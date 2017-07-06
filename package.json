@@ -1,0 +1,30 @@
+{
+  "name": "@v4fire/client",
+  "description": "V4Fire client core library",
+  "homepage": "https://github.com/V4Fire/Client#readme",
+  "main": "src/core/index.js",
+  "license": "MIT",
+  "version": "1.0.0",
+  "author": {
+    "name": "kobezzza",
+    "email": "kobezzza@gmail.com",
+    "url": "https://github.com/kobezzza"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/V4Fire/Client.git"
+  },
+  "bugs": {
+    "url": "https://github.com/V4Fire/Client/issues"
+  },
+  "keywords": [
+    "V4Fire"
+  ],
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 0"
+  },
+  "dependencies": {
+    "collection.js": "^6.0.0-beta.19",
+    "sugar": "^2.0.0"
+  }
+}

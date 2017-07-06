@@ -1,0 +1,67 @@
+/*!
+ * V4Fire Client Core
+ * https://github.com/V4Fire/Client
+ *
+ * Released under the MIT license
+ * https://github.com/V4Fire/Client/blob/master/LICENSE
+ */
+
+declare($obj, $name)
+	push($obj, $name)
+
+extends($obj, $p = {})
+	for $el, $i in $obj
+		if $i == 0
+			{$el} ($p)
+		else
+			{$el} ({})
+
+fork($objs...)
+	$res = {}
+	for $obj in $objs
+		for $key, $el in $obj
+			$res[$key] = $el
+	$res
+
+/**
+ * Generates rules for colorized styles
+ *
+ * @param {Tuple} [$set] - set of colors
+ * @param {Tuple} [$styles] - list of styles
+ * @param {string=} [$selector] - additional selector
+ * @param {string=} [$key] - color key
+ * @param {Function=} [$cb] - callback function
+ */
+setColorMods($set, $styles = null, $selector = '', $key = 'backgroundColor', $cb = null)
+	for $s in $set
+		$color = $set[$s][$key]
+
+		if $cb
+			$cb($s, $color)
+
+		else if $styles
+			&_{dasherize($s)}{$selector},
+			&_{$s}{$selector}
+				for $style in $styles
+					{$style}: $color
+
+resetButton()
+	display inline-block
+	box-sizing border-box
+	margin 0
+	padding 0
+	outline 0
+	border 0
+	border-spacing 0
+	background none
+	vertical-align middle
+	text-align left
+	text-decoration none
+	text-indent 0
+	white-space normal
+	font-weight normal
+	font-family BASE_FONT
+	line-height 1
+
+	&:focus
+		outline 0

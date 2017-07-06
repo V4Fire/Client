@@ -1,0 +1,48 @@
+/*!
+ * V4Fire Client Core
+ * https://github.com/V4Fire/Client
+ *
+ * Released under the MIT license
+ * https://github.com/V4Fire/Client/blob/master/LICENSE
+ */
+
+@import "nib/reset"
+@import "./funcs.styl"
+@import "./consts.styl"
+
+global-reset()
+reset-html5()
+
+html
+	font-size 14px
+	font-family BASE_FONT
+
+	for $el in (1600px 14px) (1400px 13px) (1300px 12px) (1100px 11px)
+		@media all and (max-device-width $el[0])
+			font-size $el[1]
+
+for $i in 1..6
+	h{$i}
+		margin 0
+		padding 0.2rem
+		color #6F8393
+		font-weight bold
+		font-size (2 - 0.2 * $i)rem
+
+p
+	margin 0
+	padding 0.4rem
+
+.a
+	resetButton()
+	cursor pointer
+
+a, .a
+	border 1px dotted transparent
+	color #136796
+
+	&:focus
+		border-color #444
+
+	img
+		border 0

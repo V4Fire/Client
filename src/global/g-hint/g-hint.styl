@@ -1,0 +1,15 @@
+/*!
+ * V4Fire Client Core
+ * https://github.com/V4Fire/Client
+ *
+ * Released under the MIT license
+ * https://github.com/V4Fire/Client/blob/master/LICENSE
+ */
+
+@import "./g-hint.interface.styl"
+
+.g-hint
+	extends($gHint, {
+		hintData: data-hint,
+		showSelector: "&[data-hint]:hover",
+	})

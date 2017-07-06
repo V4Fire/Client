@@ -1,0 +1,30 @@
+/*!
+ * V4Fire Client Core
+ * https://github.com/V4Fire/Client
+ *
+ * Released under the MIT license
+ * https://github.com/V4Fire/Client/blob/master/LICENSE
+ */
+
+@import "super/i-data/i-data.styl"
+
+$p = {
+	lockHelpers: true,
+	messageHelpers: true
+}
+
+i-input extends i-data
+	&_show-error_true&_valid_true &__error-box,
+	&_show-info_true&_valid_false &__info-box,
+	&_show-info_true&_empty_false &__info-box
+		display none
+
+	&_show-error_true&_valid_true&_empty_true &__info-box
+		display block
+
+	&__hidden-input
+		padding 0
+		width 0
+		position absolute
+		z-index -1
+		opacity 0

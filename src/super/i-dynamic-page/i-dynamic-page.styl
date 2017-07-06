@@ -1,0 +1,30 @@
+/*!
+ * V4Fire Client Core
+ * https://github.com/V4Fire/Client
+ *
+ * Released under the MIT license
+ * https://github.com/V4Fire/Client/blob/master/LICENSE
+ */
+
+@import "super/i-data/i-data.styl"
+
+$p = {
+	cellMargin: 0.5em
+}
+
+i-dynamic-page extends i-data
+	&__cell
+		$d = 1..20
+
+		for $el in $d
+			&-p{$el}
+				width $el * 5%
+
+		for $el in $d
+			&-m{$el}
+				width $el * 5%
+
+			for $el2 in $d
+				&-m{$el} + &-m{$el2}
+					margin-left $p.cellMargin
+					width s("calc(%s * 5% - %s)", $el2, $p.cellMargin)

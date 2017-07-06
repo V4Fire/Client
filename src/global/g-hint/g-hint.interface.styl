@@ -1,0 +1,166 @@
+/*!
+ * V4Fire Client Core
+ * https://github.com/V4Fire/Client
+ *
+ * Released under the MIT license
+ * https://github.com/V4Fire/Client/blob/master/LICENSE
+ */
+
+@import "super/i-base/i-base.styl"
+
+$p = {
+	hintData: false,
+	showSelector: false,
+	wrapper: "&",
+	arrow: "&::before",
+	content: "&::after",
+	vertArrowSize: 0.7rem,
+	horArrowSize: 0.4rem,
+	fontSize: 0.8rem,
+	rounding: 0.3rem,
+	backgroundColor: #616161,
+	shadow: 0 0 0.2rem alpha(#111, 0.4),
+	color: #FEFEFE,
+	zIndex: 1000
+}
+
+g-hint extends i-base
+	{$p.wrapper}
+		if $p.wrapper != "&"
+			display none
+
+		else
+			display inline-block
+
+		{$p.content},
+		{$p.arrow}
+			position absolute
+			display none
+			text-shadow none
+			font normal $p.fontSize BASE_FONT
+
+		{$p.content}
+			z-index $p.zIndex
+			padding ($p.fontSize / 1.8)
+			border-radius $p.rounding
+			background $p.backgroundColor
+			box-shadow $p.shadow
+			text-transform none
+			color $p.color
+
+			if $p.hintData
+				content attr($p.hintData)
+
+		{$p.arrow}
+			z-index $p.zIndex + 1
+			border $p.vertArrowSize solid transparent
+			content ''
+
+	if $p.showSelector
+		for $el in $p.showSelector
+			{$el}
+				if $p.wrapper != "&"
+					display block
+
+				{$p.content},
+				{$p.arrow}
+					display block
+
+	{$p.wrapper}_pos_top,
+	{$p.wrapper}_pos_top-left,
+	{$p.wrapper}_pos_top-right
+		{$p.content}
+			bottom "calc(100% + %s)" % $p.vertArrowSize
+
+		{$p.arrow}
+			top "calc(-%s - %s)" % ($p.vertArrowSize 1px)
+			border-top-color $p.backgroundColor
+
+	{$p.wrapper}_pos_bottom,
+	{$p.wrapper}_pos_bottom-left,
+	{$p.wrapper}_pos_bottom-right
+		{$p.content}
+			top "calc(100% + %s)" % $p.vertArrowSize
+
+		{$p.arrow}
+			bottom "calc(-%s - %s)" % ($p.vertArrowSize 1px)
+			border-bottom-color $p.backgroundColor
+
+	{$p.wrapper}_pos_top,
+	{$p.wrapper}_pos_bottom
+		{$p.content},
+		{$p.arrow}
+			left 50%
+			transform translateX(-50%)
+
+	{$p.wrapper}_pos_top-right,
+	{$p.wrapper}_pos_bottom-right
+		{$p.content}
+			left 0
+
+		{$p.arrow}
+			left "calc(%s + %s)" % ($p.vertArrowSize / 2 $p.rounding / 4 || 0px)
+
+	{$p.wrapper}_pos_top-left,
+	{$p.wrapper}_pos_bottom-left
+		{$p.content},
+		{$p.arrow}
+			transform translateX(-100%)
+
+		{$p.content}
+			left 100%
+
+		{$p.arrow}
+			left "calc(100% - %s - %s)" % ($p.vertArrowSize / 2 $p.rounding / 4 || 0px)
+
+	{$p.wrapper}_pos_left,
+	{$p.wrapper}_pos_left-top,
+	{$p.wrapper}_pos_left-bottom,
+	{$p.wrapper}_pos_right,
+	{$p.wrapper}_pos_right-top,
+	{$p.wrapper}_pos_right-bottom
+		{$p.arrow}
+			border-width $p.horArrowSize
+
+	{$p.wrapper}_pos_left,
+	{$p.wrapper}_pos_right
+		{$p.content},
+		{$p.arrow}
+			bottom 50%
+			transform translateY(50%)
+
+	{$p.wrapper}_pos_right,
+	{$p.wrapper}_pos_right-top,
+	{$p.wrapper}_pos_right-bottom
+		{$p.content}
+			left "calc(100% + %s)" % ($p.horArrowSize / 1.1)
+
+		{$p.arrow}
+			left "calc(100% - %s)" % ($p.horArrowSize / 1.1)
+			border-right-color $p.backgroundColor
+
+	{$p.wrapper}_pos_left,
+	{$p.wrapper}_pos_left-top,
+	{$p.wrapper}_pos_left-bottom
+		{$p.content}
+			right "calc(100% + %s)" % ($p.horArrowSize / 1.1)
+
+		{$p.arrow}
+			right "calc(100% - %s)" % ($p.horArrowSize / 1.1)
+			border-left-color $p.backgroundColor
+
+	{$p.wrapper}_pos_left-top,
+	{$p.wrapper}_pos_right-top
+		{$p.content}
+			top 0 - $p.rounding
+
+		{$p.arrow}
+			top 0
+
+	{$p.wrapper}_pos_left-bottom,
+	{$p.wrapper}_pos_right-bottom
+		{$p.content}
+			bottom 0 - $p.rounding
+
+		{$p.arrow}
+			top 0
