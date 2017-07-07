@@ -1,0 +1,5 @@
+dist/**
+src/blocks/**/index.js
+src/blocks/**/*.index.js
+src/blocks/libs/**
+src/blocks/**/*_es5.js
