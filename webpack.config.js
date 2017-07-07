@@ -25,7 +25,7 @@ const
 	fs = require('fs'),
 	pack = require('./package.json'),
 	isProdEnv = env.NODE_ENV === 'production',
-	isMinifyCss = env.MINIFY_CSS === 'true';
+	isMinifyCSS = env.MINIFY_CSS === 'true';
 
 let version = '';
 if (isProdEnv) {
@@ -62,7 +62,7 @@ const
 	packages = d('dist/packages'),
 	lib = d('node_modules'),
 	entries = d('src/entries'),
-	blocks = d('src/blocks'),
+	blocks = d('src'),
 	assets = d('assets'),
 	appGraphCache = d('app-cache/graph');
 
@@ -115,6 +115,8 @@ require('@v4fire/core/build/i18n');
 require('./build/snakeskin.webpack')(blocks);
 console.log('Project graph initialized');
 
+console.log($C.extend({deep: true, concatArray: true}, {}, config.babel.base, config.babel.client));
+
 function buildFactory(entry, i = '00') {
 	const
 		base = {'0': true, '00': true}[i];
@@ -151,7 +153,7 @@ function buildFactory(entry, i = '00') {
 
 				{
 					test: /\.styl$/,
-					loader: ExtractTextPlugin.extract('style', `css${isProdEnv || isMinifyCss ? '?minimize=true!postcss' : ''}!stylus!monic`)
+					loader: ExtractTextPlugin.extract('style', `css${isProdEnv || isMinifyCSS ? '?minimize=true!postcss' : ''}!stylus!monic`)
 				},
 
 				{
