@@ -8,12 +8,16 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-const {env} = process;
 require('dotenv').config();
 
 const
+	$C = require('collection.js'),
 	path = require('path'),
-	s = JSON.stringify;
+	config = require('@v4fire/core/config/default');
+
+const
+	s = JSON.stringify,
+	{env} = process;
 
 function getENVs(s = (s) => s) {
 	return {
@@ -27,7 +31,7 @@ function getENVs(s = (s) => s) {
 	};
 }
 
-module.exports = {
+module.exports = $C.extend(true, {}, config, {
 	clientGlobals: {
 		'process.env': {
 			NODE_ENV: s(env.NODE_ENV)
@@ -40,72 +44,21 @@ module.exports = {
 		'eventemitter2': 'EventEmitter2',
 		'localforage': 'localforage',
 		'urijs': 'URI',
-		'page': 'page',
-		'ion-sound': 'ion',
-		'deep-diff': 'DeepDiff',
-		'jquery': 'jQuery',
 		'sugar': 'Sugar',
-		'vue': 'Vue',
-		'humanize-duration': 'humanizeDuration',
-		'chart.js': 'Chart'
+		'vue': 'Vue'
 	},
 
 	snakeskin: {
-		base: {
-			pack: false,
-			vars: getENVs(),
-			filters: {global: ['undef']},
-			adapterOptions: {transpiler: true}
-		},
-
 		client: {
+			vars: getENVs(),
 			adapter: 'ss2vue',
 			tagFilter: 'vueComp',
 			tagNameFilter: 'vueTag',
 			bemFilter: 'bem2vue'
-		},
-
-		server: {
-
 		}
 	},
 
 	babel: {
-		base: {
-			plugins: [
-				'syntax-flow',
-				'transform-flow-strip-types',
-				'transform-decorators-legacy',
-				'transform-class-properties',
-				'transform-es2015-object-super',
-				'transform-function-bind',
-				['transform-es2015-modules-commonjs', {loose: true}],
-				['transform-object-rest-spread', {useBuiltIns: true}],
-				['transform-runtime', {
-					helpers: true,
-					polyfill: false,
-					regenerator: false
-				}]
-			],
-
-			compact: false
-		},
-
-		server: {
-			resolveModuleSource(source, from) {
-				if (path.isAbsolute(source) || /^(\.|babel-runtime)/.test(source)) {
-					return source;
-				}
-
-				const p = path.posix;
-				return p.relative(p.dirname(from.replace(/.*?src\//, '')), p.join('./server', source));
-			},
-
-			plugins: [
-				'transform-strict-mode'
-			]
-		},
-
 		client: {
 			plugins: [
 				'transform-exponentiation-operator',
@@ -128,15 +81,5 @@ module.exports = {
 
 			compact: false
 		}
-	},
-
-	db: {
-		autoIndex: true,
-		uri: env.MONGOHQ_URL
-	},
-
-	redis: {
-		scope: /production/.test(env.SERVICE_NAME) ? 'production' : 'staging',
-		url: env.REDIS_URL
 	}
-};
+});

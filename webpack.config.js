@@ -111,7 +111,7 @@ const tplData = Object.assign(
 	{exec: true}
 );
 
-require('./build/i18n');
+require('@v4fire/core/build/i18n');
 require('./build/snakeskin.webpack')(blocks);
 console.log('Project graph initialized');
 

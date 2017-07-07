@@ -11,6 +11,7 @@
 const {env, argv} = process;
 env.NODE_ENV = env.NODE_ENV || 'standalone';
 
+require('@v4fire/core/gulpfile');
 require('./build/other.gulp');
 require('./build/static.gulp');
 
