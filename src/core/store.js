@@ -10,4 +10,4 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-export { default as default } from '../../core/store';
+export { default as default } from '@v4fire/core/src/store';

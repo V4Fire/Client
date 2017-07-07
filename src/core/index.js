@@ -10,7 +10,7 @@
 
 import 'regenerator-runtime/runtime';
 import 'uuid/lib/rng-browser';
-import '../../core';
+import '@v4fire/core/src';
 import './dependencies';
 import './number';
 import './dom';

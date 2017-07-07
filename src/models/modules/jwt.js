@@ -16,10 +16,7 @@ const
 	isLocal = (url) => url.includes(API);
 
 @provider
-export default class Admin extends Provider {
-	/** @override */
-	socketURL = 'admin';
-
+export default class JWT extends Provider {
 	/* eslint-disable no-unused-vars */
 
 	/** @override */

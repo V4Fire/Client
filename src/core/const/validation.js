@@ -8,4 +8,4 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-export * from '../../../core/const/validation';
+export * from '@v4fire/core/src/const/validation';

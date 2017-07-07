@@ -39,7 +39,6 @@ module.exports = {
 		'collection.js': '$C',
 		'eventemitter2': 'EventEmitter2',
 		'localforage': 'localforage',
-		'validator-js': 'Validator',
 		'urijs': 'URI',
 		'page': 'page',
 		'ion-sound': 'ion',

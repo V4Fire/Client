@@ -8,4 +8,4 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-export * from '../../core/helpers';
+export * from '@v4fire/core/src/helpers';
