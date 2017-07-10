@@ -8,24 +8,31 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+require('dotenv').config();
+require('@v4fire/core/build/i18n');
+require('@v4fire/core/gulpfile')();
+
 const
 	{env, argv} = process;
 
-require('dotenv').config();
-env.NODE_ENV = env.NODE_ENV || 'standalone';
+const
+	$C = require('collection.js'),
+	config = require('config'),
+	pack = require('./package.json');
 
 const
-	args = require('minimist')(argv.slice(2));
+	fs = require('fs'),
+	path = require('path'),
+	query = require('querystring');
+
+const
+	args = require('minimist')(argv.slice(2)),
+	isProdEnv = env.NODE_ENV === 'production',
+	isMinifyCSS = env.MINIFY_CSS === 'true';
 
 if (args.env) {
 	env.NODE_ENV = args.env;
 }
-
-const
-	fs = require('fs'),
-	pack = require('./package.json'),
-	isProdEnv = env.NODE_ENV === 'production',
-	isMinifyCSS = env.MINIFY_CSS === 'true';
 
 let version = '';
 if (isProdEnv) {
@@ -45,12 +52,6 @@ if (isProdEnv) {
 		argv.push('--fast');
 	}
 }
-
-const
-	$C = require('collection.js'),
-	path = require('path'),
-	query = require('querystring'),
-	config = require('config');
 
 function d(src) {
 	return path.join(__dirname, src);
@@ -111,7 +112,6 @@ const tplData = Object.assign(
 	{exec: true}
 );
 
-require('@v4fire/core/build/i18n');
 require('./build/snakeskin.webpack')(blocks);
 console.log('Project graph initialized');
 
