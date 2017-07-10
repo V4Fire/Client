@@ -11,14 +11,13 @@
 const {env, argv} = process;
 env.NODE_ENV = env.NODE_ENV || 'standalone';
 
-require('@v4fire/core/gulpfile');
-require('./build/other.gulp');
-require('./build/static.gulp');
-
 const
 	gulp = require('gulp'),
 	plumber = require('gulp-plumber'),
 	cached = require('gulp-cached');
+
+require('@v4fire/core/gulpfile')(gulp);
+require('./build/static.gulp');
 
 const
 	runWebpack = 'node node_modules/parallel-webpack/bin/run.js',
