@@ -11,7 +11,7 @@
 const
 	isPathInside = require('is-path-inside'),
 	path = require('path'),
-	prop = require('../build/prop');
+	prop = require('@v4fire/core/build/prop');
 
 /**
  * WebPack loader for using Flow with Vue
