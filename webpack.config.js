@@ -115,8 +115,6 @@ const tplData = Object.assign(
 require('./build/snakeskin.webpack')(blocks);
 console.log('Project graph initialized');
 
-console.log($C.extend({deep: true, concatArray: true}, {}, config.babel.base, config.babel.client));
-
 function buildFactory(entry, i = '00') {
 	const
 		base = {'0': true, '00': true}[i];

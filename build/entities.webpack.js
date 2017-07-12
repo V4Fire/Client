@@ -40,8 +40,11 @@ module.exports = function ({entries, blocks, output, cache, assetsJSON}) {
 		return `common_${i}`;
 	}
 
+	const
+		files = glob.sync(path.join(blocks, '!(core|models|libs|entries)/**/@(index|*.index).js'));
+
 	// Load index declarations of blocks
-	const blockMap = $C(glob.sync(path.join(blocks, '!(core|models|libs)/**/@(index|*.index).js'))).reduce((map, el) => {
+	const blockMap = $C(files).reduce((map, el) => {
 		const
 			decl = pzlr.declaration.parse(fs.readFileSync(el)),
 			dir = path.dirname(el),
