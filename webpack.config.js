@@ -146,7 +146,7 @@ function buildFactory(entry, i = '00') {
 				{
 					test: /\.js$/,
 					loader: 'babel!prop!proxy',
-					exclude: /node_modules/,
+					exclude: /node_modules\/(?!@v4fire)/,
 				},
 
 				{
