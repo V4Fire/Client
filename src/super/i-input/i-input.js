@@ -87,7 +87,14 @@ export default class iInput extends iData {
 	/**
 	 * Block value store
 	 */
-	@field((o) => o.link('valueProp'))
+	@field((o) => o.link('valueProp', (val) => {
+		if (val === undefined && o.blockValueField === 'value') {
+			return o.default;
+		}
+
+		return val;
+	}))
+
 	valueStore: any;
 
 	/**
