@@ -38,4 +38,6 @@ export default class VueInterface {
 	get $children(): Object {}
 	get $root(): Object {}
 	get $vnode(): VNode {}
+	get $attrs(): Object {}
+	get $listeners(): Object {}
 }

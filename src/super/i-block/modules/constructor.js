@@ -44,7 +44,9 @@ const whitelist = {
 	provide: true,
 	inject: true,
 	model: true,
-	with: true
+	with: true,
+	inheritAttrs: true,
+	comments: true
 };
 
 const blacklist = {
