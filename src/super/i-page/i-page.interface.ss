@@ -133,7 +133,7 @@
 						content = width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no
 					.
 
-					< title :: {title = 'HotelChat' ?}
+					< title :: {title = '' ?}
 					< base href = ${base}
 
 					/// Dirty hack for replacing startURL from manifest.json

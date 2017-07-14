@@ -1,9 +1,9 @@
 /*!
- * TravelChat Client
- * https://github.com/Travelbanda/TravelChat
+ * V4Fire Client Core
+ * https://github.com/V4Fire/Client
  *
- * Released under the FSFUL license
- * https://github.com/Travelbanda/TravelChat/blob/master/LICENSE
+ * Released under the MIT license
+ * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
 import '../core';
