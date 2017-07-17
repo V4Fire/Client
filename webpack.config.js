@@ -13,70 +13,11 @@ require('@v4fire/core/build/i18n');
 require('@v4fire/core/gulpfile')();
 
 const
-	{env, argv} = process;
+	{d, hash, args, cwd, config, babel, VERSION, HASH_LENGTH} = require('./build/helpers.webpack'),
+	{env} = process;
 
 const
-	$C = require('collection.js'),
-	config = require('config'),
-	pack = require('./package.json');
-
-const
-	fs = require('fs'),
-	path = require('path'),
-	query = require('querystring');
-
-const
-	args = require('minimist')(argv.slice(2)),
-	isProdEnv = env.NODE_ENV === 'production',
-	isMinifyCSS = env.MINIFY_CSS === 'true';
-
-if (args.env) {
-	env.NODE_ENV = args.env;
-}
-
-let version = '';
-if (isProdEnv) {
-	// FIXME
-	/*if (env.VERSION) {
-		version = env.VERSION;
-
-	} else {
-		const v = pack.version.split('.');
-		pack.version = [v[0], v[1], Number(v[2]) + 1].join('.');
-		env.VERSION = version = `${pack.version.replace(/\./g, '')}_`;
-		fs.writeFileSync('./package.json', `${JSON.stringify(pack, null, 2)}\n`);
-	}*/
-
-	if (!args.fast) {
-		args.fast = true;
-		argv.push('--fast');
-	}
-}
-
-function d(src) {
-	return path.join(__dirname, src);
-}
-
-const
-	output = './dist/packages/[hash]_[name]',
-	assetsJSON = `./dist/packages/${version}assets.json`,
-	packages = d('dist/packages'),
-	lib = d('node_modules'),
-	entries = d('src/entries'),
-	blocks = d('src'),
-	assets = d('assets'),
-	appGraphCache = d('app-cache/graph');
-
-const hashLength = 15;
-function v(str, chunk) {
-	/// FIXME: webpack commonChunksPlugin chunkhash bug
-	/*return str.replace(/\[hash]_/g, isProdEnv ?
-		chunk ? `[chunkhash:${hashLength}]_` : `[hash:${hashLength}]_` :
-		''
-	);*/
-
-	return str.replace(/\[hash]_/g, isProdEnv ? `[hash:${hashLength}]_` : '');
-}
+	$C = require('collection.js');
 
 const
 	webpack = require('webpack'),
@@ -85,26 +26,40 @@ const
 	AssetsWebpackPlugin = require('assets-webpack-plugin'),
 	WebpackMd5Hash = require('webpack-md5-hash');
 
+const
+	isProdEnv = env.NODE_ENV === 'production',
+	isMinifyCSS = env.MINIFY_CSS === 'true';
+
+const
+	output = './dist/packages/[hash]_[name]',
+	assetsJSON = `./dist/packages/${VERSION}assets.json`,
+	packages = d('dist/packages'),
+	lib = d('node_modules'),
+	entries = d('src/entries'),
+	blocks = d('src'),
+	assets = d('assets'),
+	appGraphCache = d('app-cache/graph');
+
 const build = require('./build/entities.webpack')({
 	entries,
 	blocks,
 	assetsJSON,
-	output: v(output),
+	output: hash(output),
 	cache: env.FROM_CACHE && appGraphCache
 });
 
 const tplData = Object.assign(
 	{
 		data: JSON.stringify({
-			root: __dirname,
-			version,
+			root: cwd,
+			version: VERSION,
+			hashLength: HASH_LENGTH,
+			dependencies: build.dependencies,
 			lib,
 			entries,
 			blocks,
 			assets,
-			packages,
-			hashLength,
-			dependencies: build.dependencies
+			packages
 		})
 	},
 
@@ -124,9 +79,9 @@ function buildFactory(entry, i = '00') {
 		externals: config.externals,
 
 		output: {
+			path: cwd,
 			publicPath: '/',
-			path: __dirname,
-			filename: v(output, true)
+			filename: hash(output, true)
 		},
 
 		resolve: {
@@ -135,45 +90,16 @@ function buildFactory(entry, i = '00') {
 		},
 
 		resolveLoader: {
+			moduleExtensions: ['-loader'],
 			alias: {
 				prop: d('./web_loaders/prop'),
 				proxy: d('./web_loaders/proxy')
 			}
 		},
 
-		module: {
-			loaders: [
-				{
-					test: /\.js$/,
-					loader: 'babel!prop!proxy',
-					exclude: /node_modules\/(?!@v4fire)/,
-				},
-
-				{
-					test: /\.styl$/,
-					loader: ExtractTextPlugin.extract('style', `css${isProdEnv || isMinifyCSS ? '?minimize=true!postcss' : ''}!stylus!monic`)
-				},
-
-				{
-					test: /\.ss$/,
-					loader: `snakeskin?${query.stringify(config.snakeskin.client)}`
-				},
-
-				{
-					test: /\.ess$/,
-					loader: `file?name=${output.replace(/\[hash]_/, '')}.html!extract!html!snakeskin?${query.stringify(tplData)}`
-				},
-
-				{
-					test: /\.(png|gif|jpg|svg|ttf|eot|woff|woff2|mp3|ogg|aac)/,
-					loader: `url?name=${v('[path][hash]_[name].[ext]')}&limit=4096`
-				}
-			]
-		},
-
 		plugins: [
 			new webpack.DefinePlugin(config.clientGlobals),
-			new ExtractTextPlugin(`${v(output, true)}.css`),
+			new ExtractTextPlugin(`${hash(output, true)}.css`),
 			new AssetsWebpackPlugin({filename: assetsJSON, update: true})
 
 		].concat(
@@ -201,9 +127,7 @@ function buildFactory(entry, i = '00') {
 			] : [],
 
 			isProdEnv ? [
-				new WebpackMd5Hash(),
-				new webpack.optimize.DedupePlugin(),
-				new webpack.optimize.OccurrenceOrderPlugin()
+				new WebpackMd5Hash()
 
 			] : [
 				new HardSourceWebpackPlugin({
@@ -215,20 +139,104 @@ function buildFactory(entry, i = '00') {
 			]
 		),
 
-		debug: config.sourcemaps,
-		postcss: [require('autoprefixer')],
-		babel: $C.extend({deep: true, concatArray: true}, {}, config.babel.base, config.babel.client),
-		snakeskin: Object.assign({}, config.snakeskin.base),
-		monic: {
-			replacers: [
-				require('./build/stylus-import.replacer')(blocks),
-				require('@pzlr/stylus-inheritance')
-			]
-		},
+		module: {
+			rules: [
+				{
+					test: /\.js$/,
+					exclude: /node_modules\/(?!@v4fire)/,
+					use: [
+						{
+							loader: 'babel',
+							options: babel.base
+						},
 
-		stylus: {
-			use: require('./build/stylus.plugins'),
-			preferPathResolver: 'webpack'
+						'prop',
+						'proxy'
+					]
+				},
+
+				{
+					test: /\.styl$/,
+					use: [].concat(
+						'style',
+
+						isProdEnv || isMinifyCSS ? [
+							{
+								loader: 'css',
+								options: {
+									minimize: true
+								}
+							},
+
+							{
+								loader:'postcss',
+								options: require('autoprefixer')
+							}
+						] : [],
+
+						{
+							loader: 'stylus',
+							options: {
+								use: require('./build/stylus.plugins'),
+								preferPathResolver: 'webpack'
+							}
+						},
+
+						{
+							loader: 'monic',
+							options: {
+								replacers: [
+									require('./build/stylus-import.replacer')(blocks),
+									require('@pzlr/stylus-inheritance')
+								]
+							}
+						}
+					)
+				},
+
+				{
+					test: /\.ss$/,
+					use: [
+						{
+							loader: 'snakeskin',
+							options: config.snakeskin.client
+						}
+					]
+				},
+
+				{
+					test: /\.ess$/,
+					use: [
+						{
+							loader: 'file',
+							options: {
+								name: `${output.replace(/\[hash]_/, '')}.html`
+							}
+						},
+
+						'extract',
+						'html',
+
+						{
+							loader: 'snakeskin',
+							options: tplData
+						}
+					]
+				},
+
+				{
+					test: /\.(png|gif|jpg|svg|ttf|eot|woff|woff2|mp3|ogg|aac)$/,
+					use: [
+						{
+							loader: 'url',
+							options: {
+								name: hash('[path][hash]_[name].[ext]'),
+								limit: 4096
+							}
+						}
+					]
+				}
+			]
 		}
 	};
 }

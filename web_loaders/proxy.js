@@ -16,7 +16,6 @@ const
  * @param {string} str
  */
 module.exports = function (str) {
-	this.cacheable && this.cacheable();
 	if (!isPathInside(this.context, './src/blocks')) {
 		return str;
 	}

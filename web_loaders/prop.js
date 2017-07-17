@@ -18,7 +18,6 @@ const
  * @param {string} str
  */
 module.exports = function (str) {
-	this.cacheable && this.cacheable();
 	if (!isPathInside(this.context, './src/blocks') || /^(g-|i-base$)/.test(path.basename(this.context))) {
 		return str;
 	}
