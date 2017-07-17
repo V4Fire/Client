@@ -72,7 +72,7 @@ if (isProdEnv) {
 /**
  * Babel config
  */
-const babel = exports.babel = {
+exports.babel = {
 	base: $C.extend(
 		{
 			deep: true,
