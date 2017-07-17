@@ -248,9 +248,7 @@ export default class iData extends iMessage {
 
 		$e.on('refresh', {
 			group: 'dataProviderSync',
-			fn: async (data) => {
-				await this.onRefreshData(Object.isFunction(data) ? data() : data);
-			}
+			fn: (data) => this.onRefreshData(Object.isFunction(data) ? data() : data)
 		});
 	}
 

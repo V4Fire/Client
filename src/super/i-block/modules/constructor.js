@@ -87,11 +87,29 @@ export default class BlockConstructor extends VueInterface {
 			return component;
 		}
 
+		/* eslint-disable consistent-this */
+
+		const
+			ctx = this;
+
+		/* eslint-enable consistent-this */
+
+		let beforeCreate;
 		Object.assign(component, {
 			watch: {},
 			methods: {},
 			mixins: [],
-			computed: {instance: () => this},
+			computed: {},
+
+			// Predefine base properties
+			beforeCreate() {
+				this.instance = ctx;
+				this.componentName = name;
+				this.component = component;
+				this.parentComponent = component.parentComponent;
+				beforeCreate && beforeCreate.call(this);
+			},
+
 			data() {
 				const
 					data = {},
@@ -105,7 +123,7 @@ export default class BlockConstructor extends VueInterface {
 					let val = el.initializer;
 					this._activeField = el.field;
 					val = val === undefined ? el.default : val;
-					data[key] = Object.isFunction(val) ? val(this) : val;
+					data[key] = Object.isFunction(val) ? val(this, ctx) : val;
 				}
 
 				return data;
@@ -125,7 +143,13 @@ export default class BlockConstructor extends VueInterface {
 			}
 
 			if (whitelist[prop]) {
-				component[prop] = this[prop];
+				if (prop === 'beforeCreate') {
+					beforeCreate = this[prop];
+
+				} else {
+					component[prop] = this[prop];
+				}
+
 				continue;
 			}
 

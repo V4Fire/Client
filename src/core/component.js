@@ -63,7 +63,7 @@ export function rootComponent(target) {
  */
 export function prop(type: any, required: boolean) {
 	return (target, key, desc) => {
-		initEvent.once('component', (block) => {
+		initEvent.once('component', (name) => {
 			let def = desc.initializer();
 			if (Object.isObject(def) || Object.isArray(def)) {
 				def = new Function(`return ${def.toSource()}`);
@@ -72,7 +72,7 @@ export function prop(type: any, required: boolean) {
 				def = def.clone();
 			}
 
-			props[block][key] = {
+			props[name][key] = {
 				type,
 				default: def,
 				required
@@ -122,7 +122,9 @@ export function component(
 			transitions: true,
 			filters: true,
 			directives: true,
-			delimiters: true
+			delimiters: true,
+			inheritAttrs: true,
+			comments: true
 		};
 
 		{
@@ -186,7 +188,7 @@ export function component(
 			}
 		}
 
-		staticComponents[name] = clone;
+		staticComponents[name] = comp.component = clone;
 		components[name] = comp;
 
 		if (parentComp) {

@@ -88,8 +88,9 @@ export default class iInput extends iData {
 	 * Block value store
 	 */
 	@field((o) => o.link('valueProp', (val) => {
-		if (val === undefined && o.blockValueField === 'value') {
-			return o.default;
+		if (val === undefined && o.component.blockValueField === 'value') {
+			o.localEvent.once('component.created', () => o.valueStore = o.default);
+			return;
 		}
 
 		return val;

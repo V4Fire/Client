@@ -57,11 +57,6 @@ export const
 @component()
 export default class iBlock extends BlockConstructor {
 	/**
-	 * Model parameters
-	 */
-	model: ?Object;
-
-	/**
 	 * Local parent component name
 	 */
 	with: ?string;
@@ -73,16 +68,44 @@ export default class iBlock extends BlockConstructor {
 	blockId: string;
 
 	/**
-	 * Link to the component instance
+	 * Block unique name
 	 */
-	@abstract
-	instance: iBlock;
+	blockName: ?string;
 
 	/**
-	 * Link to the Vue instance
+	 * Link to the current Vue component
 	 */
 	@abstract
 	self: Vue;
+
+	/**
+	 * Link to the current component iBlock instance
+	 */
+	@abstract
+	instance: this;
+
+	/**
+	 * Alias for $options.selfName
+	 */
+	@abstract
+	componentName: string;
+
+	/**
+	 * Alias for $options.component
+	 */
+	@abstract
+	component: Object;
+
+	/**
+	 * Alias for $options.parentComponent
+	 */
+	@abstract
+	parentComponent: Object;
+
+	/**
+	 * v-model component parameters
+	 */
+	model: ?Object;
 
 	/**
 	 * Async object
@@ -109,7 +132,7 @@ export default class iBlock extends BlockConstructor {
 	blockStatus: string = statuses.unloaded;
 
 	/**
-	 * Data helpers
+	 * Some helpers
 	 */
 	@abstract
 	h: Object;
@@ -139,11 +162,6 @@ export default class iBlock extends BlockConstructor {
 	blockActivated: boolean = true;
 
 	/**
-	 * Block unique name
-	 */
-	blockName: ?string;
-
-	/**
 	 * Additional classes for block elements
 	 */
 	classes: Object = {};
@@ -165,13 +183,12 @@ export default class iBlock extends BlockConstructor {
 	dispatching: boolean = false;
 
 	/**
-	 * Link for translation function
+	 * Link to translation function
 	 */
 	i18n: Function = defaulti18n;
 
 	/**
 	 * If true, then the block will be reinitialized after activated
-	 * @type {boolean}
 	 */
 	needReInit: boolean = false;
 
@@ -315,27 +332,6 @@ export default class iBlock extends BlockConstructor {
 	};
 
 	/**
-	 * Link for the component
-	 */
-	get component(): this {
-		return this;
-	}
-
-	/**
-	 * Link for $options.componentName
-	 */
-	get componentName(): string {
-		return this.$options.selfName;
-	}
-
-	/**
-	 * Link for $options.parentComponent
-	 */
-	get parentComponent(): Object {
-		return this.$options.parentComponent;
-	}
-
-	/**
 	 * Environment value
 	 */
 	get currentEnv(): string {
@@ -344,49 +340,49 @@ export default class iBlock extends BlockConstructor {
 	}
 
 	/**
-	 * Link for .i18n
+	 * Alias for .i18n
 	 */
 	get t(): Function {
 		return this.i18n;
 	}
 
 	/**
-	 * Link for window.l
+	 * Link to window.l
 	 */
 	get l(): Function {
 		return l;
 	}
 
 	/**
-	 * Link for $options.sizeTo.gt
+	 * Alias for $options.sizeTo.gt
 	 */
 	get gt(): Object {
 		return this.$options.sizeTo.gt;
 	}
 
 	/**
-	 * Link for $options.sizeTo.lt
+	 * Alias for $options.sizeTo.lt
 	 */
 	get lt(): Object {
 		return this.$options.sizeTo.lt;
 	}
 
 	/**
-	 * Link for the global object
+	 * Link to the global object
 	 */
 	get global(): Function {
 		return window;
 	}
 
 	/**
-	 * Link for console API
+	 * Link to console API
 	 */
 	get console(): Function {
 		return console;
 	}
 
 	/**
-	 * Link for window.location
+	 * Link to window.location
 	 */
 	get location(): Function {
 		return location;
@@ -1025,7 +1021,7 @@ export default class iBlock extends BlockConstructor {
 
 	/**
 	 * Returns a link to the closest parent component for the current
-	 * @param component - component name or a link for the component constructor
+	 * @param component - component name or a link to the component constructor
 	 */
 	closest(component: string | Function): ?iBlock {
 		const
@@ -1242,27 +1238,25 @@ export default class iBlock extends BlockConstructor {
 	 * Block initialized
 	 */
 	beforeCreate() {
-		const
-			linkCache = {};
-
-		this.h = helpers;
-		this.b = browser;
 		this.self = this;
 		this.blockId = `b-${uuid()}`;
-		this.asyncQueue = new Set();
+		this.h = helpers;
+		this.b = browser;
 		this.async = new Async(this);
+		this.asyncQueue = new Set();
 		this.localEvent = new EventEmitter2({maxListeners: 100, wildcard: true});
-		this._syncLinks = {};
 
 		const addWatcher = (watcher) => {
-			if (this.componentName) {
+			if (this.blockStatus) {
 				watcher();
 
 			} else {
-				const block = this.$options.selfName;
-				watchers[block] = (watchers[block] || []).concat(watcher);
+				watchers[this.componentName] = (watchers[this.componentName] || []).concat(watcher);
 			}
 		};
+
+		const linkCache = {};
+		this._syncLinks = {};
 
 		/**
 		 * Sets a link for the specified field
@@ -1372,6 +1366,8 @@ export default class iBlock extends BlockConstructor {
 	 * Block created
 	 */
 	created() {
+		this.localEvent.emit('component.created');
+
 		let
 			methods = methodsCache[this.componentName];
 
@@ -1503,6 +1499,8 @@ export default class iBlock extends BlockConstructor {
 	 * Block mounted
 	 */
 	async mounted() {
+		this.localEvent.emit('component.mounted');
+
 		if (this.block) {
 			const
 				{node} = this.block;
@@ -1527,6 +1525,8 @@ export default class iBlock extends BlockConstructor {
 	 * (for keep-alive)
 	 */
 	async activated() {
+		this.localEvent.emit('component.activated');
+
 		if (this.blockActivated) {
 			return;
 		}
@@ -1550,6 +1550,7 @@ export default class iBlock extends BlockConstructor {
 	 * (for keep-alive)
 	 */
 	deactivated() {
+		this.localEvent.emit('component.deactivated');
 		this.async
 			.clearAllImmediates()
 			.clearAllTimeouts()
@@ -1567,6 +1568,7 @@ export default class iBlock extends BlockConstructor {
 	 * Block before destroy
 	 */
 	beforeDestroy() {
+		this.localEvent.emit('component.destroyed');
 		this.block.destructor();
 
 		$C(this.asyncQueue).forEach((el) => {

@@ -100,35 +100,35 @@ export default class iPage extends Block {
 				},
 
 				/**
-				 * Link for i18n function
+				 * Link to i18n function
 				 */
 				i18n(): Function {
 					return i18n;
 				},
 
 				/**
-				 * Link for .i18n
+				 * Alias for .i18n
 				 */
 				t(): Function {
 					return this.i18n;
 				},
 
 				/**
-				 * Link for window.l
+				 * Link to window.l
 				 */
 				l(): Function {
 					return l;
 				},
 
 				/**
-				 * Link for console API
+				 * Link to console API
 				 */
 				console(): Function {
 					return console;
 				},
 
 				/**
-				 * Link for window.location
+				 * Link to window.location
 				 */
 				location(): Function {
 					return location;
