@@ -121,7 +121,7 @@ function buildFactory(entry, i = '00') {
 
 					comments: false,
 					mangle: false
-				}),
+				})
 
 				/* eslint-enable camelcase */
 			] : [],
@@ -157,41 +157,45 @@ function buildFactory(entry, i = '00') {
 
 				{
 					test: /\.styl$/,
-					use: [].concat(
-						'style',
-
-						isProdEnv || isMinifyCSS ? [
+					use: ExtractTextPlugin.extract({
+						fallback: 'style',
+						use: [].concat(
 							{
 								loader: 'css',
 								options: {
-									minimize: true
+									minimize: Boolean(isProdEnv || isMinifyCSS)
+								}
+							},
+
+							isProdEnv ? [
+								{
+									loader: 'postcss',
+									options: {
+										plugins: [require('autoprefixer')()]
+									}
+								}
+
+							] : [],
+
+							{
+								loader: 'stylus',
+								options: {
+									use: require('./build/stylus.plugins'),
+									preferPathResolver: 'webpack'
 								}
 							},
 
 							{
-								loader:'postcss',
-								options: require('autoprefixer')
+								loader: 'monic',
+								options: {
+									replacers: [
+										require('./build/stylus-import.replacer')(blocks),
+										require('@pzlr/stylus-inheritance')
+									]
+								}
 							}
-						] : [],
-
-						{
-							loader: 'stylus',
-							options: {
-								use: require('./build/stylus.plugins'),
-								preferPathResolver: 'webpack'
-							}
-						},
-
-						{
-							loader: 'monic',
-							options: {
-								replacers: [
-									require('./build/stylus-import.replacer')(blocks),
-									require('@pzlr/stylus-inheritance')
-								]
-							}
-						}
-					)
+						)
+					})
 				},
 
 				{
