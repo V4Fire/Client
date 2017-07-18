@@ -114,16 +114,27 @@ function buildFactory(entry, i = '00') {
 				/* eslint-disable camelcase */
 
 				new webpack.optimize.UglifyJsPlugin({
-					compressor: {
+					compress: {
 						warnings: false,
 						keep_fnames: true
 					},
 
-					comments: false,
+					output: {
+						comments: false
+					},
+
 					mangle: false
-				})
+				}),
 
 				/* eslint-enable camelcase */
+
+				new webpack.LoaderOptionsPlugin({
+					minimize: true,
+					debug: false,
+					options: {
+						context: __dirname
+					}
+				})
 			] : [],
 
 			isProdEnv ? [
