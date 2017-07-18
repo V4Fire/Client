@@ -21,7 +21,6 @@
     "V4Fire"
   ],
   "scripts": {
-    "installDependencies": "npm i",
     "test": "echo \"Error: no test specified\" && exit 0"
   },
   "dependencies": {
