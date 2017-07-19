@@ -8,7 +8,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-module.exports = function (gulp = require('gulp')) {
+module.exports = function (gulp = require('gulp'), params) {
 	const
 		plumber = require('gulp-plumber');
 
@@ -20,23 +20,26 @@ module.exports = function (gulp = require('gulp')) {
 
 		/* eslint-disable camelcase */
 
+		const faviconsParams = Object.assign({
+			appName: 'V4Fire',
+			start_url: '.',
+			background: '#3D7D73',
+			path: '../../assets/favicons/',
+			display: 'standalone',
+			orientation: 'portrait',
+			version: 1.0,
+			logging: false,
+			html: 'favicons.html',
+			pipeHTML: true,
+			replace: true
+		}, params && params.favicons);
+
+		/* eslint-enable camelcase */
+
 		async.series([
 			(cb) => gulp.src('./assets/logo.svg')
 				.pipe(plumber())
-				.pipe(favicons({
-					appName: 'V4Fire',
-					start_url: '.',
-					background: '#3D7D73',
-					path: '../../assets/favicons/',
-					display: 'standalone',
-					orientation: 'portrait',
-					version: 1.0,
-					logging: false,
-					html: 'favicons.html',
-					pipeHTML: true,
-					replace: true
-				}))
-
+				.pipe(favicons(faviconsParams))
 				.pipe(gulp.dest('./assets/favicons'))
 				.on('end', cb),
 
@@ -51,8 +54,6 @@ module.exports = function (gulp = require('gulp')) {
 				.on('end', cb)
 
 		], cb);
-
-		/* eslint-enable camelcase */
 	});
 
 	gulp.task('html', (cb) => {
