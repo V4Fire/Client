@@ -9,18 +9,25 @@
  */
 
 const
-	path = require('path'),
+	path = require('path').posix,
+	findUp = require('find-up'),
 	cache = {};
 
-module.exports = function (blocks) {
-	return (str, file) => {
-		if (cache[str]) {
-			return cache[str];
-		}
+module.exports = async function (str, file) {
+	const
+		cwd = path.dirname(file),
+		parent = path.dirname(cwd),
+		c = cache[parent] = cache[parent] || {};
 
-		return cache[str] = str.replace(/@import "([^./].*?\.styl)"/g, (str, url) => {
-			url = path.relative(path.dirname(file), path.join(blocks, url)).replace(/\\/g, '/');
-			return `@import "${url}"`;
-		});
-	};
+	if (c[str]) {
+		return c[str];
+	}
+
+	const
+		blocks = await findUp('src', {cwd});
+
+	return c[str] = str.replace(/@import "([^./~].*?\.styl)"/g, (str, url) => {
+		url = path.relative(path.dirname(file), path.join(blocks, url));
+		return `@import "${url}"`;
+	});
 };

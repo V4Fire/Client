@@ -15,9 +15,6 @@ const
 module.exports = [
 	require('nib')(),
 
-	/**
-	 * fromSVG
-	 */
 	function (style) {
 		style.define('dataURI', (mime, str) =>
 			`data:${mime.string};base64,${Buffer(str.string).toString('base64')}`);

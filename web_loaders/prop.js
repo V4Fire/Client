@@ -18,7 +18,7 @@ const
  * @param {string} str
  */
 module.exports = function (str) {
-	if (!isPathInside(this.context, './src/blocks') || /^(g-|i-base$)/.test(path.basename(this.context))) {
+	if (!isPathInside(this.context, './src') || /^g-/.test(path.basename(this.context))) {
 		return str;
 	}
 

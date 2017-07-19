@@ -177,7 +177,7 @@ function buildFactory(entry, i = '00') {
 								loader: 'monic',
 								options: {
 									replacers: [
-										require('./build/stylus-import.replacer')(blocks),
+										require('./build/stylus-import.replacer'),
 										require('@pzlr/stylus-inheritance')
 									]
 								}
