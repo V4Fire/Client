@@ -16,15 +16,27 @@ module.exports = [
 	require('nib')(),
 
 	function (style) {
+		/**
+		 * Converts string to dataURI
+		 */
 		style.define('dataURI', (mime, str) =>
 			`data:${mime.string};base64,${Buffer(str.string).toString('base64')}`);
 
+		/**
+		 * Link to Sugar.String.dasherize
+		 */
 		style.define('dasherize',
 			(str) => Sugar.String.dasherize(str.string));
 
+		/**
+		 * Link to Sugar.String.camelize
+		 */
 		style.define('camelize',
 			(str, upper) => Sugar.String.camelize(str.string, upper));
 
+		/**
+		 * Converts plain svg text to dataURI
+		 */
 		style.define('fromSVG', (str) =>
 			`data:image/svg+xml;base64,${Buffer([
 				'<?xml version="1.0" encoding="utf-8"?>',
@@ -36,6 +48,9 @@ module.exports = [
 			].join('')).toString('base64')}`
 		);
 
+		/**
+		 * Returns true if the specified file is already exists
+		 */
 		style.define('file-exists', function (path) {
 			return Boolean(stylus.utils.find(path.string, this.paths));
 		});

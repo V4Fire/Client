@@ -31,20 +31,24 @@ const
 
 const
 	output = './dist/packages/[hash]_[name]',
-	assetsJSON = `./dist/packages/${VERSION}assets.json`,
+	assetsJSON = `./dist/packages/${VERSION}assets.json`;
+
+const
+	blocks = d('src'),
 	entries = d('src/entries'),
 	assets = d('assets'),
-	blocks = d('src');
+	lib = d('node_modules');
 
 const build = require('./build/entities.webpack')({
 	output: hash(output),
 	cache: env.FROM_CACHE && d('app-cache/graph'),
+	assetsJSON,
 	entries,
 	blocks,
-	assetsJSON
+	lib
 });
 
-require('./build/snakeskin.webpack')(blocks);
+require('./build/snakeskin.webpack')({blocks, lib});
 console.log('Project graph initialized');
 
 function buildFactory(entry, i = '00') {
@@ -218,11 +222,9 @@ function buildFactory(entry, i = '00') {
 									version: VERSION,
 									hashLength: HASH_LENGTH,
 									dependencies: build.dependencies,
-									lib: d('node_modules'),
 									packages: d('dist/packages'),
-									entries,
-									blocks,
-									assets
+									assets,
+									lib
 								})
 							})
 						}

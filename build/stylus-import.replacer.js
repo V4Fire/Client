@@ -9,7 +9,7 @@
  */
 
 const
-	path = require('path').posix,
+	path = require('path'),
 	findUp = require('find-up'),
 	cache = {};
 
@@ -27,7 +27,7 @@ module.exports = async function (str, file) {
 		blocks = await findUp('src', {cwd});
 
 	return c[str] = str.replace(/@import "([^./~].*?\.styl)"/g, (str, url) => {
-		url = path.relative(path.dirname(file), path.join(blocks, url));
+		url = path.relative(path.dirname(file), path.join(blocks, url)).replace(/\\/g, '/');
 		return `@import "${url}"`;
 	});
 };

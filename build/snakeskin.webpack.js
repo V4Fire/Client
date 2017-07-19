@@ -21,7 +21,13 @@ const
 	path = require('path'),
 	glob = require('glob');
 
-module.exports = function (blocks) {
+/**
+ * Initializes Snakeskin
+ *
+ * @param {string} blocks - path to a block folder
+ * @param {string} lib - path to a lib folder
+ */
+module.exports = function ({blocks, lib}) {
 	const bind = {
 		bind: [
 			(o) => o.getVar('$attrs'),
@@ -30,9 +36,15 @@ module.exports = function (blocks) {
 	};
 
 	const
-		blocksTree = {};
+		blocksTree = {},
+		components = '/**/@(i|b|p|g|v)-*.js';
 
-	$C(glob.sync(path.join(blocks, '/**/@(g|i|b|v)-*.js'))).forEach((el) => {
+	const files = [].concat(
+		glob.sync(path.join(lib, '@v4fire/client/src', components)),
+		glob.sync(path.join(blocks, components))
+	);
+
+	$C(files).forEach((el) => {
 		const
 			file = fs.readFileSync(el, {encoding: 'utf-8'});
 

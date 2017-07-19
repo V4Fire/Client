@@ -113,8 +113,6 @@
 	- isProd = @@env === 'production'
 	- root = path.relative(@packages, @root)
 	- lib = path.relative(@packages, @lib)
-	- entries = path.relative(@packages, @entries)
-	- blocks = path.relative(@packages, @blocks)
 	- assets = path.relative(@packages, @assets)
 	- packages = path.relative(@packages, @packages)
 

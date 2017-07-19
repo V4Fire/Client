@@ -9,25 +9,39 @@
  */
 
 const
-	$C = require('collection.js'),
-	{String} = require('sugar');
+	$C = require('collection.js');
 
 const
-	argv = require('minimist')(process.argv.slice(2)),
-	pzlr = require('@pzlr/build-core');
+	{String} = require('sugar'),
+	{args} = require('./helpers.webpack');
 
 const
 	fs = require('fs'),
 	path = require('path'),
+	findUp = require('find-up'),
 	glob = require('glob'),
 	mkdirp = require('mkdirp'),
-	hasha = require('hasha');
+	hasha = require('hasha'),
+	pzlr = require('@pzlr/build-core');
 
 const
 	IN_PROCESS = 3;
 
-module.exports = function ({entries, blocks, output, cache, assetsJSON}) {
-	let cacheFile;
+/**
+ * Builds entry points for WebPack by the specified parameters and returns a tree of dependencies
+ *
+ * @param {string} entries - path to base entry points
+ * @param {string} blocks - path to a block folder
+ * @param {string} lib - path to a lib folder
+ * @param {string} output - output path
+ * @param {string} cache - path to a cache folder
+ * @param {string} assetsJSON - path to assets.json file
+ * @returns {{processes, entry, dependencies, commonPacks}}
+ */
+module.exports = function ({entries, blocks, lib, output, cache, assetsJSON}) {
+	let
+		cacheFile;
+
 	if (cache) {
 		mkdirp.sync(cache);
 		cacheFile = path.join(cache, 'graph.json');
@@ -41,14 +55,19 @@ module.exports = function ({entries, blocks, output, cache, assetsJSON}) {
 	}
 
 	const
-		files = glob.sync(path.join(blocks, '!(core|models|libs|entries)/**/@(index|*.index).js'));
+		components = '!(core|models|libs|entries)/**/@(index|*.index).js';
+
+	const files = [].concat(
+		glob.sync(path.join(lib, '@v4fire/client/src', components)),
+		glob.sync(path.join(blocks, components))
+	);
 
 	// Load index declarations of blocks
 	const blockMap = $C(files).reduce((map, el) => {
 		const
 			decl = pzlr.declaration.parse(fs.readFileSync(el)),
-			dir = path.dirname(el),
-			url = (ext) => path.join(dir, `${decl.name}.${ext}`);
+			cwd = path.dirname(el),
+			url = (ext) => path.join(cwd, `${decl.name}.${ext}`);
 
 		const
 			logic = url('js'),
@@ -72,6 +91,11 @@ module.exports = function ({entries, blocks, output, cache, assetsJSON}) {
 			decl.html = html;
 		}
 
+		if (decl.libs.length) {
+			const root = findUp.sync('src', {cwd});
+			$C(decl.libs).set((el) => path.join(root, el));
+		}
+
 		decl.src = el;
 		map[decl.name] = decl;
 		return map;
@@ -79,8 +103,8 @@ module.exports = function ({entries, blocks, output, cache, assetsJSON}) {
 
 	// Parse --build arguments
 	let entriesFilter;
-	if (typeof argv.build === 'string') {
-		entriesFilter = $C(argv.build.split(',')).reduce((map, el) => (map[el] = true, map), {});
+	if (typeof args.build === 'string') {
+		entriesFilter = $C(args.build.split(',')).reduce((map, el) => (map[el] = true, map), {});
 		entriesFilter.index = true;
 	}
 
@@ -160,7 +184,7 @@ module.exports = function ({entries, blocks, output, cache, assetsJSON}) {
 				name = path.basename(el, '.js'),
 				block = blockMap[name];
 
-			if (!/^(g|b|i|p)-/.test(name) || !block) {
+			if (!/^[ibpgv]-/.test(name) || !block) {
 				list.push(el);
 				return;
 			}
@@ -254,8 +278,7 @@ module.exports = function ({entries, blocks, output, cache, assetsJSON}) {
 				block = blockMap[name];
 
 			if (block) {
-				$C(block.libs).forEach((el) =>
-					str += `require('${getUrl(path.resolve(blocks, el))}');\n`);
+				$C(block.libs).forEach((el) => str += `require('${el}');\n`);
 			}
 
 			if (!block || block && block.logic) {
@@ -306,7 +329,7 @@ module.exports = function ({entries, blocks, output, cache, assetsJSON}) {
 
 		const
 			tplTaskName = `${name}_tpl.js`,
-			tplFile = path.join(tmpEntries, `${name}.ss${!argv.fast ? '.js' : ''}`);
+			tplFile = path.join(tmpEntries, `${name}.ss${!args.fast ? '.js' : ''}`);
 
 		fs.writeFileSync(tplFile, $C(list).reduce((str, name) => {
 			const
@@ -314,13 +337,13 @@ module.exports = function ({entries, blocks, output, cache, assetsJSON}) {
 
 			if (block && block.tpl && !/^i-/.test(name)) {
 				const url = getUrl(block.tpl);
-				str += argv.fast ? `- include '${url}'\n` : `Object.assign(TPLS, require('./${url}'));\n`;
+				str += args.fast ? `- include '${url}'\n` : `Object.assign(TPLS, require('./${url}'));\n`;
 			}
 
 			return str;
-		}, !argv.fast ? 'window.TPLS = window.TPLS || {};\n' : ''));
+		}, !args.fast ? 'window.TPLS = window.TPLS || {};\n' : ''));
 
-		if (argv.fast) {
+		if (args.fast) {
 			const tplRequireFileUrl = path.join(tmpEntries, tplTaskName);
 			fs.writeFileSync(tplRequireFileUrl, `Object.assign(window.TPLS = window.TPLS || {}, require('./${getUrl(tplFile)}'));\n`);
 			entry[tplTaskName] = union[tplTaskName] = tplRequireFileUrl;
