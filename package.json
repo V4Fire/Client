@@ -35,7 +35,6 @@
     "join-uri": "^1.0.1",
     "localforage": "^1.4.2",
     "raven-js": "^3.16.1",
-    "request-full-screen": "^0.1.1",
     "requestidlecallback": "^0.3.0",
     "snakeskin": "^7.2.8",
     "socket.io": "^1.7.4",
