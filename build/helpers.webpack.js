@@ -9,46 +9,45 @@
  */
 
 const
-	$C = require('collection.js'),
-	fs = require('fs'),
-	path = require('path');
-
-const
 	{env, argv} = process;
 
-/**
- * Project work directory
- */
-const cwd = exports.cwd = process.cwd();
+const
+	fs = require('fs'),
+	path = require('path'),
+	minimist = require('minimist');
 
 /**
  * Process arguments
  */
-const args = exports.args = require('minimist')(argv.slice(2));
+const args =
+	exports.args = minimist(argv.slice(2));
 
 if (args.env) {
 	env.NODE_ENV = args.env;
 }
+
+/**
+ * Project work directory
+ */
+const
+	cwd = exports.cwd = process.cwd();
 
 const
 	pack = require(d('package.json')),
 	isProdEnv = env.NODE_ENV === 'production';
 
 /**
- * Project config
- */
-const config = exports.config = require('config');
-
-/**
  * File hash length
  */
-const HASH_LENGTH = exports.HASH_LENGTH = 15;
+const HASH_LENGTH =
+	exports.HASH_LENGTH = 15;
 
 /**
  * Project version
  * (for longterm caching)
  */
-let VERSION = exports.VERSION = '';
+let VERSION =
+	exports.VERSION = '';
 
 if (isProdEnv) {
 	if (env.BUMP_VERSION) {
@@ -68,38 +67,6 @@ if (isProdEnv) {
 		argv.push('--fast');
 	}
 }
-
-/**
- * Babel config
- */
-exports.babel = {
-	base: $C.extend(
-		{
-			deep: true,
-			concatArray: true
-		},
-
-		{},
-
-		config.babel.base,
-		config.babel.client
-	),
-
-	get withRuntime() {
-		const
-			config = $C.extend(true, {}, this.base),
-			pl = config.plugins,
-			pos = $C(pl).search((el) => (Array.isArray(el) ? el[0] : el) === 'transform-runtime');
-
-		pl[pos === -1 ? pl.length : pos] = ['transform-runtime', {
-			helpers: false,
-			polyfill: false,
-			regenerator: false
-		}];
-
-		return pl;
-	}
-};
 
 /**
  * Returns WebPack output path string from the specified with hash parameters

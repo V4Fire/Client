@@ -8,16 +8,15 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-require('dotenv').config();
 require('@v4fire/core/build/i18n');
-require('@v4fire/core/gulpfile')();
 
 const
-	{d, hash, args, cwd, config, babel, VERSION, HASH_LENGTH} = require('./build/helpers.webpack'),
+	$C = require('collection.js'),
+	config = require('config');
+
+const
+	{d, hash, args, cwd, VERSION, HASH_LENGTH} = require('./build/helpers.webpack'),
 	{env} = process;
-
-const
-	$C = require('collection.js');
 
 const
 	webpack = require('webpack'),
@@ -47,25 +46,6 @@ const build = require('./build/entities.webpack')({
 	output: hash(output),
 	cache: env.FROM_CACHE && appGraphCache
 });
-
-const tplData = Object.assign(
-	{
-		data: JSON.stringify({
-			root: cwd,
-			version: VERSION,
-			hashLength: HASH_LENGTH,
-			dependencies: build.dependencies,
-			lib,
-			entries,
-			blocks,
-			assets,
-			packages
-		})
-	},
-
-	config.snakeskin.server,
-	{exec: true}
-);
 
 require('./build/snakeskin.webpack')(blocks);
 console.log('Project graph initialized');
@@ -98,7 +78,7 @@ function buildFactory(entry, i = '00') {
 		},
 
 		plugins: [
-			new webpack.DefinePlugin(config.clientGlobals),
+			new webpack.DefinePlugin(config.globals),
 			new ExtractTextPlugin(`${hash(output, true)}.css`),
 			new AssetsWebpackPlugin({filename: assetsJSON, update: true})
 
@@ -158,7 +138,7 @@ function buildFactory(entry, i = '00') {
 					use: [
 						{
 							loader: 'babel',
-							options: babel.base
+							options: config.babel.base
 						},
 
 						'prop',
@@ -234,7 +214,20 @@ function buildFactory(entry, i = '00') {
 
 						{
 							loader: 'snakeskin',
-							options: tplData
+							options: Object.assign({}, config.snakeskin.server, {
+								exec: true,
+								data: JSON.stringify({
+									root: cwd,
+									version: VERSION,
+									hashLength: HASH_LENGTH,
+									dependencies: build.dependencies,
+									lib,
+									entries,
+									blocks,
+									assets,
+									packages
+								})
+							})
 						}
 					]
 				},
