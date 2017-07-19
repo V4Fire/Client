@@ -19,6 +19,10 @@ const
 	{env} = process;
 
 const
+	isProdEnv = env.NODE_ENV === 'production',
+	isMinifyCSS = env.MINIFY_CSS === 'true';
+
+const
 	webpack = require('webpack'),
 	HardSourceWebpackPlugin = require('hard-source-webpack-plugin'),
 	ExtractTextPlugin = require('extract-text-webpack-plugin'),
@@ -26,25 +30,18 @@ const
 	WebpackMd5Hash = require('webpack-md5-hash');
 
 const
-	isProdEnv = env.NODE_ENV === 'production',
-	isMinifyCSS = env.MINIFY_CSS === 'true';
-
-const
 	output = './dist/packages/[hash]_[name]',
 	assetsJSON = `./dist/packages/${VERSION}assets.json`,
-	packages = d('dist/packages'),
-	lib = d('node_modules'),
 	entries = d('src/entries'),
-	blocks = d('src'),
 	assets = d('assets'),
-	appGraphCache = d('app-cache/graph');
+	blocks = d('src');
 
 const build = require('./build/entities.webpack')({
+	output: hash(output),
+	cache: env.FROM_CACHE && d('app-cache/graph'),
 	entries,
 	blocks,
-	assetsJSON,
-	output: hash(output),
-	cache: env.FROM_CACHE && appGraphCache
+	assetsJSON
 });
 
 require('./build/snakeskin.webpack')(blocks);
@@ -221,11 +218,11 @@ function buildFactory(entry, i = '00') {
 									version: VERSION,
 									hashLength: HASH_LENGTH,
 									dependencies: build.dependencies,
-									lib,
+									lib: d('node_modules'),
+									packages: d('dist/packages'),
 									entries,
 									blocks,
-									assets,
-									packages
+									assets
 								})
 							})
 						}
