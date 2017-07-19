@@ -8,4 +8,3 @@
 
 import '../core';
 import '../global/g-def';
-import '../global/g-hint';
