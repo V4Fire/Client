@@ -8,17 +8,12 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-require('dotenv').config();
-
 const
 	$C = require('collection.js'),
 	path = require('path'),
-	config = require('@v4fire/core/config/default');
+	defConfig = require('@v4fire/core/config/default');
 
-const
-	s = JSON.stringify,
-	{env} = process;
-
+const {env} = process;
 function getENVs(s = (s) => s) {
 	return {
 		env: s(env.NODE_ENV),
@@ -31,14 +26,14 @@ function getENVs(s = (s) => s) {
 	};
 }
 
-module.exports = $C.extend(true, {}, config, {
-	clientGlobals: {
+const config = module.exports = $C.extend(true, {}, defConfig, {
+	envs: getENVs(),
+	globals: {
 		'process.env': {
-			NODE_ENV: s(env.NODE_ENV)
+			NODE_ENV: JSON.stringify(env.NODE_ENV)
 		}
 	},
 
-	envs: getENVs(),
 	externals: {
 		'collection.js': '$C',
 		'eventemitter2': 'EventEmitter2',
@@ -46,20 +41,35 @@ module.exports = $C.extend(true, {}, config, {
 		'urijs': 'URI',
 		'sugar': 'Sugar',
 		'vue': 'Vue'
-	},
+	}
+});
 
-	snakeskin: {
-		client: {
-			vars: getENVs(),
-			adapter: 'ss2vue',
-			tagFilter: 'vueComp',
-			tagNameFilter: 'vueTag',
-			bemFilter: 'bem2vue'
-		}
-	},
+config.snakeskin = {
+	client: Object.assign({}, defConfig.snakeskin, {
+		vars: getENVs(),
+		adapter: 'ss2vue',
+		tagFilter: 'vueComp',
+		tagNameFilter: 'vueTag',
+		bemFilter: 'bem2vue'
+	}),
 
-	babel: {
-		client: {
+	server: Object.assign({}, defConfig.snakeskin, {
+		vars: getENVs()
+	})
+};
+
+config.babel = {
+	base: $C.extend(
+		{
+			deep: true,
+			concatArray: true
+		},
+
+		{},
+
+		defConfig.babel,
+
+		{
 			plugins: [
 				'transform-exponentiation-operator',
 				'check-es2015-constants',
@@ -77,9 +87,22 @@ module.exports = $C.extend(true, {}, config, {
 				['transform-es2015-template-literals', {loose: true}],
 				'transform-es2015-spread',
 				'transform-regenerator'
-			],
-
-			compact: false
+			]
 		}
+	),
+
+	get withRuntime() {
+		const
+			config = $C.extend(true, {}, this.base),
+			pl = config.plugins,
+			pos = $C(pl).search((el) => (Array.isArray(el) ? el[0] : el) === 'transform-runtime');
+
+		pl[pos === -1 ? pl.length : pos] = ['transform-runtime', {
+			helpers: false,
+			polyfill: false,
+			regenerator: false
+		}];
+
+		return pl;
 	}
-});
+};
