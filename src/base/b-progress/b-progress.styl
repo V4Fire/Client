@@ -1,0 +1,39 @@
+/*!
+ * V4Fire Client Core
+ * https://github.com/V4Fire/Client
+ *
+ * Released under the MIT license
+ * https://github.com/V4Fire/Client/blob/master/LICENSE
+ */
+
+@import "super/i-block/i-block.styl"
+
+$p = {
+	color: alpha(#FFF, 0.6),
+	gradColor1: alpha(#FFBE00, 1),
+	gradColor2: alpha(#FEB645, 1),
+	width: 10em,
+	height: 0.5em,
+	pointWidth: 1px
+}
+
+b-progress extends i-block
+	&_progress_true &__progress
+		display block
+		width $p.width
+		height $p.height
+		border 0.1em invert($p.color) solid
+		border-radius 2px
+
+	&__line,
+	&__point
+		height 100%
+
+	&__line
+		background linear-gradient(to right, $p.gradColor1 0, $p.gradColor2 100%)
+		box-shadow 1px 0 3px alpha($p.color, 0.2)
+
+	&__point
+		float right
+		width $p.pointWidth
+		background $p.color

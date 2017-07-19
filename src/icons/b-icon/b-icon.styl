@@ -1,0 +1,30 @@
+/*!
+ * V4Fire Client Core
+ * https://github.com/V4Fire/Client
+ *
+ * Released under the MIT license
+ * https://github.com/V4Fire/Client/blob/master/LICENSE
+ */
+
+@import "super/i-functional/i-functional.styl"
+
+$p = {
+	size: 1em
+}
+
+b-icon extends i-functional
+	display inline-flex
+	align-items center
+	justify-content center
+
+	&__svg
+		width $p.size
+		height $p.size
+
+	if $p.color
+		fill $p.color
+		color $p.color
+
+	else
+		fill currentColor
+		color currentColor

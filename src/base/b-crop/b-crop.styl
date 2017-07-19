@@ -1,0 +1,137 @@
+/*!
+ * V4Fire Client Core
+ * https://github.com/V4Fire/Client
+ *
+ * Released under the MIT license
+ * https://github.com/V4Fire/Client/blob/master/LICENSE
+ */
+
+@import "super/i-block/i-block.styl"
+
+$p = {
+	rSize: 0.6em,
+	overBackgroundColor: alpha(#000, 0.7),
+	rBackgroundColor: alpha(#EEE, 0.6)
+	activeRBackgroundColor: alpha(#FFF, 0.8),
+	selectBorderColor: alpha(#666, 0.2)
+}
+
+b-crop extends i-block
+	transform translateZ(0)
+	user-select none
+
+	&__over-wrapper
+		display block
+		background $p.overBackgroundColor
+
+	&__area
+		absolute top 0 left 0
+		z-index 10
+		width 100%
+		height @width
+		cursor crosshair
+
+	&_disabled_true &__area,
+	&_progress_true &__area,
+	&_parent-progress_true &__area
+		display none
+
+	&_parent-progress_true &__over-wrapper
+		background none
+
+	&_progress_true &__progress
+		display flex
+		justify-content center
+		align-items center
+
+	&__progress
+		absolute top 0 left 0
+		z-index 2
+		width 100%
+		height @width
+
+		.b-progress-icon
+			font-size 5em
+
+	&__img
+		max-width 100%
+
+	&__original,
+	&__clone
+		min-width 10em
+		min-height @min-width
+
+	&__clone
+		position absolute
+		z-index 1
+
+		&_hidden_true
+			display none
+
+	&__select
+		position absolute
+		z-index 2
+		box-sizing border-box
+		border 1px solid $p.selectBorderColor
+		cursor move
+
+		&_hidden_true
+			display none
+
+	&_resize-select_false &__r
+		visibility hidden
+
+	&_active_true &__r
+		background $p.activeRBackgroundColor
+
+	&__r
+		position absolute
+		backgrou $p.rBackgroundColor
+		transition background-color 0.3s
+
+		width $p.rSize
+		height @width
+
+		&_hor-align_left
+			left -(@width / 2)
+
+		&_hor-align_middle
+			left 50%
+			margin-left -(@width / 2)
+
+		&_hor-align_right
+			right -(@width / 2)
+
+		&_vert-align_top
+			top -(@width / 2)
+
+		&_vert-align_middle
+			top 50%
+			margin-top -(@width / 2)
+
+		&_vert-align_bottom
+			bottom -(@width / 2)
+
+		&_vert-align_top&_hor-align_left
+			cursor nw-resize
+
+		&_vert-align_top&_hor-align_right
+			cursor ne-resize
+
+		&_vert-align_bottom&_hor-align_left
+			cursor sw-resize
+
+		&_vert-align_bottom&_hor-align_right
+			cursor se-resize
+
+		&_vert-align_middle&_hor-align_left
+			cursor w-resize
+
+		&_vert-align_middle&_hor-align_right
+			cursor e-resize
+
+		&_vert-align_top&_hor-align_middle
+			cursor n-resize
+
+		&_vert-align_bottom&_hor-align_middle
+			cursor s-resize

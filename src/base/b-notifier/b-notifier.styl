@@ -1,0 +1,26 @@
+/*!
+ * V4Fire Client Core
+ * https://github.com/V4Fire/Client
+ *
+ * Released under the MIT license
+ * https://github.com/V4Fire/Client/blob/master/LICENSE
+ */
+
+@import "super/i-data/i-data.styl"
+
+$p = {
+	tooltipBackgroundColor: #FFBD53
+	tooltipColor: #000
+}
+
+b-notifier extends i-data
+	fixed top 0 left 0
+	z-index 1000
+	width 100%
+
+	&__tooltip
+		padding 0.4em
+		background $p.tooltipBackgroundColor
+		text-align center
+		font-size 1.2em
+		color $p.tooltipColor

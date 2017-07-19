@@ -1,0 +1,45 @@
+/*!
+ * V4Fire Client Core
+ * https://github.com/V4Fire/Client
+ *
+ * Released under the MIT license
+ * https://github.com/V4Fire/Client/blob/master/LICENSE
+ */
+
+@import "form/b-input/b-input.styl"
+
+$p = {
+
+}
+
+b-textarea extends b-input
+	&__super-wrapper,
+	&__root-wrapper
+		background inherit
+
+	&__super-wrapper
+		padding 0.5em
+		max-height 10em
+
+	&__input
+		display block
+		overflow hidden
+		padding 0
+		width 100%
+		outline 0
+		border 0
+		resize none
+
+	&_collapsed_true &__input
+		height 1.1em
+
+	&_focused_true &__limit_hidden_false
+		display block
+
+	&__limit
+		display none
+		padding 0.3em
+		font-size 0.7em
+
+		&_warning_true
+			color $p.invalidColor

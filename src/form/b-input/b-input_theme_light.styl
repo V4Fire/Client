@@ -1,0 +1,18 @@
+/*!
+ * V4Fire Client Core
+ * https://github.com/V4Fire/Client
+ *
+ * Released under the MIT license
+ * https://github.com/V4Fire/Client/blob/master/LICENSE
+ */
+
+$p = {
+	shadowColor: alpha(#6DC5F9, 0.3)
+}
+
+b-input_theme_light extends b-input
+	/theme &__root-wrapper
+		border 0
+
+	/theme&_focused_true &__root-wrapper
+		box-shadow 0 0 0.45em $p.shadowColor

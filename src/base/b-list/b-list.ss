@@ -1,0 +1,66 @@
+- namespace [%fileName%]
+
+/*!
+ * V4Fire Client Core
+ * https://github.com/V4Fire/Client
+ *
+ * Released under the MIT license
+ * https://github.com/V4Fire/Client/blob/master/LICENSE
+ */
+
+- include 'super/i-data'|b as placeholder
+
+- template index() extends ['i-data'].index
+	- overWrapper = false
+
+	- block body
+		- super
+
+		- listTag = 'ul'
+		- listElTag = 'li'
+
+		< ${listTag}.&__wrapper
+			- block list
+				< ${listElTag}.&__el v-for = (el, i) in value
+					< a &
+						:class = setHint(el.hintPos).concat(getElClasses({link: {
+							id: i,
+							active: isActive(el, i),
+							theme: el.theme,
+							hidden: el.hidden,
+							progress: el.progress
+						}})) |
+
+						:href = el.href || (autoHref && el.value !== undefined ? '#' + el.value : 'javascript:void(0)') |
+						:-hint = el.hint |
+						:-value = {value: el.value !== undefined ? el.value : el.href}.toSource()
+					.
+						- block preIcon
+							< span.&__cell.&__link-icon.&__link-pre-icon v-if = el.preIcon
+								< component &
+									:instanceOf = bIcon |
+									:is = el.preIconComponent || 'b-icon' |
+									:value = el.preIcon |
+									:hint = el.preIconHint
+								.
+
+						- block text
+							< span.&__cell.&__link-text v-if = !hideLabels
+								{{ t(el.label) }}
+
+						- block info
+							< span.&__cell.&__link-info v-if = db && el.info && getField('db.' + el.info)
+								{{ getField('db.' + el.info) }}
+
+						- block icon
+							< span.&__cell.&__link-icon.&__link-post-icon v-if = el.icon
+								< component &
+									:instanceOf = bIcon |
+									:is = el.iconComponent || 'b-icon' |
+									:value = el.icon |
+									:hint = el.iconHint || (hideLabels ? t(el.label) : undefined)
+								.
+
+						- block progress
+							< span.&__cell.&__link-icon.&__link-progress
+								< b-progress-icon v-once

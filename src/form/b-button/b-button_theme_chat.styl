@@ -1,0 +1,42 @@
+/*!
+ * V4Fire Client Core
+ * https://github.com/V4Fire/Client
+ *
+ * Released under the MIT license
+ * https://github.com/V4Fire/Client/blob/master/LICENSE
+ */
+
+$p = {
+	buttonBackgroundColor: #00796B,
+	discardButtonBackgroundColor: #FBFCFA,
+	discardColor: #9B9B9B
+}
+
+b-button_theme_chat extends b-button
+	/theme
+		flex 1 0 33%
+
+	/theme &__button
+		width 100%
+		padding 1.2em 0.2em
+		background-color $p.buttonBackgroundColor
+		border-radius 0 0 0 1em
+		font-weight normal
+
+		&:hover, &:active, &:focus
+			background-color lighten($p.buttonBackgroundColor, 10%)
+
+	/theme&_rounding_small + /theme&_rounding_small &__button
+		border-radius 0 0 1em 0
+
+	/theme&_discard_true &__button
+		background-color $p.discardButtonBackgroundColor
+		border-radius 0 0 0 1em
+		color $p.discardColor
+
+		&:hover, &:active, &:focus
+			background-color darken($p.discardButtonBackgroundColor, 2%)
+
+	/theme&_once_true &__button
+		border-radius 0 0 1em 1em
+

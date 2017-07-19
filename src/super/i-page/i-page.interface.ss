@@ -131,7 +131,7 @@
 						content = width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no
 					.
 
-					< title :: {title = '' ?}
+					< title :: {title = 'V4Fire' ?}
 					< base href = ${base}
 
 					/// Dirty hack for replacing startURL from manifest.json
@@ -204,7 +204,6 @@
 						['babel-polyfill/dist/polyfill.min.js'],
 						['collection.js/dist/collection.min.js'],
 						['sugar/dist/sugar.min.js'],
-						'request-full-screen/dist/request-full-screen.js',
 						'requestidlecallback/index.js',
 						'dom4/build/dom4.js',
 						'sugar/dist/locales/ru.js',

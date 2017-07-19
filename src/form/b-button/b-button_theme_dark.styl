@@ -1,0 +1,23 @@
+/*!
+ * V4Fire Client Core
+ * https://github.com/V4Fire/Client
+ *
+ * Released under the MIT license
+ * https://github.com/V4Fire/Client/blob/master/LICENSE
+ */
+
+$p = {
+	color: #FFF,
+	backgroundColor: #CACACA,
+	shadowColor: alpha(#CCC, 0.2)
+}
+
+b-button_theme_dark extends b-button
+	b-button_theme_light($p)
+
+	/theme &__button
+		&:hover
+			background darken($p.backgroundColor, 5%)
+
+		&:active
+			background darken($p.backgroundColor, 10%)

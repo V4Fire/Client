@@ -1,0 +1,31 @@
+/*!
+ * V4Fire Client Core
+ * https://github.com/V4Fire/Client
+ *
+ * Released under the MIT license
+ * https://github.com/V4Fire/Client/blob/master/LICENSE
+ */
+
+$p = {
+	borderColor: #E7E7E7
+}
+
+b-input_theme_chat extends b-input
+	/theme
+		display flex
+		height 100%
+		border-radius 2em
+		border 1px solid $p.borderColor
+
+	/theme&_disabled_true
+		background $p.backgroundColor
+
+	/theme &__root-wrapper
+		border 0
+
+	/theme&_focused_true &__root-wrapper
+		box-shadow none
+
+	/theme &__input
+		font-size 1em
+		padding 0.7em

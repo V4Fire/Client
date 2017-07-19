@@ -1,0 +1,68 @@
+/*!
+ * V4Fire Client Core
+ * https://github.com/V4Fire/Client
+ *
+ * Released under the MIT license
+ * https://github.com/V4Fire/Client/blob/master/LICENSE
+ */
+
+@import "super/i-data/i-data.styl"
+
+$p = {
+	width: auto,
+	color: #4B494B,
+	titleColor: #FFF,
+	backgroundColor: #FFF,
+	titleBackgroundColor: #00786B,
+	backBackgroundColor: alpha(#000, 0.4),
+	zIndex: 100
+}
+
+b-window extends i-data
+	absolute top 0 left 0
+	z-index $p.zIndex
+	min-width 100%
+
+	&_width_full &__window
+		width 100%
+
+	&_width_auto &__window
+		width auto
+
+	&__back
+		fixed top 0 left 0
+		width 100%
+		height @width
+		background $p.backBackgroundColor
+
+	&__wrapper
+		position relative
+		z-index 1
+		display flex
+		justify-content center
+		width 100%
+		height 100vh
+
+	&__window
+		width $p.width
+		max-width 100%
+		align-self center
+		background $p.backgroundColor
+		color $p.color
+
+	&__title
+		display block
+		padding 1em 10em 1em 1em
+		background $p.titleBackgroundColor
+		color $p.titleColor
+		font-size 1.8rem
+
+	&__controls
+		padding 1em
+		text-align center
+
+	&__control
+		display inline-block
+
+	&__control + &__control
+		margin-left 0.2em

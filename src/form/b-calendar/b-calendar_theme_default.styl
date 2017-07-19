@@ -1,0 +1,45 @@
+/*!
+ * V4Fire Client Core
+ * https://github.com/V4Fire/Client
+ *
+ * Released under the MIT license
+ * https://github.com/V4Fire/Client/blob/master/LICENSE
+ */
+
+$p = {
+	labelNavColor: #222C3C,
+	borderColor: #CCC
+}
+
+b-calendar_theme_default extends b-calendar
+	/theme &__label-nav
+		justify-content space-between
+		padding 0.2em
+		width $p.width
+		text-decoration none
+		cursor pointer
+		color $p.labelNavColor
+		height auto
+		border 1px solid $p.borderColor
+
+		&_buttons_false
+			height 3em
+			justify-content center
+
+		&:active
+			{$p.onActive}
+
+	/theme&_opened_true &__label-nav
+		border 1px solid $p.labelNavColor
+
+	/theme &__icon
+		display block
+		border-radius 100%
+		color lighten($p.labelNavColor, 30%)
+		text-decoration none
+		cursor pointer
+
+	/theme &__label-nav &__icon
+		.b-icon
+			padding 0.1em
+			font-size 2em

@@ -23,7 +23,7 @@
 	- attrs = {}
 	- block attrs
 
-	- slotAttrs = {':stage': 'stage', ':ctx': 'component'}
+	- slotAttrs = {':stage': 'stage', ':ctx': 'self'}
 	- block slotAttrs
 
 	- block root

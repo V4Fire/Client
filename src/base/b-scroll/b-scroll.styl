@@ -1,0 +1,96 @@
+/*!
+ * V4Fire Client Core
+ * https://github.com/V4Fire/Client
+ *
+ * Released under the MIT license
+ * https://github.com/V4Fire/Client/blob/master/LICENSE
+ */
+
+@import "super/i-block/i-block.styl"
+
+$p = {
+	backgroundColor: inherit,
+	scrollerBackgroundColor: alpha(#4B494B, 0.4),
+	scrollerSize: 6px
+}
+
+b-scroll extends i-block
+	display block
+	height 100%
+	background inherit
+
+	&__root-wrapper,
+	&__scroll-wrapper-y
+		height 100%
+
+	&__root-wrapper,
+	&__scroll-wrapper
+		background inherit
+
+	&__scroll-wrapper,
+	&__scroller,
+	&__area
+		display block
+
+	&__root-wrapper
+		overflow visible
+
+	&_mobile_true &__area
+		transform translate3d(0,0,0)
+
+	&__area
+		overflow auto
+		box-sizing border-box
+		max-width 100%
+		max-height @max-width
+		-webkit-overflow-scrolling touch
+
+		&::-webkit-scrollbar
+			visibility hidden
+
+	&__scroll-wrapper
+		text-align center
+
+		&_hidden_true
+			display none
+
+	&__scroll
+		display inline-block
+		background $p.backgroundColor
+
+	&__scroller
+		position absolute
+		cursor pointer
+		user-select none
+		border-radius 1em
+		background $p.scrollerBackgroundColor
+
+		&:hover
+			background lighten($p.scrollerBackgroundColor, 10%)
+
+	&__scroll-wrapper-x
+		absolute bottom 0 left 0
+		width 100%
+
+	&__scroll-x
+		width inherit
+		height $p.scrollerSize
+
+	&__scroller-x
+		top 50%
+		margin-top -($p.scrollerSize / 2)
+		min-width 1em
+		height $p.scrollerSize
+
+	&__scroll-wrapper-y
+		absolute top 0 right 0
+
+	&__scroll-y
+		width $p.scrollerSize
+		height inherit
+
+	&__scroller-y
+		left 50%
+		margin-left -($p.scrollerSize / 2)
+		min-height 1em
+		width $p.scrollerSize

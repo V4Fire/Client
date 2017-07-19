@@ -1,0 +1,35 @@
+/*!
+ * V4Fire Client Core
+ * https://github.com/V4Fire/Client
+ *
+ * Released under the MIT license
+ * https://github.com/V4Fire/Client/blob/master/LICENSE
+ */
+
+$p = {
+	color: #000,
+	hoverColor: lighten(#000, 20%),
+	backgroundColor: #FFF,
+	borderColor: #00796B
+}
+
+b-link_theme_chat extends b-link
+	/theme
+		margin-right 1em
+		padding 1em 2em
+		border-radius 1em
+		border-top-left-radius 0.2em
+		border 2px solid $p.borderColor
+		background $p.backgroundColor
+		cursor pointer
+
+		&:focus, &:hover
+			background $p.borderColor
+
+			& ^[0]__link
+				color $p.backgroundColor
+
+	/theme &__link
+		text-decoration none
+		font-weight 400
+		border 0

@@ -1,0 +1,40 @@
+/*!
+ * V4Fire Client Core
+ * https://github.com/V4Fire/Client
+ *
+ * Released under the MIT license
+ * https://github.com/V4Fire/Client/blob/master/LICENSE
+ */
+
+@import "super/i-functional/i-functional.styl"
+
+$p = {
+	size: 0.8em,
+	color: #6153B9
+}
+
+b-progress-icon extends i-functional
+	display inline-block
+
+	&__loader,
+	&__i
+		display block
+		width $p.size
+		height $p.size
+		border ($p.size / 4) solid alpha($p.color, 0.4)
+		border-radius 50%
+
+	&__i
+		absolute top 0 left 0
+		border-color transparent
+		border-left-color $p.color
+		transform translateZ(0)
+		animation loader 1.1s infinite linear
+
+	@keyframes loader
+		from
+			transform rotate(0)
+
+		to
+			transform rotate(360deg)
+

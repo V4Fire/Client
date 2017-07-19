@@ -1,0 +1,23 @@
+/*!
+ * V4Fire Client Core
+ * https://github.com/V4Fire/Client
+ *
+ * Released under the MIT license
+ * https://github.com/V4Fire/Client/blob/master/LICENSE
+ */
+
+$p = {
+
+}
+
+b-scroll_theme_light extends b-scroll
+	/theme &__scroller
+		background alpha($p.scrollerBackgroundColor, 0)
+		transition background 0.4s
+
+	/theme &__scroll-wrapper:hover &__scroller,
+	/theme &__scroller_scroll_true
+		background $p.scrollerBackgroundColor
+
+		&:hover
+			background lighten($p.scrollerBackgroundColor, 10%)

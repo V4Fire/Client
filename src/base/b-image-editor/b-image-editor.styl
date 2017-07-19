@@ -1,0 +1,76 @@
+/*!
+ * V4Fire Client Core
+ * https://github.com/V4Fire/Client
+ *
+ * Released under the MIT license
+ * https://github.com/V4Fire/Client/blob/master/LICENSE
+ */
+
+@import "super/i-block/i-block.styl"
+
+$p = {
+	color: #FFF,
+	hoverColor: #008FCA,
+	textShadow: alpha(#000, 0.3),
+	wrapperBackgroundColor: alpha(#000, 0.7)
+}
+
+b-image-editor extends i-block
+	&__root-wrapper
+		display flex
+		justify-content center
+		align-items center
+
+	&__super-wrapper
+		position relative
+		display inline-block
+
+	&__img
+		min-width 10em
+		min-height @min-width
+
+	&__wrapper
+		absolute top 0 left 0
+		z-index 1
+		display none
+		width 100%
+		height @width
+		background $p.wrapperBackgroundColor
+
+	&__info-cell
+		align-self center
+
+	&__progress
+		display inline-block
+		color $p.color
+
+	&_progress_true &__super-wrapper
+		display block
+
+	&_progress_true &__wrapper
+		display flex
+		justify-content center
+		flex-direction column
+
+	&_progress_true &__wrapper + &__controls
+		display none
+
+	&__controls
+		$padding = 0.4em
+		absolute bottom ($padding / 2) right 0
+		z-index 2
+		display flex
+		justify-content flex-end
+		padding 0.2em $padding
+		color $p.color
+
+	&__control
+		margin-left 0.3em
+		text-shadow 1px 1px $p.textShadow
+		cursor pointer
+
+		&:hover
+			color $p.hoverColor
+
+		&:active
+			color lighten($p.hoverColor, 20%)

@@ -1,0 +1,48 @@
+/*!
+ * V4Fire Client Core
+ * https://github.com/V4Fire/Client
+ *
+ * Released under the MIT license
+ * https://github.com/V4Fire/Client/blob/master/LICENSE
+ */
+
+@import "super/i-data/i-data.styl"
+@import "icons/b-progress-icon/b-progress-icon.styl"
+
+$p = {
+	progressIconColor: #333
+}
+
+b-list extends i-data
+	&__wrapper,
+	&__link
+		display flex
+		align-items center
+
+	&__link
+		border 1px dotted transparent
+
+		&:active
+			{$p.onActive}
+
+	&__cell
+		display flex
+
+	&__el,
+	&__link
+		position relative
+
+	&__el
+		display block
+
+	&__link_progress_true &__link-progress
+		display block
+
+	&__cell + &__cell
+		margin-left 0.3em
+
+	&__link-progress
+		display none
+
+		.b-progress-icon
+			b-progress-icon({color: $p.progressIconColor, size: 0.6em})

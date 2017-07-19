@@ -1,0 +1,34 @@
+/*!
+ * V4Fire Client Core
+ * https://github.com/V4Fire/Client
+ *
+ * Released under the MIT license
+ * https://github.com/V4Fire/Client/blob/master/LICENSE
+ */
+
+@import "form/b-input/b-input.styl"
+
+$p = {
+	width: 5em
+}
+
+b-input-number extends b-input
+	&__input::-webkit-outer-spin-button,
+	&__input::-webkit-inner-spin-button
+		-webkit-appearance none
+
+	&__input
+		text-align center
+		-moz-appearance textfield
+
+	&__range
+		display flex
+		flex-direction column
+		margin 0 0.2em
+
+	&__arrow
+		color lighten($p.color, 30%)
+		cursor pointer
+
+		&:hover
+			color $p.color

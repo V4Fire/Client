@@ -1,0 +1,26 @@
+/*!
+ * V4Fire Client Core
+ * https://github.com/V4Fire/Client
+ *
+ * Released under the MIT license
+ * https://github.com/V4Fire/Client/blob/master/LICENSE
+ */
+
+$p = {
+	color: #1FA3DD,
+	hoverColor: #146082
+}
+
+b-link_theme_light extends b-link
+	/theme &__wrapper
+		color $p.color
+
+	/theme &__link
+		&:focus
+			border-color $p.color
+
+		&:hover
+			color $p.hoverColor
+
+	/theme .b-progress-icon
+		b-progress-icon({color: $p.color})

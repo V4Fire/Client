@@ -1,0 +1,122 @@
+/*!
+ * V4Fire Client Core
+ * https://github.com/V4Fire/Client
+ *
+ * Released under the MIT license
+ * https://github.com/V4Fire/Client/blob/master/LICENSE
+ */
+
+@import "super/i-data-pages/i-data-pages.styl"
+@import "icons/b-progress-icon/b-progress-icon.styl"
+
+$p = {
+	color: #3A3A3A,
+	headBackgroundColor: #EFEFEF,
+	thColor: #3A3A3A,
+	evenTrBackgroundColor: #F8F9FA
+}
+
+b-grid extends i-data-list
+	&__table
+		width 100%
+		color $p.color
+
+	&__thead th
+		padding 0.2em
+		background $p.headBackgroundColor
+
+	&__paging
+		text-align center
+
+	&__row
+		> th
+			position relative
+			font-weight 400
+
+		> th
+			padding 0.8em
+			color $p.thColor
+			font-size 0.8em
+			border-left 1px darken($p.headBackgroundColor, 10%) solid
+			box-shadow -1px 0 0 lighten($p.headBackgroundColor, 60%)
+
+		> td
+			position relative
+			padding 0.8em 1.3em
+			font-size 1em
+
+		> th:nth-child(1),
+		> td:nth-child(1)
+			margin-left 3em
+
+	&__row:nth-child(even) > td
+		background $p.evenTrBackgroundColor
+
+	&__center
+		text-align center
+
+	&__th
+		padding-left 0.5em
+		font-weight 500
+		white-space nowrap
+		cursor default
+
+	&__sort-field
+		font-size 1em
+
+	&__row > th:first-child &__th
+		padding-left 0
+
+		&:before
+			display none
+
+	&__dir
+		display inline-block
+		width 2em
+		vertical-align middle
+		cursor pointer
+		opacity 0.4
+		transition 0.15s ease-in opacity
+
+		.b-icon
+			vertical-align middle
+
+		&_active_true
+			opacity 1
+
+	&__sort-field
+		border 1px dotted transparent
+		color $p.thColor
+		vertical-align middle
+		text-decoration none
+		white-space nowrap
+
+		&:focus
+			border-color darken($p.thColor, 50%)
+
+		&:hover
+			color darken($p.thColor, 10%)
+
+		&:active
+			color darken($p.thColor, 20%)
+
+	&__empty
+		padding 5em 0.5em
+		background alpha($p.evenTrBackgroundColor, 0.4)
+		text-align center
+		font-size 1.2em
+
+	&_progress_true &__progress
+		display table-cell
+
+	&__progress
+		padding 5em
+		text-align center
+
+		.b-progress-icon
+			opacity 0.3
+
+			b-progress-icon({
+				size: 5em,
+				color: $p.color
+			})
