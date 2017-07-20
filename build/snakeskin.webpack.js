@@ -49,7 +49,7 @@ module.exports = function ({blocks, lib}) {
 		const
 			file = fs.readFileSync(el, {encoding: 'utf-8'});
 
-		if (!/^export default class (.*?) extends (.*?) \{/m.test(file)) {
+		if (!/^export default class (.*?) extends (.*?) {/m.test(file)) {
 			return;
 		}
 
@@ -59,12 +59,12 @@ module.exports = function ({blocks, lib}) {
 
 		const obj = blocksTree[component] = blocksTree[component] || {
 			props: {},
-			functional: /@component\s*\(\s*\{\s*functional\s*:\s*true\s*}\s*\)/.test(file),
+			functional: /@component\s*\(\s*{\s*functional\s*:\s*true\s*}\s*\)/.test(file),
 			parent
 		};
 
 		const
-			propRgxp = /^(\t@(?:field|abstract)[\s\S]+?\)*\n+|)\t([\w$]+)\s*:\s*[ \w|&$?()[\]{}<>'"`:.]+?\s*(?:=|;$)/gm;
+			propRgxp = /^(\t@(?:field|abstract)[\s\S]+?\)*\n+)?\t([\w$]+)\s*:\s*[ \w|&$?()[\]{}<>'"`:.]+?\s*(?:=|;$)/gm;
 
 		let s;
 		while ((s = propRgxp.exec(file))) {
@@ -220,7 +220,7 @@ module.exports = function ({blocks, lib}) {
 		return arr;
 	}
 
-	function bem2vue(block, attrs, rootTag, val) {
+	function bem2vue(block, attrs, ignore_rootTag, val) {
 		const
 			tmp = attrs[':class'] = attrs[':class'] || [];
 
