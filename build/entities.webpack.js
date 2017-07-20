@@ -150,6 +150,10 @@ module.exports = function ({entries, blocks, lib, output, cache, assetsJSON}) {
 		return runtimeDependencies;
 	}
 
+	function isNodeModule(url) {
+		return !path.isAbsolute(url) && /[^./\\]/.test(url);
+	}
+
 	// Returns dependencies from a file with entries
 	function getDependencies(dir, file, arr = []) {
 		$C(file.split(/\r?\n|\r/)).forEach((el) => {
@@ -161,6 +165,7 @@ module.exports = function ({entries, blocks, lib, output, cache, assetsJSON}) {
 				url = RegExp.$2;
 
 			if (/^\.\//.test(url)) {
+				dir = isNodeModule(url) ? lib : dir;
 				getDependencies(
 					path.join(dir, path.dirname(url)),
 					fs.readFileSync(path.join(dir, `${url}.js`), 'utf-8'),
@@ -257,10 +262,6 @@ module.exports = function ({entries, blocks, lib, output, cache, assetsJSON}) {
 	// Temporary folder for webpack entry points
 	const tmpEntries = path.join(entries, 'tmp');
 	mkdirp.sync(tmpEntries);
-
-	function isNodeModule(url) {
-		return !path.isAbsolute(url) && /[^./~]/.test(url);
-	}
 
 	function getUrl(url) {
 		const
