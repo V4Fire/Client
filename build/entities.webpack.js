@@ -166,12 +166,17 @@ module.exports = function ({entries, blocks, lib, output, cache, assetsJSON}) {
 				nodeModule = isNodeModule(url);
 
 			if (nodeModule || /^\.\//.test(url)) {
-				dir = nodeModule ? lib : dir;
-				getDependencies(
-					path.join(dir, path.dirname(url)),
-					fs.readFileSync(path.join(dir, `${url}.js`), 'utf-8'),
-					arr
-				);
+				const
+					d = nodeModule ? lib : dir;
+
+				let
+					f = path.join(d, `${url}.js`);
+
+				if (!fs.existsSync(f)) {
+					f = path.join(d, `${url}/index.js`)
+				}
+
+				getDependencies(path.dirname(f), fs.readFileSync(f, 'utf-8'), arr);
 
 			} else {
 				arr.push(path.join(dir, url));
