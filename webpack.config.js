@@ -12,6 +12,7 @@ require('@v4fire/core/build/i18n');
 
 const
 	$C = require('collection.js'),
+	path = require('path'),
 	config = require('config');
 
 const
@@ -73,8 +74,8 @@ function buildFactory(entry, i = '00') {
 		resolveLoader: {
 			moduleExtensions: ['-loader'],
 			alias: {
-				prop: d('./web_loaders/prop'),
-				proxy: d('./web_loaders/proxy')
+				prop: path.join(__dirname, './web_loaders/prop'),
+				proxy: path.join(__dirname, './web_loaders/proxy')
 			}
 		},
 
