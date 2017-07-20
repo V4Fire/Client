@@ -165,7 +165,7 @@ module.exports = function ({entries, blocks, lib, output, cache, assetsJSON}) {
 				url = RegExp.$2,
 				nodeModule = isNodeModule(url);
 
-			if (nodeModule || /^\.\//.test(url)) {
+			if (nodeModule && /\bentries\b/.test(url) || /^\.\//.test(url)) {
 				const
 					d = nodeModule ? lib : dir;
 

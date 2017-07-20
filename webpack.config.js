@@ -68,7 +68,7 @@ function buildFactory(entry, i = '00') {
 
 		resolve: {
 			alias: {assets},
-			modules: [blocks, 'node_modules']
+			modules: [blocks, 'node_modules/@v4fire/client/src', 'node_modules']
 		},
 
 		resolveLoader: {

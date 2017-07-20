@@ -20,7 +20,8 @@ const
 const
 	fs = require('fs'),
 	path = require('path'),
-	glob = require('glob');
+	glob = require('glob'),
+	findUp = require('find-up');
 
 /**
  * Initializes Snakeskin
@@ -29,13 +30,6 @@ const
  * @param {string} lib - path to a lib folder
  */
 module.exports = function ({blocks, lib}) {
-	const bind = {
-		bind: [
-			(o) => o.getVar('$attrs'),
-			'typeof rootTag !== "undefined" ? rootTag : undefined'
-		]
-	};
-
 	const
 		blocksTree = {},
 		components = '/**/@(i|b|p|g|v)-*.js';
@@ -80,12 +74,30 @@ module.exports = function ({blocks, lib}) {
 		}
 	});
 
+	const bind = {
+		bind: [
+			(o) => o.getVar('$attrs'),
+			'typeof rootTag !== "undefined" ? rootTag : undefined'
+		]
+	};
+
 	ss.importFilters({
 		vueComp,
 		vueTag: ss.setFilterParams(vueTag, bind),
 		bem2vue: ss.setFilterParams(bem2vue, bind),
-		b: (url) => path.resolve(blocks, url) + (/\.e?ss$/.test(url) ? '' : '/')
+		b: ss.setFilterParams(b, {bind: ['__dirname']})
 	});
+
+	function b(url, cwd) {
+		const
+			end = /\.e?ss$/.test(url) ? '' : '/';
+
+		if (/^[./]/.test(url)) {
+			return path.resolve(blocks, url) + end;
+		}
+
+		return path.join(findUp.sync('src', {cwd}), url) + end;
+	}
 
 	function vueComp({name, attrs}) {
 		$C(attrs).forEach((el, key) => {
