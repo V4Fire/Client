@@ -66,8 +66,11 @@ module.exports = function ({entries, blocks, lib, output, cache, assetsJSON}) {
 	const blockMap = $C(files).reduce((map, el) => {
 		const
 			decl = pzlr.declaration.parse(fs.readFileSync(el)),
-			cwd = path.dirname(el),
-			url = (ext) => path.join(cwd, `${decl.name}.${ext}`);
+			cwd = path.dirname(el);
+
+		const
+			nm = decl.name,
+			url = (ext) => path.join(cwd, `${nm}.${ext}`);
 
 		const
 			logic = url('js'),
@@ -97,7 +100,17 @@ module.exports = function ({entries, blocks, lib, output, cache, assetsJSON}) {
 		}
 
 		decl.src = el;
-		map[decl.name] = decl;
+
+		const
+			obj = map[nm];
+
+		if (obj) {
+			obj.styles = (obj.styles || []).concat(glob.sync(path.join(cwd, `${nm}_*.styl`)));
+
+		} else {
+			map[nm] = decl;
+		}
+
 		return map;
 	}, {});
 
@@ -322,8 +335,12 @@ module.exports = function ({entries, blocks, lib, output, cache, assetsJSON}) {
 				block = blockMap[name];
 
 			if (block && block.style && !blackName.test(name)) {
-				const url = getUrl(block.style);
-				str += `@import "${url}"\n`;
+				const setUrl = (url) => {
+					str += `@import "${url}"\n`;
+				};
+
+				setUrl(getUrl(block.style));
+				$C(block.styles).forEach((url) => setUrl(url));
 
 				if (/^[bp]-/.test(name)) {
 					str +=
