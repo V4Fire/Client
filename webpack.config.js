@@ -126,7 +126,7 @@ function buildFactory(entry, i = '00') {
 				new HardSourceWebpackPlugin({
 					cacheDirectory: d(`app-cache/${i}/[confighash]`),
 					recordsPath: d(`app-cache/${i}/[confighash]/records.json`),
-					environmentHash: {files: ['yarn.lock']},
+					environmentHash: {files: ['package-lock.json']},
 					configHash: (webpackConfig) => require('node-object-hash')().hash(webpackConfig)
 				})
 			]
