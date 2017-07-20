@@ -37,7 +37,6 @@ const
 const
 	blocks = d('src'),
 	entries = d('src/entries'),
-	assets = d('assets'),
 	lib = d('node_modules');
 
 const build = require('./build/entities.webpack')({
@@ -67,7 +66,6 @@ function buildFactory(entry, i = '00') {
 		},
 
 		resolve: {
-			alias: {assets},
 			modules: [
 				blocks,
 				'node_modules/@v4fire/client/src',
@@ -229,7 +227,7 @@ function buildFactory(entry, i = '00') {
 									hashLength: HASH_LENGTH,
 									dependencies: build.dependencies,
 									packages: d('dist/packages'),
-									assets,
+									assets: d('assets'),
 									lib
 								})
 							})
