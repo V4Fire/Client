@@ -258,8 +258,19 @@ module.exports = function ({entries, blocks, lib, output, cache, assetsJSON}) {
 	const tmpEntries = path.join(entries, 'tmp');
 	mkdirp.sync(tmpEntries);
 
+	function isNodeModule(url) {
+		return !path.isAbsolute(url) && /[^./~]/.test(url);
+	}
+
 	function getUrl(url) {
-		return path.relative(tmpEntries, url).replace(/\\/g, '/');
+		const
+			r = (s) => s.replace(/\\/g, '/');
+
+		if (isNodeModule(url)) {
+			return r(url);
+		}
+
+		return r(path.relative(tmpEntries, url));
 	}
 
 	// Generate webpack entry points
@@ -270,6 +281,7 @@ module.exports = function ({entries, blocks, lib, output, cache, assetsJSON}) {
 		// JS
 
 		const
+			blackName = /^[iv]-/,
 			logicTaskName = `${name}.js`,
 			logicFile = path.join(tmpEntries, logicTaskName);
 
@@ -282,7 +294,8 @@ module.exports = function ({entries, blocks, lib, output, cache, assetsJSON}) {
 			}
 
 			if (!block || block && block.logic) {
-				str += `require('${getUrl(block ? block.logic : path.resolve(tmpEntries, '../', name))}');\n`;
+				const url = block ? block.logic : isNodeModule(name) ? name : path.resolve(tmpEntries, '../', name);
+				str += `require('${getUrl(url)}');\n`;
 			}
 
 			return str;
@@ -301,7 +314,7 @@ module.exports = function ({entries, blocks, lib, output, cache, assetsJSON}) {
 			const
 				block = blockMap[name];
 
-			if (block && block.style && !/^i-/.test(name)) {
+			if (block && block.style && !blackName.test(name)) {
 				const url = getUrl(block.style);
 				str += `@import "${url}"\n`;
 
@@ -335,7 +348,7 @@ module.exports = function ({entries, blocks, lib, output, cache, assetsJSON}) {
 			const
 				block = blockMap[name];
 
-			if (block && block.tpl && !/^i-/.test(name)) {
+			if (block && block.tpl && !blackName.test(name)) {
 				const url = getUrl(block.tpl);
 				str += args.fast ? `- include '${url}'\n` : `Object.assign(TPLS, require('./${url}'));\n`;
 			}
@@ -362,7 +375,7 @@ module.exports = function ({entries, blocks, lib, output, cache, assetsJSON}) {
 			const
 				block = blockMap[name];
 
-			if (block && block.html && !/^i-/.test(name)) {
+			if (block && block.html && !blackName.test(name)) {
 				str += `require('./${getUrl(block.html)}');\n`;
 			}
 
