@@ -9,7 +9,8 @@
  */
 
 const
-	{String} = require('sugar');
+	{String} = require('sugar'),
+	{validators} = require('@pzlr/build-core');
 
 const
 	$C = require('collection.js'),
@@ -139,7 +140,7 @@ module.exports = function ({blocks, lib}) {
 			}
 		});
 
-		if (/^([igb]-[-a-z]+|component)$/.test(name)) {
+		if (name === 'component' || validators.blockName(name)) {
 			let componentName;
 			if (attrs[':instance-of']) {
 				componentName = attrs[':instance-of'][0];

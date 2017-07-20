@@ -13,6 +13,13 @@ const
 	findUp = require('find-up'),
 	cache = {};
 
+/**
+ * Monic replacer for Stylus @import declarations
+ *
+ * @param str - source string
+ * @param file - file path
+ * @returns {Promise<string>}
+ */
 module.exports = async function (str, file) {
 	const
 		cwd = path.dirname(file),

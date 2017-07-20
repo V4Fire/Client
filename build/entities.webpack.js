@@ -151,7 +151,7 @@ module.exports = function ({entries, blocks, lib, output, cache, assetsJSON}) {
 	}
 
 	function isNodeModule(url) {
-		return !path.isAbsolute(url) && /[^./\\]/.test(url);
+		return !path.isAbsolute(url) && /^[^./\\]/.test(url);
 	}
 
 	// Returns dependencies from a file with entries
@@ -162,10 +162,11 @@ module.exports = function ({entries, blocks, lib, output, cache, assetsJSON}) {
 			}
 
 			const
-				url = RegExp.$2;
+				url = RegExp.$2,
+				nodeModule = isNodeModule(url);
 
-			if (/^\.\//.test(url)) {
-				dir = isNodeModule(url) ? lib : dir;
+			if (nodeModule || /^\.\//.test(url)) {
+				dir = nodeModule ? lib : dir;
 				getDependencies(
 					path.join(dir, path.dirname(url)),
 					fs.readFileSync(path.join(dir, `${url}.js`), 'utf-8'),
@@ -173,7 +174,7 @@ module.exports = function ({entries, blocks, lib, output, cache, assetsJSON}) {
 				);
 
 			} else {
-				arr.push(url);
+				arr.push(path.join(dir, url));
 			}
 		});
 
@@ -189,7 +190,7 @@ module.exports = function ({entries, blocks, lib, output, cache, assetsJSON}) {
 				name = path.basename(el, '.js'),
 				block = blockMap[name];
 
-			if (!/^[ibpgv]-/.test(name) || !block) {
+			if (!pzlr.validators.blockName(name) || !block) {
 				list.push(el);
 				return;
 			}
