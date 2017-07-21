@@ -346,10 +346,10 @@ module.exports = function ({entries, blocks, lib, output, cache, assetsJSON}) {
 
 			if (block && block.style && !blackName.test(name)) {
 				const setUrl = (url) => {
-					str += `@import "${url}"\n`;
+					str += `@import "${getUrl(url)}"\n`;
 				};
 
-				setUrl(getUrl(block.style));
+				setUrl(block.style);
 				$C(block.styles).forEach((url) => setUrl(url));
 
 				if (/^[bp]-/.test(name)) {
