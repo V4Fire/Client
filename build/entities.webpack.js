@@ -104,8 +104,18 @@ module.exports = function ({entries, blocks, lib, output, cache, assetsJSON}) {
 		const
 			obj = map[nm];
 
-		if (obj) {
-			obj.styles = (obj.styles || []).concat(glob.sync(path.join(cwd, `${nm}_*.styl`)));
+		if (obj && decl.mixin) {
+			obj.styles = (obj.styles || []);
+
+			const
+				baseStyle = path.join(cwd, `${nm}.styl`);
+
+			if (fs.existsSync(baseStyle)) {
+				obj.styles.push(baseStyle);
+
+			} else {
+				obj.styles = obj.styles.concat(glob.sync(path.join(cwd, `${nm}_*.styl`)));
+			}
 
 		} else {
 			map[nm] = decl;
