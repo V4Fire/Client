@@ -6,15 +6,14 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-declare($obj, $name)
-	push($obj, $name)
-
 extends($obj, $p = {})
 	for $el, $i in $obj
-		if $i == 0
-			{$el} ($p)
-		else
-			{$el} ({})
+		for $el in $el
+			if $i == 0
+				{$el} ($p)
+
+			else
+				{$el} ({})
 
 fork($objs...)
 	$res = {}
