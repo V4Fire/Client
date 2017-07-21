@@ -185,7 +185,7 @@ function buildFactory(entry, i = '00') {
 								loader: 'monic',
 								options: {
 									replacers: [
-										require('./build/stylus-import.replacer'),
+										Object.assign(require('./build/stylus-import.replacer'), {lib}),
 										require('@pzlr/stylus-inheritance')
 									]
 								}

@@ -96,7 +96,14 @@ module.exports = function ({blocks, lib}) {
 			return path.resolve(blocks, url) + end;
 		}
 
-		return path.join(findUp.sync('src', {cwd}), url) + end;
+		const
+			local = path.join(findUp.sync('src', {cwd}), url) + end;
+
+		if (fs.existsSync(local)) {
+			return local;
+		}
+
+		return url + end;
 	}
 
 	function vueComp({name, attrs}) {
