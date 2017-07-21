@@ -8,7 +8,7 @@
 
 extends($obj, $p = {})
 	for $el, $i in $obj
-		for $el in $el
+		for $el in lookup($el)
 			$fn = lookup($el)
 
 			if $i == 0
