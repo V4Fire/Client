@@ -39,9 +39,9 @@ const
  * @returns {{entry, processes, dependencies}}
  */
 module.exports = function ({entries, blocks, lib, output, cache, assetsJSON}) {
-	////////
-	// Cache
-	////////
+	//////////////////
+	// Load from cache
+	//////////////////
 
 	let
 		cacheFile;
@@ -78,12 +78,15 @@ module.exports = function ({entries, blocks, lib, output, cache, assetsJSON}) {
 		return true;
 	});
 
-	///////////////////////////////////////////////////
-	// Create temporary folder for webpack entry points
-	///////////////////////////////////////////////////
+	///////////////////////////
+	// Create temporary folders
+	///////////////////////////
 
-	const tmpEntries = path.join(entries, 'tmp');
+	const
+		tmpEntries = path.join(entries, 'tmp');
+
 	mkdirp.sync(tmpEntries);
+	mkdirp.sync(path.dirname(output));
 
 	////////////////////////////////////
 	// Load index declarations of blocks
@@ -318,6 +321,10 @@ module.exports = function ({entries, blocks, lib, output, cache, assetsJSON}) {
 	// Remove empty modules
 	$C(commonPacks).remove((el) => !el);
 
+	///////////////////////////////////
+	// Generate dependence declarations
+	///////////////////////////////////
+
 	/**
 	 * Returns a name for a common chunk by the specified id
 	 */
@@ -325,8 +332,9 @@ module.exports = function ({entries, blocks, lib, output, cache, assetsJSON}) {
 		return `common_${i}`;
 	}
 
-	// Configure dependencies for each entry point
-	const dependencies = {};
+	const
+		dependencies = {};
+
 	$C(packs).forEach((deps, name) => {
 		const
 			depList = new Set();
@@ -344,9 +352,46 @@ module.exports = function ({entries, blocks, lib, output, cache, assetsJSON}) {
 		dependencies[name] = [...depList].sort((a, b) => a - b).map((i) => getCommonName(i));
 	});
 
-	////////////////////////////
-	// Generate new entry points
-	////////////////////////////
+	$C(dependencies).forEach((el, key) => {
+		if (key !== 'index' && !el.includes('index')) {
+			el.unshift('index');
+		}
+
+		el.push(key);
+
+		const
+			content = `ModuleDependencies.add("${key}", ${JSON.stringify(el)});`,
+			name = `${key}.dependencies`;
+
+		const src = output
+			.replace(/\[name]/g, `${name}.js`)
+			.replace(/\[hash:?(\d*)]/, (str, length) => {
+				const res = hasha(content, {algorithm: 'md5'});
+				return length ? res.substr(0, Number(length)) : res;
+			});
+
+		fs.writeFileSync(src, content);
+
+		let fd;
+		try {
+			fd = fs.openSync(assetsJSON, 'r+');
+
+		} catch (_) {
+			fd = fs.openSync(assetsJSON, 'w+');
+		}
+
+		const
+			file = fs.readFileSync(fd, 'utf-8'),
+			assets = file ? JSON.parse(file) : {};
+
+		assets[name] = {js: src};
+		fs.writeFileSync(fd, JSON.stringify(assets));
+		fs.closeSync(fd);
+	});
+
+	////////////////////////////////
+	// Generate webpack entry points
+	////////////////////////////////
 
 	const
 		entry = {};
@@ -361,10 +406,6 @@ module.exports = function ({entries, blocks, lib, output, cache, assetsJSON}) {
 			isParent: deps.parents.has(name)
 		}), new Map());
 	});
-
-	////////////////////////////////
-	// Generate webpack entry points
-	////////////////////////////////
 
 	/**
 	 * Returns an url relative to the entry folder
@@ -495,45 +536,9 @@ module.exports = function ({entries, blocks, lib, output, cache, assetsJSON}) {
 		entry[htmlTaskName] = union[htmlTaskName] = htmlFile;
 	});
 
-	mkdirp.sync(path.dirname(output));
-
-	// Generate dependence declarations
-	$C(dependencies).forEach((el, key) => {
-		if (key !== 'index' && !el.includes('index')) {
-			el.unshift('index');
-		}
-
-		el.push(key);
-
-		const
-			content = `ModuleDependencies.add("${key}", ${JSON.stringify(el)});`,
-			name = `${key}.dependencies`;
-
-		const src = output
-			.replace(/\[name]/g, `${name}.js`)
-			.replace(/\[hash:?(\d*)]/, (str, length) => {
-				const res = hasha(content, {algorithm: 'md5'});
-				return length ? res.substr(0, Number(length)) : res;
-			});
-
-		fs.writeFileSync(src, content);
-
-		let fd;
-		try {
-			fd = fs.openSync(assetsJSON, 'r+');
-
-		} catch (_) {
-			fd = fs.openSync(assetsJSON, 'w+');
-		}
-
-		const
-			file = fs.readFileSync(fd, 'utf-8'),
-			assets = file ? JSON.parse(file) : {};
-
-		assets[name] = {js: src};
-		fs.writeFileSync(fd, JSON.stringify(assets));
-		fs.closeSync(fd);
-	});
+	///////////////////
+	// Cache the result
+	///////////////////
 
 	const res = {
 		entry,
