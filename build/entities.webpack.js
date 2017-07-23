@@ -137,10 +137,20 @@ module.exports = function ({entries, blocks, lib, output, cache, assetsJSON}) {
 
 			$C(decl.libs).set((el) => {
 				const
-					local = path.join(root, el);
+					ext = path.extname(el),
+					local = path.join(root, el + (!ext ? '.js' : ''));
 
 				if (fs.existsSync(local)) {
 					return local;
+				}
+
+				if (!ext) {
+					const
+						local = path.join(root, el, 'index.js');
+
+					if (fs.existsSync(local)) {
+						return local;
+					}
 				}
 
 				return el;
