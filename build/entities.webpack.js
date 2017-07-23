@@ -318,19 +318,19 @@ module.exports = function ({entries, blocks, lib, output, cache, assetsJSON}) {
 	const dependencies = {};
 	$C(packs).forEach((deps, name) => {
 		const
-			dep = dependencies[name] = dependencies[name] || new Set();
+			depList = new Set();
 
 		$C(deps.runtime).forEach((block) => {
 			const
 				pos = $C(commonPacks).one.search((map) => map.has(block));
 
 			if (pos !== null) {
-				dep.add(pos);
+				depList.add(pos);
 				deps.runtime.delete(block);
 			}
 		});
 
-		dependencies[name] = [...dep].sort((a, b) => a - b).map((i) => getCommonName(i));
+		dependencies[name] = [...depList].sort((a, b) => a - b).map((i) => getCommonName(i));
 	});
 
 	////////////////////////////
