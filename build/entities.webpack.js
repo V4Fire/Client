@@ -263,6 +263,9 @@ module.exports = function ({entries, blocks, lib, output, cache, assetsJSON}) {
 			parents: new Set()
 		};
 
+		const
+			runtime = new Set();
+
 		$C(getEntryDepList(dir, file)).forEach((el) => {
 			const
 				name = path.basename(el, '.js'),
@@ -276,8 +279,14 @@ module.exports = function ({entries, blocks, lib, output, cache, assetsJSON}) {
 			const
 				blockDeps = getBlockDeps(name);
 
+			$C(blockDeps.runtime).forEach((block) => {
+				if (!blockDeps.parents.has(block)) {
+					runtime.add(block);
+				}
+			});
+
 			deps.runtime = new Set([...deps.runtime, ...blockDeps.runtime]);
-			deps.parents = new Set([...deps.parents, ...blockDeps.parents]);
+			deps.parents = new Set($C([...deps.parents, ...blockDeps.parents]).filter((el) => !runtime.has(el)).map());
 		});
 
 		return deps;
