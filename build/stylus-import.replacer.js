@@ -38,7 +38,7 @@ const fn = module.exports = function (str, file) {
 	return c[str] = str
 		.replace(/@import "([^./~].*?\.styl)"/g, (str, url) => {
 			if (!blocks) {
-				blocks = findUp.sync('src', {cwd})
+				blocks = findUp.sync('src', {cwd});
 			}
 
 			url = r(path.relative(path.dirname(file), path.join(blocks, url)));
@@ -47,6 +47,6 @@ const fn = module.exports = function (str, file) {
 
 		.replace(/@import "~(.*?\.styl)"/g, (str, url) => {
 			url = r(path.relative(path.dirname(file), path.join(fn.lib, url)));
-			return `@import "${url}"`
+			return `@import "${url}"`;
 		});
 };

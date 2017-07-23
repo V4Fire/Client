@@ -58,8 +58,7 @@ module.exports = function (gulp = require('gulp'), params) {
 
 	gulp.task('html', (cb) => {
 		const
-			htmlmin = require('gulp-htmlmin'),
-			replace = require('gulp-replace');
+			htmlmin = require('gulp-htmlmin');
 
 		gulp.src('./dist/packages/**/*.html')
 			.pipe(plumber())

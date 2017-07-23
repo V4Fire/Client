@@ -239,7 +239,7 @@ module.exports = function ({blocks, lib}) {
 		return arr;
 	}
 
-	function bem2vue(block, attrs, ignore_rootTag, val) {
+	function bem2vue(block, attrs, rootTag, val) {
 		const
 			tmp = attrs[':class'] = attrs[':class'] || [];
 

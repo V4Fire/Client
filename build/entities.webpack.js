@@ -36,9 +36,13 @@ const
  * @param {string} output - output path
  * @param {string} cache - path to a cache folder
  * @param {string} assetsJSON - path to assets.json file
- * @returns {{processes, entry, dependencies, commonPacks}}
+ * @returns {{entry, processes, dependencies}}
  */
 module.exports = function ({entries, blocks, lib, output, cache, assetsJSON}) {
+	////////
+	// Cache
+	////////
+
 	let
 		cacheFile;
 
@@ -50,9 +54,40 @@ module.exports = function ({entries, blocks, lib, output, cache, assetsJSON}) {
 		}
 	}
 
-	function getCommonName(i) {
-		return `common_${i}`;
+	//////////////////////////
+	// Parse --build arguments
+	//////////////////////////
+
+	let
+		entriesFilter;
+
+	if (typeof args.build === 'string') {
+		entriesFilter = $C(args.build.split(',')).reduce((map, el) => (map[el] = true, map), {});
+		entriesFilter.index = true;
 	}
+
+	////////////////////
+	// Load entries list
+	////////////////////
+
+	const entriesList = $C(glob.sync(path.join(entries, '*.js'))).get((el) => {
+		if (entriesFilter) {
+			return entriesFilter[path.basename(el, '.js')];
+		}
+
+		return true;
+	});
+
+	///////////////////////////////////////////////////
+	// Create temporary folder for webpack entry points
+	///////////////////////////////////////////////////
+
+	const tmpEntries = path.join(entries, 'tmp');
+	mkdirp.sync(tmpEntries);
+
+	////////////////////////////////////
+	// Load index declarations of blocks
+	////////////////////////////////////
 
 	const
 		components = '!(core|models|libs|entries)/**/@(index|*.index).js';
@@ -62,7 +97,6 @@ module.exports = function ({entries, blocks, lib, output, cache, assetsJSON}) {
 		glob.sync(path.join(blocks, components))
 	);
 
-	// Load index declarations of blocks
 	const blockMap = $C(files).reduce((map, el) => {
 		const
 			decl = pzlr.declaration.parse(fs.readFileSync(el)),
@@ -105,7 +139,7 @@ module.exports = function ({entries, blocks, lib, output, cache, assetsJSON}) {
 			obj = map[nm];
 
 		if (obj && decl.mixin) {
-			obj.styles = (obj.styles || []);
+			obj.styles = obj.styles || [];
 
 			const
 				baseStyle = path.join(cwd, `${nm}.styl`);
@@ -124,26 +158,15 @@ module.exports = function ({entries, blocks, lib, output, cache, assetsJSON}) {
 		return map;
 	}, {});
 
-	// Parse --build arguments
-	let entriesFilter;
-	if (typeof args.build === 'string') {
-		entriesFilter = $C(args.build.split(',')).reduce((map, el) => (map[el] = true, map), {});
-		entriesFilter.index = true;
-	}
+	/**
+	 * Returns a graph with dependencies for a block
+	 */
+	function getBlockDeps(name, isParent, runtime = new Set(), parents = new Set()) {
+		runtime.add(name);
 
-	// Load entries
-	const entriesList = $C(glob.sync(path.join(entries, '*.js'))).get((el) => {
-		if (entriesFilter) {
-			return entriesFilter[path.basename(el, '.js')];
+		if (!isParent && parents.has(name)) {
+			parents.delete(name);
 		}
-
-		return true;
-	});
-
-	// Build a graph with dependencies for each block
-	function getBlocks(name, runtimeDependencies = [], compileDependencies = [], parents = []) {
-		compileDependencies.unshift(name);
-		runtimeDependencies.unshift(name);
 
 		const
 			block = blockMap[name];
@@ -154,31 +177,39 @@ module.exports = function ({entries, blocks, lib, output, cache, assetsJSON}) {
 
 		$C(block.dependencies).forEach((block) => {
 			block = path.basename(block.replace(/^@/, ''));
-			compileDependencies.unshift(block);
-			runtimeDependencies.unshift(block);
-			getBlocks(block, runtimeDependencies, compileDependencies);
+			runtime.add(block);
+			getBlockDeps(block, false, runtime, parents);
 		});
 
 		if (block.parent) {
-			const parent = path.basename(block.parent);
-			runtimeDependencies.unshift(parent);
-			parents.unshift(parent);
-			getBlocks(parent, runtimeDependencies, compileDependencies, parents);
+			const
+				parent = path.basename(block.parent);
+
+			if (!runtime.has(parent)) {
+				parents.add(parent);
+				runtime.add(parent);
+			}
+
+			getBlockDeps(parent, true, runtime, parents);
 		}
 
-		block.compileDependencies = new Set(compileDependencies);
-		block.runtimeDependencies = new Set(runtimeDependencies);
+		block.runtime = new Set(runtime);
 		block.parents = new Set(parents);
 
-		return runtimeDependencies;
+		return {runtime, parents};
 	}
 
+	/**
+	 * Returns true if the specified url is a node module
+	 */
 	function isNodeModule(url) {
 		return !path.isAbsolute(url) && /^[^./\\]/.test(url);
 	}
 
-	// Returns dependencies from a file with entries
-	function getDependencies(dir, file, arr = []) {
+	/**
+	 * Returns a list of dependencies from an entry file
+	 */
+	function getEntryDepList(dir, file, arr = []) {
 		$C(file.split(/\r?\n|\r/)).forEach((el) => {
 			if (!/^import\s+('|")(.*?)\1;?/.test(el)) {
 				return;
@@ -196,10 +227,10 @@ module.exports = function ({entries, blocks, lib, output, cache, assetsJSON}) {
 					f = path.join(d, `${url}.js`);
 
 				if (!fs.existsSync(f)) {
-					f = path.join(d, `${url}/index.js`)
+					f = path.join(d, `${url}/index.js`);
 				}
 
-				getDependencies(path.dirname(f), fs.readFileSync(f, 'utf-8'), arr);
+				getEntryDepList(path.dirname(f), fs.readFileSync(f, 'utf-8'), arr);
 
 			} else {
 				arr.push(path.join(dir, url));
@@ -209,89 +240,124 @@ module.exports = function ({entries, blocks, lib, output, cache, assetsJSON}) {
 		return arr;
 	}
 
-	// Parses a file with entries
-	function extractFile(dir, file) {
-		let list = [];
+	/**
+	 * Returns a graph with dependencies for an entry file
+	 */
+	function getEntryDeps(dir, file) {
+		const deps = {
+			runtime: new Set(),
+			parents: new Set()
+		};
 
-		$C(getDependencies(dir, file)).forEach((el) => {
+		$C(getEntryDepList(dir, file)).forEach((el) => {
 			const
 				name = path.basename(el, '.js'),
 				block = blockMap[name];
 
 			if (!pzlr.validators.blockName(name) || !block) {
-				list.push(el);
+				deps.runtime.add(el);
 				return;
 			}
 
-			list = list.concat(getBlocks(name));
+			const
+				blockDeps = getBlockDeps(name);
+
+			deps.runtime = new Set([...deps.runtime, ...blockDeps.runtime]);
+			deps.parents = new Set([...deps.parents, ...blockDeps.parents]);
 		});
 
-		return [...new Set(list)];
+		return deps;
 	}
+
+	/////////////////////////////////////////////////
+	// Load entries and build a graph of dependencies
+	/////////////////////////////////////////////////
 
 	const
 		packs = {},
 		weights = {};
 
-	// Load entries
 	$C(entriesList).forEach((el) => {
 		const
-			list = packs[path.basename(el, '.js')] = extractFile(path.dirname(el), fs.readFileSync(el, 'utf-8'));
+			deps = packs[path.basename(el, '.js')] = getEntryDeps(path.dirname(el), fs.readFileSync(el, 'utf-8'));
 
-		$C(list).forEach((block) => {
+		$C(deps.runtime).forEach((block) => {
 			if (block in weights) {
-				weights[block]++;
+				weights[block].i++;
 
 			} else {
-				weights[block] = 0;
+				weights[block] = {
+					i: 0,
+					name: block,
+					isParent: deps.parents.has(block)
+				};
 			}
 		});
 	});
 
 	// Find common modules (weight > 1)
 	const commonPacks = [];
-	$C(weights).forEach((i, key) => {
-		if (i > 1) {
-			const pos = entriesList.length - i - 1;
-			(commonPacks[pos] = commonPacks[pos] || new Set()).add(key);
+	$C(weights).forEach((el, key) => {
+		if (el.i > 1) {
+			const pos = entriesList.length - el.i - 1;
+			commonPacks[pos] = (commonPacks[pos] || new Map()).set(key, el);
 		}
 	});
 
 	// Remove empty modules
 	$C(commonPacks).remove((el) => !el);
 
+	/**
+	 * Returns a name for a common chunk by the specified id
+	 */
+	function getCommonName(i) {
+		return `common_${i}`;
+	}
+
 	// Configure dependencies for each entry point
 	const dependencies = {};
-	$C(packs).forEach((list, name) => {
+	$C(packs).forEach((deps, name) => {
 		const
-			dep = dependencies[name] = dependencies[name] || new Set(),
-			newList = [];
+			dep = dependencies[name] = dependencies[name] || new Set();
 
-		$C(list).forEach((block) => {
+		$C(deps.runtime).forEach((block) => {
 			const
-				pos = $C(commonPacks).one.search((set) => set.has(block));
+				pos = $C(commonPacks).one.search((map) => map.has(block));
 
-			if (pos === null) {
-				newList.push(block);
-
-			} else {
+			if (pos !== null) {
 				dep.add(pos);
+				deps.runtime.delete(block);
 			}
 		});
 
 		dependencies[name] = [...dep].sort((a, b) => a - b).map((i) => getCommonName(i));
-		packs[name] = newList;
 	});
 
+	////////////////////////////
 	// Generate new entry points
-	const entry = {};
-	$C(commonPacks).forEach((list, i) => entry[getCommonName(i)] = list);
-	$C(packs).forEach((list, name) => entry[name] = new Set(list));
+	////////////////////////////
 
-	// Temporary folder for webpack entry points
-	const tmpEntries = path.join(entries, 'tmp');
-	mkdirp.sync(tmpEntries);
+	const
+		entry = {};
 
+	$C(commonPacks).forEach((deps, i) => {
+		entry[getCommonName(i)] = deps;
+	});
+
+	$C(packs).forEach((deps, name) => {
+		entry[name] = $C(deps.runtime).reduce((map, name) => map.set(name, {
+			name,
+			isParent: deps.parents.has(name)
+		}), new Map());
+	});
+
+	////////////////////////////////
+	// Generate webpack entry points
+	////////////////////////////////
+
+	/**
+	 * Returns an url relative to the entry folder
+	 */
 	function getUrl(url) {
 		const
 			r = (s) => s.replace(/\\/g, '/');
@@ -303,7 +369,6 @@ module.exports = function ({entries, blocks, lib, output, cache, assetsJSON}) {
 		return r(path.relative(tmpEntries, url));
 	}
 
-	// Generate webpack entry points
 	const processes = [{}];
 	$C(entry).forEach((list, name) => {
 		delete entry[name];
@@ -315,7 +380,7 @@ module.exports = function ({entries, blocks, lib, output, cache, assetsJSON}) {
 			logicTaskName = `${name}.js`,
 			logicFile = path.join(tmpEntries, logicTaskName);
 
-		fs.writeFileSync(logicFile, $C(list).reduce((str, name) => {
+		fs.writeFileSync(logicFile, $C(list).reduce((str, {name}) => {
 			const
 				block = blockMap[name];
 
@@ -340,11 +405,11 @@ module.exports = function ({entries, blocks, lib, output, cache, assetsJSON}) {
 			styleTaskName = `${name}$style`,
 			styleFile = path.join(tmpEntries, `${name}.styl`);
 
-		fs.writeFileSync(styleFile, $C(list).reduce((str, name) => {
+		fs.writeFileSync(styleFile, $C(list).reduce((str, {name, isParent}) => {
 			const
 				block = blockMap[name];
 
-			if (block && block.style && !blackName.test(name)) {
+			if (!isParent && block && block.style && !blackName.test(name)) {
 				const setUrl = (url) => {
 					str += `@import "${getUrl(url)}"\n`;
 				};
@@ -378,11 +443,11 @@ module.exports = function ({entries, blocks, lib, output, cache, assetsJSON}) {
 			tplTaskName = `${name}_tpl.js`,
 			tplFile = path.join(tmpEntries, `${name}.ss${!args.fast ? '.js' : ''}`);
 
-		fs.writeFileSync(tplFile, $C(list).reduce((str, name) => {
+		fs.writeFileSync(tplFile, $C(list).reduce((str, {name, isParent}) => {
 			const
 				block = blockMap[name];
 
-			if (block && block.tpl && !blackName.test(name)) {
+			if (!isParent && block && block.tpl && !blackName.test(name)) {
 				const url = getUrl(block.tpl);
 				str += args.fast ? `- include '${url}'\n` : `Object.assign(TPLS, require('./${url}'));\n`;
 			}
@@ -419,7 +484,6 @@ module.exports = function ({entries, blocks, lib, output, cache, assetsJSON}) {
 		entry[htmlTaskName] = union[htmlTaskName] = htmlFile;
 	});
 
-	const finalCommonPacks = ['index.js'].concat($C(commonPacks).map((el, i) => `${getCommonName(i)}.js`));
 	mkdirp.sync(path.dirname(output));
 
 	// Generate dependence declarations
@@ -461,10 +525,9 @@ module.exports = function ({entries, blocks, lib, output, cache, assetsJSON}) {
 	});
 
 	const res = {
-		processes,
 		entry,
-		dependencies,
-		commonPacks: finalCommonPacks
+		processes,
+		dependencies
 	};
 
 	if (cacheFile) {

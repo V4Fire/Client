@@ -71,7 +71,6 @@
     "gulp-htmlmin": "^3.0.0",
     "gulp-image": "^2.10.0",
     "gulp-plumber": "^1.1.0",
-    "gulp-replace": "^0.6.1",
     "gulp-run": "^1.7.1",
     "gulp-uglify": "^3.0.0",
     "hard-source-webpack-plugin": "^0.4.9",
