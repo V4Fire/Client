@@ -129,8 +129,19 @@ module.exports = function ({entries, blocks, lib, output, cache, assetsJSON}) {
 		}
 
 		if (decl.libs.length) {
-			const root = findUp.sync('src', {cwd});
-			$C(decl.libs).set((el) => path.join(root, el));
+			const
+				root = findUp.sync('src', {cwd});
+
+			$C(decl.libs).set((el) => {
+				const
+					local = path.join(root, el);
+
+				if (fs.existsSync(local)) {
+					return local;
+				}
+
+				return el;
+			});
 		}
 
 		decl.src = el;
