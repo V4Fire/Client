@@ -68,7 +68,13 @@ function buildFactory(entry, i = '00') {
 		},
 
 		resolve: {
-			modules: [blocks, cwd, coreClient, path.dirname(coreClient)]
+			modules: [
+				blocks,
+				cwd,
+				coreClient,
+				path.dirname(coreClient),
+				lib
+			]
 		},
 
 		resolveLoader: {
