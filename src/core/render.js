@@ -11,7 +11,6 @@
 const
 	$C = require('collection.js');
 
-
 /**
  * Render queue
  */
