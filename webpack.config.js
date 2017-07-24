@@ -12,7 +12,6 @@ require('@v4fire/core/build/i18n');
 
 const
 	$C = require('collection.js'),
-	ss = require('snakeskin'),
 	path = require('path'),
 	config = require('config');
 
