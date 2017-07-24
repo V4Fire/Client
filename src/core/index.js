@@ -11,9 +11,9 @@
 import 'regenerator-runtime/runtime';
 import 'uuid/lib/rng-browser';
 import '@v4fire/core/src';
-import './dependencies';
-import './number';
-import './dom';
-import './image';
-import './canvas';
-import './start';
+import 'core/dependencies';
+import 'core/number';
+import 'core/dom';
+import 'core/image';
+import 'core/canvas';
+import 'core/start';

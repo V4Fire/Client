@@ -8,7 +8,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import Async from './async';
+import Async from 'core/async';
 
 const
 	$C = require('collection.js'),

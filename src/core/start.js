@@ -8,7 +8,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { rootComponents } from './component';
+import { rootComponents } from 'core/component';
 
 document.addEventListener('DOMContentLoaded', () => {
 	const

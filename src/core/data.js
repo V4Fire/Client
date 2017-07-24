@@ -8,11 +8,11 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import Async from './async';
-import Store from './store';
-import Socket from './socket';
-import { c, r, u, d } from './request';
-import type { $$requestParams } from './request';
+import Async from 'core/async';
+import Store from 'core/store';
+import Socket from 'core/socket';
+import { c, r, u, d } from 'core/request';
+import type { $$requestParams } from 'core/request';
 
 const
 	$C = require('collection.js'),

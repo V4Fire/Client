@@ -8,7 +8,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { RawWorker } from './worker';
+import { RawWorker } from 'core/worker';
 export class ImageEditorError extends Error {}
 
 export default {
@@ -222,7 +222,7 @@ export default {
 			);
 
 			const
-				worker = new RawWorker(require('raw!./workers/lanczos.js'));
+				worker = new RawWorker(require('raw!core/workers/lanczos'));
 
 			worker.postMessage({
 				id,

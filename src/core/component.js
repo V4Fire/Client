@@ -8,7 +8,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import * as defTpls from './block.ss';
+import * as defTpls from 'core/block.ss';
 
 const
 	Vue = require('vue');
