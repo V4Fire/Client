@@ -38,11 +38,12 @@
 	- block helpers
 		- super
 		- block limit
-			< _ v-if = maxlength | :class = getElClasses({ &
-				limit: {
-					hidden: limit > maxlength / 1.5,
-					warning: limit < maxlength / 4
-				}
-			}) .
+			+= self.slot('limit', {':limit': 'limit', ':maxlength': 'maxlength'})
+				< _ v-if = maxlength | :class = getElClasses({ &
+					limit: {
+						hidden: limit > maxlength / 1.5,
+						warning: limit < maxlength / 4
+					}
+				}) .
 
-				{{ `Characters left:` }} {{ limit }}
+					{{ `Characters left:` }} {{ limit }}

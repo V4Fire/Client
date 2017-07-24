@@ -68,7 +68,7 @@
 
 					- block validation
 						< _.&__cell.&__icon.&__valid-status v-if = mods.valid != null
-							< b-icon :value = {true: 'done', false: 'close'}[mods.valid]
+							< b-icon :value = {true: 'done', false: 'clear'}[mods.valid]
 
 					- block progress
 						< _.&__cell.&__icon.&__progress

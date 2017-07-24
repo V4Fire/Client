@@ -48,7 +48,7 @@
 						@click.capture.stop = onClear
 					.
 						< b-icon &
-							:value = 'close' |
+							:value = 'clear' |
 							:hint = l('Clear')
 						.
 

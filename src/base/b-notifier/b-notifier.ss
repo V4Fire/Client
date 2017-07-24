@@ -20,4 +20,4 @@
 				{{ `enable desktop notifications` }}
 
 			< button:a.&__close @click = setMod('hidden', true)
-				< b-icon :value = 'close'
+				< b-icon :value = 'clear'
