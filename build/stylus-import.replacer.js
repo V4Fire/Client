@@ -45,7 +45,7 @@ const fn = module.exports = function (str, file) {
 				importUrl = getUrl(fn.blocks);
 
 			if (!fs.existsSync(importUrl)) {
-				importUrl = getUrl(blocks || (blocks = getUrl(findUp.sync('src', {cwd}))));
+				importUrl = getUrl(blocks || (blocks = findUp.sync('src', {cwd})));
 			}
 
 			return `@import "${importUrl}"`;
