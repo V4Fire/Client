@@ -133,11 +133,18 @@ module.exports = function ({entries, blocks, lib, coreClient, output, cache, ass
 			decl.logic = logic;
 		}
 
-		if (fs.existsSync(style)) {
-			decl.style = style;
+		if (decl.mixin) {
+			decl.style = [].concat(base.style);
 
-		} else if (decl.mixin) {
-			decl.styles = (base.styles || []).concat(glob.sync(path.join(cwd, `${nm}_*.styl`)));
+			if (fs.existsSync(style)) {
+				decl.style.push(style);
+
+			} else {
+				decl.style = decl.style.concat(glob.sync(path.join(cwd, `${nm}_*.styl`)));
+			}
+
+		} else if (fs.existsSync(style)) {
+			decl.style = style;
 		}
 
 		if (fs.existsSync(tpl)) {
@@ -452,13 +459,10 @@ module.exports = function ({entries, blocks, lib, coreClient, output, cache, ass
 			const
 				block = blockMap[name];
 
-			if (!isParent && block && block.style && !blackName.test(name)) {
-				const setUrl = (url) => {
+			if (!isParent && $C(block).get('style.length') && !blackName.test(name)) {
+				$C([].concat(block.style)).forEach((url) => {
 					str += `@import "${getUrl(url)}"\n`;
-				};
-
-				setUrl(block.style);
-				$C(block.styles).forEach((url) => setUrl(url));
+				});
 
 				if (/^[bp]-/.test(name)) {
 					str +=
