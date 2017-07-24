@@ -7,8 +7,8 @@
  */
 
 @import "nib/reset"
-@import "./funcs.styl"
-@import "./consts.styl"
+@import "global/g-def/funcs.styl"
+@import "global/g-def/consts.styl"
 
 global-reset()
 reset-html5()
@@ -25,7 +25,6 @@ for $i in 1..6
 	h{$i}
 		margin 0
 		padding 0.2rem
-		color #6F8393
 		font-weight bold
 		font-size (2 - 0.2 * $i)rem
 
@@ -39,10 +38,6 @@ p
 
 a, .a
 	border 1px dotted transparent
-	color #136796
-
-	&:focus
-		border-color #444
 
 	img
 		border 0
