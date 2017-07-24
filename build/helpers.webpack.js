@@ -46,18 +46,17 @@ const HASH_LENGTH =
  * Project version
  * (for longterm caching)
  */
-let VERSION =
-	exports.VERSION = '';
+exports.VERSION = '';
 
 if (isProdEnv) {
 	if (env.BUMP_VERSION) {
 		if (env.VERSION) {
-			VERSION = env.VERSION;
+			exports.VERSION = env.VERSION;
 
 		} else {
 			const v = pack.version.split('.');
 			pack.version = [v[0], v[1], Number(v[2]) + 1].join('.');
-			env.VERSION = VERSION = `${pack.version.replace(/\./g, '')}_`;
+			env.VERSION = exports.VERSION = `${pack.version.replace(/\./g, '')}_`;
 			fs.writeFileSync('./package.json', `${JSON.stringify(pack, null, 2)}\n`);
 		}
 	}
@@ -67,6 +66,8 @@ if (isProdEnv) {
 		argv.push('--fast');
 	}
 }
+
+/* eslint-disable no-unused-vars */
 
 /**
  * Returns WebPack output path string from the specified with hash parameters
@@ -80,6 +81,8 @@ exports.hash = function (output, chunk) {
 	// return str.replace(/\[hash]_/g, isProdEnv ? chunk ? `[chunkhash:${HASH_LENGTH}]_` : `[hash:${HASH_LENGTH}]_` : '');
 	return output.replace(/\[hash]_/g, isProdEnv ? `[hash:${HASH_LENGTH}]_` : '');
 };
+
+/* eslint-enable no-unused-vars */
 
 exports.d = d;
 
