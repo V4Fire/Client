@@ -114,7 +114,6 @@
 	- root = path.relative(@packages, @root)
 	- lib = path.relative(@packages, @lib)
 	- assets = path.relative(@packages, @assets)
-	- packages = path.relative(@packages, @packages)
 
 	- block root
 		- block doctype

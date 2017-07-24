@@ -12,6 +12,7 @@ require('@v4fire/core/build/i18n');
 
 const
 	$C = require('collection.js'),
+	ss = require('snakeskin'),
 	path = require('path'),
 	config = require('config');
 
@@ -68,6 +69,7 @@ function buildFactory(entry, i = '00') {
 		resolve: {
 			modules: [
 				blocks,
+				cwd,
 				'node_modules/@v4fire/client/src',
 				'node_modules/@v4fire/client',
 				'node_modules'
@@ -185,7 +187,7 @@ function buildFactory(entry, i = '00') {
 								loader: 'monic',
 								options: {
 									replacers: [
-										Object.assign(require('./build/stylus-import.replacer'), {lib}),
+										Object.assign(require('./build/stylus-import.replacer'), {lib, cwd, blocks}),
 										require('@pzlr/stylus-inheritance')
 									]
 								}

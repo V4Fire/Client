@@ -18,7 +18,6 @@ const
 const
 	fs = require('fs'),
 	path = require('path'),
-	findUp = require('find-up'),
 	glob = require('glob'),
 	mkdirp = require('mkdirp'),
 	hasha = require('hasha'),
@@ -133,18 +132,11 @@ module.exports = function ({entries, blocks, lib, output, cache, assetsJSON}) {
 			decl.logic = logic;
 		}
 
-		if (decl.mixin) {
-			decl.styles = [];
-
-			if (fs.existsSync(style)) {
-				decl.styles.push(style);
-
-			} else {
-				decl.styles = base.styles.concat(glob.sync(path.join(cwd, `${nm}_*.styl`)));
-			}
-
-		} else if (fs.existsSync(style)) {
+		if (fs.existsSync(style)) {
 			decl.style = style;
+
+		} else if (decl.mixin) {
+			decl.styles = (base.styles || []).concat(glob.sync(path.join(cwd, `${nm}_*.styl`)));
 		}
 
 		if (fs.existsSync(tpl)) {
@@ -153,36 +145,6 @@ module.exports = function ({entries, blocks, lib, output, cache, assetsJSON}) {
 
 		if (fs.existsSync(html)) {
 			decl.html = html;
-		}
-
-		if (decl.libs.length) {
-			const
-				root = findUp.sync('src', {cwd});
-
-			$C(decl.libs).set((el) => {
-				if (path.isAbsolute(el)) {
-					return el;
-				}
-
-				const
-					ext = path.extname(el),
-					local = path.join(root, el + (!ext ? '.js' : ''));
-
-				if (fs.existsSync(local)) {
-					return local;
-				}
-
-				if (!ext) {
-					const
-						local = path.join(root, el, 'index.js');
-
-					if (fs.existsSync(local)) {
-						return local;
-					}
-				}
-
-				return el;
-			});
 		}
 
 		decl.src = decl.mixin ? base.src : el;

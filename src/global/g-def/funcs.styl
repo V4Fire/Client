@@ -6,23 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-extends($obj, $p = {})
-	for $el, $i in $obj
-		for $el in lookup($el)
-			$fn = lookup($el)
-
-			if $i == 0
-				{$fn} ($p)
-
-			else
-				{$fn} ({})
-
-fork($objs...)
-	$res = {}
-	for $obj in $objs
-		for $key, $el in $obj
-			$res[$key] = $el
-	$res
+@import "~@pzlr/stylus-inheritance/runtime.styl"
 
 /**
  * Generates rules for colorized styles

@@ -9,6 +9,7 @@
  */
 
 const
+	$C = require('collection.js'),
 	path = require('path'),
 	findUp = require('find-up'),
 	cache = {};
@@ -37,12 +38,17 @@ const fn = module.exports = function (str, file) {
 	let blocks;
 	return c[str] = str
 		.replace(/@import "([^./~].*?\.styl)"/g, (str, url) => {
-			if (!blocks) {
-				blocks = findUp.sync('src', {cwd});
+			const
+				getUrl = (src) => r(path.relative(path.dirname(file), path.join(src), url));
+
+			let
+				importUrl = getUrl(fn.blocks);
+
+			if (!fs.existsSync(importUrl)) {
+				importUrl = getUrl(blocks || (blocks = getUrl(findUp.sync('src', {cwd}))));
 			}
 
-			url = r(path.relative(path.dirname(file), path.join(blocks, url)));
-			return `@import "${url}"`;
+			return `@import "${importUrl}"`;
 		})
 
 		.replace(/@import "~(.*?\.styl)"/g, (str, url) => {

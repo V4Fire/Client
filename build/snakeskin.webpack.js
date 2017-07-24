@@ -97,7 +97,14 @@ module.exports = function ({blocks, lib}) {
 		}
 
 		const
-			local = path.join(findUp.sync('src', {cwd}), url) + end;
+			getUrl = (src) => path.join(src, url) + end;
+
+		let
+			local = getUrl(blocks);
+
+		if (!fs.existsSync(local)) {
+			local = getUrl(path.join(findUp.sync('src', {cwd}), url) + end);
+		}
 
 		if (fs.existsSync(local)) {
 			return local;
