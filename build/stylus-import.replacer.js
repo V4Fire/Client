@@ -9,6 +9,7 @@
  */
 
 const
+	fs = require('fs'),
 	path = require('path'),
 	findUp = require('find-up'),
 	cache = {};
