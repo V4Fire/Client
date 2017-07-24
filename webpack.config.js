@@ -16,12 +16,8 @@ const
 	config = require('config');
 
 const
-	{d, hash, args, cwd, VERSION, HASH_LENGTH} = require('./build/helpers.webpack'),
+	{d, hash, args, cwd, isProdEnv, VERSION, HASH_LENGTH} = require('./build/helpers.webpack'),
 	{env} = process;
-
-const
-	isProdEnv = env.NODE_ENV === 'production',
-	isMinifyCSS = env.MINIFY_CSS === 'true';
 
 const
 	webpack = require('webpack'),
@@ -162,7 +158,7 @@ function buildFactory(entry, i = '00') {
 							{
 								loader: 'css',
 								options: {
-									minimize: Boolean(isProdEnv || isMinifyCSS)
+									minimize: Boolean(isProdEnv || env.MINIFY_CSS === 'true')
 								}
 							},
 

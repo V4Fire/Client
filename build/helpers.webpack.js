@@ -19,28 +19,23 @@ const
 /**
  * Process arguments
  */
-const args =
-	exports.args = minimist(argv.slice(2));
-
-if (args.env) {
-	env.NODE_ENV = args.env;
-}
+const args = exports.args = minimist(argv.slice(2));
+args.env && (env.NODE_ENV = args.env);
 
 /**
  * Project work directory
  */
-const
-	cwd = exports.cwd = process.cwd();
+const cwd = exports.cwd = process.cwd();
 
-const
-	pack = require(d('package.json')),
-	isProdEnv = env.NODE_ENV === 'production';
+/**
+ * Production mode
+ */
+const isProdEnv = exports.isProdEnv = env.NODE_ENV === 'production';
 
 /**
  * File hash length
  */
-const HASH_LENGTH =
-	exports.HASH_LENGTH = 15;
+const HASH_LENGTH = exports.HASH_LENGTH = 15;
 
 /**
  * Project version
@@ -54,7 +49,10 @@ if (isProdEnv) {
 			exports.VERSION = env.VERSION;
 
 		} else {
-			const v = pack.version.split('.');
+			const
+				pack = require(d('package.json')),
+				v = pack.version.split('.');
+
 			pack.version = [v[0], v[1], Number(v[2]) + 1].join('.');
 			env.VERSION = exports.VERSION = `${pack.version.replace(/\./g, '')}_`;
 			fs.writeFileSync('./package.json', `${JSON.stringify(pack, null, 2)}\n`);
