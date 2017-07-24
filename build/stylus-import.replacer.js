@@ -9,7 +9,6 @@
  */
 
 const
-	$C = require('collection.js'),
 	path = require('path'),
 	findUp = require('find-up'),
 	cache = {};
