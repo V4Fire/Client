@@ -49,7 +49,7 @@ const fn = module.exports = function (str, file) {
 					fullPath = path.join(urls[i], url);
 
 				if (fs.existsSync(fullPath)) {
-					return `@import "${r(path.relative(cwd, fullPath))}"`;
+					return `@import "./${r(path.relative(cwd, fullPath))}"`;
 				}
 			}
 
