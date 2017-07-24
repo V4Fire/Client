@@ -12,7 +12,7 @@ const
 	$C = require('collection.js');
 
 const
-	{String} = require('sugar'),
+	{String, Array} = require('sugar'),
 	{args} = require('./helpers.webpack');
 
 const
@@ -103,11 +103,25 @@ module.exports = function ({entries, blocks, lib, output, cache, assetsJSON}) {
 	const blockMap = $C(files).reduce((map, el) => {
 		const
 			decl = pzlr.declaration.parse(fs.readFileSync(el)),
-			cwd = path.dirname(el);
+			nm = decl.name,
+			base = map[nm];
 
 		const
-			nm = decl.name,
+			cwd = path.dirname(el),
 			url = (ext) => path.join(cwd, `${nm}.${ext}`);
+
+		if (base) {
+			if (decl.mixin) {
+				$C.extend({
+					deep: true,
+					concatArray: true,
+					concatFn: Array.union
+				}, decl, base);
+
+			} else {
+				Object.assign(decl, base);
+			}
+		}
 
 		const
 			logic = url('js'),
@@ -119,7 +133,17 @@ module.exports = function ({entries, blocks, lib, output, cache, assetsJSON}) {
 			decl.logic = logic;
 		}
 
-		if (fs.existsSync(style)) {
+		if (decl.mixin) {
+			decl.styles = [];
+
+			if (fs.existsSync(style)) {
+				decl.styles.push(style);
+
+			} else {
+				decl.styles = base.styles.concat(glob.sync(path.join(cwd, `${nm}_*.styl`)));
+			}
+
+		} else if (fs.existsSync(style)) {
 			decl.style = style;
 		}
 
@@ -136,6 +160,10 @@ module.exports = function ({entries, blocks, lib, output, cache, assetsJSON}) {
 				root = findUp.sync('src', {cwd});
 
 			$C(decl.libs).set((el) => {
+				if (path.isAbsolute(el)) {
+					return el;
+				}
+
 				const
 					ext = path.extname(el),
 					local = path.join(root, el + (!ext ? '.js' : ''));
@@ -157,27 +185,8 @@ module.exports = function ({entries, blocks, lib, output, cache, assetsJSON}) {
 			});
 		}
 
-		decl.src = el;
-
-		const
-			obj = map[nm];
-
-		if (obj && decl.mixin) {
-			obj.styles = obj.styles || [];
-
-			const
-				baseStyle = path.join(cwd, `${nm}.styl`);
-
-			if (fs.existsSync(baseStyle)) {
-				obj.styles.push(baseStyle);
-
-			} else {
-				obj.styles = obj.styles.concat(glob.sync(path.join(cwd, `${nm}_*.styl`)));
-			}
-
-		} else {
-			map[nm] = decl;
-		}
+		decl.src = decl.mixin ? base.src : el;
+		map[nm] = decl;
 
 		return map;
 	}, {});

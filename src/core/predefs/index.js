@@ -18,7 +18,11 @@ type $$l = (...name: string) => {dependencies: $$d};
  * @param name - module name
  */
 global.package = function (name: string): {
-	mixin(): void,
+	mixin(): {
+		dependencies: $$d,
+		libs: $$l
+	},
+
 	extends(name: string): {
 		dependencies: $$d,
 		libs: $$l
@@ -44,7 +48,7 @@ global.package = function (name: string): {
 		},
 
 		mixin() {
-
+			return {dependencies, libs};
 		}
 	};
 };
