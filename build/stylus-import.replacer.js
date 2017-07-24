@@ -46,10 +46,10 @@ const fn = module.exports = function (str, file) {
 
 			for (let i = 0; i < urls.length; i++) {
 				const
-					fullPath = r(path.relative(path.dirname(file), path.join(urls[i], url)));
+					fullPath = path.join(urls[i], url);
 
 				if (fs.existsSync(fullPath)) {
-					return `@import "${fullPath}"`;
+					return `@import "${r(path.relative(cwd, fullPath))}"`;
 				}
 			}
 
@@ -57,7 +57,7 @@ const fn = module.exports = function (str, file) {
 		})
 
 		.replace(/@import "~(.*?\.styl)"/g, (str, url) => {
-			url = r(path.relative(path.dirname(file), path.join(fn.lib, url)));
+			url = r(path.relative(cwd, path.join(fn.lib, url)));
 			return `@import "${url}"`;
 		});
 };
