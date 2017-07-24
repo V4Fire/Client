@@ -37,18 +37,20 @@ const
 const
 	blocks = d('src'),
 	entries = d('src/entries'),
-	lib = d('node_modules');
+	lib = d('node_modules'),
+	coreClient = path.join(lib, '@v4Fire/client/src');
 
 const build = require('./build/entities.webpack')({
-	output: hash(output),
-	cache: env.FROM_CACHE && d('app-cache/graph'),
-	assetsJSON,
 	entries,
 	blocks,
-	lib
+	lib,
+	coreClient,
+	output: hash(output),
+	cache: env.FROM_CACHE && d('app-cache/graph'),
+	assetsJSON
 });
 
-require('./build/snakeskin.webpack')({blocks, lib});
+require('./build/snakeskin.webpack')({blocks, coreClient});
 console.log('Project graph initialized');
 
 function buildFactory(entry, i = '00') {
@@ -66,13 +68,7 @@ function buildFactory(entry, i = '00') {
 		},
 
 		resolve: {
-			modules: [
-				blocks,
-				cwd,
-				'node_modules/@v4fire/client/src',
-				'node_modules/@v4fire/client',
-				'node_modules'
-			]
+			modules: [blocks, cwd, coreClient, path.dirname(coreClient)]
 		},
 
 		resolveLoader: {
@@ -186,7 +182,7 @@ function buildFactory(entry, i = '00') {
 								loader: 'monic',
 								options: {
 									replacers: [
-										Object.assign(require('./build/stylus-import.replacer'), {lib, cwd, blocks}),
+										Object.assign(require('./build/stylus-import.replacer'), {blocks, lib, coreClient}),
 										require('@pzlr/stylus-inheritance')
 									]
 								}

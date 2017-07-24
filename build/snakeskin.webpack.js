@@ -27,15 +27,15 @@ const
  * Initializes Snakeskin
  *
  * @param {string} blocks - path to a block folder
- * @param {string} lib - path to a lib folder
+ * @param {string} coreClient - path to the V4Fire core library
  */
-module.exports = function ({blocks, lib}) {
+module.exports = function ({blocks, coreClient}) {
 	const
 		blocksTree = {},
 		components = '/**/@(i|b|p|g|v)-*.js';
 
 	const files = [].concat(
-		glob.sync(path.join(lib, '@v4fire/client/src', components)),
+		glob.sync(path.join(coreClient, components)),
 		glob.sync(path.join(blocks, components))
 	);
 
@@ -96,20 +96,19 @@ module.exports = function ({blocks, lib}) {
 			return path.resolve(blocks, url) + end;
 		}
 
-		const
-			getUrl = (src) => path.join(src, url) + end;
+		const urls = [
+			blocks,
+			findUp.sync('src', {cwd}),
+			coreClient
+		];
 
-		let
-			local = getUrl(blocks);
+		for (let i = 0; i < urls.length; i++) {
+			const
+				fullPath = path.join(urls[i], url) + end;
 
-		if (fs.existsSync(local)) {
-			return local;
-		}
-
-		local = getUrl(findUp.sync('src', {cwd}));
-
-		if (fs.existsSync(local)) {
-			return local;
+			if (fs.existsSync(fullPath)) {
+				return fullPath;
+			}
 		}
 
 		return url + end;

@@ -32,12 +32,13 @@ const
  * @param {string} entries - path to base entry points
  * @param {string} blocks - path to a block folder
  * @param {string} lib - path to a lib folder
+ * @param {string} coreClient - path to the V4Fire core library
  * @param {string} output - output path
  * @param {string} cache - path to a cache folder
  * @param {string} assetsJSON - path to assets.json file
  * @returns {{entry, processes, dependencies}}
  */
-module.exports = function ({entries, blocks, lib, output, cache, assetsJSON}) {
+module.exports = function ({entries, blocks, lib, coreClient, output, cache, assetsJSON}) {
 	//////////////////
 	// Load from cache
 	//////////////////
@@ -95,7 +96,7 @@ module.exports = function ({entries, blocks, lib, output, cache, assetsJSON}) {
 		components = '!(core|models|libs|entries)/**/@(index|*.index).js';
 
 	const files = [].concat(
-		glob.sync(path.join(lib, '@v4fire/client/src', components)),
+		glob.sync(path.join(coreClient, components)),
 		glob.sync(path.join(blocks, components))
 	);
 

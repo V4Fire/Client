@@ -38,17 +38,22 @@ const fn = module.exports = function (str, file) {
 	let blocks;
 	return c[str] = str
 		.replace(/@import "([^./~].*?\.styl)"/g, (str, url) => {
-			const
-				getUrl = (src) => r(path.relative(path.dirname(file), path.join(src, url)));
+			const urls = [
+				fn.blocks,
+				blocks || (blocks = findUp.sync('src', {cwd})),
+				fn.coreClient
+			];
 
-			let
-				importUrl = getUrl(fn.blocks);
+			for (let i = 0; i < urls.length; i++) {
+				const
+					fullPath = r(path.relative(path.dirname(file), path.join(urls[i], url)));
 
-			if (!fs.existsSync(importUrl)) {
-				importUrl = getUrl(blocks || (blocks = findUp.sync('src', {cwd})));
+				if (fs.existsSync(fullPath)) {
+					return `@import "${fullPath}"`;
+				}
 			}
 
-			return `@import "${importUrl}"`;
+			return `@import "${url}"`;
 		})
 
 		.replace(/@import "~(.*?\.styl)"/g, (str, url) => {
