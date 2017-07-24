@@ -10,7 +10,6 @@
 
 const
 	$C = require('collection.js'),
-	path = require('path'),
 	defConfig = require('@v4fire/core/config/default');
 
 const {env} = process;
