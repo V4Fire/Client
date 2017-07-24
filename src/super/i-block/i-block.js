@@ -495,6 +495,8 @@ export default class iBlock extends BlockConstructor {
 		this.emit('initLoad');
 	}
 
+	/* eslint-disable no-unused-vars */
+
 	/**
 	 * Reaches the specified goal
 	 * (analytics)
@@ -502,15 +504,9 @@ export default class iBlock extends BlockConstructor {
 	 * @param goal
 	 * @param params
 	 */
-	reachGoal(goal: string, params?: Object = {}) {
-		try {
-			yaCounter.reachGoal(goal, {...this.session, ...params}, () => {});
-		} catch (_) {}
+	reachGoal(goal: string, params?: Object = {}) {}
 
-		try {
-			mixpanel.track(goal, {...this.session, ...params}, () => {});
-		} catch (_) {}
-	}
+	/* eslint-enable no-unused-vars */
 
 	/**
 	 * Returns a string id, which is connected to the block
