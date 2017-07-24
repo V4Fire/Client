@@ -19,7 +19,7 @@ Vue.config.errorHandler = (err, vm) => {
 
 if (process.env.NODE_ENV === 'production') {
 	require('raven-js')
-		.config(require('core/config').sentry.url)
+		.config(require('config').sentry.url)
 		.addPlugin(require('raven-js/plugins/vue'), Vue)
 		.install();
 }

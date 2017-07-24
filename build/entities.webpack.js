@@ -93,7 +93,7 @@ module.exports = function ({entries, blocks, lib, coreClient, output, cache, ass
 	////////////////////////////////////
 
 	const
-		components = '!(core|models|lang|libs|entries)/**/@(index|*.index).js';
+		components = '!(core|config|models|lang|libs|entries)/**/@(index|*.index).js';
 
 	const files = [].concat(
 		glob.sync(path.join(coreClient, components)),
