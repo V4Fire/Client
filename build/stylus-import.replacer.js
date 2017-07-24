@@ -39,7 +39,7 @@ const fn = module.exports = function (str, file) {
 	return c[str] = str
 		.replace(/@import "([^./~].*?\.styl)"/g, (str, url) => {
 			const
-				getUrl = (src) => r(path.relative(path.dirname(file), path.join(src), url));
+				getUrl = (src) => r(path.relative(path.dirname(file), path.join(src, url)));
 
 			let
 				importUrl = getUrl(fn.blocks);

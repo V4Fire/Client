@@ -103,7 +103,7 @@ module.exports = function ({blocks, lib}) {
 			local = getUrl(blocks);
 
 		if (!fs.existsSync(local)) {
-			local = getUrl(path.join(findUp.sync('src', {cwd}), url) + end);
+			local = getUrl(findUp.sync('src', {cwd}));
 		}
 
 		if (fs.existsSync(local)) {
