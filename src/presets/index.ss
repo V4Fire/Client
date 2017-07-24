@@ -8,7 +8,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-- include './*'
+- include 'presets/**/*.ss'|b
 - import Sugar from 'sugar'
 
 /**
