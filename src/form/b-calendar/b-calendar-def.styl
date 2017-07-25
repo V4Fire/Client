@@ -1,0 +1,155 @@
+/*!
+ * V4Fire Client Core
+ * https://github.com/V4Fire/Client
+ *
+ * Released under the MIT license
+ * https://github.com/V4Fire/Client/blob/master/LICENSE
+ */
+
+$p = {
+	color: #222C3C,
+	labelNavColor: #222C3C,
+	borderColor: #CCC,
+	shadowColor: alpha(#000, 0.2),
+	activeValueColor: #222c3c,
+	activeDayColor: #FFF,
+	navArrowsColor: #808080,
+	dayHoverBackgroundColor: #EEE,
+	activeDayBackgroundColor: #BDC3C7,
+	borderColor: #BCC5D7,
+	inputBackgroundColor: #F8F9FA
+}
+
+b-calendar
+	color lighten($p.color, 20%)
+
+	for $el in (none 0) (small 0.5em) (normal 1em) (big 2em)
+		&_rounding_{$el[0]} &__label-nav
+			border-radius $el[1]
+
+	&__label-nav
+		padding 0.2em
+		border 1px solid $p.borderColor
+		background $p.inputBackgroundColor
+		color $p.labelNavColor
+		transition 0.2s ease-in border-color
+
+		&_buttons_false
+			height 3em
+
+	&_opened_true &__label-nav
+		border 1px solid $p.labelNavColor
+
+	&__nav
+		padding 1em 0
+		font-size 1.1em
+
+	&__icon
+		border-radius 100%
+		color lighten($p.labelNavColor, 30%)
+
+	&__label-nav &__icon .b-icon
+		padding 0.1em
+		font-size 2em
+
+	&__nav &__icon
+		border 1px dotted transparent
+		color $p.navArrowsColor
+
+		&:hover
+			background $p.dayHoverBackgroundColor
+
+		&:active
+			background darken($p.dayHoverBackgroundColor, 5%)
+
+		.b-icon
+			padding 0.2em
+			font-size 1.4em
+
+	&__value
+		font-weight 400
+
+	&__calendar-icon
+		color darken($p.borderColor, 20%)
+		margin-right 0.5em
+
+	&__nav &__value
+		min-width 8em
+		color $p.activeValueColor
+
+	&__dropdown-content
+		box-shadow 0 0 1em $p.shadowColor
+
+	&__label-year
+		margin 0 1.5em
+		font-weight 600
+		color lighten($p.navArrowsColor, 20%)
+
+		&_once_true
+			margin 0
+			font-size 0.8em
+			margin-left 1.5em
+
+	&__dropdown &__dropdown-content
+		padding 0
+
+	&__month-wrap
+		animation-duration .2s
+
+	&__hr
+		height 0.1em
+		background $p.activeValueColor
+
+	&__row
+		padding 0 1em
+
+		&:last-child
+			padding-bottom 1em
+
+	&__td
+		margin 0.3em
+		width 2.2em
+		height @width
+
+	&__cell
+		&_range-start_false&_range-end_false&_in-range_true,
+		&_range-end_true
+			&:before
+				width 0.65em
+				background $p.dayHoverBackgroundColor
+
+		&_in-range_true
+			background $p.dayHoverBackgroundColor
+			border-radius 0
+
+		&_range-start_true
+			background $p.dayHoverBackgroundColor
+			border-radius 100% 0 0 100%
+
+		&_range-end_true
+			background $p.dayHoverBackgroundColor
+			border-radius 0 100% 100% 0
+
+		&_range-start_true&_range-end_true
+			border-radius 100%
+
+	&__day
+		border 1px dotted transparent
+		border-radius 100%
+		color $p.color
+
+		&:focus
+			border-color darken($p.activeDayBackgroundColor, 5%)
+
+		&_active_false&_disabled_false:hover
+			background $p.dayHoverBackgroundColor
+
+		&_active_false&_disabled_false:active
+			background darken($p.dayHoverBackgroundColor, 5%)
+
+		&_active_true
+			background $p.activeValueColor
+			color $p.activeDayColor
+
+		&_disabled_true
+			opacity 0.5

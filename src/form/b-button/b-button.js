@@ -9,7 +9,6 @@
  */
 
 import iData from 'super/i-data/i-data';
-import { PARENT } from 'super/i-block/i-block';
 import { component } from 'core/component';
 
 @component()
@@ -87,14 +86,6 @@ export default class bButton extends iData {
 			['small'],
 			'normal',
 			'big'
-		],
-
-		theme: [
-			PARENT,
-			'dark',
-			'light',
-			'icon',
-			'chat'
 		]
 	};
 

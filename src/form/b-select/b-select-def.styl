@@ -1,0 +1,31 @@
+/*!
+ * V4Fire Client Core
+ * https://github.com/V4Fire/Client
+ *
+ * Released under the MIT license
+ * https://github.com/V4Fire/Client/blob/master/LICENSE
+ */
+
+$p = {
+	optionSelectedBackgroundColor: #EBF3F7
+}
+
+b-select
+	&__option
+		padding 0.4em
+		min-width 8em
+
+		&:hover
+			background lighten($p.optionSelectedBackgroundColor, 30%)
+
+		&_selected_true
+			background $p.optionSelectedBackgroundColor
+
+			&:hover
+				background @background
+
+	&__dropdown-content-wrapper
+		max-height 20em
+
+	&__dropdown &__dropdown-content
+		padding 0.4em 0

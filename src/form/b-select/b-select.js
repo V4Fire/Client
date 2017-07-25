@@ -102,8 +102,7 @@ export default class bSelect extends bInput {
 	static mods = {
 		theme: [
 			PARENT,
-			'paging',
-			'status'
+			'paging'
 		]
 	};
 

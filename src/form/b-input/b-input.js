@@ -167,13 +167,7 @@ export default class bInput extends iInput {
 
 		theme: [
 			PARENT,
-			'light',
-			'header',
-			'link',
-			'light-form',
-			'chat',
-			'chat-form',
-			'auth'
+			'link'
 		],
 
 		@bindModTo('valueBufferStore', (v) => !v)

@@ -12,10 +12,7 @@ $p = {
 	lockHelpers: true,
 	messageHelpers: true,
 	dropdownHelpers: true,
-	width: auto,
-	color: #FFF,
-	backgroundColor: #6153B9,
-	shadowColor: alpha(#222, 0.5)
+	width: auto
 }
 
 b-button extends i-data
@@ -29,10 +26,6 @@ b-button extends i-data
 	&_width_auto &__value
 		width auto
 
-	for $el in (none 0) (small 0.5em) (normal 1em) (big 2em)
-		&_rounding_{$el[0]} &__button
-			border-radius $el[1]
-
 	&__root-wrapper
 		flex-direction column
 
@@ -45,33 +38,16 @@ b-button extends i-data
 		width 100%
 
 	&__button
-		padding 0.5em 1em
 		border 0
-		background $p.backgroundColor
-		color $p.color
 		text-transform inherit
 		text-align center
-		font bold 1em BASE_FONT
 		cursor pointer
 
 		&:focus
 			outline 0
-			box-shadow 0 0 0.45em $p.shadowColor
-
-		&:hover
-			background lighten($p.backgroundColor, 20%)
 
 		&:active
-			background darken($p.backgroundColor, 20%)
 			{$p.onActive}
-
-	@supports (-ms-accelerator:true)
-		&__button
-			border-width 0.1em
-
-	&_disabled_true &__button,
-	&_progress_true &__button
-		color lighten($p.color, 20%)
 
 	&__wrapper
 		align-items center
@@ -84,15 +60,9 @@ b-button extends i-data
 	&__progress
 		display none
 
-	&__cell + &__cell
-		margin-left 0.3em
-
 	&__value
 		justify-content center
 		width $p.width
-
-	&__expand .b-icon
-		font-size 1.5em
 
 	&__dropdown &__dropdown-content
 		padding 0

@@ -10,21 +10,11 @@
 
 $p = {
 	dropdownHelpers: true,
-	width: 20em,
-	color: #222C3C,
-	shadowColor: alpha(#000, 0.2),
-	activeValueColor: #222c3c,
-	activeDayColor: #FFF,
-	navArrowsColor: #808080,
-	dayHoverBackgroundColor: #EEE,
-	activeDayBackgroundColor: #BDC3C7,
-	borderColor: #BCC5D7,
-	inputBackgroundColor: #F8F9FA
+	width: 20em
 }
 
-b-calendar extends i-input
+b-calendar
 	display inline-block
-	color lighten($p.color, 20%)
 
 	&_width_full &__label-nav
 		width 100%
@@ -32,19 +22,18 @@ b-calendar extends i-input
 	&_width_auto &__label-nav
 		width auto
 
-	for $el in (none 0) (small 0.5em) (normal 1em) (big 2em)
-		&_rounding_{$el[0]} &__label-nav
-			border-radius $el[1]
-
 	&__label-nav
-		padding 0.9em 0.4em
-		border 1px solid $p.borderColor
-		background $p.inputBackgroundColor
-		transition 0.2s ease-in border-color
+		justify-content space-between
+		width $p.width
 		height auto
+		text-decoration none
+		cursor pointer
 
-	&_opened_true &__label-nav
-		border-color $p.activeValueColor
+		&_buttons_false
+			justify-content center
+
+		&:active
+			{$p.onActive}
 
 	&__root-wrapper,
 	&__label-nav,
@@ -71,85 +60,33 @@ b-calendar extends i-input
 		justify-content center
 
 	&__nav
-		padding 1em 0
-		font-size 1.1em
 		justify-content space-between
-
-	&__nav &__icon
-		border 1px dotted transparent
-		color $p.navArrowsColor
-
-		&:hover
-			background $p.dayHoverBackgroundColor
-
-		&:active
-			background darken($p.dayHoverBackgroundColor, 5%)
-
-		.b-icon
-			padding 0.2em
-			font-size 1.4em
 
 	&__value
 		text-align center
 		user-select none
-		font-weight 400
-
-	&__calendar-icon
-		color darken($p.borderColor, 20%)
-		margin-right 0.5em
-
-	&__nav &__value
-		min-width 8em
-		color $p.activeValueColor
 
 	&__dropdown_immediately-shown_false
 		opacity 0
 
 	&__dropdown-content
 		overflow hidden
-		box-shadow 0 0 1em $p.shadowColor
 
 	&__dropdown-controls
 		display flex
 
 	&__label-year
-		margin 0 1.5em
-		font-weight 600
 		user-select none
 		cursor default
-		color lighten($p.navArrowsColor, 20%)
-
-		&_once
-			&_true
-				margin 0
-				font-size 0.8em
-				margin-left 1.5em
-
-	&__dropdown &__dropdown-content
-		padding 0
-
-	&__month-wrap
-		animation-duration .2s
 
 	&__items-container
 		display flex
 
-	&__hr
-		height 0.1em
-		background $p.activeValueColor
-
 	&__row
-		padding 0 1em
 		white-space nowrap
-
-		&:last-child
-			padding-bottom 1em
 
 	&__td
 		display inline-block
-		margin 0.3em
-		width 2.2em
-		height @width
 		user-select none
 
 	&__cell
@@ -159,37 +96,18 @@ b-calendar extends i-input
 		&_range-start_false&_range-end_false&_in-range_true,
 		&_range-end_true
 			&:before
-				content ''
 				position absolute
 				right 100%
-				display block
-				width 0.65em
-				height 100%
-				background $p.dayHoverBackgroundColor
 				z-index -1
+				display block
+				height 100%
+				content ''
 
 		&_touch_false
 			pointer-events none
 
-		&_in-range
-			&_true
-				background $p.dayHoverBackgroundColor
-				border-radius 0
-
-		&_range-start
-			&_true
-				background $p.dayHoverBackgroundColor
-				border-radius 100% 0 0 100%
-
-		&_range-end
-			&_true
-				background $p.dayHoverBackgroundColor
-				border-radius 0 100% 100% 0
-
-		&_range-start_true&_range-end_true
-			border-radius 100%
-			&:before
-				display none
+		&_range-start_true&_range-end_true:before
+			display none
 
 	&__h
 		display inline-flex
@@ -202,32 +120,13 @@ b-calendar extends i-input
 	&__day
 		width 100%
 		height @width
-		border 1px dotted transparent
-		border-radius 100%
-		color $p.color
 		text-decoration none
 		user-select none
 		text-align center
 
-		&:focus
-			border-color darken($p.activeDayBackgroundColor, 5%)
-
-		&_active_false&_disabled_false:hover
-			background $p.dayHoverBackgroundColor
-
-		&_active_false&_disabled_false:active
-			background darken($p.dayHoverBackgroundColor, 5%)
-
 		&_disabled_true,
 		&_active_true
 			cursor default
-
-		&_active_true
-			background $p.activeValueColor
-			color $p.activeDayColor
-
-		&_disabled_true
-			opacity 0.5
 
 	&__time-block
 		display flex
@@ -236,3 +135,8 @@ b-calendar extends i-input
 
 	&__time-label
 		line-height 1
+
+	&__icon
+		display block
+		text-decoration none
+		cursor pointer

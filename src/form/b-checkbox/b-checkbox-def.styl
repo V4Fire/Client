@@ -1,0 +1,44 @@
+/*!
+ * V4Fire Client Core
+ * https://github.com/V4Fire/Client
+ *
+ * Released under the MIT license
+ * https://github.com/V4Fire/Client/blob/master/LICENSE
+ */
+
+$p = {
+	width: 1.2em,
+	backgroundColor: #FFF,
+	borderColor: #CCC,
+	borderActiveColor: #006358,
+	checkedBackgroundColor: #006358
+}
+
+b-checkbox
+	&__label
+		margin-left 0.2em
+
+	&__wrapper:hover &__box
+		background darken($p.backgroundColor, 5%)
+
+	&_focused_true &__box
+		border 1px dotted $p.borderActiveColor
+
+	&_disabled_true &__wrapper
+		opacity 0.5
+
+	&__box
+		border 1px solid $p.borderColor
+		background $p.backgroundColor
+		transition 0.1s ease-in background-color
+
+	&_checked_true &__wrapper:hover &__box
+		background $p.checkedBackgroundColor
+
+	&_checked_true &__box
+		background $p.checkedBackgroundColor
+		border-color $p.borderActiveColor
+
+		&:after
+			border solid $p.backgroundColor
+			border-width 0 2px 2px 0

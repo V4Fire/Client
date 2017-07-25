@@ -6,16 +6,16 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-@import "super/i-block/i-block.styl"
-
 $p = {
 
 }
 
-b-option extends i-block
-	&__wrapper
-		display flex
-		align-items center
+b-input-number
+	&__range
+		margin 0 0.2em
 
-	&__label
-		white-space nowrap
+	&__arrow
+		color lighten($p.color, 30%)
+
+		&:hover
+			color $p.color

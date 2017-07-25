@@ -9,18 +9,11 @@
 @import "form/b-checkbox/b-checkbox.styl"
 
 $p = {
-	width: auto,
-	color: #4B494B,
-	backgroundColor: #FFF,
-	hoverColor: #FFF,
-	hoverBackgroundColor: darken(#006358, 30%),
-	checkedColor: #FFF,
-	checkedBackgroundColor: #006358
+	width: auto
 }
 
 b-icon-checkbox extends b-checkbox
 	display block
-	color $p.color
 
 	&_width_full &__wrapper
 		width 100%
@@ -32,54 +25,9 @@ b-icon-checkbox extends b-checkbox
 		display flex
 		align-items center
 		box-sizing border-box
-		margin-bottom 1em
-		padding 1em
 		width $p.width
-		background $p.backgroundColor
 		color currentColor
 		text-decoration none
-		border 1px solid lighten($p.color, 60%)
 
 		&:active
 			{$p.onActive}
-
-		&:hover
-			background $p.hoverBackgroundColor
-			color $p.hoverColor
-
-			span
-				color @color
-
-	&_checked_true &__wrapper
-		background $p.checkedBackgroundColor
-		color $p.checkedColor
-		border-color $p.hoverBackgroundColor
-
-		span
-			color @color
-
-		&:hover
-			background darken($p.hoverBackgroundColor, 7%)
-			color darken($p.hoverColor, 5%)
-			border-color $p.hoverBackgroundColor
-
-			span
-				color @color
-
-	&__cell + &__cell
-		margin-left 0.5em
-
-	&__cell:last-child
-		margin-left auto
-		padding-left 3em
-
-	&__desc
-		margin-top 0.3em
-		color lighten($p.color, 20%)
-		font-size 0.8em
-
-	&_checked_true &__desc
-		color darken($p.checkedColor, 10%)
-
-	&__wrapper:hover &__desc
-		color darken($p.hoverColor, 10%)

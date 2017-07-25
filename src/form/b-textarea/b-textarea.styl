@@ -17,10 +17,6 @@ b-textarea extends b-input
 	&__root-wrapper
 		background inherit
 
-	&__super-wrapper
-		padding 0.5em
-		max-height 10em
-
 	&__input
 		display block
 		overflow hidden
@@ -30,16 +26,8 @@ b-textarea extends b-input
 		border 0
 		resize none
 
-	&_collapsed_true &__input
-		height 1.1em
-
 	&_focused_true &__limit_hidden_false
 		display block
 
 	&__limit
 		display none
-		padding 0.3em
-		font-size 0.7em
-
-		&_warning_true
-			color $p.invalidColor

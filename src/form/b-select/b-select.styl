@@ -9,8 +9,7 @@
 @import "form/b-input/b-input.styl"
 
 $p = {
-	dropdownHelpers: true,
-	optionSelectedBackgroundColor: #EBF3F7
+	dropdownHelpers: true
 }
 
 b-select extends b-input
@@ -25,28 +24,13 @@ b-select extends b-input
 
 	&__option
 		display block
-		padding 0.4em
-		min-width 8em
 		white-space nowrap
 		cursor pointer
-
-		&:hover
-			background lighten($p.optionSelectedBackgroundColor, 30%)
-
-		&_selected_true
-			background $p.optionSelectedBackgroundColor
-
-			&:hover
-				background @background
 
 	&__expand
 		cursor pointer
 
 	&__dropdown-content-wrapper
 		display block
-		max-height 20em
 		overflow hidden
 		background inherit
-
-	&__dropdown &__dropdown-content
-		padding 0.4em 0

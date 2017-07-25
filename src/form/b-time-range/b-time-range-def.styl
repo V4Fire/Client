@@ -1,0 +1,63 @@
+/*!
+ * V4Fire Client Core
+ * https://github.com/V4Fire/Client
+ *
+ * Released under the MIT license
+ * https://github.com/V4Fire/Client/blob/master/LICENSE
+ */
+
+$p = {
+	color: #FFF,
+	backgroundColor: #079888
+}
+
+b-time-range
+	color $p.color
+
+	&__value
+		padding 0.4em 0.6em
+		border 1px dotted transparent
+		background $p.backgroundColor
+
+		&:hover
+			background darken($p.backgroundColor, 5%)
+
+		&:active
+			background darken($p.backgroundColor, 7%)
+
+	&_focused_true &__value
+		border-color $p.focusedBorderColor
+
+	&__time,
+	&__empty
+		font-weight bold
+		font-size 0.95em
+
+	&__cell + &__cell
+		margin-left 0.3em
+
+	&__pre-icon .b-icon
+		font-size 1.5em
+
+	&__clear .b-icon
+		font-size 1.3em
+
+	&__time span + span
+		margin-left 0.2em
+
+	&__label,
+	&__sep
+		font-weight 300
+		font-size 1.1em
+
+	&__label
+		padding-right 0.4em
+
+	&__sep
+		padding 0 0.2em
+
+	&__controls
+		margin-top 1em
+
+	&__button + &__button
+		margin-left 0.5em

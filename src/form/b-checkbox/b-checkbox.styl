@@ -9,11 +9,7 @@
 @import "super/i-input/i-input.styl"
 
 $p = {
-	width: 1.2em,
-	backgroundColor: #FFF,
-	borderColor: #CCC,
-	borderActiveColor: #006358,
-	checkedBackgroundColor: #006358
+	width: 1.2em
 }
 
 b-checkbox extends i-input
@@ -24,25 +20,10 @@ b-checkbox extends i-input
 		align-items center
 		cursor pointer
 
-	&__label
-		margin-left 0.2em
-
-	&__wrapper:hover &__box
-		background darken($p.backgroundColor, 5%)
-
-	&_focused_true &__box
-		border 1px dotted $p.borderActiveColor
-
-	&_disabled_true &__wrapper
-		opacity 0.5
-
 	&__box
 		display block
 		width $p.width
 		height @width
-		border 1px solid $p.borderColor
-		background $p.backgroundColor
-		transition 0.1s ease-in background-color
 		cursor pointer
 
 		&:after
@@ -50,19 +31,10 @@ b-checkbox extends i-input
 			position absolute
 			display none
 
-	&_checked_true &__wrapper:hover &__box
-		background $p.checkedBackgroundColor
-
-	&_checked_true &__box
-		background $p.checkedBackgroundColor
-		border-color $p.borderActiveColor
-
-		&:after
-			display block
-			left 0.5em
-			top 0.2em
-			width 0.2em
-			height 0.6em
-			border solid $p.backgroundColor
-			border-width 0 2px 2px 0
-			transform rotate(45deg)
+	&_checked_true &__box:after
+		display block
+		left ($p.width / 2)em
+		top ($p.width / 6)em
+		width ($p.width / 6)em
+		height ($p.width / 2)em
+		transform rotate(45deg)

@@ -9,18 +9,12 @@
 @import "super/i-input/i-input.styl"
 
 $p = {
-	width: 15em,
-	color: #000,
-	backgroundColor: #FFF,
-	shadowColor: alpha(#222, 0.5),
-	validColor: #7FB425,
-	invalidColor: #D44D24
+	width: 15em
 }
 
 b-input extends i-input
 	display inline-block
 	width $p.width
-	background $p.backgroundColor
 
 	&_focused_true
 		z-index 1
@@ -28,31 +22,12 @@ b-input extends i-input
 	&_progress_true
 		pointer-events auto
 
-	&_disabled_true
-		background darken($p.backgroundColor, 10%)
-
-	for $el in (none 0) (small 0.18em) (normal 0.3em) (big 0.8em)
-		&_rounding_{$el[0]},
-		&_rounding_{$el[0]} &__root-wrapper,
-		&_rounding_{$el[0]} &__super-wrapper
-			border-radius $el[1]
-
 	&__root-wrapper,
 	&__super-wrapper,
 	&__wrapper
 		display flex
 		box-sizing border-box
 		width 100%
-
-	&__root-wrapper
-		border 1px solid darken($p.backgroundColor, 15%)
-		transition 0.2s ease-in border-color
-
-	&_focused_true &__root-wrapper
-		border 1px solid darken($p.backgroundColor, 35%)
-
-	&_disabled_true &__root-wrapper
-		opacity 0.5
 
 	&__super-wrapper
 		cursor text
@@ -62,58 +37,25 @@ b-input extends i-input
 
 	&__cell
 		flex auto
-		margin-right 1em
 
 	&__input-cont
-		margin-right 0.3em
-		margin-left 0.4em
 		width 100%
 
 	&__input
 		margin 0
-		padding 0.7em 0
 		width 100%
 		border 0
 		background transparent
-		color $p.color
-		font 400 1em BASE_FONT
 		overflow hidden
 		text-overflow ellipsis
-
-		&:-webkit-autofill
-			-webkit-box-shadow 0 0 0 100em $p.backgroundColor inset !important
-
-		&::placeholder
-			color lighten($p.color, 50%)
-			opacity 1
-
-		&:focus::placeholder
-			opacity 0.5
 
 		&::-ms-clear
 			display none
 
-		&:focus
-			outline 0
-
+		&:focus,
 		&:valid,
 		&:invalid
 			outline 0
-			box-shadow none
-
-	&_disabled_true &__input,
-	&_disabled_true &__icon
-		color darken($p.color, 20%)
-
-	&__icon
-		color lighten($p.color, 10%)
-		text-shadow none
-
-		span
-			font-size 1.2em
-
-		&:hover
-			color lighten($p.color, 20%)
 
 	&__post-icon + &__clear
 		display none
@@ -134,24 +76,11 @@ b-input extends i-input
 	&__progress
 		pointer-events none
 
-	&__progress span
-		font-size 1em
-
 	&_focused_true &__valid-status
 		display none
-
-	&_valid_true &__valid-status
-		color $p.validColor
-
-	&_valid_false &__input,
-	&_valid_false &__valid-status
-		color $p.invalidColor
 
 	&_show-error_true &__error-box
 		display none
 
 	&_show-error_true&_focused_true&_valid_false &__error-box
 		display block
-
-	&__pre-icon
-		margin-left 0.5em
