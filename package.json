@@ -24,7 +24,7 @@
     "test": "echo \"Error: no test specified\" && exit 0"
   },
   "dependencies": {
-    "@v4fire/core": "^1.0.8",
+    "@v4fire/core": "^1.0.10",
     "babel-polyfill": "^6.23.0",
     "babel-runtime": "^6.23.0",
     "chart.js": "^2.6.0",
@@ -36,6 +36,7 @@
     "ion-sound": "^3.0.7",
     "join-uri": "^1.0.1",
     "localforage": "^1.5.0",
+    "path-to-regexp": "^1.7.0",
     "raven-js": "^3.17.0",
     "requestidlecallback": "^0.3.0",
     "snakeskin": "^7.2.8",
@@ -47,7 +48,7 @@
   },
   "optionalDependencies": {
     "@pzlr/build-core": "^1.1.1",
-    "@pzlr/stylus-inheritance": "^2.1.0",
+    "@pzlr/stylus-inheritance": "^2.2.0",
     "assets-webpack-plugin": "^3.5.1",
     "async": "^2.5.0",
     "autoprefixer": "^7.1.2",
