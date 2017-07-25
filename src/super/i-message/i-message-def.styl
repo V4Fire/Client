@@ -1,0 +1,52 @@
+/*!
+ * V4Fire Client Core
+ * https://github.com/V4Fire/Client
+ *
+ * Released under the MIT license
+ * https://github.com/V4Fire/Client/blob/master/LICENSE
+ */
+
+@import "global/g-hint/g-hint.interface.styl"
+
+$p = {
+	messageColor: #FEFEFE,
+	messageBorderColor: #616161,
+	messageBackgroundColor: #616161,
+	messageShadowColor: alpha(#111, 0.4),
+	messageRounding: 0.3rem,
+	hintColor: #000,
+	hintBackgroundColor: #FFF,
+	hintShadowColor: alpha(#000, 0.2)
+}
+
+i-message
+	if $p.messageHelpers
+		g-hint({
+			arrow: "&::before, &::after",
+			wrapper: "&__message-box",
+			content: "%s__message-content" % unquote(selector()),
+			showSelector: "&_show-error_true &__error-box" "&_show-info_true &__info-box",
+			fontSize: 0.85rem,
+			horArrowSize: 0.8em,
+			color: $p.messageColor,
+			backgroundColor: $p.messageBackgroundColor,
+			shadow: 0.1em 0.1em 0.5em $p.messageShadowColor,
+			rounding: $p.messageRounding
+		})
+
+	if $p.dropdownHelpers
+		g-hint({
+			arrow: "&::before, &::after",
+			wrapper: "&__dropdown",
+			content: "%s__dropdown-content" % unquote(selector()),
+			showSelector: "&_opened_true&_disabled_false &__dropdown",
+			fontSize: 1em,
+			vertArrowSize: 1.2em,
+			color: $p.hintColor,
+			backgroundColor: $p.hintBackgroundColor,
+			shadow: 0.1em 0.1em 0.5em $p.hintShadowColor,
+			rounding: 0
+		})
+
+		&__dropdown::before
+			border-bottom-color alpha($p.hintShadowColor, 0.3)
