@@ -9,7 +9,6 @@
  */
 
 import iData from 'super/i-data/i-data';
-import { PARENT } from 'super/i-block/i-block';
 import { component } from 'core/component';
 
 @component()
@@ -54,12 +53,6 @@ export default class bLink extends iData {
 		underline: [
 			['true'],
 			'false'
-		],
-
-		theme: [
-			PARENT,
-			'light',
-			'sky'
 		]
 	};
 

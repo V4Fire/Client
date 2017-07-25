@@ -9,10 +9,7 @@
 @import "super/i-block/i-block.styl"
 
 $p = {
-	color: #FFF,
-	hoverColor: #008FCA,
-	textShadow: alpha(#000, 0.3),
-	wrapperBackgroundColor: alpha(#000, 0.7)
+
 }
 
 b-image-editor extends i-block
@@ -35,14 +32,12 @@ b-image-editor extends i-block
 		display none
 		width 100%
 		height @width
-		background $p.wrapperBackgroundColor
 
 	&__info-cell
 		align-self center
 
 	&__progress
 		display inline-block
-		color $p.color
 
 	&_progress_true &__super-wrapper
 		display block
@@ -56,21 +51,10 @@ b-image-editor extends i-block
 		display none
 
 	&__controls
-		$padding = 0.4em
-		absolute bottom ($padding / 2) right 0
+		absolute bottom 0 right 0
 		z-index 2
 		display flex
 		justify-content flex-end
-		padding 0.2em $padding
-		color $p.color
 
 	&__control
-		margin-left 0.3em
-		text-shadow 1px 1px $p.textShadow
 		cursor pointer
-
-		&:hover
-			color $p.hoverColor
-
-		&:active
-			color lighten($p.hoverColor, 20%)

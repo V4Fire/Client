@@ -10,7 +10,7 @@
 
 import Store from 'core/store';
 import iData from 'super/i-data/i-data';
-import { field, params, PARENT } from 'super/i-block/i-block';
+import { field, params } from 'super/i-block/i-block';
 import { component } from 'core/component';
 
 export const
@@ -95,14 +95,6 @@ export default class bList extends iData {
 	$$activeStore() {
 		this.emit('change', this.active);
 	}
-
-	/** @inheritDoc */
-	static mods = {
-		theme: [
-			PARENT,
-			'light-vert'
-		]
-	};
 
 	/**
 	 * Undefined value constant

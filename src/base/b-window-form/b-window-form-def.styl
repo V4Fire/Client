@@ -6,13 +6,21 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-@import "super/i-data/i-data.styl"
-
 $p = {
 
 }
 
-b-notifier extends i-data
-	fixed top 0 left 0
-	z-index 1000
-	width 100%
+b-window-form
+	&__title
+		padding 1em
+
+	&__form
+		margin-top 2em
+
+	&__row
+		margin 1.5em 1em
+
+	&__label
+		margin-bottom 0.5em
+		font-weight bold
+		font-size 1.1em

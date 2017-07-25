@@ -83,6 +83,7 @@ export default class bWindow extends iData {
 		if (await this.setMod('hidden', false)) {
 			if (stage) {
 				this.stage = stage;
+
 			} else {
 				this.stage = this.id ? 'edit' : 'new';
 			}

@@ -1,0 +1,36 @@
+/*!
+ * V4Fire Client Core
+ * https://github.com/V4Fire/Client
+ *
+ * Released under the MIT license
+ * https://github.com/V4Fire/Client/blob/master/LICENSE
+ */
+
+$p = {
+	overBackgroundColor: alpha(#000, 0.7),
+	rBackgroundColor: alpha(#EEE, 0.6)
+	activeRBackgroundColor: alpha(#FFF, 0.8),
+	selectBorderColor: alpha(#666, 0.2)
+}
+
+b-crop
+	&__over-wrapper
+		background $p.overBackgroundColor
+
+	&__progress .b-progress-icon
+		font-size 5em
+
+	&__original,
+	&__clone
+		min-width 10em
+		min-height @min-width
+
+	&__select
+		border 1px solid $p.selectBorderColor
+
+	&_active_true &__r
+		background $p.activeRBackgroundColor
+
+	&__r
+		backgrou $p.rBackgroundColor
+		transition background-color 0.3s

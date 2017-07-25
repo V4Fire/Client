@@ -9,8 +9,7 @@
 @import "super/i-block/i-block.styl"
 
 $p = {
-	color: #4B494B,
-	hoverBackgroundColor: alpha(#00786B, 0.2)
+
 }
 
 b-up extends i-block
@@ -19,13 +18,8 @@ b-up extends i-block
 	justify-content flex-end
 	fixed bottom 0 left 0
 	z-index 999
-	padding 2em
 	height 100%
-	color $p.color
 	cursor pointer
-
-	&:hover
-		background $p.hoverBackgroundColor
 
 	&__root-wrapper
 		display flex
@@ -35,10 +29,6 @@ b-up extends i-block
 	&__a
 		color currentColor
 		text-decoration none
-		text-transform uppercase
 
 	&__up
 		display block
-
-		.b-icon
-			font-size 2em

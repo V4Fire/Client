@@ -9,29 +9,16 @@
 @import "super/i-data/i-data.styl"
 
 $p = {
-	color: #A9A9A9
+
 }
 
 b-group extends i-data
-	padding 0.5em
-	background darken(invert($p.color), 60%)
-	color $p.color
-
 	&__title
 		display flex
 		align-items top
 
-	&__title-text
-		margin-right 0.3em
-
 	&__toggle
 		cursor pointer
-
-		&:hover
-			color lighten($p.color, 50%)
-
-	&__content
-		margin-top 0.3em
 
 	&_opened_false &__content
 		display none

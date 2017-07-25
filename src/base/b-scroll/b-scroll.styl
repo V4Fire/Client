@@ -10,7 +10,6 @@
 
 $p = {
 	backgroundColor: inherit,
-	scrollerBackgroundColor: alpha(#4B494B, 0.4),
 	scrollerSize: 6px
 }
 
@@ -36,7 +35,7 @@ b-scroll extends i-block
 		overflow visible
 
 	&_mobile_true &__area
-		transform translate3d(0,0,0)
+		transform translate3d(0, 0, 0)
 
 	&__area
 		overflow auto
@@ -62,11 +61,6 @@ b-scroll extends i-block
 		position absolute
 		cursor pointer
 		user-select none
-		border-radius 1em
-		background $p.scrollerBackgroundColor
-
-		&:hover
-			background lighten($p.scrollerBackgroundColor, 10%)
 
 	&__scroll-wrapper-x
 		absolute bottom 0 left 0

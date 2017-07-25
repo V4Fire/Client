@@ -1,0 +1,25 @@
+/*!
+ * V4Fire Client Core
+ * https://github.com/V4Fire/Client
+ *
+ * Released under the MIT license
+ * https://github.com/V4Fire/Client/blob/master/LICENSE
+ */
+
+$p = {
+	scrollerBackgroundColor: alpha(#4B494B, 0.4)
+}
+
+b-scroll
+	&__scroller
+		border-radius 1em
+		background $p.scrollerBackgroundColor
+
+		&:hover
+			background lighten($p.scrollerBackgroundColor, 10%)
+
+	&__scroller-y
+		left 50%
+		margin-left -($p.scrollerSize / 2)
+		min-height 1em
+		width $p.scrollerSize

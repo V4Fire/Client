@@ -1,0 +1,37 @@
+/*!
+ * V4Fire Client Core
+ * https://github.com/V4Fire/Client
+ *
+ * Released under the MIT license
+ * https://github.com/V4Fire/Client/blob/master/LICENSE
+ */
+
+$p = {
+	color: #FFF,
+	hoverColor: #008FCA,
+	textShadow: alpha(#000, 0.3),
+	wrapperBackgroundColor: alpha(#000, 0.7)
+}
+
+b-image-editor
+	&__wrapper
+		background $p.wrapperBackgroundColor
+
+	&__progress
+		color $p.color
+
+	&__controls
+		$padding = 0.4em
+		absolute bottom ($padding / 2) right 0
+		padding 0.2em $padding
+		color $p.color
+
+	&__control
+		margin-left 0.3em
+		text-shadow 1px 1px $p.textShadow
+
+		&:hover
+			color $p.hoverColor
+
+		&:active
+			color lighten($p.hoverColor, 20%)

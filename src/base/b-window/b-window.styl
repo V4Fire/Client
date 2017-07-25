@@ -10,11 +10,6 @@
 
 $p = {
 	width: auto,
-	color: #4B494B,
-	titleColor: #FFF,
-	backgroundColor: #FFF,
-	titleBackgroundColor: #00786B,
-	backBackgroundColor: alpha(#000, 0.4),
 	zIndex: 100
 }
 
@@ -33,7 +28,6 @@ b-window extends i-data
 		fixed top 0 left 0
 		width 100%
 		height @width
-		background $p.backBackgroundColor
 
 	&__wrapper
 		position relative
@@ -47,22 +41,9 @@ b-window extends i-data
 		width $p.width
 		max-width 100%
 		align-self center
-		background $p.backgroundColor
-		color $p.color
 
 	&__title
 		display block
-		padding 1em 10em 1em 1em
-		background $p.titleBackgroundColor
-		color $p.titleColor
-		font-size 1.8rem
-
-	&__controls
-		padding 1em
-		text-align center
 
 	&__control
 		display inline-block
-
-	&__control + &__control
-		margin-left 0.2em
