@@ -90,6 +90,7 @@ module.exports = function ({blocks, coreClient}) {
 
 	function b(url, cwd) {
 		const
+			hasMagic = glob.hasMagic(url),
 			end = /\.e?ss$/.test(url) ? '' : '/',
 			ends = [];
 
@@ -98,13 +99,10 @@ module.exports = function ({blocks, coreClient}) {
 				basename = path.basename(url);
 
 			if (!glob.hasMagic(basename)) {
-				ends.push(basename);
+				ends.push(`${basename}.ss`);
 			}
 
 			ends.push('main.ss', 'index.ss');
-
-		} else {
-			ends.push('');
 		}
 
 		const urls = [
@@ -116,9 +114,9 @@ module.exports = function ({blocks, coreClient}) {
 		for (let i = 0; i < urls.length; i++) {
 			for (let j = 0; j < ends.length; j++) {
 				const
-					fullPath = path.join(urls[i], url, ends[j]);
+					fullPath = path.join(urls[i], url, ends[j] || '');
 
-				if (glob.sync(fullPath)) {
+				if (hasMagic ? glob.sync(fullPath).length : fs.existsSync(fullPath)) {
 					return fullPath;
 				}
 			}
