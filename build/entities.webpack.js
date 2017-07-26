@@ -94,9 +94,9 @@ module.exports = function ({entries, blocks, lib, coreClient, output, cache, ass
 	////////////////////////////////////
 
 	const
-		b = validators.blockTypeList.join('|'),
+		b = `@(${validators.blockTypeList.join('|')})-*`,
 		components = `/**/${b}/index.js`,
-		virtualComponents = `/**/${b}/${b}.index.js`;
+		virtualComponents = `/**/${b}.index.js`;
 
 	const files = [].concat(
 		glob.sync(path.join(coreClient, components)),
