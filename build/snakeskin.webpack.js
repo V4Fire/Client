@@ -97,7 +97,7 @@ module.exports = function ({blocks, coreClient}) {
 			const
 				basename = path.basename(url);
 
-			if (glob.hasMagic(basename)) {
+			if (!glob.hasMagic(basename)) {
 				ends.push(basename);
 			}
 
