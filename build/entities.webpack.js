@@ -13,7 +13,8 @@ const
 
 const
 	{String, Array} = require('sugar'),
-	{args} = require('./helpers.webpack');
+	{args} = require('./helpers.webpack'),
+	{validators} = require('@pzlr/build-core');
 
 const
 	fs = require('fs'),
@@ -93,11 +94,15 @@ module.exports = function ({entries, blocks, lib, coreClient, output, cache, ass
 	////////////////////////////////////
 
 	const
-		components = '!(core|config|models|lang|libs|entries)/**/@(index|*.index).js';
+		b = validators.blockTypeList.join('|'),
+		components = `/**/${b}/index.js`,
+		virtualComponents = `/**/${b}/${b}.index.js`;
 
 	const files = [].concat(
 		glob.sync(path.join(coreClient, components)),
-		glob.sync(path.join(blocks, components))
+		glob.sync(path.join(coreClient, virtualComponents)),
+		glob.sync(path.join(blocks, components)),
+		glob.sync(path.join(blocks, virtualComponents))
 	);
 
 	const blockMap = $C(files).reduce((map, el) => {

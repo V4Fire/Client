@@ -32,7 +32,7 @@ const
 module.exports = function ({blocks, coreClient}) {
 	const
 		blocksTree = {},
-		components = '/**/@(i|b|p|g|v)-*.js';
+		components = `/**/@(${validators.blockTypeList.join('|')})-*.js`;
 
 	const files = [].concat(
 		glob.sync(path.join(coreClient, components)),
