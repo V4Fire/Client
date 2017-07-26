@@ -90,10 +90,21 @@ module.exports = function ({blocks, coreClient}) {
 
 	function b(url, cwd) {
 		const
-			end = /\.e?ss$/.test(url) ? '' : '/';
+			end = /\.e?ss$/.test(url) ? '' : '/',
+			ends = [];
 
-		if (/^[./]/.test(url)) {
-			return path.resolve(blocks, url) + end;
+		if (end) {
+			const
+				basename = path.basename(url);
+
+			if (glob.hasMagic(basename)) {
+				ends.push(basename);
+			}
+
+			ends.push('main.ss', 'index.ss');
+
+		} else {
+			ends.push('');
 		}
 
 		const urls = [
@@ -102,26 +113,12 @@ module.exports = function ({blocks, coreClient}) {
 			coreClient
 		];
 
-		const
-			ends = [];
-
-		if (end) {
-			ends.push(
-				`${path.basename(url)}.ss`,
-				'main.ss',
-				'index.ss'
-			);
-
-		} else {
-			ends.push('');
-		}
-
 		for (let i = 0; i < urls.length; i++) {
 			for (let j = 0; j < ends.length; j++) {
 				const
 					fullPath = path.join(urls[i], url, ends[j]);
 
-				if (fs.existsSync(fullPath)) {
+				if (glob.sync(fullPath)) {
 					return fullPath;
 				}
 			}
