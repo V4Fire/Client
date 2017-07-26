@@ -35,15 +35,11 @@ const fn = module.exports = function (str, file) {
 		return str.replace(/\\/g, '/');
 	}
 
-	let
-		blocks,
-		localBlocks;
-
+	let blocks;
 	return c[str] = str
 		.replace(/@import "([^./~].*?\.styl)"/g, (str, url) => {
 			const urls = [
 				fn.blocks,
-				localBlocks || (localBlocks = findUp.sync('src/blocks', {cwd})),
 				blocks || (blocks = findUp.sync('src', {cwd})),
 				fn.coreClient
 			];

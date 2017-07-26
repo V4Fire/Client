@@ -98,17 +98,32 @@ module.exports = function ({blocks, coreClient}) {
 
 		const urls = [
 			blocks,
-			findUp.sync('src/blocks', {cwd}),
 			findUp.sync('src', {cwd}),
 			coreClient
 		];
 
-		for (let i = 0; i < urls.length; i++) {
-			const
-				fullPath = path.join(urls[i], url) + end;
+		const
+			ends = [];
 
-			if (fs.existsSync(fullPath)) {
-				return fullPath;
+		if (end) {
+			ends.push(
+				`${path.basename(url)}.ss`,
+				'main.ss',
+				'index.ss'
+			);
+
+		} else {
+			ends.push('');
+		}
+
+		for (let i = 0; i < urls.length; i++) {
+			for (let j = 0; j < ends.length; j++) {
+				const
+					fullPath = path.join(urls[i], url, ends[j]);
+
+				if (fs.existsSync(fullPath)) {
+					return fullPath;
+				}
 			}
 		}
 
