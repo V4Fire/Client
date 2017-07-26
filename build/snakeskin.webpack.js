@@ -88,6 +88,10 @@ module.exports = function ({blocks, coreClient}) {
 		b: ss.setFilterParams(b, {bind: ['__dirname']})
 	});
 
+	const
+		exists = {},
+		root = {};
+
 	function b(url, cwd) {
 		const
 			hasMagic = glob.hasMagic(url),
@@ -102,12 +106,14 @@ module.exports = function ({blocks, coreClient}) {
 				ends.push(`${basename}.ss`);
 			}
 
-			ends.push('main.ss', 'index.ss');
+			if (!validators.blockName(basename)) {
+				ends.push('main.ss', 'index.ss');
+			}
 		}
 
 		const urls = [
 			blocks,
-			findUp.sync('src', {cwd}),
+			root[cwd] || (root[cwd] = findUp.sync('src', {cwd})),
 			coreClient
 		];
 
@@ -116,7 +122,11 @@ module.exports = function ({blocks, coreClient}) {
 				const
 					fullPath = path.join(urls[i], url, ends[j] || '');
 
-				if (hasMagic ? glob.sync(fullPath).length : fs.existsSync(fullPath)) {
+				if (fullPath in exists === false) {
+					exists[fullPath] = hasMagic ? Boolean(glob.sync(fullPath).length) : fs.existsSync(fullPath);
+				}
+
+				if (exists[fullPath]) {
 					return fullPath;
 				}
 			}
