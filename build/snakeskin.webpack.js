@@ -98,6 +98,7 @@ module.exports = function ({blocks, coreClient}) {
 
 		const urls = [
 			blocks,
+			findUp.sync('src/blocks', {cwd}),
 			findUp.sync('src', {cwd}),
 			coreClient
 		];

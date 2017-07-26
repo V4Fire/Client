@@ -12,6 +12,7 @@ require('@v4fire/core/build/i18n');
 
 const
 	$C = require('collection.js'),
+	fs = require('fs'),
 	path = require('path'),
 	config = require('config');
 
@@ -30,8 +31,14 @@ const
 	output = './dist/packages/[hash]_[name]',
 	assetsJSON = `./dist/packages/${VERSION}assets.json`;
 
+let
+	blocks = d('src/blocks');
+
+if (!fs.existsSync()) {
+	blocks = d('src');
+}
+
 const
-	blocks = d('src'),
 	entries = d('src/entries'),
 	lib = d('node_modules'),
 	coreClient = path.join(lib, '@v4Fire/client/src');
