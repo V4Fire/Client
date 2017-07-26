@@ -69,7 +69,7 @@ config.favicons = {
 
 config.monic = {
 	styl: {
-
+		flags: '+:*'
 	}
 };
 
