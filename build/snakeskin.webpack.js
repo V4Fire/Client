@@ -109,6 +109,9 @@ module.exports = function ({blocks, coreClient}) {
 			if (!validators.blockName(basename)) {
 				ends.push('main.ss', 'index.ss');
 			}
+
+		} else {
+			ends.push('');
 		}
 
 		const urls = [
