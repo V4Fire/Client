@@ -182,12 +182,12 @@ function buildFactory(entry, i = '00') {
 
 							{
 								loader: 'monic',
-								options: {
+								options: $C.extend({deep: true, concatArray: true}, {}, config.monic.styl, {
 									replacers: [
 										Object.assign(require('./build/stylus-import.replacer'), {blocks, lib, coreClient}),
 										require('@pzlr/stylus-inheritance')
 									]
-								}
+								})
 							}
 						)
 					})

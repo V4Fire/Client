@@ -57,6 +57,22 @@ config.snakeskin = {
 	})
 };
 
+config.favicons = {
+	appName: config.appName,
+	background: '#3D7D73',
+	path: '../../assets/favicons/',
+	display: 'standalone',
+	orientation: 'portrait',
+	version: 1.0,
+	logging: false
+};
+
+config.monic = {
+	styl: {
+
+	}
+};
+
 config.babel = {
 	base: $C.extend(
 		{

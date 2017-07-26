@@ -8,8 +8,9 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-module.exports = function (gulp = require('gulp'), params) {
+module.exports = function (gulp = require('gulp')) {
 	const
+		config = require('config'),
 		plumber = require('gulp-plumber');
 
 	gulp.task('favicons', (cb) => {
@@ -20,19 +21,12 @@ module.exports = function (gulp = require('gulp'), params) {
 
 		/* eslint-disable camelcase */
 
-		const faviconsParams = Object.assign({
-			appName: 'V4Fire',
+		const faviconsParams = Object.assign({}, config.favicons, {
 			start_url: '.',
-			background: '#3D7D73',
-			path: '../../assets/favicons/',
-			display: 'standalone',
-			orientation: 'portrait',
-			version: 1.0,
-			logging: false,
 			html: 'favicons.html',
 			pipeHTML: true,
 			replace: true
-		}, params && params.favicons);
+		});
 
 		/* eslint-enable camelcase */
 

@@ -23,6 +23,7 @@ import './modules/vue.directives';
 const
 	$C = require('collection.js'),
 	EventEmitter2 = require('eventemitter2'),
+	config = require('config'),
 	localforage = require('localforage'),
 	uuid = require('uuid');
 
@@ -341,8 +342,8 @@ export default class iBlock extends BlockConstructor {
 	 * Environment value
 	 */
 	get currentEnv(): string {
-		const {admin} = CONFIG.host;
-		return admin.indexOf('staging') !== -1 || CONFIG.env === 'standalone' ? 'staging' : 'production';
+		const {admin} = config.host;
+		return admin.indexOf('staging') !== -1 || config.env === 'standalone' ? 'staging' : 'production';
 	}
 
 	/**

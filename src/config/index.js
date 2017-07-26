@@ -8,4 +8,4 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-module.exports = require(`@v4fire/core/src/config`);
+module.exports = Object.assign({}, require(`@v4fire/core/src/config`), CONFIG);
