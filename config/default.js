@@ -34,7 +34,9 @@ const config = module.exports = $C.extend(true, {}, defConfig, {
 		'localforage': 'localforage',
 		'urijs': 'URI',
 		'sugar': 'Sugar',
-		'vue': 'Vue'
+		'vue': 'Vue',
+		'chart.js': 'Chart',
+		'ion-sound': 'ion'
 	}
 });
 
