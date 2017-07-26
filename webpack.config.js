@@ -34,7 +34,7 @@ const
 let
 	blocks = d('src/blocks');
 
-if (!fs.existsSync()) {
+if (!fs.existsSync(blocks)) {
 	blocks = d('src');
 }
 
