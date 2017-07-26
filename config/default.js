@@ -39,22 +39,22 @@ const config = module.exports = $C.extend(true, {}, defConfig, {
 		'ion-sound': 'ion'
 	},
 
-	favicons: {
-		appName: config.appName,
-		background: '#3D7D73',
-		path: '../../assets/favicons/',
-		display: 'standalone',
-		orientation: 'portrait',
-		version: 1.0,
-		logging: false
-	},
-
 	monic: {
 		styl: {
 			flags: '+:*'
 		}
 	}
 });
+
+config.favicons = {
+	appName: config.appName,
+	background: '#3D7D73',
+	path: '../../assets/favicons/',
+	display: 'standalone',
+	orientation: 'portrait',
+	version: 1.0,
+	logging: false
+};
 
 config.snakeskin = {
 	client: Object.assign({}, defConfig.snakeskin, {
