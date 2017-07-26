@@ -9,7 +9,7 @@
  */
 
 import VueInterface from './vue';
-import { staticComponents } from 'core/component';
+import { staticComponents, getPublicComponentName } from 'core/component';
 import { mixins } from './decorators';
 import './vue.directives';
 
@@ -71,8 +71,13 @@ export default class BlockConstructor extends VueInterface {
 		parent?: string
 	}) {
 		super(...arguments);
+
+		const
+			publicName = getPublicComponentName(name);
+
 		const component = {
 			props,
+			publicName,
 			selfName: name,
 			...opts
 		};
@@ -82,6 +87,11 @@ export default class BlockConstructor extends VueInterface {
 			component.props.componentName = {
 				type: String,
 				default: name
+			};
+
+			component.props.selfComponentName = {
+				type: String,
+				default: publicName
 			};
 
 			return component;
@@ -104,7 +114,8 @@ export default class BlockConstructor extends VueInterface {
 			// Predefine base properties
 			beforeCreate() {
 				this.instance = ctx;
-				this.componentName = name;
+				this.componentName = publicName;
+				this.selfComponentName = publicName;
 				this.component = component;
 				this.parentComponent = component.parentComponent;
 				beforeCreate && beforeCreate.call(this);

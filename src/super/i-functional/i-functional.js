@@ -53,10 +53,16 @@ const
 @component({functional: true})
 export default class iFunctional extends BlockConstructor {
 	/**
-	 * Component name
+	 * Public component name
 	 */
 	@abstract
 	componentName: string;
+
+	/**
+	 * Unique component name
+	 */
+	@abstract
+	selfComponentName: string;
 
 	/**
 	 * Name of the component template

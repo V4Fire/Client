@@ -103,7 +103,7 @@ export default class Block {
 	 * Returns the current block name
 	 */
 	get blockName(): string {
-		return $C(this).get('model.componentName') || this.constructor.name.dasherize();
+		return $C(this).get('model.publicComponentName') || this.constructor.name.dasherize();
 	}
 
 	/**

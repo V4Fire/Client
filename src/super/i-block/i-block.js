@@ -85,10 +85,16 @@ export default class iBlock extends BlockConstructor {
 	instance: this;
 
 	/**
-	 * Alias for $options.selfName
+	 * Alias for $options.publicName
 	 */
 	@abstract
 	componentName: string;
+
+	/**
+	 * Alias for $options.selfName
+	 */
+	@abstract
+	selfComponentName: string;
 
 	/**
 	 * Alias for $options.component
@@ -1247,7 +1253,7 @@ export default class iBlock extends BlockConstructor {
 				watcher();
 
 			} else {
-				watchers[this.componentName] = (watchers[this.componentName] || []).concat(watcher);
+				watchers[this.selfComponentName] = (watchers[this.selfComponentName] || []).concat(watcher);
 			}
 		};
 
@@ -1365,13 +1371,13 @@ export default class iBlock extends BlockConstructor {
 		this.localEvent.emit('component.created');
 
 		let
-			methods = methodsCache[this.componentName];
+			methods = methodsCache[this.selfComponentName];
 
 		if (!methods) {
-			methods = methodsCache[this.componentName] = {};
+			methods = methodsCache[this.selfComponentName] = {};
 
 			const
-				obj = staticComponents[this.componentName].methods;
+				obj = staticComponents[this.selfComponentName].methods;
 
 			/* eslint-disable guard-for-in */
 

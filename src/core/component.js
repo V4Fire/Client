@@ -11,7 +11,8 @@
 import * as defTpls from 'core/block.ss';
 
 const
-	Vue = require('vue');
+	Vue = require('vue'),
+	uuid = require('uuid');
 
 Vue.config.errorHandler = (err, vm) => {
 	console.error(err, vm);
@@ -25,7 +26,8 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 const
-	EventEmitter2 = require('eventemitter2').EventEmitter2;
+	EventEmitter2 = require('eventemitter2').EventEmitter2,
+	componentName = Symbol('componentName');
 
 export const
 	rootComponents = {},
@@ -40,7 +42,15 @@ export const
  * @param constr
  */
 export function getComponentName(constr: Function): string {
-	return (constr.name || '').dasherize();
+	return constr[componentName] = constr[componentName] || `${constr.name}__${uuid()}`.dasherize();
+}
+
+/**
+ * Returns a public component name from the specified
+ * @param name
+ */
+export function getPublicComponentName(name: string): string {
+	return name.replace(/--.*/, '');
 }
 
 /**
@@ -102,6 +112,7 @@ export function component(
 
 		const
 			name = getComponentName(target),
+			publicName = getPublicComponentName(name),
 			parent = getComponentName(Object.getPrototypeOf(target));
 
 		const p = {
@@ -211,13 +222,13 @@ export function component(
 
 		function loader(resolve) {
 			const success = () => {
-				if (localComponents[name]) {
-					comp.components = Object.assign(comp.components || {}, localComponents[name]);
+				if (localComponents[publicName]) {
+					comp.components = Object.assign(comp.components || {}, localComponents[publicName]);
 					clone.components = {...comp.components};
 				}
 
 				resolve(comp);
-				ModuleDependencies.event.emit(`component.${name}`, {comp, name});
+				ModuleDependencies.event.emit(`component.${name}`, {comp, name, publicName});
 			};
 
 			const addRenderAndResolve = (tpls) => {
@@ -248,10 +259,11 @@ export function component(
 		if (comp.with) {
 			const l = comp.with.dasherize();
 			localComponents[l] = localComponents[l] || {};
-			localComponents[l][name] = () => new Promise(loader);
+			localComponents[l][publicName] = () => new Promise(loader);
 
 		} else {
 			Vue.component(name, loader);
+			Vue.component(publicName, loader);
 		}
 
 		return target;
