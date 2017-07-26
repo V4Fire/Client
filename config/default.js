@@ -16,12 +16,7 @@ const {env} = process;
 function getENVs(s = (s) => s) {
 	return {
 		env: s(env.NODE_ENV),
-		service: s(env.SERVICE_NAME),
-		host: {
-			guest: s(env.GUEST_HOST),
-			api: s(env.API_HOST),
-			admin: s(env.ADMIN_HOST)
-		}
+		service: s(env.SERVICE_NAME)
 	};
 }
 
