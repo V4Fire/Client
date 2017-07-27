@@ -1231,10 +1231,13 @@ export default class Async {
 			return labelCache;
 		}
 
+		const
+			ctx = this.context;
+
 		let
 			id,
 			finalObj,
-			wrappedObj = id = finalObj = needCall && Object.isFunction(obj) ? obj.call(this.context || this) : obj;
+			wrappedObj = id = finalObj = needCall && Object.isFunction(obj) ? obj.call(ctx || this) : obj;
 
 		if (!interval || Object.isFunction(wrappedObj)) {
 			wrappedObj = function () {
@@ -1245,7 +1248,7 @@ export default class Async {
 
 				const
 					link = links.get(id),
-					ctx = this && this.context || this;
+					ctx = ctx || this;
 
 				if (!link) {
 					return;
