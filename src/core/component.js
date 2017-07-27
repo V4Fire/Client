@@ -65,7 +65,7 @@ export function getPublicComponentName(name: string): string {
  */
 export function rootComponent(target) {
 	const lastBlock = getComponentName(target);
-	rootComponents[lastBlock] = target;
+	rootComponents[getPublicComponentName(lastBlock)] = target;
 	props[lastBlock] = props[lastBlock] || {};
 	initEvent.emit('component', lastBlock);
 }
@@ -205,8 +205,8 @@ export function component(
 			}
 		}
 
-		staticComponents[name] = comp.component = clone;
-		components[name] = comp;
+		staticComponents[name] = staticComponents[publicName] = comp.component = clone;
+		components[name] = components[publicName] = comp;
 
 		if (parentComp) {
 			const
