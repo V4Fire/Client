@@ -86,12 +86,12 @@ export default class BlockConstructor extends VueInterface {
 			component.render = this.render;
 			component.props.componentName = {
 				type: String,
-				default: name
+				default: publicName
 			};
 
 			component.props.selfComponentName = {
 				type: String,
-				default: publicName
+				default: name
 			};
 
 			return component;
@@ -115,7 +115,7 @@ export default class BlockConstructor extends VueInterface {
 			beforeCreate() {
 				this.instance = ctx;
 				this.componentName = publicName;
-				this.selfComponentName = publicName;
+				this.selfComponentName = name;
 				this.component = component;
 				this.parentComponent = component.parentComponent;
 				beforeCreate && beforeCreate.call(this);
