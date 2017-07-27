@@ -27,7 +27,7 @@ if (process.env.NODE_ENV === 'production') {
 
 const
 	EventEmitter2 = require('eventemitter2').EventEmitter2,
-	componentName = Symbol('componentName');
+	componentNames = new WeakMap();
 
 export const
 	rootComponents = {},
@@ -42,7 +42,13 @@ export const
  * @param constr
  */
 export function getComponentName(constr: Function): string {
-	return constr[componentName] = constr[componentName] || `${constr.name}__${uuid()}`.dasherize();
+	if (componentNames.has(constr)) {
+		return componentNames.get(constr);
+	}
+
+	const name = `${constr.name}__${uuid()}`.dasherize();
+	componentNames.set(constr, name);
+	return name;
 }
 
 /**
