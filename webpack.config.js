@@ -152,8 +152,19 @@ function buildFactory(entry, i = '00') {
 							options: config.babel.base
 						},
 
-						'prop',
-						'proxy'
+						{
+							loader: 'prop',
+							options: {
+								modules: [blocks, coreClient]
+							}
+						},
+
+						{
+							loader: 'proxy',
+							options: {
+								modules: [blocks, coreClient]
+							}
+						}
 					]
 				},
 

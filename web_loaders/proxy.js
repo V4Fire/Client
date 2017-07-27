@@ -9,6 +9,7 @@
  */
 
 const
+	$C = require('collection.js'),
 	isPathInside = require('is-path-inside');
 
 /**
@@ -16,7 +17,7 @@ const
  * @param {string} str
  */
 module.exports = function (str) {
-	if (!isPathInside(this.context, './src')) {
+	if (!$C(this.query.modules).some((src) => isPathInside(this.context, src))) {
 		return str;
 	}
 

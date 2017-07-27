@@ -9,6 +9,7 @@
  */
 
 const
+	$C = require('collection.js'),
 	isPathInside = require('is-path-inside'),
 	path = require('path'),
 	prop = require('@v4fire/core/build/prop');
@@ -18,7 +19,10 @@ const
  * @param {string} str
  */
 module.exports = function (str) {
-	if (!isPathInside(this.context, './src') || /^g-/.test(path.basename(this.context))) {
+	const
+		ctx = this.context;
+
+	if (!$C(this.query.modules).some((src) => isPathInside(ctx, src)) || /^g-/.test(path.basename(ctx))) {
 		return str;
 	}
 
