@@ -41,7 +41,9 @@ const config = module.exports = $C.extend(true, {}, defConfig, {
 
 	monic: {
 		styl: {
-			flags: '+:*'
+			flags: {
+				'+:*': true
+			}
 		}
 	}
 });
