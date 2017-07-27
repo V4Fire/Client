@@ -107,7 +107,7 @@ module.exports = function ({entries, blocks, lib, coreClient, output, cache, ass
 
 	const blockMap = $C(files).reduce((map, el) => {
 		const
-			decl = pzlr.declaration.parse(fs.readFileSync(el)),
+			decl = pzlr.declaration.parse(fs.readFileSync(el)).toJSON(),
 			nm = decl.name,
 			base = map[nm];
 
