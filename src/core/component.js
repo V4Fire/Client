@@ -98,7 +98,7 @@ export function prop(type: any, required: boolean) {
 }
 
 const
-	isAbstract = /^i-/;
+	isAbstract = /^[iv]-/;
 
 /**
  * Creates new Vue.js component
@@ -234,7 +234,7 @@ export function component(
 				}
 
 				resolve(comp);
-				ModuleDependencies.event.emit(`component.${name}`, {comp, name, publicName});
+				ModuleDependencies.event.emit(`component.${publicName}`, {comp, name: publicName});
 			};
 
 			const addRenderAndResolve = (tpls) => {
@@ -250,8 +250,8 @@ export function component(
 
 			} else {
 				const f = () => {
-					if (TPLS[name]) {
-						addRenderAndResolve(TPLS[name]);
+					if (TPLS[publicName]) {
+						addRenderAndResolve(TPLS[publicName]);
 
 					} else {
 						setImmediate(f);
@@ -268,7 +268,6 @@ export function component(
 			localComponents[l][publicName] = () => new Promise(loader);
 
 		} else {
-			Vue.component(name, loader);
 			Vue.component(publicName, loader);
 		}
 
