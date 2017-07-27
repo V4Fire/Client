@@ -139,13 +139,11 @@ module.exports = function ({entries, blocks, lib, coreClient, output, cache, ass
 		}
 
 		if (decl.mixin) {
-			decl.style = [].concat(base.style);
-
 			if (fs.existsSync(style)) {
-				decl.style.push(style);
+				decl.style = style;
 
 			} else {
-				decl.style = decl.style.concat(glob.sync(path.join(cwd, `${nm}_*.styl`)));
+				decl.style = [].concat(base.style || []).concat(glob.sync(path.join(cwd, `${nm}_*.styl`)));
 			}
 
 		} else if (fs.existsSync(style)) {
