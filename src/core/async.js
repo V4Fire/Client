@@ -1245,7 +1245,7 @@ export default class Async {
 
 				const
 					link = links.get(id),
-					ctx = this.context || this;
+					ctx = this && this.context || this;
 
 				if (!link) {
 					return;
