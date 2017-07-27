@@ -22,7 +22,7 @@ module.exports = function (str) {
 	const
 		ctx = this.context;
 
-	if (!$C(this.query.modules).some((src) => isPathInside(ctx, src)) || /^g-/.test(path.basename(ctx))) {
+	if (!$C(this.query.modules).some((src) => isPathInside(ctx, src)) || /^[gv]-/.test(path.basename(ctx))) {
 		return str;
 	}
 
