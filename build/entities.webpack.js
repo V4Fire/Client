@@ -522,7 +522,7 @@ module.exports = function ({entries, blocks, lib, coreClient, output, cache, ass
 			htmlTaskName = `${name}_view`,
 			htmlFile = path.join(tmpEntries, `${htmlTaskName}.html.js`);
 
-		fs.writeFileSync(htmlFile, $C(list).reduce((str, name) => {
+		fs.writeFileSync(htmlFile, $C(list).reduce((str, {name}) => {
 			const
 				block = blockMap[name];
 

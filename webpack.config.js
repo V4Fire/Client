@@ -238,7 +238,7 @@ function buildFactory(entry, i = '00') {
 							loader: 'snakeskin',
 							options: Object.assign({}, config.snakeskin.server, {
 								exec: true,
-								data: JSON.stringify({
+								data: {
 									root: cwd,
 									version: VERSION,
 									hashLength: HASH_LENGTH,
@@ -246,7 +246,7 @@ function buildFactory(entry, i = '00') {
 									packages: d('dist/packages'),
 									assets: d('assets'),
 									lib
-								})
+								}
 							})
 						}
 					]
