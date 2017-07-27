@@ -12,9 +12,9 @@ import iFunctional from 'super/i-functional/i-functional';
 import { component } from 'core/component';
 
 const icons = require.context(
-	'!!svg-sprite!replace?flags=g&regex=#\\w{6}&sub=currentColor!assets/svg',
+	'!!svg-sprite?esModule=false!replace?flags=g&regex=#\\w{6}&sub=currentColor!assets/svg',
 	false,
-	/^\.\/.*\.svg$/
+	/\.svg$/
 );
 
 const
@@ -66,7 +66,7 @@ export default class bIcon extends iFunctional {
 				el('use', {
 					class: [`${b}__link`],
 					attrs: {
-						'xlink:href': location.pathname + location.search + icons(icon)
+						'xlink:href': `${location.pathname + location.search}#${icons(icon).id}`
 					}
 				})
 			])
