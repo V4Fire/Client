@@ -143,7 +143,7 @@ module.exports = function ({entries, blocks, lib, coreClient, output, cache, ass
 				decl.style = style;
 
 			} else {
-				decl.style = [].concat(base.style || []).concat(glob.sync(path.join(cwd, `${nm}_*.styl`)));
+				decl.style = [].concat(base.style || [], glob.sync(path.join(cwd, `${nm}_*.styl`)));
 			}
 
 		} else if (fs.existsSync(style)) {
