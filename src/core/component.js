@@ -8,6 +8,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import config from 'config';
 import * as defTpls from 'core/block.ss';
 
 const
@@ -19,10 +20,12 @@ Vue.config.errorHandler = (err, vm) => {
 };
 
 if (process.env.NODE_ENV === 'production') {
-	require('raven-js')
-		.config(require('config').sentry.url)
-		.addPlugin(require('raven-js/plugins/vue'), Vue)
-		.install();
+	if (config.sentry) {
+		require('raven-js')
+			.config(config.sentry.url)
+			.addPlugin(require('raven-js/plugins/vue'), Vue)
+			.install();
+	}
 }
 
 const

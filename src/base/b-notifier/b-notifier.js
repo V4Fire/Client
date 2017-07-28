@@ -8,13 +8,13 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import config from 'config';
 import Store from 'core/store';
 import iData from 'super/i-data/i-data';
 import { component } from 'core/component';
 
 const
 	$C = require('collection.js'),
-	config = require('config'),
 	ion = require('ion-sound');
 
 ion.sound({

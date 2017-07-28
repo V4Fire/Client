@@ -8,4 +8,5 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-module.exports = Object.assign({}, require('@v4fire/core/src/config'), CONFIG);
+import baseConfig from '@v4fire/core/src/config';
+export default Object.assign({}, baseConfig, CONFIG);

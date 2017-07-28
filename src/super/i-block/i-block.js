@@ -8,6 +8,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import config from 'config';
 import Async from 'core/async';
 import Store from 'core/store';
 import Block, { statuses } from 'core/block';
@@ -23,7 +24,6 @@ import './modules/vue.directives';
 const
 	$C = require('collection.js'),
 	EventEmitter2 = require('eventemitter2'),
-	config = require('config'),
 	localforage = require('localforage'),
 	uuid = require('uuid');
 
