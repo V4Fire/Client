@@ -14,6 +14,7 @@ import { component } from 'core/component';
 
 const
 	$C = require('collection.js'),
+	config = require('config'),
 	ion = require('ion-sound');
 
 ion.sound({
@@ -37,7 +38,7 @@ export default class bNotifier extends iData {
 	/**
 	 * Default project title
 	 */
-	title: string = 'V4Fire';
+	title: string = config.appName;
 
 	/**
 	 * Notify rules

@@ -16,7 +16,8 @@ const {env} = process;
 function getENVs(s = (s) => s) {
 	return {
 		env: s(env.NODE_ENV),
-		service: s(env.SERVICE_NAME)
+		service: s(env.SERVICE_NAME),
+		appName: s(env.APP_NAME)
 	};
 }
 

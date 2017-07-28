@@ -17,7 +17,7 @@ const
 	config = require('config');
 
 const
-	{d, hash, args, cwd, isProdEnv, VERSION, HASH_LENGTH} = require('./build/helpers.webpack'),
+	{d, hash, args, cwd, isProdEnv, version, hashLength} = require('./build/helpers.webpack'),
 	{env} = process;
 
 const
@@ -29,7 +29,7 @@ const
 
 const
 	output = './dist/packages/[hash]_[name]',
-	assetsJSON = `./dist/packages/${VERSION}assets.json`;
+	assetsJSON = `./dist/packages/${version}assets.json`;
 
 let
 	blocks = d('src/blocks');
@@ -240,8 +240,8 @@ function buildFactory(entry, i = '00') {
 								exec: true,
 								data: {
 									root: cwd,
-									version: VERSION,
-									hashLength: HASH_LENGTH,
+									version,
+									hashLength,
 									dependencies: build.dependencies,
 									packages: d('dist/packages'),
 									assets: d('assets'),
