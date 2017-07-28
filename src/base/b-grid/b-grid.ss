@@ -67,7 +67,6 @@
 						:dispatching = true |
 						:count = Math.ceil(db.total / perPage) |
 						:current = pageIndex |
-						@actionChange = onPageChange |
 						${props}
 					.
 

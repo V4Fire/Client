@@ -62,12 +62,10 @@ export default class iDataPages extends iDataList {
 
 	/**
 	 * Loads a data page for the source request
-	 *
-	 * @param pageNumber
 	 * @emits loadNewPage(data: Object)
 	 */
 	@wait('ready', {label: $$.loadPage, defer: true})
-	async loadPage(pageNumber: number) {
+	async loadPage() {
 		this.setMod('loading', true);
 
 		const
@@ -92,10 +90,7 @@ export default class iDataPages extends iDataList {
 		let
 			pageIndex = this.pageIndex + 1;
 
-		if (pageNumber) {
-			pageIndex = pageNumber;
-
-		} else if (this.pageIndex !== 1) {
+		if (this.pageIndex !== 1) {
 			pageIndex = ($C(p[0]).get('page') || 0) + pageIndex;
 		}
 
@@ -109,9 +104,7 @@ export default class iDataPages extends iDataList {
 			this.url(this.initAdvPath);
 		}
 
-		if (this.lazyLoad) {
-			this._pageLoaded[pageIndex] = true;
-		}
+		this._pageLoaded[pageIndex] = true;
 
 		const
 			res = (await this.get(...p)).responseData;
@@ -123,12 +116,7 @@ export default class iDataPages extends iDataList {
 					const
 						data = res.data;
 
-					if (!this.lazyLoad) {
-						db.data = [];
-
-					} else {
-						this._pageLoaded[pageIndex] = true;
-					}
+					this._pageLoaded[pageIndex] = true;
 
 					for (let i = 0; i < data.length; i++) {
 						db.data.push(this.getObservableChunk(data[i]));
@@ -156,16 +144,6 @@ export default class iDataPages extends iDataList {
 				fn: this.loadPage
 			}, 0.3.second());
 		}
-	}
-
-	/**
-	 * Handler: page change
-	 *
-	 * @param el
-	 * @param value
-	 */
-	async onPageChange(el: bPaging, value: number) {
-		await this.loadPage(value);
 	}
 
 	/** @inheritDoc */

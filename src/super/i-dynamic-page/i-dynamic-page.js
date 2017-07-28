@@ -48,7 +48,11 @@ export default class iDynamicPage extends iData {
 	 */
 	setHash(obj: Object): string | false {
 		obj = this.convertStateToHash(obj);
-		$C(obj).forEach((el, key) => this[key] = el);
+		$C(obj).forEach((el, key) => {
+			if (el) {
+				this[key] = el;
+			}
+		});
 
 		if (!this.blockActivated) {
 			return false;
@@ -97,12 +101,9 @@ export default class iDynamicPage extends iData {
 		}
 
 		Object.assign(tmp.hash, obj);
-
-		try {
-			await this.async.sleep(0.22.second(), {label: $$.accumulateHash});
-			this.setHash(tmp.hash);
-			tmp.hash = {};
-		} catch (_) {}
+		await this.async.sleep(0.22.second(), {label: $$.accumulateHash});
+		this.setHash(tmp.hash);
+		tmp.hash = {};
 	}
 
 	/* eslint-disable no-unused-vars */
