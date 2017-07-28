@@ -12,20 +12,10 @@ const
 	$C = require('collection.js'),
 	defConfig = require('@v4fire/core/config/default');
 
-const {env} = process;
-function getENVs(s = (s) => s) {
-	return {
-		env: s(env.NODE_ENV),
-		service: s(env.SERVICE_NAME),
-		appName: s(env.APP_NAME)
-	};
-}
-
 const config = module.exports = $C.extend(true, {}, defConfig, {
-	envs: getENVs(),
 	globals: {
 		'process.env': {
-			NODE_ENV: JSON.stringify(env.NODE_ENV)
+			NODE_ENV: JSON.stringify(process.env.NODE_ENV)
 		}
 	},
 
@@ -61,16 +51,13 @@ config.favicons = {
 
 config.snakeskin = {
 	client: Object.assign({}, defConfig.snakeskin, {
-		vars: getENVs(),
 		adapter: 'ss2vue',
 		tagFilter: 'vueComp',
 		tagNameFilter: 'vueTag',
 		bemFilter: 'bem2vue'
 	}),
 
-	server: Object.assign({}, defConfig.snakeskin, {
-		vars: getENVs()
-	})
+	server: Object.assign({}, defConfig.snakeskin)
 };
 
 config.babel = {
