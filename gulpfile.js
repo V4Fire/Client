@@ -35,7 +35,6 @@ module.exports = function (gulp = require('gulp')) {
 
 	gulp.task('watch', ['watchClient']);
 	gulp.task('default', ['head', 'cleanClient', 'client']);
-	gulp.task('prod', ['setProd', 'default']);
 };
 
 module.exports();
