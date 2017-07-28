@@ -50,14 +50,14 @@ config.favicons = {
 };
 
 config.snakeskin = {
-	client: Object.assign({}, defConfig.snakeskin, {
+	client: $C.extend(true, {}, defConfig.snakeskin, {
 		adapter: 'ss2vue',
 		tagFilter: 'vueComp',
 		tagNameFilter: 'vueTag',
 		bemFilter: 'bem2vue'
 	}),
 
-	server: Object.assign({}, defConfig.snakeskin)
+	server: $C.extend(true, {}, defConfig.snakeskin)
 };
 
 config.babel = {
