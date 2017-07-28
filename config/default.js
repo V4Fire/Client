@@ -10,9 +10,14 @@
 
 const
 	$C = require('collection.js'),
+	path = require('path'),
 	defConfig = require('@v4fire/core/config/default');
 
 const config = module.exports = $C.extend(true, {}, defConfig, {
+	clientSrc: [
+		path.join(__dirname, '../src')
+	],
+
 	globals: {
 		'process.env': {
 			NODE_ENV: JSON.stringify(process.env.NODE_ENV)
