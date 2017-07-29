@@ -13,7 +13,7 @@ const
 	path = require('path'),
 	defConfig = require('@v4fire/core/config/default');
 
-const config = module.exports = $C.extend(defConfig.extend, {}, defConfig, {
+const config = module.exports = $C.extend(defConfig.extend, Object.create(defConfig), {
 	src: {
 		client: [path.join(__dirname, '../src')]
 	},
