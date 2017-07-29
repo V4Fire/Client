@@ -32,9 +32,6 @@ module.exports = function (gulp = require('gulp')) {
 		const run = require('gulp-run');
 		run(`${runWebpack} --watch -- ${args}`, {verbosity: 3}).exec();
 	});
-
-	gulp.task('watch', ['watchClient']);
-	gulp.task('default', ['head', 'cleanClient', 'client']);
 };
 
 module.exports();
