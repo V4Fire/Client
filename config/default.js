@@ -66,7 +66,7 @@ config.snakeskin = {
 };
 
 config.babel = {
-	base: $C.extend(
+	client: $C.extend(
 		{
 			deep: true,
 			concatArray: true
@@ -98,7 +98,7 @@ config.babel = {
 		}
 	),
 
-	get withRuntime() {
+	get clientWithRuntime() {
 		const
 			config = $C.extend(true, {}, this.base),
 			pl = config.plugins,

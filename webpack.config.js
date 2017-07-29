@@ -149,7 +149,7 @@ function buildFactory(entry, i = '00') {
 					use: [
 						{
 							loader: 'babel',
-							options: config.babel.base
+							options: config.babel.client
 						},
 
 						{
