@@ -98,9 +98,9 @@ config.babel = {
 		}
 	),
 
-	get clientWithRuntime() {
+	clientWithRuntime() {
 		const
-			config = $C.extend(true, {}, this.base),
+			config = $C.extend(true, {}, this.client),
 			pl = config.plugins,
 			pos = $C(pl).search((el) => (Array.isArray(el) ? el[0] : el) === 'transform-runtime');
 
