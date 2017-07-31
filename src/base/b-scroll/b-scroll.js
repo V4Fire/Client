@@ -400,17 +400,81 @@ export default class bScroll extends iBlock {
 	}
 
 	/**
+	 * Calculates horizontal and vertical positions
+	 */
+	calcDirs(): {x: number, y: number} {
+		const
+			{area} = this.$refs;
+
+		return {
+			x: this._maxScrollerXPos && this._maxScrollerXPos * area.scrollLeft / (area.scrollWidth - area.clientWidth),
+			y: this._maxScrollerYPos && this._maxScrollerYPos * area.scrollTop / (area.scrollHeight - area.clientHeight)
+		};
+	}
+
+	/**
+	 * Sets inView mods to area child items
+	 *
+	 * @param children - area children node list
+	 * @param dirs
+	 */
+	calcInView(children: NodeList, dirs: Object) {
+		const
+			breakpoints = {left: 0, top: 0},
+			{scrollWidth: areaWidth, scrollHeight: areaHeight} = this.$el;
+
+		$C(children).forEach((el) => {
+			if (this.$(el)) {
+				const
+					{height, width} = el.getBoundingClientRect();
+
+				const isInRange = (dir) => {
+					const s = {
+						left: {
+							area: areaWidth,
+							self: width
+						},
+						top: {
+							area: areaHeight,
+							self: height
+						}
+					};
+
+					const
+						areaRange = Number.range(this.scrollOffset[dir], s[dir].area + this.scrollOffset[dir]),
+						itemRange = Number.range(breakpoints[dir], breakpoints[dir] + s[dir].self);
+
+					return Boolean(areaRange.intersect(itemRange).toArray().length);
+				};
+
+				const inView = {
+					left: dirs.x !== undefined ? isInRange('left') : true,
+					top: dirs.y !== undefined ? isInRange('top') : true
+				};
+
+				this.$(el).setMod('view', inView.left && inView.top);
+				breakpoints.left += dirs.x !== undefined ? width : 0;
+				breakpoints.top += dirs.y !== undefined ? height : 0;
+			}
+		});
+	}
+
+	/**
 	 * Handler: base scroll
 	 *
 	 * @param e
 	 * @emits scroll(e: Event)
-	*/
+	 */
 	onScroll(e: Event) {
-		const {area} = this.$refs;
-		this.setScrollerPosition({
-			x: this._maxScrollerXPos && this._maxScrollerXPos * area.scrollLeft / (area.scrollWidth - area.clientWidth),
-			y: this._maxScrollerYPos && this._maxScrollerYPos * area.scrollTop / (area.scrollHeight - area.clientHeight)
-		}, true);
+		const
+			dirs = this.calcDirs(),
+			{children} = this.block.element('area');
+
+		this.setScrollerPosition(dirs, true);
+
+		if (children) {
+			this.calcInView(children, dirs);
+		}
 
 		this.emit('scroll', e);
 	}
@@ -502,6 +566,13 @@ export default class bScroll extends iBlock {
 			$b.setElMod(scrollerX, 'scroller', 'scroll', val);
 			$b.setElMod(scrollerY, 'scroller', 'scroll', val);
 		};
+
+		const
+			{area} = this.$refs;
+
+		if (area && area.children) {
+			this.calcInView(area.children, this.calcDirs());
+		}
 
 		this.async.on(this.$el, 'scroll', {
 			join: true,
