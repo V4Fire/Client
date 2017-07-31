@@ -184,7 +184,7 @@ export default class bList extends iData {
 			{block: $b} = this;
 
 		if ($b) {
-			const el = this.$el.query($b.getElSelector('link', {id}));
+			const el = $b.element($b.getElSelector('link', {id}));
 			el && $b.setElMod(el, 'link', 'active', isActive);
 		}
 

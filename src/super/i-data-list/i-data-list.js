@@ -114,59 +114,100 @@ export default class iDataList extends iData {
 
 	/** @override */
 	async onAddData(data: Object) {
+		data = [].concat(data);
 		await this.async.wait(() => this.db);
 
-		if (!$C(this.db.data).some(this.getElComparator(data))) {
+		const
+			db = this.db.data;
+
+		for (let i = 0; i < data.length; i++) {
 			const
-				mut = this.addData(this.getObservableChunk(data));
+				el1 = data[0];
 
-			if (mut && mut.type && mut[mut.type]) {
-				mut[mut.type].call(this);
+			let some = false;
+			for (let i = 0; i < db.length; i++) {
+				const
+					el2 = db[i];
 
-			} else {
-				this.initLoad();
+				if (el1 && el1._id === el2._id) {
+					some = true;
+					break;
+				}
+			}
+
+			if (!some) {
+				const
+					mut = this.addData(this.getObservableChunk(el1));
+
+				if (mut && mut.type && mut[mut.type]) {
+					mut[mut.type].call(this);
+
+				} else {
+					return this.initLoad();
+				}
 			}
 		}
 	}
 
 	/** @override */
 	async onUpdData(data: Object) {
+		data = [].concat(data);
 		await this.async.wait(() => this.db);
 
-		$C(this.db.data).forEach((el, i, obj, o) => {
+		const
+			db = this.db.data;
+
+		for (let i = 0; i < data.length; i++) {
 			const
-				mut = this.updData(this.getObservableChunk(data), i);
+				el1 = data[0];
 
-			if (mut && mut.type && mut[mut.type]) {
-				mut[mut.type].call(this);
+			for (let i = 0; i < db.length; i++) {
+				const
+					el2 = db[i];
 
-			} else {
-				this.initLoad();
+				if (el1 && el1._id === el2._id) {
+					const
+						mut = this.updData(this.getObservableChunk(el1), i);
+
+					if (mut && mut.type && mut[mut.type]) {
+						mut[mut.type].call(this);
+						break;
+					}
+
+					return this.initLoad();
+				}
 			}
-
-			return o.break;
-
-		}, {filter: this.getElComparator(data)});
+		}
 	}
 
 	/** @override */
 	async onDelData(data: Object) {
+		data = [].concat(data);
 		await this.async.wait(() => this.db);
 
-		// FIXME: replace to for...of
-		$C(this.db.data).forEach((el, i, obj, o) => {
+		const
+			db = this.db.data;
+
+		for (let i = 0; i < data.length; i++) {
 			const
-				mut = this.delData(data, i);
+				el1 = data[0];
 
-			if (mut && mut.type && mut[mut.type]) {
-				mut[mut.type].call(this);
+			for (let i = 0; i < db.length; i++) {
+				const
+					el2 = db[i];
 
-			} else {
-				this.initLoad();
+				if (el1 && el1._id === el2._id) {
+					const
+						mut = this.delData(el1, i);
+
+					if (mut && mut.type && mut[mut.type]) {
+						mut[mut.type].call(this);
+						break;
+					}
+
+					return this.initLoad();
+				}
 			}
-
-			return o.break;
-
-		}, {filter: this.getElComparator(data)});
+		}
 	}
 }

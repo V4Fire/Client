@@ -11,7 +11,7 @@
 import Store from 'core/store';
 import bInput from 'form/b-input/b-input';
 import keyCodes from 'core/keyCodes';
-import { abstract, field, params, mod, wait, PARENT } from 'super/i-block/i-block';
+import { params, mod, wait } from 'super/i-block/i-block';
 import { component } from 'core/component';
 
 const
@@ -22,90 +22,6 @@ export const
 
 @component()
 export default class bSelect extends bInput {
-	/** @override */
-	model: ?Object = {
-		prop: 'selectedProp',
-		event: 'onChange'
-	};
-
-	/** @override */
-	@params({default: (obj) => $C(obj).get('data') || obj || []})
-	blockConverter: ?Function;
-
-	/**
-	 * Initial select options
-	 */
-	optionsProp: Array<Object> = [];
-
-	/**
-	 * Initial selected value
-	 */
-	selectedProp: ?any;
-
-	/**
-	 * Option component
-	 */
-	option: ?string;
-
-	/**
-	 * If true, then .initLoad will be executed after .mods.opened === 'true'
-	 */
-	initAfterOpen: boolean = false;
-
-	/** @override */
-	@field()
-	blockValueField: string = 'selected';
-
-	/**
-	 * Select options store
-	 */
-	@field((o) => o.link('optionsProp', (val) => {
-		if (o.dataProvider || Object.fastCompare(val, o.optionsStore)) {
-			return o.optionsStore || [];
-		}
-
-		return val;
-	}))
-
-	optionsStore: Array<Object>;
-
-	/**
-	 * Selected value store
-	 */
-	@field((o) => o.link('selectedProp', (val) => {
-		if (val === undefined) {
-			o.localEvent.once('component.created', () => o.selectedStore = o.default);
-			return;
-		}
-
-		return val;
-	}))
-
-	selectedStore: any;
-
-	/** @private */
-	@abstract
-	_labels: ?Object;
-
-	/** @private */
-	@abstract
-	_values: ?Object;
-
-	/** @override */
-	get $refs(): {
-		input: HTMLInputElement,
-		scroll: ?bScrollInline,
-		select: ?HTMLSelectElement
-	} {}
-
-	/** @inheritDoc */
-	static mods = {
-		theme: [
-			PARENT,
-			'paging'
-		]
-	};
-
 	/** @override */
 	async initLoad() {
 		try {
@@ -200,7 +116,7 @@ export default class bSelect extends bInput {
 			]);
 
 			const
-				selected = this.$el.query(this.block.getElSelector('option', {selected: true})),
+				selected = this.block.element('option', {selected: true}),
 				{scroll} = this.$refs;
 
 			if (selected) {
@@ -347,7 +263,7 @@ export default class bSelect extends bInput {
 			window.openedSelect = this;
 
 			const
-				{$el, selected} = this;
+				{selected} = this;
 
 			const reset = async () => {
 				if (selected) {
@@ -390,7 +306,7 @@ export default class bSelect extends bInput {
 						selected = getSelected();
 
 					function getSelected() {
-						return $el.query($b.getElSelector('option', {selected: true}));
+						return $b.element('option', {selected: true});
 					}
 
 					switch (e.keyCode) {
@@ -436,7 +352,7 @@ export default class bSelect extends bInput {
 										return;
 									}
 
-									this.selected = $el.query($b.getElSelector('option')).dataset.value;
+									this.selected = $b.element('option').dataset.value;
 								}
 							};
 
@@ -447,7 +363,7 @@ export default class bSelect extends bInput {
 								}
 							}
 
-							await select($el.query($b.getElSelector('option')));
+							await select($b.element('option'));
 							break;
 						}
 					}
@@ -490,7 +406,7 @@ export default class bSelect extends bInput {
 			}
 
 			const
-				selected = this.$el.query(this.block.getElSelector('option', {selected: true}));
+				selected = this.block.element('option', {selected: true});
 
 			if (this.ifOnce('opened') < 2) {
 				await Promise.all([this.nextTick(), this.waitRef('scroll')]);

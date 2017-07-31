@@ -101,9 +101,13 @@ export default class iDynamicPage extends iData {
 		}
 
 		Object.assign(tmp.hash, obj);
-		await this.async.sleep(0.22.second(), {label: $$.accumulateHash});
-		this.setHash(tmp.hash);
-		tmp.hash = {};
+
+		try {
+			await this.async.sleep(0.22.second(), {label: $$.accumulateHash});
+			this.setHash(tmp.hash);
+			tmp.hash = {};
+
+		} catch (_) {}
 	}
 
 	/* eslint-disable no-unused-vars */
