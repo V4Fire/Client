@@ -10,7 +10,7 @@
 
 module.exports = function (gulp = require('gulp')) {
 	const
-		path = require('config'),
+		path = require('path'),
 		config = require('config'),
 		async = require('async'),
 		plumber = require('gulp-plumber');
