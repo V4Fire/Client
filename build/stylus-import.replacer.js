@@ -10,9 +10,11 @@
 
 const
 	fs = require('fs'),
-	path = require('path'),
-	findUp = require('find-up'),
-	cache = {};
+	path = require('path');
+
+const
+	cache = {},
+	exists = {};
 
 /**
  * Monic replacer for Stylus @import declarations
@@ -35,20 +37,17 @@ const fn = module.exports = function (str, file) {
 		return str.replace(/\\/g, '/');
 	}
 
-	let blocks;
 	return c[str] = str
 		.replace(/@import "([^./~].*?\.styl)"/g, (str, url) => {
-			const urls = [
-				fn.blocks,
-				blocks || (blocks = findUp.sync('src', {cwd})),
-				fn.coreClient
-			];
-
-			for (let i = 0; i < urls.length; i++) {
+			for (let i = 0; i < fn.folders.length; i++) {
 				const
-					fullPath = path.join(urls[i], url);
+					fullPath = path.join(fn.folders[i], url);
 
-				if (fs.existsSync(fullPath)) {
+				if (fullPath in exists === false) {
+					exists[fullPath] = fs.existsSync(fullPath);
+				}
+
+				if (exists[fullPath]) {
 					return `@import "./${r(path.relative(cwd, fullPath))}"`;
 				}
 			}

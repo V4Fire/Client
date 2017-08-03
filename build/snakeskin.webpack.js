@@ -20,24 +20,17 @@ const
 const
 	fs = require('fs'),
 	path = require('path'),
-	glob = require('glob'),
-	findUp = require('find-up');
+	glob = require('glob');
 
 /**
  * Initializes Snakeskin
- *
- * @param {string} blocks - path to a block folder
- * @param {string} coreClient - path to the V4Fire core library
+ * @param {string} folders - list of block folders
  */
-module.exports = function ({blocks, coreClient}) {
+module.exports = function (folders) {
 	const
 		blocksTree = {},
-		components = `/**/@(${validators.blockTypeList.join('|')})-*.js`;
-
-	const files = [].concat(
-		glob.sync(path.join(coreClient, components)),
-		glob.sync(path.join(blocks, components))
-	);
+		components = `/**/@(${validators.blockTypeList.join('|')})-*.js`,
+		files = $C(folders).reduce((arr, el) => arr.concat(glob.sync(path.join(el, components))), []).reverse();
 
 	$C(files).forEach((el) => {
 		const
@@ -89,10 +82,9 @@ module.exports = function ({blocks, coreClient}) {
 	});
 
 	const
-		exists = {},
-		root = {};
+		exists = {};
 
-	function b(url, cwd) {
+	function b(url) {
 		const
 			hasMagic = glob.hasMagic(url),
 			end = /\.e?ss$/.test(url) ? '' : '/',
@@ -114,16 +106,10 @@ module.exports = function ({blocks, coreClient}) {
 			ends.push('');
 		}
 
-		const urls = [
-			blocks,
-			root[cwd] || (root[cwd] = findUp.sync('src', {cwd})),
-			coreClient
-		];
-
-		for (let i = 0; i < urls.length; i++) {
+		for (let i = 0; i < folders.length; i++) {
 			for (let j = 0; j < ends.length; j++) {
 				const
-					fullPath = path.join(urls[i], url, ends[j] || '');
+					fullPath = path.join(folders[i], url, ends[j] || '');
 
 				if (fullPath in exists === false) {
 					exists[fullPath] = hasMagic ? Boolean(glob.sync(fullPath).length) : fs.existsSync(fullPath);
