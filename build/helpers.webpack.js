@@ -13,6 +13,8 @@ const
 
 const
 	fs = require('fs'),
+	path = require('path'),
+	config = require('config'),
 	minimist = require('minimist');
 
 /**
@@ -44,12 +46,13 @@ if (isProdEnv) {
 
 		} else {
 			const
-				pack = require(d('package.json')),
+				src = path.join(config.src.cwd, 'package.json'),
+				pack = require(src),
 				v = pack.version.split('.');
 
 			pack.version = [v[0], v[1], Number(v[2]) + 1].join('.');
 			env.VERSION = exports.version = `${pack.version.replace(/\./g, '')}_`;
-			fs.writeFileSync('./package.json', `${JSON.stringify(pack, null, 2)}\n`);
+			fs.writeFileSync(src, `${JSON.stringify(pack, null, 2)}\n`);
 		}
 	}
 
