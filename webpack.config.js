@@ -27,6 +27,11 @@ const
 	AssetsWebpackPlugin = require('assets-webpack-plugin'),
 	WebpackMd5Hash = require('webpack-md5-hash');
 
+const
+	cwd = src.cwd,
+	folders = src.client,
+	entryFolder = folders[0];
+
 function d(file = '') {
 	return path.join(src.cwd, file);
 }
@@ -35,10 +40,9 @@ function o(file = '') {
 	return path.join(src.clientOutput(), file);
 }
 
-const
-	cwd = src.cwd,
-	folders = src.client,
-	entryFolder = folders[0];
+function r(file) {
+	return path.relative(cwd, file);
+}
 
 const
 	output = o('[hash]_[name]'),
@@ -68,7 +72,7 @@ function buildFactory(entry, i = '00') {
 		output: {
 			path: cwd,
 			publicPath: '/',
-			filename: hash(output, true)
+			filename: hash(r(output), true)
 		},
 
 		resolve: {
@@ -90,7 +94,7 @@ function buildFactory(entry, i = '00') {
 
 		plugins: [
 			new webpack.DefinePlugin(config.globals),
-			new ExtractTextPlugin(`${hash(output, true)}.css`),
+			new ExtractTextPlugin(`${hash(r(output), true)}.css`),
 			new AssetsWebpackPlugin({filename: assetsJSON, update: true})
 
 		].concat(
