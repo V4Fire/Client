@@ -41,7 +41,7 @@ function o(file = '') {
 }
 
 function r(file) {
-	return path.relative(cwd, file);
+	return `./${path.relative(cwd, file).replace(/\\/g, '/')}`;
 }
 
 const
