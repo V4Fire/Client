@@ -12,8 +12,7 @@ import config from 'config';
 import * as defTpls from 'core/block.ss';
 
 const
-	Vue = require('vue'),
-	uuid = require('uuid');
+	Vue = require('vue');
 
 Vue.config.errorHandler = (err, vm) => {
 	console.error(err, vm);
@@ -30,36 +29,21 @@ if (process.env.NODE_ENV === 'production') {
 
 const
 	EventEmitter2 = require('eventemitter2').EventEmitter2,
-	componentNames = new WeakMap();
+	initEvent = new EventEmitter2({maxListeners: 1e3});
 
 export const
 	rootComponents = {},
-	staticComponents = {},
-	localComponents = {},
-	components = {},
-	props = {},
-	initEvent = new EventEmitter2({maxListeners: 1e3});
+	staticComponents = new WeakMap(),
+	localComponents = new WeakMap(),
+	components = new WeakMap(),
+	props = new WeakMap();
 
 /**
  * Returns a component name
  * @param constr
  */
 export function getComponentName(constr: Function): string {
-	if (componentNames.has(constr)) {
-		return componentNames.get(constr);
-	}
-
-	const name = `${constr.name}__${uuid()}`.dasherize();
-	componentNames.set(constr, name);
-	return name;
-}
-
-/**
- * Returns a public component name from the specified
- * @param name
- */
-export function getPublicComponentName(name: string): string {
-	return name.replace(/--.*/, '');
+	return constr.name.dasherize();
 }
 
 /**
@@ -67,10 +51,9 @@ export function getPublicComponentName(name: string): string {
  * @decorator
  */
 export function rootComponent(target) {
-	const lastBlock = getComponentName(target);
-	rootComponents[getPublicComponentName(lastBlock)] = target;
-	props[lastBlock] = props[lastBlock] || {};
-	initEvent.emit('component', lastBlock);
+	rootComponents[getComponentName(target)] = target;
+	props.set(target, props.get(target) || {});
+	initEvent.emit('component', target);
 }
 
 /**
@@ -82,7 +65,7 @@ export function rootComponent(target) {
  */
 export function prop(type: any, required: boolean) {
 	return (target, key, desc) => {
-		initEvent.once('component', (name) => {
+		initEvent.once('component', (comp) => {
 			let def = desc.initializer();
 			if (Object.isObject(def) || Object.isArray(def)) {
 				def = new Function(`return ${def.toSource()}`);
@@ -91,7 +74,7 @@ export function prop(type: any, required: boolean) {
 				def = def.clone();
 			}
 
-			props[name][key] = {
+			props.get(comp)[key] = {
 				type,
 				default: def,
 				required
@@ -121,8 +104,7 @@ export function component(
 
 		const
 			name = getComponentName(target),
-			publicName = getPublicComponentName(name),
-			parent = getComponentName(Object.getPrototypeOf(target));
+			parent = Object.getPrototypeOf(target).constructor;
 
 		const p = {
 			props: {},
@@ -183,8 +165,8 @@ export function component(
 		}
 
 		const
-			parentComp = components[parent],
-			parentCompStatic = staticComponents[parent];
+			parentComp = components.get(parent),
+			parentCompStatic = staticComponents.get(parent);
 
 		if (parentComp) {
 			comp.mixins = comp.mixins || [];
@@ -208,8 +190,9 @@ export function component(
 			}
 		}
 
-		staticComponents[name] = staticComponents[publicName] = comp.component = clone;
-		components[name] = components[publicName] = comp;
+		comp.component = clone;
+		staticComponents.set(target, clone);
+		components.set(target, comp);
 
 		if (parentComp) {
 			const
@@ -231,13 +214,13 @@ export function component(
 
 		function loader(resolve) {
 			const success = () => {
-				if (localComponents[publicName]) {
-					comp.components = Object.assign(comp.components || {}, localComponents[publicName]);
+				if (localComponents[name]) {
+					comp.components = Object.assign(comp.components || {}, localComponents[name]);
 					clone.components = {...comp.components};
 				}
 
 				resolve(comp);
-				ModuleDependencies.event.emit(`component.${publicName}`, {comp, name: publicName});
+				ModuleDependencies.event.emit(`component.${name}`, {comp, name: publicName});
 			};
 
 			const addRenderAndResolve = (tpls) => {
@@ -268,10 +251,10 @@ export function component(
 		if (comp.with) {
 			const l = comp.with.dasherize();
 			localComponents[l] = localComponents[l] || {};
-			localComponents[l][publicName] = () => new Promise(loader);
+			localComponents[l][name] = () => new Promise(loader);
 
 		} else {
-			Vue.component(publicName, loader);
+			Vue.component(name, loader);
 		}
 
 		return target;

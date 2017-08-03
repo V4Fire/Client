@@ -50,7 +50,7 @@ const
 	modsCache = {},
 	initializedModsCache = {},
 	classesCache = {},
-	methodsCache = {};
+	methodsCache = new WeakMap();
 
 export const
 	$$ = new Store();
@@ -86,16 +86,10 @@ export default class iBlock extends BlockConstructor {
 	instance: this;
 
 	/**
-	 * Alias for $options.publicName
-	 */
-	@abstract
-	componentName: string;
-
-	/**
 	 * Alias for $options.selfName
 	 */
 	@abstract
-	selfComponentName: string;
+	componentName: string;
 
 	/**
 	 * Alias for $options.component
@@ -1249,12 +1243,15 @@ export default class iBlock extends BlockConstructor {
 		this.asyncQueue = new Set();
 		this.localEvent = new EventEmitter2({maxListeners: 100, wildcard: true});
 
+		const
+			constr = this.instance.constructor;
+
 		const addWatcher = (watcher) => {
 			if (this.blockStatus) {
 				watcher();
 
 			} else {
-				watchers[this.selfComponentName] = (watchers[this.selfComponentName] || []).concat(watcher);
+				watchers.set(constr, (watchers.get(constr) || []).concat(watcher));
 			}
 		};
 
@@ -1371,14 +1368,17 @@ export default class iBlock extends BlockConstructor {
 	created() {
 		this.localEvent.emit('component.created');
 
+		const
+			constr = this.instance.constructor;
+
 		let
-			methods = methodsCache[this.selfComponentName];
+			methods = methodsCache.get(constr);
 
 		if (!methods) {
-			methods = methodsCache[this.selfComponentName] = {};
+			methodsCache.set(constr, methods = {});
 
 			const
-				obj = staticComponents[this.selfComponentName].methods;
+				obj = staticComponents.get(constr).methods;
 
 			/* eslint-disable guard-for-in */
 
@@ -1443,12 +1443,12 @@ export default class iBlock extends BlockConstructor {
 
 		while (obj) {
 			const
-				nm = obj.selfName,
+				constr = obj.instance.constructor,
 				arr = [watchers, binds, locals];
 
 			for (let i = 0; i < arr.length; i++) {
 				const
-					c = arr[i][nm];
+					c = arr[i].get(constr);
 
 				if (c) {
 					for (let i = 0; i < c.length; i++) {
@@ -1458,7 +1458,7 @@ export default class iBlock extends BlockConstructor {
 			}
 
 			const
-				c = blockProps[nm];
+				c = blockProps.get(constr);
 
 			if (c) {
 				for (let i = 0; i < c.length; i++) {

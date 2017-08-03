@@ -9,12 +9,12 @@
  */
 
 import VueInterface from './vue';
-import { staticComponents, getPublicComponentName } from 'core/component';
+import { staticComponents } from 'core/component';
 import { mixins } from './decorators';
 import './vue.directives';
 
 export const
-	mods = {},
+	mods = new WeakMap(),
 	PARENT = {};
 
 const whitelist = {
@@ -51,6 +51,7 @@ const whitelist = {
 
 const blacklist = {
 	selfName: true,
+	instance: true,
 	...Object.fromArray(Object.getOwnPropertyNames(VueInterface.prototype))
 };
 
@@ -60,7 +61,7 @@ export default class BlockConstructor extends VueInterface {
 	 * @param opts - component options
 	 * @param props - component properties
 	 * @param fields - component fields
-	 * @param parent - parent component name
+	 * @param parent - parent component constructor
 	 */
 	constructor({name, opts, props, fields, parent}: {
 		name: string,
@@ -68,28 +69,20 @@ export default class BlockConstructor extends VueInterface {
 		model: Object,
 		props: Object,
 		fields: Object,
-		parent?: string
+		parent?: Object
 	}) {
 		super(...arguments);
 
-		const
-			publicName = getPublicComponentName(name);
-
 		const component = {
 			props,
-			publicName,
 			selfName: name,
+			instance: this,
 			...opts
 		};
 
 		if (opts.functional) {
 			component.render = this.render;
 			component.props.componentName = {
-				type: String,
-				default: publicName
-			};
-
-			component.props.selfComponentName = {
 				type: String,
 				default: name
 			};
@@ -114,8 +107,7 @@ export default class BlockConstructor extends VueInterface {
 			// Predefine base properties
 			beforeCreate() {
 				this.instance = ctx;
-				this.componentName = publicName;
-				this.selfComponentName = name;
+				this.componentName = name;
 				this.component = component;
 				this.parentComponent = component.parentComponent;
 				beforeCreate && beforeCreate.call(this);
@@ -170,7 +162,7 @@ export default class BlockConstructor extends VueInterface {
 			if (get || set) {
 				const
 					obj = get || set,
-					l = staticComponents[parent],
+					l = staticComponents.get(parent),
 					parentProp = l && l.computed && l.computed[prop];
 
 				if (obj.abstract) {

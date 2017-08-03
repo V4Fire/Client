@@ -59,12 +59,6 @@ export default class iFunctional extends BlockConstructor {
 	componentName: string;
 
 	/**
-	 * Unique component name
-	 */
-	@abstract
-	selfComponentName: string;
-
-	/**
 	 * Name of the component template
 	 */
 	@abstract

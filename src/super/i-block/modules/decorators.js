@@ -12,11 +12,11 @@ import { statuses } from 'core/block';
 import { initEvent, props } from 'core/component';
 
 export const
-	binds = {},
-	watchers = {},
-	locals = {},
-	blockProps = {},
-	mixins = {};
+	binds = new WeakMap(),
+	watchers = new WeakMap(),
+	locals = new WeakMap(),
+	blockProps = new WeakMap(),
+	mixins = new WeakMap();
 
 /**
  * Sets the specified parameters to a Vue property
@@ -27,7 +27,7 @@ export const
 export function params(params) {
 	return (target, key, desc) => {
 		Object.assign(params, {field: key});
-		initEvent.once('component', (block) => {
+		initEvent.once('component', (comp) => {
 			const
 				a = desc.get || desc.set;
 
@@ -41,7 +41,7 @@ export function params(params) {
 				return;
 			}
 
-			Object.assign(props[block][key], params);
+			Object.assign(props.get(comp)[key], params);
 		});
 	};
 }
@@ -71,9 +71,8 @@ export function field(initializer?: (o: iBlock) => any | any) {
  */
 export function blockProp(name?: string, keyName?: string) {
 	return (target, key) => {
-		initEvent.once('component', (block) => {
-			blockProps[block] = blockProps[block] || [];
-			blockProps[block].push([name || key, keyName || key]);
+		initEvent.once('component', (comp) => {
+			blockProps.set(comp, (blockProps.get(comp) || []).concat([[name || key, keyName || key]]));
 		});
 	};
 }
@@ -88,10 +87,10 @@ export function blockProp(name?: string, keyName?: string) {
  */
 export function bindModTo(param: string, fn?: Function = Boolean, opts?: Object) {
 	return (target, key) => {
-		initEvent.once('component', (block) => {
-			binds[block] = (binds[block] || []).concat(function () {
+		initEvent.once('component', (comp) => {
+			binds.set(comp, (binds.get(comp) || []).concat(function () {
 				this.bindModTo(key, param, fn, opts);
-			});
+			}));
 		});
 	};
 }
@@ -101,9 +100,9 @@ export function bindModTo(param: string, fn?: Function = Boolean, opts?: Object)
  * @decorator
  */
 export function mixin(target, key, desc) {
-	initEvent.once('component', (block) => {
-		mixins[block] = mixins[block] || {};
-		mixins[block][key] = desc.initializer ? desc.initializer() : desc.value;
+	initEvent.once('component', (comp) => {
+		mixins.set(comp, mixins.get(comp) || {});
+		mixins.get(comp)[key] = desc.initializer ? desc.initializer() : desc.value;
 	});
 }
 
@@ -116,10 +115,10 @@ export function mixin(target, key, desc) {
  */
 export function watch(handler: (value: any, oldValue: any) => void | string, params?: Object) {
 	return (target, key) => {
-		initEvent.once('component', (block) => {
-			watchers[block] = (watchers[block] || []).concat(function () {
+		initEvent.once('component', (comp) => {
+			watchers.set(comp, (watchers.get(comp) || []).concat(function () {
 				this.$watch(key, Object.isFunction(handler) ? handler : this[handler], params);
-			});
+			}));
 		});
 	};
 }
@@ -134,10 +133,10 @@ export function watch(handler: (value: any, oldValue: any) => void | string, par
  */
 export function mod(name: string, value?: any = '*', method?: string = 'on') {
 	return (target, key, descriptor) => {
-		initEvent.once('component', (block) => {
-			locals[block] = (locals[block] || []).concat(function () {
+		initEvent.once('component', (comp) => {
+			locals.set(comp, (locals.get(comp) || []).concat(function () {
 				this.localEvent[method](`block.mod.set.${name}.${value}`, descriptor.value.bind(this));
-			});
+			}));
 		});
 	};
 }
@@ -152,10 +151,10 @@ export function mod(name: string, value?: any = '*', method?: string = 'on') {
  */
 export function removeMod(name: string, value?: any = '*', method?: string = 'on') {
 	return (target, key, descriptor) => {
-		initEvent.once('component', (block) => {
-			locals[block] = (locals[block] || []).concat(function () {
+		initEvent.once('component', (comp) => {
+			locals.set(comp, (locals.get(comp) || []).concat(function () {
 				this.localEvent[method](`block.mod.remove.${name}.${value}`, descriptor.value.bind(this));
-			});
+			}));
 		});
 	};
 }
@@ -171,10 +170,10 @@ export function removeMod(name: string, value?: any = '*', method?: string = 'on
  */
 export function elMod(elName: string, modName: string, value?: any = '*', method?: string = 'on') {
 	return (target, key, descriptor) => {
-		initEvent.once('component', (block) => {
-			locals[block] = (locals[block] || []).concat(function () {
+		initEvent.once('component', (comp) => {
+			locals.set(comp, (locals.get(comp) || []).concat(function () {
 				this.localEvent[method](`el.mod.set.${elName}.${modName}.${value}`, descriptor.value.bind(this));
-			});
+			}));
 		});
 	};
 }
@@ -190,10 +189,10 @@ export function elMod(elName: string, modName: string, value?: any = '*', method
  */
 export function removeElMod(elName: string, modName: string, value?: any = '*', method?: string = 'on') {
 	return (target, key, descriptor) => {
-		initEvent.once('component', (block) => {
-			locals[block] = (locals[block] || []).concat(function () {
+		initEvent.once('component', (comp) => {
+			locals.set(comp, (locals.get(comp) || []).concat(function () {
 				this.localEvent[method](`el.mod.remove.${elName}.${modName}.${value}`, descriptor.value.bind(this));
-			});
+			}));
 		});
 	};
 }
@@ -207,10 +206,10 @@ export function removeElMod(elName: string, modName: string, value?: any = '*', 
  */
 export function state(state: number, method?: string = 'on') {
 	return (target, key, descriptor) => {
-		initEvent.once('component', (block) => {
-			locals[block] = (locals[block] || []).concat(function () {
+		initEvent.once('component', (comp) => {
+			locals.set(comp, (locals.get(comp) || []).concat(function () {
 				this.localEvent[method](`block.status.${state}`, descriptor.value.bind(this));
-			});
+			}));
 		});
 	};
 }
