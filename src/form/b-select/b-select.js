@@ -11,7 +11,7 @@
 import Store from 'core/store';
 import bInput from 'form/b-input/b-input';
 import keyCodes from 'core/keyCodes';
-import { params, mod, wait } from 'super/i-block/i-block';
+import { abstract, field, params, mod, wait } from 'super/i-block/i-block';
 import { component } from 'core/component';
 
 const
@@ -22,6 +22,82 @@ export const
 
 @component()
 export default class bSelect extends bInput {
+	/** @override */
+	model: ?Object = {
+		prop: 'selectedProp',
+		event: 'onChange'
+	};
+
+	/** @override */
+	@params({default: (obj) => $C(obj).get('data') || obj || []})
+	blockConverter: ?Function;
+
+	/**
+	 * Initial select options
+	 */
+	optionsProp: Array<Object> = [];
+
+	/**
+	 * Initial selected value
+	 */
+	selectedProp: ?any;
+
+	/**
+	 * Option component
+	 */
+	option: ?string;
+
+	/**
+	 * If true, then .initLoad will be executed after .mods.opened === 'true'
+	 */
+	initAfterOpen: boolean = false;
+
+	/** @override */
+	@field()
+	blockValueField: string = 'selected';
+
+	/**
+	 * Select options store
+	 */
+	@field((o) => o.link('optionsProp', (val) => {
+		if (o.dataProvider || Object.fastCompare(val, o.optionsStore)) {
+			return o.optionsStore || [];
+		}
+
+		return val;
+	}))
+
+	optionsStore: Array<Object>;
+
+	/**
+	 * Selected value store
+	 */
+	@field((o) => o.link('selectedProp', (val) => {
+		if (val === undefined) {
+			o.localEvent.once('component.created', () => o.selectedStore = o.default);
+			return;
+		}
+
+		return val;
+	}))
+
+	selectedStore: any;
+
+	/** @private */
+	@abstract
+	_labels: ?Object;
+
+	/** @private */
+	@abstract
+	_values: ?Object;
+
+	/** @override */
+	get $refs(): {
+		input: HTMLInputElement,
+		scroll: ?bScrollInline,
+		select: ?HTMLSelectElement
+	} {}
+
 	/** @override */
 	async initLoad() {
 		try {
