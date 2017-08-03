@@ -23,7 +23,7 @@ ion.sound({
 	],
 
 	volume: 1,
-	path: `/dist/packages/${PATH.sounds}/`,
+	path: `/dist/client/${PATH.sounds}/`,
 	preload: true
 });
 
