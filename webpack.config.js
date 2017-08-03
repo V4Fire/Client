@@ -36,14 +36,17 @@ function o(file = '') {
 }
 
 const
+	cwd = src.cwd,
+	folders = src.client,
+	entryFolder = folders[0];
+
+const
 	output = o('[hash]_[name]'),
 	assetsJSON = o(`${version}assets.json`),
-	folders = src.client,
-	root = folders[0],
 	lib = d('node_modules');
 
 const build = require('./build/entities.webpack')({
-	entries: path.join(root, 'entries'),
+	entries: path.join(entryFolder, 'entries'),
 	output: hash(output),
 	cache: env.FROM_CACHE && d('app-cache/graph'),
 	folders,
@@ -70,7 +73,7 @@ function buildFactory(entry, i = '00') {
 
 		resolve: {
 			modules: [
-				root,
+				entryFolder,
 				cwd,
 				...folders.slice(1),
 				lib
