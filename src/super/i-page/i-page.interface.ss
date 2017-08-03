@@ -61,12 +61,12 @@
 			- if isProd
 				? hash = hasha(src, {algorithm: 'md5'}).substr(0, @hashLength) + '_'
 
-			? newSrc = path.join(@packages, 'lib', hash + basename)
-			? relativeSrc = path.relative(@packages, newSrc)
+			? newSrc = path.join(@output, 'lib', hash + basename)
+			? relativeSrc = path.relative(@output, newSrc)
 			? libCache[basename] = fs.existsSync(newSrc) && relativeSrc
 
 		- if !libCache[basename]
-			? mkdirp.sync(path.join(@packages, 'lib'))
+			? mkdirp.sync(path.join(@output, 'lib'))
 			? fs.writeFileSync(newSrc, file.toString().replace(/\/\/# sourceMappingURL=.*/, ''))
 			? libCache[basename] = relativeSrc
 
@@ -111,9 +111,9 @@
  */
 - placeholder index(@params = {}) extends ['i-base'].index
 	- isProd = @@env === 'production'
-	- root = path.relative(@packages, @root)
-	- lib = path.relative(@packages, @lib)
-	- assets = path.relative(@packages, @assets)
+	- root = path.relative(@output, @root)
+	- lib = path.relative(@output, @lib)
+	- assets = path.relative(@output, @assets)
 
 	- block root
 		- block doctype
@@ -121,7 +121,7 @@
 
 		< html
 			< head
-				: base = self.join('/', path.relative(@root, @packages), '/')
+				: base = self.join('/', path.relative(@root, @output), '/')
 
 				- block meta
 					< meta charset = utf-8
@@ -231,8 +231,8 @@
 								- if isProd
 									? hash = hashFiles.sync({files: [path.join(src, '/**/*')]}).substr(0, @hashLength) + '_'
 
-								? newSrc = path.join(@packages, 'lib', hash + basename)
-								? relativeSrc = path.relative(@packages, newSrc)
+								? newSrc = path.join(@output, 'lib', hash + basename)
+								? relativeSrc = path.relative(@output, newSrc)
 								? foldersCache[basename] = fs.existsSync(newSrc) && relativeSrc
 
 							- if !foldersCache[basename]

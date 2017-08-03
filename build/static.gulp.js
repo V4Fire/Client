@@ -15,12 +15,12 @@ module.exports = function (gulp = require('gulp')) {
 		async = require('async'),
 		plumber = require('gulp-plumber');
 
-	function a(src = '') {
-		return path.join(config.src.assets(), src);
+	function a(file = '') {
+		return path.join(config.src.assets(), file);
 	}
 
-	function o(src = '') {
-		return path.join(config.src.clientOutput(), src);
+	function o(file = '') {
+		return path.join(config.src.clientOutput(), file);
 	}
 
 	gulp.task('favicons', (cb) => {

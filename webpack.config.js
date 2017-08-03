@@ -12,13 +12,13 @@ require('@v4fire/core/build/i18n');
 
 const
 	$C = require('collection.js'),
-	fs = require('fs'),
-	path = require('path'),
-	config = require('config');
+	config = require('config'),
+	path = require('path');
 
 const
-	{d, hash, args, cwd, isProdEnv, version, hashLength} = require('./build/helpers.webpack'),
-	{env} = process;
+	{hash, args, isProdEnv, version, hashLength} = require('./build/helpers.webpack'),
+	{env} = process,
+	{src} = config;
 
 const
 	webpack = require('webpack'),
@@ -27,33 +27,31 @@ const
 	AssetsWebpackPlugin = require('assets-webpack-plugin'),
 	WebpackMd5Hash = require('webpack-md5-hash');
 
-const
-	output = './dist/packages/[hash]_[name]',
-	assetsJSON = `./dist/packages/${version}assets.json`;
+function d(file = '') {
+	return path.join(src.cwd, file);
+}
 
-let
-	blocks = d('src/blocks');
-
-if (!fs.existsSync(blocks)) {
-	blocks = d('src');
+function o(file = '') {
+	return path.join(src.clientOutput(), file);
 }
 
 const
-	entries = d('src/entries'),
-	lib = d('node_modules'),
-	coreClient = path.join(lib, '@v4Fire/client/src');
+	output = o('[hash]_[name]'),
+	assetsJSON = o(`${version}assets.json`),
+	folders = src.client,
+	root = folders[0],
+	lib = d('node_modules');
 
 const build = require('./build/entities.webpack')({
-	entries,
-	blocks,
-	lib,
-	coreClient,
+	entries: path.join(root, 'entries'),
 	output: hash(output),
 	cache: env.FROM_CACHE && d('app-cache/graph'),
-	assetsJSON
+	folders,
+	assetsJSON,
+	lib
 });
 
-require('./build/snakeskin.webpack')({blocks, coreClient});
+require('./build/snakeskin.webpack')(folders);
 console.log('Project graph initialized');
 
 function buildFactory(entry, i = '00') {
@@ -72,10 +70,9 @@ function buildFactory(entry, i = '00') {
 
 		resolve: {
 			modules: [
-				blocks,
+				root,
 				cwd,
-				coreClient,
-				path.dirname(coreClient),
+				...folders.slice(1),
 				lib
 			]
 		},
@@ -155,14 +152,14 @@ function buildFactory(entry, i = '00') {
 						{
 							loader: 'prop',
 							options: {
-								modules: [blocks, coreClient]
+								modules: folders
 							}
 						},
 
 						{
 							loader: 'proxy',
 							options: {
-								modules: [blocks, coreClient]
+								modules: folders
 							}
 						}
 					]
@@ -202,7 +199,7 @@ function buildFactory(entry, i = '00') {
 								loader: 'monic',
 								options: $C.extend({deep: true, concatArray: true}, {}, config.monic.styl, {
 									replacers: [
-										Object.assign(require('./build/stylus-import.replacer'), {blocks, lib, coreClient}),
+										Object.assign(require('./build/stylus-import.replacer'), {folders, lib}),
 										require('@pzlr/stylus-inheritance')
 									]
 								})
@@ -240,11 +237,11 @@ function buildFactory(entry, i = '00') {
 								exec: true,
 								data: {
 									root: cwd,
+									output: o(),
+									dependencies: build.dependencies,
+									assets: src.assets(),
 									version,
 									hashLength,
-									dependencies: build.dependencies,
-									packages: d('dist/packages'),
-									assets: d('assets'),
 									lib
 								}
 							})
