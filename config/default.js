@@ -15,7 +15,7 @@ const
 
 const config = module.exports = $C.extend(defConfig.extend, Object.create(defConfig), {
 	src: {
-		client: [path.join(__dirname, '../src')]
+		client: [path.join(__dirname, '../src')].concat(defConfig.src.client)
 	},
 
 	globals: {
