@@ -45,8 +45,7 @@ function r(file) {
 }
 
 const
-	output = o('[hash]_[name]'),
-	wpOutput = r(output),
+	output = r(o('[hash]_[name]')),
 	assetsJSON = o(`${version}assets.json`),
 	lib = d('node_modules');
 
@@ -73,7 +72,7 @@ function buildFactory(entry, i = '00') {
 		output: {
 			path: cwd,
 			publicPath: '/',
-			filename: hash(wpOutput, true)
+			filename: hash(output, true)
 		},
 
 		resolve: {
@@ -95,7 +94,7 @@ function buildFactory(entry, i = '00') {
 
 		plugins: [
 			new webpack.DefinePlugin(config.globals),
-			new ExtractTextPlugin(`${hash(wpOutput, true)}.css`),
+			new ExtractTextPlugin(`${hash(output, true)}.css`),
 			new AssetsWebpackPlugin({filename: assetsJSON, update: true})
 
 		].concat(
@@ -232,7 +231,7 @@ function buildFactory(entry, i = '00') {
 						{
 							loader: 'file',
 							options: {
-								name: `${wpOutput.replace(/\[hash]_/, '')}.html`
+								name: `${output.replace(/\[hash]_/, '')}.html`
 							}
 						},
 
