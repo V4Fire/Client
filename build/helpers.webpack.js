@@ -13,8 +13,6 @@ const
 
 const
 	fs = require('fs'),
-	path = require('path'),
-	config = require('config'),
 	minimist = require('minimist');
 
 /**
@@ -22,11 +20,6 @@ const
  */
 const args = exports.args = minimist(argv.slice(2));
 args.env && (env.NODE_ENV = args.env);
-
-/**
- * Project work directory
- */
-const cwd = exports.cwd = config.src.cwd;
 
 /**
  * Production mode
@@ -82,15 +75,3 @@ exports.hash = function (output, chunk) {
 };
 
 /* eslint-enable no-unused-vars */
-
-exports.d = d;
-
-/**
- * Returns full path to the specified file relative to process.cwd()
- *
- * @param {string} file
- * @returns {string}
- */
-function d(file) {
-	return path.join(cwd, file);
-}

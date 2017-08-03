@@ -31,15 +31,14 @@ const
  * Builds entry points for WebPack by the specified parameters and returns a tree of dependencies
  *
  * @param {string} entries - path to base entry points
- * @param {string} blocks - path to a block folder
- * @param {string} lib - path to a lib folder
- * @param {string} coreClient - path to the V4Fire core library
+ * @param {string} folders - list of block folders
  * @param {string} output - output path
  * @param {string} cache - path to a cache folder
  * @param {string} assetsJSON - path to assets.json file
+ * @param {string} lib - path to a node_modules folder
  * @returns {{entry, processes, dependencies}}
  */
-module.exports = function ({entries, blocks, lib, coreClient, output, cache, assetsJSON}) {
+module.exports = function ({entries, folders, output, cache, assetsJSON, lib}) {
 	//////////////////
 	// Load from cache
 	//////////////////
@@ -98,12 +97,10 @@ module.exports = function ({entries, blocks, lib, coreClient, output, cache, ass
 		components = `/**/${b}/index.js`,
 		virtualComponents = `/**/${b}.index.js`;
 
-	const files = [].concat(
-		glob.sync(path.join(coreClient, components)),
-		glob.sync(path.join(coreClient, virtualComponents)),
-		glob.sync(path.join(blocks, components)),
-		glob.sync(path.join(blocks, virtualComponents))
-	);
+	const files = $C(folders).reduce((arr, el) => arr.concat(
+		glob.sync(path.join(el, components)),
+		glob.sync(path.join(el, virtualComponents))
+	), []).reverse();
 
 	const blockMap = $C(files).reduce((map, el) => {
 		const
