@@ -14,6 +14,7 @@ const
 const
 	fs = require('fs'),
 	path = require('path'),
+	config = require('config'),
 	minimist = require('minimist');
 
 /**
@@ -25,7 +26,7 @@ args.env && (env.NODE_ENV = args.env);
 /**
  * Project work directory
  */
-const cwd = exports.cwd = process.cwd();
+const cwd = exports.cwd = config.src.cwd;
 
 /**
  * Production mode
