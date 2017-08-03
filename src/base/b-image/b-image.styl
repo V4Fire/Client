@@ -1,0 +1,42 @@
+/*!
+ * V4Fire Client Core
+ * https://github.com/V4Fire/Client
+ *
+ * Released under the MIT license
+ * https://github.com/V4Fire/Client/blob/master/LICENSE
+ */
+
+@import "super/i-block/i-block.styl"
+
+$p = {
+
+}
+
+b-image extends i-block
+	&__root-wrapper
+		width 100%
+		height @width
+
+	&__overlay, &__damaged
+		position absolute
+		width 100%
+		height @width
+		pointer-events none
+
+	&__overlay
+		opacity 0
+
+	&__damaged
+		display none
+
+	&_error_true &__damaged
+		z-index 2
+		display flex
+		align-items center
+		justify-content center
+
+	&_disabled_true &__overlay, &_loading_true &__overlay
+		opacity 1
+
+	&__img
+		width 100%
