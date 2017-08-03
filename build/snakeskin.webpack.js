@@ -78,7 +78,7 @@ module.exports = function (folders) {
 		vueComp,
 		vueTag: ss.setFilterParams(vueTag, bind),
 		bem2vue: ss.setFilterParams(bem2vue, bind),
-		b: ss.setFilterParams(b, {bind: ['__dirname']})
+		b
 	});
 
 	const
