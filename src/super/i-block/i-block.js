@@ -47,9 +47,9 @@ export {
 } from './modules/decorators';
 
 const
-	modsCache = {},
-	initializedModsCache = {},
-	classesCache = {},
+	modsCache = Object.create(null),
+	initializedModsCache = Object.create(null),
+	classesCache = Object.create(null),
 	methodsCache = new WeakMap();
 
 export const

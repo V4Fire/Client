@@ -17,8 +17,8 @@ const
 	uuid = require('uuid');
 
 const
-	requests = {},
-	cache = {};
+	requests = Object.create(null),
+	cache = Object.create(null);
 
 export class RequestError {
 	/**
@@ -320,7 +320,6 @@ class Request {
 			}
 
 			let cb = req.cbs[key];
-
 			cache[id] = cache[id] || {};
 			cache[id][key] = fn;
 
