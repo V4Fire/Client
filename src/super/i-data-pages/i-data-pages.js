@@ -53,6 +53,24 @@ export default class iDataPages extends iDataList {
 	/** @override */
 	get $refs(): {loadPageTrigger: HTMLDivElement} {}
 
+	/**
+	 * Lazy load synchronization
+	 * @param value
+	 */
+	$$lazyLoad(value: boolean) {
+		const
+			{async: $a} = this,
+			group = 'lazyLoad';
+
+		if (value) {
+			$a.on(document, 'scroll', {fn: this.checkLazyLoad, group});
+			$a.on(window, 'resize', {fn: this.checkLazyLoad, group});
+
+		} else {
+			$a.off({group});
+		}
+	}
+
 	/** @override */
 	async initLoad() {
 		await super.initLoad();
@@ -143,14 +161,6 @@ export default class iDataPages extends iDataList {
 				label: $$.checkLazyLoad,
 				fn: this.loadPage
 			}, 0.3.second());
-		}
-	}
-
-	/** @inheritDoc */
-	mounted() {
-		if (this.lazyLoad) {
-			this.async.on(document, 'scroll', this.checkLazyLoad);
-			this.async.on(window, 'resize', this.checkLazyLoad);
 		}
 	}
 }
