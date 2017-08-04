@@ -86,6 +86,20 @@ export function prop(type: any, required: boolean) {
 const
 	isAbstract = /^[iv]-/;
 
+const whitelist = {
+	with: true,
+	model: true,
+	provide: true,
+	inject: true,
+	components: true,
+	transitions: true,
+	filters: true,
+	directives: true,
+	delimiters: true,
+	inheritAttrs: true,
+	comments: true
+};
+
 /**
  * Creates new Vue.js component
  *
@@ -113,20 +127,6 @@ export function component(
 
 		const opts = {
 			functional
-		};
-
-		const whitelist = {
-			with: true,
-			model: true,
-			provide: true,
-			inject: true,
-			components: true,
-			transitions: true,
-			filters: true,
-			directives: true,
-			delimiters: true,
-			inheritAttrs: true,
-			comments: true
 		};
 
 		{
@@ -220,7 +220,6 @@ export function component(
 				}
 
 				resolve(comp);
-				ModuleDependencies.event.emit(`component.${name}`, {comp, name: publicName});
 			};
 
 			const addRenderAndResolve = (tpls) => {
@@ -236,8 +235,8 @@ export function component(
 
 			} else {
 				const f = () => {
-					if (TPLS[publicName]) {
-						addRenderAndResolve(TPLS[publicName]);
+					if (TPLS[name]) {
+						addRenderAndResolve(TPLS[name]);
 
 					} else {
 						setImmediate(f);
