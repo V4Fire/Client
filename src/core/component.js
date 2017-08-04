@@ -214,8 +214,8 @@ export function component(
 
 		function loader(resolve) {
 			const success = () => {
-				if (localComponents[name]) {
-					comp.components = Object.assign(comp.components || {}, localComponents[name]);
+				if (localComponents.has(target)) {
+					comp.components = Object.assign(comp.components || {}, localComponents.get(target));
 					clone.components = {...comp.components};
 				}
 
@@ -249,9 +249,8 @@ export function component(
 		}
 
 		if (comp.with) {
-			const l = comp.with.dasherize();
-			localComponents[l] = localComponents[l] || {};
-			localComponents[l][name] = () => new Promise(loader);
+			localComponents.set(comp.with, localComponents.get(comp.with) || {});
+			localComponents.get(comp.with)[name] = () => new Promise(loader);
 
 		} else {
 			Vue.component(name, loader);

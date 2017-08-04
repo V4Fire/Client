@@ -9,7 +9,7 @@
  */
 
 import iBlock, { abstract, BlockConstructor } from 'super/i-block/i-block';
-import { component, getComponentName, components } from 'core/component';
+import { component, components } from 'core/component';
 
 const
 	Vue = require('vue'),
@@ -228,7 +228,7 @@ export default class iFunctional extends BlockConstructor {
 			defMods = {};
 
 		if (p.shim) {
-			Object.assign(defMods, components[getComponentName(p.shim)].mods);
+			Object.assign(defMods, components.get(p.shim).mods);
 		}
 
 		Object.assign(defMods, p.mods);

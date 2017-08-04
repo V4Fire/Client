@@ -58,9 +58,9 @@ export const
 @component()
 export default class iBlock extends BlockConstructor {
 	/**
-	 * Local parent component name
+	 * Local parent component constructor
 	 */
-	with: ?string;
+	with: ?Function;
 
 	/**
 	 * Block unique id
