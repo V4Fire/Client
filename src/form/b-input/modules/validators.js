@@ -15,6 +15,9 @@ import { name, password } from 'core/const/validation';
 export const
 	$$ = new Store();
 
+const
+	group = 'validation';
+
 export default {
 	/** @this {bInput} */
 	async name({msg, skipLength, showMsg = true}): boolean {
@@ -62,13 +65,13 @@ export default {
 
 		return new Promise((resolve) => {
 			this.async.setTimeout({
-				group: 'validation',
+				group,
 				label: $$.nameNotExists,
 				onClear: () => resolve(false),
 				fn: async () => {
 					try {
 						const {responseData: {result}} = await this.async.request(r(url, {value}), {
-							group: 'validation',
+							group,
 							label: $$.nameNotExists
 						});
 
@@ -118,13 +121,13 @@ export default {
 
 		return new Promise((resolve) => {
 			this.async.setTimeout({
-				group: 'validation',
+				group,
 				label: $$.emailNotExists,
 				onClear: () => resolve(false),
 				fn: async () => {
 					try {
 						const {responseData: {result}} = await this.async.request(r(url, {value}), {
-							group: 'validation',
+							group,
 							label: $$.emailNotExists
 						});
 

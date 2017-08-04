@@ -109,11 +109,12 @@ export default class bWindow extends iData {
 	/** @override */
 	initCloseHelpers() {
 		const
-			{async: $a, localEvent: $e} = this;
+			{async: $a, localEvent: $e} = this,
+			group = 'closeHelpers';
 
 		const closeHelpers = () => {
 			$a.on(document, 'keyup', {
-				group: 'closeHelpers',
+				group,
 				fn: (e) => {
 					if (e.keyCode === keyCodes.ESC) {
 						return this.close();
@@ -122,7 +123,7 @@ export default class bWindow extends iData {
 			});
 
 			$a.on(document, 'click', {
-				group: 'closeHelpers',
+				group,
 				fn: (e) => {
 					if (e.target.matches(this.block.getElSelector('wrapper'))) {
 						return this.close();
@@ -134,7 +135,7 @@ export default class bWindow extends iData {
 		$e.removeAllListeners('block.mod.*.hidden.*');
 		$e.on('block.mod.remove.hidden.*', closeHelpers);
 		$e.on('block.mod.set.hidden.false', closeHelpers);
-		$e.on('block.mod.set.hidden.true', () => $a.off({group: 'closeHelpers'}));
+		$e.on('block.mod.set.hidden.true', () => $a.off({group}));
 	}
 
 	/** @inheritDoc */

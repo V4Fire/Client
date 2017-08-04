@@ -124,11 +124,12 @@ export default class iMessage extends iBlock {
 	 */
 	initCloseHelpers() {
 		const
-			{async: $a, localEvent: $e} = this;
+			{async: $a, localEvent: $e} = this,
+			group = 'closeHelpers';
 
 		const closeHelpers = () => {
 			$a.on(document, 'keyup', {
-				group: 'closeHelpers',
+				group,
 				fn: (e) => {
 					if (e.keyCode === keyCodes.ESC) {
 						return this.close();
@@ -137,7 +138,7 @@ export default class iMessage extends iBlock {
 			});
 
 			$a.on(document, 'click', {
-				group: 'closeHelpers',
+				group,
 				fn: (e) => {
 					if (!e.target.closest(`.${this.blockId}`)) {
 						return this.close();
@@ -148,7 +149,7 @@ export default class iMessage extends iBlock {
 
 		$e.removeAllListeners('block.mod.set.opened.*');
 		$e.on('block.mod.set.opened.true', closeHelpers);
-		$e.on('block.mod.set.opened.false', () => $a.off({group: 'closeHelpers'}));
+		$e.on('block.mod.set.opened.false', () => $a.off({group}));
 	}
 
 	/** @inheritDoc */

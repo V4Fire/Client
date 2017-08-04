@@ -253,44 +253,47 @@ export default class bInput extends iInput {
 			{async: $a} = this,
 			{input} = this.$refs;
 
+		const
+			group = 'mask';
+
 		if (this.mask) {
 			$a.on(input, 'mousedown keydown', {
-				group: 'mask',
+				group,
 				fn: this.onMaskNavigate
 			});
 
 			$a.on(input, 'mousedown keydown', {
-				group: 'mask',
+				group,
 				fn: this.onMaskValueReady
 			});
 
 			$a.on(input, 'mouseup keyup', {
-				group: 'mask',
+				group,
 				fn: this.onMaskCursorReady
 			}, true);
 
 			$a.on(input, this.b.is.Android ? 'keyup' : 'keypress', {
-				group: 'mask',
+				group,
 				fn: this.onMaskKeyPress
 			});
 
 			$a.on(input, 'keydown', {
-				group: 'mask',
+				group,
 				fn: this.onMaskBackspace
 			});
 
 			$a.on(input, 'input', {
-				group: 'mask',
+				group,
 				fn: this.onMaskInput
 			});
 
 			$a.on(input, 'focus', {
-				group: 'mask',
+				group,
 				fn: this.onMaskFocus
 			});
 
 			$a.on(input, 'blur', {
-				group: 'mask',
+				group,
 				fn: this.onMaskBlur
 			});
 
@@ -324,7 +327,7 @@ export default class bInput extends iInput {
 			await this.applyMaskToValue(this.value, {updateBuffer: true});
 
 		} else {
-			$a.off({group: 'mask'});
+			$a.off({group});
 			this._mask = undefined;
 		}
 	}

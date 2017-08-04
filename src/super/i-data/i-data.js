@@ -213,14 +213,15 @@ export default class iData extends iMessage {
 	@wait('ready')
 	async initDataListeners() {
 		const
-			{dataEvent: $e} = this;
+			{dataEvent: $e} = this,
+			group = 'dataProviderSync';
 
 		$e.off({
-			group: 'dataProviderSync'
+			group
 		});
 
 		$e.on('add', {
-			group: 'dataProviderSync',
+			group,
 			fn: (data) => {
 				if (this.getParams('get')) {
 					this.onAddData(Object.isFunction(data) ? data() : data);
@@ -229,7 +230,7 @@ export default class iData extends iMessage {
 		});
 
 		$e.on('upd', {
-			group: 'dataProviderSync',
+			group,
 			fn: (data) => {
 				if (this.getParams('get')) {
 					this.onUpdData(Object.isFunction(data) ? data() : data);
@@ -238,7 +239,7 @@ export default class iData extends iMessage {
 		});
 
 		$e.on('del', {
-			group: 'dataProviderSync',
+			group,
 			fn: (data) => {
 				if (this.getParams('get')) {
 					this.onDelData(Object.isFunction(data) ? data() : data);
@@ -247,7 +248,7 @@ export default class iData extends iMessage {
 		});
 
 		$e.on('refresh', {
-			group: 'dataProviderSync',
+			group,
 			fn: (data) => this.onRefreshData(Object.isFunction(data) ? data() : data)
 		});
 	}
