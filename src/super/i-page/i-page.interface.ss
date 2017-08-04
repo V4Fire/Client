@@ -34,8 +34,8 @@
 	- return fs.readFileSync(path.join(base, src)).toString()
 
 : &
-	libCache = {},
-	foldersCache = {}
+	libCache = Object.create(null),
+	foldersCache = Object.create(null)
 .
 
 /**
@@ -151,14 +151,16 @@
 
 				# script
 					var
-						ModuleDependencies = {fileCache: {}},
-						READY_STATE = 0,
-						PATH = {},
+						ModuleDependencies = {fileCache: Object.create(null)},
 						API = location.protocol + '//' + location.host + '/api',
-						FN_CACHE = {};
+						READY_STATE = 0;
+
+					var
+						PATH = Object.create(null),
+						FN_CACHE = Object.create(null);
 
 					try {
-						FN_CACHE.string = JSON.parse(localStorage.getItem('STRING_CACHE') || '{}');
+						FN_CACHE.string = JSON.parse(localStorage.getItem('STRING_CACHE') || 'false') || Object.create(null);
 						PATH = new Proxy(PATH, {
 							get: function (target, prop) {
 								if (target[prop]) {
@@ -173,7 +175,7 @@
 					} catch (_) {}
 
 				- script js src = \/config.js
-				- script js src = \/${@version}assets.js?${Math.random()}
+				- script js src = \/${@version}assets.js
 
 				- block head
 					: styles = [ &

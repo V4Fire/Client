@@ -1,5 +1,9 @@
 dist/**
-src/blocks/**/index.js
-src/blocks/**/*.index.js
-src/blocks/libs/**
-src/blocks/**/*_es5.js
+src/super/**/index.js
+src/base/**/index.js
+src/form/**/index.js
+src/icons/**/index.js
+src/global/**/index.js
+src/presets/**/*.index.js
+src/libs/**
+src/**/*_es5.js

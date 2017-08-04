@@ -27,12 +27,15 @@ export default class bUp extends iBlock {
 
 	/** @inheritDoc */
 	mounted() {
-		this.async.on(document, 'scroll', {
+		const
+			{async: $a} = this;
+
+		$a.on(document, 'scroll', {
 			label: $$.scroll,
 			fn: () => this.setMod('hidden', !(pageYOffset > innerHeight / 3))
 		});
 
-		this.async.on(this.$el, 'click', {
+		$a.on(this.$el, 'click', {
 			label: $$.up,
 			fn: () => window.scrollTo(0, 0)
 		});
