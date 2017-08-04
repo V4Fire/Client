@@ -20,10 +20,10 @@ const
 	globalEvent = new EventEmitter2({maxListeners: 1e3, wildcard: true});
 
 export const
-	providers = {},
-	instanceCache = {},
-	reqCache = {},
-	connectCache = {};
+	providers = Object.create(null),
+	instanceCache = Object.create(null),
+	reqCache = Object.create(null),
+	connectCache = Object.create(null);
 
 export const
 	$$ = new Store();

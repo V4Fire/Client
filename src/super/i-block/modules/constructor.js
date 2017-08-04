@@ -93,7 +93,8 @@ export default class BlockConstructor extends VueInterface {
 		/* eslint-disable consistent-this */
 
 		const
-			ctx = this;
+			ctx = this,
+			constr = this.constructor;
 
 		/* eslint-enable consistent-this */
 
@@ -218,8 +219,8 @@ export default class BlockConstructor extends VueInterface {
 			component.methods[prop] = val;
 		}
 
-		mixins[name] = mixins[name] || {};
-		mods[name] = {};
+		mixins.set(constr, mixins.get(constr) || {});
+		mods.set(constr, mods.get(constr) || {});
 
 		const
 			statics = this.constructor;
@@ -239,7 +240,7 @@ export default class BlockConstructor extends VueInterface {
 
 			if (prop === 'mods') {
 				const
-					parentMods = mods[parent];
+					parentMods = mods.get(parent);
 
 				if (parentMods) {
 					el = Object.mixin(false, {}, parentMods, el);
@@ -290,7 +291,7 @@ export default class BlockConstructor extends VueInterface {
 					}
 				}
 
-				mods[name] = el;
+				mods.set(constr, el);
 
 				const
 					map = {},
@@ -322,24 +323,27 @@ export default class BlockConstructor extends VueInterface {
 				continue;
 			}
 
+			const
+				mx = mixins.get(constr);
+
 			let
-				mixin = mixins[name][prop];
+				mixin = mx[prop];
 
 			if (mixin && parent && !Object.isFunction(mixin)) {
 				const
-					parentProp = mixins[parent][prop];
+					parentProp = mixins.get(parent)[prop];
 
 				if (parentProp) {
 					if (Object.isArray(parentProp) && Object.isArray(mixin)) {
 						mixin = parentProp.union(mixin);
 
 					} else {
-						mixin = Object.mixin({deep: true, concatArray: true}, {}, mixins[parent][prop], mixin);
+						mixin = Object.mixin({deep: true, concatArray: true}, {}, parentProp, mixin);
 					}
 				}
 			}
 
-			mixins[name][prop] = component[prop] = this.constructor[prop] = mixin || el;
+			mx[prop] = component[prop] = this.constructor[prop] = mixin || el;
 		}
 
 		return component;

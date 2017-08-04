@@ -8,7 +8,6 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import config from 'config';
 import Async from 'core/async';
 import Store from 'core/store';
 import Block, { statuses } from 'core/block';
@@ -331,14 +330,6 @@ export default class iBlock extends BlockConstructor {
 			xxs: 'xxs'
 		}
 	};
-
-	/**
-	 * Environment value
-	 */
-	get currentEnv(): string {
-		const {admin} = config.host;
-		return admin.indexOf('staging') !== -1 || config.env === 'standalone' ? 'staging' : 'production';
-	}
 
 	/**
 	 * Alias for .i18n
@@ -1255,7 +1246,7 @@ export default class iBlock extends BlockConstructor {
 			}
 		};
 
-		const linkCache = {};
+		const linkCache = Object.create(null);
 		this._syncLinks = {};
 
 		/**

@@ -19,7 +19,7 @@ window.ModuleDependencies = Object.assign(window.ModuleDependencies, {
 	/**
 	 * Cache for modules
 	 */
-	cache: {},
+	cache: Object.create(null),
 
 	/**
 	 * Event emitter instance
