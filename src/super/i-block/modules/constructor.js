@@ -51,7 +51,7 @@ const whitelist = {
 
 const blacklist = {
 	selfName: true,
-	instanceObj: true,
+	instanceConstructor: true,
 	...Object.fromArray(Object.getOwnPropertyNames(VueInterface.prototype))
 };
 
@@ -73,10 +73,18 @@ export default class BlockConstructor extends VueInterface {
 	}) {
 		super(...arguments);
 
+		/* eslint-disable consistent-this */
+
+		const
+			ctx = this,
+			constr = this.constructor;
+
+		/* eslint-enable consistent-this */
+
 		const component = {
 			props,
 			selfName: name,
-			instanceObj: this,
+			instanceConstructor: constr,
 			...opts
 		};
 
@@ -89,14 +97,6 @@ export default class BlockConstructor extends VueInterface {
 
 			return component;
 		}
-
-		/* eslint-disable consistent-this */
-
-		const
-			ctx = this,
-			constr = this.constructor;
-
-		/* eslint-enable consistent-this */
 
 		let beforeCreate;
 		Object.assign(component, {
