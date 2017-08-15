@@ -152,10 +152,14 @@ export function component(
 			}
 		}
 
+		const
+			parentComp = components.get(parent),
+			parentCompStatic = staticComponents.get(parent);
+
 		const comp = new target({
 			name,
-			parent,
 			opts,
+			parent: parentComp && parent,
 			props: p.props,
 			fields: p.data
 		});
@@ -163,10 +167,6 @@ export function component(
 		if (comp.model) {
 			comp.model.event = comp.model.event.dasherize();
 		}
-
-		const
-			parentComp = components.get(parent),
-			parentCompStatic = staticComponents.get(parent);
 
 		if (parentComp) {
 			comp.mixins = comp.mixins || [];
