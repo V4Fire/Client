@@ -17,7 +17,8 @@ b-image extends i-block
 		width 100%
 		height @width
 
-	&__overlay, &__damaged
+	&__overlay,
+	&__damaged
 		position absolute
 		width 100%
 		height @width
@@ -30,12 +31,13 @@ b-image extends i-block
 		display none
 
 	&_error_true &__damaged
-		z-index 2
 		display flex
 		align-items center
 		justify-content center
+		z-index 2
 
-	&_disabled_true &__overlay, &_loading_true &__overlay
+	&_disabled_true &__overlay,
+	&_loading_true &__overlay
 		opacity 1
 
 	&__img
