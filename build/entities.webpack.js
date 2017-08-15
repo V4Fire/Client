@@ -295,7 +295,13 @@ module.exports = function ({entries, folders, output, cache, assetsJSON, lib}) {
 
 		$C(deps.runtime).forEach((block) => {
 			if (block in weights) {
-				weights[block].i++;
+				const
+					w = weights[block];
+
+				w.i++;
+				if (w.isParent) {
+					w.isParent = deps.parents.has(block);
+				}
 
 			} else {
 				weights[block] = {
