@@ -51,7 +51,7 @@ const whitelist = {
 
 const blacklist = {
 	selfName: true,
-	instance: true,
+	instanceObj: true,
 	...Object.fromArray(Object.getOwnPropertyNames(VueInterface.prototype))
 };
 
@@ -76,7 +76,7 @@ export default class BlockConstructor extends VueInterface {
 		const component = {
 			props,
 			selfName: name,
-			instance: this,
+			instanceObj: this,
 			...opts
 		};
 

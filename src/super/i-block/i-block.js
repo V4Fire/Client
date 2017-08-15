@@ -1434,7 +1434,7 @@ export default class iBlock extends BlockConstructor {
 
 		while (obj) {
 			const
-				constr = obj.instance.constructor,
+				constr = obj.instanceObj.constructor,
 				arr = [watchers, binds, locals];
 
 			for (let i = 0; i < arr.length; i++) {
