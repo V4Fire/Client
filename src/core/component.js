@@ -118,7 +118,7 @@ export function component(
 
 		const
 			name = getComponentName(target),
-			parent = Object.getPrototypeOf(target).constructor;
+			parent = Object.getPrototypeOf(target);
 
 		const p = {
 			props: {},
