@@ -24,7 +24,7 @@
     "test": "echo \"Error: no test specified\" && exit 0"
   },
   "dependencies": {
-    "@v4fire/core": "^1.0.27",
+    "@v4fire/core": "^1.0.29",
     "babel-polyfill": "^6.23.0",
     "babel-runtime": "^6.25.0",
     "chart.js": "^2.6.0",
@@ -42,7 +42,7 @@
     "snakeskin": "^7.2.8",
     "socket.io": "^1.7.4",
     "sugar": "^2.0.4",
-    "urijs": "^1.18.10",
+    "urijs": "^1.18.12",
     "uuid": "^3.1.0",
     "vue": "^2.4.2"
   },
@@ -105,7 +105,7 @@
   },
   "devDependencies": {
     "babel-eslint": "^7.2.3",
-    "eslint": "^4.3.0",
+    "eslint": "^4.4.1",
     "eslint-plugin-flowtype": "^2.35.0"
   }
 }
