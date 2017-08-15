@@ -28,10 +28,10 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 const
-	EventEmitter2 = require('eventemitter2').EventEmitter2,
-	initEvent = new EventEmitter2({maxListeners: 1e3});
+	EventEmitter2 = require('eventemitter2').EventEmitter2;
 
 export const
+	initEvent = new EventEmitter2({maxListeners: 1e3}),
 	rootComponents = {},
 	staticComponents = new WeakMap(),
 	localComponents = new WeakMap(),
