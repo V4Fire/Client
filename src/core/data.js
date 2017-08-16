@@ -37,11 +37,6 @@ export function provider(target) {
 }
 
 /**
- * Socket connection store
- */
-let connection: ?Promise<Socket>;
-
-/**
  * Base data provider
  */
 @provider
@@ -171,7 +166,7 @@ export default class Provider {
 			key = JSON.stringify(params);
 
 		if (!connectCache[key]) {
-			connection = connectCache[key] = new Promise((resolve, reject) => {
+			connectCache[key] = new Promise((resolve, reject) => {
 				const
 					socket = new Socket(url);
 
@@ -182,6 +177,7 @@ export default class Provider {
 
 				this.async.worker(socket, {
 					label: $$.connect,
+					join: true,
 					onClear
 				});
 
