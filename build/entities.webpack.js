@@ -506,11 +506,17 @@ module.exports = function ({entries, folders, output, cache, assetsJSON, lib}) {
 			}
 
 			return str;
-		}, !args.fast ? 'window.TPLS = window.TPLS || {};\n' : ''));
+		}, !args.fast ? 'window.TPLS = window.TPLS || Object.create(null);\n' : ''));
 
 		if (args.fast) {
-			const tplRequireFileUrl = path.join(tmpEntries, tplTaskName);
-			fs.writeFileSync(tplRequireFileUrl, `Object.assign(window.TPLS = window.TPLS || Object.create(null), require('./${getUrl(tplFile)}'));\n`);
+			const
+				tplRequireFileUrl = path.join(tmpEntries, tplTaskName);
+
+			fs.writeFileSync(
+				tplRequireFileUrl,
+				`Object.assign(window.TPLS = window.TPLS || Object.create(null), require('./${getUrl(tplFile)}'));\n`
+			);
+
 			entry[tplTaskName] = union[tplTaskName] = tplRequireFileUrl;
 
 		} else {
