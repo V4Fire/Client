@@ -173,13 +173,15 @@ export default class bScroll extends iBlock {
 
 	/**
 	 * Initializes the scroll
+	 *
 	 * @param [scrollerPosition]
+	 * @param [side] - scroll side (x or y)
 	 */
 	@wait('ready', {defer: true})
-	initScroll(scrollerPosition?: {x?: number | string, y?: number | string}): Promise {
+	initScroll(scrollerPosition?: {x?: number | string, y?: number | string}, side?: string): Promise {
 		return this.async.promise(new Promise(async (resolve) => {
 			await this.putInStream(async () => {
-				await this.calcScroll();
+				await this.calcScroll(side);
 				scrollerPosition && this.setScrollerPosition(scrollerPosition);
 				resolve();
 			});
