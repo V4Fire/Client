@@ -22,11 +22,6 @@ export const
 @component()
 export default class bGrid extends iDataPages {
 	/**
-	 * Document count per page
-	 */
-	perPage: ?number = 15;
-
-	/**
 	 * Sort field
 	 */
 	sort: string = 'createdDate';

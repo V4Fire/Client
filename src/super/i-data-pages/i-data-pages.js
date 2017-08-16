@@ -27,6 +27,11 @@ export default class iDataPages extends iDataList {
 	page: number = 1;
 
 	/**
+	 * Document count per page
+	 */
+	perPage: ?number = 15;
+
+	/**
 	 * If false, then lazy load for paging will be disabled
 	 */
 	lazyLoad: ?boolean = true;
