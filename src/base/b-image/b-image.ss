@@ -16,7 +16,7 @@
 
 		- block damaged
 			< .&__damaged
-				< b-icon :value = 'damaged'
+				< b-icon :value = brokenIcon
 
 		- block overlay
 			< .&__overlay

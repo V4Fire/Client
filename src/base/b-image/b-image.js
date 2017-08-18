@@ -29,6 +29,11 @@ export default class bImage extends iBlock {
 	@watch('initOverlay')
 	load: ?boolean = false;
 
+	/**
+	 * Icon value for broken state
+	 */
+	brokenIcon: string = 'damaged';
+
 	/** @override */
 	get refs(): {img: HTMLImageElement} {}
 
