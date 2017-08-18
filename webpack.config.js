@@ -46,7 +46,7 @@ function r(file) {
 
 const
 	output = r(o('[hash]_[name]')),
-	assetsJSON = o(`${version}assets.json`),
+	assetsJSON = r(o(`${version}assets.json`)),
 	lib = d('node_modules');
 
 const build = require('./build/entities.webpack')({
