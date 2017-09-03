@@ -274,11 +274,8 @@ module.exports = function ({entries, folders, output, cache, assetsJSON, lib}) {
 				}
 			});
 
-			// FIXME
-			if (Math.random() < 0.5) {
-				deps.runtime = new Set([...deps.runtime, ...blockDeps.runtime]);
-				deps.parents = new Set($C([...deps.parents, ...blockDeps.parents]).filter((el) => !runtime.has(el)).map());
-			}
+			deps.runtime = new Set([...deps.runtime, ...blockDeps.runtime]);
+			deps.parents = new Set($C([...deps.parents, ...blockDeps.parents]).filter((el) => !runtime.has(el)).map());
 		});
 
 		return deps;

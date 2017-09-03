@@ -1327,9 +1327,6 @@ export default class Async {
 	 * @private
 	 */
 	_clear({name, clearFn, id, label, group}): this {
-		// FIXME
-		return;
-
 		const
 			p = arguments[0];
 
