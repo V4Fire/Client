@@ -26,12 +26,12 @@ export default class bImageEditor extends iBlock {
 	/**
 	 * Image width
 	 */
-	width: number;
+	width: ?number | string = 'auto';
 
 	/**
 	 * Image height
 	 */
-	height: number;
+	height: ?number | string = 'auto';
 
 	/**
 	 * Image maximum width
