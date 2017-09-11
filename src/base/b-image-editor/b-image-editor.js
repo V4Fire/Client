@@ -293,7 +293,7 @@ export default class bImageEditor extends iBlock {
 	 */
 	getSelectedRect(): $$size {
 		if (this.tools.crop) {
-			return this.$refs.crop.getSelectedRect();
+			return this.$refs.crop.selectedRect;
 		}
 
 		return {
@@ -309,7 +309,7 @@ export default class bImageEditor extends iBlock {
 	 */
 	getSelectedImageData(): ImageData {
 		if (this.tools.crop) {
-			const {x, y, width, height} = this.$refs.crop.getSelectedRect();
+			const {x, y, width, height} = this.$refs.crop.selectedRect;
 			return this.ctx.getImageData(x, y, width, height);
 		}
 
@@ -325,7 +325,7 @@ export default class bImageEditor extends iBlock {
 	getSelectedImageDataURL(mime?: string = 'image/png', quality?: number = 1): string {
 		if (this.tools.crop) {
 			const
-				{x, y, width, height} = this.$refs.crop.getSelectedRect();
+				{x, y, width, height} = this.$refs.crop.selectedRect;
 
 			const
 				data = this.ctx.getImageData(x, y, width, height),
@@ -350,7 +350,7 @@ export default class bImageEditor extends iBlock {
 	getSelectedImageBlob(mime?: string = 'image/png', quality?: number = 1): Promise<Blob> {
 		if (this.tools.crop) {
 			const
-				{x, y, width, height} = this.$refs.crop.getSelectedRect();
+				{x, y, width, height} = this.$refs.crop.selectedRect;
 
 			const
 				data = this.ctx.getImageData(x, y, width, height),
