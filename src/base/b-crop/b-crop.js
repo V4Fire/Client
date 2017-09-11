@@ -36,12 +36,12 @@ export default class bCrop extends iBlock {
 	/**
 	 * Image width
 	 */
-	width: number;
+	width: ?number | string = 'auto';
 
 	/**
 	 * Image height
 	 */
-	height: number;
+	height: ?number | string = 'auto';
 
 	/**
 	 * Image alt
@@ -1059,7 +1059,11 @@ export default class bCrop extends iBlock {
 	@wait('loading')
 	async initSelect(params?: $$size = {}) {
 		this.setMod('progress', true);
-		await this.async.promise(this.img.init, {label: $$.initSelect});
+
+		try {
+			await this.async.promise(this.img.init, {label: $$.initSelect});
+		} catch (_) {}
+
 		this._areaEvent = false;
 
 		if (!this.src) {
