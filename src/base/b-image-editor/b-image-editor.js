@@ -178,7 +178,7 @@ export default class bImageEditor extends iBlock {
 				skipTest: this.skipTest
 			});
 
-			$C(workers).forEach((worker) => $a.worker({group, worker}));
+			$C(workers).forEach((worker) => $a.worker(worker, {group}));
 
 		}), {group});
 
