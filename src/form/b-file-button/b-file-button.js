@@ -57,6 +57,13 @@ export default class bFileButton extends bButton {
 		reader[this.read](file);
 	}
 
+	/**
+	 * Resetting value of the file input
+	 */
+	reset() {
+		this.$refs.file.value = '';
+	}
+
 	/** @inheritDoc */
 	mounted() {
 		const {file, button} = this.$refs;
