@@ -122,7 +122,7 @@ export default class bWindow extends iData {
 				}
 			});
 
-			$a.on(document, 'click', {
+			$a.on(document, 'mousedown touchstart', {
 				group,
 				fn: (e) => {
 					if (e.target.matches(this.block.getElSelector('wrapper'))) {
