@@ -10,6 +10,7 @@
 
 import Store from 'core/store';
 import bButton from 'form/b-button/b-button';
+import { wait } from 'super/i-block/i-block';
 import { component } from 'core/component';
 export class bUploaderError extends Error {}
 
@@ -58,9 +59,10 @@ export default class bFileButton extends bButton {
 	}
 
 	/**
-	 * Resetting value of the file input
+	 * Resets a value of the file input
 	 */
-	reset() {
+	@wait('ready')
+	reset(): ?Promise {
 		this.$refs.file.value = '';
 	}
 
