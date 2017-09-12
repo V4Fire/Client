@@ -179,12 +179,7 @@ function buildFactory(entry, i = '00') {
 						{
 							loader: 'babel',
 							options: Object.assign({}, config.babel.client, {
-								plugins: $C([].concat(config.babel.client.plugins)).map((el) => {
-									if (el[0] === 'transform-runtime') {
-										el[1].helpers = false;
-									}
-									return el;
-								})
+								plugins: config.babel.clientWithRuntime()
 							})
 						}
 					]
