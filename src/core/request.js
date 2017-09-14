@@ -275,7 +275,7 @@ class Request {
 			body = Object.toQueryString(data);
 			contentType = 'text/plain;charset=UTF-8';
 
-		} else if (data.constructor === FormData) {
+		} else if (data instanceof FormData) {
 			contentType = '';
 
 		} else if (typeof data === 'object') {
