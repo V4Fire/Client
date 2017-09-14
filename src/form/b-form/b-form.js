@@ -242,7 +242,12 @@ export default class bForm extends iData {
 
 			if (isMultipart) {
 				body = $C(body).reduce((res, el, key) => {
-					res.append(key, el);
+					if (el instanceof Blob) {
+						res.append(key, el, `blob.${el.type.split('/')[1]}`);
+
+					} else {
+						res.append(key, el);
+					}
 					return res;
 				}, new FormData());
 
