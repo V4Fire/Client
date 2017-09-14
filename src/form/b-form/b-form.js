@@ -225,14 +225,29 @@ export default class bForm extends iData {
 			res;
 
 		if (els && els.length) {
-			const
-				body = {};
+			let
+				body = {},
+				isMultipart = false;
 
 			await Promise.all($C(els).map((el) => (async () => {
 				let val = await el.groupFormValue;
-				val = el.formConverter ? el.formConverter(val) : val;
+				val = el.formConverter ? await el.formConverter(val) : val;
+
+				if (val instanceof Blob || val instanceof File || val instanceof FileList) {
+					isMultipart = true;
+				}
+
 				body[el.name] = el.utc ? this.h.setJSONToUTC(val) : val;
 			})()));
+
+			if (isMultipart) {
+				body = $C(body).reduce((res, el, key) => {
+					res.append(key, el);
+					return res;
+				}, new FormData());
+
+				this.params.responseType = 'text';
+			}
 
 			this.emit('submitStart', body, this.params, this.method);
 			try {
