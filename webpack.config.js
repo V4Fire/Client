@@ -173,6 +173,19 @@ function buildFactory(entry, i = '00') {
 				},
 
 				{
+					test: /workers\/\w+\.js$/,
+					exclude: /node_modules\/(?!@v4fire)/,
+					use: [
+						{
+							loader: 'babel',
+							options: Object.assign({}, config.babel.client, {
+								plugins: config.babel.clientWithRuntime()
+							})
+						}
+					]
+				},
+
+				{
 					test: /\.styl$/,
 					use: ExtractTextPlugin.extract({
 						fallback: 'style',
