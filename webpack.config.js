@@ -63,7 +63,8 @@ console.log('Project graph initialized');
 
 function buildFactory(entry, i = '00') {
 	const
-		base = {'0': true, '00': true}[i];
+		base = {'0': true, '00': true}[i],
+		publicPath = '/';
 
 	return {
 		entry,
@@ -71,7 +72,7 @@ function buildFactory(entry, i = '00') {
 
 		output: {
 			path: cwd,
-			publicPath: '/',
+			publicPath,
 			filename: hash(output, true)
 		},
 
@@ -127,6 +128,7 @@ function buildFactory(entry, i = '00') {
 					minimize: true,
 					debug: false,
 					options: {
+						publicPath,
 						context: __dirname
 					}
 				})

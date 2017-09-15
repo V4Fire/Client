@@ -56,10 +56,11 @@ if (isProdEnv) {
 		}
 	}
 
-	if (!args.fast) {
+	// FIXME: conflict with the same names of templates. See ./entities.webpack.js:497
+	/*if (!args.fast) {
 		args.fast = true;
 		argv.push('--fast');
-	}
+	}*/
 }
 
 /* eslint-disable no-unused-vars */
