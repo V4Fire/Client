@@ -275,6 +275,9 @@ class Request {
 			body = Object.toQueryString(data);
 			contentType = 'text/plain;charset=UTF-8';
 
+		} else if (data instanceof FormData) {
+			contentType = '';
+
 		} else if (typeof data === 'object') {
 			body = JSON.stringify(data);
 			contentType = 'application/json;charset=UTF-8';
