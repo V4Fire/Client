@@ -105,7 +105,7 @@ config.babel = {
 			pos = $C(pl).search((el) => (Array.isArray(el) ? el[0] : el) === 'transform-runtime');
 
 		pl[pos === -1 ? pl.length : pos] = ['transform-runtime', {
-			helpers: false,
+			helpers: true,
 			polyfill: false,
 			regenerator: false
 		}];

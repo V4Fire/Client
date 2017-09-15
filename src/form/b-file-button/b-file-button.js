@@ -10,6 +10,7 @@
 
 import Store from 'core/store';
 import bButton from 'form/b-button/b-button';
+import { wait } from 'super/i-block/i-block';
 import { component } from 'core/component';
 export class bUploaderError extends Error {}
 
@@ -55,6 +56,14 @@ export default class bFileButton extends bButton {
 
 		reader.onload = this.async.proxy((e) => this.emit('set', e.target.result));
 		reader[this.read](file);
+	}
+
+	/**
+	 * Resets a value of the file input
+	 */
+	@wait('ready')
+	reset(): ?Promise {
+		this.$refs.file.value = '';
 	}
 
 	/** @inheritDoc */
