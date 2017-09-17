@@ -1,7 +1,3 @@
-'use strict';
-
-/* eslint-disable no-unused-vars */
-
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -29,12 +25,12 @@ export default class Async {
 	/**
 	 * Cache object for async operations
 	 */
-	cache: ?Object;
+	cache: Object | undefined;
 
 	/**
 	 * Context for functions
 	 */
-	context: ?Object;
+	context: Object | undefined;
 
 	/**
 	 * @param [ctx] - context for functions
