@@ -24,7 +24,7 @@
     "test": "echo \"Error: no test specified\" && exit 0"
   },
   "dependencies": {
-    "@v4fire/core": "^1.0.31",
+    "@v4fire/core": "github:dmitrybrovka/Core",
     "babel-polyfill": "^6.26.0",
     "babel-runtime": "^6.26.0",
     "chart.js": "^2.6.0",
