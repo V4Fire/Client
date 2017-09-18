@@ -151,7 +151,7 @@ function buildFactory(entry, i = '00') {
 			rules: [
 				{
 					test: /\.js$/,
-					exclude: /node_modules\/(?!@v4fire)/,
+					exclude: [/node_modules\/(?!@v4fire)/, /workers/],
 					use: [
 						{
 							loader: 'babel',
@@ -175,7 +175,7 @@ function buildFactory(entry, i = '00') {
 				},
 
 				{
-					test: /workers\/\w+\.js$/,
+					test: /workers\w+\.js$/,
 					exclude: /node_modules\/(?!@v4fire)/,
 					use: [
 						{
