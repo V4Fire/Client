@@ -175,8 +175,8 @@ function buildFactory(entry, i = '00') {
 				},
 
 				{
-					test: /workers\w+\.js$/,
-					exclude: /node_modules\/(?!@v4fire)/,
+					test: /\.js$/,
+					include: /workers/,
 					use: [
 						{
 							loader: 'babel',
@@ -261,6 +261,7 @@ function buildFactory(entry, i = '00') {
 									root: cwd,
 									output: o(),
 									dependencies: build.dependencies,
+									blocks: entryFolder,
 									assets: src.assets(),
 									version,
 									hashLength,
