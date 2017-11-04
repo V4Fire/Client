@@ -10,11 +10,11 @@
 
 module.exports = function (gulp = require('gulp')) {
 	require('@v4fire/core/gulpfile')(gulp);
-	require('./build/static.gulp')(gulp);
+	include('build/static.gulp')(gulp);
 
 	const
 		config = require('config'),
-		runWebpack = 'node node_modules/parallel-webpack/bin/run.js',
+		runWebpack = 'npx parallel-webpack',
 		args = process.argv.slice(3).join(' ');
 
 	gulp.task('cleanClient', (cb) => {

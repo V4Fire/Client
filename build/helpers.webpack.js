@@ -24,11 +24,6 @@ const args = exports.args = minimist(argv.slice(2));
 args.env && (env.NODE_ENV = args.env);
 
 /**
- * Production mode
- */
-const isProdEnv = exports.isProdEnv = env.NODE_ENV === 'production';
-
-/**
  * File hash length
  */
 const hashLength = exports.hashLength = 15;
