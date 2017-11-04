@@ -1,7 +1,22 @@
 {
   "compilerOptions": {
     "target": "es5",
-    "baseUrl": "./src",
-    "lib": ["es5", "es2015", "es2016", "es2017", "esnext"]
+    "baseUrl": ".",
+    "paths": {
+      "*": [
+        "./src/*",
+        "./node_modules/@v4fire/core/src/*"
+      ],
+
+      "@v4fire/core/*": [
+        "./node_modules/@v4fire/core/src/*"
+      ]
+    },
+
+    "downlevelIteration": true,
+    "lib": ["dom", "esnext"],
+    "strictNullChecks": true,
+    "strictFunctionTypes": true,
+    "typeRoots": ["node_modules", "node_modules/@types"]
   }
 }
