@@ -26,12 +26,9 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	},
 
 	favicons() {
-		const
-			config = require('config');
-
 		return {
-			appName: config.appName(),
-			path: path.join(config.src.assets(), 'favicons'),
+			appName: this.appName(),
+			path: path.join(this.src.assets(), 'favicons'),
 			background: '#FFF',
 			display: 'standalone',
 			orientation: 'portrait',
