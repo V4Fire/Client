@@ -23,3 +23,12 @@ declare let ModuleDependencies: {
 	add(moduleName: string, dependencies: string[]): void;
 	get(module: string): Promise<string[]>;
 };
+
+interface Element {
+	getPosition(): {top: number; left: number};
+	getIndex(): number;
+}
+
+interface Node {
+	getOffset(parent?: Element | string): {top: number; left: number};
+}

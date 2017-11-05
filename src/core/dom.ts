@@ -1,5 +1,3 @@
-'use strict';
-
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -8,8 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-const
-	$C = require('collection.js');
+import $C = require('collection.js');
 
 /**
  * Delegates the specified event
@@ -19,17 +16,17 @@ const
  * @param [handler]
  */
 export function delegate(selector: string, handler?: Function): Function {
-	function wrapper(e) {
+	function wrapper(e: any): boolean {
 		const
 			link = e.target.closest && e.target.closest(selector);
 
 		if (link) {
 			e.delegateTarget = link;
-			handler.call(this, e);
-
-		} else {
-			return false;
+			handler && handler.call(this, e);
+			return true;
 		}
+
+		return false;
 	}
 
 	if (handler) {
@@ -45,7 +42,7 @@ export function delegate(selector: string, handler?: Function): Function {
 /**
  * Returns a position of the element relative to the document
  */
-Element.prototype.getPosition = function (): {top: number, left: number} {
+Element.prototype.getPosition = function (): {top: number; left: number} {
 	const box = this.getBoundingClientRect();
 	return {
 		top: box.top + pageYOffset,
@@ -64,7 +61,7 @@ Element.prototype.getIndex = function (): number {
  * Returns a position of the element relative to the parent
  * @param [parent]
  */
-Node.prototype.getOffset = function (parent?: Element | string): {top: number, left: number} {
+Node.prototype.getOffset = function (parent?: Element | string): {top: number; left: number} {
 	const res = {
 		top: this.offsetTop,
 		left: this.offsetLeft
@@ -77,10 +74,9 @@ Node.prototype.getOffset = function (parent?: Element | string): {top: number, l
 	let
 		{offsetParent} = this;
 
-	function matcher() {
-		return offsetParent && offsetParent !== document.documentElement &&
-			(Object.isString(parent) ? !offsetParent.matches(parent) : offsetParent !== parent);
-	}
+	const matcher = () =>
+		offsetParent && offsetParent !== document.documentElement &&
+		(Object.isString(parent) ? !offsetParent.matches(parent) : offsetParent !== parent);
 
 	while (matcher()) {
 		res.top += offsetParent.offsetTop;
