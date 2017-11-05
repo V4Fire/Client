@@ -26,7 +26,7 @@ args.env && (env.NODE_ENV = args.env);
 /**
  * File hash length
  */
-const hashLength = exports.hashLength = 15;
+exports.hashLength = 15;
 
 /**
  * Project version
@@ -35,13 +35,13 @@ const hashLength = exports.hashLength = 15;
 exports.version = '';
 
 if (isProd) {
-	if (env.BUMP_VERSION) {
+	if (Number(env.BUMP_VERSION)) {
 		if (env.VERSION) {
 			exports.version = env.VERSION;
 
 		} else {
 			const
-				src = path.join(config.src.cwd, 'package.json'),
+				src = path.join(config.src.cwd(), 'package.json'),
 				pack = require(src),
 				v = pack.version.split('.');
 
@@ -51,11 +51,10 @@ if (isProd) {
 		}
 	}
 
-	// FIXME: conflict with the same names of templates. See ./entities.webpack.js:497
-	/*if (!args.fast) {
+	if (!args.fast) {
 		args.fast = true;
 		argv.push('--fast');
-	}*/
+	}
 }
 
 /* eslint-disable no-unused-vars */
@@ -68,9 +67,8 @@ if (isProd) {
  * @param {boolean=} [chunk] - if true, then the specified output is a chunk
  */
 exports.hash = function (output, chunk) {
-	// FIXME: webpack commonChunksPlugin chunkhash bug
-	// return str.replace(/\[hash]_/g, isProd ? chunk ? `[chunkhash:${HASH_LENGTH}]_` : `[hash:${HASH_LENGTH}]_` : '');
-	return output.replace(/\[hash]_/g, isProd ? `[hash:${hashLength}]_` : '');
+	const l = exports.hashLength;
+	return output.replace(/\[hash]_/g, isProd ? chunk ? `[chunkhash:${l}]_` : `[hash:${l}]_` : '');
 };
 
 /* eslint-enable no-unused-vars */
