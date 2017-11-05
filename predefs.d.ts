@@ -7,3 +7,19 @@
  */
 
 /// <reference types="@v4fire/core/predefs"/>
+/// <reference types="dom4"/>
+
+declare let READY_STATE: number;
+declare let PATH: Record<string, string | undefined>;
+declare let API: string;
+
+interface HTMLImageElement {
+	onInit(onSuccess: () => void, onFail?: (err?: Error) => void): void;
+}
+
+declare let ModuleDependencies: {
+	cache: Record<string, any>;
+	event: {on: Function; once: Function; off: Function};
+	add(moduleName: string, dependencies: string[]): void;
+	get(module: string): Promise<string[]>;
+};

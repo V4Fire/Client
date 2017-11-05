@@ -25,6 +25,9 @@
     "test": "echo \"Error: no test specified\" && exit 0"
   },
   "dependencies": {
+    "@types/dom4": "^1.5.20",
+    "@types/socket.io": "^1.4.31",
+    "@types/urijs": "^1.15.34",
     "@v4fire/core": "github:v4Fire/core#ts",
     "babel-polyfill": "^6.26.0",
     "chart.js": "^2.7.1",
