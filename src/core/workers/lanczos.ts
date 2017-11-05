@@ -1,5 +1,3 @@
-'use strict';
-
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -8,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-onmessage = function (e: Event) {
+onmessage = function (e: ServiceWorkerMessageEvent): void {
 	const {original, final, lobes, id} = e.data;
 	new Resizer(original, final, lobes, id);
 };

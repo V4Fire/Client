@@ -1,5 +1,3 @@
-'use strict';
-
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -8,13 +6,11 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { convertDate } from 'core/json';
-
-const
-	$C = require('collection.js'),
-	URI = require('urijs'),
-	joinUri = require('join-uri'),
-	uuid = require('uuid');
+import $C = require('collection.js');
+import URI = require('urijs');
+import joinUri = require('join-uri');
+import uuid = require('uuid');
+import { convertIfDate } from 'core/json';
 
 const
 	requests = Object.create(null),
@@ -24,7 +20,7 @@ export class RequestError {
 	/**
 	 * Error arguments
 	 */
-	args: Object;
+	args: Record<string, any>;
 
 	/**
 	 * Error type
@@ -40,7 +36,7 @@ export class RequestError {
 	 * @param type - error type
 	 * @param args - error arguments
 	 */
-	constructor(type: string, args: Object) {
+	constructor(type: string, args: Record<string, any>) {
 		this.args = args;
 		this.type = type;
 		this.code = args[0].status;
@@ -48,27 +44,29 @@ export class RequestError {
 }
 
 export default request;
-export type $$requestParams = {
-	method?: string,
-	timeout?: number,
-	defer?: number,
-	contentType?: string,
-	responseType?: string,
-	headers?: Object,
-	body?: any,
-	withCredentials?: boolean,
-	user?: string,
-	password?: string,
-	status?: Array | RegExp | number,
-	onAbort?: (transport: any, ...args: any) => void,
-	onTimeout?: (transport: any, ...args: any) => void,
-	onError?: (transport: any, ...args: any) => void,
-	onLoad?: (transport: any, ...args: any) => void,
-	onLoadStart?: (transport: any, ...args: any) => void,
-	onLoadEnd?: (transport: any, ...args: any) => void,
-	onProgress?: (transport: any, ...args: any) => void,
-	upload?: (transport: any, ...args: any) => void
-};
+export interface RequestParams {
+	method?: string;
+	timeout?: number;
+	defer?: number;
+	contentType?: string;
+	responseType?: string;
+	headers?: Object;
+	body?: any;
+	withCredentials?: boolean;
+	user?: string;
+	password?: string;
+	status?: RegExp | number | number[];
+	// tslint:disable:prefer-method-signature
+	onAbort?: (transport: any, ...args: any[]) => void;
+	onTimeout?: (transport: any, ...args: any[]) => void;
+	onError?: (transport: any, ...args: any[]) => void;
+	onLoad?: (transport: any, ...args: any[]) => void;
+	onLoadStart?: (transport: any, ...args: any[]) => void;
+	onLoadEnd?: (transport: any, ...args: any[]) => void;
+	onProgress?: (transport: any, ...args: any[]) => void;
+	upload?: (transport: any, ...args: any[]) => void;
+	// tslint:enable:prefer-method-signature
+}
 
 /**
  * Creates a new request for the specified URL and returns a promise
@@ -76,7 +74,7 @@ export type $$requestParams = {
  * @param url
  * @param params - additional parameters
  */
-export function request(url: string, params?: $$requestParams): Promise<XMLHttpRequest> {
+export function request(url: string, params?: RequestParams): Promise<XMLHttpRequest> {
 	let
 		res,
 		replacedBy;
@@ -85,7 +83,7 @@ export function request(url: string, params?: $$requestParams): Promise<XMLHttpR
 		res = new Request(url, {
 			...params,
 
-			onAbort() {
+			onAbort(): void {
 				if (replacedBy) {
 					resolve(replacedBy);
 
@@ -95,12 +93,12 @@ export function request(url: string, params?: $$requestParams): Promise<XMLHttpR
 				}
 			},
 
-			onError() {
+			onError(): void {
 				params.onError && params.onError.apply(this, arguments);
 				reject(new RequestError('error', arguments));
 			},
 
-			onLoad(transport) {
+			onLoad(transport: any): void {
 				const
 					st = params.status || /^2\d\d$/;
 
@@ -125,7 +123,7 @@ export function request(url: string, params?: $$requestParams): Promise<XMLHttpR
 				}
 			},
 
-			onTimeout() {
+			onTimeout(): void {
 				params.onTimeout && params.onTimeout.apply(this, arguments);
 				reject(new RequestError('timeout', arguments));
 			}
@@ -248,7 +246,7 @@ class Request {
 			onLoadEnd,
 			onProgress,
 			upload
-		}: $$requestParams
+		}: RequestParams
 
 		/* eslint-enable no-unused-vars */
 
@@ -404,7 +402,7 @@ class Request {
 					if (!clone && clone !== null) {
 						clone = null;
 						timer = requestIdleCallback(() => {
-							let data = JSON.parse(responseData, convertDate);
+							let data = JSON.parse(responseData, convertIfDate);
 							timer = requestIdleCallback(() => {
 								data = data.toSource();
 								timer = requestIdleCallback(() => clone = new Function(`return ${data}`));
@@ -412,7 +410,7 @@ class Request {
 						});
 					}
 
-					return clone ? clone() : JSON.parse(responseData, convertDate);
+					return clone ? clone() : JSON.parse(responseData, convertIfDate);
 				}
 
 				return responseData;
