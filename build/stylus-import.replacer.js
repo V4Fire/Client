@@ -20,10 +20,12 @@ const
  * Monic replacer for Stylus @import declarations
  *
  * @param {Array<string>} folders - list of related folders
- * @param {string} lib - src of a node_modules folder
+ * @param {string} lib - path to a node_modules folder
  * @returns {function(string, string): string}
  */
 module.exports = function ({folders, lib}) {
+	folders = folders.slice().reverse();
+
 	return (str, file) => {
 		const
 			cwd = path.dirname(file),
@@ -40,7 +42,7 @@ module.exports = function ({folders, lib}) {
 
 		return c[str] = str
 			.replace(/@import "([^./~].*?\.styl)"/g, (str, url) => {
-				for (let i = folders.length; i--;) {
+				for (let i = 0; i < folders.length; i++) {
 					const
 						fullPath = path.join(folders[i], url);
 

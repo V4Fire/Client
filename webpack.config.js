@@ -14,6 +14,7 @@ const
 	path = require('path');
 
 const
+	{config: pzlr} = require('@pzlr/build-core'),
 	{hash, args, version} = include('build/build.webpack'),
 	{src, src: {client: folders, client: [entryFolder]}} = config;
 
@@ -24,7 +25,7 @@ const
 	lib = path.join(cwd, 'node_modules');
 
 const build = include('build/entities.webpack')({
-	entries: path.join(entryFolder, 'entries'),
+	entries: path.join(entryFolder, pzlr.entriesDir),
 	output: hash(output),
 	cache: Number(process.env.FROM_CACHE) && path.join(cwd, 'app-cache/graph'),
 	folders,
@@ -32,7 +33,7 @@ const build = include('build/entities.webpack')({
 	lib
 });
 
-include('build/snakeskin.webpack')(folders);
+include('build/snakeskin.webpack')({folders});
 console.log('Project graph initialized');
 
 function r(file) {
@@ -46,7 +47,7 @@ function buildFactory(entry, i = '00') {
 		resolve: include('build/resolve.webpack')({modules: [entryFolder, cwd, ...folders.slice(1), lib]}),
 		resolveLoader: include('build/resolve-loader.webpack'),
 		externals: include('build/externals.webpack'),
-		module: include('build/module.webpack')({build, output, folders}),
+		module: include('build/module.webpack')({build, output, folders, lib}),
 		plugins: include('build/plugins.webpack')({build, assetsJSON, output, i})
 	};
 }

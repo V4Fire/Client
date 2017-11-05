@@ -12,9 +12,8 @@ const
 	$C = require('collection.js');
 
 const
-	{String, Array} = require('sugar'),
-	{args} = require('./build.webpack'),
-	{validators} = require('@pzlr/build-core');
+	Sugar = require('sugar'),
+	{args} = require('./build.webpack');
 
 const
 	fs = require('fs'),
@@ -39,6 +38,8 @@ const
  * @returns {{entry, processes, dependencies}}
  */
 module.exports = function ({entries, folders, output, cache, assetsJSON, lib}) {
+	folders = folders.slice().reverse();
+
 	//////////////////
 	// Load from cache
 	//////////////////
@@ -93,7 +94,7 @@ module.exports = function ({entries, folders, output, cache, assetsJSON, lib}) {
 	////////////////////////////////////
 
 	const
-		b = `@(${validators.blockTypeList.join('|')})-*`,
+		b = `@(${pzlr.validators.blockTypeList.join('|')})-*`,
 		components = `/**/${b}/index.js`,
 		virtualComponents = `/**/${b}.index.js`;
 
@@ -117,7 +118,7 @@ module.exports = function ({entries, folders, output, cache, assetsJSON, lib}) {
 				$C.extend({
 					deep: true,
 					concatArray: true,
-					concatFn: Array.union
+					concatFn: Sugar.Array.union
 				}, decl, base);
 
 			} else {
@@ -126,13 +127,17 @@ module.exports = function ({entries, folders, output, cache, assetsJSON, lib}) {
 		}
 
 		const
-			logic = url('js'),
+			logicJs = url('js'),
+			logicTs = url('ts'),
 			style = url('styl'),
 			tpl = url('ss'),
 			html = url('ess');
 
-		if (fs.existsSync(logic)) {
-			decl.logic = logic;
+		if (fs.existsSync(logicJs)) {
+			decl.logic = logicJs;
+
+		} else if (fs.existsSync(logicTs)) {
+			decl.logic = logicTs;
 		}
 
 		if (decl.mixin) {
@@ -213,8 +218,13 @@ module.exports = function ({entries, folders, output, cache, assetsJSON, lib}) {
 	 * Returns a list of dependencies from an entry file
 	 */
 	function getEntryDepList(dir, file, arr = []) {
+		const
+			hasImport = /^import\s+(['"])(.*?)\1;?/,
+			entriesDir = new RegExp(`\\b${Sugar.RegExp.escape(pzlr.config.entriesDir)}\\b`),
+			insideEntry = /^\.\//;
+
 		$C(file.split(/\r?\n|\r/)).forEach((el) => {
-			if (!/^import\s+('|")(.*?)\1;?/.test(el)) {
+			if (!hasImport.test(el)) {
 				return;
 			}
 
@@ -222,7 +232,7 @@ module.exports = function ({entries, folders, output, cache, assetsJSON, lib}) {
 				url = RegExp.$2,
 				nodeModule = isNodeModule(url);
 
-			if (nodeModule && /\bentries\b/.test(url) || /^\.\//.test(url)) {
+			if (nodeModule && entriesDir.test(url) || insideEntry.test(url)) {
 				const
 					d = nodeModule ? lib : dir;
 
@@ -236,7 +246,7 @@ module.exports = function ({entries, folders, output, cache, assetsJSON, lib}) {
 				getEntryDepList(path.dirname(f), fs.readFileSync(f, 'utf-8'), arr);
 
 			} else {
-				arr.push(path.join(dir, url));
+				arr.push(nodeModule ? url : path.join(dir, url));
 			}
 		});
 
@@ -257,7 +267,7 @@ module.exports = function ({entries, folders, output, cache, assetsJSON, lib}) {
 
 		$C(getEntryDepList(dir, file)).forEach((el) => {
 			const
-				name = path.basename(el, '.js'),
+				name = path.basename(el, path.extname(el)),
 				block = blockMap[name];
 
 			if (!pzlr.validators.blockName(name) || !block) {
@@ -429,7 +439,7 @@ module.exports = function ({entries, folders, output, cache, assetsJSON, lib}) {
 	$C(entry).forEach((list, name) => {
 		delete entry[name];
 
-		// JS
+		// JS / TS
 
 		const
 			blackName = /^[iv]-/,
@@ -474,7 +484,7 @@ module.exports = function ({entries, folders, output, cache, assetsJSON, lib}) {
 					str +=
 						`
 .${name}
-	extends($${String.camelize(name, false)})
+	extends($${Sugar.String.camelize(name, false)})
 
 `;
 				}

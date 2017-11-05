@@ -23,9 +23,10 @@ const
  * @param {Object} build - build object
  * @param {string} output - output path
  * @param {Array<string>} folders - list of related folders
+ * @param {string} lib - path to a node_modules folder
  * @returns {Object}
  */
-module.exports = function ({build, output, folders}) {
+module.exports = function ({build, output, folders, lib}) {
 	return {
 		rules: [
 			{

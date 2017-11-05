@@ -24,12 +24,14 @@ const
 
 /**
  * Initializes Snakeskin
- * @param {string} folders - list of block folders
+ * @param {Array<string>} folders - list of block folders
  */
-module.exports = function (folders) {
+module.exports = function ({folders}) {
+	folders = folders.slice().reverse();
+
 	const
 		blocksTree = {},
-		components = `/**/@(${validators.blockTypeList.join('|')})-*.js`,
+		components = `/**/@(${validators.blockTypeList.join('|')})-*.@(ts|js)`,
 		files = $C(folders).reduce((arr, el) => arr.concat(glob.sync(path.join(el, components))), []).reverse();
 
 	$C(files).forEach((el) => {

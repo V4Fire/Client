@@ -14,7 +14,7 @@ const
 /**
  * Monic replacer for TS import declarations
  *
- * @param {string} lib - src of a node_modules folder
+ * @param {string} lib - path to a node_modules folder
  * @returns {function(string, string): string}
  */
 module.exports = function ({lib}) {
