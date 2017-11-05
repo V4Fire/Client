@@ -10,7 +10,9 @@ import $C = require('collection.js');
 import URI = require('urijs');
 import joinUri = require('join-uri');
 import uuid = require('uuid');
+
 import { convertIfDate } from 'core/json';
+import { RequestLike as AsyncRequest } from 'core/async';
 
 const
 	requests = Object.create(null),
@@ -43,7 +45,10 @@ export class RequestError {
 	}
 }
 
-export default request;
+export interface RequestLike<T> extends AsyncRequest<T> {
+	aborted?: boolean;
+}
+
 export interface RequestParams {
 	method?: string;
 	timeout?: number;
@@ -74,12 +79,15 @@ export interface RequestParams {
  * @param url
  * @param params - additional parameters
  */
-export function request(url: string, params?: RequestParams): Promise<XMLHttpRequest> {
+export default function request(url: string, params?: RequestParams): RequestLike<XMLHttpRequest> {
+	const
+		p = params || {};
+
 	let
 		res,
 		replacedBy;
 
-	const promise = new Promise((resolve, reject) => {
+	const promise: any = new Promise((resolve, reject) => {
 		res = new Request(url, {
 			...params,
 
@@ -88,19 +96,19 @@ export function request(url: string, params?: RequestParams): Promise<XMLHttpReq
 					resolve(replacedBy);
 
 				} else {
-					params.onAbort && params.onAbort.apply(this, arguments);
+					p.onAbort && p.onAbort.apply(this, arguments);
 					reject(new RequestError('abort', arguments));
 				}
 			},
 
 			onError(): void {
-				params.onError && params.onError.apply(this, arguments);
+				p.onError && p.onError.apply(this, arguments);
 				reject(new RequestError('error', arguments));
 			},
 
 			onLoad(transport: any): void {
 				const
-					st = params.status || /^2\d\d$/;
+					st = p.status || /^2\d\d$/;
 
 				let valid;
 				if (Object.isRegExp(st)) {
@@ -114,17 +122,17 @@ export function request(url: string, params?: RequestParams): Promise<XMLHttpReq
 				}
 
 				if (valid) {
-					params.onLoad && params.onLoad.apply(this, arguments);
+					p.onLoad && p.onLoad.apply(this, arguments);
 					resolve(transport);
 
 				} else {
-					params.onError && params.onError.apply(this, arguments);
+					p.onError && p.onError.apply(this, arguments);
 					reject(new RequestError('invalidStatus', arguments));
 				}
 			},
 
 			onTimeout(): void {
-				params.onTimeout && params.onTimeout.apply(this, arguments);
+				p.onTimeout && p.onTimeout.apply(this, arguments);
 				reject(new RequestError('timeout', arguments));
 			}
 		});
@@ -132,13 +140,14 @@ export function request(url: string, params?: RequestParams): Promise<XMLHttpReq
 		return res.transport;
 	});
 
-	promise.abort = function (id) {
+	promise.abort = (id) => {
 		replacedBy = id;
 
 		const
+			DONE_STATE = 4,
 			{transport, req} = res;
 
-		if (transport.readyState === 4) {
+		if (transport.readyState === DONE_STATE) {
 			return;
 		}
 
@@ -172,7 +181,7 @@ export function request(url: string, params?: RequestParams): Promise<XMLHttpReq
  * @param body
  * @param params
  */
-export function c(url: string, body?: any, params?: $$requestParams): Promise<XMLHttpRequest> {
+export function c(url: string, body?: any, params?: RequestParams): RequestLike<XMLHttpRequest> {
 	return request(url, {...params, ...{body, method: 'POST'}});
 }
 
@@ -186,7 +195,7 @@ export const post = c;
  * @param body
  * @param params
  */
-export function r(url: string, body?: any, params?: $$requestParams): Promise<XMLHttpRequest> {
+export function r(url: string, body?: any, params?: RequestParams): RequestLike<XMLHttpRequest> {
 	return request(url, {...params, ...{body, method: 'GET'}});
 }
 
@@ -200,7 +209,7 @@ export const get = r;
  * @param body
  * @param params
  */
-export function u(url: string, body?: any, params?: $$requestParams): Promise<XMLHttpRequest> {
+export function u(url: string, body?: any, params?: RequestParams): RequestLike<XMLHttpRequest> {
 	return request(url, {...params, ...{body, method: 'PUT'}});
 }
 
@@ -214,7 +223,7 @@ export const upd = u;
  * @param body
  * @param params
  */
-export function d(url: string, body?: any, params?: $$requestParams): Promise<XMLHttpRequest> {
+export function d(url: string, body?: any, params?: RequestParams): RequestLike<XMLHttpRequest> {
 	return request(url, {...params, ...{body, method: 'DELETE'}});
 }
 
@@ -222,79 +231,60 @@ export function d(url: string, body?: any, params?: $$requestParams): Promise<XM
 export const del = d;
 
 class Request {
-	constructor(
-		url: string,
+	constructor(url: string, p: RequestParams) {
+		p = Object.assign({
+			method: 'GET',
+			// tslint:disable-next-line
+			timeout: (25).seconds(),
+			defer: 0,
+			responseType: 'json',
+			body: ''
+		}, p);
 
-		/* eslint-disable no-unused-vars */
-
-		{
-			method = 'GET',
-			timeout = (25).seconds(),
-			defer = 0,
-			contentType,
-			responseType = 'json',
-			headers,
-			body = '',
-			withCredentials,
-			user,
-			password,
-			onAbort,
-			onTimeout,
-			onError,
-			onLoad,
-			onLoadStart,
-			onLoadEnd,
-			onProgress,
-			upload
-		}: RequestParams
-
-		/* eslint-enable no-unused-vars */
-
-	) {
 		if (!new URI(url).protocol()) {
 			url = joinUri(API, url);
 		}
 
-		let data = body;
+		let data = p.body;
 		if (data) {
 			if (Object.isString(data)) {
 				data = {data};
 
-			} else if (Object.isObject(body) || Object.isArray(body)) {
+			} else if (Object.isObject(p.body) || Object.isArray(p.body)) {
 				data = Object.fastClone(data);
 			}
 		}
 
 		const
 			id = uuid(),
-			urlEncodeRequest = {GET: 1, HEAD: 1}[method];
+			urlEncodeRequest = {GET: 1, HEAD: 1}[<string>p.method];
 
 		if (urlEncodeRequest) {
-			body = Object.toQueryString(data);
-			contentType = 'text/plain;charset=UTF-8';
+			p.body = Object.toQueryString(data);
+			p.contentType = 'text/plain;charset=UTF-8';
 
 		} else if (data instanceof FormData) {
-			contentType = '';
+			p.contentType = '';
 
 		} else if (typeof data === 'object') {
-			body = JSON.stringify(data);
-			contentType = 'application/json;charset=UTF-8';
+			p.body = JSON.stringify(data);
+			p.contentType = 'application/json;charset=UTF-8';
 		}
 
 		let
-			reqKey = null,
+			reqKey: string | null = null,
 			req;
 
 		if (urlEncodeRequest) {
 			reqKey = JSON.stringify([
 				url,
-				method,
-				responseType,
-				headers,
-				body,
-				withCredentials,
-				user,
-				password
+				p.method,
+				p.responseType,
+				p.headers,
+				p.body,
+				p.withCredentials,
+				p.user,
+				p.password
 			]);
 
 			req = requests[reqKey] = requests[reqKey] || {
@@ -304,14 +294,14 @@ class Request {
 			};
 		}
 
-		function wrap(fn, key) {
+		function wrap(fn: Function, key: string): Function {
 			const hMap = {
 				onAbort: true,
 				onLoadEnd: true
 			};
 
 			if (!req) {
-				return function () {
+				return function (): void {
 					if (transport.aborted && !hMap[key]) {
 						return;
 					}
@@ -329,12 +319,13 @@ class Request {
 
 			} else {
 				cb = req.cbs[key] = {
-					fn() {
+					fn(): void {
 						if (transport.aborted && !hMap[key]) {
 							return;
 						}
 
-						$C(cb.queue).forEach((key, fn: Function) => fn.call(this, transport, ...arguments));
+						const args = arguments;
+						$C(cb.queue).forEach((key, fn: Function) => fn.call(this, transport, ...args));
 					},
 
 					queue: new Map()
@@ -356,10 +347,10 @@ class Request {
 			req.transport = transport;
 		}
 
-		$C(upload).forEach((el, key: string) =>
+		$C(p.upload).forEach((el, key: string) =>
 			transport.upload[key.toLowerCase()] = wrap(el, key));
 
-		$C(arguments[1]).filter((el) => Object.isFunction(el)).forEach(
+		$C(p).filter((el) => Object.isFunction(el)).forEach(
 			(el, key: string) => transport[key.toLowerCase()] = wrap(el, key)
 		);
 
@@ -377,7 +368,7 @@ class Request {
 		};
 
 		const
-			isJSON = responseType === 'json';
+			isJSON = p.responseType === 'json';
 
 		let
 			clone,
@@ -385,8 +376,9 @@ class Request {
 			timer;
 
 		Object.defineProperty(transport, 'responseData', {
-			get() {
+			get(): any {
 				if (responseData === undefined || responseData !== transport.responseDataSource) {
+					// tslint:disable-next-line
 					if (transport.responseDataSource === undefined) {
 						responseData = transport.responseDataSource = isJSON ? transport.responseText : transport.response;
 
@@ -418,22 +410,22 @@ class Request {
 		});
 
 		transport.requestData = data;
-		transport.open(method, url + (urlEncodeRequest && body ? `?${body}` : ''), true, user, password);
-		transport.timeout = timeout;
-		transport.responseType = isJSON ? '' : responseType;
-		transport.withCredentials = withCredentials;
+		transport.open(p.method, url + (urlEncodeRequest && p.body ? `?${p.body}` : ''), true, p.user, p.password);
+		transport.timeout = p.timeout;
+		transport.responseType = isJSON ? '' : p.responseType;
+		transport.withCredentials = p.withCredentials;
 
-		$C(headers).forEach((el, key: string) =>
+		$C(p.headers).forEach((el, key: string) =>
 			transport.setRequestHeader(key, String(el)));
 
-		if (contentType) {
-			transport.setRequestHeader('Content-Type', contentType);
+		if (p.contentType) {
+			transport.setRequestHeader('Content-Type', p.contentType);
 		}
 
-		onLoadEnd = transport.onloadend;
-		transport.onloadend = function () {
+		p.onLoadEnd = transport.onloadend;
+		transport.onloadend = function (): void {
 			transport.clearCache();
-			onLoadEnd && onLoadEnd.apply(this, arguments);
+			p.onLoadEnd && p.onLoadEnd.apply(this, arguments);
 		};
 
 		setTimeout(
@@ -443,11 +435,11 @@ class Request {
 					transport.onloadend(transport);
 
 				} else {
-					transport.send(urlEncodeRequest ? undefined : body);
+					transport.send(urlEncodeRequest ? undefined : p.body);
 				}
 			},
 
-			defer
+			p.defer
 		);
 
 		return res;

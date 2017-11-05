@@ -1,5 +1,3 @@
-'use strict';
-
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -8,9 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import baseConfig from '@v4fire/core/src/config';
+import $C = require('collection.js');
+import config from '@v4fire/core/config';
 
-const
-	$C = require('collection.js');
-
-export default $C.extend(true, {}, baseConfig, CONFIG);
+export default $C.extend(true, {}, config, CONFIG);

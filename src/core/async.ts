@@ -8,6 +8,7 @@
 
 import $C = require('collection.js');
 import Super, { AsyncCbOpts, ClearOpts, ClearOptsId } from '@v4fire/core/async';
+export * from '@v4fire/core/async';
 
 export interface NodeEventCb {
 	(e: Event, el: Node): void;

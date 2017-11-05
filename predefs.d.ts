@@ -10,6 +10,7 @@
 /// <reference types="dom4"/>
 
 declare let READY_STATE: number;
+declare let CONFIG: Record<string, any>;
 declare let PATH: Record<string, string | undefined>;
 declare let API: string;
 
