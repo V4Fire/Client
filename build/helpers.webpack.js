@@ -34,7 +34,7 @@ const hashLength = exports.hashLength = 15;
  */
 exports.version = '';
 
-if (isProdEnv) {
+if (isProd) {
 	if (env.BUMP_VERSION) {
 		if (env.VERSION) {
 			exports.version = env.VERSION;
@@ -69,8 +69,8 @@ if (isProdEnv) {
  */
 exports.hash = function (output, chunk) {
 	// FIXME: webpack commonChunksPlugin chunkhash bug
-	// return str.replace(/\[hash]_/g, isProdEnv ? chunk ? `[chunkhash:${HASH_LENGTH}]_` : `[hash:${HASH_LENGTH}]_` : '');
-	return output.replace(/\[hash]_/g, isProdEnv ? `[hash:${hashLength}]_` : '');
+	// return str.replace(/\[hash]_/g, isProd ? chunk ? `[chunkhash:${HASH_LENGTH}]_` : `[hash:${HASH_LENGTH}]_` : '');
+	return output.replace(/\[hash]_/g, isProd ? `[hash:${hashLength}]_` : '');
 };
 
 /* eslint-enable no-unused-vars */
