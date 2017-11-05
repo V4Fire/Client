@@ -182,7 +182,7 @@ export default function request(url: string, params?: RequestParams): RequestLik
  * @param params
  */
 export function c(url: string, body?: any, params?: RequestParams): RequestLike<XMLHttpRequest> {
-	return request(url, {...params, ...{body, method: 'POST'}});
+	return request(url, {...params, body, method: 'POST'});
 }
 
 /** @alias c */
@@ -196,7 +196,7 @@ export const post = c;
  * @param params
  */
 export function r(url: string, body?: any, params?: RequestParams): RequestLike<XMLHttpRequest> {
-	return request(url, {...params, ...{body, method: 'GET'}});
+	return request(url, {...params, body, method: 'GET'});
 }
 
 /** @alias r */
@@ -210,7 +210,7 @@ export const get = r;
  * @param params
  */
 export function u(url: string, body?: any, params?: RequestParams): RequestLike<XMLHttpRequest> {
-	return request(url, {...params, ...{body, method: 'PUT'}});
+	return request(url, {...params, body, method: 'PUT'});
 }
 
 /** @alias u */
@@ -224,7 +224,7 @@ export const upd = u;
  * @param params
  */
 export function d(url: string, body?: any, params?: RequestParams): RequestLike<XMLHttpRequest> {
-	return request(url, {...params, ...{body, method: 'DELETE'}});
+	return request(url, {...params, body, method: 'DELETE'});
 }
 
 /** @alias d */
