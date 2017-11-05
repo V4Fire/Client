@@ -10,11 +10,17 @@
 
 const
 	config = require('config'),
-	{hash} = include('build/helpers.webpack');
+	{hash} = include('build/build.webpack');
 
+/**
+ * Returns an object for webpack.output
+ *
+ * @param {string} output - output path
+ * @returns {{path: string, publicPath: string, filename: string}}
+ */
 module.exports = function ({output}) {
 	return {
-		path: config.src.cwd,
+		path: config.src.cwd(),
 		publicPath: '/',
 		filename: hash(output, true)
 	};

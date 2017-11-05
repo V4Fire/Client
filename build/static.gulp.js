@@ -30,7 +30,7 @@ module.exports = function (gulp = require('gulp')) {
 
 		/* eslint-disable camelcase */
 
-		const faviconsParams = Object.assign({}, config.favicons, {
+		const faviconsParams = Object.assign(config.favicons(), {
 			start_url: '.',
 			html: 'favicons.html',
 			pipeHTML: true,

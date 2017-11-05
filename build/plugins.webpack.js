@@ -21,9 +21,18 @@ const
 	WebpackMd5Hash = require('webpack-md5-hash');
 
 const
-	{cwd} = config.src,
-	{hash} = include('build/helpers.webpack');
+	cwd = config.src.cwd(),
+	{hash} = include('build/build.webpack');
 
+/**
+ * Returns a list of webpack plugins
+ *
+ * @param {Object} build - build object
+ * @param {string} assetsJSON - path to assets.json file
+ * @param {string} output - output path
+ * @param {(number|string)} i - build id
+ * @returns {Array}
+ */
 module.exports = function ({build, assetsJSON, output, i}) {
 	const base = {
 		'0': true,

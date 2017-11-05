@@ -14,18 +14,26 @@ const
 	ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 const
-	{hash, version, hashLength} = include('build/helpers.webpack');
+	{src} = config,
+	{hash, version, hashLength} = include('build/build.webpack');
 
+/**
+ * Returns an object for webpack.module
+ *
+ * @param {Object} build - build object
+ * @param {string} output - output path
+ * @param {Array<string>} folders - list of related folders
+ * @returns {Object}
+ */
 module.exports = function ({build, output, folders}) {
 	return {
 		rules: [
 			{
-				test: /\.js$/,
+				test: /\.ts/,
 				exclude: /node_modules\/(?!@v4fire)/,
 				use: [
 					{
-						loader: 'babel',
-						options: config.babel.client
+						loader: 'ts'
 					},
 
 					{
@@ -40,21 +48,23 @@ module.exports = function ({build, output, folders}) {
 						options: {
 							modules: folders
 						}
+					},
+
+					{
+						loader: 'monic',
+						options: {
+							replacers: [
+								include('build/ts-import.replacer')({lib})
+							]
+						}
 					}
 				]
 			},
 
 			{
-				test: /workers\/\w+\.js$/,
+				test: /workers\/\w+\.ts$/,
 				exclude: /node_modules\/(?!@v4fire)/,
-				use: [
-					{
-						loader: 'babel',
-						options: Object.assign({}, config.babel.client, {
-							plugins: config.babel.clientWithRuntime()
-						})
-					}
-				]
+				use: [{loader: 'ts'}]
 			},
 
 			{
@@ -65,7 +75,7 @@ module.exports = function ({build, output, folders}) {
 						{
 							loader: 'css',
 							options: {
-								minimize: Boolean(isProd || env.MINIFY_CSS === 'true')
+								minimize: Boolean(isProd || Number(process.env.MINIFY_CSS))
 							}
 						},
 
@@ -89,9 +99,9 @@ module.exports = function ({build, output, folders}) {
 
 						{
 							loader: 'monic',
-							options: $C.extend({deep: true, concatArray: true}, {}, config.monic.styl, {
+							options: $C.extend({deep: true, concatArray: true}, config.monic().styl, {
 								replacers: [
-									Object.assign(include('build/stylus-import.replacer'), {folders, lib}),
+									include('build/stylus-import.replacer')({folders, lib}),
 									require('@pzlr/stylus-inheritance')
 								]
 							})
@@ -105,7 +115,7 @@ module.exports = function ({build, output, folders}) {
 				use: [
 					{
 						loader: 'snakeskin',
-						options: config.snakeskin.client
+						options: config.snakeskin().client
 					}
 				]
 			},
@@ -125,13 +135,13 @@ module.exports = function ({build, output, folders}) {
 
 					{
 						loader: 'snakeskin',
-						options: Object.assign({}, config.snakeskin.server, {
+						options: Object.assign(config.snakeskin().server, {
 							exec: true,
 							data: {
-								root: cwd,
-								output: config.src.clientOutput(),
+								root: src.cwd(),
+								output: src.clientOutput(),
 								dependencies: build.dependencies,
-								assets: config.src.assets(),
+								assets: src.assets(),
 								version,
 								hashLength,
 								lib

@@ -13,50 +13,52 @@ const
 	path = require('path');
 
 const
-	cache = {},
-	exists = {};
+	cache = Object.create(null),
+	exists = Object.create(null);
 
 /**
  * Monic replacer for Stylus @import declarations
  *
- * @param str - source string
- * @param file - file path
- * @returns {string}
+ * @param {Array<string>} folders - list of related folders
+ * @param {string} lib - src of a node_modules folder
+ * @returns {function(string, string): string}
  */
-const fn = module.exports = function (str, file) {
-	const
-		cwd = path.dirname(file),
-		parent = path.dirname(cwd),
-		c = cache[parent] = cache[parent] || {};
+module.exports = function ({folders, lib}) {
+	return (str, file) => {
+		const
+			cwd = path.dirname(file),
+			parent = path.dirname(cwd),
+			c = cache[parent] = cache[parent] || {};
 
-	if (c[str]) {
-		return c[str];
-	}
+		if (c[str]) {
+			return c[str];
+		}
 
-	function r(str) {
-		return str.replace(/\\/g, '/');
-	}
+		function r(str) {
+			return str.replace(/\\/g, '/');
+		}
 
-	return c[str] = str
-		.replace(/@import "([^./~].*?\.styl)"/g, (str, url) => {
-			for (let i = 0; i < fn.folders.length; i++) {
-				const
-					fullPath = path.join(fn.folders[i], url);
+		return c[str] = str
+			.replace(/@import "([^./~].*?\.styl)"/g, (str, url) => {
+				for (let i = folders.length; i--;) {
+					const
+						fullPath = path.join(folders[i], url);
 
-				if (fullPath in exists === false) {
-					exists[fullPath] = fs.existsSync(fullPath);
+					if (fullPath in exists === false) {
+						exists[fullPath] = fs.existsSync(fullPath);
+					}
+
+					if (exists[fullPath]) {
+						return `@import "./${r(path.relative(cwd, fullPath))}"`;
+					}
 				}
 
-				if (exists[fullPath]) {
-					return `@import "./${r(path.relative(cwd, fullPath))}"`;
-				}
-			}
+				return `@import "${url}"`;
+			})
 
-			return `@import "${url}"`;
-		})
-
-		.replace(/@import "~(.*?\.styl)"/g, (str, url) => {
-			url = r(path.relative(cwd, path.join(fn.lib, url)));
-			return `@import "${url}"`;
-		});
+			.replace(/@import "~(.*?\.styl)"/g, (str, url) => {
+				url = r(path.relative(cwd, path.join(lib, url)));
+				return `@import "${url}"`;
+			});
+	};
 };

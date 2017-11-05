@@ -8,32 +8,25 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-require('@v4fire/core/build/i18n');
-require('./gulpfile');
-
 const
 	$C = require('collection.js'),
 	config = require('config'),
 	path = require('path');
 
 const
-	{hash, args, version} = include('build/helpers.webpack'),
-	{src} = config;
+	{hash, args, version} = include('build/build.webpack'),
+	{src, src: {client: folders, client: [entryFolder]}} = config;
 
 const
-	cwd = src.cwd,
-	folders = src.client,
-	entryFolder = folders[0];
-
-const
+	cwd = src.cwd(),
 	output = r('[hash]_[name]'),
 	assetsJSON = r(`${version}assets.json`),
-	lib = path.join(src.cwd, 'node_modules');
+	lib = path.join(cwd, 'node_modules');
 
 const build = include('build/entities.webpack')({
 	entries: path.join(entryFolder, 'entries'),
 	output: hash(output),
-	cache: Number(process.env.FROM_CACHE) && path.join(src.cwd, 'app-cache/graph'),
+	cache: Number(process.env.FROM_CACHE) && path.join(cwd, 'app-cache/graph'),
 	folders,
 	assetsJSON,
 	lib

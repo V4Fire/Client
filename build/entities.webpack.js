@@ -13,7 +13,7 @@ const
 
 const
 	{String, Array} = require('sugar'),
-	{args} = require('./helpers.webpack'),
+	{args} = require('./build.webpack'),
 	{validators} = require('@pzlr/build-core');
 
 const
