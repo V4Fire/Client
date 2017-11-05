@@ -1,5 +1,3 @@
-'use strict';
-
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -8,8 +6,10 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-const
-	$C = require('collection.js');
+import $C = require('collection.js');
+
+export const
+	DELAY = 50;
 
 /**
  * Render queue
@@ -22,7 +22,7 @@ export const
 let
 	inProgress = false;
 
-queue.add = backQueue.add = function () {
+queue.add = backQueue.add = function addToQueue<T>(): T {
 	const
 		res = add.apply(this, arguments);
 
@@ -37,7 +37,7 @@ queue.add = backQueue.add = function () {
  * Render loop
  */
 let i = 0;
-function render() {
+function render(): void {
 	inProgress = true;
 
 	const
@@ -46,7 +46,10 @@ function render() {
 		switchI = Math.round(componentsPerTick / 2) + 1;
 
 	$C(cursor).forEach((el, i, data, o) => {
-		if (o.i() && o.i() % componentsPerTick === 0) {
+		const
+			pos = o.i();
+
+		if (pos && pos % componentsPerTick === 0) {
 			return o.break;
 		}
 
@@ -60,7 +63,7 @@ function render() {
 	}
 
 	if (queue.size || backQueue.size) {
-		setTimeout(() => requestIdleCallback(render), 50);
+		setTimeout(() => requestIdleCallback(render), DELAY);
 
 	} else {
 		inProgress = false;

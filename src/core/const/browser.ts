@@ -1,5 +1,3 @@
-'use strict';
-
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -16,12 +14,12 @@ export const is = {
 	BlackBerry: agent.match(/BlackBerry/i),
 	iOS: agent.match(/iPhone|iPad|iPod/i),
 	OperaMini: agent.match(/Opera Mini/i),
-	WindowsMobile: agent.match(/IEMobile/i)
-};
+	WindowsMobile: agent.match(/IEMobile/i),
 
-is.mobile =
-	is.Android ||
-	is.BlackBerry ||
-	is.iOS ||
-	is.OperaMini ||
-	is.WindowsMobile;
+	/**
+	 * True if the current browser is mobile
+	 */
+	get mobile(): boolean {
+		return this.Android || this.BlackBerry || this.iOS || this.OperaMini || this.WindowsMobile;
+	}
+};

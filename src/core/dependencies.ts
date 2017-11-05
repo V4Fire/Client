@@ -1,5 +1,3 @@
-'use strict';
-
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -8,14 +6,15 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-const
-	$C = require('collection.js'),
-	EventEmitter2 = require('eventemitter2').EventEmitter2;
+import $C = require('collection.js');
+import { EventEmitter2 } from 'eventemitter2';
+import { GLOBAL } from 'const/links';
 
 /**
  * Manager of modules
  */
-window.ModuleDependencies = Object.assign(window.ModuleDependencies, {
+// tslint:disable-next-line
+GLOBAL.ModuleDependencies = Object.assign(GLOBAL.ModuleDependencies || {}, {
 	/**
 	 * Cache for modules
 	 */
@@ -32,10 +31,10 @@ window.ModuleDependencies = Object.assign(window.ModuleDependencies, {
 	 * @param moduleName
 	 * @param dependencies
 	 */
-	add(moduleName: string, dependencies: Array<string>) {
+	add(moduleName: string, dependencies: string[]): void {
 		let packages = 0;
 
-		function indicator() {
+		function indicator(): void {
 			const blob = new Blob(
 				[`ModuleDependencies.event.emit('component.${moduleName}.loading', {packages: ${packages}})`],
 				{type: 'application/javascript'}
@@ -48,8 +47,11 @@ window.ModuleDependencies = Object.assign(window.ModuleDependencies, {
 		}
 
 		const
-			style = [],
-			logic = [];
+			style: Function[] = [],
+			logic: Function[] = [];
+
+		const
+			DEPS = ['js', 'tpl', 'css'].length;
 
 		if (!this.cache[moduleName]) {
 			$C(dependencies).forEach((el) => {
@@ -57,19 +59,39 @@ window.ModuleDependencies = Object.assign(window.ModuleDependencies, {
 					return;
 				}
 
-				packages += 3;
+				packages += DEPS;
 				this.fileCache[el] = true;
 
-				const link = document.createElement('link');
-				link.href = PATH[`${el}$style`];
+				const
+					link = document.createElement('link'),
+					cssURL = `${el}$style`;
+
+				if (!PATH[cssURL]) {
+					throw new ReferenceError(`Stylesheet "${cssURL}" is not defined`);
+				}
+
+				link.href = <string>PATH[cssURL];
 				link.rel = 'stylesheet';
 
-				const tpl = document.createElement('script');
-				tpl.src = PATH[`${el}_tpl`];
+				const
+					tpl = document.createElement('script'),
+					tplURL = `${el}_tpl`;
+
+				if (!PATH[tplURL]) {
+					throw new ReferenceError(`Template "${tplURL}" is not defined`);
+				}
+
+				tpl.src = <string>PATH[tplURL];
 				tpl.async = false;
 
-				const script = document.createElement('script');
-				script.src = PATH[el];
+				const
+					script = document.createElement('script');
+
+				if (!PATH[el]) {
+					throw new ReferenceError(`JS "${el}" is not defined`);
+				}
+
+				script.src = <string>PATH[el];
 				script.async = false;
 
 				style.push(() => {
@@ -77,10 +99,10 @@ window.ModuleDependencies = Object.assign(window.ModuleDependencies, {
 						links = document.getElementsByTagName('link');
 
 					if (links.length) {
-						links[links.length - 1].after(link);
+						(<any>links[links.length - 1]).after(link);
 
 					} else {
-						document.head.prepend(link);
+						(<any>document.head).prepend(link);
 					}
 				});
 
@@ -105,14 +127,20 @@ window.ModuleDependencies = Object.assign(window.ModuleDependencies, {
 	 * Get dependencies for the specified module
 	 * @param module
 	 */
-	get(module: string): Promise<Array<string>> {
+	get(module: string): Promise<string[]> {
 		if (this.cache[module]) {
 			return this.cache[module];
 		}
 
-		const script = document.createElement('script');
-		script.src = PATH[`${module}.dependencies`];
+		const
+			script = document.createElement('script'),
+			url = `${module}.dependencies`;
 
+		if (!PATH[url]) {
+			throw new ReferenceError(`Dependencies "${url}" is not defined`);
+		}
+
+		script.src = <string>PATH[`${module}.dependencies`];
 		return new Promise((resolve) => {
 			this.event.once(`dependencies.${module}`, resolve);
 			document.head.appendChild(script);

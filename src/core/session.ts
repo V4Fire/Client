@@ -1,5 +1,3 @@
-'use strict';
-
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -14,7 +12,7 @@
  * @param [jwt]
  * @param [xsrf]
  */
-export function setSession(jwt: ?string, xsrf: ?string) {
+export function setSession(jwt?: string | null, xsrf?: string | null): boolean {
 	try {
 		if (jwt) {
 			localStorage.setItem('jwt', jwt);
@@ -24,13 +22,17 @@ export function setSession(jwt: ?string, xsrf: ?string) {
 			localStorage.setItem('xsrf', xsrf);
 		}
 
-	} catch (_) {}
+	} catch (_) {
+		return false;
+	}
+
+	return true;
 }
 
 /**
  * Returns the current session object
  */
-export function getSession(): {xsrf: ?string, jwt: ?string} {
+export function getSession(): {xsrf: string | null; jwt: string | null} {
 	try {
 		return {
 			jwt: localStorage.getItem('jwt'),
@@ -38,23 +40,26 @@ export function getSession(): {xsrf: ?string, jwt: ?string} {
 		};
 
 	} catch (_) {
-		return {};
+		return {jwt: null, xsrf: null};
 	}
 }
 
 /**
  * Clears the current session
  */
-export function clearSession() {
+export function clearSession(): boolean {
 	try {
 		localStorage.removeItem('jwt');
 		localStorage.removeItem('xsrf');
 
 	} catch (_) {
+		return false;
 
 	} finally {
 		location.href = '/';
 	}
+
+	return true;
 }
 
 /**
@@ -63,7 +68,7 @@ export function clearSession() {
  * @param [jwt]
  * @param [xsrf]
  */
-export function matchSession(jwt: ?string, xsrf: ?string): boolean {
+export function matchSession(jwt?: string | null, xsrf?: string | null): boolean {
 	try {
 		return jwt === localStorage.getItem('jwt') && xsrf === localStorage.getItem('xsrf');
 

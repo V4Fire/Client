@@ -1,5 +1,3 @@
-'use strict';
-
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -8,23 +6,25 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import $C = require('collection.js');
+import uuid = require('uuid');
 import Async from 'core/async';
-
-const
-	$C = require('collection.js'),
-	EventEmitter2 = require('eventemitter2').EventEmitter2,
-	uuid = require('uuid');
+import { EventEmitter2 } from 'eventemitter2';
 
 /**
- * Map of available block statuses
+ * Enum of available block statuses
  */
-export const statuses = Object.createMap({
-	destroyed: -1,
-	inactive: 0,
-	loading: 1,
-	ready: 2,
-	unloaded: 0
-});
+export enum statuses {
+	destroyed = -1,
+	inactive = 0,
+	loading = 1,
+	ready = 2,
+	unloaded = 0
+}
+
+type Model = Record<string, any> & {
+	emit(event: string, ...args: any[]): void;
+};
 
 /**
  * Base class for BEM like develop
@@ -33,54 +33,53 @@ export default class Block {
 	/**
 	 * Block unique id
 	 */
-	id: ?string;
+	id: string;
 
 	/**
 	 * Link to a block node
 	 */
-	node: ?Element;
+	node: Element | undefined;
 
 	/**
 	 * Block model
 	 */
-	model: ?iBlock;
+	model: Model | undefined;
 
 	/**
 	 * Async object
 	 */
-	async: ?Async;
+	async: Async<any>;
 
 	/**
 	 * Local event emitter
 	 */
-	localEvent: ?EventEmitter2;
+	localEvent: EventEmitter2;
 
 	/**
 	 * List of applied modifiers
 	 */
-	mods: ?Object;
+	mods: Record<string, string | undefined>;
 
 	/**
 	 * Map of available block statuses
 	 */
-	statuses = statuses;
+	statuses: typeof statuses = statuses;
 
 	/**
 	 * Block init status
-	 * @protected
 	 */
-	__status: number = statuses.unloaded;
+	protected blockStatus: number = statuses.unloaded;
 
 	/**
 	 * Sets a new status to the current block
 	 * @param value
 	 */
 	set status(value: number) {
-		if (this.__status === value) {
+		if (this.blockStatus === value) {
 			return;
 		}
 
-		this.__status = value = value in this.statuses ? value : 0;
+		this.blockStatus = value = value in this.statuses ? value : 0;
 		this.localEvent.emit(`block.status.${this.statuses[value]}`, value);
 
 		if (this.model) {
@@ -93,14 +92,14 @@ export default class Block {
 	}
 
 	/**
-	 * Return the current block status
+	 * Current block status
 	 */
 	get status(): number {
-		return this.__status;
+		return this.blockStatus;
 	}
 
 	/**
-	 * Returns the current block name
+	 * Current block name
 	 */
 	get blockName(): string {
 		return $C(this).get('model.componentName') || this.constructor.name.dasherize();
@@ -109,30 +108,26 @@ export default class Block {
 	/**
 	 * @param [id] - block id
 	 * @param [node] - link to a block node
-	 * @param [tpls] - map of templates
 	 * @param [mods] - map of modifiers to apply
 	 * @param [async] - instance of Async
 	 * @param [localEvent] - instance of EventEmitter2
 	 * @param [model] - model instance (Vue.js)
 	 */
 	constructor(
-		{id, node, tpls, mods, async, localEvent, model}: {
-			id?: string,
-			node?: Element,
-			tpls?: Object,
-			mods?: Object,
-			async?: Async,
-			localEvent?: EventEmitter2,
-			model?: iBlock
+		{id, node, mods, async, localEvent, model}: {
+			id?: string;
+			node?: Element;
+			mods?: Object;
+			async?: Async<any>;
+			localEvent?: EventEmitter2;
+			model?: Model;
 		} = {}
-
 	) {
 		this.id = id || `b-${uuid()}`;
 		this.async = async || new Async(this);
 		this.localEvent = localEvent || new EventEmitter2({maxListeners: 100, wildcard: true});
-		this.mods = {};
+		this.mods = Object.create(null);
 		this.node = node;
-		this.tpls = tpls;
 
 		// Two way binding with a Vue.js instance
 		if (model) {
@@ -144,13 +139,13 @@ export default class Block {
 			node.classList.add(this.blockName, 'i-block-helper');
 		}
 
-		this.localEvent.once(`block.status.loading`, () => {
+		this.localEvent.once('block.status.loading', () => {
 			if (mods) {
 				const
 					keys = Object.keys(mods);
 
 				for (let i = 0; i < keys.length; i++) {
-					const name = keys[i];
+					const name = <string>keys[i];
 					this.setMod(name, mods[name]);
 				}
 			}
@@ -159,14 +154,14 @@ export default class Block {
 		this.status = this.statuses.loading;
 	}
 
-	destructor() {
+	destructor(): void {
 		this.status = this.statuses.destroyed;
 		this.async.clearAll();
 		this.localEvent.removeAllListeners();
 	}
 
 	/**
-	 * Returns the full name of the current block
+	 * Returns a full name of the current block
 	 *
 	 * @param [modName]
 	 * @param [modValue]
@@ -176,7 +171,7 @@ export default class Block {
 	}
 
 	/**
-	 * Returns the full name of the specified element
+	 * Returns a full name of the specified element
 	 *
 	 * @param elName
 	 * @param [modName]
@@ -205,7 +200,7 @@ export default class Block {
 				keys = Object.keys(mods);
 
 			for (let i = 0; i < keys.length; i++) {
-				const name = keys[i];
+				const name = <string>keys[i];
 				res += `${sel}_${name}_${mods[name]}`;
 			}
 		}
@@ -219,8 +214,12 @@ export default class Block {
 	 * @param elName
 	 * @param [mods]
 	 */
-	elements(elName: string, mods?: Object): Array<Element> {
-		return this.node.queryAll(this.getElSelector(elName, mods));
+	elements(elName: string, mods?: Object): NodeList {
+		if (!this.node) {
+			throw new ReferenceError('Root node is not defined');
+		}
+
+		return this.node.querySelectorAll(this.getElSelector(elName, mods));
 	}
 
 	/**
@@ -229,8 +228,12 @@ export default class Block {
 	 * @param elName
 	 * @param [mods]
 	 */
-	element(elName: string, mods?: Object): Array<Element> {
-		return this.node.query(this.getElSelector(elName, mods));
+	element(elName: string, mods?: Object): Element | null {
+		if (!this.node) {
+			throw new ReferenceError('Root node is not defined');
+		}
+
+		return this.node.querySelector(this.getElSelector(elName, mods));
 	}
 
 	/**
@@ -240,6 +243,10 @@ export default class Block {
 	 * @param value
 	 */
 	setMod(name: string, value: any): boolean {
+		if (!this.node) {
+			throw new ReferenceError('Root node is not defined');
+		}
+
 		value = String(value);
 
 		const
@@ -247,7 +254,6 @@ export default class Block {
 
 		if (prev !== value) {
 			this.removeMod(name);
-
 			this.mods[name] = value;
 			this.node.classList.add(this.getFullBlockName(name, value));
 
@@ -274,11 +280,15 @@ export default class Block {
 	 * @param [value]
 	 */
 	removeMod(name: string, value?: any): boolean {
+		if (!this.node) {
+			throw new ReferenceError('Root node is not defined');
+		}
+
 		const
 			current = this.mods[name];
 
-		if (name in this.mods && (value === undefined || current === String(value))) {
-			delete this.mods[name];
+		if (current !== undefined && (value === undefined || current === String(value))) {
+			this.mods[name] = undefined;
 			this.node.classList.remove(this.getFullBlockName(name, current));
 
 			const event = {
@@ -300,7 +310,7 @@ export default class Block {
 	 * Returns a value of the specified block modifier
 	 * @param mod
 	 */
-	getMod(mod: string): ?string {
+	getMod(mod: string): string | undefined {
 		return this.mods[mod];
 	}
 
@@ -317,10 +327,7 @@ export default class Block {
 
 		if (this.getElMod(link, elName, modName) !== value) {
 			this.removeElMod(link, elName, modName);
-
-			link.classList.add(
-				this.getFullElName(elName, modName, value)
-			);
+			link.classList.add(this.getFullElName(elName, modName, value));
 
 			this.localEvent.emit(`el.mod.set.${elName}.${modName}.${value}`, {
 				element: elName,
@@ -350,10 +357,7 @@ export default class Block {
 			current = this.getElMod(link, elName, modName);
 
 		if (current !== undefined && (value === undefined || current === String(value))) {
-			link.classList.remove(
-				this.getFullElName(elName, modName, current)
-			);
-
+			link.classList.remove(this.getFullElName(elName, modName, current));
 			this.localEvent.emit(`el.mod.remove.${elName}.${modName}.${current}`, {
 				element: elName,
 				event: 'el.mod.remove',
@@ -376,9 +380,14 @@ export default class Block {
 	 * @param elName
 	 * @param modName
 	 */
-	getElMod(link: Element, elName: string, modName: string): ?string {
-		const rgxp = new RegExp(`^${this.getFullElName(elName)}_${modName}_`);
-		const el = $C(link.classList).one.get((el) => rgxp.test(el));
-		return el && el.split(/_+/)[3];
+	getElMod(link: Element, elName: string, modName: string): string | undefined {
+		const
+			MOD_VALUE = 3;
+
+		const
+			rgxp = new RegExp(`^${this.getFullElName(elName)}_${modName}_`),
+			el = $C(link.classList).one.get((el) => rgxp.test(el));
+
+		return el && el.split(/_+/)[MOD_VALUE];
 	}
 }

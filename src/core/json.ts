@@ -1,7 +1,3 @@
-'use strict';
-
-/* eslint-disable no-useless-rename */
-
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -10,4 +6,4 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-export { default as default } from '@v4fire/core/src/store';
+export * from '@v4fire/core/src/json';

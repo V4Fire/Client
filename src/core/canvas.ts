@@ -1,5 +1,3 @@
-'use strict';
-
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -20,7 +18,8 @@ if (!HTMLCanvasElement.prototype.toBlob) {
 
 	const hasArrayBufferViewSupport = hasBlobConstructor && (() => {
 		try {
-			return new Blob([new Uint8Array(100)]).size === 100;
+			const SIZE = 100;
+			return new Blob([new Uint8Array(SIZE)]).size === SIZE;
 
 		} catch (_) {
 			return false;
@@ -29,9 +28,9 @@ if (!HTMLCanvasElement.prototype.toBlob) {
 
 	HTMLCanvasElement.prototype.toBlob = function (
 		cb: (blob: Blob) => void,
-		mime?: string = 'image/png',
-		quality?: number = 1
-	) {
+		mime: string = 'image/png',
+		quality: number = 1
+	): void {
 		if (mime === 'image/png' && this.msToBlob) {
 			cb(this.msToBlob());
 			return;

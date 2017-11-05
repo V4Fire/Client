@@ -1,5 +1,3 @@
-'use strict';
-
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -14,7 +12,7 @@
  * @param onSuccess
  * @param [onFail]
  */
-HTMLImageElement.prototype.onInit = function (onSuccess: () => void, onFail?: (err: ?Error) => void) {
+HTMLImageElement.prototype.onInit = function (onSuccess: () => void, onFail?: (err?: Error) => void): void {
 	setImmediate(() => {
 		if (this.complete) {
 			if (this.height || this.width) {
@@ -48,6 +46,6 @@ HTMLImageElement.prototype.onInit = function (onSuccess: () => void, onFail?: (e
  */
 Object.defineProperty(HTMLImageElement.prototype, 'init', {
 	get(): Promise<HTMLImageElement> {
-		return new Promise((resolve, reject) => this.onInit(() => resolve(this), (err) => reject(err)));
+		return new Promise((resolve, reject) => this.onInit(() => resolve(this), reject));
 	}
 });
