@@ -71,13 +71,12 @@ export default class Async<CTX extends Object> extends Super<CTX> {
 	// tslint:disable-next-line
 	cancelAnimationFrame(p) {
 		if (p === undefined) {
-			return this.clearAllAsync({name: 'animationFrame', clearFn: cancelAnimationFrame});
+			return this.clearAllAsync({name: 'animationFrame'});
 		}
 
 		return this.clearAsync({
 			...p,
 			name: 'animationFrame',
-			clearFn: cancelAnimationFrame,
 			id: p.id || this.getIfNotObject(p)
 		});
 	}
