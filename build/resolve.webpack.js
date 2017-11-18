@@ -15,5 +15,5 @@
  * @returns {Array<string>}
  */
 module.exports = function ({modules}) {
-	return modules;
+	return {modules};
 };
