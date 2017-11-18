@@ -40,14 +40,14 @@
     "join-uri": "^1.0.1",
     "localforage": "^1.5.3",
     "path-to-regexp": "^2.1.0",
-    "raven-js": "^3.19.1",
+    "raven-js": "^3.20.1",
     "requestidlecallback": "^0.3.0",
     "snakeskin": "^7.2.8",
     "socket.io": "^2.0.4",
     "sugar": "^2.0.4",
     "urijs": "^1.19.0",
     "uuid": "^3.1.0",
-    "vue": "^2.5.3"
+    "vue": "^2.5.5"
   },
   "optionalDependencies": {
     "@pzlr/build-core": "^1.6.0",
@@ -105,8 +105,8 @@
     "webpack-replace-chunkhash-contenthash": "0.0.2"
   },
   "devDependencies": {
-    "babel-eslint": "^8.0.0",
-    "eslint": "^4.10.0",
+    "babel-eslint": "^8.0.2",
+    "eslint": "^4.11.0",
     "packages-version-check": "^1.1.1",
     "tslint": "^5.8.0"
   }
