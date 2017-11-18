@@ -37,12 +37,12 @@ module.exports = function ({build, output, folders, lib}) {
 						loader: 'ts'
 					},
 
-					{
+					/*{
 						loader: 'prop',
 						options: {
 							modules: folders
 						}
-					},
+					},*/
 
 					{
 						loader: 'proxy',
