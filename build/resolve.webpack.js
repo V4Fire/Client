@@ -15,5 +15,8 @@
  * @returns {Array<string>}
  */
 module.exports = function ({modules}) {
-	return {modules};
+	return {
+		extensions: ['.ts', '.js', '.json'],
+		modules
+	};
 };
