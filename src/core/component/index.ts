@@ -7,11 +7,11 @@
  */
 
 import Async from 'core/async';
-import { WatchOptions, WatchHandler, ComputedOptions } from 'vue';
-
+import Vue, { WatchOptions, WatchHandler, ComputedOptions } from 'vue';
+import { InjectOptions } from 'vue/types/options';
 import { EventEmitter2 } from 'eventemitter2';
-export * from 'core/component/decorators';
 
+export * from 'core/component/decorators';
 export const
 	initEvent = new EventEmitter2({maxListeners: 1e3}),
 	rootComponents = {},
@@ -20,7 +20,13 @@ export const
 export interface ComponentParams {
 	root?: boolean;
 	tpl?: boolean;
-	functional?: false
+	functional?: false;
+	mixins?: Record<string, any>;
+	model?: {prop?: string; event?: string};
+	parent?: Vue;
+	provide?: Record<string, any> | (() => Record<string, any>);
+	inject?: InjectOptions;
+	inheritAttrs?: boolean;
 }
 
 export interface FieldWatcher extends WatchOptions {
@@ -54,7 +60,7 @@ export interface InitialComponent<T> {
 }
 
 export interface InitFieldFn {
-	init<O>(o: O & InitialComponent<O>): void;
+	<O>(component: O & InitialComponent<O>, instance: O): void;
 }
 
 export interface ComponentField {
@@ -100,11 +106,13 @@ export function getComponentName(constr: Function): string {
  *   *) [functional] - if true, then the component will be created as functional
  *   *) [tpl] - if false, then will be used the default template
  */
-export function component(params?: ComponentParams): Function {
+export function component(params: ComponentParams = {}): Function {
 	let p: ComponentParams = {
 		root: false,
 		tpl: true,
 		functional: false,
+		inheritAttrs: false,
+		mixins: {},
 		...params
 	};
 
@@ -134,9 +142,93 @@ export function component(params?: ComponentParams): Function {
 				methods
 			} = parentMeta;
 
-			p = meta.params = {
+			let
+				provide,
+				inject;
+
+			// tslint:disable-next-line
+			if (Object.isObject(<any>p.provide) && Object.isObject(params.provide)) {
+				provide = {...params.provide, ...p.provide};
+
+			} else {
+				provide = p.provide || params.provide;
+			}
+
+			const
+				pIIsObj = Object.isObject(<any>params.inject),
+				pIIsArr = !pIIsObj && Object.isArray(<any>params.inject),
+				cIIsObj = Object.isObject(<any>p.inject),
+				cIIsArr = !cIIsObj && Object.isArray(<any>p.inject);
+
+			if (pIIsArr && cIIsArr) {
+				inject = (<string[]>p.inject).union(<string[]>p.inject);
+
+			} else if (pIIsObj && cIIsObj) {
+				inject = {};
+
+				for (let o = params.inject, keys = Object.keys(o), i = 0; i < keys.length; i++) {
+					const
+						key = <string>keys[i],
+						el = o[key];
+
+					inject[key] = Object.isObject(el) ? {...el} : {from: el};
+				}
+
+				for (let o = <any>p.inject, keys = Object.keys(o), i = 0; i < keys.length; i++) {
+					const
+						key = <string>keys[i],
+						el = o[key];
+
+					// tslint:disable-next-line
+					inject[key] = Object.assign(inject[key] || {}, Object.isObject(el) ? el : {from: el});
+				}
+
+			} else if (pIIsArr && cIIsObj) {
+				inject = {};
+
+				for (let o = params.inject, i = 0; i < o.length; i++) {
+					const key = <string>o[i];
+					inject[key] = {[key]: {from: key}};
+				}
+
+				for (let o = <any>p.inject, keys = Object.keys(o), i = 0; i < keys.length; i++) {
+					const
+						key = <string>keys[i],
+						el = o[key];
+
+					// tslint:disable-next-line
+					inject[key] = Object.assign(inject[key] || {}, Object.isObject(el) ? el : {from: el});
+				}
+
+			} else if (pIIsObj && cIIsArr) {
+				inject = {};
+
+				for (let o = params.inject, keys = Object.keys(o), i = 0; i < keys.length; i++) {
+					const
+						key = <string>keys[i],
+						el = o[key];
+
+					inject[key] = Object.isObject(el) ? {...el} : {from: el};
+				}
+
+				for (let o = <any>p.inject, i = 0; i < o.length; i++) {
+					const key = <string>o[i];
+
+					// tslint:disable-next-line
+					inject[key] = Object.assign(inject[key] || {}, {from: key});
+				}
+
+			} else  {
+				inject = p.inject || params.inject;
+			}
+
+			p = {
 				...params,
-				...p
+				...p,
+				mixins: {...params.mixins, ...p.mixins},
+				model: (p.model || params.model) && {...params.model, ...p.model},
+				provide,
+				inject
 			};
 
 			for (let o = meta.props, keys = Object.keys(props), i = 0; i < keys.length; i++) {
@@ -223,11 +315,11 @@ export function component(params?: ComponentParams): Function {
 
 		const
 			proto = target.prototype,
-			methods = Object.getOwnPropertyNames(proto);
+			ownProps = Object.getOwnPropertyNames(proto);
 
-		for (let i = 0; i < methods.length; i++) {
+		for (let i = 0; i < ownProps.length; i++) {
 			const
-				key = methods[i];
+				key = ownProps[i];
 
 			if (key === 'constructor') {
 				continue;
@@ -254,6 +346,86 @@ export function component(params?: ComponentParams): Function {
 					}
 				});
 			}
+		}
+
+		let
+			component: Record<string, any>;
+
+		const
+			instance = new target(),
+			props = {},
+			methods = {};
+
+		for (let o = meta.props, keys = Object.keys(meta.props), i = 0; i < keys.length; i++) {
+			const
+				key = <string>keys[i],
+				el = o[key];
+
+			props[key] = {
+				type: el.type,
+				required: el.required,
+				default: instance[key]
+			};
+		}
+
+		for (let o = meta.methods, keys = Object.keys(meta.methods), i = 0; i < keys.length; i++) {
+			const key = <string>keys[i];
+			methods[key] = o[key].fn;
+		}
+
+		console.log(meta.fields);
+
+		if (p.functional) {
+
+		} else {
+			component = {
+				...p.mixins,
+
+				props,
+				methods,
+				computed: meta.computed,
+				provide: p.provide,
+				inject: p.inject,
+
+				data(): Record<string, any> {
+					const
+						data = {},
+						fields = meta.fields,
+						keys = Object.keys(fields);
+
+					for (let i = 0; i < keys.length; i++) {
+						const
+							key = this._activeField = <string>keys[i],
+							el = fields[key];
+
+						let val;
+						if (el.init) {
+							val = el.init(this, instance);
+						}
+
+						data[key] = val === undefined ? el.default : val;
+					}
+
+					return data;
+				},
+
+				beforeCreate(): void {
+					for (let o = meta.accessors, keys = Object.keys(o), i = 0; i < keys.length; i++) {
+						const
+							key = <string>keys[i],
+							el = o[key];
+
+						Object.defineProperty(this, <string>keys[i], {
+							get: el.get,
+							set: el.set
+						});
+					}
+				},
+
+				created(): void {
+
+				}
+			};
 		}
 
 		if (p.root) {
