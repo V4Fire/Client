@@ -15,8 +15,10 @@
 
     "downlevelIteration": true,
     "lib": ["dom", "esnext"],
+    "allowJs": true,
+    "skipLibCheck": true,
     "strictNullChecks": true,
     "strictFunctionTypes": true,
-    "typeRoots": ["node_modules", "node_modules/@types"]
+    "experimentalDecorators": true
   }
 }
