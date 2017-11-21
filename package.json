@@ -31,7 +31,7 @@
     "@v4fire/core": "github:v4Fire/core#ts",
     "babel-polyfill": "^6.26.0",
     "chart.js": "^2.7.1",
-    "collection.js": "^6.3.11",
+    "collection.js": "^6.3.12",
     "dom4": "^1.8.5",
     "eventemitter2": "^4.1.2",
     "fg-loadcss": "^1.3.1",
@@ -47,7 +47,7 @@
     "sugar": "^2.0.4",
     "urijs": "^1.19.0",
     "uuid": "^3.1.0",
-    "vue": "^2.5.5"
+    "vue": "^2.5.7"
   },
   "optionalDependencies": {
     "@pzlr/build-core": "^1.6.0",
