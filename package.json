@@ -47,7 +47,7 @@
     "sugar": "^2.0.4",
     "urijs": "^1.19.0",
     "uuid": "^3.1.0",
-    "vue": "^2.5.5"
+    "vue": "^2.5.13"
   },
   "optionalDependencies": {
     "@pzlr/build-core": "^1.6.0",
