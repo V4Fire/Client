@@ -24,18 +24,6 @@ const
 	assetsJSON = r(`${version}assets.json`),
 	lib = path.join(cwd, 'node_modules');
 
-const build = include('build/entities.webpack')({
-	entries: path.join(entryFolder, pzlr.entriesDir),
-	output: hash(output),
-	cache: Number(process.env.FROM_CACHE) && path.join(cwd, 'app-cache/graph'),
-	folders,
-	assetsJSON,
-	lib
-});
-
-include('build/snakeskin.webpack')({folders});
-console.log('Project graph initialized');
-
 function r(file) {
 	return `./${path.relative(cwd, path.join(src.clientOutput(), file)).replace(/\\/g, '/')}`;
 }
@@ -52,5 +40,19 @@ function buildFactory(entry, i = '00') {
 	};
 }
 
-module.exports = args.single ?
-	buildFactory(build.entry) : $C(build.processes).map((el, i) => buildFactory(el, i));
+module.exports = (async () => {
+	const build = include('build/entities.webpack')({
+		entries: path.join(entryFolder, pzlr.entriesDir),
+		output: hash(output),
+		cache: Number(process.env.FROM_CACHE) && path.join(cwd, 'app-cache/graph'),
+		folders,
+		assetsJSON,
+		lib
+	});
+
+	include('build/snakeskin.webpack')({folders});
+	console.log('Project graph initialized');
+
+	return args.single ?
+		buildFactory(build.entry) : $C(build.processes).map((el, i) => buildFactory(el, i));
+})();

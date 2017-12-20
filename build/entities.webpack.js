@@ -37,7 +37,7 @@ const
  * @param {string} lib - path to a node_modules folder
  * @returns {{entry, processes, dependencies}}
  */
-module.exports = function ({entries, folders, output, cache, assetsJSON, lib}) {
+module.exports = async function ({entries, folders, output, cache, assetsJSON, lib}) {
 	folders = folders.slice().reverse();
 
 	//////////////////
@@ -102,6 +102,10 @@ module.exports = function ({entries, folders, output, cache, assetsJSON, lib}) {
 		glob.sync(path.join(el, components)),
 		glob.sync(path.join(el, virtualComponents))
 	), []).reverse();
+
+	await $C(await pzlr.block.getAll()).async.forEach(async (el) => {
+		console.log(el.name, el.getParent());
+	});
 
 	const blockMap = $C(files).reduce((map, el) => {
 		const
