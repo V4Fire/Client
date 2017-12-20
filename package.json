@@ -50,8 +50,8 @@
     "vue": "^2.5.13"
   },
   "optionalDependencies": {
-    "@pzlr/build-core": "^1.6.0",
-    "@pzlr/stylus-inheritance": "^2.2.1",
+    "@pzlr/build-core": "^1.7.0",
+    "@pzlr/stylus-inheritance": "^2.4.0",
     "@types/webpack": "^3.0.14",
     "assets-webpack-plugin": "^3.5.1",
     "async": "^2.5.0",
