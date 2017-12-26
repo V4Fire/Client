@@ -14,9 +14,9 @@ const
 	path = require('path');
 
 const
-	{config: pzlr} = require('@pzlr/build-core'),
+	{resolve} = require('@pzlr/build-core'),
 	{hash, args, version} = include('build/build.webpack'),
-	{src, src: {client: folders, client: [entryFolder]}} = config;
+	{src} = config;
 
 const
 	cwd = src.cwd(),
@@ -42,10 +42,9 @@ function buildFactory(entry, i = '00') {
 
 module.exports = (async () => {
 	const build = include('build/entities.webpack')({
-		entries: path.join(entryFolder, pzlr.entriesDir),
+		entries: resolve.entry(),
 		output: hash(output),
 		cache: Number(process.env.FROM_CACHE) && path.join(cwd, 'app-cache/graph'),
-		folders,
 		assetsJSON,
 		lib
 	});

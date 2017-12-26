@@ -30,16 +30,13 @@ const
  * Builds entry points for WebPack by the specified parameters and returns a tree of dependencies
  *
  * @param {string} entries - path to base entry points
- * @param {string} folders - list of block folders
  * @param {string} output - output path
  * @param {string} cache - path to a cache folder
  * @param {string} assetsJSON - path to assets.json file
  * @param {string} lib - path to a node_modules folder
  * @returns {{entry, processes, dependencies}}
  */
-module.exports = async function ({entries, folders, output, cache, assetsJSON, lib}) {
-	folders = folders.slice().reverse();
-
+module.exports = async function ({entries, output, cache, assetsJSON, lib}) {
 	//////////////////
 	// Load from cache
 	//////////////////
@@ -103,10 +100,10 @@ module.exports = async function ({entries, folders, output, cache, assetsJSON, l
 		glob.sync(path.join(el, virtualComponents))
 	), []).reverse();
 
-	await $C(await pzlr.block.getAll()).async.forEach(async (el) => {
+	/*await $C(await pzlr.block.getAll()).async.forEach(async (el) => {
 		console.log(el.name, el.getParent());
 	});
-
+*/
 	const blockMap = $C(files).reduce((map, el) => {
 		const
 			decl = pzlr.declaration.parse(fs.readFileSync(el)).toJSON(),
@@ -174,6 +171,7 @@ module.exports = async function ({entries, folders, output, cache, assetsJSON, l
 	 * Returns a graph with dependencies for a block
 	 */
 	function getBlockDeps(name, isParent, runtime = new Set(), parents = new Set()) {
+		console.log(121, name);
 		runtime.add(name);
 
 		if (!isParent && parents.has(name)) {
@@ -302,6 +300,8 @@ module.exports = async function ({entries, folders, output, cache, assetsJSON, l
 	const
 		packs = {},
 		weights = {};
+
+	console.log(121, entriesList);
 
 	$C(entriesList).forEach((el) => {
 		const
