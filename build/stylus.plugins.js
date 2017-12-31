@@ -12,6 +12,10 @@ const
 	Sugar = require('sugar'),
 	stylus = require('stylus');
 
+const
+	SVGO = require('svgo-sync'),
+	svgo = new SVGO();
+
 module.exports = [
 	require('nib')(),
 
@@ -50,16 +54,24 @@ module.exports = [
 		 * @param {?} str - source string
 		 * @returns {string}
 		 */
-		style.define('fromSVG', (str) =>
-			`data:image/svg+xml;base64,${Buffer([
+		style.define('fromSVG', (str) => {
+			let svg = str.string.replace(
+				'<svg ',
+				'<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" '
+			);
+
+			if (isProd) {
+				svg = svgo.optimizeSync(svg).data;
+			}
+
+			const base64 = Buffer([
 				'<?xml version="1.0" encoding="utf-8"?>',
 				'<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">',
-				str.string.replace(
-					'<svg ',
-					'<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" '
-				)
-			].join('')).toString('base64')}`
-		);
+				svg
+			].join('')).toString('base64');
+
+			return `data:image/svg+xml;base64,${base64}`;
+		});
 
 		/**
 		 * Returns true if the specified file is already exists
