@@ -13,13 +13,13 @@ module.exports = function (gulp = require('gulp')) {
 	include('build/static.gulp')(gulp);
 
 	const
-		config = require('config'),
+		{src} = require('config'),
 		runWebpack = 'npx parallel-webpack',
 		args = process.argv.slice(3).join(' ');
 
 	gulp.task('cleanClient', (cb) => {
 		const del = require('del');
-		del(config.src.clientOutput()).then(() => cb(), cb);
+		del(src.clientOutput()).then(() => cb(), cb);
 	});
 
 	gulp.task('client', (cb) => {
