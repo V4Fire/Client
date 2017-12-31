@@ -9,19 +9,14 @@
  */
 
 const
-	config = require('config'),
-	{hash} = include('build/build.webpack');
+	{src} = require('config'),
+	{hash, output} = include('build/build.webpack');
 
 /**
- * Returns an object for webpack.output
- *
- * @param {string} output - output path
- * @returns {{path: string, publicPath: string, filename: string}}
+ * Parameters for webpack.output
  */
-module.exports = function ({output}) {
-	return {
-		path: config.src.cwd(),
-		publicPath: '/',
-		filename: hash(output, true)
-	};
+module.exports = {
+	path: src.cwd(),
+	publicPath: '/',
+	filename: hash(output, true)
 };

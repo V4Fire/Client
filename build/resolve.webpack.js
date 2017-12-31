@@ -8,15 +8,14 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+const
+	{src} = require('config'),
+	{resolve} = require('@pzlr/build-core');
+
 /**
- * Returns a list for webpack.resolve
- *
- * @param {Array<string>} modules - list of modules
- * @returns {Array<string>}
+ * Parameters for webpack.resolve
  */
-module.exports = function ({modules}) {
-	return {
-		extensions: ['.ts', '.js', '.json'],
-		modules
-	};
+module.exports = {
+	extensions: ['.ts', '.js', '.json'],
+	modules: [resolve.sourceDir, src.cwd(), ...resolve.rootDependencies, src.lib()]
 };

@@ -63,6 +63,11 @@ if (isProd) {
 }
 
 /**
+ * Build cache folder
+ */
+exports.buildCache = path.join(src.cwd(), 'app-cache');
+
+/**
  * Path to assets.json
  */
 exports.assetsJSON = r(`${version}assets.json`);

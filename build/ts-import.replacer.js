@@ -9,18 +9,18 @@
  */
 
 const
-	path = require('path');
+	path = require('path'),
+	{src} = require('config');
 
 /**
  * Monic replacer for TS import declarations
  *
- * @param {string} lib - path to a node_modules folder
- * @returns {function(string, string): string}
+ * @param {string} str
+ * @param {string} file
+ * @returns {string}
  */
-module.exports = function ({lib}) {
-	return function (str, file) {
-		return str.replace(/(['"])(@v4fire)(.*?)\1/, (str, $1, root, src) =>
-			`'${path.relative(path.dirname(file), path.join(lib, root, 'src', src))}'`
-		);
-	};
+module.exports = function (str, file) {
+	return str.replace(/(['"])(@v4fire)(.*?)\1/, (str, $1, root, url) =>
+		`'${path.relative(path.dirname(file), path.join(src.lib(), root, 'src', url))}'`
+	);
 };
