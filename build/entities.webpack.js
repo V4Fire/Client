@@ -9,34 +9,27 @@
  */
 
 const
-	$C = require('collection.js');
-
-const
+	$C = require('collection.js'),
 	Sugar = require('sugar'),
-	{args} = require('./build.webpack');
+	pzlr = require('@pzlr/build-core');
 
 const
-	fs = require('fs'),
+	fs = require('fs-extra-promise'),
 	path = require('path'),
-	glob = require('glob'),
-	mkdirp = require('mkdirp'),
-	hasha = require('hasha'),
-	pzlr = require('@pzlr/build-core');
+	hasha = require('hasha');
+
+const
+	{src} = require('config'),
+	{args, output, assetsJSON, buildCache} = include('build/build.webpack');
 
 const
 	IN_PROCESS = 3;
 
 /**
- * Builds entry points for WebPack by the specified parameters and returns a tree of dependencies
- *
- * @param {string} entries - path to base entry points
- * @param {string} output - output path
- * @param {string} cache - path to a cache folder
- * @param {string} assetsJSON - path to assets.json file
- * @param {string} lib - path to a node_modules folder
- * @returns {{entry, processes, dependencies}}
+ * Tree of dependencies
+ * @type {Promise<{entry, processes, dependencies}>}
  */
-module.exports = async function ({entries, output, cache, assetsJSON, lib}) {
+module.exports = (async () => {
 	//////////////////
 	// Load from cache
 	//////////////////
@@ -44,11 +37,12 @@ module.exports = async function ({entries, output, cache, assetsJSON, lib}) {
 	let
 		cacheFile;
 
-	if (cache) {
-		mkdirp.sync(cache);
-		cacheFile = path.join(cache, 'graph.json');
-		if (fs.existsSync(cacheFile)) {
-			return require(cacheFile);
+	if (Number(process.env.FROM_CACHE)) {
+		await fs.mkdirpAsync(buildCache);
+		cacheFile = path.join(buildCache, 'graph.json');
+
+		if (fs.existsAsync(cacheFile)) {
+			return fs.readJSONAsync(cacheFile);
 		}
 	}
 
@@ -68,110 +62,41 @@ module.exports = async function ({entries, output, cache, assetsJSON, lib}) {
 	// Load entries list
 	////////////////////
 
-	const entriesList = $C(glob.sync(path.join(entries, '*.js'))).get((el) => {
-		if (entriesFilter) {
-			return entriesFilter[path.basename(el, '.js')];
-		}
+	const
+		tmpEntries = path.join(pzlr.resolve.entry(), 'tmp'),
+		buildConfig = pzlr.entries.getBuildConfig().filter((el, key) => entriesFilter ? entriesFilter[key] : true);
 
-		return true;
-	});
+	console.log(buildConfig);
+	return 1;
 
 	///////////////////////////
 	// Create temporary folders
 	///////////////////////////
 
-	const
-		tmpEntries = path.join(entries, 'tmp');
+	const mkdirp = async (src) => {
+		if (!await fs.existsAsync(src)) {
+			await fs.mkdirAsync(src);
+		}
+	};
 
-	mkdirp.sync(tmpEntries);
-	mkdirp.sync(path.dirname(output));
+	await Promise.all([
+		mkdirp(tmpEntries),
+		mkdirp(path.dirname(output))
+	]);
 
 	////////////////////////////////////
 	// Load index declarations of blocks
 	////////////////////////////////////
 
-	const
-		b = `@(${pzlr.validators.blockTypeList.join('|')})-*`,
-		components = `/**/${b}/index.js`,
-		virtualComponents = `/**/${b}.index.js`;
-
-	const files = $C(folders).reduce((arr, el) => arr.concat(
-		glob.sync(path.join(el, components)),
-		glob.sync(path.join(el, virtualComponents))
-	), []).reverse();
-
-	/*await $C(await pzlr.block.getAll()).async.forEach(async (el) => {
-		console.log(el.name, el.getParent());
-	});
-*/
-	const blockMap = $C(files).reduce((map, el) => {
-		const
-			decl = pzlr.declaration.parse(fs.readFileSync(el)).toJSON(),
-			nm = decl.name,
-			base = map[nm];
-
-		const
-			cwd = path.dirname(el),
-			url = (ext) => path.join(cwd, `${nm}.${ext}`);
-
-		if (base) {
-			if (decl.mixin) {
-				$C.extend({
-					deep: true,
-					concatArray: true,
-					concatFn: Sugar.Array.union
-				}, decl, base);
-
-			} else {
-				Object.assign(decl, base);
-			}
-		}
-
-		const
-			logicJs = url('js'),
-			logicTs = url('ts'),
-			style = url('styl'),
-			tpl = url('ss'),
-			html = url('ess');
-
-		if (fs.existsSync(logicJs)) {
-			decl.logic = logicJs;
-
-		} else if (fs.existsSync(logicTs)) {
-			decl.logic = logicTs;
-		}
-
-		if (decl.mixin) {
-			if (fs.existsSync(style)) {
-				decl.style = style;
-
-			} else {
-				decl.style = [].concat(base.style || [], glob.sync(path.join(cwd, `${nm}_*.styl`)));
-			}
-
-		} else if (fs.existsSync(style)) {
-			decl.style = style;
-		}
-
-		if (fs.existsSync(tpl)) {
-			decl.tpl = tpl;
-		}
-
-		if (fs.existsSync(html)) {
-			decl.html = html;
-		}
-
-		decl.src = decl.mixin ? base.src : el;
-		map[nm] = decl;
-
-		return map;
+	const blockMap = $C(await pzlr.block.getAll()).reduce((map, decl) => {
+		map[decl.name] = decl;
+		return decl;
 	}, {});
 
 	/**
 	 * Returns a graph with dependencies for a block
 	 */
 	function getBlockDeps(name, isParent, runtime = new Set(), parents = new Set()) {
-		console.log(121, name);
 		runtime.add(name);
 
 		if (!isParent && parents.has(name)) {
@@ -236,7 +161,7 @@ module.exports = async function ({entries, output, cache, assetsJSON, lib}) {
 
 			if (nodeModule && entriesDir.test(url) || insideEntry.test(url)) {
 				const
-					d = nodeModule ? lib : dir;
+					d = nodeModule ? src.lib() : dir;
 
 				let
 					f = path.join(d, `${url}.js`);
@@ -301,7 +226,7 @@ module.exports = async function ({entries, output, cache, assetsJSON, lib}) {
 		packs = {},
 		weights = {};
 
-	console.log(121, entriesList);
+	console.log(1111, buildConfig.entries);
 
 	$C(entriesList).forEach((el) => {
 		const
@@ -573,4 +498,4 @@ module.exports = async function ({entries, output, cache, assetsJSON, lib}) {
 	}
 
 	return res;
-};
+})();
