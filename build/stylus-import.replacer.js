@@ -9,24 +9,20 @@
  */
 
 const
-	fs = require('fs'),
-	path = require('path');
+	path = require('path'),
+	{resolve} = require('@pzlr/build-core');
 
 const
-	cache = Object.create(null),
-	exists = Object.create(null);
+	cache = Object.create(null);
 
 /**
  * Monic replacer for Stylus @import declarations
  *
- * @param {Array<string>} folders - list of related folders
  * @param {string} lib - path to a node_modules folder
  * @returns {function(string, string): string}
  */
-module.exports = function ({folders, lib}) {
-	folders = folders.slice().reverse();
-
-	return (str, file) => {
+module.exports = function ({lib}) {
+	return async (str, file) => {
 		const
 			cwd = path.dirname(file),
 			parent = path.dirname(cwd),
@@ -40,27 +36,26 @@ module.exports = function ({folders, lib}) {
 			return str.replace(/\\/g, '/');
 		}
 
-		return c[str] = str
-			.replace(/@import "([^./~].*?\.styl)"/g, (str, url) => {
-				for (let i = 0; i < folders.length; i++) {
-					const
-						fullPath = path.join(folders[i], url);
+		const
+			importBlock = /@import "([^./~].*?\.styl)"/g;
 
-					if (fullPath in exists === false) {
-						exists[fullPath] = fs.existsSync(fullPath);
-					}
+		let
+			importStatement,
+			newStr = str;
 
-					if (exists[fullPath]) {
-						return `@import "./${r(path.relative(cwd, fullPath))}"`;
-					}
-				}
+		while ((importStatement = importBlock.exec(str))) {
+			const
+				url = importStatement[1],
+				file = await resolve.block(url);
 
-				return `@import "${url}"`;
-			})
+			if (file) {
+				newStr = newStr.replace(importStatement[0], `@import "./${r(path.relative(cwd, file))}"`);
+			}
+		}
 
-			.replace(/@import "~(.*?\.styl)"/g, (str, url) => {
-				url = r(path.relative(cwd, path.join(lib, url)));
-				return `@import "${url}"`;
-			});
+		c[str] = newStr.replace(/@import "~(.*?\.styl)"/g, (str, url) => {
+			url = r(path.relative(cwd, path.join(lib, url)));
+			return `@import "${url}"`;
+		});
 	};
 };
