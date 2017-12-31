@@ -70,7 +70,7 @@ exports.buildCache = path.join(src.cwd(), 'app-cache');
 /**
  * Path to assets.json
  */
-exports.assetsJSON = r(`${version}assets.json`);
+exports.assetsJSON = r(`${exports.version}assets.json`);
 
 /* eslint-disable no-unused-vars */
 
