@@ -17,8 +17,7 @@ const
 const
 	HardSourceWebpackPlugin = require('hard-source-webpack-plugin'),
 	ExtractTextPlugin = require('extract-text-webpack-plugin'),
-	AssetsWebpackPlugin = require('assets-webpack-plugin'),
-	WebpackMd5Hash = require('webpack-md5-hash');
+	AssetsWebpackPlugin = require('assets-webpack-plugin');
 
 const
 	cwd = config.src.cwd(),
@@ -72,8 +71,6 @@ module.exports = function ({build, assetsJSON, output, i}) {
 			}));
 
 			/* eslint-enable camelcase */
-
-			plugins.push(new WebpackMd5Hash());
 		}
 
 	} else {
