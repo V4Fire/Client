@@ -9,12 +9,12 @@
  */
 
 const
-	{env, argv} = process;
+	{env, argv} = process,
+	{src} = require('config');
 
 const
 	fs = require('fs'),
 	path = require('path'),
-	config = require('config'),
 	minimist = require('minimist');
 
 /**
@@ -22,6 +22,11 @@ const
  */
 const args = exports.args = minimist(argv.slice(2));
 args.env && (env.NODE_ENV = args.env);
+
+/**
+ * Output pattern
+ */
+exports.output = r('[hash]_[name]');
 
 /**
  * File hash length
@@ -41,7 +46,7 @@ if (isProd) {
 
 		} else {
 			const
-				src = path.join(config.src.cwd(), 'package.json'),
+				src = include('package.json'),
 				pack = require(src),
 				v = pack.version.split('.');
 
@@ -56,6 +61,11 @@ if (isProd) {
 		argv.push('--fast');
 	}
 }
+
+/**
+ * Path to assets.json
+ */
+exports.assetsJSON = r(`${version}assets.json`);
 
 /* eslint-disable no-unused-vars */
 
@@ -72,3 +82,7 @@ exports.hash = function (output, chunk) {
 };
 
 /* eslint-enable no-unused-vars */
+
+function r(file) {
+	return `./${path.relative(src.cwd(), path.join(src.clientOutput(), file)).replace(/\\/g, '/')}`;
+}
