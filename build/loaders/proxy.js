@@ -31,7 +31,7 @@ module.exports = function (str) {
 	}
 
 	if (names.size) {
-		return str.replace(/(\$\$ = new Store\()(\))/, (sstr, $1, $2) => $1 + JSON.stringify([...names]) + $2);
+		return str.replace(/(\$\$ = symbolGenerator\()(\))/, (sstr, $1, $2) => $1 + JSON.stringify([...names]) + $2);
 	}
 
 	return str;
