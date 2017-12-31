@@ -11,7 +11,6 @@
 const
 	$C = require('collection.js'),
 	path = require('path'),
-	config = require('config'),
 	webpack = require('webpack');
 
 const
@@ -20,23 +19,22 @@ const
 	AssetsWebpackPlugin = require('assets-webpack-plugin');
 
 const
-	cwd = config.src.cwd(),
-	{hash} = include('build/build.webpack');
+	{output, assetsJSON, hash, buildCache} = include('build/build.webpack');
 
 /**
  * Returns a list of webpack plugins
  *
- * @param {Object} build - build object
- * @param {string} assetsJSON - path to assets.json file
- * @param {string} output - output path
- * @param {(number|string)} i - build id
+ * @param {(number|string)} buildId - build id
  * @returns {Array}
  */
-module.exports = function ({build, assetsJSON, output, i}) {
+module.exports = async function ({buildId}) {
+	const
+		build = await include('build/entities.webpack');
+
 	const base = {
 		'0': true,
 		'00': true
-	}[i];
+	}[buildId];
 
 	const plugins = [
 		new webpack.DefinePlugin(include('build/globals.webpack')),
@@ -75,8 +73,8 @@ module.exports = function ({build, assetsJSON, output, i}) {
 
 	} else {
 		plugins.push(new HardSourceWebpackPlugin({
-			cacheDirectory: path.join(cwd, `app-cache/${i}/[confighash]`),
-			recordsPath: path.join(cwd, `app-cache/${i}/[confighash]/records.json`),
+			cacheDirectory: path.join(buildCache, `${i}/[confighash]`),
+			recordsPath: path.join(buildCache, `${i}/[confighash]/records.json`),
 			environmentHash: {files: ['package-lock.json']},
 			configHash: (webpackConfig) => require('node-object-hash')().hash(webpackConfig)
 		}));

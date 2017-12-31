@@ -14,19 +14,17 @@ const
 	ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 const
-	{src} = config,
-	{hash, version, hashLength} = include('build/build.webpack');
+	{src} = require('config'),
+	{output, hash, version, hashLength} = include('build/build.webpack');
 
 /**
- * Returns an object for webpack.module
- *
- * @param {Object} build - build object
- * @param {string} output - output path
- * @param {Array<string>} folders - list of related folders
- * @param {string} lib - path to a node_modules folder
- * @returns {Object}
+ * Parameters for webpack.module
+ * @type {Promise<Object>}
  */
-module.exports = function ({build, output, folders, lib}) {
+module.exports = (async () => {
+	const
+		build = await include('build/entities.webpack');
+
 	return {
 		rules: [
 			{
@@ -37,17 +35,10 @@ module.exports = function ({build, output, folders, lib}) {
 						loader: 'ts'
 					},
 
-					/*{
-						loader: 'prop',
-						options: {
-							modules: folders
-						}
-					},*/
-
 					{
 						loader: 'proxy',
 						options: {
-							modules: folders
+							modules: src.client
 						}
 					},
 
@@ -55,7 +46,7 @@ module.exports = function ({build, output, folders, lib}) {
 						loader: 'monic',
 						options: {
 							replacers: [
-								include('build/ts-import.replacer')({lib})
+								include('build/ts-import.replacer')
 							]
 						}
 					}
@@ -102,7 +93,7 @@ module.exports = function ({build, output, folders, lib}) {
 							loader: 'monic',
 							options: $C.extend({deep: true, concatArray: true}, config.monic().styl, {
 								replacers: [
-									include('build/stylus-import.replacer')({folders, lib}),
+									include('build/stylus-import.replacer'),
 									require('@pzlr/stylus-inheritance')
 								]
 							})
@@ -143,9 +134,9 @@ module.exports = function ({build, output, folders, lib}) {
 								output: src.clientOutput(),
 								dependencies: build.dependencies,
 								assets: src.assets(),
+								lib: src.lib(),
 								version,
-								hashLength,
-								lib
+								hashLength
 							}
 						})
 					}
@@ -166,4 +157,4 @@ module.exports = function ({build, output, folders, lib}) {
 			}
 		]
 	};
-};
+})();

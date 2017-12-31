@@ -8,50 +8,32 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+require('config');
+
 const
 	$C = require('collection.js'),
-	config = require('config'),
-	path = require('path');
+	{args} = include('build/build.webpack');
 
-const
-	{resolve} = require('@pzlr/build-core'),
-	{hash, args, version} = include('build/build.webpack'),
-	{src} = config;
-
-const
-	cwd = src.cwd(),
-	output = r('[hash]_[name]'),
-	assetsJSON = r(`${version}assets.json`),
-	lib = path.join(cwd, 'node_modules');
-
-function r(file) {
-	return `./${path.relative(cwd, path.join(src.clientOutput(), file)).replace(/\\/g, '/')}`;
-}
-
-function buildFactory(entry, i = '00') {
+async function buildFactory(entry, buildId = '00') {
 	return {
 		entry,
-		output: include('build/output.webpack')({output}),
-		resolve: include('build/resolve.webpack')({modules: [entryFolder, cwd, ...folders.slice(1), lib]}),
-		resolveLoader: include('build/resolve-loader.webpack'),
-		externals: include('build/externals.webpack'),
-		module: include('build/module.webpack')({build, output, folders, lib}),
-		plugins: include('build/plugins.webpack')({build, assetsJSON, output, i})
+		output: await include('build/output.webpack'),
+		resolve: await include('build/resolve.webpack'),
+		resolveLoader: await include('build/resolve-loader.webpack'),
+		externals: await include('build/externals.webpack'),
+		module: await include('build/module.webpack'),
+		plugins: await include('build/plugins.webpack')({buildId})
 	};
 }
 
 module.exports = (async () => {
-	const build = include('build/entities.webpack')({
-		entries: resolve.entry(),
-		output: hash(output),
-		cache: Number(process.env.FROM_CACHE) && path.join(cwd, 'app-cache/graph'),
-		assetsJSON,
-		lib
-	});
+	await include('build/snakeskin.webpack');
 
-	include('build/snakeskin.webpack')({folders});
+	const
+		build = await include('build/entities.webpack');
+
 	console.log('Project graph initialized');
 
 	return args.single ?
-		buildFactory(build.entry) : $C(build.processes).map((el, i) => buildFactory(el, i));
+		buildFactory(build.entry) : $C(build.processes).async.map((el, i) => buildFactory(el, i));
 })();
