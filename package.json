@@ -46,11 +46,11 @@
     "socket.io": "^2.0.4",
     "sugar": "^2.0.4",
     "urijs": "^1.19.0",
-    "uuid": "^3.1.0",
+    "uuid": "^3.2.0",
     "vue": "^2.5.13"
   },
   "optionalDependencies": {
-    "@pzlr/build-core": "^2.2.0",
+    "@pzlr/build-core": "^2.3.0",
     "@pzlr/stylus-inheritance": "^2.5.0",
     "@types/async": "^2.0.46",
     "@types/fs-extra-promise": "^1.0.4",
