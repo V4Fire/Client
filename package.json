@@ -33,14 +33,14 @@
     "chart.js": "^2.7.1",
     "collection.js": "^6.3.11",
     "dom4": "^2.0.0",
-    "eventemitter2": "^5.0.0",
+    "eventemitter2": "^5.0.1",
     "fg-loadcss": "^2.0.1",
     "http-status": "^1.0.1",
     "ion-sound": "^3.0.7",
     "join-uri": "^1.0.1",
     "localforage": "^1.5.3",
     "path-to-regexp": "^2.1.0",
-    "raven-js": "^3.20.1",
+    "raven-js": "^3.22.1",
     "requestidlecallback": "^0.3.0",
     "snakeskin": "^7.2.8",
     "socket.io": "^2.0.4",
@@ -109,9 +109,9 @@
     "webpack-replace-chunkhash-contenthash": "0.0.2"
   },
   "devDependencies": {
-    "babel-eslint": "^8.1.2",
-    "eslint": "^4.14.0",
+    "babel-eslint": "^8.2.1",
+    "eslint": "^4.15.0",
     "packages-version-check": "^1.1.1",
-    "tslint": "^5.8.0"
+    "tslint": "^5.9.1"
   }
 }
