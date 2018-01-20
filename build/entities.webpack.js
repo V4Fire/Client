@@ -30,10 +30,6 @@ const
  * @type {Promise<{entry, processes, dependencies}>}
  */
 module.exports = (async () => {
-	//////////////////
-	// Load from cache
-	//////////////////
-
 	let
 		cacheFile;
 
@@ -46,32 +42,8 @@ module.exports = (async () => {
 		}
 	}
 
-	//////////////////////////
-	// Parse --build arguments
-	//////////////////////////
-
-	let
-		entriesFilter;
-
-	if (typeof args.build === 'string') {
-		entriesFilter = $C(args.build.split(',')).reduce((map, el) => (map[el] = true, map), {});
-		entriesFilter.index = true;
-	}
-
-	////////////////////
-	// Load entries list
-	////////////////////
-
 	const
-		tmpEntries = path.join(pzlr.resolve.entry(), 'tmp'),
-		buildConfig = pzlr.entries.getBuildConfig().filter((el, key) => entriesFilter ? entriesFilter[key] : true);
-
-	console.log(buildConfig);
-	return 1;
-
-	///////////////////////////
-	// Create temporary folders
-	///////////////////////////
+		tmpEntries = path.join(pzlr.resolve.entry(), 'tmp');
 
 	const mkdirp = async (src) => {
 		if (!await fs.existsAsync(src)) {
@@ -84,138 +56,27 @@ module.exports = (async () => {
 		mkdirp(path.dirname(output))
 	]);
 
-	////////////////////////////////////
-	// Load index declarations of blocks
-	////////////////////////////////////
+	let
+		entriesFilter;
 
-	const blockMap = $C(await pzlr.block.getAll()).reduce((map, decl) => {
-		map[decl.name] = decl;
-		return decl;
-	}, {});
-
-	/**
-	 * Returns a graph with dependencies for a block
-	 */
-	function getBlockDeps(name, isParent, runtime = new Set(), parents = new Set()) {
-		runtime.add(name);
-
-		if (!isParent && parents.has(name)) {
-			parents.delete(name);
-		}
-
-		const
-			block = blockMap[name];
-
-		if (!block) {
-			throw new Error(`Block "${name}" not exists!`);
-		}
-
-		$C(block.dependencies).forEach((block) => {
-			block = path.basename(block.replace(/^@/, ''));
-			runtime.add(block);
-			getBlockDeps(block, false, runtime, parents);
-		});
-
-		if (block.parent) {
-			const
-				parent = path.basename(block.parent);
-
-			if (!runtime.has(parent)) {
-				parents.add(parent);
-				runtime.add(parent);
-			}
-
-			getBlockDeps(parent, true, runtime, parents);
-		}
-
-		block.runtime = new Set(runtime);
-		block.parents = new Set(parents);
-
-		return {runtime, parents};
+	if (typeof args.build === 'string') {
+		entriesFilter = $C(args.build.split(',')).reduce((map, el) => (map[el] = true, map), {});
+		entriesFilter.index = true;
 	}
+
+	const
+		buildConfig = (await pzlr.entries.getBuildConfig()).filter((el, key) => entriesFilter ? entriesFilter[key] : true),
+		blockMap = await pzlr.block.getAll();
+
+	// console.log(await blockMap.get('b-input').getRuntimeDependencies({cache: blockMap}));
+	console.log(await buildConfig.entries.b.getRuntimeDependencies());
+	return;
 
 	/**
 	 * Returns true if the specified url is a node module
 	 */
 	function isNodeModule(url) {
 		return !path.isAbsolute(url) && /^[^./\\]/.test(url);
-	}
-
-	/**
-	 * Returns a list of dependencies from an entry file
-	 */
-	function getEntryDepList(dir, file, arr = []) {
-		const
-			hasImport = /^import\s+(['"])(.*?)\1;?/,
-			entriesDir = new RegExp(`\\b${Sugar.RegExp.escape(pzlr.config.entriesDir)}\\b`),
-			insideEntry = /^\.\//;
-
-		$C(file.split(/\r?\n|\r/)).forEach((el) => {
-			if (!hasImport.test(el)) {
-				return;
-			}
-
-			const
-				url = RegExp.$2,
-				nodeModule = isNodeModule(url);
-
-			if (nodeModule && entriesDir.test(url) || insideEntry.test(url)) {
-				const
-					d = nodeModule ? src.lib() : dir;
-
-				let
-					f = path.join(d, `${url}.js`);
-
-				if (!fs.existsSync(f)) {
-					f = path.join(d, `${url}/index.js`);
-				}
-
-				getEntryDepList(path.dirname(f), fs.readFileSync(f, 'utf-8'), arr);
-
-			} else {
-				arr.push(nodeModule ? url : path.join(dir, url));
-			}
-		});
-
-		return arr;
-	}
-
-	/**
-	 * Returns a graph with dependencies for an entry file
-	 */
-	function getEntryDeps(dir, file) {
-		const deps = {
-			runtime: new Set(),
-			parents: new Set()
-		};
-
-		const
-			runtime = new Set();
-
-		$C(getEntryDepList(dir, file)).forEach((el) => {
-			const
-				name = path.basename(el, path.extname(el)),
-				block = blockMap[name];
-
-			if (!pzlr.validators.blockName(name) || !block) {
-				deps.runtime.add(el);
-				return;
-			}
-
-			const
-				blockDeps = getBlockDeps(name);
-
-			$C(blockDeps.runtime).forEach((block) => {
-				if (!blockDeps.parents.has(block)) {
-					runtime.add(block);
-				}
-			});
-
-			deps.runtime = new Set([...deps.runtime, ...blockDeps.runtime]);
-			deps.parents = new Set($C([...deps.parents, ...blockDeps.parents]).filter((el) => !runtime.has(el)).map());
-		});
-
-		return deps;
 	}
 
 	/////////////////////////////////////////////////
@@ -254,6 +115,7 @@ module.exports = (async () => {
 
 	// Find common modules (weight > 1)
 	const commonPacks = [];
+
 	$C(weights).forEach((el, key) => {
 		if (el.i > 1) {
 			const pos = entriesList.length - el.i - 1;
@@ -377,7 +239,7 @@ module.exports = (async () => {
 
 		fs.writeFileSync(logicFile, $C(list).reduce((str, {name}) => {
 			const
-				block = blockMap[name];
+				block = blockMap.get(name);
 
 			if (block) {
 				$C(block.libs).forEach((el) => str += `require('${el}');\n`);
@@ -402,7 +264,7 @@ module.exports = (async () => {
 
 		fs.writeFileSync(styleFile, $C(list).reduce((str, {name, isParent}) => {
 			const
-				block = blockMap[name];
+				block = blockMap.get(name);
 
 			if (!isParent && $C(block).get('style.length') && !blackName.test(name)) {
 				$C([].concat(block.style)).forEach((url) => {
@@ -437,7 +299,7 @@ module.exports = (async () => {
 
 		fs.writeFileSync(tplFile, $C(list).reduce((str, {name, isParent}) => {
 			const
-				block = blockMap[name];
+				block = blockMap.get(name);
 
 			if (!isParent && block && block.tpl && !blackName.test(name)) {
 				const url = getUrl(block.tpl);
@@ -470,7 +332,7 @@ module.exports = (async () => {
 
 		fs.writeFileSync(htmlFile, $C(list).reduce((str, {name}) => {
 			const
-				block = blockMap[name];
+				block = blockMap.get(name);
 
 			if (block && block.html && !blackName.test(name)) {
 				str += `require('./${getUrl(block.html)}');\n`;
