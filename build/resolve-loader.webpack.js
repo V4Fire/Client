@@ -14,7 +14,6 @@ const
 module.exports = {
 	moduleExtensions: ['-loader'],
 	alias: {
-		prop: path.join(__dirname, '../build/loaders/prop'),
 		proxy: path.join(__dirname, '../build/loaders/proxy')
 	}
 };
