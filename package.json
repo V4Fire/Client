@@ -38,7 +38,7 @@
     "http-status": "^1.0.1",
     "ion-sound": "^3.0.7",
     "join-uri": "^1.0.1",
-    "localforage": "^1.5.3",
+    "localforage": "^1.5.6",
     "path-to-regexp": "^2.1.0",
     "raven-js": "^3.22.1",
     "requestidlecallback": "^0.3.0",
@@ -46,7 +46,7 @@
     "socket.io": "^2.0.4",
     "sugar": "^2.0.4",
     "urijs": "^1.19.0",
-    "uuid": "^3.2.0",
+    "uuid": "^3.2.1",
     "vue": "^2.5.13"
   },
   "optionalDependencies": {
@@ -110,7 +110,7 @@
   },
   "devDependencies": {
     "babel-eslint": "^8.2.1",
-    "eslint": "^4.15.0",
+    "eslint": "^4.16.0",
     "packages-version-check": "^1.1.1",
     "tslint": "^5.9.1"
   }
