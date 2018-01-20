@@ -50,7 +50,7 @@
     "vue": "^2.5.13"
   },
   "optionalDependencies": {
-    "@pzlr/build-core": "^2.4.0",
+    "@pzlr/build-core": "^2.5.1",
     "@pzlr/stylus-inheritance": "^2.5.0",
     "@types/async": "^2.0.46",
     "@types/fs-extra-promise": "^1.0.4",
