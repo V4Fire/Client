@@ -69,7 +69,7 @@ module.exports = (async () => {
 		blockMap = await pzlr.block.getAll();
 
 	// console.log(await blockMap.get('b-input').getRuntimeDependencies({cache: blockMap}));
-	console.log(await buildConfig.entries.b.getRuntimeDependencies());
+	console.log(buildConfig.dependencies);
 	return;
 
 	/**
