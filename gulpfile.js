@@ -14,25 +14,15 @@ module.exports = function (gulp = require('gulp')) {
 
 	const
 		{src} = require('config'),
+		$ = require('gulp-load-plugins')({scope: ['optionalDependencies']});
+
+	const
 		runWebpack = 'npx parallel-webpack',
 		args = process.argv.slice(3).join(' ');
 
-	gulp.task('cleanClient', (cb) => {
-		const del = require('del');
-		del(src.clientOutput()).then(() => cb(), cb);
-	});
-
-	gulp.task('client', (cb) => {
-		const run = require('gulp-run');
-		run(`${runWebpack} -- ${args}`, {verbosity: 3})
-			.exec()
-			.on('finish', cb);
-	});
-
-	gulp.task('watchClient', () => {
-		const run = require('gulp-run');
-		run(`${runWebpack} --watch -- ${args}`, {verbosity: 3}).exec();
-	});
+	gulp.task('clean:client', () => require('del')(src.clientOutput()));
+	gulp.task('build:client', () => $.run(`${runWebpack} -- ${args}`, {verbosity: 3}).exec().on('error', console.error));
+	gulp.task('watch:client', () => $.run(`${runWebpack} --watch -- ${args}`, {verbosity: 3}).exec().on('error', console.error));
 };
 
 module.exports();
