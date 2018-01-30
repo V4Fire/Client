@@ -76,7 +76,7 @@ module.exports = async function ({buildId}) {
 			cacheDirectory: path.join(buildCache, `${buildId}/[confighash]`),
 			recordsPath: path.join(buildCache, `${buildId}/[confighash]/records.json`),
 			environmentHash: {files: ['package-lock.json']},
-			configHash: (webpackConfig) => require('node-object-hash')().hash(webpackConfig)
+			configHash: async (webpackConfig) => require('node-object-hash')().hash(await webpackConfig)
 		}));
 	}
 
