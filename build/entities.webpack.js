@@ -29,26 +29,26 @@ const
  * @type {Promise<{entry, processes, dependencies}>}
  */
 module.exports = (async () => {
-	let
-		cacheFile;
-
-	if (Number(process.env.FROM_CACHE)) {
-		await fs.mkdirpAsync(buildCache);
-		cacheFile = path.join(buildCache, 'graph.json');
-
-		if (fs.existsAsync(cacheFile)) {
-			return fs.readJSONAsync(cacheFile);
-		}
-	}
-
-	const
-		tmpEntries = path.join(resolve.entry(), 'tmp');
-
 	const mkdirp = (src) => {
 		if (!fs.existsSync(src)) {
 			fs.mkdirpSync(src);
 		}
 	};
+
+	let
+		cacheFile;
+
+	if (Number(process.env.FROM_CACHE)) {
+		mkdirp(buildCache);
+		cacheFile = path.join(buildCache, 'graph.json');
+
+		if (fs.existsSync(cacheFile)) {
+			return fs.readJSONSync(cacheFile);
+		}
+	}
+
+	const
+		tmpEntries = path.join(resolve.entry(), 'tmp');
 
 	mkdirp(tmpEntries);
 	mkdirp(path.dirname(output));
