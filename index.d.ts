@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-/// <reference types="@v4fire/core/predefs"/>
+/// <reference types="@v4fire/core"/>
 /// <reference types="dom4"/>
 
 declare let READY_STATE: number;

@@ -1,6 +1,6 @@
 {
+  "extends": "./node_modules/@v4fire/core/tsconfig.json",
   "compilerOptions": {
-    "target": "es5",
     "baseUrl": ".",
     "paths": {
       "*": [
@@ -11,14 +11,6 @@
       "@v4fire/core/*": [
         "./node_modules/@v4fire/core/src/*"
       ]
-    },
-
-    "downlevelIteration": true,
-    "lib": ["dom", "esnext"],
-    "allowJs": true,
-    "skipLibCheck": true,
-    "strictNullChecks": true,
-    "strictFunctionTypes": true,
-    "experimentalDecorators": true
+    }
   }
 }

@@ -3,7 +3,7 @@
   "description": "V4Fire client core library",
   "homepage": "https://github.com/V4Fire/Client#readme",
   "main": "src/core/index.js",
-  "typings": "predefs.d.ts",
+  "typings": "index.d.ts",
   "license": "MIT",
   "version": "1.0.0",
   "author": {
@@ -31,7 +31,7 @@
     "@v4fire/core": "github:v4Fire/core#ts",
     "babel-polyfill": "^6.26.0",
     "chart.js": "^2.7.1",
-    "collection.js": "^6.3.16",
+    "collection.js": "^6.3.17",
     "dom4": "^2.0.1",
     "eventemitter2": "^5.0.1",
     "fg-loadcss": "^2.0.1",
