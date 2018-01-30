@@ -10,8 +10,7 @@
 
 const
 	$C = require('collection.js'),
-	Sugar = require('sugar'),
-	pzlr = require('@pzlr/build-core');
+	Sugar = require('sugar');
 
 const
 	fs = require('fs-extra-promise'),
@@ -19,7 +18,7 @@ const
 	hasha = require('hasha');
 
 const
-	{src} = require('config'),
+	{resolve, entries, block} = require('@pzlr/build-core'),
 	{args, output, assetsJSON, buildCache} = include('build/build.webpack');
 
 const
@@ -43,18 +42,16 @@ module.exports = (async () => {
 	}
 
 	const
-		tmpEntries = path.join(pzlr.resolve.entry(), 'tmp');
+		tmpEntries = path.join(resolve.entry(), 'tmp');
 
-	const mkdirp = async (src) => {
-		if (!await fs.existsAsync(src)) {
-			await fs.mkdirAsync(src);
+	const mkdirp = (src) => {
+		if (!fs.existsSync(src)) {
+			fs.mkdirpSync(src);
 		}
 	};
 
-	await Promise.all([
-		mkdirp(tmpEntries),
-		mkdirp(path.dirname(output))
-	]);
+	mkdirp(tmpEntries);
+	mkdirp(path.dirname(output));
 
 	let
 		entriesFilter;
@@ -65,107 +62,19 @@ module.exports = (async () => {
 	}
 
 	const
-		buildConfig = (await pzlr.entries.getBuildConfig()).filter((el, key) => entriesFilter ? entriesFilter[key] : true),
-		blockMap = await pzlr.block.getAll();
+		buildConfig = (await entries.getBuildConfig()).filter((el, key) => entriesFilter ? entriesFilter[key] : true),
+		blockMap = await block.getAll(),
+		graph = await buildConfig.getUnionEntryPoints({cache: blockMap});
 
-	// console.log(await blockMap.get('b-input').getRuntimeDependencies({cache: blockMap}));
-	console.log(buildConfig.dependencies);
-	return;
-
-	/**
-	 * Returns true if the specified url is a node module
-	 */
-	function isNodeModule(url) {
-		return !path.isAbsolute(url) && /^[^./\\]/.test(url);
-	}
-
-	/////////////////////////////////////////////////
-	// Load entries and build a graph of dependencies
-	/////////////////////////////////////////////////
-
-	const
-		packs = {},
-		weights = {};
-
-	console.log(1111, buildConfig.entries);
-
-	$C(entriesList).forEach((el) => {
-		const
-			deps = packs[path.basename(el, '.js')] = getEntryDeps(path.dirname(el), fs.readFileSync(el, 'utf-8'));
-
-		$C(deps.runtime).forEach((block) => {
-			if (block in weights) {
-				const
-					w = weights[block];
-
-				w.i++;
-				if (w.isParent) {
-					w.isParent = deps.parents.has(block);
-				}
-
-			} else {
-				weights[block] = {
-					i: 0,
-					name: block,
-					isParent: deps.parents.has(block)
-				};
-			}
-		});
-	});
-
-	// Find common modules (weight > 1)
-	const commonPacks = [];
-
-	$C(weights).forEach((el, key) => {
-		if (el.i > 1) {
-			const pos = entriesList.length - el.i - 1;
-			commonPacks[pos] = (commonPacks[pos] || new Map()).set(key, el);
-		}
-	});
-
-	// Remove empty modules
-	$C(commonPacks).remove((el) => !el);
-
-	///////////////////////////////////
-	// Generate dependence declarations
-	///////////////////////////////////
-
-	/**
-	 * Returns a name for a common chunk by the specified id
-	 */
-	function getCommonName(i) {
-		return `common_${i}`;
-	}
-
-	const
-		dependencies = {};
-
-	$C(packs).forEach((deps, name) => {
-		const
-			depList = new Set();
-
-		$C(deps.runtime).forEach((block) => {
-			const
-				pos = $C(commonPacks).one.search((map) => map.has(block));
-
-			if (pos !== null) {
-				depList.add(pos);
-				deps.runtime.delete(block);
-			}
-		});
-
-		dependencies[name] = [...depList].sort((a, b) => a - b).map((i) => getCommonName(i));
-	});
-
-	$C(dependencies).forEach((el, key) => {
-		if (key !== 'index' && !el.includes('index')) {
-			el.unshift('index');
+	$C(graph.dependencies).forEach((el, key, data) => {
+		if (key !== 'index' && !el.has('index')) {
+			data[key] = new Set(['index', ...el]);
 		}
 
-		el.push(key);
+		el.add(key);
 
 		const
-			content = `ModuleDependencies.add("${key}", ${JSON.stringify(el)});`,
+			content = `ModuleDependencies.add("${key}", ${JSON.stringify([...el])});`,
 			name = `${key}.dependencies`;
 
 		const src = output
@@ -194,24 +103,6 @@ module.exports = (async () => {
 		fs.closeSync(fd);
 	});
 
-	////////////////////////////////
-	// Generate webpack entry points
-	////////////////////////////////
-
-	const
-		entry = {};
-
-	$C(commonPacks).forEach((deps, i) => {
-		entry[getCommonName(i)] = deps;
-	});
-
-	$C(packs).forEach((deps, name) => {
-		entry[name] = $C(deps.runtime).reduce((map, name) => map.set(name, {
-			name,
-			isParent: deps.parents.has(name)
-		}), new Map());
-	});
-
 	/**
 	 * Returns an url relative to the entry folder
 	 */
@@ -219,17 +110,18 @@ module.exports = (async () => {
 		const
 			r = (s) => s.replace(/\\/g, '/');
 
-		if (isNodeModule(url)) {
+		if (resolve.isNodeModule(url)) {
 			return r(url);
 		}
 
 		return r(path.relative(tmpEntries, url));
 	}
 
-	const processes = [{}];
-	$C(entry).forEach((list, name) => {
-		delete entry[name];
+	const processes = [
+		{}
+	];
 
+	const entry = await $C(graph.entry).parallel().reduce(async (entry, list, name) => {
 		// JS / TS
 
 		const
@@ -237,16 +129,17 @@ module.exports = (async () => {
 			logicTaskName = `${name}.js`,
 			logicFile = path.join(tmpEntries, logicTaskName);
 
-		fs.writeFileSync(logicFile, $C(list).reduce((str, {name}) => {
+		fs.writeFileSync(logicFile, await $C(list).async.reduce(async (str, {name}) => {
 			const
-				block = blockMap.get(name);
+				block = blockMap.get(name),
+				logic = block && await block.logic;
 
 			if (block) {
 				$C(block.libs).forEach((el) => str += `require('${el}');\n`);
 			}
 
-			if (!block || block && block.logic) {
-				const url = block ? block.logic : isNodeModule(name) ? name : path.resolve(tmpEntries, '../', name);
+			if (!block || logic) {
+				const url = logic ? logic : resolve.isNodeModule(name) ? name : path.resolve(tmpEntries, '../', name);
 				str += `require('${getUrl(url)}');\n`;
 			}
 
@@ -262,12 +155,13 @@ module.exports = (async () => {
 			styleTaskName = `${name}$style`,
 			styleFile = path.join(tmpEntries, `${name}.styl`);
 
-		fs.writeFileSync(styleFile, $C(list).reduce((str, {name, isParent}) => {
+		fs.writeFileSync(styleFile, await $C(list).async.reduce(async (str, {name, isParent}) => {
 			const
-				block = blockMap.get(name);
+				block = blockMap.get(name),
+				style = block && await block.styles;
 
-			if (!isParent && $C(block).get('style.length') && !blackName.test(name)) {
-				$C([].concat(block.style)).forEach((url) => {
+			if (!isParent && style.length && !blackName.test(name)) {
+				$C(style).forEach((url) => {
 					str += `@import "${getUrl(url)}"\n`;
 				});
 
@@ -297,12 +191,13 @@ module.exports = (async () => {
 			tplTaskName = `${name}_tpl.js`,
 			tplFile = path.join(tmpEntries, `${name}.ss${!args.fast ? '.js' : ''}`);
 
-		fs.writeFileSync(tplFile, $C(list).reduce((str, {name, isParent}) => {
+		fs.writeFileSync(tplFile, await $C(list).async.reduce(async (str, {name, isParent}) => {
 			const
-				block = blockMap.get(name);
+				block = blockMap.get(name),
+				tpl = block && await block.tpl;
 
-			if (!isParent && block && block.tpl && !blackName.test(name)) {
-				const url = getUrl(block.tpl);
+			if (!isParent && tpl && !blackName.test(name)) {
+				const url = getUrl(tpl);
 				str += args.fast ? `- include '${url}'\n` : `Object.assign(TPLS, require('./${url}'));\n`;
 			}
 
@@ -330,28 +225,26 @@ module.exports = (async () => {
 			htmlTaskName = `${name}_view`,
 			htmlFile = path.join(tmpEntries, `${htmlTaskName}.html.js`);
 
-		fs.writeFileSync(htmlFile, $C(list).reduce((str, {name}) => {
+		fs.writeFileSync(htmlFile, await $C(list).async.reduce(async (str, {name}) => {
 			const
-				block = blockMap.get(name);
+				block = blockMap.get(name),
+				html = block && await block.etpl;
 
-			if (block && block.html && !blackName.test(name)) {
-				str += `require('./${getUrl(block.html)}');\n`;
+			if (html && !blackName.test(name)) {
+				str += `require('./${getUrl(html)}');\n`;
 			}
 
 			return str;
 		}, ''));
 
 		entry[htmlTaskName] = union[htmlTaskName] = htmlFile;
-	});
-
-	///////////////////
-	// Cache the result
-	///////////////////
+		return entry;
+	}, {});
 
 	const res = {
 		entry,
 		processes,
-		dependencies
+		dependencies: graph.dependencies
 	};
 
 	if (cacheFile) {

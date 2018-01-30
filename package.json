@@ -31,7 +31,7 @@
     "@v4fire/core": "github:v4Fire/core#ts",
     "babel-polyfill": "^6.26.0",
     "chart.js": "^2.7.1",
-    "collection.js": "^6.3.17",
+    "collection.js": "^6.3.19",
     "dom4": "^2.0.1",
     "eventemitter2": "^5.0.1",
     "fg-loadcss": "^2.0.1",
