@@ -8,7 +8,7 @@
 
 import $C = require('collection.js');
 import { EventEmitter2 } from 'eventemitter2';
-import { GLOBAL } from 'const/links';
+import { GLOBAL } from 'core/const/links';
 
 /**
  * Manager of modules
