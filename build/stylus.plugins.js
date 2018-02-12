@@ -9,10 +9,7 @@
  */
 
 const
-	Sugar = require('sugar'),
-	stylus = require('stylus');
-
-const
+	stylus = require('stylus'),
 	SVGO = require('svgo-sync'),
 	svgo = new SVGO();
 
@@ -37,7 +34,7 @@ module.exports = [
 		 * @returns {string}
 		 */
 		style.define('dasherize',
-			(str) => Sugar.String.dasherize(str.string));
+			(str) => str.string.dasherize());
 
 		/**
 		 * Link to Sugar.String.camelize
@@ -46,7 +43,7 @@ module.exports = [
 		 * @returns {string}
 		 */
 		style.define('camelize',
-			(str, upper) => Sugar.String.camelize(str.string, upper));
+			(str, upper) => str.string.camelize(upper));
 
 		/**
 		 * Converts plain svg text to dataURI

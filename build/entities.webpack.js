@@ -10,9 +10,6 @@
 
 const
 	$C = require('collection.js'),
-	Sugar = require('sugar');
-
-const
 	fs = require('fs-extra-promise'),
 	path = require('path'),
 	hasha = require('hasha');
@@ -169,7 +166,7 @@ module.exports = (async () => {
 					str +=
 						`
 .${name}
-	extends($${Sugar.String.camelize(name, false)})
+	extends($${name.camelize(name, false)})
 
 `;
 				}

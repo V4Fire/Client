@@ -19,7 +19,6 @@ const
 	glob = require('glob');
 
 const
-	{String} = require('sugar'),
 	{validators} = require('@pzlr/build-core'),
 	{src} = require('config');
 
@@ -123,7 +122,7 @@ function vueComp({name, attrs}) {
 		}
 
 		const
-			tmp = String.dasherize(key);
+			tmp = key.dasherize();
 
 		if (tmp !== key) {
 			delete attrs[key];
@@ -176,7 +175,7 @@ function vueComp({name, attrs}) {
 			delete attrs[':instance-of'];
 
 		} else {
-			componentName = name === 'component' ? 'iBlock' : String.camelize(name, false);
+			componentName = name === 'component' ? 'iBlock' : name.camelize(false);
 		}
 
 		const
@@ -196,7 +195,7 @@ function vueComp({name, attrs}) {
 				prop = `${base}Prop`;
 
 			if (c && !c.props[base] && c.props[prop]) {
-				attrs[`:${String.dasherize(prop)}`] = el;
+				attrs[`:${prop.dasherize()}`] = el;
 				delete attrs[key];
 			}
 		});
