@@ -23,6 +23,7 @@ module.exports = function (gulp = require('gulp')) {
 	gulp.task('clean:client', () => require('del')(src.clientOutput()));
 	gulp.task('build:client', () => $.run(`${runWebpack} -- ${args}`, {verbosity: 3}).exec().on('error', console.error));
 	gulp.task('watch:client', () => $.run(`${runWebpack} --watch -- ${args}`, {verbosity: 3}).exec().on('error', console.error));
+	global.callGulp(module);
 };
 
 module.exports();
