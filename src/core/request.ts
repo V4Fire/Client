@@ -10,9 +10,7 @@ import $C = require('collection.js');
 import URI = require('urijs');
 import joinUri = require('join-uri');
 import uuid = require('uuid');
-
 import { convertIfDate } from 'core/json';
-import { RequestLike as AsyncRequest } from 'core/async';
 
 const
 	requests = Object.create(null),
@@ -45,7 +43,7 @@ export class RequestError {
 	}
 }
 
-export interface RequestLike<T> extends AsyncRequest<T> {
+export interface RequestLike<T> extends PromiseLike<T> {
 	aborted?: boolean;
 }
 
@@ -325,7 +323,7 @@ class Request {
 						}
 
 						const args = arguments;
-						$C(cb.queue).forEach((key, fn: Function) => fn.call(this, transport, ...args));
+						$C(cb.queue).forEach((fn) => fn.call(this, transport, ...args));
 					},
 
 					queue: new Map()

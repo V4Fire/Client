@@ -53,8 +53,9 @@ Element.prototype.getPosition = function (): {top: number; left: number} {
 /**
  * Returns an element index relative to the parent
  */
-Element.prototype.getIndex = function (): number {
-	return $C(this.parentNode.children).one.search((el) => el === this);
+Element.prototype.getIndex = function (): number | null {
+	return $C(this.parentElement && <HTMLCollection>this.parentElement.children)
+		.one.search((el) => el === this);
 };
 
 /**
