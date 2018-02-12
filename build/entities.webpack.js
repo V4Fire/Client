@@ -118,125 +118,132 @@ module.exports = (async () => {
 		{}
 	];
 
-	const entry = await $C(graph.entry).parallel().reduce(async (entry, list, name) => {
-		// JS / TS
+	const entry = await $C(graph.entry)
+		.parallel()
+		.to({})
+		.reduce(async (entry, list, name) => {
+			// JS / TS
 
-		const
-			blackName = /^[iv]-/,
-			logicTaskName = `${name}.js`,
-			logicFile = path.join(tmpEntries, logicTaskName);
-
-		fs.writeFileSync(logicFile, await $C(list).async.reduce(async (str, {name}) => {
 			const
-				block = blockMap.get(name),
-				logic = block && await block.logic;
+				blackName = /^[iv]-/,
+				logicTaskName = `${name}.js`,
+				logicFile = path.join(tmpEntries, logicTaskName);
 
-			if (block) {
-				$C(block.libs).forEach((el) => str += `require('${el}');\n`);
-			}
+			fs.writeFileSync(logicFile, await $C(list).async.to('').reduce(async (str, {name}) => {
+				const
+					block = blockMap.get(name),
+					logic = block && await block.logic;
 
-			if (!block || logic) {
-				const url = logic ? logic : resolve.isNodeModule(name) ? name : path.resolve(tmpEntries, '../', name);
-				str += `require('${getUrl(url)}');\n`;
-			}
-
-			return str;
-		}, ''));
-
-		entry[logicTaskName] = logicFile;
-		processes[0][logicTaskName] = logicFile;
-
-		// CSS
-
-		const
-			styleTaskName = `${name}$style`,
-			styleFile = path.join(tmpEntries, `${name}.styl`);
-
-		fs.writeFileSync(styleFile, await $C(list).async.reduce(async (str, {name, isParent}) => {
-			const
-				block = blockMap.get(name),
-				style = block && await block.styles;
-
-			if (!isParent && style.length && !blackName.test(name)) {
-				$C(style).forEach((url) => {
-					str += `@import "${getUrl(url)}"\n`;
-				});
-
-				if (/^[bp]-/.test(name)) {
-					str +=
-						`
-.${name}
-	extends($${name.camelize(name, false)})
-
-`;
+				if (block) {
+					$C(block.libs).forEach((el) => str += `require('${el}');\n`);
 				}
+
+				if (!block || logic) {
+					const url = logic ? logic : resolve.isNodeModule(name) ? name : path.resolve(tmpEntries, '../', name);
+					str += `require('${getUrl(url)}');\n`;
+				}
+
+				return str;
+			}));
+
+			entry[logicTaskName] = logicFile;
+			processes[0][logicTaskName] = logicFile;
+
+			// CSS
+
+			const
+				styleTaskName = `${name}$style`,
+				styleFile = path.join(tmpEntries, `${name}.styl`);
+
+			fs.writeFileSync(styleFile, await $C(list).async.to('').reduce(async (str, {name, isParent}) => {
+				const
+					block = blockMap.get(name),
+					style = block && await block.styles;
+
+				if (!isParent && style.length && !blackName.test(name)) {
+					$C(style).forEach((url) => {
+						str += `@import "${getUrl(url)}"\n`;
+					});
+
+					if (/^[bp]-/.test(name)) {
+						str +=
+							`
+	.${name}
+		extends($${name.camelize(name, false)})
+	
+	`;
+					}
+				}
+
+				return str;
+			}));
+
+			let union = processes[processes.length - 1];
+			if (processes.length === 1 || $C(union).length() > IN_PROCESS) {
+				processes.push(union = {});
 			}
 
-			return str;
-		}, ''));
+			entry[styleTaskName] = union[styleTaskName] = styleFile;
 
-		let union = processes[processes.length - 1];
-		if (processes.length === 1 || $C(union).length() > IN_PROCESS) {
-			processes.push(union = {});
-		}
+			// TEMPLATES
 
-		entry[styleTaskName] = union[styleTaskName] = styleFile;
-
-		// TEMPLATES
-
-		const
-			tplTaskName = `${name}_tpl.js`,
-			tplFile = path.join(tmpEntries, `${name}.ss${!args.fast ? '.js' : ''}`);
-
-		fs.writeFileSync(tplFile, await $C(list).async.reduce(async (str, {name, isParent}) => {
 			const
-				block = blockMap.get(name),
-				tpl = block && await block.tpl;
+				tplTaskName = `${name}_tpl.js`,
+				tplFile = path.join(tmpEntries, `${name}.ss${!args.fast ? '.js' : ''}`);
 
-			if (!isParent && tpl && !blackName.test(name)) {
-				const url = getUrl(tpl);
-				str += args.fast ? `- include '${url}'\n` : `Object.assign(TPLS, require('./${url}'));\n`;
-			}
+			fs.writeFileSync(tplFile, await $C(list)
+				.async
+				.to(args.fast ? '' : 'window.TPLS = window.TPLS || Object.create(null);\n')
+				.reduce(async (str, {name, isParent}) => {
+					const
+						block = blockMap.get(name),
+						tpl = block && await block.tpl;
 
-			return str;
-		}, !args.fast ? 'window.TPLS = window.TPLS || Object.create(null);\n' : ''));
+					if (!isParent && tpl && !blackName.test(name)) {
+						const url = getUrl(tpl);
+						str += args.fast ? `- include '${url}'\n` : `Object.assign(TPLS, require('./${url}'));\n`;
+					}
 
-		if (args.fast) {
-			const
-				tplRequireFileUrl = path.join(tmpEntries, tplTaskName);
-
-			fs.writeFileSync(
-				tplRequireFileUrl,
-				`Object.assign(window.TPLS = window.TPLS || Object.create(null), require('./${getUrl(tplFile)}'));\n`
+					return str;
+				})
 			);
 
-			entry[tplTaskName] = union[tplTaskName] = tplRequireFileUrl;
+			if (args.fast) {
+				const
+					tplRequireFileUrl = path.join(tmpEntries, tplTaskName);
 
-		} else {
-			entry[tplTaskName] = union[tplTaskName] = tplFile;
-		}
+				fs.writeFileSync(
+					tplRequireFileUrl,
+					`Object.assign(window.TPLS = window.TPLS || Object.create(null), require('./${getUrl(tplFile)}'));\n`
+				);
 
-		// HTML
+				entry[tplTaskName] = union[tplTaskName] = tplRequireFileUrl;
 
-		const
-			htmlTaskName = `${name}_view`,
-			htmlFile = path.join(tmpEntries, `${htmlTaskName}.html.js`);
-
-		fs.writeFileSync(htmlFile, await $C(list).async.reduce(async (str, {name}) => {
-			const
-				block = blockMap.get(name),
-				html = block && await block.etpl;
-
-			if (html && !blackName.test(name)) {
-				str += `require('./${getUrl(html)}');\n`;
+			} else {
+				entry[tplTaskName] = union[tplTaskName] = tplFile;
 			}
 
-			return str;
-		}, ''));
+			// HTML
 
-		entry[htmlTaskName] = union[htmlTaskName] = htmlFile;
-		return entry;
-	}, {});
+			const
+				htmlTaskName = `${name}_view`,
+				htmlFile = path.join(tmpEntries, `${htmlTaskName}.html.js`);
+
+			fs.writeFileSync(htmlFile, await $C(list).async.to('').reduce(async (str, {name}) => {
+				const
+					block = blockMap.get(name),
+					html = block && await block.etpl;
+
+				if (html && !blackName.test(name)) {
+					str += `require('./${getUrl(html)}');\n`;
+				}
+
+				return str;
+			}));
+
+			entry[htmlTaskName] = union[htmlTaskName] = htmlFile;
+			return entry;
+		});
 
 	const res = {
 		entry,
