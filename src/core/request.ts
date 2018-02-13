@@ -20,7 +20,7 @@ export class RequestError {
 	/**
 	 * Error arguments
 	 */
-	args: Record<string, any>;
+	args: Dictionary;
 
 	/**
 	 * Error type
@@ -36,7 +36,7 @@ export class RequestError {
 	 * @param type - error type
 	 * @param args - error arguments
 	 */
-	constructor(type: string, args: Record<string, any>) {
+	constructor(type: string, args: Dictionary) {
 		this.args = args;
 		this.type = type;
 		this.code = args[0].status;

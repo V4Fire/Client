@@ -22,7 +22,7 @@ export enum statuses {
 	unloaded = 0
 }
 
-type Model = Record<string, any> & {
+type Model = Dictionary & {
 	emit(event: string, ...args: any[]): void;
 };
 
@@ -58,7 +58,7 @@ export default class Block {
 	/**
 	 * List of applied modifiers
 	 */
-	mods: Record<string, string | undefined>;
+	mods: Dictionary<string | undefined>;
 
 	/**
 	 * Map of available block statuses
@@ -145,7 +145,7 @@ export default class Block {
 					keys = Object.keys(mods);
 
 				for (let i = 0; i < keys.length; i++) {
-					const name = <string>keys[i];
+					const name = keys[i];
 					this.setMod(name, mods[name]);
 				}
 			}
@@ -200,7 +200,7 @@ export default class Block {
 				keys = Object.keys(mods);
 
 			for (let i = 0; i < keys.length; i++) {
-				const name = <string>keys[i];
+				const name = keys[i];
 				res += `${sel}_${name}_${mods[name]}`;
 			}
 		}

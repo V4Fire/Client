@@ -21,10 +21,10 @@ export interface ComponentParams {
 	root?: boolean;
 	tpl?: boolean;
 	functional?: false;
-	mixins?: Record<string, any>;
+	mixins?: Dictionary;
 	model?: {prop?: string; event?: string};
 	parent?: Vue;
-	provide?: Record<string, any> | (() => Record<string, any>);
+	provide?: Dictionary | (() => Dictionary);
 	inject?: InjectOptions;
 	inheritAttrs?: boolean;
 }
@@ -56,7 +56,7 @@ export interface InitialComponent<T> {
 	asyncQueue: Set<Function>;
 	localEvent: EventEmitter2;
 	link(field: string, wrapper?: FieldWrapper<T>, watchOptions?: WatchOptions): any;
-	createWatchObject(path: string, fields: Array<WatchField<T>>, watchOptions?: WatchOptions): Record<string, any>;
+	createWatchObject(path: string, fields: Array<WatchField<T>>, watchOptions?: WatchOptions): Dictionary;
 }
 
 export interface InitFieldFn {
@@ -75,18 +75,18 @@ export interface MethodWatcher extends WatchOptions {
 
 export interface ComponentMethod {
 	fn: Function;
-	watchers?: Record<string, MethodWatcher>;
-	hooks?: Record<string, string>;
+	watchers?: Dictionary<MethodWatcher>;
+	hooks?: Dictionary<string>;
 }
 
 export interface ComponentMeta {
 	name: string;
 	params: ComponentParams;
-	props: Record<string, ComponentProp>;
-	fields: Record<string, ComponentField>;
-	computed: Record<string, ComputedOptions<any>>;
-	accessors: Record<string, ComputedOptions<any>>;
-	methods: Record<string, ComponentMethod>;
+	props: Dictionary<ComponentProp>;
+	fields: Dictionary<ComponentField>;
+	computed: Dictionary<ComputedOptions<any>>;
+	accessors: Dictionary<ComputedOptions<any>>;
+	methods: Dictionary<ComponentMethod>;
 }
 
 /**
@@ -361,7 +361,7 @@ export function component(params: ComponentParams = {}): Function {
 		}
 
 		let
-			component: Record<string, any>;
+			component: Dictionary;
 
 		const
 			instance = new target(),
@@ -397,7 +397,7 @@ export function component(params: ComponentParams = {}): Function {
 				provide: p.provide,
 				inject: p.inject,
 
-				data(): Record<string, any> {
+				data(): Dictionary {
 					const
 						data = {},
 						fields = meta.fields,

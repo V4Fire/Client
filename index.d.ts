@@ -10,8 +10,8 @@
 /// <reference types="dom4"/>
 
 declare let READY_STATE: number;
-declare let CONFIG: Record<string, any>;
-declare let PATH: Record<string, string | undefined>;
+declare let CONFIG: Dictionary;
+declare let PATH: Dictionary<string | undefined>;
 declare let API: string;
 
 interface HTMLImageElement {
@@ -19,7 +19,7 @@ interface HTMLImageElement {
 }
 
 declare let ModuleDependencies: {
-	cache: Record<string, any>;
+	cache: Dictionary;
 	event: {on: Function; once: Function; off: Function};
 	add(moduleName: string, dependencies: string[]): void;
 	get(module: string): Promise<string[]>;
