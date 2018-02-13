@@ -26,7 +26,7 @@ args.env && (env.NODE_ENV = args.env);
 /**
  * Output pattern
  */
-exports.output = r('[hash]_[name]');
+exports.output = hash(r('[hash]_[name]'));
 
 /**
  * File hash length
@@ -74,6 +74,8 @@ exports.assetsJSON = r(`${exports.version}assets.json`);
 
 /* eslint-disable no-unused-vars */
 
+exports.hash = hash;
+
 /**
  * Returns WebPack output path string from the specified with hash parameters
  * (for longterm cache)
@@ -81,10 +83,10 @@ exports.assetsJSON = r(`${exports.version}assets.json`);
  * @param {string} output - source string
  * @param {boolean=} [chunk] - if true, then the specified output is a chunk
  */
-exports.hash = function (output, chunk) {
+function hash(output, chunk) {
 	const l = exports.hashLength;
 	return output.replace(/\[hash]_/g, isProd ? chunk ? `[chunkhash:${l}]_` : `[hash:${l}]_` : '');
-};
+}
 
 /* eslint-enable no-unused-vars */
 

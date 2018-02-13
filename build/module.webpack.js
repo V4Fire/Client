@@ -15,6 +15,7 @@ const
 
 const
 	{src} = require('config'),
+	{resolve} = require('@pzlr/build-core'),
 	{output, hash, version, hashLength} = include('build/build.webpack');
 
 /**
@@ -38,7 +39,7 @@ module.exports = (async () => {
 					{
 						loader: 'proxy',
 						options: {
-							modules: src.client
+							modules: [resolve.sourceDir, ...resolve.rootDependencies]
 						}
 					},
 
@@ -93,8 +94,7 @@ module.exports = (async () => {
 							loader: 'monic',
 							options: $C.extend({deep: true, concatArray: true}, config.monic().styl, {
 								replacers: [
-									include('build/stylus-import.replacer'),
-									require('@pzlr/stylus-inheritance')
+									require('@pzlr/stylus-inheritance')({resolveImports: true})
 								]
 							})
 						}
