@@ -24,14 +24,14 @@ export default class iComponent {
 
 	}
 
-	@p({watch: []})
+	@p({watch: ['bla']})
 	baz() {
 
 	}
 }
 
 @component({inject: ['ff2']})
-export default class iComponent2 extends iComponent {
+export class iComponent2 extends iComponent {
 	model = '';
 
 	@prop({watch: ['foo24']})
