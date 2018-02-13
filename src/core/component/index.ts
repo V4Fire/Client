@@ -146,6 +146,10 @@ export function component(params: ComponentParams = {}): Function {
 				provide,
 				inject;
 
+			///////////////////////
+			// Provider inheritance
+			///////////////////////
+
 			// tslint:disable-next-line
 			if (Object.isObject(<any>p.provide) && Object.isObject(params.provide)) {
 				provide = {...params.provide, ...p.provide};
@@ -153,6 +157,10 @@ export function component(params: ComponentParams = {}): Function {
 			} else {
 				provide = p.provide || params.provide;
 			}
+
+			/////////////////////
+			// Inject inheritance
+			/////////////////////
 
 			const
 				pIIsObj = Object.isObject(<any>params.inject),
@@ -168,7 +176,7 @@ export function component(params: ComponentParams = {}): Function {
 
 				for (let o = params.inject, keys = Object.keys(o), i = 0; i < keys.length; i++) {
 					const
-						key = <string>keys[i],
+						key = keys[i],
 						el = o[key];
 
 					inject[key] = Object.isObject(el) ? {...el} : {from: el};
@@ -176,7 +184,7 @@ export function component(params: ComponentParams = {}): Function {
 
 				for (let o = <any>p.inject, keys = Object.keys(o), i = 0; i < keys.length; i++) {
 					const
-						key = <string>keys[i],
+						key = keys[i],
 						el = o[key];
 
 					// tslint:disable-next-line
@@ -187,13 +195,13 @@ export function component(params: ComponentParams = {}): Function {
 				inject = {};
 
 				for (let o = params.inject, i = 0; i < o.length; i++) {
-					const key = <string>o[i];
+					const key = o[i];
 					inject[key] = {[key]: {from: key}};
 				}
 
 				for (let o = <any>p.inject, keys = Object.keys(o), i = 0; i < keys.length; i++) {
 					const
-						key = <string>keys[i],
+						key = keys[i],
 						el = o[key];
 
 					// tslint:disable-next-line
@@ -205,14 +213,14 @@ export function component(params: ComponentParams = {}): Function {
 
 				for (let o = params.inject, keys = Object.keys(o), i = 0; i < keys.length; i++) {
 					const
-						key = <string>keys[i],
+						key = keys[i],
 						el = o[key];
 
 					inject[key] = Object.isObject(el) ? {...el} : {from: el};
 				}
 
 				for (let o = <any>p.inject, i = 0; i < o.length; i++) {
-					const key = <string>o[i];
+					const key = o[i];
 
 					// tslint:disable-next-line
 					inject[key] = Object.assign(inject[key] || {}, {from: key});
@@ -221,6 +229,10 @@ export function component(params: ComponentParams = {}): Function {
 			} else  {
 				inject = p.inject || params.inject;
 			}
+
+			///////////////////////////
+			// Props|fields inheritance
+			///////////////////////////
 
 			p = {
 				...params,
@@ -233,7 +245,7 @@ export function component(params: ComponentParams = {}): Function {
 
 			for (let o = meta.props, keys = Object.keys(props), i = 0; i < keys.length; i++) {
 				const
-					key = <string>keys[i],
+					key = keys[i],
 					el = props[key],
 					watchers = new Map();
 
@@ -251,7 +263,7 @@ export function component(params: ComponentParams = {}): Function {
 
 			for (let o = meta.fields, keys = Object.keys(fields), i = 0; i < keys.length; i++) {
 				const
-					key = <string>keys[i],
+					key = keys[i],
 					el = fields[key],
 					watchers = new Map();
 
@@ -268,18 +280,18 @@ export function component(params: ComponentParams = {}): Function {
 			}
 
 			for (let o = meta.computed, keys = Object.keys(computed), i = 0; i < keys.length; i++) {
-				const key = <string>keys[i];
+				const key = keys[i];
 				o[key] = {...computed[key]};
 			}
 
 			for (let o = meta.accessors, keys = Object.keys(accessors), i = 0; i < keys.length; i++) {
-				const key = <string>keys[i];
+				const key = keys[i];
 				o[key] = {...accessors[key]};
 			}
 
 			for (let o = meta.methods, keys = Object.keys(methods), i = 0; i < keys.length; i++) {
 				const
-					key = <string>keys[i],
+					key = keys[i],
 					el = methods[key],
 					watchers = {},
 					hooks = {};
@@ -290,7 +302,7 @@ export function component(params: ComponentParams = {}): Function {
 						w = Object.keys(o);
 
 					for (let i = 0; i < w.length; i++) {
-						const key = <string>w[i];
+						const key = w[i];
 						watchers[key] = {...o[key]};
 					}
 				}
@@ -301,7 +313,7 @@ export function component(params: ComponentParams = {}): Function {
 						w = Object.keys(o);
 
 					for (let i = 0; i < w.length; i++) {
-						const key = <string>w[i];
+						const key = w[i];
 						hooks[key] = {...o[key]};
 					}
 				}
@@ -358,7 +370,7 @@ export function component(params: ComponentParams = {}): Function {
 
 		for (let o = meta.props, keys = Object.keys(meta.props), i = 0; i < keys.length; i++) {
 			const
-				key = <string>keys[i],
+				key = keys[i],
 				el = o[key];
 
 			props[key] = {
@@ -369,11 +381,9 @@ export function component(params: ComponentParams = {}): Function {
 		}
 
 		for (let o = meta.methods, keys = Object.keys(meta.methods), i = 0; i < keys.length; i++) {
-			const key = <string>keys[i];
+			const key = keys[i];
 			methods[key] = o[key].fn;
 		}
-
-		console.log(meta.fields);
 
 		if (p.functional) {
 
@@ -395,7 +405,7 @@ export function component(params: ComponentParams = {}): Function {
 
 					for (let i = 0; i < keys.length; i++) {
 						const
-							key = this._activeField = <string>keys[i],
+							key = this._activeField = keys[i],
 							el = fields[key];
 
 						let val;
@@ -412,10 +422,10 @@ export function component(params: ComponentParams = {}): Function {
 				beforeCreate(): void {
 					for (let o = meta.accessors, keys = Object.keys(o), i = 0; i < keys.length; i++) {
 						const
-							key = <string>keys[i],
+							key = keys[i],
 							el = o[key];
 
-						Object.defineProperty(this, <string>keys[i], {
+						Object.defineProperty(this, keys[i], {
 							get: el.get,
 							set: el.set
 						});

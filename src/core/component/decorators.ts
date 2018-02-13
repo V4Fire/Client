@@ -100,7 +100,7 @@ function paramsFactory<T>(
 				if (metaKey === 'methods') {
 					const
 						w = <any[]>[].concat(p.watch || []),
-						watchers = el && el.watchers || Object.createDict();
+						watchers = el && el.watchers || {};
 
 					for (let i = 0; i < w.length; i++) {
 						const
@@ -116,7 +116,7 @@ function paramsFactory<T>(
 
 					const
 						h = <any[]>[].concat(p.hook || []),
-						hooks = el && el.hooks || Object.createDict();
+						hooks = el && el.hooks || {};
 
 					for (let i = 0; i < h.length; i++) {
 						const el = h[i];
