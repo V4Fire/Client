@@ -27,7 +27,7 @@ declare let ModuleDependencies: {
 
 interface Element {
 	getPosition(): {top: number; left: number};
-	getIndex(): number;
+	getIndex(): number | null;
 }
 
 interface Node {
