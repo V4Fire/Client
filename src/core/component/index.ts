@@ -7,8 +7,10 @@
  */
 
 import Async from 'core/async';
-import Vue, { WatchOptions, WatchHandler, ComputedOptions } from 'vue';
+import Vue, { PropOptions, WatchOptions, WatchHandler, ComputedOptions } from 'vue';
 import inheritMeta from 'core/component/inherit';
+import addMethodsToMeta from 'core/component/methods';
+import { getComponent } from 'core/component/component';
 import { InjectOptions } from 'vue/types/options';
 import { EventEmitter2 } from 'eventemitter2';
 
@@ -34,10 +36,7 @@ export interface FieldWatcher extends WatchOptions {
 	fn: string | WatchHandler<any>;
 }
 
-export interface ComponentProp {
-	type?: Function;
-	required?: boolean;
-	default?: any;
+export interface ComponentProp extends PropOptions {
 	watchers?: Map<string | Function, FieldWatcher>;
 }
 
@@ -134,123 +133,20 @@ export function component(params: ComponentParams = {}): Function {
 		};
 
 		if (parentMeta) {
-			p = inheritMeta(meta, parentMeta, p);
+			p = inheritMeta(meta, parentMeta);
 		}
 
 		components.set(target, meta);
 		initEvent.emit('constructor', {meta, parentMeta});
+		addMethodsToMeta(target, meta);
 
-		const
-			proto = target.prototype,
-			ownProps = Object.getOwnPropertyNames(proto);
-
-		for (let i = 0; i < ownProps.length; i++) {
-			const
-				key = ownProps[i];
-
-			if (key === 'constructor') {
-				continue;
-			}
-
-			const
-				desc = <PropertyDescriptor>Object.getOwnPropertyDescriptor(proto, key);
-
-			if ('value' in desc) {
-				// tslint:disable-next-line
-				meta.methods[key] = Object.assign(meta.methods[key] || {}, {
-					fn: desc.value
-				});
-
-			} else {
-				const
-					o = meta[key in meta.accessors ? 'accessors' : 'computed'],
-					old = o[key];
-
-				Object.assign(meta[key in meta.accessors ? 'accessors' : 'computed'], {
-					[key]: {
-						get: desc.get || old && old.get,
-						set: desc.set || old && old.set
-					}
-				});
-			}
-		}
-
-		let
-			component: Dictionary;
-
-		const
-			instance = new target(),
-			props = {},
-			methods = {};
-
-		for (let o = meta.props, keys = Object.keys(meta.props), i = 0; i < keys.length; i++) {
-			const
-				key = keys[i],
-				el = o[key];
-
-			props[key] = {
-				type: el.type,
-				required: el.required,
-				default: instance[key]
-			};
-		}
-
-		for (let o = meta.methods, keys = Object.keys(meta.methods), i = 0; i < keys.length; i++) {
-			const key = keys[i];
-			methods[key] = o[key].fn;
-		}
+		let component;
 
 		if (p.functional) {
 
 		} else {
-			component = {
-				...p.mixins,
-
-				props,
-				methods,
-				computed: meta.computed,
-				provide: p.provide,
-				inject: p.inject,
-
-				data(): Dictionary {
-					const
-						data = {},
-						fields = meta.fields,
-						keys = Object.keys(fields);
-
-					for (let i = 0; i < keys.length; i++) {
-						const
-							key = this._activeField = keys[i],
-							el = fields[key];
-
-						let val;
-						if (el.init) {
-							val = el.init(this, instance);
-						}
-
-						data[key] = val === undefined ? el.default : val;
-					}
-
-					return data;
-				},
-
-				beforeCreate(): void {
-					for (let o = meta.accessors, keys = Object.keys(o), i = 0; i < keys.length; i++) {
-						const
-							key = keys[i],
-							el = o[key];
-
-						Object.defineProperty(this, keys[i], {
-							get: el.get,
-							set: el.set
-						});
-					}
-				},
-
-				created(): void {
-
-				}
-			};
+			component = getComponent(target, meta);
+			console.log(component);
 		}
 
 		if (p.root) {

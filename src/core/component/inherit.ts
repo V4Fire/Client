@@ -14,13 +14,14 @@ import { ComponentMeta, ComponentParams } from 'core/component';
  *
  * @param meta
  * @param parentMeta
- * @param opts - source component parameters
  */
 export default function inheritMeta(
 	meta: ComponentMeta,
-	parentMeta: ComponentMeta,
-	opts: ComponentParams
+	parentMeta: ComponentMeta
 ): ComponentParams {
+	const
+		p = meta.params;
+
 	const {
 		params,
 		props,
@@ -39,11 +40,11 @@ export default function inheritMeta(
 	///////////////////////
 
 	// tslint:disable-next-line
-	if (Object.isObject(<any>opts.provide) && Object.isObject(<any>params.provide)) {
-		provide = {...params.provide, ...opts.provide};
+	if (Object.isObject(<any>p.provide) && Object.isObject(<any>params.provide)) {
+		provide = {...params.provide, ...p.provide};
 
 	} else {
-		provide = opts.provide || params.provide;
+		provide = p.provide || params.provide;
 	}
 
 	/////////////////////
@@ -53,11 +54,11 @@ export default function inheritMeta(
 	const
 		pIIsObj = Object.isObject(<any>params.inject),
 		pIIsArr = !pIIsObj && Object.isArray(<any>params.inject),
-		cIIsObj = Object.isObject(<any>opts.inject),
-		cIIsArr = !cIIsObj && Object.isArray(<any>opts.inject);
+		cIIsObj = Object.isObject(<any>p.inject),
+		cIIsArr = !cIIsObj && Object.isArray(<any>p.inject);
 
 	if (pIIsArr && cIIsArr) {
-		inject = (<string[]>opts.inject).union(<string[]>opts.inject);
+		inject = (<string[]>p.inject).union(<string[]>p.inject);
 
 	} else if (pIIsObj && cIIsObj) {
 		inject = {};
@@ -70,7 +71,7 @@ export default function inheritMeta(
 			inject[key] = Object.isObject(el) ? {...el} : {from: el};
 		}
 
-		for (let o = <Object>opts.inject, keys = Object.keys(o), i = 0; i < keys.length; i++) {
+		for (let o = <Object>p.inject, keys = Object.keys(o), i = 0; i < keys.length; i++) {
 			const
 				key = keys[i],
 				el = o[key];
@@ -87,7 +88,7 @@ export default function inheritMeta(
 			inject[key] = {[key]: {from: key}};
 		}
 
-		for (let o = <Object>opts.inject, keys = Object.keys(o), i = 0; i < keys.length; i++) {
+		for (let o = <Object>p.inject, keys = Object.keys(o), i = 0; i < keys.length; i++) {
 			const
 				key = keys[i],
 				el = o[key];
@@ -107,7 +108,7 @@ export default function inheritMeta(
 			inject[key] = Object.isObject(el) ? {...el} : {from: el};
 		}
 
-		for (let o = <any[]>opts.inject, i = 0; i < o.length; i++) {
+		for (let o = <any[]>p.inject, i = 0; i < o.length; i++) {
 			const key = o[i];
 
 			// tslint:disable-next-line
@@ -115,7 +116,7 @@ export default function inheritMeta(
 		}
 
 	} else  {
-		inject = opts.inject || params.inject;
+		inject = p.inject || params.inject;
 	}
 
 	///////////////////////////
@@ -124,9 +125,9 @@ export default function inheritMeta(
 
 	const newOpts = {
 		...params,
-		...opts,
-		mixins: {...params.mixins, ...opts.mixins},
-		model: (opts.model || params.model) && {...params.model, ...opts.model},
+		...p,
+		mixins: {...params.mixins, ...p.mixins},
+		model: (p.model || params.model) && {...params.model, ...p.model},
 		provide,
 		inject
 	};
