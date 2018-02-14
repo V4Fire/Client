@@ -141,10 +141,7 @@ export default function inheritMeta(
 			watchers = new Map();
 
 		if (parent.watchers) {
-			const
-				w = parent.watchers.values();
-
-			for (let el = w.next(); !el.done; el = w.next()) {
+			for (let w = parent.watchers.values(), el = w.next(); !el.done; el = w.next()) {
 				watchers.set(el.value.fn, {...el.value});
 			}
 		}
@@ -159,10 +156,7 @@ export default function inheritMeta(
 			watchers = new Map();
 
 		if (parent.watchers) {
-			const
-				w = parent.watchers.values();
-
-			for (let el = w.next(); !el.done; el = w.next()) {
+			for (let w = parent.watchers.values(), el = w.next(); !el.done; el = w.next()) {
 				watchers.set(el.value.fn, {...el.value});
 			}
 		}

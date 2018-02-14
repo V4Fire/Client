@@ -85,6 +85,10 @@ export function getComponent(constructor: ComponentConstructor, meta: ComponentM
 		},
 
 		created(): void {
+			for (let o = meta.watchers, keys = Object.keys(o), i = 0; i < keys.length; i++) {
+				const key = keys[i];
+				this.$watch(key, o[key]);
+			}
 		}
 	};
 }
@@ -106,20 +110,50 @@ function getBaseComponent(
 	addMethodsToMeta(constructor, meta);
 
 	const
-		{component} = meta,
+		{component, watchers} = meta,
 		instance = new constructor();
 
 	for (let o = meta.props, keys = Object.keys(meta.props), i = 0; i < keys.length; i++) {
 		const
 			key = keys[i],
-			el = o[key];
+			prop = o[key];
 
 		component.props[key] = {
-			type: el.type,
-			required: el.required,
-			validator: el.validator,
-			default: el.default !== undefined ? el.default : Object.fastClone(instance[key])
+			type: prop.type,
+			required: prop.required,
+			validator: prop.validator,
+			default: prop.default !== undefined ? prop.default : Object.fastClone(instance[key])
 		};
+
+		watchers[key] = watchers[key] || [];
+		for (let w = prop.watchers.values(), el = w.next(); !el.done; el = w.next()) {
+			const
+				val = el.value;
+
+			watchers[key].push({
+				deep: val.deep,
+				immediate: val.immediate,
+				handler: val.fn
+			});
+		}
+	}
+
+	for (let o = meta.fields, keys = Object.keys(meta.fields), i = 0; i < keys.length; i++) {
+		const
+			key = keys[i],
+			field = o[key];
+
+		watchers[key] = watchers[key] || [];
+		for (let w = field.watchers.values(), el = w.next(); !el.done; el = w.next()) {
+			const
+				val = el.value;
+
+			watchers[key].push({
+				deep: val.deep,
+				immediate: val.immediate,
+				handler: val.fn
+			});
+		}
 	}
 
 	const

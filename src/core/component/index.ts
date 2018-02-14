@@ -43,11 +43,11 @@ export interface ComponentParams {
 }
 
 export interface FieldWatcher extends WatchOptions {
-	fn: string | WatchHandler<any>;
+	fn: WatchHandler<any>;
 }
 
 export interface ComponentProp extends PropOptions {
-	watchers?: Map<string | Function, FieldWatcher>;
+	watchers: Map<string | Function, FieldWatcher>;
 }
 
 export interface FieldWrapper<T> {

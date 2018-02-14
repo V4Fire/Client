@@ -11,16 +11,19 @@ import {
 
 	initEvent,
 	InitFieldFn,
-	FieldWatcher as MetaFieldWatcher,
 	MethodWatcher as MetaMethodWatcher
 
 } from 'core/component';
 
+export interface FieldWatcherObject extends WatchOptions {
+	fn: string | WatchHandler<any>;
+}
+
 export type FieldWatcher =
 	string |
-	MetaFieldWatcher |
+	FieldWatcherObject |
 	WatchHandler<any> |
-	Array<string | MetaFieldWatcher | WatchHandler<any>>;
+	Array<string | FieldWatcherObject | WatchHandler<any>>;
 
 export interface ComponentProp extends PropOptions {
 	watch?: FieldWatcher;
@@ -220,7 +223,15 @@ function paramsFactory<T>(
 					watchers.set(el.fn, {...el});
 
 				} else {
-					watchers.set(el, {fn: el});
+					let fn = el;
+
+					if (Object.isString(el)) {
+						fn = function (a: any, b: any): any {
+							return this[el](a, b);
+						};
+					}
+
+					watchers.set(el, {fn});
 				}
 			}
 
