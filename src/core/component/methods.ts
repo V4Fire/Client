@@ -14,7 +14,7 @@ import { ComponentMeta } from 'core/component';
  * @param constructor
  * @param meta
  */
-export default function addMethodsToMeta<T>(constructor: Function, meta: ComponentMeta): void {
+export default function addMethodsToMeta(constructor: Function, meta: ComponentMeta): void {
 	const
 		{component, watchers, hooks} = meta;
 
