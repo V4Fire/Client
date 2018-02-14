@@ -13,6 +13,7 @@ import Vue, {
 	WatchOptions,
 	WatchHandler,
 	WatchOptionsWithHandler,
+	ComponentOptions,
 	ComputedOptions
 
 } from 'vue';
@@ -113,9 +114,9 @@ export interface ComponentMeta {
 	hooks: Dictionary<{fn: Function; after: Set<string>}[]>;
 	component: {
 		name: string;
-		props: Dictionary<PropOptions>;
-		methods: Dictionary<Function>;
-		computed: Dictionary<ComputedOptions<any>>;
+		props: ComponentOptions<Vue>['props'];
+		methods: ComponentOptions<Vue>['methods'];
+		computed: ComponentOptions<Vue>['computed'];
 	}
 }
 
