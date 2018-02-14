@@ -27,14 +27,12 @@ export function getComponent(constructor: ComponentConstructor, meta: ComponentM
 
 		data(): Dictionary {
 			const
-				data = {},
-				fields = meta.fields,
-				keys = Object.keys(fields);
+				data = {} as Dictionary;
 
-			for (let i = 0; i < keys.length; i++) {
+			for (let o = meta.fields, keys = Object.keys(o), i = 0; i < keys.length; i++) {
 				const
 					key = this._activeField = keys[i],
-					el = fields[key];
+					el = o[key];
 
 				let val;
 				if (el.init) {
@@ -50,6 +48,7 @@ export function getComponent(constructor: ComponentConstructor, meta: ComponentM
 				}
 			}
 
+			data.mods = mods;
 			return data;
 		},
 
