@@ -16,7 +16,8 @@ const
 
 const
 	{resolve, entries, block} = require('@pzlr/build-core'),
-	{args, output, assetsJSON, buildCache} = include('build/build.webpack');
+	{args, output, assetsJSON, buildCache} = include('build/build.webpack'),
+	{normalizeSep} = include('build/helpers');
 
 const
 	IN_PROCESS = 3;
@@ -104,14 +105,11 @@ module.exports = (async () => {
 	 * Returns an url relative to the entry folder
 	 */
 	function getUrl(url) {
-		const
-			r = (s) => s.replace(/\\/g, '/');
-
 		if (resolve.isNodeModule(url)) {
-			return r(url);
+			return normalizeSep(url);
 		}
 
-		return r(path.relative(tmpEntries, url));
+		return normalizeSep(path.relative(tmpEntries, url));
 	}
 
 	const processes = [

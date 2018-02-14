@@ -10,7 +10,8 @@
 
 const
 	{env, argv} = process,
-	{src} = require('config');
+	{src} = require('config'),
+	{normalizeSep} = include('build/helpers');
 
 const
 	fs = require('fs'),
@@ -91,5 +92,5 @@ function hash(output, chunk) {
 /* eslint-enable no-unused-vars */
 
 function r(file) {
-	return `./${path.relative(src.cwd(), path.join(src.clientOutput(), file)).replace(/\\/g, '/')}`;
+	return `./${normalizeSep(path.relative(src.cwd(), path.join(src.clientOutput(), file)))}`;
 }

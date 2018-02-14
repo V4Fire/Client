@@ -15,8 +15,11 @@ const
 
 const
 	{src} = require('config'),
-	{resolve} = require('@pzlr/build-core'),
+	{resolve, config: {dependencies}} = require('@pzlr/build-core'),
 	{output, hash, version, hashLength} = include('build/build.webpack');
+
+const
+	depsRgxp = new RegExp(`node_modules\\/(?!${dependencies.map((el) => RegExp.escape(el || el.src)).join('|')})`);
 
 /**
  * Parameters for webpack.module
@@ -30,7 +33,7 @@ module.exports = (async () => {
 		rules: [
 			{
 				test: /\.ts/,
-				exclude: /node_modules\/(?!@v4fire)/,
+				exclude: depsRgxp,
 				use: [
 					{
 						loader: 'ts'
@@ -45,18 +48,18 @@ module.exports = (async () => {
 
 					{
 						loader: 'monic',
-						options: {
+						options: $C.extend({deep: true, concatArray: true}, {}, config.monic().ts, {
 							replacers: [
 								include('build/ts-import.replacer')
 							]
-						}
+						})
 					}
 				]
 			},
 
 			{
 				test: /workers\/\w+\.ts$/,
-				exclude: /node_modules\/(?!@v4fire)/,
+				exclude: depsRgxp,
 				use: [{loader: 'ts'}]
 			},
 
@@ -92,7 +95,7 @@ module.exports = (async () => {
 
 						{
 							loader: 'monic',
-							options: $C.extend({deep: true, concatArray: true}, config.monic().styl, {
+							options: $C.extend({deep: true, concatArray: true}, {}, config.monic().styl, {
 								replacers: [
 									require('@pzlr/stylus-inheritance')({resolveImports: true})
 								]

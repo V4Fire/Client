@@ -10,7 +10,13 @@
 
 const
 	path = require('path'),
-	{src} = require('config');
+	{src} = require('config'),
+	{config: {dependencies}} = require('@pzlr/build-core'),
+	{normalizeSep} = include('build/helpers');
+
+const
+	deps = dependencies.map((el) => RegExp.escape(el || el.src)),
+	importRgxp = new RegExp(`('|")(${deps.join('|')})(.*?)\\1`);
 
 /**
  * Monic replacer for TS import declarations
@@ -20,7 +26,11 @@ const
  * @returns {string}
  */
 module.exports = function (str, file) {
-	return str.replace(/(['"])(@v4fire)(.*?)\1/, (str, $1, root, url) =>
-		`'${path.relative(path.dirname(file), path.join(src.lib(), root, 'src', url))}'`
+	if (!deps.length) {
+		return txt;
+	}
+
+	return str.replace(importRgxp, (str, $1, root, url) =>
+		`'${normalizeSep(path.relative(path.dirname(file), path.join(src.lib(), root, 'src', url)))}'`
 	);
 };
