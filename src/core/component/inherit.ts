@@ -135,37 +135,37 @@ export default function inheritMeta(
 	for (let o = meta.props, keys = Object.keys(props), i = 0; i < keys.length; i++) {
 		const
 			key = keys[i],
-			el = props[key],
+			parent = props[key],
 			watchers = new Map();
 
-		if (el.watchers) {
+		if (parent.watchers) {
 			const
-				w = el.watchers.values();
+				w = parent.watchers.values();
 
 			for (let el = w.next(); !el.done; el = w.next()) {
 				watchers.set(el.value.fn, {...el.value});
 			}
 		}
 
-		o[key] = {...el, watchers};
+		o[key] = {...parent, watchers};
 	}
 
 	for (let o = meta.fields, keys = Object.keys(fields), i = 0; i < keys.length; i++) {
 		const
 			key = keys[i],
-			el = fields[key],
+			parent = fields[key],
 			watchers = new Map();
 
-		if (el.watchers) {
+		if (parent.watchers) {
 			const
-				w = el.watchers.values();
+				w = parent.watchers.values();
 
 			for (let el = w.next(); !el.done; el = w.next()) {
 				watchers.set(el.value.fn, {...el.value});
 			}
 		}
 
-		o[key] = {...el, watchers};
+		o[key] = {...parent, watchers};
 	}
 
 	for (let o = meta.computed, keys = Object.keys(computed), i = 0; i < keys.length; i++) {
@@ -181,13 +181,13 @@ export default function inheritMeta(
 	for (let o = meta.methods, keys = Object.keys(methods), i = 0; i < keys.length; i++) {
 		const
 			key = keys[i],
-			el = methods[key],
+			parent = methods[key],
 			watchers = {},
 			hooks = {};
 
-		if (el.watchers) {
+		if (parent.watchers) {
 			const
-				o = el.watchers,
+				o = parent.watchers,
 				w = Object.keys(o);
 
 			for (let i = 0; i < w.length; i++) {
@@ -196,18 +196,24 @@ export default function inheritMeta(
 			}
 		}
 
-		if (el.hooks) {
+		if (parent.hooks) {
 			const
-				o = <Dictionary>el.hooks,
+				o = <Dictionary>parent.hooks,
 				w = Object.keys(o);
 
 			for (let i = 0; i < w.length; i++) {
-				const key = w[i];
-				hooks[key] = {...o[key]};
+				const
+					key = w[i],
+					el = o[key];
+
+				hooks[key] = {
+					hook: el.hook,
+					after: new Set(el.after)
+				};
 			}
 		}
 
-		o[key] = {...el, watchers, hooks};
+		o[key] = {...parent, watchers, hooks};
 	}
 
 	return newOpts;
