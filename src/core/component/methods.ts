@@ -16,6 +16,9 @@ import { ComponentMeta } from 'core/component';
  */
 export default function addMethodsToMeta<T>(constructor: Function, meta: ComponentMeta): void {
 	const
+		{component, watchers, hooks} = meta;
+
+	const
 		proto = constructor.prototype,
 		ownProps = Object.getOwnPropertyNames(proto);
 
@@ -31,15 +34,39 @@ export default function addMethodsToMeta<T>(constructor: Function, meta: Compone
 			desc = <PropertyDescriptor>Object.getOwnPropertyDescriptor(proto, key);
 
 		if ('value' in desc) {
+			component.methods[key] = desc.value;
+
 			// tslint:disable-next-line
-			meta.methods[key] = Object.assign(meta.methods[key] || {}, {
+			const method = meta.methods[key] = Object.assign(meta.methods[key] || {}, {
 				fn: desc.value
 			});
 
+			for (let o = method.watchers, keys = Object.keys(o), i = 0; i < keys.length; i++) {
+				const
+					key = keys[i],
+					el = o[key];
+
+				watchers[key] = watchers[key] || [];
+				watchers[key].push({
+					deep: el.deep,
+					immediate: el.immediate,
+					handler: method.fn
+				});
+			}
+
+			for (let o = method.hooks, keys = Object.keys(o), i = 0; i < keys.length; i++) {
+				const key = keys[i];
+				hooks[key] = hooks[key] || [];
+				hooks[key].push({fn: method.fn, after: o[key].after});
+			}
+
 		} else {
 			const
-				o = meta[key in meta.accessors ? 'accessors' : 'computed'],
-				old = o[key],
+				metaKey = key in meta.accessors ? 'accessors' : 'computed',
+				obj = meta[metaKey];
+
+			const
+				old = obj[key],
 				set = desc.set || old && old.set;
 
 			if (set) {
@@ -50,12 +77,20 @@ export default function addMethodsToMeta<T>(constructor: Function, meta: Compone
 				};
 			}
 
-			Object.assign(meta[key in meta.accessors ? 'accessors' : 'computed'], {
+			Object.assign(obj, {
 				[key]: {
 					get: desc.get || old && old.get,
 					set
 				}
 			});
+
+			if (metaKey === 'computed') {
+				const method = obj[key];
+				component.computed[key] = {
+					get: method.get,
+					set: method.set
+				};
+			}
 		}
 	}
 }

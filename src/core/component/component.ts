@@ -18,15 +18,12 @@ export function getComponent(constructor: ComponentConstructor, meta: ComponentM
 		instance = new constructor(),
 		p = meta.params;
 
-	const
-		{props, methods} = getBaseComponent(constructor, meta);
+	console.log(instance);
 
 	return <any>{
 		...p.mixins,
+		...getBaseComponent(constructor, meta),
 
-		props,
-		methods,
-		computed: meta.computed,
 		provide: p.provide,
 		inject: p.inject,
 
@@ -76,35 +73,23 @@ export function getComponent(constructor: ComponentConstructor, meta: ComponentM
  * @param constructor
  * @param meta
  */
-function getBaseComponent(constructor: ComponentConstructor, meta: ComponentMeta): {
-	props: PropOptions;
-	methods: Dictionary<Function>;
-} {
+function getBaseComponent(constructor: ComponentConstructor, meta: ComponentMeta): ComponentMeta['component'] {
 	const
-		instance = new constructor(),
-		props = {},
-		methods = {};
+		{component} = meta,
+		instance = new constructor();
 
 	for (let o = meta.props, keys = Object.keys(meta.props), i = 0; i < keys.length; i++) {
 		const
 			key = keys[i],
 			el = o[key];
 
-		props[key] = {
+		component.props[key] = {
 			type: el.type,
 			required: el.required,
 			validator: el.validator,
-			default: instance[key]
+			default: el.default !== undefined ? el.default : Object.fastClone(instance[key])
 		};
 	}
 
-	for (let o = meta.methods, keys = Object.keys(meta.methods), i = 0; i < keys.length; i++) {
-		const
-			key = keys[i],
-			method = o[key];
-
-		methods[key] = method.fn;
-	}
-
-	return {props, methods};
+	return component;
 }

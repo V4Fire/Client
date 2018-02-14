@@ -7,7 +7,16 @@
  */
 
 import Async from 'core/async';
-import Vue, { PropOptions, WatchOptions, WatchHandler, ComputedOptions } from 'vue';
+import Vue, {
+
+	PropOptions,
+	WatchOptions,
+	WatchHandler,
+	WatchOptionsWithHandler,
+	ComputedOptions
+
+} from 'vue';
+
 import inheritMeta from 'core/component/inherit';
 import addMethodsToMeta from 'core/component/methods';
 import { getComponent } from 'core/component/component';
@@ -87,11 +96,13 @@ export interface ComponentMeta {
 	computed: Dictionary<ComputedOptions<any>>;
 	accessors: Dictionary<ComputedOptions<any>>;
 	methods: Dictionary<ComponentMethod>;
+	hooks: Dictionary<{fn: Function; after: Set<string>}[]>;
+	watchers: Dictionary<WatchOptionsWithHandler<any>[]>;
 	component: {
 		props: Dictionary<PropOptions>;
 		methods: Dictionary<Function>;
-		watchers: Dictionary;
-	};
+		computed: Dictionary<ComputedOptions<any>>;
+	}
 }
 
 /**
@@ -135,10 +146,12 @@ export function component(params: ComponentParams = {}): Function {
 			computed: {},
 			accessors: {},
 			methods: {},
+			watchers: {},
+			hooks: {},
 			component: {
 				props: {},
 				methods: {},
-				watchers: {}
+				computed: {}
 			}
 		};
 
