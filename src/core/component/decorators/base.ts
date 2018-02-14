@@ -83,6 +83,18 @@ export interface ComponentMethod {
 export const p = paramsFactory<ComponentProp | ComponentField | ComponentMethod>(null);
 
 /**
+ * Attaches a hook listener to a method
+ * @decorator
+ */
+export const hook = paramsFactory<ComponentMethod['hook']>(null, (hook) => ({hook}));
+
+/**
+ * Attaches a watch listener to a method or a field
+ * @decorator
+ */
+export const watch = paramsFactory<FieldWatcher | ComponentMethod['watch']>(null, (watch) => ({watch}));
+
+/**
  * Factory for creating component property decorators
  *
  * @param cluster - property cluster

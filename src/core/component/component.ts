@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import Vue, { PropOptions, ComponentOptions } from 'vue';
+import Vue, { ComponentOptions } from 'vue';
 import { ComponentMeta } from 'core/component';
 
 export interface ComponentConstructor<T = any> {
@@ -15,14 +15,12 @@ export interface ComponentConstructor<T = any> {
 
 export function getComponent(constructor: ComponentConstructor, meta: ComponentMeta): ComponentOptions<Vue> {
 	const
-		instance = new constructor(),
+		{component, instance} = getBaseComponent(constructor, meta),
 		p = meta.params;
-
-	console.log(instance);
 
 	return <any>{
 		...p.mixins,
-		...getBaseComponent(constructor, meta),
+		...component,
 
 		provide: p.provide,
 		inject: p.inject,
@@ -43,7 +41,13 @@ export function getComponent(constructor: ComponentConstructor, meta: ComponentM
 					val = el.init(this, instance);
 				}
 
-				data[key] = val === undefined ? el.default : val;
+				// tslint:disable-next-line
+				if (val === undefined) {
+					data[key] = el.default !== undefined ? el.default : Object.fastClone(instance[key]);
+
+				} else {
+					data[key] = val;
+				}
 			}
 
 			return data;
@@ -73,7 +77,10 @@ export function getComponent(constructor: ComponentConstructor, meta: ComponentM
  * @param constructor
  * @param meta
  */
-function getBaseComponent(constructor: ComponentConstructor, meta: ComponentMeta): ComponentMeta['component'] {
+function getBaseComponent(
+	constructor: ComponentConstructor,
+	meta: ComponentMeta
+): {component: ComponentMeta['component']; instance: Dictionary} {
 	const
 		{component} = meta,
 		instance = new constructor();
@@ -91,5 +98,5 @@ function getBaseComponent(constructor: ComponentConstructor, meta: ComponentMeta
 		};
 	}
 
-	return component;
+	return {component, instance};
 }

@@ -99,6 +99,7 @@ export interface ComponentMeta {
 	hooks: Dictionary<{fn: Function; after: Set<string>}[]>;
 	watchers: Dictionary<WatchOptionsWithHandler<any>[]>;
 	component: {
+		name: string;
 		props: Dictionary<PropOptions>;
 		methods: Dictionary<Function>;
 		computed: Dictionary<ComputedOptions<any>>;
@@ -149,6 +150,7 @@ export function component(params: ComponentParams = {}): Function {
 			watchers: {},
 			hooks: {},
 			component: {
+				name,
 				props: {},
 				methods: {},
 				computed: {}
