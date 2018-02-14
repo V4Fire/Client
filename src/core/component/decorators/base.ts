@@ -56,6 +56,18 @@ export const field = paramsFactory<InitFieldFn | ComponentField>('fields', (p) =
 	return p;
 });
 
+/**
+ * Marks a class property as a system property
+ * @decorator
+ */
+export const system = paramsFactory<InitFieldFn | ComponentField>('systemFields', (p) => {
+	if (Object.isFunction(p)) {
+		return {init: p};
+	}
+
+	return p;
+});
+
 export type hooks =
 	'beforeCreate' |
 	'created' |
@@ -170,12 +182,25 @@ function paramsFactory<T>(
 
 			const
 				metaKey = cluster || (key in meta.props ? 'props' : 'fields'),
-				inverse = metaKey === 'props' ? 'fields' : 'props',
 				obj = meta[metaKey];
 
-			if (key in meta[inverse]) {
-				obj[key] = meta[inverse][key];
-				delete meta[inverse][key];
+			const inverse = {
+				props: ['fields', 'systemFields'],
+				fields: ['props', 'systemFields'],
+				systemFields: ['props', 'props']
+			}[metaKey];
+
+			if (inverse) {
+				for (let i = 0; i < inverse.length; i++) {
+					const
+						tmp = meta[inverse[i]];
+
+					if (key in tmp) {
+						obj[key] = tmp[key];
+						delete tmp[key];
+						break;
+					}
+				}
 			}
 
 			if (transformer) {

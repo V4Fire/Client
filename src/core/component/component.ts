@@ -63,6 +63,25 @@ export function getComponent(constructor: ComponentConstructor, meta: ComponentM
 					set: el.set
 				});
 			}
+
+			for (let o = meta.systemFields, keys = Object.keys(o), i = 0; i < keys.length; i++) {
+				const
+					key = keys[i],
+					el = o[key];
+
+				let val;
+				if (el.init) {
+					val = el.init(this, instance);
+				}
+
+				// tslint:disable-next-line
+				if (val === undefined) {
+					this[key] = el.default !== undefined ? el.default : Object.fastClone(instance[key]);
+
+				} else {
+					this[key] = val;
+				}
+			}
 		},
 
 		created(): void {

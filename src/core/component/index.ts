@@ -79,6 +79,11 @@ export interface ComponentField {
 	init?: InitFieldFn;
 }
 
+export interface SystemField {
+	default?: any;
+	init?: InitFieldFn;
+}
+
 export interface MethodWatcher extends WatchOptions {
 	field: string;
 }
@@ -99,6 +104,7 @@ export interface ComponentMeta {
 	params: ComponentParams;
 	props: Dictionary<ComponentProp>;
 	fields: Dictionary<ComponentField>;
+	systemFields: Dictionary<ComponentField>;
 	mods: ModsDecl;
 	computed: Dictionary<ComputedOptions<any>>;
 	accessors: Dictionary<ComputedOptions<any>>;
@@ -151,6 +157,7 @@ export function component(params: ComponentParams = {}): Function {
 			params: p,
 			props: {},
 			fields: {},
+			systemFields: {},
 			mods: target.mods || {},
 			computed: {},
 			accessors: {},
