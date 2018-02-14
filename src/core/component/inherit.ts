@@ -7,6 +7,7 @@
  */
 
 import { ComponentMeta, ComponentParams } from 'core/component';
+export const PARENT = {};
 
 /**
  * Inherits parameters to the specified meta object from an other object
@@ -26,6 +27,7 @@ export default function inheritMeta(
 		params,
 		props,
 		fields,
+		mods,
 		computed,
 		accessors,
 		methods
@@ -214,6 +216,54 @@ export default function inheritMeta(
 		}
 
 		o[key] = {...parent, watchers, hooks};
+	}
+
+	////////////////////////
+	// Modifiers inheritance
+	////////////////////////
+
+	for (let o = meta.mods, keys = Object.keys(mods), i = 0; i < keys.length; i++) {
+		const
+			key = keys[i],
+			current = o[key],
+			parent = (mods[key] || []).slice();
+
+		if (current) {
+			for (let i = 0; i < current.length; i++) {
+				const
+					el = current[i];
+
+				if (el !== PARENT) {
+					continue;
+				}
+
+				let hasDefault = false;
+				for (let i = 0; i < current.length; i++) {
+					if (Object.isArray(current[i])) {
+						hasDefault = true;
+						break;
+					}
+				}
+
+				if (hasDefault) {
+					for (let i = 0; i < parent.length; i++) {
+						const
+							el = parent[i];
+
+						if (Object.isArray(el)) {
+							parent[i] = el[0];
+							break;
+						}
+					}
+				}
+
+				current.splice(i, 1, ...parent);
+				break;
+			}
+
+		} else if (!(key in o)) {
+			o[key] = parent;
+		}
 	}
 
 	return newOpts;
