@@ -18,12 +18,13 @@ import Vue, {
 } from 'vue';
 
 import inheritMeta from 'core/component/inherit';
-import addMethodsToMeta from 'core/component/methods';
 import { getComponent } from 'core/component/component';
 import { InjectOptions } from 'vue/types/options';
 import { EventEmitter2 } from 'eventemitter2';
 
 export * from 'core/component/decorators';
+export { PARENT } from 'core/component/inherit';
+
 export const
 	initEvent = new EventEmitter2({maxListeners: 1e3}),
 	rootComponents = {},
@@ -88,16 +89,22 @@ export interface ComponentMethod {
 	hooks: Dictionary<{hook: string; after: Set<string>}>;
 }
 
+export type ModVal = string | boolean | number;
+export interface ModsDecl {
+	[name: string]: Array<ModVal | ModVal[]> | void;
+}
+
 export interface ComponentMeta {
 	name: string;
 	params: ComponentParams;
 	props: Dictionary<ComponentProp>;
 	fields: Dictionary<ComponentField>;
+	mods: ModsDecl;
 	computed: Dictionary<ComputedOptions<any>>;
 	accessors: Dictionary<ComputedOptions<any>>;
 	methods: Dictionary<ComponentMethod>;
-	hooks: Dictionary<{fn: Function; after: Set<string>}[]>;
 	watchers: Dictionary<WatchOptionsWithHandler<any>[]>;
+	hooks: Dictionary<{fn: Function; after: Set<string>}[]>;
 	component: {
 		name: string;
 		props: Dictionary<PropOptions>;
@@ -144,6 +151,7 @@ export function component(params: ComponentParams = {}): Function {
 			params: p,
 			props: {},
 			fields: {},
+			mods: target.mods || {},
 			computed: {},
 			accessors: {},
 			methods: {},
@@ -163,10 +171,8 @@ export function component(params: ComponentParams = {}): Function {
 
 		components.set(target, meta);
 		initEvent.emit('constructor', {meta, parentMeta});
-		addMethodsToMeta(target, meta);
 
 		let component;
-
 		if (p.functional) {
 
 		} else {
