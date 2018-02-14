@@ -64,8 +64,8 @@ export interface InitFieldFn {
 }
 
 export interface ComponentField {
+	watchers: Map<string | Function, FieldWatcher>;
 	default?: any;
-	watchers?: Map<string | Function, FieldWatcher>;
 	init?: InitFieldFn;
 }
 
@@ -75,8 +75,8 @@ export interface MethodWatcher extends WatchOptions {
 
 export interface ComponentMethod {
 	fn: Function;
-	watchers?: Dictionary<MethodWatcher>;
-	hooks?: Dictionary<string>;
+	watchers: Dictionary<MethodWatcher>;
+	hooks: Dictionary<{hook: string; after: Set<string>}>;
 }
 
 export interface ComponentMeta {
@@ -87,6 +87,11 @@ export interface ComponentMeta {
 	computed: Dictionary<ComputedOptions<any>>;
 	accessors: Dictionary<ComputedOptions<any>>;
 	methods: Dictionary<ComponentMethod>;
+	component: {
+		props: Dictionary<PropOptions>;
+		methods: Dictionary<Function>;
+		watchers: Dictionary;
+	};
 }
 
 /**
@@ -129,7 +134,12 @@ export function component(params: ComponentParams = {}): Function {
 			fields: {},
 			computed: {},
 			accessors: {},
-			methods: {}
+			methods: {},
+			component: {
+				props: {},
+				methods: {},
+				watchers: {}
+			}
 		};
 
 		if (parentMeta) {

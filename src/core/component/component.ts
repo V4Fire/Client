@@ -66,7 +66,6 @@ export function getComponent(constructor: ComponentConstructor, meta: ComponentM
 		},
 
 		created(): void {
-
 		}
 	};
 }
@@ -100,8 +99,11 @@ function getBaseComponent(constructor: ComponentConstructor, meta: ComponentMeta
 	}
 
 	for (let o = meta.methods, keys = Object.keys(meta.methods), i = 0; i < keys.length; i++) {
-		const key = keys[i];
-		methods[key] = o[key].fn;
+		const
+			key = keys[i],
+			method = o[key];
+
+		methods[key] = method.fn;
 	}
 
 	return {props, methods};

@@ -43,7 +43,11 @@ export default function addMethodsToMeta<T>(constructor: Function, meta: Compone
 				set = desc.set || old && old.set;
 
 			if (set) {
-				meta.methods[`${key}Setter`] = {fn: set};
+				meta.methods[`${key}Setter`] = {
+					fn: set,
+					watchers: {},
+					hooks: {}
+				};
 			}
 
 			Object.assign(meta[key in meta.accessors ? 'accessors' : 'computed'], {

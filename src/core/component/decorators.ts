@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { WatchHandler, WatchOptions } from 'vue';
+import { PropOptions, WatchHandler, WatchOptions } from 'vue';
 import {
 
 	initEvent,
@@ -22,10 +22,7 @@ export type FieldWatcher =
 	WatchHandler<any> |
 	Array<string | MetaFieldWatcher | WatchHandler<any>>;
 
-export interface ComponentProp {
-	type?: Function;
-	required?: boolean;
-	default?: any;
+export interface ComponentProp extends PropOptions {
 	watch?: FieldWatcher;
 }
 
@@ -59,10 +56,24 @@ export const field = paramsFactory<InitFieldFn | ComponentField>('fields', (p) =
 	return p;
 });
 
+export type hooks =
+	'beforeCreate' |
+	'created' |
+	'beforeMount' |
+	'mounted' |
+	'beforeUpdate' |
+	'updated' |
+	'activated' |
+	'deactivated' |
+	'beforeDestroy' |
+	'destroyed' |
+	'errorCaptured';
+
+export type HookParams = {[hook in hooks]?: string | string[]};
 export interface ComponentMethod {
 	watch?: Array<string | MetaMethodWatcher>;
 	watchParams?: WatchOptions,
-	hook?: string | string[];
+	hook?: hooks | hooks[] | HookParams | HookParams[];
 }
 
 /**
@@ -120,14 +131,21 @@ function paramsFactory<T>(
 
 					for (let i = 0; i < h.length; i++) {
 						const el = h[i];
-						hooks[el] = el;
+
+						if (Object.isObject(el)) {
+							const key = Object.keys(el)[0];
+							hooks[key] = {hook: key, after: new Set([].concat(el[key] || []))};
+
+						} else {
+							hooks[el] = {hook: el, after: new Set()};
+						}
 					}
 
 					obj[key] = {...el, ...p, watchers, hooks};
 					return;
 				}
 
-				if (metaKey === 'accessors' ? key in meta.computed : 'cache' in p === false && key in meta.accessors) {
+				if (metaKey === 'accessors' ? key in meta.computed : !('cache' in p) && key in meta.accessors) {
 					obj.accessors = meta.computed[key];
 					delete meta.computed[key];
 
