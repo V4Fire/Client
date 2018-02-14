@@ -32,8 +32,15 @@ export function getComponent(
 		...p.mixins,
 		...component,
 
+		model: p.model,
+		parent: p.parent,
+		inheritAttrs: p.inheritAttrs,
 		provide: p.provide,
 		inject: p.inject,
+
+		render() {
+			return methods.render.fn.call(this, ...arguments);
+		},
 
 		data(): Dictionary {
 			const
@@ -94,7 +101,7 @@ export function getComponent(
 			}
 
 			methods.beforeCreate && methods.beforeCreate.fn.call(this);
-			runHooks('beforeCreate', meta);
+			runHook('beforeCreate', meta);
 		},
 
 		created(): void {
@@ -104,47 +111,47 @@ export function getComponent(
 			}
 
 			methods.created && methods.created.fn.call(this);
-			runHooks('created', meta);
+			runHook('created', meta);
 		},
 
 		beforeMount(): void {
 			methods.beforeMount && methods.beforeMount.fn.call(this);
-			runHooks('beforeMount', meta);
+			runHook('beforeMount', meta);
 		},
 
 		mounted(): void {
 			methods.mounted && methods.mounted.fn.call(this);
-			runHooks('mounted', meta);
+			runHook('mounted', meta);
 		},
 
 		beforeUpdate(): void {
 			methods.beforeUpdate && methods.beforeUpdate.fn.call(this);
-			runHooks('beforeUpdate', meta);
+			runHook('beforeUpdate', meta);
 		},
 
 		updated(): void {
 			methods.updated && methods.updated.fn.call(this);
-			runHooks('updated', meta);
+			runHook('updated', meta);
 		},
 
 		activated(): void {
 			methods.activated && methods.activated.fn.call(this);
-			runHooks('activated', meta);
+			runHook('activated', meta);
 		},
 
 		deactivated(): void {
 			methods.deactivated && methods.deactivated.fn.call(this);
-			runHooks('deactivated', meta);
+			runHook('deactivated', meta);
 		},
 
 		beforeDestroy(): void {
 			methods.beforeDestroy && methods.beforeDestroy.fn.call(this);
-			runHooks('beforeDestroy', meta);
+			runHook('beforeDestroy', meta);
 		},
 
 		destroyed(): void {
 			methods.destroyed && methods.destroyed.fn.call(this);
-			runHooks('destroyed', meta);
+			runHook('destroyed', meta);
 		}
 	};
 }
@@ -155,7 +162,11 @@ export function getComponent(
  * @param hook
  * @param meta
  */
-function runHooks(hook: string, meta: ComponentMeta): void {
+function runHook(hook: string, meta: ComponentMeta): void {
+	if (!meta.hooks[hook]) {
+		return;
+	}
+
 	const event = {
 		queue: [] as Function[],
 		events: {} as Dictionary<{event: Set<string>; cb: Function}[]>,
@@ -198,7 +209,7 @@ function runHooks(hook: string, meta: ComponentMeta): void {
 
 		event.on(el.after, () => {
 			el.fn.call(this);
-			event.emit(el.fn.name);
+			event.emit(el.name);
 		});
 	}
 
@@ -328,7 +339,7 @@ function addMethodsToMeta(constructor: Function, meta: ComponentMeta): void {
 			}
 
 			// tslint:disable-next-line
-			const method = meta.methods[key] = Object.assign(meta.methods[key] || {}, {
+			const method = meta.methods[key] = Object.assign(meta.methods[key] || {watchers: {}, hooks: {}}, {
 				fn: desc.value
 			});
 
@@ -346,9 +357,16 @@ function addMethodsToMeta(constructor: Function, meta: ComponentMeta): void {
 			}
 
 			for (let o = method.hooks, keys = Object.keys(o), i = 0; i < keys.length; i++) {
-				const key = keys[i];
+				const
+					key = keys[i],
+					el = o[key];
+
 				hooks[key] = hooks[key] || [];
-				hooks[key].push({fn: method.fn, after: o[key].after});
+				hooks[key].push({
+					name: el.name,
+					fn: method.fn,
+					after: el.after
+				});
 			}
 
 		} else {

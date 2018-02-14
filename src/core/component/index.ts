@@ -92,7 +92,11 @@ export interface MethodWatcher extends WatchOptions {
 export interface ComponentMethod {
 	fn: Function;
 	watchers: Dictionary<MethodWatcher>;
-	hooks: Dictionary<{hook: string; after: Set<string>}>;
+	hooks: Dictionary<{
+		name: string;
+		hook: string;
+		after: Set<string>;
+	}>;
 }
 
 export type ModVal = string | boolean | number;
@@ -111,7 +115,7 @@ export interface ComponentMeta {
 	accessors: Dictionary<ComputedOptions<any>>;
 	methods: Dictionary<ComponentMethod>;
 	watchers: Dictionary<WatchOptionsWithHandler<any>[]>;
-	hooks: Dictionary<{fn: Function; after: Set<string>}[]>;
+	hooks: Dictionary<{name: string; fn: Function; after: Set<string>}[]>;
 	component: {
 		name: string;
 		props: ComponentOptions<Vue>['props'];
@@ -184,8 +188,7 @@ export function component(params: ComponentParams = {}): Function {
 		if (p.functional) {
 
 		} else {
-			component = getComponent(target, meta);
-			console.log(component);
+			console.log(Vue.component(name, <any>getComponent(target, meta)));
 		}
 
 		if (p.root) {

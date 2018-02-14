@@ -137,6 +137,7 @@ function paramsFactory<T>(
 
 				if (metaKey === 'methods') {
 					const
+						name = key,
 						w = <any[]>[].concat(p.watch || []),
 						watchers = el && el.watchers || {};
 
@@ -161,10 +162,18 @@ function paramsFactory<T>(
 
 						if (Object.isObject(el)) {
 							const key = Object.keys(el)[0];
-							hooks[key] = {hook: key, after: new Set([].concat(el[key] || []))};
+							hooks[key] = {
+								name,
+								hook: key,
+								after: new Set([].concat(el[key] || []))
+							};
 
 						} else {
-							hooks[el] = {hook: el, after: new Set()};
+							hooks[el] = {
+								name,
+								hook: el,
+								after: new Set()
+							};
 						}
 					}
 

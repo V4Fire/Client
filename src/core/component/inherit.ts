@@ -203,6 +203,7 @@ export default function inheritMeta(
 					el = o[key];
 
 				hooks[key] = {
+					name: el.name,
 					hook: el.hook,
 					after: new Set(el.after)
 				};
