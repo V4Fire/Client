@@ -19,18 +19,19 @@ document.addEventListener('DOMContentLoaded', () =>
 	})
 );
 
-import Async from 'core/async';
-import Block, { statuses } from 'core/block';
+import $C = require('collection.js');
+import Async, { AsyncOpts } from 'core/async';
+import Block, { statuses } from 'super/i-block/modules/block';
 import { EventEmitter2 as EventEmitter } from 'eventemitter2';
-import { component, prop, field, system, hook, ModsDecl, VueInterface } from 'core/component';
+import { component, prop, hook, ModsDecl, VueInterface } from 'core/component';
+import { field, system } from 'super/i-block/modules/decorators';
 import { queue, backQueue } from 'core/render';
 
 import * as helpers from 'core/helpers';
 import * as browser from 'core/const/browser';
-export type Classes = Dictionary<string | Array<string | true> | true>;
 
-const
-	$C = require('collection.js');
+export * from 'core/component';
+export type Classes = Dictionary<string | Array<string | true> | true>;
 
 @component()
 export default class iBlock extends VueInterface<iBlock> {
@@ -81,12 +82,6 @@ export default class iBlock extends VueInterface<iBlock> {
 	 */
 	@prop(Object)
 	p: Dictionary = {};
-
-	/**
-	 * Alias for $options.selfName
-	 */
-	@system()
-	componentName!: string;
 
 	/**
 	 * Block initialize status
@@ -166,7 +161,40 @@ export default class iBlock extends VueInterface<iBlock> {
 	 * API for async operations
 	 */
 	@system((ctx) => new Async(ctx))
-	protected async!: Async<iBlock>;
+	protected async!: Async<this>;
+
+	/**
+	 * API for BEM like develop
+	 */
+	@system((ctx) => {
+		ctx.meta.hooks.mounted.push({
+			fn() {
+				if (ctx.block) {
+					const
+						{node} = ctx.block;
+
+					if (node === ctx.$el) {
+						return;
+					}
+
+					if (node && node.vueComponent === ctx) {
+						delete node.vueComponent;
+					}
+				}
+
+				this.block = new Block<iBlock>({
+					id: ctx.blockId,
+					node: ctx.$el,
+					async: this.async,
+					localEvent: this.localEvent,
+					mods: {},
+					model: ctx
+				});
+			}
+		});
+	})
+
+	protected block!: Block<this>;
 
 	/**
 	 * Local event emitter
@@ -257,6 +285,46 @@ export default class iBlock extends VueInterface<iBlock> {
 	}
 
 	/**
+	 * Wrapper for $emit
+	 *
+	 * @param event
+	 * @param args
+	 */
+	emit(event: string, ...args: any[]): void {
+		event = event.dasherize();
+		this.$emit(event, this, ...args);
+		this.$emit(`on-${event}`, ...args);
+		this.dispatching && this.dispatch(event, ...args);
+	}
+
+	/**
+	 * Emits the specified event for the parent block
+	 *
+	 * @param event
+	 * @param args
+	 */
+	dispatch(event: string, ...args: any[]): void {
+		event = event.dasherize();
+
+		let
+			obj = this.$parent;
+
+		while (obj) {
+			obj.$emit(`${this.componentName}::${event}`, this, ...args);
+
+			if (this.blockName) {
+				obj.$emit(`${this.blockName.dasherize()}::${event}`, this, ...args);
+			}
+
+			if (!obj.dispatching) {
+				break;
+			}
+
+			obj = obj.$parent;
+		}
+	}
+
+	/**
 	 * Wrapper for $on
 	 *
 	 * @param event
@@ -284,6 +352,29 @@ export default class iBlock extends VueInterface<iBlock> {
 	 */
 	off(event?: string, cb?: Function): void {
 		this.$off(event && event.dasherize(), cb);
+	}
+
+	/**
+	 * Wrapper for $nextTick
+	 *
+	 * @see Async.promise
+	 * @param [params]
+	 */
+	protected nextTick(params?: AsyncOpts): Promise<void> {
+		return this.async.promise(this.$nextTick(), params);
+	}
+
+	/**
+	 * Waits until the specified reference won't be available
+	 * and returns it
+	 *
+	 * @see Async.wait
+	 * @param ref
+	 * @param [params]
+	 */
+	protected async waitRef<T = iBlock | HTMLElement | iBlock[] | HTMLElement[]>(ref: string, params?: AsyncOpts): Promise<T> {
+		await this.async.wait(() => this.$refs[ref], params);
+		return <any>this.$refs[ref];
 	}
 
 	/**
@@ -567,46 +658,6 @@ export default class iBlock extends VueInterface<iBlock> {
 	}
 
 	/**
-	 * Wrapper for $emit
-	 *
-	 * @param event
-	 * @param args
-	 */
-	protected emit(event: string, ...args: any[]): void {
-		event = event.dasherize();
-		this.$emit(event, this, ...args);
-		this.$emit(`on-${event}`, ...args);
-		this.dispatching && this.dispatch(event, ...args);
-	}
-
-	/**
-	 * Emits the specified event for the parent block
-	 *
-	 * @param event
-	 * @param args
-	 */
-	protected dispatch(event: string, ...args: any[]): void {
-		event = event.dasherize();
-
-		let
-			obj = this.$parent;
-
-		while (obj) {
-			obj.$emit(`${this.componentName}::${event}`, this, ...args);
-
-			if (this.blockName) {
-				obj.$emit(`${this.blockName.dasherize()}::${event}`, this, ...args);
-			}
-
-			if (!obj.dispatching) {
-				break;
-			}
-
-			obj = obj.$parent;
-		}
-	}
-
-	/**
 	 * Returns an object with classes for elements of an another component
 	 * @param classes - additional classes ({baseElementName: newElementName})
 	 */
@@ -644,6 +695,69 @@ export default class iBlock extends VueInterface<iBlock> {
 		return map;
 	}
 
+	private mounted() {
+		this.localEvent.emit('component.mounted');
+	}
+
+	/**
+	 * Block activated
+	 * (for keep-alive)
+	 */
+	private async activated() {
+		this.localEvent.emit('component.activated');
+
+		if (this.blockActivated) {
+			return;
+		}
+
+		const {block: $b} = this;
+		$b.status = $b.statuses.loading;
+
+		if (this.needReInit) {
+			await this.initLoad();
+
+		} else {
+			$b.status = $b.statuses.ready;
+		}
+
+		this.blockActivated = true;
+		this.$forceUpdate();
+	}
+
+	/**
+	 * Block deactivated
+	 * (for keep-alive)
+	 */
+	private deactivated() {
+		this.localEvent.emit('component.deactivated');
+		this.async
+			.clearAllImmediates()
+			.clearAllTimeouts()
+			.cancelAllIdleCallbacks()
+			.cancelAllAnimationFrames()
+			.cancelAllRequests()
+			.terminateAllWorkers()
+			.cancelAllProxies();
+
+		this.block.status = this.block.statuses.inactive;
+		this.blockActivated = false;
+	}
+
+	/**
+	 * Block before destroy
+	 */
+	private beforeDestroy() {
+		this.localEvent.emit('component.destroyed');
+		this.block.destructor();
+
+		$C(this.asyncQueue).forEach((el) => {
+			queue.delete(el);
+			backQueue.delete(el);
+		});
+
+		this.block.status = this.block.statuses.inactive;
+	}
+
 	/**
 	 * Executes the specified callback after created hook
 	 * @param cb
@@ -653,11 +767,7 @@ export default class iBlock extends VueInterface<iBlock> {
 			cb();
 
 		} else {
-			this.meta.hooks.created.push({
-				name: Math.random().toString(),
-				fn: cb,
-				after: new Set()
-			});
+			this.meta.hooks.created.push({fn: cb});
 		}
 	}
 }

@@ -7,9 +7,9 @@
  */
 
 import $C = require('collection.js');
-import uuid = require('uuid');
 import Async from 'core/async';
-import { EventEmitter2 } from 'eventemitter2';
+import iBlock, { VueElement } from 'super/i-block/i-block';
+import { EventEmitter2 as EventEmitter } from 'eventemitter2';
 
 /**
  * Enum of available block statuses
@@ -22,14 +22,10 @@ export enum statuses {
 	unloaded = 0
 }
 
-type Model = Dictionary & {
-	emit(event: string, ...args: any[]): void;
-};
-
 /**
  * Base class for BEM like develop
  */
-export default class Block {
+export default class Block<T extends iBlock> {
 	/**
 	 * Block unique id
 	 */
@@ -38,22 +34,22 @@ export default class Block {
 	/**
 	 * Link to a block node
 	 */
-	node: Element | undefined;
+	node: VueElement<T>;
 
 	/**
 	 * Block model
 	 */
-	model: Model | undefined;
+	model: T;
 
 	/**
 	 * Async object
 	 */
-	async: Async<any>;
+	async: Async<T>;
 
 	/**
 	 * Local event emitter
 	 */
-	localEvent: EventEmitter2;
+	localEvent: EventEmitter;
 
 	/**
 	 * List of applied modifiers
@@ -87,7 +83,7 @@ export default class Block {
 				this.model.emit(`status-${this.statuses[value]}`, value);
 			}
 
-			this.model.blockStatus = this.statuses[value];
+			this.model.blockStatus = value;
 		}
 	}
 
@@ -102,52 +98,41 @@ export default class Block {
 	 * Current block name
 	 */
 	get blockName(): string {
-		return $C(this).get('model.componentName') || this.constructor.name.dasherize();
+		return this.model.componentName;
 	}
 
 	/**
-	 * @param [id] - block id
-	 * @param [node] - link to a block node
-	 * @param [mods] - map of modifiers to apply
-	 * @param [async] - instance of Async
-	 * @param [localEvent] - instance of EventEmitter2
-	 * @param [model] - model instance (Vue.js)
+	 * @param id - block id
+	 * @param node - link to a block node
+	 * @param mods - map of modifiers to apply
+	 * @param async - instance of Async
+	 * @param localEvent - instance of EventEmitter2
+	 * @param model - model instance (Vue.js)
 	 */
 	constructor(
 		{id, node, mods, async, localEvent, model}: {
-			id?: string;
-			node?: Element;
-			mods?: Object;
-			async?: Async<any>;
-			localEvent?: EventEmitter2;
-			model?: Model;
-		} = {}
+			id: string;
+			node: HTMLElement;
+			mods: Dictionary<string | undefined>;
+			async: Async<T>;
+			localEvent: EventEmitter;
+			model: T;
+		}
 	) {
-		this.id = id || `b-${uuid()}`;
-		this.async = async || new Async(this);
-		this.localEvent = localEvent || new EventEmitter2({maxListeners: 100, wildcard: true});
-		this.mods = Object.create(null);
+		this.id = id;
+		this.async = async;
+		this.localEvent = localEvent;
+
+		this.mods = Object.createDict();
+		this.model = model;
+
 		this.node = node;
-
-		// Two way binding with a Vue.js instance
-		if (model) {
-			this.model = model;
-			model.block = this;
-		}
-
-		if (node) {
-			node.classList.add(this.blockName, 'i-block-helper');
-		}
+		this.node.classList.add(this.blockName, 'i-block-helper');
 
 		this.localEvent.once('block.status.loading', () => {
-			if (mods) {
-				const
-					keys = Object.keys(mods);
-
-				for (let i = 0; i < keys.length; i++) {
-					const name = keys[i];
-					this.setMod(name, mods[name]);
-				}
+			for (let keys = Object.keys(mods), i = 0; i < keys.length; i++) {
+				const name = keys[i];
+				this.setMod(name, mods[name]);
 			}
 		});
 
@@ -196,10 +181,7 @@ export default class Block {
 			res = `${sel}.${this.id}`;
 
 		if (mods) {
-			const
-				keys = Object.keys(mods);
-
-			for (let i = 0; i < keys.length; i++) {
+			for (let keys = Object.keys(mods), i = 0; i < keys.length; i++) {
 				const name = keys[i];
 				res += `${sel}_${name}_${mods[name]}`;
 			}
@@ -266,7 +248,7 @@ export default class Block {
 			};
 
 			this.localEvent.emit(`block.mod.set.${name}.${value}`, event);
-			this.model && this.model.emit && this.model.emit(`mod_set_${name}_${value}`, event);
+			this.model.emit(`mod_set_${name}_${value}`, event);
 			return true;
 		}
 
@@ -299,7 +281,7 @@ export default class Block {
 			};
 
 			this.localEvent.emit(`block.mod.remove.${name}.${current}`, event);
-			this.model && this.model.emit && this.model.emit(`mod_remove_${name}_${current}`, event);
+			this.model.emit(`mod_remove_${name}_${current}`, event);
 			return true;
 		}
 
