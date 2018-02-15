@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', () =>
 import Async from 'core/async';
 import Block, { statuses } from 'core/block';
 import { EventEmitter2 as EventEmitter } from 'eventemitter2';
-import { component, prop, field, system, hook, VueInterface } from 'core/component';
+import { component, prop, field, system, hook, ModsDecl, VueInterface } from 'core/component';
 import { queue, backQueue } from 'core/render';
 
 import * as helpers from 'core/helpers';
@@ -33,7 +33,7 @@ const
 	$C = require('collection.js');
 
 @component()
-export default class iBlock extends VueInterface {
+export default class iBlock extends VueInterface<iBlock> {
 	/**
 	 * Block unique id
 	 */
@@ -93,6 +93,50 @@ export default class iBlock extends VueInterface {
 	 */
 	@field()
 	blockStatus: number = statuses.unloaded;
+
+	/**
+	 * Block modifiers
+	 */
+	static mods: ModsDecl = {
+		theme: [
+			['default']
+		],
+
+		size: [
+			'xxs',
+			'xs',
+			's',
+			['m'],
+			'xs',
+			'xxs'
+		],
+
+		progress: [
+			'true',
+			['false']
+		],
+
+		disabled: [
+			'true',
+			['false']
+		],
+
+		focused: [
+			'true',
+			['false']
+		],
+
+		hidden: [
+			'true',
+			['false']
+		],
+
+		width: [
+			['normal'],
+			'full',
+			'auto'
+		]
+	};
 
 	/**
 	 * Cache of ifOnce
@@ -188,23 +232,13 @@ export default class iBlock extends VueInterface {
 	 * Cache for prop/field links
 	 */
 	@system(() => Object.createDict())
-	protected linkCache!: Dictionary<Dictionary>;
+	private linkCache!: Dictionary<Dictionary>;
 
 	/**
 	 * Cache for prop/field links
 	 */
 	@system(() => Object.createDict())
-	protected syncLinkCache!: Dictionary<Function>;
-
-	/**
-	 * Initializes core block API
-	 */
-	@hook('beforeCreate')
-	initBaseAPI() {
-		this.link = this.instance.link.bind(this);
-		this.createWatchObject = this.instance.createWatchObject.bind(this);
-		this.execCbAfterCreated = this.instance.execCbAfterCreated.bind(this);
-	}
+	private syncLinkCache!: Dictionary<Function>;
 
 	render(el: any): any {
 		return el('span', '121');
@@ -250,6 +284,16 @@ export default class iBlock extends VueInterface {
 	 */
 	off(event?: string, cb?: Function): void {
 		this.$off(event && event.dasherize(), cb);
+	}
+
+	/**
+	 * Initializes core block API
+	 */
+	@hook('beforeCreate')
+	protected initBaseAPI() {
+		this.link = this.instance.link.bind(this);
+		this.createWatchObject = this.instance.createWatchObject.bind(this);
+		this.execCbAfterCreated = this.instance.execCbAfterCreated.bind(this);
 	}
 
 	/**
@@ -484,23 +528,6 @@ export default class iBlock extends VueInterface {
 	}
 
 	/**
-	 * Executes the specified callback after created hook
-	 * @param cb
-	 */
-	protected execCbAfterCreated(cb: Function): void {
-		if (this.blockStatus) {
-			cb();
-
-		} else {
-			this.meta.hooks.created.push({
-				name: Math.random().toString(),
-				fn: cb,
-				after: new Set()
-			});
-		}
-	}
-
-	/**
 	 * Adds a component to the render queue
 	 * @param id - task id
 	 */
@@ -571,9 +598,9 @@ export default class iBlock extends VueInterface {
 				obj.$emit(`${this.blockName.dasherize()}::${event}`, this, ...args);
 			}
 
-			/*if (!obj.dispatching) {
+			if (!obj.dispatching) {
 				break;
-			}*/
+			}
 
 			obj = obj.$parent;
 		}
@@ -615,5 +642,22 @@ export default class iBlock extends VueInterface {
 		}
 
 		return map;
+	}
+
+	/**
+	 * Executes the specified callback after created hook
+	 * @param cb
+	 */
+	private execCbAfterCreated(cb: Function): void {
+		if (this.blockStatus) {
+			cb();
+
+		} else {
+			this.meta.hooks.created.push({
+				name: Math.random().toString(),
+				fn: cb,
+				after: new Set()
+			});
+		}
 	}
 }
