@@ -6,16 +6,34 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import Vue from 'vue';
+import '@v4fire/core/core';
+
+document.addEventListener('DOMContentLoaded', () =>
+	new Vue(<any>{
+		data: {},
+		el: document.getElementById('bla'),
+		render(el: any): any {
+			return el('i-block');
+		}
+	})
+);
+
 import Async from 'core/async';
+import Block, { statuses } from 'core/block';
 import { EventEmitter2 as EventEmitter } from 'eventemitter2';
-import { prop, field, system, Vue } from 'core/component';
+import { component, prop, field, system, hook, VueInterface } from 'core/component';
 import { queue, backQueue } from 'core/render';
 
 import * as helpers from 'core/helpers';
 import * as browser from 'core/const/browser';
 export type Classes = Dictionary<string | Array<string | true> | true>;
 
-export default class iBlock extends Vue {
+const
+	$C = require('collection.js');
+
+@component()
+export default class iBlock extends VueInterface {
 	/**
 	 * Block unique id
 	 */
@@ -69,6 +87,12 @@ export default class iBlock extends Vue {
 	 */
 	@system()
 	componentName!: string;
+
+	/**
+	 * Block initialize status
+	 */
+	@field()
+	blockStatus: number = statuses.unloaded;
 
 	/**
 	 * Cache of ifOnce
@@ -161,6 +185,32 @@ export default class iBlock extends Vue {
 	protected location!: Location;
 
 	/**
+	 * Cache for prop/field links
+	 */
+	@system(() => Object.createDict())
+	protected linkCache!: Dictionary<Dictionary>;
+
+	/**
+	 * Cache for prop/field links
+	 */
+	@system(() => Object.createDict())
+	protected syncLinkCache!: Dictionary<Function>;
+
+	/**
+	 * Initializes core block API
+	 */
+	@hook('beforeCreate')
+	initBaseAPI() {
+		this.link = this.instance.link.bind(this);
+		this.createWatchObject = this.instance.createWatchObject.bind(this);
+		this.execCbAfterCreated = this.instance.execCbAfterCreated.bind(this);
+	}
+
+	render(el: any): any {
+		return el('span', '121');
+	}
+
+	/**
 	 * Returns a string id, which is connected to the block
 	 * @param id - custom id
 	 */
@@ -200,6 +250,254 @@ export default class iBlock extends Vue {
 	 */
 	off(event?: string, cb?: Function): void {
 		this.$off(event && event.dasherize(), cb);
+	}
+
+	/**
+	 * Sets a new watch property to the specified object
+	 *
+	 * @param path - path to the property (bla.baz.foo)
+	 * @param value
+	 * @param [obj]
+	 */
+	protected setField(path: string, value: any, obj: Object = this): any {
+		let
+			ref = obj;
+
+		const
+			chunks = path.split('.');
+
+		for (let i = 0; i < chunks.length; i++) {
+			const
+				prop = chunks[i];
+
+			if (chunks.length === i + 1) {
+				path = prop;
+				continue;
+			}
+
+			if (!ref[prop] || typeof ref[prop] !== 'object') {
+				this.$set(ref, prop, isNaN(Number(chunks[i + 1])) ? {} : []);
+			}
+
+			ref = ref[prop];
+		}
+
+		if (path in ref) {
+			ref[path] = value;
+
+		} else {
+			this.$set(ref, path, value);
+		}
+
+		return value;
+	}
+
+	/**
+	 * Deletes a watch property from the specified object
+	 *
+	 * @param path - path to the property (bla.baz.foo)
+	 * @param [obj]
+	 */
+	protected deleteField(path: string, obj: Object = this): boolean {
+		let ref = obj;
+
+		const
+			chunks = path.split('.');
+
+		let test = true;
+		for (let i = 0; i < chunks.length; i++) {
+			const
+				prop = chunks[i];
+
+			if (chunks.length === i + 1) {
+				path = prop;
+				continue;
+			}
+
+			if (!ref[prop] || typeof ref[prop] !== 'object') {
+				test = false;
+				break;
+			}
+
+			ref = ref[prop];
+		}
+
+		if (test) {
+			this.$delete(ref, path);
+			return true;
+		}
+
+		return false;
+	}
+
+	/**
+	 * Returns a property from the specified object
+	 *
+	 * @param path - path to the property (bla.baz.foo)
+	 * @param [obj]
+	 */
+	protected getField(path: string, obj: Object = this): any {
+		const
+			chunks = path.split('.');
+
+		let res = obj;
+		for (let i = 0; i < chunks.length; i++) {
+			if (res == null) {
+				return undefined;
+			}
+
+			res = res[chunks[i]];
+		}
+
+		return res;
+	}
+
+	/**
+	 * Synchronizes block props values with store values
+	 * @param [name] - property name
+	 */
+	protected syncLinks(name?: string): void {
+		if (name) {
+			this.syncLinkCache[name]();
+
+		} else {
+			$C(this.syncLinkCache).forEach((fn) => fn);
+		}
+	}
+
+	/**
+	 * Sets a link for the specified field
+	 *
+	 * @param field
+	 * @param [wrapper]
+	 * @param [watchParams]
+	 */
+	protected link(field: string, wrapper: (this: this) => any, watchParams: Object): any {
+		const
+			path = this.$activeField;
+
+		if (!(path in this.linkCache)) {
+			this.linkCache[path] = {};
+			this.execCbAfterCreated(() => {
+				this.$watch(field, (val) => {
+					this.setField(path, wrapper ? wrapper.call(this, val) : val);
+				}, watchParams);
+			});
+
+			const val = () => wrapper ? wrapper.call(this, this[field]) : this[field];
+			this.syncLinkCache[field] = () => this.setField(path, val());
+			return val();
+		}
+	}
+
+	/**
+	 * Creates an object with linked fields
+	 *
+	 * @param path - property path
+	 * @param fields
+	 * @param [watchParams]
+	 */
+	protected createWatchObject(
+		path: string,
+		fields: Array<string | [string] | [string, (this: this) => any] | [string, string, (this: this) => any]>,
+		watchParams?: Object
+	): Object {
+		const
+			{linkCache, syncLinkCache} = this;
+
+		if (path) {
+			path = [this.$activeField, path].join('.');
+
+		} else {
+			path = this.$activeField;
+		}
+
+		const
+			short = path.split('.').slice(1),
+			obj = {};
+
+		if (short.length) {
+			$C(obj).set({}, short);
+		}
+
+		const
+			map = $C(obj).get(short);
+
+		for (let i = 0; i < fields.length; i++) {
+			const
+				el = fields[i];
+
+			if (Object.isArray(el)) {
+				let
+					wrapper,
+					field;
+
+				if (el.length === 3) {
+					field = el[1];
+					wrapper = el[2];
+
+				} else if (Object.isFunction(el[1])) {
+					field = el[0];
+					wrapper = el[1];
+
+				} else {
+					field = el[1];
+				}
+
+				const
+					l = [path, el[0]].join('.');
+
+				if (!$C(linkCache).get(l)) {
+					$C(linkCache).set(true, l);
+					this.execCbAfterCreated(() => {
+						this.$watch(field, (val) => {
+							this.setField(l, wrapper ? wrapper.call(this, val) : val);
+						}, watchParams);
+					});
+
+					const
+						v = this.getField(field),
+						val = () => wrapper ? wrapper.call(this, v) : v;
+
+					syncLinkCache[field] = () => this.setField(l, val());
+					map[el[0]] = val();
+				}
+
+			} else {
+				const
+					l = [path, el].join('.');
+
+				if (!$C(linkCache).get(l)) {
+					$C(linkCache).set(true, l);
+
+					this.execCbAfterCreated(() => {
+						this.$watch(el, (val) => this.setField(l, val), watchParams);
+					});
+
+					syncLinkCache[el] = () => this.setField(l, this.getField(el));
+					map[el] = this.getField(el);
+				}
+			}
+		}
+
+		return obj;
+	}
+
+	/**
+	 * Executes the specified callback after created hook
+	 * @param cb
+	 */
+	protected execCbAfterCreated(cb: Function): void {
+		if (this.blockStatus) {
+			cb();
+
+		} else {
+			this.meta.hooks.created.push({
+				name: Math.random().toString(),
+				fn: cb,
+				after: new Set()
+			});
+		}
 	}
 
 	/**
