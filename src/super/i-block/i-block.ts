@@ -23,7 +23,7 @@ import $C = require('collection.js');
 import Async, { AsyncOpts } from 'core/async';
 import Block, { statuses } from 'super/i-block/modules/block';
 import { EventEmitter2 as EventEmitter } from 'eventemitter2';
-import { component, prop, hook, ModsDecl, VueInterface } from 'core/component';
+import { component, prop, hook, ModVal, ModsDecl, VueInterface } from 'core/component';
 import { field, system } from 'super/i-block/modules/decorators';
 import { queue, backQueue } from 'core/render';
 
@@ -53,7 +53,7 @@ export default class iBlock extends VueInterface<iBlock> {
 	 * Initial block modifiers
 	 */
 	@prop(Object)
-	modsProp: Dictionary<string | number | boolean> = {};
+	modsProp: Dictionary<ModVal> = {};
 
 	/**
 	 * Initial block stage
