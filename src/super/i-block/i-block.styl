@@ -6,13 +6,18 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-@import "super/i-base/i-base.styl"
+@import "nib/positions"
+@import "global/g-def/funcs.styl"
+@import "global/g-def/consts.styl"
 
 $p = {
-	lockHelpers: false
+	lockHelpers: false,
+	onActive: {
+		transform: translate(1px, 1px)
+	}
 }
 
-i-block extends i-base
+i-block
 	position relative
 	box-sizing border-box
 

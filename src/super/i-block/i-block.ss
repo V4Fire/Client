@@ -8,12 +8,18 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-- include 'super/i-base'|b as placeholder
-
 /**
  * Base block template
  */
-- template index() extends ['i-base'].index
+- template index()
+	- blockName = ''
+
+	/**
+	 * Returns the block name
+	 */
+	- block name()
+		- return blockName || /\['(.*?)'\]/.exec(TPL_NAME)[1]
+
 	- rootTag = 'div'
 	- overWrapper = true
 

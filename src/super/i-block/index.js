@@ -6,5 +6,4 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-package('i-block')
-	.extends('i-base');
+package('i-block');
