@@ -8,7 +8,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import VueInterface from './vue';
+import VueInterface from '../../../core/component/vue';
 import { staticComponents } from 'core/component';
 import { mixins } from './decorators';
 import './vue.directives';

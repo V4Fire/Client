@@ -8,7 +8,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { statuses } from 'core/block';
+import { statuses } from 'super/i-block/modules/block';
 import { initEvent, props } from 'core/component';
 
 export const

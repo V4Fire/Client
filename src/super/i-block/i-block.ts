@@ -31,6 +31,8 @@ import * as helpers from 'core/helpers';
 import * as browser from 'core/const/browser';
 
 export * from 'core/component';
+export { statuses } from 'super/i-block/modules/block';
+export { field, system, wait } from 'super/i-block/modules/decorators';
 export type Classes = Dictionary<string | Array<string | true> | true>;
 
 @component()

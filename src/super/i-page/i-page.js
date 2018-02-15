@@ -9,7 +9,7 @@
  */
 
 import Store from 'core/store';
-import Block from 'core/block';
+import Block from 'super/i-block/modules/block';
 import { queue, backQueue } from 'core/render';
 import { setLang, lang } from 'core/i18n';
 import * as helpers from 'core/helpers';

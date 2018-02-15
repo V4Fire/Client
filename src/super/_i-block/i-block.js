@@ -10,7 +10,7 @@
 
 import Async from 'core/async';
 import Store from 'core/store';
-import Block, { statuses } from 'core/block';
+import Block, { statuses } from 'super/i-block/modules/block';
 import BlockConstructor from './modules/constructor';
 import { queue, backQueue } from 'core/render';
 import { component, staticComponents } from 'core/component';
@@ -504,7 +504,7 @@ export default class iBlock extends BlockConstructor {
 	 * Returns a string id, which is connected to the block
 	 * @param id - custom id
 	 */
-	getConnectedId(id: ?string): ?string {
+	getConnectedId(id: string): string {
 		if (!id) {
 			return undefined;
 		}
@@ -1204,7 +1204,7 @@ export default class iBlock extends BlockConstructor {
 	 * @param settings
 	 * @param [key] - block key
 	 */
-	async saveSettings(settings: Object, key?: string = ''): Object {
+	async saveSettings(settings: Object, key: string = ''): Object {
 		try {
 			await localforage.setItem(`${this.componentName}_${this.blockName}_${key}`, settings);
 		} catch (_) {}
@@ -1216,7 +1216,7 @@ export default class iBlock extends BlockConstructor {
 	 * Loads block settings from the local storage
 	 * @param [key] - block key
 	 */
-	async loadSettings(key?: string = ''): ?Object {
+	async loadSettings(key: string = ''): Object {
 		try {
 			return await localforage.getItem(`${this.componentName}_${this.blockName}_${key}`);
 		} catch (_) {}
@@ -1256,7 +1256,7 @@ export default class iBlock extends BlockConstructor {
 		 * @param [wrapper]
 		 * @param [watchParams]
 		 */
-		this.link = function (field: string, wrapper?: Function, watchParams?: Object): any {
+		this.link = function (field: string, wrapper: Function, watchParams: Object): any {
 			const
 				path = this._activeField;
 
