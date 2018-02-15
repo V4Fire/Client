@@ -16,7 +16,6 @@ import Vue, {
 
 } from 'vue';
 
-import VueInterface from 'core/component/vue';
 import inheritMeta from 'core/component/inherit';
 import { getComponent } from 'core/component/component';
 import { InjectOptions } from 'vue/types/options';
@@ -24,7 +23,7 @@ import { EventEmitter2 } from 'eventemitter2';
 
 export * from 'core/component/decorators';
 export { PARENT } from 'core/component/inherit';
-export { default as VueInterface } from 'core/component/vue';
+export { default as VueInterface, VueElement } from 'core/component/vue';
 
 export const
 	initEvent = new EventEmitter2({maxListeners: 1e3}),
@@ -52,7 +51,7 @@ export interface ComponentProp extends PropOptions {
 }
 
 export interface InitFieldFn {
-	<T = VueInterface>(ctx: T): any;
+	(ctx: any): any;
 }
 
 export interface ComponentField {
@@ -110,9 +109,9 @@ export interface ComponentMeta {
 	methods: Dictionary<ComponentMethod>;
 	watchers: Dictionary<WatchOptionsWithHandler<any>[]>;
 	hooks: {[hook in Hooks]: Array<{
-		name: string;
+		name?: string;
 		fn: Function;
-		after: Set<string>
+		after?: Set<string>;
 	}>};
 
 	component: {

@@ -13,10 +13,11 @@ import { ComponentMeta } from 'core/component';
 // tslint:disable:no-empty
 // tslint:disable:typedef
 
+export type VueElement<T> = HTMLElement & {vueComponent?: T};
 export default class VueInterface<B = VueInterface<any, any>, R = VueInterface<any, any>> {
 	readonly instance!: this;
-	readonly selfName!: string;
-	readonly $el!: HTMLElement;
+	readonly componentName!: string;
+	readonly $el!: VueElement<B>;
 	readonly $options!: ComponentOptions<Vue>;
 	readonly $props!: Dictionary;
 	readonly $children!: B[];

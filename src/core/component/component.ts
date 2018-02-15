@@ -75,7 +75,7 @@ export function getComponent(
 				ctx = this as any;
 
 			ctx.meta = meta;
-			ctx.selfName = meta.name;
+			ctx.componentName = meta.name;
 			ctx.instance = instance;
 
 			for (let o = meta.accessors, keys = Object.keys(o), i = 0; i < keys.length; i++) {
@@ -128,6 +128,7 @@ export function getComponent(
 		},
 
 		mounted(): void {
+			this.$el.vueComponent = this;
 			methods.mounted && methods.mounted.fn.call(this);
 			runHook('mounted', meta, this);
 		},
@@ -180,8 +181,8 @@ function runHook(hook: string, meta: ComponentMeta, ctx: Object): void {
 		queue: [] as Function[],
 		events: {} as Dictionary<{event: Set<string>; cb: Function}[]>,
 
-		on(event: Set<string>, cb: Function): void {
-			if (event.size) {
+		on(event: Set<string> | undefined, cb: Function): void {
+			if (event && event.size) {
 				for (let v = event.values(), el = v.next(); !el.done; el = v.next()) {
 					this.events[el.value] = this.events[el.value] || [];
 					this.events[el.value].push({event, cb});
@@ -218,7 +219,7 @@ function runHook(hook: string, meta: ComponentMeta, ctx: Object): void {
 
 		event.on(el.after, () => {
 			el.fn.call(ctx);
-			event.emit(el.name);
+			event.emit(el.name || Math.random().toString());
 		});
 	}
 

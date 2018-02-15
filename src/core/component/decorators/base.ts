@@ -157,11 +157,7 @@ function paramsFactory<T>(
 							};
 
 						} else {
-							hooks[el] = {
-								name,
-								hook: el,
-								after: new Set()
-							};
+							hooks[el] = {name, hook: el};
 						}
 					}
 
