@@ -103,7 +103,7 @@ export const watch = paramsFactory<FieldWatcher | ComponentMethod['watch']>(null
  * @param cluster - property cluster
  * @param [transformer] - transformer for parameters
  */
-function paramsFactory<T>(
+export function paramsFactory<T>(
 	cluster: string | null,
 	transformer?: (params: any, cluster: string) => any
 ): (params?: T) => Function {
