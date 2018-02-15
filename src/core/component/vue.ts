@@ -8,19 +8,23 @@
 
 import Vue, { ComponentOptions, WatchOptions, VNode, CreateElement } from 'vue';
 import { ScopedSlot } from 'vue/types/vnode';
+import { ComponentMeta } from 'core/component';
 
 // tslint:disable:no-empty
 // tslint:disable:typedef
 
-export default class VueInterface {
+export default class VueInterface<R = VueInterface<any>> {
+	readonly instance!: this;
+	readonly selfName!: string;
 	readonly $el!: HTMLElement;
 	readonly $options!: ComponentOptions<Vue>;
 	readonly $props!: Dictionary;
-	readonly $root!: Vue;
+	readonly $root!: R;
 	readonly $isServer!: boolean;
-	protected readonly $parent!: Vue;
-	protected readonly $children!: Vue[];
-	protected readonly $refs!: Dictionary<Vue | HTMLElement | Vue[] | HTMLElement[]>;
+	protected readonly meta!: ComponentMeta;
+	protected readonly $parent!: VueInterface;
+	protected readonly $children!: VueInterface[];
+	protected readonly $refs!: Dictionary<VueInterface | HTMLElement | VueInterface[] | HTMLElement[]>;
 	protected readonly $slots!: Dictionary<VNode[]>;
 	protected readonly $scopedSlots!: Dictionary<ScopedSlot>;
 	protected readonly $data!: Dictionary;
@@ -28,6 +32,7 @@ export default class VueInterface {
 	protected readonly $vnode!: VNode;
 	protected readonly $attrs!: Dictionary<string>;
 	protected readonly $listeners!: Dictionary<Function | Function[]>;
+	protected readonly $activeField!: string;
 	protected $createElement!: CreateElement;
 
 	// @ts-ignore
