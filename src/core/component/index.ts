@@ -6,18 +6,17 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import Async from 'core/async';
 import Vue, {
 
 	PropOptions,
 	WatchOptions,
 	WatchHandler,
 	WatchOptionsWithHandler,
-	ComponentOptions,
 	ComputedOptions
 
 } from 'vue';
 
+import VueInterface from 'core/component/vue';
 import inheritMeta from 'core/component/inherit';
 import { getComponent } from 'core/component/component';
 import { InjectOptions } from 'vue/types/options';
@@ -25,6 +24,7 @@ import { EventEmitter2 } from 'eventemitter2';
 
 export * from 'core/component/decorators';
 export { PARENT } from 'core/component/inherit';
+export { default as VueInterface } from 'core/component/vue';
 
 export const
 	initEvent = new EventEmitter2({maxListeners: 1e3}),
@@ -51,27 +51,8 @@ export interface ComponentProp extends PropOptions {
 	watchers: Map<string | Function, FieldWatcher>;
 }
 
-export interface FieldWrapper<T> {
-	(this: T & InitialComponent<T>, value: any): any;
-}
-
-export type WatchField<T> =
-	string |
-	[string, string] |
-	[string, FieldWrapper<T>] |
-	[string, string, FieldWrapper<T>];
-
-export interface InitialComponent<T> {
-	blockId: string;
-	async: Async<any>;
-	asyncQueue: Set<Function>;
-	localEvent: EventEmitter2;
-	link(field: string, wrapper?: FieldWrapper<T>, watchOptions?: WatchOptions): any;
-	createWatchObject(path: string, fields: Array<WatchField<T>>, watchOptions?: WatchOptions): Dictionary;
-}
-
 export interface InitFieldFn {
-	<O>(component: O & InitialComponent<O>, instance: O): void;
+	<T = VueInterface>(ctx: T): any;
 }
 
 export interface ComponentField {
@@ -89,14 +70,27 @@ export interface MethodWatcher extends WatchOptions {
 	field: string;
 }
 
+export type Hooks =
+	'beforeCreate' |
+	'created' |
+	'beforeMount' |
+	'mounted' |
+	'beforeUpdate' |
+	'updated' |
+	'activated' |
+	'deactivated' |
+	'beforeDestroy' |
+	'destroyed' |
+	'errorCaptured';
+
 export interface ComponentMethod {
 	fn: Function;
 	watchers: Dictionary<MethodWatcher>;
-	hooks: Dictionary<{
+	hooks: {[hook in Hooks]?: {
 		name: string;
 		hook: string;
 		after: Set<string>;
-	}>;
+	}};
 }
 
 export type ModVal = string | boolean | number;
@@ -115,12 +109,17 @@ export interface ComponentMeta {
 	accessors: Dictionary<ComputedOptions<any>>;
 	methods: Dictionary<ComponentMethod>;
 	watchers: Dictionary<WatchOptionsWithHandler<any>[]>;
-	hooks: Dictionary<{name: string; fn: Function; after: Set<string>}[]>;
+	hooks: {[hook in Hooks]: Array<{
+		name: string;
+		fn: Function;
+		after: Set<string>
+	}>};
+
 	component: {
 		name: string;
-		props: ComponentOptions<Vue>['props'];
-		methods: ComponentOptions<Vue>['methods'];
-		computed: ComponentOptions<Vue>['computed'];
+		props: Dictionary<PropOptions>;
+		methods: Dictionary<Function>;
+		computed: Dictionary<ComputedOptions<any>>;
 	}
 }
 
@@ -168,7 +167,19 @@ export function component(params: ComponentParams = {}): Function {
 			accessors: {},
 			methods: {},
 			watchers: {},
-			hooks: {},
+			hooks: {
+				beforeCreate: [],
+				created: [],
+				beforeMount: [],
+				mounted: [],
+				beforeUpdate: [],
+				updated: [],
+				activated: [],
+				deactivated: [],
+				beforeDestroy: [],
+				destroyed: [],
+				errorCaptured: []
+			},
 			component: {
 				name,
 				props: {},
@@ -188,7 +199,7 @@ export function component(params: ComponentParams = {}): Function {
 		if (p.functional) {
 
 		} else {
-			console.log(Vue.component(name, <any>getComponent(target, meta)));
+			Vue.component(name, getComponent(target, meta));
 		}
 
 		if (p.root) {

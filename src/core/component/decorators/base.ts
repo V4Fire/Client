@@ -9,6 +9,7 @@
 import { PropOptions, WatchHandler, WatchOptions } from 'vue';
 import {
 
+	Hooks,
 	initEvent,
 	InitFieldFn,
 	MethodWatcher as MetaMethodWatcher
@@ -33,7 +34,7 @@ export interface ComponentProp extends PropOptions {
  * Marks a class property as a Vue component initial property
  * @decorator
  */
-export const prop = paramsFactory<Function | ComponentProp>('props', (p) => {
+export const prop = paramsFactory<Function | ObjectConstructor | ComponentProp>('props', (p) => {
 	if (Object.isFunction(p)) {
 		return {type: p};
 	}
@@ -71,24 +72,11 @@ export const system = paramsFactory<InitFieldFn | ComponentField>('systemFields'
 	return p;
 });
 
-export type hooks =
-	'beforeCreate' |
-	'created' |
-	'beforeMount' |
-	'mounted' |
-	'beforeUpdate' |
-	'updated' |
-	'activated' |
-	'deactivated' |
-	'beforeDestroy' |
-	'destroyed' |
-	'errorCaptured';
-
-export type HookParams = {[hook in hooks]?: string | string[]};
+export type HookParams = {[hook in Hooks]?: string | string[]};
 export interface ComponentMethod {
 	watch?: Array<string | MetaMethodWatcher>;
 	watchParams?: WatchOptions,
-	hook?: hooks | hooks[] | HookParams | HookParams[];
+	hook?: Hooks | Hooks[] | HookParams | HookParams[];
 }
 
 /**

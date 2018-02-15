@@ -22,15 +22,15 @@ export interface ComponentConstructor<T = any> {
 export function getComponent(
 	constructor: ComponentConstructor,
 	meta: ComponentMeta
-): ComponentOptions<Vue & {$activeField: string}> {
+): ComponentOptions<Vue> {
 	const
 		{mods, component, instance} = getBaseComponent(constructor, meta),
 		{methods} = meta,
 		p = meta.params;
 
 	return {
-		...p.mixins,
-		...component,
+		...<any>p.mixins,
+		...<any>component,
 
 		model: p.model,
 		parent: p.parent,
@@ -38,22 +38,23 @@ export function getComponent(
 		provide: p.provide,
 		inject: p.inject,
 
-		render() {
+		render(): any {
 			return methods.render.fn.call(this, ...arguments);
 		},
 
 		data(): Dictionary {
 			const
+				ctx = this as any,
 				data = {} as Dictionary;
 
 			for (let o = meta.fields, keys = Object.keys(o), i = 0; i < keys.length; i++) {
 				const
-					key = this.$activeField = keys[i],
+					key = ctx.$activeField = keys[i],
 					el = o[key];
 
 				let val;
 				if (el.init) {
-					val = el.init(<any>this, instance);
+					val = el.init(this);
 				}
 
 				// tslint:disable-next-line
@@ -70,6 +71,13 @@ export function getComponent(
 		},
 
 		beforeCreate(): void {
+			const
+				ctx = this as any;
+
+			ctx.meta = meta;
+			ctx.selfName = meta.name;
+			ctx.instance = instance;
+
 			for (let o = meta.accessors, keys = Object.keys(o), i = 0; i < keys.length; i++) {
 				const
 					key = keys[i],
@@ -88,7 +96,7 @@ export function getComponent(
 
 				let val;
 				if (el.init) {
-					val = el.init(<any>this, instance);
+					val = el.init(this);
 				}
 
 				// tslint:disable-next-line
@@ -101,7 +109,7 @@ export function getComponent(
 			}
 
 			methods.beforeCreate && methods.beforeCreate.fn.call(this);
-			runHook('beforeCreate', meta);
+			runHook('beforeCreate', meta, this);
 		},
 
 		created(): void {
@@ -111,47 +119,47 @@ export function getComponent(
 			}
 
 			methods.created && methods.created.fn.call(this);
-			runHook('created', meta);
+			runHook('created', meta, this);
 		},
 
 		beforeMount(): void {
 			methods.beforeMount && methods.beforeMount.fn.call(this);
-			runHook('beforeMount', meta);
+			runHook('beforeMount', meta, this);
 		},
 
 		mounted(): void {
 			methods.mounted && methods.mounted.fn.call(this);
-			runHook('mounted', meta);
+			runHook('mounted', meta, this);
 		},
 
 		beforeUpdate(): void {
 			methods.beforeUpdate && methods.beforeUpdate.fn.call(this);
-			runHook('beforeUpdate', meta);
+			runHook('beforeUpdate', meta, this);
 		},
 
 		updated(): void {
 			methods.updated && methods.updated.fn.call(this);
-			runHook('updated', meta);
+			runHook('updated', meta, this);
 		},
 
 		activated(): void {
 			methods.activated && methods.activated.fn.call(this);
-			runHook('activated', meta);
+			runHook('activated', meta, this);
 		},
 
 		deactivated(): void {
 			methods.deactivated && methods.deactivated.fn.call(this);
-			runHook('deactivated', meta);
+			runHook('deactivated', meta, this);
 		},
 
 		beforeDestroy(): void {
 			methods.beforeDestroy && methods.beforeDestroy.fn.call(this);
-			runHook('beforeDestroy', meta);
+			runHook('beforeDestroy', meta, this);
 		},
 
 		destroyed(): void {
 			methods.destroyed && methods.destroyed.fn.call(this);
-			runHook('destroyed', meta);
+			runHook('destroyed', meta, this);
 		}
 	};
 }
@@ -161,9 +169,10 @@ export function getComponent(
  *
  * @param hook
  * @param meta
+ * @param ctx - link to context
  */
-function runHook(hook: string, meta: ComponentMeta): void {
-	if (!meta.hooks[hook]) {
+function runHook(hook: string, meta: ComponentMeta, ctx: Object): void {
+	if (!meta.hooks[hook].length) {
 		return;
 	}
 
@@ -208,7 +217,7 @@ function runHook(hook: string, meta: ComponentMeta): void {
 			el = hooks[i];
 
 		event.on(el.after, () => {
-			el.fn.call(this);
+			el.fn.call(ctx);
 			event.emit(el.name);
 		});
 	}
@@ -241,14 +250,12 @@ function getBaseComponent(
 			key = keys[i],
 			prop = o[key];
 
-		if (component.props) {
-			component.props[key] = {
-				type: prop.type,
-				required: prop.required,
-				validator: prop.validator,
-				default: prop.default !== undefined ? prop.default : Object.fastClone(instance[key])
-			};
-		}
+		component.props[key] = {
+			type: prop.type,
+			required: prop.required,
+			validator: prop.validator,
+			default: prop.default !== undefined ? prop.default : () => Object.fastClone(instance[key])
+		};
 
 		watchers[key] = watchers[key] || [];
 		for (let w = prop.watchers.values(), el = w.next(); !el.done; el = w.next()) {
@@ -334,9 +341,7 @@ function addMethodsToMeta(constructor: Function, meta: ComponentMeta): void {
 			desc = <PropertyDescriptor>Object.getOwnPropertyDescriptor(proto, key);
 
 		if ('value' in desc) {
-			if (component.methods) {
-				component.methods[key] = desc.value;
-			}
+			component.methods[key] = desc.value;
 
 			// tslint:disable-next-line
 			const method = meta.methods[key] = Object.assign(meta.methods[key] || {watchers: {}, hooks: {}}, {
@@ -361,7 +366,6 @@ function addMethodsToMeta(constructor: Function, meta: ComponentMeta): void {
 					key = keys[i],
 					el = o[key];
 
-				hooks[key] = hooks[key] || [];
 				hooks[key].push({
 					name: el.name,
 					fn: method.fn,
