@@ -16,7 +16,7 @@ const
 
 const
 	deps = dependencies.map((el) => RegExp.escape(el || el.src)),
-	importRgxp = new RegExp(`('|")(${deps.join('|')})(.*?)\\1`);
+	importRgxp = new RegExp(`('|")(${deps.join('|')})(.*?)\\1`, 'g');
 
 /**
  * Monic replacer for TS import declarations
