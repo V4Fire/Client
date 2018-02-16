@@ -6,28 +6,25 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { PropOptions, WatchHandler, WatchOptions } from 'vue';
-import {
+import { PropOptions, WatchOptions } from 'vue';
+import { Hooks, initEvent, InitFieldFn, VueInterface, MethodWatcher } from 'core/component';
 
-	Hooks,
-	initEvent,
-	InitFieldFn,
-	MethodWatcher as MetaMethodWatcher
-
-} from 'core/component';
-
-export interface FieldWatcherObject extends WatchOptions {
-	fn: string | WatchHandler<any>;
+export interface WatchHandler<T, A, B> {
+	(this: T, value: A, oldValue: B): any;
 }
 
-export type FieldWatcher =
-	string |
-	FieldWatcherObject |
-	WatchHandler<any> |
-	Array<string | FieldWatcherObject | WatchHandler<any>>;
+export interface FieldWatcherObject<T, A, B> extends WatchOptions {
+	fn: string | WatchHandler<T, A, B>;
+}
 
-export interface ComponentProp extends PropOptions {
-	watch?: FieldWatcher;
+export type FieldWatcher<T = VueInterface, A = any, B = A> =
+	string |
+	FieldWatcherObject<T, A, B> |
+	WatchHandler<T, A, B> |
+	Array<string | FieldWatcherObject<T, A, B> | WatchHandler<T, A, B>>;
+
+export interface ComponentProp<T = VueInterface, A = any, B = A> extends PropOptions {
+	watch?: FieldWatcher<T, A, B>;
 }
 
 /**
@@ -42,9 +39,9 @@ export const prop = paramsFactory<Function | ObjectConstructor | ComponentProp>(
 	return p;
 });
 
-export interface ComponentField {
+export interface ComponentField<T = VueInterface, A = any, B = A> {
 	default?: any;
-	watch?: FieldWatcher;
+	watch?: FieldWatcher<T, A, B>;
 	init?: InitFieldFn;
 }
 
@@ -73,10 +70,13 @@ export const system = paramsFactory<InitFieldFn | ComponentField>('systemFields'
 });
 
 export type HookParams = {[hook in Hooks]?: string | string[]};
+export type MethodWatchers = Array<string | MethodWatcher>;
+export type ComponentHooks = Hooks | Hooks[] | HookParams | HookParams[];
+
 export interface ComponentMethod {
-	watch?: Array<string | MetaMethodWatcher>;
+	watch?: MethodWatchers;
 	watchParams?: WatchOptions,
-	hook?: Hooks | Hooks[] | HookParams | HookParams[];
+	hook?: ComponentHooks;
 }
 
 /**
@@ -89,13 +89,13 @@ export const p = paramsFactory<ComponentProp | ComponentField | ComponentMethod>
  * Attaches a hook listener to a method
  * @decorator
  */
-export const hook = paramsFactory<ComponentMethod['hook']>(null, (hook) => ({hook}));
+export const hook = paramsFactory<ComponentHooks>(null, (hook) => ({hook}));
 
 /**
  * Attaches a watch listener to a method or a field
  * @decorator
  */
-export const watch = paramsFactory<FieldWatcher | ComponentMethod['watch']>(null, (watch) => ({watch}));
+export const watch = paramsFactory<FieldWatcher | MethodWatchers>(null, (watch) => ({watch}));
 
 /**
  * Factory for creating component property decorators

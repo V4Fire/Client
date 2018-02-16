@@ -24,8 +24,10 @@ export function getComponent(
 	meta: ComponentMeta
 ): ComponentOptions<Vue> {
 	const
-		{mods, component, instance} = getBaseComponent(constructor, meta),
-		{methods} = meta,
+		{component, instance} = getBaseComponent(constructor, meta),
+		{methods} = meta;
+
+	const
 		p = meta.params;
 
 	return {
@@ -66,7 +68,6 @@ export function getComponent(
 				}
 			}
 
-			data.mods = mods;
 			return data;
 		},
 
