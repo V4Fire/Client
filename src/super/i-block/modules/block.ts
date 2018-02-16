@@ -76,15 +76,13 @@ export default class Block<T extends iBlock> {
 		}
 
 		this.blockStatus = value = value in this.statuses ? value : 0;
-		this.localEvent.emit(`block.status.${this.statuses[value]}`, value);
 
-		if (this.model) {
-			if (this.model.emit) {
-				this.model.emit(`status-${this.statuses[value]}`, value);
-			}
+		const
+			stringStatus = this.statuses[value];
 
-			this.model.blockStatus = value;
-		}
+		this.model.blockStatus = stringStatus;
+		this.localEvent.emit(`block.status.${stringStatus}`, value);
+		this.model.emit(`status-${stringStatus}`, value);
 	}
 
 	/**

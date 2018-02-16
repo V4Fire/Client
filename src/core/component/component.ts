@@ -114,8 +114,13 @@ export function getComponent(
 
 		created(): void {
 			for (let o = meta.watchers, keys = Object.keys(o), i = 0; i < keys.length; i++) {
-				const key = keys[i];
-				this.$watch(key, o[key]);
+				const
+					key = keys[i],
+					watchers = o[key];
+
+				for (let i = 0; i < watchers.length; i++) {
+					this.$watch(key, watchers[i]);
+				}
 			}
 
 			methods.created && methods.created.fn.call(this);
@@ -276,11 +281,11 @@ function getBaseComponent(
 			key = keys[i],
 			field = o[key];
 
-		watchers[key] = watchers[key] || [];
 		for (let w = field.watchers.values(), el = w.next(); !el.done; el = w.next()) {
 			const
 				val = el.value;
 
+			watchers[key] = watchers[key] || [];
 			watchers[key].push({
 				deep: val.deep,
 				immediate: val.immediate,
