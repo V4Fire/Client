@@ -89,7 +89,7 @@ export default class iBlock extends VueInterface<iBlock> {
 	 * Block initialize status
 	 */
 	@field()
-	blockStatus: number = statuses.unloaded;
+	blockStatus: string = statuses[statuses.unloaded];
 
 	/**
 	 * Block modifiers
@@ -184,11 +184,11 @@ export default class iBlock extends VueInterface<iBlock> {
 					}
 				}
 
-				this.block = new Block<iBlock>({
+				ctx.block = new Block<iBlock>({
 					id: ctx.blockId,
 					node: ctx.$el,
-					async: this.async,
-					localEvent: this.localEvent,
+					async: ctx.async,
+					localEvent: ctx.localEvent,
 					mods: {},
 					model: ctx
 				});
@@ -765,7 +765,7 @@ export default class iBlock extends VueInterface<iBlock> {
 	 * @param cb
 	 */
 	private execCbAfterCreated(cb: Function): void {
-		if (this.blockStatus) {
+		if (statuses[this.blockStatus]) {
 			cb();
 
 		} else {
