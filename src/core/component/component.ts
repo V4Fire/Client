@@ -56,7 +56,7 @@ export function getComponent(
 
 				let val;
 				if (el.init) {
-					val = el.init(this);
+					val = el.init(ctx);
 				}
 
 				// tslint:disable-next-line
@@ -97,7 +97,7 @@ export function getComponent(
 
 				let val;
 				if (el.init) {
-					val = el.init(this);
+					val = el.init(ctx);
 				}
 
 				// tslint:disable-next-line
@@ -120,7 +120,8 @@ export function getComponent(
 					watchers = o[key];
 
 				for (let i = 0; i < watchers.length; i++) {
-					this.$watch(key, watchers[i]);
+					const el = watchers[i];
+					this.$watch(key, {...el, handler: (a, b) => el.handler(this, a, b)});
 				}
 			}
 

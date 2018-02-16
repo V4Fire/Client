@@ -8,7 +8,7 @@
 
 import iBlock, { statuses } from 'super/i-block/i-block';
 import { AsyncOpts } from 'core/async';
-import { InitFieldFn as InitFieldFn } from 'core/component'
+import { InitFieldFn as BaseInitFieldFn } from 'core/component'
 
 import {
 
@@ -27,7 +27,7 @@ import {
 
 } from 'core/component/decorators/base';
 
-export interface InitFieldFn<T = iBlock> extends InitFieldFn<T> {}
+export interface InitFieldFn<T = iBlock> extends BaseInitFieldFn<T> {}
 export type FieldWatcher<T = iBlock, A = any, B = A> = BaseFieldWatcher<T, A, B>;
 export interface ComponentProp<T = iBlock, A = any, B = A> extends BaseComponentProp<T, A, B> {}
 export interface ComponentField<T = iBlock, A = any, B = A> extends BaseComponentField<T, A, B> {}

@@ -10,7 +10,7 @@ import { PropOptions, WatchOptions } from 'vue';
 import { Hooks, initEvent, InitFieldFn, VueInterface, MethodWatcher } from 'core/component';
 
 export interface WatchHandler<T, A, B> {
-	(this: T, value: A, oldValue: B): any;
+	(ctx: T, value: A, oldValue: B): any;
 }
 
 export interface FieldWatcherObject<T, A, B> extends WatchOptions {

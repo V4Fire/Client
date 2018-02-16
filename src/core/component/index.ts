@@ -11,7 +11,6 @@ import Vue, {
 	PropOptions,
 	WatchOptions,
 	WatchHandler,
-	WatchOptionsWithHandler,
 	ComputedOptions
 
 } from 'vue';
@@ -66,6 +65,10 @@ export interface SystemField<T = VueInterface> {
 	init?: InitFieldFn<T>;
 }
 
+export interface WatchOptionsWithHandler<T = VueInterface, A = any, B = A> extends WatchOptions {
+	handler(ctx: T, a: A, b: B): any;
+}
+
 export interface MethodWatcher extends WatchOptions {
 	field: string;
 }
@@ -108,7 +111,7 @@ export interface ComponentMeta {
 	computed: Dictionary<ComputedOptions<any>>;
 	accessors: Dictionary<ComputedOptions<any>>;
 	methods: Dictionary<ComponentMethod>;
-	watchers: Dictionary<WatchOptionsWithHandler<any>[]>;
+	watchers: Dictionary<WatchOptionsWithHandler[]>;
 	hooks: {[hook in Hooks]: Array<{
 		name?: string;
 		fn: Function;

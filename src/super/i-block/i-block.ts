@@ -143,13 +143,6 @@ export default class iBlock extends VueInterface<iBlock> {
 	 * Store of block modifiers
 	 */
 
-	@watch({
-		immediate: true,
-		fn(this: {a: 1}) {
-			console.log(222, this.async);
-		}
-	})
-
 	@field((o) => o.link('modsProp', (val) => {
 		o.modsStore = o.modsStore || Object.assign(o.meta.mods);
 		return Object.assign(o.modsStore, val)
