@@ -42,7 +42,7 @@ export const prop = paramsFactory<Function | ObjectConstructor | ComponentProp>(
 export interface ComponentField<T = VueInterface, A = any, B = A> {
 	default?: any;
 	watch?: FieldWatcher<T, A, B>;
-	init?: InitFieldFn;
+	init?: InitFieldFn<T>;
 }
 
 /**

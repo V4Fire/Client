@@ -17,6 +17,7 @@ import Vue, {
 } from 'vue';
 
 import inheritMeta from 'core/component/inherit';
+import VueInterface from 'core/component/vue';
 import { getComponent } from 'core/component/component';
 import { InjectOptions } from 'vue/types/options';
 import { EventEmitter2 } from 'eventemitter2';
@@ -50,19 +51,19 @@ export interface ComponentProp extends PropOptions {
 	watchers: Map<string | Function, FieldWatcher>;
 }
 
-export interface InitFieldFn {
-	(ctx: any): any;
+export interface InitFieldFn<T = VueInterface> {
+	(ctx: T): any;
 }
 
-export interface ComponentField {
+export interface ComponentField<T = VueInterface> {
+	default?: any;
 	watchers: Map<string | Function, FieldWatcher>;
-	default?: any;
-	init?: InitFieldFn;
+	init?: InitFieldFn<T>;
 }
 
-export interface SystemField {
+export interface SystemField<T = VueInterface> {
 	default?: any;
-	init?: InitFieldFn;
+	init?: InitFieldFn<T>;
 }
 
 export interface MethodWatcher extends WatchOptions {

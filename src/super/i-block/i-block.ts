@@ -23,8 +23,8 @@ import $C = require('collection.js');
 import Async, { AsyncOpts } from 'core/async';
 import Block, { statuses } from 'super/i-block/modules/block';
 import { EventEmitter2 as EventEmitter } from 'eventemitter2';
-import { component, prop, hook, ModVal, ModsDecl, VueInterface } from 'core/component';
-import { field, system } from 'super/i-block/modules/decorators';
+import { component, hook, ModVal, ModsDecl, VueInterface } from 'core/component';
+import { prop, field, system, watch } from 'super/i-block/modules/decorators';
 import { queue, backQueue } from 'core/render';
 
 import * as helpers from 'core/helpers';
@@ -32,8 +32,12 @@ import * as browser from 'core/const/browser';
 
 export * from 'core/component';
 export { statuses } from 'super/i-block/modules/block';
-export { field, system, wait } from 'super/i-block/modules/decorators';
+export { prop, field, system, watch, wait } from 'super/i-block/modules/decorators';
 export type Classes = Dictionary<string | Array<string | true> | true>;
+
+export interface LinkWrapper {
+	(this: this, value: any): any;
+}
 
 @component()
 export default class iBlock extends VueInterface<iBlock> {
@@ -134,6 +138,24 @@ export default class iBlock extends VueInterface<iBlock> {
 			'auto'
 		]
 	};
+
+	/**
+	 * Store of block modifiers
+	 */
+
+	@watch({
+		immediate: true,
+		fn(this: {a: 1}) {
+			console.log(222, this.async);
+		}
+	})
+
+	@field((o) => o.link('modsProp', (val) => {
+		o.modsStore = o.modsStore || Object.assign(o.meta.mods);
+		return Object.assign(o.modsStore, val)
+	}))
+
+	protected modsStore!: Dictionary<ModVal>;
 
 	/**
 	 * Cache of ifOnce
@@ -257,6 +279,46 @@ export default class iBlock extends VueInterface<iBlock> {
 	 */
 	@system(() => location)
 	protected location!: Location;
+
+	/**
+	 * Block modifiers
+	 */
+	protected get mods(): Dictionary {
+		const
+			obj = this.modsStore,
+			map = {};
+
+		for (let keys = Object.keys(obj), i = 0; i < keys.length; i++) {
+			const
+				key = keys[i],
+				el = obj[key];
+
+			map[key] = el != null ? String(el) : el;
+		}
+
+		return map;
+	}
+
+	/**
+	 * Sets an object of modifiers
+	 * @param value
+	 */
+	protected set mods(value: Dictionary) {
+		this.modsStore = value;
+	}
+
+	/**
+	 * Base block modifiers
+	 */
+	get baseMods(): Dictionary<string> {
+		const
+			m = this.mods;
+
+		return {
+			theme: m.theme,
+			size: m.size
+		};
+	}
 
 	/**
 	 * Cache for prop/field links
@@ -509,7 +571,7 @@ export default class iBlock extends VueInterface<iBlock> {
 	 * @param [wrapper]
 	 * @param [watchParams]
 	 */
-	protected link(field: string, wrapper: (this: this) => any, watchParams: Object): any {
+	protected link(field: string, wrapper?: LinkWrapper, watchParams?: Object): any {
 		const
 			path = this.$activeField;
 
@@ -536,7 +598,7 @@ export default class iBlock extends VueInterface<iBlock> {
 	 */
 	protected createWatchObject(
 		path: string,
-		fields: Array<string | [string] | [string, (this: this) => any] | [string, string, (this: this) => any]>,
+		fields: Array<string | [string] | [string, LinkWrapper] | [string, string, LinkWrapper]>,
 		watchParams?: Object
 	): Object {
 		const

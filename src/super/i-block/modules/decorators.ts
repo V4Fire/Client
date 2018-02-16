@@ -8,22 +8,41 @@
 
 import iBlock, { statuses } from 'super/i-block/i-block';
 import { AsyncOpts } from 'core/async';
+import { InitFieldFn as InitFieldFn } from 'core/component'
 
 import {
 
+	ComponentMethod,
+	MethodWatchers,
+
+	p as pDecorator,
+	prop as propDecorator,
 	field as fieldDecorator,
 	system as systemDecorator,
+	watch as watchDecorator,
+
+	FieldWatcher as BaseFieldWatcher,
+	ComponentProp as BaseComponentProp,
 	ComponentField as BaseComponentField
 
 } from 'core/component/decorators/base';
 
-export interface InitFieldFn {
-	(ctx: iBlock): any;
-}
+export interface InitFieldFn<T = iBlock> extends InitFieldFn<T> {}
+export type FieldWatcher<T = iBlock, A = any, B = A> = BaseFieldWatcher<T, A, B>;
+export interface ComponentProp<T = iBlock, A = any, B = A> extends BaseComponentProp<T, A, B> {}
+export interface ComponentField<T = iBlock, A = any, B = A> extends BaseComponentField<T, A, B> {}
 
-export interface ComponentField extends BaseComponentField {
-	init?: InitFieldFn;
-}
+/**
+ * @see core/component/decorators/base.ts
+ * @override
+ */
+export const p = pDecorator as (params?: ComponentProp | ComponentField | ComponentMethod) => Function;
+
+/**
+ * @see core/component/decorators/base.ts
+ * @override
+ */
+export const prop = propDecorator as (params?: Function | ObjectConstructor | ComponentProp) => Function;
 
 /**
  * @see core/component/decorators/base.ts
@@ -36,6 +55,12 @@ export const field = fieldDecorator as (params?: InitFieldFn | ComponentField) =
  * @override
  */
 export const system = systemDecorator as (params?: InitFieldFn | ComponentField) => Function;
+
+/**
+ * @see core/component/decorators/base.ts
+ * @override
+ */
+export const watch = watchDecorator as (params?: FieldWatcher | MethodWatchers) => Function;
 
 /**
  * Decorates a method or a function for using with the specified init status
