@@ -200,35 +200,7 @@ export default class iBlock extends VueInterface<iBlock> {
 	/**
 	 * API for BEM like develop
 	 */
-	@system((ctx) => {
-		ctx.meta.hooks.mounted.push({
-			name: 'initBlockInstance',
-			fn: () => {
-				if (ctx.block) {
-					const
-						{node} = ctx.block;
-
-					if (node === ctx.$el) {
-						return;
-					}
-
-					if (node && node.vueComponent === ctx) {
-						delete node.vueComponent;
-					}
-				}
-
-				ctx.block = new Block<iBlock>({
-					id: ctx.blockId,
-					node: ctx.$el,
-					async: ctx.async,
-					localEvent: ctx.localEvent,
-					mods: {},
-					model: ctx
-				});
-			}
-		});
-	})
-
+	@system()
 	protected block!: Block<this>;
 
 	/**
@@ -1172,6 +1144,34 @@ export default class iBlock extends VueInterface<iBlock> {
 		}
 
 		return map;
+	}
+
+	/**
+	 * Initializes block instance
+	 */
+	@hook('mounted')
+	protected initBlockInstance(): void {
+		if (this.block) {
+			const
+				{node} = this.block;
+
+			if (node === this.$el) {
+				return;
+			}
+
+			if (node && node.vueComponent === this) {
+				delete node.vueComponent;
+			}
+		}
+
+		this.block = new Block({
+			id: this.blockId,
+			node: this.$el,
+			async: this.async,
+			localEvent: this.localEvent,
+			mods: {},
+			model: this
+		});
 	}
 
 	/**
