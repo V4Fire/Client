@@ -452,6 +452,7 @@ export default class iBlock extends VueInterface<iBlock> {
 	 * @emits initLoad()
 	 */
 	@wait('loading')
+	@hook('mounted')
 	initLoad(): void {
 		this.block.status = this.block.statuses.ready;
 		this.emit('initLoad');
@@ -1171,9 +1172,46 @@ export default class iBlock extends VueInterface<iBlock> {
 	}
 
 	/**
+	 * Initializes modifiers event listeners
+	 */
+	@hook('created')
+	protected initModEvents(): void {
+		const
+			{async: $a, localEvent: $e} = this;
+
+		$e.on('block.mod.set.**', (e) => this.$set(this.modsStore, e.name, e.value));
+		$e.on('block.mod.remove.**', (e) => this.$set(this.modsStore, e.name, undefined));
+		$e.on('block.mod.*.disabled.*', (e) => {
+			if (e.value === 'false' || e.type === 'remove') {
+				$a.off({group: 'blockOnDisable'});
+
+			} else {
+				const handler = (e) => {
+					e.preventDefault();
+					e.stopImmediatePropagation();
+				};
+
+				$a.on(this.$el, 'click mousedown touchstart keydown input change scroll', handler, {
+					group: 'blockOnDisable',
+					options: {
+						capture: true
+					}
+				});
+			}
+		});
+	}
+
+	/**
+	 * Block created
+	 */
+	protected created(): void {
+		this.localEvent.emit('component.created');
+	}
+
+	/**
 	 * Block mounted to DOM
 	 */
-	protected mounted(): void {
+	protected async mounted(): Promise<void> {
 		this.localEvent.emit('component.mounted');
 	}
 
