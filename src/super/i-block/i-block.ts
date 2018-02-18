@@ -6,19 +6,6 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import Vue from 'vue';
-import '@v4fire/core/core';
-
-document.addEventListener('DOMContentLoaded', () =>
-	new Vue(<any>{
-		data: {},
-		el: document.getElementById('bla'),
-		render(el: any): any {
-			return el('i-block');
-		}
-	})
-);
-
 import $C = require('collection.js');
 import symbolGenerator from 'core/symbol';
 import Async, { AsyncOpts } from 'core/async';
@@ -320,10 +307,6 @@ export default class iBlock extends VueInterface<iBlock> {
 	 */
 	@system(() => Object.createDict())
 	private syncLinkCache!: Dictionary<Function>;
-
-	render(el: any): any {
-		return el('span', '121');
-	}
 
 	/**
 	 * Returns a string id, which is connected to the block
