@@ -17,13 +17,13 @@ export interface FieldWatcherObject<T, A, B> extends WatchOptions {
 	fn: string | WatchHandler<T, A, B>;
 }
 
-export type FieldWatcher<T = VueInterface, A = any, B = A> =
+export type FieldWatcher<T extends VueInterface = VueInterface, A = any, B = A> =
 	string |
 	FieldWatcherObject<T, A, B> |
 	WatchHandler<T, A, B> |
 	Array<string | FieldWatcherObject<T, A, B> | WatchHandler<T, A, B>>;
 
-export interface ComponentProp<T = VueInterface, A = any, B = A> extends PropOptions {
+export interface ComponentProp<T extends VueInterface = VueInterface, A = any, B = A> extends PropOptions {
 	watch?: FieldWatcher<T, A, B>;
 }
 
@@ -39,7 +39,7 @@ export const prop = paramsFactory<Function | ObjectConstructor | ComponentProp>(
 	return p;
 });
 
-export interface ComponentField<T = VueInterface, A = any, B = A> {
+export interface ComponentField<T extends VueInterface = VueInterface, A = any, B = A> {
 	default?: any;
 	watch?: FieldWatcher<T, A, B>;
 	init?: InitFieldFn<T>;
@@ -70,7 +70,7 @@ export const system = paramsFactory<InitFieldFn | ComponentField>('systemFields'
 });
 
 export type HookParams = {[hook in Hooks]?: string | string[]};
-export type MethodWatchers = Array<string | MethodWatcher>;
+export type MethodWatchers = string | MethodWatcher | Array<string | MethodWatcher>;
 export type ComponentHooks = Hooks | Hooks[] | HookParams | HookParams[];
 
 export interface ComponentMethod {

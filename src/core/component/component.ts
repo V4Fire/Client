@@ -121,7 +121,7 @@ export function getComponent(
 
 				for (let i = 0; i < watchers.length; i++) {
 					const el = watchers[i];
-					this.$watch(key, {...el, handler: (a, b) => el.handler(this, a, b)});
+					this.$watch(key, {...el, handler: el.method ? el.handler : (a, b) => el.handler(this, a, b)});
 				}
 			}
 
@@ -365,7 +365,8 @@ function addMethodsToMeta(constructor: Function, meta: ComponentMeta): void {
 				watchers[key].push({
 					deep: el.deep,
 					immediate: el.immediate,
-					handler: method.fn
+					handler: method.fn,
+					method: true
 				});
 			}
 

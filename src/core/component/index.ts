@@ -50,22 +50,24 @@ export interface ComponentProp extends PropOptions {
 	watchers: Map<string | Function, FieldWatcher>;
 }
 
-export interface InitFieldFn<T = VueInterface> {
+export interface InitFieldFn<T extends VueInterface = VueInterface> {
 	(ctx: T): any;
 }
 
-export interface ComponentField<T = VueInterface> {
+export interface ComponentField<T extends VueInterface = VueInterface> {
 	default?: any;
 	watchers: Map<string | Function, FieldWatcher>;
 	init?: InitFieldFn<T>;
 }
 
-export interface SystemField<T = VueInterface> {
+export interface SystemField<T extends VueInterface = VueInterface> {
 	default?: any;
 	init?: InitFieldFn<T>;
 }
 
-export interface WatchOptionsWithHandler<T = VueInterface, A = any, B = A> extends WatchOptions {
+export interface WatchOptionsWithHandler<T extends VueInterface = VueInterface, A = any, B = A> extends WatchOptions {
+	method?: true;
+	handler(a: A, b: B): any;
 	handler(ctx: T, a: A, b: B): any;
 }
 
