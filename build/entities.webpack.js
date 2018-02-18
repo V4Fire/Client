@@ -158,7 +158,7 @@ module.exports = (async () => {
 					block = blockMap.get(name),
 					style = block && await block.styles;
 
-				if (!isParent && style.length && !blackName.test(name)) {
+				if (!isParent && style && style.length && !blackName.test(name)) {
 					$C(style).forEach((url) => {
 						str += `@import "${getUrl(url)}"\n`;
 					});
