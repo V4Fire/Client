@@ -109,8 +109,8 @@ export function getComponent(
 				}
 			}
 
-			methods.beforeCreate && methods.beforeCreate.fn.call(this);
 			runHook('beforeCreate', meta, this);
+			methods.beforeCreate && methods.beforeCreate.fn.call(this);
 		},
 
 		created(): void {
@@ -125,49 +125,49 @@ export function getComponent(
 				}
 			}
 
-			methods.created && methods.created.fn.call(this);
 			runHook('created', meta, this);
+			methods.created && methods.created.fn.call(this);
 		},
 
 		beforeMount(): void {
-			methods.beforeMount && methods.beforeMount.fn.call(this);
 			runHook('beforeMount', meta, this);
+			methods.beforeMount && methods.beforeMount.fn.call(this);
 		},
 
 		mounted(): void {
 			this.$el.vueComponent = this;
-			methods.mounted && methods.mounted.fn.call(this);
 			runHook('mounted', meta, this);
+			methods.mounted && methods.mounted.fn.call(this);
 		},
 
 		beforeUpdate(): void {
-			methods.beforeUpdate && methods.beforeUpdate.fn.call(this);
 			runHook('beforeUpdate', meta, this);
+			methods.beforeUpdate && methods.beforeUpdate.fn.call(this);
 		},
 
 		updated(): void {
-			methods.updated && methods.updated.fn.call(this);
 			runHook('updated', meta, this);
+			methods.updated && methods.updated.fn.call(this);
 		},
 
 		activated(): void {
-			methods.activated && methods.activated.fn.call(this);
 			runHook('activated', meta, this);
+			methods.activated && methods.activated.fn.call(this);
 		},
 
 		deactivated(): void {
-			methods.deactivated && methods.deactivated.fn.call(this);
 			runHook('deactivated', meta, this);
+			methods.deactivated && methods.deactivated.fn.call(this);
 		},
 
 		beforeDestroy(): void {
-			methods.beforeDestroy && methods.beforeDestroy.fn.call(this);
 			runHook('beforeDestroy', meta, this);
+			methods.beforeDestroy && methods.beforeDestroy.fn.call(this);
 		},
 
 		destroyed(): void {
-			methods.destroyed && methods.destroyed.fn.call(this);
 			runHook('destroyed', meta, this);
+			methods.destroyed && methods.destroyed.fn.call(this);
 		}
 	};
 }
