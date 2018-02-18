@@ -8,7 +8,7 @@
 
 import iBlock, { statuses } from 'super/i-block/i-block';
 import { AsyncOpts } from 'core/async';
-import { InitFieldFn as BaseInitFieldFn } from 'core/component'
+import { InitFieldFn as BaseInitFieldFn } from 'core/component';
 
 import {
 
@@ -27,10 +27,10 @@ import {
 
 } from 'core/component/decorators/base';
 
-export interface InitFieldFn<T = iBlock> extends BaseInitFieldFn<T> {}
-export type FieldWatcher<T = iBlock, A = any, B = A> = BaseFieldWatcher<T, A, B>;
-export interface ComponentProp<T = iBlock, A = any, B = A> extends BaseComponentProp<T, A, B> {}
-export interface ComponentField<T = iBlock, A = any, B = A> extends BaseComponentField<T, A, B> {}
+export interface InitFieldFn<T extends iBlock = iBlock> extends BaseInitFieldFn<T> {}
+export type FieldWatcher<T extends iBlock = iBlock, A = any, B = A> = BaseFieldWatcher<T, A, B>;
+export interface ComponentProp<T extends iBlock = iBlock, A = any, B = A> extends BaseComponentProp<T, A, B> {}
+export interface ComponentField<T extends iBlock = iBlock, A = any, B = A> extends BaseComponentField<T, A, B> {}
 
 /**
  * @see core/component/decorators/base.ts
@@ -72,18 +72,22 @@ export const watch = watchDecorator as (params?: FieldWatcher | MethodWatchers) 
  *   *) [params.fn] - callback function
  *   *) [params.defer] - if true, then the function will always return a promise
  */
-export function wait(
+export function wait<T = any, B extends iBlock = iBlock>(
 	status: number | string,
-	params: AsyncOpts & {fn?: Function; defer?: boolean | number} | Function
+	params?: AsyncOpts & {fn?: Function; defer?: boolean | number} | Function
 
-) {
+): Function {
+	// tslint:disable:prefer-const
+
 	let {
 		join,
 		label,
 		group,
 		defer,
 		fn
-	} = typeof params !== 'function' ? params : <Dictionary>{};
+	} = params && typeof params !== 'function' ? params : <Dictionary>{};
+
+	// tslint:enable:prefer-const
 
 	if (Object.isString(status)) {
 		status = statuses[status];
@@ -92,8 +96,7 @@ export function wait(
 	let
 		handler = <Function>(fn || params);
 
-	/** @this {iBlock} */
-	function wrapper() {
+	function wrapper(this: B): T | Promise<T> | undefined {
 		const
 			args = arguments;
 
@@ -102,14 +105,15 @@ export function wait(
 		}
 
 		const
+			// @ts-ignore
 			{async: $a, block: $b} = this,
 			p = {join, label, group};
 
-		function reject(err) {
+		const reject = (err) => {
 			if (err.type !== 'clear') {
 				throw err;
 			}
-		}
+		};
 
 		if ($b) {
 			if (status > 0 && $b.status < 0) {
@@ -132,10 +136,11 @@ export function wait(
 			}
 		}
 
-		return $a.promise(
-			new Promise((resolve) =>
-				this.localEvent.once(`block.status.${statuses[status]}`, () => resolve(handler.apply(this, args)))
-			),
+		return $a.promise<any>(
+			new Promise((resolve) => {
+				// @ts-ignore
+				this.localEvent.once(`block.status.${statuses[status]}`, () => resolve(handler.apply(this, args)));
+			}),
 
 			p
 		).catch(reject);
@@ -145,8 +150,8 @@ export function wait(
 		return wrapper;
 	}
 
-	return (target, key, descriptors) => {
+	return <any>((target, key, descriptors) => {
 		handler = descriptors.value;
 		descriptors.value = wrapper;
-	};
+	});
 }

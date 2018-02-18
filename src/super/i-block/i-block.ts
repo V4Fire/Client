@@ -20,12 +20,14 @@ document.addEventListener('DOMContentLoaded', () =>
 );
 
 import $C = require('collection.js');
+import symbolGenerator from 'core/symbol';
 import Async, { AsyncOpts } from 'core/async';
 import Block, { statuses } from 'super/i-block/modules/block';
 import { EventEmitter2 as EventEmitter } from 'eventemitter2';
-import { component, hook, ModVal, ModsDecl, VueInterface } from 'core/component';
-import { prop, field, system, watch } from 'super/i-block/modules/decorators';
+import { component, hook, ModVal, ModsDecl, VueInterface, VueElement } from 'core/component';
+import { prop, field, system, watch, wait } from 'super/i-block/modules/decorators';
 import { queue, backQueue } from 'core/render';
+import { delegate } from 'core/dom';
 
 import * as helpers from 'core/helpers';
 import * as browser from 'core/const/browser';
@@ -38,6 +40,12 @@ export type Classes = Dictionary<string | Array<string | true> | true>;
 export interface LinkWrapper {
 	(this: this, value: any): any;
 }
+
+export const
+	$$ = symbolGenerator();
+
+const
+	classesCache = Object.createDict();
 
 @component()
 export default class iBlock extends VueInterface<iBlock> {
@@ -90,12 +98,6 @@ export default class iBlock extends VueInterface<iBlock> {
 	p: Dictionary = {};
 
 	/**
-	 * Block initialize status
-	 */
-	@field()
-	blockStatus: string = statuses[statuses.unloaded];
-
-	/**
 	 * Block modifiers
 	 */
 	static mods: ModsDecl = {
@@ -140,12 +142,25 @@ export default class iBlock extends VueInterface<iBlock> {
 	};
 
 	/**
+	 * Block initialize status
+	 */
+	@field()
+	protected blockStatus: string = statuses[statuses.unloaded];
+
+	/**
+	 * Active status
+	 * (for keep alive)
+	 */
+	@field()
+	protected blockActivated: boolean = true;
+
+	/**
 	 * Store of block modifiers
 	 */
-
 	@field((o) => o.link('modsProp', (val) => {
-		o.modsStore = o.modsStore || Object.assign(o.meta.mods);
-		return Object.assign(o.modsStore, val)
+		o.modsStore = o.modsStore || {...o.meta.mods};
+		// tslint:disable-next-line
+		return Object.assign(o.modsStore, val);
 	}))
 
 	protected modsStore!: Dictionary<ModVal>;
@@ -185,7 +200,7 @@ export default class iBlock extends VueInterface<iBlock> {
 	 */
 	@system((ctx) => {
 		ctx.meta.hooks.mounted.push({
-			fn() {
+			fn: () => {
 				if (ctx.block) {
 					const
 						{node} = ctx.block;
@@ -218,6 +233,12 @@ export default class iBlock extends VueInterface<iBlock> {
 	 */
 	@system(() => new EventEmitter({maxListeners: 100, wildcard: true}))
 	protected localEvent!: EventEmitter;
+
+	/**
+	 * Storage object
+	 */
+	@system(() => localStorage)
+	protected storage!: Storage;
 
 	/**
 	 * Async loading state
@@ -409,6 +430,347 @@ export default class iBlock extends VueInterface<iBlock> {
 	 */
 	off(event?: string, cb?: Function): void {
 		this.$off(event && event.dasherize(), cb);
+	}
+
+	/**
+	 * Wrapper for @wait
+	 *
+	 * @see Async.promise
+	 * @param state
+	 * @param fn
+	 * @param [params] - additional parameters:
+	 *   *) [params.defer] - if true, then the function will always return a promise
+	 */
+	waitState<T>(state: number | string, fn: () => T, params?: AsyncOpts & {defer?: boolean}): Promise<T> {
+		params = params || {};
+		params.join = false;
+		return wait(state, {fn, ...params}).call(this);
+	}
+
+	/**
+	 * Loads block data
+	 * @emits initLoad()
+	 */
+	@wait('loading')
+	initLoad(): void {
+		this.block.status = this.block.statuses.ready;
+		this.emit('initLoad');
+	}
+
+	/**
+	 * Returns an array of block classes by the specified parameters
+	 *
+	 * @param [blockName] - name of the source block
+	 * @param mods - map of modifiers
+	 */
+	getBlockClasses(blockName: string | undefined, mods: Dictionary<ModVal>): string[] {
+		const
+			key = JSON.stringify(mods) + blockName,
+			cache = classesCache[key];
+
+		if (cache) {
+			return cache;
+		}
+
+		const
+			classes = [this.getFullBlockName(blockName)];
+
+		for (let keys = Object.keys(mods), i = 0; i < keys.length; i++) {
+			const mod = keys[i];
+			classes.push(this.getFullBlockName(blockName, mod, mods[mod]));
+		}
+
+		return classes;
+	}
+
+	/**
+	 * Sets a block modifier
+	 *
+	 * @param name
+	 * @param value
+	 */
+	@wait('loading')
+	setMod(name: string, value: any): Promise<boolean> | boolean {
+		return this.block.setMod(name, value);
+	}
+
+	/**
+	 * Removes a block modifier
+	 *
+	 * @param name
+	 * @param [value]
+	 */
+	@wait('loading')
+	removeMod(name: string, value?: any): Promise<boolean> | boolean {
+		return this.block.removeMod(name, value);
+	}
+
+	/**
+	 * Disables the block
+	 * @emits disable()
+	 */
+	async disable(): Promise<boolean> {
+		if (await this.setMod('disabled', true)) {
+			this.emit('disable');
+			return true;
+		}
+
+		return false;
+	}
+
+	/**
+	 * Enables the block
+	 * @emits enable()
+	 */
+	async enable(): Promise<boolean> {
+		if (await this.setMod('disabled', false)) {
+			this.emit('enable');
+			return true;
+		}
+
+		return false;
+	}
+
+	/**
+	 * Sets focus to the block
+	 * @emits focus()
+	 */
+	async focus(): Promise<boolean> {
+		if (await this.setMod('focused', true)) {
+			this.emit('focus');
+			return true;
+		}
+
+		return false;
+	}
+
+	/**
+	 * Returns true if the block has all modifiers from specified
+	 *
+	 * @param mods - list of modifiers (['name', ['name', 'value']])
+	 * @param [value] - value of modifiers
+	 */
+	ifEveryMods(mods: Array<string | string[]>, value?: ModVal): boolean {
+		return $C(mods).every((el) => {
+			if (Object.isArray(el)) {
+				return this.mods[el[0]] === String(el[1]);
+			}
+
+			return this.mods[el] === String(value);
+		});
+	}
+
+	/**
+	 * Returns true if the block has at least one modifier from specified
+	 *
+	 * @param mods - list of modifiers (['name', ['name', 'value']])
+	 * @param [value] - value of modifiers
+	 */
+	ifSomeMod(mods: Array<string | string[]>, value?: ModVal): boolean {
+		return $C(mods).some((el) => {
+			if (Object.isArray(el)) {
+				return this.mods[el[0]] === String(el[1]);
+			}
+
+			return this.mods[el] === String(value);
+		});
+	}
+
+	/**
+	 * Returns the full name of the specified block
+	 *
+	 * @param [blockName]
+	 * @param [modName]
+	 * @param [modValue]
+	 */
+	protected getFullBlockName(blockName: string = this.componentName, modName?: string, modValue?: any): string {
+		return Block.prototype.getFullBlockName.call({blockName}, ...[].slice.call(arguments, 1));
+	}
+
+	/**
+	 * Returns a full name of the specified element
+	 *
+	 * @param elName
+	 * @param [modName]
+	 * @param [modValue]
+	 */
+	protected getFullElName(elName: string, modName?: string, modValue?: any): string {
+		return Block.prototype.getFullElName.apply({blockName: this.componentName}, arguments);
+	}
+
+	/**
+	 * Returns an array of element classes by the specified parameters
+	 * @param els - map of elements with map of modifiers ({button: {focused: true}})
+	 */
+	protected getElClasses(els: Dictionary<Dictionary<ModVal>>): string[] {
+		const
+			key = JSON.stringify(els) + this.blockId,
+			cache = classesCache[key];
+
+		if (cache) {
+			return cache;
+		}
+
+		const
+			classes = [this.blockId];
+
+		for (let keys = Object.keys(els), i = 0; i < keys.length; i++) {
+			const
+				el = keys[i],
+				mods = els[el];
+
+			classes.push(
+				this.getFullElName(el)
+			);
+
+			for (let keys = Object.keys(mods), i = 0; i < keys.length; i++) {
+				const
+					key = keys[i],
+					val = mods[key];
+
+				if (val !== undefined) {
+					classes.push(this.getFullElName(el, key, val));
+				}
+			}
+		}
+
+		return classes;
+	}
+
+	/**
+	 * Puts the block root element to the stream
+	 * @param cb
+	 */
+	@wait('ready')
+	async putInStream(cb: (el: HTMLElement) => void): Promise<boolean> {
+		const
+			el = this.$el;
+
+		if (el.offsetHeight) {
+			cb.call(this, el);
+			return false;
+		}
+
+		const wrapper = document.createElement('div');
+		Object.assign(wrapper.style, {
+			'display': 'block',
+			'position': 'absolute',
+			'top': 0,
+			'left': 0,
+			'z-index': -1,
+			'opacity': 0
+		});
+
+		const
+			parent = el.parentNode,
+			before = el.nextSibling;
+
+		wrapper.appendChild(el);
+		document.body.appendChild(wrapper);
+		await cb.call(this, el);
+
+		if (parent) {
+			if (before) {
+				parent.insertBefore(el, before);
+
+			} else {
+				parent.appendChild(el);
+			}
+		}
+
+		wrapper.remove();
+		return true;
+	}
+
+	/**
+	 * Saves the specified block settings to the local storage
+	 *
+	 * @param settings
+	 * @param [key] - block key
+	 */
+	async saveSettings<T extends Object = Dictionary>(settings: T, key: string = ''): Promise<T> {
+		try {
+			await this.storage.setItem(`${this.componentName}_${this.blockName}_${key}`, JSON.stringify(settings));
+		} catch (_) {}
+
+		return settings;
+	}
+
+	/**
+	 * Loads block settings from the local storage
+	 * @param [key] - block key
+	 */
+	async loadSettings<T extends Object = Dictionary>(key: string = ''): Promise<T | undefined> {
+		try {
+			const str = await this.storage.getItem(`${this.componentName}_${this.blockName}_${key}`);
+			return str && JSON.parse(str);
+		} catch (_) {}
+	}
+
+	/**
+	 * Wraps a handler for delegation of the specified element
+	 *
+	 * @param elName
+	 * @param handler
+	 */
+	@wait('loading')
+	protected delegateElement(elName: string, handler: Function): Promise<Function> | Function {
+		return delegate(this.block.getElSelector(elName), handler);
+	}
+
+	/**
+	 * Returns a link to the closest parent component for the current
+	 * @param component - component name or a link to the component constructor
+	 */
+	protected closest<T extends iBlock = iBlock>(component: string | {new: T}): T | undefined {
+		const
+			isStr = Object.isString(component);
+
+		let el = this.$parent;
+		while (el && (
+			isStr ?
+				el.componentName !== (<string>component).dasherize() :
+				!(el.instance instanceof <any>component)
+		)) {
+			el = el.$parent;
+		}
+
+		return <any>el;
+	}
+
+	/**
+	 * Returns an instance of Vue component by the specified selector / element
+	 *
+	 * @param query
+	 * @param [filter]
+	 */
+	protected $<T extends iBlock = iBlock>(query: string | VueElement<T>, filter: string = ''): T | undefined {
+		const
+			$0 = Object.isString(query) ? document.query(query) : query,
+			n = $0 && $0.closest(`.i-block-helper${filter}`) as any;
+
+		return n && n.vueComponent;
+	}
+
+	/**
+	 * Returns if the specified label:
+	 *   2 -> already exists in the cache;
+	 *   1 -> just written in the cache;
+	 *   0 -> doesn't exist in the cache.
+	 *
+	 * @param label
+	 * @param value - label value (will saved in the cache only if true)
+	 */
+	protected ifOnce(label: any, value: boolean): 0 | 1 | 2 {
+		if (this.ifOnceStore[label]) {
+			return 2;
+		}
+
+		if (value) {
+			return this.ifOnceStore[label] = 1;
+		}
+
+		return 0;
 	}
 
 	/**
@@ -715,6 +1077,62 @@ export default class iBlock extends VueInterface<iBlock> {
 	}
 
 	/**
+	 * Modifiers synchronization
+	 * @param value
+	 */
+	@wait('loading')
+	@watch({field: 'modsStore', deep: true, immediate: true})
+	protected syncModsWatcher(value: Dictionary<ModVal>): void {
+		for (let keys = Object.keys(value), i = 0; i < keys.length; i++) {
+			const
+				key = keys[i];
+
+			let
+				el = value[key];
+
+			if (el === undefined) {
+				this.removeMod(key, el);
+				continue;
+			}
+
+			el = String(el);
+			if (el !== this.block.getMod(key)) {
+				this.setMod(key, el);
+			}
+		}
+	}
+
+	/**
+	 * Synchronization for the async counter
+	 * @param value
+	 */
+	@watch({field: 'asyncCounter', immediate: true})
+	protected syncAsyncCounterWatcher(value: number): void {
+		const disableAsync = () => {
+			this.asyncLoading = false;
+		};
+
+		this.async.setTimeout(disableAsync, 0.2.second(), {
+			label: $$.asyncLoading
+		});
+
+		if (value && this.$parent && 'asyncCounter' in this.$parent) {
+			this.$parent.asyncCounter++;
+		}
+	}
+
+	/**
+	 * Synchronization for the stage field
+	 *
+	 * @param value
+	 * @param oldValue
+	 */
+	@watch({field: 'stage', immediate: true})
+	protected syncStageWatcher(value: string, oldValue: string | undefined): void {
+		this.emit('changeStage', value, oldValue);
+	}
+
+	/**
 	 * Returns an object with classes for elements of an another component
 	 * @param classes - additional classes ({baseElementName: newElementName})
 	 */
@@ -745,14 +1163,17 @@ export default class iBlock extends VueInterface<iBlock> {
 					}
 				}
 
-				/*map[key] = this.getFullElName.apply(this, [].concat(el));*/
+				map[key] = this.getFullElName.apply(this, (<any[]>[]).concat(el));
 			}
 		}
 
 		return map;
 	}
 
-	private mounted() {
+	/**
+	 * Block mounted to DOM
+	 */
+	protected mounted(): void {
 		this.localEvent.emit('component.mounted');
 	}
 
@@ -760,7 +1181,7 @@ export default class iBlock extends VueInterface<iBlock> {
 	 * Block activated
 	 * (for keep-alive)
 	 */
-	private async activated() {
+	protected async activated(): Promise<void> {
 		this.localEvent.emit('component.activated');
 
 		if (this.blockActivated) {
@@ -785,16 +1206,17 @@ export default class iBlock extends VueInterface<iBlock> {
 	 * Block deactivated
 	 * (for keep-alive)
 	 */
-	private deactivated() {
+	protected deactivated(): void {
 		this.localEvent.emit('component.deactivated');
+
 		this.async
-			.clearAllImmediates()
-			.clearAllTimeouts()
-			.cancelAllIdleCallbacks()
-			.cancelAllAnimationFrames()
-			.cancelAllRequests()
-			.terminateAllWorkers()
-			.cancelAllProxies();
+			.clearImmediate()
+			.clearTimeout()
+			.cancelIdleCallback()
+			.cancelAnimationFrame()
+			.cancelRequest()
+			.terminateWorker()
+			.cancelProxy();
 
 		this.block.status = this.block.statuses.inactive;
 		this.blockActivated = false;
@@ -803,7 +1225,7 @@ export default class iBlock extends VueInterface<iBlock> {
 	/**
 	 * Block before destroy
 	 */
-	private beforeDestroy() {
+	protected beforeDestroy(): void {
 		this.localEvent.emit('component.destroyed');
 		this.block.destructor();
 

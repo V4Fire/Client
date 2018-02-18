@@ -14,18 +14,18 @@ import { ComponentMeta } from 'core/component';
 // tslint:disable:typedef
 
 export type VueElement<T> = HTMLElement & {vueComponent?: T};
-export default class VueInterface<B = VueInterface<any, any>, R = VueInterface<any, any>> {
+export default class VueInterface<B = VueInterface<any, any>, R = VueInterface<any, any>, C extends B = B> {
 	readonly instance!: this;
 	readonly componentName!: string;
-	readonly $el!: VueElement<B>;
+	readonly $el!: VueElement<C>;
 	readonly $options!: ComponentOptions<Vue>;
 	readonly $props!: Dictionary;
-	readonly $children!: B[];
-	readonly $parent!: B;
+	readonly $children!: C[];
+	readonly $parent!: C;
 	readonly $root!: R;
 	readonly $isServer!: boolean;
 	protected readonly meta!: ComponentMeta;
-	protected readonly $refs!: Dictionary<B | HTMLElement | B[] | HTMLElement[]>;
+	protected readonly $refs!: Dictionary<C | HTMLElement | C[] | HTMLElement[]>;
 	protected readonly $slots!: Dictionary<VNode[]>;
 	protected readonly $scopedSlots!: Dictionary<ScopedSlot>;
 	protected readonly $data!: Dictionary;
