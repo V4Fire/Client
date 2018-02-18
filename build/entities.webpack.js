@@ -166,10 +166,10 @@ module.exports = (async () => {
 					if (/^[bp]-/.test(name)) {
 						str +=
 							`
-	.${name}
-		extends($${name.camelize(name, false)})
-	
-	`;
+.${name}
+	extends($${name.camelize(name, false)})
+
+`;
 					}
 				}
 
