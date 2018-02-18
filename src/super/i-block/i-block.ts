@@ -41,6 +41,8 @@ export interface LinkWrapper {
 	(this: this, value: any): any;
 }
 
+export type ModsTable = Dictionary<ModVal>;
+
 export const
 	$$ = symbolGenerator();
 
@@ -65,7 +67,7 @@ export default class iBlock extends VueInterface<iBlock> {
 	 * Initial block modifiers
 	 */
 	@prop(Object)
-	modsProp: Dictionary<ModVal> = {};
+	modsProp: ModsTable = {};
 
 	/**
 	 * Initial block stage
@@ -163,7 +165,7 @@ export default class iBlock extends VueInterface<iBlock> {
 		return Object.assign(o.modsStore, val);
 	}))
 
-	protected modsStore!: Dictionary<ModVal>;
+	protected modsStore!: ModsTable;
 
 	/**
 	 * Cache of ifOnce
@@ -200,6 +202,7 @@ export default class iBlock extends VueInterface<iBlock> {
 	 */
 	@system((ctx) => {
 		ctx.meta.hooks.mounted.push({
+			name: 'initBlockInstance',
 			fn: () => {
 				if (ctx.block) {
 					const
@@ -452,7 +455,7 @@ export default class iBlock extends VueInterface<iBlock> {
 	 * @emits initLoad()
 	 */
 	@wait('loading')
-	@hook('mounted')
+	@hook({mounted: 'initBlockInstance'})
 	initLoad(): void {
 		this.block.status = this.block.statuses.ready;
 		this.emit('initLoad');
@@ -464,7 +467,7 @@ export default class iBlock extends VueInterface<iBlock> {
 	 * @param [blockName] - name of the source block
 	 * @param mods - map of modifiers
 	 */
-	getBlockClasses(blockName: string | undefined, mods: Dictionary<ModVal>): string[] {
+	getBlockClasses(blockName: string | undefined, mods: ModsTable): string[] {
 		const
 			key = JSON.stringify(mods) + blockName,
 			cache = classesCache[key];
@@ -603,7 +606,7 @@ export default class iBlock extends VueInterface<iBlock> {
 	 * Returns an array of element classes by the specified parameters
 	 * @param els - map of elements with map of modifiers ({button: {focused: true}})
 	 */
-	protected getElClasses(els: Dictionary<Dictionary<ModVal>>): string[] {
+	protected getElClasses(els: Dictionary<ModsTable>): string[] {
 		const
 			key = JSON.stringify(els) + this.blockId,
 			cache = classesCache[key];
@@ -1082,8 +1085,8 @@ export default class iBlock extends VueInterface<iBlock> {
 	 * @param value
 	 */
 	@wait('loading')
-	@watch({field: 'modsStore', deep: true, immediate: true})
-	protected syncModsWatcher(value: Dictionary<ModVal>): void {
+	@watch({field: 'modsStore', deep: true})
+	protected syncModsWatcher(value: ModsTable): void {
 		for (let keys = Object.keys(value), i = 0; i < keys.length; i++) {
 			const
 				key = keys[i];
