@@ -10,8 +10,7 @@
 
 const
 	$C = require('collection.js'),
-	ss = require('snakeskin'),
-	uuid = require('uuid');
+	ss = require('snakeskin');
 
 const
 	fs = require('fs'),
@@ -207,7 +206,7 @@ function vueComp({name, attrs}) {
 
 	if (!isSync && !attrs.ref && !attrs[':ref'] && (isAsync || isAsyncBack)) {
 		const
-			id = `'${uuid()}' + i`,
+			id = `'${Math.random()}' + i`,
 			p = isAsyncBack ? 'Back' : '',
 			key = attrs['v-else'] ? 'v-else-if' : attrs['v-else-if'] ? 'v-else-if' : 'v-if';
 

@@ -1,5 +1,3 @@
-'use strict';
-
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -8,9 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import 'regenerator-runtime/runtime';
-import 'uuid/lib/rng-browser';
-import '@v4fire/core/src';
+import '@v4fire/core/core';
 import 'core/dependencies';
 import 'core/number';
 import 'core/dom';

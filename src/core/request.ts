@@ -9,7 +9,6 @@
 import $C = require('collection.js');
 import URI = require('urijs');
 import joinUri = require('join-uri');
-import uuid = require('uuid');
 import { convertIfDate } from 'core/json';
 
 const
@@ -254,7 +253,7 @@ class Request {
 		}
 
 		const
-			id = uuid(),
+			id = Math.random(),
 			urlEncodeRequest = {GET: 1, HEAD: 1}[<string>p.method];
 
 		if (urlEncodeRequest) {

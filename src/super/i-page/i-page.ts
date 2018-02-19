@@ -6,10 +6,5 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-@import "super/i-block/i-block.styl"
-
-$p = {
-
-}
-
-i-page extends i-block
+import iBlock from 'super/i-block/i-block';
+export default class iPage extends iBlock {}

@@ -7,4 +7,4 @@
  */
 
 package('i-page')
-	.extends('i-base');
+	.extends('i-block');
