@@ -8,13 +8,16 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-- include 'super/i-base'|b as placeholder
+- include 'super/i-block'|b as placeholder
 
 /**
  * Base page component template
  */
-- template index() extends ['i-base'].index
-	- block root
-		< ?.${self.name()}
-			< [.page-wrapper]
-				- block body
+- template index() extends ['i-block'].index
+	- overWrapper = false
+
+	- block innerRoot
+		< [.page-wrapper]
+			- block body
+
+		- block helpers
