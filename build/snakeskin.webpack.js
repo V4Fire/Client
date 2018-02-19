@@ -19,43 +19,43 @@ const
 	glob = require('glob');
 
 const
-	{validators} = require('@pzlr/build-core'),
-	{src} = require('config');
+	{validators, resolve} = require('@pzlr/build-core');
 
 const
-	folders = src.client.slice().reverse(),
+	folders = [resolve.blockSync(), ...resolve.dependencies],
 	components = `/**/@(${validators.blockTypeList.join('|')})-*.@(ts|js)`;
 
 const
 	files = $C(folders).reduce((arr, el) => arr.concat(glob.sync(path.join(el, components))), []).reverse(),
 	blocksTree = {};
 
+const
+	isBlockClass = /^\s*export\s+default\s+class\s+(.*?)\s+extends\s+(.*?)\s*{/m,
+	isFunctional = /^\s*@component\s*\(\s*{.*?\bfunctional\s*:\s*true/m,
+	propsRgxp = /^(\t+)@prop\s*\([\s\S]+?\)+\n+\1([\w$]+)(?:: [ \w|&$?()[\]{}<>'"`:.]+?)?\s*(?:=|;$)/gm,
+	genericRgxp = /<.*/;
+
 $C(files).forEach((el) => {
 	const
 		file = fs.readFileSync(el, {encoding: 'utf-8'});
 
-	if (!/^export default class (.*?) extends (.*?) {/m.test(file)) {
+	if (!isBlockClass.test(file)) {
 		return;
 	}
 
 	const
-		component = RegExp.$1,
-		parent = RegExp.$2;
+		component = RegExp.$1.replace(genericRgxp, ''),
+		parent = RegExp.$2.replace(genericRgxp, '');
 
 	const obj = blocksTree[component] = blocksTree[component] || {
 		props: {},
-		functional: /@component\s*\(\s*{\s*functional\s*:\s*true\s*}\s*\)/.test(file),
+		functional: isFunctional.test(file),
 		parent
 	};
 
-	const
-		propRgxp = /^(\t@(?:field|abstract)[\s\S]+?\)*\n+)?\t([\w$]+)\s*:\s*[ \w|&$?()[\]{}<>'"`:.]+?\s*(?:=|;$)/gm;
-
 	let s;
-	while ((s = propRgxp.exec(file))) {
-		if (!s[1]) {
-			obj.props[s[2]] = true;
-		}
+	while ((s = propsRgxp.exec(file))) {
+		obj.props[s[2]] = true;
 	}
 });
 

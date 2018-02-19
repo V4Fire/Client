@@ -167,7 +167,7 @@ module.exports = (async () => {
 						str +=
 							`
 .${name}
-	extends($${name.camelize(name, false)})
+	extends($${name.camelize(false)})
 
 `;
 					}
