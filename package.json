@@ -42,11 +42,10 @@
     "path-to-regexp": "^2.1.0",
     "raven-js": "^3.22.3",
     "requestidlecallback": "^0.3.0",
-    "snakeskin": "^7.2.8",
+    "snakeskin": "^7.2.9",
     "socket.io": "^2.0.4",
     "sugar": "^2.0.4",
     "urijs": "^1.19.1",
-    "uuid": "^3.2.1",
     "vue": "^2.5.13"
   },
   "optionalDependencies": {
