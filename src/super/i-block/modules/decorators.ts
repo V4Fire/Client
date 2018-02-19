@@ -8,7 +8,8 @@
 
 import iBlock, { statuses } from 'super/i-block/i-block';
 import { AsyncOpts } from 'core/async';
-import { InitFieldFn as BaseInitFieldFn } from 'core/component';
+import { WatchOptions } from 'vue';
+import { initEvent, ModVal, InitFieldFn as BaseInitFieldFn } from 'core/component';
 
 import {
 
@@ -61,6 +62,138 @@ export const system = systemDecorator as (params?: InitFieldFn | ComponentField)
  * @override
  */
 export const watch = watchDecorator as (params?: FieldWatcher | MethodWatchers) => Function;
+
+/**
+ * Binds a modifier to the specified parameter
+ *
+ * @decorator
+ * @param param
+ * @param [converter] - converter function
+ * @param [opts] - watch options
+ */
+export function bindModTo<T extends iBlock = iBlock>(
+	param: string,
+	converter: ((value: any, ctx: T) => any) | WatchOptions = Boolean,
+	opts?: WatchOptions
+): Function {
+	return (target, key) => {
+		initEvent.once('constructor', ({meta}) => {
+			meta.hooks.created.push({
+				fn(this: iBlock): void {
+					this.bindModTo<T>(key, param, converter, opts);
+				}
+			});
+		});
+	};
+}
+
+type EventType = 'on' | 'once';
+
+/**
+ * Decorates a method as a modifier handler
+ *
+ * @decorator
+ * @param name
+ * @param [value]
+ * @param [method]
+ */
+export function mod(name: string, value: ModVal = '*', method: EventType = 'on'): Function {
+	return (target, key, descriptor) => {
+		initEvent.once('constructor', ({meta}) => {
+			meta.hooks.created.push({
+				fn(this: iBlock): void {
+					// @ts-ignore
+					this.localEvent[method](`block.mod.set.${name}.${value}`, descriptor.value.bind(this));
+				}
+			});
+		});
+	};
+}
+
+/**
+ * Decorates a method as a remove modifier handler
+ *
+ * @decorator
+ * @param name
+ * @param [value]
+ * @param [method]
+ */
+export function removeMod(name: string, value: ModVal = '*', method: EventType = 'on'): Function {
+	return (target, key, descriptor) => {
+		initEvent.once('constructor', ({meta}) => {
+			meta.hooks.created.push({
+				fn(this: iBlock): void {
+					// @ts-ignore
+					this.localEvent[method](`block.mod.remove.${name}.${value}`, descriptor.value.bind(this));
+				}
+			});
+		});
+	};
+}
+
+/**
+ * Decorates a method as an element modifier handler
+ *
+ * @decorator
+ * @param elName
+ * @param modName
+ * @param [value]
+ * @param [method]
+ */
+export function elMod(elName: string, modName: string, value: ModVal = '*', method: EventType = 'on'): Function {
+	return (target, key, descriptor) => {
+		initEvent.once('constructor', ({meta}) => {
+			meta.hooks.created.push({
+				fn(this: iBlock): void {
+					// @ts-ignore
+					this.localEvent[method](`el.mod.set.${elName}.${modName}.${value}`, descriptor.value.bind(this));
+				}
+			});
+		});
+	};
+}
+
+/**
+ * Decorates a method as an element remove modifier handler
+ *
+ * @decorator
+ * @param elName
+ * @param modName
+ * @param [value]
+ * @param [method]
+ */
+export function removeElMod(elName: string, modName: string, value: ModVal = '*', method: EventType = 'on'): Function {
+	return (target, key, descriptor) => {
+		initEvent.once('constructor', ({meta}) => {
+			meta.hooks.created.push({
+				fn(this: iBlock): void {
+					// @ts-ignore
+					this.localEvent[method](`el.mod.remove.${elName}.${modName}.${value}`, descriptor.value.bind(this));
+				}
+			});
+		});
+	};
+}
+
+/**
+ * Decorates a method as a state handler
+ *
+ * @decorator
+ * @param state
+ * @param [method]
+ */
+export function state(state: number, method: EventType = 'on'): Function {
+	return (target, key, descriptor) => {
+		initEvent.once('constructor', ({meta}) => {
+			meta.hooks.created.push({
+				fn(this: iBlock): void {
+					// @ts-ignore
+					this.localEvent[method](`block.status.${state}`, descriptor.value.bind(this));
+				}
+			});
+		});
+	};
+}
 
 /**
  * Decorates a method or a function for using with the specified init status

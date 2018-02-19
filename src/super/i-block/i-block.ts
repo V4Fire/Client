@@ -22,7 +22,22 @@ import * as browser from 'core/const/browser';
 
 export * from 'core/component';
 export { statuses } from 'super/i-block/modules/block';
-export { prop, field, system, watch, wait } from 'super/i-block/modules/decorators';
+export {
+
+	prop,
+	field,
+	system,
+	watch,
+	wait,
+	bindModTo,
+	mod,
+	removeMod,
+	elMod,
+	removeElMod,
+	state
+
+} from 'super/i-block/modules/decorators';
+
 export type Classes = Dictionary<string | Array<string | true> | true>;
 
 export interface LinkWrapper {
@@ -720,10 +735,10 @@ export default class iBlock extends VueInterface<iBlock> {
 	 * @param [converter] - converter function
 	 * @param [opts] - watch options
 	 */
-	bindModTo(
+	bindModTo<T = this>(
 		mod: string,
 		field: string,
-		converter: ((value: any, ctx: this) => any) | WatchOptions = Boolean,
+		converter: ((value: any, ctx: T) => any) | WatchOptions = Boolean,
 		opts?: WatchOptions
 	): void {
 		if (!Object.isFunction(converter)) {
