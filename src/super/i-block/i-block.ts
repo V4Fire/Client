@@ -10,6 +10,7 @@ import $C = require('collection.js');
 import symbolGenerator from 'core/symbol';
 import Async, { AsyncOpts } from 'core/async';
 import Block, { statuses } from 'super/i-block/modules/block';
+import { WatchOptions } from 'vue';
 import { EventEmitter2 as EventEmitter } from 'eventemitter2';
 import { component, hook, ModVal, ModsDecl, VueInterface, VueElement } from 'core/component';
 import { prop, field, system, watch, wait } from 'super/i-block/modules/decorators';
@@ -48,7 +49,7 @@ export default class iBlock extends VueInterface<iBlock> {
 	 * Block unique name
 	 */
 	@prop({type: String, required: false})
-	blockName!: string | undefined;
+	blockName?: string;
 
 	/**
 	 * Initial block modifiers
@@ -60,7 +61,7 @@ export default class iBlock extends VueInterface<iBlock> {
 	 * Initial block stage
 	 */
 	@prop({type: String, required: false})
-	stageProp!: string | undefined;
+	stageProp?: string;
 
 	/**
 	 * Dispatching mode
@@ -712,6 +713,34 @@ export default class iBlock extends VueInterface<iBlock> {
 	}
 
 	/**
+	 * Binds a modifier to the specified field
+	 *
+	 * @param mod
+	 * @param field
+	 * @param [converter] - converter function
+	 * @param [opts] - watch options
+	 */
+	bindModTo(
+		mod: string,
+		field: string,
+		converter: ((value: any, ctx: this) => any) | WatchOptions = Boolean,
+		opts?: WatchOptions
+	): void {
+		if (!Object.isFunction(converter)) {
+			opts = converter;
+			converter = Boolean;
+		}
+
+		this.$watch(field, (val) => {
+			this.setMod(mod, (<Function>converter)(val, this));
+
+		}, {
+			immediate: true,
+			...opts
+		});
+	}
+
+	/**
 	 * Returns if the specified label:
 	 *   2 -> already exists in the cache;
 	 *   1 -> just written in the cache;
@@ -1267,7 +1296,7 @@ export default class iBlock extends VueInterface<iBlock> {
 	 */
 	private execCbAfterCreated(cb: Function): void {
 		if (statuses[this.blockStatus]) {
-			cb();
+			cb.call(this);
 
 		} else {
 			this.meta.hooks.created.push({fn: cb});
