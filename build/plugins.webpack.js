@@ -15,11 +15,10 @@ const
 
 const
 	HardSourceWebpackPlugin = require('hard-source-webpack-plugin'),
-	ExtractTextPlugin = require('extract-text-webpack-plugin'),
-	AssetsWebpackPlugin = require('assets-webpack-plugin');
+	ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 const
-	{output, assetsJSON, hash, buildCache} = include('build/build.webpack');
+	{output, hash, buildCache} = include('build/build.webpack');
 
 /**
  * Returns a list of webpack plugins
@@ -39,7 +38,8 @@ module.exports = async function ({buildId}) {
 	const plugins = [
 		new webpack.DefinePlugin(include('build/globals.webpack')),
 		new ExtractTextPlugin(`${hash(output, true)}.css`),
-		new AssetsWebpackPlugin({filename: assetsJSON, update: true})
+		include('build/assets.webpack'),
+		include('build/dependencies.webpack')({build})
 	];
 
 	if (base) {

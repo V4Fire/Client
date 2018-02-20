@@ -11,12 +11,11 @@
 const
 	$C = require('collection.js'),
 	fs = require('fs-extra-promise'),
-	path = require('path'),
-	hasha = require('hasha');
+	path = require('path');
 
 const
 	{resolve, entries, block} = require('@pzlr/build-core'),
-	{args, output, assetsJSON, buildCache} = include('build/build.webpack'),
+	{args, output, buildCache} = include('build/build.webpack'),
 	{normalizeSep} = include('build/helpers');
 
 const
@@ -63,50 +62,6 @@ module.exports = (async () => {
 		buildConfig = (await entries.getBuildConfig()).filter((el, key) => entriesFilter ? entriesFilter[key] : true),
 		blockMap = await block.getAll(),
 		graph = await buildConfig.getUnionEntryPoints({cache: blockMap});
-
-	$C(graph.dependencies).forEach((el, key, data) => {
-		if (key !== 'index' && !el.has('index')) {
-			data[key] = new Set(['index', ...el]);
-		}
-
-		el.add(key);
-
-		const
-			content = `ModuleDependencies.add("${key}", ${JSON.stringify([...el])});`,
-			name = `${key}.dependencies`;
-
-		const src = output
-			.replace(/\[name]/g, `${name}.js`)
-			.replace(/\[hash:?(\d*)]/, (str, length) => {
-				const res = hasha(content, {algorithm: 'md5'});
-				return length ? res.substr(0, Number(length)) : res;
-			});
-
-		fs.writeFileSync(src, content);
-
-		let fd;
-		try {
-			fd = fs.openSync(assetsJSON, 'r+');
-
-		} catch (_) {
-			fd = fs.openSync(assetsJSON, 'w+');
-		}
-
-		const
-			file = fs.readFileSync(fd, 'utf-8');
-
-		let
-			assets = {};
-
-		try {
-			assets = JSON.parse(file);
-
-		} catch (_) {}
-
-		assets[name] = {js: src};
-		fs.writeFileSync(fd, JSON.stringify(assets));
-		fs.closeSync(fd);
-	});
 
 	/**
 	 * Returns an url relative to the entry folder
