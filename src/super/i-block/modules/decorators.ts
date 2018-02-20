@@ -6,7 +6,8 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import iBlock, { statuses } from 'super/i-block/i-block';
+import iBlock, { statuses, LinkWrapper } from 'super/i-block/i-block';
+import { EventEmitter2 as EventEmitter } from 'eventemitter2';
 import { AsyncOpts } from 'core/async';
 import { WatchOptions } from 'vue';
 import { initEvent, ModVal, InitFieldFn as BaseInitFieldFn } from 'core/component';
@@ -28,10 +29,42 @@ import {
 
 } from 'core/component/decorators/base';
 
-export interface InitFieldFn<T extends iBlock = iBlock> extends BaseInitFieldFn<T> {}
-export type FieldWatcher<T extends iBlock = iBlock, A = any, B = A> = BaseFieldWatcher<T, A, B>;
-export interface ComponentProp<T extends iBlock = iBlock, A = any, B = A> extends BaseComponentProp<T, A, B> {}
-export interface ComponentField<T extends iBlock = iBlock, A = any, B = A> extends BaseComponentField<T, A, B> {}
+export abstract class iBlockDecorator extends iBlock {
+	public abstract localEvent: EventEmitter;
+	public abstract link(field: string, wrapper?: LinkWrapper, watchParams?: Object): any;
+	public abstract createWatchObject(
+		path: string,
+		fields: Array<string | [string] | [string, LinkWrapper] | [string, string, LinkWrapper]>,
+		watchParams?: WatchOptions
+	): Dictionary;
+
+	public abstract bindModTo<T = this>(
+		mod: string,
+		field: string,
+		converter: ((value: any, ctx: T) => any) | WatchOptions,
+		opts?: WatchOptions
+	): void;
+}
+
+export interface InitFieldFn<T extends iBlock = iBlockDecorator> extends BaseInitFieldFn<T> {}
+
+export type FieldWatcher<
+	T extends iBlock = iBlockDecorator,
+	A = any,
+	B = A
+> = BaseFieldWatcher<T, A, B>;
+
+export interface ComponentProp<
+	T extends iBlock = iBlockDecorator,
+	A = any,
+	B = A
+> extends BaseComponentProp<T, A, B> {}
+
+export interface ComponentField<
+	T extends iBlock = iBlockDecorator,
+	A = any,
+	B = A
+> extends BaseComponentField<T, A, B> {}
 
 /**
  * @see core/component/decorators/base.ts
@@ -71,7 +104,7 @@ export const watch = watchDecorator as (params?: FieldWatcher | MethodWatchers) 
  * @param [converter] - converter function
  * @param [opts] - watch options
  */
-export function bindModTo<T extends iBlock = iBlock>(
+export function bindModTo<T extends iBlock = iBlockDecorator>(
 	param: string,
 	converter: ((value: any, ctx: T) => any) | WatchOptions = Boolean,
 	opts?: WatchOptions
@@ -79,7 +112,7 @@ export function bindModTo<T extends iBlock = iBlock>(
 	return (target, key) => {
 		initEvent.once('constructor', ({meta}) => {
 			meta.hooks.created.push({
-				fn(this: iBlock): void {
+				fn(this: iBlockDecorator): void {
 					this.bindModTo<T>(key, param, converter, opts);
 				}
 			});
@@ -101,8 +134,7 @@ export function mod(name: string, value: ModVal = '*', method: EventType = 'on')
 	return (target, key, descriptor) => {
 		initEvent.once('constructor', ({meta}) => {
 			meta.hooks.created.push({
-				fn(this: iBlock): void {
-					// @ts-ignore
+				fn(this: iBlockDecorator): void {
 					this.localEvent[method](`block.mod.set.${name}.${value}`, descriptor.value.bind(this));
 				}
 			});
@@ -122,8 +154,7 @@ export function removeMod(name: string, value: ModVal = '*', method: EventType =
 	return (target, key, descriptor) => {
 		initEvent.once('constructor', ({meta}) => {
 			meta.hooks.created.push({
-				fn(this: iBlock): void {
-					// @ts-ignore
+				fn(this: iBlockDecorator): void {
 					this.localEvent[method](`block.mod.remove.${name}.${value}`, descriptor.value.bind(this));
 				}
 			});
@@ -144,8 +175,7 @@ export function elMod(elName: string, modName: string, value: ModVal = '*', meth
 	return (target, key, descriptor) => {
 		initEvent.once('constructor', ({meta}) => {
 			meta.hooks.created.push({
-				fn(this: iBlock): void {
-					// @ts-ignore
+				fn(this: iBlockDecorator): void {
 					this.localEvent[method](`el.mod.set.${elName}.${modName}.${value}`, descriptor.value.bind(this));
 				}
 			});
@@ -166,8 +196,7 @@ export function removeElMod(elName: string, modName: string, value: ModVal = '*'
 	return (target, key, descriptor) => {
 		initEvent.once('constructor', ({meta}) => {
 			meta.hooks.created.push({
-				fn(this: iBlock): void {
-					// @ts-ignore
+				fn(this: iBlockDecorator): void {
 					this.localEvent[method](`el.mod.remove.${elName}.${modName}.${value}`, descriptor.value.bind(this));
 				}
 			});
@@ -186,8 +215,7 @@ export function state(state: number, method: EventType = 'on'): Function {
 	return (target, key, descriptor) => {
 		initEvent.once('constructor', ({meta}) => {
 			meta.hooks.created.push({
-				fn(this: iBlock): void {
-					// @ts-ignore
+				fn(this: iBlockDecorator): void {
 					this.localEvent[method](`block.status.${state}`, descriptor.value.bind(this));
 				}
 			});
@@ -205,7 +233,7 @@ export function state(state: number, method: EventType = 'on'): Function {
  *   *) [params.fn] - callback function
  *   *) [params.defer] - if true, then the function will always return a promise
  */
-export function wait<T = any, B extends iBlock = iBlock>(
+export function wait<T = any>(
 	status: number | string,
 	params?: AsyncOpts & {fn?: Function; defer?: boolean | number} | Function
 
@@ -229,7 +257,7 @@ export function wait<T = any, B extends iBlock = iBlock>(
 	let
 		handler = <Function>(fn || params);
 
-	function wrapper(this: B): T | Promise<T> | undefined {
+	function wrapper(this: iBlockDecorator): T | Promise<T> | undefined {
 		const
 			args = arguments;
 
@@ -271,7 +299,6 @@ export function wait<T = any, B extends iBlock = iBlock>(
 
 		return $a.promise<any>(
 			new Promise((resolve) => {
-				// @ts-ignore
 				this.localEvent.once(`block.status.${statuses[status]}`, () => resolve(handler.apply(this, args)));
 			}),
 

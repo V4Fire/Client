@@ -957,8 +957,8 @@ export default class iBlock extends VueInterface<iBlock> {
 	protected createWatchObject(
 		path: string,
 		fields: Array<string | [string] | [string, LinkWrapper] | [string, string, LinkWrapper]>,
-		watchParams?: Object
-	): Object {
+		watchParams?: WatchOptions
+	): Dictionary {
 		const
 			{linkCache, syncLinkCache} = this;
 
