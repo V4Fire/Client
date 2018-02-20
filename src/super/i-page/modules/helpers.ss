@@ -10,6 +10,7 @@
 
 - include 'super/i-block'|b as placeholder
 
+- import $C from 'collection.js'
 - import fs from 'fs-extra-promise'
 - import path from 'path'
 - import hasha from 'hasha'
@@ -80,22 +81,24 @@
 
 	- if !type || type === 'styles'
 		- script
-			- forEach list => el
-				? el = self.normalize(el)
-				document.write('<link rel="stylesheet" href="' + PATH['{el}$style'] + '">');
+			+= $C(list).to('').map()
+				() => el
+					? el = self.normalize(el)
+					document.write('<link rel="stylesheet" href="' + PATH['{el}$style'] + '">');
 
 	- if !type || type === 'scripts'
 		- script
-			- forEach list => el
-				? el = self.normalize(el)
-				: tpl = el + '_tpl'
+			+= $C(list).to('').map()
+				() => el
+					? el = self.normalize(el)
+					: tpl = el + '_tpl'
 
-				- if el === 'index'
-					document.write('<script src="' + PATH['{el}'] + '" defer="defer"><' + '/script>');
-					document.write('<script src="' + PATH['{tpl}'] + '" defer="defer"><' + '/script>');
+					- if el === 'index'
+						document.write('<script src="' + PATH['{el}'] + '" defer="defer"><' + '/script>');
+						document.write('<script src="' + PATH['{tpl}'] + '" defer="defer"><' + '/script>');
 
-				- else
-					document.write('<script src="' + PATH['{tpl}'] + '" defer="defer"><' + '/script>');
-					document.write('<script src="' + PATH['{el}'] + '" defer="defer"><' + '/script>');
+					- else
+						document.write('<script src="' + PATH['{tpl}'] + '" defer="defer"><' + '/script>');
+						document.write('<script src="' + PATH['{el}'] + '" defer="defer"><' + '/script>');
 
-				ModuleDependencies.fileCache['{el}'] = true;
+					ModuleDependencies.fileCache['{el}'] = true;
