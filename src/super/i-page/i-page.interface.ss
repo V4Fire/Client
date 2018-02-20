@@ -25,6 +25,10 @@
 	- pageData = {}
 	- overWrapper = false
 
+	- apiURL = ''
+	- configRequest = false
+	- assetsRequest = true
+
 	- charset = { &
 		charset: 'utf-8'
 	} .
@@ -94,14 +98,12 @@
 				# script
 					# block initVars
 						var
-							READY_STATE = 0;
+							READY_STATE = 0,
+							PATH = {},
+							API = #{apiURL|json};
 
 						var
-							ModuleDependencies = {fileCache: {}},
-							PATH = {};
-
-						var
-							API = location.protocol + '//' + location.host + '/api';
+							ModuleDependencies = {fileCache: {}};
 
 						try {
 							PATH = new Proxy(PATH, {
@@ -117,11 +119,13 @@
 
 						} catch (_) {}
 
-				- block config
-					- script js src = \/config.js
+				- if configRequest
+					- block config
+						- script js src = \/config.js
 
-				- block assets
-					- script js src = \/${@version}assets.js
+				- if assetsRequest
+					- block assets
+						- script js src = \/${@version}assets.js
 
 				- block head
 					: defStyles
