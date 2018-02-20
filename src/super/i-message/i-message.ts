@@ -1,5 +1,3 @@
-'use strict';
-
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -9,42 +7,41 @@
  */
 
 import keyCodes from 'core/keyCodes';
-import iBlock, { field, bindModTo } from 'super/i-block/i-block';
-import { component } from 'core/component';
+import iBlock, { component, prop, field, ModsDecl } from 'super/i-block/i-block';
 
 @component()
 export default class iMessage extends iBlock {
 	/**
 	 * Initial information message
 	 */
-	infoProp: ?string;
+	@prop()
+	infoProp?: string;
 
 	/**
 	 * Initial error message
 	 */
-	errorProp: ?string;
+	@prop()
+	errorProp?: string;
 
 	/**
 	 * Information message store
 	 */
 	@field((o) => o.link('infoProp'))
-	infoMsg: ?string;
+	infoMsg?: string;
 
 	/**
 	 * Error message store
 	 */
 	@field((o) => o.link('errorProp'))
-	errorMsg: ?string;
+	errorMsg?: string;
 
 	/** @inheritDoc */
-	static mods = {
-		@bindModTo('infoMsg')
+	static mods: ModsDecl = {
 		showInfo: [
 			'true',
 			['false']
 		],
 
-		@bindModTo('errorMsg')
 		showError: [
 			'true',
 			['false']
@@ -59,7 +56,7 @@ export default class iMessage extends iBlock {
 	/**
 	 * Information message
 	 */
-	get info(): string {
+	get info(): string | undefined {
 		return this.infoMsg;
 	}
 
@@ -67,14 +64,14 @@ export default class iMessage extends iBlock {
 	 * Sets a new information message
 	 * @param value
 	 */
-	set info(value: string) {
+	set info(value: string | undefined) {
 		this.infoMsg = value;
 	}
 
 	/**
 	 * Error message
 	 */
-	get error(): string {
+	get error(): string | undefined {
 		return this.errorMsg;
 	}
 
@@ -82,7 +79,7 @@ export default class iMessage extends iBlock {
 	 * Sets a new error message
 	 * @param value
 	 */
-	set error(value: string) {
+	set error(value: string | undefined) {
 		this.errorMsg = value;
 	}
 
@@ -90,7 +87,7 @@ export default class iMessage extends iBlock {
 	 * Opens the block
 	 * @emits open()
 	 */
-	async open(): boolean {
+	async open(): Promise<boolean> {
 		if (await this.setMod('opened', true)) {
 			this.emit('open');
 			return true;
@@ -103,7 +100,7 @@ export default class iMessage extends iBlock {
 	 * Closes the block
 	 * @emits close()
 	 */
-	async close(): boolean {
+	async close(): Promise<boolean> {
 		if (await this.setMod('opened', false)) {
 			this.emit('close');
 			return true;
@@ -122,29 +119,23 @@ export default class iMessage extends iBlock {
 	/**
 	 * Initializes close helpers
 	 */
-	initCloseHelpers() {
+	protected initCloseHelpers(): void {
 		const
 			{async: $a, localEvent: $e} = this,
 			group = 'closeHelpers';
 
 		const closeHelpers = () => {
-			$a.on(document, 'keyup', {
-				group,
-				fn: (e) => {
-					if (e.keyCode === keyCodes.ESC) {
-						return this.close();
-					}
+			$a.on(document, 'keyup', (e) => {
+				if (e.keyCode === keyCodes.ESC) {
+					return this.close();
 				}
-			});
+			}, {group});
 
-			$a.on(document, 'click', {
-				group,
-				fn: (e) => {
-					if (!e.target.closest(`.${this.blockId}`)) {
-						return this.close();
-					}
+			$a.on(document, 'keyup', (e) => {
+				if (!e.target.closest(`.${this.blockId}`)) {
+					return this.close();
 				}
-			});
+			}, {group});
 		};
 
 		$e.removeAllListeners('block.mod.set.opened.*');
@@ -152,8 +143,13 @@ export default class iMessage extends iBlock {
 		$e.on('block.mod.set.opened.false', () => $a.off({group}));
 	}
 
-	/** @inheritDoc */
-	created() {
+	/** @override */
+	protected initModEvents(): void {
+		super.initModEvents();
+
+		this.bindModTo('showInfo', 'infoMsg');
+		this.bindModTo('showError', 'errorMsg');
+
 		this.localEvent.on('block.mod.*.valid.*', ({type, value}) => {
 			if (type === 'remove' && value === 'false' || type === 'set' && value === 'true') {
 				this.error = '';
