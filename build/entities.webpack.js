@@ -93,8 +93,15 @@ module.exports = (async () => {
 		}
 
 		const
-			file = fs.readFileSync(fd, 'utf-8'),
-			assets = file ? JSON.parse(file) : {};
+			file = fs.readFileSync(fd, 'utf-8');
+
+		let
+			assets = {};
+
+		try {
+			assets = JSON.parse(file);
+
+		} catch (_) {}
 
 		assets[name] = {js: src};
 		fs.writeFileSync(fd, JSON.stringify(assets));
