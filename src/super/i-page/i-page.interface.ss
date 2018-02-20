@@ -28,6 +28,7 @@
 	- apiURL = ''
 	- configRequest = false
 	- assetsRequest = true
+	- defineBase = false
 
 	- charset = { &
 		charset: 'utf-8'
@@ -70,8 +71,9 @@
 				- block title
 					< title :: {title}
 
-				- block base
-					< base href = ${base}
+				- if defineBase
+					- block base
+						< base href = ${base}
 
 				- block favicons
 					/// Dirty hack for replacing startURL from manifest.json
@@ -121,11 +123,11 @@
 
 				- if configRequest
 					- block config
-						- script js src = \/config.js
+						- script js src = config.js
 
 				- if assetsRequest
 					- block assets
-						- script js src = \/${@version}assets.js
+						- script js src = ${@version}assets.js
 
 				- block head
 					: defStyles
