@@ -23,10 +23,10 @@
 
 /**
  * Injects the specified file to the template
- * @param {...string} url
+ * @param {string} src
  */
-- block index->inject()
-	- return fs.readFileSync(path.join.apply(path, arguments)).toString()
+- block index->inject(src)
+	- return fs.readFileSync(src).toString()
 
 : &
 	libCache = Object.create(null),
