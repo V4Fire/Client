@@ -10,9 +10,10 @@
 /// <reference types="dom4"/>
 
 declare let READY_STATE: number;
-declare let CONFIG: Dictionary;
-declare let PATH: Dictionary<string | undefined>;
-declare let API: string;
+declare const CONFIG: Dictionary;
+declare const PATH: Dictionary<string | undefined>;
+declare const API: string;
+declare const TPLS: Dictionary;
 
 interface HTMLImageElement {
 	onInit(onSuccess: () => void, onFail?: (err?: Error) => void): void;

@@ -36,11 +36,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 		return Object.assign(data.call(this), params.data);
 	};
 
-	console.log({
-		...params,
-		...component
-	});
-
 	root = new Vue({
 		...params,
 		...component,
