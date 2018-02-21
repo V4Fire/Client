@@ -7,11 +7,14 @@
  */
 
 import $C = require('collection.js');
-import symbolGenerator from 'core/symbol';
+import { EventEmitter2 as EventEmitter } from 'eventemitter2';
+import { WatchOptions } from 'vue';
+
+import 'super/i-block/modules/vue.directives';
 import Async, { AsyncOpts } from 'core/async';
 import Block, { statuses } from 'super/i-block/modules/block';
-import { WatchOptions } from 'vue';
-import { EventEmitter2 as EventEmitter } from 'eventemitter2';
+import symbolGenerator from 'core/symbol';
+
 import { component, hook, ModVal, ModsDecl, VueInterface, VueElement } from 'core/component';
 import { prop, field, system, watch, wait } from 'super/i-block/modules/decorators';
 import { queue, backQueue } from 'core/render';
