@@ -9,14 +9,14 @@
 /// <reference types="socket.io"/>
 import URI = require('urijs');
 
-// tslint:disable-next-line
 export const PING = (5).seconds();
+export type Socket = SocketIO.Client;
 
 /**
  * Wrapper for sockets
  * @param [namespace] - connection namespace
  */
-export function IO(namespace: string = ''): SocketIO.Client {
+export default function socket(namespace: string = ''): SocketIO.Client {
 	return require('socket.io-client').connect(new URI(API).path(namespace).toString(), {
 		allowUpgrades: false,
 		transports: ['websocket'],
