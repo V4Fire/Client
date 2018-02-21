@@ -1318,3 +1318,23 @@ export default class iBlock extends VueInterface<iBlock> {
 		}
 	}
 }
+
+/**
+ * Hack for i-block decorators
+ */
+export abstract class iBlockDecorator extends iBlock {
+	public abstract localEvent: EventEmitter;
+	public abstract link(field: string, wrapper?: LinkWrapper, watchParams?: Object): any;
+	public abstract createWatchObject(
+		path: string,
+		fields: Array<string | [string] | [string, LinkWrapper] | [string, string, LinkWrapper]>,
+		watchParams?: WatchOptions
+	): Dictionary;
+
+	public abstract bindModTo<T = this>(
+		mod: string,
+		field: string,
+		converter: ((value: any, ctx: T) => any) | WatchOptions,
+		opts?: WatchOptions
+	): void;
+}

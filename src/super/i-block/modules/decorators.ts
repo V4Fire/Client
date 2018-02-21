@@ -6,8 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import iBlock, { statuses, LinkWrapper } from 'super/i-block/i-block';
-import { EventEmitter2 as EventEmitter } from 'eventemitter2';
+import iBlock, { statuses, iBlockDecorator } from 'super/i-block/i-block';
 import { AsyncOpts } from 'core/async';
 import { WatchOptions } from 'vue';
 import { initEvent, ModVal, InitFieldFn as BaseInitFieldFn } from 'core/component';
@@ -28,23 +27,6 @@ import {
 	ComponentField as BaseComponentField
 
 } from 'core/component/decorators/base';
-
-export abstract class iBlockDecorator extends iBlock {
-	public abstract localEvent: EventEmitter;
-	public abstract link(field: string, wrapper?: LinkWrapper, watchParams?: Object): any;
-	public abstract createWatchObject(
-		path: string,
-		fields: Array<string | [string] | [string, LinkWrapper] | [string, string, LinkWrapper]>,
-		watchParams?: WatchOptions
-	): Dictionary;
-
-	public abstract bindModTo<T = this>(
-		mod: string,
-		field: string,
-		converter: ((value: any, ctx: T) => any) | WatchOptions,
-		opts?: WatchOptions
-	): void;
-}
 
 export interface InitFieldFn<T extends iBlock = iBlockDecorator> extends BaseInitFieldFn<T> {}
 
