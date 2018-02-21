@@ -27,6 +27,7 @@ export default function inheritMeta(
 		params,
 		props,
 		fields,
+		systemFields,
 		mods,
 		computed,
 		accessors,
@@ -134,44 +135,49 @@ export default function inheritMeta(
 		inject
 	};
 
-	for (let o = meta.props, keys = Object.keys(props), i = 0; i < keys.length; i++) {
-		const
-			key = keys[i],
-			parent = props[key],
-			watchers = new Map();
+	{
+		const list = [
+			[meta.props, props],
+			[meta.fields, fields],
+			[meta.systemFields, systemFields]
+		];
 
-		if (parent.watchers) {
-			for (let w = parent.watchers.values(), el = w.next(); !el.done; el = w.next()) {
-				watchers.set(el.value.fn, {...el.value});
+		for (let i = 0; i < list.length; i++) {
+			const
+				[o, parentObj] = list[i];
+
+			for (let keys = Object.keys(parentObj), i = 0; i < keys.length; i++) {
+				const
+					key = keys[i],
+					parent = parentObj[key],
+					watchers = new Map();
+
+				if (parent.watchers) {
+					for (let w = parent.watchers.values(), el = w.next(); !el.done; el = w.next()) {
+						watchers.set(el.value.fn, {...el.value});
+					}
+				}
+
+				o[key] = {...parent, watchers};
 			}
 		}
-
-		o[key] = {...parent, watchers};
 	}
 
-	for (let o = meta.fields, keys = Object.keys(fields), i = 0; i < keys.length; i++) {
-		const
-			key = keys[i],
-			parent = fields[key],
-			watchers = new Map();
+	{
+		const list = [
+			[meta.computed, computed],
+			[meta.accessors, accessors]
+		];
 
-		if (parent.watchers) {
-			for (let w = parent.watchers.values(), el = w.next(); !el.done; el = w.next()) {
-				watchers.set(el.value.fn, {...el.value});
+		for (let i = 0; i < list.length; i++) {
+			const
+				[o, parentObj] = list[i];
+
+			for (let keys = Object.keys(parentObj), i = 0; i < keys.length; i++) {
+				const key = keys[i];
+				o[key] = {...parentObj[key]};
 			}
 		}
-
-		o[key] = {...parent, watchers};
-	}
-
-	for (let o = meta.computed, keys = Object.keys(computed), i = 0; i < keys.length; i++) {
-		const key = keys[i];
-		o[key] = {...computed[key]};
-	}
-
-	for (let o = meta.accessors, keys = Object.keys(accessors), i = 0; i < keys.length; i++) {
-		const key = keys[i];
-		o[key] = {...accessors[key]};
 	}
 
 	for (let o = meta.methods, keys = Object.keys(methods), i = 0; i < keys.length; i++) {

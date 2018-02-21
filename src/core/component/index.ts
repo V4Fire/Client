@@ -251,7 +251,8 @@ export function component(params: ComponentParams = {}): Function {
 
 		} else {
 			const
-				component = loadTemplate(getComponent(target, meta));
+				a = getComponent(target, meta),
+				component = loadTemplate(a);
 
 			if (p.root) {
 				rootComponents[name] = new Promise(component);

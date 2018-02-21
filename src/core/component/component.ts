@@ -259,6 +259,9 @@ export function getBaseComponent(
 			key = keys[i],
 			method = o[key];
 
+		component.methods[key] =
+			method.fn;
+
 		for (let o = method.watchers, keys = Object.keys(o), i = 0; i < keys.length; i++) {
 			const
 				key = keys[i],
@@ -284,6 +287,11 @@ export function getBaseComponent(
 				after: el.after
 			});
 		}
+	}
+
+	for (let o = meta.computed, keys = Object.keys(o), i = 0; i < keys.length; i++) {
+		const key = keys[i];
+		component.computed[key] = o[key];
 	}
 
 	for (let o = meta.props, keys = Object.keys(o), i = 0; i < keys.length; i++) {
@@ -364,9 +372,6 @@ export function getBaseComponent(
  */
 export function addMethodsToMeta(constructor: Function, meta: ComponentMeta): void {
 	const
-		{component} = meta;
-
-	const
 		proto = constructor.prototype,
 		ownProps = Object.getOwnPropertyNames(proto);
 
@@ -382,8 +387,6 @@ export function addMethodsToMeta(constructor: Function, meta: ComponentMeta): vo
 			desc = <PropertyDescriptor>Object.getOwnPropertyDescriptor(proto, key);
 
 		if ('value' in desc) {
-			component.methods[key] = desc.value;
-
 			// tslint:disable-next-line
 			meta.methods[key] = Object.assign(meta.methods[key] || {watchers: {}, hooks: {}}, {
 				fn: desc.value
@@ -412,14 +415,6 @@ export function addMethodsToMeta(constructor: Function, meta: ComponentMeta): vo
 					set
 				}
 			});
-
-			if (metaKey === 'computed' && component.computed) {
-				const method = obj[key];
-				component.computed[key] = {
-					get: method.get,
-					set: method.set
-				};
-			}
 		}
 	}
 }
