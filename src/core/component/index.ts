@@ -15,9 +15,12 @@ import Vue, {
 
 } from 'vue';
 
+// @ts-ignore
+import * as defTpls from 'core/block.ss';
 import inheritMeta from 'core/component/inherit';
 import VueInterface from 'core/component/vue';
-import { getComponent } from 'core/component/component';
+
+import { getComponent, getBaseComponent } from 'core/component/component';
 import { InjectOptions } from 'vue/types/options';
 import { EventEmitter2 } from 'eventemitter2';
 
@@ -27,7 +30,8 @@ export { default as VueInterface, VueElement } from 'core/component/vue';
 
 export const
 	initEvent = new EventEmitter2({maxListeners: 1e3}),
-	rootComponents = {},
+	rootComponents = Object.createDict(),
+	localComponents = new WeakMap(),
 	components = new WeakMap();
 
 export interface ComponentParams {
@@ -115,8 +119,8 @@ export interface ComponentMeta {
 	methods: Dictionary<ComponentMethod>;
 	watchers: Dictionary<WatchOptionsWithHandler[]>;
 	hooks: {[hook in Hooks]: Array<{
-		name?: string;
 		fn: Function;
+		name?: string;
 		after?: Set<string>;
 	}>};
 
@@ -127,6 +131,9 @@ export interface ComponentMeta {
 		computed: Dictionary<ComputedOptions<any>>;
 	}
 }
+
+export const
+	isAbstractComponent = /^[iv]-/;
 
 /**
  * Returns a component name
@@ -200,15 +207,58 @@ export function component(params: ComponentParams = {}): Function {
 		components.set(target, meta);
 		initEvent.emit('constructor', {meta, parentMeta});
 
-		let component;
+		if (isAbstractComponent.test(name)) {
+			getBaseComponent(target, meta);
+			return;
+		}
+
+		const loadTemplate = (component) => (resolve) => {
+			const success = () => {
+				if (localComponents.has(target)) {
+					// tslint:disable-next-line
+					component.components = Object.assign(component.components || {}, localComponents.get(target));
+				}
+
+				resolve(component);
+			};
+
+			const addRenderAndResolve = (tpls) => {
+				Object.assign(component, tpls.index());
+				success();
+			};
+
+			if ('render' in component.methods) {
+				success();
+
+			} else if (p.tpl === false) {
+				addRenderAndResolve(defTpls.block);
+
+			} else {
+				const f = () => {
+					if (TPLS[name]) {
+						addRenderAndResolve(TPLS[name]);
+
+					} else {
+						setImmediate(f);
+					}
+				};
+
+				f();
+			}
+		};
+
 		if (p.functional) {
 
 		} else {
-			Vue.component(name, getComponent(target, meta));
-		}
+			const
+				component = loadTemplate(getComponent(target, meta));
 
-		if (p.root) {
-			// rootComponents[name];
+			if (p.root) {
+				rootComponents[name] = new Promise(component);
+
+			} else {
+				Vue.component(name, component);
+			}
 		}
 	};
 }

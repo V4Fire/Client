@@ -6,43 +6,46 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import Vue from 'vue';
 import { rootComponents } from 'core/component';
 
-document.addEventListener('DOMContentLoaded', () => {
+export let
+	root: Vue | undefined;
+
+document.addEventListener('DOMContentLoaded', async () => {
 	const
-		nodes = document.querySelectorAll('[data-init-block]');
+		node = <HTMLElement | undefined>document.querySelector('[data-init-block]');
 
-	for (let i = 0; i < nodes.length; i++) {
-		const
-			el = <HTMLElement>nodes[i],
-			blocks = el.dataset.initBlock;
-
-		if (!blocks) {
-			throw new Error('Invalid root block declaration');
-		}
-
-		const
-			names = blocks.split(',');
-
-		for (let i = 0; i < names.length; i++) {
-			const
-				name = names[i].trim(),
-				p = `${name}-params`.camelize(false);
-
-			if (rootComponents[name]) {
-				if (!el.children.length) {
-					el.innerHTML = '<div></div>';
-				}
-
-				// tslint:disable-next-line
-				new rootComponents[name]({node: el.children[0], ...el.dataset[p] && Object.parse(el.dataset[p])});
-			}
-
-			delete el.dataset[p];
-		}
-
-		delete el.dataset.initBlock;
+	if (!node) {
+		throw new Error('Root node is not defined');
 	}
+
+	const
+		name = <string>node.dataset.initBlock,
+		component = await rootComponents[name];
+
+	if (!component) {
+		throw new Error('Root component is not defined');
+	}
+
+	const
+		{data} = component,
+		params = JSON.parse(<string>node.dataset.blockParams);
+
+	component.data = function (): Dictionary {
+		return Object.assign(data.call(this), params.data);
+	};
+
+	console.log({
+		...params,
+		...component
+	});
+
+	root = new Vue({
+		...params,
+		...component,
+		el: node
+	});
 
 	READY_STATE++;
 });

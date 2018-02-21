@@ -39,9 +39,10 @@ export function getComponent(
 		inheritAttrs: p.inheritAttrs,
 		provide: p.provide,
 		inject: p.inject,
-
 		render(): any {
-			return methods.render.fn.call(this, ...arguments);
+			if (methods.render) {
+				return methods.render.fn.call(this, ...arguments);
+			}
 		},
 
 		data(): Dictionary {
@@ -239,7 +240,7 @@ function runHook(hook: string, meta: ComponentMeta, ctx: Object): void {
  * @param constructor
  * @param meta
  */
-function getBaseComponent(
+export function getBaseComponent(
 	constructor: ComponentConstructor,
 	meta: ComponentMeta
 ): {
@@ -329,7 +330,7 @@ function getBaseComponent(
  * @param constructor
  * @param meta
  */
-function addMethodsToMeta(constructor: Function, meta: ComponentMeta): void {
+export function addMethodsToMeta(constructor: Function, meta: ComponentMeta): void {
 	const
 		{component, watchers, hooks} = meta;
 
