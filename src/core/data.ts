@@ -1,5 +1,3 @@
-'use strict';
-
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -8,31 +6,33 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import $C = require('collection.js');
+import { EventEmitter2 as EventEmitter } from 'eventemitter2';
+
 import Async from 'core/async';
-import Store from 'core/store';
-import Socket from 'core/socket';
-import { c, r, u, d } from 'core/request';
-import type { $$requestParams } from 'core/request';
+import IO, { Socket } from 'core/socket';
+import symbolGenerator from 'core/symbol';
+import { c, r, u, d, RequestParams } from 'core/request';
 
-const
-	$C = require('collection.js'),
-	EventEmitter2 = require('eventemitter2').EventEmitter2,
-	globalEvent = new EventEmitter2({maxListeners: 1e3, wildcard: true});
-
-export const
-	providers = Object.create(null),
-	instanceCache = Object.create(null),
-	reqCache = Object.create(null),
-	connectCache = Object.create(null);
+const globalEvent = new EventEmitter({
+	maxListeners: 1e3,
+	wildcard: true
+});
 
 export const
-	$$ = new Store();
+	providers = Object.createDict(),
+	instanceCache = Object.createDict(),
+	reqCache = Object.createDict(),
+	connectCache = Object.createDict();
+
+export const
+	$$ = symbolGenerator();
 
 /**
  * Adds a data provider to the global cache
  * @decorator
  */
-export function provider(target) {
+export function provider(target: Function): void {
 	providers[target.name] = target;
 }
 
@@ -42,48 +42,14 @@ export function provider(target) {
 @provider
 export default class Provider {
 	/**
-	 * @param [params] - additional parameters
-	 */
-	constructor(params?: Object = {}) {
-		const
-			nm = this.constructor.name,
-			key = `${nm}:${JSON.stringify(params)}`;
-
-		if (instanceCache[key]) {
-			return instanceCache[key];
-		}
-
-		reqCache[nm] = {};
-		this.async = new Async();
-		this.event = new EventEmitter2({maxListeners: 1e3, wildcard: true});
-		this.listenAllEvents = Boolean(params.listenAllEvents);
-
-		const
-			c = this.connect();
-
-		if (c) {
-			c.then(
-				() => {
-					this.listenSocketEvents();
-					this.providers.length && this.bindEvents(...this.providers);
-				},
-
-				stderr
-			);
-		}
-
-		instanceCache[key] = this;
-	}
-
-	/**
 	 * List of socket events
 	 */
-	events: Array<string> = ['add', 'upd', 'del', 'refresh'];
+	events: string[] = ['add', 'upd', 'del', 'refresh'];
 
 	/**
 	 * List of additional providers to listen
 	 */
-	providers: Array<string> = [];
+	providers: string[] = [];
 
 	/**
 	 * If true, then the provider will be listen all events
@@ -93,7 +59,7 @@ export default class Provider {
 	/**
 	 * Socket connection url
 	 */
-	socketURL: ?string;
+	socketURL?: string;
 
 	/**
 	 * Base URL for requests
@@ -118,7 +84,7 @@ export default class Provider {
 	/**
 	 * Event emitter object
 	 */
-	event: EventEmitter2;
+	event: EventEmitter;
 
 	/**
 	 * Map for data events
@@ -129,17 +95,17 @@ export default class Provider {
 	 * Global event emitter object
 	 * (for all data providers)
 	 */
-	globalEvent: EventEmitter2 = globalEvent;
+	globalEvent: EventEmitter = globalEvent;
 
 	/**
 	 * Async object
 	 */
-	async: Async;
+	async: Async<this>;
 
 	/**
 	 * Socket connection
 	 */
-	connection: ?Promise<Socket>;
+	connection?: Promise<Socket>;
 
 	/* eslint-disable no-unused-vars */
 
@@ -147,9 +113,43 @@ export default class Provider {
 	 * Returns an object with authentication params
 	 * @param params - request parameters
 	 */
-	getAuthParams(params: ?Object): ?Object {}
+	getAuthParams(params: Object | undefined): Object | undefined {}
 
 	/* eslint-enable no-unused-vars */
+
+	/**
+	 * @param [params] - additional parameters
+	 */
+	constructor(params?: Object = {}) {
+		const
+			nm = this.constructor.name,
+			key = `${nm}:${JSON.stringify(params)}`;
+
+		if (instanceCache[key]) {
+			return instanceCache[key];
+		}
+
+		reqCache[nm] = {};
+		this.async = new Async(this);
+		this.event = new EventEmitter({maxListeners: 1e3, wildcard: true});
+		this.listenAllEvents = Boolean(params.listenAllEvents);
+
+		const
+			c = this.connect();
+
+		if (c) {
+			c.then(
+				() => {
+					this.listenSocketEvents();
+					this.providers.length && this.bindEvents(...this.providers);
+				},
+
+				stderr
+			);
+		}
+
+		instanceCache[key] = this;
+	}
 
 	/**
 	 * Connects to a socket server
@@ -158,7 +158,7 @@ export default class Provider {
 	 * @emits ${socketURL}Connect(socket: Socket)
 	 * @emits ${socketURL}Reject(err: Error)
 	 */
-	async connect(params?: Object = {}): ?Socket {
+	async connect(params: Object = {}): Socket | undefined {
 		await this.async.wait(() => this.socketURL);
 
 		const
@@ -168,7 +168,7 @@ export default class Provider {
 		if (!connectCache[key]) {
 			connectCache[key] = new Promise((resolve, reject) => {
 				const
-					socket = new Socket(url);
+					socket = new IO(url);
 
 				function onClear(err) {
 					reject(err);
@@ -395,7 +395,7 @@ export default class Provider {
 	 * @param [data]
 	 * @param [params]
 	 */
-	get(data?: any, params?: $$requestParams): Promise<XMLHttpRequest> {
+	get(data?: any, params?: RequestParams): Promise<XMLHttpRequest> {
 		const
 			url = this.url(),
 			query = `${url}?${Object.toQueryString(data || {})}`,
@@ -428,7 +428,7 @@ export default class Provider {
 	 * @param data
 	 * @param [params]
 	 */
-	post(data: any, params?: $$requestParams): Promise<XMLHttpRequest> {
+	post(data: any, params?: RequestParams): Promise<XMLHttpRequest> {
 		const url = this.url();
 		return this.updateRequest(url, () => c(url, data, this.addSession(url, params)));
 	}
@@ -439,7 +439,7 @@ export default class Provider {
 	 * @param data
 	 * @param [params]
 	 */
-	add(data: any, params?: $$requestParams): Promise<XMLHttpRequest> {
+	add(data: any, params?: RequestParams): Promise<XMLHttpRequest> {
 		const url = this.url();
 		return this.updateRequest(url, () => c(url, data, this.addSession(url, params)), 'add');
 	}
@@ -450,7 +450,7 @@ export default class Provider {
 	 * @param [data]
 	 * @param [params]
 	 */
-	upd(data?: any, params?: $$requestParams): Promise<XMLHttpRequest> {
+	upd(data?: any, params?: RequestParams): Promise<XMLHttpRequest> {
 		const url = this.url();
 		return this.updateRequest(url, () => u(url, data, this.addSession(url, params)), 'upd');
 	}
@@ -461,7 +461,7 @@ export default class Provider {
 	 * @param [data]
 	 * @param [params]
 	 */
-	del(data?: any, params?: $$requestParams): Promise<XMLHttpRequest> {
+	del(data?: any, params?: RequestParams): Promise<XMLHttpRequest> {
 		const url = this.url();
 		return this.updateRequest(url, () => d(url, data, this.addSession(url, params)), 'del');
 	}
