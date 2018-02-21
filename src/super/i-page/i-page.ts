@@ -6,5 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import iBlock from 'super/i-block/i-block';
+import iBlock, { component } from 'super/i-block/i-block';
+
+@component()
 export default class iPage extends iBlock {}
