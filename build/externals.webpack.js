@@ -14,6 +14,7 @@ module.exports = {
 	'localforage': 'localforage',
 	'urijs': 'URI',
 	'sugar': 'Sugar',
+	'vue': 'Vue',
 	'chart.js': 'Chart',
 	'ion-sound': 'ion'
 };

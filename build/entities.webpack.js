@@ -208,7 +208,7 @@ module.exports = (async () => {
 	const res = {
 		entry,
 		processes,
-		dependencies: graph.dependencies
+		dependencies: $C(graph.dependencies).map((el, key) => [...el, key])
 	};
 
 	if (cacheFile) {

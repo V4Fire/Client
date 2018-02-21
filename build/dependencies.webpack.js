@@ -26,13 +26,7 @@ module.exports = function ({build}) {
 	return {
 		apply(compiler) {
 			compiler.plugin('emit', (compilation, cb) => {
-				$C(build.dependencies).forEach((el, key, data) => {
-					if (key !== 'index' && !el.has('index')) {
-						data[key] = new Set(['index', ...el]);
-					}
-
-					el.add(key);
-
+				$C(build.dependencies).forEach((el, key) => {
 					const
 						content = `ModuleDependencies.add("${key}", ${JSON.stringify([...el])});`,
 						name = `${key}.dependencies`;
