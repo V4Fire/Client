@@ -183,7 +183,7 @@ export function paramsFactory<T>(
 			const inverse = {
 				props: ['fields', 'systemFields'],
 				fields: ['props', 'systemFields'],
-				systemFields: ['props', 'props']
+				systemFields: ['props', 'fields']
 			}[metaKey];
 
 			if (inverse) {

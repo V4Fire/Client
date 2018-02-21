@@ -251,10 +251,42 @@ export function getBaseComponent(
 	addMethodsToMeta(constructor, meta);
 
 	const
-		{component, watchers} = meta,
+		{component, watchers, hooks} = meta,
 		instance = new constructor();
 
-	for (let o = meta.props, keys = Object.keys(meta.props), i = 0; i < keys.length; i++) {
+	for (let o = meta.methods, keys = Object.keys(o), i = 0; i < keys.length; i++) {
+		const
+			key = keys[i],
+			method = o[key];
+
+		for (let o = method.watchers, keys = Object.keys(o), i = 0; i < keys.length; i++) {
+			const
+				key = keys[i],
+				el = o[key];
+
+			watchers[key] = watchers[key] || [];
+			watchers[key].push({
+				deep: el.deep,
+				immediate: el.immediate,
+				handler: <any>method.fn,
+				method: true
+			});
+		}
+
+		for (let o = method.hooks, keys = Object.keys(o), i = 0; i < keys.length; i++) {
+			const
+				key = keys[i],
+				el = o[key];
+
+			hooks[key].push({
+				name: el.name,
+				fn: method.fn,
+				after: el.after
+			});
+		}
+	}
+
+	for (let o = meta.props, keys = Object.keys(o), i = 0; i < keys.length; i++) {
 		const
 			key = keys[i],
 			prop = o[key];
@@ -279,7 +311,7 @@ export function getBaseComponent(
 		}
 	}
 
-	for (let o = meta.fields, keys = Object.keys(meta.fields), i = 0; i < keys.length; i++) {
+	for (let o = meta.fields, keys = Object.keys(o), i = 0; i < keys.length; i++) {
 		const
 			key = keys[i],
 			field = o[key];
@@ -332,7 +364,7 @@ export function getBaseComponent(
  */
 export function addMethodsToMeta(constructor: Function, meta: ComponentMeta): void {
 	const
-		{component, watchers, hooks} = meta;
+		{component} = meta;
 
 	const
 		proto = constructor.prototype,
@@ -353,35 +385,9 @@ export function addMethodsToMeta(constructor: Function, meta: ComponentMeta): vo
 			component.methods[key] = desc.value;
 
 			// tslint:disable-next-line
-			const method = meta.methods[key] = Object.assign(meta.methods[key] || {watchers: {}, hooks: {}}, {
+			meta.methods[key] = Object.assign(meta.methods[key] || {watchers: {}, hooks: {}}, {
 				fn: desc.value
 			});
-
-			for (let o = method.watchers, keys = Object.keys(o), i = 0; i < keys.length; i++) {
-				const
-					key = keys[i],
-					el = o[key];
-
-				watchers[key] = watchers[key] || [];
-				watchers[key].push({
-					deep: el.deep,
-					immediate: el.immediate,
-					handler: method.fn,
-					method: true
-				});
-			}
-
-			for (let o = method.hooks, keys = Object.keys(o), i = 0; i < keys.length; i++) {
-				const
-					key = keys[i],
-					el = o[key];
-
-				hooks[key].push({
-					name: el.name,
-					fn: method.fn,
-					after: el.after
-				});
-			}
 
 		} else {
 			const
