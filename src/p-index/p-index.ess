@@ -1,3 +1,5 @@
+- namespace [%fileName%]
+
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -6,4 +8,6 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import '../core';
+- include 'super/i-page/i-page.interface.ss'|b as placeholder
+
+- template index(params) extends ['i-page.interface'].index
