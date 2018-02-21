@@ -158,7 +158,7 @@ export default {
 	 * @param keyCode
 	 */
 	getKeyNameFromKeyCode(keyCode: number): string | null {
-		return $C(this).one.get((el) => el === keyCode) || null;
+		return $C(this).one.search((el) => el === keyCode);
 	},
 
 	...keyCodes
