@@ -6,17 +6,18 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-/// <reference types="socket.io"/>
+/// <reference types="node"/>
+/// <reference types="socket.io-client"/>
 import URI = require('urijs');
 
 export const PING = (5).seconds();
-export type Socket = SocketIO.Client;
+export type Socket = SocketIOClient.Socket;
 
 /**
  * Wrapper for sockets
  * @param [namespace] - connection namespace
  */
-export default function socket(namespace: string = ''): SocketIO.Client {
+export default function socket(namespace: string = ''): Socket {
 	return require('socket.io-client').connect(new URI(API).path(namespace).toString(), {
 		allowUpgrades: false,
 		transports: ['websocket'],
