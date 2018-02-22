@@ -18,7 +18,7 @@ GLOBAL.ModuleDependencies = Object.assign(GLOBAL.ModuleDependencies || {}, {
 	/**
 	 * Cache for modules
 	 */
-	cache: Object.create(null),
+	cache: Object.createDict(),
 
 	/**
 	 * Event emitter instance

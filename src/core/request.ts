@@ -12,8 +12,8 @@ import joinUri = require('join-uri');
 import { convertIfDate } from 'core/json';
 
 const
-	requests = Object.create(null),
-	cache = Object.create(null);
+	requests = Object.createDict(),
+	cache = Object.createDict();
 
 export class RequestError {
 	/**
