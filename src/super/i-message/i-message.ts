@@ -15,13 +15,13 @@ export default class iMessage extends iBlock {
 	 * Initial information message
 	 */
 	@prop()
-	infoProp?: string;
+	readonly infoProp?: string;
 
 	/**
 	 * Initial error message
 	 */
 	@prop()
-	errorProp?: string;
+	readonly errorProp?: string;
 
 	/**
 	 * Information message store
@@ -36,7 +36,7 @@ export default class iMessage extends iBlock {
 	errorMsg?: string;
 
 	/** @inheritDoc */
-	static mods: ModsDecl = {
+	static readonly mods: ModsDecl = {
 		showInfo: [
 			'true',
 			['false']

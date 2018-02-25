@@ -62,54 +62,67 @@ export default class iBlock extends VueInterface<iBlock> {
 	 * Block unique id
 	 */
 	@system(() => `uid-${Math.random().toString().slice(2)}`)
-	blockId!: string;
+	readonly blockId!: string;
 
 	/**
 	 * Block unique name
 	 */
 	@prop({type: String, required: false})
-	blockName?: string;
+	readonly blockName?: string;
 
 	/**
 	 * Initial block modifiers
 	 */
 	@prop(Object)
-	modsProp: ModsTable = {};
+	readonly modsProp: ModsTable = {};
 
 	/**
 	 * Initial block stage
 	 */
 	@prop({type: String, required: false})
-	stageProp?: string;
+	readonly stageProp?: string;
 
 	/**
 	 * Dispatching mode
 	 */
 	@prop(Boolean)
-	dispatching: boolean = false;
+	readonly dispatching: boolean = false;
 
 	/**
 	 * If true, then the block will be reinitialized after activated
 	 */
 	@prop(Boolean)
-	needReInit: boolean = false;
+	readonly needReInit: boolean = false;
 
 	/**
 	 * Additional classes for block elements
 	 */
 	@prop(Object)
-	classes: Classes = {};
+	readonly classes: Classes = {};
 
 	/**
 	 * Advanced block parameters
 	 */
 	@prop(Object)
-	p: Dictionary = {};
+	readonly p: Dictionary = {};
+
+	/**
+	 * Base block modifiers
+	 */
+	get baseMods(): Dictionary<string> {
+		const
+			m = this.mods;
+
+		return {
+			theme: m.theme,
+			size: m.size
+		};
+	}
 
 	/**
 	 * Block modifiers
 	 */
-	static mods: ModsDecl = {
+	static readonly mods: ModsDecl = {
 		theme: [
 			['default']
 		],
@@ -178,25 +191,25 @@ export default class iBlock extends VueInterface<iBlock> {
 	 * Cache of ifOnce
 	 */
 	@field()
-	protected ifOnceStore: Dictionary = {};
+	protected readonly ifOnceStore: Dictionary = {};
 
 	/**
 	 * Temporary cache
 	 */
 	@field()
-	protected tmp: Dictionary = {};
+	protected readonly tmp: Dictionary = {};
 
 	/**
 	 * Temporary render cache
 	 */
 	@field()
-	protected renderTmp: Dictionary = {};
+	protected readonly renderTmp: Dictionary = {};
 
 	/**
 	 * Link to the current Vue component
 	 */
 	@system((ctx) => ctx)
-	protected self!: iBlock;
+	protected readonly self!: iBlock;
 
 	/**
 	 * API for async operations
@@ -214,13 +227,13 @@ export default class iBlock extends VueInterface<iBlock> {
 	 * Local event emitter
 	 */
 	@system(() => new EventEmitter({maxListeners: 100, wildcard: true}))
-	protected localEvent!: EventEmitter;
+	protected readonly localEvent!: EventEmitter;
 
 	/**
 	 * Storage object
 	 */
 	@system((o) => asyncLocal.namespace(o.componentName))
-	protected storage!: AsyncNamespace;
+	protected readonly storage!: AsyncNamespace;
 
 	/**
 	 * Async loading state
@@ -238,43 +251,43 @@ export default class iBlock extends VueInterface<iBlock> {
 	 * Queue of async components
 	 */
 	@system(() => new Set())
-	protected asyncQueue!: Set<Function>;
+	protected readonly asyncQueue!: Set<Function>;
 
 	/**
 	 * Cache of child async components
 	 */
 	@field()
-	protected asyncComponents: Dictionary<string> = {};
+	protected readonly asyncComponents: Dictionary<string> = {};
 
 	/**
 	 * Cache of child background async components
 	 */
 	@field()
-	protected asyncBackComponents: Dictionary<string> = {};
+	protected readonly asyncBackComponents: Dictionary<string> = {};
 
 	/**
 	 * Some helpers
 	 */
 	@system(() => helpers)
-	protected h!: typeof helpers;
+	protected readonly h!: typeof helpers;
 
 	/**
 	 * Browser constants
 	 */
 	@system(() => browser)
-	protected b!: typeof browser;
+	protected readonly b!: typeof browser;
 
 	/**
 	 * Link to console API
 	 */
 	@system(() => console)
-	protected console!: Console;
+	protected readonly console!: Console;
 
 	/**
 	 * Link to window.location
 	 */
 	@system(() => location)
-	protected location!: Location;
+	protected readonly location!: Location;
 
 	/**
 	 * Block modifiers
@@ -304,29 +317,16 @@ export default class iBlock extends VueInterface<iBlock> {
 	}
 
 	/**
-	 * Base block modifiers
+	 * Cache for prop/field links
 	 */
-	get baseMods(): Dictionary<string> {
-		const
-			m = this.mods;
-
-		return {
-			theme: m.theme,
-			size: m.size
-		};
-	}
+	@system(() => Object.createDict())
+	private readonly linkCache!: Dictionary<Dictionary>;
 
 	/**
 	 * Cache for prop/field links
 	 */
 	@system(() => Object.createDict())
-	private linkCache!: Dictionary<Dictionary>;
-
-	/**
-	 * Cache for prop/field links
-	 */
-	@system(() => Object.createDict())
-	private syncLinkCache!: Dictionary<Function>;
+	private readonly syncLinkCache!: Dictionary<Function>;
 
 	/**
 	 * Returns a string id, which is connected to the block

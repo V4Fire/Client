@@ -14,7 +14,7 @@ import { getSession, setSession, clearSession, matchSession } from 'core/session
 @provider
 export default class JWT extends Provider {
 	/** @inheritDoc */
-	static middlewares: Middlewares<any, Provider> = {
+	static readonly middlewares: Middlewares<any, Provider> = {
 		// tslint:disable-next-line
 		addSession(url, p) {
 			if (p.api) {

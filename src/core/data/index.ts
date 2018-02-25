@@ -74,7 +74,7 @@ export default class Provider {
 	/**
 	 * Request middlewares
 	 */
-	static middlewares: Middlewares<any, Provider> = {};
+	static readonly middlewares: Middlewares<any, Provider> = {};
 
 	/**
 	 * Cache strategy
