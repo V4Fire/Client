@@ -6,6 +6,11 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import { namespace } from 'core/kv-storage';
+
+export const
+	storage = namespace('session');
+
 /**
  * Sets a new session
  *
@@ -15,11 +20,11 @@
 export function setSession(jwt?: string | null, xsrf?: string | null): boolean {
 	try {
 		if (jwt) {
-			localStorage.setItem('jwt', jwt);
+			storage.set('jwt', jwt);
 		}
 
 		if (xsrf) {
-			localStorage.setItem('xsrf', xsrf);
+			storage.set('xsrf', xsrf);
 		}
 
 	} catch (_) {
@@ -35,8 +40,8 @@ export function setSession(jwt?: string | null, xsrf?: string | null): boolean {
 export function getSession(): {xsrf: string | null; jwt: string | null} {
 	try {
 		return {
-			jwt: localStorage.getItem('jwt'),
-			xsrf: localStorage.getItem('xsrf')
+			jwt: storage.get('jwt'),
+			xsrf: storage.get('xsrf')
 		};
 
 	} catch (_) {
@@ -49,8 +54,8 @@ export function getSession(): {xsrf: string | null; jwt: string | null} {
  */
 export function clearSession(): boolean {
 	try {
-		localStorage.removeItem('jwt');
-		localStorage.removeItem('xsrf');
+		storage.remove('jwt');
+		storage.remove('xsrf');
 
 	} catch (_) {
 		return false;
@@ -70,7 +75,7 @@ export function clearSession(): boolean {
  */
 export function matchSession(jwt?: string | null, xsrf?: string | null): boolean {
 	try {
-		return jwt === localStorage.getItem('jwt') && xsrf === localStorage.getItem('xsrf');
+		return jwt === storage.get('jwt') && xsrf === storage.get('xsrf');
 
 	} catch (_) {
 		return false;
@@ -82,7 +87,7 @@ export function matchSession(jwt?: string | null, xsrf?: string | null): boolean
  */
 export function isSessionExists(): boolean {
 	try {
-		return Boolean(localStorage.getItem('jwt') && localStorage.getItem('xsrf'));
+		return Boolean(storage.get('jwt') && storage.get('xsrf'));
 
 	} catch (_) {
 		return false;
