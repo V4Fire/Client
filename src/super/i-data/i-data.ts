@@ -339,6 +339,20 @@ export default class iData extends iMessage {
 	}
 
 	/**
+	 * Drops a request cache
+	 */
+	dropCache(): void {
+		const
+			{$dataProvider: $d} = this;
+
+		if (!$d) {
+			return;
+		}
+
+		$d.dropCache();
+	}
+
+	/**
 	 * Executes the specified function with a socket connection
 	 *
 	 * @see {Provider.attachToSocket}
@@ -346,11 +360,14 @@ export default class iData extends iMessage {
 	 * @param [params]
 	 */
 	protected attachToSocket(fn: (socket: Socket) => void, params?: AsyncCbOpts): void {
-		if (!this.$dataProvider) {
+		const
+			{$dataProvider: $d} = this;
+
+		if (!$d) {
 			return;
 		}
 
-		this.$dataProvider.attachToSocket(fn, params);
+		$d.attachToSocket(fn, params);
 	}
 
 	/**
