@@ -807,7 +807,7 @@ export default class iBlock extends VueInterface<iBlock> {
 	/**
 	 * Initializes core block API
 	 */
-	@hook('beforeCreate')
+	@hook('beforeRuntime')
 	protected initBaseAPI() {
 		this.link = this.instance.link.bind(this);
 		this.createWatchObject = this.instance.createWatchObject.bind(this);

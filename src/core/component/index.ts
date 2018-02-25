@@ -80,6 +80,7 @@ export interface MethodWatcher extends WatchOptions {
 }
 
 export type Hooks =
+	'beforeRuntime' |
 	'beforeCreate' |
 	'created' |
 	'beforeMount' |
@@ -180,6 +181,7 @@ export function component(params: ComponentParams = {}): Function {
 			methods: {},
 			watchers: {},
 			hooks: {
+				beforeRuntime: [],
 				beforeCreate: [],
 				created: [],
 				beforeMount: [],

@@ -152,23 +152,7 @@ export default class iData extends iMessage {
 	/**
 	 * Provider instance
 	 */
-	@system((o) => o.link('dataProvider', {immediate: true}, async (value: string | undefined) => {
-		let res;
-
-		if (value) {
-			res = new providers[value](this.dataProviderParams);
-			// @ts-ignore
-			o.$provider = res;
-			await this.initDataListeners();
-
-		} else {
-			res = null;
-			this.dataEvent.off({group: 'dataProviderSync'});
-		}
-
-		return res;
-	}))
-
+	@system()
 	protected $dataProvider?: Provider;
 
 	/** @override */
@@ -418,6 +402,22 @@ export default class iData extends iMessage {
 		}, {group});
 
 		$e.on('refresh', (data) => this.onRefreshData(Object.isFunction(data) ? data() : data), {group});
+	}
+
+	/**
+	 * Synchronization for the dataProvider property
+	 * @param value
+	 */
+	@watch({field: 'dataProvider', immediate: true})
+	protected async syncDataProviderWatcher(value: string | undefined): Promise<void> {
+		if (value) {
+			this.$dataProvider = new providers[value](this.dataProviderParams);
+			await this.initDataListeners();
+
+		} else {
+			this.$dataProvider = undefined;
+			this.dataEvent.off({group: 'dataProviderSync'});
+		}
 	}
 
 	/**

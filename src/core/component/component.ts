@@ -79,6 +79,7 @@ export function getComponent(
 			ctx.meta = meta;
 			ctx.componentName = meta.name;
 			ctx.instance = instance;
+			runHook('beforeRuntime', meta, this);
 
 			for (let o = meta.accessors, keys = Object.keys(o), i = 0; i < keys.length; i++) {
 				const
@@ -93,7 +94,7 @@ export function getComponent(
 
 			for (let o = meta.systemFields, keys = Object.keys(o), i = 0; i < keys.length; i++) {
 				const
-					key = keys[i],
+					key = ctx.$activeField = keys[i],
 					el = o[key];
 
 				let val;

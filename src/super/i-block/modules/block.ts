@@ -135,7 +135,7 @@ export default class Block<T extends iBlock> {
 			}
 		});
 
-		this.status = this.statuses.loading;
+		this.async.setImmediate(() => this.status = this.statuses.loading);
 	}
 
 	destructor(): void {
