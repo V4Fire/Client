@@ -43,6 +43,7 @@ export {
 } from 'super/i-block/modules/decorators';
 
 export type Classes = Dictionary<string | Array<string | true> | true>;
+export type WatchObjectFields = Array<string | [string] | [string, LinkWrapper] | [string, string, LinkWrapper]>;
 
 export interface LinkWrapper {
 	(this: this, value: any): any;
@@ -930,10 +931,28 @@ export default class iBlock extends VueInterface<iBlock> {
 	 * Sets a link for the specified field
 	 *
 	 * @param field
-	 * @param [wrapper]
 	 * @param [watchParams]
 	 */
-	protected link(field: string, wrapper?: LinkWrapper, watchParams?: Object): any {
+	protected link(field: string, watchParams?: WatchOptions): any;
+
+	/**
+	 * @param field
+	 * @param [wrapper]
+	 */
+	protected link(field: string, wrapper?: LinkWrapper): any;
+
+	/**
+	 * @param field
+	 * @param watchParams
+	 * @param wrapper
+	 */
+	protected link(field: string, watchParams: WatchOptions, wrapper: LinkWrapper): any;
+	protected link(field: string, watchParams?: WatchOptions | LinkWrapper, wrapper?: LinkWrapper): any {
+		if (watchParams && Object.isFunction(watchParams)) {
+			wrapper = watchParams;
+			watchParams = undefined;
+		}
+
 		const
 			path = this.$activeField;
 
@@ -942,7 +961,7 @@ export default class iBlock extends VueInterface<iBlock> {
 			this.execCbAfterCreated(() => {
 				this.$watch(field, (val) => {
 					this.setField(path, wrapper ? wrapper.call(this, val) : val);
-				}, watchParams);
+				}, <WatchOptions>watchParams);
 			});
 
 			const val = () => wrapper ? wrapper.call(this, this[field]) : this[field];
@@ -956,13 +975,33 @@ export default class iBlock extends VueInterface<iBlock> {
 	 *
 	 * @param path - property path
 	 * @param fields
-	 * @param [watchParams]
 	 */
 	protected createWatchObject(
 		path: string,
-		fields: Array<string | [string] | [string, LinkWrapper] | [string, string, LinkWrapper]>,
-		watchParams?: WatchOptions
+		fields: WatchObjectFields
+	): Dictionary;
+
+	/**
+	 * @param path - property path
+	 * @param watchParams
+	 * @param fields
+	 */
+	protected createWatchObject(
+		path: string,
+		watchParams: WatchOptions,
+		fields: WatchObjectFields
+	): Dictionary;
+
+	protected createWatchObject(
+		path: string,
+		watchParams: WatchOptions | WatchObjectFields,
+		fields?: WatchObjectFields
 	): Dictionary {
+		if (Object.isArray(watchParams)) {
+			fields = watchParams;
+			watchParams = {};
+		}
+
 		const
 			{linkCache, syncLinkCache} = this;
 
@@ -984,9 +1023,9 @@ export default class iBlock extends VueInterface<iBlock> {
 		const
 			map = $C(obj).get(short);
 
-		for (let i = 0; i < fields.length; i++) {
+		for (let i = 0; i < (<WatchObjectFields>fields).length; i++) {
 			const
-				el = fields[i];
+				el = (<WatchObjectFields>fields)[i];
 
 			if (Object.isArray(el)) {
 				let
@@ -1013,7 +1052,7 @@ export default class iBlock extends VueInterface<iBlock> {
 					this.execCbAfterCreated(() => {
 						this.$watch(field, (val) => {
 							this.setField(l, wrapper ? wrapper.call(this, val) : val);
-						}, watchParams);
+						}, <WatchOptions>watchParams);
 					});
 
 					const
@@ -1032,7 +1071,7 @@ export default class iBlock extends VueInterface<iBlock> {
 					$C(linkCache).set(true, l);
 
 					this.execCbAfterCreated(() => {
-						this.$watch(el, (val) => this.setField(l, val), watchParams);
+						this.$watch(el, (val) => this.setField(l, val), <WatchOptions>watchParams);
 					});
 
 					syncLinkCache[el] = () => this.setField(l, this.getField(el));
@@ -1327,12 +1366,21 @@ export default class iBlock extends VueInterface<iBlock> {
  * Hack for i-block decorators
  */
 export abstract class iBlockDecorator extends iBlock {
-	public abstract localEvent: EventEmitter;
-	public abstract link(field: string, wrapper?: LinkWrapper, watchParams?: Object): any;
+	public readonly abstract localEvent: EventEmitter;
+
+	public abstract link(field: string, watchParams?: WatchOptions): any;
+	public abstract link(field: string, wrapper?: LinkWrapper): any;
+	public abstract link(field: string, watchParams?: WatchOptions, wrapper?: LinkWrapper): any;
+
 	public abstract createWatchObject(
 		path: string,
-		fields: Array<string | [string] | [string, LinkWrapper] | [string, string, LinkWrapper]>,
-		watchParams?: WatchOptions
+		fields: WatchObjectFields,
+	): Dictionary;
+
+	public abstract createWatchObject(
+		path: string,
+		watchParams: WatchOptions,
+		fields: WatchObjectFields
 	): Dictionary;
 
 	public abstract bindModTo<T = this>(

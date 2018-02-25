@@ -287,7 +287,7 @@ export default class Provider {
 	 */
 	url(value: string): Provider;
 	url(value?: string): Provider | string {
-		if (!value) {
+		if (value == null) {
 			const tmp = `${API}/${this.tmpURL || this.baseURL}/${this.advURL}`;
 			this.advURL = '';
 			this.tmpURL = '';

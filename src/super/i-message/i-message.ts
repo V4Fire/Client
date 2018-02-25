@@ -8,19 +8,20 @@
 
 import KeyCodes from 'core/keyCodes';
 import iBlock, { component, prop, field, ModsDecl } from 'super/i-block/i-block';
+export * from 'super/i-block/i-block';
 
 @component()
 export default class iMessage extends iBlock {
 	/**
 	 * Initial information message
 	 */
-	@prop()
+	@prop({type: String, required: false})
 	readonly infoProp?: string;
 
 	/**
 	 * Initial error message
 	 */
-	@prop()
+	@prop({type: String, required: false})
 	readonly errorProp?: string;
 
 	/**
