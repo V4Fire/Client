@@ -15,6 +15,7 @@ import Async, { AsyncOpts } from 'core/async';
 import Block, { statuses } from 'super/i-block/modules/block';
 import symbolGenerator from 'core/symbol';
 
+import { asyncLocal, AsyncNamespace } from 'core/kv-storage';
 import { component, hook, ModVal, ModsDecl, VueInterface, VueElement } from 'core/component';
 import { prop, field, system, watch, wait } from 'super/i-block/modules/decorators';
 import { queue, backQueue } from 'core/render';
@@ -218,8 +219,8 @@ export default class iBlock extends VueInterface<iBlock> {
 	/**
 	 * Storage object
 	 */
-	@system(() => localStorage)
-	protected storage!: Storage;
+	@system((o) => asyncLocal.namespace(o.componentName))
+	protected storage!: AsyncNamespace;
 
 	/**
 	 * Async loading state
@@ -668,7 +669,7 @@ export default class iBlock extends VueInterface<iBlock> {
 	 */
 	async saveSettings<T extends Object = Dictionary>(settings: T, key: string = ''): Promise<T> {
 		try {
-			await this.storage.setItem(`${this.componentName}_${this.blockName}_${key}`, JSON.stringify(settings));
+			await this.storage.set(`${this.blockName}_${key}`, JSON.stringify(settings));
 		} catch (_) {}
 
 		return settings;
@@ -680,7 +681,7 @@ export default class iBlock extends VueInterface<iBlock> {
 	 */
 	async loadSettings<T extends Object = Dictionary>(key: string = ''): Promise<T | undefined> {
 		try {
-			const str = await this.storage.getItem(`${this.componentName}_${this.blockName}_${key}`);
+			const str = await this.storage.get(`${this.blockName}_${key}`);
 			return str && JSON.parse(str);
 		} catch (_) {}
 	}
