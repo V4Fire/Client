@@ -29,17 +29,17 @@ export default class Block<T extends iBlock> {
 	/**
 	 * Block unique id
 	 */
-	id: string;
+	readonly id: string;
 
 	/**
 	 * Link to a block node
 	 */
-	node: VueElement<T>;
+	readonly node: VueElement<T>;
 
 	/**
 	 * Block model
 	 */
-	model: T;
+	readonly model: T;
 
 	/**
 	 * Async object
@@ -49,17 +49,17 @@ export default class Block<T extends iBlock> {
 	/**
 	 * Local event emitter
 	 */
-	localEvent: EventEmitter;
+	readonly localEvent: EventEmitter;
 
 	/**
 	 * List of applied modifiers
 	 */
-	mods: Dictionary<string | undefined>;
+	readonly mods: Dictionary<string | undefined>;
 
 	/**
 	 * Map of available block statuses
 	 */
-	statuses: typeof statuses = statuses;
+	readonly statuses: typeof statuses = statuses;
 
 	/**
 	 * Block init status
