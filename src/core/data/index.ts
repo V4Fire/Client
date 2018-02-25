@@ -25,12 +25,14 @@ import request, {
 	RequestQuery,
 	RequestResponse,
 	Response,
-	BodyType
+	RequestBody
 
 } from 'core/request';
 
 export * from 'core/data/interface';
 export type RequestFactory = (...args: any[]) => RequestResponse;
+
+export { RequestMethods, RequestError } from 'core/request';
 export {
 
 	globalOpts,
@@ -40,7 +42,7 @@ export {
 	RequestQuery,
 	RequestResponse,
 	Response,
-	BodyType
+	RequestBody
 
 };
 
@@ -347,7 +349,7 @@ export default class Provider {
 	 * @param [body]
 	 * @param [opts]
 	 */
-	post<T>(body?: BodyType, opts?: CreateRequestOptions<T>): RequestResponse {
+	post<T>(body?: RequestBody, opts?: CreateRequestOptions<T>): RequestResponse {
 		const
 			url = this.url(),
 			{middlewares} = <any>this.constructor;
@@ -369,7 +371,7 @@ export default class Provider {
 	 * @param [body]
 	 * @param [opts]
 	 */
-	add<T>(body?: BodyType, opts?: CreateRequestOptions<T>): RequestResponse {
+	add<T>(body?: RequestBody, opts?: CreateRequestOptions<T>): RequestResponse {
 		const
 			url = this.url(),
 			{middlewares} = <any>this.constructor;
@@ -392,7 +394,7 @@ export default class Provider {
 	 * @param [body]
 	 * @param [opts]
 	 */
-	upd<T>(body?: BodyType, opts?: CreateRequestOptions<T>): RequestResponse {
+	upd<T>(body?: RequestBody, opts?: CreateRequestOptions<T>): RequestResponse {
 		const
 			url = this.url(),
 			{middlewares} = <any>this.constructor;
@@ -415,7 +417,7 @@ export default class Provider {
 	 * @param [body]
 	 * @param [opts]
 	 */
-	del<T>(body?: BodyType, opts?: CreateRequestOptions<T>): RequestResponse {
+	del<T>(body?: RequestBody, opts?: CreateRequestOptions<T>): RequestResponse {
 		const
 			url = this.url(),
 			{middlewares} = <any>this.constructor;
