@@ -28,9 +28,7 @@ import Provider, {
 
 } from 'core/data';
 
-export const
-	$$ = symbolGenerator();
-
+export * from 'super/i-message/i-message';
 export interface DataEvent {
 	on(events: string | string[], handler: Function, ...args: any[]): Object | undefined;
 	on(
@@ -62,6 +60,9 @@ export interface CreateRequestOptions<T = any> extends BaseCreateRequestOptions<
 }
 
 export type ModelMethods = 'get' | 'post' | 'add' | 'upd' | 'del';
+
+export const
+	$$ = symbolGenerator();
 
 @component()
 export default class iData extends iMessage {
