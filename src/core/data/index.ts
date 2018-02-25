@@ -15,19 +15,34 @@ import Async, { AsyncCbOpts } from 'core/async';
 import IO, { Socket } from 'core/socket';
 
 import symbolGenerator from 'core/symbol';
+import { SocketEvent, ProviderParams } from 'core/data/interface';
 import request, {
 
-	getRequestKey,
+	globalOpts,
 	CreateRequestOptions,
 	Middlewares,
-	BodyType,
+	CacheStrategy,
 	RequestQuery,
-	RequestResponse
+	RequestResponse,
+	Response,
+	BodyType
 
 } from 'core/request';
 
-import { SocketEvent, ProviderParams } from 'core/data/interface';
 export * from 'core/data/interface';
+export type RequestFactory = (...args: any[]) => RequestResponse;
+export {
+
+	globalOpts,
+	CreateRequestOptions,
+	Middlewares,
+	CacheStrategy,
+	RequestQuery,
+	RequestResponse,
+	Response,
+	BodyType
+
+};
 
 const globalEvent = new EventEmitter({
 	maxListeners: 1e3,
@@ -59,22 +74,22 @@ export default class Provider {
 	/**
 	 * Request middlewares
 	 */
-	static middlewares: Middlewares = {};
+	static middlewares: Middlewares<any, Provider> = {};
 
 	/**
-	 * List of socket events
+	 * Cache strategy
 	 */
-	events: string[] = ['add', 'upd', 'del', 'refresh'];
+	cacheStrategy: CacheStrategy = 'queue';
 
 	/**
-	 * List of additional providers to listen
+	 * Offline cache
 	 */
-	providers: string[] = [];
+	offlineCache: boolean = false;
 
 	/**
-	 * If true, then the provider will be listen all events
+	 * Maximum cache time
 	 */
-	listenAllEvents: boolean = false;
+	cacheTime: number = (10).seconds();
 
 	/**
 	 * Socket connection url
@@ -97,35 +112,45 @@ export default class Provider {
 	tmpURL: string = '';
 
 	/**
-	 * Maximum cache time
+	 * List of socket events
 	 */
-	cacheTime: number = (10).seconds();
+	readonly events: string[] = ['add', 'upd', 'del', 'refresh'];
+
+	/**
+	 * List of additional providers to listen
+	 */
+	readonly providers: string[] = [];
+
+	/**
+	 * If true, then the provider will be listen all events
+	 */
+	readonly listenAllEvents!: boolean;
 
 	/**
 	 * Event emitter object
 	 */
-	event!: EventEmitter;
-
-	/**
-	 * Map for data events
-	 */
-	eventMap: Map<string, {event: string; data: SocketEvent}> = new Map();
+	readonly event!: EventEmitter;
 
 	/**
 	 * Global event emitter object
 	 * (for all data providers)
 	 */
-	globalEvent: EventEmitter = globalEvent;
+	readonly globalEvent: EventEmitter = globalEvent;
+
+	/**
+	 * Map for data events
+	 */
+	protected eventMap: Map<string, {event: string; data: SocketEvent}> = new Map();
 
 	/**
 	 * Async object
 	 */
-	async!: Async<this>;
+	protected async!: Async<this>;
 
 	/**
 	 * Socket connection
 	 */
-	connection?: Promise<Socket>;
+	protected connection?: Promise<Socket>;
 
 	/**
 	 * @param [params] - additional parameters
@@ -165,7 +190,7 @@ export default class Provider {
 	 * Returns an object with authentication params
 	 * @param params - request parameters
 	 */
-	getAuthParams(params: Dictionary | undefined): Dictionary | undefined {
+	getAuthParams(params?: Dictionary | undefined): Dictionary {
 		return {};
 	}
 
@@ -252,112 +277,6 @@ export default class Provider {
 	}
 
 	/**
-	 * Returns an event instanceCache key by the specified parameters
-	 *
-	 * @param event
-	 * @param data
-	 */
-	getEventKey(event: string, data: Dictionary): string {
-		return `${event}::${JSON.stringify(data)}`;
-	}
-
-	/**
-	 * Sets an event to the queue by the specified key
-	 *
-	 * @param key
-	 * @param event - event name
-	 * @param data - event data
-	 * @emits drain()
-	 */
-	setEventToQueue(key: string, event: string, data: SocketEvent): void {
-		const {
-			async: $a,
-			event: $e,
-			eventMap: $m
-		} = this;
-
-		$m.set(key, {event, data});
-		$a.setTimeout(() => {
-			$C($m).remove((el) => ($e.emit(el.event, el.data), true));
-			$e.emit('drain');
-		}, 0.1.second(), {label: $$.setEventToQueue});
-	}
-
-	/**
-	 * Attaches event listeners for the specified socket connection
-	 */
-	listenSocketEvents(): void {
-		const
-			{async: $a, constructor: {name: nm}} = this;
-
-		this.attachToSocket((socket) => {
-			$C(this.events).forEach((type) => {
-				$a.on(socket, type, ({instance, type, data}) => {
-					const
-						f = () => Object.fastClone(data),
-						key = this.getEventKey(type, data);
-
-					this.dropCache();
-					if (this.listenAllEvents) {
-						this.setEventToQueue(key, type, {
-							type,
-							instance,
-							get data(): Dictionary {
-								return f();
-							}
-						});
-
-					} else if (nm && (<string>nm).camelize(false) === instance) {
-						this.setEventToQueue(key, type, f);
-					}
-				}, {
-					label: $$.listenSocketEvents
-				});
-			});
-
-			$a.on(socket, 'alive?', () => socket.emit('alive!'), {
-				label: $$.alive
-			});
-
-		}, {label: $$.listenSocketEvents});
-	}
-
-	/**
-	 * Updates the specified request
-	 *
-	 * @param url - request url
-	 * @param factory - request factory
-	 */
-	updateRequest(url: string, factory: (...args: any[]) => RequestResponse): RequestResponse;
-
-	/**
-	 * @param url - request url
-	 * @param event - event type
-	 * @param factory - request factory
-	 */
-	updateRequest(url: string, event: string, factory: (...args: any[]) => RequestResponse): RequestResponse;
-	updateRequest(url: string, event: string | Function, factory?: Function): RequestResponse {
-		if (Object.isFunction(event)) {
-			factory = event;
-			event = '';
-		}
-
-		const
-			req = factory && factory();
-
-		if (event) {
-			const
-				e = <string>event;
-
-			req.then((res) => {
-				this.setEventToQueue(this.getEventKey(e, res.data), e, () => res.data);
-			});
-		}
-
-		return req;
-	}
-
-	/**
 	 * Returns full request URL
 	 */
 	url(): string;
@@ -406,38 +325,20 @@ export default class Provider {
 	get<T>(query?: RequestQuery, opts?: CreateRequestOptions<T>): RequestResponse {
 		const
 			url = this.url(),
-			key = getRequestKey(url, opts),
-			instanceCache = reqCache[this.constructor.name][key];
+			{middlewares} = <any>this.constructor;
 
-		if (instanceCache) {
-			if (!instanceCache.aborted) {
-				return instanceCache;
-			}
-
-			clearTimeout(instanceCache.timeout);
-		}
-
-		const
-			{middlewares} = <any>this.constructor,
-			clear = () => delete reqCache[key];
-
-		const req = this.updateRequest(
+		return this.updateRequest(
 			url,
 			request(url, <CreateRequestOptions<T>>{
+				cacheStrategy: this.cacheStrategy,
+				cacheTime: this.cacheTime,
+				offlineCache: this.offlineCache,
 				...opts,
 				query,
 				middlewares: {...middlewares, ...opts && opts.middlewares},
 				method: 'GET'
 			})
 		);
-
-		req.then(() => {
-			reqCache[key] = req;
-			clearTimeout(req[$$.getTimeout]);
-			req[$$.getTimeout] = setTimeout(clear, this.cacheTime);
-		}, clear);
-
-		return req;
 	}
 
 	/**
@@ -529,5 +430,111 @@ export default class Provider {
 				method: 'DELETE'
 			})
 		);
+	}
+
+	/**
+	 * Returns an event instanceCache key by the specified parameters
+	 *
+	 * @param event
+	 * @param data
+	 */
+	protected getEventKey(event: string, data: Dictionary): string {
+		return `${event}::${JSON.stringify(data)}`;
+	}
+
+	/**
+	 * Sets an event to the queue by the specified key
+	 *
+	 * @param key
+	 * @param event - event name
+	 * @param data - event data
+	 * @emits drain()
+	 */
+	protected setEventToQueue(key: string, event: string, data: SocketEvent): void {
+		const {
+			async: $a,
+			event: $e,
+			eventMap: $m
+		} = this;
+
+		$m.set(key, {event, data});
+		$a.setTimeout(() => {
+			$C($m).remove((el) => ($e.emit(el.event, el.data), true));
+			$e.emit('drain');
+		}, 0.1.second(), {label: $$.setEventToQueue});
+	}
+
+	/**
+	 * Attaches event listeners for the specified socket connection
+	 */
+	protected listenSocketEvents(): void {
+		const
+			{async: $a, constructor: {name: nm}} = this;
+
+		this.attachToSocket((socket) => {
+			$C(this.events).forEach((type) => {
+				$a.on(socket, type, ({instance, type, data}) => {
+					const
+						f = () => Object.fastClone(data),
+						key = this.getEventKey(type, data);
+
+					this.dropCache();
+					if (this.listenAllEvents) {
+						this.setEventToQueue(key, type, {
+							type,
+							instance,
+							get data(): Dictionary {
+								return f();
+							}
+						});
+
+					} else if (nm && (<string>nm).camelize(false) === instance) {
+						this.setEventToQueue(key, type, f);
+					}
+				}, {
+					label: $$.listenSocketEvents
+				});
+			});
+
+			$a.on(socket, 'alive?', () => socket.emit('alive!'), {
+				label: $$.alive
+			});
+
+		}, {label: $$.listenSocketEvents});
+	}
+
+	/**
+	 * Updates the specified request
+	 *
+	 * @param url - request url
+	 * @param factory - request factory
+	 */
+	protected updateRequest(url: string, factory: RequestFactory): RequestResponse;
+
+	/**
+	 * @param url - request url
+	 * @param event - event type
+	 * @param factory - request factory
+	 */
+	protected updateRequest(url: string, event: string, factory: RequestFactory): RequestResponse;
+	protected updateRequest(url: string, event: string | RequestFactory, factory?: RequestFactory): RequestResponse {
+		if (Object.isFunction(event)) {
+			factory = event;
+			event = '';
+		}
+
+		const
+			req = (<Function>factory)();
+
+		if (event) {
+			const
+				e = <string>event;
+
+			req.then((res) => {
+				this.setEventToQueue(this.getEventKey(e, res.data), e, () => res.data);
+			});
+		}
+
+		return req;
 	}
 }
