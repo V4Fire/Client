@@ -8,7 +8,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-- include 'super/i-block'|b
+- include 'super/i-data'|b
 - include 'super/i-page/modules/**/*.ss'|b
 
 - import fs from 'fs-extra-promise'
@@ -19,7 +19,7 @@
  * Base page template
  * @param [params] - template parameters
  */
-- placeholder index(@params = {}) extends ['i-block'].index
+- placeholder index(@params = {}) extends ['i-data'].index
 	- title = @title || @@appName
 
 	- pageData = {}
