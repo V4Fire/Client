@@ -8,7 +8,7 @@
 
 import $C = require('collection.js');
 
-enum keyCodes {
+enum KeyCodes {
 	// Hacks
 	ANDROID_229 = 229,
 
@@ -161,5 +161,5 @@ export default {
 		return $C(this).one.search((el) => el === keyCode);
 	},
 
-	...keyCodes
+	...KeyCodes
 };

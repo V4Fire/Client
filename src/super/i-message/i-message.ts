@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import keyCodes from 'core/keyCodes';
+import KeyCodes from 'core/keyCodes';
 import iBlock, { component, prop, field, ModsDecl } from 'super/i-block/i-block';
 
 @component()
@@ -126,7 +126,7 @@ export default class iMessage extends iBlock {
 
 		const closeHelpers = () => {
 			$a.on(document, 'keyup', (e) => {
-				if (e.keyCode === keyCodes.ESC) {
+				if (e.keyCode === KeyCodes.ESC) {
 					return this.close();
 				}
 			}, {group});

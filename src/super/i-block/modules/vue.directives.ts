@@ -9,7 +9,7 @@
 import $C = require('collection.js');
 import Vue, { VNode, VNodeDirective } from 'vue';
 import iBlock, { VueElement } from 'super/i-block/i-block';
-import keyCodes from 'core/keyCodes';
+import KeyCodes from 'core/keyCodes';
 
 const
 	cache = new WeakMap();
@@ -70,7 +70,7 @@ function bind(node: VueElement<iBlock>, p: VNodeDirective, vNode: VNode & {conte
 
 	function fn(e: KeyboardEvent): void {
 		const
-			key = m.key && keyCodes.getKeyNameFromKeyCode(e.keyCode);
+			key = m.key && KeyCodes.getKeyNameFromKeyCode(e.keyCode);
 
 		if (
 			m.alt && !e.altKey ||
