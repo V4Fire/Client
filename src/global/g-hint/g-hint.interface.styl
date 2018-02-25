@@ -6,8 +6,6 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-@import "super/i-base/i-base.styl"
-
 $p = {
 	hintData: false,
 	showSelector: false,
@@ -24,7 +22,7 @@ $p = {
 	zIndex: 1000
 }
 
-g-hint extends i-base
+g-hint
 	{$p.wrapper}
 		if $p.wrapper != "&"
 			display none
