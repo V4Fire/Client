@@ -7,7 +7,9 @@
  */
 
 import $C = require('collection.js');
+import Then from 'core/then';
 import iData, { component } from 'super/i-data/i-data';
+import { RequestQuery, CreateRequestOptions } from 'core/data';
 export * from 'super/i-data/i-data';
 
 export interface ElComparator {
@@ -23,6 +25,11 @@ export interface DataList<T> {
 export default class iDataList<T extends Dictionary = Dictionary> extends iData<DataList<T>> {
 	/** @override */
 	readonly needReInit: boolean = true;
+
+	/** @override */
+	get(data?: RequestQuery, params?: CreateRequestOptions<DataList<T>>): Then<DataList<T> | null> {
+		return super.get(...arguments);
+	}
 
 	/** @override */
 	protected getObservableData<O>(base: DataList<T>): O | DataList<T> {

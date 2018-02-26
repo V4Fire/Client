@@ -279,7 +279,7 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 	 * @param [data]
 	 * @param [params]
 	 */
-	get<T>(data?: RequestQuery, params?: CreateRequestOptions<T>): Then<T | null> {
+	get(data?: RequestQuery, params?: CreateRequestOptions<T>): Then<T | null> {
 		return this.createRequest('get', ...arguments);
 	}
 
