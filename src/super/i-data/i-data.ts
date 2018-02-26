@@ -65,7 +65,7 @@ export const
 	$$ = symbolGenerator();
 
 @component()
-export default class iData extends iMessage {
+export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 	/**
 	 * Data provider name
 	 */
@@ -76,7 +76,7 @@ export default class iData extends iMessage {
 	 * Parameters for a data provider instance
 	 */
 	@prop(Object)
-	readonly dataProviderParams: Object = {};
+	readonly dataProviderParams: Dictionary = {};
 
 	/**
 	 * Data initialization advanced path
@@ -147,7 +147,7 @@ export default class iData extends iMessage {
 	 * Block data
 	 */
 	@field({watch: 'initRemoteData'})
-	protected db?: Dictionary | null = null;
+	protected db?: T | null = null;
 
 	/**
 	 * Provider instance
@@ -359,7 +359,7 @@ export default class iData extends iMessage {
 	 * Returns an object to observe by the specified
 	 * @param base
 	 */
-	protected getObservableData(base: Dictionary): Dictionary {
+	protected getObservableData<O>(base: T): O | T {
 		return base;
 	}
 
@@ -572,7 +572,7 @@ export default class iData extends iMessage {
 	 * Handler: $dataProvider.add
 	 * @param data
 	 */
-	protected onAddData(data: Dictionary): void {
+	protected onAddData(data: T): void {
 		this.db = this.getObservableData(data);
 	}
 
@@ -580,7 +580,7 @@ export default class iData extends iMessage {
 	 * Handler: $dataProvider.upd
 	 * @param data
 	 */
-	protected onUpdData(data: Dictionary): void {
+	protected onUpdData(data: T): void {
 		this.db = this.getObservableData(data);
 	}
 
@@ -588,7 +588,7 @@ export default class iData extends iMessage {
 	 * Handler: $dataProvider.del
 	 * @param data
 	 */
-	protected onDelData(data: Dictionary): void {
+	protected onDelData(data: T): void {
 		this.db = undefined;
 	}
 
@@ -596,7 +596,7 @@ export default class iData extends iMessage {
 	 * Handler: $dataProvider.refresh
 	 * @param data
 	 */
-	protected async onRefreshData(data: Dictionary): Promise<void> {
+	protected async onRefreshData(data: T): Promise<void> {
 		await this.initLoad();
 	}
 }

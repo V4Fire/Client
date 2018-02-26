@@ -22,7 +22,7 @@ export const
 	$$ = symbolGenerator();
 
 @component()
-export default class iDynamicPage extends iData {
+export default class iDynamicPage<T extends Dictionary = Dictionary> extends iData<T> {
 	/** @override */
 	readonly needReInit: boolean = true;
 
@@ -93,7 +93,7 @@ export default class iDynamicPage extends iData {
 	 * Accumulates a state for a setting hash
 	 * @param obj - state object
 	 */
-	protected async accumulateHashState(obj: Object): Promise<void> {
+	protected async accumulateHashState(obj: Dictionary): Promise<void> {
 		const
 			{tmp} = this;
 

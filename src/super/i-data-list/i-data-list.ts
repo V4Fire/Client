@@ -1,5 +1,3 @@
-'use strict';
-
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -8,19 +6,26 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import iData from 'super/i-data/i-data';
-import { component } from 'core/component';
+import $C = require('collection.js');
+import iData, { component } from 'super/i-data/i-data';
+export * from 'super/i-data/i-data';
 
-const
-	$C = require('collection.js');
+export interface ElComparator {
+	(el: any): boolean;
+}
+
+export interface DataList<T> {
+	data: T[];
+	total: number;
+}
 
 @component()
-export default class iDataList extends iData {
+export default class iDataList<T extends Dictionary = Dictionary> extends iData<DataList<T>> {
 	/** @override */
-	needReInit: boolean = true;
+	readonly needReInit: boolean = true;
 
 	/** @override */
-	getObservableData(base: Object): Object {
+	protected getObservableData<O>(base: DataList<T>): O | DataList<T> {
 		const
 			obj = Object.create(base);
 
@@ -34,7 +39,7 @@ export default class iDataList extends iData {
 	 * Returns an object (chunk) to observe by the specified
 	 * @param base
 	 */
-	getObservableChunk(base: Object): Object {
+	protected getObservableChunk(base: T): T {
 		return base;
 	}
 
@@ -42,7 +47,7 @@ export default class iDataList extends iData {
 	 * Returns a function for comparing list elements
 	 * @param el - base element for comparing
 	 */
-	getElComparator(el: Object): Function {
+	protected getElComparator(el: T): ElComparator {
 		return (el2) => el && el._id === el2._id;
 	}
 
@@ -50,7 +55,7 @@ export default class iDataList extends iData {
 	 * Adds the specified data object to the store
 	 * @param data
 	 */
-	addData(data: Object): {exec?: Function, type?: string} {
+	protected addData(data: T): {type: 'upd'; upd: Function} {
 		return {
 			type: 'upd',
 			upd: () => {
@@ -70,7 +75,7 @@ export default class iDataList extends iData {
 	 * @param data
 	 * @param i - element index
 	 */
-	updData(data: Object, i: number): {exec?: Function, type?: string} {
+	protected updData(data: T, i: number): {type: 'upd'; upd: Function; del: Function} {
 		return {
 			type: 'upd',
 			upd: () => {
@@ -98,7 +103,7 @@ export default class iDataList extends iData {
 	 * @param data
 	 * @param i - element index
 	 */
-	delData(data: Object, i: number): {exec?: Function, type?: string} {
+	protected delData(data: T, i: number): {type: 'del'; del: Function} {
 		return {
 			type: 'del',
 			del: () => {
@@ -113,16 +118,17 @@ export default class iDataList extends iData {
 	}
 
 	/** @override */
-	async onAddData(data: Object) {
-		data = [].concat(data);
+	// @ts-ignore
+	protected async onAddData(data: T): Promise<void> {
+		const list = (<T[]>[]).concat(data);
 		await this.async.wait(() => this.db);
 
 		const
-			db = this.db.data;
+			db = (<DataList<T>>this.db).data;
 
-		for (let i = 0; i < data.length; i++) {
+		for (let i = 0; i < list.length; i++) {
 			const
-				el1 = data[0];
+				el1 = list[0];
 
 			let some = false;
 			for (let i = 0; i < db.length; i++) {
@@ -150,16 +156,17 @@ export default class iDataList extends iData {
 	}
 
 	/** @override */
-	async onUpdData(data: Object) {
-		data = [].concat(data);
+	// @ts-ignore
+	protected async onUpdData(data: T): Promise<void> {
+		const list = (<T[]>[]).concat(data);
 		await this.async.wait(() => this.db);
 
 		const
-			db = this.db.data;
+			db = (<DataList<T>>this.db).data;
 
-		for (let i = 0; i < data.length; i++) {
+		for (let i = 0; i < list.length; i++) {
 			const
-				el1 = data[0];
+				el1 = list[0];
 
 			for (let i = 0; i < db.length; i++) {
 				const
@@ -181,16 +188,17 @@ export default class iDataList extends iData {
 	}
 
 	/** @override */
-	async onDelData(data: Object) {
-		data = [].concat(data);
+	// @ts-ignore
+	protected async onDelData(data: T): Promise<void> {
+		const list = (<T[]>[]).concat(data);
 		await this.async.wait(() => this.db);
 
 		const
-			db = this.db.data;
+			db = (<DataList<T>>this.db).data;
 
-		for (let i = 0; i < data.length; i++) {
+		for (let i = 0; i < list.length; i++) {
 			const
-				el1 = data[0];
+				el1 = list[0];
 
 			for (let i = 0; i < db.length; i++) {
 				const

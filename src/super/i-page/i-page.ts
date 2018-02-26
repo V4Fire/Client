@@ -9,4 +9,4 @@
 import iData, { component } from 'super/i-data/i-data';
 
 @component()
-export default class iPage extends iData {}
+export default class iPage<T extends Dictionary = Dictionary> extends iData<T> {}
