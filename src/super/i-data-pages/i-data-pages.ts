@@ -37,7 +37,7 @@ export default class iDataPages<T extends Dictionary = Dictionary> extends iData
 	/**
 	 * Link to element at the bottom of the data block
 	 */
-	@prop(HTMLElement)
+	@prop({type: HTMLElement, required: false})
 	readonly lazyLoadTrigger?: HTMLElement;
 
 	/**

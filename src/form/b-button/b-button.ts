@@ -1,5 +1,3 @@
-'use strict';
-
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -8,79 +6,92 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import iData from 'super/i-data/i-data';
-import { component } from 'core/component';
+import iData, { component, prop, ModsDecl, ModelMethods, CreateRequestOptions } from 'super/i-data/i-data';
+import { RequestQuery, RequestBody } from 'core/data';
+export * from 'super/i-data/i-data';
 
 @component()
 export default class bButton extends iData {
 	/** @override */
-	dataProvider: string = 'Provider';
+	readonly dataProvider: string = 'Provider';
 
 	/** @override */
-	requestFilter: Function | boolean = false;
+	readonly requestFilter: Function | boolean = false;
 
 	/**
 	 * Link href
 	 */
-	href: ?string;
+	@prop({type: String, required: false})
+	readonly href?: string;
 
 	/**
 	 * Data provider method
 	 */
-	method: ?string = 'get';
+	@prop(String)
+	readonly method: ModelMethods = 'get';
 
 	/**
 	 * Request parameters
 	 */
-	request: ?Object | Array<Object>;
+	@prop({type: [Object, Array], required: false})
+	request?: RequestQuery | RequestBody | [RequestBody | RequestQuery, CreateRequestOptions];
 
 	/**
 	 * Button type
 	 */
+	@prop(String)
 	type: string = 'button';
 
 	/**
 	 * Connected form id
 	 */
-	form: ?string;
+	@prop({type: String, required: false})
+	form?: string;
 
 	/**
 	 * Input autofocus mode
 	 */
-	autofocus: ?boolean;
+	@prop({type: Boolean, required: false})
+	autofocus?: boolean;
 
 	/**
 	 * Icon before text
 	 */
-	preIcon: ?string;
+	@prop({type: String, required: false})
+	preIcon?: string;
 
 	/**
 	 * Component for .preIcon
 	 */
-	preIconComponent: ?string = 'b-icon';
+	@prop(String)
+	preIconComponent?: string = 'b-icon';
 
 	/**
 	 * Icon after text
 	 */
-	icon: ?string;
+	@prop({type: String, required: false})
+	icon?: string;
 
 	/**
 	 * Component for .icon
 	 */
-	iconComponent: ?string = 'b-icon';
+	@prop(String)
+	iconComponent: string = 'b-icon';
 
 	/**
 	 * Tooltip text
 	 */
-	hint: ?string;
+	@prop({type: String, required: false})
+	hint?: string;
 
 	/**
 	 * Tooltip position
 	 */
-	hintPos: ?string;
+	@prop({type: String, required: false})
+	hintPos?: string;
 
 	/** @inheritDoc */
-	static mods = {
+	static mods: ModsDecl = {
 		rounding: [
 			'none',
 			['small'],
@@ -95,7 +106,7 @@ export default class bButton extends iData {
 	 * @param e
 	 * @emits click(e: Event)
 	 */
-	async onClick(e: Event) {
+	protected async onClick(e: Event): Promise<void> {
 		// Form attribute fix for MS Edge && IE
 		if (this.form && this.type === 'submit') {
 			e.preventDefault();
@@ -107,7 +118,7 @@ export default class bButton extends iData {
 				this.base(this.href);
 			}
 
-			await this[this.method](...[].concat(this.request || []));
+			await (<Function>this[this.method])(...(<any>[]).concat(this.request || []));
 		}
 
 		await this.toggle();
@@ -115,7 +126,8 @@ export default class bButton extends iData {
 	}
 
 	/* @override */
-	created() {
+	protected created(): void {
+		super.created();
 		this.initCloseHelpers();
 	}
 }

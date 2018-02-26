@@ -8,8 +8,8 @@
 
 import $C = require('collection.js');
 import Then from 'core/then';
-import iData, { component } from 'super/i-data/i-data';
-import { RequestQuery, CreateRequestOptions } from 'core/data';
+import iData, { component, CreateRequestOptions } from 'super/i-data/i-data';
+import { RequestQuery } from 'core/data';
 export * from 'super/i-data/i-data';
 
 export interface ElComparator {
