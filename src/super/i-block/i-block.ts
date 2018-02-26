@@ -15,6 +15,7 @@ import Async, { AsyncOpts } from 'core/async';
 import Block, { statuses } from 'super/i-block/modules/block';
 import symbolGenerator from 'core/symbol';
 
+import iPage from 'super/i-page/i-page';
 import { asyncLocal, AsyncNamespace } from 'core/kv-storage';
 import { component, hook, ModVal, ModsDecl, VueInterface, VueElement } from 'core/component';
 import { prop, field, system, watch, wait } from 'super/i-block/modules/decorators';
@@ -59,12 +60,18 @@ const
 	modsCache = Object.createDict();
 
 @component()
-export default class iBlock extends VueInterface<iBlock> {
+export default class iBlock extends VueInterface<iBlock, iPage> {
 	/**
 	 * Block unique id
 	 */
 	@system(() => `uid-${Math.random().toString().slice(2)}`)
 	readonly blockId!: string;
+
+	/**
+	 * Link to i18n function
+	 */
+	@prop(Function)
+	readonly i18n: typeof i18n = defaulti18n;
 
 	/**
 	 * Block unique name
@@ -83,6 +90,19 @@ export default class iBlock extends VueInterface<iBlock> {
 	 */
 	@prop({type: String, required: false})
 	readonly stageProp?: string;
+
+	/**
+	 * Block stage
+	 */
+	@field((o) => o.link('stageProp'))
+	stage?: string;
+
+	/**
+	 * Group name for the current stage
+	 */
+	get stageGroup(): string {
+		return `stage.${this.stage}`;
+	}
 
 	/**
 	 * Dispatching mode
@@ -278,6 +298,19 @@ export default class iBlock extends VueInterface<iBlock> {
 	 */
 	@system(() => browser)
 	protected readonly b!: typeof browser;
+
+	/**
+	 * Alias for .i18n
+	 */
+	protected get t(): typeof i18n {
+		return this.i18n;
+	};
+
+	/**
+	 * Link to window.l
+	 */
+	@system(() => l)
+	protected readonly l!: typeof l;
 
 	/**
 	 * Link to console API
@@ -577,6 +610,14 @@ export default class iBlock extends VueInterface<iBlock> {
 	 */
 	protected getFullElName(elName: string, modName?: string, modValue?: any): string {
 		return Block.prototype.getFullElName.apply({blockName: this.componentName}, arguments);
+	}
+
+	/**
+	 * Sets g-hint for the specified element
+	 * @param [pos] - hint position
+	 */
+	protected setHint(pos: string = 'bottom'): string[] {
+		return this.getBlockClasses('g-hint', {pos});
 	}
 
 	/**
@@ -1404,6 +1445,10 @@ export default class iBlock extends VueInterface<iBlock> {
 			this.meta.hooks.created.push({fn: cb});
 		}
 	}
+}
+
+function defaulti18n(): string {
+	return this.$root.i18n.apply(this.$root, arguments);
 }
 
 /**

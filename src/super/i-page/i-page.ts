@@ -16,7 +16,7 @@ export default class iPage<T extends Dictionary = Dictionary> extends iData<T> {
 	 * Link to i18n function
 	 */
 	@system()
-	protected readonly i18n: typeof i18n = i18n;
+	readonly i18n: typeof i18n = i18n;
 
 	/**
 	 * System language
