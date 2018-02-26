@@ -55,7 +55,8 @@ export const
 	$$ = symbolGenerator();
 
 const
-	classesCache = Object.createDict();
+	classesCache = Object.createDict(),
+	modsCache = Object.createDict();
 
 @component()
 export default class iBlock extends VueInterface<iBlock> {
@@ -1210,6 +1211,49 @@ export default class iBlock extends VueInterface<iBlock> {
 				}
 
 				map[key] = this.getFullElName.apply(this, (<any[]>[]).concat(el));
+			}
+		}
+
+		return map;
+	}
+
+	/**
+	 * Returns an object with base block modifiers
+	 * @param mods - additional modifiers ({modifier: {currentValue: value}} || {modifier: value})
+	 */
+	provideMods(mods?: Dictionary<ModVal | Dictionary<ModVal>>): Dictionary<string> {
+		const
+			key = JSON.stringify(this.baseMods) + JSON.stringify(mods),
+			cache = modsCache[key];
+
+		if (cache) {
+			return cache;
+		}
+
+		const
+			map = {...this.baseMods};
+
+		if (mods) {
+			const
+				keys = Object.keys(mods);
+
+			for (let i = 0; i < keys.length; i++) {
+				const
+					key = keys[i];
+
+				let
+					el = <any>mods[key];
+
+				if (!Object.isObject(el)) {
+					el = {default: el};
+				}
+
+				if (!(key in mods) || el[key] === undefined) {
+					map[key] = el[Object.keys(el)[0]];
+
+				} else {
+					map[key] = el[key];
+				}
 			}
 		}
 
