@@ -1,5 +1,3 @@
-'use strict';
-
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -8,46 +6,41 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import iData from 'super/i-data/i-data';
-import { component } from 'core/component';
-import Store from 'core/store';
+import $C = require('collection.js');
+import URI = require('urijs');
 
-const
-	$C = require('collection.js'),
-	URI = require('urijs');
+import iData, { component } from 'super/i-data/i-data';
+import symbolGenerator from 'core/symbol';
+export * from 'super/i-data/i-data';
+
+export interface OnFilterChange {
+	mixin?: Dictionary;
+	modifier?(value: any): any;
+}
 
 export const
-	$$ = new Store();
+	$$ = symbolGenerator();
 
 @component()
 export default class iDynamicPage extends iData {
 	/** @override */
-	needReInit: boolean = true;
-
-	/**
-	 * Returns an object with default block fields for hash
-	 * @param obj
-	 */
-	convertStateToHash(obj: ?Object): Object {
-		return {...obj};
-	}
-
-	/* eslint-disable no-unused-vars */
+	readonly needReInit: boolean = true;
 
 	/**
 	 * Gets values from the specified object and saves it to the block state
 	 * @param obj
 	 */
-	setState(obj: Object) {}
-
-	/* eslint-enable no-unused-vars */
+	setState(obj: Dictionary): void {
+		return;
+	}
 
 	/**
 	 * Saves the block state to the location.hash
 	 * @param obj - state object
 	 */
-	setHash(obj: Object): string | false {
+	setHash(obj: Dictionary): string | false {
 		obj = this.convertStateToHash(obj);
+
 		$C(obj).forEach((el, key) => {
 			if (el) {
 				this[key] = el;
@@ -59,14 +52,14 @@ export default class iDynamicPage extends iData {
 		}
 
 		const
-			hash = Object.toQueryString(Object.remove(obj), {deep: true}),
+			hash = <string>Object.toQueryString(obj, {deep: true}),
 			url = new URI();
 
 		if (url.fragment()) {
 			location.hash = hash;
 
 		} else if (hash) {
-			location.replace(url.hash(hash));
+			location.replace(url.hash(hash).toString());
 		}
 
 		return hash;
@@ -84,15 +77,23 @@ export default class iDynamicPage extends iData {
 	/**
 	 * Initialized the block state from hash values
 	 */
-	initStateFromHash() {
+	initStateFromHash(): void {
 		this.setState(Object.fromQueryString(new URI().fragment(), {deep: true}));
+	}
+
+	/**
+	 * Returns an object with default block fields for hash
+	 * @param [obj]
+	 */
+	protected convertStateToHash(obj?: Dictionary | undefined): Dictionary {
+		return {...obj};
 	}
 
 	/**
 	 * Accumulates a state for a setting hash
 	 * @param obj - state object
 	 */
-	async accumulateHashState(obj: Object) {
+	protected async accumulateHashState(obj: Object): Promise<void> {
 		const
 			{tmp} = this;
 
@@ -110,8 +111,6 @@ export default class iDynamicPage extends iData {
 		} catch (_) {}
 	}
 
-	/* eslint-disable no-unused-vars */
-
 	/**
 	 * Handler: filter change
 	 *
@@ -121,31 +120,33 @@ export default class iDynamicPage extends iData {
 	 *   3) [defKey] - default state key
 	 *
 	 * @param [key] - state key
-	 * @param [mixin] - filter mixin
-	 * @param [modifier] - value modifier
+	 * @param [e] - additional event parameters:
+	 *   *) [mixin] - filter mixin
+	 *   *) [modifier] - value modifier
 	 */
-	async onFilterChange(args: Object, key?: string = args[2], {mixin = {}, modifier}: {mixin?: Object, modifier?: Function} = {}) {
-		let hashData = {};
+	protected async onFilterChange(args: IArguments, key: string = args[2], e: OnFilterChange = {}): Promise<void> {
+		let
+			hashData = {};
 
 		if (key) {
 			const value = args[1];
-			hashData = {[key]: modifier ? modifier(value) : value};
+			hashData = {[key]: e.modifier ? e.modifier(value) : value};
 		}
 
-		await this.accumulateHashState({...mixin, ...hashData});
+		await this.accumulateHashState({...e.mixin, ...hashData});
 	}
 
-	/* eslint-enable no-unused-vars */
-
 	/** @override */
-	activated() {
+	protected async activated(): Promise<void> {
+		await super.activated();
 		this.initStateFromHash();
 		this.async.on(window, 'hashchange', this.initStateFromHash);
 	}
 
 	/** @override */
-	deactivated() {
-		this.async.off(window, 'hashchange');
+	protected deactivated(): void {
+		super.deactivated();
+		this.async.off('hashchange');
 		$C(this.convertStateToHash()).forEach((el, key) => this[key] = undefined);
 	}
 }
