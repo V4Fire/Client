@@ -233,8 +233,8 @@ export function patchVNode(vnode: VNode, ctx: Dictionary, renderCtx: RenderConte
 		}
 	}
 
-	runHook('afterRender', meta, renderCtx);
-	meta.methods.afterRender && meta.methods.afterRender.fn.call(renderCtx);
+	runHook('afterRender', meta, ctx);
+	meta.methods.afterRender && meta.methods.afterRender.fn.call(ctx);
 	return vnode;
 }
 
