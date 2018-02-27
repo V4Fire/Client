@@ -9,7 +9,7 @@
 import { CreateElement, RenderContext, VNode, FunctionalComponentOptions } from 'vue';
 import { EventEmitter2 as EventEmitter } from 'eventemitter2';
 import { FunctionalCtx } from 'core/component';
-import { runHook } from 'core/component/component';
+import { runHook, defaultWrapper } from 'core/component/component';
 
 const
 	cache = new WeakMap();
@@ -34,6 +34,51 @@ export function createFakeCtx(
 	const
 		fakeCtx: Dictionary & FunctionalCtx = Object.create(baseCtx),
 		{meta, meta: {methods}, instance} = fakeCtx;
+
+	const
+		p = <Dictionary>renderCtx.parent,
+		event = new EventEmitter();
+
+	// Add base methods and properties
+	Object.assign(fakeCtx, renderCtx, renderCtx.props, {
+		_self: fakeCtx,
+		_staticTrees: [],
+		children: [],
+
+		$root: p.$root,
+		$parent: p,
+		$options: Object.assign(Object.create(p.$options), fakeCtx.$options),
+		$createElement: createElement,
+
+		$slots: Object.assign(renderCtx.slots(), {default: renderCtx.children}),
+		$scopedSlots: {},
+
+		$emit(e: string, ...args: any[]): void {
+			event.emit(e, ...args);
+		},
+
+		$once(e: string, cb: any): void {
+			event.once(e, cb);
+		},
+
+		$on(e: string | string[], cb: any): void {
+			const
+				events = (<string[]>[]).concat(e);
+
+			for (let i = 0; i < events.length; i++) {
+				event.on(events[i], cb);
+			}
+		},
+
+		$off(e: string | string[], cb?: any): void {
+			const
+				events = (<string[]>[]).concat(e);
+
+			for (let i = 0; i < events.length; i++) {
+				event.off(events[i], cb);
+			}
+		}
+	});
 
 	{
 		const list = [
@@ -96,50 +141,15 @@ export function createFakeCtx(
 		}
 	}
 
-	const
-		p = <Dictionary>renderCtx.parent,
-		event = new EventEmitter();
+	for (let o = meta.component.props, keys = Object.keys(o), i = 0; i < keys.length; i++) {
+		const
+			key = fakeCtx.$activeField = keys[i],
+			el = o[key];
 
-	// Add base methods and properties
-	Object.assign(fakeCtx, renderCtx, renderCtx.props, {
-		_self: fakeCtx,
-		_staticTrees: [],
-		children: [],
-
-		$root: p.$root,
-		$parent: p,
-		$options: Object.assign(Object.create(p.$options), fakeCtx.$options),
-		$createElement: createElement,
-
-		$slots: Object.assign(renderCtx.slots(), {default: renderCtx.children}),
-		$scopedSlots: {},
-
-		$emit(e: string, ...args: any[]): void {
-			event.emit(e, ...args);
-		},
-
-		$once(e: string, cb: any): void {
-			event.once(e, cb);
-		},
-
-		$on(e: string | string[], cb: any): void {
-			const
-				events = (<string[]>[]).concat(e);
-
-			for (let i = 0; i < events.length; i++) {
-				event.on(events[i], cb);
-			}
-		},
-
-		$off(e: string | string[], cb?: any): void {
-			const
-				events = (<string[]>[]).concat(e);
-
-			for (let i = 0; i < events.length; i++) {
-				event.off(events[i], cb);
-			}
+		if (Object.isFunction(el.default) && !el.default[defaultWrapper]) {
+			fakeCtx[key] = el.type === Function ? el.default.bind(fakeCtx) : el.default.call(fakeCtx);
 		}
-	});
+	}
 
 	runHook('beforeRender', meta, fakeCtx);
 	methods.beforeRender && methods.beforeRender.fn.call(fakeCtx);

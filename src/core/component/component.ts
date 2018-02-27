@@ -14,6 +14,7 @@ export interface ComponentConstructor<T = any> {
 }
 
 export const
+	defaultWrapper = Symbol('Default wrapper'),
 	vueProto = {};
 
 {
@@ -218,8 +219,8 @@ export function getFunctionalComponent(
 			el = o[key],
 			prop = props[key] = {...el};
 
-		if (Object.isFunction(el.default)) {
-			prop.default = el.default.bind(ctx);
+		if (Object.isFunction(el.default) && !el.default[defaultWrapper]) {
+			prop.default = undefined;
 		}
 	}
 
@@ -359,12 +360,14 @@ export function getBaseComponent(
 			prop = o[key],
 			def = instance[key];
 
+		const cloneDef = () => Object.fastClone(def);
+		cloneDef[defaultWrapper] = true;
+
 		component.props[key] = {
 			type: prop.type,
 			required: prop.required,
 			validator: prop.validator,
-			default: prop.default !== undefined ?
-				prop.default : prop.type === Function ? def : () => Object.fastClone(def)
+			default: prop.default !== undefined ? prop.default : prop.type === Function ? def : cloneDef
 		};
 
 		watchers[key] = watchers[key] || [];

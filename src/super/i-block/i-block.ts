@@ -303,7 +303,6 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 * Alias for .i18n
 	 */
 	protected get t(): typeof i18n {
-		console.log(121, this.i18n);
 		return this.i18n;
 	};
 
