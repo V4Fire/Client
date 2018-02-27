@@ -143,6 +143,7 @@ export interface ComponentMeta {
 
 	component: {
 		name: string;
+		mods: Dictionary<string | undefined>;
 		props: Dictionary<PropOptions>;
 		methods: Dictionary<Function>;
 		computed: Dictionary<ComputedOptions<any>>;
@@ -217,6 +218,7 @@ export function component(params: ComponentParams = {}): Function {
 
 			component: {
 				name,
+				mods: {},
 				props: {},
 				methods: {},
 				computed: {},

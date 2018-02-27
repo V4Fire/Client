@@ -402,7 +402,7 @@ export function getBaseComponent(
 	}
 
 	const
-		mods = {};
+		mods = component.mods;
 
 	for (let o = meta.mods, keys = Object.keys(o), i = 0; i < keys.length; i++) {
 		const
