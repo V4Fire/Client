@@ -71,7 +71,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 * Link to i18n function
 	 */
 	@prop(Function)
-	readonly i18n: typeof i18n = defaulti18n;
+	readonly i18n: typeof i18n = defaultI18n;
 
 	/**
 	 * Block unique name
@@ -303,6 +303,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 * Alias for .i18n
 	 */
 	protected get t(): typeof i18n {
+		console.log(121, this.i18n);
 		return this.i18n;
 	};
 
@@ -354,14 +355,14 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	/**
 	 * Cache for prop/field links
 	 */
-	@system(() => Object.createDict())
-	private readonly linkCache!: Dictionary<Dictionary>;
+	@system()
+	private linkCache!: Dictionary<Dictionary>;
 
 	/**
 	 * Cache for prop/field links
 	 */
-	@system(() => Object.createDict())
-	private readonly syncLinkCache!: Dictionary<Function>;
+	@system()
+	private syncLinkCache!: Dictionary<Function>;
 
 	/**
 	 * Returns a string id, which is connected to the block
@@ -851,6 +852,8 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 */
 	@hook('beforeRuntime')
 	protected initBaseAPI() {
+		this.linkCache = {};
+		this.syncLinkCache = {};
 		this.link = this.instance.link.bind(this);
 		this.createWatchObject = this.instance.createWatchObject.bind(this);
 		this.execCbAfterCreated = this.instance.execCbAfterCreated.bind(this);
@@ -1447,7 +1450,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	}
 }
 
-function defaulti18n(): string {
+function defaultI18n(): string {
 	return this.$root.i18n.apply(this.$root, arguments);
 }
 
