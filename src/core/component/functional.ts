@@ -155,29 +155,28 @@ export function createFakeCtx(
 /**
  * Patches the specified virtual node: add classes, event handlers, etc.
  *
- * @param vnode
+ * @param vNode
  * @param ctx - component fake context
  * @param renderCtx - Vue.RenderContext
  */
-export function patchVNode(vnode: VNode, ctx: Dictionary, renderCtx: RenderContext): VNode {
+export function patchVNode(vNode: VNode, ctx: Dictionary, renderCtx: RenderContext): VNode {
 	const
-		m = ctx.$options.mods,
-		vData = vnode.data;
-
-	const
+		{data: vData} = vNode,
 		{data} = renderCtx,
-		{meta} = ctx;
+		{meta, meta: {component: {mods}}} = ctx;
 
 	if (vData) {
+		vData.staticClass = vData.staticClass || '';
+
 		// Support for modifiers
-		for (const key in m) {
-			if (!m.hasOwnProperty(key)) {
+		for (const key in mods) {
+			if (!mods.hasOwnProperty(key)) {
 				break;
 			}
 
 			if (key in ctx) {
 				const
-					mod = m[key],
+					mod = mods[key],
 					val = ctx[key];
 
 				vData.staticClass += ` ${ctx.blockName}_${key}_${mod.coerce ? mod.coerce(val) : val}`;
@@ -188,6 +187,10 @@ export function patchVNode(vnode: VNode, ctx: Dictionary, renderCtx: RenderConte
 
 		if (data.staticClass) {
 			vData.staticClass += ` ${data.staticClass}`;
+		}
+
+		if (data.class) {
+			vData.class = [].concat(vData.class, data.class);
 		}
 
 		if (data.attrs) {
@@ -235,7 +238,7 @@ export function patchVNode(vnode: VNode, ctx: Dictionary, renderCtx: RenderConte
 
 	runHook('afterRender', meta, ctx);
 	meta.methods.afterRender && meta.methods.afterRender.fn.call(ctx);
-	return vnode;
+	return vNode;
 }
 
 /**
