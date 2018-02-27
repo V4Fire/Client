@@ -19,6 +19,10 @@ interface HTMLImageElement {
 	onInit(onSuccess: () => void, onFail?: (err?: Error) => void): void;
 }
 
+interface Event {
+	delegateTarget?: Element;
+}
+
 declare let ModuleDependencies: {
 	cache: Dictionary;
 	event: {on: Function; once: Function; off: Function};
