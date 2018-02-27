@@ -356,13 +356,15 @@ export function getBaseComponent(
 	for (let o = meta.props, keys = Object.keys(o), i = 0; i < keys.length; i++) {
 		const
 			key = keys[i],
-			prop = o[key];
+			prop = o[key],
+			def = instance[key];
 
 		component.props[key] = {
 			type: prop.type,
 			required: prop.required,
 			validator: prop.validator,
-			default: prop.default !== undefined ? prop.default : () => Object.fastClone(instance[key])
+			default: prop.default !== undefined ?
+				prop.default : prop.type === Function ? def : () => Object.fastClone(def)
 		};
 
 		watchers[key] = watchers[key] || [];
