@@ -7,4 +7,4 @@
  */
 
 package('b-progress-icon')
-	.extends('i-functional');
+	.extends('i-block');

@@ -33,25 +33,25 @@ export default class bIcon extends iBlock {
 	 * Block value
 	 */
 	@prop({type: String, required: false})
-	value?: string;
+	readonly value?: string;
 
 	/**
 	 * Icon prefix
 	 */
 	@prop(String)
-	prfx: string = '';
+	readonly prfx: string = '';
 
 	/**
 	 * Tooltip text
 	 */
 	@prop({type: String, required: false})
-	hint?: string;
+	readonly hint?: string;
 
 	/**
 	 * Tooltip position
 	 */
 	@prop(String)
-	hintPos: string = 'bottom';
+	readonly hintPos: string = 'bottom';
 
 	/** @override */
 	protected readonly $slots!: {
@@ -59,7 +59,7 @@ export default class bIcon extends iBlock {
 	};
 
 	/** @override */
-	render(el: CreateElement, ctx: RenderContext): VNode {
+	protected render(el: CreateElement, ctx: RenderContext): VNode {
 		const
 			iconId = ctx.props.value;
 

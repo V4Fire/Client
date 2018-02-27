@@ -14,5 +14,4 @@
 	- rootTag = 'span'
 
 	- block body
-		< svg.&__svg
-			< slot name = svgLink
+		< _.flag-icon :class = 'flag-icon-' + value

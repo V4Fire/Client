@@ -7,4 +7,4 @@
  */
 
 package('b-icon')
-	.dependencies('i-functional');
+	.dependencies('i-block');

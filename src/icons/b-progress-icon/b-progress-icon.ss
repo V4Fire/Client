@@ -14,5 +14,5 @@
 	- rootTag = 'span'
 
 	- block body
-		< svg.&__svg
-			< slot name = svgLink
+		< _.&__loader
+		< _.&__i

@@ -7,4 +7,4 @@
  */
 
 package('b-flag-icon')
-	.extends('i-functional');
+	.extends('i-block');
