@@ -1,5 +1,3 @@
-'use strict';
-
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -8,44 +6,51 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import Store from 'core/store';
-import iData from 'super/i-data/i-data';
-import { field, params } from 'super/i-block/i-block';
-import { component } from 'core/component';
+import $C = require('collection.js');
+import URI = require('urijs');
+import path = require('path-to-regexp');
+import { Key } from 'path-to-regexp';
+
+import symbolGenerator from 'core/symbol';
+import iData, { component, prop, field } from 'super/i-data/i-data';
 import { delegate } from 'core/dom';
 
-const
-	$C = require('collection.js'),
-	URI = require('urijs'),
-	path = require('path-to-regexp');
+export * from 'super/i-data/i-data';
+export type PageInfo = Dictionary<string> & {page: string};
+export type Pages = Dictionary<{
+	page: string;
+	pattern: string;
+	rgxp: RegExp;
+}>;
 
 export const
-	$$ = new Store();
+	$$ = symbolGenerator();
 
 @component()
 export default class bRouter extends iData {
 	/**
 	 * Initial page
 	 */
-	@params({default: () => location.href})
-	pageProp: ?string;
+	@prop({type: String, default: () => location.href})
+	readonly pageProp!: string;
 
 	/**
 	 * Initial router paths
 	 */
-	pagesProp: Object;
+	@prop(Object)
+	readonly pagesProp!: Dictionary<string>;
 
 	/**
 	 * Page store
 	 */
-	@field()
-	pageStore: string;
+	@field(String)
+	protected pageStore!: string;
 
 	/**
 	 * Page load status
 	 */
 	@field()
-	status: number = 0;
+	protected status: number = 0;
 
 	/**
 	 * Router paths
@@ -56,13 +61,19 @@ export default class bRouter extends iData {
 		rgxp: path(pattern)
 	}))))
 
-	pages: Object;
+	protected pages!: Pages;
 
 	/**
-	 * Sets a new page or returns current
-	 * @param [url]
+	 * Returns current page
 	 */
-	page(url?: string): Promise | string {
+	page(): string;
+
+	/**
+	 * Sets a new page
+	 * @param url
+	 */
+	page(url: string): Promise<PageInfo>;
+	page(url?: string): Promise<PageInfo> | string {
 		if (!url) {
 			return this.pageStore;
 		}
@@ -112,22 +123,21 @@ export default class bRouter extends iData {
 	 * Returns an information object of a page by the specified URL
 	 * @param [url]
 	 */
-	getPageOpts(url?: string = location.pathname): ?Object {
+	getPageOpts(url: string = location.pathname): PageInfo | null {
 		let current = null;
 		$C(this.pages).forEach(({pattern, rgxp}, page, data, o) => {
 			if (rgxp.test(url)) {
 				const
 					res = rgxp.exec(url);
 
-				let i = 0;
-				current = $C(path.parse(pattern)).reduce((map, el) => {
+				current = $C(path.parse(pattern) as any[]).to({page}).reduce((map, el: Key, i) => {
 					if (Object.isObject(el)) {
-						map[el.name] = res[++i];
+						map[el.name] = res[i];
 					}
 
 					return map;
 
-				}, {page});
+				});
 
 				return o.break;
 			}
@@ -140,31 +150,32 @@ export default class bRouter extends iData {
 	 * Handler: link trigger
 	 * @param e
 	 */
-	onLink(e: MouseEvent) {
+	protected async onLink(e: MouseEvent): Promise<void> {
 		e.preventDefault();
 
 		const
-			{href} = e.delegateTarget;
+			{href} = <HTMLAnchorElement>e.delegateTarget;
 
 		if (e.ctrlKey) {
 			window.open(href, '_blank');
 
 		} else {
-			this.page(href);
+			await this.page(href);
 		}
 	}
 
 	/**
 	 * Handler: popstate
 	 */
-	onPopState() {
-		this.page(location.href);
+	protected async onPopState(): Promise<void> {
+		await this.page(location.href);
 	}
 
-	/** @inheritDoc */
-	created() {
-		this.page(this.pageProp);
+	/** @override */
+	protected async created(): Promise<void> {
+		super.created();
 		this.async.on(document, 'click', delegate('a[href^="/"]', this.onLink));
 		this.async.on(window, 'popstate', this.onPopState);
+		await this.page(this.pageProp);
 	}
 }
