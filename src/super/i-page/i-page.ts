@@ -19,6 +19,12 @@ export default class iPage<T extends Dictionary = Dictionary> extends iData<T> {
 	readonly i18n: typeof i18n = i18n;
 
 	/**
+	 * Page information object
+	 */
+	@field()
+	pageInfo: Dictionary = {};
+
+	/**
 	 * System language
 	 */
 	get lang(): string {
