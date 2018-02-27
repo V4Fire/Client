@@ -664,11 +664,11 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 * @param cb
 	 */
 	@wait('ready')
-	async putInStream(cb: (el: HTMLElement) => void): Promise<boolean> {
+	async putInStream(cb: (el: Element) => void): Promise<boolean> {
 		const
 			el = this.$el;
 
-		if (el.offsetHeight) {
+		if (el.clientHeight) {
 			cb.call(this, el);
 			return false;
 		}
@@ -841,7 +841,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 * @param ref
 	 * @param [params]
 	 */
-	protected async waitRef<T = iBlock | HTMLElement | iBlock[] | HTMLElement[]>(ref: string, params?: AsyncOpts): Promise<T> {
+	protected async waitRef<T = iBlock | Element | iBlock[] | Element[]>(ref: string, params?: AsyncOpts): Promise<T> {
 		await this.async.wait(() => this.$refs[ref], params);
 		return <any>this.$refs[ref];
 	}

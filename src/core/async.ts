@@ -26,7 +26,7 @@ export default class Async<CTX extends Object> extends Super<CTX> {
 	 * @param fn - callback function
 	 * @param [element] - link for the element
 	 */
-	requestAnimationFrame(fn: (timeStamp: number) => void, element?: HTMLElement): number;
+	requestAnimationFrame(fn: (timeStamp: number) => void, element?: Element): number;
 
 	/**
 	 * Wrapper for requestAnimationFrame
@@ -39,7 +39,7 @@ export default class Async<CTX extends Object> extends Super<CTX> {
 	 *   *) [group] - group name for the task
 	 *   *) [onClear] - clear handler
 	 */
-	requestAnimationFrame(fn: (timeStamp: number) => void, params: AsyncCbOpts & {element?: HTMLElement}): number;
+	requestAnimationFrame(fn: (timeStamp: number) => void, params: AsyncCbOpts & {element?: Element}): number;
 
 	// tslint:disable-next-line
 	requestAnimationFrame(fn, p) {
@@ -85,7 +85,7 @@ export default class Async<CTX extends Object> extends Super<CTX> {
 	 * Promise for requestAnimationFrame
 	 * @param [element] - link for the element
 	 */
-	animationFrame(element?: HTMLElement): Promise<number>;
+	animationFrame(element?: Element): Promise<number>;
 
 	/**
 	 * @param params - parameters for the operation:
@@ -95,7 +95,7 @@ export default class Async<CTX extends Object> extends Super<CTX> {
 	 *   *) [group] - group name for the task
 	 *   *) [onClear] - clear handler
 	 */
-	animationFrame(params: AsyncCbOpts & {element?: HTMLElement}): Promise<number>;
+	animationFrame(params: AsyncCbOpts & {element?: Element}): Promise<number>;
 
 	// tslint:disable-next-line
 	animationFrame(p) {
@@ -114,7 +114,7 @@ export default class Async<CTX extends Object> extends Super<CTX> {
 	 * @param el
 	 * @param [useCapture]
 	 */
-	dnd(el: HTMLElement, useCapture?: boolean): string | symbol;
+	dnd(el: Element, useCapture?: boolean): string | symbol;
 
 	/**
 	 * @param el
@@ -128,7 +128,7 @@ export default class Async<CTX extends Object> extends Super<CTX> {
 	 *   *) [onDrag]
 	 *   *) [onDragEnd]
 	 */
-	dnd(el: HTMLElement, params: AsyncCbOpts & {
+	dnd(el: Element, params: AsyncCbOpts & {
 		options?: AddEventListenerOptions;
 		onDragStart?: NodeEventCb | NodeEventOpts;
 		onDrag?: NodeEventCb | NodeEventOpts;

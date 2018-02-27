@@ -111,7 +111,7 @@ export default class Block<T extends iBlock> {
 	constructor(
 		{id, node, mods, async, localEvent, model}: {
 			id: string;
-			node: HTMLElement;
+			node: Element;
 			mods: Dictionary<string | undefined>;
 			async: Async<T>;
 			localEvent: EventEmitter;

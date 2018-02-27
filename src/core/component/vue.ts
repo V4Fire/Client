@@ -13,7 +13,7 @@ import { ComponentMeta } from 'core/component';
 // tslint:disable:no-empty
 // tslint:disable:typedef
 
-export type VueElement<T> = HTMLElement & {vueComponent?: T};
+export type VueElement<T> = Element & {vueComponent?: T};
 export default class VueInterface<B = VueInterface<any, any>, R = VueInterface<any, any>, C extends B = B> {
 	readonly instance!: this;
 	readonly componentName!: string;
@@ -25,7 +25,7 @@ export default class VueInterface<B = VueInterface<any, any>, R = VueInterface<a
 	readonly $root!: R;
 	readonly $isServer!: boolean;
 	protected readonly meta!: ComponentMeta;
-	protected readonly $refs!: Dictionary<C | HTMLElement | C[] | HTMLElement[]>;
+	protected readonly $refs!: Dictionary<C | Element | C[] | Element[]>;
 	protected readonly $slots!: Dictionary<VNode[]>;
 	protected readonly $scopedSlots!: Dictionary<ScopedSlot>;
 	protected readonly $data!: Dictionary;
