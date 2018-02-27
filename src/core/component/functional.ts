@@ -6,24 +6,10 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import Vue, { CreateElement, RenderContext, VNode, FunctionalComponentOptions } from 'vue';
+import { CreateElement, RenderContext, VNode, FunctionalComponentOptions } from 'vue';
 import { EventEmitter2 as EventEmitter } from 'eventemitter2';
-import { getBaseComponent, runHook, ComponentConstructor } from 'core/component/component';
-import { ComponentMeta } from 'core/component';
-
-const
-	vueProto = {};
-
-{
-	const
-		obj = Vue.prototype;
-
-	for (const key in obj) {
-		if (key.length === 2) {
-			vueProto[key] = obj[key];
-		}
-	}
-}
+import { FunctionalCtx } from 'core/component';
+import { runHook } from 'core/component/component';
 
 const
 	cache = new WeakMap();
@@ -31,86 +17,6 @@ const
 export interface RenderObject {
 	render: Function;
 	staticRenderFns?: Function[];
-}
-
-interface RenderFunction {
-	(createElement: CreateElement, ctx: RenderContext): VNode;
-}
-
-/**
- * Returns an object for the Vue functional component
- *
- * @param constructor
- * @param meta
- */
-export function getFunctionalComponent(
-	constructor: ComponentConstructor,
-	meta: ComponentMeta
-): FunctionalComponentOptions<Vue> {
-	const
-		{component, instance} = getBaseComponent(constructor, meta);
-
-	const
-		p = meta.params,
-		c = {props: {}};
-
-	console.log(meta, component);
-
-	{
-		const list = [
-			meta.accessors,
-			component.computed,
-			component.methods
-		];
-
-		for (let i = 0; i < list.length; i++) {
-			const
-				o = list[i];
-
-			for (let keys = Object.keys(o), i = 0; i < keys.length; i++) {
-				const
-					key = keys[i],
-					el = o[key];
-
-				if (Object.isFunction(el)) {
-					c.props[key] = {
-						method: true,
-						wrap: (obj) => el.bind(obj)
-					};
-
-				} else if (el.get) {
-					c.props[key] = {
-						getter: true,
-						wrap: (obj) => ({get: (<Function>el.get).bind(obj)})
-					};
-				}
-			}
-		}
-	}
-
-	/*return {
-		inject: p.inject,
-		render(): any {
-			if (methods.render) {
-				return methods.render.fn.call(this, ...arguments);
-			}
-		}
-	};*/
-
-	/*const $options = {
-		mods: blockMeta.mods,
-		props: blockMeta.props,
-		hooks: blockMeta.hooks,
-		watchers: blockMeta.watchers,
-		eventListeners: blockMeta.eventListeners,
-		class: constructor
-	};
-
-	functionalCtx = Object.assign(Object.create(vueProto), {
-		$options,
-		blockName: name,
-		instance: new constructor()
-	});*/
 }
 
 /**
@@ -123,17 +29,17 @@ export function getFunctionalComponent(
 export function createFakeCtx(
 	createElement: CreateElement,
 	renderCtx: RenderContext,
-	baseCtx: Dictionary
-): Dictionary {
+	baseCtx: FunctionalCtx
+): Dictionary & FunctionalCtx {
 	const
-		fakeCtx: Dictionary = Object.create(baseCtx),
-		{meta, instance} = fakeCtx;
+		fakeCtx: Dictionary & FunctionalCtx = Object.create(baseCtx),
+		{meta, meta: {methods}, instance} = fakeCtx;
 
 	{
 		const list = [
 			meta.accessors,
 			meta.computed,
-			meta.methods
+			methods
 		];
 
 		for (let i = 0; i < list.length; i++) {
@@ -145,8 +51,8 @@ export function createFakeCtx(
 					key = keys[i],
 					el = o[key];
 
-				if (el.fn) {
-					fakeCtx[el] = el.fn.bind(fakeCtx);
+				if ('fn' in el) {
+					fakeCtx[key] = el.fn.bind(fakeCtx);
 
 				} else {
 					Object.defineProperty(fakeCtx, key, el);
@@ -154,6 +60,9 @@ export function createFakeCtx(
 			}
 		}
 	}
+
+	runHook('beforeRuntime', meta, fakeCtx);
+	methods.beforeRuntime && methods.beforeRuntime.fn.call(fakeCtx);
 
 	{
 		const list = [
@@ -172,12 +81,13 @@ export function createFakeCtx(
 
 				let val;
 				if (el.init) {
-					val = el.init(fakeCtx);
+					val = el.init(<any>fakeCtx);
 				}
 
 				// tslint:disable-next-line
 				if (val === undefined) {
-					fakeCtx[key] = el.default !== undefined ? el.default : Object.fastClone(instance[key]);
+					val = el.default !== undefined ? el.default : Object.fastClone(instance[key]);
+					fakeCtx[key] = val === undefined ? fakeCtx[key] : val;
 
 				} else {
 					fakeCtx[key] = val;
@@ -194,10 +104,10 @@ export function createFakeCtx(
 	Object.assign(fakeCtx, renderCtx, renderCtx.props, {
 		_self: fakeCtx,
 		_staticTrees: [],
+		children: [],
 
 		$root: p.$root,
 		$parent: p,
-		$children: [],
 		$options: Object.assign(Object.create(p.$options), fakeCtx.$options),
 		$createElement: createElement,
 
@@ -232,7 +142,7 @@ export function createFakeCtx(
 	});
 
 	runHook('beforeRender', meta, fakeCtx);
-	meta.methods.beforeRender && meta.methods.beforeRender.fn.call(fakeCtx);
+	methods.beforeRender && methods.beforeRender.fn.call(fakeCtx);
 
 	return fakeCtx;
 }
@@ -241,14 +151,17 @@ export function createFakeCtx(
  * Patches the specified virtual node: add classes, event handlers, etc.
  *
  * @param vnode
- * @param ctx - фейковый контекст
- * @param renderCtx - контекст функционального компонента
+ * @param ctx - component fake context
+ * @param renderCtx - Vue.RenderContext
  */
-export function patchVNode(vnode: VNode, ctx: Dictionary, renderCtx: RenderContext): VNode {
+export function patchVNode(vnode: VNode, ctx: Dictionary & FunctionalCtx, renderCtx: RenderContext): VNode {
 	const
 		m = ctx.$options.mods,
-		vData = vnode.data,
-		{data, meta} = renderCtx;
+		vData = vnode.data;
+
+	const
+		{data} = renderCtx,
+		{meta} = ctx;
 
 	if (vData) {
 		// Support for modifiers
@@ -345,7 +258,10 @@ export function execRenderObject(renderObject: RenderObject, fakeCtx: Dictionary
  * @param renderObject
  * @param baseCtx - base component context
  */
-export function convertRender(renderObject: RenderObject, baseCtx: Dictionary): RenderFunction {
+export function convertRender(
+	renderObject: RenderObject,
+	baseCtx: FunctionalCtx
+): FunctionalComponentOptions['render'] {
 	if (cache.has(renderObject)) {
 		return cache.get(renderObject);
 	}

@@ -6,11 +6,25 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import Vue, { ComponentOptions } from 'vue';
+import Vue, { ComponentOptions, FunctionalComponentOptions } from 'vue';
 import { ComponentMeta } from 'core/component';
 
 export interface ComponentConstructor<T = any> {
 	new(): T;
+}
+
+export const
+	vueProto = {};
+
+{
+	const
+		obj = Vue.prototype;
+
+	for (const key in obj) {
+		if (key.length === 2) {
+			vueProto[key] = obj[key];
+		}
+	}
 }
 
 /**
@@ -22,13 +36,17 @@ export interface ComponentConstructor<T = any> {
 export function getComponent(
 	constructor: ComponentConstructor,
 	meta: ComponentMeta
-): ComponentOptions<Vue> {
+): ComponentOptions<Vue> | FunctionalComponentOptions<Vue> {
 	const
 		{component, instance} = getBaseComponent(constructor, meta),
 		{methods} = meta;
 
 	const
 		p = meta.params;
+
+	if (p.functional) {
+		return getFunctionalComponent(constructor, meta);
+	}
 
 	return {
 		...<any>p.mixins,
@@ -39,12 +57,6 @@ export function getComponent(
 		inheritAttrs: p.inheritAttrs,
 		provide: p.provide,
 		inject: p.inject,
-		render(): any {
-			if (methods.render) {
-				return methods.render.fn.call(this, ...arguments);
-			}
-		},
-
 		data(): Dictionary {
 			const
 				ctx = this as any,
@@ -62,7 +74,8 @@ export function getComponent(
 
 				// tslint:disable-next-line
 				if (val === undefined) {
-					data[key] = el.default !== undefined ? el.default : Object.fastClone(instance[key]);
+					val = el.default !== undefined ? el.default : Object.fastClone(instance[key]);
+					data[key] = val === undefined ? ctx[key] : val;
 
 				} else {
 					data[key] = val;
@@ -104,7 +117,8 @@ export function getComponent(
 
 				// tslint:disable-next-line
 				if (val === undefined) {
-					this[key] = el.default !== undefined ? el.default : Object.fastClone(instance[key]);
+					val = el.default !== undefined ? el.default : Object.fastClone(instance[key]);
+					this[key] = val === undefined ? this[key] : val;
 
 				} else {
 					this[key] = val;
@@ -175,13 +189,57 @@ export function getComponent(
 }
 
 /**
+ * Returns an object for the Vue functional component
+ *
+ * @param constructor
+ * @param meta
+ */
+export function getFunctionalComponent(
+	constructor: ComponentConstructor,
+	meta: ComponentMeta
+): FunctionalComponentOptions<Vue> {
+	const
+		{component, instance} = getBaseComponent(constructor, meta),
+		{name, params: p} = meta;
+
+	const
+		props = {};
+
+	const ctx = component.ctx = Object.assign(Object.create(vueProto), {
+		meta,
+		instance,
+		componentName: name,
+		$options: {...p.mixins}
+	});
+
+	for (let o = component.props, keys = Object.keys(o), i = 0; i < keys.length; i++) {
+		const
+			key = keys[i],
+			el = o[key],
+			prop = props[key] = {...el};
+
+		if (Object.isFunction(el.default)) {
+			prop.default = el.default.bind(ctx);
+		}
+	}
+
+	return <any>{
+		name,
+		props,
+		functional: true,
+		inject: p.inject,
+		render: component.render
+	};
+}
+
+/**
  * Runs a hook from the specified meta object
  *
  * @param hook
  * @param meta
  * @param ctx - link to context
  */
-function runHook(hook: string, meta: ComponentMeta, ctx: Object): void {
+export function runHook(hook: string, meta: ComponentMeta, ctx: Object): void {
 	if (!meta.hooks[hook].length) {
 		return;
 	}
@@ -252,10 +310,10 @@ export function getBaseComponent(
 	addMethodsToMeta(constructor, meta);
 
 	const
-		{component, watchers, hooks} = meta,
+		{component, methods, watchers, hooks} = meta,
 		instance = new constructor();
 
-	for (let o = meta.methods, keys = Object.keys(o), i = 0; i < keys.length; i++) {
+	for (let o = methods, keys = Object.keys(o), i = 0; i < keys.length; i++) {
 		const
 			key = keys[i],
 			method = o[key];

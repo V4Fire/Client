@@ -11,7 +11,12 @@ import Vue, {
 	PropOptions,
 	WatchOptions,
 	WatchHandler,
-	ComputedOptions
+	ComputedOptions,
+	ComponentOptions,
+	FunctionalComponentOptions,
+	CreateElement,
+	RenderContext,
+	VNode
 
 } from 'vue';
 
@@ -21,6 +26,7 @@ import inheritMeta from 'core/component/inherit';
 import VueInterface from 'core/component/vue';
 
 import { getComponent, getBaseComponent } from 'core/component/component';
+import { convertRender, createFakeCtx, patchVNode } from 'core/component/functional';
 import { InjectOptions } from 'vue/types/options';
 import { EventEmitter2 } from 'eventemitter2';
 
@@ -37,7 +43,7 @@ export const
 export interface ComponentParams {
 	root?: boolean;
 	tpl?: boolean;
-	functional?: false;
+	functional?: boolean;
 	mixins?: Dictionary;
 	model?: {prop?: string; event?: string};
 	parent?: Vue;
@@ -91,7 +97,9 @@ export type Hooks =
 	'deactivated' |
 	'beforeDestroy' |
 	'destroyed' |
-	'errorCaptured';
+	'errorCaptured' |
+	'beforeRender' |
+	'afterRender';
 
 export interface ComponentMethod {
 	fn: Function;
@@ -106,6 +114,13 @@ export interface ComponentMethod {
 export type ModVal = string | boolean | number;
 export interface ModsDecl {
 	[name: string]: Array<ModVal | ModVal[]> | void;
+}
+
+export interface FunctionalCtx {
+	componentName: string;
+	meta: ComponentMeta;
+	instance: Dictionary;
+	$options: Dictionary;
 }
 
 export interface ComponentMeta {
@@ -130,6 +145,8 @@ export interface ComponentMeta {
 		props: Dictionary<PropOptions>;
 		methods: Dictionary<Function>;
 		computed: Dictionary<ComputedOptions<any>>;
+		render: ComponentOptions<Vue>['render'] | FunctionalComponentOptions['render'];
+		ctx?: FunctionalCtx;
 	}
 }
 
@@ -192,13 +209,29 @@ export function component(params: ComponentParams = {}): Function {
 				deactivated: [],
 				beforeDestroy: [],
 				destroyed: [],
-				errorCaptured: []
+				errorCaptured: [],
+				beforeRender: [],
+				afterRender: []
 			},
+
 			component: {
 				name,
 				props: {},
 				methods: {},
-				computed: {}
+				computed: {},
+				render(el: CreateElement, baseCtx: RenderContext): any {
+					const
+						{methods: {render: r}, component: {ctx}} = meta;
+
+					if (r) {
+						if (p.functional && ctx) {
+							const fakeCtx = createFakeCtx(el, baseCtx, ctx);
+							return patchVNode(r.fn.call(fakeCtx, el, baseCtx), fakeCtx, baseCtx);
+						}
+
+						return r.fn.apply(this, arguments);
+					}
+				}
 			}
 		};
 
@@ -225,11 +258,20 @@ export function component(params: ComponentParams = {}): Function {
 			};
 
 			const addRenderAndResolve = (tpls) => {
-				Object.assign(component, tpls.index());
+				const
+					fns = tpls.index();
+
+				if (p.functional) {
+					component.render = convertRender(fns, <any>meta.component.ctx);
+
+				} else {
+					Object.assign(component, fns);
+				}
+
 				success();
 			};
 
-			if ('render' in component.methods) {
+			if ('render' in meta.component.methods) {
 				success();
 
 			} else if (p.tpl === false) {
@@ -249,19 +291,14 @@ export function component(params: ComponentParams = {}): Function {
 			}
 		};
 
-		if (p.functional) {
+		const
+			component = loadTemplate(getComponent(target, meta));
+
+		if (p.root) {
+			rootComponents[name] = new Promise(component);
 
 		} else {
-			const
-				a = getComponent(target, meta),
-				component = loadTemplate(a);
-
-			if (p.root) {
-				rootComponents[name] = new Promise(component);
-
-			} else {
-				Vue.component(name, component);
-			}
+			Vue.component(name, component);
 		}
 	};
 }
