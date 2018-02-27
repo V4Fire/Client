@@ -26,7 +26,7 @@ export default class VueInterface<B = VueInterface<any, any>, R = VueInterface<a
 	readonly $isServer!: boolean;
 	protected readonly meta!: ComponentMeta;
 	protected readonly $refs!: Dictionary<C | Element | C[] | Element[]>;
-	protected readonly $slots!: Dictionary<VNode[]>;
+	protected readonly $slots!: Dictionary<VNode>;
 	protected readonly $scopedSlots!: Dictionary<ScopedSlot>;
 	protected readonly $data!: Dictionary;
 	protected readonly $ssrContext!: any;

@@ -14,11 +14,6 @@ import { runHook, defaultWrapper } from 'core/component/component';
 const
 	cache = new WeakMap();
 
-export interface RenderObject {
-	render: Function;
-	staticRenderFns?: Function[];
-}
-
 /**
  * Generates a fake context for a function component
  *
@@ -164,7 +159,7 @@ export function createFakeCtx(
  * @param ctx - component fake context
  * @param renderCtx - Vue.RenderContext
  */
-export function patchVNode(vnode: VNode, ctx: Dictionary & FunctionalCtx, renderCtx: RenderContext): VNode {
+export function patchVNode(vnode: VNode, ctx: Dictionary, renderCtx: RenderContext): VNode {
 	const
 		m = ctx.$options.mods,
 		vData = vnode.data;
@@ -249,7 +244,7 @@ export function patchVNode(vnode: VNode, ctx: Dictionary & FunctionalCtx, render
  * @param renderObject
  * @param fakeCtx
  */
-export function execRenderObject(renderObject: RenderObject, fakeCtx: Dictionary): VNode {
+export function execRenderObject(renderObject: Dictionary, fakeCtx: Dictionary): VNode {
 	if (renderObject.staticRenderFns) {
 		const
 			fns = renderObject.staticRenderFns;
@@ -269,7 +264,7 @@ export function execRenderObject(renderObject: RenderObject, fakeCtx: Dictionary
  * @param baseCtx - base component context
  */
 export function convertRender(
-	renderObject: RenderObject,
+	renderObject: Dictionary,
 	baseCtx: FunctionalCtx
 ): FunctionalComponentOptions['render'] {
 	if (cache.has(renderObject)) {

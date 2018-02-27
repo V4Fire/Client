@@ -15,8 +15,7 @@ import Vue, {
 	ComponentOptions,
 	FunctionalComponentOptions,
 	CreateElement,
-	RenderContext,
-	VNode
+	RenderContext
 
 } from 'vue';
 
@@ -31,6 +30,8 @@ import { InjectOptions } from 'vue/types/options';
 import { EventEmitter2 } from 'eventemitter2';
 
 export * from 'core/component/decorators';
+export * from 'core/component/functional';
+
 export { PARENT } from 'core/component/inherit';
 export { default as VueInterface, VueElement } from 'core/component/vue';
 
@@ -271,16 +272,29 @@ export function component(params: ComponentParams = {}): Function {
 				success();
 			};
 
-			if ('render' in meta.component.methods) {
-				success();
+			const
+				r = meta.component.methods.render;
 
-			} else if (p.tpl === false) {
-				addRenderAndResolve(defTpls.block);
+			if (p.tpl === false) {
+				if (r) {
+					success();
+
+				} else {
+					addRenderAndResolve(defTpls.block);
+				}
 
 			} else {
 				const f = () => {
-					if (TPLS[name]) {
-						addRenderAndResolve(TPLS[name]);
+					const
+						fns = TPLS[name];
+
+					if (fns) {
+						if (r) {
+							success();
+
+						} else {
+							addRenderAndResolve(fns);
+						}
 
 					} else {
 						setImmediate(f);

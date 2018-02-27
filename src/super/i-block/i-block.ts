@@ -8,7 +8,7 @@
 
 import $C = require('collection.js');
 import { EventEmitter2 as EventEmitter } from 'eventemitter2';
-import { WatchOptions } from 'vue';
+import { WatchOptions, RenderContext, VNode } from 'vue';
 
 import 'super/i-block/modules/vue.directives';
 import Async, { AsyncOpts } from 'core/async';
@@ -17,7 +17,19 @@ import symbolGenerator from 'core/symbol';
 
 import iPage from 'super/i-page/i-page';
 import { asyncLocal, AsyncNamespace } from 'core/kv-storage';
-import { component, hook, ModVal, ModsDecl, VueInterface, VueElement } from 'core/component';
+import {
+
+	component,
+	hook,
+	execRenderObject,
+	patchVNode,
+	ModVal,
+	ModsDecl,
+	VueInterface,
+	VueElement
+
+} from 'core/component';
+
 import { prop, field, system, watch, wait } from 'super/i-block/modules/decorators';
 import { queue, backQueue } from 'core/render';
 import { delegate } from 'core/dom';
@@ -588,6 +600,23 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 
 			return this.mods[el] === String(value);
 		});
+	}
+
+	/**
+	 * Executes the specified render object
+	 *
+	 * @param renderObj
+	 * @param [ctx] - render context
+	 */
+	protected execRenderObject(renderObj: Dictionary, ctx?: RenderContext): VNode {
+		const
+			vnode = execRenderObject(renderObj, this);
+
+		if (ctx) {
+			return patchVNode(vnode, <any>this, ctx);
+		}
+
+		return vnode;
 	}
 
 	/**
