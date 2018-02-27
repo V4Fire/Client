@@ -214,7 +214,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 * Store of block modifiers
 	 */
 	@field((o) => o.link('modsProp', (val) => {
-		o.modsStore = o.modsStore || {...o.meta.mods};
+		o.modsStore = o.modsStore || {...o.meta.component.mods};
 		// tslint:disable-next-line
 		return Object.assign(o.modsStore, val);
 	}))
@@ -1355,7 +1355,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 			node: this.$el,
 			async: this.async,
 			localEvent: this.localEvent,
-			mods: {},
+			mods: this.mods,
 			model: this
 		});
 	}
