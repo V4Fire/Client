@@ -1,5 +1,3 @@
-'use strict';
-
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -8,75 +6,86 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import iData from 'super/i-data/i-data';
-import { abstract, field, params, wait } from 'super/i-block/i-block';
-import { component } from 'core/component';
+import $C = require('collection.js');
+import iData, { component, prop, field, system, hook, wait, p, ModsDecl } from 'super/i-data/i-data';
 
-const
-	$C = require('collection.js');
+export * from 'super/i-data/i-data';
+export type Validators = Array<string | Dictionary<Dictionary>>;
+export type ValidatorsDecl = Dictionary<(params: Dictionary) => boolean | Promise<boolean>>;
 
-@component()
-export default class iInput extends iData {
-	/** @override */
-	model: ?Object = {
+@component({
+	model: {
 		prop: 'valueProp',
 		event: 'onChange'
-	};
+	}
+})
 
+export default class iInput<T extends Dictionary = Dictionary> extends iData<T> {
 	/**
 	 * Initial block value
 	 */
-	valueProp: ?any;
+	@prop({required: false})
+	readonly valueProp?: any;
 
 	/**
 	 * Block default value
 	 */
-	defaultProp: ?any;
+	@prop({required: false})
+	readonly defaultProp: any;
 
 	/**
 	 * Input id
 	 */
-	id: ?string;
+	@prop({type: String, required: false})
+	readonly id?: string;
 
 	/**
 	 * Input name
 	 */
-	name: ?string;
+	@prop({type: String, required: false})
+	readonly name?: string;
 
 	/**
 	 * Input autofocus mode
 	 */
-	autofocus: ?boolean;
+	@prop({type: Boolean, required: false})
+	readonly autofocus?: boolean;
 
 	/**
 	 * Connected form id
 	 */
-	form: ?string;
+	@prop({type: String, required: false})
+	readonly form?: string;
 
 	/**
 	 * Illegal block values
 	 */
-	disallow: ?any | Array | Function | RegExp;
+	@prop({required: false})
+	readonly disallow?: any | any[] | Function | RegExp;
 
 	/**
 	 * Block value type factory
 	 */
-	dataType: Function = Any;
+	@prop(Function)
+	readonly dataType: Function = Any;
 
 	/**
 	 * Form value converter
 	 */
-	formConverter: ?Function;
+	@prop({type: Function, required: false})
+	readonly formConverter?: Function;
 
 	/**
 	 * If false, then the block value won't be cached by a form
 	 */
-	cache: boolean = true;
+	@prop(Boolean)
+	readonly cache: boolean = true;
 
 	/**
 	 * List of validators
 	 */
-	validators: Array = [];
+	@prop(Array)
+	readonly validators: Validators = [];
 
 	/**
 	 * Block value field name
@@ -85,27 +94,13 @@ export default class iInput extends iData {
 	blockValueField: string = 'value';
 
 	/**
-	 * Block value store
-	 */
-	@field((o) => o.link('valueProp', (val) => {
-		if (val === undefined && o.component.blockValueField === 'value') {
-			o.localEvent.once('component.created', () => o.valueStore = o.default);
-			return;
-		}
-
-		return val;
-	}))
-
-	valueStore: any;
-
-	/**
 	 * Previous block value
 	 */
-	@abstract
+	@system()
 	prevValue: any;
 
 	/** @inheritDoc */
-	static mods = {
+	static mods: ModsDecl = {
 		form: [
 			['true'],
 			'false'
@@ -120,9 +115,9 @@ export default class iInput extends iData {
 	/**
 	 * Block validators
 	 */
-	static blockValidators = {
+	static blockValidators: ValidatorsDecl = {
 		/** @this {iInput} */
-		async required({msg, showMsg = true}): boolean {
+		async required({msg, showMsg = true}: Dictionary): Promise<boolean> {
 			if (!await this.formValue) {
 				if (showMsg) {
 					this.error = msg || t`Required field`;
@@ -135,17 +130,42 @@ export default class iInput extends iData {
 		}
 	};
 
+	/**
+	 * Block value store
+	 */
+	@field((o) => o.link('valueProp', (val) => {
+		const
+			ctx: iInput = <any>o;
+
+		if (val === undefined && ctx.instance.blockValueField === 'value') {
+			o.localEvent.once('component.created', () => ctx.valueStore = ctx.default);
+			return;
+		}
+
+		return val;
+	}))
+
+	protected valueStore: any;
+
+	/**
+	 * Link to the block validators
+	 */
+	get blockValidators(): typeof iInput['blockValidators'] {
+		return (<any>this.instance.constructor).blockValidators;
+	}
+
 	/** @override */
-	get error() {
+	get error(): string | undefined {
 		return this.errorMsg && this.errorMsg.replace(/\.$/, '');
 	}
 
 	/**
 	 * Link to the form that is associated to the block
 	 */
-	@params({cache: false})
-	get connectedForm(): ?HTMLFormElement {
-		return this.waitState('ready', () => this.form ? document.querySelector(`#${this.form}`) : this.$el.closest('form'));
+	@p({cache: false})
+	get connectedForm(): Promise<HTMLFormElement | null> {
+		return this.waitState('ready', () => this.form ?
+			<any>document.querySelector(`#${this.form}`) : this.$el.closest('form'));
 	}
 
 	/**
@@ -173,7 +193,7 @@ export default class iInput extends iData {
 	/**
 	 * Form value of the block
 	 */
-	@params({cache: false})
+	@p({cache: false})
 	get formValue(): any {
 		return (async () => {
 			await this.nextTick();
@@ -205,50 +225,44 @@ export default class iInput extends iData {
 	/**
 	 * Grouped form value of the block
 	 */
-	@params({cache: false})
-	get groupFormValue(): Array | any {
+	@p({cache: false})
+	get groupFormValue(): any[] | any {
 		return (async () => {
 			if (this.name) {
 				const
 					form = this.connectedForm,
-					els = [];
+					list = document.getElementsByName(this.name),
+					els = <any[]>[];
 
-				await Promise.all($C(document.getElementsByName(this.name)).reduce((arr, el) => {
+				const promises = $C(list).to([] as Promise<void>[]).reduce((arr, el) => {
 					arr.push((async () => {
-						el = this.$(el, '[class*="_form_true"]');
+						const
+							block = <iInput | undefined>this.$(el, '[class*="_form_true"]');
 
-						if (el && form === el.connectedForm) {
-							els.push(await el.formValue);
+						if (block && form === block.connectedForm) {
+							els.push(await block.formValue);
 						}
 					})());
 
 					return arr;
-				}, []));
+				});
 
+				await Promise.all(promises);
 				return els.length > 1 ? els : els[0];
 			}
 
-			return await this.formValue;
+			return this.formValue;
 		})();
 	}
 
 	/** @override */
-	initRemoteData(): ?any {
-		if (!this.db) {
-			return;
-		}
-
-		return this[this.blockValueField] = this.blockConverter ? this.blockConverter(this.db) : this.db;
-	}
-
-	/** @override */
 	@wait('ready')
-	async focus(): boolean {
+	async focus(): Promise<boolean> {
 		const
 			{input} = this.$refs;
 
 		if (document.activeElement !== input) {
-			input.focus();
+			(<HTMLElement>input).focus();
 			this.emit('focus');
 			return true;
 		}
@@ -257,25 +271,11 @@ export default class iInput extends iData {
 	}
 
 	/**
-	 * Handler: focus
-	 */
-	onFocus() {
-		this.setMod('focused', true);
-	}
-
-	/**
-	 * Handler: blur
-	 */
-	onBlur() {
-		this.setMod('focused', false);
-	}
-
-	/**
 	 * Clears value of the block
 	 * @emits clear()
 	 */
 	@wait('ready')
-	async clear(): boolean {
+	async clear(): Promise<boolean> {
 		if (this[this.blockValueField]) {
 			this[this.blockValueField] = undefined;
 			this.async.clearAll({group: 'validation'});
@@ -293,7 +293,7 @@ export default class iInput extends iData {
 	 * @emits reset()
 	 */
 	@wait('ready')
-	async reset(): boolean {
+	async reset(): Promise<boolean> {
 		if (this[this.blockValueField] !== this.default) {
 			this[this.blockValueField] = this.default;
 			this.async.clearAll({group: 'validation'});
@@ -316,7 +316,7 @@ export default class iInput extends iData {
 	 * @emits validationEnd(result: boolean)
 	 */
 	@wait('ready')
-	async validate(params?: Object): boolean {
+	async validate(params?: Object): Promise<boolean> {
 		if (!this.validators.length) {
 			this.removeMod('valid');
 			return true;
@@ -329,7 +329,7 @@ export default class iInput extends iData {
 			const
 				key = Object.isString(el) ? el : Object.keys(el)[0];
 
-			const validator = this.$options.blockValidators[key].call(
+			const validator = this.blockValidators[key].call(
 				this,
 				Object.assign(Object.isObject(el) ? el[key] : {}, params)
 			);
@@ -365,19 +365,45 @@ export default class iInput extends iData {
 		return valid;
 	}
 
+	/** @override */
+	protected initRemoteData(): any | undefined {
+		if (!this.db) {
+			return;
+		}
+
+		return this[this.blockValueField] = this.blockConverter ? this.blockConverter(this.db) : this.db;
+	}
+
+	/**
+	 * Handler: focus
+	 */
+	protected onFocus(): void {
+		this.setMod('focused', true);
+	}
+
+	/**
+	 * Handler: blur
+	 */
+	protected onBlur(): void {
+		this.setMod('focused', false);
+	}
+
 	/**
 	 * Handler: block value change
 	 * @emits change(value)
 	 */
-	onBlockValueChange(newValue: any, oldValue: any) {
+	protected onBlockValueChange(newValue: any, oldValue: any): void {
 		this.prevValue = oldValue;
 		if (newValue !== oldValue || newValue && typeof newValue === 'object') {
 			this.emit('change', this[this.blockValueField]);
 		}
 	}
 
-	/** @inheritDoc */
-	created() {
+	/**
+	 * Initializes events for valueStore
+	 */
+	@hook('created')
+	protected initValueEvents(): void {
 		const k = this.blockValueField;
 		this.$watch(k + (`${k}Store` in this ? 'Store' : ''), this.onBlockValueChange);
 		this.on('actionChange', () => this.validate());
