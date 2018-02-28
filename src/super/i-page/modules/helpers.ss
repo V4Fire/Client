@@ -1,4 +1,4 @@
-- namespace ['p-index']
+- namespace ['i-page']
 
 /*!
  * V4Fire Client Core
