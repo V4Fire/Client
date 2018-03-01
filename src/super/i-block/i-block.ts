@@ -1493,7 +1493,6 @@ export abstract class iBlockDecorator extends iBlock {
 	public async!: Async<this>;
 	public readonly abstract block: Block<this>;
 	public readonly abstract localEvent: EventEmitter;
-	public readonly abstract h: typeof helpers;
 
 	public abstract link(field: string, watchParams?: WatchOptions): any;
 	public abstract link(field: string, wrapper?: LinkWrapper): any;
