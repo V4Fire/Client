@@ -95,6 +95,7 @@
     "style-loader": "^0.20.1",
     "stylus": "^0.54.5",
     "stylus-loader": "^3.0.1",
+    "svg-fill-loader": "0.0.8",
     "svg-sprite-loader": "^3.6.2",
     "svgo-sync": "^0.5.1",
     "ts-loader": "^3.5.0",
