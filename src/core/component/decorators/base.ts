@@ -27,6 +27,10 @@ export interface ComponentProp<T extends VueInterface = VueInterface, A = any, B
 	watch?: FieldWatcher<T, A, B>;
 }
 
+export interface ComponentAccessor {
+	cache: boolean;
+}
+
 /**
  * Marks a class property as a Vue component initial property
  * @decorator
@@ -83,7 +87,7 @@ export interface ComponentMethod {
  * Universal decorator of component properties
  * @decorator
  */
-export const p = paramsFactory<ComponentProp | ComponentField | ComponentMethod>(null);
+export const p = paramsFactory<ComponentProp | ComponentField | ComponentMethod | ComponentAccessor>(null);
 
 /**
  * Attaches a hook listener to a method
