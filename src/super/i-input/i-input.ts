@@ -194,7 +194,7 @@ export default class iInput<T extends Dictionary = Dictionary> extends iData<T> 
 	 * Form value of the block
 	 */
 	@p({cache: false})
-	get formValue(): any {
+	get formValue(): Promise<any> {
 		return (async () => {
 			await this.nextTick();
 
@@ -226,7 +226,7 @@ export default class iInput<T extends Dictionary = Dictionary> extends iData<T> 
 	 * Grouped form value of the block
 	 */
 	@p({cache: false})
-	get groupFormValue(): any[] | any {
+	get groupFormValue(): Promise<any[] | any> {
 		return (async () => {
 			if (this.name) {
 				const
