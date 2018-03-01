@@ -153,8 +153,6 @@ export default class bGrid<T extends Dictionary = Dictionary> extends iDataPages
 		return mut;
 	}
 
-	/* eslint-disable no-unused-vars */
-
 	/** @override */
 	protected updData(data: T, i: number): {type: 'upd' | 'del'; upd: Function; del: Function} {
 		const
@@ -170,14 +168,24 @@ export default class bGrid<T extends Dictionary = Dictionary> extends iDataPages
 		return {...mut, type: 'upd'};
 	}
 
-	/* eslint-enable no-unused-vars */
+	/**
+	 * Sets an interval for setting rows to the render temp
+	 */
+	@hook('mounted')
+	protected activeRowsInterval(): void {
+		const
+			setTmp = $C(this.activeRows).forEach((val, key) => this.$set(this.renderTmp, key, val));
+
+		this.async.setInterval(() => setTmp, 0.1.second(), {label: $$.checkActiveRows}	);
+	}
 
 	/**
-	 * @private
+	 * Factory for dates comparing
+	 *
 	 * @param date
 	 * @param data
 	 */
-	private checkDateFactory(date: Date | Array<Date>, data: Object): Function {
+	protected checkDateFactory(date: Date | Date[], data: Object): Function {
 		return () => {
 			const normalizedDate = Object.isDate(date) ? [date] : date;
 			return $C(normalizedDate).every((date, i, obj) =>
@@ -202,15 +210,5 @@ export default class bGrid<T extends Dictionary = Dictionary> extends iDataPages
 				})
 			);
 		};
-	}
-
-	/** @inheritDoc */
-	@hook('mounted')
-	protected activeRowsInterval(): void {
-		this.async.setInterval(
-			() => $C(this.activeRows).forEach((val, key) => this.$set(this.renderTmp, key, val)),
-			0.1.second(),
-			{label: $$.checkActiveRows}
-		);
 	}
 }

@@ -1,5 +1,3 @@
-'use strict';
-
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -8,56 +6,56 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import iBlock, { field, watch } from 'super/i-block/i-block';
-import { component } from 'core/component';
-import Store from 'core/store';
+import iBlock, { field, p, component, prop, hook } from 'super/i-block/i-block';
+import symbolGenerator from 'core/symbol';
 
 export const
-	$$ = new Store();
+	$$ = symbolGenerator();
 
 @component()
 export default class bPaging extends iBlock {
 	/**
 	 * Initial count of pages
 	 */
-	@watch('setStripInView', {immediate: true})
-	count: number = 0;
+	@prop(Number)
+	readonly count: number = 0;
 
 	/**
 	 * Initial current page
 	 */
-	currentProp: ?number;
+	@prop(Number)
+	readonly currentProp!: number;
 
 	/**
 	 * Visible strip length
 	 */
-	stripLength: number = 5;
+	@prop(Number)
+	readonly stripLength: number = 5;
 
 	/**
 	 * Visible strip start
 	 * @private
 	 */
 	@field()
-	_stripStart: number;
+	private stripStart!: number;
 
 	/**
 	 * Visible paging strip
 	 */
 	@field()
-	strip: ?Array;
+	protected strip!: number[];
 
 	/**
 	 * Current page field
 	 */
-	@watch('setStripInView', {immediate: true})
 	@field((o) => o.link('currentProp'))
-	currentStore: number;
+	protected currentStore!: number;
 
 	/**
 	 * List of advanced pages (for dropdown)
 	 */
 	@field()
-	advPages: Array;
+	protected advPages!: Object[];
 
 	/**
 	 * Current page current
@@ -83,7 +81,7 @@ export default class bPaging extends iBlock {
 	/**
 	 * Calculates pages for the dropdown select
 	 */
-	getDropdownPages(): Array<Object> {
+	protected getDropdownPages(): Array<Object> {
 		const
 			full = Number.range(1, this.pageCount).toArray(),
 			options = full.subtract(this.strip);
@@ -94,20 +92,21 @@ export default class bPaging extends iBlock {
 	/**
 	 * Calculates visible strip
 	 */
-	setStripInView(): Array<number> {
+	@p({watch: ['currentStore', 'count'], watchParams: {immediate: true}})
+	protected setStripInView(): Array<number> {
 		let
 			end = this.current;
 
 		if (end - this.stripLength > 0) {
-			this._stripStart = end + 1 - this.stripLength;
+			this.stripStart = end + 1 - this.stripLength;
 
 		} else {
-			this._stripStart = 1;
+			this.stripStart = 1;
 			end = this.stripLength > this.pageCount ? this.pageCount : this.stripLength;
 		}
 
 		const
-			start = this.pageCount <= this.stripLength ? 1 : this._stripStart;
+			start = this.pageCount <= this.stripLength ? 1 : this.stripStart;
 
 		this.strip = Number.range(start, end).toArray();
 		this.advPages = this.getDropdownPages();
@@ -119,7 +118,7 @@ export default class bPaging extends iBlock {
 	 * Checks switch available
 	 * @param value - switch direction -1 || 1
 	 */
-	isSwitch(value: number): boolean {
+	protected isSwitch(value: number): boolean {
 		return value > 0 ? this.current < this.pageCount : this.current > 1;
 	}
 
@@ -129,8 +128,8 @@ export default class bPaging extends iBlock {
 	 * @param e
 	 * @emits actionChange(value: number)
 	 */
-	onPageClick(e: Event) {
-		this.current = Number(e.delegateTarget.textContent);
+	protected onPageClick(e: Event): void {
+		this.current = e.delegateTarget ? Number(e.delegateTarget.textContent) : 0;
 		this.emit('actionChange', this.current);
 	}
 
@@ -140,7 +139,7 @@ export default class bPaging extends iBlock {
 	 * @param skip - count of skipping days
 	 * @emits actionChange(value: number)
 	 */
-	onSwitchPage(skip: number) {
+	protected onSwitchPage(skip: number): void {
 		if (this.isSwitch(skip)) {
 			this.current = this.current + skip;
 			this.emit('actionChange', this.current);
@@ -151,7 +150,7 @@ export default class bPaging extends iBlock {
 	 * Handler: select page change
 	 * @emits actionChange(value: number)
 	 */
-	async onSelectChange(el: bSelect, value) {
+	protected async onSelectChange(el: bSelect, value: string): Promise<void> {
 		this.current = Number(value);
 		this.emit('actionChange', this.current);
 		await el.clear();
@@ -163,18 +162,23 @@ export default class bPaging extends iBlock {
 	 * @param edge - edge of pages -1 || 1
 	 * @emits actionChange(value: number)
 	 */
-	onFastJump(edge: number) {
+	protected onFastJump(edge: number): void {
 		if (this.isSwitch(edge)) {
 			this.current = edge > 0 ? this.pageCount : 1;
 			this.emit('actionChange', this.current);
 		}
 	}
 
-	/** @inheritDoc */
-	mounted() {
-		this.async.on(this.$el, 'click', {
-			label: $$.pageSelection,
-			fn: this.delegateElement('page', this.onPageClick)
-		});
+	/**
+	 * Adds click handler to page numbers
+	 */
+	@hook('mounted')
+	protected pageClickEvent(): void {
+		this.async.on(
+			this.$el,
+			'click',
+			() => this.delegateElement('page', this.onPageClick),
+			{label: $$.pageSelection}
+		);
 	}
 }
