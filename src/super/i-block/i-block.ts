@@ -1486,6 +1486,12 @@ function defaultI18n(): string {
  * Hack for i-block decorators
  */
 export abstract class iBlockDecorator extends iBlock {
+	public abstract readonly h: typeof helpers;
+	public abstract readonly b: typeof browser;
+	public abstract readonly t: typeof i18n;
+
+	public async!: Async<this>;
+	public readonly abstract block: Block<this>;
 	public readonly abstract localEvent: EventEmitter;
 
 	public abstract link(field: string, watchParams?: WatchOptions): any;
