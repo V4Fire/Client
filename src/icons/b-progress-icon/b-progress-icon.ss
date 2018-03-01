@@ -14,5 +14,5 @@
 	- rootTag = 'span'
 
 	- block body
-		< _.&__loader
-		< _.&__i
+		< .&__loader
+		< .&__i

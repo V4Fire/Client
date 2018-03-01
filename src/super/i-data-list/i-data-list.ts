@@ -82,7 +82,7 @@ export default class iDataList<T extends Dictionary = Dictionary> extends iData<
 	 * @param data
 	 * @param i - element index
 	 */
-	protected updData(data: T, i: number): {type: 'upd'; upd: Function; del: Function} {
+	protected updData(data: T, i: number): {type: 'upd' | 'del'; upd: Function; del: Function} {
 		return {
 			type: 'upd',
 			upd: () => {
