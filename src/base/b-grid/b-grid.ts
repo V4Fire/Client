@@ -66,9 +66,11 @@ export default class bGrid<T extends Dictionary = Dictionary> extends iDataPages
 		loadMore: HTMLTableCellElement;
 	};
 
-	/** @private */
+	/**
+	 * Contains rows, that ready to interaction with user
+	 */
 	@system()
-	private readonly activeRows: Dictionary = {};
+	protected readonly activeRows: Dictionary = {};
 
 	/**
 	 * Activates a row by the specified id

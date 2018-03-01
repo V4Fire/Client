@@ -34,10 +34,9 @@ export default class bPaging extends iBlock {
 
 	/**
 	 * Visible strip start
-	 * @private
 	 */
 	@field()
-	private stripStart!: number;
+	protected stripStart!: number;
 
 	/**
 	 * Visible paging strip
