@@ -7,7 +7,7 @@
  */
 
 import fetch from 'core/request';
-import iInput from 'super/i-input/i-input';
+import iInput, { ValidatorsDecl } from 'super/i-input/i-input';
 import symbolGenerator from 'core/symbol';
 import { name, password } from 'core/const/validation';
 
@@ -16,7 +16,7 @@ export const
 	DELAY = 0.3.second(),
 	group = 'validation';
 
-export default {
+export default <ValidatorsDecl>{
 	/** @this {bInput} */
 	async name({msg, skipLength, showMsg = true}: Dictionary): Promise<boolean> {
 		const
@@ -62,8 +62,10 @@ export default {
 		}
 
 		return new Promise<boolean | null>((resolve) => {
+			// @ts-ignore
 			this.async.setTimeout(async () => {
 				try {
+					// @ts-ignore
 					const {result} = await this.async.request(fetch(url, {method: 'GET', query: {value}})(), {
 						group,
 						label: $$.nameNotExists
@@ -77,6 +79,7 @@ export default {
 
 				} catch (err) {
 					if (showMsg) {
+						// @ts-ignore
 						this.error = this.getDefaultErrorText(err);
 					}
 
@@ -117,8 +120,10 @@ export default {
 		}
 
 		return new Promise<boolean | null>((resolve) => {
+			// @ts-ignore
 			this.async.setTimeout(async () => {
 				try {
+					// @ts-ignore
 					const {result} = await this.async.request(fetch(url, {method: 'GET', query: {value}}), {
 						group,
 						label: $$.emailNotExists
@@ -132,6 +137,7 @@ export default {
 
 				} catch (err) {
 					if (showMsg) {
+						// @ts-ignore
 						this.error = this.getDefaultErrorText(err);
 					}
 
@@ -179,6 +185,7 @@ export default {
 
 		if (old) {
 			const
+				// @ts-ignore
 				connectedInput = <iInput>this.$(old),
 				connectedValue = connectedInput && await connectedInput.formValue;
 
@@ -197,6 +204,7 @@ export default {
 
 		if (connected) {
 			const
+				// @ts-ignore
 				connectedInput = <iInput>this.$(connected),
 				connectedValue = connectedInput && await connectedInput.formValue;
 

@@ -11,7 +11,8 @@ import iData, { component, prop, field, system, hook, wait, p, ModsDecl } from '
 
 export * from 'super/i-data/i-data';
 export type Validators = Array<string | Dictionary<Dictionary>>;
-export type ValidatorsDecl = Dictionary<(params: Dictionary) => boolean | Promise<boolean>>;
+export type ValidatorsDecl<T extends iInput = iInput> =
+	Dictionary<(this: T, params: Dictionary) => boolean | Promise<boolean>>;
 
 @component({
 	model: {
@@ -157,6 +158,11 @@ export default class iInput<T extends Dictionary = Dictionary> extends iData<T> 
 	/** @override */
 	get error(): string | undefined {
 		return this.errorMsg && this.errorMsg.replace(/\.$/, '');
+	}
+
+	/** @override */
+	set error(value: string | undefined) {
+		this.errorMsg = value;
 	}
 
 	/**
