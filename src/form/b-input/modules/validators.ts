@@ -1,5 +1,3 @@
-'use strict';
-
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -8,19 +6,19 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import Store from 'core/store';
-import { r } from 'core/request';
+import fetch from 'core/request';
+import iInput from 'super/i-input/i-input';
+import symbolGenerator from 'core/symbol';
 import { name, password } from 'core/const/validation';
 
 export const
-	$$ = new Store();
-
-const
+	$$ = symbolGenerator(),
+	DELAY = 0.3.second(),
 	group = 'validation';
 
 export default {
 	/** @this {bInput} */
-	async name({msg, skipLength, showMsg = true}): boolean {
+	async name({msg, skipLength, showMsg = true}: Dictionary): Promise<boolean> {
 		const
 			value = await this.formValue;
 
@@ -55,7 +53,7 @@ export default {
 	},
 
 	/** @this {bInput} */
-	async nameNotExists({url, msg, own, showMsg = true}): boolean {
+	async nameNotExists({url, msg, own, showMsg = true}: Dictionary): Promise<boolean | null> {
 		const
 			value = await this.formValue;
 
@@ -63,39 +61,38 @@ export default {
 			return true;
 		}
 
-		return new Promise((resolve) => {
-			this.async.setTimeout({
-				group,
-				label: $$.nameNotExists,
-				onClear: () => resolve(false),
-				fn: async () => {
-					try {
-						const {responseData: {result}} = await this.async.request(r(url, {value}), {
-							group,
-							label: $$.nameNotExists
-						});
+		return new Promise<boolean | null>((resolve) => {
+			this.async.setTimeout(async () => {
+				try {
+					const {result} = await this.async.request(fetch(url, {method: 'GET', query: {value}})(), {
+						group,
+						label: $$.nameNotExists
+					});
 
-						if (result === true && showMsg) {
-							this.error = msg || t`This name is already taken`;
-						}
-
-						resolve(result !== true);
-
-					} catch (err) {
-						if (showMsg) {
-							this.error = this.getDefaultErrorText(err);
-						}
-
-						resolve(err.type !== 'abort' ? false : null);
+					if (result === true && showMsg) {
+						this.error = msg || t`This name is already taken`;
 					}
+
+					resolve(result !== true);
+
+				} catch (err) {
+					if (showMsg) {
+						this.error = this.getDefaultErrorText(err);
+					}
+
+					resolve(err.type !== 'abort' ? false : null);
 				}
 
-			}, 0.3.second());
+			}, DELAY, {
+				group,
+				label: $$.nameNotExists,
+				onClear: () => resolve(false)
+			});
 		});
 	},
 
 	/** @this {bInput} */
-	async email({msg, showMsg = true}): boolean {
+	async email({msg, showMsg = true}: Dictionary): Promise<boolean | null> {
 		const
 			value = (await this.formValue).trim();
 
@@ -111,7 +108,7 @@ export default {
 	},
 
 	/** @this {bInput} */
-	async emailNotExists({url, msg, own, showMsg = true}): boolean {
+	async emailNotExists({url, msg, own, showMsg = true}: Dictionary): Promise<boolean | null> {
 		const
 			value = await this.formValue;
 
@@ -119,39 +116,37 @@ export default {
 			return true;
 		}
 
-		return new Promise((resolve) => {
-			this.async.setTimeout({
+		return new Promise<boolean | null>((resolve) => {
+			this.async.setTimeout(async () => {
+				try {
+					const {result} = await this.async.request(fetch(url, {method: 'GET', query: {value}}), {
+						group,
+						label: $$.emailNotExists
+					});
+
+					if (result === true && showMsg) {
+						this.error = msg || t`This email is already taken`;
+					}
+
+					resolve(result !== true);
+
+				} catch (err) {
+					if (showMsg) {
+						this.error = this.getDefaultErrorText(err);
+					}
+
+					resolve(err.type !== 'abort' ? false : null);
+				}
+			}, DELAY, {
 				group,
 				label: $$.emailNotExists,
-				onClear: () => resolve(false),
-				fn: async () => {
-					try {
-						const {responseData: {result}} = await this.async.request(r(url, {value}), {
-							group,
-							label: $$.emailNotExists
-						});
-
-						if (result === true && showMsg) {
-							this.error = msg || t`This email is already taken`;
-						}
-
-						resolve(result !== true);
-
-					} catch (err) {
-						if (showMsg) {
-							this.error = this.getDefaultErrorText(err);
-						}
-
-						resolve(err.type !== 'abort' ? false : null);
-					}
-				}
-
-			}, 0.3.second());
+				onClear: () => resolve(false)
+			});
 		});
 	},
 
 	/** @this {bInput} */
-	async password({msg, connected, old, skipLength, showMsg = true}): boolean {
+	async password({msg, connected, old, skipLength, showMsg = true}: Dictionary): Promise<boolean> {
 		const
 			value = await this.formValue;
 
@@ -184,7 +179,7 @@ export default {
 
 		if (old) {
 			const
-				connectedInput = this.$(old),
+				connectedInput = <iInput>this.$(old),
 				connectedValue = connectedInput && await connectedInput.formValue;
 
 			if (connectedValue) {
@@ -202,7 +197,7 @@ export default {
 
 		if (connected) {
 			const
-				connectedInput = this.$(connected),
+				connectedInput = <iInput>this.$(connected),
 				connectedValue = connectedInput && await connectedInput.formValue;
 
 			if (connectedValue) {
@@ -222,7 +217,7 @@ export default {
 	},
 
 	/** @this {bInput} */
-	async dateFromInput({msg, showMsg = true}): boolean {
+	async dateFromInput({msg, showMsg = true}: Dictionary): Promise<boolean> {
 		const
 			value = await this.formValue;
 
@@ -230,7 +225,7 @@ export default {
 			return false;
 		}
 
-		if (!Object.isDate(value) || isNaN(Date.parse(value))) {
+		if (!Object.isDate(value) || isNaN(Date.parse(<any>value))) {
 			if (showMsg) {
 				this.error = msg || t`Invalid date`;
 			}
