@@ -17,5 +17,6 @@ const
  */
 module.exports = {
 	extensions: ['.ts', '.js', '.json'],
-	modules: [resolve.sourceDir, src.cwd(), ...resolve.rootDependencies, src.lib()]
+	modules: [resolve.sourceDir, src.cwd(), ...resolve.rootDependencies, src.lib()],
+	alias: include('build/alias.webpack')
 };
