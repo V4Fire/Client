@@ -9,6 +9,8 @@
 import iBlock, { field, p, component, prop, hook } from 'super/i-block/i-block';
 import symbolGenerator from 'core/symbol';
 
+export * from 'super/i-block/i-block';
+
 export const
 	$$ = symbolGenerator();
 

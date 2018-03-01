@@ -21,7 +21,7 @@ import Vue, {
 
 // @ts-ignore
 import * as defTpls from 'core/block.ss';
-import inheritMeta from 'core/component/inherit';
+import inheritMeta, { PARENT } from 'core/component/inherit';
 import VueInterface from 'core/component/vue';
 
 import { getComponent, getBaseComponent } from 'core/component/component';
@@ -114,7 +114,7 @@ export interface ComponentMethod {
 
 export type ModVal = string | boolean | number;
 export interface ModsDecl {
-	[name: string]: Array<ModVal | ModVal[]> | void;
+	[name: string]: Array<ModVal | ModVal[] | typeof PARENT> | void;
 }
 
 export interface FunctionalCtx {

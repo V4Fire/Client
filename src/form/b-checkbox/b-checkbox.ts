@@ -1,5 +1,3 @@
-'use strict';
-
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -8,35 +6,34 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import Store from 'core/store';
-import iInput from 'super/i-input/i-input';
-import { bindModTo, PARENT } from 'super/i-block/i-block';
-import { component } from 'core/component';
+import symbolGenerator from 'core/symbol';
+import iInput, { component, prop, ModsDecl, PARENT, hook } from 'super/i-input/i-input';
+
+export * from 'super/i-input/i-input';
 
 export const
-	$$ = new Store();
+	$$ = symbolGenerator();
 
 @component()
 export default class bCheckbox extends iInput {
 	/** @override */
-	dataType: Function = Boolean;
+	@prop(Function)
+	readonly dataType: Function = Any;
 
 	/**
 	 * Checkbox label
 	 */
-	label: ?string;
+	@prop(String)
+	readonly label?: string;
 
 	/**
 	 * True if the checkbox can be accessed
 	 */
-	changeable: boolean = true;
-
-	/** @override */
-	get $refs(): {input: HTMLInputElement} {}
+	@prop(Boolean)
+	readonly changeable: boolean = true;
 
 	/** @inheritDoc */
-	static mods = {
-		@bindModTo('valueStore')
+	static mods: ModsDecl = {
 		checked: [
 			'true',
 			'false'
@@ -48,11 +45,14 @@ export default class bCheckbox extends iInput {
 		]
 	};
 
+	/** @override */
+	protected readonly $refs!: {input: HTMLInputElement};
+
 	/**
 	 * Checks the box
 	 * @emits check()
 	 */
-	async check(): boolean {
+	async check(): Promise<boolean> {
 		if (!this.changeable) {
 			return false;
 		}
@@ -69,7 +69,7 @@ export default class bCheckbox extends iInput {
 	 * Unchecks the box
 	 * @emits uncheck()
 	 */
-	async uncheck(): boolean {
+	async uncheck(): Promise<boolean> {
 		if (!this.changeable) {
 			return false;
 		}
@@ -87,39 +87,48 @@ export default class bCheckbox extends iInput {
 		return this.mods.checked === 'true' ? this.uncheck() : this.check();
 	}
 
-	/* eslint-disable no-unused-vars */
-
 	/**
 	 * Handler: checkbox trigger
 	 *
 	 * @param e
 	 * @emits actionChange(value: boolean)
 	 */
-	async onClick(e: Event) {
-		this.focus();
+	protected async onClick(e: Event): Promise<void> {
+		await this.focus();
 		await this.toggle();
 		this.emit('actionChange', this.mods.checked === 'true');
 	}
 
-	/* eslint-enable no-unused-vars */
-
-	/** @inheritDoc */
-	created() {
+	/**
+	 * Adds local event handler on checked state change
+	 */
+	@hook('created')
+	protected addCheckedHandler(): void {
 		this.localEvent.on('block.mod.*.checked.*', (el) => this.value = el.type !== 'remove' && el.value === 'true');
 	}
 
-	/** @inheritDoc */
-	mounted() {
+	/**
+	 * Adds handler on checkbox click
+	 */
+	@hook('mounted')
+	protected addOnClickHandler(): void {
 		const
-			{block: $b} = this;
-
-		this.async.on(this.$el, 'click', {
-			label: $$.toggle,
-			fn: (e) => {
-				if (e.target.closest($b.getElSelector('wrapper')) || e.target.closest($b.getElSelector('hidden-input'))) {
+			{block: {getElSelector: $g}} = this,
+			handler = (e) => {
+				if (
+					e.target.closest($g('wrapper')) ||
+					e.target.closest($g('hidden-input'))
+				) {
 					return this.onClick(e);
 				}
-			}
-		});
+			};
+
+		this.async.on(this.$el, 'click', handler, {label: $$.toggle});
+	}
+
+	/** @override */
+	protected initModEvents(): void {
+		super.initModEvents();
+		this.bindModTo('checked', 'valueStore');
 	}
 }
