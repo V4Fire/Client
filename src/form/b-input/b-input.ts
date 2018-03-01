@@ -1,5 +1,3 @@
-'use strict';
-
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -8,156 +6,134 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import Store from 'core/store';
-import iInput from 'super/i-input/i-input';
-import blockValidators from './modules/validators';
-import keyCodes from 'core/keyCodes';
-import { abstract, field, watch, wait, mixin, bindModTo, PARENT } from 'super/i-block/i-block';
-import { component } from 'core/component';
+import $C = require('collection.js');
+import symbolGenerator from 'core/symbol';
+import KeyCodes from 'core/KeyCodes';
+import BlockValidators from './modules/validators';
+import iInput, {
 
-const
-	$C = require('collection.js');
+	component,
+	prop,
+	field,
+	system,
+	wait,
+	watch,
+	ModsDecl,
+	ValidatorsDecl,
+	PARENT
+
+} from 'super/i-input/i-input';
 
 export const
-	$$ = new Store();
+	$$ = symbolGenerator();
 
 @component()
-export default class bInput extends iInput {
+export default class bInput<T extends Dictionary = Dictionary> extends iInput<T> {
 	/**
 	 * Input type
 	 */
-	type: ?string = 'text';
+	@prop(String)
+	readonly type: string = 'text';
 
 	/**
 	 * Input placeholder
 	 */
-	placeholder: ?string;
+	@prop({type: String, required: false})
+	readonly placeholder?: string;
 
 	/**
 	 * Input pattern
 	 */
-	pattern: ?string;
+	@prop({type: String, required: false})
+	readonly pattern?: string;
 
 	/**
 	 * Reset button for input
 	 */
-	resetButton: boolean = true;
+	@prop(Boolean)
+	readonly resetButton: boolean = true;
 
 	/**
 	 * Input autocomplete mode
 	 */
-	autocomplete: ?string = 'off';
+	@prop(String)
+	readonly autocomplete: string = 'off';
 
 	/**
 	 * Input maximum value length
 	 */
-	maxlength: ?number;
+	@prop({type: String, required: false})
+	readonly maxlength?: number;
 
 	/**
 	 * Icon before input
 	 */
-	preIcon: ?string;
+	@prop({type: String, required: false})
+	readonly preIcon?: string;
 
 	/**
 	 * Component for .preIcon
 	 */
-	preIconComponent: ?string = 'b-icon';
+	@prop(String)
+	readonly preIconComponent: string = 'b-icon';
 
 	/**
 	 * Tooltip text for the preIcon
 	 */
-	preIconHint: ?string;
+	@prop({type: String, required: false})
+	readonly preIconHint?: string;
 
 	/**
 	 * Tooltip position for the preIcon
 	 */
-	preIconHintPos: ?string;
+	@prop({type: String, required: false})
+	readonly preIconHintPos?: string;
 
 	/**
 	 * Icon after input
 	 */
-	icon: ?string;
+	@prop({type: String, required: false})
+	readonly icon?: string;
 
 	/**
 	 * Component for .icon
 	 */
-	iconComponent: ?string = 'b-icon';
+	@prop(String)
+	readonly iconComponent: string = 'b-icon';
 
 	/**
 	 * Tooltip text for the icon
 	 */
-	iconHint: ?string;
+	@prop({type: String, required: false})
+	readonly iconHint?: string;
 
 	/**
 	 * Tooltip position for the icon
 	 */
-	iconHintPos: ?string;
+	@prop({type: String, required: false})
+	readonly iconHintPos?: string;
 
 	/**
 	 * RegExp map
 	 * (for using with .mask)
 	 */
-	regs: Object = {};
+	@prop(Object)
+	readonly regs: Dictionary = {};
 
 	/**
 	 * Input mask value
 	 */
-	mask: ?string;
+	@prop({type: String, required: false})
+	readonly mask?: string;
 
 	/**
 	 * Mask placeholder
 	 */
-	@watch('updateMask', {immediate: true})
-	maskPlaceholder: string = '_';
-
-	/**
-	 * Value buffer
-	 */
-	@watch('onValueBufferUpdate', {immediate: true})
-	@field((o) => o.link('valueProp'))
-	valueBufferStore: any;
-
-	/**
-	 * If true, then one tick of value buffer synchronization will be skipped
-	 */
-	@field()
-	skipBuffer: boolean = false;
-
-	/** @private */
-	@abstract
-	_lastMaskSelectionStartIndex: ?number;
-
-	/** @private */
-	@abstract
-	_lastMaskSelectionEndIndex: ?number;
-
-	/** @private */
-	@abstract
-	_maskBuffer: ?string;
-
-	/** @private */
-	@abstract
-	_mask: ?{value: Array<string>, tpl: string};
-
-	/**
-	 * Value buffer
-	 */
-	get valueBuffer(): string {
-		return this.valueBufferStore;
-	}
-
-	/**
-	 * Sets a value to the value buffer store
-	 */
-	set valueBuffer(value: string) {
-		this.valueBufferStore = value;
-	}
-
-	/** @override */
-	get $refs(): {input: HTMLInputElement} {}
+	@prop({type: String, watch: {fn: 'updateMask', immediate: true}})
+	readonly maskPlaceholder: string = '_';
 
 	/** @inheritDoc */
-	static mods = {
+	static mods: ModsDecl = {
 		rounding: [
 			['none'],
 			'small',
@@ -170,7 +146,7 @@ export default class bInput extends iInput {
 			'link'
 		],
 
-		@bindModTo('valueBufferStore', (v) => !v)
+		// @bindModTo('valueBufferStore', (v) => !v)
 		empty: [
 			'true',
 			'false'
@@ -178,8 +154,62 @@ export default class bInput extends iInput {
 	};
 
 	/** @override */
-	@mixin
-	static blockValidators = blockValidators;
+	static blockValidators: ValidatorsDecl = {
+		...iInput.blockValidators,
+		...BlockValidators
+	};
+
+	/** @override */
+	protected $refs!: {input: HTMLInputElement};
+
+	/**
+	 * Value buffer
+	 */
+	@field({
+		init: (o) => o.link('valueProp'),
+		watch: {
+			fn: 'onValueBufferUpdate',
+			immediate: true
+		}
+	})
+
+	protected valueBufferStore: any;
+
+	/**
+	 * Value buffer
+	 */
+	protected get valueBuffer(): string {
+		return this.valueBufferStore;
+	}
+
+	/**
+	 * Sets a value to the value buffer store
+	 */
+	protected set valueBuffer(value: string) {
+		this.valueBufferStore = value;
+	}
+
+	/**
+	 * If true, then one tick of value buffer synchronization will be skipped
+	 */
+	@field()
+	protected skipBuffer: boolean = false;
+
+	/** @private */
+	@system()
+	private _lastMaskSelectionStartIndex?: number;
+
+	/** @private */
+	@system()
+	private _lastMaskSelectionEndIndex?: number;
+
+	/** @private */
+	@system()
+	private _maskBuffer?: string;
+
+	/** @private */
+	@system()
+	private _mask?: {value: string[]; tpl: string};
 
 	/** @override */
 	get value(): any {
@@ -213,7 +243,7 @@ export default class bInput extends iInput {
 	}
 
 	/** @override */
-	async clear(): boolean {
+	async clear(): Promise<boolean> {
 		this.skipBuffer = true;
 
 		if (this.mask) {
@@ -568,8 +598,8 @@ export default class bInput extends iInput {
 	 */
 	async onMaskBackspace(e: KeyboardEvent) {
 		const codes = {
-			[keyCodes.BACKSPACE]: true,
-			[keyCodes.DELETE]: true
+			[KeyCodes.BACKSPACE]: true,
+			[KeyCodes.DELETE]: true
 		};
 
 		if (!codes[e.keyCode]) {
@@ -592,7 +622,7 @@ export default class bInput extends iInput {
 			res = this.valueBuffer,
 			pos = 0;
 
-		if (e.keyCode === keyCodes.DELETE) {
+		if (e.keyCode === KeyCodes.DELETE) {
 			let
 				start = selectionStart,
 				end = selectionEnd;
@@ -693,9 +723,9 @@ export default class bInput extends iInput {
 
 		const
 			keyboardEvent = e instanceof KeyboardEvent,
-			leftKey = e.keyCode === keyCodes.LEFT;
+			leftKey = e.keyCode === KeyCodes.LEFT;
 
-		if (keyboardEvent ? !leftKey && e.keyCode !== keyCodes.RIGHT : e.button !== 0) {
+		if (keyboardEvent ? !leftKey && e.keyCode !== KeyCodes.RIGHT : e.button !== 0) {
 			return;
 		}
 
@@ -771,7 +801,7 @@ export default class bInput extends iInput {
 	 */
 	onMaskKeyPress(e: KeyboardEvent) {
 		const blacklist = {
-			[keyCodes.TAB]: true
+			[KeyCodes.TAB]: true
 		};
 
 		if (e.altKey || e.shiftKey || e.ctrlKey || e.metaKey || blacklist[e.keyCode]) {
