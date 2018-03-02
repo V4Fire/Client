@@ -879,7 +879,6 @@ export default class bInput<T extends Dictionary = Dictionary> extends iInput<T>
 	/** @override */
 	protected initValueEvents(): void {
 		super.initValueEvents();
-
 		this.$watch('valueBufferStore', async (val = '') => {
 			try {
 				await this.waitRef('input', {label: $$.valueBufferStoreModel});
