@@ -163,7 +163,7 @@ export default class bInput<T extends Dictionary = Dictionary> extends iInput<T>
 	};
 
 	/** @override */
-	protected $refs!: {input: HTMLInputElement};
+	protected readonly $refs!: {input: HTMLInputElement};
 
 	/**
 	 * Value buffer
