@@ -11,8 +11,7 @@ import symbolGenerator from 'core/symbol';
 import bInputHidden from 'form/b-input-hidden/b-input-hidden';
 import iInput from 'super/i-input/i-input';
 import bButton from 'form/b-button/b-button';
-import iData, { component, prop, wait, p, ModsDecl, ModelMethods } from 'super/i-data/i-data';
-import { CreateRequestOptions } from 'core/data';
+import iData, { component, prop, wait, p, ModsDecl, ModelMethods, CreateRequestOptions } from 'super/i-data/i-data';
 export * from 'super/i-data/i-data';
 
 export const

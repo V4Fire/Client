@@ -55,8 +55,8 @@ export interface SocketEvent extends DataEvent {
 }
 
 export interface CreateRequestOptions<T = any> extends BaseCreateRequestOptions<T>, AsyncOpts {
-	showProgress: boolean;
-	hideProgress: boolean;
+	showProgress?: boolean;
+	hideProgress?: boolean;
 }
 
 export type ModelMethods = 'get' | 'post' | 'add' | 'upd' | 'del';
