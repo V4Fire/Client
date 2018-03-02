@@ -138,7 +138,21 @@ export function getComponent(
 
 				for (let i = 0; i < watchers.length; i++) {
 					const el = watchers[i];
-					this.$watch(key, {...el, handler: el.method ? el.handler : (a, b) => el.handler(this, a, b)});
+					this.$watch(key, {...el, handler: el.method ? el.handler : (a, b) => {
+						const
+							fn = el.handler;
+
+						if (Object.isString(fn)) {
+							if (!Object.isFunction(this[fn])) {
+								throw new ReferenceError(`The specified method (${fn}) for watching is not defined`);
+							}
+
+							this[fn](a, b);
+
+						} else {
+							el.handler(this, a, b);
+						}
+					}});
 				}
 			}
 
