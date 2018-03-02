@@ -39,7 +39,7 @@ export default class iInput<T extends Dictionary = Dictionary> extends iData<T> 
 	 * (if value is date)
 	 */
 	@prop(Boolean)
-	utc: boolean = false;
+	readonly utc: boolean = false;
 
 	/**
 	 * Input id
