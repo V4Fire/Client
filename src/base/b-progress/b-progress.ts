@@ -1,5 +1,3 @@
-'use strict';
-
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -10,6 +8,8 @@
 
 import symbolGenerator from 'core/symbol';
 import iBlock, { field, component, PARENT, ModsDecl } from 'super/i-block/i-block';
+
+export * from 'super/i-block/i-block';
 
 export const
 	$$ = symbolGenerator();
