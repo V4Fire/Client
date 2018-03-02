@@ -148,7 +148,6 @@ export default class bInput<T extends Dictionary = Dictionary> extends iInput<T>
 			'link'
 		],
 
-		// @bindModTo('valueBufferStore', (v) => !v)
 		empty: [
 			'true',
 			'false'
@@ -879,7 +878,15 @@ export default class bInput<T extends Dictionary = Dictionary> extends iInput<T>
 	/** @override */
 	protected initValueEvents(): void {
 		super.initValueEvents();
-		this.$watch('valueBufferStore', async (val = '') => {
+
+		this.bindModTo(
+			'empty',
+			'valueBufferStore',
+			(v) => !v
+		);
+
+		this.$watch(
+			'valueBufferStore', async (val = '') => {
 			try {
 				await this.waitRef('input', {label: $$.valueBufferStoreModel});
 
