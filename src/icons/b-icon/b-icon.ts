@@ -63,18 +63,20 @@ export default class bIcon extends iBlock {
 		const
 			iconId = ctx.props.value;
 
-		if (!(iconId in iconsMap)) {
-			throw new ReferenceError(`The specified icon "${iconId}" is not defined`);
-		}
-
-		const
-			icon = icons(iconsMap[iconId]);
-
-		this.$slots.svgLink = el('use', {
-			attrs: {
-				'xlink:href': `${location.pathname + location.search}#${icon.id}`
+		if (iconId) {
+			if (!(iconId in iconsMap)) {
+				throw new ReferenceError(`The specified icon "${iconId}" is not defined`);
 			}
-		});
+
+			const
+				icon = icons(iconsMap[iconId]);
+
+			this.$slots.svgLink = el('use', {
+				attrs: {
+					'xlink:href': `${location.pathname + location.search}#${icon.id}`
+				}
+			});
+		}
 
 		return this.execRenderObject(TPLS[this.componentName].index());
 	}
