@@ -10,7 +10,7 @@
 
 import $C = require('collection.js');
 import symbolGenerator from 'core/symbol';
-import KeyCodes from 'core/KeyCodes';
+import KeyCodes from 'core/keyCodes';
 import BlockValidators from './modules/validators';
 import iInput, {
 
