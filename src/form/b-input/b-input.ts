@@ -6,6 +6,8 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+// tslint:disable:max-file-line-count
+
 import $C = require('collection.js');
 import symbolGenerator from 'core/symbol';
 import KeyCodes from 'core/KeyCodes';
@@ -17,7 +19,7 @@ import iInput, {
 	field,
 	system,
 	wait,
-	watch,
+	hook,
 	ModsDecl,
 	ValidatorsDecl,
 	PARENT
@@ -178,14 +180,14 @@ export default class bInput<T extends Dictionary = Dictionary> extends iInput<T>
 	/**
 	 * Value buffer
 	 */
-	protected get valueBuffer(): string {
+	protected get valueBuffer(): string | undefined {
 		return this.valueBufferStore;
 	}
 
 	/**
 	 * Sets a value to the value buffer store
 	 */
-	protected set valueBuffer(value: string) {
+	protected set valueBuffer(value: string | undefined) {
 		this.valueBufferStore = value;
 	}
 
@@ -209,7 +211,7 @@ export default class bInput<T extends Dictionary = Dictionary> extends iInput<T>
 
 	/** @private */
 	@system()
-	private _mask?: {value: string[]; tpl: string};
+	private _mask?: {value: Array<string | RegExp>; tpl: string};
 
 	/** @override */
 	get value(): any {
@@ -261,7 +263,7 @@ export default class bInput<T extends Dictionary = Dictionary> extends iInput<T>
 	 * @emits selectAll()
 	 */
 	@wait('ready', {label: $$.selectAll})
-	async selectAll(): boolean {
+	async selectAll(): Promise<boolean> {
 		const
 			{input} = this.$refs;
 
@@ -278,7 +280,7 @@ export default class bInput<T extends Dictionary = Dictionary> extends iInput<T>
 	 * Updates the mask value
 	 */
 	@wait('ready', {label: $$.updateMask})
-	async updateMask() {
+	async updateMask(): Promise<void> {
 		const
 			{async: $a} = this,
 			{input} = this.$refs;
@@ -287,48 +289,23 @@ export default class bInput<T extends Dictionary = Dictionary> extends iInput<T>
 			group = 'mask';
 
 		if (this.mask) {
-			$a.on(input, 'mousedown keydown', {
+			$a.on(input, 'mousedown keydown', this.onMaskNavigate, {group});
+			$a.on(input, 'mousedown keydown', this.onMaskValueReady, {group});
+			$a.on(input, 'mouseup keyup', this.onMaskValueReady, {
 				group,
-				fn: this.onMaskNavigate
+				options: {
+					capture: true
+				}
 			});
 
-			$a.on(input, 'mousedown keydown', {
-				group,
-				fn: this.onMaskValueReady
-			});
-
-			$a.on(input, 'mouseup keyup', {
-				group,
-				fn: this.onMaskCursorReady
-			}, true);
-
-			$a.on(input, this.b.is.Android ? 'keyup' : 'keypress', {
-				group,
-				fn: this.onMaskKeyPress
-			});
-
-			$a.on(input, 'keydown', {
-				group,
-				fn: this.onMaskBackspace
-			});
-
-			$a.on(input, 'input', {
-				group,
-				fn: this.onMaskInput
-			});
-
-			$a.on(input, 'focus', {
-				group,
-				fn: this.onMaskFocus
-			});
-
-			$a.on(input, 'blur', {
-				group,
-				fn: this.onMaskBlur
-			});
+			$a.on(input, this.b.is.Android ? 'keyup' : 'keypress', this.onMaskKeyPress, {group});
+			$a.on(input, 'keydown', this.onMaskBackspace, {group});
+			$a.on(input, 'input', this.onMaskInput, {group});
+			$a.on(input, 'focus', this.onMaskFocus, {group});
+			$a.on(input, 'blur', this.onMaskBlur, {group});
 
 			const
-				value = [];
+				value = <Array<string | RegExp>>[];
 
 			let
 				tpl = '',
@@ -374,23 +351,34 @@ export default class bInput<T extends Dictionary = Dictionary> extends iInput<T>
 	 */
 	@wait('ready', {label: $$.applyMaskToValue})
 	async applyMaskToValue(
-		value?: string = this.valueBuffer,
-		{updateBuffer, start = 0, end = start, cursor, maskBuffer = this._maskBuffer}: {
-			updateBuffer?: boolean,
-			start?: number,
-			end?: number,
-			cursor?: number | string,
-			maskBuffer?: string
+		value: string | undefined = this.valueBuffer,
+
+		{
+			updateBuffer,
+			start = 0,
+			end = start,
+			cursor,
+			maskBuffer = this._maskBuffer
+		}: {
+			updateBuffer?: boolean;
+			start?: number;
+			end?: number;
+			cursor?: number | string | null;
+			maskBuffer?: string;
 		} = {}
 
-	) {
+	): Promise<void> {
 		if (!value) {
 			start = end = 0;
 		}
 
 		const
 			m = this._mask,
-			mask = m.value;
+			mask = m && m.value;
+
+		if (!m || !mask) {
+			return;
+		}
 
 		const
 			focused = this.mods.focused === 'true',
@@ -424,7 +412,7 @@ export default class bInput<T extends Dictionary = Dictionary> extends iInput<T>
 
 				if (isRgxp) {
 					if (chunks.length) {
-						while (chunks.length && !mask.test(chunks[0])) {
+						while (chunks.length && !(<RegExp>mask).test(chunks[0])) {
 							chunks.shift();
 						}
 
@@ -448,7 +436,7 @@ export default class bInput<T extends Dictionary = Dictionary> extends iInput<T>
 
 		} else if (focused) {
 			cursor = 'start';
-			res = m.tpl;
+			res = m ? m.tpl : '';
 		}
 
 		if (cursor === 'start') {
@@ -459,7 +447,7 @@ export default class bInput<T extends Dictionary = Dictionary> extends iInput<T>
 		this[updateBuffer ? 'valueBuffer' : 'value'] = input.value = res;
 
 		if (focused) {
-			pos = cursor != null ? cursor : selectionFalse ? start + pos + 1 : end;
+			pos = cursor != null ? Number(cursor) : selectionFalse ? start + pos + 1 : end;
 			while (pos < mask.length && !Object.isRegExp(mask[pos])) {
 				pos++;
 			}
@@ -470,7 +458,7 @@ export default class bInput<T extends Dictionary = Dictionary> extends iInput<T>
 	}
 
 	/** @override */
-	onFocus() {
+	protected onFocus(): void {
 		const
 			{input} = this.$refs;
 
@@ -483,20 +471,20 @@ export default class bInput<T extends Dictionary = Dictionary> extends iInput<T>
 			}
 		}
 
-		super.onFocus(...arguments);
+		super.onFocus();
 	}
 
 	/**
 	 * Handler: value buffer update
 	 * @param value
 	 */
-	onValueBufferUpdate(value: any) {
+	protected onValueBufferUpdate(value: any): void {
 		if (!this.mask) {
 			this.value = value;
 		}
-	}
 
-	/* eslint-disable no-unused-vars */
+		super.onFocus();
+	}
 
 	/**
 	 * Handler: clear
@@ -504,7 +492,7 @@ export default class bInput<T extends Dictionary = Dictionary> extends iInput<T>
 	 * @param e
 	 * @emits actionChange(value: string)
 	 */
-	async onClear(e: MouseEvent) {
+	protected async onClear(e: MouseEvent): Promise<void> {
 		if (await this.clear()) {
 			this.emit('actionChange', this.value);
 		}
@@ -516,7 +504,7 @@ export default class bInput<T extends Dictionary = Dictionary> extends iInput<T>
 	 * @param e
 	 * @emits actionChange(value: string)
 	 */
-	async onEdit(e: InputEvent) {
+	protected async onEdit(e: Event): Promise<void> {
 		if (!this.mask && this.blockValueField === 'value') {
 			this.emit('actionChange', this.value);
 		}
@@ -526,12 +514,19 @@ export default class bInput<T extends Dictionary = Dictionary> extends iInput<T>
 	 * Handler: mask focus
 	 * @param e
 	 */
-	async onMaskFocus(e: FocusEvent) {
+	protected async onMaskFocus(e: FocusEvent): Promise<void> {
 		if (this.mods.empty === 'true') {
 			await this.applyMaskToValue('', {updateBuffer: true});
 		}
 
-		const pos = $C(this._mask.value).one.search((el) => Object.isRegExp(el));
+		const
+			m = this._mask;
+
+		if (!m) {
+			return;
+		}
+
+		const pos = $C(m.value).one.search((el) => Object.isRegExp(el)) || 0;
 		this.$refs.input.setSelectionRange(pos, pos);
 	}
 
@@ -539,8 +534,15 @@ export default class bInput<T extends Dictionary = Dictionary> extends iInput<T>
 	 * Handler: mask blur
 	 * @param e
 	 */
-	onMaskBlur(e: Event) {
-		if (this.valueBuffer === this._mask.tpl) {
+	protected onMaskBlur(e: Event): void {
+		const
+			m = this._mask;
+
+		if (!m) {
+			return;
+		}
+
+		if (this.valueBuffer === m.tpl) {
 			this.value = undefined;
 		}
 	}
@@ -549,7 +551,7 @@ export default class bInput<T extends Dictionary = Dictionary> extends iInput<T>
 	 * Handler: mask cursor position save
 	 * @param e
 	 */
-	onMaskCursorReady(e: KeyboardEvent | MouseEvent) {
+	protected onMaskCursorReady(e: KeyboardEvent | MouseEvent): void {
 		const {input} = this.$refs;
 		this._lastMaskSelectionStartIndex = input.selectionStart;
 		this._lastMaskSelectionEndIndex = input.selectionEnd;
@@ -559,7 +561,7 @@ export default class bInput<T extends Dictionary = Dictionary> extends iInput<T>
 	 * Handler: mask value save
 	 * @param e
 	 */
-	onMaskValueReady(e: KeyboardEvent | MouseEvent) {
+	protected onMaskValueReady(e: KeyboardEvent | MouseEvent): void {
 		this._maskBuffer = this.valueBuffer;
 	}
 
@@ -569,7 +571,7 @@ export default class bInput<T extends Dictionary = Dictionary> extends iInput<T>
 	 * @param value
 	 * @emits actionChange
 	 */
-	onRawDataChange(value: any) {
+	protected onRawDataChange(value: any): void {
 		if (this.blockValueField === 'value') {
 			this.emit('actionChange', value);
 		}
@@ -579,7 +581,7 @@ export default class bInput<T extends Dictionary = Dictionary> extends iInput<T>
 	 * Handler: mask input
 	 * @emits actionChange(value: string)
 	 */
-	async onMaskInput(e: InputEvent) {
+	protected async onMaskInput(e: Event): Promise<void> {
 		await this.applyMaskToValue(undefined, {
 			start: this._lastMaskSelectionStartIndex,
 			end: this._lastMaskSelectionEndIndex
@@ -588,15 +590,13 @@ export default class bInput<T extends Dictionary = Dictionary> extends iInput<T>
 		this.onRawDataChange(this.value);
 	}
 
-	/* eslint-enable no-unused-vars */
-
 	/**
 	 * Backspace handler for the mask
 	 *
 	 * @param e
 	 * @emits actionChange(value: string)
 	 */
-	async onMaskBackspace(e: KeyboardEvent) {
+	protected async onMaskBackspace(e: KeyboardEvent): Promise<void> {
 		const codes = {
 			[KeyCodes.BACKSPACE]: true,
 			[KeyCodes.DELETE]: true
@@ -615,8 +615,12 @@ export default class bInput<T extends Dictionary = Dictionary> extends iInput<T>
 
 		const
 			m = this._mask,
-			mask = m.value,
+			mask = m && m.value,
 			ph = this.maskPlaceholder;
+
+		if (!m || !mask) {
+			return;
+		}
 
 		let
 			res = this.valueBuffer,
@@ -627,8 +631,8 @@ export default class bInput<T extends Dictionary = Dictionary> extends iInput<T>
 				start = selectionStart,
 				end = selectionEnd;
 
-			const chunks = $C(mask).reduce((arr, el, i) => {
-				if (Object.isRegExp(el) && el.test(res[i])) {
+			const chunks = $C(mask).to([] as string[]).reduce((arr, el, i) => {
+				if (res && Object.isRegExp(el) && el.test(res[i])) {
 					arr.push(res[i]);
 
 				} else {
@@ -642,7 +646,7 @@ export default class bInput<T extends Dictionary = Dictionary> extends iInput<T>
 				}
 
 				return arr;
-			}, []);
+			});
 
 			chunks.splice(start, selectionFalse ? 1 : end - start);
 			res = chunks.join('');
@@ -660,7 +664,7 @@ export default class bInput<T extends Dictionary = Dictionary> extends iInput<T>
 		}
 
 		const
-			chunks = res.split('');
+			chunks = (<string>res).split('');
 
 		let n = selectionEnd - selectionStart;
 		n = n > 0 ? n : 1;
@@ -716,24 +720,29 @@ export default class bInput<T extends Dictionary = Dictionary> extends iInput<T>
 	 * Handler: mask navigation by arrows
 	 * @param e
 	 */
-	onMaskNavigate(e: KeyboardEvent | MouseEvent) {
+	protected onMaskNavigate(e: KeyboardEvent | MouseEvent): void {
 		if (e.altKey || e.shiftKey || e.ctrlKey || e.metaKey) {
 			return;
 		}
 
 		const
 			keyboardEvent = e instanceof KeyboardEvent,
-			leftKey = e.keyCode === KeyCodes.LEFT;
+			leftKey = (<KeyboardEvent>e).keyCode === KeyCodes.LEFT;
 
-		if (keyboardEvent ? !leftKey && e.keyCode !== KeyCodes.RIGHT : e.button !== 0) {
+		if (keyboardEvent ? !leftKey && (<KeyboardEvent>e).keyCode !== KeyCodes.RIGHT : (<MouseEvent>e).button !== 0) {
 			return;
 		}
 
 		const event = () => {
 			const
-				mask = this._mask.value;
+				m = this._mask;
+
+			if (!m) {
+				return;
+			}
 
 			const
+				mask = m.value,
 				{input} = this.$refs,
 				{selectionStart, selectionEnd} = input;
 
@@ -742,6 +751,7 @@ export default class bInput<T extends Dictionary = Dictionary> extends iInput<T>
 				pos;
 
 			if (keyboardEvent) {
+				// tslint:disable-next-line
 				if (selectionStart !== selectionEnd) {
 					pos = leftKey ? selectionStart : selectionEnd;
 
@@ -789,7 +799,7 @@ export default class bInput<T extends Dictionary = Dictionary> extends iInput<T>
 			keyboardEvent && event();
 
 		} else {
-			this.async.setImmediate({fn: event, label: $$.setCursor});
+			this.async.setImmediate(event, {label: $$.setCursor});
 		}
 	}
 
@@ -799,12 +809,12 @@ export default class bInput<T extends Dictionary = Dictionary> extends iInput<T>
 	 * @param e
 	 * @emits actionChange(value: string)
 	 */
-	onMaskKeyPress(e: KeyboardEvent) {
+	protected onMaskKeyPress(e: KeyboardEvent): void {
 		const blacklist = {
 			[KeyCodes.TAB]: true
 		};
 
-		if (e.altKey || e.shiftKey || e.ctrlKey || e.metaKey || blacklist[e.keyCode]) {
+		if (e.altKey || e.shiftKey || e.ctrlKey || e.metaKey || blacklist[e.keyCode] || !this.valueBuffer || !this._mask) {
 			return;
 		}
 
@@ -822,7 +832,7 @@ export default class bInput<T extends Dictionary = Dictionary> extends iInput<T>
 			insert = true,
 			n = selectionEnd - selectionStart + 1,
 			start = selectionStart,
-			inputVal = String.fromCharCode(String(e.charCode));
+			inputVal = String.fromCharCode(e.charCode);
 
 		while (n--) {
 			const
@@ -867,7 +877,9 @@ export default class bInput<T extends Dictionary = Dictionary> extends iInput<T>
 	}
 
 	/** @override */
-	created() {
+	protected initValueEvents(): void {
+		super.initValueEvents();
+
 		this.$watch('valueBufferStore', async (val = '') => {
 			try {
 				await this.waitRef('input', {label: $$.valueBufferStoreModel});
@@ -883,13 +895,13 @@ export default class bInput<T extends Dictionary = Dictionary> extends iInput<T>
 		}, {immediate: true});
 	}
 
-	/** @override */
-	mounted() {
-		this.async.on(this.$el, 'input', {
-			label: $$.valueBufferStoreModelInput,
-			fn: (e) => {
-				this.valueBufferStore = e.target.value || '';
-			}
+	/**
+	 * Initializes events for input
+	 */
+	@hook('mounted')
+	protected initInputEvents(): void {
+		this.async.on(this.$el, 'input', (e) => this.valueBufferStore = e.target.value || '', {
+			label: $$.valueBufferStoreModelInput
 		});
 	}
 }
