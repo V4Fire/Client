@@ -1,5 +1,3 @@
-'use strict';
-
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -8,11 +6,11 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import iInput from 'super/i-input/i-input';
-import { component } from 'core/component';
+import iInput, { component } from 'super/i-input/i-input';
+export * from  'super/i-input/i-input';
 
 @component()
 export default class bInputHidden extends iInput {
 	/** @override */
-	get $refs(): {input: HTMLInputElement} {}
+	protected readonly $refs!: {input: HTMLInputElement};
 }
