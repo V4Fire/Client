@@ -485,9 +485,13 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 	 * Returns default texts for server errors
 	 * @param err
 	 */
-	protected getDefaultErrorText(err: RequestError): string {
+	protected getDefaultErrorText(err: Error | RequestError): string {
 		const
 			defMsg = t`Unknown server error`;
+
+		if (!(err instanceof RequestError)) {
+			return defMsg;
+		}
 
 		if (err.type === 'abort') {
 			return defMsg;
