@@ -8,33 +8,31 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import Store from 'core/store';
-import iBlock, { field, bindModTo, PARENT } from 'super/i-block/i-block';
-import { component } from 'core/component';
+import symbolGenerator from 'core/symbol';
+import iBlock, { field, component, PARENT, ModsDecl } from 'super/i-block/i-block';
 
 export const
-	$$ = new Store();
+	$$ = symbolGenerator();
 
 @component()
 export default class bProgress extends iBlock {
-	/**
-	 * Progress value store
-	 */
-	@field()
-	valueStore: number = 0;
-
 	/** @inheritDoc */
-	static mods = {
-		@bindModTo('valueStore')
+	static mods: ModsDecl = {
 		progress: [
 			PARENT
 		]
 	};
 
 	/**
+	 * Progress value store
+	 */
+	@field()
+	protected valueStore: number = 0;
+
+	/**
 	 * Progress value
 	 */
-	get value(): number {
+	protected get value(): number {
 		return this.valueStore;
 	}
 
@@ -44,7 +42,7 @@ export default class bProgress extends iBlock {
 	 * @param value
 	 * @emits complete()
 	 */
-	set value(value: number) {
+	protected set value(value: number) {
 		(async () => {
 			this.valueStore = value;
 
@@ -60,5 +58,11 @@ export default class bProgress extends iBlock {
 				this.async.clearTimeout({label: $$.complete});
 			}
 		})();
+	}
+
+	/** @override */
+	protected initModEvents(): void {
+		super.initModEvents();
+		this.bindModTo('progress', 'valueStore');
 	}
 }
