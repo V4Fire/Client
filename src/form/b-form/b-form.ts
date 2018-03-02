@@ -11,7 +11,7 @@ import symbolGenerator from 'core/symbol';
 import bInputHidden from 'form/b-input-hidden/b-input-hidden';
 import iInput from 'super/i-input/i-input';
 import bButton from 'form/b-button/b-button';
-import iData, { component, prop, wait, p, ModsDecl } from 'super/i-data/i-data';
+import iData, { component, prop, wait, p, ModsDecl, ModelMethods } from 'super/i-data/i-data';
 import { CreateRequestOptions } from 'core/data';
 export * from 'super/i-data/i-data';
 
@@ -48,7 +48,7 @@ export default class bForm<T extends Dictionary = Dictionary> extends iData<T> {
 	 * Data provider method
 	 */
 	@prop(String)
-	readonly method: string = 'add';
+	readonly method: ModelMethods = 'add';
 
 	/**
 	 * Form delegate function
@@ -276,7 +276,7 @@ export default class bForm<T extends Dictionary = Dictionary> extends iData<T> {
 						throw Error('Form .action is not defined');
 					}
 
-					res = await this.base(this.action)[this.method](body, this.params);
+					res = await (<Function>this.base(this.action)[this.method])(body, this.params);
 				}
 
 				Object.assign(this.tmp, body);
