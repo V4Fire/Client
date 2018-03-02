@@ -11,7 +11,7 @@
 import $C = require('collection.js');
 import symbolGenerator from 'core/symbol';
 import KeyCodes from 'core/keyCodes';
-import BlockValidators from './modules/validators';
+import BlockValidators from 'form/b-input/modules/validators';
 import iInput, {
 
 	component,
@@ -25,6 +25,8 @@ import iInput, {
 	PARENT
 
 } from 'super/i-input/i-input';
+
+export * from 'super/i-input/i-input';
 
 export const
 	$$ = symbolGenerator();
