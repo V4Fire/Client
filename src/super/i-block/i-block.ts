@@ -156,6 +156,33 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	/**
 	 * Block modifiers
 	 */
+	get mods(): Dictionary {
+		const
+			obj = this.modsStore,
+			map = {};
+
+		for (let keys = Object.keys(obj), i = 0; i < keys.length; i++) {
+			const
+				key = keys[i],
+				el = obj[key];
+
+			map[key] = el != null ? String(el) : el;
+		}
+
+		return map;
+	}
+
+	/**
+	 * Sets an object of modifiers
+	 * @param value
+	 */
+	set mods(value: Dictionary) {
+		this.modsStore = value;
+	}
+
+	/**
+	 * Block modifiers
+	 */
 	static readonly mods: ModsDecl = {
 		theme: [
 			['default']
@@ -335,33 +362,6 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 */
 	@system(() => location)
 	protected readonly location!: Location;
-
-	/**
-	 * Block modifiers
-	 */
-	protected get mods(): Dictionary {
-		const
-			obj = this.modsStore,
-			map = {};
-
-		for (let keys = Object.keys(obj), i = 0; i < keys.length; i++) {
-			const
-				key = keys[i],
-				el = obj[key];
-
-			map[key] = el != null ? String(el) : el;
-		}
-
-		return map;
-	}
-
-	/**
-	 * Sets an object of modifiers
-	 * @param value
-	 */
-	protected set mods(value: Dictionary) {
-		this.modsStore = value;
-	}
 
 	/**
 	 * Cache for prop/field links
