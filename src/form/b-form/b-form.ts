@@ -1,5 +1,3 @@
-'use strict';
-
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -8,116 +6,125 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import Store from 'core/store';
+import $C = require('collection.js');
+import symbolGenerator from 'core/symbol';
 import bInputHidden from 'form/b-input-hidden/b-input-hidden';
 import iInput from 'super/i-input/i-input';
-import iData from 'super/i-data/i-data';
-import { params, wait } from 'super/i-block/i-block';
-import { component } from 'core/component';
-
-const
-	$C = require('collection.js');
+import bButton from 'form/b-button/b-button';
+import iData, { component, prop, wait, p, ModsDecl } from 'super/i-data/i-data';
+import { CreateRequestOptions } from 'core/data';
+export * from 'super/i-data/i-data';
 
 export const
-	$$ = new Store();
+	$$ = symbolGenerator();
 
 @component()
-export default class bForm extends iData {
+export default class bForm<T extends Dictionary = Dictionary> extends iData<T> {
 	/** @override */
-	dataProvider: string = 'Provider';
+	readonly dataProvider: string = 'Provider';
 
 	/** @override */
-	requestFilter: Function | boolean = false;
+	readonly requestFilter: Function | boolean = false;
 
 	/**
 	 * Form id
 	 */
-	id: ?string;
+	@prop({type: String, required: false})
+	readonly id?: string;
 
 	/**
 	 * Form name
 	 */
-	name: ?string;
+	@prop({type: String, required: false})
+	readonly name?: string;
 
 	/**
 	 * Form action
 	 */
-	action: ?string;
+	@prop({type: String, required: false})
+	readonly action?: string;
 
 	/**
 	 * Data provider method
 	 */
-	method: ?string = 'add';
+	@prop(String)
+	readonly method: string = 'add';
 
 	/**
 	 * Form delegate function
 	 */
-	delegate: ?Function;
+	@prop({type: Function, required: false})
+	readonly delegate?: Function;
 
 	/**
 	 * Form request parameters
 	 */
-	params: Object = {};
+	@prop(Object)
+	readonly params: CreateRequestOptions = {};
 
 	/**
 	 * If true, then form elements will be cached
 	 */
-	cache: boolean = false;
+	@prop(Boolean)
+	readonly cache: boolean = false;
 
 	/**
 	 * If false, then default error handler won't be used
 	 */
-	errorHandler: boolean = true;
-
-	/** @override */
-	get $refs(): {form: HTMLFormElement} {}
+	@prop(Boolean)
+	readonly errorHandler: boolean = true;
 
 	/** @inheritDoc */
-	static mods = {
+	static mods: ModsDecl = {
 		valid: [
 			'true',
 			'false'
 		]
 	};
 
+	/** @override */
+	protected readonly $refs!: {form: HTMLFormElement};
+
 	/**
 	 * Array of form Vue elements
 	 */
-	@params({cache: false})
-	get elements(): Array<iInput> {
+	@p({cache: false})
+	get elements(): Promise<iInput[]> {
 		const cache = {};
-		return this.waitState('ready', () => $C(this.$refs.form.elements).reduce((arr, el) => {
+		return this.waitState('ready', () => $C(this.$refs.form.elements).to([]).reduce((arr, el) => {
 			const
 				component = this.$(el, '[class*="_form_true"]');
 
 			if (component && component.instance instanceof iInput && !cache[component.blockId]) {
 				cache[component.blockId] = true;
-				arr.push(component);
+				arr.push(<iInput>component);
 			}
 
 			return arr;
-		}, []));
+		}));
 	}
 
 	/**
 	 * Array of form submit Vue elements
 	 */
-	@params({cache: false})
-	get submits(): Array<bButton> {
+	@p({cache: false})
+	get submits(): Promise<bButton[]> {
 		return this.waitState('ready', () => $C(
 			this.$el
 				.queryAll('button[type="submit"]')
 				.concat(this.id ? document.queryAll(`button[type="submit"][form="${this.id}"]`) : [])
 
-		).map((el) => this.$(el)));
+		).map((el) => <bButton>this.$(el)));
 	}
 
 	/**
 	 * Clears child form blocks
 	 * @emits clear()
 	 */
-	async clear(): boolean {
-		const res = [];
+	async clear(): Promise<boolean> {
+		const
+			res = <boolean[]>[];
+
 		for (const el of await this.elements) {
 			try {
 				res.push(await el.clear());
@@ -136,8 +143,10 @@ export default class bForm extends iData {
 	 * Resets child form blocks to default
 	 * @emits reset()
 	 */
-	async reset(): boolean {
-		const res = [];
+	async reset(): Promise<boolean> {
+		const
+			res = <boolean[]>[];
+
 		for (const el of await this.elements) {
 			try {
 				res.push(await el.reset());
@@ -161,11 +170,11 @@ export default class bForm extends iData {
 	 * @emits validationEnd(result: boolean)
 	 */
 	@wait('ready', {label: $$.validate, defer: true})
-	async validate(): Array | boolean {
+	async validate(): Promise<iInput[] | false> {
 		this.emit('validationStart');
 
 		const
-			els = [],
+			els = <iInput[]>[],
 			map = {};
 
 		let valid = true;
@@ -175,8 +184,8 @@ export default class bForm extends iData {
 					!this.cache || !el.cache || !Object.fastCompare(this.getField(`tmp.${el.name}`), await el.groupFormValue)
 				)
 			) {
-				if (el.mods.valid !== 'true' && await el.validate() === false) {
-					el.focus();
+				if (el.mods.valid !== 'true' && await el.validate()) {
+					await el.focus();
 					valid = false;
 					break;
 				}
@@ -207,14 +216,14 @@ export default class bForm extends iData {
 	 * @emits submitFail(err: error, els: Array<iInput>)
 	 */
 	@wait('ready', {label: $$.submit, defer: true})
-	async submit() {
+	async submit(): Promise<void> {
 		const
 			start = Date.now(),
 			[submits, elements] = await Promise.all([this.submits, this.elements]);
 
 		await Promise.all([].concat(
-			$C(elements).map((el) => el.setMod('disabled', true)),
-			$C(submits).map((el) => el.setMod('progress', true))
+			<any>$C(elements).map((el) => el.setMod('disabled', true)),
+			<any>$C(submits).map((el) => el.setMod('progress', true))
 		));
 
 		const
@@ -229,7 +238,7 @@ export default class bForm extends iData {
 				body = {},
 				isMultipart = false;
 
-			await Promise.all($C(els).map((el) => (async () => {
+			await Promise.all($C(els as iInput[]).map((el) => (async () => {
 				let val = await el.groupFormValue;
 				val = el.formConverter ? await el.formConverter(val) : val;
 
@@ -237,7 +246,9 @@ export default class bForm extends iData {
 					isMultipart = true;
 				}
 
-				body[el.name] = el.utc ? this.h.setJSONToUTC(val) : val;
+				if (el.name) {
+					body[el.name] = el.utc ? this.h.setJSONToUTC(val) : val;
+				}
 			})()));
 
 			if (isMultipart) {
@@ -256,14 +267,19 @@ export default class bForm extends iData {
 
 			this.emit('submitStart', body, this.params, this.method);
 			try {
+				// tslint:disable-next-line
 				if (this.delegate) {
 					res = await this.delegate(this, body, this.params, els);
 
 				} else {
+					if (!this.action) {
+						throw Error('Form .action is not defined');
+					}
+
 					res = await this.base(this.action)[this.method](body, this.params);
 				}
 
-				this.tmp = Object.assign(this.tmp, body);
+				Object.assign(this.tmp, body);
 
 			} catch (err) {
 				throws = err;
@@ -278,8 +294,8 @@ export default class bForm extends iData {
 		}
 
 		await Promise.all([].concat(
-			$C(elements).map((el) => el.setMod('disabled', false)),
-			$C(submits).map((el) => el.setMod('progress', false))
+			<any>$C(elements).map((el) => el.setMod('disabled', false)),
+			<any>$C(submits).map((el) => el.setMod('progress', false))
 		));
 
 		if (!els) {
@@ -301,16 +317,15 @@ export default class bForm extends iData {
 	 * @param err
 	 * @param els
 	 */
-	onError(err: Error, els: Array<Object>) {
+	protected async onError(err: Error, els: iInput[]): Promise<void> {
 		$C(els).forEach((el) => el.setMod('valid', false));
 
 		const
-			el = $C(els).one.get((el) => el.instance instanceof bInputHidden === false);
+			el = $C(els).one.get((el) => !(el.instance instanceof bInputHidden));
 
 		if (el) {
 			el.error = this.getDefaultErrorText(err);
-			el.focus();
+			await el.focus();
 		}
 	}
 }
-
