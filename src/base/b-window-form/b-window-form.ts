@@ -7,8 +7,11 @@
  */
 
 import bWindow, { field, prop, wait } from 'base/b-window/b-window';
+import bForm from 'form/b-form/b-form';
 import { list2Map } from 'core/helpers';
 import { component } from 'core/component';
+
+export * from 'base/b-window/b-window';
 
 @component()
 export default class bWindowForm extends bWindow {
@@ -46,7 +49,7 @@ export default class bWindowForm extends bWindow {
 	 * Requested id
 	 */
 	@field((o) => o.link('idProp'))
-	protected readonly id?: string;
+	protected id?: string;
 
 	/**
 	 * Form temporary cache

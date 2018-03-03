@@ -50,6 +50,30 @@ export default class bWindow extends iData {
 	}
 
 	/**
+	 * @override
+	 * @param [stage] - window stage
+	 */
+	async open(stage?: string): Promise<boolean> {
+		if (await this.setMod('hidden', false)) {
+			await this.nextTick();
+			this.emit('open');
+			return true;
+		}
+
+		return false;
+	}
+
+	/** @override */
+	async close(): Promise<boolean> {
+		if (await this.setMod('hidden', true)) {
+			this.emit('close');
+			return true;
+		}
+
+		return false;
+	}
+
+	/**
 	 * Window title
 	 */
 	protected get title(): string {
@@ -80,30 +104,6 @@ export default class bWindow extends iData {
 	 */
 	protected onError(err: RequestError): void {
 		this.error = this.getDefaultErrorText(err);
-	}
-
-	/**
-	 * @override
-	 * @param [stage] - window stage
-	 */
-	protected async open(stage?: string): Promise<boolean> {
-		if (await this.setMod('hidden', false)) {
-			await this.nextTick();
-			this.emit('open');
-			return true;
-		}
-
-		return false;
-	}
-
-	/** @override */
-	protected async close(): Promise<boolean> {
-		if (await this.setMod('hidden', true)) {
-			this.emit('close');
-			return true;
-		}
-
-		return false;
 	}
 
 	/** @override */
