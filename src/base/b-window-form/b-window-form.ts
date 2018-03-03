@@ -1,5 +1,3 @@
-'use strict';
-
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -8,64 +6,61 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import bWindow from 'base/b-window/b-window';
-import { field, params, wait } from 'super/i-block/i-block';
+import bWindow, { field, prop, wait } from 'base/b-window/b-window';
 import { list2Map } from 'core/helpers';
 import { component } from 'core/component';
 
 @component()
 export default class bWindowForm extends bWindow {
 	/** @override */
-	dbConverter: ?Function = list2Map;
+	readonly dbConverter?: Function = list2Map;
 
 	/** @override */
-	stageProp: ?string;
+	@prop(String)
+	readonly stageProp?: string;
 
 	/** @override */
-	@params({default(body, isEmpty) {
-		return this.stage !== 'remove' && !isEmpty;
-	}})
-
-	requestFilter: Function | boolean = false;
+	@prop({default: (body, isEmpty) => this.stage !== 'remove' && !isEmpty})
+	readonly requestFilter: Function | boolean = false;
 
 	/**
 	 * If true, then the component won't be reset after closing
 	 */
-	singleton: boolean = false;
+	readonly singleton: boolean = false;
 
 	/**
 	 * Initial requested id
 	 */
-	idProp: ?string;
+	readonly idProp?: string;
 
 	/**
 	 * Method name
 	 */
-	method: ?string;
+	readonly method?: string;
 
 	/** @override */
-	@field((o) => o.createWatchObject('get', [['_id', 'id']], {immediate: true}))
-	requestParams: Object;
+	@field((o) => o.createWatchObject('get', {immediate: true}, [['_id', 'id']]))
+	protected readonly requestParams: Dictionary = {};
 
 	/**
 	 * Requested id
 	 */
 	@field((o) => o.link('idProp'))
-	id: ?string;
+	protected readonly id?: string;
 
 	/**
 	 * Form temporary cache
 	 */
 	@field()
-	formTmp: Object = {};
+	protected formTmp: Object = {};
 
 	/** @override */
-	get $refs(): {form: bForm} {}
+	protected readonly $refs!: {form: bForm};
 
 	/**
 	 * Method name
 	 */
-	get methodName(): string {
+	protected get methodName(): string | undefined {
 		let m = this.method;
 
 		if (!m) {
@@ -83,7 +78,6 @@ export default class bWindowForm extends bWindow {
 
 				default:
 					m = 'add';
-					break;
 			}
 		}
 
@@ -91,14 +85,16 @@ export default class bWindowForm extends bWindow {
 	}
 
 	/** @override */
-	initDataListeners() {}
+	protected async initDataListeners(): Promise<void> {
+		return;
+	}
 
 	/**
 	 * Clears the block form
 	 * @emits clear()
 	 */
 	@wait('ready')
-	async clear(): boolean {
+	protected async clear(): Promise<boolean> {
 		if (await this.$refs.form.clear()) {
 			this.emit('clear');
 			return true;
@@ -112,7 +108,7 @@ export default class bWindowForm extends bWindow {
 	 * @emits reset()
 	 */
 	@wait('ready')
-	async reset(): boolean {
+	protected async reset(): Promise<boolean> {
 		if (await this.$refs.form.reset()) {
 			this.emit('reset');
 			return true;
@@ -121,8 +117,24 @@ export default class bWindowForm extends bWindow {
 		return false;
 	}
 
+	/**
+	 * @override
+	 * @param [stage] - window stage
+	 */
+	protected async open(stage?: string): Promise<boolean> {
+		if (await this.setMod('hidden', false)) {
+			this.stage = stage || this.id ? 'edit' : 'new';
+
+			await this.nextTick();
+			this.emit('open');
+			return true;
+		}
+
+		return false;
+	}
+
 	/** @override */
-	async close(): boolean {
+	protected async close(): Promise<boolean> {
 		const
 			res = await super.close();
 

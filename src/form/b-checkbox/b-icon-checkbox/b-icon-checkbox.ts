@@ -1,5 +1,3 @@
-'use strict';
-
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -8,13 +6,15 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import bCheckbox from 'form/b-checkbox/b-checkbox';
-import { component } from 'core/component';
+import bCheckbox, { component, prop } from 'form/b-checkbox/b-checkbox';
+
+export * from 'form/b-checkbox/b-checkbox';
 
 @component()
 export default class bIconCheckbox extends bCheckbox {
 	/**
 	 * Icon component
 	 */
-	icon: ?string;
+	@prop(String)
+	readonly icon?: string;
 }

@@ -56,7 +56,7 @@ export {
 } from 'super/i-block/modules/decorators';
 
 export type Classes = Dictionary<string | Array<string | true> | true>;
-export type WatchObjectFields = Array<string | [string] | [string, LinkWrapper] | [string, string, LinkWrapper]>;
+export type WatchObjectFields = Array<string | [string] | string[] | [string, LinkWrapper] | [string, string, LinkWrapper]>;
 
 export interface LinkWrapper {
 	(this: this, value: any): any;
