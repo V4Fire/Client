@@ -55,8 +55,8 @@ export interface SocketEvent extends DataEvent {
 }
 
 export interface CreateRequestOptions<T = any> extends BaseCreateRequestOptions<T>, AsyncOpts {
-	showProgress: boolean;
-	hideProgress: boolean;
+	showProgress?: boolean;
+	hideProgress?: boolean;
 }
 
 export type ModelMethods = 'get' | 'post' | 'add' | 'upd' | 'del';
@@ -485,9 +485,13 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 	 * Returns default texts for server errors
 	 * @param err
 	 */
-	protected getDefaultErrorText(err: RequestError): string {
+	protected getDefaultErrorText(err: Error | RequestError): string {
 		const
 			defMsg = t`Unknown server error`;
+
+		if (!(err instanceof RequestError)) {
+			return defMsg;
+		}
 
 		if (err.type === 'abort') {
 			return defMsg;

@@ -35,6 +35,13 @@ export default class iInput<T extends Dictionary = Dictionary> extends iData<T> 
 	readonly defaultProp: any;
 
 	/**
+	 * If true, then the block value will be marked as UTC
+	 * (if value is date)
+	 */
+	@prop(Boolean)
+	readonly utc: boolean = false;
+
+	/**
 	 * Input id
 	 */
 	@prop({type: String, required: false})

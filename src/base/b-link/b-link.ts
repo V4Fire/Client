@@ -1,5 +1,3 @@
-'use strict';
-
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -8,48 +6,55 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import iData from 'super/i-data/i-data';
-import { component } from 'core/component';
+import iData, { component, prop, ModsDecl } from 'super/i-data/i-data';
+export * from 'super/i-data/i-data';
 
 @component()
-export default class bLink extends iData {
+export default class bLink<T extends Dictionary = Dictionary> extends iData<T> {
 	/**
 	 * Link href
 	 */
-	href: string = '#';
+	@prop(String)
+	readonly href: string = '#';
 
 	/**
 	 * Icon before text
 	 */
-	preIcon: ?string;
+	@prop({type: String, required: false})
+	preIcon?: string;
 
 	/**
 	 * Component for .preIcon
 	 */
-	preIconComponent: ?string = 'b-icon';
+	@prop(String)
+	preIconComponent: string = 'b-icon';
 
 	/**
 	 * Icon after text
 	 */
-	icon: ?string;
+	@prop({type: String, required: false})
+	icon?: string;
 
 	/**
 	 * Component for .icon
 	 */
-	iconComponent: ?string = 'b-icon';
+	@prop(String)
+	iconComponent: string = 'b-icon';
 
 	/**
 	 * Tooltip text
 	 */
-	hint: ?string;
+	@prop({type: String, required: false})
+	hint?: string;
 
 	/**
 	 * Tooltip position
 	 */
-	hintPos: ?string;
+	@prop({type: String, required: false})
+	hintPos?: string;
 
 	/** @inheritDoc */
-	static mods = {
+	static mods: ModsDecl = {
 		underline: [
 			['true'],
 			'false'
@@ -57,7 +62,7 @@ export default class bLink extends iData {
 	};
 
 	/** @override */
-	get $refs(): {link: HTMLAnchorElement} {}
+	protected readonly $refs!: {link: HTMLAnchorElement};
 
 	/**
 	 * Handler: link trigger
@@ -65,7 +70,7 @@ export default class bLink extends iData {
 	 * @param e
 	 * @emits click(e: Event)
 	 */
-	onClick(e: Event) {
+	protected onClick(e: Event): void {
 		const
 			{link} = this.$refs;
 
