@@ -6,10 +6,9 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import KeyCodes from 'core/keyCodes';
 import iData, { field, component, prop, watch, hook, ModsDecl } from 'super/i-data/i-data';
-import keyCodes from 'core/keyCodes';
 import { RequestError } from 'core/data';
-
 export * from 'super/i-data/i-data';
 
 @component()
@@ -17,7 +16,7 @@ export default class bWindow extends iData {
 	/**
 	 * Initial window title
 	 */
-	@prop(String)
+	@prop({type: String, required: false})
 	readonly titleProp?: string;
 
 	/**
@@ -76,22 +75,22 @@ export default class bWindow extends iData {
 	/**
 	 * Window title
 	 */
-	protected get title(): string {
+	get title(): string {
 		return this.titleStore && this.stage ? this.t(this.stageTitles[this.stage]) : '';
 	}
 
 	/**
 	 * Sets the specified window title
 	 */
-	protected set title(value: string) {
+	set title(value: string) {
 		this.titleStore = value;
 	}
 
 	/**
-	 * Clears asyncs by group on stage change
+	 * Clears async handlers by group on stage change
 	 *
-	 * @param {string} value
-	 * @param {string} oldValue
+	 * @param value
+	 * @param oldValue
 	 */
 	@watch({field: 'stage'})
 	protected clearOnStageChange(value: string, oldValue: string): void {
@@ -107,32 +106,30 @@ export default class bWindow extends iData {
 	}
 
 	/** @override */
+	@hook('created')
 	protected initCloseHelpers(): void {
 		const
 			{async: $a, localEvent: $e} = this,
 			group = 'closeHelpers';
 
 		const closeHelpers = () => {
-			$a.on(document, 'keyup', (e) => e.keyCode === keyCodes.ESC && this.close(), {group});
+			$a.on(document, 'keyup', async (e) => {
+				if (e.keyCode === KeyCodes.ESC) {
+					await this.close();
+				}
+			}, {group});
 
-			$a.on(
-				document,
-				'mousedown touchstart',
-				(e) => e.target.matches(this.block.getElSelector('wrapper')) && this.close(), {group});
+			$a.on(document, 'mousedown touchstart', async (e) => {
+				if (e.target.matches(this.block.getElSelector('wrapper'))) {
+					await this.close();
+				}
+			}, {group});
 		};
 
 		$e.removeAllListeners('block.mod.*.hidden.*');
 		$e.on('block.mod.remove.hidden.*', closeHelpers);
 		$e.on('block.mod.set.hidden.false', closeHelpers);
 		$e.on('block.mod.set.hidden.true', () => $a.off({group}));
-	}
-
-	/**
-	 * Call initializing close helpers events for the window
-	 */
-	@hook('created')
-	protected initializeCloseHelpers(): void {
-		this.initCloseHelpers();
 	}
 
 	/**
