@@ -9,7 +9,6 @@
 import $C = require('collection.js');
 import symbolGenerator from 'core/symbol';
 import iDataPages, { system, field, prop, component, hook } from 'super/i-data-pages/i-data-pages';
-
 export * from 'super/i-data-pages/i-data-pages';
 
 export const
@@ -32,8 +31,8 @@ export default class bGrid<T extends Dictionary = Dictionary> extends iDataPages
 	/**
 	 * If true, then time from .date wont be skipped
 	 */
-	@prop({type: Boolean, required: false})
-	readonly keepTime?: boolean = false;
+	@prop(Boolean)
+	readonly keepTime: boolean = false;
 
 	/**
 	 * Request date
@@ -44,8 +43,8 @@ export default class bGrid<T extends Dictionary = Dictionary> extends iDataPages
 	/**
 	 * Request date field
 	 */
-	@prop({type: String, required: false})
-	readonly dateField?: string = 'createdDate';
+	@prop(String)
+	readonly dateField: string = 'createdDate';
 
 	/** @override */
 	@field((o) => o.createWatchObject('get', [
@@ -98,9 +97,7 @@ export default class bGrid<T extends Dictionary = Dictionary> extends iDataPages
 	 * @emits toggleDir(dir: string)
 	 */
 	protected toggleDir(): string {
-		const
-			dir = this.requestParams.get.dir = {asc: 'desc', desc: 'asc'}[this.requestParams.get.dir];
-
+		const dir = this.requestParams.get.dir = {asc: 'desc', desc: 'asc'}[this.requestParams.get.dir];
 		this.emit('toggleDir', dir);
 		return dir;
 	}
@@ -171,14 +168,17 @@ export default class bGrid<T extends Dictionary = Dictionary> extends iDataPages
 	}
 
 	/**
-	 * Sets an interval for setting rows to the render temp
+	 * Active row synchronization
 	 */
 	@hook('mounted')
-	protected activeRowsInterval(): void {
-		const
-			setTmp = $C(this.activeRows).forEach((val, key) => this.$set(this.renderTmp, key, val));
+	protected activeRowsSync(): void {
+		const sync = () => {
+			$C(this.activeRows).forEach((val, key) => {
+				this.$set(this.renderTmp, key, val);
+			});
+		};
 
-		this.async.setInterval(() => setTmp, 0.1.second(), {label: $$.checkActiveRows}	);
+		this.async.setInterval(sync, 0.1.second(), {label: $$.checkActiveRows});
 	}
 
 	/**
