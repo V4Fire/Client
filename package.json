@@ -39,8 +39,8 @@
     "fg-loadcss": "^2.0.1",
     "http-status": "^1.0.1",
     "ion-sound": "^3.0.7",
-    "path-to-regexp": "^2.1.0",
-    "raven-js": "^3.22.4",
+    "path-to-regexp": "^2.2.0",
+    "raven-js": "^3.23.1",
     "requestidlecallback": "^0.3.0",
     "snakeskin": "^7.2.9",
     "socket.io": "^2.0.4",
@@ -108,7 +108,7 @@
   },
   "devDependencies": {
     "babel-eslint": "^8.2.2",
-    "eslint": "^4.18.1",
+    "eslint": "^4.18.2",
     "packages-version-check": "^1.1.1",
     "tslint": "^5.9.1"
   }
