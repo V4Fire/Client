@@ -9,15 +9,10 @@
 import bWindow, { field, prop, wait } from 'base/b-window/b-window';
 import bForm from 'form/b-form/b-form';
 import { component } from 'core/component';
-
 export * from 'base/b-window/b-window';
 
 @component()
 export default class bWindowForm extends bWindow {
-	/** @override */
-	@prop(String)
-	readonly stageProp?: string;
-
 	/** @override */
 	@prop({default: (body, isEmpty) => this.stage !== 'remove' && !isEmpty})
 	readonly requestFilter: Function | boolean = false;
@@ -25,41 +20,31 @@ export default class bWindowForm extends bWindow {
 	/**
 	 * If true, then the component won't be reset after closing
 	 */
+	@prop(Boolean)
 	readonly singleton: boolean = false;
 
 	/**
 	 * Initial requested id
 	 */
+	@prop({type: String, required: false})
 	readonly idProp?: string;
 
 	/**
 	 * Method name
 	 */
+	@prop({type: String, required: false})
 	readonly method?: string;
-
-	/** @override */
-	@field((o) => o.createWatchObject('get', {immediate: true}, [['_id', 'id']]))
-	protected readonly requestParams: Dictionary = {};
 
 	/**
 	 * Requested id
 	 */
 	@field((o) => o.link('idProp'))
-	protected id?: string;
-
-	/**
-	 * Form temporary cache
-	 */
-	@field()
-	protected formTmp: Object = {};
-
-	/** @override */
-	protected readonly $refs!: {form: bForm};
+	id?: string;
 
 	/**
 	 * Method name
 	 */
-	protected get methodName(): string | undefined {
+	get methodName(): string | undefined {
 		let m = this.method;
 
 		if (!m) {
@@ -82,6 +67,19 @@ export default class bWindowForm extends bWindow {
 
 		return m;
 	}
+
+	/** @override */
+	@field((o) => o.createWatchObject('get', {immediate: true}, [['_id', 'id']]))
+	protected readonly requestParams: Dictionary = {};
+
+	/**
+	 * Form temporary cache
+	 */
+	@field()
+	protected formTmp: Object = {};
+
+	/** @override */
+	protected readonly $refs!: {form: bForm};
 
 	/**
 	 * @override
@@ -115,17 +113,12 @@ export default class bWindowForm extends bWindow {
 		return res;
 	}
 
-	/** @override */
-	protected async initDataListeners(): Promise<void> {
-		return;
-	}
-
 	/**
 	 * Clears the block form
 	 * @emits clear()
 	 */
 	@wait('ready')
-	protected async clear(): Promise<boolean> {
+	async clear(): Promise<boolean> {
 		if (await this.$refs.form.clear()) {
 			this.emit('clear');
 			return true;
@@ -139,12 +132,17 @@ export default class bWindowForm extends bWindow {
 	 * @emits reset()
 	 */
 	@wait('ready')
-	protected async reset(): Promise<boolean> {
+	async reset(): Promise<boolean> {
 		if (await this.$refs.form.reset()) {
 			this.emit('reset');
 			return true;
 		}
 
 		return false;
+	}
+
+	/** @override */
+	protected async initDataListeners(): Promise<void> {
+		return;
 	}
 }
