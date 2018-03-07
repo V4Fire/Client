@@ -8,16 +8,12 @@
 
 import bWindow, { field, prop, wait } from 'base/b-window/b-window';
 import bForm from 'form/b-form/b-form';
-import { list2Map } from 'core/helpers';
 import { component } from 'core/component';
 
 export * from 'base/b-window/b-window';
 
 @component()
 export default class bWindowForm extends bWindow {
-	/** @override */
-	readonly dbConverter?: Function = list2Map;
-
 	/** @override */
 	@prop(String)
 	readonly stageProp?: string;
@@ -87,6 +83,38 @@ export default class bWindowForm extends bWindow {
 		return m;
 	}
 
+	/**
+	 * @override
+	 * @param [stage] - window stage
+	 */
+	async open(stage?: string): Promise<boolean> {
+		if (await this.setMod('hidden', false)) {
+			this.stage = stage || this.id ? 'edit' : 'new';
+
+			await this.nextTick();
+			this.emit('open');
+			return true;
+		}
+
+		return false;
+	}
+
+	/** @override */
+	async close(): Promise<boolean> {
+		const
+			res = await super.close();
+
+		if (res && !this.singleton) {
+			if (await this.reset() || this.db) {
+				this.formTmp = {};
+				this.id = undefined;
+				this.db = null;
+			}
+		}
+
+		return res;
+	}
+
 	/** @override */
 	protected async initDataListeners(): Promise<void> {
 		return;
@@ -118,37 +146,5 @@ export default class bWindowForm extends bWindow {
 		}
 
 		return false;
-	}
-
-	/**
-	 * @override
-	 * @param [stage] - window stage
-	 */
-	protected async open(stage?: string): Promise<boolean> {
-		if (await this.setMod('hidden', false)) {
-			this.stage = stage || this.id ? 'edit' : 'new';
-
-			await this.nextTick();
-			this.emit('open');
-			return true;
-		}
-
-		return false;
-	}
-
-	/** @override */
-	protected async close(): Promise<boolean> {
-		const
-			res = await super.close();
-
-		if (res && !this.singleton) {
-			if (await this.reset() || this.db) {
-				this.formTmp = {};
-				this.id = undefined;
-				this.db = null;
-			}
-		}
-
-		return res;
 	}
 }
