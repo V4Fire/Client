@@ -124,7 +124,7 @@ export default class bRouter extends iData {
 	 * @param [url]
 	 */
 	getPageOpts(url: string = location.pathname): PageInfo | null {
-		let current = null;
+		let current: PageInfo | null = null;
 		$C(this.pages).forEach(({pattern, rgxp}, page, data, o) => {
 			if (rgxp.test(url)) {
 				const
@@ -132,11 +132,11 @@ export default class bRouter extends iData {
 
 				current = $C(path.parse(pattern) as any[]).to({page}).reduce((map, el: Key, i) => {
 					if (Object.isObject(el)) {
+						// @ts-ignore
 						map[el.name] = res[i];
 					}
 
 					return map;
-
 				});
 
 				return o.break;
