@@ -88,7 +88,7 @@ export default class bForm<T extends Dictionary = Dictionary> extends iData<T> {
 	 * Array of form Vue elements
 	 */
 	@p({cache: false})
-	get elements(): Promise<iInput[]> {
+	get elements(): iInput[] | Promise<iInput[]> {
 		const cache = {};
 		return this.waitState('ready', () => $C(this.$refs.form.elements).to([]).reduce((arr, el) => {
 			const
@@ -107,7 +107,7 @@ export default class bForm<T extends Dictionary = Dictionary> extends iData<T> {
 	 * Array of form submit Vue elements
 	 */
 	@p({cache: false})
-	get submits(): Promise<bButton[]> {
+	get submits(): bButton[] | Promise<bButton[]> {
 		return this.waitState('ready', () => $C(
 			this.$el
 				.queryAll('button[type="submit"]')

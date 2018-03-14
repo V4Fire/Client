@@ -176,7 +176,7 @@ export default class iInput<T extends Dictionary = Dictionary> extends iData<T> 
 	 * Link to the form that is associated to the block
 	 */
 	@p({cache: false})
-	get connectedForm(): Promise<HTMLFormElement | null> {
+	get connectedForm(): HTMLFormElement | null | Promise<HTMLFormElement | null> {
 		return this.waitState('ready', () => this.form ?
 			<any>document.querySelector(`#${this.form}`) : this.$el.closest('form'));
 	}
