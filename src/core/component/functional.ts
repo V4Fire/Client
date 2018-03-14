@@ -101,8 +101,7 @@ export function createFakeCtx(
 		}
 	}
 
-	runHook('beforeRuntime', meta, fakeCtx);
-	methods.beforeRuntime && methods.beforeRuntime.fn.call(fakeCtx);
+	runHook('beforeRuntime', meta, fakeCtx).catch(stderr);
 
 	{
 		const list = [
@@ -146,7 +145,7 @@ export function createFakeCtx(
 		}
 	}
 
-	runHook('beforeRender', meta, fakeCtx);
+	runHook('beforeRender', meta, fakeCtx).catch(stderr);
 	methods.beforeRender && methods.beforeRender.fn.call(fakeCtx);
 
 	return fakeCtx;

@@ -93,7 +93,7 @@ export function getComponent(
 			ctx.meta = meta;
 			ctx.componentName = meta.name;
 			ctx.instance = instance;
-			runHook('beforeRuntime', meta, this);
+			runHook('beforeRuntime', meta, this).catch(stderr);
 
 			for (let o = meta.accessors, keys = Object.keys(o), i = 0; i < keys.length; i++) {
 				const
@@ -126,8 +126,11 @@ export function getComponent(
 				}
 			}
 
-			runHook('beforeCreate', meta, this);
-			methods.beforeCreate && methods.beforeCreate.fn.call(this);
+			runHook('beforeCreate', meta, this).then(async () => {
+				if (methods.beforeCreate) {
+					await methods.beforeCreate.fn.call(this);
+				}
+			}, stderr);
 		},
 
 		created(): void {
@@ -156,49 +159,76 @@ export function getComponent(
 				}
 			}
 
-			runHook('created', meta, this);
-			methods.created && methods.created.fn.call(this);
+			runHook('created', meta, this).then(async () => {
+				if (methods.created) {
+					await methods.created.fn.call(this);
+				}
+			}, stderr);
 		},
 
 		beforeMount(): void {
-			runHook('beforeMount', meta, this);
-			methods.beforeMount && methods.beforeMount.fn.call(this);
+			runHook('beforeMount', meta, this).then(async () => {
+				if (methods.beforeMount) {
+					await methods.beforeMount.fn.call(this);
+				}
+			}, stderr);
 		},
 
 		mounted(): void {
 			this.$el.vueComponent = this;
-			runHook('mounted', meta, this);
-			methods.mounted && methods.mounted.fn.call(this);
+			runHook('mounted', meta, this).then(async () => {
+				if (methods.mounted) {
+					await methods.mounted.fn.call(this);
+				}
+			}, stderr);
 		},
 
 		beforeUpdate(): void {
-			runHook('beforeUpdate', meta, this);
-			methods.beforeUpdate && methods.beforeUpdate.fn.call(this);
+			runHook('beforeUpdate', meta, this).then(async () => {
+				if (methods.beforeUpdate) {
+					await methods.beforeUpdate.fn.call(this);
+				}
+			}, stderr);
 		},
 
 		updated(): void {
-			runHook('updated', meta, this);
-			methods.updated && methods.updated.fn.call(this);
+			runHook('updated', meta, this).then(async () => {
+				if (methods.updated) {
+					await methods.updated.fn.call(this);
+				}
+			}, stderr);
 		},
 
 		activated(): void {
-			runHook('activated', meta, this);
-			methods.activated && methods.activated.fn.call(this);
+			runHook('activated', meta, this).then(async () => {
+				if (methods.activated) {
+					await methods.activated.fn.call(this);
+				}
+			}, stderr);
 		},
 
 		deactivated(): void {
-			runHook('deactivated', meta, this);
-			methods.deactivated && methods.deactivated.fn.call(this);
+			runHook('deactivated', meta, this).then(async () => {
+				if (methods.deactivated) {
+					await methods.deactivated.fn.call(this);
+				}
+			}, stderr);
 		},
 
 		beforeDestroy(): void {
-			runHook('beforeDestroy', meta, this);
-			methods.beforeDestroy && methods.beforeDestroy.fn.call(this);
+			runHook('beforeDestroy', meta, this).then(async () => {
+				if (methods.beforeDestroy) {
+					await methods.beforeDestroy.fn.call(this);
+				}
+			}, stderr);
 		},
 
 		destroyed(): void {
-			runHook('destroyed', meta, this);
-			methods.destroyed && methods.destroyed.fn.call(this);
+			runHook('destroyed', meta, this).then(async () => {
+				if (methods.destroyed) {
+					await methods.destroyed.fn.call(this);
+				}
+			}, stderr);
 		}
 	};
 }
@@ -254,7 +284,7 @@ export function getFunctionalComponent(
  * @param meta
  * @param ctx - link to context
  */
-export function runHook(hook: string, meta: ComponentMeta, ctx: Object): void {
+export async function runHook(hook: string, meta: ComponentMeta, ctx: Object): Promise<void> {
 	if (!meta.hooks[hook].length) {
 		return;
 	}
@@ -276,22 +306,35 @@ export function runHook(hook: string, meta: ComponentMeta, ctx: Object): void {
 			this.queue.push(cb);
 		},
 
-		emit(event: string): void {
+		async emit(event: string): Promise<void> {
 			if (!this.events[event]) {
 				return;
 			}
 
+			const
+				tasks = <any[]>[];
+
 			for (let o = this.events[event], i = 0; i < o.length; i++) {
-				const el = o[i];
-				el.event.delete(event);
-				!el.event.size && el.cb();
+				const
+					el = o[i];
+
+				if (!el.event.delete(event).size) {
+					tasks.push(el.cb());
+				}
 			}
+
+			await Promise.all(tasks);
 		},
 
-		fire(): void {
+		async fire(): Promise<void> {
+			const
+				tasks = <any[]>[];
+
 			for (let i = 0; i < this.queue.length; i++) {
-				this.queue[i]();
+				tasks.push(this.queue[i]());
 			}
+
+			await Promise.all(tasks);
 		}
 	};
 
@@ -299,13 +342,13 @@ export function runHook(hook: string, meta: ComponentMeta, ctx: Object): void {
 		const
 			el = hooks[i];
 
-		event.on(el.after, () => {
-			el.fn.call(ctx);
-			event.emit(el.name || Math.random().toString());
+		event.on(el.after, async () => {
+			await el.fn.call(ctx);
+			await event.emit(el.name || Math.random().toString());
 		});
 	}
 
-	event.fire();
+	await event.fire();
 }
 
 /**
