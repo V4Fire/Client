@@ -39,4 +39,16 @@ interface Node {
 	getOffset(parent?: Element | string): {top: number; left: number};
 }
 
+interface Number {
+	em: string;
+	ex: string;
+	px: string;
+	per: string;
+	rem: string;
+	vh: string;
+	vw: string;
+	vmin: string;
+	vmax: string;
+}
+
 type CanPromise<T> = T | Promise<T>;

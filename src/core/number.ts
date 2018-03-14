@@ -38,5 +38,29 @@ Object.defineProperties(Number.prototype, /** @lends {Number.prototype} */ {
 		get(): string {
 			return `${this}rem`;
 		}
+	},
+
+	vh: {
+		get(): string {
+			return `${this}vh`;
+		}
+	},
+
+	vw: {
+		get(): string {
+			return `${this}vw`;
+		}
+	},
+
+	vmin: {
+		get(): string {
+			return `${this}vmin`;
+		}
+	},
+
+	vmax: {
+		get(): string {
+			return `${this}vmax`;
+		}
 	}
 });
