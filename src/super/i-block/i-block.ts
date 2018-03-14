@@ -6,6 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+// tslint:disable:max-file-line-count
 import $C = require('collection.js');
 import { EventEmitter2 as EventEmitter } from 'eventemitter2';
 import { WatchOptions, RenderContext, VNode } from 'vue';
@@ -349,7 +350,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 */
 	protected get t(): typeof i18n {
 		return this.i18n;
-	};
+	}
 
 	/**
 	 * Link to window.l
@@ -472,7 +473,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 * @param [params] - additional parameters:
 	 *   *) [params.defer] - if true, then the function will always return a promise
 	 */
-	waitState<T>(state: number | string, fn: () => T, params?: AsyncOpts & {defer?: boolean}): Promise<T> {
+	waitState<T>(state: number | string, fn: () => T, params?: AsyncOpts & {defer?: boolean}): T | Promise<T> {
 		params = params || {};
 		params.join = false;
 		return wait(state, {fn, ...params}).call(this);
@@ -699,7 +700,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 * @param cb
 	 */
 	@wait('ready')
-	async putInStream(cb: (el: Element) => void): Promise<boolean> {
+	protected async putInStream(cb: (el: Element) => void): Promise<boolean> {
 		const
 			el = this.$el;
 
@@ -745,7 +746,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 * @param settings
 	 * @param [key] - block key
 	 */
-	async saveSettings<T extends Object = Dictionary>(settings: T, key: string = ''): Promise<T> {
+	protected async saveSettings<T extends Object = Dictionary>(settings: T, key: string = ''): Promise<T> {
 		try {
 			await this.storage.set(`${this.blockName}_${key}`, JSON.stringify(settings));
 		} catch (_) {}
@@ -757,7 +758,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 * Loads block settings from the local storage
 	 * @param [key] - block key
 	 */
-	async loadSettings<T extends Object = Dictionary>(key: string = ''): Promise<T | undefined> {
+	protected async loadSettings<T extends Object = Dictionary>(key: string = ''): Promise<T | undefined> {
 		try {
 			const str = await this.storage.get(`${this.blockName}_${key}`);
 			return str && JSON.parse(str);
@@ -817,7 +818,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 * @param [converter] - converter function
 	 * @param [opts] - watch options
 	 */
-	bindModTo<T = this>(
+	protected bindModTo<T = this>(
 		mod: string,
 		field: string,
 		converter: ((value: any, ctx: T) => any) | WatchOptions = Boolean,
@@ -885,7 +886,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 * Initializes core block API
 	 */
 	@hook('beforeRuntime')
-	protected initBaseAPI() {
+	protected initBaseAPI(): void {
 		this.linkCache = {};
 		this.syncLinkCache = {};
 		this.link = this.instance.link.bind(this);
@@ -1018,6 +1019,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 * @param field
 	 * @param [wrapper]
 	 */
+	// tslint:disable-next-line:unified-signatures
 	protected link(field: string, wrapper?: LinkWrapper): any;
 
 	/**
@@ -1025,6 +1027,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 * @param watchParams
 	 * @param wrapper
 	 */
+	// tslint:disable-next-line:unified-signatures
 	protected link(field: string, watchParams: WatchOptions, wrapper: LinkWrapper): any;
 	protected link(field: string, watchParams?: WatchOptions | LinkWrapper, wrapper?: LinkWrapper): any {
 		if (watchParams && Object.isFunction(watchParams)) {
@@ -1084,6 +1087,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 		const
 			{linkCache, syncLinkCache} = this;
 
+		// tslint:disable-next-line
 		if (path) {
 			path = [this.$activeField, path].join('.');
 
@@ -1299,7 +1303,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 * Returns an object with base block modifiers
 	 * @param mods - additional modifiers ({modifier: {currentValue: value}} || {modifier: value})
 	 */
-	provideMods(mods?: Dictionary<ModVal | Dictionary<ModVal>>): Dictionary<string> {
+	protected provideMods(mods?: Dictionary<ModVal | Dictionary<ModVal>>): Dictionary<string> {
 		const
 			key = JSON.stringify(this.baseMods) + JSON.stringify(mods),
 			cache = modsCache[key];
@@ -1326,6 +1330,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 					el = {default: el};
 				}
 
+				// tslint:disable-next-line
 				if (!(key in mods) || el[key] === undefined) {
 					map[key] = el[Object.keys(el)[0]];
 
@@ -1445,7 +1450,9 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 		this.async
 			.clearImmediate()
 			.clearTimeout()
-			.cancelIdleCallback()
+			.cancelIdleCallback();
+
+		this.async
 			.cancelAnimationFrame()
 			.cancelRequest()
 			.terminateWorker()
@@ -1492,21 +1499,24 @@ function defaultI18n(): string {
  * Hack for i-block decorators
  */
 export abstract class iBlockDecorator extends iBlock {
-	public abstract readonly h: typeof helpers;
-	public abstract readonly b: typeof browser;
-	public abstract readonly t: typeof i18n;
+	public readonly h!: typeof helpers;
+	public readonly b!: typeof browser;
+	public readonly t!: typeof i18n;
 
 	public async!: Async<this>;
-	public readonly block: Block<this>;
-	public readonly localEvent: EventEmitter;
+	public readonly block!: Block<this>;
+	public readonly localEvent!: EventEmitter;
 
+	// tslint:disable-next-line:unified-signatures
 	public abstract link(field: string, watchParams?: WatchOptions): any;
+	// tslint:disable-next-line:unified-signatures
 	public abstract link(field: string, wrapper?: LinkWrapper): any;
+	// tslint:disable-next-line:unified-signatures
 	public abstract link(field: string, watchParams?: WatchOptions, wrapper?: LinkWrapper): any;
 
 	public abstract createWatchObject(
 		path: string,
-		fields: WatchObjectFields,
+		fields: WatchObjectFields
 	): Dictionary;
 
 	public abstract createWatchObject(
