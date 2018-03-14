@@ -38,3 +38,5 @@ interface Element {
 interface Node {
 	getOffset(parent?: Element | string): {top: number; left: number};
 }
+
+type CanPromise<T> = T | Promise<T>;

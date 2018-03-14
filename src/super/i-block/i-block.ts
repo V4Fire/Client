@@ -473,7 +473,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 * @param [params] - additional parameters:
 	 *   *) [params.defer] - if true, then the function will always return a promise
 	 */
-	waitState<T>(state: number | string, fn: () => T, params?: AsyncOpts & {defer?: boolean}): T | Promise<T> {
+	waitState<T>(state: number | string, fn: () => T, params?: AsyncOpts & {defer?: boolean}): CanPromise<T> {
 		params = params || {};
 		params.join = false;
 		return wait(state, {fn, ...params}).call(this);

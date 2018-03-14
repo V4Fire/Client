@@ -12,7 +12,7 @@ import iData, { component, prop, field, system, hook, wait, p, ModsDecl } from '
 export * from 'super/i-data/i-data';
 export type Validators = Array<string | Dictionary<Dictionary>>;
 export type ValidatorsDecl<T extends iInput = iInput> =
-	Dictionary<(this: T, params: Dictionary) => boolean | Promise<boolean>>;
+	Dictionary<(this: T, params: Dictionary) => CanPromise<boolean>>;
 
 @component({
 	model: {
@@ -176,7 +176,7 @@ export default class iInput<T extends Dictionary = Dictionary> extends iData<T> 
 	 * Link to the form that is associated to the block
 	 */
 	@p({cache: false})
-	get connectedForm(): HTMLFormElement | null | Promise<HTMLFormElement | null> {
+	get connectedForm(): CanPromise<HTMLFormElement | null> {
 		return this.waitState('ready', () => this.form ?
 			<any>document.querySelector(`#${this.form}`) : this.$el.closest('form'));
 	}

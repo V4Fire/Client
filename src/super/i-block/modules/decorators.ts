@@ -239,7 +239,7 @@ export function wait<T = any>(
 	let
 		handler = <Function>(fn || params);
 
-	function wrapper(this: iBlockDecorator): T | Promise<T> | undefined {
+	function wrapper(this: iBlockDecorator): CanPromise<T> | undefined {
 		const
 			args = arguments;
 
