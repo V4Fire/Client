@@ -10,14 +10,15 @@
 
 const
 	$C = require('collection.js'),
+	path = require('path'),
 	fs = require('fs'),
 	hasha = require('hasha');
 
 const
-	{output} = include('build/build.webpack');
+	{output, assetsJSON} = include('build/build.webpack');
 
 /**
- * WebPack plugin for dependencies.js
+ * WebPack plugin for .dependencies.js files and assets.js
  *
  * @param {{entry, processes, dependencies}} build - build object
  * @returns {!Function}
@@ -26,6 +27,9 @@ module.exports = function ({build}) {
 	return {
 		apply(compiler) {
 			compiler.plugin('emit', (compilation, cb) => {
+				const
+					manifest = {};
+
 				$C(build.dependencies).forEach((el, key) => {
 					const
 						content = `ModuleDependencies.add("${key}", ${JSON.stringify([...el])});`,
@@ -38,9 +42,44 @@ module.exports = function ({build}) {
 							return length ? res.substr(0, Number(length)) : res;
 						});
 
+					manifest[name] = path.basename(src);
 					fs.writeFileSync(src, content);
 				});
 
+				$C(compilation.chunks).forEach(({name, files}) => {
+					const
+						file = $C(files).one.filter((src) => path.extname(src)).get();
+
+					if (file) {
+						manifest[path.basename(name, path.extname(name))] = path.basename(file);
+					}
+				});
+
+				let
+					fd,
+					assets = {};
+
+				try {
+					fd = fs.openSync(assetsJSON, 'r+');
+
+				} catch (_) {
+					fd = fs.openSync(assetsJSON, 'w+');
+				}
+
+				const
+					file = fs.readFileSync(fd, 'utf-8');
+
+				try {
+					assets = JSON.parse(file);
+
+				} catch (_) {}
+
+				Object.assign(assets, manifest);
+
+				fs.writeFileSync(fd, JSON.stringify(assets));
+				fs.closeSync(fd);
+
+				fs.writeFileSync(assetsJSON.replace(/\.json$/, '.js'), $C(assets).to('').map((el, key) => `PATH['${key}'] = '${el}';\n`));
 				cb();
 			});
 		}

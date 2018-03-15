@@ -38,7 +38,6 @@ module.exports = async function ({buildId}) {
 	const plugins = [
 		new webpack.DefinePlugin(include('build/globals.webpack')),
 		new ExtractTextPlugin(`${hash(output, true)}.css`),
-		include('build/assets.webpack'),
 		include('build/dependencies.webpack')({build})
 	];
 
