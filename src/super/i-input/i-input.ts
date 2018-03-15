@@ -136,7 +136,7 @@ export default class iInput<T extends Dictionary = Dictionary> extends iData<T> 
 	 * Block value field name
 	 */
 	@field()
-	protected blockValueField: string = 'value';
+	protected readonly blockValueField: string = 'value';
 
 	/**
 	 * Block value store

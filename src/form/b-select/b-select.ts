@@ -104,7 +104,7 @@ export default class bSelect extends bInput {
 
 	/** @override */
 	@field()
-	protected blockValueField: string = 'selected';
+	protected readonly blockValueField: string = 'selected';
 
 	/**
 	 * Select options store
