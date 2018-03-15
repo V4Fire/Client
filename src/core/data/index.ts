@@ -79,6 +79,11 @@ export default class Provider {
 	static readonly middlewares: Middlewares<any, Provider> = {};
 
 	/**
+	 * Request Function
+	 */
+	request: typeof request = request;
+
+	/**
 	 * Cache strategy
 	 */
 	cacheStrategy: CacheStrategy = 'queue';
@@ -331,7 +336,7 @@ export default class Provider {
 
 		return this.updateRequest(
 			url,
-			request(url, <CreateRequestOptions<T>>{
+			this.request(url, <CreateRequestOptions<T>>{
 				cacheStrategy: this.cacheStrategy,
 				cacheTime: this.cacheTime,
 				offlineCache: this.offlineCache,
@@ -356,7 +361,7 @@ export default class Provider {
 
 		return this.updateRequest(
 			url,
-			request(url, <CreateRequestOptions<T>>{
+			this.request(url, <CreateRequestOptions<T>>{
 				...opts,
 				body,
 				middlewares: {...middlewares, ...opts && opts.middlewares},
@@ -379,7 +384,7 @@ export default class Provider {
 		return this.updateRequest(
 			url,
 			'add',
-			request(url, <CreateRequestOptions<T>>{
+			this.request(url, <CreateRequestOptions<T>>{
 				...opts,
 				body,
 				middlewares: {...middlewares, ...opts && opts.middlewares},
@@ -402,7 +407,7 @@ export default class Provider {
 		return this.updateRequest(
 			url,
 			'upd',
-			request(url, <CreateRequestOptions<T>>{
+			this.request(url, <CreateRequestOptions<T>>{
 				...opts,
 				body,
 				middlewares: {...middlewares, ...opts && opts.middlewares},
@@ -425,7 +430,7 @@ export default class Provider {
 		return this.updateRequest(
 			url,
 			'del',
-			request(url, <CreateRequestOptions<T>>{
+			this.request(url, <CreateRequestOptions<T>>{
 				...opts,
 				body,
 				middlewares: {...middlewares, ...opts && opts.middlewares},
