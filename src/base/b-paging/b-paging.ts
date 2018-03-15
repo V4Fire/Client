@@ -6,13 +6,19 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import iBlock, { field, p, component, prop, hook } from 'super/i-block/i-block';
+import $C = require('collection.js');
 import symbolGenerator from 'core/symbol';
-
+import bSelect from 'form/b-select/b-select';
+import iBlock, { prop, field, p, component } from 'super/i-block/i-block';
 export * from 'super/i-block/i-block';
 
 export const
 	$$ = symbolGenerator();
+
+export interface Page {
+	label: string;
+	value: number;
+}
 
 @component()
 export default class bPaging extends iBlock {
@@ -56,7 +62,7 @@ export default class bPaging extends iBlock {
 	 * List of advanced pages (for dropdown)
 	 */
 	@field()
-	protected advPages!: Object[];
+	protected advPages!: Page[];
 
 	/**
 	 * Current page current
@@ -82,19 +88,19 @@ export default class bPaging extends iBlock {
 	/**
 	 * Calculates pages for the dropdown select
 	 */
-	protected getDropdownPages(): Array<Object> {
+	protected getDropdownPages(): Page[] {
 		const
 			full = Number.range(1, this.pageCount).toArray(),
 			options = full.subtract(this.strip);
 
-		return options.map((el) => ({label: el, value: el}));
+		return $C(options as number[]).map((value) => ({label: String(value), value}));
 	}
 
 	/**
-	 * Calculates visible strip
+	 * Calculates the visible strip
 	 */
 	@p({watch: ['currentStore', 'count'], watchParams: {immediate: true}})
-	protected setStripInView(): Array<number> {
+	protected setStripInView(): number[] {
 		let
 			end = this.current;
 
@@ -170,16 +176,11 @@ export default class bPaging extends iBlock {
 		}
 	}
 
-	/**
-	 * Adds click handler to page numbers
-	 */
-	@hook('mounted')
-	protected pageClickEvent(): void {
-		this.async.on(
-			this.$el,
-			'click',
-			() => this.delegateElement('page', this.onPageClick),
-			{label: $$.pageSelection}
-		);
+	/** @override */
+	protected async mounted(): Promise<void> {
+		await super.mounted();
+		this.async.on(this.$el, 'click', () => this.delegateElement('page', this.onPageClick), {
+			label: $$.pageSelection
+		});
 	}
 }
