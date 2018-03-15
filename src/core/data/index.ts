@@ -11,10 +11,11 @@
 import $C = require('collection.js');
 import { EventEmitter2 as EventEmitter } from 'eventemitter2';
 
+import symbolGenerator from 'core/symbol';
 import Async, { AsyncCbOpts } from 'core/async';
 import IO, { Socket } from 'core/socket';
 
-import symbolGenerator from 'core/symbol';
+import { concatUrls } from 'core/url';
 import { SocketEvent, ProviderParams } from 'core/data/interface';
 import request, {
 
@@ -295,7 +296,7 @@ export default class Provider {
 	url(value: string): Provider;
 	url(value?: string): Provider | string {
 		if (value == null) {
-			const tmp = `${API}/${this.tmpURL || this.baseURL}/${this.advURL}`;
+			const tmp = concatUrls(this.tmpURL || this.baseURL, this.advURL);
 			this.advURL = '';
 			this.tmpURL = '';
 			return tmp;
