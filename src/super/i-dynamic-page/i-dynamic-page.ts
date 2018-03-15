@@ -9,8 +9,8 @@
 import $C = require('collection.js');
 import URI = require('urijs');
 
-import iData, { component } from 'super/i-data/i-data';
 import symbolGenerator from 'core/symbol';
+import iData, { component } from 'super/i-data/i-data';
 export * from 'super/i-data/i-data';
 
 export interface OnFilterChange {
