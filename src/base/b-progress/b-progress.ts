@@ -8,7 +8,6 @@
 
 import symbolGenerator from 'core/symbol';
 import iBlock, { field, component, PARENT, ModsDecl } from 'super/i-block/i-block';
-
 export * from 'super/i-block/i-block';
 
 export const
