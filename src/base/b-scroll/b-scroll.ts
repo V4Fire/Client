@@ -71,14 +71,13 @@ export default class bScroll extends iBlock {
 
 	/**
 	 * Sets a new scroll offset
-	 *
-	 * @param top
-	 * @param left
+	 * @param offset
 	 */
 	// @ts-ignore
-	set scrollOffset({top, left}: CanPromise<Partial<Offset>>) {
-		const res = this.waitState('ready', () => {
+	set scrollOffset(offset: CanPromise<Partial<Offset>>) {
+		const res = this.waitState('ready', async () => {
 			const
+				{top, left} = await offset,
 				{area} = this.$refs;
 
 			if (top !== undefined) {
