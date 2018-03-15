@@ -1,5 +1,3 @@
-'use strict';
-
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -8,15 +6,38 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import Store from 'core/store';
-import iBlock, { abstract, params, wait, PARENT } from 'super/i-block/i-block';
-import { component } from 'core/component';
-
-const
-	$C = require('collection.js');
+// tslint:disable:max-file-line-count
+import $C = require('collection.js');
+import symbolGenerator from 'core/symbol';
+import iBlock, { component, prop, system, p, wait, ModsDecl, PARENT } from 'super/i-block/i-block';
+export * from 'super/i-block/i-block';
 
 export const
-	$$ = new Store();
+	$$ = symbolGenerator();
+
+export type ScrollSide = 'x' | 'y';
+export type FixSizeTypes = 'width' | 'height';
+export type OverflowTypes = 'auto' | 'hidden' | 'scroll' | 'visible' | 'inherit';
+
+export interface ScrollSize {
+	width?: number;
+	height?: number;
+}
+
+export interface Offset {
+	top: number;
+	left: number;
+}
+
+export interface ScrollerPosition {
+	x?: number;
+	y?: number;
+}
+
+export interface InputScrollerPosition {
+	x?: number | 'left' | 'right';
+	y?: number | 'top' | 'bottom';
+}
 
 @component()
 export default class bScroll extends iBlock {
@@ -24,56 +45,21 @@ export default class bScroll extends iBlock {
 	 * If true, then the content size will be extended with scroll bars
 	 * ('width' or 'height' for extending one of sides)
 	 */
-	fixSize: boolean | string = false;
+	@prop({type: [Boolean, String]})
+	readonly fixSize: boolean | FixSizeTypes = false;
 
 	/**
 	 * Overflow css value
 	 */
-	overflowType: string = 'auto';
-
-	/** @private */
-	@abstract
-	_maxScrollerXPos: ?number;
-
-	/** @private */
-	@abstract
-	_maxScrollerYPos: ?number;
-
-	/** @private */
-	@abstract
-	_scrollerOffsetX: ?number;
-
-	/** @private */
-	@abstract
-	_scrollerOffsetY: ?number;
-
-	/** @inheritDoc */
-	static mods = {
-		theme: [
-			PARENT,
-			'light'
-		],
-
-		scroll: [
-			'true',
-			['false']
-		]
-	};
-
-	/** @override */
-	get $refs(): {
-		area: Element,
-		scrollerX: Element,
-		scrollWrapperX: Element,
-		scrollerY: Element,
-		scrollWrapperY: Element
-	} {}
+	@prop(String)
+	readonly overflowType: OverflowTypes = 'auto';
 
 	/**
 	 * Scroll offset
 	 */
-	@params({cache: false})
-	get scrollOffset(): {top: number, left: number} {
+	@p({cache: false})
+	// @ts-ignore
+	get scrollOffset(): CanPromise<Offset> {
 		return this.waitState('ready', () => {
 			const {area} = this.$refs;
 			return {
@@ -89,7 +75,8 @@ export default class bScroll extends iBlock {
 	 * @param top
 	 * @param left
 	 */
-	set scrollOffset({top, left}: {top?: number, left?: number}) {
+	// @ts-ignore
+	set scrollOffset({top, left}: CanPromise<Partial<Offset>>) {
 		const res = this.waitState('ready', () => {
 			const
 				{area} = this.$refs;
@@ -102,83 +89,144 @@ export default class bScroll extends iBlock {
 				area.scrollLeft = left;
 			}
 
-		}, {label: $$.setScrollOffset, defer: true});
+		}, {
+			label: $$.setScrollOffset,
+			defer: true
+		});
 
 		if (res) {
-			res.catch(() => {});
+			res.catch(stderr);
 		}
 	}
 
 	/**
 	 * Scroll width
 	 */
-	@params({cache: false})
-	get scrollWidth(): number {
+	@p({cache: false})
+	get scrollWidth(): CanPromise<number> {
 		return this.waitState('ready', () => this.$refs.area.scrollWidth);
 	}
 
 	/**
 	 * Scroll height
 	 */
-	@params({cache: false})
-	get scrollHeight(): number {
+	@p({cache: false})
+	get scrollHeight(): CanPromise<number> {
 		return this.waitState('ready', () => this.$refs.area.scrollHeight);
 	}
 
 	/**
 	 * Block width
 	 */
-	@params({cache: false})
-	get width(): number {
+	@p({cache: false})
+	// @ts-ignore
+	get width(): CanPromise<number> {
 		return this.waitState('ready', () => this.$refs.area.clientWidth);
-	}
-
-	/**
-	 * Block height
-	 */
-	@params({cache: false})
-	get height(): number {
-		return this.waitState('ready', () => this.$refs.area.clientHeight);
 	}
 
 	/**
 	 * Sets the block width
 	 * @param value
 	 */
-	set width(value: number) {
+	// @ts-ignore
+	set width(value: CanPromise<number | string>) {
 		const res = this.waitState('ready', async () => {
+			value = await value;
 			this.$refs.area.style.maxWidth = Object.isString(value) ? value : value.px;
 			await this.calcScroll('x');
-		}, {label: $$.setWidth, defer: true});
+		}, {
+			label: $$.setWidth,
+			defer: true
+		});
 
 		if (res) {
-			res.catch(() => {});
+			res.catch(stderr);
 		}
+	}
+
+	/**
+	 * Block height
+	 */
+	@p({cache: false})
+	// @ts-ignore
+	get height(): CanPromise<number> {
+		return this.waitState('ready', () => this.$refs.area.clientHeight);
 	}
 
 	/**
 	 * Sets the block height
 	 * @param value
 	 */
-	set height(value: number) {
+	// @ts-ignore
+	set height(value: CanPromise<number | string>) {
 		const res = this.waitState('ready', async () => {
+			value = await value;
 			this.$refs.area.style.maxHeight = Object.isString(value) ? value : value.px;
 			await this.calcScroll('y');
-		}, {label: $$.setHeight, defer: true});
+		}, {
+			label: $$.setHeight,
+			defer: true
+		});
 
 		if (res) {
-			res.catch(() => {});
+			res.catch(stderr);
 		}
 	}
 
+	/** @inheritDoc */
+	static mods: ModsDecl = {
+		theme: [
+			PARENT,
+			'light'
+		],
+
+		scroll: [
+			'true',
+			['false']
+		]
+	};
+
 	/**
-	 * Initializes the scroll
+	 * Temporary scroller x position
+	 */
+	@system()
+	protected maxScrollerXPos: number = 0;
+
+	/**
+	 * Temporary scroller y position
+	 */
+	@system()
+	protected maxScrollerYPos: number = 0;
+
+	/**
+	 * Temporary scroller x offset
+	 */
+	@system()
+	protected scrollerOffsetX: number = 0;
+
+	/**
+	 * Temporary scroller y offset
+	 */
+	@system()
+	protected scrollerOffsetY: number = 0;
+
+	/** @override */
+	protected $refs!: {
+		area: HTMLElement;
+		scrollerX: HTMLElement;
+		scrollWrapperX: HTMLElement;
+		scrollerY: HTMLElement;
+		scrollWrapperY: HTMLElement;
+	};
+
+	/**
+	 * Initializes the scroll area
 	 *
 	 * @param [scrollerPosition]
-	 * @param [side] - scroll side (x or y)
+	 * @param [side] - scroll side
 	 */
 	@wait('ready', {defer: true})
-	initScroll(scrollerPosition?: {x?: number | string, y?: number | string}, side?: string): Promise {
+	initScroll(scrollerPosition?: InputScrollerPosition, side?: ScrollSide): Promise<void> {
 		return this.async.promise(new Promise(async (resolve) => {
 			await this.putInStream(async () => {
 				await this.calcScroll(side);
@@ -186,18 +234,21 @@ export default class bScroll extends iBlock {
 				resolve();
 			});
 
-		}, {label: $$.initScroll, join: 'replace'}));
+		}), {
+			label: $$.initScroll,
+			join: 'replace'
+		});
 	}
 
 	/**
-	 * Calculates the scroll
-	 * @param [side] - scroll side (x or y)
+	 * Calculates the scroll area and returns it size
+	 * @param [side] - scroll side
 	 */
 	@wait('ready', {label: $$.calcScroll, defer: true})
-	calcScroll(side?: string): Promise<{width?: number, height?: number}> {
+	async calcScroll(side?: ScrollSide): Promise<ScrollSize> {
 		const
-			el = this.$el,
-			parent = el.parentNode,
+			el = <HTMLElement>this.$el,
+			parent = <HTMLElement>el.parentNode,
 			r = this.$refs;
 
 		delete el.style.height;
@@ -220,7 +271,7 @@ export default class bScroll extends iBlock {
 				pos: 'left',
 				size: 'width',
 				delta: '_deltaX',
-				cache: '_maxScrollerXPos'
+				cache: 'maxScrollerXPos'
 			},
 
 			y: {
@@ -229,11 +280,11 @@ export default class bScroll extends iBlock {
 				pos: 'top',
 				size: 'height',
 				delta: '_deltaY',
-				cache: '_maxScrollerYPos'
+				cache: 'maxScrollerYPos'
 			}
 		};
 
-		function c(val) {
+		function c(val: string): string {
 			return val.camelize(false);
 		}
 
@@ -319,21 +370,14 @@ export default class bScroll extends iBlock {
 	}
 
 	/**
-	 * Sets the scroller position
+	 * Sets the scroller position and returns it
 	 *
-	 * @param x - left offset or a constant value (left or right)
-	 * @param y - top offset or a constant value (top or bottom)
+	 * @param x - left offset or a constant value
+	 * @param y - top offset or a constant value
 	 * @param pseudo - if true, then the scroll position won't be affected for the scroll
 	 */
 	@wait('ready', {label: $$.setScrollerPosition})
-	setScrollerPosition(
-		{x, y}: {
-			x?: number | string,
-			y?: number | string
-		} = {},
-		pseudo?: boolean
-
-	): Promise<Object> | Object {
+	setScrollerPosition({x, y}: InputScrollerPosition = {}, pseudo?: boolean): CanPromise<ScrollerPosition> {
 		const
 			r = this.$refs;
 
@@ -350,7 +394,7 @@ export default class bScroll extends iBlock {
 				pos: 'left',
 				size: 'width',
 				delta: '_deltaX',
-				cache: '_maxScrollerXPos'
+				cache: 'maxScrollerXPos'
 			},
 
 			y: {
@@ -358,15 +402,15 @@ export default class bScroll extends iBlock {
 				pos: 'top',
 				size: 'height',
 				delta: '_deltaY',
-				cache: '_maxScrollerYPos'
+				cache: 'maxScrollerYPos'
 			}
 		};
 
-		function c(val) {
+		function c(val: string): string {
 			return val.camelize(false);
 		}
 
-		return $C({x, y}).reduce((res, val, key) => {
+		return $C({x, y}).to({}).reduce((res, val, key) => {
 			if (val == null) {
 				return res;
 			}
@@ -381,6 +425,7 @@ export default class bScroll extends iBlock {
 			}
 
 			if (pseudo !== undefined) {
+				// tslint:disable-next-line
 				if (pseudo) {
 					res[key] = el.scroller.style[el.pos] = val.px;
 
@@ -398,19 +443,19 @@ export default class bScroll extends iBlock {
 			}
 
 			return res;
-		}, {});
+		});
 	}
 
 	/**
-	 * Calculates horizontal and vertical positions
+	 * Calculates horizontal and vertical positions and returns it
 	 */
-	calcDirs(): {x: number, y: number} {
+	protected calcDirs(): ScrollerPosition {
 		const
 			{area} = this.$refs;
 
 		return {
-			x: this._maxScrollerXPos && this._maxScrollerXPos * area.scrollLeft / (area.scrollWidth - area.clientWidth),
-			y: this._maxScrollerYPos && this._maxScrollerYPos * area.scrollTop / (area.scrollHeight - area.clientHeight)
+			x: this.maxScrollerXPos && this.maxScrollerXPos * area.scrollLeft / (area.scrollWidth - area.clientWidth),
+			y: this.maxScrollerYPos && this.maxScrollerYPos * area.scrollTop / (area.scrollHeight - area.clientHeight)
 		};
 	}
 
@@ -420,7 +465,7 @@ export default class bScroll extends iBlock {
 	 * @param children - area children node list
 	 * @param dirs
 	 */
-	calcInView(children: NodeList, dirs: Object) {
+	protected calcInView(children: HTMLCollection, dirs: ScrollerPosition): void {
 		const
 			breakpoints = {left: 0, top: 0},
 			{scrollWidth: areaWidth, scrollHeight: areaHeight} = this.$el;
@@ -454,9 +499,14 @@ export default class bScroll extends iBlock {
 					top: dirs.y !== undefined ? isInRange('top') : true
 				};
 
-				this.$(el).setMod('view', inView.left && inView.top);
-				breakpoints.left += dirs.x !== undefined ? width : 0;
-				breakpoints.top += dirs.y !== undefined ? height : 0;
+				const
+					block = this.$(el);
+
+				if (block) {
+					block.setMod('view', inView.left && inView.top);
+					breakpoints.left += dirs.x !== undefined ? width : 0;
+					breakpoints.top += dirs.y !== undefined ? height : 0;
+				}
 			}
 		});
 	}
@@ -467,10 +517,10 @@ export default class bScroll extends iBlock {
 	 * @param e
 	 * @emits scroll(e: Event)
 	 */
-	onScroll(e: Event) {
+	protected onScroll(e: Event): void {
 		const
 			dirs = this.calcDirs(),
-			{children} = this.block.element('area');
+			{children} = <HTMLElement>this.block.element('area');
 
 		this.setScrollerPosition(dirs, true);
 
@@ -487,12 +537,12 @@ export default class bScroll extends iBlock {
 	 * @param e
 	 * @param scroller - link to the element
 	 */
-	onScrollerDragStart(e: MouseEvent, scroller: Element) {
+	protected onScrollerDragStart(e: MouseEvent, scroller: HTMLElement): void {
 		const
 			{scrollerX, scrollerY} = this.$refs;
 
-		this._scrollerOffsetX = e.pageX - scrollerX.offsetLeft;
-		this._scrollerOffsetY = e.pageY - scrollerY.offsetTop;
+		this.scrollerOffsetX = e.pageX - scrollerX.offsetLeft;
+		this.scrollerOffsetY = e.pageY - scrollerY.offsetTop;
 
 		if (e) {
 			this.block.setElMod(scroller, 'scroller', 'active', true);
@@ -503,57 +553,66 @@ export default class bScroll extends iBlock {
 	 * Handler: scroller drag
 	 * @param e
 	 */
-	onScrollerDrag(e: MouseEvent) {
+	protected onScrollerDrag(e: MouseEvent): void {
 		this.setScrollerPosition({
-			x: e.pageX - this._scrollerOffsetX,
-			y: e.pageY - this._scrollerOffsetY
+			x: e.pageX - this.scrollerOffsetX,
+			y: e.pageY - this.scrollerOffsetY
 		}, false);
 	}
 
 	/**
 	 * Handler: scroller drag end
 	 */
-	onScrollerDragEnd() {
-		$C(['scrollerX', 'scrollerY']).forEach((el) => this.block.setElMod(this.$refs[el], 'scroller', 'active', false));
+	protected onScrollerDragEnd(): void {
+		$C(['scrollerX', 'scrollerY']).forEach((el) => {
+			this.block.setElMod(this.$refs[el], 'scroller', 'active', false);
+		});
 	}
 
-	/** @inheritDoc */
-	created() {
-		this.async.on(document, 'wheel', async (e) => {
+	/**
+	 * Handler: wheel scroll
+	 * @param e
+	 */
+	protected async onWheel(e: WheelEvent): Promise<void> {
+		const
+			target = document.elementFromPoint(e.clientX, e.clientY);
+
+		if (target && target.closest(`.${this.blockId}`)) {
 			const
-				target = document.elementFromPoint(e.clientX, e.clientY);
+				{area, scrollWrapperY} = this.$refs;
 
-			if (target && target.closest(`.${this.blockId}`)) {
+			if (this.block.getElMod(scrollWrapperY, 'scroll-wrapper', 'hidden') !== 'false') {
 				const
-					{area, scrollWrapperY} = this.$refs;
+					d = (e.deltaX || e.deltaY) > 0 ? -1 : 1;
 
-				if (this.block.getElMod(scrollWrapperY, 'scroll-wrapper', 'hidden') !== 'false') {
+				try {
 					const
-						d = (e.deltaX || e.deltaY) > 0 ? -1 : 1;
+						baseScroll = area.scrollLeft;
 
-					try {
-						const
-							baseScroll = area.scrollLeft;
+					for (let i = 0; i < 9; i++) {
+						area.scrollLeft += d * (10 - i);
 
-						for (let i = 0; i < 9; i++) {
-							area.scrollLeft += d * (10 - i);
-
-							if (!i && area.scrollLeft > 0 && area.scrollLeft !== baseScroll) {
-								e.preventDefault();
-							}
-
-							await this.async.nextTick({label: $$.wheel});
+						if (!i && area.scrollLeft > 0 && area.scrollLeft !== baseScroll) {
+							e.preventDefault();
 						}
 
-					} catch (_) {}
-				}
-			}
+						await this.async.nextTick({label: $$.wheel});
+					}
 
-		}, true);
+				} catch (_) {}
+			}
+		}
 	}
 
-	/** @inheritDoc */
-	async mounted() {
+	/** @override */
+	protected created(): void {
+		super.created();
+		this.async.on(document, 'wheel', this.onWheel, {options: {capture: true}});
+	}
+
+	/** @override */
+	protected async mounted(): Promise<void> {
+		await super.mounted();
 		await this.initScroll();
 
 		let
@@ -576,26 +635,27 @@ export default class bScroll extends iBlock {
 			this.calcInView(area.children, this.calcDirs());
 		}
 
-		this.async.on(this.$el, 'scroll', {
-			join: true,
-			label: $$.scroll,
-			fn: () => {
-				const
-					newOffset = this.scrollOffset;
+		this.async.on(this.$el, 'scroll', () => {
+			const
+				newOffset = this.scrollOffset;
 
-				if (Object.fastCompare(offset, newOffset)) {
-					return;
-				}
-
-				offset = newOffset;
-				setScrollMod(true);
-
-				this.async.setTimeout({
-					label: $$.scroll,
-					fn: () => setScrollMod(false)
-				}, 0.3.second());
+			if (Object.fastCompare(offset, newOffset)) {
+				return;
 			}
 
-		}, true);
+			offset = newOffset;
+			setScrollMod(true);
+
+			this.async.setTimeout(() => setScrollMod(false), 0.3.second(), {
+				label: $$.scroll
+			});
+
+		}, {
+			join: true,
+			label: $$.scroll,
+			options: {
+				capture: true
+			}
+		});
 	}
 }
