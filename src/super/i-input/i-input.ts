@@ -96,12 +96,6 @@ export default class iInput<T extends Dictionary = Dictionary> extends iData<T> 
 	readonly validators: Validators = [];
 
 	/**
-	 * Block value field name
-	 */
-	@field()
-	blockValueField: string = 'value';
-
-	/**
 	 * Previous block value
 	 */
 	@system()
@@ -137,6 +131,12 @@ export default class iInput<T extends Dictionary = Dictionary> extends iData<T> 
 			return true;
 		}
 	};
+
+	/**
+	 * Block value field name
+	 */
+	@field()
+	protected blockValueField: string = 'value';
 
 	/**
 	 * Block value store
