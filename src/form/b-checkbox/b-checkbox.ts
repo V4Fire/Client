@@ -7,8 +7,7 @@
  */
 
 import symbolGenerator from 'core/symbol';
-import iInput, { component, prop, ModsDecl, PARENT, hook } from 'super/i-input/i-input';
-
+import iInput, { component, prop, ModsDecl, PARENT } from 'super/i-input/i-input';
 export * from 'super/i-input/i-input';
 
 export const
@@ -23,7 +22,7 @@ export default class bCheckbox extends iInput {
 	/**
 	 * Checkbox label
 	 */
-	@prop(String)
+	@prop({type: String, required: false})
 	readonly label?: string;
 
 	/**
@@ -99,36 +98,29 @@ export default class bCheckbox extends iInput {
 		this.emit('actionChange', this.mods.checked === 'true');
 	}
 
-	/**
-	 * Adds local event handler on checked state change
-	 */
-	@hook('created')
-	protected addCheckedHandler(): void {
-		this.localEvent.on('block.mod.*.checked.*', (el) => this.value = el.type !== 'remove' && el.value === 'true');
-	}
-
-	/**
-	 * Adds handler on checkbox click
-	 */
-	@hook('mounted')
-	protected addOnClickHandler(): void {
-		const
-			{block: {getElSelector: $g}} = this,
-			handler = (e) => {
-				if (
-					e.target.closest($g('wrapper')) ||
-					e.target.closest($g('hidden-input'))
-				) {
-					return this.onClick(e);
-				}
-			};
-
-		this.async.on(this.$el, 'click', handler, {label: $$.toggle});
-	}
-
 	/** @override */
 	protected initModEvents(): void {
 		super.initModEvents();
 		this.bindModTo('checked', 'valueStore');
+		this.localEvent.on('block.mod.*.checked.*', (el) => {
+			this.value = el.type !== 'remove' && el.value === 'true';
+		});
+	}
+
+	/** @override */
+	protected async mounted(): Promise<void> {
+		const
+			{block: $b} = this;
+
+		this.async.on(this.$el, 'click', (e) => {
+			if (
+				e.target.closest($b.getElSelector('wrapper')) ||
+				e.target.closest($b.getElSelector('hidden-input'))
+			) {
+				return this.onClick(e);
+			}
+		}, {
+			label: $$.toggle
+		});
 	}
 }

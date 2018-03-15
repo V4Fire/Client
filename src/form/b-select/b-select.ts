@@ -152,7 +152,7 @@ export default class bSelect extends bInput {
 	protected values?: Dictionary<Option>;
 
 	/** @override */
-	protected $refs!: {
+	protected readonly $refs!: {
 		input: HTMLInputElement;
 		scroll?: bScrollInline;
 		select?: HTMLSelectElement;

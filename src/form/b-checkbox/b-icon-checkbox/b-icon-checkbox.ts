@@ -7,7 +7,6 @@
  */
 
 import bCheckbox, { component, prop } from 'form/b-checkbox/b-checkbox';
-
 export * from 'form/b-checkbox/b-checkbox';
 
 @component()
@@ -15,6 +14,6 @@ export default class bIconCheckbox extends bCheckbox {
 	/**
 	 * Icon component
 	 */
-	@prop(String)
+	@prop({type: String, required: false})
 	readonly icon?: string;
 }

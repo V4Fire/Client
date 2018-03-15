@@ -210,7 +210,7 @@ export default class bScroll extends iBlock {
 	protected scrollerOffsetY: number = 0;
 
 	/** @override */
-	protected $refs!: {
+	protected readonly $refs!: {
 		area: HTMLElement;
 		scrollerX: HTMLElement;
 		scrollWrapperX: HTMLElement;
