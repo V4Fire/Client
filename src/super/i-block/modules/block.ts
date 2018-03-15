@@ -195,7 +195,7 @@ export default class Block<T extends iBlock> {
 	 * @param elName
 	 * @param [mods]
 	 */
-	elements(elName: string, mods?: Object): NodeList {
+	elements<E extends Element = Element>(elName: string, mods?: Object): NodeListOf<E> {
 		if (!this.node) {
 			throw new ReferenceError('Root node is not defined');
 		}
@@ -209,7 +209,7 @@ export default class Block<T extends iBlock> {
 	 * @param elName
 	 * @param [mods]
 	 */
-	element(elName: string, mods?: Object): Element | null {
+	element<E extends Element = Element>(elName: string, mods?: Object): E | null {
 		if (!this.node) {
 			throw new ReferenceError('Root node is not defined');
 		}
