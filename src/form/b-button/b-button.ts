@@ -6,6 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import bForm from 'form/b-form/b-form';
 import iData, { component, prop, ModsDecl, ModelMethods, CreateRequestOptions } from 'super/i-data/i-data';
 import { RequestQuery, RequestBody } from 'core/data';
 export * from 'super/i-data/i-data';
@@ -110,7 +111,7 @@ export default class bButton extends iData {
 		// Form attribute fix for MS Edge && IE
 		if (this.form && this.type === 'submit') {
 			e.preventDefault();
-			const form = this.$(`#${this.form}`);
+			const form = <bForm>this.$(`#${this.form}`);
 			form && await form.submit();
 
 		} else if (this.dataProvider !== 'Provider' || this.href) {
