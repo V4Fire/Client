@@ -153,7 +153,7 @@ export function getComponent(
 							this[fn](a, b);
 
 						} else {
-							el.handler(this, a, b);
+							fn(this, a, b);
 						}
 					}});
 				}

@@ -220,15 +220,7 @@ export function paramsFactory<T>(
 					watchers.set(el.fn, {...el});
 
 				} else {
-					let fn = el;
-
-					if (Object.isString(el)) {
-						fn = function (a: any, b: any): any {
-							return this[el](a, b);
-						};
-					}
-
-					watchers.set(el, {fn});
+					watchers.set(el, {fn: el});
 				}
 			}
 
