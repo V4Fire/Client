@@ -198,6 +198,7 @@ export function patchVNode(vNode: VNode, ctx: Dictionary, renderCtx: RenderConte
 		}
 
 		// Reference to element
+
 		if (data.ref) {
 			vData.ref = data.ref;
 		}
