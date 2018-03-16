@@ -197,6 +197,11 @@ export function patchVNode(vNode: VNode, ctx: Dictionary, renderCtx: RenderConte
 			vData.attrs = Object.assign(vData.attrs || {}, data.attrs);
 		}
 
+		// Reference to element
+		if (data.ref) {
+			vData.ref = data.ref;
+		}
+
 		// Vue directives
 
 		const
