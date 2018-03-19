@@ -110,7 +110,7 @@ export default class bInputTime extends bInput {
 	protected pointerStore!: Date;
 
 	/** @override */
-	set valueBuffer(value: string) {
+	protected set valueBuffer(value: string) {
 		this.pointer = converter.call(this, value, this.pointerStore);
 		this.valueBufferStore = timeFormat(this.pointer);
 	}
