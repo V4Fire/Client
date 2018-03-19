@@ -39,7 +39,7 @@ export interface Option {
 	}
 })
 
-export default class bList extends iData {
+export default class bList<T extends Dictionary = Dictionary> extends iData<T> {
 	/**
 	 * Initial block value
 	 */

@@ -20,7 +20,7 @@ export const
 	}
 })
 
-export default class bInputTime extends bInput {
+export default class bInputTime<T extends Dictionary = Dictionary> extends bInput<T> {
 	/** @override */
 	readonly placeholder: string = '__:__';
 

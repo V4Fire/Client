@@ -12,7 +12,7 @@ import { RequestError } from 'core/data';
 export * from 'super/i-data/i-data';
 
 @component()
-export default class bWindow extends iData {
+export default class bWindow<T extends Dictionary = Dictionary> extends iData<T> {
 	/**
 	 * Initial window title
 	 */

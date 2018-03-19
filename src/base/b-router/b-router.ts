@@ -27,7 +27,7 @@ export const
 	$$ = symbolGenerator();
 
 @component()
-export default class bRouter extends iData {
+export default class bRouter<T extends Dictionary = Dictionary> extends iData<T> {
 	/**
 	 * Initial page
 	 */
