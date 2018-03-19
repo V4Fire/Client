@@ -485,7 +485,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 */
 	@wait('loading')
 	@hook({mounted: 'initBlockInstance'})
-	initLoad(): void {
+	initLoad(): CanPromise<void> {
 		this.block.status = this.block.statuses.ready;
 		this.emit('initLoad');
 	}
@@ -523,7 +523,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 * @param value
 	 */
 	@wait('loading')
-	setMod(name: string, value: any): Promise<boolean> | boolean {
+	setMod(name: string, value: any): CanPromise<boolean> {
 		return this.block.setMod(name, value);
 	}
 
@@ -534,7 +534,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 * @param [value]
 	 */
 	@wait('loading')
-	removeMod(name: string, value?: any): Promise<boolean> | boolean {
+	removeMod(name: string, value?: any): CanPromise<boolean> {
 		return this.block.removeMod(name, value);
 	}
 
@@ -772,7 +772,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 * @param handler
 	 */
 	@wait('loading')
-	protected delegateElement(elName: string, handler: Function): Promise<Function> | Function {
+	protected delegateElement(elName: string, handler: Function): CanPromise<Function> {
 		return delegate(this.block.getElSelector(elName), handler);
 	}
 
@@ -1211,7 +1211,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 */
 	@wait('loading')
 	@watch({field: 'modsStore', deep: true})
-	protected syncModsWatcher(value: ModsTable): void {
+	protected syncModsWatcher(value: ModsTable): CanPromise<void> {
 		for (let keys = Object.keys(value), i = 0; i < keys.length; i++) {
 			const
 				key = keys[i];
