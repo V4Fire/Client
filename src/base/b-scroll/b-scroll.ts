@@ -417,23 +417,20 @@ export default class bScroll extends iBlock {
 			const
 				el = get[key],
 				scroll = c(`scroll-${el.pos}`),
-				d = this[el.delta] || 1;
-
-			if (val in map) {
-				val = map[val];
-			}
+				d = this[el.delta] || 1,
+				pos = val in map ? map[val] : val;
 
 			if (pseudo !== undefined) {
 				// tslint:disable-next-line
 				if (pseudo) {
-					res[key] = el.scroller.style[el.pos] = val.px;
+					res[key] = el.scroller.style[el.pos] = pos.px;
 
 				} else {
-					res[key] = r.area[scroll] = val * d;
+					res[key] = r.area[scroll] = pos * d;
 				}
 
 			} else {
-				r.area[scroll] = val;
+				r.area[scroll] = pos;
 				if (this[el.cache]) {
 					res[key] = el.scroller.style[el.pos] = (
 						this[el.cache] * r.area[scroll] / (r.area[c(`scroll-${el.size}`)] - r.area[c(`client-${el.size}`)])

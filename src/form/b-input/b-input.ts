@@ -198,19 +198,27 @@ export default class bInput<T extends Dictionary = Dictionary> extends iInput<T>
 	@field()
 	protected skipBuffer: boolean = false;
 
-	/** @private */
+	/**
+	 * Temporary last selection start index
+	 */
 	@system()
-	private _lastMaskSelectionStartIndex?: number;
+	private _lastMaskSelectionStartIndex?: number | null;
 
-	/** @private */
+	/**
+	 * Temporary last selection end index
+	 */
 	@system()
-	private _lastMaskSelectionEndIndex?: number;
+	private _lastMaskSelectionEndIndex?: number | null;
 
-	/** @private */
+	/**
+	 * Temporary mask buffer
+	 */
 	@system()
 	private _maskBuffer?: string;
 
-	/** @private */
+	/**
+	 * Temporary mask value
+	 */
 	@system()
 	private _mask?: {value: Array<string | RegExp>; tpl: string};
 
@@ -356,21 +364,29 @@ export default class bInput<T extends Dictionary = Dictionary> extends iInput<T>
 
 		{
 			updateBuffer,
-			start = 0,
-			end = start,
+			start,
+			end,
 			cursor,
 			maskBuffer = this._maskBuffer
 		}: {
 			updateBuffer?: boolean;
-			start?: number;
-			end?: number;
+			start?: number | null;
+			end?: number | null;
 			cursor?: number | string | null;
 			maskBuffer?: string;
 		} = {}
 
 	): Promise<void> {
+		let
+			startPos,
+			endPos;
+
 		if (!value) {
-			start = end = 0;
+			startPos = endPos = 0;
+
+		} else {
+			startPos = start || 0;
+			endPos = end || 0;
 		}
 
 		const
@@ -383,7 +399,7 @@ export default class bInput<T extends Dictionary = Dictionary> extends iInput<T>
 
 		const
 			focused = this.mods.focused === 'true',
-			selectionFalse = start === end,
+			selectionFalse = startPos === endPos,
 			buffer = maskBuffer;
 
 		let
@@ -392,7 +408,7 @@ export default class bInput<T extends Dictionary = Dictionary> extends iInput<T>
 
 		if (value) {
 			const
-				chunks = Array.from(value).slice(start, !selectionFalse ? end : undefined),
+				chunks = Array.from(value).slice(startPos, !selectionFalse ? endPos : undefined),
 				ph = this.maskPlaceholder,
 				def = (mask, i) => buffer && mask.test(buffer[i]) ? buffer[i] : ph;
 
@@ -400,7 +416,7 @@ export default class bInput<T extends Dictionary = Dictionary> extends iInput<T>
 				const
 					isRgxp = Object.isRegExp(mask);
 
-				if (i < start || !selectionFalse && i > end) {
+				if (i < startPos || !selectionFalse && i > endPos) {
 					if (isRgxp) {
 						res += def(mask, i);
 
@@ -448,7 +464,7 @@ export default class bInput<T extends Dictionary = Dictionary> extends iInput<T>
 		this[updateBuffer ? 'valueBuffer' : 'value'] = input.value = res;
 
 		if (focused) {
-			pos = cursor != null ? Number(cursor) : selectionFalse ? start + pos + 1 : end;
+			pos = cursor != null ? Number(cursor) : selectionFalse ? startPos + pos + 1 : endPos;
 			while (pos < mask.length && !Object.isRegExp(mask[pos])) {
 				pos++;
 			}
@@ -610,8 +626,11 @@ export default class bInput<T extends Dictionary = Dictionary> extends iInput<T>
 		e.preventDefault();
 
 		const
-			{input} = this.$refs,
-			{selectionStart, selectionEnd} = input,
+			{input} = this.$refs;
+
+		const
+			selectionStart = input.selectionStart || 0,
+			selectionEnd = input.selectionEnd || 0,
 			selectionFalse = selectionStart === selectionEnd;
 
 		const
@@ -744,8 +763,11 @@ export default class bInput<T extends Dictionary = Dictionary> extends iInput<T>
 
 			const
 				mask = m.value,
-				{input} = this.$refs,
-				{selectionStart, selectionEnd} = input;
+				{input} = this.$refs;
+
+			const
+				selectionStart = input.selectionStart || 0,
+				selectionEnd = input.selectionEnd || 0;
 
 			let
 				canChange = true,
@@ -822,8 +844,11 @@ export default class bInput<T extends Dictionary = Dictionary> extends iInput<T>
 		e.preventDefault();
 
 		const
-			{input} = this.$refs,
-			{selectionStart, selectionEnd} = input;
+			{input} = this.$refs;
+
+		const
+			selectionStart = input.selectionStart || 0,
+			selectionEnd = input.selectionEnd || 0;
 
 		const
 			res = this.valueBuffer.split(''),

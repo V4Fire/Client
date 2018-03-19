@@ -11,3 +11,5 @@
 - include 'super/i-page/i-page.component.ss'|b as placeholder
 
 - template index() extends ['i-page.component'].index
+	- block body
+		Hello!

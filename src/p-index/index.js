@@ -7,4 +7,5 @@
  */
 
 package('p-index')
-	.extends('i-page');
+	.extends('i-page')
+	.dependencies('b-func');

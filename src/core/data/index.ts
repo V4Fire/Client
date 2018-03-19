@@ -25,6 +25,7 @@ import request, {
 	CacheStrategy,
 	RequestQuery,
 	RequestResponse,
+	RequestResponseObject,
 	Response,
 	RequestBody
 
@@ -53,10 +54,10 @@ const globalEvent = new EventEmitter({
 });
 
 export const
-	providers = Object.createDict(),
-	instanceCache = Object.createDict(),
-	reqCache = Object.createDict(),
-	connectCache = Object.createDict();
+	providers: Dictionary<typeof Provider> = Object.createDict(),
+	instanceCache: Dictionary<Provider> = Object.createDict(),
+	reqCache: Dictionary<Dictionary<RequestResponseObject>> = Object.createDict(),
+	connectCache: Dictionary<Promise<Socket>> = Object.createDict();
 
 export const
 	$$ = symbolGenerator();
@@ -65,7 +66,7 @@ export const
  * Adds a data provider to the global cache
  * @decorator
  */
-export function provider(target: Function): void {
+export function provider(target: typeof Provider): void {
 	providers[target.name] = target;
 }
 
@@ -97,7 +98,7 @@ export default class Provider {
 	/**
 	 * Maximum cache time
 	 */
-	cacheTime: number = (10).seconds();
+	cacheTTL: number = (10).seconds();
 
 	/**
 	 * Socket connection url
@@ -320,7 +321,7 @@ export default class Provider {
 	 */
 	dropCache(): void {
 		const nm = this.constructor.name;
-		$C(reqCache[nm]).forEach((el) => clearTimeout(el.timeout));
+		$C(reqCache[nm]).forEach((el) => el.dropCache());
 		reqCache[nm] = Object.createDict();
 	}
 
@@ -339,7 +340,7 @@ export default class Provider {
 			url,
 			this.request(url, <CreateRequestOptions<T>>{
 				cacheStrategy: this.cacheStrategy,
-				cacheTime: this.cacheTime,
+				cacheTTL: this.cacheTTL,
 				offlineCache: this.offlineCache,
 				...opts,
 				query,
@@ -539,6 +540,13 @@ export default class Provider {
 				e = <string>event;
 
 			req.then((res) => {
+				const
+					{ctx} = res;
+
+				if (ctx.canCache) {
+					reqCache[this.constructor.name][res.cacheKey] = res;
+				}
+
 				this.setEventToQueue(this.getEventKey(e, res.data), e, () => res.data);
 			});
 		}

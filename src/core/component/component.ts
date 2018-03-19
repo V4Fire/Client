@@ -6,6 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+// tslint:disable:max-file-line-count
 import Vue, { ComponentOptions, FunctionalComponentOptions } from 'vue';
 import { ComponentMeta } from 'core/component';
 
