@@ -75,6 +75,7 @@ ss.importFilters({
 	vueComp,
 	vueTag: ss.setFilterParams(vueTag, bind),
 	bem2vue: ss.setFilterParams(bem2vue, bind),
+	getFirstTagElementName,
 	b
 });
 
@@ -271,4 +272,21 @@ function attachClass(arr) {
 	};
 
 	return arr;
+}
+
+function getFirstTagElementName(str) {
+	const
+		escapedStr = str,
+		tagMatch = /<[^>]+>/.exec(escapedStr);
+
+	if (!tagMatch) {
+		return null;
+	}
+
+	return getElementClassName(tagMatch[0]);
+}
+
+function getElementClassName(str) {
+	const search = /\b[ibgp]-[a-z0-9][a-z0-9-]*__[a-z0-9][a-z0-9-]*\b/.exec(str);
+	return search ? search[0] : null;
 }
