@@ -44,7 +44,7 @@
 
 				- if !elName
 					< transition
-						{ content }
+						{content}
 
 				- else
 					: a = {}
@@ -53,7 +53,7 @@
 						? a[type + '-class'] = elName + '_' + type + '_true';
 
 					< transition ${a}
-						{ content }
+						{content}
 
 			/**
 			 * Generates double slot declaration (scoped and plain)
