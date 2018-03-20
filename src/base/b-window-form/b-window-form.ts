@@ -12,7 +12,7 @@ import { component } from 'core/component';
 export * from 'base/b-window/b-window';
 
 @component()
-export default class bWindowForm extends bWindow {
+export default class bWindowForm<T extends Dictionary = Dictionary> extends bWindow<T> {
 	/** @override */
 	@prop({default: (body, isEmpty) => this.stage !== 'remove' && !isEmpty})
 	readonly requestFilter: Function | boolean = false;

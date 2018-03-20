@@ -1232,7 +1232,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	}
 
 	/**
-	 * Synchronization for the async counter
+	 * Synchronization for the asyncCounter field
 	 * @param value
 	 */
 	@watch({field: 'asyncCounter', immediate: true})

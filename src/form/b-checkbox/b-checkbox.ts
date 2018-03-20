@@ -14,7 +14,7 @@ export const
 	$$ = symbolGenerator();
 
 @component()
-export default class bCheckbox extends iInput {
+export default class bCheckbox<T extends Dictionary = Dictionary> extends iInput<T> {
 	/** @override */
 	@prop(Function)
 	readonly dataType: Function = Any;
