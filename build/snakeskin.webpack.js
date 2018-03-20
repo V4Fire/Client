@@ -30,22 +30,24 @@ const
 	blocksTree = {};
 
 const
-	isBlockClass = /^\s*export\s+default\s+class\s+(.*?)\s+extends\s+(.*?)\s*{/m,
+	blockClass = /^\s*export\s+default\s+class\s+((.*?)\s+extends\s+.*?)\s*{/m,
 	isFunctional = /^\s*@component\s*\(\s*{.*?\bfunctional\s*:\s*true/m,
 	propsRgxp = /^(\t+)@prop\s*\([\s\S]+?\)+\n+\1([ \w$]+)(?:\??: [ \w|&$?()[\]{}<>'"`:.]+?)?\s*(?:=|;$)/gm,
-	genericRgxp = /<.*/;
+	genericRgxp = /<.*/,
+	extendsRgxp = /\s+extends\s+/;
 
 $C(files).forEach((el) => {
 	const
-		file = fs.readFileSync(el, {encoding: 'utf-8'});
+		file = fs.readFileSync(el, {encoding: 'utf-8'}),
+		block = blockClass.exec(file);
 
-	if (!isBlockClass.test(file)) {
+	if (!block) {
 		return;
 	}
 
 	const
-		component = RegExp.$1.replace(genericRgxp, ''),
-		parent = RegExp.$2.replace(genericRgxp, '');
+		component = block[2].replace(genericRgxp, ''),
+		parent = block[1].split(extendsRgxp).slice(-1)[0].replace(genericRgxp, '');
 
 	const obj = blocksTree[component] = blocksTree[component] || {
 		props: {},
