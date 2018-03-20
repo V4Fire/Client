@@ -499,8 +499,6 @@ export default class bInput<T extends Dictionary = Dictionary> extends iInput<T>
 		if (!this.mask) {
 			this.value = value;
 		}
-
-		super.onFocus();
 	}
 
 	/**
