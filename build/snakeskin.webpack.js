@@ -14,6 +14,7 @@ const
 
 const
 	fs = require('fs'),
+	escaper = require('escaper'),
 	path = require('path'),
 	glob = require('glob');
 
@@ -276,14 +277,14 @@ function attachClass(arr) {
 
 function getFirstTagElementName(str) {
 	const
-		escapedStr = str,
+		escapedStr = escaper.replace(str),
 		tagMatch = /<[^>]+>/.exec(escapedStr);
 
 	if (!tagMatch) {
 		return null;
 	}
 
-	return getElementClassName(tagMatch[0]);
+	return getElementClassName(escaper.paste(tagMatch[0]));
 }
 
 function getElementClassName(str) {

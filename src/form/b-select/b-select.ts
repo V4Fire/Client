@@ -43,7 +43,7 @@ export default class bSelect<T extends Dictionary = Dictionary> extends bInput<T
 	/**
 	 * Initial select options
 	 */
-	@prop(Object)
+	@prop(Array)
 	readonly optionsProp: Option[] = [];
 
 	/**
