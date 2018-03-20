@@ -31,7 +31,7 @@ const
 const
 	isBlockClass = /^\s*export\s+default\s+class\s+(.*?)\s+extends\s+(.*?)\s*{/m,
 	isFunctional = /^\s*@component\s*\(\s*{.*?\bfunctional\s*:\s*true/m,
-	propsRgxp = /^(\t+)@prop\s*\([\s\S]+?\)+\n+\1([\w$]+)(?:: [ \w|&$?()[\]{}<>'"`:.]+?)?\s*(?:=|;$)/gm,
+	propsRgxp = /^(\t+)@prop\s*\([\s\S]+?\)+\n+\1([ \w$]+)(?:\??: [ \w|&$?()[\]{}<>'"`:.]+?)?\s*(?:=|;$)/gm,
 	genericRgxp = /<.*/;
 
 $C(files).forEach((el) => {
@@ -54,7 +54,7 @@ $C(files).forEach((el) => {
 
 	let s;
 	while ((s = propsRgxp.exec(file))) {
-		obj.props[s[2]] = true;
+		obj.props[s[2].split(' ').slice(-1)[0]] = true;
 	}
 });
 
