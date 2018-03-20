@@ -598,14 +598,12 @@ export default class bSelect<T extends Dictionary = Dictionary> extends bInput<T
 	 * @emits actionChange(selected: ?string)
 	 */
 	protected async onOptionSelected(value?: string): Promise<void> {
-		if (this.values && this.selected) {
-			const
-				v = this.values[this.selected];
+		const
+			v = this.values && this.values[<any>this.selected];
 
-			if (value !== this.selected || v && this.value !== this.getOptionLabel(v)) {
-				this.syncValue(value);
-				this.emit('actionChange', this.selected);
-			}
+		if (value !== this.selected || v && this.value !== this.getOptionLabel(v)) {
+			this.syncValue(value);
+			this.emit('actionChange', this.selected);
 		}
 
 		await this.close();
