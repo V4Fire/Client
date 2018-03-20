@@ -36,7 +36,8 @@
 					< .&__cell.&__value
 						< .&__calendar-icon
 							< b-icon :value = 'calendar' | :mods = provideMods({size: 'xl'})
-						{{ labelText.capitalize() }}
+
+						{{ labelText }}
 
 				- block labelNext
 					< button:a.&__cell.&__icon.&__next &
@@ -90,7 +91,7 @@
 										v-on:after-leave = onMonthSwitchEnd
 									.
 										< .&__month-wrap v-if = !isMonthSwitchAnimation
-											< .&__row v-for = days in dayInMonth(index)
+											< .&__row v-for = days in getMonthDays(index)
 												< .&__td &
 													v-for = day in days |
 													:class = getElClasses({

@@ -1,5 +1,3 @@
-'use strict';
-
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -8,17 +6,17 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import Store from 'core/store';
-import bInput from 'form/b-input/b-input';
-import { component } from 'core/component';
+import symbolGenerator from 'core/symbol';
+import bInput, { component, prop } from 'form/b-input/b-input';
+export * from 'form/b-input/b-input';
 
 export const
-	$$ = new Store();
+	$$ = symbolGenerator();
 
 @component()
-export default class bInputNumber extends bInput {
+export default class bInputNumber<T extends Dictionary = Dictionary> extends bInput<T> {
 	/** @override */
-	type: string = 'number';
+	readonly type: string = 'number';
 
 	/** @override */
 	dataType: Function = convert;
@@ -29,30 +27,34 @@ export default class bInputNumber extends bInput {
 	/**
 	 * Position of block controllers
 	 */
+	@prop(String)
 	controllersPos: string = 'left';
 
 	/**
 	 * Value of a step
 	 */
+	@prop(Number)
 	step: number = 1;
 
 	/**
 	 * Maximum value
 	 */
-	max: ?number;
+	@prop({type: Number, required: false})
+	max?: number;
 
 	/**
 	 * Minimum value
 	 */
-	min: ?number;
+	@prop({type: Number, required: false})
+	min?: number;
 
 	/** @override */
-	get value(): any {
+	get value(): number | undefined {
 		return convert(this.valueStore);
 	}
 
 	/** @override */
-	get default(): string {
+	get default(): number | undefined {
 		return convert(this.defaultProp);
 	}
 
@@ -70,7 +72,8 @@ export default class bInputNumber extends bInput {
 			value = this.max;
 		}
 
-		super.valueSetter(value);
+		// tslint:disable-next-line
+		super['valueSetter'](value);
 	}
 
 	/**
@@ -79,7 +82,7 @@ export default class bInputNumber extends bInput {
 	 * @param factor
 	 * @emits actionChange(value: number)
 	 */
-	onInc(factor: number) {
+	protected onInc(factor: number): void {
 		this.value = (this.value || 0) + factor * this.step;
 		this.emit('actionChange', this.value);
 	}
@@ -88,7 +91,7 @@ export default class bInputNumber extends bInput {
 /**
  * Block value converter
  */
-function convert(value: any): ?number {
+function convert(value: any): number | undefined {
 	if (!isNaN(value)) {
 		return Number(value);
 	}

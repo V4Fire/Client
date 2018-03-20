@@ -136,6 +136,37 @@ export default class bInput<T extends Dictionary = Dictionary> extends iInput<T>
 	@prop({type: String, watch: {fn: 'updateMask', immediate: true}})
 	readonly maskPlaceholder: string = '_';
 
+	/** @override */
+	get value(): string {
+		return this.valueStore !== undefined ? String(this.valueStore) : '';
+	}
+
+	/** @override */
+	set value(value: string) {
+		this.valueStore = value;
+
+		if (this.skipBuffer) {
+			this.skipBuffer = false;
+			return;
+		}
+
+		if (this.valueBuffer !== value) {
+			this.valueBuffer = value;
+
+			const
+				{input} = this.$refs;
+
+			if (input) {
+				input.value = value;
+			}
+		}
+	}
+
+	/** @override */
+	get default(): string {
+		return this.defaultProp !== undefined ? String(this.defaultProp) : '';
+	}
+
 	/** @inheritDoc */
 	static mods: ModsDecl = {
 		rounding: [
@@ -181,14 +212,14 @@ export default class bInput<T extends Dictionary = Dictionary> extends iInput<T>
 	/**
 	 * Value buffer
 	 */
-	protected get valueBuffer(): string | undefined {
+	protected get valueBuffer(): any {
 		return this.valueBufferStore;
 	}
 
 	/**
 	 * Sets a value to the value buffer store
 	 */
-	protected set valueBuffer(value: string | undefined) {
+	protected set valueBuffer(value: any) {
 		this.valueBufferStore = value;
 	}
 
@@ -221,37 +252,6 @@ export default class bInput<T extends Dictionary = Dictionary> extends iInput<T>
 	 */
 	@system()
 	private _mask?: {value: Array<string | RegExp>; tpl: string};
-
-	/** @override */
-	get value(): any {
-		return this.valueStore !== undefined ? String(this.valueStore) : '';
-	}
-
-	/** @override */
-	set value(value: any) {
-		this.valueStore = value;
-
-		if (this.skipBuffer) {
-			this.skipBuffer = false;
-			return;
-		}
-
-		if (this.valueBuffer !== value) {
-			this.valueBuffer = value;
-
-			const
-				{input} = this.$refs;
-
-			if (input) {
-				input.value = value;
-			}
-		}
-	}
-
-	/** @override */
-	get default(): string {
-		return this.defaultProp !== undefined ? String(this.defaultProp) : '';
-	}
 
 	/** @override */
 	async clear(): Promise<boolean> {
@@ -560,7 +560,7 @@ export default class bInput<T extends Dictionary = Dictionary> extends iInput<T>
 		}
 
 		if (this.valueBuffer === m.tpl) {
-			this.value = undefined;
+			this.value = '';
 		}
 	}
 
@@ -676,7 +676,7 @@ export default class bInput<T extends Dictionary = Dictionary> extends iInput<T>
 
 			} else {
 				this.skipBuffer = true;
-				this.value = undefined;
+				this.value = '';
 				await this.applyMaskToValue('', {updateBuffer: true});
 			}
 
@@ -725,7 +725,7 @@ export default class bInput<T extends Dictionary = Dictionary> extends iInput<T>
 
 		if (res === m.tpl) {
 			this.skipBuffer = true;
-			this.value = undefined;
+			this.value = '';
 			await this.applyMaskToValue('', {updateBuffer: true});
 
 		} else {

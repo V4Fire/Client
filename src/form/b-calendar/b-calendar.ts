@@ -1,5 +1,3 @@
-'use strict';
-
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -8,56 +6,113 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import iInput from 'super/i-input/i-input';
-import Store from 'core/store';
-import { field, params, abstract, PARENT } from 'super/i-block/i-block';
-import { component } from 'core/component';
-
-const
-	$C = require('collection.js');
+import $C = require('collection.js');
+import symbolGenerator from 'core/symbol';
+import iInput, { component, prop, field, system, p, ModsDecl, PARENT } from 'super/i-input/i-input';
+export * from 'super/i-input/i-input';
 
 export const
-	$$ = new Store();
+	$$ = symbolGenerator();
+
+export interface Day {
+	active: boolean;
+	disabled: boolean;
+	inRange: boolean;
+	rangeStart: boolean;
+	rangeEnd: boolean;
+	text: string;
+}
+
+export type Directions =
+	'right' |
+	'left';
 
 @component()
 export default class bCalendar extends iInput {
 	/** @override */
-	@params({default: () => new Date()})
-	valueProp: ?Date | Array<Date>;
+	@prop({default: () => new Date()})
+	readonly valueProp!: Date | Date[];
 
 	/** @override */
-	dataType: ?Function = getDataType;
+	readonly dataType: Function = getDataType;
 
-	/**
-	 * If true, then the block value will be marked as UTC
-	 */
-	utc: boolean = false;
+	/** @override */
+	readonly utc: boolean = false;
 
 	/**
 	 * Initial maximum date value
 	 */
-	maxProp: ?string | number | Date;
+	@prop({type: [String, Number, Date], required: false})
+	readonly maxProp?: string | number | Date;
 
 	/**
 	 * Initial minimum date value
 	 */
-	minProp: ?string | number | Date;
+	@prop({type: [String, Number, Date], required: false})
+	readonly minProp?: string | number | Date;
 
 	/**
 	 * Time margin for .min and .max
 	 */
-	timeMargin: number = (1).second();
+	@prop(Number)
+	readonly timeMargin: number = (1).second();
 
 	/** @override */
-	@field((o) => o.link('valueProp', (val) => {
-		if (String(val) !== String(o.valueStore)) {
-			return Object.isArray(val) ? val : [val];
-		}
+	@p({cache: false})
+	get value(): Date[] {
+		return Object.fastClone(this.valueStore);
+	}
 
-		return Object.isArray(o.valueStore) ? o.valueStore : [o.valueStore];
-	}))
+	/** @override */
+	set value(value: Date[]) {
+		const
+			{min, max} = this,
+			store = this.valueStore;
 
-	valueStore: ?Date | Array<Date>;
+		$C(value).forEach((v, i) => {
+			if (min && min.isAfter(v)) {
+				v = min.clone();
+
+			} else if (max && max.isBefore(v)) {
+				v = max.clone();
+			}
+
+			if (!store[i] || Math.abs(store[i].valueOf() - v.valueOf()).seconds() >= this.timeMargin) {
+				this.$set(store, i, v);
+			}
+		});
+	}
+
+	/**
+	 * Date pointer
+	 */
+	get pointer(): Date[] {
+		return Object.fastClone(this.pointerStore);
+	}
+
+	/**
+	 * Sets a new date pointer
+	 * @param value
+	 */
+	set pointer(value: Date[]) {
+		this.pointerStore = value;
+	}
+
+	/**
+	 * Minimum date value
+	 */
+	@p({cache: false})
+	get min(): Date | undefined {
+		return this.minProp != null ? Date.create(this.minProp) : undefined;
+	}
+
+	/**
+	 * Maximum date value
+	 */
+	@p({cache: false})
+	get max(): Date | undefined {
+		return this.maxProp != null ? Date.create(this.maxProp) : undefined;
+	}
 
 	/**
 	 * If true, then will be shown the datepicker range
@@ -76,7 +131,7 @@ export default class bCalendar extends iInput {
 	 * (by default data type is Array)
 	 */
 	@field()
-	isStringInput: ?boolean = false;
+	isStringInput: boolean = false;
 
 	/**
 	 * Dropdown position modifier
@@ -100,13 +155,36 @@ export default class bCalendar extends iInput {
 	 * Available animation directions
 	 */
 	@field()
-	directions: Array = ['right', 'left'];
+	directions: Directions[] = ['right', 'left'];
+
+	/** @inheritDoc */
+	static mods: ModsDecl = {
+		rounding: [
+			PARENT,
+			['small']
+		]
+	};
+
+	/** @override */
+	@field((o) => o.link('valueProp', (val) => {
+		const
+			ctx: bCalendar = <any>o;
+
+		if (String(val) !== String(ctx.valueStore)) {
+			return Object.isArray(val) ? val : [val];
+		}
+
+		return Object.isArray(ctx.valueStore) ? ctx.valueStore : [ctx.valueStore];
+	}))
+
+	protected valueStore!: Date[];
 
 	/**
 	 * Date pointer store
 	 */
 	@field((o) => o.link('valueProp', (val = new Date()) => {
 		const
+			ctx: bCalendar = <any>o,
 			prop = Object.isArray(val) ? val : [val];
 
 		const d = prop.map((v, index) => index > 0 ? prop[index - 1].clone().addMonths(1) : v.clone().beginningOfMonth().set({
@@ -116,24 +194,24 @@ export default class bCalendar extends iInput {
 			millisecond: v.getMilliseconds()
 		}));
 
-		if (o.pointerStore && d.isEqual(o.pointerStore)) {
-			return o.pointerStore;
+		if (ctx.pointerStore && d.isEqual(ctx.pointerStore)) {
+			return ctx.pointerStore;
 		}
 
-		if (o.isShown && o.pointerStore) {
+		if (ctx.isShown && ctx.pointerStore) {
 			const
-				oldMonth = o.pointerStore[0].getMonth(),
+				oldMonth = ctx.pointerStore[0].getMonth(),
 				newMonth = d[0].getMonth();
 
 			if (oldMonth !== newMonth) {
-				o.runMonthSwitching(Number(newMonth > oldMonth));
+				ctx.runMonthSwitching(Number(newMonth > oldMonth));
 			}
 		}
 
 		return d;
 	}))
 
-	pointerStore: ?Date | Array<Date>;
+	protected pointerStore!: Date[];
 
 	/**
 	 * If true, then dropdown is shown.
@@ -146,71 +224,19 @@ export default class bCalendar extends iInput {
 	 * Index for next date selecting (range control)
 	 * @private
 	 */
-	@abstract
-	_nextSelectItem: ?number;
+	@system()
+	_nextSelectItem?: number;
 
 	/** @override */
-	get $refs(): {input: HTMLInputElement} {}
-
-	/** @inheritDoc */
-	static mods = {
-		rounding: [
-			PARENT,
-			['small']
-		],
-
-		theme: [
-			PARENT,
-			['unstyled']
-		]
+	protected $refs!: {
+		input: HTMLInputElement;
 	};
-
-	/** @override */
-	@params({cache: false})
-	get value(): ?Date | Array<Date> {
-		return Object.fastClone(this.valueStore);
-	}
-
-	/** @override */
-	set value(value: ?Date | Array<Date>) {
-		const
-			{min, max} = this;
-
-		$C(value).forEach((v, i) => {
-			if (min && min.isAfter(v)) {
-				v = min.clone();
-
-			} else if (max && max.isBefore(v)) {
-				v = max.clone();
-			}
-
-			if (Math.abs(this.valueStore[i] - v).seconds() >= this.timeMargin) {
-				this.$set(this.valueStore, i, v);
-			}
-		});
-	}
-
-	/**
-	 * The minimum date value
-	 */
-	@params({cache: false})
-	get min(): Date {
-		return this.minProp != null ? Date.create(this.minProp) : undefined;
-	}
-
-	/**
-	 * The maximum date value
-	 */
-	@params({cache: false})
-	get max(): Date {
-		return this.maxProp != null ? Date.create(this.maxProp) : undefined;
-	}
 
 	/**
 	 * Title for a calendar dropdown
 	 */
-	@params({cache: false})
-	get dropdownTitle(): string {
+	@p({cache: false})
+	protected get dropdownTitle(): string {
 		const title = $C(this.pointer).reduce(
 			(str, item, i) => str + (i > 0 ? ' - ' : '') + this.t(item.format('{Month}', 'en')), '');
 
@@ -220,40 +246,73 @@ export default class bCalendar extends iInput {
 	/**
 	 * Month enter class on switching
 	 */
-	@params({cache: false})
-	get animateMonthEnterClass(): string {
+	@p({cache: false})
+	protected get animateMonthEnterClass(): string {
 		return `animated fadeIn${this.directions[Number(!this.monthSwitchDirection)].capitalize()}`;
 	}
 
 	/**
-	 * Date pointer
+	 * Label for a calendar input
 	 */
-	get pointer(): ?Date | Array<Date> {
-		return Object.fastClone(this.pointerStore);
+	protected get labelText(): string {
+		const
+			val = this.value;
+
+		let res;
+		if (this.timeRange) {
+			const from = $C(val)
+				.to('')
+				.reduce((str, v, ind) => str + (ind > 0 && t` to ` || '') + v.format('{HH}:{mm}'));
+
+			res = t`${val[0].format('{dd}.{MM}.{yyyy}')} from ${from}`;
+
+		} else {
+			res = $C(val)
+				.to('')
+				.reduce((str, v, ind) => str + (ind > 0 && ' - ' || '') + v.format('{dd}.{MM}.{yyyy}'));
+		}
+
+		return res.capitalize();
 	}
 
 	/**
-	 * Sets a new date pointer
-	 * @param value
+	 * Returns a list of month days from the specified value date
+	 * @param valueIndex
 	 */
-	set pointer(value: ?Date | Array<Date>) {
-		this.pointerStore = value;
-	}
+	protected getMonthDays(valueIndex: number): Day[][] {
+		const
+			{min, max} = this;
 
-	/**
-	 * List of month days
-	 * @param index - calendar index
-	 */
-	dayInMonth(index: number): Array<Object> {
-		const {min, max} = this;
+		const
+			val = this.value,
+			pointer = this.pointer[valueIndex];
 
-		return $C(new Array(this.pointer[index].daysInMonth())).reduce((arr, el, i) => {
+		if (!pointer) {
+			return [];
+		}
+
+		let
+			d1,
+			d2;
+
+		if (this.dayRange) {
+			d1 = Date.create(val[0].short());
+			d2 = Date.create(val[1].short());
+		}
+
+		return $C(new Array(pointer.daysInMonth())).to([] as Day[][]).reduce((arr, el, i) => {
 			if (!arr.length) {
 				arr.push([]);
 			}
 
 			const
-				day = this.pointer[index].clone().set({date: i + 1});
+				day = pointer.clone().set({date: i + 1}),
+				short = day.short();
+
+			const rangeBorders = this.dayRange ? {
+				isDateStart: d1.is(short),
+				isDateEnd: d2.is(short)
+			} : false;
 
 			if (!arr[0].length) {
 				arr[0] = arr[0].concat(new Array((day.getDay() || 7) - 1).fill({
@@ -266,27 +325,15 @@ export default class bCalendar extends iInput {
 				}
 			}
 
-			const rangeBorders = (() => {
-				if (this.dayRange) {
-					const
-						isDateStart = Date.create(this.value[0].short()).is(day.short()),
-						isDateEnd = Date.create(this.value[1].short()).is(day.short());
-
-					return {isDateStart, isDateEnd};
-				}
-
-				return false;
-			})();
-
 			const
-				active = $C(this.value).some((v) => Boolean(v && Date.create(v.short()).is(day.short())));
+				active = $C(this.value).some((v) => Boolean(v && Date.create(v.short()).is(short)));
 
 			const obj = {
 				active,
 				disabled: Boolean(min && min.isAfter(day) || max && max.isBefore(day)),
 				inRange: Boolean(this.dayRange && day > this.value[0] && day < this.value[1]),
-				rangeStart: rangeBorders.isDateStart,
-				rangeEnd: rangeBorders.isDateEnd,
+				rangeStart: rangeBorders && rangeBorders.isDateStart,
+				rangeEnd: rangeBorders && rangeBorders.isDateEnd,
 				text: String(i + 1)
 			};
 
@@ -295,32 +342,14 @@ export default class bCalendar extends iInput {
 			}
 
 			return arr;
-		}, []);
-	}
-
-	/**
-	 * Label for a calendar input
-	 */
-	get labelText(): string {
-		let label = '';
-		if (this.timeRange) {
-			const day = this.value[0].format('{dd}.{MM}.{yyyy}');
-			label = t`${day} from ${
-				$C(this.value).reduce((str, v, ind) => str + (ind > 0 && t` to ` || '') + v.format('{HH}:{mm}'), '')
-			}`;
-
-		} else {
-			label = $C(this.value).reduce((str, v, ind) => str + (ind > 0 && ' - ' || '') + v.format('{dd}.{MM}.{yyyy}'), '');
-		}
-
-		return label;
+		});
 	}
 
 	/**
 	 * Executes the month switcher
-	 * @param dir - index for directions (0 || 1)
+	 * @param dir - index for directions
 	 */
-	runMonthSwitching(dir: number) {
+	protected runMonthSwitching(dir: 0 | 1): void {
 		this.monthSwitchDirection = dir;
 		this.isMonthSwitchAnimation = true;
 	}
@@ -332,7 +361,7 @@ export default class bCalendar extends iInput {
 	 * @param index - selected item index
 	 * @emits actionChange(value: ?Date | Array<Date>)
 	 */
-	setDates(date: Date, index: ?number): Array<Date> {
+	protected setDate(date: Date, index?: number): Date[] {
 		const
 			now = index !== undefined ? index : this._nextSelectItem !== undefined ? this._nextSelectItem : 0,
 			next = Number(!now);
@@ -464,7 +493,7 @@ export default class bCalendar extends iInput {
 			calendar = Number(target.dataset.calendar);
 
 		if (this.block.getElMod(target, 'day', 'active') !== 'true' || this.value.length > 1) {
-			this.setDates(this.pointer[calendar].clone().set({date: Number(target.textContent)}));
+			this.setDate(this.pointer[calendar].clone().set({date: Number(target.textContent)}));
 		}
 	}
 
@@ -473,7 +502,7 @@ export default class bCalendar extends iInput {
 	 */
 	onTimeChange(el: bInputTime, value: Date) {
 		const {index} = el.$el.dataset;
-		this.setDates(value, Number(index));
+		this.setDate(value, Number(index));
 	}
 
 	/**
