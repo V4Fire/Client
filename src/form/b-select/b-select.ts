@@ -25,6 +25,10 @@ export interface Option {
 	marked?: boolean;
 }
 
+export interface NOption extends Option {
+	value: string;
+}
+
 let
 	openedSelect;
 
@@ -67,22 +71,15 @@ export default class bSelect<T extends Dictionary = Dictionary> extends bInput<T
 	/**
 	 * Select options
 	 */
-	get options(): Option[] {
-		return $C(this.optionsStore).map((el) => {
-			if (el.value !== undefined) {
-				el.value = String(el.value);
-			}
-
-			el.label = String(el.label);
-			return el;
-		});
+	get options(): NOption[] {
+		return this.optionsStore.slice();
 	}
 
 	/**
 	 * Sets new select options
 	 * @param value
 	 */
-	set options(value: Option[]) {
+	set options(value: NOption[]) {
 		this.optionsStore = value;
 	}
 
@@ -110,17 +107,11 @@ export default class bSelect<T extends Dictionary = Dictionary> extends bInput<T
 	 * Select options store
 	 */
 	@field((o) => o.link('optionsProp', (val) => {
-		const
-			ctx: bSelect = <any>o;
-
-		if (ctx.dataProvider || Object.fastCompare(val, ctx.optionsStore)) {
-			return ctx.optionsStore || [];
-		}
-
-		return val;
+		const ctx: bSelect = <any>o;
+		return ctx.dataProvider ? ctx.optionsStore || [] : ctx.normalizeOptions(val);
 	}))
 
-	protected optionsStore!: Option[];
+	protected optionsStore!: NOption[];
 
 	/**
 	 * Selected value store
@@ -175,7 +166,7 @@ export default class bSelect<T extends Dictionary = Dictionary> extends bInput<T
 		await this.close();
 
 		if (this.value || this.selected) {
-			this.value = undefined;
+			this.value = '';
 			await super.clear();
 			return true;
 		}
@@ -256,10 +247,31 @@ export default class bSelect<T extends Dictionary = Dictionary> extends bInput<T
 			val = this.blockConverter ? this.blockConverter(this.db) : this.db;
 
 		if (Object.isArray(val)) {
-			return this.options = <Option[]>val;
+			return this.options = this.normalizeOptions(<Option[]>val);
 		}
 
 		return this.options;
+	}
+
+	/** @override */
+	protected initBaseAPI(): void {
+		super.initBaseAPI();
+		this.normalizeOptions = this.instance.normalizeOptions.bind(this);
+	}
+
+	/**
+	 * Normalizes the specified options and returns it
+	 * @param options
+	 */
+	protected normalizeOptions(options: Option[] | undefined): NOption[] {
+		return $C(options).to([]).map((el) => {
+			if (el.value !== undefined) {
+				el.value = String(el.value);
+			}
+
+			el.label = String(el.label);
+			return el;
+		});
 	}
 
 	/**
@@ -304,7 +316,7 @@ export default class bSelect<T extends Dictionary = Dictionary> extends bInput<T
 	@watch({field: 'selectedStore', immediate: true})
 	protected async syncSelectedStoreWatcher(value: any): Promise<void> {
 		if (value === undefined) {
-			this.value = undefined;
+			this.value = '';
 			return;
 		}
 
