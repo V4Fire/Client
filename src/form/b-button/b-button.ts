@@ -35,61 +35,67 @@ export default class bButton<T extends Dictionary = Dictionary> extends iData<T>
 	 * Request parameters
 	 */
 	@prop({type: [Object, Array], required: false})
-	request?: RequestQuery | RequestBody | [RequestBody | RequestQuery, CreateRequestOptions];
+	readonly request?: RequestQuery | RequestBody | [RequestBody | RequestQuery, CreateRequestOptions];
 
 	/**
 	 * Button type
 	 */
 	@prop(String)
-	type: string = 'button';
+	readonly type: string = 'button';
 
 	/**
 	 * Connected form id
 	 */
 	@prop({type: String, required: false})
-	form?: string;
+	readonly form?: string;
 
 	/**
 	 * Input autofocus mode
 	 */
 	@prop({type: Boolean, required: false})
-	autofocus?: boolean;
+	readonly autofocus?: boolean;
 
 	/**
 	 * Icon before text
 	 */
 	@prop({type: String, required: false})
-	preIcon?: string;
+	readonly preIcon?: string;
 
 	/**
 	 * Component for .preIcon
 	 */
 	@prop(String)
-	preIconComponent?: string = 'b-icon';
+	readonly preIconComponent?: string = 'b-icon';
 
 	/**
 	 * Icon after text
 	 */
 	@prop({type: String, required: false})
-	icon?: string;
+	readonly icon?: string;
 
 	/**
 	 * Component for .icon
 	 */
 	@prop(String)
-	iconComponent: string = 'b-icon';
+	readonly iconComponent: string = 'b-icon';
 
 	/**
 	 * Tooltip text
 	 */
 	@prop({type: String, required: false})
-	hint?: string;
+	readonly hint?: string;
 
 	/**
 	 * Tooltip position
 	 */
 	@prop({type: String, required: false})
-	hintPos?: string;
+	readonly hintPos?: string;
+
+	/**
+	 * Dropdown position
+	 */
+	@prop(String)
+	readonly dropdown: string = 'bottom';
 
 	/** @inheritDoc */
 	static mods: ModsDecl = {
