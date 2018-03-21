@@ -18,12 +18,13 @@ b-icon extends i-block
 	justify-content center
 
 	&__svg
+		display block
 		width $p.size
-		height $p.size
+		height @width
 
 	if $p.color
 		fill $p.color
-		color $p.color
+		color @fill
 
 	else
 		fill currentColor

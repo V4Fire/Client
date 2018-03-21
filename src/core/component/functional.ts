@@ -45,6 +45,7 @@ export function createFakeCtx(
 		$options: Object.assign(Object.create(p.$options), fakeCtx.$options),
 		$createElement: createElement,
 
+		$attrs: renderCtx.data.attrs,
 		$slots: Object.assign(renderCtx.slots(), {default: renderCtx.children}),
 		$scopedSlots: {},
 
@@ -192,12 +193,12 @@ export function patchVNode(vNode: VNode, ctx: Dictionary, renderCtx: RenderConte
 			vData.class = [].concat(vData.class, data.class);
 		}
 
-		if (data.attrs) {
+		if (data.attrs && meta.params.inheritAttrs) {
 			// tslint:disable-next-line
 			vData.attrs = Object.assign(vData.attrs || {}, data.attrs);
 		}
 
-		// Reference to element
+		// Reference to the element
 
 		if (data.ref) {
 			vData.ref = data.ref;
@@ -241,7 +242,7 @@ export function patchVNode(vNode: VNode, ctx: Dictionary, renderCtx: RenderConte
 		}
 	}
 
-	runHook('afterRender', meta, ctx);
+	runHook('afterRender', meta, ctx).catch(stderr);
 	meta.methods.afterRender && meta.methods.afterRender.fn.call(ctx);
 	return vNode;
 }

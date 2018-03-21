@@ -14,6 +14,7 @@ const
 
 const
 	fs = require('fs'),
+	escaper = require('escaper'),
 	path = require('path'),
 	glob = require('glob');
 
@@ -29,22 +30,24 @@ const
 	blocksTree = {};
 
 const
-	isBlockClass = /^\s*export\s+default\s+class\s+(.*?)\s+extends\s+(.*?)\s*{/m,
+	blockClass = /^\s*export\s+default\s+class\s+((.*?)\s+extends\s+.*?)\s*{/m,
 	isFunctional = /^\s*@component\s*\(\s*{.*?\bfunctional\s*:\s*true/m,
-	propsRgxp = /^(\t+)@prop\s*\([\s\S]+?\)+\n+\1([\w$]+)(?:: [ \w|&$?()[\]{}<>'"`:.]+?)?\s*(?:=|;$)/gm,
-	genericRgxp = /<.*/;
+	propsRgxp = /^(\t+)@prop\s*\([\s\S]+?\)+\n+\1([ \w$]+)(?:\??: [ \w|&$?()[\]{}<>'"`:.]+?)?\s*(?:=|;$)/gm,
+	genericRgxp = /<.*/,
+	extendsRgxp = /\s+extends\s+/;
 
 $C(files).forEach((el) => {
 	const
-		file = fs.readFileSync(el, {encoding: 'utf-8'});
+		file = fs.readFileSync(el, {encoding: 'utf-8'}),
+		block = blockClass.exec(file);
 
-	if (!isBlockClass.test(file)) {
+	if (!block) {
 		return;
 	}
 
 	const
-		component = RegExp.$1.replace(genericRgxp, ''),
-		parent = RegExp.$2.replace(genericRgxp, '');
+		component = block[2].replace(genericRgxp, ''),
+		parent = block[1].split(extendsRgxp).slice(-1)[0].replace(genericRgxp, '');
 
 	const obj = blocksTree[component] = blocksTree[component] || {
 		props: {},
@@ -54,7 +57,7 @@ $C(files).forEach((el) => {
 
 	let s;
 	while ((s = propsRgxp.exec(file))) {
-		obj.props[s[2]] = true;
+		obj.props[s[2].split(' ').slice(-1)[0]] = true;
 	}
 });
 
@@ -75,6 +78,7 @@ ss.importFilters({
 	vueComp,
 	vueTag: ss.setFilterParams(vueTag, bind),
 	bem2vue: ss.setFilterParams(bem2vue, bind),
+	getFirstTagElementName,
 	b
 });
 
@@ -271,4 +275,21 @@ function attachClass(arr) {
 	};
 
 	return arr;
+}
+
+function getFirstTagElementName(str) {
+	const
+		escapedStr = escaper.replace(str),
+		tagMatch = /<[^>]+>/.exec(escapedStr);
+
+	if (!tagMatch) {
+		return null;
+	}
+
+	return getElementClassName(escaper.paste(tagMatch[0]));
+}
+
+function getElementClassName(str) {
+	const search = /\b[ibgp]-[a-z0-9][a-z0-9-]*__[a-z0-9][a-z0-9-]*\b/.exec(str);
+	return search ? search[0] : null;
 }

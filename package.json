@@ -34,6 +34,7 @@
     "chart.js": "^2.7.2",
     "collection.js": "^6.6.17",
     "dom4": "^2.0.1",
+    "escaper": "^2.4.34",
     "eventemitter2": "^5.0.1",
     "express": "^4.16.3",
     "fg-loadcss": "^2.0.1",
