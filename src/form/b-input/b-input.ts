@@ -901,15 +901,14 @@ export default class bInput<T extends Dictionary = Dictionary> extends iInput<T>
 	}
 
 	/** @override */
+	protected initModEvents(): void {
+		super.initModEvents();
+		this.bindModTo('empty', 'valueBufferStore', (v) => !v);
+	}
+
+	/** @override */
 	protected initValueEvents(): void {
 		super.initValueEvents();
-
-		this.bindModTo(
-			'empty',
-			'valueBufferStore',
-			(v) => !v
-		);
-
 		this.$watch(
 			'valueBufferStore', async (val = '') => {
 			try {
@@ -926,11 +925,9 @@ export default class bInput<T extends Dictionary = Dictionary> extends iInput<T>
 		}, {immediate: true});
 	}
 
-	/**
-	 * Initializes events for input
-	 */
-	@hook('mounted')
-	protected initInputEvents(): void {
+	/** @override */
+	protected async mounted(): Promise<void> {
+		await super.mounted();
 		this.async.on(this.$el, 'input', (e) => this.valueBufferStore = e.target.value || '', {
 			label: $$.valueBufferStoreModelInput
 		});
