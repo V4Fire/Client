@@ -179,7 +179,7 @@ export default class bPaging extends iBlock {
 	/** @override */
 	protected async mounted(): Promise<void> {
 		await super.mounted();
-		this.async.on(this.$el, 'click', () => this.delegateElement('page', this.onPageClick), {
+		this.async.on(this.$el, 'click', await this.delegateElement('page', this.onPageClick), {
 			label: $$.pageSelection
 		});
 	}
