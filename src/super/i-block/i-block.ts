@@ -902,10 +902,14 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	protected initBaseAPI(): void {
 		this.linkCache = {};
 		this.syncLinkCache = {};
-		this.link = this.instance.link.bind(this);
-		this.createWatchObject = this.instance.createWatchObject.bind(this);
-		this.normalizeMods = this.instance.normalizeMods.bind(this);
-		this.execCbAfterCreated = this.instance.execCbAfterCreated.bind(this);
+
+		const
+			i = this.instance;
+
+		this.link = i.link.bind(this);
+		this.createWatchObject = i.createWatchObject.bind(this);
+		this.normalizeMods = i.normalizeMods.bind(this);
+		this.execCbAfterCreated = i.execCbAfterCreated.bind(this);
 	}
 
 	/**
