@@ -213,7 +213,7 @@ export default class bSelect<T extends Dictionary = Dictionary> extends bInput<T
 					{scroll} = this.$refs;
 
 				if (scroll) {
-					scroll.scrollOffset = <any>{top: selected ? selected.offsetTop : 0};
+					await scroll.setScrollOffset({top: selected ? selected.offsetTop : 0});
 					await scroll.calcScroll();
 				}
 
@@ -346,14 +346,14 @@ export default class bSelect<T extends Dictionary = Dictionary> extends bInput<T
 
 				if (selOffset > scrollHeight) {
 					if (selOffset > scrollTop + scrollHeight) {
-						scroll.scrollOffset = <any>{top: selTop - scrollHeight + selHeight};
+						await scroll.setScrollOffset({top: selTop - scrollHeight + selHeight});
 
 					} else if (selOffset < scrollTop + selected.offsetHeight) {
-						scroll.scrollOffset = <any>{top: selTop};
+						await scroll.setScrollOffset({top: selTop});
 					}
 
 				} else if (selOffset < scrollTop) {
-					scroll.scrollOffset = <any>{top: selTop};
+					await scroll.setScrollOffset({top: selTop});
 				}
 			}
 

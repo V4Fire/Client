@@ -58,7 +58,6 @@ export default class bScroll extends iBlock {
 	 * Scroll offset
 	 */
 	@p({cache: false})
-	// @ts-ignore
 	get scrollOffset(): CanPromise<Offset> {
 		return this.waitState('ready', () => {
 			const {area} = this.$refs;
@@ -67,35 +66,6 @@ export default class bScroll extends iBlock {
 				left: area.scrollLeft
 			};
 		});
-	}
-
-	/**
-	 * Sets a new scroll offset
-	 * @param offset
-	 */
-	// @ts-ignore
-	set scrollOffset(offset: CanPromise<Partial<Offset>>) {
-		const res = this.waitState('ready', async () => {
-			const
-				{top, left} = await offset,
-				{area} = this.$refs;
-
-			if (top !== undefined) {
-				area.scrollTop = top;
-			}
-
-			if (left !== undefined) {
-				area.scrollLeft = left;
-			}
-
-		}, {
-			label: $$.setScrollOffset,
-			defer: true
-		});
-
-		if (res) {
-			res.catch(stderr);
-		}
 	}
 
 	/**
@@ -118,58 +88,16 @@ export default class bScroll extends iBlock {
 	 * Block width
 	 */
 	@p({cache: false})
-	// @ts-ignore
 	get width(): CanPromise<number> {
 		return this.waitState('ready', () => this.$refs.area.clientWidth);
-	}
-
-	/**
-	 * Sets the block width
-	 * @param value
-	 */
-	// @ts-ignore
-	set width(value: CanPromise<number | string>) {
-		const res = this.waitState('ready', async () => {
-			value = await value;
-			this.$refs.area.style.maxWidth = Object.isString(value) ? value : value.px;
-			await this.calcScroll('x');
-		}, {
-			label: $$.setWidth,
-			defer: true
-		});
-
-		if (res) {
-			res.catch(stderr);
-		}
 	}
 
 	/**
 	 * Block height
 	 */
 	@p({cache: false})
-	// @ts-ignore
 	get height(): CanPromise<number> {
 		return this.waitState('ready', () => this.$refs.area.clientHeight);
-	}
-
-	/**
-	 * Sets the block height
-	 * @param value
-	 */
-	// @ts-ignore
-	set height(value: CanPromise<number | string>) {
-		const res = this.waitState('ready', async () => {
-			value = await value;
-			this.$refs.area.style.maxHeight = Object.isString(value) ? value : value.px;
-			await this.calcScroll('y');
-		}, {
-			label: $$.setHeight,
-			defer: true
-		});
-
-		if (res) {
-			res.catch(stderr);
-		}
 	}
 
 	/** @inheritDoc */
@@ -217,6 +145,49 @@ export default class bScroll extends iBlock {
 		scrollerY: HTMLElement;
 		scrollWrapperY: HTMLElement;
 	};
+
+	/**
+	 * Sets a new scroll offset
+	 * @param offset
+	 */
+	@wait('ready', {defer: true, label: $$.setScrollOffset})
+	async setScrollOffset(offset: Partial<Offset>): Promise<Offset> {
+		const
+			{top, left} = offset,
+			{area} = this.$refs;
+
+		if (top !== undefined) {
+			area.scrollTop = top;
+		}
+
+		if (left !== undefined) {
+			area.scrollLeft = left;
+		}
+
+		return this.scrollOffset;
+	}
+
+	/**
+	 * Sets the block width
+	 * @param value
+	 */
+	@wait('ready', {defer: true, label: $$.setWidth})
+	async setWidth(value: number | string): Promise<number> {
+		this.$refs.area.style.maxWidth = Object.isString(value) ? value : value.px;
+		await this.calcScroll('x');
+		return this.width;
+	}
+
+	/**
+	 * Sets the block height
+	 * @param value
+	 */
+	@wait('ready', {defer: true, label: $$.setHeight})
+	async setHeight(value: number | string): Promise<number> {
+		this.$refs.area.style.maxHeight = Object.isString(value) ? value : value.px;
+		await this.calcScroll('y');
+		return this.height;
+	}
 
 	/**
 	 * Initializes the scroll area
