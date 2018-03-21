@@ -79,17 +79,7 @@ export default class bList<T extends Dictionary = Dictionary> extends iData<T> {
 	/**
 	 * Block value
 	 */
-	@field((o) => o.link('valueProp', (val) => {
-		const
-			ctx: bList = <any>o;
-
-		if (Object.fastCompare(val, ctx.value)) {
-			return ctx.value || [];
-		}
-
-		return val;
-	}))
-
+	@field((o) => o.link('valueProp'))
 	value!: Option[];
 
 	/**
@@ -147,7 +137,7 @@ export default class bList<T extends Dictionary = Dictionary> extends iData<T> {
 			return objVal;
 		}
 
-		return Object.fastCompare(val, ctx.activeStore) ? ctx.activeStore : val;
+		return val;
 	}))
 
 	protected activeStore!: any;
