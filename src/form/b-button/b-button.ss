@@ -58,6 +58,9 @@
 							< b-progress-icon v-once
 
 		- block dropdown
-			< _.&__dropdown[.&_pos_bottom] v-if = $slots.dropdown && ifOnce('opened', mods.opened !== 'false')
-				< _.&__dropdown-content
+			< . &
+				v-if = $slots.dropdown && ifOnce('opened', mods.opened !== 'false') |
+				:class = getElClasses({dropdown: {pos: dropdown}})
+			.
+				< .&__dropdown-content
 					+= self.slot('dropdown')
