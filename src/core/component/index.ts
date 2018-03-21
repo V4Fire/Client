@@ -172,21 +172,21 @@ export function getComponentName(constr: Function): string {
  *   *) [functional] - if true, then the component will be created as functional
  *   *) [tpl] - if false, then will be used the default template
  */
-export function component(params: ComponentParams = {}): Function {
-	let p: ComponentParams = {
-		root: false,
-		tpl: true,
-		functional: false,
-		inheritAttrs: false,
-		mixins: {},
-		...params
-	};
-
+export function component(params?: ComponentParams): Function {
 	return (target) => {
 		const
 			name = getComponentName(target),
 			parent = Object.getPrototypeOf(target),
 			parentMeta = components.get(parent);
+
+		let p: ComponentParams = parentMeta ? {...params} : {
+			root: false,
+			tpl: true,
+			functional: false,
+			inheritAttrs: false,
+			mixins: {},
+			...params
+		};
 
 		const meta: ComponentMeta = {
 			name,

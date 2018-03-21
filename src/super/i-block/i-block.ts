@@ -70,6 +70,7 @@ export interface LinkWrapper {
 }
 
 export type ModsTable = Dictionary<ModVal>;
+export type ModsNTable = Dictionary<string | undefined>;
 
 export const
 	$$ = symbolGenerator();
@@ -150,7 +151,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	/**
 	 * Base block modifiers
 	 */
-	get baseMods(): Dictionary<string> {
+	get baseMods(): ModsNTable {
 		const
 			m = this.mods;
 
@@ -163,28 +164,16 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	/**
 	 * Block modifiers
 	 */
-	get mods(): Dictionary {
-		const
-			obj = this.modsStore,
-			map = {};
-
-		for (let keys = Object.keys(obj), i = 0; i < keys.length; i++) {
-			const
-				key = keys[i],
-				el = obj[key];
-
-			map[key] = el != null ? String(el) : el;
-		}
-
-		return map;
+	get mods(): ModsNTable {
+		return {...this.modsStore};
 	}
 
 	/**
 	 * Sets an object of modifiers
 	 * @param value
 	 */
-	set mods(value: Dictionary) {
-		this.modsStore = value;
+	set mods(value: ModsNTable) {
+		this.modsStore = normalizeMods(value);
 	}
 
 	/**
@@ -247,13 +236,37 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	/**
 	 * Store of block modifiers
 	 */
-	@field((o) => o.link('modsProp', (val) => {
-		o.modsStore = o.modsStore || {...o.meta.component.mods};
-		// tslint:disable-next-line
-		return Object.assign(o.modsStore, val);
-	}))
+	@field((o) => {
+		const
+			declMods = o.meta.component.mods,
+			attrMods = <string[][]>[];
 
-	protected modsStore!: ModsTable;
+		for (let attrs = o.$attrs, keys = Object.keys(attrs), i = 0; i < keys.length; i++) {
+			const
+				key = keys[i];
+
+			if (key in declMods) {
+				attrMods.push([key, attrs[key]]);
+				o.$watch(`$attrs.${key}`, (val) => o.modsStore[key] = val);
+			}
+		}
+
+		return o.link('modsProp', (val) => {
+			const
+				declMods = o.meta.component.mods,
+				// tslint:disable-next-line:prefer-object-spread
+				mods = Object.assign(o.modsStore || {...declMods}, val);
+
+			for (let i = 0; i < attrMods.length; i++) {
+				const [key, val] = attrMods[i];
+				mods[key] = val;
+			}
+
+			return normalizeMods(mods);
+		});
+	})
+
+	protected modsStore!: ModsNTable;
 
 	/**
 	 * Cache of ifOnce
@@ -1303,7 +1316,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 * Returns an object with base block modifiers
 	 * @param mods - additional modifiers ({modifier: {currentValue: value}} || {modifier: value})
 	 */
-	protected provideMods(mods?: Dictionary<ModVal | Dictionary<ModVal>>): Dictionary<string> {
+	protected provideMods(mods?: Dictionary<ModVal | Dictionary<ModVal>>): ModsNTable {
 		const
 			key = JSON.stringify(this.baseMods) + JSON.stringify(mods),
 			cache = modsCache[key];
@@ -1491,10 +1504,6 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	}
 }
 
-function defaultI18n(): string {
-	return this.$root.i18n.apply(this.$root, arguments);
-}
-
 /**
  * Hack for i-block decorators
  */
@@ -1531,4 +1540,24 @@ export abstract class iBlockDecorator extends iBlock {
 		converter: ((value: any, ctx: T) => any) | WatchOptions,
 		opts?: WatchOptions
 	): void;
+}
+
+function defaultI18n(): string {
+	return this.$root.i18n.apply(this.$root, arguments);
+}
+
+/**
+ * Normalizes the specified modifier object
+ * @param mods
+ */
+function normalizeMods(mods: Dictionary): ModsNTable {
+	for (let keys = Object.keys(mods), i = 0; i < keys.length; i++) {
+		const
+			key = keys[i],
+			val = mods[key];
+
+		mods[key] = val != null ? String(val) : val;
+	}
+
+	return mods;
 }

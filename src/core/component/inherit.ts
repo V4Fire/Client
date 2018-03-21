@@ -20,7 +20,7 @@ export default function inheritMeta(
 	meta: ComponentMeta,
 	parentMeta: ComponentMeta
 ): ComponentParams {
-	const
+	let
 		p = meta.params;
 
 	const {
@@ -122,11 +122,11 @@ export default function inheritMeta(
 		inject = p.inject || params.inject;
 	}
 
-	///////////////////////////
-	// Props|fields inheritance
-	///////////////////////////
+	///////////////////////////////////
+	// Component parameters inheritance
+	///////////////////////////////////
 
-	const newOpts = {
+	p = meta.params = {
 		...params,
 		...p,
 		mixins: {...params.mixins, ...p.mixins},
@@ -134,6 +134,10 @@ export default function inheritMeta(
 		provide,
 		inject
 	};
+
+	///////////////////////////
+	// Props|fields inheritance
+	///////////////////////////
 
 	{
 		const list = [
@@ -267,5 +271,5 @@ export default function inheritMeta(
 		}
 	}
 
-	return newOpts;
+	return p;
 }
