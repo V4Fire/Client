@@ -55,7 +55,7 @@ export default class iDataPages<T extends Dictionary = Dictionary> extends iData
 	protected readonly requestParams!: Dictionary<Dictionary>;
 
 	/** @override */
-	protected readonly $refs!: {loadPageTrigger: HTMLDivElement};
+	protected readonly $refs!: {loadPageTrigger?: HTMLDivElement};
 
 	/** @override */
 	async initLoad(): Promise<void> {
@@ -136,8 +136,8 @@ export default class iDataPages<T extends Dictionary = Dictionary> extends iData
 	 */
 	@wait('ready')
 	async checkLazyLoad(): Promise<void> {
-		await this.waitRef('loadPageTrigger');
-		if (innerHeight + pageYOffset >= Math.floor(this.$refs.loadPageTrigger.getPosition().top)) {
+		const loadPageTrigger = await this.waitRef<HTMLElement>('loadPageTrigger');
+		if (innerHeight + pageYOffset >= Math.floor(loadPageTrigger.getPosition().top)) {
 			this.async.setTimeout(this.loadPage, 0.3.second(), {label: $$.checkLazyLoad});
 		}
 	}

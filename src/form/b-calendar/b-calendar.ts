@@ -213,7 +213,10 @@ export default class bCalendar<T extends Dictionary = Dictionary> extends iInput
 	protected pointerStore!: Date[];
 
 	/** @override */
-	protected $refs!: {dropdown?: HTMLElement};
+	protected readonly $refs!: {
+		input: HTMLInputElement;
+		dropdown?: HTMLElement;
+	};
 
 	/**
 	 * If true, then
@@ -282,10 +285,9 @@ export default class bCalendar<T extends Dictionary = Dictionary> extends iInput
 
 		if (res) {
 			try {
-				await this.waitRef('dropdown', {label: $$.openedDropdown});
-
 				const
-					offset = (<HTMLElement>this.$refs.dropdown).getBoundingClientRect();
+					dropdown = await this.waitRef<HTMLElement>('dropdown', {label: $$.openedDropdown}),
+					offset = dropdown.getBoundingClientRect();
 
 				if (offset.left < 0) {
 					this.position = 'bottom-right';

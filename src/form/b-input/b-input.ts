@@ -909,13 +909,10 @@ export default class bInput<T extends Dictionary = Dictionary> extends iInput<T>
 	/** @override */
 	protected initValueEvents(): void {
 		super.initValueEvents();
-		this.$watch(
-			'valueBufferStore', async (val = '') => {
+		this.$watch('valueBufferStore', async (val = '') => {
 			try {
-				await this.waitRef('input', {label: $$.valueBufferStoreModel});
-
 				const
-					{input} = this.$refs;
+					input = await this.waitRef<HTMLInputElement>('input', {label: $$.valueBufferStoreModel});
 
 				if (input.value !== val) {
 					input.value = val;

@@ -252,10 +252,7 @@ export default class iInput<T extends Dictionary = Dictionary> extends iData<T> 
 	protected readonly blockValueField: string = 'value';
 
 	/** @override */
-	protected $refs!: {
-		dropdown?: HTMLElement;
-		input?: HTMLInputElement;
-	};
+	protected readonly $refs!: {input?: HTMLInputElement};
 
 	/**
 	 * Block value store
