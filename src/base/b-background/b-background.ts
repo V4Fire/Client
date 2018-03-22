@@ -1,5 +1,3 @@
-'use strict';
-
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -8,23 +6,23 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import Store from 'core/store';
-import iBlock, { abstract, wait } from 'super/i-block/i-block';
-import { component } from 'core/component';
+import symbolGenerator from 'core/symbol';
+import iBlock, { component, system, wait } from 'super/i-block/i-block';
+export * from 'super/i-block/i-block';
 
 export const
-	$$ = new Store();
+	$$ = symbolGenerator();
 
 @component({tpl: false})
 export default class bBackground extends iBlock {
 	/**
 	 * Block cache
 	 */
-	@abstract
-	cache: Object;
+	@system()
+	cache?: Dictionary<string>;
 
 	/** @override */
-	async initLoad() {
+	async initLoad(): Promise<void> {
 		this.cache = await this.loadSettings() || {};
 		this.block.status = this.block.statuses.ready;
 		this.emit('initLoad');
@@ -46,22 +44,27 @@ export default class bBackground extends iBlock {
 	 * @emits applyStyle(className: string, dataURI: string)
 	 */
 	@wait('ready', {label: $$.applyStyle, defer: true})
-	async applyStyle(className: string, dataURI: string) {
+	async applyStyle(className: string, dataURI: string): Promise<void> {
 		if (this.blockName) {
 			className = `${this.blockName}-${className}`;
 		}
 
-		const style = document.createElement('style');
-		style.innerHTML = `
-			.${className} {
-				background-image: url(${dataURI});
-			}
-		`;
+		const style = Object.assign(document.createElement('style'), {
+			innerHTML: `
+				.${className} {
+					background-image: url(${dataURI});
+				}
+			`
+		});
 
-		this.cache[className] = dataURI;
-		this.saveSettings(this.cache);
+		const
+			c = <Dictionary>this.cache;
+
+		c[className] = dataURI;
 		document.head.appendChild(style);
+
 		this.$el.classList.add(className);
 		this.emit('applyStyle', className, dataURI);
+		await this.saveSettings(c);
 	}
 }
