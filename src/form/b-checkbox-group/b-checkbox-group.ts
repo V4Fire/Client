@@ -7,58 +7,80 @@
  */
 
 import $C = require('collection.js');
-import iInput, { component, prop, field } from 'super/i-input/i-input';
+import bCheckbox from 'form/b-checkbox/b-checkbox';
+import iInput, { component, prop, field, p, ValidatorsDecl, BlockConverter } from 'super/i-input/i-input';
 export * from 'super/i-input/i-input';
 
+export interface Option {
+	id: string;
+	name: string;
+	label: string;
+	autofocus?: boolean;
+}
+
 @component()
-export default class bCheckboxGroup extends iInput {
+export default class bCheckboxGroup<T extends Dictionary = Dictionary> extends iInput<T> {
 	/** @override */
-	valueProp: ?any | Array = [];
+	readonly valueProp: any | any[] = [];
 
 	/** @override */
-	@params({default: (obj) => $C(obj).get('data') || obj || []})
-	blockConverter: ?Function;
+	@prop({default: (obj) => $C(obj).get('data') || obj || []})
+	readonly blockConverter!: BlockConverter<Option[]>;
 
 	/**
 	 * Checkbox selection method
 	 */
-	multiple: boolean = true;
+	@prop(Boolean)
+	readonly multiple: boolean = true;
 
 	/**
 	 * Initial checkboxes
 	 */
-	optionsProp: Array<Object> = [];
+	@prop(Array)
+	readonly optionsProp: Option[] = [];
 
 	/**
 	 * Checkbox component
 	 */
-	option: string = 'b-checkbox';
-
-	/** @override */
-	@field((o) => o.link('valueProp', (val) => o.multiple && Object.fromArray(val) || val))
-	valueStore: any;
+	@prop(String)
+	readonly option: string = 'b-checkbox';
 
 	/**
 	 * Checkboxes store
 	 */
 	@field((o) => o.link('optionsProp', (val) => {
-		if (o.dataProvider || Object.fastCompare(val, o.optionsStore)) {
-			return o.options || [];
+		const
+			ctx: bCheckboxGroup = <any>o;
+
+		if (ctx.dataProvider) {
+			return ctx.options || [];
 		}
 
 		return val;
 	}))
 
-	options: Array<Object>;
+	options!: Option[];
+
+	/**
+	 * Array of child checkboxes
+	 */
+	@p({cache: false})
+	get elements(): CanPromise<bCheckbox[]> {
+		return this.waitState('ready', () => $C(this.block.elements('checkbox'))
+			.to([])
+			.map((el) => this.$(el))
+		);
+	}
 
 	/** @override */
-	get $refs(): {input: HTMLInputElement} {}
+	get value(): string | string[] | undefined {
+		return this.multiple ? Object.keys(<Dictionary>this.valueStore) : <string | undefined>this.valueStore;
+	}
 
 	/** @override */
-	@mixin
-	static blockValidators = {
-		/** @this {iInput} */
-		async required({msg, showMsg = true}): boolean {
+	static blockValidators: ValidatorsDecl<bCheckboxGroup> = {
+		...iInput.blockValidators,
+		async required({msg, showMsg = true}: Dictionary): Promise<boolean> {
 			const value = await this.formValue;
 			if (this.multiple ? !value.length : !value) {
 				if (showMsg) {
@@ -78,23 +100,18 @@ export default class bCheckboxGroup extends iInput {
 		}
 	};
 
-	/**
-	 * Array of child checkboxes
-	 */
-	@params({cache: false})
-	get elements(): Array<bCheckbox> {
-		return this.waitState('ready', () => $C(this.block.elements('checkbox')).map((el) => this.$(el)));
-	}
-
 	/** @override */
-	get value(): any {
-		return this.multiple ? Object.keys(this.valueStore) : this.valueStore;
-	}
+	@field((o) => o.link('valueProp', (val) => {
+		const ctx: bCheckboxGroup = <any>o;
+		return ctx.multiple && Object.fromArray(val) || val;
+	}))
 
-	/** @override */
-	set value(value: any) {
+	protected valueStore?: Dictionary<boolean> | string | undefined;
+
+	setValue(name: string, value: boolean) {
 		if (!this.multiple) {
-			return value[1] && this.$set(this, 'valueStore', value[0]);
+			this.valueStore = value ? name : undefined;
+			return;
 		}
 
 		if (Object.isArray(value)) {
@@ -111,24 +128,10 @@ export default class bCheckboxGroup extends iInput {
 	}
 
 	/** @override */
-	initRemoteData(): ?any {
-		if (!this.db) {
-			return;
-		}
-
+	async clear(): Promise<boolean> {
 		const
-			val = this.blockConverter ? this.blockConverter(this.db) : this.db;
+			res = <boolean[]>[];
 
-		if (Object.isArray(val)) {
-			return this.options = val;
-		}
-
-		return this.options;
-	}
-
-	/** @override */
-	async clear(): boolean {
-		const res = [];
 		for (const el of await this.elements) {
 			try {
 				res.push(await el.clear());
@@ -144,8 +147,10 @@ export default class bCheckboxGroup extends iInput {
 	}
 
 	/** @override */
-	async reset(): boolean {
-		const res = [];
+	async reset(): Promise<boolean> {
+		const
+			res = <boolean[]>[];
+
 		for (const el of await this.elements) {
 			try {
 				res.push(await el.reset());
@@ -160,11 +165,27 @@ export default class bCheckboxGroup extends iInput {
 		return false;
 	}
 
+	/** @override */
+	protected initRemoteData(): Option[] | undefined {
+		if (!this.db) {
+			return;
+		}
+
+		const
+			val = this.blockConverter ? this.blockConverter(this.db) : this.db;
+
+		if (Object.isArray(val)) {
+			return this.options = val;
+		}
+
+		return this.options;
+	}
+
 	/**
 	 * Returns true if the specified checkbox is checked
 	 * @param el
 	 */
-	isChecked(el: Object): boolean {
+	protected isChecked(el: Option): boolean {
 		return this.multiple ? this.valueStore[el.name] : this.valueStore === el.name;
 	}
 
@@ -172,7 +193,7 @@ export default class bCheckboxGroup extends iInput {
 	 * Returns true if he specified checkbox can change state
 	 * @param el
 	 */
-	isChangeable(el: Object): boolean {
+	protected isChangeable(el: Option): boolean {
 		return this.multiple || this.value && this.value !== el.name;
 	}
 
@@ -182,7 +203,7 @@ export default class bCheckboxGroup extends iInput {
 	 * @param el
 	 * @param value
 	 */
-	onChange(el: bCheckbox, value: boolean) {
+	protected onChange(el: bCheckbox, value: boolean): void {
 		if (el.name) {
 			this.value = [el.name, value];
 		}
@@ -195,7 +216,7 @@ export default class bCheckboxGroup extends iInput {
 	 * @param value
 	 * @emits actionChange(value: ?any | Array)
 	 */
-	onActionChange(el: bCheckbox, value: boolean) {
+	protected onActionChange(el: bCheckbox, value: boolean): void {
 		if (el.name) {
 			this.value = [el.name, value];
 			this.emit('actionChange', this.value);
