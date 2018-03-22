@@ -90,6 +90,7 @@ export default class bInputNumber<T extends Dictionary = Dictionary> extends bIn
 
 	/**
 	 * Block value converter
+	 * @param [value]
 	 */
 	protected convertValue(value: any): number | undefined {
 		if (!isNaN(value)) {
