@@ -6,8 +6,10 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+// tslint:disable:max-file-line-count
 import $C = require('collection.js');
 import symbolGenerator from 'core/symbol';
+import bInputTime from 'form/b-input-time/b-input-time';
 import iInput, { component, prop, field, system, p, ModsDecl, PARENT } from 'super/i-input/i-input';
 export * from 'super/i-input/i-input';
 
@@ -34,7 +36,11 @@ export default class bCalendar extends iInput {
 	readonly valueProp!: Date | Date[];
 
 	/** @override */
-	readonly dataType: Function = getDataType;
+	@prop({default(): Date | Date[] {
+		return this.stringInput ? this.value[0] : this.value;
+	}})
+
+	readonly dataType!: Function;
 
 	/** @override */
 	readonly utc: boolean = false;
@@ -115,47 +121,20 @@ export default class bCalendar extends iInput {
 	}
 
 	/**
-	 * If true, then will be shown the datepicker range
+	 * If true, then the block has a datepicker range
 	 */
-	@field()
-	dayRange: boolean = false;
+	get dayRange(): boolean {
+		const v = this.valueProp;
+		return Object.isArray(v) && v.length > 1;
+	}
 
 	/**
-	 * If true, then wil be shown the time range
+	 * If true, then the block has a time range
 	 */
-	@field()
-	timeRange: boolean = false;
-
-	/**
-	 * Flag for setting a date parameter as Date
-	 * (by default data type is Array)
-	 */
-	@field()
-	isStringInput: boolean = false;
-
-	/**
-	 * Dropdown position modifier
-	 */
-	@field()
-	position: string = 'bottom';
-
-	/**
-	 * Direction of smooth switching month animation
-	 */
-	@field()
-	monthSwitchDirection: number = 0;
-
-	/**
-	 * Flag for start month switch animation
-	 */
-	@field()
-	isMonthSwitchAnimation: boolean = false;
-
-	/**
-	 * Available animation directions
-	 */
-	@field()
-	directions: Directions[] = ['right', 'left'];
+	get timeRange(): boolean {
+		const v = this.valueProp;
+		return this.dayRange && v[0].short() === v[1].short();
+	}
 
 	/** @inheritDoc */
 	static mods: ModsDecl = {
@@ -165,18 +144,38 @@ export default class bCalendar extends iInput {
 		]
 	};
 
+	/**
+	 * If true, then dropdown is shown
+	 */
+	@field()
+	protected shown: boolean = false;
+
+	/**
+	 * Dropdown position modifier
+	 */
+	@field()
+	protected position: string = 'bottom';
+
+	/**
+	 * Direction of smooth switching month animation
+	 */
+	@field()
+	protected monthSwitchDirection: number = 0;
+
+	/**
+	 * Flag for start month switch animation
+	 */
+	@field()
+	protected monthSwitchAnimation: boolean = false;
+
+	/**
+	 * Available animation directions
+	 */
+	@field()
+	protected directions: Directions[] = ['right', 'left'];
+
 	/** @override */
-	@field((o) => o.link('valueProp', (val) => {
-		const
-			ctx: bCalendar = <any>o;
-
-		if (String(val) !== String(ctx.valueStore)) {
-			return Object.isArray(val) ? val : [val];
-		}
-
-		return Object.isArray(ctx.valueStore) ? ctx.valueStore : [ctx.valueStore];
-	}))
-
+	@field((o) => o.link('valueProp', (val) => Object.isArray(val) ? val : [val]))
 	protected valueStore!: Date[];
 
 	/**
@@ -198,13 +197,13 @@ export default class bCalendar extends iInput {
 			return ctx.pointerStore;
 		}
 
-		if (ctx.isShown && ctx.pointerStore) {
+		if (ctx.shown && ctx.pointerStore) {
 			const
 				oldMonth = ctx.pointerStore[0].getMonth(),
 				newMonth = d[0].getMonth();
 
 			if (oldMonth !== newMonth) {
-				ctx.runMonthSwitching(Number(newMonth > oldMonth));
+				ctx.runMonthSwitching(<0 | 1>Number(newMonth > oldMonth));
 			}
 		}
 
@@ -213,24 +212,18 @@ export default class bCalendar extends iInput {
 
 	protected pointerStore!: Date[];
 
-	/**
-	 * If true, then dropdown is shown.
-	 * Needed to fit dropdown in window (reposition by class name)
-	 */
-	@field()
-	isShown: boolean = false;
-
-	/**
-	 * Index for next date selecting (range control)
-	 * @private
-	 */
-	@system()
-	_nextSelectItem?: number;
-
 	/** @override */
-	protected $refs!: {
-		input: HTMLInputElement;
-	};
+	protected $refs!: {dropdown: HTMLElement};
+
+	/**
+	 * If true, then
+	 *
+	 * Flag for setting a date parameter as Date
+	 * (by default data type is Array)
+	 */
+	protected get stringInput(): boolean {
+		return Object.isArray(this.valueProp);
+	}
 
 	/**
 	 * Title for a calendar dropdown
@@ -244,7 +237,7 @@ export default class bCalendar extends iInput {
 	}
 
 	/**
-	 * Month enter class on switching
+	 * Month enter class for switching
 	 */
 	@p({cache: false})
 	protected get animateMonthEnterClass(): string {
@@ -256,7 +249,8 @@ export default class bCalendar extends iInput {
 	 */
 	protected get labelText(): string {
 		const
-			val = this.value;
+			val = this.value,
+			date = '{dd}.{MM}.{yyyy}';
 
 		let res;
 		if (this.timeRange) {
@@ -264,15 +258,59 @@ export default class bCalendar extends iInput {
 				.to('')
 				.reduce((str, v, ind) => str + (ind > 0 && t` to ` || '') + v.format('{HH}:{mm}'));
 
-			res = t`${val[0].format('{dd}.{MM}.{yyyy}')} from ${from}`;
+			res = t`${val[0].format(date)} from ${from}`;
 
 		} else {
 			res = $C(val)
 				.to('')
-				.reduce((str, v, ind) => str + (ind > 0 && ' - ' || '') + v.format('{dd}.{MM}.{yyyy}'));
+				.reduce((str, v, ind) => str + (ind > 0 && ' - ' || '') + v.format(date));
 		}
 
 		return res.capitalize();
+	}
+
+	/**
+	 * Index for next date selecting (range control)
+	 */
+	@system()
+	private nextSelectItem?: number;
+
+	/** @override */
+	async open(): Promise<boolean> {
+		const
+			res = await super.open();
+
+		if (res) {
+			try {
+				await this.waitRef('dropdown', {label: $$.openedDropdown});
+
+				const
+					offset = this.$refs.dropdown.getBoundingClientRect();
+
+				if (offset.left < 0) {
+					this.position = 'bottom-right';
+
+				} else if (offset.right > window.outerWidth) {
+					this.position = 'bottom-left';
+				}
+
+				this.shown = true;
+			} catch (_) {}
+		}
+
+		return res;
+	}
+
+	/** @override */
+	async close(): Promise<boolean> {
+		const
+			res = await super.close();
+
+		if (res) {
+			this.shown = false;
+		}
+
+		return res;
 	}
 
 	/**
@@ -351,7 +389,7 @@ export default class bCalendar extends iInput {
 	 */
 	protected runMonthSwitching(dir: 0 | 1): void {
 		this.monthSwitchDirection = dir;
-		this.isMonthSwitchAnimation = true;
+		this.monthSwitchAnimation = true;
 	}
 
 	/**
@@ -363,7 +401,7 @@ export default class bCalendar extends iInput {
 	 */
 	protected setDate(date: Date, index?: number): Date[] {
 		const
-			now = index !== undefined ? index : this._nextSelectItem !== undefined ? this._nextSelectItem : 0,
+			now = index !== undefined ? index : this.nextSelectItem !== undefined ? this.nextSelectItem : 0,
 			next = Number(!now);
 
 		let
@@ -376,72 +414,21 @@ export default class bCalendar extends iInput {
 				nowShort = selectedDays[now].short(),
 				nextShort = selectedDays[next].short();
 
-			if (nowShort !== nextShort) {
-				if (now === 0) {
-					selectedDays[next] = date.clone().endOfDay();
-
-				} else {
-					this.timeRange = false;
-				}
+			if (nowShort !== nextShort && now === 0) {
+				selectedDays[next] = date.clone().endOfDay();
 			}
 
-			this._nextSelectItem = next;
-			selectedDays = selectedDays.sort(this.sortDates);
+			this.nextSelectItem = next;
+			selectedDays = selectedDays.sort((a, b) => a.isAfter(b) ? 1 : b.isAfter(a) ? -1 : 0);
 
 		} else {
 			selectedDays[now] = date;
-			this.timeRange = false;
 		}
 
 		this.value = selectedDays;
-		this.emit('actionChange', this.isStringInput ? this.value[0] : this.value);
+		this.emit('actionChange', this.stringInput ? this.value[0] : this.value);
 
 		return this.value;
-	}
-
-	/**
-	 * Date sort function
-	 */
-	sortDates(a: Date, b: Date): number {
-		return a.isAfter(b) ? 1 : b.isAfter(a) ? -1 : 0;
-	}
-
-	/** @override */
-	async open(): boolean {
-		const
-			res = await super.open();
-
-		if (res) {
-			try {
-				await this.waitRef('dropdown', {label: $$.openedDropdown});
-
-				const
-					offset = this.$refs.dropdown.getBoundingClientRect();
-
-				if (offset.left < 0) {
-					this.position = 'bottom-right';
-
-				} else if (offset.right > window.outerWidth) {
-					this.position = 'bottom-left';
-				}
-
-				this.isShown = true;
-			} catch (_) {}
-		}
-
-		return res;
-	}
-
-	/** @override */
-	async close(): boolean {
-		const
-			res = await super.close();
-
-		if (res) {
-			this.isShown = false;
-		}
-
-		return res;
 	}
 
 	/**
@@ -451,17 +438,21 @@ export default class bCalendar extends iInput {
 	 * @param index - calendar index
 	 * @emits actionChange(value: ?Date | Array<Date>)
 	 */
-	async onSwitchDay(days: number, index: number = 0) {
+	protected async onSwitchDay(days: number, index: number = 0): Promise<void> {
 		const selectedDay = Object.isArray(this.value) ? this.value : [this.value];
 		selectedDay[index] = selectedDay[index].addDays(days);
 
 		this.value = selectedDay;
-		this.emit('actionChange', this.isStringInput ? this.value[0] : this.value);
+		this.emit('actionChange', this.stringInput ? this.value[0] : this.value);
 
-		if (this.value[index].format('{MM}:{yyyy}') !== this.pointer[index].format('{MM}:{yyyy}')) {
-			this.$set(this.pointerStore, index, this.pointer[index].set({
-				month: this.value[index].getMonth(),
-				year: this.value[index].getFullYear()
+		const
+			val = this.value[index],
+			pointer = this.pointer[index];
+
+		if (val.format('{MM}:{yyyy}') !== pointer.format('{MM}:{yyyy}')) {
+			this.$set(this.pointerStore, index, pointer.set({
+				month: val.getMonth(),
+				year: val.getFullYear()
 			}));
 		}
 
@@ -472,7 +463,7 @@ export default class bCalendar extends iInput {
 	 * Handler: month switch
 	 * @param months - number of switching months
 	 */
-	async onSwitchMonth(months: number) {
+	protected async onSwitchMonth(months: number): Promise<void> {
 		$C(this.pointer).forEach((el, i) => {
 			this.$set(this.pointerStore, i, el.addMonths(months));
 		});
@@ -487,9 +478,9 @@ export default class bCalendar extends iInput {
 	 * @param e
 	 * @emits actionChange(value: ?Date | Array<Date>)
 	 */
-	onDaySelect(e: Event) {
+	protected onDaySelect(e: Event): void {
 		const
-			target = e.delegateTarget,
+			target = <HTMLElement>e.delegateTarget,
 			calendar = Number(target.dataset.calendar);
 
 		if (this.block.getElMod(target, 'day', 'active') !== 'true' || this.value.length > 1) {
@@ -500,43 +491,29 @@ export default class bCalendar extends iInput {
 	/**
 	 * Handler: time change
 	 */
-	onTimeChange(el: bInputTime, value: Date) {
-		const {index} = el.$el.dataset;
+	protected onTimeChange(el: bInputTime, value: Date): void {
+		const {index} = (<HTMLElement>el.$el).dataset;
 		this.setDate(value, Number(index));
 	}
 
 	/**
 	 * Handler: month animation transition end
 	 */
-	async onMonthSwitchEnd() {
-		this.isMonthSwitchAnimation = false;
+	protected async onMonthSwitchEnd(): Promise<void> {
+		this.monthSwitchAnimation = false;
 	}
 
 	/** @override */
-	created() {
-		this.$watch('valueProp', (val) => {
-			if (!Object.isArray(val)) {
-				this.isStringInput = true;
-				this.dayRange = false;
-
-			} else {
-				this.dayRange = val.length > 1;
-				this.timeRange = this.dayRange && val[0].short() === val[1].short();
-			}
-		}, {immediate: true});
-
+	protected created(): void {
+		super.created();
 		this.initCloseHelpers();
 	}
 
-	/** @inheritDoc */
-	mounted() {
-		this.async.on(this.$el, 'click', {
-			label: $$.daySelection,
-			fn: this.delegateElement('day', this.onDaySelect)
+	/** @override */
+	protected async mounted(): Promise<void> {
+		await super.mounted();
+		this.async.on(this.$el, 'click', await this.delegateElement('day', this.onDaySelect), {
+			label: $$.daySelection
 		});
 	}
-}
-
-function getDataType(): Array | Date {
-	return this.isStringInput ? this.value[0] : this.value;
 }
