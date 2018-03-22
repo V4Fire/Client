@@ -66,7 +66,7 @@ export type WatchObjectField =
 
 export type WatchObjectFields = Array<WatchObjectField>;
 export interface LinkWrapper {
-	(this: this, value: any): any;
+	(this: this, value: any, oldValue: any): any;
 }
 
 export type ModsTable = Dictionary<ModVal>;
@@ -173,7 +173,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 * @param value
 	 */
 	set mods(value: ModsNTable) {
-		this.modsStore = normalizeMods(value);
+		this.modsStore = this.normalizeMods(value);
 	}
 
 	/**
@@ -262,7 +262,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 				mods[key] = val;
 			}
 
-			return normalizeMods(mods);
+			return o.normalizeMods(mods);
 		});
 	})
 
@@ -902,9 +902,30 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	protected initBaseAPI(): void {
 		this.linkCache = {};
 		this.syncLinkCache = {};
-		this.link = this.instance.link.bind(this);
-		this.createWatchObject = this.instance.createWatchObject.bind(this);
-		this.execCbAfterCreated = this.instance.execCbAfterCreated.bind(this);
+
+		const
+			i = this.instance;
+
+		this.link = i.link.bind(this);
+		this.createWatchObject = i.createWatchObject.bind(this);
+		this.normalizeMods = i.normalizeMods.bind(this);
+		this.execCbAfterCreated = i.execCbAfterCreated.bind(this);
+	}
+
+	/**
+	 * Normalizes the specified modifier object
+	 * @param mods
+	 */
+	protected normalizeMods(mods: Dictionary): ModsNTable {
+		for (let keys = Object.keys(mods), i = 0; i < keys.length; i++) {
+			const
+				key = keys[i],
+				val = mods[key];
+
+			mods[key] = val != null ? String(val) : val;
+		}
+
+		return mods;
 	}
 
 	/**
@@ -1054,8 +1075,10 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 		if (!(path in this.linkCache)) {
 			this.linkCache[path] = {};
 			this.execCbAfterCreated(() => {
-				this.$watch(field, (val) => {
-					this.setField(path, wrapper ? wrapper.call(this, val) : val);
+				this.$watch(field, (val, oldVal) => {
+					if (!Object.fastCompare(val, oldVal)) {
+						this.setField(path, wrapper ? wrapper.call(this, val, oldVal) : val);
+					}
 				}, <WatchOptions>watchParams);
 			});
 
@@ -1146,8 +1169,10 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 				if (!$C(linkCache).get(l)) {
 					$C(linkCache).set(true, l);
 					this.execCbAfterCreated(() => {
-						this.$watch(field, (val) => {
-							this.setField(l, wrapper ? wrapper.call(this, val) : val);
+						this.$watch(field, (val, oldVal) => {
+							if (!Object.fastCompare(val, oldVal)) {
+								this.setField(l, wrapper ? wrapper.call(this, val, oldVal) : val);
+							}
 						}, <WatchOptions>watchParams);
 					});
 
@@ -1167,7 +1192,11 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 					$C(linkCache).set(true, l);
 
 					this.execCbAfterCreated(() => {
-						this.$watch(el, (val) => this.setField(l, val), <WatchOptions>watchParams);
+						this.$watch(el, (val, oldVal) => {
+							if (!Object.fastCompare(val, oldVal)) {
+								this.setField(l, val);
+							}
+						}, <WatchOptions>watchParams);
 					});
 
 					syncLinkCache[el] = () => this.setField(l, this.getField(el));
@@ -1522,6 +1551,7 @@ export abstract class iBlockDecorator extends iBlock {
 	public abstract link(field: string, wrapper?: LinkWrapper): any;
 	// tslint:disable-next-line:unified-signatures
 	public abstract link(field: string, watchParams?: WatchOptions, wrapper?: LinkWrapper): any;
+	public abstract normalizeMods(mods: Dictionary): ModsNTable;
 
 	public abstract createWatchObject(
 		path: string,
@@ -1544,20 +1574,4 @@ export abstract class iBlockDecorator extends iBlock {
 
 function defaultI18n(): string {
 	return this.$root.i18n.apply(this.$root, arguments);
-}
-
-/**
- * Normalizes the specified modifier object
- * @param mods
- */
-function normalizeMods(mods: Dictionary): ModsNTable {
-	for (let keys = Object.keys(mods), i = 0; i < keys.length; i++) {
-		const
-			key = keys[i],
-			val = mods[key];
-
-		mods[key] = val != null ? String(val) : val;
-	}
-
-	return mods;
 }

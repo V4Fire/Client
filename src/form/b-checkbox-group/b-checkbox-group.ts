@@ -1,5 +1,3 @@
-'use strict';
-
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -8,12 +6,9 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import iInput from 'super/i-input/i-input';
-import { field, params, mixin } from 'super/i-block/i-block';
-import { component } from 'core/component';
-
-const
-	$C = require('collection.js');
+import $C = require('collection.js');
+import iInput, { component, prop, field } from 'super/i-input/i-input';
+export * from 'super/i-input/i-input';
 
 @component()
 export default class bCheckboxGroup extends iInput {

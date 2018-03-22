@@ -132,7 +132,7 @@ export default class iMessage extends iBlock {
 				}
 			}, {group});
 
-			$a.on(document, 'keyup', (e) => {
+			$a.on(document, 'click', (e) => {
 				if (!e.target.closest(`.${this.blockId}`)) {
 					return this.close();
 				}

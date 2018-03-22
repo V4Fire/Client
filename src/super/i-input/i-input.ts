@@ -101,60 +101,6 @@ export default class iInput<T extends Dictionary = Dictionary> extends iData<T> 
 	@system()
 	prevValue: any;
 
-	/** @inheritDoc */
-	static mods: ModsDecl = {
-		form: [
-			['true'],
-			'false'
-		],
-
-		valid: [
-			'true',
-			'false'
-		]
-	};
-
-	/**
-	 * Block validators
-	 */
-	static blockValidators: ValidatorsDecl = {
-		/** @this {iInput} */
-		async required({msg, showMsg = true}: Dictionary): Promise<boolean> {
-			if (!await this.formValue) {
-				if (showMsg) {
-					this.error = msg || t`Required field`;
-				}
-
-				return false;
-			}
-
-			return true;
-		}
-	};
-
-	/**
-	 * Block value field name
-	 */
-	@field()
-	protected readonly blockValueField: string = 'value';
-
-	/**
-	 * Block value store
-	 */
-	@field((o) => o.link('valueProp', (val) => {
-		const
-			ctx: iInput = <any>o;
-
-		if (val === undefined && ctx.instance.blockValueField === 'value') {
-			o.localEvent.once('component.created', () => ctx.valueStore = ctx.default);
-			return;
-		}
-
-		return val;
-	}))
-
-	protected valueStore: any;
-
 	/**
 	 * Link to the block validators
 	 */
@@ -267,6 +213,62 @@ export default class iInput<T extends Dictionary = Dictionary> extends iData<T> 
 			return this.formValue;
 		})();
 	}
+
+	/** @inheritDoc */
+	static mods: ModsDecl = {
+		form: [
+			['true'],
+			'false'
+		],
+
+		valid: [
+			'true',
+			'false'
+		]
+	};
+
+	/**
+	 * Block validators
+	 */
+	static blockValidators: ValidatorsDecl = {
+		async required({msg, showMsg = true}: Dictionary): Promise<boolean> {
+			if (!await this.formValue) {
+				if (showMsg) {
+					this.error = msg || t`Required field`;
+				}
+
+				return false;
+			}
+
+			return true;
+		}
+	};
+
+	/**
+	 * Block value field name
+	 */
+	@field()
+	protected readonly blockValueField: string = 'value';
+
+	/** @override */
+	protected readonly $refs!: {input?: HTMLInputElement};
+
+	/**
+	 * Block value store
+	 */
+	@field((o) => o.link('valueProp', (val) => {
+		const
+			ctx: iInput = <any>o;
+
+		if (val === undefined && ctx.instance.blockValueField === 'value') {
+			o.localEvent.once('component.created', () => ctx.valueStore = ctx.default);
+			return;
+		}
+
+		return val;
+	}))
+
+	protected valueStore: any;
 
 	/** @override */
 	@wait('ready')

@@ -17,7 +17,6 @@ export const
 	group = 'validation';
 
 export default <ValidatorsDecl>{
-	/** @this {bInput} */
 	async name({msg, skipLength, showMsg = true}: Dictionary): Promise<boolean> {
 		const
 			value = await this.formValue;
@@ -52,7 +51,6 @@ export default <ValidatorsDecl>{
 		return true;
 	},
 
-	/** @this {bInput} */
 	async nameNotExists({url, msg, own, showMsg = true}: Dictionary): Promise<boolean | null> {
 		const
 			value = await this.formValue;
@@ -94,7 +92,6 @@ export default <ValidatorsDecl>{
 		});
 	},
 
-	/** @this {bInput} */
 	async email({msg, showMsg = true}: Dictionary): Promise<boolean | null> {
 		const
 			value = (await this.formValue).trim();
@@ -110,7 +107,6 @@ export default <ValidatorsDecl>{
 		return true;
 	},
 
-	/** @this {bInput} */
 	async emailNotExists({url, msg, own, showMsg = true}: Dictionary): Promise<boolean | null> {
 		const
 			value = await this.formValue;
@@ -151,7 +147,6 @@ export default <ValidatorsDecl>{
 		});
 	},
 
-	/** @this {bInput} */
 	async password({msg, connected, old, skipLength, showMsg = true}: Dictionary): Promise<boolean> {
 		const
 			value = await this.formValue;
@@ -224,7 +219,6 @@ export default <ValidatorsDecl>{
 		return true;
 	},
 
-	/** @this {bInput} */
 	async dateFromInput({msg, showMsg = true}: Dictionary): Promise<boolean> {
 		const
 			value = await this.formValue;
