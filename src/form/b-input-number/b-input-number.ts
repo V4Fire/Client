@@ -19,61 +19,82 @@ export default class bInputNumber<T extends Dictionary = Dictionary> extends bIn
 	readonly type: string = 'number';
 
 	/** @override */
-	dataType: Function = convert;
+	@prop({default(value: string): number | undefined {
+		return this.convertValue(value);
+	}})
+
+	readonly dataType!: Function;
 
 	/** @override */
-	resetButton: boolean = false;
+	readonly resetButton: boolean = false;
 
 	/**
 	 * Position of block controllers
 	 */
 	@prop(String)
-	controllersPos: string = 'left';
+	readonly controllersPos: string = 'left';
 
 	/**
 	 * Value of a step
 	 */
 	@prop(Number)
-	step: number = 1;
+	readonly step: number = 1;
 
 	/**
 	 * Maximum value
 	 */
 	@prop({type: Number, required: false})
-	max?: number;
+	readonly max?: number;
 
 	/**
 	 * Minimum value
 	 */
 	@prop({type: Number, required: false})
-	min?: number;
+	readonly min?: number;
 
-	/** @override */
-	get value(): number | undefined {
-		return convert(this.valueStore);
+	/**
+	 * Returns the block value as a number
+	 */
+	get numValue(): number | undefined {
+		return this.convertValue(this.valueStore);
 	}
 
-	/** @override */
-	get default(): number | undefined {
-		return convert(this.defaultProp);
-	}
+	/**
+	 * Sets a value to the block
+	 * @param [value]
+	 */
+	setValue(value: string | number | undefined): number | undefined {
+		let
+			v = this.convertValue(value);
 
-	/** @override */
-	set value(value: any) {
-		if (isNaN(value)) {
+		if (v === undefined) {
 			return;
 		}
 
-		value = Number(value);
-		if (this.min != null && value < this.min) {
-			value = this.min;
+		if (this.min != null && v < this.min) {
+			v = this.min;
 
-		} else if (this.max != null && value > this.max) {
-			value = this.max;
+		} else if (this.max != null && v > this.max) {
+			v = this.max;
 		}
 
-		// tslint:disable-next-line
-		super['valueSetter'](value);
+		this.value = String(v);
+		return v;
+	}
+
+	/** @override */
+	protected initBaseAPI(): void {
+		super.initBaseAPI();
+		this.convertValue = this.instance.convertValue.bind(this);
+	}
+
+	/**
+	 * Block value converter
+	 */
+	protected convertValue(value: any): number | undefined {
+		if (!isNaN(value)) {
+			return Number(value);
+		}
 	}
 
 	/**
@@ -83,16 +104,7 @@ export default class bInputNumber<T extends Dictionary = Dictionary> extends bIn
 	 * @emits actionChange(value: number)
 	 */
 	protected onInc(factor: number): void {
-		this.value = (this.value || 0) + factor * this.step;
+		this.setValue((this.numValue || 0) + factor * this.step);
 		this.emit('actionChange', this.value);
-	}
-}
-
-/**
- * Block value converter
- */
-function convert(value: any): number | undefined {
-	if (!isNaN(value)) {
-		return Number(value);
 	}
 }
