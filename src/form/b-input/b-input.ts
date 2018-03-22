@@ -19,7 +19,6 @@ import iInput, {
 	field,
 	system,
 	wait,
-	hook,
 	ModsDecl,
 	ValidatorsDecl,
 	PARENT

@@ -11,12 +11,9 @@ import $C = require('collection.js');
 import symbolGenerator from 'core/symbol';
 import KeyCodes from 'core/keyCodes';
 import bScrollInline from 'base/b-scroll/b-scroll-inline/b-scroll-inline';
-import bInput, { component, prop, field, system, watch, mod, wait } from 'form/b-input/b-input';
+import bInput, { component, prop, field, system, watch, mod, wait, BlockConverter } from 'form/b-input/b-input';
+
 export * from 'form/b-input/b-input';
-
-export const
-	$$ = symbolGenerator();
-
 export interface Option {
 	label: string;
 	inputLabel?: string;
@@ -28,6 +25,9 @@ export interface Option {
 export interface NOption extends Option {
 	value: string;
 }
+
+export const
+	$$ = symbolGenerator();
 
 let
 	openedSelect;
@@ -42,7 +42,7 @@ let
 export default class bSelect<T extends Dictionary = Dictionary> extends bInput<T> {
 	/** @override */
 	@prop({default: (obj) => $C(obj).get('data') || obj || []})
-	readonly blockConverter?: Function;
+	readonly blockConverter?: BlockConverter<Option[]>;
 
 	/**
 	 * Initial select options
@@ -237,7 +237,7 @@ export default class bSelect<T extends Dictionary = Dictionary> extends bInput<T
 	}
 
 	/** @override */
-	protected initRemoteData(): any {
+	protected initRemoteData(): NOption[] | undefined {
 		if (!this.db) {
 			return;
 		}
@@ -246,7 +246,7 @@ export default class bSelect<T extends Dictionary = Dictionary> extends bInput<T
 			val = this.blockConverter ? this.blockConverter(this.db) : this.db;
 
 		if (Object.isArray(val)) {
-			return this.options = this.normalizeOptions(<Option[]>val);
+			return this.options = this.normalizeOptions(val);
 		}
 
 		return this.options;

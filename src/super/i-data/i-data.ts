@@ -59,6 +59,10 @@ export interface CreateRequestOptions<T = any> extends BaseCreateRequestOptions<
 	hideProgress?: boolean;
 }
 
+export interface BlockConverter<T = any> {
+	(value: any): T;
+}
+
 export type ModelMethods = 'get' | 'post' | 'add' | 'upd' | 'del';
 
 export const
@@ -101,7 +105,7 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 	 * Converter from .db to the block format
 	 */
 	@prop({type: Function, watch: 'initRemoteData', required: false})
-	readonly blockConverter?: Function;
+	readonly blockConverter?: BlockConverter;
 
 	/**
 	 * Event emitter object for working with a data provider
@@ -366,7 +370,7 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 	/**
 	 * Initializes remote data
 	 */
-	protected initRemoteData(): any {
+	protected initRemoteData(): any | undefined {
 		return undefined;
 	}
 

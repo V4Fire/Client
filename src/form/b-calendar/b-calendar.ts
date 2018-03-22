@@ -11,11 +11,8 @@ import $C = require('collection.js');
 import symbolGenerator from 'core/symbol';
 import bInputTime from 'form/b-input-time/b-input-time';
 import iInput, { component, prop, field, system, p, ModsDecl, PARENT } from 'super/i-input/i-input';
+
 export * from 'super/i-input/i-input';
-
-export const
-	$$ = symbolGenerator();
-
 export interface Day {
 	active: boolean;
 	disabled: boolean;
@@ -25,9 +22,10 @@ export interface Day {
 	text: string;
 }
 
-export type Directions =
-	'right' |
-	'left';
+export type Directions = 'right' | 'left';
+
+export const
+	$$ = symbolGenerator();
 
 @component()
 export default class bCalendar<T extends Dictionary = Dictionary> extends iInput<T> {
