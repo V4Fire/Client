@@ -231,7 +231,6 @@ export default class iInput<T extends Dictionary = Dictionary> extends iData<T> 
 	 * Block validators
 	 */
 	static blockValidators: ValidatorsDecl = {
-		/** @this {iInput} */
 		async required({msg, showMsg = true}: Dictionary): Promise<boolean> {
 			if (!await this.formValue) {
 				if (showMsg) {
