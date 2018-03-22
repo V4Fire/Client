@@ -30,7 +30,7 @@ export type Directions =
 	'left';
 
 @component()
-export default class bCalendar extends iInput {
+export default class bCalendar<T extends Dictionary = Dictionary> extends iInput<T> {
 	/** @override */
 	@prop({default: () => new Date()})
 	readonly valueProp!: Date | Date[];
