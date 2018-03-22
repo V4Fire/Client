@@ -15,7 +15,7 @@ export default class bGroup extends iData {
 	 * Group title
 	 */
 	@prop(String)
-	title: string = '';
+	readonly title: string = '';
 
 	/** @override */
 	async initLoad(): Promise<void> {
