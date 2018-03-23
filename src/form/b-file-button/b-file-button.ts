@@ -16,6 +16,13 @@ export interface Test {
 	(file: File): boolean;
 }
 
+export type ReadType =
+	'readAsArrayBuffer' |
+	'readAsBinaryString' |
+	'readAsBlob' |
+	'readAsDataURL' |
+	'readAsText';
+
 export const
 	$$ = symbolGenerator();
 
@@ -37,7 +44,7 @@ export default class bFileButton extends bButton {
 	 * Read type
 	 */
 	@prop(String)
-	read: string = 'readAsDataURL';
+	read: ReadType = 'readAsDataURL';
 
 	/** @override */
 	protected readonly $refs!: bButton['$refs'] & {
