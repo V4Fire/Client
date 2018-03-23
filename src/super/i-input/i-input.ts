@@ -256,18 +256,7 @@ export default class iInput<T extends Dictionary = Dictionary> extends iData<T> 
 	/**
 	 * Block value store
 	 */
-	@field((o) => o.link('valueProp', (val) => {
-		const
-			ctx: iInput = <any>o;
-
-		if (val === undefined && ctx.instance.blockValueField === 'value') {
-			o.localEvent.once('component.created', () => ctx.valueStore = ctx.default);
-			return;
-		}
-
-		return val;
-	}))
-
+	@field((o) => o.link('valueProp'))
 	protected valueStore: any;
 
 	/** @override */
@@ -419,8 +408,15 @@ export default class iInput<T extends Dictionary = Dictionary> extends iData<T> 
 	 */
 	@hook('created')
 	protected initValueEvents(): void {
-		const k = this.blockValueField;
-		this.$watch(k + (`${k}Store` in this ? 'Store' : ''), this.onBlockValueChange);
+		const
+			k = this.blockValueField,
+			f = k + (`${k}Store` in this ? 'Store' : '');
+
+		if (this[f] === undefined) {
+			this[k] = this.default;
+		}
+
+		this.$watch(f, this.onBlockValueChange);
 		this.on('actionChange', () => this.validate());
 	}
 }
