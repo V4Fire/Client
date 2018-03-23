@@ -71,7 +71,7 @@ export function getComponent(
 
 				let val;
 				if (el.init) {
-					val = el.init(ctx);
+					val = el.init(ctx, data);
 				}
 
 				// tslint:disable-next-line
@@ -84,6 +84,7 @@ export function getComponent(
 				}
 			}
 
+			runHook('beforeDataCreate', meta, this, data).catch(stderr);
 			return data;
 		},
 
@@ -114,7 +115,7 @@ export function getComponent(
 
 				let val;
 				if (el.init) {
-					val = el.init(ctx);
+					val = el.init(ctx, ctx);
 				}
 
 				// tslint:disable-next-line
@@ -251,7 +252,7 @@ export function getFunctionalComponent(
 	const
 		props = {};
 
-	const ctx = component.ctx = Object.assign(Object.create(vueProto), {
+	component.ctx = Object.assign(Object.create(vueProto), {
 		meta,
 		instance,
 		componentName: name,
@@ -284,8 +285,11 @@ export function getFunctionalComponent(
  * @param hook
  * @param meta
  * @param ctx - link to context
+ * @param args - event arguments
  */
-export async function runHook(hook: string, meta: ComponentMeta, ctx: Object): Promise<void> {
+export async function runHook(hook: string, meta: ComponentMeta, ctx: Dictionary, ...args: any[]): Promise<void> {
+	ctx.hook = hook;
+
 	if (!meta.hooks[hook].length) {
 		return;
 	}
@@ -344,7 +348,7 @@ export async function runHook(hook: string, meta: ComponentMeta, ctx: Object): P
 			el = hooks[i];
 
 		event.on(el.after, async () => {
-			await el.fn.call(ctx);
+			await el.fn.apply(ctx, args);
 			await event.emit(el.name || Math.random().toString());
 		});
 	}
@@ -521,11 +525,28 @@ export function addMethodsToMeta(constructor: Function, meta: ComponentMeta): vo
 
 			const
 				old = obj[key],
-				set = desc.set || old && old.set;
+				set = desc.set || old && old.set,
+				get = desc.get || old && old.get;
 
 			if (set) {
-				meta.methods[`${key}Setter`] = {
+				const
+					k = `${key}Setter`;
+
+				proto[k] = set;
+				meta.methods[k] = {
 					fn: set,
+					watchers: {},
+					hooks: {}
+				};
+			}
+
+			if (get) {
+				const
+					k = `${key}Getter`;
+
+				proto[k] = get;
+				meta.methods[k] = {
+					fn: get,
 					watchers: {},
 					hooks: {}
 				};

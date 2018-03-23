@@ -59,16 +59,18 @@ export interface FieldWatcher extends WatchOptions {
 
 export interface ComponentProp extends PropOptions {
 	watchers: Map<string | Function, FieldWatcher>;
+	default?: any;
 }
 
 export interface InitFieldFn<T extends VueInterface = VueInterface> {
-	(ctx: T): any;
+	(ctx: T, data: Dictionary): Dictionary;
 }
 
 export interface ComponentField<T extends VueInterface = VueInterface> {
-	default?: any;
+	after: Set<string>;
 	watchers: Map<string | Function, FieldWatcher>;
 	init?: InitFieldFn<T>;
+	default?: any;
 }
 
 export interface SystemField<T extends VueInterface = VueInterface> {
@@ -89,6 +91,7 @@ export interface MethodWatcher extends WatchOptions {
 export type Hooks =
 	'beforeRuntime' |
 	'beforeCreate' |
+	'beforeDataCreate' |
 	'created' |
 	'beforeMount' |
 	'mounted' |
@@ -202,6 +205,7 @@ export function component(params?: ComponentParams): Function {
 			hooks: {
 				beforeRuntime: [],
 				beforeCreate: [],
+				beforeDataCreate: [],
 				created: [],
 				beforeMount: [],
 				mounted: [],

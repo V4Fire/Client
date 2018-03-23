@@ -153,7 +153,10 @@ export default function inheritMeta(
 			for (let keys = Object.keys(parentObj), i = 0; i < keys.length; i++) {
 				const
 					key = keys[i],
-					parent = parentObj[key],
+					parent = parentObj[key];
+
+				const
+					after = new Set(),
 					watchers = new Map();
 
 				if (parent.watchers) {
@@ -162,7 +165,13 @@ export default function inheritMeta(
 					}
 				}
 
-				o[key] = {...parent, watchers};
+				if ('after' in parent) {
+					for (let a = parent.after.values(), el = a.next(); !el.done; el = a.next()) {
+						after.add(el);
+					}
+				}
+
+				o[key] = {...parent, after, watchers};
 			}
 		}
 	}
