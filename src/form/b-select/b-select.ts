@@ -116,18 +116,7 @@ export default class bSelect<T extends Dictionary = Dictionary> extends bInput<T
 	/**
 	 * Selected value store
 	 */
-	@field((o) => o.link('selectedProp', (val) => {
-		const
-			ctx: bSelect = <any>o;
-
-		if (val === undefined) {
-			o.localEvent.once('component.created', () => ctx.selectedStore = ctx.default);
-			return;
-		}
-
-		return val;
-	}))
-
+	@field((o) => o.link('selectedProp', (val) => (<any>o).initDefaultValue(val)))
 	protected selectedStore?: any;
 
 	/**
