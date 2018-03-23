@@ -63,7 +63,7 @@ export interface ComponentProp extends PropOptions {
 }
 
 export interface InitFieldFn<T extends VueInterface = VueInterface> {
-	(ctx: T, data: Dictionary): Dictionary;
+	(ctx: T, data: Dictionary): any;
 }
 
 export interface ComponentField<T extends VueInterface = VueInterface> {

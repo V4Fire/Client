@@ -8,7 +8,7 @@
 
 // tslint:disable:max-file-line-count
 import Vue, { ComponentOptions, FunctionalComponentOptions } from 'vue';
-import { ComponentMeta } from 'core/component';
+import { ComponentField, ComponentMeta } from 'core/component';
 
 export interface ComponentConstructor<T = any> {
 	new(): T;
@@ -60,30 +60,7 @@ export function getComponent(
 		provide: p.provide,
 		inject: p.inject,
 		data(): Dictionary {
-			const
-				ctx = this as any,
-				data = {} as Dictionary;
-
-			for (let o = meta.fields, keys = Object.keys(o), i = 0; i < keys.length; i++) {
-				const
-					key = ctx.$activeField = keys[i],
-					el = o[key];
-
-				let val;
-				if (el.init) {
-					val = el.init(ctx, data);
-				}
-
-				// tslint:disable-next-line
-				if (val === undefined) {
-					val = el.default !== undefined ? el.default : Object.fastClone(instance[key]);
-					data[key] = val === undefined ? ctx[key] : val;
-
-				} else {
-					data[key] = val;
-				}
-			}
-
+			const data = initDataObject(meta.fields, this, instance);
 			runHook('beforeDataCreate', meta, this, data).catch(stderr);
 			return data;
 		},
@@ -108,26 +85,7 @@ export function getComponent(
 				});
 			}
 
-			for (let o = meta.systemFields, keys = Object.keys(o), i = 0; i < keys.length; i++) {
-				const
-					key = ctx.$activeField = keys[i],
-					el = o[key];
-
-				let val;
-				if (el.init) {
-					val = el.init(ctx, ctx);
-				}
-
-				// tslint:disable-next-line
-				if (val === undefined) {
-					val = el.default !== undefined ? el.default : Object.fastClone(instance[key]);
-					this[key] = val === undefined ? this[key] : val;
-
-				} else {
-					this[key] = val;
-				}
-			}
-
+			initDataObject(meta.systemFields, this, instance, this);
 			runHook('beforeCreate', meta, this).then(async () => {
 				if (methods.beforeCreate) {
 					await methods.beforeCreate.fn.call(this);
@@ -277,6 +235,82 @@ export function getFunctionalComponent(
 		inject: p.inject,
 		render: component.render
 	};
+}
+
+/**
+ * Initializes fields to the specified data object and returns it
+ *
+ * @param fields
+ * @param ctx - component context
+ * @param instance - component class instance
+ * @param [data] - data object
+ */
+export function initDataObject(
+	fields: Dictionary<ComponentField>,
+	ctx: Dictionary,
+	instance: Dictionary,
+	data: Dictionary = {}
+): Dictionary {
+	const
+		queue = new Set();
+
+	while (true) {
+		for (let o = fields, keys = Object.keys(o), i = 0; i < keys.length; i++) {
+			const
+				key = ctx.$activeField = keys[i],
+				el = o[key];
+
+			if (key in data) {
+				continue;
+			}
+
+			const initVal = () => {
+				queue.delete(key);
+
+				let
+					val;
+
+				if (el.init) {
+					val = el.init(<any>ctx, data);
+				}
+
+				// tslint:disable-next-line
+				if (val === undefined) {
+					val = el.default !== undefined ? el.default : Object.fastClone(instance[key]);
+					data[key] = val === undefined ? ctx[key] : val;
+
+				} else {
+					data[key] = val;
+				}
+			};
+
+			if (el.after.size) {
+				let
+					res = true;
+
+				for (let o = el.after.values(), val = o.next(); !val.done; val = o.next()) {
+					if (!(val.value in data)) {
+						queue.add(key);
+						res = false;
+						break;
+					}
+				}
+
+				if (res) {
+					initVal();
+				}
+
+			} else {
+				initVal();
+			}
+		}
+
+		if (!queue.size) {
+			break;
+		}
+	}
+
+	return data;
 }
 
 /**

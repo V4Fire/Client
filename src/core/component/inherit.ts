@@ -167,7 +167,7 @@ export default function inheritMeta(
 
 				if ('after' in parent) {
 					for (let a = parent.after.values(), el = a.next(); !el.done; el = a.next()) {
-						after.add(el);
+						after.add(el.value);
 					}
 				}
 
