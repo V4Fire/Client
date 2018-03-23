@@ -199,7 +199,8 @@ export default class bInput<T extends Dictionary = Dictionary> extends iInput<T>
 	 * Value buffer
 	 */
 	@field({
-		init: (o) => o.link('valueProp'),
+		init: (o, data) => o.link('valueProp', (val) => val === undefined ? data.valueStore : val),
+		after: 'valueStore',
 		watch: {
 			fn: 'onValueBufferUpdate',
 			immediate: true
