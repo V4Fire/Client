@@ -256,7 +256,7 @@ export default class iInput<T extends Dictionary = Dictionary> extends iData<T> 
 	/**
 	 * Block value store
 	 */
-	@field((o) => o.link('valueProp'))
+	@field((o) => o.link('valueProp', (val) => (<any>o).initDefaultValue(val)))
 	protected valueStore: any;
 
 	/** @override */
@@ -370,6 +370,12 @@ export default class iInput<T extends Dictionary = Dictionary> extends iData<T> 
 	}
 
 	/** @override */
+	protected initBaseAPI(): void {
+		super.initBaseAPI();
+		this.initDefaultValue = this.instance.initDefaultValue.bind(this);
+	}
+
+	/** @override */
 	protected initRemoteData(): any | undefined {
 		if (!this.db) {
 			return;
@@ -404,19 +410,30 @@ export default class iInput<T extends Dictionary = Dictionary> extends iData<T> 
 	}
 
 	/**
+	 * Initializes a default value (if needed) for the blockValue field
+	 * @param value - blockValue field value
+	 */
+	protected initDefaultValue(value: any): any {
+		const
+			i = this.instance,
+			k = i.blockValueField,
+			f = this.$activeField;
+
+		if (value !== undefined || f !== k && f !== `${k}Store`) {
+			return value;
+		}
+
+		// tslint:disable-next-line
+		return i['defaultGetter'].call(this);
+	}
+
+	/**
 	 * Initializes events for valueStore
 	 */
 	@hook('created')
 	protected initValueEvents(): void {
-		const
-			k = this.blockValueField,
-			f = k + (`${k}Store` in this ? 'Store' : '');
-
-		if (this[f] === undefined) {
-			this[k] = this.default;
-		}
-
-		this.$watch(f, this.onBlockValueChange);
+		const k = this.blockValueField;
+		this.$watch(k + (`${k}Store` in this ? 'Store' : ''), this.onBlockValueChange);
 		this.on('actionChange', () => this.validate());
 	}
 }

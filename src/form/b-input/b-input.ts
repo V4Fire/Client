@@ -901,6 +901,12 @@ export default class bInput<T extends Dictionary = Dictionary> extends iInput<T>
 	}
 
 	/** @override */
+	protected initDefaultMods(data: Dictionary): void {
+		super.initDefaultMods(data);
+		data.modsStore.empty = String(!data.valueBufferStore);
+	}
+
+	/** @override */
 	protected initModEvents(): void {
 		super.initModEvents();
 		this.bindModTo('empty', 'valueBufferStore', (v) => !v);

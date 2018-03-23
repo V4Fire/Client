@@ -896,6 +896,15 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	}
 
 	/**
+	 * Initializes default modifier values
+	 * @param data
+	 */
+	@hook('beforeDataCreate')
+	protected initDefaultMods(data: Dictionary): void {
+		return undefined;
+	}
+
+	/**
 	 * Initializes core block API
 	 */
 	@hook('beforeRuntime')
@@ -1422,10 +1431,6 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 			{async: $a, localEvent: $e} = this;
 
 		$e.on('block.mod.set.**', (e) => {
-			if (this.modsStore[e.name] !== e.value) {
-				console.log(e.name, e.value, this.modsStore[e.name]);
-			}
-
 			this.$set(this.modsStore, e.name, e.value);
 		});
 
