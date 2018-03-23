@@ -134,8 +134,13 @@ export default class Block<T extends iBlock> {
 
 		this.localEvent.once('block.status.loading', () => {
 			for (let keys = Object.keys(mods), i = 0; i < keys.length; i++) {
-				const name = keys[i];
-				this.setMod(name, mods[name]);
+				const
+					name = keys[i],
+					val = mods[name];
+
+				if (val !== undefined) {
+					this.setMod(name, val);
+				}
 			}
 		});
 
