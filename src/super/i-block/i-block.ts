@@ -223,7 +223,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	/**
 	 * Block initialize status
 	 */
-	@field()
+	@system()
 	protected blockStatus: string = statuses[statuses.unloaded];
 
 	/**
@@ -1421,8 +1421,20 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 		const
 			{async: $a, localEvent: $e} = this;
 
-		$e.on('block.mod.set.**', (e) => this.$set(this.modsStore, e.name, e.value));
-		$e.on('block.mod.remove.**', (e) => this.$set(this.modsStore, e.name, undefined));
+		$e.on('block.mod.set.**', (e) => {
+			if (this.modsStore[e.name] !== e.value) {
+				console.log(e.name, e.value, this.modsStore[e.name]);
+			}
+
+			this.$set(this.modsStore, e.name, e.value);
+		});
+
+		$e.on('block.mod.remove.**', (e) => {
+			if (e.reason === 'removeMod') {
+				this.$set(this.modsStore, e.name, undefined);
+			}
+		});
+
 		$e.on('block.mod.*.disabled.*', (e) => {
 			if (e.value === 'false' || e.type === 'remove') {
 				$a.off({group: 'blockOnDisable'});
