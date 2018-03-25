@@ -161,7 +161,8 @@ export default function inheritMeta(
 
 				if (parent.watchers) {
 					for (let w = parent.watchers.values(), el = w.next(); !el.done; el = w.next()) {
-						watchers.set(el.value.fn, {...el.value});
+						const val = el.value;
+						watchers.set(val.fn, {...el.value});
 					}
 				}
 
