@@ -1199,7 +1199,6 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 
 				if (!$C(linkCache).get(l)) {
 					$C(linkCache).set(true, l);
-
 					this.execCbAfterCreated(() => {
 						this.$watch(el, (val, oldVal) => {
 							if (!Object.fastCompare(val, oldVal)) {
