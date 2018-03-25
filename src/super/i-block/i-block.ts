@@ -509,17 +509,17 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 * @param [blockName] - name of the source block
 	 * @param mods - map of modifiers
 	 */
-	getBlockClasses(blockName: string | undefined, mods: ModsTable): string[] {
+	getBlockClasses(blockName: string | undefined, mods: ModsTable): ReadonlyArray<string> {
 		const
 			key = JSON.stringify(mods) + blockName,
 			cache = classesCache[key];
 
 		if (cache) {
-			return cache;
+			return cache.slice();
 		}
 
 		const
-			classes = [this.getFullBlockName(blockName)];
+			classes = classesCache[key] = [this.getFullBlockName(blockName)];
 
 		for (let keys = Object.keys(mods), i = 0; i < keys.length; i++) {
 			const mod = keys[i];
@@ -665,7 +665,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 * Sets g-hint for the specified element
 	 * @param [pos] - hint position
 	 */
-	protected setHint(pos: string = 'bottom'): string[] {
+	protected setHint(pos: string = 'bottom'): ReadonlyArray<string> {
 		return this.getBlockClasses('g-hint', {pos});
 	}
 
@@ -673,7 +673,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 * Returns an array of element classes by the specified parameters
 	 * @param els - map of elements with map of modifiers ({button: {focused: true}})
 	 */
-	protected getElClasses(els: Dictionary<ModsTable>): string[] {
+	protected getElClasses(els: Dictionary<ModsTable>): ReadonlyArray<string> {
 		const
 			key = JSON.stringify(els) + this.blockId,
 			cache = classesCache[key];
@@ -683,7 +683,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 		}
 
 		const
-			classes = [this.blockId];
+			classes = classesCache[key] = [this.blockId];
 
 		for (let keys = Object.keys(els), i = 0; i < keys.length; i++) {
 			const
@@ -705,7 +705,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 			}
 		}
 
-		return classes;
+		return Object.freeze(classes);
 	}
 
 	/**
@@ -1315,9 +1315,17 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 * Returns an object with classes for elements of an another component
 	 * @param classes - additional classes ({baseElementName: newElementName})
 	 */
-	protected provideClasses(classes?: Classes): Dictionary<string> {
+	protected provideClasses(classes?: Classes): Readonly<Dictionary<string>> {
 		const
-			map = {};
+			key = JSON.stringify(classes),
+			cache = classesCache[key];
+
+		if (cache) {
+			return cache;
+		}
+
+		const
+			map = classesCache[key] = {};
 
 		if (classes) {
 			const
@@ -1346,14 +1354,14 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 			}
 		}
 
-		return map;
+		return Object.freeze(map);
 	}
 
 	/**
 	 * Returns an object with base block modifiers
 	 * @param mods - additional modifiers ({modifier: {currentValue: value}} || {modifier: value})
 	 */
-	protected provideMods(mods?: Dictionary<ModVal | Dictionary<ModVal>>): ModsNTable {
+	protected provideMods(mods?: Dictionary<ModVal | Dictionary<ModVal>>): Readonly<ModsNTable> {
 		const
 			key = JSON.stringify(this.baseMods) + JSON.stringify(mods),
 			cache = modsCache[key];
@@ -1363,7 +1371,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 		}
 
 		const
-			map = {...this.baseMods};
+			map = modsCache[key] = {...this.baseMods};
 
 		if (mods) {
 			const
@@ -1390,7 +1398,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 			}
 		}
 
-		return map;
+		return Object.freeze(map);
 	}
 
 	/**
