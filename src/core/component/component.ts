@@ -69,10 +69,21 @@ export function getComponent(
 			const
 				ctx = this as any;
 
-			ctx.meta = meta;
-			ctx.componentName = meta.name;
 			ctx.instance = instance;
-			runHook('beforeRuntime', meta, this).catch(stderr);
+			ctx.componentName = meta.name;
+
+			ctx.meta = Object.assign(Object.create(meta), {
+				watchers: Object.create(meta.watchers),
+				hooks: Object.create(meta.hooks)
+			});
+
+			for (let o = ctx.meta.hooks, keys = Object.keys(meta.hooks), i = 0; i < keys.length; i++) {
+				const key = keys[i];
+				o[key] = o[key].slice();
+			}
+
+			runHook('beforeRuntime', meta, this)
+				.catch(stderr);
 
 			for (let o = meta.accessors, keys = Object.keys(o), i = 0; i < keys.length; i++) {
 				const
