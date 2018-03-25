@@ -76,8 +76,24 @@ export const
 	$$ = symbolGenerator();
 
 const
-	classesCache = Object.createDict(),
 	modsCache = Object.createDict();
+
+const classesCache = {
+	base: Object.createDict(),
+	blocks: Object.createDict(),
+	els: Object.createDict(),
+	create(nms: 'base' | 'blocks' | 'els', cacheKey?: string): Dictionary {
+		const
+			cache = classesCache[nms];
+
+		if (cacheKey) {
+			cache[cacheKey] = cache[cacheKey] || {};
+			return cache[cacheKey];
+		}
+
+		return cache;
+	}
+};
 
 @component()
 export default class iBlock extends VueInterface<iBlock, iPage> {
@@ -512,14 +528,14 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	getBlockClasses(blockName: string | undefined, mods: ModsTable): ReadonlyArray<string> {
 		const
 			key = JSON.stringify(mods) + blockName,
-			cache = classesCache[key];
+			cache = classesCache.create('blocks', this.componentName);
 
-		if (cache) {
-			return cache.slice();
+		if (cache[key]) {
+			return cache[key];
 		}
 
 		const
-			classes = classesCache[key] = [this.getFullBlockName(blockName)];
+			classes = cache[key] = [this.getFullBlockName(blockName)];
 
 		for (let keys = Object.keys(mods), i = 0; i < keys.length; i++) {
 			const mod = keys[i];
@@ -675,15 +691,15 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 */
 	protected getElClasses(els: Dictionary<ModsTable>): ReadonlyArray<string> {
 		const
-			key = JSON.stringify(els) + this.blockId,
-			cache = classesCache[key];
+			key = JSON.stringify(els),
+			cache = classesCache.create('els', this.blockId);
 
-		if (cache) {
-			return cache;
+		if (cache[key]) {
+			return cache[key];
 		}
 
 		const
-			classes = classesCache[key] = [this.blockId];
+			classes = cache[key] = [this.blockId];
 
 		for (let keys = Object.keys(els), i = 0; i < keys.length; i++) {
 			const
@@ -1318,14 +1334,14 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	protected provideClasses(classes?: Classes): Readonly<Dictionary<string>> {
 		const
 			key = JSON.stringify(classes),
-			cache = classesCache[key];
+			cache = classesCache.create('base');
 
-		if (cache) {
-			return cache;
+		if (cache[key]) {
+			return cache[key];
 		}
 
 		const
-			map = classesCache[key] = {};
+			map = cache[key] = {};
 
 		if (classes) {
 			const
@@ -1363,11 +1379,10 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 */
 	protected provideMods(mods?: Dictionary<ModVal | Dictionary<ModVal>>): Readonly<ModsNTable> {
 		const
-			key = JSON.stringify(this.baseMods) + JSON.stringify(mods),
-			cache = modsCache[key];
+			key = JSON.stringify(this.baseMods) + JSON.stringify(mods);
 
-		if (cache) {
-			return cache;
+		if (modsCache[key]) {
+			return modsCache[key];
 		}
 
 		const
@@ -1541,6 +1556,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 		});
 
 		this.block.status = this.block.statuses.inactive;
+		delete classesCache.els[this.blockId];
 	}
 
 	/**
