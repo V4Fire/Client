@@ -181,7 +181,11 @@ export default class bInputTime<T extends Dictionary = Dictionary> extends bInpu
 		buffer: Date | undefined = pointer
 	): Date | undefined {
 		if (!pointer || !buffer) {
-			return undefined;
+			if (value === undefined) {
+				return undefined;
+			}
+
+			pointer = buffer = new Date();
 		}
 
 		const
