@@ -65,11 +65,14 @@ export default class bCheckboxGroup<T extends Dictionary = Dictionary> extends i
 	 * Array of child checkboxes
 	 */
 	@p({cache: false})
-	get elements(): CanPromise<bCheckbox[]> {
-		return this.waitState('ready', () => $C(this.block.elements('checkbox'))
-			.to([])
-			.map((el) => this.$(el))
-		);
+	get elements(): CanPromise<ReadonlyArray<bCheckbox>> {
+		return this.waitState('ready', () => {
+			const els = $C(this.block.elements('checkbox'))
+				.to([])
+				.map((el) => this.$(el));
+
+			return Object.freeze(els);
+		});
 	}
 
 	/** @override */
