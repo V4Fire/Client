@@ -60,14 +60,17 @@ export function getComponent(
 		provide: p.provide,
 		inject: p.inject,
 		data(): Dictionary {
-			const data = initDataObject(meta.fields, this, instance);
-			runHook('beforeDataCreate', meta, this, data).catch(stderr);
+			const
+				ctx = <any>this,
+				data = initDataObject(meta.fields, ctx, instance);
+
+			runHook('beforeDataCreate', ctx.meta, ctx, data).catch(stderr);
 			return data;
 		},
 
 		beforeCreate(): void {
 			const
-				ctx = this as any;
+				ctx = <any>this;
 
 			ctx.instance = instance;
 			ctx.componentName = meta.name;
@@ -82,7 +85,7 @@ export function getComponent(
 				o[key] = o[key].slice();
 			}
 
-			runHook('beforeRuntime', meta, this)
+			runHook('beforeRuntime', ctx.meta, ctx)
 				.catch(stderr);
 
 			for (let o = meta.accessors, keys = Object.keys(o), i = 0; i < keys.length; i++) {
@@ -90,21 +93,24 @@ export function getComponent(
 					key = keys[i],
 					el = o[key];
 
-				Object.defineProperty(this, keys[i], {
+				Object.defineProperty(ctx, keys[i], {
 					get: el.get,
 					set: el.set
 				});
 			}
 
-			initDataObject(meta.systemFields, this, instance, this);
-			runHook('beforeCreate', meta, this).then(async () => {
+			initDataObject(meta.systemFields, ctx, instance, ctx);
+			runHook('beforeCreate', meta, ctx).then(async () => {
 				if (methods.beforeCreate) {
-					await methods.beforeCreate.fn.call(this);
+					await methods.beforeCreate.fn.call(ctx);
 				}
 			}, stderr);
 		},
 
 		created(): void {
+			const
+				ctx = <any>this;
+
 			for (let o = meta.watchers, keys = Object.keys(o), i = 0; i < keys.length; i++) {
 				const
 					key = keys[i],
@@ -117,87 +123,110 @@ export function getComponent(
 							fn = el.handler;
 
 						if (Object.isString(fn)) {
-							if (!Object.isFunction(this[fn])) {
+							if (!Object.isFunction(ctx[fn])) {
 								throw new ReferenceError(`The specified method (${fn}) for watching is not defined`);
 							}
 
-							this[fn](a, b);
+							ctx[fn](a, b);
 
 						} else {
-							fn(this, a, b);
+							fn(ctx, a, b);
 						}
 					}});
 				}
 			}
 
-			runHook('created', meta, this).then(async () => {
+			runHook('created', ctx.meta, ctx).then(async () => {
 				if (methods.created) {
-					await methods.created.fn.call(this);
+					await methods.created.fn.call(ctx);
 				}
 			}, stderr);
 		},
 
 		beforeMount(): void {
-			runHook('beforeMount', meta, this).then(async () => {
+			const
+				ctx = <any>this;
+
+			runHook('beforeMount', ctx.meta, ctx).then(async () => {
 				if (methods.beforeMount) {
-					await methods.beforeMount.fn.call(this);
+					await methods.beforeMount.fn.call(ctx);
 				}
 			}, stderr);
 		},
 
 		mounted(): void {
-			this.$el.vueComponent = this;
-			runHook('mounted', meta, this).then(async () => {
+			const
+				ctx = this.$el.vueComponent = <any>this;
+
+			runHook('mounted', ctx.meta, ctx).then(async () => {
 				if (methods.mounted) {
-					await methods.mounted.fn.call(this);
+					await methods.mounted.fn.call(ctx);
 				}
 			}, stderr);
 		},
 
 		beforeUpdate(): void {
-			runHook('beforeUpdate', meta, this).then(async () => {
+			const
+				ctx = <any>this;
+
+			runHook('beforeUpdate', ctx.meta, ctx).then(async () => {
 				if (methods.beforeUpdate) {
-					await methods.beforeUpdate.fn.call(this);
+					await methods.beforeUpdate.fn.call(ctx);
 				}
 			}, stderr);
 		},
 
 		updated(): void {
-			runHook('updated', meta, this).then(async () => {
+			const
+				ctx = <any>this;
+
+			runHook('updated', ctx.meta, ctx).then(async () => {
 				if (methods.updated) {
-					await methods.updated.fn.call(this);
+					await methods.updated.fn.call(ctx);
 				}
 			}, stderr);
 		},
 
 		activated(): void {
-			runHook('activated', meta, this).then(async () => {
+			const
+				ctx = <any>this;
+
+			runHook('activated', ctx.meta, ctx).then(async () => {
 				if (methods.activated) {
-					await methods.activated.fn.call(this);
+					await methods.activated.fn.call(ctx);
 				}
 			}, stderr);
 		},
 
 		deactivated(): void {
-			runHook('deactivated', meta, this).then(async () => {
+			const
+				ctx = <any>this;
+
+			runHook('deactivated', ctx.meta, ctx).then(async () => {
 				if (methods.deactivated) {
-					await methods.deactivated.fn.call(this);
+					await methods.deactivated.fn.call(ctx);
 				}
 			}, stderr);
 		},
 
 		beforeDestroy(): void {
-			runHook('beforeDestroy', meta, this).then(async () => {
+			const
+				ctx = <any>this;
+
+			runHook('beforeDestroy', ctx.meta, ctx).then(async () => {
 				if (methods.beforeDestroy) {
-					await methods.beforeDestroy.fn.call(this);
+					await methods.beforeDestroy.fn.call(ctx);
 				}
 			}, stderr);
 		},
 
 		destroyed(): void {
-			runHook('destroyed', meta, this).then(async () => {
+			const
+				ctx = <any>this;
+
+			runHook('destroyed', ctx.meta, ctx).then(async () => {
 				if (methods.destroyed) {
-					await methods.destroyed.fn.call(this);
+					await methods.destroyed.fn.call(ctx);
 				}
 			}, stderr);
 		}

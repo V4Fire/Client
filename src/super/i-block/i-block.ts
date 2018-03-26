@@ -858,13 +858,36 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 			converter = Boolean;
 		}
 
-		this.$watch(field, (val) => {
-			this.setMod(mod, (<Function>converter)(val, this));
+		const
+			fn = <Function>converter;
 
-		}, {
-			immediate: true,
-			...opts
-		});
+		const setWatcher = () => {
+			this.$watch(field, (val) => {
+				this.setMod(mod, fn(val, this));
+
+			}, {
+				immediate: true,
+				...opts
+			});
+		};
+
+		if (this.blockStatus === 'unloaded') {
+			const
+				{hooks} = this.meta;
+
+			hooks.beforeDataCreate.push({
+				fn: (data) => {
+					data.modsStore[mod] = String(fn(data[field], this));
+				}
+			});
+
+			hooks.created.push({
+				fn: setWatcher
+			});
+
+		} else if (statuses[this.blockStatus] >= 1) {
+			setWatcher();
+		}
 	}
 
 	/**
@@ -912,15 +935,6 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	}
 
 	/**
-	 * Initializes default modifier values
-	 * @param data
-	 */
-	@hook('beforeDataCreate')
-	protected initDefaultMods(data: Dictionary): void {
-		return undefined;
-	}
-
-	/**
 	 * Initializes core block API
 	 */
 	@hook('beforeRuntime')
@@ -934,6 +948,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 		this.link = i.link.bind(this);
 		this.createWatchObject = i.createWatchObject.bind(this);
 		this.normalizeMods = i.normalizeMods.bind(this);
+		this.bindModTo = i.bindModTo.bind(this);
 		this.execCbAfterCreated = i.execCbAfterCreated.bind(this);
 	}
 
@@ -1447,7 +1462,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	/**
 	 * Initializes modifiers event listeners
 	 */
-	@hook('created')
+	@hook('beforeCreate')
 	protected initModEvents(): void {
 		const
 			{async: $a, localEvent: $e} = this;
