@@ -193,15 +193,15 @@ export default class bInput<T extends Dictionary = Dictionary> extends iInput<T>
 	};
 
 	/** @override */
-	protected readonly $refs!: {input: HTMLInputElement};
-
-	/** @override */
 	@field((o) => o.link('valueProp', (val) => {
 		val = (<any>o).initDefaultValue(val);
 		return val !== undefined ? String(val) : '';
 	}))
 
 	protected valueStore!: string;
+
+	/** @override */
+	protected readonly $refs!: {input: HTMLInputElement};
 
 	/**
 	 * Value buffer
