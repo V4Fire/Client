@@ -87,8 +87,7 @@ export default class bSelect<T extends Dictionary = Dictionary> extends bInput<T
 	 * Selected value
 	 */
 	get selected(): string | undefined {
-		const val = this.selectedStore;
-		return val !== undefined ? String(val) : val;
+		return this.selectedStore;
 	}
 
 	/**
@@ -97,6 +96,12 @@ export default class bSelect<T extends Dictionary = Dictionary> extends bInput<T
 	 */
 	set selected(value: string | undefined) {
 		this.selectedStore = value;
+	}
+
+	/** @override */
+	// @ts-ignore
+	get default(): string | undefined {
+		return this.defaultProp !== undefined ? String(this.defaultProp) : undefined;
 	}
 
 	/** @override */
@@ -116,8 +121,12 @@ export default class bSelect<T extends Dictionary = Dictionary> extends bInput<T
 	/**
 	 * Selected value store
 	 */
-	@field((o) => o.link('selectedProp', (val) => (<any>o).initDefaultValue(val)))
-	protected selectedStore?: any;
+	@field((o) => o.link('selectedPropProp', (val) => {
+		val = (<any>o).initDefaultValue(val);
+		return val !== undefined ? String(val) : '';
+	}))
+
+	protected selectedStore?: string;
 
 	/**
 	 * Temporary labels table
@@ -325,16 +334,15 @@ export default class bSelect<T extends Dictionary = Dictionary> extends bInput<T
 		}
 
 		try {
-			await Promise.all([
-				this.nextTick({label: $$.$$selectedStore}),
-				this.waitRef('scroll', {label: $$.$$selectedStoreWait})
+			const [scroll] = await Promise.all([
+				this.waitRef<bScrollInline>('scroll', {label: $$.$$selectedStoreWait}),
+				this.nextTick({label: $$.$$selectedStore})
 			]);
 
 			const
-				selected = this.block.element<HTMLElement>('option', {selected: true}),
-				{scroll} = this.$refs;
+				selected = this.block.element<HTMLElement>('option', {selected: true});
 
-			if (selected && scroll) {
+			if (selected) {
 				const
 					selTop = selected.offsetTop,
 					selHeight = selected.offsetHeight,
@@ -616,7 +624,7 @@ export default class bSelect<T extends Dictionary = Dictionary> extends bInput<T
 		if (!this.b.is.mobile) {
 			this.$watch('asyncCounter', async () => {
 				try {
-					await (await this.waitRef('scroll').scroll).initScroll();
+					await (await this.waitRef<bScrollInline>('scroll')).initScroll();
 				} catch (_) {}
 			});
 
