@@ -842,11 +842,18 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	}
 
 	/**
-	 * Returns an instance of Vue component by the specified selector / element
+	 * Returns an instance of Vue component by the specified element
+	 * @param el
+	 */
+	protected $<T extends iBlock = iBlock>(el: VueElement<T>): T;
+
+	/**
+	 * Returns an instance of Vue component by the specified query
 	 *
 	 * @param query
 	 * @param [filter]
 	 */
+	protected $<T extends iBlock = iBlock>(query: string, filter?: string): T | undefined;
 	protected $<T extends iBlock = iBlock>(query: string | VueElement<T>, filter: string = ''): T | undefined {
 		const
 			$0 = Object.isString(query) ? document.query(query) : query,
