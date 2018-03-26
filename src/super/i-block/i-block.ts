@@ -72,28 +72,44 @@ export interface LinkWrapper {
 export type ModsTable = Dictionary<ModVal>;
 export type ModsNTable = Dictionary<string | undefined>;
 
-export const
-	$$ = symbolGenerator();
+/**
+ * Cache helper
+ */
+export class Cache<T extends string = string> {
+	/**
+	 * Cache dictionary
+	 */
+	dict: Dictionary = Object.createDict();
 
-const
-	modsCache = Object.createDict();
+	/**
+	 * @param [namespaces] - predefined namespaces
+	 */
+	constructor(namespaces?: string[]) {
+		$C(namespaces).forEach((el) => {
+			this[el] = Object.createDict();
+		});
+	}
 
-const classesCache = {
-	base: Object.createDict(),
-	blocks: Object.createDict(),
-	els: Object.createDict(),
-	create(nms: 'base' | 'blocks' | 'els', cacheKey?: string): Dictionary {
+	/**
+	 * Creates a cache object by the specified parameters and returns it
+	 */
+	create(nms: T, cacheKey?: string): Dictionary {
 		const
-			cache = classesCache[nms];
+			cache = this.dict[nms] = this.dict[nms] || Object.createDict();
 
 		if (cacheKey) {
-			cache[cacheKey] = cache[cacheKey] || {};
+			cache[cacheKey] = cache[cacheKey] || Object.createDict();
 			return cache[cacheKey];
 		}
 
 		return cache;
 	}
-};
+}
+
+export const
+	$$ = symbolGenerator(),
+	modsCache = Object.createDict(),
+	classesCache = new Cache<'base' | 'blocks' | 'els'>(['base', 'blocks', 'els']);
 
 @component()
 export default class iBlock extends VueInterface<iBlock, iPage> {
@@ -1571,7 +1587,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 		});
 
 		this.block.status = this.block.statuses.inactive;
-		delete classesCache.els[this.blockId];
+		delete classesCache.dict.els[this.blockId];
 	}
 
 	/**
