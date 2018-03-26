@@ -33,8 +33,8 @@ export default class bInputTime<T extends Dictionary = Dictionary> extends bInpu
 	/**
 	 * Initial time pointer
 	 */
-	@prop()
-	readonly pointerProp!: Date;
+	@prop({type: Date, required: false})
+	readonly pointerProp?: Date;
 
 	/**
 	 * Initial maximum date value
@@ -73,7 +73,7 @@ export default class bInputTime<T extends Dictionary = Dictionary> extends bInpu
 	/**
 	 * Time pointer
 	 */
-	get pointer(): Date {
+	get pointer(): Date | undefined {
 		return Object.fastClone(this.pointerStore);
 	}
 
@@ -81,48 +81,50 @@ export default class bInputTime<T extends Dictionary = Dictionary> extends bInpu
 	 * Sets a new time pointer
 	 * @param value
 	 */
-	set pointer(value: Date) {
-		this.pointerStore = this.convertValue(this.value, value, this.pointerStore);
+	set pointer(value: Date | undefined) {
+		this.pointerStore = this.getNPointer(this.value, value, this.pointerStore);
+	}
+
+	/** @override */
+	// @ts-ignore
+	get default(): Date | undefined {
+		return this.defaultProp !== undefined ? Date.create(this.defaultProp) : undefined;
 	}
 
 	/** @override */
 	protected readonly blockValueField: string = 'pointer';
 
 	/** @override */
-	@field((o) => o.link('valueProp', (val) => {
-		const ctx: bInputTime = <any>o;
-		return ctx.getTimeFormat(ctx.convertValue(val, ctx.pointerStore));
-	}))
+	@field({
+		after: 'pointerStore',
+		init: (o, data) => o.link('valueProp', (val) => {
+			const ctx: bInputTime = <any>o;
+			return ctx.getTimeFormat(ctx.getNPointer(val, 'pointerStore' in ctx ? ctx.pointerStore : data.pointerStore));
+		})
+	})
 
-	protected valueStore!: Date;
+	protected valueStore!: string;
 
 	/**
 	 * Time pointer store
 	 */
 	@field((o) => o.link('pointerProp', (val) => {
 		const ctx: bInputTime = <any>o;
-		val = ctx.convertValue(undefined, val, ctx.pointerStore);
+		val = ctx.getNPointer(undefined, val, ctx.pointerStore);
 
 		if (val === undefined) {
 			return ctx.initDefaultValue();
-			return;
 		}
 
 		return val;
 	}))
 
-	protected pointerStore!: Date;
-
-	/** @override */
-	protected set valueBuffer(value: string) {
-		this.pointer = this.convertValue(value, this.pointerStore);
-		this.valueBufferStore = this.getTimeFormat(this.pointer);
-	}
+	protected pointerStore?: Date;
 
 	/** @override */
 	protected initBaseAPI(): void {
 		super.initBaseAPI();
-		this.convertValue = this.instance.convertValue.bind(this);
+		this.getNPointer = this.instance.getNPointer.bind(this);
 	}
 
 	/**
@@ -133,7 +135,7 @@ export default class bInputTime<T extends Dictionary = Dictionary> extends bInpu
 	protected async syncValueStoreWatcher(value: string): Promise<void> {
 		try {
 			await this.async.wait(() => this.mods.focused !== 'true', {label: $$.$$valueStore});
-			this.valueBuffer = value;
+			this.pointer = this.getNPointer(value, this.pointerStore);
 		} catch (_) {}
 	}
 
@@ -149,33 +151,31 @@ export default class bInputTime<T extends Dictionary = Dictionary> extends bInpu
 	 * Returns a string time value by the specified date
 	 * @param [date]
 	 */
-	protected getTimeFormat(date: Date): string;
-	protected getTimeFormat(date: undefined): undefined;
-	protected getTimeFormat(date: Date | undefined): string | undefined {
-		return date && date.format('{HH}:{mm}');
+	protected getTimeFormat(date: Date | undefined): string {
+		return date ? date.format('{HH}:{mm}') : '';
 	}
 
 	/**
-	 * Block value converter
+	 * Returns normalized date value pointer by the specified parameters
 	 *
 	 * @param [value] - input value
 	 * @param pointer - time pointer
 	 * @param buffer - time buffer
 	 */
-	protected convertValue(value: string | undefined, pointer: Date, buffer?: Date | undefined): Date;
+	protected getNPointer(value: string | undefined, pointer: Date, buffer?: Date | undefined): Date;
 
 	/**
 	 * @param [value] - input value
 	 * @param [pointer] - time pointer
 	 * @param [buffer] - time buffer
 	 */
-	protected convertValue(
+	protected getNPointer(
 		value: string | undefined,
 		pointer?: Date | undefined,
 		buffer?: Date | undefined
 	): Date | undefined;
 
-	protected convertValue(
+	protected getNPointer(
 		value: string | undefined,
 		pointer: Date | undefined,
 		buffer: Date | undefined = pointer
@@ -226,7 +226,7 @@ export default class bInputTime<T extends Dictionary = Dictionary> extends bInpu
 				label: $$.change
 			});
 
-			this.valueBuffer = value;
+			this.pointer = this.getNPointer(value, this.pointerStore);
 			this.emit('actionChange', this.pointer);
 
 		} catch (_) {}
