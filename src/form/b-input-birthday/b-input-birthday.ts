@@ -1,5 +1,3 @@
-'use strict';
-
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -8,26 +6,26 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import iInput from 'super/i-input/i-input';
-import { field, params } from 'super/i-block/i-block';
-import { component } from 'core/component';
-
-const
-	$C = require('collection.js');
+import $C = require('collection.js');
+import iInput, { component, prop, field } from 'super/i-input/i-input';
+export * from 'super/i-input/i-input';
 
 @component()
 export default class bInputBirthday extends iInput {
 	/** @override */
-	@params({default: () => new Date().beginningOfYear()})
-	valueProp: ?Date;
+	@prop({default: () => new Date().beginningOfYear()})
+	valueProp!: Date;
 
 	/** @override */
 	@field((o) => o.link('valueProp', (val) => {
-		if (String(val) !== String(o.valueStore)) {
+		const
+			ctx: bInputBirthday = <any>o;
+
+		if (String(val) !== String(ctx.valueStore)) {
 			return val;
 		}
 
-		return o.valueStore;
+		return ctx.valueStore;
 	}))
 
 	valueStore: Date;

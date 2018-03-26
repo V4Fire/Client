@@ -33,7 +33,7 @@ export default class bInputTime<T extends Dictionary = Dictionary> extends bInpu
 	/**
 	 * Initial time pointer
 	 */
-	@prop({default: () => new Date()})
+	@prop()
 	readonly pointerProp!: Date;
 
 	/**
@@ -104,7 +104,7 @@ export default class bInputTime<T extends Dictionary = Dictionary> extends bInpu
 		val = ctx.convertValue(undefined, val, ctx.pointerStore);
 
 		if (val === undefined) {
-			ctx.localEvent.once('component.created', () => ctx.pointerStore = Date.create(ctx.default));
+			return ctx.initDefaultValue();
 			return;
 		}
 

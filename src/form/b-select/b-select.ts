@@ -616,8 +616,7 @@ export default class bSelect<T extends Dictionary = Dictionary> extends bInput<T
 		if (!this.b.is.mobile) {
 			this.$watch('asyncCounter', async () => {
 				try {
-					await this.waitRef('scroll');
-					await (<bScrollInline>this.$refs.scroll).initScroll();
+					await (await this.waitRef('scroll').scroll).initScroll();
 				} catch (_) {}
 			});
 

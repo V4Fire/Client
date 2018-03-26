@@ -8,4 +8,4 @@
 
 package('p-index')
 	.extends('i-page')
-	.dependencies('b-func');
+	.dependencies('b-input');
