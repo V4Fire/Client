@@ -413,7 +413,7 @@ export default class iInput<T extends Dictionary = Dictionary> extends iData<T> 
 	 * Initializes a default value (if needed) for the blockValue field
 	 * @param value - blockValue field value
 	 */
-	protected initDefaultValue(value: any): any {
+	protected initDefaultValue(value?: any): any {
 		const
 			i = this.instance,
 			k = i.blockValueField,
