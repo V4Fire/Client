@@ -7,49 +7,36 @@
  */
 
 import $C = require('collection.js');
-import iInput, { component, prop, field } from 'super/i-input/i-input';
+import bSelect, { Option } from 'form/b-select/b-select';
+import iInput, { component, prop, p, Cache } from 'super/i-input/i-input';
 export * from 'super/i-input/i-input';
 
+export const
+	selectCache = new Cache<'months' | 'days' | 'years'>(['months', 'days', 'years']);
+
 @component()
-export default class bInputBirthday extends iInput {
+export default class bInputBirthday<T extends Dictionary = Dictionary> extends iInput<T> {
 	/** @override */
 	@prop({default: () => new Date().beginningOfYear()})
-	valueProp!: Date;
+	readonly valueProp!: Date;
 
 	/** @override */
-	@field((o) => o.link('valueProp', (val) => {
-		const
-			ctx: bInputBirthday = <any>o;
-
-		if (String(val) !== String(ctx.valueStore)) {
-			return val;
-		}
-
-		return ctx.valueStore;
-	}))
-
-	valueStore: Date;
-
-	/**
-	 * If true, then the block value will be marked as UTC
-	 */
-	utc: boolean = false;
-
-	/** @override */
-	get $refs(): {input: HTMLInputElement, month: bSelect, day: bSelect, year: bSelect} {}
-
-	/** @override */
-	@params({cache: false})
+	@p({cache: false})
 	get value(): Date {
 		return Object.fastClone(this.valueStore);
+	}
+
+	/** @override */
+	set value(value: Date) {
+		this.valueStore = value;
 	}
 
 	/**
 	 * List of accepted months
 	 */
-	@params({cache: false})
-	get months(): Array<Object> {
-		return $C([
+	@p({cache: false})
+	get months(): ReadonlyArray<Option> {
+		const months = [
 			t`January`,
 			t`February`,
 			t`March`,
@@ -62,61 +49,98 @@ export default class bInputBirthday extends iInput {
 			t`October`,
 			t`November`,
 			t`December`
-		]).map((label, value) => ({value, label}));
+		];
+
+		const
+			key = JSON.stringify(months),
+			cache = selectCache.create('months');
+
+		if (cache[key]) {
+			return cache[key];
+		}
+
+		return cache[key] = Object.freeze(months).map((label, value) => ({value, label}));
 	}
 
 	/**
 	 * List of accepted days
 	 */
-	get days(): Array<Object> {
+	get days(): ReadonlyArray<Option> {
 		const
-			days = this.value.daysInMonth(),
-			res = [];
+			key = this.value.daysInMonth(),
+			cache = selectCache.create('days');
 
-		for (let i = 1; i <= days; i++) {
+		if (cache[key]) {
+			return cache[key];
+		}
+
+		const
+			res = cache[key] = <Option[]>[];
+
+		for (let i = 1; i <= key; i++) {
 			res.push({
 				value: i,
-				label: i
+				label: String(i)
 			});
 		}
 
-		return res;
+		return Object.freeze(res);
 	}
 
 	/**
 	 * List of accepted years
 	 */
-	get years(): Array<Object> {
+	get years(): ReadonlyArray<Option> {
 		const
-			current = new Date().getFullYear(),
-			res = [];
+			key = new Date().getFullYear(),
+			cache = selectCache.create('years');
+
+		if (cache[key]) {
+			return cache[key];
+		}
+
+		const
+			res = cache[key] = <Option[]>[];
 
 		for (let i = 0; i < 125; i++) {
 			const
-				value = current - i;
+				value = key - i;
 
 			res.push({
 				value,
-				label: value
+				label: String(value)
 			});
 		}
 
-		return res;
+		return Object.freeze(res);
 	}
 
 	/**
 	 * Array of child selects
 	 */
-	get elements(): Array<bSelect> {
+	get elements(): CanPromise<ReadonlyArray<bSelect>> {
 		return this.waitState('ready', () => {
 			const r = this.$refs;
-			return [r.month, r.day, r.year];
+			return Object.freeze([r.month, r.day, r.year]);
 		});
 	}
 
 	/** @override */
-	async clear(): boolean {
-		const res = [];
+	protected readonly $refs!: {
+		input: HTMLInputElement;
+		month: bSelect;
+		day: bSelect;
+		year: bSelect;
+	};
+
+	/** @override */
+	protected valueStore!: Date;
+
+	/** @override */
+	async clear(): Promise<boolean> {
+		const
+			res = <boolean[]>[];
+
 		for (const el of await this.elements) {
 			try {
 				res.push(await el.clear());
@@ -132,8 +156,10 @@ export default class bInputBirthday extends iInput {
 	}
 
 	/** @override */
-	async reset(): boolean {
-		const res = [];
+	async reset(): Promise<boolean> {
+		const
+			res = <boolean[]>[];
+
 		for (const el of await this.elements) {
 			try {
 				res.push(await el.reset());
@@ -151,16 +177,16 @@ export default class bInputBirthday extends iInput {
 	/**
 	 * Handler: value update
 	 */
-	onValueUpdate() {
+	onValueUpdate(): void {
 		const
 			{month, day, year} = this.$refs;
 
 		const
-			d = new Date(year.selected || new Date().getFullYear(), month.selected || 0, 1),
+			d = new Date(Number(year.selected) || new Date().getFullYear(), Number(month.selected) || 0, 1),
 			max = d.daysInMonth();
 
-		if (max < day.selected) {
-			day.selected = max;
+		if (max < Number(day.selected)) {
+			day.selected = String(max);
 		}
 
 		d.set({
@@ -180,7 +206,7 @@ export default class bInputBirthday extends iInput {
 	 * Handler: action change
 	 * @emits actionChange(value: Date)
 	 */
-	async onActionChange() {
+	async onActionChange(): Promise<void> {
 		await this.nextTick();
 		this.emit('actionChange', this.value);
 	}
