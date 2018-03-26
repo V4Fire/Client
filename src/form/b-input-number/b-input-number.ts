@@ -89,7 +89,7 @@ export default class bInputNumber<T extends Dictionary = Dictionary> extends bIn
 	}
 
 	/**
-	 * Block value converter
+	 * Converts the specified value to a number and returns it
 	 * @param [value]
 	 */
 	protected convertValue(value: any): number | undefined {
