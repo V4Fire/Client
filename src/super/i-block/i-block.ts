@@ -86,7 +86,7 @@ export class Cache<T extends string = string> {
 	 */
 	constructor(namespaces?: string[]) {
 		$C(namespaces).forEach((el) => {
-			this[el] = Object.createDict();
+			this.dict[el] = Object.createDict();
 		});
 	}
 
@@ -973,6 +973,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 		this.normalizeMods = i.normalizeMods.bind(this);
 		this.bindModTo = i.bindModTo.bind(this);
 		this.execCbAfterCreated = i.execCbAfterCreated.bind(this);
+		this.getField = i.getField.bind(this);
 	}
 
 	/**
