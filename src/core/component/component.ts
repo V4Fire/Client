@@ -229,6 +229,18 @@ export function getComponent(
 					await methods.destroyed.fn.call(ctx);
 				}
 			}, stderr);
+		},
+
+		errorCaptured(): void {
+			const
+				args = arguments,
+				ctx = <any>this;
+
+			runHook('errorCaptured', ctx.meta, ctx, ...args).then(async () => {
+				if (methods.errorCaptured) {
+					await methods.errorCaptured.fn.apply(ctx, args);
+				}
+			}, stderr);
 		}
 	};
 }
