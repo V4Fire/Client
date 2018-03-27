@@ -29,6 +29,15 @@ import Provider, {
 } from 'core/data';
 
 export * from 'super/i-message/i-message';
+export {
+
+	RequestQuery,
+	RequestBody,
+	RequestResponse,
+	RequestError
+
+} from 'core/data';
+
 export interface DataEvent {
 	on(events: string | string[], handler: Function, ...args: any[]): Object | undefined;
 	on(
@@ -457,7 +466,7 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 	 *
 	 * @param method
 	 */
-	protected getParams(method: string): [RequestBody | RequestQuery, CreateRequestOptions] | false {
+	protected getParams(method: string): [RequestQuery | RequestBody, CreateRequestOptions] | false {
 		const
 			p = this.requestParams && this.requestParams[method];
 
