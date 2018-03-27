@@ -1,5 +1,3 @@
-'use strict';
-
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -8,18 +6,19 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import iData from 'super/i-data/i-data';
-import { component } from 'core/component';
+import iData, { component, prop } from 'super/i-data/i-data';
+export * from 'super/i-data/i-data';
 
 @component()
 export default class bGroup extends iData {
 	/**
 	 * Group title
 	 */
-	title: ?string = '';
+	@prop(String)
+	readonly title: string = '';
 
 	/** @override */
-	async initLoad() {
+	async initLoad(): Promise<void> {
 		const
 			opts = await this.loadSettings() || {};
 
@@ -30,11 +29,12 @@ export default class bGroup extends iData {
 		return super.initLoad();
 	}
 
-	/** @inheritDoc */
-	created() {
-		this.localEvent.on('block.mod.*.opened.*', (el) => {
+	/** @override */
+	protected initModEvents(): void {
+		super.initModEvents();
+		this.localEvent.on('block.mod.*.opened.*', async (el) => {
 			if (this.blockName) {
-				this.saveSettings({[el.name]: el.value});
+				await this.saveSettings({[el.name]: el.value});
 			}
 		});
 	}

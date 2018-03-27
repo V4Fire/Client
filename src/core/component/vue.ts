@@ -8,13 +8,14 @@
 
 import Vue, { ComponentOptions, WatchOptions, VNode, CreateElement } from 'vue';
 import { ScopedSlot } from 'vue/types/vnode';
-import { ComponentMeta } from 'core/component';
+import { ComponentMeta, Hooks } from 'core/component';
 
 // tslint:disable:no-empty
 // tslint:disable:typedef
 
 export type VueElement<T> = Element & {vueComponent?: T};
 export default class VueInterface<B = VueInterface<any, any>, R = VueInterface<any, any>, C extends B = B> {
+	readonly hook!: Hooks;
 	readonly instance!: this;
 	readonly componentName!: string;
 	readonly $el!: VueElement<C>;

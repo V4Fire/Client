@@ -72,12 +72,44 @@ export interface LinkWrapper {
 export type ModsTable = Dictionary<ModVal>;
 export type ModsNTable = Dictionary<string | undefined>;
 
-export const
-	$$ = symbolGenerator();
+/**
+ * Cache helper
+ */
+export class Cache<T extends string = string> {
+	/**
+	 * Cache dictionary
+	 */
+	dict: Dictionary = Object.createDict();
 
-const
-	classesCache = Object.createDict(),
-	modsCache = Object.createDict();
+	/**
+	 * @param [namespaces] - predefined namespaces
+	 */
+	constructor(namespaces?: string[]) {
+		$C(namespaces).forEach((el) => {
+			this.dict[el] = Object.createDict();
+		});
+	}
+
+	/**
+	 * Creates a cache object by the specified parameters and returns it
+	 */
+	create(nms: T, cacheKey?: string): Dictionary {
+		const
+			cache = this.dict[nms] = this.dict[nms] || Object.createDict();
+
+		if (cacheKey) {
+			cache[cacheKey] = cache[cacheKey] || Object.createDict();
+			return cache[cacheKey];
+		}
+
+		return cache;
+	}
+}
+
+export const
+	$$ = symbolGenerator(),
+	modsCache = Object.createDict(),
+	classesCache = new Cache<'base' | 'blocks' | 'els'>(['base', 'blocks', 'els']);
 
 @component()
 export default class iBlock extends VueInterface<iBlock, iPage> {
@@ -223,7 +255,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	/**
 	 * Block initialize status
 	 */
-	@field()
+	@system()
 	protected blockStatus: string = statuses[statuses.unloaded];
 
 	/**
@@ -509,17 +541,17 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 * @param [blockName] - name of the source block
 	 * @param mods - map of modifiers
 	 */
-	getBlockClasses(blockName: string | undefined, mods: ModsTable): string[] {
+	getBlockClasses(blockName: string | undefined, mods: ModsTable): ReadonlyArray<string> {
 		const
 			key = JSON.stringify(mods) + blockName,
-			cache = classesCache[key];
+			cache = classesCache.create('blocks', this.componentName);
 
-		if (cache) {
-			return cache;
+		if (cache[key]) {
+			return cache[key];
 		}
 
 		const
-			classes = [this.getFullBlockName(blockName)];
+			classes = cache[key] = [this.getFullBlockName(blockName)];
 
 		for (let keys = Object.keys(mods), i = 0; i < keys.length; i++) {
 			const mod = keys[i];
@@ -665,7 +697,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 * Sets g-hint for the specified element
 	 * @param [pos] - hint position
 	 */
-	protected setHint(pos: string = 'bottom'): string[] {
+	protected setHint(pos: string = 'bottom'): ReadonlyArray<string> {
 		return this.getBlockClasses('g-hint', {pos});
 	}
 
@@ -673,17 +705,17 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 * Returns an array of element classes by the specified parameters
 	 * @param els - map of elements with map of modifiers ({button: {focused: true}})
 	 */
-	protected getElClasses(els: Dictionary<ModsTable>): string[] {
+	protected getElClasses(els: Dictionary<ModsTable>): ReadonlyArray<string> {
 		const
-			key = JSON.stringify(els) + this.blockId,
-			cache = classesCache[key];
+			key = JSON.stringify(els),
+			cache = classesCache.create('els', this.blockId);
 
-		if (cache) {
-			return cache;
+		if (cache[key]) {
+			return cache[key];
 		}
 
 		const
-			classes = [this.blockId];
+			classes = cache[key] = [this.blockId];
 
 		for (let keys = Object.keys(els), i = 0; i < keys.length; i++) {
 			const
@@ -705,7 +737,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 			}
 		}
 
-		return classes;
+		return Object.freeze(classes);
 	}
 
 	/**
@@ -810,11 +842,20 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	}
 
 	/**
-	 * Returns an instance of Vue component by the specified selector / element
+	 * Returns an instance of Vue component by the specified element
+	 *
+	 * @param el
+	 * @param [filter]
+	 */
+	protected $<T extends iBlock = iBlock>(el: VueElement<T>, filter?: string): T;
+
+	/**
+	 * Returns an instance of Vue component by the specified query
 	 *
 	 * @param query
 	 * @param [filter]
 	 */
+	protected $<T extends iBlock = iBlock>(query: string, filter?: string): T | undefined;
 	protected $<T extends iBlock = iBlock>(query: string | VueElement<T>, filter: string = ''): T | undefined {
 		const
 			$0 = Object.isString(query) ? document.query(query) : query,
@@ -842,13 +883,36 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 			converter = Boolean;
 		}
 
-		this.$watch(field, (val) => {
-			this.setMod(mod, (<Function>converter)(val, this));
+		const
+			fn = <Function>converter;
 
-		}, {
-			immediate: true,
-			...opts
-		});
+		const setWatcher = () => {
+			this.$watch(field, (val) => {
+				this.setMod(mod, fn(val, this));
+
+			}, {
+				immediate: true,
+				...opts
+			});
+		};
+
+		if (this.blockStatus === 'unloaded') {
+			const
+				{hooks} = this.meta;
+
+			hooks.beforeDataCreate.push({
+				fn: (data) => {
+					data.modsStore[mod] = String(fn(data[field], this));
+				}
+			});
+
+			hooks.created.push({
+				fn: setWatcher
+			});
+
+		} else if (statuses[this.blockStatus] >= 1) {
+			setWatcher();
+		}
 	}
 
 	/**
@@ -909,7 +973,9 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 		this.link = i.link.bind(this);
 		this.createWatchObject = i.createWatchObject.bind(this);
 		this.normalizeMods = i.normalizeMods.bind(this);
+		this.bindModTo = i.bindModTo.bind(this);
 		this.execCbAfterCreated = i.execCbAfterCreated.bind(this);
+		this.getField = i.getField.bind(this);
 	}
 
 	/**
@@ -1190,7 +1256,6 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 
 				if (!$C(linkCache).get(l)) {
 					$C(linkCache).set(true, l);
-
 					this.execCbAfterCreated(() => {
 						this.$watch(el, (val, oldVal) => {
 							if (!Object.fastCompare(val, oldVal)) {
@@ -1307,9 +1372,17 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 * Returns an object with classes for elements of an another component
 	 * @param classes - additional classes ({baseElementName: newElementName})
 	 */
-	protected provideClasses(classes?: Classes): Dictionary<string> {
+	protected provideClasses(classes?: Classes): Readonly<Dictionary<string>> {
 		const
-			map = {};
+			key = JSON.stringify(classes),
+			cache = classesCache.create('base');
+
+		if (cache[key]) {
+			return cache[key];
+		}
+
+		const
+			map = cache[key] = {};
 
 		if (classes) {
 			const
@@ -1338,24 +1411,23 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 			}
 		}
 
-		return map;
+		return Object.freeze(map);
 	}
 
 	/**
 	 * Returns an object with base block modifiers
 	 * @param mods - additional modifiers ({modifier: {currentValue: value}} || {modifier: value})
 	 */
-	protected provideMods(mods?: Dictionary<ModVal | Dictionary<ModVal>>): ModsNTable {
+	protected provideMods(mods?: Dictionary<ModVal | Dictionary<ModVal>>): Readonly<ModsNTable> {
 		const
-			key = JSON.stringify(this.baseMods) + JSON.stringify(mods),
-			cache = modsCache[key];
+			key = JSON.stringify(this.baseMods) + JSON.stringify(mods);
 
-		if (cache) {
-			return cache;
+		if (modsCache[key]) {
+			return modsCache[key];
 		}
 
 		const
-			map = {...this.baseMods};
+			map = modsCache[key] = {...this.baseMods};
 
 		if (mods) {
 			const
@@ -1382,7 +1454,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 			}
 		}
 
-		return map;
+		return Object.freeze(map);
 	}
 
 	/**
@@ -1416,13 +1488,21 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	/**
 	 * Initializes modifiers event listeners
 	 */
-	@hook('created')
+	@hook('beforeCreate')
 	protected initModEvents(): void {
 		const
 			{async: $a, localEvent: $e} = this;
 
-		$e.on('block.mod.set.**', (e) => this.$set(this.modsStore, e.name, e.value));
-		$e.on('block.mod.remove.**', (e) => this.$set(this.modsStore, e.name, undefined));
+		$e.on('block.mod.set.**', (e) => {
+			this.$set(this.modsStore, e.name, e.value);
+		});
+
+		$e.on('block.mod.remove.**', (e) => {
+			if (e.reason === 'removeMod') {
+				this.$set(this.modsStore, e.name, undefined);
+			}
+		});
+
 		$e.on('block.mod.*.disabled.*', (e) => {
 			if (e.value === 'false' || e.type === 'remove') {
 				$a.off({group: 'blockOnDisable'});
@@ -1517,6 +1597,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 		});
 
 		this.block.status = this.block.statuses.inactive;
+		delete classesCache.dict.els[this.blockId];
 	}
 
 	/**

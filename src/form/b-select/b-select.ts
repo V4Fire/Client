@@ -11,12 +11,9 @@ import $C = require('collection.js');
 import symbolGenerator from 'core/symbol';
 import KeyCodes from 'core/keyCodes';
 import bScrollInline from 'base/b-scroll/b-scroll-inline/b-scroll-inline';
-import bInput, { component, prop, field, system, watch, mod, wait } from 'form/b-input/b-input';
+import bInput, { component, prop, field, system, watch, mod, wait, BlockConverter } from 'form/b-input/b-input';
+
 export * from 'form/b-input/b-input';
-
-export const
-	$$ = symbolGenerator();
-
 export interface Option {
 	label: string;
 	inputLabel?: string;
@@ -28,6 +25,9 @@ export interface Option {
 export interface NOption extends Option {
 	value: string;
 }
+
+export const
+	$$ = symbolGenerator();
 
 let
 	openedSelect;
@@ -42,7 +42,7 @@ let
 export default class bSelect<T extends Dictionary = Dictionary> extends bInput<T> {
 	/** @override */
 	@prop({default: (obj) => $C(obj).get('data') || obj || []})
-	readonly blockConverter?: Function;
+	readonly blockConverter?: BlockConverter<Option[]>;
 
 	/**
 	 * Initial select options
@@ -87,8 +87,7 @@ export default class bSelect<T extends Dictionary = Dictionary> extends bInput<T
 	 * Selected value
 	 */
 	get selected(): string | undefined {
-		const val = this.selectedStore;
-		return val !== undefined ? String(val) : val;
+		return this.selectedStore;
 	}
 
 	/**
@@ -97,6 +96,12 @@ export default class bSelect<T extends Dictionary = Dictionary> extends bInput<T
 	 */
 	set selected(value: string | undefined) {
 		this.selectedStore = value;
+	}
+
+	/** @override */
+	// @ts-ignore
+	get default(): string | undefined {
+		return this.defaultProp !== undefined ? String(this.defaultProp) : undefined;
 	}
 
 	/** @override */
@@ -116,19 +121,12 @@ export default class bSelect<T extends Dictionary = Dictionary> extends bInput<T
 	/**
 	 * Selected value store
 	 */
-	@field((o) => o.link('selectedProp', (val) => {
-		const
-			ctx: bSelect = <any>o;
-
-		if (val === undefined) {
-			o.localEvent.once('component.created', () => ctx.selectedStore = ctx.default);
-			return;
-		}
-
-		return val;
+	@field((o) => o.link('selectedPropProp', (val) => {
+		val = (<any>o).initDefaultValue(val);
+		return val !== undefined ? String(val) : '';
 	}))
 
-	protected selectedStore?: any;
+	protected selectedStore?: string;
 
 	/**
 	 * Temporary labels table
@@ -237,7 +235,7 @@ export default class bSelect<T extends Dictionary = Dictionary> extends bInput<T
 	}
 
 	/** @override */
-	protected initRemoteData(): any {
+	protected initRemoteData(): NOption[] | undefined {
 		if (!this.db) {
 			return;
 		}
@@ -246,7 +244,7 @@ export default class bSelect<T extends Dictionary = Dictionary> extends bInput<T
 			val = this.blockConverter ? this.blockConverter(this.db) : this.db;
 
 		if (Object.isArray(val)) {
-			return this.options = this.normalizeOptions(<Option[]>val);
+			return this.options = this.normalizeOptions(val);
 		}
 
 		return this.options;
@@ -336,16 +334,15 @@ export default class bSelect<T extends Dictionary = Dictionary> extends bInput<T
 		}
 
 		try {
-			await Promise.all([
-				this.nextTick({label: $$.$$selectedStore}),
-				this.waitRef('scroll', {label: $$.$$selectedStoreWait})
+			const [scroll] = await Promise.all([
+				this.waitRef<bScrollInline>('scroll', {label: $$.$$selectedStoreWait}),
+				this.nextTick({label: $$.$$selectedStore})
 			]);
 
 			const
-				selected = this.block.element<HTMLElement>('option', {selected: true}),
-				{scroll} = this.$refs;
+				selected = this.block.element<HTMLElement>('option', {selected: true});
 
-			if (selected && scroll) {
+			if (selected) {
 				const
 					selTop = selected.offsetTop,
 					selHeight = selected.offsetHeight,
@@ -627,8 +624,7 @@ export default class bSelect<T extends Dictionary = Dictionary> extends bInput<T
 		if (!this.b.is.mobile) {
 			this.$watch('asyncCounter', async () => {
 				try {
-					await this.waitRef('scroll');
-					await (<bScrollInline>this.$refs.scroll).initScroll();
+					await (await this.waitRef<bScrollInline>('scroll')).initScroll();
 				} catch (_) {}
 			});
 

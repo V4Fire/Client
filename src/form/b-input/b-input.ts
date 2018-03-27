@@ -19,7 +19,6 @@ import iInput, {
 	field,
 	system,
 	wait,
-	hook,
 	ModsDecl,
 	ValidatorsDecl,
 	PARENT
@@ -138,7 +137,7 @@ export default class bInput<T extends Dictionary = Dictionary> extends iInput<T>
 
 	/** @override */
 	get value(): string {
-		return this.valueStore !== undefined ? String(this.valueStore) : '';
+		return this.valueStore;
 	}
 
 	/** @override */
@@ -194,32 +193,45 @@ export default class bInput<T extends Dictionary = Dictionary> extends iInput<T>
 	};
 
 	/** @override */
+	@field((o) => o.link('valueProp', (val) => {
+		val = (<any>o).initDefaultValue(val);
+		return val !== undefined ? String(val) : '';
+	}))
+
+	protected valueStore!: string;
+
+	/** @override */
 	protected readonly $refs!: {input: HTMLInputElement};
 
 	/**
 	 * Value buffer
 	 */
 	@field({
-		init: (o) => o.link('valueProp'),
+		after: 'valueStore',
 		watch: {
 			fn: 'onValueBufferUpdate',
 			immediate: true
-		}
+		},
+
+		init: (o, data) => o.link('valueProp', (val) => {
+			val = val === undefined ? data.valueStore : val;
+			return val !== undefined ? String(val) : '';
+		})
 	})
 
-	protected valueBufferStore: any;
+	protected valueBufferStore!: string;
 
 	/**
 	 * Value buffer
 	 */
-	protected get valueBuffer(): any {
+	protected get valueBuffer(): string {
 		return this.valueBufferStore;
 	}
 
 	/**
 	 * Sets a value to the value buffer store
 	 */
-	protected set valueBuffer(value: any) {
+	protected set valueBuffer(value: string) {
 		this.valueBufferStore = value;
 	}
 
@@ -261,7 +273,7 @@ export default class bInput<T extends Dictionary = Dictionary> extends iInput<T>
 			await this.applyMaskToValue('', {updateBuffer: true});
 
 		} else {
-			this.valueBuffer = undefined;
+			this.valueBuffer = '';
 		}
 
 		return super.clear();

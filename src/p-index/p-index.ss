@@ -12,4 +12,4 @@
 
 - template index() extends ['i-page.component'].index
 	- block body
-		Hello!
+		< b-textarea

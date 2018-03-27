@@ -45,6 +45,7 @@ export const prop = paramsFactory<Function | ObjectConstructor | ComponentProp>(
 
 export interface ComponentField<T extends VueInterface = VueInterface, A = any, B = A> {
 	default?: any;
+	after?: string | string[];
 	watch?: FieldWatcher<T, A, B>;
 	init?: InitFieldFn<T>;
 }
@@ -209,12 +210,16 @@ export function paramsFactory<T>(
 
 			const
 				el = obj[key],
-				w = <any[]>[].concat(p.watch || []),
-				watchers = el && el.watchers || new Map();
+				watchers = el && el.watchers || new Map(),
+				after = el && el.after || new Set();
 
-			for (let i = 0; i < w.length; i++) {
+			for (let o = <any[]>[].concat(p.after || []), i = 0; i < o.length; i++) {
+				after.add(o[i]);
+			}
+
+			for (let o = <any[]>[].concat(p.watch || []), i = 0; i < o.length; i++) {
 				const
-					el = w[i];
+					el = o[i];
 
 				if (Object.isObject(el)) {
 					watchers.set(el.fn, {...el});
@@ -224,7 +229,12 @@ export function paramsFactory<T>(
 				}
 			}
 
-			obj[key] = {...el, ...p, watchers};
+			obj[key] = {
+				...el,
+				...p,
+				after,
+				watchers
+			};
 		});
 	};
 }

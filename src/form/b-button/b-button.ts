@@ -107,6 +107,9 @@ export default class bButton<T extends Dictionary = Dictionary> extends iData<T>
 		]
 	};
 
+	/** @override */
+	protected readonly $refs!: {button: HTMLButtonElement};
+
 	/**
 	 * Handler: button trigger
 	 *

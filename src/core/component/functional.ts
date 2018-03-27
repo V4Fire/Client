@@ -9,7 +9,7 @@
 import { CreateElement, RenderContext, VNode, FunctionalComponentOptions } from 'vue';
 import { EventEmitter2 as EventEmitter } from 'eventemitter2';
 import { FunctionalCtx } from 'core/component';
-import { runHook, defaultWrapper } from 'core/component/component';
+import { runHook, initDataObject, defaultWrapper } from 'core/component/component';
 
 const
 	cache = new WeakMap();
@@ -111,28 +111,7 @@ export function createFakeCtx(
 		];
 
 		for (let i = 0; i < list.length; i++) {
-			const
-				o = list[i];
-
-			for (let keys = Object.keys(o), i = 0; i < keys.length; i++) {
-				const
-					key = fakeCtx.$activeField = keys[i],
-					el = o[key];
-
-				let val;
-				if (el.init) {
-					val = el.init(<any>fakeCtx);
-				}
-
-				// tslint:disable-next-line
-				if (val === undefined) {
-					val = el.default !== undefined ? el.default : Object.fastClone(instance[key]);
-					fakeCtx[key] = val === undefined ? fakeCtx[key] : val;
-
-				} else {
-					fakeCtx[key] = val;
-				}
-			}
+			initDataObject(list[i], fakeCtx, instance, fakeCtx);
 		}
 	}
 

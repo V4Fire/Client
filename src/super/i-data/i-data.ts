@@ -29,6 +29,15 @@ import Provider, {
 } from 'core/data';
 
 export * from 'super/i-message/i-message';
+export {
+
+	RequestQuery,
+	RequestBody,
+	RequestResponse,
+	RequestError
+
+} from 'core/data';
+
 export interface DataEvent {
 	on(events: string | string[], handler: Function, ...args: any[]): Object | undefined;
 	on(
@@ -57,6 +66,10 @@ export interface SocketEvent extends DataEvent {
 export interface CreateRequestOptions<T = any> extends BaseCreateRequestOptions<T>, AsyncOpts {
 	showProgress?: boolean;
 	hideProgress?: boolean;
+}
+
+export interface BlockConverter<T = any> {
+	(value: any): T;
 }
 
 export type ModelMethods = 'get' | 'post' | 'add' | 'upd' | 'del';
@@ -101,7 +114,7 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 	 * Converter from .db to the block format
 	 */
 	@prop({type: Function, watch: 'initRemoteData', required: false})
-	readonly blockConverter?: Function;
+	readonly blockConverter?: BlockConverter;
 
 	/**
 	 * Event emitter object for working with a data provider
@@ -366,7 +379,7 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 	/**
 	 * Initializes remote data
 	 */
-	protected initRemoteData(): any {
+	protected initRemoteData(): any | undefined {
 		return undefined;
 	}
 
@@ -453,7 +466,7 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 	 *
 	 * @param method
 	 */
-	protected getParams(method: string): [RequestBody | RequestQuery, CreateRequestOptions] | false {
+	protected getParams(method: string): [RequestQuery | RequestBody, CreateRequestOptions] | false {
 		const
 			p = this.requestParams && this.requestParams[method];
 
