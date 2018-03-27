@@ -1,5 +1,3 @@
-'use strict';
-
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -8,8 +6,19 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import bLink from 'base/b-link/b-link';
-import { component } from 'core/component';
+import bLink, {
+
+	component,
+	prop,
+	RequestBody,
+	RequestQuery,
+	CreateRequestOptions,
+	ModelMethods
+
+} from 'base/b-link/b-link';
+
+export * from 'base/b-link/b-link';
+export type Request = RequestQuery | RequestBody | [RequestQuery | RequestBody, CreateRequestOptions];
 
 @component()
 export default class bPseudoLink extends bLink {
@@ -25,27 +34,25 @@ export default class bPseudoLink extends bLink {
 	/**
 	 * Data provider method
 	 */
-	method: ?string = 'get';
+	@prop(String)
+	method: ModelMethods = 'get';
 
 	/**
 	 * Request parameters
 	 */
-	request: ?Object | Array<Object>;
-
-	/* eslint-disable no-unused-vars */
+	@prop({type: [Object, Array], required: false})
+	request?: Request;
 
 	/** @override */
-	async onClick(e: Event) {
+	async onClick(e: Event): Promise<void> {
 		if (this.href) {
 			this.base(this.href);
 		}
 
 		if (this.dataProvider !== 'Provider' || this.href) {
-			await this[this.method](...[].concat(this.request || []));
+			await (<Function>this[this.method])(...(<any[]>[]).concat(this.request || []));
 		}
 
 		this.emit('click', e);
 	}
-
-	/* eslint-enable no-unused-vars */
 }
