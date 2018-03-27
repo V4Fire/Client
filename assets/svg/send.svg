@@ -1,11 +1,10 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- Generator: Adobe Illustrator 21.1.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
-<svg version="1.1" id="Слой_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-	 viewBox="0 0 24 24" style="enable-background:new 0 0 24 24;" xml:space="preserve">
-<style type="text/css">
-	.st0{fill:#FF0000;}
-</style>
-<path class="st0" d="M3.25,10.25l9.25,1.875L3.25,14c-0.38,0.072-0.655,0.405-0.655,0.792l-0.587,5.112c0.001,0.578,0.592,0.967,1.123,0.739
-	l18.602-7.976c0.478-0.205,0.478-0.882,0-1.087L3.131,3.606C2.6,3.378,2.009,3.767,2.008,4.345l0.587,5.112
-	C2.595,9.845,2.87,10.177,3.25,10.25z"/>
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="16px" height="14px" viewBox="0 0 16 14" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 49.1 (51147) - http://www.bohemiancoding.com/sketch -->
+    <title>send</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="send" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <path d="M1.4001875,5.594125 L8.3376875,7.000375 L1.4001875,8.406625 C1.1150479,8.46097697 0.908810139,8.71035149 0.9089375,9.000625 L0.4686875,12.834625 C0.4694375,13.268125 0.9126875,13.559875 1.3109375,13.388875 L15.2624375,7.406875 C15.6209375,7.253125 15.6209375,6.745375 15.2624375,6.591625 L1.3109375,0.611125 C0.9126875,0.440125 0.4694375,0.731875 0.4686875,1.165375 L0.9089375,4.999375 C0.9089375,5.290375 1.1151875,5.539375 1.4001875,5.594125 Z" fill="#FF0000" fill-rule="nonzero"></path>
+    </g>
 </svg>

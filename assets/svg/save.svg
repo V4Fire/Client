@@ -1,4 +1,10 @@
-<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-	<path fill="none" d="M0 0h24v24H0z"/>
-	<path fill="#FF0000" d="M17 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V7l-4-4zm-5 16c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm3-10H5V5h10v4z"/>
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="14px" height="14px" viewBox="0 0 14 14" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 49.1 (51147) - http://www.bohemiancoding.com/sketch -->
+    <title>save</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="save" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <path d="M10.75,0.25 L1.75,0.25 C0.9175,0.25 0.25,0.925 0.25,1.75 L0.25,12.25 C0.25,13.075 0.9175,13.75 1.75,13.75 L12.25,13.75 C13.075,13.75 13.75,13.075 13.75,12.25 L13.75,3.25 L10.75,0.25 Z M7,12.25 C5.755,12.25 4.75,11.245 4.75,10 C4.75,8.755 5.755,7.75 7,7.75 C8.245,7.75 9.25,8.755 9.25,10 C9.25,11.245 8.245,12.25 7,12.25 Z M9.25,4.75 L1.75,4.75 L1.75,1.75 L9.25,1.75 L9.25,4.75 Z" fill="#FF0000" fill-rule="nonzero"></path>
+    </g>
 </svg>
