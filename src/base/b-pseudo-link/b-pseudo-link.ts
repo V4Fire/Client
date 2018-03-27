@@ -23,28 +23,28 @@ export type Request = RequestQuery | RequestBody | [RequestQuery | RequestBody, 
 @component()
 export default class bPseudoLink extends bLink {
 	/** @override */
-	dataProvider: string = 'Provider';
+	readonly dataProvider: string = 'Provider';
 
 	/** @override */
-	href: string = '';
+	readonly href: string = '';
 
 	/** @override */
-	requestFilter: Function | boolean = false;
+	readonly requestFilter: Function | boolean = false;
 
 	/**
 	 * Data provider method
 	 */
 	@prop(String)
-	method: ModelMethods = 'get';
+	readonly method: ModelMethods = 'get';
 
 	/**
 	 * Request parameters
 	 */
 	@prop({type: [Object, Array], required: false})
-	request?: Request;
+	readonly request?: Request;
 
 	/** @override */
-	async onClick(e: Event): Promise<void> {
+	protected async onClick(e: Event): Promise<void> {
 		if (this.href) {
 			this.base(this.href);
 		}
