@@ -60,7 +60,7 @@ export default class bGrid<T extends Dictionary = Dictionary> extends iDataPages
 	protected readonly requestParams!: Dictionary<Dictionary>;
 
 	/** @override */
-	protected readonly $refs!: {loadPageTrigger: HTMLDivElement};
+	protected readonly $refs!: {loadPageTrigger: HTMLElement};
 
 	/**
 	 * Contains rows, that ready to interaction with user
