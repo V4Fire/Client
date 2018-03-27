@@ -11,11 +11,8 @@ import $C = require('collection.js');
 import symbolGenerator from 'core/symbol';
 import bInputTime from 'form/b-input-time/b-input-time';
 import iInput, { component, prop, field, system, p, ModsDecl, PARENT } from 'super/i-input/i-input';
+
 export * from 'super/i-input/i-input';
-
-export const
-	$$ = symbolGenerator();
-
 export interface Day {
 	active: boolean;
 	disabled: boolean;
@@ -25,9 +22,10 @@ export interface Day {
 	text: string;
 }
 
-export type Directions =
-	'right' |
-	'left';
+export type Directions = 'right' | 'left';
+
+export const
+	$$ = symbolGenerator();
 
 @component()
 export default class bCalendar<T extends Dictionary = Dictionary> extends iInput<T> {
@@ -41,9 +39,6 @@ export default class bCalendar<T extends Dictionary = Dictionary> extends iInput
 	}})
 
 	readonly dataType!: Function;
-
-	/** @override */
-	readonly utc: boolean = false;
 
 	/**
 	 * Initial maximum date value
@@ -83,7 +78,7 @@ export default class bCalendar<T extends Dictionary = Dictionary> extends iInput
 				v = max.clone();
 			}
 
-			if (!store[i] || Math.abs(store[i].valueOf() - v.valueOf()).seconds() >= this.timeMargin) {
+			if (!store[i] || (<number>Math.abs(store[i].valueOf() - v.valueOf())).seconds() >= this.timeMargin) {
 				this.$set(store, i, v);
 			}
 		});
@@ -175,7 +170,9 @@ export default class bCalendar<T extends Dictionary = Dictionary> extends iInput
 	protected directions: Directions[] = ['right', 'left'];
 
 	/** @override */
-	@field((o) => o.link('valueProp', (val) => Object.isArray(val) ? val : [val]))
+	@field((o) => o.link('valueProp', (val) =>
+		Object.isArray(val) ? val : [].concat((<any>o).initDefaultValue(val) || [])))
+
 	protected valueStore!: Date[];
 
 	/**

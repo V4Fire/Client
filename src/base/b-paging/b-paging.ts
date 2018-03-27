@@ -10,15 +10,15 @@ import $C = require('collection.js');
 import symbolGenerator from 'core/symbol';
 import bSelect from 'form/b-select/b-select';
 import iBlock, { prop, field, p, component } from 'super/i-block/i-block';
+
 export * from 'super/i-block/i-block';
-
-export const
-	$$ = symbolGenerator();
-
 export interface Page {
 	label: string;
 	value: number;
 }
+
+export const
+	$$ = symbolGenerator();
 
 @component()
 export default class bPaging extends iBlock {

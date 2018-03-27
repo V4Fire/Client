@@ -88,32 +88,40 @@ export default class bForm<T extends Dictionary = Dictionary> extends iData<T> {
 	 * Array of form Vue elements
 	 */
 	@p({cache: false})
-	get elements(): CanPromise<iInput[]> {
+	get elements(): CanPromise<ReadonlyArray<iInput>> {
 		const cache = {};
-		return this.waitState('ready', () => $C(this.$refs.form.elements).to([]).reduce((arr, el) => {
-			const
-				component = this.$(el, '[class*="_form_true"]');
+		return this.waitState('ready', () => {
+			const els = $C(this.$refs.form.elements).to([] as iInput[]).reduce((arr, el) => {
+				const
+					component = this.$(el, '[class*="_form_true"]');
 
-			if (component && component.instance instanceof iInput && !cache[component.blockId]) {
-				cache[component.blockId] = true;
-				arr.push(<iInput>component);
-			}
+				if (component && component.instance instanceof iInput && !cache[component.blockId]) {
+					cache[component.blockId] = true;
+					arr.push(<iInput>component);
+				}
 
-			return arr;
-		}));
+				return arr;
+			});
+
+			return Object.freeze(els);
+		});
 	}
 
 	/**
 	 * Array of form submit Vue elements
 	 */
 	@p({cache: false})
-	get submits(): CanPromise<bButton[]> {
-		return this.waitState('ready', () => $C(
-			this.$el
-				.queryAll('button[type="submit"]')
-				.concat(this.id ? document.queryAll(`button[type="submit"][form="${this.id}"]`) : [])
+	get submits(): CanPromise<ReadonlyArray<bButton>> {
+		return this.waitState('ready', () => {
+			const els = $C(
+				this.$el
+					.queryAll('button[type="submit"]')
+					.concat(this.id ? document.queryAll(`button[type="submit"][form="${this.id}"]`) : [])
 
-		).map((el) => <bButton>this.$(el)));
+			).map((el) => <bButton>this.$(el));
+
+			return Object.freeze(els);
+		});
 	}
 
 	/**

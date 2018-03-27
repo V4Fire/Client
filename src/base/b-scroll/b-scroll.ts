@@ -10,11 +10,8 @@
 import $C = require('collection.js');
 import symbolGenerator from 'core/symbol';
 import iBlock, { component, prop, system, p, wait, ModsDecl, PARENT } from 'super/i-block/i-block';
+
 export * from 'super/i-block/i-block';
-
-export const
-	$$ = symbolGenerator();
-
 export type ScrollSide = 'x' | 'y';
 export type FixSizeTypes = 'width' | 'height';
 export type OverflowTypes = 'auto' | 'hidden' | 'scroll' | 'visible' | 'inherit';
@@ -38,6 +35,9 @@ export interface InputScrollerPosition {
 	x?: number | 'left' | 'right';
 	y?: number | 'top' | 'bottom';
 }
+
+export const
+	$$ = symbolGenerator();
 
 @component()
 export default class bScroll extends iBlock {

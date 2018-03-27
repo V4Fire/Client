@@ -152,7 +152,7 @@ export default class bList<T extends Dictionary = Dictionary> extends iData<T> {
 	}
 
 	/** @override */
-	protected initRemoteData(): any {
+	protected initRemoteData(): Option[] | undefined {
 		if (!this.db) {
 			return;
 		}

@@ -256,18 +256,7 @@ export default class iInput<T extends Dictionary = Dictionary> extends iData<T> 
 	/**
 	 * Block value store
 	 */
-	@field((o) => o.link('valueProp', (val) => {
-		const
-			ctx: iInput = <any>o;
-
-		if (val === undefined && ctx.instance.blockValueField === 'value') {
-			o.localEvent.once('component.created', () => ctx.valueStore = ctx.default);
-			return;
-		}
-
-		return val;
-	}))
-
+	@field((o) => o.link('valueProp', (val) => (<any>o).initDefaultValue(val)))
 	protected valueStore: any;
 
 	/** @override */
@@ -381,6 +370,12 @@ export default class iInput<T extends Dictionary = Dictionary> extends iData<T> 
 	}
 
 	/** @override */
+	protected initBaseAPI(): void {
+		super.initBaseAPI();
+		this.initDefaultValue = this.instance.initDefaultValue.bind(this);
+	}
+
+	/** @override */
 	protected initRemoteData(): any | undefined {
 		if (!this.db) {
 			return;
@@ -412,6 +407,24 @@ export default class iInput<T extends Dictionary = Dictionary> extends iData<T> 
 		if (newValue !== oldValue || newValue && typeof newValue === 'object') {
 			this.emit('change', this[this.blockValueField]);
 		}
+	}
+
+	/**
+	 * Initializes a default value (if needed) for the blockValue field
+	 * @param value - blockValue field value
+	 */
+	protected initDefaultValue(value?: any): any {
+		const
+			i = this.instance,
+			k = i.blockValueField,
+			f = this.$activeField;
+
+		if (value !== undefined || f !== k && f !== `${k}Store`) {
+			return value;
+		}
+
+		// tslint:disable-next-line
+		return i['defaultGetter'].call(this);
 	}
 
 	/**

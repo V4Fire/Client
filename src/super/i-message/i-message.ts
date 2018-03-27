@@ -153,7 +153,7 @@ export default class iMessage extends iBlock {
 
 		this.localEvent.on('block.mod.*.valid.*', ({type, value}) => {
 			if (type === 'remove' && value === 'false' || type === 'set' && value === 'true') {
-				this.error = '';
+				this.error = undefined;
 			}
 		});
 	}

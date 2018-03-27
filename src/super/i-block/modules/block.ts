@@ -22,6 +22,10 @@ export enum statuses {
 	unloaded = 0
 }
 
+export type Reason =
+	'setMod' |
+	'removeMod';
+
 /**
  * Base class for BEM like develop
  */
@@ -130,8 +134,13 @@ export default class Block<T extends iBlock> {
 
 		this.localEvent.once('block.status.loading', () => {
 			for (let keys = Object.keys(mods), i = 0; i < keys.length; i++) {
-				const name = keys[i];
-				this.setMod(name, mods[name]);
+				const
+					name = keys[i],
+					val = mods[name];
+
+				if (val !== undefined) {
+					this.setMod(name, val);
+				}
 			}
 		});
 
@@ -234,7 +243,7 @@ export default class Block<T extends iBlock> {
 			prev = this.mods[name];
 
 		if (prev !== value) {
-			this.removeMod(name);
+			this.removeMod(name, undefined, 'setMod');
 			this.mods[name] = value;
 			this.node.classList.add(this.getFullBlockName(name, value));
 
@@ -259,8 +268,9 @@ export default class Block<T extends iBlock> {
 	 *
 	 * @param name
 	 * @param [value]
+	 * @param [reason]
 	 */
-	removeMod(name: string, value?: any): boolean {
+	removeMod(name: string, value?: any, reason: Reason = 'removeMod'): boolean {
 		if (!this.node) {
 			throw new ReferenceError('Root node is not defined');
 		}
@@ -276,7 +286,8 @@ export default class Block<T extends iBlock> {
 				event: 'block.mod.remove',
 				type: 'remove',
 				name,
-				value: current
+				value: current,
+				reason
 			};
 
 			this.localEvent.emit(`block.mod.remove.${name}.${current}`, event);
@@ -307,7 +318,7 @@ export default class Block<T extends iBlock> {
 		value = String(value);
 
 		if (this.getElMod(link, elName, modName) !== value) {
-			this.removeElMod(link, elName, modName);
+			this.removeElMod(link, elName, modName, undefined, 'setMod');
 			link.classList.add(this.getFullElName(elName, modName, value));
 
 			this.localEvent.emit(`el.mod.set.${elName}.${modName}.${value}`, {
@@ -332,8 +343,9 @@ export default class Block<T extends iBlock> {
 	 * @param elName
 	 * @param modName
 	 * @param [value]
+	 * @param [reason]
 	 */
-	removeElMod(link: Element, elName: string, modName: string, value?: any): boolean {
+	removeElMod(link: Element, elName: string, modName: string, value?: any, reason: Reason = 'removeMod'): boolean {
 		const
 			current = this.getElMod(link, elName, modName);
 
@@ -345,7 +357,8 @@ export default class Block<T extends iBlock> {
 				type: 'remove',
 				link,
 				modName,
-				value: current
+				value: current,
+				reason
 			});
 
 			return true;

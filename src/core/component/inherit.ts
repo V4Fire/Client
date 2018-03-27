@@ -153,16 +153,26 @@ export default function inheritMeta(
 			for (let keys = Object.keys(parentObj), i = 0; i < keys.length; i++) {
 				const
 					key = keys[i],
-					parent = parentObj[key],
+					parent = parentObj[key];
+
+				const
+					after = new Set(),
 					watchers = new Map();
 
 				if (parent.watchers) {
 					for (let w = parent.watchers.values(), el = w.next(); !el.done; el = w.next()) {
-						watchers.set(el.value.fn, {...el.value});
+						const val = el.value;
+						watchers.set(val.fn, {...el.value});
 					}
 				}
 
-				o[key] = {...parent, watchers};
+				if ('after' in parent) {
+					for (let a = parent.after.values(), el = a.next(); !el.done; el = a.next()) {
+						after.add(el.value);
+					}
+				}
+
+				o[key] = {...parent, after, watchers};
 			}
 		}
 	}

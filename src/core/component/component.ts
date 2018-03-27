@@ -8,7 +8,7 @@
 
 // tslint:disable:max-file-line-count
 import Vue, { ComponentOptions, FunctionalComponentOptions } from 'vue';
-import { ComponentMeta } from 'core/component';
+import { ComponentField, ComponentMeta } from 'core/component';
 
 export interface ComponentConstructor<T = any> {
 	new(): T;
@@ -61,80 +61,56 @@ export function getComponent(
 		inject: p.inject,
 		data(): Dictionary {
 			const
-				ctx = this as any,
-				data = {} as Dictionary;
+				ctx = <any>this,
+				data = initDataObject(meta.fields, ctx, instance);
 
-			for (let o = meta.fields, keys = Object.keys(o), i = 0; i < keys.length; i++) {
-				const
-					key = ctx.$activeField = keys[i],
-					el = o[key];
-
-				let val;
-				if (el.init) {
-					val = el.init(ctx);
-				}
-
-				// tslint:disable-next-line
-				if (val === undefined) {
-					val = el.default !== undefined ? el.default : Object.fastClone(instance[key]);
-					data[key] = val === undefined ? ctx[key] : val;
-
-				} else {
-					data[key] = val;
-				}
-			}
-
+			runHook('beforeDataCreate', ctx.meta, ctx, data).catch(stderr);
 			return data;
 		},
 
 		beforeCreate(): void {
 			const
-				ctx = this as any;
+				ctx = <any>this;
 
-			ctx.meta = meta;
-			ctx.componentName = meta.name;
 			ctx.instance = instance;
-			runHook('beforeRuntime', meta, this).catch(stderr);
+			ctx.componentName = meta.name;
+
+			ctx.meta = Object.assign(Object.create(meta), {
+				watchers: Object.create(meta.watchers),
+				hooks: Object.create(meta.hooks)
+			});
+
+			for (let o = ctx.meta.hooks, keys = Object.keys(meta.hooks), i = 0; i < keys.length; i++) {
+				const key = keys[i];
+				o[key] = o[key].slice();
+			}
+
+			runHook('beforeRuntime', ctx.meta, ctx)
+				.catch(stderr);
 
 			for (let o = meta.accessors, keys = Object.keys(o), i = 0; i < keys.length; i++) {
 				const
 					key = keys[i],
 					el = o[key];
 
-				Object.defineProperty(this, keys[i], {
+				Object.defineProperty(ctx, keys[i], {
 					get: el.get,
 					set: el.set
 				});
 			}
 
-			for (let o = meta.systemFields, keys = Object.keys(o), i = 0; i < keys.length; i++) {
-				const
-					key = ctx.$activeField = keys[i],
-					el = o[key];
-
-				let val;
-				if (el.init) {
-					val = el.init(ctx);
-				}
-
-				// tslint:disable-next-line
-				if (val === undefined) {
-					val = el.default !== undefined ? el.default : Object.fastClone(instance[key]);
-					this[key] = val === undefined ? this[key] : val;
-
-				} else {
-					this[key] = val;
-				}
-			}
-
-			runHook('beforeCreate', meta, this).then(async () => {
+			initDataObject(meta.systemFields, ctx, instance, ctx);
+			runHook('beforeCreate', meta, ctx).then(async () => {
 				if (methods.beforeCreate) {
-					await methods.beforeCreate.fn.call(this);
+					await methods.beforeCreate.fn.call(ctx);
 				}
 			}, stderr);
 		},
 
 		created(): void {
+			const
+				ctx = <any>this;
+
 			for (let o = meta.watchers, keys = Object.keys(o), i = 0; i < keys.length; i++) {
 				const
 					key = keys[i],
@@ -147,87 +123,122 @@ export function getComponent(
 							fn = el.handler;
 
 						if (Object.isString(fn)) {
-							if (!Object.isFunction(this[fn])) {
+							if (!Object.isFunction(ctx[fn])) {
 								throw new ReferenceError(`The specified method (${fn}) for watching is not defined`);
 							}
 
-							this[fn](a, b);
+							ctx[fn](a, b);
 
 						} else {
-							fn(this, a, b);
+							fn(ctx, a, b);
 						}
 					}});
 				}
 			}
 
-			runHook('created', meta, this).then(async () => {
+			runHook('created', ctx.meta, ctx).then(async () => {
 				if (methods.created) {
-					await methods.created.fn.call(this);
+					await methods.created.fn.call(ctx);
 				}
 			}, stderr);
 		},
 
 		beforeMount(): void {
-			runHook('beforeMount', meta, this).then(async () => {
+			const
+				ctx = <any>this;
+
+			runHook('beforeMount', ctx.meta, ctx).then(async () => {
 				if (methods.beforeMount) {
-					await methods.beforeMount.fn.call(this);
+					await methods.beforeMount.fn.call(ctx);
 				}
 			}, stderr);
 		},
 
 		mounted(): void {
-			this.$el.vueComponent = this;
-			runHook('mounted', meta, this).then(async () => {
+			const
+				ctx = this.$el.vueComponent = <any>this;
+
+			runHook('mounted', ctx.meta, ctx).then(async () => {
 				if (methods.mounted) {
-					await methods.mounted.fn.call(this);
+					await methods.mounted.fn.call(ctx);
 				}
 			}, stderr);
 		},
 
 		beforeUpdate(): void {
-			runHook('beforeUpdate', meta, this).then(async () => {
+			const
+				ctx = <any>this;
+
+			runHook('beforeUpdate', ctx.meta, ctx).then(async () => {
 				if (methods.beforeUpdate) {
-					await methods.beforeUpdate.fn.call(this);
+					await methods.beforeUpdate.fn.call(ctx);
 				}
 			}, stderr);
 		},
 
 		updated(): void {
-			runHook('updated', meta, this).then(async () => {
+			const
+				ctx = <any>this;
+
+			runHook('updated', ctx.meta, ctx).then(async () => {
 				if (methods.updated) {
-					await methods.updated.fn.call(this);
+					await methods.updated.fn.call(ctx);
 				}
 			}, stderr);
 		},
 
 		activated(): void {
-			runHook('activated', meta, this).then(async () => {
+			const
+				ctx = <any>this;
+
+			runHook('activated', ctx.meta, ctx).then(async () => {
 				if (methods.activated) {
-					await methods.activated.fn.call(this);
+					await methods.activated.fn.call(ctx);
 				}
 			}, stderr);
 		},
 
 		deactivated(): void {
-			runHook('deactivated', meta, this).then(async () => {
+			const
+				ctx = <any>this;
+
+			runHook('deactivated', ctx.meta, ctx).then(async () => {
 				if (methods.deactivated) {
-					await methods.deactivated.fn.call(this);
+					await methods.deactivated.fn.call(ctx);
 				}
 			}, stderr);
 		},
 
 		beforeDestroy(): void {
-			runHook('beforeDestroy', meta, this).then(async () => {
+			const
+				ctx = <any>this;
+
+			runHook('beforeDestroy', ctx.meta, ctx).then(async () => {
 				if (methods.beforeDestroy) {
-					await methods.beforeDestroy.fn.call(this);
+					await methods.beforeDestroy.fn.call(ctx);
 				}
 			}, stderr);
 		},
 
 		destroyed(): void {
-			runHook('destroyed', meta, this).then(async () => {
+			const
+				ctx = <any>this;
+
+			runHook('destroyed', ctx.meta, ctx).then(async () => {
 				if (methods.destroyed) {
-					await methods.destroyed.fn.call(this);
+					await methods.destroyed.fn.call(ctx);
+				}
+			}, stderr);
+		},
+
+		errorCaptured(): void {
+			const
+				args = arguments,
+				ctx = <any>this;
+
+			runHook('errorCaptured', ctx.meta, ctx, ...args).then(async () => {
+				if (methods.errorCaptured) {
+					await methods.errorCaptured.fn.apply(ctx, args);
 				}
 			}, stderr);
 		}
@@ -251,7 +262,7 @@ export function getFunctionalComponent(
 	const
 		props = {};
 
-	const ctx = component.ctx = Object.assign(Object.create(vueProto), {
+	component.ctx = Object.assign(Object.create(vueProto), {
 		meta,
 		instance,
 		componentName: name,
@@ -279,13 +290,92 @@ export function getFunctionalComponent(
 }
 
 /**
+ * Initializes fields to the specified data object and returns it
+ *
+ * @param fields
+ * @param ctx - component context
+ * @param instance - component class instance
+ * @param [data] - data object
+ */
+export function initDataObject(
+	fields: Dictionary<ComponentField>,
+	ctx: Dictionary,
+	instance: Dictionary,
+	data: Dictionary = {}
+): Dictionary {
+	const
+		queue = new Set();
+
+	while (true) {
+		for (let o = fields, keys = Object.keys(o), i = 0; i < keys.length; i++) {
+			const
+				key = ctx.$activeField = keys[i],
+				el = o[key];
+
+			if (key in data) {
+				continue;
+			}
+
+			const initVal = () => {
+				queue.delete(key);
+
+				let
+					val;
+
+				if (el.init) {
+					val = el.init(<any>ctx, data);
+				}
+
+				// tslint:disable-next-line
+				if (val === undefined) {
+					val = el.default !== undefined ? el.default : Object.fastClone(instance[key]);
+					data[key] = val === undefined ? ctx[key] : val;
+
+				} else {
+					data[key] = val;
+				}
+			};
+
+			if (el.after.size) {
+				let
+					res = true;
+
+				for (let o = el.after.values(), val = o.next(); !val.done; val = o.next()) {
+					if (!(val.value in data)) {
+						queue.add(key);
+						res = false;
+						break;
+					}
+				}
+
+				if (res) {
+					initVal();
+				}
+
+			} else {
+				initVal();
+			}
+		}
+
+		if (!queue.size) {
+			break;
+		}
+	}
+
+	return data;
+}
+
+/**
  * Runs a hook from the specified meta object
  *
  * @param hook
  * @param meta
  * @param ctx - link to context
+ * @param args - event arguments
  */
-export async function runHook(hook: string, meta: ComponentMeta, ctx: Object): Promise<void> {
+export async function runHook(hook: string, meta: ComponentMeta, ctx: Dictionary, ...args: any[]): Promise<void> {
+	ctx.hook = hook;
+
 	if (!meta.hooks[hook].length) {
 		return;
 	}
@@ -344,7 +434,7 @@ export async function runHook(hook: string, meta: ComponentMeta, ctx: Object): P
 			el = hooks[i];
 
 		event.on(el.after, async () => {
-			await el.fn.call(ctx);
+			await el.fn.apply(ctx, args);
 			await event.emit(el.name || Math.random().toString());
 		});
 	}
@@ -521,11 +611,28 @@ export function addMethodsToMeta(constructor: Function, meta: ComponentMeta): vo
 
 			const
 				old = obj[key],
-				set = desc.set || old && old.set;
+				set = desc.set || old && old.set,
+				get = desc.get || old && old.get;
 
 			if (set) {
-				meta.methods[`${key}Setter`] = {
+				const
+					k = `${key}Setter`;
+
+				proto[k] = set;
+				meta.methods[k] = {
 					fn: set,
+					watchers: {},
+					hooks: {}
+				};
+			}
+
+			if (get) {
+				const
+					k = `${key}Getter`;
+
+				proto[k] = get;
+				meta.methods[k] = {
+					fn: get,
 					watchers: {},
 					hooks: {}
 				};

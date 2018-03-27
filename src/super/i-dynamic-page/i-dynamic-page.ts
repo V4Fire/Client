@@ -8,11 +8,10 @@
 
 import $C = require('collection.js');
 import URI = require('urijs');
-
 import symbolGenerator from 'core/symbol';
 import iData, { component } from 'super/i-data/i-data';
-export * from 'super/i-data/i-data';
 
+export * from 'super/i-data/i-data';
 export interface OnFilterChange {
 	mixin?: Dictionary;
 	modifier?(value: any): any;
