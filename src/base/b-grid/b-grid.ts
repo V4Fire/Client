@@ -184,7 +184,7 @@ export default class bGrid<T extends Dictionary = Dictionary> extends iDataPages
 	 * @param date
 	 * @param data
 	 */
-	protected checkDateFactory(date: Date | Date[], data: Object): Function {
+	protected checkDateFactory(date: Date | Date[], data: Dictionary): Function {
 		return () => {
 			const normalizedDate = Object.isDate(date) ? [date] : date;
 			return $C(normalizedDate).every((date, i, obj) =>

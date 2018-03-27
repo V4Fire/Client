@@ -212,17 +212,17 @@ export default class bList<T extends Dictionary = Dictionary> extends iData<T> {
 	}
 
 	/** @override */
-	protected onAddData(data: Object): void {
+	protected onAddData(data: T): void {
 		Object.assign(this.db, data);
 	}
 
 	/** @override */
-	protected onUpdData(data: Object): void {
+	protected onUpdData(data: T): void {
 		Object.assign(this.db, data);
 	}
 
 	/** @override */
-	protected onDelData(data: Object): void {
+	protected onDelData(data: T): void {
 		Object.assign(this.db, data);
 	}
 

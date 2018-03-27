@@ -39,24 +39,24 @@ export {
 } from 'core/data';
 
 export interface DataEvent {
-	on(events: string | string[], handler: Function, ...args: any[]): Object | undefined;
+	on(events: string | string[], handler: Function, ...args: any[]): object | undefined;
 	on(
 		events: string | string[],
 		handler: Function,
 		params: AsyncCbOptsSingle & {options?: AddEventListenerOptions},
 		...args: any[]
-	): Object | undefined;
+	): object | undefined;
 
-	once(events: string | string[], handler: Function, ...args: any[]): Object | undefined;
+	once(events: string | string[], handler: Function, ...args: any[]): object | undefined;
 	once(
 		events: string | string[],
 		handler: Function,
 		params: AsyncCbOpts & {options?: AddEventListenerOptions},
 		...args: any[]
-	): Object | undefined;
+	): object | undefined;
 
-	off(id?: Object): void;
-	off(params: ClearOptsId<Object>): void;
+	off(id?: object): void;
+	off(params: ClearOptsId<object>): void;
 }
 
 export interface SocketEvent extends DataEvent {
@@ -253,7 +253,7 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 	 * Returns an event emitter object for working with a socket connection
 	 * @param [params] - advanced parameters
 	 */
-	connect(params?: Object): SocketEvent {
+	connect(params?: Dictionary): SocketEvent {
 		const
 			{async: $a, $dataProvider: $d} = this,
 			connection = (async () => $d && $d.connect(params))();

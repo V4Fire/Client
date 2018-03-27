@@ -1001,7 +1001,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 * @param value
 	 * @param [obj]
 	 */
-	protected setField(path: string, value: any, obj: Object = this): any {
+	protected setField(path: string, value: any, obj: object = this): any {
 		let
 			ref = obj;
 
@@ -1040,7 +1040,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 * @param path - path to the property (bla.baz.foo)
 	 * @param [obj]
 	 */
-	protected deleteField(path: string, obj: Object = this): boolean {
+	protected deleteField(path: string, obj: object = this): boolean {
 		let ref = obj;
 
 		const
@@ -1078,7 +1078,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 * @param path - path to the property (bla.baz.foo)
 	 * @param [obj]
 	 */
-	protected getField(path: string, obj: Object = this): any {
+	protected getField(path: string, obj: object = this): any {
 		const
 			chunks = path.split('.');
 

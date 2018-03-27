@@ -76,7 +76,7 @@ export default class bWindowForm<T extends Dictionary = Dictionary> extends bWin
 	 * Form temporary cache
 	 */
 	@field()
-	protected formTmp: Object = {};
+	protected formTmp: Dictionary = {};
 
 	/** @override */
 	protected readonly $refs!: {form: bForm};
