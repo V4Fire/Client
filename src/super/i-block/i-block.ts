@@ -525,6 +525,14 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	}
 
 	/**
+	 * Wrapper for $forceUpdate
+	 */
+	@wait('loading', {defer: true, label: $$.forceUpdate})
+	async forceUpdate(): Promise<void> {
+		this.$forceUpdate();
+	}
+
+	/**
 	 * Loads block data
 	 * @emits initLoad()
 	 */
