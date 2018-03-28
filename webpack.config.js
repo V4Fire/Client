@@ -29,11 +29,10 @@ async function buildFactory(entry, buildId = '00') {
 module.exports = (async () => {
 	await include('build/snakeskin.webpack');
 
-	const
-		build = await include('build/entities.webpack');
-
+	const build = await include('build/entities.webpack');
 	console.log('Project graph initialized');
 
-	return args.single ?
-		buildFactory(build.entry) : $C(build.processes).async.map((el, i) => buildFactory(el, i));
+	return global.WEBPACK_CONFIG = await (
+		args.single ? buildFactory(build.entry) : $C(build.processes).async.map((el, i) => buildFactory(el, i))
+	);
 })();

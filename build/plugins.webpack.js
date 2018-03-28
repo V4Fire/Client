@@ -73,9 +73,8 @@ module.exports = async function ({buildId}) {
 	} else {
 		plugins.push(new HardSourceWebpackPlugin({
 			cacheDirectory: path.join(buildCache, `${buildId}/[confighash]`),
-			recordsPath: path.join(buildCache, `${buildId}/[confighash]/records.json`),
 			environmentHash: {files: ['package-lock.json']},
-			configHash: async (webpackConfig) => require('node-object-hash')().hash(await webpackConfig)
+			configHash: () => require('node-object-hash')().hash(global.WEBPACK_CONFIG)
 		}));
 	}
 
