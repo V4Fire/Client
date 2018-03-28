@@ -188,10 +188,31 @@ function vueComp({name, attrs}) {
 			isSync = true;
 		}
 
+		const
+			isLiteral = /^\s*[[{]/;
+
+		const isStaticLiteral = (v) => {
+			try {
+				new Function(`return ${v}`)();
+				return true;
+
+			} catch (_) {
+				return false;
+			}
+		};
+
 		$C(attrs).forEach((el, key) => {
 			if (key[0] !== ':') {
 				return;
 			}
+
+			el = $C(el).map((el) => {
+				if (Object.isString(el) && isLiteral.test(el) && isStaticLiteral(el)) {
+					return `memoizeLiteral(${el})`;
+				}
+
+				return el;
+			});
 
 			const
 				base = key.slice(1),
