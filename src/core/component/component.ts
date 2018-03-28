@@ -76,11 +76,6 @@ export function getComponent(
 			ctx.componentName = meta.name;
 			ctx.meta = createMeta(meta);
 
-			for (let o = ctx.meta.hooks, keys = Object.keys(meta.hooks), i = 0; i < keys.length; i++) {
-				const key = keys[i];
-				o[key] = o[key].slice();
-			}
-
 			runHook('beforeRuntime', ctx.meta, ctx)
 				.catch(stderr);
 
@@ -290,10 +285,17 @@ export function getFunctionalComponent(
  * @param parent
  */
 export function createMeta(parent: ComponentMeta): ComponentMeta {
-	return Object.assign(Object.create(parent), {
+	const meta = Object.assign(Object.create(parent), {
 		watchers: Object.create(parent.watchers),
 		hooks: Object.create(parent.hooks)
 	});
+
+	for (let o = meta.hooks, keys = Object.keys(parent.hooks), i = 0; i < keys.length; i++) {
+		const key = keys[i];
+		o[key] = o[key].slice();
+	}
+
+	return meta;
 }
 
 /**
