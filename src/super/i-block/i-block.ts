@@ -1597,14 +1597,21 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 */
 	protected beforeDestroy(): void {
 		this.localEvent.emit('component.destroyed');
-		this.block.destructor();
+
+		if (this.block) {
+			this.block.destructor();
+
+		} else {
+			this.blockStatus = 'destroyed';
+			this.async.clearAll();
+			this.localEvent.removeAllListeners();
+		}
 
 		$C(this.asyncQueue).forEach((el) => {
 			queue.delete(el);
 			backQueue.delete(el);
 		});
 
-		this.block.status = this.block.statuses.inactive;
 		delete classesCache.dict.els[this.blockId];
 	}
 
