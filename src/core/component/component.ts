@@ -74,11 +74,7 @@ export function getComponent(
 
 			ctx.instance = instance;
 			ctx.componentName = meta.name;
-
-			ctx.meta = Object.assign(Object.create(meta), {
-				watchers: Object.create(meta.watchers),
-				hooks: Object.create(meta.hooks)
-			});
+			ctx.meta = createMeta(meta);
 
 			for (let o = ctx.meta.hooks, keys = Object.keys(meta.hooks), i = 0; i < keys.length; i++) {
 				const key = keys[i];
@@ -290,6 +286,17 @@ export function getFunctionalComponent(
 }
 
 /**
+ * Creates new meta object with the specified parent
+ * @param parent
+ */
+export function createMeta(parent: ComponentMeta): ComponentMeta {
+	return Object.assign(Object.create(parent), {
+		watchers: Object.create(parent.watchers),
+		hooks: Object.create(parent.hooks)
+	});
+}
+
+/**
  * Initializes fields to the specified data object and returns it
  *
  * @param fields
@@ -442,6 +449,9 @@ export async function runHook(hook: string, meta: ComponentMeta, ctx: Dictionary
 	await event.fire();
 }
 
+const
+	baseComponents = new WeakMap();
+
 /**
  * Returns a base component object from the specified constructor
  *
@@ -456,6 +466,10 @@ export function getBaseComponent(
 	component: ComponentMeta['component'];
 	instance: Dictionary;
 } {
+	if (baseComponents.has(constructor)) {
+		return baseComponents.get(constructor);
+	}
+
 	addMethodsToMeta(constructor, meta);
 
 	const
@@ -573,7 +587,9 @@ export function getBaseComponent(
 		}
 	}
 
-	return {mods, component, instance};
+	const res = {mods, component, instance};
+	baseComponents.set(constructor, res);
+	return res;
 }
 
 /**
