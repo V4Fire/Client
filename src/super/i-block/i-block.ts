@@ -262,7 +262,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 * Active status
 	 * (for keep alive)
 	 */
-	@field()
+	@system()
 	protected blockActivated: boolean = true;
 
 	/**
@@ -904,7 +904,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 			});
 		};
 
-		if (this.blockStatus === 'unloaded') {
+		if (this.blockStatus === statuses[statuses.unloaded]) {
 			const
 				{hooks} = this.meta;
 
@@ -1567,7 +1567,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 		}
 
 		this.blockActivated = true;
-		this.$forceUpdate();
+		await this.forceUpdate();
 	}
 
 	/**
@@ -1602,7 +1602,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 			this.block.destructor();
 
 		} else {
-			this.blockStatus = 'destroyed';
+			this.blockStatus = statuses[statuses.destroyed];
 			this.async.clearAll();
 			this.localEvent.removeAllListeners();
 		}
