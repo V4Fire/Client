@@ -6,10 +6,11 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import $C = require('collection.js');
 import { CreateElement, RenderContext, VNode, FunctionalComponentOptions } from 'vue';
 import { EventEmitter2 as EventEmitter } from 'eventemitter2';
-import { FunctionalCtx } from 'core/component';
-import { runHook, initDataObject, defaultWrapper } from 'core/component/component';
+import { VueElement, FunctionalCtx } from 'core/component';
+import { runHook, createMeta, initDataObject, defaultWrapper } from 'core/component/component';
 
 const
 	cache = new WeakMap();
@@ -28,7 +29,11 @@ export function createFakeCtx(
 ): Dictionary & FunctionalCtx {
 	const
 		fakeCtx: Dictionary & FunctionalCtx = Object.create(baseCtx),
-		{meta, meta: {methods}, instance} = fakeCtx;
+		meta = createMeta(fakeCtx.meta);
+
+	const
+		{instance} = fakeCtx,
+		{methods} = meta;
 
 	const
 		p = <Dictionary>renderCtx.parent,
@@ -38,16 +43,47 @@ export function createFakeCtx(
 	Object.assign(fakeCtx, renderCtx, renderCtx.props, {
 		_self: fakeCtx,
 		_staticTrees: [],
+
+		meta,
 		children: [],
 
 		$root: p.$root,
 		$parent: p,
 		$options: Object.assign(Object.create(p.$options), fakeCtx.$options),
-		$createElement: createElement,
 
 		$attrs: renderCtx.data.attrs,
 		$slots: Object.assign(renderCtx.slots(), {default: renderCtx.children}),
 		$scopedSlots: {},
+
+		$nextTick: p.$nextTick,
+		$createElement: createElement,
+
+		$destroy(): void {
+			$C(['beforeDestroy', 'destroyed']).forEach((key) => {
+				runHook(key, meta, fakeCtx).then(async () => {
+					if (methods[key]) {
+						await methods[key].fn.call(fakeCtx);
+					}
+				}, stderr);
+			});
+		},
+
+		$forceUpdate(): void {
+			p.forceUpdate().catch(stderr);
+		},
+
+		$watch(): () => void {
+			return () => undefined;
+		},
+
+		$set(obj: object, key: string, value: any): any {
+			obj[key] = value;
+			return value;
+		},
+
+		$delete(obj: object, key: string): void {
+			delete obj[key];
+		},
 
 		$emit(e: string, ...args: any[]): void {
 			event.emit(e, ...args);
@@ -102,6 +138,17 @@ export function createFakeCtx(
 		}
 	}
 
+	let $el;
+	Object.defineProperty(fakeCtx, '$el', {
+		get(): VueElement<any> | undefined {
+			if ($el) {
+				return $el;
+			}
+
+			return $el = p.$root.$el.querySelector(`.${fakeCtx.blockId}`);
+		}
+	});
+
 	runHook('beforeRuntime', meta, fakeCtx).catch(stderr);
 
 	{
@@ -125,8 +172,11 @@ export function createFakeCtx(
 		}
 	}
 
-	runHook('beforeRender', meta, fakeCtx).catch(stderr);
-	methods.beforeRender && methods.beforeRender.fn.call(fakeCtx);
+	runHook('beforeCreate', meta, fakeCtx).then(async () => {
+		if (methods.beforeCreate) {
+			await methods.beforeCreate.fn.call(fakeCtx);
+		}
+	}, stderr);
 
 	return fakeCtx;
 }
@@ -142,7 +192,7 @@ export function patchVNode(vNode: VNode, ctx: Dictionary, renderCtx: RenderConte
 	const
 		{data: vData} = vNode,
 		{data} = renderCtx,
-		{meta, meta: {component: {mods}}} = ctx;
+		{meta, meta: {methods, component: {mods}}} = ctx;
 
 	if (vData) {
 		vData.staticClass = vData.staticClass || '';
@@ -221,8 +271,54 @@ export function patchVNode(vNode: VNode, ctx: Dictionary, renderCtx: RenderConte
 		}
 	}
 
-	runHook('afterRender', meta, ctx).catch(stderr);
-	meta.methods.afterRender && meta.methods.afterRender.fn.call(ctx);
+	runHook('created', ctx.meta, ctx).then(async () => {
+		if (methods.created) {
+			await methods.created.fn.call(ctx);
+		}
+	}, stderr);
+
+	(async () => {
+		const
+			{async: $a} = ctx;
+
+		let
+			destroyed,
+			mounted;
+
+		const destroy = () => {
+			destroyed = true;
+			ctx.$destroy();
+		};
+
+		$a.setTimeout(() => {
+			if (!mounted) {
+				destroy();
+			}
+		}, (1).second());
+
+		try {
+			await $a.wait(() => ctx.$el);
+			if (destroyed) {
+				return;
+			}
+
+			mounted = true;
+			runHook('mounted', ctx.meta, ctx).then(async () => {
+				if (methods.mounted) {
+					await methods.mounted.fn.call(ctx);
+				}
+			}, stderr);
+
+			await $a.wait(() => !ctx.$el);
+			destroy();
+
+		} catch (err) {
+			if (err.type !== 'clearAsync') {
+				throw err;
+			}
+		}
+	})();
+
 	return vNode;
 }
 

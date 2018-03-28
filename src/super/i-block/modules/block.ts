@@ -8,7 +8,7 @@
 
 import $C = require('collection.js');
 import Async from 'core/async';
-import iBlock, { VueElement } from 'super/i-block/i-block';
+import iBlock, { VueElement, ModsTable } from 'super/i-block/i-block';
 import { EventEmitter2 as EventEmitter } from 'eventemitter2';
 
 /**
@@ -181,7 +181,7 @@ export default class Block<T extends iBlock> {
 	 * @param elName
 	 * @param [mods]
 	 */
-	getElSelector(elName: string, mods?: Object): string {
+	getElSelector(elName: string, mods?: ModsTable): string {
 		const
 			sel = `.${this.getFullElName(elName)}`;
 
@@ -204,7 +204,7 @@ export default class Block<T extends iBlock> {
 	 * @param elName
 	 * @param [mods]
 	 */
-	elements<E extends Element = Element>(elName: string, mods?: Object): NodeListOf<E> {
+	elements<E extends Element = Element>(elName: string, mods?: ModsTable): NodeListOf<E> {
 		if (!this.node) {
 			throw new ReferenceError('Root node is not defined');
 		}
@@ -218,7 +218,7 @@ export default class Block<T extends iBlock> {
 	 * @param elName
 	 * @param [mods]
 	 */
-	element<E extends Element = Element>(elName: string, mods?: Object): E | null {
+	element<E extends Element = Element>(elName: string, mods?: ModsTable): E | null {
 		if (!this.node) {
 			throw new ReferenceError('Root node is not defined');
 		}

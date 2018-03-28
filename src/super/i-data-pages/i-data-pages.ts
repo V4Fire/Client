@@ -55,7 +55,7 @@ export default class iDataPages<T extends Dictionary = Dictionary> extends iData
 	protected readonly requestParams!: Dictionary<Dictionary>;
 
 	/** @override */
-	protected readonly $refs!: {loadPageTrigger?: HTMLDivElement};
+	protected readonly $refs!: {loadPageTrigger?: HTMLElement};
 
 	/** @override */
 	async initLoad(): Promise<void> {

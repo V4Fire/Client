@@ -320,7 +320,7 @@ export default class iInput<T extends Dictionary = Dictionary> extends iData<T> 
 	 * @emits validationEnd(result: boolean)
 	 */
 	@wait('ready')
-	async validate(params?: Object): Promise<boolean> {
+	async validate(params?: Dictionary): Promise<boolean> {
 		if (!this.validators.length) {
 			this.removeMod('valid');
 			return true;
