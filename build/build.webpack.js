@@ -25,14 +25,14 @@ const args = exports.args = minimist(argv.slice(2));
 args.env && (env.NODE_ENV = args.env);
 
 /**
- * Output pattern
- */
-exports.output = hash(r('[hash]_[name]'));
-
-/**
  * File hash length
  */
 exports.hashLength = 15;
+
+/**
+ * Output pattern
+ */
+exports.output = hash(r('[hash]_[name]'));
 
 /**
  * Project version
