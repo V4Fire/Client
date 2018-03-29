@@ -8,7 +8,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-- include 'blocks/i-block'|b as placeholder
+- include 'super/i-block'|b as placeholder
 
 - template index(params) extends ['i-block'].index
 	- rootTag = 'span'
