@@ -19,7 +19,9 @@ const
 	{normalizeSep} = include('build/helpers');
 
 const
-	IN_PROCESS = 3;
+	RCPU = require('os').cpus().length,
+	IN_PROCESS = 3,
+	MAX_PROCESS = RCPU * 10;
 
 /**
  * Tree of dependencies
@@ -139,7 +141,7 @@ module.exports = (async () => {
 			}));
 
 			let union = processes[processes.length - 1];
-			if (processes.length === 1 || $C(union).length() > IN_PROCESS) {
+			if (MAX_PROCESS > processes.length && (processes.length === 1 || $C(union).length() > IN_PROCESS)) {
 				processes.push(union = {});
 			}
 
@@ -218,3 +220,5 @@ module.exports = (async () => {
 
 	return res;
 })();
+
+module.exports.MAX_PROCESS = MAX_PROCESS;

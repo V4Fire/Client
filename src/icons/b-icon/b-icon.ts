@@ -12,16 +12,15 @@ import iBlock, { component, prop } from 'super/i-block/i-block';
 export * from 'super/i-block/i-block';
 
 const icons = (<any>require).context(
-	'!!svg-sprite-loader?esModule=false!svg-fill-loader?fill=currentColor!sprite',
+	'!!svg-sprite-loader!svg-fill-loader?fill=currentColor!sprite',
 	true,
 	/\.svg/
 );
 
-const iconsMap = $C(icons.keys()).reduce((map, el) => {
+const iconsMap = $C(icons.keys()).to(Object.createDict()).reduce((map, el) => {
 	map[normalize(el)] = el;
 	return map;
-
-}, {});
+});
 
 function normalize(key: string): string {
 	return key.replace(/\.\//, '').replace(/\.svg$/, '');
@@ -69,7 +68,7 @@ export default class bIcon extends iBlock {
 			}
 
 			const
-				icon = icons(iconsMap[iconId]);
+				{default: icon} = icons(iconsMap[iconId]);
 
 			this.$slots.svgLink = el('use', {
 				attrs: {

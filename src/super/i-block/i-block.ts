@@ -109,6 +109,7 @@ export class Cache<T extends string = string> {
 export const
 	$$ = symbolGenerator(),
 	modsCache = Object.createDict(),
+	literalCache = Object.createDict(),
 	classesCache = new Cache<'base' | 'blocks' | 'els'>(['base', 'blocks', 'els']);
 
 @component()
@@ -1463,6 +1464,15 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 		}
 
 		return Object.freeze(map);
+	}
+
+	/**
+	 * Saves to cache the specified literal and returns returns it
+	 * @param literal
+	 */
+	protected memoizeLiteral<T extends Dictionary | any[]>(literal: T): T extends any[] ? ReadonlyArray<T> : Readonly<T> {
+		const key = JSON.stringify(literal);
+		return modsCache[key] = modsCache[key] || Object.freeze(literal);
 	}
 
 	/**
