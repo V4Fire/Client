@@ -65,4 +65,4 @@ const tasks = (async () => {
 })();
 
 // FIXME: https://github.com/trivago/parallel-webpack/issues/76
-module.exports = /([/\\])webpack-cli\1/.test(module.parent.id) ? tasks : predefinedTasks;
+module.exports = /[/\\]webpack\b/.test(process.argv[1]) ? tasks : predefinedTasks;
