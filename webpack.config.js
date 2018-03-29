@@ -23,7 +23,9 @@ async function buildFactory(entry, buildId = '00') {
 		resolveLoader: await include('build/resolve-loader.webpack'),
 		externals: await include('build/externals.webpack'),
 		module: await include('build/module.webpack'),
-		plugins: await include('build/plugins.webpack')({buildId})
+		plugins: await include('build/plugins.webpack')({buildId}),
+		mode: isProd ? 'production' : 'development',
+		optimization: await include('build/optimization.webpack')({buildId})
 	};
 }
 
@@ -36,7 +38,8 @@ const predefinedTasks = $C(build.MAX_PROCESS).map((el, i) => new Promise((resolv
 	buildEvent.once(`build.all`, (config) => {
 		resolve({
 			...include('build/fake.webpack'),
-			output: config.output
+			output: config.output,
+			mode: 'development'
 		});
 	});
 }));
@@ -62,4 +65,4 @@ const tasks = (async () => {
 })();
 
 // FIXME: https://github.com/trivago/parallel-webpack/issues/76
-module.exports = /([/\\])webpack\1/.test(module.parent.id) ? tasks : predefinedTasks;
+module.exports = /([/\\])webpack-cli\1/.test(module.parent.id) ? tasks : predefinedTasks;
