@@ -32,7 +32,7 @@ export default class iInput<T extends Dictionary = Dictionary> extends iData<T> 
 	 * Block default value
 	 */
 	@prop({required: false})
-	readonly defaultProp: any;
+	readonly defaultProp?: any;
 
 	/**
 	 * If true, then the block value will be marked as UTC
