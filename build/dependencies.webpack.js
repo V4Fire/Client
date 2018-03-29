@@ -26,7 +26,7 @@ const
 module.exports = function ({build}) {
 	return {
 		apply(compiler) {
-			compiler.plugin('emit', (compilation, cb) => {
+			compiler.hooks.emit.tap('DependenciesPlugin', (compilation) => {
 				const
 					manifest = {};
 
@@ -80,7 +80,6 @@ module.exports = function ({build}) {
 				fs.closeSync(fd);
 
 				fs.writeFileSync(assetsJSON.replace(/\.json$/, '.js'), $C(assets).to('').map((el, key) => `PATH['${key}'] = '${el}';\n`));
-				cb();
 			});
 		}
 	};
