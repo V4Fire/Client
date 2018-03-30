@@ -104,6 +104,10 @@ export default class bButton<T extends Dictionary = Dictionary> extends iData<T>
 			['small'],
 			'normal',
 			'big'
+		],
+		upper: [
+			'true',
+			['false']
 		]
 	};
 
