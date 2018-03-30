@@ -41,7 +41,7 @@
 		'user-scalable': 'no'
 	} .
 
-	- isProd = @@env === 'production'
+	- isProd = @@NODE_ENV === 'production'
 	- root = path.relative(@output, @root)
 	- lib = path.relative(@output, @lib)
 	- assets = path.relative(@output, @assets)
@@ -210,7 +210,15 @@
 							Sugar.extend();
 
 					- block scripts
+						# script
+							if ('vendor' in PATH) {
+								#+= self.addScriptDep('vendor')
+							}
+
 						+= self.addDependencies(@dependencies, 'scripts')
+
+						- script
+							+= self.addScriptDep('webpack.runtime')
 
 					# script
 						# block depsReady

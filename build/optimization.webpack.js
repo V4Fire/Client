@@ -27,9 +27,32 @@ module.exports = async function ({buildId}) {
 		options = {};
 
 	if (base) {
+		options.runtimeChunk = {
+			name: 'webpack.runtime.js'
+		};
+
 		options.splitChunks = {
-			name: 'index.js',
-			chunks: 'initial'
+			cacheGroups: {
+				index: {
+					name: 'index.js',
+					chunks: 'all',
+					priority: 0,
+					minChunks: 2,
+					enforce: true,
+					reuseExistingChunk: true,
+					test: /@v4fire|^((?!([/\\])node_modules\2).)*$/
+				},
+
+				vendor: {
+					name: 'vendor.js',
+					chunks: 'all',
+					priority: 1,
+					minChunks: 2,
+					enforce: true,
+					reuseExistingChunk: true,
+					test: /^((?!([/\\])node_modules\2).)*[/\\]?node_modules([/\\])((?!@v4fire\2?).)*$/
+				}
+			}
 		};
 	}
 

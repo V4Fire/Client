@@ -25,7 +25,8 @@ async function buildFactory(entry, buildId = '00') {
 		module: await include('build/module.webpack'),
 		plugins: await include('build/plugins.webpack')({buildId}),
 		mode: isProd ? 'production' : 'development',
-		optimization: await include('build/optimization.webpack')({buildId})
+		optimization: await include('build/optimization.webpack')({buildId}),
+		devtool: await include('build/devtool.webpack')
 	};
 }
 
@@ -35,13 +36,7 @@ const
 
 const predefinedTasks = $C(build.MAX_PROCESS).map((el, i) => new Promise((resolve) => {
 	buildEvent.once(`build.${i}`, resolve);
-	buildEvent.once(`build.all`, (config) => {
-		resolve({
-			...include('build/fake.webpack'),
-			output: config.output,
-			mode: 'development'
-		});
-	});
+	buildEvent.once(`build.all`, () => resolve(include('build/fake.webpack')));
 }));
 
 const tasks = (async () => {
