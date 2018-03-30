@@ -121,7 +121,7 @@ module.exports = (async () => {
 					{
 						loader: 'file',
 						options: {
-							name: `${output.replace(/\[hash]_/, '')}.html`
+							name: `${output.replace(/\[hash:\d+]_/, '')}.html`
 						}
 					},
 

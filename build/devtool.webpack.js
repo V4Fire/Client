@@ -8,10 +8,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-module.exports = {
-	'CONFIG': {},
-	'process.env': {
-		NODE_ENV: JSON.stringify(process.env.NODE_ENV),
-		IS_PROD: isProd
-	}
-};
+/**
+ * Parameters for webpack.devtool
+ */
+module.exports = false;

@@ -21,7 +21,7 @@ const
 const
 	RCPU = require('os').cpus().length,
 	IN_PROCESS = 3,
-	MAX_PROCESS = RCPU * 10;
+	MAX_PROCESS = RCPU * IN_PROCESS;
 
 /**
  * Tree of dependencies

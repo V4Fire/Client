@@ -70,6 +70,22 @@
 	- return self.normalize(src)
 
 /**
+ * Adds a script dependence
+ * @param {string=} [name] - dependence name
+ */
+- block index->addScriptDep(name)
+	? name = self.normalize(name)
+	document.write('<script src="' + PATH['{name}'] + '" defer="defer"><' + '/script>');
+
+/**
+ * Adds a link dependence
+ * @param {string=} [name] - dependence name
+ */
+- block index->addStyleDep(name)
+	? name = self.normalize(name)
+	document.write('<link rel="stylesheet" href="' + PATH['{name}$style'] + '">');
+
+/**
  * Adds template dependencies
  *
  * @param {!Object} dependencies
@@ -81,21 +97,19 @@
 	- if !type || type === 'styles'
 		- script
 			- forEach list => el
-				? el = self.normalize(el)
-				document.write('<link rel="stylesheet" href="' + PATH['{el}$style'] + '">');
+				+= self.addStyleDep(el)
 
 	- if !type || type === 'scripts'
 		- script
 			- forEach list => el
-				? el = self.normalize(el)
 				: tpl = el + '_tpl'
 
 				- if el === 'index'
-					document.write('<script src="' + PATH['{el}'] + '" defer="defer"><' + '/script>');
-					document.write('<script src="' + PATH['{tpl}'] + '" defer="defer"><' + '/script>');
+					+= self.addScriptDep(el)
+					+= self.addScriptDep(tpl)
 
 				- else
-					document.write('<script src="' + PATH['{tpl}'] + '" defer="defer"><' + '/script>');
-					document.write('<script src="' + PATH['{el}'] + '" defer="defer"><' + '/script>');
+					+= self.addScriptDep(tpl)
+					+= self.addScriptDep(el)
 
 				ModuleDependencies.fileCache['{el}'] = true;

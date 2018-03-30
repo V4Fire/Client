@@ -26,7 +26,7 @@
   },
   "dependencies": {
     "@types/dom4": "^1.5.20",
-    "@types/socket.io": "^1.4.32",
+    "@types/socket.io": "^1.4.33",
     "@types/socket.io-client": "^1.4.32",
     "@types/urijs": "^1.15.37",
     "@v4fire/core": "github:v4Fire/core#ts",
@@ -44,7 +44,7 @@
     "raven-js": "^3.24.0",
     "requestidlecallback": "^0.3.0",
     "snakeskin": "^7.2.9",
-    "socket.io": "^2.0.4",
+    "socket.io": "^2.1.0",
     "sugar": "^2.0.4",
     "urijs": "^1.19.1",
     "vue": "^2.5.16"

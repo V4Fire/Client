@@ -9,7 +9,19 @@
  */
 
 module.exports = {
+	mode: 'development',
+	cache: true,
+	devtool: false,
+
 	entry: {
 		__tmp: __filename
+	},
+
+	output: {
+		filename: '[name]'
+	},
+
+	optimization: {
+		minimize: false
 	}
 };
