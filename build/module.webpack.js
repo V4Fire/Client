@@ -22,27 +22,42 @@ const
 	depsRgxp = new RegExp(`node_modules\\/(?!${dependencies.map((el) => RegExp.escape(el || el.src)).join('|')})`);
 
 /**
- * Parameters for webpack.module
- * @type {Promise<Object>}
+ * Returns parameters for webpack.module
+ *
+ * @param {(number|string)} buildId - build id
+ * @param {Array} plugins - list of plugins
+ * @return {Promise<Object>}
  */
-module.exports = (async () => {
+module.exports = async function ({buildId, plugins}) {
 	const
 		build = await include('build/entities.webpack');
 
-	return {
-		rules: [
+	const base = {
+		'0': true,
+		'00': true
+	}[buildId];
+
+	const loaders = {
+		rules: []
+	};
+
+	if (base) {
+		loaders.rules.push(
 			{
 				test: /\.ts/,
 				exclude: depsRgxp,
 				use: [
 					{
-						loader: 'ts'
+						loader: 'ts',
+						options: {
+							transpileOnly: !isProd
+						}
 					},
 
 					{
 						loader: 'proxy',
 						options: {
-							modules: [resolve.sourceDir, ...resolve.rootDependencies]
+							modules: [resolve.blockSync(), resolve.sourceDir, ...resolve.rootDependencies]
 						}
 					},
 
@@ -61,8 +76,15 @@ module.exports = (async () => {
 				test: /workers\/\w+\.ts$/,
 				exclude: depsRgxp,
 				use: [{loader: 'ts'}]
-			},
+			}
+		);
 
+	} else {
+		plugins.push(
+			new ExtractTextPlugin(`${hash(output, true)}.css`)
+		);
+
+		loaders.rules.push(
 			{
 				test: /\.styl$/,
 				use: ExtractTextPlugin.extract({
@@ -106,16 +128,6 @@ module.exports = (async () => {
 			},
 
 			{
-				test: /\.ss$/,
-				use: [
-					{
-						loader: 'snakeskin',
-						options: config.snakeskin().client
-					}
-				]
-			},
-
-			{
 				test: /\.ess$/,
 				use: [
 					{
@@ -144,20 +156,34 @@ module.exports = (async () => {
 						})
 					}
 				]
-			},
-
-			{
-				test: /\.(png|gif|jpg|svg|ttf|eot|woff|woff2|mp3|ogg|aac)$/,
-				use: [
-					{
-						loader: 'url',
-						options: {
-							name: hash('[path][hash]_[name].[ext]'),
-							limit: 4096
-						}
-					}
-				]
 			}
-		]
-	};
-})();
+		);
+	}
+
+	loaders.rules.push(
+		{
+			test: /\.ss$/,
+			use: [
+				{
+					loader: 'snakeskin',
+					options: config.snakeskin().client
+				}
+			]
+		},
+
+		{
+			test: /\.(png|gif|jpg|svg|ttf|eot|woff|woff2|mp3|ogg|aac)$/,
+			use: [
+				{
+					loader: 'url',
+					options: {
+						name: hash('[path][hash]_[name].[ext]'),
+						limit: 4096
+					}
+				}
+			]
+		}
+	);
+
+	return loaders;
+};
