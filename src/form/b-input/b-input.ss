@@ -41,7 +41,7 @@
 								:autocomplete = autocomplete |
 								:autofocus = autofocus |
 								:maxlength = maxlength |
-								:readonly = autocomplete === 'off' ? 'readonly' : undefined |
+								:readonly = readonly || autocomplete === 'off' ? 'readonly' : undefined |
 								@focus = onFocus |
 								@input = onEdit |
 								@blur = onBlur |

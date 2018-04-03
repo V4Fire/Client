@@ -51,6 +51,12 @@ export default class bInput<T extends Dictionary = Dictionary> extends iInput<T>
 	readonly pattern?: string;
 
 	/**
+	 * Readonly flag
+	 */
+	@prop({type: Boolean, required: false})
+	readonly readonly?: boolean;
+
+	/**
 	 * Reset button for input
 	 */
 	@prop(Boolean)
@@ -491,7 +497,7 @@ export default class bInput<T extends Dictionary = Dictionary> extends iInput<T>
 		const
 			{input} = this.$refs;
 
-		if (input.hasAttribute('readonly')) {
+		if (!this.readonly && input.hasAttribute('readonly')) {
 			input.removeAttribute('readonly');
 
 			if (this.b.is.iOS) {

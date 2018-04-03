@@ -146,7 +146,7 @@ export default class iDataPages<T extends Dictionary = Dictionary> extends iData
 	 * Synchronization for the lazyLoad property
 	 * @param value
 	 */
-	@watch({field: 'lazyLoad'})
+	@watch({field: 'lazyLoad', immediate: true})
 	protected syncLazyLoadWatcher(value: boolean): void {
 		const
 			{async: $a} = this,
