@@ -189,14 +189,14 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	/**
 	 * Base block modifiers
 	 */
-	get baseMods(): ModsNTable {
+	get baseMods(): Readonly<ModsNTable> {
 		const
 			m = this.mods;
 
-		return {
+		return Object.freeze({
 			theme: m.theme,
 			size: m.size
-		};
+		});
 	}
 
 	/**
@@ -341,7 +341,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	/**
 	 * Watched block modifiers
 	 */
-	protected get m(): ModsNTable {
+	protected get m(): Readonly<ModsNTable> {
 		const
 			o = {},
 			w = this.watchModsStore,
@@ -368,7 +368,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 			}
 		}
 
-		return o;
+		return Object.freeze(o);
 	}
 
 	/**
