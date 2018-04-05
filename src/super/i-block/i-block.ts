@@ -200,44 +200,39 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	}
 
 	/**
-	 * Watched block modifiers
+	 * Block modifiers
 	 */
-	get m(): ModsNTable {
+	@system((o) => {
 		const
-			o = {},
-			w = this.watchModsStore,
-			m = this.modsStore;
+			declMods = o.meta.component.mods,
+			attrMods = <string[][]>[];
 
-		for (let keys = Object.keys(m), i = 0; i < keys.length; i++) {
+		for (let attrs = o.$attrs, keys = Object.keys(attrs), i = 0; i < keys.length; i++) {
 			const
-				key = keys[i],
-				val = m[key];
+				key = keys[i];
 
-			if (key in w) {
-				o[key] = val;
-
-			} else {
-				Object.defineProperty(o, key, {
-					get: () => {
-						if (!(key in w)) {
-							w[key] = val;
-						}
-
-						return val;
-					}
-				});
+			if (key in declMods) {
+				attrMods.push([key, attrs[key]]);
+				o.$watch(`$attrs.${key}`, (val) => o.mods[key] = val);
 			}
 		}
 
-		return o;
-	}
+		return o.link('modsProp', (val) => {
+			const
+				declMods = o.meta.component.mods,
+				// tslint:disable-next-line:prefer-object-spread
+				mods = Object.assign(o.mods || {...declMods}, val);
 
-	/**
-	 * Block modifiers
-	 */
-	get mods(): ModsNTable {
-		return {...this.modsStore};
-	}
+			for (let i = 0; i < attrMods.length; i++) {
+				const [key, val] = attrMods[i];
+				mods[key] = val;
+			}
+
+			return o.normalizeMods(mods);
+		});
+	})
+
+	mods!: ModsNTable;
 
 	/**
 	 * Block modifiers
@@ -344,39 +339,37 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	protected watchModsStore: ModsNTable = {};
 
 	/**
-	 * Store of block modifiers
+	 * Watched block modifiers
 	 */
-	@system((o) => {
+	protected get m(): ModsNTable {
 		const
-			declMods = o.meta.component.mods,
-			attrMods = <string[][]>[];
+			o = {},
+			w = this.watchModsStore,
+			m = this.mods;
 
-		for (let attrs = o.$attrs, keys = Object.keys(attrs), i = 0; i < keys.length; i++) {
+		for (let keys = Object.keys(m), i = 0; i < keys.length; i++) {
 			const
-				key = keys[i];
+				key = keys[i],
+				val = m[key];
 
-			if (key in declMods) {
-				attrMods.push([key, attrs[key]]);
-				o.$watch(`$attrs.${key}`, (val) => o.modsStore[key] = val);
+			if (key in w) {
+				o[key] = val;
+
+			} else {
+				Object.defineProperty(o, key, {
+					get: () => {
+						if (!(key in w)) {
+							w[key] = val;
+						}
+
+						return val;
+					}
+				});
 			}
 		}
 
-		return o.link('modsProp', (val) => {
-			const
-				declMods = o.meta.component.mods,
-				// tslint:disable-next-line:prefer-object-spread
-				mods = Object.assign(o.modsStore || {...declMods}, val);
-
-			for (let i = 0; i < attrMods.length; i++) {
-				const [key, val] = attrMods[i];
-				mods[key] = val;
-			}
-
-			return o.normalizeMods(mods);
-		});
-	})
-
-	protected modsStore!: ModsNTable;
+		return o;
+	}
 
 	/**
 	 * Cache of ifOnce
@@ -1003,7 +996,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 
 			hooks.beforeDataCreate.push({
 				fn: (data) => {
-					this.modsStore[mod] = String(fn(data[field], this));
+					this.mods[mod] = String(fn(data[field], this));
 				}
 			});
 
@@ -1621,7 +1614,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 				this.$set(w, k, v);
 			}
 
-			this.modsStore[k] = v;
+			this.mods[k] = v;
 		});
 
 		$e.on('block.mod.remove.**', (e) => {
@@ -1635,7 +1628,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 					this.$set(w, k, undefined);
 				}
 
-				this.modsStore[k] = undefined;
+				this.mods[k] = undefined;
 			}
 		});
 
