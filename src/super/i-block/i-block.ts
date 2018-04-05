@@ -1609,12 +1609,13 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 				v = e.value,
 				w = this.watchModsStore;
 
+			this
+				.mods[k] = v;
+
 			if (k in w && w[k] !== v) {
 				delete w[k];
 				this.$set(w, k, v);
 			}
-
-			this.mods[k] = v;
 		});
 
 		$e.on('block.mod.remove.**', (e) => {
@@ -1623,12 +1624,13 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 					k = e.name,
 					w = this.watchModsStore;
 
+				this
+					.mods[k] = undefined;
+
 				if (k in w && w[k]) {
 					delete w[k];
 					this.$set(w, k, undefined);
 				}
-
-				this.mods[k] = undefined;
 			}
 		});
 
