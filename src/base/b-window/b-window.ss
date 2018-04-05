@@ -21,7 +21,7 @@
 		- super
 		- block window
 			< .&__back
-			< .&__wrapper v-if = ifOnce('hidden', mods.hidden !== 'true')
+			< .&__wrapper v-if = ifOnce('hidden', m.hidden !== 'true')
 				< section.&__window
 					< h1.&__title v-if = title || $slots.title
 						+= self.slot('title')
@@ -36,7 +36,7 @@
 						+= self.slot('control')
 							- block controls
 								< b-button &
-									:mods = provideMods({theme: 'dark', size: gt[mods.size]}) |
+									:mods = provideMods({theme: 'dark', size: gt[m.size]}) |
 									@click = close
 								.
 									{{ `Close` }}

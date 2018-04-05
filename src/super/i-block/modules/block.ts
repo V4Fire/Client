@@ -23,6 +23,7 @@ export enum statuses {
 }
 
 export type Reason =
+	'initSetMod' |
 	'setMod' |
 	'removeMod';
 
@@ -139,7 +140,7 @@ export default class Block<T extends iBlock> {
 					val = mods[name];
 
 				if (val !== undefined) {
-					this.setMod(name, val);
+					this.setMod(name, val, 'initSetMod');
 				}
 			}
 		});
@@ -231,8 +232,9 @@ export default class Block<T extends iBlock> {
 	 *
 	 * @param name
 	 * @param value
+	 * @param [reason]
 	 */
-	setMod(name: string, value: any): boolean {
+	setMod(name: string, value: any, reason: Reason = 'setMod'): boolean {
 		if (!this.node) {
 			throw new ReferenceError('Root node is not defined');
 		}
@@ -245,14 +247,18 @@ export default class Block<T extends iBlock> {
 		if (prev !== value) {
 			this.removeMod(name, undefined, 'setMod');
 			this.mods[name] = value;
-			this.node.classList.add(this.getFullBlockName(name, value));
+
+			if (reason !== 'initSetMod') {
+				this.node.classList.add(this.getFullBlockName(name, value));
+			}
 
 			const event = {
 				event: 'block.mod.set',
 				type: 'set',
 				name,
 				value,
-				prev
+				prev,
+				reason
 			};
 
 			this.localEvent.emit(`block.mod.set.${name}.${value}`, event);

@@ -24,7 +24,7 @@
 					< .&__cell.&__icon.&__pre-icon
 						< b-icon :value = 'timelapse'
 
-				< .&__cell.&__time v-if = mods.empty !== 'true'
+				< .&__cell.&__time v-if = m.empty !== 'true'
 					- block input
 						< span v-if = getField('value.from.length')
 							{{ `From` }}
@@ -44,7 +44,7 @@
 
 				- block clear
 					< button:a.&__cell.&__icon.&__clear &
-						v-if = mods.empty !== 'true' |
+						v-if = m.empty !== 'true' |
 						@click.capture.stop = onClear
 					.
 						< b-icon &
@@ -53,7 +53,7 @@
 						.
 
 		- block dropdown
-			< .&__dropdown[.&_pos_bottom] v-if = mods.opened !== 'false'
+			< .&__dropdown[.&_pos_bottom] v-if = m.opened !== 'false'
 				< .&__dropdown-content
 					< .&__form
 						- block table

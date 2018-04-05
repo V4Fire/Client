@@ -153,12 +153,16 @@ export function createFakeCtx(
 
 	{
 		const list = [
-			meta.fields,
-			meta.systemFields
+			meta.systemFields,
+			meta.fields
 		];
 
 		for (let i = 0; i < list.length; i++) {
 			initDataObject(list[i], fakeCtx, instance, fakeCtx);
+
+			if (i === list.length - 1) {
+				runHook('beforeDataCreate', meta, fakeCtx, fakeCtx).catch(stderr);
+			}
 		}
 	}
 

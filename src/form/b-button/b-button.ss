@@ -59,7 +59,7 @@
 
 		- block dropdown
 			< . &
-				v-if = $slots.dropdown && ifOnce('opened', mods.opened !== 'false') |
+				v-if = $slots.dropdown && ifOnce('opened', m.opened !== 'false') |
 				:class = getElClasses({dropdown: {pos: dropdown}})
 			.
 				< .&__dropdown-content

@@ -23,7 +23,7 @@
 	- rootTag = 'div'
 	- overWrapper = true
 
-	- rootAttrs = {':class': 'blockId'}
+	- rootAttrs = {':class': '[blockId, getBlockClasses(mods)]'}
 	- block rootAttrs
 
 	- attrs = {}

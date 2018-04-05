@@ -28,7 +28,7 @@
 				- block labelPrev
 					< button:a.&__cell.&__icon.&__prev &
 						@click.capture.stop = onSwitchDay(-1) |
-						v-if = mods.theme === 'default' && !dayRange
+						v-if = m.theme === 'default' && !dayRange
 					.
 						< b-icon :value = 'keyboard_arrow_left'
 
@@ -42,13 +42,13 @@
 				- block labelNext
 					< button:a.&__cell.&__icon.&__next &
 						@click.capture.stop = onSwitchDay(1) |
-						v-if = mods.theme === 'default' && !dayRange
+						v-if = m.theme === 'default' && !dayRange
 					.
 						< b-icon :value = 'keyboard_arrow_right'
 
 		- block dropdown
 			< .&__dropdown &
-				v-if = ifOnce('opened', mods.opened !== 'false') |
+				v-if = ifOnce('opened', m.opened !== 'false') |
 				:class = getElClasses({dropdown: {pos: position, 'immediately-shown': shown}})
 			.
 				< .&__dropdown-content ref = dropdown

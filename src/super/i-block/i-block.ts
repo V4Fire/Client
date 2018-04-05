@@ -69,6 +69,11 @@ export interface LinkWrapper {
 	(this: this, value: any, oldValue: any): any;
 }
 
+export interface SizeTo {
+	gt: Dictionary<string>;
+	lt: Dictionary<string>;
+}
+
 export type ModsTable = Dictionary<ModVal>;
 export type ModsNTable = Dictionary<string | undefined>;
 
@@ -195,18 +200,43 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	}
 
 	/**
+	 * Watched block modifiers
+	 */
+	get m(): ModsNTable {
+		const
+			o = {},
+			w = this.watchModsStore,
+			m = this.modsStore;
+
+		for (let keys = Object.keys(m), i = 0; i < keys.length; i++) {
+			const
+				key = keys[i],
+				val = m[key];
+
+			if (key in w) {
+				o[key] = val;
+
+			} else {
+				Object.defineProperty(o, key, {
+					get: () => {
+						if (!(key in w)) {
+							w[key] = val;
+						}
+
+						return val;
+					}
+				});
+			}
+		}
+
+		return o;
+	}
+
+	/**
 	 * Block modifiers
 	 */
 	get mods(): ModsNTable {
 		return {...this.modsStore};
-	}
-
-	/**
-	 * Sets an object of modifiers
-	 * @param value
-	 */
-	set mods(value: ModsNTable) {
-		this.modsStore = this.normalizeMods(value);
 	}
 
 	/**
@@ -254,6 +284,47 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	};
 
 	/**
+	 * Size converter
+	 */
+	static sizeTo: SizeTo = {
+		gt: {
+			xxl: 'xxl',
+			xl: 'xxl',
+			l: 'xl',
+			m: 'l',
+			undefined: 'l',
+			s: 'm',
+			xs: 's',
+			xxs: 'xs'
+		},
+
+		lt: {
+			xxl: 'xl',
+			xl: 'l',
+			l: 'm',
+			m: 's',
+			undefined: 's',
+			s: 'xs',
+			xs: 'xxs',
+			xxs: 'xxs'
+		}
+	};
+
+	/**
+	 * Alias for iBlock.sizeTo.gt
+	 */
+	protected get gt(): Dictionary<string> {
+		return (<any>this.instance.constructor).sizeTo.gt;
+	}
+
+	/**
+	 * Alias for iBlock.sizeTo.lt
+	 */
+	protected get lt(): Dictionary<string> {
+		return (<any>this.instance.constructor).sizeTo.lt;
+	}
+
+	/**
 	 * Block initialize status
 	 */
 	@system()
@@ -267,9 +338,15 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	protected blockActivated: boolean = true;
 
 	/**
+	 * Watched store of block modifiers
+	 */
+	@field()
+	protected watchModsStore: ModsNTable = {};
+
+	/**
 	 * Store of block modifiers
 	 */
-	@field((o) => {
+	@system((o) => {
 		const
 			declMods = o.meta.component.mods,
 			attrMods = <string[][]>[];
@@ -550,7 +627,22 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 * @param [blockName] - name of the source block
 	 * @param mods - map of modifiers
 	 */
-	getBlockClasses(blockName: string | undefined, mods: ModsTable): ReadonlyArray<string> {
+	getBlockClasses(blockName: string | undefined, mods: ModsTable): ReadonlyArray<string>;
+
+	/**
+	 * @param mods - map of modifiers
+	 */
+	getBlockClasses(mods: ModsTable): ReadonlyArray<string>;
+	getBlockClasses(blockName: string | undefined | ModsTable, mods?: ModsTable): ReadonlyArray<string> {
+		if (arguments.length === 1) {
+			mods = <ModsTable>blockName;
+			blockName = undefined;
+
+		} else {
+			mods = <ModsTable>mods;
+			blockName = <string | undefined>blockName;
+		}
+
 		const
 			key = JSON.stringify(mods) + blockName,
 			cache = classesCache.create('blocks', this.componentName);
@@ -911,7 +1003,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 
 			hooks.beforeDataCreate.push({
 				fn: (data) => {
-					data.modsStore[mod] = String(fn(data[field], this));
+					this.modsStore[mod] = String(fn(data[field], this));
 				}
 			});
 
@@ -984,6 +1076,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 		this.normalizeMods = i.normalizeMods.bind(this);
 		this.bindModTo = i.bindModTo.bind(this);
 		this.execCbAfterCreated = i.execCbAfterCreated.bind(this);
+		this.execCbBeforeDataCreated = i.execCbBeforeDataCreated.bind(this);
 		this.getField = i.getField.bind(this);
 	}
 
@@ -1015,7 +1108,8 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 			ref = obj;
 
 		const
-			chunks = path.split('.');
+			chunks = path.split('.'),
+			isSystem = this.meta.systemFields[chunks[0]];
 
 		for (let i = 0; i < chunks.length; i++) {
 			const
@@ -1027,7 +1121,15 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 			}
 
 			if (!ref[prop] || typeof ref[prop] !== 'object') {
-				this.$set(ref, prop, isNaN(Number(chunks[i + 1])) ? {} : []);
+				const
+					val = isNaN(Number(chunks[i + 1])) ? {} : [];
+
+				if (isSystem) {
+					ref[prop] = val;
+
+				} else {
+					this.$set(ref, prop, val);
+				}
 			}
 
 			ref = ref[prop];
@@ -1037,7 +1139,12 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 			ref[path] = value;
 
 		} else {
-			this.$set(ref, path, value);
+			if (isSystem) {
+				ref[path] = value;
+
+			} else {
+				this.$set(ref, path, value);
+			}
 		}
 
 		return value;
@@ -1053,7 +1160,8 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 		let ref = obj;
 
 		const
-			chunks = path.split('.');
+			chunks = path.split('.'),
+			isSystem = this.meta.systemFields[chunks[0]];
 
 		let test = true;
 		for (let i = 0; i < chunks.length; i++) {
@@ -1074,7 +1182,13 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 		}
 
 		if (test) {
-			this.$delete(ref, path);
+			if (isSystem) {
+				delete ref[path];
+
+			} else {
+				this.$delete(ref, path);
+			}
+
 			return true;
 		}
 
@@ -1145,7 +1259,8 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 		}
 
 		const
-			path = this.$activeField;
+			path = this.$activeField,
+			isSystem = this.meta.systemFields[path.split('.')[0]];
 
 		if (!(path in this.linkCache)) {
 			this.linkCache[path] = {};
@@ -1157,9 +1272,19 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 				}, <WatchOptions>watchParams);
 			});
 
-			const val = () => wrapper ? wrapper.call(this, this[field]) : this[field];
+			const val = () => {
+				const
+					res = wrapper ? wrapper.call(this, this[field]) : this[field];
+
+				if (isSystem || this.hook !== 'beforeCreate') {
+					this.setField(path, res);
+				}
+
+				return res;
+			};
+
 			this.syncLinkCache[field] = () => this.setField(path, val());
-			return val();
+			return this.execCbBeforeDataCreated(val);
 		}
 	}
 
@@ -1319,32 +1444,6 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 		}
 
 		return id;
-	}
-
-	/**
-	 * Modifiers synchronization
-	 * @param value
-	 */
-	@wait('loading')
-	@watch({field: 'modsStore', deep: true})
-	protected syncModsWatcher(value: ModsTable): CanPromise<void> {
-		for (let keys = Object.keys(value), i = 0; i < keys.length; i++) {
-			const
-				key = keys[i];
-
-			let
-				el = value[key];
-
-			if (el === undefined) {
-				this.removeMod(key, el);
-				continue;
-			}
-
-			el = String(el);
-			if (el !== this.block.getMod(key)) {
-				this.setMod(key, el);
-			}
-		}
 	}
 
 	/**
@@ -1512,12 +1611,31 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 			{async: $a, localEvent: $e} = this;
 
 		$e.on('block.mod.set.**', (e) => {
-			this.$set(this.modsStore, e.name, e.value);
+			const
+				k = e.name,
+				v = e.value,
+				w = this.watchModsStore;
+
+			if (k in w && w[k] !== v) {
+				delete w[k];
+				this.$set(w, k, v);
+			}
+
+			this.modsStore[k] = v;
 		});
 
 		$e.on('block.mod.remove.**', (e) => {
 			if (e.reason === 'removeMod') {
-				this.$set(this.modsStore, e.name, undefined);
+				const
+					k = e.name,
+					w = this.watchModsStore;
+
+				if (k in w && w[k]) {
+					delete w[k];
+					this.$set(w, k, undefined);
+				}
+
+				this.modsStore[k] = undefined;
 			}
 		});
 
@@ -1626,16 +1744,28 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	}
 
 	/**
-	 * Executes the specified callback after created hook
+	 * Executes the specified callback after beforeDataCreate hook and returns the result
 	 * @param cb
 	 */
-	private execCbAfterCreated(cb: Function): void {
-		if (statuses[this.blockStatus]) {
-			cb.call(this);
-
-		} else {
-			this.meta.hooks.created.push({fn: cb});
+	private execCbBeforeDataCreated<T>(cb: Function): T | undefined {
+		if (this.hook === 'beforeRuntime') {
+			this.meta.hooks.beforeDataCreate.push({fn: cb});
+			return;
 		}
+
+		return cb.call(this);
+	}
+
+	/**
+	 * Executes the specified callback after created hook and returns the result
+	 * @param cb
+	 */
+	private execCbAfterCreated<T>(cb: Function): T | undefined {
+		if (statuses[this.blockStatus]) {
+			return cb.call(this);
+		}
+
+		this.meta.hooks.created.push({fn: cb});
 	}
 }
 
