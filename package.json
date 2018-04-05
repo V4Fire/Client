@@ -47,7 +47,7 @@
     "socket.io": "^2.1.0",
     "sugar": "^2.0.4",
     "urijs": "^1.19.1",
-    "vue": "^2.5.16"
+    "vue": "^2.5.17-beta.0"
   },
   "optionalDependencies": {
     "@pzlr/build-core": "^2.7.2",
@@ -103,7 +103,7 @@
     "typograf": "^6.6.2",
     "uglifyjs-webpack-plugin": "^1.2.4",
     "url-loader": "^1.0.1",
-    "vue-template-compiler": "^2.5.16",
+    "vue-template-compiler": "^2.5.17-beta.0",
     "vue-template-es2015-compiler": "^1.6.0",
     "webpack": "^4.4.1",
     "webpack-cli": "^2.0.13"
