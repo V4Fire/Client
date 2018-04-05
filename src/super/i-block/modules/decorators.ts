@@ -14,6 +14,7 @@ import { initEvent, ModVal, InitFieldFn as BaseInitFieldFn } from 'core/componen
 import {
 
 	ComponentMethod,
+	ComponentAccessor,
 	MethodWatchers,
 
 	p as pDecorator,
@@ -52,7 +53,8 @@ export interface ComponentField<
  * @see core/component/decorators/base.ts
  * @override
  */
-export const p = pDecorator as (params?: ComponentProp | ComponentField | ComponentMethod) => Function;
+export const p = pDecorator as (params?: ComponentProp | ComponentField | ComponentMethod | ComponentAccessor) =>
+	Function;
 
 /**
  * @see core/component/decorators/base.ts
