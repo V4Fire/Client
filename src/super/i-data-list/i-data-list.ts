@@ -33,8 +33,12 @@ export default class iDataList<T extends Dictionary = Dictionary> extends iData<
 
 	/** @override */
 	protected getObservableData<O>(base: DataList<T>): O | DataList<T> {
+		if (Object.isFrozen(base)) {
+			return base;
+		}
+
 		const
-			obj = Object.create(base.valueOf());
+			obj = Object.create(base);
 
 		Object.assign(obj, Object.select(base, ['data', 'total']));
 		obj.data = $C(obj.data).map((el) => this.getObservableChunk(el));

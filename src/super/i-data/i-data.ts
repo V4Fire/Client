@@ -189,7 +189,7 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 					const db = await this.get(<RequestQuery>p[0], p[1]);
 					await new Promise((resolve) => {
 						this.async.requestIdleCallback(() => {
-							this.db = this.getObservableData(this.dbConverter ? this.dbConverter(db) : db);
+							this.db = this.getObservableData(this.dbConverter ? this.dbConverter(db && db.valueOf()) : db);
 							resolve();
 
 						}, {
