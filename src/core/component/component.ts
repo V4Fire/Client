@@ -40,15 +40,15 @@ export function getComponent(
 	meta: ComponentMeta
 ): ComponentOptions<Vue> | FunctionalComponentOptions<Vue> {
 	const
-		{component, instance} = getBaseComponent(constructor, meta),
-		{methods} = meta;
-
-	const
 		p = meta.params;
 
-	if (p.functional) {
+	if (p.functional === true) {
 		return getFunctionalComponent(constructor, meta);
 	}
+
+	const
+		{component, instance} = getBaseComponent(constructor, meta),
+		{methods} = meta;
 
 	return {
 		...<any>p.mixins,
@@ -248,7 +248,7 @@ export function getFunctionalComponent(
 ): FunctionalComponentOptions<Vue> {
 	const
 		{component, instance} = getBaseComponent(constructor, meta),
-		{name, params: p} = meta;
+		{params: p} = meta;
 
 	const
 		props = {};
@@ -256,7 +256,7 @@ export function getFunctionalComponent(
 	component.ctx = Object.assign(Object.create(vueProto), {
 		meta,
 		instance,
-		componentName: name,
+		componentName: meta.componentName,
 		$options: {...p.mixins}
 	});
 
@@ -272,8 +272,8 @@ export function getFunctionalComponent(
 	}
 
 	return <any>{
-		name,
 		props,
+		name: meta.name,
 		functional: true,
 		inject: p.inject,
 		render: component.render
@@ -451,9 +451,6 @@ export async function runHook(hook: string, meta: ComponentMeta, ctx: Dictionary
 	await event.fire();
 }
 
-const
-	baseComponents = new WeakMap();
-
 /**
  * Returns a base component object from the specified constructor
  *
@@ -468,10 +465,6 @@ export function getBaseComponent(
 	component: ComponentMeta['component'];
 	instance: Dictionary;
 } {
-	if (baseComponents.has(constructor)) {
-		return baseComponents.get(constructor);
-	}
-
 	addMethodsToMeta(constructor, meta);
 
 	const
@@ -589,9 +582,7 @@ export function getBaseComponent(
 		}
 	}
 
-	const res = {mods, component, instance};
-	baseComponents.set(constructor, res);
-	return res;
+	return {mods, component, instance};
 }
 
 /**

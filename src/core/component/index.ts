@@ -42,9 +42,10 @@ export const
 	components = new WeakMap();
 
 export interface ComponentParams {
+	name?: string;
 	root?: boolean;
 	tpl?: boolean;
-	functional?: boolean;
+	functional?: boolean | Dictionary;
 	mixins?: Dictionary;
 	model?: {prop?: string; event?: string};
 	parent?: Vue;
@@ -129,6 +130,7 @@ export interface FunctionalCtx {
 
 export interface ComponentMeta {
 	name: string;
+	componentName: string;
 	params: ComponentParams;
 	props: Dictionary<ComponentProp>;
 	fields: Dictionary<ComponentField>;
@@ -178,7 +180,7 @@ export function getComponentName(constr: Function): string {
 export function component(params?: ComponentParams): Function {
 	return (target) => {
 		const
-			name = getComponentName(target),
+			name = params && params.name || getComponentName(target),
 			parent = Object.getPrototypeOf(target),
 			parentMeta = components.get(parent);
 
@@ -193,6 +195,7 @@ export function component(params?: ComponentParams): Function {
 
 		const meta: ComponentMeta = {
 			name,
+			componentName: name.replace(/-func-placeholder$/, ''),
 			params: p,
 			props: {},
 			fields: {},
@@ -231,7 +234,7 @@ export function component(params?: ComponentParams): Function {
 						{methods: {render: r}, component: {ctx}} = meta;
 
 					if (r) {
-						if (p.functional && ctx) {
+						if (p.functional === true && ctx) {
 							const fakeCtx = createFakeCtx(el, baseCtx, ctx);
 							return patchVNode(r.fn.call(fakeCtx, el, baseCtx), fakeCtx, baseCtx);
 						}
@@ -268,7 +271,7 @@ export function component(params?: ComponentParams): Function {
 				const
 					fns = tpls.index();
 
-				if (p.functional) {
+				if (p.functional === true) {
 					component.render = convertRender(fns, <any>meta.component.ctx);
 
 				} else {
@@ -292,7 +295,7 @@ export function component(params?: ComponentParams): Function {
 			} else {
 				const f = () => {
 					const
-						fns = TPLS[name];
+						fns = TPLS[meta.componentName];
 
 					if (fns) {
 						if (r) {
@@ -312,13 +315,21 @@ export function component(params?: ComponentParams): Function {
 		};
 
 		const
-			component = loadTemplate(getComponent(target, meta));
+			obj = loadTemplate(getComponent(target, meta));
 
 		if (p.root) {
-			rootComponents[name] = new Promise(component);
+			rootComponents[name] = new Promise(obj);
 
 		} else {
-			Vue.component(name, component);
+			Vue.component(name, obj);
+		}
+
+		if (!Object.isBoolean(<any>p.functional)) {
+			component({
+				...params,
+				name: `${name}-func-placeholder`,
+				functional: true
+			})(target);
 		}
 	};
 }

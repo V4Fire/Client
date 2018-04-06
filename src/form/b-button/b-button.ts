@@ -11,7 +11,13 @@ import iData, { component, prop, ModsDecl, ModelMethods, CreateRequestOptions } 
 import { RequestQuery, RequestBody } from 'core/data';
 export * from 'super/i-data/i-data';
 
-@component()
+@component({
+	functional: {
+		dataProvider: undefined,
+		href: undefined
+	}
+})
+
 export default class bButton<T extends Dictionary = Dictionary> extends iData<T> {
 	/** @override */
 	readonly dataProvider: string = 'Provider';
@@ -105,6 +111,7 @@ export default class bButton<T extends Dictionary = Dictionary> extends iData<T>
 			'normal',
 			'big'
 		],
+
 		upper: [
 			'true',
 			['false']
@@ -121,18 +128,18 @@ export default class bButton<T extends Dictionary = Dictionary> extends iData<T>
 	 * @emits click(e: Event)
 	 */
 	protected async onClick(e: Event): Promise<void> {
-		// Form attribute fix for MS Edge && IE
-		if (this.form && this.type === 'submit') {
-			e.preventDefault();
-			const form = <bForm>this.$(`#${this.form}`);
-			form && await form.submit();
-
-		} else if (this.dataProvider !== 'Provider' || this.href) {
+		if (this.dataProvider !== 'Provider' || this.href) {
 			if (this.href) {
 				this.base(this.href);
 			}
 
 			await (<Function>this[this.method])(...(<any>[]).concat(this.request || []));
+
+		// Form attribute fix for MS Edge && IE
+		} else if (this.form && this.type === 'submit') {
+			e.preventDefault();
+			const form = <bForm>this.$(`#${this.form}`);
+			form && await form.submit();
 		}
 
 		await this.toggle();
