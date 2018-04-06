@@ -30,8 +30,8 @@ const
 	blocksTree = {};
 
 const
-	blockClass = /^\s*export\s+default\s+class\s+((.*?)\s+extends\s+.*?)\s*{/m,
-	isFunctional = /^\s*@component\s*\(\s*{.*?\bfunctional\s*:\s*true/m,
+	blockClassRgxp = /^\s*export\s+default\s+class\s+((.*?)\s+extends\s+.*?)\s*{/m,
+	componentRgxp = /@component\(([\s\S]*)\)\n+\s*export\s+/,
 	propsRgxp = /^(\t+)@prop\s*\([\s\S]+?\)+\n+\1([ \w$]+)(?:\??: [ \w|&$?()[\]{}<>'"`:.]+?)?\s*(?:=|;$)/gm,
 	genericRgxp = /<.*/,
 	extendsRgxp = /\s+extends\s+/;
@@ -39,9 +39,10 @@ const
 $C(files).forEach((el) => {
 	const
 		file = fs.readFileSync(el, {encoding: 'utf-8'}),
-		block = blockClass.exec(file);
+		block = blockClassRgxp.exec(file),
+		p = ((v) => v && new Function(`return ${v[1] || '{}'}`)())(block && componentRgxp.exec(file));
 
-	if (!block) {
+	if (!p) {
 		return;
 	}
 
@@ -51,9 +52,12 @@ $C(files).forEach((el) => {
 
 	const obj = blocksTree[component] = blocksTree[component] || {
 		props: {},
-		functional: isFunctional.test(file),
 		parent
 	};
+
+	if (p.functional != null) {
+		obj.functional = p.functional;
+	}
 
 	let s;
 	while ((s = propsRgxp.exec(file))) {
@@ -61,7 +65,25 @@ $C(files).forEach((el) => {
 	}
 });
 
+function getFunctionalParameters(obj) {
+	const
+		v = obj.functional || false;
+
+	if (obj.parent) {
+		const
+			p = getFunctionalParameters(obj.parent);
+
+		if (Object.isObject(v) && Object.isObject(p)) {
+			return {...p, ...v};
+		}
+	}
+
+	return v;
+}
+
 $C(blocksTree).forEach((el, key, data) => {
+	data[key].functional = getFunctionalParameters(el);
+
 	if (el.parent && data[el.parent]) {
 		Object.setPrototypeOf(el.props, data[el.parent].props);
 	}
@@ -254,6 +276,20 @@ const
 	isButtonLink = /^button:a$/;
 
 function vueTag(tag, attrs, rootTag) {
+	const
+		nm = tag.camelize(false),
+		component = blocksTree[nm];
+
+	if (component) {
+		if (!Object.isBoolean(component.functional)) {
+			attrs[':instance-of'] = [nm];
+			attrs['is'] = [tag];
+			return 'component';
+		}
+
+		return tag;
+	}
+
 	if (isVoidLink.test(tag)) {
 		attrs.href = ['javascript:void(0)'];
 		tag = 'a';
