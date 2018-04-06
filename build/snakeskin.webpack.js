@@ -82,10 +82,13 @@ ss.importFilters({
 	b
 });
 
+const
+	ssExtRgxp = /\.e?ss$/;
+
 function b(url) {
 	const
 		hasMagic = glob.hasMagic(url),
-		end = /\.e?ss$/.test(url) ? '' : '/',
+		end = ssExtRgxp.test(url) ? '' : '/',
 		ends = [];
 
 	if (end) {
@@ -118,9 +121,14 @@ function b(url) {
 	return url + end;
 }
 
+const
+	isVueProp = /^(:|@|v-)/,
+	isLiteral = /^\s*[[{]/,
+	vForRgxp = /^\s*([\w$]+)(\s+(?:in|of)\s+.*)$/;
+
 function vueComp({name, attrs}) {
 	$C(attrs).forEach((el, key) => {
-		if (!/^(:|@|v-)/.test(key)) {
+		if (!isVueProp.test(key)) {
 			return;
 		}
 
@@ -141,7 +149,7 @@ function vueComp({name, attrs}) {
 		isAsyncBack = attrs['v-async-back'];
 
 	if (attrs['v-for']) {
-		if (/^\s*([\w$]+)(\s+(?:in|of)\s+.*)$/.test(attrs['v-for'].join(' '))) {
+		if (vForRgxp.test(attrs['v-for'].join(' '))) {
 			attrs['v-for'] = [`(${RegExp.$1}, i)${RegExp.$2}`];
 		}
 	}
@@ -187,9 +195,6 @@ function vueComp({name, attrs}) {
 		if (!isAsync && !isAsyncBack && c && c.functional) {
 			isSync = true;
 		}
-
-		const
-			isLiteral = /^\s*[[{]/;
 
 		const isStaticLiteral = (v) => {
 			try {
@@ -244,12 +249,16 @@ function vueComp({name, attrs}) {
 	}
 }
 
+const
+	isVoidLink = /^a:void$/,
+	isButtonLink = /^button:a$/;
+
 function vueTag(tag, attrs, rootTag) {
-	if (/^a:void$/.test(tag)) {
+	if (isVoidLink.test(tag)) {
 		attrs.href = ['javascript:void(0)'];
 		tag = 'a';
 
-	} else if (/^button:a$/.test(tag)) {
+	} else if (isButtonLink.test(tag)) {
 		attrs.type = ['button'];
 		attrs.class = attachClass((attrs.class || []).concat('a'));
 		tag = 'button';
@@ -298,10 +307,14 @@ function attachClass(arr) {
 	return arr;
 }
 
+const
+	tagRgxp = /<[^>]+>/,
+	elRgxp = new RegExp(`\\b${validators.baseBlockName}__[a-z0-9][a-z0-9-_]*\\b`);
+
 function getFirstTagElementName(str) {
 	const
 		escapedStr = escaper.replace(str),
-		tagMatch = /<[^>]+>/.exec(escapedStr);
+		tagMatch = tagRgxp.exec(escapedStr);
 
 	if (!tagMatch) {
 		return null;
@@ -311,6 +324,6 @@ function getFirstTagElementName(str) {
 }
 
 function getElementClassName(str) {
-	const search = /\b[ibgp]-[a-z0-9][a-z0-9-]*__[a-z0-9][a-z0-9-]*\b/.exec(str);
+	const search = elRgxp.exec(str);
 	return search ? search[0] : null;
 }
