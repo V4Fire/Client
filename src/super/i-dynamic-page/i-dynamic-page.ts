@@ -9,7 +9,7 @@
 import $C = require('collection.js');
 import URI = require('urijs');
 import symbolGenerator from 'core/symbol';
-import iData, { component } from 'super/i-data/i-data';
+import iData, { component, prop } from 'super/i-data/i-data';
 
 export * from 'super/i-data/i-data';
 export interface OnFilterChange {
@@ -22,8 +22,32 @@ export const
 
 @component()
 export default class iDynamicPage<T extends Dictionary = Dictionary> extends iData<T> {
+	/**
+	 * If true, then will be enabled keep-alive mode
+	 */
+	@prop(Boolean)
+	keepAlive: boolean = false;
+
 	/** @override */
 	readonly needReInit: boolean = true;
+
+	/**
+	 * Activates the page
+	 */
+	activate(): void {
+		this.initStateFromHash();
+		this.async.on(window, 'hashchange', this.initStateFromHash, {
+			label: $$.activate
+		});
+	}
+
+	/**
+	 * Deactivates the page
+	 */
+	deactivate(): void {
+		this.async.off('hashchange');
+		$C(this.convertStateToHash()).forEach((el, key) => this[key] = undefined);
+	}
 
 	/**
 	 * Gets values from the specified object and saves it to the block state
@@ -136,16 +160,20 @@ export default class iDynamicPage<T extends Dictionary = Dictionary> extends iDa
 	}
 
 	/** @override */
+	protected async mounted(): Promise<void> {
+		await super.mounted();
+		!this.keepAlive && this.activate();
+	}
+
+	/** @override */
 	protected async activated(): Promise<void> {
 		await super.activated();
-		this.initStateFromHash();
-		this.async.on(window, 'hashchange', this.initStateFromHash);
+		this.activate();
 	}
 
 	/** @override */
 	protected deactivated(): void {
 		super.deactivated();
-		this.async.off('hashchange');
-		$C(this.convertStateToHash()).forEach((el, key) => this[key] = undefined);
+		this.deactivate();
 	}
 }
