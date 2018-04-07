@@ -212,11 +212,8 @@ function vueComp({name, attrs}) {
 		}
 
 		const
-			c = blocksTree[componentName];
-
-		if (!isAsync && !isAsyncBack && c && c.functional) {
-			isSync = true;
-		}
+			c = blocksTree[componentName],
+			smart = [attrs[':func-placeholder'], delete attrs[':func-placeholder']][0] && c && c.functional;
 
 		const isStaticLiteral = (v) => {
 			try {
@@ -227,6 +224,44 @@ function vueComp({name, attrs}) {
 				return false;
 			}
 		};
+
+		const isFunctional = c && c.functional === true || $C(smart).some((el, key) => {
+			let
+				attr = attrs[key] && attrs[key][0];
+
+			try {
+				attr = new Function(`return ${attr}`)();
+
+			} catch (_) {}
+
+			if (Object.isArray(el)) {
+				if (!Object.isArray(el[0])) {
+					return $C(el).includes(attr);
+				}
+
+				return Object.isEqual(el[0], attr);
+			}
+
+			if (Object.isRegExp(el)) {
+				return el.test(attr);
+			}
+
+			if (Object.isFunction(el)) {
+				return el(attr);
+			}
+
+			return Object.isEqual(el, attr);
+		});
+
+		if (isFunctional) {
+			if (smart) {
+				attrs['is'] = [`${attrs['is'][0]}-func-placeholder`];
+			}
+
+			if (!isAsync && !isAsyncBack) {
+				isSync = true;
+			}
+		}
 
 		$C(attrs).forEach((el, key) => {
 			if (key[0] !== ':') {
@@ -283,6 +318,7 @@ function vueTag(tag, attrs, rootTag) {
 	if (component) {
 		if (!Object.isBoolean(component.functional)) {
 			attrs[':instance-of'] = [nm];
+			attrs[':func-placeholder'] = [true];
 			attrs['is'] = [tag];
 			return 'component';
 		}
