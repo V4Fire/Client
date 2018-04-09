@@ -45,8 +45,8 @@ const predefinedTasks = $C(build.MAX_PROCESS).map((el, buildId) => new Promise((
 const tasks = (async () => {
 	await include('build/snakeskin.webpack');
 
-	const graph = await build;
-	console.log('Project graph initialized');
+	const
+		graph = await build;
 
 	const tasks = global.WEBPACK_CONFIG = await (
 		args.single ? buildFactory(graph.entry) : $C(graph.processes).async.map((el, i) => buildFactory(el, i))

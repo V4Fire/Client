@@ -37,28 +37,32 @@ module.exports = (async () => {
 	const
 		cacheFile = path.join(buildCache, 'graph.json');
 
-	if (fs.existsSync(cacheFile)) {
-		await new Promise((r) => {
-			const f = () => {
-				setTimeout(() => {
-					if (fs.readFileSync(cacheFile, 'utf-8') !== '') {
-						r();
+	if (Number(process.env.BUILD_GRAPH_FROM_CACHE)) {
+		if (fs.existsSync(cacheFile)) {
+			await new Promise((r) => {
+				const f = () => {
+					setTimeout(() => {
+						if (fs.readFileSync(cacheFile, 'utf-8') !== '') {
+							r();
 
-					} else {
-						f();
-					}
+						} else {
+							f();
+						}
 
-				}, 15);
-			};
+					}, 15);
+				};
 
-			f();
-		});
+				f();
+			});
 
-		return fs.readJSONSync(cacheFile);
+			return fs.readJSONSync(cacheFile);
+		}
+
+	} else {
+		mkdirp(buildCache);
+		fs.writeFileSync(cacheFile, '');
+		process.env.BUILD_GRAPH_FROM_CACHE = 1;
 	}
-
-	mkdirp(buildCache);
-	fs.writeFileSync(cacheFile, '');
 
 	const
 		tmpEntries = path.join(resolve.entry(), 'tmp');
@@ -228,6 +232,8 @@ module.exports = (async () => {
 	};
 
 	fs.writeFileSync(cacheFile, JSON.stringify(res, null, 2));
+	console.log('Project graph initialized');
+
 	return res;
 })();
 
