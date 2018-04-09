@@ -390,7 +390,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	/**
 	 * Temporary cache
 	 */
-	@field()
+	@system()
 	protected tmp: Dictionary = {};
 
 	/**
