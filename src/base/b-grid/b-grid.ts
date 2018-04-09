@@ -8,7 +8,7 @@
 
 import $C = require('collection.js');
 import symbolGenerator from 'core/symbol';
-import iDataPages, { system, field, prop, component, hook } from 'super/i-data-pages/i-data-pages';
+import iDataPages, { system, field, prop, component } from 'super/i-data-pages/i-data-pages';
 export * from 'super/i-data-pages/i-data-pages';
 
 export const
@@ -162,20 +162,6 @@ export default class bGrid<T extends Dictionary = Dictionary> extends iDataPages
 		}
 
 		return {...mut, type: 'upd'};
-	}
-
-	/**
-	 * Active row synchronization
-	 */
-	@hook('mounted')
-	protected activeRowsSync(): void {
-		const sync = () => {
-			$C(this.activeRows).forEach((val, key) => {
-				this.$set(this.renderTmp, key, val);
-			});
-		};
-
-		this.async.setInterval(sync, 0.1.second(), {label: $$.checkActiveRows});
 	}
 
 	/**
