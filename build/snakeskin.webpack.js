@@ -151,6 +151,14 @@ const
 function vueComp({name, attrs}) {
 	$C(attrs).forEach((el, key) => {
 		if (!isVueProp.test(key)) {
+			if (key === 'ref') {
+				attrs['data-vue-ref'] = [el];
+
+				if (!attrs[':class']) {
+					attrs[':class'] = attachClass(['blockId']);
+				}
+			}
+
 			return;
 		}
 
@@ -225,7 +233,7 @@ function vueComp({name, attrs}) {
 			}
 		};
 
-		const isFunctional = c && c.functional === true || $C(smart).some((el, key) => {
+		const isFunctional = c && c.functional === true || $C(smart).every((el, key) => {
 			let
 				attr = attrs[key] && attrs[key][0];
 
@@ -255,7 +263,7 @@ function vueComp({name, attrs}) {
 
 		if (isFunctional) {
 			if (smart) {
-				attrs['is'] = [`${attrs['is'][0]}-func-placeholder`];
+				attrs['is'] = [`${attrs['is'][0]}-fn`];
 			}
 
 			if (!isAsync && !isAsyncBack) {
@@ -332,7 +340,7 @@ function vueTag(tag, attrs, rootTag) {
 
 	} else if (isButtonLink.test(tag)) {
 		attrs.type = ['button'];
-		attrs.class = attachClass((attrs.class || []).concat('a'));
+		attrs.class = (attrs.class || []).concat('a');
 		tag = 'button';
 
 	} else if (tag === '_') {

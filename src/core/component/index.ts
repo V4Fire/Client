@@ -327,7 +327,7 @@ export function component(params?: ComponentParams): Function {
 		if (!Object.isBoolean(<any>p.functional)) {
 			component({
 				...params,
-				name: `${name}-func-placeholder`,
+				name: `${name}-fn`,
 				functional: true
 			})(target);
 		}

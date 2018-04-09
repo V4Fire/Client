@@ -51,6 +51,7 @@ export function createFakeCtx(
 		$parent: p,
 		$options: Object.assign(Object.create(p.$options), fakeCtx.$options),
 
+		$refs: {},
 		$attrs: renderCtx.data.attrs,
 		$slots: Object.assign(renderCtx.slots(), {default: renderCtx.children}),
 		$scopedSlots: {},
@@ -302,11 +303,23 @@ export function patchVNode(vNode: VNode, ctx: Dictionary, renderCtx: RenderConte
 
 		try {
 			await $a.wait(() => ctx.$el);
+
 			if (destroyed) {
 				return;
 			}
 
+			const
+				el = ctx.$el,
+				refs = el.querySelectorAll(`.${ctx.blockId}[data-vue-ref]`);
+
 			mounted = true;
+			el.vueComponent = ctx;
+
+			for (let i = 0; i < refs.length; i++) {
+				const el = refs[i];
+				ctx.$refs[el.dataset.vueRef] = el.vueComponent ? el.vueComponent : el;
+			}
+
 			runHook('mounted', ctx.meta, ctx).then(async () => {
 				if (methods.mounted) {
 					await methods.mounted.fn.call(ctx);
