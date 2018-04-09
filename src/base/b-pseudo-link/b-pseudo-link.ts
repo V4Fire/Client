@@ -20,7 +20,13 @@ import bLink, {
 export * from 'base/b-link/b-link';
 export type Request = RequestQuery | RequestBody | [RequestQuery | RequestBody, CreateRequestOptions];
 
-@component()
+@component({
+	functional: {
+		dataProvider: undefined,
+		href: undefined
+	}
+})
+
 export default class bPseudoLink extends bLink {
 	/** @override */
 	readonly dataProvider: string = 'Provider';

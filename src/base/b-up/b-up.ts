@@ -13,7 +13,7 @@ export * from 'super/i-block/i-block';
 export const
 	$$ = symbolGenerator();
 
-@component()
+@component({functional: true})
 export default class bUp extends iBlock {
 	/** @inheritDoc */
 	static mods: ModsDecl = {
