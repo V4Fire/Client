@@ -205,7 +205,8 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	@system((o) => {
 		const
 			declMods = o.meta.component.mods,
-			attrMods = <string[][]>[];
+			attrMods = <string[][]>[],
+			modVal = (val) => val != null ? String(val) : val;
 
 		for (let attrs = o.$attrs, keys = Object.keys(attrs), i = 0; i < keys.length; i++) {
 			const
@@ -213,7 +214,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 
 			if (key in declMods) {
 				attrMods.push([key, attrs[key]]);
-				o.$watch(`$attrs.${key}`, (val) => o.mods[key] = val);
+				o.$watch(`$attrs.${key}`, (val) => o.setMod(key, modVal(val)));
 			}
 		}
 
@@ -228,11 +229,20 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 				mods[key] = val;
 			}
 
-			return o.normalizeMods(mods);
+			for (let keys = Object.keys(mods), i = 0; i < keys.length; i++) {
+				const
+					key = keys[i],
+					val = modVal(mods[key]);
+
+				mods[key] = val;
+				o.hook !== 'beforeDataCreate' && o.setMod(key, val);
+			}
+
+			return mods;
 		});
 	})
 
-	mods!: ModsNTable;
+	readonly mods!: ModsNTable;
 
 	/**
 	 * Block modifiers
@@ -1066,7 +1076,6 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 
 		this.link = i.link.bind(this);
 		this.createWatchObject = i.createWatchObject.bind(this);
-		this.normalizeMods = i.normalizeMods.bind(this);
 		this.bindModTo = i.bindModTo.bind(this);
 		this.execCbAfterCreated = i.execCbAfterCreated.bind(this);
 		this.execCbBeforeDataCreated = i.execCbBeforeDataCreated.bind(this);
@@ -1079,22 +1088,6 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 			// @ts-ignore
 			this.$watch = (...args) => this.execCbBeforeDataCreated(() => $watch.apply(this, args));
 		}
-	}
-
-	/**
-	 * Normalizes the specified modifier object
-	 * @param mods
-	 */
-	protected normalizeMods(mods: Dictionary): ModsNTable {
-		for (let keys = Object.keys(mods), i = 0; i < keys.length; i++) {
-			const
-				key = keys[i],
-				val = mods[key];
-
-			mods[key] = val != null ? String(val) : val;
-		}
-
-		return mods;
 	}
 
 	/**
@@ -1790,7 +1783,6 @@ export abstract class iBlockDecorator extends iBlock {
 	public abstract link(field: string, wrapper?: LinkWrapper): any;
 	// tslint:disable-next-line:unified-signatures
 	public abstract link(field: string, watchParams?: WatchOptions, wrapper?: LinkWrapper): any;
-	public abstract normalizeMods(mods: Dictionary): ModsNTable;
 
 	public abstract createWatchObject(
 		path: string,
