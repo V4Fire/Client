@@ -71,6 +71,8 @@
 					.
 
 		- block grid
+			+= self.slot('header')
+
 			< table.&__table
 				< thead.&__thead
 					- block thead
@@ -83,6 +85,8 @@
 
 				< tbody.&__tbody v-if = db
 					- block tbody
+
+			+= self.slot('footer')
 
 		- block loadPageTrigger
 			< . ref = loadPageTrigger
