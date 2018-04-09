@@ -135,13 +135,8 @@ export default class Block<T extends iBlock> {
 
 		this.localEvent.once('block.status.loading', () => {
 			for (let keys = Object.keys(mods), i = 0; i < keys.length; i++) {
-				const
-					name = keys[i],
-					val = mods[name];
-
-				if (val !== undefined) {
-					this.setMod(name, val, 'initSetMod');
-				}
+				const name = keys[i];
+				this.setMod(name, mods[name], 'initSetMod');
 			}
 		});
 
@@ -239,6 +234,10 @@ export default class Block<T extends iBlock> {
 			throw new ReferenceError('Root node is not defined');
 		}
 
+		if (value === undefined) {
+			return false;
+		}
+
 		value = String(value);
 
 		const
@@ -321,6 +320,10 @@ export default class Block<T extends iBlock> {
 	 * @param value
 	 */
 	setElMod(link: Element, elName: string, modName: string, value: any): boolean {
+		if (value === undefined) {
+			return false;
+		}
+
 		value = String(value);
 
 		if (this.getElMod(link, elName, modName) !== value) {
