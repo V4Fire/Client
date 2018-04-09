@@ -34,17 +34,31 @@ module.exports = (async () => {
 		}
 	};
 
-	let
-		cacheFile;
-
-	if (Number(process.env.FROM_CACHE)) {
-		mkdirp(buildCache);
+	const
 		cacheFile = path.join(buildCache, 'graph.json');
 
-		if (fs.existsSync(cacheFile)) {
-			return fs.readJSONSync(cacheFile);
-		}
+	if (fs.existsSync(cacheFile)) {
+		await new Promise((r) => {
+			const f = () => {
+				setTimeout(() => {
+					if (fs.readFileSync(cacheFile, 'utf-8') !== '') {
+						r();
+
+					} else {
+						f();
+					}
+
+				}, 15);
+			};
+
+			f();
+		});
+
+		return fs.readJSONSync(cacheFile);
 	}
+
+	mkdirp(buildCache);
+	fs.writeFileSync(cacheFile, '');
 
 	const
 		tmpEntries = path.join(resolve.entry(), 'tmp');
@@ -213,11 +227,7 @@ module.exports = (async () => {
 		dependencies: $C(graph.dependencies).map((el, key) => [...el, key])
 	};
 
-	if (cacheFile) {
-		fs.writeFileSync(cacheFile, JSON.stringify(res, null, 2));
-		process.env.FROM_CACHE = true;
-	}
-
+	fs.writeFileSync(cacheFile, JSON.stringify(res, null, 2));
 	return res;
 })();
 
