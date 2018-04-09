@@ -6,9 +6,8 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import bWindow, { field, prop, wait } from 'base/b-window/b-window';
+import bWindow, { component, field, prop, wait } from 'base/b-window/b-window';
 import bForm from 'form/b-form/b-form';
-import { component } from 'core/component';
 export * from 'base/b-window/b-window';
 
 @component()
