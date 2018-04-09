@@ -658,8 +658,13 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 			classes = cache[key] = [this.getFullBlockName(blockName)];
 
 		for (let keys = Object.keys(mods), i = 0; i < keys.length; i++) {
-			const mod = keys[i];
-			classes.push(this.getFullBlockName(blockName, mod, mods[mod]));
+			const
+				key = keys[i],
+				val = mods[key];
+
+			if (val !== undefined) {
+				classes.push(this.getFullBlockName(blockName, key, val));
+			}
 		}
 
 		return classes;
