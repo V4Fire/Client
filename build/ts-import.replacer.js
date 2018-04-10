@@ -27,7 +27,7 @@ const
  */
 module.exports = function (str, file) {
 	if (!deps.length) {
-		return txt;
+		return str;
 	}
 
 	return str.replace(importRgxp, (str, $1, root, url) =>
