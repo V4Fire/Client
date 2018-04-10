@@ -8,13 +8,10 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-module.exports = {
-	'collection.js': '$C',
-	'eventemitter2': 'EventEmitter2',
-	'localforage': 'localforage',
-	'urijs': 'URI',
-	'sugar': 'Sugar',
-	'vue': 'Vue',
-	'chart.js': 'Chart',
-	'ion-sound': 'ion'
-};
+const
+	config = require('config');
+
+/**
+ * Parameters for webpack.externals
+ */
+module.exports = config.externalLibs;

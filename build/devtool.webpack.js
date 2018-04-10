@@ -8,7 +8,10 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+const
+	config = require('config');
+
 /**
  * Parameters for webpack.devtool
  */
-module.exports = false;
+module.exports = config.devtool;
