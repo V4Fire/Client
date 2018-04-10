@@ -221,7 +221,8 @@ function vueComp({name, attrs}) {
 
 		const
 			c = blocksTree[componentName],
-			smart = [attrs[':func-placeholder'], delete attrs[':func-placeholder']][0] && c && c.functional;
+			smart = [attrs['v-func-placeholder'], delete attrs['v-func-placeholder']][0] && c && c.functional,
+			forceComponent = [attrs['v-functional'], delete attrs['v-functional']][0] !== true;
 
 		const isStaticLiteral = (v) => {
 			try {
@@ -233,7 +234,7 @@ function vueComp({name, attrs}) {
 			}
 		};
 
-		const isFunctional = c && c.functional === true || $C(smart).every((el, key) => {
+		const isFunctional = c && c.functional === true || !forceComponent && $C(smart).every((el, key) => {
 			let
 				attr = attrs[key] && attrs[key][0];
 
@@ -326,7 +327,7 @@ function vueTag(tag, attrs, rootTag) {
 	if (component) {
 		if (!Object.isBoolean(component.functional)) {
 			attrs[':instance-of'] = [nm];
-			attrs[':func-placeholder'] = [true];
+			attrs['v-func-placeholder'] = [true];
 			attrs['is'] = [tag];
 			return 'component';
 		}
