@@ -66,7 +66,7 @@ export default function inheritMeta(
 	} else if (pIIsObj && cIIsObj) {
 		inject = {};
 
-		for (let o = <Object>params.inject, keys = Object.keys(o), i = 0; i < keys.length; i++) {
+		for (let o = <object>params.inject, keys = Object.keys(o), i = 0; i < keys.length; i++) {
 			const
 				key = keys[i],
 				el = o[key];
@@ -74,7 +74,7 @@ export default function inheritMeta(
 			inject[key] = Object.isObject(el) ? {...el} : {from: el};
 		}
 
-		for (let o = <Object>p.inject, keys = Object.keys(o), i = 0; i < keys.length; i++) {
+		for (let o = <object>p.inject, keys = Object.keys(o), i = 0; i < keys.length; i++) {
 			const
 				key = keys[i],
 				el = o[key];
@@ -91,7 +91,7 @@ export default function inheritMeta(
 			inject[key] = {[key]: {from: key}};
 		}
 
-		for (let o = <Object>p.inject, keys = Object.keys(o), i = 0; i < keys.length; i++) {
+		for (let o = <object>p.inject, keys = Object.keys(o), i = 0; i < keys.length; i++) {
 			const
 				key = keys[i],
 				el = o[key];
@@ -103,7 +103,7 @@ export default function inheritMeta(
 	} else if (pIIsObj && cIIsArr) {
 		inject = {};
 
-		for (let o = <Object>params.inject, keys = Object.keys(o), i = 0; i < keys.length; i++) {
+		for (let o = <object>params.inject, keys = Object.keys(o), i = 0; i < keys.length; i++) {
 			const
 				key = keys[i],
 				el = o[key];
@@ -131,7 +131,7 @@ export default function inheritMeta(
 
 	// tslint:disable-next-line
 	if (Object.isObject(<any>p.functional) && Object.isObject(<any>params.functional)) {
-		functional = {...<Object>params.functional, ...<Object>p.functional};
+		functional = {...<object>params.functional, ...<object>p.functional};
 
 	} else {
 		functional = p.functional != null ? p.functional : params.functional;
