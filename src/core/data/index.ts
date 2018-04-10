@@ -27,7 +27,8 @@ import request, {
 	RequestResponse,
 	RequestResponseObject,
 	Response,
-	RequestBody
+	RequestBody,
+	ResolverResult
 
 } from 'core/request';
 
@@ -196,6 +197,16 @@ export default class Provider {
 	}
 
 	/**
+	 * Request resolve function
+	 *
+	 * @param url - request url
+	 * @param opts - request params
+	 */
+	resolver(url: string, opts: CreateRequestOptions): ResolverResult {
+		return undefined;
+	}
+
+	/**
 	 * Returns an object with authentication params
 	 * @param params - request parameters
 	 */
@@ -338,7 +349,7 @@ export default class Provider {
 
 		return this.updateRequest(
 			url,
-			this.request(url, <CreateRequestOptions<T>>{
+			this.request(url, this.resolver, <CreateRequestOptions<T>>{
 				cacheStrategy: this.cacheStrategy,
 				cacheTTL: this.cacheTTL,
 				offlineCache: this.offlineCache,
@@ -363,7 +374,7 @@ export default class Provider {
 
 		return this.updateRequest(
 			url,
-			this.request(url, <CreateRequestOptions<T>>{
+			this.request(url, this.resolver, <CreateRequestOptions<T>>{
 				...opts,
 				body,
 				middlewares: {...middlewares, ...opts && opts.middlewares},
@@ -386,7 +397,7 @@ export default class Provider {
 		return this.updateRequest(
 			url,
 			'add',
-			this.request(url, <CreateRequestOptions<T>>{
+			this.request(url, this.resolver, <CreateRequestOptions<T>>{
 				...opts,
 				body,
 				middlewares: {...middlewares, ...opts && opts.middlewares},
@@ -409,7 +420,7 @@ export default class Provider {
 		return this.updateRequest(
 			url,
 			'upd',
-			this.request(url, <CreateRequestOptions<T>>{
+			this.request(url, this.resolver, <CreateRequestOptions<T>>{
 				...opts,
 				body,
 				middlewares: {...middlewares, ...opts && opts.middlewares},
@@ -432,7 +443,7 @@ export default class Provider {
 		return this.updateRequest(
 			url,
 			'del',
-			this.request(url, <CreateRequestOptions<T>>{
+			this.request(url, this.resolver, <CreateRequestOptions<T>>{
 				...opts,
 				body,
 				middlewares: {...middlewares, ...opts && opts.middlewares},
