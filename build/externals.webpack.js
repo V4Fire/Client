@@ -14,4 +14,4 @@ const
 /**
  * Parameters for webpack.externals
  */
-module.exports = config.externalLibs;
+module.exports = config.webpack.externals;

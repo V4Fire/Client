@@ -57,12 +57,7 @@ module.exports = function (gulp = require('gulp')) {
 	gulp.task('static:html', () =>
 		gulp.src(o('/**/*.html'))
 			.pipe($.plumber())
-			.pipe($.htmlmin({
-				useShortDoctype: true,
-				conservativeCollapse: true,
-				removeAttributeQuotes: true
-			}))
-
+			.pipe($.htmlmin(config.html))
 			.pipe(gulp.dest(o()))
 	);
 
@@ -101,8 +96,6 @@ module.exports = function (gulp = require('gulp')) {
 
 				.pipe(gulp.dest(src));
 		}
-
-		/* eslint-enable camelcase */
 
 		return merge([
 			f(o('lib')),

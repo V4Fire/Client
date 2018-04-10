@@ -9,14 +9,16 @@
  */
 
 const
-	$C = require('collection.js'),
+	$C = require('collection.js');
+
+const
 	config = require('config'),
 	ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 const
 	{src} = require('config'),
 	{resolve, config: {dependencies}} = require('@pzlr/build-core'),
-	{output, hash, version, hashLength} = include('build/build.webpack');
+	{output, hash, version, hashLength, inherit} = include('build/build.webpack');
 
 const
 	depsRgxp = new RegExp(`node_modules\\/(?!${dependencies.map((el) => RegExp.escape(el || el.src)).join('|')})`);
@@ -49,9 +51,7 @@ module.exports = async function ({buildId, plugins}) {
 				use: [
 					{
 						loader: 'ts',
-						options: {
-							transpileOnly: !isProd
-						}
+						options: config.typescript().client
 					},
 
 					{
@@ -63,7 +63,7 @@ module.exports = async function ({buildId, plugins}) {
 
 					{
 						loader: 'monic',
-						options: $C.extend({deep: true, concatArray: true}, {}, config.monic().ts, {
+						options: inherit(config.monic().typescript, {
 							replacers: [
 								include('build/ts-import.replacer')
 							]
@@ -75,7 +75,19 @@ module.exports = async function ({buildId, plugins}) {
 			{
 				test: /workers\/\w+\.ts$/,
 				exclude: depsRgxp,
-				use: [{loader: 'ts'}]
+				use: [{
+					loader: 'ts',
+					options: config.typescript().worker
+				}]
+			},
+
+			{
+				test: /\.js$/,
+				exclude: depsRgxp,
+				use: [{
+					loader: 'monic',
+					options: config.monic().javascript
+				}]
 			}
 		);
 
@@ -92,32 +104,26 @@ module.exports = async function ({buildId, plugins}) {
 					use: [].concat(
 						{
 							loader: 'css',
-							options: {
-								minimize: Boolean(isProd || Number(process.env.MINIFY_CSS))
-							}
+							options: config.css()
 						},
 
-						isProd ? [
-							{
-								loader: 'postcss',
-								options: {
-									plugins: [require('autoprefixer')()]
-								}
-							}
-
-						] : [],
+						$C(config.postcss).length() ? {
+							loader: 'postcss',
+							options: inherit(config.postcss, {
+								plugins: [require('autoprefixer')(config.autoprefixer())]
+							})
+						} : [],
 
 						{
 							loader: 'stylus',
-							options: {
-								use: include('build/stylus.plugins'),
-								preferPathResolver: 'webpack'
-							}
+							options: inherit(config.stylus(), {
+								use: include('build/stylus.plugins')
+							})
 						},
 
 						{
 							loader: 'monic',
-							options: $C.extend({deep: true, concatArray: true}, {}, config.monic().styl, {
+							options: inherit(config.monic().stylus, {
 								replacers: [
 									require('@pzlr/stylus-inheritance')({resolveImports: true})
 								]
@@ -138,11 +144,24 @@ module.exports = async function ({buildId, plugins}) {
 					},
 
 					'extract',
-					'html',
+
+					{
+						loader: 'html-loader',
+						options: config.html
+					},
+
+					{
+						loader: 'monic',
+						options: inherit(config.monic().html, {
+							replacers: [
+								include('build/html-import.replacer')
+							]
+						})
+					},
 
 					{
 						loader: 'snakeskin',
-						options: Object.assign(config.snakeskin().server, {
+						options: inherit(config.snakeskin().server, {
 							exec: true,
 							data: {
 								root: src.cwd(),
@@ -172,16 +191,33 @@ module.exports = async function ({buildId, plugins}) {
 		},
 
 		{
-			test: /\.(png|gif|jpg|svg|ttf|eot|woff|woff2|mp3|ogg|aac)$/,
+			test: /\.(png|gif|jpe?g|svg|ttf|eot|woff|woff2|mp3|ogg|aac)$/,
 			use: [
 				{
 					loader: 'url',
-					options: {
-						name: hash('[path][hash]_[name].[ext]'),
-						limit: 4096
-					}
+					options: inherit({name: hash('[path][hash]_[name].[ext]')}, config.dataURI)
 				}
-			]
+			].concat(
+				isProd ? {
+					loader: 'image-webpack',
+					options: config.imageOpts
+				} : []
+			)
+		},
+
+		{
+			test: /\.svg$/,
+			use: [
+				{
+					loader: 'svg-url',
+					options: inherit({name: hash('[path][hash]_[name].[ext]')}, config.dataURI)
+				}
+			].concat(
+				isProd ? {
+					loader: 'svgo',
+					options: config.imageOpts.svgo
+				} : []
+			)
 		}
 	);
 

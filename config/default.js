@@ -15,9 +15,76 @@ const
 module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	__proto__: config,
 
+	webpack: {
+		externals: {
+			'collection.js': '$C',
+			'eventemitter2': 'EventEmitter2',
+			'localforage': 'localforage',
+			'urijs': 'URI',
+			'sugar': 'Sugar',
+			'vue': 'Vue',
+			'chart.js': 'Chart',
+			'ion-sound': 'ion'
+		},
+
+		devtool: false
+	},
+
+	imageOpts: {
+		mozjpeg: {
+			progressive: true,
+			quality: 65
+		},
+
+		optipng: {
+			enabled: false,
+		},
+
+		pngquant: {
+			quality: '65-90',
+			speed: 4
+		},
+
+		gifsicle: {
+			interlaced: false,
+		},
+
+		webp: {
+			quality: 75
+		},
+
+		svgo: {
+
+		}
+	},
+
+	html: {
+		useShortDoctype: true,
+		conservativeCollapse: true,
+		removeAttributeQuotes: true,
+		removeComments: isProd,
+		collapseWhitespace: isProd
+	},
+
+	dataURI: {
+		limit: 4096
+	},
+
+	postcss: {
+
+	},
+
+	autoprefixer: {
+
+	},
+
+	uglify: {
+
+	},
+
 	monic() {
 		return {
-			styl: {
+			stylus: {
 				flags: {
 					'+:*': true
 				}
@@ -48,6 +115,26 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 			}),
 
 			server: super.snakeskin()
+		};
+	},
+
+	typescript() {
+		return {
+			client: super.typescript(),
+			worker: super.typescript(),
+			server: super.typescript()
+		};
+	},
+
+	css() {
+		return {
+			minimize: Boolean(isProd || Number(process.env.MINIFY_CSS))
+		};
+	},
+
+	stylus() {
+		return {
+			preferPathResolver: 'webpack'
 		};
 	}
 });

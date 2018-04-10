@@ -9,7 +9,11 @@
  */
 
 const
+	config = require('config'),
 	UglifyJsPlugin = require('uglifyjs-webpack-plugin');
+
+const
+	{inherit} = include('build/build.webpack');
 
 /**
  * Returns a list of webpack optimizations
@@ -62,7 +66,7 @@ module.exports = async function ({buildId}) {
 
 			new UglifyJsPlugin({
 				parallel: true,
-				uglifyOptions: {
+				uglifyOptions: inherit(config.uglify, {
 					compress: {
 						warnings: false,
 						keep_classnames: true,
@@ -74,7 +78,7 @@ module.exports = async function ({buildId}) {
 					},
 
 					mangle: false
-				}
+				})
 			})
 
 			/* eslint-enable camelcase */
