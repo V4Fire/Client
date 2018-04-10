@@ -18,4 +18,3 @@ const
 module.exports = {
 	sprite: path.join(src.assets(), 'svg')
 };
-
