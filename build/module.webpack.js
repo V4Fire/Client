@@ -75,10 +75,21 @@ module.exports = async function ({buildId, plugins}) {
 			{
 				test: /workers\/\w+\.ts$/,
 				exclude: depsRgxp,
-				use: [{
-					loader: 'ts',
-					options: config.typescript().worker
-				}]
+				use: [
+					{
+						loader: 'ts',
+						options: config.typescript().worker
+					},
+
+					{
+						loader: 'monic',
+						options: inherit(config.monic().typescript, {
+							replacers: [
+								include('build/ts-import.replacer')
+							]
+						})
+					}
+				]
 			},
 
 			{
