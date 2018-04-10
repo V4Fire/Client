@@ -53,7 +53,7 @@ export function createFakeCtx(
 
 		$refs: {},
 		$attrs: renderCtx.data.attrs,
-		$slots: Object.assign(renderCtx.slots(), {default: renderCtx.children}),
+		$slots: {default: renderCtx.children, ...renderCtx.slots()},
 		$scopedSlots: {},
 
 		$nextTick: p.$nextTick,
