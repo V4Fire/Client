@@ -27,7 +27,7 @@ import VueInterface from 'core/component/vue';
 import { getComponent, getBaseComponent } from 'core/component/component';
 import { convertRender, createFakeCtx, patchVNode } from 'core/component/functional';
 import { InjectOptions } from 'vue/types/options';
-import { EventEmitter2 } from 'eventemitter2';
+import { EventEmitter2 as EventEmitter, Listener } from 'eventemitter2';
 
 export * from 'core/component/decorators';
 export * from 'core/component/functional';
@@ -36,10 +36,37 @@ export { PARENT } from 'core/component/inherit';
 export { default as VueInterface, VueElement } from 'core/component/vue';
 
 export const
-	initEvent = new EventEmitter2({maxListeners: 1e3}),
+	initEvent = new EventEmitter({maxListeners: 1e3}),
 	rootComponents = Object.createDict(),
 	localComponents = new WeakMap(),
 	components = new WeakMap();
+
+((initEventOnce) => {
+	initEvent.once = function (event: string | string[], listener: Listener): EventEmitter {
+		const
+			events = (<string[]>[]).concat(event);
+
+		for (let i = 0; i < events.length; i++) {
+			const
+				el = events[i];
+
+			if (el === 'constructor') {
+				initEventOnce(events, (obj) => {
+					listener(obj);
+
+					if (!Object.isBoolean(obj.meta.params.functional)) {
+						initEventOnce(el, listener);
+					}
+				});
+
+			} else {
+				initEventOnce(events, listener);
+			}
+		}
+
+		return this;
+	};
+})(initEvent.once.bind(initEvent));
 
 export interface ComponentParams {
 	name?: string;
