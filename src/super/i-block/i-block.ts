@@ -415,7 +415,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 * API for async operations
 	 */
 	@system((ctx) => new Async(ctx))
-	protected async!: Async<this>;
+	protected readonly async!: Async<this>;
 
 	/**
 	 * API for BEM like develop
@@ -1788,7 +1788,7 @@ export abstract class iBlockDecorator extends iBlock {
 	public readonly b!: typeof browser;
 	public readonly t!: typeof i18n;
 
-	public async!: Async<this>;
+	public readonly async!: Async<this>;
 	public readonly block!: Block<this>;
 	public readonly localEvent!: EventEmitter;
 
