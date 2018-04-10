@@ -27,7 +27,8 @@ import {
 	ModVal,
 	ModsDecl,
 	VueInterface,
-	VueElement
+	VueElement,
+	PARENT
 
 } from 'core/component';
 
@@ -243,6 +244,11 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	})
 
 	readonly mods!: ModsNTable;
+
+	/**
+	 * Parent link
+	 */
+	static PARENT: object = PARENT;
 
 	/**
 	 * Block modifiers

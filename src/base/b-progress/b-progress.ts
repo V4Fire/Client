@@ -7,7 +7,7 @@
  */
 
 import symbolGenerator from 'core/symbol';
-import iBlock, { field, component, PARENT, ModsDecl } from 'super/i-block/i-block';
+import iBlock, { field, component, ModsDecl } from 'super/i-block/i-block';
 export * from 'super/i-block/i-block';
 
 export const
@@ -18,7 +18,7 @@ export default class bProgress extends iBlock {
 	/** @inheritDoc */
 	static mods: ModsDecl = {
 		progress: [
-			PARENT
+			bProgress.PARENT
 		]
 	};
 

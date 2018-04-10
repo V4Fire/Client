@@ -9,7 +9,7 @@
 // tslint:disable:max-file-line-count
 import $C = require('collection.js');
 import symbolGenerator from 'core/symbol';
-import iBlock, { component, prop, system, p, wait, ModsDecl, PARENT } from 'super/i-block/i-block';
+import iBlock, { component, prop, system, p, wait, ModsDecl } from 'super/i-block/i-block';
 
 export * from 'super/i-block/i-block';
 export type ScrollSide = 'x' | 'y';
@@ -103,7 +103,7 @@ export default class bScroll extends iBlock {
 	/** @inheritDoc */
 	static mods: ModsDecl = {
 		theme: [
-			PARENT,
+			bScroll.PARENT,
 			'light'
 		],
 

@@ -20,8 +20,7 @@ import iInput, {
 	system,
 	wait,
 	ModsDecl,
-	ValidatorsDecl,
-	PARENT
+	ValidatorsDecl
 
 } from 'super/i-input/i-input';
 
@@ -182,7 +181,7 @@ export default class bInput<T extends Dictionary = Dictionary> extends iInput<T>
 		],
 
 		theme: [
-			PARENT,
+			bInput.PARENT,
 			'link'
 		],
 
