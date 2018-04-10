@@ -195,7 +195,7 @@ export function component(params?: ComponentParams): Function {
 
 		const meta: ComponentMeta = {
 			name,
-			componentName: name.replace(/-func-placeholder$/, ''),
+			componentName: name.replace(/-fn$/, ''),
 			params: p,
 			props: {},
 			fields: {},
