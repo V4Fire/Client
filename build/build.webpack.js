@@ -9,6 +9,10 @@
  */
 
 const
+	$C = require('collection.js'),
+	Sugar = require('sugar');
+
+const
 	{env, argv} = process,
 	{src} = require('config'),
 	{normalizeSep} = include('build/helpers');
@@ -73,7 +77,7 @@ exports.buildCache = path.join(src.cwd(), 'app-cache');
  */
 exports.assetsJSON = r(`${exports.version}assets.json`);
 
-/* eslint-disable no-unused-vars */
+// Some helpers
 
 exports.hash = hash;
 
@@ -89,7 +93,20 @@ function hash(output, chunk) {
 	return output.replace(/\[hash]_/g, isProd ? chunk ? `[chunkhash:${l}]_` : `[hash:${l}]_` : '');
 }
 
-/* eslint-enable no-unused-vars */
+exports.inherit = inherit;
+
+/**
+ * Alias for $C.extend({deep, concatArray})
+ */
+function inherit() {
+	const extOpts = {
+		deep: true,
+		concatArray: true,
+		concatFn: Sugar.Array.union
+	};
+
+	return $C.extend(extOpts, {}, ...arguments);
+}
 
 function r(file) {
 	return `./${normalizeSep(path.relative(src.cwd(), path.join(src.clientOutput(), file)))}`;
