@@ -248,7 +248,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	/**
 	 * Parent link
 	 */
-	static PARENT: object = PARENT;
+	static readonly PARENT: object = PARENT;
 
 	/**
 	 * Block modifiers
