@@ -1033,7 +1033,11 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 * @param label
 	 * @param [value] - label value (will saved in the cache only if true)
 	 */
-	protected ifOnce(label: any, value: boolean = false): 0 | 1 | 2 {
+	protected ifOnce(label: any, value: boolean = false): 0 | 1 | 2 | 3 {
+		if (this.meta.params.functional === true) {
+			return 3;
+		}
+
 		if (this.ifOnceStore[label]) {
 			return 2;
 		}
