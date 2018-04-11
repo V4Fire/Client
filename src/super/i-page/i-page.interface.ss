@@ -166,7 +166,8 @@
 							'eventemitter2/lib/eventemitter2.js',
 							'urijs/src/URI.min.js',
 							'fg-loadcss/src/loadCSS.js',
-							'fg-loadcss/src/cssrelpreload.js'
+							'fg-loadcss/src/cssrelpreload.js',
+							'socket.io-client/dist/socket.io.js'
 						] .
 
 					- forEach defLibs => url
