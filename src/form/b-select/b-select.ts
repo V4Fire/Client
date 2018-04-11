@@ -33,6 +33,8 @@ let
 	openedSelect;
 
 @component({
+	functional: false,
+
 	model: {
 		prop: 'selectedProp',
 		event: 'onChange'

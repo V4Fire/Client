@@ -29,7 +29,14 @@ export * from 'super/i-input/i-input';
 export const
 	$$ = symbolGenerator();
 
-@component()
+@component({
+	functional: {
+		'@actionChange': undefined,
+		'dataProvider': undefined,
+		'validators': undefined
+	}
+})
+
 export default class bInput<T extends Dictionary = Dictionary> extends iInput<T> {
 	/**
 	 * Input type
@@ -279,6 +286,13 @@ export default class bInput<T extends Dictionary = Dictionary> extends iInput<T>
 
 		} else {
 			this.valueBuffer = '';
+
+			const
+				{input} = this.$refs;
+
+			if (input) {
+				input.value = '';
+			}
 		}
 
 		return super.clear();

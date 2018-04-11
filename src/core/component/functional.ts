@@ -73,10 +73,7 @@ export function createFakeCtx(
 			p.forceUpdate().catch(stderr);
 		},
 
-		$watch(): () => void {
-			return () => undefined;
-		},
-
+		$watch: () => ({$unwatch: () => undefined}),
 		$set(obj: object, key: string, value: any): any {
 			obj[key] = value;
 			return value;

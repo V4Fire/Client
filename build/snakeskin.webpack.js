@@ -234,7 +234,17 @@ function vueComp({name, attrs}) {
 			}
 		};
 
+		const vuePrfx = {
+			':': true,
+			'@': true,
+			'v-': true
+		};
+
 		const isFunctional = c && c.functional === true || !forceComponent && $C(smart).every((el, key) => {
+			if (!vuePrfx[key.slice(0, 2)] && !vuePrfx[key[0]]) {
+				key = `:${key}`;
+			}
+
 			let
 				attr = attrs[key] && attrs[key][0];
 

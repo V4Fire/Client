@@ -14,7 +14,7 @@ export * from 'form/b-input/b-input';
 export const
 	$$ = symbolGenerator();
 
-@component()
+@component({functional: false})
 export default class bTextarea<T extends Dictionary = Dictionary> extends bInput<T> {
 	/**
 	 * Row count for extending

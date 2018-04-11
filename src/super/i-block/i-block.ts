@@ -1009,13 +1009,22 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 			fn = <Function>converter;
 
 		const setWatcher = () => {
-			this.$watch(field, (val) => {
-				this.setMod(mod, fn(val, this));
+			if (this.isFunctional) {
+				this.async.setInterval(() => {
+					const
+						v = String(fn(this[field], this));
 
-			}, {
-				immediate: true,
-				...opts
-			});
+					if (this.mods[mod] !== v) {
+						this.setMod(mod, v);
+					}
+
+				}, 0.3.second(), {group: 'bindModTo'});
+
+			} else {
+				this.$watch(field, (val) => {
+					this.setMod(mod, fn(val, this));
+				}, opts);
+			}
 		};
 
 		if (this.blockStatus === statuses[statuses.unloaded]) {

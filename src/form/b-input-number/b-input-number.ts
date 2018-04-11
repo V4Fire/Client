@@ -79,6 +79,14 @@ export default class bInputNumber<T extends Dictionary = Dictionary> extends bIn
 		}
 
 		this.value = String(v);
+
+		const
+			{input} = this.$refs;
+
+		if (input) {
+			input.value = this.value;
+		}
+
 		return v;
 	}
 
