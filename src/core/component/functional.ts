@@ -197,25 +197,10 @@ export function patchVNode(vNode: VNode, ctx: Dictionary, renderCtx: RenderConte
 	const
 		{data: vData} = vNode,
 		{data} = renderCtx,
-		{meta, meta: {methods, component: {mods}}} = ctx;
+		{meta, meta: {methods}} = ctx;
 
 	if (vData) {
 		vData.staticClass = vData.staticClass || '';
-
-		// Support for modifiers
-		for (const key in mods) {
-			if (!mods.hasOwnProperty(key)) {
-				break;
-			}
-
-			if (key in ctx) {
-				const
-					mod = mods[key],
-					val = ctx[key];
-
-				vData.staticClass += ` ${ctx.blockName}_${key}_${mod.coerce ? mod.coerce(val) : val}`;
-			}
-		}
 
 		// Custom classes and attributes
 
