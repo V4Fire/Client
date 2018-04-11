@@ -24,7 +24,9 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 			'sugar': 'Sugar',
 			'vue': 'Vue',
 			'chart.js': 'Chart',
-			'ion-sound': 'ion'
+			'ion-sound': 'ion',
+			'socket.io-client': 'io',
+			'setimmediate': 'setImmediate'
 		},
 
 		devtool: false
