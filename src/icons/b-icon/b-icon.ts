@@ -11,11 +11,23 @@ import { CreateElement, RenderContext, VNode } from 'vue';
 import iBlock, { component, prop } from 'super/i-block/i-block';
 export * from 'super/i-block/i-block';
 
-const icons = (<any>require).context(
-	'!!svg-sprite-loader!svg-fill-loader?fill=currentColor!sprite',
-	true,
-	/\.svg/
-);
+let
+	icons;
+
+if (IS_PROD) {
+	icons = (<any>require).context(
+		'!!svg-sprite!svg-fill?fill=currentColor!svgo!sprite',
+		true,
+		/\.svg$/
+	);
+
+} else {
+	icons = (<any>require).context(
+		'!!svg-sprite!svg-fill?fill=currentColor!sprite',
+		true,
+		/\.svg$/
+	);
+}
 
 const iconsMap = $C(icons.keys()).to(Object.createDict()).reduce((map, el) => {
 	map[normalize(el)] = el;
