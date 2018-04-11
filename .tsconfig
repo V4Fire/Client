@@ -1,5 +1,5 @@
 {
-  "extends": "@v4fire/core/tsconfig.json",
+  "extends": "@v4fire/core/.tsconfig",
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
