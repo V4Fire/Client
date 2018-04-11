@@ -31,10 +31,8 @@ export const
 
 @component({
 	functional: {
-		'@onChange': undefined,
-		'@onActionChange': undefined,
-		'dataProvider': undefined,
-		'validators': undefined
+		dataProvider: undefined,
+		validators: undefined
 	}
 })
 
