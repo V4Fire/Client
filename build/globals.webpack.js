@@ -10,8 +10,8 @@
 
 module.exports = {
 	'CONFIG': {},
+	'IS_PROD': isProd,
 	'process.env': {
-		NODE_ENV: JSON.stringify(process.env.NODE_ENV),
-		IS_PROD: isProd
+		NODE_ENV: JSON.stringify(process.env.NODE_ENV)
 	}
 };
