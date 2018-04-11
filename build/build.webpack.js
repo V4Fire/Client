@@ -15,7 +15,8 @@ const
 const
 	{env, argv} = process,
 	{src} = require('config'),
-	{normalizeSep} = include('build/helpers');
+	{normalizeSep} = include('build/helpers'),
+	{config: {dependencies}} = require('@pzlr/build-core');
 
 const
 	fs = require('fs'),
@@ -27,6 +28,11 @@ const
  */
 const args = exports.args = minimist(argv.slice(2));
 args.env && (env.NODE_ENV = args.env);
+
+/**
+ * String with project dependencies for using with regular expressions
+ */
+exports.depsRgxpStr = dependencies.map((el) => RegExp.escape(el || el.src)).join('|');
 
 /**
  * File hash length

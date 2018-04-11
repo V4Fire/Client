@@ -13,7 +13,11 @@ const
 	UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 
 const
-	{inherit} = include('build/build.webpack');
+	{inherit, depsRgxpStr} = include('build/build.webpack');
+
+const
+	excludeCustomNodeModules = new RegExp(`(?:^|/)node_modules/(?:${depsRgxpStr})(?:/|$)|^(?:(?!(?:^|/)node_modules/).)*$`),
+	excludeNotCustomNodeModules = new RegExp(`^(?:(?!(?:^|/)node_modules/).)*/?node_modules/(?:(?!${depsRgxpStr}).)*$`);
 
 /**
  * Returns a list of webpack optimizations
@@ -44,7 +48,7 @@ module.exports = async function ({buildId}) {
 					minChunks: 2,
 					enforce: true,
 					reuseExistingChunk: true,
-					test: /@v4fire|^((?!([/\\])node_modules\2).)*$/
+					test: excludeCustomNodeModules
 				},
 
 				vendor: {
@@ -54,7 +58,7 @@ module.exports = async function ({buildId}) {
 					minChunks: 2,
 					enforce: true,
 					reuseExistingChunk: true,
-					test: /^((?!([/\\])node_modules\2).)*[/\\]?node_modules([/\\])((?!@v4fire\2?).)*$/
+					test: excludeNotCustomNodeModules
 				}
 			}
 		};

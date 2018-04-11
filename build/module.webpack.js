@@ -17,11 +17,11 @@ const
 
 const
 	{src} = require('config'),
-	{resolve, config: {dependencies}} = require('@pzlr/build-core'),
-	{output, hash, version, hashLength, inherit} = include('build/build.webpack');
+	{resolve} = require('@pzlr/build-core'),
+	{output, hash, version, hashLength, inherit, depsRgxpStr} = include('build/build.webpack');
 
 const
-	depsRgxp = new RegExp(`node_modules\\/(?!${dependencies.map((el) => RegExp.escape(el || el.src)).join('|')})`);
+	depsRgxp = new RegExp(`(?:^|/)node_modules/(?!${depsRgxpStr})(?:/|$)`);
 
 /**
  * Returns parameters for webpack.module
@@ -46,7 +46,7 @@ module.exports = async function ({buildId, plugins}) {
 	if (base) {
 		loaders.rules.push(
 			{
-				test: /\.ts/,
+				test: /^(?:(?!\/workers\/).)*\.ts$/,
 				exclude: depsRgxp,
 				use: [
 					{
@@ -73,7 +73,7 @@ module.exports = async function ({buildId, plugins}) {
 			},
 
 			{
-				test: /workers\/\w+\.ts$/,
+				test: /\/workers\/.*?\.ts$/,
 				exclude: depsRgxp,
 				use: [
 					{
@@ -202,7 +202,7 @@ module.exports = async function ({buildId, plugins}) {
 		},
 
 		{
-			test: /\.(png|gif|jpe?g|svg|ttf|eot|woff|woff2|mp3|ogg|aac)$/,
+			test: /\.(?:png|gif|jpe?g|svg|ttf|eot|woff|woff2|mp3|ogg|aac)$/,
 			use: [
 				{
 					loader: 'url',
