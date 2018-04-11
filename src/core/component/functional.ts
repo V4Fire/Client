@@ -292,14 +292,19 @@ export function patchVNode(vNode: VNode, ctx: Dictionary, renderCtx: RenderConte
 
 			const
 				el = ctx.$el,
-				refs = el.querySelectorAll(`.${ctx.blockId}[data-vue-ref]`);
+				refs = ctx.$refs,
+				refNodes = el.querySelectorAll(`.${ctx.blockId}[data-vue-ref]`);
 
 			mounted = true;
 			el.vueComponent = ctx;
 
-			for (let i = 0; i < refs.length; i++) {
-				const el = refs[i];
-				ctx.$refs[el.dataset.vueRef] = el.vueComponent ? el.vueComponent : el;
+			for (let i = 0; i < refNodes.length; i++) {
+				const
+					el = refNodes[i],
+					link = el.vueComponent ? el.vueComponent : el,
+					ref = el.dataset.vueRef;
+
+				refs[ref] = refs[ref] ? [].concat(refs[ref], link) : link;
 			}
 
 			runHook('mounted', ctx.meta, ctx).then(async () => {
