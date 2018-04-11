@@ -17,7 +17,7 @@ export type ValidatorsDecl<T extends iInput = iInput> =
 @component({
 	model: {
 		prop: 'valueProp',
-		event: 'onChange'
+		event: 'change'
 	}
 })
 

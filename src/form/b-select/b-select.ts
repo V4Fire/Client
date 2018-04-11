@@ -37,7 +37,7 @@ let
 
 	model: {
 		prop: 'selectedProp',
-		event: 'onChange'
+		event: 'change'
 	}
 })
 
