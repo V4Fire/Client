@@ -5,11 +5,11 @@
     "paths": {
       "*": [
         "./src/*",
-        "./node_modules/@v4fire/core/src/*"
+        "@v4fire/core:src/*"
       ],
 
       "@v4fire/core/*": [
-        "./node_modules/@v4fire/core/src/*"
+        "@v4fire/core:src/*"
       ]
     }
   }
