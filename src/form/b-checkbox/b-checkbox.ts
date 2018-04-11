@@ -13,7 +13,12 @@ export * from 'super/i-input/i-input';
 export const
 	$$ = symbolGenerator();
 
-@component()
+@component({
+	functional: {
+		dataProvider: undefined
+	}
+})
+
 export default class bCheckbox<T extends Dictionary = Dictionary> extends iInput<T> {
 	/** @override */
 	@prop(Function)
