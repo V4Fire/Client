@@ -258,7 +258,11 @@ export function patchVNode(vNode: VNode, ctx: Dictionary, renderCtx: RenderConte
 		}
 	}
 
-	runHook('created', ctx.meta, ctx).then(async () => {
+	if (meta.params.tiny) {
+		return vNode;
+	}
+
+	runHook('created', meta, ctx).then(async () => {
 		if (methods.created) {
 			await methods.created.fn.call(ctx);
 		}
@@ -307,7 +311,7 @@ export function patchVNode(vNode: VNode, ctx: Dictionary, renderCtx: RenderConte
 				refs[ref] = refs[ref] ? [].concat(refs[ref], link) : link;
 			}
 
-			runHook('mounted', ctx.meta, ctx).then(async () => {
+			runHook('mounted', meta, ctx).then(async () => {
 				if (methods.mounted) {
 					await methods.mounted.fn.call(ctx);
 				}

@@ -73,6 +73,7 @@ export interface ComponentParams {
 	root?: boolean;
 	tpl?: boolean;
 	functional?: boolean | Dictionary;
+	tiny?: boolean;
 	mixins?: Dictionary;
 	model?: {prop?: string; event?: string};
 	parent?: Vue;
