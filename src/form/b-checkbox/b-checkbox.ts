@@ -15,8 +15,7 @@ export const
 
 @component({
 	functional: {
-		dataProvider: undefined,
-		validators: undefined
+		dataProvider: undefined
 	}
 })
 
