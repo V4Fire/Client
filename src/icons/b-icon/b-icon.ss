@@ -15,4 +15,4 @@
 
 	- block body
 		< svg.&__svg
-			< slot name = svgLink
+			< use v-if = value | :xlink:href = getIconLink(value)

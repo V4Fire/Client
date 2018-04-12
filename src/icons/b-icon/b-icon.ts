@@ -6,7 +6,6 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { CreateElement, RenderContext, VNode } from 'vue';
 import iBlock, { component, prop } from 'super/i-block/i-block';
 export * from 'super/i-block/i-block';
 
@@ -35,25 +34,4 @@ export default class bIcon extends iBlock {
 	 */
 	@prop(String)
 	readonly hintPos: string = 'bottom';
-
-	/** @override */
-	protected readonly $slots!: {
-		svgLink: VNode;
-	};
-
-	/** @override */
-	protected render(el: CreateElement, ctx: RenderContext): VNode {
-		const
-			iconId = ctx.props.value;
-
-		if (iconId) {
-			this.$slots.svgLink = el('use', {
-				attrs: {
-					'xlink:href': this.getIconLink(iconId)
-				}
-			});
-		}
-
-		return this.execRenderObject(TPLS[this.componentName].index());
-	}
 }
