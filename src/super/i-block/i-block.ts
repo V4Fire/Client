@@ -14,6 +14,8 @@ import { WatchOptions, RenderContext, VNode } from 'vue';
 import 'super/i-block/modules/vue.directives';
 import Async, { AsyncOpts } from 'core/async';
 import Block, { statuses } from 'super/i-block/modules/block';
+import Cache from 'super/i-block/modules/cache';
+import { icons, iconsMap } from 'super/i-block/modules/icons';
 import symbolGenerator from 'core/symbol';
 
 import iPage from 'super/i-page/i-page';
@@ -41,6 +43,7 @@ import * as browser from 'core/const/browser';
 
 export * from 'core/component';
 export { statuses } from 'super/i-block/modules/block';
+export { default as Cache } from 'super/i-block/modules/cache';
 export {
 
 	prop,
@@ -78,40 +81,6 @@ export interface SizeTo {
 export type ModsTable = Dictionary<ModVal>;
 export type ModsNTable = Dictionary<string | undefined>;
 
-/**
- * Cache helper
- */
-export class Cache<T extends string = string> {
-	/**
-	 * Cache dictionary
-	 */
-	dict: Dictionary = Object.createDict();
-
-	/**
-	 * @param [namespaces] - predefined namespaces
-	 */
-	constructor(namespaces?: string[]) {
-		$C(namespaces).forEach((el) => {
-			this.dict[el] = Object.createDict();
-		});
-	}
-
-	/**
-	 * Creates a cache object by the specified parameters and returns it
-	 */
-	create(nms: T, cacheKey?: string): Dictionary {
-		const
-			cache = this.dict[nms] = this.dict[nms] || Object.createDict();
-
-		if (cacheKey) {
-			cache[cacheKey] = cache[cacheKey] || Object.createDict();
-			return cache[cacheKey];
-		}
-
-		return cache;
-	}
-}
-
 export const
 	$$ = symbolGenerator(),
 	modsCache = Object.createDict(),
@@ -120,6 +89,19 @@ export const
 
 @component()
 export default class iBlock extends VueInterface<iBlock, iPage> {
+	/**
+	 * Returns a link for the specified icon
+	 * @param iconId
+	 */
+	static getIconLink(iconId: string): string {
+		if (!(iconId in iconsMap)) {
+			throw new ReferenceError(`The specified icon "${iconId}" is not defined`);
+		}
+
+		const {default: icon} = icons(iconsMap[iconId]);
+		return `${location.pathname + location.search}#${icon.id}`;
+	}
+
 	/**
 	 * Block unique id
 	 */
@@ -340,6 +322,13 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 */
 	protected get lt(): Dictionary<string> {
 		return (<any>this.instance.constructor).sizeTo.lt;
+	}
+
+	/**
+	 * Link to bIcon.getIconLink
+	 */
+	protected get getIconLink(): typeof iBlock.getIconLink {
+		return (<any>this.instance.constructor).getIconLink;
 	}
 
 	/**
@@ -1009,22 +998,9 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 			fn = <Function>converter;
 
 		const setWatcher = () => {
-			if (this.isFunctional) {
-				this.async.setInterval(() => {
-					const
-						v = String(fn(this[field], this));
-
-					if (this.mods[mod] !== v) {
-						this.setMod(mod, v);
-					}
-
-				}, 0.3.second(), {group: 'bindModTo'});
-
-			} else {
-				this.$watch(field, (val) => {
-					this.setMod(mod, fn(val, this));
-				}, opts);
-			}
+			this.$watch(field, (val) => {
+				this.setMod(mod, fn(val, this));
+			}, opts);
 		};
 
 		if (this.blockStatus === statuses[statuses.unloaded]) {

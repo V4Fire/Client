@@ -6,39 +6,11 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import $C = require('collection.js');
 import { CreateElement, RenderContext, VNode } from 'vue';
 import iBlock, { component, prop } from 'super/i-block/i-block';
 export * from 'super/i-block/i-block';
 
-let
-	icons;
-
-if (IS_PROD) {
-	icons = (<any>require).context(
-		'!!svg-sprite!svg-fill?fill=currentColor!svgo!sprite',
-		true,
-		/\.svg$/
-	);
-
-} else {
-	icons = (<any>require).context(
-		'!!svg-sprite!svg-fill?fill=currentColor!sprite',
-		true,
-		/\.svg$/
-	);
-}
-
-const iconsMap = $C(icons.keys()).to(Object.createDict()).reduce((map, el) => {
-	map[normalize(el)] = el;
-	return map;
-});
-
-function normalize(key: string): string {
-	return key.replace(/\.\//, '').replace(/\.svg$/, '');
-}
-
-@component({functional: true})
+@component({functional: true, tiny: true})
 export default class bIcon extends iBlock {
 	/**
 	 * Block value
@@ -75,16 +47,9 @@ export default class bIcon extends iBlock {
 			iconId = ctx.props.value;
 
 		if (iconId) {
-			if (!(iconId in iconsMap)) {
-				throw new ReferenceError(`The specified icon "${iconId}" is not defined`);
-			}
-
-			const
-				{default: icon} = icons(iconsMap[iconId]);
-
 			this.$slots.svgLink = el('use', {
 				attrs: {
-					'xlink:href': `${location.pathname + location.search}#${icon.id}`
+					'xlink:href': this.getIconLink(iconId)
 				}
 			});
 		}

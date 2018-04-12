@@ -36,6 +36,17 @@
 		< _.${self.name()} ${rootAttrs|!html}
 
 			/**
+			 * Generates an icon block
+			 *
+			 * @param {string} iconId
+			 * @param {Object=} [classes]
+			 * @param {Object=} [attrs]
+			 */
+			- block index->gIcon(iconId, classes = {}, attrs)
+				< svg[.g-icon] :class = getElClasses(${classes|json}) | ${attrs}
+					< use :xlink:href = getIconLink('${iconId}')
+
+			/**
 			 * Generates vue transition wrapper for content
 			 * @param {string=} [content] - content to wrapping
 			 */
