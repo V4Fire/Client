@@ -42,7 +42,7 @@
 			 * @param {Object=} [classes]
 			 * @param {Object=} [attrs]
 			 */
-			- block index->gIcon(iconId, classes = {}, attrs)
+			- block index->gIcon(iconId, classes = {}, attrs = {})
 				< svg[.g-icon] :class = getElClasses(${classes|json}) | ${attrs}
 					< use :xlink:href = getIconLink('${iconId}')
 
