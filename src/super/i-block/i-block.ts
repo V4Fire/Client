@@ -788,7 +788,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 		const
 			vnode = execRenderObject(renderObj, instanceCtx);
 
-		if (ctx) {
+		if (renderCtx) {
 			return patchVNode(vnode, instanceCtx, renderCtx);
 		}
 
