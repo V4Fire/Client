@@ -7,7 +7,7 @@
  */
 
 import $C = require('collection.js');
-import { CreateElement, RenderContext, VNode, FunctionalComponentOptions } from 'vue';
+import { CreateElement, RenderContext, VNode, FunctionalComponentOptions, WatchOptions } from 'vue';
 import { EventEmitter2 as EventEmitter } from 'eventemitter2';
 import { VueElement, FunctionalCtx } from 'core/component';
 import { runHook, createMeta, initDataObject, defaultWrapper } from 'core/component/component';
@@ -37,7 +37,8 @@ export function createFakeCtx(
 
 	const
 		p = <Dictionary>renderCtx.parent,
-		event = new EventEmitter();
+		watchers = new EventEmitter({maxListeners: 1e3}),
+		event = new EventEmitter({maxListeners: 1e3});
 
 	// Add base methods and properties
 	Object.assign(fakeCtx, renderCtx, renderCtx.props, {
@@ -73,7 +74,20 @@ export function createFakeCtx(
 			p.forceUpdate().catch(stderr);
 		},
 
-		$watch: () => ({$unwatch: () => undefined}),
+		$watch(
+			expr: string,
+			cb: (n: any, o: any) => void,
+			opts?: WatchOptions
+		): (() => void) {
+			if (opts && opts.immediate) {
+				watchers.emit(expr, this.getField(expr));
+			}
+
+			cb = cb.bind(this);
+			watchers.on(expr, cb);
+			return () => watchers.off(expr, cb);
+		},
+
 		$set(obj: object, key: string, value: any): any {
 			obj[key] = value;
 			return value;
@@ -156,10 +170,33 @@ export function createFakeCtx(
 		];
 
 		for (let i = 0; i < list.length; i++) {
-			initDataObject(list[i], fakeCtx, instance, fakeCtx);
+			const data = i ? {} : fakeCtx;
+			initDataObject(list[i], fakeCtx, instance, data);
 
-			if (i === list.length - 1) {
-				runHook('beforeDataCreate', meta, fakeCtx, fakeCtx).catch(stderr);
+			if (i) {
+				runHook('beforeDataCreate', meta, fakeCtx, data).catch(stderr);
+
+				if (meta.params.tiny) {
+					Object.assign(fakeCtx, data);
+					continue;
+				}
+
+				for (let keys = Object.keys(data), i = 0; i < keys.length; i++) {
+					const
+						key = keys[i];
+
+					Object.defineProperty(fakeCtx, key, {
+						get(): any {
+							return data[key];
+						},
+
+						set(val: any): void {
+							const old = data[key];
+							data[key] = val;
+							watchers.emit(key, val, old);
+						}
+					});
+				}
 			}
 		}
 	}
