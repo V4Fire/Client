@@ -197,6 +197,13 @@ export function createFakeCtx(
 						}
 					});
 				}
+
+			} else {
+				runHook('beforeCreate', meta, fakeCtx).then(async () => {
+					if (methods.beforeCreate) {
+						await methods.beforeCreate.fn.call(fakeCtx);
+					}
+				}, stderr);
 			}
 		}
 	}
@@ -210,12 +217,6 @@ export function createFakeCtx(
 			fakeCtx[key] = el.type === Function ? el.default.bind(fakeCtx) : el.default.call(fakeCtx);
 		}
 	}
-
-	runHook('beforeCreate', meta, fakeCtx).then(async () => {
-		if (methods.beforeCreate) {
-			await methods.beforeCreate.fn.call(fakeCtx);
-		}
-	}, stderr);
 
 	return fakeCtx;
 }
