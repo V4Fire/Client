@@ -54,36 +54,36 @@ export default class VueInterface<B = VueInterface<any, any>, R = VueInterface<a
 
 	// @ts-ignore
 	protected $watch(
-		expOrFn: string,
-		callback: (this: this, n: any, o: any) => void,
-		options?: WatchOptions
+		expr: string,
+		cb: (this: this, n: any, o: any) => void,
+		opts?: WatchOptions
 	): (() => void);
 
 	protected $watch<T>(
-		expOrFn: (this: this) => T,
-		callback: (this: this, n: T, o: T) => void,
-		options?: WatchOptions
+		fn: (this: this) => T,
+		cb: (this: this, n: T, o: T) => void,
+		opts?: WatchOptions
 	): (() => void);
 
 	protected $watch() {}
 
 	// @ts-ignore
-	protected $on(event: string | string[], callback: Function): this;
+	protected $on(event: string | string[], cb: Function): this;
 	protected $on() {}
 
 	// @ts-ignore
-	protected $once(event: string, callback: Function): this;
+	protected $once(event: string, cb: Function): this;
 	protected $once() {}
 
 	// @ts-ignore
-	protected $off(event?: string | string[], callback?: Function): this;
+	protected $off(event?: string | string[], cb?: Function): this;
 	protected $off() {}
 
 	// @ts-ignore
 	protected $emit(event: string, ...args: any[]): this;
 	protected $emit() {}
 
-	protected $nextTick(callback: (this: this) => void): void;
+	protected $nextTick(cb: (this: this) => void): void;
 	// @ts-ignore
 	protected $nextTick(): Promise<void>;
 	protected $nextTick() {}
