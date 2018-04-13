@@ -31,10 +31,13 @@
 	- block helpers
 		- super
 		- block dropdown
-			< _.&__dropdown[.&_pos_bottom-left] v-if = !b.is.mobile && options.length && ifOnce('opened', m.opened !== 'false')
+			< _.&__dropdown[.&_pos_bottom-left] &
+				v-if = !b.is.mobile && options.length && (isFunctional || ifOnce('opened', m.opened !== 'false'))
+			.
 				< _.&__dropdown-content
 					< _.&__dropdown-content-wrapper
 						< b-scroll-inline.&__scroll &
+							!v-func |
 							ref = scroll |
 							:fixSize = true |
 							:mods = provideMods({size: 'm'})

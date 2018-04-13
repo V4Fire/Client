@@ -11,7 +11,19 @@ import $C = require('collection.js');
 import symbolGenerator from 'core/symbol';
 import KeyCodes from 'core/keyCodes';
 import bScrollInline from 'base/b-scroll/b-scroll-inline/b-scroll-inline';
-import bInput, { component, prop, field, system, watch, mod, wait, BlockConverter } from 'form/b-input/b-input';
+import bInput, {
+
+	component,
+	prop,
+	field,
+	system,
+	hook,
+	watch,
+	mod,
+	wait,
+	BlockConverter
+
+} from 'form/b-input/b-input';
 
 export * from 'form/b-input/b-input';
 export interface Option {
@@ -85,21 +97,6 @@ export default class bSelect<T extends Dictionary = Dictionary> extends bInput<T
 		this.optionsStore = value;
 	}
 
-	/**
-	 * Selected value
-	 */
-	get selected(): string | undefined {
-		return this.selectedStore;
-	}
-
-	/**
-	 * Sets a new selected value
-	 * @param value
-	 */
-	set selected(value: string | undefined) {
-		this.selectedStore = value;
-	}
-
 	/** @override */
 	// @ts-ignore
 	get default(): string | undefined {
@@ -123,24 +120,24 @@ export default class bSelect<T extends Dictionary = Dictionary> extends bInput<T
 	/**
 	 * Selected value store
 	 */
-	@field((o) => o.link('selectedPropProp', (val) => {
+	@field((o) => o.link('selectedProp', (val) => {
 		val = (<any>o).initDefaultValue(val);
-		return val !== undefined ? String(val) : '';
+		return val !== undefined ? String(val) : undefined;
 	}))
 
-	protected selectedStore?: string;
+	protected selected?: string;
 
 	/**
 	 * Temporary labels table
 	 */
 	@system()
-	protected labels?: Dictionary<Option>;
+	protected labels!: Dictionary<Option>;
 
 	/**
 	 * Temporary values table
 	 */
 	@system()
-	protected values?: Dictionary<Option>;
+	protected values!: Dictionary<Option>;
 
 	/** @override */
 	protected readonly $refs!: bInput['$refs'] & {
@@ -255,7 +252,12 @@ export default class bSelect<T extends Dictionary = Dictionary> extends bInput<T
 	/** @override */
 	protected initBaseAPI(): void {
 		super.initBaseAPI();
-		this.normalizeOptions = this.instance.normalizeOptions.bind(this);
+
+		const
+			i = this.instance;
+
+		this.normalizeOptions = i.normalizeOptions.bind(this);
+		this.getOptionValue = i.getOptionValue.bind(this);
 	}
 
 	/**
@@ -274,52 +276,76 @@ export default class bSelect<T extends Dictionary = Dictionary> extends bInput<T
 	}
 
 	/**
-	 * Synchronization for the optionsStore field
-	 * @param value
+	 * Initializes component values
+	 * @param data - data object
 	 */
-	@watch({field: 'optionsStore', immediate: true})
-	protected async syncOptionsStoreWatcher(value: Option[]): Promise<void> {
-		const labels = $C(value).to({}).reduce((map, el) => {
+	@hook('beforeDataCreate')
+	protected async initComponentValues(data: Dictionary = this): Promise<void> {
+		const
+			options = data.optionsStore;
+
+		const labels = $C(options).to({}).reduce((map, el) => {
 			el.value = this.getOptionValue(el);
-			el.label = this.t(el.label);
+			el.label = this.i18n(el.label);
 			map[el.label] = el;
 			return map;
 		});
 
-		const values = $C(value).to({}).reduce((map, el) => {
+		const values = $C(options).to({}).reduce((map, el) => {
 			el.value = this.getOptionValue(el);
 			map[el.value] = el;
 			return map;
 		});
 
-		Object.assign(this, {labels, values});
+		this.labels = labels;
+		this.values = values;
 
-		if (this.selected) {
-			const
-				selected = (<Dictionary>this.values)[this.selected];
+		const
+			{valueStore: value, selected} = data;
 
-			if (selected) {
-				this.value = this.getOptionLabel(selected);
+		if (selected === undefined) {
+			if (value) {
+				const
+					option = labels[value];
+
+				if (option) {
+					data.selected = option.value;
+				}
 			}
+
+		} else if (!value) {
+			const val = values[selected];
+			data.valueStore = data.valueBufferStore = val ? this.getOptionLabel(val) : '';
 		}
 
-		if (value.length && this.$refs.scroll) {
-			await this.$refs.scroll.initScroll();
+		const
+			{scroll} = this.$refs;
+
+		if (scroll) {
+			await scroll.initScroll();
 		}
 	}
 
 	/**
-	 * Synchronization for the selectedStore field
+	 * Synchronization for the optionsStore field
+	 */
+	@watch({field: 'optionsStore'})
+	protected async syncOptionsStoreWatcher(): Promise<void> {
+		await this.initComponentValues();
+	}
+
+	/**
+	 * Synchronization for the selected field
 	 * @param value
 	 */
-	@watch({field: 'selectedStore', immediate: true})
+	@watch({field: 'selected'})
 	protected async syncSelectedStoreWatcher(value: any): Promise<void> {
 		if (value === undefined) {
 			this.value = '';
 			return;
 		}
 
-		value = this.values && this.values[value];
+		value = this.values[value];
 		if (!value) {
 			return;
 		}
@@ -337,8 +363,8 @@ export default class bSelect<T extends Dictionary = Dictionary> extends bInput<T
 
 		try {
 			const [scroll] = await Promise.all([
-				this.waitRef<bScrollInline>('scroll', {label: $$.$$selectedStoreWait}),
-				this.nextTick({label: $$.$$selectedStore})
+				this.waitRef<bScrollInline>('scroll', {label: $$.$$selectedWait}),
+				this.nextTick({label: $$.$$selected})
 			]);
 
 			const
@@ -395,7 +421,7 @@ export default class bSelect<T extends Dictionary = Dictionary> extends bInput<T
 			this.selected = selected;
 		}
 
-		if (!this.values || !this.selected) {
+		if (!this.selected) {
 			return;
 		}
 
@@ -631,19 +657,6 @@ export default class bSelect<T extends Dictionary = Dictionary> extends bInput<T
 			});
 
 			this.initCloseHelpers();
-		}
-
-		if (this.labels && this.selected === undefined && this.value) {
-			const
-				option = this.labels[this.value];
-
-			if (option) {
-				this.selected = option.value;
-			}
-
-		} else if (this.values && this.selected !== undefined && !this.value) {
-			const val = this.values[this.selected];
-			this.value = val ? this.getOptionLabel(val) : '';
 		}
 	}
 
