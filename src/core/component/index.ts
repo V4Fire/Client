@@ -200,9 +200,19 @@ export function getComponentName(constr: Function): string {
  *
  * @decorator
  * @param [params] - additional parameters:
+ *   *) [name] - component name
  *   *) [root] - if true, then the component will be registered as root
- *   *) [functional] - if true, then the component will be created as functional
  *   *) [tpl] - if false, then will be used the default template
+ *   *) [functional] - functional status:
+ *        *) if true, then the component will be created as functional
+ *        *) if a table with parameters, then the component will be created as smart component
+ *
+ *   *) [tiny] - if true, then the functional component will be created without advanced component shim
+ *   *) [parent] - link to a parent component
+ *   *) [model] - parameters for Vue.model
+ *   *) [provide] - parameters for Vue.provide
+ *   *) [inject] - parameters for Vue.inject
+ *   *) [inheritAttrs] - parameters for Vue.inheritAttrs
  */
 export function component(params?: ComponentParams): Function {
 	return (target) => {
@@ -265,7 +275,7 @@ export function component(params?: ComponentParams): Function {
 							return patchVNode(r.fn.call(fakeCtx, el, baseCtx), fakeCtx, baseCtx);
 						}
 
-						return r.fn.apply(this, arguments);
+						return r.fn.call(this, el);
 					}
 				}
 			}
