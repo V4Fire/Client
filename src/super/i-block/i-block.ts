@@ -396,10 +396,10 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	protected tmp: Dictionary = {};
 
 	/**
-	 * Temporary render cache
+	 * Temporary cache with watching
 	 */
 	@field()
-	protected renderTmp: Dictionary = {};
+	protected watchTmp: Dictionary = {};
 
 	/**
 	 * Link to the current Vue component
