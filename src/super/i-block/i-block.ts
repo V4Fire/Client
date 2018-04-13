@@ -827,6 +827,43 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	}
 
 	/**
+	 * Searches an element by the specified name fromt a virtual node
+	 *
+	 * @param vnode
+	 * @param elName
+	 * @param [ctx] - component context
+	 */
+	protected findElFromVNode(vnode: VNode, elName: string, ctx: iBlock = this): VNode | null {
+		const
+			selector = ctx.getFullElName(elName);
+
+		const search = (vnode) => {
+			const
+				classStr = vnode.data && vnode.data.staticClass || '',
+				classes = Object.fromArray(classStr.split(' '));
+
+			if (classes[selector]) {
+				return vnode;
+			}
+
+			if (vnode.children) {
+				for (let i = 0; i < vnode.children.length; i++) {
+					const
+						res = search(vnode.children[i]);
+
+					if (res) {
+						return res;
+					}
+				}
+			}
+
+			return null;
+		};
+
+		return search(vnode);
+	}
+
+	/**
 	 * Sets g-hint for the specified element
 	 * @param [pos] - hint position
 	 */
