@@ -325,6 +325,13 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	}
 
 	/**
+	 * Alias for .$refs
+	 */
+	protected get refs(): Dictionary {
+		return $C(this.$refs).map((el) => el && (<any>el).vueComponent || el);
+	}
+
+	/**
 	 * Link to bIcon.getIconLink
 	 */
 	protected get getIconLink(): typeof iBlock.getIconLink {
