@@ -39,7 +39,7 @@ export interface InputScrollerPosition {
 export const
 	$$ = symbolGenerator();
 
-@component({functional: true})
+@component({})
 export default class bScroll extends iBlock {
 	/**
 	 * If true, then the content size will be extended with scroll bars
