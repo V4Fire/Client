@@ -1129,7 +1129,8 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 */
 	protected async waitRef<T = iBlock | Element | iBlock[] | Element[]>(ref: string, params?: AsyncOpts): Promise<T> {
 		await this.async.wait(() => this.$refs[ref], params);
-		return <any>this.refs[ref];
+		const link = <any>this.$refs[ref];
+		return link.vueComponent ? link.vueComponent : link;
 	}
 
 	/**
