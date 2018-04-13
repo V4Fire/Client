@@ -79,12 +79,13 @@ export function createFakeCtx(
 			cb: (n: any, o: any) => void,
 			opts?: WatchOptions
 		): (() => void) {
+			cb = cb.bind(this);
+			watchers.on(expr, cb);
+
 			if (opts && opts.immediate) {
 				watchers.emit(expr, this.getField(expr));
 			}
 
-			cb = cb.bind(this);
-			watchers.on(expr, cb);
 			return () => watchers.off(expr, cb);
 		},
 
