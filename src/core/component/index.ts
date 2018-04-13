@@ -74,7 +74,6 @@ export interface ComponentParams {
 	tpl?: boolean;
 	functional?: boolean | Dictionary;
 	tiny?: boolean;
-	mixins?: Dictionary;
 	model?: {prop?: string; event?: string};
 	parent?: Vue;
 	provide?: Dictionary | (() => Dictionary);
@@ -217,7 +216,6 @@ export function component(params?: ComponentParams): Function {
 			tpl: true,
 			functional: false,
 			inheritAttrs: false,
-			mixins: {},
 			...params
 		};
 

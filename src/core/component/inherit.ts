@@ -144,7 +144,6 @@ export default function inheritMeta(
 	p = meta.params = {
 		...params,
 		...p,
-		mixins: {...params.mixins, ...p.mixins},
 		model: (p.model || params.model) && {...params.model, ...p.model},
 		functional,
 		provide,

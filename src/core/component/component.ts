@@ -51,7 +51,6 @@ export function getComponent(
 		{methods} = meta;
 
 	return {
-		...<any>p.mixins,
 		...<any>component,
 
 		model: p.model,
@@ -257,7 +256,7 @@ export function getFunctionalComponent(
 		meta,
 		instance,
 		componentName: meta.componentName,
-		$options: {...p.mixins}
+		$options: {}
 	});
 
 	for (let o = component.props, keys = Object.keys(o), i = 0; i < keys.length; i++) {
