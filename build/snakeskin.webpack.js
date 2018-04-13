@@ -222,7 +222,7 @@ function vueComp({name, attrs}) {
 		const
 			c = blocksTree[componentName],
 			smart = [attrs['v-func-placeholder'], delete attrs['v-func-placeholder']][0] && c && c.functional,
-			forceComponent = [attrs['v-functional'], delete attrs['v-functional']][0] === false;
+			forceComponent = [attrs['!v-func'], delete attrs['!v-func']][0];
 
 		const isStaticLiteral = (v) => {
 			try {
