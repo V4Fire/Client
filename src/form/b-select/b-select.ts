@@ -188,12 +188,12 @@ export default class bSelect<T extends Dictionary = Dictionary> extends bInput<T
 				return true;
 			}
 
-			const
-				selected = this.block.element<HTMLElement>('option', {selected: true});
-
 			if (this.ifOnce('opened') < 2) {
 				await Promise.all([this.nextTick(), this.waitRef('scroll')]);
 			}
+
+			const
+				selected = this.block.element<HTMLElement>('option', {selected: true});
 
 			if (this.mods.opened === 'true') {
 				const
