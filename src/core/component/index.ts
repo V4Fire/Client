@@ -51,7 +51,7 @@ export const
 				el = events[i];
 
 			if (el === 'constructor') {
-				initEventOnce(events, (obj) => {
+				initEventOnce(el, (obj) => {
 					listener(obj);
 
 					if (!Object.isBoolean(obj.meta.params.functional)) {
@@ -60,7 +60,7 @@ export const
 				});
 
 			} else {
-				initEventOnce(events, listener);
+				initEventOnce(el, listener);
 			}
 		}
 
