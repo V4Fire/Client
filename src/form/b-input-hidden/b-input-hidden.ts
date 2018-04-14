@@ -9,7 +9,12 @@
 import iInput, { component } from 'super/i-input/i-input';
 export * from  'super/i-input/i-input';
 
-@component()
+@component({
+	functional: {
+		dataProvider: undefined
+	}
+})
+
 export default class bInputHidden<T extends Dictionary = Dictionary> extends iInput<T> {
 	/** @override */
 	protected readonly $refs!: {input: HTMLInputElement};

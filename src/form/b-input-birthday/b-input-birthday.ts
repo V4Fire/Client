@@ -14,7 +14,12 @@ export * from 'super/i-input/i-input';
 export const
 	selectCache = new Cache<'months' | 'days' | 'years'>(['months', 'days', 'years']);
 
-@component()
+@component({
+	functional: {
+		dataProvider: undefined
+	}
+})
+
 export default class bInputBirthday<T extends Dictionary = Dictionary> extends iInput<T> {
 	/** @override */
 	@prop({default: () => new Date().beginningOfYear()})

@@ -18,7 +18,12 @@ export type Option = Dictionary & {
 	autofocus?: boolean;
 };
 
-@component()
+@component({
+	functional: {
+		dataProvider: undefined
+	}
+})
+
 export default class bCheckboxGroup<T extends Dictionary = Dictionary> extends iInput<T> {
 	/** @override */
 	readonly valueProp: any | any[] = [];
