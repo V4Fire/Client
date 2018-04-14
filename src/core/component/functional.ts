@@ -48,7 +48,8 @@ export function createFakeCtx(
 	const
 		p = <Dictionary>renderCtx.parent,
 		watchers = new EventEmitter({maxListeners: 1e3}),
-		event = new EventEmitter({maxListeners: 1e3});
+		event = new EventEmitter({maxListeners: 1e3}),
+		data = {};
 
 	// Add base methods and properties
 	Object.assign(fakeCtx, renderCtx, renderCtx.props, {
@@ -62,8 +63,12 @@ export function createFakeCtx(
 		$parent: p,
 		$options: Object.assign(Object.create(p.$options), fakeCtx.$options),
 
-		$refs: {},
+		data,
+		$data: data,
+		$props: renderCtx.props,
 		$attrs: renderCtx.data.attrs,
+		$refs: {},
+
 		$slots: {default: renderCtx.children, ...renderCtx.slots()},
 		$scopedSlots: {},
 		$createElement: createElement,
@@ -209,7 +214,7 @@ export function createFakeCtx(
 		];
 
 		for (let i = 0; i < list.length; i++) {
-			const data = i ? {} : fakeCtx;
+			const data = i ? fakeCtx.data : fakeCtx;
 			initDataObject(list[i], fakeCtx, instance, data);
 
 			if (i) {
