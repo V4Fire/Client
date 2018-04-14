@@ -81,6 +81,16 @@ export default class bSelect<T extends Dictionary = Dictionary> extends bInput<T
 	readonly initAfterOpen: boolean = false;
 
 	/**
+	 * Selected value store
+	 */
+	@field((o) => o.link('selectedProp', (val) => {
+		val = (<any>o).initDefaultValue(val);
+		return val !== undefined ? String(val) : undefined;
+	}))
+
+	selected?: string;
+
+	/**
 	 * Select options
 	 */
 	get options(): NOption[] {
@@ -114,16 +124,6 @@ export default class bSelect<T extends Dictionary = Dictionary> extends bInput<T
 	}))
 
 	protected optionsStore!: NOption[];
-
-	/**
-	 * Selected value store
-	 */
-	@field((o) => o.link('selectedProp', (val) => {
-		val = (<any>o).initDefaultValue(val);
-		return val !== undefined ? String(val) : undefined;
-	}))
-
-	protected selected?: string;
 
 	/**
 	 * Temporary labels table
