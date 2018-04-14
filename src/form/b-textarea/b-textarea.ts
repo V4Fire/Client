@@ -8,13 +8,18 @@
 
 import symbolGenerator from 'core/symbol';
 import bScrollInline from 'base/b-scroll/b-scroll-inline/b-scroll-inline';
-import bInput, { component, prop, system, p, wait, watch, ModsDecl, VueElement } from 'form/b-input/b-input';
+import bInput, { component, prop, system, p, wait, watch, ModsDecl } from 'form/b-input/b-input';
 export * from 'form/b-input/b-input';
 
 export const
 	$$ = symbolGenerator();
 
-@component({functional: false})
+@component({
+	functional: {
+		limit: undefined
+	}
+})
+
 export default class bTextarea<T extends Dictionary = Dictionary> extends bInput<T> {
 	/**
 	 * Row count for extending
@@ -86,7 +91,7 @@ export default class bTextarea<T extends Dictionary = Dictionary> extends bInput
 	// @ts-ignore
 	protected readonly $refs!: {
 		superWrapper: HTMLElement;
-		scroll: VueElement<bScrollInline>;
+		scroll: bScrollInline;
 		input: HTMLTextAreaElement;
 	};
 
@@ -96,7 +101,7 @@ export default class bTextarea<T extends Dictionary = Dictionary> extends bInput
 	@wait('ready', {label: $$.calcHeight, defer: true})
 	async calcHeight(): Promise<number | void> {
 		const
-			{input, scroll} = this.refs,
+			{input, scroll} = this.$refs,
 			{length} = this.value;
 
 		if (input.scrollHeight <= input.clientHeight) {
@@ -135,7 +140,7 @@ export default class bTextarea<T extends Dictionary = Dictionary> extends bInput
 	@wait('ready', {label: $$.minimize, defer: true})
 	protected async minimize(): Promise<number> {
 		const
-			{input, scroll} = this.refs;
+			{input, scroll} = this.$refs;
 
 		const
 			val = this.value,
