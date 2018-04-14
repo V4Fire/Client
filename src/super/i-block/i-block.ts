@@ -850,8 +850,12 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 
 		const search = (vnode) => {
 			const
-				classStr = vnode.data && vnode.data.staticClass || '',
-				classes = Object.fromArray(classStr.split(' '));
+				data = vnode.data || {};
+
+			const classes = Object.fromArray([].concat(
+				(data.staticClass || '').split(' '),
+				data.class || []
+			));
 
 			if (classes[selector]) {
 				return vnode;
