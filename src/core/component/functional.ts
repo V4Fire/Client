@@ -373,7 +373,14 @@ export function patchVNode(vNode: VNode, ctx: Dictionary, renderCtx: RenderConte
 			}
 
 			const
-				el = ctx.$el,
+				el = ctx.$el;
+
+			if (el.vueComponent) {
+				destroy();
+				return;
+			}
+
+			const
 				refs = ctx.$refs,
 				refNodes = el.querySelectorAll(`.${ctx.blockId}[data-vue-ref]`);
 
