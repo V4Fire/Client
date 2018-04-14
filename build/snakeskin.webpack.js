@@ -66,19 +66,30 @@ $C(files).forEach((el) => {
 });
 
 function getFunctionalParameters(obj) {
-	const
-		v = obj.functional || false;
-
-	if (obj.parent) {
-		const
-			p = getFunctionalParameters(obj.parent);
-
-		if (Object.isObject(v) && Object.isObject(p)) {
-			return {...p, ...v};
-		}
+	if (!obj) {
+		return false;
 	}
 
-	return v;
+	const
+		v = obj.functional,
+		isObj = Object.isObject(v);
+
+	if (obj.parent && (v === undefined || isObj)) {
+		const
+			p = getFunctionalParameters(blocksTree[obj.parent]);
+
+		if (Object.isObject(p)) {
+			return {...p, ...v};
+		}
+
+		if (isObj) {
+			return v;
+		}
+
+		return p;
+	}
+
+	return v || false;
 }
 
 $C(blocksTree).forEach((el, key, data) => {
@@ -146,19 +157,20 @@ function b(url) {
 const
 	isVueProp = /^(:|@|v-)/,
 	isLiteral = /^\s*[[{]/,
-	vForRgxp = /^\s*([\w$]+)(\s+(?:in|of)\s+.*)$/;
+	vForRgxp = /^\s*([\w$]+)(\s+(?:in|of)\s+.*)$/,
+	isRef = {'ref': true, ':ref': true};
 
 function vueComp({name, attrs}) {
 	$C(attrs).forEach((el, key) => {
-		if (!isVueProp.test(key)) {
-			if (key === 'ref') {
-				attrs['data-vue-ref'] = [el];
+		if (isRef[key]) {
+			attrs['data-vue-ref'] = [el];
 
-				if (!attrs[':class']) {
-					attrs[':class'] = attachClass(['blockId']);
-				}
+			if (!attrs[':class']) {
+				attrs[':class'] = attachClass(['blockId']);
 			}
+		}
 
+		if (!isVueProp.test(key)) {
 			return;
 		}
 
@@ -222,7 +234,7 @@ function vueComp({name, attrs}) {
 		const
 			c = blocksTree[componentName],
 			smart = [attrs['v-func-placeholder'], delete attrs['v-func-placeholder']][0] && c && c.functional,
-			forceComponent = [attrs['!v-func'], delete attrs['!v-func']][0];
+			vFunc = [attrs['v-func'], delete attrs['v-func']][0];
 
 		const isStaticLiteral = (v) => {
 			try {
@@ -240,7 +252,7 @@ function vueComp({name, attrs}) {
 			'v-': true
 		};
 
-		const isFunctional = c && c.functional === true || !forceComponent && $C(smart).every((el, key) => {
+		const isFunctional = c && c.functional === true || !vFunc && $C(smart).every((el, key) => {
 			if (!vuePrfx[key.slice(0, 2)] && !vuePrfx[key[0]]) {
 				key = `:${key}`;
 			}
@@ -272,9 +284,15 @@ function vueComp({name, attrs}) {
 			return Object.isEqual(el, attr);
 		});
 
-		if (isFunctional) {
+		if (isFunctional || vFunc) {
 			if (smart) {
-				attrs['is'] = [`${attrs['is'][0]}-fn`];
+				if (vFunc) {
+					attrs[':is'] = [`'${attrs['is'][0]}' + (${vFunc[0]} ? '-fn' : '')`];
+					delete attrs['is'];
+
+				} else {
+					attrs['is'] = [`${attrs['is'][0]}-fn`];
+				}
 			}
 
 			if (!isAsync && !isAsyncBack) {
