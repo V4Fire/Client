@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import Vue, { ComponentOptions, WatchOptions, VNode, CreateElement } from 'vue';
+import Vue, { ComponentOptions, WatchOptions, WatchOptionsWithHandler, VNode, CreateElement } from 'vue';
 import { ScopedSlot } from 'vue/types/vnode';
 import { ComponentMeta, Hooks } from 'core/component';
 
@@ -53,16 +53,16 @@ export default class VueInterface<B = VueInterface<any, any>, R = VueInterface<a
 	protected $delete() {}
 
 	// @ts-ignore
-	protected $watch(
-		expr: string,
-		cb: (this: this, n: any, o: any) => void,
+	protected $watch<T = any>(
+		exprOrFn: string | ((this: this) => string),
+		cb: (this: this, n: T, o: T) => void,
 		opts?: WatchOptions
 	): (() => void);
 
-	protected $watch<T>(
-		fn: (this: this) => T,
-		cb: (this: this, n: T, o: T) => void,
-		opts?: WatchOptions
+	// @ts-ignore
+	protected $watch<T = any>(
+		exprOrFn: string | ((this: this) => string),
+		opts: WatchOptionsWithHandler<T>
 	): (() => void);
 
 	protected $watch() {}
