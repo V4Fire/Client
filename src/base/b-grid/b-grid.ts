@@ -63,33 +63,6 @@ export default class bGrid<T extends Dictionary = Dictionary> extends iDataPages
 	protected readonly $refs!: {loadPageTrigger: HTMLElement};
 
 	/**
-	 * Contains rows, that ready to interaction with user
-	 */
-	@system()
-	protected readonly activeRows: Dictionary = {};
-
-	/**
-	 * Activates a row by the specified id
-	 *
-	 * @param id
-	 * @param [node]
-	 */
-	protected async activateRow(id: string, node?: Element): Promise<void> {
-		if (this.activeRows[id]) {
-			return;
-		}
-
-		if (node) {
-			await this.async.sleep(50);
-			if (!node.matches(':hover')) {
-				return;
-			}
-		}
-
-		this.activeRows[id] = true;
-	}
-
-	/**
 	 * Toggles sort direction
 	 * @emits toggleDir(dir: string)
 	 */
