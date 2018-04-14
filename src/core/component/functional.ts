@@ -164,6 +164,16 @@ export function createFakeCtx(
 
 	runHook('beforeRuntime', meta, fakeCtx).catch(stderr);
 
+	for (let o = meta.component.props, keys = Object.keys(o), i = 0; i < keys.length; i++) {
+		const
+			key = fakeCtx.$activeField = keys[i],
+			el = o[key];
+
+		if (Object.isFunction(el.default) && !el.default[defaultWrapper]) {
+			fakeCtx[key] = el.type === Function ? el.default.bind(fakeCtx) : el.default.call(fakeCtx);
+		}
+	}
+
 	{
 		const list = [
 			meta.systemFields,
@@ -206,16 +216,6 @@ export function createFakeCtx(
 					}
 				}, stderr);
 			}
-		}
-	}
-
-	for (let o = meta.component.props, keys = Object.keys(o), i = 0; i < keys.length; i++) {
-		const
-			key = fakeCtx.$activeField = keys[i],
-			el = o[key];
-
-		if (Object.isFunction(el.default) && !el.default[defaultWrapper]) {
-			fakeCtx[key] = el.type === Function ? el.default.bind(fakeCtx) : el.default.call(fakeCtx);
 		}
 	}
 
