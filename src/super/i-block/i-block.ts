@@ -779,7 +779,10 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 * @param renderObj
 	 * @param [ctx] - render context
 	 */
-	protected execRenderObject(renderObj: Dictionary, ctx?: RenderContext | [Dictionary, RenderContext]): VNode {
+	protected execRenderObject(
+		renderObj: Dictionary,
+		ctx?: RenderContext | [Dictionary] | [Dictionary, RenderContext]
+	): VNode {
 		let
 			instanceCtx,
 			renderCtx;
