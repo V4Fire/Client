@@ -63,8 +63,7 @@ export function createFakeCtx(
 		$parent: p,
 		$options: Object.assign(Object.create(p.$options), fakeCtx.$options),
 
-		data,
-		$data: data,
+		$data: {},
 		$props: renderCtx.props,
 		$attrs: renderCtx.data.attrs,
 		$refs: {},
@@ -214,7 +213,7 @@ export function createFakeCtx(
 		];
 
 		for (let i = 0; i < list.length; i++) {
-			const data = i ? fakeCtx.data : fakeCtx;
+			const data = i ? fakeCtx.$data : fakeCtx;
 			initDataObject(list[i], fakeCtx, instance, data);
 
 			if (i) {
