@@ -45,8 +45,6 @@ let
 	openedSelect;
 
 @component({
-	functional: false,
-
 	model: {
 		prop: 'selectedProp',
 		event: 'change'
@@ -340,12 +338,22 @@ export default class bSelect<T extends Dictionary = Dictionary> extends bInput<T
 	 */
 	@watch({field: 'selected'})
 	protected async syncSelectedStoreWatcher(value: any): Promise<void> {
+		const
+			{block: $b} = this,
+			prevSelected = $b.element('option', {selected: true});
+
+		if (prevSelected) {
+			$b.setElMod(prevSelected, 'option', 'selected', false);
+		}
+
 		if (value === undefined) {
 			this.value = '';
 			return;
 		}
 
-		value = this.values[value];
+		value =
+			this.values[value];
+
 		if (!value) {
 			return;
 		}
@@ -368,9 +376,11 @@ export default class bSelect<T extends Dictionary = Dictionary> extends bInput<T
 			]);
 
 			const
-				selected = this.block.element<HTMLElement>('option', {selected: true});
+				selected = $b.element<HTMLElement>(`option[data-value="${value.value}"]`);
 
 			if (selected) {
+				$b.setElMod(selected, 'option', 'selected', true);
+
 				const
 					selTop = selected.offsetTop,
 					selHeight = selected.offsetHeight,
