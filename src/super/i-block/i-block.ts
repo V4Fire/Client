@@ -205,6 +205,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 			if (key in declMods) {
 				attrMods.push([key, attrs[key]]);
 				o.$watch(`$attrs.${key}`, (val) => o.setMod(key, modVal(val)));
+				delete attrs[key];
 			}
 		}
 

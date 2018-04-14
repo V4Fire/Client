@@ -225,7 +225,7 @@ export function component(params?: ComponentParams): Function {
 			root: false,
 			tpl: true,
 			functional: false,
-			inheritAttrs: false,
+			inheritAttrs: true,
 			...params
 		};
 
