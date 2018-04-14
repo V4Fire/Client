@@ -1152,6 +1152,11 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 		this.execCbBeforeDataCreated = i.execCbBeforeDataCreated.bind(this);
 		this.getField = i.getField.bind(this);
 
+		Object.defineProperty(this, 'refs', {
+			// tslint:disable-next-line
+			get: i['refsGetter']
+		});
+
 		const
 			{$watch} = this;
 
