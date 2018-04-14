@@ -66,8 +66,6 @@ export function createFakeCtx(
 		$attrs: renderCtx.data.attrs,
 		$slots: {default: renderCtx.children, ...renderCtx.slots()},
 		$scopedSlots: {},
-
-		$nextTick: p.$nextTick,
 		$createElement: createElement,
 
 		$destroy(): void {
@@ -78,6 +76,15 @@ export function createFakeCtx(
 					}
 				}, stderr);
 			});
+		},
+
+		$nextTick(cb?: () => void): Promise<void> | void {
+			if (cb) {
+				cb();
+				return;
+			}
+
+			return Promise.resolve();
 		},
 
 		$forceUpdate(): void {
