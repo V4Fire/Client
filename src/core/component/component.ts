@@ -8,7 +8,7 @@
 
 // tslint:disable:max-file-line-count
 import Vue, { ComponentOptions, FunctionalComponentOptions } from 'vue';
-import { ComponentField, ComponentMeta } from 'core/component';
+import { ComponentField, ComponentMeta, VueInterface } from 'core/component';
 
 export interface ComponentConstructor<T = any> {
 	new(): T;
@@ -98,137 +98,86 @@ export function getComponent(
 		},
 
 		created(): void {
-			const
-				ctx = <any>this;
-
-			for (let o = meta.watchers, keys = Object.keys(o), i = 0; i < keys.length; i++) {
-				const
-					key = keys[i],
-					watchers = o[key];
-
-				for (let i = 0; i < watchers.length; i++) {
-					const el = watchers[i];
-					this.$watch(key, {...el, handler: el.method ? el.handler : (a, b) => {
-						const
-							fn = el.handler;
-
-						if (Object.isString(fn)) {
-							if (!Object.isFunction(ctx[fn])) {
-								throw new ReferenceError(`The specified method (${fn}) for watching is not defined`);
-							}
-
-							ctx[fn](a, b);
-
-						} else {
-							fn(ctx, a, b);
-						}
-					}});
-				}
-			}
-
-			runHook('created', ctx.meta, ctx).then(async () => {
+			bindWatchers(this);
+			runHook('created', this.meta, this).then(async () => {
 				if (methods.created) {
-					await methods.created.fn.call(ctx);
+					await methods.created.fn.call(this);
 				}
 			}, stderr);
 		},
 
 		beforeMount(): void {
-			const
-				ctx = <any>this;
-
-			runHook('beforeMount', ctx.meta, ctx).then(async () => {
+			runHook('beforeMount', this.meta, this).then(async () => {
 				if (methods.beforeMount) {
-					await methods.beforeMount.fn.call(ctx);
+					await methods.beforeMount.fn.call(this);
 				}
 			}, stderr);
 		},
 
 		mounted(): void {
-			const
-				ctx = this.$el.vueComponent = <any>this;
-
-			runHook('mounted', ctx.meta, ctx).then(async () => {
+			this.$el.vueComponent = this;
+			runHook('mounted', this.meta, this).then(async () => {
 				if (methods.mounted) {
-					await methods.mounted.fn.call(ctx);
+					await methods.mounted.fn.call(this);
 				}
 			}, stderr);
 		},
 
 		beforeUpdate(): void {
-			const
-				ctx = <any>this;
-
-			runHook('beforeUpdate', ctx.meta, ctx).then(async () => {
+			runHook('beforeUpdate', this.meta, this).then(async () => {
 				if (methods.beforeUpdate) {
-					await methods.beforeUpdate.fn.call(ctx);
+					await methods.beforeUpdate.fn.call(this);
 				}
 			}, stderr);
 		},
 
 		updated(): void {
-			const
-				ctx = <any>this;
-
-			runHook('updated', ctx.meta, ctx).then(async () => {
+			runHook('updated', this.meta, this).then(async () => {
 				if (methods.updated) {
-					await methods.updated.fn.call(ctx);
+					await methods.updated.fn.call(this);
 				}
 			}, stderr);
 		},
 
 		activated(): void {
-			const
-				ctx = <any>this;
-
-			runHook('activated', ctx.meta, ctx).then(async () => {
+			runHook('activated', this.meta, this).then(async () => {
 				if (methods.activated) {
-					await methods.activated.fn.call(ctx);
+					await methods.activated.fn.call(this);
 				}
 			}, stderr);
 		},
 
 		deactivated(): void {
-			const
-				ctx = <any>this;
-
-			runHook('deactivated', ctx.meta, ctx).then(async () => {
+			runHook('deactivated', this.meta, this).then(async () => {
 				if (methods.deactivated) {
-					await methods.deactivated.fn.call(ctx);
+					await methods.deactivated.fn.call(this);
 				}
 			}, stderr);
 		},
 
 		beforeDestroy(): void {
-			const
-				ctx = <any>this;
-
-			runHook('beforeDestroy', ctx.meta, ctx).then(async () => {
+			runHook('beforeDestroy', this.meta, this).then(async () => {
 				if (methods.beforeDestroy) {
-					await methods.beforeDestroy.fn.call(ctx);
+					await methods.beforeDestroy.fn.call(this);
 				}
 			}, stderr);
 		},
 
 		destroyed(): void {
-			const
-				ctx = <any>this;
-
-			runHook('destroyed', ctx.meta, ctx).then(async () => {
+			runHook('destroyed', this.meta, this).then(async () => {
 				if (methods.destroyed) {
-					await methods.destroyed.fn.call(ctx);
+					await methods.destroyed.fn.call(this);
 				}
 			}, stderr);
 		},
 
 		errorCaptured(): void {
 			const
-				args = arguments,
-				ctx = <any>this;
+				args = arguments;
 
-			runHook('errorCaptured', ctx.meta, ctx, ...args).then(async () => {
+			runHook('errorCaptured', this.meta, this, ...args).then(async () => {
 				if (methods.errorCaptured) {
-					await methods.errorCaptured.fn.apply(ctx, args);
+					await methods.errorCaptured.fn.apply(this, args);
 				}
 			}, stderr);
 		}
@@ -285,16 +234,59 @@ export function getFunctionalComponent(
  */
 export function createMeta(parent: ComponentMeta): ComponentMeta {
 	const meta = Object.assign(Object.create(parent), {
-		watchers: Object.create(parent.watchers),
-		hooks: Object.create(parent.hooks)
+		watchers: {},
+		hooks: {}
 	});
 
-	for (let o = meta.hooks, keys = Object.keys(parent.hooks), i = 0; i < keys.length; i++) {
+	for (let o = meta.hooks, p = parent.hooks, keys = Object.keys(p), i = 0; i < keys.length; i++) {
 		const key = keys[i];
-		o[key] = o[key].slice();
+		o[key] = p[key].slice();
+	}
+
+	for (let o = meta.watchers, p = parent.watchers, keys = Object.keys(p), i = 0; i < keys.length; i++) {
+		const key = keys[i];
+		o[key] = p[key].slice();
 	}
 
 	return meta;
+}
+
+/**
+ * Binds watchers to the specified component
+ * @param ctx - component context
+ */
+export function bindWatchers(ctx: VueInterface): void {
+	const
+		// @ts-ignore
+		{meta} = ctx;
+
+	for (let o = meta.watchers, keys = Object.keys(o), i = 0; i < keys.length; i++) {
+		const
+			key = keys[i],
+			watchers = o[key];
+
+		for (let i = 0; i < watchers.length; i++) {
+			const
+				el = watchers[i];
+
+			// @ts-ignore
+			ctx.$watch(key, {...el, handler: el.method ? el.handler : (a, b) => {
+					const
+						fn = el.handler;
+
+					if (Object.isString(fn)) {
+						if (!Object.isFunction(ctx[fn])) {
+							throw new ReferenceError(`The specified method (${fn}) for watching is not defined`);
+						}
+
+						ctx[fn](a, b);
+
+					} else {
+						fn(ctx, a, b);
+					}
+				}});
+		}
+	}
 }
 
 /**

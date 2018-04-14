@@ -7,10 +7,20 @@
  */
 
 import $C = require('collection.js');
-import { CreateElement, RenderContext, VNode, FunctionalComponentOptions, WatchOptions } from 'vue';
+import {
+
+	CreateElement,
+	RenderContext,
+	VNode,
+	FunctionalComponentOptions,
+	WatchOptions,
+	WatchOptionsWithHandler
+
+} from 'vue';
+
 import { EventEmitter2 as EventEmitter } from 'eventemitter2';
 import { VueElement, FunctionalCtx } from 'core/component';
-import { runHook, createMeta, initDataObject, defaultWrapper } from 'core/component/component';
+import { runHook, createMeta, initDataObject, bindWatchers, defaultWrapper } from 'core/component/component';
 
 const
 	cache = new WeakMap();
@@ -75,10 +85,21 @@ export function createFakeCtx(
 		},
 
 		$watch(
-			expr: string,
-			cb: (n: any, o: any) => void,
+			exprOrFn: string | (() => string),
+			cbOrOpts: (n: any, o: any) => void | WatchOptionsWithHandler<any>,
 			opts?: WatchOptions
 		): (() => void) {
+			let
+				cb = cbOrOpts;
+
+			if (Object.isObject(cbOrOpts)) {
+				cb = (<any>cbOrOpts).handler;
+				opts = <any>cbOrOpts;
+			}
+
+			const
+				expr = Object.isFunction(exprOrFn) ? exprOrFn.call(this) : exprOrFn;
+
 			cb = cb.bind(this);
 			watchers.on(expr, cb);
 
@@ -301,6 +322,7 @@ export function patchVNode(vNode: VNode, ctx: Dictionary, renderCtx: RenderConte
 		return vNode;
 	}
 
+	bindWatchers(<any>ctx);
 	runHook('created', meta, ctx).then(async () => {
 		if (methods.created) {
 			await methods.created.fn.call(ctx);
@@ -325,6 +347,12 @@ export function patchVNode(vNode: VNode, ctx: Dictionary, renderCtx: RenderConte
 				destroy();
 			}
 		}, (1).second());
+
+		runHook('beforeMount', meta, ctx).then(async () => {
+			if (methods.beforeMount) {
+				await methods.beforeMount.fn.call(ctx);
+			}
+		}, stderr);
 
 		try {
 			await $a.wait(() => ctx.$el);
