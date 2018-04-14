@@ -33,6 +33,10 @@ export interface Option {
 }
 
 @component({
+	functional: {
+		dataProvider: undefined
+	},
+
 	model: {
 		prop: 'valueProp',
 		event: 'change'
