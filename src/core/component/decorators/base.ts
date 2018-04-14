@@ -7,7 +7,7 @@
  */
 
 import { PropOptions, WatchOptions } from 'vue';
-import { Hooks, initEvent, InitFieldFn, VueInterface, MethodWatcher } from 'core/component';
+import { Hooks, initEvent, InitFieldFn, VueInterface, MethodWatcher, ComponentMeta } from 'core/component';
 
 export interface WatchHandler<T, A, B> {
 	(ctx: T, value: A, oldValue: B): any;
@@ -114,7 +114,7 @@ export function paramsFactory<T>(
 ): (params?: T) => Function {
 	return (p: any = {}) => (target, key, desc) => {
 		// tslint:disable-next-line
-		initEvent.once('constructor', ({meta}) => {
+		initEvent.once('constructor', ({meta}: {meta: ComponentMeta}) => {
 			if (desc) {
 				const metaKey = cluster || (
 					'value' in desc ? 'methods' : key in meta.computed && p.cache !== false ? 'computed' : 'accessors'
