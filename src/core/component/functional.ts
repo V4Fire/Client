@@ -359,12 +359,6 @@ export function patchVNode(vNode: VNode, ctx: Dictionary, renderCtx: RenderConte
 			}
 		}, (1).second());
 
-		runHook('beforeMount', meta, ctx).then(async () => {
-			if (methods.beforeMount) {
-				await methods.beforeMount.fn.call(ctx);
-			}
-		}, stderr);
-
 		try {
 			await $a.wait(() => ctx.$el);
 
@@ -376,8 +370,7 @@ export function patchVNode(vNode: VNode, ctx: Dictionary, renderCtx: RenderConte
 				el = ctx.$el;
 
 			if (el.vueComponent) {
-				destroy();
-				return;
+				el.vueComponent.$destroy();
 			}
 
 			const
