@@ -230,9 +230,13 @@ export function createFakeCtx(
 						},
 
 						set(val: any): void {
-							const old = data[key];
-							data[key] = val;
-							watchers.emit(key, val, old);
+							const
+								old = data[key];
+
+							if (old !== val) {
+								data[key] = val;
+								watchers.emit(key, val, old);
+							}
 						}
 					});
 				}
