@@ -112,9 +112,12 @@ export function paramsFactory<T>(
 	cluster: string | null,
 	transformer?: (params: any, cluster: string) => any
 ): (params?: T) => Function {
-	return (p: any = {}) => (target, key, desc) => {
+	return (params: any = {}) => (target, key, desc) => {
 		// tslint:disable-next-line
 		initEvent.once('constructor', ({meta}: {meta: ComponentMeta}) => {
+			let
+				p = params;
+
 			if (desc) {
 				const metaKey = cluster || (
 					'value' in desc ? 'methods' : key in meta.computed && p.cache !== false ? 'computed' : 'accessors'
@@ -151,10 +154,13 @@ export function paramsFactory<T>(
 						hooks = el && el.hooks || {};
 
 					for (let i = 0; i < h.length; i++) {
-						const el = h[i];
+						const
+							el = h[i];
 
 						if (Object.isObject(el)) {
-							const key = Object.keys(el)[0];
+							const
+								key = Object.keys(el)[0];
+
 							hooks[key] = {
 								name,
 								hook: key,

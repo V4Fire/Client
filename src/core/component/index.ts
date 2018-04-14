@@ -219,7 +219,8 @@ export function component(params?: ComponentParams): Function {
 		const
 			name = params && params.name || getComponentName(target),
 			parent = Object.getPrototypeOf(target),
-			parentMeta = components.get(parent);
+			parentMeta = components.get(parent),
+			isSmart = /-fn$/;
 
 		let p: ComponentParams = parentMeta ? {...params} : {
 			root: false,
@@ -231,7 +232,7 @@ export function component(params?: ComponentParams): Function {
 
 		const meta: ComponentMeta = {
 			name,
-			componentName: name.replace(/-fn$/, ''),
+			componentName: name.replace(isSmart, ''),
 			params: p,
 			props: {},
 			fields: {},
@@ -285,7 +286,10 @@ export function component(params?: ComponentParams): Function {
 			p = inheritMeta(meta, parentMeta);
 		}
 
-		components.set(target, meta);
+		if (!p.name || !isSmart.test(p.name)) {
+			components.set(target, meta);
+		}
+
 		initEvent.emit('constructor', {meta, parentMeta});
 
 		if (isAbstractComponent.test(name)) {

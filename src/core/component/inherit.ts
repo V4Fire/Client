@@ -144,6 +144,7 @@ export default function inheritMeta(
 	p = meta.params = {
 		...params,
 		...p,
+		name: p.name,
 		model: (p.model || params.model) && {...params.model, ...p.model},
 		functional,
 		provide,
