@@ -271,20 +271,20 @@ export function bindWatchers(ctx: VueInterface): void {
 
 			// @ts-ignore
 			ctx.$watch(key, {...el, handler: el.method ? el.handler : (a, b) => {
-					const
-						fn = el.handler;
+				const
+					fn = el.handler;
 
-					if (Object.isString(fn)) {
-						if (!Object.isFunction(ctx[fn])) {
-							throw new ReferenceError(`The specified method (${fn}) for watching is not defined`);
-						}
-
-						ctx[fn](a, b);
-
-					} else {
-						fn(ctx, a, b);
+				if (Object.isString(fn)) {
+					if (!Object.isFunction(ctx[fn])) {
+						throw new ReferenceError(`The specified method (${fn}) for watching is not defined`);
 					}
-				}});
+
+					ctx[fn](a, b);
+
+				} else {
+					fn(ctx, a, b);
+				}
+			}});
 		}
 	}
 }
