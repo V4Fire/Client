@@ -266,7 +266,7 @@ export default class iInput<T extends Dictionary = Dictionary> extends iData<T> 
 			{input} = this.$refs;
 
 		if (input && document.activeElement !== input) {
-			(<HTMLElement>input).focus();
+			input.focus();
 			this.emit('focus');
 			return true;
 		}
