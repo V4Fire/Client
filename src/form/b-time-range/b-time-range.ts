@@ -76,7 +76,7 @@ export default class bTimeRange<T extends Dictionary = Dictionary> extends iInpu
 	 */
 	protected async onSave(): Promise<void> {
 		const
-			get = (s) => $C(this.block.elements(s)).map((el) => this.$<bInputNumber>(el).formValue),
+			get = (s) => $C(this.block.elements(s)).to([]).map((el) => this.$<bInputNumber>(el).formValue),
 			from = <number[]>await Promise.all(get('input-from')),
 			to = <number[]>await Promise.all(get('input-to'));
 

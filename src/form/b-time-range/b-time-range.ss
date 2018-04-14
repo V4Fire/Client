@@ -30,13 +30,13 @@
 							{{ `From` }}
 
 							< time.&__from
-								{{ h.getTimeFormattedValue(value.from) }}
+								{{ h.getTimeFormattedStr(value.from) }}
 
 						< span v-if = getField('value.to.length')
 							{{ `To` }}
 
 							< time.&__to
-								{{ h.getTimeFormattedValue(value.to) }}
+								{{ h.getTimeFormattedStr(value.to) }}
 
 				< .&__cell.&__empty v-else
 					- block empty
