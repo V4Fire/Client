@@ -50,8 +50,7 @@ export function createFakeCtx(
 	const
 		p = <Dictionary>renderCtx.parent,
 		watchers = new EventEmitter({maxListeners: 1e3}),
-		event = new EventEmitter({maxListeners: 1e3}),
-		data = {};
+		event = new EventEmitter({maxListeners: 1e3});
 
 	// Add base methods and properties
 	Object.assign(fakeCtx, renderCtx, renderCtx.props, {
@@ -438,6 +437,7 @@ export function patchVNode(vNode: VNode, ctx: Dictionary, renderCtx: RenderConte
 									Object.isWeakSet(el)
 								)
 							) {
+								console.log(key, el);
 								ctx[key] = el;
 							}
 						}
