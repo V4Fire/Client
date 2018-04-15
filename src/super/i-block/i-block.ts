@@ -515,7 +515,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 * Cache for prop/field links
 	 */
 	@system()
-	private linkCache!: Dictionary<Dictionary>;
+	private linksCache!: Dictionary<Dictionary>;
 
 	/**
 	 * Cache for prop/field links
@@ -1152,7 +1152,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 */
 	@hook('beforeRuntime')
 	protected initBaseAPI(): void {
-		this.linkCache = {};
+		this.linksCache = {};
 		this.syncLinkCache = {};
 
 		const
@@ -1350,8 +1350,8 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 			path = this.$activeField,
 			isSystem = this.meta.systemFields[path.split('.')[0]];
 
-		if (!(path in this.linkCache)) {
-			this.linkCache[path] = {};
+		if (!(path in this.linksCache)) {
+			this.linksCache[path] = {};
 			this.execCbAfterCreated(() => {
 				this.$watch(field, (val, oldVal) => {
 					if (!Object.fastCompare(val, oldVal)) {
@@ -1416,7 +1416,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 		}
 
 		const
-			{linkCache, syncLinkCache} = this;
+			{linksCache, syncLinkCache} = this;
 
 		// tslint:disable-next-line
 		if (path) {
@@ -1461,8 +1461,8 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 				const
 					l = [path, el[0]].join('.');
 
-				if (!$C(linkCache).get(l)) {
-					$C(linkCache).set(true, l);
+				if (!$C(linksCache).get(l)) {
+					$C(linksCache).set(true, l);
 					this.execCbAfterCreated(() => {
 						this.$watch(field, (val, oldVal) => {
 							if (!Object.fastCompare(val, oldVal)) {
@@ -1488,8 +1488,8 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 				const
 					l = [path, el].join('.');
 
-				if (!$C(linkCache).get(l)) {
-					$C(linkCache).set(true, l);
+				if (!$C(linksCache).get(l)) {
+					$C(linksCache).set(true, l);
 					this.execCbAfterCreated(() => {
 						this.$watch(el, (val, oldVal) => {
 							if (!Object.fastCompare(val, oldVal)) {
