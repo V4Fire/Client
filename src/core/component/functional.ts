@@ -437,7 +437,6 @@ export function patchVNode(vNode: VNode, ctx: Dictionary, renderCtx: RenderConte
 									Object.isWeakSet(el)
 								)
 							) {
-								console.log(key, el);
 								ctx[key] = el;
 							}
 						}
