@@ -839,7 +839,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	}
 
 	/**
-	 * Searches an element by the specified name fromt a virtual node
+	 * Searches an element by the specified name from a virtual node
 	 *
 	 * @param vnode
 	 * @param elName
