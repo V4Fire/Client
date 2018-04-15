@@ -424,6 +424,7 @@ export function patchVNode(vNode: VNode, ctx: Dictionary, renderCtx: RenderConte
 									Object.isObject(el) ||
 									Object.isArray(el) ||
 									Object.isDate(el) ||
+									Object.isRegExp(el) ||
 									Object.isMap(el) ||
 									Object.isWeakMap(el) ||
 									Object.isSet(el) ||
