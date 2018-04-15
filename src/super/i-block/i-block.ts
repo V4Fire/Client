@@ -1378,7 +1378,8 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 				sync
 			};
 
-			return this.execCbBeforeDataCreated(sync);
+			// tslint:disable-next-line
+			return this.execCbBeforeDataCreated(() => sync());
 		}
 	}
 
