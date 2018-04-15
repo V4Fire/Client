@@ -78,6 +78,11 @@ export interface SizeTo {
 	lt: Dictionary<string>;
 }
 
+export interface SyncLink {
+	path: string;
+	sync(value?: any): void;
+}
+
 export type ModsTable = Dictionary<ModVal>;
 export type ModsNTable = Dictionary<string | undefined>;
 
@@ -516,7 +521,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 * Cache for prop/field links
 	 */
 	@system()
-	private syncLinkCache!: Dictionary<Function>;
+	private syncLinkCache!: Dictionary<SyncLink>;
 
 	/**
 	 * Returns a string id, which is connected to the block
@@ -1300,11 +1305,16 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 * @param [name] - property name
 	 */
 	protected syncLinks(name?: string): void {
+		const
+			cache = this.syncLinkCache;
+
 		if (name) {
-			this.syncLinkCache[name]();
+			if (cache[name]) {
+				cache[name].sync();
+			}
 
 		} else {
-			$C(this.syncLinkCache).forEach((fn) => fn);
+			$C(cache).forEach(({sync}) => sync());
 		}
 	}
 
@@ -1350,9 +1360,9 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 				}, <WatchOptions>watchParams);
 			});
 
-			const val = () => {
+			const val = (v) => {
 				const
-					res = wrapper ? wrapper.call(this, this[field]) : this[field];
+					res = wrapper ? wrapper.call(this, v || this[field]) : v || this[field];
 
 				if (isSystem || this.hook !== 'beforeCreate') {
 					this.setField(path, res);
@@ -1361,7 +1371,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 				return res;
 			};
 
-			this.syncLinkCache[field] = () => this.setField(path, val());
+			this.syncLinkCache[field] = {path, sync: (nv) => this.setField(path, val(nv))};
 			return this.execCbBeforeDataCreated(val);
 		}
 	}
@@ -1456,9 +1466,9 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 
 					const
 						v = this.getField(field),
-						val = () => wrapper ? wrapper.call(this, v) : v;
+						val = (nv?) => wrapper ? wrapper.call(this, nv || v) : nv || v;
 
-					syncLinkCache[field] = () => this.setField(l, val());
+					syncLinkCache[field] = {path: l, sync: (nv) => this.setField(l, val(nv))};
 					map[el[0]] = val();
 				}
 
@@ -1476,7 +1486,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 						}, <WatchOptions>watchParams);
 					});
 
-					syncLinkCache[el] = () => this.setField(l, this.getField(el));
+					syncLinkCache[el] = {path: l, sync: (nv) => this.setField(l, nv || this.getField(el))};
 					map[el] = this.getField(el);
 				}
 			}
