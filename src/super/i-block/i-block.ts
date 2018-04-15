@@ -1360,9 +1360,9 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 				}, <WatchOptions>watchParams);
 			});
 
-			const val = (v) => {
+			const val = (nv) => {
 				const
-					res = wrapper ? wrapper.call(this, v || this[field]) : v || this[field];
+					res = wrapper ? wrapper.call(this, nv || this[field]) : nv || this[field];
 
 				if (isSystem || this.hook !== 'beforeCreate') {
 					this.setField(path, res);
