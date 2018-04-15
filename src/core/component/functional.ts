@@ -399,6 +399,11 @@ export function patchVNode(vNode: VNode, ctx: Dictionary, renderCtx: RenderConte
 						old.$data
 					];
 
+					const blacklist = {
+						blockId: true,
+						mods: true
+					};
+
 					for (let i = 0; i < list.length; i++) {
 						const
 							obj = list[i],
@@ -411,7 +416,7 @@ export function patchVNode(vNode: VNode, ctx: Dictionary, renderCtx: RenderConte
 								linked = linkedFields[key];
 
 							if (
-								key !== 'mods' &&
+								!blacklist[key] &&
 
 								(
 									!linked ||
