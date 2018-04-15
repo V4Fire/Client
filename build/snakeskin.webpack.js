@@ -287,11 +287,11 @@ function vueComp({name, attrs}) {
 		if (isFunctional || vFunc) {
 			if (smart) {
 				if (vFunc) {
-					attrs[':is'] = [`'${attrs['is'][0]}' + (${vFunc[0]} ? '-fn' : '')`];
+					attrs[':is'] = [`'${attrs['is'][0]}' + (${vFunc[0]} ? '-functional' : '')`];
 					delete attrs['is'];
 
 				} else {
-					attrs['is'] = [`${attrs['is'][0]}-fn`];
+					attrs['is'] = [`${attrs['is'][0]}-functional`];
 				}
 			}
 

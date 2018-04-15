@@ -220,7 +220,7 @@ export function component(params?: ComponentParams): Function {
 			name = params && params.name || getComponentName(target),
 			parent = Object.getPrototypeOf(target),
 			parentMeta = components.get(parent),
-			isSmart = /-fn$/;
+			isSmart = /-functional$/;
 
 		let p: ComponentParams = parentMeta ? {...params} : {
 			root: false,
@@ -367,7 +367,7 @@ export function component(params?: ComponentParams): Function {
 		if (!Object.isBoolean(<any>p.functional)) {
 			component({
 				...params,
-				name: `${name}-fn`,
+				name: `${name}-functional`,
 				functional: true
 			})(target);
 		}
