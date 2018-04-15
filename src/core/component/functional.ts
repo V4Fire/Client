@@ -401,6 +401,8 @@ export function patchVNode(vNode: VNode, ctx: Dictionary, renderCtx: RenderConte
 
 					const blacklist = {
 						blockId: true,
+						blockStatus: true,
+						blockActivated: true,
 						mods: true
 					};
 
