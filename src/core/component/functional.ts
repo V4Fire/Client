@@ -371,10 +371,52 @@ export function patchVNode(vNode: VNode, ctx: Dictionary, renderCtx: RenderConte
 			}
 
 			const
-				el = ctx.$el;
+				el = ctx.$el,
+				old = el.vueComponent;
 
-			if (el.vueComponent) {
-				el.vueComponent.$destroy();
+			if (old) {
+				const
+					props = ctx.$props,
+					oldProps = old.$props,
+					oldData = old.$data,
+					linkedFields = <Dictionary>{};
+
+				for (let keys = Object.keys(oldProps), i = 0; i < keys.length; i++) {
+					const
+						key = keys[i],
+						linked = old.syncLinkCache[key];
+
+					if (linked) {
+						linkedFields[linked.path] = key;
+					}
+				}
+
+				for (let keys = Object.keys(oldData), i = 0; i < keys.length; i++) {
+					const
+						key = keys[i],
+						el = oldData[key],
+						linked = linkedFields[key];
+
+					if (!linked || linked && Object.fastCompare(props[linked], oldProps[linked])) {
+						ctx[key] = el;
+					}
+				}
+
+				if (linkedFields.mods) {
+					const
+						l = linkedFields.mods,
+						{sync} = ctx.syncLinkCache[l];
+
+					// tslint:disable-next-line
+					if (Object.fastCompare(props[l], oldProps[l])) {
+						sync(old.mods);
+
+					} else {
+						sync({...old.mods, ...props[linkedFields.mods]});
+					}
+				}
+
+				old.$destroy();
 			}
 
 			const
