@@ -1360,9 +1360,11 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 				}, <WatchOptions>watchParams);
 			});
 
-			const val = (nv) => {
+			const sync = (val?) => {
+				val = val || this.getField(field);
+
 				const
-					res = wrapper ? wrapper.call(this, nv || this[field]) : nv || this[field];
+					res = wrapper ? wrapper.call(this, val) : val;
 
 				if (isSystem || this.hook !== 'beforeCreate') {
 					this.setField(path, res);
@@ -1371,8 +1373,12 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 				return res;
 			};
 
-			this.syncLinkCache[field] = {path, sync: (nv) => this.setField(path, val(nv))};
-			return this.execCbBeforeDataCreated(val);
+			this.syncLinkCache[field] = {
+				path,
+				sync
+			};
+
+			return this.execCbBeforeDataCreated(sync);
 		}
 	}
 
@@ -1464,12 +1470,17 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 						}, <WatchOptions>watchParams);
 					});
 
-					const
-						v = this.getField(field),
-						val = (nv?) => wrapper ? wrapper.call(this, nv || v) : nv || v;
+					const sync = (val?) => {
+						val = val || this.getField(field);
+						return wrapper ? wrapper.call(this, val) : val;
+					};
 
-					syncLinkCache[field] = {path: l, sync: (nv) => this.setField(l, val(nv))};
-					map[el[0]] = val();
+					syncLinkCache[field] = {
+						path: l,
+						sync: (val?) => this.setField(l, sync(val))
+					};
+
+					map[el[0]] = sync();
 				}
 
 			} else {
@@ -1486,7 +1497,11 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 						}, <WatchOptions>watchParams);
 					});
 
-					syncLinkCache[el] = {path: l, sync: (nv) => this.setField(l, nv || this.getField(el))};
+					syncLinkCache[el] = {
+						path: l,
+						sync: (val?) => this.setField(l, val || this.getField(el))
+					};
+
 					map[el] = this.getField(el);
 				}
 			}
