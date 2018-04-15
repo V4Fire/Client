@@ -364,6 +364,7 @@ export function patchVNode(vNode: VNode, ctx: Dictionary, renderCtx: RenderConte
 		}, (1).second());
 
 		try {
+			await $a.nextTick();
 			await $a.wait(() => ctx.$el);
 
 			if (destroyed) {
