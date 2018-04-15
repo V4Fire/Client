@@ -6,6 +6,8 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+// tslint:disable:max-file-line-count
+
 import $C = require('collection.js');
 import {
 
@@ -379,7 +381,6 @@ export function patchVNode(vNode: VNode, ctx: Dictionary, renderCtx: RenderConte
 				const
 					props = ctx.$props,
 					oldProps = old.$props,
-					oldData = old.$data,
 					linkedFields = <Dictionary>{};
 
 				for (let keys = Object.keys(oldProps), i = 0; i < keys.length; i++) {
@@ -392,14 +393,46 @@ export function patchVNode(vNode: VNode, ctx: Dictionary, renderCtx: RenderConte
 					}
 				}
 
-				for (let keys = Object.keys(oldData), i = 0; i < keys.length; i++) {
-					const
-						key = keys[i],
-						el = oldData[key],
-						linked = linkedFields[key];
+				{
+					const list = [
+						old.meta.systemFields,
+						old.$data
+					];
 
-					if (!linked || linked && Object.fastCompare(props[linked], oldProps[linked])) {
-						ctx[key] = el;
+					for (let i = 0; i < list.length; i++) {
+						const
+							obj = list[i],
+							keys = Object.keys(obj);
+
+						for (let j = 0; j < keys.length; j++) {
+							const
+								key = keys[j],
+								el = i ? obj[key] : old[key],
+								linked = linkedFields[key];
+
+							if (
+								key !== 'mods' &&
+
+								(
+									!linked ||
+									linked && Object.fastCompare(props[linked], oldProps[linked])
+								) &&
+
+								(
+									i ||
+									Object.isFunction(el) ||
+									Object.isObject(el) ||
+									Object.isArray(el) ||
+									Object.isDate(el) ||
+									Object.isMap(el) ||
+									Object.isWeakMap(el) ||
+									Object.isSet(el) ||
+									Object.isWeakSet(el)
+								)
+							) {
+								ctx[key] = el;
+							}
+						}
 					}
 				}
 
