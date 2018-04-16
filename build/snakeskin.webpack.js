@@ -253,6 +253,8 @@ function vueComp({name, attrs}) {
 		};
 
 		const isFunctional = c && c.functional === true || !vFunc && $C(smart).every((el, key) => {
+			key = key.dasherize();
+
 			if (!vuePrfx[key.slice(0, 2)] && !vuePrfx[key[0]]) {
 				key = `:${key}`;
 			}
