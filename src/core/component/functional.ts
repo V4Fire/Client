@@ -477,6 +477,10 @@ export function execRenderObject(renderObject: Dictionary, fakeCtx: Dictionary):
 		const
 			fns = renderObject.staticRenderFns;
 
+		if (!Object.isArray(fakeCtx._staticTrees)) {
+			fakeCtx._staticTrees = [];
+		}
+
 		for (let i = 0; i < fns.length; i++) {
 			fakeCtx._staticTrees.push(fns[i].call(fakeCtx));
 		}
