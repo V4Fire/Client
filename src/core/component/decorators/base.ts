@@ -7,7 +7,17 @@
  */
 
 import { PropOptions, WatchOptions } from 'vue';
-import { Hooks, initEvent, InitFieldFn, VueInterface, MethodWatcher, ComponentMeta } from 'core/component';
+import {
+
+	Hooks,
+	initEvent,
+	InitFieldFn,
+	MergeFieldFn,
+	VueInterface,
+	MethodWatcher,
+	ComponentMeta
+
+} from 'core/component';
 
 export interface WatchHandler<T, A, B> {
 	(ctx: T, value: A, oldValue: B): any;
@@ -43,11 +53,16 @@ export const prop = paramsFactory<Function | ObjectConstructor | ComponentProp>(
 	return p;
 });
 
-export interface ComponentField<T extends VueInterface = VueInterface, A = any, B = A> {
+export interface SystemField<T extends VueInterface = VueInterface> {
 	default?: any;
+	unique?: boolean;
 	after?: string | string[];
-	watch?: FieldWatcher<T, A, B>;
 	init?: InitFieldFn<T>;
+	merge?: MergeFieldFn<T>;
+}
+
+export interface ComponentField<T extends VueInterface = VueInterface, A = any, B = A> extends SystemField<T> {
+	watch?: FieldWatcher<T, A, B>;
 }
 
 /**
@@ -66,7 +81,7 @@ export const field = paramsFactory<InitFieldFn | ComponentField>('fields', (p) =
  * Marks a class property as a system property
  * @decorator
  */
-export const system = paramsFactory<InitFieldFn | ComponentField>('systemFields', (p) => {
+export const system = paramsFactory<InitFieldFn | SystemField>('systemFields', (p) => {
 	if (Object.isFunction(p)) {
 		return {init: p};
 	}

@@ -110,7 +110,11 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	/**
 	 * Block unique id
 	 */
-	@system(() => `uid-${Math.random().toString().slice(2)}`)
+	@system({
+		unique: true,
+		init: () => `uid-${Math.random().toString().slice(2)}`
+	})
+
 	readonly blockId!: string;
 
 	/**
@@ -197,45 +201,64 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	/**
 	 * Block modifiers
 	 */
-	@system((o) => {
-		const
-			declMods = o.meta.component.mods,
-			attrMods = <string[][]>[],
-			modVal = (val) => val != null ? String(val) : val;
-
-		for (let attrs = o.$attrs, keys = Object.keys(attrs), i = 0; i < keys.length; i++) {
-			const
-				key = keys[i];
-
-			if (key in declMods) {
-				attrMods.push([key, attrs[key]]);
-				o.$watch(`$attrs.${key}`, (val) => o.setMod(key, modVal(val)));
-				delete attrs[key];
+	@system({
+		merge: (ctx, oldCtx, link) => {
+			if (!link) {
+				return;
 			}
-		}
 
-		return o.link('modsProp', (val) => {
+			const
+				l = ctx.syncLinkCache[link],
+				modsProp = ctx.$props[link];
+
+			if (Object.fastCompare(modsProp, oldCtx.$props[link])) {
+				l.sync(oldCtx.mods);
+
+			} else {
+				l.sync({...oldCtx.mods, ...<object>modsProp});
+			}
+		},
+
+		init: (o) => {
 			const
 				declMods = o.meta.component.mods,
-				// tslint:disable-next-line:prefer-object-spread
-				mods = Object.assign(o.mods || {...declMods}, val);
+				attrMods = <string[][]>[],
+				modVal = (val) => val != null ? String(val) : val;
 
-			for (let i = 0; i < attrMods.length; i++) {
-				const [key, val] = attrMods[i];
-				mods[key] = val;
-			}
-
-			for (let keys = Object.keys(mods), i = 0; i < keys.length; i++) {
+			for (let attrs = o.$attrs, keys = Object.keys(attrs), i = 0; i < keys.length; i++) {
 				const
-					key = keys[i],
-					val = modVal(mods[key]);
+					key = keys[i];
 
-				mods[key] = val;
-				o.hook !== 'beforeDataCreate' && o.setMod(key, val);
+				if (key in declMods) {
+					attrMods.push([key, attrs[key]]);
+					o.$watch(`$attrs.${key}`, (val) => o.setMod(key, modVal(val)));
+					delete attrs[key];
+				}
 			}
 
-			return mods;
-		});
+			return o.link('modsProp', (val) => {
+				const
+					declMods = o.meta.component.mods,
+					// tslint:disable-next-line:prefer-object-spread
+					mods = Object.assign(o.mods || {...declMods}, val);
+
+				for (let i = 0; i < attrMods.length; i++) {
+					const [key, val] = attrMods[i];
+					mods[key] = val;
+				}
+
+				for (let keys = Object.keys(mods), i = 0; i < keys.length; i++) {
+					const
+						key = keys[i],
+						val = modVal(mods[key]);
+
+					mods[key] = val;
+					o.hook !== 'beforeDataCreate' && o.setMod(key, val);
+				}
+
+				return mods;
+			});
+		}
 	})
 
 	readonly mods!: ModsNTable;
@@ -347,14 +370,14 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	/**
 	 * Block initialize status
 	 */
-	@system()
+	@system({unique: true})
 	protected blockStatus: string = statuses[statuses.unloaded];
 
 	/**
 	 * Active status
 	 * (for keep alive)
 	 */
-	@system()
+	@system({unique: true})
 	protected blockActivated: boolean = true;
 
 	/**
@@ -417,25 +440,37 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	/**
 	 * Link to the current Vue component
 	 */
-	@system((ctx) => ctx)
+	@system({
+		unique: true,
+		init: (ctx) => ctx
+	})
+
 	protected readonly self!: iBlock;
 
 	/**
 	 * API for async operations
 	 */
-	@system((ctx) => new Async(ctx))
+	@system({
+		unique: true,
+		init: (ctx) => new Async(ctx)
+	})
+
 	protected readonly async!: Async<this>;
 
 	/**
 	 * API for BEM like develop
 	 */
-	@system()
+	@system({unique: true})
 	protected block!: Block<this>;
 
 	/**
 	 * Local event emitter
 	 */
-	@system(() => new EventEmitter({maxListeners: 100, wildcard: true}))
+	@system({
+		unique: true,
+		init: () => new EventEmitter({maxListeners: 100, wildcard: true})
+	})
+
 	protected readonly localEvent!: EventEmitter;
 
 	/**

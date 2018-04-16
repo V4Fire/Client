@@ -94,11 +94,20 @@ export interface InitFieldFn<T extends VueInterface = VueInterface> {
 	(ctx: T, data: Dictionary): any;
 }
 
-export interface ComponentField<T extends VueInterface = VueInterface> {
-	after: Set<string>;
-	watchers: Map<string | Function, FieldWatcher>;
-	init?: InitFieldFn<T>;
+export interface MergeFieldFn<T extends VueInterface = VueInterface> {
+	(ctx: T, oldCtx: T, link: string | undefined): any;
+}
+
+export interface SystemField<T extends VueInterface = VueInterface> {
 	default?: any;
+	unique?: boolean;
+	after: Set<string>;
+	init?: InitFieldFn<T>;
+	merge?: InitFieldFn<T>;
+}
+
+export interface ComponentField<T extends VueInterface = VueInterface> extends SystemField<T> {
+	watchers: Map<string | Function, FieldWatcher>;
 }
 
 export interface SystemField<T extends VueInterface = VueInterface> {

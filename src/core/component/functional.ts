@@ -374,18 +374,18 @@ export function patchVNode(vNode: VNode, ctx: Dictionary, renderCtx: RenderConte
 
 			const
 				el = ctx.$el,
-				old = el.vueComponent;
+				oldCtx = el.vueComponent;
 
-			if (old) {
+			if (oldCtx) {
 				const
 					props = ctx.$props,
-					oldProps = old.$props,
+					oldProps = oldCtx.$props,
 					linkedFields = <Dictionary>{};
 
 				for (let keys = Object.keys(oldProps), i = 0; i < keys.length; i++) {
 					const
 						key = keys[i],
-						linked = old.syncLinkCache[key];
+						linked = oldCtx.syncLinkCache[key];
 
 					if (linked) {
 						linkedFields[linked.path] = key;
@@ -394,16 +394,9 @@ export function patchVNode(vNode: VNode, ctx: Dictionary, renderCtx: RenderConte
 
 				{
 					const list = [
-						old.meta.systemFields,
-						old.$data
+						oldCtx.meta.systemFields,
+						oldCtx.meta.fields
 					];
-
-					const blacklist = {
-						blockId: true,
-						blockStatus: true,
-						blockActivated: true,
-						mods: true
-					};
 
 					for (let i = 0; i < list.length; i++) {
 						const
@@ -413,51 +406,29 @@ export function patchVNode(vNode: VNode, ctx: Dictionary, renderCtx: RenderConte
 						for (let j = 0; j < keys.length; j++) {
 							const
 								key = keys[j],
-								el = i ? obj[key] : old[key],
-								linked = linkedFields[key];
+								el = obj[key],
+								link = linkedFields[key];
 
 							if (
-								!blacklist[key] &&
+								!el.unique &&
 
 								(
-									!linked ||
-									linked && Object.fastCompare(props[linked], oldProps[linked])
-								) &&
-
-								(
-									i ||
-									Object.isFunction(el) ||
-									Object.isObject(el) ||
-									Object.isArray(el) ||
-									Object.isDate(el) ||
-									Object.isRegExp(el) ||
-									Object.isMap(el) ||
-									Object.isWeakMap(el) ||
-									Object.isSet(el) ||
-									Object.isWeakSet(el)
+									!link ||
+									link && Object.fastCompare(props[link], oldProps[link])
 								)
 							) {
-								ctx[key] = el;
+								if (el.merge) {
+									el.merge(ctx, oldCtx, link);
+
+								} else {
+									ctx[key] = oldCtx[key];
+								}
 							}
 						}
 					}
 				}
 
-				if (linkedFields.mods) {
-					const
-						l = linkedFields.mods,
-						{sync} = ctx.syncLinkCache[l];
-
-					// tslint:disable-next-line
-					if (Object.fastCompare(props[l], oldProps[l])) {
-						sync(old.mods);
-
-					} else {
-						sync({...old.mods, ...props[linkedFields.mods]});
-					}
-				}
-
-				old.$destroy();
+				oldCtx.$destroy();
 			}
 
 			const
