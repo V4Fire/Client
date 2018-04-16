@@ -111,7 +111,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 * Block unique id
 	 */
 	@system({
-		unique: true,
+		unique: (ctx, oldCtx) => !ctx.$el.classList.contains(oldCtx.blockId),
 		init: () => `uid-${Math.random().toString().slice(2)}`
 	})
 

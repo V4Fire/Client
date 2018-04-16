@@ -98,9 +98,13 @@ export interface MergeFieldFn<T extends VueInterface = VueInterface> {
 	(ctx: T, oldCtx: T, link: string | undefined): any;
 }
 
+export interface UniqueFieldFn<T extends VueInterface = VueInterface> {
+	(ctx: T, oldCtx: T): any;
+}
+
 export interface SystemField<T extends VueInterface = VueInterface> {
 	default?: any;
-	unique?: boolean;
+	unique?: boolean | UniqueFieldFn<T>;
 	after: Set<string>;
 	init?: InitFieldFn<T>;
 	merge?: InitFieldFn<T>;

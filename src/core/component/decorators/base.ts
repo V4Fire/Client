@@ -13,6 +13,7 @@ import {
 	initEvent,
 	InitFieldFn,
 	MergeFieldFn,
+	UniqueFieldFn,
 	VueInterface,
 	MethodWatcher,
 	ComponentMeta
@@ -55,7 +56,7 @@ export const prop = paramsFactory<Function | ObjectConstructor | ComponentProp>(
 
 export interface SystemField<T extends VueInterface = VueInterface> {
 	default?: any;
-	unique?: boolean;
+	unique?: boolean | UniqueFieldFn<T>;
 	after?: string | string[];
 	init?: InitFieldFn<T>;
 	merge?: MergeFieldFn<T>;
