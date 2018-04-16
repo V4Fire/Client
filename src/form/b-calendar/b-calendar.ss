@@ -80,7 +80,7 @@
 							< .&__item v-for = (el, index) in value
 								- block th
 									< .&__row
-										< .&__td.&__h v-for = el in [t('Mn'), t('Ts'), t('Wd'), t('Th'), t('Fr'), t('St'), t('Sn')]
+										< .&__td.&__h v-for = el in Date.getWeekDays()
 											{{ el }}
 
 								< .&__hr
