@@ -7,7 +7,7 @@
  */
 
 import symbolGenerator from 'core/symbol';
-import iInput, { component, prop, ModsDecl } from 'super/i-input/i-input';
+import iInput, { component, prop, wait, ModsDecl } from 'super/i-input/i-input';
 export * from 'super/i-input/i-input';
 
 export const
@@ -114,6 +114,8 @@ export default class bCheckbox<T extends Dictionary = Dictionary> extends iInput
 
 	/** @override */
 	protected async mounted(): Promise<void> {
+		await super.mounted();
+
 		const
 			{block: $b} = this;
 
