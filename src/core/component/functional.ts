@@ -410,7 +410,7 @@ export function patchVNode(vNode: VNode, ctx: Dictionary, renderCtx: RenderConte
 								link = linkedFields[key];
 
 							if (
-								!el.unique &&
+								(Object.isFunction(el.unique) ? !el.unique(ctx, oldCtx) : !el.unique) &&
 
 								(
 									!link ||
