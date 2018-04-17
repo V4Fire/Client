@@ -885,7 +885,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 * @param elName
 	 * @param [ctx] - component context
 	 */
-	protected findElFromVNode(vnode: VNode, elName: string, ctx: iBlock = this): VNode | null {
+	protected findElFromVNode(vnode: VNode, elName: string, ctx: iBlock = this): VNode | undefined {
 		const
 			selector = ctx.getFullElName(elName);
 
@@ -913,7 +913,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 				}
 			}
 
-			return null;
+			return undefined;
 		};
 
 		return search(vnode);
