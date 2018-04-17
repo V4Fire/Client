@@ -1804,14 +1804,14 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 * Block created
 	 */
 	protected created(): void {
-		this.localEvent.emit('component.created');
+		return undefined;
 	}
 
 	/**
 	 * Block mounted to DOM
 	 */
 	protected async mounted(): Promise<void> {
-		this.localEvent.emit('component.mounted');
+		return undefined;
 	}
 
 	/**
@@ -1819,8 +1819,6 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 * (for keep-alive)
 	 */
 	protected async activated(): Promise<void> {
-		this.localEvent.emit('component.activated');
-
 		if (this.blockActivated) {
 			return;
 		}
@@ -1844,8 +1842,6 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 * (for keep-alive)
 	 */
 	protected deactivated(): void {
-		this.localEvent.emit('component.deactivated');
-
 		this.async
 			.clearImmediate()
 			.clearTimeout()
@@ -1865,8 +1861,6 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 * Block before destroy
 	 */
 	protected beforeDestroy(): void {
-		this.localEvent.emit('component.destroyed');
-
 		if (this.block) {
 			this.block.destructor();
 
