@@ -1,5 +1,3 @@
-'use strict';
-
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -8,48 +6,51 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import iBlock, { watch } from 'super/i-block/i-block';
-import { component } from 'core/component';
-import Store from 'core/store';
+import symbolGenerator from 'core/symbol';
+import iBlock, { component, prop, wait, ModsDecl } from 'super/i-block/i-block';
+export * from 'super/i-block/i-block';
 
 export const
-	$$ = new Store();
+	$$ = symbolGenerator();
 
-@component()
+@component({functional: true})
 export default class bImage extends iBlock {
 	/**
 	 * Target image src
 	 */
-	@watch('initOverlay')
-	src: string;
+	@prop({type: String, watch: {fn: 'initOverlay', immediate: true}})
+	readonly src!: string;
 
 	/**
 	 * Show lazy overlay if true
 	 */
-	@watch('initOverlay')
-	load: ?boolean = false;
+	@prop({type: Boolean, watch: 'initOverlay'})
+	readonly load: boolean = false;
 
 	/**
-	 * Icon value for broken state
+	 * Icon value for a broken state
 	 */
-	brokenIcon: string = 'damaged';
-
-	/** @override */
-	get refs(): {img: HTMLImageElement} {}
+	@prop(String)
+	readonly brokenIcon: string = 'damaged';
 
 	/** @inheritDoc */
-	static mods = {
+	static mods: ModsDecl = {
 		'hide-image': [
 			'true',
 			['false']
 		]
 	};
 
+	/** @override */
+	protected readonly $refs!: {
+		img: HTMLImageElement;
+	};
+
 	/**
 	 * Handler: image loaded
 	 * @emits loaded
 	 */
-	onImageLoaded() {
+	protected onImageLoaded(): void {
 		this.setMod('loading', false);
 		this.$set(this.tmp, this.src, true);
 		this.emit('loaded');
@@ -59,7 +60,7 @@ export default class bImage extends iBlock {
 	 * Handler: image load error
 	 * @emits loadError
 	 */
-	onImageError() {
+	protected onImageError(): void {
 		this.setMod('error', true);
 		this.emit('loadError');
 	}
@@ -67,7 +68,8 @@ export default class bImage extends iBlock {
 	/**
 	 * Initializes overlay, that shown during the image loading process
 	 */
-	async initOverlay() {
+	@wait('loading', {label: $$.initOverlay, defer: true})
+	protected async initOverlay(): Promise<void> {
 		if (this.load && !this.tmp[this.src]) {
 			await this.setMod('disabled', false);
 			await this.setMod('loading', true);
@@ -82,28 +84,20 @@ export default class bImage extends iBlock {
 				this.onImageLoaded();
 
 			} else {
-				$a.on(img, 'load', {
-					label: $$.imgLoad,
-					fn: this.onImageLoaded
+				$a.on(img, 'load', this.onImageLoaded, {
+					label: $$.imgLoad
 				});
 
-				$a.on(img, 'error', {
-					label: $$.imgLoad,
-					fn: this.onImageError
+				$a.on(img, 'error', this.onImageError, {
+					label: $$.imgLoad
 				});
 			}
 		}
 	}
 
-	/** @inheritDoc */
-	async created() {
-		await this.initOverlay();
-	}
-
-	/** @inheritDoc */
-	mounted() {
-		if (!this.load) {
-			this.setMod('disabled', true);
-		}
+	/** @override */
+	protected initModEvents(): void {
+		super.initModEvents();
+		this.bindModTo('disabled', 'load');
 	}
 }

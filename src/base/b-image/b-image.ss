@@ -24,7 +24,6 @@
 		- block image
 			< .&__img
 				< img &
-					v-show = m.loading === 'false' |
 					ref = img |
 					:src = load && src
 				.
