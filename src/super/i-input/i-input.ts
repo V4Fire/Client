@@ -196,7 +196,7 @@ export default class iInput<T extends Dictionary = Dictionary> extends iData<T> 
 				const promises = $C(list).to([] as Promise<void>[]).reduce((arr, el) => {
 					arr.push((async () => {
 						const
-							block = <iInput | undefined>this.$(el, '[class*="_form_true"]');
+							block = this.$<iInput>(el, '[class*="_form_true"]');
 
 						if (block && form === block.connectedForm) {
 							els.push(await block.formValue);
