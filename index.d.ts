@@ -17,6 +17,7 @@ declare const API: string;
 declare const TPLS: Dictionary;
 
 interface HTMLImageElement {
+	readonly init: Promise<this>;
 	onInit(onSuccess: () => void, onFail?: (err?: Error) => void): void;
 }
 
