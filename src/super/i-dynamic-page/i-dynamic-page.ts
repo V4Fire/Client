@@ -7,9 +7,8 @@
  */
 
 import $C = require('collection.js');
-import URI = require('urijs');
 import symbolGenerator from 'core/symbol';
-import iData, { component, prop, hook } from 'super/i-data/i-data';
+import iData, { component, hook } from 'super/i-data/i-data';
 
 export * from 'super/i-data/i-data';
 export interface OnFilterChange {
@@ -76,13 +75,14 @@ export default class iDynamicPage<T extends Dictionary = Dictionary> extends iDa
 
 		const
 			hash = <string>Object.toQueryString(obj, {deep: true}),
-			url = new URI();
+			url = new URL(location.href);
 
-		if (url.fragment()) {
+		if (url.hash.slice(1)) {
 			location.hash = hash;
 
 		} else if (hash) {
-			location.replace(url.hash(hash).toString());
+			url.hash = hash;
+			location.replace(url.toString());
 		}
 
 		return hash;
@@ -102,7 +102,7 @@ export default class iDynamicPage<T extends Dictionary = Dictionary> extends iDa
 	 * @param [state] - state object
 	 */
 	initStateFromHash(state: Dictionary = this): void {
-		this.setState(Object.fromQueryString(new URI().fragment(), {deep: true}), state);
+		this.setState(Object.fromQueryString(new URL(location.href).hash.slice(1), {deep: true}), state);
 	}
 
 	/**

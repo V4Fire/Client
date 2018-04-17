@@ -27,7 +27,6 @@
   "dependencies": {
     "@types/socket.io": "^1.4.33",
     "@types/socket.io-client": "^1.4.32",
-    "@types/urijs": "^1.15.37",
     "@v4fire/core": "github:v4Fire/core#ts",
     "babel-polyfill": "^6.26.0",
     "chart.js": "^2.7.2",
@@ -44,7 +43,6 @@
     "snakeskin": "^7.2.9",
     "socket.io": "^2.1.0",
     "sugar": "^2.0.4",
-    "urijs": "^1.19.1",
     "vue": "^2.5.17-beta.0"
   },
   "optionalDependencies": {

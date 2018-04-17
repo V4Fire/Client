@@ -7,7 +7,6 @@
  */
 
 import $C = require('collection.js');
-import URI = require('urijs');
 import path = require('path-to-regexp');
 import { Key } from 'path-to-regexp';
 
@@ -79,7 +78,7 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 		}
 
 		const
-			name = new URI(url).pathname();
+			name = new URL(url).pathname;
 
 		return new Promise((resolve) => {
 			this.pageStore = name;

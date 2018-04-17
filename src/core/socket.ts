@@ -8,7 +8,6 @@
 
 /// <reference types="node"/>
 /// <reference types="socket.io-client"/>
-import URI = require('urijs');
 
 export const PING = (5).seconds();
 export type Socket = SocketIOClient.Socket;
@@ -26,7 +25,8 @@ export default function socket(namespace: string = ''): Socket | undefined {
 	} catch (_) {}
 
 	if (socket) {
-		return socket.connect(new URI(API).path(namespace).toString(), {
+		const url = new URL(API);
+		return socket.connect((url.pathname = namespace).toString(), {
 			allowUpgrades: false,
 			transports: ['websocket'],
 			pingTimeout: PING,

@@ -20,7 +20,6 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 			'collection.js': '$C',
 			'eventemitter2': 'EventEmitter2',
 			'localforage': 'localforage',
-			'urijs': 'URI',
 			'sugar': 'Sugar',
 			'vue': 'Vue',
 			'chart.js': 'Chart',
