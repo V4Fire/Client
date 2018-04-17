@@ -1,5 +1,3 @@
-'use strict';
-
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -8,14 +6,12 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import $C = require('collection.js');
+import ion = require('ion-sound');
 import config from 'config';
-import Store from 'core/store';
-import iData from 'super/i-data/i-data';
-import { component } from 'core/component';
-
-const
-	$C = require('collection.js'),
-	ion = require('ion-sound');
+import symbolGenerator from 'core/symbol';
+import iData, { prop, component } from 'super/i-data/i-data';
+export * from 'super/i-data/i-data';
 
 ion.sound({
 	sounds: [
@@ -27,34 +23,43 @@ ion.sound({
 	preload: true
 });
 
+export interface Message<T extends Dictionary = Dictionary> {
+	instance: string;
+	type: string;
+	data: T;
+}
+
 export const
-	$$ = new Store();
+	$$ = symbolGenerator();
 
 @component()
-export default class bNotifier extends iData {
+export default class bNotifier<T extends Dictionary = Message> extends iData<T> {
 	/** @override */
-	dataProviderParams: Object = {listenAllEvents: true};
+	readonly dataProviderParams: Dictionary = {listenAllEvents: true};
 
 	/**
 	 * Default project title
 	 */
-	title: string = config.appName;
+	@prop(String)
+	readonly title: string = config.appName;
 
 	/**
 	 * Notify rules
 	 */
-	rules: Object = {};
+	@prop(Object)
+	readonly rules: Dictionary = {};
 
 	/**
 	 * If false, the helper tooltip won't be displayed
 	 */
-	showTooltip: boolean = true;
+	readonly showTooltip: boolean = true;
 
 	/**
 	 * Notification permission
 	 */
-	get permission(): string {
+	get permission(): NotificationPermission {
 		try {
+			// @ts-ignore
 			return Notification.permission;
 
 		} catch (_) {
@@ -63,7 +68,7 @@ export default class bNotifier extends iData {
 	}
 
 	/** @override */
-	async initLoad() {
+	async initLoad(): Promise<void> {
 		const
 			opts = await this.loadSettings() || {};
 
@@ -77,7 +82,7 @@ export default class bNotifier extends iData {
 	/**
 	 * Requests for notifications
 	 */
-	async requestPermissions() {
+	async requestPermissions(): Promise<void> {
 		if (await Notification.requestPermission()) {
 			await this.setMod('hidden', true);
 		}
@@ -87,12 +92,13 @@ export default class bNotifier extends iData {
 	 * Sends notifications
 	 * @param data
 	 */
-	notify(data: {instance: string, type: string, data: Object}) {
+	notify(data: T): void {
 		if (!data.instance) {
 			return;
 		}
 
 		try {
+			// @ts-ignore
 			if (!Notification.permission) {
 				return;
 			}
@@ -108,17 +114,17 @@ export default class bNotifier extends iData {
 				{onshow} = rule;
 
 			rule = {...rule, silent: true};
-			rule.onshow = function () {
+			rule.onshow = function (): void {
 				ion.sound.play('door_bell');
 				onshow && onshow.apply(this, arguments);
 			};
 
 			Object.assign(
-				new Notification(rule.title ? rule.title(data) : this.title, {
+				new Notification(rule.title ? rule.title(data) : this.title, <any>{
 					tag: data.instance,
 					body: rule.body(data),
 					icon: '/assets/favicons/favicon.ico',
-					...Object.reject(rule, /^(on|body$)/),
+					...Object.reject(rule, /^(on|body$)/)
 				}),
 
 				$C(Object.select(rule, /^on/)).map((fn) => (e) => fn(e, data))
@@ -128,22 +134,23 @@ export default class bNotifier extends iData {
 	}
 
 	/** @override */
-	async onAddData(data: Object) {
+	protected async onAddData(data: T): Promise<void> {
 		await this.notify(data);
 	}
 
 	/** @override */
-	async onUpdData(data: Object) {
+	protected async onUpdData(data: T): Promise<void> {
 		await this.notify(data);
 	}
 
 	/** @override */
-	async onDelData(data: Object) {
+	protected async onDelData(data: T): Promise<void> {
 		await this.notify(data);
 	}
 
-	/** @inheritDoc */
-	created() {
+	/** @override */
+	protected initModEvents(): void {
+		super.initModEvents();
 		this.localEvent.on('block.mod.*.hidden.*', (el) => this.saveSettings({[el.name]: el.value}));
 	}
 }
