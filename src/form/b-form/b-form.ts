@@ -11,7 +11,19 @@ import symbolGenerator from 'core/symbol';
 import bInputHidden from 'form/b-input-hidden/b-input-hidden';
 import iInput from 'super/i-input/i-input';
 import bButton from 'form/b-button/b-button';
-import iData, { component, prop, wait, p, ModsDecl, ModelMethods, CreateRequestOptions } from 'super/i-data/i-data';
+import iData, {
+
+	component,
+	field,
+	prop,
+	wait,
+	p,
+	ModsDecl,
+	ModelMethods,
+	CreateRequestOptions
+
+} from 'super/i-data/i-data';
+
 export * from 'super/i-data/i-data';
 
 export const
@@ -64,7 +76,7 @@ export default class bForm<T extends Dictionary = Dictionary> extends iData<T> {
 	 * Form request parameters
 	 */
 	@prop(Object)
-	readonly params: CreateRequestOptions = {};
+	readonly paramsProp: CreateRequestOptions = {};
 
 	/**
 	 * If true, then form elements will be cached
@@ -77,6 +89,17 @@ export default class bForm<T extends Dictionary = Dictionary> extends iData<T> {
 	 */
 	@prop(Boolean)
 	readonly errorHandler: boolean = true;
+
+	/**
+	 * Form request parameters store
+	 */
+	@field((o) => o.link('paramsProp', (val) => {
+		const ctx: bForm = <any>o;
+		// tslint:disable-next-line
+		return Object.assign(ctx.params || {}, val);
+	}))
+
+	params!: CreateRequestOptions;
 
 	/** @inheritDoc */
 	static mods: ModsDecl = {
@@ -273,6 +296,7 @@ export default class bForm<T extends Dictionary = Dictionary> extends iData<T> {
 					} else {
 						res.append(key, el);
 					}
+
 					return res;
 				}, new FormData());
 
