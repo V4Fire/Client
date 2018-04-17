@@ -165,7 +165,6 @@
 							['collection.js/dist/collection.sync.min.js'],
 							['vue/dist/vue.runtime' + (isProd ? '.min' : '') + '.js'],
 							'requestidlecallback/index.js',
-							'dom4/build/dom4.js',
 							'eventemitter2/lib/eventemitter2.js',
 							'urijs/src/URI.min.js',
 							'fg-loadcss/src/loadCSS.js',

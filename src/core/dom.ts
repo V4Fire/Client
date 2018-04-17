@@ -87,3 +87,48 @@ Node.prototype.getOffset = function (parent?: Element | string): {top: number; l
 
 	return res;
 };
+
+if (!Element.prototype.matches) {
+	// tslint:disable:no-string-literal
+
+	Element.prototype.matches =
+		Element.prototype['matchesSelector'] ||
+		Element.prototype['mozMatchesSelector'] ||
+		Element.prototype['msMatchesSelector'] ||
+		Element.prototype['oMatchesSelector'] ||
+		Element.prototype['webkitMatchesSelector'] ||
+		function (selector: string): boolean {
+			const
+				matches = (this.document || this.ownerDocument).querySelectorAll(selector);
+
+			let
+				i = matches.length;
+
+			while (--i >= 0 && matches.item(i) !== this) {
+				// Do nothing
+			}
+
+			return i > -1;
+		};
+
+	// tslint:enable:no-string-literal
+}
+
+if (!Element.prototype.closest) {
+	// @ts-ignore
+	Element.prototype.closest = function (selector: string): Element | null {
+		if (!this) {
+			return null;
+		}
+
+		if (this.matches(selector)) {
+			return this;
+		}
+
+		if (!this.parentElement) {
+			return null;
+		}
+
+		return this.parentElement.closest(selector);
+	};
+}
