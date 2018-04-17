@@ -193,7 +193,9 @@ export default class bForm<T extends Dictionary = Dictionary> extends iData<T> {
 		for (const el of await this.elements) {
 			if (
 				el.name && (
-					!this.cache || !el.cache || !Object.fastCompare(this.getField(`tmp.${el.name}`), await el.groupFormValue)
+					!this.cache ||
+					!el.cache ||
+					!Object.fastCompare(this.getField(`tmp.${el.name}`), await el.groupFormValue)
 				)
 			) {
 				if (el.mods.valid !== 'true' && await el.validate()) {
