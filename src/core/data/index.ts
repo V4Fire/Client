@@ -233,7 +233,7 @@ export default class Provider {
 				const
 					socket = IO(url);
 
-				function onClear(err: Error): void {
+				function onClear(err: any): void {
 					reject(err);
 					delete connectCache[key];
 				}
@@ -272,7 +272,7 @@ export default class Provider {
 	 * @param fn
 	 * @param [params]
 	 */
-	attachToSocket(fn: (socket: Socket) => void, params?: AsyncCbOpts): void {
+	attachToSocket(fn: (socket: Socket) => void, params?: AsyncCbOpts<this>): void {
 		this.async.on(this.globalEvent, `${this.socketURL}Connect`, fn, params);
 		this.connection && this.connection.then(fn);
 	}

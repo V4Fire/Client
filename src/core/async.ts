@@ -7,8 +7,22 @@
  */
 
 import $C = require('collection.js');
-import Super, { AsyncCbOpts, ClearOpts, ClearOptsId } from '@v4fire/core/core/async';
+import Super, { AsyncOpts, AsyncCbOpts, AsyncOnOpts, ClearOpts, ClearOptsId } from '@v4fire/core/core/async';
 export * from '@v4fire/core/core/async';
+
+export interface AsyncRequestAnimationFrameOpts<T extends object = Async> extends AsyncCbOpts<T> {
+	element?: Element;
+}
+
+export interface AsyncAnimationFrameOpts extends AsyncOpts {
+	element?: Element;
+}
+
+export interface AsyncDnDOpts<T extends object = Async> extends AsyncOnOpts<T> {
+	onDragStart?: NodeEventCb | NodeEventOpts;
+	onDrag?: NodeEventCb | NodeEventOpts;
+	onDragEnd?: NodeEventCb | NodeEventOpts;
+}
 
 export interface NodeEventCb {
 	(e: Event, el: Node): void;
@@ -19,7 +33,7 @@ export interface NodeEventOpts {
 	handler: NodeEventCb;
 }
 
-export default class Async<CTX extends Object> extends Super<CTX> {
+export default class Async<CTX extends object = Async<any>> extends Super<CTX> {
 	/**
 	 * Wrapper for requestAnimationFrame
 	 *
@@ -39,7 +53,7 @@ export default class Async<CTX extends Object> extends Super<CTX> {
 	 *   *) [group] - group name for the task
 	 *   *) [onClear] - clear handler
 	 */
-	requestAnimationFrame(fn: (timeStamp: number) => void, params: AsyncCbOpts & {element?: Element}): number;
+	requestAnimationFrame(fn: (timeStamp: number) => void, params: AsyncRequestAnimationFrameOpts<CTX>): number;
 
 	// tslint:disable-next-line
 	requestAnimationFrame(fn, p) {
@@ -93,9 +107,8 @@ export default class Async<CTX extends Object> extends Super<CTX> {
 	 *   *) [join] - if true, then competitive tasks (with same labels) will be joined to the first
 	 *   *) [label] - label for the task (previous task with the same label will be canceled)
 	 *   *) [group] - group name for the task
-	 *   *) [onClear] - clear handler
 	 */
-	animationFrame(params: AsyncCbOpts & {element?: Element}): Promise<number>;
+	animationFrame(params: AsyncAnimationFrameOpts): Promise<number>;
 
 	// tslint:disable-next-line
 	animationFrame(p) {
@@ -128,12 +141,7 @@ export default class Async<CTX extends Object> extends Super<CTX> {
 	 *   *) [onDrag]
 	 *   *) [onDragEnd]
 	 */
-	dnd(el: Element, params: AsyncCbOpts & {
-		options?: AddEventListenerOptions;
-		onDragStart?: NodeEventCb | NodeEventOpts;
-		onDrag?: NodeEventCb | NodeEventOpts;
-		onDragEnd?: NodeEventCb | NodeEventOpts;
-	}): string | symbol;
+	dnd(el: Element, params: AsyncDnDOpts<CTX>): string | symbol;
 
 	// tslint:disable-next-line
 	dnd(el, p) {

@@ -1919,6 +1919,7 @@ export abstract class iBlockDecorator extends iBlock {
 	public readonly t!: typeof i18n;
 
 	public readonly async!: Async<this>;
+	// @ts-ignore
 	public readonly block!: Block<this>;
 	public readonly localEvent!: EventEmitter;
 

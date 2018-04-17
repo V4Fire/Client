@@ -30,7 +30,7 @@ export type Reason =
 /**
  * Base class for BEM like develop
  */
-export default class Block<T extends iBlock> {
+export default class Block<T extends iBlock = iBlock> {
 	/**
 	 * Block unique id
 	 */

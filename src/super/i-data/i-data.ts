@@ -14,7 +14,7 @@ import StatusCodes from 'core/statusCodes';
 import symbolGenerator from 'core/symbol';
 
 import { Socket } from 'core/socket';
-import { AsyncOpts, AsyncCbOpts, AsyncCbOptsSingle, ClearOptsId } from 'core/async';
+import Async, { AsyncOpts, AsyncCbOpts, AsyncOnOpts, AsyncOnceOpts, ClearOptsId } from 'core/async';
 
 import iMessage, { component, prop, field, system, watch, wait } from 'super/i-message/i-message';
 import Provider, {
@@ -38,12 +38,12 @@ export {
 
 } from 'core/data';
 
-export interface DataEvent {
+export interface DataEvent<T extends object = Async> {
 	on(events: string | string[], handler: Function, ...args: any[]): object | undefined;
 	on(
 		events: string | string[],
 		handler: Function,
-		params: AsyncCbOptsSingle & {options?: AddEventListenerOptions},
+		params: AsyncOnOpts<T>,
 		...args: any[]
 	): object | undefined;
 
@@ -51,7 +51,7 @@ export interface DataEvent {
 	once(
 		events: string | string[],
 		handler: Function,
-		params: AsyncCbOpts & {options?: AddEventListenerOptions},
+		params: AsyncOnceOpts<T>,
 		...args: any[]
 	): object | undefined;
 
@@ -59,7 +59,7 @@ export interface DataEvent {
 	off(params: ClearOptsId<object>): void;
 }
 
-export interface SocketEvent extends DataEvent {
+export interface SocketEvent<T extends object = Async> extends DataEvent<T> {
 	connection: Promise<Socket | void>;
 }
 
@@ -119,7 +119,7 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 	/**
 	 * Event emitter object for working with a data provider
 	 */
-	get dataEvent(): DataEvent {
+	get dataEvent(): DataEvent<this> {
 		const
 			{async: $a, $dataProvider: $d} = this;
 
@@ -253,7 +253,7 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 	 * Returns an event emitter object for working with a socket connection
 	 * @param [params] - advanced parameters
 	 */
-	connect(params?: Dictionary): SocketEvent {
+	connect(params?: Dictionary): SocketEvent<this> {
 		const
 			{async: $a, $dataProvider: $d} = this,
 			connection = (async () => $d && $d.connect(params))();
@@ -357,7 +357,7 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 	 * @param fn
 	 * @param [params]
 	 */
-	protected attachToSocket(fn: (socket: Socket) => void, params?: AsyncCbOpts): void {
+	protected attachToSocket(fn: (socket: Socket) => void, params?: AsyncCbOpts<Provider>): void {
 		const
 			{$dataProvider: $d} = this;
 
