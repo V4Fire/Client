@@ -71,15 +71,17 @@
 
 /**
  * Adds a script dependence
- * @param {string=} [name] - dependence name
+ *
+ * @param {string} name - dependence name
+ * @param {boolean=} [defer] - defer load mode
  */
-- block index->addScriptDep(name)
+- block index->addScriptDep(name, defer = true)
 	? name = self.normalize(name)
-	document.write('<script src="' + PATH['{name}'] + '" defer="defer"><' + '/script>');
+	document.write('<script src="' + PATH['{name}'] + '" {(defer ? \'defer="defer"\' : '')}><' + '/script>');
 
 /**
  * Adds a link dependence
- * @param {string=} [name] - dependence name
+ * @param {string} name - dependence name
  */
 - block index->addStyleDep(name)
 	? name = self.normalize(name)

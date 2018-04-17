@@ -153,16 +153,19 @@
 					- block styles
 						+= self.addDependencies(@dependencies, 'styles')
 
+					- block std
+						# script
+							if ('std' in PATH) {
+								#+= self.addScriptDep('std', false)
+							}
+
 					: defLibs
 					- block defLibs
 						? defLibs = [ &
-							['babel-polyfill/dist/polyfill.min.js'],
-							['collection.js/dist/collection.min.js'],
-							['sugar/dist/sugar.min.js'],
+							['collection.js/dist/collection.sync.min.js'],
 							['vue/dist/vue.runtime' + (isProd ? '.min' : '') + '.js'],
 							'requestidlecallback/index.js',
 							'dom4/build/dom4.js',
-							'sugar/dist/locales/ru.js',
 							'eventemitter2/lib/eventemitter2.js',
 							'urijs/src/URI.min.js',
 							'fg-loadcss/src/loadCSS.js',
@@ -208,7 +211,6 @@
 					# script
 						# block initLibs
 							Vue.default = Vue;
-							Sugar.extend();
 
 					- block scripts
 						# script

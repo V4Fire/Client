@@ -19,9 +19,17 @@ const
 	{normalizeSep} = include('build/helpers');
 
 const
+	RUNTIME = 0,
+	STD = 1,
+	HTML = 2,
+	I = [RUNTIME, STD, HTML].length;
+
+const
 	RCPU = require('os').cpus().length,
-	IN_PROCESS = 3,
-	MAX_PROCESS = RCPU * IN_PROCESS;
+	IN_PROCESS = ['js', 'css', 'html'].length;
+
+let MAX_PROCESS = RCPU * IN_PROCESS;
+MAX_PROCESS += MAX_PROCESS <= I ? 1 : 0;
 
 /**
  * Tree of dependencies
@@ -81,7 +89,8 @@ module.exports = (async () => {
 	const
 		buildConfig = (await entries.getBuildConfig()).filter((el, key) => entriesFilter ? entriesFilter[key] : true),
 		blockMap = await block.getAll(),
-		graph = await buildConfig.getUnionEntryPoints({cache: blockMap});
+		graph = await buildConfig.getUnionEntryPoints({cache: blockMap}),
+		processes = $C(I).map(() => ({}));
 
 	/**
 	 * Returns an url relative to the entry folder
@@ -93,10 +102,6 @@ module.exports = (async () => {
 
 		return normalizeSep(path.relative(tmpEntries, url));
 	}
-
-	const processes = [
-		{}
-	];
 
 	const entry = await $C(graph.entry)
 		.parallel()
@@ -127,7 +132,13 @@ module.exports = (async () => {
 			}));
 
 			entry[logicTaskName] = logicFile;
-			processes[0][logicTaskName] = logicFile;
+
+			if (name === 'std') {
+				processes[STD][logicTaskName] = logicFile;
+
+			} else {
+				processes[RUNTIME][logicTaskName] = logicFile;
+			}
 
 			// CSS
 
@@ -158,8 +169,10 @@ module.exports = (async () => {
 				return str;
 			}));
 
-			let union = processes[processes.length - 1];
-			if (MAX_PROCESS > processes.length && (processes.length === 1 || $C(union).length() > IN_PROCESS)) {
+			let
+				union = processes[processes.length - 1];
+
+			if (processes.length === I || MAX_PROCESS > processes.length && $C(union).length() > IN_PROCESS) {
 				processes.push(union = {});
 			}
 
@@ -221,9 +234,12 @@ module.exports = (async () => {
 				return str;
 			}));
 
-			entry[htmlTaskName] = union[htmlTaskName] = htmlFile;
+			entry[htmlTaskName] = processes[HTML][htmlTaskName] = htmlFile;
 			return entry;
 		});
+
+	$C(processes)
+		.remove((obj) => !$C(obj).length());
 
 	const res = {
 		entry,
