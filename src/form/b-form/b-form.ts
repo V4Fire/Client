@@ -102,7 +102,7 @@ export default class bForm<T extends Dictionary = Dictionary> extends iData<T> {
 
 				if (component && component.instance instanceof iInput && !cache[component.blockId]) {
 					cache[component.blockId] = true;
-					arr.push(<iInput>component);
+					arr.push(<any>component);
 				}
 
 				return arr;
