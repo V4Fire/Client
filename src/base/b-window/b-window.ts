@@ -137,6 +137,6 @@ export default class bWindow<T extends Dictionary = Dictionary> extends iData<T>
 	 */
 	@hook('mounted')
 	protected prependElToBody(): void {
-		(<any>document.body).prepend(this.$el);
+		document.body.insertAdjacentElement('beforeend', this.$el);
 	}
 }

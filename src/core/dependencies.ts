@@ -102,7 +102,7 @@ GLOBAL.ModuleDependencies = Object.assign(GLOBAL.ModuleDependencies || {}, {
 						(<any>links[links.length - 1]).after(link);
 
 					} else {
-						(<any>document.head).prepend(link);
+						document.head.insertAdjacentElement('beforeend', link);
 					}
 				});
 
