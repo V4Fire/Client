@@ -12,6 +12,7 @@ exports.loadToPrototype = loadToPrototype;
 exports.loadToConstructor = loadToConstructor;
 
 require('core-js/modules/web.immediate');
+require('sugar/locales/ru');
 
 loadToConstructor([
 	[
