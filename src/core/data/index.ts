@@ -233,6 +233,10 @@ export default class Provider {
 				const
 					socket = IO(url);
 
+				if (!socket) {
+					return;
+				}
+
 				function onClear(err: any): void {
 					reject(err);
 					delete connectCache[key];

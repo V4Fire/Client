@@ -17,11 +17,20 @@ export type Socket = SocketIOClient.Socket;
  * Wrapper for sockets
  * @param [namespace] - connection namespace
  */
-export default function socket(namespace: string = ''): Socket {
-	return require('socket.io-client').connect(new URI(API).path(namespace).toString(), {
-		allowUpgrades: false,
-		transports: ['websocket'],
-		pingTimeout: PING,
-		pingInterval: PING
-	});
+export default function socket(namespace: string = ''): Socket | undefined {
+	let socket;
+
+	try {
+		socket = require('socket.io-client');
+
+	} catch (_) {}
+
+	if (socket) {
+		return socket.connect(new URI(API).path(namespace).toString(), {
+			allowUpgrades: false,
+			transports: ['websocket'],
+			pingTimeout: PING,
+			pingInterval: PING
+		});
+	}
 }
