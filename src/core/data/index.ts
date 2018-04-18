@@ -55,7 +55,7 @@ const globalEvent = new EventEmitter({
 });
 
 export const
-	providers: Dictionary<typeof Provider> = Object.createDict(),
+	providers: Dictionary<Function> = Object.createDict(),
 	instanceCache: Dictionary<Provider> = Object.createDict(),
 	reqCache: Dictionary<Dictionary<RequestResponseObject>> = Object.createDict(),
 	connectCache: Dictionary<Promise<Socket>> = Object.createDict();
@@ -67,7 +67,7 @@ export const
  * Adds a data provider to the global cache
  * @decorator
  */
-export function provider(target: typeof Provider): void {
+export function provider(target: Function): void {
 	providers[target.name] = target;
 }
 
