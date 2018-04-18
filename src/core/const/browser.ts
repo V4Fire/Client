@@ -10,16 +10,16 @@ const
 	agent = navigator.userAgent;
 
 export const is = {
-	Android: agent.match(/Android/i),
+	Android: agent.match(/Android[ \/-]([0-9.]*)/i),
 	BlackBerry: agent.match(/BlackBerry/i),
 	iOS: agent.match(/iPhone|iPad|iPod/i),
 	OperaMini: agent.match(/Opera Mini/i),
 	WindowsMobile: agent.match(/IEMobile/i),
 
 	/**
-	 * True if the current browser is mobile
+	 * Version of the current mobile browser or false
 	 */
-	get mobile(): boolean {
-		return this.Android || this.BlackBerry || this.iOS || this.OperaMini || this.WindowsMobile;
+	get mobile(): string[] | boolean {
+		return this.Android || this.BlackBerry || this.iOS || this.OperaMini || this.WindowsMobile || false;
 	}
 };
