@@ -57,7 +57,9 @@ loadToPrototype([
 	[
 		Number,
 		['second', require('sugar/number/second')],
-		['seconds', require('sugar/number/seconds')]
+		['seconds', require('sugar/number/seconds')],
+		['floor', require('sugar/number/floor')],
+		['format', require('sugar/number/format')]
 	],
 
 	[
