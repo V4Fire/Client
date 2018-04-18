@@ -1084,7 +1084,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	protected $<T extends iBlock = iBlock>(query: string, filter?: string): T | undefined;
 	protected $<T extends iBlock = iBlock>(query: string | VueElement<T>, filter: string = ''): T | undefined {
 		const
-			$0 = Object.isString(query) ? document.query(query) : query,
+			$0 = Object.isString(query) ? document.body.querySelector(query) : query,
 			n = $0 && $0.closest(`.i-block-helper${filter}`) as any;
 
 		return n && n.vueComponent;
