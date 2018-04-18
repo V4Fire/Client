@@ -142,9 +142,9 @@ export default class bForm<T extends Dictionary = Dictionary> extends iData<T> {
 	get submits(): CanPromise<ReadonlyArray<bButton>> {
 		return this.waitState('ready', () => {
 			const els = $C(
-				this.$el
-					.queryAll('button[type="submit"]')
-					.concat(this.id ? document.queryAll(`button[type="submit"][form="${this.id}"]`) : [])
+				Array.from(this.$el.querySelectorAll('button[type="submit"]')).concat(
+					this.id ? Array.from(document.body.querySelectorAll(`button[type="submit"][form="${this.id}"]`)) : []
+				)
 
 			).map((el) => <bButton>this.$(el));
 
