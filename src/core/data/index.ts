@@ -391,19 +391,23 @@ export default class Provider {
 	 *
 	 * @param [body]
 	 * @param [opts]
+	 * @param [eventName]
 	 */
-	post<T>(body?: RequestBody, opts?: CreateRequestOptions<T>): RequestResponse {
+	post<T>(body?: RequestBody, opts?: CreateRequestOptions<T>, eventName?: ModelMethods): RequestResponse {
 		const
 			url = this.url();
 
-		return this.updateRequest(
-			url,
-			this.request(url, this.resolver, this.mergeStatics('post', {
-				...opts,
-				body,
-				method: 'POST'
-			}))
-		);
+		const req = this.request(url, this.resolver, this.mergeStatics(eventName || 'post', {
+			...opts,
+			body,
+			method: 'POST'
+		}));
+
+		if (eventName) {
+			return this.updateRequest(url, eventName, req);
+		}
+
+		return this.updateRequest(url, req);
 	}
 
 	/**
