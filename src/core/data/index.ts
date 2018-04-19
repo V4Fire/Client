@@ -53,8 +53,8 @@ export {
 
 };
 
-export type EncodersTable = Record<ModelMethods, Encoder | Encoders> | {};
-export type DecodersTable = Record<ModelMethods, Decoder | Decoders> | {};
+export type EncodersTable = Record<ModelMethods | 'def', Encoder | Encoders> | {};
+export type DecodersTable = Record<ModelMethods | 'def', Decoder | Decoders> | {};
 
 const globalEvent = new EventEmitter({
 	maxListeners: 1e3,
@@ -555,8 +555,8 @@ export default class Provider {
 		return {
 			...opts,
 			middlewares: merge(middlewares, opts.middlewares),
-			encoder: merge(encoders[method], opts.encoder),
-			decoder: merge(decoders[method], opts.decoder)
+			encoder: merge(encoders[method] || encoders.def, opts.encoder),
+			decoder: merge(decoders[method] || decoders.def, opts.decoder)
 		};
 	}
 
