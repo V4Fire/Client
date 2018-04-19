@@ -32,6 +32,7 @@ import Provider, {
 export * from 'super/i-message/i-message';
 export {
 
+	ModelMethods,
 	RequestQuery,
 	RequestBody,
 	RequestResponse,
