@@ -16,5 +16,6 @@ const
  * Parameters for webpack.alias
  */
 module.exports = {
+	assets: src.assets(),
 	sprite: path.join(src.assets(), 'svg')
 };
