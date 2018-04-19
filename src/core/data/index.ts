@@ -99,31 +99,6 @@ export default class Provider {
 	static readonly decoders: DecodersTable = {};
 
 	/**
-	 * Request Function
-	 */
-	request: typeof request = request;
-
-	/**
-	 * External request mode
-	 */
-	externalRequest: boolean = false;
-
-	/**
-	 * Cache strategy
-	 */
-	cacheStrategy: CacheStrategy = 'queue';
-
-	/**
-	 * Offline cache
-	 */
-	offlineCache: boolean = false;
-
-	/**
-	 * Maximum cache time
-	 */
-	cacheTTL: number = (10).seconds();
-
-	/**
 	 * Socket connection url
 	 */
 	socketURL?: string;
@@ -147,6 +122,31 @@ export default class Provider {
 	 * Temporary model event name for requests
 	 */
 	tmpEventName: ModelMethods | undefined;
+
+	/**
+	 * Request Function
+	 */
+	readonly request: typeof request = request;
+
+	/**
+	 * External request mode
+	 */
+	readonly externalRequest: boolean = false;
+
+	/**
+	 * Cache strategy
+	 */
+	readonly cacheStrategy: CacheStrategy = 'queue';
+
+	/**
+	 * Offline cache
+	 */
+	readonly offlineCache: boolean = false;
+
+	/**
+	 * Maximum cache time
+	 */
+	readonly cacheTTL: number = (10).seconds();
 
 	/**
 	 * List of socket events
