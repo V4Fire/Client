@@ -425,9 +425,9 @@ export default class Provider {
 	post<T>(body?: RequestBody, opts?: CreateRequestOptions<T>): RequestResponse {
 		const
 			url = this.url(),
-			eventName = this.name() || 'post';
+			eventName = this.name();
 
-		const req = this.request(url, this.resolver, this.mergeStatics(eventName, {
+		const req = this.request(url, this.resolver, this.mergeStatics(eventName || 'post', {
 			...opts,
 			body,
 			method: 'POST'
