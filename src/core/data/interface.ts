@@ -6,6 +6,13 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+export type ModelMethods =
+	'get' |
+	'post' |
+	'add' |
+	'upd' |
+	'del';
+
 export type SocketEvent = (() => Dictionary) | {
 	type: string;
 	instance: string;

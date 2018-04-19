@@ -16,7 +16,7 @@ import Async, { AsyncCbOpts } from 'core/async';
 import IO, { Socket } from 'core/socket';
 
 import { concatUrls } from 'core/url';
-import { SocketEvent, ProviderParams } from 'core/data/interface';
+import { ModelMethods, SocketEvent, ProviderParams } from 'core/data/interface';
 import request, {
 
 	globalOpts,
@@ -28,7 +28,9 @@ import request, {
 	RequestResponseObject,
 	Response,
 	RequestBody,
-	ResolverResult
+	ResolverResult,
+	Decoders,
+	Encoders
 
 } from 'core/request';
 
@@ -80,6 +82,16 @@ export default class Provider {
 	 * Request middlewares
 	 */
 	static readonly middlewares: Middlewares<any, Provider> = {};
+
+	/**
+	 * Data encoders
+	 */
+	static readonly encoders: Record<ModelMethods, Encoders>;
+
+	/**
+	 * Data decoders
+	 */
+	static readonly decoders: Record<ModelMethods, Decoders>;
 
 	/**
 	 * Request Function
@@ -348,20 +360,18 @@ export default class Provider {
 	 */
 	get<T>(query?: RequestQuery, opts?: CreateRequestOptions<T>): RequestResponse {
 		const
-			url = this.url(),
-			{middlewares} = <any>this.constructor;
+			url = this.url();
 
 		return this.updateRequest(
 			url,
-			this.request(url, this.resolver, <CreateRequestOptions<T>>{
+			this.request(url, this.resolver, this.mergeStatics('get', {
 				cacheStrategy: this.cacheStrategy,
 				cacheTTL: this.cacheTTL,
 				offlineCache: this.offlineCache,
 				...opts,
 				query,
-				middlewares: {...middlewares, ...opts && opts.middlewares},
 				method: 'GET'
-			})
+			}))
 		);
 	}
 
@@ -373,17 +383,15 @@ export default class Provider {
 	 */
 	post<T>(body?: RequestBody, opts?: CreateRequestOptions<T>): RequestResponse {
 		const
-			url = this.url(),
-			{middlewares} = <any>this.constructor;
+			url = this.url();
 
 		return this.updateRequest(
 			url,
-			this.request(url, this.resolver, <CreateRequestOptions<T>>{
+			this.request(url, this.resolver, this.mergeStatics('post', {
 				...opts,
 				body,
-				middlewares: {...middlewares, ...opts && opts.middlewares},
 				method: 'POST'
-			})
+			}))
 		);
 	}
 
@@ -395,18 +403,16 @@ export default class Provider {
 	 */
 	add<T>(body?: RequestBody, opts?: CreateRequestOptions<T>): RequestResponse {
 		const
-			url = this.url(),
-			{middlewares} = <any>this.constructor;
+			url = this.url();
 
 		return this.updateRequest(
 			url,
 			'add',
-			this.request(url, this.resolver, <CreateRequestOptions<T>>{
+			this.request(url, this.resolver, this.mergeStatics('add', {
 				...opts,
 				body,
-				middlewares: {...middlewares, ...opts && opts.middlewares},
 				method: 'POST'
-			})
+			}))
 		);
 	}
 
@@ -418,18 +424,16 @@ export default class Provider {
 	 */
 	upd<T>(body?: RequestBody, opts?: CreateRequestOptions<T>): RequestResponse {
 		const
-			url = this.url(),
-			{middlewares} = <any>this.constructor;
+			url = this.url();
 
 		return this.updateRequest(
 			url,
 			'upd',
-			this.request(url, this.resolver, <CreateRequestOptions<T>>{
+			this.request(url, this.resolver, this.mergeStatics('upd', {
 				...opts,
 				body,
-				middlewares: {...middlewares, ...opts && opts.middlewares},
 				method: 'PUT'
-			})
+			}))
 		);
 	}
 
@@ -441,18 +445,16 @@ export default class Provider {
 	 */
 	del<T>(body?: RequestBody, opts?: CreateRequestOptions<T>): RequestResponse {
 		const
-			url = this.url(),
-			{middlewares} = <any>this.constructor;
+			url = this.url();
 
 		return this.updateRequest(
 			url,
 			'del',
-			this.request(url, this.resolver, <CreateRequestOptions<T>>{
+			this.request(url, this.resolver, this.mergeStatics('del', {
 				...opts,
 				body,
-				middlewares: {...middlewares, ...opts && opts.middlewares},
 				method: 'DELETE'
-			})
+			}))
 		);
 	}
 
@@ -525,6 +527,32 @@ export default class Provider {
 			});
 
 		}, {label: $$.listenSocketEvents});
+	}
+
+	/**
+	 * Merge options from static class fields to the specified options object and returns new options
+	 *
+	 * @param method - model method
+	 * @param opts
+	 */
+	protected mergeStatics(method: ModelMethods, opts: CreateRequestOptions): CreateRequestOptions {
+		opts = opts || {};
+
+		const
+			{middlewares, encoders, decoders} = <any>this.constructor;
+
+		const merge = (a, b) => {
+			a = Object.isFunction(a) ? [a] : a;
+			b = Object.isFunction(b) ? [b] : b;
+			return {...a, ...b};
+		};
+
+		return {
+			...opts,
+			middlewares: merge(middlewares, opts.middlewares),
+			encoder: merge(encoders && encoders[method], opts.encoder),
+			decoder: merge(decoders && decoders[method], opts.decoder)
+		};
 	}
 
 	/**

@@ -24,6 +24,7 @@ import Provider, {
 	RequestBody,
 	RequestResponse,
 	RequestError,
+	ModelMethods,
 	CreateRequestOptions as BaseCreateRequestOptions
 
 } from 'core/data';
@@ -71,8 +72,6 @@ export interface CreateRequestOptions<T = any> extends BaseCreateRequestOptions<
 export interface BlockConverter<T = any> {
 	(value: any): T;
 }
-
-export type ModelMethods = 'get' | 'post' | 'add' | 'upd' | 'del';
 
 export const
 	$$ = symbolGenerator();
