@@ -144,6 +144,11 @@ export default class Provider {
 	tmpURL: string = '';
 
 	/**
+	 * Temporary model event name for requests
+	 */
+	tmpEventName: ModelMethods | undefined;
+
+	/**
 	 * List of socket events
 	 */
 	readonly events: string[] = ['add', 'upd', 'del', 'refresh'];
@@ -323,12 +328,33 @@ export default class Provider {
 	}
 
 	/**
+	 * Returns a custom event name for the operation
+	 */
+	name(): ModelMethods | undefined;
+
+	/**
+	 * Sets a custom event name for the operation
+	 * @param [value]
+	 */
+	name(value: ModelMethods): Provider;
+	name(value?: ModelMethods): Provider | ModelMethods | undefined {
+		if (value == null) {
+			const val = this.tmpEventName;
+			this.tmpEventName = undefined;
+			return val;
+		}
+
+		this.tmpEventName = value;
+		return this;
+	}
+
+	/**
 	 * Returns full request URL
 	 */
 	url(): string;
 
 	/**
-	 * Sets advanced URL for requests
+	 * Sets an advanced URL for requests
 	 * @param [value]
 	 */
 	url(value: string): Provider;
@@ -345,7 +371,7 @@ export default class Provider {
 	}
 
 	/**
-	 * Sets base temporary URL for requests
+	 * Sets a base temporary URL for requests
 	 * @param [value]
 	 */
 	base(value: string): Provider {
@@ -370,20 +396,24 @@ export default class Provider {
 	 */
 	get<T>(query?: RequestQuery, opts?: CreateRequestOptions<T>): RequestResponse {
 		const
-			url = this.url();
+			url = this.url(),
+			eventName = this.name();
 
-		return this.updateRequest(
-			url,
-			this.request(url, this.resolver, this.mergeStatics('get', {
-				externalRequest: this.externalRequest,
-				cacheStrategy: this.cacheStrategy,
-				cacheTTL: this.cacheTTL,
-				offlineCache: this.offlineCache,
-				...opts,
-				query,
-				method: 'GET'
-			}))
-		);
+		const req = this.request(url, this.resolver, this.mergeStatics('get', {
+			externalRequest: this.externalRequest,
+			cacheStrategy: this.cacheStrategy,
+			cacheTTL: this.cacheTTL,
+			offlineCache: this.offlineCache,
+			...opts,
+			query,
+			method: 'GET'
+		}));
+
+		if (eventName) {
+			return this.updateRequest(url, eventName, req);
+		}
+
+		return this.updateRequest(url, req);
 	}
 
 	/**
@@ -391,13 +421,13 @@ export default class Provider {
 	 *
 	 * @param [body]
 	 * @param [opts]
-	 * @param [eventName]
 	 */
-	post<T>(body?: RequestBody, opts?: CreateRequestOptions<T>, eventName?: ModelMethods): RequestResponse {
+	post<T>(body?: RequestBody, opts?: CreateRequestOptions<T>): RequestResponse {
 		const
-			url = this.url();
+			url = this.url(),
+			eventName = this.name() || 'post';
 
-		const req = this.request(url, this.resolver, this.mergeStatics(eventName || 'post', {
+		const req = this.request(url, this.resolver, this.mergeStatics(eventName, {
 			...opts,
 			body,
 			method: 'POST'
@@ -418,11 +448,12 @@ export default class Provider {
 	 */
 	add<T>(body?: RequestBody, opts?: CreateRequestOptions<T>): RequestResponse {
 		const
-			url = this.url();
+			url = this.url(),
+			eventName = this.name() || 'add';
 
 		return this.updateRequest(
 			url,
-			'add',
+			eventName,
 			this.request(url, this.resolver, this.mergeStatics('add', {
 				...opts,
 				body,
@@ -439,11 +470,12 @@ export default class Provider {
 	 */
 	upd<T>(body?: RequestBody, opts?: CreateRequestOptions<T>): RequestResponse {
 		const
-			url = this.url();
+			url = this.url(),
+			eventName = this.name() || 'upd';
 
 		return this.updateRequest(
 			url,
-			'upd',
+			eventName,
 			this.request(url, this.resolver, this.mergeStatics('upd', {
 				...opts,
 				body,
@@ -460,11 +492,12 @@ export default class Provider {
 	 */
 	del<T>(body?: RequestBody, opts?: CreateRequestOptions<T>): RequestResponse {
 		const
-			url = this.url();
+			url = this.url(),
+			eventName = this.name() || 'upd';
 
 		return this.updateRequest(
 			url,
-			'del',
+			eventName,
 			this.request(url, this.resolver, this.mergeStatics('del', {
 				...opts,
 				body,
