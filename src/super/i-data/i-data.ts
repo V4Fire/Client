@@ -576,7 +576,7 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 	}
 
 	/**
-	 * Handler: dp.add
+	 * Handler: dataProvider.add
 	 * @param data
 	 */
 	protected onAddData(data: T): void {
@@ -584,7 +584,7 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 	}
 
 	/**
-	 * Handler: dp.upd
+	 * Handler: dataProvider.upd
 	 * @param data
 	 */
 	protected onUpdData(data: T): void {
@@ -592,7 +592,7 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 	}
 
 	/**
-	 * Handler: dp.del
+	 * Handler: dataProvider.del
 	 * @param data
 	 */
 	protected onDelData(data: T): void {
@@ -600,7 +600,7 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 	}
 
 	/**
-	 * Handler: dp.refresh
+	 * Handler: dataProvider.refresh
 	 * @param data
 	 */
 	protected async onRefreshData(data: T): Promise<void> {
