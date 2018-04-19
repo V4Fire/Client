@@ -121,7 +121,7 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 	 */
 	get dataEvent(): DataEvent<this> {
 		const
-			{async: $a, $dataProvider: $d} = this;
+			{async: $a, dp: $d} = this;
 
 		return {
 			on: (event, fn, params, ...args) => {
@@ -166,15 +166,14 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 	 * Provider instance
 	 */
 	@system()
-	protected $dataProvider?: Provider;
+	protected dp?: Provider;
 
 	/** @override */
 	@wait('loading', {label: $$.initLoad, defer: true})
 	async initLoad(): Promise<void> {
-		const {$dataProvider: $d} = this;
 		this.block.status = this.block.statuses.loading;
 
-		if ($d && $d.baseURL) {
+		if (this.dp && this.dp.baseURL) {
 			const
 				p = this.getParams('get');
 
@@ -220,7 +219,7 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 	url(value: string): this;
 	url(value?: string): this | string | undefined {
 		const
-			{$dataProvider: $d} = this;
+			{dp: $d} = this;
 
 		if (!$d) {
 			return value != null ? this : undefined;
@@ -239,11 +238,8 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 	 * @param value
 	 */
 	base(value: string): this {
-		const
-			{$dataProvider: $d} = this;
-
-		if ($d) {
-			$d.base(value);
+		if (this.dp) {
+			this.dp.base(value);
 		}
 
 		return this;
@@ -255,7 +251,7 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 	 */
 	connect(params?: Dictionary): SocketEvent<this> {
 		const
-			{async: $a, $dataProvider: $d} = this,
+			{async: $a, dp: $d} = this,
 			connection = (async () => $d && $d.connect(params))();
 
 		return {
@@ -340,14 +336,11 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 	 * Drops a request cache
 	 */
 	dropCache(): void {
-		const
-			{$dataProvider: $d} = this;
-
-		if (!$d) {
+		if (!this.dp) {
 			return;
 		}
 
-		$d.dropCache();
+		this.dp.dropCache();
 	}
 
 	/**
@@ -358,14 +351,11 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 	 * @param [params]
 	 */
 	protected attachToSocket(fn: (socket: Socket) => void, params?: AsyncCbOpts<Provider>): void {
-		const
-			{$dataProvider: $d} = this;
-
-		if (!$d) {
+		if (!this.dp) {
 			return;
 		}
 
-		$d.attachToSocket(fn, params);
+		this.dp.attachToSocket(fn, params);
 	}
 
 	/**
@@ -424,11 +414,11 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 	@watch({field: 'dataProvider', immediate: true})
 	protected async syncDataProviderWatcher(value: string | undefined): Promise<void> {
 		if (value) {
-			this.$dataProvider = new providers[value](this.dataProviderParams);
+			this.dp = new providers[value](this.dataProviderParams);
 			await this.initDataListeners();
 
 		} else {
-			this.$dataProvider = undefined;
+			this.dp = undefined;
 			this.dataEvent.off({group: 'dataProviderSync'});
 		}
 	}
@@ -455,7 +445,7 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 	@watch('p')
 	protected async syncDataProviderParamsWatcher(value: Dictionary, oldValue: Dictionary): Promise<void> {
 		if (this.dataProvider) {
-			this.$dataProvider = new providers[this.dataProvider](value);
+			this.dp = new providers[this.dataProvider](value);
 			await this.initDataListeners();
 		}
 	}
@@ -551,7 +541,7 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 		data?: RequestBody,
 		params?: CreateRequestOptions<T>
 	): Then<T | null> {
-		if (!this.$dataProvider) {
+		if (!this.dp) {
 			return <any>Then.resolve(null);
 		}
 
@@ -562,7 +552,7 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 			asyncParams = <AsyncOpts>(Object.select(p, asyncFields));
 
 		const
-			req = <RequestResponse>this.async.request((<Function>this.$dataProvider[method])(data, reqParams), asyncParams),
+			req = <RequestResponse>this.async.request((<Function>this.dp[method])(data, reqParams), asyncParams),
 			is = (v) => v !== false;
 
 		if (this.mods.progress !== 'true') {
@@ -586,7 +576,7 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 	}
 
 	/**
-	 * Handler: $dataProvider.add
+	 * Handler: dp.add
 	 * @param data
 	 */
 	protected onAddData(data: T): void {
@@ -594,7 +584,7 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 	}
 
 	/**
-	 * Handler: $dataProvider.upd
+	 * Handler: dp.upd
 	 * @param data
 	 */
 	protected onUpdData(data: T): void {
@@ -602,7 +592,7 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 	}
 
 	/**
-	 * Handler: $dataProvider.del
+	 * Handler: dp.del
 	 * @param data
 	 */
 	protected onDelData(data: T): void {
@@ -610,7 +600,7 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 	}
 
 	/**
-	 * Handler: $dataProvider.refresh
+	 * Handler: dp.refresh
 	 * @param data
 	 */
 	protected async onRefreshData(data: T): Promise<void> {
