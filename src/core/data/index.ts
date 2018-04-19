@@ -29,7 +29,9 @@ import request, {
 	Response,
 	RequestBody,
 	ResolverResult,
+	Decoder,
 	Decoders,
+	Encoder,
 	Encoders
 
 } from 'core/request';
@@ -50,6 +52,9 @@ export {
 	RequestBody
 
 };
+
+export type EncodersTable = Record<ModelMethods, Encoder | Encoders> | {};
+export type DecodersTable = Record<ModelMethods, Decoder | Decoders> | {};
 
 const globalEvent = new EventEmitter({
 	maxListeners: 1e3,
@@ -86,12 +91,12 @@ export default class Provider {
 	/**
 	 * Data encoders
 	 */
-	static readonly encoders: Record<ModelMethods, Encoders>;
+	static readonly encoders: EncodersTable = {};
 
 	/**
 	 * Data decoders
 	 */
-	static readonly decoders: Record<ModelMethods, Decoders>;
+	static readonly decoders: DecodersTable = {};
 
 	/**
 	 * Request Function
@@ -550,8 +555,8 @@ export default class Provider {
 		return {
 			...opts,
 			middlewares: merge(middlewares, opts.middlewares),
-			encoder: merge(encoders && encoders[method], opts.encoder),
-			decoder: merge(decoders && decoders[method], opts.decoder)
+			encoder: merge(encoders[method], opts.encoder),
+			decoder: merge(decoders[method], opts.decoder)
 		};
 	}
 
