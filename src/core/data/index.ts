@@ -555,7 +555,7 @@ export default class Provider {
 		return {
 			...opts,
 			middlewares: merge(middlewares, opts.middlewares),
-			encoder: merge(encoders[method] || encoders.def, opts.encoder),
+			encoder: merge(encoders[method] || encoders.def || decoders[method] || decoders.def, opts.encoder),
 			decoder: merge(decoders[method] || decoders.def, opts.decoder)
 		};
 	}
