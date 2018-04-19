@@ -104,6 +104,11 @@ export default class Provider {
 	request: typeof request = request;
 
 	/**
+	 * External request mode
+	 */
+	externalRequest: boolean = false;
+
+	/**
 	 * Cache strategy
 	 */
 	cacheStrategy: CacheStrategy = 'queue';
@@ -370,6 +375,7 @@ export default class Provider {
 		return this.updateRequest(
 			url,
 			this.request(url, this.resolver, this.mergeStatics('get', {
+				externalRequest: this.externalRequest,
 				cacheStrategy: this.cacheStrategy,
 				cacheTTL: this.cacheTTL,
 				offlineCache: this.offlineCache,
