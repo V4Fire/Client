@@ -439,6 +439,18 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	protected watchTmp: Dictionary = {};
 
 	/**
+	 * Cache for prop/field links
+	 */
+	@system()
+	protected readonly linksCache: Dictionary<Dictionary> = {};
+
+	/**
+	 * Cache for prop/field links
+	 */
+	@system()
+	protected readonly syncLinkCache: Dictionary<SyncLink> = {};
+
+	/**
 	 * Link to the current Vue component
 	 */
 	@system({
@@ -546,18 +558,6 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 */
 	@system(() => location)
 	protected readonly location!: Location;
-
-	/**
-	 * Cache for prop/field links
-	 */
-	@system()
-	protected linksCache!: Dictionary<Dictionary>;
-
-	/**
-	 * Cache for prop/field links
-	 */
-	@system()
-	protected syncLinkCache!: Dictionary<SyncLink>;
 
 	/**
 	 * Returns a string id, which is connected to the block
@@ -1188,9 +1188,6 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 */
 	@hook('beforeRuntime')
 	protected initBaseAPI(): void {
-		this.linksCache = {};
-		this.syncLinkCache = {};
-
 		const
 			i = this.instance;
 
