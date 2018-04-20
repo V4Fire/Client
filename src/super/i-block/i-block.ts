@@ -442,13 +442,13 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 * Cache for prop/field links
 	 */
 	@system()
-	protected readonly linksCache: Dictionary<Dictionary> = {};
+	protected readonly linksCache!: Dictionary<Dictionary>;
 
 	/**
 	 * Cache for prop/field synchronize functions
 	 */
 	@system()
-	protected readonly syncLinkCache: Dictionary<SyncLink> = {};
+	protected readonly syncLinkCache!: Dictionary<SyncLink>;
 
 	/**
 	 * Link to the current Vue component
@@ -1188,6 +1188,12 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 */
 	@hook('beforeRuntime')
 	protected initBaseAPI(): void {
+		// @ts-ignore
+		this.linksCache = {};
+
+		// @ts-ignore
+		this.syncLinkCache = {};
+
 		const
 			i = this.instance;
 
