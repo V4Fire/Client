@@ -474,6 +474,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 * API for BEM like develop
 	 */
 	@system({unique: true})
+	// @ts-ignore
 	protected block!: Block<this>;
 
 	/**
@@ -1738,10 +1739,10 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 		this.block = new Block({
 			id: this.blockId,
 			node: this.$el,
-			async: this.async,
+			async: <any>this.async,
 			localEvent: this.localEvent,
 			mods: this.mods,
-			model: this
+			model: <any>this
 		});
 	}
 
