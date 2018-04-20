@@ -445,7 +445,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	protected readonly linksCache: Dictionary<Dictionary> = {};
 
 	/**
-	 * Cache for prop/field links
+	 * Cache for prop/field synchronize functions
 	 */
 	@system()
 	protected readonly syncLinkCache: Dictionary<SyncLink> = {};
