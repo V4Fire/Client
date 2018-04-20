@@ -29,9 +29,7 @@ import request, {
 	Response,
 	RequestBody,
 	ResolverResult,
-	Decoder,
 	Decoders,
-	Encoder,
 	Encoders
 
 } from 'core/request';
@@ -53,8 +51,8 @@ export {
 
 };
 
-export type EncodersTable = Record<ModelMethods | 'def', Encoder | Encoders> | {};
-export type DecodersTable = Record<ModelMethods | 'def', Decoder | Decoders> | {};
+export type EncodersTable = Record<ModelMethods | 'def', Encoders> | {};
+export type DecodersTable = Record<ModelMethods | 'def', Decoders> | {};
 
 const globalEvent = new EventEmitter({
 	maxListeners: 1e3,
@@ -64,7 +62,7 @@ const globalEvent = new EventEmitter({
 export const
 	providers: Dictionary<typeof Provider> = Object.createDict(),
 	instanceCache: Dictionary<Provider> = Object.createDict(),
-	reqCache: Dictionary<Dictionary<RequestResponseObject>> = Object.createDict(),
+	requestCache: Dictionary<Dictionary<RequestResponseObject>> = Object.createDict(),
 	connectCache: Dictionary<Promise<Socket>> = Object.createDict();
 
 export const
@@ -84,6 +82,11 @@ export function provider(target: Function): void {
 @provider
 export default class Provider {
 	/**
+	 * Request Function
+	 */
+	static readonly request: typeof request = request;
+
+	/**
 	 * Request middlewares
 	 */
 	static readonly middlewares: Middlewares<any, Provider> = {};
@@ -97,11 +100,6 @@ export default class Provider {
 	 * Data decoders
 	 */
 	static readonly decoders: DecodersTable = {};
-
-	/**
-	 * Socket connection url
-	 */
-	socketURL?: string;
 
 	/**
 	 * Base URL for requests
@@ -119,34 +117,24 @@ export default class Provider {
 	tmpURL: string = '';
 
 	/**
+	 * Socket connection url
+	 */
+	socketURL?: string;
+
+	/**
 	 * Temporary model event name for requests
 	 */
 	tmpEventName: ModelMethods | undefined;
 
 	/**
-	 * Request Function
+	 * Cache id
 	 */
-	readonly request: typeof request = request;
+	readonly cacheId: string;
 
 	/**
 	 * External request mode
 	 */
 	readonly externalRequest: boolean = false;
-
-	/**
-	 * Cache strategy
-	 */
-	readonly cacheStrategy: CacheStrategy = 'queue';
-
-	/**
-	 * Offline cache
-	 */
-	readonly offlineCache: boolean = false;
-
-	/**
-	 * Maximum cache time
-	 */
-	readonly cacheTTL: number = (10).seconds();
 
 	/**
 	 * List of socket events
@@ -167,6 +155,13 @@ export default class Provider {
 	 * Event emitter object
 	 */
 	readonly event!: EventEmitter;
+
+	/**
+	 * Alias for the request function
+	 */
+	get request(): typeof request {
+		return (<any>this.constructor).request;
+	}
 
 	/**
 	 * Global event emitter object
@@ -195,13 +190,13 @@ export default class Provider {
 	constructor(params: ProviderParams = {}) {
 		const
 			nm = this.constructor.name,
-			key = `${nm}:${JSON.stringify(params)}`;
+			key = this.cacheId = `${nm}:${JSON.stringify(params)}`;
 
 		if (instanceCache[key]) {
 			return instanceCache[key];
 		}
 
-		reqCache[nm] = Object.createDict();
+		requestCache[nm] = Object.createDict();
 		this.async = new Async(this);
 		this.event = new EventEmitter({maxListeners: 1e3, wildcard: true});
 		this.listenAllEvents = Boolean(params.listenAllEvents);
@@ -384,8 +379,8 @@ export default class Provider {
 	 */
 	dropCache(): void {
 		const nm = this.constructor.name;
-		$C(reqCache[nm]).forEach((el) => el.dropCache());
-		reqCache[nm] = Object.createDict();
+		$C(requestCache[nm]).forEach((el) => el.dropCache());
+		requestCache[nm] = Object.createDict();
 	}
 
 	/**
@@ -399,11 +394,8 @@ export default class Provider {
 			url = this.url(),
 			eventName = this.name();
 
-		const req = this.request(url, this.resolver, this.mergeStatics('get', {
+		const req = this.request(url, this.resolver, this.mergeToOpts('get', {
 			externalRequest: this.externalRequest,
-			cacheStrategy: this.cacheStrategy,
-			cacheTTL: this.cacheTTL,
-			offlineCache: this.offlineCache,
 			...opts,
 			query,
 			method: 'GET'
@@ -427,7 +419,7 @@ export default class Provider {
 			url = this.url(),
 			eventName = this.name();
 
-		const req = this.request(url, this.resolver, this.mergeStatics(eventName || 'post', {
+		const req = this.request(url, this.resolver, this.mergeToOpts(eventName || 'post', {
 			...opts,
 			body,
 			method: 'POST'
@@ -454,7 +446,7 @@ export default class Provider {
 		return this.updateRequest(
 			url,
 			eventName,
-			this.request(url, this.resolver, this.mergeStatics('add', {
+			this.request(url, this.resolver, this.mergeToOpts('add', {
 				...opts,
 				body,
 				method: 'POST'
@@ -476,7 +468,7 @@ export default class Provider {
 		return this.updateRequest(
 			url,
 			eventName,
-			this.request(url, this.resolver, this.mergeStatics('upd', {
+			this.request(url, this.resolver, this.mergeToOpts('upd', {
 				...opts,
 				body,
 				method: 'PUT'
@@ -498,7 +490,7 @@ export default class Provider {
 		return this.updateRequest(
 			url,
 			eventName,
-			this.request(url, this.resolver, this.mergeStatics('del', {
+			this.request(url, this.resolver, this.mergeToOpts('del', {
 				...opts,
 				body,
 				method: 'DELETE'
@@ -578,12 +570,12 @@ export default class Provider {
 	}
 
 	/**
-	 * Merge options from static class fields to the specified options object and returns new options
+	 * Merge options from class fields to the specified options object and returns new options
 	 *
 	 * @param method - model method
 	 * @param opts
 	 */
-	protected mergeStatics(method: ModelMethods, opts: CreateRequestOptions): CreateRequestOptions {
+	protected mergeToOpts(method: ModelMethods, opts: CreateRequestOptions): CreateRequestOptions {
 		opts = opts || {};
 
 		const
@@ -597,6 +589,7 @@ export default class Provider {
 
 		return {
 			...opts,
+			cacheId: this.cacheId,
 			middlewares: merge(middlewares, opts.middlewares),
 			encoder: merge(encoders[method] || encoders.def || decoders[method] || decoders.def, opts.encoder),
 			decoder: merge(decoders[method] || decoders.def, opts.decoder)
@@ -635,7 +628,7 @@ export default class Provider {
 					{ctx} = res;
 
 				if (ctx.canCache) {
-					reqCache[this.constructor.name][res.cacheKey] = res;
+					requestCache[this.constructor.name][res.cacheKey] = res;
 				}
 
 				this.setEventToQueue(this.getEventKey(e, res.data), e, () => res.data);
