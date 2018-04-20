@@ -46,10 +46,12 @@ export default class VueInterface<B = VueInterface<any, any>, R = VueInterface<a
 
 	protected $set<T>(object: object, key: string, value: T): T;
 	protected $set<T>(array: T[], key: number, value: T): T;
+	// tslint:disable-next-line
 	protected $set() {}
 
 	protected $delete(object: object, key: string): void;
 	protected $delete<T>(array: T[], key: number): void;
+	// tslint:disable-next-line
 	protected $delete() {}
 
 	// @ts-ignore
@@ -65,26 +67,32 @@ export default class VueInterface<B = VueInterface<any, any>, R = VueInterface<a
 		opts: WatchOptionsWithHandler<T>
 	): (() => void);
 
+	// tslint:disable-next-line
 	protected $watch() {}
 
 	// @ts-ignore
 	protected $on(event: string | string[], cb: Function): this;
+	// tslint:disable-next-line
 	protected $on() {}
 
 	// @ts-ignore
 	protected $once(event: string, cb: Function): this;
+	// tslint:disable-next-line
 	protected $once() {}
 
 	// @ts-ignore
 	protected $off(event?: string | string[], cb?: Function): this;
+	// tslint:disable-next-line
 	protected $off() {}
 
 	// @ts-ignore
 	protected $emit(event: string, ...args: any[]): this;
+	// tslint:disable-next-line
 	protected $emit() {}
 
 	protected $nextTick(cb: (this: this) => void): void;
 	// @ts-ignore
 	protected $nextTick(): Promise<void>;
+	// tslint:disable-next-line
 	protected $nextTick() {}
 }

@@ -9,7 +9,7 @@
 // tslint:disable:max-file-line-count
 import $C = require('collection.js');
 import { EventEmitter2 as EventEmitter } from 'eventemitter2';
-import { WatchOptions, RenderContext, VNode } from 'vue';
+import { WatchOptions, WatchOptionsWithHandler, RenderContext, VNode } from 'vue';
 
 import 'super/i-block/modules/vue.directives';
 import Async, { AsyncOpts } from 'core/async';
@@ -30,6 +30,7 @@ import {
 	ModsDecl,
 	VueInterface,
 	VueElement,
+	ComponentMeta,
 	PARENT
 
 } from 'core/component';
@@ -550,13 +551,13 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 * Cache for prop/field links
 	 */
 	@system()
-	private linksCache!: Dictionary<Dictionary>;
+	protected linksCache!: Dictionary<Dictionary>;
 
 	/**
 	 * Cache for prop/field links
 	 */
 	@system()
-	private syncLinkCache!: Dictionary<SyncLink>;
+	protected syncLinkCache!: Dictionary<SyncLink>;
 
 	/**
 	 * Returns a string id, which is connected to the block
@@ -790,7 +791,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	ifEveryMods(mods: Array<string | string[]>, value?: ModVal): boolean {
 		return $C(mods).every((el) => {
 			if (Object.isArray(el)) {
-				return this.mods[el[0]] === String(el[1]);
+				return this.mods[<string>el[0]] === String(el[1]);
 			}
 
 			return this.mods[el] === String(value);
@@ -806,7 +807,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	ifSomeMod(mods: Array<string | string[]>, value?: ModVal): boolean {
 		return $C(mods).some((el) => {
 			if (Object.isArray(el)) {
-				return this.mods[el[0]] === String(el[1]);
+				return this.mods[<string>el[0]] === String(el[1]);
 			}
 
 			return this.mods[el] === String(value);
@@ -1912,6 +1913,11 @@ export abstract class iBlockDecorator extends iBlock {
 	public readonly b!: typeof browser;
 	public readonly t!: typeof i18n;
 
+	public readonly meta!: ComponentMeta;
+	public readonly linksCache!: Dictionary<Dictionary>;
+	public readonly syncLinkCache!: Dictionary<SyncLink>;
+	public readonly $attrs!: Dictionary<string>;
+
 	public readonly async!: Async<this>;
 	// @ts-ignore
 	public readonly block!: Block<this>;
@@ -1941,6 +1947,22 @@ export abstract class iBlockDecorator extends iBlock {
 		converter: ((value: any, ctx: T) => any) | WatchOptions,
 		opts?: WatchOptions
 	): void;
+
+	// @ts-ignore
+	public $watch<T = any>(
+		exprOrFn: string | ((this: this) => string),
+		cb: (this: this, n: T, o: T) => void,
+		opts?: WatchOptions
+	): (() => void);
+
+	// @ts-ignore
+	public $watch<T = any>(
+		exprOrFn: string | ((this: this) => string),
+		opts: WatchOptionsWithHandler<T>
+	): (() => void);
+
+	// tslint:disable-next-line
+	public $watch() {}
 }
 
 function defaultI18n(): string {
