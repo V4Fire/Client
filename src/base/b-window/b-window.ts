@@ -132,11 +132,9 @@ export default class bWindow<T extends Dictionary = Dictionary> extends iData<T>
 		$e.on('block.mod.set.hidden.true', () => $a.off({group}));
 	}
 
-	/**
-	 * Adds window to the start of a page
-	 */
-	@hook('mounted')
-	protected prependElToBody(): void {
+	/** @override */
+	protected async mounted(): Promise<void> {
+		await super.mounted();
 		document.body.insertAdjacentElement('beforeend', this.$el);
 	}
 }
