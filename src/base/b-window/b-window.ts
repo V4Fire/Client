@@ -133,7 +133,7 @@ export default class bWindow<T extends Dictionary = Dictionary> extends iData<T>
 	}
 
 	/**
-	 * Adds window to start of the page
+	 * Adds window to the start of a page
 	 */
 	@hook('mounted')
 	protected prependElToBody(): void {
