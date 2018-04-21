@@ -282,14 +282,14 @@ export default class bSelect<T extends Dictionary = Dictionary> extends bInput<T
 		const
 			options = data.optionsStore;
 
-		const labels = $C(options).to({}).reduce((map, el) => {
+		const labels = $C(options).to({}).reduce((map, el: any) => {
 			el.value = this.getOptionValue(el);
 			el.label = this.i18n(el.label);
 			map[el.label] = el;
 			return map;
 		});
 
-		const values = $C(options).to({}).reduce((map, el) => {
+		const values = $C(options).to({}).reduce((map, el: any) => {
 			el.value = this.getOptionValue(el);
 			map[el.value] = el;
 			return map;
