@@ -33,7 +33,6 @@
     "collection.js": "^6.6.18",
     "escaper": "^2.4.34",
     "eventemitter2": "^5.0.1",
-    "express": "^4.16.3",
     "fg-loadcss": "^2.0.1",
     "http-status": "^1.0.1",
     "ion-sound": "^3.0.7",
