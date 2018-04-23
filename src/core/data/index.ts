@@ -79,7 +79,7 @@ export function provider(target: Function): void;
 export function provider(nmsOrFn: Function | string): Function | void {
 	if (Object.isString(nmsOrFn)) {
 		return (target) => {
-			providers[`${nmsOrFn}.${target.name}`] = <any>target;
+			providers[`${nmsOrFn}.${target.name}`] = target;
 		};
 	}
 
