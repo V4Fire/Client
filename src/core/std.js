@@ -89,7 +89,9 @@ function loadToConstructor(list) {
 			} else {
 				for (var key in fn) {
 					if (fn.hasOwnProperty(key)) {
-						obj[0][key] = fn[key];
+						(function (key) {
+							obj[0][key] = fn[key];
+						})(key);
 					}
 				}
 			}
@@ -108,9 +110,11 @@ function loadToPrototype(list) {
 			} else {
 				for (var key in fn) {
 					if (fn.hasOwnProperty(key)) {
-						obj[0].prototype[key] = function () {
-							return fn[key](this, ...arguments);
-						};
+						(function (key) {
+							obj[0].prototype[key] = function () {
+								return fn[key](this, ...arguments);
+							};
+						})(key);
 					}
 				}
 			}
