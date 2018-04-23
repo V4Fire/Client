@@ -70,10 +70,20 @@ export const
 
 /**
  * Adds a data provider to the global cache
+ *
  * @decorator
+ * @param namespace
  */
-export function provider(target: Function): void {
-	providers[target.name] = <any>target;
+export function provider(namespace: string): (target: Function) => void;
+export function provider(target: Function): void;
+export function provider(nmsOrFn: Function | string): Function | void {
+	if (Object.isString(nmsOrFn)) {
+		return (target) => {
+			providers[`${nmsOrFn}.${target.name}`] = <any>target;
+		};
+	}
+
+	providers[nmsOrFn.name] = <any>nmsOrFn;
 }
 
 /**
