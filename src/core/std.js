@@ -71,7 +71,8 @@ loadToPrototype([
 
 	[
 		Array,
-		['union', require('sugar/array/union')]
+		['union', require('sugar/array/union')],
+		['sortBy', require('sugar/array/sortBy')]
 	],
 
 	[
