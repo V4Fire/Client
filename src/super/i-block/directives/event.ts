@@ -9,19 +9,17 @@
 import $C = require('collection.js');
 import KeyCodes from 'core/keyCodes';
 import Vue, { VNode, VNodeDirective } from 'vue';
-import { VueInterface, VueElement } from 'core/component';
+import iBlock, { VueElement } from 'super/i-block/i-block';
 
 const
-	cache = new WeakMap();
-
-const
+	cache = new WeakMap(),
 	commaRgxp = /\s*,\s*/g,
 	keyValRgxp = /\.key\.([^.]*)/;
 
 function bind(
-	node: VueElement<VueInterface>,
+	node: VueElement<iBlock>,
 	p: VNodeDirective,
-	vNode: VNode & {context?: VueInterface},
+	vNode: VNode & {context?: iBlock},
 	oldVNode: VNode
 ): void {
 	if (!vNode.context) {

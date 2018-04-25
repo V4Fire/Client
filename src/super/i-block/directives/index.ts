@@ -5,3 +5,5 @@
  * Released under the MIT license
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
+
+import 'super/i-block/directives/event';

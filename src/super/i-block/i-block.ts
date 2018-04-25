@@ -11,6 +11,7 @@ import $C = require('collection.js');
 import { EventEmitter2 as EventEmitter } from 'eventemitter2';
 import { WatchOptions, WatchOptionsWithHandler, RenderContext, VNode } from 'vue';
 
+import 'super/i-block/directives';
 import Async, { AsyncOpts } from 'core/async';
 import Block, { statuses } from 'super/i-block/modules/block';
 import Cache from 'super/i-block/modules/cache';
