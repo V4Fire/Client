@@ -21,13 +21,14 @@ import Vue, {
 
 // @ts-ignore
 import * as defTpls from 'core/block.ss';
-import inheritMeta, { PARENT } from 'core/component/inherit';
-import VueInterface from 'core/component/vue';
-
-import { getComponent, getBaseComponent } from 'core/component/component';
-import { convertRender, createFakeCtx, patchVNode } from 'core/component/functional';
 import { InjectOptions } from 'vue/types/options';
 import { EventEmitter2 as EventEmitter, Listener } from 'eventemitter2';
+
+import 'core/component/directives';
+import VueInterface from 'core/component/vue';
+import inheritMeta, { PARENT } from 'core/component/inherit';
+import { getComponent, getBaseComponent } from 'core/component/component';
+import { convertRender, createFakeCtx, patchVNode } from 'core/component/functional';
 
 export * from 'core/component/decorators';
 export * from 'core/component/functional';
