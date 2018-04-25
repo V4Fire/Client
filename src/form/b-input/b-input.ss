@@ -59,7 +59,7 @@
 							.
 
 					- block clear
-						< _.&__cell.&__icon.&__clear v-if = resetButton
+						< _.&__cell.&__icon.&__clear v-if = resetButton && !readonly
 							< span v-e:mousedown.prevent | @click = onClear
 								< b-icon &
 									:value = 'clear' |

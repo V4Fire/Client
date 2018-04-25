@@ -24,15 +24,9 @@
 						@click = onFastJump(-1)
 					.
 						< .&__bias-right
-							< b-icon &
-								:value = 'keyboard_arrow_left' |
-								:mods = provideMods({size: 'xxl'})
-							.
+							< b-icon :value = 'keyboard_arrow_left'
 
-						< b-icon &
-							:value = 'keyboard_arrow_left' |
-							:mods = provideMods({size: 'xxl'})
-						.
+						< b-icon :value = 'keyboard_arrow_left'
 
 				- block switchLeft
 					< button:a.&__cell.&__step &
@@ -40,10 +34,7 @@
 						:class = getElClasses({state: {disabled: current === 1}}) |
 						@click = onSwitchPage(-1)
 					.
-						< b-icon &
-							:value = 'keyboard_arrow_left' |
-							:mods = provideMods({size: 'xxl'})
-						.
+						< b-icon :value = 'keyboard_arrow_left'
 
 				- block strip
 					< button:a.&__cell.&__page &
@@ -58,7 +49,7 @@
 						< b-select &
 							:options = advPages |
 							:resetButton = false |
-							:mods = provideMods({width: 'full', size: 's', theme: 'paging'}) |
+							:mods = provideMods({width: 'full', size: 'xs', theme: 'paging'}) |
 							@actionChange = onSelectChange
 						.
 
@@ -68,10 +59,7 @@
 						:class = getElClasses({state: {disabled: current === pageCount}}) |
 						@click = onSwitchPage(1)
 					.
-						< b-icon &
-							:value = 'keyboard_arrow_right' |
-							:mods = provideMods({size: 'xxl'})
-						.
+						< b-icon :value = 'keyboard_arrow_right'
 
 				- block jumpRight
 					< button:a.&__cell.&__fast-passage &
@@ -79,13 +67,7 @@
 						:class = getElClasses({state: {disabled: current === pageCount}}) |
 						@click = onFastJump(1)
 					.
-						< b-icon &
-							:value = 'keyboard_arrow_right' |
-							:mods = provideMods({size: 'xxl'})
-						.
+						< b-icon :value = 'keyboard_arrow_right'
 
 						< .&__bias-left
-							< b-icon &
-								:value = 'keyboard_arrow_right' |
-								:mods = provideMods({size: 'xxl'})
-							.
+							< b-icon :value = 'keyboard_arrow_right'

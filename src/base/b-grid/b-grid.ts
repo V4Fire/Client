@@ -8,7 +8,7 @@
 
 import $C = require('collection.js');
 import symbolGenerator from 'core/symbol';
-import iDataPages, { system, field, prop, component } from 'super/i-data-pages/i-data-pages';
+import iDataPages, { field, prop, component } from 'super/i-data-pages/i-data-pages';
 export * from 'super/i-data-pages/i-data-pages';
 
 export const
