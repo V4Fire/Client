@@ -24,7 +24,9 @@ import * as defTpls from 'core/block.ss';
 import { InjectOptions } from 'vue/types/options';
 import { EventEmitter2 as EventEmitter, Listener } from 'eventemitter2';
 
+import 'core/component/filters';
 import 'core/component/directives';
+
 import VueInterface from 'core/component/vue';
 import inheritMeta, { PARENT } from 'core/component/inherit';
 import { getComponent, getBaseComponent } from 'core/component/component';
