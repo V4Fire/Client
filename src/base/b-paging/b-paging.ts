@@ -90,7 +90,7 @@ export default class bPaging extends iBlock {
 	 */
 	protected getDropdownPages(): Page[] {
 		const
-			full = Number.range(1, this.pageCount).toArray(),
+			full = <number[]>Number.range(1, this.pageCount).toArray(),
 			strip = new Set(this.strip),
 			options = $C(full).filter((el) => !strip.has(el)).map();
 
