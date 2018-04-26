@@ -94,7 +94,7 @@ export default class bPaging extends iBlock {
 			strip = new Set(this.strip),
 			options = $C(full).filter((el) => !strip.has(el)).map();
 
-		return $C(options as number[]).map((value) => ({label: String(value), value}));
+		return $C(options as number[]).to([] as Page[]).map((value) => ({label: String(value), value}));
 	}
 
 	/**
