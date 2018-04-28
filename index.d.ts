@@ -7,7 +7,6 @@
  */
 
 /// <reference types="@v4fire/core"/>
-/// <reference types="dom4"/>
 
 declare let READY_STATE: number;
 declare const CONFIG: Dictionary;
