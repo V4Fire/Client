@@ -113,7 +113,7 @@ export default class Provider {
 
 	/**
 	 * Returns an object with authentication params
-	 * @param params - request parameters
+	 * @param params - additional parameters
 	 */
 	static getAuthParams(params?: Dictionary | undefined): Dictionary {
 		return {};
@@ -600,7 +600,7 @@ export default class Provider {
 		return {
 			...opts,
 			cacheId: this.cacheId,
-			middlewares: merge(middlewares, opts.middlewares),
+			middlewares: $C(merge(middlewares, opts.middlewares)).map((fn) => fn.bind(this)),
 			encoder: merge(encoders[method] || encoders.def || decoders[method] || decoders.def, opts.encoder),
 			decoder: merge(decoders[method] || decoders.def, opts.decoder)
 		};
