@@ -51,8 +51,8 @@ export {
 
 };
 
-export type EncodersTable = Record<ModelMethods | 'def', Encoders> | {};
-export type DecodersTable = Record<ModelMethods | 'def', Decoders> | {};
+export type EncodersTable = Record<ModelMethods | 'def', Encoders> | {def?: Encoders};
+export type DecodersTable = Record<ModelMethods | 'def', Decoders> | {def?: Encoders};
 
 const globalEvent = new EventEmitter({
 	maxListeners: 1e3,
@@ -99,7 +99,7 @@ export default class Provider {
 	/**
 	 * Request middlewares
 	 */
-	static readonly middlewares: Middlewares<any, Provider> = {};
+	static readonly middlewares: Middlewares = {};
 
 	/**
 	 * Data encoders
@@ -110,6 +110,14 @@ export default class Provider {
 	 * Data decoders
 	 */
 	static readonly decoders: DecodersTable = {};
+
+	/**
+	 * Returns an object with authentication params
+	 * @param params - request parameters
+	 */
+	static getAuthParams(params?: Dictionary | undefined): Dictionary {
+		return {};
+	}
 
 	/**
 	 * Base URL for requests
@@ -170,7 +178,7 @@ export default class Provider {
 	 * Alias for the request function
 	 */
 	get request(): typeof request {
-		return (<any>this.constructor).request;
+		return (<typeof Provider>this.constructor).request;
 	}
 
 	/**
@@ -239,14 +247,6 @@ export default class Provider {
 	}
 
 	/**
-	 * Returns an object with authentication params
-	 * @param params - request parameters
-	 */
-	getAuthParams(params?: Dictionary | undefined): Dictionary {
-		return {};
-	}
-
-	/**
 	 * Connects to a socket server
 	 *
 	 * @param [params] - additional parameters
@@ -293,7 +293,7 @@ export default class Provider {
 							$e.emit(`${url}Reject`, err);
 						})
 
-						.emit('authentication', this.getAuthParams(params));
+						.emit('authentication', (<typeof Provider>this.constructor).getAuthParams(params));
 				});
 			});
 		}
@@ -589,7 +589,7 @@ export default class Provider {
 		opts = opts || {};
 
 		const
-			{middlewares, encoders, decoders} = <any>this.constructor;
+			{middlewares, encoders, decoders} = <typeof Provider>this.constructor;
 
 		const merge = (a, b) => {
 			a = Object.isFunction(a) ? [a] : a;

@@ -105,7 +105,7 @@ export default class iInput<T extends Dictionary = Dictionary> extends iData<T> 
 	 * Link to the block validators
 	 */
 	get blockValidators(): typeof iInput['blockValidators'] {
-		return (<any>this.instance.constructor).blockValidators;
+		return (<typeof iInput>this.instance.constructor).blockValidators;
 	}
 
 	/** @override */

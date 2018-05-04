@@ -344,14 +344,14 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 * Alias for iBlock.sizeTo.gt
 	 */
 	protected get gt(): Dictionary<string> {
-		return (<any>this.instance.constructor).sizeTo.gt;
+		return (<typeof iBlock>this.instance.constructor).sizeTo.gt;
 	}
 
 	/**
 	 * Alias for iBlock.sizeTo.lt
 	 */
 	protected get lt(): Dictionary<string> {
-		return (<any>this.instance.constructor).sizeTo.lt;
+		return (<typeof iBlock>this.instance.constructor).sizeTo.lt;
 	}
 
 	/**
@@ -365,7 +365,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 * Link to bIcon.getIconLink
 	 */
 	protected get getIconLink(): typeof iBlock.getIconLink {
-		return (<any>this.instance.constructor).getIconLink;
+		return (<typeof iBlock>this.instance.constructor).getIconLink;
 	}
 
 	/**
