@@ -10,6 +10,7 @@ import $C = require('collection.js');
 import StatusCodes from 'core/statusCodes';
 import Provider, { provider, Middlewares, RequestResponse, RequestFactory, Response } from 'core/data';
 import * as s from 'core/session';
+export * from 'core/data';
 
 @provider
 export default class Session extends Provider {
