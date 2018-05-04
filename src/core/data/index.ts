@@ -112,14 +112,6 @@ export default class Provider {
 	static readonly decoders: DecodersTable = {};
 
 	/**
-	 * Returns an object with authentication params
-	 * @param params - additional parameters
-	 */
-	static getAuthParams(params?: Dictionary | undefined): Dictionary {
-		return {};
-	}
-
-	/**
 	 * Base URL for requests
 	 */
 	baseURL: string = '';
@@ -237,6 +229,14 @@ export default class Provider {
 	}
 
 	/**
+	 * Returns an object with authentication params
+	 * @param params - additional parameters
+	 */
+	getAuthParams(params?: Dictionary | undefined): Dictionary {
+		return {};
+	}
+
+	/**
 	 * Request resolve function
 	 *
 	 * @param url - request url
@@ -293,7 +293,7 @@ export default class Provider {
 							$e.emit(`${url}Reject`, err);
 						})
 
-						.emit('authentication', (<typeof Provider>this.constructor).getAuthParams(params));
+						.emit('authentication', this.getAuthParams(params));
 				});
 			});
 		}

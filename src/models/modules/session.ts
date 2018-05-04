@@ -39,7 +39,8 @@ export default class Session extends Provider {
 		// tslint:disable-next-line
 		async addSession(this: Session, {opts}) {
 			if (opts.api) {
-				Object.assign(opts.headers, await this.getAuthParams());
+				const h = await this.getAuthParams();
+				Object.assign(opts.headers, h);
 			}
 		}
 	};
