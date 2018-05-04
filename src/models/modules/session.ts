@@ -37,7 +37,7 @@ export default class Session extends Provider {
 	/** @override */
 	static readonly middlewares: Middlewares = {
 		// tslint:disable-next-line
-		async addSession({opts}): Promise<void> {
+		async addSession({opts}) {
 			if (opts.api) {
 				Object.assign(opts.headers, await this.getAuthParams());
 			}
