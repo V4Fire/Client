@@ -35,11 +35,11 @@ export default class Session extends Provider {
 	readonly csrfHeader: string = 'X-XSRF-TOKEN';
 
 	/** @override */
-	static readonly middlewares: Middlewares<any, Provider> = {
+	static readonly middlewares: Middlewares = {
 		// tslint:disable-next-line
-		async addSession(url, p) {
-			if (p.api) {
-				Object.assign(p.headers, await this.getAuthParams());
+		async addSession({opts}): Promise<void> {
+			if (opts.api) {
+				Object.assign(opts.headers, await this.getAuthParams());
 			}
 		}
 	};
