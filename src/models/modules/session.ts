@@ -9,26 +9,48 @@
 import $C = require('collection.js');
 import StatusCodes from 'core/statusCodes';
 import Provider, { provider, Middlewares, RequestResponse, RequestFactory, Response } from 'core/data';
-import { getSession, setSession, clearSession, matchSession } from 'core/session';
+import * as s from 'core/session';
 
 @provider
-export default class JWT extends Provider {
+export default class Session extends Provider {
+	/**
+	 * Authorization scheme prefix
+	 */
+	readonly authPrfx: string = 'Bearer ';
+
+	/**
+	 * Authorization header name
+	 */
+	readonly authHeader: string = 'Authorization';
+
+	/**
+	 * Authorization refresh header name
+	 */
+	readonly authRefreshHeader: string = 'X-JWT-TOKEN';
+
+	/**
+	 * CSRF header name
+	 */
+	readonly csrfHeader: string = 'X-XSRF-TOKEN';
+
 	/** @override */
 	static readonly middlewares: Middlewares<any, Provider> = {
 		// tslint:disable-next-line
-		addSession(url, p) {
+		async addSession(url, p) {
 			if (p.api) {
-				Object.assign(p.headers, this.getAuthParams());
+				Object.assign(p.headers, await this.getAuthParams());
 			}
 		}
 	};
 
 	/** @override */
-	getAuthParams(params?: Dictionary | undefined): Dictionary {
-		const session = getSession();
+	async getAuthParams(params?: Dictionary | undefined): Promise<Dictionary> {
+		const
+			session = await s.get();
+
 		return {
-			'X-XSRF-TOKEN': session.xsrf,
-			'Authorization': `Bearer ${session.jwt}`
+			[this.authHeader]: this.authPrfx + session.auth,
+			[this.csrfHeader]: session.csrf
 		};
 	}
 
@@ -39,31 +61,34 @@ export default class JWT extends Provider {
 		const
 			// @ts-ignore
 			req = super.updateRequest(...arguments),
-			{jwt, xsrf} = getSession();
+			session = s.get();
 
 		const update = (res) => {
 			const
-				info = <Response>res.response;
+				info = <Response>res.response,
+				refreshHeader = info.getHeader(this.authRefreshHeader);
 
 			try {
-				setSession(info.getHeader('X-JWT-TOKEN'), info.getHeader('X-XSRF-TOKEN'));
-
+				if (refreshHeader) {
+					s.set(refreshHeader, info.getHeader(this.csrfHeader));
+				}
 			} catch (_) {}
 		};
 
 		req.then(update);
-		return req.catch((err) => {
+		return req.catch(async (err) => {
 			const
-				response = <Response | undefined>$C(err).get('details.response');
+				response = <Response | undefined>$C(err).get('details.response'),
+				{auth, csrf} = await session;
 
 			if (response) {
 				if (response.status === StatusCodes.UNAUTHORIZED) {
-					if (!matchSession(jwt, xsrf)) {
+					if (!await s.match(auth, csrf)) {
 						// @ts-ignore
 						return this.updateRequest(...arguments);
 					}
 
-					clearSession();
+					s.clear();
 				}
 
 				update({response});
