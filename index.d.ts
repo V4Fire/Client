@@ -51,5 +51,3 @@ interface Number {
 	vmin: string;
 	vmax: string;
 }
-
-type CanPromise<T> = T | Promise<T>;
