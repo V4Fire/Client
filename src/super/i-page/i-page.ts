@@ -8,10 +8,15 @@
 
 import iData, { component, field, system, watch } from 'super/i-data/i-data';
 import { setLang, lang } from 'core/i18n';
+import { TransitionPageInfo } from 'base/b-router/b-router';
 export * from 'super/i-data/i-data';
 
 @component()
-export default class iPage<T extends Dictionary = Dictionary> extends iData<T> {
+export default class iPage<
+	T extends Dictionary = Dictionary,
+	M extends Dictionary = Dictionary,
+	D extends Dictionary = Dictionary
+> extends iData<D> {
 	/**
 	 * Link to i18n function
 	 */
@@ -22,7 +27,7 @@ export default class iPage<T extends Dictionary = Dictionary> extends iData<T> {
 	 * Page information object
 	 */
 	@field()
-	pageInfo: Dictionary = {};
+	pageInfo?: TransitionPageInfo<T, M>;
 
 	/**
 	 * System language

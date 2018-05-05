@@ -8,19 +8,47 @@
 
 import $C = require('collection.js');
 import path = require('path-to-regexp');
+
 import { Key } from 'path-to-regexp';
+import { EventEmitterLike } from 'core/async';
 
 import symbolGenerator from 'core/symbol';
-import iData, { component, prop, field } from 'super/i-data/i-data';
+import iData, { component, prop, field, system, hook } from 'super/i-data/i-data';
 import { delegate } from 'core/dom';
-
 export * from 'super/i-data/i-data';
-export type PageInfo = Dictionary<string> & {page: string};
-export type Pages = Dictionary<{
+
+export type PageProp<T extends Dictionary = Dictionary> = string | {
+	page: string;
+	transition?: T;
+};
+
+export type PageSchema<M extends Dictionary = Dictionary> = string | M & {
+	path: string;
+};
+
+export type PageInfo<M extends Dictionary = Dictionary> = Dictionary & {
+	page: string;
+	meta?: M;
+};
+
+export type TransitionPageInfo<
+	T extends Dictionary = Dictionary,
+	M extends Dictionary = Dictionary
+> = Readonly<PageInfo<M> & {
+	transition?: Dictionary;
+}>;
+
+export type Pages<M extends Dictionary = Dictionary> = Dictionary<{
 	page: string;
 	pattern: string;
 	rgxp: RegExp;
+	meta: M;
 }>;
+
+export interface RemoteRouter extends EventEmitterLike {
+	page: PageProp | undefined;
+	routes: Dictionary<PageSchema>;
+}
 
 export const
 	$$ = symbolGenerator();
@@ -30,20 +58,37 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 	/**
 	 * Initial page
 	 */
-	@prop({type: String, default: () => location.href})
-	readonly pageProp!: string;
+	@prop({
+		type: [String, Object],
+		watch: 'initComponentValues',
+		default: () => location.href
+	})
+
+	readonly pageProp?: PageProp;
 
 	/**
 	 * Initial router paths
 	 */
 	@prop(Object)
-	readonly pagesProp!: Dictionary<string>;
+	readonly pagesProp: Dictionary<PageSchema> = {};
+
+	/**
+	 * Driver constructor for remote router
+	 */
+	@prop({type: Function, watch: 'initComponentValues'})
+	readonly driverProp?: () => RemoteRouter;
+
+	/**
+	 * Driver for remote router
+	 */
+	@system()
+	protected driver?: RemoteRouter;
 
 	/**
 	 * Page store
 	 */
-	@field(String)
-	protected pageStore!: string;
+	@field()
+	protected pageStore?: TransitionPageInfo;
 
 	/**
 	 * Page load status
@@ -54,51 +99,63 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 	/**
 	 * Router paths
 	 */
-	@field((o) => o.link('pagesProp', (val) => $C(val).map((pattern, page) => ({
-		page,
-		pattern,
-		rgxp: path(pattern)
-	}))))
-
+	@system()
 	protected pages!: Pages;
 
 	/**
 	 * Returns current page
 	 */
-	page(): string;
+	page(): TransitionPageInfo | undefined;
 
 	/**
-	 * Sets a new page
-	 * @param url
+	 * Sets a new page by the specified id
+	 *
+	 * @param id - page id: url or an abstract page id (if using remote router)
+	 * @param [params] - additional transition parameters
 	 */
-	page(url: string): Promise<PageInfo>;
-	page(url?: string): Promise<PageInfo> | string {
-		if (!url) {
+	page(id: string, params?: Dictionary): TransitionPageInfo;
+	page(id?: string, params?: Dictionary): CanPromise<TransitionPageInfo> | undefined {
+		if (!id) {
 			return this.pageStore;
 		}
 
 		const
-			name = new URL(url).pathname;
+			d = this.driver,
+			name = d ? id : new URL(id).pathname;
 
 		return new Promise((resolve) => {
-			this.pageStore = name;
-
 			const
 				info = this.getPageOpts(name);
 
+			if (info && params) {
+				info.transition = params;
+			}
+
+			this.pageStore = Object.freeze({
+				page: name,
+				...info
+			});
+
+			const done = () => {
+				this.$root.pageInfo = this.pageStore;
+				resolve(this.pageStore);
+			};
+
+			if (d) {
+				done();
+				return;
+			}
+
 			if (info) {
-				if (location.href !== url) {
-					history.pushState(info, info.page, url);
+				if (location.href !== id) {
+					history.pushState(info, info.page, id);
 				}
 
 				let i = 0;
 				ModuleDependencies.event.on(`component.${info.page}.loading`, this.async.proxy(
 					({packages}) => {
 						this.status = (++i * 100) / packages;
-						if (i === packages) {
-							this.$root.pageInfo = info;
-							resolve(info);
-						}
+						i === packages && done();
 					},
 
 					{
@@ -108,28 +165,38 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 				));
 
 				if (Object.isArray(ModuleDependencies.get(info.page))) {
-					this.$root.pageInfo = info;
-					resolve(info);
+					done();
 				}
 
 			} else {
-				location.href = url;
+				location.href = id;
 			}
 		});
 	}
 
 	/**
-	 * Returns an information object of a page by the specified URL
-	 * @param [url]
+	 * Returns an information object of a page by the specified id
+	 * @param [id] - page id: url or an abstract page id (if using remote router)
 	 */
-	getPageOpts(url: string = location.pathname): PageInfo | null {
-		let current: PageInfo | null = null;
-		$C(this.pages).forEach(({pattern, rgxp}, page, data, o) => {
-			if (rgxp.test(url)) {
-				const
-					res = rgxp.exec(url);
+	getPageOpts(id: string = location.pathname): PageInfo | undefined {
+		let
+			current: PageInfo | undefined;
 
-				current = $C(path.parse(pattern) as any[]).to({page}).reduce((map, el: Key, i) => {
+		$C(this.pages).forEach((el, page, data, o) => {
+			const
+				r = el.rgxp,
+				transition = {page, meta: el.meta};
+
+			if (this.driver) {
+				if (el.page === id) {
+					current = transition;
+				}
+
+			} else if (r && r.test(id)) {
+				const
+					res = r.exec(id);
+
+				current = $C(path.parse(el.pattern) as any[]).to(transition).reduce((map, el: Key, i) => {
 					if (Object.isObject(el)) {
 						// @ts-ignore
 						map[el.name] = res[i];
@@ -146,6 +213,62 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 	}
 
 	/**
+	 * Initializes component values
+	 */
+	@hook('beforeDataCreate')
+	protected async initComponentValues(): Promise<void> {
+		const initPages = (val) => $C(val).map((obj: PageSchema, page) => {
+			const
+				isStr = Object.isString(obj),
+				pattern = isStr ? obj : (<any>obj).path;
+
+			return {
+				page,
+				pattern,
+				rgxp: pattern != null ? path(pattern) : undefined,
+				meta: isStr ? {} : obj
+			};
+		});
+
+		const
+			d = this.driverProp && this.driverProp(),
+			flags = {label: $$.transition};
+
+		let
+			page = this.pageProp;
+
+		if (d) {
+			this.driver = d;
+			this.pages = initPages(d.routes);
+			page = d.page;
+
+			const fn = (transition) => {
+				this.page(transition.name, transition);
+			};
+
+			this.async.on(d, 'transition', fn, flags);
+
+		} else {
+			this.pages = initPages(this.pageProp);
+
+			const fn = () => {
+				this.page.bind(this, location.href, history.state);
+			};
+
+			this.async.on(window, 'popstate', fn, flags);
+		}
+
+		if (page) {
+			if (Object.isString(page)) {
+				await this.page(page);
+
+			} else {
+				await this.page(page.page, page.transition);
+			}
+		}
+	}
+
+	/**
 	 * Handler: link trigger
 	 * @param e
 	 */
@@ -153,28 +276,19 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 		e.preventDefault();
 
 		const
-			{href} = <HTMLAnchorElement>e.delegateTarget;
+			a = <HTMLAnchorElement>e.delegateTarget;
 
 		if (e.ctrlKey) {
-			window.open(href, '_blank');
+			window.open(a.href, '_blank');
 
 		} else {
-			await this.page(href);
+			await this.page(a.href, Object.parse(a.dataset.transition));
 		}
 	}
 
-	/**
-	 * Handler: popstate
-	 */
-	protected async onPopState(): Promise<void> {
-		await this.page(location.href);
-	}
-
 	/** @override */
-	protected async created(): Promise<void> {
+	protected created(): void {
 		super.created();
 		this.async.on(document, 'click', delegate('a[href^="/"]', this.onLink));
-		this.async.on(window, 'popstate', this.onPopState);
-		await this.page(this.pageProp);
 	}
 }
