@@ -98,6 +98,7 @@ export function getComponent(
 		},
 
 		created(): void {
+			this.hook = 'created';
 			bindWatchers(this);
 			runHook('created', this.meta, this).then(async () => {
 				if (methods.created) {

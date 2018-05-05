@@ -1406,7 +1406,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 				const
 					res = wrapper ? wrapper.call(this, val) : val;
 
-				if (isSystem || this.hook !== 'beforeCreate') {
+				if (isSystem || !{beforeCreate: true, beforeDataCreate: true}[this.hook]) {
 					this.setField(path, res);
 				}
 
