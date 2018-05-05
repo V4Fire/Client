@@ -23,7 +23,7 @@ export type PageProp<T extends Dictionary = Dictionary> = string | {
 };
 
 export type PageSchema<M extends Dictionary = Dictionary> = string | M & {
-	path: string;
+	path?: string;
 };
 
 export type PageInfo<M extends Dictionary = Dictionary> = Dictionary & {
@@ -249,7 +249,7 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 			this.async.on(d, 'transition', fn, flags);
 
 		} else {
-			this.pages = initPages(this.pageProp);
+			this.pages = initPages(this.pagesProp);
 
 			const fn = () => {
 				this.page.bind(this, location.href, history.state);
