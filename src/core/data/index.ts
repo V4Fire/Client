@@ -52,7 +52,7 @@ export {
 };
 
 export type EncodersTable = Record<ModelMethods | 'def', Encoders> | {def?: Encoders};
-export type DecodersTable = Record<ModelMethods | 'def', Decoders> | {def?: Encoders};
+export type DecodersTable = Record<ModelMethods | 'def', Decoders> | {def?: Decoders};
 
 const globalEvent = new EventEmitter({
 	maxListeners: 1e3,
