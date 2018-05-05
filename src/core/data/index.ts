@@ -51,8 +51,8 @@ export {
 
 };
 
-export type EncodersTable = Record<ModelMethods | 'def', Encoders> | {def?: Encoders};
-export type DecodersTable = Record<ModelMethods | 'def', Decoders> | {def?: Decoders};
+export type EncodersTable = Record<ModelMethods | 'def', Encoders> | {};
+export type DecodersTable = Record<ModelMethods | 'def', Decoders> | {};
 
 const globalEvent = new EventEmitter({
 	maxListeners: 1e3,
@@ -601,8 +601,10 @@ export default class Provider {
 			...opts,
 			cacheId: this.cacheId,
 			middlewares: $C(merge(middlewares, opts.middlewares)).map((fn) => fn.bind(this)),
-			encoder: merge(encoders[method] || encoders.def || decoders[method] || decoders.def, opts.encoder),
-			decoder: merge(decoders[method] || decoders.def, opts.decoder)
+			// tslint:disable-next-line:no-string-literal
+			encoder: merge(encoders[method] || encoders['def'] || decoders[method] || decoders['def'], opts.encoder),
+			// tslint:disable-next-line:no-string-literal
+			decoder: merge(decoders[method] || decoders['def'], opts.decoder)
 		};
 	}
 
