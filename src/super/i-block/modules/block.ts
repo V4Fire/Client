@@ -238,8 +238,8 @@ export default class Block<T extends iBlock = iBlock> {
 			return false;
 		}
 
-		name = name.trim().camelize(false);
-		value = String(value).trim().camelize(false);
+		name = name.camelize(false);
+		value = String(value).camelize(false);
 
 		const
 			prev = this.mods[name];
@@ -281,8 +281,8 @@ export default class Block<T extends iBlock = iBlock> {
 			throw new ReferenceError('Root node is not defined');
 		}
 
-		name = name.trim().camelize(false);
-		value = value !== undefined ? String(value).trim().camelize(false) : undefined;
+		name = name.camelize(false);
+		value = value !== undefined ? String(value).camelize(false) : undefined;
 
 		const
 			current = this.mods[name];
@@ -312,7 +312,7 @@ export default class Block<T extends iBlock = iBlock> {
 	 * @param mod
 	 */
 	getMod(mod: string): string | undefined {
-		return this.mods[mod.trim().camelize(false)];
+		return this.mods[mod.camelize(false)];
 	}
 
 	/**
@@ -328,9 +328,9 @@ export default class Block<T extends iBlock = iBlock> {
 			return false;
 		}
 
-		elName = elName.trim().camelize(false);
-		modName = modName.trim().camelize(false);
-		value = String(value).trim().camelize(false);
+		elName = elName.camelize(false);
+		modName = modName.camelize(false);
+		value = String(value).camelize(false);
 
 		if (this.getElMod(link, elName, modName) !== value) {
 			this.removeElMod(link, elName, modName, undefined, 'setMod');
@@ -361,9 +361,9 @@ export default class Block<T extends iBlock = iBlock> {
 	 * @param [reason]
 	 */
 	removeElMod(link: Element, elName: string, modName: string, value?: any, reason: Reason = 'removeMod'): boolean {
-		elName = elName.trim().dasherize();
-		modName = modName.trim().camelize(false);
-		value = value !== undefined ? String(value).trim().camelize(false) : undefined;
+		elName = elName.dasherize();
+		modName = modName.camelize(false);
+		value = value !== undefined ? String(value).camelize(false) : undefined;
 
 		const
 			current = this.getElMod(link, elName, modName);

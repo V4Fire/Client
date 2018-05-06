@@ -255,7 +255,7 @@ export default function inheritMeta(
 
 	for (let o = meta.mods, keys = Object.keys(mods), i = 0; i < keys.length; i++) {
 		const
-			key = keys[i].trim().camelize(false),
+			key = keys[i].camelize(false),
 			current = o[key],
 			parent = (mods[key] || []).slice();
 

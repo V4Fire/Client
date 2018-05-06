@@ -252,7 +252,7 @@ export function component(params?: ComponentParams): Function {
 		if (target.mods) {
 			for (let o = target.mods, keys = Object.keys(o), i = 0; i < keys.length; i++) {
 				const key = keys[i];
-				mods[key.trim().camelize(false)] = o[key];
+				mods[key.camelize(false)] = o[key];
 			}
 		}
 
