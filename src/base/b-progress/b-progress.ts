@@ -16,7 +16,7 @@ export const
 @component()
 export default class bProgress extends iBlock {
 	/** @inheritDoc */
-	static mods: ModsDecl = {
+	static readonly mods: ModsDecl = {
 		progress: [
 			bProgress.PARENT
 		]

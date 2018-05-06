@@ -102,7 +102,7 @@ export default class bForm<T extends Dictionary = Dictionary> extends iData<T> {
 	params!: CreateRequestOptions;
 
 	/** @inheritDoc */
-	static mods: ModsDecl = {
+	static readonly mods: ModsDecl = {
 		valid: [
 			'true',
 			'false'

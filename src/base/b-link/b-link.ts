@@ -59,7 +59,7 @@ export default class bLink<T extends Dictionary = Dictionary> extends iData<T> {
 	hintPos?: string;
 
 	/** @inheritDoc */
-	static mods: ModsDecl = {
+	static readonly mods: ModsDecl = {
 		underline: [
 			['true'],
 			'false'

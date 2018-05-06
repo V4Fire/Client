@@ -101,7 +101,7 @@ export default class bScroll extends iBlock {
 	}
 
 	/** @inheritDoc */
-	static mods: ModsDecl = {
+	static readonly mods: ModsDecl = {
 		theme: [
 			bScroll.PARENT,
 			'light'

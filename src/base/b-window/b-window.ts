@@ -26,7 +26,7 @@ export default class bWindow<T extends Dictionary = Dictionary> extends iData<T>
 	readonly stageTitles: Dictionary<string> = {};
 
 	/** @inheritDoc */
-	static mods: ModsDecl = {
+	static readonly mods: ModsDecl = {
 		hidden: [
 			['true'],
 			'false'

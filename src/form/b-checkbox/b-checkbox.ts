@@ -37,7 +37,7 @@ export default class bCheckbox<T extends Dictionary = Dictionary> extends iInput
 	readonly changeable: boolean = true;
 
 	/** @inheritDoc */
-	static mods: ModsDecl = {
+	static readonly mods: ModsDecl = {
 		checked: [
 			'true',
 			'false'

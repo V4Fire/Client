@@ -132,7 +132,7 @@ export default class bCalendar<T extends Dictionary = Dictionary> extends iInput
 	}
 
 	/** @inheritDoc */
-	static mods: ModsDecl = {
+	static readonly mods: ModsDecl = {
 		rounding: [
 			bCalendar.PARENT,
 			['small']

@@ -215,7 +215,7 @@ export default class iInput<T extends Dictionary = Dictionary> extends iData<T> 
 	}
 
 	/** @inheritDoc */
-	static mods: ModsDecl = {
+	static readonly mods: ModsDecl = {
 		form: [
 			['true'],
 			'false'

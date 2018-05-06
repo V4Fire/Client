@@ -16,7 +16,7 @@ export const
 @component({functional: true})
 export default class bUp extends iBlock {
 	/** @inheritDoc */
-	static mods: ModsDecl = {
+	static readonly mods: ModsDecl = {
 		hidden: [
 			['true'],
 			'false'

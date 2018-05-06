@@ -34,7 +34,7 @@ export default class bImage extends iBlock {
 	readonly brokenIcon: string = 'damaged';
 
 	/** @inheritDoc */
-	static mods: ModsDecl = {
+	static readonly mods: ModsDecl = {
 		'hide-image': [
 			'true',
 			['false']

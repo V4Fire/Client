@@ -74,7 +74,7 @@ export default class bTextarea<T extends Dictionary = Dictionary> extends bInput
 	}
 
 	/** @inheritDoc */
-	static mods: ModsDecl = {
+	static readonly mods: ModsDecl = {
 		collapsed: [
 			'true',
 			['false']

@@ -104,7 +104,7 @@ export default class bButton<T extends Dictionary = Dictionary> extends iData<T>
 	readonly dropdown: string = 'bottom';
 
 	/** @inheritDoc */
-	static mods: ModsDecl = {
+	static readonly mods: ModsDecl = {
 		rounding: [
 			'none',
 			['small'],

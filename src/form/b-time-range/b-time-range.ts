@@ -29,7 +29,7 @@ export default class bTimeRange<T extends Dictionary = Dictionary> extends iInpu
 	}
 
 	/** @inheritDoc */
-	static mods: ModsDecl = {
+	static readonly mods: ModsDecl = {
 		empty: [
 			'true',
 			'false'
