@@ -35,7 +35,7 @@ export default class bImage extends iBlock {
 
 	/** @inheritDoc */
 	static readonly mods: ModsDecl = {
-		'hide-image': [
+		hideImage: [
 			'true',
 			['false']
 		]
