@@ -1659,7 +1659,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 					}
 				}
 
-				map[key] = this.getFullElName.apply(this, (<any[]>[]).concat(el));
+				map[key.dasherize()] = this.getFullElName.apply(this, (<any[]>[]).concat(el));
 			}
 		}
 
@@ -1687,7 +1687,8 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 
 			for (let i = 0; i < keys.length; i++) {
 				const
-					key = keys[i];
+					key = keys[i],
+					mod = key.dasherize();
 
 				let
 					el = <any>mods[key];
@@ -1698,10 +1699,10 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 
 				// tslint:disable-next-line
 				if (!(key in mods) || el[key] === undefined) {
-					map[key] = el[Object.keys(el)[0]];
+					map[mod] = el[Object.keys(el)[0]];
 
 				} else {
-					map[key] = el[key];
+					map[mod] = el[key];
 				}
 			}
 		}
