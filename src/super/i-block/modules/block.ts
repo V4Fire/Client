@@ -238,7 +238,8 @@ export default class Block<T extends iBlock = iBlock> {
 			return false;
 		}
 
-		value = String(value);
+		name = name.trim().camelize(false);
+		value = String(value).trim().camelize(false);
 
 		const
 			prev = this.mods[name];
@@ -280,10 +281,13 @@ export default class Block<T extends iBlock = iBlock> {
 			throw new ReferenceError('Root node is not defined');
 		}
 
+		name = name.trim().camelize(false);
+		value = value !== undefined ? String(value).trim().camelize(false) : undefined;
+
 		const
 			current = this.mods[name];
 
-		if (current !== undefined && (value === undefined || current === String(value))) {
+		if (current !== undefined && (value === undefined || current === value)) {
 			this.mods[name] = undefined;
 			this.node.classList.remove(this.getFullBlockName(name, current));
 
@@ -308,7 +312,7 @@ export default class Block<T extends iBlock = iBlock> {
 	 * @param mod
 	 */
 	getMod(mod: string): string | undefined {
-		return this.mods[mod];
+		return this.mods[mod.trim().camelize(false)];
 	}
 
 	/**
@@ -324,7 +328,9 @@ export default class Block<T extends iBlock = iBlock> {
 			return false;
 		}
 
-		value = String(value);
+		elName = elName.trim().camelize(false);
+		modName = modName.trim().camelize(false);
+		value = String(value).trim().camelize(false);
 
 		if (this.getElMod(link, elName, modName) !== value) {
 			this.removeElMod(link, elName, modName, undefined, 'setMod');
@@ -355,10 +361,14 @@ export default class Block<T extends iBlock = iBlock> {
 	 * @param [reason]
 	 */
 	removeElMod(link: Element, elName: string, modName: string, value?: any, reason: Reason = 'removeMod'): boolean {
+		elName = elName.trim().dasherize();
+		modName = modName.trim().camelize(false);
+		value = value !== undefined ? String(value).trim().camelize(false) : undefined;
+
 		const
 			current = this.getElMod(link, elName, modName);
 
-		if (current !== undefined && (value === undefined || current === String(value))) {
+		if (current !== undefined && (value === undefined || current === value)) {
 			link.classList.remove(this.getFullElName(elName, modName, current));
 			this.localEvent.emit(`el.mod.remove.${elName}.${modName}.${current}`, {
 				element: elName,

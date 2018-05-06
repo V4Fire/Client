@@ -555,7 +555,7 @@ export function getBaseComponent(
 
 	for (let o = meta.mods, keys = Object.keys(o), i = 0; i < keys.length; i++) {
 		const
-			key = keys[i].trim().dasherize(),
+			key = keys[i],
 			mod = o[key];
 
 		let def;

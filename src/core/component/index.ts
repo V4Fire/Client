@@ -246,6 +246,16 @@ export function component(params?: ComponentParams): Function {
 			...params
 		};
 
+		const
+			mods = {};
+
+		if (target.mods) {
+			for (let o = target.mods, keys = Object.keys(o), i = 0; i < keys.length; i++) {
+				const key = keys[i];
+				mods[key.trim().camelize(false)] = o[key];
+			}
+		}
+
 		const meta: ComponentMeta = {
 			name,
 			componentName: name.replace(isSmart, ''),
@@ -253,7 +263,7 @@ export function component(params?: ComponentParams): Function {
 			props: {},
 			fields: {},
 			systemFields: {},
-			mods: target.mods || {},
+			mods,
 			computed: {},
 			accessors: {},
 			methods: {},
