@@ -31,28 +31,6 @@ setColorMods($set, $styles = null, $selector = '', $key = 'backgroundColor', $cb
 					{$style}: $color
 
 /**
- * Generates rules for overflow
- */
-overflow()
-	if arguments[0] == ellipsis
-		white-space nowrap
-		overflow hidden
-		text-overflow ellipsis
-
-	else
-		overflow arguments
-
-/**
- * Generates rules for width/height
- *
- * @param {string} $width
- * @param {string=} [$height]
- */
-size($width, $height = $width)
-	width $width
-	height $height
-
-/**
  * CSS hack for IE10-11
  */
 ie10-11()
