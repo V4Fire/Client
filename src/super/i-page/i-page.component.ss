@@ -17,7 +17,7 @@
 	- overWrapper = false
 
 	- block innerRoot
-		< [.page-wrapper]
+		< .&__root-wrapper[.page-wrapper]
 			- block body
 
 		- block helpers
