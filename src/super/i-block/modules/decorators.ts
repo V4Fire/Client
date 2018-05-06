@@ -117,7 +117,7 @@ type EventType = 'on' | 'once';
 export function mod(name: string, value: ModVal = '*', method: EventType = 'on'): Function {
 	return (target, key, descriptor) => {
 		initEvent.once('constructor', ({meta}) => {
-			meta.hooks.created.push({
+			meta.hooks.beforeCreate.push({
 				fn(this: iBlockDecorator): void {
 					this.localEvent[method](`block.mod.set.${name}.${value}`, descriptor.value.bind(this));
 				}
@@ -137,7 +137,7 @@ export function mod(name: string, value: ModVal = '*', method: EventType = 'on')
 export function removeMod(name: string, value: ModVal = '*', method: EventType = 'on'): Function {
 	return (target, key, descriptor) => {
 		initEvent.once('constructor', ({meta}) => {
-			meta.hooks.created.push({
+			meta.hooks.beforeCreate.push({
 				fn(this: iBlockDecorator): void {
 					this.localEvent[method](`block.mod.remove.${name}.${value}`, descriptor.value.bind(this));
 				}
@@ -158,7 +158,7 @@ export function removeMod(name: string, value: ModVal = '*', method: EventType =
 export function elMod(elName: string, modName: string, value: ModVal = '*', method: EventType = 'on'): Function {
 	return (target, key, descriptor) => {
 		initEvent.once('constructor', ({meta}) => {
-			meta.hooks.created.push({
+			meta.hooks.beforeCreate.push({
 				fn(this: iBlockDecorator): void {
 					this.localEvent[method](`el.mod.set.${elName}.${modName}.${value}`, descriptor.value.bind(this));
 				}
@@ -179,7 +179,7 @@ export function elMod(elName: string, modName: string, value: ModVal = '*', meth
 export function removeElMod(elName: string, modName: string, value: ModVal = '*', method: EventType = 'on'): Function {
 	return (target, key, descriptor) => {
 		initEvent.once('constructor', ({meta}) => {
-			meta.hooks.created.push({
+			meta.hooks.beforeCreate.push({
 				fn(this: iBlockDecorator): void {
 					this.localEvent[method](`el.mod.remove.${elName}.${modName}.${value}`, descriptor.value.bind(this));
 				}
@@ -198,7 +198,7 @@ export function removeElMod(elName: string, modName: string, value: ModVal = '*'
 export function state(state: number, method: EventType = 'on'): Function {
 	return (target, key, descriptor) => {
 		initEvent.once('constructor', ({meta}) => {
-			meta.hooks.created.push({
+			meta.hooks.beforeCreate.push({
 				fn(this: iBlockDecorator): void {
 					this.localEvent[method](`block.status.${state}`, descriptor.value.bind(this));
 				}
