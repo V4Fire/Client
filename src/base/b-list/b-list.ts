@@ -151,7 +151,7 @@ export default class bList<T extends Dictionary = Dictionary> extends iData<T> {
 	 * @param value
 	 */
 	@watch({field: 'activeStore', deep: true})
-	protected async syncActiveStoreWatcher(value: Option[]): Promise<void> {
+	protected syncActiveStoreWatcher(value: Option[]): void {
 		this.emit('change', this.active);
 	}
 
