@@ -11,6 +11,9 @@ export * from 'super/i-data/i-data';
 
 @component()
 export default class bRemoteProvider<T extends Dictionary = Dictionary> extends iData<T> {
+	/** @override */
+	readonly remoteProvider: boolean = true;
+
 	/**
 	 * Field for setting to a component parent
 	 */
