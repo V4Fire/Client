@@ -850,6 +850,127 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	}
 
 	/**
+	 * Sets a new watch property to the specified object
+	 *
+	 * @param path - path to the property (bla.baz.foo)
+	 * @param value
+	 * @param [obj]
+	 */
+	setField(path: string, value: any, obj: object = this): any {
+		let
+			ref = obj;
+
+		const
+			chunks = path.split('.'),
+			isSystem = this.meta.systemFields[chunks[0]];
+
+		for (let i = 0; i < chunks.length; i++) {
+			const
+				prop = chunks[i];
+
+			if (chunks.length === i + 1) {
+				path = prop;
+				continue;
+			}
+
+			if (!ref[prop] || typeof ref[prop] !== 'object') {
+				const
+					val = isNaN(Number(chunks[i + 1])) ? {} : [];
+
+				if (isSystem) {
+					ref[prop] = val;
+
+				} else {
+					this.$set(ref, prop, val);
+				}
+			}
+
+			ref = ref[prop];
+		}
+
+		if (path in ref) {
+			ref[path] = value;
+
+		} else {
+			if (isSystem) {
+				ref[path] = value;
+
+			} else {
+				this.$set(ref, path, value);
+			}
+		}
+
+		return value;
+	}
+
+	/**
+	 * Deletes a watch property from the specified object
+	 *
+	 * @param path - path to the property (bla.baz.foo)
+	 * @param [obj]
+	 */
+	deleteField(path: string, obj: object = this): boolean {
+		let ref = obj;
+
+		const
+			chunks = path.split('.'),
+			isSystem = this.meta.systemFields[chunks[0]];
+
+		let test = true;
+		for (let i = 0; i < chunks.length; i++) {
+			const
+				prop = chunks[i];
+
+			if (chunks.length === i + 1) {
+				path = prop;
+				continue;
+			}
+
+			if (!ref[prop] || typeof ref[prop] !== 'object') {
+				test = false;
+				break;
+			}
+
+			ref = ref[prop];
+		}
+
+		if (test) {
+			if (isSystem) {
+				delete ref[path];
+
+			} else {
+				this.$delete(ref, path);
+			}
+
+			return true;
+		}
+
+		return false;
+	}
+
+	/**
+	 * Returns a property from the specified object
+	 *
+	 * @param path - path to the property (bla.baz.foo)
+	 * @param [obj]
+	 */
+	getField(path: string, obj: object = this): any {
+		const
+			chunks = path.split('.');
+
+		let res = obj;
+		for (let i = 0; i < chunks.length; i++) {
+			if (res == null) {
+				return undefined;
+			}
+
+			res = res[chunks[i]];
+		}
+
+		return res;
+	}
+
+	/**
 	 * Executes the specified render object
 	 *
 	 * @param renderObj
@@ -1251,127 +1372,6 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 			// @ts-ignore
 			this.$watch = (...args) => this.execCbBeforeDataCreated(() => $watch.apply(this, args));
 		}
-	}
-
-	/**
-	 * Sets a new watch property to the specified object
-	 *
-	 * @param path - path to the property (bla.baz.foo)
-	 * @param value
-	 * @param [obj]
-	 */
-	protected setField(path: string, value: any, obj: object = this): any {
-		let
-			ref = obj;
-
-		const
-			chunks = path.split('.'),
-			isSystem = this.meta.systemFields[chunks[0]];
-
-		for (let i = 0; i < chunks.length; i++) {
-			const
-				prop = chunks[i];
-
-			if (chunks.length === i + 1) {
-				path = prop;
-				continue;
-			}
-
-			if (!ref[prop] || typeof ref[prop] !== 'object') {
-				const
-					val = isNaN(Number(chunks[i + 1])) ? {} : [];
-
-				if (isSystem) {
-					ref[prop] = val;
-
-				} else {
-					this.$set(ref, prop, val);
-				}
-			}
-
-			ref = ref[prop];
-		}
-
-		if (path in ref) {
-			ref[path] = value;
-
-		} else {
-			if (isSystem) {
-				ref[path] = value;
-
-			} else {
-				this.$set(ref, path, value);
-			}
-		}
-
-		return value;
-	}
-
-	/**
-	 * Deletes a watch property from the specified object
-	 *
-	 * @param path - path to the property (bla.baz.foo)
-	 * @param [obj]
-	 */
-	protected deleteField(path: string, obj: object = this): boolean {
-		let ref = obj;
-
-		const
-			chunks = path.split('.'),
-			isSystem = this.meta.systemFields[chunks[0]];
-
-		let test = true;
-		for (let i = 0; i < chunks.length; i++) {
-			const
-				prop = chunks[i];
-
-			if (chunks.length === i + 1) {
-				path = prop;
-				continue;
-			}
-
-			if (!ref[prop] || typeof ref[prop] !== 'object') {
-				test = false;
-				break;
-			}
-
-			ref = ref[prop];
-		}
-
-		if (test) {
-			if (isSystem) {
-				delete ref[path];
-
-			} else {
-				this.$delete(ref, path);
-			}
-
-			return true;
-		}
-
-		return false;
-	}
-
-	/**
-	 * Returns a property from the specified object
-	 *
-	 * @param path - path to the property (bla.baz.foo)
-	 * @param [obj]
-	 */
-	protected getField(path: string, obj: object = this): any {
-		const
-			chunks = path.split('.');
-
-		let res = obj;
-		for (let i = 0; i < chunks.length; i++) {
-			if (res == null) {
-				return undefined;
-			}
-
-			res = res[chunks[i]];
-		}
-
-		return res;
 	}
 
 	/**
