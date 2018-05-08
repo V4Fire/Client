@@ -678,24 +678,8 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	@wait('loading')
 	@hook({mounted: 'initBlockInstance'})
 	async initLoad(): Promise<void> {
-		const
-			{async: $a, block: $b, $children: $c} = this,
-			storeWatchers = {group: 'storeWatchers'};
-
-		$a.terminateWorker(storeWatchers);
+		const {block: $b, $children: $c} = this;
 		await this.loadLocalStore();
-
-		$C(this.convertStateToStore()).forEach((el, key) => {
-			const watcher = this.$watch(key, (val) => {
-				if (!Object.fastCompare(val, this[key])) {
-					$a.setTimeout(this.saveLocalStore, 0.2.second(), {
-						label: $$.syncLocalStore
-					});
-				}
-			});
-
-			$a.worker(watcher, storeWatchers);
-		});
 
 		if ($c) {
 			const
@@ -994,7 +978,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 */
 	setState(obj: Dictionary | undefined, state: Dictionary = this): void {
 		$C(obj).forEach((el, key) => {
-			if (el !== undefined) {
+			if (!Object.fastCompare(el, this[key])) {
 				this.setField(key, el, state);
 			}
 		});
@@ -1272,10 +1256,36 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 
 	/**
 	 * Loads a store from the local storage
+	 * @param [state] - state object
 	 */
-	@wait('loading', {defer: true, label: $$.loadLocalStore})
-	protected async loadLocalStore(): Promise<void> {
-		this.setState(await this.loadSettings('[[STORE]]'));
+	@hook('beforeDataCreate')
+	protected async loadLocalStore(state: Dictionary = this): Promise<void> {
+		const
+			key = $$.pendingLocalStore;
+
+		if (this[key]) {
+			return this[key];
+		}
+
+		const
+			$a = this.async,
+			storeWatchers = {group: 'storeWatchers'};
+
+		$a.terminateWorker(storeWatchers);
+		this[key] = this.loadSettings('[[STORE]]');
+		this.setState(await this[key], state);
+
+		$C(this.convertStateToStore()).forEach((el, key) => {
+			const watcher = this.$watch(key, (val) => {
+				if (!Object.fastCompare(val, this[key])) {
+					$a.setTimeout(this.saveLocalStore, 0.2.second(), {
+						label: $$.syncLocalStore
+					});
+				}
+			});
+
+			$a.worker(watcher, storeWatchers);
+		});
 	}
 
 	/**
