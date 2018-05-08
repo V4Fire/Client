@@ -162,6 +162,12 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	readonly dispatching: boolean = false;
 
 	/**
+	 * If true, then the block marked as remote provider
+	 */
+	@prop(Boolean)
+	readonly remoteProvider: boolean = false;
+
+	/**
 	 * If true, then the block will be reinitialized after activated
 	 */
 	@prop(Boolean)
@@ -671,7 +677,35 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 */
 	@wait('loading')
 	@hook({mounted: 'initBlockInstance'})
-	initLoad(): CanPromise<void> {
+	async initLoad(): Promise<void> {
+		const
+			children = this.$children;
+
+		if (children) {
+			const
+				providers = new Set();
+
+			for (let i = 0; i < children.length; i++) {
+				const
+					el = children[i];
+
+				if (el.remoteProvider) {
+					providers.add(el);
+				}
+			}
+
+			if (providers.size) {
+				await this.async.wait(() => $C(providers).every((el) => {
+					if (el.blockStatus === 'ready') {
+						providers.delete(el);
+						return true;
+					}
+
+					return false;
+				}));
+			}
+		}
+
 		this.block.status = this.block.statuses.ready;
 		this.emit('initLoad');
 	}
