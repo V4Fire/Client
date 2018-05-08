@@ -92,7 +92,7 @@ export default class bWindow<T extends Dictionary = Dictionary> extends iData<T>
 	 * @param value
 	 * @param oldValue
 	 */
-	@watch({field: 'stage'})
+	@watch('stage')
 	protected clearOnStageChange(value: string, oldValue: string): void {
 		this.async.clearAll({group: `stage.${oldValue}`});
 	}

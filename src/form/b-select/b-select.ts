@@ -327,7 +327,7 @@ export default class bSelect<T extends Dictionary = Dictionary> extends bInput<T
 	/**
 	 * Synchronization for the optionsStore field
 	 */
-	@watch({field: 'optionsStore'})
+	@watch('optionsStore')
 	protected async syncOptionsStoreWatcher(): Promise<void> {
 		await this.initComponentValues();
 	}
@@ -336,7 +336,7 @@ export default class bSelect<T extends Dictionary = Dictionary> extends bInput<T
 	 * Synchronization for the selected field
 	 * @param value
 	 */
-	@watch({field: 'selected'})
+	@watch('selected')
 	protected async syncSelectedStoreWatcher(value: any): Promise<void> {
 		const
 			{block: $b} = this,

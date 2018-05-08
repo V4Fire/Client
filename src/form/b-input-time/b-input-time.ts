@@ -131,7 +131,7 @@ export default class bInputTime<T extends Dictionary = Dictionary> extends bInpu
 	 * Synchronization for the valueStore field
 	 * @param [value]
 	 */
-	@watch({field: 'valueStore'})
+	@watch('valueStore')
 	protected async syncValueStoreWatcher(value: string): Promise<void> {
 		try {
 			await this.async.wait(() => this.mods.focused !== 'true', {label: $$.$$valueStore});
