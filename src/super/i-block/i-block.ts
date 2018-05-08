@@ -131,6 +131,19 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	readonly blockName?: string;
 
 	/**
+	 * Block initialize status
+	 */
+	@system({unique: true})
+	blockStatus: string = statuses[statuses.unloaded];
+
+	/**
+	 * Active status
+	 * (for keep alive)
+	 */
+	@system({unique: true})
+	blockActivated: boolean = true;
+
+	/**
 	 * Initial block modifiers
 	 */
 	@prop(Object)
@@ -373,19 +386,6 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	protected get getIconLink(): typeof iBlock.getIconLink {
 		return (<typeof iBlock>this.instance.constructor).getIconLink;
 	}
-
-	/**
-	 * Block initialize status
-	 */
-	@system({unique: true})
-	protected blockStatus: string = statuses[statuses.unloaded];
-
-	/**
-	 * Active status
-	 * (for keep alive)
-	 */
-	@system({unique: true})
-	protected blockActivated: boolean = true;
 
 	/**
 	 * Watched store of block modifiers
