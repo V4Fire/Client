@@ -119,7 +119,7 @@ export default class iDataPages<T extends Dictionary = Dictionary> extends iData
 				this.pageLoaded[pageIndex] = true;
 
 				for (let i = 0; i < data.length; i++) {
-					db.data.push(this.getObservableChunk(data[i]));
+					db.data.push(this.convertRemoteChunk(data[i]));
 				}
 
 				db.total = res.total;

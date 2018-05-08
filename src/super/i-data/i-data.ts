@@ -188,7 +188,7 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 					const db = await this.get(<RequestQuery>p[0], p[1]);
 					await new Promise((resolve) => {
 						this.async.requestIdleCallback(() => {
-							this.db = this.getObservableData(this.dbConverter ? this.dbConverter(db && db.valueOf()) : db);
+							this.db = this.convertRemoteData(db);
 							resolve();
 
 						}, {
@@ -359,11 +359,11 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 	}
 
 	/**
-	 * Returns an object to observe by the specified
-	 * @param base
+	 * Converts the specified remote data to the component format and returns it
+	 * @param data
 	 */
-	protected getObservableData<O>(base: T): O | T {
-		return base;
+	protected convertRemoteData<O>(data: any): O | T {
+		return this.dbConverter ? this.dbConverter(data && data.valueOf()) : data;
 	}
 
 	/**
@@ -580,7 +580,7 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 	 * @param data
 	 */
 	protected onAddData(data: T): void {
-		this.db = this.getObservableData(data);
+		this.db = this.convertRemoteData(data);
 	}
 
 	/**
@@ -588,7 +588,7 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 	 * @param data
 	 */
 	protected onUpdData(data: T): void {
-		this.db = this.getObservableData(data);
+		this.db = this.convertRemoteData(data);
 	}
 
 	/**

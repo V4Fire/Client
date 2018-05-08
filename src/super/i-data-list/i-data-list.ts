@@ -32,26 +32,28 @@ export default class iDataList<T extends Dictionary = Dictionary> extends iData<
 	}
 
 	/** @override */
-	protected getObservableData<O>(base: DataList<T>): O | DataList<T> {
-		if (Object.isFrozen(base)) {
-			return base;
+	protected convertRemoteData<O>(data: any): O | DataList<T> {
+		data = super.convertRemoteData(data);
+
+		if (Object.isFrozen(data)) {
+			return data;
 		}
 
 		const
-			obj = Object.create(base);
+			obj = Object.create(data);
 
-		Object.assign(obj, Object.select(base, ['data', 'total']));
-		obj.data = $C(obj.data).map((el) => this.getObservableChunk(el));
+		Object.assign(obj, Object.select(data, ['data', 'total']));
+		obj.data = $C(obj.data).map((el) => this.convertRemoteChunk(el));
 
 		return obj;
 	}
 
 	/**
-	 * Returns an object (chunk) to observe by the specified
-	 * @param base
+	 * Converts the specified remote data chunk to the component format and returns it
+	 * @param chunk
 	 */
-	protected getObservableChunk(base: T): T {
-		return base;
+	protected convertRemoteChunk(chunk: any): T {
+		return chunk;
 	}
 
 	/**
@@ -154,7 +156,7 @@ export default class iDataList<T extends Dictionary = Dictionary> extends iData<
 
 			if (!some) {
 				const
-					mut = this.addData(this.getObservableChunk(el1));
+					mut = this.addData(this.convertRemoteChunk(el1));
 
 				if (mut && mut.type && mut[mut.type]) {
 					mut[mut.type].call(this);
@@ -185,7 +187,7 @@ export default class iDataList<T extends Dictionary = Dictionary> extends iData<
 
 				if (el1 && el1._id === el2._id) {
 					const
-						mut = this.updData(this.getObservableChunk(el1), i);
+						mut = this.updData(this.convertRemoteChunk(el1), i);
 
 					if (mut && mut.type && mut[mut.type]) {
 						mut[mut.type].call(this);
