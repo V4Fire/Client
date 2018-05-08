@@ -51,8 +51,9 @@ export function createFakeCtx(
 
 	const
 		p = <Dictionary>renderCtx.parent,
-		watchers = new EventEmitter({maxListeners: 1e3}),
-		event = new EventEmitter({maxListeners: 1e3});
+		$w = new EventEmitter({maxListeners: 1e3}),
+		$e = new EventEmitter({maxListeners: 1e3}),
+		$a = new Async(this);
 
 	// Add base methods and properties
 	Object.assign(fakeCtx, renderCtx, renderCtx.props, {
@@ -62,7 +63,7 @@ export function createFakeCtx(
 		meta,
 		children: [],
 
-		$async: new Async(this),
+		$async: $a,
 		$root: p.$root,
 		$parent: p,
 		$options: Object.assign(Object.create(p.$options), fakeCtx.$options),
@@ -77,6 +78,7 @@ export function createFakeCtx(
 		$createElement: createElement,
 
 		$destroy(): void {
+			$a.clearAll();
 			$C(['beforeDestroy', 'destroyed']).forEach((key) => {
 				runHook(key, meta, fakeCtx).then(async () => {
 					if (methods[key]) {
@@ -88,15 +90,18 @@ export function createFakeCtx(
 
 		$nextTick(cb?: () => void): Promise<void> | void {
 			if (cb) {
-				cb();
+				$a.setImmediate(cb);
 				return;
 			}
 
-			return Promise.resolve();
+			return $a.nextTick();
 		},
 
 		$forceUpdate(): void {
-			p.forceUpdate().catch(stderr);
+			$a.setImmediate(() => p.$forceUpdate(), {
+				group: 'render',
+				label: 'forceUpdate'
+			});
 		},
 
 		$watch(
@@ -116,13 +121,13 @@ export function createFakeCtx(
 				expr = Object.isFunction(exprOrFn) ? exprOrFn.call(this) : exprOrFn;
 
 			cb = cb.bind(this);
-			watchers.on(expr, cb);
+			$w.on(expr, cb);
 
 			if (opts && opts.immediate) {
-				watchers.emit(expr, this.getField(expr));
+				$w.emit(expr, this.getField(expr));
 			}
 
-			return () => watchers.off(expr, cb);
+			return () => $w.off(expr, cb);
 		},
 
 		$set(obj: object, key: string, value: any): any {
@@ -135,11 +140,11 @@ export function createFakeCtx(
 		},
 
 		$emit(e: string, ...args: any[]): void {
-			event.emit(e, ...args);
+			$e.emit(e, ...args);
 		},
 
 		$once(e: string, cb: any): void {
-			event.once(e, cb);
+			$e.once(e, cb);
 		},
 
 		$on(e: string | string[], cb: any): void {
@@ -147,7 +152,7 @@ export function createFakeCtx(
 				events = (<string[]>[]).concat(e);
 
 			for (let i = 0; i < events.length; i++) {
-				event.on(events[i], cb);
+				$e.on(events[i], cb);
 			}
 		},
 
@@ -156,7 +161,7 @@ export function createFakeCtx(
 				events = (<string[]>[]).concat(e);
 
 			for (let i = 0; i < events.length; i++) {
-				event.off(events[i], cb);
+				$e.off(events[i], cb);
 			}
 		}
 	});
@@ -216,6 +221,9 @@ export function createFakeCtx(
 			meta.fields
 		];
 
+		const
+			tasks = <Function[]>[];
+
 		for (let i = 0; i < list.length; i++) {
 			const data = i ? fakeCtx.$data : fakeCtx;
 			initDataObject(list[i], fakeCtx, instance, data);
@@ -242,8 +250,25 @@ export function createFakeCtx(
 								old = data[key];
 
 							if (old !== val) {
-								data[key] = val;
-								watchers.emit(key, val, old);
+								tasks.push(() => {
+									data[key] = val;
+									$w.emit(key, val, old);
+								});
+
+								$a.setImmediate(() => {
+									try {
+										for (let i = tasks.length; i--;) {
+											tasks[i]();
+										}
+
+									} finally {
+										tasks.splice(0, tasks.length);
+									}
+
+								}, {
+									group: 'setters',
+									label: 'changeState'
+								});
 							}
 						}
 					});

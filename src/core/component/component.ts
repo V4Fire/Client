@@ -285,7 +285,8 @@ export function bindWatchers(ctx: VueInterface): void {
 
 					// @ts-ignore
 					ctx.$async.setImmediate(() => ctx[fn](a, b), {
-						label: `watcher:${fn}`
+						group: 'watchers',
+						label: fn
 					});
 
 				} else {
