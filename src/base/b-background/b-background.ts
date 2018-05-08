@@ -15,20 +15,11 @@ export const
 
 @component({tpl: false})
 export default class bBackground extends iBlock {
-	/** @override */
-	async initLoad(): Promise<void> {
-		this.tmp[$$.cache] = await this.loadSettings() || {};
-		this.block.status = this.block.statuses.ready;
-		this.emit('initLoad');
-	}
-
 	/**
-	 * Normalizes a string
-	 * @param str
+	 * Styles cache
 	 */
-	clrfx(str: string): string {
-		return str.replace(/[\s(),]/g, '_');
-	}
+	@system()
+	cache: Dictionary<string> = {};
 
 	/**
 	 * Applies background style to the node
@@ -51,14 +42,15 @@ export default class bBackground extends iBlock {
 			`
 		});
 
-		const
-			c = <Dictionary>this.tmp[$$.cache];
-
-		c[className] = dataURI;
+		this.cache[className] = dataURI;
 		document.head.appendChild(style);
 
 		this.$el.classList.add(className);
 		this.emit('applyStyle', className, dataURI);
-		await this.saveSettings(c);
+	}
+
+	/** @override */
+	protected convertStateToStore(def?: Dictionary | undefined): Dictionary {
+		return super.convertStateToStore({cache: this.cache, ...def});
 	}
 }
