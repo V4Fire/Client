@@ -85,7 +85,7 @@ export default class bScroll extends iBlock {
 	}
 
 	/**
-	 * Block width
+	 * Component width
 	 */
 	@p({cache: false})
 	get width(): CanPromise<number> {
@@ -93,7 +93,7 @@ export default class bScroll extends iBlock {
 	}
 
 	/**
-	 * Block height
+	 * Component height
 	 */
 	@p({cache: false})
 	get height(): CanPromise<number> {
@@ -168,7 +168,7 @@ export default class bScroll extends iBlock {
 	}
 
 	/**
-	 * Sets the block width
+	 * Sets the component width
 	 * @param value
 	 */
 	@wait('ready', {defer: true, label: $$.setWidth})
@@ -179,7 +179,7 @@ export default class bScroll extends iBlock {
 	}
 
 	/**
-	 * Sets the block height
+	 * Sets the component height
 	 * @param value
 	 */
 	@wait('ready', {defer: true, label: $$.setHeight})
@@ -544,7 +544,7 @@ export default class bScroll extends iBlock {
 		const
 			target = document.elementFromPoint(e.clientX, e.clientY);
 
-		if (target && target.closest(`.${this.blockId}`)) {
+		if (target && target.closest(`.${this.componentId}`)) {
 			const
 				{area, scrollWrapperY} = this.$refs;
 

@@ -12,7 +12,7 @@ export * from 'super/i-block/i-block';
 @component({functional: true, tiny: true})
 export default class bIcon extends iBlock {
 	/**
-	 * Block value
+	 * Component value
 	 */
 	@prop({type: String, required: false})
 	readonly value?: string;

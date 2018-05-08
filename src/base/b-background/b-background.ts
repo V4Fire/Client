@@ -15,15 +15,9 @@ export const
 
 @component({tpl: false})
 export default class bBackground extends iBlock {
-	/**
-	 * Block cache
-	 */
-	@system()
-	cache?: Dictionary<string>;
-
 	/** @override */
 	async initLoad(): Promise<void> {
-		this.cache = await this.loadSettings() || {};
+		this.tmp[$$.cache] = await this.loadSettings() || {};
 		this.block.status = this.block.statuses.ready;
 		this.emit('initLoad');
 	}
@@ -45,8 +39,8 @@ export default class bBackground extends iBlock {
 	 */
 	@wait('ready', {label: $$.applyStyle, defer: true})
 	async applyStyle(className: string, dataURI: string): Promise<void> {
-		if (this.blockName) {
-			className = `${this.blockName}-${className}`;
+		if (this.globalName) {
+			className = `${this.globalName}-${className}`;
 		}
 
 		const style = Object.assign(document.createElement('style'), {
@@ -58,7 +52,7 @@ export default class bBackground extends iBlock {
 		});
 
 		const
-			c = <Dictionary>this.cache;
+			c = <Dictionary>this.tmp[$$.cache];
 
 		c[className] = dataURI;
 		document.head.appendChild(style);

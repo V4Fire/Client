@@ -111,7 +111,7 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 	readonly dbConverter?: Function;
 
 	/**
-	 * Converter from .db to the block format
+	 * Converter from .db to the component format
 	 */
 	@prop({type: Function, watch: 'initRemoteData', required: false})
 	readonly blockConverter?: BlockConverter;
@@ -157,7 +157,7 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 	protected readonly requestParams: Dictionary<Dictionary> = {get: {}};
 
 	/**
-	 * Block data
+	 * Component data
 	 */
 	@field({watch: 'initRemoteData'})
 	protected db?: T | null = null;

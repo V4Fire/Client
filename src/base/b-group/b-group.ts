@@ -33,7 +33,7 @@ export default class bGroup extends iData {
 	protected initModEvents(): void {
 		super.initModEvents();
 		this.localEvent.on('block.mod.*.opened.*', async (el) => {
-			if (this.blockName) {
+			if (this.globalName) {
 				await this.saveSettings({[el.name]: el.value});
 			}
 		});

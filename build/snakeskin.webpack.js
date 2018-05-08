@@ -166,7 +166,7 @@ function vueComp({name, attrs}) {
 			attrs['data-vue-ref'] = [el];
 
 			if (!attrs[':class']) {
-				attrs[':class'] = attachClass(['blockId']);
+				attrs[':class'] = attachClass(['componentId']);
 			}
 		}
 
@@ -396,8 +396,8 @@ function bem2vue(block, attrs, rootTag, val) {
 	const
 		tmp = attrs[':class'] = attrs[':class'] || [];
 
-	if (!$C(tmp).includes('blockId')) {
-		attrs[':class'] = attachClass(tmp.concat('blockId', `classes['${val.replace(/^_+/, '')}']`));
+	if (!$C(tmp).includes('componentId')) {
+		attrs[':class'] = attachClass(tmp.concat('componentId', `classes['${val.replace(/^_+/, '')}']`));
 	}
 
 	return block + val;

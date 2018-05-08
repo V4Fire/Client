@@ -461,7 +461,7 @@ export function patchVNode(vNode: VNode, ctx: Dictionary, renderCtx: RenderConte
 
 			const
 				refs = ctx.$refs,
-				refNodes = el.querySelectorAll(`.${ctx.blockId}[data-vue-ref]`);
+				refNodes = el.querySelectorAll(`.${ctx.componentId}[data-vue-ref]`);
 
 			mounted = true;
 			el.vueComponent = ctx;

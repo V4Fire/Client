@@ -45,13 +45,13 @@ export interface Option {
 
 export default class bList<T extends Dictionary = Dictionary> extends iData<T> {
 	/**
-	 * Initial block value
+	 * Initial component value
 	 */
 	@prop(Array)
 	readonly valueProp: Option[] = [];
 
 	/**
-	 * Initial block active value
+	 * Initial component active value
 	 */
 	@prop({required: false})
 	readonly activeProp?: any | any[];
@@ -81,13 +81,13 @@ export default class bList<T extends Dictionary = Dictionary> extends iData<T> {
 	readonly cancelable: boolean = false;
 
 	/**
-	 * Block value
+	 * Component value
 	 */
 	@field((o) => o.link('valueProp'))
 	value!: Option[];
 
 	/**
-	 * Block active value
+	 * Component active value
 	 */
 	get active(): any {
 		if (this.activeStore === UNDEF) {
@@ -98,7 +98,7 @@ export default class bList<T extends Dictionary = Dictionary> extends iData<T> {
 	}
 
 	/**
-	 * Sets a new block active value
+	 * Sets a new component active value
 	 * @param value
 	 */
 	set active(value: any) {
@@ -124,7 +124,7 @@ export default class bList<T extends Dictionary = Dictionary> extends iData<T> {
 	}
 
 	/**
-	 * Block active value store
+	 * Component active value store
 	 */
 	@field((o) => o.link('activeProp', (val) => {
 		const

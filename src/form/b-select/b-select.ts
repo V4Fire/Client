@@ -488,7 +488,7 @@ export default class bSelect<T extends Dictionary = Dictionary> extends bInput<T
 			};
 
 			$a.on(document, 'click', (e) => {
-				if (!e.target.closest(`.${this.blockId}`)) {
+				if (!e.target.closest(`.${this.componentId}`)) {
 					return reset();
 				}
 			}, {

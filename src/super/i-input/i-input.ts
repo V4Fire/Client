@@ -23,19 +23,19 @@ export type ValidatorsDecl<T extends iInput = iInput> =
 
 export default class iInput<T extends Dictionary = Dictionary> extends iData<T> {
 	/**
-	 * Initial block value
+	 * Initial component value
 	 */
 	@prop({required: false})
 	readonly valueProp?: any;
 
 	/**
-	 * Block default value
+	 * Component default value
 	 */
 	@prop({required: false})
 	readonly defaultProp?: any;
 
 	/**
-	 * If true, then the block value will be marked as UTC
+	 * If true, then the component value will be marked as UTC
 	 * (if value is date)
 	 */
 	@prop(Boolean)
@@ -66,13 +66,13 @@ export default class iInput<T extends Dictionary = Dictionary> extends iData<T> 
 	readonly form?: string;
 
 	/**
-	 * Illegal block values
+	 * Illegal component values
 	 */
 	@prop({required: false})
 	readonly disallow?: any | any[] | Function | RegExp;
 
 	/**
-	 * Block value type factory
+	 * Component value type factory
 	 */
 	@prop(Function)
 	readonly dataType: Function = Any;
@@ -84,7 +84,7 @@ export default class iInput<T extends Dictionary = Dictionary> extends iData<T> 
 	readonly formConverter?: Function;
 
 	/**
-	 * If false, then the block value won't be cached by a form
+	 * If false, then the component value won't be cached by a form
 	 */
 	@prop(Boolean)
 	readonly cache: boolean = true;
@@ -96,13 +96,13 @@ export default class iInput<T extends Dictionary = Dictionary> extends iData<T> 
 	readonly validators: Validators = [];
 
 	/**
-	 * Previous block value
+	 * Previous component value
 	 */
 	@system()
 	prevValue: any;
 
 	/**
-	 * Link to the block validators
+	 * Link to the component validators
 	 */
 	get blockValidators(): typeof iInput['blockValidators'] {
 		return (<typeof iInput>this.instance.constructor).blockValidators;
@@ -119,7 +119,7 @@ export default class iInput<T extends Dictionary = Dictionary> extends iData<T> 
 	}
 
 	/**
-	 * Link to the form that is associated to the block
+	 * Link to the form that is associated to the component
 	 */
 	@p({cache: false})
 	get connectedForm(): CanPromise<HTMLFormElement | null> {
@@ -128,14 +128,14 @@ export default class iInput<T extends Dictionary = Dictionary> extends iData<T> 
 	}
 
 	/**
-	 * Block value
+	 * Component value
 	 */
 	get value(): any {
 		return this.valueStore;
 	}
 
 	/**
-	 * Sets a new block value
+	 * Sets a new component value
 	 * @param value
 	 */
 	set value(value: any) {
@@ -143,14 +143,14 @@ export default class iInput<T extends Dictionary = Dictionary> extends iData<T> 
 	}
 
 	/**
-	 * Block default value
+	 * Component default value
 	 */
 	get default(): any {
 		return this.defaultProp;
 	}
 
 	/**
-	 * Form value of the block
+	 * Form value of the component
 	 */
 	@p({cache: false})
 	get formValue(): Promise<any> {
@@ -182,7 +182,7 @@ export default class iInput<T extends Dictionary = Dictionary> extends iData<T> 
 	}
 
 	/**
-	 * Grouped form value of the block
+	 * Grouped form value of the component
 	 */
 	@p({cache: false})
 	get groupFormValue(): Promise<any[] | any> {
@@ -228,7 +228,7 @@ export default class iInput<T extends Dictionary = Dictionary> extends iData<T> 
 	};
 
 	/**
-	 * Block validators
+	 * Component validators
 	 */
 	static blockValidators: ValidatorsDecl = {
 		async required({msg, showMsg = true}: Dictionary): Promise<boolean> {
@@ -245,7 +245,7 @@ export default class iInput<T extends Dictionary = Dictionary> extends iData<T> 
 	};
 
 	/**
-	 * Block value field name
+	 * Component value field name
 	 */
 	@field()
 	protected readonly blockValueField: string = 'value';
@@ -254,7 +254,7 @@ export default class iInput<T extends Dictionary = Dictionary> extends iData<T> 
 	protected readonly $refs!: {input?: HTMLInputElement};
 
 	/**
-	 * Block value store
+	 * Component value store
 	 */
 	@field((o) => o.link('valueProp', (val) => (<any>o).initDefaultValue(val)))
 	protected valueStore: any;
@@ -275,7 +275,7 @@ export default class iInput<T extends Dictionary = Dictionary> extends iData<T> 
 	}
 
 	/**
-	 * Clears value of the block
+	 * Clears value of the component
 	 * @emits clear()
 	 */
 	@wait('ready')
@@ -293,7 +293,7 @@ export default class iInput<T extends Dictionary = Dictionary> extends iData<T> 
 	}
 
 	/**
-	 * Resets the block value to default
+	 * Resets the component value to default
 	 * @emits reset()
 	 */
 	@wait('ready')
@@ -311,7 +311,7 @@ export default class iInput<T extends Dictionary = Dictionary> extends iData<T> 
 	}
 
 	/**
-	 * Validates the block value
+	 * Validates the component value
 	 *
 	 * @param params - additional parameters
 	 * @emits validationStart()
@@ -399,7 +399,7 @@ export default class iInput<T extends Dictionary = Dictionary> extends iData<T> 
 	}
 
 	/**
-	 * Handler: block value change
+	 * Handler: component value change
 	 * @emits change(value)
 	 */
 	protected onBlockValueChange(newValue: any, oldValue: any): void {

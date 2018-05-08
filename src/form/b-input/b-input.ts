@@ -378,10 +378,10 @@ export default class bInput<T extends Dictionary = Dictionary> extends iInput<T>
 	}
 
 	/**
-	 * Applies the mask to a block value
+	 * Applies the mask to a component value
 	 *
 	 * @param [value]
-	 * @param [updateBuffer] - if true, then wil be updated only the block value buffer
+	 * @param [updateBuffer] - if true, then wil be updated only the component value buffer
 	 * @param [start] - selection start
 	 * @param [end] - selection end
 	 * @param [cursor] - cursor position (or constant 'start')

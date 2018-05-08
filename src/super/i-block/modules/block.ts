@@ -86,7 +86,7 @@ export default class Block<T extends iBlock = iBlock> {
 			stringStatus = this.statuses[value];
 
 		// @ts-ignore
-		this.model.blockStatus = stringStatus;
+		this.model.componentStatus = stringStatus;
 		this.localEvent.emit(`block.status.${stringStatus}`, value);
 		this.model.emit(`status-${stringStatus}`, value);
 	}

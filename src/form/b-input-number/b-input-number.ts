@@ -29,7 +29,7 @@ export default class bInputNumber<T extends Dictionary = Dictionary> extends bIn
 	readonly resetButton: boolean = false;
 
 	/**
-	 * Position of block controllers
+	 * Position of component controllers
 	 */
 	@prop(String)
 	readonly controllersPos: string = 'left';
@@ -53,14 +53,14 @@ export default class bInputNumber<T extends Dictionary = Dictionary> extends bIn
 	readonly min?: number;
 
 	/**
-	 * Returns the block value as a number
+	 * Returns the component value as a number
 	 */
 	get numValue(): number | undefined {
 		return this.convertValue(this.valueStore);
 	}
 
 	/**
-	 * Sets a value to the block
+	 * Sets a value to the component
 	 * @param [value]
 	 */
 	setValue(value: string | number | undefined): number | undefined {
@@ -107,7 +107,7 @@ export default class bInputNumber<T extends Dictionary = Dictionary> extends bIn
 	}
 
 	/**
-	 * Handler: block value increment
+	 * Handler: component value increment
 	 *
 	 * @param factor
 	 * @emits actionChange(value: number)

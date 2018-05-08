@@ -31,8 +31,8 @@ export default class iDynamicPage<T extends Dictionary = Dictionary> extends iDa
 	@hook('beforeDataCreate')
 	@hook('activated')
 	activate(state: Dictionary = this): void {
-		this.initStateFromHash(state);
-		this.async.on(window, 'hashchange', this.initStateFromHash, {
+		this.initStateFromLocation(state);
+		this.async.on(window, 'hashchange', this.initStateFromLocation, {
 			label: $$.activate
 		});
 	}
@@ -43,25 +43,15 @@ export default class iDynamicPage<T extends Dictionary = Dictionary> extends iDa
 	@hook('deactivated')
 	deactivate(): void {
 		this.async.off('hashchange');
-		$C(this.convertStateToHash()).forEach((el, key) => this[key] = undefined);
+		$C(this.convertStateToLocation()).forEach((el, key) => this[key] = undefined);
 	}
 
 	/**
-	 * Gets values from the specified object and saves it to the block state
-	 *
-	 * @param obj
-	 * @param [state] - state object
-	 */
-	setState(obj: Dictionary, state: Dictionary = this): void {
-		return;
-	}
-
-	/**
-	 * Saves the block state to the location.hash
+	 * Saves the component state to the location
 	 * @param obj - state object
 	 */
-	setHash(obj: Dictionary): string | false {
-		obj = this.convertStateToHash(obj);
+	saveStateToLocation(obj: Dictionary): string | false {
+		obj = this.convertStateToLocation(obj);
 
 		$C(obj).forEach((el, key) => {
 			if (el) {
@@ -69,7 +59,7 @@ export default class iDynamicPage<T extends Dictionary = Dictionary> extends iDa
 			}
 		});
 
-		if (!this.blockActivated) {
+		if (!this.componentActivated) {
 			return false;
 		}
 
@@ -91,48 +81,26 @@ export default class iDynamicPage<T extends Dictionary = Dictionary> extends iDa
 	/**
 	 * Resets the filter hash
 	 */
-	resetHash(): string {
-		$C(this.convertStateToHash()).forEach((el, key) => this[key] = undefined);
+	resetLocationState(): string {
+		$C(this.convertStateToLocation()).forEach((el, key) => this[key] = undefined);
 		location.hash = '';
 		return '';
 	}
 
 	/**
-	 * Initialized the block state from hash values
+	 * Initialized the component state from the location
 	 * @param [state] - state object
 	 */
-	initStateFromHash(state: Dictionary = this): void {
+	initStateFromLocation(state: Dictionary = this): void {
 		this.setState(Object.fromQueryString(new URL(location.href).hash.slice(1), {deep: true}), state);
 	}
 
 	/**
-	 * Returns an object with default block fields for hash
+	 * Returns an object with default component fields for hash
 	 * @param [obj]
 	 */
-	protected convertStateToHash(obj?: Dictionary | undefined): Dictionary {
+	protected convertStateToLocation(obj?: Dictionary | undefined): Dictionary {
 		return {...obj};
-	}
-
-	/**
-	 * Accumulates a state for a setting hash
-	 * @param obj - state object
-	 */
-	protected async accumulateHashState(obj: Dictionary): Promise<void> {
-		const
-			{tmp} = this;
-
-		if (!tmp.hash) {
-			tmp.hash = {};
-		}
-
-		Object.assign(tmp.hash, obj);
-
-		try {
-			await this.async.sleep(0.22.second(), {label: $$.accumulateHash});
-			this.setHash(tmp.hash);
-			tmp.hash = {};
-
-		} catch (_) {}
 	}
 
 	/**
@@ -157,6 +125,6 @@ export default class iDynamicPage<T extends Dictionary = Dictionary> extends iDa
 			hashData = {[key]: e.modifier ? e.modifier(value) : value};
 		}
 
-		await this.accumulateHashState({...e.mixin, ...hashData});
+		await this.accumulateTmpObj({...e.mixin, ...hashData}, $$.state, this.saveStateToLocation);
 	}
 }

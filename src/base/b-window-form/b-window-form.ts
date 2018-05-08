@@ -113,7 +113,7 @@ export default class bWindowForm<T extends Dictionary = Dictionary> extends bWin
 	}
 
 	/**
-	 * Clears the block form
+	 * Clears the component form
 	 * @emits clear()
 	 */
 	@wait('ready')
@@ -127,7 +127,7 @@ export default class bWindowForm<T extends Dictionary = Dictionary> extends bWin
 	}
 
 	/**
-	 * Resets the block form
+	 * Resets the component form
 	 * @emits reset()
 	 */
 	@wait('ready')

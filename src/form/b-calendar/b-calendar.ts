@@ -116,7 +116,7 @@ export default class bCalendar<T extends Dictionary = Dictionary> extends iInput
 	}
 
 	/**
-	 * If true, then the block has a datepicker range
+	 * If true, then the component has a datepicker range
 	 */
 	get dayRange(): boolean {
 		const v = this.valueProp;
@@ -124,7 +124,7 @@ export default class bCalendar<T extends Dictionary = Dictionary> extends iInput
 	}
 
 	/**
-	 * If true, then the block has a time range
+	 * If true, then the component has a time range
 	 */
 	get timeRange(): boolean {
 		const v = this.valueProp;

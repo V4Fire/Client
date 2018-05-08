@@ -35,7 +35,7 @@ export default class iDataPages<T extends Dictionary = Dictionary> extends iData
 	readonly lazyLoad: boolean = true;
 
 	/**
-	 * Link to element at the bottom of the data block
+	 * Link to an element at the bottom of the data component
 	 */
 	@prop({type: Element, required: false})
 	readonly lazyLoadTrigger?: Element;

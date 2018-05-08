@@ -85,7 +85,7 @@ export default class iMessage extends iBlock {
 	}
 
 	/**
-	 * Opens the block
+	 * Opens the component
 	 * @emits open()
 	 */
 	async open(): Promise<boolean> {
@@ -98,7 +98,7 @@ export default class iMessage extends iBlock {
 	}
 
 	/**
-	 * Closes the block
+	 * Closes the component
 	 * @emits close()
 	 */
 	async close(): Promise<boolean> {
@@ -111,7 +111,7 @@ export default class iMessage extends iBlock {
 	}
 
 	/**
-	 * Toggles the block
+	 * Toggles the component
 	 */
 	toggle(): Promise<boolean> {
 		return this.mods.opened === 'true' ? this.close() : this.open();
@@ -133,7 +133,7 @@ export default class iMessage extends iBlock {
 			}, {group});
 
 			$a.on(document, 'click', (e) => {
-				if (!e.target.closest(`.${this.blockId}`)) {
+				if (!e.target.closest(`.${this.componentId}`)) {
 					return this.close();
 				}
 			}, {group});

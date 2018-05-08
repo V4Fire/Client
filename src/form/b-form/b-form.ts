@@ -123,8 +123,8 @@ export default class bForm<T extends Dictionary = Dictionary> extends iData<T> {
 				const
 					component = this.$(el, '[class*="_form_true"]');
 
-				if (component && component.instance instanceof iInput && !cache[component.blockId]) {
-					cache[component.blockId] = true;
+				if (component && component.instance instanceof iInput && !cache[component.componentId]) {
+					cache[component.componentId] = true;
 					arr.push(<any>component);
 				}
 

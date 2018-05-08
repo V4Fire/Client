@@ -42,7 +42,7 @@ export default class bTextarea<T extends Dictionary = Dictionary> extends bInput
 	}
 
 	/**
-	 * Maximum block height
+	 * Maximum component height
 	 */
 	@p({cache: false})
 	get maxHeight(): CanPromise<number> {
@@ -82,7 +82,7 @@ export default class bTextarea<T extends Dictionary = Dictionary> extends bInput
 	};
 
 	/**
-	 * Minimum block height
+	 * Minimum component height
 	 */
 	@system()
 	protected minHeight?: number;
@@ -96,7 +96,7 @@ export default class bTextarea<T extends Dictionary = Dictionary> extends bInput
 	};
 
 	/**
-	 * Calculates the block height
+	 * Calculates the component height
 	 */
 	@wait('ready', {label: $$.calcHeight, defer: true})
 	async calcHeight(): Promise<number | void> {
@@ -135,7 +135,7 @@ export default class bTextarea<T extends Dictionary = Dictionary> extends bInput
 	}
 
 	/**
-	 * Minimizes the block
+	 * Minimizes the component
 	 */
 	@wait('ready', {label: $$.minimize, defer: true})
 	protected async minimize(): Promise<number> {
