@@ -135,17 +135,23 @@ export default class bNotifier<T extends Dictionary = Message> extends iData<T> 
 
 	/** @override */
 	protected async onAddData(data: any): Promise<void> {
-		await this.notify(this.convertRemoteData(data));
+		if (data !== undefined) {
+			await this.notify(this.convertRemoteData(data));
+		}
 	}
 
 	/** @override */
 	protected async onUpdData(data: any): Promise<void> {
-		await this.notify(this.convertRemoteData(data));
+		if (data !== undefined) {
+			await this.notify(this.convertRemoteData(data));
+		}
 	}
 
 	/** @override */
 	protected async onDelData(data: any): Promise<void> {
-		await this.notify(this.convertRemoteData(data));
+		if (data !== undefined) {
+			await this.notify(this.convertRemoteData(data));
+		}
 	}
 
 	/** @override */

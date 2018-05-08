@@ -131,9 +131,12 @@ export default class iDataList<T extends Dictionary = Dictionary> extends iData<
 	}
 
 	/** @override */
-	// @ts-ignore
-	protected async onAddData(data: T): Promise<void> {
-		const list = (<T[]>[]).concat(data);
+	protected async onAddData(data: any): Promise<void> {
+		if (data === undefined) {
+			return;
+		}
+
+		const list = (<any[]>[]).concat(this.convertRemoteData(data));
 		await this.async.wait(() => this.db);
 
 		const
@@ -156,7 +159,7 @@ export default class iDataList<T extends Dictionary = Dictionary> extends iData<
 
 			if (!some) {
 				const
-					mut = this.addData(this.convertRemoteChunk(el1));
+					mut = this.addData(el1);
 
 				if (mut && mut.type && mut[mut.type]) {
 					mut[mut.type].call(this);
@@ -170,8 +173,12 @@ export default class iDataList<T extends Dictionary = Dictionary> extends iData<
 
 	/** @override */
 	// @ts-ignore
-	protected async onUpdData(data: T): Promise<void> {
-		const list = (<T[]>[]).concat(data);
+	protected async onUpdData(data: any): Promise<void> {
+		if (data === undefined) {
+			return;
+		}
+
+		const list = (<any[]>[]).concat(this.convertRemoteData(data));
 		await this.async.wait(() => this.db);
 
 		const
@@ -187,7 +194,7 @@ export default class iDataList<T extends Dictionary = Dictionary> extends iData<
 
 				if (el1 && el1._id === el2._id) {
 					const
-						mut = this.updData(this.convertRemoteChunk(el1), i);
+						mut = this.updData(el1, i);
 
 					if (mut && mut.type && mut[mut.type]) {
 						mut[mut.type].call(this);
@@ -201,9 +208,12 @@ export default class iDataList<T extends Dictionary = Dictionary> extends iData<
 	}
 
 	/** @override */
-	// @ts-ignore
-	protected async onDelData(data: T): Promise<void> {
-		const list = (<T[]>[]).concat(data);
+	protected async onDelData(data: any): Promise<void> {
+		if (data === undefined) {
+			return;
+		}
+
+		const list = (<any>[]).concat(this.convertRemoteData(data));
 		await this.async.wait(() => this.db);
 
 		const

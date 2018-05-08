@@ -579,23 +579,27 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 	 * Handler: dataProvider.add
 	 * @param data
 	 */
-	protected onAddData(data: T): void {
-		this.db = this.convertRemoteData(data);
+	protected onAddData(data: any): void {
+		if (data !== undefined) {
+			this.db = this.convertRemoteData(data);
+		}
 	}
 
 	/**
 	 * Handler: dataProvider.upd
 	 * @param data
 	 */
-	protected onUpdData(data: T): void {
-		this.db = this.convertRemoteData(data);
+	protected onUpdData(data: any): void {
+		if (data !== undefined) {
+			this.db = this.convertRemoteData(data);
+		}
 	}
 
 	/**
 	 * Handler: dataProvider.del
 	 * @param data
 	 */
-	protected onDelData(data: T): void {
+	protected onDelData(data: any): void {
 		this.db = undefined;
 	}
 
