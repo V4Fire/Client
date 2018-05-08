@@ -65,6 +65,7 @@ loadToPrototype([
 	[
 		Function,
 		['once', require('sugar/function/once')],
+		['memoize', require('sugar/function/memoize')],
 		['debounce', require('sugar/function/debounce')],
 		['throttle', require('sugar/function/throttle')]
 	],
