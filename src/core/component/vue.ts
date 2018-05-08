@@ -6,6 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import Async from 'core/async';
 import Vue, { ComponentOptions, WatchOptions, WatchOptionsWithHandler, VNode, CreateElement } from 'vue';
 import { ScopedSlot } from 'vue/types/vnode';
 import { ComponentMeta, Hooks } from 'core/component';
@@ -25,6 +26,7 @@ export default class VueInterface<B = VueInterface<any, any>, R = VueInterface<a
 	readonly $parent!: C;
 	readonly $root!: R;
 	readonly $isServer!: boolean;
+	protected readonly $async!: Async<VueInterface>;
 	protected readonly meta!: ComponentMeta;
 	protected readonly $refs!: Dictionary;
 	protected readonly $slots!: Dictionary<VNode>;

@@ -9,6 +9,8 @@
 // tslint:disable:max-file-line-count
 
 import $C = require('collection.js');
+import Async from 'core/async';
+
 import {
 
 	CreateElement,
@@ -60,6 +62,7 @@ export function createFakeCtx(
 		meta,
 		children: [],
 
+		$async: new Async(this),
 		$root: p.$root,
 		$parent: p,
 		$options: Object.assign(Object.create(p.$options), fakeCtx.$options),

@@ -7,6 +7,7 @@
  */
 
 // tslint:disable:max-file-line-count
+import Async from 'core/async';
 import Vue, { ComponentOptions, FunctionalComponentOptions } from 'vue';
 import { ComponentField, ComponentMeta, VueInterface } from 'core/component';
 
@@ -71,6 +72,7 @@ export function getComponent(
 			const
 				ctx = <any>this;
 
+			ctx.$async = new Async(this);
 			ctx.instance = instance;
 			ctx.componentName = meta.name;
 			ctx.meta = createMeta(meta);
@@ -157,6 +159,7 @@ export function getComponent(
 		},
 
 		beforeDestroy(): void {
+			this.$async.clearAll();
 			runHook('beforeDestroy', this.meta, this).then(async () => {
 				if (methods.beforeDestroy) {
 					await methods.beforeDestroy.fn.call(this);
@@ -280,7 +283,10 @@ export function bindWatchers(ctx: VueInterface): void {
 						throw new ReferenceError(`The specified method (${fn}) for watching is not defined`);
 					}
 
-					ctx[fn](a, b);
+					// @ts-ignore
+					ctx.$async.setImmediate(() => ctx[fn](a, b), {
+						label: `watcher:${fn}`
+					});
 
 				} else {
 					fn(ctx, a, b);
