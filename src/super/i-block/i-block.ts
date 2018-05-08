@@ -1174,7 +1174,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 * @param settings
 	 * @param [key] - block key
 	 */
-	protected async saveSettings<T extends Object = Dictionary>(settings: T, key: string = ''): Promise<T> {
+	protected async saveSettings<T extends object = Dictionary>(settings: T, key: string = ''): Promise<T> {
 		try {
 			await this.storage.set(`${this.blockName}_${key}`, JSON.stringify(settings));
 		} catch (_) {}
@@ -1186,7 +1186,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 * Loads block settings from the local storage
 	 * @param [key] - block key
 	 */
-	protected async loadSettings<T extends Object = Dictionary>(key: string = ''): Promise<T | undefined> {
+	protected async loadSettings<T extends object = Dictionary>(key: string = ''): Promise<T | undefined> {
 		try {
 			const str = await this.storage.get(`${this.blockName}_${key}`);
 			return str && JSON.parse(str);
