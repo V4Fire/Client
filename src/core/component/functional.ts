@@ -199,7 +199,7 @@ export function createFakeCtx(
 				return $el;
 			}
 
-			return $el = p.$root.$el.querySelector(`.${fakeCtx.blockId}`);
+			return $el = p.$root.$el.querySelector(`.${fakeCtx.componentId}`);
 		}
 	});
 
