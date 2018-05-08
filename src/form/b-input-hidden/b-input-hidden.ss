@@ -12,6 +12,8 @@
 
 - template index() extends ['i-input'].index
 	- rootTag = 'span'
+	- messageHelpers = false
+	- overWrapper = false
 
 	- block innerRoot
 		- block input
