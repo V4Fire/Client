@@ -50,7 +50,7 @@ export default class bBackground extends iBlock {
 	}
 
 	/** @override */
-	protected convertStateToStore(def?: Dictionary | undefined): Dictionary {
-		return super.convertStateToStore({cache: this.cache, ...def});
+	protected convertStateToStore(): Dictionary {
+		return super.convertStateToStore({cache: this.cache});
 	}
 }

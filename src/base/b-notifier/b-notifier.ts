@@ -67,18 +67,6 @@ export default class bNotifier<T extends Dictionary = Message> extends iData<T> 
 		}
 	}
 
-	/** @override */
-	async initLoad(): Promise<void> {
-		const
-			opts = await this.loadSettings() || {};
-
-		if (opts.hidden) {
-			this.setMod('hidden', opts.hidden);
-		}
-
-		await super.initLoad();
-	}
-
 	/**
 	 * Requests for notifications
 	 */
@@ -134,6 +122,13 @@ export default class bNotifier<T extends Dictionary = Message> extends iData<T> 
 	}
 
 	/** @override */
+	protected convertStateToStore(): Dictionary {
+		return {
+			'mods.hidden': this.mods.opened
+		};
+	}
+
+	/** @override */
 	protected async onAddData(data: any): Promise<void> {
 		if (data !== undefined) {
 			await this.notify(this.convertRemoteData(data));
@@ -152,11 +147,5 @@ export default class bNotifier<T extends Dictionary = Message> extends iData<T> 
 		if (data !== undefined) {
 			await this.notify(this.convertRemoteData(data));
 		}
-	}
-
-	/** @override */
-	protected initModEvents(): void {
-		super.initModEvents();
-		this.localEvent.on('block.mod.*.hidden.*', (el) => this.saveSettings({[el.name]: el.value}));
 	}
 }

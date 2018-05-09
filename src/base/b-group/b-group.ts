@@ -18,24 +18,9 @@ export default class bGroup extends iData {
 	readonly title: string = '';
 
 	/** @override */
-	async initLoad(): Promise<void> {
-		const
-			opts = await this.loadSettings() || {};
-
-		if (opts.opened) {
-			this.setMod('opened', opts.opened);
-		}
-
-		return super.initLoad();
-	}
-
-	/** @override */
-	protected initModEvents(): void {
-		super.initModEvents();
-		this.localEvent.on('block.mod.*.opened.*', async (el) => {
-			if (this.globalName) {
-				await this.saveSettings({[el.name]: el.value});
-			}
-		});
+	protected convertStateToStore(): Dictionary {
+		return {
+			'mods.opened': this.mods.opened
+		};
 	}
 }
