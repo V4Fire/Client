@@ -978,7 +978,13 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 */
 	setState(obj: Dictionary | undefined, state: Dictionary = this): void {
 		$C(obj).forEach((el, key) => {
-			if (!Object.fastCompare(el, this[key])) {
+			const
+				p = key.split('.');
+
+			if (p[0] === 'mods') {
+				this.setMod(p[0], p.slice(1).join('.'));
+
+			} else if (!Object.fastCompare(el, this.getField(key, state))) {
 				this.setField(key, el, state);
 			}
 		});
