@@ -1480,6 +1480,10 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 		this.execCbAfterCreated = i.execCbAfterCreated.bind(this);
 		this.execCbBeforeDataCreated = i.execCbBeforeDataCreated.bind(this);
 		this.getField = i.getField.bind(this);
+		this.setField = i.setField.bind(this);
+		this.deleteField = i.deleteField.bind(this);
+		this.loadLocalStore = i.loadLocalStore.bind(this);
+		this.setState = i.setState.bind(this);
 
 		Object.defineProperty(this, 'refs', {
 			// tslint:disable-next-line
