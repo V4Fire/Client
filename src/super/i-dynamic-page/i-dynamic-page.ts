@@ -59,7 +59,7 @@ export default class iDynamicPage<T extends Dictionary = Dictionary> extends iDa
 			}
 		});
 
-		if (!this.componentActivated) {
+		if (!this.isActivated) {
 			return false;
 		}
 

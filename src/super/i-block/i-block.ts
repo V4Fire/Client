@@ -138,13 +138,6 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	componentStatus: string = statuses[statuses.unloaded];
 
 	/**
-	 * Active status
-	 * (for keep alive)
-	 */
-	@system({unique: true})
-	componentActivated: boolean = true;
-
-	/**
 	 * Initial component modifiers
 	 */
 	@prop(Object)
@@ -198,6 +191,12 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 */
 	@prop(Object)
 	readonly p: Dictionary = {};
+
+	/**
+	 * True if the current component is activated (keep-alive)
+	 */
+	@system({unique: true})
+	isActivated: boolean = true;
 
 	/**
 	 * True if the current component is functional
@@ -1521,7 +1520,8 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 
 		const
 			path = this.$activeField,
-			isSystem = this.meta.systemFields[path.split('.')[0]];
+			isSystem = this.meta.systemFields[path.split('.')[0]],
+			cache = this.syncLinkCache;
 
 		if (!(path in this.linksCache)) {
 			this.linksCache[path] = {};
@@ -1547,7 +1547,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 			};
 
 			// tslint:disable-next-line:prefer-object-spread
-			this.syncLinkCache[field] = Object.assign(this.syncLinkCache[field] || {}, {
+			cache[field] = Object.assign(cache[field] || {}, {
 				[path]: {
 					path,
 					sync
@@ -1653,7 +1653,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 					};
 
 					// tslint:disable-next-line:prefer-object-spread
-					this.syncLinkCache[field] = Object.assign(this.syncLinkCache[field] || {}, {
+					syncLinkCache[field] = Object.assign(syncLinkCache[field] || {}, {
 						[l]: {
 							path: l,
 							sync: (val?) => this.setField(l, sync(val))
@@ -1678,7 +1678,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 					});
 
 					// tslint:disable-next-line:prefer-object-spread
-					this.syncLinkCache[el] = Object.assign(this.syncLinkCache[el] || {}, {
+					syncLinkCache[el] = Object.assign(syncLinkCache[el] || {}, {
 						[l]: {
 							path: l,
 							sync: (val?) => this.setField(l, val || this.getField(el))
@@ -1967,7 +1967,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 * (for keep-alive)
 	 */
 	protected async activated(): Promise<void> {
-		if (this.componentActivated) {
+		if (this.isActivated) {
 			return;
 		}
 
@@ -1981,7 +1981,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 			$b.status = $b.statuses.ready;
 		}
 
-		this.componentActivated = true;
+		this.isActivated = true;
 		await this.forceUpdate();
 	}
 
@@ -2002,7 +2002,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 			.cancelProxy();
 
 		this.block.status = this.block.statuses.inactive;
-		this.componentActivated = false;
+		this.isActivated = false;
 	}
 
 	/**
