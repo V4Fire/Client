@@ -277,6 +277,7 @@ export default class bSelect<T extends Dictionary = Dictionary> extends bInput<T
 	 * Initializes component values
 	 * @param data - data object
 	 */
+	@watch('optionsStore')
 	@hook('beforeDataCreate')
 	protected async initComponentValues(data: Dictionary = this): Promise<void> {
 		const
@@ -322,14 +323,6 @@ export default class bSelect<T extends Dictionary = Dictionary> extends bInput<T
 		if (scroll) {
 			await scroll.initScroll();
 		}
-	}
-
-	/**
-	 * Synchronization for the optionsStore field
-	 */
-	@watch('optionsStore')
-	protected async syncOptionsStoreWatcher(): Promise<void> {
-		await this.initComponentValues();
 	}
 
 	/**
