@@ -1257,6 +1257,10 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 */
 	@wait('loading', {defer: true, label: $$.saveLocalStore})
 	protected async saveLocalStore(): Promise<void> {
+		if (!this.globalName) {
+			return;
+		}
+
 		await this.saveSettings(this.convertStateToStore(), '[[STORE]]');
 	}
 
@@ -1266,6 +1270,10 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 */
 	@hook('beforeDataCreate')
 	protected async loadLocalStore(state: Dictionary = this): Promise<void> {
+		if (!this.globalName) {
+			return;
+		}
+
 		const
 			key = $$.pendingLocalStore;
 
