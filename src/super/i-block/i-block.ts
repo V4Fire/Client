@@ -1277,20 +1277,32 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 			$a = this.async,
 			storeWatchers = {group: 'storeWatchers'};
 
-		$a.terminateWorker(storeWatchers);
+		const sync = () => {
+			$a.setTimeout(this.saveLocalStore, 0.2.second(), {
+				label: $$.syncLocalStore
+			});
+		};
+
+		$a.clearAll(storeWatchers);
 		this[key] = this.loadSettings('[[STORE]]');
 		this.setState(await this[key], state);
 
 		$C(this.convertStateToStore()).forEach((el, key) => {
-			const watcher = this.$watch(key, (val) => {
-				if (!Object.fastCompare(val, this[key])) {
-					$a.setTimeout(this.saveLocalStore, 0.2.second(), {
-						label: $$.syncLocalStore
-					});
-				}
-			});
+			const
+				p = key.split('.');
 
-			$a.worker(watcher, storeWatchers);
+			if (p[0] === 'mods') {
+				$a.on(this.localEvent, `block.mod.*.${p[0]}.*`, sync, storeWatchers);
+
+			} else {
+				const watcher = this.$watch(key, (val) => {
+					if (!Object.fastCompare(val, this.getField(key, state))) {
+						sync();
+					}
+				});
+
+				$a.worker(watcher, storeWatchers);
+			}
 		});
 	}
 
