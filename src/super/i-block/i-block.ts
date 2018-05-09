@@ -84,6 +84,7 @@ export interface SyncLink {
 	sync(value?: any): void;
 }
 
+export type SyncLinkCache = Dictionary<Dictionary<SyncLink>>;
 export type ModsTable = Dictionary<ModVal>;
 export type ModsNTable = Dictionary<string | undefined>;
 
@@ -222,13 +223,13 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 * Component modifiers
 	 */
 	@system({
-		merge: (ctx, oldCtx, link) => {
+		merge: (ctx, oldCtx, key, link) => {
 			if (!link) {
 				return;
 			}
 
 			const
-				l = ctx.syncLinkCache[link],
+				l = ctx.syncLinkCache[link][key],
 				modsProp = ctx.$props[link];
 
 			if (Object.fastCompare(modsProp, oldCtx.$props[link])) {
@@ -454,7 +455,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 * Cache for prop/field synchronize functions
 	 */
 	@system()
-	protected readonly syncLinkCache!: Dictionary<SyncLink>;
+	protected readonly syncLinkCache!: SyncLinkCache;
 
 	/**
 	 * Link to the current Vue component
@@ -1470,20 +1471,23 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	}
 
 	/**
-	 * Synchronizes component props values with store values
-	 * @param [name] - property name
+	 * Synchronizes component link values with linked values
+	 * @param [name] - link name or [linked] | [linked, link]
 	 */
-	protected syncLinks(name?: string): void {
+	protected syncLinks(name?: string | [string] | [string, string]): void {
 		const
-			cache = this.syncLinkCache;
+			linkName = <string | undefined>(Object.isString(<any>name) ? name : name && name[1]),
+			fieldName = Object.isArray(<any>name) ? (<string[]>name)[0] : undefined;
 
-		if (name) {
-			if (cache[name]) {
-				cache[name].sync();
-			}
+		const
+			cache = this.syncLinkCache,
+			sync = (el, key) => (!fieldName || key === fieldName) && el.sync();
+
+		if (linkName) {
+			$C(cache[linkName]).forEach(sync);
 
 		} else {
-			$C(cache).forEach(({sync}) => sync());
+			$C(cache).forEach((el) => $C(el).forEach(sync));
 		}
 	}
 
@@ -1542,10 +1546,13 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 				return res;
 			};
 
-			this.syncLinkCache[field] = {
-				path,
-				sync
-			};
+			// tslint:disable-next-line:prefer-object-spread
+			this.syncLinkCache[field] = Object.assign(this.syncLinkCache[field] || {}, {
+				[path]: {
+					path,
+					sync
+				}
+			});
 
 			// tslint:disable-next-line
 			return this.execCbBeforeDataCreated(() => sync());
@@ -1645,10 +1652,13 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 						return wrapper ? wrapper.call(this, val) : val;
 					};
 
-					syncLinkCache[field] = {
-						path: l,
-						sync: (val?) => this.setField(l, sync(val))
-					};
+					// tslint:disable-next-line:prefer-object-spread
+					this.syncLinkCache[field] = Object.assign(this.syncLinkCache[field] || {}, {
+						[l]: {
+							path: l,
+							sync: (val?) => this.setField(l, sync(val))
+						}
+					});
 
 					map[el[0]] = sync();
 				}
@@ -1667,10 +1677,13 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 						}, <WatchOptions>watchParams);
 					});
 
-					syncLinkCache[el] = {
-						path: l,
-						sync: (val?) => this.setField(l, val || this.getField(el))
-					};
+					// tslint:disable-next-line:prefer-object-spread
+					this.syncLinkCache[el] = Object.assign(this.syncLinkCache[el] || {}, {
+						[l]: {
+							path: l,
+							sync: (val?) => this.setField(l, val || this.getField(el))
+						}
+					});
 
 					map[el] = this.getField(el);
 				}
@@ -2049,7 +2062,7 @@ export abstract class iBlockDecorator extends iBlock {
 
 	public readonly meta!: ComponentMeta;
 	public readonly linksCache!: Dictionary<Dictionary>;
-	public readonly syncLinkCache!: Dictionary<SyncLink>;
+	public readonly syncLinkCache!: SyncLinkCache;
 	public readonly $attrs!: Dictionary<string>;
 
 	public readonly async!: Async<this>;

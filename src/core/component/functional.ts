@@ -416,7 +416,9 @@ export function patchVNode(vNode: VNode, ctx: Dictionary, renderCtx: RenderConte
 						linked = oldCtx.syncLinkCache[key];
 
 					if (linked) {
-						linkedFields[linked.path] = key;
+						for (let keys = Object.keys(linked), i = 0; i < keys.length; i++) {
+							linkedFields[linked[keys[i]].path] = key;
+						}
 					}
 				}
 
@@ -446,7 +448,7 @@ export function patchVNode(vNode: VNode, ctx: Dictionary, renderCtx: RenderConte
 								)
 							) {
 								if (el.merge) {
-									el.merge(ctx, oldCtx, link);
+									el.merge(ctx, oldCtx, key, link);
 
 								} else {
 									ctx[key] = oldCtx[key];

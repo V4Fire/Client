@@ -98,7 +98,7 @@ export interface InitFieldFn<T extends VueInterface = VueInterface> {
 }
 
 export interface MergeFieldFn<T extends VueInterface = VueInterface> {
-	(ctx: T, oldCtx: T, link: string | undefined): any;
+	(ctx: T, oldCtx: T, field: string, link: string | undefined): any;
 }
 
 export interface UniqueFieldFn<T extends VueInterface = VueInterface> {
