@@ -54,6 +54,7 @@ export default class bWindow<T extends Dictionary = Dictionary> extends iData<T>
 	 */
 	async open(stage?: string): Promise<boolean> {
 		if (await this.setMod('hidden', false)) {
+			this.setRootMod('hidden', false);
 			await this.nextTick();
 			this.emit('open');
 			return true;
@@ -65,6 +66,7 @@ export default class bWindow<T extends Dictionary = Dictionary> extends iData<T>
 	/** @override */
 	async close(): Promise<boolean> {
 		if (await this.setMod('hidden', true)) {
+			this.setRootMod('hidden', true);
 			this.emit('close');
 			return true;
 		}
@@ -136,5 +138,12 @@ export default class bWindow<T extends Dictionary = Dictionary> extends iData<T>
 	protected async mounted(): Promise<void> {
 		await super.mounted();
 		document.body.insertAdjacentElement('beforeend', this.$el);
+	}
+
+	/** @override */
+	protected beforeDestroy(): void {
+		super.beforeDestroy();
+		this.removeRootMod('hidden');
+		this.$el.remove();
 	}
 }
