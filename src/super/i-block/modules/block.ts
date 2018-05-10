@@ -7,7 +7,6 @@
  */
 
 import $C = require('collection.js');
-import Async from 'core/async';
 import iBlock, { VueElement, ModsTable } from 'super/i-block/i-block';
 import { EventEmitter2 as EventEmitter } from 'eventemitter2';
 
@@ -32,29 +31,19 @@ export type Reason =
  */
 export default class Block<T extends iBlock = iBlock> {
 	/**
-	 * Block unique id
-	 */
-	readonly id: string;
-
-	/**
 	 * Link to a block node
 	 */
 	readonly node: VueElement<T>;
 
 	/**
-	 * Block model
+	 * Vue component
 	 */
-	readonly model: T;
-
-	/**
-	 * Async object
-	 */
-	async: Async<T>;
+	readonly component: T;
 
 	/**
 	 * Local event emitter
 	 */
-	readonly localEvent: EventEmitter;
+	readonly event: EventEmitter;
 
 	/**
 	 * List of applied modifiers
@@ -86,9 +75,9 @@ export default class Block<T extends iBlock = iBlock> {
 			stringStatus = this.statuses[value];
 
 		// @ts-ignore
-		this.model.componentStatus = stringStatus;
-		this.localEvent.emit(`block.status.${stringStatus}`, value);
-		this.model.emit(`status-${stringStatus}`, value);
+		this.component.componentStatus = stringStatus;
+		this.event.emit(`block.status.${stringStatus}`, value);
+		this.component.emit(`status-${stringStatus}`, value);
 	}
 
 	/**
@@ -102,51 +91,34 @@ export default class Block<T extends iBlock = iBlock> {
 	 * Current block name
 	 */
 	get blockName(): string {
-		return this.model.componentName;
+		return this.component.componentName;
 	}
 
 	/**
-	 * @param id - block id
-	 * @param node - link to a block node
-	 * @param mods - map of modifiers to apply
-	 * @param async - instance of Async
-	 * @param localEvent - instance of EventEmitter2
-	 * @param model - model instance (Vue.js)
+	 * @param component - component instance
 	 */
-	constructor(
-		{id, node, mods, async, localEvent, model}: {
-			id: string;
-			node: Element;
-			mods: Dictionary<string | undefined>;
-			async: Async<T>;
-			localEvent: EventEmitter;
-			model: T;
-		}
-	) {
-		this.id = id;
-		this.async = async;
-		this.localEvent = localEvent;
-
+	constructor(component: T) {
+		// @ts-ignore
+		this.event = component.localEvent;
 		this.mods = Object.createDict();
-		this.model = model;
+		this.component = component;
 
-		this.node = node;
+		// @ts-ignore
+		this.node = component.$el;
 		this.node.classList.add(this.blockName, 'i-block-helper');
 
-		this.localEvent.once('block.status.loading', () => {
-			for (let keys = Object.keys(mods), i = 0; i < keys.length; i++) {
+		this.event.once('block.status.loading', () => {
+			const
+				m = component.mods;
+
+			for (let keys = Object.keys(m), i = 0; i < keys.length; i++) {
 				const name = keys[i];
-				this.setMod(name, mods[name], 'initSetMod');
+				this.setMod(name, m[name], 'initSetMod');
 			}
 		});
 
-		this.async.setImmediate(() => this.status = this.statuses.loading);
-	}
-
-	destructor(): void {
-		this.status = this.statuses.destroyed;
-		this.async.clearAll();
-		this.localEvent.removeAllListeners();
+		// @ts-ignore
+		component.async.setImmediate(() => this.status = this.statuses.loading);
 	}
 
 	/**
@@ -182,7 +154,7 @@ export default class Block<T extends iBlock = iBlock> {
 			sel = `.${this.getFullElName(elName)}`;
 
 		let
-			res = `${sel}.${this.id}`;
+			res = `${sel}.${this.component.componentId}`;
 
 		if (mods) {
 			for (let keys = Object.keys(mods), i = 0; i < keys.length; i++) {
@@ -249,8 +221,8 @@ export default class Block<T extends iBlock = iBlock> {
 				reason
 			};
 
-			this.localEvent.emit(`block.mod.set.${name}.${value}`, event);
-			this.model.emit(`mod_set_${name}_${value}`, event);
+			this.event.emit(`block.mod.set.${name}.${value}`, event);
+			this.component.emit(`mod_set_${name}_${value}`, event);
 			return true;
 		}
 
@@ -283,8 +255,8 @@ export default class Block<T extends iBlock = iBlock> {
 				reason
 			};
 
-			this.localEvent.emit(`block.mod.remove.${name}.${current}`, event);
-			this.model.emit(`mod_remove_${name}_${current}`, event);
+			this.event.emit(`block.mod.remove.${name}.${current}`, event);
+			this.component.emit(`mod_remove_${name}_${current}`, event);
 			return true;
 		}
 
@@ -320,7 +292,7 @@ export default class Block<T extends iBlock = iBlock> {
 			this.removeElMod(link, elName, modName, undefined, 'setMod');
 			link.classList.add(this.getFullElName(elName, modName, value));
 
-			this.localEvent.emit(`el.mod.set.${elName}.${modName}.${value}`, {
+			this.event.emit(`el.mod.set.${elName}.${modName}.${value}`, {
 				element: elName,
 				event: 'el.mod.set',
 				type: 'set',
@@ -354,7 +326,7 @@ export default class Block<T extends iBlock = iBlock> {
 
 		if (current !== undefined && (value === undefined || current === value)) {
 			link.classList.remove(this.getFullElName(elName, modName, current));
-			this.localEvent.emit(`el.mod.remove.${elName}.${modName}.${current}`, {
+			this.event.emit(`el.mod.remove.${elName}.${modName}.${current}`, {
 				element: elName,
 				event: 'el.mod.remove',
 				type: 'remove',

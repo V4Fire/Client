@@ -1931,14 +1931,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 			}
 		}
 
-		this.block = new Block({
-			id: this.componentId,
-			node: this.$el,
-			async: <any>this.async,
-			localEvent: this.localEvent,
-			mods: this.mods,
-			model: <any>this
-		});
+		this.block = new Block(this);
 	}
 
 	/**
@@ -2061,14 +2054,9 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 * Component before destroy
 	 */
 	protected beforeDestroy(): void {
-		if (this.block) {
-			this.block.destructor();
-
-		} else {
-			this.componentStatus = statuses[statuses.destroyed];
-			this.async.clearAll();
-			this.localEvent.removeAllListeners();
-		}
+		this.componentStatus = statuses[statuses.destroyed];
+		this.async.clearAll();
+		this.localEvent.removeAllListeners();
 
 		$C(this.asyncQueue).forEach((el) => {
 			queue.delete(el);
