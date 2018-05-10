@@ -201,10 +201,6 @@ export default class Block<T extends iBlock = iBlock> {
 	 * @param [mods]
 	 */
 	elements<E extends Element = Element>(elName: string, mods?: ModsTable): NodeListOf<E> {
-		if (!this.node) {
-			throw new ReferenceError('Root node is not defined');
-		}
-
 		return this.node.querySelectorAll(this.getElSelector(elName, mods));
 	}
 
@@ -215,10 +211,6 @@ export default class Block<T extends iBlock = iBlock> {
 	 * @param [mods]
 	 */
 	element<E extends Element = Element>(elName: string, mods?: ModsTable): E | null {
-		if (!this.node) {
-			throw new ReferenceError('Root node is not defined');
-		}
-
 		return this.node.querySelector(this.getElSelector(elName, mods));
 	}
 
@@ -230,10 +222,6 @@ export default class Block<T extends iBlock = iBlock> {
 	 * @param [reason]
 	 */
 	setMod(name: string, value: any, reason: Reason = 'setMod'): boolean {
-		if (!this.node) {
-			throw new ReferenceError('Root node is not defined');
-		}
-
 		if (value === undefined) {
 			return false;
 		}
@@ -277,10 +265,6 @@ export default class Block<T extends iBlock = iBlock> {
 	 * @param [reason]
 	 */
 	removeMod(name: string, value?: any, reason: Reason = 'removeMod'): boolean {
-		if (!this.node) {
-			throw new ReferenceError('Root node is not defined');
-		}
-
 		name = name.camelize(false);
 		value = value !== undefined ? String(value).dasherize() : undefined;
 
