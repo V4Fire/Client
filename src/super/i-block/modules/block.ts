@@ -31,6 +31,11 @@ export type Reason =
  */
 export default class Block<T extends iBlock = iBlock> {
 	/**
+	 * Current block name
+	 */
+	readonly blockName: string;
+
+	/**
 	 * Link to a block node
 	 */
 	readonly node: VueElement<T>;
@@ -88,20 +93,15 @@ export default class Block<T extends iBlock = iBlock> {
 	}
 
 	/**
-	 * Current block name
-	 */
-	get blockName(): string {
-		return this.component.componentName;
-	}
-
-	/**
 	 * @param component - component instance
 	 */
 	constructor(component: T) {
-		// @ts-ignore
-		this.event = component.localEvent;
+		this.blockName = component.componentName;
 		this.mods = Object.createDict();
 		this.component = component;
+
+		// @ts-ignore
+		this.event = component.localEvent;
 
 		// @ts-ignore
 		this.node = component.$el;
