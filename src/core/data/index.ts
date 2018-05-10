@@ -117,6 +117,21 @@ export default class Provider {
 	baseURL: string = '';
 
 	/**
+	 * Base URL for ADD requests
+	 */
+	baseAddURL: string = '';
+
+	/**
+	 * Base URL for UPD requests
+	 */
+	baseUpdURL: string = '';
+
+	/**
+	 * Base URL for DEL requests
+	 */
+	baseDelURL: string = '';
+
+	/**
 	 * Advanced URL for requests
 	 */
 	advURL: string = '';
@@ -449,6 +464,10 @@ export default class Provider {
 	 * @param [opts]
 	 */
 	add<T>(body?: RequestBody, opts?: CreateRequestOptions<T>): RequestResponse {
+		if (this.baseAddURL && !this.advURL) {
+			this.base(this.baseAddURL);
+		}
+
 		const
 			url = this.url(),
 			eventName = this.name() || 'add';
@@ -471,6 +490,10 @@ export default class Provider {
 	 * @param [opts]
 	 */
 	upd<T>(body?: RequestBody, opts?: CreateRequestOptions<T>): RequestResponse {
+		if (this.baseUpdURL && !this.advURL) {
+			this.base(this.baseUpdURL);
+		}
+
 		const
 			url = this.url(),
 			eventName = this.name() || 'upd';
@@ -493,6 +516,10 @@ export default class Provider {
 	 * @param [opts]
 	 */
 	del<T>(body?: RequestBody, opts?: CreateRequestOptions<T>): RequestResponse {
+		if (this.baseDelURL && !this.advURL) {
+			this.base(this.baseDelURL);
+		}
+
 		const
 			url = this.url(),
 			eventName = this.name() || 'upd';
