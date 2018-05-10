@@ -77,7 +77,7 @@ export default class iPage<
 			mod = this.getFullBlockName(c, name, value);
 
 		name = `${c}_${name.camelize(false)}`;
-		value = String(value).camelize(false);
+		value = String(value).dasherize();
 
 		const
 			cache = this.rootMods[name];
@@ -106,7 +106,7 @@ export default class iPage<
 			root = document.documentElement;
 
 		name = `${component.componentName}_${name.camelize(false)}`;
-		value = value !== undefined ? String(value).camelize(false) : undefined;
+		value = value !== undefined ? String(value).dasherize() : undefined;
 
 		const
 			cache = this.rootMods[name];

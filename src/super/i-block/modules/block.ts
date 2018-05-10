@@ -239,7 +239,7 @@ export default class Block<T extends iBlock = iBlock> {
 		}
 
 		name = name.camelize(false);
-		value = String(value).camelize(false);
+		value = String(value).dasherize();
 
 		const
 			prev = this.mods[name];
@@ -282,7 +282,7 @@ export default class Block<T extends iBlock = iBlock> {
 		}
 
 		name = name.camelize(false);
-		value = value !== undefined ? String(value).camelize(false) : undefined;
+		value = value !== undefined ? String(value).dasherize() : undefined;
 
 		const
 			current = this.mods[name];
@@ -330,7 +330,7 @@ export default class Block<T extends iBlock = iBlock> {
 
 		elName = elName.camelize(false);
 		modName = modName.camelize(false);
-		value = String(value).camelize(false);
+		value = String(value).dasherize();
 
 		if (this.getElMod(link, elName, modName) !== value) {
 			this.removeElMod(link, elName, modName, undefined, 'setMod');
@@ -361,9 +361,9 @@ export default class Block<T extends iBlock = iBlock> {
 	 * @param [reason]
 	 */
 	removeElMod(link: Element, elName: string, modName: string, value?: any, reason: Reason = 'removeMod'): boolean {
-		elName = elName.dasherize();
+		elName = elName.camelize(false);
 		modName = modName.camelize(false);
-		value = value !== undefined ? String(value).camelize(false) : undefined;
+		value = value !== undefined ? String(value).dasherize() : undefined;
 
 		const
 			current = this.getElMod(link, elName, modName);
