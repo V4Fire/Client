@@ -779,6 +779,26 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	}
 
 	/**
+	 * Sets a modifier to the root element
+	 *
+	 * @param name
+	 * @param value
+	 */
+	setRootMod(name: string, value: any): boolean {
+		return this.$root.setRootMod(name, value, this);
+	}
+
+	/**
+	 * Removes a modifier from the root element
+	 *
+	 * @param name
+	 * @param value
+	 */
+	removeRootMod(name: string, value?: any): boolean {
+		return this.$root.removeRootMod(name, value, this);
+	}
+
+	/**
 	 * Disables the component
 	 * @emits disable()
 	 */

@@ -7,9 +7,16 @@
  */
 
 import iData, { component, field, system, watch } from 'super/i-data/i-data';
+import { VueInterface } from 'core/component';
 import { setLang, lang } from 'core/i18n';
 import { TransitionPageInfo } from 'base/b-router/b-router';
 export * from 'super/i-data/i-data';
+
+export type RootMods = Dictionary<{
+	mod: string;
+	value: string;
+	component: VueInterface;
+}>;
 
 @component()
 export default class iPage<
@@ -50,12 +57,13 @@ export default class iPage<
 	protected langStore: string = lang;
 
 	/**
-	 * Sets a modifier to the root element
-	 *
-	 * @param name
-	 * @param value
+	 * Cache of root modifiers
 	 */
-	setRootMod(name: string, value: any): boolean {
+	@system()
+	protected rootMods: RootMods = {};
+
+	/** @override */
+	setRootMod(name: string, value: any, component: VueInterface = this): boolean {
 		if (value === undefined) {
 			return false;
 		}
@@ -64,43 +72,55 @@ export default class iPage<
 			root = document.documentElement,
 			cl = root.classList;
 
-		name = name.camelize(false);
+		name = `${component.componentName}_${name.camelize(false)}`;
 		value = String(value).camelize(false);
 
 		const
-			mod = `${name}_${value}`;
+			mod = `${name}_${value}`,
+			cache = this.rootMods[name];
 
-		if (cl.contains(mod)) {
-			return false;
+		if (cache) {
+			if (cache.value === value && cache.component === component) {
+				return false;
+			}
+
+			cl.remove(cache.mod);
 		}
 
-		root.className = root.className.replace(new RegExp(`(?:^|\\s+)${name}_[^\\s]+`), '');
 		cl.add(mod);
+		this.rootMods[name] = {
+			mod,
+			value,
+			component
+		};
+
 		return true;
 	}
 
-	/**
-	 * Removes a modifier from the root element
-	 *
-	 * @param name
-	 * @param value
-	 */
-	removeRootMod(name: string, value?: any): boolean {
+	/** @override */
+	removeRootMod(name: string, value?: any, component: VueInterface = this): boolean {
 		const
 			root = document.documentElement;
 
-		name = name.camelize(false);
+		name = `${component.componentName}_${name.camelize(false)}`;
 		value = value !== undefined ? String(value).camelize(false) : undefined;
 
-		let
-			res = false;
+		const
+			cache = this.rootMods[name];
 
-		root.className = root.className.replace(new RegExp(`(?:^|\\s+)${name}_([^\\s]+)`), (str, v) => {
-			res = value === undefined || v === value;
-			return res ? '' : str;
-		});
+		if (cache) {
+			if (cache.component !== component) {
+				return false;
+			}
 
-		return res;
+			if (value === undefined || value === cache.value) {
+				root.classList.remove(cache.mod);
+				delete this.rootMods[name];
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	/**
