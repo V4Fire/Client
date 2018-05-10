@@ -126,6 +126,11 @@ export default class iPage<
 		return false;
 	}
 
+	/** @override */
+	getRootMod(name: string, component: VueInterface = this): undefined | string {
+		return this.removeRootMod[name] && this.removeRootMod[name].value;
+	}
+
 	/**
 	 * Synchronization for the langStore field
 	 */

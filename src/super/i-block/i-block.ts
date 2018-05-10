@@ -799,6 +799,14 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	}
 
 	/**
+	 * Returns a value of the specified root element modifier
+	 * @param name
+	 */
+	getRootMod(name: string): string | undefined {
+		return this.$root.getRootMod(name, this);
+	}
+
+	/**
 	 * Disables the component
 	 * @emits disable()
 	 */
