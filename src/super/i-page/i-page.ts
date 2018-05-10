@@ -72,11 +72,14 @@ export default class iPage<
 			root = document.documentElement,
 			cl = root.classList;
 
-		name = `${component.componentName}_${name.camelize(false)}`;
+		const
+			c = component.componentName,
+			mod = this.getFullBlockName(c, name, value);
+
+		name = `${c}_${name.camelize(false)}`;
 		value = String(value).camelize(false);
 
 		const
-			mod = `${name}_${value}`,
 			cache = this.rootMods[name];
 
 		if (cache) {
