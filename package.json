@@ -30,7 +30,7 @@
     "@v4fire/core": "github:v4Fire/core#ts",
     "babel-polyfill": "^6.26.0",
     "chart.js": "^2.7.2",
-    "collection.js": "^6.6.19",
+    "collection.js": "^6.6.22",
     "escaper": "^2.4.34",
     "eventemitter2": "^5.0.1",
     "fg-loadcss": "^2.0.1",
@@ -111,6 +111,6 @@
     "babel-eslint": "^8.2.3",
     "eslint": "^4.19.1",
     "packages-version-check": "^1.1.1",
-    "tslint": "^5.9.1"
+    "tslint": "^5.10.0"
   }
 }
