@@ -1404,7 +1404,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 
 			hooks.beforeDataCreate.push({
 				fn: (data) => {
-					this.mods[mod] = String(fn(data[field], this));
+					this.mods[mod] = String(fn(this.getField(field, data), this));
 				}
 			});
 
