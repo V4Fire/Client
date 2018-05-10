@@ -1382,6 +1382,8 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 		converter: ((value: any, ctx: T) => any) | WatchOptions = Boolean,
 		opts?: WatchOptions
 	): void {
+		mod = mod.camelize(false);
+
 		if (!Object.isFunction(converter)) {
 			opts = converter;
 			converter = Boolean;
