@@ -1040,7 +1040,8 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	): void {
 		const
 			t = this.tmp,
-			tmp = t[key] = t[key] || {};
+			k = <any>key,
+			tmp = t[k] = t[k] || {};
 
 		Object.assign(
 			tmp,
@@ -1049,7 +1050,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 
 		const apply = () => {
 			fn.call(this, tmp);
-			t[key] = undefined;
+			t[k] = undefined;
 		};
 
 		this.async.setTimeout(apply, 0.2.second(), {
