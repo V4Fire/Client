@@ -629,7 +629,7 @@ export default class Provider {
 			cacheId: this.cacheId,
 			middlewares: $C(merge(middlewares, opts.middlewares)).map((fn) => fn.bind(this)),
 			// tslint:disable-next-line:no-string-literal
-			encoder: merge(encoders[method] || encoders['def'] || decoders[method] || decoders['def'], opts.encoder),
+			encoder: merge(encoders[method] || encoders['def'], opts.encoder),
 			// tslint:disable-next-line:no-string-literal
 			decoder: merge(decoders[method] || decoders['def'], opts.decoder)
 		};
