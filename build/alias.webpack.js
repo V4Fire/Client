@@ -15,9 +15,9 @@ const
  * Parameters for webpack.alias
  */
 module.exports = {
-	assets: src.rel('assets'),
-	fonts: src.rel('assets', 'fonts'),
-	icons: src.rel('assets', 'icons'),
-	images: src.rel('assets', 'images'),
-	sprite: src.rel('assets', 'svg')
+	assets$: src.rel('assets'),
+	fonts$: src.rel('assets', 'fonts'),
+	icons$: src.rel('assets', 'icons'),
+	images$: src.rel('assets', 'images'),
+	sprite$: src.rel('assets', 'svg')
 };
