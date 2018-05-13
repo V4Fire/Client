@@ -1360,8 +1360,8 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 					$a.on(this.localEvent, `block.mod.*.${p[0]}.*`, sync, storeWatchers);
 
 				} else {
-					const watcher = this.$watch(key, (val) => {
-						if (!Object.fastCompare(val, this.getField(key, state))) {
+					const watcher = this.$watch(key, (val, oldVal) => {
+						if (!Object.fastCompare(val, oldVal)) {
 							sync();
 						}
 					});
