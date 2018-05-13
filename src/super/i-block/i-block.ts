@@ -8,11 +8,13 @@
 
 // tslint:disable:max-file-line-count
 import $C = require('collection.js');
+import Then from 'core/then';
+import Async, { AsyncOpts } from 'core/async';
+
 import { EventEmitter2 as EventEmitter } from 'eventemitter2';
 import { WatchOptions, WatchOptionsWithHandler, RenderContext, VNode } from 'vue';
 
 import 'super/i-block/directives';
-import Async, { AsyncOpts } from 'core/async';
 import Block, { statuses } from 'super/i-block/modules/block';
 import Cache from 'super/i-block/modules/cache';
 import { icons, iconsMap } from 'super/i-block/modules/icons';
@@ -1263,22 +1265,44 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 * @param [key] - data key
 	 */
 	protected async saveSettings<T extends object = Dictionary>(settings: T, key: string = ''): Promise<T> {
-		try {
-			await this.storage.set(`${this.globalName}_${key}`, JSON.stringify(settings));
-		} catch (_) {}
+		const
+			$a = this.async,
+			id = `${this.globalName}_${key}`;
 
-		return settings;
+		return $a.promise(async () => {
+			try {
+				await this.storage.set(id, JSON.stringify(settings));
+			} catch (_) {}
+
+			return settings;
+
+		}, {
+			label: id,
+			group: 'saveSettings',
+			join: 'replace'
+		});
 	}
 
 	/**
 	 * Loads settings from the local storage
 	 * @param [key] - data key
 	 */
-	protected async loadSettings<T extends object = Dictionary>(key: string = ''): Promise<T | undefined> {
-		try {
-			const str = await this.storage.get(`${this.globalName}_${key}`);
-			return str && JSON.parse(str);
-		} catch (_) {}
+	protected loadSettings<T extends object = Dictionary>(key: string = ''): Promise<T | undefined> {
+		const
+			$a = this.async,
+			id = `${this.globalName}_${key}`;
+
+		return $a.promise(async () => {
+			try {
+				const str = await this.storage.get(id);
+				return str && JSON.parse(str);
+			} catch (_) {}
+
+		}, {
+			label: id,
+			group: 'loadSettings',
+			join: true
+		});
 	}
 
 	/**
