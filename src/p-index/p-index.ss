@@ -12,10 +12,11 @@
 
 - template index() extends ['i-page.component'].index
 	- block body
-		///< b-input :value = 'fooo'
+		{{ foo }}
+		< b-input :value = 'fooo'
 		///< b-checkbox
 		///< b-textarea
-		< b-select :value = '4545' | :options = [ &
+		< b-select :value = '4545' | v-func = false | :options = [ &
 			{label: 'foo', value: '1hjh'},
 			{label: 'foo', value: '12'},
 			{label: 'foo', value: '13yy'},

@@ -7,7 +7,17 @@
  */
 
 import iPage from 'super/i-page/i-page';
-import { component } from 'super/i-block/i-block';
+import { component, field } from 'super/i-block/i-block';
 
 @component({root: true})
-export default class pIndex extends iPage {}
+export default class pIndex extends iPage {
+	@field()
+	foo: number = 0;
+
+	async mounted(): Promise<void> {
+		await super.mounted();
+		setTimeout(() => {
+			this.foo++;
+		}, 300);
+	}
+}
