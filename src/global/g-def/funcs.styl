@@ -9,6 +9,33 @@
 @import "~@pzlr/stylus-inheritance/runtime.styl"
 
 /**
+ * Global images cache
+ */
+$IMG = {}
+
+/**
+ * Saves the specified image to thew global cache
+ * @param {string} $img
+ */
+img($img)
+	$prop = current-property[0]
+	$keys = {
+		background: background-image
+		background-image: background-image
+	}
+
+	$IMG[$img] = ( selector() $keys[$prop] )
+	return
+
+/**
+ * Generates images classes
+ */
+generateImgClasses()
+	for $key, $el in $IMG
+		{$el[0]}
+			add-property($el[1], "url(%s)" % $key)
+
+/**
  * Generates rules for colorized styles
  *
  * @param {Tuple} [$set] - set of colors
