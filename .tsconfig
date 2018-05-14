@@ -1,16 +1,3 @@
 {
-  "extends": "@v4fire/core/.tsconfig",
-  "compilerOptions": {
-    "baseUrl": ".",
-    "paths": {
-      "*": [
-        "./src/*",
-        "@v4fire/core:src/*"
-      ],
-
-      "@v4fire/core/*": [
-        "@v4fire/core:src/*"
-      ]
-    }
-  }
+  "extends": "@super/.tsconfig"
 }

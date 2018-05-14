@@ -7,8 +7,8 @@
  */
 
 import $C = require('collection.js');
-import Super, { AsyncOpts, AsyncCbOpts, AsyncOnOpts, ClearOpts, ClearOptsId } from '@v4fire/core/core/async';
-export * from '@v4fire/core/core/async';
+import Super, { AsyncOpts, AsyncCbOpts, AsyncOnOpts, ClearOpts, ClearOptsId } from '@super/core/async';
+export * from '@super/core/async';
 
 export interface AsyncRequestAnimationFrameOpts<T extends object = Async> extends AsyncCbOpts<T> {
 	element?: Element;

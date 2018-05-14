@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import '@v4fire/core/core';
+import '@super/core';
 import 'core/dependencies';
 import 'core/number';
 import 'core/dom';

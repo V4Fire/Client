@@ -9,13 +9,16 @@
  */
 
 const
-	path = require('path'),
+	fs = require('fs'),
+	path = require('path');
+
+const
 	{src} = require('config'),
-	{config: {dependencies}} = require('@pzlr/build-core'),
+	{config, resolve} = require('@pzlr/build-core'),
 	{normalizeSep} = include('build/helpers');
 
 const
-	deps = dependencies.map((el) => RegExp.escape(el || el.src)),
+	deps = [config.super, ...config.dependencies].map((el) => RegExp.escape(el || el.src)),
 	importRgxp = new RegExp(`('|")(${deps.join('|')})(.*?)\\1`, 'g');
 
 /**
@@ -30,7 +33,31 @@ module.exports = function (str, file) {
 		return str;
 	}
 
-	return str.replace(importRgxp, (str, $1, root, url) =>
-		`'${normalizeSep(path.relative(path.dirname(file), path.join(src.lib(), root, 'src', url)))}'`
-	);
+	return str.replace(importRgxp, (str, $1, root, url) => {
+		let
+			resource;
+
+		if (config.superRgxp.test(root)) {
+			for (let deps = resolve.rootDependencies, i = 0; i < deps.length; i++) {
+				const
+					el = deps[i],
+					l = path.join(el, url);
+
+				if (fs.existsSync(l)) {
+					resource = l;
+					break;
+				}
+			}
+		}
+
+		if (!resource && resolve.depMap[root]) {
+			resource = path.join(src.lib(), root, resolve.depMap[root].config.sourceDir, url);
+		}
+
+		if (resource) {
+			return `'${normalizeSep(path.relative(path.dirname(file), resource))}'`;
+		}
+
+		return str;
+	});
 };

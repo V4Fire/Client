@@ -9,15 +9,13 @@
  */
 
 const
+	{resolve} = require('@pzlr/build-core'),
 	{src} = require('config');
 
 /**
  * Parameters for webpack.alias
  */
 module.exports = {
-	assets$: src.rel('assets'),
-	fonts$: src.rel('assets', 'fonts'),
-	icons$: src.rel('assets', 'icons'),
-	images$: src.rel('assets', 'images'),
-	sprite$: src.rel('assets', 'svg')
+	'@super': resolve.rootDependencies[0],
+	'sprite': src.assets('svg')
 };
