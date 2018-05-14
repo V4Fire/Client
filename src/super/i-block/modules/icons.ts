@@ -6,31 +6,54 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+const
+	iconsMap = Object.createDict(),
+	iconsList = <any[]>[];
+
+interface Sprite {
+	id: string;
+	content: string;
+	viewBox: string;
+	node: SVGSymbolElement;
+}
+
+function icons(id: string): Sprite {
+	for (let i = 0; i < iconsList.length; i++) {
+		try {
+			return iconsList[i](id).default;
+
+		} catch (_) {}
+	}
+
+	throw new Error(`Cannot find module "${id}"`);
+}
+
+// @context: ['@sprite', 'sprite' in flags ? flags.sprite : '@super']
+
 let
-	icons;
+	ctx;
 
 if (IS_PROD) {
-	icons = (<any>require).context(
-		'!!svg-sprite!svg-fill?fill=currentColor!svgo!sprite',
+	ctx = (<any>require).context(
+		'!!svg-sprite!svg-fill?fill=currentColor!svgo!@sprite',
 		true,
 		/\.svg$/
 	);
 
 } else {
-	icons = (<any>require).context(
-		'!!svg-sprite!svg-fill?fill=currentColor!sprite',
+	ctx = (<any>require).context(
+		'!!svg-sprite!svg-fill?fill=currentColor!@sprite',
 		true,
 		/\.svg$/
 	);
 }
 
-/**
- * Table with svg icons
- */
-const iconsMap = $C(icons.keys()).to(Object.createDict()).reduce((map, el) => {
-	map[normalize(el)] = el;
-	return map;
+$C(ctx.keys()).forEach((el) => {
+	iconsMap[normalize(el)] = el;
 });
+
+iconsList.push(ctx);
+// @endcontext
 
 function normalize(key: string): string {
 	return key.replace(/\.\//, '').replace(/\.svg$/, '');

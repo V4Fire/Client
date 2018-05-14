@@ -9,7 +9,11 @@
  */
 
 const
-	{resolve} = require('@pzlr/build-core'),
+	$C = require('collection.js'),
+	path = require('path');
+
+const
+	{config: pzlr, resolve} = require('@pzlr/build-core'),
 	{src} = require('config');
 
 /**
@@ -17,5 +21,10 @@ const
  */
 module.exports = {
 	'@super': resolve.rootDependencies[0],
-	'sprite': src.assets('svg')
+	'sprite': src.assets(pzlr.assets.sprite),
+	...$C(pzlr.dependencies).to({}).reduce((map, el, i) => {
+		const a = resolve.depMap[el].config.assets;
+		map[`${el}/sprite`] = path.join(resolve.rootDependencies[i], a.dir, a.sprite);
+		return map;
+	})
 };
