@@ -20,6 +20,12 @@ const
 	{config: pzlr, resolve} = require('@pzlr/build-core'),
 	{normalizeSep} = include('build/helpers');
 
+const exts = $C(include('build/resolve.webpack').extensions).to([]).reduce((list, ext) => {
+	list.push(ext);
+	list.push(`/index${ext}`);
+	return list;
+});
+
 const
 	aliases = include('build/alias.webpack'),
 	deps = [pzlr.super, ...pzlr.dependencies].map((el) => RegExp.escape(el || el.src));
@@ -113,14 +119,27 @@ module.exports = function (str, file) {
 			resource;
 
 		if (pzlr.superRgxp.test(root)) {
-			for (let deps = resolve.rootDependencies, i = 0; i < deps.length; i++) {
+			outer: for (let deps = resolve.rootDependencies, i = 0; i < deps.length; i++) {
 				const
 					el = deps[i],
 					l = path.join(el, url);
 
-				if (fs.existsSync(l)) {
-					resource = l;
-					break;
+				if (path.extname(l)) {
+					if (l !== file && fs.existsSync(l)) {
+						resource = l;
+						break;
+					}
+
+				} else {
+					for (let i = 0; i < exts.length; i++) {
+						const
+							ml = l + exts[i];
+
+						if (ml !== file && fs.existsSync(ml)) {
+							resource = ml;
+							break outer;
+						}
+					}
 				}
 			}
 		}
