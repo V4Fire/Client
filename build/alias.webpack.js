@@ -19,9 +19,8 @@ const
 /**
  * Parameters for webpack.alias
  */
-module.exports = {
+const aliases = {
 	'@super': resolve.rootDependencies[0],
-	'sprite': src.assets(pzlr.assets.sprite),
 	...$C(pzlr.dependencies).to({}).reduce((map, el, i) => {
 		const
 			a = resolve.depMap[el].config.assets;
@@ -34,3 +33,9 @@ module.exports = {
 		return map;
 	})
 };
+
+if (pzlr.assets && pzlr.assets.sprite) {
+	aliases.sprite = src.assets(pzlr.assets.sprite);
+}
+
+module.exports = aliases;
