@@ -69,7 +69,7 @@ module.exports = function (str, file) {
 		}
 
 		if (resource) {
-			return `'${resource + url}`;
+			return `'${resource + url}'`;
 		}
 
 		return str;
