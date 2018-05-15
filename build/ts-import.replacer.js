@@ -9,31 +9,16 @@
  */
 
 const
-	$C = require('collection.js'),
-	config = require('config');
-
-const
-	fs = require('fs'),
+	config = require('config'),
 	path = require('path');
 
 const
 	{config: pzlr, resolve} = require('@pzlr/build-core'),
 	{normalizeSep} = include('build/helpers');
 
-const exts = $C(include('build/resolve.webpack').extensions).to([]).reduce((list, ext) => {
-	list.push(ext);
-	list.push(`/index${ext}`);
-	return list;
-});
-
 const
-	aliases = include('build/alias.webpack'),
-	deps = [pzlr.super, ...pzlr.dependencies].map((el) => RegExp.escape(el || el.src));
-
-const
-	importRgxp = new RegExp(`('|")(${deps.join('|')})(.*?)\\1`, 'g'),
-	contextRgxp = /\/\/\s*@context:\s*(.*?)\n([\s\S]*?)\/\/\s*@endcontext\n/g,
-	tplRgxp = /\/?\${(.*?)}/g;
+	deps = pzlr.dependencies.map((el) => RegExp.escape(el || el.src)),
+	importRgxp = new RegExp(`('|")(${deps.join('|')})([/\\\\].*?|(?=\\1))\\1`, 'g');
 
 /**
  * Monic replacer for TS import declarations
@@ -47,109 +32,10 @@ module.exports = function (str, file) {
 		return str;
 	}
 
-	str = str.replace(contextRgxp, (str, values, body) => {
-		values = new Function('flags', `return ${values}`)(this);
-
-		if (!Object.isArray(values) || values.length < 2) {
-			throw SyntaxError('Invalid @context format');
-		}
-
-		let
-			res = '';
-
-		const
-			rgxp = new RegExp(`('|"|!)(${RegExp.escape(values[0])})(?='|")`, 'g'),
-			wrap = (str) => res += `\n(() => {\n${str}\n})();\n`;
-
-		values = values.slice(1).map((el) => {
-			if (el === pzlr.super) {
-				return pzlr.dependencies;
-			}
-
-			return el;
-		});
-
-		[''].concat(...values).forEach((el) => {
-			if (el != null) {
-				let
-					exists = false;
-
-				body = body.replace(rgxp, (str, $1, url) => {
-					let
-						src;
-
-					if (url[0] === '@') {
-						const
-							parts = url.split('/'),
-							key = [].concat(el || [], parts[0].slice(1)).join('/');
-
-						if (!aliases[key]) {
-							return str;
-						}
-
-						src = [aliases[key], ...parts.slice(1)].join('/');
-
-					} else {
-						src = [].concat(el || [], url).join('/');
-					}
-
-					src = src.replace(tplRgxp, (str, key) => {
-						const v = $C(config).get(key);
-						return v ? `/${v}` : v;
-					});
-
-					if (fs.existsSync(src)) {
-						exists = true;
-					}
-
-					return $1 + src;
-				});
-
-				if (exists) {
-					wrap(body);
-				}
-			}
-		});
-
-		return res;
-	});
-
 	return str.replace(importRgxp, (str, $1, root, url) => {
-		let
-			resource;
-
-		if (pzlr.superRgxp.test(root)) {
-			outer: for (let deps = resolve.rootDependencies, i = 0; i < deps.length; i++) {
-				const
-					el = deps[i],
-					l = path.join(el, url);
-
-				if (path.extname(l)) {
-					if (l !== file && fs.existsSync(l)) {
-						resource = l;
-						break;
-					}
-
-				} else {
-					for (let i = 0; i < exts.length; i++) {
-						const
-							ml = l + exts[i];
-
-						if (ml !== file && fs.existsSync(ml)) {
-							resource = ml;
-							break outer;
-						}
-					}
-				}
-			}
-		}
-
-		if (!resource && resolve.depMap[root]) {
-			resource = path.join(config.src.lib(), root, resolve.depMap[root].config.sourceDir, url);
-		}
-
-		if (resource) {
-			return `'${normalizeSep(path.relative(path.dirname(file), resource))}'`;
+		if (resolve.depMap[root]) {
+			const l = path.join(config.src.lib(), root, resolve.depMap[root].config.sourceDir, url);
+			return `'${normalizeSep(path.relative(path.dirname(file), l))}'`;
 		}
 
 		return str;

@@ -65,6 +65,8 @@ module.exports = async function ({buildId, plugins}) {
 						loader: 'monic',
 						options: inherit(config.monic().typescript, {
 							replacers: [
+								include('build/context.replacer'),
+								include('build/super.replacer'),
 								include('build/ts-import.replacer')
 							]
 						})
@@ -85,6 +87,8 @@ module.exports = async function ({buildId, plugins}) {
 						loader: 'monic',
 						options: inherit(config.monic().typescript, {
 							replacers: [
+								include('build/context.replacer'),
+								include('build/super.replacer'),
 								include('build/ts-import.replacer')
 							]
 						})
@@ -97,7 +101,12 @@ module.exports = async function ({buildId, plugins}) {
 				exclude: depsRgxp,
 				use: [{
 					loader: 'monic',
-					options: config.monic().javascript
+					options: inherit(config.monic().javascript, {
+						replacers: [
+							include('build/context.replacer'),
+							include('build/super.replacer')
+						]
+					})
 				}]
 			}
 		);
