@@ -45,7 +45,7 @@
     "vue": "^2.5.17-beta.0"
   },
   "optionalDependencies": {
-    "@pzlr/build-core": "^2.8.4",
+    "@pzlr/build-core": "^2.8.5",
     "@pzlr/stylus-inheritance": "^3.0.0",
     "@types/fs-extra-promise": "^1.0.4",
     "@types/glob": "^5.0.34",
