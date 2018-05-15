@@ -6,4 +6,4 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-export * from '@super/lang';
+export * from '@v4fire/core/lang';

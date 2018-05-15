@@ -7,6 +7,6 @@
  */
 
 import $C = require('collection.js');
-import config from '@super/config';
+import config from '@v4fire/core/config';
 
 export default $C.extend(true, {}, config, CONFIG);
