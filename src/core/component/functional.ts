@@ -255,7 +255,7 @@ export function createFakeCtx(
 									$w.emit(key, val, old);
 								});
 
-								$a.setImmediate(() => {
+								const exec = () => {
 									try {
 										for (let i = tasks.length; i--;) {
 											tasks[i]();
@@ -264,11 +264,17 @@ export function createFakeCtx(
 									} finally {
 										tasks.splice(0, tasks.length);
 									}
+								};
 
-								}, {
-									group: 'setters',
-									label: 'changeState'
-								});
+								if (fakeCtx.$forceSetters) {
+									exec();
+
+								} else {
+									$a.setImmediate(exec, {
+										group: 'setters',
+										label: 'changeState'
+									});
+								}
 							}
 						}
 					});
@@ -422,6 +428,8 @@ export function patchVNode(vNode: VNode, ctx: Dictionary, renderCtx: RenderConte
 					}
 				}
 
+				ctx.$forceSetters = true;
+
 				{
 					const list = [
 						oldCtx.meta.systemFields,
@@ -458,6 +466,7 @@ export function patchVNode(vNode: VNode, ctx: Dictionary, renderCtx: RenderConte
 					}
 				}
 
+				ctx.$forceSetters = false;
 				oldCtx.$destroy();
 			}
 
