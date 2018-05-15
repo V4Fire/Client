@@ -34,9 +34,9 @@ export type PageInfo<M extends Dictionary = Dictionary> = Dictionary & {
 export type TransitionPageInfo<
 	T extends Dictionary = Dictionary,
 	M extends Dictionary = Dictionary
-> = Readonly<PageInfo<M> & {
+	> = PageInfo<M> & {
 	transition?: Dictionary;
-}>;
+};
 
 export type Pages<M extends Dictionary = Dictionary> = Dictionary<{
 	page: string;
@@ -93,7 +93,7 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 	/**
 	 * Page load status
 	 */
-	@field()
+	@system()
 	protected status: number = 0;
 
 	/**
@@ -113,8 +113,8 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 	 * @param id - page id: url or an abstract page id (if using remote router)
 	 * @param [params] - additional transition parameters
 	 */
-	page(id: string, params?: Dictionary): TransitionPageInfo;
-	page(id?: string, params?: Dictionary): CanPromise<TransitionPageInfo> | undefined {
+	page(id: string, params?: Dictionary, state?: Dictionary): TransitionPageInfo;
+	page(id?: string, params?: Dictionary, state: Dictionary = this): CanPromise<TransitionPageInfo> | undefined {
 		if (!id) {
 			return this.pageStore;
 		}
@@ -131,14 +131,14 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 				info.transition = params;
 			}
 
-			this.pageStore = Object.freeze({
+			state.pageStore = Object.create({
 				page: name,
 				...info
 			});
 
 			const done = () => {
-				this.$root.pageInfo = this.pageStore;
-				resolve(this.pageStore);
+				this.$root.pageInfo = state.pageStore;
+				resolve(state.pageStore);
 			};
 
 			if (d) {
@@ -155,7 +155,7 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 				ModuleDependencies.event.on(`component.${info.page}.loading`, this.async.proxy(
 					({packages}) => {
 						this.status = (++i * 100) / packages;
-						i === packages && done();
+						(i === packages) && done();
 					},
 
 					{
@@ -216,7 +216,7 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 	 * Initializes component values
 	 */
 	@hook('beforeDataCreate')
-	protected async initComponentValues(): Promise<void> {
+	protected async initComponentValues(data: Dictionary): Promise<void> {
 		const initPages = (val) => $C(val).map((obj: PageSchema, page) => {
 			const
 				isStr = Object.isString(obj),
@@ -260,10 +260,10 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 
 		if (page) {
 			if (Object.isString(page)) {
-				await this.page(page);
+				await this.page(page, undefined, data);
 
 			} else {
-				await this.page(page.page, page.transition);
+				await this.page(page.page, page.transition, data);
 			}
 		}
 	}
