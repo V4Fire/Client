@@ -35,7 +35,7 @@ module.exports = function (str, file) {
 	return str.replace(importRgxp, (str, $1, root, url) => {
 		if (resolve.depMap[root]) {
 			const l = path.join(config.src.lib(), root, resolve.depMap[root].config.sourceDir, url);
-			return `'${normalizeSep(path.relative(path.dirname(file), l))}'`;
+			return `'./${normalizeSep(path.relative(path.dirname(file), l))}'`;
 		}
 
 		return str;

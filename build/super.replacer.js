@@ -16,8 +16,11 @@ const
 	path = require('path');
 
 const
-	{config: pzlr, resolve} = require('@pzlr/build-core'),
+	isPathInside = require('is-path-inside'),
 	{pathEqual} = require('path-equal');
+
+const
+	{config: pzlr, resolve} = require('@pzlr/build-core');
 
 const exts = $C(include('build/resolve.webpack').extensions).to([]).reduce((list, ext) => {
 	list.push(ext);
@@ -27,7 +30,7 @@ const exts = $C(include('build/resolve.webpack').extensions).to([]).reduce((list
 
 const
 	deps = pzlr.dependencies,
-	importRgxp = new RegExp(`('|")(${RegExp.escape(pzlr.super)})([/\\\\].*?|(?=\\1))\\1`, 'g');
+	importRgxp = new RegExp(`('|")(${RegExp.escape(pzlr.super)})(.*?)\\1`, 'g');
 
 /**
  * Monic replacer for TS import declarations
@@ -41,17 +44,26 @@ module.exports = function (str, file) {
 		return str;
 	}
 
+	let start = 0;
+	for (let o = resolve.rootDependencies, i = 0; i < o.length; i++) {
+		if (isPathInside(file, o[i])) {
+			start = i + 1;
+			break;
+		}
+	}
+
 	return str.replace(importRgxp, (str, $1, root, url) => {
 		let
 			resource;
 
-		loop: for (let o = resolve.rootDependencies, i = 0; i < o.length; i++) {
+		loop: for (let o = resolve.rootDependencies, i = start; i < o.length; i++) {
 			const
+				dep = deps[i],
 				l = path.join(o[i], url);
 
 			if (path.extname(l)) {
 				if (!pathEqual(l, file) && fs.existsSync(l)) {
-					resource = deps[i];
+					resource = dep;
 					break;
 				}
 
@@ -61,7 +73,7 @@ module.exports = function (str, file) {
 						ml = l + exts[i];
 
 					if (!pathEqual(ml, file) && fs.existsSync(ml)) {
-						resource = deps[i];
+						resource = dep;
 						break loop;
 					}
 				}
