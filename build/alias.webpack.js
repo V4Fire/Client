@@ -23,7 +23,13 @@ module.exports = {
 	'@super': resolve.rootDependencies[0],
 	'sprite': src.assets(pzlr.assets.sprite),
 	...$C(pzlr.dependencies).to({}).reduce((map, el, i) => {
-		const a = resolve.depMap[el].config.assets;
+		const
+			a = resolve.depMap[el].config.assets;
+
+		if (!a || !a.sprite) {
+			return map;
+		}
+
 		map[`${el}/sprite`] = path.join(resolve.rootDependencies[i], a.dir, a.sprite);
 		return map;
 	})

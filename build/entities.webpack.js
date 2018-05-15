@@ -146,28 +146,32 @@ module.exports = (async () => {
 				styleTaskName = `${name}$style`,
 				styleFile = path.join(tmpEntries, `${name}.styl`);
 
-			fs.writeFileSync(styleFile, await $C(list).async.to('').reduce(async (str, {name, isParent}) => {
-				const
-					block = blockMap.get(name),
-					style = block && await block.styles;
+			fs.writeFileSync(styleFile, [
+				await $C(list).async.to('').reduce(async (str, {name, isParent}) => {
+					const
+						block = blockMap.get(name),
+						style = block && await block.styles;
 
-				if (!isParent && style && style.length && !blackName.test(name)) {
-					$C(style).forEach((url) => {
-						str += `@import "${getUrl(url)}"\n`;
-					});
+					if (!isParent && style && style.length && !blackName.test(name)) {
+						$C(style).forEach((url) => {
+							str += `@import "${getUrl(url)}"\n`;
+						});
 
-					if (/^[bp]-/.test(name)) {
-						str +=
+						if (/^[bp]-/.test(name)) {
+							str +=
 							`
 .${name}
 	extends($${name.camelize(false)})
 
 `;
+						}
 					}
-				}
 
-				return str;
-			}));
+					return str;
+				}),
+
+				'generateImgClasses()'
+			].join('\n'));
 
 			let
 				union = processes[processes.length - 1];

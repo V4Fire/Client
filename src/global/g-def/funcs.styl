@@ -24,16 +24,28 @@ img($img)
 		background-image: background-image
 	}
 
-	$IMG[$img] = ( selector() $keys[$prop] )
+	if !$IMG[$img]
+		$IMG[$img] = {
+			selectors: ()
+			props: {}
+		}
+
+	$obj = $IMG[$img]
+	$props = $obj.props
+
+	push($obj.selectors, selector())
+	$props[$keys[$prop]] = true
+
 	return
 
 /**
  * Generates images classes
  */
 generateImgClasses()
-	for $key, $el in $IMG
-		{$el[0]}
-			add-property($el[1], "url(%s)" % $key)
+	for $img, $obj in $IMG
+		{join(',', $obj.selectors)}
+			for $prop in $obj.props
+				add-property($prop, "url(%s)" % $img)
 
 /**
  * Generates rules for colorized styles

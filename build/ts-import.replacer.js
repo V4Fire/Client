@@ -77,6 +77,10 @@ module.exports = function (str, file) {
 							parts = url.split('/'),
 							key = [].concat(el || [], parts[0].slice(1)).join('/');
 
+						if (!aliases[key]) {
+							return str;
+						}
+
 						src = [aliases[key], ...parts.slice(1)].join('/');
 
 					} else {
