@@ -112,6 +112,7 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 	 *
 	 * @param id - page id: url or an abstract page id (if using remote router)
 	 * @param [params] - additional transition parameters
+	 * @param [state] - state object
 	 */
 	page(id: string, params?: Dictionary, state?: Dictionary): TransitionPageInfo;
 	page(id?: string, params?: Dictionary, state: Dictionary = this): CanPromise<TransitionPageInfo> | undefined {
