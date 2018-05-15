@@ -18,7 +18,7 @@ const
 
 const
 	deps = pzlr.dependencies.map((el) => RegExp.escape(el || el.src)),
-	importRgxp = new RegExp(`('|")(${deps.join('|')})([/\\\\].*?|(?=\\1))\\1`, 'g');
+	importRgxp = new RegExp(`('|")(${deps.join('|')})(/.*?|(?=\\1))\\1`, 'g');
 
 /**
  * Monic replacer for TS import declarations

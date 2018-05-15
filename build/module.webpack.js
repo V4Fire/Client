@@ -21,7 +21,7 @@ const
 	{output, hash, version, hashLength, inherit, depsRgxpStr} = include('build/build.webpack');
 
 const
-	depsRgxp = new RegExp(`(?:^|/)node_modules/(?!${depsRgxpStr})(?:/|$)`);
+	depsRgxp = new RegExp(`(?:^|/)node_modules/(?:(?!${depsRgxpStr}).)*?(?:/|$)`);
 
 /**
  * Returns parameters for webpack.module

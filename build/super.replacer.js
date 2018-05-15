@@ -20,7 +20,8 @@ const
 	{pathEqual} = require('path-equal');
 
 const
-	{config: pzlr, resolve} = require('@pzlr/build-core');
+	{config: pzlr, resolve} = require('@pzlr/build-core'),
+	{normalizeSep} = include('build/helpers');
 
 const exts = $C(include('build/resolve.webpack').extensions).to([]).reduce((list, ext) => {
 	list.push(ext);
@@ -30,7 +31,7 @@ const exts = $C(include('build/resolve.webpack').extensions).to([]).reduce((list
 
 const
 	deps = pzlr.dependencies,
-	importRgxp = new RegExp(`('|")(${RegExp.escape(pzlr.super)})(.*?)\\1`, 'g');
+	importRgxp = new RegExp(`('|")(${RegExp.escape(pzlr.super)})(/.*?|(?=\\1))\\1`, 'g');
 
 /**
  * Monic replacer for TS import declarations
@@ -51,6 +52,9 @@ module.exports = function (str, file) {
 			break;
 		}
 	}
+
+	const
+		isTS = path.extname(file) === '.ts';
 
 	return str.replace(importRgxp, (str, $1, root, url) => {
 		let
@@ -81,7 +85,11 @@ module.exports = function (str, file) {
 		}
 
 		if (resource) {
-			return `'${resource + url}'`;
+			if (isTS) {
+				return `'${resource + url}'`;
+			}
+
+			return `'${normalizeSep(path.join(resource, resolve.depMap[resource].config.sourceDir, url))}'`;
 		}
 
 		return str;
