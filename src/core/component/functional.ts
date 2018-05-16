@@ -222,7 +222,7 @@ export function createFakeCtx(
 		];
 
 		const
-			tasks = <Function[]>[];
+			tasks = <Dictionary<Function>>{};
 
 		for (let i = 0; i < list.length; i++) {
 			const data = i ? fakeCtx.$data : fakeCtx;
@@ -250,19 +250,19 @@ export function createFakeCtx(
 								old = data[key];
 
 							if (old !== val) {
-								tasks.push(() => {
+								tasks[key] = () => {
 									data[key] = val;
 									$w.emit(key, val, old);
-								});
+								};
 
 								const exec = () => {
-									try {
-										for (let i = tasks.length; i--;) {
-											tasks[i]();
+									for (const key in tasks) {
+										if (!tasks.hasOwnProperty(key)) {
+											break;
 										}
 
-									} finally {
-										tasks.splice(0, tasks.length);
+										tasks[key]();
+										delete tasks[key];
 									}
 								};
 
