@@ -246,35 +246,35 @@ export function createFakeCtx(
 						},
 
 						set(val: any): void {
-							const
-								old = data[key];
+							tasks[key] = () => {
+								const
+									old = data[key];
 
-							if (old !== val) {
-								tasks[key] = () => {
+								if (val !== old) {
 									data[key] = val;
 									$w.emit(key, val, old);
-								};
-
-								const exec = () => {
-									for (const key in tasks) {
-										if (!tasks.hasOwnProperty(key)) {
-											break;
-										}
-
-										tasks[key]();
-										delete tasks[key];
-									}
-								};
-
-								if (fakeCtx.$forceSetters) {
-									exec();
-
-								} else {
-									$a.setImmediate(exec, {
-										group: 'setters',
-										label: 'changeState'
-									});
 								}
+							};
+
+							const exec = () => {
+								for (const key in tasks) {
+									if (!tasks.hasOwnProperty(key)) {
+										break;
+									}
+
+									tasks[key]();
+									delete tasks[key];
+								}
+							};
+
+							if (fakeCtx.$forceSetters) {
+								exec();
+
+							} else {
+								$a.setImmediate(exec, {
+									group: 'setters',
+									label: 'changeState'
+								});
 							}
 						}
 					});
