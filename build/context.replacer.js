@@ -76,7 +76,7 @@ module.exports = function (str) {
 
 					src = src.replace(tplRgxp, (str, key) => {
 						const v = $C(config).get(key);
-						return v ? `/${v}` : v;
+						return v ? `/${v}` : '';
 					});
 
 					if (fs.existsSync(src)) {
