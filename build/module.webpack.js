@@ -211,7 +211,7 @@ module.exports = async function ({buildId, plugins}) {
 		},
 
 		{
-			test: /\.(?:png|gif|jpe?g|svg|ttf|eot|woff|woff2|mp3|ogg|aac)$/,
+			test: /\.(?:png|gif|jpe?g|ttf|eot|woff|woff2|mp3|ogg|aac)$/,
 			use: [
 				{
 					loader: 'url',

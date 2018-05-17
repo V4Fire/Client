@@ -158,9 +158,25 @@ const
 	isVueProp = /^(:|@|v-)/,
 	isLiteral = /^\s*[[{]/,
 	vForRgxp = /^\s*([\w$]+)(\s+(?:in|of)\s+.*)$/,
+	svgRequire = /require\(.*?\.svg[\\"']+\)/,
 	isRef = {'ref': true, ':ref': true};
 
+function normalizeSvgRequire(name, attrs) {
+	if (name !== 'img') {
+		return;
+	}
+
+	const
+		src = attrs[':src'];
+
+	if (src && svgRequire.test(src[0])) {
+		src[0] += '.replace(/^"|"$/g, \'\')';
+	}
+}
+
 function vueComp({name, attrs}) {
+	normalizeSvgRequire(name, attrs);
+
 	$C(attrs).forEach((el, key) => {
 		if (isRef[key]) {
 			attrs['data-vue-ref'] = [el];

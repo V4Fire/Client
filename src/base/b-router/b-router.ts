@@ -253,7 +253,7 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 			this.pages = initPages(this.pagesProp);
 
 			const fn = () => {
-				this.page.bind(this, location.href, history.state);
+				this.page(location.href, history.state);
 			};
 
 			this.async.on(window, 'popstate', fn, flags);
