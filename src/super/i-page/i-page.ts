@@ -160,7 +160,6 @@ export default class iPage<
 	@hook('created')
 	protected initRemoteListeners(): void {
 		const {async: $a} = this;
-		console.log(this.isOnline, this.isAuth);
 		$a.on(net.event, 'status', (value) => this.isOnline = value);
 		$a.on(session.event, 'set', ({auth}) => this.isAuth = Boolean(auth));
 		$a.on(session.event, 'clear', () => this.isAuth = false);
