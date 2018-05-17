@@ -75,7 +75,8 @@ module.exports = function (str) {
 					}
 
 					src = src.replace(tplRgxp, (str, key) => {
-						let v = $C(config).get(key);
+						let
+							v = $C(config).get(key);
 
 						if (Object.isFunction(v)) {
 							v = v();
