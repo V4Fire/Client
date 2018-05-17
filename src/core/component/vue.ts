@@ -26,6 +26,7 @@ export default class VueInterface<B = VueInterface<any, any>, R = VueInterface<a
 	readonly $parent?: C;
 	readonly $root!: R;
 	readonly $isServer!: boolean;
+	protected readonly $state!: Dictionary;
 	protected readonly $async!: Async<VueInterface>;
 	protected readonly meta!: ComponentMeta;
 	protected readonly $refs!: Dictionary;

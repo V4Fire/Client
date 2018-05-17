@@ -8,6 +8,7 @@
 
 // tslint:disable:max-file-line-count
 import Async from 'core/async';
+import state from 'core/component/state';
 import Vue, { ComponentOptions, FunctionalComponentOptions } from 'vue';
 import { ComponentField, ComponentMeta, VueInterface } from 'core/component';
 
@@ -72,6 +73,7 @@ export function getComponent(
 			const
 				ctx = <any>this;
 
+			ctx.$state = state;
 			ctx.$async = new Async(this);
 			ctx.instance = instance;
 			ctx.componentName = meta.name;

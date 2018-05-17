@@ -9,7 +9,9 @@
 // tslint:disable:max-file-line-count
 
 import $C = require('collection.js');
+
 import Async from 'core/async';
+import { EventEmitter2 as EventEmitter } from 'eventemitter2';
 
 import {
 
@@ -22,7 +24,7 @@ import {
 
 } from 'vue';
 
-import { EventEmitter2 as EventEmitter } from 'eventemitter2';
+import state from 'core/component/state';
 import { VueElement, FunctionalCtx } from 'core/component';
 import { runHook, createMeta, initDataObject, bindWatchers, defaultWrapper } from 'core/component/component';
 
@@ -64,6 +66,7 @@ export function createFakeCtx(
 		children: [],
 
 		$async: $a,
+		$state: state,
 		$root: p.$root,
 		$parent: p,
 		$options: Object.assign(Object.create(p.$options), fakeCtx.$options),

@@ -7,12 +7,11 @@
  */
 
 import Vue from 'vue';
+import flags from 'core/start/flags';
 import { rootComponents } from 'core/component';
+import { onEverythingReady } from 'core/event';
 
-export let
-	root: Vue | undefined;
-
-document.addEventListener('DOMContentLoaded', async () => {
+export default onEverythingReady(async () => {
 	const
 		node = <HTMLElement | undefined>document.querySelector('[data-init-block]');
 
@@ -36,11 +35,12 @@ document.addEventListener('DOMContentLoaded', async () => {
 		return Object.assign(data.call(this), params.data);
 	};
 
-	root = new Vue({
+	// tslint:disable-next-line:no-unused-expression
+	new Vue({
 		...params,
 		...component,
 		el: node
 	});
 
 	READY_STATE++;
-});
+}, ...flags);
