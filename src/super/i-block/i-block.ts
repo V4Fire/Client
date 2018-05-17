@@ -8,9 +8,9 @@
 
 // tslint:disable:max-file-line-count
 import $C = require('collection.js');
-import Then from 'core/then';
 import Async, { AsyncOpts } from 'core/async';
 
+import * as analytics from 'core/analytics';
 import { EventEmitter2 as EventEmitter } from 'eventemitter2';
 import { WatchOptions, WatchOptionsWithHandler, RenderContext, VNode } from 'vue';
 
@@ -1520,6 +1520,17 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 		await this.async.wait(() => this.$refs[ref], params);
 		const link = <any>this.$refs[ref];
 		return link.vueComponent ? link.vueComponent : link;
+	}
+
+	/**
+	 * Sends an analytic event with the specified parameters
+	 *
+	 * @param event - event name
+	 * @param [details] - event details
+	 */
+	@wait('loading', {defer: true, label: $$.sendAnalyticsEvent})
+	protected async sendAnalyticsEvent(event: string, details: Dictionary = {}): Promise<void> {
+		analytics.send(event, details);
 	}
 
 	/**
