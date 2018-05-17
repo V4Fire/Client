@@ -6,7 +6,10 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import iData, { component, field, system, watch } from 'super/i-data/i-data';
+import * as net from 'core/net';
+import * as session from 'core/session';
+
+import iData, { component, field, system, watch, hook } from 'super/i-data/i-data';
 import { VueInterface } from 'core/component';
 import { setLang, lang } from 'core/i18n';
 import { TransitionPageInfo } from 'base/b-router/b-router';
@@ -35,6 +38,18 @@ export default class iPage<
 	 */
 	@field()
 	pageInfo?: TransitionPageInfo<T, M>;
+
+	/**
+	 * Authorization status
+	 */
+	@field((o) => (<any>o).$state.isAuth)
+	isAuth!: boolean;
+
+	/**
+	 * Online status
+	 */
+	@field((o) => (<any>o).$state.isOnline)
+	isOnline!: boolean;
 
 	/**
 	 * System language
@@ -137,5 +152,17 @@ export default class iPage<
 	@watch('langStore')
 	protected syncLangWatcher(): void {
 		this.$forceUpdate();
+	}
+
+	/**
+	 * Initializes listeners for some remote instances (online, session, etc.)
+	 */
+	@hook('created')
+	protected initRemoteListeners(): void {
+		const {async: $a} = this;
+		console.log(this.isOnline, this.isAuth);
+		$a.on(net.event, 'status', (value) => this.isOnline = value);
+		$a.on(session.event, 'set', ({auth}) => this.isAuth = Boolean(auth));
+		$a.on(session.event, 'clear', () => this.isAuth = false);
 	}
 }
