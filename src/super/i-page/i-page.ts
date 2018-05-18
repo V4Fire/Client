@@ -52,6 +52,12 @@ export default class iPage<
 	isOnline!: boolean;
 
 	/**
+	 * Last online date
+	 */
+	@system((o) => (<any>o).$state.lastOnlineDate)
+	lastOnlineDate?: Date;
+
+	/**
 	 * System language
 	 */
 	get lang(): string {
@@ -159,8 +165,14 @@ export default class iPage<
 	 */
 	@hook('created')
 	protected initRemoteListeners(): void {
-		const {async: $a} = this;
-		$a.on(net.event, 'status', (value) => this.isOnline = value);
+		const
+			{async: $a} = this;
+
+		$a.on(net.event, 'status', ({status, lastOnline}) => {
+			this.isOnline = status;
+			this.lastOnlineDate = lastOnline;
+		});
+
 		$a.on(session.event, 'set', ({auth}) => this.isAuth = Boolean(auth));
 		$a.on(session.event, 'clear', () => this.isAuth = false);
 	}

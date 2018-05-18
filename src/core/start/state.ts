@@ -13,7 +13,23 @@ import state from 'core/component/state';
 import semaphore from 'core/start/semaphore';
 
 export default (async () => {
-	state.isAuth = await isExists();
-	state.isOnline = await isOnline();
+	const
+		tasks = <Promise<any>[]>[];
+
+	tasks.push(
+		isOnline().then((v) => {
+			state.isOnline = v.status;
+			state.lastOnlineDate = v.lastOnline;
+		}),
+
+		isExists().then((v) => state.isAuth = v)
+	);
+
+	for (let i = 0; i < tasks.length; i++) {
+		try {
+			await tasks[i];
+		} catch (_) {}
+	}
+
 	semaphore('stateReady');
 })();
