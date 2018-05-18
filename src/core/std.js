@@ -58,6 +58,10 @@ loadToPrototype([
 		Number,
 		['second', require('sugar/number/second')],
 		['seconds', require('sugar/number/seconds')],
+		['minute', require('sugar/number/minute')],
+		['minutes', require('sugar/number/minutes')],
+		['hour', require('sugar/number/hour')],
+		['hours', require('sugar/number/hours')],
 		['floor', require('sugar/number/floor')],
 		['format', require('sugar/number/format')]
 	],
