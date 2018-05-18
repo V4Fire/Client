@@ -330,6 +330,7 @@ export default class bSelect<T extends Dictionary = Dictionary> extends bInput<T
 	 * @param value
 	 */
 	@watch('selected')
+	@wait('ready')
 	protected async syncSelectedStoreWatcher(value: any): Promise<void> {
 		const
 			{block: $b} = this,
