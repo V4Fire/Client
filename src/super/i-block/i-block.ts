@@ -200,6 +200,13 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	isActivated: boolean = true;
 
 	/**
+	 * Link to $root
+	 */
+	get r(): iPage {
+		return this.$root;
+	}
+
+	/**
 	 * True if the current component is functional
 	 */
 	get isFunctional(): boolean {
