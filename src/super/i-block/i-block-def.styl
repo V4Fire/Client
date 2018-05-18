@@ -8,15 +8,16 @@
 
 $p = {
 	focusedBorderColor: #444
+	sizes: SIZES
 }
 
 i-block
 	if $p.lockHelpers
-		&_disabled_true &__root-wrapper,
+		&_disabled_true &__root-wrapper
 		&_progress_true &__root-wrapper
 			opacity 0.8
 
 	&_size
-		for $el in (xxs 0.65) (xs 0.75) (s 0.9) (m 1) (l 1.15) (xl 1.35) (xxl 1.75)
+		for $el in $p.sizes
 			&_{$el[0]}
 				font-size $el[1]rem
