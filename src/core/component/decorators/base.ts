@@ -59,7 +59,7 @@ export interface SystemField<T extends VueInterface = VueInterface> {
 	unique?: boolean | UniqueFieldFn<T>;
 	after?: string | string[];
 	init?: InitFieldFn<T>;
-	merge?: MergeFieldFn<T>;
+	merge?: MergeFieldFn<T> | boolean;
 }
 
 export interface ComponentField<T extends VueInterface = VueInterface, A = any, B = A> extends SystemField<T> {

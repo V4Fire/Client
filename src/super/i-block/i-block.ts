@@ -398,7 +398,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	/**
 	 * Watched store of component modifiers
 	 */
-	@field()
+	@field({merge: true})
 	protected watchModsStore: ModsNTable = {};
 
 	/**
@@ -437,31 +437,31 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	/**
 	 * Cache of ifOnce
 	 */
-	@field()
+	@field({merge: true})
 	protected readonly ifOnceStore: Dictionary = {};
 
 	/**
 	 * Temporary cache
 	 */
-	@system()
+	@system({merge: true})
 	protected tmp: Dictionary = {};
 
 	/**
 	 * Temporary cache with watching
 	 */
-	@field()
+	@field({merge: true})
 	protected watchTmp: Dictionary = {};
 
 	/**
 	 * Cache for prop/field links
 	 */
-	@system()
+	@system({unique: true})
 	protected readonly linksCache!: Dictionary<Dictionary>;
 
 	/**
 	 * Cache for prop/field synchronize functions
 	 */
-	@system()
+	@system({unique: true})
 	protected readonly syncLinkCache!: SyncLinkCache;
 
 	/**
@@ -504,7 +504,11 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	/**
 	 * Storage object
 	 */
-	@system((o) => asyncLocal.namespace(o.componentName))
+	@system({
+		unique: true,
+		init: (o) => asyncLocal.namespace(o.componentName)
+	})
+
 	protected readonly storage!: AsyncNamespace;
 
 	/**
@@ -528,25 +532,33 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	/**
 	 * Cache of child async components
 	 */
-	@field()
+	@field({unique: true})
 	protected readonly asyncComponents: Dictionary<string> = {};
 
 	/**
 	 * Cache of child background async components
 	 */
-	@field()
+	@field({unique: true})
 	protected readonly asyncBackComponents: Dictionary<string> = {};
 
 	/**
 	 * Some helpers
 	 */
-	@system(() => helpers)
+	@system({
+		unique: true,
+		init: () => helpers
+	})
+
 	protected readonly h!: typeof helpers;
 
 	/**
 	 * Browser constants
 	 */
-	@system(() => browser)
+	@system({
+		unique: true,
+		init: () => browser
+	})
+
 	protected readonly b!: typeof browser;
 
 	/**
@@ -559,19 +571,31 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	/**
 	 * Link to window.l
 	 */
-	@system(() => l)
+	@system({
+		unique: true,
+		init: () => l
+	})
+
 	protected readonly l!: typeof l;
 
 	/**
 	 * Link to console API
 	 */
-	@system(() => console)
+	@system({
+		unique: true,
+		init: () => console
+	})
+
 	protected readonly console!: Console;
 
 	/**
 	 * Link to window.location
 	 */
-	@system(() => location)
+	@system({
+		unique: true,
+		init: () => location
+	})
+
 	protected readonly location!: Location;
 
 	/**

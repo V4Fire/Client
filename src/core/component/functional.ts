@@ -262,12 +262,11 @@ export function createFakeCtx(
 						},
 
 						set(val: any): void {
-							tasks[key] = () => {
-								const
-									old = data[key];
+							const old = data[key];
+							data[key] = val;
 
+							tasks[key] = () => {
 								if (val !== old) {
-									data[key] = val;
 									$w.emit(key, val, old);
 								}
 							};
@@ -401,7 +400,8 @@ export function patchVNode(vNode: VNode, ctx: Dictionary, renderCtx: RenderConte
 
 	const parentHook = {
 		beforeMount: 'mounted',
-		beforeUpdate: 'updated'
+		beforeUpdate: 'updated',
+		deactivated: 'activated'
 	}[p.hook];
 
 	let
@@ -412,12 +412,19 @@ export function patchVNode(vNode: VNode, ctx: Dictionary, renderCtx: RenderConte
 		ctx.$destroy();
 	};
 
-	const mount = () => {
+	const mount = async () => {
 		ctx[<any>$$.el] = undefined;
 		$C(hooks[parentHook]).remove((el) => el.fn[$$.self] === ctx);
 
 		if (!ctx.$el) {
-			destroy();
+			try {
+				await ctx.$async.promise(p.nextTick());
+				!ctx.$el && destroy();
+
+			} catch (err) {
+				destroyed = true;
+				stderr(err);
+			}
 		}
 
 		if (destroyed) {
@@ -477,7 +484,14 @@ export function patchVNode(vNode: VNode, ctx: Dictionary, renderCtx: RenderConte
 							)
 						) {
 							if (el.merge) {
-								el.merge(ctx, oldCtx, key, link);
+								if (el.merge === true) {
+									if (!Object.fastCompare(ctx[key], oldCtx[key])) {
+										ctx[key] = {...ctx[key], ...oldCtx[key]};
+									}
+
+								} else {
+									el.merge(ctx, oldCtx, key, link);
+								}
 
 							} else {
 								ctx[key] = oldCtx[key];
@@ -521,7 +535,7 @@ export function patchVNode(vNode: VNode, ctx: Dictionary, renderCtx: RenderConte
 		});
 
 	} else {
-		mount();
+		mount().catch(stderr);
 	}
 
 	hooks.beforeDestroy.unshift({
