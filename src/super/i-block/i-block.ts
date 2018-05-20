@@ -237,13 +237,24 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 
 			const
 				l = ctx.syncLinkCache[link][key],
-				modsProp = ctx.$props[link];
+				modsProp = ctx.$props[link],
+				mods = {...oldCtx.mods};
+
+			for (let keys = Object.keys(mods), i = 0; i < keys.length; i++) {
+				const
+					key = keys[i];
+
+				if (this.syncModCache[key]) {
+					delete mods[key];
+				}
+			}
 
 			if (Object.fastCompare(modsProp, oldCtx.$props[link])) {
-				l.sync(oldCtx.mods);
+				l.sync(mods);
 
 			} else {
-				l.sync({...oldCtx.mods, ...<object>modsProp});
+				// tslint:disable-next-line:prefer-object-spread
+				l.sync(Object.assign(mods, modsProp));
 			}
 		},
 
@@ -463,6 +474,12 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 */
 	@system({unique: true})
 	protected readonly syncLinkCache!: SyncLinkCache;
+
+	/**
+	 * Cache for modifiers synchronize functions
+	 */
+	@system({unique: true})
+	protected readonly syncModCache!: Dictionary<Function>;
 
 	/**
 	 * Link to the current Vue component
@@ -1494,9 +1511,9 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 				{hooks} = this.meta;
 
 			hooks.beforeDataCreate.push({
-				fn: (data) => {
+				fn: (this.syncModCache[mod] = (data) => {
 					this.mods[mod] = String(fn(this.getField(field, data), this));
-				}
+				})
 			});
 
 			hooks.created.push({
@@ -1574,6 +1591,9 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 
 		// @ts-ignore
 		this.syncLinkCache = {};
+
+		// @ts-ignore
+		this.syncModCache = {};
 
 		const
 			i = this.instance;

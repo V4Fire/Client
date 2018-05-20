@@ -81,6 +81,7 @@ export function createFakeCtx(
 		$options: Object.assign(Object.create(p.$options), fakeCtx.$options),
 
 		$data: {},
+		$dataCache: {},
 		$props: renderCtx.props,
 		$attrs: renderCtx.data.attrs,
 		$refs: {},
@@ -259,6 +260,8 @@ export function createFakeCtx(
 						},
 
 						set(val: any): void {
+							fakeCtx.$dataCache[key] = true;
+
 							const
 								old = data[key];
 
@@ -452,6 +455,7 @@ export function patchVNode(vNode: VNode, ctx: Dictionary, renderCtx: RenderConte
 							old = oldCtx[key];
 
 						if (
+							!ctx.$dataCache[key] &&
 							(Object.isFunction(field.unique) ? !field.unique(ctx, oldCtx) : !field.unique) &&
 							!Object.fastCompare(val, old) &&
 
