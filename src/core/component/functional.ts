@@ -515,9 +515,14 @@ export function patchVNode(vNode: VNode, ctx: Dictionary, renderCtx: RenderConte
 	mount[$$.self] = ctx;
 	destroy[$$.self] = ctx;
 
-	hooks[parentHook].unshift({
-		fn: mount
-	});
+	if (parentHook) {
+		hooks[parentHook].unshift({
+			fn: mount
+		});
+
+	} else {
+		mount();
+	}
 
 	hooks.beforeDestroy.unshift({
 		fn: destroy
