@@ -1913,7 +1913,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 */
 	@watch({field: 'stage', immediate: true})
 	protected syncStageWatcher(value: string, oldValue: string | undefined): void {
-		this.emit('changeStage', value, oldValue);
+		this.emit('stageChange', value, oldValue);
 	}
 
 	/**
