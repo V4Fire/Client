@@ -237,9 +237,6 @@ export function createFakeCtx(
 			meta.fields
 		];
 
-		const
-			tasks = <Dictionary<Function>>{};
-
 		for (let i = 0; i < list.length; i++) {
 			const data = i ? fakeCtx.$data : fakeCtx;
 			initDataObject(list[i], fakeCtx, instance, data);
@@ -262,34 +259,12 @@ export function createFakeCtx(
 						},
 
 						set(val: any): void {
-							const old = data[key];
-							data[key] = val;
+							const
+								old = data[key];
 
-							tasks[key] = () => {
-								if (val !== old) {
-									$w.emit(key, val, old);
-								}
-							};
-
-							const exec = () => {
-								for (const key in tasks) {
-									if (!tasks.hasOwnProperty(key)) {
-										break;
-									}
-
-									tasks[key]();
-									delete tasks[key];
-								}
-							};
-
-							if (fakeCtx[<any>$$.forceSetters]) {
-								exec();
-
-							} else {
-								$a.setImmediate(exec, {
-									group: 'setters',
-									label: 'changeState'
-								});
+							if (val !== old) {
+								data[key] = val;
+								$w.emit(key, val, old);
 							}
 						}
 					});
@@ -455,9 +430,6 @@ export function patchVNode(vNode: VNode, ctx: Dictionary, renderCtx: RenderConte
 				}
 			}
 
-			const f = <any>$$.forceSetters;
-			ctx[f] = true;
-
 			{
 				const list = [
 					oldCtx.meta.systemFields,
@@ -515,8 +487,6 @@ export function patchVNode(vNode: VNode, ctx: Dictionary, renderCtx: RenderConte
 					}
 				}
 			}
-
-			ctx[f] = false;
 		}
 
 		el.vueComponent = ctx;
