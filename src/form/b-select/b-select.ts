@@ -198,8 +198,8 @@ export default class bSelect<T extends Dictionary = Dictionary> extends bInput<T
 					{scroll} = this.$refs;
 
 				if (scroll) {
-					await scroll.setScrollOffset({top: selected ? selected.offsetTop : 0});
 					await scroll.calcScroll();
+					await scroll.setScrollOffset({top: selected ? selected.offsetTop : 0});
 				}
 
 				this.emit('open');
