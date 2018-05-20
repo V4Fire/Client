@@ -53,16 +53,19 @@ export default class bCheckboxGroup<T extends Dictionary = Dictionary> extends i
 	/**
 	 * Checkboxes store
 	 */
-	@field((o) => o.link('optionsProp', (val) => {
-		const
-			ctx: bCheckboxGroup = <any>o;
+	@field({
+		merge: true,
+		init: (o) => o.link('optionsProp', (val) => {
+			const
+				ctx: bCheckboxGroup = <any>o;
 
-		if (ctx.dataProvider) {
-			return ctx.options || [];
-		}
+			if (ctx.dataProvider) {
+				return ctx.options || [];
+			}
 
-		return val;
-	}))
+			return val;
+		})
+	})
 
 	options!: Option[];
 

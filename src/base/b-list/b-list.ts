@@ -83,7 +83,11 @@ export default class bList<T extends Dictionary = Dictionary> extends iData<T> {
 	/**
 	 * Component value
 	 */
-	@field((o) => o.link('valueProp'))
+	@field({
+		merge: true,
+		init: (o) => o.link('valueProp')
+	})
+
 	value!: Option[];
 
 	/**

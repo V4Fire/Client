@@ -485,8 +485,24 @@ export function patchVNode(vNode: VNode, ctx: Dictionary, renderCtx: RenderConte
 						) {
 							if (el.merge) {
 								if (el.merge === true) {
-									if (!Object.fastCompare(ctx[key], oldCtx[key])) {
-										ctx[key] = {...ctx[key], ...oldCtx[key]};
+									const
+										val = ctx[key],
+										old = oldCtx[key];
+
+									if (!Object.fastCompare(val, old)) {
+										let
+											newVal = old;
+
+										if (Object.isObject(val) || Object.isObject(old)) {
+											// tslint:disable-next-line:prefer-object-spread
+											newVal = Object.assign({}, val, old);
+
+										} else if (Object.isArray(val) || Object.isArray(old)) {
+											// tslint:disable-next-line:prefer-object-spread
+											newVal = Object.assign([], val, old);
+										}
+
+										ctx[key] = newVal;
 									}
 
 								} else {
