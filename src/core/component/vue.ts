@@ -24,6 +24,7 @@ export default class VueInterface<B = VueInterface<any, any>, R = VueInterface<a
 	readonly $props!: Dictionary;
 	readonly $children?: C[];
 	readonly $parent?: C;
+	readonly $normalParent?: C;
 	readonly $root!: R;
 	readonly $isServer!: boolean;
 	protected readonly $state!: Dictionary;

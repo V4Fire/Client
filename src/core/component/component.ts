@@ -73,6 +73,7 @@ export function getComponent(
 			const
 				ctx = <any>this;
 
+			ctx.$normalParent = ctx.$parent;
 			ctx.$state = state;
 			ctx.$async = new Async(this);
 			ctx.instance = instance;
