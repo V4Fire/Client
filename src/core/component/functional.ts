@@ -9,6 +9,7 @@
 // tslint:disable:max-file-line-count
 
 import $C = require('collection.js');
+import symbolGenerator from 'core/symbol';
 
 import Async from 'core/async';
 import { EventEmitter2 as EventEmitter } from 'eventemitter2';
@@ -29,6 +30,7 @@ import { VueElement, FunctionalCtx } from 'core/component';
 import { runHook, createMeta, initDataObject, bindWatchers, defaultWrapper } from 'core/component/component';
 
 const
+	$$ = symbolGenerator(),
 	cache = new WeakMap();
 
 /**
@@ -57,6 +59,13 @@ export function createFakeCtx(
 		$e = new EventEmitter({maxListeners: 1e3}),
 		$a = new Async(this);
 
+	let
+		$normalParent = p;
+
+	while ($normalParent.isFunctional) {
+		$normalParent = $normalParent.$parent;
+	}
+
 	// Add base methods and properties
 	Object.assign(fakeCtx, renderCtx, renderCtx.props, {
 		_self: fakeCtx,
@@ -68,7 +77,7 @@ export function createFakeCtx(
 		$async: $a,
 		$state: state,
 		$root: p.$root,
-		$parent: p,
+		$normalParent,
 		$options: Object.assign(Object.create(p.$options), fakeCtx.$options),
 
 		$data: {},
@@ -82,6 +91,14 @@ export function createFakeCtx(
 
 		$destroy(): void {
 			$a.clearAll();
+
+			const
+				hooks = $normalParent.meta.hooks;
+
+			$C(['mounted', 'created', 'beforeDestroy']).forEach((key) => {
+				$C(hooks[key]).remove((el) => el.fn[$$.self] === fakeCtx);
+			});
+
 			$C(['beforeDestroy', 'destroyed']).forEach((key) => {
 				runHook(key, meta, fakeCtx).then(async () => {
 					if (methods[key]) {
@@ -195,14 +212,10 @@ export function createFakeCtx(
 		}
 	}
 
-	let $el;
 	Object.defineProperty(fakeCtx, '$el', {
 		get(): VueElement<any> | undefined {
-			if ($el) {
-				return $el;
-			}
-
-			return $el = p.$root.$el.querySelector(`.${fakeCtx.componentId}`);
+			const l = <any>$$.el;
+			return fakeCtx[l] || (fakeCtx[l] = $normalParent.$el.querySelector(`.${fakeCtx.componentId}`));
 		}
 	});
 
@@ -270,7 +283,7 @@ export function createFakeCtx(
 								}
 							};
 
-							if (fakeCtx.$forceSetters) {
+							if (fakeCtx[<any>$$.forceSetters]) {
 								exec();
 
 							} else {
@@ -382,128 +395,133 @@ export function patchVNode(vNode: VNode, ctx: Dictionary, renderCtx: RenderConte
 		}
 	}, stderr);
 
-	(async () => {
+	const
+		p = ctx.$normalParent,
+		hooks = p.meta.hooks;
+
+	const parentHook = {
+		beforeMount: 'mounted',
+		beforeUpdate: 'updated'
+	}[p.hook];
+
+	let
+		destroyed;
+
+	const destroy = () => {
+		destroyed = true;
+		ctx.$destroy();
+	};
+
+	const mount = () => {
+		ctx[<any>$$.el] = undefined;
+		$C(hooks[parentHook]).remove((el) => el.fn[$$.self] === ctx);
+
+		if (!ctx.$el) {
+			destroy();
+		}
+
+		if (destroyed) {
+			return;
+		}
+
 		const
-			{async: $a} = ctx;
+			el = ctx.$el,
+			oldCtx = el.vueComponent;
 
-		let
-			destroyed,
-			mounted;
-
-		const destroy = () => {
-			destroyed = true;
-			ctx.$destroy();
-		};
-
-		$a.setTimeout(() => {
-			if (!mounted) {
-				destroy();
-			}
-		}, (1).second());
-
-		try {
-			await $a.nextTick();
-			await $a.wait(() => ctx.$el);
-
-			if (destroyed) {
-				return;
-			}
+		if (oldCtx) {
+			oldCtx.$destroy();
 
 			const
-				el = ctx.$el,
-				oldCtx = el.vueComponent;
+				props = ctx.$props,
+				oldProps = oldCtx.$props,
+				linkedFields = <Dictionary>{};
 
-			if (oldCtx) {
+			for (let keys = Object.keys(oldProps), i = 0; i < keys.length; i++) {
 				const
-					props = ctx.$props,
-					oldProps = oldCtx.$props,
-					linkedFields = <Dictionary>{};
+					key = keys[i],
+					linked = oldCtx.syncLinkCache[key];
 
-				for (let keys = Object.keys(oldProps), i = 0; i < keys.length; i++) {
-					const
-						key = keys[i],
-						linked = oldCtx.syncLinkCache[key];
-
-					if (linked) {
-						for (let keys = Object.keys(linked), i = 0; i < keys.length; i++) {
-							linkedFields[linked[keys[i]].path] = key;
-						}
+				if (linked) {
+					for (let keys = Object.keys(linked), i = 0; i < keys.length; i++) {
+						linkedFields[linked[keys[i]].path] = key;
 					}
 				}
+			}
 
-				ctx.$forceSetters = true;
+			const f = <any>$$.forceSetters;
+			ctx[f] = true;
 
-				{
-					const list = [
-						oldCtx.meta.systemFields,
-						oldCtx.meta.fields
-					];
+			{
+				const list = [
+					oldCtx.meta.systemFields,
+					oldCtx.meta.fields
+				];
 
-					for (let i = 0; i < list.length; i++) {
+				for (let i = 0; i < list.length; i++) {
+					const
+						obj = list[i],
+						keys = Object.keys(obj);
+
+					for (let j = 0; j < keys.length; j++) {
 						const
-							obj = list[i],
-							keys = Object.keys(obj);
+							key = keys[j],
+							el = obj[key],
+							link = linkedFields[key];
 
-						for (let j = 0; j < keys.length; j++) {
-							const
-								key = keys[j],
-								el = obj[key],
-								link = linkedFields[key];
+						if (
+							(Object.isFunction(el.unique) ? !el.unique(ctx, oldCtx) : !el.unique) &&
 
-							if (
-								(Object.isFunction(el.unique) ? !el.unique(ctx, oldCtx) : !el.unique) &&
+							(
+								!link ||
+								link && Object.fastCompare(props[link], oldProps[link])
+							)
+						) {
+							if (el.merge) {
+								el.merge(ctx, oldCtx, key, link);
 
-								(
-									!link ||
-									link && Object.fastCompare(props[link], oldProps[link])
-								)
-							) {
-								if (el.merge) {
-									el.merge(ctx, oldCtx, key, link);
-
-								} else {
-									ctx[key] = oldCtx[key];
-								}
+							} else {
+								ctx[key] = oldCtx[key];
 							}
 						}
 					}
 				}
-
-				ctx.$forceSetters = false;
-				oldCtx.$destroy();
 			}
 
-			const
-				refs = ctx.$refs,
-				refNodes = el.querySelectorAll(`.${ctx.componentId}[data-vue-ref]`);
-
-			mounted = true;
-			el.vueComponent = ctx;
-
-			for (let i = 0; i < refNodes.length; i++) {
-				const
-					el = refNodes[i],
-					link = el.vueComponent ? el.vueComponent : el,
-					ref = el.dataset.vueRef;
-
-				refs[ref] = refs[ref] ? [].concat(refs[ref], link) : link;
-			}
-
-			runHook('mounted', meta, ctx).then(async () => {
-				if (methods.mounted) {
-					await methods.mounted.fn.call(ctx);
-				}
-			}, stderr);
-
-			await $a.wait(() => !ctx.$el);
-			destroy();
-
-		} catch (err) {
-			if (err.type !== 'clearAsync') {
-				throw err;
-			}
+			ctx[f] = false;
 		}
-	})();
+
+		el.vueComponent = ctx;
+
+		const
+			refs = ctx.$refs,
+			refNodes = el.querySelectorAll(`.${ctx.componentId}[data-vue-ref]`);
+
+		for (let i = 0; i < refNodes.length; i++) {
+			const
+				el = refNodes[i],
+				link = el.vueComponent ? el.vueComponent : el,
+				ref = el.dataset.vueRef;
+
+			refs[ref] = refs[ref] ? [].concat(refs[ref], link) : link;
+		}
+
+		runHook('mounted', meta, ctx).then(async () => {
+			if (methods.mounted) {
+				await methods.mounted.fn.call(ctx);
+			}
+		}, stderr);
+	};
+
+	mount[$$.self] = ctx;
+	destroy[$$.self] = ctx;
+
+	hooks[parentHook].unshift({
+		fn: mount
+	});
+
+	hooks.beforeDestroy.unshift({
+		fn: destroy
+	});
 
 	return vNode;
 }
