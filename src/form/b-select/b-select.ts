@@ -536,27 +536,31 @@ export default class bSelect<T extends Dictionary = Dictionary> extends bInput<T
 						break;
 
 					case KeyCodes.DOWN: {
+						const
+							that = this;
+
+						// Use "that" instead of "this" because of TS generates invalid code
 						const select = async (el) => {
-							if (this.mods.opened !== 'true') {
-								await this.open();
+							if (that.mods.opened !== 'true') {
+								await that.open();
 								el = getSelected();
-								if (this.selected) {
+								if (that.selected) {
 									return;
 								}
 							}
 
 							if (el) {
-								if (!this.selected) {
-									this.selected = el.dataset.value;
+								if (!that.selected) {
+									that.selected = el.dataset.value;
 									return;
 								}
 
 								if (el.nextElementSibling) {
-									this.selected = el.nextElementSibling.dataset.value;
+									that.selected = el.nextElementSibling.dataset.value;
 									return;
 								}
 
-								this.selected = (<HTMLElement>$b.element('option')).dataset.value;
+								that.selected = (<HTMLElement>$b.element('option')).dataset.value;
 							}
 						};
 
