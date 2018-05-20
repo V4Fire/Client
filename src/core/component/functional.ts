@@ -472,41 +472,40 @@ export function patchVNode(vNode: VNode, ctx: Dictionary, renderCtx: RenderConte
 					for (let j = 0; j < keys.length; j++) {
 						const
 							key = keys[j],
-							el = obj[key],
+							field = obj[key],
 							link = linkedFields[key];
 
+						const
+							val = ctx[key],
+							old = oldCtx[key];
+
 						if (
-							(Object.isFunction(el.unique) ? !el.unique(ctx, oldCtx) : !el.unique) &&
+							(Object.isFunction(field.unique) ? !field.unique(ctx, oldCtx) : !field.unique) &&
+							!Object.fastCompare(val, old) &&
 
 							(
 								!link ||
 								link && Object.fastCompare(props[link], oldProps[link])
 							)
 						) {
-							if (el.merge) {
-								if (el.merge === true) {
-									const
-										val = ctx[key],
-										old = oldCtx[key];
+							if (field.merge) {
+								if (field.merge === true) {
+									let
+										newVal = old;
 
-									if (!Object.fastCompare(val, old)) {
-										let
-											newVal = old;
+									if (Object.isObject(val) || Object.isObject(old)) {
+										// tslint:disable-next-line:prefer-object-spread
+										newVal = Object.assign({}, val, old);
 
-										if (Object.isObject(val) || Object.isObject(old)) {
-											// tslint:disable-next-line:prefer-object-spread
-											newVal = Object.assign({}, val, old);
-
-										} else if (Object.isArray(val) || Object.isArray(old)) {
-											// tslint:disable-next-line:prefer-object-spread
-											newVal = Object.assign([], val, old);
-										}
-
-										ctx[key] = newVal;
+									} else if (Object.isArray(val) || Object.isArray(old)) {
+										// tslint:disable-next-line:prefer-object-spread
+										newVal = Object.assign([], val, old);
 									}
 
+									ctx[key] = newVal;
+
 								} else {
-									el.merge(ctx, oldCtx, key, link);
+									field.merge(ctx, oldCtx, key, link);
 								}
 
 							} else {
