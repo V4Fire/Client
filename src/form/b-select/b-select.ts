@@ -118,13 +118,10 @@ export default class bSelect<T extends Dictionary = Dictionary> extends bInput<T
 	/**
 	 * Select options store
 	 */
-	@field({
-		merge: true,
-		init: (o) => o.link('optionsProp', (val) => {
-			const ctx: bSelect = <any>o;
-			return ctx.dataProvider ? ctx.optionsStore || [] : ctx.normalizeOptions(val);
-		})
-	})
+	@field((o) => o.link('optionsProp', (val) => {
+		const ctx: bSelect = <any>o;
+		return ctx.dataProvider ? ctx.optionsStore || [] : ctx.normalizeOptions(val);
+	}))
 
 	protected optionsStore!: NOption[];
 
