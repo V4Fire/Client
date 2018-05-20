@@ -48,6 +48,17 @@ generateImgClasses()
 				add-property($prop, "url(%s)" % $img)
 
 /**
+ * Executes the default font pattern and returns a result
+ * @param {string} [$type] - advanced font type
+ */
+execFontPattern($type = "")
+	if $type
+		unquote(replace("%t", " " + $type, BASE_FONT_PATTERN))
+
+	else
+		unquote(replace("%t", "", BASE_FONT_PATTERN))
+
+/**
  * Generates rules for colorized styles
  *
  * @param {Tuple} [$set] - set of colors
