@@ -244,7 +244,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 				const
 					key = keys[i];
 
-				if (this.syncModCache[key]) {
+				if (ctx.syncModCache[key]) {
 					delete mods[key];
 				}
 			}
