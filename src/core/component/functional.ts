@@ -374,8 +374,15 @@ export function patchVNode(vNode: VNode, ctx: Dictionary, renderCtx: RenderConte
 
 	const
 		p = ctx.$normalParent,
-		hooks = p.meta.hooks,
-		destroy = () => ctx.$destroy();
+		hooks = p.meta.hooks;
+
+	let
+		destroyed;
+
+	const destroy = () => {
+		ctx.$destroy();
+		destroyed = true;
+	};
 
 	const parentHook = {
 		beforeMount: 'mounted',
@@ -383,8 +390,9 @@ export function patchVNode(vNode: VNode, ctx: Dictionary, renderCtx: RenderConte
 		deactivated: 'activated'
 	}[p.hook];
 
+	// tslint:disable-next-line:cyclomatic-complexity
 	const mount = async () => {
-		if (ctx.componentStatus === 'destroyed') {
+		if (destroyed || ctx.componentStatus === 'destroyed') {
 			return;
 		}
 
@@ -402,7 +410,7 @@ export function patchVNode(vNode: VNode, ctx: Dictionary, renderCtx: RenderConte
 			}
 		}
 
-		if (ctx.componentStatus === 'destroyed') {
+		if (destroyed || ctx.componentStatus === 'destroyed') {
 			return;
 		}
 
