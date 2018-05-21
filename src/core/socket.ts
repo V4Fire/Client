@@ -9,6 +9,7 @@
 /// <reference types="node"/>
 /// <reference types="socket.io-client"/>
 
+import config from 'config';
 export const PING = (5).seconds();
 export type Socket = SocketIOClient.Socket;
 
@@ -25,7 +26,7 @@ export default function socket(namespace: string = ''): Socket | undefined {
 	} catch (_) {}
 
 	if (socket) {
-		const url = new URL(API);
+		const url = new URL(config.api);
 		return socket.connect((url.pathname = namespace).toString(), {
 			allowUpgrades: false,
 			transports: ['websocket'],

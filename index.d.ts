@@ -9,10 +9,8 @@
 /// <reference types="@v4fire/core"/>
 
 declare let READY_STATE: number;
-declare const CONFIG: Dictionary;
 declare const IS_PROD: boolean;
 declare const PATH: Dictionary<string | undefined>;
-declare const API: string;
 declare const TPLS: Dictionary;
 
 interface HTMLImageElement {
