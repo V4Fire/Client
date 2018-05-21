@@ -153,7 +153,7 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 	/**
 	 * Request parameters
 	 */
-	@field({watch: {fn: 'initLoad', deep: true}})
+	@field({merge: true, watch: {fn: 'initLoad', deep: true}})
 	protected readonly requestParams: Dictionary<Dictionary> = {get: {}};
 
 	/**

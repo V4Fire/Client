@@ -15,6 +15,7 @@ const
 
 const
 	{config: pzlr} = require('@pzlr/build-core'),
+	{normalizeSep} = include('build/helpers'),
 	aliases = include('build/alias.webpack');
 
 const
@@ -89,7 +90,7 @@ module.exports = function (str) {
 						exists = true;
 					}
 
-					return $1 + src;
+					return normalizeSep($1 + src);
 				});
 
 				if (exists) {

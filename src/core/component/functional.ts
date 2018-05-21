@@ -9,6 +9,7 @@
 // tslint:disable:max-file-line-count
 
 import $C = require('collection.js');
+import symbolGenerator from 'core/symbol';
 
 import Async from 'core/async';
 import { EventEmitter2 as EventEmitter } from 'eventemitter2';
@@ -29,6 +30,7 @@ import { VueElement, FunctionalCtx } from 'core/component';
 import { runHook, createMeta, initDataObject, bindWatchers, defaultWrapper } from 'core/component/component';
 
 const
+	$$ = symbolGenerator(),
 	cache = new WeakMap();
 
 /**
@@ -57,6 +59,13 @@ export function createFakeCtx(
 		$e = new EventEmitter({maxListeners: 1e3}),
 		$a = new Async(this);
 
+	let
+		$normalParent = p;
+
+	while ($normalParent.isFunctional) {
+		$normalParent = $normalParent.$parent;
+	}
+
 	// Add base methods and properties
 	Object.assign(fakeCtx, renderCtx, renderCtx.props, {
 		_self: fakeCtx,
@@ -68,10 +77,11 @@ export function createFakeCtx(
 		$async: $a,
 		$state: state,
 		$root: p.$root,
-		$parent: p,
+		$normalParent,
 		$options: Object.assign(Object.create(p.$options), fakeCtx.$options),
 
 		$data: {},
+		$dataCache: {},
 		$props: renderCtx.props,
 		$attrs: renderCtx.data.attrs,
 		$refs: {},
@@ -81,7 +91,19 @@ export function createFakeCtx(
 		$createElement: createElement,
 
 		$destroy(): void {
+			if (this.componentStatus === 'destroyed') {
+				return;
+			}
+
 			$a.clearAll();
+
+			const
+				hooks = $normalParent.meta.hooks;
+
+			$C(['mounted', 'created', 'beforeDestroy']).forEach((key) => {
+				$C(hooks[key]).remove((el) => el.fn[$$.self] === fakeCtx);
+			});
+
 			$C(['beforeDestroy', 'destroyed']).forEach((key) => {
 				runHook(key, meta, fakeCtx).then(async () => {
 					if (methods[key]) {
@@ -195,14 +217,10 @@ export function createFakeCtx(
 		}
 	}
 
-	let $el;
 	Object.defineProperty(fakeCtx, '$el', {
 		get(): VueElement<any> | undefined {
-			if ($el) {
-				return $el;
-			}
-
-			return $el = p.$root.$el.querySelector(`.${fakeCtx.componentId}`);
+			const l = <any>$$.el;
+			return fakeCtx[l] || (fakeCtx[l] = $normalParent.$el.querySelector(`.${fakeCtx.componentId}`));
 		}
 	});
 
@@ -223,9 +241,6 @@ export function createFakeCtx(
 			meta.systemFields,
 			meta.fields
 		];
-
-		const
-			tasks = <Dictionary<Function>>{};
 
 		for (let i = 0; i < list.length; i++) {
 			const data = i ? fakeCtx.$data : fakeCtx;
@@ -249,35 +264,14 @@ export function createFakeCtx(
 						},
 
 						set(val: any): void {
-							tasks[key] = () => {
-								const
-									old = data[key];
+							fakeCtx.$dataCache[key] = true;
 
-								if (val !== old) {
-									data[key] = val;
-									$w.emit(key, val, old);
-								}
-							};
+							const
+								old = data[key];
 
-							const exec = () => {
-								for (const key in tasks) {
-									if (!tasks.hasOwnProperty(key)) {
-										break;
-									}
-
-									tasks[key]();
-									delete tasks[key];
-								}
-							};
-
-							if (fakeCtx.$forceSetters) {
-								exec();
-
-							} else {
-								$a.setImmediate(exec, {
-									group: 'setters',
-									label: 'changeState'
-								});
+							if (val !== old) {
+								data[key] = val;
+								$w.emit(key, val, old);
 							}
 						}
 					});
@@ -371,10 +365,6 @@ export function patchVNode(vNode: VNode, ctx: Dictionary, renderCtx: RenderConte
 		}
 	}
 
-	if (meta.params.tiny) {
-		return vNode;
-	}
-
 	bindWatchers(<any>ctx);
 	runHook('created', meta, ctx).then(async () => {
 		if (methods.created) {
@@ -382,37 +372,57 @@ export function patchVNode(vNode: VNode, ctx: Dictionary, renderCtx: RenderConte
 		}
 	}, stderr);
 
-	(async () => {
-		const
-			{async: $a} = ctx;
+	const
+		p = ctx.$normalParent,
+		hooks = p.meta.hooks;
 
-		let
-			destroyed,
-			mounted;
+	let
+		destroyed;
 
-		const destroy = () => {
-			destroyed = true;
-			ctx.$destroy();
-		};
+	const destroy = () => {
+		ctx.$destroy();
+		destroyed = true;
+	};
 
-		$a.setTimeout(() => {
-			if (!mounted) {
-				destroy();
-			}
-		}, (1).second());
+	const parentHook = {
+		beforeMount: 'mounted',
+		beforeUpdate: 'updated',
+		deactivated: 'activated'
+	}[p.hook];
 
-		try {
-			await $a.nextTick();
-			await $a.wait(() => ctx.$el);
+	// tslint:disable-next-line:cyclomatic-complexity
+	const mount = async () => {
+		if (destroyed || ctx.componentStatus === 'destroyed') {
+			return;
+		}
 
-			if (destroyed) {
+		ctx[<any>$$.el] = undefined;
+		$C(hooks[parentHook]).remove((el) => el.fn[$$.self] === ctx);
+
+		if (!ctx.$el) {
+			try {
+				await ctx.$async.promise(p.nextTick());
+				!ctx.$el && destroy();
+
+			} catch (err) {
+				stderr(err);
 				return;
 			}
+		}
 
-			const
-				el = ctx.$el,
-				oldCtx = el.vueComponent;
+		if (destroyed) {
+			return;
+		}
 
+		const
+			el = ctx.$el,
+			oldCtx = el.vueComponent;
+
+		if (oldCtx) {
+			oldCtx.$destroy();
+		}
+
+		if (!meta.params.tiny) {
 			if (oldCtx) {
 				const
 					props = ctx.$props,
@@ -431,8 +441,6 @@ export function patchVNode(vNode: VNode, ctx: Dictionary, renderCtx: RenderConte
 					}
 				}
 
-				ctx.$forceSetters = true;
-
 				{
 					const list = [
 						oldCtx.meta.systemFields,
@@ -447,19 +455,42 @@ export function patchVNode(vNode: VNode, ctx: Dictionary, renderCtx: RenderConte
 						for (let j = 0; j < keys.length; j++) {
 							const
 								key = keys[j],
-								el = obj[key],
+								field = obj[key],
 								link = linkedFields[key];
 
+							const
+								val = ctx[key],
+								old = oldCtx[key];
+
 							if (
-								(Object.isFunction(el.unique) ? !el.unique(ctx, oldCtx) : !el.unique) &&
+								!ctx.$dataCache[key] &&
+								(Object.isFunction(field.unique) ? !field.unique(ctx, oldCtx) : !field.unique) &&
+								!Object.fastCompare(val, old) &&
 
 								(
 									!link ||
 									link && Object.fastCompare(props[link], oldProps[link])
 								)
 							) {
-								if (el.merge) {
-									el.merge(ctx, oldCtx, key, link);
+								if (field.merge) {
+									if (field.merge === true) {
+										let
+											newVal = old;
+
+										if (Object.isObject(val) || Object.isObject(old)) {
+											// tslint:disable-next-line:prefer-object-spread
+											newVal = Object.assign({}, val, old);
+
+										} else if (Object.isArray(val) || Object.isArray(old)) {
+											// tslint:disable-next-line:prefer-object-spread
+											newVal = Object.assign([], val, old);
+										}
+
+										ctx[key] = newVal;
+
+									} else {
+										field.merge(ctx, oldCtx, key, link);
+									}
 
 								} else {
 									ctx[key] = oldCtx[key];
@@ -468,17 +499,11 @@ export function patchVNode(vNode: VNode, ctx: Dictionary, renderCtx: RenderConte
 						}
 					}
 				}
-
-				ctx.$forceSetters = false;
-				oldCtx.$destroy();
 			}
 
 			const
 				refs = ctx.$refs,
 				refNodes = el.querySelectorAll(`.${ctx.componentId}[data-vue-ref]`);
-
-			mounted = true;
-			el.vueComponent = ctx;
 
 			for (let i = 0; i < refNodes.length; i++) {
 				const
@@ -488,22 +513,32 @@ export function patchVNode(vNode: VNode, ctx: Dictionary, renderCtx: RenderConte
 
 				refs[ref] = refs[ref] ? [].concat(refs[ref], link) : link;
 			}
-
-			runHook('mounted', meta, ctx).then(async () => {
-				if (methods.mounted) {
-					await methods.mounted.fn.call(ctx);
-				}
-			}, stderr);
-
-			await $a.wait(() => !ctx.$el);
-			destroy();
-
-		} catch (err) {
-			if (err.type !== 'clearAsync') {
-				throw err;
-			}
 		}
-	})();
+
+		el.vueComponent = ctx;
+
+		runHook('mounted', meta, ctx).then(async () => {
+			if (methods.mounted) {
+				await methods.mounted.fn.call(ctx);
+			}
+		}, stderr);
+	};
+
+	mount[$$.self] = ctx;
+	destroy[$$.self] = ctx;
+
+	if (parentHook) {
+		hooks[parentHook].unshift({
+			fn: mount
+		});
+
+	} else {
+		mount().catch(stderr);
+	}
+
+	hooks.beforeDestroy.unshift({
+		fn: destroy
+	});
 
 	return vNode;
 }
