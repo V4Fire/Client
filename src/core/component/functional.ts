@@ -361,10 +361,6 @@ export function patchVNode(vNode: VNode, ctx: Dictionary, renderCtx: RenderConte
 		}
 	}
 
-	if (meta.params.tiny) {
-		return vNode;
-	}
-
 	bindWatchers(<any>ctx);
 	runHook('created', meta, ctx).then(async () => {
 		if (methods.created) {
