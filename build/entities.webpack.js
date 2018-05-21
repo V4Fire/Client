@@ -11,12 +11,11 @@
 const
 	$C = require('collection.js'),
 	fs = require('fs-extra-promise'),
-	path = require('path');
+	path = require('upath');
 
 const
 	{resolve, entries, block} = require('@pzlr/build-core'),
-	{args, output, buildCache} = include('build/build.webpack'),
-	{normalizeSep} = include('build/helpers');
+	{args, output, buildCache} = include('build/build.webpack');
 
 const
 	RUNTIME = 0,
@@ -97,10 +96,10 @@ module.exports = (async () => {
 	 */
 	function getUrl(url) {
 		if (resolve.isNodeModule(url)) {
-			return normalizeSep(url);
+			return path.normalize(url);
 		}
 
-		return normalizeSep(path.relative(tmpEntries, url));
+		return path.relative(tmpEntries, url);
 	}
 
 	const entry = await $C(graph.entry)

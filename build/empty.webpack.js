@@ -9,7 +9,7 @@
  */
 
 const
-	path = require('path'),
+	path = require('upath'),
 	HardSourceWebpackPlugin = require('hard-source-webpack-plugin');
 
 const

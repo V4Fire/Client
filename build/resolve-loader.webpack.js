@@ -9,7 +9,7 @@
  */
 
 const
-	path = require('path');
+	path = require('upath');
 
 module.exports = {
 	moduleExtensions: ['-loader'],

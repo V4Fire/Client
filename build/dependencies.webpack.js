@@ -9,9 +9,11 @@
  */
 
 const
-	$C = require('collection.js'),
-	path = require('path'),
+	$C = require('collection.js');
+
+const
 	fs = require('fs'),
+	path = require('upath'),
 	hasha = require('hasha');
 
 const

@@ -10,12 +10,12 @@
 
 const
 	$C = require('collection.js'),
-	ss = require('snakeskin');
+	ss = require('snakeskin'),
+	escaper = require('escaper');
 
 const
 	fs = require('fs'),
-	escaper = require('escaper'),
-	path = require('path'),
+	path = require('upath'),
 	glob = require('glob');
 
 const

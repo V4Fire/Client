@@ -9,7 +9,7 @@
  */
 
 const
-	path = require('path'),
+	path = require('upath'),
 	config = require('@v4fire/core/config/default');
 
 module.exports = config.createConfig({dirs: [__dirname, 'client']}, {

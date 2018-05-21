@@ -10,11 +10,12 @@
 
 const
 	config = require('config'),
-	path = require('path');
+	path = require('upath');
 
-const
-	{config: pzlr, resolve} = require('@pzlr/build-core'),
-	{normalizeSep} = include('build/helpers');
+const {
+	config: pzlr,
+	resolve
+} = require('@pzlr/build-core');
 
 const
 	deps = pzlr.dependencies.map((el) => RegExp.escape(el || el.src)),
@@ -35,7 +36,7 @@ module.exports = function (str, file) {
 	return str.replace(importRgxp, (str, $1, root, url) => {
 		if (resolve.depMap[root]) {
 			const l = path.join(config.src.lib(), root, resolve.depMap[root].config.sourceDir, url);
-			return `'./${normalizeSep(path.relative(path.dirname(file), l))}'`;
+			return `'./${path.relative(path.dirname(file), l)}'`;
 		}
 
 		return str;

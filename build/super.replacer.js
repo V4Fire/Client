@@ -13,15 +13,16 @@ const
 
 const
 	fs = require('fs'),
-	path = require('path');
+	path = require('upath');
 
 const
 	isPathInside = require('is-path-inside'),
 	{pathEqual} = require('path-equal');
 
-const
-	{config: pzlr, resolve} = require('@pzlr/build-core'),
-	{normalizeSep} = include('build/helpers');
+const {
+	config: pzlr,
+	resolve
+} = require('@pzlr/build-core');
 
 const exts = $C(include('build/resolve.webpack').extensions).to([]).reduce((list, ext) => {
 	list.push(ext);
@@ -89,7 +90,7 @@ module.exports = function (str, file) {
 				return `'${resource + url}'`;
 			}
 
-			return `'${normalizeSep(path.join(resource, resolve.depMap[resource].config.sourceDir, url))}'`;
+			return `'${path.join(resource, resolve.depMap[resource].config.sourceDir, url)}'`;
 		}
 
 		return str;

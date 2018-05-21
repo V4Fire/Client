@@ -10,12 +10,14 @@
 
 const
 	$C = require('collection.js'),
-	config = require('config'),
-	fs = require('fs');
+	config = require('config');
+
+const
+	fs = require('fs'),
+	path = require('upath');
 
 const
 	{config: pzlr} = require('@pzlr/build-core'),
-	{normalizeSep} = include('build/helpers'),
 	aliases = include('build/alias.webpack');
 
 const
@@ -90,7 +92,7 @@ module.exports = function (str) {
 						exists = true;
 					}
 
-					return normalizeSep($1 + src);
+					return path.normalize($1 + src);
 				});
 
 				if (exists) {

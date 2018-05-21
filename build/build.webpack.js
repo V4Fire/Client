@@ -15,12 +15,11 @@ const
 const
 	{env, argv} = process,
 	{src} = require('config'),
-	{normalizeSep} = include('build/helpers'),
 	{config: {dependencies}} = require('@pzlr/build-core');
 
 const
 	fs = require('fs'),
-	path = require('path'),
+	path = require('upath'),
 	minimist = require('minimist');
 
 /**
@@ -115,5 +114,5 @@ function inherit() {
 }
 
 function r(file) {
-	return `./${normalizeSep(path.relative(src.cwd(), path.join(src.clientOutput(), file)))}`;
+	return `./${path.relative(src.cwd(), path.join(src.clientOutput(), file))}`;
 }
