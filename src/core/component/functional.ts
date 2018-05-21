@@ -409,100 +409,102 @@ export function patchVNode(vNode: VNode, ctx: Dictionary, renderCtx: RenderConte
 			el = ctx.$el,
 			oldCtx = el.vueComponent;
 
-		if (oldCtx) {
-			oldCtx.$destroy();
+		if (!meta.params.tiny) {
+			if (oldCtx) {
+				oldCtx.$destroy();
 
-			const
-				props = ctx.$props,
-				oldProps = oldCtx.$props,
-				linkedFields = <Dictionary>{};
-
-			for (let keys = Object.keys(oldProps), i = 0; i < keys.length; i++) {
 				const
-					key = keys[i],
-					linked = oldCtx.syncLinkCache[key];
+					props = ctx.$props,
+					oldProps = oldCtx.$props,
+					linkedFields = <Dictionary>{};
 
-				if (linked) {
-					for (let keys = Object.keys(linked), i = 0; i < keys.length; i++) {
-						linkedFields[linked[keys[i]].path] = key;
+				for (let keys = Object.keys(oldProps), i = 0; i < keys.length; i++) {
+					const
+						key = keys[i],
+						linked = oldCtx.syncLinkCache[key];
+
+					if (linked) {
+						for (let keys = Object.keys(linked), i = 0; i < keys.length; i++) {
+							linkedFields[linked[keys[i]].path] = key;
+						}
 					}
 				}
-			}
 
-			{
-				const list = [
-					oldCtx.meta.systemFields,
-					oldCtx.meta.fields
-				];
+				{
+					const list = [
+						oldCtx.meta.systemFields,
+						oldCtx.meta.fields
+					];
 
-				for (let i = 0; i < list.length; i++) {
-					const
-						obj = list[i],
-						keys = Object.keys(obj);
-
-					for (let j = 0; j < keys.length; j++) {
+					for (let i = 0; i < list.length; i++) {
 						const
-							key = keys[j],
-							field = obj[key],
-							link = linkedFields[key];
+							obj = list[i],
+							keys = Object.keys(obj);
 
-						const
-							val = ctx[key],
-							old = oldCtx[key];
+						for (let j = 0; j < keys.length; j++) {
+							const
+								key = keys[j],
+								field = obj[key],
+								link = linkedFields[key];
 
-						if (
-							!ctx.$dataCache[key] &&
-							(Object.isFunction(field.unique) ? !field.unique(ctx, oldCtx) : !field.unique) &&
-							!Object.fastCompare(val, old) &&
+							const
+								val = ctx[key],
+								old = oldCtx[key];
 
-							(
-								!link ||
-								link && Object.fastCompare(props[link], oldProps[link])
-							)
-						) {
-							if (field.merge) {
-								if (field.merge === true) {
-									let
-										newVal = old;
+							if (
+								!ctx.$dataCache[key] &&
+								(Object.isFunction(field.unique) ? !field.unique(ctx, oldCtx) : !field.unique) &&
+								!Object.fastCompare(val, old) &&
 
-									if (Object.isObject(val) || Object.isObject(old)) {
-										// tslint:disable-next-line:prefer-object-spread
-										newVal = Object.assign({}, val, old);
+								(
+									!link ||
+									link && Object.fastCompare(props[link], oldProps[link])
+								)
+							) {
+								if (field.merge) {
+									if (field.merge === true) {
+										let
+											newVal = old;
 
-									} else if (Object.isArray(val) || Object.isArray(old)) {
-										// tslint:disable-next-line:prefer-object-spread
-										newVal = Object.assign([], val, old);
+										if (Object.isObject(val) || Object.isObject(old)) {
+											// tslint:disable-next-line:prefer-object-spread
+											newVal = Object.assign({}, val, old);
+
+										} else if (Object.isArray(val) || Object.isArray(old)) {
+											// tslint:disable-next-line:prefer-object-spread
+											newVal = Object.assign([], val, old);
+										}
+
+										ctx[key] = newVal;
+
+									} else {
+										field.merge(ctx, oldCtx, key, link);
 									}
 
-									ctx[key] = newVal;
-
 								} else {
-									field.merge(ctx, oldCtx, key, link);
+									ctx[key] = oldCtx[key];
 								}
-
-							} else {
-								ctx[key] = oldCtx[key];
 							}
 						}
 					}
 				}
 			}
+
+			const
+				refs = ctx.$refs,
+				refNodes = el.querySelectorAll(`.${ctx.componentId}[data-vue-ref]`);
+
+			for (let i = 0; i < refNodes.length; i++) {
+				const
+					el = refNodes[i],
+					link = el.vueComponent ? el.vueComponent : el,
+					ref = el.dataset.vueRef;
+
+				refs[ref] = refs[ref] ? [].concat(refs[ref], link) : link;
+			}
 		}
 
 		el.vueComponent = ctx;
-
-		const
-			refs = ctx.$refs,
-			refNodes = el.querySelectorAll(`.${ctx.componentId}[data-vue-ref]`);
-
-		for (let i = 0; i < refNodes.length; i++) {
-			const
-				el = refNodes[i],
-				link = el.vueComponent ? el.vueComponent : el,
-				ref = el.dataset.vueRef;
-
-			refs[ref] = refs[ref] ? [].concat(refs[ref], link) : link;
-		}
 
 		runHook('mounted', meta, ctx).then(async () => {
 			if (methods.mounted) {
