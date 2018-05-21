@@ -101,6 +101,18 @@ useGPU()
 	transform translate3d(0, 0, 0)
 
 /**
+ * Global overlays map
+ */
+$OVERLAYS = ( layer modal overall )
+
+/**
+ * Sets a z-index for the specified layer position
+ * @param {string} $pos
+ */
+zIndex($pos)
+	z-index index($OVERLAYS, $pos)
+
+/**
  * Generates rules for flexbox
  *
  * @param {string} $justify
