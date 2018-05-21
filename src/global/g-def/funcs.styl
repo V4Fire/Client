@@ -110,7 +110,7 @@ $OVERLAYS = ( layer modal overall )
  * @param {string} $pos
  */
 zIndex($pos)
-	z-index index($OVERLAYS, $pos)
+	z-index index($OVERLAYS, $pos) * 1000
 
 /**
  * Generates rules for flexbox
