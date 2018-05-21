@@ -80,7 +80,7 @@ exports.buildCache = path.join(src.cwd(), 'app-cache');
 /**
  * Path to assets.json
  */
-exports.assetsJSON = r(`${exports.version}assets.json`);
+exports.assetsJSON = path.join(src.clientOutput(), `${exports.version}assets.json`);
 
 // Some helpers
 
