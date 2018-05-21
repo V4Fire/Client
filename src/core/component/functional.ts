@@ -409,10 +409,12 @@ export function patchVNode(vNode: VNode, ctx: Dictionary, renderCtx: RenderConte
 			el = ctx.$el,
 			oldCtx = el.vueComponent;
 
+		if (oldCtx) {
+			oldCtx.$destroy();
+		}
+
 		if (!meta.params.tiny) {
 			if (oldCtx) {
-				oldCtx.$destroy();
-
 				const
 					props = ctx.$props,
 					oldProps = oldCtx.$props,
