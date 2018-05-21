@@ -91,6 +91,10 @@ export function createFakeCtx(
 		$createElement: createElement,
 
 		$destroy(): void {
+			if (this.componentStatus === 'destroyed') {
+				return;
+			}
+
 			$a.clearAll();
 
 			const
@@ -370,7 +374,8 @@ export function patchVNode(vNode: VNode, ctx: Dictionary, renderCtx: RenderConte
 
 	const
 		p = ctx.$normalParent,
-		hooks = p.meta.hooks;
+		hooks = p.meta.hooks,
+		destroy = () => ctx.$destroy();
 
 	const parentHook = {
 		beforeMount: 'mounted',
@@ -378,15 +383,11 @@ export function patchVNode(vNode: VNode, ctx: Dictionary, renderCtx: RenderConte
 		deactivated: 'activated'
 	}[p.hook];
 
-	let
-		destroyed;
-
-	const destroy = () => {
-		destroyed = true;
-		ctx.$destroy();
-	};
-
 	const mount = async () => {
+		if (ctx.componentStatus === 'destroyed') {
+			return;
+		}
+
 		ctx[<any>$$.el] = undefined;
 		$C(hooks[parentHook]).remove((el) => el.fn[$$.self] === ctx);
 
@@ -396,12 +397,12 @@ export function patchVNode(vNode: VNode, ctx: Dictionary, renderCtx: RenderConte
 				!ctx.$el && destroy();
 
 			} catch (err) {
-				destroyed = true;
 				stderr(err);
+				return;
 			}
 		}
 
-		if (destroyed) {
+		if (ctx.componentStatus === 'destroyed') {
 			return;
 		}
 
