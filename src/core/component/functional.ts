@@ -410,7 +410,7 @@ export function patchVNode(vNode: VNode, ctx: Dictionary, renderCtx: RenderConte
 			}
 		}
 
-		if (destroyed || ctx.componentStatus === 'destroyed') {
+		if (destroyed) {
 			return;
 		}
 
