@@ -122,7 +122,8 @@
 
 				- if !@fatHTML && assetsRequest
 					- block assets
-						- script js src = ${path.relative(@output, @assetsJSON)}
+						: assetJS = path.relative(@output, @assetsJSON.replace(/json$/, 'js'))
+						- script js src = ${assetJS}
 
 				- block head
 					: defStyles

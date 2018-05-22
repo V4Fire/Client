@@ -98,7 +98,7 @@
 		requireMonic({url})
 
 	- else
-		document.write('<link rel="stylesheet" href="' + PATH['{url}'] + '">');
+		document.write('<link rel="stylesheet" href="' + PATH['{rname}'] + '">');
 
 /**
  * Adds template dependencies

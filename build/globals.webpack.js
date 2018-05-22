@@ -13,7 +13,7 @@ const
 
 module.exports = {
 	'IS_PROD': isProd,
-	'API_URL': config.apiURL(),
+	'API_URL': JSON.stringify(config.apiURL()),
 	'process.env': {
 		NODE_ENV: JSON.stringify(process.env.NODE_ENV)
 	}
