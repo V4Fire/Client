@@ -12,23 +12,24 @@
 - include 'super/i-page/modules/**/*.ss'|b
 
 - import fs from 'fs-extra-promise'
-- import path from 'path'
+- import path from 'upath'
 - import hashFiles from 'hash-files'
+- import delay from 'delay'
 
 /**
  * Base page template
  * @param [params] - template parameters
  */
-- placeholder index(@params = {}) extends ['i-data'].index
+- async template index(@params = {}) extends ['i-data'].index
+	- isProd = @@NODE_ENV === 'production'
+	- assets = Object.create(null)
+
 	- title = @title || @@appName
-
 	- pageData = {}
-	- overWrapper = false
 
-	- apiURL = ''
-	- configRequest = false
-	- assetsRequest = true
 	- defineBase = false
+	- assetsRequest = true
+	- overWrapper = false
 
 	- charset = { &
 		charset: 'utf-8'
@@ -41,12 +42,13 @@
 		'user-scalable': 'no'
 	} .
 
-	- isProd = @@NODE_ENV === 'production'
-	- root = path.relative(@output, @root)
-	- lib = path.relative(@output, @lib)
-	- assets = path.relative(@output, @assets)
-
 	- block root
+		- if @fatHTML
+			- while await fs.existsAsync(@assetsJSON) === false
+				? await delay(200)
+
+			? Object.assign(assets, fs.readJSONSync(@assetsJSON))
+
 		- block doctype
 			- doctype
 
@@ -101,10 +103,7 @@
 					# block initVars
 						var
 							READY_STATE = 0,
-							PATH = {},
-							API = #{apiURL|json};
-
-						var
+							PATH = #{assets|json},
 							ModuleDependencies = {fileCache: {}};
 
 						try {
@@ -121,13 +120,9 @@
 
 						} catch (_) {}
 
-				- if configRequest
-					- block config
-						- script js src = config.js
-
-				- if assetsRequest
+				- if !@fatHTML && assetsRequest
 					- block assets
-						- script js src = ${@version}assets.js
+						- script js src = ${path.relative(@output, @assetsJSON)}
 
 				- block head
 					: defStyles
@@ -139,16 +134,21 @@
 						? url = self.join(@lib, notDefer ? url[0] : url)
 
 						- block loadDefStyles
-							- if notDefer
-								< link css href = ${url}
+							- if @fatHTML
+								- style
+									requireMonic({url})
 
 							- else
-								< link &
-									rel = preload |
-									href = ${url} |
-									as = style |
-									onload = this.rel='stylesheet'
-								.
+								- if notDefer
+									- link css href = ${url}
+
+								- else
+									< link &
+										rel = preload |
+										href = ${url} |
+										as = style |
+										onload = this.rel='stylesheet'
+									.
 
 					- block styles
 						+= self.addDependencies(@dependencies, 'styles')
@@ -195,16 +195,19 @@
 									? fs.copySync(src, newSrc)
 									? foldersCache[basename] = relativeSrc
 
-								- script :: PATH['{basename}'] = '{self.normalize(foldersCache[basename])}';
+								- script :: PATH['{basename}'] = '{foldersCache[basename]}';
 
 						- else
 							- block loadDefLibs
 								: notDefer = Array.isArray(url)
+								? url = self.join(@lib, notDefer ? url[0] : url)
 
-								- script js &
-									src = ${self.join(@lib, notDefer ? url[0] : url)} |
-									${notDefer ? '' : 'defer'}
-								.
+								- if @fatHTML
+									- script
+										requireMonic({url})
+
+								- else
+									- script js src = ${url} | ${notDefer ? '' : 'defer'}
 
 					# script
 						# block initLibs
@@ -226,6 +229,7 @@
 							READY_STATE++;
 
 			: pageName = self.name()
+
 			- block pageData
 				? rootAttrs['data-init-block'] = pageName
 				? rootAttrs['data-block-params'] = ({data: pageData}|json)

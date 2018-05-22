@@ -18,7 +18,7 @@ const
 const
 	{src} = require('config'),
 	{resolve} = require('@pzlr/build-core'),
-	{output, hash, version, hashLength, inherit, depsRgxpStr} = include('build/build.webpack');
+	{output, hash, hashLength, assetsJSON, inherit, depsRgxpStr} = include('build/build.webpack');
 
 const
 	depsRgxp = new RegExp(`(?:^|/)node_modules/(?:(?!${depsRgxpStr}).)*?(?:/|$)`);
@@ -184,12 +184,13 @@ module.exports = async function ({buildId, plugins}) {
 						options: inherit(config.snakeskin().server, {
 							exec: true,
 							data: {
+								fatHTML: config.pack.fatHTML,
 								root: src.cwd(),
 								output: src.clientOutput(),
 								dependencies: build.dependencies,
 								assets: src.assets(),
 								lib: src.lib(),
-								version,
+								assetsJSON,
 								hashLength
 							}
 						})
@@ -215,7 +216,9 @@ module.exports = async function ({buildId, plugins}) {
 			use: [
 				{
 					loader: 'url',
-					options: inherit({name: hash('[path][hash]_[name].[ext]')}, config.dataURI)
+					options: inherit({name: hash('[path][hash]_[name].[ext]')}, {
+						limit: config.pack.dataURILimit()
+					})
 				}
 			].concat(
 				isProd ? {
@@ -230,7 +233,9 @@ module.exports = async function ({buildId, plugins}) {
 			use: [
 				{
 					loader: 'svg-url',
-					options: inherit({name: hash('[path][hash]_[name].[ext]')}, config.dataURI)
+					options: inherit({name: hash('[path][hash]_[name].[ext]')}, {
+						limit: config.pack.dataURILimit()
+					})
 				}
 			].concat(
 				isProd ? {

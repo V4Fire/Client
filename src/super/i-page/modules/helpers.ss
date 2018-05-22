@@ -11,15 +11,8 @@
 - include 'super/i-block'|b as placeholder
 
 - import fs from 'fs-extra-promise'
-- import path from 'path'
+- import path from 'upath'
 - import hasha from 'hasha'
-
-/**
- * Normalizes the specified url
- * @param {string} url
- */
-- block index->normalize(url)
-	- return url.replace(/\\/g, '/')
 
 /**
  * Injects the specified file to the template
@@ -47,7 +40,11 @@
 	: basename = path.basename(src)
 
 	- if path.extname(basename)
-		: newSrc, relativeSrc, file
+		: &
+			newSrc,
+			url,
+			file
+		.
 
 		- if !libCache[basename]
 			? file = fs.readFileSync(src)
@@ -57,17 +54,17 @@
 				? hash = hasha(src, {algorithm: 'md5'}).substr(0, @hashLength) + '_'
 
 			? newSrc = path.join(@output, 'lib', hash + basename)
-			? relativeSrc = path.relative(@output, newSrc)
-			? libCache[basename] = fs.existsSync(newSrc) && relativeSrc
+			? url = @fatHTML ? newSrc : path.relative(@output, newSrc)
+			? libCache[basename] = fs.existsSync(newSrc) && url
 
 		- if !libCache[basename]
 			? fs.mkdirpSync(path.join(@output, 'lib'))
 			? fs.writeFileSync(newSrc, file.toString().replace(/\/\/# sourceMappingURL=.*/, ''))
-			? libCache[basename] = relativeSrc
+			? libCache[basename] = url
 
-		- return self.normalize(libCache[basename])
+		- return libCache[basename]
 
-	- return self.normalize(src)
+	- return src
 
 /**
  * Adds a script dependence
@@ -76,16 +73,32 @@
  * @param {boolean=} [defer] - defer load mode
  */
 - block index->addScriptDep(name, defer = true)
-	? name = self.normalize(name)
-	document.write('<script src="' + PATH['{name}'] + '" {(defer ? \'defer="defer"\' : '')}><' + '/script>');
+	- if @fatHTML
+		- if !assets[name]
+			- throw new Error('Script dependence with id "' + name +  '" is not defined')
+
+		: url = path.join(@output, assets[name])
+		requireMonic({url})
+
+	- else
+		document.write('<script src="' + PATH['{name}'] + '" {(defer ? \'defer="defer"\' : '')}><' + '/script>');
 
 /**
  * Adds a link dependence
  * @param {string} name - dependence name
  */
 - block index->addStyleDep(name)
-	? name = self.normalize(name)
-	document.write('<link rel="stylesheet" href="' + PATH['{name}$style'] + '">');
+	: rname = name + '$style'
+
+	- if @fatHTML
+		- if !assets[rname]
+			- throw new Error('Style dependence with id "' + name +  '" is not defined')
+
+		: url = path.join(@output, assets[rname])
+		requireMonic({url})
+
+	- else
+		document.write('<link rel="stylesheet" href="' + PATH['{url}'] + '">');
 
 /**
  * Adds template dependencies
@@ -97,9 +110,15 @@
 	: list = dependencies[path.basename(__filename, '.ess')]
 
 	- if !type || type === 'styles'
-		- script
-			- forEach list => el
-				+= self.addStyleDep(el)
+		- if @fatHTML
+			- style
+				- forEach list => el
+					+= self.addStyleDep(el)
+
+		- else
+			- script
+				- forEach list => el
+					+= self.addStyleDep(el)
 
 	- if !type || type === 'scripts'
 		- script

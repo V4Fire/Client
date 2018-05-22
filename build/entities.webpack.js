@@ -14,8 +14,12 @@ const
 	path = require('upath');
 
 const
+	{build} = require('config'),
 	{resolve, entries, block} = require('@pzlr/build-core'),
-	{args, output, buildCache} = include('build/build.webpack');
+	{output, buildCache} = include('build/build.webpack');
+
+const
+	isFastBuild = build.fast();
 
 const
 	RUNTIME = 0,
@@ -44,7 +48,7 @@ module.exports = (async () => {
 	const
 		cacheFile = path.join(buildCache, 'graph.json');
 
-	if (Number(process.env.BUILD_GRAPH_FROM_CACHE)) {
+	if (build.buildGraphFromCache) {
 		if (fs.existsSync(cacheFile)) {
 			await new Promise((r) => {
 				const f = () => {
@@ -80,8 +84,8 @@ module.exports = (async () => {
 	let
 		entriesFilter;
 
-	if (typeof args.build === 'string') {
-		entriesFilter = $C(args.build.split(',')).reduce((map, el) => (map[el] = true, map), {});
+	if (build.entries) {
+		entriesFilter = $C(build.entries).reduce((map, el) => (map[el] = true, map), {});
 		entriesFilter.index = true;
 	}
 
@@ -185,11 +189,11 @@ module.exports = (async () => {
 
 			const
 				tplTaskName = `${name}_tpl.js`,
-				tplFile = path.join(tmpEntries, `${name}.ss${!args.fast ? '.js' : ''}`);
+				tplFile = path.join(tmpEntries, `${name}.ss${!isFastBuild ? '.js' : ''}`);
 
 			fs.writeFileSync(tplFile, await $C(list)
 				.async
-				.to(args.fast ? '' : 'window.TPLS = window.TPLS || Object.create(null);\n')
+				.to(isFastBuild ? '' : 'window.TPLS = window.TPLS || Object.create(null);\n')
 				.reduce(async (str, {name, isParent}) => {
 					const
 						block = blockMap.get(name),
@@ -197,14 +201,14 @@ module.exports = (async () => {
 
 					if (!isParent && tpl && !blackName.test(name)) {
 						const url = getUrl(tpl);
-						str += args.fast ? `- include '${url}'\n` : `Object.assign(TPLS, require('./${url}'));\n`;
+						str += isFastBuild ? `- include '${url}'\n` : `Object.assign(TPLS, require('./${url}'));\n`;
 					}
 
 					return str;
 				})
 			);
 
-			if (args.fast) {
+			if (isFastBuild) {
 				const
 					tplRequireFileUrl = path.join(tmpEntries, tplTaskName);
 

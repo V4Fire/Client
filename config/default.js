@@ -9,11 +9,77 @@
  */
 
 const
-	path = require('upath'),
-	config = require('@v4fire/core/config/default');
+	url = require('url'),
+	config = require('@v4fire/core/config/default'),
+	concatUrls = require('urlconcat').concat,
+	o = require('uniconf/options').option;
 
 module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	__proto__: config,
+
+	apiURL() {
+		return this.api.proxy ? concatUrls(this.pathname(), 'api') : this.api.url;
+	},
+
+	api: {
+		proxy: true,
+		url: o('api-url', {
+			env: true
+		}),
+
+		schema: {
+
+		}
+	},
+
+	port: o('port', {
+		env: true,
+		type: 'number',
+		default: 3333,
+		validate(value) {
+			return Number.isFinite(value) && (value > 0) && (value < 65536);
+		}
+	}),
+
+	host() {
+		return o('host-url', {
+			env: true,
+			default: `http://localhost:${this.port}/`
+		});
+	},
+
+	pathname() {
+		return o('base-path', {
+			env: true,
+			default: url.parse(this.host()).pathname || '/'
+		});
+	},
+
+	build: {
+		entries: o('entries', {
+			env: true,
+			short: 'e',
+			coerce: (v) => v ? v.split(',') : []
+		}),
+
+		fast() {
+			const v = o('fast-build', {
+				env: true,
+				type: 'boolean'
+			});
+
+			return v != null ? v : isProd;
+		},
+
+		buildGraphFromCache: o('build-graph-from-cache', {
+			env: true,
+			type: 'boolean'
+		}),
+
+		assetsJSON() {
+			return 'assets.json';
+		}
+	},
 
 	webpack: {
 		externals: {
@@ -67,8 +133,11 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		collapseWhitespace: isProd
 	},
 
-	dataURI: {
-		limit: 4096
+	pack: {
+		fatHTML: false,
+		dataURILimit() {
+			return this.fatHTML ? false : 4096;
+		}
 	},
 
 	postcss: {
@@ -96,7 +165,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	favicons() {
 		return {
 			appName: this.appName(),
-			path: path.join(this.src.assets(), 'favicons'),
+			path: this.src.assets('favicons'),
 			background: '#FFF',
 			display: 'standalone',
 			orientation: 'portrait',

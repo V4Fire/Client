@@ -9,24 +9,15 @@
  */
 
 const
-	$C = require('collection.js'),
-	Sugar = require('sugar');
+	$C = require('collection.js');
 
 const
-	{env, argv} = process,
-	{src} = require('config'),
+	Sugar = require('sugar'),
+	path = require('upath');
+
+const
+	{src, build} = require('config'),
 	{config: {dependencies}} = require('@pzlr/build-core');
-
-const
-	fs = require('fs'),
-	path = require('upath'),
-	minimist = require('minimist');
-
-/**
- * Process arguments
- */
-const args = exports.args = minimist(argv.slice(2));
-args.env && (env.NODE_ENV = args.env);
 
 /**
  * String with project dependencies for using with regular expressions
@@ -44,35 +35,6 @@ exports.hashLength = 15;
 exports.output = hash(r('[hash]_[name]'));
 
 /**
- * Project version
- * (for longterm caching)
- */
-exports.version = '';
-
-if (isProd) {
-	if (Number(env.BUMP_VERSION)) {
-		if (env.VERSION) {
-			exports.version = env.VERSION;
-
-		} else {
-			const
-				src = include('package.json'),
-				pack = require(src),
-				v = pack.version.split('.');
-
-			pack.version = [v[0], v[1], Number(v[2]) + 1].join('.');
-			env.VERSION = exports.version = `${pack.version.replace(/\./g, '')}_`;
-			fs.writeFileSync(src, `${JSON.stringify(pack, null, 2)}\n`);
-		}
-	}
-
-	if (!args.fast) {
-		args.fast = true;
-		argv.push('--fast');
-	}
-}
-
-/**
  * Build cache folder
  */
 exports.buildCache = path.join(src.cwd(), 'app-cache');
@@ -80,7 +42,7 @@ exports.buildCache = path.join(src.cwd(), 'app-cache');
 /**
  * Path to assets.json
  */
-exports.assetsJSON = path.join(src.clientOutput(), `${exports.version}assets.json`);
+exports.assetsJSON = path.join(src.clientOutput(), build.assetsJSON());
 
 // Some helpers
 
