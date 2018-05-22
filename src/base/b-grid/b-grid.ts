@@ -104,7 +104,7 @@ export default class bGrid<T extends Dictionary = Dictionary> extends iDataPages
 
 		if ((!sort || {createdDate: true, modifiedDate: true}[sort]) &&
 				this.checkDateFactory(date, data)() &&
-				(!this.lazyLoad && this.pageIndex !== 1)
+				(!this.lazyLoad && this.page !== 1)
 		) {
 			return {
 				...mut,

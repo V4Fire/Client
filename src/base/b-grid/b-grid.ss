@@ -66,7 +66,7 @@
 						:blockName = 'paging' |
 						:dispatching = true |
 						:count = Math.ceil(db.total / perPage) |
-						:current = pageIndex |
+						:current = page |
 						${props}
 					.
 
