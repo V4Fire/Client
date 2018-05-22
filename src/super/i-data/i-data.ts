@@ -114,7 +114,7 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 	 * Converter from .db to the component format
 	 */
 	@prop({type: Function, watch: 'initRemoteData', required: false})
-	readonly blockConverter?: BlockConverter;
+	readonly componentConverter?: BlockConverter;
 
 	/**
 	 * Event emitter object for working with a data provider
@@ -371,7 +371,7 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 	 * @param data
 	 */
 	protected convertDataToComponent<O>(data: any): O | T {
-		return this.blockConverter ? this.blockConverter(data && data.valueOf()) : data;
+		return this.componentConverter ? this.componentConverter(data && data.valueOf()) : data;
 	}
 
 	/**

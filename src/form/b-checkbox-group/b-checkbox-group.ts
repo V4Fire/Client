@@ -30,7 +30,7 @@ export default class bCheckboxGroup<T extends Dictionary = Dictionary> extends i
 
 	/** @override */
 	@prop({default: (obj) => $C(obj).get('data') || obj || []})
-	readonly blockConverter!: BlockConverter<Option[]>;
+	readonly componentConverter!: BlockConverter<Option[]>;
 
 	/**
 	 * Checkbox selection method

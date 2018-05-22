@@ -54,7 +54,7 @@ let
 export default class bSelect<T extends Dictionary = Dictionary> extends bInput<T> {
 	/** @override */
 	@prop({default: (obj) => $C(obj).get('data') || obj || []})
-	readonly blockConverter?: BlockConverter<Option[]>;
+	readonly componentConverter?: BlockConverter<Option[]>;
 
 	/**
 	 * Initial select options
