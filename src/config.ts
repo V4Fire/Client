@@ -7,6 +7,7 @@
  */
 
 import { extend } from '@v4fire/core/config';
+export * from '@v4fire/core/config';
 
 export default extend({
 	api: API_URL
