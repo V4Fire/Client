@@ -8,8 +8,12 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+const
+	config = require('config');
+
 module.exports = {
 	'IS_PROD': isProd,
+	'API_URL': config.apiURL(),
 	'process.env': {
 		NODE_ENV: JSON.stringify(process.env.NODE_ENV)
 	}

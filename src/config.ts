@@ -6,7 +6,8 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import $C = require('collection.js');
-import config from '@v4fire/core/config';
+import { extend } from '@v4fire/core/config';
 
-export default $C.extend(true, {}, config);
+export default extend({
+	api: API_URL
+});
