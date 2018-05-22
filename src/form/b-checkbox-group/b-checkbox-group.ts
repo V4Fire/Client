@@ -240,7 +240,7 @@ export default class bCheckboxGroup<T extends Dictionary = Dictionary> extends i
 	 *
 	 * @param el
 	 * @param value
-	 * @emits actionChange(value: ?any | Array)
+	 * @emits actionChange(value?: any | any[])
 	 */
 	protected onActionChange(el: bCheckbox, value: boolean): void {
 		if (el.name) {

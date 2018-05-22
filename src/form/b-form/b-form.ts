@@ -250,7 +250,7 @@ export default class bForm<T extends Dictionary = Dictionary> extends iData<T> {
 	 *
 	 * @emits submitStart(body: Object, params: Object, method: string)
 	 * @emits submitSuccess(result: XMLHttpRequest)
-	 * @emits submitFail(err: error, els: Array<iInput>)
+	 * @emits submitFail(err: error, els: iInput[])
 	 */
 	@wait('ready', {label: $$.submit, defer: true})
 	async submit(): Promise<void> {

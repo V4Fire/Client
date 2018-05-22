@@ -72,7 +72,7 @@ export default class bTimeRange<T extends Dictionary = Dictionary> extends iInpu
 
 	/**
 	 * Handler: component value save
-	 * @emits actionChange(value: ?Object)
+	 * @emits actionChange(value?: Object)
 	 */
 	protected async onSave(): Promise<void> {
 		const

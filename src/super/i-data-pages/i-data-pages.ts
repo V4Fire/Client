@@ -17,10 +17,10 @@ export const
 @component()
 export default class iDataPages<T extends Dictionary = Dictionary> extends iDataList<T> {
 	/**
-	 * Page number
+	 * Initial page number
 	 */
 	@prop(Number)
-	readonly page: number = 1;
+	readonly pageProp: number = 1;
 
 	/**
 	 * Document count per page
@@ -41,10 +41,10 @@ export default class iDataPages<T extends Dictionary = Dictionary> extends iData
 	readonly lazyLoadTrigger?: Element;
 
 	/**
-	 * Data page index
+	 * Page number
 	 */
-	@field((o) => o.link('page'))
-	pageIndex!: number;
+	@field((o) => o.link('pageProp'))
+	page!: number;
 
 	/** @private */
 	@system()
@@ -92,23 +92,23 @@ export default class iDataPages<T extends Dictionary = Dictionary> extends iData
 		p[0] = $C(p[0]).filter((el) => el != null).map();
 
 		let
-			pageIndex = this.pageIndex + 1;
+			page = this.page + 1;
 
-		if (this.pageIndex !== 1) {
-			pageIndex = ($C(p[0]).get('page') || 0) + pageIndex;
+		if (this.page !== 1) {
+			page = ($C(p[0]).get('page') || 0) + page;
 		}
 
-		if (this.pageLoaded[pageIndex]) {
+		if (this.pageLoaded[page]) {
 			return;
 		}
 
-		p[0].page = pageIndex;
+		p[0].page = page;
 
 		if (this.initAdvPath) {
 			this.url(this.initAdvPath);
 		}
 
-		this.pageLoaded[pageIndex] = true;
+		this.pageLoaded[page] = true;
 
 		const
 			res = await this.get(p[0], p[1]);
@@ -116,16 +116,19 @@ export default class iDataPages<T extends Dictionary = Dictionary> extends iData
 		if (res && res.data.length) {
 			this.async.requestIdleCallback(() => {
 				const data = res.data;
-				this.pageLoaded[pageIndex] = true;
+				this.pageLoaded[page] = true;
 
 				for (let i = 0; i < data.length; i++) {
 					db.data.push(this.convertRemoteChunk(data[i]));
 				}
 
 				db.total = res.total;
-				this.pageIndex = pageIndex;
+				this.page = page;
 				this.emit('loadNewPage', res);
-			}, {group: 'loadPage'});
+
+			}, {
+				group: 'loadPage'
+			});
 		}
 
 		this.setMod('loading', false);
@@ -136,7 +139,9 @@ export default class iDataPages<T extends Dictionary = Dictionary> extends iData
 	 */
 	@wait('ready')
 	async checkLazyLoad(): Promise<void> {
-		const loadPageTrigger = await this.waitRef<HTMLElement>('loadPageTrigger');
+		const
+			loadPageTrigger = await this.waitRef<HTMLElement>('loadPageTrigger');
+
 		if (innerHeight + pageYOffset >= Math.floor(loadPageTrigger.getPosition().top)) {
 			this.async.setTimeout(this.loadPage, 0.3.second(), {label: $$.checkLazyLoad});
 		}

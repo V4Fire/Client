@@ -396,7 +396,7 @@ export default class bCalendar<T extends Dictionary = Dictionary> extends iInput
 	 *
 	 * @param date - new date value
 	 * @param index - selected item index
-	 * @emits actionChange(value: ?Date | Array<Date>)
+	 * @emits actionChange(value?: Date | Date[])
 	 */
 	protected setDate(date: Date, index?: number): Date[] {
 		const
@@ -435,7 +435,7 @@ export default class bCalendar<T extends Dictionary = Dictionary> extends iInput
 	 *
 	 * @param days - number of switching days
 	 * @param index - calendar index
-	 * @emits actionChange(value: ?Date | Array<Date>)
+	 * @emits actionChange(value?: Date | Date[])
 	 */
 	protected async onSwitchDay(days: number, index: number = 0): Promise<void> {
 		const selectedDay = Object.isArray(this.value) ? this.value : [this.value];
@@ -475,7 +475,7 @@ export default class bCalendar<T extends Dictionary = Dictionary> extends iInput
 	 * Handler: day select
 	 *
 	 * @param e
-	 * @emits actionChange(value: ?Date | Array<Date>)
+	 * @emits actionChange(value?: Date | Date[])
 	 */
 	protected onDaySelect(e: Event): void {
 		const
