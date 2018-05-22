@@ -9,12 +9,14 @@
  */
 
 const
-	config = require('config');
+	config = require('config'),
+	s = JSON.stringify;
 
 module.exports = {
 	'IS_PROD': isProd,
-	'API_URL': JSON.stringify(config.apiURL()),
+	'API_URL': s(config.apiURL()),
+	'API_NAME': s(config.appName),
 	'process.env': {
-		NODE_ENV: JSON.stringify(process.env.NODE_ENV)
+		NODE_ENV: s(process.env.NODE_ENV)
 	}
 };
