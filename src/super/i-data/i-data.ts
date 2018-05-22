@@ -367,6 +367,14 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 	}
 
 	/**
+	 * Converts the specified data to the internal component format and returns it
+	 * @param data
+	 */
+	protected convertDataToComponent<O>(data: any): O | T {
+		return this.blockConverter ? this.blockConverter(data && data.valueOf()) : data;
+	}
+
+	/**
 	 * Initializes remote data
 	 */
 	protected initRemoteData(): any | undefined {

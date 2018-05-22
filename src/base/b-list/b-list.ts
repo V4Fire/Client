@@ -162,10 +162,10 @@ export default class bList<T extends Dictionary = Dictionary> extends iData<T> {
 		}
 
 		const
-			val = this.blockConverter ? this.blockConverter(this.db) : this.db;
+			val = this.convertDataToComponent<Option[]>(this.db);
 
 		if (Object.isArray(val)) {
-			return this.value = <Option[]>val;
+			return this.value = val;
 		}
 
 		return this.value;

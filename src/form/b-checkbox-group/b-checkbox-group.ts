@@ -196,7 +196,7 @@ export default class bCheckboxGroup<T extends Dictionary = Dictionary> extends i
 		}
 
 		const
-			val = this.blockConverter ? this.blockConverter(this.db) : this.db;
+			val = this.convertDataToComponent<Option[]>(this.db);
 
 		if (Object.isArray(val)) {
 			return this.options = val;
