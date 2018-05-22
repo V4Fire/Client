@@ -8,6 +8,7 @@
 
 import $C = require('collection.js');
 import ion = require('ion-sound');
+
 import config from 'config';
 import symbolGenerator from 'core/symbol';
 import iData, { prop, component } from 'super/i-data/i-data';
@@ -41,7 +42,7 @@ export default class bNotifier<T extends Dictionary = Message> extends iData<T> 
 	 * Default project title
 	 */
 	@prop(String)
-	readonly title: string = config.appName;
+	readonly title: string = config.appName || '';
 
 	/**
 	 * Notify rules
