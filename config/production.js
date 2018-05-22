@@ -9,6 +9,10 @@
  */
 
 module.exports = {
+	api: {
+		proxy: false
+	},
+
 	externals: {
 		'raven-js': 'Raven'
 	}
