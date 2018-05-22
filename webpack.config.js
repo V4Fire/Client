@@ -12,8 +12,8 @@ require('config');
 
 const
 	$C = require('collection.js'),
-	{EventEmitter2: EventEmitter} = require('eventemitter2'),
-	{args} = include('build/build.webpack');
+	EventEmitter = require('eventemitter2').EventEmitter2,
+	config = require('config');
 
 async function buildFactory(entry, buildId = '00') {
 	const
@@ -49,7 +49,7 @@ const tasks = (async () => {
 		graph = await build;
 
 	const tasks = global.WEBPACK_CONFIG = await (
-		args.single ? buildFactory(graph.entry) : $C(graph.processes).async.map((el, i) => buildFactory(el, i))
+		config.build.single ? buildFactory(graph.entry) : $C(graph.processes).async.map((el, i) => buildFactory(el, i))
 	);
 
 	$C(tasks).forEach((config, i) => {

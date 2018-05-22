@@ -56,6 +56,10 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	},
 
 	build: {
+		single: o('single-build', {
+			env: true
+		}),
+
 		entries: o('entries', {
 			env: true,
 			short: 'e',
