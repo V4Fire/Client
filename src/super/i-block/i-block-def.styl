@@ -8,10 +8,6 @@
 
 $p = {
 	focusedBorderColor: #444
-	sizes: {
-		table: SIZES
-		units: rem
-	}
 }
 
 i-block
@@ -19,8 +15,3 @@ i-block
 		&_disabled_true &__root-wrapper
 		&_progress_true &__root-wrapper
 			opacity 0.8
-
-	&_size
-		for $key, $value in $p.sizes.table
-			&_{$key}
-				font-size "%s%s" % ($value $p.sizes.units)
