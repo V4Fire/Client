@@ -189,7 +189,7 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 					const
 						db = await this.get(<RequestQuery>p[0], p[1]);
 
-					await this.waitStatus('ready', () => {
+					this.waitStatus('ready', () => {
 						this.db = this.convertRemoteData(db);
 
 					}, {
@@ -197,7 +197,9 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 						label: $$.initLoad
 					});
 
-				} catch (_) {}
+				} catch (err) {
+					stderr(err);
+				}
 
 			} else {
 				this.db = null;

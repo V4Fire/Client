@@ -1390,10 +1390,8 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 		);
 
 		return this[key] = $a.promise(async () => {
-			const
-				data = await this.loadSettings('[[STORE]]');
-
-			this.waitStatus('ready', () => {
+			const data = await this.loadSettings('[[STORE]]');
+			await this.waitStatus('ready', () => {
 				this.setState(data, state);
 
 				const sync = () => {
@@ -1424,7 +1422,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 		}, {
 			group: 'loadStore',
 			join: true
-		});
+		}).catch(stderr);
 	}
 
 	/**
