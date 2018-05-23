@@ -36,19 +36,19 @@ export type FieldWatcher<
 	T extends iBlock = iBlockDecorator,
 	A = any,
 	B = A
-> = BaseFieldWatcher<T, A, B>;
+	> = BaseFieldWatcher<T, A, B>;
 
 export interface ComponentProp<
 	T extends iBlock = iBlockDecorator,
 	A = any,
 	B = A
-> extends BaseComponentProp<T, A, B> {}
+	> extends BaseComponentProp<T, A, B> {}
 
 export interface ComponentField<
 	T extends iBlock = iBlockDecorator,
 	A = any,
 	B = A
-> extends BaseComponentField<T, A, B> {}
+	> extends BaseComponentField<T, A, B> {}
 
 /**
  * @see core/component/decorators/base.ts
@@ -259,7 +259,8 @@ export function wait<T = any>(
 			p = {join, label, group};
 
 		let
-			res;
+			res,
+			init;
 
 		if ($b) {
 			if (status > 0 && $b.status < 0) {
@@ -267,6 +268,8 @@ export function wait<T = any>(
 			}
 
 			if ($b.status >= status) {
+				init = true;
+
 				if (defer) {
 					res = $a.promise(
 						(async () => {
@@ -281,11 +284,14 @@ export function wait<T = any>(
 					res = handler.apply(this, args);
 				}
 			}
+		}
 
-		} else {
+		if (!init) {
 			res = $a.promise<any>(
 				new Promise((resolve) => {
-					this.localEvent.once(`block.status.${statuses[status]}`, () => resolve(handler.apply(this, args)));
+					this.localEvent.once(`block.status.${statuses[status]}`, () => {
+						resolve(handler.apply(this, args));
+					});
 				}),
 
 				p
