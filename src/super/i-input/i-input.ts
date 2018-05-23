@@ -123,7 +123,7 @@ export default class iInput<T extends Dictionary = Dictionary> extends iData<T> 
 	 */
 	@p({cache: false})
 	get connectedForm(): CanPromise<HTMLFormElement | null> {
-		return this.waitState('ready', () => this.form ?
+		return this.waitStatus('ready', () => this.form ?
 			<any>document.querySelector(`#${this.form}`) : this.$el.closest('form'));
 	}
 

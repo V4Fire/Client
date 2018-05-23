@@ -118,7 +118,7 @@ export default class bForm<T extends Dictionary = Dictionary> extends iData<T> {
 	@p({cache: false})
 	get elements(): CanPromise<ReadonlyArray<iInput>> {
 		const cache = {};
-		return this.waitState('ready', () => {
+		return this.waitStatus('ready', () => {
 			const els = $C(this.$refs.form.elements).to([] as iInput[]).reduce((arr, el) => {
 				const
 					component = this.$(el, '[class*="_form_true"]');
@@ -140,7 +140,7 @@ export default class bForm<T extends Dictionary = Dictionary> extends iData<T> {
 	 */
 	@p({cache: false})
 	get submits(): CanPromise<ReadonlyArray<bButton>> {
-		return this.waitState('ready', () => {
+		return this.waitStatus('ready', () => {
 			const els = $C(
 				Array.from(this.$el.querySelectorAll('button[type="submit"]')).concat(
 					this.id ? Array.from(document.body.querySelectorAll(`button[type="submit"][form="${this.id}"]`)) : []

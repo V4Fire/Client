@@ -9,6 +9,7 @@
 // tslint:disable:max-file-line-count
 
 import $C = require('collection.js');
+
 import Then from 'core/then';
 import StatusCodes from 'core/statusCodes';
 import symbolGenerator from 'core/symbol';
@@ -117,6 +118,12 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 	readonly componentConverter?: BlockConverter;
 
 	/**
+	 * Component data
+	 */
+	@field({watch: 'initRemoteData'})
+	db?: T | null = null;
+
+	/**
 	 * Event emitter object for working with a data provider
 	 */
 	get dataEvent(): DataEvent<this> {
@@ -157,12 +164,6 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 	protected readonly requestParams: Dictionary<Dictionary> = {get: {}};
 
 	/**
-	 * Component data
-	 */
-	@field({watch: 'initRemoteData'})
-	protected db?: T | null = null;
-
-	/**
 	 * Provider instance
 	 */
 	@system()
@@ -185,16 +186,15 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 				}
 
 				try {
-					const db = await this.get(<RequestQuery>p[0], p[1]);
-					await new Promise((resolve) => {
-						this.async.requestIdleCallback(() => {
-							this.db = this.convertRemoteData(db);
-							resolve();
+					const
+						db = await this.get(<RequestQuery>p[0], p[1]);
 
-						}, {
-							join: true,
-							label: $$.initLoad
-						});
+					await this.waitStatus('ready', () => {
+						this.db = this.convertRemoteData(db);
+
+					}, {
+						join: true,
+						label: $$.initLoad
 					});
 
 				} catch (_) {}
@@ -204,7 +204,7 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 			}
 		}
 
-		return super.initLoad();
+		return super.initLoad(this.db);
 	}
 
 	/**

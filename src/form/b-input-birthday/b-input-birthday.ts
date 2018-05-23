@@ -124,7 +124,7 @@ export default class bInputBirthday<T extends Dictionary = Dictionary> extends i
 	 * Array of child selects
 	 */
 	get elements(): CanPromise<ReadonlyArray<bSelect>> {
-		return this.waitState('ready', () => {
+		return this.waitStatus('ready', () => {
 			const r = this.$refs;
 			return Object.freeze([r.month, r.day, r.year]);
 		});

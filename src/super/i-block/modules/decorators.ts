@@ -6,6 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import Then from 'core/then';
 import iBlock, { statuses, iBlockDecorator } from 'super/i-block/i-block';
 import { AsyncOpts } from 'core/async';
 import { WatchOptions } from 'vue';
@@ -241,6 +242,9 @@ export function wait<T = any>(
 	let
 		handler = <Function>(fn || params);
 
+	const
+		isDecorator = !Object.isFunction(handler);
+
 	function wrapper(this: iBlockDecorator): CanPromise<T> | undefined {
 		const
 			args = arguments;
@@ -254,11 +258,8 @@ export function wait<T = any>(
 			{async: $a, block: $b} = this,
 			p = {join, label, group};
 
-		const reject = (err) => {
-			if (err.type !== 'clear') {
-				throw err;
-			}
-		};
+		let
+			res;
 
 		if ($b) {
 			if (status > 0 && $b.status < 0) {
@@ -267,35 +268,43 @@ export function wait<T = any>(
 
 			if ($b.status >= status) {
 				if (defer) {
-					return $a.promise(
+					res = $a.promise(
 						(async () => {
 							await $a.nextTick();
 							return handler.apply(this, args);
 						})(),
 
 						p
-					).catch(reject);
-				}
+					);
 
-				return handler.apply(this, args);
+				} else {
+					res = handler.apply(this, args);
+				}
 			}
+
+		} else {
+			res = $a.promise<any>(
+				new Promise((resolve) => {
+					this.localEvent.once(`block.status.${statuses[status]}`, () => resolve(handler.apply(this, args)));
+				}),
+
+				p
+			);
 		}
 
-		return $a.promise<any>(
-			new Promise((resolve) => {
-				this.localEvent.once(`block.status.${statuses[status]}`, () => resolve(handler.apply(this, args)));
-			}),
+		if (isDecorator && Then.isThenable(res)) {
+			return (<Promise<any>>res).catch(stderr);
+		}
 
-			p
-		).catch(reject);
+		return res;
 	}
 
-	if (Object.isFunction(handler)) {
-		return wrapper;
+	if (isDecorator) {
+		return <any>((target, key, descriptors) => {
+			handler = descriptors.value;
+			descriptors.value = wrapper;
+		});
 	}
 
-	return <any>((target, key, descriptors) => {
-		handler = descriptors.value;
-		descriptors.value = wrapper;
-	});
+	return wrapper;
 }

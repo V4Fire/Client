@@ -6,8 +6,13 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import Then from 'core/then';
+import symbolGenerator from 'core/symbol';
 import iData, { component, prop, watch } from 'super/i-data/i-data';
 export * from 'super/i-data/i-data';
+
+export const
+	$$ = symbolGenerator();
 
 @component()
 export default class bRemoteProvider<T extends Dictionary = Dictionary> extends iData<T> {
@@ -28,10 +33,27 @@ export default class bRemoteProvider<T extends Dictionary = Dictionary> extends 
 	 */
 	@watch('db')
 	protected syncDBWatcher(value: T): void {
-		if (this.field && this.$parent) {
-			this.$parent.setField(this.field, value);
+		const
+			p = this.$parent;
+
+		if (!p) {
+			return;
 		}
 
-		this.emit('change', value);
+		const handler = () => {
+			if (this.field) {
+				p.setField(this.field, value);
+			}
+
+			this.emit('change', value);
+		};
+
+		const res = p.waitStatus('ready', handler, {
+			label: $$.syncDBWatcher
+		});
+
+		if (Then.isThenable(res)) {
+			res.catch(stderr);
+		}
 	}
 }

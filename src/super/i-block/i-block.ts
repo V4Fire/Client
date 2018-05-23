@@ -706,7 +706,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 * @param [params] - additional parameters:
 	 *   *) [params.defer] - if true, then the function will always return a promise
 	 */
-	waitState<T>(state: number | string, fn: () => T, params?: AsyncOpts & {defer?: boolean}): CanPromise<T> {
+	waitStatus<T>(state: number | string, fn: () => T, params?: AsyncOpts & {defer?: boolean}): CanPromise<T> {
 		params = params || {};
 		params.join = false;
 		return wait(state, {fn, ...params}).call(this);
@@ -722,11 +722,11 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 
 	/**
 	 * Loads component data
-	 * @emits initLoad()
+	 * @emits initLoad(data?: Object)
 	 */
 	@wait('loading')
 	@hook({mounted: 'initBlockInstance'})
-	async initLoad(): Promise<void> {
+	async initLoad(data?: any): Promise<void> {
 		const {block: $b, $children: $c} = this;
 		await this.loadLocalStore();
 
@@ -756,7 +756,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 		}
 
 		$b.status = $b.statuses.ready;
-		this.emit('initLoad');
+		this.emit('initLoad', data);
 	}
 
 	/**
@@ -1389,33 +1389,38 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 			storeWatchers
 		);
 
-		return $a.promise(async () => {
-			this[key] = this.loadSettings('[[STORE]]');
-			this.setState(await this[key], state);
+		return this[key] = $a.promise(async () => {
+			const
+				data = await this.loadSettings('[[STORE]]');
 
-			const sync = () => {
-				$a.setTimeout(this.saveLocalStore, 0.2.second(), {
-					label: $$.syncLocalStore
-				});
-			};
+			this.waitStatus('ready', () => {
+				this.setState(data, state);
 
-			$C(this.convertStateToStore()).forEach((el, key) => {
-				const
-					p = key.split('.');
-
-				if (p[0] === 'mods') {
-					$a.on(this.localEvent, `block.mod.*.${p[0]}.*`, sync, storeWatchers);
-
-				} else {
-					const watcher = this.$watch(key, (val, oldVal) => {
-						if (!Object.fastCompare(val, oldVal)) {
-							sync();
-						}
+				const sync = () => {
+					$a.setTimeout(this.saveLocalStore, 0.2.second(), {
+						label: $$.syncLocalStore
 					});
+				};
 
-					$a.worker(watcher, storeWatchers);
-				}
+				$C(this.convertStateToStore()).forEach((el, key) => {
+					const
+						p = key.split('.');
+
+					if (p[0] === 'mods') {
+						$a.on(this.localEvent, `block.mod.*.${p[0]}.*`, sync, storeWatchers);
+
+					} else {
+						const watcher = this.$watch(key, (val, oldVal) => {
+							if (!Object.fastCompare(val, oldVal)) {
+								sync();
+							}
+						});
+
+						$a.worker(watcher, storeWatchers);
+					}
+				});
 			});
+
 		}, {
 			group: 'loadStore',
 			join: true

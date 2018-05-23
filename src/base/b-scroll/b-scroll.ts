@@ -59,7 +59,7 @@ export default class bScroll extends iBlock {
 	 */
 	@p({cache: false})
 	get scrollOffset(): CanPromise<Offset> {
-		return this.waitState('ready', () => {
+		return this.waitStatus('ready', () => {
 			const {area} = this.$refs;
 			return {
 				top: area.scrollTop,
@@ -73,7 +73,7 @@ export default class bScroll extends iBlock {
 	 */
 	@p({cache: false})
 	get scrollWidth(): CanPromise<number> {
-		return this.waitState('ready', () => this.$refs.area.scrollWidth);
+		return this.waitStatus('ready', () => this.$refs.area.scrollWidth);
 	}
 
 	/**
@@ -81,7 +81,7 @@ export default class bScroll extends iBlock {
 	 */
 	@p({cache: false})
 	get scrollHeight(): CanPromise<number> {
-		return this.waitState('ready', () => this.$refs.area.scrollHeight);
+		return this.waitStatus('ready', () => this.$refs.area.scrollHeight);
 	}
 
 	/**
@@ -89,7 +89,7 @@ export default class bScroll extends iBlock {
 	 */
 	@p({cache: false})
 	get width(): CanPromise<number> {
-		return this.waitState('ready', () => this.$refs.area.clientWidth);
+		return this.waitStatus('ready', () => this.$refs.area.clientWidth);
 	}
 
 	/**
@@ -97,7 +97,7 @@ export default class bScroll extends iBlock {
 	 */
 	@p({cache: false})
 	get height(): CanPromise<number> {
-		return this.waitState('ready', () => this.$refs.area.clientHeight);
+		return this.waitStatus('ready', () => this.$refs.area.clientHeight);
 	}
 
 	/** @inheritDoc */

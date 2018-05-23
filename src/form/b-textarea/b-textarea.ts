@@ -32,7 +32,7 @@ export default class bTextarea<T extends Dictionary = Dictionary> extends bInput
 	 */
 	@p({cache: false})
 	get height(): CanPromise<number> {
-		return this.waitState('ready', () => {
+		return this.waitStatus('ready', () => {
 			const
 				{input} = this.$refs,
 				s = getComputedStyle(this.$refs.input);
@@ -46,7 +46,7 @@ export default class bTextarea<T extends Dictionary = Dictionary> extends bInput
 	 */
 	@p({cache: false})
 	get maxHeight(): CanPromise<number> {
-		return this.waitState('ready', () => {
+		return this.waitStatus('ready', () => {
 			const s = getComputedStyle(this.$refs.superWrapper);
 			return Number.parseFloat(s.maxHeight || '') -
 				Number.parseFloat(s.paddingTop || '') -
@@ -58,7 +58,7 @@ export default class bTextarea<T extends Dictionary = Dictionary> extends bInput
 	 * Height of a newline
 	 */
 	get newlineHeight(): CanPromise<number> {
-		return this.waitState('ready', () =>
+		return this.waitStatus('ready', () =>
 			Number.parseFloat(getComputedStyle(this.$refs.input).lineHeight || '') || 10);
 	}
 
