@@ -32,8 +32,8 @@ export default class iDataList<T extends Dictionary = Dictionary> extends iData<
 	}
 
 	/** @override */
-	protected convertRemoteData<O>(data: any): O | DataList<T> {
-		data = super.convertRemoteData(data);
+	protected convertDataToDB<O>(data: any): O | DataList<T> {
+		data = super.convertDataToDB(data);
 
 		if (Object.isFrozen(data)) {
 			return data;
@@ -136,7 +136,7 @@ export default class iDataList<T extends Dictionary = Dictionary> extends iData<
 			return;
 		}
 
-		const list = (<any[]>[]).concat(this.convertRemoteData(data));
+		const list = (<any[]>[]).concat(this.convertDataToDB(data));
 		await this.async.wait(() => this.db);
 
 		const
@@ -178,7 +178,7 @@ export default class iDataList<T extends Dictionary = Dictionary> extends iData<
 			return;
 		}
 
-		const list = (<any[]>[]).concat(this.convertRemoteData(data));
+		const list = (<any[]>[]).concat(this.convertDataToDB(data));
 		await this.async.wait(() => this.db);
 
 		const
@@ -213,7 +213,7 @@ export default class iDataList<T extends Dictionary = Dictionary> extends iData<
 			return;
 		}
 
-		const list = (<any>[]).concat(this.convertRemoteData(data));
+		const list = (<any>[]).concat(this.convertDataToDB(data));
 		await this.async.wait(() => this.db);
 
 		const

@@ -381,7 +381,7 @@ export default class iInput<T extends Dictionary = Dictionary> extends iData<T> 
 			return;
 		}
 
-		return this[this.blockValueField] = this.convertDataToComponent(this.db);
+		return this[this.blockValueField] = this.convertDBToComponent(this.db);
 	}
 
 	/**

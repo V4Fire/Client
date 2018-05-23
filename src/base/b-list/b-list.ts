@@ -162,7 +162,7 @@ export default class bList<T extends Dictionary = Dictionary> extends iData<T> {
 		}
 
 		const
-			val = this.convertDataToComponent<Option[]>(this.db);
+			val = this.convertDBToComponent<Option[]>(this.db);
 
 		if (Object.isArray(val)) {
 			return this.value = val;
@@ -217,17 +217,17 @@ export default class bList<T extends Dictionary = Dictionary> extends iData<T> {
 
 	/** @override */
 	protected onAddData(data: any): void {
-		Object.assign(this.db, this.convertRemoteData(data));
+		Object.assign(this.db, this.convertDataToDB(data));
 	}
 
 	/** @override */
 	protected onUpdData(data: any): void {
-		Object.assign(this.db, this.convertRemoteData(data));
+		Object.assign(this.db, this.convertDataToDB(data));
 	}
 
 	/** @override */
 	protected onDelData(data: any): void {
-		Object.assign(this.db, this.convertRemoteData(data));
+		Object.assign(this.db, this.convertDataToDB(data));
 	}
 
 	/**

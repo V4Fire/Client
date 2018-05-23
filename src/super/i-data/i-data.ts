@@ -190,7 +190,7 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 						db = await this.get(<RequestQuery>p[0], p[1]);
 
 					this.waitStatus('ready', () => {
-						this.db = this.convertRemoteData(db);
+						this.db = this.convertDataToDB(db);
 
 					}, {
 						join: true,
@@ -364,7 +364,7 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 	 * Converts the specified remote data to the component format and returns it
 	 * @param data
 	 */
-	protected convertRemoteData<O>(data: any): O | T {
+	protected convertDataToDB<O>(data: any): O | T {
 		return this.dbConverter ? this.dbConverter(data && data.valueOf()) : data;
 	}
 
@@ -372,7 +372,7 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 	 * Converts the specified data to the internal component format and returns it
 	 * @param data
 	 */
-	protected convertDataToComponent<O>(data: any): O | T {
+	protected convertDBToComponent<O>(data: any): O | T {
 		return this.componentConverter ? this.componentConverter(data && data.valueOf()) : data;
 	}
 
@@ -398,19 +398,19 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 
 		$e.on('add', (data) => {
 			if (this.getParams('get')) {
-				this.onAddData(Object.isFunction(data) ? data() : data);
+				return this.onAddData(Object.isFunction(data) ? data() : data);
 			}
 		}, {group});
 
 		$e.on('upd', (data) => {
 			if (this.getParams('get')) {
-				this.onUpdData(Object.isFunction(data) ? data() : data);
+				return this.onUpdData(Object.isFunction(data) ? data() : data);
 			}
 		}, {group});
 
 		$e.on('del', (data) => {
 			if (this.getParams('get')) {
-				this.onDelData(Object.isFunction(data) ? data() : data);
+				return this.onDelData(Object.isFunction(data) ? data() : data);
 			}
 		}, {group});
 
@@ -591,7 +591,7 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 	 */
 	protected onAddData(data: any): void {
 		if (data !== undefined) {
-			this.db = this.convertRemoteData(data);
+			this.db = this.convertDataToDB(data);
 		}
 	}
 
@@ -601,7 +601,7 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 	 */
 	protected onUpdData(data: any): void {
 		if (data !== undefined) {
-			this.db = this.convertRemoteData(data);
+			this.db = this.convertDataToDB(data);
 		}
 	}
 
