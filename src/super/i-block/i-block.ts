@@ -203,7 +203,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	/**
 	 * Link to $root
 	 */
-	get r(): iPage {
+	get r(): iPage | any {
 		return this.$root;
 	}
 
@@ -490,7 +490,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 		init: (ctx) => ctx
 	})
 
-	protected readonly self!: iBlock;
+	protected readonly self!: this;
 
 	/**
 	 * API for async operations
@@ -1086,7 +1086,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	protected accumulateTmpObj(
 		obj: Dictionary,
 		key: string | symbol,
-		fn: (this: iBlock, obj: Dictionary) => void
+		fn: (this: this, obj: Dictionary) => void
 	): void {
 		const
 			t = this.tmp,

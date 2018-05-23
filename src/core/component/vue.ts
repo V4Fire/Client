@@ -15,7 +15,10 @@ import { ComponentMeta, Hooks } from 'core/component';
 // tslint:disable:typedef
 
 export type VueElement<T> = Element & {vueComponent?: T};
-export default class VueInterface<B = VueInterface<any, any>, R = VueInterface<any, any>, C extends B = B> {
+export default class VueInterface<
+	C extends VueInterface = VueInterface<any, any>,
+	R extends VueInterface = VueInterface<any, any>
+> {
 	readonly hook!: Hooks;
 	readonly instance!: this;
 	readonly componentName!: string;
@@ -25,7 +28,7 @@ export default class VueInterface<B = VueInterface<any, any>, R = VueInterface<a
 	readonly $children?: C[];
 	readonly $parent?: C;
 	readonly $normalParent?: C;
-	readonly $root!: R;
+	readonly $root!: R | any;
 	readonly $isServer!: boolean;
 	protected readonly $state!: Dictionary;
 	protected readonly $async!: Async<VueInterface>;
