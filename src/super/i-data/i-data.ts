@@ -189,13 +189,17 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 					const
 						db = await this.get(<RequestQuery>p[0], p[1]);
 
-					this.waitStatus('ready', () => {
+					const done = this.waitStatus('ready', () => {
 						this.db = this.convertDataToDB(db);
 
 					}, {
 						join: true,
 						label: $$.initLoad
 					});
+
+					if (Then.isThenable(done)) {
+						done.catch(stderr);
+					}
 
 				} catch (err) {
 					stderr(err);
