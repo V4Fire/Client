@@ -15,7 +15,7 @@ const
 module.exports = {
 	'IS_PROD': isProd,
 	'API_URL': s(config.apiURL()),
-	'API_NAME': s(config.appName),
+	'APP_NAME': s(config.appName),
 	'process.env': {
 		NODE_ENV: s(process.env.NODE_ENV)
 	}
