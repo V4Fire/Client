@@ -120,7 +120,7 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 	/**
 	 * Component data
 	 */
-	@field({watch: 'initRemoteData'})
+	@field({watch: {fn: 'initRemoteData', deep: true}})
 	db?: T | null = null;
 
 	/**
