@@ -1586,9 +1586,10 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 * @param event - event name
 	 * @param [details] - event details
 	 */
-	@wait('loading', {defer: true, label: $$.sendAnalyticsEvent})
-	protected async sendAnalyticsEvent(event: string, details: Dictionary = {}): Promise<void> {
-		analytics.send(event, details);
+	protected sendAnalyticsEvent(event: string, details: Dictionary = {}): void {
+		this.async.setImmediate(() => analytics.send(event, details), {
+			label: $$.sendAnalyticsEvent
+		});
 	}
 
 	/**
