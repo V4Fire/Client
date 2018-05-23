@@ -8,7 +8,7 @@
 
 import $C = require('collection.js');
 import bCheckbox from 'form/b-checkbox/b-checkbox';
-import iInput, { component, prop, field, p, ValidatorsDecl, BlockConverter } from 'super/i-input/i-input';
+import iInput, { component, prop, field, p, ValidatorsDecl, ComponentConverter } from 'super/i-input/i-input';
 export * from 'super/i-input/i-input';
 
 export type Option = Dictionary & {
@@ -30,7 +30,7 @@ export default class bCheckboxGroup<T extends Dictionary = Dictionary> extends i
 
 	/** @override */
 	@prop({default: (obj) => $C(obj).get('data') || obj || []})
-	readonly componentConverter!: BlockConverter<Option[]>;
+	readonly componentConverter!: ComponentConverter<Option[]>;
 
 	/**
 	 * Checkbox selection method

@@ -71,7 +71,7 @@ export interface CreateRequestOptions<T = any> extends BaseCreateRequestOptions<
 	hideProgress?: boolean;
 }
 
-export interface BlockConverter<T = any> {
+export interface ComponentConverter<T = any> {
 	(value: any): T;
 }
 
@@ -115,7 +115,7 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 	 * Converter from .db to the component format
 	 */
 	@prop({type: Function, watch: 'initRemoteData', required: false})
-	readonly componentConverter?: BlockConverter;
+	readonly componentConverter?: ComponentConverter;
 
 	/**
 	 * Component data

@@ -21,7 +21,7 @@ import bInput, {
 	watch,
 	mod,
 	wait,
-	BlockConverter
+	ComponentConverter
 
 } from 'form/b-input/b-input';
 
@@ -54,7 +54,7 @@ let
 export default class bSelect<T extends Dictionary = Dictionary> extends bInput<T> {
 	/** @override */
 	@prop({default: (obj) => $C(obj).get('data') || obj || []})
-	readonly componentConverter?: BlockConverter<Option[]>;
+	readonly componentConverter?: ComponentConverter<Option[]>;
 
 	/**
 	 * Initial select options
