@@ -124,12 +124,14 @@ export interface SystemField<T extends VueInterface = VueInterface> {
 
 export interface WatchOptionsWithHandler<T extends VueInterface = VueInterface, A = any, B = A> extends WatchOptions {
 	method?: true;
+	event?: boolean;
 	handler(a: A, b: B): any;
 	handler(ctx: T, a: A, b: B): any;
 }
 
 export interface MethodWatcher extends WatchOptions {
-	field: string;
+	event?: string;
+	field?: string;
 }
 
 export type Hooks =

@@ -158,7 +158,7 @@ export function paramsFactory<T>(
 							el = w[i];
 
 						if (Object.isObject(el)) {
-							watchers[el.field] = {...p.watchParams, ...el};
+							watchers[el.field || el.event.dasherize()] = {...p.watchParams, ...el};
 
 						} else {
 							watchers[el] = {field: el, ...p.watchParams};

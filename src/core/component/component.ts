@@ -283,8 +283,7 @@ export function bindWatchers(ctx: VueInterface): void {
 			const
 				el = watchers[i];
 
-			// @ts-ignore
-			ctx.$watch(key, {...el, handler: el.method ? el.handler : (a, b) => {
+			const handler = el.method ? el.handler : (a, b) => {
 				const
 					fn = el.handler;
 
@@ -302,7 +301,20 @@ export function bindWatchers(ctx: VueInterface): void {
 				} else {
 					fn(ctx, a, b);
 				}
-			}});
+			};
+
+			if (el.event) {
+				// @ts-ignore
+				ctx.$on(key, handler.bind(ctx));
+
+			} else {
+				// @ts-ignore
+				ctx.$watch(key, {
+					deep: el.deep,
+					immediate: el.immediate,
+					handler
+				});
+			}
 		}
 	}
 }
@@ -495,10 +507,11 @@ export function getBaseComponent(
 
 			watchers[key] = watchers[key] || [];
 			watchers[key].push({
+				method: true,
+				event: Boolean(el.event),
 				deep: el.deep,
 				immediate: el.immediate,
-				handler: <any>method.fn,
-				method: true
+				handler: <any>method.fn
 			});
 		}
 
