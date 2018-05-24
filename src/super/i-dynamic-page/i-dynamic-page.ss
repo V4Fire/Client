@@ -14,3 +14,5 @@
 	- block innerRoot
 		< .&__root-wrapper v-if = dataProvider ? db : true
 			- block body
+
+		- block helpers
