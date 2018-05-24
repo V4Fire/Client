@@ -305,7 +305,6 @@ export default class bList<T extends Dictionary = Dictionary> extends iData<T> {
 	 * Initializes component values
 	 * @param data - data object
 	 */
-	@watch('value')
 	@hook('beforeDataCreate')
 	protected initComponentValues(data: Dictionary = this): void {
 		const
@@ -331,7 +330,7 @@ export default class bList<T extends Dictionary = Dictionary> extends iData<T> {
 	/**
 	 * Synchronization for the value field
 	 */
-	@watch('optionsStore')
+	@watch('value')
 	protected async syncValueWatcher(): Promise<void> {
 		await this.initComponentValues();
 	}
