@@ -150,6 +150,7 @@ export default class bList<T extends Dictionary = Dictionary> extends iData<T> {
 	/**
 	 * Returns link to the active element
 	 */
+	@p({cache: true})
 	protected get activeElement(): HTMLAnchorElement | null {
 		if (this.active in this.values) {
 			return this.block.element('link', {
