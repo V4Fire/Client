@@ -7,7 +7,7 @@
  */
 
 import symbolGenerator from 'core/symbol';
-import iData, { component, prop, field, system, hook, watch } from 'super/i-data/i-data';
+import iData, { component, prop, field, system, hook, watch, p } from 'super/i-data/i-data';
 export * from 'super/i-data/i-data';
 
 export const
@@ -92,6 +92,7 @@ export default class bList<T extends Dictionary = Dictionary> extends iData<T> {
 	/**
 	 * Component active value
 	 */
+	@p({cache: false})
 	get active(): any {
 		return this.multiple ? Object.keys(this.activeStore) : this.activeStore;
 	}
@@ -113,11 +114,15 @@ export default class bList<T extends Dictionary = Dictionary> extends iData<T> {
 	 */
 	@system((o) => o.link('activeProp', (val) => {
 		const
-			ctx: bList = <any>o;
+			ctx: bList = <any>o,
+			beforeDataCreate = o.hook === 'beforeDataCreate';
 
-		if (val === undefined && o.hook === 'beforeDataCreate') {
+		if (val === undefined && beforeDataCreate) {
 			return ctx.activeStore;
 		}
+
+		let
+			res;
 
 		if (ctx.multiple) {
 			const
@@ -127,10 +132,17 @@ export default class bList<T extends Dictionary = Dictionary> extends iData<T> {
 				return ctx.activeStore;
 			}
 
-			return objVal;
+			res = objVal;
+
+		} else {
+			res = val;
 		}
 
-		return val;
+		if (!beforeDataCreate) {
+			ctx.emit('change', val);
+		}
+
+		return res;
 	}))
 
 	protected activeStore!: any;
