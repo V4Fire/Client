@@ -139,7 +139,7 @@ export default class bList<T extends Dictionary = Dictionary> extends iData<T> {
 		}
 
 		if (!beforeDataCreate) {
-			ctx.emit('change', val);
+			ctx.emit('change', res);
 		}
 
 		return res;
