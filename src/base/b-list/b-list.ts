@@ -111,6 +111,9 @@ export default class bList<T extends Dictionary = Dictionary> extends iData<T> {
 
 	/**
 	 * Component active value store
+	 *
+	 * @emits change(active: any)
+	 * @emits immediateChange(active: any)
 	 */
 	@system((o) => o.link('activeProp', (val) => {
 		const
@@ -142,6 +145,7 @@ export default class bList<T extends Dictionary = Dictionary> extends iData<T> {
 			ctx.emit('change', res);
 		}
 
+		ctx.emit('immediateChange', res);
 		return res;
 	}))
 
@@ -191,6 +195,7 @@ export default class bList<T extends Dictionary = Dictionary> extends iData<T> {
 	 *
 	 * @param value
 	 * @emits change(active: any)
+	 * @emits immediateChange(active: any)
 	 */
 	setActive(value: any): boolean {
 		const
@@ -232,6 +237,7 @@ export default class bList<T extends Dictionary = Dictionary> extends iData<T> {
 		}
 
 		this.emit('change', this.active);
+		this.emit('immediateChange', this.active);
 		return true;
 	}
 
@@ -240,6 +246,7 @@ export default class bList<T extends Dictionary = Dictionary> extends iData<T> {
 	 *
 	 * @param value
 	 * @emits change(active: any)
+	 * @emits immediateChange(active: any)
 	 */
 	removeActive(value: any): boolean {
 		const
@@ -273,7 +280,36 @@ export default class bList<T extends Dictionary = Dictionary> extends iData<T> {
 		}
 
 		this.emit('change', this.active);
+		this.emit('immediateChange', this.active);
 		return true;
+	}
+
+	/** @override */
+	protected initRemoteData(): Option[] | undefined {
+		if (!this.db) {
+			return;
+		}
+
+		const
+			val = this.convertDBToComponent<Option[]>(this.db);
+
+		if (Object.isArray(val)) {
+			return this.value = this.normalizeOptions(val);
+		}
+
+		return this.value;
+	}
+
+	/** @override */
+	protected initBaseAPI(): void {
+		super.initBaseAPI();
+
+		const
+			i = this.instance;
+
+		this.isActive = i.isActive.bind(this);
+		this.setActive = i.setActive.bind(this);
+		this.normalizeOptions = i.normalizeOptions.bind(this);
 	}
 
 	/**
@@ -334,34 +370,6 @@ export default class bList<T extends Dictionary = Dictionary> extends iData<T> {
 	@watch('value')
 	protected async syncValueWatcher(): Promise<void> {
 		await this.initComponentValues();
-	}
-
-	/** @override */
-	protected initRemoteData(): Option[] | undefined {
-		if (!this.db) {
-			return;
-		}
-
-		const
-			val = this.convertDBToComponent<Option[]>(this.db);
-
-		if (Object.isArray(val)) {
-			return this.value = this.normalizeOptions(val);
-		}
-
-		return this.value;
-	}
-
-	/** @override */
-	protected initBaseAPI(): void {
-		super.initBaseAPI();
-
-		const
-			i = this.instance;
-
-		this.isActive = i.isActive.bind(this);
-		this.setActive = i.setActive.bind(this);
-		this.normalizeOptions = i.normalizeOptions.bind(this);
 	}
 
 	/** @override */
