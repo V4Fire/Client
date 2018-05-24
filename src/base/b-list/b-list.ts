@@ -7,12 +7,11 @@
  */
 
 import symbolGenerator from 'core/symbol';
-import iData, { component, prop, field, watch } from 'super/i-data/i-data';
+import iData, { component, prop, field, system, hook, watch } from 'super/i-data/i-data';
 export * from 'super/i-data/i-data';
 
 export const
-	$$ = symbolGenerator(),
-	UNDEF = {};
+	$$ = symbolGenerator();
 
 export interface Option {
 	label: string;
@@ -83,52 +82,42 @@ export default class bList<T extends Dictionary = Dictionary> extends iData<T> {
 	/**
 	 * Component value
 	 */
-	@field((o) => o.link('valueProp'))
+	@field((o) => o.link('valueProp', (val) => {
+		const ctx: bList = <any>o;
+		return ctx.dataProvider ? ctx.value || [] : ctx.normalizeOptions(val);
+	}))
+
 	value!: Option[];
 
 	/**
 	 * Component active value
 	 */
 	get active(): any {
-		if (this.activeStore === UNDEF) {
-			return undefined;
-		}
-
 		return this.multiple ? Object.keys(this.activeStore) : this.activeStore;
 	}
 
 	/**
-	 * Sets a new component active value
-	 * @param value
+	 * Temporary index table
 	 */
-	set active(value: any) {
-		if (this.multiple) {
-			if (Object.isArray(value)) {
-				const
-					prop = String(value[0]);
+	@system()
+	protected indexes!: Dictionary;
 
-				if (value[1]) {
-					this.$set(this.activeStore, prop, true);
-
-				} else {
-					this.$delete(this.activeStore, prop);
-				}
-
-			} else {
-				this.$set(this.activeStore, value, true);
-			}
-
-		} else {
-			this.activeStore = value;
-		}
-	}
+	/**
+	 * Temporary values table
+	 */
+	@system()
+	protected values!: Dictionary<number>;
 
 	/**
 	 * Component active value store
 	 */
-	@field((o) => o.link('activeProp', (val) => {
+	@system((o) => o.link('activeProp', (val) => {
 		const
 			ctx: bList = <any>o;
+
+		if (val === undefined && o.hook === 'beforeDataCreate') {
+			return ctx.activeStore;
+		}
 
 		if (ctx.multiple) {
 			const
@@ -145,6 +134,187 @@ export default class bList<T extends Dictionary = Dictionary> extends iData<T> {
 	}))
 
 	protected activeStore!: any;
+
+	/**
+	 * Returns link to the active element
+	 */
+	protected get activeElement(): HTMLAnchorElement | null {
+		if (this.active in this.values) {
+			return this.block.element('link', {
+				id: this.values[this.active]
+			});
+		}
+
+		return null;
+	}
+
+	/**
+	 * Toggles the specified value
+	 * @param value
+	 */
+	toggleActive(value: any): boolean {
+		const
+			a = this.activeStore;
+
+		if (this.multiple) {
+			if (value in a) {
+				return this.removeActive(value);
+			}
+
+			return this.setActive(value);
+		}
+
+		if (a !== value) {
+			return this.setActive(value);
+		}
+
+		return this.removeActive(value);
+	}
+
+	/**
+	 * Activates the specified value
+	 * @param value
+	 */
+	setActive(value: any): boolean {
+		const
+			a = this.activeStore;
+
+		if (this.multiple) {
+			if (value in a) {
+				return false;
+			}
+
+			this.$set(a, value, true);
+
+		} else if (a === value) {
+			return false;
+
+		} else {
+			this.activeStore = value;
+		}
+
+		const
+			{block: $b} = this;
+
+		if ($b) {
+			const
+				target = $b.element('link', {id: this.values[value]});
+
+			if (!this.multiple) {
+				const
+					old = $b.element('link', {active: true});
+
+				if (old && old !== target) {
+					$b.setElMod(old, 'link', 'active', false);
+				}
+			}
+
+			if (target) {
+				$b.setElMod(target, 'link', 'active', true);
+			}
+		}
+
+		return true;
+	}
+
+	/**
+	 * Deactivates the specified value
+	 * @param value
+	 */
+	removeActive(value: any): boolean {
+		const
+			a = this.activeStore,
+			cantCancel = !this.cancelable;
+
+		if (this.multiple) {
+			if (!(value in a) || cantCancel) {
+				return false;
+			}
+
+			this.$delete(a, value);
+
+		} else if (a !== value || cantCancel) {
+			return false;
+
+		} else {
+			this.activeStore = undefined;
+		}
+
+		const
+			{block: $b} = this;
+
+		if ($b) {
+			const
+				target = $b.element('link', {id: this.values[value]});
+
+			if (target) {
+				$b.setElMod(target, 'link', 'active', false);
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * Returns true if the specified option is active
+	 * @param option
+	 */
+	protected isActive(option: Option): boolean {
+		return this.multiple ? option.value in this.activeStore : option.value === this.activeStore;
+	}
+
+	/**
+	 * Normalizes the specified options and returns it
+	 * @param options
+	 */
+	protected normalizeOptions(options: Option[] | undefined): Option[] {
+		return $C(options).map((el) => {
+			if (el.value === undefined) {
+				el.value = el.href;
+			}
+
+			if (el.href === undefined) {
+				el.href = this.autoHref && el.value !== undefined ? `#${el.value}` : 'javascript:void(0)';
+			}
+
+			return el;
+		});
+	}
+
+	/**
+	 * Initializes component values
+	 * @param data - data object
+	 */
+	@watch('value')
+	@hook('beforeDataCreate')
+	protected initComponentValues(data: Dictionary = this): void {
+		const
+			values = {},
+			indexes = {};
+
+		$C(data.value).forEach((el, i) => {
+			const
+				val = el.value;
+
+			if (el.active && (this.multiple ? !(val in this.activeStore) : this.activeStore === undefined)) {
+				this.setActive(val);
+			}
+
+			values[val] = i;
+			indexes[i] = val;
+		});
+
+		this.values = values;
+		this.indexes = indexes;
+	}
+
+	/**
+	 * Synchronization for the value field
+	 */
+	@watch('optionsStore')
+	protected async syncValueWatcher(): Promise<void> {
+		await this.initComponentValues();
+	}
 
 	/**
 	 * Synchronization for the activeStore field
@@ -165,54 +335,22 @@ export default class bList<T extends Dictionary = Dictionary> extends iData<T> {
 			val = this.convertDBToComponent<Option[]>(this.db);
 
 		if (Object.isArray(val)) {
-			return this.value = val;
+			return this.value = this.normalizeOptions(val);
 		}
 
 		return this.value;
 	}
 
-	/**
-	 * Returns true if the specified link is active
-	 *
-	 * @param link - link object
-	 * @param id - link ID
-	 */
-	protected isActive(link: Option, id: number): boolean {
-		const
-			a = document.createElement('a');
-
-		if (link.href) {
-			a.href = link.href;
-		}
+	/** @override */
+	protected initBaseAPI(): void {
+		super.initBaseAPI();
 
 		const
-			val = link.value !== undefined ? link.value : link.href;
+			i = this.instance;
 
-		let isActive;
-		if (this.multiple) {
-			if (link.active && !(val in this.activeStore)) {
-				this.active = val;
-			}
-
-			isActive = Boolean(this.activeStore[val]);
-
-		} else {
-			if (link.active && this.active === undefined) {
-				this.active = val;
-			}
-
-			isActive = Boolean(this.active !== undefined ? val === this.active : link.active);
-		}
-
-		const
-			{block: $b} = this;
-
-		if ($b) {
-			const el = $b.element($b.getElSelector('link', {id}));
-			el && $b.setElMod(el, 'link', 'active', isActive);
-		}
-
-		return isActive;
+		this.isActive = i.isActive.bind(this);
+		this.setActive = i.setActive.bind(this);
+		this.normalizeOptions = i.normalizeOptions.bind(this);
 	}
 
 	/** @override */
@@ -238,20 +376,10 @@ export default class bList<T extends Dictionary = Dictionary> extends iData<T> {
 	 */
 	protected onActive(e: Event): void {
 		const
-			val = Object.parse((<HTMLElement>e.delegateTarget).dataset.value).value;
+			target = <Element>e.delegateTarget,
+			id = Number(this.block.getElMod(target, 'link', 'id'));
 
-		if (this.multiple) {
-			this.active = this.activeStore[val] ? [val] : val;
-
-		} else {
-			if (this.cancelable) {
-				this.active = this.active === val ? UNDEF : val;
-
-			} else {
-				this.active = val;
-			}
-		}
-
+		this.toggleActive(this.indexes[id]);
 		this.emit('actionChange', this.active);
 	}
 
