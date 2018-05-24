@@ -1636,16 +1636,18 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 
 	/**
 	 * Synchronizes component link values with linked values
+	 *
 	 * @param [name] - link name or [linked] | [linked, link]
+	 * @param [value] - additional value for sync
 	 */
-	protected syncLinks(name?: string | [string] | [string, string]): void {
+	protected syncLinks(name?: string | [string] | [string, string], value?: any): void {
 		const
 			linkName = <string | undefined>(Object.isString(<any>name) ? name : name && name[1]),
 			fieldName = Object.isArray(<any>name) ? (<string[]>name)[0] : undefined;
 
 		const
 			cache = this.syncLinkCache,
-			sync = (el, key) => (!fieldName || key === fieldName) && el.sync();
+			sync = (el, key) => (!fieldName || key === fieldName) && el.sync(value);
 
 		if (linkName) {
 			$C(cache[linkName]).forEach(sync);
@@ -2185,7 +2187,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 */
 	private execCbBeforeDataCreated<T>(cb: Function): T | undefined {
 		if (this.hook === 'beforeRuntime') {
-			this.meta.hooks.beforeDataCreate.push({fn: cb});
+			this.meta.hooks.beforeDataCreate.unshift({fn: cb});
 			return;
 		}
 
@@ -2201,7 +2203,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 			return cb.call(this);
 		}
 
-		this.meta.hooks.created.push({fn: cb});
+		this.meta.hooks.created.unshift({fn: cb});
 	}
 }
 
