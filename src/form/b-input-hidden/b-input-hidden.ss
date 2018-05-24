@@ -18,3 +18,5 @@
 	- block innerRoot
 		- block input
 			+= self.hiddenInput()
+
+		- block helpers
