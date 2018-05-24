@@ -756,6 +756,11 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 			}
 		}
 
+		$b.status = $b.statuses.beforeReady;
+		if ({beforeMount: true, beforeUpdate: true, deactivated: true}[this.hook]) {
+			await this.nextTick();
+		}
+
 		$b.status = $b.statuses.ready;
 		this.emit('initLoad', data);
 	}
@@ -1394,7 +1399,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 			const
 				data = await this.loadSettings('[[STORE]]');
 
-			const done = this.waitStatus('ready', () => {
+			const done = this.waitStatus('beforeReady', () => {
 				this.setState(data, state);
 
 				const sync = () => {

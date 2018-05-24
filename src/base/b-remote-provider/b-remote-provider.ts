@@ -48,7 +48,7 @@ export default class bRemoteProvider<T extends Dictionary = Dictionary> extends 
 			this.emit('change', value);
 		};
 
-		const res = p.waitStatus('ready', handler, {
+		const res = p.waitStatus('beforeReady', handler, {
 			label: $$.syncDBWatcher
 		});
 
