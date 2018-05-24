@@ -250,12 +250,7 @@ export default class bSelect<T extends Dictionary = Dictionary> extends bInput<T
 	/** @override */
 	protected initBaseAPI(): void {
 		super.initBaseAPI();
-
-		const
-			i = this.instance;
-
-		this.normalizeOptions = i.normalizeOptions.bind(this);
-		this.getOptionValue = i.getOptionValue.bind(this);
+		this.normalizeOptions = this.instance.normalizeOptions.bind(this);
 	}
 
 	/**
@@ -264,11 +259,8 @@ export default class bSelect<T extends Dictionary = Dictionary> extends bInput<T
 	 */
 	protected normalizeOptions(options: Option[] | undefined): NOption[] {
 		return $C(options).to([]).map((el) => {
-			if (el.value !== undefined) {
-				el.value = String(el.value);
-			}
-
 			el.label = String(el.label);
+			el.value = el.value !== undefined ? String(el.value) : el.label;
 			return el;
 		});
 	}
@@ -277,23 +269,26 @@ export default class bSelect<T extends Dictionary = Dictionary> extends bInput<T
 	 * Initializes component values
 	 * @param data - data object
 	 */
-	@watch('optionsStore')
 	@hook('beforeDataCreate')
 	protected async initComponentValues(data: Dictionary = this): Promise<void> {
 		const
-			options = data.optionsStore;
+			labels = {},
+			values = {};
 
-		const labels = $C(options).to({}).reduce((map, el: any) => {
-			el.value = this.getOptionValue(el);
-			el.label = this.i18n(el.label);
-			map[el.label] = el;
-			return map;
-		});
+		$C(data.optionsStore).forEach((el) => {
+			const
+				val = el.value;
 
-		const values = $C(options).to({}).reduce((map, el: any) => {
-			el.value = this.getOptionValue(el);
-			map[el.value] = el;
-			return map;
+			if (el.selected && !this.selected && !this.value) {
+				if (this.mods.focused !== 'true') {
+					this.syncLinks('valueProp', this.getOptionLabel(el));
+				}
+
+				data.selected = val;
+			}
+
+			values[val] = el;
+			labels[el.label] = el;
 		});
 
 		this.labels = labels;
@@ -323,6 +318,14 @@ export default class bSelect<T extends Dictionary = Dictionary> extends bInput<T
 		if (scroll) {
 			await scroll.initScroll();
 		}
+	}
+
+	/**
+	 * Synchronization for the optionsStore field
+	 */
+	@watch('optionsStore')
+	protected async syncOptionsStoreWatcher(): Promise<void> {
+		await this.initComponentValues();
 	}
 
 	/**
@@ -401,14 +404,6 @@ export default class bSelect<T extends Dictionary = Dictionary> extends bInput<T
 	}
 
 	/**
-	 * Returns a value of the specified option
-	 * @param option
-	 */
-	protected getOptionValue(option: Option): string {
-		return String(option.value !== undefined ? option.value : option.label);
-	}
-
-	/**
 	 * Returns a label of the specified option
 	 * @param option
 	 */
@@ -441,19 +436,8 @@ export default class bSelect<T extends Dictionary = Dictionary> extends bInput<T
 	 * Returns true if the specified option is selected
 	 * @param option
 	 */
-	protected isSelected(option: Option): boolean {
-		const
-			val = this.getOptionValue(option);
-
-		if (option.selected && !this.selected && !this.value) {
-			if (this.mods.focused !== 'true') {
-				this.value = this.getOptionLabel(option);
-			}
-
-			this.selected = val;
-		}
-
-		return this.selected || this.value ? val === String(this.selected) : Boolean(option.selected);
+	protected isSelected(option: NOption): boolean {
+		return this.selected || this.value ? option.value === this.selected : Boolean(option.selected);
 	}
 
 	/** @override */
