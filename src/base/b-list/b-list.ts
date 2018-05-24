@@ -150,7 +150,9 @@ export default class bList<T extends Dictionary = Dictionary> extends iData<T> {
 
 	/**
 	 * Toggles the specified value
+	 *
 	 * @param value
+	 * @emits change(active: any)
 	 */
 	toggleActive(value: any): boolean {
 		const
@@ -173,7 +175,9 @@ export default class bList<T extends Dictionary = Dictionary> extends iData<T> {
 
 	/**
 	 * Activates the specified value
+	 *
 	 * @param value
+	 * @emits change(active: any)
 	 */
 	setActive(value: any): boolean {
 		const
@@ -220,7 +224,9 @@ export default class bList<T extends Dictionary = Dictionary> extends iData<T> {
 
 	/**
 	 * Deactivates the specified value
+	 *
 	 * @param value
+	 * @emits change(active: any)
 	 */
 	removeActive(value: any): boolean {
 		const
