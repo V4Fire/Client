@@ -214,6 +214,7 @@ export default class bList<T extends Dictionary = Dictionary> extends iData<T> {
 			}
 		}
 
+		this.emit('change', this.active);
 		return true;
 	}
 
@@ -252,7 +253,8 @@ export default class bList<T extends Dictionary = Dictionary> extends iData<T> {
 			}
 		}
 
-		return false;
+		this.emit('change', this.active);
+		return true;
 	}
 
 	/**
@@ -314,15 +316,6 @@ export default class bList<T extends Dictionary = Dictionary> extends iData<T> {
 	@watch('optionsStore')
 	protected async syncValueWatcher(): Promise<void> {
 		await this.initComponentValues();
-	}
-
-	/**
-	 * Synchronization for the activeStore field
-	 * @param value
-	 */
-	@watch({field: 'activeStore', deep: true})
-	protected syncActiveStoreWatcher(value: Option[]): void {
-		this.emit('change', this.active);
 	}
 
 	/** @override */
