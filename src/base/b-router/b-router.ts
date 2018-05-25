@@ -91,7 +91,12 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 			ctx: bRouter = <any>o,
 			d = v(o);
 
-		ctx.async.on(d, 'transition', (t) => ctx.setPage(t.name, t), {
+		const fn = (e) => ctx.setPage(e.page, {
+			params: e.params,
+			query: e.query
+		});
+
+		ctx.async.on(d, 'transition', fn, {
 			label: $$.transition
 		});
 
