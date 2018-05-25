@@ -171,7 +171,7 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 
 		$C(this.pages).forEach((el, name, data, o) => {
 			const transition = {
-				name,
+				page: name,
 				meta: el.meta
 			};
 

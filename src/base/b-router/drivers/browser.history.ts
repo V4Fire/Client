@@ -34,17 +34,17 @@ export default function createRouter(ctx: bRouter): Router {
 						resolve();
 					};
 
-					if (Object.isArray(ModuleDependencies.get(info.name))) {
+					if (Object.isArray(ModuleDependencies.get(info.page))) {
 						done();
 						return;
 					}
 
 					if (location.href !== page) {
-						history.pushState(info, info.name, page);
+						history.pushState(info, info.page, page);
 					}
 
 					let i = 0;
-					ModuleDependencies.event.on(`component.${info.name}.loading`, $a.proxy(
+					ModuleDependencies.event.on(`component.${info.page}.loading`, $a.proxy(
 						({packages}) => {
 							ctx.status = (++i * 100) / packages;
 							(i === packages) && done();

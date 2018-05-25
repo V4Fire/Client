@@ -9,7 +9,7 @@
 import { EventEmitter2 as EventEmitter } from 'eventemitter2';
 
 export type PageInfo<M extends Dictionary = Dictionary> = Dictionary & {
-	name: string;
+	page: string;
 	meta?: M;
 };
 
