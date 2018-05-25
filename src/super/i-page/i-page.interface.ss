@@ -20,7 +20,7 @@
  * Base page template
  * @param [config] - template config
  */
-- async template index(@config = {}) extends ['i-data'].index
+- async template index(@params = {}) extends ['i-data'].index
 	- isProd = @@NODE_ENV === 'production'
 	- assets = Object.create(null)
 
