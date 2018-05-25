@@ -65,8 +65,8 @@ export default function createRouter(ctx: bRouter): Router {
 
 	$a.on(window, 'popstate', () => {
 		router.emit('transition', {
-			name: location.href,
-			...history.state
+			page: location.href,
+			state: history.state
 		});
 	});
 

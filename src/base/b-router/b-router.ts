@@ -27,11 +27,12 @@ export type PageProp<T extends Dictionary = Dictionary> = string | {
 	transition?: T;
 };
 
-export type TransitionPageInfo<
-	T extends Dictionary = Dictionary,
-	M extends Dictionary = Dictionary
-	> = PageInfo<M> & {
-	transition?: Dictionary;
+export type PageParams<
+	P extends Dictionary = Dictionary,
+	Q extends Dictionary = Dictionary
+> = Dictionary & {
+	params?: P;
+	query?: Q;
 };
 
 export type Pages<M extends Dictionary = Dictionary> = Dictionary<{
@@ -70,7 +71,7 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 	 */
 	@prop({
 		type: Function,
-		watch: 'initComponentValues',
+		watch: (o) => (<any>o).initComponentValues(),
 		default: driver
 	})
 
@@ -103,7 +104,7 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 	 * Page store
 	 */
 	@field()
-	protected pageStore?: TransitionPageInfo;
+	protected pageStore?: PageInfo;
 
 	/**
 	 * Router paths
@@ -131,7 +132,7 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 	/**
 	 * Current page
 	 */
-	get page(): TransitionPageInfo | undefined {
+	get page(): PageInfo | undefined {
 		return this.pageStore;
 	}
 
@@ -142,23 +143,18 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 	 * @param [params] - additional transition parameters
 	 * @param [state] - state object
 	 */
-	async setPage(page: string, params?: Dictionary, state: Dictionary = this): Promise<TransitionPageInfo | undefined> {
+	async setPage(page: string, params?: PageParams, state: Dictionary = this): Promise<PageInfo | undefined> {
 		const
 			name = this.driver.id(page),
-			info = this.getPageOpts(name);
+			transition = <PageInfo>Object.mixin(true, {page: name, ...this.getPageOpts(name)}, params);
 
-		if (info && params) {
-			info.transition = params;
+		if (!Object.fastCompare(state.pageStore, transition)) {
+			state.pageStore = transition;
+			await this.driver.load(page, transition);
+			this.r.pageInfo = transition;
 		}
 
-		state.pageStore = Object.create({
-			page: name,
-			...info
-		});
-
-		await this.driver.load(page, info);
-		this.r.pageInfo = state.pageStore;
-		return info;
+		return transition;
 	}
 
 	/**
@@ -170,10 +166,16 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 			current: PageInfo | undefined;
 
 		$C(this.pages).forEach((el, name, data, o) => {
-			const transition = {
+			const meta = Object.create({
+				meta: el.meta || {}
+			});
+
+			// tslint:disable-next-line:prefer-object-spread
+			const transition = Object.assign(meta, {
 				page: name,
-				meta: el.meta
-			};
+				params: {},
+				query: {}
+			});
 
 			if (el.page === page) {
 				current = transition;
@@ -187,7 +189,7 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 				const
 					params = rgxp.exec(page);
 
-				current = $C(path.parse(el.pattern) as any[]).to(transition).reduce((map, el: Key, i) => {
+				current = $C(path.parse(el.pattern) as any[]).to(transition.params).reduce((map, el: Key, i) => {
 					if (Object.isObject(el)) {
 						// @ts-ignore
 						map[el.name] = params[i];

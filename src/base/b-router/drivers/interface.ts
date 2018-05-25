@@ -8,9 +8,15 @@
 
 import { EventEmitter2 as EventEmitter } from 'eventemitter2';
 
-export type PageInfo<M extends Dictionary = Dictionary> = Dictionary & {
+export type PageInfo<
+	P extends Dictionary = Dictionary,
+	Q extends Dictionary = Dictionary,
+	M extends Dictionary = Dictionary
+> = Dictionary & {
 	page: string;
-	meta?: M;
+	params: P;
+	query: Q;
+	meta: M;
 };
 
 export type PageSchema<M extends Dictionary = Dictionary> = string | M & {
