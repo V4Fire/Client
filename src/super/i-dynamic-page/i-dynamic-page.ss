@@ -16,3 +16,4 @@
 			- block body
 
 		- block helpers
+		- block providers
