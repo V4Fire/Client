@@ -70,12 +70,12 @@
  * Adds a script dependence
  *
  * @param {string} name - dependence name
- * @param {Object=} [params] - additional parameters:
+ * @param {Object=} [opts] - additional options:
  *   *) [defer]
  *   *) [optional]
  */
-- block index->addScriptDep(name, params)
-	: p = Object.assign({defer: true}, params)
+- block index->addScriptDep(name, opts)
+	: p = Object.assign({defer: true}, opts)
 
 	- if @fatHTML
 		- if assets[name]
@@ -102,25 +102,28 @@
  * Adds a link dependence
  *
  * @param {string} name - dependence name
- * @param {Object=} [params] - additional parameters:
+ * @param {Object=} [opts] - additional options
  *   *) [optional]
  */
-- block index->addStyleDep(name, params = {})
-	: rname = name + '$style'
+- block index->addStyleDep(name, opts)
+	: &
+		rname = name + '$style',
+		p = Object.assign({}, opts)
+	.
 
 	- if @fatHTML
 		- if assets[rname]
 			: url = path.join(@output, assets[rname])
 			requireMonic({url})
 
-		- else if !params.optional
+		- else if !p.optional
 			- throw new Error('Style dependence with id "' + name +  '" is not defined')
 
 	- else
 		: putIn tpl
 			document.write('<link rel="stylesheet" href="' + PATH['{rname}'] + '">');
 
-		- if params.optional
+		- if p.optional
 			# op
 				if ('#{rname}' in PATH) {
 					#+= tpl
