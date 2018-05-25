@@ -71,7 +71,7 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 	@prop({
 		type: Function,
 		watch: 'initComponentValues',
-		default: () => driver
+		default: driver
 	})
 
 	readonly driverProp!: () => Router;
