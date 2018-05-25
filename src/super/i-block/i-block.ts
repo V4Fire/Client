@@ -727,7 +727,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 */
 	@wait('loading')
 	@hook({mounted: 'initBlockInstance'})
-	async initLoad(data?: any): Promise<void> {
+	async initLoad(data?: any | ((this: this) => any)): Promise<void> {
 		const {block: $b, $children: $c} = this;
 		await this.loadLocalStore();
 
@@ -762,7 +762,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 		}
 
 		$b.status = $b.statuses.ready;
-		this.emit('initLoad', data);
+		this.emit('initLoad', Object.isFunction(data) ? data.call(this) : data);
 	}
 
 	/**

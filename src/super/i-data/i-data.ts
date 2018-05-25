@@ -210,7 +210,7 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 			}
 		}
 
-		return super.initLoad(this.db);
+		return super.initLoad(() => this.db);
 	}
 
 	/**
