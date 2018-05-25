@@ -11,12 +11,12 @@ import bCheckbox from 'form/b-checkbox/b-checkbox';
 import iInput, { component, prop, field, p, ValidatorsDecl, ComponentConverter } from 'super/i-input/i-input';
 export * from 'super/i-input/i-input';
 
-export type Option = Dictionary & {
+export interface Option extends Dictionary {
 	id: string;
 	name: string;
 	label: string;
 	autofocus?: boolean;
-};
+}
 
 @component({
 	functional: {
