@@ -156,9 +156,7 @@
 
 					- block std
 						# script
-							if ('std' in PATH) {
-								#+= self.addScriptDep('std', {defer: false, optional: true})
-							}
+							#+= self.addScriptDep('std', {defer: false, optional: true})
 
 					: defLibs
 					- block defLibs
@@ -216,9 +214,7 @@
 
 					- block scripts
 						# script
-							if ('vendor' in PATH) {
-								#+= self.addScriptDep('vendor', {optional: true})
-							}
+							#+= self.addScriptDep('vendor', {optional: true})
 
 						+= self.addDependencies(@dependencies, 'scripts')
 

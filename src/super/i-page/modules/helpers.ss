@@ -78,7 +78,7 @@
 	: p = Object.assign({defer: true}, params)
 
 	- if @fatHTML
-		- if assets[rname]
+		- if assets[name]
 			: url = path.join(@output, assets[name])
 			requireMonic({url})
 
@@ -91,7 +91,7 @@
 
 		- if p.optional
 			# op
-				if ('#{rname}' in PATH) {
+				if ('#{name}' in PATH) {
 					#+= tpl
 				}
 
