@@ -9,8 +9,8 @@
 import $C = require('collection.js');
 import symbolGenerator from 'core/symbol';
 import iData, { component, hook } from 'super/i-data/i-data';
-
 export * from 'super/i-data/i-data';
+
 export interface OnFilterChange {
 	mixin?: Dictionary;
 	modifier?(value: any): any;
@@ -93,6 +93,17 @@ export default class iDynamicPage<T extends Dictionary = Dictionary> extends iDa
 	 */
 	initStateFromLocation(state: Dictionary = this): void {
 		this.setState(Object.fromQueryString(new URL(location.href).hash.slice(1), {deep: true}), state);
+	}
+
+	/**
+	 * Initializes component values
+	 * @param [data] - data object
+	 */
+	@hook('beforeDataCreate')
+	protected async initComponentValues(data: Dictionary = this): Promise<void> {
+		$C(data.p).forEach((el, key) => {
+			data[key] = el;
+		});
 	}
 
 	/**
