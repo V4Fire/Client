@@ -267,7 +267,7 @@ export default class bSelect<T extends Dictionary = Dictionary> extends bInput<T
 
 	/**
 	 * Initializes component values
-	 * @param data - data object
+	 * @param [data] - data object
 	 */
 	@hook('beforeDataCreate')
 	protected async initComponentValues(data: Dictionary = this): Promise<void> {

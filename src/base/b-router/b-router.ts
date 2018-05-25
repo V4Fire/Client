@@ -215,9 +215,10 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 
 	/**
 	 * Initializes component values
+	 * @param [data] - data object
 	 */
 	@hook('beforeDataCreate')
-	protected async initComponentValues(data: Dictionary): Promise<void> {
+	protected async initComponentValues(data: Dictionary = this): Promise<void> {
 		const initPages = (val) => $C(val).map((obj: PageSchema, page) => {
 			const
 				isStr = Object.isString(obj),

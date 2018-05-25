@@ -342,7 +342,7 @@ export default class bList<T extends Dictionary = Dictionary> extends iData<T> {
 
 	/**
 	 * Initializes component values
-	 * @param data - data object
+	 * @param [data] - data object
 	 */
 	@hook('beforeDataCreate')
 	protected initComponentValues(data: Dictionary = this): void {
