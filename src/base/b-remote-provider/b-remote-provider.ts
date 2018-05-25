@@ -41,8 +41,19 @@ export default class bRemoteProvider<T extends Dictionary = Dictionary> extends 
 		}
 
 		const handler = () => {
-			if (this.field) {
-				p.setField(this.field, value);
+			const
+				f = this.field;
+
+			if (f) {
+				const
+					c = p.getField(f);
+
+				if (Object.isFunction(c)) {
+					c.call(p, value);
+
+				} else {
+					p.setField(f, value);
+				}
 			}
 
 			this.emit('change', value);
