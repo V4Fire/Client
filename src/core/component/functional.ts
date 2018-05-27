@@ -518,8 +518,13 @@ export function patchVNode(vNode: VNode, ctx: Dictionary, renderCtx: RenderConte
 					key = keys[i],
 					el = refs[key];
 
+				let cache;
 				Object.defineProperty(ctx.$refs, key, {
 					get(): any {
+						if (cache) {
+							return cache;
+						}
+
 						if (Object.isArray(el)) {
 							const
 								res = <any[]>[];
@@ -529,10 +534,10 @@ export function patchVNode(vNode: VNode, ctx: Dictionary, renderCtx: RenderConte
 								res.push(v.vueComponent || v);
 							}
 
-							return res;
+							return cache = res;
 						}
 
-						return el.vueComponent || el;
+						return cache = el.vueComponent || el;
 					}
 				});
 			}
