@@ -27,13 +27,10 @@ export type PageProp<T extends Dictionary = Dictionary> = string | {
 	transition?: T;
 };
 
-export type PageParams<
-	P extends Dictionary = Dictionary,
-	Q extends Dictionary = Dictionary
-	> = Dictionary & {
-	params?: P;
-	query?: Q;
-};
+export interface PageParams extends Dictionary {
+	params?: Dictionary;
+	query?: Dictionary;
+}
 
 export type Pages<M extends Dictionary = Dictionary> = Dictionary<{
 	page: string;
@@ -148,7 +145,7 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 	 * @param [params] - additional transition parameters
 	 * @param [state] - state object
 	 */
-	async push(page: string, params?: PageParams, state: Dictionary = this): Promise<void> {
+	async push(page: string | null, params?: PageParams, state: Dictionary = this): Promise<void> {
 		await this.setPage(page, params, 'push', state);
 	}
 
@@ -159,7 +156,7 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 	 * @param [params] - additional transition parameters
 	 * @param [state] - state object
 	 */
-	async replace(page: string, params?: PageParams, state: Dictionary = this): Promise<void> {
+	async replace(page: string | null, params?: PageParams, state: Dictionary = this): Promise<void> {
 		await this.setPage(page, params, 'replace', state);
 	}
 
@@ -251,13 +248,15 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 	 * @param [state] - state object
 	 */
 	protected async setPage(
-		page: string,
+		page: string | null,
 		params?: PageParams,
 		method: string = 'push',
 		state: Dictionary = this
 	): Promise<PageInfo | undefined> {
+		const d = this.driver;
+		page = page || d.page;
+
 		const
-			d = this.driver,
 			info = this.getPageOpts(d.id(page));
 
 		if (!info) {

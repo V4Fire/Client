@@ -1074,14 +1074,6 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	}
 
 	/**
-	 * Returns an object with default component fields for saving as local settings
-	 * @param [def]
-	 */
-	protected convertStateToStore(def?: Dictionary | undefined): Dictionary {
-		return {...def};
-	}
-
-	/**
 	 * Accumulates a temporary object and apply it with the specified function
 	 *
 	 * @param obj
@@ -1356,6 +1348,14 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 			group: 'loadSettings',
 			join: true
 		});
+	}
+
+	/**
+	 * Returns an object with default component fields for saving as local settings
+	 * @param [def]
+	 */
+	protected convertStateToStore(def?: Dictionary | undefined): Dictionary {
+		return {...def};
 	}
 
 	/**

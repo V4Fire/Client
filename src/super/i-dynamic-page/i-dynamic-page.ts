@@ -7,6 +7,8 @@
  */
 
 import $C = require('collection.js');
+import Then from 'core/then';
+
 import symbolGenerator from 'core/symbol';
 import iData, { component, hook } from 'super/i-data/i-data';
 export * from 'super/i-data/i-data';
@@ -31,9 +33,15 @@ export default class iDynamicPage<T extends Dictionary = Dictionary> extends iDa
 	@hook('beforeDataCreate')
 	@hook('activated')
 	activate(state: Dictionary = this): void {
-		this.initStateFromLocation(state);
-		this.async.on(window, 'hashchange', this.initStateFromLocation, {
-			label: $$.activate
+		this.initStateFromRouter(state);
+
+		const watcher = this.$watch('$root.pageInfo', () => {
+			this.initStateFromRouter();
+		}, {deep: true});
+
+		this.async.worker(watcher, {
+			label: $$.activate,
+			group: 'routerStateWatchers'
 		});
 	}
 
@@ -42,16 +50,27 @@ export default class iDynamicPage<T extends Dictionary = Dictionary> extends iDa
 	 */
 	@hook('deactivated')
 	deactivate(): void {
-		this.async.off('hashchange');
-		$C(this.convertStateToLocation()).forEach((el, key) => this[key] = undefined);
+		this.async
+			.off({group: 'routerStateWatchers'})
+			.off({group: 'routerWatchers'});
+
+		$C(this.convertStateToRouter()).forEach((el, key) => this[key] = undefined);
 	}
 
 	/**
-	 * Saves the component state to the location
+	 * Returns an object with default component fields for hash
+	 * @param [obj]
+	 */
+	protected convertStateToRouter(obj?: Dictionary | undefined): Dictionary {
+		return {...obj};
+	}
+
+	/**
+	 * Saves the component state a router
 	 * @param obj - state object
 	 */
-	saveStateToLocation(obj: Dictionary): string | false {
-		obj = this.convertStateToLocation(obj);
+	protected async saveStateToRouter(obj: Dictionary): Promise<boolean> {
+		obj = this.convertStateToRouter(obj);
 
 		$C(obj).forEach((el, key) => {
 			if (el) {
@@ -59,59 +78,86 @@ export default class iDynamicPage<T extends Dictionary = Dictionary> extends iDa
 			}
 		});
 
-		if (!this.isActivated) {
+		const
+			r = this.r.router;
+
+		if (!this.isActivated || !r) {
 			return false;
 		}
 
-		const
-			hash = <string>Object.toQueryString(obj, {deep: true}),
-			url = new URL(location.href);
+		await r.push(null, {
+			query: obj
+		});
 
-		if (url.hash.slice(1)) {
-			location.hash = hash;
-
-		} else if (hash) {
-			url.hash = hash;
-			location.replace(url.toString());
-		}
-
-		return hash;
+		return true;
 	}
 
 	/**
-	 * Resets the filter hash
+	 * Resets the component router state
 	 */
-	resetLocationState(): string {
-		$C(this.convertStateToLocation()).forEach((el, key) => this[key] = undefined);
-		location.hash = '';
-		return '';
+	protected async resetRouterState(): Promise<boolean> {
+		$C(this.convertStateToRouter()).forEach((el, key) => this[key] = undefined);
+
+		const
+			r = this.r.router;
+
+		if (!this.isActivated || !r) {
+			return false;
+		}
+
+		await r.push(null);
+		return true;
 	}
 
 	/**
 	 * Initialized the component state from the location
 	 * @param [state] - state object
 	 */
-	initStateFromLocation(state: Dictionary = this): void {
-		this.setState(Object.fromQueryString(new URL(location.href).hash.slice(1), {deep: true}), state);
-	}
+	protected initStateFromRouter(state: Dictionary = this): void {
+		const
+			{async: $a} = this,
+			routerWatchers = {group: 'routerWatchers'};
 
-	/**
-	 * Initializes component values
-	 * @param [data] - data object
-	 */
-	@hook('beforeDataCreate')
-	protected async initComponentValues(data: Dictionary = this): Promise<void> {
-		$C(data.p).forEach((el, key) => {
-			data[key] = el;
+		$a.clearAll(
+			routerWatchers
+		);
+
+		const done = this.waitStatus('beforeReady', () => {
+			const
+				p = this.r.pageInfo;
+
+			if (p && p.query) {
+				this.setState(p.query, state);
+			}
+
+			const sync = () => {
+				$a.setTimeout(this.saveStateToRouter, 0.2.second(), {
+					label: $$.syncRouter
+				});
+			};
+
+			$C(this.convertStateToRouter()).forEach((el, key) => {
+				const
+					p = key.split('.');
+
+				if (p[0] === 'mods') {
+					$a.on(this.localEvent, `block.mod.*.${p[0]}.*`, sync, routerWatchers);
+
+				} else {
+					const watcher = this.$watch(key, (val, oldVal) => {
+						if (!Object.fastCompare(val, oldVal)) {
+							sync();
+						}
+					});
+
+					$a.worker(watcher, routerWatchers);
+				}
+			});
 		});
-	}
 
-	/**
-	 * Returns an object with default component fields for hash
-	 * @param [obj]
-	 */
-	protected convertStateToLocation(obj?: Dictionary | undefined): Dictionary {
-		return {...obj};
+		if (Then.isThenable(done)) {
+			done.catch(stderr);
+		}
 	}
 
 	/**
@@ -136,6 +182,6 @@ export default class iDynamicPage<T extends Dictionary = Dictionary> extends iDa
 			hashData = {[key]: e.modifier ? e.modifier(value) : value};
 		}
 
-		await this.accumulateTmpObj({...e.mixin, ...hashData}, $$.state, this.saveStateToLocation);
+		await this.accumulateTmpObj({...e.mixin, ...hashData}, $$.state, this.saveStateToRouter);
 	}
 }
