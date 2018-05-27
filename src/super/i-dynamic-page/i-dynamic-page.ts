@@ -122,7 +122,7 @@ export default class iDynamicPage<T extends Dictionary = Dictionary> extends iDa
 			routerWatchers
 		);
 
-		const done = this.waitStatus('beforeReady', () => {
+		const init = () => {
 			const
 				p = this.r.pageInfo;
 
@@ -153,10 +153,18 @@ export default class iDynamicPage<T extends Dictionary = Dictionary> extends iDa
 					$a.worker(watcher, routerWatchers);
 				}
 			});
-		});
+		};
 
-		if (Then.isThenable(done)) {
-			done.catch(stderr);
+		if (this.hook === 'beforeDataCreate') {
+			init();
+
+		} else {
+			const
+				done = this.waitStatus('beforeReady', init);
+
+			if (Then.isThenable(done)) {
+				done.catch(stderr);
+			}
 		}
 	}
 
