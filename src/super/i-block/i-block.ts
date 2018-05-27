@@ -108,7 +108,8 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 			throw new ReferenceError(`The specified icon "${iconId}" is not defined`);
 		}
 
-		return `${location.pathname + location.search}#${icons(iconsMap[iconId]).id}`;
+		const q = location.search || (location.href.slice(-1) === '?' ? '?' : '');
+		return `${location.pathname + q}#${icons(iconsMap[iconId]).id}`;
 	}
 
 	/**
