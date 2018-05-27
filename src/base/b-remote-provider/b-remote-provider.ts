@@ -8,7 +8,7 @@
 
 import Then from 'core/then';
 import symbolGenerator from 'core/symbol';
-import iData, { component, prop, watch } from 'super/i-data/i-data';
+import iData, { component, prop, system, watch } from 'super/i-data/i-data';
 export * from 'super/i-data/i-data';
 
 export const
@@ -32,7 +32,7 @@ export default class bRemoteProvider<T extends Dictionary = Dictionary> extends 
 	 * @emits change(db: T)
 	 */
 	@watch('db')
-	protected syncDBWatcher(value: T): void {
+	protected syncDBWatcher(value: T | null): void {
 		const
 			p = this.$parent;
 
