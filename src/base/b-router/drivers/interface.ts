@@ -17,6 +17,7 @@ export type PageInfo<
 	params: P;
 	query: Q;
 	meta: M;
+	toPath(params?: Dictionary): string;
 };
 
 export type PageSchema<M extends Dictionary = Dictionary> = string | M & {
@@ -27,5 +28,9 @@ export interface Router extends EventEmitter {
 	page: string;
 	routes: Dictionary<PageSchema>;
 	id(page: string): string;
-	load(page: string, info?: PageInfo): Promise<void>;
+	push(page: string, info?: PageInfo): Promise<void>;
+	replace(page: string, info?: PageInfo): Promise<void>;
+	back(): void;
+	forward(): void;
+	go(pos: number): void;
 }

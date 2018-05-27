@@ -9,6 +9,7 @@
 import symbolGenerator from 'core/symbol';
 import bRouter from 'base/b-router/b-router';
 
+import { toQueryString } from 'core/url';
 import { EventEmitter2 as EventEmitter } from 'eventemitter2';
 import { Router, PageInfo } from 'base/b-router/drivers/interface';
 
@@ -19,6 +20,44 @@ export default function createRouter(ctx: bRouter): Router {
 	const
 		{async: $a} = ctx;
 
+	function load(page: string, info?: PageInfo, method: string = 'pushState'): Promise<void> {
+		return new Promise((resolve) => {
+			if (info) {
+				page = [page, toQueryString(info.query) || undefined].join('?');
+
+				const done = () => {
+					this.page = page;
+					resolve();
+				};
+
+				if (Object.isArray(ModuleDependencies.get(info.page))) {
+					done();
+					return;
+				}
+
+				if (location.href !== page) {
+					history[method](info, info.page, page);
+				}
+
+				let i = 0;
+				ModuleDependencies.event.on(`component.${info.page}.loading`, $a.proxy(
+					({packages}) => {
+						ctx.status = (++i * 100) / packages;
+						(i === packages) && done();
+					},
+
+					{
+						label: $$.component,
+						single: false
+					}
+				));
+
+			} else {
+				location.href = page;
+			}
+		});
+	}
+
 	const router = Object.assign(Object.create(new EventEmitter()), {
 		page: location.href,
 
@@ -26,40 +65,24 @@ export default function createRouter(ctx: bRouter): Router {
 			return new URL(page).pathname;
 		},
 
-		load(page: string, info?: PageInfo): Promise<void> {
-			return new Promise((resolve) => {
-				if (info) {
-					const done = () => {
-						this.page = page;
-						resolve();
-					};
+		push(page: string, info?: PageInfo): Promise<void> {
+			return load(page, info);
+		},
 
-					if (Object.isArray(ModuleDependencies.get(info.page))) {
-						done();
-						return;
-					}
+		replace(page: string, info?: PageInfo): Promise<void> {
+			return load(page, info, 'replaceState');
+		},
 
-					if (location.href !== page) {
-						history.pushState(info, info.page, page);
-					}
+		back(): void {
+			history.back();
+		},
 
-					let i = 0;
-					ModuleDependencies.event.on(`component.${info.page}.loading`, $a.proxy(
-						({packages}) => {
-							ctx.status = (++i * 100) / packages;
-							(i === packages) && done();
-						},
+		forward(): void {
+			history.forward();
+		},
 
-						{
-							label: $$.component,
-							single: false
-						}
-					));
-
-				} else {
-					location.href = page;
-				}
-			});
+		go(pos: number): void {
+			history.go(pos);
 		}
 	});
 
