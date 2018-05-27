@@ -194,7 +194,14 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 		if (obj) {
 			const meta = Object.create({
 				meta: obj.meta || {},
-				toPath: (p) => p ? path.compile(obj.pattern || page)($C(p).map(String)) : page
+				toPath(p?: Dictionary): string {
+					if (p) {
+						p = $C(p).filter((el) => el != null).map(String);
+						return path.compile(obj.pattern || page)(p);
+					}
+
+					return page;
+				}
 			});
 
 			// tslint:disable-next-line:prefer-object-spread
@@ -313,7 +320,7 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 					break;
 
 				default:
-					await this[method === 'replace' ? 'replace' : 'push'](href, {
+					await this[method === 'replace' ? 'replace' : 'push'](a.href, {
 						params: Object.parse(data.params),
 						query: Object.parse(data.query)
 					});
