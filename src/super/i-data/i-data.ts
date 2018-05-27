@@ -120,8 +120,16 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 	/**
 	 * Component data
 	 */
-	@field({watch: {fn: 'initRemoteData', deep: true}})
-	db?: T | undefined;
+	get db(): T | undefined {
+		return this.dbStore;
+	}
+
+	/**
+	 * Sets new component data
+	 */
+	set db(value: T | undefined) {
+		this.dbStore = value;
+	}
 
 	/**
 	 * Event emitter object for working with a data provider
@@ -162,6 +170,12 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 	 */
 	@field({merge: true, watch: {fn: 'initLoad', deep: true}})
 	protected readonly requestParams: Dictionary<Dictionary> = {get: {}};
+
+	/**
+	 * Component data store
+	 */
+	@field({watch: {fn: 'initRemoteData', deep: true}})
+	protected dbStore?: T | undefined;
 
 	/**
 	 * Provider instance

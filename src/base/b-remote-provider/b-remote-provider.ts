@@ -25,11 +25,22 @@ export default class bRemoteProvider<T extends Dictionary = Dictionary> extends 
 	@prop({type: String, required: false})
 	readonly field?: string;
 
+	/** @override */
+	set db(value: T | undefined) {
+		this.dbStore = value;
+		this.initRemoteData();
+		this.syncDBWatcher(value);
+	}
+
+	/** @override */
+	@system()
+	protected dbStore?: T | undefined;
+
 	/**
 	 * Synchronization for the db field
 	 *
 	 * @param [value]
-	 * @emits change(db: T)
+	 * @emits change(db: T | undefined)
 	 */
 	@watch('db')
 	protected syncDBWatcher(value: T | undefined): void {
