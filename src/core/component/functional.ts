@@ -502,21 +502,43 @@ export function patchVNode(vNode: VNode, ctx: Dictionary, renderCtx: RenderConte
 			}
 
 			const
-				refs = ctx.$refs,
+				refs = {},
 				refNodes = el.querySelectorAll(`.${ctx.componentId}[data-vue-ref]`);
 
 			for (let i = 0; i < refNodes.length; i++) {
 				const
 					el = refNodes[i],
-					link = el.vueComponent ? el.vueComponent : el,
 					ref = el.dataset.vueRef;
 
-				refs[ref] = refs[ref] ? [].concat(refs[ref], link) : link;
+				refs[ref] = refs[ref] ? [].concat(refs[ref], el) : el;
+			}
+
+			for (let keys = Object.keys(refs), i = 0; i < keys.length; i++) {
+				const
+					key = keys[i],
+					el = refs[key];
+
+				Object.defineProperty(ctx.$refs, key, {
+					get(): any {
+						if (Object.isArray(el)) {
+							const
+								res = <any[]>[];
+
+							for (let i = 0; i < el.length; i++) {
+								const v = <any>el[i];
+								res.push(v.vueComponent || v);
+							}
+
+							return res;
+						}
+
+						return el.vueComponent || el;
+					}
+				});
 			}
 		}
 
 		el.vueComponent = ctx;
-
 		runHook('mounted', meta, ctx).then(async () => {
 			if (methods.mounted) {
 				await methods.mounted.fn.call(ctx);
