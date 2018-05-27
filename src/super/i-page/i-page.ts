@@ -12,7 +12,7 @@ import * as net from 'core/net';
 import * as session from 'core/session';
 import { setLang, lang } from 'core/i18n';
 
-import bRouter, { TransitionPageInfo } from 'base/b-router/b-router';
+import bRouter, { PageInfo } from 'base/b-router/b-router';
 import iData, { component, field, system, watch, hook } from 'super/i-data/i-data';
 export * from 'super/i-data/i-data';
 
@@ -38,7 +38,7 @@ export default class iPage<
 	 * Page information object
 	 */
 	@field()
-	pageInfo?: TransitionPageInfo<T, M>;
+	pageInfo?: PageInfo<T, M>;
 
 	/**
 	 * Authorization status
