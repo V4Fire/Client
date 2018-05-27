@@ -168,6 +168,17 @@ export default class iDynamicPage<T extends Dictionary = Dictionary> extends iDa
 		}
 	}
 
+	/** @override */
+	protected initBaseAPI(): void {
+		super.initBaseAPI();
+
+		const
+			i = this.instance;
+
+		this.convertStateToRouter = i.convertStateToRouter.bind(this);
+		this.initStateFromRouter = i.initStateFromRouter.bind(this);
+	}
+
 	/**
 	 * Handler: filter change
 	 *

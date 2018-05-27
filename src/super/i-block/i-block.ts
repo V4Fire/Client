@@ -1622,6 +1622,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 		this.getField = i.getField.bind(this);
 		this.setField = i.setField.bind(this);
 		this.deleteField = i.deleteField.bind(this);
+		this.convertStateToStore = i.convertStateToStore.bind(this);
 		this.loadLocalStore = i.loadLocalStore.bind(this);
 		this.setState = i.setState.bind(this);
 
