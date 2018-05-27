@@ -121,7 +121,7 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 	 * Component data
 	 */
 	@field({watch: {fn: 'initRemoteData', deep: true}})
-	db?: T | null = null;
+	db?: T | undefined;
 
 	/**
 	 * Event emitter object for working with a data provider
@@ -206,7 +206,7 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 				}
 
 			} else {
-				this.db = null;
+				this.db = undefined;
 			}
 		}
 
@@ -294,7 +294,7 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 	 * @param [data]
 	 * @param [params]
 	 */
-	get(data?: RequestQuery, params?: CreateRequestOptions<T>): Then<T | null> {
+	get(data?: RequestQuery, params?: CreateRequestOptions<T>): Then<T | undefined> {
 		return this.createRequest('get', ...arguments);
 	}
 
@@ -304,7 +304,7 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 	 * @param data
 	 * @param [params]
 	 */
-	post<T>(data?: RequestBody, params?: CreateRequestOptions<T>): Then<T | null> {
+	post<T>(data?: RequestBody, params?: CreateRequestOptions<T>): Then<T | undefined> {
 		return this.createRequest('post', ...arguments);
 	}
 
@@ -314,7 +314,7 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 	 * @param data
 	 * @param [params]
 	 */
-	add<T>(data?: RequestBody, params?: CreateRequestOptions<T>): Then<T | null> {
+	add<T>(data?: RequestBody, params?: CreateRequestOptions<T>): Then<T | undefined> {
 		return this.createRequest('add', ...arguments);
 	}
 
@@ -324,7 +324,7 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 	 * @param [data]
 	 * @param [params]
 	 */
-	upd<T>(data?: RequestBody, params?: CreateRequestOptions<T>): Then<T | null> {
+	upd<T>(data?: RequestBody, params?: CreateRequestOptions<T>): Then<T | undefined> {
 		return this.createRequest('upd', ...arguments);
 	}
 
@@ -334,7 +334,7 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 	 * @param [data]
 	 * @param [params]
 	 */
-	del<T>(data?: RequestBody, params?: CreateRequestOptions<T>): Then<T | null> {
+	del<T>(data?: RequestBody, params?: CreateRequestOptions<T>): Then<T | undefined> {
 		return this.createRequest('del', ...arguments);
 	}
 
@@ -554,9 +554,9 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 		method: ModelMethods,
 		data?: RequestBody,
 		params?: CreateRequestOptions<T>
-	): Then<T | null> {
+	): Then<T | undefined> {
 		if (!this.dp) {
-			return <any>Then.resolve(null);
+			return <any>Then.resolve();
 		}
 
 		const
