@@ -34,14 +34,15 @@ export default class iDynamicPage<T extends Dictionary = Dictionary> extends iDa
 	@hook('activated')
 	activate(state: Dictionary = this): void {
 		this.initStateFromRouter(state);
+		this.execCbAfterCreated(() => {
+			const watcher = this.$watch('$root.pageInfo', () => {
+				this.initStateFromRouter();
+			}, {deep: true});
 
-		const watcher = this.$watch('$root.pageInfo', () => {
-			this.initStateFromRouter();
-		}, {deep: true});
-
-		this.async.worker(watcher, {
-			label: $$.activate,
-			group: 'routerStateWatchers'
+			this.async.worker(watcher, {
+				label: $$.activate,
+				group: 'routerStateWatchers'
+			});
 		});
 	}
 

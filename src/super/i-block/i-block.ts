@@ -1725,8 +1725,8 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 				}
 			});
 
-			if (this.hook === 'beforeRuntime') {
-				this.meta.hooks.beforeDataCreate.unshift({fn: sync});
+			if ({beforeRuntime: true, beforeDataCreate: true}[this.hook]) {
+				this.meta.hooks.beforeDataCreate.unshift({fn: () => sync()});
 				return;
 			}
 
@@ -2190,11 +2190,12 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 * @param cb
 	 */
 	protected execCbAfterCreated<T>(cb: Function): T | undefined {
-		if (statuses[this.componentStatus]) {
-			return cb.call(this);
+		if ({beforeCreate: true, beforeRuntime: true, beforeDataCreate: true}[this.hook]) {
+			this.meta.hooks.created.unshift({fn: cb});
+			return;
 		}
 
-		this.meta.hooks.created.unshift({fn: cb});
+		return cb.call(this);
 	}
 }
 
