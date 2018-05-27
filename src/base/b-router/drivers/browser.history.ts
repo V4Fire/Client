@@ -23,7 +23,8 @@ export default function createRouter(ctx: bRouter): Router {
 	function load(page: string, info?: PageInfo, method: string = 'pushState'): Promise<void> {
 		return new Promise((resolve) => {
 			if (info) {
-				page = [page, toQueryString(info.query) || undefined].join('?');
+				const q = toQueryString(Object.assign(Object.fromQueryString(page, {deep: true}), info.query));
+				page = [page.replace(/\?.*/, ''), q || undefined].join('?');
 
 				const done = () => {
 					this.page = page;
@@ -86,11 +87,8 @@ export default function createRouter(ctx: bRouter): Router {
 		}
 	});
 
-	$a.on(window, 'popstate', () => {
-		router.emit('transition', {
-			page: location.href,
-			state: history.state
-		});
+	$a.on(window, 'popstate', async () => {
+		ctx.emit('transition', await router.replace(location.href, history.state));
 	});
 
 	return router;

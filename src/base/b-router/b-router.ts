@@ -30,7 +30,7 @@ export type PageProp<T extends Dictionary = Dictionary> = string | {
 export type PageParams<
 	P extends Dictionary = Dictionary,
 	Q extends Dictionary = Dictionary
-> = Dictionary & {
+	> = Dictionary & {
 	params?: P;
 	query?: Q;
 };
@@ -142,24 +142,47 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 	}
 
 	/**
-	 * Sets a new page
+	 * Pushes a new transition to router
 	 *
 	 * @param page
 	 * @param [params] - additional transition parameters
 	 * @param [state] - state object
 	 */
-	async setPage(page: string, params?: PageParams, state: Dictionary = this): Promise<PageInfo | undefined> {
-		const
-			name = this.driver.id(page),
-			transition = <PageInfo>Object.mixin(true, {page: name, ...this.getPageOpts(name)}, params);
+	async push(page: string, params?: PageParams, state: Dictionary = this): Promise<void> {
+		await this.setPage(page, params, 'push', state);
+	}
 
-		if (!Object.fastCompare(state.pageStore, transition)) {
-			state.pageStore = transition;
-			await this.driver.load(page, transition);
-			this.r.pageInfo = transition;
-		}
+	/**
+	 * Replaces the current transition to a new
+	 *
+	 * @param page
+	 * @param [params] - additional transition parameters
+	 * @param [state] - state object
+	 */
+	async replace(page: string, params?: PageParams, state: Dictionary = this): Promise<void> {
+		await this.setPage(page, params, 'replace', state);
+	}
 
-		return transition;
+	/**
+	 * Router.back
+	 */
+	back(): void {
+		this.driver.back();
+	}
+
+	/**
+	 * Router.forward
+	 */
+	forward(): void {
+		this.driver.forward();
+	}
+
+	/**
+	 * Router.go
+	 * @param pos
+	 */
+	go(pos: number): void {
+		this.driver.go(pos);
 	}
 
 	/**
@@ -167,47 +190,37 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 	 * @param [page]
 	 */
 	getPageOpts(page: string): PageInfo | undefined {
-		let
-			current: PageInfo | undefined;
+		const
+			p = this.pages,
+			obj = p[page] || $C(p).one.get(({rgxp}) => rgxp && rgxp.test(page));
 
-		$C(this.pages).forEach((el, name, data, o) => {
+		if (obj) {
 			const meta = Object.create({
-				meta: el.meta || {}
+				meta: obj.meta || {},
+				toPath: (p) => p ? path.compile(obj.pattern || page)(p) : page
 			});
 
 			// tslint:disable-next-line:prefer-object-spread
-			const transition = Object.assign(meta, {
-				page: name,
+			const t = Object.assign(meta, {
+				page: obj.page,
 				params: {},
 				query: {}
 			});
 
-			if (el.page === page) {
-				current = transition;
-				return o.break;
-			}
-
-			const
-				{rgxp} = el;
-
-			if (rgxp && rgxp.test(page)) {
+			if (obj.pattern) {
 				const
-					params = rgxp.exec(page);
+					params = obj.rgxp.exec(page);
 
-				current = $C(path.parse(el.pattern) as any[]).to(transition.params).reduce((map, el: Key, i) => {
+				$C(path.parse(obj.pattern) as any[]).reduce((map, el: Key, i) => {
 					if (Object.isObject(el)) {
 						// @ts-ignore
-						map[el.name] = params[i];
+						t.params[el.name] = params[i];
 					}
-
-					return map;
 				});
-
-				return o.break;
 			}
-		});
 
-		return current;
+			return t;
+		}
 	}
 
 	/**
@@ -221,12 +234,47 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 
 		if (page) {
 			if (Object.isString(page)) {
-				await this.setPage(page, undefined, data);
+				await this.replace(page, undefined, data);
 
 			} else {
-				await this.setPage(page.page, page.transition, data);
+				await this.replace(page.page, page.transition, data);
 			}
 		}
+	}
+
+	/**
+	 * Sets a new page
+	 *
+	 * @param page
+	 * @param [params] - additional page parameters
+	 * @param [method] - driver method
+	 * @param [state] - state object
+	 */
+	protected async setPage(
+		page: string,
+		params?: PageParams,
+		method: string = 'push',
+		state: Dictionary = this
+	): Promise<PageInfo | undefined> {
+		const
+			d = this.driver,
+			info = this.getPageOpts(d.id(page));
+
+		if (!info) {
+			await d[method](page);
+			return;
+		}
+
+		const
+			t = <PageInfo>Object.mixin(true, info, params);
+
+		if (!Object.fastCompare(state.pageStore, t)) {
+			state.pageStore = t;
+			await d[method](t.toPath(params), t);
+			this.$root.pageInfo = t;
+		}
+
+		return t;
 	}
 
 	/**
@@ -243,7 +291,29 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 			window.open(a.href, '_blank');
 
 		} else {
-			await this.setPage(a.href, Object.parse(a.dataset.transition));
+			const
+				data = a.dataset,
+				method = data.method;
+
+			switch (method) {
+				case 'back':
+					this.back();
+					break;
+
+				case 'forward':
+					this.back();
+					break;
+
+				case 'go':
+					this.go(Number(data.pos || -1));
+					break;
+
+				default:
+					await this[method === 'replace' ? 'replace' : 'push'](a.href, {
+						params: Object.parse(data.params),
+						query: Object.parse(data.query)
+					});
+			}
 		}
 	}
 
@@ -256,7 +326,7 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 	/** @override */
 	protected created(): void {
 		super.created();
-		this.r.router = this;
+		this.$root.router = this;
 		this.async.on(document, 'click', delegate('a[href^="/"]', this.onLink));
 	}
 }
