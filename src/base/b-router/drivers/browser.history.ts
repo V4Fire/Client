@@ -26,13 +26,8 @@ export default function createRouter(ctx: bRouter): Router {
 				const q = toQueryString(Object.assign(Object.fromQueryString(page, {deep: true}), info.query));
 				page = [page.replace(/\?.*/, ''), q || undefined].join('?');
 
-				const done = () => {
-					this.page = page;
-					resolve();
-				};
-
 				if (Object.isArray(ModuleDependencies.get(info.page))) {
-					done();
+					resolve();
 					return;
 				}
 
@@ -44,7 +39,7 @@ export default function createRouter(ctx: bRouter): Router {
 				ModuleDependencies.event.on(`component.${info.page}.loading`, $a.proxy(
 					({packages}) => {
 						ctx.status = (++i * 100) / packages;
-						(i === packages) && done();
+						(i === packages) && resolve();
 					},
 
 					{
@@ -60,7 +55,9 @@ export default function createRouter(ctx: bRouter): Router {
 	}
 
 	const router = Object.assign(Object.create(new EventEmitter()), {
-		page: location.href,
+		get page(): string {
+			return location.href;
+		},
 
 		id(page: string): string {
 			return new URL(page).pathname;
