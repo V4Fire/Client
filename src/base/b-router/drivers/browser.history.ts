@@ -24,15 +24,19 @@ export default function createRouter(ctx: bRouter): Router {
 		return new Promise((resolve) => {
 			if (info) {
 				const q = toQueryString(Object.assign(Object.fromQueryString(page, {deep: true}), info.query));
-				page = [page.replace(/\?.*/, ''), q || undefined].join('?');
+				page = page.replace(/\?.*/, '');
 
-				if (Object.isArray(ModuleDependencies.get(info.page))) {
-					resolve();
-					return;
+				if (q) {
+					page += `?${q}`;
 				}
 
 				if (location.href !== page) {
 					history[method](info, info.page, page);
+				}
+
+				if (Object.isArray(ModuleDependencies.get(info.page))) {
+					resolve();
+					return;
 				}
 
 				let i = 0;
@@ -85,7 +89,7 @@ export default function createRouter(ctx: bRouter): Router {
 	});
 
 	$a.on(window, 'popstate', async () => {
-		ctx.emit('transition', await router.replace(location.href, history.state));
+		ctx.emit('transition', await ctx.replace(location.href, history.state));
 	});
 
 	return router;

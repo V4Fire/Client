@@ -194,7 +194,7 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 		if (obj) {
 			const meta = Object.create({
 				meta: obj.meta || {},
-				toPath: (p) => p ? path.compile(obj.pattern || page)(p) : page
+				toPath: (p) => p ? path.compile(obj.pattern || page)($C(p).map(String)) : page
 			});
 
 			// tslint:disable-next-line:prefer-object-spread
@@ -269,7 +269,7 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 
 		if (!Object.fastCompare(state.pageStore, t)) {
 			state.pageStore = t;
-			await d[method](t.toPath(params), t);
+			await d[method](t.toPath(params && params.params), t);
 			this.$root.pageInfo = t;
 		}
 
@@ -281,10 +281,15 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 	 * @param e
 	 */
 	protected async onLink(e: MouseEvent): Promise<void> {
-		e.preventDefault();
-
 		const
-			a = <HTMLAnchorElement>e.delegateTarget;
+			a = <HTMLAnchorElement>e.delegateTarget,
+			href = a.getAttribute('href');
+
+		if (!href || /^(.*?:)?\/\//.test(href)) {
+			return;
+		}
+
+		e.preventDefault();
 
 		if (e.ctrlKey) {
 			window.open(a.href, '_blank');
@@ -308,7 +313,7 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 					break;
 
 				default:
-					await this[method === 'replace' ? 'replace' : 'push'](a.href, {
+					await this[method === 'replace' ? 'replace' : 'push'](href, {
 						params: Object.parse(data.params),
 						query: Object.parse(data.query)
 					});
@@ -326,6 +331,6 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 	protected created(): void {
 		super.created();
 		this.$root.router = this;
-		this.async.on(document, 'click', delegate('a[href^="/"]', this.onLink));
+		this.async.on(document, 'click', delegate('a[href]', this.onLink));
 	}
 }

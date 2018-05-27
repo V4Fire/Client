@@ -79,7 +79,7 @@ export default class iDynamicPage<T extends Dictionary = Dictionary> extends iDa
 		});
 
 		const
-			r = this.r.router;
+			r = this.$root.router;
 
 		if (!this.isActivated || !r) {
 			return false;
@@ -99,7 +99,7 @@ export default class iDynamicPage<T extends Dictionary = Dictionary> extends iDa
 		$C(this.convertStateToRouter()).forEach((el, key) => this[key] = undefined);
 
 		const
-			r = this.r.router;
+			r = this.$root.router;
 
 		if (!this.isActivated || !r) {
 			return false;
@@ -124,7 +124,7 @@ export default class iDynamicPage<T extends Dictionary = Dictionary> extends iDa
 
 		const init = () => {
 			const
-				p = this.r.pageInfo;
+				p = this.$root.pageInfo;
 
 			if (p && p.query) {
 				this.setState(p.query, state);
