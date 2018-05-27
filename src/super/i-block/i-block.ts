@@ -1618,8 +1618,6 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 		this.link = i.link.bind(this);
 		this.createWatchObject = i.createWatchObject.bind(this);
 		this.bindModTo = i.bindModTo.bind(this);
-		this.execCbAfterCreated = i.execCbAfterCreated.bind(this);
-		this.execCbBeforeDataCreated = i.execCbBeforeDataCreated.bind(this);
 		this.getField = i.getField.bind(this);
 		this.setField = i.setField.bind(this);
 		this.deleteField = i.deleteField.bind(this);
@@ -1637,7 +1635,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 
 		if ($watch) {
 			// @ts-ignore
-			this.$watch = (...args) => this.execCbBeforeDataCreated(() => $watch.apply(this, args));
+			this.$watch = (...args) => this.execCbAfterCreated(() => $watch.apply(this, args));
 		}
 	}
 
@@ -1699,13 +1697,11 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 
 		if (!(path in this.linksCache)) {
 			this.linksCache[path] = {};
-			this.execCbAfterCreated(() => {
-				this.$watch(field, (val, oldVal) => {
-					if (!Object.fastCompare(val, oldVal)) {
-						this.setField(path, wrapper ? wrapper.call(this, val, oldVal) : val);
-					}
-				}, <WatchOptions>watchParams);
-			});
+			this.$watch(field, (val, oldVal) => {
+				if (!Object.fastCompare(val, oldVal)) {
+					this.setField(path, wrapper ? wrapper.call(this, val, oldVal) : val);
+				}
+			}, <WatchOptions>watchParams);
 
 			const sync = (val?) => {
 				val = val || this.getField(field);
@@ -1728,8 +1724,12 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 				}
 			});
 
-			// tslint:disable-next-line
-			return this.execCbBeforeDataCreated(() => sync());
+			if (this.hook === 'beforeRuntime') {
+				this.meta.hooks.beforeDataCreate.unshift({fn: sync});
+				return;
+			}
+
+			return sync();
 		}
 	}
 
@@ -1813,13 +1813,11 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 
 				if (!$C(linksCache).get(l)) {
 					$C(linksCache).set(true, l);
-					this.execCbAfterCreated(() => {
-						this.$watch(field, (val, oldVal) => {
-							if (!Object.fastCompare(val, oldVal)) {
-								this.setField(l, wrapper ? wrapper.call(this, val, oldVal) : val);
-							}
-						}, <WatchOptions>watchParams);
-					});
+					this.$watch(field, (val, oldVal) => {
+						if (!Object.fastCompare(val, oldVal)) {
+							this.setField(l, wrapper ? wrapper.call(this, val, oldVal) : val);
+						}
+					}, <WatchOptions>watchParams);
 
 					const sync = (val?) => {
 						val = val || this.getField(field);
@@ -1843,13 +1841,11 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 
 				if (!$C(linksCache).get(l)) {
 					$C(linksCache).set(true, l);
-					this.execCbAfterCreated(() => {
-						this.$watch(el, (val, oldVal) => {
-							if (!Object.fastCompare(val, oldVal)) {
-								this.setField(l, val);
-							}
-						}, <WatchOptions>watchParams);
-					});
+					this.$watch(el, (val, oldVal) => {
+						if (!Object.fastCompare(val, oldVal)) {
+							this.setField(l, val);
+						}
+					}, <WatchOptions>watchParams);
 
 					// tslint:disable-next-line:prefer-object-spread
 					syncLinkCache[el] = Object.assign(syncLinkCache[el] || {}, {
@@ -2189,23 +2185,10 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	}
 
 	/**
-	 * Executes the specified callback after beforeDataCreate hook and returns the result
-	 * @param cb
-	 */
-	private execCbBeforeDataCreated<T>(cb: Function): T | undefined {
-		if (this.hook === 'beforeRuntime') {
-			this.meta.hooks.beforeDataCreate.unshift({fn: cb});
-			return;
-		}
-
-		return cb.call(this);
-	}
-
-	/**
 	 * Executes the specified callback after created hook and returns the result
 	 * @param cb
 	 */
-	private execCbAfterCreated<T>(cb: Function): T | undefined {
+	protected execCbAfterCreated<T>(cb: Function): T | undefined {
 		if (statuses[this.componentStatus]) {
 			return cb.call(this);
 		}

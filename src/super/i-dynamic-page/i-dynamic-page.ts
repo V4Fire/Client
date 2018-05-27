@@ -144,13 +144,15 @@ export default class iDynamicPage<T extends Dictionary = Dictionary> extends iDa
 					$a.on(this.localEvent, `block.mod.*.${p[0]}.*`, sync, routerWatchers);
 
 				} else {
-					const watcher = this.$watch(key, (val, oldVal) => {
-						if (!Object.fastCompare(val, oldVal)) {
-							sync();
-						}
-					});
+					this.execCbAfterCreated(() => {
+						const watcher = this.$watch(key, (val, oldVal) => {
+							if (!Object.fastCompare(val, oldVal)) {
+								sync();
+							}
+						});
 
-					$a.worker(watcher, routerWatchers);
+						$a.worker(watcher, routerWatchers);
+					});
 				}
 			});
 		};
