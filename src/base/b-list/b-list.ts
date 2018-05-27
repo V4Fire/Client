@@ -82,10 +82,17 @@ export default class bList<T extends Dictionary = Dictionary> extends iData<T> {
 	/**
 	 * Component value
 	 */
-	@field((o) => o.link('valueProp', (val) => {
-		const ctx: bList = <any>o;
-		return ctx.dataProvider ? ctx.value || [] : ctx.normalizeOptions(val);
-	}))
+	@field({
+		watch: (o) => {
+			const ctx: bList = <bList><any>o;
+			ctx.initComponentValues();
+		},
+
+		init: (o) => o.link('valueProp', (val) => {
+			const ctx: bList = <any>o;
+			return ctx.dataProvider ? ctx.value || [] : ctx.normalizeOptions(val);
+		})
+	})
 
 	value!: Option[];
 
@@ -364,14 +371,6 @@ export default class bList<T extends Dictionary = Dictionary> extends iData<T> {
 
 		this.values = values;
 		this.indexes = indexes;
-	}
-
-	/**
-	 * Synchronization for the value field
-	 */
-	@watch('value')
-	protected async syncValueWatcher(): Promise<void> {
-		await this.initComponentValues();
 	}
 
 	/** @override */

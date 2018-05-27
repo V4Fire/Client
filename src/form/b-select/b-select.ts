@@ -118,10 +118,17 @@ export default class bSelect<T extends Dictionary = Dictionary> extends bInput<T
 	/**
 	 * Select options store
 	 */
-	@field((o) => o.link('optionsProp', (val) => {
-		const ctx: bSelect = <any>o;
-		return ctx.dataProvider ? ctx.optionsStore || [] : ctx.normalizeOptions(val);
-	}))
+	@field({
+		watch: (o) => {
+			const ctx: bSelect = <any>o;
+			ctx.initComponentValues().catch(stderr);
+		},
+
+		init: (o) => o.link('optionsProp', (val) => {
+			const ctx: bSelect = <any>o;
+			return ctx.dataProvider ? ctx.optionsStore || [] : ctx.normalizeOptions(val);
+		})
+	})
 
 	protected optionsStore!: NOption[];
 
@@ -318,14 +325,6 @@ export default class bSelect<T extends Dictionary = Dictionary> extends bInput<T
 		if (scroll) {
 			await scroll.initScroll();
 		}
-	}
-
-	/**
-	 * Synchronization for the optionsStore field
-	 */
-	@watch('optionsStore')
-	protected async syncOptionsStoreWatcher(): Promise<void> {
-		await this.initComponentValues();
 	}
 
 	/**
