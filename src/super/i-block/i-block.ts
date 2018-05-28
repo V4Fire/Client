@@ -1401,7 +1401,12 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 				data = await this.loadSettings('[[STORE]]');
 
 			const done = this.waitStatus('beforeReady', () => {
-				this.setState(data, state);
+				const
+					stateFields = this.convertStateToStore();
+
+				if (data) {
+					this.setState(Object.select(data, Object.keys(stateFields)), state);
+				}
 
 				const sync = () => {
 					$a.setTimeout(this.saveLocalStore, 0.2.second(), {
@@ -1409,7 +1414,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 					});
 				};
 
-				$C(this.convertStateToStore()).forEach((el, key) => {
+				$C(stateFields).forEach((el, key) => {
 					const
 						p = key.split('.');
 
@@ -1726,6 +1731,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 			});
 
 			if ({beforeRuntime: true, beforeDataCreate: true}[this.hook]) {
+				// tslint:disable-next-line:no-unnecessary-callback-wrapper
 				this.meta.hooks.beforeDataCreate.unshift({fn: () => sync()});
 				return;
 			}

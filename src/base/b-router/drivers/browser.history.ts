@@ -23,8 +23,22 @@ export default function createRouter(ctx: bRouter): Router {
 	function load(page: string, info?: PageInfo, method: string = 'pushState'): Promise<void> {
 		return new Promise((resolve) => {
 			if (info) {
-				const q = toQueryString(Object.assign(Object.fromQueryString(page, {deep: true}), info.query));
-				page = page.replace(/\?.*/, '');
+				const
+					qs = /\?.*/;
+
+				const parse = (s, test?) => {
+					if (test && !qs.test(s)) {
+						return {};
+					}
+
+					return Object.fromQueryString(s, {deep: true});
+				};
+
+				info.query = Object.assign(parse(location.search), parse(page, true), info.query);
+				page = page.replace(qs, '');
+
+				const
+					q = toQueryString(info.query);
 
 				if (q) {
 					page += `?${q}`;

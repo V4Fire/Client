@@ -83,23 +83,7 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 	/**
 	 * Driver for remote router
 	 */
-	@system((o) => o.link('driverProp', (v) => {
-		const
-			ctx: bRouter = <any>o,
-			d = v(o);
-
-		const fn = (e) => ctx.setPage(e.page, {
-			params: e.params,
-			query: e.query
-		});
-
-		ctx.async.on(d, 'transition', fn, {
-			label: $$.transition
-		});
-
-		return d;
-	}))
-
+	@system((o) => o.link('driverProp', (v) => v(o)))
 	protected driver!: Router;
 
 	/**
@@ -289,7 +273,7 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 	 */
 	protected async onLink(e: MouseEvent): Promise<void> {
 		const
-			a = <HTMLAnchorElement>e.delegateTarget,
+			a = <HTMLElement>e.delegateTarget,
 			href = a.getAttribute('href');
 
 		if (!href || /^(.*?:)?\/\//.test(href)) {
@@ -298,8 +282,11 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 
 		e.preventDefault();
 
+		const
+			l = Object.assign(document.createElement('a'), {href});
+
 		if (e.ctrlKey) {
-			window.open(a.href, '_blank');
+			window.open(l.href, '_blank');
 
 		} else {
 			const
@@ -320,7 +307,7 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 					break;
 
 				default:
-					await this[method === 'replace' ? 'replace' : 'push'](a.href, {
+					await this[method === 'replace' ? 'replace' : 'push'](l.href, {
 						params: Object.parse(data.params),
 						query: Object.parse(data.query)
 					});
@@ -338,6 +325,6 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 	protected created(): void {
 		super.created();
 		this.$root.router = this;
-		this.async.on(document, 'click', delegate('a[href]', this.onLink));
+		this.async.on(document, 'click', delegate('[href]', this.onLink));
 	}
 }
