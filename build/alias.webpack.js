@@ -10,7 +10,7 @@
 
 const
 	$C = require('collection.js'),
-	path = require('upath');
+	path = require('path');
 
 const
 	{config: pzlr, resolve} = require('@pzlr/build-core'),
