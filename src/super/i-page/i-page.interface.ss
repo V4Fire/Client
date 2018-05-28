@@ -18,7 +18,7 @@
 
 /**
  * Base page template
- * @param [params] - template parameters
+ * @param [config] - template config
  */
 - async template index(@params = {}) extends ['i-data'].index
 	- isProd = @@NODE_ENV === 'production'
@@ -156,9 +156,7 @@
 
 					- block std
 						# script
-							if ('std' in PATH) {
-								#+= self.addScriptDep('std', false)
-							}
+							#+= self.addScriptDep('std', {defer: false, optional: true})
 
 					: defLibs
 					- block defLibs
@@ -216,9 +214,7 @@
 
 					- block scripts
 						# script
-							if ('vendor' in PATH) {
-								#+= self.addScriptDep('vendor')
-							}
+							#+= self.addScriptDep('vendor', {optional: true})
 
 						+= self.addDependencies(@dependencies, 'scripts')
 
@@ -245,3 +241,4 @@
 
 							- block body
 						- block helpers
+						- block providers

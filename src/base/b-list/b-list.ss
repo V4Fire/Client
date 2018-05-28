@@ -25,15 +25,15 @@
 					< a &
 						:class = setHint(el.hintPos).concat(getElClasses({link: {
 							id: i,
-							active: isActive(el, i),
+							active: isActive(el),
 							theme: el.theme,
 							hidden: el.hidden,
 							progress: el.progress
 						}})) |
 
-						:href = el.href || (autoHref && el.value !== undefined ? '#' + el.value : 'javascript:void(0)') |
+						:href = el.href |
 						:-hint = el.hint |
-						:-value = {value: el.value !== undefined ? el.value : el.href}.toSource()
+						:-id = i
 					.
 						- block preIcon
 							< span.&__cell.&__link-icon.&__link-pre-icon v-if = el.preIcon

@@ -25,7 +25,7 @@
 			@blur = onBlur |
 			@change = onOptionSelected($event.target.dataset.value)
 		.
-			< option v-for = el in options | :key = :value, getOptionValue(el)
+			< option v-for = el in options | :key = :value, el.value
 				{{ el.label }}
 
 	- block helpers
@@ -44,7 +44,7 @@
 						.
 							< _ &
 								v-for = el in options |
-								:key = :-value, getOptionValue(el) |
+								:key = :-value, el.value |
 								:class = getElClasses({
 									option: {
 										marked: el.marked,

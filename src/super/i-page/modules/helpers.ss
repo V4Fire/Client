@@ -70,35 +70,67 @@
  * Adds a script dependence
  *
  * @param {string} name - dependence name
- * @param {boolean=} [defer] - defer load mode
+ * @param {Object=} [opts] - additional options:
+ *   *) [defer]
+ *   *) [optional]
  */
-- block index->addScriptDep(name, defer = true)
+- block index->addScriptDep(name, opts)
+	: p = Object.assign({defer: true}, opts)
+
 	- if @fatHTML
-		- if !assets[name]
+		- if assets[name]
+			: url = path.join(@output, assets[name])
+			requireMonic({url})
+
+		- else if !p.optional
 			- throw new Error('Script dependence with id "' + name +  '" is not defined')
 
-		: url = path.join(@output, assets[name])
-		requireMonic({url})
-
 	- else
-		document.write('<script src="' + PATH['{name}'] + '" {(defer ? \'defer="defer"\' : '')}><' + '/script>');
+		: putIn tpl
+			document.write('<script src="' + PATH['{name}'] + '" {(p.defer ? \'defer="defer"\' : '')}><' + '/script>');
+
+		- if p.optional
+			# op
+				if ('#{name}' in PATH) {
+					#+= tpl
+				}
+
+		- else
+			+= tpl
 
 /**
  * Adds a link dependence
+ *
  * @param {string} name - dependence name
+ * @param {Object=} [opts] - additional options
+ *   *) [optional]
  */
-- block index->addStyleDep(name)
-	: rname = name + '$style'
+- block index->addStyleDep(name, opts)
+	: &
+		rname = name + '$style',
+		p = Object.assign({}, opts)
+	.
 
 	- if @fatHTML
-		- if !assets[rname]
+		- if assets[rname]
+			: url = path.join(@output, assets[rname])
+			requireMonic({url})
+
+		- else if !p.optional
 			- throw new Error('Style dependence with id "' + name +  '" is not defined')
 
-		: url = path.join(@output, assets[rname])
-		requireMonic({url})
-
 	- else
-		document.write('<link rel="stylesheet" href="' + PATH['{rname}'] + '">');
+		: putIn tpl
+			document.write('<link rel="stylesheet" href="' + PATH['{rname}'] + '">');
+
+		- if p.optional
+			# op
+				if ('#{rname}' in PATH) {
+					#+= tpl
+				}
+
+		- else
+			+= tpl
 
 /**
  * Adds template dependencies
