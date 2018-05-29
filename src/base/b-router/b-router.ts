@@ -213,19 +213,19 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 
 	/**
 	 * Initializes component values
-	 * @param [data] - data object
+	 * @param [state] - state object
 	 */
 	@hook('beforeDataCreate')
-	protected async initComponentValues(data: Dictionary = this): Promise<void> {
+	protected async initComponentValues(state: Dictionary = this): Promise<void> {
 		const
 			page = this.pageProp || this.driver.page;
 
 		if (page) {
 			if (Object.isString(page)) {
-				await this.replace(page, undefined, data);
+				await this.replace(page, undefined, state);
 
 			} else {
-				await this.replace(page.page, page.transition, data);
+				await this.replace(page.page, page.transition, state);
 			}
 		}
 	}
