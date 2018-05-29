@@ -132,7 +132,7 @@ export default class iDynamicPage<T extends Dictionary = Dictionary> extends iDa
 				this.setState(Object.select(this.convertStateToRouter(p.query), Object.keys(stateFields)), state);
 
 			} else {
-				this.setState(stateFields);
+				this.setState(stateFields, state);
 			}
 
 			const sync = () => {
