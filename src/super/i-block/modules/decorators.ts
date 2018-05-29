@@ -189,25 +189,6 @@ export function removeElMod(elName: string, modName: string, value: ModVal = '*'
 	};
 }
 
-/**
- * Decorates a method as a status handler
- *
- * @decorator
- * @param status
- * @param [method]
- */
-export function status(status: string, method: EventType = 'on'): Function {
-	return (target, key, descriptor) => {
-		initEvent.once('constructor', ({meta}) => {
-			meta.hooks.beforeCreate.push({
-				fn(this: iBlockDecorator): void {
-					this.localEvent[method](`component.status.${status}`, descriptor.value.bind(this));
-				}
-			});
-		});
-	};
-}
-
 export interface WaitOpts extends AsyncOpts {
 	fn?: Function;
 	defer?: boolean | number;
