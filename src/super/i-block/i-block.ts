@@ -617,6 +617,15 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	protected readonly location!: Location;
 
 	/**
+	 * Link to the global object
+	 */
+	@system({
+		unique: true,
+		init: () => window
+	})
+	protected readonly global!: Window;
+
+	/**
 	 * Returns a string id, which is connected to the component
 	 * @param id - custom id
 	 */
