@@ -274,7 +274,7 @@ export function wait<T = any>(status: number | string | WaitOpts, params?: WaitO
 		}
 
 		if (!init) {
-			res = $a.promise<any>(
+			res = $a.promise(
 				new Promise((resolve) => {
 					this.localEvent.once(`component.status.${statuses[<number>status]}`, () => {
 						resolve(handler.apply(this, args));

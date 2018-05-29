@@ -58,8 +58,7 @@ export {
 	mod,
 	removeMod,
 	elMod,
-	removeElMod,
-	status
+	removeElMod
 
 } from 'super/i-block/modules/decorators';
 
@@ -539,7 +538,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 * API for BEM like develop
 	 */
 	@system({unique: true})
-	protected block!: Block<this>;
+	protected block!: Block;
 
 	/**
 	 * Local event emitter
@@ -734,15 +733,15 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 * Wrapper for @wait
 	 *
 	 * @see Async.promise
-	 * @param state
+	 * @param status
 	 * @param fn
 	 * @param [params] - additional parameters:
 	 *   *) [params.defer] - if true, then the function will always return a promise
 	 */
-	waitStatus<T>(state: number | string, fn: () => T, params?: AsyncOpts & {defer?: boolean}): CanPromise<T> {
+	waitStatus<T>(status: string, fn: () => T, params?: AsyncOpts & {defer?: boolean}): CanPromise<T> {
 		params = params || {};
 		params.join = false;
-		return wait(state, {fn, ...params}).call(this);
+		return wait(status, {fn, ...params}).call(this);
 	}
 
 	/**
@@ -760,7 +759,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	async initLoad(data?: any | ((this: this) => any)): Promise<void> {
 		this.componentStatus = 'loading';
 
-		const {$children: $c} = this;
+		const {$children: $c, async: $a} = this;
 		await this.loadLocalStore();
 
 		if ($c) {
@@ -777,7 +776,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 			}
 
 			if (providers.size) {
-				await this.async.wait(() => $C(providers).every((el) => {
+				await $a.wait(() => $C(providers).every((el) => {
 					if (el.componentStatus === 'ready') {
 						providers.delete(el);
 						return true;
@@ -789,9 +788,10 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 		}
 
 		this.componentStatus = 'beforeReady';
-		this.componentStatus = 'ready';
-
-		this.emit('initLoad', Object.isFunction(data) ? data.call(this) : data);
+		this.execCbAfterBlockReady(() => {
+			this.componentStatus = 'ready';
+			this.emit('initLoad', Object.isFunction(data) ? data.call(this) : data);
+		});
 	}
 
 	/**
@@ -847,16 +847,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 * @param value
 	 */
 	setMod(name: string, value: any): CanPromise<boolean> {
-		const
-			fn = () => this.block.setMod(name, value);
-
-		if (this.block) {
-			return fn();
-		}
-
-		return new Promise((r) => {
-			this.localEvent.once('block.ready', () => r(fn()));
-		});
+		return this.execCbAfterBlockReady(() => this.block.setMod(name, value));
 	}
 
 	/**
@@ -866,16 +857,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 * @param [value]
 	 */
 	removeMod(name: string, value?: any): CanPromise<boolean> {
-		const
-			fn = () => this.block.removeMod(name, value);
-
-		if (this.block) {
-			return fn();
-		}
-
-		return new Promise((r) => {
-			this.localEvent.once('block.ready', () => r(fn()));
-		});
+		return this.execCbAfterBlockReady(() => this.block.removeMod(name, value));
 	}
 
 	/**
@@ -1494,16 +1476,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 * @param handler
 	 */
 	protected delegateElement(elName: string, handler: Function): CanPromise<Function> {
-		const
-			fn = () => delegate(this.block.getElSelector(elName), handler);
-
-		if (this.block) {
-			return fn();
-		}
-
-		return new Promise((r) => {
-			this.localEvent.once('block.ready', () => r(fn()));
-		});
+		return this.execCbAfterBlockReady(() => delegate(this.block.getElSelector(elName), handler));
 	}
 
 	/**
@@ -2133,6 +2106,8 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 				delete w[k];
 				this.$set(w, k, v);
 			}
+
+			this.emit(`mod-set-${k}-${v}`, e);
 		});
 
 		$e.on('block.mod.remove.**', (e) => {
@@ -2148,6 +2123,8 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 					delete w[k];
 					this.$set(w, k, undefined);
 				}
+
+				this.emit(`mod-remove-${k}-${e.value}`, e);
 			}
 		});
 
@@ -2247,13 +2224,28 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 * Executes the specified callback after created hook and returns the result
 	 * @param cb
 	 */
-	protected execCbAfterCreated<T>(cb: Function): T | undefined {
+	protected execCbAfterCreated<T>(cb: Function): CanPromise<T> {
 		if ({beforeCreate: true, beforeRuntime: true, beforeDataCreate: true}[this.hook]) {
-			this.meta.hooks.created.unshift({fn: cb});
-			return;
+			return <any>this.async.promise(new Promise((r) => {
+				this.meta.hooks.created.unshift({fn: () => r(cb())});
+			})).catch(stderr);
 		}
 
 		return cb.call(this);
+	}
+
+	/**
+	 * Executes the specified callback after block.ready event and returns the result
+	 * @param cb
+	 */
+	protected execCbAfterBlockReady<T>(cb: Function): CanPromise<T> {
+		if (this.block) {
+			return cb();
+		}
+
+		return <any>this.async.promise(new Promise((r) => {
+			this.localEvent.once('block.ready', () => r(cb()));
+		})).catch(stderr);
 	}
 }
 
@@ -2271,8 +2263,7 @@ export abstract class iBlockDecorator extends iBlock {
 	public readonly $attrs!: Dictionary<string>;
 
 	public readonly async!: Async<this>;
-	// @ts-ignore
-	public readonly block!: Block<this>;
+	public readonly block!: Block;
 	public readonly localEvent!: EventEmitter;
 
 	// tslint:disable-next-line:unified-signatures

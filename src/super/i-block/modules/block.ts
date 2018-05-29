@@ -18,7 +18,12 @@ export type Reason =
 /**
  * Base class for BEM like develop
  */
-export default class Block<T extends iBlock = iBlock> {
+export default class Block {
+	/**
+	 * Current block id
+	 */
+	readonly blockId: string;
+
 	/**
 	 * Current block name
 	 */
@@ -27,12 +32,7 @@ export default class Block<T extends iBlock = iBlock> {
 	/**
 	 * Link to a block node
 	 */
-	readonly node: VueElement<T>;
-
-	/**
-	 * Vue component
-	 */
-	readonly component: T;
+	readonly node: VueElement<any>;
 
 	/**
 	 * Local event emitter
@@ -47,8 +47,8 @@ export default class Block<T extends iBlock = iBlock> {
 	/**
 	 * @param component - component instance
 	 */
-	constructor(component: T) {
-		this.component = component;
+	constructor(component: iBlock) {
+		this.blockId = component.componentId;
 		this.blockName = component.componentName;
 		this.mods = Object.createDict();
 
@@ -98,7 +98,7 @@ export default class Block<T extends iBlock = iBlock> {
 			sel = `.${this.getFullElName(elName)}`;
 
 		let
-			res = `${sel}.${this.component.componentId}`;
+			res = `${sel}.${this.blockId}`;
 
 		if (mods) {
 			for (let keys = Object.keys(mods), i = 0; i < keys.length; i++) {
@@ -166,7 +166,6 @@ export default class Block<T extends iBlock = iBlock> {
 			};
 
 			this.event.emit(`block.mod.set.${name}.${value}`, event);
-			this.component.emit(`mod_set_${name}_${value}`, event);
 			return true;
 		}
 
@@ -200,7 +199,6 @@ export default class Block<T extends iBlock = iBlock> {
 			};
 
 			this.event.emit(`block.mod.remove.${name}.${current}`, event);
-			this.component.emit(`mod_remove_${name}_${current}`, event);
 			return true;
 		}
 
