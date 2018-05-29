@@ -46,6 +46,7 @@ export {
 	CacheStrategy,
 	RequestQuery,
 	RequestResponse,
+	RequestResponseObject,
 	Response,
 	RequestBody
 

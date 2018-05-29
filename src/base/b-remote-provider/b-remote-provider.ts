@@ -6,7 +6,6 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import Then from 'core/then';
 import symbolGenerator from 'core/symbol';
 import iData, { component, prop, system, watch } from 'super/i-data/i-data';
 export * from 'super/i-data/i-data';
@@ -51,7 +50,7 @@ export default class bRemoteProvider<T extends Dictionary = Dictionary> extends 
 			return;
 		}
 
-		const handler = () => {
+		p.execCbAtTheRightTime((state = p) => {
 			const
 				f = this.field;
 
@@ -63,19 +62,13 @@ export default class bRemoteProvider<T extends Dictionary = Dictionary> extends 
 					c.call(p, value);
 
 				} else {
-					p.setField(f, value);
+					p.setField(f, value, state);
 				}
 			}
 
 			this.emit('change', value);
-		};
-
-		const res = p.waitStatus('beforeReady', handler, {
+		}, {
 			label: $$.syncDBWatcher
 		});
-
-		if (Then.isThenable(res)) {
-			res.catch(stderr);
-		}
 	}
 }

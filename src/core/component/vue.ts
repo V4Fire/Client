@@ -37,6 +37,7 @@ export default class VueInterface<
 	protected readonly $slots!: Dictionary<VNode>;
 	protected readonly $scopedSlots!: Dictionary<ScopedSlot>;
 	protected readonly $data!: Dictionary;
+	protected readonly $$data!: Dictionary;
 	protected readonly $ssrContext!: any;
 	protected readonly $vnode!: VNode;
 	protected readonly $attrs!: Dictionary<string>;

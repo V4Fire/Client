@@ -247,7 +247,9 @@ export function createFakeCtx(
 			initDataObject(list[i], fakeCtx, instance, data);
 
 			if (i) {
+				fakeCtx.$$data = data;
 				runHook('beforeDataCreate', meta, fakeCtx, data).catch(stderr);
+				delete fakeCtx.$$data;
 
 				if (meta.params.tiny) {
 					Object.assign(fakeCtx, data);

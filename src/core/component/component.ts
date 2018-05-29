@@ -65,7 +65,11 @@ export function getComponent(
 				ctx = <any>this,
 				data = initDataObject(meta.fields, ctx, instance);
 
+			// @ts-ignore
+			this.$$data = data;
 			runHook('beforeDataCreate', ctx.meta, ctx, data).catch(stderr);
+			// @ts-ignore
+			delete this.$$data;
 			return data;
 		},
 
@@ -337,9 +341,26 @@ export function initDataObject(
 		queue = new Set();
 
 	while (true) {
-		for (let o = fields, keys = Object.keys(o), i = 0; i < keys.length; i++) {
+		const
+			o = fields,
+			fieldList = <string[]>[];
+
+		for (let keys = Object.keys(fields), i = 0; i < keys.length; i++) {
 			const
-				key = ctx.$activeField = keys[i],
+				key = keys[i],
+				el = o[key];
+
+			if (el.atom || !el.init && (el.default !== undefined || key in instance)) {
+				fieldList.unshift(key);
+
+			} else {
+				fieldList.push(key);
+			}
+		}
+
+		for (let i = 0; i < fieldList.length; i++) {
+			const
+				key = ctx.$activeField = fieldList[i],
 				el = o[key];
 
 			if (key in data) {

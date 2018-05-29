@@ -23,7 +23,7 @@ import Provider, {
 	providers,
 	RequestQuery,
 	RequestBody,
-	RequestResponse,
+	RequestResponseObject,
 	RequestError,
 	ModelMethods,
 	CreateRequestOptions as BaseCreateRequestOptions
@@ -36,7 +36,7 @@ export {
 	ModelMethods,
 	RequestQuery,
 	RequestBody,
-	RequestResponse,
+	RequestResponseObject,
 	RequestError
 
 } from 'core/data';
@@ -203,24 +203,26 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 					const
 						db = await this.get(<RequestQuery>p[0], p[1]);
 
-					const done = this.waitStatus('beforeReady', () => {
-						this.db = this.convertDataToDB(db);
+					this.execCbAtTheRightTime((state = this) => {
+						state.db = this.convertDataToDB(db);
 
 					}, {
 						join: true,
 						label: $$.initLoad
 					});
 
-					if (Then.isThenable(done)) {
-						done.catch(stderr);
-					}
-
 				} catch (err) {
 					stderr(err);
 				}
 
 			} else {
-				this.db = undefined;
+				this.execCbAtTheRightTime((state = this) => {
+					state.db = undefined;
+
+				}, {
+					join: true,
+					label: $$.initLoad
+				});
 			}
 		}
 
@@ -308,7 +310,7 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 	 * @param [data]
 	 * @param [params]
 	 */
-	get(data?: RequestQuery, params?: CreateRequestOptions<T>): Then<T | undefined> {
+	get(data?: RequestQuery, params?: CreateRequestOptions<T>): Promise<T | undefined> {
 		return this.createRequest('get', ...arguments);
 	}
 
@@ -318,7 +320,7 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 	 * @param data
 	 * @param [params]
 	 */
-	post<T>(data?: RequestBody, params?: CreateRequestOptions<T>): Then<T | undefined> {
+	post<T>(data?: RequestBody, params?: CreateRequestOptions<T>): Promise<T | undefined> {
 		return this.createRequest('post', ...arguments);
 	}
 
@@ -328,7 +330,7 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 	 * @param data
 	 * @param [params]
 	 */
-	add<T>(data?: RequestBody, params?: CreateRequestOptions<T>): Then<T | undefined> {
+	add<T>(data?: RequestBody, params?: CreateRequestOptions<T>): Promise<T | undefined> {
 		return this.createRequest('add', ...arguments);
 	}
 
@@ -338,7 +340,7 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 	 * @param [data]
 	 * @param [params]
 	 */
-	upd<T>(data?: RequestBody, params?: CreateRequestOptions<T>): Then<T | undefined> {
+	upd<T>(data?: RequestBody, params?: CreateRequestOptions<T>): Promise<T | undefined> {
 		return this.createRequest('upd', ...arguments);
 	}
 
@@ -348,7 +350,7 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 	 * @param [data]
 	 * @param [params]
 	 */
-	del<T>(data?: RequestBody, params?: CreateRequestOptions<T>): Then<T | undefined> {
+	del<T>(data?: RequestBody, params?: CreateRequestOptions<T>): Promise<T | undefined> {
 		return this.createRequest('del', ...arguments);
 	}
 
@@ -568,7 +570,7 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 		method: ModelMethods,
 		data?: RequestBody,
 		params?: CreateRequestOptions<T>
-	): Then<T | undefined> {
+	): Promise<T | undefined> {
 		if (!this.dp) {
 			return <any>Then.resolve();
 		}
@@ -580,7 +582,7 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 			asyncParams = <AsyncOpts>(Object.select(p, asyncFields));
 
 		const
-			req = <RequestResponse>this.async.request((<Function>this.dp[method])(data, reqParams), asyncParams),
+			req = this.async.request<RequestResponseObject>((<Function>this.dp[method])(data, reqParams), asyncParams),
 			is = (v) => v !== false;
 
 		if (this.mods.progress !== 'true') {
