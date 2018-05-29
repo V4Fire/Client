@@ -184,9 +184,9 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 	protected dp?: Provider;
 
 	/** @override */
-	@wait('loading', {label: $$.initLoad, defer: true})
+	@wait({label: $$.initLoad, defer: true})
 	async initLoad(): Promise<void> {
-		this.block.status = this.block.statuses.loading;
+		this.componentStatus = 'loading';
 
 		if (this.dp && this.dp.baseURL) {
 			const

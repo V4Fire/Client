@@ -562,7 +562,7 @@ export default class bSelect<T extends Dictionary = Dictionary> extends bInput<T
 			});
 		});
 
-		$e.once('block.status.ready', () => {
+		this.waitStatus('ready', () => {
 			$e.on('block.mod.set.opened.false', () => {
 				if (openedSelect === this) {
 					openedSelect = null;

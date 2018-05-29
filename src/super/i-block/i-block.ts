@@ -16,7 +16,7 @@ import { EventEmitter2 as EventEmitter } from 'eventemitter2';
 import { WatchOptions, WatchOptionsWithHandler, RenderContext, VNode } from 'vue';
 
 import 'super/i-block/directives';
-import Block, { statuses } from 'super/i-block/modules/block';
+import Block from 'super/i-block/modules/block';
 import Cache from 'super/i-block/modules/cache';
 import { icons, iconsMap } from 'super/i-block/modules/icons';
 import symbolGenerator from 'core/symbol';
@@ -46,7 +46,6 @@ import * as helpers from 'core/helpers';
 import * as browser from 'core/const/browser';
 
 export * from 'core/component';
-export { statuses } from 'super/i-block/modules/block';
 export { default as Cache } from 'super/i-block/modules/cache';
 export {
 
@@ -60,7 +59,7 @@ export {
 	removeMod,
 	elMod,
 	removeElMod,
-	state
+	status
 
 } from 'super/i-block/modules/decorators';
 
@@ -90,6 +89,18 @@ export interface SyncLink {
 export type SyncLinkCache = Dictionary<Dictionary<SyncLink>>;
 export type ModsTable = Dictionary<ModVal>;
 export type ModsNTable = Dictionary<string | undefined>;
+
+/**
+ * Enum of available component statuses
+ */
+export enum statuses {
+	destroyed = -1,
+	inactive = 0,
+	loading = 1,
+	beforeReady = 2,
+	ready = 3,
+	unloaded = 0
+}
 
 export const
 	$$ = symbolGenerator(),
@@ -137,8 +148,23 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	/**
 	 * Component initialize status
 	 */
-	@system({unique: true})
-	componentStatus: string = statuses[statuses.unloaded];
+	get componentStatus(): string {
+		return this.componentStatusStore;
+	}
+
+	/**
+	 * Sets a new component initialize status
+	 * @param value
+	 */
+	set componentStatus(value: string) {
+		if (this.componentStatusStore === value) {
+			return;
+		}
+
+		this.componentStatusStore = value;
+		this.localEvent.emit(`component.status.${value}`, value);
+		this.emit(`status-${value}`, value);
+	}
 
 	/**
 	 * Initial component modifiers
@@ -409,6 +435,12 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	}
 
 	/**
+	 * Component initialize status store
+	 */
+	@system({unique: true})
+	protected componentStatusStore: string = statuses[statuses.unloaded];
+
+	/**
 	 * Watched store of component modifiers
 	 */
 	@field({merge: true})
@@ -507,7 +539,6 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 * API for BEM like develop
 	 */
 	@system({unique: true})
-	// @ts-ignore
 	protected block!: Block<this>;
 
 	/**
@@ -717,7 +748,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	/**
 	 * Wrapper for $forceUpdate
 	 */
-	@wait('loading', {defer: true, label: $$.forceUpdate})
+	@wait({defer: true, label: $$.forceUpdate})
 	async forceUpdate(): Promise<void> {
 		this.$forceUpdate();
 	}
@@ -726,10 +757,10 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 * Loads component data
 	 * @emits initLoad(data?: Object)
 	 */
-	@wait('loading')
-	@hook({mounted: 'initBlockInstance'})
 	async initLoad(data?: any | ((this: this) => any)): Promise<void> {
-		const {block: $b, $children: $c} = this;
+		this.componentStatus = 'loading';
+
+		const {$children: $c} = this;
 		await this.loadLocalStore();
 
 		if ($c) {
@@ -757,12 +788,9 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 			}
 		}
 
-		$b.status = $b.statuses.beforeReady;
-		if ({beforeMount: true, beforeUpdate: true, deactivated: true}[this.hook]) {
-			await this.nextTick();
-		}
+		this.componentStatus = 'beforeReady';
+		this.componentStatus = 'ready';
 
-		$b.status = $b.statuses.ready;
 		this.emit('initLoad', Object.isFunction(data) ? data.call(this) : data);
 	}
 
@@ -818,9 +846,17 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 * @param name
 	 * @param value
 	 */
-	@wait('loading')
 	setMod(name: string, value: any): CanPromise<boolean> {
-		return this.block.setMod(name, value);
+		const
+			fn = () => this.block.setMod(name, value);
+
+		if (this.block) {
+			return fn();
+		}
+
+		return new Promise((r) => {
+			this.localEvent.once('block.ready', () => r(fn()));
+		});
 	}
 
 	/**
@@ -829,9 +865,17 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 * @param name
 	 * @param [value]
 	 */
-	@wait('loading')
 	removeMod(name: string, value?: any): CanPromise<boolean> {
-		return this.block.removeMod(name, value);
+		const
+			fn = () => this.block.removeMod(name, value);
+
+		if (this.block) {
+			return fn();
+		}
+
+		return new Promise((r) => {
+			this.localEvent.once('block.ready', () => r(fn()));
+		});
 	}
 
 	/**
@@ -1362,7 +1406,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	/**
 	 * Saves a store from to local storage
 	 */
-	@wait('loading', {defer: true, label: $$.saveLocalStore})
+	@wait({defer: true, label: $$.saveLocalStore})
 	protected async saveLocalStore(): Promise<void> {
 		if (!this.globalName) {
 			return;
@@ -1449,9 +1493,17 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 * @param elName
 	 * @param handler
 	 */
-	@wait('loading')
 	protected delegateElement(elName: string, handler: Function): CanPromise<Function> {
-		return delegate(this.block.getElSelector(elName), handler);
+		const
+			fn = () => delegate(this.block.getElSelector(elName), handler);
+
+		if (this.block) {
+			return fn();
+		}
+
+		return new Promise((r) => {
+			this.localEvent.once('block.ready', () => r(fn()));
+		});
 	}
 
 	/**
@@ -1527,7 +1579,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 			}, opts);
 		};
 
-		if (this.componentStatus === statuses[statuses.unloaded]) {
+		if (this.componentStatus === 'unloaded') {
 			const
 				{hooks} = this.meta;
 
@@ -2057,6 +2109,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 		}
 
 		this.block = new Block(this);
+		this.localEvent.emit('block.ready');
 	}
 
 	/**
@@ -2141,14 +2194,13 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 			return;
 		}
 
-		const {block: $b} = this;
-		$b.status = $b.statuses.loading;
+		this.componentStatus = 'loading';
 
 		if (this.needReInit) {
 			await this.initLoad();
 
 		} else {
-			$b.status = $b.statuses.ready;
+			this.componentStatus = 'ready';
 		}
 
 		this.isActivated = true;
@@ -2171,7 +2223,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 			.terminateWorker()
 			.cancelProxy();
 
-		this.block.status = this.block.statuses.inactive;
+		this.componentStatus = 'inactive';
 		this.isActivated = false;
 	}
 
@@ -2179,7 +2231,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 * Component before destroy
 	 */
 	protected beforeDestroy(): void {
-		this.componentStatus = statuses[statuses.destroyed];
+		this.componentStatus = 'destroyed';
 		this.async.clearAll();
 		this.localEvent.removeAllListeners();
 
