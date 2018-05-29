@@ -129,7 +129,10 @@ export default class iDynamicPage<T extends Dictionary = Dictionary> extends iDa
 				stateFields = this.convertStateToRouter();
 
 			if (p && p.query) {
-				this.setState(Object.select(p.query, Object.keys(stateFields)), state);
+				this.setState(Object.select(this.convertStateToRouter(p.query), Object.keys(stateFields)), state);
+
+			} else {
+				this.setState(stateFields);
 			}
 
 			const sync = () => {

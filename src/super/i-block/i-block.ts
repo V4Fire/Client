@@ -1494,7 +1494,10 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 					stateFields = this.convertStateToStore();
 
 				if (data) {
-					this.setState(Object.select(data, Object.keys(stateFields)), state);
+					this.setState(Object.select(this.convertStateToStore(data), Object.keys(stateFields)), state);
+
+				} else {
+					this.setState(stateFields, state);
 				}
 
 				const sync = () => {
