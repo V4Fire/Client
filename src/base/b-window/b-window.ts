@@ -135,8 +135,8 @@ export default class bWindow<T extends Dictionary = Dictionary> extends iData<T>
 	}
 
 	/** @override */
-	protected async mounted(): Promise<void> {
-		await super.mounted();
+	protected mounted(): void {
+		super.mounted();
 		document.body.insertAdjacentElement('beforeend', this.$el);
 	}
 

@@ -405,7 +405,7 @@ export default class bList<T extends Dictionary = Dictionary> extends iData<T> {
 
 	/** @override */
 	protected async mounted(): Promise<void> {
-		await super.mounted();
+		super.mounted();
 		this.async.on(this.$el, 'click', await this.delegateElement('link', this.onActive), {
 			label: $$.activation
 		});

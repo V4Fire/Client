@@ -651,7 +651,7 @@ export default class bSelect<T extends Dictionary = Dictionary> extends bInput<T
 
 	/** @override */
 	protected async mounted(): Promise<void> {
-		await super.mounted();
+		super.mounted();
 
 		const fn = await this.delegateElement('option', async (e) => {
 			await this.onOptionSelected(e.delegateTarget.dataset.value);

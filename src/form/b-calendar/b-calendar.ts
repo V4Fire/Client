@@ -510,7 +510,7 @@ export default class bCalendar<T extends Dictionary = Dictionary> extends iInput
 
 	/** @override */
 	protected async mounted(): Promise<void> {
-		await super.mounted();
+		super.mounted();
 		this.async.on(this.$el, 'click', await this.delegateElement('day', this.onDaySelect), {
 			label: $$.daySelection
 		});

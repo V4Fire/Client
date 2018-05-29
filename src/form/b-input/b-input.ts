@@ -952,8 +952,8 @@ export default class bInput<T extends Dictionary = Dictionary> extends iInput<T>
 	}
 
 	/** @override */
-	protected async mounted(): Promise<void> {
-		await super.mounted();
+	protected mounted(): void {
+		super.mounted();
 		this.async.on(this.$el, 'input', (e) => this.valueBufferStore = e.target.value || '', {
 			label: $$.valueBufferStoreModelInput
 		});

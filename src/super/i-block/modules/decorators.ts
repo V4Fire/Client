@@ -252,8 +252,10 @@ export function wait<T = any>(status: number | string | WaitOpts, params?: WaitO
 			res,
 			init;
 
-		if (status > 0 && componentStatus < 0) {
-			return;
+		if (componentStatus < 0 && status > componentStatus) {
+			throw Object.assign(new Error('Component status watcher abort'), {
+				type: 'abort'
+			});
 		}
 
 		if (componentStatus >= status) {

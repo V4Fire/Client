@@ -200,7 +200,7 @@ export default class bTextarea<T extends Dictionary = Dictionary> extends bInput
 
 	/** @override */
 	protected async mounted(): Promise<void> {
-		await super.mounted();
+		super.mounted();
 		await this.putInStream(async () => {
 			this.minHeight = this.$refs.input.clientHeight;
 			await this.calcHeight();

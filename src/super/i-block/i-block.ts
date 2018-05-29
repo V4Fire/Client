@@ -2226,7 +2226,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	/**
 	 * Component mounted to DOM
 	 */
-	protected async mounted(): Promise<void> {
+	protected mounted(): void {
 		return undefined;
 	}
 

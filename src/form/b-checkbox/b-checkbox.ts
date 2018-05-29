@@ -113,8 +113,8 @@ export default class bCheckbox<T extends Dictionary = Dictionary> extends iInput
 	}
 
 	/** @override */
-	protected async mounted(): Promise<void> {
-		await super.mounted();
+	protected mounted(): void {
+		super.mounted();
 
 		const
 			{block: $b} = this;
