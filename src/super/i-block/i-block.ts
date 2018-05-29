@@ -434,6 +434,13 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	}
 
 	/**
+	 * Number of beforeReady event listeners
+	 * @type {number}
+	 */
+	@system({unique: true})
+	protected beforeReadyListeners: number = 0;
+
+	/**
 	 * Component initialize status store
 	 */
 	@system({unique: true})
@@ -765,12 +772,12 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 * Loads component data
 	 * @emits initLoad(data?: Object)
 	 */
-	@hook('beforeCreate')
-	async initLoad(data?: any | ((this: this) => any)): Promise<void> {
+	initLoad(data?: any | ((this: this) => any)): CanPromise<void> {
 		this.componentStatus = 'loading';
 
-		const {$children: $c, async: $a} = this;
-		await this.loadLocalStore();
+		const
+			{$children: $c, async: $a} = this,
+			providers = new Set();
 
 		if ($c) {
 			const
@@ -784,24 +791,43 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 					providers.add(el);
 				}
 			}
-
-			if (providers.size) {
-				await $a.wait(() => $C(providers).every((el) => {
-					if (el.componentStatus === 'ready') {
-						providers.delete(el);
-						return true;
-					}
-
-					return false;
-				}));
-			}
 		}
 
-		this.componentStatus = 'beforeReady';
-		this.execCbAfterBlockReady(() => {
-			this.componentStatus = 'ready';
-			this.emit('initLoad', Object.isFunction(data) ? data.call(this) : data);
-		});
+		const done = () => {
+			this.componentStatus = 'beforeReady';
+			this.execCbAfterBlockReady(async () => {
+				if (this.beforeReadyListeners) {
+					await this.nextTick();
+					this.beforeReadyListeners = 0;
+				}
+
+				this.componentStatus = 'ready';
+				this.emit('initLoad', Object.isFunction(data) ? data.call(this) : data);
+			});
+		};
+
+		if (this.globalName || providers.size) {
+			const init = async () => {
+				await this.loadLocalStore();
+
+				if (providers.size) {
+					await $a.wait(() => $C(providers).every((el) => {
+						if (el.componentStatus === 'ready') {
+							providers.delete(el);
+							return true;
+						}
+
+						return false;
+					}));
+				}
+
+				done();
+			};
+
+			return $a.promise(init, {join: true, label: $$.initLoad}).catch(stderr);
+		}
+
+		done();
 	}
 
 	/**
@@ -1127,7 +1153,16 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 			return cb.call(this, this.$$data);
 		}
 
+		this.beforeReadyListeners++;
 		return this.waitStatus('beforeReady', cb, params);
+	}
+
+	/**
+	 * Initializes the component
+	 */
+	@hook('beforeDataCreate')
+	protected initComponent(): void {
+		this.initLoad();
 	}
 
 	/**
@@ -1684,9 +1719,11 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 		this.loadLocalStore = i.loadLocalStore.bind(this);
 		this.setState = i.setState.bind(this);
 
-		Object.defineProperty(this, 'refs', {
-			// tslint:disable-next-line
-			get: i['refsGetter']
+		Object.defineProperties(this, {
+			refs: {
+				// tslint:disable-next-line
+				get: i['refsGetter']
+			}
 		});
 
 		const

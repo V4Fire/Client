@@ -237,7 +237,8 @@ export function wait<T = any>(status: number | string | WaitOpts, params?: WaitO
 	function wrapper(this: iBlockDecorator): CanPromise<T> | undefined {
 		const
 			args = arguments,
-			componentStatus = statuses[this.componentStatus];
+			// @ts-ignore
+			componentStatus = statuses[this.componentStatusStore];
 
 		if (join === undefined) {
 			join = handler.length ? 'replace' : true;

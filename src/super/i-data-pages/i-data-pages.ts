@@ -115,8 +115,10 @@ export default class iDataPages<T extends Dictionary = Dictionary> extends iData
 
 		if (res && res.data.length) {
 			this.async.requestIdleCallback(() => {
-				const data = res.data;
 				this.pageLoaded[page] = true;
+
+				const
+					data = res.data;
 
 				for (let i = 0; i < data.length; i++) {
 					db.data.push(this.convertRemoteChunk(data[i]));

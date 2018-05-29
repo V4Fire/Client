@@ -562,23 +562,21 @@ export default class bSelect<T extends Dictionary = Dictionary> extends bInput<T
 			});
 		});
 
-		this.waitStatus('ready', () => {
-			$e.on('block.mod.set.opened.false', () => {
-				if (openedSelect === this) {
-					openedSelect = null;
-				}
+		$e.on('block.mod.set.opened.false', () => {
+			if (openedSelect === this) {
+				openedSelect = null;
+			}
 
-				$a.off({group: 'global'});
-				if (this.mods.focused !== 'true') {
-					$a.off({group: 'navigation'});
-				}
-			});
+			$a.off({group: 'global'});
+			if (this.mods.focused !== 'true') {
+				$a.off({group: 'navigation'});
+			}
+		});
 
-			$e.on('block.mod.set.focused.false', async () => {
-				if (this.mods.opened !== 'true') {
-					$a.off({group: 'navigation'});
-				}
-			});
+		$e.on('block.mod.set.focused.false', () => {
+			if (this.mods.opened !== 'true') {
+				$a.off({group: 'navigation'});
+			}
 		});
 	}
 
