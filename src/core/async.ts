@@ -57,14 +57,17 @@ export default class Async<CTX extends object = Async<any>> extends Super<CTX> {
 
 	// tslint:disable-next-line
 	requestAnimationFrame(fn, p) {
+		const
+			isObj = Object.isObject(p);
+
 		return this.setAsync({
-			...Object.isObject(p) ? p : undefined,
+			...isObj ? p : undefined,
 			name: 'animationFrame',
 			obj: fn,
 			clearFn: cancelAnimationFrame,
 			wrapper: requestAnimationFrame,
 			linkByWrapper: true,
-			args: p && (this.getIfNotObject(p) || p.element)
+			args: isObj ? p.element : p
 		});
 	}
 
@@ -84,15 +87,7 @@ export default class Async<CTX extends object = Async<any>> extends Super<CTX> {
 
 	// tslint:disable-next-line
 	cancelAnimationFrame(p) {
-		if (p === undefined) {
-			return this.clearAllAsync({name: 'animationFrame'});
-		}
-
-		return this.clearAsync({
-			...p,
-			name: 'animationFrame',
-			id: p.id || this.getIfNotObject(p)
-		});
+		return this.clearAsync(p, 'animationFrame');
 	}
 
 	/**
@@ -112,10 +107,13 @@ export default class Async<CTX extends object = Async<any>> extends Super<CTX> {
 
 	// tslint:disable-next-line
 	animationFrame(p) {
+		const
+			isObj = Object.isObject(p);
+
 		return new Promise((resolve, reject) => {
 			this.requestAnimationFrame(resolve, {
-				...Object.isObject(p) ? p : undefined,
-				element: p && (this.getIfNotObject(p) || p.element),
+				...isObj ? p : undefined,
+				element: isObj ? p.element : p,
 				onClear: this.onPromiseClear(resolve, reject)
 			});
 		});
