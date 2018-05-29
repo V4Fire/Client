@@ -36,19 +36,19 @@ export type FieldWatcher<
 	T extends iBlock = iBlockDecorator,
 	A = any,
 	B = A
-	> = BaseFieldWatcher<T, A, B>;
+> = BaseFieldWatcher<T, A, B>;
 
 export interface ComponentProp<
 	T extends iBlock = iBlockDecorator,
 	A = any,
 	B = A
-	> extends BaseComponentProp<T, A, B> {}
+> extends BaseComponentProp<T, A, B> {}
 
 export interface ComponentField<
 	T extends iBlock = iBlockDecorator,
 	A = any,
 	B = A
-	> extends BaseComponentField<T, A, B> {}
+> extends BaseComponentField<T, A, B> {}
 
 /**
  * @see core/component/decorators/base.ts
