@@ -75,14 +75,19 @@ export default function createRouter(ctx: bRouter): Router {
 	const router = Object.mixin({withAccessors: true}, Object.create(new EventEmitter()), {
 		get page(): CurrentPage {
 			return {
-				page: this.id(location.href),
 				query: Object.fromQueryString(location.search, {deep: true}),
-				...history.state
+				...history.state,
+				page: this.id(location.href)
 			};
 		},
 
 		id(page: string): string {
-			return new URL(page).pathname;
+			try {
+				return new URL(page).pathname;
+
+			} catch (_) {
+				return page;
+			}
 		},
 
 		push(page: string, info?: PageInfo): Promise<void> {

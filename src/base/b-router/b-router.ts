@@ -195,16 +195,18 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 				query: {}
 			});
 
-			if (obj.pattern) {
+			if (!p[page] && obj.pattern) {
 				const
 					params = obj.rgxp.exec(page);
 
-				$C(path.parse(obj.pattern) as any[]).reduce((map, el: Key, i) => {
-					if (Object.isObject(el)) {
-						// @ts-ignore
-						t.params[el.name] = params[i];
-					}
-				});
+				if (params) {
+					$C(path.parse(obj.pattern) as any[]).reduce((map, el: Key, i) => {
+						if (Object.isObject(el)) {
+							// @ts-ignore
+							t.params[el.name] = params[i];
+						}
+					});
+				}
 			}
 
 			return t;
@@ -217,7 +219,7 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 	@hook('beforeDataCreate')
 	protected async initComponentValues(): Promise<void> {
 		const
-			page = this.pageProp || this.driver.page;
+			page = this.pageProp;
 
 		if (page) {
 			if (Object.isString(page)) {
@@ -226,6 +228,9 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 			} else {
 				await this.replace(page.page, page);
 			}
+
+		} else {
+			await this.replace(null);
 		}
 	}
 
@@ -246,11 +251,15 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 			c = d.page;
 
 		const
-			info = page ? this.getPageOpts(d.id(page)) : Object.mixin(true, this.getPageOpts(c.page), c);
+			info = page ? this.getPageOpts(d.id(page)) : Object.mixin(true, this.getPageOpts(c.page), Object.reject(c, 'page'));
 
 		if (!info) {
 			await d[method](page);
 			return;
+		}
+
+		if (!info.page && c.page) {
+			info.page = c.page;
 		}
 
 		Object.mixin(true, info, params);
@@ -267,14 +276,14 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 
 		const
 			current = this.getField('pageStore'),
-			f = (v) => $C(v).filter((el) => Object.isFunction(el)).object(true).map();
+			f = (v) => $C(v).filter((el) => !Object.isFunction(el)).object(true).map();
 
 		if (!Object.fastCompare(f(current), f(store))) {
 			this.setField('pageStore', store);
 			await d[method](info.toPath(params && params.params), info);
 
 			const
-				f = (v) => $C(v).map();
+				f = (v) => $C(v).filter((el) => !Object.isFunction(el)).map();
 
 			if (Object.fastCompare(f(current), f(store))) {
 				const
