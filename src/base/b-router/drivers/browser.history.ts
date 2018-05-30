@@ -112,7 +112,7 @@ export default function createRouter(ctx: bRouter): Router {
 	});
 
 	$a.on(window, 'popstate', async () => {
-		ctx.$root.emit('transition', await ctx.replace(location.href, history.state));
+		await ctx.replace(location.href, history.state);
 	});
 
 	return router;

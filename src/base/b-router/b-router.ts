@@ -262,7 +262,7 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 			info.page = c.page;
 		}
 
-		Object.mixin(true, info, params);
+		Object.mixin(true, info, params && Object.reject(params, 'page'));
 
 		const nonWatchValues = {
 			query: info.query,
@@ -287,17 +287,17 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 
 			if (Object.fastCompare(f(current), f(store))) {
 				const
-					proto = Object.getPrototypeOf(store);
+					proto = Object.getPrototypeOf(this.r.pageInfo);
 
 				$C(nonWatchValues).forEach((el, key) => {
 					proto[key] = el;
 				});
 
 			} else {
-				this.$root.pageInfo = store;
+				this.r.pageInfo = store;
 			}
 
-			this.$root.emit('transition', store);
+			this.r.emit('transition', store);
 		}
 
 		return store;
@@ -360,7 +360,7 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 	/** @override */
 	protected created(): void {
 		super.created();
-		this.$root.router = this;
+		this.r.router = this;
 		this.async.on(document, 'click', delegate('[href]', this.onLink));
 	}
 }
