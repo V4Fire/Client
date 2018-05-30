@@ -148,7 +148,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 * Component initialize status
 	 */
 	get componentStatus(): string {
-		return this.componentStatusStore;
+		return this.getField('componentStatusStore');
 	}
 
 	/**
@@ -156,11 +156,11 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 * @param value
 	 */
 	set componentStatus(value: string) {
-		if (this.componentStatusStore === value) {
+		if (this.componentStatus === value) {
 			return;
 		}
 
-		this.componentStatusStore = value;
+		this.setField('componentStatusStore', value);
 		this.localEvent.emit(`component.status.${value}`, value);
 		this.emit(`status-${value}`, value);
 	}
@@ -926,6 +926,39 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	}
 
 	/**
+	 * Activates the component
+	 * @emits activated()
+	 */
+	@hook(['beforeDataCreate', 'activated'])
+	activate(): void {
+		if (Object.keys(this.convertStateToRouter()).length) {
+			this.initStateFromRouter();
+			this.execCbAfterCreated(() => {
+				this.async.on(this.$root, 'transition', this.initStateFromRouter, {
+					label: $$.activate,
+					group: 'routerStateWatchers'
+				});
+			});
+		}
+
+		this.emit('activated');
+	}
+
+	/**
+	 * Deactivates the component
+	 * @emits deactivated()
+	 */
+	@hook('deactivated')
+	deactivate(): void {
+		this.async
+			.off({group: 'routerStateWatchers'})
+			.off({group: 'routerWatchers'});
+
+		$C(this.convertStateToRouter()).forEach((el, key) => this[key] = undefined);
+		this.emit('deactivated');
+	}
+
+	/**
 	 * Disables the component
 	 * @emits disable()
 	 */
@@ -1532,6 +1565,110 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	}
 
 	/**
+	 * Returns an object with default component fields for hash
+	 * @param [obj]
+	 */
+	protected convertStateToRouter(obj?: Dictionary | undefined): Dictionary {
+		return {...obj};
+	}
+
+	/**
+	 * Saves the component state a router
+	 * @param obj - state object
+	 */
+	protected async saveStateToRouter(obj: Dictionary): Promise<boolean> {
+		obj = this.convertStateToRouter(obj);
+
+		$C(obj).forEach((el, key) => {
+			if (el) {
+				this[key] = el;
+			}
+		});
+
+		const
+			r = this.$root.router;
+
+		if (!this.isActivated || !r) {
+			return false;
+		}
+
+		await r.push(null, {
+			query: obj
+		});
+
+		return true;
+	}
+
+	/**
+	 * Resets the component router state
+	 */
+	protected async resetRouterState(): Promise<boolean> {
+		$C(this.convertStateToRouter()).forEach((el, key) => this[key] = undefined);
+
+		const
+			r = this.$root.router;
+
+		if (!this.isActivated || !r) {
+			return false;
+		}
+
+		await r.push(null);
+		return true;
+	}
+
+	/**
+	 * Initialized the component state from the location
+	 */
+	protected initStateFromRouter(): void {
+		const
+			{async: $a} = this,
+			routerWatchers = {group: 'routerWatchers'};
+
+		$a.clearAll(
+			routerWatchers
+		);
+
+		this.execCbAtTheRightTime(() => {
+			const
+				p = this.$root.pageInfo,
+				stateFields = this.convertStateToRouter();
+
+			if (p && p.query) {
+				this.setState(Object.select(this.convertStateToRouter(p.query), Object.keys(stateFields)));
+
+			} else {
+				this.setState(stateFields);
+			}
+
+			const sync = () => {
+				$a.setTimeout(this.saveStateToRouter, 0.2.second(), {
+					label: $$.syncRouter
+				});
+			};
+
+			$C(this.convertStateToRouter()).forEach((el, key) => {
+				const
+					p = key.split('.');
+
+				if (p[0] === 'mods') {
+					$a.on(this.localEvent, `block.mod.*.${p[0]}.*`, sync, routerWatchers);
+
+				} else {
+					this.execCbAfterCreated(() => {
+						const watcher = this.$watch(key, (val, oldVal) => {
+							if (!Object.fastCompare(val, oldVal)) {
+								sync();
+							}
+						});
+
+						$a.worker(watcher, routerWatchers);
+					});
+				}
+			});
+		});
+	}
+
+	/**
 	 * Wraps a handler for delegation of the specified element
 	 *
 	 * @param elName
@@ -1718,6 +1855,8 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 		this.deleteField = i.deleteField.bind(this);
 		this.convertStateToStore = i.convertStateToStore.bind(this);
 		this.loadLocalStore = i.loadLocalStore.bind(this);
+		this.convertStateToRouter = i.convertStateToRouter.bind(this);
+		this.initStateFromRouter = i.initStateFromRouter.bind(this);
 		this.setState = i.setState.bind(this);
 
 		Object.defineProperties(this, {

@@ -11,7 +11,7 @@ import bRouter from 'base/b-router/b-router';
 
 import { toQueryString } from 'core/url';
 import { EventEmitter2 as EventEmitter } from 'eventemitter2';
-import { Router, PageInfo } from 'base/b-router/drivers/interface';
+import { Router, PageInfo, CurrentPage } from 'base/b-router/drivers/interface';
 
 export const
 	$$ = symbolGenerator();
@@ -34,7 +34,7 @@ export default function createRouter(ctx: bRouter): Router {
 					return Object.fromQueryString(s, {deep: true});
 				};
 
-				info.query = Object.assign(parse(location.search), parse(page, true), info.query);
+				info.query = Object.assign(parse(page, true), info.query);
 				page = page.replace(qs, '');
 
 				const
@@ -72,9 +72,13 @@ export default function createRouter(ctx: bRouter): Router {
 		});
 	}
 
-	const router = Object.assign(Object.create(new EventEmitter()), {
-		get page(): string {
-			return location.href;
+	const router = Object.mixin({withAccessors: true}, Object.create(new EventEmitter()), {
+		get page(): CurrentPage {
+			return {
+				page: this.id(location.href),
+				query: Object.fromQueryString(location.search, {deep: true}),
+				...history.state
+			};
 		},
 
 		id(page: string): string {
@@ -103,7 +107,7 @@ export default function createRouter(ctx: bRouter): Router {
 	});
 
 	$a.on(window, 'popstate', async () => {
-		ctx.emit('transition', await ctx.replace(location.href, history.state));
+		ctx.$root.emit('transition', await ctx.replace(location.href, history.state));
 	});
 
 	return router;

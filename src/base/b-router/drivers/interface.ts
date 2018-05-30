@@ -20,12 +20,22 @@ export type PageInfo<
 	toPath(params?: Dictionary): string;
 };
 
+export type CurrentPage<
+	P extends Dictionary = Dictionary,
+	Q extends Dictionary = Dictionary,
+	M extends Dictionary = Dictionary
+> = Dictionary & {
+	page: string;
+	params?: P;
+	query?: Q;
+};
+
 export type PageSchema<M extends Dictionary = Dictionary> = string | M & {
 	path?: string;
 };
 
 export interface Router extends EventEmitter {
-	page: string;
+	page: CurrentPage;
 	routes: Dictionary<PageSchema>;
 	id(page: string): string;
 	push(page: string, info?: PageInfo): Promise<void>;

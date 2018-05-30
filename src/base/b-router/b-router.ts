@@ -16,17 +16,13 @@ import Async from 'core/async';
 import driver from 'base/b-router/drivers';
 import symbolGenerator from 'core/symbol';
 
-import { Router, PageSchema, PageInfo } from 'base/b-router/drivers/interface';
-import iData, { component, prop, field, system, hook } from 'super/i-data/i-data';
+import { Router, PageSchema, PageInfo, CurrentPage } from 'base/b-router/drivers/interface';
+import iData, { component, prop, system, hook } from 'super/i-data/i-data';
 
 export * from 'super/i-data/i-data';
 export * from 'base/b-router/drivers/interface';
 
-export type PageProp<T extends Dictionary = Dictionary> = string | {
-	page: string;
-	transition?: T;
-};
-
+export type PageProp<T extends Dictionary = Dictionary> = string | CurrentPage;
 export interface PageParams extends Dictionary {
 	params?: Dictionary;
 	query?: Dictionary;
@@ -95,7 +91,7 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 	/**
 	 * Page store
 	 */
-	@field()
+	@system()
 	protected pageStore?: PageInfo;
 
 	/**
@@ -125,7 +121,7 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 	 * Current page
 	 */
 	get page(): PageInfo | undefined {
-		return this.pageStore;
+		return this.getField('pageStore');
 	}
 
 	/**
@@ -133,10 +129,9 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 	 *
 	 * @param page
 	 * @param [params] - additional transition parameters
-	 * @param [state] - state object
 	 */
-	async push(page: string | null, params?: PageParams, state: Dictionary = this): Promise<void> {
-		await this.setPage(page, params, 'push', state);
+	async push(page: string | null, params?: PageParams): Promise<void> {
+		await this.setPage(page, params, 'push');
 	}
 
 	/**
@@ -144,10 +139,9 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 	 *
 	 * @param page
 	 * @param [params] - additional transition parameters
-	 * @param [state] - state object
 	 */
-	async replace(page: string | null, params?: PageParams, state: Dictionary = this): Promise<void> {
-		await this.setPage(page, params, 'replace', state);
+	async replace(page: string | null, params?: PageParams): Promise<void> {
+		await this.setPage(page, params, 'replace');
 	}
 
 	/**
@@ -227,10 +221,10 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 
 		if (page) {
 			if (Object.isString(page)) {
-				await this.replace(page, undefined);
+				await this.replace(page);
 
 			} else {
-				await this.replace(page.page, page.transition);
+				await this.replace(page.page, page);
 			}
 		}
 	}
@@ -241,35 +235,43 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 	 * @param page
 	 * @param [params] - additional page parameters
 	 * @param [method] - driver method
-	 * @param [state] - state object
 	 */
 	protected async setPage(
 		page: string | null,
 		params?: PageParams,
-		method: string = 'push',
-		state: Dictionary = this
+		method: string = 'push'
 	): Promise<PageInfo | undefined> {
-		const d = this.driver;
-		page = page || d.page;
+		const
+			d = this.driver,
+			c = d.page;
 
 		const
-			info = this.getPageOpts(d.id(page));
+			info = page ? this.getPageOpts(d.id(page)) : Object.mixin(true, this.getPageOpts(c.page), c);
 
 		if (!info) {
 			await d[method](page);
 			return;
 		}
 
-		const
-			t = <PageInfo>Object.mixin(true, info, params);
+		Object.mixin(true, info, params);
 
-		if (!Object.fastCompare(state.pageStore, t)) {
-			state.pageStore = t;
-			await d[method](t.toPath(params && params.params), t);
-			this.$root.pageInfo = t;
+		const nonWatchValues = {
+			query: info.query,
+			meta: info.meta
+		};
+
+		const store = Object.assign(
+			Object.create(nonWatchValues),
+			Object.reject(info, Object.keys(nonWatchValues))
+		);
+
+		if (!Object.fastCompare(this.getField('pageStore'), store)) {
+			this.setField('pageStore', store);
+			await d[method](info.toPath(params && params.params), info);
+			this.$root.pageInfo = store;
 		}
 
-		return t;
+		return store;
 	}
 
 	/**
