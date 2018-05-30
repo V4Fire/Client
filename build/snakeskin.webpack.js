@@ -408,7 +408,7 @@ function attachVIf(arr, op) {
 	return arr;
 }
 
-function bem2vue(block, attrs, rootTag, val) {
+function bem2vue(block, attrs = {}, rootTag, val) {
 	const
 		tmp = attrs[':class'] = attrs[':class'] || [];
 
