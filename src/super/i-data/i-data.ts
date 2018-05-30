@@ -592,7 +592,7 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 
 			const then = () => {
 				if (is(p.hideProgress)) {
-					this.setMod('progress', false);
+					this.execCbAtTheRightTime(() => this.setMod('progress', false));
 				}
 			};
 

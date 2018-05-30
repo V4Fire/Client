@@ -8,7 +8,7 @@
 
 import $C = require('collection.js');
 import symbolGenerator from 'core/symbol';
-import iDataPages, { field, prop, component } from 'super/i-data-pages/i-data-pages';
+import iDataPages, { field, prop, component, ModsDecl } from 'super/i-data-pages/i-data-pages';
 export * from 'super/i-data-pages/i-data-pages';
 
 export const
@@ -45,6 +45,14 @@ export default class bGrid<T extends Dictionary = Dictionary> extends iDataPages
 	 */
 	@prop(String)
 	readonly dateField: string = 'createdDate';
+
+	/** @inheritDoc */
+	static readonly mods: ModsDecl = {
+		loading: [
+			'true',
+			['false']
+		]
+	};
 
 	/** @override */
 	@field((o) => o.createWatchObject('get', [

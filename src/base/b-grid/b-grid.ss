@@ -78,7 +78,7 @@
 					- block thead
 
 				< tfoot
-					< tr v-if = !db || m.progress === 'true' && m.loading === 'true'
+					< tr v-if = !db || m.loading === 'true' && m.progress === 'true'
 						- block progress
 							< td.&__progress colspan = ${colCount}
 								< b-progress-icon v-once
