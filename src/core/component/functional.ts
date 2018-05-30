@@ -81,6 +81,7 @@ export function createFakeCtx(
 		$options: Object.assign(Object.create(p.$options), fakeCtx.$options),
 
 		$data: {},
+		$$data: fakeCtx,
 		$dataCache: {},
 		$props: renderCtx.props,
 		$attrs: renderCtx.data.attrs,
@@ -243,11 +244,11 @@ export function createFakeCtx(
 		];
 
 		for (let i = 0; i < list.length; i++) {
-			const data = i ? fakeCtx.$data : fakeCtx;
-			initDataObject(list[i], fakeCtx, instance, data);
-
 			if (i) {
-				fakeCtx.$$data = data;
+				const
+					data = fakeCtx.$$data = fakeCtx.$data;
+
+				initDataObject(list[i], fakeCtx, instance, data);
 				runHook('beforeDataCreate', meta, fakeCtx).catch(stderr);
 				fakeCtx.$$data = fakeCtx;
 
@@ -280,6 +281,7 @@ export function createFakeCtx(
 				}
 
 			} else {
+				initDataObject(list[i], fakeCtx, instance, fakeCtx);
 				runHook('beforeCreate', meta, fakeCtx).then(async () => {
 					if (methods.beforeCreate) {
 						await methods.beforeCreate.fn.call(fakeCtx);
