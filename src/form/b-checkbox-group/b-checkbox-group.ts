@@ -53,7 +53,7 @@ export default class bCheckboxGroup<T extends Dictionary = Dictionary> extends i
 	/**
 	 * Checkboxes store
 	 */
-	@field((o) => o.link('optionsProp', (val) => {
+	@field((o) => o.link((val) => {
 		const
 			ctx: bCheckboxGroup = <any>o;
 
@@ -117,7 +117,7 @@ export default class bCheckboxGroup<T extends Dictionary = Dictionary> extends i
 	};
 
 	/** @override */
-	@field((o) => o.link('valueProp', (val) => {
+	@field((o) => o.link((val) => {
 		const ctx: bCheckboxGroup = <any>o;
 		return ctx.multiple && Object.fromArray(val) || val;
 	}))

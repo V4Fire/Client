@@ -84,11 +84,11 @@ export default class bList<T extends Dictionary = Dictionary> extends iData<T> {
 	 */
 	@field({
 		watch: (o) => {
-			const ctx: bList = <bList><any>o;
+			const ctx: bList = <any>o;
 			ctx.initComponentValues();
 		},
 
-		init: (o) => o.link('valueProp', (val) => {
+		init: (o) => o.link((val) => {
 			const ctx: bList = <any>o;
 			return ctx.dataProvider ? ctx.value || [] : ctx.normalizeOptions(val);
 		})
@@ -122,7 +122,7 @@ export default class bList<T extends Dictionary = Dictionary> extends iData<T> {
 	 * @emits change(active: any)
 	 * @emits immediateChange(active: any)
 	 */
-	@system((o) => o.link('activeProp', (val) => {
+	@system((o) => o.link((val) => {
 		const
 			ctx: bList = <any>o,
 			beforeDataCreate = o.hook === 'beforeDataCreate';

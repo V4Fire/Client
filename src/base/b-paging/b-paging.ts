@@ -55,7 +55,7 @@ export default class bPaging extends iBlock {
 	/**
 	 * Current page field
 	 */
-	@field((o) => o.link('currentProp'))
+	@field((o) => o.link())
 	protected currentStore!: number;
 
 	/**

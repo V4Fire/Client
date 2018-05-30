@@ -43,7 +43,7 @@ export default class iDataPages<T extends Dictionary = Dictionary> extends iData
 	/**
 	 * Page number
 	 */
-	@field((o) => o.link('pageProp'))
+	@field((o) => o.link())
 	page!: number;
 
 	/** @private */

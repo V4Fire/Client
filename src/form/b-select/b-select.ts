@@ -83,7 +83,7 @@ export default class bSelect<T extends Dictionary = Dictionary> extends bInput<T
 	/**
 	 * Selected value store
 	 */
-	@field((o) => o.link('selectedProp', (val) => {
+	@field((o) => o.link((val) => {
 		val = (<any>o).initDefaultValue(val);
 		return val !== undefined ? String(val) : undefined;
 	}))
@@ -124,7 +124,7 @@ export default class bSelect<T extends Dictionary = Dictionary> extends bInput<T
 			ctx.initComponentValues().catch(stderr);
 		},
 
-		init: (o) => o.link('optionsProp', (val) => {
+		init: (o) => o.link((val) => {
 			const ctx: bSelect = <any>o;
 			return ctx.dataProvider ? ctx.optionsStore || [] : ctx.normalizeOptions(val);
 		})

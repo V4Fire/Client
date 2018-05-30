@@ -37,7 +37,7 @@ export default class bWindowForm<T extends Dictionary = Dictionary> extends bWin
 	/**
 	 * Requested id
 	 */
-	@field((o) => o.link('idProp'))
+	@field((o) => o.link())
 	id?: string;
 
 	/**

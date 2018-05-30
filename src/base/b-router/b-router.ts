@@ -52,7 +52,10 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 	 */
 	@prop({
 		type: [String, Object],
-		watch: (o) => (<any>o).initComponentValues()
+		watch: (o) => {
+			const ctx: bRouter = <any>o;
+			ctx.initComponentValues().catch(stderr);
+		}
 	})
 
 	readonly pageProp?: PageProp;
@@ -68,8 +71,11 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 	 */
 	@prop({
 		type: Function,
-		watch: (o) => (<any>o).initComponentValues(),
-		default: driver
+		default: driver,
+		watch: (o) => {
+			const ctx: bRouter = <any>o;
+			ctx.initComponentValues().catch(stderr);
+		}
 	})
 
 	readonly driverProp!: () => Router;
@@ -83,7 +89,7 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 	/**
 	 * Driver for remote router
 	 */
-	@system((o) => o.link('driverProp', (v) => v(o)))
+	@system((o) => o.link((v) => v(o)))
 	protected driver!: Router;
 
 	/**
@@ -97,7 +103,7 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 	 */
 	@system({
 		after: 'driver',
-		init: (o) => o.link('pagesProp', (v) =>
+		init: (o) => o.link((v) =>
 			$C(v || this.driver.routes).map((obj, page) => {
 				const
 					isStr = Object.isString(obj),

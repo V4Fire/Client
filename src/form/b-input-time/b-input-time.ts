@@ -97,7 +97,7 @@ export default class bInputTime<T extends Dictionary = Dictionary> extends bInpu
 	/** @override */
 	@field({
 		after: 'pointerStore',
-		init: (o, data) => o.link('valueProp', (val) => {
+		init: (o, data) => o.link((val) => {
 			const ctx: bInputTime = <any>o;
 			return ctx.getTimeFormat(ctx.getNPointer(val, 'pointerStore' in ctx ? ctx.pointerStore : data.pointerStore));
 		})
@@ -108,7 +108,7 @@ export default class bInputTime<T extends Dictionary = Dictionary> extends bInpu
 	/**
 	 * Time pointer store
 	 */
-	@field((o) => o.link('pointerProp', (val) => {
+	@field((o) => o.link((val) => {
 		const ctx: bInputTime = <any>o;
 		val = ctx.getNPointer(undefined, val, ctx.pointerStore);
 

@@ -203,8 +203,9 @@ export default class bInput<T extends Dictionary = Dictionary> extends iInput<T>
 	};
 
 	/** @override */
-	@field((o) => o.link('valueProp', (val) => {
-		val = (<any>o).initDefaultValue(val);
+	@field((o) => o.link((val) => {
+		const ctx: bInput = <any>o;
+		val = ctx.initDefaultValue(val);
 		return val !== undefined ? String(val) : '';
 	}))
 

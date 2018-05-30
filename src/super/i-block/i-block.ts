@@ -180,7 +180,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	/**
 	 * Component stage
 	 */
-	@field((o) => o.link('stageProp'))
+	@field((o) => o.link())
 	stage?: string;
 
 	/**
@@ -302,7 +302,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 				}
 			}
 
-			return o.link('modsProp', (val) => {
+			return o.link((val) => {
 				const
 					declMods = o.meta.component.mods,
 					// tslint:disable-next-line:prefer-object-spread
@@ -1761,36 +1761,54 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 
 	/**
 	 * Sets a link for the specified field
-	 *
-	 * @param field
-	 * @param [watchParams]
+	 * @param [watchParamsOrWrapper]
 	 */
-	protected link(field: string, watchParams?: WatchOptions): any;
+	protected link(watchParamsOrWrapper?: WatchOptions | LinkWrapper): any;
 
 	/**
-	 * @param field
+	 * Sets a link for the specified field
+	 *
+	 * @param watchParams
 	 * @param [wrapper]
 	 */
-	// tslint:disable-next-line:unified-signatures
-	protected link(field: string, wrapper?: LinkWrapper): any;
+	protected link(watchParams: WatchOptions, wrapper?: LinkWrapper): any;
 
 	/**
+	 * Sets a link for the specified field
+	 *
+	 * @param field
+	 * @param [watchParamsOrWrapper]
+	 */
+	protected link(field: string, watchParamsOrWrapper?: WatchOptions | LinkWrapper): any;
+
+	/**
+	 * Sets a link for the specified field
+	 *
 	 * @param field
 	 * @param watchParams
-	 * @param wrapper
+	 * @param [wrapper]
 	 */
-	// tslint:disable-next-line:unified-signatures
-	protected link(field: string, watchParams: WatchOptions, wrapper: LinkWrapper): any;
-	protected link(field: string, watchParams?: WatchOptions | LinkWrapper, wrapper?: LinkWrapper): any {
+	protected link(field: string, watchParams: WatchOptions, wrapper?: LinkWrapper): any;
+
+	protected link(
+		field?: string | WatchOptions | LinkWrapper,
+		watchParams?: WatchOptions | LinkWrapper,
+		wrapper?: LinkWrapper
+	): any {
+		const
+			path = this.$activeField,
+			cache = this.syncLinkCache;
+
+		if (!field || !Object.isString(field)) {
+			wrapper = <LinkWrapper>watchParams;
+			watchParams = <WatchOptions>field;
+			field = `${path.replace(/Store$/, '')}Prop`;
+		}
+
 		if (watchParams && Object.isFunction(watchParams)) {
 			wrapper = watchParams;
 			watchParams = undefined;
 		}
-
-		const
-			path = this.$activeField,
-			isSystem = this.meta.systemFields[path.split('.')[0]],
-			cache = this.syncLinkCache;
 
 		if (!(path in this.linksCache)) {
 			this.linksCache[path] = {};
@@ -1801,15 +1819,12 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 			}, <WatchOptions>watchParams);
 
 			const sync = (val?) => {
-				val = val || this.getField(field);
+				val = val || this.getField(<string>field);
 
 				const
 					res = wrapper ? wrapper.call(this, val) : val;
 
-				if (isSystem || !{beforeCreate: true, beforeDataCreate: true}[this.hook]) {
-					this.setField(path, res);
-				}
-
+				this.setField(path, res);
 				return res;
 			};
 
@@ -2335,12 +2350,10 @@ export abstract class iBlockDecorator extends iBlock {
 	public readonly block!: Block;
 	public readonly localEvent!: EventEmitter;
 
-	// tslint:disable-next-line:unified-signatures
-	public abstract link(field: string, watchParams?: WatchOptions): any;
-	// tslint:disable-next-line:unified-signatures
-	public abstract link(field: string, wrapper?: LinkWrapper): any;
-	// tslint:disable-next-line:unified-signatures
-	public abstract link(field: string, watchParams?: WatchOptions, wrapper?: LinkWrapper): any;
+	public abstract link(watchParamsOrWrapper?: WatchOptions | LinkWrapper): any;
+	public abstract link(watchParams: WatchOptions, wrapper?: LinkWrapper): any;
+	public abstract link(field: string, watchParamsOrWrapper?: WatchOptions | LinkWrapper): any;
+	public abstract link(field: string, watchParams: WatchOptions, wrapper?: LinkWrapper): any;
 
 	public abstract createWatchObject(
 		path: string,
