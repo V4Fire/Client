@@ -265,10 +265,30 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 			Object.reject(info, Object.keys(nonWatchValues))
 		);
 
-		if (!Object.fastCompare(this.getField('pageStore'), store)) {
+		const
+			current = this.getField('pageStore'),
+			f = (v) => $C(v).filter((el) => Object.isFunction(el)).object(true).map();
+
+		if (!Object.fastCompare(f(current), f(store))) {
 			this.setField('pageStore', store);
 			await d[method](info.toPath(params && params.params), info);
-			this.$root.pageInfo = store;
+
+			const
+				f = (v) => $C(v).map();
+
+			if (Object.fastCompare(f(current), f(store))) {
+				const
+					proto = Object.getPrototypeOf(store);
+
+				$C(nonWatchValues).forEach((el, key) => {
+					proto[key] = el;
+				});
+
+			} else {
+				this.$root.pageInfo = store;
+			}
+
+			this.$root.emit('transition', store);
 		}
 
 		return store;
