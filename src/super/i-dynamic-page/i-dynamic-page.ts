@@ -28,12 +28,10 @@ export default class iDynamicPage<T extends Dictionary = Dictionary> extends iDa
 
 	/**
 	 * Activates the page
-	 * @param [state] - state object
 	 */
-	@hook('beforeDataCreate')
-	@hook('activated')
-	activate(state: Dictionary = this): void {
-		this.initStateFromRouter(state);
+	@hook(['beforeDataCreate', 'activated'])
+	activate(): void {
+		this.initStateFromRouter();
 		this.execCbAfterCreated(() => {
 			const watcher = this.$watch('$root.pageInfo', () => {
 				this.initStateFromRouter();
@@ -112,9 +110,8 @@ export default class iDynamicPage<T extends Dictionary = Dictionary> extends iDa
 
 	/**
 	 * Initialized the component state from the location
-	 * @param [state] - state object
 	 */
-	protected initStateFromRouter(state: Dictionary = this): void {
+	protected initStateFromRouter(): void {
 		const
 			{async: $a} = this,
 			routerWatchers = {group: 'routerWatchers'};
@@ -123,16 +120,16 @@ export default class iDynamicPage<T extends Dictionary = Dictionary> extends iDa
 			routerWatchers
 		);
 
-		const init = () => {
+		this.execCbAtTheRightTime(() => () => {
 			const
 				p = this.$root.pageInfo,
 				stateFields = this.convertStateToRouter();
 
 			if (p && p.query) {
-				this.setState(Object.select(this.convertStateToRouter(p.query), Object.keys(stateFields)), state);
+				this.setState(Object.select(this.convertStateToRouter(p.query), Object.keys(stateFields)));
 
 			} else {
-				this.setState(stateFields, state);
+				this.setState(stateFields);
 			}
 
 			const sync = () => {
@@ -160,19 +157,7 @@ export default class iDynamicPage<T extends Dictionary = Dictionary> extends iDa
 					});
 				}
 			});
-		};
-
-		if (this.hook === 'beforeDataCreate') {
-			init();
-
-		} else {
-			const
-				done = this.waitStatus('beforeReady', init);
-
-			if (Then.isThenable(done)) {
-				done.catch(stderr);
-			}
-		}
+		});
 	}
 
 	/** @override */

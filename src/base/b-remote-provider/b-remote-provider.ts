@@ -50,7 +50,7 @@ export default class bRemoteProvider<T extends Dictionary = Dictionary> extends 
 			return;
 		}
 
-		p.execCbAtTheRightTime((state = p) => {
+		p.execCbAtTheRightTime(() => {
 			const
 				f = this.field;
 
@@ -62,7 +62,7 @@ export default class bRemoteProvider<T extends Dictionary = Dictionary> extends 
 					c.call(p, value);
 
 				} else {
-					p.setField(f, value, state);
+					p.setField(f, value);
 				}
 			}
 

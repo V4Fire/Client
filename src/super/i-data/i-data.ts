@@ -203,8 +203,8 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 					const
 						db = await this.get(<RequestQuery>p[0], p[1]);
 
-					this.execCbAtTheRightTime((state = this) => {
-						state.db = this.convertDataToDB(db);
+					this.execCbAtTheRightTime(() => {
+						this.setField('db', this.convertDataToDB(db));
 
 					}, {
 						join: true,
@@ -216,8 +216,8 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 				}
 
 			} else {
-				this.execCbAtTheRightTime((state = this) => {
-					state.db = undefined;
+				this.execCbAtTheRightTime(() => {
+					this.setField('db', undefined);
 
 				}, {
 					join: true,

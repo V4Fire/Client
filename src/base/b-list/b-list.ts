@@ -349,15 +349,14 @@ export default class bList<T extends Dictionary = Dictionary> extends iData<T> {
 
 	/**
 	 * Initializes component values
-	 * @param [data] - data object
 	 */
 	@hook('beforeDataCreate')
-	protected initComponentValues(data: Dictionary = this): void {
+	protected initComponentValues(): void {
 		const
 			values = {},
 			indexes = {};
 
-		$C(data.value).forEach((el, i) => {
+		$C(this.$$data.value).forEach((el, i) => {
 			const
 				val = el.value;
 

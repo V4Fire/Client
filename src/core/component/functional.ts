@@ -248,8 +248,8 @@ export function createFakeCtx(
 
 			if (i) {
 				fakeCtx.$$data = data;
-				runHook('beforeDataCreate', meta, fakeCtx, data).catch(stderr);
-				delete fakeCtx.$$data;
+				runHook('beforeDataCreate', meta, fakeCtx).catch(stderr);
+				fakeCtx.$$data = fakeCtx;
 
 				if (meta.params.tiny) {
 					Object.assign(fakeCtx, data);

@@ -67,9 +67,9 @@ export function getComponent(
 
 			// @ts-ignore
 			this.$$data = data;
-			runHook('beforeDataCreate', ctx.meta, ctx, data).catch(stderr);
+			runHook('beforeDataCreate', ctx.meta, ctx).catch(stderr);
 			// @ts-ignore
-			delete this.$$data;
+			this.$$data = this;
 			return data;
 		},
 

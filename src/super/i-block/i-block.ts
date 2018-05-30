@@ -772,6 +772,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 * Loads component data
 	 * @emits initLoad(data?: Object)
 	 */
+	@hook('beforeDataCreate')
 	initLoad(data?: any | ((this: this) => any)): CanPromise<void> {
 		this.componentStatus = 'loading';
 
@@ -1003,12 +1004,13 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 * @param [obj]
 	 */
 	setField(path: string, value: any, obj: object = this): any {
-		let
-			ref = obj;
-
 		const
 			chunks = path.split('.'),
-			isSystem = this.meta.systemFields[chunks[0]];
+			isSelf = obj === this,
+			isField = isSelf && this.meta.fields[chunks[0]];
+
+		let
+			ref = isField && isSelf ? this.$$data : obj;
 
 		for (let i = 0; i < chunks.length; i++) {
 			const
@@ -1023,11 +1025,11 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 				const
 					val = isNaN(Number(chunks[i + 1])) ? {} : [];
 
-				if (isSystem) {
-					ref[prop] = val;
+				if (isField) {
+					this.$set(ref, prop, val);
 
 				} else {
-					this.$set(ref, prop, val);
+					ref[prop] = val;
 				}
 			}
 
@@ -1038,11 +1040,11 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 			ref[path] = value;
 
 		} else {
-			if (isSystem) {
-				ref[path] = value;
+			if (isField) {
+				this.$set(ref, path, value);
 
 			} else {
-				this.$set(ref, path, value);
+				ref[path] = value;
 			}
 		}
 
@@ -1056,13 +1058,15 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 * @param [obj]
 	 */
 	deleteField(path: string, obj: object = this): boolean {
-		let ref = obj;
-
 		const
 			chunks = path.split('.'),
-			isSystem = this.meta.systemFields[chunks[0]];
+			isSelf = obj === this,
+			isField = isSelf && this.meta.fields[chunks[0]];
 
-		let test = true;
+		let
+			test = true,
+			ref = isField && isSelf ? this.$$data : obj;
+
 		for (let i = 0; i < chunks.length; i++) {
 			const
 				prop = chunks[i];
@@ -1081,11 +1085,11 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 		}
 
 		if (test) {
-			if (isSystem) {
-				delete ref[path];
+			if (isField) {
+				this.$delete(ref, path);
 
 			} else {
-				this.$delete(ref, path);
+				delete ref[path];
 			}
 
 			return true;
@@ -1102,9 +1106,13 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 */
 	getField(path: string, obj: object = this): any {
 		const
-			chunks = path.split('.');
+			chunks = path.split('.'),
+			isSelf = obj === this,
+			isField = isSelf && this.meta.fields[chunks[0]];
 
-		let res = obj;
+		let
+			res = isField && isSelf ? this.$$data : obj;
+
 		for (let i = 0; i < chunks.length; i++) {
 			if (res == null) {
 				return undefined;
@@ -1118,11 +1126,9 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 
 	/**
 	 * Gets values from the specified object and saves it to the component state
-	 *
 	 * @param [obj]
-	 * @param [state] - state object
 	 */
-	setState(obj: Dictionary | undefined, state: Dictionary = this): void {
+	setState(obj: Dictionary | undefined): void {
 		$C(obj).forEach((el, key) => {
 			const
 				p = key.split('.');
@@ -1130,8 +1136,8 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 			if (p[0] === 'mods') {
 				this.setMod(p[0], p.slice(1).join('.'));
 
-			} else if (!Object.fastCompare(el, this.getField(key, state))) {
-				this.setField(key, el, state);
+			} else if (!Object.fastCompare(el, this.getField(key))) {
+				this.setField(key, el);
 			}
 		});
 	}
@@ -1142,27 +1148,19 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 * @param cb
 	 * @param [params] - additional parameters
 	 */
-	execCbAtTheRightTime<T>(cb: (this: this, data?: Dictionary) => T, params?: AsyncOpts): CanPromise<T> {
+	execCbAtTheRightTime<T>(cb: (this: this) => T, params?: AsyncOpts): CanPromise<T> {
 		if ({beforeRuntime: true, beforeCreate: true}[this.hook]) {
 			return <any>this.async.promise(new Promise((r) => {
-				this.meta.hooks.beforeDataCreate.unshift({fn: (d) => r(cb.call(this, d))});
+				this.meta.hooks.beforeDataCreate.unshift({fn: () => r(cb.call(this))});
 			}), params).catch(stderr);
 		}
 
 		if (this.hook === 'beforeDataCreate') {
-			return cb.call(this, this.$$data);
+			return cb.call(this);
 		}
 
 		this.beforeReadyListeners++;
 		return this.waitStatus('beforeReady', cb, params);
-	}
-
-	/**
-	 * Initializes the component
-	 */
-	@hook('beforeDataCreate')
-	protected initComponent(): void {
-		this.initLoad();
 	}
 
 	/**
@@ -1489,15 +1487,15 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 			const
 				data = await this.loadSettings('[[STORE]]');
 
-			this.execCbAtTheRightTime((state = this) => {
+			this.execCbAtTheRightTime(() => {
 				const
 					stateFields = this.convertStateToStore();
 
 				if (data) {
-					this.setState(Object.select(this.convertStateToStore(data), Object.keys(stateFields)), state);
+					this.setState(Object.select(this.convertStateToStore(data), Object.keys(stateFields)));
 
 				} else {
-					this.setState(stateFields, state);
+					this.setState(stateFields);
 				}
 
 				const sync = () => {
@@ -1621,8 +1619,8 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 				{hooks} = this.meta;
 
 			hooks.beforeDataCreate.push({
-				fn: (this.syncModCache[mod] = (data) => {
-					this.mods[mod] = String(fn(this.getField(field, data), this));
+				fn: (this.syncModCache[mod] = () => {
+					this.mods[mod] = String(fn(this.getField(field), this));
 				})
 			});
 
@@ -1824,8 +1822,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 			});
 
 			if ({beforeRuntime: true, beforeDataCreate: true}[this.hook]) {
-				// tslint:disable-next-line:no-unnecessary-callback-wrapper
-				this.meta.hooks.beforeDataCreate.unshift({fn: () => sync()});
+				this.meta.hooks.beforeDataCreate.unshift({fn: sync});
 				return;
 			}
 

@@ -274,15 +274,15 @@ export default class bSelect<T extends Dictionary = Dictionary> extends bInput<T
 
 	/**
 	 * Initializes component values
-	 * @param [state] - state object
 	 */
 	@hook('beforeDataCreate')
-	protected async initComponentValues(state: Dictionary = this): Promise<void> {
+	protected async initComponentValues(): Promise<void> {
 		const
+			data = this.$$data,
 			labels = {},
 			values = {};
 
-		$C(state.optionsStore).forEach((el) => {
+		$C(data.optionsStore).forEach((el) => {
 			const
 				val = el.value;
 
@@ -291,7 +291,7 @@ export default class bSelect<T extends Dictionary = Dictionary> extends bInput<T
 					this.syncLinks('valueProp', this.getOptionLabel(el));
 				}
 
-				state.selected = val;
+				data.selected = val;
 			}
 
 			values[val] = el;
@@ -302,7 +302,7 @@ export default class bSelect<T extends Dictionary = Dictionary> extends bInput<T
 		this.values = values;
 
 		const
-			{valueStore: value, selected} = state;
+			{valueStore: value, selected} = data;
 
 		if (selected === undefined) {
 			if (value) {
@@ -310,13 +310,13 @@ export default class bSelect<T extends Dictionary = Dictionary> extends bInput<T
 					option = labels[value];
 
 				if (option) {
-					state.selected = option.value;
+					data.selected = option.value;
 				}
 			}
 
 		} else if (!value) {
 			const val = values[selected];
-			state.valueStore = state.valueBufferStore = val ? this.getOptionLabel(val) : '';
+			data.valueStore = data.valueBufferStore = val ? this.getOptionLabel(val) : '';
 		}
 
 		const
