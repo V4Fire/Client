@@ -7,7 +7,7 @@
  */
 
 import symbolGenerator from 'core/symbol';
-import iData, { component, prop, field, system, hook, watch, p } from 'super/i-data/i-data';
+import iData, { component, prop, field, system, hook, p } from 'super/i-data/i-data';
 export * from 'super/i-data/i-data';
 
 export const
