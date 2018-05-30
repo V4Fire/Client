@@ -59,12 +59,6 @@ export default class iPage<
 	lastOnlineDate?: Date;
 
 	/**
-	 * Page router
-	 */
-	@system()
-	router?: bRouter;
-
-	/**
 	 * System language
 	 */
 	get lang(): string {
@@ -77,6 +71,12 @@ export default class iPage<
 	set lang(value: string) {
 		setLang(this.langStore = value);
 	}
+
+	/**
+	 * Root page router instance
+	 */
+	@system()
+	protected routerStore?: bRouter;
 
 	/**
 	 * System language store

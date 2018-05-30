@@ -247,10 +247,7 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 		method: string = 'push'
 	): Promise<PageInfo | undefined> {
 		const
-			d = this.driver,
-			c = d.page;
-
-		const
+			{$root: r, driver: d, driver: {page: c}} = this,
 			info = page ? this.getPageOpts(d.id(page)) : Object.mixin(true, this.getPageOpts(c.page), Object.reject(c, 'page'));
 
 		if (!info) {
@@ -287,17 +284,17 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 
 			if (Object.fastCompare(f(current), f(store))) {
 				const
-					proto = Object.getPrototypeOf(this.r.pageInfo);
+					proto = Object.getPrototypeOf(r.pageInfo);
 
 				$C(nonWatchValues).forEach((el, key) => {
 					proto[key] = el;
 				});
 
 			} else {
-				this.r.pageInfo = store;
+				r.pageInfo = store;
 			}
 
-			this.r.emit('transition', store);
+			r.emit('transition', store);
 		}
 
 		return store;
@@ -360,7 +357,8 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 	/** @override */
 	protected created(): void {
 		super.created();
-		this.r.router = this;
+		// @ts-ignore
+		this.$root.routerStore = this;
 		this.async.on(document, 'click', delegate('[href]', this.onLink));
 	}
 }

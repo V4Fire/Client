@@ -21,6 +21,7 @@ import { icons, iconsMap } from 'super/i-block/modules/icons';
 import symbolGenerator from 'core/symbol';
 
 import iPage from 'super/i-page/i-page';
+import bRouter from 'base/b-router/b-router';
 import { asyncLocal, AsyncNamespace } from 'core/kv-storage';
 import {
 
@@ -231,6 +232,13 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 */
 	get r(): iPage | any {
 		return this.$root;
+	}
+
+	/**
+	 * Link to the root router
+	 */
+	get router(): bRouter | any | undefined {
+		return this.$root.routerStore;
 	}
 
 	/**
