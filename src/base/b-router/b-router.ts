@@ -240,6 +240,7 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 	 * @param page
 	 * @param [params] - additional page parameters
 	 * @param [method] - driver method
+	 * @emits $root.transition(info: Object)
 	 */
 	protected async setPage(
 		page: string | null,
