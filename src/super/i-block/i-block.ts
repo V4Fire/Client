@@ -1789,7 +1789,6 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 * @param [wrapper]
 	 */
 	protected link(field: string, watchParams: WatchOptions, wrapper?: LinkWrapper): any;
-
 	protected link(
 		field?: string | WatchOptions | LinkWrapper,
 		watchParams?: WatchOptions | LinkWrapper,
