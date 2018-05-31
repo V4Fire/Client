@@ -36,7 +36,17 @@ queue.add = backQueue.add = function addToQueue<T>(): T {
 };
 
 let
-	renderStartTimer;
+	renderStartTimer,
+	loopTimer;
+
+/**
+ * Restarts render daemon
+ */
+export function restart(): void {
+	isStarted = false;
+	inProgress = false;
+	render();
+}
 
 /**
  * Render loop
@@ -67,7 +77,8 @@ function render(): void {
 		});
 
 		if (queue.size || backQueue.size) {
-			setTimeout(render, DELAY);
+			clearTimeout(loopTimer);
+			loopTimer = setTimeout(render, DELAY);
 
 		} else {
 			inProgress = false;
