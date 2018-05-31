@@ -157,7 +157,6 @@ function b(url) {
 const
 	isVueProp = /^(:|@|v-)/,
 	isLiteral = /^\s*[[{]/,
-	vForRgxp = /^\s*([\w$]+)(\s+(?:in|of)\s+.*)$/,
 	svgRequire = /require\(.*?\.svg[\\"']+\)/,
 	isRef = {'ref': true, ':ref': true};
 
