@@ -20,7 +20,8 @@ export const
 	add = queue.add;
 
 let
-	inProgress = false;
+	inProgress = false,
+	timer;
 
 queue.add = backQueue.add = function addToQueue<T>(): T {
 	const
@@ -38,34 +39,46 @@ queue.add = backQueue.add = function addToQueue<T>(): T {
  */
 let i = 0;
 function render(): void {
-	inProgress = true;
-
 	const
 		cursor = queue.size ? queue : backQueue,
 		componentsPerTick = 10,
 		switchI = Math.round(componentsPerTick / 2) + 1;
 
-	$C(cursor).forEach((el, i, data, o) => {
-		const
-			pos = o.i();
+	const exec = () => {
+		inProgress = true;
 
-		if (pos && pos % componentsPerTick === 0) {
-			return o.break;
+		$C(cursor).forEach((el, i, data, o) => {
+			const
+				pos = o.i();
+
+			if (pos && pos % componentsPerTick === 0) {
+				return o.break;
+			}
+
+			el();
+			cursor.delete(el);
+		}, {reverse: i % switchI === 0});
+
+		i++;
+		if (i === switchI) {
+			i = 0;
 		}
 
-		el();
-		cursor.delete(el);
-	}, {reverse: i % switchI === 0});
+		if (queue.size || backQueue.size) {
+			setTimeout(() => requestIdleCallback(render), DELAY);
 
-	i++;
-	if (i === switchI) {
-		i = 0;
-	}
+		} else {
+			setImmediate(() => {
+				inProgress = false;
+			});
+		}
+	};
 
-	if (queue.size || backQueue.size) {
-		setTimeout(() => requestIdleCallback(render), DELAY);
+	if (cursor.size >= componentsPerTick) {
+		exec();
 
 	} else {
-		inProgress = false;
+		clearImmediate(timer);
+		timer = setImmediate(exec);
 	}
 }
