@@ -41,7 +41,6 @@ export default class bRemoteProvider<T extends Dictionary = Dictionary> extends 
 	 * @param [value]
 	 * @emits change(db: T | undefined)
 	 */
-	@watch('db')
 	protected syncDBWatcher(value: T | undefined): void {
 		const
 			p = this.$parent;
