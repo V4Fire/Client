@@ -114,7 +114,7 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 	/**
 	 * Converter from .db to the component format
 	 */
-	@prop({type: Function, watch: 'initRemoteData', required: false})
+	@prop({type: Function, watch: 'initReminitRemoteDataoteData', required: false})
 	readonly componentConverter?: ComponentConverter;
 
 	/**
@@ -128,7 +128,19 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 	 * Sets new component data
 	 */
 	set db(value: T | undefined) {
+		const
+			{async: $a} = this;
+
+		$a.terminateWorker({
+			label: $$.db
+		});
+
 		this.dbStore = value;
+		this.initRemoteData();
+
+		$a.worker(this.$watch('dbStore', this.initRemoteData, {deep: true}), {
+			label: $$.db
+		});
 	}
 
 	/**
@@ -174,7 +186,7 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 	/**
 	 * Component data store
 	 */
-	@field({watch: {fn: 'initRemoteData', deep: true}})
+	@field()
 	protected dbStore?: T | undefined;
 
 	/**
@@ -204,7 +216,7 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 						db = await this.get(<RequestQuery>p[0], p[1]);
 
 					this.execCbAtTheRightTime(() => {
-						this.setField('db', this.convertDataToDB(db));
+						this.db = this.convertDataToDB(db);
 
 					}, {
 						join: true,

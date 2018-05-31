@@ -26,8 +26,8 @@ export default class bRemoteProvider<T extends Dictionary = Dictionary> extends 
 
 	/** @override */
 	set db(value: T | undefined) {
-		this.dbStore = value;
-		this.initRemoteData();
+		// tslint:disable-next-line:no-string-literal
+		super['dbSetter'](value);
 		this.syncDBWatcher(value);
 	}
 
