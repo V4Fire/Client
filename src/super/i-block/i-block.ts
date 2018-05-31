@@ -617,12 +617,6 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	protected asyncCounter: number = 0;
 
 	/**
-	 * Queue of async components
-	 */
-	@system()
-	protected readonly asyncQueue: Set<Function> = new Set();
-
-	/**
 	 * Cache of child async components
 	 */
 	@field({unique: true})
@@ -2202,6 +2196,9 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 			simpleId = (<AsyncTaskObjectId>id).id;
 		}
 
+		const
+			currentQueue = group === 'asyncComponents' ? queue : backQueue;
+
 		if (!this[group][simpleId]) {
 			this.asyncLoading = true;
 			const fn = this.async.proxy(() => {
@@ -2210,14 +2207,16 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 				}
 
 				this.asyncCounter++;
-				this.asyncQueue.delete(fn);
 				this.$set(this[group], simpleId, true);
 				return true;
 
-			}, {group});
+			}, {
+				onClear: () => currentQueue.delete(fn),
+				single: false,
+				group
+			});
 
-			this.asyncQueue.add(fn);
-			queue.add(fn);
+			currentQueue.add(fn);
 		}
 
 		return simpleId;
@@ -2508,12 +2507,6 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 		this.componentStatus = 'destroyed';
 		this.async.clearAll();
 		this.localEvent.removeAllListeners();
-
-		$C(this.asyncQueue).forEach((el) => {
-			queue.delete(el);
-			backQueue.delete(el);
-		});
-
 		delete classesCache.dict.els[this.componentId];
 	}
 
