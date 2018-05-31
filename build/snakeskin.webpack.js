@@ -203,14 +203,8 @@ function vueComp({name, attrs}) {
 		isSync = attrs['v-sync'];
 
 	const
-		isAsync = attrs['v-async'],
-		isAsyncBack = attrs['v-async-back'];
-
-	if (attrs['v-for']) {
-		if (vForRgxp.test(attrs['v-for'].join(' '))) {
-			attrs['v-for'] = [`(${RegExp.$1}, i)${RegExp.$2}`];
-		}
-	}
+		asyncVal = attrs['v-async'],
+		asyncBackVal = attrs['v-async-back'];
 
 	delete attrs['v-sync'];
 	delete attrs['v-async'];
@@ -313,7 +307,7 @@ function vueComp({name, attrs}) {
 				}
 			}
 
-			if (!isAsync && !isAsyncBack) {
+			if (!asyncVal && !asyncBackVal) {
 				isSync = true;
 			}
 		}
@@ -346,15 +340,18 @@ function vueComp({name, attrs}) {
 		}
 	}
 
-	if (!isSync && !attrs.ref && !attrs[':ref'] && (isAsync || isAsyncBack)) {
+	if (!isSync && !attrs.ref && !attrs[':ref'] && (asyncVal || asyncBackVal)) {
 		const
-			id = `'${Math.random()}' + i`,
-			p = isAsyncBack ? 'Back' : '',
+			selfId = asyncVal ? asyncVal[0] : asyncBackVal[0],
+			id = selfId !== true ? selfId : Math.random();
+
+		const
+			p = asyncBackVal ? 'Back' : '',
 			key = attrs['v-else'] ? 'v-else-if' : attrs['v-else-if'] ? 'v-else-if' : 'v-if';
 
 		attrs[key] = attachVIf(
 			(attrs[key] || []).concat(`async${p}Components[regAsync${p}Component(${id}, '${name}')]`),
-			isAsyncBack ? '||' : '&&'
+			asyncBackVal ? '||' : '&&'
 		);
 
 		delete attrs['v-else'];

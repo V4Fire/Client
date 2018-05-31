@@ -2167,16 +2167,40 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 
 	/**
 	 * Adds a component to the render queue
+	 *
 	 * @param id - task id
+	 * @param [group] - task group
 	 */
-	protected regAsyncComponent(id: string): string {
-		if (!this.asyncComponents[id]) {
+	protected regAsyncComponent(id: any, group: string = 'asyncComponents'): string {
+		let
+			filter;
+
+		if (Object.isFunction(id)) {
+			const
+				v = id();
+
+			if (Object.isObject(v)) {
+				id = v.id;
+				filter = v.filter;
+
+			} else {
+				id = v;
+			}
+		}
+
+		if (!this[group][id]) {
 			this.asyncLoading = true;
 			const fn = this.async.proxy(() => {
+				if (!filter || !filter(id)) {
+					return false;
+				}
+
 				this.asyncCounter++;
 				this.asyncQueue.delete(fn);
-				this.$set(this.asyncComponents, id, true);
-			}, {group: 'asyncComponents'});
+				this.$set(this[group], id, true);
+				return true;
+
+			}, {group});
 
 			this.asyncQueue.add(fn);
 			queue.add(fn);
@@ -2189,19 +2213,8 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 * Adds a component to the background render queue
 	 * @param id - task id
 	 */
-	protected regAsyncBackComponent(id: string): string {
-		if (!this.asyncBackComponents[id]) {
-			const fn = this.async.proxy(() => {
-				this.asyncCounter++;
-				this.asyncQueue.delete(fn);
-				this.$set(this.asyncBackComponents, id, true);
-			}, {group: 'asyncBackComponents'});
-
-			this.asyncQueue.add(fn);
-			backQueue.add(fn);
-		}
-
-		return id;
+	protected regAsyncBackComponent(id: any): string {
+		return this.regAsyncComponent(id, 'asyncBackComponents');
 	}
 
 	/**

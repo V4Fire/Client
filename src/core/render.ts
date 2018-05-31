@@ -47,16 +47,19 @@ function render(): void {
 	const exec = () => {
 		inProgress = true;
 
-		$C(cursor).forEach((el, i, data, o) => {
-			const
-				pos = o.i();
+		let
+			done = componentsPerTick;
 
-			if (pos && pos % componentsPerTick === 0) {
+		$C(cursor).forEach((fn, i, data, o) => {
+			if (!done) {
 				return o.break;
 			}
 
-			el();
-			cursor.delete(el);
+			if (fn()) {
+				done--;
+				cursor.delete(fn);
+			}
+
 		}, {reverse: i % switchI === 0});
 
 		i++;
