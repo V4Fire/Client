@@ -2232,9 +2232,11 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 
 	/**
 	 * Synchronization for the asyncCounter field
+	 *
 	 * @param value
+	 * @emits asyncRender()
 	 */
-	@watch({field: 'asyncCounter', immediate: true})
+	@watch('asyncCounter')
 	protected syncAsyncCounterWatcher(value: number): void {
 		const disableAsync = () => {
 			this.asyncLoading = false;
@@ -2244,9 +2246,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 			label: $$.asyncLoading
 		});
 
-		if (value && this.$parent && 'asyncCounter' in this.$parent) {
-			this.$parent.asyncCounter++;
-		}
+		this.emit('asyncRender');
 	}
 
 	/**

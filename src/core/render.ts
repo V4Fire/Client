@@ -8,9 +8,6 @@
 
 import $C = require('collection.js');
 
-export const
-	DELAY = 50;
-
 /**
  * Render queue
  */
@@ -63,12 +60,10 @@ function render(): void {
 		});
 
 		if (queue.size || backQueue.size) {
-			setTimeout(() => requestIdleCallback(render), DELAY);
+			requestIdleCallback(render);
 
 		} else {
-			setImmediate(() => {
-				inProgress = false;
-			});
+			setImmediate(() => inProgress = false);
 		}
 	};
 
