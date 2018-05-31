@@ -7,7 +7,7 @@
  */
 
 import Then from 'core/then';
-import iBlock, { statuses, iBlockDecorator } from 'super/i-block/i-block';
+import iBlock, { statuses, Statuses, iBlockDecorator } from 'super/i-block/i-block';
 import { AsyncOpts } from 'core/async';
 import { WatchOptions } from 'vue';
 import { initEvent, ModVal, InitFieldFn as BaseInitFieldFn } from 'core/component';
@@ -195,7 +195,7 @@ export interface WaitOpts extends AsyncOpts {
 }
 
 export function wait(params: WaitOpts): Function;
-export function wait(status: number | string, params?: WaitOpts | Function): Function;
+export function wait(status: number | Statuses, params?: WaitOpts | Function): Function;
 
 /**
  * Decorates a method or a function for using with the specified init status
@@ -207,7 +207,7 @@ export function wait(status: number | string, params?: WaitOpts | Function): Fun
  *   *) [params.fn] - callback function
  *   *) [params.defer] - if true, then the function will always return a promise
  */
-export function wait<T = any>(status: number | string | WaitOpts, params?: WaitOpts | Function): Function {
+export function wait<T = any>(status: number | Statuses | WaitOpts, params?: WaitOpts | Function): Function {
 	if (Object.isObject(status)) {
 		params = <WaitOpts>status;
 		status = 0;
@@ -238,7 +238,7 @@ export function wait<T = any>(status: number | string | WaitOpts, params?: WaitO
 		const
 			args = arguments,
 			// @ts-ignore
-			componentStatus = statuses[this.componentStatusStore];
+			componentStatus = statuses[this.getField('componentStatusStore')];
 
 		if (join === undefined) {
 			join = handler.length ? 'replace' : true;
@@ -252,7 +252,7 @@ export function wait<T = any>(status: number | string | WaitOpts, params?: WaitO
 			res,
 			init;
 
-		if (componentStatus < 0 && status > componentStatus) {
+		if (componentStatus !== undefined && componentStatus < 0 && status > componentStatus) {
 			throw Object.assign(new Error('Component status watcher abort'), {
 				type: 'abort'
 			});

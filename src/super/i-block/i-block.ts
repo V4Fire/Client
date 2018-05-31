@@ -90,6 +90,14 @@ export type SyncLinkCache = Dictionary<Dictionary<SyncLink>>;
 export type ModsTable = Dictionary<ModVal>;
 export type ModsNTable = Dictionary<string | undefined>;
 
+export type Statuses =
+	'destroyed' |
+	'inactive' |
+	'loading' |
+	'beforeReady' |
+	'ready' |
+	'unloaded';
+
 /**
  * Enum of available component statuses
  */
@@ -150,7 +158,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 * Component initialize status
 	 */
 	@p({cache: false})
-	get componentStatus(): string {
+	get componentStatus(): Statuses {
 		return this.getField('componentStatusStore');
 	}
 
@@ -158,7 +166,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 * Sets a new component initialize status
 	 * @param value
 	 */
-	set componentStatus(value: string) {
+	set componentStatus(value: Statuses) {
 		if (this.componentStatus === value) {
 			return;
 		}
@@ -461,7 +469,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 * Component initialize status store
 	 */
 	@system({unique: true})
-	protected componentStatusStore: string = statuses[statuses.unloaded];
+	protected componentStatusStore: Statuses = 'unloaded';
 
 	/**
 	 * Watched store of component modifiers
@@ -780,7 +788,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 * @param [params] - additional parameters:
 	 *   *) [params.defer] - if true, then the function will always return a promise
 	 */
-	waitStatus<T>(status: string, fn: (this: this) => T, params?: AsyncOpts & {defer?: boolean}): CanPromise<T> {
+	waitStatus<T>(status: Statuses, fn: (this: this) => T, params?: AsyncOpts & {defer?: boolean}): CanPromise<T> {
 		params = params || {};
 		params.join = false;
 		return wait(status, {fn, ...params}).call(this);
