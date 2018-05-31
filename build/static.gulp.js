@@ -10,7 +10,7 @@
 
 module.exports = function (gulp = require('gulp')) {
 	const
-		path = require('upath'),
+		path = require('path'),
 		config = require('config');
 
 	const

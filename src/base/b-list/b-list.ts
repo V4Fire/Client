@@ -7,7 +7,7 @@
  */
 
 import symbolGenerator from 'core/symbol';
-import iData, { component, prop, field, system, hook, watch, p } from 'super/i-data/i-data';
+import iData, { component, prop, field, system, hook, p } from 'super/i-data/i-data';
 export * from 'super/i-data/i-data';
 
 export const
@@ -82,10 +82,17 @@ export default class bList<T extends Dictionary = Dictionary> extends iData<T> {
 	/**
 	 * Component value
 	 */
-	@field((o) => o.link('valueProp', (val) => {
-		const ctx: bList = <any>o;
-		return ctx.dataProvider ? ctx.value || [] : ctx.normalizeOptions(val);
-	}))
+	@field({
+		watch: (o) => {
+			const ctx: bList = <any>o;
+			ctx.initComponentValues();
+		},
+
+		init: (o) => o.link((val) => {
+			const ctx: bList = <any>o;
+			return ctx.dataProvider ? ctx.value || [] : ctx.normalizeOptions(val);
+		})
+	})
 
 	value!: Option[];
 
@@ -115,7 +122,7 @@ export default class bList<T extends Dictionary = Dictionary> extends iData<T> {
 	 * @emits change(active: any)
 	 * @emits immediateChange(active: any)
 	 */
-	@system((o) => o.link('activeProp', (val) => {
+	@system((o) => o.link((val) => {
 		const
 			ctx: bList = <any>o,
 			beforeDataCreate = o.hook === 'beforeDataCreate';
@@ -342,15 +349,14 @@ export default class bList<T extends Dictionary = Dictionary> extends iData<T> {
 
 	/**
 	 * Initializes component values
-	 * @param [data] - data object
 	 */
 	@hook('beforeDataCreate')
-	protected initComponentValues(data: Dictionary = this): void {
+	protected initComponentValues(): void {
 		const
 			values = {},
 			indexes = {};
 
-		$C(data.value).forEach((el, i) => {
+		$C(this.$$data.value).forEach((el, i) => {
 			const
 				val = el.value;
 
@@ -364,14 +370,6 @@ export default class bList<T extends Dictionary = Dictionary> extends iData<T> {
 
 		this.values = values;
 		this.indexes = indexes;
-	}
-
-	/**
-	 * Synchronization for the value field
-	 */
-	@watch('value')
-	protected async syncValueWatcher(): Promise<void> {
-		await this.initComponentValues();
 	}
 
 	/** @override */
@@ -406,7 +404,7 @@ export default class bList<T extends Dictionary = Dictionary> extends iData<T> {
 
 	/** @override */
 	protected async mounted(): Promise<void> {
-		await super.mounted();
+		super.mounted();
 		this.async.on(this.$el, 'click', await this.delegateElement('link', this.onActive), {
 			label: $$.activation
 		});

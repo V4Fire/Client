@@ -10,33 +10,23 @@ import $C = require('collection.js');
 import path = require('path-to-regexp');
 
 import { Key } from 'path-to-regexp';
-import { EventEmitterLike } from 'core/async';
-
-import symbolGenerator from 'core/symbol';
-import iData, { component, prop, field, system, hook } from 'super/i-data/i-data';
 import { delegate } from 'core/dom';
+
+import Async from 'core/async';
+import driver from 'base/b-router/drivers';
+import symbolGenerator from 'core/symbol';
+
+import { Router, PageSchema, PageInfo, CurrentPage } from 'base/b-router/drivers/interface';
+import iData, { component, prop, system, hook } from 'super/i-data/i-data';
+
 export * from 'super/i-data/i-data';
+export * from 'base/b-router/drivers/interface';
 
-export type PageProp<T extends Dictionary = Dictionary> = string | {
-	page: string;
-	transition?: T;
-};
-
-export type PageSchema<M extends Dictionary = Dictionary> = string | M & {
-	path?: string;
-};
-
-export type PageInfo<M extends Dictionary = Dictionary> = Dictionary & {
-	page: string;
-	meta?: M;
-};
-
-export type TransitionPageInfo<
-	T extends Dictionary = Dictionary,
-	M extends Dictionary = Dictionary
-	> = PageInfo<M> & {
-	transition?: Dictionary;
-};
+export type PageProp<T extends Dictionary = Dictionary> = string | CurrentPage;
+export interface PageParams extends Dictionary {
+	params?: Dictionary;
+	query?: Dictionary;
+}
 
 export type Pages<M extends Dictionary = Dictionary> = Dictionary<{
 	page: string;
@@ -45,23 +35,23 @@ export type Pages<M extends Dictionary = Dictionary> = Dictionary<{
 	meta: M;
 }>;
 
-export interface RemoteRouter extends EventEmitterLike {
-	page: PageProp | undefined;
-	routes: Dictionary<PageSchema>;
-}
-
 export const
 	$$ = symbolGenerator();
 
 @component()
 export default class bRouter<T extends Dictionary = Dictionary> extends iData<T> {
+	/* @override */
+	public async!: Async<this>;
+
 	/**
 	 * Initial page
 	 */
 	@prop({
 		type: [String, Object],
-		watch: 'initComponentValues',
-		default: () => location.href
+		watch: (o) => {
+			const ctx: bRouter = <any>o;
+			ctx.initComponentValues().catch(stderr);
+		}
 	})
 
 	readonly pageProp?: PageProp;
@@ -73,201 +63,242 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 	readonly pagesProp: Dictionary<PageSchema> = {};
 
 	/**
-	 * Driver constructor for remote router
+	 * Driver constructor for router
 	 */
-	@prop({type: Function, watch: 'initComponentValues'})
-	readonly driverProp?: () => RemoteRouter;
+	@prop({
+		type: Function,
+		default: driver,
+		watch: (o) => {
+			const ctx: bRouter = <any>o;
+			ctx.initComponentValues().catch(stderr);
+		}
+	})
 
-	/**
-	 * Driver for remote router
-	 */
-	@system()
-	protected driver?: RemoteRouter;
-
-	/**
-	 * Page store
-	 */
-	@field()
-	protected pageStore?: TransitionPageInfo;
+	readonly driverProp!: () => Router;
 
 	/**
 	 * Page load status
 	 */
 	@system()
-	protected status: number = 0;
+	status: number = 0;
+
+	/**
+	 * Driver for remote router
+	 */
+	@system((o) => o.link((v) => v(o)))
+	protected driver!: Router;
+
+	/**
+	 * Page store
+	 */
+	@system()
+	protected pageStore?: PageInfo;
 
 	/**
 	 * Router paths
 	 */
-	@system()
+	@system({
+		after: 'driver',
+		init: (o) => o.link((v) =>
+			$C(v || this.driver.routes).map((obj, page) => {
+				const
+					isStr = Object.isString(obj),
+					pattern = isStr ? obj : obj.path;
+
+				return {
+					page,
+					pattern,
+					rgxp: pattern != null ? path(pattern) : undefined,
+					meta: isStr ? {} : obj
+				};
+			})
+		)
+	})
+
 	protected pages!: Pages;
 
 	/**
-	 * Returns current page
+	 * Current page
 	 */
-	page(): TransitionPageInfo | undefined;
-
-	/**
-	 * Sets a new page by the specified id
-	 *
-	 * @param id - page id: url or an abstract page id (if using remote router)
-	 * @param [params] - additional transition parameters
-	 * @param [state] - state object
-	 */
-	page(id: string, params?: Dictionary, state?: Dictionary): TransitionPageInfo;
-	page(id?: string, params?: Dictionary, state: Dictionary = this): CanPromise<TransitionPageInfo> | undefined {
-		if (!id) {
-			return this.pageStore;
-		}
-
-		const
-			d = this.driver,
-			name = d ? id : new URL(id).pathname;
-
-		return new Promise((resolve) => {
-			const
-				info = this.getPageOpts(name);
-
-			if (info && params) {
-				info.transition = params;
-			}
-
-			state.pageStore = Object.create({
-				page: name,
-				...info
-			});
-
-			const done = () => {
-				this.$root.pageInfo = state.pageStore;
-				resolve(state.pageStore);
-			};
-
-			if (d) {
-				done();
-				return;
-			}
-
-			if (info) {
-				if (location.href !== id) {
-					history.pushState(info, info.page, id);
-				}
-
-				let i = 0;
-				ModuleDependencies.event.on(`component.${info.page}.loading`, this.async.proxy(
-					({packages}) => {
-						this.status = (++i * 100) / packages;
-						(i === packages) && done();
-					},
-
-					{
-						label: $$.component,
-						single: false
-					}
-				));
-
-				if (Object.isArray(ModuleDependencies.get(info.page))) {
-					done();
-				}
-
-			} else {
-				location.href = id;
-			}
-		});
+	get page(): PageInfo | undefined {
+		return this.getField('pageStore');
 	}
 
 	/**
-	 * Returns an information object of a page by the specified id
-	 * @param [id] - page id: url or an abstract page id (if using remote router)
+	 * Pushes a new transition to router
+	 *
+	 * @param page
+	 * @param [params] - additional transition parameters
 	 */
-	getPageOpts(id: string = location.pathname): PageInfo | undefined {
-		let
-			current: PageInfo | undefined;
+	async push(page: string | null, params?: PageParams): Promise<void> {
+		await this.setPage(page, params, 'push');
+	}
 
-		$C(this.pages).forEach((el, page, data, o) => {
-			const
-				r = el.rgxp,
-				transition = {page, meta: el.meta};
+	/**
+	 * Replaces the current transition to a new
+	 *
+	 * @param page
+	 * @param [params] - additional transition parameters
+	 */
+	async replace(page: string | null, params?: PageParams): Promise<void> {
+		await this.setPage(page, params, 'replace');
+	}
 
-			if (this.driver) {
-				if (el.page === id) {
-					current = transition;
-				}
+	/**
+	 * Router.back
+	 */
+	back(): void {
+		this.driver.back();
+	}
 
-			} else if (r && r.test(id)) {
-				const
-					res = r.exec(id);
+	/**
+	 * Router.forward
+	 */
+	forward(): void {
+		this.driver.forward();
+	}
 
-				current = $C(path.parse(el.pattern) as any[]).to(transition).reduce((map, el: Key, i) => {
-					if (Object.isObject(el)) {
-						// @ts-ignore
-						map[el.name] = res[i];
+	/**
+	 * Router.go
+	 * @param pos
+	 */
+	go(pos: number): void {
+		this.driver.go(pos);
+	}
+
+	/**
+	 * Returns an information object of the specified page
+	 * @param [page]
+	 */
+	getPageOpts(page: string): PageInfo | undefined {
+		const
+			p = this.pages,
+			obj = p[page] || $C(p).one.get(({rgxp}) => rgxp && rgxp.test(page));
+
+		if (obj) {
+			const meta = Object.create({
+				meta: obj.meta || {},
+				toPath(p?: Dictionary): string {
+					if (p) {
+						p = $C(p).filter((el) => el != null).map(String);
+						return path.compile(obj.pattern || page)(p);
 					}
 
-					return map;
-				});
+					return page;
+				}
+			});
 
-				return o.break;
+			// tslint:disable-next-line:prefer-object-spread
+			const t = Object.assign(meta, {
+				page: obj.page,
+				params: {},
+				query: {}
+			});
+
+			if (!p[page] && obj.pattern) {
+				const
+					params = obj.rgxp.exec(page);
+
+				if (params) {
+					$C(path.parse(obj.pattern) as any[]).reduce((map, el: Key, i) => {
+						if (Object.isObject(el)) {
+							// @ts-ignore
+							t.params[el.name] = params[i];
+						}
+					});
+				}
 			}
-		});
 
-		return current;
+			return t;
+		}
 	}
 
 	/**
 	 * Initializes component values
-	 * @param [data] - data object
 	 */
 	@hook('beforeDataCreate')
-	protected async initComponentValues(data: Dictionary = this): Promise<void> {
-		const initPages = (val) => $C(val).map((obj: PageSchema, page) => {
-			const
-				isStr = Object.isString(obj),
-				pattern = isStr ? obj : (<any>obj).path;
-
-			return {
-				page,
-				pattern,
-				rgxp: pattern != null ? path(pattern) : undefined,
-				meta: isStr ? {} : obj
-			};
-		});
-
+	protected async initComponentValues(): Promise<void> {
 		const
-			d = this.driverProp && this.driverProp(),
-			flags = {label: $$.transition};
-
-		let
 			page = this.pageProp;
-
-		if (d) {
-			this.driver = d;
-			this.pages = initPages(d.routes);
-			page = d.page;
-
-			const fn = (transition) => {
-				this.page(transition.name, transition);
-			};
-
-			this.async.on(d, 'transition', fn, flags);
-
-		} else {
-			this.pages = initPages(this.pagesProp);
-
-			const fn = () => {
-				this.page(location.href, history.state);
-			};
-
-			this.async.on(window, 'popstate', fn, flags);
-		}
 
 		if (page) {
 			if (Object.isString(page)) {
-				await this.page(page, undefined, data);
+				await this.replace(page);
 
 			} else {
-				await this.page(page.page, page.transition, data);
+				await this.replace(page.page, page);
 			}
+
+		} else {
+			await this.replace(null);
 		}
+	}
+
+	/**
+	 * Sets a new page
+	 *
+	 * @param page
+	 * @param [params] - additional page parameters
+	 * @param [method] - driver method
+	 * @emits $root.transition(info: Object)
+	 */
+	protected async setPage(
+		page: string | null,
+		params?: PageParams,
+		method: string = 'push'
+	): Promise<PageInfo | undefined> {
+		const
+			{$root: r, driver: d, driver: {page: c}} = this,
+			info = page ? this.getPageOpts(d.id(page)) : Object.mixin(true, this.getPageOpts(c.page), Object.reject(c, 'page'));
+
+		if (!info) {
+			await d[method](page);
+			return;
+		}
+
+		if (!info.page && c.page) {
+			info.page = c.page;
+		}
+
+		Object.mixin(true, info, params && Object.reject(params, 'page'));
+
+		const nonWatchValues = {
+			query: info.query,
+			meta: info.meta
+		};
+
+		const store = Object.assign(
+			Object.create(nonWatchValues),
+			Object.reject(info, Object.keys(nonWatchValues))
+		);
+
+		const
+			current = this.getField('pageStore'),
+			f = (v) => $C(v).filter((el) => !Object.isFunction(el)).object(true).map();
+
+		if (!Object.fastCompare(f(current), f(store))) {
+			this.setField('pageStore', store);
+			await d[method](info.toPath(params && params.params), info);
+
+			const
+				f = (v) => $C(v).filter((el) => !Object.isFunction(el)).map();
+
+			if (Object.fastCompare(f(current), f(store))) {
+				const
+					proto = Object.getPrototypeOf(r.pageInfo);
+
+				$C(nonWatchValues).forEach((el, key) => {
+					proto[key] = el;
+				});
+
+			} else {
+				r.pageInfo = store;
+			}
+
+			r.emit('transition', store);
+		}
+
+		return store;
 	}
 
 	/**
@@ -275,22 +306,60 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 	 * @param e
 	 */
 	protected async onLink(e: MouseEvent): Promise<void> {
+		const
+			a = <HTMLElement>e.delegateTarget,
+			href = a.getAttribute('href');
+
+		if (!href || /^(.*?:)?\/\//.test(href)) {
+			return;
+		}
+
 		e.preventDefault();
 
 		const
-			a = <HTMLAnchorElement>e.delegateTarget;
+			l = Object.assign(document.createElement('a'), {href});
 
 		if (e.ctrlKey) {
-			window.open(a.href, '_blank');
+			window.open(l.href, '_blank');
 
 		} else {
-			await this.page(a.href, Object.parse(a.dataset.transition));
+			const
+				data = a.dataset,
+				method = data.method;
+
+			switch (method) {
+				case 'back':
+					this.back();
+					break;
+
+				case 'forward':
+					this.back();
+					break;
+
+				case 'go':
+					this.go(Number(data.pos || -1));
+					break;
+
+				default:
+					await this[method === 'replace' ? 'replace' : 'push'](l.href, {
+						params: Object.parse(data.params),
+						query: Object.parse(data.query)
+					});
+			}
 		}
+	}
+
+	/** @override */
+	protected initBaseAPI(): void {
+		super.initBaseAPI();
+		this.setPage = this.instance.setPage.bind(this);
 	}
 
 	/** @override */
 	protected created(): void {
 		super.created();
-		this.async.on(document, 'click', delegate('a[href^="/"]', this.onLink));
+		// @ts-ignore
+		this.$root.routerStore = this;
+		this.async.on(document, 'click', delegate('[href]', this.onLink));
 	}
 }

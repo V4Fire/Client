@@ -9,7 +9,7 @@
  */
 
 const
-	path = require('upath'),
+	path = require('path'),
 	webpack = require('webpack');
 
 const

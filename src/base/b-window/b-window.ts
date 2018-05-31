@@ -36,7 +36,7 @@ export default class bWindow<T extends Dictionary = Dictionary> extends iData<T>
 	/**
 	 * Window title store
 	 */
-	@field((o) => o.link('titleProp'))
+	@field((o) => o.link())
 	protected titleStore?: string;
 
 	/** @override */
@@ -135,8 +135,8 @@ export default class bWindow<T extends Dictionary = Dictionary> extends iData<T>
 	}
 
 	/** @override */
-	protected async mounted(): Promise<void> {
-		await super.mounted();
+	protected mounted(): void {
+		super.mounted();
 		document.body.insertAdjacentElement('beforeend', this.$el);
 	}
 

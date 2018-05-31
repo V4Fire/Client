@@ -11,12 +11,12 @@ import bCheckbox from 'form/b-checkbox/b-checkbox';
 import iInput, { component, prop, field, p, ValidatorsDecl, ComponentConverter } from 'super/i-input/i-input';
 export * from 'super/i-input/i-input';
 
-export type Option = Dictionary & {
+export interface Option extends Dictionary {
 	id: string;
 	name: string;
 	label: string;
 	autofocus?: boolean;
-};
+}
 
 @component({
 	functional: {
@@ -53,7 +53,7 @@ export default class bCheckboxGroup<T extends Dictionary = Dictionary> extends i
 	/**
 	 * Checkboxes store
 	 */
-	@field((o) => o.link('optionsProp', (val) => {
+	@field((o) => o.link((val) => {
 		const
 			ctx: bCheckboxGroup = <any>o;
 
@@ -117,7 +117,7 @@ export default class bCheckboxGroup<T extends Dictionary = Dictionary> extends i
 	};
 
 	/** @override */
-	@field((o) => o.link('valueProp', (val) => {
+	@field((o) => o.link((val) => {
 		const ctx: bCheckboxGroup = <any>o;
 		return ctx.multiple && Object.fromArray(val) || val;
 	}))

@@ -32,7 +32,7 @@ const exts = $C(include('build/resolve.webpack').extensions).to([]).reduce((list
 
 const
 	deps = pzlr.dependencies,
-	importRgxp = new RegExp(`('|")(${RegExp.escape(pzlr.super)})(/.*?|(?=\\1))\\1`, 'g');
+	importRgxp = new RegExp(`(['"])(${RegExp.escape(pzlr.super)})(/.*?|(?=\\1))\\1`, 'g');
 
 /**
  * Monic replacer for TS import declarations

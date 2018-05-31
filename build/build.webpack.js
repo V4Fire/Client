@@ -13,7 +13,7 @@ const
 
 const
 	Sugar = require('sugar'),
-	path = require('upath');
+	path = require('path');
 
 const
 	{src, build} = require('config'),

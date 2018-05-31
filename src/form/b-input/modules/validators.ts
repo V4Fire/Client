@@ -139,6 +139,7 @@ export default <ValidatorsDecl>{
 
 					resolve(err.type !== 'abort' ? false : null);
 				}
+
 			}, DELAY, {
 				group,
 				label: $$.emailNotExists,

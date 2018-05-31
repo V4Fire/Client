@@ -36,19 +36,19 @@ export type FieldWatcher<
 	T extends iBlock = iBlockDecorator,
 	A = any,
 	B = A
-	> = BaseFieldWatcher<T, A, B>;
+> = BaseFieldWatcher<T, A, B>;
 
 export interface ComponentProp<
 	T extends iBlock = iBlockDecorator,
 	A = any,
 	B = A
-	> extends BaseComponentProp<T, A, B> {}
+> extends BaseComponentProp<T, A, B> {}
 
 export interface ComponentField<
 	T extends iBlock = iBlockDecorator,
 	A = any,
 	B = A
-	> extends BaseComponentField<T, A, B> {}
+> extends BaseComponentField<T, A, B> {}
 
 /**
  * @see core/component/decorators/base.ts
@@ -189,24 +189,13 @@ export function removeElMod(elName: string, modName: string, value: ModVal = '*'
 	};
 }
 
-/**
- * Decorates a method as a state handler
- *
- * @decorator
- * @param state
- * @param [method]
- */
-export function state(state: number, method: EventType = 'on'): Function {
-	return (target, key, descriptor) => {
-		initEvent.once('constructor', ({meta}) => {
-			meta.hooks.beforeCreate.push({
-				fn(this: iBlockDecorator): void {
-					this.localEvent[method](`block.status.${state}`, descriptor.value.bind(this));
-				}
-			});
-		});
-	};
+export interface WaitOpts extends AsyncOpts {
+	fn?: Function;
+	defer?: boolean | number;
 }
+
+export function wait(params: WaitOpts): Function;
+export function wait(status: number | string, params?: WaitOpts | Function): Function;
 
 /**
  * Decorates a method or a function for using with the specified init status
@@ -218,11 +207,15 @@ export function state(state: number, method: EventType = 'on'): Function {
  *   *) [params.fn] - callback function
  *   *) [params.defer] - if true, then the function will always return a promise
  */
-export function wait<T = any>(
-	status: number | string,
-	params?: AsyncOpts & {fn?: Function; defer?: boolean | number} | Function
+export function wait<T = any>(status: number | string | WaitOpts, params?: WaitOpts | Function): Function {
+	if (Object.isObject(status)) {
+		params = <WaitOpts>status;
+		status = 0;
 
-): Function {
+	} else if (Object.isString(status)) {
+		status = statuses[status];
+	}
+
 	// tslint:disable:prefer-const
 
 	let {
@@ -235,10 +228,6 @@ export function wait<T = any>(
 
 	// tslint:enable:prefer-const
 
-	if (Object.isString(status)) {
-		status = statuses[status];
-	}
-
 	let
 		handler = <Function>(fn || params);
 
@@ -247,49 +236,50 @@ export function wait<T = any>(
 
 	function wrapper(this: iBlockDecorator): CanPromise<T> | undefined {
 		const
-			args = arguments;
+			args = arguments,
+			// @ts-ignore
+			componentStatus = statuses[this.componentStatusStore];
 
 		if (join === undefined) {
 			join = handler.length ? 'replace' : true;
 		}
 
 		const
-			// @ts-ignore
-			{async: $a, block: $b} = this,
+			{async: $a} = this,
 			p = {join, label, group};
 
 		let
 			res,
 			init;
 
-		if ($b) {
-			if (status > 0 && $b.status < 0) {
-				return;
-			}
+		if (componentStatus < 0 && status > componentStatus) {
+			throw Object.assign(new Error('Component status watcher abort'), {
+				type: 'abort'
+			});
+		}
 
-			if ($b.status >= status) {
-				init = true;
+		if (componentStatus >= status) {
+			init = true;
 
-				if (defer) {
-					res = $a.promise(
-						(async () => {
-							await $a.nextTick();
-							return handler.apply(this, args);
-						})(),
+			if (defer) {
+				res = $a.promise(
+					(async () => {
+						await $a.nextTick();
+						return handler.apply(this, args);
+					})(),
 
-						p
-					);
+					p
+				);
 
-				} else {
-					res = handler.apply(this, args);
-				}
+			} else {
+				res = handler.apply(this, args);
 			}
 		}
 
 		if (!init) {
-			res = $a.promise<any>(
+			res = $a.promise(
 				new Promise((resolve) => {
-					this.localEvent.once(`block.status.${statuses[status]}`, () => {
+					this.localEvent.once(`component.status.${statuses[<number>status]}`, () => {
 						resolve(handler.apply(this, args));
 					});
 				}),

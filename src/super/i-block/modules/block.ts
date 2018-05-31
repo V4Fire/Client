@@ -10,18 +10,6 @@ import $C = require('collection.js');
 import iBlock, { VueElement, ModsTable } from 'super/i-block/i-block';
 import { EventEmitter2 as EventEmitter } from 'eventemitter2';
 
-/**
- * Enum of available block statuses
- */
-export enum statuses {
-	destroyed = -1,
-	inactive = 0,
-	loading = 1,
-	beforeReady = 2,
-	ready = 3,
-	unloaded = 0
-}
-
 export type Reason =
 	'initSetMod' |
 	'setMod' |
@@ -30,7 +18,12 @@ export type Reason =
 /**
  * Base class for BEM like develop
  */
-export default class Block<T extends iBlock = iBlock> {
+export default class Block {
+	/**
+	 * Current block id
+	 */
+	readonly blockId: string;
+
 	/**
 	 * Current block name
 	 */
@@ -39,12 +32,7 @@ export default class Block<T extends iBlock = iBlock> {
 	/**
 	 * Link to a block node
 	 */
-	readonly node: VueElement<T>;
-
-	/**
-	 * Vue component
-	 */
-	readonly component: T;
+	readonly node: VueElement<any>;
 
 	/**
 	 * Local event emitter
@@ -57,49 +45,12 @@ export default class Block<T extends iBlock = iBlock> {
 	readonly mods: Dictionary<string | undefined>;
 
 	/**
-	 * Map of available block statuses
-	 */
-	readonly statuses: typeof statuses = statuses;
-
-	/**
-	 * Block init status
-	 */
-	protected blockStatus: number = statuses.unloaded;
-
-	/**
-	 * Sets a new status to the current block
-	 * @param value
-	 */
-	set status(value: number) {
-		if (this.blockStatus === value) {
-			return;
-		}
-
-		this.blockStatus = value = value in this.statuses ? value : 0;
-
-		const
-			stringStatus = this.statuses[value];
-
-		// @ts-ignore
-		this.component.componentStatus = stringStatus;
-		this.event.emit(`block.status.${stringStatus}`, value);
-		this.component.emit(`status-${stringStatus}`, value);
-	}
-
-	/**
-	 * Current block status
-	 */
-	get status(): number {
-		return this.blockStatus;
-	}
-
-	/**
 	 * @param component - component instance
 	 */
-	constructor(component: T) {
+	constructor(component: iBlock) {
+		this.blockId = component.componentId;
 		this.blockName = component.componentName;
 		this.mods = Object.createDict();
-		this.component = component;
 
 		// @ts-ignore
 		this.event = component.localEvent;
@@ -108,18 +59,10 @@ export default class Block<T extends iBlock = iBlock> {
 		this.node = component.$el;
 		this.node.classList.add(this.blockName, 'i-block-helper');
 
-		this.event.once('block.status.loading', () => {
-			const
-				m = component.mods;
-
-			for (let keys = Object.keys(m), i = 0; i < keys.length; i++) {
-				const name = keys[i];
-				this.setMod(name, m[name], 'initSetMod');
-			}
-		});
-
-		// @ts-ignore
-		component.async.setImmediate(() => this.status = this.statuses.loading);
+		for (let m = component.mods, keys = Object.keys(m), i = 0; i < keys.length; i++) {
+			const name = keys[i];
+			this.setMod(name, m[name], 'initSetMod');
+		}
 	}
 
 	/**
@@ -155,7 +98,7 @@ export default class Block<T extends iBlock = iBlock> {
 			sel = `.${this.getFullElName(elName)}`;
 
 		let
-			res = `${sel}.${this.component.componentId}`;
+			res = `${sel}.${this.blockId}`;
 
 		if (mods) {
 			for (let keys = Object.keys(mods), i = 0; i < keys.length; i++) {
@@ -223,7 +166,6 @@ export default class Block<T extends iBlock = iBlock> {
 			};
 
 			this.event.emit(`block.mod.set.${name}.${value}`, event);
-			this.component.emit(`mod_set_${name}_${value}`, event);
 			return true;
 		}
 
@@ -257,7 +199,6 @@ export default class Block<T extends iBlock = iBlock> {
 			};
 
 			this.event.emit(`block.mod.remove.${name}.${current}`, event);
-			this.component.emit(`mod_remove_${name}_${current}`, event);
 			return true;
 		}
 

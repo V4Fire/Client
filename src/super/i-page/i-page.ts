@@ -6,13 +6,14 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import { VueInterface } from 'core/component';
+
 import * as net from 'core/net';
 import * as session from 'core/session';
-
-import iData, { component, field, system, watch, hook } from 'super/i-data/i-data';
-import { VueInterface } from 'core/component';
 import { setLang, lang } from 'core/i18n';
-import { TransitionPageInfo } from 'base/b-router/b-router';
+
+import bRouter, { PageInfo } from 'base/b-router/b-router';
+import iData, { component, field, system, watch, hook } from 'super/i-data/i-data';
 export * from 'super/i-data/i-data';
 
 export type RootMods = Dictionary<{
@@ -37,7 +38,7 @@ export default class iPage<
 	 * Page information object
 	 */
 	@field()
-	pageInfo?: TransitionPageInfo<T, M>;
+	pageInfo?: PageInfo<T, M>;
 
 	/**
 	 * Authorization status
@@ -70,6 +71,12 @@ export default class iPage<
 	set lang(value: string) {
 		setLang(this.langStore = value);
 	}
+
+	/**
+	 * Root page router instance
+	 */
+	@system()
+	protected routerStore?: bRouter;
 
 	/**
 	 * System language store

@@ -83,7 +83,7 @@ export default class bSelect<T extends Dictionary = Dictionary> extends bInput<T
 	/**
 	 * Selected value store
 	 */
-	@field((o) => o.link('selectedProp', (val) => {
+	@field((o) => o.link((val) => {
 		val = (<any>o).initDefaultValue(val);
 		return val !== undefined ? String(val) : undefined;
 	}))
@@ -118,10 +118,17 @@ export default class bSelect<T extends Dictionary = Dictionary> extends bInput<T
 	/**
 	 * Select options store
 	 */
-	@field((o) => o.link('optionsProp', (val) => {
-		const ctx: bSelect = <any>o;
-		return ctx.dataProvider ? ctx.optionsStore || [] : ctx.normalizeOptions(val);
-	}))
+	@field({
+		watch: (o) => {
+			const ctx: bSelect = <any>o;
+			ctx.initComponentValues().catch(stderr);
+		},
+
+		init: (o) => o.link((val) => {
+			const ctx: bSelect = <any>o;
+			return ctx.dataProvider ? ctx.optionsStore || [] : ctx.normalizeOptions(val);
+		})
+	})
 
 	protected optionsStore!: NOption[];
 
@@ -267,11 +274,11 @@ export default class bSelect<T extends Dictionary = Dictionary> extends bInput<T
 
 	/**
 	 * Initializes component values
-	 * @param [data] - data object
 	 */
 	@hook('beforeDataCreate')
-	protected async initComponentValues(data: Dictionary = this): Promise<void> {
+	protected async initComponentValues(): Promise<void> {
 		const
+			data = this.$$data,
 			labels = {},
 			values = {};
 
@@ -318,14 +325,6 @@ export default class bSelect<T extends Dictionary = Dictionary> extends bInput<T
 		if (scroll) {
 			await scroll.initScroll();
 		}
-	}
-
-	/**
-	 * Synchronization for the optionsStore field
-	 */
-	@watch('optionsStore')
-	protected async syncOptionsStoreWatcher(): Promise<void> {
-		await this.initComponentValues();
 	}
 
 	/**
@@ -563,23 +562,21 @@ export default class bSelect<T extends Dictionary = Dictionary> extends bInput<T
 			});
 		});
 
-		$e.once('block.status.ready', () => {
-			$e.on('block.mod.set.opened.false', () => {
-				if (openedSelect === this) {
-					openedSelect = null;
-				}
+		$e.on('block.mod.set.opened.false', () => {
+			if (openedSelect === this) {
+				openedSelect = null;
+			}
 
-				$a.off({group: 'global'});
-				if (this.mods.focused !== 'true') {
-					$a.off({group: 'navigation'});
-				}
-			});
+			$a.off({group: 'global'});
+			if (this.mods.focused !== 'true') {
+				$a.off({group: 'navigation'});
+			}
+		});
 
-			$e.on('block.mod.set.focused.false', async () => {
-				if (this.mods.opened !== 'true') {
-					$a.off({group: 'navigation'});
-				}
-			});
+		$e.on('block.mod.set.focused.false', () => {
+			if (this.mods.opened !== 'true') {
+				$a.off({group: 'navigation'});
+			}
 		});
 	}
 
@@ -654,7 +651,7 @@ export default class bSelect<T extends Dictionary = Dictionary> extends bInput<T
 
 	/** @override */
 	protected async mounted(): Promise<void> {
-		await super.mounted();
+		super.mounted();
 
 		const fn = await this.delegateElement('option', async (e) => {
 			await this.onOptionSelected(e.delegateTarget.dataset.value);

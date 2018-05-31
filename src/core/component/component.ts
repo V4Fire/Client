@@ -63,9 +63,12 @@ export function getComponent(
 		data(): Dictionary {
 			const
 				ctx = <any>this,
-				data = initDataObject(meta.fields, ctx, instance);
+				data = ctx.$$data = {};
 
-			runHook('beforeDataCreate', ctx.meta, ctx, data).catch(stderr);
+			initDataObject(meta.fields, ctx, instance, ctx.$$data);
+			runHook('beforeDataCreate', ctx.meta, ctx).catch(stderr);
+
+			ctx.$$data = this;
 			return data;
 		},
 
@@ -80,6 +83,7 @@ export function getComponent(
 				p = p.$parent;
 			}
 
+			ctx.$$data = this;
 			ctx.$normalParent = p;
 			ctx.$state = state;
 			ctx.$async = new Async(this);
@@ -337,9 +341,26 @@ export function initDataObject(
 		queue = new Set();
 
 	while (true) {
-		for (let o = fields, keys = Object.keys(o), i = 0; i < keys.length; i++) {
+		const
+			o = fields,
+			fieldList = <string[]>[];
+
+		for (let keys = Object.keys(fields), i = 0; i < keys.length; i++) {
 			const
-				key = ctx.$activeField = keys[i],
+				key = keys[i],
+				el = o[key];
+
+			if (el.atom || !el.init && (el.default !== undefined || key in instance)) {
+				fieldList.unshift(key);
+
+			} else {
+				fieldList.push(key);
+			}
+		}
+
+		for (let i = 0; i < fieldList.length; i++) {
+			const
+				key = ctx.$activeField = fieldList[i],
 				el = o[key];
 
 			if (key in data) {

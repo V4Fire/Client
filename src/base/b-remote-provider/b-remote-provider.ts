@@ -6,9 +6,8 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import Then from 'core/then';
 import symbolGenerator from 'core/symbol';
-import iData, { component, prop, watch } from 'super/i-data/i-data';
+import iData, { component, prop, system, watch } from 'super/i-data/i-data';
 export * from 'super/i-data/i-data';
 
 export const
@@ -25,14 +24,25 @@ export default class bRemoteProvider<T extends Dictionary = Dictionary> extends 
 	@prop({type: String, required: false})
 	readonly field?: string;
 
+	/** @override */
+	set db(value: T | undefined) {
+		this.dbStore = value;
+		this.initRemoteData();
+		this.syncDBWatcher(value);
+	}
+
+	/** @override */
+	@system()
+	protected dbStore?: T | undefined;
+
 	/**
 	 * Synchronization for the db field
 	 *
 	 * @param [value]
-	 * @emits change(db: T)
+	 * @emits change(db: T | undefined)
 	 */
 	@watch('db')
-	protected syncDBWatcher(value: T): void {
+	protected syncDBWatcher(value: T | undefined): void {
 		const
 			p = this.$parent;
 
@@ -40,7 +50,7 @@ export default class bRemoteProvider<T extends Dictionary = Dictionary> extends 
 			return;
 		}
 
-		const handler = () => {
+		p.execCbAtTheRightTime(() => {
 			const
 				f = this.field;
 
@@ -57,14 +67,8 @@ export default class bRemoteProvider<T extends Dictionary = Dictionary> extends 
 			}
 
 			this.emit('change', value);
-		};
-
-		const res = p.waitStatus('beforeReady', handler, {
+		}, {
 			label: $$.syncDBWatcher
 		});
-
-		if (Then.isThenable(res)) {
-			res.catch(stderr);
-		}
 	}
 }

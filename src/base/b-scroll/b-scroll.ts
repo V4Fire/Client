@@ -579,7 +579,7 @@ export default class bScroll extends iBlock {
 
 	/** @override */
 	protected async mounted(): Promise<void> {
-		await super.mounted();
+		super.mounted();
 		await this.initScroll();
 
 		let

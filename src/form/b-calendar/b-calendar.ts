@@ -170,8 +170,10 @@ export default class bCalendar<T extends Dictionary = Dictionary> extends iInput
 	protected directions: Directions[] = ['right', 'left'];
 
 	/** @override */
-	@field((o) => o.link('valueProp', (val) =>
-		Object.isArray(val) ? val : [].concat((<any>o).initDefaultValue(val) || [])))
+	@field((o) => o.link((val) => {
+		const ctx: bCalendar = <any>o;
+		return Object.isArray(val) ? val : [].concat(ctx.initDefaultValue(val) || []);
+	}))
 
 	protected valueStore!: Date[];
 
@@ -510,7 +512,7 @@ export default class bCalendar<T extends Dictionary = Dictionary> extends iInput
 
 	/** @override */
 	protected async mounted(): Promise<void> {
-		await super.mounted();
+		super.mounted();
 		this.async.on(this.$el, 'click', await this.delegateElement('day', this.onDaySelect), {
 			label: $$.daySelection
 		});

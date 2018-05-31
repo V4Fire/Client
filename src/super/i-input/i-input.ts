@@ -256,7 +256,11 @@ export default class iInput<T extends Dictionary = Dictionary> extends iData<T> 
 	/**
 	 * Component value store
 	 */
-	@field((o) => o.link('valueProp', (val) => (<any>o).initDefaultValue(val)))
+	@field((o) => o.link((val) => {
+		const ctx: iInput = <any>o;
+		return ctx.initDefaultValue(val);
+	}))
+
 	protected valueStore: any;
 
 	/** @override */

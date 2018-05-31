@@ -81,6 +81,7 @@ export function createFakeCtx(
 		$options: Object.assign(Object.create(p.$options), fakeCtx.$options),
 
 		$data: {},
+		$$data: fakeCtx,
 		$dataCache: {},
 		$props: renderCtx.props,
 		$attrs: renderCtx.data.attrs,
@@ -243,11 +244,13 @@ export function createFakeCtx(
 		];
 
 		for (let i = 0; i < list.length; i++) {
-			const data = i ? fakeCtx.$data : fakeCtx;
-			initDataObject(list[i], fakeCtx, instance, data);
-
 			if (i) {
-				runHook('beforeDataCreate', meta, fakeCtx, data).catch(stderr);
+				const
+					data = fakeCtx.$$data = fakeCtx.$data;
+
+				initDataObject(list[i], fakeCtx, instance, data);
+				runHook('beforeDataCreate', meta, fakeCtx).catch(stderr);
+				fakeCtx.$$data = fakeCtx;
 
 				if (meta.params.tiny) {
 					Object.assign(fakeCtx, data);
@@ -278,6 +281,7 @@ export function createFakeCtx(
 				}
 
 			} else {
+				initDataObject(list[i], fakeCtx, instance, fakeCtx);
 				runHook('beforeCreate', meta, fakeCtx).then(async () => {
 					if (methods.beforeCreate) {
 						await methods.beforeCreate.fn.call(fakeCtx);
@@ -502,21 +506,48 @@ export function patchVNode(vNode: VNode, ctx: Dictionary, renderCtx: RenderConte
 			}
 
 			const
-				refs = ctx.$refs,
+				refs = {},
 				refNodes = el.querySelectorAll(`.${ctx.componentId}[data-vue-ref]`);
 
 			for (let i = 0; i < refNodes.length; i++) {
 				const
 					el = refNodes[i],
-					link = el.vueComponent ? el.vueComponent : el,
 					ref = el.dataset.vueRef;
 
-				refs[ref] = refs[ref] ? [].concat(refs[ref], link) : link;
+				refs[ref] = refs[ref] ? [].concat(refs[ref], el) : el;
+			}
+
+			for (let keys = Object.keys(refs), i = 0; i < keys.length; i++) {
+				const
+					key = keys[i],
+					el = refs[key];
+
+				let cache;
+				Object.defineProperty(ctx.$refs, key, {
+					get(): any {
+						if (cache) {
+							return cache;
+						}
+
+						if (Object.isArray(el)) {
+							const
+								res = <any[]>[];
+
+							for (let i = 0; i < el.length; i++) {
+								const v = <any>el[i];
+								res.push(v.vueComponent || v);
+							}
+
+							return cache = res;
+						}
+
+						return cache = el.vueComponent || el;
+					}
+				});
 			}
 		}
 
 		el.vueComponent = ctx;
-
 		runHook('mounted', meta, ctx).then(async () => {
 			if (methods.mounted) {
 				await methods.mounted.fn.call(ctx);

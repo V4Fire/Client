@@ -24,8 +24,8 @@ export default class bUp extends iBlock {
 	};
 
 	/** @override */
-	protected async mounted(): Promise<void> {
-		await super.mounted();
+	protected mounted(): void {
+		super.mounted();
 
 		const
 			{async: $a} = this;

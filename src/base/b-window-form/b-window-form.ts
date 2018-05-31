@@ -37,7 +37,7 @@ export default class bWindowForm<T extends Dictionary = Dictionary> extends bWin
 	/**
 	 * Requested id
 	 */
-	@field((o) => o.link('idProp'))
+	@field((o) => o.link())
 	id?: string;
 
 	/**
@@ -105,7 +105,7 @@ export default class bWindowForm<T extends Dictionary = Dictionary> extends bWin
 			if (await this.reset() || this.db) {
 				this.formTmp = {};
 				this.id = undefined;
-				this.db = null;
+				this.db = undefined;
 			}
 		}
 

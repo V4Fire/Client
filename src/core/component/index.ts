@@ -106,6 +106,7 @@ export interface UniqueFieldFn<T extends VueInterface = VueInterface> {
 }
 
 export interface SystemField<T extends VueInterface = VueInterface> {
+	atom?: boolean;
 	default?: any;
 	unique?: boolean | UniqueFieldFn<T>;
 	after: Set<string>;

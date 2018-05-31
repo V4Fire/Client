@@ -55,6 +55,7 @@ export const prop = paramsFactory<Function | ObjectConstructor | ComponentProp>(
 });
 
 export interface SystemField<T extends VueInterface = VueInterface> {
+	atom?: boolean;
 	default?: any;
 	unique?: boolean | UniqueFieldFn<T>;
 	after?: string | string[];

@@ -68,7 +68,7 @@ export default class bImage extends iBlock {
 	/**
 	 * Initializes overlay, that shown during the image loading process
 	 */
-	@wait('loading', {label: $$.initOverlay, defer: true})
+	@wait('ready', {label: $$.initOverlay, defer: true})
 	protected async initOverlay(): Promise<void> {
 		if (this.load && !this.tmp[this.src]) {
 			await this.setMod('disabled', false);

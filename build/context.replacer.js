@@ -42,7 +42,7 @@ module.exports = function (str) {
 			res = '';
 
 		const
-			rgxp = new RegExp(`('|"|!)(${RegExp.escape(values[0])})(?='|")`, 'g'),
+			rgxp = new RegExp(`(['"!])(${RegExp.escape(values[0])})(?=['"])`, 'g'),
 			wrap = (str) => res += `\n(() => {\n${str}\n})();\n`;
 
 		values = values.slice(1).map((el) => {

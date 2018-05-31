@@ -8,7 +8,6 @@
 
 // tslint:disable:max-file-line-count
 import $C = require('collection.js');
-import Then from 'core/then';
 import Async, { AsyncOpts } from 'core/async';
 
 import * as analytics from 'core/analytics';
@@ -16,12 +15,13 @@ import { EventEmitter2 as EventEmitter } from 'eventemitter2';
 import { WatchOptions, WatchOptionsWithHandler, RenderContext, VNode } from 'vue';
 
 import 'super/i-block/directives';
-import Block, { statuses } from 'super/i-block/modules/block';
+import Block from 'super/i-block/modules/block';
 import Cache from 'super/i-block/modules/cache';
 import { icons, iconsMap } from 'super/i-block/modules/icons';
 import symbolGenerator from 'core/symbol';
 
 import iPage from 'super/i-page/i-page';
+import bRouter, { PageInfo } from 'base/b-router/b-router';
 import { asyncLocal, AsyncNamespace } from 'core/kv-storage';
 import {
 
@@ -34,6 +34,7 @@ import {
 	VueInterface,
 	VueElement,
 	ComponentMeta,
+	Hooks,
 	PARENT
 
 } from 'core/component';
@@ -46,7 +47,6 @@ import * as helpers from 'core/helpers';
 import * as browser from 'core/const/browser';
 
 export * from 'core/component';
-export { statuses } from 'super/i-block/modules/block';
 export { default as Cache } from 'super/i-block/modules/cache';
 export {
 
@@ -59,8 +59,7 @@ export {
 	mod,
 	removeMod,
 	elMod,
-	removeElMod,
-	state
+	removeElMod
 
 } from 'super/i-block/modules/decorators';
 
@@ -91,6 +90,18 @@ export type SyncLinkCache = Dictionary<Dictionary<SyncLink>>;
 export type ModsTable = Dictionary<ModVal>;
 export type ModsNTable = Dictionary<string | undefined>;
 
+/**
+ * Enum of available component statuses
+ */
+export enum statuses {
+	destroyed = -1,
+	inactive = 0,
+	loading = 1,
+	beforeReady = 2,
+	ready = 3,
+	unloaded = 0
+}
+
 export const
 	$$ = symbolGenerator(),
 	modsCache = Object.createDict(),
@@ -108,13 +119,15 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 			throw new ReferenceError(`The specified icon "${iconId}" is not defined`);
 		}
 
-		return `${location.pathname + location.search}#${icons(iconsMap[iconId]).id}`;
+		const q = location.search || (location.href.slice(-1) === '?' ? '?' : '');
+		return `${location.pathname + q}#${icons(iconsMap[iconId]).id}`;
 	}
 
 	/**
 	 * Component unique id
 	 */
 	@system({
+		atom: true,
 		unique: (ctx, oldCtx) => !ctx.$el.classList.contains(oldCtx.componentId),
 		init: () => `uid-${Math.random().toString().slice(2)}`
 	})
@@ -136,8 +149,23 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	/**
 	 * Component initialize status
 	 */
-	@system({unique: true})
-	componentStatus: string = statuses[statuses.unloaded];
+	get componentStatus(): string {
+		return this.getField('componentStatusStore');
+	}
+
+	/**
+	 * Sets a new component initialize status
+	 * @param value
+	 */
+	set componentStatus(value: string) {
+		if (this.componentStatus === value) {
+			return;
+		}
+
+		this.setField('componentStatusStore', value);
+		this.localEvent.emit(`component.status.${value}`, value);
+		this.emit(`status-${value}`, value);
+	}
 
 	/**
 	 * Initial component modifiers
@@ -154,7 +182,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	/**
 	 * Component stage
 	 */
-	@field((o) => o.link('stageProp'))
+	@field((o) => o.link())
 	stage?: string;
 
 	/**
@@ -205,6 +233,20 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 */
 	get r(): iPage | any {
 		return this.$root;
+	}
+
+	/**
+	 * Link to the root router
+	 */
+	get router(): bRouter | any | undefined {
+		return this.$root.routerStore;
+	}
+
+	/**
+	 * Link to the root pageInfo object
+	 */
+	get route(): PageInfo | any | undefined {
+		return this.$root.pageInfo;
 	}
 
 	/**
@@ -276,7 +318,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 				}
 			}
 
-			return o.link('modsProp', (val) => {
+			return o.link((val) => {
 				const
 					declMods = o.meta.component.mods,
 					// tslint:disable-next-line:prefer-object-spread
@@ -408,6 +450,19 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	}
 
 	/**
+	 * Number of beforeReady event listeners
+	 * @type {number}
+	 */
+	@system({unique: true})
+	protected beforeReadyListeners: number = 0;
+
+	/**
+	 * Component initialize status store
+	 */
+	@system({unique: true})
+	protected componentStatusStore: string = statuses[statuses.unloaded];
+
+	/**
 	 * Watched store of component modifiers
 	 */
 	@field({merge: true})
@@ -486,6 +541,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 * Link to the current Vue component
 	 */
 	@system({
+		atom: true,
 		unique: true,
 		init: (ctx) => ctx
 	})
@@ -496,6 +552,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 * API for async operations
 	 */
 	@system({
+		atom: true,
 		unique: true,
 		init: (ctx) => new Async(ctx)
 	})
@@ -506,13 +563,13 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 * API for BEM like develop
 	 */
 	@system({unique: true})
-	// @ts-ignore
-	protected block!: Block<this>;
+	protected block!: Block;
 
 	/**
 	 * Local event emitter
 	 */
 	@system({
+		atom: true,
 		unique: true,
 		init: () => new EventEmitter({maxListeners: 100, wildcard: true})
 	})
@@ -523,6 +580,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 * Storage object
 	 */
 	@system({
+		atom: true,
 		unique: true,
 		init: (o) => asyncLocal.namespace(o.componentName)
 	})
@@ -544,8 +602,8 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	/**
 	 * Queue of async components
 	 */
-	@system(() => new Set())
-	protected readonly asyncQueue!: Set<Function>;
+	@system()
+	protected readonly asyncQueue: Set<Function> = new Set();
 
 	/**
 	 * Cache of child async components
@@ -563,6 +621,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 * Some helpers
 	 */
 	@system({
+		atom: true,
 		unique: true,
 		init: () => helpers
 	})
@@ -573,6 +632,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 * Browser constants
 	 */
 	@system({
+		atom: true,
 		unique: true,
 		init: () => browser
 	})
@@ -590,6 +650,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 * Link to window.l
 	 */
 	@system({
+		atom: true,
 		unique: true,
 		init: () => l
 	})
@@ -600,6 +661,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 * Link to console API
 	 */
 	@system({
+		atom: true,
 		unique: true,
 		init: () => console
 	})
@@ -610,6 +672,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 * Link to window.location
 	 */
 	@system({
+		atom: true,
 		unique: true,
 		init: () => location
 	})
@@ -711,21 +774,21 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 * Wrapper for @wait
 	 *
 	 * @see Async.promise
-	 * @param state
+	 * @param status
 	 * @param fn
 	 * @param [params] - additional parameters:
 	 *   *) [params.defer] - if true, then the function will always return a promise
 	 */
-	waitStatus<T>(state: number | string, fn: () => T, params?: AsyncOpts & {defer?: boolean}): CanPromise<T> {
+	waitStatus<T>(status: string, fn: (this: this) => T, params?: AsyncOpts & {defer?: boolean}): CanPromise<T> {
 		params = params || {};
 		params.join = false;
-		return wait(state, {fn, ...params}).call(this);
+		return wait(status, {fn, ...params}).call(this);
 	}
 
 	/**
 	 * Wrapper for $forceUpdate
 	 */
-	@wait('loading', {defer: true, label: $$.forceUpdate})
+	@wait({defer: true, label: $$.forceUpdate})
 	async forceUpdate(): Promise<void> {
 		this.$forceUpdate();
 	}
@@ -734,11 +797,13 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 * Loads component data
 	 * @emits initLoad(data?: Object)
 	 */
-	@wait('loading')
-	@hook({mounted: 'initBlockInstance'})
-	async initLoad(data?: any | ((this: this) => any)): Promise<void> {
-		const {block: $b, $children: $c} = this;
-		await this.loadLocalStore();
+	@hook('beforeDataCreate')
+	initLoad(data?: any | ((this: this) => any)): CanPromise<void> {
+		this.componentStatus = 'loading';
+
+		const
+			{$children: $c, async: $a} = this,
+			providers = new Set();
 
 		if ($c) {
 			const
@@ -752,26 +817,43 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 					providers.add(el);
 				}
 			}
-
-			if (providers.size) {
-				await this.async.wait(() => $C(providers).every((el) => {
-					if (el.componentStatus === 'ready') {
-						providers.delete(el);
-						return true;
-					}
-
-					return false;
-				}));
-			}
 		}
 
-		$b.status = $b.statuses.beforeReady;
-		if ({beforeMount: true, beforeUpdate: true, deactivated: true}[this.hook]) {
-			await this.nextTick();
+		const done = () => {
+			this.componentStatus = 'beforeReady';
+			this.execCbAfterBlockReady(async () => {
+				if (this.beforeReadyListeners) {
+					await this.nextTick();
+					this.beforeReadyListeners = 0;
+				}
+
+				this.componentStatus = 'ready';
+				this.emit('initLoad', Object.isFunction(data) ? data.call(this) : data);
+			});
+		};
+
+		if (this.globalName || providers.size) {
+			const init = async () => {
+				await this.loadLocalStore();
+
+				if (providers.size) {
+					await $a.wait(() => $C(providers).every((el) => {
+						if (el.componentStatus === 'ready') {
+							providers.delete(el);
+							return true;
+						}
+
+						return false;
+					}));
+				}
+
+				done();
+			};
+
+			return $a.promise(init, {join: true, label: $$.initLoad}).catch(stderr);
 		}
 
-		$b.status = $b.statuses.ready;
-		this.emit('initLoad', Object.isFunction(data) ? data.call(this) : data);
+		done();
 	}
 
 	/**
@@ -826,9 +908,8 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 * @param name
 	 * @param value
 	 */
-	@wait('loading')
 	setMod(name: string, value: any): CanPromise<boolean> {
-		return this.block.setMod(name, value);
+		return this.execCbAfterBlockReady(() => this.block.setMod(name, value));
 	}
 
 	/**
@@ -837,9 +918,8 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 * @param name
 	 * @param [value]
 	 */
-	@wait('loading')
 	removeMod(name: string, value?: any): CanPromise<boolean> {
-		return this.block.removeMod(name, value);
+		return this.execCbAfterBlockReady(() => this.block.removeMod(name, value));
 	}
 
 	/**
@@ -868,6 +948,39 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 */
 	getRootMod(name: string): string | undefined {
 		return this.$root.getRootMod(name, this);
+	}
+
+	/**
+	 * Activates the component
+	 * @emits activated()
+	 */
+	@hook(['beforeDataCreate', 'activated'])
+	activate(): void {
+		if (Object.keys(this.convertStateToRouter()).length) {
+			this.initStateFromRouter();
+			this.execCbAfterCreated(() => {
+				this.async.on(this.$root, 'transition', this.initStateFromRouter, {
+					label: $$.activate,
+					group: 'routerStateWatchers'
+				});
+			});
+		}
+
+		this.emit('activated');
+	}
+
+	/**
+	 * Deactivates the component
+	 * @emits deactivated()
+	 */
+	@hook('deactivated')
+	deactivate(): void {
+		this.async
+			.off({group: 'routerStateWatchers'})
+			.off({group: 'routerWatchers'});
+
+		$C(this.convertStateToRouter()).forEach((el, key) => this[key] = undefined);
+		this.emit('deactivated');
 	}
 
 	/**
@@ -949,12 +1062,14 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 * @param [obj]
 	 */
 	setField(path: string, value: any, obj: object = this): any {
-		let
-			ref = obj;
-
 		const
 			chunks = path.split('.'),
-			isSystem = this.meta.systemFields[chunks[0]];
+			isSelf = obj === this,
+			isField = isSelf && this.meta.fields[chunks[0]],
+			isReady = !this.isBeforeCreate();
+
+		let
+			ref = isField ? this.$$data : obj;
 
 		for (let i = 0; i < chunks.length; i++) {
 			const
@@ -969,11 +1084,11 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 				const
 					val = isNaN(Number(chunks[i + 1])) ? {} : [];
 
-				if (isSystem) {
-					ref[prop] = val;
+				if (isField && isReady) {
+					this.$set(ref, prop, val);
 
 				} else {
-					this.$set(ref, prop, val);
+					ref[prop] = val;
 				}
 			}
 
@@ -984,11 +1099,11 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 			ref[path] = value;
 
 		} else {
-			if (isSystem) {
-				ref[path] = value;
+			if (isField && isReady) {
+				this.$set(ref, path, value);
 
 			} else {
-				this.$set(ref, path, value);
+				ref[path] = value;
 			}
 		}
 
@@ -1002,13 +1117,16 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 * @param [obj]
 	 */
 	deleteField(path: string, obj: object = this): boolean {
-		let ref = obj;
-
 		const
 			chunks = path.split('.'),
-			isSystem = this.meta.systemFields[chunks[0]];
+			isSelf = obj === this,
+			isField = isSelf && this.meta.fields[chunks[0]],
+			isReady = !this.isBeforeCreate();
 
-		let test = true;
+		let
+			test = true,
+			ref = isField ? this.$$data : obj;
+
 		for (let i = 0; i < chunks.length; i++) {
 			const
 				prop = chunks[i];
@@ -1027,11 +1145,11 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 		}
 
 		if (test) {
-			if (isSystem) {
-				delete ref[path];
+			if (isField && isReady) {
+				this.$delete(ref, path);
 
 			} else {
-				this.$delete(ref, path);
+				delete ref[path];
 			}
 
 			return true;
@@ -1048,9 +1166,13 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 */
 	getField(path: string, obj: object = this): any {
 		const
-			chunks = path.split('.');
+			chunks = path.split('.'),
+			isSelf = obj === this,
+			isField = isSelf && this.meta.fields[chunks[0]];
 
-		let res = obj;
+		let
+			res = isField ? this.$$data : obj;
+
 		for (let i = 0; i < chunks.length; i++) {
 			if (res == null) {
 				return undefined;
@@ -1064,11 +1186,9 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 
 	/**
 	 * Gets values from the specified object and saves it to the component state
-	 *
 	 * @param [obj]
-	 * @param [state] - state object
 	 */
-	setState(obj: Dictionary | undefined, state: Dictionary = this): void {
+	setState(obj: Dictionary | undefined): void {
 		$C(obj).forEach((el, key) => {
 			const
 				p = key.split('.');
@@ -1076,18 +1196,31 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 			if (p[0] === 'mods') {
 				this.setMod(p[0], p.slice(1).join('.'));
 
-			} else if (!Object.fastCompare(el, this.getField(key, state))) {
-				this.setField(key, el, state);
+			} else if (!Object.fastCompare(el, this.getField(key))) {
+				this.setField(key, el);
 			}
 		});
 	}
 
 	/**
-	 * Returns an object with default component fields for saving as local settings
-	 * @param [def]
+	 * Executes the specified callback after beforeDataCreate hook or beforeReady event
+	 *
+	 * @param cb
+	 * @param [params] - additional parameters
 	 */
-	protected convertStateToStore(def?: Dictionary | undefined): Dictionary {
-		return {...def};
+	execCbAtTheRightTime<T>(cb: (this: this) => T, params?: AsyncOpts): CanPromise<T> {
+		if (this.isBeforeCreate('beforeDataCreate')) {
+			return <any>this.async.promise(new Promise((r) => {
+				this.meta.hooks.beforeDataCreate.unshift({fn: () => r(cb.call(this))});
+			}), params).catch(stderr);
+		}
+
+		if (this.hook === 'beforeDataCreate') {
+			return cb.call(this);
+		}
+
+		this.beforeReadyListeners++;
+		return this.waitStatus('beforeReady', cb, params);
 	}
 
 	/**
@@ -1368,9 +1501,17 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	}
 
 	/**
+	 * Returns an object with default component fields for saving as local settings
+	 * @param [def]
+	 */
+	protected convertStateToStore(def?: Dictionary | undefined): Dictionary {
+		return {...def};
+	}
+
+	/**
 	 * Saves a store from to local storage
 	 */
-	@wait('loading', {defer: true, label: $$.saveLocalStore})
+	@wait({defer: true, label: $$.saveLocalStore})
 	protected async saveLocalStore(): Promise<void> {
 		if (!this.globalName) {
 			return;
@@ -1381,10 +1522,8 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 
 	/**
 	 * Loads a store from the local storage
-	 * @param [state] - state object
 	 */
-	@hook('beforeDataCreate')
-	protected async loadLocalStore(state: Dictionary = this): Promise<void> {
+	protected async loadLocalStore(): Promise<void> {
 		if (!this.globalName) {
 			return;
 		}
@@ -1408,8 +1547,16 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 			const
 				data = await this.loadSettings('[[STORE]]');
 
-			const done = this.waitStatus('beforeReady', () => {
-				this.setState(data, state);
+			this.execCbAtTheRightTime(() => {
+				const
+					stateFields = this.convertStateToStore();
+
+				if (data) {
+					this.setState(Object.select(this.convertStateToStore(data), Object.keys(stateFields)));
+
+				} else {
+					this.setState(stateFields);
+				}
 
 				const sync = () => {
 					$a.setTimeout(this.saveLocalStore, 0.2.second(), {
@@ -1417,7 +1564,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 					});
 				};
 
-				$C(this.convertStateToStore()).forEach((el, key) => {
+				$C(stateFields).forEach((el, key) => {
 					const
 						p = key.split('.');
 
@@ -1425,24 +1572,126 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 						$a.on(this.localEvent, `block.mod.*.${p[0]}.*`, sync, storeWatchers);
 
 					} else {
+						this.execCbAfterCreated(() => {
+							const watcher = this.$watch(key, (val, oldVal) => {
+								if (!Object.fastCompare(val, oldVal)) {
+									sync();
+								}
+							});
+
+							$a.worker(watcher, storeWatchers);
+						});
+					}
+				});
+			});
+
+		}, {
+			group: 'loadStore',
+			join: true
+		});
+	}
+
+	/**
+	 * Returns an object with default component fields for hash
+	 * @param [obj]
+	 */
+	protected convertStateToRouter(obj?: Dictionary | undefined): Dictionary {
+		return {...obj};
+	}
+
+	/**
+	 * Saves the component state a router
+	 * @param obj - state object
+	 */
+	protected async saveStateToRouter(obj: Dictionary): Promise<boolean> {
+		obj = this.convertStateToRouter(obj);
+
+		$C(obj).forEach((el, key) => {
+			if (el) {
+				this[key] = el;
+			}
+		});
+
+		const
+			r = this.$root.router;
+
+		if (!this.isActivated || !r) {
+			return false;
+		}
+
+		await r.push(null, {
+			query: obj
+		});
+
+		return true;
+	}
+
+	/**
+	 * Resets the component router state
+	 */
+	protected async resetRouterState(): Promise<boolean> {
+		$C(this.convertStateToRouter()).forEach((el, key) => this[key] = undefined);
+
+		const
+			r = this.$root.router;
+
+		if (!this.isActivated || !r) {
+			return false;
+		}
+
+		await r.push(null);
+		return true;
+	}
+
+	/**
+	 * Initialized the component state from the location
+	 */
+	protected initStateFromRouter(): void {
+		const
+			{async: $a} = this,
+			routerWatchers = {group: 'routerWatchers'};
+
+		$a.clearAll(
+			routerWatchers
+		);
+
+		this.execCbAtTheRightTime(() => {
+			const
+				p = this.$root.pageInfo,
+				stateFields = this.convertStateToRouter();
+
+			if (p && p.query) {
+				this.setState(Object.select(this.convertStateToRouter(p.query), Object.keys(stateFields)));
+
+			} else {
+				this.setState(stateFields);
+			}
+
+			const sync = () => {
+				$a.setTimeout(this.saveStateToRouter, 0.2.second(), {
+					label: $$.syncRouter
+				});
+			};
+
+			$C(this.convertStateToRouter()).forEach((el, key) => {
+				const
+					p = key.split('.');
+
+				if (p[0] === 'mods') {
+					$a.on(this.localEvent, `block.mod.*.${p[0]}.*`, sync, routerWatchers);
+
+				} else {
+					this.execCbAfterCreated(() => {
 						const watcher = this.$watch(key, (val, oldVal) => {
 							if (!Object.fastCompare(val, oldVal)) {
 								sync();
 							}
 						});
 
-						$a.worker(watcher, storeWatchers);
-					}
-				});
+						$a.worker(watcher, routerWatchers);
+					});
+				}
 			});
-
-			if (Then.isThenable(done)) {
-				done.catch(stderr);
-			}
-
-		}, {
-			group: 'loadStore',
-			join: true
 		});
 	}
 
@@ -1452,9 +1701,8 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 * @param elName
 	 * @param handler
 	 */
-	@wait('loading')
 	protected delegateElement(elName: string, handler: Function): CanPromise<Function> {
-		return delegate(this.block.getElSelector(elName), handler);
+		return this.execCbAfterBlockReady(() => delegate(this.block.getElSelector(elName), handler));
 	}
 
 	/**
@@ -1530,19 +1778,21 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 			}, opts);
 		};
 
-		if (this.componentStatus === statuses[statuses.unloaded]) {
-			const
-				{hooks} = this.meta;
+		if (this.isBeforeCreate()) {
+			const sync = this.syncModCache[mod] = () => {
+				this.mods[mod] = String(fn(this.getField(field), this));
+			};
 
-			hooks.beforeDataCreate.push({
-				fn: (this.syncModCache[mod] = (data) => {
-					this.mods[mod] = String(fn(this.getField(field, data), this));
-				})
-			});
+			if (this.hook !== 'beforeDataCreate') {
+				this.meta.hooks.beforeDataCreate.push({
+					fn: sync
+				});
 
-			hooks.created.push({
-				fn: setWatcher
-			});
+			} else {
+				sync();
+			}
+
+			setWatcher();
 
 		} else if (statuses[this.componentStatus] >= 1) {
 			setWatcher();
@@ -1625,18 +1875,25 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 
 		this.link = i.link.bind(this);
 		this.createWatchObject = i.createWatchObject.bind(this);
-		this.bindModTo = i.bindModTo.bind(this);
+		this.isBeforeCreate = i.isBeforeCreate.bind(this);
 		this.execCbAfterCreated = i.execCbAfterCreated.bind(this);
-		this.execCbBeforeDataCreated = i.execCbBeforeDataCreated.bind(this);
+		this.execCbAfterBlockReady = i.execCbAfterBlockReady.bind(this);
+		this.execCbAtTheRightTime = i.execCbAtTheRightTime.bind(this);
+		this.bindModTo = i.bindModTo.bind(this);
 		this.getField = i.getField.bind(this);
 		this.setField = i.setField.bind(this);
 		this.deleteField = i.deleteField.bind(this);
+		this.convertStateToStore = i.convertStateToStore.bind(this);
 		this.loadLocalStore = i.loadLocalStore.bind(this);
+		this.convertStateToRouter = i.convertStateToRouter.bind(this);
+		this.initStateFromRouter = i.initStateFromRouter.bind(this);
 		this.setState = i.setState.bind(this);
 
-		Object.defineProperty(this, 'refs', {
-			// tslint:disable-next-line
-			get: i['refsGetter']
+		Object.defineProperties(this, {
+			refs: {
+				// tslint:disable-next-line
+				get: i['refsGetter']
+			}
 		});
 
 		const
@@ -1644,7 +1901,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 
 		if ($watch) {
 			// @ts-ignore
-			this.$watch = (...args) => this.execCbBeforeDataCreated(() => $watch.apply(this, args));
+			this.$watch = (...args) => this.execCbAfterCreated(() => $watch.apply(this, args));
 		}
 	}
 
@@ -1673,57 +1930,69 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 
 	/**
 	 * Sets a link for the specified field
-	 *
-	 * @param field
-	 * @param [watchParams]
+	 * @param [watchParamsOrWrapper]
 	 */
-	protected link(field: string, watchParams?: WatchOptions): any;
+	protected link(watchParamsOrWrapper?: WatchOptions | LinkWrapper): any;
 
 	/**
-	 * @param field
+	 * Sets a link for the specified field
+	 *
+	 * @param watchParams
 	 * @param [wrapper]
 	 */
-	// tslint:disable-next-line:unified-signatures
-	protected link(field: string, wrapper?: LinkWrapper): any;
+	protected link(watchParams: WatchOptions, wrapper?: LinkWrapper): any;
 
 	/**
+	 * Sets a link for the specified field
+	 *
+	 * @param field
+	 * @param [watchParamsOrWrapper]
+	 */
+	protected link(field: string, watchParamsOrWrapper?: WatchOptions | LinkWrapper): any;
+
+	/**
+	 * Sets a link for the specified field
+	 *
 	 * @param field
 	 * @param watchParams
-	 * @param wrapper
+	 * @param [wrapper]
 	 */
-	// tslint:disable-next-line:unified-signatures
-	protected link(field: string, watchParams: WatchOptions, wrapper: LinkWrapper): any;
-	protected link(field: string, watchParams?: WatchOptions | LinkWrapper, wrapper?: LinkWrapper): any {
+	protected link(field: string, watchParams: WatchOptions, wrapper?: LinkWrapper): any;
+	protected link(
+		field?: string | WatchOptions | LinkWrapper,
+		watchParams?: WatchOptions | LinkWrapper,
+		wrapper?: LinkWrapper
+	): any {
+		const
+			path = this.$activeField,
+			cache = this.syncLinkCache;
+
+		if (!field || !Object.isString(field)) {
+			wrapper = <LinkWrapper>watchParams;
+			watchParams = <WatchOptions>field;
+			field = `${path.replace(/Store$/, '')}Prop`;
+		}
+
 		if (watchParams && Object.isFunction(watchParams)) {
 			wrapper = watchParams;
 			watchParams = undefined;
 		}
 
-		const
-			path = this.$activeField,
-			isSystem = this.meta.systemFields[path.split('.')[0]],
-			cache = this.syncLinkCache;
-
 		if (!(path in this.linksCache)) {
 			this.linksCache[path] = {};
-			this.execCbAfterCreated(() => {
-				this.$watch(field, (val, oldVal) => {
-					if (!Object.fastCompare(val, oldVal)) {
-						this.setField(path, wrapper ? wrapper.call(this, val, oldVal) : val);
-					}
-				}, <WatchOptions>watchParams);
-			});
+			this.$watch(field, (val, oldVal) => {
+				if (!Object.fastCompare(val, oldVal)) {
+					this.setField(path, wrapper ? wrapper.call(this, val, oldVal) : val);
+				}
+			}, <WatchOptions>watchParams);
 
 			const sync = (val?) => {
-				val = val || this.getField(field);
+				val = val || this.getField(<string>field);
 
 				const
 					res = wrapper ? wrapper.call(this, val) : val;
 
-				if (isSystem || !{beforeCreate: true, beforeDataCreate: true}[this.hook]) {
-					this.setField(path, res);
-				}
-
+				this.setField(path, res);
 				return res;
 			};
 
@@ -1735,8 +2004,12 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 				}
 			});
 
-			// tslint:disable-next-line
-			return this.execCbBeforeDataCreated(() => sync());
+			if (this.isBeforeCreate('beforeDataCreate')) {
+				this.meta.hooks.beforeDataCreate.unshift({fn: sync});
+				return;
+			}
+
+			return sync();
 		}
 	}
 
@@ -1820,13 +2093,11 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 
 				if (!$C(linksCache).get(l)) {
 					$C(linksCache).set(true, l);
-					this.execCbAfterCreated(() => {
-						this.$watch(field, (val, oldVal) => {
-							if (!Object.fastCompare(val, oldVal)) {
-								this.setField(l, wrapper ? wrapper.call(this, val, oldVal) : val);
-							}
-						}, <WatchOptions>watchParams);
-					});
+					this.$watch(field, (val, oldVal) => {
+						if (!Object.fastCompare(val, oldVal)) {
+							this.setField(l, wrapper ? wrapper.call(this, val, oldVal) : val);
+						}
+					}, <WatchOptions>watchParams);
 
 					const sync = (val?) => {
 						val = val || this.getField(field);
@@ -1850,13 +2121,11 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 
 				if (!$C(linksCache).get(l)) {
 					$C(linksCache).set(true, l);
-					this.execCbAfterCreated(() => {
-						this.$watch(el, (val, oldVal) => {
-							if (!Object.fastCompare(val, oldVal)) {
-								this.setField(l, val);
-							}
-						}, <WatchOptions>watchParams);
-					});
+					this.$watch(el, (val, oldVal) => {
+						if (!Object.fastCompare(val, oldVal)) {
+							this.setField(l, val);
+						}
+					}, <WatchOptions>watchParams);
 
 					// tslint:disable-next-line:prefer-object-spread
 					syncLinkCache[el] = Object.assign(syncLinkCache[el] || {}, {
@@ -2061,6 +2330,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 		}
 
 		this.block = new Block(this);
+		this.localEvent.emit('block.ready');
 	}
 
 	/**
@@ -2084,6 +2354,8 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 				delete w[k];
 				this.$set(w, k, v);
 			}
+
+			this.emit(`mod-set-${k}-${v}`, e);
 		});
 
 		$e.on('block.mod.remove.**', (e) => {
@@ -2099,6 +2371,8 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 					delete w[k];
 					this.$set(w, k, undefined);
 				}
+
+				this.emit(`mod-remove-${k}-${e.value}`, e);
 			}
 		});
 
@@ -2132,7 +2406,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	/**
 	 * Component mounted to DOM
 	 */
-	protected async mounted(): Promise<void> {
+	protected mounted(): void {
 		return undefined;
 	}
 
@@ -2145,14 +2419,13 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 			return;
 		}
 
-		const {block: $b} = this;
-		$b.status = $b.statuses.loading;
+		this.componentStatus = 'loading';
 
 		if (this.needReInit) {
 			await this.initLoad();
 
 		} else {
-			$b.status = $b.statuses.ready;
+			this.componentStatus = 'ready';
 		}
 
 		this.isActivated = true;
@@ -2175,7 +2448,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 			.terminateWorker()
 			.cancelProxy();
 
-		this.block.status = this.block.statuses.inactive;
+		this.componentStatus = 'inactive';
 		this.isActivated = false;
 	}
 
@@ -2183,7 +2456,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 * Component before destroy
 	 */
 	protected beforeDestroy(): void {
-		this.componentStatus = statuses[statuses.destroyed];
+		this.componentStatus = 'destroyed';
 		this.async.clearAll();
 		this.localEvent.removeAllListeners();
 
@@ -2196,28 +2469,50 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	}
 
 	/**
-	 * Executes the specified callback after beforeDataCreate hook and returns the result
-	 * @param cb
+	 * Returns true if the component hook is equal one of "before" hooks
+	 * @param [skip] - name of a skipped hook
 	 */
-	private execCbBeforeDataCreated<T>(cb: Function): T | undefined {
-		if (this.hook === 'beforeRuntime') {
-			this.meta.hooks.beforeDataCreate.unshift({fn: cb});
-			return;
+	protected isBeforeCreate(...skip: Hooks[]): boolean {
+		const
+			hooks = {beforeRuntime: true, beforeCreate: true, beforeDataCreate: true};
+
+		for (let i = 0; i < skip.length; i++) {
+			hooks[skip[i]] = false;
+		}
+
+		return Boolean(hooks[this.hook]);
+	}
+
+	/**
+	 * Executes the specified callback after created hook and returns the result
+	 *
+	 * @param cb
+	 * @param [params] - additional parameters
+	 */
+	protected execCbAfterCreated<T>(cb: (this: this) => T, params?: AsyncOpts): CanPromise<T> {
+		if (this.isBeforeCreate()) {
+			return <any>this.async.promise(new Promise((r) => {
+				this.meta.hooks.created.unshift({fn: () => r(cb.call(this))});
+			}), params).catch(stderr);
 		}
 
 		return cb.call(this);
 	}
 
 	/**
-	 * Executes the specified callback after created hook and returns the result
+	 * Executes the specified callback after block.ready event and returns the result
+	 *
 	 * @param cb
+	 * @param [params] - additional parameters
 	 */
-	private execCbAfterCreated<T>(cb: Function): T | undefined {
-		if (statuses[this.componentStatus]) {
+	protected execCbAfterBlockReady<T>(cb: (this: this) => T, params?: AsyncOpts): CanPromise<T> {
+		if (this.block) {
 			return cb.call(this);
 		}
 
-		this.meta.hooks.created.unshift({fn: cb});
+		return <any>this.async.promise(new Promise((r) => {
+			this.localEvent.once('block.ready', () => r(cb.call(this)));
+		}), params).catch(stderr);
 	}
 }
 
@@ -2235,16 +2530,13 @@ export abstract class iBlockDecorator extends iBlock {
 	public readonly $attrs!: Dictionary<string>;
 
 	public readonly async!: Async<this>;
-	// @ts-ignore
-	public readonly block!: Block<this>;
+	public readonly block!: Block;
 	public readonly localEvent!: EventEmitter;
 
-	// tslint:disable-next-line:unified-signatures
-	public abstract link(field: string, watchParams?: WatchOptions): any;
-	// tslint:disable-next-line:unified-signatures
-	public abstract link(field: string, wrapper?: LinkWrapper): any;
-	// tslint:disable-next-line:unified-signatures
-	public abstract link(field: string, watchParams?: WatchOptions, wrapper?: LinkWrapper): any;
+	public abstract link(watchParamsOrWrapper?: WatchOptions | LinkWrapper): any;
+	public abstract link(watchParams: WatchOptions, wrapper?: LinkWrapper): any;
+	public abstract link(field: string, watchParamsOrWrapper?: WatchOptions | LinkWrapper): any;
+	public abstract link(field: string, watchParams: WatchOptions, wrapper?: LinkWrapper): any;
 
 	public abstract createWatchObject(
 		path: string,
