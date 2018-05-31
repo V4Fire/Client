@@ -10,7 +10,7 @@ import $C = require('collection.js');
 
 const
 	COMPONENTS_PER_TICK = 10,
-	DELAY = 30;
+	DELAY = 40;
 
 /**
  * Render queue
@@ -66,7 +66,7 @@ function render(): void {
 			done = COMPONENTS_PER_TICK;
 
 		$C(cursor).forEach((fn, i, data, o) => {
-			if (!done || Date.now() - time > 30) {
+			if (!done || Date.now() - time > DELAY) {
 				return o.break;
 			}
 
