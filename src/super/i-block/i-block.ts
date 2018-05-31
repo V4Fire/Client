@@ -2203,6 +2203,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 				group
 			});
 
+			(<Dictionary>this[group])[simpleId] = false;
 			cursor.add(fn);
 		}
 

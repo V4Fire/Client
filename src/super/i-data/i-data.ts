@@ -229,7 +229,7 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 
 			} else {
 				this.execCbAtTheRightTime(() => {
-					this.setField('db', undefined);
+					this.db = undefined;
 
 				}, {
 					join: true,
