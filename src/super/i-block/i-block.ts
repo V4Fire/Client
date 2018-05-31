@@ -2191,7 +2191,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 		if (!this[group][id]) {
 			this.asyncLoading = true;
 			const fn = this.async.proxy(() => {
-				if (!filter || !filter(id)) {
+				if (filter && !filter(id)) {
 					return false;
 				}
 
