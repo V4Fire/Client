@@ -113,6 +113,9 @@ export default function createRouter(ctx: bRouter): Router {
 
 	$a.on(window, 'popstate', async () => {
 		await ctx.replace(location.href, history.state);
+
+	}, {
+		label: $$.popstate
 	});
 
 	return router;
