@@ -73,7 +73,7 @@ export default function createRouter(ctx: bRouter): Router {
 	}
 
 	const router = Object.mixin({withAccessors: true}, Object.create(new EventEmitter()), {
-		get page(): CurrentPage {
+		get page(): CurrentPage | undefined {
 			return {
 				query: Object.fromQueryString(location.search, {deep: true}),
 				...history.state,

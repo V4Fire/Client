@@ -250,15 +250,18 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 		method: string = 'push'
 	): Promise<PageInfo | undefined> {
 		const
-			{$root: r, driver: d, driver: {page: c}} = this,
-			info = page ? this.getPageOpts(d.id(page)) : Object.mixin(true, this.getPageOpts(c.page), Object.reject(c, 'page'));
+			{$root: r, driver: d, driver: {page: c}} = this;
+
+		const info = page ?
+			this.getPageOpts(d.id(page)) :
+			c && Object.mixin(true, this.getPageOpts(c.page), Object.reject(c, 'page'));
 
 		if (!info) {
 			await d[method](page);
 			return;
 		}
 
-		if (!info.page && c.page) {
+		if (!info.page && c && c.page) {
 			info.page = c.page;
 		}
 

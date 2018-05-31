@@ -35,7 +35,7 @@ export type PageSchema<M extends Dictionary = Dictionary> = string | M & {
 };
 
 export interface Router extends EventEmitter {
-	page: CurrentPage;
+	page?: CurrentPage | undefined;
 	routes: Dictionary<PageSchema>;
 	id(page: string): string;
 	push(page: string, info?: PageInfo): Promise<void>;
