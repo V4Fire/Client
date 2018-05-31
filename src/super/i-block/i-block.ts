@@ -2187,7 +2187,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 		const
 			currentQueue = group === 'asyncComponents' ? queue : backQueue;
 
-		if (!this[group][simpleId]) {
+		if (!(simpleId in this[group])) {
 			const fn = this.async.proxy(() => {
 				if (filter && !filter(simpleId)) {
 					return false;
@@ -2202,6 +2202,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 				group
 			});
 
+			this[group][simpleId] = false;
 			currentQueue.add(fn);
 		}
 
