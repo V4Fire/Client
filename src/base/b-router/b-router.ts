@@ -17,7 +17,7 @@ import driver from 'base/b-router/drivers';
 import symbolGenerator from 'core/symbol';
 
 import { Router, PageSchema, PageInfo, CurrentPage } from 'base/b-router/drivers/interface';
-import iData, { component, prop, system, hook } from 'super/i-data/i-data';
+import iData, { component, prop, system, hook, p } from 'super/i-data/i-data';
 
 export * from 'super/i-data/i-data';
 export * from 'base/b-router/drivers/interface';
@@ -59,8 +59,8 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 	/**
 	 * Initial router paths
 	 */
-	@prop(Object)
-	readonly pagesProp: Dictionary<PageSchema> = {};
+	@prop({type: Object, required: false})
+	readonly pagesProp?: Dictionary<PageSchema>;
 
 	/**
 	 * Driver constructor for router
@@ -99,8 +99,9 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 	 */
 	@system({
 		after: 'driver',
-		init: (o) => o.link((v) =>
-			$C(v || this.driver.routes).map((obj, page) => {
+		init: (o) => o.link((v) => {
+			const ctx: bRouter = <any>o;
+			return $C(v || ctx.driver.routes || {}).map((obj, page) => {
 				const
 					isStr = Object.isString(obj),
 					pattern = isStr ? obj : obj.path;
@@ -111,8 +112,8 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 					rgxp: pattern != null ? path(pattern) : undefined,
 					meta: isStr ? {} : obj
 				};
-			})
-		)
+			});
+		})
 	})
 
 	protected pages!: Pages;
@@ -120,6 +121,7 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 	/**
 	 * Current page
 	 */
+	@p({cache: false})
 	get page(): PageInfo | undefined {
 		return this.getField('pageStore');
 	}

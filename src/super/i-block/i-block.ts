@@ -39,7 +39,7 @@ import {
 
 } from 'core/component';
 
-import { prop, field, system, watch, wait } from 'super/i-block/modules/decorators';
+import { prop, field, system, watch, wait, p } from 'super/i-block/modules/decorators';
 import { queue, backQueue } from 'core/render';
 import { delegate } from 'core/dom';
 
@@ -149,6 +149,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	/**
 	 * Component initialize status
 	 */
+	@p({cache: false})
 	get componentStatus(): string {
 		return this.getField('componentStatusStore');
 	}
@@ -2005,7 +2006,20 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 			});
 
 			if (this.isBeforeCreate('beforeDataCreate')) {
-				this.meta.hooks.beforeDataCreate.unshift({fn: sync});
+				const
+					name = '[[SYNC]]',
+					hooks = this.meta.hooks.beforeDataCreate;
+
+				let
+					pos = 0;
+
+				for (let i = 0; i < hooks.length; i++) {
+					if (hooks[i].name === name) {
+						pos = i + 1;
+					}
+				}
+
+				hooks.splice(pos, 0, {fn: sync, name});
 				return;
 			}
 
