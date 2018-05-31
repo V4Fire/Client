@@ -1057,7 +1057,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 			chunks = path.split('.'),
 			isSelf = obj === this,
 			isField = isSelf && this.meta.fields[chunks[0]],
-			isBeforeCreate = this.isBeforeCreate();
+			isReady = !this.isBeforeCreate();
 
 		let
 			ref = isField ? this.$$data : obj;
@@ -1075,7 +1075,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 				const
 					val = isNaN(Number(chunks[i + 1])) ? {} : [];
 
-				if (isField && isBeforeCreate) {
+				if (isField && isReady) {
 					this.$set(ref, prop, val);
 
 				} else {
@@ -1090,7 +1090,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 			ref[path] = value;
 
 		} else {
-			if (isField && isBeforeCreate) {
+			if (isField && isReady) {
 				this.$set(ref, path, value);
 
 			} else {
@@ -1112,7 +1112,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 			chunks = path.split('.'),
 			isSelf = obj === this,
 			isField = isSelf && this.meta.fields[chunks[0]],
-			isBeforeCreate = this.isBeforeCreate();
+			isReady = !this.isBeforeCreate();
 
 		let
 			test = true,
@@ -1136,7 +1136,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 		}
 
 		if (test) {
-			if (isField && isBeforeCreate) {
+			if (isField && isReady) {
 				this.$delete(ref, path);
 
 			} else {
