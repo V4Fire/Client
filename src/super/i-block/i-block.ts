@@ -110,6 +110,14 @@ export enum statuses {
 	unloaded = 0
 }
 
+export interface AsyncTaskObjectId {
+	id: AsyncTaskSimpleId;
+	filter?(id: AsyncTaskSimpleId): boolean;
+}
+
+export type AsyncTaskSimpleId = string | number;
+export type AsyncTaskId = AsyncTaskSimpleId | (() => AsyncTaskObjectId) | AsyncTaskObjectId;
+
 export const
 	$$ = symbolGenerator(),
 	modsCache = Object.createDict(),
@@ -695,6 +703,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 		unique: true,
 		init: () => window
 	})
+
 	protected readonly global!: Window;
 
 	/**
@@ -2171,37 +2180,38 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 * @param id - task id
 	 * @param [group] - task group
 	 */
-	protected regAsyncComponent(id: any, group: string = 'asyncComponents'): string {
+	protected regAsyncComponent(id: AsyncTaskId, group: string = 'asyncComponents'): AsyncTaskSimpleId {
 		let
-			filter;
+			filter,
+			simpleId = <any>id;
 
 		if (Object.isFunction(id)) {
 			const
 				v = id();
 
 			if (Object.isObject(v)) {
-				id = v.id;
+				simpleId = v.id;
 				filter = v.filter;
 
 			} else {
-				id = v;
+				simpleId = v;
 			}
 
 		} else if (Object.isObject(id)) {
-			filter = id.filter;
-			id = id.id;
+			filter = (<AsyncTaskObjectId>id).filter;
+			simpleId = (<AsyncTaskObjectId>id).id;
 		}
 
-		if (!this[group][id]) {
+		if (!this[group][simpleId]) {
 			this.asyncLoading = true;
 			const fn = this.async.proxy(() => {
-				if (filter && !filter(id)) {
+				if (filter && !filter(simpleId)) {
 					return false;
 				}
 
 				this.asyncCounter++;
 				this.asyncQueue.delete(fn);
-				this.$set(this[group], id, true);
+				this.$set(this[group], simpleId, true);
 				return true;
 
 			}, {group});
@@ -2210,14 +2220,14 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 			queue.add(fn);
 		}
 
-		return id;
+		return simpleId;
 	}
 
 	/**
 	 * Adds a component to the background render queue
 	 * @param id - task id
 	 */
-	protected regAsyncBackComponent(id: any): string {
+	protected regAsyncBackComponent(id: AsyncTaskId): AsyncTaskSimpleId {
 		return this.regAsyncComponent(id, 'asyncBackComponents');
 	}
 
