@@ -2186,6 +2186,10 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 			} else {
 				id = v;
 			}
+
+		} else if (Object.isObject(id)) {
+			filter = id.filter;
+			id = id.id;
 		}
 
 		if (!this[group][id]) {

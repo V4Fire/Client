@@ -37,21 +37,22 @@ queue.add = backQueue.add = function addToQueue<T>(): T {
 /**
  * Render loop
  */
-let i = 0;
 function render(): void {
 	const
 		cursor = queue.size ? queue : backQueue,
-		componentsPerTick = 10,
-		switchI = Math.round(componentsPerTick / 2) + 1;
+		componentsPerTick = 10;
 
 	const exec = () => {
 		inProgress = true;
+
+		const
+			time = Date.now();
 
 		let
 			done = componentsPerTick;
 
 		$C(cursor).forEach((fn, i, data, o) => {
-			if (!done) {
+			if (!done || Date.now() - time > 30) {
 				return o.break;
 			}
 
@@ -59,13 +60,7 @@ function render(): void {
 				done--;
 				cursor.delete(fn);
 			}
-
-		}, {reverse: i % switchI === 0});
-
-		i++;
-		if (i === switchI) {
-			i = 0;
-		}
+		});
 
 		if (queue.size || backQueue.size) {
 			setTimeout(() => requestIdleCallback(render), DELAY);
