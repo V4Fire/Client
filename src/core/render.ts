@@ -17,8 +17,7 @@ export const
 	add = queue.add;
 
 let
-	inProgress = false,
-	timer;
+	inProgress = false;
 
 queue.add = backQueue.add = function addToQueue<T>(): T {
 	const
@@ -30,6 +29,10 @@ queue.add = backQueue.add = function addToQueue<T>(): T {
 
 	return res;
 };
+
+let
+	timer,
+	cancelTimer;
 
 /**
  * Render loop
@@ -63,7 +66,11 @@ function render(): void {
 			requestIdleCallback(render);
 
 		} else {
-			setImmediate(() => inProgress = false);
+			clearImmediate(cancelTimer);
+			cancelTimer = setImmediate(() => {
+				inProgress = Boolean(queue.size || backQueue.size);
+				inProgress && exec();
+			});
 		}
 	};
 
