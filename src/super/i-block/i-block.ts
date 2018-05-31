@@ -34,6 +34,7 @@ import {
 	VueInterface,
 	VueElement,
 	ComponentMeta,
+	Hooks,
 	PARENT
 
 } from 'core/component';
@@ -1055,10 +1056,11 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 		const
 			chunks = path.split('.'),
 			isSelf = obj === this,
-			isField = isSelf && this.meta.fields[chunks[0]];
+			isField = isSelf && this.meta.fields[chunks[0]],
+			isBeforeCreate = this.isBeforeCreate();
 
 		let
-			ref = isField && isSelf ? this.$$data : obj;
+			ref = isField ? this.$$data : obj;
 
 		for (let i = 0; i < chunks.length; i++) {
 			const
@@ -1073,7 +1075,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 				const
 					val = isNaN(Number(chunks[i + 1])) ? {} : [];
 
-				if (isField) {
+				if (isField && isBeforeCreate) {
 					this.$set(ref, prop, val);
 
 				} else {
@@ -1088,7 +1090,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 			ref[path] = value;
 
 		} else {
-			if (isField) {
+			if (isField && isBeforeCreate) {
 				this.$set(ref, path, value);
 
 			} else {
@@ -1109,11 +1111,12 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 		const
 			chunks = path.split('.'),
 			isSelf = obj === this,
-			isField = isSelf && this.meta.fields[chunks[0]];
+			isField = isSelf && this.meta.fields[chunks[0]],
+			isBeforeCreate = this.isBeforeCreate();
 
 		let
 			test = true,
-			ref = isField && isSelf ? this.$$data : obj;
+			ref = isField ? this.$$data : obj;
 
 		for (let i = 0; i < chunks.length; i++) {
 			const
@@ -1133,7 +1136,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 		}
 
 		if (test) {
-			if (isField) {
+			if (isField && isBeforeCreate) {
 				this.$delete(ref, path);
 
 			} else {
@@ -1159,7 +1162,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 			isField = isSelf && this.meta.fields[chunks[0]];
 
 		let
-			res = isField && isSelf ? this.$$data : obj;
+			res = isField ? this.$$data : obj;
 
 		for (let i = 0; i < chunks.length; i++) {
 			if (res == null) {
@@ -1197,7 +1200,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 * @param [params] - additional parameters
 	 */
 	execCbAtTheRightTime<T>(cb: (this: this) => T, params?: AsyncOpts): CanPromise<T> {
-		if ({beforeRuntime: true, beforeCreate: true}[this.hook]) {
+		if (this.isBeforeCreate('beforeDataCreate')) {
 			return <any>this.async.promise(new Promise((r) => {
 				this.meta.hooks.beforeDataCreate.unshift({fn: () => r(cb.call(this))});
 			}), params).catch(stderr);
@@ -1766,19 +1769,21 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 			}, opts);
 		};
 
-		if (this.componentStatus === 'unloaded') {
-			const
-				{hooks} = this.meta;
+		if (this.isBeforeCreate()) {
+			const sync = this.syncModCache[mod] = () => {
+				this.mods[mod] = String(fn(this.getField(field), this));
+			};
 
-			hooks.beforeDataCreate.push({
-				fn: (this.syncModCache[mod] = () => {
-					this.mods[mod] = String(fn(this.getField(field), this));
-				})
-			});
+			if (this.hook !== 'beforeDataCreate') {
+				this.meta.hooks.beforeDataCreate.push({
+					fn: sync
+				});
 
-			hooks.created.push({
-				fn: setWatcher
-			});
+			} else {
+				sync();
+			}
+
+			setWatcher();
 
 		} else if (statuses[this.componentStatus] >= 1) {
 			setWatcher();
@@ -1861,6 +1866,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 
 		this.link = i.link.bind(this);
 		this.createWatchObject = i.createWatchObject.bind(this);
+		this.isBeforeCreate = i.isBeforeCreate.bind(this);
 		this.execCbAfterCreated = i.execCbAfterCreated.bind(this);
 		this.execCbAfterBlockReady = i.execCbAfterBlockReady.bind(this);
 		this.execCbAtTheRightTime = i.execCbAtTheRightTime.bind(this);
@@ -1989,7 +1995,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 				}
 			});
 
-			if ({beforeRuntime: true, beforeDataCreate: true}[this.hook]) {
+			if (this.isBeforeCreate('beforeDataCreate')) {
 				this.meta.hooks.beforeDataCreate.unshift({fn: sync});
 				return;
 			}
@@ -2454,13 +2460,28 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	}
 
 	/**
+	 * Returns true if the component hook is equal one of "before" hooks
+	 * @param [skip] - name of a skipped hook
+	 */
+	protected isBeforeCreate(...skip: Hooks[]): boolean {
+		const
+			hooks = {beforeRuntime: true, beforeCreate: true, beforeDataCreate: true};
+
+		for (let i = 0; i < skip.length; i++) {
+			hooks[skip[i]] = false;
+		}
+
+		return Boolean(hooks[this.hook]);
+	}
+
+	/**
 	 * Executes the specified callback after created hook and returns the result
 	 *
 	 * @param cb
 	 * @param [params] - additional parameters
 	 */
 	protected execCbAfterCreated<T>(cb: (this: this) => T, params?: AsyncOpts): CanPromise<T> {
-		if ({beforeRuntime: true, beforeCreate: true, beforeDataCreate: true}[this.hook]) {
+		if (this.isBeforeCreate()) {
 			return <any>this.async.promise(new Promise((r) => {
 				this.meta.hooks.created.unshift({fn: () => r(cb.call(this))});
 			}), params).catch(stderr);
