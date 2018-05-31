@@ -605,18 +605,6 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	protected readonly storage!: AsyncNamespace;
 
 	/**
-	 * Async loading state
-	 */
-	@field()
-	protected asyncLoading: boolean = false;
-
-	/**
-	 * Counter of async components
-	 */
-	@field()
-	protected asyncCounter: number = 0;
-
-	/**
 	 * Cache of child async components
 	 */
 	@field({unique: true})
@@ -2200,13 +2188,11 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 			currentQueue = group === 'asyncComponents' ? queue : backQueue;
 
 		if (!this[group][simpleId]) {
-			this.asyncLoading = true;
 			const fn = this.async.proxy(() => {
 				if (filter && !filter(simpleId)) {
 					return false;
 				}
 
-				this.asyncCounter++;
 				this.$set(this[group], simpleId, true);
 				return true;
 
@@ -2231,21 +2217,12 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	}
 
 	/**
-	 * Synchronization for the asyncCounter field
-	 *
-	 * @param value
+	 * Synchronization for the asyncComponents field
 	 * @emits asyncRender()
 	 */
-	@watch('asyncCounter')
-	protected syncAsyncCounterWatcher(value: number): void {
-		const disableAsync = () => {
-			this.asyncLoading = false;
-		};
-
-		this.async.setTimeout(disableAsync, 0.2.second(), {
-			label: $$.asyncLoading
-		});
-
+	@watch({field: 'asyncComponents', deep: true})
+	@watch({field: 'asyncBackComponents', deep: true})
+	protected syncAsyncComponentsWatcher(): void {
 		this.emit('asyncRender');
 	}
 

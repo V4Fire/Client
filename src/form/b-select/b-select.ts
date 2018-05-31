@@ -639,7 +639,7 @@ export default class bSelect<T extends Dictionary = Dictionary> extends bInput<T
 		super.created();
 
 		if (!this.b.is.mobile) {
-			this.$watch('asyncCounter', async () => {
+			this.on('asyncRender', async () => {
 				try {
 					await (await this.waitRef<bScrollInline>('scroll')).initScroll();
 				} catch (_) {}

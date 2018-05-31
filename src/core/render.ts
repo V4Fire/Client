@@ -67,11 +67,13 @@ function render(): void {
 		}
 	};
 
-	if (cursor.size >= componentsPerTick) {
-		exec();
+	if (!inProgress) {
+		if (cursor.size >= componentsPerTick) {
+			exec();
 
-	} else {
-		clearImmediate(timer);
-		timer = setImmediate(exec);
+		} else {
+			clearImmediate(timer);
+			timer = setImmediate(exec);
+		}
 	}
 }
