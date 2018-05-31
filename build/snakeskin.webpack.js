@@ -349,7 +349,7 @@ function vueComp({name, attrs}) {
 			key = attrs['v-else'] ? 'v-else-if' : attrs['v-else-if'] ? 'v-else-if' : 'v-if';
 
 		attrs[key] = attachVIf(
-			(attrs[key] || []).concat(`async${p}Components[regAsync${p}Component(${id}, '${name}')]`),
+			(attrs[key] || []).concat(`async${p}Components[regAsync${p}Component(${id})]`),
 			asyncBackVal ? '||' : '&&'
 		);
 
