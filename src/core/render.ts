@@ -8,6 +8,10 @@
 
 import $C = require('collection.js');
 
+const
+	COMPONENTS_PER_TICK = 10,
+	DELAY = 30;
+
 /**
  * Render queue
  */
@@ -17,13 +21,14 @@ export const
 	add = queue.add;
 
 let
-	inProgress = false;
+	inProgress = false,
+	isStarted = false;
 
 queue.add = backQueue.add = function addToQueue<T>(): T {
 	const
 		res = add.apply(this, arguments);
 
-	if (!inProgress) {
+	if (!isStarted) {
 		render();
 	}
 
@@ -31,25 +36,24 @@ queue.add = backQueue.add = function addToQueue<T>(): T {
 };
 
 let
-	timer,
-	cancelTimer;
+	renderStartTimer;
 
 /**
  * Render loop
  */
 function render(): void {
 	const
-		cursor = queue.size ? queue : backQueue,
-		componentsPerTick = 10;
+		cursor = queue.size ? queue : backQueue;
 
 	const exec = () => {
 		inProgress = true;
+		isStarted = true;
 
 		const
 			time = Date.now();
 
 		let
-			done = componentsPerTick;
+			done = COMPONENTS_PER_TICK;
 
 		$C(cursor).forEach((fn, i, data, o) => {
 			if (!done || Date.now() - time > 30) {
@@ -63,22 +67,19 @@ function render(): void {
 		});
 
 		if (queue.size || backQueue.size) {
-			requestIdleCallback(render);
+			setTimeout(render, DELAY);
 
 		} else {
-			clearImmediate(cancelTimer);
-			cancelTimer = setImmediate(() => {
-				inProgress = Boolean(queue.size || backQueue.size);
-				inProgress && exec();
-			});
+			inProgress = false;
+			isStarted = false;
 		}
 	};
 
-	if (inProgress || cursor.size >= componentsPerTick) {
+	if (inProgress || cursor.size >= COMPONENTS_PER_TICK) {
 		exec();
 
 	} else {
-		clearImmediate(timer);
-		timer = setImmediate(exec);
+		clearImmediate(renderStartTimer);
+		renderStartTimer = setImmediate(exec);
 	}
 }

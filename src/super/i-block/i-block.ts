@@ -117,6 +117,7 @@ export interface AsyncTaskObjectId {
 
 export type AsyncTaskSimpleId = string | number;
 export type AsyncTaskId = AsyncTaskSimpleId | (() => AsyncTaskObjectId) | AsyncTaskObjectId;
+export type AsyncQueueType = 'asyncComponents' | 'asyncBackComponents';
 
 export const
 	$$ = symbolGenerator(),
@@ -2162,7 +2163,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 * @param id - task id
 	 * @param [group] - task group
 	 */
-	protected regAsyncComponent(id: AsyncTaskId, group: string = 'asyncComponents'): AsyncTaskSimpleId {
+	protected regAsyncComponent(id: AsyncTaskId, group: AsyncQueueType = 'asyncComponents'): AsyncTaskSimpleId {
 		let
 			filter,
 			simpleId = <any>id;
@@ -2185,7 +2186,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 		}
 
 		const
-			currentQueue = group === 'asyncComponents' ? queue : backQueue;
+			cursor = group === 'asyncComponents' ? queue : backQueue;
 
 		if (!(simpleId in this[group])) {
 			const fn = this.async.proxy(() => {
@@ -2197,13 +2198,12 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 				return true;
 
 			}, {
-				onClear: () => currentQueue.delete(fn),
+				onClear: () => cursor.delete(fn),
 				single: false,
 				group
 			});
 
-			this[group][simpleId] = false;
-			currentQueue.add(fn);
+			cursor.add(fn);
 		}
 
 		return simpleId;
