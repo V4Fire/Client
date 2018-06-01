@@ -2164,37 +2164,31 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 * @param [group] - task group
 	 */
 	protected regAsyncComponent(id: AsyncTaskId, group: AsyncQueueType = 'asyncComponents'): AsyncTaskSimpleId {
+		id = Object.isFunction(id) ? id() : id;
+
 		let
 			filter,
-			simpleId = <any>id;
+			simpleId;
 
-		if (Object.isFunction(id)) {
-			const
-				v = id();
-
-			if (Object.isObject(v)) {
-				simpleId = v.id;
-				filter = v.filter;
-
-			} else {
-				simpleId = v;
-			}
-
-		} else if (Object.isObject(id)) {
+		if (Object.isObject(id)) {
 			filter = (<AsyncTaskObjectId>id).filter;
 			simpleId = (<AsyncTaskObjectId>id).id;
+
+		} else {
+			simpleId = id;
 		}
 
 		const
-			cursor = group === 'asyncComponents' ? queue : backQueue;
+			cursor = group === 'asyncComponents' ? queue : backQueue,
+			store = <Dictionary>this[group];
 
-		if (!(simpleId in this[group])) {
+		if (!(simpleId in store)) {
 			const fn = this.async.proxy(() => {
 				if (filter && !filter(simpleId)) {
 					return false;
 				}
 
-				this.$set(this[group], simpleId, true);
+				this.$set(store, simpleId, true);
 				return true;
 
 			}, {
@@ -2203,7 +2197,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 				group
 			});
 
-			(<Dictionary>this[group])[simpleId] = false;
+			store[simpleId] = false;
 			cursor.add(fn);
 		}
 
