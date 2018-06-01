@@ -203,11 +203,13 @@ function vueComp({name, attrs}) {
 
 	const
 		asyncVal = attrs['v-async'],
-		asyncBackVal = attrs['v-async-back'];
+		asyncBackVal = attrs['v-async-back'],
+		asyncCounter = attrs['v-async-counter'];
 
 	delete attrs['v-sync'];
 	delete attrs['v-async'];
 	delete attrs['v-async-back'];
+	delete attrs['v-async-counter'];
 
 	$C(attrs).forEach((el, key) => {
 		if (key.slice(0, 2) === ':-') {
@@ -341,8 +343,9 @@ function vueComp({name, attrs}) {
 
 	if (!isSync && !attrs.ref && !attrs[':ref'] && (asyncVal || asyncBackVal)) {
 		const
+			uid = Math.random(),
 			selfId = asyncVal ? asyncVal[0] : asyncBackVal[0],
-			id = selfId !== true ? selfId : Math.random();
+			id = selfId !== true ? selfId : asyncCounter ? `'${uid}' + ${asyncCounter[0]}` : `'${uid}'`;
 
 		const
 			p = asyncBackVal ? 'Back' : '',
