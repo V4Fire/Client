@@ -168,7 +168,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 
 	favicons() {
 		return {
-			appName: this.appName(),
+			appName: this.appName,
 			path: this.src.assets('favicons'),
 			background: '#FFF',
 			display: 'standalone',
