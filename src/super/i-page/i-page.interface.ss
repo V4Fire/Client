@@ -12,6 +12,7 @@
 - include 'super/i-page/modules/**/*.ss'|b
 
 - import fs from 'fs-extra-promise'
+- import glob from 'glob'
 - import path from 'upath'
 - import hashFiles from 'hash-files'
 - import delay from 'delay'
@@ -81,9 +82,9 @@
 					/// Dirty hack for replacing startURL from manifest.json
 					: putIn injectFavicons
 						() =>
-							: faviconsSrc = path.join(@assets, 'favicons/favicons.html')
+							: faviconsSrc = glob.sync(path.join(@favicons, '*.html'))[0]
 
-							- if !fs.existsSync(faviconsSrc)
+							- if !faviconsSrc
 								- return
 
 							: &

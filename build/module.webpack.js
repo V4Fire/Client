@@ -187,6 +187,7 @@ module.exports = async function ({buildId, plugins}) {
 								fatHTML: config.pack.fatHTML,
 								root: src.cwd(),
 								output: src.clientOutput(),
+								favicons: config.favicons().path,
 								dependencies: build.dependencies,
 								assets: src.assets(),
 								lib: src.lib(),
