@@ -40,7 +40,7 @@ import {
 } from 'core/component';
 
 import { prop, field, system, watch, wait, p } from 'super/i-block/modules/decorators';
-import { queue, backQueue, restart } from 'core/render';
+import { queue, backQueue, restart, lazyRestart } from 'core/render';
 import { delegate } from 'core/dom';
 
 import * as helpers from 'core/helpers';
@@ -2159,6 +2159,14 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 */
 	protected forceAsyncRender(): void {
 		restart();
+	}
+
+	/**
+	 * Restarts the async render daemon for forcing render
+	 * (runs on the next tick)
+	 */
+	protected lazyForceAsyncRender(): void {
+		lazyRestart();
 	}
 
 	/**

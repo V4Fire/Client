@@ -29,7 +29,7 @@ queue.add = backQueue.add = function addToQueue<T>(): T {
 		res = add.apply(this, arguments);
 
 	if (!isStarted) {
-		render();
+		run();
 	}
 
 	return res;
@@ -45,16 +45,20 @@ let
  */
 export function restart(): void {
 	isStarted = inProgress = false;
-	render();
+	run();
 }
 
 /**
- * Render loop
+ * Restarts render daemon (runs on the next tick)
  */
-function render(): void {
-	clearImmediate(daemonStartTimer);
-	clearImmediate(daemonStopTimer);
-	clearTimeout(loopTimer);
+export function lazyRestart(): void {
+	isStarted = inProgress = false;
+	clearTimers();
+	runOnNextTick();
+}
+
+function run(): void {
+	clearTimers();
 
 	const
 		cursor = queue.size ? queue : backQueue;
@@ -79,18 +83,6 @@ function render(): void {
 			}
 		});
 
-		const canProcessing = () =>
-			Boolean(queue.size || backQueue.size);
-
-		const runOnNextTick = () => {
-			if (canProcessing()) {
-				loopTimer = setTimeout(render, DELAY);
-				return true;
-			}
-
-			return false;
-		};
-
 		if (!runOnNextTick()) {
 			daemonStopTimer = setImmediate(() => {
 				inProgress = isStarted = canProcessing();
@@ -105,4 +97,23 @@ function render(): void {
 	} else {
 		daemonStartTimer = setImmediate(exec);
 	}
+}
+
+function canProcessing(): boolean {
+	return Boolean(queue.size || backQueue.size);
+}
+
+function runOnNextTick(): boolean {
+	if (canProcessing()) {
+		loopTimer = setTimeout(run, DELAY);
+		return true;
+	}
+
+	return false;
+}
+
+function clearTimers(): void {
+	clearImmediate(daemonStartTimer);
+	clearImmediate(daemonStopTimer);
+	clearTimeout(loopTimer);
 }
