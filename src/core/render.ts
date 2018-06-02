@@ -44,8 +44,7 @@ let
  * Restarts render daemon
  */
 export function restart(): void {
-	isStarted = false;
-	inProgress = false;
+	isStarted = inProgress = false;
 	render();
 }
 
