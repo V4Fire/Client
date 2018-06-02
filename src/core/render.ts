@@ -36,8 +36,8 @@ queue.add = backQueue.add = function addToQueue<T>(): T {
 };
 
 let
-	renderStartTimer,
-	renderStopTimer,
+	daemonStartTimer,
+	daemonStopTimer,
 	loopTimer;
 
 /**
@@ -53,7 +53,9 @@ export function restart(): void {
  * Render loop
  */
 function render(): void {
-	clearImmediate(renderStopTimer);
+	clearImmediate(daemonStartTimer);
+	clearImmediate(daemonStopTimer);
+	clearTimeout(loopTimer);
 
 	const
 		cursor = queue.size ? queue : backQueue;
@@ -83,7 +85,6 @@ function render(): void {
 
 		const runOnNextTick = () => {
 			if (canProcessing()) {
-				clearTimeout(loopTimer);
 				loopTimer = setTimeout(render, DELAY);
 				return true;
 			}
@@ -92,7 +93,7 @@ function render(): void {
 		};
 
 		if (!runOnNextTick()) {
-			renderStopTimer = setImmediate(() => {
+			daemonStopTimer = setImmediate(() => {
 				inProgress = isStarted = canProcessing();
 				inProgress && runOnNextTick();
 			});
@@ -103,7 +104,6 @@ function render(): void {
 		exec();
 
 	} else {
-		clearImmediate(renderStartTimer);
-		renderStartTimer = setImmediate(exec);
+		daemonStartTimer = setImmediate(exec);
 	}
 }
