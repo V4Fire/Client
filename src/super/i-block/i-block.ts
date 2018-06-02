@@ -40,7 +40,7 @@ import {
 } from 'core/component';
 
 import { prop, field, system, watch, wait, p } from 'super/i-block/modules/decorators';
-import { queue, backQueue } from 'core/render';
+import { queue, backQueue, restart } from 'core/render';
 import { delegate } from 'core/dom';
 
 import * as helpers from 'core/helpers';
@@ -2155,6 +2155,13 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	}
 
 	/**
+	 * Restarts the async render daemon for forcing render
+	 */
+	protected forceAsyncRender(): void {
+		restart();
+	}
+
+	/**
 	 * Adds a component to the render queue
 	 *
 	 * @param id - task id
@@ -2185,7 +2192,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 					return false;
 				}
 
-				this.$set(store, simpleId, true);
+				store[simpleId] = true;
 				return true;
 
 			}, {
@@ -2194,7 +2201,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 				group
 			});
 
-			store[simpleId] = false;
+			this.$set(store, simpleId, false);
 			cursor.add(fn);
 		}
 

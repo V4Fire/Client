@@ -37,6 +37,7 @@ queue.add = backQueue.add = function addToQueue<T>(): T {
 
 let
 	renderStartTimer,
+	renderStopTimer,
 	loopTimer;
 
 /**
@@ -52,12 +53,13 @@ export function restart(): void {
  * Render loop
  */
 function render(): void {
+	clearImmediate(renderStopTimer);
+
 	const
 		cursor = queue.size ? queue : backQueue;
 
 	const exec = () => {
-		inProgress = true;
-		isStarted = true;
+		inProgress = isStarted = true;
 
 		const
 			time = Date.now();
@@ -76,13 +78,24 @@ function render(): void {
 			}
 		});
 
-		if (queue.size || backQueue.size) {
-			clearTimeout(loopTimer);
-			loopTimer = setTimeout(render, DELAY);
+		const canProcessing = () =>
+			Boolean(queue.size || backQueue.size);
 
-		} else {
-			inProgress = false;
-			isStarted = false;
+		const runOnNextTick = () => {
+			if (canProcessing()) {
+				clearTimeout(loopTimer);
+				loopTimer = setTimeout(render, DELAY);
+				return true;
+			}
+
+			return false;
+		};
+
+		if (!runOnNextTick()) {
+			renderStopTimer = setImmediate(() => {
+				inProgress = isStarted = canProcessing();
+				inProgress && runOnNextTick();
+			});
 		}
 	};
 
