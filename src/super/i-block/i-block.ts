@@ -807,9 +807,6 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 			providers = new Set();
 
 		if ($c) {
-			const
-				providers = new Set();
-
 			for (let i = 0; i < $c.length; i++) {
 				const
 					el = $c[i];
