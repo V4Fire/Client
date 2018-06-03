@@ -683,6 +683,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 * Link to the global object
 	 */
 	@system({
+		atom: true,
 		unique: true,
 		init: () => window
 	})
