@@ -63,9 +63,9 @@ export function getComponent(
 		data(): Dictionary {
 			const
 				ctx = <any>this,
-				data = ctx.$$data = {};
+				data = ctx.$$data;
 
-			initDataObject(meta.fields, ctx, instance, ctx.$$data);
+			initDataObject(meta.fields, ctx, instance, data);
 			runHook('beforeDataCreate', ctx.meta, ctx).catch(stderr);
 
 			ctx.$$data = this;
@@ -83,7 +83,7 @@ export function getComponent(
 				p = p.$parent;
 			}
 
-			ctx.$$data = this;
+			ctx.$$data = {};
 			ctx.$normalParent = p;
 			ctx.$state = state;
 			ctx.$async = new Async(this);

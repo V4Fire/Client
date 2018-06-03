@@ -55,6 +55,9 @@ export function createFakeCtx(
 
 	const
 		p = <Dictionary>renderCtx.parent,
+		data = {};
+
+	const
 		$w = new EventEmitter({maxListeners: 1e3}),
 		$e = new EventEmitter({maxListeners: 1e3}),
 		$a = new Async(this);
@@ -80,8 +83,8 @@ export function createFakeCtx(
 		$normalParent,
 		$options: Object.assign(Object.create(p.$options), fakeCtx.$options),
 
-		$data: {},
-		$$data: fakeCtx,
+		$data: data,
+		$$data: data,
 		$dataCache: {},
 		$props: renderCtx.props,
 		$attrs: renderCtx.data.attrs,
@@ -245,9 +248,6 @@ export function createFakeCtx(
 
 		for (let i = 0; i < list.length; i++) {
 			if (i) {
-				const
-					data = fakeCtx.$$data = fakeCtx.$data;
-
 				initDataObject(list[i], fakeCtx, instance, data);
 				runHook('beforeDataCreate', meta, fakeCtx).catch(stderr);
 				fakeCtx.$$data = fakeCtx;
