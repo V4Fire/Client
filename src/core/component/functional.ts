@@ -235,7 +235,7 @@ export function createFakeCtx(
 			key = fakeCtx.$activeField = keys[i],
 			el = o[key];
 
-		if (Object.isFunction(el.default) && !el.default[defaultWrapper]) {
+		if (!fakeCtx[key] && Object.isFunction(el.default) && !el.default[defaultWrapper]) {
 			fakeCtx[key] = el.type === Function ? el.default.bind(fakeCtx) : el.default.call(fakeCtx);
 		}
 	}
