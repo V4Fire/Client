@@ -102,7 +102,7 @@ export default class iPage<
 
 		const
 			c = component.componentName,
-			mod = this.getFullBlockName(c, name, value);
+			mod = this.getFullBlockName(c, name, value).replace(/_/g, '-');
 
 		name = `${c}_${name.camelize(false)}`;
 		value = String(value).dasherize();
