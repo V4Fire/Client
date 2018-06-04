@@ -53,11 +53,10 @@ export default class Block {
 		this.mods = Object.createDict();
 
 		// @ts-ignore
-		this.event = component.localEvent;
+		this.node = component.$el;
 
 		// @ts-ignore
-		this.node = component.$el;
-		this.node.classList.add(this.blockName, 'i-block-helper');
+		this.event = component.localEvent;
 
 		for (let m = component.mods, keys = Object.keys(m), i = 0; i < keys.length; i++) {
 			const name = keys[i];

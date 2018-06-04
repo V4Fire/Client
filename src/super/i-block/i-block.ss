@@ -25,7 +25,7 @@
 	- rootTag = 'div'
 	- overWrapper = true
 
-	- rootAttrs = {':class': '[componentId, getBlockClasses(mods)]'}
+	- rootAttrs = {':class': '[componentId, getBlockClasses(mods), "i-block-helper"]'}
 	- block rootAttrs
 
 	- attrs = {}
