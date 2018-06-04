@@ -221,7 +221,7 @@ export default class bForm<T extends Dictionary = Dictionary> extends iData<T> {
 					!Object.fastCompare(this.getField(`tmp.${el.name}`), await el.groupFormValue)
 				)
 			) {
-				if (el.mods.valid !== 'true' && await el.validate()) {
+				if (el.mods.valid !== 'true' && !(await el.validate())) {
 					await el.focus();
 					valid = false;
 					break;
