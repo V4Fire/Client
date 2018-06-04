@@ -114,7 +114,7 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 	/**
 	 * Converter from .db to the component format
 	 */
-	@prop({type: Function, watch: 'initReminitRemoteDataoteData', required: false})
+	@prop({type: Function, watch: 'initRemoteData', required: false})
 	readonly componentConverter?: ComponentConverter;
 
 	/**
