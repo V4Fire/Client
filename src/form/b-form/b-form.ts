@@ -310,11 +310,11 @@ export default class bForm<T extends Dictionary = Dictionary> extends iData<T> {
 					res = await this.delegate(this, body, this.params, els);
 
 				} else {
-					if (!this.action) {
-						throw Error('Form .action is not defined');
+					if (this.action) {
+						this.base(this.action)
 					}
 
-					res = await (<Function>this.base(this.action)[this.method])(body, this.params);
+					res = await (<Function>this[this.method])(body, this.params);
 				}
 
 				Object.assign(this.tmp, body);
