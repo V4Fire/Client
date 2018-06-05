@@ -12,7 +12,7 @@
 
 - template index() extends ['i-data'].index
 	- block innerRoot
-		< .&__root-wrapper v-if = dataProvider ? db : true
+		< .&__root-wrapper
 			- block body
 
 		- block helpers
