@@ -13,7 +13,7 @@ import * as session from 'core/session';
 import { setLang, lang } from 'core/i18n';
 
 import bRouter, { PageInfo } from 'base/b-router/b-router';
-import iData, { component, field, system, watch, hook } from 'super/i-data/i-data';
+import iData, { component, field, system, watch, hook, Statuses } from 'super/i-data/i-data';
 export * from 'super/i-data/i-data';
 
 export type RootMods = Dictionary<{
@@ -71,6 +71,10 @@ export default class iPage<
 	set lang(value: string) {
 		setLang(this.langStore = value);
 	}
+
+	/** @override */
+	@field()
+	protected componentStatusStore!: Statuses;
 
 	/**
 	 * Root page router instance
