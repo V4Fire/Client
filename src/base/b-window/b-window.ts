@@ -11,13 +11,7 @@ import iData, { field, component, prop, watch, hook, ModsDecl } from 'super/i-da
 import { RequestError } from 'core/data';
 export * from 'super/i-data/i-data';
 
-@component({
-	functional: {
-		dataProvider: undefined,
-		stage: undefined
-	}
-})
-
+@component()
 export default class bWindow<T extends Dictionary = Dictionary> extends iData<T> {
 	/**
 	 * Initial window title
