@@ -230,12 +230,6 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	readonly remoteProvider: boolean = false;
 
 	/**
-	 * Handler function: providers ready
-	 */
-	@prop({type: Function, required: false})
-	readonly onProvidersReady?: Function;
-
-	/**
 	 * If true, then the component will be reinitialized after activated
 	 */
 	@prop(Boolean)
@@ -278,6 +272,13 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 */
 	get route(): PageInfo | any | undefined {
 		return this.$root.pageInfo;
+	}
+
+	/**
+	 * True if the current component is ready (componentStatus == ready)
+	 */
+	get isReady(): boolean {
+		return this.componentStatus === 'ready';
 	}
 
 	/**
@@ -837,7 +838,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 			const
 				get = () => Object.isFunction(data) ? data.call(this) : data;
 
-			this.execCbAtTheRightTime(() => this.onProvidersReady && this.onProvidersReady(get()));
+			this.execCbAtTheRightTime(() => this.emit('dbReady', get()));
 			this.componentStatus = 'beforeReady';
 
 			this.execCbAfterBlockReady(async () => {
