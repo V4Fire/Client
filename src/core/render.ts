@@ -22,8 +22,7 @@ export const
 
 let
 	inProgress = false,
-	isStarted = false,
-	breaker;
+	isStarted = false;
 
 queue.add = backQueue.add = function addToQueue<T>(): T {
 	const
@@ -45,7 +44,6 @@ let
  * Restarts render daemon
  */
 export function restart(): void {
-	breaker = true;
 	isStarted = inProgress = false;
 	run();
 }
@@ -54,14 +52,12 @@ export function restart(): void {
  * Restarts render daemon (runs on the next tick)
  */
 export function lazyRestart(): void {
-	breaker = true;
 	isStarted = inProgress = false;
 	clearTimers();
 	runOnNextTick();
 }
 
 function run(): void {
-	breaker = false;
 	clearTimers();
 
 	const
@@ -77,7 +73,7 @@ function run(): void {
 			done = COMPONENTS_PER_TICK;
 
 		$C(cursor).forEach((el, i, data, o) => {
-			if (done <= 0 || breaker || Date.now() - time > DELAY) {
+			if (done <= 0 || Date.now() - time > DELAY) {
 				return o.break;
 			}
 

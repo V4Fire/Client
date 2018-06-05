@@ -2212,22 +2212,25 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 			store = <Dictionary>this[group];
 
 		if (!(simpleId in store)) {
-			const fn = this.async.proxy(() => {
-				if (filter && !filter(simpleId)) {
-					return false;
-				}
+			const obj = {
+				weight,
+				fn: this.async.proxy(() => {
+					if (filter && !filter(simpleId)) {
+						return false;
+					}
 
-				store[simpleId] = true;
-				return true;
+					store[simpleId] = true;
+					return true;
 
-			}, {
-				onClear: () => cursor.delete(fn),
-				single: false,
-				group
-			});
+				}, {
+					onClear: () => cursor.delete(obj),
+					single: false,
+					group
+				})
+			};
 
 			this.$set(store, simpleId, false);
-			cursor.add({weight, fn});
+			cursor.add(obj);
 		}
 
 		return simpleId;
