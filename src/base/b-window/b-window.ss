@@ -23,7 +23,7 @@
 			< .&__back
 
 			+= self.transition()
-				< .&__wrapper v-if = ifOnce('hidden', m.hidden !== 'true')
+				< .&__wrapper v-if = isFunctional || ifOnce('hidden', m.hidden !== 'true')
 						< section.&__window
 							+= self.slot()
 								< h1.&__title v-if = title || $slots.title
