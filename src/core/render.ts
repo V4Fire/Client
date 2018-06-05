@@ -76,14 +76,21 @@ function run(): void {
 		let
 			done = COMPONENTS_PER_TICK;
 
-		$C(cursor).forEach((fn, i, data, o) => {
-			if (!done || breaker || Date.now() - time > DELAY) {
+		$C(cursor).forEach((el, i, data, o) => {
+			if (done <= 0 || breaker || Date.now() - time > DELAY) {
 				return o.break;
 			}
 
-			if (fn()) {
-				done--;
-				cursor.delete(fn);
+			const
+				w = el.weight || 1;
+
+			if (done - w < 0 && done !== COMPONENTS_PER_TICK) {
+				return;
+			}
+
+			if (el.fn()) {
+				done -= el.weight || 1;
+				cursor.delete(el);
 			}
 		});
 

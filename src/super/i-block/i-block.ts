@@ -112,6 +112,7 @@ export enum statuses {
 
 export interface AsyncTaskObjectId {
 	id: AsyncTaskSimpleId;
+	weight?: number;
 	filter?(id: AsyncTaskSimpleId): boolean;
 }
 
@@ -196,6 +197,12 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 */
 	@prop({type: String, required: false})
 	readonly stageProp?: string;
+
+	/**
+	 * Component render weight
+	 */
+	@prop({type: Number, required: false})
+	readonly weight?: number;
 
 	/**
 	 * Component stage
@@ -2181,15 +2188,22 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 
 		let
 			filter,
-			simpleId;
+			simpleId,
+			weight;
 
 		if (Object.isObject(id)) {
-			filter = (<AsyncTaskObjectId>id).filter;
 			simpleId = (<AsyncTaskObjectId>id).id;
+			filter = (<AsyncTaskObjectId>id).filter;
+			weight = (<AsyncTaskObjectId>id).weight;
 
 		} else {
 			simpleId = id;
 		}
+
+		weight =
+			weight ||
+			this.weight ||
+			this.isFunctional ? 0.5 : 1;
 
 		const
 			cursor = group === 'asyncComponents' ? queue : backQueue,
@@ -2211,7 +2225,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 			});
 
 			this.$set(store, simpleId, false);
-			cursor.add(fn);
+			cursor.add({weight, fn});
 		}
 
 		return simpleId;
