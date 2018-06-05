@@ -837,11 +837,9 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 			const
 				get = () => Object.isFunction(data) ? data.call(this) : data;
 
-			this.execCbAtTheRightTime(() => {
-				this.onProvidersReady && this.onProvidersReady(get());
-			});
-
+			this.execCbAtTheRightTime(() => this.onProvidersReady && this.onProvidersReady(get()));
 			this.componentStatus = 'beforeReady';
+
 			this.execCbAfterBlockReady(async () => {
 				if (this.beforeReadyListeners) {
 					await this.nextTick();
