@@ -1287,6 +1287,8 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 				instanceCtx.getFullBlockName = i.getFullBlockName.bind(instanceCtx);
 				instanceCtx.getFullElName = i.getFullElName.bind(instanceCtx);
 				instanceCtx.getElClasses = i.getElClasses.bind(instanceCtx);
+				instanceCtx.execRenderObject = i.execRenderObject.bind(instanceCtx);
+				instanceCtx.findElFromVNode = i.findElFromVNode.bind(instanceCtx);
 			}
 
 		} else {
