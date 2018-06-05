@@ -834,11 +834,14 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 		}
 
 		const done = () => {
-			data = Object.isFunction(data) ? data.call(this) : data;
+			const
+				get = () => Object.isFunction(data) ? data.call(this) : data;
+
+			this.execCbAtTheRightTime(() => {
+				this.onProvidersReady && this.onProvidersReady(get());
+			});
 
 			this.componentStatus = 'beforeReady';
-			this.onProvidersReady && this.onProvidersReady(data);
-
 			this.execCbAfterBlockReady(async () => {
 				if (this.beforeReadyListeners) {
 					await this.nextTick();
@@ -846,7 +849,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 				}
 
 				this.componentStatus = 'ready';
-				this.emit('initLoad', data);
+				this.emit('initLoad', get());
 			});
 		};
 
