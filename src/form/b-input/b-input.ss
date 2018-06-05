@@ -71,7 +71,7 @@
 							< b-icon :value = {true: 'done', false: 'clear'}[m.valid]
 
 					- block progress
-						< _.&__cell.&__icon.&__progress
+						< _.&__cell.&__icon.&__progress v-if = !isFunctional
 							< b-progress-icon v-once
 
 					- block icons

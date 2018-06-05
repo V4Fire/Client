@@ -62,5 +62,5 @@
 								.
 
 						- block progress
-							< span.&__cell.&__link-icon.&__link-progress
+							< span.&__cell.&__link-icon.&__link-progress v-if = !isFunctional
 								< b-progress-icon v-once
