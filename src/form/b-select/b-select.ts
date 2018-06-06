@@ -47,7 +47,7 @@ let
 @component({
 	model: {
 		prop: 'selectedProp',
-		event: 'change'
+		event: 'onChange'
 	}
 })
 

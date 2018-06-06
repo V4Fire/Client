@@ -16,7 +16,7 @@ export const
 @component({
 	model: {
 		prop: 'pointerProp',
-		event: 'change'
+		event: 'onChange'
 	}
 })
 

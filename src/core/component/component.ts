@@ -42,7 +42,8 @@ export function getComponent(
 	meta: ComponentMeta
 ): ComponentOptions<Vue> | FunctionalComponentOptions<Vue> {
 	const
-		p = meta.params;
+		p = meta.params,
+		m = p.model;
 
 	if (p.functional === true) {
 		return getFunctionalComponent(constructor, meta);
@@ -55,11 +56,16 @@ export function getComponent(
 	return {
 		...<any>component,
 
-		model: p.model,
 		parent: p.parent,
 		inheritAttrs: p.inheritAttrs,
 		provide: p.provide,
 		inject: p.inject,
+
+		model: m && {
+			prop: m.prop,
+			model: m.event && m.event.dasherize()
+		},
+
 		data(): Dictionary {
 			const
 				ctx = <any>this,

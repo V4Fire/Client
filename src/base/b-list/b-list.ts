@@ -38,7 +38,7 @@ export interface Option {
 
 	model: {
 		prop: 'valueProp',
-		event: 'change'
+		event: 'onChange'
 	}
 })
 
