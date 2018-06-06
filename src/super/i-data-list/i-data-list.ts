@@ -7,7 +7,6 @@
  */
 
 import $C = require('collection.js');
-import Then from 'core/then';
 import iData, { component, CreateRequestOptions } from 'super/i-data/i-data';
 import { RequestQuery } from 'core/data';
 export * from 'super/i-data/i-data';
@@ -27,7 +26,7 @@ export default class iDataList<T extends Dictionary = Dictionary> extends iData<
 	readonly needReInit: boolean = true;
 
 	/** @override */
-	get(data?: RequestQuery, params?: CreateRequestOptions<DataList<T>>): Then<DataList<T> | null> {
+	get(data?: RequestQuery, params?: CreateRequestOptions<DataList<T>>): Promise<DataList<T> | undefined> {
 		return super.get(...arguments);
 	}
 
@@ -132,7 +131,7 @@ export default class iDataList<T extends Dictionary = Dictionary> extends iData<
 
 	/** @override */
 	protected async onAddData(data: any): Promise<void> {
-		if (data === undefined) {
+		if (data == null) {
 			return;
 		}
 
@@ -174,7 +173,7 @@ export default class iDataList<T extends Dictionary = Dictionary> extends iData<
 	/** @override */
 	// @ts-ignore
 	protected async onUpdData(data: any): Promise<void> {
-		if (data === undefined) {
+		if (data == null) {
 			return;
 		}
 
@@ -209,7 +208,7 @@ export default class iDataList<T extends Dictionary = Dictionary> extends iData<
 
 	/** @override */
 	protected async onDelData(data: any): Promise<void> {
-		if (data === undefined) {
+		if (data == null) {
 			return;
 		}
 

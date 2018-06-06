@@ -131,21 +131,21 @@ export default class bNotifier<T extends Dictionary = Message> extends iData<T> 
 
 	/** @override */
 	protected async onAddData(data: any): Promise<void> {
-		if (data !== undefined) {
+		if (data != null) {
 			await this.notify(this.convertDataToDB(data));
 		}
 	}
 
 	/** @override */
 	protected async onUpdData(data: any): Promise<void> {
-		if (data !== undefined) {
+		if (data != null) {
 			await this.notify(this.convertDataToDB(data));
 		}
 	}
 
 	/** @override */
 	protected async onDelData(data: any): Promise<void> {
-		if (data !== undefined) {
+		if (data != null) {
 			await this.notify(this.convertDataToDB(data));
 		}
 	}
