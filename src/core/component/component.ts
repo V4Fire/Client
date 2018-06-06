@@ -385,8 +385,10 @@ export function initDataObject(
 
 				// tslint:disable-next-line
 				if (val === undefined) {
-					val = el.default !== undefined ? el.default : Object.fastClone(instance[key]);
-					data[key] = val === undefined ? ctx[key] : val;
+					if (data[key] === undefined) {
+						val = el.default !== undefined ? el.default : Object.fastClone(instance[key]);
+						data[key] = val;
+					}
 
 				} else {
 					data[key] = val;
