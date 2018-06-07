@@ -50,7 +50,7 @@ img($img)
  */
 generateImgClasses()
 	for $img, $obj in $IMG
-		{join(',', $obj.selectors)}
+		{join(",", $obj.selectors)}
 			for $prop in $obj.props
 				add-property($prop, "url(%s)" % $img)
 
@@ -74,7 +74,7 @@ execFontPattern($type = "")
  * @param {string=} [$key] - color key
  * @param {Function=} [$cb] - callback function
  */
-setColorMods($set, $styles = null, $selector = '', $key = 'backgroundColor', $cb = null)
+setColorMods($set, $styles = null, $selector = "", $key = "backgroundColor", $cb = null)
 	for $s in $set
 		$color = $set[$s][$key]
 
