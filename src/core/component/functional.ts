@@ -307,66 +307,64 @@ export function patchVNode(vNode: VNode, ctx: Dictionary, renderCtx: RenderConte
 		{data} = renderCtx,
 		{meta, meta: {methods}} = ctx;
 
-	if (data) {
-		if (vData) {
-			vData.staticClass = vData.staticClass || '';
+	if (vData) {
+		vData.staticClass = vData.staticClass || '';
 
-			// Custom classes and attributes
+		// Custom classes and attributes
 
-			if (data.staticClass) {
-				vData.staticClass += ` ${data.staticClass}`;
-			}
+		if (data.staticClass) {
+			vData.staticClass += ` ${data.staticClass}`;
+		}
 
-			if (data.class) {
-				vData.class = [].concat(vData.class, data.class);
-			}
+		if (data.class) {
+			vData.class = [].concat(vData.class, data.class);
+		}
 
-			if (data.attrs && meta.params.inheritAttrs) {
-				// tslint:disable-next-line
-				vData.attrs = Object.assign(vData.attrs || {}, data.attrs);
-			}
+		if (data.attrs && meta.params.inheritAttrs) {
+			// tslint:disable-next-line
+			vData.attrs = Object.assign(vData.attrs || {}, data.attrs);
+		}
 
-			// Reference to the element
+		// Reference to the element
 
-			if (data.ref) {
-				vData.ref = data.ref;
-			}
+		if (data.ref) {
+			vData.ref = data.ref;
+		}
 
-			// Vue directives
+		// Vue directives
 
-			const
-				d = data.directives;
+		const
+			d = data.directives;
 
-			if (d) {
-				for (let i = 0; i < d.length; i++) {
-					const
-						el = d[i];
+		if (d) {
+			for (let i = 0; i < d.length; i++) {
+				const
+					el = d[i];
 
-					if (el.name === 'show' && !el.value) {
-						vData.attrs = vData.attrs || {};
-						vData.attrs.style = (vData.attrs.style || '') + ';display: none;';
-					}
+				if (el.name === 'show' && !el.value) {
+					vData.attrs = vData.attrs || {};
+					vData.attrs.style = (vData.attrs.style || '') + ';display: none;';
 				}
 			}
 		}
+	}
 
-		// Event handlers
+	// Event handlers
 
-		const
-			h = data.on;
+	const
+		h = data.on;
 
-		if (h) {
-			for (const key in h) {
-				if (!h.hasOwnProperty(key)) {
-					break;
-				}
+	if (h) {
+		for (const key in h) {
+			if (!h.hasOwnProperty(key)) {
+				break;
+			}
 
-				const
-					fn = h[key];
+			const
+				fn = h[key];
 
-				if (fn) {
-					ctx.$on(key, fn);
-				}
+			if (fn) {
+				ctx.$on(key, fn);
 			}
 		}
 	}
