@@ -40,7 +40,7 @@ import {
 } from 'core/component';
 
 import { prop, field, system, watch, wait, p } from 'super/i-block/modules/decorators';
-import { queue, backQueue, restart, lazyRestart } from 'core/render';
+import { queue, backQueue, restart, deferRestart } from 'core/render';
 import { delegate } from 'core/dom';
 
 import * as helpers from 'core/helpers';
@@ -1265,14 +1265,13 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 			obj
 		);
 
-		const apply = () => {
+		this.createDeferFn(() => {
 			fn.call(this, tmp);
 			t[k] = undefined;
-		};
 
-		this.async.setTimeout(apply, 0.2.second(), {
+		}, {
 			label: $$.accumulateTmpObj
-		});
+		})();
 	}
 
 	/**
@@ -1580,11 +1579,9 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 					this.setState(stateFields);
 				}
 
-				const sync = () => {
-					$a.setTimeout(this.saveLocalStore, 0.2.second(), {
-						label: $$.syncLocalStore
-					});
-				};
+				const sync = this.createDeferFn(this.saveLocalStore, {
+					label: $$.syncLocalStore
+				});
 
 				$C(stateFields).forEach((el, key) => {
 					const
@@ -1689,11 +1686,9 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 				this.setState(stateFields);
 			}
 
-			const sync = () => {
-				$a.setTimeout(this.saveStateToRouter, 0.2.second(), {
-					label: $$.syncRouter
-				});
-			};
+			const sync = this.createDeferFn(this.saveStateToRouter, {
+				label: $$.syncRouter
+			});
 
 			$C(this.convertStateToRouter()).forEach((el, key) => {
 				const
@@ -1843,6 +1838,17 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	}
 
 	/**
+	 * Creates a new function from the specified that executes deferedly
+	 *
+	 * @see Async.setTimeout
+	 * @param fn
+	 * @param [params]
+	 */
+	protected createDeferFn(fn: Function, params?: AsyncOpts): Function {
+		return (...args) => this.async.setTimeout(() => fn.call(this, ...args), 0.2.second(), params);
+	}
+
+	/**
 	 * Wrapper for $nextTick
 	 *
 	 * @see Async.promise
@@ -1853,8 +1859,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	}
 
 	/**
-	 * Waits until the specified reference won't be available
-	 * and returns it
+	 * Waits until the specified reference won't be available and returns it
 	 *
 	 * @see Async.wait
 	 * @param ref
@@ -2189,8 +2194,8 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 * Restarts the async render daemon for forcing render
 	 * (runs on the next tick)
 	 */
-	protected lazyForceAsyncRender(): void {
-		lazyRestart();
+	protected deferForceAsyncRender(): void {
+		deferRestart();
 	}
 
 	/**

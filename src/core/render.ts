@@ -51,7 +51,7 @@ export function restart(): void {
 /**
  * Restarts render daemon (runs on the next tick)
  */
-export function lazyRestart(): void {
+export function deferRestart(): void {
 	isStarted = inProgress = false;
 	clearTimers();
 	runOnNextTick();
