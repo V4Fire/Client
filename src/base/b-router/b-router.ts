@@ -315,7 +315,7 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 			a = <HTMLElement>e.delegateTarget,
 			href = a.getAttribute('href');
 
-		if (!href || /^(.*?:)?\/\//.test(href)) {
+		if (!href || /^(#|\w+:|\/\/)/.test(href)) {
 			return;
 		}
 

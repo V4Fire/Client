@@ -855,7 +855,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 
 		if (this.globalName || providers.size) {
 			const init = async () => {
-				await this.loadLocalStore();
+				await this.initStateFromStorage();
 
 				if (providers.size) {
 					await $a.wait(() => $C(providers).every((el) => {
@@ -1484,10 +1484,10 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	}
 
 	/**
-	 * Saves the specified settings to the local storage
+	 * Saves the specified settings to a local storage by a key
 	 *
 	 * @param settings
-	 * @param [key] - data key
+	 * @param [key] - data storage key
 	 */
 	protected async saveSettings<T extends object = Dictionary>(settings: T, key: string = ''): Promise<T> {
 		const
@@ -1509,15 +1509,14 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	}
 
 	/**
-	 * Loads settings from the local storage
+	 * Loads settings from a local storage by the specified key
 	 * @param [key] - data key
 	 */
 	protected loadSettings<T extends object = Dictionary>(key: string = ''): Promise<T | undefined> {
 		const
-			$a = this.async,
 			id = `${this.globalName}_${key}`;
 
-		return $a.promise(async () => {
+		return this.async.promise(async () => {
 			try {
 				const str = await this.storage.get(id);
 				return str && JSON.parse(str);
@@ -1531,29 +1530,33 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	}
 
 	/**
-	 * Returns an object with default component fields for saving as local settings
-	 * @param [def]
+	 * Returns an object with default component fields for saving to a local storage
+	 * @param [data] - advanced data
 	 */
-	protected convertStateToStore(def?: Dictionary | undefined): Dictionary {
-		return {...def};
+	protected convertStateToStorage(data?: Dictionary | undefined): Dictionary {
+		return {...data};
 	}
 
 	/**
-	 * Saves a store from to local storage
+	 * Saves a component state to a local storage
+	 * @param [data] - advanced data
 	 */
-	@wait({defer: true, label: $$.saveLocalStore})
-	protected async saveLocalStore(): Promise<void> {
+	@wait({defer: true, label: $$.saveStateToStorage})
+	protected async saveStateToStorage(data?: Dictionary | undefined): Promise<void> {
 		if (!this.globalName) {
 			return;
 		}
 
-		await this.saveSettings(this.convertStateToStore(), '[[STORE]]');
+		data = this.convertStateToRouter(data);
+		this.setState(data);
+
+		await this.saveSettings(data, '[[STORE]]');
 	}
 
 	/**
-	 * Loads a store from the local storage
+	 * Initializes a component state from a local storage
 	 */
-	protected async loadLocalStore(): Promise<void> {
+	protected async initStateFromStorage(): Promise<void> {
 		if (!this.globalName) {
 			return;
 		}
@@ -1579,16 +1582,16 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 
 			this.execCbAtTheRightTime(() => {
 				const
-					stateFields = this.convertStateToStore();
+					stateFields = this.convertStateToStorage();
 
 				if (data) {
-					this.setState(Object.select(this.convertStateToStore(data), Object.keys(stateFields)));
+					this.setState(Object.select(this.convertStateToStorage(data), Object.keys(stateFields)));
 
 				} else {
 					this.setState(stateFields);
 				}
 
-				const sync = this.createDeferFn(this.saveLocalStore, {
+				const sync = this.createDeferFn(this.saveStateToStorage, {
 					label: $$.syncLocalStore
 				});
 
@@ -1620,25 +1623,20 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	}
 
 	/**
-	 * Returns an object with default component fields for hash
-	 * @param [obj]
+	 * Returns an object with default component fields for saving to a router
+	 * @param [data] - advanced data
 	 */
-	protected convertStateToRouter(obj?: Dictionary | undefined): Dictionary {
-		return {...obj};
+	protected convertStateToRouter(data?: Dictionary | undefined): Dictionary {
+		return {...data};
 	}
 
 	/**
-	 * Saves the component state a router
-	 * @param obj - state object
+	 * Saves a component state to a router
+	 * @param [data] - advanced data
 	 */
-	protected async saveStateToRouter(obj: Dictionary): Promise<boolean> {
-		obj = this.convertStateToRouter(obj);
-
-		$C(obj).forEach((el, key) => {
-			if (el) {
-				this[key] = el;
-			}
-		});
+	protected async saveStateToRouter(data?: Dictionary | undefined): Promise<boolean> {
+		data = this.convertStateToRouter(data);
+		this.setState(data);
 
 		const
 			r = this.$root.router;
@@ -1648,31 +1646,14 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 		}
 
 		await r.push(null, {
-			query: obj
+			query: data
 		});
 
 		return true;
 	}
 
 	/**
-	 * Resets the component router state
-	 */
-	protected async resetRouterState(): Promise<boolean> {
-		$C(this.convertStateToRouter()).forEach((el, key) => this[key] = undefined);
-
-		const
-			r = this.$root.router;
-
-		if (!this.isActivated || !r) {
-			return false;
-		}
-
-		await r.push(null);
-		return true;
-	}
-
-	/**
-	 * Initialized the component state from the location
+	 * Initializes a component state from a router
 	 */
 	protected initStateFromRouter(): void {
 		const
@@ -1719,6 +1700,23 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 				}
 			});
 		});
+	}
+
+	/**
+	 * Resets a component router state
+	 */
+	protected async resetRouterState(): Promise<boolean> {
+		this.setState($C(this.convertStateToRouter()).map(() => undefined));
+
+		const
+			r = this.$root.router;
+
+		if (!this.isActivated || !r) {
+			return false;
+		}
+
+		await r.push(null);
+		return true;
 	}
 
 	/**
@@ -1919,8 +1917,8 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 		this.getField = i.getField.bind(this);
 		this.setField = i.setField.bind(this);
 		this.deleteField = i.deleteField.bind(this);
-		this.convertStateToStore = i.convertStateToStore.bind(this);
-		this.loadLocalStore = i.loadLocalStore.bind(this);
+		this.convertStateToStorage = i.convertStateToStorage.bind(this);
+		this.initStateFromStorage = i.initStateFromStorage.bind(this);
 		this.convertStateToRouter = i.convertStateToRouter.bind(this);
 		this.initStateFromRouter = i.initStateFromRouter.bind(this);
 		this.setState = i.setState.bind(this);

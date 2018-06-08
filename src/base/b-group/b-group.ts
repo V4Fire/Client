@@ -18,7 +18,7 @@ export default class bGroup extends iData {
 	readonly title: string = '';
 
 	/** @override */
-	protected convertStateToStore(): Dictionary {
+	protected convertStateToStorage(): Dictionary {
 		return {
 			'mods.opened': this.mods.opened
 		};
