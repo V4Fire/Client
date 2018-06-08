@@ -22,22 +22,31 @@ export default class Block {
 	/**
 	 * Current block id
 	 */
-	readonly blockId: string;
+	get blockId(): string {
+		return this.component.componentId;
+	}
 
 	/**
 	 * Current block name
 	 */
-	readonly blockName: string;
+	get blockName(): string {
+		return this.component.componentName;
+	}
 
 	/**
 	 * Link to a block node
 	 */
-	readonly node: VueElement<any>;
+	get node(): VueElement<any> {
+		return this.component.$el;
+	}
 
 	/**
 	 * Local event emitter
 	 */
-	readonly event: EventEmitter;
+	get event(): EventEmitter {
+		// @ts-ignore
+		return this.component.localEvent;
+	}
 
 	/**
 	 * List of applied modifiers
@@ -45,18 +54,16 @@ export default class Block {
 	readonly mods: Dictionary<string | undefined>;
 
 	/**
+	 * iBlock instance
+	 */
+	readonly component: iBlock;
+
+	/**
 	 * @param component - component instance
 	 */
 	constructor(component: iBlock) {
-		this.blockId = component.componentId;
-		this.blockName = component.componentName;
+		this.component = component;
 		this.mods = Object.createDict();
-
-		// @ts-ignore
-		this.node = component.$el;
-
-		// @ts-ignore
-		this.event = component.localEvent;
 
 		for (let m = component.mods, keys = Object.keys(m), i = 0; i < keys.length; i++) {
 			const name = keys[i];

@@ -223,8 +223,7 @@ export function createFakeCtx(
 
 	Object.defineProperty(fakeCtx, '$el', {
 		get(): VueElement<any> | undefined {
-			const l = <any>$$.el;
-			return fakeCtx[l] || (fakeCtx[l] = $normalParent.$el.querySelector(`.${fakeCtx.componentId}`));
+			return $normalParent.$el.querySelector(`.${fakeCtx.componentId}`);
 		}
 	});
 
@@ -406,7 +405,11 @@ export function patchVNode(vNode: VNode, ctx: Dictionary, renderCtx: RenderConte
 		if (!ctx.$el) {
 			try {
 				await ctx.$async.promise(p.nextTick());
-				!ctx.$el && destroy();
+
+				if (!ctx.$el) {
+					await ctx.$async.nextTick();
+					!ctx.$el && destroy();
+				}
 
 			} catch (err) {
 				stderr(err);
