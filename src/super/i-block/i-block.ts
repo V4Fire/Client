@@ -9,6 +9,7 @@
 // tslint:disable:max-file-line-count
 import $C = require('collection.js');
 import Async, { AsyncOpts } from 'core/async';
+import Then from 'core/then';
 
 import * as analytics from 'core/analytics';
 import { EventEmitter2 as EventEmitter } from 'eventemitter2';
@@ -1240,7 +1241,15 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 		}
 
 		this.beforeReadyListeners++;
-		return this.waitStatus('beforeReady', cb, params);
+
+		const
+			res = this.waitStatus('beforeReady', cb, params);
+
+		if (Then.isThenable(res)) {
+			return (<Promise<any>>res).catch(stderr);
+		}
+
+		return res;
 	}
 
 	/**
