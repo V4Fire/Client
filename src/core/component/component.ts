@@ -111,7 +111,9 @@ export function getComponent(
 				});
 			}
 
+			bindWatchers(ctx, 'event');
 			initDataObject(meta.systemFields, ctx, instance, ctx);
+
 			runHook('beforeCreate', meta, ctx).then(async () => {
 				if (methods.beforeCreate) {
 					await methods.beforeCreate.fn.call(ctx);
@@ -121,7 +123,7 @@ export function getComponent(
 
 		created(): void {
 			this.hook = 'created';
-			bindWatchers(this);
+			bindWatchers(this, 'field');
 			runHook('created', this.meta, this).then(async () => {
 				if (methods.created) {
 					await methods.created.fn.call(this);
@@ -277,9 +279,11 @@ export function createMeta(parent: ComponentMeta): ComponentMeta {
 
 /**
  * Binds watchers to the specified component
+ *
  * @param ctx - component context
+ * @param type - watcher type
  */
-export function bindWatchers(ctx: VueInterface): void {
+export function bindWatchers(ctx: VueInterface, type: 'event' | 'field'): void {
 	const
 		// @ts-ignore
 		{meta} = ctx;
@@ -314,10 +318,15 @@ export function bindWatchers(ctx: VueInterface): void {
 			};
 
 			if (el.event) {
-				// @ts-ignore
-				ctx.$on(key, handler.bind(ctx));
+				if (type === 'event') {
+					// @ts-ignore
+					ctx.$on(key, handler.bind(ctx));
+				}
 
-			} else {
+				return;
+			}
+
+			if (type === 'field') {
 				// @ts-ignore
 				ctx.$watch(key, {
 					deep: el.deep,

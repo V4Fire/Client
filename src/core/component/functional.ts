@@ -223,7 +223,8 @@ export function createFakeCtx(
 
 	Object.defineProperty(fakeCtx, '$el', {
 		get(): VueElement<any> | undefined {
-			return $normalParent.$el.querySelector(`.${fakeCtx.componentId}`);
+			const id = <any>$$.el;
+			return fakeCtx[id] || (fakeCtx[id] = document.querySelector(`.i-block-helper.${fakeCtx.componentId}`));
 		}
 	});
 
@@ -234,10 +235,12 @@ export function createFakeCtx(
 			key = fakeCtx.$activeField = keys[i],
 			el = o[key];
 
-		if (!fakeCtx[key] && Object.isFunction(el.default) && !el.default[defaultWrapper]) {
+		if (fakeCtx[key] === undefined && Object.isFunction(el.default) && !el.default[defaultWrapper]) {
 			fakeCtx[key] = el.type === Function ? el.default.bind(fakeCtx) : el.default.call(fakeCtx);
 		}
 	}
+
+	bindWatchers(<any>fakeCtx, 'event');
 
 	{
 		const list = [
@@ -246,8 +249,9 @@ export function createFakeCtx(
 		];
 
 		for (let i = 0; i < list.length; i++) {
+			initDataObject(list[i], fakeCtx, instance, i ? data : fakeCtx);
+
 			if (i) {
-				initDataObject(list[i], fakeCtx, instance, data);
 				runHook('beforeDataCreate', meta, fakeCtx).catch(stderr);
 				fakeCtx.$$data = fakeCtx;
 
@@ -279,14 +283,14 @@ export function createFakeCtx(
 					});
 				}
 
-			} else {
-				initDataObject(list[i], fakeCtx, instance, fakeCtx);
-				runHook('beforeCreate', meta, fakeCtx).then(async () => {
-					if (methods.beforeCreate) {
-						await methods.beforeCreate.fn.call(fakeCtx);
-					}
-				}, stderr);
+				continue;
 			}
+
+			runHook('beforeCreate', meta, fakeCtx).then(async () => {
+				if (methods.beforeCreate) {
+					await methods.beforeCreate.fn.call(fakeCtx);
+				}
+			}, stderr);
 		}
 	}
 
@@ -368,7 +372,8 @@ export function patchVNode(vNode: VNode, ctx: Dictionary, renderCtx: RenderConte
 		}
 	}
 
-	bindWatchers(<any>ctx);
+	ctx.hook = 'created';
+	bindWatchers(<any>ctx, 'field');
 	runHook('created', meta, ctx).then(async () => {
 		if (methods.created) {
 			await methods.created.fn.call(ctx);

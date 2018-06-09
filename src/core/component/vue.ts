@@ -65,15 +65,15 @@ export default class VueInterface<
 	// @ts-ignore
 	protected $watch<T = any>(
 		exprOrFn: string | ((this: this) => string),
-		cb: (this: this, n: T, o: T) => void,
+		cb: (this: this, n: T, o?: T) => void,
 		opts?: WatchOptions
-	): (() => void);
+	): Function;
 
 	// @ts-ignore
 	protected $watch<T = any>(
 		exprOrFn: string | ((this: this) => string),
 		opts: WatchOptionsWithHandler<T>
-	): (() => void);
+	): Function;
 
 	// tslint:disable-next-line
 	protected $watch() {}
