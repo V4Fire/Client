@@ -45,10 +45,18 @@
 
 	- block root
 		- if @fatHTML
-			- while await fs.existsAsync(@assetsJSON) === false
-				? await delay(200)
+			- forEach @dependencies => el, key
+				? assets[key] = key + '.js'
+				? assets[key + '_tpl'] = key + '_tpl.js'
+				? assets[key + '$style'] = key + '$style.css'
 
-			? Object.assign(assets, fs.readJSONSync(@assetsJSON))
+			- for var key in assets
+				- while !await fs.existsAsync(path.join(@output, assets[key]))
+					? await delay(200)
+
+			? assets['std'] = 'std.js'
+			? assets['vendor'] = 'vendor.js'
+			? assets['webpack.runtime'] = 'webpack.runtime.js'
 
 		- block doctype
 			- doctype

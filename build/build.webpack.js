@@ -16,7 +16,7 @@ const
 	path = require('path');
 
 const
-	{src, build} = require('config'),
+	{src, build, pack} = require('config'),
 	{config: {dependencies}} = require('@pzlr/build-core');
 
 /**
@@ -57,7 +57,7 @@ exports.hash = hash;
  */
 function hash(output, chunk) {
 	const l = exports.hashLength;
-	return output.replace(/\[hash]_/g, isProd ? chunk ? `[chunkhash:${l}]_` : `[hash:${l}]_` : '');
+	return output.replace(/\[hash]_/g, isProd && !pack.fatHTML ? chunk ? `[chunkhash:${l}]_` : `[hash:${l}]_` : '');
 }
 
 exports.inherit = inherit;

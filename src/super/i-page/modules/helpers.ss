@@ -80,7 +80,9 @@
 	- if @fatHTML
 		- if assets[name]
 			: url = path.join(@output, assets[name])
-			requireMonic({url})
+
+			- if fs.existsSync(url)
+				requireMonic({url})
 
 		- else if !p.optional
 			- throw new Error('Script dependence with id "' + name +  '" is not defined')
@@ -114,7 +116,9 @@
 	- if @fatHTML
 		- if assets[rname]
 			: url = path.join(@output, assets[rname])
-			requireMonic({url})
+
+			- if fs.existsSync(url)
+				requireMonic({url})
 
 		- else if !p.optional
 			- throw new Error('Style dependence with id "' + name +  '" is not defined')
