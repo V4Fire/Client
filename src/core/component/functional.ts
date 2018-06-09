@@ -223,8 +223,15 @@ export function createFakeCtx(
 
 	Object.defineProperty(fakeCtx, '$el', {
 		get(): VueElement<any> | undefined {
-			const id = <any>$$.el;
-			return fakeCtx[id] || (fakeCtx[id] = document.querySelector(`.i-block-helper.${fakeCtx.componentId}`));
+			const
+				id = <any>$$.el,
+				el = fakeCtx[id];
+
+			if (el && el.closest('html')) {
+				return el;
+			}
+
+			return (fakeCtx[id] = document.querySelector(`.i-block-helper.${fakeCtx.componentId}`));
 		}
 	});
 
