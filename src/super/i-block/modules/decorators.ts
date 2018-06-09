@@ -6,7 +6,6 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import Then from 'core/then';
 import iBlock, { statuses, Statuses, iBlockDecorator } from 'super/i-block/i-block';
 import { AsyncOpts } from 'core/async';
 import { WatchOptions } from 'vue';
@@ -238,7 +237,7 @@ export function wait<T = any>(status: number | Statuses | WaitOpts, params?: Wai
 		const
 			args = arguments,
 			// @ts-ignore
-			componentStatus = statuses[this.getField('componentStatusStore')];
+			componentStatus = <number>statuses[this.getField('componentStatusStore')];
 
 		if (join === undefined) {
 			join = handler.length ? 'replace' : true;
@@ -252,7 +251,7 @@ export function wait<T = any>(status: number | Statuses | WaitOpts, params?: Wai
 			res,
 			init;
 
-		if (componentStatus !== undefined && componentStatus < 0 && status > componentStatus) {
+		if (componentStatus < 0 && status > componentStatus) {
 			throw Object.assign(new Error('Component status watcher abort'), {
 				type: 'abort'
 			});
@@ -288,8 +287,8 @@ export function wait<T = any>(status: number | Statuses | WaitOpts, params?: Wai
 			);
 		}
 
-		if (isDecorator && Then.isThenable(res)) {
-			return (<Promise<any>>res).catch(stderr);
+		if (isDecorator && Object.isPromise(res)) {
+			return res.catch(stderr);
 		}
 
 		return res;

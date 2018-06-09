@@ -437,7 +437,7 @@ export default class iInput<T extends Dictionary = Dictionary> extends iData<T> 
 	@hook('created')
 	protected initValueEvents(): void {
 		const k = this.blockValueField;
-		this.$watch(k + (`${k}Store` in this ? 'Store' : ''), this.onBlockValueChange);
+		this.watch(k + (`${k}Store` in this ? 'Store' : ''), this.onBlockValueChange);
 		this.on('actionChange', () => this.validate());
 	}
 }

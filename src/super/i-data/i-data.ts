@@ -138,7 +138,8 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 		this.dbStore = value;
 		this.initRemoteData();
 
-		$a.worker(this.$watch('dbStore', this.initRemoteData, {deep: true}), {
+		this.watch('dbStore', this.initRemoteData, {
+			deep: true,
 			label: $$.db
 		});
 	}

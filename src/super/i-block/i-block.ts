@@ -8,12 +8,11 @@
 
 // tslint:disable:max-file-line-count
 import $C = require('collection.js');
-import Async, { AsyncOpts } from 'core/async';
-import Then from 'core/then';
+import Async, { AsyncOpts, ClearOptsId } from 'core/async';
 
 import * as analytics from 'core/analytics';
 import { EventEmitter2 as EventEmitter } from 'eventemitter2';
-import { WatchOptions, WatchOptionsWithHandler, RenderContext, VNode } from 'vue';
+import { WatchOptions, RenderContext, VNode } from 'vue';
 
 import 'super/i-block/directives';
 import Block from 'super/i-block/modules/block';
@@ -120,6 +119,7 @@ export interface AsyncTaskObjectId {
 export type AsyncTaskSimpleId = string | number;
 export type AsyncTaskId = AsyncTaskSimpleId | (() => AsyncTaskObjectId) | AsyncTaskObjectId;
 export type AsyncQueueType = 'asyncComponents' | 'asyncBackComponents';
+export type AsyncWatchOpts = WatchOptions & AsyncOpts;
 
 export const
 	$$ = symbolGenerator(),
@@ -225,13 +225,13 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	readonly dispatching: boolean = false;
 
 	/**
-	 * If true, then the component marked as remote provider
+	 * If true, then the component marked as a remote provider
 	 */
 	@prop(Boolean)
 	readonly remoteProvider: boolean = false;
 
 	/**
-	 * If true, then the component will be reinitialized after activated
+	 * If true, then the component will be reinitialized after an activated hook
 	 */
 	@prop(Boolean)
 	readonly needReInit: boolean = false;
@@ -346,7 +346,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 
 				if (key in declMods) {
 					attrMods.push([key, attrs[key]]);
-					o.$watch(`$attrs.${key}`, (val) => o.setMod(key, modVal(val)));
+					o.watch(`$attrs.${key}`, (val) => o.setMod(key, modVal(val)));
 					delete attrs[key];
 				}
 			}
@@ -455,6 +455,13 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	};
 
 	/**
+	 * Wrapper for $refs
+	 */
+	protected get refs(): Dictionary {
+		return $C(this.$refs).map((el) => el && (<any>el).vueComponent || el);
+	}
+
+	/**
 	 * Alias for iBlock.sizeTo.gt
 	 */
 	protected get gt(): Dictionary<string> {
@@ -466,13 +473,6 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 */
 	protected get lt(): Dictionary<string> {
 		return (<typeof iBlock>this.instance.constructor).sizeTo.lt;
-	}
-
-	/**
-	 * Alias for .$refs
-	 */
-	protected get refs(): Dictionary {
-		return $C(this.$refs).map((el) => el && (<any>el).vueComponent || el);
 	}
 
 	/**
@@ -718,6 +718,326 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	}
 
 	/**
+	 * Wrapper for $watch
+	 *
+	 * @see Async.worker
+	 * @param exprOrFn
+	 * @param cb
+	 * @param [params] - additional parameters
+	 */
+	watch<T = any>(
+		exprOrFn: string | ((this: this) => string),
+		cb: (this: this, n: T, o?: T) => void,
+		params?: AsyncWatchOpts
+	): void {
+		this.execCbAfterCreated(() => {
+			const
+				p = params || {};
+
+			const watchParams = {
+				handler: cb,
+				deep: p.deep,
+				immediate: p.immediate
+			};
+
+			const asyncParams = {
+				group: p.group,
+				label: p.label,
+				join: p.join
+			};
+
+			const
+				watcher = this.$watch(exprOrFn, watchParams);
+
+			if (Object.keys(asyncParams).length) {
+				this.async.worker(watcher, asyncParams);
+				return;
+			}
+		});
+	}
+
+	/**
+	 * Sets a link for the specified field
+	 *
+	 * @see Async.worker
+	 * @param [paramsOrWrapper] - additional parameters or wrapper
+	 */
+	link(paramsOrWrapper?: AsyncWatchOpts | LinkWrapper): any;
+
+	/**
+	 * @see Async.worker
+	 * @param params - additional parameters
+	 * @param [wrapper]
+	 */
+	link(params: AsyncWatchOpts, wrapper?: LinkWrapper): any;
+
+	/**
+	 * @see Async.worker
+	 * @param field
+	 * @param [paramsOrWrapper]
+	 */
+	link(field: string, paramsOrWrapper?: AsyncWatchOpts | LinkWrapper): any;
+
+	/**
+	 * @see Async.worker
+	 * @param field
+	 * @param params
+	 * @param [wrapper]
+	 */
+	link(field: string, params: AsyncWatchOpts, wrapper?: LinkWrapper): any;
+	link(
+		field?: string | AsyncWatchOpts | LinkWrapper,
+		params?: AsyncWatchOpts | LinkWrapper,
+		wrapper?: LinkWrapper
+	): any {
+		const
+			path = this.$activeField,
+			cache = this.syncLinkCache;
+
+		if (!field || !Object.isString(field)) {
+			wrapper = <LinkWrapper>params;
+			params = <AsyncWatchOpts>field;
+			field = `${path.replace(/Store$/, '')}Prop`;
+		}
+
+		if (params && Object.isFunction(params)) {
+			wrapper = params;
+			params = undefined;
+		}
+
+		if (!(path in this.linksCache)) {
+			this.linksCache[path] = {};
+
+			this.watch(field, (val, oldVal) => {
+				if (!Object.fastCompare(val, oldVal)) {
+					this.setField(path, wrapper ? wrapper.call(this, val, oldVal) : val);
+				}
+			}, params);
+
+			const sync = (val?) => {
+				val = val || this.getField(<string>field);
+
+				const
+					res = wrapper ? wrapper.call(this, val) : val;
+
+				this.setField(path, res);
+				return res;
+			};
+
+			// tslint:disable-next-line:prefer-object-spread
+			cache[field] = Object.assign(cache[field] || {}, {
+				[path]: {
+					path,
+					sync
+				}
+			});
+
+			if (this.isBeforeCreate('beforeDataCreate')) {
+				const
+					name = '[[SYNC]]',
+					hooks = this.meta.hooks.beforeDataCreate;
+
+				let
+					pos = 0;
+
+				for (let i = 0; i < hooks.length; i++) {
+					if (hooks[i].name === name) {
+						pos = i + 1;
+					}
+				}
+
+				hooks.splice(pos, 0, {fn: sync, name});
+				return;
+			}
+
+			return sync();
+		}
+	}
+
+	/**
+	 * Creates an object with linked fields
+	 *
+	 * @param path - property path
+	 * @param fields
+	 */
+	createWatchObject(
+		path: string,
+		fields: WatchObjectFields
+	): Dictionary;
+
+	/**
+	 * @param path - property path
+	 * @param params - additional parameters
+	 * @param fields
+	 */
+	createWatchObject(
+		path: string,
+		params: AsyncWatchOpts,
+		fields: WatchObjectFields
+	): Dictionary;
+
+	createWatchObject(
+		path: string,
+		params: AsyncWatchOpts | WatchObjectFields,
+		fields?: WatchObjectFields
+	): Dictionary {
+		if (Object.isArray(params)) {
+			fields = params;
+			params = {};
+		}
+
+		const
+			{linksCache, syncLinkCache} = this;
+
+		// tslint:disable-next-line
+		if (path) {
+			path = [this.$activeField, path].join('.');
+
+		} else {
+			path = this.$activeField;
+		}
+
+		const
+			short = path.split('.').slice(1),
+			obj = {};
+
+		if (short.length) {
+			$C(obj).set({}, short);
+		}
+
+		const
+			map = $C(obj).get(short);
+
+		for (let i = 0; i < (<WatchObjectFields>fields).length; i++) {
+			const
+				el = (<WatchObjectFields>fields)[i];
+
+			if (Object.isArray(el)) {
+				let
+					wrapper,
+					field;
+
+				if (el.length === 3) {
+					field = el[1];
+					wrapper = el[2];
+
+				} else if (Object.isFunction(el[1])) {
+					field = el[0];
+					wrapper = el[1];
+
+				} else {
+					field = el[1];
+				}
+
+				const
+					l = [path, el[0]].join('.');
+
+				if (!$C(linksCache).get(l)) {
+					$C(linksCache).set(true, l);
+
+					this.watch(field, (val, oldVal) => {
+						if (!Object.fastCompare(val, oldVal)) {
+							this.setField(l, wrapper ? wrapper.call(this, val, oldVal) : val);
+						}
+					}, params);
+
+					const sync = (val?) => {
+						val = val || this.getField(field);
+						return wrapper ? wrapper.call(this, val) : val;
+					};
+
+					// tslint:disable-next-line:prefer-object-spread
+					syncLinkCache[field] = Object.assign(syncLinkCache[field] || {}, {
+						[l]: {
+							path: l,
+							sync: (val?) => this.setField(l, sync(val))
+						}
+					});
+
+					map[el[0]] = sync();
+				}
+
+			} else {
+				const
+					l = [path, el].join('.');
+
+				if (!$C(linksCache).get(l)) {
+					$C(linksCache).set(true, l);
+
+					this.watch(el, (val, oldVal) => {
+						if (!Object.fastCompare(val, oldVal)) {
+							this.setField(l, val);
+						}
+					}, params);
+
+					// tslint:disable-next-line:prefer-object-spread
+					syncLinkCache[el] = Object.assign(syncLinkCache[el] || {}, {
+						[l]: {
+							path: l,
+							sync: (val?) => this.setField(l, val || this.getField(el))
+						}
+					});
+
+					map[el] = this.getField(el);
+				}
+			}
+		}
+
+		return obj;
+	}
+
+	/**
+	 * Binds a modifier to the specified field
+	 *
+	 * @param mod
+	 * @param field
+	 * @param [converter] - converter function or additional parameters
+	 * @param [params] - additional parameters
+	 */
+	bindModTo<T = this>(
+		mod: string,
+		field: string,
+		converter: ((value: any, ctx: T) => any) | AsyncWatchOpts = Boolean,
+		params?: AsyncWatchOpts
+	): void {
+		mod = mod.camelize(false);
+
+		if (!Object.isFunction(converter)) {
+			params = converter;
+			converter = Boolean;
+		}
+
+		const
+			fn = <Function>converter;
+
+		const setWatcher = () => {
+			this.watch(field, (val) => {
+				this.setMod(mod, fn(val, this));
+			}, params);
+		};
+
+		if (this.isBeforeCreate()) {
+			const sync = this.syncModCache[mod] = () => {
+				this.mods[mod] = String(fn(this.getField(field), this));
+			};
+
+			if (this.hook !== 'beforeDataCreate') {
+				this.meta.hooks.beforeDataCreate.push({
+					fn: sync
+				});
+
+			} else {
+				sync();
+			}
+
+			setWatcher();
+
+		} else if (statuses[this.componentStatus] >= 1) {
+			setWatcher();
+		}
+	}
+
+	/**
 	 * Wrapper for $emit
 	 *
 	 * @param event
@@ -760,21 +1080,39 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	/**
 	 * Wrapper for $on
 	 *
+	 * @see Async.on
 	 * @param event
 	 * @param cb
+	 * @param [params] - async parameters
 	 */
-	on(event: string, cb: Function): void {
-		this.$on(event.dasherize(), cb);
+	on(event: string, cb: Function, params?: AsyncOpts): void {
+		event = event.dasherize();
+
+		if (params) {
+			this.async.on(this, event, cb, params);
+			return;
+		}
+
+		this.$on(event, cb);
 	}
 
 	/**
 	 * Wrapper for $once
 	 *
+	 * @see Async.on
 	 * @param event
 	 * @param cb
+	 * @param [params]  - async parameters
 	 */
-	once(event: string, cb: Function): void {
-		this.$once(event.dasherize(), cb);
+	once(event: string, cb: Function, params?: AsyncOpts): void {
+		event = event.dasherize();
+
+		if (params) {
+			this.async.once(this, event, cb, params);
+			return;
+		}
+
+		this.$once(event, cb);
 	}
 
 	/**
@@ -783,12 +1121,27 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 * @param [event]
 	 * @param [cb]
 	 */
-	off(event?: string, cb?: Function): void {
-		this.$off(event && event.dasherize(), cb);
+	off(event?: string, cb?: Function): void;
+
+	/**
+	 * @see Async.off
+	 * @param [params] - async parameters
+	 */
+	off(params: ClearOptsId<object>): void;
+	off(eventOrParams?: string | ClearOptsId<object>, cb?: Function): void {
+		if (!eventOrParams || Object.isString(eventOrParams)) {
+			const
+				e = eventOrParams;
+
+			this.$off(e && e.dasherize(), cb);
+			return;
+		}
+
+		this.async.off(eventOrParams);
 	}
 
 	/**
-	 * Wrapper for @wait
+	 * Wrapper for a wait decorator
 	 *
 	 * @see Async.promise
 	 * @param status
@@ -944,7 +1297,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	}
 
 	/**
-	 * Sets a modifier to the root element
+	 * Sets a modifier for the root element
 	 *
 	 * @param name
 	 * @param value
@@ -1031,7 +1384,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	}
 
 	/**
-	 * Sets focus to the component
+	 * Sets focus for the component
 	 * @emits focus()
 	 */
 	async focus(): Promise<boolean> {
@@ -1076,7 +1429,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	}
 
 	/**
-	 * Sets a new watch property to the specified object
+	 * Sets a new property to the specified object
 	 *
 	 * @param path - path to the property (bla.baz.foo)
 	 * @param value
@@ -1132,7 +1485,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	}
 
 	/**
-	 * Deletes a watch property from the specified object
+	 * Deletes a property from the specified object
 	 *
 	 * @param path - path to the property (bla.baz.foo)
 	 * @param [obj]
@@ -1226,12 +1579,13 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	/**
 	 * Executes the specified callback after beforeDataCreate hook or beforeReady event
 	 *
+	 * @see Async.proxy
 	 * @param cb
-	 * @param [params] - additional parameters
+	 * @param [params] - async parameters
 	 */
-	execCbAtTheRightTime<T>(cb: (this: this) => T, params?: AsyncOpts): CanPromise<T> {
+	execCbAtTheRightTime<T>(cb: (this: this) => T, params?: AsyncOpts): CanPromise<T | void> {
 		if (this.isBeforeCreate('beforeDataCreate')) {
-			return <any>this.async.promise(new Promise((r) => {
+			return <any>this.$async.promise(new Promise((r) => {
 				this.meta.hooks.beforeDataCreate.unshift({fn: () => r(cb.call(this))});
 			}), params).catch(stderr);
 		}
@@ -1245,11 +1599,22 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 		const
 			res = this.waitStatus('beforeReady', cb, params);
 
-		if (Then.isThenable(res)) {
-			return (<Promise<any>>res).catch(stderr);
+		if (Object.isPromise(res)) {
+			return res.catch(stderr);
 		}
 
 		return res;
+	}
+
+	/**
+	 * Creates a new function from the specified that executes deferedly
+	 *
+	 * @see Async.setTimeout
+	 * @param fn
+	 * @param [params] - async parameters
+	 */
+	protected createDeferFn(fn: Function, params?: AsyncOpts): Function {
+		return (...args) => this.async.setTimeout(() => fn.call(this, ...args), 0.2.second(), params);
 	}
 
 	/**
@@ -1329,7 +1694,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	}
 
 	/**
-	 * Returns the full name of the specified component
+	 * Returns a full name of the specified component
 	 *
 	 * @param [blockName]
 	 * @param [modName]
@@ -1424,6 +1789,10 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 				this.getFullElName(el)
 			);
 
+			if (!Object.isObject(mods)) {
+				continue;
+			}
+
 			for (let keys = Object.keys(mods), i = 0; i < keys.length; i++) {
 				const
 					key = keys[i],
@@ -1439,7 +1808,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	}
 
 	/**
-	 * Puts the component root element to the stream
+	 * Puts the component root element to the render stream
 	 * @param cb
 	 */
 	@wait('ready')
@@ -1603,15 +1972,11 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 						$a.on(this.localEvent, `block.mod.*.${p[0]}.*`, sync, storeWatchers);
 
 					} else {
-						this.execCbAfterCreated(() => {
-							const watcher = this.$watch(key, (val, oldVal) => {
-								if (!Object.fastCompare(val, oldVal)) {
-									sync();
-								}
-							});
-
-							$a.worker(watcher, storeWatchers);
-						});
+						this.watch(key, (val, oldVal) => {
+							if (!Object.fastCompare(val, oldVal)) {
+								sync();
+							}
+						}, storeWatchers);
 					}
 				});
 			});
@@ -1688,15 +2053,11 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 					$a.on(this.localEvent, `block.mod.*.${p[0]}.*`, sync, routerWatchers);
 
 				} else {
-					this.execCbAfterCreated(() => {
-						const watcher = this.$watch(key, (val, oldVal) => {
-							if (!Object.fastCompare(val, oldVal)) {
-								sync();
-							}
-						});
-
-						$a.worker(watcher, routerWatchers);
-					});
+					this.watch(key, (val, oldVal) => {
+						if (!Object.fastCompare(val, oldVal)) {
+							sync();
+						}
+					}, routerWatchers);
 				}
 			});
 		});
@@ -1773,57 +2134,6 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	}
 
 	/**
-	 * Binds a modifier to the specified field
-	 *
-	 * @param mod
-	 * @param field
-	 * @param [converter] - converter function
-	 * @param [opts] - watch options
-	 */
-	protected bindModTo<T = this>(
-		mod: string,
-		field: string,
-		converter: ((value: any, ctx: T) => any) | WatchOptions = Boolean,
-		opts?: WatchOptions
-	): void {
-		mod = mod.camelize(false);
-
-		if (!Object.isFunction(converter)) {
-			opts = converter;
-			converter = Boolean;
-		}
-
-		const
-			fn = <Function>converter;
-
-		const setWatcher = () => {
-			this.$watch(field, (val) => {
-				this.setMod(mod, fn(val, this));
-			}, opts);
-		};
-
-		if (this.isBeforeCreate()) {
-			const sync = this.syncModCache[mod] = () => {
-				this.mods[mod] = String(fn(this.getField(field), this));
-			};
-
-			if (this.hook !== 'beforeDataCreate') {
-				this.meta.hooks.beforeDataCreate.push({
-					fn: sync
-				});
-
-			} else {
-				sync();
-			}
-
-			setWatcher();
-
-		} else if (statuses[this.componentStatus] >= 1) {
-			setWatcher();
-		}
-	}
-
-	/**
 	 * Returns if the specified label:
 	 *   2 -> already exists in the cache;
 	 *   1 -> just written in the cache;
@@ -1845,21 +2155,10 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	}
 
 	/**
-	 * Creates a new function from the specified that executes deferedly
-	 *
-	 * @see Async.setTimeout
-	 * @param fn
-	 * @param [params]
-	 */
-	protected createDeferFn(fn: Function, params?: AsyncOpts): Function {
-		return (...args) => this.async.setTimeout(() => fn.call(this, ...args), 0.2.second(), params);
-	}
-
-	/**
 	 * Wrapper for $nextTick
 	 *
 	 * @see Async.promise
-	 * @param [params]
+	 * @param [params] - async parameters
 	 */
 	protected nextTick(params?: AsyncOpts): Promise<void> {
 		return this.async.promise(this.$nextTick(), params);
@@ -1870,7 +2169,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 *
 	 * @see Async.wait
 	 * @param ref
-	 * @param [params]
+	 * @param [params] - async parameters
 	 */
 	protected async waitRef<T = iBlock | Element | iBlock[] | Element[]>(ref: string, params?: AsyncOpts): Promise<T> {
 		await this.async.wait(() => this.$refs[ref], params);
@@ -1922,6 +2221,10 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 		this.convertStateToRouter = i.convertStateToRouter.bind(this);
 		this.initStateFromRouter = i.initStateFromRouter.bind(this);
 		this.setState = i.setState.bind(this);
+		this.watch = i.watch.bind(this);
+		this.on = i.on.bind(this);
+		this.once = i.once.bind(this);
+		this.off = i.off.bind(this);
 
 		Object.defineProperties(this, {
 			refs: {
@@ -1929,14 +2232,6 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 				get: i['refsGetter']
 			}
 		});
-
-		const
-			{$watch} = this;
-
-		if ($watch) {
-			// @ts-ignore
-			this.$watch = (...args) => this.execCbAfterCreated(() => $watch.apply(this, args));
-		}
 	}
 
 	/**
@@ -1960,234 +2255,6 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 		} else {
 			$C(cache).forEach((el) => $C(el).forEach(sync));
 		}
-	}
-
-	/**
-	 * Sets a link for the specified field
-	 * @param [watchParamsOrWrapper]
-	 */
-	protected link(watchParamsOrWrapper?: WatchOptions | LinkWrapper): any;
-
-	/**
-	 * Sets a link for the specified field
-	 *
-	 * @param watchParams
-	 * @param [wrapper]
-	 */
-	protected link(watchParams: WatchOptions, wrapper?: LinkWrapper): any;
-
-	/**
-	 * Sets a link for the specified field
-	 *
-	 * @param field
-	 * @param [watchParamsOrWrapper]
-	 */
-	protected link(field: string, watchParamsOrWrapper?: WatchOptions | LinkWrapper): any;
-
-	/**
-	 * Sets a link for the specified field
-	 *
-	 * @param field
-	 * @param watchParams
-	 * @param [wrapper]
-	 */
-	protected link(field: string, watchParams: WatchOptions, wrapper?: LinkWrapper): any;
-	protected link(
-		field?: string | WatchOptions | LinkWrapper,
-		watchParams?: WatchOptions | LinkWrapper,
-		wrapper?: LinkWrapper
-	): any {
-		const
-			path = this.$activeField,
-			cache = this.syncLinkCache;
-
-		if (!field || !Object.isString(field)) {
-			wrapper = <LinkWrapper>watchParams;
-			watchParams = <WatchOptions>field;
-			field = `${path.replace(/Store$/, '')}Prop`;
-		}
-
-		if (watchParams && Object.isFunction(watchParams)) {
-			wrapper = watchParams;
-			watchParams = undefined;
-		}
-
-		if (!(path in this.linksCache)) {
-			this.linksCache[path] = {};
-			this.$watch(field, (val, oldVal) => {
-				if (!Object.fastCompare(val, oldVal)) {
-					this.setField(path, wrapper ? wrapper.call(this, val, oldVal) : val);
-				}
-			}, <WatchOptions>watchParams);
-
-			const sync = (val?) => {
-				val = val || this.getField(<string>field);
-
-				const
-					res = wrapper ? wrapper.call(this, val) : val;
-
-				this.setField(path, res);
-				return res;
-			};
-
-			// tslint:disable-next-line:prefer-object-spread
-			cache[field] = Object.assign(cache[field] || {}, {
-				[path]: {
-					path,
-					sync
-				}
-			});
-
-			if (this.isBeforeCreate('beforeDataCreate')) {
-				const
-					name = '[[SYNC]]',
-					hooks = this.meta.hooks.beforeDataCreate;
-
-				let
-					pos = 0;
-
-				for (let i = 0; i < hooks.length; i++) {
-					if (hooks[i].name === name) {
-						pos = i + 1;
-					}
-				}
-
-				hooks.splice(pos, 0, {fn: sync, name});
-				return;
-			}
-
-			return sync();
-		}
-	}
-
-	/**
-	 * Creates an object with linked fields
-	 *
-	 * @param path - property path
-	 * @param fields
-	 */
-	protected createWatchObject(
-		path: string,
-		fields: WatchObjectFields
-	): Dictionary;
-
-	/**
-	 * @param path - property path
-	 * @param watchParams
-	 * @param fields
-	 */
-	protected createWatchObject(
-		path: string,
-		watchParams: WatchOptions,
-		fields: WatchObjectFields
-	): Dictionary;
-
-	protected createWatchObject(
-		path: string,
-		watchParams: WatchOptions | WatchObjectFields,
-		fields?: WatchObjectFields
-	): Dictionary {
-		if (Object.isArray(watchParams)) {
-			fields = watchParams;
-			watchParams = {};
-		}
-
-		const
-			{linksCache, syncLinkCache} = this;
-
-		// tslint:disable-next-line
-		if (path) {
-			path = [this.$activeField, path].join('.');
-
-		} else {
-			path = this.$activeField;
-		}
-
-		const
-			short = path.split('.').slice(1),
-			obj = {};
-
-		if (short.length) {
-			$C(obj).set({}, short);
-		}
-
-		const
-			map = $C(obj).get(short);
-
-		for (let i = 0; i < (<WatchObjectFields>fields).length; i++) {
-			const
-				el = (<WatchObjectFields>fields)[i];
-
-			if (Object.isArray(el)) {
-				let
-					wrapper,
-					field;
-
-				if (el.length === 3) {
-					field = el[1];
-					wrapper = el[2];
-
-				} else if (Object.isFunction(el[1])) {
-					field = el[0];
-					wrapper = el[1];
-
-				} else {
-					field = el[1];
-				}
-
-				const
-					l = [path, el[0]].join('.');
-
-				if (!$C(linksCache).get(l)) {
-					$C(linksCache).set(true, l);
-					this.$watch(field, (val, oldVal) => {
-						if (!Object.fastCompare(val, oldVal)) {
-							this.setField(l, wrapper ? wrapper.call(this, val, oldVal) : val);
-						}
-					}, <WatchOptions>watchParams);
-
-					const sync = (val?) => {
-						val = val || this.getField(field);
-						return wrapper ? wrapper.call(this, val) : val;
-					};
-
-					// tslint:disable-next-line:prefer-object-spread
-					syncLinkCache[field] = Object.assign(syncLinkCache[field] || {}, {
-						[l]: {
-							path: l,
-							sync: (val?) => this.setField(l, sync(val))
-						}
-					});
-
-					map[el[0]] = sync();
-				}
-
-			} else {
-				const
-					l = [path, el].join('.');
-
-				if (!$C(linksCache).get(l)) {
-					$C(linksCache).set(true, l);
-					this.$watch(el, (val, oldVal) => {
-						if (!Object.fastCompare(val, oldVal)) {
-							this.setField(l, val);
-						}
-					}, <WatchOptions>watchParams);
-
-					// tslint:disable-next-line:prefer-object-spread
-					syncLinkCache[el] = Object.assign(syncLinkCache[el] || {}, {
-						[l]: {
-							path: l,
-							sync: (val?) => this.setField(l, val || this.getField(el))
-						}
-					});
-
-					map[el] = this.getField(el);
-				}
-			}
-		}
-
-		return obj;
 	}
 
 	/**
@@ -2476,6 +2543,53 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	}
 
 	/**
+	 * Returns true if the component hook is equal one of "before" hooks
+	 * @param [skip] - name of a skipped hook
+	 */
+	protected isBeforeCreate(...skip: Hooks[]): boolean {
+		const
+			hooks = {beforeRuntime: true, beforeCreate: true, beforeDataCreate: true};
+
+		for (let i = 0; i < skip.length; i++) {
+			hooks[skip[i]] = false;
+		}
+
+		return Boolean(hooks[this.hook]);
+	}
+
+	/**
+	 * Executes the specified callback after created hook and returns the result
+	 *
+	 * @param cb
+	 * @param [params] - async parameters
+	 */
+	protected execCbAfterCreated<T>(cb: (this: this) => T, params?: AsyncOpts): CanPromise<T> {
+		if (this.isBeforeCreate()) {
+			return <any>this.$async.promise(new Promise((r) => {
+				this.meta.hooks.created.unshift({fn: () => r(cb.call(this))});
+			}), params).catch(stderr);
+		}
+
+		return cb.call(this);
+	}
+
+	/**
+	 * Executes the specified callback after block.ready event and returns the result
+	 *
+	 * @param cb
+	 * @param [params] - async parameters
+	 */
+	protected execCbAfterBlockReady<T>(cb: (this: this) => T, params?: AsyncOpts): CanPromise<T> {
+		if (this.block) {
+			return cb.call(this);
+		}
+
+		return <any>this.$async.promise(new Promise((r) => {
+			this.localEvent.once('block.ready', () => r(cb.call(this)));
+		}), params).catch(stderr);
+	}
+
+	/**
 	 * Component created
 	 */
 	protected created(): void {
@@ -2540,53 +2654,6 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 		this.localEvent.removeAllListeners();
 		delete classesCache.dict.els[this.componentId];
 	}
-
-	/**
-	 * Returns true if the component hook is equal one of "before" hooks
-	 * @param [skip] - name of a skipped hook
-	 */
-	protected isBeforeCreate(...skip: Hooks[]): boolean {
-		const
-			hooks = {beforeRuntime: true, beforeCreate: true, beforeDataCreate: true};
-
-		for (let i = 0; i < skip.length; i++) {
-			hooks[skip[i]] = false;
-		}
-
-		return Boolean(hooks[this.hook]);
-	}
-
-	/**
-	 * Executes the specified callback after created hook and returns the result
-	 *
-	 * @param cb
-	 * @param [params] - additional parameters
-	 */
-	protected execCbAfterCreated<T>(cb: (this: this) => T, params?: AsyncOpts): CanPromise<T> {
-		if (this.isBeforeCreate()) {
-			return <any>this.async.promise(new Promise((r) => {
-				this.meta.hooks.created.unshift({fn: () => r(cb.call(this))});
-			}), params).catch(stderr);
-		}
-
-		return cb.call(this);
-	}
-
-	/**
-	 * Executes the specified callback after block.ready event and returns the result
-	 *
-	 * @param cb
-	 * @param [params] - additional parameters
-	 */
-	protected execCbAfterBlockReady<T>(cb: (this: this) => T, params?: AsyncOpts): CanPromise<T> {
-		if (this.block) {
-			return cb.call(this);
-		}
-
-		return <any>this.async.promise(new Promise((r) => {
-			this.localEvent.once('block.ready', () => r(cb.call(this)));
-		}), params).catch(stderr);
-	}
 }
 
 /**
@@ -2605,45 +2672,6 @@ export abstract class iBlockDecorator extends iBlock {
 	public readonly async!: Async<this>;
 	public readonly block!: Block;
 	public readonly localEvent!: EventEmitter;
-
-	public abstract link(watchParamsOrWrapper?: WatchOptions | LinkWrapper): any;
-	public abstract link(watchParams: WatchOptions, wrapper?: LinkWrapper): any;
-	public abstract link(field: string, watchParamsOrWrapper?: WatchOptions | LinkWrapper): any;
-	public abstract link(field: string, watchParams: WatchOptions, wrapper?: LinkWrapper): any;
-
-	public abstract createWatchObject(
-		path: string,
-		fields: WatchObjectFields
-	): Dictionary;
-
-	public abstract createWatchObject(
-		path: string,
-		watchParams: WatchOptions,
-		fields: WatchObjectFields
-	): Dictionary;
-
-	public abstract bindModTo<T = this>(
-		mod: string,
-		field: string,
-		converter: ((value: any, ctx: T) => any) | WatchOptions,
-		opts?: WatchOptions
-	): void;
-
-	// @ts-ignore
-	public $watch<T = any>(
-		exprOrFn: string | ((this: this) => string),
-		cb: (this: this, n: T, o: T) => void,
-		opts?: WatchOptions
-	): (() => void);
-
-	// @ts-ignore
-	public $watch<T = any>(
-		exprOrFn: string | ((this: this) => string),
-		opts: WatchOptionsWithHandler<T>
-	): (() => void);
-
-	// tslint:disable-next-line
-	public $watch() {}
 }
 
 function defaultI18n(): string {
