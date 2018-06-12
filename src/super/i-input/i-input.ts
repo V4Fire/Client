@@ -232,7 +232,7 @@ export default class iInput<T extends Dictionary = Dictionary> extends iData<T> 
 	 */
 	static blockValidators: ValidatorsDecl = {
 		async required({msg, showMsg = true}: Dictionary): Promise<boolean> {
-			if (!await this.formValue) {
+			if (await this.formValue == null) {
 				if (showMsg) {
 					this.error = msg || t`Required field`;
 				}

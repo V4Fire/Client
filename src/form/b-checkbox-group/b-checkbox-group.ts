@@ -98,7 +98,7 @@ export default class bCheckboxGroup<T extends Dictionary = Dictionary> extends i
 				ctx: bCheckboxGroup = <any>this,
 				value = await ctx.formValue;
 
-			if (ctx.multiple ? !value.length : !value) {
+			if (ctx.multiple ? !value.length : value == null) {
 				if (showMsg) {
 					const
 						els = await ctx.elements;
