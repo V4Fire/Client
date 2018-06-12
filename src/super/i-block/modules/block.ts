@@ -10,10 +10,46 @@ import $C = require('collection.js');
 import iBlock, { VueElement, ModsTable } from 'super/i-block/i-block';
 import { EventEmitter2 as EventEmitter } from 'eventemitter2';
 
-export type Reason =
+export type EventType =
+	'set' |
+	'remove';
+
+export type EventName =
+	'block.mod.set' |
+	'block.mod.remove' |
+	'el.mod.set' |
+	'el.mod.remove';
+
+export type EventReason =
 	'initSetMod' |
 	'setMod' |
 	'removeMod';
+
+export interface Event {
+	event: EventName;
+	type: EventType;
+	reason: EventReason;
+	name: string;
+	value: string;
+}
+
+export interface SetEvent extends Event {
+	prev: string | undefined;
+}
+
+export interface ElementEvent {
+	event: EventName;
+	type: EventType;
+	reason: EventReason;
+	element: string;
+	link: HTMLElement;
+	modName: string;
+	value: string;
+}
+
+export interface SetElementEvent extends ElementEvent {
+	prev: string | undefined;
+}
 
 /**
  * Base class for BEM like develop
@@ -143,7 +179,7 @@ export default class Block {
 	 * @param value
 	 * @param [reason]
 	 */
-	setMod(name: string, value: any, reason: Reason = 'setMod'): boolean {
+	setMod(name: string, value: any, reason: EventReason = 'setMod'): boolean {
 		if (value === undefined) {
 			return false;
 		}
@@ -162,7 +198,7 @@ export default class Block {
 				this.node.classList.add(this.getFullBlockName(name, value));
 			}
 
-			const event = {
+			const event = <SetEvent>{
 				event: 'block.mod.set',
 				type: 'set',
 				name,
@@ -185,7 +221,7 @@ export default class Block {
 	 * @param [value]
 	 * @param [reason]
 	 */
-	removeMod(name: string, value?: any, reason: Reason = 'removeMod'): boolean {
+	removeMod(name: string, value?: any, reason: EventReason = 'removeMod'): boolean {
 		name = name.camelize(false);
 		value = value !== undefined ? String(value).dasherize() : undefined;
 
@@ -196,7 +232,7 @@ export default class Block {
 			this.mods[name] = undefined;
 			this.node.classList.remove(this.getFullBlockName(name, current));
 
-			const event = {
+			const event = <Event>{
 				event: 'block.mod.remove',
 				type: 'remove',
 				name,
@@ -226,8 +262,9 @@ export default class Block {
 	 * @param elName
 	 * @param modName
 	 * @param value
+	 * @param [reason]
 	 */
-	setElMod(link: Element, elName: string, modName: string, value: any): boolean {
+	setElMod(link: Element, elName: string, modName: string, value: any, reason: EventReason = 'setMod'): boolean {
 		if (value === undefined) {
 			return false;
 		}
@@ -240,15 +277,17 @@ export default class Block {
 			this.removeElMod(link, elName, modName, undefined, 'setMod');
 			link.classList.add(this.getFullElName(elName, modName, value));
 
-			this.event.emit(`el.mod.set.${elName}.${modName}.${value}`, {
+			const event = <SetElementEvent>{
 				element: elName,
 				event: 'el.mod.set',
 				type: 'set',
 				link,
 				modName,
-				value
-			});
+				value,
+				reason
+			};
 
+			this.event.emit(`el.mod.set.${elName}.${modName}.${value}`, event);
 			return true;
 		}
 
@@ -264,7 +303,7 @@ export default class Block {
 	 * @param [value]
 	 * @param [reason]
 	 */
-	removeElMod(link: Element, elName: string, modName: string, value?: any, reason: Reason = 'removeMod'): boolean {
+	removeElMod(link: Element, elName: string, modName: string, value?: any, reason: EventReason = 'removeMod'): boolean {
 		elName = elName.camelize(false);
 		modName = modName.camelize(false);
 		value = value !== undefined ? String(value).dasherize() : undefined;
@@ -274,7 +313,8 @@ export default class Block {
 
 		if (current !== undefined && (value === undefined || current === value)) {
 			link.classList.remove(this.getFullElName(elName, modName, current));
-			this.event.emit(`el.mod.remove.${elName}.${modName}.${current}`, {
+
+			const event = <ElementEvent>{
 				element: elName,
 				event: 'el.mod.remove',
 				type: 'remove',
@@ -282,8 +322,9 @@ export default class Block {
 				modName,
 				value: current,
 				reason
-			});
+			};
 
+			this.event.emit(`el.mod.remove.${elName}.${modName}.${current}`, event);
 			return true;
 		}
 
