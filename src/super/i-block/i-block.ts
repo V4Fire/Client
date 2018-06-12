@@ -2266,7 +2266,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 
 	/**
 	 * Restarts the async render daemon for forcing render
-	 * (runs on the next tick)
+	 * (runs on a next tick)
 	 */
 	protected deferForceAsyncRender(): void {
 		deferRestart();
