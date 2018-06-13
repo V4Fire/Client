@@ -898,6 +898,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 		}
 
 		const
+			hooks = this.meta.hooks.beforeDataCreate,
 			short = path.split('.').slice(1),
 			obj = {};
 
@@ -941,20 +942,27 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 						}
 					}, params);
 
-					const sync = (val?) => {
+					const getVal = (val?) => {
 						val = val || this.getField(field);
 						return wrapper ? wrapper.call(this, val) : val;
 					};
+
+					const
+						sync = (val?) => this.setField(l, getVal(val));
 
 					// tslint:disable-next-line:prefer-object-spread
 					syncLinkCache[field] = Object.assign(syncLinkCache[field] || {}, {
 						[l]: {
 							path: l,
-							sync: (val?) => this.setField(l, sync(val))
+							sync
 						}
 					});
 
-					map[el[0]] = sync();
+					if (this.isBeforeCreate('beforeDataCreate')) {
+						hooks.push({fn: sync, name});
+					}
+
+					map[el[0]] = getVal();
 				}
 
 			} else {
@@ -970,15 +978,23 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 						}
 					}, params);
 
+					const
+						getVal = (val?) => val || this.getField(el),
+						sync = (val?) => this.setField(l, getVal(val));
+
 					// tslint:disable-next-line:prefer-object-spread
 					syncLinkCache[el] = Object.assign(syncLinkCache[el] || {}, {
 						[l]: {
 							path: l,
-							sync: (val?) => this.setField(l, val || this.getField(el))
+							sync
 						}
 					});
 
-					map[el] = this.getField(el);
+					if (this.isBeforeCreate('beforeDataCreate')) {
+						hooks.push({fn: sync, name});
+					}
+
+					map[el] = getVal();
 				}
 			}
 		}
@@ -1954,7 +1970,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 					stateFields = this.convertStateToStorage();
 
 				if (data) {
-					this.setState(Object.select(this.convertStateToStorage(data), Object.keys(stateFields)));
+					this.setState(this.convertStateToStorage(data));
 
 				} else {
 					this.setState(stateFields);
@@ -2035,7 +2051,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 				stateFields = this.convertStateToRouter();
 
 			if (p && p.query) {
-				this.setState(Object.select(this.convertStateToRouter(p.query), Object.keys(stateFields)));
+				this.setState(this.convertStateToRouter(p.query));
 
 			} else {
 				this.setState(stateFields);
@@ -2045,7 +2061,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 				label: $$.syncRouter
 			});
 
-			$C(this.convertStateToRouter()).forEach((el, key) => {
+			$C(stateFields).forEach((el, key) => {
 				const
 					p = key.split('.');
 
