@@ -1932,7 +1932,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 			return;
 		}
 
-		data = this.convertStateToRouter(data);
+		data = this.convertStateToStorage(data);
 		this.setState(data);
 
 		await this.saveSettings(data, '[[STORE]]');
