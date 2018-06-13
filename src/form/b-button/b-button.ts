@@ -7,8 +7,7 @@
  */
 
 import bForm from 'form/b-form/b-form';
-import iData, { component, prop, ModsDecl, ModelMethods, CreateRequestOptions } from 'super/i-data/i-data';
-import { RequestQuery, RequestBody } from 'core/data';
+import iData, { component, prop, ModsDecl, ModelMethods, Request } from 'super/i-data/i-data';
 export * from 'super/i-data/i-data';
 
 @component({
@@ -41,7 +40,7 @@ export default class bButton<T extends Dictionary = Dictionary> extends iData<T>
 	 * Request parameters
 	 */
 	@prop({type: [Object, Array], required: false})
-	readonly request?: RequestQuery | RequestBody | [RequestBody | RequestQuery, CreateRequestOptions];
+	readonly request?: Request;
 
 	/**
 	 * Button type

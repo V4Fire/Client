@@ -6,19 +6,8 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import bLink, {
-
-	component,
-	prop,
-	RequestBody,
-	RequestQuery,
-	CreateRequestOptions,
-	ModelMethods
-
-} from 'base/b-link/b-link';
-
+import bLink, { component, prop, ModelMethods, Request } from 'base/b-link/b-link';
 export * from 'base/b-link/b-link';
-export type Request = RequestQuery | RequestBody | [RequestQuery | RequestBody, CreateRequestOptions];
 
 @component({
 	functional: {

@@ -31,15 +31,12 @@ import Provider, {
 } from 'core/data';
 
 export * from 'super/i-message/i-message';
-export {
+export { ModelMethods, RequestQuery, RequestBody, RequestResponseObject, RequestError } from 'core/data';
 
-	ModelMethods,
-	RequestQuery,
-	RequestBody,
-	RequestResponseObject,
-	RequestError
-
-} from 'core/data';
+export type Request =
+	RequestQuery |
+	RequestBody |
+	[RequestQuery | RequestBody, CreateRequestOptions];
 
 export interface DataEvent<T extends object = Async> {
 	on(events: string | string[], handler: Function, ...args: any[]): object | undefined;
