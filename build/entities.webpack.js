@@ -245,6 +245,9 @@ module.exports = (async () => {
 			return entry;
 		});
 
+	processes.push(processes[HTML]);
+	processes.splice(HTML, 1);
+
 	$C(processes)
 		.remove((obj) => !$C(obj).length());
 
