@@ -188,7 +188,9 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	snakeskin() {
 		function ignore(target) {
 			target.ignore = true;
-			return target.apply(this, arguments);
+			return function () {
+				return target.apply(this, arguments);
+			};
 		}
 
 		const {
