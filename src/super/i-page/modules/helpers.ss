@@ -31,18 +31,20 @@
  * @param {...string} url
  */
 - block index->join()
-	: last = arguments[arguments.length - 1]
+	: lastChunk = arguments[arguments.length - 1]
 
-	- if /^(\w+:)?\/\//.test(last)
-		- return last
+	- if /^(\w+:)?\/\//.test(lastChunk)
+		- return lastChunk
 
-	: src = path.join.apply(path, arguments)
-	: basename = path.basename(src)
+	: &
+		src = path.join.apply(path, arguments),
+		basename = path.basename(src)
+	.
 
 	- if path.extname(basename)
 		: &
 			newSrc,
-			url,
+			fileLink,
 			file
 		.
 
@@ -50,17 +52,17 @@
 			? file = fs.readFileSync(src)
 			: hash = ''
 
-			- if @hashLength
-				? hash = hasha(src, {algorithm: 'md5'}).substr(0, @hashLength) + '_'
+			- if @@hashLength
+				? hash = hasha(src, {algorithm: 'md5'}).substr(0, @@hashLength) + '_'
 
-			? newSrc = path.join(@output, 'lib', hash + basename)
-			? url = @fatHTML ? newSrc : path.relative(@output, newSrc)
-			? libCache[basename] = fs.existsSync(newSrc) && url
+			? newSrc = path.join(lib, hash + basename)
+			? fileLink = @@fatHTML ? newSrc : path.relative(@@output, newSrc)
+			? libCache[basename] = fs.existsSync(newSrc) && fileLink
 
 		- if !libCache[basename]
-			? fs.mkdirpSync(path.join(@output, 'lib'))
+			? fs.mkdirpSync(lib)
 			? fs.writeFileSync(newSrc, file.toString().replace(/\/\/# sourceMappingURL=.*/, ''))
-			? libCache[basename] = url
+			? libCache[basename] = fileLink
 
 		- return libCache[basename]
 
@@ -77,9 +79,9 @@
 - block index->addScriptDep(name, opts)
 	: p = Object.assign({defer: true}, opts)
 
-	- if @fatHTML
+	- if @@fatHTML
 		- if assets[name]
-			: url = path.join(@output, assets[name])
+			: url = path.join(@@output, assets[name])
 
 			- if fs.existsSync(url)
 				requireMonic({url})
@@ -113,9 +115,9 @@
 		p = Object.assign({}, opts)
 	.
 
-	- if @fatHTML
+	- if @@fatHTML
 		- if assets[rname]
-			: url = path.join(@output, assets[rname])
+			: url = path.join(@@output, assets[rname])
 
 			- if fs.existsSync(url)
 				requireMonic({url})
@@ -138,15 +140,13 @@
 
 /**
  * Adds template dependencies
- *
- * @param {!Object} dependencies
  * @param {string=} [type] - type of dependencies
  */
-- block index->addDependencies(dependencies, type)
-	: list = dependencies[path.basename(__filename, '.ess')]
+- block index->addDependencies(type)
+	: list = @@dependencies[path.basename(__filename, '.ess')]
 
 	- if !type || type === 'styles'
-		- if @fatHTML
+		- if @@fatHTML
 			- style
 				- forEach list => el
 					+= self.addStyleDep(el)

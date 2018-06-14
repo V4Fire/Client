@@ -19,13 +19,13 @@
 
 /**
  * Base page template
- * @param [config] - template config
  */
-- async template index(@params = {}) extends ['i-data'].index
+- async template index() extends ['i-data'].index
 	- isProd = @@NODE_ENV === 'production'
 	- assets = Object.create(null)
+	- lib = path.join(@@output, 'lib')
 
-	- title = @title || @@appName
+	- title = @@appName
 	- pageData = {}
 
 	- defineBase = false
@@ -44,14 +44,14 @@
 	} .
 
 	- block root
-		- if @fatHTML
-			- forEach @dependencies => el, key
+		- if @@fatHTML
+			- forEach @@dependencies => el, key
 				? assets[key] = key + '.js'
 				? assets[key + '_tpl'] = key + '_tpl.js'
 				? assets[key + '$style'] = key + '$style.css'
 
 			- for var key in assets
-				- while !await fs.existsAsync(path.join(@output, assets[key]))
+				- while !await fs.existsAsync(path.join(@@output, assets[key]))
 					? await delay(200)
 
 			? assets['std'] = 'std.js'
@@ -63,7 +63,7 @@
 
 		< html
 			< head
-				: base = self.join('/', path.relative(@root, @output), '/')
+				: base = self.join('/', path.relative(@@root, @@output), '/')
 
 				- block meta
 					< meta ${charset}
@@ -90,7 +90,7 @@
 					/// Dirty hack for replacing startURL from manifest.json
 					: putIn injectFavicons
 						() =>
-							: faviconsSrc = glob.sync(path.join(@favicons, '*.html'))[0]
+							: faviconsSrc = glob.sync(path.join(@@favicons, '*.html'))[0]
 
 							- if !faviconsSrc
 								- return
@@ -129,9 +129,9 @@
 
 						} catch (_) {}
 
-				- if !@fatHTML && assetsRequest
+				- if !@@fatHTML && assetsRequest
 					- block assets
-						: assetJS = path.relative(@output, @assetsJSON.replace(/json$/, 'js'))
+						: assetJS = path.relative(@@output, @@assetsJSON.replace(/json$/, 'js'))
 						- script js src = ${assetJS}
 
 				- block head
@@ -141,10 +141,10 @@
 
 					- forEach defStyles => url
 						: notDefer = Array.isArray(url)
-						? url = self.join(@lib, notDefer ? url[0] : url)
+						? url = self.join(@@lib, notDefer ? url[0] : url)
 
 						- block loadDefStyles
-							- if @fatHTML
+							- if @@fatHTML
 								- style
 									requireMonic({url})
 
@@ -161,11 +161,11 @@
 									.
 
 					- block styles
-						+= self.addDependencies(@dependencies, 'styles')
+						+= self.addDependencies('styles')
 
 					- block std
-						# script
-							#+= self.addScriptDep('std', {defer: false, optional: true})
+						- script
+							+= self.addScriptDep('std', {defer: false, optional: true})
 
 					: defLibs
 					- block defLibs
@@ -188,14 +188,14 @@
 								: src, newSrc, relativeSrc
 
 								- if !foldersCache[basename]
-									? src = path.join(@lib, url)
+									? src = path.join(@@lib, url)
 									: hash = ''
 
-									- if @hashLength
-										? hash = hashFiles.sync({files: [path.join(src, '/**/*')]}).substr(0, @hashLength) + '_'
+									- if @@hashLength
+										? hash = hashFiles.sync({files: [path.join(src, '/**/*')]}).substr(0, @@hashLength) + '_'
 
-									? newSrc = path.join(@output, 'lib', hash + basename)
-									? relativeSrc = path.relative(@output, newSrc)
+									? newSrc = path.join(lib, hash + basename)
+									? relativeSrc = path.relative(@@output, newSrc)
 									? foldersCache[basename] = fs.existsSync(newSrc) && relativeSrc
 
 								- if !foldersCache[basename]
@@ -208,9 +208,9 @@
 						- else
 							- block loadDefLibs
 								: notDefer = Array.isArray(url)
-								? url = self.join(@lib, notDefer ? url[0] : url)
+								? url = self.join(@@lib, notDefer ? url[0] : url)
 
-								- if @fatHTML
+								- if @@fatHTML
 									- script
 										requireMonic({url})
 
@@ -222,10 +222,10 @@
 							Vue.default = Vue;
 
 					- block scripts
-						# script
-							#+= self.addScriptDep('vendor', {optional: true})
+						- script
+							+= self.addScriptDep('vendor', {optional: true})
 
-						+= self.addDependencies(@dependencies, 'scripts')
+						+= self.addDependencies('scripts')
 
 						- script
 							+= self.addScriptDep('webpack.runtime')

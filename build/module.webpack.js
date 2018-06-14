@@ -15,15 +15,17 @@ const
 
 const
 	{resolve} = require('@pzlr/build-core'),
-	{output, hash, assetsJSON, inherit, depsRgxpStr} = include('build/build.webpack');
+	{output, hash, assetsJSON, inherit, depsRgxpStr} = include('build/build.webpack'),
+	depsRgxp = new RegExp(`(?:^|/)node_modules/(?:(?!${depsRgxpStr}).)*?(?:/|$)`);
 
 const
-	{src, webpack} = config,
+	snakeskin = config.snakeskin(),
 	typescript = config.typescript(),
 	monic = config.monic();
 
-const
-	depsRgxp = new RegExp(`(?:^|/)node_modules/(?:(?!${depsRgxpStr}).)*?(?:/|$)`);
+const fileLoaderOpts = inherit({name: hash('[path][hash]_[name].[ext]')}, {
+	limit: config.webpack.dataURILimit()
+});
 
 /**
  * Returns parameters for webpack.module
@@ -183,17 +185,10 @@ module.exports = async function ({buildId, plugins}) {
 
 					{
 						loader: 'snakeskin',
-						options: inherit(config.snakeskin().server, {
+						options: inherit(snakeskin.server, {
 							exec: true,
-							data: {
-								fatHTML: webpack.fatHTML,
-								hashLength: webpack.hashLength(),
-								root: src.cwd(),
-								output: src.clientOutput(),
-								favicons: config.favicons().path,
+							vars: {
 								dependencies: build.dependencies,
-								assets: src.assets(),
-								lib: src.lib(),
 								assetsJSON
 							}
 						})
@@ -209,7 +204,7 @@ module.exports = async function ({buildId, plugins}) {
 			use: [
 				{
 					loader: 'snakeskin',
-					options: config.snakeskin().client
+					options: snakeskin.client
 				}
 			]
 		},
@@ -219,9 +214,7 @@ module.exports = async function ({buildId, plugins}) {
 			use: [
 				{
 					loader: 'url',
-					options: inherit({name: hash('[path][hash]_[name].[ext]')}, {
-						limit: webpack.dataURILimit()
-					})
+					options: fileLoaderOpts
 				}
 			].concat(
 				isProd ? {
@@ -236,9 +229,7 @@ module.exports = async function ({buildId, plugins}) {
 			use: [
 				{
 					loader: 'svg-url',
-					options: inherit({name: hash('[path][hash]_[name].[ext]')}, {
-						limit: webpack.dataURILimit()
-					})
+					options: fileLoaderOpts
 				}
 			].concat(
 				isProd ? {
