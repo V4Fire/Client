@@ -16,7 +16,7 @@ const
 	path = require('path');
 
 const
-	{src, build, pack} = require('config'),
+	{src, build, pack, webpack} = require('config'),
 	{config: {dependencies}} = require('@pzlr/build-core');
 
 /**
@@ -25,14 +25,9 @@ const
 exports.depsRgxpStr = dependencies.map((el) => RegExp.escape(el || el.src)).join('|');
 
 /**
- * File hash length
- */
-exports.hashLength = 15;
-
-/**
  * Output pattern
  */
-exports.output = hash(r('[hash]_[name]'));
+exports.output = hash(r(webpack.output()));
 
 /**
  * Build cache folder
@@ -56,7 +51,7 @@ exports.hash = hash;
  * @param {boolean=} [chunk] - if true, then the specified output is a chunk
  */
 function hash(output, chunk) {
-	const l = exports.hashLength;
+	const l = webpack.hashLength;
 	return output.replace(/\[hash]_/g, isProd && !pack.fatHTML ? chunk ? `[chunkhash:${l}]_` : `[hash:${l}]_` : '');
 }
 

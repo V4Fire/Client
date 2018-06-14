@@ -98,7 +98,12 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 			'setimmediate': 'setImmediate'
 		},
 
-		devtool: false
+		devtool: false,
+		hashLength: 15,
+
+		output() {
+			return '[hash]_[name]';
+		}
 	},
 
 	imageOpts: {

@@ -16,9 +16,9 @@ const
 	ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 const
-	{src} = require('config'),
+	{src, webpack} = require('config'),
 	{resolve} = require('@pzlr/build-core'),
-	{output, hash, hashLength, assetsJSON, inherit, depsRgxpStr} = include('build/build.webpack');
+	{output, hash, assetsJSON, inherit, depsRgxpStr} = include('build/build.webpack');
 
 const
 	depsRgxp = new RegExp(`(?:^|/)node_modules/(?:(?!${depsRgxpStr}).)*?(?:/|$)`);
@@ -191,8 +191,8 @@ module.exports = async function ({buildId, plugins}) {
 								dependencies: build.dependencies,
 								assets: src.assets(),
 								lib: src.lib(),
-								assetsJSON,
-								hashLength
+								hashLength: webpack.hashLength,
+								assetsJSON
 							}
 						})
 					}
