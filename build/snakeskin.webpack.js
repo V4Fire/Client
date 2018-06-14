@@ -140,15 +140,25 @@ function b(url) {
 		ends.push('');
 	}
 
+	const
+		paths = [];
+
 	for (let i = 0; i < folders.length; i++) {
 		for (let j = 0; j < ends.length; j++) {
 			const
 				fullPath = path.join(folders[i], url, ends[j] || '');
 
-			if (hasMagic ? Boolean(glob.sync(fullPath).length) : fs.existsSync(fullPath)) {
+			if (hasMagic) {
+				paths.push(...glob.sync(fullPath));
+
+			} else if (fs.existsSync(fullPath)) {
 				return fullPath;
 			}
 		}
+	}
+
+	if (hasMagic) {
+		return paths;
 	}
 
 	return url + end;
