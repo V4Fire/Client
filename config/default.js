@@ -23,6 +23,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 
 	api: {
 		proxy: true,
+
 		url: o('api-url', {
 			env: true
 		}),
@@ -78,11 +79,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		buildGraphFromCache: o('build-graph-from-cache', {
 			env: true,
 			type: 'boolean'
-		}),
-
-		assetsJSON() {
-			return 'assets.json';
-		}
+		})
 	},
 
 	webpack: {
@@ -98,11 +95,23 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 			'setimmediate': 'setImmediate'
 		},
 
+		fatHTML: false,
 		devtool: false,
-		hashLength: 15,
+
+		hashLength() {
+			return !isProd || this.fatHTML ? false : 15;
+		},
+
+		dataURILimit() {
+			return this.fatHTML ? false : 4096;
+		},
 
 		output() {
-			return '[hash]_[name]';
+			return this.fatHTML ? '[name]' : '[hash]_[name]';
+		},
+
+		assetsJSON() {
+			return 'assets.json';
 		}
 	},
 
@@ -140,13 +149,6 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		removeAttributeQuotes: true,
 		removeComments: isProd,
 		collapseWhitespace: isProd
-	},
-
-	pack: {
-		fatHTML: false,
-		dataURILimit() {
-			return this.fatHTML ? false : 4096;
-		}
 	},
 
 	postcss: {

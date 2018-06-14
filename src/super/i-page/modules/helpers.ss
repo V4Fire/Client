@@ -33,7 +33,7 @@
 - block index->join()
 	: last = arguments[arguments.length - 1]
 
-	- if /(https?:)?\/\//.test(last)
+	- if /^(\w+:)?\/\//.test(last)
 		- return last
 
 	: src = path.join.apply(path, arguments)
@@ -50,7 +50,7 @@
 			? file = fs.readFileSync(src)
 			: hash = ''
 
-			- if isProd
+			- if @hashLength
 				? hash = hasha(src, {algorithm: 'md5'}).substr(0, @hashLength) + '_'
 
 			? newSrc = path.join(@output, 'lib', hash + basename)

@@ -9,16 +9,18 @@
  */
 
 const
-	$C = require('collection.js');
-
-const
+	$C = require('collection.js'),
 	config = require('config'),
 	ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 const
-	{src, webpack} = require('config'),
 	{resolve} = require('@pzlr/build-core'),
 	{output, hash, assetsJSON, inherit, depsRgxpStr} = include('build/build.webpack');
+
+const
+	{src, webpack} = config,
+	typescript = config.typescript(),
+	monic = config.monic();
 
 const
 	depsRgxp = new RegExp(`(?:^|/)node_modules/(?:(?!${depsRgxpStr}).)*?(?:/|$)`);
@@ -51,7 +53,7 @@ module.exports = async function ({buildId, plugins}) {
 				use: [
 					{
 						loader: 'ts',
-						options: config.typescript().client
+						options: typescript.client
 					},
 
 					{
@@ -63,7 +65,7 @@ module.exports = async function ({buildId, plugins}) {
 
 					{
 						loader: 'monic',
-						options: inherit(config.monic().typescript, {
+						options: inherit(monic.typescript, {
 							replacers: [
 								include('build/context.replacer'),
 								include('build/super.replacer'),
@@ -80,12 +82,12 @@ module.exports = async function ({buildId, plugins}) {
 				use: [
 					{
 						loader: 'ts',
-						options: config.typescript().worker
+						options: typescript.worker
 					},
 
 					{
 						loader: 'monic',
-						options: inherit(config.monic().typescript, {
+						options: inherit(monic.typescript, {
 							replacers: [
 								include('build/context.replacer'),
 								include('build/super.replacer'),
@@ -101,7 +103,7 @@ module.exports = async function ({buildId, plugins}) {
 				exclude: depsRgxp,
 				use: [{
 					loader: 'monic',
-					options: inherit(config.monic().javascript, {
+					options: inherit(monic.javascript, {
 						replacers: [
 							include('build/context.replacer'),
 							include('build/super.replacer')
@@ -143,7 +145,7 @@ module.exports = async function ({buildId, plugins}) {
 
 						{
 							loader: 'monic',
-							options: inherit(config.monic().stylus, {
+							options: inherit(monic.stylus, {
 								replacers: [
 									require('@pzlr/stylus-inheritance')({resolveImports: true})
 								]
@@ -172,7 +174,7 @@ module.exports = async function ({buildId, plugins}) {
 
 					{
 						loader: 'monic',
-						options: inherit(config.monic().html, {
+						options: inherit(monic.html, {
 							replacers: [
 								include('build/html-import.replacer')
 							]
@@ -184,14 +186,14 @@ module.exports = async function ({buildId, plugins}) {
 						options: inherit(config.snakeskin().server, {
 							exec: true,
 							data: {
-								fatHTML: config.pack.fatHTML,
+								fatHTML: webpack.fatHTML,
+								hashLength: webpack.hashLength(),
 								root: src.cwd(),
 								output: src.clientOutput(),
 								favicons: config.favicons().path,
 								dependencies: build.dependencies,
 								assets: src.assets(),
 								lib: src.lib(),
-								hashLength: webpack.hashLength,
 								assetsJSON
 							}
 						})
@@ -218,7 +220,7 @@ module.exports = async function ({buildId, plugins}) {
 				{
 					loader: 'url',
 					options: inherit({name: hash('[path][hash]_[name].[ext]')}, {
-						limit: config.pack.dataURILimit()
+						limit: webpack.dataURILimit()
 					})
 				}
 			].concat(
@@ -235,7 +237,7 @@ module.exports = async function ({buildId, plugins}) {
 				{
 					loader: 'svg-url',
 					options: inherit({name: hash('[path][hash]_[name].[ext]')}, {
-						limit: config.pack.dataURILimit()
+						limit: webpack.dataURILimit()
 					})
 				}
 			].concat(

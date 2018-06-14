@@ -191,7 +191,7 @@
 									? src = path.join(@lib, url)
 									: hash = ''
 
-									- if isProd && !@fatHTML
+									- if @hashLength
 										? hash = hashFiles.sync({files: [path.join(src, '/**/*')]}).substr(0, @hashLength) + '_'
 
 									? newSrc = path.join(@output, 'lib', hash + basename)

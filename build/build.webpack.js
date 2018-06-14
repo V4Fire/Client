@@ -16,7 +16,7 @@ const
 	path = require('path');
 
 const
-	{src, build, pack, webpack} = require('config'),
+	{src, webpack} = require('config'),
 	{config: {dependencies}} = require('@pzlr/build-core');
 
 /**
@@ -37,7 +37,7 @@ exports.buildCache = path.join(src.cwd(), 'app-cache');
 /**
  * Path to assets.json
  */
-exports.assetsJSON = path.join(src.clientOutput(), build.assetsJSON());
+exports.assetsJSON = path.join(src.clientOutput(), webpack.assetsJSON());
 
 // Some helpers
 
@@ -51,8 +51,8 @@ exports.hash = hash;
  * @param {boolean=} [chunk] - if true, then the specified output is a chunk
  */
 function hash(output, chunk) {
-	const l = webpack.hashLength;
-	return output.replace(/\[hash]_/g, isProd && !pack.fatHTML ? chunk ? `[chunkhash:${l}]_` : `[hash:${l}]_` : '');
+	const l = webpack.hashLength();
+	return output.replace(/\[(chunk)?hash(:\d+)?]_/g, l ? chunk ? `[chunkhash:${l}]_` : `[hash:${l}]_` : '');
 }
 
 exports.inherit = inherit;
