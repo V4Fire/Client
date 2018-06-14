@@ -39,7 +39,7 @@
     "path-to-regexp": "^2.2.1",
     "raven-js": "^3.26.2",
     "requestidlecallback": "^0.3.0",
-    "snakeskin": "^7.2.9",
+    "snakeskin": "^7.3.0",
     "socket.io": "^2.1.1",
     "sugar": "^2.0.4",
     "vue": "^2.5.17-beta.0"
