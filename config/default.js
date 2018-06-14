@@ -186,16 +186,39 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	},
 
 	snakeskin() {
+		function ignore(target) {
+			target.ignore = true;
+			return target.apply(this, arguments);
+		}
+
+		const {
+			webpack,
+			src
+		} = this;
+
 		return {
 			client: this.extend(super.snakeskin(), {
 				adapter: 'ss2vue',
 				adapterOptions: {transpiler: true},
 				tagFilter: 'vueComp',
 				tagNameFilter: 'vueTag',
-				bemFilter: 'bem2vue'
+				bemFilter: 'bem2vue',
+				vars: {
+					ignore
+				}
 			}),
 
-			server: super.snakeskin()
+			server: this.extend(super.snakeskin(), {
+				vars: {
+					fatHTML: webpack.fatHTML,
+					hashLength: webpack.hashLength(),
+					root: src.cwd(),
+					output: src.clientOutput(),
+					favicons: this.favicons().path,
+					assets: src.assets(),
+					lib: src.lib()
+				}
+			})
 		};
 	},
 
