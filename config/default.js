@@ -18,7 +18,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	__proto__: config,
 
 	apiURL() {
-		return this.api.proxy ? concatUrls(this.pathname(), 'api') : this.api.url;
+		return this.api.proxy ? concatUrls(this.api.pathname(), 'api') : this.api.url;
 	},
 
 	api: {
@@ -28,32 +28,32 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 			env: true
 		}),
 
+		port: o('port', {
+			env: true,
+			type: 'number',
+			default: 3333,
+			validate(value) {
+				return Number.isFinite(value) && (value > 0) && (value < 65536);
+			}
+		}),
+
+		host() {
+			return o('host-url', {
+				env: true,
+				default: `http://localhost:${this.port}/`
+			});
+		},
+
+		pathname() {
+			return o('base-path', {
+				env: true,
+				default: url.parse(this.host()).pathname || '/'
+			});
+		},
+
 		schema: {
 
 		}
-	},
-
-	port: o('port', {
-		env: true,
-		type: 'number',
-		default: 3333,
-		validate(value) {
-			return Number.isFinite(value) && (value > 0) && (value < 65536);
-		}
-	}),
-
-	host() {
-		return o('host-url', {
-			env: true,
-			default: `http://localhost:${this.port}/`
-		});
-	},
-
-	pathname() {
-		return o('base-path', {
-			env: true,
-			default: url.parse(this.host()).pathname || '/'
-		});
 	},
 
 	build: {
