@@ -25,6 +25,17 @@
 	- rootTag = 'div'
 	- overWrapper = true
 
+	/**
+	 * Appends the specified value to root component classes
+	 * @param {string} value
+	 */
+	- block appendToRootClasses(value)
+		if rootAttrs[':class']
+			? rootAttrs[':class'] += '.concat(' + value + ')'
+
+		- else
+			rootAttrs[':class'] = value
+
 	- rootAttrs = {':class': '[componentId, getBlockClasses(mods), "i-block-helper"]'}
 	- block rootAttrs
 
