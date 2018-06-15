@@ -202,9 +202,9 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 			client: this.extend(super.snakeskin(), {
 				adapter: 'ss2vue',
 				adapterOptions: {transpiler: true},
-				tagFilter: 'vueComp',
-				tagNameFilter: 'vueTag',
-				bemFilter: 'bem2vue',
+				tagFilter: 'tagFilter',
+				tagNameFilter: 'tagNameFilter',
+				bemFilter: 'bemFilter',
 				vars: {
 					ignore
 				}

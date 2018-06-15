@@ -8,10 +8,11 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+include('build/filters');
+
 const
 	$C = require('collection.js'),
-	ss = require('snakeskin'),
-	escaper = require('escaper');
+	Snakeskin = require('snakeskin');
 
 const
 	fs = require('fs'),
@@ -19,14 +20,15 @@ const
 	glob = require('glob');
 
 const
-	{validators, resolve} = require('@pzlr/build-core');
+	{validators, resolve} = require('@pzlr/build-core'),
+	{attachVIf} = include('build/filters/helpers');
 
 const
-	folders = [resolve.blockSync(), ...resolve.dependencies],
+	resources = [resolve.blockSync(), ...resolve.dependencies],
 	components = `/**/@(${validators.blockTypeList.join('|')})-*.@(ts|js)`;
 
 const
-	files = $C(folders).reduce((arr, el) => arr.concat(glob.sync(path.join(el, components))), []).reverse(),
+	files = $C(resources).reduce((arr, el) => arr.concat(glob.sync(path.join(el, components))), []).reverse(),
 	blocksTree = {};
 
 const
@@ -107,105 +109,21 @@ const bind = {
 	]
 };
 
-ss.importFilters({
-	vueComp,
-	vueTag: ss.setFilterParams(vueTag, bind),
-	bem2vue: ss.setFilterParams(bem2vue, bind),
-	getFirstTagElementName,
-	b
+Snakeskin.importFilters({
+	tagFilter,
+	tagNameFilter: Snakeskin.setFilterParams(tagNameFilter, bind),
+	bemFilter: Snakeskin.setFilterParams(bemFilter, bind)
 });
 
-const
-	ssExtRgxp = /\.e?ss$/;
+const vuePrfx = {
+	':': true,
+	'@': true,
+	'v-': true
+};
 
-function b(url) {
-	const
-		hasMagic = glob.hasMagic(url),
-		end = ssExtRgxp.test(url) ? '' : '/',
-		ends = [];
-
-	if (end) {
-		const
-			basename = path.basename(url);
-
-		if (!glob.hasMagic(basename)) {
-			ends.push(`${basename}.ss`);
-		}
-
-		if (!validators.blockName(basename)) {
-			ends.push('main.ss', 'index.ss');
-		}
-
-	} else {
-		ends.push('');
-	}
-
-	const
-		paths = [];
-
-	for (let i = 0; i < folders.length; i++) {
-		for (let j = 0; j < ends.length; j++) {
-			const
-				fullPath = path.join(folders[i], url, ends[j] || '');
-
-			if (hasMagic) {
-				paths.push(...glob.sync(fullPath));
-
-			} else if (fs.existsSync(fullPath)) {
-				return fullPath;
-			}
-		}
-	}
-
-	if (hasMagic) {
-		return paths;
-	}
-
-	return url + end;
-}
-
-const
-	isVueProp = /^(:|@|v-)/,
-	isLiteral = /^\s*[[{]/,
-	svgRequire = /require\(.*?\.svg[\\"']+\)/,
-	isRef = {'ref': true, ':ref': true};
-
-function normalizeSvgRequire(name, attrs) {
-	if (name !== 'img') {
-		return;
-	}
-
-	const
-		src = attrs[':src'];
-
-	if (src && svgRequire.test(src[0])) {
-		src[0] += '.replace(/^"|"$/g, \'\')';
-	}
-}
-
-function vueComp({name, attrs}) {
-	normalizeSvgRequire(name, attrs);
-
-	$C(attrs).forEach((el, key) => {
-		if (isRef[key]) {
-			attrs['data-vue-ref'] = [el];
-
-			if (!attrs[':class']) {
-				attrs[':class'] = attachClass(['componentId']);
-			}
-		}
-
-		if (!isVueProp.test(key)) {
-			return;
-		}
-
-		const
-			tmp = key.dasherize();
-
-		if (tmp !== key) {
-			delete attrs[key];
-			attrs[tmp] = el;
-		}
+function tagFilter({name, attrs = {}}) {
+	$C(include('build/filters/tag')).forEach((filter) => {
+		filter({name, attrs});
 	});
 
 	let
@@ -221,29 +139,10 @@ function vueComp({name, attrs}) {
 	delete attrs['v-async-back'];
 	delete attrs['v-async-counter'];
 
-	$C(attrs).forEach((el, key) => {
-		if (key.slice(0, 2) === ':-') {
-			attrs[`:data-${key.slice(2)}`] = el;
-			delete attrs[key];
-
-		} else if (key === ':key') {
-			const
-				parts = el.join('').split(/\s*,\s*/),
-				val = attrs[key] = parts.slice(-1);
-
-			$C(parts.slice(0, -1)).forEach((key) => {
-				if (key.slice(0, 2) === ':-') {
-					attrs[`:data-${key.slice(2)}`] = val;
-
-				} else {
-					attrs[key] = val;
-				}
-			});
-		}
-	});
-
 	if (name === 'component' || validators.blockName(name)) {
-		let componentName;
+		let
+			componentName;
+
 		if (attrs[':instance-of']) {
 			componentName = attrs[':instance-of'][0];
 			delete attrs[':instance-of'];
@@ -256,22 +155,6 @@ function vueComp({name, attrs}) {
 			c = blocksTree[componentName],
 			smart = [attrs['v-func-placeholder'], delete attrs['v-func-placeholder']][0] && c && c.functional,
 			vFunc = [attrs['v-func'], delete attrs['v-func']][0];
-
-		const isStaticLiteral = (v) => {
-			try {
-				new Function(`return ${v}`)();
-				return true;
-
-			} catch (_) {
-				return false;
-			}
-		};
-
-		const vuePrfx = {
-			':': true,
-			'@': true,
-			'v-': true
-		};
 
 		const isFunctional = c && c.functional === true || !vFunc && $C(smart).every((el, key) => {
 			key = key.dasherize();
@@ -328,14 +211,6 @@ function vueComp({name, attrs}) {
 				return;
 			}
 
-			el = $C(el).map((el) => {
-				if (Object.isString(el) && isLiteral.test(el) && isStaticLiteral(el)) {
-					return `memoizeLiteral(${el})`;
-				}
-
-				return el;
-			});
-
 			const
 				base = key.slice(1),
 				prop = `${base}Prop`;
@@ -370,96 +245,28 @@ function vueComp({name, attrs}) {
 	}
 }
 
-const
-	isVoidLink = /^a:void$/,
-	isButtonLink = /^button:a$/;
+function tagNameFilter(tag, attrs = {}, rootTag) {
+	tag = $C(include('build/filters/tagName'))
+		.to('')
+		.reduce((res, filter) => res + filter(tag, attrs, rootTag));
 
-function vueTag(tag, attrs, rootTag) {
 	const
 		nm = tag.camelize(false),
 		component = blocksTree[nm];
 
-	if (component) {
-		if (!Object.isBoolean(component.functional)) {
-			attrs[':instance-of'] = [nm];
-			attrs['v-func-placeholder'] = [true];
-			attrs['is'] = [tag];
-			return 'component';
-		}
+	if (component && !Object.isBoolean(component.functional)) {
+		Object.assign(attrs, {
+			':instance-of': [nm],
+			'v-func-placeholder': [true],
+			'is': [tag]
+		});
 
-		return tag;
-	}
-
-	if (isVoidLink.test(tag)) {
-		attrs.href = ['javascript:void(0)'];
-		tag = 'a';
-
-	} else if (isButtonLink.test(tag)) {
-		attrs.type = ['button'];
-		attrs.class = (attrs.class || []).concat('a');
-		tag = 'button';
-
-	} else if (tag === '_') {
-		tag = rootTag;
+		return 'component';
 	}
 
 	return tag;
 }
 
-function attachVIf(arr, op) {
-	const
-		join = arr.join;
-
-	arr.join = function () {
-		return join.call(this, op);
-	};
-
-	return arr;
-}
-
-function bem2vue(block, attrs = {}, rootTag, val) {
-	const
-		tmp = attrs[':class'] = attrs[':class'] || [];
-
-	if (!$C(tmp).includes('componentId')) {
-		attrs[':class'] = attachClass(tmp.concat('componentId', `classes['${val.replace(/^_+/, '')}']`));
-	}
-
-	return block + val;
-}
-
-function attachClass(arr) {
-	const
-		join = arr.join;
-
-	arr.join = function () {
-		if (this.length < 2) {
-			return join.call(this);
-		}
-
-		return `[${join.call(this, ',')}]`;
-	};
-
-	return arr;
-}
-
-const
-	tagRgxp = /<[^>]+>/,
-	elRgxp = new RegExp(`\\b${validators.baseBlockName}__[a-z0-9][a-z0-9-_]*\\b`);
-
-function getFirstTagElementName(str) {
-	const
-		escapedStr = escaper.replace(str),
-		tagMatch = tagRgxp.exec(escapedStr);
-
-	if (!tagMatch) {
-		return null;
-	}
-
-	return getElementClassName(escaper.paste(tagMatch[0]));
-}
-
-function getElementClassName(str) {
-	const search = elRgxp.exec(str);
-	return search ? search[0] : null;
+function bemFilter(block, attrs = {}, rootTag, value) {
+	return $C(include('build/filters/bem')).to('').reduce((res, filter) => res + filter(block, attrs, rootTag, value));
 }
