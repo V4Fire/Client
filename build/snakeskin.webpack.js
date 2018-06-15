@@ -156,7 +156,7 @@ function tagFilter({name, attrs = {}}) {
 		const isFunctional = c && c.functional === true || !vFunc && $C(smart).every((el, key) => {
 			key = key.dasherize();
 
-			if (isVueProp.test(key)) {
+			if (!isVueProp.test(key)) {
 				key = `:${key}`;
 			}
 
