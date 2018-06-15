@@ -30,7 +30,7 @@
 	 * @param {string} value
 	 */
 	- block appendToRootClasses(value)
-		if rootAttrs[':class']
+		- if rootAttrs[':class']
 			? rootAttrs[':class'] += '.concat(' + value + ')'
 
 		- else
