@@ -11,6 +11,7 @@
 - include 'super/i-data'|b
 - include 'super/i-page/modules/**/*.ss'|b
 
+- import $C from 'collection.js'
 - import fs from 'fs-extra-promise'
 - import glob from 'glob'
 - import path from 'upath'
@@ -21,7 +22,6 @@
  * Base page template
  */
 - async template index() extends ['i-data'].index
-	- isProd = @@NODE_ENV === 'production'
 	- assets = Object.create(null)
 	- lib = path.join(@@output, 'lib')
 
@@ -136,29 +136,33 @@
 
 				- block head
 					: defStyles
+
 					- block defStyles
-						? defStyles = []
+						? defStyles = new Map([])
 
-					- forEach defStyles => url
-						: notDefer = Array.isArray(url)
-						? url = self.join(@@lib, notDefer ? url[0] : url)
+					+= $C(defStyles).to('').reduce()
+						() => res, url
+							: notDefer = Array.isArray(url)
+							? url = self.join(@@lib, notDefer ? url[0] : url)
 
-						- block loadDefStyles
-							- if @@fatHTML
-								- style
-									requireMonic({url})
-
-							- else
-								- if notDefer
-									- link css href = ${url}
+							- block loadDefStyles
+								- if @@fatHTML
+									- style
+										requireMonic({url})
 
 								- else
-									< link &
-										rel = preload |
-										href = ${url} |
-										as = style |
-										onload = this.rel='stylesheet'
-									.
+									- if notDefer
+										- link css href = ${url}
+
+									- else
+										< link &
+											rel = preload |
+											href = ${url} |
+											as = style |
+											onload = this.rel='stylesheet'
+										.
+
+							- return res + getTplResult()
 
 					- block styles
 						+= self.addDependencies('styles')
@@ -168,54 +172,62 @@
 							+= self.addScriptDep('std', {defer: false, optional: true})
 
 					: defLibs
+
 					- block defLibs
-						? defLibs = [ &
-							['collection.js/dist/collection.sync.min.js'],
-							['vue/dist/vue.runtime' + (isProd ? '.min' : '') + '.js'],
-							'requestidlecallback/index.js',
-							'eventemitter2/lib/eventemitter2.js',
-							'urijs/src/URI.min.js',
-							'fg-loadcss/src/loadCSS.js',
-							'fg-loadcss/src/cssrelpreload.js'
-						] .
+						? defLibs = new Map([ &
+							['collection.js', ['collection.js/dist/collection.sync.min.js']],
+							['vue', ['vue/dist/vue.runtime' + (@@isProd ? '.min' : '') + '.js']],
+							['requestidlecallback', 'requestidlecallback/index.js'],
+							['eventemitter2', 'eventemitter2/lib/eventemitter2.js'],
+							['urijs', 'urijs/src/URI.min.js'],
+							['fg-loadcss', 'fg-loadcss/src/loadCSS.js'],
+							['fg-loadcss-preload', 'fg-loadcss/src/cssrelpreload.js']
+						]) .
 
-					- forEach defLibs => url
-						- if /\/$/.test(url)
-							- block loadFolder
+					+= $C(defLibs).to('').reduce()
+						() => res, url
+							- if Object.isString(url) && /\/$/.test(url)
+								- block loadFolder
+									? url = url.replace(/\/$/, '')
 
-								? url = url.replace(/\/$/, '')
-								: basename = path.basename(url)
-								: src, newSrc, relativeSrc
+									: &
+										src,
+										newSrc,
+										relativeSrc,
+										basename = path.basename(url)
+									.
 
-								- if !foldersCache[basename]
-									? src = path.join(@@lib, url)
-									: hash = ''
+									- if !foldersCache[basename]
+										? src = path.join(@@lib, url)
+										: hash = ''
 
-									- if @@hashLength
-										? hash = hashFiles.sync({files: [path.join(src, '/**/*')]}).substr(0, @@hashLength) + '_'
+										- if @@hashLength
+											? hash = hashFiles.sync({files: [path.join(src, '/**/*')]}).substr(0, @@hashLength) + '_'
 
-									? newSrc = path.join(lib, hash + basename)
-									? relativeSrc = path.relative(@@output, newSrc)
-									? foldersCache[basename] = fs.existsSync(newSrc) && relativeSrc
+										? newSrc = path.join(lib, hash + basename)
+										? relativeSrc = path.relative(@@output, newSrc)
+										? foldersCache[basename] = fs.existsSync(newSrc) && relativeSrc
 
-								- if !foldersCache[basename]
-									? fs.mkdirpSync(newSrc)
-									? fs.copySync(src, newSrc)
-									? foldersCache[basename] = relativeSrc
+									- if !foldersCache[basename]
+										? fs.mkdirpSync(newSrc)
+										? fs.copySync(src, newSrc)
+										? foldersCache[basename] = relativeSrc
 
-								- script :: PATH['{basename}'] = '{foldersCache[basename]}';
+									- script :: PATH['{basename}'] = '{foldersCache[basename]}';
 
-						- else
-							- block loadDefLibs
-								: notDefer = Array.isArray(url)
-								? url = self.join(@@lib, notDefer ? url[0] : url)
+							- else
+								- block loadDefLibs
+									: notDefer = Array.isArray(url)
+									? url = self.join(@@lib, notDefer ? url[0] : url)
 
-								- if @@fatHTML
-									- script
-										requireMonic({url})
+									- if @@fatHTML
+										- script
+											requireMonic({url})
 
-								- else
-									- script js src = ${url} | ${notDefer ? '' : 'defer'}
+									- else
+										- script js src = ${url} | ${notDefer ? '' : 'defer'}
+
+							- return res + getTplResult()
 
 					# script
 						# block initLibs
