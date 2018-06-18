@@ -9,6 +9,7 @@
  */
 
 - include 'super/i-block/modules/**/*.ss'|b
+- import $C from 'collection.js'
 
 /**
  * Base block template
@@ -21,6 +22,13 @@
 	 */
 	- block name()
 		- return blockName || /\['(.*?)'\]/.exec(TPL_NAME)[1]
+
+	/**
+	 * Returns link to a template by the specified link
+	 */
+	- block getTpl(nms)
+		? nms = nms.replace(/\/$/, '.index')
+		- return $C(exports).get(nms)
 
 	- rootTag = 'div'
 	- overWrapper = true
