@@ -227,8 +227,8 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 				vars: {
 					fatHTML: webpack.fatHTML,
 					hashLength: webpack.hashLength(),
-					fileName: webpack.output,
 					root: src.cwd(),
+					outputPattern: webpack.output,
 					output: src.clientOutput(),
 					favicons: this.favicons().path,
 					assets: src.assets(),
