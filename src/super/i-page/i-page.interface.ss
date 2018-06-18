@@ -46,17 +46,18 @@
 	- block root
 		- if @@fatHTML
 			- forEach @@dependencies => el, key
-				? assets[key] = key + '.js'
-				? assets[key + '_tpl'] = key + '_tpl.js'
-				? assets[key + '$style'] = key + '$style.css'
+				: nm = @@outputPattern({name: key})
+				? assets[key] = nm + '.js'
+				? assets[key + '_tpl'] = nm + '_tpl.js'
+				? assets[key + '$style'] = nm + '$style.css'
 
 			- for var key in assets
 				- while !await fs.existsAsync(path.join(@@output, assets[key]))
 					? await delay(200)
 
-			? assets['std'] = 'std.js'
-			? assets['vendor'] = 'vendor.js'
-			? assets['webpack.runtime'] = 'webpack.runtime.js'
+			? assets['std'] = @@outputPattern({name: 'std'}) + '.js'
+			? assets['vendor'] = @@outputPattern({name: 'vendor'}) + '.js'
+			? assets['webpack.runtime'] = @@outputPattern({name: 'webpack.runtime'}) + '.js'
 
 		- block doctype
 			- doctype
