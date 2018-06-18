@@ -106,8 +106,21 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 			return this.fatHTML ? false : 4096;
 		},
 
-		output() {
-			return this.fatHTML ? '[name]' : '[hash]_[name]';
+		output(params) {
+			const
+				res = this.fatHTML ? '[name]' : '[hash]_[name]';
+
+			if (params) {
+				return res.replace(/\[(.*?)]/g, (str, key) => {
+					if (params[key] != null) {
+						return params[key];
+					}
+
+					return '';
+				});
+			}
+
+			return res;
 		},
 
 		assetsJSON() {
@@ -214,6 +227,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 				vars: {
 					fatHTML: webpack.fatHTML,
 					hashLength: webpack.hashLength(),
+					fileName: webpack.output,
 					root: src.cwd(),
 					output: src.clientOutput(),
 					favicons: this.favicons().path,
