@@ -27,7 +27,7 @@ export default class iDataList<T extends Dictionary = Dictionary> extends iData<
 
 	/** @override */
 	get(data?: RequestQuery, params?: CreateRequestOptions<DataList<T>>): Promise<DataList<T> | undefined> {
-		return super.get(...arguments);
+		return super.get(data, params);
 	}
 
 	/** @override */

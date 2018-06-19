@@ -321,7 +321,7 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 	 * @param [params]
 	 */
 	get(data?: RequestQuery, params?: CreateRequestOptions<T>): Promise<T | undefined> {
-		return this.createRequest('get', ...arguments);
+		return this.createRequest('get', data, params);
 	}
 
 	/**
@@ -331,7 +331,7 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 	 * @param [params]
 	 */
 	post<T>(data?: RequestBody, params?: CreateRequestOptions<T>): Promise<T | undefined> {
-		return this.createRequest('post', ...arguments);
+		return this.createRequest('post', data, params);
 	}
 
 	/**
@@ -341,7 +341,7 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 	 * @param [params]
 	 */
 	add<T>(data?: RequestBody, params?: CreateRequestOptions<T>): Promise<T | undefined> {
-		return this.createRequest('add', ...arguments);
+		return this.createRequest('add', data, params);
 	}
 
 	/**
@@ -351,7 +351,7 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 	 * @param [params]
 	 */
 	upd<T>(data?: RequestBody, params?: CreateRequestOptions<T>): Promise<T | undefined> {
-		return this.createRequest('upd', ...arguments);
+		return this.createRequest('upd', data, params);
 	}
 
 	/**
@@ -361,7 +361,7 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 	 * @param [params]
 	 */
 	del<T>(data?: RequestBody, params?: CreateRequestOptions<T>): Promise<T | undefined> {
-		return this.createRequest('del', ...arguments);
+		return this.createRequest('del', data, params);
 	}
 
 	/**

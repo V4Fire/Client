@@ -62,7 +62,7 @@ export default class Session extends Provider {
 	protected updateRequest(url: string, event: string | RequestFactory, factory?: RequestFactory): RequestResponse {
 		const
 			// @ts-ignore
-			req = super.updateRequest(...arguments),
+			req = super.updateRequest(url, event, factory),
 			session = s.get();
 
 		const update = (res) => {
@@ -87,7 +87,7 @@ export default class Session extends Provider {
 				if (response.status === StatusCodes.UNAUTHORIZED) {
 					if (!await s.match(auth, csrf)) {
 						// @ts-ignore
-						return this.updateRequest(...arguments);
+						return this.updateRequest(url, event, factory);
 					}
 
 					s.clear();
