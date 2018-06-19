@@ -6,19 +6,17 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import $C = require('collection.js');
+import Async from 'core/async';
 
 const
 	COMPONENTS_PER_TICK = 10,
 	DELAY = 40;
 
-/**
- * Render queue
- */
 export const
 	queue = new Set(),
 	backQueue = new Set(),
-	add = queue.add;
+	add = queue.add,
+	daemon = new Async();
 
 let
 	inProgress = false,
@@ -35,11 +33,6 @@ queue.add = backQueue.add = function addToQueue<T>(): T {
 	return res;
 };
 
-let
-	daemonStartTimer,
-	daemonStopTimer,
-	loopTimer;
-
 /**
  * Restarts render daemon
  */
@@ -53,45 +46,48 @@ export function restart(): void {
  */
 export function deferRestart(): void {
 	isStarted = inProgress = false;
-	clearTimers();
+	daemon.clearAll();
 	runOnNextTick();
 }
 
 function run(): void {
-	clearTimers();
+	daemon.clearAll();
 
 	const
 		cursor = queue.size ? queue : backQueue;
 
-	const exec = () => {
+	const exec = async () => {
 		inProgress = isStarted = true;
 
-		const
-			time = Date.now();
-
 		let
+			time = Date.now(),
 			done = COMPONENTS_PER_TICK;
 
-		$C(cursor).forEach((el, i, data, o) => {
+		for (let w = cursor.values(), el = w.next(); !el.done; el = w.next()) {
+			const
+				val = el.value;
+
 			if (done <= 0 || Date.now() - time > DELAY) {
-				return o.break;
+				await daemon.sleep(DELAY);
+				time = Date.now();
+				done = COMPONENTS_PER_TICK;
 			}
 
 			const
-				w = el.weight || 1;
+				w = val.weight || 1;
 
 			if (done - w < 0 && done !== COMPONENTS_PER_TICK) {
-				return;
+				continue;
 			}
 
-			if (el.fn()) {
-				done -= el.weight || 1;
+			if (val.fn()) {
+				done -= val.weight || 1;
 				cursor.delete(el);
 			}
-		});
+		}
 
 		if (!runOnNextTick()) {
-			daemonStopTimer = setImmediate(() => {
+			daemon.setImmediate(() => {
 				inProgress = isStarted = canProcessing();
 				inProgress && runOnNextTick();
 			});
@@ -99,10 +95,10 @@ function run(): void {
 	};
 
 	if (inProgress || cursor.size >= COMPONENTS_PER_TICK) {
-		exec();
+		exec().catch(stderr);
 
 	} else {
-		daemonStartTimer = setImmediate(exec);
+		daemon.setImmediate(() => exec().catch(stderr));
 	}
 }
 
@@ -112,15 +108,9 @@ function canProcessing(): boolean {
 
 function runOnNextTick(): boolean {
 	if (canProcessing()) {
-		loopTimer = setTimeout(run, DELAY);
+		daemon.setTimeout(run, DELAY);
 		return true;
 	}
 
 	return false;
-}
-
-function clearTimers(): void {
-	clearImmediate(daemonStartTimer);
-	clearImmediate(daemonStopTimer);
-	clearTimeout(loopTimer);
 }
