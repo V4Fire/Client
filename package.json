@@ -25,12 +25,12 @@
     "test": "echo \"Error: no test specified\" && exit 0"
   },
   "dependencies": {
-    "@types/socket.io": "^1.4.35",
+    "@types/socket.io": "^1.4.36",
     "@types/socket.io-client": "^1.4.32",
     "@v4fire/core": "github:v4Fire/core#ts",
     "babel-polyfill": "^6.26.0",
     "chart.js": "^2.7.2",
-    "collection.js": "^6.6.26",
+    "collection.js": "^6.6.27",
     "escaper": "^2.4.34",
     "eventemitter2": "^5.0.1",
     "fg-loadcss": "^2.0.1",
