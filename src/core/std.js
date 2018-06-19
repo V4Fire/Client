@@ -109,7 +109,7 @@ function loadToPrototype(list) {
 		obj.slice(1).forEach(function (fn) {
 			if (Array.isArray(fn)) {
 				obj[0].prototype[fn[0]] = function () {
-					return fn[1](this, ...arguments);
+					return fn[1].apply(fn[1], [this].concat([].slice.call(arguments)));
 				};
 
 			} else {
@@ -117,7 +117,7 @@ function loadToPrototype(list) {
 					if (fn.hasOwnProperty(key)) {
 						(function (key) {
 							obj[0].prototype[key] = function () {
-								return fn[key](this, ...arguments);
+								return fn[key].apply(fn[key], [this].concat([].slice.call(arguments)));
 							};
 						})(key);
 					}
