@@ -26,7 +26,7 @@ export function match(pattern: RegExp | string): [string, number[] | null] | boo
 		rgxp = Object.isString(pattern) ? new RegExp(`(${pattern})(?:[ \\/-]([0-9.]*))?`, 'i') : pattern,
 		res = agent.match(rgxp);
 
-	return res ? [res[1], res[2] ? res[2].split('.').map(parseInt) : null] : false;
+	return res ? [res[1], res[2] ? res[2].split('.').map((el) => parseInt(el, 10) || 0) : null] : false;
 }
 
 /**
@@ -38,7 +38,7 @@ export function match(pattern: RegExp | string): [string, number[] | null] | boo
  */
 export function test(platform: string, operation?: Operations, version?: string): boolean {
 	const
-		val = this[platform];
+		val = is[platform];
 
 	if (!val) {
 		return false;
@@ -54,11 +54,11 @@ export function test(platform: string, operation?: Operations, version?: string)
 
 	const
 		v1 = val[1],
-		v2 = version.split('.').map(parseInt);
+		v2 = version.split('.').map((el) => parseInt(el, 10) || 0);
 
 	const
-		gt = v1[0] > v2[0] || v1[1] > v2[1] || v1[2] > v2[2],
-		lt = v1[0] < v2[0] || v1[1] < v2[1] || v1[2] < v2[2],
+		gt = v1[0] < v2[0] || v1[1] < v2[1] || v1[2] < v2[2],
+		lt = v1[0] > v2[0] || v1[1] > v2[1] || v1[2] > v2[2],
 		eq = v1.join() === v2.join();
 
 	switch (operation) {
