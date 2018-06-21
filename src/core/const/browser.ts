@@ -52,13 +52,16 @@ export function test(platform: string, operation?: Operations, version?: string)
 		return false;
 	}
 
-	const
+	let
 		v1 = val[1],
 		v2 = version.split('.').map((el) => parseInt(el, 10) || 0);
 
+	v1 = [v1[0] || 0, v1[1] || 0, v1[2] || 0];
+	v2 = [v2[0] || 0, v2[1] || 0, v2[2] || 0];
+
 	const
-		gt = v1[0] < v2[0] || v1[1] < v2[1] || v1[2] < v2[2],
-		lt = v1[0] > v2[0] || v1[1] > v2[1] || v1[2] > v2[2],
+		gt = v1[0] > v2[0] || v1[1] > v2[1] || v1[2] > v2[2],
+		lt = v1[0] < v2[0] || v1[1] < v2[1] || v1[2] < v2[2],
 		eq = v1.join() === v2.join();
 
 	switch (operation) {
@@ -83,6 +86,7 @@ export function test(platform: string, operation?: Operations, version?: string)
 }
 
 export const is = {
+	Chrome: match('Firefox'),
 	Firefox: match('Firefox'),
 	Android: match('Android'),
 	BlackBerry: match('BlackBerry'),
