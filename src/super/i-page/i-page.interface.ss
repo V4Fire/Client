@@ -180,7 +180,6 @@
 							['vue', ['vue/dist/vue.runtime' + (@@isProd ? '.min' : '') + '.js']],
 							['requestidlecallback', 'requestidlecallback/index.js'],
 							['eventemitter2', 'eventemitter2/lib/eventemitter2.js'],
-							['urijs', 'urijs/src/URI.min.js'],
 							['fg-loadcss', 'fg-loadcss/src/loadCSS.js'],
 							['fg-loadcss-preload', 'fg-loadcss/src/cssrelpreload.js']
 						]) .
