@@ -131,10 +131,10 @@ module.exports = async function ({buildId, plugins}) {
 							options: config.css()
 						},
 
-						$C(config.postcss).length() ? {
+						isProd || $C(config.postcss).length() || $C(config.autoprefixer).length() ? {
 							loader: 'postcss',
 							options: inherit(config.postcss, {
-								plugins: [require('autoprefixer')(config.autoprefixer())]
+								plugins: [require('autoprefixer')(config.autoprefixer)]
 							})
 						} : [],
 
