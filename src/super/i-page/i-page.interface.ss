@@ -24,6 +24,7 @@
 - async template index() extends ['i-data'].index
 	- assets = Object.create(null)
 	- lib = path.join(@@output, 'lib')
+	- deps = include('src/super/i-page/deps')
 
 	- title = @@appName
 	- pageData = {}
@@ -136,10 +137,8 @@
 						- script js src = ${assetJS}
 
 				- block head
-					: defStyles
-
+					: defStyles = deps.styles
 					- block defStyles
-						? defStyles = new Map([])
 
 					+= $C(defStyles).to('').reduce()
 						() => res, url
@@ -172,17 +171,8 @@
 						- script
 							+= self.addScriptDep('std', {defer: false, optional: true})
 
-					: defLibs
-
+					: defLibs = deps.scripts
 					- block defLibs
-						? defLibs = new Map([ &
-							['collection.js', ['collection.js/dist/collection.sync.min.js']],
-							['vue', ['vue/dist/vue.runtime' + (@@isProd ? '.min' : '') + '.js']],
-							['requestidlecallback', 'requestidlecallback/index.js'],
-							['eventemitter2', 'eventemitter2/lib/eventemitter2.js'],
-							['fg-loadcss', 'fg-loadcss/src/loadCSS.js'],
-							['fg-loadcss-preload', 'fg-loadcss/src/cssrelpreload.js']
-						]) .
 
 					+= $C(defLibs).to('').reduce()
 						() => res, url
