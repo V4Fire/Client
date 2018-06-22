@@ -20,7 +20,8 @@ import iData, {
 	p,
 	ModsDecl,
 	ModelMethods,
-	CreateRequestOptions
+	CreateRequestOptions,
+	RequestFilter
 
 } from 'super/i-data/i-data';
 
@@ -40,7 +41,7 @@ export default class bForm<T extends Dictionary = Dictionary> extends iData<T> {
 	readonly dataProvider: string = 'Provider';
 
 	/** @override */
-	readonly requestFilter: Function | boolean = false;
+	readonly requestFilter: RequestFilter = false;
 
 	/**
 	 * Form id

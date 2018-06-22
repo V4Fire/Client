@@ -7,7 +7,7 @@
  */
 
 import symbolGenerator from 'core/symbol';
-import iData, { component, prop, field, system, Request } from 'super/i-data/i-data';
+import iData, { component, prop, system } from 'super/i-data/i-data';
 export * from 'super/i-data/i-data';
 
 export const
@@ -23,23 +23,6 @@ export default class bRemoteProvider<T extends Dictionary = Dictionary> extends 
 	 */
 	@prop({type: String, required: false})
 	readonly field?: string;
-
-	/**
-	 * Request parameters
-	 */
-	@prop({type: [Object, Array], required: false})
-	readonly request?: Request;
-
-	/** @override */
-	@field((o) => o.link('request', (val) => {
-		if (!Object.fastCompare(this.requestParams, val)) {
-			return val;
-		}
-
-		return this.requestParams;
-	}))
-
-	protected readonly requestParams!: Dictionary<Dictionary>;
 
 	/** @override */
 	set db(value: T | undefined) {

@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import bWindow, { component, field, prop, wait } from 'base/b-window/b-window';
+import bWindow, { component, field, prop, wait, RequestFilter } from 'base/b-window/b-window';
 import bForm from 'form/b-form/b-form';
 export * from 'base/b-window/b-window';
 
@@ -14,7 +14,7 @@ export * from 'base/b-window/b-window';
 export default class bWindowForm<T extends Dictionary = Dictionary> extends bWindow<T> {
 	/** @override */
 	@prop({default: (body, isEmpty) => this.stage !== 'remove' && !isEmpty})
-	readonly requestFilter: Function | boolean = false;
+	readonly requestFilter: RequestFilter = false;
 
 	/**
 	 * If true, then the component won't be reset after closing
@@ -69,7 +69,7 @@ export default class bWindowForm<T extends Dictionary = Dictionary> extends bWin
 
 	/** @override */
 	@field((o) => o.createWatchObject('get', {immediate: true}, [['_id', 'id']]))
-	protected readonly requestParams: Dictionary = {};
+	protected readonly requestParams!: Dictionary;
 
 	/**
 	 * Form temporary cache

@@ -33,10 +33,15 @@ import Provider, {
 export * from 'super/i-message/i-message';
 export { ModelMethods, RequestQuery, RequestBody, RequestResponseObject, RequestError } from 'core/data';
 
-export type Request =
-	RequestQuery |
-	RequestBody |
-	[RequestQuery | RequestBody, CreateRequestOptions];
+export interface RequestFilterOpts {
+	isEmpty: boolean;
+	method: ModelMethods;
+	params: CreateRequestOptions;
+}
+
+export type RequestFilter = ((data: RequestQuery | RequestBody, opts: RequestFilterOpts) => boolean) | boolean;
+export type Request = RequestQuery | RequestBody | [RequestQuery | RequestBody, CreateRequestOptions];
+export type RequestParams = Dictionary<Request>;
 
 export interface DataEvent<T extends object = Async> {
 	on(events: string | string[], handler: Function, ...args: any[]): object | undefined;
@@ -96,11 +101,17 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 	readonly initAdvPath?: string;
 
 	/**
+	 * Initial request parameters
+	 */
+	@prop({type: [Object, Array], required: false})
+	readonly request?: RequestParams;
+
+	/**
 	 * Initial request filter or if false,
 	 * then won't be request for an empty request
 	 */
 	@prop({type: [Function, Boolean], watch: 'initLoad'})
-	readonly requestFilter: Function | boolean = true;
+	readonly requestFilter: RequestFilter = true;
 
 	/**
 	 * Remote data converter
@@ -178,8 +189,8 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 	/**
 	 * Request parameters
 	 */
-	@field({merge: true, watch: {fn: 'initLoad', deep: true}})
-	protected readonly requestParams: Dictionary<Dictionary> = {get: {}};
+	@field({merge: true})
+	protected readonly requestParams: RequestParams = {get: {}};
 
 	/**
 	 * Component data store
@@ -200,7 +211,12 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 
 		if (this.dp && this.dp.baseURL) {
 			const
-				p = this.getParams('get');
+				p = this.getDefaultRequestParams('get');
+
+			const label = {
+				join: true,
+				label: $$.initLoad
+			};
 
 			if (p) {
 				Object.assign(p[1], {label: $$.initLoad, join: 'replace'});
@@ -210,29 +226,15 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 				}
 
 				try {
-					const
-						db = await this.get(<RequestQuery>p[0], p[1]);
-
-					this.execCbAtTheRightTime(() => {
-						this.db = this.convertDataToDB(db);
-
-					}, {
-						join: true,
-						label: $$.initLoad
-					});
+					const db = await this.get(<RequestQuery>p[0], p[1]);
+					this.execCbAtTheRightTime(() => this.db = this.convertDataToDB(db), label);
 
 				} catch (err) {
 					stderr(err);
 				}
 
 			} else {
-				this.execCbAtTheRightTime(() => {
-					this.db = undefined;
-
-				}, {
-					join: true,
-					label: $$.initLoad
-				});
+				this.execCbAtTheRightTime(() => this.db = undefined, label);
 			}
 		}
 
@@ -321,7 +323,14 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 	 * @param [params]
 	 */
 	get(data?: RequestQuery, params?: CreateRequestOptions<T>): Promise<T | undefined> {
-		return this.createRequest('get', data, params);
+		const
+			args = arguments.length > 0 ? [data, params] : this.getDefaultRequestParams('get');
+
+		if (args) {
+			return this.createRequest('get', ...args);
+		}
+
+		return Promise.resolve(undefined);
 	}
 
 	/**
@@ -331,7 +340,14 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 	 * @param [params]
 	 */
 	post<T>(data?: RequestBody, params?: CreateRequestOptions<T>): Promise<T | undefined> {
-		return this.createRequest('post', data, params);
+		const
+			args = arguments.length > 0 ? [data, params] : this.getDefaultRequestParams('post');
+
+		if (args) {
+			return this.createRequest('post', ...args);
+		}
+
+		return Promise.resolve(undefined);
 	}
 
 	/**
@@ -341,7 +357,14 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 	 * @param [params]
 	 */
 	add<T>(data?: RequestBody, params?: CreateRequestOptions<T>): Promise<T | undefined> {
-		return this.createRequest('add', data, params);
+		const
+			args = arguments.length > 0 ? [data, params] : this.getDefaultRequestParams('add');
+
+		if (args) {
+			return this.createRequest('add', ...args);
+		}
+
+		return Promise.resolve(undefined);
 	}
 
 	/**
@@ -351,7 +374,14 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 	 * @param [params]
 	 */
 	upd<T>(data?: RequestBody, params?: CreateRequestOptions<T>): Promise<T | undefined> {
-		return this.createRequest('upd', data, params);
+		const
+			args = arguments.length > 0 ? [data, params] : this.getDefaultRequestParams('upd');
+
+		if (args) {
+			return this.createRequest('upd', ...args);
+		}
+
+		return Promise.resolve(undefined);
 	}
 
 	/**
@@ -361,7 +391,14 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 	 * @param [params]
 	 */
 	del<T>(data?: RequestBody, params?: CreateRequestOptions<T>): Promise<T | undefined> {
-		return this.createRequest('del', data, params);
+		const
+			args = arguments.length > 0 ? [data, params] : this.getDefaultRequestParams('del');
+
+		if (args) {
+			return this.createRequest('del', ...args);
+		}
+
+		return Promise.resolve(undefined);
 	}
 
 	/**
@@ -427,24 +464,44 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 		});
 
 		$e.on('add', (data) => {
-			if (this.getParams('get')) {
+			if (this.getDefaultRequestParams('get')) {
 				return this.onAddData(Object.isFunction(data) ? data() : data);
 			}
 		}, {group});
 
 		$e.on('upd', (data) => {
-			if (this.getParams('get')) {
+			if (this.getDefaultRequestParams('get')) {
 				return this.onUpdData(Object.isFunction(data) ? data() : data);
 			}
 		}, {group});
 
 		$e.on('del', (data) => {
-			if (this.getParams('get')) {
+			if (this.getDefaultRequestParams('get')) {
 				return this.onDelData(Object.isFunction(data) ? data() : data);
 			}
 		}, {group});
 
 		$e.on('refresh', (data) => this.onRefreshData(Object.isFunction(data) ? data() : data), {group});
+	}
+
+	/**
+	 * Synchronization for the requestParams field
+	 *
+	 * @param [value]
+	 * @param [oldValue]
+	 */
+	@watch({field: 'requestParams', deep: true})
+	protected async syncRequestParamsWatcher(value?: Dictionary, oldValue?: Dictionary): Promise<void> {
+		$C(value).forEach((el, key) => {
+			if (el && oldValue && oldValue[key] && el.toSource() === oldValue.toSource()) {
+				return;
+			}
+
+			const
+				m = key.split(':')[0];
+
+			this[m === 'get' ? 'initLoad' : m](...this.getDefaultRequestParams(key));
+		});
 	}
 
 	/**
@@ -491,16 +548,21 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 	}
 
 	/**
-	 * Returns request parameters for the specified method or false
-	 * (for /^get(:|$)/ empty requests if .requestFilter -> true)
-	 *
+	 * Returns default request parameters for the specified method or false
 	 * @param method
 	 */
-	protected getParams(method: string): [RequestQuery | RequestBody, CreateRequestOptions] | false {
-		const
-			p = this.requestParams && this.requestParams[method];
+	protected getDefaultRequestParams(method: string): [RequestQuery | RequestBody, CreateRequestOptions] | false {
+		const [customData, customOpts] = (<any[]>[]).concat(
+			this.request && this.request[method] || []
+		);
 
-		let res;
+		const
+			p = this.requestParams && this.requestParams[method],
+			isGet = /^get(:|$)/.test(method);
+
+		let
+			res;
+
 		if (Object.isArray(p)) {
 			p[1] = p[1] || {};
 			res = p;
@@ -509,15 +571,24 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 			res = [p, {}];
 		}
 
-		if (/^get(:|$)/.test(method)) {
-			res[0] = $C(res[0]).filter((el) => el != null).map();
-		}
+		res[0] = Object.mixin({
+			traits: true,
+			filter: (el) => isGet ? el != null : el !== undefined
+		}, undefined, res[0], customData);
+
+		res[1] = Object.mixin({deep: true}, undefined, res[1], customOpts);
 
 		const
 			f = this.requestFilter,
 			isEmpty = !$C(res[0]).length();
 
-		if (method === 'get' && (f ? Object.isFunction(f) && !f.call(this, res[0], isEmpty) : isEmpty)) {
+		const info = {
+			isEmpty,
+			method,
+			params: res[1]
+		};
+
+		if (f ? Object.isFunction(f) && !f.call(this, res[0], info) : isEmpty) {
 			return false;
 		}
 
@@ -607,12 +678,23 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 			};
 
 			req.then(then, (err) => {
+				this.onRequestError(err);
 				then();
 				throw err;
 			});
 		}
 
 		return req.then((res) => res.data);
+	}
+
+	/**
+	 * Handler: dataProvider.error
+	 *
+	 * @emits error(err: Error)
+	 * @param err
+	 */
+	protected onRequestError(err: Error | RequestError): void {
+		this.emit('error', err);
 	}
 
 	/**

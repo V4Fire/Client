@@ -7,7 +7,7 @@
  */
 
 import bForm from 'form/b-form/b-form';
-import iData, { component, prop, ModsDecl, ModelMethods, Request } from 'super/i-data/i-data';
+import iData, { component, prop, ModsDecl, ModelMethods, RequestFilter } from 'super/i-data/i-data';
 export * from 'super/i-data/i-data';
 
 @component({
@@ -22,7 +22,7 @@ export default class bButton<T extends Dictionary = Dictionary> extends iData<T>
 	readonly dataProvider: string = 'Provider';
 
 	/** @override */
-	readonly requestFilter: Function | boolean = false;
+	readonly requestFilter: RequestFilter = false;
 
 	/**
 	 * Link href
@@ -35,12 +35,6 @@ export default class bButton<T extends Dictionary = Dictionary> extends iData<T>
 	 */
 	@prop(String)
 	readonly method: ModelMethods = 'get';
-
-	/**
-	 * Request parameters
-	 */
-	@prop({type: [Object, Array], required: false})
-	readonly request?: Request;
 
 	/**
 	 * Button type
@@ -132,7 +126,7 @@ export default class bButton<T extends Dictionary = Dictionary> extends iData<T>
 				this.base(this.href);
 			}
 
-			await (<Function>this[this.method])(...(<any>[]).concat(this.request || []));
+			await (<Function>this[this.method])();
 
 		// Form attribute fix for MS Edge && IE
 		} else if (this.form && this.type === 'submit') {

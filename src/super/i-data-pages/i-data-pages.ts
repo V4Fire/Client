@@ -87,7 +87,7 @@ export default class iDataPages<T extends Dictionary = Dictionary> extends iData
 		}
 
 		const
-			p = this.getParams('get');
+			p = this.getDefaultRequestParams('get');
 
 		p[0] = $C(p[0]).filter((el) => el != null).map();
 

@@ -191,10 +191,9 @@ export default class bTextarea<T extends Dictionary = Dictionary> extends bInput
 
 	/**
 	 * Synchronization for the valueStore field
-	 * @param [value]
 	 */
 	@watch('valueStore')
-	protected async syncValueStoreWatcher(value: string): Promise<void> {
+	protected async syncValueStoreWatcher(): Promise<void> {
 		await this.calcHeight();
 	}
 
