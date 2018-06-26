@@ -34,6 +34,11 @@ export default class Session extends Provider {
 	 */
 	readonly csrfHeader: string = 'X-XSRF-TOKEN';
 
+	/**
+	 * If true, then after clearing the session (in case of answer 401) will be an additional query
+	 */
+	readonly requestAfterClear: boolean = true;
+
 	/** @override */
 	static readonly middlewares: Middlewares = {
 		// tslint:disable-next-line
@@ -84,13 +89,19 @@ export default class Session extends Provider {
 				{auth, csrf} = await session;
 
 			if (response) {
+				const
+					r = () => this.updateRequest(url, <string>event, <RequestFactory>factory);
+
 				if (response.status === StatusCodes.UNAUTHORIZED) {
 					if (!await s.match(auth, csrf)) {
-						// @ts-ignore
-						return this.updateRequest(url, event, factory);
+						return r();
 					}
 
 					s.clear();
+
+					if (this.requestAfterClear) {
+						return r();
+					}
 				}
 
 				update({response});
