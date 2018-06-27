@@ -31,7 +31,7 @@ const fileLoaderOpts = inherit({name: hash('[path][hash]_[name].[ext]')}, {
  * Returns parameters for webpack.module
  *
  * @param {(number|string)} buildId - build id
- * @param {Array} plugins - list of plugins
+ * @param {Map} plugins - list of plugins
  * @return {Promise<Object>}
  */
 module.exports = async function ({buildId, plugins}) {
@@ -44,201 +44,196 @@ module.exports = async function ({buildId, plugins}) {
 	}[buildId];
 
 	const loaders = {
-		rules: []
+		rules: new Map()
 	};
 
 	if (base) {
-		loaders.rules.push(
-			{
-				test: /^(?:(?!\/workers\/).)*\.ts$/,
-				exclude: depsRgxp,
-				use: [
-					{
-						loader: 'ts',
-						options: typescript.client
-					},
+		loaders.rules.set('ts', {
+			test: /^(?:(?!\/workers\/).)*\.ts$/,
+			exclude: depsRgxp,
+			use: [
+				{
+					loader: 'ts',
+					options: typescript.client
+				},
 
-					{
-						loader: 'proxy',
-						options: {
-							modules: [resolve.blockSync(), resolve.sourceDir, ...resolve.rootDependencies]
-						}
-					},
-
-					{
-						loader: 'monic',
-						options: inherit(monic.typescript, {
-							replacers: [
-								include('build/context.replacer'),
-								include('build/super.replacer'),
-								include('build/ts-import.replacer')
-							]
-						})
+				{
+					loader: 'proxy',
+					options: {
+						modules: [resolve.blockSync(), resolve.sourceDir, ...resolve.rootDependencies]
 					}
-				]
-			},
+				},
 
-			{
-				test: /\/workers\/.*?\.ts$/,
-				exclude: depsRgxp,
-				use: [
-					{
-						loader: 'ts',
-						options: typescript.worker
-					},
-
-					{
-						loader: 'monic',
-						options: inherit(monic.typescript, {
-							replacers: [
-								include('build/context.replacer'),
-								include('build/super.replacer'),
-								include('build/ts-import.replacer')
-							]
-						})
-					}
-				]
-			},
-
-			{
-				test: /\.js$/,
-				exclude: depsRgxp,
-				use: [{
+				{
 					loader: 'monic',
-					options: inherit(monic.javascript, {
+					options: inherit(monic.typescript, {
 						replacers: [
 							include('build/context.replacer'),
-							include('build/super.replacer')
+							include('build/super.replacer'),
+							include('build/ts-import.replacer')
 						]
 					})
-				}]
-			}
-		);
+				}
+			]
+		});
+
+		loaders.rules.set('ts.workers', {
+			test: /\/workers\/.*?\.ts$/,
+			exclude: depsRgxp,
+			use: [
+				{
+					loader: 'ts',
+					options: typescript.worker
+				},
+
+				{
+					loader: 'monic',
+					options: inherit(monic.typescript, {
+						replacers: [
+							include('build/context.replacer'),
+							include('build/super.replacer'),
+							include('build/ts-import.replacer')
+						]
+					})
+				}
+			]
+		});
+
+		loaders.rules.set('js', {
+			test: /\.js$/,
+			exclude: depsRgxp,
+			use: [{
+				loader: 'monic',
+				options: inherit(monic.javascript, {
+					replacers: [
+						include('build/context.replacer'),
+						include('build/super.replacer')
+					]
+				})
+			}]
+		});
 
 	} else {
-		plugins.push(
+		plugins.set(
+			'extractCSS',
 			new ExtractTextPlugin(`${hash(output, true)}.css`)
 		);
 
-		loaders.rules.push(
-			{
-				test: /\.styl$/,
-				use: ExtractTextPlugin.extract({
-					fallback: 'style',
-					use: [].concat(
-						{
-							loader: 'css',
-							options: config.css()
-						},
-
-						isProd || $C(config.postcss).length() || $C(config.autoprefixer).length() ? {
-							loader: 'postcss',
-							options: inherit(config.postcss, {
-								plugins: [require('autoprefixer')(config.autoprefixer)]
-							})
-						} : [],
-
-						{
-							loader: 'stylus',
-							options: inherit(config.stylus(), {
-								use: include('build/stylus.plugins')
-							})
-						},
-
-						{
-							loader: 'monic',
-							options: inherit(monic.stylus, {
-								replacers: [
-									require('@pzlr/stylus-inheritance')({resolveImports: true})
-								]
-							})
-						}
-					)
-				})
-			},
-
-			{
-				test: /\.ess$/,
-				use: [
+		loaders.rules.set('styl', {
+			test: /\.styl$/,
+			use: ExtractTextPlugin.extract({
+				fallback: 'style',
+				use: [].concat(
 					{
-						loader: 'file',
-						options: {
-							name: `${output.replace(/\[hash:\d+]_/, '')}.html`
-						}
+						loader: 'css',
+						options: config.css()
 					},
 
-					'extract',
+					isProd || $C(config.postcss).length() || $C(config.autoprefixer).length() ? {
+						loader: 'postcss',
+						options: inherit(config.postcss, {
+							plugins: [require('autoprefixer')(config.autoprefixer)]
+						})
+					} : [],
 
 					{
-						loader: 'html-loader',
-						options: config.html
+						loader: 'stylus',
+						options: inherit(config.stylus(), {
+							use: include('build/stylus.plugins')
+						})
 					},
 
 					{
 						loader: 'monic',
-						options: inherit(monic.html, {
+						options: inherit(monic.stylus, {
 							replacers: [
-								include('build/html-import.replacer')
+								require('@pzlr/stylus-inheritance')({resolveImports: true})
 							]
 						})
-					},
-
-					{
-						loader: 'snakeskin',
-						options: inherit(snakeskin.server, {
-							exec: true,
-							vars: {
-								dependencies: build.dependencies,
-								assetsJSON
-							}
-						})
 					}
-				]
-			}
-		);
-	}
+				)
+			})
+		});
 
-	loaders.rules.push(
-		{
-			test: /\.ss$/,
+		loaders.rules.set('ess', {
+			test: /\.ess$/,
 			use: [
+				{
+					loader: 'file',
+					options: {
+						name: `${output.replace(/\[hash:\d+]_/, '')}.html`
+					}
+				},
+
+				'extract',
+
+				{
+					loader: 'html-loader',
+					options: config.html
+				},
+
+				{
+					loader: 'monic',
+					options: inherit(monic.html, {
+						replacers: [
+							include('build/html-import.replacer')
+						]
+					})
+				},
+
 				{
 					loader: 'snakeskin',
-					options: snakeskin.client
+					options: inherit(snakeskin.server, {
+						exec: true,
+						vars: {
+							dependencies: build.dependencies,
+							assetsJSON
+						}
+					})
 				}
 			]
-		},
+		});
+	}
 
-		{
-			test: /\.(?:png|gif|jpe?g|ttf|eot|woff|woff2|mp3|ogg|aac)$/,
-			use: [
-				{
-					loader: 'url',
-					options: fileLoaderOpts
-				}
-			].concat(
-				isProd ? {
-					loader: 'image-webpack',
-					options: config.imageOpts
-				} : []
-			)
-		},
+	loaders.rules.set('ss', {
+		test: /\.ss$/,
+		use: [
+			{
+				loader: 'snakeskin',
+				options: snakeskin.client
+			}
+		]
+	});
 
-		{
-			test: /\.svg$/,
-			use: [
-				{
-					loader: 'svg-url',
-					options: fileLoaderOpts
-				}
-			].concat(
-				isProd ? {
-					loader: 'svgo',
-					options: config.imageOpts.svgo
-				} : []
-			)
-		}
-	);
+	loaders.rules.set('img', {
+		test: /\.(?:png|gif|jpe?g|ttf|eot|woff|woff2|mp3|ogg|aac)$/,
+		use: [
+			{
+				loader: 'url',
+				options: fileLoaderOpts
+			}
+		].concat(
+			isProd ? {
+				loader: 'image-webpack',
+				options: config.imageOpts
+			} : []
+		)
+	});
+
+	loaders.rules.set('img.svg', {
+		test: /\.svg$/,
+		use: [
+			{
+				loader: 'svg-url',
+				options: fileLoaderOpts
+			}
+		].concat(
+			isProd ? {
+				loader: 'svgo',
+				options: config.imageOpts.svgo
+			} : []
+		)
+	});
 
 	return loaders;
 };

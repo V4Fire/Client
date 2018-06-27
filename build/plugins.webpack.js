@@ -22,19 +22,19 @@ const
  * Returns a list of webpack plugins
  *
  * @param {(number|string)} buildId - build id
- * @returns {Array}
+ * @returns {Map}
  */
 module.exports = async function ({buildId}) {
 	const
 		build = await include('build/entities.webpack');
 
-	const plugins = [
-		new webpack.DefinePlugin(include('build/globals.webpack')),
-		include('build/dependencies.webpack')({build})
-	];
+	const plugins = new Map([
+		['globals', new webpack.DefinePlugin(include('build/globals.webpack'))],
+		['dependencies', include('build/dependencies.webpack')({build})]
+	]);
 
 	if (!isProd) {
-		plugins.push(new HardSourceWebpackPlugin({
+		plugins.set('buildCache', new HardSourceWebpackPlugin({
 			cacheDirectory: path.join(buildCache, `${buildId}/[confighash]`),
 			environmentHash: {files: ['package-lock.json', 'yarn.lock']},
 			configHash: () => require('node-object-hash')().hash(global.WEBPACK_CONFIG)

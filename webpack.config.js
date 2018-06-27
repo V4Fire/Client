@@ -17,16 +17,20 @@ const
 
 async function buildFactory(entry, buildId = '00') {
 	const
-		plugins = await include('build/plugins.webpack')({buildId});
+		plugins = await include('build/plugins.webpack')({buildId}),
+		modules = await include('build/module.webpack')({buildId, plugins});
 
 	return {
 		entry,
 		output: await include('build/output.webpack'),
+
 		resolve: await include('build/resolve.webpack'),
 		resolveLoader: await include('build/resolve-loader.webpack'),
 		externals: await include('build/externals.webpack'),
-		module: await include('build/module.webpack')({buildId, plugins}),
-		plugins,
+
+		plugins: [...plugins.values()],
+		module: {...modules, rules: [...modules.rules.values()]},
+
 		mode: isProd ? 'production' : 'development',
 		optimization: await include('build/optimization.webpack')({buildId}),
 		devtool: await include('build/devtool.webpack')
