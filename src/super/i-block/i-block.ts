@@ -154,6 +154,12 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	readonly componentId!: string;
 
 	/**
+	 * If true, then if the component is functional it won't be destroyed after removal from DOM
+	 */
+	@prop(Boolean)
+	readonly keepAlive: boolean = false;
+
+	/**
 	 * Link to i18n function
 	 */
 	@prop(Function)

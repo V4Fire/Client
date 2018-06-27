@@ -22,6 +22,7 @@ export default class VueInterface<
 	readonly hook!: Hooks;
 	readonly instance!: this;
 	readonly componentName!: string;
+	readonly keepAlive!: boolean;
 	readonly $el!: VueElement<C>;
 	readonly $options!: ComponentOptions<Vue>;
 	readonly $props!: Dictionary;

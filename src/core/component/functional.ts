@@ -402,7 +402,7 @@ export function patchVNode(vNode: VNode, ctx: Dictionary, renderCtx: RenderConte
 	// tslint:disable-next-line:cyclomatic-complexity
 	const mount = async () => {
 		if (ctx.hook === 'mounted') {
-			if (!ctx.$el) {
+			if (!ctx.keepAlive && !ctx.$el) {
 				destroy();
 			}
 
