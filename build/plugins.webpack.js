@@ -37,7 +37,7 @@ module.exports = async function ({buildId}) {
 	if (!isProd) {
 		plugins.set('buildCache', new HardSourceWebpackPlugin({
 			environmentHash: {files: ['package-lock.json', 'yarn.lock']},
-			cacheDirectory: path.join(buildCache, buildId, config.webpack.cacheDirectory),
+			cacheDirectory: path.join(buildCache, buildId, config.webpack.cacheDirectory()),
 			configHash: () => require('node-object-hash')().hash(global.WEBPACK_CONFIG)
 		}));
 	}
