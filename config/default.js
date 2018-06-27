@@ -97,6 +97,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 
 		fatHTML: false,
 		devtool: false,
+		cacheDirectory: '[confighash]',
 
 		hashLength() {
 			return !isProd || this.fatHTML ? false : 15;
