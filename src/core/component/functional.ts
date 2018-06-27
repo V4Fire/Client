@@ -399,38 +399,36 @@ export function patchVNode(vNode: VNode, ctx: Dictionary, renderCtx: RenderConte
 		destroyed = true;
 	};
 
-	const parentHook = {
-		beforeMount: 'mounted',
-		beforeUpdate: 'updated',
-		deactivated: 'activated'
-	}[p.hook];
-
 	// tslint:disable-next-line:cyclomatic-complexity
 	const mount = async () => {
-		if (destroyed || ctx.componentStatus === 'destroyed') {
+		if (ctx.hook === 'mounted') {
+			if (!ctx.$el) {
+				destroy();
+			}
+
+			return;
+		}
+
+		if (destroyed || ctx.hook !== 'created') {
 			return;
 		}
 
 		ctx[<any>$$.el] = undefined;
-		$C(hooks[parentHook]).remove((el) => el.fn[$$.self] === ctx);
 
 		if (!ctx.$el) {
 			try {
-				await ctx.$async.promise(p.nextTick());
+				await ctx.$async.promise(
+					p.nextTick()
+				);
 
 				if (!ctx.$el) {
-					await ctx.$async.nextTick();
-					!ctx.$el && destroy();
+					return;
 				}
 
 			} catch (err) {
 				stderr(err);
 				return;
 			}
-		}
-
-		if (destroyed) {
-			return;
 		}
 
 		const
@@ -572,6 +570,22 @@ export function patchVNode(vNode: VNode, ctx: Dictionary, renderCtx: RenderConte
 
 	mount[$$.self] = ctx;
 	destroy[$$.self] = ctx;
+
+	const parentHook = {
+		beforeMount: 'mounted',
+		beforeUpdate: 'updated',
+		deactivated: 'activated'
+	}[p.hook];
+
+	$C(['mounted', 'updated', 'activated']).forEach((hook) => {
+		if (hook === parentHook) {
+			return;
+		}
+
+		hooks[hook].unshift({
+			fn: mount
+		});
+	});
 
 	if (parentHook) {
 		hooks[parentHook].unshift({
