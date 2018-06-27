@@ -54,6 +54,10 @@ export default class bWindow<T extends Dictionary = Dictionary> extends iData<T>
 	 */
 	async open(stage?: string): Promise<boolean> {
 		if (await this.setMod('hidden', false)) {
+			if (stage) {
+				this.stage = stage;
+			}
+
 			this.setRootMod('hidden', false);
 			await this.nextTick();
 			this.emit('open');
