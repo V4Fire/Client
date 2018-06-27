@@ -23,7 +23,7 @@
  */
 - async template index() extends ['i-data'].index
 	- assets = Object.create(null)
-	- lib = path.join(@@output, 'lib')
+	- lib = path.join(@@output, @@outputPattern({name: 'lib'}))
 	- deps = include('src/super/i-page/deps')
 
 	- title = @@appName
