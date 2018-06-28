@@ -1364,7 +1364,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 */
 	@hook(['beforeDataCreate', 'activated'])
 	activate(): void {
-		if (this.hook === 'activated' && this.isActivated || !Object.keys(this.convertStateToRouter()).length) {
+		if (this.isActivated && this.hook !== 'beforeDataCreate' || !Object.keys(this.convertStateToRouter()).length) {
 			return;
 		}
 
@@ -1375,6 +1375,15 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 				group: 'routerStateWatchers'
 			});
 		});
+	}
+
+	/**
+	 * Deactivates the component
+	 */
+	deactivate(): void {
+		if (this.isActivated) {
+			this.deactivated();
+		}
 	}
 
 	/**
