@@ -187,11 +187,14 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 		const
 			old = this.componentStatus;
 
-		if (old === value && value !== 'beforeReady') {
+		if (old === value) {
 			return;
 		}
 
-		this.setField('componentStatusStore', value);
+		if (value !== 'beforeReady') {
+			this.setField('componentStatusStore', value);
+		}
+
 		this.localEvent.emit(`component.status.${value}`, value);
 		this.emit(`status-${value}`, value);
 	}
@@ -1222,19 +1225,13 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 
 		const done = () => {
 			const
-				get = () => Object.isFunction(data) ? data.call(this) : data,
-				fireDBReady = () => this.emit('dbReady', get(), silent);
+				get = () => Object.isFunction(data) ? data.call(this) : data;
 
-			if (this.beforeReadyListeners) {
-				this.execCbAtTheRightTime(fireDBReady);
-				this.componentStatus = 'beforeReady';
-
-			} else {
-				fireDBReady();
-			}
+			this.execCbAtTheRightTime(() => this.emit('dbReady', get(), silent));
+			this.componentStatus = 'beforeReady';
 
 			this.execCbAfterBlockReady(async () => {
-				if (this.beforeReadyListeners) {
+				if (this.beforeReadyListeners > 1) {
 					await this.nextTick();
 					this.beforeReadyListeners = 0;
 				}
