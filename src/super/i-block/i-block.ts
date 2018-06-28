@@ -1199,6 +1199,8 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 */
 	@hook('beforeDataCreate')
 	initLoad(data?: any | ((this: this) => any), silent?: boolean): CanPromise<void> {
+		this.beforeReadyListeners = 0;
+
 		if (!silent) {
 			this.componentStatus = 'loading';
 		}
@@ -1220,10 +1222,16 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 
 		const done = () => {
 			const
-				get = () => Object.isFunction(data) ? data.call(this) : data;
+				get = () => Object.isFunction(data) ? data.call(this) : data,
+				fireDBReady = () => this.emit('dbReady', get(), silent);
 
-			this.execCbAtTheRightTime(() => this.emit('dbReady', get(), silent));
-			this.componentStatus = 'beforeReady';
+			if (this.beforeReadyListeners) {
+				this.execCbAtTheRightTime(fireDBReady);
+				this.componentStatus = 'beforeReady';
+
+			} else {
+				fireDBReady();
+			}
 
 			this.execCbAfterBlockReady(async () => {
 				if (this.beforeReadyListeners) {
