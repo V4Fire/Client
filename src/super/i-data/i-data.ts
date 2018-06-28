@@ -236,24 +236,17 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 
 				try {
 					const
-						db = await this.get(<RequestQuery>p[0], p[1]);
+						db = this.convertDataToDB(await this.get(<RequestQuery>p[0], p[1]));
 
-					this.execCbAtTheRightTime(() => {
-						const
-							val = <any>this.convertDataToDB(db);
-
-						if (Object.fastCompare(this.db, val)) {
-							return;
-						}
-
-						this.db = val;
-					}, label);
+					if (!Object.fastCompare(this.db, db)) {
+						this.execCbAtTheRightTime(() => this.db = <any>db, label);
+					}
 
 				} catch (err) {
 					stderr(err);
 				}
 
-			} else {
+			} else if (this.db) {
 				this.execCbAtTheRightTime(() => this.db = undefined, label);
 			}
 		}

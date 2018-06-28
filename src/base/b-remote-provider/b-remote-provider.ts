@@ -49,25 +49,36 @@ export default class bRemoteProvider<T extends Dictionary = Dictionary> extends 
 			return;
 		}
 
-		p.execCbAtTheRightTime(() => {
+		const
+			e = this.$listeners,
+			f = this.field;
+
+		let
+			needUpdate = false,
+			action;
+
+		if (f) {
 			const
-				f = this.field;
+				field = p.getField(f);
 
-			if (f) {
-				const
-					c = p.getField(f);
+			if (Object.isFunction(field)) {
+				action = () => field.call(p, value);
+				needUpdate = true;
 
-				if (Object.isFunction(c)) {
-					c.call(p, value);
-
-				} else {
-					p.setField(f, value);
-				}
+			} else if (!Object.fastCompare(value, field)) {
+				action = () => p.setField(f, value);
+				needUpdate = true;
 			}
+		}
 
-			this.emit('change', value);
-		}, {
-			label: $$.syncDBWatcher
-		});
+		if (needUpdate || e.change || e['on-change']) {
+			p.execCbAtTheRightTime(() => {
+				action && action();
+				this.emit('change', value);
+
+			}, {
+				label: $$.syncDBWatcher
+			});
+		}
 	}
 }
