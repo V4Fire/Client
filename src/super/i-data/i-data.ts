@@ -85,7 +85,7 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 	/**
 	 * Data provider name
 	 */
-	@prop({type: String, watch: 'initLoad', required: false})
+	@prop({type: String, watch: 'reload', required: false})
 	readonly dataProvider?: string;
 
 	/**
@@ -97,7 +97,7 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 	/**
 	 * Data initialization advanced path
 	 */
-	@prop({type: String, watch: 'initLoad', required: false})
+	@prop({type: String, watch: 'reload', required: false})
 	readonly initAdvPath?: string;
 
 	/**
@@ -110,13 +110,13 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 	 * Initial request filter or if false,
 	 * then won't be request for an empty request
 	 */
-	@prop({type: [Function, Boolean], watch: 'initLoad'})
+	@prop({type: [Function, Boolean], watch: 'reload'})
 	readonly requestFilter: RequestFilter = true;
 
 	/**
 	 * Remote data converter
 	 */
-	@prop({type: Function, watch: 'initLoad', required: false})
+	@prop({type: Function, watch: 'reload', required: false})
 	readonly dbConverter?: Function;
 
 	/**
@@ -204,10 +204,19 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 	@system()
 	protected dp?: Provider;
 
+	/**
+	 * Reloads component data
+	 */
+	async reload(): Promise<void> {
+		return this.initLoad(true);
+	}
+
 	/** @override */
 	@wait({label: $$.initLoad, defer: true})
-	async initLoad(): Promise<void> {
-		this.componentStatus = 'loading';
+	async initLoad(silent?: boolean): Promise<void> {
+		if (!silent) {
+			this.componentStatus = 'loading';
+		}
 
 		if (this.dp && this.dp.baseURL) {
 			const
@@ -226,8 +235,19 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 				}
 
 				try {
-					const db = await this.get(<RequestQuery>p[0], p[1]);
-					this.execCbAtTheRightTime(() => this.db = this.convertDataToDB(db), label);
+					const
+						db = await this.get(<RequestQuery>p[0], p[1]);
+
+					this.execCbAtTheRightTime(() => {
+						const
+							val = <any>this.convertDataToDB(db);
+
+						if (Object.fastCompare(this.db, val)) {
+							return;
+						}
+
+						this.db = val;
+					}, label);
 
 				} catch (err) {
 					stderr(err);
@@ -238,7 +258,7 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 			}
 		}
 
-		return super.initLoad(() => this.db);
+		return super.initLoad(() => this.db, silent);
 	}
 
 	/**
@@ -730,6 +750,6 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 	 * @param data
 	 */
 	protected async onRefreshData(data: T): Promise<void> {
-		await this.initLoad();
+		await this.reload();
 	}
 }

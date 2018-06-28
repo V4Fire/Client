@@ -164,7 +164,7 @@ export default class iDataList<T extends Dictionary = Dictionary> extends iData<
 					mut[mut.type].call(this);
 
 				} else {
-					return this.initLoad();
+					return this.reload();
 				}
 			}
 		}
@@ -200,7 +200,7 @@ export default class iDataList<T extends Dictionary = Dictionary> extends iData<
 						break;
 					}
 
-					return this.initLoad();
+					return this.reload();
 				}
 			}
 		}
@@ -235,7 +235,7 @@ export default class iDataList<T extends Dictionary = Dictionary> extends iData<
 						break;
 					}
 
-					return this.initLoad();
+					return this.reload();
 				}
 			}
 		}

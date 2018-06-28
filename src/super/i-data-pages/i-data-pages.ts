@@ -58,8 +58,8 @@ export default class iDataPages<T extends Dictionary = Dictionary> extends iData
 	protected readonly $refs!: {loadPageTrigger?: HTMLElement};
 
 	/** @override */
-	async initLoad(): Promise<void> {
-		await super.initLoad();
+	async initLoad(silent?: boolean): Promise<void> {
+		await super.initLoad(silent);
 		this.pageLoaded = {};
 		this.async.clearAll({group: 'loadPage'});
 	}

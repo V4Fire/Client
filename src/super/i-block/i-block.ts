@@ -184,7 +184,10 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 * @param value
 	 */
 	set componentStatus(value: Statuses) {
-		if (this.componentStatus === value) {
+		const
+			old = this.componentStatus;
+
+		if (old === value && value !== 'beforeReady') {
 			return;
 		}
 
@@ -1188,12 +1191,17 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	/**
 	 * Loads component data
 	 *
-	 * @emits initLoad(data?: Object)
-	 * @emits dbReady(data?: Object)
+	 * @param [data] - data object (for events)
+	 * @param [silent] - silent mode
+	 *
+	 * @emits initLoad(data: Object | undefined, silent: boolean)
+	 * @emits dbReady(data: Object | undefined, silent: boolean)
 	 */
 	@hook('beforeDataCreate')
-	initLoad(data?: any | ((this: this) => any)): CanPromise<void> {
-		this.componentStatus = 'loading';
+	initLoad(data?: any | ((this: this) => any), silent?: boolean): CanPromise<void> {
+		if (!silent) {
+			this.componentStatus = 'loading';
+		}
 
 		const
 			{$children: $c, async: $a} = this,
@@ -1214,7 +1222,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 			const
 				get = () => Object.isFunction(data) ? data.call(this) : data;
 
-			this.execCbAtTheRightTime(() => this.emit('dbReady', get()));
+			this.execCbAtTheRightTime(() => this.emit('dbReady', get(), silent));
 			this.componentStatus = 'beforeReady';
 
 			this.execCbAfterBlockReady(async () => {
@@ -1224,11 +1232,11 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 				}
 
 				this.componentStatus = 'ready';
-				this.emit('initLoad', get());
+				this.emit('initLoad', get(), silent);
 			});
 		};
 
-		if (this.globalName || providers.size) {
+		if ((this.globalName || providers.size) && this.componentStatus === 'loading') {
 			const init = async () => {
 				await this.initStateFromStorage();
 
@@ -1348,35 +1356,20 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 
 	/**
 	 * Activates the component
-	 * @emits activated()
 	 */
 	@hook(['beforeDataCreate', 'activated'])
 	activate(): void {
-		if (Object.keys(this.convertStateToRouter()).length) {
-			this.initStateFromRouter();
-			this.execCbAfterCreated(() => {
-				this.async.on(this.$root, 'transition', this.initStateFromRouter, {
-					label: $$.activate,
-					group: 'routerStateWatchers'
-				});
-			});
+		if (this.hook === 'activated' && this.isActivated || !Object.keys(this.convertStateToRouter()).length) {
+			return;
 		}
 
-		this.emit('activated');
-	}
-
-	/**
-	 * Deactivates the component
-	 * @emits deactivated()
-	 */
-	@hook('deactivated')
-	deactivate(): void {
-		this.async
-			.off({group: 'routerStateWatchers'})
-			.off({group: 'routerWatchers'});
-
-		$C(this.convertStateToRouter()).forEach((el, key) => this[key] = undefined);
-		this.emit('deactivated');
+		this.initStateFromRouter();
+		this.execCbAfterCreated(() => {
+			this.async.on(this.$root, 'transition', this.initStateFromRouter, {
+				label: $$.activate,
+				group: 'routerStateWatchers'
+			});
+		});
 	}
 
 	/**
@@ -2629,22 +2622,28 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 * Component activated
 	 * (for keep-alive)
 	 */
-	protected async activated(): Promise<void> {
+	protected activated(): void {
 		if (this.isActivated) {
 			return;
 		}
 
-		this.componentStatus = 'loading';
+		this.componentStatus = 'beforeReady';
 
 		if (this.needReInit) {
-			await this.initLoad();
+			const
+				v = this.initLoad(true);
 
-		} else {
-			this.componentStatus = 'ready';
+			if (Object.isPromise(v)) {
+				v.catch(stderr);
+			}
 		}
 
+		if (!{beforeReady: true, ready: true}[this.componentStatus]) {
+			this.componentStatus = 'beforeReady';
+		}
+
+		this.componentStatus = 'ready';
 		this.isActivated = true;
-		await this.forceUpdate();
 	}
 
 	/**
@@ -2652,6 +2651,10 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 * (for keep-alive)
 	 */
 	protected deactivated(): void {
+		this.async
+			.off({group: 'routerStateWatchers'})
+			.off({group: 'routerWatchers'});
+
 		this.async
 			.clearImmediate()
 			.clearTimeout()
