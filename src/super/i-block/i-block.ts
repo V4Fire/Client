@@ -1236,7 +1236,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 			});
 		};
 
-		if ((this.globalName || providers.size) && this.componentStatus === 'loading') {
+		if (this.globalName || providers.size) {
 			const init = async () => {
 				await this.initStateFromStorage();
 
@@ -2630,12 +2630,17 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 		this.componentStatus = 'beforeReady';
 
 		if (this.needReInit) {
-			const
-				v = this.initLoad(true);
+			this.async.setImmediate(() => {
+				const
+					v = this.initLoad(true);
 
-			if (Object.isPromise(v)) {
-				v.catch(stderr);
-			}
+				if (Object.isPromise(v)) {
+					v.catch(stderr);
+				}
+
+			}, {
+				label: $$.activated
+			});
 		}
 
 		if (!{beforeReady: true, ready: true}[this.componentStatus]) {
