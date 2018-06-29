@@ -203,12 +203,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	},
 
 	snakeskin() {
-		function ignore(target) {
-			target.ignore = true;
-			return function () {
-				return target.apply(this, arguments);
-			};
-		}
+		const snakeskinVars = include('build/snakeskin.vars.js');
 
 		const {
 			webpack,
@@ -222,9 +217,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 				tagFilter: 'tagFilter',
 				tagNameFilter: 'tagNameFilter',
 				bemFilter: 'bemFilter',
-				vars: {
-					ignore
-				}
+				vars: snakeskinVars
 			}),
 
 			server: this.extend(super.snakeskin(), {

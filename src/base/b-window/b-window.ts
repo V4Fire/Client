@@ -14,6 +14,12 @@ export * from 'super/i-data/i-data';
 @component()
 export default class bWindow<T extends Dictionary = Dictionary> extends iData<T> {
 	/**
+	 * Name of the active third-party slot
+	 */
+	@prop({type: String, required: false})
+	readonly slotNameProp?: string;
+
+	/**
 	 * Initial window title
 	 */
 	@prop({type: String, required: false})
@@ -38,6 +44,12 @@ export default class bWindow<T extends Dictionary = Dictionary> extends iData<T>
 	 */
 	@field((o) => o.link())
 	protected titleStore?: string;
+
+	/**
+	 * Slot name store
+	 */
+	@field((o) => o.link())
+	protected slotNameStore?: string;
 
 	/** @override */
 	set error(value: string) {
@@ -76,6 +88,21 @@ export default class bWindow<T extends Dictionary = Dictionary> extends iData<T>
 		}
 
 		return false;
+	}
+
+	/**
+	 * Slot name
+	 */
+	get slotName(): any {
+		return this.slotNameStore;
+	}
+
+	/**
+	 * Sets slot name
+	 * @param val
+	 */
+	set slotName(val: any) {
+		this.slotNameStore = String(val);
 	}
 
 	/**

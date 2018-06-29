@@ -116,6 +116,17 @@ export interface AsyncTaskObjectId {
 	filter?(id: AsyncTaskSimpleId): boolean;
 }
 
+export enum FieldsForParentMessageCheck {
+	block,
+	globalName,
+	id
+}
+
+export interface ParentMessage {
+	check: [keyof (typeof FieldsForParentMessageCheck), any];
+	action(this: iBlock): Function;
+}
+
 export type AsyncTaskSimpleId = string | number;
 export type AsyncTaskId = AsyncTaskSimpleId | (() => AsyncTaskObjectId) | AsyncTaskObjectId;
 export type AsyncQueueType = 'asyncComponents' | 'asyncBackComponents';
@@ -2506,6 +2517,23 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 
 		this.block = new Block(this);
 		this.localEvent.emit('block.ready');
+	}
+
+	/**
+	 * Initializes an update from the parent listener
+	 */
+	@hook('beforeCreate')
+	protected initParentListener(): CanPromise<any> {
+		if (this.$parent) {
+			this.$parent.on('callChild', (component: iBlock, {check, action}: ParentMessage) => {
+				if (
+					check[0] !== 'block' && check[1] === this[check[0]] ||
+					check[0] === 'block' && this.instance instanceof check[1]
+				) {
+					return action.call(this);
+				}
+			}, {group: 'callChild'});
+		}
 	}
 
 	/**
