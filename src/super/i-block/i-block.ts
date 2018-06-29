@@ -1372,7 +1372,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	/**
 	 * Activates the component
 	 */
-	@hook(['beforeDataCreate', 'activated'])
+	@hook('beforeDataCreate')
 	activate(): void {
 		if (this.isActivated && this.hook !== 'beforeDataCreate' || !Object.keys(this.convertStateToRouter()).length) {
 			return;
@@ -1391,9 +1391,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 * Deactivates the component
 	 */
 	deactivate(): void {
-		if (this.isActivated) {
-			this.deactivated();
-		}
+		this.isActivated && this.deactivated();
 	}
 
 	/**
@@ -2651,6 +2649,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 			return;
 		}
 
+		this.async.disabled = false;
 		this.componentStatus = 'beforeReady';
 
 		if (this.needReInit) {
@@ -2680,21 +2679,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 * (for keep-alive)
 	 */
 	protected deactivated(): void {
-		this.async
-			.off({group: 'routerStateWatchers'})
-			.off({group: 'routerWatchers'});
-
-		this.async
-			.clearImmediate()
-			.clearTimeout()
-			.cancelIdleCallback();
-
-		this.async
-			.cancelAnimationFrame()
-			.cancelRequest()
-			.terminateWorker()
-			.cancelProxy();
-
+		this.async.disabled = true;
 		this.componentStatus = 'inactive';
 		this.isActivated = false;
 	}
