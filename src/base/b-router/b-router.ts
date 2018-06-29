@@ -22,17 +22,33 @@ import iData, { component, prop, system, hook, p } from 'super/i-data/i-data';
 export * from 'super/i-data/i-data';
 export * from 'base/b-router/drivers/interface';
 
-export type PageProp<T extends Dictionary = Dictionary> = string | CurrentPage;
+export interface Meta extends Dictionary {
+	autoScroll?: boolean;
+	scroll?: {
+		x: number;
+		y: number;
+	};
+}
+
+export interface PagePropObj extends CurrentPage {
+	meta?: Meta;
+}
+
+export type PageProp =
+	string |
+	PagePropObj;
+
 export interface PageParams extends Dictionary {
 	params?: Dictionary;
 	query?: Dictionary;
+	meta?: Meta;
 }
 
-export type Pages<M extends Dictionary = Dictionary> = Dictionary<{
+export type Pages = Dictionary<{
 	page: string;
 	pattern: string;
 	rgxp: RegExp;
-	meta: M;
+	meta: Meta;
 }>;
 
 export const
@@ -216,6 +232,13 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 	}
 
 	/**
+	 * Scrolls a document to the specified coordinates
+	 */
+	scrollTo(y?: number, x?: number): void {
+		window.scrollTo(x, y);
+	}
+
+	/**
 	 * Initializes component values
 	 */
 	@hook('beforeDataCreate')
@@ -256,8 +279,26 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 			this.getPageOpts(d.id(page)) :
 			c && Object.mixin(true, this.getPageOpts(c.page), Object.reject(c, 'page'));
 
+		const scroll = {
+			meta: {
+				scroll: {
+					x: pageXOffset,
+					y: pageYOffset
+				}
+			}
+		};
+
+		if (c) {
+			if (method === 'push') {
+				await d.replace(c.page, Object.mixin(true, undefined, c, scroll));
+
+			} else if (info) {
+				Object.mixin(true, info, scroll);
+			}
+		}
+
 		if (!info) {
-			await d[method](page);
+			await d[method](page, scroll);
 			return;
 		}
 
@@ -301,6 +342,13 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 			}
 
 			r.emit('transition', store);
+		}
+
+		const
+			m = info.meta || {};
+
+		if (m.scroll && m.autoScroll !== false) {
+			this.scrollTo(m.scroll.y, m.scroll.x);
 		}
 
 		return store;
