@@ -28,6 +28,7 @@ export type CurrentPage<
 	page: string;
 	params?: P;
 	query?: Q;
+	meta?: M;
 };
 
 export type PageSchema<M extends Dictionary = Dictionary> = string | M & {

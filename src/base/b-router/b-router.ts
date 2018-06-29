@@ -22,18 +22,39 @@ import iData, { component, prop, system, hook, p } from 'super/i-data/i-data';
 export * from 'super/i-data/i-data';
 export * from 'base/b-router/drivers/interface';
 
-export type PageProp<T extends Dictionary = Dictionary> = string | CurrentPage;
+export interface Meta extends Dictionary {
+	autoScroll?: boolean;
+	scroll?: {
+		x: number;
+		y: number;
+	};
+}
+
+export interface PagePropObj extends CurrentPage {
+	meta?: Meta;
+}
+
+export type PageProp =
+	string |
+	PagePropObj;
+
 export interface PageParams extends Dictionary {
 	params?: Dictionary;
 	query?: Dictionary;
+	meta?: Meta;
 }
 
-export type Pages<M extends Dictionary = Dictionary> = Dictionary<{
+export type Pages = Dictionary<{
 	page: string;
 	pattern: string;
 	rgxp: RegExp;
-	meta: M;
+	meta: Meta;
 }>;
+
+export type SetPage =
+	'push' |
+	'replace' |
+	'event';
 
 export const
 	$$ = symbolGenerator();
@@ -127,6 +148,13 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 	}
 
 	/**
+	 * Scrolls a document to the specified coordinates
+	 */
+	scrollTo(y?: number, x?: number): void {
+		window.scrollTo(x, y);
+	}
+
+	/**
 	 * Pushes a new transition to router
 	 *
 	 * @param page
@@ -216,27 +244,6 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 	}
 
 	/**
-	 * Initializes component values
-	 */
-	@hook('beforeDataCreate')
-	protected async initComponentValues(): Promise<void> {
-		const
-			page = this.pageProp;
-
-		if (page) {
-			if (Object.isString(page)) {
-				await this.replace(page);
-
-			} else {
-				await this.replace(page.page, page);
-			}
-
-		} else {
-			await this.replace(null);
-		}
-	}
-
-	/**
 	 * Sets a new page
 	 *
 	 * @param page
@@ -244,10 +251,10 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 	 * @param [method] - driver method
 	 * @emits $root.transition(info: Object)
 	 */
-	protected async setPage(
+	async setPage(
 		page: string | null,
 		params?: PageParams,
-		method: string = 'push'
+		method: SetPage = 'push'
 	): Promise<PageInfo | undefined> {
 		const
 			{$root: r, driver: d, driver: {page: c}} = this;
@@ -256,8 +263,32 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 			this.getPageOpts(d.id(page)) :
 			c && Object.mixin(true, this.getPageOpts(c.page), Object.reject(c, 'page'));
 
+		const scroll = {
+			meta: {
+				scroll: {
+					x: pageXOffset,
+					y: pageYOffset
+				}
+			}
+		};
+
+		if (c) {
+			if (method === 'push') {
+				await d.replace(c.page, Object.mixin(true, undefined, c, scroll));
+
+			} else if (info) {
+				Object.mixin(true, info, scroll);
+			}
+		}
+
+		const
+			isNotEvent = method !== 'event';
+
 		if (!info) {
-			await d[method](page);
+			if (isNotEvent) {
+				await d[method](page, scroll);
+			}
+
 			return;
 		}
 
@@ -283,7 +314,10 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 
 		if (!Object.fastCompare(f(current), f(store))) {
 			this.setField('pageStore', store);
-			await d[method](info.toPath(params && params.params), info);
+
+			if (isNotEvent) {
+				await d[method](info.toPath(params && params.params), info);
+			}
 
 			const
 				f = (v) => $C(v).filter((el) => !Object.isFunction(el)).map();
@@ -303,7 +337,35 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 			r.emit('transition', store);
 		}
 
+		const
+			m = info.meta || {};
+
+		if (m.scroll && m.autoScroll !== false) {
+			this.scrollTo(m.scroll.y, m.scroll.x);
+		}
+
 		return store;
+	}
+
+	/**
+	 * Initializes component values
+	 */
+	@hook('beforeDataCreate')
+	protected async initComponentValues(): Promise<void> {
+		const
+			page = this.pageProp;
+
+		if (page) {
+			if (Object.isString(page)) {
+				await this.replace(page);
+
+			} else {
+				await this.replace(page.page, page);
+			}
+
+		} else {
+			await this.replace(null);
+		}
 	}
 
 	/**

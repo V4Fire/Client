@@ -50,11 +50,10 @@ export default class bRemoteProvider<T extends Dictionary = Dictionary> extends 
 		}
 
 		const
-			e = this.$listeners,
 			f = this.field;
 
 		let
-			needUpdate = false,
+			needUpdate = !f,
 			action;
 
 		if (f) {
@@ -71,7 +70,7 @@ export default class bRemoteProvider<T extends Dictionary = Dictionary> extends 
 			}
 		}
 
-		if (needUpdate || e.change || e['on-change']) {
+		if (needUpdate) {
 			p.execCbAtTheRightTime(() => {
 				action && action();
 				this.emit('change', value);

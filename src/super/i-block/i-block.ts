@@ -187,7 +187,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 */
 	@p({cache: false})
 	get componentStatus(): Statuses {
-		return this.getField('componentStatusStore');
+		return this.shadowComponentStatusStore || this.getField('componentStatusStore');
 	}
 
 	/**
@@ -198,11 +198,15 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 		const
 			old = this.componentStatus;
 
-		if (old === value) {
+		if (old === value && value !== 'beforeReady') {
 			return;
 		}
 
-		if (value !== 'beforeReady') {
+		if ({beforeReady: true, inactive: true, destroyed: true, unloaded: true}[value]) {
+			this.shadowComponentStatusStore = value;
+
+		} else {
+			this.shadowComponentStatusStore = undefined;
 			this.setField('componentStatusStore', value);
 		}
 
@@ -287,6 +291,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	/**
 	 * Link to the root router
 	 */
+	@p({cache: false})
 	get router(): bRouter | any | undefined {
 		return this.$root.routerStore;
 	}
@@ -294,6 +299,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	/**
 	 * Link to the root pageInfo object
 	 */
+	@p({cache: false})
 	get route(): PageInfo | any | undefined {
 		return this.$root.pageInfo;
 	}
@@ -517,6 +523,12 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 */
 	@system({unique: true})
 	protected componentStatusStore: Statuses = 'unloaded';
+
+	/**
+	 * Component initialize status store for non watch statuses
+	 */
+	@system()
+	protected shadowComponentStatusStore?: Statuses;
 
 	/**
 	 * Watched store of component modifiers
@@ -1373,28 +1385,51 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	/**
 	 * Activates the component
 	 */
-	@hook(['beforeDataCreate', 'activated'])
+	@hook('beforeDataCreate')
 	activate(): void {
-		if (this.isActivated && this.hook !== 'beforeDataCreate' || !Object.keys(this.convertStateToRouter()).length) {
+		const
+			isBefore = this.isBeforeCreate();
+
+		if (isBefore) {
+			if (!Object.keys(this.convertStateToRouter()).length) {
+				return;
+			}
+
+			this.initStateFromRouter();
+			this.execCbAfterCreated(() => {
+				this.async.on(this.$root, 'transition', this.initStateFromRouter, {
+					label: $$.activate,
+					group: 'routerStateWatchers'
+				});
+			});
+
 			return;
 		}
 
-		this.initStateFromRouter();
-		this.execCbAfterCreated(() => {
-			this.async.on(this.$root, 'transition', this.initStateFromRouter, {
-				label: $$.activate,
-				group: 'routerStateWatchers'
-			});
-		});
+		const exec = (component = this) => {
+			if (!component.isActivated) {
+				component.activated();
+			}
+
+			$C(component.$children).forEach(exec);
+		};
+
+		exec();
 	}
 
 	/**
 	 * Deactivates the component
 	 */
 	deactivate(): void {
-		if (this.isActivated) {
-			this.deactivated();
-		}
+		const exec = (component = this) => {
+			if (component.isActivated) {
+				component.deactivated();
+			}
+
+			$C(component.$children).forEach(exec);
+		};
+
+		exec();
 	}
 
 	/**
@@ -2669,6 +2704,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 			return;
 		}
 
+		this.async.disabled = false;
 		this.componentStatus = 'beforeReady';
 
 		if (this.needReInit) {
@@ -2698,21 +2734,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 * (for keep-alive)
 	 */
 	protected deactivated(): void {
-		this.async
-			.off({group: 'routerStateWatchers'})
-			.off({group: 'routerWatchers'});
-
-		this.async
-			.clearImmediate()
-			.clearTimeout()
-			.cancelIdleCallback();
-
-		this.async
-			.cancelAnimationFrame()
-			.cancelRequest()
-			.terminateWorker()
-			.cancelProxy();
-
+		this.async.disabled = true;
 		this.componentStatus = 'inactive';
 		this.isActivated = false;
 	}
