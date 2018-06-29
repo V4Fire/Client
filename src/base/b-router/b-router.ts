@@ -51,6 +51,11 @@ export type Pages = Dictionary<{
 	meta: Meta;
 }>;
 
+export type SetPage =
+	'push' |
+	'replace' |
+	'event';
+
 export const
 	$$ = symbolGenerator();
 
@@ -143,6 +148,13 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 	}
 
 	/**
+	 * Scrolls a document to the specified coordinates
+	 */
+	scrollTo(y?: number, x?: number): void {
+		window.scrollTo(x, y);
+	}
+
+	/**
 	 * Pushes a new transition to router
 	 *
 	 * @param page
@@ -232,34 +244,6 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 	}
 
 	/**
-	 * Scrolls a document to the specified coordinates
-	 */
-	scrollTo(y?: number, x?: number): void {
-		window.scrollTo(x, y);
-	}
-
-	/**
-	 * Initializes component values
-	 */
-	@hook('beforeDataCreate')
-	protected async initComponentValues(): Promise<void> {
-		const
-			page = this.pageProp;
-
-		if (page) {
-			if (Object.isString(page)) {
-				await this.replace(page);
-
-			} else {
-				await this.replace(page.page, page);
-			}
-
-		} else {
-			await this.replace(null);
-		}
-	}
-
-	/**
 	 * Sets a new page
 	 *
 	 * @param page
@@ -267,10 +251,10 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 	 * @param [method] - driver method
 	 * @emits $root.transition(info: Object)
 	 */
-	protected async setPage(
+	async setPage(
 		page: string | null,
 		params?: PageParams,
-		method: string = 'push'
+		method: SetPage = 'push'
 	): Promise<PageInfo | undefined> {
 		const
 			{$root: r, driver: d, driver: {page: c}} = this;
@@ -297,8 +281,14 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 			}
 		}
 
+		const
+			isEvent = method === 'event';
+
 		if (!info) {
-			await d[method](page, scroll);
+			if (isEvent) {
+				await d[method](page, scroll);
+			}
+
 			return;
 		}
 
@@ -324,7 +314,10 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 
 		if (!Object.fastCompare(f(current), f(store))) {
 			this.setField('pageStore', store);
-			await d[method](info.toPath(params && params.params), info);
+
+			if (isEvent) {
+				await d[method](info.toPath(params && params.params), info);
+			}
 
 			const
 				f = (v) => $C(v).filter((el) => !Object.isFunction(el)).map();
@@ -352,6 +345,27 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 		}
 
 		return store;
+	}
+
+	/**
+	 * Initializes component values
+	 */
+	@hook('beforeDataCreate')
+	protected async initComponentValues(): Promise<void> {
+		const
+			page = this.pageProp;
+
+		if (page) {
+			if (Object.isString(page)) {
+				await this.replace(page);
+
+			} else {
+				await this.replace(page.page, page);
+			}
+
+		} else {
+			await this.replace(null);
+		}
 	}
 
 	/**
