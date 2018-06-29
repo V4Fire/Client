@@ -176,7 +176,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 */
 	@p({cache: false})
 	get componentStatus(): Statuses {
-		return this.getField('componentStatusStore');
+		return this.shadowComponentStatusStore || this.getField('componentStatusStore');
 	}
 
 	/**
@@ -187,11 +187,15 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 		const
 			old = this.componentStatus;
 
-		if (old === value) {
+		if (old === value && value !== 'beforeReady') {
 			return;
 		}
 
-		if (value !== 'beforeReady') {
+		if ({beforeReady: true, inactive: true, destroyed: true, unloaded: true}[value]) {
+			this.shadowComponentStatusStore = value;
+
+		} else {
+			this.shadowComponentStatusStore = undefined;
 			this.setField('componentStatusStore', value);
 		}
 
@@ -506,6 +510,12 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 */
 	@system({unique: true})
 	protected componentStatusStore: Statuses = 'unloaded';
+
+	/**
+	 * Component initialize status store for non watch statuses
+	 */
+	@system()
+	protected shadowComponentStatusStore?: Statuses;
 
 	/**
 	 * Watched store of component modifiers
