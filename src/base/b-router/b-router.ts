@@ -282,10 +282,10 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 		}
 
 		const
-			isEvent = method === 'event';
+			isNotEvent = method !== 'event';
 
 		if (!info) {
-			if (isEvent) {
+			if (isNotEvent) {
 				await d[method](page, scroll);
 			}
 
@@ -315,7 +315,7 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 		if (!Object.fastCompare(f(current), f(store))) {
 			this.setField('pageStore', store);
 
-			if (isEvent) {
+			if (isNotEvent) {
 				await d[method](info.toPath(params && params.params), info);
 			}
 
