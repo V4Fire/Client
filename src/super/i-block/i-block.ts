@@ -280,6 +280,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	/**
 	 * Link to the root router
 	 */
+	@p({cache: false})
 	get router(): bRouter | any | undefined {
 		return this.$root.routerStore;
 	}
@@ -287,6 +288,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	/**
 	 * Link to the root pageInfo object
 	 */
+	@p({cache: false})
 	get route(): PageInfo | any | undefined {
 		return this.$root.pageInfo;
 	}
@@ -1374,24 +1376,49 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 */
 	@hook('beforeDataCreate')
 	activate(): void {
-		if (this.isActivated && this.hook !== 'beforeDataCreate' || !Object.keys(this.convertStateToRouter()).length) {
+		const
+			isBefore = this.isBeforeCreate();
+
+		if (isBefore) {
+			if (!Object.keys(this.convertStateToRouter()).length) {
+				return;
+			}
+
+			this.initStateFromRouter();
+			this.execCbAfterCreated(() => {
+				this.async.on(this.$root, 'transition', this.initStateFromRouter, {
+					label: $$.activate,
+					group: 'routerStateWatchers'
+				});
+			});
+
 			return;
 		}
 
-		this.initStateFromRouter();
-		this.execCbAfterCreated(() => {
-			this.async.on(this.$root, 'transition', this.initStateFromRouter, {
-				label: $$.activate,
-				group: 'routerStateWatchers'
-			});
-		});
+		const exec = (component = this) => {
+			if (!component.isActivated) {
+				component.activated();
+			}
+
+			$C(component.$children).forEach(exec);
+		};
+
+		exec();
 	}
 
 	/**
 	 * Deactivates the component
 	 */
 	deactivate(): void {
-		this.isActivated && this.deactivated();
+		const exec = (component = this) => {
+			if (component.isActivated) {
+				component.deactivated();
+			}
+
+			$C(component.$children).forEach(exec);
+		};
+
+		exec();
 	}
 
 	/**
