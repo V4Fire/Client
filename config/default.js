@@ -222,6 +222,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 
 			server: this.extend(super.snakeskin(), {
 				vars: {
+					...snakeskinVars,
 					fatHTML: webpack.fatHTML,
 					hashLength: webpack.hashLength(),
 					root: src.cwd(),

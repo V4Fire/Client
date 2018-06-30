@@ -9,9 +9,9 @@
  */
 
 const
-	path = require('path'),
 	$C = require('collection.js'),
-	Snakeskin = require('snakeskin');
+	Snakeskin = require('snakeskin'),
+	path = require('path');
 
 module.exports = {
 	ignore(target) {
@@ -34,7 +34,7 @@ module.exports = {
 				Snakeskin.Vars['globalNames'][el] = dir;
 
 			} else if (Snakeskin.Vars['globalNames'][el] !== dir) {
-				throw new Error(`Name ${el} is already in global namespace`)
+				throw new Error(`Name ${el} is already in global namespace`);
 			}
 		});
 	}

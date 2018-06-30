@@ -14,12 +14,6 @@ export * from 'super/i-data/i-data';
 @component()
 export default class bWindow<T extends Dictionary = Dictionary> extends iData<T> {
 	/**
-	 * Name of the active third-party slot
-	 */
-	@prop({type: String, required: false})
-	readonly slotNameProp?: string;
-
-	/**
 	 * Initial window title
 	 */
 	@prop({type: String, required: false})
@@ -30,6 +24,12 @@ export default class bWindow<T extends Dictionary = Dictionary> extends iData<T>
 	 */
 	@prop(Object)
 	readonly stageTitles: Dictionary<string> = {};
+
+	/**
+	 * Name of an active third-party slot
+	 */
+	@prop({type: String, required: false})
+	readonly slotNameProp?: string;
 
 	/** @inheritDoc */
 	static readonly mods: ModsDecl = {
