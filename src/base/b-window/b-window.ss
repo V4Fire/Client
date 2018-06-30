@@ -30,8 +30,9 @@
 						< section.&__window
 							- if thirdPartySlots
 								< template v-if = slotName
-									- forIn self => el, key
-										- if key.includes('slot')
+									: isSlot = /^slot[A-Z]/
+									- forEach self => el, key
+										- if isSlot.test(key)
 											< template
 												+= el(@@globalNames[key])
 
