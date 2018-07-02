@@ -11,7 +11,7 @@
 const
 	$C = require('collection.js'),
 	Typograf = require('typograf'),
-	Escaper = require('escaper');
+	escaper = require('escaper');
 
 const
 	tp = new Typograf(include('build/typograf.rules'));
@@ -34,16 +34,16 @@ module.exports = function (str) {
 	const
 		chunks = [];
 
-	str = Escaper.replace(str, escaperRules, chunks);
+	str = escaper.replace(str, escaperRules, chunks);
 	str = str.replace(literalsRgxp, (str) => {
 		const
 			chunks = [];
 
-		str = Escaper.replace(str, true, chunks);
+		str = escaper.replace(str, true, chunks);
 		$C(chunks).set((el) => el.replace(chunkRgxp, (str, val) => tp.execute(val)));
 
-		return Escaper.paste(str.slice(tagLength), chunks);
+		return escaper.paste(str.slice(tagLength), chunks);
 	});
 
-	return Escaper.paste(str, chunks);
+	return escaper.paste(str, chunks);
 };
