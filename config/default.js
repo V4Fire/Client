@@ -9,52 +9,11 @@
  */
 
 const
-	url = require('url'),
 	config = require('@v4fire/core/config/default'),
-	concatUrls = require('urlconcat').concat,
 	o = require('uniconf/options').option;
 
 module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	__proto__: config,
-
-	apiURL() {
-		return this.api.proxy ? concatUrls(this.api.pathname(), 'api') : this.api.url;
-	},
-
-	api: {
-		proxy: true,
-
-		url: o('api-url', {
-			env: true
-		}),
-
-		port: o('port', {
-			env: true,
-			type: 'number',
-			default: 3333,
-			validate(value) {
-				return Number.isFinite(value) && (value > 0) && (value < 65536);
-			}
-		}),
-
-		host() {
-			return o('host-url', {
-				env: true,
-				default: `http://localhost:${this.port}/`
-			});
-		},
-
-		pathname() {
-			return o('base-path', {
-				env: true,
-				default: url.parse(this.host()).pathname || '/'
-			});
-		},
-
-		schema: {
-
-		}
-	},
 
 	build: {
 		single: o('single-build', {

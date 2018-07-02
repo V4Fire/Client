@@ -8,14 +8,16 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+/* eslint-disable quote-props */
+
 const
-	config = require('config'),
 	s = JSON.stringify;
 
 module.exports = {
-	'IS_PROD': isProd,
-	'API_URL': s(config.apiURL()),
-	'APP_NAME': s(config.appName),
+	IS_PROD,
+	LANG: s(LANG),
+	API_URL: s(API_URL),
+	APP_NAME: s(APP_NAME),
 	'process.env': {
 		NODE_ENV: s(process.env.NODE_ENV)
 	}
