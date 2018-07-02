@@ -10,11 +10,14 @@
 
 const
 	$C = require('collection.js'),
-	Typograf = require('typograf'),
-	escaper = require('escaper');
+	Typograf = require('typograf');
 
 const
-	tp = new Typograf(include('build/typograf.rules'));
+	escaper = require('escaper'),
+	config = require('config');
+
+const
+	tp = new Typograf(config.typograf());
 
 const
 	literalsRgxp = /typograf`(?:(?:\\[\s\S]|[^`\\])*?)`/g,

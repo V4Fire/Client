@@ -10,8 +10,11 @@
 
 const
 	Snakeskin = require('snakeskin'),
-	Typograf = require('typograf'),
-	escaper = require('escaper');
+	Typograf = require('typograf');
+
+const
+	escaper = require('escaper'),
+	config = require('config');
 
 const
 	fs = require('fs'),
@@ -21,7 +24,7 @@ const
 const
 	{validators, resolve} = require('@pzlr/build-core'),
 	resources = [resolve.blockSync(), ...resolve.dependencies],
-	tp = new Typograf(include('build/typograf.rules'));
+	tp = new Typograf(config.typograf());
 
 const
 	tagRgxp = /<[^>]+>/,

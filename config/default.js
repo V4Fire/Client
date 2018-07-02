@@ -213,5 +213,11 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		return {
 			preferPathResolver: 'webpack'
 		};
-	}
+	},
+
+	typograf() {
+		return {
+			locale: this.lang
+		};
+	},
 });
