@@ -37,6 +37,7 @@ export * from 'core/component/functional';
 
 export { PARENT } from 'core/component/inherit';
 export { default as VueInterface, VueElement } from 'core/component/vue';
+export { default as globalEvent, reset, ResetType } from 'core/component/event';
 
 export const
 	initEvent = new EventEmitter({maxListeners: 1e3}),

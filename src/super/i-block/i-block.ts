@@ -8,7 +8,7 @@
 
 // tslint:disable:max-file-line-count
 import $C = require('collection.js');
-import Async, { AsyncOpts, ClearOptsId } from 'core/async';
+import Async, { AsyncOpts, AsyncOnOpts, AsyncOnceOpts, ClearOptsId } from 'core/async';
 
 import * as analytics from 'core/analytics';
 import { EventEmitter2 as EventEmitter } from 'eventemitter2';
@@ -29,6 +29,7 @@ import {
 	hook,
 	execRenderObject,
 	patchVNode,
+	globalEvent,
 	ModVal,
 	ModsDecl,
 	VueInterface,
@@ -131,6 +132,29 @@ export type AsyncTaskSimpleId = string | number;
 export type AsyncTaskId = AsyncTaskSimpleId | (() => AsyncTaskObjectId) | AsyncTaskObjectId;
 export type AsyncQueueType = 'asyncComponents' | 'asyncBackComponents';
 export type AsyncWatchOpts = WatchOptions & AsyncOpts;
+
+export interface Event<T extends object = Async> {
+	emit(event: string, ...args: any[]): boolean;
+
+	on(events: string | string[], handler: Function, ...args: any[]): object | undefined;
+	on(
+		events: string | string[],
+		handler: Function,
+		params: AsyncOnOpts<T>,
+		...args: any[]
+	): object | undefined;
+
+	once(events: string | string[], handler: Function, ...args: any[]): object | undefined;
+	once(
+		events: string | string[],
+		handler: Function,
+		params: AsyncOnceOpts<T>,
+		...args: any[]
+	): object | undefined;
+
+	off(id?: object): void;
+	off(params: ClearOptsId<object>): void;
+}
 
 export const
 	$$ = symbolGenerator(),
@@ -643,6 +667,21 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	})
 
 	protected readonly localEvent!: EventEmitter;
+
+	/**
+	 * Global event emitter
+	 */
+	protected get globalEvent(): Event<this> {
+		const
+			{async: $a} = this;
+
+		return {
+			emit: (event, ...args) => globalEvent.emit(event, ...args),
+			on: (event, fn, params, ...args) => $a.on(globalEvent, event, fn, params, ...args),
+			once: (event, fn, params, ...args) => $a.once(globalEvent, event, fn, params, ...args),
+			off: (...args) => $a.off(...args)
+		};
+	}
 
 	/**
 	 * Storage object
@@ -1982,6 +2021,14 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	}
 
 	/**
+	 * Returns an object with default component fields for resetting a local storage
+	 * @param [data] - advanced data
+	 */
+	protected convertStateToStorageReset(data?: Dictionary | undefined): Dictionary {
+		return $C(this.convertStateToStorage(data)).map(() => undefined);
+	}
+
+	/**
 	 * Saves a component state to a local storage
 	 * @param [data] - advanced data
 	 */
@@ -2063,11 +2110,28 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	}
 
 	/**
+	 * Resets a component storage state
+	 */
+	protected async resetStorageState(): Promise<boolean> {
+		this.setState(this.convertStateToStorageReset());
+		await this.saveStateToStorage();
+		return true;
+	}
+
+	/**
 	 * Returns an object with default component fields for saving to a router
 	 * @param [data] - advanced data
 	 */
 	protected convertStateToRouter(data?: Dictionary | undefined): Dictionary {
 		return {...data};
+	}
+
+	/**
+	 * Returns an object with default component fields for resetting a router
+	 * @param [data] - advanced data
+	 */
+	protected convertStateToRouterReset(data?: Dictionary | undefined): Dictionary {
+		return $C(this.convertStateToRouter(data)).map(() => undefined);
 	}
 
 	/**
@@ -2142,7 +2206,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 * Resets a component router state
 	 */
 	protected async resetRouterState(): Promise<boolean> {
-		this.setState($C(this.convertStateToRouter()).map(() => undefined));
+		this.setState(this.convertStateToRouterReset());
 
 		const
 			r = this.$root.router;
@@ -2569,6 +2633,28 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 				}
 			}, {group: 'callChild'});
 		}
+	}
+
+	/**
+	 * Initializes global event listeners
+	 */
+	@hook('created')
+	protected initGlobalEvents(): void {
+		const
+			{globalEvent: $e} = this;
+
+		$e.on('reset.load', this.initLoad);
+		$e.on('reset.router', this.resetRouterState);
+		$e.on('reset.storage', this.resetStorageState);
+
+		$e.on('reset', async () => {
+			await Promise.all([
+				this.resetRouterState(),
+				this.resetStorageState()
+			]);
+
+			await this.initLoad();
+		});
 	}
 
 	/**
