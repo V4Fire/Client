@@ -446,7 +446,13 @@ export function initDataObject(
  */
 export async function runHook(hook: string, meta: ComponentMeta, ctx: Dictionary, ...args: any[]): Promise<void> {
 	ctx.hook = hook;
-	log(`component:hook:${meta.componentName}:${hook}`, ctx);
+
+	if (ctx.log) {
+		ctx.log(`hook:${hook}`);
+
+	} else {
+		log(`component:hook:${meta.componentName}:${hook}`, ctx);
+	}
 
 	if (!meta.hooks[hook].length) {
 		return;

@@ -46,6 +46,8 @@ export default class VueInterface<
 	protected readonly $activeField!: string;
 	protected $createElement!: CreateElement;
 
+	protected log?(key: string, ...details: any[]): void;
+
 	// @ts-ignore
 	protected $mount(elementOrSelector?: Element | string, hydrating?: boolean): this;
 	protected $mount() {}

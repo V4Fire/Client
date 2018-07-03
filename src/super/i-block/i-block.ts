@@ -1139,7 +1139,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 		this.$emit(event, this, ...args);
 		this.$emit(`on-${event}`, ...args);
 		this.dispatching && this.dispatch(event, ...args);
-		log(`component:event:${this.componentName}:${event}`, this, ...args);
+		this.log(`event:${event}`, this, ...args);
 	}
 
 	/**
@@ -1723,6 +1723,20 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	}
 
 	/**
+	 * Puts the specified parameters to log
+	 *
+	 * @param key - log key
+	 * @param [details]
+	 */
+	protected log(key: string, ...details: any[]): void {
+		log(['component', key, this.componentName].join(':'), this, ...details);
+
+		if (this.globalName) {
+			log(['component:global', this.globalName, key, this.componentName].join(':'), this, ...details);
+		}
+	}
+
+	/**
 	 * Creates a new function from the specified that executes deferedly
 	 *
 	 * @see Async.setTimeout
@@ -2044,7 +2058,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 		this.setState(data);
 
 		await this.saveSettings(data, '[[STORE]]');
-		log(`component:state:save:storage:${this.componentName}`, this, data);
+		this.log('state:save:storage', this, data);
 	}
 
 	/**
@@ -2102,7 +2116,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 					}
 				});
 
-				log(`component:state:init:storage:${this.componentName}`, this, stateFields);
+				this.log('state:init:storage', this, stateFields);
 			});
 
 		}, {
@@ -2123,7 +2137,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 		);
 
 		await this.saveStateToStorage();
-		log(`component:state:reset:storage:${this.componentName}`, this, stateFields);
+		this.log('state:reset:storage', this, stateFields);
 		return true;
 	}
 
@@ -2165,7 +2179,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 			query: data
 		});
 
-		log(`component:state:save:router:${this.componentName}`, this, data);
+		this.log('state:save:router', this, data);
 		return true;
 	}
 
@@ -2210,7 +2224,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 				}
 			});
 
-			log(`component:state:init:router:${this.componentName}`, this, stateFields);
+			this.log('state:init:router', this, stateFields);
 		});
 	}
 
@@ -2233,7 +2247,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 		}
 
 		await r.push(null);
-		log(`component:state:reset:router:${this.componentName}`, this, stateFields);
+		this.log('state:reset:router', this, stateFields);
 		return true;
 	}
 
