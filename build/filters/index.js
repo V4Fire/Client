@@ -10,7 +10,11 @@
 
 const
 	Snakeskin = require('snakeskin'),
-	escaper = require('escaper');
+	Typograf = require('typograf');
+
+const
+	escaper = require('escaper'),
+	config = require('config');
 
 const
 	fs = require('fs'),
@@ -19,7 +23,8 @@ const
 
 const
 	{validators, resolve} = require('@pzlr/build-core'),
-	resources = [resolve.blockSync(), ...resolve.dependencies];
+	resources = [resolve.blockSync(), ...resolve.dependencies],
+	tp = new Typograf(config.typograf());
 
 const
 	tagRgxp = /<[^>]+>/,
@@ -27,6 +32,16 @@ const
 	ssExtRgxp = /\.e?ss$/;
 
 Snakeskin.importFilters({
+	/**
+	 * Applies Typograf to the specified string and returns it
+	 *
+	 * @param {string} str
+	 * @returns {string}
+	 */
+	typograf(str) {
+		return tp.execute(str);
+	},
+
 	/**
 	 * Returns a first element name
 	 *

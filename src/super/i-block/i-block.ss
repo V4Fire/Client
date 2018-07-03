@@ -34,6 +34,13 @@
 	- overWrapper = true
 
 	/**
+	 * Applies Typograf to the specified content
+	 * @param {string} content
+	 */
+	- block index->typograf(content)
+		+= content|typograf
+
+	/**
 	 * Appends the specified value to root component classes
 	 * @param {string} value
 	 */

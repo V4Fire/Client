@@ -70,7 +70,8 @@ module.exports = async function ({buildId, plugins}) {
 						replacers: [
 							include('build/context.replacer'),
 							include('build/super.replacer'),
-							include('build/ts-import.replacer')
+							include('build/ts-import.replacer'),
+							include('build/typograf.replacer')
 						]
 					})
 				}
@@ -92,7 +93,8 @@ module.exports = async function ({buildId, plugins}) {
 						replacers: [
 							include('build/context.replacer'),
 							include('build/super.replacer'),
-							include('build/ts-import.replacer')
+							include('build/ts-import.replacer'),
+							include('build/typograf.replacer')
 						]
 					})
 				}
@@ -107,7 +109,8 @@ module.exports = async function ({buildId, plugins}) {
 				options: inherit(monic.javascript, {
 					replacers: [
 						include('build/context.replacer'),
-						include('build/super.replacer')
+						include('build/super.replacer'),
+						include('build/typograf.replacer')
 					]
 				})
 			}]

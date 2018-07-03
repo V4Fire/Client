@@ -9,9 +9,6 @@
 /// <reference types="@v4fire/core"/>
 
 declare let READY_STATE: number;
-declare const IS_PROD: boolean;
-declare const API_URL: string | undefined;
-declare const APP_NAME: string | undefined;
 declare const PATH: Dictionary<string | undefined>;
 declare const TPLS: Dictionary;
 

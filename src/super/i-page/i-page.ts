@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { VueInterface } from 'core/component';
+import { reset, ResetType, VueInterface } from 'core/component';
 
 import * as net from 'core/net';
 import * as session from 'core/session';
@@ -93,6 +93,14 @@ export default class iPage<
 	 */
 	@system()
 	protected rootMods: RootMods = {};
+
+	/**
+	 * Sends a message for reset to all components
+	 * @param [type] - reset type
+	 */
+	reset(type?: ResetType): void {
+		reset();
+	}
 
 	/** @override */
 	setRootMod(name: string, value: any, component: VueInterface = this): boolean {

@@ -25,7 +25,7 @@ export default function socket(namespace: string = ''): Socket | undefined {
 
 	} catch (_) {}
 
-	if (socket) {
+	if (socket && config.api) {
 		const url = new URL(config.api);
 		return socket.connect((url.pathname = namespace).toString(), {
 			allowUpgrades: false,
