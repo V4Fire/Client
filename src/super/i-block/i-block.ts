@@ -9,6 +9,7 @@
 // tslint:disable:max-file-line-count
 import $C = require('collection.js');
 import Async, { AsyncOpts, AsyncOnOpts, AsyncOnceOpts, ClearOptsId } from 'core/async';
+import log from 'core/log';
 
 import * as analytics from 'core/analytics';
 import { EventEmitter2 as EventEmitter } from 'eventemitter2';
@@ -1138,6 +1139,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 		this.$emit(event, this, ...args);
 		this.$emit(`on-${event}`, ...args);
 		this.dispatching && this.dispatch(event, ...args);
+		log(`component:event:${this.componentName}:${event}`, this, ...args);
 	}
 
 	/**
@@ -2042,6 +2044,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 		this.setState(data);
 
 		await this.saveSettings(data, '[[STORE]]');
+		log(`component:state:save:storage:${this.componentName}`, this, data);
 	}
 
 	/**
@@ -2073,14 +2076,11 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 
 			this.execCbAtTheRightTime(() => {
 				const
-					stateFields = this.convertStateToStorage();
+					stateFields = this.convertStateToStorage(data);
 
-				if (data) {
-					this.setState(this.convertStateToStorage(data));
-
-				} else {
-					this.setState(stateFields);
-				}
+				this.setState(
+					stateFields
+				);
 
 				const sync = this.createDeferFn(this.saveStateToStorage, {
 					label: $$.syncLocalStore
@@ -2101,6 +2101,8 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 						}, storeWatchers);
 					}
 				});
+
+				log(`component:state:init:storage:${this.componentName}`, this, stateFields);
 			});
 
 		}, {
@@ -2113,8 +2115,15 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 * Resets a component storage state
 	 */
 	protected async resetStorageState(): Promise<boolean> {
-		this.setState(this.convertStateToStorageReset());
+		const
+			stateFields = this.convertStateToStorageReset();
+
+		this.setState(
+			stateFields
+		);
+
 		await this.saveStateToStorage();
+		log(`component:state:reset:storage:${this.componentName}`, this, stateFields);
 		return true;
 	}
 
@@ -2140,7 +2149,10 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 */
 	protected async saveStateToRouter(data?: Dictionary | undefined): Promise<boolean> {
 		data = this.convertStateToRouter(data);
-		this.setState(data);
+
+		this.setState(
+			data
+		);
 
 		const
 			r = this.$root.router;
@@ -2153,6 +2165,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 			query: data
 		});
 
+		log(`component:state:save:router:${this.componentName}`, this, data);
 		return true;
 	}
 
@@ -2171,14 +2184,11 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 		this.execCbAtTheRightTime(() => {
 			const
 				p = this.$root.pageInfo,
-				stateFields = this.convertStateToRouter();
+				stateFields = this.convertStateToRouter(p && p.query);
 
-			if (p && p.query) {
-				this.setState(this.convertStateToRouter(p.query));
-
-			} else {
-				this.setState(stateFields);
-			}
+			this.setState(
+				stateFields
+			);
 
 			const sync = this.createDeferFn(this.saveStateToRouter, {
 				label: $$.syncRouter
@@ -2199,6 +2209,8 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 					}, routerWatchers);
 				}
 			});
+
+			log(`component:state:init:router:${this.componentName}`, this, stateFields);
 		});
 	}
 
@@ -2206,7 +2218,12 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 * Resets a component router state
 	 */
 	protected async resetRouterState(): Promise<boolean> {
-		this.setState(this.convertStateToRouterReset());
+		const
+			stateFields = this.convertStateToRouterReset();
+
+		this.setState(
+			stateFields
+		);
 
 		const
 			r = this.$root.router;
@@ -2216,6 +2233,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 		}
 
 		await r.push(null);
+		log(`component:state:reset:router:${this.componentName}`, this, stateFields);
 		return true;
 	}
 

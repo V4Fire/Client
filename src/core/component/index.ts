@@ -27,8 +27,10 @@ import { EventEmitter2 as EventEmitter, Listener } from 'eventemitter2';
 import 'core/component/filters';
 import 'core/component/directives';
 
-import VueInterface from 'core/component/vue';
+import log from 'core/log';
 import inheritMeta, { PARENT } from 'core/component/inherit';
+
+import VueInterface from 'core/component/vue';
 import { getComponent, getBaseComponent } from 'core/component/component';
 import { convertRender, createFakeCtx, patchVNode } from 'core/component/functional';
 
@@ -334,6 +336,7 @@ export function component(params?: ComponentParams): Function {
 					component.components = Object.assign(component.components || {}, localComponents.get(target));
 				}
 
+				log(`component:load:${name}`, component);
 				resolve(component);
 			};
 
