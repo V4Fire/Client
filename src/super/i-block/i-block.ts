@@ -1729,10 +1729,10 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 * @param [details]
 	 */
 	protected log(key: string, ...details: any[]): void {
-		log(['component', key, this.componentName].join(':'), this, ...details);
+		log(['component', key, this.componentName].join(':'), ...details, this);
 
 		if (this.globalName) {
-			log(['component:global', this.globalName, key, this.componentName].join(':'), this, ...details);
+			log(['component:global', this.globalName, key, this.componentName].join(':'), ...details, this);
 		}
 	}
 
