@@ -102,7 +102,7 @@ export default class bWindow<T extends Dictionary = Dictionary> extends iData<T>
 	 * @param val
 	 */
 	set slotName(val: any) {
-		this.slotNameStore = String(val);
+		this.slotNameStore = val;
 	}
 
 	/**
