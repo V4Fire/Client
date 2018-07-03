@@ -33,7 +33,7 @@
 									: isSlot = /^slot[A-Z]/
 									- forEach self => el, key
 										- if isSlot.test(key)
-											< template
+											< template v-if = slotName === '${key}'
 												+= el(@@globalNames[key])
 
 							< template v-else
