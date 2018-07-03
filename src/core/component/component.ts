@@ -448,10 +448,10 @@ export async function runHook(hook: string, meta: ComponentMeta, ctx: Dictionary
 	ctx.hook = hook;
 
 	if (ctx.log) {
-		ctx.log(`hook:${hook}`);
+		ctx.log(`hook:${hook}`, ...args);
 
 	} else {
-		log(`component:hook:${meta.componentName}:${hook}`, ctx);
+		log(`component:hook:${meta.componentName}:${hook}`, ...args, ctx);
 	}
 
 	if (!meta.hooks[hook].length) {
