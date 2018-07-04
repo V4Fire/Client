@@ -119,9 +119,10 @@ export interface AsyncTaskObjectId {
 }
 
 export enum FieldsForParentMessageCheck {
-	block,
+	instanceOf,
 	globalName,
-	id
+	componentName,
+	componentId
 }
 
 export interface ParentMessage {
@@ -2658,8 +2659,8 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 		if (this.$parent) {
 			this.$parent.on('callChild', (component: iBlock, {check, action}: ParentMessage) => {
 				if (
-					check[0] !== 'block' && check[1] === this[check[0]] ||
-					check[0] === 'block' && this.instance instanceof check[1]
+					check[0] !== 'instanceOf' && check[1] === this[check[0]] ||
+					check[0] === 'instanceOf' && this.instance instanceof check[1]
 				) {
 					return action.call(this);
 				}
