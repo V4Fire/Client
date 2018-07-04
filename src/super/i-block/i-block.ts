@@ -1332,27 +1332,27 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	/**
 	 * Returns an array of component classes by the specified parameters
 	 *
-	 * @param [blockName] - name of the source component
+	 * @param [componentName] - name of the source component
 	 * @param mods - map of modifiers
 	 */
-	getBlockClasses(blockName: string | undefined, mods: ModsTable): ReadonlyArray<string>;
+	getBlockClasses(componentName: string | undefined, mods: ModsTable): ReadonlyArray<string>;
 
 	/**
 	 * @param mods - map of modifiers
 	 */
 	getBlockClasses(mods: ModsTable): ReadonlyArray<string>;
-	getBlockClasses(blockName: string | undefined | ModsTable, mods?: ModsTable): ReadonlyArray<string> {
+	getBlockClasses(componentName: string | undefined | ModsTable, mods?: ModsTable): ReadonlyArray<string> {
 		if (arguments.length === 1) {
-			mods = <ModsTable>blockName;
-			blockName = undefined;
+			mods = <ModsTable>componentName;
+			componentName = undefined;
 
 		} else {
 			mods = <ModsTable>mods;
-			blockName = <string | undefined>blockName;
+			componentName = <string | undefined>componentName;
 		}
 
 		const
-			key = JSON.stringify(mods) + blockName,
+			key = JSON.stringify(mods) + componentName,
 			cache = classesCache.create('blocks', this.componentName);
 
 		if (cache[key]) {
@@ -1360,7 +1360,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 		}
 
 		const
-			classes = cache[key] = [this.getFullBlockName(blockName)];
+			classes = cache[key] = [this.getFullBlockName(componentName)];
 
 		for (let keys = Object.keys(mods), i = 0; i < keys.length; i++) {
 			const
@@ -1368,7 +1368,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 				val = mods[key];
 
 			if (val !== undefined) {
-				classes.push(this.getFullBlockName(blockName, key, val));
+				classes.push(this.getFullBlockName(componentName, key, val));
 			}
 		}
 
@@ -1826,23 +1826,23 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	/**
 	 * Returns a full name of the specified component
 	 *
-	 * @param [blockName]
+	 * @param [componentName]
 	 * @param [modName]
 	 * @param [modValue]
 	 */
-	protected getFullBlockName(blockName: string = this.componentName, modName?: string, modValue?: any): string {
-		return Block.prototype.getFullBlockName.call({blockName}, ...[].slice.call(arguments, 1));
+	protected getFullBlockName(componentName: string = this.componentName, modName?: string, modValue?: any): string {
+		return Block.prototype.getFullBlockName.call({componentName}, ...[].slice.call(arguments, 1));
 	}
 
 	/**
 	 * Returns a full name of the specified element
 	 *
-	 * @param blockName
+	 * @param componentName
 	 * @param elName
 	 * @param [modName]
 	 * @param [modValue]
 	 */
-	protected getFullElName(blockName: string, elName: string, modName?: string, modValue?: any): string;
+	protected getFullElName(componentName: string, elName: string, modName?: string, modValue?: any): string;
 
 	/**
 	 * @param elName
@@ -1850,15 +1850,15 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 * @param [modValue]
 	 */
 	protected getFullElName(elName: string, modName?: string, modValue?: any): string;
-	protected getFullElName(blockName: string, elName: string, modName?: string, modValue?: any): string {
+	protected getFullElName(componentName: string, elName: string, modName?: string, modValue?: any): string {
 		if (!{2: true, 4: true}[arguments.length]) {
 			modValue = modName;
 			modName = elName;
-			elName = blockName;
-			blockName = this.componentName;
+			elName = componentName;
+			componentName = this.componentName;
 		}
 
-		return Block.prototype.getFullElName.call({blockName}, elName, modName, modValue);
+		return Block.prototype.getFullElName.call({componentName}, elName, modName, modValue);
 	}
 
 	/**
@@ -1913,35 +1913,35 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	/**
 	 * Returns an array of element classes by the specified parameters
 	 *
-	 * @param blockNameOrCtx
+	 * @param componentNameOrCtx
 	 * @param els - map of elements with map of modifiers ({button: {focused: true}})
 	 */
-	protected getElClasses(blockNameOrCtx: string | iBlock, els: Dictionary<ModsTable>): ReadonlyArray<string>;
+	protected getElClasses(componentNameOrCtx: string | iBlock, els: Dictionary<ModsTable>): ReadonlyArray<string>;
 
 	/**
 	 * @param els - map of elements with map of modifiers ({button: {focused: true}})
 	 */
 	protected getElClasses(els: Dictionary<ModsTable>): ReadonlyArray<string>;
 	protected getElClasses(
-		blockNameOrCtx: string | iBlock | Dictionary<ModsTable>,
+		componentNameOrCtx: string | iBlock | Dictionary<ModsTable>,
 		els?: Dictionary<ModsTable>
 	): ReadonlyArray<string> {
 		let
 			id,
-			blockName;
+			componentName;
 
 		if (arguments.length === 1) {
 			id = this.componentId;
-			blockName = this.componentName;
-			els = <Dictionary<ModsTable>>blockNameOrCtx;
+			componentName = this.componentName;
+			els = <Dictionary<ModsTable>>componentNameOrCtx;
 
 		} else {
-			if (Object.isString(blockNameOrCtx)) {
-				blockName = blockNameOrCtx;
+			if (Object.isString(componentNameOrCtx)) {
+				componentName = componentNameOrCtx;
 
 			} else {
-				id = (<iBlock>blockNameOrCtx).componentId;
-				blockName = (<iBlock>blockNameOrCtx).componentName;
+				id = (<iBlock>componentNameOrCtx).componentId;
+				componentName = (<iBlock>componentNameOrCtx).componentName;
 			}
 		}
 
@@ -1951,7 +1951,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 
 		const
 			key = JSON.stringify(els),
-			cache = classesCache.create('els', id || blockName);
+			cache = classesCache.create('els', id || componentName);
 
 		if (cache[key]) {
 			return cache[key];
@@ -1966,7 +1966,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 				mods = els[el];
 
 			classes.push(
-				this.getFullElName(<string>blockName, el)
+				this.getFullElName(<string>componentName, el)
 			);
 
 			if (!Object.isObject(mods)) {
@@ -1979,7 +1979,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 					val = mods[key];
 
 				if (val !== undefined) {
-					classes.push(this.getFullElName(<string>blockName, el, key, val));
+					classes.push(this.getFullElName(<string>componentName, el, key, val));
 				}
 			}
 		}
@@ -2588,9 +2588,22 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 
 	/**
 	 * Returns an object with classes for elements of an another component
+	 *
+	 * @param componentName
 	 * @param classes - additional classes ({baseElementName: newElementName})
 	 */
-	protected provideClasses(classes?: Classes): Readonly<Dictionary<string>> {
+	protected provideClasses(componentName: string, classes?: Classes): Readonly<Dictionary<string>>;
+
+	/**
+	 * @param classes - additional classes ({baseElementName: newElementName})
+	 */
+	protected provideClasses(classes: Classes): Readonly<Dictionary<string>>;
+	protected provideClasses(componentName: string | Classes, classes?: Classes): Readonly<Dictionary<string>> {
+		if (!Object.isString(componentName)) {
+			classes = componentName;
+			componentName = this.componentName;
+		}
+
 		const
 			key = JSON.stringify(classes),
 			cache = classesCache.create('base');
@@ -2625,7 +2638,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 					}
 				}
 
-				map[key.dasherize()] = this.getFullElName.apply(this, (<any[]>[]).concat(el));
+				map[key.dasherize()] = this.getFullElName.apply(this, (<any[]>[componentName]).concat(el));
 			}
 		}
 
