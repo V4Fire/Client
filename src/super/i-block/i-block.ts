@@ -1397,7 +1397,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 		}
 
 		return Block.prototype.setMod.call(
-			this.createBlockShimFromNode(nodeOrName),
+			this.createBlockCtxFromNode(nodeOrName),
 			name,
 			value
 		);
@@ -1425,7 +1425,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 		}
 
 		return Block.prototype.removeMod.call(
-			this.createBlockShimFromNode(nodeOrName),
+			this.createBlockCtxFromNode(nodeOrName),
 			name,
 			value
 		);
@@ -1818,7 +1818,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 * Creates a fake context for a Block instance from the specified node
 	 * @param node
 	 */
-	protected createBlockShimFromNode(node: Element): Dictionary {
+	protected createBlockCtxFromNode(node: Element): Dictionary {
 		const
 			$el = <VueElement<iBlock>>node,
 			comp = $el.vueComponent,
