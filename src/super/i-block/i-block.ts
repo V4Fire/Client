@@ -1378,21 +1378,57 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	/**
 	 * Sets a component modifier
 	 *
+	 * @param node
 	 * @param name
 	 * @param value
 	 */
-	setMod(name: string, value: any): CanPromise<boolean> {
-		return this.execCbAfterBlockReady(() => this.block.setMod(name, value));
+	setMod(node: Element, name: string, value: any): CanPromise<boolean>;
+
+	/**
+	 * @param name
+	 * @param value
+	 */
+	setMod(name: string, value: any): CanPromise<boolean>;
+	setMod(nodeOrName: Element | string, name: string | any, value?: any): CanPromise<boolean> {
+		if (Object.isString(nodeOrName)) {
+			value = name;
+			name = nodeOrName;
+			return this.execCbAfterBlockReady(() => this.block.setMod(name, value));
+		}
+
+		return Block.prototype.setMod.call(
+			this.createBlockShimFromNode(nodeOrName),
+			name,
+			value
+		);
 	}
 
 	/**
 	 * Removes a component modifier
 	 *
+	 * @param node
 	 * @param name
 	 * @param [value]
 	 */
-	removeMod(name: string, value?: any): CanPromise<boolean> {
-		return this.execCbAfterBlockReady(() => this.block.removeMod(name, value));
+	removeMod(node: Element, name: string, value?: any): CanPromise<boolean>;
+
+	/**
+	 * @param name
+	 * @param [value]
+	 */
+	removeMod(name: string, value?: any): CanPromise<boolean>;
+	removeMod(nodeOrName: Element | string, name?: string | any, value?: any): CanPromise<boolean> {
+		if (Object.isString(nodeOrName)) {
+			value = name;
+			name = nodeOrName;
+			return this.execCbAfterBlockReady(() => this.block.removeMod(name, value));
+		}
+
+		return Block.prototype.removeMod.call(
+			this.createBlockShimFromNode(nodeOrName),
+			name,
+			value
+		);
 	}
 
 	/**
@@ -1776,6 +1812,26 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 		}, {
 			label: $$.accumulateTmpObj
 		})();
+	}
+
+	/**
+	 * Creates a fake context for a Block instance from the specified node
+	 * @param node
+	 */
+	protected createBlockShimFromNode(node: Element): Dictionary {
+		const
+			$el = <VueElement<iBlock>>node,
+			comp = $el.vueComponent,
+			componentName = comp ? comp.componentName : $C($el.className.match(/[bg]-[^_ ]+/)).get('0') || this.componentName;
+
+		return Object.assign(Object.create(Block.prototype), {
+			component: {
+				$el,
+				componentName,
+				localEvent: comp ? comp.localEvent : {emit(): void { /* loopback */ }},
+				mods: comp ? comp.mods : undefined
+			}
+		});
 	}
 
 	/**
