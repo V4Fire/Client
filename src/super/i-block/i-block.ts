@@ -46,7 +46,7 @@ import { queue, backQueue, restart, deferRestart } from 'core/render';
 import { delegate } from 'core/dom';
 
 import * as helpers from 'core/helpers';
-import * as browser from 'core/const/browser';
+import * as browser from 'core/browser';
 
 export * from 'core/component';
 export { default as Cache } from 'super/i-block/modules/cache';
