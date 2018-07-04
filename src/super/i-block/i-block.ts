@@ -118,15 +118,14 @@ export interface AsyncTaskObjectId {
 	filter?(id: AsyncTaskSimpleId): boolean;
 }
 
-export enum FieldsForParentMessageCheck {
-	instanceOf,
-	globalName,
-	componentName,
-	componentId
-}
+export type ParentMessageFields =
+	'instanceOf' |
+	'globalName' |
+	'componentName' |
+	'componentId';
 
 export interface ParentMessage {
-	check: [keyof (typeof FieldsForParentMessageCheck), any];
+	check: [ParentMessageFields, any];
 	action(this: iBlock): Function;
 }
 
