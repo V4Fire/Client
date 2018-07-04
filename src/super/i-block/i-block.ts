@@ -2068,7 +2068,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 					res = str && JSON.parse(str);
 
 				this.log('settings:load', () => Object.fastClone(res));
-				return str;
+				return res;
 
 			} catch (_) {}
 
