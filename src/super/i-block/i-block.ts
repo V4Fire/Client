@@ -1851,7 +1851,13 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 */
 	protected getFullElName(elName: string, modName?: string, modValue?: any): string;
 	protected getFullElName(blockName: string, elName: string, modName?: string, modValue?: any): string {
-		blockName = {2: true, 4: true}[arguments.length] ? blockName : this.componentName;
+		if (!{2: true, 4: true}[arguments.length]) {
+			modValue = modName;
+			modName = elName;
+			elName = blockName;
+			blockName = this.componentName;
+		}
+
 		return Block.prototype.getFullElName.call({blockName}, elName, modName, modValue);
 	}
 
