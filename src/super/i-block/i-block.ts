@@ -1821,8 +1821,11 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	protected createBlockCtxFromNode(node: Element): Dictionary {
 		const
 			$el = <VueElement<iBlock>>node,
-			comp = $el.vueComponent,
-			componentName = comp ? comp.componentName : $C($el.className.match(/[bg]-[^_ ]+/)).get('0') || this.componentName;
+			comp = $el.vueComponent;
+
+		const
+			rgxp = /(?:^| )[bg]-[^_ ]+(?: |$)/,
+			componentName = comp ? comp.componentName : $C(rgxp.exec($el.className)).get('0') || this.componentName;
 
 		return Object.assign(Object.create(Block.prototype), {
 			component: {
