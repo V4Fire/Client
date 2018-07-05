@@ -6,7 +6,6 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import $C = require('collection.js');
 import iBlock, { VueElement, ModsTable } from 'super/i-block/i-block';
 import { EventEmitter2 as EventEmitter } from 'eventemitter2';
 
