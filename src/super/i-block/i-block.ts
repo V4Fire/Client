@@ -1824,8 +1824,8 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 			comp = $el.vueComponent;
 
 		const
-			rgxp = /(?:^| )[bg]-[^_ ]+(?: |$)/,
-			componentName = comp ? comp.componentName : $C(rgxp.exec($el.className)).get('0') || this.componentName;
+			rgxp = /(?:^| )([bpg]-[^_ ]+)(?: |$)/,
+			componentName = comp ? comp.componentName : $C(rgxp.exec($el.className)).get('1') || this.componentName;
 
 		return Object.assign(Object.create(Block.prototype), {
 			component: {

@@ -267,10 +267,10 @@ export default class Block {
 			MOD_VALUE = 2;
 
 		const
-			rgxp = new RegExp(`(?:^| )${this.getFullBlockName(mod, '')}[^_ ]*`),
+			rgxp = new RegExp(`(?:^| )(${this.getFullBlockName(mod, '')}[^_ ]*)`),
 			el = rgxp.exec(this.node.className);
 
-		return el ? el[0].split('_')[MOD_VALUE] : undefined;
+		return el ? el[1].split('_')[MOD_VALUE] : undefined;
 	}
 
 	/**
@@ -361,9 +361,9 @@ export default class Block {
 			MOD_VALUE = 3;
 
 		const
-			rgxp = new RegExp(`(?:^| )${this.getFullElName(elName, modName, '')}[^_ ]*`),
+			rgxp = new RegExp(`(?:^| )(${this.getFullElName(elName, modName, '')}[^_ ]*)`),
 			el = rgxp.exec(link.className);
 
-		return el ? el[0].split(/_+/)[MOD_VALUE] : undefined;
+		return el ? el[1].split(/_+/)[MOD_VALUE] : undefined;
 	}
 }
