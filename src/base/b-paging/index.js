@@ -8,4 +8,4 @@
 
 package('b-paging')
 	.extends('i-block')
-	.dependencies('b-icon', 'b-select');
+	.dependencies('b-select');

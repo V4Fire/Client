@@ -30,12 +30,12 @@
 						@click.capture.stop = onSwitchDay(-1) |
 						v-if = m.theme === 'default' && !dayRange
 					.
-						< b-icon :value = 'keyboard_arrow_left'
+						+= self.gIcon('keyboard_arrow_left')
 
 				- block labelValue
 					< .&__cell.&__value
 						< .&__calendar-icon
-							< b-icon :value = 'calendar' | :mods = provideMods({size: 'xl'})
+							+= self.gIcon('calendar')
 
 						{{ labelText }}
 
@@ -44,7 +44,7 @@
 						@click.capture.stop = onSwitchDay(1) |
 						v-if = m.theme === 'default' && !dayRange
 					.
-						< b-icon :value = 'keyboard_arrow_right'
+						+= self.gIcon('keyboard_arrow_right')
 
 		- block dropdown
 			< .&__dropdown &
@@ -61,7 +61,7 @@
 								< .&__dropdown-controls
 									- block navPrev
 										< .&__cell.&__icon.&__prev @click = onSwitchMonth(-1)
-											< b-icon :value = 'keyboard_arrow_left'
+											+= self.gIcon('keyboard_arrow_left')
 
 									- block navValue
 										< .&__cell.&__value
@@ -69,7 +69,7 @@
 
 									- block navNext
 										< .&__cell.&__icon.&__next @click = onSwitchMonth(1)
-											< b-icon :value = 'keyboard_arrow_right'
+											+= self.gIcon('keyboard_arrow_right')
 
 								< .&__label-year
 									< template v-if = value.length > 1

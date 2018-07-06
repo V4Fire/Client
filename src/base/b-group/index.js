@@ -7,5 +7,4 @@
  */
 
 package('b-group')
-	.extends('i-data')
-	.dependencies('b-icon');
+	.extends('i-data');

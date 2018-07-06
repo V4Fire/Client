@@ -32,7 +32,7 @@ export default class bLink<T extends Dictionary = Dictionary> extends iData<T> {
 	 * Component for .preIcon
 	 */
 	@prop(String)
-	preIconComponent: string = 'b-icon';
+	preIconComponent?: string;
 
 	/**
 	 * Icon after text
@@ -44,7 +44,7 @@ export default class bLink<T extends Dictionary = Dictionary> extends iData<T> {
 	 * Component for .icon
 	 */
 	@prop(String)
-	iconComponent: string = 'b-icon';
+	iconComponent?: string;
 
 	/**
 	 * Tooltip text

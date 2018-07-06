@@ -16,7 +16,7 @@
 	- block body
 		- super
 		< .&__up
-			< b-icon :value = 'arrow_drop_up'
+			+= self.gIcon('arrow_drop_up')
 
 		< button:a.&__a
 			{{ `Up` }}

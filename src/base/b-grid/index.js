@@ -8,4 +8,4 @@
 
 package('b-grid')
 	.extends('i-data-pages')
-	.dependencies('b-icon', 'b-progress-icon', 'b-paging');
+	.dependencies('b-progress-icon', 'b-paging');

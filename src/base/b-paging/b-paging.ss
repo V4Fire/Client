@@ -24,9 +24,9 @@
 						@click = onFastJump(-1)
 					.
 						< .&__bias-right
-							< b-icon :value = 'keyboard_arrow_left'
+							+= self.gIcon('keyboard_arrow_left')
 
-						< b-icon :value = 'keyboard_arrow_left'
+						+= self.gIcon('keyboard_arrow_left')
 
 				- block switchLeft
 					< button:a.&__cell.&__step &
@@ -34,7 +34,7 @@
 						:class = getElClasses({state: {disabled: current === 1}}) |
 						@click = onSwitchPage(-1)
 					.
-						< b-icon :value = 'keyboard_arrow_left'
+						+= self.gIcon('keyboard_arrow_left')
 
 				- block strip
 					< button:a.&__cell.&__page &
@@ -59,7 +59,7 @@
 						:class = getElClasses({state: {disabled: current === pageCount}}) |
 						@click = onSwitchPage(1)
 					.
-						< b-icon :value = 'keyboard_arrow_right'
+						+= self.gIcon('keyboard_arrow_right')
 
 				- block jumpRight
 					< button:a.&__cell.&__fast-passage &
@@ -67,7 +67,7 @@
 						:class = getElClasses({state: {disabled: current === pageCount}}) |
 						@click = onFastJump(1)
 					.
-						< b-icon :value = 'keyboard_arrow_right'
+						+= self.gIcon('keyboard_arrow_right')
 
 						< .&__bias-left
-							< b-icon :value = 'keyboard_arrow_right'
+							+= self.gIcon('keyboard_arrow_right')

@@ -64,7 +64,7 @@ export default class bButton<T extends Dictionary = Dictionary> extends iData<T>
 	 * Component for .preIcon
 	 */
 	@prop(String)
-	readonly preIconComponent?: string = 'b-icon';
+	readonly preIconComponent?: string;
 
 	/**
 	 * Icon after text
@@ -76,7 +76,7 @@ export default class bButton<T extends Dictionary = Dictionary> extends iData<T>
 	 * Component for .icon
 	 */
 	@prop(String)
-	readonly iconComponent: string = 'b-icon';
+	readonly iconComponent?: string;
 
 	/**
 	 * Tooltip text

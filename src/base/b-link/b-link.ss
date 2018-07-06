@@ -20,12 +20,16 @@
 			< _.&__wrapper @click = onClick
 				- block preIcon
 					< _.&__cell.&__icon.&__pre-icon v-if = preIcon
-						< component &
+						< component.&__b-icon &
+							v-if = preIconComponent || hint |
 							:instanceOf = bIcon |
 							:is = preIconComponent |
-							:value = preIcon |
+							:value = preIcon || 'b-icon' |
 							:hint = hint
 						.
+
+						< template v-else
+							+= self.gIcon(['preIcon'], {'g-icon': {}})
 
 				- block link
 					< a.&__cell.&__link &
@@ -39,12 +43,16 @@
 
 				- block icon
 					< _.&__cell.&__icon.&__post-icon v-if = icon
-						< component &
+						< component.&__b-icon &
+							v-if = iconComponent || hint |
 							:instanceOf = bIcon |
-							:is = iconComponent |
+							:is = iconComponent || 'b-icon' |
 							:value = icon |
 							:hint = hint
 						.
+
+						< template v-else
+							+= self.gIcon(['icon'], {'g-icon': {}})
 
 				- block progress
 					< _.&__cell.&__icon.&__progress v-if = !isFunctional
