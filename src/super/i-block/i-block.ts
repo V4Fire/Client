@@ -260,6 +260,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	/**
 	 * Component stage store
 	 */
+	@p({cache: false})
 	get stage(): string | undefined {
 		return this.stageStore;
 	}
