@@ -14,10 +14,18 @@ const
 	$C = require('collection.js'),
 	EventEmitter = require('eventemitter2').EventEmitter2;
 
-async function buildFactory(entry, buildId = '00') {
+const
+	build = include('build/entities.webpack'),
+	buildEvent = new EventEmitter({maxListeners: build.MAX_PROCESS});
+
+async function buildFactory(entry, buildId) {
 	const
 		plugins = await include('build/plugins.webpack')({buildId}),
 		modules = await include('build/module.webpack')({buildId, plugins});
+
+	if (build.STD === buildId) {
+		$C(entry).set((el) => [].concat(el));
+	}
 
 	return {
 		entry,
@@ -35,10 +43,6 @@ async function buildFactory(entry, buildId = '00') {
 		devtool: await include('build/devtool.webpack')
 	};
 }
-
-const
-	build = include('build/entities.webpack'),
-	buildEvent = new EventEmitter({maxListeners: build.MAX_PROCESS});
 
 const predefinedTasks = $C(build.MAX_PROCESS).map((el, buildId) => new Promise((resolve) => {
 	buildEvent.once(`build.${buildId}`, resolve);
