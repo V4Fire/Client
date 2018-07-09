@@ -72,7 +72,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 			return this.fatHTML ? false : 4096;
 		},
 
-		stdOutput(params) {
+		dllOutput(params) {
 			return this.output(params);
 		},
 

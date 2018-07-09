@@ -40,9 +40,9 @@ exports.buildCache = path.join(src.cwd(), 'app-cache');
 exports.stdCache = path.join(src.cwd(), 'app-std-cache');
 
 /**
- * Path to std-manifest.json
+ * Path to dll-manifest.json
  */
-exports.stdManifest = path.join(src.clientOutput(), webpack.stdOutput({name: 'std-manifest.json', hash: null}));
+exports.dllManifest = path.join(src.clientOutput(), webpack.dllOutput({name: 'dll-manifest.json', hash: null}));
 
 /**
  * Path to assets.json

@@ -11,19 +11,16 @@
 const
 	$C = require('collection.js'),
 	webpack = require('webpack'),
-	config = require('config');
-
-const
-	path = require('path'),
-	fs = require('fs-extra-promise');
+	config = require('config'),
+	path = require('path');
 
 const
 	HardSourceWebpackPlugin = require('hard-source-webpack-plugin'),
 	build = include('build/entities.webpack');
 
 const
-	{src, webpack: wp} = config,
-	{buildCache, stdCache, stdManifest, hash} = include('build/build.webpack');
+	{webpack: wp} = config,
+	{buildCache, stdCache} = include('build/build.webpack');
 
 /**
  * Returns a list of webpack plugins
@@ -33,7 +30,6 @@ const
  */
 module.exports = async function ({buildId}) {
 	const
-		context = src.cwd(),
 		isSTD = buildId === build.STD,
 		graph = await build;
 
@@ -41,20 +37,6 @@ module.exports = async function ({buildId}) {
 		['globals', new webpack.DefinePlugin(include('build/globals.webpack'))],
 		['dependencies', include('build/dependencies.webpack')({graph})]
 	]);
-
-	if (isSTD) {
-		plugins.set('stdDLL', new webpack.DllPlugin({
-			context,
-			name: hash(src.output()),
-			path: stdManifest,
-		}));
-
-	} else if (stdManifest && fs.existsSync(stdManifest)) {
-		plugins.set('stdDLLReference', new webpack.DllReferencePlugin({
-			context,
-			manifest: stdManifest
-		}));
-	}
 
 	if (wp.longCache()) {
 		const expandConfig = (config, obj) => {
