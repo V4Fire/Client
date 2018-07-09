@@ -17,7 +17,10 @@ const
 
 async function buildFactory(entry, buildId = '00') {
 	const
-		plugins = await include('build/plugins.webpack')({buildId}),
+		isSTD = $C(entry).some((el, key) => /std\.js$/.test(key));
+
+	const
+		plugins = await include('build/plugins.webpack')({buildId, isSTD}),
 		modules = await include('build/module.webpack')({buildId, plugins});
 
 	return {

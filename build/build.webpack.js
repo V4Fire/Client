@@ -35,6 +35,11 @@ exports.output = hash(r(webpack.output()));
 exports.buildCache = path.join(src.cwd(), 'app-cache');
 
 /**
+ * STD build cache folder
+ */
+exports.stdCache = path.join(src.cwd(), 'app-std-cache');
+
+/**
  * Path to assets.json
  */
 exports.assetsJSON = path.join(src.clientOutput(), webpack.assetsJSON());
