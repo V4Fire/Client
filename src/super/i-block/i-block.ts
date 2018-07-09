@@ -260,26 +260,6 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	/**
 	 * Component stage store
 	 */
-	@field((o) => o.link((v) => {
-		o.execCbAfterCreated(() => {
-			const
-				old = o.stageStore;
-
-			if (v === old) {
-				return;
-			}
-
-			o.emit('stageChange', v, old);
-		});
-
-		return v;
-	}))
-
-	stageStore?: string;
-
-	/**
-	 * Component stage store
-	 */
 	get stage(): string | undefined {
 		return this.stageStore;
 	}
@@ -572,6 +552,26 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	protected get getIconLink(): typeof iBlock.getIconLink {
 		return (<typeof iBlock>this.instance.constructor).getIconLink;
 	}
+
+	/**
+	 * Component stage store
+	 */
+	@field((o) => o.link((v) => {
+		o.execCbAfterCreated(() => {
+			const
+				old = o.stageStore;
+
+			if (v === old) {
+				return;
+			}
+
+			o.emit('stageChange', v, old);
+		});
+
+		return v;
+	}))
+
+	protected stageStore?: string;
 
 	/**
 	 * Number of beforeReady event listeners
