@@ -258,10 +258,47 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	readonly weight?: number;
 
 	/**
-	 * Component stage
+	 * Component stage store
 	 */
-	@field((o) => o.link())
-	stage?: string;
+	@field((o) => o.link((v) => {
+		o.execCbAfterCreated(() => {
+			const
+				old = o.stageStore;
+
+			if (v === old) {
+				return;
+			}
+
+			o.emit('stageChange', v, old);
+		});
+
+		return v;
+	}))
+
+	stageStore?: string;
+
+	/**
+	 * Component stage store
+	 */
+	get stage(): string | undefined {
+		return this.stageStore;
+	}
+
+	/**
+	 * Sets a new component stage
+	 * @emits stageChange(value?: string, oldValue?: string)
+	 */
+	set stage(value: string | undefined) {
+		const
+			oldValue = this.stage;
+
+		if (oldValue === value) {
+			return;
+		}
+
+		this.stageStore = value;
+		this.emit('stageChange', value, oldValue);
+	}
 
 	/**
 	 * Group name for the current stage
@@ -2632,17 +2669,6 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	@watch({field: 'asyncBackComponents', deep: true})
 	protected syncAsyncComponentsWatcher(): void {
 		this.emit('asyncRender');
-	}
-
-	/**
-	 * Synchronization for the stage field
-	 *
-	 * @param value
-	 * @param oldValue
-	 */
-	@watch({field: 'stage', immediate: true})
-	protected syncStageWatcher(value: string, oldValue: string | undefined): void {
-		this.emit('stageChange', value, oldValue);
 	}
 
 	/**
