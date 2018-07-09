@@ -15,7 +15,10 @@ const
 
 const
 	{resolve} = require('@pzlr/build-core'),
-	{output, hash, assetsJSON, inherit, depsRgxpStr} = include('build/build.webpack'),
+	{output, hash, assetsJSON, inherit, depsRgxpStr} = include('build/build.webpack');
+
+const
+	build = include('build/entities.webpack'),
 	depsRgxp = new RegExp(`(?:^|/)node_modules/(?:(?!${depsRgxpStr}).)*?(?:/|$)`);
 
 const
@@ -36,18 +39,10 @@ const fileLoaderOpts = inherit({name: hash('[path][hash]_[name].[ext]')}, {
  */
 module.exports = async function ({buildId, plugins}) {
 	const
-		build = await include('build/entities.webpack');
+		graph = await build,
+		loaders = {rules: new Map()};
 
-	const base = {
-		'0': true,
-		'00': true
-	}[buildId];
-
-	const loaders = {
-		rules: new Map()
-	};
-
-	if (base) {
+	if (buildId === build.RUNTIME) {
 		loaders.rules.set('ts', {
 			test: /^(?:(?!\/workers\/).)*\.ts$/,
 			exclude: depsRgxp,
@@ -189,7 +184,7 @@ module.exports = async function ({buildId, plugins}) {
 					options: inherit(snakeskin.server, {
 						exec: true,
 						vars: {
-							dependencies: build.dependencies,
+							dependencies: graph.dependencies,
 							assetsJSON
 						}
 					})

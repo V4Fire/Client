@@ -12,15 +12,11 @@ require('config');
 
 const
 	$C = require('collection.js'),
-	EventEmitter = require('eventemitter2').EventEmitter2,
-	config = require('config');
+	EventEmitter = require('eventemitter2').EventEmitter2;
 
 async function buildFactory(entry, buildId = '00') {
 	const
-		isSTD = $C(entry).some((el, key) => /std\.js$/.test(key));
-
-	const
-		plugins = await include('build/plugins.webpack')({buildId, isSTD}),
+		plugins = await include('build/plugins.webpack')({buildId}),
 		modules = await include('build/module.webpack')({buildId, plugins});
 
 	return {
@@ -53,11 +49,8 @@ const tasks = (async () => {
 	await include('build/snakeskin.webpack');
 
 	const
-		graph = await build;
-
-	const tasks = global.WEBPACK_CONFIG = await (
-		config.build.single ? buildFactory(graph.entry) : $C(graph.processes).async.map((el, i) => buildFactory(el, i))
-	);
+		graph = await build,
+		tasks = global.WEBPACK_CONFIG = await $C(graph.processes).async.map((el, i) => buildFactory(el, i));
 
 	$C(tasks).forEach((config, i) => {
 		buildEvent.emit(`build.${i}`, config);

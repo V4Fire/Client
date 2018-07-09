@@ -22,17 +22,17 @@ const
 /**
  * WebPack plugin for .dependencies.js files and assets.js
  *
- * @param {{entry, processes, dependencies}} build - build object
+ * @param {{entry, processes, dependencies}} graph - build object
  * @returns {!Function}
  */
-module.exports = function ({build}) {
+module.exports = function ({graph}) {
 	return {
 		apply(compiler) {
 			compiler.hooks.emit.tap('DependenciesPlugin', (compilation) => {
 				const
 					manifest = {};
 
-				$C(build.dependencies).forEach((el, key) => {
+				$C(graph.dependencies).forEach((el, key) => {
 					const
 						content = `ModuleDependencies.add("${key}", ${JSON.stringify([...el])});`,
 						name = `${key}.dependencies`;

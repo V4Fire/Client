@@ -14,7 +14,8 @@ const
 	config = require('config');
 
 const
-	HardSourceWebpackPlugin = require('hard-source-webpack-plugin');
+	HardSourceWebpackPlugin = require('hard-source-webpack-plugin'),
+	build = include('build/entities.webpack');
 
 const
 	{buildCache, stdCache} = include('build/build.webpack');
@@ -22,17 +23,17 @@ const
 /**
  * Returns a list of webpack plugins
  *
- * @param {(number|string)} buildId - build id
- * @param {boolean} isSTD
+ * @param {number} buildId - build id
  * @returns {Map}
  */
-module.exports = async function ({buildId, isSTD}) {
+module.exports = async function ({buildId}) {
 	const
-		build = await include('build/entities.webpack');
+		isSTD = buildId === build.STD,
+		graph = await build;
 
 	const plugins = new Map([
 		['globals', new webpack.DefinePlugin(include('build/globals.webpack'))],
-		['dependencies', include('build/dependencies.webpack')({build})]
+		['dependencies', include('build/dependencies.webpack')({graph})]
 	]);
 
 	if (!isProd) {

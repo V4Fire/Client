@@ -13,7 +13,8 @@ const
 	UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 
 const
-	{inherit, depsRgxpStr} = include('build/build.webpack');
+	{inherit, depsRgxpStr} = include('build/build.webpack'),
+	{RUNTIME} = include('build/entities.webpack');
 
 const
 	excludeCustomNodeModules = new RegExp(`(?:^|/)node_modules/(?:${depsRgxpStr})(?:/|$)|^(?:(?!(?:^|/)node_modules/).)*$`),
@@ -22,19 +23,14 @@ const
 /**
  * Returns a list of webpack optimizations
  *
- * @param {(number|string)} buildId - build id
+ * @param {number} buildId - build id
  * @returns {Array}
  */
 module.exports = async function ({buildId}) {
-	const base = {
-		'0': true,
-		'00': true
-	}[buildId];
-
 	const
 		options = {};
 
-	if (base) {
+	if (buildId === RUNTIME) {
 		options.runtimeChunk = {
 			name: 'webpack.runtime.js'
 		};
