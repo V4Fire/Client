@@ -7,4 +7,5 @@
  */
 
 package('b-icon-checkbox')
-	.extends('b-checkbox');
+	.extends('b-checkbox')
+	.dependencies('b-icon');

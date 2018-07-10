@@ -10,6 +10,7 @@
 
 $p = {
 	lockHelpers: true
+	sizeHelpers: true
 	messageHelpers: true
 	dropdownHelpers: true
 	width: auto
@@ -22,7 +23,7 @@ b-button extends i-data
 	&_upper_true &__button
 		text-transform uppercase
 
-	&_width_full &__button,
+	&_width_full &__button
 	&_width_full &__value
 		width 100%
 
@@ -32,8 +33,8 @@ b-button extends i-data
 	&__root-wrapper
 		flex-direction column
 
-	&__root-wrapper,
-	&__button,
+	&__root-wrapper
+	&__button
 	&__wrapper
 		display flex
 		box-sizing border-box
@@ -58,7 +59,7 @@ b-button extends i-data
 		align-items center
 		justify-content center
 
-	&__cell,
+	&__cell
 	&_progress_true &__progress
 		display flex
 
@@ -71,3 +72,7 @@ b-button extends i-data
 
 	&__dropdown &__dropdown-content
 		padding 0
+
+	&__g-icon
+		display inline-block
+		size 100%

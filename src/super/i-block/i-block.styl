@@ -11,6 +11,7 @@
 
 $p = {
 	lockHelpers: false
+	sizeHelpers: false
 
 	onActive: {
 		transform: translate(1px, 1px)
@@ -30,10 +31,11 @@ i-block
 		position @position
 		box-sizing @box-sizing
 
-	&_size
-		for $key, $value in $p.sizes.table
-			&_{$key}
-				font-size "%s%s" % ($value $p.sizes.units)
+	if $p.sizeHelpers
+		&_size
+			for $key, $value in $p.sizes.table
+				&_{$key}
+					font-size "%s%s" % ($value $p.sizes.units)
 
 	&_width
 		&_full
@@ -46,15 +48,15 @@ i-block
 		display none !important
 
 	if $p.lockHelpers
-		&_disabled_true,
+		&_disabled_true
 		&_progress_true
 			pointer-events none
 
-		&_disabled_true &__over-wrapper,
+		&_disabled_true &__over-wrapper
 		&_progress_true &__over-wrapper
 			display block
 
-		&_disabled_true &__root-wrapper,
+		&_disabled_true &__root-wrapper
 		&_progress_true &__root-wrapper
 			cursor default
 

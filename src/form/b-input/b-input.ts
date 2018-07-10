@@ -88,7 +88,7 @@ export default class bInput<T extends Dictionary = Dictionary> extends iInput<T>
 	 * Component for .preIcon
 	 */
 	@prop(String)
-	readonly preIconComponent: string = 'b-icon';
+	readonly preIconComponent?: string;
 
 	/**
 	 * Tooltip text for the preIcon
@@ -112,7 +112,7 @@ export default class bInput<T extends Dictionary = Dictionary> extends iInput<T>
 	 * Component for .icon
 	 */
 	@prop(String)
-	readonly iconComponent: string = 'b-icon';
+	readonly iconComponent?: string;
 
 	/**
 	 * Tooltip text for the icon

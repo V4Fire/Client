@@ -37,12 +37,16 @@
 					.
 						- block preIcon
 							< span.&__cell.&__link-icon.&__link-pre-icon v-if = el.preIcon
-								< component &
+								< component.&__b-icon &
+									v-if = el.preIconComponent || el.preIconHint |
 									:instanceOf = bIcon |
 									:is = el.preIconComponent || 'b-icon' |
 									:value = el.preIcon |
 									:hint = el.preIconHint
 								.
+
+								< template v-else
+									+= self.gIcon(['el.preIcon'], {'g-icon': {}})
 
 						- block text
 							< span.&__cell.&__link-text v-if = !hideLabels
@@ -54,12 +58,16 @@
 
 						- block icon
 							< span.&__cell.&__link-icon.&__link-post-icon v-if = el.icon
-								< component &
+								< component.&__b-icon &
+									v-if = el.iconComponent || el.iconHint || hideLabels |
 									:instanceOf = bIcon |
 									:is = el.iconComponent || 'b-icon' |
 									:value = el.icon |
 									:hint = el.iconHint || (hideLabels ? t(el.label) : undefined)
 								.
+
+								< template v-else
+									+= self.gIcon(['el.icon'], {'g-icon': {}})
 
 						- block progress
 							< span.&__cell.&__link-icon.&__link-progress v-if = !isFunctional

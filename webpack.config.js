@@ -12,13 +12,20 @@ require('config');
 
 const
 	$C = require('collection.js'),
-	EventEmitter = require('eventemitter2').EventEmitter2,
-	config = require('config');
+	EventEmitter = require('eventemitter2').EventEmitter2;
 
-async function buildFactory(entry, buildId = '00') {
+const
+	build = include('build/entities.webpack'),
+	buildEvent = new EventEmitter({maxListeners: build.MAX_PROCESS});
+
+async function buildFactory(entry, buildId) {
 	const
 		plugins = await include('build/plugins.webpack')({buildId}),
 		modules = await include('build/module.webpack')({buildId, plugins});
+
+	if (build.STD === buildId) {
+		$C(entry).set((el) => [].concat(el));
+	}
 
 	return {
 		entry,
@@ -37,10 +44,6 @@ async function buildFactory(entry, buildId = '00') {
 	};
 }
 
-const
-	build = include('build/entities.webpack'),
-	buildEvent = new EventEmitter({maxListeners: build.MAX_PROCESS});
-
 const predefinedTasks = $C(build.MAX_PROCESS).map((el, buildId) => new Promise((resolve) => {
 	buildEvent.once(`build.${buildId}`, resolve);
 	buildEvent.once(`build.all`, () => resolve(include('build/empty.webpack')({buildId})));
@@ -50,11 +53,8 @@ const tasks = (async () => {
 	await include('build/snakeskin.webpack');
 
 	const
-		graph = await build;
-
-	const tasks = global.WEBPACK_CONFIG = await (
-		config.build.single ? buildFactory(graph.entry) : $C(graph.processes).async.map((el, i) => buildFactory(el, i))
-	);
+		graph = await build,
+		tasks = global.WEBPACK_CONFIG = await $C(graph.processes).async.map((el, i) => buildFactory(el, i));
 
 	$C(tasks).forEach((config, i) => {
 		buildEvent.emit(`build.${i}`, config);

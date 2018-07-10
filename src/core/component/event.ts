@@ -6,6 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import log from 'core/log';
 import { EventEmitter2 as EventEmitter } from 'eventemitter2';
 
 const event = new EventEmitter({
@@ -24,6 +25,7 @@ export type ResetType =
  */
 export function reset(type?: ResetType): void {
 	event.emit(type ? `reset.${type}` : 'reset');
+	log(`global:event:${type}`);
 }
 
 export default event;

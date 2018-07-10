@@ -8,4 +8,4 @@
 
 package('b-button')
 	.extends('i-data')
-	.dependencies('b-icon', 'b-progress-icon');
+	.dependencies('b-progress-icon');

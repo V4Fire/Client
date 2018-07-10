@@ -6,7 +6,6 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import $C = require('collection.js');
 import iBlock, { VueElement, ModsTable } from 'super/i-block/i-block';
 import { EventEmitter2 as EventEmitter } from 'eventemitter2';
 
@@ -87,7 +86,7 @@ export default class Block {
 	/**
 	 * List of applied modifiers
 	 */
-	readonly mods: Dictionary<string | undefined>;
+	readonly mods?: Dictionary<string | undefined>;
 
 	/**
 	 * iBlock instance
@@ -188,11 +187,14 @@ export default class Block {
 		value = String(value).dasherize();
 
 		const
-			prev = this.mods[name];
+			prev = this.getMod(name);
 
 		if (prev !== value) {
 			this.removeMod(name, undefined, 'setMod');
-			this.mods[name] = value;
+
+			if (this.mods) {
+				this.mods[name] = value;
+			}
 
 			if (reason !== 'initSetMod') {
 				this.node.classList.add(this.getFullBlockName(name, value));
@@ -226,11 +228,16 @@ export default class Block {
 		value = value !== undefined ? String(value).dasherize() : undefined;
 
 		const
-			current = this.mods[name];
+			current = this.getMod(name);
 
 		if (current !== undefined && (value === undefined || current === value)) {
-			this.mods[name] = undefined;
-			this.node.classList.remove(this.getFullBlockName(name, current));
+			if (this.mods) {
+				this.mods[name] = undefined;
+			}
+
+			this.node.classList.remove(
+				this.getFullBlockName(name, current)
+			);
 
 			const event = <Event>{
 				event: 'block.mod.remove',
@@ -252,7 +259,18 @@ export default class Block {
 	 * @param mod
 	 */
 	getMod(mod: string): string | undefined {
-		return this.mods[mod.camelize(false)];
+		if (this.mods) {
+			return this.mods[mod.camelize(false)];
+		}
+
+		const
+			MOD_VALUE = 2;
+
+		const
+			rgxp = new RegExp(`(?:^| )(${this.getFullBlockName(mod, '')}[^_ ]*)`),
+			el = rgxp.exec(this.node.className);
+
+		return el ? el[1].split('_')[MOD_VALUE] : undefined;
 	}
 
 	/**
@@ -343,9 +361,9 @@ export default class Block {
 			MOD_VALUE = 3;
 
 		const
-			rgxp = new RegExp(`^${this.getFullElName(elName)}_${modName}_`),
-			el = $C(link.classList).one.get((el) => rgxp.test(el));
+			rgxp = new RegExp(`(?:^| )(${this.getFullElName(elName, modName, '')}[^_ ]*)`),
+			el = rgxp.exec(link.className);
 
-		return el && el.split(/_+/)[MOD_VALUE];
+		return el ? el[1].split(/_+/)[MOD_VALUE] : undefined;
 	}
 }

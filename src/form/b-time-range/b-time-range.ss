@@ -22,7 +22,7 @@
 			< .&__value @click = focus(), toggle()
 				- block preIcon
 					< .&__cell.&__icon.&__pre-icon
-						< b-icon :value = 'timelapse'
+						+= self.gIcon('timelapse')
 
 				< .&__cell.&__time v-if = m.empty !== 'true'
 					- block input

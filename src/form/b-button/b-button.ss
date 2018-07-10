@@ -31,11 +31,15 @@
 				< _.&__wrapper
 					- block preIcon
 						< _.&__cell.&__icon.&__pre-icon v-if = preIcon
-							< component &
+							< component.&__b-icon &
+								v-if = preIconComponent |
 								:instanceOf = bIcon |
 								:is = preIconComponent |
 								:value = preIcon
 							.
+
+							< template v-else
+								+= self.gIcon(['preIcon'], {'g-icon': {}})
 
 					- block value
 						< _.&__cell.&__value
@@ -43,15 +47,19 @@
 
 					- block expand
 						< _.&__cell.&__icon.&__expand v-if = $slots.dropdown
-							< b-icon :value = 'expand_more' | v-once
+							+= self.gIcon('expand_more')
 
 					- block icon
 						< _.&__cell.&__icon.&__post-icon v-if = icon
-							< component &
-								:instanceOf = icon |
+							< component.&__b-icon &
+								v-if = iconComponent |
+								:instanceOf = bIcon |
 								:is = iconComponent |
 								:value = icon
 							.
+
+							< template v-else
+								+= self.gIcon(['icon'], {'g-icon': {}})
 
 					- block progress
 						< _.&__cell.&__icon.&__progress v-if = !isFunctional

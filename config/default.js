@@ -16,10 +16,6 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	__proto__: config,
 
 	build: {
-		single: o('single-build', {
-			env: true
-		}),
-
 		entries: o('entries', {
 			env: true,
 			short: 'e',
@@ -57,6 +53,13 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		fatHTML: false,
 		devtool: false,
 
+		longCache() {
+			return o('long-cache', {
+				default: !isProd,
+				type: 'boolean'
+			});
+		},
+
 		cacheDir() {
 			return '[confighash]';
 		},
@@ -69,9 +72,13 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 			return this.fatHTML ? false : 4096;
 		},
 
+		dllOutput(params) {
+			return this.output(params);
+		},
+
 		output(params) {
 			const
-				res = this.fatHTML ? '[name]' : '[hash]_[name]';
+				res = !isProd || this.fatHTML ? '[name]' : '[hash]_[name]';
 
 			if (params) {
 				return res.replace(/\[(.*?)]/g, (str, key) => {

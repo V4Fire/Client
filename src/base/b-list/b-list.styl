@@ -13,7 +13,7 @@ $p = {
 }
 
 b-list extends i-data
-	&__wrapper,
+	&__wrapper
 	&__link
 		display flex
 		align-items center
@@ -21,16 +21,20 @@ b-list extends i-data
 	&__cell
 		display flex
 
-	&__el,
+	&__el
 	&__link
 		position relative
 
 	&__link:active
 		{$p.onActive}
 
-	&__el,
+	&__el
 	&__link_progress_true &__link-progress
 		display block
 
 	&__link-progress
 		display none
+
+	&__g-icon
+		display inline-block
+		size 100%

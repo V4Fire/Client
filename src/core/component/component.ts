@@ -7,8 +7,11 @@
  */
 
 // tslint:disable:max-file-line-count
-import Async from 'core/async';
+
+import log from 'core/log';
 import state from 'core/component/state';
+import Async from 'core/async';
+
 import Vue, { ComponentOptions, FunctionalComponentOptions } from 'vue';
 import { ComponentField, ComponentMeta, VueInterface } from 'core/component';
 
@@ -443,6 +446,13 @@ export function initDataObject(
  */
 export async function runHook(hook: string, meta: ComponentMeta, ctx: Dictionary, ...args: any[]): Promise<void> {
 	ctx.hook = hook;
+
+	if (ctx.log) {
+		ctx.log(`hook:${hook}`, ...args);
+
+	} else {
+		log(`component:hook:${meta.componentName}:${hook}`, ...args, ctx);
+	}
 
 	if (!meta.hooks[hook].length) {
 		return;

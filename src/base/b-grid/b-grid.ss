@@ -32,7 +32,7 @@
 				:class = getElClasses({dir: {active: requestParams.get.sort === '${field}'}}) |
 				-value = ${field}
 			.
-				< b-icon :value = 'expand_' + (requestParams.get.dir === 'desc' ? 'more' : 'less')
+				+= self.gIcon(["'expand_' + (requestParams.get.dir === 'desc' ? 'more' : 'less')"], {'dir-icon': {}})
 
 		/**
 		 * Returns th declaration for a table

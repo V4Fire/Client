@@ -10,13 +10,14 @@
 
 $p = {
 	lockHelpers: true
+	sizeHelpers: true
 	messageHelpers: true
 }
 
 b-link extends i-data
 	display inline-block
 
-	&__root-wrapper,
+	&__root-wrapper
 	&__wrapper
 		display flex
 		box-sizing border-box
@@ -44,3 +45,7 @@ b-link extends i-data
 
 		&:active
 			{$p.onActive}
+
+	&__g-icon
+		display inline-block
+		size 100%

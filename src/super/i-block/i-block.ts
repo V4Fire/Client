@@ -258,10 +258,28 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	readonly weight?: number;
 
 	/**
-	 * Component stage
+	 * Component stage store
 	 */
-	@field((o) => o.link())
-	stage?: string;
+	@p({cache: false})
+	get stage(): string | undefined {
+		return this.stageStore;
+	}
+
+	/**
+	 * Sets a new component stage
+	 * @emits stageChange(value?: string, oldValue?: string)
+	 */
+	set stage(value: string | undefined) {
+		const
+			oldValue = this.stage;
+
+		if (oldValue === value) {
+			return;
+		}
+
+		this.stageStore = value;
+		this.emit('stageChange', value, oldValue);
+	}
 
 	/**
 	 * Group name for the current stage
@@ -298,28 +316,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 * Advanced component parameters
 	 */
 	@prop(Object)
-	readonly pProp: Dictionary = {};
-
-	/**
-	 * Advanced component parameters internal storage
-	 */
-	@system()
-	protected pStore: Dictionary = {};
-
-	/**
-	 * Returns the internal advanced parameters store value
-	 * @returns {Dictionary}
-	 */
-	get p(): Dictionary {
-		return this.pStore;
-	}
-
-	/**
-	 * Sets the internal advanced parameters store value
-	 */
-	set p(val) {
-		this.pStore = val;
-	}
+	readonly p: Dictionary = {};
 
 	/**
 	 * True if the current component is activated (keep-alive)
@@ -556,6 +553,26 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	protected get getIconLink(): typeof iBlock.getIconLink {
 		return (<typeof iBlock>this.instance.constructor).getIconLink;
 	}
+
+	/**
+	 * Component stage store
+	 */
+	@field((o) => o.link((v) => {
+		o.execCbAfterCreated(() => {
+			const
+				old = o.stageStore;
+
+			if (v === old) {
+				return;
+			}
+
+			o.emit('stageChange', v, old);
+		});
+
+		return v;
+	}))
+
+	protected stageStore?: string;
 
 	/**
 	 * Number of beforeReady event listeners
@@ -1842,8 +1859,11 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	protected createBlockCtxFromNode(node: Element): Dictionary {
 		const
 			$el = <VueElement<iBlock>>node,
-			comp = $el.vueComponent,
-			componentName = comp ? comp.componentName : $C($el.className.match(/[bg]-[^_ ]+/)).get('0') || this.componentName;
+			comp = $el.vueComponent;
+
+		const
+			rgxp = /(?:^| )([bpg]-[^_ ]+)(?: |$)/,
+			componentName = comp ? comp.componentName : $C(rgxp.exec($el.className)).get('1') || this.componentName;
 
 		return Object.assign(Object.create(Block.prototype), {
 			component: {
@@ -2653,17 +2673,6 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	}
 
 	/**
-	 * Synchronization for the stage field
-	 *
-	 * @param value
-	 * @param oldValue
-	 */
-	@watch({field: 'stage', immediate: true})
-	protected syncStageWatcher(value: string, oldValue: string | undefined): void {
-		this.emit('stageChange', value, oldValue);
-	}
-
-	/**
 	 * Returns an object with classes for elements of an another component
 	 *
 	 * @param componentName
@@ -2803,7 +2812,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	@hook('beforeCreate')
 	protected initParentListener(): CanPromise<any> {
 		if (this.$parent) {
-			this.async.on(this.$parent, 'callChild', (component: iBlock, {check, action}: ParentMessage) => {
+			this.$parent.on('callChild', (component: iBlock, {check, action}: ParentMessage) => {
 				if (
 					check[0] !== 'instanceOf' && check[1] === this[check[0]] ||
 					check[0] === 'instanceOf' && this.instance instanceof check[1]

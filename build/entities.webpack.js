@@ -22,10 +22,10 @@ const
 	isFastBuild = build.fast();
 
 const
-	RUNTIME = 0,
-	STD = 1,
+	STD = 0,
+	RUNTIME = 1,
 	HTML = 2,
-	I = [RUNTIME, STD, HTML].length;
+	I = [STD, RUNTIME, HTML].length;
 
 const
 	RCPU = require('os').cpus().length,
@@ -249,7 +249,7 @@ module.exports = (async () => {
 	processes.splice(HTML, 1);
 
 	$C(processes)
-		.remove((obj) => !$C(obj).length());
+		.remove((obj, i) => i >= I.length && !$C(obj).length());
 
 	const res = {
 		entry,
@@ -263,4 +263,9 @@ module.exports = (async () => {
 	return res;
 })();
 
-module.exports.MAX_PROCESS = MAX_PROCESS;
+Object.assign(module.exports, {
+	STD,
+	RUNTIME,
+	HTML,
+	MAX_PROCESS,
+});

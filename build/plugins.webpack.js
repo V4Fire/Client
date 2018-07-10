@@ -9,36 +9,69 @@
  */
 
 const
-	path = require('path'),
+	$C = require('collection.js'),
 	webpack = require('webpack'),
-	config = require('config');
+	config = require('config'),
+	path = require('path');
 
 const
-	HardSourceWebpackPlugin = require('hard-source-webpack-plugin');
+	HardSourceWebpackPlugin = require('hard-source-webpack-plugin'),
+	build = include('build/entities.webpack');
 
 const
-	{buildCache} = include('build/build.webpack');
+	{webpack: wp} = config,
+	{buildCache, stdCache} = include('build/build.webpack');
 
 /**
  * Returns a list of webpack plugins
  *
- * @param {(number|string)} buildId - build id
+ * @param {number} buildId - build id
  * @returns {Map}
  */
 module.exports = async function ({buildId}) {
 	const
-		build = await include('build/entities.webpack');
+		isSTD = buildId === build.STD,
+		graph = await build;
 
 	const plugins = new Map([
 		['globals', new webpack.DefinePlugin(include('build/globals.webpack'))],
-		['dependencies', include('build/dependencies.webpack')({build})]
+		['dependencies', include('build/dependencies.webpack')({graph})]
 	]);
 
-	if (!isProd) {
+	if (wp.longCache()) {
+		const expandConfig = (config, obj) => {
+			$C(obj).forEach((el, key) => {
+				if (Object.isFunction(el)) {
+					if (!el.length) {
+						try {
+							config[key] = el.call(obj);
+
+						} catch (_) {}
+					}
+
+				} else if (Object.isObject(el)) {
+					config[key] = {};
+					config[key] = expandConfig(config[key], el);
+
+				} else if (Object.isArray(el)) {
+					config[key] = [];
+					config[key] = expandConfig(config[key], el);
+
+				} else {
+					config[key] = el;
+				}
+			});
+
+			return config;
+		};
+
 		plugins.set('buildCache', new HardSourceWebpackPlugin({
 			environmentHash: {files: ['package-lock.json', 'yarn.lock']},
-			cacheDirectory: path.join(buildCache, String(buildId), config.webpack.cacheDir()),
-			configHash: () => require('node-object-hash')().hash(global.WEBPACK_CONFIG)
+			cacheDirectory: path.join(isSTD ? stdCache : buildCache, String(buildId), wp.cacheDir()),
+			configHash: () => require('node-object-hash')().hash({
+				webpack: global.WEBPACK_CONFIG,
+				config: expandConfig({}, config)
+			})
 		}));
 	}
 

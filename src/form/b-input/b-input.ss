@@ -20,13 +20,17 @@
 				< _.&__wrapper
 					- block preIcon
 						< _.&__cell.&__icon.&__pre-icon v-if = preIcon
-							< component &
+							< component.&__b-icon &
+								v-if = preIconComponent || preIconHint |
 								:instanceOf = bIcon |
 								:is = preIconComponent |
 								:value = preIcon |
 								:hint = preIconHint |
 								:hintPos = preIconHintPos
 							.
+
+							< template v-else
+								+= self.gIcon(['preIcon'], {'g-icon': {}})
 
 					- block input
 						< _.&__cell.&__input-cont
@@ -50,13 +54,17 @@
 
 					- block icon
 						< _.&__cell.&__icon.&__post-icon v-if = icon
-							< component &
-								:instanceOf = icon |
+							< component.&__b-icon &
+								v-if = iconComponent || iconHint |
+								:instanceOf = bIcon |
 								:is = iconComponent |
 								:value = icon |
 								:hint = iconHint |
 								:hintPos = iconHintPos
 							.
+
+							< template v-else
+								+= self.gIcon(['icon'], {'g-icon': {}})
 
 					- block clear
 						< _.&__cell.&__icon.&__clear v-if = resetButton && !readonly
@@ -68,7 +76,7 @@
 
 					- block validation
 						< _.&__cell.&__icon.&__valid-status v-if = m.valid != null
-							< b-icon :value = {true: 'done', false: 'clear'}[m.valid]
+							+= self.gIcon(["{true: 'done', false: 'clear'}[m.valid]"])
 
 					- block progress
 						< _.&__cell.&__icon.&__progress v-if = !isFunctional
