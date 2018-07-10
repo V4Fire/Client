@@ -316,7 +316,27 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 * Advanced component parameters
 	 */
 	@prop(Object)
-	readonly p: Dictionary = {};
+	readonly pProp: Dictionary = {};
+
+	/**
+	 * Advanced component parameters internal storage
+	 */
+	@field((o) => o.link())
+	protected pStore: Dictionary = {};
+
+	/**
+	 * Returns the internal advanced parameters store value
+	 */
+	get p(): Dictionary {
+		return this.pStore;
+	}
+
+	/**
+	 * Sets the internal advanced parameters store value
+	 */
+	set p(val: Dictionary) {
+		this.pStore = val;
+	}
 
 	/**
 	 * True if the current component is activated (keep-alive)
