@@ -10,11 +10,11 @@
 
 $p = {
 	cellMargin: 0.5em
-	cellClasses: false
+	cellHelpers: false
 }
 
 i-dynamic-page extends i-data
-	if $p.cellClasses
+	if $p.cellHelpers
 		&__cell
 			$d = 1..20
 
