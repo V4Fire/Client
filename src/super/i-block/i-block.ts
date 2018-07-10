@@ -9,6 +9,7 @@
 // tslint:disable:max-file-line-count
 import $C = require('collection.js');
 import Async, { AsyncOpts, AsyncOnOpts, AsyncOnceOpts, ClearOptsId } from 'core/async';
+import log from 'core/log';
 
 import * as analytics from 'core/analytics';
 import { EventEmitter2 as EventEmitter } from 'eventemitter2';
@@ -45,7 +46,7 @@ import { queue, backQueue, restart, deferRestart } from 'core/render';
 import { delegate } from 'core/dom';
 
 import * as helpers from 'core/helpers';
-import * as browser from 'core/const/browser';
+import * as browser from 'core/browser';
 
 export * from 'core/component';
 export { default as Cache } from 'super/i-block/modules/cache';
@@ -117,14 +118,14 @@ export interface AsyncTaskObjectId {
 	filter?(id: AsyncTaskSimpleId): boolean;
 }
 
-export enum FieldsForParentMessageCheck {
-	block,
-	globalName,
-	id
-}
+export type ParentMessageFields =
+	'instanceOf' |
+	'globalName' |
+	'componentName' |
+	'componentId';
 
 export interface ParentMessage {
-	check: [keyof (typeof FieldsForParentMessageCheck), any];
+	check: [ParentMessageFields, any];
 	action(this: iBlock): Function;
 }
 
@@ -297,7 +298,28 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 * Advanced component parameters
 	 */
 	@prop(Object)
-	readonly p: Dictionary = {};
+	readonly pProp: Dictionary = {};
+
+	/**
+	 * Advanced component parameters internal storage
+	 */
+	@system()
+	protected pStore: Dictionary = {};
+
+	/**
+	 * Returns the internal advanced parameters store value
+	 * @returns {Dictionary}
+	 */
+	get p(): Dictionary {
+		return this.pStore;
+	}
+
+	/**
+	 * Sets the internal advanced parameters store value
+	 */
+	set p(val) {
+		this.pStore = val;
+	}
 
 	/**
 	 * True if the current component is activated (keep-alive)
@@ -1138,6 +1160,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 		this.$emit(event, this, ...args);
 		this.$emit(`on-${event}`, ...args);
 		this.dispatching && this.dispatch(event, ...args);
+		this.log(`event:${event}`, this, ...args);
 	}
 
 	/**
@@ -1330,27 +1353,27 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	/**
 	 * Returns an array of component classes by the specified parameters
 	 *
-	 * @param [blockName] - name of the source component
+	 * @param [componentName] - name of the source component
 	 * @param mods - map of modifiers
 	 */
-	getBlockClasses(blockName: string | undefined, mods: ModsTable): ReadonlyArray<string>;
+	getBlockClasses(componentName: string | undefined, mods: ModsTable): ReadonlyArray<string>;
 
 	/**
 	 * @param mods - map of modifiers
 	 */
 	getBlockClasses(mods: ModsTable): ReadonlyArray<string>;
-	getBlockClasses(blockName: string | undefined | ModsTable, mods?: ModsTable): ReadonlyArray<string> {
+	getBlockClasses(componentName: string | undefined | ModsTable, mods?: ModsTable): ReadonlyArray<string> {
 		if (arguments.length === 1) {
-			mods = <ModsTable>blockName;
-			blockName = undefined;
+			mods = <ModsTable>componentName;
+			componentName = undefined;
 
 		} else {
 			mods = <ModsTable>mods;
-			blockName = <string | undefined>blockName;
+			componentName = <string | undefined>componentName;
 		}
 
 		const
-			key = JSON.stringify(mods) + blockName,
+			key = JSON.stringify(mods) + componentName,
 			cache = classesCache.create('blocks', this.componentName);
 
 		if (cache[key]) {
@@ -1358,7 +1381,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 		}
 
 		const
-			classes = cache[key] = [this.getFullBlockName(blockName)];
+			classes = cache[key] = [this.getFullBlockName(componentName)];
 
 		for (let keys = Object.keys(mods), i = 0; i < keys.length; i++) {
 			const
@@ -1366,7 +1389,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 				val = mods[key];
 
 			if (val !== undefined) {
-				classes.push(this.getFullBlockName(blockName, key, val));
+				classes.push(this.getFullBlockName(componentName, key, val));
 			}
 		}
 
@@ -1376,21 +1399,57 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	/**
 	 * Sets a component modifier
 	 *
+	 * @param node
 	 * @param name
 	 * @param value
 	 */
-	setMod(name: string, value: any): CanPromise<boolean> {
-		return this.execCbAfterBlockReady(() => this.block.setMod(name, value));
+	setMod(node: Element, name: string, value: any): CanPromise<boolean>;
+
+	/**
+	 * @param name
+	 * @param value
+	 */
+	setMod(name: string, value: any): CanPromise<boolean>;
+	setMod(nodeOrName: Element | string, name: string | any, value?: any): CanPromise<boolean> {
+		if (Object.isString(nodeOrName)) {
+			value = name;
+			name = nodeOrName;
+			return this.execCbAfterBlockReady(() => this.block.setMod(name, value));
+		}
+
+		return Block.prototype.setMod.call(
+			this.createBlockCtxFromNode(nodeOrName),
+			name,
+			value
+		);
 	}
 
 	/**
 	 * Removes a component modifier
 	 *
+	 * @param node
 	 * @param name
 	 * @param [value]
 	 */
-	removeMod(name: string, value?: any): CanPromise<boolean> {
-		return this.execCbAfterBlockReady(() => this.block.removeMod(name, value));
+	removeMod(node: Element, name: string, value?: any): CanPromise<boolean>;
+
+	/**
+	 * @param name
+	 * @param [value]
+	 */
+	removeMod(name: string, value?: any): CanPromise<boolean>;
+	removeMod(nodeOrName: Element | string, name?: string | any, value?: any): CanPromise<boolean> {
+		if (Object.isString(nodeOrName)) {
+			value = name;
+			name = nodeOrName;
+			return this.execCbAfterBlockReady(() => this.block.removeMod(name, value));
+		}
+
+		return Block.prototype.removeMod.call(
+			this.createBlockCtxFromNode(nodeOrName),
+			name,
+			value
+		);
 	}
 
 	/**
@@ -1721,6 +1780,20 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	}
 
 	/**
+	 * Puts the specified parameters to log
+	 *
+	 * @param key - log key
+	 * @param [details]
+	 */
+	protected log(key: string, ...details: any[]): void {
+		log(['component', key, this.componentName].join(':'), ...details, this);
+
+		if (this.globalName) {
+			log(['component:global', this.globalName, key, this.componentName].join(':'), ...details, this);
+		}
+	}
+
+	/**
 	 * Creates a new function from the specified that executes deferedly
 	 *
 	 * @see Async.setTimeout
@@ -1760,6 +1833,26 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 		}, {
 			label: $$.accumulateTmpObj
 		})();
+	}
+
+	/**
+	 * Creates a fake context for a Block instance from the specified node
+	 * @param node
+	 */
+	protected createBlockCtxFromNode(node: Element): Dictionary {
+		const
+			$el = <VueElement<iBlock>>node,
+			comp = $el.vueComponent,
+			componentName = comp ? comp.componentName : $C($el.className.match(/[bg]-[^_ ]+/)).get('0') || this.componentName;
+
+		return Object.assign(Object.create(Block.prototype), {
+			component: {
+				$el,
+				componentName,
+				localEvent: comp ? comp.localEvent : {emit(): void { /* loopback */ }},
+				mods: comp ? comp.mods : undefined
+			}
+		});
 	}
 
 	/**
@@ -1810,23 +1903,39 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	/**
 	 * Returns a full name of the specified component
 	 *
-	 * @param [blockName]
+	 * @param [componentName]
 	 * @param [modName]
 	 * @param [modValue]
 	 */
-	protected getFullBlockName(blockName: string = this.componentName, modName?: string, modValue?: any): string {
-		return Block.prototype.getFullBlockName.call({blockName}, ...[].slice.call(arguments, 1));
+	protected getFullBlockName(componentName: string = this.componentName, modName?: string, modValue?: any): string {
+		return Block.prototype.getFullBlockName.call({blockName: componentName}, ...[].slice.call(arguments, 1));
 	}
 
 	/**
 	 * Returns a full name of the specified element
 	 *
+	 * @param componentName
 	 * @param elName
 	 * @param [modName]
 	 * @param [modValue]
 	 */
-	protected getFullElName(elName: string, modName?: string, modValue?: any): string {
-		return Block.prototype.getFullElName.apply({blockName: this.componentName}, arguments);
+	protected getFullElName(componentName: string, elName: string, modName?: string, modValue?: any): string;
+
+	/**
+	 * @param elName
+	 * @param [modName]
+	 * @param [modValue]
+	 */
+	protected getFullElName(elName: string, modName?: string, modValue?: any): string;
+	protected getFullElName(componentName: string, elName: string, modName?: string, modValue?: any): string {
+		if (!{2: true, 4: true}[arguments.length]) {
+			modValue = modName;
+			modName = elName;
+			elName = componentName;
+			componentName = this.componentName;
+		}
+
+		return Block.prototype.getFullElName.call({blockName: componentName}, elName, modName, modValue);
 	}
 
 	/**
@@ -1880,19 +1989,53 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 
 	/**
 	 * Returns an array of element classes by the specified parameters
+	 *
+	 * @param componentNameOrCtx
 	 * @param els - map of elements with map of modifiers ({button: {focused: true}})
 	 */
-	protected getElClasses(els: Dictionary<ModsTable>): ReadonlyArray<string> {
+	protected getElClasses(componentNameOrCtx: string | iBlock, els: Dictionary<ModsTable>): ReadonlyArray<string>;
+
+	/**
+	 * @param els - map of elements with map of modifiers ({button: {focused: true}})
+	 */
+	protected getElClasses(els: Dictionary<ModsTable>): ReadonlyArray<string>;
+	protected getElClasses(
+		componentNameOrCtx: string | iBlock | Dictionary<ModsTable>,
+		els?: Dictionary<ModsTable>
+	): ReadonlyArray<string> {
+		let
+			id,
+			componentName;
+
+		if (arguments.length === 1) {
+			id = this.componentId;
+			componentName = this.componentName;
+			els = <Dictionary<ModsTable>>componentNameOrCtx;
+
+		} else {
+			if (Object.isString(componentNameOrCtx)) {
+				componentName = componentNameOrCtx;
+
+			} else {
+				id = (<iBlock>componentNameOrCtx).componentId;
+				componentName = (<iBlock>componentNameOrCtx).componentName;
+			}
+		}
+
+		if (!els) {
+			return Object.freeze([]);
+		}
+
 		const
 			key = JSON.stringify(els),
-			cache = classesCache.create('els', this.componentId);
+			cache = classesCache.create('els', id || componentName);
 
 		if (cache[key]) {
 			return cache[key];
 		}
 
 		const
-			classes = cache[key] = [this.componentId];
+			classes = cache[key] = id ? [id] : [];
 
 		for (let keys = Object.keys(els), i = 0; i < keys.length; i++) {
 			const
@@ -1900,7 +2043,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 				mods = els[el];
 
 			classes.push(
-				this.getFullElName(el)
+				this.getFullElName(<string>componentName, el)
 			);
 
 			if (!Object.isObject(mods)) {
@@ -1913,7 +2056,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 					val = mods[key];
 
 				if (val !== undefined) {
-					classes.push(this.getFullElName(el, key, val));
+					classes.push(this.getFullElName(<string>componentName, el, key, val));
 				}
 			}
 		}
@@ -1980,6 +2123,8 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 		return $a.promise(async () => {
 			try {
 				await this.storage.set(id, JSON.stringify(settings));
+				this.log('settings:save', () => Object.fastClone(settings));
+
 			} catch (_) {}
 
 			return settings;
@@ -2001,8 +2146,13 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 
 		return this.async.promise(async () => {
 			try {
-				const str = await this.storage.get(id);
-				return str && JSON.parse(str);
+				const
+					str = await this.storage.get(id),
+					res = str && JSON.parse(str);
+
+				this.log('settings:load', () => Object.fastClone(res));
+				return res;
+
 			} catch (_) {}
 
 		}, {
@@ -2042,6 +2192,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 		this.setState(data);
 
 		await this.saveSettings(data, '[[STORE]]');
+		this.log('state:save:storage', this, data);
 	}
 
 	/**
@@ -2073,14 +2224,11 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 
 			this.execCbAtTheRightTime(() => {
 				const
-					stateFields = this.convertStateToStorage();
+					stateFields = this.convertStateToStorage(data);
 
-				if (data) {
-					this.setState(this.convertStateToStorage(data));
-
-				} else {
-					this.setState(stateFields);
-				}
+				this.setState(
+					stateFields
+				);
 
 				const sync = this.createDeferFn(this.saveStateToStorage, {
 					label: $$.syncLocalStore
@@ -2101,6 +2249,8 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 						}, storeWatchers);
 					}
 				});
+
+				this.log('state:init:storage', this, stateFields);
 			});
 
 		}, {
@@ -2113,8 +2263,15 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 * Resets a component storage state
 	 */
 	protected async resetStorageState(): Promise<boolean> {
-		this.setState(this.convertStateToStorageReset());
+		const
+			stateFields = this.convertStateToStorageReset();
+
+		this.setState(
+			stateFields
+		);
+
 		await this.saveStateToStorage();
+		this.log('state:reset:storage', this, stateFields);
 		return true;
 	}
 
@@ -2140,7 +2297,10 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 */
 	protected async saveStateToRouter(data?: Dictionary | undefined): Promise<boolean> {
 		data = this.convertStateToRouter(data);
-		this.setState(data);
+
+		this.setState(
+			data
+		);
 
 		const
 			r = this.$root.router;
@@ -2153,6 +2313,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 			query: data
 		});
 
+		this.log('state:save:router', this, data);
 		return true;
 	}
 
@@ -2171,14 +2332,11 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 		this.execCbAtTheRightTime(() => {
 			const
 				p = this.$root.pageInfo,
-				stateFields = this.convertStateToRouter();
+				stateFields = this.convertStateToRouter(p && p.query);
 
-			if (p && p.query) {
-				this.setState(this.convertStateToRouter(p.query));
-
-			} else {
-				this.setState(stateFields);
-			}
+			this.setState(
+				stateFields
+			);
 
 			const sync = this.createDeferFn(this.saveStateToRouter, {
 				label: $$.syncRouter
@@ -2199,6 +2357,8 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 					}, routerWatchers);
 				}
 			});
+
+			this.log('state:init:router', this, stateFields);
 		});
 	}
 
@@ -2206,7 +2366,12 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 * Resets a component router state
 	 */
 	protected async resetRouterState(): Promise<boolean> {
-		this.setState(this.convertStateToRouterReset());
+		const
+			stateFields = this.convertStateToRouterReset();
+
+		this.setState(
+			stateFields
+		);
 
 		const
 			r = this.$root.router;
@@ -2216,6 +2381,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 		}
 
 		await r.push(null);
+		this.log('state:reset:router', this, stateFields);
 		return true;
 	}
 
@@ -2499,9 +2665,22 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 
 	/**
 	 * Returns an object with classes for elements of an another component
+	 *
+	 * @param componentName
 	 * @param classes - additional classes ({baseElementName: newElementName})
 	 */
-	protected provideClasses(classes?: Classes): Readonly<Dictionary<string>> {
+	protected provideClasses(componentName: string, classes?: Classes): Readonly<Dictionary<string>>;
+
+	/**
+	 * @param classes - additional classes ({baseElementName: newElementName})
+	 */
+	protected provideClasses(classes: Classes): Readonly<Dictionary<string>>;
+	protected provideClasses(componentName: string | Classes, classes?: Classes): Readonly<Dictionary<string>> {
+		if (!Object.isString(componentName)) {
+			classes = componentName;
+			componentName = this.componentName;
+		}
+
 		const
 			key = JSON.stringify(classes),
 			cache = classesCache.create('base');
@@ -2536,7 +2715,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 					}
 				}
 
-				map[key.dasherize()] = this.getFullElName.apply(this, (<any[]>[]).concat(el));
+				map[key.dasherize()] = this.getFullElName.apply(this, (<any[]>[componentName]).concat(el));
 			}
 		}
 
@@ -2624,10 +2803,10 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	@hook('beforeCreate')
 	protected initParentListener(): CanPromise<any> {
 		if (this.$parent) {
-			this.$parent.on('callChild', (component: iBlock, {check, action}: ParentMessage) => {
+			this.async.on(this.$parent, 'callChild', (component: iBlock, {check, action}: ParentMessage) => {
 				if (
-					check[0] !== 'block' && check[1] === this[check[0]] ||
-					check[0] === 'block' && this.instance instanceof check[1]
+					check[0] !== 'instanceOf' && check[1] === this[check[0]] ||
+					check[0] === 'instanceOf' && this.instance instanceof check[1]
 				) {
 					return action.call(this);
 				}
