@@ -155,6 +155,10 @@ export default class bWindow<T extends Dictionary = Dictionary> extends iData<T>
 			$a.on(document, 'mousedown touchstart', async (e) => {
 				if (e.target.matches(this.block.getElSelector('wrapper'))) {
 					await this.close();
+
+					$a.once(document, 'click mouseup touchend', (e) => {
+						e.stopImmediatePropagation();
+					}, {group}, {capture: true});
 				}
 			}, {group});
 		};
