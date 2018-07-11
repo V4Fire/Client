@@ -319,12 +319,6 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	readonly pProp: Dictionary = {};
 
 	/**
-	 * Advanced component parameters internal storage
-	 */
-	@field((o) => o.link())
-	protected pStore: Dictionary = {};
-
-	/**
 	 * Returns the internal advanced parameters store value
 	 */
 	get p(): Dictionary {
@@ -573,6 +567,12 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	protected get getIconLink(): typeof iBlock.getIconLink {
 		return (<typeof iBlock>this.instance.constructor).getIconLink;
 	}
+
+	/**
+	 * Advanced component parameters internal storage
+	 */
+	@field((o) => o.link())
+	protected pStore: Dictionary = {};
 
 	/**
 	 * Component stage store

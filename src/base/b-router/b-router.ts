@@ -249,6 +249,9 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 	 * @param page
 	 * @param [params] - additional page parameters
 	 * @param [method] - driver method
+	 *
+	 * @emits beforeChange(page: (string|null), params?: Object, method: string)
+	 * @emits change(info: Object)
 	 * @emits $root.transition(info: Object)
 	 */
 	async setPage(
@@ -256,6 +259,8 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 		params?: PageParams,
 		method: SetPage = 'push'
 	): Promise<PageInfo | undefined> {
+		this.emit('beforeChange', page, params, method);
+
 		const
 			{$root: r, driver: d, driver: {page: c}} = this;
 
@@ -334,6 +339,7 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 				r.pageInfo = store;
 			}
 
+			this.emit('change', store);
 			r.emit('transition', store);
 		}
 
