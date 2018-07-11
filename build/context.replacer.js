@@ -32,7 +32,7 @@ const
  */
 module.exports = function (str) {
 	return str.replace(contextRgxp, (str, values, body) => {
-		values = new Function('flags', `return ${values}`)(this);
+		values = new Function('flags', `return ${values}`)(this.flags);
 
 		if (!Object.isArray(values) || values.length < 2) {
 			throw SyntaxError('Invalid @context format');
@@ -58,7 +58,7 @@ module.exports = function (str) {
 				let
 					exists = false;
 
-				body = body.replace(rgxp, (str, $1, url) => {
+				const res = body.replace(rgxp, (str, $1, url) => {
 					let
 						src;
 
@@ -96,7 +96,7 @@ module.exports = function (str) {
 				});
 
 				if (exists) {
-					wrap(body);
+					wrap(res);
 				}
 			}
 		});
