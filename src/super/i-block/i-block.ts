@@ -249,7 +249,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 * Initial component stage
 	 */
 	@prop({type: String, required: false})
-	readonly stageProp?: string;
+	readonly stageProp?: string | number;
 
 	/**
 	 * Component render weight
@@ -261,7 +261,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 * Component stage store
 	 */
 	@p({cache: false})
-	get stage(): string | undefined {
+	get stage(): string | number | undefined {
 		return this.stageStore;
 	}
 
@@ -269,7 +269,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 * Sets a new component stage
 	 * @emits stageChange(value?: string, oldValue?: string)
 	 */
-	set stage(value: string | undefined) {
+	set stage(value: string | number | undefined) {
 		const
 			oldValue = this.stage;
 
@@ -592,7 +592,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 		return v;
 	}))
 
-	protected stageStore?: string;
+	protected stageStore?: string | number;
 
 	/**
 	 * Number of beforeReady event listeners
