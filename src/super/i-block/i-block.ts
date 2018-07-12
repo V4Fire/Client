@@ -178,6 +178,10 @@ export interface Event<T extends object = Async> {
 	off(params: ClearOptsId<object>): void;
 }
 
+export type ConverterCallType =
+	'component' |
+	'remote';
+
 export const
 	$$ = symbolGenerator(),
 	modsCache = Object.createDict(),
@@ -2291,9 +2295,11 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 
 	/**
 	 * Returns an object with default component fields for saving to a local storage
+	 *
 	 * @param [data] - advanced data
+	 * @param [type] - call type
 	 */
-	protected convertStateToStorage(data?: Dictionary | undefined): Dictionary {
+	protected convertStateToStorage(data?: Dictionary | undefined, type: ConverterCallType = 'component'): Dictionary {
 		return {...data};
 	}
 
@@ -2315,7 +2321,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 			return;
 		}
 
-		data = this.convertStateToStorage(data);
+		data = this.convertStateToStorage(data, 'remote');
 		this.setState(data);
 
 		await this.saveSettings(data, '[[STORE]]');
@@ -2404,9 +2410,11 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 
 	/**
 	 * Returns an object with default component fields for saving to a router
+	 *
 	 * @param [data] - advanced data
+	 * @param [type] - call type
 	 */
-	protected convertStateToRouter(data?: Dictionary | undefined): Dictionary {
+	protected convertStateToRouter(data?: Dictionary | undefined, type: ConverterCallType = 'component'): Dictionary {
 		return {...data};
 	}
 
@@ -2423,11 +2431,8 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 * @param [data] - advanced data
 	 */
 	protected async saveStateToRouter(data?: Dictionary | undefined): Promise<boolean> {
-		data = this.convertStateToRouter(data);
-
-		this.setState(
-			data
-		);
+		data = this.convertStateToRouter(data, 'remote');
+		this.setState(data);
 
 		const
 			r = this.$root.router;
