@@ -157,14 +157,14 @@ export default class iDataPages<T extends Dictionary = Dictionary> extends iData
 	protected syncLazyLoadWatcher(value: boolean): void {
 		const
 			{async: $a} = this,
-			group = 'lazyLoad';
+			group = {group: 'lazyLoad'};
 
 		if (value) {
-			$a.on(document, 'scroll', this.checkLazyLoad, {group});
-			$a.on(window, 'resize', this.checkLazyLoad, {group});
+			$a.on(document, 'scroll', this.checkLazyLoad, group);
+			$a.on(window, 'resize', this.checkLazyLoad, group);
 
 		} else {
-			$a.off({group});
+			$a.off(group);
 		}
 	}
 }
