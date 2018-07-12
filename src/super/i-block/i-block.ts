@@ -134,9 +134,7 @@ export type AsyncTaskId = AsyncTaskSimpleId | (() => AsyncTaskObjectId) | AsyncT
 export type AsyncQueueType = 'asyncComponents' | 'asyncBackComponents';
 export type AsyncWatchOpts = WatchOptions & AsyncOpts;
 
-export interface Event<T extends object = Async> {
-	emit(event: string, ...args: any[]): boolean;
-
+export interface RemoteEvent<T extends object = Async> {
 	on(events: string | string[], handler: Function, ...args: any[]): object | undefined;
 	on(
 		events: string | string[],
@@ -146,6 +144,29 @@ export interface Event<T extends object = Async> {
 	): object | undefined;
 
 	once(events: string | string[], handler: Function, ...args: any[]): object | undefined;
+	once(
+		events: string | string[],
+		handler: Function,
+		params: AsyncOnceOpts<T>,
+		...args: any[]
+	): object | undefined;
+
+	off(id?: object): void;
+	off(params: ClearOptsId<object>): void;
+}
+
+export interface Event<T extends object = Async> {
+	emit(event: string, ...args: any[]): boolean;
+
+	on(events: string | string[], handler: Function, ...args: any[]): object;
+	on(
+		events: string | string[],
+		handler: Function,
+		params: AsyncOnOpts<T>,
+		...args: any[]
+	): object | undefined;
+
+	once(events: string | string[], handler: Function, ...args: any[]): object;
 	once(
 		events: string | string[],
 		handler: Function,
@@ -739,6 +760,74 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 			on: (event, fn, params, ...args) => $a.on(globalEvent, event, fn, params, ...args),
 			once: (event, fn, params, ...args) => $a.once(globalEvent, event, fn, params, ...args),
 			off: (...args) => $a.off(...args)
+		};
+	}
+
+	/**
+	 * Root event emitter
+	 */
+	protected get rootEvent(): RemoteEvent<this> {
+		const
+			{async: $a, $root: $e} = this;
+
+		return {
+			on: (event, fn, params, ...args) => {
+				if (!$e) {
+					return;
+				}
+
+				return $a.on($e, event, fn, params, ...args);
+			},
+
+			once: (event, fn, params, ...args) => {
+				if (!$e) {
+					return;
+				}
+
+				return $a.once($e, event, fn, params, ...args);
+			},
+
+			off: (...args) => {
+				if (!$e) {
+					return;
+				}
+
+				$a.off(...args);
+			}
+		};
+	}
+
+	/**
+	 * Parent event emitter
+	 */
+	protected get parentEvent(): RemoteEvent<this> {
+		const
+			{async: $a, $parent: $e} = this;
+
+		return {
+			on: (event, fn, params, ...args) => {
+				if (!$e) {
+					return;
+				}
+
+				return $a.on($e, event, fn, params, ...args);
+			},
+
+			once: (event, fn, params, ...args) => {
+				if (!$e) {
+					return;
+				}
+
+				return $a.once($e, event, fn, params, ...args);
+			},
+
+			off: (...args) => {
+				if (!$e) {
+					return;
+				}
+
+				$a.off(...args);
+			}
 		};
 	}
 
@@ -1531,12 +1620,10 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 			}
 
 			this.initStateFromRouter();
-			this.execCbAfterCreated(() => {
-				this.async.on(this.$root, 'transition', this.initStateFromRouter, {
-					label: $$.activate,
-					group: 'routerStateWatchers'
-				});
-			});
+			this.execCbAfterCreated(() => this.rootEvent.on('transition', this.initStateFromRouter, {
+				label: $$.activate,
+				group: 'routerStateWatchers'
+			}));
 
 			return;
 		}
@@ -2829,18 +2916,16 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	/**
 	 * Initializes an update from the parent listener
 	 */
-	@hook('beforeCreate')
-	protected initParentListener(): CanPromise<any> {
-		if (this.$parent) {
-			this.$parent.on('callChild', (component: iBlock, {check, action}: ParentMessage) => {
-				if (
-					check[0] !== 'instanceOf' && check[1] === this[check[0]] ||
-					check[0] === 'instanceOf' && this.instance instanceof check[1]
-				) {
-					return action.call(this);
-				}
-			}, {group: 'callChild'});
-		}
+	@hook('created')
+	protected initParentCallEvent(): void {
+		this.parentEvent.on('callChild', (component: iBlock, {check, action}: ParentMessage) => {
+			if (
+				check[0] !== 'instanceOf' && check[1] === this[check[0]] ||
+				check[0] === 'instanceOf' && this.instance instanceof check[1]
+			) {
+				return action.call(this);
+			}
+		});
 	}
 
 	/**
