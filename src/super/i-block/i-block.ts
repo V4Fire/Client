@@ -30,6 +30,7 @@ import {
 	hook,
 	execRenderObject,
 	patchVNode,
+	runHook,
 	globalEvent,
 	ModVal,
 	ModsDecl,
@@ -1615,10 +1616,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 */
 	@hook('beforeDataCreate')
 	activate(): void {
-		const
-			isBefore = this.isBeforeCreate();
-
-		if (isBefore) {
+		if (this.isBeforeCreate()) {
 			if (!Object.keys(this.convertStateToRouter()).length) {
 				return;
 			}
@@ -1632,30 +1630,96 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 			return;
 		}
 
-		const exec = (component = this) => {
-			if (!component.isActivated) {
-				component.activated();
-			}
+		const
+			els = new Set();
 
-			$C(component.$children).forEach(exec);
+		const exec = (ctx = this) => {
+			els.add(ctx);
+
+			const
+				children = ctx.$children;
+
+			if (children) {
+				for (let i = 0; i < children.length; i++) {
+					exec(<any>children[i]);
+				}
+			}
 		};
 
 		exec();
+
+		if (this.$el) {
+			const
+				domEls = this.$el.querySelectorAll('.i-block-helper');
+
+			for (let i = 0; i < domEls.length; i++) {
+				const
+					el = (<VueElement<any>>domEls[i]).vueComponent;
+
+				if (el) {
+					els.add(el);
+				}
+			}
+		}
+
+		for (let w = els.values(), el = w.next(); !el.done; el = w.next()) {
+			const
+				ctx = el.value;
+
+			if (!ctx.isActivated) {
+				runHook('activated', ctx.meta, ctx).then(() => ctx.activated(), stderr);
+			}
+		}
 	}
 
 	/**
 	 * Deactivates the component
 	 */
 	deactivate(): void {
-		const exec = (component = this) => {
-			if (component.isActivated) {
-				component.deactivated();
-			}
+		if (this.isBeforeCreate()) {
+			return;
+		}
 
-			$C(component.$children).forEach(exec);
+		const
+			els = new Set();
+
+		const exec = (ctx = this) => {
+			els.add(ctx);
+
+			const
+				children = ctx.$children;
+
+			if (children) {
+				for (let i = 0; i < children.length; i++) {
+					exec(<any>children[i]);
+				}
+			}
 		};
 
 		exec();
+
+		if (this.$el) {
+			const
+				domEls = this.$el.querySelectorAll('.i-block-helper');
+
+			for (let i = 0; i < domEls.length; i++) {
+				const
+					el = (<VueElement<any>>domEls[i]).vueComponent;
+
+				if (el) {
+					els.add(el);
+				}
+			}
+		}
+
+		for (let w = els.values(), el = w.next(); !el.done; el = w.next()) {
+			const
+				ctx = el.value;
+
+			if (ctx.isActivated) {
+				runHook('deactivated', ctx.meta, ctx).then(() => ctx.deactivated(), stderr);
+			}
+		}
 	}
 
 	/**
@@ -3088,7 +3152,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 			return;
 		}
 
-		this.async.disabled = false;
+		this.async.unmuteEventListeners().unsuspendAll();
 		this.componentStatus = 'beforeReady';
 
 		if (this.needReInit) {
@@ -3118,7 +3182,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 * (for keep-alive)
 	 */
 	protected deactivated(): void {
-		this.async.disabled = true;
+		this.async.muteEventListeners().suspendAll();
 		this.componentStatus = 'inactive';
 		this.isActivated = false;
 	}

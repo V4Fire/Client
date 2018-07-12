@@ -38,6 +38,7 @@ export * from 'core/component/decorators';
 export * from 'core/component/functional';
 
 export { PARENT } from 'core/component/inherit';
+export { runHook } from 'core/component/component';
 export { default as VueInterface, VueElement } from 'core/component/vue';
 export { default as globalEvent, reset, ResetType } from 'core/component/event';
 
