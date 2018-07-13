@@ -68,14 +68,14 @@ export default class bPaging extends iBlock {
 	 * Current page current
 	 */
 	get current(): number {
-		return this.currentStore;
+		return this.getField('currentStore');
 	}
 
 	/**
-	 * Sets the page current
+	 * Sets a new current page
 	 */
 	set current(value: number) {
-		this.currentStore = value;
+		this.setField('currentStore', value);
 	}
 
 	/**

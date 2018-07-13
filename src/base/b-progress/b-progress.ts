@@ -32,7 +32,7 @@ export default class bProgress extends iBlock {
 	 * Progress value
 	 */
 	protected get value(): number {
-		return this.valueStore;
+		return this.getField('valueStore');
 	}
 
 	/**
@@ -43,12 +43,12 @@ export default class bProgress extends iBlock {
 	 */
 	protected set value(value: number) {
 		(async () => {
-			this.valueStore = value;
+			this.setField('valueStore', value);
 
 			if (value === 100) {
 				try {
 					await this.async.sleep(0.8.second(), {label: $$.complete});
-					this.valueStore = 0;
+					this.setField('valueStore', 0)
 					this.emit('complete');
 
 				} catch (_) {}

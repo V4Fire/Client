@@ -431,8 +431,7 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 	/** @override */
 	protected created(): void {
 		super.created();
-		// @ts-ignore
-		this.$root.routerStore = this;
+		this.setField('routerStore', this, this.$root);
 		this.async.on(document, 'click', delegate('[href]', this.onLink));
 	}
 }

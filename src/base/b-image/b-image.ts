@@ -52,7 +52,7 @@ export default class bImage extends iBlock {
 	 */
 	protected onImageLoaded(): void {
 		this.setMod('loading', false);
-		this.$set(this.tmp, this.src, true);
+		this.tmp[this.src] = true;
 		this.emit('loaded');
 	}
 

@@ -82,12 +82,13 @@ export default class bCheckboxGroup<T extends Dictionary = Dictionary> extends i
 
 	/** @override */
 	get value(): string | string[] | undefined {
-		return this.multiple ? Object.keys(<Dictionary>this.valueStore) : <string | undefined>this.valueStore;
+		const v = this.getField('valueStore');
+		return this.multiple ? Object.keys(v) : v;
 	}
 
 	/** @override */
 	set value(value: string | string[] | undefined) {
-		this.valueStore = value && Object.isArray(value) ? Object.fromArray(value) : value;
+		this.setField('valueStore', value && Object.isArray(value) ? Object.fromArray(value) : value);
 	}
 
 	/** @override */
@@ -132,7 +133,7 @@ export default class bCheckboxGroup<T extends Dictionary = Dictionary> extends i
 	 */
 	setValue(name: string, value: boolean): boolean | undefined {
 		if (!this.multiple) {
-			this.valueStore = value ? name : undefined;
+			this.setField('valueStore', value ? name : undefined);
 			return;
 		}
 
@@ -210,7 +211,7 @@ export default class bCheckboxGroup<T extends Dictionary = Dictionary> extends i
 	 * @param el
 	 */
 	protected isChecked(el: Option): boolean {
-		const v = this.valueStore;
+		const v = this.getField('valueStore');
 		return Boolean(this.multiple ? v && v[el.name] : v === el.name);
 	}
 
@@ -219,7 +220,7 @@ export default class bCheckboxGroup<T extends Dictionary = Dictionary> extends i
 	 * @param el
 	 */
 	protected isChangeable(el: Option): boolean {
-		const v = <any>this.valueStore;
+		const v = this.getField('valueStore');
 		return this.multiple || v && v !== el.name;
 	}
 

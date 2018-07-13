@@ -131,7 +131,7 @@ export default class iInput<T extends Dictionary = Dictionary> extends iData<T> 
 	 * Component value
 	 */
 	get value(): any {
-		return this.valueStore;
+		return this.getField('valueStore');
 	}
 
 	/**
@@ -139,7 +139,7 @@ export default class iInput<T extends Dictionary = Dictionary> extends iData<T> 
 	 * @param value
 	 */
 	set value(value: any) {
-		this.valueStore = value;
+		this.setField('valueStore', value);
 	}
 
 	/**

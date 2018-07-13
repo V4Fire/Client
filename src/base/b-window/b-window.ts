@@ -93,30 +93,30 @@ export default class bWindow<T extends Dictionary = Dictionary> extends iData<T>
 	/**
 	 * Slot name
 	 */
-	get slotName(): any {
-		return this.slotNameStore;
+	get slotName(): string | undefined {
+		return this.getField('slotNameStore');
 	}
 
 	/**
-	 * Sets slot name
-	 * @param val
+	 * Sets a new slot name
+	 * @param value
 	 */
-	set slotName(val: any) {
-		this.slotNameStore = val;
+	set slotName(value: string | undefined) {
+		this.setField('slotNameStore', value);
 	}
 
 	/**
 	 * Window title
 	 */
 	get title(): string {
-		return this.titleStore && this.stage ? this.t(this.stageTitles[this.stage]) : '';
+		return this.getField('titleStore') && this.stage ? this.t(this.stageTitles[this.stage]) : '';
 	}
 
 	/**
-	 * Sets the specified window title
+	 * Sets a new window title
 	 */
 	set title(value: string) {
-		this.titleStore = value;
+		this.setField('titleStore', value);
 	}
 
 	/**

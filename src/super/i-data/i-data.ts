@@ -108,7 +108,7 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 	 * Component data
 	 */
 	get db(): T | undefined {
-		return this.dbStore;
+		return this.getField('dbStore');
 	}
 
 	/**
@@ -122,7 +122,7 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 			label: $$.db
 		});
 
-		this.dbStore = value;
+		this.setField('dbStore', value);
 		this.initRemoteData();
 
 		this.watch('dbStore', this.initRemoteData, {

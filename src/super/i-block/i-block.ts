@@ -292,7 +292,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 */
 	@p({cache: false})
 	get stage(): string | number | undefined {
-		return this.stageStore;
+		return this.getField('stageStore');
 	}
 
 	/**
@@ -307,7 +307,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 			return;
 		}
 
-		this.stageStore = value;
+		this.setField('stageStore', value);
 		this.emit('stageChange', value, oldValue);
 	}
 
@@ -352,14 +352,14 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 * Returns the internal advanced parameters store value
 	 */
 	get p(): Dictionary {
-		return this.pStore;
+		return this.getField('pStore');
 	}
 
 	/**
 	 * Sets the internal advanced parameters store value
 	 */
-	set p(val: Dictionary) {
-		this.pStore = val;
+	set p(value: Dictionary) {
+		this.setField('pStore', value);
 	}
 
 	/**
@@ -380,7 +380,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 */
 	@p({cache: false})
 	get router(): bRouter | any | undefined {
-		return this.$root.routerStore;
+		return this.getField('routerStore', this.$root);
 	}
 
 	/**
@@ -388,7 +388,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 */
 	@p({cache: false})
 	get route(): PageInfo | any | undefined {
-		return this.$root.pageInfo;
+		return this.getField('pageInfo', this.$root);
 	}
 
 	/**
@@ -655,7 +655,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	protected get m(): Readonly<ModsNTable> {
 		const
 			o = {},
-			w = this.watchModsStore,
+			w = this.getField('watchModsStore'),
 			m = this.mods;
 
 		for (let keys = Object.keys(m), i = 0; i < keys.length; i++) {
@@ -1846,14 +1846,23 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 * @param [obj]
 	 */
 	setField(path: string, value: any, obj: object = this): any {
+		let
+			// tslint:disable-next-line
+			ctx: iBlock = this,
+			isComponent = obj === this;
+
+		if ((<any>obj).instance instanceof iBlock) {
+			ctx = <any>obj;
+			isComponent = true;
+		}
+
 		const
 			chunks = path.split('.'),
-			isSelf = obj === this,
-			isField = isSelf && this.meta.fields[chunks[0]],
-			isReady = !this.isBeforeCreate();
+			isField = isComponent && ctx.meta.fields[chunks[0]],
+			isReady = !ctx.isBeforeCreate();
 
 		let
-			ref = isField ? this.$$data : obj;
+			ref = isField ? ctx.$$data : obj;
 
 		for (let i = 0; i < chunks.length; i++) {
 			const
@@ -1869,7 +1878,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 					val = isNaN(Number(chunks[i + 1])) ? {} : [];
 
 				if (isField && isReady) {
-					this.$set(ref, prop, val);
+					ctx.$set(ref, prop, val);
 
 				} else {
 					ref[prop] = val;
@@ -1884,7 +1893,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 
 		} else {
 			if (isField && isReady) {
-				this.$set(ref, path, value);
+				ctx.$set(ref, path, value);
 
 			} else {
 				ref[path] = value;
@@ -1901,15 +1910,24 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 * @param [obj]
 	 */
 	deleteField(path: string, obj: object = this): boolean {
+		let
+			// tslint:disable-next-line
+			ctx: iBlock = this,
+			isComponent = obj === this;
+
+		if ((<any>obj).instance instanceof iBlock) {
+			ctx = <any>obj;
+			isComponent = true;
+		}
+
 		const
 			chunks = path.split('.'),
-			isSelf = obj === this,
-			isField = isSelf && this.meta.fields[chunks[0]],
-			isReady = !this.isBeforeCreate();
+			isField = isComponent && ctx.meta.fields[chunks[0]],
+			isReady = !ctx.isBeforeCreate();
 
 		let
 			test = true,
-			ref = isField ? this.$$data : obj;
+			ref = isField ? ctx.$$data : obj;
 
 		for (let i = 0; i < chunks.length; i++) {
 			const
@@ -1930,7 +1948,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 
 		if (test) {
 			if (isField && isReady) {
-				this.$delete(ref, path);
+				ctx.$delete(ref, path);
 
 			} else {
 				delete ref[path];
@@ -1949,13 +1967,22 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 * @param [obj]
 	 */
 	getField(path: string, obj: object = this): any {
+		let
+			// tslint:disable-next-line
+			ctx: iBlock = this,
+			isComponent = obj === this;
+
+		if ((<any>obj).instance instanceof iBlock) {
+			ctx = <any>obj;
+			isComponent = true;
+		}
+
 		const
 			chunks = path.split('.'),
-			isSelf = obj === this,
-			isField = isSelf && this.meta.fields[chunks[0]];
+			isField = isComponent && ctx.meta.fields[chunks[0]];
 
 		let
-			res = isField ? this.$$data : obj;
+			res = isField ? ctx.$$data : obj;
 
 		for (let i = 0; i < chunks.length; i++) {
 			if (res == null) {
@@ -3066,14 +3093,14 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 			const
 				k = e.name,
 				v = e.value,
-				w = this.watchModsStore;
+				w = this.getField('watchModsStore');
 
 			this
 				.mods[k] = v;
 
 			if (k in w && w[k] !== v) {
 				delete w[k];
-				this.$set(w, k, v);
+				this.setField(`watchModsStore.${k}`, v);
 			}
 
 			this.emit(`mod-set-${k}-${v}`, e);
@@ -3083,14 +3110,14 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 			if (e.reason === 'removeMod') {
 				const
 					k = e.name,
-					w = this.watchModsStore;
+					w = this.getField('watchModsStore');
 
 				this
 					.mods[k] = undefined;
 
 				if (k in w && w[k]) {
 					delete w[k];
-					this.$set(w, k, undefined);
+					this.setField(`watchModsStore.${k}`, undefined);
 				}
 
 				this.emit(`mod-remove-${k}-${e.value}`, e);

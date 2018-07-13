@@ -101,7 +101,8 @@ export default class bList<T extends Dictionary = Dictionary> extends iData<T> {
 	 */
 	@p({cache: false})
 	get active(): any {
-		return this.multiple ? Object.keys(this.activeStore) : this.activeStore;
+		const v = this.getField('activeStore');
+		return this.multiple ? Object.keys(v) : v;
 	}
 
 	/**
@@ -163,7 +164,7 @@ export default class bList<T extends Dictionary = Dictionary> extends iData<T> {
 	 */
 	@p({cache: true})
 	protected get activeElement(): CanPromise<HTMLAnchorElement | null> {
-		return this.waitStatus('ready', () => {
+		return this.waitStatus<HTMLAnchorElement | null>('ready', () => {
 			if (this.active in this.values) {
 				return this.block.element('link', {
 					id: this.values[this.active]
@@ -182,7 +183,7 @@ export default class bList<T extends Dictionary = Dictionary> extends iData<T> {
 	 */
 	toggleActive(value: any): boolean {
 		const
-			a = this.activeStore;
+			a = this.getField('activeStore');
 
 		if (this.multiple) {
 			if (value in a) {
@@ -208,20 +209,20 @@ export default class bList<T extends Dictionary = Dictionary> extends iData<T> {
 	 */
 	setActive(value: any): boolean {
 		const
-			a = this.activeStore;
+			a = this.getField('activeStore');
 
 		if (this.multiple) {
 			if (value in a) {
 				return false;
 			}
 
-			this.$set(a, value, true);
+			this.setField(`activeStore.${value}`, true);
 
 		} else if (a === value) {
 			return false;
 
 		} else {
-			this.activeStore = value;
+			this.setField('activeStore', value);
 		}
 
 		const
@@ -259,7 +260,7 @@ export default class bList<T extends Dictionary = Dictionary> extends iData<T> {
 	 */
 	removeActive(value: any): boolean {
 		const
-			a = this.activeStore,
+			a = this.getField('activeStore'),
 			cantCancel = !this.cancelable;
 
 		if (this.multiple) {
@@ -267,13 +268,13 @@ export default class bList<T extends Dictionary = Dictionary> extends iData<T> {
 				return false;
 			}
 
-			this.$delete(a, value);
+			this.deleteField(`activeField.${value}`);
 
 		} else if (a !== value || cantCancel) {
 			return false;
 
 		} else {
-			this.activeStore = undefined;
+			this.setField('activeStore', undefined);
 		}
 
 		const
@@ -326,7 +327,8 @@ export default class bList<T extends Dictionary = Dictionary> extends iData<T> {
 	 * @param option
 	 */
 	protected isActive(option: Option): boolean {
-		return this.multiple ? option.value in this.activeStore : option.value === this.activeStore;
+		const v = this.getField('activeStore');
+		return this.multiple ? option.value in v : option.value === v;
 	}
 
 	/**
@@ -354,13 +356,14 @@ export default class bList<T extends Dictionary = Dictionary> extends iData<T> {
 	protected initComponentValues(): void {
 		const
 			values = {},
-			indexes = {};
+			indexes = {},
+			a = this.getField('activeStore');
 
 		$C(this.$$data.value).forEach((el, i) => {
 			const
 				val = el.value;
 
-			if (el.active && (this.multiple ? !(val in this.activeStore) : this.activeStore === undefined)) {
+			if (el.active && (this.multiple ? !(val in a) : a === undefined)) {
 				this.setActive(val);
 			}
 

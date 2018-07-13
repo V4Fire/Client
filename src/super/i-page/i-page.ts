@@ -62,14 +62,15 @@ export default class iPage<
 	 * System language
 	 */
 	get lang(): string {
-		return this.langStore;
+		return this.getField('langStore');
 	}
 
 	/**
 	 * Sets a new system language
 	 */
 	set lang(value: string) {
-		setLang(this.langStore = value);
+		this.setField('langStore', value);
+		setLang(value);
 	}
 
 	/** @override */

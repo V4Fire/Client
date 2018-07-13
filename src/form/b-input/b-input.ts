@@ -147,12 +147,12 @@ export default class bInput<T extends Dictionary = Dictionary> extends iInput<T>
 
 	/** @override */
 	get value(): string {
-		return this.valueStore;
+		return this.getField('valueStore');
 	}
 
 	/** @override */
 	set value(value: string) {
-		this.valueStore = value;
+		this.setField('valueStore', value);
 
 		if (this.skipBuffer) {
 			this.skipBuffer = false;
@@ -236,14 +236,14 @@ export default class bInput<T extends Dictionary = Dictionary> extends iInput<T>
 	 * Value buffer
 	 */
 	protected get valueBuffer(): string {
-		return this.valueBufferStore;
+		return this.getField('valueBufferStore');
 	}
 
 	/**
 	 * Sets a value to the value buffer store
 	 */
 	protected set valueBuffer(value: string) {
-		this.valueBufferStore = value;
+		this.setField('valueBufferStore', value);
 	}
 
 	/**

@@ -28,12 +28,12 @@ export default class bInputBirthday<T extends Dictionary = Dictionary> extends i
 	/** @override */
 	@p({cache: false})
 	get value(): Date {
-		return Object.fastClone(this.valueStore);
+		return Object.fastClone(this.getField('pointerStore'));
 	}
 
 	/** @override */
 	set value(value: Date) {
-		this.valueStore = value;
+		this.setField('pointerStore', value);
 	}
 
 	/**

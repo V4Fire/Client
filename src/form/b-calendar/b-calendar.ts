@@ -61,14 +61,14 @@ export default class bCalendar<T extends Dictionary = Dictionary> extends iInput
 	/** @override */
 	@p({cache: false})
 	get value(): Date[] {
-		return Object.fastClone(this.valueStore);
+		return Object.fastClone(this.getField('valueStore'));
 	}
 
 	/** @override */
 	set value(value: Date[]) {
 		const
 			{min, max} = this,
-			store = this.valueStore;
+			store = this.getField('valueStore');
 
 		$C(value).forEach((v, i) => {
 			if (min && min.isAfter(v)) {
@@ -79,7 +79,7 @@ export default class bCalendar<T extends Dictionary = Dictionary> extends iInput
 			}
 
 			if (!store[i] || (<number>Math.abs(store[i].valueOf() - v.valueOf())).seconds() >= this.timeMargin) {
-				this.$set(store, i, v);
+				this.setField(`valueStore.${i}`, v);
 			}
 		});
 	}
@@ -88,7 +88,7 @@ export default class bCalendar<T extends Dictionary = Dictionary> extends iInput
 	 * Date pointer
 	 */
 	get pointer(): Date[] {
-		return Object.fastClone(this.pointerStore);
+		return Object.fastClone(this.getField('pointerStore'));
 	}
 
 	/**
@@ -96,7 +96,7 @@ export default class bCalendar<T extends Dictionary = Dictionary> extends iInput
 	 * @param value
 	 */
 	set pointer(value: Date[]) {
-		this.pointerStore = value;
+		this.setField('pointerStore', value);
 	}
 
 	/**
@@ -451,7 +451,7 @@ export default class bCalendar<T extends Dictionary = Dictionary> extends iInput
 			pointer = this.pointer[index];
 
 		if (val.format('{MM}:{yyyy}') !== pointer.format('{MM}:{yyyy}')) {
-			this.$set(this.pointerStore, index, pointer.set({
+			this.setField(`pointerStore.${index}`, pointer.set({
 				month: val.getMonth(),
 				year: val.getFullYear()
 			}));
@@ -466,7 +466,7 @@ export default class bCalendar<T extends Dictionary = Dictionary> extends iInput
 	 */
 	protected async onSwitchMonth(months: number): Promise<void> {
 		$C(this.pointer).forEach((el, i) => {
-			this.$set(this.pointerStore, i, el.addMonths(months));
+			this.setField(`pointerStore.${i}`, el.addMonths(months));
 		});
 
 		this.runMonthSwitching(months < 0 ? 0 : 1);
