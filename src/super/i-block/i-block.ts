@@ -113,6 +113,10 @@ export enum statuses {
 	unloaded = 0
 }
 
+export interface WaitStatusOpts extends AsyncOpts {
+	defer?: boolean;
+}
+
 export interface AsyncTaskObjectId {
 	id: AsyncTaskSimpleId;
 	weight?: number;
@@ -1389,14 +1393,29 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 *
 	 * @see Async.promise
 	 * @param status
-	 * @param fn
 	 * @param [params] - additional parameters:
 	 *   *) [params.defer] - if true, then the function will always return a promise
 	 */
-	waitStatus<T>(status: Statuses, fn: (this: this) => T, params?: AsyncOpts & {defer?: boolean}): CanPromise<T> {
-		params = params || {};
-		params.join = false;
-		return wait(status, {fn, ...params}).call(this);
+	waitStatus(status: Statuses, params?: WaitStatusOpts): Promise<void>;
+
+	/**
+	 * @see Async.promise
+	 * @param status
+	 * @param cb
+	 * @param [params] - additional parameters:
+	 *   *) [params.defer] - if true, then the function will always return a promise
+	 */
+	waitStatus<T>(status: Statuses, cb: (this: this) => T, params?: WaitStatusOpts): CanPromise<T>;
+	waitStatus<T>(status: Statuses, cbOrParams?: Function | WaitStatusOpts, params?: WaitStatusOpts): CanPromise<T> {
+		const
+			isFn = cbOrParams && Object.isFunction(cbOrParams),
+			p = {...(isFn ? params : cbOrParams) || {}, join: false};
+
+		if (isFn) {
+			return wait(status, {fn: <Function>cbOrParams, ...p}).call(this);
+		}
+
+		return this.async.promise(new Promise((r) => wait(status, {fn: r, ...p}).call(this)));
 	}
 
 	/**
@@ -2658,11 +2677,27 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	/**
 	 * Wrapper for $nextTick
 	 *
+	 * @see Async.proxy
+	 * @param cb
+	 * @param [params] - async parameters
+	 */
+	protected nextTick(cb: ((this: this) => void), params?: AsyncOpts): void;
+
+	/**
 	 * @see Async.promise
 	 * @param [params] - async parameters
 	 */
-	protected nextTick(params?: AsyncOpts): Promise<void> {
-		return this.async.promise(this.$nextTick(), params);
+	protected nextTick(params?: AsyncOpts): Promise<void>;
+	protected nextTick(cbOrParams?: Function | AsyncOpts, params?: AsyncOpts): CanPromise<void> {
+		const
+			{async: $a} = this;
+
+		if (cbOrParams && Object.isFunction(cbOrParams)) {
+			this.$nextTick(<any>$a.proxy(cbOrParams, params));
+			return;
+		}
+
+		return $a.promise(this.$nextTick(), cbOrParams);
 	}
 
 	/**
