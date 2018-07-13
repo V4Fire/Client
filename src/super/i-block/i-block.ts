@@ -1419,6 +1419,32 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	}
 
 	/**
+	 * Wrapper for $nextTick
+	 *
+	 * @see Async.proxy
+	 * @param cb
+	 * @param [params] - async parameters
+	 */
+	nextTick(cb: ((this: this) => void), params?: AsyncOpts): void;
+
+	/**
+	 * @see Async.promise
+	 * @param [params] - async parameters
+	 */
+	nextTick(params?: AsyncOpts): Promise<void>;
+	nextTick(cbOrParams?: Function | AsyncOpts, params?: AsyncOpts): CanPromise<void> {
+		const
+			{async: $a} = this;
+
+		if (cbOrParams && Object.isFunction(cbOrParams)) {
+			this.$nextTick(<any>$a.proxy(cbOrParams, params));
+			return;
+		}
+
+		return $a.promise(this.$nextTick(), cbOrParams);
+	}
+
+	/**
 	 * Wrapper for $forceUpdate
 	 */
 	@wait({defer: true, label: $$.forceUpdate})
@@ -2672,32 +2698,6 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 		}
 
 		return 0;
-	}
-
-	/**
-	 * Wrapper for $nextTick
-	 *
-	 * @see Async.proxy
-	 * @param cb
-	 * @param [params] - async parameters
-	 */
-	protected nextTick(cb: ((this: this) => void), params?: AsyncOpts): void;
-
-	/**
-	 * @see Async.promise
-	 * @param [params] - async parameters
-	 */
-	protected nextTick(params?: AsyncOpts): Promise<void>;
-	protected nextTick(cbOrParams?: Function | AsyncOpts, params?: AsyncOpts): CanPromise<void> {
-		const
-			{async: $a} = this;
-
-		if (cbOrParams && Object.isFunction(cbOrParams)) {
-			this.$nextTick(<any>$a.proxy(cbOrParams, params));
-			return;
-		}
-
-		return $a.promise(this.$nextTick(), cbOrParams);
 	}
 
 	/**
