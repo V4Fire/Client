@@ -599,6 +599,12 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	}
 
 	/**
+	 * Render counter (for forceUpdate)
+	 */
+	@field()
+	protected renderCounter: number = 0;
+
+	/**
 	 * Advanced component parameters internal storage
 	 */
 	@field((o) => o.link())
@@ -1449,7 +1455,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 */
 	@wait({defer: true, label: $$.forceUpdate})
 	async forceUpdate(): Promise<void> {
-		this.$forceUpdate();
+		this.renderCounter++;
 	}
 
 	/**
