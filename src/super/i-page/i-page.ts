@@ -22,6 +22,11 @@ export type RootMods = Dictionary<{
 	component: VueInterface;
 }>;
 
+export type StageTitleValue = string | ((this: iPage) => void);
+export interface StageTitles extends Dictionary<StageTitleValue> {
+	'[[DEFAULT]]': StageTitleValue;
+}
+
 @component()
 export default class iPage<
 	T extends Dictionary = Dictionary,
@@ -213,10 +218,19 @@ export default class iPage<
 	protected syncStageWatcher(value: string | number | undefined): void {
 		if (this.stagePageTitles) {
 			const
-				stageTitle = value != null && this.stagePageTitles[value];
+				stageTitles = value != null && this.stagePageTitles;
 
-			if (stageTitle) {
-				this.pageTitle = this.t(stageTitle);
+			if (stageTitles) {
+				let
+					v = stageTitles[<string>value];
+
+				if (!v) {
+					v = stageTitles['[[DEFAULT]]'];
+				}
+
+				if (v) {
+					this.pageTitle = this.t(Object.isFunction(v) ? v.call(this) : v);
+				}
 			}
 		}
 	}

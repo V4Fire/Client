@@ -894,9 +894,8 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	/**
 	 * Alias for .i18n
 	 */
-	protected get t(): typeof i18n {
-		return this.i18n;
-	}
+	@system((o) => o.link('i18n'))
+	protected readonly t!: typeof i18n;
 
 	/**
 	 * Link to window.l
