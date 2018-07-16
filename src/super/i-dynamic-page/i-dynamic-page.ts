@@ -61,7 +61,7 @@ export default class iDynamicPage<T extends Dictionary = Dictionary> extends iDa
 	/**
 	 * Synchronization for the stageStore field
 	 */
-	@watch({event: 'stageChange'})
+	@watch({event: 'onStageChange'})
 	protected syncStageWatcher(value: string | number | undefined): void {
 		if (this.stagePageTitles) {
 			const

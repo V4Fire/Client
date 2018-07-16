@@ -214,7 +214,7 @@ export default class iPage<
 	/**
 	 * Synchronization for the stageStore field
 	 */
-	@watch({event: 'stageChange'})
+	@watch({event: 'onStageChange'})
 	protected syncStageWatcher(value: string | number | undefined): void {
 		if (this.stagePageTitles) {
 			const

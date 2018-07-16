@@ -326,7 +326,7 @@ export function bindWatchers(ctx: VueInterface, type: 'event' | 'field'): void {
 					ctx.$on(key, handler.bind(ctx));
 				}
 
-				return;
+				continue;
 			}
 
 			if (type === 'field') {
