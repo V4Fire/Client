@@ -69,7 +69,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		},
 
 		dataURILimit() {
-			return this.fatHTML ? false : 4096;
+			return this.fatHTML ? undefined : 4096;
 		},
 
 		dllOutput(params) {
