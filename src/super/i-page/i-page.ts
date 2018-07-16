@@ -59,6 +59,20 @@ export default class iPage<
 	lastOnlineDate?: Date;
 
 	/**
+	 * Page title
+	 */
+	get pageTitle(): string {
+		return this.pageTitleStore;
+	}
+
+	/**
+	 * Sets a new page title
+	 */
+	set pageTitle(value: string) {
+		document.title = value;
+	}
+
+	/**
 	 * System language
 	 */
 	get lang(): string {
@@ -76,6 +90,18 @@ export default class iPage<
 	/** @override */
 	@field()
 	protected componentStatusStore!: Statuses;
+
+	/**
+	 * Page title store
+	 */
+	@system()
+	protected pageTitleStore: string = '';
+
+	/**
+	 * Map of page titles ({stage: title})
+	 */
+	@system(Object)
+	protected stagePageTitles?: Dictionary<string>;
 
 	/**
 	 * Root page router instance
@@ -181,6 +207,21 @@ export default class iPage<
 	}
 
 	/**
+	 * Synchronization for the stageStore field
+	 */
+	@watch({event: 'stageChange'})
+	protected syncStageWatcher(value: string | number | undefined): void {
+		if (this.stagePageTitles) {
+			const
+				stageTitle = value != null && this.stagePageTitles[value];
+
+			if (stageTitle) {
+				this.pageTitle = this.t(stageTitle);
+			}
+		}
+	}
+
+	/**
 	 * Initializes listeners for some remote instances (online, session, etc.)
 	 */
 	@hook('created')
@@ -195,5 +236,11 @@ export default class iPage<
 
 		$a.on(session.event, 'set', ({auth}) => this.isAuth = Boolean(auth));
 		$a.on(session.event, 'clear', () => this.isAuth = false);
+	}
+
+	/** @override */
+	protected created(): void {
+		super.created();
+		this.pageTitle = this.pageTitleStore;
 	}
 }
