@@ -23,7 +23,7 @@ export default class bWindow<T extends Dictionary = Dictionary> extends iData<T>
 	 * Map of window titles ({stage: title})
 	 */
 	@prop(Object)
-	readonly stageTitles: Dictionary<string> = {};
+	readonly stageTitles?: Dictionary<string>;
 
 	/**
 	 * Name of an active third-party slot
@@ -109,7 +109,15 @@ export default class bWindow<T extends Dictionary = Dictionary> extends iData<T>
 	 * Window title
 	 */
 	get title(): string {
-		return this.getField('titleStore') && this.stage ? this.t(this.stageTitles[this.stage]) : '';
+		const
+			v = this.getField('titleStore');
+
+		if (this.stageTitles) {
+			const stageTitle = this.stage != null && this.stageTitles[this.stage];
+			return stageTitle ? this.t(stageTitle) : v;
+		}
+
+		return v;
 	}
 
 	/**
