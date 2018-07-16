@@ -15,6 +15,11 @@ export interface OnFilterChange {
 	modifier?(value: any): any;
 }
 
+export type StageTitleValue = string | ((this: iDynamicPage) => void);
+export interface StageTitles extends Dictionary<StageTitleValue> {
+	'[[DEFAULT]]': StageTitleValue;
+}
+
 export const
 	$$ = symbolGenerator();
 
@@ -33,7 +38,7 @@ export default class iDynamicPage<T extends Dictionary = Dictionary> extends iDa
 	 * Map of page titles ({stage: title})
 	 */
 	@prop(Object)
-	readonly stagePageTitles?: Dictionary<string>;
+	readonly stagePageTitles?: StageTitles;
 
 	/**
 	 * Page title
@@ -60,10 +65,19 @@ export default class iDynamicPage<T extends Dictionary = Dictionary> extends iDa
 	protected syncStageWatcher(value: string | number | undefined): void {
 		if (this.stagePageTitles) {
 			const
-				stageTitle = value != null && this.stagePageTitles[value];
+				stageTitles = value != null && this.stagePageTitles;
 
-			if (stageTitle) {
-				this.pageTitle = this.t(stageTitle);
+			if (stageTitles) {
+				let
+					v = stageTitles[<string>value];
+
+				if (!v) {
+					v = stageTitles['[[DEFAULT]]'];
+				}
+
+				if (v) {
+					this.pageTitle = this.t(Object.isFunction(v) ? v.call(this) : v);
+				}
 			}
 		}
 	}

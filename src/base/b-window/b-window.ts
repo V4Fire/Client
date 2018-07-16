@@ -11,6 +11,11 @@ import iData, { field, component, prop, watch, hook, ModsDecl } from 'super/i-da
 import { RequestError } from 'core/data';
 export * from 'super/i-data/i-data';
 
+export type StageTitleValue = string | ((this: bWindow) => void);
+export interface StageTitles extends Dictionary<StageTitleValue> {
+	'[[DEFAULT]]': StageTitleValue;
+}
+
 @component()
 export default class bWindow<T extends Dictionary = Dictionary> extends iData<T> {
 	/**
@@ -110,11 +115,22 @@ export default class bWindow<T extends Dictionary = Dictionary> extends iData<T>
 	 */
 	get title(): string {
 		const
-			v = this.getField('titleStore');
+			v = this.getField('titleStore'),
+			stageTitles = this.stageTitles;
 
-		if (this.stageTitles) {
-			const stageTitle = this.stage != null && this.stageTitles[this.stage];
-			return stageTitle ? this.t(stageTitle) : v;
+		if (stageTitles) {
+			let
+				stageValue = stageTitles[<string>v];
+
+			if (!stageValue) {
+				stageValue = stageTitles['[[DEFAULT]]'];
+			}
+
+			if (stageValue) {
+				stageValue = this.t(Object.isFunction(stageValue) ? stageValue.call(this) : stageValue);
+			}
+
+			return stageValue || v;
 		}
 
 		return v;
