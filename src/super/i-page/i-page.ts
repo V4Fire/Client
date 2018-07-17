@@ -215,14 +215,14 @@ export default class iPage<
 	 * Synchronization for the stageStore field
 	 */
 	@watch({event: 'onStageChange'})
-	protected syncStageWatcher(value: string | number | undefined): void {
+	protected syncStageWatcher(): void {
 		if (this.stagePageTitles) {
 			const
-				stageTitles = value != null && this.stagePageTitles;
+				stageTitles = this.stage != null && this.stagePageTitles;
 
 			if (stageTitles) {
 				let
-					v = stageTitles[<string>value];
+					v = stageTitles[<string>this.stage];
 
 				if (!v) {
 					v = stageTitles['[[DEFAULT]]'];
