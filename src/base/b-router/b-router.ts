@@ -107,7 +107,7 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 	 * Driver for remote router
 	 */
 	@system((o) => o.link((v) => v(o)))
-	protected driver!: Router;
+	driver!: Router;
 
 	/**
 	 * Page store
