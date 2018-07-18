@@ -133,7 +133,7 @@ module.exports = function (style) {
 			res;
 
 		if (!base) {
-			if (col && (col[0][num] || col[num])) {
+			if (col && (reserved && col[0][num] || col[num])) {
 				return reserved && col[0][num] ? pickColor(col[0][num]) : pickColor(col[num]);
 			}
 
