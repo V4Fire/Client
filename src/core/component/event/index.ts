@@ -6,13 +6,8 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import log from 'core/log';
-import { EventEmitter2 as EventEmitter } from 'eventemitter2';
-
-const event = new EventEmitter({
-	maxListeners: 1e3,
-	wildcard: true
-});
+import emitter from 'core/component/event/emitter';
+import 'core/component/event/providers';
 
 export type ResetType =
 	'load' |
@@ -24,8 +19,7 @@ export type ResetType =
  * @param [type] - reset type
  */
 export function reset(type?: ResetType): void {
-	event.emit(type ? `reset.${type}` : 'reset');
-	log(`global:event:${type}`);
+	emitter.emit(type ? `reset.${type}` : 'reset');
 }
 
-export default event;
+export default emitter;
