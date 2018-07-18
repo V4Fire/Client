@@ -23,12 +23,12 @@ function kitFromNodes(nodes) {
 
 /**
  * Saves subset of colors
- * to global colors sets variable
+ * to global color sets variable
  *
- * @param set - subset
+ * @param kit - subset
  * @param {?} el - name of a subset
  */
-function saveColorsSet(set, el) {
+function saveColorsKit(kit, el) {
 	const
 		reduce = (s) => $C(s).reduce((res, el, name) => {
 			if (el.nodes) {
@@ -38,11 +38,11 @@ function saveColorsSet(set, el) {
 		}, {});
 
 	if (el) {
-		GLOBAL.colors[el] = reduce(set);
+		GLOBAL.colors[el] = reduce(kit);
 
 	} else {
 		const
-			res = reduce(set);
+			res = reduce(kit);
 
 		$C(GLOBAL.colors).forEach((el, key) => {
 			if (Array.isArray(el[0]) && res[key]) {
@@ -76,13 +76,13 @@ module.exports = function (style) {
 			parent = par.vals,
 			child = ch.vals;
 
-		saveColorsSet(child);
+		saveColorsKit(child);
 		$C(dependencies).forEach((el, i) => {
 			if (i == 0) {
-				saveColorsSet(parent, el);
+				saveColorsKit(parent, el);
 
 			} else if (parent[el]){
-				saveColorsSet(parent[el], el);
+				saveColorsKit(parent[el], el);
 			}
 		});
 	});
@@ -90,15 +90,13 @@ module.exports = function (style) {
 	/**
 	 * Sets a color theme kit for proto or global colors
 	 *
-	 * @param set - theme kit
+	 * @param kit - themed kit
 	 * @param {?} proto - proto name
 	 */
-	style.define('setReservedColorKits', (set, proto) => {
-		$C(set.vals).forEach((el, key) => {
-			let color;
-
+	style.define('setReservedColorKits', (kit, proto) => {
+		$C(kit.vals).forEach((el, key) => {
 			const
-				base = proto ? GLOBAL.colors[proto.val] : GLOBAL.colors
+				base = proto ? GLOBAL.colors[proto.val] : GLOBAL.colors;
 
 			if (!base) {
 				throw new Error(`Field with name ${proto} not found`)
@@ -110,6 +108,14 @@ module.exports = function (style) {
 
 			base[key][0] = kitFromNodes(el.nodes);
 		});
+	});
+
+	/**
+	 * Sets global colors kit
+	 * @param kit
+	 */
+	style.define('setGlobalColors', (kit) => {
+		saveColorsKit(kit);
 	});
 
 	/**
@@ -134,7 +140,7 @@ module.exports = function (style) {
 
 		if (!base) {
 			if (col && (reserved && col[0][num] || col[num])) {
-				return reserved && col[0][num] ? pickColor(col[0][num]) : pickColor(col[num]);
+				return reserved ? pickColor(col[0][num]) : pickColor(col[num]);
 			}
 
 			$C(dependencies).some((el) => {
@@ -153,13 +159,14 @@ module.exports = function (style) {
 			})
 
 		} else {
-			const set = GLOBAL.colors[base];
+			const
+				kit = GLOBAL.colors[base];
 
-			if (set && reserved) {
-				res = set[hue][0][num]
+			if (kit && reserved) {
+				res = kit[hue][0][num]
 
-			} else if (set && set[hue] && set[hue][num]) {
-				res = set[hue][num];
+			} else if (kit && kit[hue] && kit[hue][num]) {
+				res = kit[hue][num];
 			}
 		}
 
