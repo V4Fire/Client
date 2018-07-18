@@ -22,6 +22,11 @@ export type RootMods = Dictionary<{
 	component: VueInterface;
 }>;
 
+export type StageTitleValue = string | ((this: iPage) => void);
+export interface StageTitles extends Dictionary<StageTitleValue> {
+	'[[DEFAULT]]': StageTitleValue;
+}
+
 @component()
 export default class iPage<
 	T extends Dictionary = Dictionary,
@@ -59,22 +64,49 @@ export default class iPage<
 	lastOnlineDate?: Date;
 
 	/**
+	 * Page title
+	 */
+	get pageTitle(): string {
+		return this.pageTitleStore;
+	}
+
+	/**
+	 * Sets a new page title
+	 */
+	set pageTitle(value: string) {
+		document.title = value;
+	}
+
+	/**
 	 * System language
 	 */
 	get lang(): string {
-		return this.langStore;
+		return this.getField('langStore');
 	}
 
 	/**
 	 * Sets a new system language
 	 */
 	set lang(value: string) {
-		setLang(this.langStore = value);
+		this.setField('langStore', value);
+		setLang(value);
 	}
 
 	/** @override */
 	@field()
 	protected componentStatusStore!: Statuses;
+
+	/**
+	 * Page title store
+	 */
+	@system()
+	protected pageTitleStore: string = '';
+
+	/**
+	 * Map of page titles ({stage: title})
+	 */
+	@system(Object)
+	protected stagePageTitles?: Dictionary<string>;
 
 	/**
 	 * Root page router instance
@@ -180,6 +212,30 @@ export default class iPage<
 	}
 
 	/**
+	 * Synchronization for the stageStore field
+	 */
+	@watch({event: 'onStageChange'})
+	protected syncStageWatcher(): void {
+		if (this.stagePageTitles) {
+			const
+				stageTitles = this.stage != null && this.stagePageTitles;
+
+			if (stageTitles) {
+				let
+					v = stageTitles[<string>this.stage];
+
+				if (!v) {
+					v = stageTitles['[[DEFAULT]]'];
+				}
+
+				if (v) {
+					this.pageTitle = this.t(Object.isFunction(v) ? v.call(this) : v);
+				}
+			}
+		}
+	}
+
+	/**
 	 * Initializes listeners for some remote instances (online, session, etc.)
 	 */
 	@hook('created')
@@ -194,5 +250,11 @@ export default class iPage<
 
 		$a.on(session.event, 'set', ({auth}) => this.isAuth = Boolean(auth));
 		$a.on(session.event, 'clear', () => this.isAuth = false);
+	}
+
+	/** @override */
+	protected created(): void {
+		super.created();
+		this.pageTitle = this.pageTitleStore;
 	}
 }

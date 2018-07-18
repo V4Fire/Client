@@ -112,8 +112,8 @@
     "webpack-cli": "^2.1.4"
   },
   "devDependencies": {
-    "babel-eslint": "^8.2.5",
+    "babel-eslint": "^8.2.6",
     "eslint": "^4.19.1",
-    "tslint": "^5.10.0"
+    "tslint": "^5.11.0"
   }
 }

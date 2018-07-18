@@ -62,6 +62,8 @@
 
 	- block root
 		< _.${self.name()} ${rootAttrs|!html}
+			< .&__render-counter v-show = false
+				{{ renderCounter }}
 
 			/**
 			 * Generates an icon block

@@ -147,12 +147,12 @@ export default class bInput<T extends Dictionary = Dictionary> extends iInput<T>
 
 	/** @override */
 	get value(): string {
-		return this.valueStore;
+		return this.getField('valueStore');
 	}
 
 	/** @override */
 	set value(value: string) {
-		this.valueStore = value;
+		this.setField('valueStore', value);
 
 		if (this.skipBuffer) {
 			this.skipBuffer = false;
@@ -236,14 +236,14 @@ export default class bInput<T extends Dictionary = Dictionary> extends iInput<T>
 	 * Value buffer
 	 */
 	protected get valueBuffer(): string {
-		return this.valueBufferStore;
+		return this.getField('valueBufferStore');
 	}
 
 	/**
 	 * Sets a value to the value buffer store
 	 */
 	protected set valueBuffer(value: string) {
-		this.valueBufferStore = value;
+		this.setField('valueBufferStore', value);
 	}
 
 	/**
@@ -325,23 +325,24 @@ export default class bInput<T extends Dictionary = Dictionary> extends iInput<T>
 			{input} = this.$refs;
 
 		const
-			group = 'mask';
+			group = {group: 'mask'};
 
 		if (this.mask) {
-			$a.on(input, 'mousedown keydown', this.onMaskNavigate, {group});
-			$a.on(input, 'mousedown keydown', this.onMaskValueReady, {group});
+			$a.on(input, 'mousedown keydown', this.onMaskNavigate, group);
+			$a.on(input, 'mousedown keydown', this.onMaskValueReady, group);
 			$a.on(input, 'mouseup keyup', this.onMaskValueReady, {
-				group,
 				options: {
 					capture: true
-				}
+				},
+
+				...group
 			});
 
-			$a.on(input, this.b.is.Android ? 'keyup' : 'keypress', this.onMaskKeyPress, {group});
-			$a.on(input, 'keydown', this.onMaskBackspace, {group});
-			$a.on(input, 'input', this.onMaskInput, {group});
-			$a.on(input, 'focus', this.onMaskFocus, {group});
-			$a.on(input, 'blur', this.onMaskBlur, {group});
+			$a.on(input, this.b.is.Android ? 'keyup' : 'keypress', this.onMaskKeyPress, group);
+			$a.on(input, 'keydown', this.onMaskBackspace, group);
+			$a.on(input, 'input', this.onMaskInput, group);
+			$a.on(input, 'focus', this.onMaskFocus, group);
+			$a.on(input, 'blur', this.onMaskBlur, group);
 
 			const
 				value = <Array<string | RegExp>>[];
@@ -373,7 +374,7 @@ export default class bInput<T extends Dictionary = Dictionary> extends iInput<T>
 			await this.applyMaskToValue(this.value, {updateBuffer: true});
 
 		} else {
-			$a.off({group});
+			$a.off(group);
 			this._mask = undefined;
 		}
 	}

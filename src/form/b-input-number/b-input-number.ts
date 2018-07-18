@@ -56,7 +56,7 @@ export default class bInputNumber<T extends Dictionary = Dictionary> extends bIn
 	 * Returns the component value as a number
 	 */
 	get numValue(): number | undefined {
-		return this.convertValue(this.valueStore);
+		return this.convertValue(this.getField('valueStore'));
 	}
 
 	/**

@@ -30,6 +30,7 @@ import {
 	hook,
 	execRenderObject,
 	patchVNode,
+	runHook,
 	globalEvent,
 	ModVal,
 	ModsDecl,
@@ -112,6 +113,10 @@ export enum statuses {
 	unloaded = 0
 }
 
+export interface WaitStatusOpts extends AsyncOpts {
+	defer?: boolean;
+}
+
 export interface AsyncTaskObjectId {
 	id: AsyncTaskSimpleId;
 	weight?: number;
@@ -134,9 +139,7 @@ export type AsyncTaskId = AsyncTaskSimpleId | (() => AsyncTaskObjectId) | AsyncT
 export type AsyncQueueType = 'asyncComponents' | 'asyncBackComponents';
 export type AsyncWatchOpts = WatchOptions & AsyncOpts;
 
-export interface Event<T extends object = Async> {
-	emit(event: string, ...args: any[]): boolean;
-
+export interface RemoteEvent<T extends object = Async> {
 	on(events: string | string[], handler: Function, ...args: any[]): object | undefined;
 	on(
 		events: string | string[],
@@ -156,6 +159,33 @@ export interface Event<T extends object = Async> {
 	off(id?: object): void;
 	off(params: ClearOptsId<object>): void;
 }
+
+export interface Event<T extends object = Async> {
+	emit(event: string, ...args: any[]): boolean;
+
+	on(events: string | string[], handler: Function, ...args: any[]): object;
+	on(
+		events: string | string[],
+		handler: Function,
+		params: AsyncOnOpts<T>,
+		...args: any[]
+	): object | undefined;
+
+	once(events: string | string[], handler: Function, ...args: any[]): object;
+	once(
+		events: string | string[],
+		handler: Function,
+		params: AsyncOnceOpts<T>,
+		...args: any[]
+	): object | undefined;
+
+	off(id?: object): void;
+	off(params: ClearOptsId<object>): void;
+}
+
+export type ConverterCallType =
+	'component' |
+	'remote';
 
 export const
 	$$ = symbolGenerator(),
@@ -249,7 +279,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 * Initial component stage
 	 */
 	@prop({type: String, required: false})
-	readonly stageProp?: string;
+	readonly stageProp?: string | number;
 
 	/**
 	 * Component render weight
@@ -261,15 +291,15 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 * Component stage store
 	 */
 	@p({cache: false})
-	get stage(): string | undefined {
-		return this.stageStore;
+	get stage(): string | number | undefined {
+		return this.getField('stageStore');
 	}
 
 	/**
 	 * Sets a new component stage
 	 * @emits stageChange(value?: string, oldValue?: string)
 	 */
-	set stage(value: string | undefined) {
+	set stage(value: string | number | undefined) {
 		const
 			oldValue = this.stage;
 
@@ -277,7 +307,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 			return;
 		}
 
-		this.stageStore = value;
+		this.setField('stageStore', value);
 		this.emit('stageChange', value, oldValue);
 	}
 
@@ -322,14 +352,14 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 * Returns the internal advanced parameters store value
 	 */
 	get p(): Dictionary {
-		return this.pStore;
+		return this.getField('pStore');
 	}
 
 	/**
 	 * Sets the internal advanced parameters store value
 	 */
-	set p(val: Dictionary) {
-		this.pStore = val;
+	set p(value: Dictionary) {
+		this.setField('pStore', value);
 	}
 
 	/**
@@ -350,7 +380,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 */
 	@p({cache: false})
 	get router(): bRouter | any | undefined {
-		return this.$root.routerStore;
+		return this.getField('routerStore', this.$root);
 	}
 
 	/**
@@ -358,7 +388,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 */
 	@p({cache: false})
 	get route(): PageInfo | any | undefined {
-		return this.$root.pageInfo;
+		return this.getField('pageInfo', this.$root);
 	}
 
 	/**
@@ -569,6 +599,12 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	}
 
 	/**
+	 * Render counter (for forceUpdate)
+	 */
+	@field()
+	protected renderCounter: number = 0;
+
+	/**
 	 * Advanced component parameters internal storage
 	 */
 	@field((o) => o.link())
@@ -592,7 +628,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 		return v;
 	}))
 
-	protected stageStore?: string;
+	protected stageStore?: string | number;
 
 	/**
 	 * Number of beforeReady event listeners
@@ -625,7 +661,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	protected get m(): Readonly<ModsNTable> {
 		const
 			o = {},
-			w = this.watchModsStore,
+			w = this.getField('watchModsStore'),
 			m = this.mods;
 
 		for (let keys = Object.keys(m), i = 0; i < keys.length; i++) {
@@ -743,6 +779,74 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	}
 
 	/**
+	 * Root event emitter
+	 */
+	protected get rootEvent(): RemoteEvent<this> {
+		const
+			{async: $a, $root: $e} = this;
+
+		return {
+			on: (event, fn, params, ...args) => {
+				if (!$e) {
+					return;
+				}
+
+				return $a.on($e, event, fn, params, ...args);
+			},
+
+			once: (event, fn, params, ...args) => {
+				if (!$e) {
+					return;
+				}
+
+				return $a.once($e, event, fn, params, ...args);
+			},
+
+			off: (...args) => {
+				if (!$e) {
+					return;
+				}
+
+				$a.off(...args);
+			}
+		};
+	}
+
+	/**
+	 * Parent event emitter
+	 */
+	protected get parentEvent(): RemoteEvent<this> {
+		const
+			{async: $a, $parent: $e} = this;
+
+		return {
+			on: (event, fn, params, ...args) => {
+				if (!$e) {
+					return;
+				}
+
+				return $a.on($e, event, fn, params, ...args);
+			},
+
+			once: (event, fn, params, ...args) => {
+				if (!$e) {
+					return;
+				}
+
+				return $a.once($e, event, fn, params, ...args);
+			},
+
+			off: (...args) => {
+				if (!$e) {
+					return;
+				}
+
+				$a.off(...args);
+			}
+		};
+	}
+
+	/**
 	 * Storage object
 	 */
 	@system({
@@ -790,9 +894,8 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	/**
 	 * Alias for .i18n
 	 */
-	protected get t(): typeof i18n {
-		return this.i18n;
-	}
+	@system((o) => o.link('i18n'))
+	protected readonly t!: typeof i18n;
 
 	/**
 	 * Link to window.l
@@ -1295,14 +1398,55 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 *
 	 * @see Async.promise
 	 * @param status
-	 * @param fn
 	 * @param [params] - additional parameters:
 	 *   *) [params.defer] - if true, then the function will always return a promise
 	 */
-	waitStatus<T>(status: Statuses, fn: (this: this) => T, params?: AsyncOpts & {defer?: boolean}): CanPromise<T> {
-		params = params || {};
-		params.join = false;
-		return wait(status, {fn, ...params}).call(this);
+	waitStatus(status: Statuses, params?: WaitStatusOpts): Promise<void>;
+
+	/**
+	 * @see Async.promise
+	 * @param status
+	 * @param cb
+	 * @param [params] - additional parameters:
+	 *   *) [params.defer] - if true, then the function will always return a promise
+	 */
+	waitStatus<T>(status: Statuses, cb: (this: this) => T, params?: WaitStatusOpts): CanPromise<T>;
+	waitStatus<T>(status: Statuses, cbOrParams?: Function | WaitStatusOpts, params?: WaitStatusOpts): CanPromise<T> {
+		const
+			isFn = cbOrParams && Object.isFunction(cbOrParams),
+			p = {...(isFn ? params : cbOrParams) || {}, join: false};
+
+		if (isFn) {
+			return wait(status, {fn: <Function>cbOrParams, ...p}).call(this);
+		}
+
+		return this.async.promise(new Promise((r) => wait(status, {fn: r, ...p}).call(this)));
+	}
+
+	/**
+	 * Wrapper for $nextTick
+	 *
+	 * @see Async.proxy
+	 * @param cb
+	 * @param [params] - async parameters
+	 */
+	nextTick(cb: ((this: this) => void), params?: AsyncOpts): void;
+
+	/**
+	 * @see Async.promise
+	 * @param [params] - async parameters
+	 */
+	nextTick(params?: AsyncOpts): Promise<void>;
+	nextTick(cbOrParams?: Function | AsyncOpts, params?: AsyncOpts): CanPromise<void> {
+		const
+			{async: $a} = this;
+
+		if (cbOrParams && Object.isFunction(cbOrParams)) {
+			this.$nextTick(<any>$a.proxy(cbOrParams, params));
+			return;
+		}
+
+		return $a.promise(this.$nextTick(), cbOrParams);
 	}
 
 	/**
@@ -1310,7 +1454,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 */
 	@wait({defer: true, label: $$.forceUpdate})
 	async forceUpdate(): Promise<void> {
-		this.$forceUpdate();
+		this.renderCounter++;
 	}
 
 	/**
@@ -1522,49 +1666,110 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 */
 	@hook('beforeDataCreate')
 	activate(): void {
-		const
-			isBefore = this.isBeforeCreate();
-
-		if (isBefore) {
+		if (this.isBeforeCreate()) {
 			if (!Object.keys(this.convertStateToRouter()).length) {
 				return;
 			}
 
 			this.initStateFromRouter();
-			this.execCbAfterCreated(() => {
-				this.async.on(this.$root, 'transition', this.initStateFromRouter, {
-					label: $$.activate,
-					group: 'routerStateWatchers'
-				});
-			});
+			this.execCbAfterCreated(() => this.rootEvent.on('transition', this.initStateFromRouter, {
+				label: $$.activate,
+				group: 'routerStateWatchers'
+			}));
 
 			return;
 		}
 
-		const exec = (component = this) => {
-			if (!component.isActivated) {
-				component.activated();
-			}
+		const
+			els = new Set();
 
-			$C(component.$children).forEach(exec);
+		const exec = (ctx = this) => {
+			els.add(ctx);
+
+			const
+				children = ctx.$children;
+
+			if (children) {
+				for (let i = 0; i < children.length; i++) {
+					exec(<any>children[i]);
+				}
+			}
 		};
 
 		exec();
+
+		if (this.$el) {
+			const
+				domEls = this.$el.querySelectorAll('.i-block-helper');
+
+			for (let i = 0; i < domEls.length; i++) {
+				const
+					el = (<VueElement<any>>domEls[i]).vueComponent;
+
+				if (el) {
+					els.add(el);
+				}
+			}
+		}
+
+		for (let w = els.values(), el = w.next(); !el.done; el = w.next()) {
+			const
+				ctx = el.value;
+
+			if (!ctx.isActivated) {
+				runHook('activated', ctx.meta, ctx).then(() => ctx.activated(), stderr);
+			}
+		}
 	}
 
 	/**
 	 * Deactivates the component
 	 */
 	deactivate(): void {
-		const exec = (component = this) => {
-			if (component.isActivated) {
-				component.deactivated();
-			}
+		if (this.isBeforeCreate()) {
+			return;
+		}
 
-			$C(component.$children).forEach(exec);
+		const
+			els = new Set();
+
+		const exec = (ctx = this) => {
+			els.add(ctx);
+
+			const
+				children = ctx.$children;
+
+			if (children) {
+				for (let i = 0; i < children.length; i++) {
+					exec(<any>children[i]);
+				}
+			}
 		};
 
 		exec();
+
+		if (this.$el) {
+			const
+				domEls = this.$el.querySelectorAll('.i-block-helper');
+
+			for (let i = 0; i < domEls.length; i++) {
+				const
+					el = (<VueElement<any>>domEls[i]).vueComponent;
+
+				if (el) {
+					els.add(el);
+				}
+			}
+		}
+
+		for (let w = els.values(), el = w.next(); !el.done; el = w.next()) {
+			const
+				ctx = el.value;
+
+			if (ctx.isActivated) {
+				runHook('deactivated', ctx.meta, ctx).then(() => ctx.deactivated(), stderr);
+			}
+		}
 	}
 
 	/**
@@ -1646,14 +1851,23 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 * @param [obj]
 	 */
 	setField(path: string, value: any, obj: object = this): any {
+		let
+			// tslint:disable-next-line
+			ctx: iBlock = this,
+			isComponent = obj === this;
+
+		if ((<any>obj).instance instanceof iBlock) {
+			ctx = <any>obj;
+			isComponent = true;
+		}
+
 		const
 			chunks = path.split('.'),
-			isSelf = obj === this,
-			isField = isSelf && this.meta.fields[chunks[0]],
-			isReady = !this.isBeforeCreate();
+			isField = isComponent && ctx.meta.fields[chunks[0]],
+			isReady = !ctx.isBeforeCreate();
 
 		let
-			ref = isField ? this.$$data : obj;
+			ref = isField ? ctx.$$data : obj;
 
 		for (let i = 0; i < chunks.length; i++) {
 			const
@@ -1669,7 +1883,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 					val = isNaN(Number(chunks[i + 1])) ? {} : [];
 
 				if (isField && isReady) {
-					this.$set(ref, prop, val);
+					ctx.$set(ref, prop, val);
 
 				} else {
 					ref[prop] = val;
@@ -1684,7 +1898,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 
 		} else {
 			if (isField && isReady) {
-				this.$set(ref, path, value);
+				ctx.$set(ref, path, value);
 
 			} else {
 				ref[path] = value;
@@ -1701,15 +1915,24 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 * @param [obj]
 	 */
 	deleteField(path: string, obj: object = this): boolean {
+		let
+			// tslint:disable-next-line
+			ctx: iBlock = this,
+			isComponent = obj === this;
+
+		if ((<any>obj).instance instanceof iBlock) {
+			ctx = <any>obj;
+			isComponent = true;
+		}
+
 		const
 			chunks = path.split('.'),
-			isSelf = obj === this,
-			isField = isSelf && this.meta.fields[chunks[0]],
-			isReady = !this.isBeforeCreate();
+			isField = isComponent && ctx.meta.fields[chunks[0]],
+			isReady = !ctx.isBeforeCreate();
 
 		let
 			test = true,
-			ref = isField ? this.$$data : obj;
+			ref = isField ? ctx.$$data : obj;
 
 		for (let i = 0; i < chunks.length; i++) {
 			const
@@ -1730,7 +1953,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 
 		if (test) {
 			if (isField && isReady) {
-				this.$delete(ref, path);
+				ctx.$delete(ref, path);
 
 			} else {
 				delete ref[path];
@@ -1749,13 +1972,22 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 * @param [obj]
 	 */
 	getField(path: string, obj: object = this): any {
+		let
+			// tslint:disable-next-line
+			ctx: iBlock = this,
+			isComponent = obj === this;
+
+		if ((<any>obj).instance instanceof iBlock) {
+			ctx = <any>obj;
+			isComponent = true;
+		}
+
 		const
 			chunks = path.split('.'),
-			isSelf = obj === this,
-			isField = isSelf && this.meta.fields[chunks[0]];
+			isField = isComponent && ctx.meta.fields[chunks[0]];
 
 		let
-			res = isField ? this.$$data : obj;
+			res = isField ? ctx.$$data : obj;
 
 		for (let i = 0; i < chunks.length; i++) {
 			if (res == null) {
@@ -2204,9 +2436,11 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 
 	/**
 	 * Returns an object with default component fields for saving to a local storage
+	 *
 	 * @param [data] - advanced data
+	 * @param [type] - call type
 	 */
-	protected convertStateToStorage(data?: Dictionary | undefined): Dictionary {
+	protected convertStateToStorage(data?: Dictionary | undefined, type: ConverterCallType = 'component'): Dictionary {
 		return {...data};
 	}
 
@@ -2228,7 +2462,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 			return;
 		}
 
-		data = this.convertStateToStorage(data);
+		data = this.convertStateToStorage(data, 'remote');
 		this.setState(data);
 
 		await this.saveSettings(data, '[[STORE]]');
@@ -2317,9 +2551,11 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 
 	/**
 	 * Returns an object with default component fields for saving to a router
+	 *
 	 * @param [data] - advanced data
+	 * @param [type] - call type
 	 */
-	protected convertStateToRouter(data?: Dictionary | undefined): Dictionary {
+	protected convertStateToRouter(data?: Dictionary | undefined, type: ConverterCallType = 'component'): Dictionary {
 		return {...data};
 	}
 
@@ -2336,11 +2572,8 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 * @param [data] - advanced data
 	 */
 	protected async saveStateToRouter(data?: Dictionary | undefined): Promise<boolean> {
-		data = this.convertStateToRouter(data);
-
-		this.setState(
-			data
-		);
+		data = this.convertStateToRouter(data, 'remote');
+		this.setState(data);
 
 		const
 			r = this.$root.router;
@@ -2497,16 +2730,6 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 		}
 
 		return 0;
-	}
-
-	/**
-	 * Wrapper for $nextTick
-	 *
-	 * @see Async.promise
-	 * @param [params] - async parameters
-	 */
-	protected nextTick(params?: AsyncOpts): Promise<void> {
-		return this.async.promise(this.$nextTick(), params);
 	}
 
 	/**
@@ -2829,18 +3052,16 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	/**
 	 * Initializes an update from the parent listener
 	 */
-	@hook('beforeCreate')
-	protected initParentListener(): CanPromise<any> {
-		if (this.$parent) {
-			this.$parent.on('callChild', (component: iBlock, {check, action}: ParentMessage) => {
-				if (
-					check[0] !== 'instanceOf' && check[1] === this[check[0]] ||
-					check[0] === 'instanceOf' && this.instance instanceof check[1]
-				) {
-					return action.call(this);
-				}
-			}, {group: 'callChild'});
-		}
+	@hook('created')
+	protected initParentCallEvent(): void {
+		this.parentEvent.on('callChild', (component: iBlock, {check, action}: ParentMessage) => {
+			if (
+				check[0] !== 'instanceOf' && check[1] === this[check[0]] ||
+				check[0] === 'instanceOf' && this.instance instanceof check[1]
+			) {
+				return action.call(this);
+			}
+		});
 	}
 
 	/**
@@ -2877,14 +3098,14 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 			const
 				k = e.name,
 				v = e.value,
-				w = this.watchModsStore;
+				w = this.getField('watchModsStore');
 
 			this
 				.mods[k] = v;
 
 			if (k in w && w[k] !== v) {
 				delete w[k];
-				this.$set(w, k, v);
+				this.setField(`watchModsStore.${k}`, v);
 			}
 
 			this.emit(`mod-set-${k}-${v}`, e);
@@ -2894,14 +3115,14 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 			if (e.reason === 'removeMod') {
 				const
 					k = e.name,
-					w = this.watchModsStore;
+					w = this.getField('watchModsStore');
 
 				this
 					.mods[k] = undefined;
 
 				if (k in w && w[k]) {
 					delete w[k];
-					this.$set(w, k, undefined);
+					this.setField(`watchModsStore.${k}`, undefined);
 				}
 
 				this.emit(`mod-remove-${k}-${e.value}`, e);
@@ -2998,7 +3219,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 			return;
 		}
 
-		this.async.disabled = false;
+		this.async.unmuteEventListeners().unsuspendAll();
 		this.componentStatus = 'beforeReady';
 
 		if (this.needReInit) {
@@ -3028,7 +3249,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 * (for keep-alive)
 	 */
 	protected deactivated(): void {
-		this.async.disabled = true;
+		this.async.muteEventListeners().suspendAll();
 		this.componentStatus = 'inactive';
 		this.isActivated = false;
 	}

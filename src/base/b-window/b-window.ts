@@ -11,6 +11,11 @@ import iData, { field, component, prop, watch, hook, ModsDecl } from 'super/i-da
 import { RequestError } from 'core/data';
 export * from 'super/i-data/i-data';
 
+export type StageTitleValue = string | ((this: bWindow) => void);
+export interface StageTitles extends Dictionary<StageTitleValue> {
+	'[[DEFAULT]]': StageTitleValue;
+}
+
 @component()
 export default class bWindow<T extends Dictionary = Dictionary> extends iData<T> {
 	/**
@@ -23,7 +28,7 @@ export default class bWindow<T extends Dictionary = Dictionary> extends iData<T>
 	 * Map of window titles ({stage: title})
 	 */
 	@prop(Object)
-	readonly stageTitles: Dictionary<string> = {};
+	readonly stageTitles?: Dictionary<string>;
 
 	/**
 	 * Name of an active third-party slot
@@ -93,30 +98,49 @@ export default class bWindow<T extends Dictionary = Dictionary> extends iData<T>
 	/**
 	 * Slot name
 	 */
-	get slotName(): any {
-		return this.slotNameStore;
+	get slotName(): string | undefined {
+		return this.getField('slotNameStore');
 	}
 
 	/**
-	 * Sets slot name
-	 * @param val
+	 * Sets a new slot name
+	 * @param value
 	 */
-	set slotName(val: any) {
-		this.slotNameStore = val;
+	set slotName(value: string | undefined) {
+		this.setField('slotNameStore', value);
 	}
 
 	/**
 	 * Window title
 	 */
 	get title(): string {
-		return this.titleStore && this.stage ? this.t(this.stageTitles[this.stage]) : '';
+		const
+			v = this.getField('titleStore'),
+			stageTitles = this.stageTitles;
+
+		if (stageTitles) {
+			let
+				stageValue = stageTitles[<string>v];
+
+			if (!stageValue) {
+				stageValue = stageTitles['[[DEFAULT]]'];
+			}
+
+			if (stageValue) {
+				stageValue = this.t(Object.isFunction(stageValue) ? stageValue.call(this) : stageValue);
+			}
+
+			return stageValue || v;
+		}
+
+		return v;
 	}
 
 	/**
-	 * Sets the specified window title
+	 * Sets a new window title
 	 */
 	set title(value: string) {
-		this.titleStore = value;
+		this.setField('titleStore', value);
 	}
 
 	/**

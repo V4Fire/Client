@@ -74,7 +74,7 @@ export default class bInputTime<T extends Dictionary = Dictionary> extends bInpu
 	 * Time pointer
 	 */
 	get pointer(): Date | undefined {
-		return Object.fastClone(this.pointerStore);
+		return Object.fastClone(this.getField('pointerStore'));
 	}
 
 	/**
@@ -82,7 +82,7 @@ export default class bInputTime<T extends Dictionary = Dictionary> extends bInpu
 	 * @param value
 	 */
 	set pointer(value: Date | undefined) {
-		this.pointerStore = this.getNPointer(this.value, value, this.pointerStore);
+		this.setField('pointerStore', this.getNPointer(this.value, value, this.pointerStore));
 	}
 
 	/** @override */
@@ -135,7 +135,7 @@ export default class bInputTime<T extends Dictionary = Dictionary> extends bInpu
 	protected async syncValueStoreWatcher(value: string): Promise<void> {
 		try {
 			await this.async.wait(() => this.mods.focused !== 'true', {label: $$.$$valueStore});
-			this.pointer = this.getNPointer(value, this.pointerStore);
+			this.pointer = this.getNPointer(value, this.getField('pointerStore'));
 		} catch (_) {}
 	}
 
@@ -230,7 +230,7 @@ export default class bInputTime<T extends Dictionary = Dictionary> extends bInpu
 				label: $$.change
 			});
 
-			this.pointer = this.getNPointer(value, this.pointerStore);
+			this.pointer = this.getNPointer(value, this.getField('pointerStore'));
 			this.emit('actionChange', this.pointer);
 
 		} catch (_) {}

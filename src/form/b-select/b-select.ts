@@ -94,7 +94,7 @@ export default class bSelect<T extends Dictionary = Dictionary> extends bInput<T
 	 * Select options
 	 */
 	get options(): NOption[] {
-		return this.optionsStore.slice();
+		return this.getField('optionsStore').slice();
 	}
 
 	/**
@@ -102,7 +102,7 @@ export default class bSelect<T extends Dictionary = Dictionary> extends bInput<T
 	 * @param value
 	 */
 	set options(value: NOption[]) {
-		this.optionsStore = value;
+		this.setField('optionsStore', value);
 	}
 
 	/** @override */

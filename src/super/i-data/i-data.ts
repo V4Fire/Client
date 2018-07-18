@@ -15,9 +15,9 @@ import StatusCodes from 'core/statusCodes';
 import symbolGenerator from 'core/symbol';
 
 import { Socket } from 'core/socket';
-import Async, { AsyncOpts, AsyncCbOpts, AsyncOnOpts, AsyncOnceOpts, ClearOptsId } from 'core/async';
+import Async, { AsyncOpts, AsyncCbOpts } from 'core/async';
 
-import iMessage, { component, prop, field, system, watch, wait } from 'super/i-message/i-message';
+import iMessage, { component, prop, field, system, watch, wait, RemoteEvent } from 'super/i-message/i-message';
 import Provider, {
 
 	providers,
@@ -43,28 +43,7 @@ export type RequestFilter = ((data: RequestQuery | RequestBody, opts: RequestFil
 export type Request = RequestQuery | RequestBody | [RequestQuery | RequestBody, CreateRequestOptions];
 export type RequestParams = Dictionary<Request>;
 
-export interface DataEvent<T extends object = Async> {
-	on(events: string | string[], handler: Function, ...args: any[]): object | undefined;
-	on(
-		events: string | string[],
-		handler: Function,
-		params: AsyncOnOpts<T>,
-		...args: any[]
-	): object | undefined;
-
-	once(events: string | string[], handler: Function, ...args: any[]): object | undefined;
-	once(
-		events: string | string[],
-		handler: Function,
-		params: AsyncOnceOpts<T>,
-		...args: any[]
-	): object | undefined;
-
-	off(id?: object): void;
-	off(params: ClearOptsId<object>): void;
-}
-
-export interface SocketEvent<T extends object = Async> extends DataEvent<T> {
+export interface SocketEvent<T extends object = Async> extends RemoteEvent<T> {
 	connection: Promise<Socket | void>;
 }
 
@@ -129,7 +108,7 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 	 * Component data
 	 */
 	get db(): T | undefined {
-		return this.dbStore;
+		return this.getField('dbStore');
 	}
 
 	/**
@@ -143,7 +122,7 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 			label: $$.db
 		});
 
-		this.dbStore = value;
+		this.setField('dbStore', value);
 		this.initRemoteData();
 
 		this.watch('dbStore', this.initRemoteData, {
@@ -155,7 +134,7 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 	/**
 	 * Event emitter object for working with a data provider
 	 */
-	get dataEvent(): DataEvent<this> {
+	get dataEvent(): RemoteEvent<this> {
 		const
 			{async: $a, dp: $d} = this;
 
@@ -470,31 +449,31 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 	protected async initDataListeners(): Promise<void> {
 		const
 			{dataEvent: $e} = this,
-			group = 'dataProviderSync';
+			group = {group: 'dataProviderSync'};
 
-		$e.off({
+		$e.off(
 			group
-		});
+		);
 
 		$e.on('add', (data) => {
 			if (this.getDefaultRequestParams('get')) {
 				return this.onAddData(Object.isFunction(data) ? data() : data);
 			}
-		}, {group});
+		}, group);
 
 		$e.on('upd', (data) => {
 			if (this.getDefaultRequestParams('get')) {
 				return this.onUpdData(Object.isFunction(data) ? data() : data);
 			}
-		}, {group});
+		}, group);
 
 		$e.on('del', (data) => {
 			if (this.getDefaultRequestParams('get')) {
 				return this.onDelData(Object.isFunction(data) ? data() : data);
 			}
-		}, {group});
+		}, group);
 
-		$e.on('refresh', (data) => this.onRefreshData(Object.isFunction(data) ? data() : data), {group});
+		$e.on('refresh', (data) => this.onRefreshData(Object.isFunction(data) ? data() : data), group);
 	}
 
 	/**

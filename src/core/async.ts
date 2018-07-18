@@ -91,6 +91,82 @@ export default class Async<CTX extends object = Async<any>> extends Super<CTX> {
 	}
 
 	/**
+	 * Mutes a requestAnimationFrame operation
+	 * @param [id] - operation id (if not defined will be remove all handlers)
+	 */
+	muteAnimationFrame(id?: number): this;
+
+	/**
+	 * @param params - parameters for the operation:
+	 *   *) [id] - operation id
+	 *   *) [label] - label for the task
+	 *   *) [group] - group name for the task
+	 */
+	muteAnimationFrame(params: ClearOptsId<number>): this;
+
+	// tslint:disable-next-line
+	muteAnimationFrame(p) {
+		return this.markAsync('muted', p, 'animationFrame');
+	}
+
+	/**
+	 * Unmutes a requestAnimationFrame operation
+	 * @param [id] - operation id (if not defined will be remove all handlers)
+	 */
+	unmuteAnimationFrame(id?: number): this;
+
+	/**
+	 * @param params - parameters for the operation:
+	 *   *) [id] - operation id
+	 *   *) [label] - label for the task
+	 *   *) [group] - group name for the task
+	 */
+	unmuteAnimationFrame(params: ClearOptsId<number>): this;
+
+	// tslint:disable-next-line
+	unmuteAnimationFrame(p) {
+		return this.markAsync('!muted', p, 'animationFrame');
+	}
+
+	/**
+	 * Suspends a requestAnimationFrame operation
+	 * @param [id] - operation id (if not defined will be remove all handlers)
+	 */
+	suspendAnimationFrame(id?: number): this;
+
+	/**
+	 * @param params - parameters for the operation:
+	 *   *) [id] - operation id
+	 *   *) [label] - label for the task
+	 *   *) [group] - group name for the task
+	 */
+	suspendAnimationFrame(params: ClearOptsId<number>): this;
+
+	// tslint:disable-next-line
+	suspendAnimationFrame(p) {
+		return this.markAsync('paused', p, 'animationFrame');
+	}
+
+	/**
+	 * Unsuspends a requestAnimationFrame operation
+	 * @param [id] - operation id (if not defined will be remove all handlers)
+	 */
+	unsuspendAnimationFrame(id?: number): this;
+
+	/**
+	 * @param params - parameters for the operation:
+	 *   *) [id] - operation id
+	 *   *) [label] - label for the task
+	 *   *) [group] - group name for the task
+	 */
+	unsuspendAnimationFrame(params: ClearOptsId<number>): this;
+
+	// tslint:disable-next-line
+	unsuspendAnimationFrame(p) {
+		return this.markAsync('!paused', p, 'animationFrame');
+	}
+
+	/**
 	 * Promise for requestAnimationFrame
 	 * @param [element] - link for the element
 	 */
@@ -238,5 +314,33 @@ export default class Async<CTX extends object = Async<any>> extends Super<CTX> {
 		const p: any = params;
 		this.cancelAnimationFrame(p);
 		return super.clearAll(p);
+	}
+
+	/** @override */
+	muteAll(params?: ClearOpts): this {
+		const p: any = params;
+		this.muteAnimationFrame(p);
+		return super.muteAll(p);
+	}
+
+	/** @override */
+	unmuteAll(params?: ClearOpts): this {
+		const p: any = params;
+		this.unmuteAnimationFrame(p);
+		return super.unmuteAll(p);
+	}
+
+	/** @override */
+	suspendAll(params?: ClearOpts): this {
+		const p: any = params;
+		this.suspendAnimationFrame(p);
+		return super.suspendAll(p);
+	}
+
+	/** @override */
+	unsuspendAll(params?: ClearOpts): this {
+		const p: any = params;
+		this.unsuspendAnimationFrame(p);
+		return super.unsuspendAll(p);
 	}
 }

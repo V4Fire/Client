@@ -20,12 +20,13 @@ export interface Value {
 export default class bTimeRange<T extends Dictionary = Dictionary> extends iInput<T> {
 	/** @override */
 	get value(): Value | undefined {
-		return this.valueStore && Object.fastClone(this.valueStore);
+		const v = this.getField('valueStore');
+		return v && Object.fastClone(v);
 	}
 
 	/** @override */
 	set value(value: Value | undefined) {
-		this.valueStore = value;
+		this.setField('valueStore', value);
 	}
 
 	/** @inheritDoc */
