@@ -2463,7 +2463,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 		}
 
 		data = this.convertStateToStorage(data, 'remote');
-		this.setState(data);
+		this.setState(this.convertStateToStorage(data));
 
 		await this.saveSettings(data, '[[STORE]]');
 		this.log('state:save:storage', this, data);
@@ -2573,7 +2573,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 */
 	protected async saveStateToRouter(data?: Dictionary | undefined): Promise<boolean> {
 		data = this.convertStateToRouter(data, 'remote');
-		this.setState(data);
+		this.setState(this.convertStateToRouter(data));
 
 		const
 			r = this.$root.router;
