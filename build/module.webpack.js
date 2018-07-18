@@ -137,7 +137,7 @@ module.exports = async function ({buildId, plugins}) {
 					{
 						loader: 'stylus',
 						options: inherit(config.stylus(), {
-							use: include('build/stylus.plugins')
+							use: include('build/stylus')
 						})
 					},
 
