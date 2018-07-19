@@ -7,7 +7,7 @@
  */
 
 import symbolGenerator from 'core/symbol';
-import iData, { component, prop, system } from 'super/i-data/i-data';
+import iData, { component, prop, system, RequestError } from 'super/i-data/i-data';
 export * from 'super/i-data/i-data';
 
 export const
@@ -34,6 +34,18 @@ export default class bRemoteProvider<T extends Dictionary = Dictionary> extends 
 	/** @override */
 	@system()
 	protected dbStore?: T | undefined;
+
+	/** @override */
+	protected onRequestError<T>(err: Error | RequestError, retry: () => Promise<T | undefined>): void {
+		const
+			l = this.$listeners;
+
+		if (!l.error && !l['on-error']) {
+			return super.onRequestError(err, retry);
+		}
+
+		this.emit('error', err, retry);
+	}
 
 	/**
 	 * Synchronization for the db field
