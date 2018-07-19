@@ -670,7 +670,7 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 			};
 
 			req.then(then, (err) => {
-				this.onRequestError(err);
+				this.onRequestError(err, () => this.createRequest<T>(method, data, params));
 				then();
 				throw err;
 			});
@@ -684,8 +684,9 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 	 *
 	 * @emits error(err: Error)
 	 * @param err
+	 * @param retry - retry function
 	 */
-	protected onRequestError(err: Error | RequestError): void {
+	protected onRequestError<T>(err: Error | RequestError, retry: () => Promise<T | undefined>): void {
 		this.emit('error', err);
 	}
 
