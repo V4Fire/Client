@@ -74,12 +74,6 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 	readonly dataProviderParams: Dictionary = {};
 
 	/**
-	 * Data initialization advanced path
-	 */
-	@prop({type: String, watch: 'reload', required: false})
-	readonly initAdvPath?: string;
-
-	/**
 	 * Initial request parameters
 	 */
 	@prop({type: [Object, Array], required: false})
@@ -208,10 +202,6 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 
 			if (p) {
 				Object.assign(p[1], {label: $$.initLoad, join: 'replace'});
-
-				if (this.initAdvPath) {
-					this.url(this.initAdvPath);
-				}
 
 				try {
 					const
