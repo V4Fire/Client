@@ -6,8 +6,9 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { isOnline } from 'core/net';
-import { isExists } from 'core/session';
+import * as lang from 'core/i18n';
+import * as net from 'core/net';
+import * as session from 'core/session';
 
 import state from 'core/component/state';
 import semaphore from 'core/start/semaphore';
@@ -17,12 +18,14 @@ export default (async () => {
 		tasks = <Promise<any>[]>[];
 
 	tasks.push(
-		isOnline().then((v) => {
+		lang.isInitialized,
+
+		net.isOnline().then((v) => {
 			state.isOnline = v.status;
 			state.lastOnlineDate = v.lastOnline;
 		}),
 
-		isExists().then((v) => state.isAuth = v)
+		session.isExists().then((v) => state.isAuth = v)
 	);
 
 	for (let i = 0; i < tasks.length; i++) {

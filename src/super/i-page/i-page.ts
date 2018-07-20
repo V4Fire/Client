@@ -7,13 +7,10 @@
  */
 
 import { reset, ResetType, VueInterface } from 'core/component';
-
-import * as net from 'core/net';
-import * as session from 'core/session';
 import { setLang, lang } from 'core/i18n';
 
 import bRouter, { PageInfo } from 'base/b-router/b-router';
-import iData, { component, field, system, watch, hook, Statuses } from 'super/i-data/i-data';
+import iData, { component, field, system, watch, Statuses } from 'super/i-data/i-data';
 export * from 'super/i-data/i-data';
 
 export type RootMods = Dictionary<{
@@ -235,21 +232,21 @@ export default class iPage<
 		}
 	}
 
-	/**
-	 * Initializes listeners for some remote instances (online, session, etc.)
-	 */
-	@hook('created')
-	protected initRemoteListeners(): void {
-		const
-			{async: $a} = this;
+	/** @override */
+	protected initGlobalEvents(): void {
+		super.initGlobalEvents();
 
-		$a.on(net.event, 'status', ({status, lastOnline}) => {
+		const
+			{globalEvent: $e} = this;
+
+		$e.on('net.status', ({status, lastOnline}) => {
 			this.isOnline = status;
 			this.lastOnlineDate = lastOnline;
 		});
 
-		$a.on(session.event, 'set', ({auth}) => this.isAuth = Boolean(auth));
-		$a.on(session.event, 'clear', () => this.isAuth = false);
+		$e.on('session.set', ({auth}) => this.isAuth = Boolean(auth));
+		$e.on('session.clear', () => this.isAuth = false);
+		$e.on('i18n.setLang', (lang) => this.lang = lang);
 	}
 
 	/** @override */
