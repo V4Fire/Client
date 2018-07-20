@@ -26,7 +26,7 @@ export function match(pattern: RegExp | string): [string, number[] | null] | boo
 		rgxp = Object.isString(pattern) ? new RegExp(`(${pattern})(?:[ \\/-]([0-9.]*))?`, 'i') : pattern,
 		res = agent.match(rgxp);
 
-	return res ? [res[1], res[2] ? res[2].split('.').map((el) => parseInt(el, 10) || 0) : null] : false;
+	return res ? [res[1], res[2] ? res[2].split('.').map((el) => parseInt(String(el), 10) || 0) : null] : false;
 }
 
 /**
@@ -54,7 +54,7 @@ export function test(platform: string, operation?: Operations, version?: string)
 
 	let
 		v1 = val[1],
-		v2 = version.split('.').map((el) => parseInt(el, 10) || 0);
+		v2 = version.split('.').map((el) => parseInt(String(el), 10) || 0);
 
 	v1 = [v1[0] || 0, v1[1] || 0, v1[2] || 0];
 	v2 = [v2[0] || 0, v2[1] || 0, v2[2] || 0];

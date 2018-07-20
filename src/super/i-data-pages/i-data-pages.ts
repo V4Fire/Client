@@ -103,11 +103,6 @@ export default class iDataPages<T extends Dictionary = Dictionary> extends iData
 		}
 
 		p[0].page = page;
-
-		if (this.initAdvPath) {
-			this.url(this.initAdvPath);
-		}
-
 		this.pageLoaded[page] = true;
 
 		const

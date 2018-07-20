@@ -185,12 +185,14 @@ export default class bCalendar<T extends Dictionary = Dictionary> extends iInput
 			ctx: bCalendar = <any>o,
 			prop = Object.isArray(val) ? val : [val];
 
-		const d = prop.map((v, index) => index > 0 ? prop[index - 1].clone().addMonths(1) : v.clone().beginningOfMonth().set({
-			hour: v.getHours(),
-			minute: v.getMinutes(),
-			second: v.getSeconds(),
-			millisecond: v.getMilliseconds()
-		}));
+		const d = prop.map((v: Date, index) =>
+			index > 0 ? prop[index - 1].clone().addMonths(1) : v.clone().beginningOfMonth().set({
+				hour: v.getHours(),
+				minute: v.getMinutes(),
+				second: v.getSeconds(),
+				millisecond: v.getMilliseconds()
+			})
+		);
 
 		if (ctx.pointerStore && d.isEqual(ctx.pointerStore)) {
 			return ctx.pointerStore;
