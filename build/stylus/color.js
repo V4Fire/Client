@@ -32,9 +32,9 @@ function kitFromNodes(nodes) {
  * Saves subset of colors to a global color sets variable
  *
  * @param {!Object} kit - subset
- * @param {string} el - name of a subset
+ * @param {string} nm - name of a subset
  */
-function saveColorsKit(kit, el) {
+function saveColorsKit(kit, nm) {
 	const reduce = (s) => $C(s).reduce((res, el, name) => {
 		if (el.nodes) {
 			res[name] = [].concat([[]], kitFromNodes(el.nodes));
@@ -42,8 +42,8 @@ function saveColorsKit(kit, el) {
 		return res;
 	}, {});
 
-	if (el) {
-		GLOBAL.colors[el] = reduce(kit);
+	if (nm) {
+		GLOBAL.colors[nm] = reduce(kit);
 
 	} else {
 		const
@@ -60,13 +60,13 @@ function saveColorsKit(kit, el) {
 }
 
 /**
- * Picks rgba color from hex string
+ * Picks an rgba color from the specified hex string
  *
- * @param {string} el - hex value
+ * @param {string} str - hex value
  * @returns {string}
  */
-function pickColor(el) {
-	return new stylus.Parser(el).peek().val;
+function pickColor(str) {
+	return new stylus.Parser(str).peek().val;
 }
 
 module.exports = function (style) {
@@ -115,7 +115,7 @@ module.exports = function (style) {
 	});
 
 	/**
-	 * Sets global colors kit
+	 * Sets a global colors kit
 	 * @param kit
 	 */
 	style.define('setGlobalColors', (kit) => {
@@ -123,7 +123,7 @@ module.exports = function (style) {
 	});
 
 	/**
-	 * Returns global color value
+	 * Returns a global color value
 	 *
 	 * @param {!Object} hueInput - color name
 	 * @param {!Object} numInput - color position in a kit
