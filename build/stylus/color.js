@@ -78,8 +78,8 @@ module.exports = function (style) {
 	 */
 	style.define('inheritColors', (parent, children) => {
 		parent = parent.vals;
-		child = children.vals;
-		saveColorsKit(child);
+		children = children.vals;
+		saveColorsKit(children);
 
 		$C(pzlr.config.dependencies).forEach((el, i) => {
 			if (i === 0) {
