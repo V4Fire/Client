@@ -86,7 +86,7 @@ export function test(platform: string, operation?: Operations, version?: string)
 }
 
 export const is = {
-	Chrome: match('Firefox'),
+	Chrome: match('Chrome'),
 	Firefox: match('Firefox'),
 	Android: match('Android'),
 	BlackBerry: match('BlackBerry'),
