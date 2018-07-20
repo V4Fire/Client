@@ -1,41 +1,46 @@
 'use strict';
 
+/*!
+ * V4Fire Client Core
+ * https://github.com/V4Fire/Client
+ *
+ * Released under the MIT license
+ * https://github.com/V4Fire/Client/blob/master/LICENSE
+ */
+
 const
 	$C = require('collection.js'),
 	stylus = require('stylus'),
 	pzlr = require('@pzlr/build-core');
 
-const
-	GLOBAL = {
-		colors: {}
-	};
+const GLOBAL = {
+	colors: {}
+};
 
 /**
- * Converts stylus nodes collection to js array
- * @param nodes
+ * Converts stylus nodes collection to a js array
+ *
+ * @param {!Object} nodes
+ * @returns {!Array<string>}
  */
 function kitFromNodes(nodes) {
-	const
-		str = nodes.toString().replace(/[ ()]/g, '');
-
+	const str = nodes.toString().replace(/[ ()]/g, '');
 	return str.split(',');
 }
 
 /**
- * Saves subset of colors
- * to global color sets variable
+ * Saves subset of colors to a global color sets variable
  *
- * @param kit - subset
- * @param {?} el - name of a subset
+ * @param {!Object} kit - subset
+ * @param {string} el - name of a subset
  */
 function saveColorsKit(kit, el) {
-	const
-		reduce = (s) => $C(s).reduce((res, el, name) => {
-			if (el.nodes) {
-				res[name] = [].concat([[]], kitFromNodes(el.nodes));
-			}
-			return res;
-		}, {});
+	const reduce = (s) => $C(s).reduce((res, el, name) => {
+		if (el.nodes) {
+			res[name] = [].concat([[]], kitFromNodes(el.nodes));
+		}
+		return res;
+	}, {});
 
 	if (el) {
 		GLOBAL.colors[el] = reduce(kit);
@@ -46,7 +51,7 @@ function saveColorsKit(kit, el) {
 
 		$C(GLOBAL.colors).forEach((el, key) => {
 			if (Array.isArray(el[0]) && res[key]) {
-				res[key][0] = el[0]
+				res[key][0] = el[0];
 			}
 		});
 
@@ -56,32 +61,31 @@ function saveColorsKit(kit, el) {
 
 /**
  * Picks rgba color from hex string
- * @param el - hex value
+ *
+ * @param {string} el - hex value
+ * @returns {string}
  */
 function pickColor(el) {
-	return new stylus.Parser(el).peek().val
+	return new stylus.Parser(el).peek().val;
 }
 
 module.exports = function (style) {
 	/**
-	 * Sets the child colors kit
-	 * with kits of parent projects
+	 * Sets the child colors kit with kits of parent projects
 	 *
-	 * @param par - parent kit
-	 * @param ch - child kit
+	 * @param {!Object} parent - parent kit
+	 * @param {!Object} children - child kit
 	 */
-	style.define('inheritColors', (par, ch) => {
-		const
-			{dependencies} = pzlr.config,
-			parent = par.vals,
-			child = ch.vals;
-
+	style.define('inheritColors', (parent, children) => {
+		parent = parent.vals;
+		child = children.vals;
 		saveColorsKit(child);
-		$C(dependencies).forEach((el, i) => {
-			if (i == 0) {
+
+		$C(pzlr.config.dependencies).forEach((el, i) => {
+			if (i === 0) {
 				saveColorsKit(parent, el);
 
-			} else if (parent[el]){
+			} else if (parent[el]) {
 				saveColorsKit(parent[el], el);
 			}
 		});
@@ -90,8 +94,8 @@ module.exports = function (style) {
 	/**
 	 * Sets a color theme kit for proto or global colors
 	 *
-	 * @param kit - themed kit
-	 * @param {?} proto - proto name
+	 * @param {!Object} kit - themed kit
+	 * @param {!Object} proto - proto name
 	 */
 	style.define('setReservedColorKits', (kit, proto) => {
 		$C(kit.vals).forEach((el, key) => {
@@ -99,7 +103,7 @@ module.exports = function (style) {
 				base = proto ? GLOBAL.colors[proto.val] : GLOBAL.colors;
 
 			if (!base) {
-				throw new Error(`Field with name ${proto} not found`)
+				throw new Error(`Field with name ${proto} not found`);
 			}
 
 			if (!base[key]) {
@@ -121,10 +125,11 @@ module.exports = function (style) {
 	/**
 	 * Returns global color value
 	 *
-	 * @param hueInput - color name
-	 * @param numInput - color position in a kit
-	 * @param reservedInput - is value in reserved kit
-	 * @param proto - proto field name
+	 * @param {!Object} hueInput - color name
+	 * @param {!Object} numInput - color position in a kit
+	 * @param {(!Object|boolean)} reservedInput - is value in reserved kit
+	 * @param (!Object|boolean) baseInput - proto field name
+	 * @returns {string}
 	 */
 	style.define('getGlobalColor', (hueInput, numInput, reservedInput = false, baseInput = false) => {
 		const
@@ -156,14 +161,14 @@ module.exports = function (style) {
 						return true;
 					}
 				}
-			})
+			});
 
 		} else {
 			const
 				kit = GLOBAL.colors[base];
 
 			if (kit && reserved) {
-				res = kit[hue][0][num]
+				res = kit[hue][0][num];
 
 			} else if (kit && kit[hue] && kit[hue][num]) {
 				res = kit[hue][num];
