@@ -97,7 +97,7 @@ export default class Session extends Provider {
 						return r();
 					}
 
-					s.clear();
+					await s.clear();
 
 					if (auth && this.requestAfterClear) {
 						return r();
