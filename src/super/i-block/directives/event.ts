@@ -9,7 +9,9 @@
 import $C = require('collection.js');
 import KeyCodes from 'core/keyCodes';
 import Vue, { VNode, VNodeDirective } from 'vue';
-import iBlock, { VueElement } from 'super/i-block/i-block';
+
+import iBlock from 'super/i-block/i-block';
+import { VueElement } from 'core/component';
 
 const
 	cache = new WeakMap(),

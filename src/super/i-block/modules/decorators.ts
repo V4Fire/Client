@@ -6,7 +6,9 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import iBlock, { statuses, Statuses, iBlockDecorator } from 'super/i-block/i-block';
+import iBlock, { Statuses, iBlockDecorator } from 'super/i-block/i-block';
+import { statuses } from 'super/i-block/modules/const';
+
 import { AsyncOpts } from 'core/async';
 import { WatchOptions } from 'vue';
 import { initEvent, ModVal, InitFieldFn as BaseInitFieldFn } from 'core/component';

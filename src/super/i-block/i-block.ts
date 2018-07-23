@@ -8,18 +8,44 @@
 
 // tslint:disable:max-file-line-count
 import $C = require('collection.js');
-import Async, { AsyncOpts, AsyncOnOpts, AsyncOnceOpts, ClearOptsId } from 'core/async';
+
+import symbolGenerator from 'core/symbol';
+import Async, { AsyncOpts, ClearOptsId } from 'core/async';
 import log from 'core/log';
 
 import * as analytics from 'core/analytics';
 import { EventEmitter2 as EventEmitter } from 'eventemitter2';
-import { WatchOptions, RenderContext, VNode } from 'vue';
+import { RenderContext, VNode } from 'vue';
 
 import 'super/i-block/directives';
 import Block from 'super/i-block/modules/block';
 import Cache from 'super/i-block/modules/cache';
+
+import { statuses } from 'super/i-block/modules/const';
 import { icons, iconsMap } from 'super/i-block/modules/icons';
-import symbolGenerator from 'core/symbol';
+
+import {
+
+	Classes,
+	WatchObjectFields,
+	SizeTo,
+	SyncLinkCache,
+	ModsTable,
+	ModsNTable,
+	Statuses,
+	LinkWrapper,
+	WaitStatusOpts,
+	ParentMessage,
+	AsyncTaskId,
+	AsyncTaskObjectId,
+	AsyncTaskSimpleId,
+	AsyncQueueType,
+	AsyncWatchOpts,
+	RemoteEvent,
+	Event,
+	ConverterCallType
+
+} from 'super/i-block/modules/interface';
 
 import iPage from 'super/i-page/i-page';
 import bRouter, { PageInfo } from 'base/b-router/b-router';
@@ -32,6 +58,7 @@ import {
 	patchVNode,
 	runHook,
 	globalEvent,
+
 	ModVal,
 	ModsDecl,
 	VueInterface,
@@ -50,142 +77,10 @@ import * as helpers from 'core/helpers';
 import * as browser from 'core/browser';
 
 export * from 'core/component';
-export { default as Cache } from 'super/i-block/modules/cache';
-export {
+export * from 'super/i-block/modules/interface';
 
-	prop,
-	field,
-	system,
-	watch,
-	wait,
-	bindModTo,
-	mod,
-	removeMod,
-	elMod,
-	removeElMod
-
-} from 'super/i-block/modules/decorators';
-
-export type Classes = Dictionary<string | Array<string | true> | true>;
-export type WatchObjectField =
-	string |
-	[string] |
-	[string, string] |
-	[string, LinkWrapper] |
-	[string, string, LinkWrapper];
-
-export type WatchObjectFields = Array<WatchObjectField>;
-export interface LinkWrapper {
-	(this: this, value: any, oldValue: any): any;
-}
-
-export interface SizeTo {
-	gt: Dictionary<string>;
-	lt: Dictionary<string>;
-}
-
-export interface SyncLink {
-	path: string;
-	sync(value?: any): void;
-}
-
-export type SyncLinkCache = Dictionary<Dictionary<SyncLink>>;
-export type ModsTable = Dictionary<ModVal>;
-export type ModsNTable = Dictionary<string | undefined>;
-
-export type Statuses =
-	'destroyed' |
-	'inactive' |
-	'loading' |
-	'beforeReady' |
-	'ready' |
-	'unloaded';
-
-/**
- * Enum of available component statuses
- */
-export enum statuses {
-	destroyed = -1,
-	inactive = 0,
-	loading = 1,
-	beforeReady = 2,
-	ready = 3,
-	unloaded = 0
-}
-
-export interface WaitStatusOpts extends AsyncOpts {
-	defer?: boolean;
-}
-
-export interface AsyncTaskObjectId {
-	id: AsyncTaskSimpleId;
-	weight?: number;
-	filter?(id: AsyncTaskSimpleId): boolean;
-}
-
-export type ParentMessageFields =
-	'instanceOf' |
-	'globalName' |
-	'componentName' |
-	'componentId';
-
-export interface ParentMessage {
-	check: [ParentMessageFields, any];
-	action(this: iBlock): Function;
-}
-
-export type AsyncTaskSimpleId = string | number;
-export type AsyncTaskId = AsyncTaskSimpleId | (() => AsyncTaskObjectId) | AsyncTaskObjectId;
-export type AsyncQueueType = 'asyncComponents' | 'asyncBackComponents';
-export type AsyncWatchOpts = WatchOptions & AsyncOpts;
-
-export interface RemoteEvent<T extends object = Async> {
-	on(events: string | string[], handler: Function, ...args: any[]): object | undefined;
-	on(
-		events: string | string[],
-		handler: Function,
-		params: AsyncOnOpts<T>,
-		...args: any[]
-	): object | undefined;
-
-	once(events: string | string[], handler: Function, ...args: any[]): object | undefined;
-	once(
-		events: string | string[],
-		handler: Function,
-		params: AsyncOnceOpts<T>,
-		...args: any[]
-	): object | undefined;
-
-	off(id?: object): void;
-	off(params: ClearOptsId<object>): void;
-}
-
-export interface Event<T extends object = Async> {
-	emit(event: string, ...args: any[]): boolean;
-
-	on(events: string | string[], handler: Function, ...args: any[]): object;
-	on(
-		events: string | string[],
-		handler: Function,
-		params: AsyncOnOpts<T>,
-		...args: any[]
-	): object | undefined;
-
-	once(events: string | string[], handler: Function, ...args: any[]): object;
-	once(
-		events: string | string[],
-		handler: Function,
-		params: AsyncOnceOpts<T>,
-		...args: any[]
-	): object | undefined;
-
-	off(id?: object): void;
-	off(params: ClearOptsId<object>): void;
-}
-
-export type ConverterCallType =
-	'component' |
-	'remote';
+export { statuses, Cache };
+export { wait, bindModTo, mod, removeMod, elMod, removeElMod } from 'super/i-block/modules/decorators';
 
 export const
 	$$ = symbolGenerator(),
