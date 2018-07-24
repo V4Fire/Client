@@ -813,7 +813,11 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	/**
 	 * Alias for .i18n
 	 */
-	@system((o) => o.link('i18n'))
+	@system({
+		atom: true,
+		init: (o) => o.link('i18n')
+	})
+
 	protected readonly t!: typeof i18n;
 
 	/**
