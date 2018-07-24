@@ -7,7 +7,7 @@
  */
 
 import symbolGenerator from 'core/symbol';
-import iData, { component, prop, field, watch, Statuses } from 'super/i-data/i-data';
+import iData, { component, prop, field, watch, hook, Statuses } from 'super/i-data/i-data';
 export * from 'super/i-data/i-data';
 
 export interface OnFilterChange {
@@ -51,7 +51,9 @@ export default class iDynamicPage<T extends Dictionary = Dictionary> extends iDa
 	 * Sets a new page title
 	 */
 	set pageTitle(value: string) {
-		this.$root.pageTitle = value;
+		if (this.isActivated) {
+			this.$root.pageTitle = value;
+		}
 	}
 
 	/** @override */
@@ -83,6 +85,16 @@ export default class iDynamicPage<T extends Dictionary = Dictionary> extends iDa
 	}
 
 	/**
+	 * Initializes a custom page title
+	 */
+	@hook(['created', 'activated'])
+	protected initTitle(): void {
+		if (this.pageTitleProp) {
+			this.pageTitle = this.pageTitleProp;
+		}
+	}
+
+	/**
 	 * Handler: filter change
 	 *
 	 * @param args - tuple:
@@ -110,9 +122,5 @@ export default class iDynamicPage<T extends Dictionary = Dictionary> extends iDa
 	/** @override */
 	protected created(): void {
 		super.created();
-
-		if (this.pageTitleProp) {
-			this.pageTitle = this.pageTitleProp;
-		}
 	}
 }

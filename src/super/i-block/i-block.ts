@@ -240,6 +240,22 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	readonly remoteProvider: boolean = false;
 
 	/**
+	 * If true, then the current component is activated
+	 */
+	@prop(Boolean)
+	readonly activatedProp: boolean = true;
+
+	/**
+	 * True if the current component is activated
+	 */
+	@system((o) => o.link('activatedProp', (val) => {
+		o[val ? 'activate' : 'deactivate']();
+		return val;
+	}))
+
+	isActivated!: boolean;
+
+	/**
 	 * If true, then the component will be reinitialized after an activated hook
 	 */
 	@prop(Boolean)
@@ -270,12 +286,6 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	set p(value: Dictionary) {
 		this.setField('pStore', value);
 	}
-
-	/**
-	 * True if the current component is activated (keep-alive)
-	 */
-	@system({unique: true})
-	isActivated: boolean = true;
 
 	/**
 	 * Link to $root
@@ -1573,7 +1583,6 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	/**
 	 * Activates the component
 	 */
-	@hook('beforeDataCreate')
 	activate(): void {
 		if (this.isBeforeCreate()) {
 			if (!Object.keys(this.convertStateToRouter()).length) {
