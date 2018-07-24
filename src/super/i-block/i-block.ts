@@ -187,7 +187,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	/**
 	 * Initial component stage
 	 */
-	@prop({type: String, required: false})
+	@prop({type: [String, Number], required: false})
 	readonly stageProp?: string | number;
 
 	/**
