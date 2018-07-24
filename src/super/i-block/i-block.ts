@@ -80,7 +80,21 @@ export * from 'core/component';
 export * from 'super/i-block/modules/interface';
 
 export { statuses, Cache };
-export { wait, bindModTo, mod, removeMod, elMod, removeElMod } from 'super/i-block/modules/decorators';
+export {
+
+	p,
+	prop,
+	field,
+	system,
+	watch,
+	wait,
+	bindModTo,
+	mod,
+	removeMod,
+	elMod,
+	removeElMod
+
+} from 'super/i-block/modules/decorators';
 
 export const
 	$$ = symbolGenerator(),
