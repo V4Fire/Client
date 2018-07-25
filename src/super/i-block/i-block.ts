@@ -533,16 +533,13 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 	/**
 	 * Component stage store
 	 */
-	@field((o) => o.link((v) => {
-		const
-			old = o.getField('stageStore');
-
-		if (v === old) {
+	@field((o) => o.link((val, old) => {
+		if (val === old) {
 			return;
 		}
 
-		o.emit('stageChange', v, old);
-		return v;
+		o.emit('stageChange', val, old);
+		return val;
 	}))
 
 	protected stageStore?: Stage;
