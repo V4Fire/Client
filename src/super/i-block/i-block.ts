@@ -1591,6 +1591,10 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 			}));
 		}
 
+		if (this.isBeforeCreate()) {
+			return;
+		}
+
 		const
 			els = new Set();
 
