@@ -1583,18 +1583,12 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 	 * Activates the component
 	 */
 	activate(): void {
-		if (this.isBeforeCreate()) {
-			if (!Object.keys(this.convertStateToRouter()).length) {
-				return;
-			}
-
+		if (Object.keys(this.convertStateToRouter()).length) {
 			this.initStateFromRouter();
 			this.execCbAfterCreated(() => this.rootEvent.on('transition', this.initStateFromRouter, {
 				label: $$.activate,
 				group: 'routerStateWatchers'
 			}));
-
-			return;
 		}
 
 		const
