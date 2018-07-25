@@ -19,10 +19,6 @@ export default class iPage<T extends Dictionary = Dictionary> extends iData<T> {
 	/** @override */
 	readonly needReInit: boolean = true;
 
-	/** @override */
-	@field()
-	protected componentStatusStore!: Statuses;
-
 	/**
 	 * Initial page title
 	 */
@@ -50,6 +46,10 @@ export default class iPage<T extends Dictionary = Dictionary> extends iData<T> {
 			this.$root.pageTitle = value;
 		}
 	}
+
+	/** @override */
+	@field()
+	protected componentStatusStore!: Statuses;
 
 	/**
 	 * Synchronization for the stagePageTitles field
