@@ -7,5 +7,4 @@
  */
 
 package('i-page')
-	.extends('i-data')
-	.dependencies('g-def');
+	.extends('i-data');

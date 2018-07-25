@@ -6,11 +6,11 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import iPage from 'super/i-page/i-page';
+import iStaticPage from 'super/i-static-page/i-static-page';
 import { component, field } from 'super/i-block/i-block';
 
 @component({root: true})
-export default class pIndex extends iPage {
+export default class pIndex extends iStaticPage {
 	@field()
 	foo: number = 0;
 

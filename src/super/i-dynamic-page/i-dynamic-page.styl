@@ -6,14 +6,14 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-@import "super/i-data/i-data.styl"
+@import "super/i-page/i-page.styl"
 
 $p = {
 	cellMargin: 0.5em
 	cellHelpers: false
 }
 
-i-dynamic-page extends i-data
+i-dynamic-page extends i-page
 	if $p.cellHelpers
 		&__cell
 			$d = 1..20

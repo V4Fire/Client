@@ -1,4 +1,4 @@
-- namespace ['i-page.interface']
+- namespace ['i-static-page.interface']
 
 /*!
  * V4Fire Client Core

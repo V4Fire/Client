@@ -144,17 +144,6 @@ export default class bWindow<T extends Dictionary = Dictionary> extends iData<T>
 	}
 
 	/**
-	 * Clears async handlers by group on stage change
-	 *
-	 * @param value
-	 * @param oldValue
-	 */
-	@watch('stage')
-	protected clearOnStageChange(value: string, oldValue: string): void {
-		this.async.clearAll({group: `stage.${oldValue}`});
-	}
-
-	/**
 	 * Handler: error
 	 * @param err
 	 */

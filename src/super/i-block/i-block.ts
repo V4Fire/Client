@@ -43,11 +43,12 @@ import {
 	AsyncWatchOpts,
 	RemoteEvent,
 	Event,
-	ConverterCallType
+	ConverterCallType,
+	Stage
 
 } from 'super/i-block/modules/interface';
 
-import iPage from 'super/i-page/i-page';
+import iStaticPage from 'super/i-static-page/i-static-page';
 import bRouter, { PageInfo } from 'base/b-router/b-router';
 import { asyncLocal, AsyncNamespace } from 'core/kv-storage';
 import {
@@ -103,7 +104,7 @@ export const
 	classesCache = new Cache<'base' | 'blocks' | 'els'>(['base', 'blocks', 'els']);
 
 @component()
-export default class iBlock extends VueInterface<iBlock, iPage> {
+export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 	/**
 	 * Returns a link for the specified icon
 	 * @param iconId
@@ -188,7 +189,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 * Initial component stage
 	 */
 	@prop({type: [String, Number], required: false})
-	readonly stageProp?: string | number;
+	readonly stageProp?: Stage;
 
 	/**
 	 * Component render weight
@@ -200,7 +201,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 * Component stage store
 	 */
 	@p({cache: false})
-	get stage(): string | number | undefined {
+	get stage(): Stage | undefined {
 		return this.getField('stageStore');
 	}
 
@@ -208,7 +209,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 * Sets a new component stage
 	 * @emits stageChange(value?: string, oldValue?: string)
 	 */
-	set stage(value: string | number | undefined) {
+	set stage(value: Stage | undefined) {
 		const
 			oldValue = this.stage;
 
@@ -290,7 +291,7 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	/**
 	 * Link to $root
 	 */
-	get r(): iPage | any {
+	get r(): iStaticPage | any {
 		return this.$root;
 	}
 
@@ -533,21 +534,18 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	 * Component stage store
 	 */
 	@field((o) => o.link((v) => {
-		o.execCbAfterCreated(() => {
-			const
-				old = o.stageStore;
+		const
+			old = o.getField('stageStore');
 
-			if (v === old) {
-				return;
-			}
+		if (v === old) {
+			return;
+		}
 
-			o.emit('stageChange', v, old);
-		});
-
+		o.emit('stageChange', v, old);
 		return v;
 	}))
 
-	protected stageStore?: string | number;
+	protected stageStore?: Stage;
 
 	/**
 	 * Number of beforeReady event listeners
@@ -2835,6 +2833,17 @@ export default class iBlock extends VueInterface<iBlock, iPage> {
 	@watch({field: 'asyncBackComponents', deep: true})
 	protected syncAsyncComponentsWatcher(): void {
 		this.emit('asyncRender');
+	}
+
+	/**
+	 * Synchronization for the stageStore field
+	 *
+	 * @param value
+	 * @param [oldValue]
+	 */
+	@watch({event: 'onStageChange'})
+	protected syncStageWatcher(value: Stage | undefined, oldValue?: Stage): void {
+		this.async.clearAll({group: `stage.${oldValue}`});
 	}
 
 	/**

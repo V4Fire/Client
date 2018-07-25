@@ -6,18 +6,8 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { reset, ResetType, VueInterface } from 'core/component';
-import { setLang, lang } from 'core/i18n';
-
-import bRouter, { PageInfo } from 'base/b-router/b-router';
-import iData, { component, field, system, watch, Statuses } from 'super/i-data/i-data';
+import iData, { component, prop, field, watch, hook, Statuses } from 'super/i-data/i-data';
 export * from 'super/i-data/i-data';
-
-export type RootMods = Dictionary<{
-	mod: string;
-	value: string;
-	component: VueInterface;
-}>;
 
 export type StageTitleValue = string | ((this: iPage) => void);
 export interface StageTitles extends Dictionary<StageTitleValue> {
@@ -25,233 +15,75 @@ export interface StageTitles extends Dictionary<StageTitleValue> {
 }
 
 @component()
-export default class iPage<
-	T extends Dictionary = Dictionary,
-	M extends Dictionary = Dictionary,
-	D extends Dictionary = Dictionary
-> extends iData<D> {
-	/**
-	 * Link to i18n function
-	 */
-	@system()
-	readonly i18n: typeof i18n = i18n;
-
-	/**
-	 * Page information object
-	 */
-	@field()
-	pageInfo?: PageInfo<T, M>;
-
-	/**
-	 * Authorization status
-	 */
-	@field((o) => (<any>o).$state.isAuth)
-	isAuth!: boolean;
-
-	/**
-	 * Online status
-	 */
-	@field((o) => (<any>o).$state.isOnline)
-	isOnline!: boolean;
-
-	/**
-	 * Last online date
-	 */
-	@system((o) => (<any>o).$state.lastOnlineDate)
-	lastOnlineDate?: Date;
-
-	/**
-	 * Page title
-	 */
-	get pageTitle(): string {
-		return this.pageTitleStore;
-	}
-
-	/**
-	 * Sets a new page title
-	 */
-	set pageTitle(value: string) {
-		document.title = value;
-	}
-
-	/**
-	 * System language
-	 */
-	get lang(): string {
-		return this.getField('langStore');
-	}
-
-	/**
-	 * Sets a new system language
-	 */
-	set lang(value: string) {
-		this.setField('langStore', value);
-		setLang(value);
-	}
+export default class iPage<T extends Dictionary = Dictionary> extends iData<T> {
+	/** @override */
+	readonly needReInit: boolean = true;
 
 	/** @override */
 	@field()
 	protected componentStatusStore!: Statuses;
 
 	/**
-	 * Page title store
+	 * Initial page title
 	 */
-	@system()
-	protected pageTitleStore: string = '';
+	@prop(String)
+	readonly pageTitleProp: string = '';
 
 	/**
 	 * Map of page titles ({stage: title})
 	 */
-	@system(Object)
-	protected stagePageTitles?: Dictionary<string>;
+	@prop(Object)
+	readonly stagePageTitles?: StageTitles;
 
 	/**
-	 * Root page router instance
+	 * Page title
 	 */
-	@system()
-	protected routerStore?: bRouter;
-
-	/**
-	 * System language store
-	 */
-	@field()
-	protected langStore: string = lang;
-
-	/**
-	 * Cache of root modifiers
-	 */
-	@system()
-	protected rootMods: RootMods = {};
-
-	/**
-	 * Sends a message for reset to all components
-	 * @param [type] - reset type
-	 */
-	reset(type?: ResetType): void {
-		reset();
+	get pageTitle(): string {
+		return this.$root.pageTitle;
 	}
 
-	/** @override */
-	setRootMod(name: string, value: any, component: VueInterface = this): boolean {
-		if (value === undefined) {
-			return false;
+	/**
+	 * Sets a new page title
+	 */
+	set pageTitle(value: string) {
+		if (this.isActivated) {
+			this.$root.pageTitle = value;
 		}
-
-		const
-			root = document.documentElement,
-			cl = root.classList;
-
-		const
-			c = component.componentName,
-			mod = this.getFullBlockName(c, name, value).replace(/_/g, '-');
-
-		name = `${c}_${name.camelize(false)}`;
-		value = String(value).dasherize();
-
-		const
-			cache = this.rootMods[name];
-
-		if (cache) {
-			if (cache.value === value && cache.component === component) {
-				return false;
-			}
-
-			cl.remove(cache.mod);
-		}
-
-		cl.add(mod);
-		this.rootMods[name] = {
-			mod,
-			value,
-			component
-		};
-
-		return true;
-	}
-
-	/** @override */
-	removeRootMod(name: string, value?: any, component: VueInterface = this): boolean {
-		const
-			root = document.documentElement;
-
-		name = `${component.componentName}_${name.camelize(false)}`;
-		value = value !== undefined ? String(value).dasherize() : undefined;
-
-		const
-			cache = this.rootMods[name];
-
-		if (cache) {
-			if (cache.component !== component) {
-				return false;
-			}
-
-			if (value === undefined || value === cache.value) {
-				root.classList.remove(cache.mod);
-				delete this.rootMods[name];
-				return true;
-			}
-		}
-
-		return false;
-	}
-
-	/** @override */
-	getRootMod(name: string, component: VueInterface = this): undefined | string {
-		return this.removeRootMod[name] && this.removeRootMod[name].value;
 	}
 
 	/**
-	 * Synchronization for the langStore field
-	 */
-	@watch('langStore')
-	protected syncLangWatcher(): void {
-		this.$forceUpdate();
-	}
-
-	/**
-	 * Synchronization for the stageStore field
+	 * Synchronization for the stagePageTitles field
 	 */
 	@watch({event: 'onStageChange'})
-	protected syncStageWatcher(): void {
-		if (this.stagePageTitles) {
-			const
-				stageTitles = this.stage != null && this.stagePageTitles;
+	protected syncStageTitles(): string | undefined {
+		if (!this.stagePageTitles) {
+			return;
+		}
 
-			if (stageTitles) {
-				let
-					v = stageTitles[<string>this.stage];
+		const
+			stageTitles = this.stage != null && this.stagePageTitles;
 
-				if (!v) {
-					v = stageTitles['[[DEFAULT]]'];
-				}
+		if (stageTitles) {
+			let
+				v = stageTitles[<string>this.stage];
 
-				if (v) {
-					this.pageTitle = this.t(Object.isFunction(v) ? v.call(this) : v);
-				}
+			if (!v) {
+				v = stageTitles['[[DEFAULT]]'];
+			}
+
+			if (v) {
+				return this.pageTitle = this.t(Object.isFunction(v) ? v.call(this) : v);
 			}
 		}
 	}
 
-	/** @override */
-	protected initGlobalEvents(): void {
-		super.initGlobalEvents();
-
-		const
-			{globalEvent: $e} = this;
-
-		$e.on('net.status', ({status, lastOnline}) => {
-			this.isOnline = status;
-			this.lastOnlineDate = lastOnline;
-		});
-
-		$e.on('session.set', ({auth}) => this.isAuth = Boolean(auth));
-		$e.on('session.clear', () => this.isAuth = false);
-		$e.on('i18n.setLang', (lang) => this.lang = lang);
-	}
-
-	/** @override */
-	protected created(): void {
-		super.created();
-		this.pageTitle = this.pageTitleStore;
+	/**
+	 * Initializes a custom page title
+	 */
+	@hook(['created', 'activated'])
+	protected initTitle(): void {
+		if (!this.syncStageTitles() && this.pageTitleProp) {
+			this.pageTitle = this.pageTitleProp;
+		}
 	}
 }

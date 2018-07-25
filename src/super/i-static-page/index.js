@@ -6,11 +6,6 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-$p = {
-
-}
-
-i-page
-	display flex
-	flex-direction column
-	min-height 100vh
+package('i-static-page')
+	.extends('i-page')
+	.dependencies('g-def');

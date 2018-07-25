@@ -7,4 +7,4 @@
  */
 
 package('i-dynamic-page')
-	.extends('i-data');
+	.extends('i-page');

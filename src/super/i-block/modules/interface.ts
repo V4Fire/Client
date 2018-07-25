@@ -118,6 +118,5 @@ export interface Event<T extends object = Async> {
 	off(params: ClearOptsId<object>): void;
 }
 
-export type ConverterCallType =
-	'component' |
-	'remote';
+export type ConverterCallType = 'component' | 'remote';
+export type Stage = string | number;

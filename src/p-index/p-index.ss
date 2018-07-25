@@ -8,9 +8,9 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-- include 'super/i-page/i-page.component.ss'|b as placeholder
+- include 'super/i-static-page/i-static-page.component.ss'|b as placeholder
 
-- template index() extends ['i-page.component'].index
+- template index() extends ['i-static-page.component'].index
 	- block body
 		{{ foo }}
 		< b-input v-once | :value = 'fooo'

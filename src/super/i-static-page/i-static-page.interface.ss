@@ -8,8 +8,8 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-- include 'super/i-data'|b
-- include 'super/i-page/modules/**/*.ss'|b
+- include 'super/i-page'|b
+- include 'super/i-static-page/modules/**/*.ss'|b
 
 - import $C from 'collection.js'
 - import fs from 'fs-extra-promise'
@@ -21,10 +21,10 @@
 /**
  * Base page template
  */
-- async template index() extends ['i-data'].index
+- async template index() extends ['i-page'].index
 	- assets = Object.create(null)
 	- lib = path.join(@@output, @@outputPattern({name: 'lib'}))
-	- deps = include('src/super/i-page/deps')
+	- deps = include('src/super/i-static-page/deps')
 
 	- title = @@appName
 	- pageData = {}
@@ -243,7 +243,7 @@
 				? rootAttrs['data-block-params'] = ({data: pageData}|json)
 
 			< body
-				< ${rootTag}.i-page.${pageName} ${rootAttrs|!html}
+				< ${rootTag}.i-static-page.${pageName} ${rootAttrs|!html}
 					- block headHelpers
 					- block innerRoot
 						- if overWrapper
