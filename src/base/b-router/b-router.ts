@@ -414,7 +414,7 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 					break;
 
 				default:
-					await this[method === 'replace' ? 'replace' : 'push'](l.href, {
+					await this[method === 'replace' ? 'replace' : 'push'](href, {
 						params: Object.parse(data.params),
 						query: Object.parse(data.query)
 					});
