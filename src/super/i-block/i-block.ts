@@ -3145,7 +3145,7 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 			return;
 		}
 
-		this.async.unmuteEventListeners().unsuspendAll();
+		this.async.unmuteAll().unsuspendAll();
 		this.componentStatus = 'beforeReady';
 
 		if (this.needReInit) {
@@ -3175,7 +3175,11 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 	 * (for keep-alive)
 	 */
 	protected deactivated(): void {
-		this.async.muteEventListeners().suspendAll();
+		this.async
+			.muteAll()
+			.unmuteAll({group: /:suspend(?:\b|$)/})
+			.suspendAll();
+
 		this.componentStatus = 'inactive';
 		this.isActivated = false;
 	}
