@@ -301,7 +301,7 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 			info.page = c.page;
 		}
 
-		Object.mixin(true, info, params && Object.reject(params, 'page'));
+		Object.mixin({deep: true, withUndef: true}, info, params && Object.reject(params, 'page'));
 
 		const nonWatchValues = {
 			query: info.query,
