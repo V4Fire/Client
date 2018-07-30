@@ -81,12 +81,6 @@ export default class iStaticPage<
 	}
 
 	/**
-	 * Page title store
-	 */
-	@system((o) => o.link())
-	protected pageTitleStore!: string;
-
-	/**
 	 * Root page router instance
 	 */
 	@system()

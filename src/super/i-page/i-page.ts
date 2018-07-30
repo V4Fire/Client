@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import iData, { component, prop, field, watch, hook, Statuses } from 'super/i-data/i-data';
+import iData, { component, prop, field, system, watch, hook, Statuses } from 'super/i-data/i-data';
 export * from 'super/i-data/i-data';
 
 export type StageTitleValue = string | ((this: iPage) => void);
@@ -52,6 +52,12 @@ export default class iPage<T extends Dictionary = Dictionary> extends iData<T> {
 	protected componentStatusStore!: Statuses;
 
 	/**
+	 * Page title store
+	 */
+	@system((o) => o.link())
+	protected pageTitleStore!: string;
+
+	/**
 	 * Synchronization for the stagePageTitles field
 	 */
 	@watch({event: 'onStageChange'})
@@ -82,8 +88,8 @@ export default class iPage<T extends Dictionary = Dictionary> extends iData<T> {
 	 */
 	@hook(['created', 'activated'])
 	protected initTitle(): void {
-		if (!this.syncStageTitles() && this.pageTitleProp) {
-			this.pageTitle = this.pageTitleProp;
+		if (!this.syncStageTitles() && this.pageTitleStore) {
+			this.pageTitle = this.pageTitleStore;
 		}
 	}
 }
