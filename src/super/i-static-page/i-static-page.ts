@@ -99,6 +99,17 @@ export default class iStaticPage<
 	protected rootMods: RootMods = {};
 
 	/**
+	 * Sets a new page title
+	 *
+	 * @param value
+	 * @param component
+	 */
+	setPageTitle(value: string, component: VueInterface = this): boolean {
+		this.pageTitle = value;
+		return this.pageTitle === value;
+	}
+
+	/**
 	 * Sends a message for reset to all components
 	 * @param [type] - reset type
 	 */

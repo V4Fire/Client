@@ -43,7 +43,7 @@ export default class iPage<T extends Dictionary = Dictionary> extends iData<T> {
 	 */
 	set pageTitle(value: string) {
 		if (this.isActivated) {
-			this.$root.pageTitle = value;
+			this.$root.setPageTitle(value, <any>this);
 		}
 	}
 
