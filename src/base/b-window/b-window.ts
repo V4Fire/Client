@@ -11,9 +11,9 @@ import iData, { field, component, prop, hook, ModsDecl } from 'super/i-data/i-da
 import { RequestError } from 'core/data';
 export * from 'super/i-data/i-data';
 
-export type TitleValue = string | ((ctx: bWindow) => string);
-export interface StageTitles extends Dictionary<TitleValue> {
-	'[[DEFAULT]]': TitleValue;
+export type TitleValue<T = bWindow> = string | ((ctx: T) => string);
+export interface StageTitles<T = bWindow> extends Dictionary<TitleValue<T>> {
+	'[[DEFAULT]]': TitleValue<T>;
 }
 
 @component()

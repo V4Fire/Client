@@ -9,9 +9,9 @@
 import iData, { component, prop, field, system, watch, hook, Statuses } from 'super/i-data/i-data';
 export * from 'super/i-data/i-data';
 
-export type TitleValue = string | ((ctx: iPage) => string);
-export interface StageTitles extends Dictionary<TitleValue> {
-	'[[DEFAULT]]': TitleValue;
+export type TitleValue<T = iPage> = string | ((ctx: T) => string);
+export interface StageTitles<T = iPage> extends Dictionary<TitleValue<T>> {
+	'[[DEFAULT]]': TitleValue<T>;
 }
 
 @component()
