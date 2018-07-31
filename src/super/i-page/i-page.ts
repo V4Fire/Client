@@ -9,9 +9,9 @@
 import iData, { component, prop, field, system, watch, hook, Statuses } from 'super/i-data/i-data';
 export * from 'super/i-data/i-data';
 
-export type StageTitleValue = string | ((this: iPage) => void);
-export interface StageTitles extends Dictionary<StageTitleValue> {
-	'[[DEFAULT]]': StageTitleValue;
+export type TitleValue = string | ((this: iPage) => string);
+export interface StageTitles extends Dictionary<TitleValue> {
+	'[[DEFAULT]]': TitleValue;
 }
 
 @component()
@@ -22,8 +22,8 @@ export default class iPage<T extends Dictionary = Dictionary> extends iData<T> {
 	/**
 	 * Initial page title
 	 */
-	@prop(String)
-	readonly pageTitleProp: string = '';
+	@prop({type: [String, Function]})
+	readonly pageTitleProp: TitleValue = '';
 
 	/**
 	 * Map of page titles ({stage: title})
@@ -54,7 +54,7 @@ export default class iPage<T extends Dictionary = Dictionary> extends iData<T> {
 	/**
 	 * Page title store
 	 */
-	@system((o) => o.link())
+	@system((o) => o.link((v) => Object.isFunction(v) ? v.call(o) : v))
 	protected pageTitleStore!: string;
 
 	/**
