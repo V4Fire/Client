@@ -9,7 +9,7 @@
 import iData, { component, prop, field, system, watch, hook, Statuses } from 'super/i-data/i-data';
 export * from 'super/i-data/i-data';
 
-export type TitleValue = string | ((this: iPage) => string);
+export type TitleValue = string | ((ctx: iPage) => string);
 export interface StageTitles extends Dictionary<TitleValue> {
 	'[[DEFAULT]]': TitleValue;
 }
@@ -54,7 +54,7 @@ export default class iPage<T extends Dictionary = Dictionary> extends iData<T> {
 	/**
 	 * Page title store
 	 */
-	@system((o) => o.link((v) => Object.isFunction(v) ? v.call(o) : v))
+	@system((o) => o.link((v) => Object.isFunction(v) ? v(o) : v))
 	protected pageTitleStore!: string;
 
 	/**
@@ -78,7 +78,7 @@ export default class iPage<T extends Dictionary = Dictionary> extends iData<T> {
 			}
 
 			if (v) {
-				return this.pageTitle = this.t(Object.isFunction(v) ? v.call(this) : v);
+				return this.pageTitle = this.t(Object.isFunction(v) ? v(<any>this) : v);
 			}
 		}
 	}
