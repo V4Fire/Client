@@ -7,13 +7,13 @@
  */
 
 import KeyCodes from 'core/keyCodes';
-import iData, { field, component, prop, watch, hook, ModsDecl } from 'super/i-data/i-data';
+import iData, { field, component, prop, hook, ModsDecl } from 'super/i-data/i-data';
 import { RequestError } from 'core/data';
 export * from 'super/i-data/i-data';
 
-export type StageTitleValue = string | ((this: bWindow) => void);
-export interface StageTitles extends Dictionary<StageTitleValue> {
-	'[[DEFAULT]]': StageTitleValue;
+export type TitleValue = string | ((this: bWindow) => string);
+export interface StageTitles extends Dictionary<TitleValue> {
+	'[[DEFAULT]]': TitleValue;
 }
 
 @component()
