@@ -104,7 +104,7 @@ export default class iStaticPage<
 	 * @param value
 	 * @param component
 	 */
-	setPageTitle(value: string, component: VueInterface = this): boolean {
+	setPageTitle(value: string, component: VueInterface = this): CanPromise<boolean> {
 		this.pageTitle = value;
 		return this.pageTitle === value;
 	}
