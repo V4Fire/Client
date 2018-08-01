@@ -11,10 +11,6 @@ import iData, { component, CreateRequestOptions } from 'super/i-data/i-data';
 import { RequestQuery } from 'core/data';
 export * from 'super/i-data/i-data';
 
-export interface ElComparator {
-	(el: any): boolean;
-}
-
 export interface DataList<T> {
 	data: T[];
 	total: number;
@@ -42,7 +38,7 @@ export default class iDataList<T extends Dictionary = Dictionary> extends iData<
 			obj = Object.create(data);
 
 		Object.assign(obj, Object.select(data, ['data', 'total']));
-		obj.data = $C(obj.data).map((el) => this.convertRemoteChunk(el));
+		obj.data = $C(obj.data).map((el) => this.convertDataChunk(el));
 
 		return obj;
 	}
@@ -51,16 +47,18 @@ export default class iDataList<T extends Dictionary = Dictionary> extends iData<
 	 * Converts the specified remote data chunk to the component format and returns it
 	 * @param chunk
 	 */
-	protected convertRemoteChunk(chunk: any): T {
+	protected convertDataChunk(chunk: any): T {
 		return chunk;
 	}
 
 	/**
-	 * Returns a function for comparing list elements
-	 * @param el - base element for comparing
+	 * Compares two specified elements
+	 *
+	 * @param el1
+	 * @param el2
 	 */
-	protected getElComparator(el: T): ElComparator {
-		return (el2) => el && el._id === el2._id;
+	protected compareEls(el1: T, el2: T): boolean {
+		return Object.fastCompare(el1, el2);
 	}
 
 	/**
@@ -143,16 +141,17 @@ export default class iDataList<T extends Dictionary = Dictionary> extends iData<
 
 		for (let i = 0; i < list.length; i++) {
 			const
-				el1 = list[0];
+				el1 = list[i];
 
-			let some = false;
-			for (let i = 0; i < db.length; i++) {
-				const
-					el2 = db[i];
+			let
+				some = false;
 
-				if (el1 && el1._id === el2._id) {
-					some = true;
-					break;
+			if (db) {
+				for (let j = 0; j < db.length; j++) {
+					if (this.compareEls(el1, db[j])) {
+						some = true;
+						break;
+					}
 				}
 			}
 
@@ -173,27 +172,24 @@ export default class iDataList<T extends Dictionary = Dictionary> extends iData<
 	/** @override */
 	// @ts-ignore
 	protected async onUpdData(data: any): Promise<void> {
-		if (data == null) {
+		const
+			db = (<DataList<T>>this.db).data;
+
+		if (data == null || db == null) {
 			return;
 		}
 
 		const list = (<any[]>[]).concat(this.convertDataToDB(data));
 		await this.async.wait(() => this.db);
 
-		const
-			db = (<DataList<T>>this.db).data;
-
 		for (let i = 0; i < list.length; i++) {
 			const
-				el1 = list[0];
+				el1 = list[i];
 
-			for (let i = 0; i < db.length; i++) {
-				const
-					el2 = db[i];
-
-				if (el1 && el1._id === el2._id) {
+			for (let j = 0; j < db.length; j++) {
+				if (this.compareEls(el1, db[j])) {
 					const
-						mut = this.updData(el1, i);
+						mut = this.updData(el1, j);
 
 					if (mut && mut.type && mut[mut.type]) {
 						mut[mut.type].call(this);
@@ -208,27 +204,24 @@ export default class iDataList<T extends Dictionary = Dictionary> extends iData<
 
 	/** @override */
 	protected async onDelData(data: any): Promise<void> {
-		if (data == null) {
+		const
+			db = (<DataList<T>>this.db).data;
+
+		if (data == null || db == null) {
 			return;
 		}
 
 		const list = (<any>[]).concat(this.convertDataToDB(data));
 		await this.async.wait(() => this.db);
 
-		const
-			db = (<DataList<T>>this.db).data;
-
 		for (let i = 0; i < list.length; i++) {
 			const
-				el1 = list[0];
+				el1 = list[i];
 
-			for (let i = 0; i < db.length; i++) {
-				const
-					el2 = db[i];
-
-				if (el1 && el1._id === el2._id) {
+			for (let j = 0; j < db.length; j++) {
+				if (this.compareEls(el1, db[j])) {
 					const
-						mut = this.delData(el1, i);
+						mut = this.delData(el1, j);
 
 					if (mut && mut.type && mut[mut.type]) {
 						mut[mut.type].call(this);

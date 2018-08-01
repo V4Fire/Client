@@ -204,12 +204,8 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 				Object.assign(p[1], {label: $$.initLoad, join: 'replace'});
 
 				try {
-					const
-						db = this.convertDataToDB(await this.get(<RequestQuery>p[0], p[1]));
-
-					if (!Object.fastCompare(this.db, db)) {
-						this.execCbAtTheRightTime(() => this.db = <any>db, label);
-					}
+					const db = this.convertDataToDB(await this.get(<RequestQuery>p[0], p[1]));
+					this.execCbAtTheRightTime(() => this.db = <any>db, label);
 
 				} catch (err) {
 					stderr(err);

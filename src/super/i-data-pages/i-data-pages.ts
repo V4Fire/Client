@@ -116,7 +116,7 @@ export default class iDataPages<T extends Dictionary = Dictionary> extends iData
 					data = res.data;
 
 				for (let i = 0; i < data.length; i++) {
-					db.data.push(this.convertRemoteChunk(data[i]));
+					db.data.push(this.convertDataChunk(data[i]));
 				}
 
 				db.total = res.total;
