@@ -259,10 +259,15 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 		params?: PageParams,
 		method: SetPage = 'push'
 	): Promise<PageInfo | undefined> {
-		this.emit('beforeChange', page, params, method);
-
 		const
-			{$root: r, driver: d, driver: {page: c}} = this;
+			{$root: r, driver: d, driver: {page: c}} = this,
+			isEmptyParams = !params || $C(params).every((el) => !$C(el).length());
+
+		if (!page && isEmptyParams && !this.isBeforeCreate()) {
+			return;
+		}
+
+		this.emit('beforeChange', page, params, method);
 
 		const info = page ?
 			this.getPageOpts(d.id(page)) :
