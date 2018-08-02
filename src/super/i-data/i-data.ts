@@ -683,6 +683,9 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 	protected onAddData(data: any): void {
 		if (data != null) {
 			this.db = this.convertDataToDB(data);
+
+		} else {
+			this.reload().catch(stderr);
 		}
 	}
 
@@ -693,6 +696,9 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 	protected onUpdData(data: any): void {
 		if (data != null) {
 			this.db = this.convertDataToDB(data);
+
+		} else {
+			this.reload().catch(stderr);
 		}
 	}
 
@@ -701,7 +707,12 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 	 * @param data
 	 */
 	protected onDelData(data: any): void {
-		this.db = undefined;
+		if (data != null) {
+			this.db = undefined;
+
+		} else {
+			this.reload().catch(stderr);
+		}
 	}
 
 	/**

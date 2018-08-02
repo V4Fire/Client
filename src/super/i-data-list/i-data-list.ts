@@ -130,6 +130,7 @@ export default class iDataList<T extends Dictionary = Dictionary> extends iData<
 	/** @override */
 	protected async onAddData(data: any): Promise<void> {
 		if (data == null) {
+			this.reload().catch(stderr);
 			return;
 		}
 
@@ -176,6 +177,7 @@ export default class iDataList<T extends Dictionary = Dictionary> extends iData<
 			db = (<DataList<T>>this.db).data;
 
 		if (data == null || db == null) {
+			this.reload().catch(stderr);
 			return;
 		}
 
@@ -208,6 +210,7 @@ export default class iDataList<T extends Dictionary = Dictionary> extends iData<
 			db = (<DataList<T>>this.db).data;
 
 		if (data == null || db == null) {
+			this.reload().catch(stderr);
 			return;
 		}
 
