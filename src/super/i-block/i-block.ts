@@ -2309,7 +2309,7 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 
 		return $a.promise(async () => {
 			try {
-				await this.storage.set(id, JSON.stringify(settings));
+				await this.storage.set(id, settings);
 				this.log('settings:save', () => Object.fastClone(settings));
 
 			} catch (_) {}
@@ -2333,10 +2333,7 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 
 		return this.async.promise(async () => {
 			try {
-				const
-					str = await this.storage.get(id),
-					res = str && JSON.parse(str);
-
+				const res = await this.storage.get(id);
 				this.log('settings:load', () => Object.fastClone(res));
 				return res;
 
