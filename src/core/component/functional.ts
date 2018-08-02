@@ -537,6 +537,7 @@ export function patchVNode(vNode: VNode, ctx: Dictionary, renderCtx: RenderConte
 
 				let cache;
 				Object.defineProperty(ctx.$refs, key, {
+					configurable: true,
 					get(): any {
 						if (cache) {
 							return cache;
