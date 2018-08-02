@@ -42,7 +42,7 @@
     "snakeskin": "^7.4.1",
     "socket.io": "^2.1.1",
     "sugar": "^2.0.4",
-    "vue": "^2.5.17-beta.0"
+    "vue": "^2.5.17"
   },
   "optionalDependencies": {
     "@pzlr/build-core": "^2.8.9",
