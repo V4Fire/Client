@@ -1450,6 +1450,13 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 	}
 
 	/**
+	 * Reloads component data
+	 */
+	async reload(): Promise<void> {
+		await this.initLoad();
+	}
+
+	/**
 	 * Returns an array of component classes by the specified parameters
 	 *
 	 * @param [componentName] - name of the source component
@@ -2996,6 +3003,7 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 			{globalEvent: $e} = this;
 
 		$e.on('reset.load', this.initLoad);
+		$e.on('reset.load.silence', this.reload);
 		$e.on('reset.router', this.resetRouterState);
 		$e.on('reset.storage', this.resetStorageState);
 
@@ -3006,6 +3014,15 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 			]);
 
 			await this.initLoad();
+		});
+
+		$e.on('reset.silence', async () => {
+			await Promise.all([
+				this.resetRouterState(),
+				this.resetStorageState()
+			]);
+
+			await this.reload();
 		});
 	}
 

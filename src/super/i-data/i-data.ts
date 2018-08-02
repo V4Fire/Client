@@ -177,9 +177,7 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 	@system()
 	protected dp?: Provider;
 
-	/**
-	 * Reloads component data
-	 */
+	/* @override */
 	async reload(): Promise<void> {
 		return this.initLoad(true);
 	}
