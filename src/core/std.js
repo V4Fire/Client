@@ -32,13 +32,15 @@ loadToConstructor([
 
 	[
 		Number,
-		['range', require('sugar/number/range')]
+		['range', require('sugar/number/range')],
+		['setOption', require('sugar/number/setOption')]
 	],
 
 	[
 		Date,
 		['create', require('sugar/date/create')],
-		['range', require('sugar/date/range')]
+		['range', require('sugar/date/range')],
+		['setOption', require('sugar/date/setOption')]
 	],
 
 	[
