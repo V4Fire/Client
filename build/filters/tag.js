@@ -107,5 +107,27 @@ module.exports = [
 				}
 			}
 		});
+	},
+
+	/**
+	 * Set image to tag. If tag name is an img, it will be set as src
+	 * otherwise it will be set as background-image in style attribute.
+	 *
+	 * @param {string} name
+	 * @param {!Object} attrs
+	 */
+	function setImageSrc({name, attrs}) {
+		if (attrs['v-image']) {
+			const src = attrs['v-image'][0];
+
+			if (name === 'img') {
+				attrs[':src'] = [src];
+
+			} else {
+				attrs[':style'] = [`{backgroundImage: 'url(' + ${src} + ')'}`];
+			}
+
+			delete attrs['v-image'];
+		}
 	}
 ];

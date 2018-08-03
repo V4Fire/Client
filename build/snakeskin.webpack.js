@@ -240,18 +240,6 @@ function tagFilter({name, attrs = {}}) {
 
 		delete attrs['v-else'];
 	}
-
-	if (attrs['v-image']) {
-		const src = attrs['v-image'][0];
-
-		if (name === 'img') {
-			attrs[':src'] = [src];
-		} else {
-			attrs[':style'] = [`{backgroundImage: 'url(' + ${src} + ')'}`];
-		}
-
-		delete attrs['v-image'];
-	}
 }
 
 function tagNameFilter(tag, attrs = {}, rootTag) {
