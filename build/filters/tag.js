@@ -110,8 +110,8 @@ module.exports = [
 	},
 
 	/**
-	 * Set image to tag. If tag name is an img, it will be set as src
-	 * otherwise it will be set as background-image in style attribute.
+	 * Sets an image to a tag. If the tag name is img, it will be set as src
+	 * otherwise it will be set as background-image in a style attribute.
 	 *
 	 * @param {string} name
 	 * @param {!Object} attrs
