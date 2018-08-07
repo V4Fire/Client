@@ -54,7 +54,7 @@ export default class iDataPages<T extends Dictionary = Dictionary> extends iData
 	 * Events group identifier
 	 */
 	@system()
-	protected readonly eventsGroup: symbol = 'lazyLoad';
+	protected readonly eventsGroup: string = 'lazyLoad';
 
 	/** @override */
 	@field((o) => o.createWatchObject('get', ['page']))
