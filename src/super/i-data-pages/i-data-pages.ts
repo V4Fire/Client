@@ -50,6 +50,12 @@ export default class iDataPages<T extends Dictionary = Dictionary> extends iData
 	@system()
 	protected pageLoaded: Dictionary = {};
 
+	/**
+	 * Events group identifier
+	 */
+	@system()
+	protected readonly eventsGroup: symbol = 'lazyLoad';
+
 	/** @override */
 	@field((o) => o.createWatchObject('get', ['page']))
 	protected readonly requestParams!: Dictionary<Dictionary>;
@@ -151,8 +157,8 @@ export default class iDataPages<T extends Dictionary = Dictionary> extends iData
 	@watch({field: 'lazyLoad', immediate: true})
 	protected syncLazyLoadWatcher(value: boolean): void {
 		const
-			{async: $a} = this,
-			group = {group: 'lazyLoad'};
+			{async: $a, eventsGroup} = this,
+			group = {group: eventsGroup};
 
 		if (value) {
 			$a.on(document, 'scroll', this.checkLazyLoad, group);
