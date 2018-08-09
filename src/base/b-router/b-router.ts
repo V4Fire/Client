@@ -282,13 +282,8 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 			}
 		};
 
-		if (c) {
-			if (method === 'push') {
-				await d.replace(c.page, Object.mixin(true, undefined, c, scroll));
-
-			} else if (info) {
-				Object.mixin(true, info, scroll);
-			}
+		if (c && method === 'push') {
+			await d.replace(c.page, Object.mixin(true, undefined, c, scroll));
 		}
 
 		const

@@ -417,9 +417,9 @@ export function patchVNode(vNode: VNode, ctx: Dictionary, renderCtx: RenderConte
 
 		if (!ctx.$el) {
 			try {
-				await ctx.$async.promise(
-					p.nextTick()
-				);
+				await ctx.$async.promise(p.nextTick(), {
+					label: $$.findElWait
+				});
 
 				if (!ctx.$el) {
 					return;
@@ -434,6 +434,10 @@ export function patchVNode(vNode: VNode, ctx: Dictionary, renderCtx: RenderConte
 		const
 			el = ctx.$el,
 			oldCtx = el.vueComponent;
+
+		if (oldCtx === ctx) {
+			return;
+		}
 
 		if (oldCtx) {
 			oldCtx.$destroy();
