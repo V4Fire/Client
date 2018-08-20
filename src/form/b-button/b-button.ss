@@ -16,15 +16,27 @@
 
 	- block body
 		- super
-		- block button
-			< button.&__button &
+		- block button(type = 'button')
+			: buttonAttrs
+
+			- if type === 'a'
+				? buttonAttrs = { &
+					':href': 'href'
+				} .
+
+			- else
+				? buttonAttrs = { &
+					':form': 'form',
+					':type': 'type'
+				} .
+
+			< ${type}.&__button &
 				ref = button |
 				:class = setHint(hintPos) |
-				:type = type |
-				:form = form |
 				:autofocus = autofocus |
 				:-hint = t(hint) |
 				@click = onClick |
+				${buttonAttrs} |
 				${attrs|!html}
 			.
 
@@ -64,6 +76,12 @@
 					- block progress
 						< _.&__cell.&__icon.&__progress v-if = !isFunctional
 							< b-progress-icon v-once
+
+		< template v-if = type === 'link'
+			+= self.button('a')
+
+		< template v-else
+			+= self.button()
 
 		- block dropdown
 			< . &

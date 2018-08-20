@@ -10,6 +10,12 @@ import bForm from 'form/b-form/b-form';
 import iData, { component, prop, ModsDecl, ModelMethods, RequestFilter } from 'super/i-data/i-data';
 export * from 'super/i-data/i-data';
 
+export type ButtonType =
+	'submit' |
+	'button' |
+	'image' |
+	'link';
+
 @component({
 	functional: {
 		dataProvider: undefined,
@@ -40,7 +46,7 @@ export default class bButton<T extends Dictionary = Dictionary> extends iData<T>
 	 * Button type
 	 */
 	@prop(String)
-	readonly type: string = 'button';
+	readonly type: ButtonType = 'button';
 
 	/**
 	 * Connected form id
@@ -121,21 +127,24 @@ export default class bButton<T extends Dictionary = Dictionary> extends iData<T>
 	 * @emits click(e: Event)
 	 */
 	protected async onClick(e: Event): Promise<void> {
-		if (this.dataProvider !== 'Provider' || this.href) {
-			if (this.href) {
-				this.base(this.href);
+		if (this.type !== 'link') {
+			if (this.dataProvider !== 'Provider' || this.href) {
+				if (this.href) {
+					this.base(this.href);
+				}
+
+				await (<Function>this[this.method])();
+
+			// Form attribute fix for MS Edge && IE
+			} else if (this.form && this.type === 'submit') {
+				e.preventDefault();
+				const form = <bForm>this.$(`#${this.form}`);
+				form && await form.submit();
 			}
 
-			await (<Function>this[this.method])();
-
-		// Form attribute fix for MS Edge && IE
-		} else if (this.form && this.type === 'submit') {
-			e.preventDefault();
-			const form = <bForm>this.$(`#${this.form}`);
-			form && await form.submit();
+			await this.toggle();
 		}
 
-		await this.toggle();
 		this.emit('click', e);
 	}
 
