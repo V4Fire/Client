@@ -118,9 +118,9 @@ export default class Provider {
 	baseURL: string = '';
 
 	/**
-	 * Base URL for CHECK requests
+	 * Base URL for PEEK requests
 	 */
-	baseCheckURL: string = '';
+	basePeekURL: string = '';
 
 	/**
 	 * Base URL for ADD requests
@@ -415,21 +415,21 @@ export default class Provider {
 	}
 
 	/**
-	 * Checks data
+	 * Peeks data
 	 *
 	 * @param [query]
 	 * @param [opts]
 	 */
-	check<T>(query?: RequestQuery, opts?: CreateRequestOptions<T>): RequestResponse {
-		if (this.baseCheckURL && !this.advURL) {
-			this.base(this.baseCheckURL);
+	peek<T>(query?: RequestQuery, opts?: CreateRequestOptions<T>): RequestResponse {
+		if (this.basePeekURL && !this.advURL) {
+			this.base(this.basePeekURL);
 		}
 
 		const
 			url = this.url(),
 			eventName = this.name();
 
-		const req = this.request(url, this.resolver, this.mergeToOpts('check', {
+		const req = this.request(url, this.resolver, this.mergeToOpts('peek', {
 			...opts,
 			query,
 			method: 'HEAD'
