@@ -207,6 +207,7 @@ export default class iStaticPage<
 		});
 
 		$e.on('session.set', ({auth}) => this.isAuth = Boolean(auth));
+		$e.on('session.clear', () => this.isAuth = false);
 		$e.on('i18n.setLang', (lang) => this.lang = lang);
 	}
 }
