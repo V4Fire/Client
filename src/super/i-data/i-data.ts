@@ -293,6 +293,23 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 	}
 
 	/**
+	 * Checks data
+	 *
+	 * @param [data]
+	 * @param [params]
+	 */
+	check(data?: RequestQuery, params?: CreateRequestOptions<T>): Promise<T | undefined> {
+		const
+			args = arguments.length > 0 ? [data, params] : this.getDefaultRequestParams('check');
+
+		if (args) {
+			return this.createRequest('check', ...args);
+		}
+
+		return Promise.resolve(undefined);
+	}
+
+	/**
 	 * Gets data
 	 *
 	 * @param [data]

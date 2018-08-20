@@ -118,6 +118,11 @@ export default class Provider {
 	baseURL: string = '';
 
 	/**
+	 * Base URL for CHECK requests
+	 */
+	baseCheckURL: string = '';
+
+	/**
 	 * Base URL for ADD requests
 	 */
 	baseAddURL: string = '';
@@ -407,6 +412,34 @@ export default class Provider {
 		const nm = this.constructor.name;
 		$C(requestCache[nm]).forEach((el) => el.dropCache());
 		requestCache[nm] = Object.createDict();
+	}
+
+	/**
+	 * Checks data
+	 *
+	 * @param [query]
+	 * @param [opts]
+	 */
+	check<T>(query?: RequestQuery, opts?: CreateRequestOptions<T>): RequestResponse {
+		if (this.baseCheckURL && !this.advURL) {
+			this.base(this.baseCheckURL);
+		}
+
+		const
+			url = this.url(),
+			eventName = this.name();
+
+		const req = this.request(url, this.resolver, this.mergeToOpts('check', {
+			...opts,
+			query,
+			method: 'HEAD'
+		}));
+
+		if (eventName) {
+			return this.updateRequest(url, eventName, req);
+		}
+
+		return this.updateRequest(url, req);
 	}
 
 	/**

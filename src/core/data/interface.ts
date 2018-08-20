@@ -7,6 +7,7 @@
  */
 
 export type ModelMethods =
+	'check' |
 	'get' |
 	'post' |
 	'add' |
