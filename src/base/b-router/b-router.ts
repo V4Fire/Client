@@ -338,10 +338,10 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 			} else {
 				r.pageInfo = store;
 			}
-
-			this.emit('change', store);
-			r.emit('transition', store);
 		}
+
+		this.emit('change', store);
+		r.emit('transition', store);
 
 		const
 			m = info.meta || {};
