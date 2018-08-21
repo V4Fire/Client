@@ -27,7 +27,7 @@
   "dependencies": {
     "@types/socket.io": "^1.4.37",
     "@types/socket.io-client": "^1.4.32",
-    "@v4fire/core": "github:v4Fire/core#ts",
+    "@v4fire/core": "github:v4Fire/core#v2.0-beta.1",
     "babel-polyfill": "^6.26.0",
     "chart.js": "^2.7.2",
     "collection.js": "^6.6.27",
@@ -36,7 +36,7 @@
     "fg-loadcss": "^2.0.1",
     "http-status": "^1.2.0",
     "ion-sound": "^3.0.7",
-    "path-to-regexp": "^2.2.1",
+    "path-to-regexp": "^2.3.0",
     "raven-js": "^3.26.4",
     "requestidlecallback": "^0.3.0",
     "snakeskin": "^7.4.1",
