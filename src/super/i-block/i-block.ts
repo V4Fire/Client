@@ -2669,9 +2669,7 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 	 * @param [details] - event details
 	 */
 	protected sendAnalyticsEvent(event: string, details: Dictionary = {}): void {
-		this.async.setImmediate(() => analytics.send(event, details), {
-			label: $$.sendAnalyticsEvent
-		});
+		analytics.send(event, details);
 	}
 
 	/**
