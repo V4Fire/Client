@@ -16,7 +16,8 @@ import 'core/component/event/providers';
 export type ResetType =
 	'load' |
 	'router' |
-	'storage';
+	'storage' |
+	'silence';
 
 /**
  * Sends a message for reset to all components
