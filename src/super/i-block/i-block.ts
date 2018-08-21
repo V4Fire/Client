@@ -1401,7 +1401,7 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 				const
 					el = $c[i];
 
-				if (el.remoteProvider) {
+				if (el.remoteProvider && statuses[el.componentStatus] >= 1) {
 					providers.add(el);
 				}
 			}
@@ -1431,7 +1431,10 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 
 				if (providers.size) {
 					await $a.wait(() => $C(providers).every((el) => {
-						if (el.componentStatus === 'ready') {
+						const
+							st = <string>el.componentStatus;
+
+						if (st === 'ready' || statuses[st] <= 0) {
 							providers.delete(el);
 							return true;
 						}
