@@ -109,6 +109,10 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 	 * Sets new component data
 	 */
 	set db(value: T | undefined) {
+		if (value === this.db) {
+			return;
+		}
+
 		const
 			{async: $a} = this;
 
