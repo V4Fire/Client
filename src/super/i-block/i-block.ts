@@ -1454,10 +1454,9 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 
 	/**
 	 * Reloads component data
-	 * @param [data] - data object (for events)
 	 */
-	async reload(data?: any | ((this: this) => any)): Promise<void> {
-		await this.initLoad(data, true);
+	async reload(): Promise<void> {
+		await this.initLoad(undefined, true);
 	}
 
 	/**
