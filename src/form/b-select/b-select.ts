@@ -151,14 +151,14 @@ export default class bSelect<T extends Dictionary = Dictionary> extends bInput<T
 	};
 
 	/** @override */
-	async initLoad(): Promise<void> {
+	async initLoad(data?: any, silent?: boolean): Promise<void> {
 		try {
 			/// FIXME
 			if (this.initAfterOpen && !this.b.is.mobile) {
 				await this.async.wait(() => this.mods.opened !== 'false' || this.mods.focused === 'true');
 			}
 
-			return super.initLoad();
+			return super.initLoad(data, silent);
 		} catch (_) {}
 	}
 

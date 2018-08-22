@@ -1454,9 +1454,10 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 
 	/**
 	 * Reloads component data
+	 * @param [data] - data object (for events)
 	 */
-	async reload(): Promise<void> {
-		await this.initLoad();
+	async reload(data?: any | ((this: this) => any)): Promise<void> {
+		await this.initLoad(data, true);
 	}
 
 	/**
@@ -3164,7 +3165,7 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 		if (this.needReInit) {
 			this.async.setImmediate(() => {
 				const
-					v = this.initLoad(true);
+					v = this.reload();
 
 				if (Object.isPromise(v)) {
 					v.catch(stderr);

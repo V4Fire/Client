@@ -181,19 +181,14 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 	@system()
 	protected dp?: Provider;
 
-	/* @override */
-	async reload(): Promise<void> {
-		return this.initLoad(true);
-	}
-
 	/** @override */
 	@wait({label: $$.initLoad, defer: true})
-	async initLoad(silent?: boolean): Promise<void> {
+	async initLoad(data?: any, silent?: boolean): Promise<void> {
 		if (!silent) {
 			this.componentStatus = 'loading';
 		}
 
-		if (this.dp && this.dp.baseURL) {
+		if (data || this.dp && this.dp.baseURL) {
 			const
 				p = this.getDefaultRequestParams('get');
 
@@ -206,7 +201,7 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 				Object.assign(p[1], {...label, join: false});
 
 				try {
-					const db = this.convertDataToDB(await this.get(<RequestQuery>p[0], p[1]));
+					const db = this.convertDataToDB(data || await this.get(<RequestQuery>p[0], p[1]));
 					this.execCbAtTheRightTime(() => this.db = <any>db, label);
 
 				} catch (err) {
