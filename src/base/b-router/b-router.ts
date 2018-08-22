@@ -347,6 +347,7 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 			m = info.meta || {};
 
 		if (m.scroll && m.autoScroll !== false) {
+			await this.nextTick({label: $$.autoScroll});
 			this.scrollTo(m.scroll.y, m.scroll.x);
 		}
 
