@@ -346,9 +346,15 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 		const
 			m = info.meta || {};
 
-		if (m.scroll && m.autoScroll !== false) {
+		if (m.autoScroll !== false) {
 			await this.nextTick({label: $$.autoScroll});
-			this.scrollTo(m.scroll.y, m.scroll.x);
+
+			const
+				s = m.scroll,
+				x = s && s.x || 0,
+				y = s && s.y || 0;
+
+			this.scrollTo(y, x);
 		}
 
 		return store;
