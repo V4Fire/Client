@@ -207,7 +207,7 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 
 		if (obj) {
 			const meta = Object.create({
-				meta: obj.meta || {},
+				meta: Object.mixin(true, {}, obj.meta),
 				toPath(p?: Dictionary): string {
 					if (p) {
 						p = $C(p).filter((el) => el != null).map(String);
@@ -319,6 +319,9 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 			current = this.getField('pageStore'),
 			f = (v) => $C(v).filter((el) => !Object.isFunction(el)).object(true).map();
 
+		let
+			hardChange = false;
+
 		if (!Object.fastCompare(f(current), f(store))) {
 			this.setField('pageStore', store);
 
@@ -340,8 +343,9 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 				this.emit('softChange', store);
 
 			} else {
-				r.pageInfo = store;
+				hardChange = true;
 				this.emit('hardChange', store);
+				r.pageInfo = store;
 			}
 		}
 
@@ -355,11 +359,14 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 			await this.nextTick({label: $$.autoScroll});
 
 			const
-				s = m.scroll,
-				x = s && s.x || 0,
-				y = s && s.y || 0;
+				s = m.scroll;
 
-			this.scrollTo(y, x);
+			if (s) {
+				this.scrollTo(s.y, s.x);
+
+			} else if (hardChange) {
+				this.scrollTo(0, 0);
+			}
 		}
 
 		return store;
