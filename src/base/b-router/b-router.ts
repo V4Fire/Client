@@ -252,6 +252,8 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 	 *
 	 * @emits beforeChange(page: (string|null), params?: Object, method: string)
 	 * @emits change(info: Object)
+	 * @emits hardChange(info: Object)
+	 * @emits softChange(info: Object)
 	 * @emits $root.transition(info: Object)
 	 */
 	async setPage(
@@ -335,8 +337,11 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 					proto[key] = el;
 				});
 
+				this.emit('softChange', store);
+
 			} else {
 				r.pageInfo = store;
+				this.emit('hardChange', store);
 			}
 		}
 
