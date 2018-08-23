@@ -3007,6 +3007,8 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 		$e.on('reset.storage', this.resetStorageState);
 
 		$e.on('reset', async () => {
+			this.componentStatus = 'loading';
+
 			await Promise.all([
 				this.resetRouterState(),
 				this.resetStorageState()
