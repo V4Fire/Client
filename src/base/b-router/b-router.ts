@@ -332,9 +332,9 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 			const
 				f = (v) => $C(v).filter((el) => !Object.isFunction(el)).map();
 
-			if (current && Object.fastCompare(f(current), f(store))) {
+			if (r.pageInfo && Object.fastCompare(f(current), f(store))) {
 				const
-					proto = Object.getPrototypeOf(current);
+					proto = Object.getPrototypeOf(r.pageInfo);
 
 				$C(nonWatchValues).forEach((el, key) => {
 					proto[key] = el;
