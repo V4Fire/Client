@@ -86,10 +86,16 @@ export default class iPage<T extends Dictionary = Dictionary> extends iData<T> {
 	/**
 	 * Initializes a custom page title
 	 */
-	@hook(['created', 'activated'])
+	@hook('created')
 	protected initTitle(): void {
 		if (!this.syncStageTitles() && this.pageTitleStore) {
 			this.pageTitle = this.pageTitleStore;
 		}
+	}
+
+	/** @override */
+	protected activated(): void {
+		super.activated();
+		this.initTitle();
 	}
 }
