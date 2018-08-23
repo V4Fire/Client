@@ -11,7 +11,9 @@ import { setLang, lang } from 'core/i18n';
 
 import bRouter, { PageInfo } from 'base/b-router/b-router';
 import iPage, { component, field, system, watch } from 'super/i-page/i-page';
+
 export * from 'super/i-data/i-data';
+export { ResetType, PageInfo };
 
 export type RootMods = Dictionary<{
 	mod: string;
