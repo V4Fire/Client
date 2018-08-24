@@ -34,10 +34,10 @@ export default class iStaticPage<
 	readonly i18n: typeof i18n = i18n;
 
 	/**
-	 * Page information object
+	 * Page information object store
 	 */
 	@field()
-	pageInfo?: PageInfo<T, M>;
+	pageInfoStore?: PageInfo<T, M>;
 
 	/**
 	 * Authorization status
@@ -56,6 +56,20 @@ export default class iStaticPage<
 	 */
 	@system((o) => (<any>o).$state.lastOnlineDate)
 	lastOnlineDate?: Date;
+
+	/**
+	 * Page information object store
+	 */
+	get pageInfo(): PageInfo<T, M> | undefined {
+		return this.pageInfoStore;
+	}
+
+	/**
+	 * Sets a new page information object store
+	 */
+	set pageInfo(value: PageInfo<T, M> | undefined) {
+		this.pageInfoStore = value;
+	}
 
 	/** @override */
 	get pageTitle(): string {
