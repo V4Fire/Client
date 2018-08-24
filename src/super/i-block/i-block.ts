@@ -97,6 +97,8 @@ export {
 
 } from 'super/i-block/modules/decorators';
 
+export type ComponentStatuses = Partial<Record<keyof typeof statuses, boolean>>;
+
 export const
 	$$ = symbolGenerator(),
 	modsCache = Object.createDict(),
@@ -167,7 +169,7 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 			return;
 		}
 
-		if ({beforeReady: true, inactive: true, destroyed: true, unloaded: true}[value]) {
+		if ((<typeof iBlock>this.instance.constructor).shadowComponentStatuses[value]) {
 			this.shadowComponentStatusStore = value;
 
 		} else {
@@ -418,6 +420,16 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 	 * Parent link
 	 */
 	static readonly PARENT: object = PARENT;
+
+	/**
+	 * Component shadow statuses
+	 */
+	static readonly shadowComponentStatuses: ComponentStatuses = {
+		beforeReady: true,
+		inactive: true,
+		destroyed: true,
+		unloaded: true
+	};
 
 	/**
 	 * Component modifiers
