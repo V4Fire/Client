@@ -363,17 +363,24 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 			m = info.meta || {};
 
 		if (m.autoScroll !== false) {
-			await this.nextTick({label: $$.autoScroll});
+			(async () => {
+				try {
+					await this.nextTick({label: $$.autoScroll});
 
-			const
-				s = m.scroll;
+					const
+						s = m.scroll;
 
-			if (s) {
-				this.scrollTo(s.y, s.x);
+					if (s) {
+						this.scrollTo(s.y, s.x);
 
-			} else if (hardChange) {
-				this.scrollTo(0, 0);
-			}
+					} else if (hardChange) {
+						this.scrollTo(0, 0);
+					}
+
+				} catch (err) {
+					stderr(err);
+				}
+			})();
 		}
 
 		return store;
