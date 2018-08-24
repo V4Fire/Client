@@ -59,14 +59,14 @@ export default class iPage<T extends Dictionary = Dictionary> extends iData<T> {
 
 	/** @override */
 	activate(): void {
-		super.activate();
 		this.setRootMod('active', true);
+		super.activate();
 	}
 
 	/** @override */
 	deactivate(): void {
-		super.deactivate();
 		this.setRootMod('active', false);
+		super.deactivate();
 	}
 
 	/**
@@ -113,7 +113,7 @@ export default class iPage<T extends Dictionary = Dictionary> extends iData<T> {
 
 	/** @override */
 	protected beforeDestroy(): void {
-		super.beforeDestroy();
 		this.removeRootMod('active');
+		super.beforeDestroy();
 	}
 }
