@@ -57,6 +57,18 @@ export default class iPage<T extends Dictionary = Dictionary> extends iData<T> {
 	@system((o) => o.link((v) => Object.isFunction(v) ? v(o) : v))
 	protected pageTitleStore!: string;
 
+	/** @override */
+	activate(): void {
+		super.activate();
+		this.setRootMod('active', true);
+	}
+
+	/** @override */
+	deactivate(): void {
+		super.deactivate();
+		this.setRootMod('active', false);
+	}
+
 	/**
 	 * Synchronization for the stagePageTitles field
 	 */
@@ -97,5 +109,11 @@ export default class iPage<T extends Dictionary = Dictionary> extends iData<T> {
 	protected activated(): void {
 		super.activated();
 		this.initTitle();
+	}
+
+	/** @override */
+	protected beforeDestroy(): void {
+		super.beforeDestroy();
+		this.removeRootMod('active');
 	}
 }
