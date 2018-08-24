@@ -34,12 +34,6 @@ export default class iStaticPage<
 	readonly i18n: typeof i18n = i18n;
 
 	/**
-	 * Page information object store
-	 */
-	@field()
-	pageInfoStore?: PageInfo<T, M>;
-
-	/**
 	 * Authorization status
 	 */
 	@field((o) => (<any>o).$state.isAuth)
@@ -95,6 +89,12 @@ export default class iStaticPage<
 		this.setField('langStore', value);
 		setLang(value);
 	}
+
+	/**
+	 * Page information object store
+	 */
+	@field()
+	protected pageInfoStore?: PageInfo<T, M>;
 
 	/**
 	 * Root page router instance
