@@ -18,6 +18,9 @@ export default class bRemoteProvider<T extends Dictionary = Dictionary> extends 
 	/** @override */
 	readonly remoteProvider: boolean = true;
 
+	/** @override */
+	readonly needReInit: boolean = true;
+
 	/**
 	 * Field for setting to a component parent
 	 */

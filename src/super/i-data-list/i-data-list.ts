@@ -19,9 +19,6 @@ export interface DataList<T> {
 @component()
 export default class iDataList<T extends Dictionary = Dictionary> extends iData<DataList<T>> {
 	/** @override */
-	readonly needReInit: boolean = true;
-
-	/** @override */
 	get(data?: RequestQuery, params?: CreateRequestOptions<DataList<T>>): Promise<DataList<T> | undefined> {
 		return super.get(data, params);
 	}
