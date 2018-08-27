@@ -55,19 +55,19 @@ export default class iStaticPage<
 	 * Page information object store
 	 */
 	get pageInfo(): PageInfo<T, M> | undefined {
-		return this.pageInfoStore;
+		return this.getField('pageInfoStore');
 	}
 
 	/**
 	 * Sets a new page information object store
 	 */
 	set pageInfo(value: PageInfo<T, M> | undefined) {
-		this.pageInfoStore = value;
+		this.setField('pageInfoStore', value);
 	}
 
 	/** @override */
 	get pageTitle(): string {
-		return this.pageTitleStore;
+		return this.getField('pageTitleStore');
 	}
 
 	/** @override */
