@@ -95,4 +95,49 @@ export default class bRemoteProvider<T extends Dictionary = Dictionary> extends 
 			});
 		}
 	}
+
+	/**
+	 * @override
+	 * @emits addData(data: any)
+	 */
+	protected onAddData(data: any): void {
+		const
+			l = this.$listeners;
+
+		if (!l['add-data'] && !l['on-add-data']) {
+			return super.onAddData(data);
+		}
+
+		this.emit('addData', data);
+	}
+
+	/**
+	 * @override
+	 * @emits updData(data: any)
+	 */
+	protected onUpdData(data: any): void {
+		const
+			l = this.$listeners;
+
+		if (!l['upd-data'] && !l['on-upd-data']) {
+			return super.onUpdData(data);
+		}
+
+		this.emit('updData', data);
+	}
+
+	/**
+	 * @override
+	 * @emits delData(data: any)
+	 */
+	protected onDelData(data: any): void {
+		const
+			l = this.$listeners;
+
+		if (!l['del-data'] && !l['on-del-data']) {
+			return super.onDelData(data);
+		}
+
+		this.emit('delData', data);
+	}
 }
