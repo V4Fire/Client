@@ -9,6 +9,7 @@
 import { reset, ResetType, VueInterface } from 'core/component';
 import { setLang, lang } from 'core/i18n';
 
+import iBlock from 'super/i-block/i-block';
 import bRouter, { PageInfo } from 'base/b-router/b-router';
 import iPage, { component, field, system, watch } from 'super/i-page/i-page';
 
@@ -134,7 +135,8 @@ export default class iStaticPage<
 	}
 
 	/** @override */
-	setRootMod(name: string, value: any, component: VueInterface = this): boolean {
+	// @ts-ignore
+	setRootMod(name: string, value: any, component: iBlock = this): boolean {
 		if (value === undefined) {
 			return false;
 		}
@@ -144,7 +146,7 @@ export default class iStaticPage<
 			cl = root.classList;
 
 		const
-			c = component.componentName,
+			c = (component.globalName || component.componentName).dasherize(),
 			mod = this.getFullBlockName(c, name, value).replace(/_/g, '-');
 
 		name = `${c}_${name.camelize(false)}`;
@@ -172,11 +174,12 @@ export default class iStaticPage<
 	}
 
 	/** @override */
-	removeRootMod(name: string, value?: any, component: VueInterface = this): boolean {
+	// @ts-ignore
+	removeRootMod(name: string, value?: any, component: iBlock = this): boolean {
 		const
 			root = document.documentElement;
 
-		name = `${component.componentName}_${name.camelize(false)}`;
+		name = `${(component.globalName || component.componentName).dasherize()}_${name.camelize(false)}`;
 		value = value !== undefined ? String(value).dasherize() : undefined;
 
 		const
