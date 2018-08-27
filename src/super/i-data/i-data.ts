@@ -231,7 +231,6 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 		await super.reload();
 	}
 
-
 	/**
 	 * Returns full request URL
 	 */
