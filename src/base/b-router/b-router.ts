@@ -365,11 +365,15 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 		if (m.autoScroll !== false) {
 			(async () => {
 				try {
+					const label = {
+						label: $$.autoScroll
+					};
+
 					if (hardChange) {
-						await this.async.wait(() => Object.fastCompare(store, r.pageInfo), {label: $$.autoScroll});
+						await this.async.wait(() => Object.fastCompare(store, r.pageInfo), label);
 					}
 
-					await this.nextTick({label: $$.autoScroll});
+					await this.nextTick(label);
 
 					const
 						s = m.scroll;
