@@ -99,6 +99,12 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 	readonly componentConverter?: ComponentConverter;
 
 	/**
+	 * If true, then the component will be reinitialized after an activated hook in offline mode
+	 */
+	@prop(Boolean)
+	readonly needOfflineReInit: boolean = false;
+
+	/**
 	 * Component data
 	 */
 	get db(): T | undefined {
@@ -215,6 +221,16 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 
 		return super.initLoad(() => this.db, silent);
 	}
+
+	/** override */
+	async reload(): Promise<void> {
+		if (!this.$root.isOnline && !this.needOfflineReInit) {
+			return;
+		}
+
+		await super.reload();
+	}
+
 
 	/**
 	 * Returns full request URL
