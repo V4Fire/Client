@@ -57,16 +57,20 @@ export default class iPage<T extends Dictionary = Dictionary> extends iData<T> {
 	@system((o) => o.link((v) => Object.isFunction(v) ? v(o) : v))
 	protected pageTitleStore!: string;
 
-	/** @override */
-	activate(): void {
+	/**
+	 * Sets component name as class to root element of the page
+	 */
+	@hook(['created', 'activated'])
+	protected activeToRoot(): void {
 		this.setRootMod('active', true);
-		super.activate();
 	}
 
-	/** @override */
-	deactivate(): void {
+	/**
+	 * Removes component name from root element of the page
+	 */
+	@hook('deactivated')
+	protected removeActiveFromRoot(): void {
 		this.setRootMod('active', false);
-		super.deactivate();
 	}
 
 	/**
