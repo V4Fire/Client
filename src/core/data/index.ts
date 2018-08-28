@@ -40,10 +40,8 @@ export type RequestFactory = (...args: any[]) => RequestResponse;
 export { RequestMethods, RequestError } from 'core/request';
 export {
 
-	globalOpts,
 	CreateRequestOptions,
 	Middlewares,
-	CacheStrategy,
 	RequestQuery,
 	RequestResponse,
 	RequestResponseObject,
