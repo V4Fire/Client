@@ -1055,27 +1055,73 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 		}
 
 		const
-			{linksCache, syncLinkCache} = this;
+			hooks = this.meta.hooks.beforeDataCreate,
+			syncLinkCache = this.syncLinkCache,
+			linksCache = $C(this.linksCache);
+
+		const
+			head = this.$activeField;
 
 		// tslint:disable-next-line
 		if (path) {
-			path = [this.$activeField, path].join('.');
+			path = [head, path].join('.');
 
 		} else {
-			path = this.$activeField;
+			path = head;
 		}
 
 		const
-			hooks = this.meta.hooks.beforeDataCreate,
-			short = path.split('.').slice(1),
+			tail = path.split('.').slice(1),
 			obj = {};
 
-		if (short.length) {
-			$C(obj).set({}, short);
+		if (tail.length) {
+			$C(obj).set({}, tail);
 		}
 
 		const
-			map = $C(obj).get(short);
+			cursor = $C(obj).get(tail);
+
+		const merge = (...args) => Object.mixin({
+			deep: true,
+			extendFilter: (d, v) => Object.isObject(v)
+		}, undefined, ...args);
+
+		const setField = (path, val) => {
+			const
+				newObj = {};
+
+			$C(newObj).set(val, path.split('.').slice(1));
+			this.setField(head, merge(this.getField(head), newObj));
+
+			return val;
+		};
+
+		const attachWatcher = (field, path, getVal) => {
+			linksCache.set(true, path);
+
+			this.watch(field, (val, oldVal) => {
+				if (Object.fastCompare(val, oldVal) || Object.fastCompare(val, this.getField(path))) {
+					return;
+				}
+
+				setField(path, val);
+			}, <AsyncWatchOpts>params);
+
+			const
+				sync = (val?) => setField(path, getVal(val));
+
+			// tslint:disable-next-line:prefer-object-spread
+			syncLinkCache[field] = Object.assign(syncLinkCache[field] || {}, {
+				[path]: {
+					path,
+					sync
+				}
+			});
+
+			if (this.isBeforeCreate('beforeDataCreate')) {
+				hooks.push({fn: sync});
+			}
+		};
 
 		for (let i = 0; i < (<WatchObjectFields>fields).length; i++) {
 			const
@@ -1101,72 +1147,24 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 				const
 					l = [path, el[0]].join('.');
 
-				if (!$C(linksCache).get(l)) {
-					$C(linksCache).set(true, l);
-
-					this.watch(field, (val, oldVal) => {
-						if (Object.fastCompare(val, oldVal) || Object.fastCompare(val, this.getField(l))) {
-							return;
-						}
-
-						this.setField(l, wrapper ? wrapper.call(this, val, oldVal) : val);
-					}, params);
-
+				if (!linksCache.get(l)) {
 					const getVal = (val?) => {
 						val = val || this.getField(field);
 						return wrapper ? wrapper.call(this, val) : val;
 					};
 
-					const
-						sync = (val?) => this.setField(l, getVal(val));
-
-					// tslint:disable-next-line:prefer-object-spread
-					syncLinkCache[field] = Object.assign(syncLinkCache[field] || {}, {
-						[l]: {
-							path: l,
-							sync
-						}
-					});
-
-					if (this.isBeforeCreate('beforeDataCreate')) {
-						hooks.push({fn: sync, name});
-					}
-
-					map[el[0]] = getVal();
+					attachWatcher(field, l, getVal);
+					cursor[el[0]] = getVal();
 				}
 
 			} else {
 				const
 					l = [path, el].join('.');
 
-				if (!$C(linksCache).get(l)) {
-					$C(linksCache).set(true, l);
-
-					this.watch(el, (val, oldVal) => {
-						if (Object.fastCompare(val, oldVal) || Object.fastCompare(val, this.getField(l))) {
-							return;
-						}
-
-						this.setField(l, val);
-					}, params);
-
-					const
-						getVal = (val?) => val || this.getField(el),
-						sync = (val?) => this.setField(l, getVal(val));
-
-					// tslint:disable-next-line:prefer-object-spread
-					syncLinkCache[el] = Object.assign(syncLinkCache[el] || {}, {
-						[l]: {
-							path: l,
-							sync
-						}
-					});
-
-					if (this.isBeforeCreate('beforeDataCreate')) {
-						hooks.push({fn: sync, name});
-					}
-
-					map[el] = getVal();
+				if (!linksCache.get(l)) {
+					const getVal = (val?) => val || this.getField(el);
+					attachWatcher(el, l, getVal);
+					cursor[el] = getVal();
 				}
 			}
 		}

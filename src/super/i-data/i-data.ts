@@ -498,17 +498,36 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 	 * @param [oldValue]
 	 */
 	@watch({field: 'requestParams', deep: true})
-	protected async syncRequestParamsWatcher(value?: Dictionary, oldValue?: Dictionary): Promise<void> {
-		$C(value).forEach((el, key) => {
-			if (el && oldValue && oldValue[key] && el.toSource() === oldValue.toSource()) {
-				return;
+	protected async syncRequestParamsWatcher(value?: RequestParams, oldValue?: RequestParams): Promise<void> {
+		if (!value) {
+			return;
+		}
+
+		const
+			tasks = <Promise<void>[]>[];
+
+		for (let o = Object.keys(value), i = 0; i < o.length; i++) {
+			const
+				key = o[i],
+				val = value[key],
+				oldVal = oldValue && oldValue[key];
+
+			if (val && oldVal && val.toSource() === oldVal.toSource()) {
+				continue;
 			}
 
 			const
 				m = key.split(':')[0];
 
-			this[m === 'get' ? 'initLoad' : m](...this.getDefaultRequestParams(key));
-		});
+			if (m === 'get') {
+				tasks.push(this.initLoad());
+
+			} else {
+				tasks.push(this[m](...this.getDefaultRequestParams(key)));
+			}
+		}
+
+		await Promise.all(tasks);
 	}
 
 	/**
