@@ -974,10 +974,12 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 		if (!(path in this.linksCache)) {
 			this.linksCache[path] = {};
 
-			this.watch(field, (val, oldVal) => {
-				if (!Object.fastCompare(val, oldVal)) {
-					this.setField(path, wrapper ? wrapper.call(this, val, oldVal) : val);
+			this.watch(field, async (val, oldVal) => {
+				if (Object.fastCompare(val, oldVal) || Object.fastCompare(val, this.getField(path))) {
+					return;
 				}
+
+				this.setField(path, wrapper ? wrapper.call(this, val, oldVal) : val);
 			}, params);
 
 			const sync = (val?) => {
@@ -1103,9 +1105,11 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 					$C(linksCache).set(true, l);
 
 					this.watch(field, (val, oldVal) => {
-						if (!Object.fastCompare(val, oldVal)) {
-							this.setField(l, wrapper ? wrapper.call(this, val, oldVal) : val);
+						if (Object.fastCompare(val, oldVal) || Object.fastCompare(val, this.getField(l))) {
+							return;
 						}
+
+						this.setField(l, wrapper ? wrapper.call(this, val, oldVal) : val);
 					}, params);
 
 					const getVal = (val?) => {
@@ -1139,9 +1143,11 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 					$C(linksCache).set(true, l);
 
 					this.watch(el, (val, oldVal) => {
-						if (!Object.fastCompare(val, oldVal)) {
-							this.setField(l, val);
+						if (Object.fastCompare(val, oldVal) || Object.fastCompare(val, this.getField(l))) {
+							return;
 						}
+
+						this.setField(l, val);
 					}, params);
 
 					const
