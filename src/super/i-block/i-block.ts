@@ -2720,20 +2720,25 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 
 		this.link = i.link.bind(this);
 		this.createWatchObject = i.createWatchObject.bind(this);
+
 		this.isBeforeCreate = i.isBeforeCreate.bind(this);
 		this.execCbAfterCreated = i.execCbAfterCreated.bind(this);
 		this.execCbAfterBlockReady = i.execCbAfterBlockReady.bind(this);
 		this.execCbAtTheRightTime = i.execCbAtTheRightTime.bind(this);
+
 		this.bindModTo = i.bindModTo.bind(this);
 		this.getField = i.getField.bind(this);
 		this.setField = i.setField.bind(this);
 		this.deleteField = i.deleteField.bind(this);
+
 		this.convertStateToStorage = i.convertStateToStorage.bind(this);
 		this.initStateFromStorage = i.initStateFromStorage.bind(this);
 		this.convertStateToRouter = i.convertStateToRouter.bind(this);
+
 		this.initStateFromRouter = i.initStateFromRouter.bind(this);
 		this.setState = i.setState.bind(this);
 		this.watch = i.watch.bind(this);
+
 		this.on = i.on.bind(this);
 		this.once = i.once.bind(this);
 		this.off = i.off.bind(this);
@@ -2742,6 +2747,16 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 			refs: {
 				// tslint:disable-next-line
 				get: i['refsGetter']
+			},
+
+			globalEvent: {
+				// tslint:disable-next-line
+				get: i['globalEventGetter']
+			},
+
+			rootEvent: {
+				// tslint:disable-next-line
+				get: i['rootEventGetter']
 			}
 		});
 	}
