@@ -6,6 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import symbolGenerator from 'core/symbol';
 import { reset, ResetType, VueInterface } from 'core/component';
 import { setLang, lang } from 'core/i18n';
 
@@ -21,6 +22,9 @@ export type RootMods = Dictionary<{
 	value: string;
 	component: VueInterface;
 }>;
+
+export const
+	$$ = symbolGenerator();
 
 @component()
 export default class iStaticPage<
@@ -131,7 +135,9 @@ export default class iStaticPage<
 	 * @param [type] - reset type
 	 */
 	reset(type?: ResetType): void {
-		reset(type);
+		this.nextTick(() => reset(type), {
+			label: $$.reset
+		});
 	}
 
 	/** @override */

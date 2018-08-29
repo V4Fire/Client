@@ -1446,10 +1446,6 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 				await this.initStateFromStorage();
 
 				if (providers.size) {
-					if (!this.isBeforeCreate()) {
-						await this.nextTick();
-					}
-
 					await $a.wait(() => $C(providers).every((el) => {
 						const
 							st = <string>el.componentStatus;
@@ -3044,12 +3040,22 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 		const
 			{globalEvent: $e} = this;
 
-		$e.on('reset.load', this.initLoad);
-		$e.on('reset.load.silence', this.reload);
+		const waitNextTick = (fn) => async () => {
+			try {
+				await this.nextTick({label: $$.reset});
+				await fn();
+
+			} catch (err) {
+				stderr(err);
+			}
+		};
+
+		$e.on('reset.load', waitNextTick(this.initLoad));
+		$e.on('reset.load.silence', waitNextTick(this.reload));
 		$e.on('reset.router', this.resetRouterState);
 		$e.on('reset.storage', this.resetStorageState);
 
-		$e.on('reset', async () => {
+		$e.on('reset', waitNextTick(async () => {
 			this.componentStatus = 'loading';
 
 			await Promise.all([
@@ -3058,16 +3064,16 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 			]);
 
 			await this.initLoad();
-		});
+		}));
 
-		$e.on('reset.silence', async () => {
+		$e.on('reset.silence', waitNextTick(async () => {
 			await Promise.all([
 				this.resetRouterState(),
 				this.resetStorageState()
 			]);
 
 			await this.reload();
-		});
+		}));
 	}
 
 	/**
