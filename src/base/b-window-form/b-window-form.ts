@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import bWindow, { component, field, prop, wait, RequestFilter } from 'base/b-window/b-window';
+import bWindow, { component, field, prop, wait, RequestFilter, Stage } from 'base/b-window/b-window';
 import bForm from 'form/b-form/b-form';
 export * from 'base/b-window/b-window';
 
@@ -84,10 +84,9 @@ export default class bWindowForm<T extends Dictionary = Dictionary> extends bWin
 	 * @override
 	 * @param [stage] - window stage
 	 */
-	async open(stage?: string): Promise<boolean> {
+	async open(stage?: Stage): Promise<boolean> {
 		if (await this.setMod('hidden', false)) {
 			this.stage = stage || this.id ? 'edit' : 'new';
-
 			await this.nextTick();
 			this.emit('open');
 			return true;

@@ -7,7 +7,7 @@
  */
 
 import KeyCodes from 'core/keyCodes';
-import iData, { field, component, prop, hook, ModsDecl } from 'super/i-data/i-data';
+import iData, { field, component, prop, hook, ModsDecl, Stage } from 'super/i-data/i-data';
 import { RequestError } from 'core/data';
 export * from 'super/i-data/i-data';
 
@@ -69,7 +69,7 @@ export default class bWindow<T extends Dictionary = Dictionary> extends iData<T>
 	 * @override
 	 * @param [stage] - window stage
 	 */
-	async open(stage?: string): Promise<boolean> {
+	async open(stage?: Stage): Promise<boolean> {
 		if (await this.setMod('hidden', false)) {
 			if (stage) {
 				this.stage = stage;

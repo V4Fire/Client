@@ -1446,6 +1446,10 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 				await this.initStateFromStorage();
 
 				if (providers.size) {
+					if (!this.isBeforeCreate()) {
+						await this.nextTick();
+					}
+
 					await $a.wait(() => $C(providers).every((el) => {
 						const
 							st = <string>el.componentStatus;

@@ -131,7 +131,7 @@ export default class iStaticPage<
 	 * @param [type] - reset type
 	 */
 	reset(type?: ResetType): void {
-		reset();
+		reset(type);
 	}
 
 	/** @override */
