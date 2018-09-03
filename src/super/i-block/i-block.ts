@@ -1972,7 +1972,7 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 	execCbAtTheRightTime<T>(cb: (this: this) => T, params?: AsyncOpts): CanPromise<T | void> {
 		if (this.isBeforeCreate('beforeDataCreate')) {
 			return <any>this.$async.promise(new Promise((r) => {
-				this.meta.hooks.beforeDataCreate.unshift({fn: () => r(cb.call(this))});
+				this.meta.hooks.beforeDataCreate.push({fn: () => r(cb.call(this))});
 			}), params).catch(stderr);
 		}
 
