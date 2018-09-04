@@ -23,10 +23,10 @@ export type Operations =
  */
 export function match(pattern: RegExp | string): [string, number[] | null] | boolean {
 	const
-		rgxp = Object.isString(pattern) ? new RegExp(`(${pattern})(?:[ \\/-]([0-9.]*))?`, 'i') : pattern,
+		rgxp = Object.isString(pattern) ? new RegExp(`(${pattern})(?:[ \\/-]([0-9._]*))?`, 'i') : pattern,
 		res = agent.match(rgxp);
 
-	return res ? [res[1], res[2] ? res[2].split('.').map((el) => parseInt(String(el), 10) || 0) : null] : false;
+	return res ? [res[1], res[2] ? res[2].split(/\.|_/).map((el) => parseInt(String(el), 10) || 0) : null] : false;
 }
 
 /**
@@ -90,7 +90,7 @@ export const is = {
 	Firefox: match('Firefox'),
 	Android: match('Android'),
 	BlackBerry: match('BlackBerry'),
-	iOS: match('(?:iPhone|iPad|iPod)'),
+	iOS: match('(?:iPhone|iPad|iPod);[ \\w]+(?= \\d)'),
 	OperaMini: match('Opera Mini'),
 	WindowsMobile: match('IEMobile'),
 
