@@ -55,7 +55,7 @@ export function createFakeCtx(
 
 	const
 		p = <Dictionary>renderCtx.parent,
-		data = {};
+		data = {$state: state};
 
 	const
 		$w = new EventEmitter({maxListeners: 1e3}),

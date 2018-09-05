@@ -78,6 +78,8 @@ export function getComponent(
 			runHook('beforeDataCreate', ctx.meta, ctx).catch(stderr);
 
 			ctx.$$data = this;
+			data.$state = state;
+
 			return data;
 		},
 
