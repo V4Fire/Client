@@ -12,7 +12,8 @@ include('build/filters');
 
 const
 	$C = require('collection.js'),
-	Snakeskin = require('snakeskin');
+	Snakeskin = require('snakeskin'),
+	escaper = require('escaper');
 
 const
 	fs = require('fs'),
@@ -33,16 +34,21 @@ const
 
 const
 	blockClassRgxp = /^\s*export\s+default\s+class\s+((.*?)\s+extends\s+.*?)\s*{/m,
-	componentRgxp = /@component\(([\s\S]*)\)\n+\s*export\s+/,
-	propsRgxp = /^(\t+)@prop\s*\([\s\S]+?\)+\n+\1([ \w$]+)(?:\??: [ \w|&$?()[\]{}<>'"`:.]+?)?\s*(?:=|;$)/gm,
+	componentRgxp = /@component\(([^@]*?)\)\n+\s*export\s+/,
+	propsRgxp = /^(\t+)@prop\s*\([^@]+?\)+\n+\1([ \w$]+)(?:\??: [ \w|&$?()[\]{}<>'"`:.]+?)?\s*(?:=|;$)/gm;
+
+const
 	genericRgxp = /<.*/,
 	extendsRgxp = /\s+extends\s+/;
 
 $C(files).forEach((el) => {
 	const
-		file = fs.readFileSync(el, {encoding: 'utf-8'}),
-		block = blockClassRgxp.exec(file),
-		p = ((v) => v && new Function(`return ${v[1] || '{}'}`)())(block && componentRgxp.exec(file));
+		literals = [],
+		file = escaper.replace(fs.readFileSync(el, {encoding: 'utf-8'}), true, literals),
+		block = blockClassRgxp.exec(file);
+
+	const
+		p = ((v) => v && new Function(`return ${escaper.paste(v[1], literals) || '{}'}`)())(block && componentRgxp.exec(file));
 
 	if (!p) {
 		return;

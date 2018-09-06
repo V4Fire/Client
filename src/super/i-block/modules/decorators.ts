@@ -195,8 +195,11 @@ export interface WaitOpts extends AsyncOpts {
 	defer?: boolean | number;
 }
 
+const
+	waitCtxRgxp = /([^:]+):(\w+)/;
+
 export function wait(params: WaitOpts): Function;
-export function wait(status: number | Statuses, params?: WaitOpts | Function): Function;
+export function wait(status: number | string | Statuses, params?: WaitOpts | Function): Function;
 
 /**
  * Decorates a method or a function for using with the specified init status
@@ -208,12 +211,20 @@ export function wait(status: number | Statuses, params?: WaitOpts | Function): F
  *   *) [params.fn] - callback function
  *   *) [params.defer] - if true, then the function will always return a promise
  */
-export function wait<T = any>(status: number | Statuses | WaitOpts, params?: WaitOpts | Function): Function {
+export function wait<T = any>(status: number | string | Statuses | WaitOpts, params?: WaitOpts | Function): Function {
+	let
+		ctx;
+
 	if (Object.isObject(status)) {
 		params = <WaitOpts>status;
 		status = 0;
 
 	} else if (Object.isString(status)) {
+		if (waitCtxRgxp.test(status)) {
+			ctx = RegExp.$1;
+			status = RegExp.$2;
+		}
+
 		status = statuses[status];
 	}
 
@@ -237,9 +248,9 @@ export function wait<T = any>(status: number | Statuses | WaitOpts, params?: Wai
 
 	function wrapper(this: iBlockDecorator): CanPromise<T> | undefined {
 		const
-			args = arguments,
-			// @ts-ignore
-			componentStatus = <number>statuses[this.getField('componentStatusStore')];
+			getRoot = () => ctx ? this.getField(ctx) : this,
+			root = getRoot(),
+			args = arguments;
 
 		if (join === undefined) {
 			join = handler.length ? 'replace' : true;
@@ -249,47 +260,66 @@ export function wait<T = any>(status: number | Statuses | WaitOpts, params?: Wai
 			{async: $a} = this,
 			p = {join, label, group};
 
-		let
-			res,
-			init;
+		const exec = (ctx) => {
+			const
+				// @ts-ignore
+				componentStatus = <number>statuses[this.getField('componentStatusStore', ctx)];
 
-		if (componentStatus < 0 && status > componentStatus) {
-			throw Object.assign(new Error('Component status watcher abort'), {
-				type: 'abort'
-			});
-		}
+			let
+				res,
+				init;
 
-		if (componentStatus >= status) {
-			init = true;
+			if (componentStatus < 0 && status > componentStatus) {
+				throw Object.assign(new Error('Component status watcher abort'), {
+					type: 'abort'
+				});
+			}
 
-			if (defer) {
+			if (componentStatus >= status) {
+				init = true;
+
+				if (defer) {
+					res = $a.promise(
+						(async () => {
+							await $a.nextTick();
+							return handler.apply(this, args);
+						})(),
+
+						p
+					);
+
+				} else {
+					res = handler.apply(this, args);
+				}
+			}
+
+			if (!init) {
 				res = $a.promise(
-					(async () => {
-						await $a.nextTick();
-						return handler.apply(this, args);
-					})(),
+					new Promise((resolve) => {
+						$a.once(ctx.localEvent, `component.status.${statuses[<number>status]}`, () => {
+							resolve(handler.apply(this, args));
+						});
+					}),
 
 					p
 				);
-
-			} else {
-				res = handler.apply(this, args);
 			}
+
+			if (isDecorator && Object.isPromise(res)) {
+				return res.catch(stderr);
+			}
+
+			return res;
+		};
+
+		if (root) {
+			return exec(root);
 		}
 
-		if (!init) {
-			res = $a.promise(
-				new Promise((resolve) => {
-					this.localEvent.once(`component.status.${statuses[<number>status]}`, () => {
-						resolve(handler.apply(this, args));
-					});
-				}),
+		const
+			res = $a.promise($a.wait(getRoot)).then(() => exec(getRoot()));
 
-				p
-			);
-		}
-
-		if (isDecorator && Object.isPromise(res)) {
+		if (isDecorator) {
 			return res.catch(stderr);
 		}
 

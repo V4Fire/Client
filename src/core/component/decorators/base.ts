@@ -213,6 +213,19 @@ export function paramsFactory<T>(
 			delete meta.computed[key];
 
 			const
+				accessors = meta.accessors[key] ? meta.accessors : meta.computed;
+
+			if (accessors[key]) {
+				Object.defineProperty(meta.constructor.prototype, key, {
+					writable: true,
+					configurable: true,
+					value: undefined
+				});
+
+				delete accessors[key];
+			}
+
+			const
 				metaKey = cluster || (key in meta.props ? 'props' : 'fields'),
 				obj = meta[metaKey];
 
