@@ -33,15 +33,19 @@ const
 
 const
 	blockClassRgxp = /^\s*export\s+default\s+class\s+((.*?)\s+extends\s+.*?)\s*{/m,
-	componentRgxp = /@component\(([\s\S]*)\)\n+\s*export\s+/,
-	propsRgxp = /^(\t+)@prop\s*\([\s\S]+?\)+\n+\1([ \w$]+)(?:\??: [ \w|&$?()[\]{}<>'"`:.]+?)?\s*(?:=|;$)/gm,
+	componentRgxp = /@component\(([\s\S]*?)\)\n+\s*export\s+/,
+	propsRgxp = /^(\t+)@prop\s*\([\s\S]+?\)+\n+\1([ \w$]+)(?:\??: [ \w|&$?()[\]{}<>'"`:.]+?)?\s*(?:=|;$)/gm;
+
+const
 	genericRgxp = /<.*/,
 	extendsRgxp = /\s+extends\s+/;
 
 $C(files).forEach((el) => {
 	const
 		file = fs.readFileSync(el, {encoding: 'utf-8'}),
-		block = blockClassRgxp.exec(file),
+		block = blockClassRgxp.exec(file);
+
+	const
 		p = ((v) => v && new Function(`return ${v[1] || '{}'}`)())(block && componentRgxp.exec(file));
 
 	if (!p) {
