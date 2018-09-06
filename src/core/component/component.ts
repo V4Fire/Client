@@ -680,15 +680,31 @@ export function addMethodsToMeta(constructor: Function, meta: ComponentMeta): vo
 			desc = <PropertyDescriptor>Object.getOwnPropertyDescriptor(proto, key);
 
 		if ('value' in desc) {
+			const
+				fn = desc.value;
+
+			if (!Object.isFunction(fn)) {
+				continue;
+			}
+
 			// tslint:disable-next-line
-			meta.methods[key] = Object.assign(meta.methods[key] || {watchers: {}, hooks: {}}, {
-				fn: desc.value
-			});
+			meta.methods[key] = Object.assign(meta.methods[key] || {watchers: {}, hooks: {}}, {fn});
 
 		} else {
 			const
+				field = meta.props[key] ? meta.props : meta.fields[key] ? meta.fields : meta.systemFields,
 				metaKey = key in meta.accessors ? 'accessors' : 'computed',
 				obj = meta[metaKey];
+
+			if (field[key]) {
+				Object.defineProperty(proto, key, {
+					writable: true,
+					configurable: true,
+					value: undefined
+				});
+
+				delete field[key];
+			}
 
 			const
 				old = obj[key],

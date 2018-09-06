@@ -136,10 +136,6 @@ export function paramsFactory<T>(
 				p = params;
 
 			if (desc) {
-				delete meta.props[key];
-				delete meta.fields[key];
-				delete meta.systemFields[key];
-
 				const metaKey = cluster || (
 					'value' in desc ? 'methods' : key in meta.computed && p.cache !== false ? 'computed' : 'accessors'
 				);
@@ -208,9 +204,18 @@ export function paramsFactory<T>(
 				return;
 			}
 
-			delete meta.methods[key];
-			delete meta.accessors[key];
-			delete meta.computed[key];
+			const
+				accessors = meta.accessors[key] ? meta.accessors : meta.computed;
+
+			if (accessors[key]) {
+				Object.defineProperty(meta.constructor.prototype, key, {
+					writable: true,
+					configurable: true,
+					value: undefined
+				});
+
+				delete accessors[key];
+			}
 
 			const
 				metaKey = cluster || (key in meta.props ? 'props' : 'fields'),

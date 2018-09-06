@@ -152,9 +152,7 @@ export type Hooks =
 	'deactivated' |
 	'beforeDestroy' |
 	'destroyed' |
-	'errorCaptured' |
-	'beforeRender' |
-	'afterRender';
+	'errorCaptured';
 
 export interface ComponentMethod {
 	fn: Function;
@@ -181,15 +179,19 @@ export interface FunctionalCtx {
 export interface ComponentMeta {
 	name: string;
 	componentName: string;
+	constructor: Function,
 	params: ComponentParams;
+
 	props: Dictionary<ComponentProp>;
 	fields: Dictionary<ComponentField>;
 	systemFields: Dictionary<ComponentField>;
 	mods: ModsDecl;
+
 	computed: Dictionary<ComputedOptions<any>>;
 	accessors: Dictionary<ComputedOptions<any>>;
 	methods: Dictionary<ComponentMethod>;
 	watchers: Dictionary<WatchOptionsWithHandler[]>;
+
 	hooks: {[hook in Hooks]: Array<{
 		fn: Function;
 		name?: string;
@@ -266,15 +268,19 @@ export function component(params?: ComponentParams): Function {
 		const meta: ComponentMeta = {
 			name,
 			componentName: name.replace(isSmart, ''),
+			constructor: target,
 			params: p,
+
 			props: {},
 			fields: {},
 			systemFields: {},
 			mods,
+
 			computed: {},
 			accessors: {},
 			methods: {},
 			watchers: {},
+
 			hooks: {
 				beforeRuntime: [],
 				beforeCreate: [],
@@ -288,9 +294,7 @@ export function component(params?: ComponentParams): Function {
 				deactivated: [],
 				beforeDestroy: [],
 				destroyed: [],
-				errorCaptured: [],
-				beforeRender: [],
-				afterRender: []
+				errorCaptured: []
 			},
 
 			component: {
