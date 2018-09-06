@@ -247,8 +247,6 @@ export function createFakeCtx(
 		}
 	}
 
-	bindWatchers(<any>fakeCtx, 'event');
-
 	{
 		const list = [
 			meta.systemFields,
@@ -298,6 +296,8 @@ export function createFakeCtx(
 					await methods.beforeCreate.fn.call(fakeCtx);
 				}
 			}, stderr);
+
+			bindWatchers(<any>fakeCtx);
 		}
 	}
 
@@ -380,7 +380,8 @@ export function patchVNode(vNode: VNode, ctx: Dictionary, renderCtx: RenderConte
 	}
 
 	ctx.hook = 'created';
-	bindWatchers(<any>ctx, 'field');
+	bindWatchers(<any>ctx);
+
 	runHook('created', meta, ctx).then(async () => {
 		if (methods.created) {
 			await methods.created.fn.call(ctx);

@@ -90,6 +90,7 @@ export interface ComponentParams {
 
 export interface FieldWatcher extends WatchOptions {
 	fn: WatchHandler<any>;
+	provideArgs?: boolean;
 }
 
 export interface ComponentProp extends PropOptions {
@@ -130,13 +131,19 @@ export interface SystemField<T extends VueInterface = VueInterface> {
 export interface WatchOptionsWithHandler<T extends VueInterface = VueInterface, A = any, B = A> extends WatchOptions {
 	method?: true;
 	event?: boolean;
+	group?: string;
+	provideArgs?: boolean;
 	handler(a: A, b: B): any;
+	handler(...args: A[]): any;
 	handler(ctx: T, a: A, b: B): any;
+	handler(ctx: T, ...args: A[]): any;
 }
 
 export interface MethodWatcher extends WatchOptions {
 	event?: string;
 	field?: string;
+	group?: string;
+	provideArgs?: boolean;
 }
 
 export type Hooks =

@@ -8,12 +8,15 @@
 
 // tslint:disable:max-file-line-count
 
+import $C = require('collection.js');
+import Async from 'core/async';
+
 import log from 'core/log';
 import state from 'core/component/state';
-import Async from 'core/async';
 
 import Vue, { ComponentOptions, FunctionalComponentOptions } from 'vue';
 import { ComponentField, ComponentMeta, VueInterface } from 'core/component';
+import { GLOBAL } from 'core/const/links';
 
 export interface ComponentConstructor<T = any> {
 	new(): T;
@@ -116,19 +119,25 @@ export function getComponent(
 				});
 			}
 
-			bindWatchers(ctx, 'event');
-			initDataObject(meta.systemFields, ctx, instance, ctx);
+			initDataObject(
+				meta.systemFields,
+				ctx,
+				instance,
+				ctx
+			);
 
 			runHook('beforeCreate', meta, ctx).then(async () => {
 				if (methods.beforeCreate) {
 					await methods.beforeCreate.fn.call(ctx);
 				}
 			}, stderr);
+
+			bindWatchers(ctx);
 		},
 
 		created(): void {
 			this.hook = 'created';
-			bindWatchers(this, 'field');
+			bindWatchers(this);
 			runHook('created', this.meta, this).then(async () => {
 				if (methods.created) {
 					await methods.created.fn.call(this);
@@ -282,27 +291,51 @@ export function createMeta(parent: ComponentMeta): ComponentMeta {
 	return meta;
 }
 
+const
+	customWatcherRgxp = /^(!?)([^:]+):(.*)/;
+
 /**
  * Binds watchers to the specified component
- *
  * @param ctx - component context
- * @param type - watcher type
  */
-export function bindWatchers(ctx: VueInterface, type: 'event' | 'field'): void {
+export function bindWatchers(ctx: VueInterface): void {
 	const
 		// @ts-ignore
-		{meta} = ctx;
+		{meta, hook, $async: $a} = ctx;
+
+	const
+		isBeforeCreate = hook === 'beforeCreate',
+		isCreated = hook === 'created';
+
+	if (!isBeforeCreate && !isCreated) {
+		return;
+	}
 
 	for (let o = meta.watchers, keys = Object.keys(o), i = 0; i < keys.length; i++) {
-		const
+		let
 			key = keys[i],
-			watchers = o[key];
+			onBeforeCreate = false,
+			root = <any>ctx;
+
+		const
+			watchers = o[key],
+			customWatcher = customWatcherRgxp.exec(key);
+
+		if (customWatcher) {
+			const
+				l = customWatcher[2];
+
+			onBeforeCreate = Boolean(customWatcher[1]);
+			root = l ? $C(ctx).get(l) || $C(GLOBAL).get(l) || ctx : ctx;
+			key = customWatcher[3];
+		}
 
 		for (let i = 0; i < watchers.length; i++) {
 			const
-				el = watchers[i];
+				el = watchers[i],
+				group = {group: el.group};
 
-			const handler = el.method ? el.handler : (a, b) => {
+			let handler = el.method ? el.handler : (...args) => {
 				const
 					fn = el.handler;
 
@@ -312,26 +345,54 @@ export function bindWatchers(ctx: VueInterface, type: 'event' | 'field'): void {
 					}
 
 					// @ts-ignore
-					ctx.$async.setImmediate(() => ctx[fn](a, b), {
+					$a.setImmediate(() => ctx[fn](...args), {
 						group: 'watchers',
 						label: fn
 					});
 
 				} else {
-					fn(ctx, a, b);
+					if (el.provideArgs === false) {
+						fn();
+
+					} else {
+						fn(ctx, ...args);
+					}
 				}
 			};
 
-			if (el.event) {
-				if (type === 'event') {
+			if (el.provideArgs === false) {
+				const l = handler;
+				handler = () => l.call(ctx);
+
+			} else {
+				handler = handler.bind(ctx);
+			}
+
+			if (isBeforeCreate && (onBeforeCreate || el.event)) {
+				if ((el.event || root === ctx) && !Object.isFunction(root.on)) {
 					// @ts-ignore
-					ctx.$on(key, handler.bind(ctx));
+					ctx.$on(key, handler);
+
+				} else {
+					$a.on(root, key, handler, group);
 				}
 
 				continue;
 			}
 
-			if (type === 'field') {
+			if (isCreated && !el.event) {
+				if (customWatcher) {
+					if (root === ctx && !Object.isFunction(root.on)) {
+						// @ts-ignore
+						ctx.$on(key, handler);
+
+					} else {
+						$a.on(root, key, handler, group);
+					}
+
+					continue;
+				}
+
 				// @ts-ignore
 				ctx.$watch(key, {
 					deep: el.deep,
@@ -559,6 +620,8 @@ export function getBaseComponent(
 			watchers[key].push({
 				method: true,
 				event: Boolean(el.event),
+				group: el.group,
+				provideArgs: el.provideArgs,
 				deep: el.deep,
 				immediate: el.immediate,
 				handler: <any>method.fn
@@ -607,6 +670,7 @@ export function getBaseComponent(
 			watchers[key].push({
 				deep: val.deep,
 				immediate: val.immediate,
+				provideArgs: val.provideArgs,
 				handler: val.fn
 			});
 		}
@@ -625,6 +689,7 @@ export function getBaseComponent(
 			watchers[key].push({
 				deep: val.deep,
 				immediate: val.immediate,
+				provideArgs: val.provideArgs,
 				handler: val.fn
 			});
 		}
