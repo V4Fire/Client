@@ -26,6 +26,7 @@ export interface WatchHandler<T, A, B> {
 
 export interface FieldWatcherObject<T, A, B> extends WatchOptions {
 	fn: string | WatchHandler<T, A, B>;
+	provideArgs?: boolean;
 }
 
 export type FieldWatcher<T extends VueInterface = VueInterface, A = any, B = A> =
