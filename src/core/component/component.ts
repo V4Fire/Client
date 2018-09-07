@@ -405,6 +405,9 @@ export function bindWatchers(ctx: VueInterface): void {
 			(async () => {
 				const
 					group = {group: el.group, label},
+					eventParams = {...group, options: el.options};
+
+				const
 					rootHasEmitter = Object.isFunction(root.on) || Object.isFunction(root.addListener),
 					rootIsCtx = root === ctx;
 
@@ -418,7 +421,7 @@ export function bindWatchers(ctx: VueInterface): void {
 						ctx.$on(key, handler);
 
 					} else {
-						$a.on(root, key, handler, group);
+						$a.on(root, key, handler, eventParams, ...el.args);
 					}
 
 					return;
@@ -431,7 +434,7 @@ export function bindWatchers(ctx: VueInterface): void {
 							ctx.$on(key, handler);
 
 						} else {
-							$a.on(root, key, handler, group);
+							$a.on(root, key, handler, eventParams, ...el.args);
 						}
 
 						return;
@@ -453,7 +456,7 @@ export function bindWatchers(ctx: VueInterface): void {
 						ctx.$on(key, handler);
 
 					} else {
-						$a.on(root, key, handler, group);
+						$a.on(root, key, handler, eventParams, ...el.args);
 					}
 				}
 			})();
@@ -678,6 +681,8 @@ export function getBaseComponent(
 				method: nm,
 				event: Boolean(el.event),
 				group: el.group,
+				options: el.options,
+				args: [].concat(el.args || []),
 				provideArgs: el.provideArgs,
 				deep: el.deep,
 				immediate: el.immediate,
