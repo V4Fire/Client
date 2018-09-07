@@ -339,16 +339,17 @@ export function bindWatchers(ctx: VueInterface): void {
 			key = customWatcher[3][l ? 'toString' : 'dasherize']();
 		}
 
+		if (
+			isBeforeCreate && !onBeforeCreate ||
+			isCreated && !onMounted && !onBeforeCreate ||
+			isMounted && !onMounted
+		) {
+			continue;
+		}
+
 		for (let i = 0; i < watchers.length; i++) {
 			const
-				el = watchers[i],
-				canBeforeCreate = el.event || onBeforeCreate,
-				canCreated = !el.event && !onMounted && !onBeforeCreate,
-				canMounted = onMounted;
-
-			if (isBeforeCreate && !canBeforeCreate || isCreated && !canCreated || isMounted && !canMounted) {
-				continue;
-			}
+				el = watchers[i];
 
 			let
 				label = el.method != null ? el.method : undefined,
@@ -404,15 +405,14 @@ export function bindWatchers(ctx: VueInterface): void {
 					eventParams = {...group, options: el.options};
 
 				const
-					rootHasEmitter = Object.isFunction(root.on) || Object.isFunction(root.addListener),
-					rootIsCtx = root === ctx;
+					needDefEmitter = root === ctx && !Object.isFunction(root.on) && !Object.isFunction(root.addListener);
 
 				if (Object.isPromise(handler)) {
 					handler = await $a.promise(handler, group);
 				}
 
-				if (canBeforeCreate) {
-					if ((el.event || rootIsCtx) && !rootHasEmitter) {
+				if (customWatcher) {
+					if (needDefEmitter) {
 						// @ts-ignore
 						ctx.$on(key, handler);
 
@@ -423,38 +423,12 @@ export function bindWatchers(ctx: VueInterface): void {
 					return;
 				}
 
-				if (canCreated) {
-					if (customWatcher) {
-						if (rootIsCtx && !rootHasEmitter) {
-							// @ts-ignore
-							ctx.$on(key, handler);
-
-						} else {
-							$a.on(root, key, handler, eventParams, ...el.args);
-						}
-
-						return;
-					}
-
-					// @ts-ignore
-					ctx.$watch(key, {
-						deep: el.deep,
-						immediate: el.immediate,
-						handler
-					});
-
-					return;
-				}
-
-				if (canMounted) {
-					if (rootIsCtx && !rootHasEmitter) {
-						// @ts-ignore
-						ctx.$on(key, handler);
-
-					} else {
-						$a.on(root, key, handler, eventParams, ...el.args);
-					}
-				}
+				// @ts-ignore
+				ctx.$watch(key, {
+					deep: el.deep,
+					immediate: el.immediate,
+					handler
+				});
 			})();
 		}
 	}
@@ -675,7 +649,6 @@ export function getBaseComponent(
 			watchers[key] = watchers[key] || [];
 			watchers[key].push({
 				method: nm,
-				event: Boolean(el.event),
 				group: el.group,
 				options: el.options,
 				args: [].concat(el.args || []),
