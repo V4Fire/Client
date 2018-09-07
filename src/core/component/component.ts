@@ -346,11 +346,11 @@ export function bindWatchers(ctx: VueInterface): void {
 		for (let i = 0; i < watchers.length; i++) {
 			const
 				el = watchers[i],
-				canBeforeCreate = isBeforeCreate && (onBeforeCreate || el.event),
-				canCreated = isCreated && !el.event,
-				canMounted = isMounted && onMounted;
+				canBeforeCreate = el.event || onBeforeCreate,
+				canCreated = !el.event && !onMounted && !onBeforeCreate,
+				canMounted = onMounted;
 
-			if (!canBeforeCreate && !canCreated && !canMounted) {
+			if (isBeforeCreate && !canBeforeCreate || isCreated && !canCreated || isMounted && !canMounted) {
 				continue;
 			}
 
@@ -402,28 +402,18 @@ export function bindWatchers(ctx: VueInterface): void {
 				handler = <any>el.wrapper(ctx, handler);
 			}
 
-			const
-				group = {group: el.group, label},
-				rootHasEmitter = Object.isFunction(root.on) || Object.isFunction(root.addListener),
-				rootIsCtx = root === ctx;
+			(async () => {
+				const
+					group = {group: el.group, label},
+					rootHasEmitter = Object.isFunction(root.on) || Object.isFunction(root.addListener),
+					rootIsCtx = root === ctx;
 
-			if (canBeforeCreate) {
-				if ((el.event || rootIsCtx) && !rootHasEmitter) {
-					// @ts-ignore
-					ctx.$on(key, handler);
-
-				} else {
-					$a.on(root, key, handler, group);
+				if (Object.isPromise(handler)) {
+					handler = await $a.promise(handler, group);
 				}
 
-				continue;
-			}
-
-			if (canCreated) {
-				if (customWatcher) {
-					console.log(key, el);
-
-					if (rootIsCtx && !rootHasEmitter) {
+				if (canBeforeCreate) {
+					if ((el.event || rootIsCtx) && !rootHasEmitter) {
 						// @ts-ignore
 						ctx.$on(key, handler);
 
@@ -431,28 +421,42 @@ export function bindWatchers(ctx: VueInterface): void {
 						$a.on(root, key, handler, group);
 					}
 
-					continue;
+					return;
 				}
 
-				// @ts-ignore
-				ctx.$watch(key, {
-					deep: el.deep,
-					immediate: el.immediate,
-					handler
-				});
+				if (canCreated) {
+					if (customWatcher) {
+						if (rootIsCtx && !rootHasEmitter) {
+							// @ts-ignore
+							ctx.$on(key, handler);
 
-				continue;
-			}
+						} else {
+							$a.on(root, key, handler, group);
+						}
 
-			if (canMounted) {
-				if (rootIsCtx && !rootHasEmitter) {
+						return;
+					}
+
 					// @ts-ignore
-					ctx.$on(key, handler);
+					ctx.$watch(key, {
+						deep: el.deep,
+						immediate: el.immediate,
+						handler
+					});
 
-				} else {
-					$a.on(root, key, handler, group);
+					return;
 				}
-			}
+
+				if (canMounted) {
+					if (rootIsCtx && !rootHasEmitter) {
+						// @ts-ignore
+						ctx.$on(key, handler);
+
+					} else {
+						$a.on(root, key, handler, group);
+					}
+				}
+			})();
 		}
 	}
 }
