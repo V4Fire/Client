@@ -567,7 +567,7 @@ export function patchVNode(vNode: VNode, ctx: Dictionary, renderCtx: RenderConte
 			}
 		}
 
-		ctx.hook = 'created';
+		ctx.hook = 'mounted';
 		el.vueComponent = ctx;
 		bindWatchers(<any>ctx);
 
