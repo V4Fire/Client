@@ -138,6 +138,7 @@ export function getComponent(
 		created(): void {
 			this.hook = 'created';
 			bindWatchers(this);
+
 			runHook('created', this.meta, this).then(async () => {
 				if (methods.created) {
 					await methods.created.fn.call(this);
@@ -155,6 +156,9 @@ export function getComponent(
 
 		mounted(): void {
 			this.$el.vueComponent = this;
+			this.hook = 'mounted';
+			bindWatchers(this);
+
 			runHook('mounted', this.meta, this).then(async () => {
 				if (methods.mounted) {
 					await methods.mounted.fn.call(this);
@@ -292,7 +296,7 @@ export function createMeta(parent: ComponentMeta): ComponentMeta {
 }
 
 const
-	customWatcherRgxp = /^(!?)([^:]+):(.*)/;
+	customWatcherRgxp = /^([!?]?)([^:]+):(.*)/;
 
 /**
  * Binds watchers to the specified component
@@ -303,18 +307,24 @@ export function bindWatchers(ctx: VueInterface): void {
 		// @ts-ignore
 		{meta, hook, $async: $a} = ctx;
 
-	const
-		isBeforeCreate = hook === 'beforeCreate',
-		isCreated = hook === 'created';
-
-	if (!isBeforeCreate && !isCreated) {
+	if (!{beforeCreate: true, created: true, mounted: true}[hook]) {
 		return;
 	}
+
+	const
+		ctxObj = $C(ctx),
+		globalObj = $C(GLOBAL);
+
+	const
+		isBeforeCreate = hook === 'beforeCreate',
+		isCreated = hook === 'created',
+		isMounted = hook === 'mounted';
 
 	for (let o = meta.watchers, keys = Object.keys(o), i = 0; i < keys.length; i++) {
 		let
 			key = keys[i],
 			onBeforeCreate = false,
+			onMounted = false,
 			root = <any>ctx;
 
 		const
@@ -323,23 +333,38 @@ export function bindWatchers(ctx: VueInterface): void {
 
 		if (customWatcher) {
 			const
+				m = customWatcher[1],
 				l = customWatcher[2];
 
-			onBeforeCreate = Boolean(customWatcher[1]);
-			root = l ? $C(ctx).get(l) || $C(GLOBAL).get(l) || ctx : ctx;
+			onBeforeCreate = m === '!';
+			onMounted = m === '?';
+
+			root = l ? ctxObj.get(l) || globalObj.get(l) || ctx : ctx;
 			key = customWatcher[3];
 		}
 
 		for (let i = 0; i < watchers.length; i++) {
 			const
 				el = watchers[i],
-				group = {group: el.group};
+				canBeforeCreate = isBeforeCreate && (onBeforeCreate || el.event),
+				canCreated = isCreated && !el.event,
+				canMounted = isMounted && onMounted;
 
-			let handler = el.method ? el.handler : (...args) => {
+			if (!canBeforeCreate && !canCreated && !canMounted) {
+				continue;
+			}
+
+			let
+				label = el.method != null ? el.method : undefined,
+				f;
+
+			let handler = f = el.method ? el.handler : (...args) => {
 				const
 					fn = el.handler;
 
 				if (Object.isString(fn)) {
+					label = fn;
+
 					if (!Object.isFunction(ctx[fn])) {
 						throw new ReferenceError(`The specified method (${fn}) for watching is not defined`);
 					}
@@ -351,6 +376,8 @@ export function bindWatchers(ctx: VueInterface): void {
 					});
 
 				} else {
+					label = fn.name;
+
 					if (el.provideArgs === false) {
 						fn();
 
@@ -360,6 +387,9 @@ export function bindWatchers(ctx: VueInterface): void {
 				}
 			};
 
+			label = label ?
+				`[[WATCHER:${key}:${label}]]` : undefined;
+
 			if (el.provideArgs === false) {
 				const l = handler;
 				handler = () => l.call(ctx);
@@ -368,8 +398,13 @@ export function bindWatchers(ctx: VueInterface): void {
 				handler = handler.bind(ctx);
 			}
 
-			if (isBeforeCreate && (onBeforeCreate || el.event)) {
-				if ((el.event || root === ctx) && !Object.isFunction(root.on)) {
+			const
+				group = {group: el.group, label},
+				rootHasEmitter = Object.isFunction(root.on) || Object.isFunction(root.addListener),
+				rootIsCtx = root === ctx;
+
+			if (canBeforeCreate) {
+				if ((el.event || rootIsCtx) && !rootHasEmitter) {
 					// @ts-ignore
 					ctx.$on(key, handler);
 
@@ -380,9 +415,9 @@ export function bindWatchers(ctx: VueInterface): void {
 				continue;
 			}
 
-			if (isCreated && !el.event) {
+			if (canCreated) {
 				if (customWatcher) {
-					if (root === ctx && !Object.isFunction(root.on)) {
+					if (rootIsCtx && !rootHasEmitter) {
 						// @ts-ignore
 						ctx.$on(key, handler);
 
@@ -399,6 +434,18 @@ export function bindWatchers(ctx: VueInterface): void {
 					immediate: el.immediate,
 					handler
 				});
+
+				continue;
+			}
+
+			if (canMounted) {
+				if (rootIsCtx && !rootHasEmitter) {
+					// @ts-ignore
+					ctx.$on(key, handler);
+
+				} else {
+					$a.on(root, key, handler, group);
+				}
 			}
 		}
 	}
@@ -605,10 +652,10 @@ export function getBaseComponent(
 
 	for (let o = methods, keys = Object.keys(o), i = 0; i < keys.length; i++) {
 		const
-			key = keys[i],
-			method = o[key];
+			nm = keys[i],
+			method = o[nm];
 
-		component.methods[key] =
+		component.methods[nm] =
 			method.fn;
 
 		for (let o = method.watchers, keys = Object.keys(o), i = 0; i < keys.length; i++) {
@@ -618,7 +665,7 @@ export function getBaseComponent(
 
 			watchers[key] = watchers[key] || [];
 			watchers[key].push({
-				method: true,
+				method: nm,
 				event: Boolean(el.event),
 				group: el.group,
 				provideArgs: el.provideArgs,

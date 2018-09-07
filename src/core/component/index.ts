@@ -129,9 +129,9 @@ export interface SystemField<T extends VueInterface = VueInterface> {
 }
 
 export interface WatchOptionsWithHandler<T extends VueInterface = VueInterface, A = any, B = A> extends WatchOptions {
-	method?: true;
 	event?: boolean;
 	group?: string;
+	method?: string;
 	provideArgs?: boolean;
 	handler(a: A, b: B): any;
 	handler(...args: A[]): any;
