@@ -7,6 +7,7 @@
  */
 
 import symbolGenerator from 'core/symbol';
+import remoteState from 'core/component/state';
 
 import { reset, ResetType, VueInterface } from 'core/component';
 import { setLang, lang } from 'core/i18n';
@@ -59,6 +60,14 @@ export default class iStaticPage<
 	 */
 	@system((o) => o.remoteState.lastOnlineDate)
 	lastOnlineDate?: Date;
+
+	/** @override */
+	@field({
+		atom: true,
+		init: () => remoteState
+	})
+
+	remoteState!: Dictionary;
 
 	/**
 	 * Page information object store
@@ -247,5 +256,11 @@ export default class iStaticPage<
 	protected syncOnlineWatcher(e: StatusEvent): void {
 		this.isOnline = e.status;
 		this.lastOnlineDate = e.lastOnline;
+	}
+
+	/** @override */
+	protected initBaseAPI(): void {
+		super.initBaseAPI();
+		this.remoteState = remoteState;
 	}
 }
