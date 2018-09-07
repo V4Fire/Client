@@ -7,8 +7,12 @@
  */
 
 import symbolGenerator from 'core/symbol';
+
 import { reset, ResetType, VueInterface } from 'core/component';
 import { setLang, lang } from 'core/i18n';
+
+import { SetEvent } from 'core/session';
+import { StatusEvent } from 'core/net';
 
 import iBlock from 'super/i-block/i-block';
 import bRouter, { PageInfo } from 'base/b-router/b-router';
@@ -213,26 +217,35 @@ export default class iStaticPage<
 
 	/**
 	 * Synchronization for the langStore field
+	 * @param lang
 	 */
 	@watch('langStore')
-	protected syncLangWatcher(): void {
+	@watch('i18n.setLang')
+	protected syncLangWatcher(lang: string): void {
+		if (this.lang === lang) {
+			return;
+		}
+
+		this.lang = lang;
 		this.$forceUpdate();
 	}
 
-	/** @override */
-	protected initGlobalEvents(): void {
-		super.initGlobalEvents();
+	/**
+	 * Synchronization for the isAuth field
+	 * @param [e]
+	 */
+	@watch('globalEvent:session.*')
+	protected syncAuthWatcher(e?: SetEvent): void {
+		this.isAuth = Boolean(e && e.auth);
+	}
 
-		const
-			{globalEvent: $e} = this;
-
-		$e.on('net.status', ({status, lastOnline}) => {
-			this.isOnline = status;
-			this.lastOnlineDate = lastOnline;
-		});
-
-		$e.on('session.set', ({auth}) => this.isAuth = Boolean(auth));
-		$e.on('session.clear', () => this.isAuth = false);
-		$e.on('i18n.setLang', (lang) => this.lang = lang);
+	/**
+	 * Synchronization for the isOnline field
+	 * @param e
+	 */
+	@watch('net.status')
+	protected syncOnlineWatcher(e: StatusEvent): void {
+		this.isOnline = e.status;
+		this.lastOnlineDate = e.lastOnline;
 	}
 }
