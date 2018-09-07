@@ -622,6 +622,11 @@ export default class bSelect<T extends Dictionary = Dictionary> extends bInput<T
 	 * @param [value]
 	 * @emits actionChange(selected?: string)
 	 */
+	@watch({
+		field: '?$el:click',
+		wrapper: (o, cb) => o.delegateElement('option', (e) => cb(e.delegateTarget.dataset.value))
+	})
+
 	protected async onOptionSelected(value?: string): Promise<void> {
 		const
 			v = this.values && this.values[<any>this.selected];
@@ -647,18 +652,5 @@ export default class bSelect<T extends Dictionary = Dictionary> extends bInput<T
 
 			this.initCloseHelpers();
 		}
-	}
-
-	/** @override */
-	protected async mounted(): Promise<void> {
-		super.mounted();
-
-		const fn = await this.delegateElement('option', async (e) => {
-			await this.onOptionSelected(e.delegateTarget.dataset.value);
-		});
-
-		this.async.on(this.$el, 'click', fn, {
-			label: $$.activation
-		});
 	}
 }

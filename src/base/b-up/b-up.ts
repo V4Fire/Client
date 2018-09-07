@@ -7,7 +7,7 @@
  */
 
 import symbolGenerator from 'core/symbol';
-import iBlock, { component, ModsDecl } from 'super/i-block/i-block';
+import iBlock, { component, hook, watch, ModsDecl } from 'super/i-block/i-block';
 export * from 'super/i-block/i-block';
 
 export const
@@ -23,19 +23,23 @@ export default class bUp extends iBlock {
 		]
 	};
 
-	/** @override */
-	protected mounted(): void {
-		super.mounted();
+	/**
+	 * Handler: click trigger
+	 * @emits up()
+	 */
+	@watch('?$el:click')
+	protected onClick(): void {
+		scrollTo(0, 0);
+		this.emit('up');
+	}
 
-		const
-			{async: $a} = this;
-
-		$a.on(document, 'scroll', () => this.setMod('hidden', !(pageYOffset > innerHeight / 3)), {
-			label: $$.scroll
-		});
-
-		$a.on(this.$el, 'click', () => window.scrollTo(0, 0), {
-			label: $$.up
-		});
+	/**
+	 * Handler: scroll trigger
+	 * @emits up()
+	 */
+	@hook('activated')
+	@watch('document:scroll')
+	protected onScroll(): void {
+		this.setMod('hidden', !(pageYOffset > innerHeight / 3));
 	}
 }

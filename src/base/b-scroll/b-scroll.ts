@@ -9,7 +9,7 @@
 // tslint:disable:max-file-line-count
 import $C = require('collection.js');
 import symbolGenerator from 'core/symbol';
-import iBlock, { component, prop, system, p, wait, ModsDecl } from 'super/i-block/i-block';
+import iBlock, { component, prop, system, p, wait, watch, ModsDecl } from 'super/i-block/i-block';
 
 export * from 'super/i-block/i-block';
 export type ScrollSide = 'x' | 'y';
@@ -540,6 +540,7 @@ export default class bScroll extends iBlock {
 	 * Handler: wheel scroll
 	 * @param e
 	 */
+	@watch({field: 'document:wheel', args: {capture: true}})
 	protected async onWheel(e: WheelEvent): Promise<void> {
 		const
 			target = document.elementFromPoint(e.clientX, e.clientY);
@@ -569,12 +570,6 @@ export default class bScroll extends iBlock {
 				} catch (_) {}
 			}
 		}
-	}
-
-	/** @override */
-	protected created(): void {
-		super.created();
-		this.async.on(document, 'wheel', this.onWheel, {options: {capture: true}});
 	}
 
 	/** @override */

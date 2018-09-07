@@ -101,6 +101,7 @@ export default class bTimeRange<T extends Dictionary = Dictionary> extends iInpu
 
 	/* @override */
 	protected created(): void {
+		super.created();
 		this.initCloseHelpers();
 	}
 }

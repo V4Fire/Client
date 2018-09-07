@@ -7,7 +7,7 @@
  */
 
 import symbolGenerator from 'core/symbol';
-import iData, { component, prop, field, system, hook, p } from 'super/i-data/i-data';
+import iData, { component, prop, field, system, hook, watch, p } from 'super/i-data/i-data';
 export * from 'super/i-data/i-data';
 
 export const
@@ -396,6 +396,7 @@ export default class bList<T extends Dictionary = Dictionary> extends iData<T> {
 	 * @param e
 	 * @emits actionChange(active: any)
 	 */
+	@watch({field: '?$el:click', wrapper: (o, cb) => o.delegateElement('link', cb)})
 	protected onActive(e: Event): void {
 		const
 			target = <Element>e.delegateTarget,
@@ -403,13 +404,5 @@ export default class bList<T extends Dictionary = Dictionary> extends iData<T> {
 
 		this.toggleActive(this.indexes[id]);
 		this.emit('actionChange', this.active);
-	}
-
-	/** @override */
-	protected async mounted(): Promise<void> {
-		super.mounted();
-		this.async.on(this.$el, 'click', await this.delegateElement('link', this.onActive), {
-			label: $$.activation
-		});
 	}
 }

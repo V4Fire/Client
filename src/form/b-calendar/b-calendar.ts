@@ -10,7 +10,7 @@
 import $C = require('collection.js');
 import symbolGenerator from 'core/symbol';
 import bInputTime from 'form/b-input-time/b-input-time';
-import iInput, { component, prop, field, system, p, ModsDecl } from 'super/i-input/i-input';
+import iInput, { component, prop, field, system, watch, p, ModsDecl } from 'super/i-input/i-input';
 
 export * from 'super/i-input/i-input';
 export interface Day {
@@ -481,6 +481,7 @@ export default class bCalendar<T extends Dictionary = Dictionary> extends iInput
 	 * @param e
 	 * @emits actionChange(value?: Date | Date[])
 	 */
+	@watch({field: '?$el:click', wrapper: (o, cb) => o.delegateElement('day', cb)})
 	protected onDaySelect(e: Event): void {
 		const
 			target = <HTMLElement>e.delegateTarget,
@@ -510,13 +511,5 @@ export default class bCalendar<T extends Dictionary = Dictionary> extends iInput
 	protected created(): void {
 		super.created();
 		this.initCloseHelpers();
-	}
-
-	/** @override */
-	protected async mounted(): Promise<void> {
-		super.mounted();
-		this.async.on(this.$el, 'click', await this.delegateElement('day', this.onDaySelect), {
-			label: $$.daySelection
-		});
 	}
 }

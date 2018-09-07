@@ -7,17 +7,16 @@
  */
 
 import $C = require('collection.js');
-import path = require('path-to-regexp');
 
+import path = require('path-to-regexp');
 import { Key } from 'path-to-regexp';
-import { delegate } from 'core/dom';
 
 import Async from 'core/async';
 import driver from 'base/b-router/drivers';
 import symbolGenerator from 'core/symbol';
 
 import { Router, PageSchema, PageInfo, CurrentPage } from 'base/b-router/drivers/interface';
-import iData, { component, prop, system, hook, p } from 'super/i-data/i-data';
+import iData, { component, prop, system, hook, watch, p } from 'super/i-data/i-data';
 
 export * from 'super/i-data/i-data';
 export * from 'base/b-router/drivers/interface';
@@ -419,6 +418,7 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 	 * Handler: link trigger
 	 * @param e
 	 */
+	@watch({field: 'document:click', wrapper: (o, cb) => o.delegate('[href]', cb)})
 	protected async onLink(e: MouseEvent): Promise<void> {
 		const
 			a = <HTMLElement>e.delegateTarget,
@@ -473,6 +473,5 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 	protected created(): void {
 		super.created();
 		this.setField('routerStore', this, this.$root);
-		this.async.on(document, 'click', delegate('[href]', this.onLink));
 	}
 }

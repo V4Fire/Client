@@ -1328,16 +1328,6 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 	}
 
 	/**
-	 * Wrapper for core/dom -> delegate
-	 *
-	 * @param selector
-	 * @param handler
-	 */
-	delegate(selector: string, handler?: Function): Function {
-		return delegate(selector, handler);
-	}
-
-	/**
 	 * Wrapper for a wait decorator
 	 *
 	 * @see Async.promise
@@ -2613,6 +2603,16 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 	}
 
 	/**
+	 * Wrapper for core/dom -> delegate
+	 *
+	 * @param selector
+	 * @param handler
+	 */
+	protected delegate(selector: string, handler?: Function): Function {
+		return delegate(selector, handler);
+	}
+
+	/**
 	 * Wraps a handler for delegation of the specified element
 	 *
 	 * @param elName
@@ -3286,6 +3286,14 @@ export abstract class iBlockDecorator extends iBlock {
 	public readonly async!: Async<this>;
 	public readonly block!: Block;
 	public readonly localEvent!: EventEmitter;
+
+	public delegate(selector: string, handler?: Function): Function {
+		return () => ({});
+	}
+
+	public delegateElement(elName: string, handler: Function): CanPromise<Function> {
+		return () => ({});
+	}
 }
 
 function defaultI18n(): string {
