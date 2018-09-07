@@ -12,7 +12,7 @@ import $C = require('collection.js');
 import Async from 'core/async';
 
 import log from 'core/log';
-import state from 'core/component/state';
+import remoteState from 'core/component/state';
 
 import Vue, { ComponentOptions, FunctionalComponentOptions } from 'vue';
 import { ComponentField, ComponentMeta, VueInterface } from 'core/component';
@@ -81,7 +81,7 @@ export function getComponent(
 			runHook('beforeDataCreate', ctx.meta, ctx).catch(stderr);
 
 			ctx.$$data = this;
-			data.remoteState = state;
+			data.remoteState = remoteState;
 
 			return data;
 		},
@@ -100,7 +100,7 @@ export function getComponent(
 			ctx.$$data = {};
 			ctx.$normalParent = p;
 			ctx.$async = new Async(this);
-			ctx.remoteState = state;
+			ctx.remoteState = remoteState;
 			ctx.instance = instance;
 			ctx.componentName = meta.name;
 			ctx.meta = createMeta(meta);
