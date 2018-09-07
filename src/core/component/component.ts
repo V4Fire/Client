@@ -296,7 +296,7 @@ export function createMeta(parent: ComponentMeta): ComponentMeta {
 }
 
 const
-	customWatcherRgxp = /^([!?]?)([^:]+):(.*)/;
+	customWatcherRgxp = /^([!?]?)([^!?:]*):(.*)/;
 
 /**
  * Binds watchers to the specified component
@@ -340,7 +340,7 @@ export function bindWatchers(ctx: VueInterface): void {
 			onMounted = m === '?';
 
 			root = l ? ctxObj.get(l) || globalObj.get(l) || ctx : ctx;
-			key = customWatcher[3];
+			key = customWatcher[3][l ? 'toString' : 'dasherize']();
 		}
 
 		for (let i = 0; i < watchers.length; i++) {
