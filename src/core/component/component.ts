@@ -398,6 +398,10 @@ export function bindWatchers(ctx: VueInterface): void {
 				handler = handler.bind(ctx);
 			}
 
+			if (el.wrapper) {
+				handler = <any>el.wrapper(ctx, handler);
+			}
+
 			const
 				group = {group: el.group, label},
 				rootHasEmitter = Object.isFunction(root.on) || Object.isFunction(root.addListener),
@@ -417,6 +421,8 @@ export function bindWatchers(ctx: VueInterface): void {
 
 			if (canCreated) {
 				if (customWatcher) {
+					console.log(key, el);
+
 					if (rootIsCtx && !rootHasEmitter) {
 						// @ts-ignore
 						ctx.$on(key, handler);
@@ -671,6 +677,7 @@ export function getBaseComponent(
 				provideArgs: el.provideArgs,
 				deep: el.deep,
 				immediate: el.immediate,
+				wrapper: el.wrapper,
 				handler: <any>method.fn
 			});
 		}

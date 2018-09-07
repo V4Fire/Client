@@ -16,15 +16,12 @@ import {
 	UniqueFieldFn,
 	VueInterface,
 	MethodWatcher,
-	ComponentMeta
+	ComponentMeta,
+	WatchHandler
 
 } from 'core/component';
 
-export interface WatchHandler<T, A, B> {
-	(ctx: T, value: A, oldValue: B): any;
-}
-
-export interface FieldWatcherObject<T, A, B> extends WatchOptions {
+export interface FieldWatcherObject<T extends VueInterface = VueInterface, A = any, B = A> extends WatchOptions {
 	fn: string | WatchHandler<T, A, B>;
 	provideArgs?: boolean;
 }
@@ -93,12 +90,15 @@ export const system = paramsFactory<InitFieldFn | SystemField>('systemFields', (
 });
 
 export type HookParams = {[hook in Hooks]?: string | string[]};
-export type MethodWatchers = string | MethodWatcher | Array<string | MethodWatcher>;
 export type ComponentHooks = Hooks | Hooks[] | HookParams | HookParams[];
+export type MethodWatchers<T extends VueInterface = VueInterface, A = any, B = A> =
+	string |
+	MethodWatcher<T, A, B> |
+	Array<string | MethodWatcher<T, A, B>>;
 
-export interface ComponentMethod {
-	watch?: MethodWatchers;
-	watchParams?: WatchOptions,
+export interface ComponentMethod<T extends VueInterface = VueInterface, A = any, B = A> {
+	watch?: MethodWatchers<T, A, B>;
+	watchParams?: WatchOptions;
 	hook?: ComponentHooks;
 }
 
