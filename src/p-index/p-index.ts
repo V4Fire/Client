@@ -15,7 +15,7 @@ export default class pIndex extends iStaticPage {
 	foo: number = 1;
 
 	@watch('?$el:click')
-	bla(e) {
+	bla(e: Event): void {
 		console.log(e);
 	}
 
