@@ -402,7 +402,7 @@ export function bindWatchers(ctx: VueInterface): void {
 			(async () => {
 				const
 					group = {group: el.group, label},
-					eventParams = {...group, options: el.options};
+					eventParams = {...group, options: el.options, single: el.single};
 
 				const
 					needDefEmitter = root === ctx && !Object.isFunction(root.on) && !Object.isFunction(root.addListener);
@@ -650,6 +650,7 @@ export function getBaseComponent(
 			watchers[key].push({
 				method: nm,
 				group: el.group,
+				single: el.single,
 				options: el.options,
 				args: [].concat(el.args || []),
 				provideArgs: el.provideArgs,

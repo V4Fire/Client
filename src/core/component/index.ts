@@ -140,6 +140,7 @@ export interface WatchWrapper<T extends VueInterface = VueInterface, A = any, B 
 
 export interface WatchOptionsWithHandler<T extends VueInterface = VueInterface, A = any, B = A> extends WatchOptions {
 	group?: string;
+	single?: boolean;
 	options?: AddEventListenerOptions;
 	method?: string;
 	args?: any | any[];
@@ -151,6 +152,7 @@ export interface WatchOptionsWithHandler<T extends VueInterface = VueInterface, 
 export interface MethodWatcher<T extends VueInterface = VueInterface, A = any, B = A> extends WatchOptions {
 	field?: string;
 	group?: string;
+	single?: boolean;
 	options?: AddEventListenerOptions;
 	args?: any | any[];
 	provideArgs?: boolean;
