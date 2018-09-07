@@ -2603,13 +2603,23 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 	}
 
 	/**
+	 * Wrapper for core/dom -> delegate
+	 *
+	 * @param selector
+	 * @param handler
+	 */
+	protected delegate(selector: string, handler?: Function): Function {
+		return delegate(selector, handler);
+	}
+
+	/**
 	 * Wraps a handler for delegation of the specified element
 	 *
 	 * @param elName
 	 * @param handler
 	 */
 	protected delegateElement(elName: string, handler: Function): CanPromise<Function> {
-		return this.execCbAfterBlockReady(() => delegate(this.block.getElSelector(elName), handler));
+		return this.execCbAfterBlockReady(() => this.delegate(this.block.getElSelector(elName), handler));
 	}
 
 	/**
@@ -2740,6 +2750,7 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 		this.on = i.on.bind(this);
 		this.once = i.once.bind(this);
 		this.off = i.off.bind(this);
+		this.delegate = i.delegate.bind(this);
 
 		Object.defineProperties(this, {
 			refs: {
@@ -2878,7 +2889,7 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 	 * @param value
 	 * @param [oldValue]
 	 */
-	@watch({event: 'onStageChange'})
+	@watch('!:onStageChange')
 	protected syncStageWatcher(value: Stage | undefined, oldValue?: Stage): void {
 		this.async.clearAll({group: `stage.${oldValue}`});
 	}
@@ -3275,6 +3286,14 @@ export abstract class iBlockDecorator extends iBlock {
 	public readonly async!: Async<this>;
 	public readonly block!: Block;
 	public readonly localEvent!: EventEmitter;
+
+	public delegate(selector: string, handler?: Function): Function {
+		return () => ({});
+	}
+
+	public delegateElement(elName: string, handler: Function): CanPromise<Function> {
+		return () => ({});
+	}
 }
 
 function defaultI18n(): string {

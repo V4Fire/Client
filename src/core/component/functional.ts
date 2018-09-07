@@ -235,7 +235,8 @@ export function createFakeCtx(
 		}
 	});
 
-	runHook('beforeRuntime', meta, fakeCtx).catch(stderr);
+	runHook('beforeRuntime', meta, fakeCtx)
+		.catch(stderr);
 
 	for (let o = meta.component.props, keys = Object.keys(o), i = 0; i < keys.length; i++) {
 		const
@@ -566,7 +567,10 @@ export function patchVNode(vNode: VNode, ctx: Dictionary, renderCtx: RenderConte
 			}
 		}
 
+		ctx.hook = 'mounted';
 		el.vueComponent = ctx;
+		bindWatchers(<any>ctx);
+
 		runHook('mounted', meta, ctx).then(async () => {
 			if (methods.mounted) {
 				await methods.mounted.fn.call(ctx);

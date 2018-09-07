@@ -10,7 +10,6 @@ import Vue, {
 
 	PropOptions,
 	WatchOptions,
-	WatchHandler,
 	ComputedOptions,
 	ComponentOptions,
 	FunctionalComponentOptions,
@@ -88,8 +87,15 @@ export interface ComponentParams {
 	inheritAttrs?: boolean;
 }
 
-export interface FieldWatcher extends WatchOptions {
-	fn: WatchHandler<any>;
+export interface WatchHandler<T extends VueInterface = VueInterface, A = any, B = A> {
+	(a: A, b: B): any;
+	(...args: A[]): any;
+	(ctx: T, a: A, b: B): any;
+	(ctx: T, ...args: A[]): any;
+}
+
+export interface FieldWatcher<T extends VueInterface = VueInterface, A = any, B = A> extends WatchOptions {
+	fn: WatchHandler<T, A, B>;
 	provideArgs?: boolean;
 }
 
@@ -128,22 +134,29 @@ export interface SystemField<T extends VueInterface = VueInterface> {
 	init?: InitFieldFn<T>;
 }
 
-export interface WatchOptionsWithHandler<T extends VueInterface = VueInterface, A = any, B = A> extends WatchOptions {
-	method?: true;
-	event?: boolean;
-	group?: string;
-	provideArgs?: boolean;
-	handler(a: A, b: B): any;
-	handler(...args: A[]): any;
-	handler(ctx: T, a: A, b: B): any;
-	handler(ctx: T, ...args: A[]): any;
+export interface WatchWrapper<T extends VueInterface = VueInterface, A = any, B = A> {
+	(ctx: T, handler: WatchHandler<T, A, B>): CanPromise<WatchHandler<T, A, B> | Function>;
 }
 
-export interface MethodWatcher extends WatchOptions {
+export interface WatchOptionsWithHandler<T extends VueInterface = VueInterface, A = any, B = A> extends WatchOptions {
+	event?: boolean;
+	group?: string;
+	options?: AddEventListenerOptions;
+	method?: string;
+	args?: any | any[];
+	provideArgs?: boolean;
+	wrapper?: WatchWrapper<T, A, B>;
+	handler: WatchHandler<T, A, B>;
+}
+
+export interface MethodWatcher<T extends VueInterface = VueInterface, A = any, B = A> extends WatchOptions {
 	event?: string;
 	field?: string;
 	group?: string;
+	options?: AddEventListenerOptions;
+	args?: any | any[];
 	provideArgs?: boolean;
+	wrapper?: WatchWrapper<T, A, B>;
 }
 
 export type Hooks =

@@ -7,7 +7,7 @@
  */
 
 import symbolGenerator from 'core/symbol';
-import iInput, { component, prop, ModsDecl } from 'super/i-input/i-input';
+import iInput, { component, prop, watch, ModsDecl } from 'super/i-input/i-input';
 export * from 'super/i-input/i-input';
 
 export const
@@ -97,6 +97,21 @@ export default class bCheckbox<T extends Dictionary = Dictionary> extends iInput
 	 * @param e
 	 * @emits actionChange(value: boolean)
 	 */
+	@watch({
+		field: '?$el:click',
+		wrapper: (o, cb) => (e) => {
+			const
+				{block: $b} = o;
+
+			if (
+				e.target.closest($b.getElSelector('wrapper')) ||
+				e.target.closest($b.getElSelector('hidden-input'))
+			) {
+				return cb(e);
+			}
+		}
+	})
+
 	protected async onClick(e: Event): Promise<void> {
 		await this.focus();
 		await this.toggle();
@@ -109,25 +124,6 @@ export default class bCheckbox<T extends Dictionary = Dictionary> extends iInput
 		this.bindModTo('checked', 'valueStore');
 		this.localEvent.on('block.mod.*.checked.*', (el) => {
 			this.value = el.type !== 'remove' && el.value === 'true';
-		});
-	}
-
-	/** @override */
-	protected mounted(): void {
-		super.mounted();
-
-		const
-			{block: $b} = this;
-
-		this.async.on(this.$el, 'click', (e) => {
-			if (
-				e.target.closest($b.getElSelector('wrapper')) ||
-				e.target.closest($b.getElSelector('hidden-input'))
-			) {
-				return this.onClick(e);
-			}
-		}, {
-			label: $$.toggle
 		});
 	}
 }

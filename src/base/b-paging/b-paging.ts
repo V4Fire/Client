@@ -9,7 +9,7 @@
 import $C = require('collection.js');
 import symbolGenerator from 'core/symbol';
 import bSelect from 'form/b-select/b-select';
-import iBlock, { prop, field, p, component } from 'super/i-block/i-block';
+import iBlock, { component, prop, field, watch, p } from 'super/i-block/i-block';
 export * from 'super/i-block/i-block';
 
 export interface Page {
@@ -136,6 +136,7 @@ export default class bPaging extends iBlock {
 	 * @param e
 	 * @emits actionChange(value: number)
 	 */
+	@watch({field: '?$el:click', wrapper: (o, cb) => o.delegateElement('page', cb)})
 	protected onPageClick(e: Event): void {
 		this.current = e.delegateTarget ? Number(e.delegateTarget.textContent) : 0;
 		this.emit('actionChange', this.current);
@@ -175,13 +176,5 @@ export default class bPaging extends iBlock {
 			this.current = edge > 0 ? this.pageCount : 1;
 			this.emit('actionChange', this.current);
 		}
-	}
-
-	/** @override */
-	protected async mounted(): Promise<void> {
-		super.mounted();
-		this.async.on(this.$el, 'click', await this.delegateElement('page', this.onPageClick), {
-			label: $$.pageSelection
-		});
 	}
 }

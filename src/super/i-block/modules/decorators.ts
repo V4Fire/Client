@@ -17,7 +17,6 @@ import {
 
 	ComponentMethod,
 	ComponentAccessor,
-	MethodWatchers,
 
 	p as pDecorator,
 	prop as propDecorator,
@@ -25,6 +24,7 @@ import {
 	system as systemDecorator,
 	watch as watchDecorator,
 
+	MethodWatchers as BaseMethodWatchers,
 	FieldWatcher as BaseFieldWatcher,
 	ComponentProp as BaseComponentProp,
 	ComponentField as BaseComponentField
@@ -32,6 +32,12 @@ import {
 } from 'core/component/decorators/base';
 
 export interface InitFieldFn<T extends iBlock = iBlockDecorator> extends BaseInitFieldFn<T> {}
+
+export type MethodWatchers<
+	T extends iBlock = iBlockDecorator,
+	A = any,
+	B = A
+> = BaseMethodWatchers<T, A, B>;
 
 export type FieldWatcher<
 	T extends iBlock = iBlockDecorator,
