@@ -2889,7 +2889,7 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 	 * @param value
 	 * @param [oldValue]
 	 */
-	@watch({event: 'onStageChange'})
+	@watch('!:onStageChange')
 	protected syncStageWatcher(value: Stage | undefined, oldValue?: Stage): void {
 		this.async.clearAll({group: `stage.${oldValue}`});
 	}

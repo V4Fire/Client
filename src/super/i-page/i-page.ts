@@ -72,7 +72,7 @@ export default class iPage<T extends Dictionary = Dictionary> extends iData<T> {
 	/**
 	 * Synchronization for the stagePageTitles field
 	 */
-	@watch({event: 'onStageChange'})
+	@watch('!:onStageChange')
 	protected syncStageTitles(): string | undefined {
 		if (!this.stagePageTitles) {
 			return;
