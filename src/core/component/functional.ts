@@ -25,7 +25,7 @@ import {
 
 } from 'vue';
 
-import state from 'core/component/state';
+import remoteState from 'core/component/state';
 import { VueElement, FunctionalCtx } from 'core/component';
 import { runHook, createMeta, initDataObject, bindWatchers, defaultWrapper } from 'core/component/component';
 
@@ -55,7 +55,7 @@ export function createFakeCtx(
 
 	const
 		p = <Dictionary>renderCtx.parent,
-		data = {$state: state};
+		data = {remoteState};
 
 	const
 		$w = new EventEmitter({maxListeners: 1e3}),
@@ -76,9 +76,9 @@ export function createFakeCtx(
 
 		meta,
 		children: [],
+		remoteState,
 
 		$async: $a,
-		$state: state,
 		$root: p.$root,
 		$normalParent,
 		$options: Object.assign(Object.create(p.$options), fakeCtx.$options),

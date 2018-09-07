@@ -45,19 +45,19 @@ export default class iStaticPage<
 	/**
 	 * Authorization status
 	 */
-	@field((o) => (<any>o).$state.isAuth)
+	@field((o) => o.remoteState.isAuth)
 	isAuth!: boolean;
 
 	/**
 	 * Online status
 	 */
-	@field((o) => (<any>o).$state.isOnline)
+	@field((o) => o.remoteState.isOnline)
 	isOnline!: boolean;
 
 	/**
 	 * Last online date
 	 */
-	@system((o) => (<any>o).$state.lastOnlineDate)
+	@system((o) => o.remoteState.lastOnlineDate)
 	lastOnlineDate?: Date;
 
 	/**

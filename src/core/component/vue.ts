@@ -23,6 +23,7 @@ export default class VueInterface<
 	readonly instance!: this;
 	readonly componentName!: string;
 	readonly keepAlive!: boolean;
+	readonly remoteState!: Dictionary;
 	readonly $el!: VueElement<C>;
 	readonly $options!: ComponentOptions<Vue>;
 	readonly $props!: Dictionary;
@@ -31,7 +32,6 @@ export default class VueInterface<
 	readonly $normalParent?: C;
 	readonly $root!: R | any;
 	readonly $isServer!: boolean;
-	protected readonly $state!: Dictionary;
 	protected readonly $async!: Async<VueInterface>;
 	protected readonly meta!: ComponentMeta;
 	protected readonly $refs!: Dictionary;

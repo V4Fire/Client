@@ -81,7 +81,7 @@ export function getComponent(
 			runHook('beforeDataCreate', ctx.meta, ctx).catch(stderr);
 
 			ctx.$$data = this;
-			data.$state = state;
+			data.remoteState = state;
 
 			return data;
 		},
@@ -99,8 +99,8 @@ export function getComponent(
 
 			ctx.$$data = {};
 			ctx.$normalParent = p;
-			ctx.$state = state;
 			ctx.$async = new Async(this);
+			ctx.remoteState = state;
 			ctx.instance = instance;
 			ctx.componentName = meta.name;
 			ctx.meta = createMeta(meta);
