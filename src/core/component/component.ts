@@ -341,7 +341,7 @@ export function bindWatchers(ctx: VueInterface): void {
 
 		if (
 			isBeforeCreate && !onBeforeCreate ||
-			isCreated && !onMounted && !onBeforeCreate ||
+			isCreated && (onMounted || onBeforeCreate) ||
 			isMounted && !onMounted
 		) {
 			continue;
