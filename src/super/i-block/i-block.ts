@@ -150,6 +150,13 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 	readonly globalName?: string;
 
 	/**
+	 * Link to the remote state object
+	 */
+	get remoteState(): Dictionary {
+		return this.$root.remoteState;
+	}
+
+	/**
 	 * Component initialize status
 	 */
 	@p({cache: false})

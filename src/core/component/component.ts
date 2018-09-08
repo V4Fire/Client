@@ -9,10 +9,9 @@
 // tslint:disable:max-file-line-count
 
 import $C = require('collection.js');
-import Async from 'core/async';
 
 import log from 'core/log';
-import state from 'core/component/state';
+import Async from 'core/async';
 
 import Vue, { ComponentOptions, FunctionalComponentOptions } from 'vue';
 import { ComponentField, ComponentMeta, VueInterface } from 'core/component';
@@ -81,8 +80,6 @@ export function getComponent(
 			runHook('beforeDataCreate', ctx.meta, ctx).catch(stderr);
 
 			ctx.$$data = this;
-			data.$state = state;
-
 			return data;
 		},
 
@@ -99,7 +96,6 @@ export function getComponent(
 
 			ctx.$$data = {};
 			ctx.$normalParent = p;
-			ctx.$state = state;
 			ctx.$async = new Async(this);
 			ctx.instance = instance;
 			ctx.componentName = meta.name;
@@ -343,16 +339,17 @@ export function bindWatchers(ctx: VueInterface): void {
 			key = customWatcher[3][l ? 'toString' : 'dasherize']();
 		}
 
+		if (
+			isBeforeCreate && !onBeforeCreate ||
+			isCreated && (onMounted || onBeforeCreate) ||
+			isMounted && !onMounted
+		) {
+			continue;
+		}
+
 		for (let i = 0; i < watchers.length; i++) {
 			const
-				el = watchers[i],
-				canBeforeCreate = el.event || onBeforeCreate,
-				canCreated = !el.event && !onMounted && !onBeforeCreate,
-				canMounted = onMounted;
-
-			if (isBeforeCreate && !canBeforeCreate || isCreated && !canCreated || isMounted && !canMounted) {
-				continue;
-			}
+				el = watchers[i];
 
 			let
 				label = el.method != null ? el.method : undefined,
@@ -405,18 +402,17 @@ export function bindWatchers(ctx: VueInterface): void {
 			(async () => {
 				const
 					group = {group: el.group, label},
-					eventParams = {...group, options: el.options};
+					eventParams = {...group, options: el.options, single: el.single};
 
 				const
-					rootHasEmitter = Object.isFunction(root.on) || Object.isFunction(root.addListener),
-					rootIsCtx = root === ctx;
+					needDefEmitter = root === ctx && !Object.isFunction(root.on) && !Object.isFunction(root.addListener);
 
 				if (Object.isPromise(handler)) {
 					handler = await $a.promise(handler, group);
 				}
 
-				if (canBeforeCreate) {
-					if ((el.event || rootIsCtx) && !rootHasEmitter) {
+				if (customWatcher) {
+					if (needDefEmitter) {
 						// @ts-ignore
 						ctx.$on(key, handler);
 
@@ -427,38 +423,12 @@ export function bindWatchers(ctx: VueInterface): void {
 					return;
 				}
 
-				if (canCreated) {
-					if (customWatcher) {
-						if (rootIsCtx && !rootHasEmitter) {
-							// @ts-ignore
-							ctx.$on(key, handler);
-
-						} else {
-							$a.on(root, key, handler, eventParams, ...el.args);
-						}
-
-						return;
-					}
-
-					// @ts-ignore
-					ctx.$watch(key, {
-						deep: el.deep,
-						immediate: el.immediate,
-						handler
-					});
-
-					return;
-				}
-
-				if (canMounted) {
-					if (rootIsCtx && !rootHasEmitter) {
-						// @ts-ignore
-						ctx.$on(key, handler);
-
-					} else {
-						$a.on(root, key, handler, eventParams, ...el.args);
-					}
-				}
+				// @ts-ignore
+				ctx.$watch(key, {
+					deep: el.deep,
+					immediate: el.immediate,
+					handler
+				});
 			})();
 		}
 	}
@@ -679,8 +649,8 @@ export function getBaseComponent(
 			watchers[key] = watchers[key] || [];
 			watchers[key].push({
 				method: nm,
-				event: Boolean(el.event),
 				group: el.group,
+				single: el.single,
 				options: el.options,
 				args: [].concat(el.args || []),
 				provideArgs: el.provideArgs,
