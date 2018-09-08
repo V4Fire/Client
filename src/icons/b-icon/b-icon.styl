@@ -6,24 +6,25 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-@import "super/i-functional/i-functional.styl"
+@import "super/i-block/i-block.styl"
 
 $p = {
 	size: 1em
 }
 
-b-icon extends i-functional
+b-icon extends i-block
 	display inline-flex
 	align-items center
 	justify-content center
 
 	&__svg
+		display block
 		width $p.size
-		height $p.size
+		height @width
 
 	if $p.color
 		fill $p.color
-		color $p.color
+		color @fill
 
 	else
 		fill currentColor

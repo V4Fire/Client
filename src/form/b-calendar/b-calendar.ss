@@ -28,27 +28,28 @@
 				- block labelPrev
 					< button:a.&__cell.&__icon.&__prev &
 						@click.capture.stop = onSwitchDay(-1) |
-						v-if = mods.theme === 'default' && !dayRange
+						v-if = m.theme === 'default' && !dayRange
 					.
-						< b-icon :value = 'keyboard_arrow_left'
+						+= self.gIcon('keyboard_arrow_left')
 
 				- block labelValue
 					< .&__cell.&__value
 						< .&__calendar-icon
-							< b-icon :value = 'calendar' | :mods = provideMods({size: 'xl'})
-						{{ labelText.capitalize() }}
+							+= self.gIcon('calendar')
+
+						{{ labelText }}
 
 				- block labelNext
 					< button:a.&__cell.&__icon.&__next &
 						@click.capture.stop = onSwitchDay(1) |
-						v-if = mods.theme === 'default' && !dayRange
+						v-if = m.theme === 'default' && !dayRange
 					.
-						< b-icon :value = 'keyboard_arrow_right'
+						+= self.gIcon('keyboard_arrow_right')
 
 		- block dropdown
 			< .&__dropdown &
-				v-if = ifOnce('opened', mods.opened !== 'false') |
-				:class = getElClasses({dropdown: {pos: position, 'immediately-shown': isShown}})
+				v-if = ifOnce('opened', m.opened !== 'false') |
+				:class = getElClasses({dropdown: {pos: position, 'immediately-shown': shown}})
 			.
 				< .&__dropdown-content ref = dropdown
 					- block nav
@@ -60,7 +61,7 @@
 								< .&__dropdown-controls
 									- block navPrev
 										< .&__cell.&__icon.&__prev @click = onSwitchMonth(-1)
-											< b-icon :value = 'keyboard_arrow_left'
+											+= self.gIcon('keyboard_arrow_left')
 
 									- block navValue
 										< .&__cell.&__value
@@ -68,7 +69,7 @@
 
 									- block navNext
 										< .&__cell.&__icon.&__next @click = onSwitchMonth(1)
-											< b-icon :value = 'keyboard_arrow_right'
+											+= self.gIcon('keyboard_arrow_right')
 
 								< .&__label-year
 									< template v-if = value.length > 1
@@ -79,7 +80,7 @@
 							< .&__item v-for = (el, index) in value
 								- block th
 									< .&__row
-										< .&__td.&__h v-for = el in [t('Mn'), t('Ts'), t('Wd'), t('Th'), t('Fr'), t('St'), t('Sn')]
+										< .&__td.&__h v-for = el in Date.getWeekDays()
 											{{ el }}
 
 								< .&__hr
@@ -89,8 +90,8 @@
 										:duration = {enter: 200, leave: 0} |
 										v-on:after-leave = onMonthSwitchEnd
 									.
-										< .&__month-wrap v-if = !isMonthSwitchAnimation
-											< .&__row v-for = days in dayInMonth(index)
+										< .&__month-wrap v-if = !monthSwitchAnimation
+											< .&__row v-for = days in getMonthDays(index)
 												< .&__td &
 													v-for = day in days |
 													:class = getElClasses({

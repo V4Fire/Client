@@ -9,107 +9,200 @@
  */
 
 const
-	$C = require('collection.js'),
-	path = require('path'),
-	defConfig = require('@v4fire/core/config/default');
+	config = require('@v4fire/core/config/default'),
+	o = require('uniconf/options').option;
 
-const config = module.exports = $C.extend(defConfig.extend, Object.create(defConfig), {
-	src: {
-		client: [path.join(__dirname, '../src')].concat(defConfig.src.client)
-	},
+module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
+	__proto__: config,
 
-	globals: {
-		'process.env': {
-			NODE_ENV: JSON.stringify(process.env.NODE_ENV)
-		}
-	},
+	build: {
+		entries: o('entries', {
+			env: true,
+			short: 'e',
+			coerce: (v) => v ? v.split(',') : []
+		}),
 
-	externals: {
-		'collection.js': '$C',
-		'eventemitter2': 'EventEmitter2',
-		'localforage': 'localforage',
-		'urijs': 'URI',
-		'sugar': 'Sugar',
-		'vue': 'Vue',
-		'chart.js': 'Chart',
-		'ion-sound': 'ion'
-	},
+		fast() {
+			const v = o('fast-build', {
+				env: true,
+				type: 'boolean'
+			});
 
-	monic: {
-		styl: {
-			flags: {
-				'+:*': true
-			}
-		}
-	}
-});
-
-config.favicons = {
-	appName: config.appName,
-	background: '#3D7D73',
-	path: '../../assets/favicons/',
-	display: 'standalone',
-	orientation: 'portrait',
-	version: 1.0,
-	logging: false
-};
-
-config.snakeskin = {
-	client: $C.extend(true, {}, defConfig.snakeskin, {
-		adapter: 'ss2vue',
-		tagFilter: 'vueComp',
-		tagNameFilter: 'vueTag',
-		bemFilter: 'bem2vue'
-	}),
-
-	server: $C.extend(true, {}, defConfig.snakeskin)
-};
-
-config.babel = {
-	client: $C.extend(
-		{
-			deep: true,
-			concatArray: true
+			return v != null ? v : isProd;
 		},
 
-		{},
+		buildGraphFromCache: o('build-graph-from-cache', {
+			env: true,
+			type: 'boolean'
+		})
+	},
 
-		defConfig.babel,
+	webpack: {
+		externals: {
+			'collection.js': '$C',
+			'eventemitter2': 'EventEmitter2',
+			'localforage': 'localforage',
+			'sugar': 'Sugar',
+			'vue': 'Vue',
+			'chart.js': 'Chart',
+			'ion-sound': 'ion',
+			'socket.io-client': 'io',
+			'setimmediate': 'setImmediate'
+		},
 
-		{
-			plugins: [
-				'transform-exponentiation-operator',
-				'check-es2015-constants',
-				'transform-es2015-destructuring',
-				'transform-remove-strict-mode',
-				'transform-es2015-arrow-functions',
-				'transform-es2015-block-scoping',
-				'transform-es2015-computed-properties',
-				['transform-es2015-classes', {loose: true}],
-				['transform-es2015-for-of', {loose: true}],
-				'transform-es2015-function-name',
-				'transform-es2015-literals',
-				'transform-es2015-parameters',
-				'transform-es2015-shorthand-properties',
-				['transform-es2015-template-literals', {loose: true}],
-				'transform-es2015-spread',
-				'transform-regenerator'
-			]
+		fatHTML: false,
+		devtool: false,
+
+		longCache() {
+			return o('long-cache', {
+				default: !isProd,
+				type: 'boolean'
+			});
+		},
+
+		cacheDir() {
+			return '[confighash]';
+		},
+
+		hashLength() {
+			return !isProd || this.fatHTML ? false : 15;
+		},
+
+		dataURILimit() {
+			return this.fatHTML ? undefined : 4096;
+		},
+
+		dllOutput(params) {
+			return this.output(params);
+		},
+
+		output(params) {
+			const
+				res = !isProd || this.fatHTML ? '[name]' : '[hash]_[name]';
+
+			if (params) {
+				return res.replace(/\[(.*?)]/g, (str, key) => {
+					if (params[key] != null) {
+						return params[key];
+					}
+
+					return '';
+				});
+			}
+
+			return res;
+		},
+
+		assetsJSON() {
+			return 'assets.json';
 		}
-	),
+	},
 
-	clientWithRuntime() {
-		const
-			config = $C.extend(true, {}, this.client),
-			pl = config.plugins,
-			pos = $C(pl).search((el) => (Array.isArray(el) ? el[0] : el) === 'transform-runtime');
+	imageOpts: {
+		svgo: {
 
-		pl[pos === -1 ? pl.length : pos] = ['transform-runtime', {
-			helpers: true,
-			polyfill: false,
-			regenerator: false
-		}];
+		}
+	},
 
-		return pl;
-	}
-};
+	html: {
+		useShortDoctype: true,
+		conservativeCollapse: true,
+		removeAttributeQuotes: true,
+		removeComments: isProd,
+		collapseWhitespace: isProd
+	},
+
+	postcss: {
+
+	},
+
+	autoprefixer: {
+
+	},
+
+	uglify: {
+
+	},
+
+	monic() {
+		return {
+			stylus: {
+				flags: {
+					'+:*': true
+				}
+			}
+		};
+	},
+
+	favicons() {
+		return {
+			appName: this.appName,
+			path: this.src.assets('favicons'),
+			background: '#FFF',
+			display: 'standalone',
+			orientation: 'portrait',
+			version: 1.0,
+			logging: false
+		};
+	},
+
+	snakeskin() {
+		const snakeskinVars = include('build/snakeskin.vars.js');
+
+		const {
+			webpack,
+			src
+		} = this;
+
+		return {
+			client: this.extend(super.snakeskin(), {
+				adapter: 'ss2vue',
+				adapterOptions: {transpiler: true},
+				tagFilter: 'tagFilter',
+				tagNameFilter: 'tagNameFilter',
+				bemFilter: 'bemFilter',
+				vars: snakeskinVars
+			}),
+
+			server: this.extend(super.snakeskin(), {
+				vars: {
+					...snakeskinVars,
+					fatHTML: webpack.fatHTML,
+					hashLength: webpack.hashLength(),
+					root: src.cwd(),
+					outputPattern: webpack.output,
+					output: src.clientOutput(),
+					favicons: this.favicons().path,
+					assets: src.assets(),
+					lib: src.lib()
+				}
+			})
+		};
+	},
+
+	typescript() {
+		return {
+			client: super.typescript(),
+			worker: super.typescript(),
+			server: super.typescript()
+		};
+	},
+
+	css() {
+		return {
+			minimize: Boolean(isProd || Number(process.env.MINIFY_CSS))
+		};
+	},
+
+	stylus() {
+		return {
+			preferPathResolver: 'webpack'
+		};
+	},
+
+	typograf() {
+		return {
+			locale: this.lang
+		};
+	},
+});

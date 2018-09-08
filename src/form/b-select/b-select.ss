@@ -13,7 +13,7 @@
 - template index() extends ['b-input'].index
 	- block icons
 		< _.&__cell.&__icon.&__expand @click = setMod('opened', true)
-			< b-icon :value = 'expand_more' | v-once
+			+= self.gIcon('expand_more')
 
 	- block input
 		- super
@@ -25,23 +25,26 @@
 			@blur = onBlur |
 			@change = onOptionSelected($event.target.dataset.value)
 		.
-			< option v-for = el in options | :key = :value, getOptionValue(el)
+			< option v-for = el in options | :key = :value, el.value
 				{{ el.label }}
 
 	- block helpers
 		- super
 		- block dropdown
-			< _.&__dropdown[.&_pos_bottom-left] v-if = !b.is.mobile && options.length && ifOnce('opened', mods.opened !== 'false')
+			< _.&__dropdown[.&_pos_bottom-left] &
+				v-if = !b.is.mobile && options.length && (isFunctional || ifOnce('opened', m.opened !== 'false'))
+			.
 				< _.&__dropdown-content
 					< _.&__dropdown-content-wrapper
 						< b-scroll-inline.&__scroll &
+							v-func = isFunctional |
 							ref = scroll |
 							:fixSize = true |
 							:mods = provideMods({size: 'm'})
 						.
 							< _ &
 								v-for = el in options |
-								:key = :-value, getOptionValue(el) |
+								:key = :-value, el.value |
 								:class = getElClasses({
 									option: {
 										marked: el.marked,

@@ -7,16 +7,16 @@
  */
 
 $p = {
-	color: #222C3C,
-	labelNavColor: #222C3C,
-	borderColor: #CCC,
-	shadowColor: alpha(#000, 0.2),
-	activeValueColor: #222c3c,
-	activeDayColor: #FFF,
-	navArrowsColor: #808080,
-	dayHoverBackgroundColor: #EEE,
-	activeDayBackgroundColor: #BDC3C7,
-	borderColor: #BCC5D7,
+	color: #222C3C
+	labelNavColor: #222C3C
+	borderColor: #CCC
+	shadowColor: alpha(#000, 0.2)
+	activeValueColor: #222c3c
+	activeDayColor: #FFF
+	navArrowsColor: #808080
+	dayHoverBackgroundColor: #EEE
+	activeDayBackgroundColor: #BDC3C7
+	borderColor: #BCC5D7
 	inputBackgroundColor: #F8F9FA
 }
 
@@ -48,10 +48,6 @@ b-calendar
 		border-radius 100%
 		color lighten($p.labelNavColor, 30%)
 
-	&__label-nav &__icon .b-icon
-		padding 0.1em
-		font-size 2em
-
 	&__nav &__icon
 		border 1px dotted transparent
 		color $p.navArrowsColor
@@ -61,10 +57,6 @@ b-calendar
 
 		&:active
 			background darken($p.dayHoverBackgroundColor, 5%)
-
-		.b-icon
-			padding 0.2em
-			font-size 1.4em
 
 	&__value
 		font-weight 400
@@ -112,7 +104,7 @@ b-calendar
 		height @width
 
 	&__cell
-		&_range-start_false&_range-end_false&_in-range_true,
+		&_range-start_false&_range-end_false&_in-range_true
 		&_range-end_true
 			&:before
 				width 0.65em

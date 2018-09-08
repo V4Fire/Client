@@ -22,21 +22,21 @@
 			< .&__value @click = focus(), toggle()
 				- block preIcon
 					< .&__cell.&__icon.&__pre-icon
-						< b-icon :value = 'timelapse'
+						+= self.gIcon('timelapse')
 
-				< .&__cell.&__time v-if = mods.empty !== 'true'
+				< .&__cell.&__time v-if = m.empty !== 'true'
 					- block input
 						< span v-if = getField('value.from.length')
 							{{ `From` }}
 
 							< time.&__from
-								{{ h.getTimeFormattedValue(value.from) }}
+								{{ h.getTimeFormattedStr(value.from) }}
 
 						< span v-if = getField('value.to.length')
 							{{ `To` }}
 
 							< time.&__to
-								{{ h.getTimeFormattedValue(value.to) }}
+								{{ h.getTimeFormattedStr(value.to) }}
 
 				< .&__cell.&__empty v-else
 					- block empty
@@ -44,7 +44,7 @@
 
 				- block clear
 					< button:a.&__cell.&__icon.&__clear &
-						v-if = mods.empty !== 'true' |
+						v-if = m.empty !== 'true' |
 						@click.capture.stop = onClear
 					.
 						< b-icon &
@@ -53,7 +53,7 @@
 						.
 
 		- block dropdown
-			< .&__dropdown[.&_pos_bottom] v-if = mods.opened !== 'false'
+			< .&__dropdown[.&_pos_bottom] v-if = m.opened !== 'false'
 				< .&__dropdown-content
 					< .&__form
 						- block table

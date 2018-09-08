@@ -1,4 +1,8 @@
 {
-  "sourceDir": "./src",
-  "projectType": "js"
+  "projectType": "ts",
+  "blockDir": "",
+  "sourceDir": "src",
+  "disclaimer": "disclaimer.txt",
+  "dependencies": ["@v4fire/core"],
+  "assets": {"sprite": "svg"}
 }

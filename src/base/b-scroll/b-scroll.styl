@@ -9,7 +9,7 @@
 @import "super/i-block/i-block.styl"
 
 $p = {
-	backgroundColor: inherit,
+	backgroundColor: inherit
 	scrollerSize: 6px
 }
 
@@ -18,16 +18,16 @@ b-scroll extends i-block
 	height 100%
 	background inherit
 
-	&__root-wrapper,
+	&__root-wrapper
 	&__scroll-wrapper-y
 		height 100%
 
-	&__root-wrapper,
+	&__root-wrapper
 	&__scroll-wrapper
 		background inherit
 
-	&__scroll-wrapper,
-	&__scroller,
+	&__scroll-wrapper
+	&__scroller
 	&__area
 		display block
 
@@ -80,8 +80,7 @@ b-scroll extends i-block
 		absolute top 0 right 0
 
 	&__scroll-y
-		width $p.scrollerSize
-		height inherit
+		size $p.scrollerSize inherit
 
 	&__scroller-y
 		left 50%

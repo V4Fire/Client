@@ -7,5 +7,4 @@
  */
 
 package('b-checkbox')
-	.extends('i-input')
-	.dependencies('b-icon');
+	.extends('i-input');

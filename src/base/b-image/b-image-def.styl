@@ -7,14 +7,14 @@
  */
 
 $p = {
-	overlayBackgroundColor: #F1F1F1,
+	overlayBackgroundColor: #F1F1F1
 	damagedColor: #CACACA
 }
 
 b-image
 	&__overlay
 		opacity 0
-		transition BASE_EASING_DURATION ease-in opacity
+		transition EASING_DURATION ease-in opacity
 		background-color $p.overlayBackgroundColor
 
 	&_error_true &__damaged
@@ -23,7 +23,3 @@ b-image
 		justify-content center
 		z-index 2
 		color $p.damagedColor
-
-	&__damaged
-		.b-icon
-			font-size 2.5em

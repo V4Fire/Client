@@ -20,13 +20,17 @@
 				< _.&__wrapper
 					- block preIcon
 						< _.&__cell.&__icon.&__pre-icon v-if = preIcon
-							< component &
+							< component.&__b-icon &
+								v-if = preIconComponent || preIconHint |
 								:instanceOf = bIcon |
 								:is = preIconComponent |
 								:value = preIcon |
 								:hint = preIconHint |
 								:hintPos = preIconHintPos
 							.
+
+							< template v-else
+								+= self.gIcon(['preIcon'], {'g-icon': {}})
 
 					- block input
 						< _.&__cell.&__input-cont
@@ -41,7 +45,7 @@
 								:autocomplete = autocomplete |
 								:autofocus = autofocus |
 								:maxlength = maxlength |
-								:readonly = autocomplete === 'off' ? 'readonly' : undefined |
+								:readonly = readonly || autocomplete === 'off' ? 'readonly' : undefined |
 								@focus = onFocus |
 								@input = onEdit |
 								@blur = onBlur |
@@ -50,16 +54,20 @@
 
 					- block icon
 						< _.&__cell.&__icon.&__post-icon v-if = icon
-							< component &
-								:instanceOf = icon |
+							< component.&__b-icon &
+								v-if = iconComponent || iconHint |
+								:instanceOf = bIcon |
 								:is = iconComponent |
 								:value = icon |
 								:hint = iconHint |
 								:hintPos = iconHintPos
 							.
 
+							< template v-else
+								+= self.gIcon(['icon'], {'g-icon': {}})
+
 					- block clear
-						< _.&__cell.&__icon.&__clear v-if = resetButton
+						< _.&__cell.&__icon.&__clear v-if = resetButton && !readonly
 							< span v-e:mousedown.prevent | @click = onClear
 								< b-icon &
 									:value = 'clear' |
@@ -67,11 +75,11 @@
 								.
 
 					- block validation
-						< _.&__cell.&__icon.&__valid-status v-if = mods.valid != null
-							< b-icon :value = {true: 'done', false: 'clear'}[mods.valid]
+						< _.&__cell.&__icon.&__valid-status v-if = m.valid != null
+							+= self.gIcon(["{true: 'done', false: 'clear'}[m.valid]"])
 
 					- block progress
-						< _.&__cell.&__icon.&__progress
+						< _.&__cell.&__icon.&__progress v-if = !isFunctional
 							< b-progress-icon v-once
 
 					- block icons

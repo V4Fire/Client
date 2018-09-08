@@ -16,26 +16,42 @@
 
 	- block body
 		- super
-		- block button
-			< button.&__button &
+		- block button(type = 'button')
+			: buttonAttrs
+
+			- if type === 'a'
+				? buttonAttrs = { &
+					':href': 'href'
+				} .
+
+			- else
+				? buttonAttrs = { &
+					':form': 'form',
+					':type': 'type'
+				} .
+
+			< ${type}.&__button &
 				ref = button |
 				:class = setHint(hintPos) |
-				:type = type |
-				:form = form |
 				:autofocus = autofocus |
 				:-hint = t(hint) |
 				@click = onClick |
+				${buttonAttrs} |
 				${attrs|!html}
 			.
 
 				< _.&__wrapper
 					- block preIcon
 						< _.&__cell.&__icon.&__pre-icon v-if = preIcon
-							< component &
+							< component.&__b-icon &
+								v-if = preIconComponent |
 								:instanceOf = bIcon |
 								:is = preIconComponent |
 								:value = preIcon
 							.
+
+							< template v-else
+								+= self.gIcon(['preIcon'], {'g-icon': {}})
 
 					- block value
 						< _.&__cell.&__value
@@ -43,21 +59,34 @@
 
 					- block expand
 						< _.&__cell.&__icon.&__expand v-if = $slots.dropdown
-							< b-icon :value = 'expand_more' | v-once
+							+= self.gIcon('expand_more')
 
 					- block icon
 						< _.&__cell.&__icon.&__post-icon v-if = icon
-							< component &
-								:instanceOf = icon |
+							< component.&__b-icon &
+								v-if = iconComponent |
+								:instanceOf = bIcon |
 								:is = iconComponent |
 								:value = icon
 							.
 
+							< template v-else
+								+= self.gIcon(['icon'], {'g-icon': {}})
+
 					- block progress
-						< _.&__cell.&__icon.&__progress
+						< _.&__cell.&__icon.&__progress v-if = !isFunctional
 							< b-progress-icon v-once
 
+		< template v-if = type === 'link'
+			+= self.button('a')
+
+		< template v-else
+			+= self.button()
+
 		- block dropdown
-			< _.&__dropdown[.&_pos_bottom] v-if = $slots.dropdown && ifOnce('opened', mods.opened !== 'false')
-				< _.&__dropdown-content
+			< . &
+				v-if = $slots.dropdown && (isFunctional || ifOnce('opened', m.opened !== 'false')) |
+				:class = getElClasses({dropdown: {pos: dropdown}})
+			.
+				< .&__dropdown-content
 					+= self.slot('dropdown')

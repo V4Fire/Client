@@ -7,11 +7,12 @@
  */
 
 $p = {
-	width: 1.2em,
-	backgroundColor: #FFF,
-	borderColor: #CCC,
-	borderActiveColor: #006358,
+	width: 1.2em
+	backgroundColor: #FFF
+	borderColor: #CCC
+	borderActiveColor: #006358
 	checkedBackgroundColor: #006358
+	checkedIconBackgroundColor: #FFF
 }
 
 b-checkbox
@@ -40,5 +41,5 @@ b-checkbox
 		border-color $p.borderActiveColor
 
 		&:after
-			border solid $p.backgroundColor
+			border solid $p.checkedIconBackgroundColor
 			border-width 0 2px 2px 0

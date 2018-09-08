@@ -8,16 +8,50 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-- include 'super/i-base'|b as placeholder
+- include 'super/i-block/modules/**/*.ss'|b
+- import $C from 'collection.js'
 
 /**
  * Base block template
  */
-- template index() extends ['i-base'].index
+- template index()
+	- blockName = ''
+
+	/**
+	 * Returns the block name
+	 */
+	- block name()
+		- return blockName || /\['(.*?)'\]/.exec(TPL_NAME)[1]
+
+	/**
+	 * Returns link to a template by the specified link
+	 */
+	- block getTpl(nms)
+		? nms = nms.replace(/\/$/, '.index')
+		- return $C(exports).get(nms)
+
 	- rootTag = 'div'
 	- overWrapper = true
 
-	- rootAttrs = {}
+	/**
+	 * Applies Typograf to the specified content
+	 * @param {string} content
+	 */
+	- block index->typograf(content)
+		+= content|typograf
+
+	/**
+	 * Appends the specified value to root component classes
+	 * @param {string} value
+	 */
+	- block appendToRootClasses(value)
+		- if rootAttrs[':class']
+			? rootAttrs[':class'] += '.concat(' + value + ')'
+
+		- else
+			rootAttrs[':class'] = value
+
+	- rootAttrs = {':class': '[componentId, getBlockClasses(mods), "i-block-helper"]'}
 	- block rootAttrs
 
 	- attrs = {}
@@ -28,6 +62,43 @@
 
 	- block root
 		< _.${self.name()} ${rootAttrs|!html}
+			< .&__render-counter v-show = false
+				{{ renderCounter }}
+
+			/**
+			 * Generates an icon block
+			 *
+			 * @param {(string|!Array<gIcon>)} iconId
+			 * @param {Object=} [classes]
+			 * @param {Object=} [attrs]
+			 */
+			- block index->gIcon(iconId, classes = {}, attrs = {})
+				< svg[.g-icon] :class = getElClasses(${classes|json}) | ${attrs}
+					- if Object.isArray(iconId)
+						< use :xlink:href = getIconLink(${iconId})
+
+					- else
+						< use :xlink:href = getIconLink('${iconId}')
+
+			/**
+			 * Generates vue transition wrapper for content
+			 * @param {string=} [content] - content to wrapping
+			 */
+			- block transition(content)
+				: elName = (content + '' |getFirstTagElementName)
+
+				- if !elName
+					< transition
+						{content}
+
+				- else
+					: a = {}
+
+					- forEach ['enter', 'enter-active', 'enter-to', 'leave', 'leave-active', 'leave-to'] => type
+						? a[type + '-class'] = elName + '_' + type + '_true';
+
+					< transition ${a}
+						{content}
 
 			/**
 			 * Generates double slot declaration (scoped and plain)
@@ -64,3 +135,4 @@
 
 					- block body
 				- block helpers
+				- block providers

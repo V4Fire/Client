@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="16px" height="16px" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 49.1 (51147) - http://www.bohemiancoding.com/sketch -->
+    <title>timelapse</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="timelapse" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <path d="M11.18,4.82 C10.3025,3.9425 9.155,3.5 8,3.5 L8,8 L4.82,11.18 C6.575,12.935 9.425,12.935 11.1875,11.18 C12.9425,9.425 12.9425,6.575 11.18,4.82 Z M8,0.5 C3.86,0.5 0.5,3.86 0.5,8 C0.5,12.14 3.86,15.5 8,15.5 C12.14,15.5 15.5,12.14 15.5,8 C15.5,3.86 12.14,0.5 8,0.5 Z M8,14 C4.685,14 2,11.315 2,8 C2,4.685 4.685,2 8,2 C11.315,2 14,4.685 14,8 C14,11.315 11.315,14 8,14 Z" fill="#FF0000" fill-rule="nonzero"></path>
+    </g>
+</svg>

@@ -8,9 +8,12 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-- include 'super/i-data'|b as placeholder
+- include 'super/i-page'|b as placeholder
 
-- template index() extends ['i-data'].index
+- template index() extends ['i-page'].index
 	- block innerRoot
-		< .&__root-wrapper v-if = dataProvider ? db : true
+		< .&__root-wrapper
 			- block body
+
+		- block helpers
+		- block providers

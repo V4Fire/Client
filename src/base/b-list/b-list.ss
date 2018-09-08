@@ -25,24 +25,28 @@
 					< a &
 						:class = setHint(el.hintPos).concat(getElClasses({link: {
 							id: i,
-							active: isActive(el, i),
+							active: isActive(el),
 							theme: el.theme,
 							hidden: el.hidden,
 							progress: el.progress
 						}})) |
 
-						:href = el.href || (autoHref && el.value !== undefined ? '#' + el.value : 'javascript:void(0)') |
+						:href = el.href |
 						:-hint = el.hint |
-						:-value = {value: el.value !== undefined ? el.value : el.href}.toSource()
+						:-id = i
 					.
 						- block preIcon
 							< span.&__cell.&__link-icon.&__link-pre-icon v-if = el.preIcon
-								< component &
+								< component.&__b-icon &
+									v-if = el.preIconComponent || el.preIconHint |
 									:instanceOf = bIcon |
 									:is = el.preIconComponent || 'b-icon' |
 									:value = el.preIcon |
 									:hint = el.preIconHint
 								.
+
+								< template v-else
+									+= self.gIcon(['el.preIcon'], {'g-icon': {}})
 
 						- block text
 							< span.&__cell.&__link-text v-if = !hideLabels
@@ -54,13 +58,17 @@
 
 						- block icon
 							< span.&__cell.&__link-icon.&__link-post-icon v-if = el.icon
-								< component &
+								< component.&__b-icon &
+									v-if = el.iconComponent || el.iconHint || hideLabels |
 									:instanceOf = bIcon |
 									:is = el.iconComponent || 'b-icon' |
 									:value = el.icon |
 									:hint = el.iconHint || (hideLabels ? t(el.label) : undefined)
 								.
 
+								< template v-else
+									+= self.gIcon(['el.icon'], {'g-icon': {}})
+
 						- block progress
-							< span.&__cell.&__link-icon.&__link-progress
+							< span.&__cell.&__link-icon.&__link-progress v-if = !isFunctional
 								< b-progress-icon v-once

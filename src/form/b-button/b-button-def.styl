@@ -7,8 +7,8 @@
  */
 
 $p = {
-	color: #FFF,
-	backgroundColor: #6153B9,
+	color: #FFF
+	backgroundColor: #6153B9
 	shadowColor: alpha(#222, 0.5)
 }
 
@@ -21,7 +21,7 @@ b-button
 		padding 0.5em 1em
 		background $p.backgroundColor
 		color $p.color
-		font bold 1em BASE_FONT
+		font-weight bold
 
 		&:focus
 			box-shadow 0 0 0.45em $p.shadowColor
@@ -36,12 +36,9 @@ b-button
 		&__button
 			border-width 0.1em
 
-	&_disabled_true &__button,
+	&_disabled_true &__button
 	&_progress_true &__button
 		color lighten($p.color, 20%)
 
 	&__cell + &__cell
 		margin-left 0.3em
-
-	&__expand .b-icon
-		font-size 1.5em

@@ -11,9 +11,11 @@
 module.exports = function (gulp = require('gulp')) {
 	const
 		path = require('path'),
-		config = require('config'),
-		async = require('async'),
-		plumber = require('gulp-plumber');
+		config = require('config');
+
+	const
+		merge = require('merge2'),
+		$ = require('gulp-load-plugins')({scope: ['optionalDependencies']});
 
 	function a(file = '') {
 		return path.join(config.src.assets(), file);
@@ -23,14 +25,10 @@ module.exports = function (gulp = require('gulp')) {
 		return path.join(config.src.clientOutput(), file);
 	}
 
-	gulp.task('favicons', (cb) => {
-		const
-			favicons = require('gulp-favicons'),
-			image = require('gulp-image');
-
+	gulp.task('static:favicons', () => {
 		/* eslint-disable camelcase */
 
-		const faviconsParams = Object.assign({}, config.favicons, {
+		const faviconsParams = Object.assign(config.favicons(), {
 			start_url: '.',
 			html: 'favicons.html',
 			pipeHTML: true,
@@ -39,71 +37,51 @@ module.exports = function (gulp = require('gulp')) {
 
 		/* eslint-enable camelcase */
 
-		async.series([
-			(cb) => gulp.src(a('logo.svg'))
-				.pipe(plumber())
-				.pipe(favicons(faviconsParams))
-				.pipe(gulp.dest(a('favicons')))
-				.on('end', cb),
+		return merge([
+			gulp.src(a('logo.svg'))
+				.pipe($.plumber())
+				.pipe($.favicons(faviconsParams))
+				.pipe(gulp.dest(a('favicons'))),
 
-			(cb) => gulp.src(a('favicons/*'))
-				.pipe(plumber())
-				.pipe(image({
+			gulp.src(a('favicons/*'))
+				.pipe($.plumber())
+				.pipe($.image({
 					pngquant: true,
 					concurrent: 10
 				}))
 
 				.pipe(gulp.dest(a('favicons')))
-				.on('end', cb)
-
-		], cb);
+		]);
 	});
 
-	gulp.task('html', (cb) => {
-		const
-			htmlmin = require('gulp-htmlmin');
-
+	gulp.task('static:html', () =>
 		gulp.src(o('/**/*.html'))
-			.pipe(plumber())
-			.pipe(htmlmin({
-				useShortDoctype: true,
-				conservativeCollapse: true,
-				removeAttributeQuotes: true
-			}))
-
+			.pipe($.plumber())
+			.pipe($.htmlmin(config.html))
 			.pipe(gulp.dest(o()))
-			.on('end', cb);
-	});
+	);
 
-	gulp.task('css', (cb) => {
-		const
-			csso = require('gulp-csso'),
-			async = require('async');
-
-		function f(src, cb) {
+	gulp.task('static:css', () => {
+		function f(src) {
 			return gulp.src([path.join(src, '/**/*.css'), `!${path.join(src, '/**/*.min.css')}`])
-				.pipe(plumber())
-				.pipe(csso())
-				.pipe(gulp.dest(src))
-				.on('end', cb);
+				.pipe($.plumber())
+				.pipe($.csso())
+				.pipe(gulp.dest(src));
 		}
 
-		async.parallel([
-			(cb) => f(o('lib'), cb),
-			(cb) => f(a(), cb),
-		], cb);
+		return merge([
+			f(o('lib'), cb),
+			f(a(), cb)
+		]);
 	});
 
-	gulp.task('js', (cb) => {
-		const
-			uglify = require('gulp-uglify');
-
+	gulp.task('static:js', () => {
 		/* eslint-disable camelcase */
 
-		function f(src, cb) {
+		function f(src) {
 			return gulp.src([path.join(src, '/**/*.js'), `!${path.join(src, '/**/*.min.js')}`])
-				.pipe(plumber())
-				.pipe(uglify({
+				.pipe($.plumber())
+				.pipe($.uglify({
 					compress: {
 						warnings: false,
 						keep_fnames: true
@@ -116,61 +94,52 @@ module.exports = function (gulp = require('gulp')) {
 					mangle: false
 				}))
 
-				.pipe(gulp.dest(src))
-				.on('end', cb);
+				.pipe(gulp.dest(src));
 		}
 
-		/* eslint-enable camelcase */
-
-		async.parallel([
-			(cb) => f(o('lib'), cb),
-			(cb) => f(a(), cb),
-		], cb);
+		return merge([
+			f(o('lib')),
+			f(a()),
+		]);
 	});
 
-	gulp.task('image', (cb) => {
-		const
-			image = require('gulp-image');
-
-		function f(src, cb) {
+	gulp.task('static:image', () => {
+		function f(src) {
 			const isArr = Array.isArray(src);
 			return gulp.src([path.join(isArr ? src[0] : src, '/**/*.@(png|svg)')].concat(isArr ? src[1] || [] : []))
-				.pipe(plumber())
-				.pipe(image({
+				.pipe($.plumber())
+				.pipe($.image({
 					pngquant: true,
 					svgo: true,
 					concurrent: 10
 				}))
 
-				.pipe(gulp.dest(isArr ? src[0] : src))
-				.on('end', cb);
+				.pipe(gulp.dest(isArr ? src[0] : src));
 		}
 
-		async.parallel([
-			(cb) => f(o(), cb),
-			(cb) => f([a(), `!${path.join(a(), 'favicons/**')}`], cb),
-		], cb);
+		return merge([
+			f(o()),
+			f([a(), `!${path.join(a(), 'favicons/**')}`]),
+		]);
 	});
 
-	gulp.task('gzip', ['image', 'html', 'css', 'js'], (cb) => {
-		const
-			gzip = require('gulp-gzip');
-
-		function f(src, cb) {
+	gulp.task('static:gzip', gulp.series([gulp.parallel(['static:image', 'static:html', 'static:css', 'static:js']), () => {
+		function f(src) {
 			return gulp.src([path.join(src, '/**/*'), `!${path.join(src, '/**/*.gz')}`])
-				.pipe(plumber())
-				.pipe(gzip({
+				.pipe($.plumber())
+				.pipe($.gzip({
 					threshold: '1kb',
 					gzipOptions: {level: 9}
 				}))
 
-				.pipe(gulp.dest(src))
-				.on('end', cb);
+				.pipe(gulp.dest(src));
 		}
 
-		async.parallel([
-			(cb) => f(o(), cb),
-			(cb) => f(a(), cb),
-		], cb);
-	});
+		return merge([
+			f(o()),
+			f(a()),
+		]);
+	}]));
+
+	gulp.task('static', gulp.series(['static:gzip']));
 };

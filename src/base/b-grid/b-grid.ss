@@ -32,7 +32,7 @@
 				:class = getElClasses({dir: {active: requestParams.get.sort === '${field}'}}) |
 				-value = ${field}
 			.
-				< b-icon :value = 'expand_' + (requestParams.get.dir === 'desc' ? 'more' : 'less')
+				+= self.gIcon(["'expand_' + (requestParams.get.dir === 'desc' ? 'more' : 'less')"], {'dir-icon': {}})
 
 		/**
 		 * Returns th declaration for a table
@@ -66,23 +66,27 @@
 						:blockName = 'paging' |
 						:dispatching = true |
 						:count = Math.ceil(db.total / perPage) |
-						:current = pageIndex |
+						:current = page |
 						${props}
 					.
 
 		- block grid
+			+= self.slot('header')
+
 			< table.&__table
 				< thead.&__thead
 					- block thead
 
 				< tfoot
-					< tr v-if = !db || mods.progress === 'true' && mods.loading === 'true'
+					< tr v-if = !db || m.loading === 'true' && m.progress === 'true'
 						- block progress
 							< td.&__progress colspan = ${colCount}
 								< b-progress-icon v-once
 
 				< tbody.&__tbody v-if = db
 					- block tbody
+
+			+= self.slot('footer')
 
 		- block loadPageTrigger
 			< . ref = loadPageTrigger

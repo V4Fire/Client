@@ -22,8 +22,8 @@ b-input extends i-input
 	&_progress_true
 		pointer-events auto
 
-	&__root-wrapper,
-	&__super-wrapper,
+	&__root-wrapper
+	&__super-wrapper
 	&__wrapper
 		display flex
 		box-sizing border-box
@@ -44,9 +44,13 @@ b-input extends i-input
 	&__input
 		margin 0
 		width 100%
+
 		border 0
 		background transparent
 		overflow hidden
+
+		font-size 1em
+		font-family BASE_FONT
 		text-overflow ellipsis
 
 		&::-ms-clear
@@ -68,11 +72,11 @@ b-input extends i-input
 		display block
 		visibility visible
 
-	&_focused_true&_empty_false &__post-icon,
+	&_focused_true&_empty_false &__post-icon
 	&_progress_true &__icon&__clear
 		display none
 
-	&__valid-status,
+	&__valid-status
 	&__progress
 		pointer-events none
 

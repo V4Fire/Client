@@ -14,14 +14,12 @@ $p = {
 
 b-image extends i-block
 	&__root-wrapper
-		width 100%
-		height @width
+		size 100%
 
-	&__overlay,
+	&__overlay
 	&__damaged
 		position absolute
-		width 100%
-		height @width
+		size 100%
 		pointer-events none
 
 	&__overlay
@@ -36,7 +34,7 @@ b-image extends i-block
 		justify-content center
 		z-index 2
 
-	&_disabled_true &__overlay,
+	&_disabled_true &__overlay
 	&_loading_true &__overlay
 		opacity 1
 

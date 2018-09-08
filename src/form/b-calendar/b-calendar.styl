@@ -9,7 +9,7 @@
 @import "super/i-input/i-input.styl"
 
 $p = {
-	dropdownHelpers: true,
+	dropdownHelpers: true
 	width: 20em
 }
 
@@ -35,13 +35,13 @@ b-calendar extends i-input
 		&:active
 			{$p.onActive}
 
-	&__root-wrapper,
-	&__label-nav,
-	&__nav,
+	&__root-wrapper
+	&__label-nav
+	&__nav
 	&__cell
 		display flex
 
-	&__root-wrapper,
+	&__root-wrapper
 	&__label-nav
 		height 100%
 
@@ -49,13 +49,13 @@ b-calendar extends i-input
 		flex-direction column
 		width 100%
 
-	&__label-nav,
-	&__nav,
+	&__label-nav
+	&__nav
 	&__cell
 		align-items center
 		box-sizing border-box
 
-	&__nav,
+	&__nav
 	&__cell
 		justify-content center
 
@@ -93,7 +93,7 @@ b-calendar extends i-input
 		position relative
 		vertical-align top
 
-		&_range-start_false&_range-end_false&_in-range_true,
+		&_range-start_false&_range-end_false&_in-range_true
 		&_range-end_true
 			&:before
 				position absolute
@@ -101,7 +101,7 @@ b-calendar extends i-input
 				z-index -1
 				display block
 				height 100%
-				content ''
+				content ""
 
 		&_touch_false
 			pointer-events none
@@ -112,7 +112,7 @@ b-calendar extends i-input
 	&__h
 		display inline-flex
 
-	&__h,
+	&__h
 	&__day
 		align-items center
 		justify-content center
@@ -124,7 +124,7 @@ b-calendar extends i-input
 		user-select none
 		text-align center
 
-		&_disabled_true,
+		&_disabled_true
 		&_active_true
 			cursor default
 

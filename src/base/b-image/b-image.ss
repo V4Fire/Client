@@ -16,7 +16,7 @@
 
 		- block damaged
 			< .&__damaged
-				< b-icon :value = brokenIcon
+				+= self.gIcon(['brokenIcon'])
 
 		- block overlay
 			< .&__overlay
@@ -24,7 +24,6 @@
 		- block image
 			< .&__img
 				< img &
-					v-show = mods.loading === 'false' |
 					ref = img |
 					:src = load && src
 				.

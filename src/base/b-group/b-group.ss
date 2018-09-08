@@ -22,8 +22,8 @@
 
 				< .&__cell.&__toggle v-if = blockStatus === 'ready'
 					- block icon
-						< span @click = mods.opened === 'true' ? close() : open()
-							< b-icon :value = mods.opened === 'true' ? 'caret-up' : 'caret-down'
+						< span @click = m.opened === 'true' ? close() : open()
+							+= self.gIcon(["m.opened === 'true' ? 'caret-up' : 'caret-down'"])
 
 			< .&__content v-if = blockStatus === 'ready'
 				- block content

@@ -7,10 +7,10 @@
  */
 
 $p = {
-	color: #000,
-	backgroundColor: #FFF,
-	shadowColor: alpha(#222, 0.5),
-	validColor: #7FB425,
+	color: #000
+	backgroundColor: #FFF
+	shadowColor: alpha(#222, 0.5)
+	validColor: #7FB425
 	invalidColor: #D44D24
 }
 
@@ -46,7 +46,7 @@ b-input
 	&__input
 		padding 0.7em 0
 		color $p.color
-		font 400 1em BASE_FONT
+		font-weight 400
 
 		&:-webkit-autofill
 			-webkit-box-shadow 0 0 0 100em $p.backgroundColor inset !important
@@ -62,7 +62,7 @@ b-input
 		&:invalid
 			box-shadow none
 
-	&_disabled_true &__input,
+	&_disabled_true &__input
 	&_disabled_true &__icon
 		color darken($p.color, 20%)
 
@@ -71,18 +71,18 @@ b-input
 		text-shadow none
 
 		span
-			font-size 1.2em
+			font-size 0.8em
 
 		&:hover
 			color lighten($p.color, 20%)
 
 	&__progress span
-		font-size 1em
+		font-size 0.8em
 
 	&_valid_true &__valid-status
 		color $p.validColor
 
-	&_valid_false &__input,
+	&_valid_false &__input
 	&_valid_false &__valid-status
 		color $p.invalidColor
 

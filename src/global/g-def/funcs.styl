@@ -6,7 +6,64 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+@import "nib/size"
+@import "nib/positions"
+@import "nib/overflow"
+@import "nib/text"
+@import "nib/border-radius"
+@import "nib/border"
+@import "nib/image"
 @import "~@pzlr/stylus-inheritance/runtime.styl"
+
+/**
+ * Global images cache
+ */
+$IMG = {}
+
+/**
+ * Saves the specified image to thew global cache
+ * @param {string} $img
+ */
+img($img)
+	$prop = current-property[0]
+	$keys = {
+		background: background-image
+		background-image: background-image
+	}
+
+	if !$IMG[$img]
+		$IMG[$img] = {
+			selectors: ()
+			props: {}
+		}
+
+	$obj = $IMG[$img]
+	$props = $obj.props
+
+	push($obj.selectors, selector())
+	$props[$keys[$prop]] = true
+
+	return
+
+/**
+ * Generates images classes
+ */
+generateImgClasses()
+	for $img, $obj in $IMG
+		{join(",", $obj.selectors)}
+			for $prop in $obj.props
+				add-property($prop, "url(%s)" % $img)
+
+/**
+ * Executes the default font pattern and returns a result
+ * @param {string} [$type] - advanced font type
+ */
+execFontPattern($type = "")
+	if $type
+		unquote(replace("%t", " " + $type, BASE_FONT_PATTERN))
+
+	else
+		unquote(replace("%t", "", BASE_FONT_PATTERN))
 
 /**
  * Generates rules for colorized styles
@@ -17,7 +74,7 @@
  * @param {string=} [$key] - color key
  * @param {Function=} [$cb] - callback function
  */
-setColorMods($set, $styles = null, $selector = '', $key = 'backgroundColor', $cb = null)
+setColorMods($set, $styles = null, $selector = "", $key = "backgroundColor", $cb = null)
 	for $s in $set
 		$color = $set[$s][$key]
 
@@ -30,6 +87,48 @@ setColorMods($set, $styles = null, $selector = '', $key = 'backgroundColor', $cb
 				for $style in $styles
 					{$style}: $color
 
+/**
+ * CSS hack for IE10-11
+ */
+ie10-11()
+	@media all and (-ms-high-contrast: none), (-ms-high-contrast: active)
+		{block}
+
+/**
+ * Activates GPU for render
+ */
+useGPU()
+	transform translate3d(0, 0, 0)
+
+/**
+ * Global overlays map
+ */
+$OVERLAYS = ( layer modal overall )
+
+/**
+ * Sets a z-index for the specified layer position
+ * @param {string} $pos
+ */
+zIndex($pos)
+	z-index index($OVERLAYS, $pos) * 1000
+
+/**
+ * Generates rules for flexbox
+ *
+ * @param {string} $justify
+ * @param {string=} [$align]
+ */
+flexbox($justify, $align = $justify)
+	display flex
+	justify-content $justify
+	align-items $align
+
+	if arguments[2]
+		flex-direction arguments[2]
+
+/**
+ * Generates rules for button css reset
+ */
 resetButton()
 	display inline-block
 	box-sizing border-box

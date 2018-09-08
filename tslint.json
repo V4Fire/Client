@@ -1,0 +1,32 @@
+{
+  "extends": "@v4fire/core/tslint.json",
+  "rules": {
+    "member-ordering": [
+      true,
+      {
+        "order": [
+          "public-static-method",
+          "protected-static-field",
+          "protected-static-method",
+
+          "public-instance-field",
+          "public-static-field",
+          "protected-instance-field",
+          "private-instance-field",
+
+          "public-constructor",
+          "protected-constructor",
+
+          "public-instance-method",
+          "protected-instance-method",
+
+          "private-static-field",
+          "private-static-method",
+
+          "private-constructor",
+          "private-instance-method"
+        ]
+      }
+    ]
+  }
+}

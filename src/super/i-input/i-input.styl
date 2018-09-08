@@ -9,13 +9,14 @@
 @import "super/i-data/i-data.styl"
 
 $p = {
-	lockHelpers: true,
+	lockHelpers: true
+	sizeHelpers: true
 	messageHelpers: true
 }
 
 i-input extends i-data
-	&_show-error_true&_valid_true &__error-box,
-	&_show-info_true&_valid_false &__info-box,
+	&_show-error_true&_valid_true &__error-box
+	&_show-info_true&_valid_false &__info-box
 	&_show-info_true&_empty_false &__info-box
 		display none
 
