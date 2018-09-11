@@ -243,7 +243,7 @@ export default class iStaticPage<
 	 * Synchronization for the isAuth field
 	 * @param [e]
 	 */
-	@watch('globalEvent:session.*')
+	@watch('$root:session.*')
 	protected syncAuthWatcher(e?: SetEvent): void {
 		this.isAuth = Boolean(e && e.auth);
 	}
@@ -252,7 +252,7 @@ export default class iStaticPage<
 	 * Synchronization for the isOnline field
 	 * @param e
 	 */
-	@watch('net.status')
+	@watch('$root.status')
 	protected syncOnlineWatcher(e: StatusEvent): void {
 		this.isOnline = e.status;
 		this.lastOnlineDate = e.lastOnline;
