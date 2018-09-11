@@ -9,7 +9,7 @@
 import symbolGenerator from 'core/symbol';
 import remoteState from 'core/component/state';
 
-import { reset, ResetType, VueInterface } from 'core/component';
+import { reset, globalEvent, ResetType, VueInterface } from 'core/component';
 import { setLang, lang } from 'core/i18n';
 
 import { SetEvent } from 'core/session';
@@ -17,10 +17,10 @@ import { StatusEvent } from 'core/net';
 
 import iBlock from 'super/i-block/i-block';
 import bRouter, { PageInfo } from 'base/b-router/b-router';
-import iPage, { component, field, system, watch } from 'super/i-page/i-page';
+import iPage, { component, field, system, watch, Event } from 'super/i-page/i-page';
 
 export * from 'super/i-data/i-data';
-export { ResetType, PageInfo };
+export { globalEvent, ResetType, PageInfo };
 
 export type RootMods = Dictionary<{
 	mod: string;
@@ -42,6 +42,12 @@ export default class iStaticPage<
 	 */
 	@system()
 	readonly i18n: typeof i18n = i18n;
+
+	/**
+	 * Link to the global event emitter
+	 */
+	@system(() => globalEvent)
+	readonly globalEvent!: Event<this>;
 
 	/**
 	 * Authorization status
@@ -229,7 +235,7 @@ export default class iStaticPage<
 	 * @param lang
 	 */
 	@watch('langStore')
-	@watch('i18n.setLang')
+	@watch('globalEvent:i18n.setLang')
 	protected syncLangWatcher(lang: string): void {
 		if (this.lang === lang) {
 			return;
@@ -243,7 +249,7 @@ export default class iStaticPage<
 	 * Synchronization for the isAuth field
 	 * @param [e]
 	 */
-	@watch('$root:session.*')
+	@watch('globalEvent:session.*')
 	protected syncAuthWatcher(e?: SetEvent): void {
 		this.isAuth = Boolean(e && e.auth);
 	}
@@ -252,7 +258,7 @@ export default class iStaticPage<
 	 * Synchronization for the isOnline field
 	 * @param e
 	 */
-	@watch('$root.status')
+	@watch('globalEvent:net.status')
 	protected syncOnlineWatcher(e: StatusEvent): void {
 		this.isOnline = e.status;
 		this.lastOnlineDate = e.lastOnline;
