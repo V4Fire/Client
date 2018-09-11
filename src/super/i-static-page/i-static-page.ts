@@ -43,9 +43,7 @@ export default class iStaticPage<
 	@system()
 	readonly i18n: typeof i18n = i18n;
 
-	/**
-	 * Link to the global event emitter
-	 */
+	/** @override */
 	@system(() => globalEvent)
 	readonly globalEvent!: Event<this>;
 
