@@ -296,9 +296,11 @@ const
 
 /**
  * Binds watchers to the specified component
+ *
  * @param ctx - component context
+ * @param [eventCtx] - event component context
  */
-export function bindWatchers(ctx: VueInterface): void {
+export function bindWatchers(ctx: VueInterface, eventCtx: VueInterface = ctx): void {
 	const
 		// @ts-ignore
 		{meta, hook, $async: $a} = ctx;
@@ -308,7 +310,7 @@ export function bindWatchers(ctx: VueInterface): void {
 	}
 
 	const
-		ctxObj = $C(ctx),
+		ctxObj = $C(eventCtx),
 		globalObj = $C(GLOBAL);
 
 	const

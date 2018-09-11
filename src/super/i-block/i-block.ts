@@ -250,6 +250,12 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 	readonly remoteProvider: boolean = false;
 
 	/**
+	 *
+	 */
+	@prop(Object)
+	readonly watchProp: Dictionary = {};
+
+	/**
 	 * If true, then the current component is activated
 	 */
 	@prop(Boolean)
@@ -3155,6 +3161,40 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 				});
 			}
 		});
+	}
+
+	@hook('beforeDataCreate')
+	protected initRemoteWatchers(): void {
+		const
+			w = this.meta.watchers,
+			o = this.watchProp,
+			keys = Object.keys(o);
+
+		for (let i = 0; i < keys.length; i++) {
+			const
+				method = keys[i],
+				watchers = [].concat(o[method] || []);
+
+			for (let i = 0; i < watchers.length; i++) {
+				const el = watchers[i];
+				w[field] = w[field] || [];
+
+				if (Object.isString(el)) {
+					w[el].push({
+						method,
+						handler: method
+					});
+
+				} else {
+					w[el.field].push({
+						...el,
+						args: [].concat(el.args || []),
+						method,
+						handler: method
+					});
+				}
+			}
+		}
 	}
 
 	/**
