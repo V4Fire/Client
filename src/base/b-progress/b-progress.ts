@@ -7,7 +7,7 @@
  */
 
 import symbolGenerator from 'core/symbol';
-import iBlock, { field, component, ModsDecl } from 'super/i-block/i-block';
+import iBlock, { component, prop, field, ModsDecl } from 'super/i-block/i-block';
 export * from 'super/i-block/i-block';
 
 export const
@@ -15,6 +15,12 @@ export const
 
 @component()
 export default class bProgress extends iBlock {
+	/**
+	 * Initial progress value store
+	 */
+	@prop(Number)
+	readonly valueProp: number = 0;
+
 	/** @inheritDoc */
 	static readonly mods: ModsDecl = {
 		progress: [
@@ -25,8 +31,8 @@ export default class bProgress extends iBlock {
 	/**
 	 * Progress value store
 	 */
-	@field()
-	protected valueStore: number = 0;
+	@field((o) => o.link())
+	protected valueStore!: number;
 
 	/**
 	 * Progress value
@@ -48,7 +54,7 @@ export default class bProgress extends iBlock {
 			if (value === 100) {
 				try {
 					await this.async.sleep(0.8.second(), {label: $$.complete});
-					this.setField('valueStore', 0)
+					this.setField('valueStore', 0);
 					this.emit('complete');
 
 				} catch (_) {}
