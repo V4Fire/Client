@@ -18,26 +18,13 @@ export default class bProgress extends iBlock {
 	/**
 	 * Initial progress value store
 	 */
-	@prop(Number)
-	readonly valueProp: number = 0;
-
-	/** @inheritDoc */
-	static readonly mods: ModsDecl = {
-		progress: [
-			bProgress.PARENT
-		]
-	};
-
-	/**
-	 * Progress value store
-	 */
-	@field((o) => o.link())
-	protected valueStore!: number;
+	@prop({type: Number, required: false})
+	readonly valueProp?: number;
 
 	/**
 	 * Progress value
 	 */
-	protected get value(): number {
+	get value(): number | undefined {
 		return this.getField('valueStore');
 	}
 
@@ -47,7 +34,7 @@ export default class bProgress extends iBlock {
 	 * @param value
 	 * @emits complete()
 	 */
-	protected set value(value: number) {
+	set value(value: number | undefined) {
 		(async () => {
 			this.setField('valueStore', value);
 
@@ -65,9 +52,22 @@ export default class bProgress extends iBlock {
 		})();
 	}
 
+	/** @inheritDoc */
+	static readonly mods: ModsDecl = {
+		progress: [
+			bProgress.PARENT
+		]
+	};
+
+	/**
+	 * Progress value store
+	 */
+	@field((o) => o.link())
+	protected valueStore?: number;
+
 	/** @override */
 	protected initModEvents(): void {
 		super.initModEvents();
-		this.bindModTo('progress', 'valueStore');
+		this.bindModTo('progress', 'valueStore', Object.isNumber);
 	}
 }
