@@ -33,6 +33,9 @@ export type CurrentPage<
 
 export type PageSchema<M extends Dictionary = Dictionary> = string | M & {
 	path?: string;
+	page?: string;
+	component?: string;
+	query?: string[];
 };
 
 export interface Router extends EventEmitter {

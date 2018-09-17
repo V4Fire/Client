@@ -122,13 +122,15 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 		init: (o) => o.link((v) => {
 			const ctx: bRouter = <any>o;
 			return $C(v || ctx.driver.routes || {}).map((obj, page) => {
+				obj = obj || {};
+
 				const
 					isStr = Object.isString(obj),
 					pattern = isStr ? obj : obj.path;
 
 				return {
-					page,
 					pattern,
+					page: isStr ? page : obj.page || obj.component || page,
 					rgxp: pattern != null ? path(pattern) : undefined,
 					meta: isStr ? {} : obj
 				};
@@ -304,15 +306,11 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 
 		Object.mixin({deep: true, withUndef: true}, info, params && Object.reject(params, 'page'));
 
-		const nonWatchValues = {
-			query: info.query,
-			meta: info.meta
-		};
-
-		const store = Object.assign(
-			Object.create(nonWatchValues),
-			Object.reject(info, Object.keys(nonWatchValues))
-		);
+		const
+			m = info.meta,
+			nonWatchKeys = ['meta', 'query'],
+			nonWatchValues = Object.select(info, nonWatchKeys),
+			store = Object.assign(Object.create(nonWatchValues), Object.reject(info, nonWatchKeys));
 
 		const
 			current = this.getField('pageStore'),
@@ -330,7 +328,27 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 			this.setField('pageStore', store);
 
 			if (isNotEvent) {
-				await d[method](info.toPath(params && params.params), info);
+				let
+					p;
+
+				if (params) {
+					p = info.params;
+
+					const
+						q = info.query;
+
+					if (q) {
+						const
+							s = Object.select(q, m.query);
+
+						if (Object.keys(s).length) {
+							p = info.params = {...s, ...p};
+							info.query = Object.reject(q, m.query);
+						}
+					}
+				}
+
+				await d[method](info.toPath(p), info);
 			}
 
 			const
@@ -357,9 +375,6 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 		} else if (method === 'push') {
 			emitTransition();
 		}
-
-		const
-			m = info.meta || {};
 
 		if (m.autoScroll !== false) {
 			(async () => {
