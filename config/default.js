@@ -100,14 +100,14 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 			if (isProd) {
 				this.output({
 					...params,
-					hash: `${root}/[hash][ext]`,
+					hash: `${root}/[hash].[ext]`,
 					name: null
 				});
 			}
 
 			return this.output({
 				...params,
-				name: `${root}/[path][name][ext]`,
+				name: `${root}/[path][name].[ext]`,
 				hash: null
 			});
 		},
