@@ -30,6 +30,16 @@ exports.depsRgxpStr = dependencies.map((el) => RegExp.escape(el || el.src)).join
 exports.output = hash(r(webpack.output()));
 
 /**
+ * Output pattern for assets
+ */
+exports.assetsOutput = hash(r(webpack.assetsOutput()));
+
+/**
+ * Path to assets.json
+ */
+exports.assetsJSON = path.join(src.clientOutput(), webpack.assetsJSON());
+
+/**
  * Build cache folder
  */
 exports.buildCache = path.join(src.cwd(), 'app-cache');
@@ -43,11 +53,6 @@ exports.stdCache = path.join(src.cwd(), 'app-std-cache');
  * Path to dll-manifest.json
  */
 exports.dllManifest = path.join(src.clientOutput(), webpack.dllOutput({name: 'dll-manifest.json', hash: null}));
-
-/**
- * Path to assets.json
- */
-exports.assetsJSON = path.join(src.clientOutput(), webpack.assetsJSON());
 
 // Some helpers
 

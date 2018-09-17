@@ -93,6 +93,25 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 			return res;
 		},
 
+		assetsOutput(params) {
+			const
+				root = 'assets';
+
+			if (isProd) {
+				this.output({
+					...params,
+					hash: `${root}/[hash][ext]`,
+					name: null
+				});
+			}
+
+			return this.output({
+				...params,
+				name: `${root}/[path][name][ext]`,
+				hash: null
+			});
+		},
+
 		assetsJSON() {
 			return 'assets.json';
 		}
