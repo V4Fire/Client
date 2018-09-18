@@ -15,7 +15,7 @@ import Async from 'core/async';
 import driver from 'base/b-router/drivers';
 import symbolGenerator from 'core/symbol';
 
-import { Router, PageMeta, PageSchema, PageInfo, CurrentPage } from 'base/b-router/drivers/interface';
+import { Router, PageMeta, PageSchema, PageInfo } from 'base/b-router/drivers/interface';
 import iData, { component, prop, system, hook, watch, p } from 'super/i-data/i-data';
 
 export * from 'super/i-data/i-data';
@@ -29,10 +29,12 @@ export interface RouterMeta extends PageMeta {
 	};
 }
 
-export type PagePropObj = Partial<CurrentPage> & {
+export interface PagePropObj {
 	page: string;
 	meta?: RouterMeta;
-};
+	params?: Dictionary;
+	query?: Dictionary;
+}
 
 export interface PageParams {
 	meta?: RouterMeta;
