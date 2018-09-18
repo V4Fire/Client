@@ -6,12 +6,13 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+// tslint:disable:max-file-line-count
 import $C = require('collection.js');
+import Async from 'core/async';
 
 import path = require('path-to-regexp');
 import { Key } from 'path-to-regexp';
 
-import Async from 'core/async';
 import driver from 'base/b-router/drivers';
 import symbolGenerator from 'core/symbol';
 
