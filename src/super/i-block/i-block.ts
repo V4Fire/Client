@@ -138,6 +138,12 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 	readonly keepAlive: boolean = false;
 
 	/**
+	 * If true, then will be forcing activation hooks for all components instead of non functional components
+	 */
+	@prop(Boolean)
+	readonly forceActivation: boolean = false;
+
+	/**
 	 * Link to i18n function
 	 */
 	@prop(Function)
@@ -1649,9 +1655,12 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 
 		exec();
 
-		if (this.$el) {
+		const
+			{$el} = this;
+
+		if (this.forceActivation && $el) {
 			const
-				domEls = this.$el.querySelectorAll('.i-block-helper');
+				domEls = $el.querySelectorAll('.i-block-helper');
 
 			for (let i = 0; i < domEls.length; i++) {
 				const
@@ -1699,9 +1708,12 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 
 		exec();
 
-		if (this.$el) {
+		const
+			{$el} = this;
+
+		if (this.forceActivation && $el) {
 			const
-				domEls = this.$el.querySelectorAll('.i-block-helper');
+				domEls = $el.querySelectorAll('.i-block-helper');
 
 			for (let i = 0; i < domEls.length; i++) {
 				const
