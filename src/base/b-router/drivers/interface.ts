@@ -8,35 +8,34 @@
 
 import { EventEmitter2 as EventEmitter } from 'eventemitter2';
 
-export type PageInfo<
-	P extends Dictionary = Dictionary,
-	Q extends Dictionary = Dictionary,
-	M extends Dictionary = Dictionary
-> = Dictionary & {
-	page: string;
-	params: P;
-	query: Q;
-	meta: M;
-	toPath(params?: Dictionary): string;
-};
-
-export type CurrentPage<
-	P extends Dictionary = Dictionary,
-	Q extends Dictionary = Dictionary,
-	M extends Dictionary = Dictionary
-> = Dictionary & {
-	page: string;
-	params?: P;
-	query?: Q;
-	meta?: M;
-};
-
-export type PageSchema<M extends Dictionary = Dictionary> = string | M & {
+export type PageMeta<M extends Dictionary = Dictionary> = M & {
 	path?: string;
 	page?: string;
 	component?: string;
-	query?: string[];
 };
+
+export type PageSchema<M extends Dictionary = Dictionary> =
+	string |
+	PageMeta<M>;
+
+export interface CurrentPage<
+	P extends Dictionary = Dictionary,
+	Q extends Dictionary = Dictionary,
+	M extends Dictionary = Dictionary
+> extends Dictionary {
+	page: string;
+	meta: PageMeta<M>;
+	params: P;
+	query: Q;
+}
+
+export interface PageInfo<
+	P extends Dictionary = Dictionary,
+	Q extends Dictionary = Dictionary,
+	M extends Dictionary = Dictionary
+> extends CurrentPage {
+	toPath(params?: Dictionary): string;
+}
 
 export interface Router extends EventEmitter {
 	page?: CurrentPage | undefined;

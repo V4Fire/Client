@@ -2553,7 +2553,7 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 		this.execCbAtTheRightTime(() => {
 			const
 				p = this.$root.pageInfo || {},
-				stateFields = this.convertStateToRouter(Object.assign(Object.create(p), p.query, p.params));
+				stateFields = this.convertStateToRouter(Object.assign(Object.create(p), p.params, p.query));
 
 			this.setState(
 				stateFields

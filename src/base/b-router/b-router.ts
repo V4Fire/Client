@@ -15,13 +15,13 @@ import Async from 'core/async';
 import driver from 'base/b-router/drivers';
 import symbolGenerator from 'core/symbol';
 
-import { Router, PageSchema, PageInfo, CurrentPage } from 'base/b-router/drivers/interface';
+import { Router, PageMeta, PageSchema, PageInfo, CurrentPage } from 'base/b-router/drivers/interface';
 import iData, { component, prop, system, hook, watch, p } from 'super/i-data/i-data';
 
 export * from 'super/i-data/i-data';
 export * from 'base/b-router/drivers/interface';
 
-export interface Meta extends Dictionary {
+export interface RouterMeta extends PageMeta {
 	autoScroll?: boolean;
 	scroll?: {
 		x: number;
@@ -29,25 +29,24 @@ export interface Meta extends Dictionary {
 	};
 }
 
-export interface PagePropObj extends CurrentPage {
-	meta?: Meta;
-}
+export type PagePropObj = Partial<CurrentPage> & {
+	page: string;
+	meta?: RouterMeta;
+};
+
+export type PageParams = Partial<CurrentPage> & {
+	page?: never;
+};
 
 export type PageProp =
 	string |
 	PagePropObj;
 
-export interface PageParams extends Dictionary {
-	params?: Dictionary;
-	query?: Dictionary;
-	meta?: Meta;
-}
-
 export type Pages = Dictionary<{
 	page: string;
 	pattern: string;
 	rgxp: RegExp;
-	meta: Meta;
+	meta: RouterMeta;
 }>;
 
 export type SetPage =
@@ -307,10 +306,9 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 		Object.mixin({deep: true, withUndef: true}, info, params && Object.reject(params, 'page'));
 
 		const
-			m = info.meta,
-			nonWatchKeys = ['meta', 'query'],
-			nonWatchValues = Object.select(info, nonWatchKeys),
-			store = Object.assign(Object.create(nonWatchValues), Object.reject(info, nonWatchKeys));
+			meta = info.meta,
+			nonWatchValues = {query: info.query, meta},
+			store = Object.assign(Object.create(nonWatchValues), Object.reject(info, Object.keys(nonWatchValues)));
 
 		const
 			current = this.getField('pageStore'),
@@ -328,27 +326,7 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 			this.setField('pageStore', store);
 
 			if (isNotEvent) {
-				let
-					p;
-
-				if (params) {
-					p = info.params;
-
-					const
-						q = info.query;
-
-					if (q) {
-						const
-							s = Object.select(q, m.query);
-
-						if (Object.keys(s).length) {
-							p = info.params = {...s, ...p};
-							info.query = Object.reject(q, m.query);
-						}
-					}
-				}
-
-				await d[method](info.toPath(p), info);
+				await d[method](info.toPath(params && params.params), info);
 			}
 
 			const
@@ -376,7 +354,7 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 			emitTransition();
 		}
 
-		if (m.autoScroll !== false) {
+		if (meta.autoScroll !== false) {
 			(async () => {
 				try {
 					const label = {
@@ -390,7 +368,7 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 					await this.nextTick(label);
 
 					const
-						s = m.scroll;
+						s = meta.scroll;
 
 					if (s) {
 						this.scrollTo(s.y, s.x);
@@ -421,7 +399,7 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 				await this.replace(page);
 
 			} else {
-				await this.replace(page.page, page);
+				await this.replace(page.page, Object.reject(page, 'page'));
 			}
 
 		} else {
