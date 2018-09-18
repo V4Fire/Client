@@ -76,12 +76,12 @@ export default class iStaticPage<
 
 	/** @override */
 	get route(): CurrentPage<P, Q, M> | undefined {
-		return this.getField('pageInfoStore');
+		return this.getField('routeStore');
 	}
 
 	/** @override */
 	set route(value: CurrentPage<P, Q, M> | undefined) {
-		this.setField('pageInfoStore', value);
+		this.setField('routeStore', value);
 	}
 
 	/** @override */
@@ -110,10 +110,10 @@ export default class iStaticPage<
 	}
 
 	/**
-	 * Page information object store
+	 * Route information object store
 	 */
 	@field()
-	protected pageInfoStore?: CurrentPage<P, Q, M>;
+	protected routeStore?: CurrentPage<P, Q, M>;
 
 	/**
 	 * Root page router instance
