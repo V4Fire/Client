@@ -9,33 +9,25 @@
 import { Key } from 'path-to-regexp';
 import { EventEmitter2 as EventEmitter } from 'eventemitter2';
 
-export type PageMeta<M extends Dictionary = Dictionary> = M & {
+export interface PageMeta extends Dictionary {
 	page: string;
 	path?: string;
 	params: [Key];
 	paramsFromQuery?: boolean;
-};
-
-export type PageSchema<M extends Dictionary = Dictionary> =
-	string |
-	PageMeta<M>;
-
-export interface CurrentPage<
-	P extends Dictionary = Dictionary,
-	Q extends Dictionary = Dictionary,
-	M extends Dictionary = Dictionary
-> extends Dictionary {
-	page: string;
-	meta: PageMeta<M>;
-	params: P;
-	query: Q;
 }
 
-export interface PageInfo<
-	P extends Dictionary = Dictionary,
-	Q extends Dictionary = Dictionary,
-	M extends Dictionary = Dictionary
-> extends CurrentPage {
+export type PageSchema =
+	string |
+	PageMeta;
+
+export interface CurrentPage extends Dictionary {
+	page: string;
+	meta: PageMeta;
+	params: Dictionary;
+	query: Dictionary;
+}
+
+export interface PageInfo extends CurrentPage {
 	toPath(params?: Dictionary): string;
 }
 

@@ -34,9 +34,11 @@ export type PagePropObj = Partial<CurrentPage> & {
 	meta?: RouterMeta;
 };
 
-export type PageParams = Partial<CurrentPage> & {
-	page?: never;
-};
+export interface PageParams {
+	meta?: RouterMeta;
+	params?: Dictionary;
+	query?: Dictionary;
+}
 
 export type PageProp =
 	string |
