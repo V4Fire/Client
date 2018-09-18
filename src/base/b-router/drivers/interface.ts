@@ -9,16 +9,21 @@
 import { Key } from 'path-to-regexp';
 import { EventEmitter2 as EventEmitter } from 'eventemitter2';
 
-export interface PageMeta extends Dictionary {
-	page: string;
+export interface BasePageMeta extends Dictionary {
+	page?: string;
 	path?: string;
-	params: [Key];
 	paramsFromQuery?: boolean;
 }
 
-export type PageSchema =
+export type PageSchema = Dictionary<
 	string |
-	PageMeta;
+	BasePageMeta
+>;
+
+export interface PageMeta extends BasePageMeta {
+	page: string;
+	params: Key[];
+}
 
 export interface CurrentPage extends Dictionary {
 	page: string;
@@ -33,7 +38,7 @@ export interface PageInfo extends CurrentPage {
 
 export interface Router extends EventEmitter {
 	page?: CurrentPage | undefined;
-	routes: Dictionary<PageSchema>;
+	routes: PageSchema;
 	id(page: string): string;
 	push(page: string, info?: PageInfo): Promise<void>;
 	replace(page: string, info?: PageInfo): Promise<void>;

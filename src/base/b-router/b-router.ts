@@ -15,13 +15,13 @@ import Async from 'core/async';
 import driver from 'base/b-router/drivers';
 import symbolGenerator from 'core/symbol';
 
-import { Router, PageMeta, PageSchema, PageInfo } from 'base/b-router/drivers/interface';
+import { Router, BasePageMeta, PageSchema, PageInfo } from 'base/b-router/drivers/interface';
 import iData, { component, prop, system, hook, watch, p } from 'super/i-data/i-data';
 
 export * from 'super/i-data/i-data';
 export * from 'base/b-router/drivers/interface';
 
-export interface RouterMeta extends PageMeta {
+export interface RouterMeta extends BasePageMeta {
 	autoScroll?: boolean;
 	scroll?: {
 		x: number;
