@@ -309,7 +309,7 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 	 */
 	@p({cache: false})
 	get router(): bRouter | any | undefined {
-		return this.getField('router', this.$root);
+		return this.getField('routerStore', this.$root);
 	}
 
 	/**
