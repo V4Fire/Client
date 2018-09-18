@@ -49,7 +49,7 @@ import {
 } from 'super/i-block/modules/interface';
 
 import iStaticPage from 'super/i-static-page/i-static-page';
-import bRouter, { PageInfo } from 'base/b-router/b-router';
+import bRouter, { CurrentPage } from 'base/b-router/b-router';
 import { asyncLocal, AsyncNamespace } from 'core/kv-storage';
 import {
 
@@ -309,15 +309,15 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 	 */
 	@p({cache: false})
 	get router(): bRouter | any | undefined {
-		return this.getField('routerStore', this.$root);
+		return this.getField('route', this.$root);
 	}
 
 	/**
-	 * Link to the root pageInfo object
+	 * Link to the root route object
 	 */
 	@p({cache: false})
-	get route(): PageInfo | any | undefined {
-		return this.getField('pageInfo', this.$root);
+	get route(): CurrentPage | any | undefined {
+		return this.getField('route', this.$root);
 	}
 
 	/**
@@ -2552,7 +2552,7 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 
 		this.execCbAtTheRightTime(() => {
 			const
-				p = this.$root.pageInfo || {},
+				p = this.$root.route || {},
 				stateFields = this.convertStateToRouter(Object.assign(Object.create(p), p.params, p.query));
 
 			this.setState(

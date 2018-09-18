@@ -11,7 +11,7 @@ import bRouter from 'base/b-router/b-router';
 
 import { toQueryString } from 'core/url';
 import { EventEmitter2 as EventEmitter } from 'eventemitter2';
-import { Router, PageInfo, CurrentPage } from 'base/b-router/drivers/interface';
+import { Router, PageOpts, CurrentPage } from 'base/b-router/drivers/interface';
 
 export const
 	$$ = symbolGenerator();
@@ -20,7 +20,7 @@ export default function createRouter(ctx: bRouter): Router {
 	const
 		{async: $a} = ctx;
 
-	function load(page: string, info?: PageInfo, method: string = 'pushState'): Promise<void> {
+	function load(page: string, info?: PageOpts, method: string = 'pushState'): Promise<void> {
 		return new Promise((resolve) => {
 			if (info) {
 				const
@@ -90,11 +90,11 @@ export default function createRouter(ctx: bRouter): Router {
 			}
 		},
 
-		push(page: string, info?: PageInfo): Promise<void> {
+		push(page: string, info?: PageOpts): Promise<void> {
 			return load(page, info);
 		},
 
-		replace(page: string, info?: PageInfo): Promise<void> {
+		replace(page: string, info?: PageOpts): Promise<void> {
 			return load(page, info, 'replaceState');
 		},
 

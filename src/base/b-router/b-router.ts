@@ -15,19 +15,19 @@ import Async from 'core/async';
 import driver from 'base/b-router/drivers';
 import symbolGenerator from 'core/symbol';
 
-import { Router, BasePageMeta, PageSchema, PageInfo } from 'base/b-router/drivers/interface';
+import { Router, BasePageMeta, PageSchema, CurrentPage, PageOpts } from 'base/b-router/drivers/interface';
 import iData, { component, prop, system, hook, watch, p } from 'super/i-data/i-data';
 
 export * from 'super/i-data/i-data';
 export * from 'base/b-router/drivers/interface';
 
-export interface RouterMeta extends BasePageMeta {
+export type RouterMeta = BasePageMeta & {
 	autoScroll?: boolean;
 	scroll?: {
 		x: number;
 		y: number;
 	};
-}
+};
 
 export interface PagePropObj {
 	page: string;
@@ -115,7 +115,7 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 	 * Page store
 	 */
 	@system()
-	protected pageStore?: PageInfo;
+	protected pageStore?: CurrentPage;
 
 	/**
 	 * Router paths
@@ -151,7 +151,7 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 	 * Current page
 	 */
 	@p({cache: false})
-	get page(): PageInfo | undefined {
+	get page(): CurrentPage | undefined {
 		return this.getField('pageStore');
 	}
 
@@ -208,7 +208,7 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 	 * Returns an information object of the specified page
 	 * @param [page]
 	 */
-	getPageOpts(page: string): PageInfo | undefined {
+	getPageOpts(page: string): PageOpts | undefined {
 		const
 			p = this.pages,
 			obj = p[page] || $C(p).one.get(({rgxp}) => rgxp && rgxp.test(page));
@@ -268,7 +268,7 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 		page: string | null,
 		params?: PageParams,
 		method: SetPage = 'push'
-	): Promise<PageInfo | undefined> {
+	): Promise<CurrentPage | undefined> {
 		const
 			{$root: r, driver: d, driver: {page: c}} = this,
 			isEmptyParams = !params || $C(params).every((el) => !$C(el).length());
@@ -361,9 +361,9 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 			const
 				f = (v) => $C(v).filter((el) => !Object.isFunction(el)).map();
 
-			if (r.pageInfo && Object.fastCompare(f(current), f(store))) {
+			if (r.route && Object.fastCompare(f(current), f(store))) {
 				const
-					proto = Object.getPrototypeOf(r.pageInfo);
+					proto = Object.getPrototypeOf(r.route);
 
 				$C(nonWatchValues).forEach((el, key) => {
 					proto[key] = el;
@@ -374,7 +374,7 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 			} else {
 				hardChange = true;
 				this.emit('hardChange', store);
-				r.pageInfo = store;
+				r.route = store;
 			}
 
 			emitTransition();
@@ -391,7 +391,7 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 					};
 
 					if (hardChange) {
-						await this.async.wait(() => Object.fastCompare(store, r.pageInfo), label);
+						await this.async.wait(() => Object.fastCompare(store, r.route), label);
 					}
 
 					await this.nextTick(label);

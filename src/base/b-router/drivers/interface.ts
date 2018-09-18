@@ -9,39 +9,51 @@
 import { Key } from 'path-to-regexp';
 import { EventEmitter2 as EventEmitter } from 'eventemitter2';
 
-export interface BasePageMeta extends Dictionary {
+export type BasePageMeta<M extends Dictionary = Dictionary> = M & {
 	page?: string;
 	path?: string;
 	paramsFromQuery?: boolean;
-}
+};
 
-export type PageSchema = Dictionary<
+export type PageSchema<M extends Dictionary = Dictionary> = Dictionary<
 	string |
-	BasePageMeta
+	BasePageMeta<M>
 >;
 
-export interface PageMeta extends BasePageMeta {
+export type PageMeta<M extends Dictionary = Dictionary> = BasePageMeta<M> & {
 	page: string;
 	params: Key[];
-}
+};
 
-export interface CurrentPage extends Dictionary {
+export interface CurrentPage<
+	P extends Dictionary = Dictionary,
+	Q extends Dictionary = Dictionary,
+	M extends Dictionary = Dictionary
+> extends Dictionary {
 	page: string;
-	meta: PageMeta;
-	params: Dictionary;
-	query: Dictionary;
+	params: P;
+	query: Q;
+	meta: PageMeta<M>;
 }
 
-export interface PageInfo extends CurrentPage {
+export interface PageOpts<
+	P extends Dictionary = Dictionary,
+	Q extends Dictionary = Dictionary,
+	M extends Dictionary = Dictionary
+> extends CurrentPage<P, Q, M> {
 	toPath(params?: Dictionary): string;
 }
 
-export interface Router extends EventEmitter {
-	page?: CurrentPage | undefined;
-	routes: PageSchema;
+export interface Router<
+	P extends Dictionary = Dictionary,
+	Q extends Dictionary = Dictionary,
+	M extends Dictionary = Dictionary
+> extends EventEmitter {
+	page?: CurrentPage<P, Q, M> | undefined;
+	routes: PageSchema<M>;
 	id(page: string): string;
-	push(page: string, info?: PageInfo): Promise<void>;
-	replace(page: string, info?: PageInfo): Promise<void>;
+	push(page: string, info?: PageOpts<P, Q, M>): Promise<void>;
+	replace(page: string, info?: PageOpts<P, Q, M>): Promise<void>;
 	back(): void;
 	forward(): void;
 	go(pos: number): void;
