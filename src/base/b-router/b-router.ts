@@ -125,13 +125,17 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 
 				const
 					isStr = Object.isString(obj),
-					pattern = isStr ? obj : obj.path;
+					pattern = isStr ? obj : obj.path,
+					params = [];
+
+				page = isStr ?
+					page : obj.page || page;
 
 				return {
+					page,
 					pattern,
-					page: isStr ? page : obj.page || page,
-					rgxp: pattern != null ? path(pattern) : undefined,
-					meta: isStr ? {} : obj
+					rgxp: pattern != null ? path(pattern, params) : undefined,
+					meta: {...isStr ? {} : obj, page, params}
 				};
 			});
 		})
@@ -326,7 +330,28 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 			this.setField('pageStore', store);
 
 			if (isNotEvent) {
-				await d[method](info.toPath(params && params.params), info);
+				let
+					p;
+
+				if (params) {
+					p = info.params;
+
+					if (meta.paramsFromQuery) {
+						for (let o = meta.params, q = info.query, i = 0; i < o.length; i++) {
+							const
+								key = o[i],
+								nm = key.name,
+								val = q[nm];
+
+							if (val != null && new RegExp(key.pattern).test(val)) {
+								p[nm] = val;
+								delete q[nm];
+							}
+						}
+					}
+				}
+
+				await d[method](info.toPath(p), info);
 			}
 
 			const

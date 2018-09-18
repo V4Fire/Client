@@ -6,11 +6,14 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import { Key } from 'path-to-regexp';
 import { EventEmitter2 as EventEmitter } from 'eventemitter2';
 
 export type PageMeta<M extends Dictionary = Dictionary> = M & {
+	page: string;
 	path?: string;
-	page?: string;
+	params: [Key];
+	paramsFromQuery?: boolean;
 };
 
 export type PageSchema<M extends Dictionary = Dictionary> =
