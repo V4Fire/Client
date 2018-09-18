@@ -129,7 +129,7 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 
 				return {
 					pattern,
-					page: isStr ? page : obj.page || obj.component || page,
+					page: isStr ? page : obj.page || page,
 					rgxp: pattern != null ? path(pattern) : undefined,
 					meta: isStr ? {} : obj
 				};

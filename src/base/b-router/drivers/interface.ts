@@ -11,7 +11,6 @@ import { EventEmitter2 as EventEmitter } from 'eventemitter2';
 export type PageMeta<M extends Dictionary = Dictionary> = M & {
 	path?: string;
 	page?: string;
-	component?: string;
 };
 
 export type PageSchema<M extends Dictionary = Dictionary> =
