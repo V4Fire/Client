@@ -20,8 +20,7 @@ const
 	{pathEqual} = require('path-equal');
 
 const {
-	resolve,
-	resolve: {rootDependencies},
+	resolve: {rootDependencies, depMap},
 	config: {dependencies, super: superLink}
 } = require('@pzlr/build-core');
 
@@ -92,7 +91,7 @@ module.exports = function (str, file) {
 				return `'${resource + url}'`;
 			}
 
-			return `'${path.join(resource, resolve.depMap[resource].config.sourceDir, url)}'`;
+			return `'${path.join(resource, depMap[resource].config.sourceDir, url)}'`;
 		}
 
 		return str;
