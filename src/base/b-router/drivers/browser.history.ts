@@ -76,8 +76,8 @@ export default function createRouter(ctx: bRouter): Router {
 		get page(): CurrentPage | undefined {
 			return {
 				query: Object.fromQueryString(location.search, {deep: true}),
-				...history.state,
-				page: this.id(location.href)
+				page: this.id(location.href),
+				...history.state
 			};
 		},
 

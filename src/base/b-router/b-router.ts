@@ -212,18 +212,14 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 	getPageOpts(page: string): PageOpts | undefined {
 		const
 			p = this.pages,
-			obj = p[page] || $C(p).one.get(({rgxp}) => rgxp && rgxp.test(page));
+			obj = p[page] || $C(p).one.get(({rgxp: r, page: s}) => s === page || r && r.test(page));
 
 		if (obj) {
 			const meta = Object.create({
 				meta: Object.mixin(true, {}, obj.meta),
 				toPath(p?: Dictionary): string {
-					if (p) {
-						p = $C(p).filter((el) => el != null).map(String);
-						return path.compile(obj.pattern || page)(p);
-					}
-
-					return page;
+					p = $C(p).filter((el) => el != null).map(String);
+					return path.compile(obj.pattern || page)(p);
 				}
 			});
 
@@ -293,8 +289,33 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 			}
 		};
 
+		const getPageParams = (info) => {
+			const
+				{meta, params, query} = info;
+
+			if (meta.paramsFromQuery) {
+				for (let o = meta.params, i = 0; i < o.length; i++) {
+					const
+						key = o[i],
+						nm = key.name,
+						val = query[nm];
+
+					if (val != null && new RegExp(key.pattern).test(val)) {
+						params[nm] = val;
+						delete query[nm];
+					}
+				}
+			}
+
+			return params;
+		};
+
 		if (c && method === 'push') {
-			await d.replace(c.page, Object.mixin(true, undefined, c, scroll));
+			const
+				page = this.getPageOpts(c.page),
+				info = Object.mixin(true, undefined, page || c, scroll);
+
+			await d.replace(page ? page.toPath(getPageParams(info)) : c.page, info);
 		}
 
 		const
@@ -335,28 +356,7 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 			this.setField('pageStore', store);
 
 			if (isNotEvent) {
-				let
-					p;
-
-				if (params) {
-					p = info.params;
-
-					if (meta.paramsFromQuery) {
-						for (let o = meta.params, q = info.query, i = 0; i < o.length; i++) {
-							const
-								key = o[i],
-								nm = key.name,
-								val = q[nm];
-
-							if (val != null && new RegExp(key.pattern).test(val)) {
-								p[nm] = val;
-								delete q[nm];
-							}
-						}
-					}
-				}
-
-				await d[method](info.toPath(p), info);
+				await d[method](info.toPath(getPageParams(info)), info);
 			}
 
 			const
