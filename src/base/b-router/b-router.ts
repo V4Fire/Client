@@ -210,9 +210,27 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 	 * @param [page]
 	 */
 	getPageOpts(page: string): PageOpts | undefined {
+		let
+			byId = false,
+			obj;
+
 		const
-			p = this.pages,
-			obj = p[page] || $C(p).one.get(({rgxp: r, page: s}) => s === page || r && r.test(page));
+			p = this.pages;
+
+		if (page in p) {
+			byId = true;
+			obj = p[page];
+
+		} else {
+			obj = $C(p).one.get((el) => {
+				if (el.page === page) {
+					byId = true;
+					return true;
+				}
+
+				return el.rgxp && el.rgxp.test(page);
+			});
+		}
 
 		if (obj) {
 			const meta = Object.create({
@@ -230,15 +248,14 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 				query: {}
 			});
 
-			if (!p[page] && obj.pattern) {
+			if (!byId && obj.pattern) {
 				const
-					params = obj.rgxp.exec(page);
+					params = obj.rgxp.exec(obj.url || page);
 
 				if (params) {
-					$C(path.parse(obj.pattern) as any[]).reduce((map, el: Key, i) => {
+					$C(path.parse(obj.pattern) as any[]).forEach((el: Key, i) => {
 						if (Object.isObject(el)) {
-							// @ts-ignore
-							t.params[el.name] = params[i];
+							t.params[el.name] = params[i + 1];
 						}
 					});
 				}
@@ -278,7 +295,7 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 
 		const info = page ?
 			this.getPageOpts(d.id(page)) :
-			c && Object.mixin(true, this.getPageOpts(c.page), Object.reject(c, 'page'));
+			c && Object.mixin(true, this.getPageOpts(c.url || c.page), Object.reject(c, ['page', 'url']));
 
 		const scroll = {
 			meta: {
@@ -293,7 +310,7 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 			const
 				{meta, params, query} = info;
 
-			if (meta.paramsFromQuery) {
+			if (meta.paramsFromQuery !== false) {
 				for (let o = meta.params, i = 0; i < o.length; i++) {
 					const
 						key = o[i],
@@ -311,11 +328,7 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 		};
 
 		if (c && method === 'push') {
-			const
-				page = this.getPageOpts(c.page),
-				info = Object.mixin(true, undefined, page || c, scroll);
-
-			await d.replace(page ? page.toPath(getPageParams(info)) : c.page, info);
+			await d.replace(c.url || c.page, Object.mixin(true, undefined, c, scroll));
 		}
 
 		const

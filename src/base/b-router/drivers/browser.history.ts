@@ -74,10 +74,14 @@ export default function createRouter(ctx: bRouter): Router {
 
 	const router = Object.mixin({withAccessors: true}, Object.create(new EventEmitter()), {
 		get page(): CurrentPage | undefined {
+			const
+				url = this.id(location.href);
+
 			return {
+				page: url,
 				query: Object.fromQueryString(location.search, {deep: true}),
-				page: this.id(location.href),
-				...history.state
+				...history.state,
+				url
 			};
 		},
 

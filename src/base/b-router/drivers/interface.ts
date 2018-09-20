@@ -30,6 +30,7 @@ export interface CurrentPage<
 	Q extends Dictionary = Dictionary,
 	M extends Dictionary = Dictionary
 > extends Dictionary {
+	url?: string;
 	page: string;
 	params: P;
 	query: Q;
