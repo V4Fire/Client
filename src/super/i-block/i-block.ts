@@ -1641,8 +1641,8 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 	activate(): void {
 		if (!this.isActivated) {
 			this.initStateFromRouter();
-			this.execCbAfterCreated(() => this.rootEvent.on('transition', async (route) => {
-				if (route !== this.r.route) {
+			this.execCbAfterCreated(() => this.rootEvent.on('onTransition', async (route, type) => {
+				if (type === 'hard' && route !== this.r.route) {
 					await this.rootEvent.promisifyOnce('setRoute', {
 						label: $$.activateAfterTransition
 					});

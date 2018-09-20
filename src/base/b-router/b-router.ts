@@ -276,7 +276,7 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 	 * @emits change(info: Object)
 	 * @emits hardChange(info: Object)
 	 * @emits softChange(info: Object)
-	 * @emits $root.transition(info: Object)
+	 * @emits $root.transition(info: Object, type: string)
 	 */
 	async setPage(
 		page: string | null,
@@ -362,7 +362,7 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 
 		const emitTransition = () => {
 			this.emit('change', store);
-			r.emit('transition', store);
+			r.emit('transition', store, hardChange ? 'hard' : 'soft');
 		};
 
 		if (!Object.fastCompare(f(current), f(store))) {
