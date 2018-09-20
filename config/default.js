@@ -93,6 +93,13 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 			return res;
 		},
 
+		publicPath() {
+			return o('public-path', {
+				env: true,
+				default: '/'
+			});
+		},
+
 		assetsJSON() {
 			return 'assets.json';
 		}

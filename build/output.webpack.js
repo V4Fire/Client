@@ -9,7 +9,7 @@
  */
 
 const
-	{src} = require('config'),
+	{src, webpack} = require('config'),
 	{hash, output} = include('build/build.webpack');
 
 /**
@@ -17,6 +17,6 @@ const
  */
 module.exports = {
 	path: src.cwd(),
-	publicPath: '/',
+	publicPath: webpack.publicPath(),
 	filename: hash(output, true)
 };
