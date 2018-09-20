@@ -284,7 +284,10 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 		method: SetPage = 'push'
 	): Promise<CurrentPage | undefined> {
 		const
-			{$root: r, driver: d, driver: {page: c}} = this,
+			{$root: r, driver: d, driver: {page: c}} = this;
+
+		const
+			rejectParams = (o) => o && Object.reject(o, ['page', 'url']),
 			isEmptyParams = !params || $C(params).every((el) => !$C(el).length());
 
 		if (!page && isEmptyParams && !this.isBeforeCreate()) {
@@ -293,9 +296,15 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 
 		this.emit('beforeChange', page, params, method);
 
-		const info = page ?
-			this.getPageOpts(d.id(page)) :
-			c && Object.mixin(true, this.getPageOpts(c.url || c.page), Object.reject(c, ['page', 'url']));
+		let
+			info;
+
+		if (page) {
+			info = this.getPageOpts(d.id(page));
+
+		} else if (c) {
+			info = Object.mixin(true, this.getPageOpts(c.url || c.page), rejectParams(c));
+		}
 
 		const scroll = {
 			meta: {
@@ -311,15 +320,23 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 				{meta, params, query} = info;
 
 			if (meta.paramsFromQuery !== false) {
+				const
+					rootState = r.convertStateToRouter(undefined, 'remote');
+
 				for (let o = meta.params, i = 0; i < o.length; i++) {
 					const
 						key = o[i],
 						nm = key.name,
 						val = query[nm];
 
-					if (val != null && new RegExp(key.pattern).test(val)) {
-						params[nm] = val;
-						delete query[nm];
+					if (params[nm] == null) {
+						if (val != null && new RegExp(key.pattern).test(val)) {
+							params[nm] = val;
+							delete query[nm];
+
+						} else if (meta.paramsFromRoot !== false) {
+							params[nm] = rootState[nm];
+						}
 					}
 				}
 			}
@@ -346,7 +363,7 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 			info.page = c.page;
 		}
 
-		Object.mixin({deep: true, withUndef: true}, info, params && Object.reject(params, 'page'));
+		Object.mixin({deep: true, withUndef: true}, info, rejectParams(params));
 
 		const
 			meta = info.meta,

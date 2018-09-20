@@ -13,6 +13,7 @@ export type BasePageMeta<M extends Dictionary = Dictionary> = M & {
 	page?: string;
 	path?: string;
 	paramsFromQuery?: boolean;
+	paramsFromRoot?: boolean;
 };
 
 export type PageSchema<M extends Dictionary = Dictionary> = Dictionary<
