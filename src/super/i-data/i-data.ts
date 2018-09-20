@@ -513,6 +513,7 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 	 * @param [value]
 	 * @param [oldValue]
 	 */
+	@watch({field: 'request', deep: true})
 	@watch({field: 'requestParams', deep: true})
 	protected async syncRequestParamsWatcher(value?: RequestParams, oldValue?: RequestParams): Promise<void> {
 		if (!value) {
