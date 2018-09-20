@@ -79,9 +79,13 @@ export default class iStaticPage<
 		return this.getField('routeStore');
 	}
 
-	/** @override */
+	/**
+	 * @override
+	 * @emits setRoute(value: Object)
+	 */
 	set route(value: CurrentPage<P, Q, M> | undefined) {
 		this.setField('routeStore', value);
+		this.emit('setRoute', value);
 	}
 
 	/** @override */

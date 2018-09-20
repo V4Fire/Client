@@ -713,6 +713,7 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 			emit: (event, ...args) => globalEvent.emit(event, ...args),
 			on: (event, fn, params, ...args) => $a.on(globalEvent, event, fn, params, ...args),
 			once: (event, fn, params, ...args) => $a.once(globalEvent, event, fn, params, ...args),
+			promisifyOnce: (event, params, ...args) => $a.promisifyOnce(globalEvent, event, params, ...args),
 			off: (...args) => $a.off(...args)
 		};
 	}
@@ -739,6 +740,14 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 				}
 
 				return $a.once($e, event, fn, params, ...args);
+			},
+
+			promisifyOnce: (event, params, ...args) => {
+				if (!$e) {
+					return;
+				}
+
+				return $a.promisifyOnce($e, event, params, ...args);
 			},
 
 			off: (...args) => {
@@ -773,6 +782,14 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 				}
 
 				return $a.once($e, event, fn, params, ...args);
+			},
+
+			promisifyOnce: (event, params, ...args) => {
+				if (!$e) {
+					return;
+				}
+
+				return $a.promisifyOnce($e, event, params, ...args);
 			},
 
 			off: (...args) => {
@@ -1624,7 +1641,13 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 	activate(): void {
 		if (!this.isActivated) {
 			this.initStateFromRouter();
-			this.execCbAfterCreated(() => this.rootEvent.on('transition', () => {
+			this.execCbAfterCreated(() => this.rootEvent.on('transition', async (route) => {
+				if (route !== this.r.route) {
+					await this.rootEvent.promisifyOnce('setRoute', {
+						label: $$.activateAfterTransition
+					});
+				}
+
 				this.initStateFromRouter();
 
 			}, {
@@ -2564,7 +2587,7 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 
 		this.execCbAtTheRightTime(() => {
 			const
-				p = this.$root.route || {},
+				p = this.$root.route,
 				stateFields = this.convertStateToRouter(Object.assign(Object.create(p), p.params, p.query));
 
 			this.setState(
