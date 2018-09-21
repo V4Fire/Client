@@ -65,7 +65,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		},
 
 		hashLength() {
-			return !isProd || this.fatHTML ? false : 15;
+			return !isProd || this.fatHTML ? false : 8;
 		},
 
 		dataURILimit() {
