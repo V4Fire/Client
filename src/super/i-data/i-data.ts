@@ -614,10 +614,15 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 			res = [p, {}];
 		}
 
-		res[0] = Object.mixin({
-			traits: true,
-			filter: (el) => isGet ? el != null : el !== undefined
-		}, undefined, res[0], customData);
+		if (Object.isObject(res[0]) && Object.isObject(customData)) {
+			res[0] = Object.mixin({
+				traits: true,
+				filter: (el) => isGet ? el != null : el !== undefined
+			}, undefined, res[0], customData);
+
+		} else {
+			res[0] = res[0] != null ? res[0] : customData;
+		}
 
 		res[1] = Object.mixin({deep: true}, undefined, res[1], customOpts);
 
