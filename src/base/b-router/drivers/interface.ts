@@ -12,6 +12,7 @@ import { EventEmitter2 as EventEmitter } from 'eventemitter2';
 export type BasePageMeta<M extends Dictionary = Dictionary> = M & {
 	page?: string;
 	path?: string;
+	index?: boolean;
 	paramsFromQuery?: boolean;
 	paramsFromRoot?: boolean;
 };
@@ -22,6 +23,7 @@ export type PageSchema<M extends Dictionary = Dictionary> = Dictionary<
 >;
 
 export type PageMeta<M extends Dictionary = Dictionary> = BasePageMeta<M> & {
+	index: boolean;
 	page: string;
 	params: Key[];
 };
@@ -31,8 +33,9 @@ export interface CurrentPage<
 	Q extends Dictionary = Dictionary,
 	M extends Dictionary = Dictionary
 > extends Dictionary {
-	url?: string;
 	page: string;
+	url?: string;
+	index: boolean;
 	params: P;
 	query: Q;
 	meta: PageMeta<M>;

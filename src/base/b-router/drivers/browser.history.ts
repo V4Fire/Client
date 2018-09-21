@@ -21,6 +21,10 @@ export default function createRouter(ctx: bRouter): Router {
 		{async: $a} = ctx;
 
 	function load(page: string, info?: PageOpts, method: string = 'pushState'): Promise<void> {
+		if (!page) {
+			throw new Error('Page to load is not defined');
+		}
+
 		return new Promise((resolve) => {
 			if (info) {
 				const

@@ -49,6 +49,7 @@ export type PageProp =
 
 export type Pages = Dictionary<{
 	page: string;
+	index: boolean;
 	pattern: string;
 	rgxp: RegExp;
 	meta: RouterMeta;
@@ -139,6 +140,7 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 				return {
 					page,
 					pattern,
+					index: !isStr && obj.index || page === 'index',
 					rgxp: pattern != null ? path(pattern, params) : undefined,
 					meta: {...isStr ? {} : obj, page, params}
 				};
@@ -232,6 +234,10 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 			});
 		}
 
+		if (!obj) {
+			obj = $C(p).one.get((el) => el.index);
+		}
+
 		if (obj) {
 			const meta = Object.create({
 				meta: Object.mixin(true, {}, obj.meta),
@@ -303,7 +309,14 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 			info = this.getPageOpts(d.id(page));
 
 		} else if (c) {
-			info = Object.mixin(true, this.getPageOpts(c.url || c.page), rejectParams(c));
+			page = c.url || c.page;
+
+			const
+				p = this.getPageOpts(page);
+
+			if (p) {
+				info = Object.mixin(true, p, rejectParams(c));
+			}
 		}
 
 		const scroll = {
@@ -352,7 +365,7 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 			isNotEvent = method !== 'event';
 
 		if (!info) {
-			if (isNotEvent) {
+			if (isNotEvent && page != null) {
 				await d[method](page, scroll);
 			}
 
