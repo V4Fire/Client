@@ -72,6 +72,13 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 			return this.fatHTML ? undefined : 4096;
 		},
 
+		publicPath() {
+			return o('public-path', {
+				env: true,
+				default: '/'
+			});
+		},
+
 		dllOutput(params) {
 			return this.output(params);
 		},
@@ -81,7 +88,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 				res = !isProd || this.fatHTML ? '[name]' : '[hash]_[name]';
 
 			if (params) {
-				return res.replace(/\[(.*?)]/g, (str, key) => {
+				return res.replace(/_?\[(.*?)]/g, (str, key) => {
 					if (params[key] != null) {
 						return params[key];
 					}
@@ -93,19 +100,12 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 			return res;
 		},
 
-		publicPath() {
-			return o('public-path', {
-				env: true,
-				default: '/'
-			});
-		},
-
 		assetsOutput(params) {
 			const
 				root = 'assets';
 
 			if (isProd) {
-				this.output({
+				return this.output({
 					...params,
 					hash: `${root}/[hash].[ext]`,
 					name: null
