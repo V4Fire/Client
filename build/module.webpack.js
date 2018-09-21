@@ -204,8 +204,18 @@ module.exports = async function ({buildId, plugins}) {
 		]
 	});
 
+	loaders.rules.set('assets', {
+		test: /\.(?:ttf|eot|woff|woff2|mp3|ogg|aac)$/,
+		use: [
+			{
+				loader: 'url',
+				options: fileLoaderOpts
+			}
+		]
+	});
+
 	loaders.rules.set('img', {
-		test: /\.(?:png|gif|jpe?g|ttf|eot|woff|woff2|mp3|ogg|aac)$/,
+		test: /\.(?:png|gif|jpe?g)$/,
 		use: [
 			{
 				loader: 'url',
