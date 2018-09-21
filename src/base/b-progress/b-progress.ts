@@ -7,7 +7,7 @@
  */
 
 import symbolGenerator from 'core/symbol';
-import iBlock, { field, component, ModsDecl } from 'super/i-block/i-block';
+import iBlock, { component, prop, field, ModsDecl } from 'super/i-block/i-block';
 export * from 'super/i-block/i-block';
 
 export const
@@ -15,23 +15,16 @@ export const
 
 @component()
 export default class bProgress extends iBlock {
-	/** @inheritDoc */
-	static readonly mods: ModsDecl = {
-		progress: [
-			bProgress.PARENT
-		]
-	};
-
 	/**
-	 * Progress value store
+	 * Initial progress value store
 	 */
-	@field()
-	protected valueStore: number = 0;
+	@prop({type: Number, required: false})
+	readonly valueProp?: number;
 
 	/**
 	 * Progress value
 	 */
-	protected get value(): number {
+	get value(): number | undefined {
 		return this.getField('valueStore');
 	}
 
@@ -41,14 +34,14 @@ export default class bProgress extends iBlock {
 	 * @param value
 	 * @emits complete()
 	 */
-	protected set value(value: number) {
+	set value(value: number | undefined) {
 		(async () => {
 			this.setField('valueStore', value);
 
 			if (value === 100) {
 				try {
 					await this.async.sleep(0.8.second(), {label: $$.complete});
-					this.setField('valueStore', 0)
+					this.setField('valueStore', 0);
 					this.emit('complete');
 
 				} catch (_) {}
@@ -59,9 +52,22 @@ export default class bProgress extends iBlock {
 		})();
 	}
 
+	/** @inheritDoc */
+	static readonly mods: ModsDecl = {
+		progress: [
+			bProgress.PARENT
+		]
+	};
+
+	/**
+	 * Progress value store
+	 */
+	@field((o) => o.link())
+	protected valueStore?: number;
+
 	/** @override */
 	protected initModEvents(): void {
 		super.initModEvents();
-		this.bindModTo('progress', 'valueStore');
+		this.bindModTo('progress', 'valueStore', Object.isNumber);
 	}
 }

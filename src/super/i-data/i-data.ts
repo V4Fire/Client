@@ -159,6 +159,14 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 				return $a.once($d.event, event, fn, params, ...args);
 			},
 
+			promisifyOnce: (event, params, ...args) => {
+				if (!$d) {
+					return;
+				}
+
+				return $a.promisifyOnce($d.event, event, params, ...args);
+			},
+
 			off: (...args) => {
 				if (!$d) {
 					return;
@@ -280,20 +288,28 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 
 		return {
 			connection,
-			on: async (event, fnOrParams, ...args) => {
+			on: (event, fnOrParams, ...args) => {
 				if (!$d) {
 					return;
 				}
 
-				return $a.on(<Socket>(await connection), event, fnOrParams, ...args);
+				return (async () => $a.on(<Socket>(await connection), event, fnOrParams, ...args))();
 			},
 
-			once: async (event, fnOrParams, ...args) => {
+			once: (event, fnOrParams, ...args) => {
 				if (!$d) {
 					return;
 				}
 
-				return $a.once(<Socket>(await connection), event, fnOrParams, ...args);
+				return (async () => $a.once(<Socket>(await connection), event, fnOrParams, ...args))();
+			},
+
+			promisifyOnce: (event, params, ...args) => {
+				if (!$d) {
+					return;
+				}
+
+				return (async () => $a.promisifyOnce(<Socket>(await connection), event, params, ...args))();
 			},
 
 			off: (...args) => {
@@ -497,6 +513,7 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 	 * @param [value]
 	 * @param [oldValue]
 	 */
+	@watch({field: 'request', deep: true})
 	@watch({field: 'requestParams', deep: true})
 	protected async syncRequestParamsWatcher(value?: RequestParams, oldValue?: RequestParams): Promise<void> {
 		if (!value) {

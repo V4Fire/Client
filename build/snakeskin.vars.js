@@ -14,13 +14,6 @@ const
 	path = require('path');
 
 module.exports = {
-	ignore(target) {
-		target.ignore = true;
-		return function () {
-			return target.apply(this, arguments);
-		};
-	},
-
 	saveTplDir(dirName, ...names) {
 		const
 			dir = path.basename(dirName);

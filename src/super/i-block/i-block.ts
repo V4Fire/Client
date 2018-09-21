@@ -49,7 +49,7 @@ import {
 } from 'super/i-block/modules/interface';
 
 import iStaticPage from 'super/i-static-page/i-static-page';
-import bRouter, { PageInfo } from 'base/b-router/b-router';
+import bRouter, { CurrentPage } from 'base/b-router/b-router';
 import { asyncLocal, AsyncNamespace } from 'core/kv-storage';
 import {
 
@@ -136,6 +136,12 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 	 */
 	@prop(Boolean)
 	readonly keepAlive: boolean = false;
+
+	/**
+	 * If true, then will be forcing activation hooks for all components instead of non functional components
+	 */
+	@prop(Boolean)
+	readonly forceActivation: boolean = false;
 
 	/**
 	 * Link to i18n function
@@ -313,11 +319,11 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 	}
 
 	/**
-	 * Link to the root pageInfo object
+	 * Link to the root route object
 	 */
 	@p({cache: false})
-	get route(): PageInfo | any | undefined {
-		return this.getField('pageInfo', this.$root);
+	get route(): CurrentPage | any | undefined {
+		return this.getField('route', this.$root);
 	}
 
 	/**
@@ -707,6 +713,7 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 			emit: (event, ...args) => globalEvent.emit(event, ...args),
 			on: (event, fn, params, ...args) => $a.on(globalEvent, event, fn, params, ...args),
 			once: (event, fn, params, ...args) => $a.once(globalEvent, event, fn, params, ...args),
+			promisifyOnce: (event, params, ...args) => $a.promisifyOnce(globalEvent, event, params, ...args),
 			off: (...args) => $a.off(...args)
 		};
 	}
@@ -733,6 +740,14 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 				}
 
 				return $a.once($e, event, fn, params, ...args);
+			},
+
+			promisifyOnce: (event, params, ...args) => {
+				if (!$e) {
+					return;
+				}
+
+				return $a.promisifyOnce($e, event, params, ...args);
 			},
 
 			off: (...args) => {
@@ -767,6 +782,14 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 				}
 
 				return $a.once($e, event, fn, params, ...args);
+			},
+
+			promisifyOnce: (event, params, ...args) => {
+				if (!$e) {
+					return;
+				}
+
+				return $a.promisifyOnce($e, event, params, ...args);
 			},
 
 			off: (...args) => {
@@ -1618,7 +1641,13 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 	activate(): void {
 		if (!this.isActivated) {
 			this.initStateFromRouter();
-			this.execCbAfterCreated(() => this.rootEvent.on('transition', () => {
+			this.execCbAfterCreated(() => this.rootEvent.on('onTransition', async (route, type) => {
+				if (type === 'hard' && route !== this.r.route) {
+					await this.rootEvent.promisifyOnce('setRoute', {
+						label: $$.activateAfterTransition
+					});
+				}
+
 				this.initStateFromRouter();
 
 			}, {
@@ -1649,9 +1678,12 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 
 		exec();
 
-		if (this.$el) {
+		const
+			{$el} = this;
+
+		if (this.forceActivation && $el) {
 			const
-				domEls = this.$el.querySelectorAll('.i-block-helper');
+				domEls = $el.querySelectorAll('.i-block-helper');
 
 			for (let i = 0; i < domEls.length; i++) {
 				const
@@ -1699,9 +1731,12 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 
 		exec();
 
-		if (this.$el) {
+		const
+			{$el} = this;
+
+		if (this.forceActivation && $el) {
 			const
-				domEls = this.$el.querySelectorAll('.i-block-helper');
+				domEls = $el.querySelectorAll('.i-block-helper');
 
 			for (let i = 0; i < domEls.length; i++) {
 				const
@@ -2552,8 +2587,8 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 
 		this.execCbAtTheRightTime(() => {
 			const
-				p = this.$root.pageInfo,
-				stateFields = this.convertStateToRouter(p && p.query);
+				p = this.$root.route || {},
+				stateFields = this.convertStateToRouter(Object.assign(Object.create(p), p.params, p.query));
 
 			this.setState(
 				stateFields

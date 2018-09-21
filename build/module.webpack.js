@@ -15,7 +15,7 @@ const
 
 const
 	{resolve} = require('@pzlr/build-core'),
-	{output, hash, assetsJSON, inherit, depsRgxpStr} = include('build/build.webpack');
+	{output, assetsOutput, assetsJSON, hash, inherit, depsRgxpStr} = include('build/build.webpack');
 
 const
 	build = include('build/entities.webpack'),
@@ -26,9 +26,10 @@ const
 	typescript = config.typescript(),
 	monic = config.monic();
 
-const fileLoaderOpts = inherit({name: hash('[path][hash]_[name].[ext]')}, {
+const fileLoaderOpts = {
+	name: assetsOutput,
 	limit: config.webpack.dataURILimit()
-});
+};
 
 /**
  * Returns parameters for webpack.module

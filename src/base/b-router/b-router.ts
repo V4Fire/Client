@@ -6,48 +6,52 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+// tslint:disable:max-file-line-count
 import $C = require('collection.js');
+import Async from 'core/async';
 
 import path = require('path-to-regexp');
 import { Key } from 'path-to-regexp';
 
-import Async from 'core/async';
 import driver from 'base/b-router/drivers';
 import symbolGenerator from 'core/symbol';
 
-import { Router, PageSchema, PageInfo, CurrentPage } from 'base/b-router/drivers/interface';
+import { Router, BasePageMeta, PageSchema, CurrentPage, PageOpts } from 'base/b-router/drivers/interface';
 import iData, { component, prop, system, hook, watch, p } from 'super/i-data/i-data';
 
 export * from 'super/i-data/i-data';
 export * from 'base/b-router/drivers/interface';
 
-export interface Meta extends Dictionary {
+export type RouterMeta = BasePageMeta & {
 	autoScroll?: boolean;
 	scroll?: {
 		x: number;
 		y: number;
 	};
+};
+
+export interface PagePropObj {
+	page: string;
+	meta?: RouterMeta;
+	params?: Dictionary;
+	query?: Dictionary;
 }
 
-export interface PagePropObj extends CurrentPage {
-	meta?: Meta;
+export interface PageParams {
+	meta?: RouterMeta;
+	params?: Dictionary;
+	query?: Dictionary;
 }
 
 export type PageProp =
 	string |
 	PagePropObj;
 
-export interface PageParams extends Dictionary {
-	params?: Dictionary;
-	query?: Dictionary;
-	meta?: Meta;
-}
-
 export type Pages = Dictionary<{
 	page: string;
 	pattern: string;
 	rgxp: RegExp;
-	meta: Meta;
+	meta: RouterMeta;
 }>;
 
 export type SetPage =
@@ -112,7 +116,7 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 	 * Page store
 	 */
 	@system()
-	protected pageStore?: PageInfo;
+	protected pageStore?: CurrentPage;
 
 	/**
 	 * Router paths
@@ -122,15 +126,21 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 		init: (o) => o.link((v) => {
 			const ctx: bRouter = <any>o;
 			return $C(v || ctx.driver.routes || {}).map((obj, page) => {
+				obj = obj || {};
+
 				const
 					isStr = Object.isString(obj),
-					pattern = isStr ? obj : obj.path;
+					pattern = isStr ? obj : obj.path,
+					params = [];
+
+				page = isStr ?
+					page : obj.page || page;
 
 				return {
 					page,
 					pattern,
-					rgxp: pattern != null ? path(pattern) : undefined,
-					meta: isStr ? {} : obj
+					rgxp: pattern != null ? path(pattern, params) : undefined,
+					meta: {...isStr ? {} : obj, page, params}
 				};
 			});
 		})
@@ -142,7 +152,7 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 	 * Current page
 	 */
 	@p({cache: false})
-	get page(): PageInfo | undefined {
+	get page(): CurrentPage | undefined {
 		return this.getField('pageStore');
 	}
 
@@ -199,21 +209,35 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 	 * Returns an information object of the specified page
 	 * @param [page]
 	 */
-	getPageOpts(page: string): PageInfo | undefined {
+	getPageOpts(page: string): PageOpts | undefined {
+		let
+			byId = false,
+			obj;
+
 		const
-			p = this.pages,
-			obj = p[page] || $C(p).one.get(({rgxp}) => rgxp && rgxp.test(page));
+			p = this.pages;
+
+		if (page in p) {
+			byId = true;
+			obj = p[page];
+
+		} else {
+			obj = $C(p).one.get((el) => {
+				if (el.page === page) {
+					byId = true;
+					return true;
+				}
+
+				return el.rgxp && el.rgxp.test(page);
+			});
+		}
 
 		if (obj) {
 			const meta = Object.create({
 				meta: Object.mixin(true, {}, obj.meta),
 				toPath(p?: Dictionary): string {
-					if (p) {
-						p = $C(p).filter((el) => el != null).map(String);
-						return path.compile(obj.pattern || page)(p);
-					}
-
-					return page;
+					p = $C(p).filter((el) => el != null).map(String);
+					return path.compile(obj.pattern || page)(p);
 				}
 			});
 
@@ -224,15 +248,14 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 				query: {}
 			});
 
-			if (!p[page] && obj.pattern) {
+			if (!byId && obj.pattern) {
 				const
-					params = obj.rgxp.exec(page);
+					params = obj.rgxp.exec(obj.url || page);
 
 				if (params) {
-					$C(path.parse(obj.pattern) as any[]).reduce((map, el: Key, i) => {
+					$C(path.parse(obj.pattern) as any[]).forEach((el: Key, i) => {
 						if (Object.isObject(el)) {
-							// @ts-ignore
-							t.params[el.name] = params[i];
+							t.params[el.name] = params[i + 1];
 						}
 					});
 				}
@@ -253,15 +276,18 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 	 * @emits change(info: Object)
 	 * @emits hardChange(info: Object)
 	 * @emits softChange(info: Object)
-	 * @emits $root.transition(info: Object)
+	 * @emits $root.transition(info: Object, type: string)
 	 */
 	async setPage(
 		page: string | null,
 		params?: PageParams,
 		method: SetPage = 'push'
-	): Promise<PageInfo | undefined> {
+	): Promise<CurrentPage | undefined> {
 		const
-			{$root: r, driver: d, driver: {page: c}} = this,
+			{$root: r, driver: d, driver: {page: c}} = this;
+
+		const
+			rejectParams = (o) => o && Object.reject(o, ['page', 'url']),
 			isEmptyParams = !params || $C(params).every((el) => !$C(el).length());
 
 		if (!page && isEmptyParams && !this.isBeforeCreate()) {
@@ -270,9 +296,15 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 
 		this.emit('beforeChange', page, params, method);
 
-		const info = page ?
-			this.getPageOpts(d.id(page)) :
-			c && Object.mixin(true, this.getPageOpts(c.page), Object.reject(c, 'page'));
+		let
+			info;
+
+		if (page) {
+			info = this.getPageOpts(d.id(page));
+
+		} else if (c) {
+			info = Object.mixin(true, this.getPageOpts(c.url || c.page), rejectParams(c));
+		}
 
 		const scroll = {
 			meta: {
@@ -283,8 +315,37 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 			}
 		};
 
+		const getPageParams = (info) => {
+			const
+				{meta, params, query} = info;
+
+			if (meta.paramsFromQuery !== false) {
+				const
+					rootState = r.convertStateToRouter(undefined, 'remote');
+
+				for (let o = meta.params, i = 0; i < o.length; i++) {
+					const
+						key = o[i],
+						nm = key.name,
+						val = query[nm];
+
+					if (params[nm] == null) {
+						if (val != null && new RegExp(key.pattern).test(val)) {
+							params[nm] = val;
+							delete query[nm];
+
+						} else if (meta.paramsFromRoot !== false) {
+							params[nm] = rootState[nm];
+						}
+					}
+				}
+			}
+
+			return params;
+		};
+
 		if (c && method === 'push') {
-			await d.replace(c.page, Object.mixin(true, undefined, c, scroll));
+			await d.replace(c.url || c.page, Object.mixin(true, undefined, c, scroll));
 		}
 
 		const
@@ -302,17 +363,12 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 			info.page = c.page;
 		}
 
-		Object.mixin({deep: true, withUndef: true}, info, params && Object.reject(params, 'page'));
+		Object.mixin({deep: true, withUndef: true}, info, rejectParams(params));
 
-		const nonWatchValues = {
-			query: info.query,
-			meta: info.meta
-		};
-
-		const store = Object.assign(
-			Object.create(nonWatchValues),
-			Object.reject(info, Object.keys(nonWatchValues))
-		);
+		const
+			meta = info.meta,
+			nonWatchValues = {query: info.query, meta},
+			store = Object.assign(Object.create(nonWatchValues), Object.reject(info, Object.keys(nonWatchValues)));
 
 		const
 			current = this.getField('pageStore'),
@@ -323,22 +379,22 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 
 		const emitTransition = () => {
 			this.emit('change', store);
-			r.emit('transition', store);
+			r.emit('transition', store, hardChange ? 'hard' : 'soft');
 		};
 
 		if (!Object.fastCompare(f(current), f(store))) {
 			this.setField('pageStore', store);
 
 			if (isNotEvent) {
-				await d[method](info.toPath(params && params.params), info);
+				await d[method](info.toPath(getPageParams(info)), info);
 			}
 
 			const
 				f = (v) => $C(v).filter((el) => !Object.isFunction(el)).map();
 
-			if (r.pageInfo && Object.fastCompare(f(current), f(store))) {
+			if (r.route && Object.fastCompare(f(current), f(store))) {
 				const
-					proto = Object.getPrototypeOf(r.pageInfo);
+					proto = Object.getPrototypeOf(r.route);
 
 				$C(nonWatchValues).forEach((el, key) => {
 					proto[key] = el;
@@ -349,7 +405,7 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 			} else {
 				hardChange = true;
 				this.emit('hardChange', store);
-				r.pageInfo = store;
+				r.route = store;
 			}
 
 			emitTransition();
@@ -358,10 +414,7 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 			emitTransition();
 		}
 
-		const
-			m = info.meta || {};
-
-		if (m.autoScroll !== false) {
+		if (meta.autoScroll !== false) {
 			(async () => {
 				try {
 					const label = {
@@ -369,13 +422,13 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 					};
 
 					if (hardChange) {
-						await this.async.wait(() => Object.fastCompare(store, r.pageInfo), label);
+						await this.async.wait(() => Object.fastCompare(store, r.route), label);
 					}
 
 					await this.nextTick(label);
 
 					const
-						s = m.scroll;
+						s = meta.scroll;
 
 					if (s) {
 						this.scrollTo(s.y, s.x);
@@ -406,7 +459,7 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 				await this.replace(page);
 
 			} else {
-				await this.replace(page.page, page);
+				await this.replace(page.page, Object.reject(page, 'page'));
 			}
 
 		} else {
