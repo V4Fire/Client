@@ -2383,7 +2383,7 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 				await this.storage.set(id, settings);
 				this.log('settings:save', () => Object.fastClone(settings));
 
-			} catch (_) {}
+			} catch {}
 
 			return settings;
 
@@ -2408,7 +2408,7 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 				this.log('settings:load', () => Object.fastClone(res));
 				return res;
 
-			} catch (_) {}
+			} catch {}
 
 		}, {
 			label: id,

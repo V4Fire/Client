@@ -949,7 +949,7 @@ export default class bInput<T extends Dictionary = Dictionary> extends iInput<T>
 					input.value = val;
 				}
 
-			} catch (_) {}
+			} catch {}
 		}, {immediate: true});
 	}
 

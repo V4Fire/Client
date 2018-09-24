@@ -136,7 +136,7 @@ export default class bInputTime<T extends Dictionary = Dictionary> extends bInpu
 		try {
 			await this.async.wait(() => this.mods.focused !== 'true', {label: $$.$$valueStore});
 			this.pointer = this.getNPointer(value, this.getField('pointerStore'));
-		} catch (_) {}
+		} catch {}
 	}
 
 	/**
@@ -233,6 +233,6 @@ export default class bInputTime<T extends Dictionary = Dictionary> extends bInpu
 			this.pointer = this.getNPointer(value, this.getField('pointerStore'));
 			this.emit('actionChange', this.pointer);
 
-		} catch (_) {}
+		} catch {}
 	}
 }

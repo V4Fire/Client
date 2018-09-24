@@ -22,7 +22,7 @@ function icons(id: string): Sprite {
 		try {
 			return iconsList[i](id).default;
 
-		} catch (_) {}
+		} catch {}
 	}
 
 	throw new Error(`Cannot find module "${id}"`);

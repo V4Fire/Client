@@ -164,7 +164,7 @@ export default class bForm<T extends Dictionary = Dictionary> extends iData<T> {
 		for (const el of await this.elements) {
 			try {
 				res.push(await el.clear());
-			} catch (_) {}
+			} catch {}
 		}
 
 		if ($C(res).some((el) => el)) {
@@ -186,7 +186,7 @@ export default class bForm<T extends Dictionary = Dictionary> extends iData<T> {
 		for (const el of await this.elements) {
 			try {
 				res.push(await el.reset());
-			} catch (_) {}
+			} catch {}
 		}
 
 		if ($C(res).some((el) => el)) {

@@ -159,7 +159,7 @@ export default class bSelect<T extends Dictionary = Dictionary> extends bInput<T
 			}
 
 			return super.initLoad(data, silent);
-		} catch (_) {}
+		} catch {}
 	}
 
 	/** @override */
@@ -399,7 +399,7 @@ export default class bSelect<T extends Dictionary = Dictionary> extends bInput<T
 				}
 			}
 
-		} catch (_) {}
+		} catch {}
 	}
 
 	/**
@@ -611,7 +611,7 @@ export default class bSelect<T extends Dictionary = Dictionary> extends bInput<T
 		try {
 			await this.async.wait(() => this.mods.opened !== 'true', {label: $$.onBlockValueChange});
 			super.onBlockValueChange(newValue, oldValue);
-		} catch (_) {}
+		} catch {}
 	}
 
 	/* eslint-enable no-unused-vars */
@@ -647,7 +647,7 @@ export default class bSelect<T extends Dictionary = Dictionary> extends bInput<T
 			this.on('asyncRender', async () => {
 				try {
 					await (await this.waitRef<bScrollInline>('scroll')).initScroll();
-				} catch (_) {}
+				} catch {}
 			});
 
 			this.initCloseHelpers();

@@ -567,7 +567,7 @@ export default class bScroll extends iBlock {
 						await this.async.nextTick({label: $$.wheel});
 					}
 
-				} catch (_) {}
+				} catch {}
 			}
 		}
 	}

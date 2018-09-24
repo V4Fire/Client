@@ -44,7 +44,7 @@ export default class bProgress extends iBlock {
 					this.setField('valueStore', 0);
 					this.emit('complete');
 
-				} catch (_) {}
+				} catch {}
 
 			} else {
 				this.async.clearTimeout({label: $$.complete});

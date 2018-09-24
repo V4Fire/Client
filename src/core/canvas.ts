@@ -11,7 +11,7 @@ if (!HTMLCanvasElement.prototype.toBlob) {
 		try {
 			return Boolean(new Blob());
 
-		} catch (_) {
+		} catch {
 			return false;
 		}
 	})();
@@ -21,7 +21,7 @@ if (!HTMLCanvasElement.prototype.toBlob) {
 			const SIZE = 100;
 			return new Blob([new Uint8Array(SIZE)]).size === SIZE;
 
-		} catch (_) {
+		} catch {
 			return false;
 		}
 	})();

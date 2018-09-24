@@ -93,7 +93,7 @@ export default function createRouter(ctx: bRouter): Router {
 			try {
 				return new URL(page).pathname;
 
-			} catch (_) {
+			} catch {
 				return page;
 			}
 		},
