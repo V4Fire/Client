@@ -18,6 +18,7 @@ const
 	{output, assetsOutput, assetsJSON, hash, inherit, depsRgxpStr} = include('build/build.webpack');
 
 const
+	path = require('upath'),
 	build = include('build/entities.webpack'),
 	depsRgxp = new RegExp(`(?:^|/)node_modules/(?:(?!${depsRgxpStr}).)*?(?:/|$)`);
 
@@ -27,7 +28,8 @@ const
 	monic = config.monic();
 
 const fileLoaderOpts = {
-	name: assetsOutput,
+	name: path.basename(assetsOutput),
+	outputPath: path.dirname(assetsOutput),
 	limit: config.webpack.dataURILimit()
 };
 
