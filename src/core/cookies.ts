@@ -31,15 +31,19 @@ export interface CookieOptions {
 	secure?: boolean;
 }
 
+export interface RemoveOptions extends CookieOptions {
+	expires?: never;
+}
+
 /**
  * Sets a cookie value by the specified name
  *
  * @param name
  * @param value
- * @param opts - additional options
+ * @param [opts] - additional options
  */
 export function set(name: string, value: string, opts: CookieOptions): string {
-	opts = opts || {};
+	opts = {path: '/', ...opts};
 
 	const
 		{expires} = opts;
@@ -75,16 +79,15 @@ export function set(name: string, value: string, opts: CookieOptions): string {
 
 /**
  * Removes a cookie by the specified name
+ *
  * @param name
+ * @param [opts] - additional options
  */
-export function remove(name: string): boolean {
+export function remove(name: string, opts?: RemoveOptions): boolean {
 	if (!has(name)) {
 		return false;
 	}
 
-	set(name, '', {
-		expires: -1
-	});
-
+	set(name, '', {path: '/', ...opts, expires: -1});
 	return true;
 }
