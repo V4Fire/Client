@@ -23,7 +23,7 @@
 			< input.&__hidden-input &
 				ref = input |
 				v-model = valueStore |
-				type = button |
+				type = hidden |
 				autocomplete = off |
 				:id = id |
 				:name = name |
