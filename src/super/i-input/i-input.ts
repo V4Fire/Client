@@ -354,7 +354,7 @@ export default class iInput<T extends Dictionary = Dictionary> extends iData<T> 
 			valid = await validator;
 
 			if (!valid) {
-				failedValidation = valid;
+				failedValidation = key;
 				break;
 			}
 		}
