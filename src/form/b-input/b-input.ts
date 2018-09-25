@@ -551,6 +551,9 @@ export default class bInput<T extends Dictionary = Dictionary> extends iInput<T>
 	 * @emits actionChange(value: string)
 	 */
 	protected async onEdit(e: Event): Promise<void> {
+		this.valueBufferStore =
+			(<HTMLInputElement>e.target).value || '';
+
 		if (!this.mask && this.blockValueField === 'value') {
 			this.emit('actionChange', this.value);
 		}
@@ -951,13 +954,5 @@ export default class bInput<T extends Dictionary = Dictionary> extends iInput<T>
 
 			} catch {}
 		}, {immediate: true});
-	}
-
-	/** @override */
-	protected mounted(): void {
-		super.mounted();
-		this.async.on(this.$el, 'input', (e) => this.valueBufferStore = e.target.value || '', {
-			label: $$.valueBufferStoreModelInput
-		});
 	}
 }

@@ -582,6 +582,9 @@ export default class bSelect<T extends Dictionary = Dictionary> extends bInput<T
 
 	/** @override */
 	protected async onEdit(e: Event): Promise<void> {
+		this.valueBufferStore =
+			(<HTMLInputElement>e.target).value || '';
+
 		this.async.setTimeout(() => {
 			const
 				rgxp = new RegExp(`^${RegExp.escape(this.value)}`, 'i');
