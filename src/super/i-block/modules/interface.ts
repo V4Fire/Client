@@ -27,9 +27,11 @@ export type WatchObjectField =
 export type WatchObjectFields = Array<WatchObjectField>;
 
 export interface SizeTo {
-	gt: Dictionary<string>;
-	lt: Dictionary<string>;
+	gt: Dictionary<Size>;
+	lt: Dictionary<Size>;
 }
+
+export type Size = 'xxs' | 'xs' | 's' | 'm' | 'l' | 'xl' | 'xxl';
 
 export interface SyncLink {
 	path: string;
