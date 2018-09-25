@@ -316,22 +316,26 @@ export default class iInput<T extends Dictionary = Dictionary> extends iData<T> 
 
 	/**
 	 * Validates the component value
+	 * (returns true or a failed validation name)
 	 *
 	 * @param params - additional parameters
 	 * @emits validationStart()
 	 * @emits validationSuccess()
-	 * @emits validationFail()
-	 * @emits validationEnd(result: boolean)
+	 * @emits validationFail(failedValidation: string)
+	 * @emits validationEnd(result: boolean, failedValidation?: string)
 	 */
 	@wait('ready')
-	async validate(params?: Dictionary): Promise<boolean> {
+	async validate(params?: Dictionary): Promise<boolean | string> {
 		if (!this.validators.length) {
 			this.removeMod('valid');
 			return true;
 		}
 
 		this.emit('validationStart');
-		let valid;
+
+		let
+			valid,
+			failedValidation;
 
 		for (const el of this.validators) {
 			const
@@ -348,7 +352,9 @@ export default class iInput<T extends Dictionary = Dictionary> extends iData<T> 
 			}
 
 			valid = await validator;
+
 			if (!valid) {
+				failedValidation = valid;
 				break;
 			}
 		}
@@ -366,11 +372,11 @@ export default class iInput<T extends Dictionary = Dictionary> extends iData<T> 
 			this.emit('validationSuccess');
 
 		} else {
-			this.emit('validationFail');
+			this.emit('validationFail', failedValidation);
 		}
 
-		this.emit('validationEnd', valid);
-		return valid;
+		this.emit('validationEnd', valid, failedValidation);
+		return valid || failedValidation;
 	}
 
 	/** @override */

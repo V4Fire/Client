@@ -202,8 +202,8 @@ export default class bForm<T extends Dictionary = Dictionary> extends iData<T> {
 	 *
 	 * @emits validationStart()
 	 * @emits validationSuccess()
-	 * @emits validationFail()
-	 * @emits validationEnd(result: boolean)
+	 * @emits validationFail(failedValidation: Object)
+	 * @emits validationEnd(result: boolean, failedValidation: Object)
 	 */
 	@wait('ready', {label: $$.validate, defer: true})
 	async validate(): Promise<iInput[] | false> {
@@ -213,7 +213,10 @@ export default class bForm<T extends Dictionary = Dictionary> extends iData<T> {
 			els = <iInput[]>[],
 			map = {};
 
-		let valid = true;
+		let
+			valid = true,
+			failedValidation;
+
 		for (const el of await this.elements) {
 			if (
 				el.name && (
@@ -222,8 +225,15 @@ export default class bForm<T extends Dictionary = Dictionary> extends iData<T> {
 					!Object.fastCompare(this.getField(`tmp.${el.name}`), await el.groupFormValue)
 				)
 			) {
-				if (el.mods.valid !== 'true' && !await el.validate()) {
-					await el.focus();
+				const
+					validation = el.mods.valid !== 'true' && await el.validate();
+
+				if (Object.isString(validation)) {
+					try {
+						await el.focus();
+					} catch {}
+
+					failedValidation = {el, validator: validation};
 					valid = false;
 					break;
 				}
@@ -239,10 +249,10 @@ export default class bForm<T extends Dictionary = Dictionary> extends iData<T> {
 			this.emit('validationSuccess');
 
 		} else {
-			this.emit('validationFail');
+			this.emit('validationFail', failedValidation);
 		}
 
-		this.emit('validationEnd', valid);
+		this.emit('validationEnd', valid, failedValidation);
 		return valid && els;
 	}
 
