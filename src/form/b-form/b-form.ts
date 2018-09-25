@@ -71,7 +71,7 @@ export default class bForm<T extends Dictionary = Dictionary> extends iData<T> {
 	 * Form delegate function
 	 */
 	@prop({type: Function, required: false})
-	readonly delegate?: Function;
+	readonly delegateAction?: Function;
 
 	/**
 	 * Form request parameters
@@ -307,8 +307,8 @@ export default class bForm<T extends Dictionary = Dictionary> extends iData<T> {
 			this.emit('submitStart', body, this.params, this.method);
 			try {
 				// tslint:disable-next-line
-				if (this.delegate) {
-					res = await this.delegate(this, body, this.params, els);
+				if (this.delegateAction) {
+					res = await this.delegateAction(this, body, this.params, els);
 
 				} else {
 					if (this.action) {
