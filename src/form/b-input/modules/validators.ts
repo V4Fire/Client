@@ -17,6 +17,18 @@ export const
 	group = 'validation';
 
 export default <ValidatorsDecl>{
+	async required({msg, showMsg = true}: Dictionary): Promise<boolean> {
+		if (!await this.formValue) {
+			if (showMsg) {
+				this.error = msg || t`Required field`;
+			}
+
+			return false;
+		}
+
+		return true;
+	},
+
 	async name({msg, skipLength, showMsg = true}: Dictionary): Promise<boolean> {
 		const
 			value = await this.formValue;
