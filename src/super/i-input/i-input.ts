@@ -22,10 +22,8 @@ export interface ValidationError<T extends any = any> extends Dictionary {
 
 export type ValidatorResult<T extends any = any> = boolean | null | ValidationError<T>;
 export type ValidationResult<T extends any = any> = boolean | [string, ValidationError<T>];
-
 export type Validators = Array<string | Dictionary<ValidatorParams> | [string, ValidatorParams]>;
-export type ValidatorsDecl<T extends iInput = iInput> =
-	Dictionary<(this: T, params: any) => CanPromise<boolean | any>>;
+export type ValidatorsDecl<T extends iInput = iInput> = Dictionary<(this: T, params: any) => CanPromise<boolean | any>>;
 
 @component({
 	model: {
