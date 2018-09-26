@@ -10,9 +10,15 @@ import $C = require('collection.js');
 import iData, { component, prop, field, system, hook, wait, p, ModsDecl } from 'super/i-data/i-data';
 
 export * from 'super/i-data/i-data';
-export type Validators = Array<string | Dictionary<Dictionary>>;
+
+export interface ValidatorParams extends Dictionary {
+	msg?: string;
+	showMsg?: boolean;
+}
+
+export type Validators = Array<string | Dictionary<ValidatorParams>>;
 export type ValidatorsDecl<T extends iInput = iInput> =
-	Dictionary<(this: T, params: Dictionary) => CanPromise<boolean>>;
+	Dictionary<(this: T, params: any) => CanPromise<boolean>>;
 
 @component({
 	model: {
@@ -231,7 +237,7 @@ export default class iInput<T extends Dictionary = Dictionary> extends iData<T> 
 	 * Component validators
 	 */
 	static blockValidators: ValidatorsDecl = {
-		async required({msg, showMsg = true}: Dictionary): Promise<boolean> {
+		async required({msg, showMsg = true}: ValidatorParams): Promise<boolean> {
 			if (await this.formValue == null) {
 				if (showMsg) {
 					this.error = msg || t`Required field`;
@@ -325,7 +331,7 @@ export default class iInput<T extends Dictionary = Dictionary> extends iData<T> 
 	 * @emits validationEnd(result: boolean, failedValidation?: string)
 	 */
 	@wait('ready')
-	async validate(params?: Dictionary): Promise<boolean | string> {
+	async validate(params?: ValidatorParams): Promise<boolean | string> {
 		if (!this.validators.length) {
 			this.removeMod('valid');
 			return true;
