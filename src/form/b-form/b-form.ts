@@ -232,9 +232,10 @@ export default class bForm<T extends Dictionary = Dictionary> extends iData<T> {
 				)
 			) {
 				const
-					validation = el.mods.valid !== 'true' && await el.validate();
+					canValidate = el.mods.valid !== 'true',
+					validation = canValidate && await el.validate();
 
-				if (validation !== true) {
+				if (canValidate && validation !== true) {
 					if (focusOnFail) {
 						try {
 							await el.focus();
