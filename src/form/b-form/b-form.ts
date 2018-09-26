@@ -9,7 +9,7 @@
 import $C = require('collection.js');
 import symbolGenerator from 'core/symbol';
 import bInputHidden from 'form/b-input-hidden/b-input-hidden';
-import iInput from 'super/i-input/i-input';
+import iInput, { ValidationError as InputValidationError } from 'super/i-input/i-input';
 import bButton from 'form/b-button/b-button';
 import iData, {
 
@@ -26,6 +26,11 @@ import iData, {
 } from 'super/i-data/i-data';
 
 export * from 'super/i-data/i-data';
+
+export interface ValidationError<V extends any = any> {
+	el: iInput;
+	validator: InputValidationError<V>;
+}
 
 export const
 	$$ = symbolGenerator();
@@ -228,7 +233,7 @@ export default class bForm<T extends Dictionary = Dictionary> extends iData<T> {
 				const
 					validation = el.mods.valid !== 'true' && await el.validate();
 
-				if (Object.isString(validation)) {
+				if (validation !== true) {
 					try {
 						await el.focus();
 					} catch {}

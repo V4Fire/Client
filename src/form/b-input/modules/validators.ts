@@ -7,7 +7,7 @@
  */
 
 import fetch from 'core/request';
-import iInput, { ValidatorsDecl, ValidatorParams } from 'super/i-input/i-input';
+import iInput, { ValidatorsDecl, ValidatorParams, ValidatorResult } from 'super/i-input/i-input';
 import symbolGenerator from 'core/symbol';
 import { name, password } from 'core/const/validation';
 
@@ -38,7 +38,7 @@ export interface PasswordValidatorParams extends ConstPatternValidatorParams {
 }
 
 export default <ValidatorsDecl>{
-	async required({msg, showMsg = true}: ValidatorParams): Promise<boolean> {
+	async required({msg, showMsg = true}: ValidatorParams): Promise<ValidatorResult> {
 		if (!await this.formValue) {
 			if (showMsg) {
 				this.error = msg || t`Required field`;
@@ -57,7 +57,7 @@ export default <ValidatorsDecl>{
 		maxLength,
 		skipLength,
 		showMsg = true
-	}: PatternValidatorParams): Promise<boolean> {
+	}: PatternValidatorParams): Promise<ValidatorResult> {
 		const
 			value = await this.formValue;
 
@@ -66,7 +66,10 @@ export default <ValidatorsDecl>{
 				this.error = msg || t`Invalid characters`;
 			}
 
-			return false;
+			return {
+				name: 'INVALID_CHARS',
+				value
+			};
 		}
 
 		if (!skipLength) {
@@ -75,7 +78,10 @@ export default <ValidatorsDecl>{
 					this.error = msg || t`Value length must be at least ${minLength} characters`;
 				}
 
-				return false;
+				return {
+					name: 'MIN_LENGTH',
+					value: minLength
+				};
 			}
 
 			if (Object.isNumber(maxLength) && value.length > maxLength) {
@@ -83,14 +89,17 @@ export default <ValidatorsDecl>{
 					this.error = msg || t`Value length must be no more than ${maxLength} characters`;
 				}
 
-				return false;
+				return {
+					name: 'MAX_LENGTH',
+					value: maxLength
+				};
 			}
 		}
 
 		return true;
 	},
 
-	async name({msg, skipLength, showMsg = true}: ConstPatternValidatorParams): Promise<boolean> {
+	async name({msg, skipLength, showMsg = true}: ConstPatternValidatorParams): Promise<ValidatorResult> {
 		const
 			value = await this.formValue;
 
@@ -100,7 +109,10 @@ export default <ValidatorsDecl>{
 					t`Invalid characters. <br>Allowed only Latin characters, numbers and underscore`;
 			}
 
-			return false;
+			return {
+				name: 'INVALID_CHARS',
+				value
+			};
 		}
 
 		if (!skipLength) {
@@ -109,7 +121,10 @@ export default <ValidatorsDecl>{
 					this.error = msg || t`Name length must be at least ${name.min} characters`;
 				}
 
-				return false;
+				return {
+					name: 'MIN_LENGTH',
+					value: name.min
+				};
 			}
 
 			if (value.length > name.max) {
@@ -117,14 +132,17 @@ export default <ValidatorsDecl>{
 					this.error = msg || t`Name length must be no more than ${name.max} characters`;
 				}
 
-				return false;
+				return {
+					name: 'MAX_LENGTH',
+					value: name.max
+				};
 			}
 		}
 
 		return true;
 	},
 
-	async nameNotExists({url, msg, own, showMsg = true}: CheckExistsValidatorParams): Promise<boolean | null> {
+	async nameNotExists({url, msg, own, showMsg = true}: CheckExistsValidatorParams): Promise<ValidatorResult> {
 		const
 			value = await this.formValue;
 
@@ -165,7 +183,7 @@ export default <ValidatorsDecl>{
 		});
 	},
 
-	async email({msg, showMsg = true}: ConstPatternValidatorParams): Promise<boolean | null> {
+	async email({msg, showMsg = true}: ConstPatternValidatorParams): Promise<ValidatorResult> {
 		const
 			value = (await this.formValue).trim();
 
@@ -180,7 +198,7 @@ export default <ValidatorsDecl>{
 		return true;
 	},
 
-	async emailNotExists({url, msg, own, showMsg = true}: CheckExistsValidatorParams): Promise<boolean | null> {
+	async emailNotExists({url, msg, own, showMsg = true}: CheckExistsValidatorParams): Promise<ValidatorResult> {
 		const
 			value = await this.formValue;
 
@@ -221,7 +239,7 @@ export default <ValidatorsDecl>{
 		});
 	},
 
-	async password({msg, connected, old, skipLength, showMsg = true}: PasswordValidatorParams): Promise<boolean> {
+	async password({msg, connected, old, skipLength, showMsg = true}: PasswordValidatorParams): Promise<ValidatorResult> {
 		const
 			value = await this.formValue;
 
@@ -231,7 +249,10 @@ export default <ValidatorsDecl>{
 					t`Invalid characters. <br>Allowed only Latin characters, numbers and underscore`;
 			}
 
-			return false;
+			return {
+				name: 'INVALID_CHARS',
+				value
+			};
 		}
 
 		if (!skipLength) {
@@ -240,7 +261,10 @@ export default <ValidatorsDecl>{
 					this.error = msg || t`Password length must be at least ${password.min} characters`;
 				}
 
-				return false;
+				return {
+					name: 'MIN_LENGTH',
+					value: password.min
+				};
 			}
 
 			if (value.length > password.max) {
@@ -248,7 +272,10 @@ export default <ValidatorsDecl>{
 					this.error = msg || t`Password length must be no more than ${password.max} characters`;
 				}
 
-				return false;
+				return {
+					name: 'MAX_LENGTH',
+					value: password.max
+				};
 			}
 		}
 
@@ -264,7 +291,10 @@ export default <ValidatorsDecl>{
 						this.error = msg || t`Old and new password are the same`;
 					}
 
-					return false;
+					return {
+						name: 'OLD_IS_NEW',
+						value
+					};
 				}
 
 				connectedInput.setMod('valid', true);
@@ -283,7 +313,10 @@ export default <ValidatorsDecl>{
 						this.error = msg || t`Passwords don't match`;
 					}
 
-					return false;
+					return {
+						name: 'NOT_CONFIRM',
+						value: [value, connectedValue]
+					};
 				}
 
 				connectedInput.setMod('valid', true);
@@ -293,12 +326,15 @@ export default <ValidatorsDecl>{
 		return true;
 	},
 
-	async dateFromInput({msg, showMsg = true}: ValidatorParams): Promise<boolean> {
+	async dateFromInput({msg, showMsg = true}: ValidatorParams): Promise<ValidatorResult> {
 		const
 			value = await this.formValue;
 
 		if (/[^\d.-:()]/.test(this.value)) {
-			return false;
+			return {
+				name: 'INVALID_CHARS',
+				value: this.value
+			};
 		}
 
 		if (!Object.isDate(value) || isNaN(Date.parse(<any>value))) {
@@ -306,7 +342,10 @@ export default <ValidatorsDecl>{
 				this.error = msg || t`Invalid date`;
 			}
 
-			return false;
+			return {
+				name: 'INVALID_DATE',
+				value
+			};
 		}
 
 		return true;
