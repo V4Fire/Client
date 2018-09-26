@@ -15,13 +15,19 @@ export interface ValidatorParams extends Dictionary {
 	showMsg?: boolean;
 }
 
-export interface ValidationError<T extends any = any> extends Dictionary {
+export interface ValidatorError<T extends any = any> extends Dictionary {
 	name: string;
 	value?: T;
 }
 
-export type ValidatorResult<T extends any = any> = boolean | null | ValidationError<T>;
-export type ValidationResult<T extends any = any> = boolean | [string, ValidationError<T>];
+export type ValidatorResult<T extends any = any> =
+	boolean |
+	null |
+	ValidatorError<T>;
+
+export type ValidationError<T extends any = any> = [string, ValidatorError<T>];
+export type ValidationResult<T extends any = any> = boolean | ValidationError<T>;
+
 export type Validators = Array<string | Dictionary<ValidatorParams> | [string, ValidatorParams]>;
 export type ValidatorsDecl<T extends iInput = iInput> = Dictionary<(this: T, params: any) => CanPromise<boolean | any>>;
 
