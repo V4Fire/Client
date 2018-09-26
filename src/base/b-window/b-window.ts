@@ -182,9 +182,11 @@ export default class bWindow<T extends Dictionary = Dictionary> extends iData<T>
 		$e.on('block.mod.set.hidden.true', () => $a.off({group}));
 	}
 
-	/** @override */
-	protected mounted(): void {
-		super.mounted();
+	/**
+	 * Initializes the component placement within a document
+	 */
+	@hook('mounted')
+	protected initDocumentPlacement(): void {
 		document.body.insertAdjacentElement('beforeend', this.$el);
 	}
 
