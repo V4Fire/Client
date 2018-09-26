@@ -205,13 +205,14 @@ export default class bForm<T extends Dictionary = Dictionary> extends iData<T> {
 	/**
 	 * Validates child form blocks and returns an array of valid elements or false
 	 *
+	 * @param [focusOnFail] - if true, then will be set focus to an invalid element
 	 * @emits validationStart()
 	 * @emits validationSuccess()
 	 * @emits validationFail(failedValidation: Object)
 	 * @emits validationEnd(result: boolean, failedValidation: Object)
 	 */
 	@wait('ready', {label: $$.validate, defer: true})
-	async validate(): Promise<iInput[] | false> {
+	async validate(focusOnFail?: boolean): Promise<iInput[] | false> {
 		this.emit('validationStart');
 
 		const
@@ -234,9 +235,11 @@ export default class bForm<T extends Dictionary = Dictionary> extends iData<T> {
 					validation = el.mods.valid !== 'true' && await el.validate();
 
 				if (validation !== true) {
-					try {
-						await el.focus();
-					} catch {}
+					if (focusOnFail) {
+						try {
+							await el.focus();
+						} catch {}
+					}
 
 					failedValidation = {el, validator: validation};
 					valid = false;
@@ -280,7 +283,7 @@ export default class bForm<T extends Dictionary = Dictionary> extends iData<T> {
 		));
 
 		const
-			els = await this.validate();
+			els = await this.validate(true);
 
 		let
 			throws,
