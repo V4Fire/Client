@@ -8,7 +8,6 @@
 
 import $C = require('collection.js');
 import iData, { component, prop, field, system, hook, wait, p, ModsDecl } from 'super/i-data/i-data';
-
 export * from 'super/i-data/i-data';
 
 export interface ValidatorParams extends Dictionary {
