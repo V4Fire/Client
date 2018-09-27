@@ -11,7 +11,7 @@
 - include 'form/b-button'|b as placeholder
 
 - template index() extends ['b-button'].index
-	- block button
+	- block button()
 		- super
 		< input.&__file &
 			ref = file |
