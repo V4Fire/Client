@@ -11,7 +11,7 @@ import $C = require('collection.js');
 
 import symbolGenerator from 'core/symbol';
 import Async, { AsyncOpts, ClearOptsId } from 'core/async';
-import log from 'core/log';
+import log, { LogMessageOptions } from 'core/log';
 
 import * as analytics from 'core/analytics';
 import { EventEmitter2 as EventEmitter } from 'eventemitter2';
@@ -2037,19 +2037,26 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 	/**
 	 * Puts the specified parameters to log
 	 *
-	 * @param key - log key
+	 * @param key - log key or log message options
 	 * @param [details]
 	 */
-	protected log(key: string, ...details: any[]): void {
-		log(['component', key, this.componentName].join(':'), ...details, this);
+	protected log(key: string | LogMessageOptions, ...details: any[]): void {
+		let type;
+
+		if (!Object.isString(key)) {
+			type = key.type;
+			key = key.key;
+		}
+
+		log({key: ['component', key, this.componentName].join(':'), type}, ...details, this);
 
 		if (this.globalName) {
-			log(['component:global', this.globalName, key, this.componentName].join(':'), ...details, this);
+			log({key: ['component:global', this.globalName, key, this.componentName].join(':'), type}, ...details, this);
 		}
 	}
 
 	/**
-	 * Creates a new function from the specified that executes deferedly
+	 * Creates a new function from the specified that executes deferredly
 	 *
 	 * @see Async.setTimeout
 	 * @param fn
