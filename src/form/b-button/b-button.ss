@@ -74,7 +74,7 @@
 								+= self.gIcon(['icon'], {'g-icon': {}})
 
 					- block progress
-						< _.&__cell.&__icon.&__progress v-if = !isFunctional
+						< _.&__cell.&__icon.&__progress v-if = dataProvider
 							< b-progress-icon v-once
 
 		< template v-if = type === 'link'

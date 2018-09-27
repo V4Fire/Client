@@ -102,6 +102,12 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 	readonly driverProp!: () => Router;
 
 	/**
+	 * If true, then will be shown page load status on transitions
+	 */
+	@prop(Boolean)
+	readonly showStatus: boolean = false;
+
+	/**
 	 * Page load status
 	 */
 	@system()

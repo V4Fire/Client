@@ -80,6 +80,12 @@ export default class bList<T extends Dictionary = Dictionary> extends iData<T> {
 	readonly cancelable: boolean = false;
 
 	/**
+	 * If true, then will be shown page load status on transitions
+	 */
+	@prop(Boolean)
+	readonly showProgress: boolean = false;
+
+	/**
 	 * Component value
 	 */
 	@field({
