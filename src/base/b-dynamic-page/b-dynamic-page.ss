@@ -15,7 +15,7 @@
 	- overWrapper = false
 
 	- block body
-		: tree = include('build/snakeskin.webpack.js')
+		: tree = include('build/snakeskin.webpack')
 
 		? Object.assign(attrs, tree.getComponentPropAttrs(self.name(PARENT_TPL_NAME)))
 		? attrs[':dispatching'] = true
