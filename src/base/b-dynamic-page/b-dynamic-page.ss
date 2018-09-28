@@ -8,14 +8,22 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-- include 'super/i-block'|b as placeholder
+- import $C from 'collection.js'
+- include 'super/i-dynamic-page'|b as placeholder
 
-- template index() extends ['i-block'].index
+- template index() extends ['i-dynamic-page'].index
 	- overWrapper = false
 
 	- block body
+		: tree = include('build/snakeskin.webpack.js')
+
+		? Object.assign(attrs, tree.getComponentPropAttrs(self.name(PARENT_TPL_NAME)))
+		? attrs[':dispatching'] = true
+		? attrs[':selfDispatching'] = true
+		? delete attrs[':is']
+
 		- block component(keepAlive, include, exclude)
-			: keepAliveAttrs = {}
+			: keepAliveAttrs = Object.assign({}, attrs)
 
 			- if include
 				? keepAliveAttrs.include = 'include'
@@ -25,8 +33,10 @@
 
 			< ${keepAlive ? 'keep-alive' : '?'} ${keepAliveAttrs}
 				< component &
-					v-if = component |
-					:is = component
+					ref = component |
+					v-if = page |
+					:is = page |
+					${attrs}
 				.
 
 		< template v-if = keepAlive

@@ -6,10 +6,5 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-@import "super/i-block/i-block.styl"
-
-$p = {
-
-}
-
-b-is extends i-block
+package('b-dynamic-page')
+	.extends('i-dynamic-page');

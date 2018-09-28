@@ -7,8 +7,8 @@
  */
 
 import { EventEmitterLike } from 'core/async';
-import iBlock, { component, prop, field, watch } from 'super/i-block/i-block';
-export * from 'super/i-block/i-block';
+import iDynamicPage, { component, prop, field, watch } from 'super/i-dynamic-page/i-dynamic-page';
+export * from 'super/i-data/i-data';
 
 export type KeepAlive =
 	string |
@@ -16,12 +16,12 @@ export type KeepAlive =
 	RegExp;
 
 @component({functional: true})
-export default class bIs extends iBlock {
+export default class bDynamicPage extends iDynamicPage {
 	/**
 	 * Initial component name
 	 */
 	@prop({type: String, required: false})
-	readonly componentProp?: string;
+	readonly pageProp?: string;
 
 	/**
 	 * If true, then will be using keep-alive
@@ -62,7 +62,17 @@ export default class bIs extends iBlock {
 	 * Component name
 	 */
 	@field((o) => o.link())
-	component?: string;
+	page?: string;
+
+	/**
+	 * Link to a page component
+	 */
+	get component(): iDynamicPage | undefined {
+		return this.$refs.component;
+	}
+
+	/** @override */
+	protected readonly $refs!: {component?: iDynamicPage};
 
 	/**
 	 * Synchronization for the emitter prop
@@ -78,7 +88,7 @@ export default class bIs extends iBlock {
 
 		if (this.event) {
 			$a.on(this.emitter || this.$root, this.event, (e) => {
-				this.component = this.eventConverter ? this.eventConverter(e, this.component) : e;
+				this.page = this.eventConverter ? this.eventConverter(e, this.page) : e;
 			}, group);
 		}
 	}
