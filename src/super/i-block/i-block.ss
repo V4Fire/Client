@@ -32,6 +32,7 @@
 
 	- rootTag = 'div'
 	- overWrapper = true
+	- renderCounter = true
 
 	/**
 	 * Applies Typograf to the specified content
@@ -62,8 +63,9 @@
 
 	- block root
 		< _.${self.name()} ${rootAttrs|!html}
-			< .&__render-counter v-show = false
-				{{ renderCounter }}
+			- if renderCounter
+				< .&__render-counter v-show = false
+					{{ renderCounter }}
 
 			/**
 			 * Generates an icon block

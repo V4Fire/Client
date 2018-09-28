@@ -14,3 +14,4 @@
 	- rootTag = 'span'
 	- messageHelpers = false
 	- overWrapper = false
+	- renderCounter = false
