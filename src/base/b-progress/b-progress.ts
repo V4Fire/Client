@@ -35,19 +35,22 @@ export default class bProgress extends iBlock {
 	 * @emits complete()
 	 */
 	set value(value: number | undefined) {
+		const
+			label = {label: $$.complete};
+
 		(async () => {
 			this.setField('valueStore', value);
 
 			if (value === 100) {
 				try {
-					await this.async.sleep(0.8.second(), {label: $$.complete});
+					await this.async.sleep(0.8.second(), label);
 					this.setField('valueStore', 0);
 					this.emit('complete');
 
 				} catch {}
 
 			} else {
-				this.async.clearTimeout({label: $$.complete});
+				this.async.clearTimeout(label);
 			}
 		})();
 	}
