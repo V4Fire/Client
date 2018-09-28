@@ -92,4 +92,10 @@ export default class bDynamicPage extends iDynamicPage {
 			}, group);
 		}
 	}
+
+	/** @override */
+	protected initModEvents(): void {
+		super.initModEvents();
+		this.bindModTo('hidden', 'page');
+	}
 }
