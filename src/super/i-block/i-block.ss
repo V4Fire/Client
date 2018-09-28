@@ -19,9 +19,10 @@
 
 	/**
 	 * Returns the block name
+	 * @param {string=} [name] - custom template name
 	 */
-	- block name()
-		- return blockName || /\['(.*?)'\]/.exec(TPL_NAME)[1]
+	- block name(name = TPL_NAME)
+		- return (blockName || /\['(.*?)'\]/.exec(name)[1] || '').dasherize()
 
 	/**
 	 * Returns link to a template by the specified link
