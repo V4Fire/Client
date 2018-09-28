@@ -8,4 +8,14 @@
 
 package('p-index')
 	.extends('i-static-page')
-	.dependencies('b-select', 'b-input', 'b-input-time', 'b-calendar', 'b-input-birthday', 'b-time-range', 'b-textarea', 'b-checkbox');
+	.dependencies(
+		'b-select',
+		'b-input',
+		'b-input-time',
+		'b-calendar',
+		'b-input-birthday',
+		'b-time-range',
+		'b-textarea',
+		'b-checkbox',
+		'b-is'
+	);

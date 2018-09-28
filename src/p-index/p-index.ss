@@ -13,6 +13,9 @@
 - template index() extends ['i-static-page.component'].index
 	- block body
 		{{ foo }}
+
+		< b-is :component = 'b-input'
+
 		< b-input v-once | :value = 'fooo'
 		///< b-checkbox
 		///< b-textarea
