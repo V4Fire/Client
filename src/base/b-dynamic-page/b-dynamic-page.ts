@@ -50,7 +50,7 @@ export default class bDynamicPage extends iDynamicPage {
 	 * Event name for listening
 	 */
 	@prop({type: String, required: false})
-	readonly event?: string = 'set';
+	readonly event?: string = 'setRoute';
 
 	/**
 	 * Event value converter
