@@ -250,6 +250,12 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 	readonly dispatching: boolean = false;
 
 	/**
+	 * If true, then all dispatching events will be emits as self component events
+	 */
+	@prop(Boolean)
+	readonly selfDispatching: boolean = false;
+
+	/**
 	 * If true, then the component marked as a remote provider
 	 */
 	@prop(Boolean)
@@ -1280,10 +1286,15 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 			obj = this.$parent;
 
 		while (obj) {
-			obj.$emit(`${this.componentName}::${event}`, this, ...args);
+			if (obj.selfDispatching) {
+				obj.$emit(event, this, ...args);
 
-			if (this.globalName) {
-				obj.$emit(`${this.globalName.dasherize()}::${event}`, this, ...args);
+			} else {
+				obj.$emit(`${this.componentName}::${event}`, this, ...args);
+
+				if (this.globalName) {
+					obj.$emit(`${this.globalName.dasherize()}::${event}`, this, ...args);
+				}
 			}
 
 			if (!obj.dispatching) {
