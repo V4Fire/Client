@@ -18,8 +18,7 @@
 		: tree = include('build/snakeskin.webpack')
 
 		? Object.assign(attrs, tree.getComponentPropAttrs(self.name(PARENT_TPL_NAME)))
-		? attrs[':dispatching'] = true
-		? attrs[':selfDispatching'] = true
+		? delete attrs[':dispatching']
 		? delete attrs[':is']
 
 		- block component(keepAlive, include, exclude)
@@ -35,6 +34,7 @@
 				< component &
 					ref = component |
 					:is = page |
+					:dispatching = true |
 					${attrs}
 				.
 

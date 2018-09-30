@@ -15,8 +15,11 @@ export type KeepAlive =
 	string[] |
 	RegExp;
 
-@component({functional: true})
+@component()
 export default class bDynamicPage extends iDynamicPage {
+	/** @override */
+	readonly selfDispatching: boolean = true;
+
 	/**
 	 * Initial component name
 	 */
