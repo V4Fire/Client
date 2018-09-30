@@ -34,7 +34,6 @@
 			< ${keepAlive ? 'keep-alive' : '?'} ${keepAliveAttrs}
 				< component &
 					ref = component |
-					v-if = page |
 					:is = page |
 					${attrs}
 				.

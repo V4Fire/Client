@@ -96,6 +96,6 @@ export default class bDynamicPage extends iDynamicPage {
 	/** @override */
 	protected initModEvents(): void {
 		super.initModEvents();
-		this.bindModTo('hidden', 'page');
+		this.bindModTo('hidden', 'page', (v) => !v);
 	}
 }
