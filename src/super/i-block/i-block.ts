@@ -1330,7 +1330,7 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 	 * @see Async.on
 	 * @param event
 	 * @param cb
-	 * @param [params]  - async parameters
+	 * @param [params] - async parameters
 	 */
 	once(event: string, cb: Function, params?: AsyncOpts): void {
 		event = event.dasherize();
@@ -1348,7 +1348,7 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 	 *
 	 * @see Async.on
 	 * @param event
-	 * @param [params]  - async parameters
+	 * @param [params] - async parameters
 	 */
 	promisifyOnce(event: string, params?: AsyncOpts): Promise<any> {
 		event = event.dasherize();
