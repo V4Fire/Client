@@ -1344,6 +1344,18 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 	}
 
 	/**
+	 * Wrapper for promisify $once
+	 *
+	 * @see Async.on
+	 * @param event
+	 * @param [params]  - async parameters
+	 */
+	promisifyOnce(event: string, params?: AsyncOpts): Promise<any> {
+		event = event.dasherize();
+		return this.async.promisifyOnce(this, event, params);
+	}
+
+	/**
 	 * Wrapper for $off
 	 *
 	 * @param [event]
