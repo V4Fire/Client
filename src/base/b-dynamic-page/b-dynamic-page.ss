@@ -25,10 +25,10 @@
 			: keepAliveAttrs = Object.assign({}, attrs)
 
 			- if include
-				? keepAliveAttrs.include = 'include'
+				? keepAliveAttrs[':include'] = 'include'
 
 			- if exclude
-				? keepAliveAttrs.exclude = 'exclude'
+				? keepAliveAttrs[':exclude'] = 'exclude'
 
 			< ${keepAlive ? 'keep-alive' : '?'} ${keepAliveAttrs}
 				< component &
