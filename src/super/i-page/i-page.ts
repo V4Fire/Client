@@ -58,9 +58,9 @@ export default class iPage<T extends Dictionary = Dictionary> extends iData<T> {
 	protected pageTitleStore!: string;
 
 	/** @override */
-	activate(): void {
+	activate(force?: boolean): void {
 		this.setRootMod('active', true);
-		super.activate();
+		super.activate(force);
 	}
 
 	/** @override */

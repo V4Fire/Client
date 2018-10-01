@@ -272,10 +272,15 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 	 */
 	@system((o) => {
 		o.execCbAtTheRightTime(() => {
-			o[o.activatedProp ? 'activate' : 'deactivate']();
+			if (o.getField('isActivated')) {
+				o.activate(true);
+
+			} else {
+				o.deactivate();
+			}
 		});
 
-		o.link('activatedProp', (val) => {
+		return o.link('activatedProp', (val) => {
 			if (o.hook !== 'beforeDataCreate') {
 				o[val ? 'activate' : 'deactivate']();
 			}
@@ -1669,9 +1674,10 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 
 	/**
 	 * Activates the component
+	 * @param [force]
 	 */
-	activate(): void {
-		if (!this.isActivated) {
+	activate(force?: boolean): void {
+		if (!this.isActivated || force) {
 			this.initStateFromRouter();
 			this.execCbAfterCreated(() => this.rootEvent.on('onTransition', async (route, type) => {
 				if (type === 'hard' && route !== this.r.route) {
