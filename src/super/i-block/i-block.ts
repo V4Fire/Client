@@ -144,6 +144,12 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 	readonly forceActivation: boolean = false;
 
 	/**
+	 * If true, then will be forcing activation hooks for the functional component
+	 */
+	@prop(Boolean)
+	readonly forceSelfActivation: boolean = false;
+
+	/**
 	 * Link to i18n function
 	 */
 	@prop(Function)
@@ -272,7 +278,7 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 	 */
 	@system((o) => {
 		o.execCbAtTheRightTime(() => {
-			if (o.isFunctional && !o.getField('forceActivation')) {
+			if (o.isFunctional && !o.getField('forceSelfActivation')) {
 				return;
 			}
 
