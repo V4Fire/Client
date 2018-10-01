@@ -272,6 +272,10 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 	 */
 	@system((o) => {
 		o.execCbAtTheRightTime(() => {
+			if (o.isFunctional && !o.forceActivation) {
+				return;
+			}
+
 			if (o.getField('isActivated')) {
 				o.activate(true);
 
