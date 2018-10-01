@@ -144,10 +144,11 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 	readonly forceActivation: boolean = false;
 
 	/**
-	 * If true, then will be forcing activation hooks for the functional component
+	 * If true, then will be forcing initial activation hooks
+	 * (only for functional components)
 	 */
 	@prop(Boolean)
-	readonly forceSelfActivation: boolean = false;
+	readonly forceInitialActivation: boolean = false;
 
 	/**
 	 * Link to i18n function
