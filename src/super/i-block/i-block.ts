@@ -270,10 +270,19 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 	/**
 	 * True if the current component is activated
 	 */
-	@system((o) => o.link('activatedProp', (val) => {
-		o[val ? 'activate' : 'deactivate']();
-		return val;
-	}))
+	@system((o) => {
+		o.execCbAtTheRightTime(() => {
+			o[o.activatedProp ? 'activate' : 'deactivate']();
+		});
+
+		o.link('activatedProp', (val) => {
+			if (o.hook !== 'beforeDataCreate') {
+				o[val ? 'activate' : 'deactivate']();
+			}
+
+			return val;
+		});
+	})
 
 	isActivated!: boolean;
 
