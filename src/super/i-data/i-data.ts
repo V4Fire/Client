@@ -230,6 +230,17 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 		return super.initLoad(() => this.db, silent);
 	}
 
+	/**
+	 * Alias for iBlock.initLoad
+	 *
+	 * @see iBlock.initLoad
+	 * @param data
+	 * @param silent
+	 */
+	initBaseLoad(data?: any | ((this: this) => any), silent?: boolean): CanPromise<void> {
+		return super.initLoad(data, silent);
+	}
+
 	/** override */
 	async reload(): Promise<void> {
 		if (!this.$root.isOnline && !this.needOfflineReInit) {
