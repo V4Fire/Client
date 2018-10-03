@@ -65,6 +65,7 @@ import {
 	VueInterface,
 	VueElement,
 	ComponentMeta,
+	MethodWatchers,
 	Hooks,
 	PARENT
 
@@ -269,10 +270,10 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 	readonly remoteProvider: boolean = false;
 
 	/**
-	 *
+	 * Remote watchers table
 	 */
 	@prop(Object)
-	readonly watchProp: Dictionary = {};
+	readonly watchProp: Dictionary<MethodWatchers> = {};
 
 	/**
 	 * If true, then the current component is activated
@@ -3254,6 +3255,9 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 		});
 	}
 
+	/**
+	 * Initializes watchers from .watchProp
+	 */
 	@hook('beforeDataCreate')
 	protected initRemoteWatchers(): void {
 		const
@@ -3261,23 +3265,39 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 			o = this.watchProp,
 			keys = Object.keys(o);
 
+		const
+			rootRgxp = /^([!?]?)([^:]*)/;
+
+		const normalizeField = (field) => {
+			if (rootRgxp.test(field)) {
+				return field.replace(rootRgxp, (str, prfx, emitter) =>
+					prfx + ['$parent'].concat(emitter || []).join('.'));
+			}
+
+			return `$parent.${field}`;
+		};
+
 		for (let i = 0; i < keys.length; i++) {
 			const
 				method = keys[i],
-				watchers = [].concat(o[method] || []);
+				watchers = (<any[]>[]).concat((<MethodWatchers>o[method]) || []);
 
 			for (let i = 0; i < watchers.length; i++) {
-				const el = watchers[i];
+				const
+					el = watchers[i],
+					isStr = Object.isString(el),
+					field = normalizeField(isStr ? el : el.field);
+
 				w[field] = w[field] || [];
 
 				if (Object.isString(el)) {
-					w[el].push({
+					w[field].push({
 						method,
 						handler: method
 					});
 
 				} else {
-					w[el.field].push({
+					w[field].push({
 						...el,
 						args: [].concat(el.args || []),
 						method,
