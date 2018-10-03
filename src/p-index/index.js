@@ -16,5 +16,6 @@ package('p-index')
 		'b-input-birthday',
 		'b-time-range',
 		'b-textarea',
-		'b-checkbox'
+		'b-checkbox',
+		'b-remote-provider'
 	);

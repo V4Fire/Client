@@ -16,7 +16,7 @@
 
 		< b-remote-provider &
 			:watch = {
-				reload: [{field: ':foo', group: ':suspend'}]
+				reload: [{field: 'foo', group: ':suspend'}]
 			}
 		.
 
