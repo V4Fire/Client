@@ -351,34 +351,37 @@ export function bindWatchers(ctx: VueInterface, eventCtx: VueInterface = ctx): v
 
 		for (let i = 0; i < watchers.length; i++) {
 			const
-				el = watchers[i];
+				el = watchers[i],
+				handlerIsStr = Object.isString(el.handler);
 
-			let
-				label = el.method != null ? el.method : undefined,
-				f;
+			const label = `[[WATCHER:${key}:${
+				el.method != null ? el.method : handlerIsStr ? el.handler : (<Function>el.handler).name
+			}]]`;
 
-			let handler = f = el.method ? el.handler : (...args) => {
-				const
-					fn = el.handler;
+			const
+				group = {group: el.group || 'watchers', label},
+				eventParams = {...group, options: el.options, single: el.single};
 
-				if (Object.isString(fn)) {
-					label = fn;
+			let handler = (...args) => {
+				args = el.provideArgs === false ? [] : args;
 
-					if (!Object.isFunction(ctx[fn])) {
-						throw new ReferenceError(`The specified method (${fn}) for watching is not defined`);
+				if (handlerIsStr) {
+					const
+						method = <string>el.handler;
+
+					if (!Object.isFunction(ctx[method])) {
+						throw new ReferenceError(`The specified method (${method}) for watching is not defined`);
 					}
 
 					// @ts-ignore
-					$a.setImmediate(() => ctx[fn](...args), {
-						group: 'watchers',
-						label: fn
-					});
+					$a.setImmediate(() => ctx[method](...args), group);
 
 				} else {
-					label = fn.name;
+					const
+						fn = <Function>el.handler;
 
-					if (el.provideArgs === false) {
-						fn();
+					if (el.method) {
+						fn.call(ctx, ...args);
 
 					} else {
 						fn(ctx, ...args);
@@ -386,34 +389,19 @@ export function bindWatchers(ctx: VueInterface, eventCtx: VueInterface = ctx): v
 				}
 			};
 
-			label = label ?
-				`[[WATCHER:${key}:${label}]]` : undefined;
-
-			if (el.provideArgs === false) {
-				const l = handler;
-				handler = () => l.call(ctx);
-
-			} else {
-				handler = handler.bind(ctx);
-			}
-
 			if (el.wrapper) {
 				handler = <any>el.wrapper(ctx, handler);
 			}
 
 			(async () => {
-				const
-					group = {group: el.group, label},
-					eventParams = {...group, options: el.options, single: el.single};
-
-				const
-					needDefEmitter = root === ctx && !Object.isFunction(root.on) && !Object.isFunction(root.addListener);
-
 				if (Object.isPromise(handler)) {
 					handler = await $a.promise(handler, group);
 				}
 
 				if (customWatcher) {
+					const
+						needDefEmitter = root === ctx && !Object.isFunction(root.on) && !Object.isFunction(root.addListener);
+
 					if (needDefEmitter) {
 						// @ts-ignore
 						ctx.$on(key, handler);
