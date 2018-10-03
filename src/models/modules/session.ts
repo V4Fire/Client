@@ -79,7 +79,7 @@ export default class Session extends Provider {
 				if (refreshHeader) {
 					s.set(refreshHeader, info.getHeader(this.csrfHeader));
 				}
-			} catch (_) {}
+			} catch {}
 		};
 
 		req.then(update);

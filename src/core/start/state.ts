@@ -31,7 +31,7 @@ export default (async () => {
 	for (let i = 0; i < tasks.length; i++) {
 		try {
 			await tasks[i];
-		} catch (_) {}
+		} catch {}
 	}
 
 	semaphore('stateReady');

@@ -63,7 +63,7 @@ export default class bFileButton extends bButton {
 	 * Handler: file change
 	 *
 	 * @param e
-	 * @emits set(result: InputEvent.target.result)
+	 * @emits change(result: InputEvent.target.result)
 	 * @emits error(err: bUploaderError)
 	 */
 	protected onFileSelected(e: Event): void {
@@ -76,7 +76,7 @@ export default class bFileButton extends bButton {
 			return;
 		}
 
-		reader.addEventListener('load', <any>this.async.proxy((e) => this.emit('set', e.target.result)));
+		reader.addEventListener('load', <any>this.async.proxy((e) => this.emit('change', e.target.result)));
 		reader[this.read](file);
 	}
 

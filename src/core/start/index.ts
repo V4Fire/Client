@@ -10,6 +10,6 @@ import 'core/start/state';
 import semaphore from 'core/start/semaphore';
 import { whenDomLoaded } from 'core/event';
 
-whenDomLoaded(() => {
+export default whenDomLoaded(() => {
 	semaphore('domReady');
 });

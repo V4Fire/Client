@@ -11,7 +11,7 @@ import $C = require('collection.js');
 
 import symbolGenerator from 'core/symbol';
 import Async, { AsyncOpts, ClearOptsId } from 'core/async';
-import log from 'core/log';
+import log, { LogMessageOptions } from 'core/log';
 
 import * as analytics from 'core/analytics';
 import { EventEmitter2 as EventEmitter } from 'eventemitter2';
@@ -49,7 +49,7 @@ import {
 } from 'super/i-block/modules/interface';
 
 import iStaticPage from 'super/i-static-page/i-static-page';
-import bRouter, { PageInfo } from 'base/b-router/b-router';
+import bRouter, { CurrentPage } from 'base/b-router/b-router';
 import { asyncLocal, AsyncNamespace } from 'core/kv-storage';
 import {
 
@@ -136,6 +136,19 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 	 */
 	@prop(Boolean)
 	readonly keepAlive: boolean = false;
+
+	/**
+	 * If true, then will be forcing activation hooks for all components instead of non functional components
+	 */
+	@prop(Boolean)
+	readonly forceActivation: boolean = false;
+
+	/**
+	 * If true, then will be forcing initial activation hooks
+	 * (only for functional components)
+	 */
+	@prop(Boolean)
+	readonly forceInitialActivation: boolean = false;
 
 	/**
 	 * Link to i18n function
@@ -244,6 +257,12 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 	readonly dispatching: boolean = false;
 
 	/**
+	 * If true, then all dispatching events will be emits as self component events
+	 */
+	@prop(Boolean)
+	readonly selfDispatching: boolean = false;
+
+	/**
 	 * If true, then the component marked as a remote provider
 	 */
 	@prop(Boolean)
@@ -264,10 +283,28 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 	/**
 	 * True if the current component is activated
 	 */
-	@system((o) => o.link('activatedProp', (val) => {
-		o[val ? 'activate' : 'deactivate']();
-		return val;
-	}))
+	@system((o) => {
+		o.execCbAtTheRightTime(() => {
+			if (o.isFunctional && !o.getField('forceSelfActivation')) {
+				return;
+			}
+
+			if (o.getField('isActivated')) {
+				o.activate(true);
+
+			} else {
+				o.deactivate();
+			}
+		});
+
+		return o.link('activatedProp', (val) => {
+			if (o.hook !== 'beforeDataCreate') {
+				o[val ? 'activate' : 'deactivate']();
+			}
+
+			return val;
+		});
+	})
 
 	isActivated!: boolean;
 
@@ -319,11 +356,11 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 	}
 
 	/**
-	 * Link to the root pageInfo object
+	 * Link to the root route object
 	 */
 	@p({cache: false})
-	get route(): PageInfo | any | undefined {
-		return this.getField('pageInfo', this.$root);
+	get route(): CurrentPage | any | undefined {
+		return this.getField('route', this.$root);
 	}
 
 	/**
@@ -713,6 +750,7 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 			emit: (event, ...args) => globalEvent.emit(event, ...args),
 			on: (event, fn, params, ...args) => $a.on(globalEvent, event, fn, params, ...args),
 			once: (event, fn, params, ...args) => $a.once(globalEvent, event, fn, params, ...args),
+			promisifyOnce: (event, params, ...args) => $a.promisifyOnce(globalEvent, event, params, ...args),
 			off: (...args) => $a.off(...args)
 		};
 	}
@@ -739,6 +777,14 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 				}
 
 				return $a.once($e, event, fn, params, ...args);
+			},
+
+			promisifyOnce: (event, params, ...args) => {
+				if (!$e) {
+					return;
+				}
+
+				return $a.promisifyOnce($e, event, params, ...args);
 			},
 
 			off: (...args) => {
@@ -773,6 +819,14 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 				}
 
 				return $a.once($e, event, fn, params, ...args);
+			},
+
+			promisifyOnce: (event, params, ...args) => {
+				if (!$e) {
+					return;
+				}
+
+				return $a.promisifyOnce($e, event, params, ...args);
 			},
 
 			off: (...args) => {
@@ -1263,10 +1317,15 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 			obj = this.$parent;
 
 		while (obj) {
-			obj.$emit(`${this.componentName}::${event}`, this, ...args);
+			if (obj.selfDispatching) {
+				obj.$emit(event, this, ...args);
 
-			if (this.globalName) {
-				obj.$emit(`${this.globalName.dasherize()}::${event}`, this, ...args);
+			} else {
+				obj.$emit(`${this.componentName}::${event}`, this, ...args);
+
+				if (this.globalName) {
+					obj.$emit(`${this.globalName.dasherize()}::${event}`, this, ...args);
+				}
 			}
 
 			if (!obj.dispatching) {
@@ -1302,7 +1361,7 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 	 * @see Async.on
 	 * @param event
 	 * @param cb
-	 * @param [params]  - async parameters
+	 * @param [params] - async parameters
 	 */
 	once(event: string, cb: Function, params?: AsyncOpts): void {
 		event = event.dasherize();
@@ -1313,6 +1372,18 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 		}
 
 		this.$once(event, cb);
+	}
+
+	/**
+	 * Wrapper for promisify $once
+	 *
+	 * @see Async.on
+	 * @param event
+	 * @param [params] - async parameters
+	 */
+	promisifyOnce(event: string, params?: AsyncOpts): Promise<any> {
+		event = event.dasherize();
+		return this.async.promisifyOnce(this, event, params);
 	}
 
 	/**
@@ -1620,11 +1691,18 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 
 	/**
 	 * Activates the component
+	 * @param [force]
 	 */
-	activate(): void {
-		if (!this.isActivated) {
+	activate(force?: boolean): void {
+		if (!this.isActivated || force) {
 			this.initStateFromRouter();
-			this.execCbAfterCreated(() => this.rootEvent.on('transition', () => {
+			this.execCbAfterCreated(() => this.rootEvent.on('onTransition', async (route, type) => {
+				if (type === 'hard' && route !== this.r.route) {
+					await this.rootEvent.promisifyOnce('setRoute', {
+						label: $$.activateAfterTransition
+					});
+				}
+
 				this.initStateFromRouter();
 
 			}, {
@@ -1655,9 +1733,12 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 
 		exec();
 
-		if (this.$el) {
+		const
+			{$el} = this;
+
+		if (this.forceActivation && $el) {
 			const
-				domEls = this.$el.querySelectorAll('.i-block-helper');
+				domEls = $el.querySelectorAll('.i-block-helper');
 
 			for (let i = 0; i < domEls.length; i++) {
 				const
@@ -1705,9 +1786,12 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 
 		exec();
 
-		if (this.$el) {
+		const
+			{$el} = this;
+
+		if (this.forceActivation && $el) {
 			const
-				domEls = this.$el.querySelectorAll('.i-block-helper');
+				domEls = $el.querySelectorAll('.i-block-helper');
 
 			for (let i = 0; i < domEls.length; i++) {
 				const
@@ -2008,19 +2092,26 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 	/**
 	 * Puts the specified parameters to log
 	 *
-	 * @param key - log key
+	 * @param key - log key or log message options
 	 * @param [details]
 	 */
-	protected log(key: string, ...details: any[]): void {
-		log(['component', key, this.componentName].join(':'), ...details, this);
+	protected log(key: string | LogMessageOptions, ...details: any[]): void {
+		let type;
+
+		if (!Object.isString(key)) {
+			type = key.type;
+			key = key.key;
+		}
+
+		log({key: ['component', key, this.componentName].join(':'), type}, ...details, this);
 
 		if (this.globalName) {
-			log(['component:global', this.globalName, key, this.componentName].join(':'), ...details, this);
+			log({key: ['component:global', this.globalName, key, this.componentName].join(':'), type}, ...details, this);
 		}
 	}
 
 	/**
-	 * Creates a new function from the specified that executes deferedly
+	 * Creates a new function from the specified that executes deferredly
 	 *
 	 * @see Async.setTimeout
 	 * @param fn
@@ -2354,7 +2445,7 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 				await this.storage.set(id, settings);
 				this.log('settings:save', () => Object.fastClone(settings));
 
-			} catch (_) {}
+			} catch {}
 
 			return settings;
 
@@ -2379,7 +2470,7 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 				this.log('settings:load', () => Object.fastClone(res));
 				return res;
 
-			} catch (_) {}
+			} catch {}
 
 		}, {
 			label: id,
@@ -2558,8 +2649,8 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 
 		this.execCbAtTheRightTime(() => {
 			const
-				p = this.$root.pageInfo,
-				stateFields = this.convertStateToRouter(p && p.query);
+				p = this.$root.route || {},
+				stateFields = this.convertStateToRouter(Object.assign(Object.create(p), p.params, p.query));
 
 			this.setState(
 				stateFields

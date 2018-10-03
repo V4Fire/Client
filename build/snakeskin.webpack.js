@@ -15,6 +15,21 @@ const
 	Snakeskin = require('snakeskin'),
 	escaper = require('escaper');
 
+const componentsTree = module.exports = {
+	getComponentPropAttrs(name) {
+		name = name.camelize(false);
+
+		if (!this[name]) {
+			throw new Error(`The specified component "${name}" is not defined`);
+		}
+
+		return $C(this[name].props)
+			.object(true)
+			.to({})
+			.reduce((map, el, key) => (map[`:${key}`] = key, map));
+	}
+};
+
 const
 	fs = require('fs'),
 	path = require('upath'),
@@ -26,14 +41,11 @@ const
 
 const
 	resources = [resolve.blockSync(), ...resolve.dependencies],
-	components = `/**/@(${validators.blockTypeList.join('|')})-*.@(ts|js)`;
+	components = `/**/@(${validators.blockTypeList.join('|')})-*.@(ts|js)`,
+	files = $C(resources).reduce((arr, el) => arr.concat(glob.sync(path.join(el, components))), []).reverse();
 
 const
-	files = $C(resources).reduce((arr, el) => arr.concat(glob.sync(path.join(el, components))), []).reverse(),
-	blocksTree = {};
-
-const
-	blockClassRgxp = /^\s*export\s+default\s+class\s+((.*?)\s+extends\s+.*?)\s*{/m,
+	componentClassRgxp = /^\s*export\s+default\s+class\s+((.*?)\s+extends\s+.*?)\s*{/m,
 	componentRgxp = /@component\(([^@]*?)\)\n+\s*export\s+/,
 	propsRgxp = /^(\t+)@prop\s*\([^@]+?\)+\n+\1([ \w$]+)(?:\??: [ \w|&$?()[\]{}<>'"`:.]+?)?\s*(?:=|;$)/gm;
 
@@ -45,20 +57,20 @@ $C(files).forEach((el) => {
 	const
 		literals = [],
 		file = escaper.replace(fs.readFileSync(el, {encoding: 'utf-8'}), true, literals),
-		block = blockClassRgxp.exec(file);
+		componentClass = componentClassRgxp.exec(file);
 
 	const
-		p = ((v) => v && new Function(`return ${escaper.paste(v[1], literals) || '{}'}`)())(block && componentRgxp.exec(file));
+		p = ((v) => v && new Function(`return ${escaper.paste(v[1], literals) || '{}'}`)())(componentClass && componentRgxp.exec(file));
 
 	if (!p) {
 		return;
 	}
 
 	const
-		component = block[2].replace(genericRgxp, ''),
-		parent = block[1].split(extendsRgxp).slice(-1)[0].replace(genericRgxp, '');
+		component = componentClass[2].replace(genericRgxp, ''),
+		parent = componentClass[1].split(extendsRgxp).slice(-1)[0].replace(genericRgxp, '');
 
-	const obj = blocksTree[component] = blocksTree[component] || {
+	const obj = componentsTree[component] = componentsTree[component] || {
 		props: {},
 		parent
 	};
@@ -84,7 +96,7 @@ function getFunctionalParameters(obj) {
 
 	if (obj.parent && (v === undefined || isObj)) {
 		const
-			p = getFunctionalParameters(blocksTree[obj.parent]);
+			p = getFunctionalParameters(componentsTree[obj.parent]);
 
 		if (Object.isObject(p)) {
 			return {...p, ...v};
@@ -100,7 +112,7 @@ function getFunctionalParameters(obj) {
 	return v || false;
 }
 
-$C(blocksTree).forEach((el, key, data) => {
+$C(componentsTree).forEach((el, key, data) => {
 	data[key].functional = getFunctionalParameters(el);
 
 	if (el.parent && data[el.parent]) {
@@ -155,7 +167,7 @@ function tagFilter({name, attrs = {}}) {
 		}
 
 		const
-			c = blocksTree[componentName],
+			c = componentsTree[componentName],
 			smart = [attrs['v-func-placeholder'], delete attrs['v-func-placeholder']][0] && c && c.functional,
 			vFunc = [attrs['v-func'], delete attrs['v-func']][0];
 
@@ -255,7 +267,7 @@ function tagNameFilter(tag, attrs = {}, rootTag) {
 
 	const
 		nm = tag.camelize(false),
-		component = blocksTree[nm];
+		component = componentsTree[nm];
 
 	if (component && !Object.isBoolean(component.functional)) {
 		Object.assign(attrs, {

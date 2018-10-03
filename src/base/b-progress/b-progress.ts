@@ -7,7 +7,7 @@
  */
 
 import symbolGenerator from 'core/symbol';
-import iBlock, { field, component, ModsDecl } from 'super/i-block/i-block';
+import iBlock, { component, prop, field, ModsDecl } from 'super/i-block/i-block';
 export * from 'super/i-block/i-block';
 
 export const
@@ -15,6 +15,46 @@ export const
 
 @component()
 export default class bProgress extends iBlock {
+	/**
+	 * Initial progress value store
+	 */
+	@prop({type: Number, required: false})
+	readonly valueProp?: number;
+
+	/**
+	 * Progress value
+	 */
+	get value(): number | undefined {
+		return this.getField('valueStore');
+	}
+
+	/**
+	 * Sets a new progress value
+	 *
+	 * @param value
+	 * @emits complete()
+	 */
+	set value(value: number | undefined) {
+		const
+			label = {label: $$.complete};
+
+		(async () => {
+			this.setField('valueStore', value);
+
+			if (value === 100) {
+				try {
+					await this.async.sleep(0.8.second(), label);
+					this.setField('valueStore', 0);
+					this.emit('complete');
+
+				} catch {}
+
+			} else {
+				this.async.clearTimeout(label);
+			}
+		})();
+	}
+
 	/** @inheritDoc */
 	static readonly mods: ModsDecl = {
 		progress: [
@@ -25,43 +65,12 @@ export default class bProgress extends iBlock {
 	/**
 	 * Progress value store
 	 */
-	@field()
-	protected valueStore: number = 0;
-
-	/**
-	 * Progress value
-	 */
-	protected get value(): number {
-		return this.getField('valueStore');
-	}
-
-	/**
-	 * Sets a new progress value
-	 *
-	 * @param value
-	 * @emits complete()
-	 */
-	protected set value(value: number) {
-		(async () => {
-			this.setField('valueStore', value);
-
-			if (value === 100) {
-				try {
-					await this.async.sleep(0.8.second(), {label: $$.complete});
-					this.setField('valueStore', 0)
-					this.emit('complete');
-
-				} catch (_) {}
-
-			} else {
-				this.async.clearTimeout({label: $$.complete});
-			}
-		})();
-	}
+	@field((o) => o.link())
+	protected valueStore?: number;
 
 	/** @override */
 	protected initModEvents(): void {
 		super.initModEvents();
-		this.bindModTo('progress', 'valueStore');
+		this.bindModTo('progress', 'valueStore', Object.isNumber);
 	}
 }

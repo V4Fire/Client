@@ -8,11 +8,28 @@
 
 import $C = require('collection.js');
 import iData, { component, prop, field, system, hook, wait, p, ModsDecl } from 'super/i-data/i-data';
-
 export * from 'super/i-data/i-data';
-export type Validators = Array<string | Dictionary<Dictionary>>;
-export type ValidatorsDecl<T extends iInput = iInput> =
-	Dictionary<(this: T, params: Dictionary) => CanPromise<boolean>>;
+
+export interface ValidatorParams extends Dictionary {
+	msg?: string;
+	showMsg?: boolean;
+}
+
+export interface ValidatorError<T extends any = any> extends Dictionary {
+	name: string;
+	value?: T;
+}
+
+export type ValidatorResult<T extends any = any> =
+	boolean |
+	null |
+	ValidatorError<T>;
+
+export type ValidationError<T extends any = any> = [string, ValidatorError<T>];
+export type ValidationResult<T extends any = any> = boolean | ValidationError<T>;
+
+export type Validators = Array<string | Dictionary<ValidatorParams> | [string, ValidatorParams]>;
+export type ValidatorsDecl<T extends iInput = iInput> = Dictionary<(this: T, params: any) => CanPromise<boolean | any>>;
 
 @component({
 	model: {
@@ -231,7 +248,7 @@ export default class iInput<T extends Dictionary = Dictionary> extends iData<T> 
 	 * Component validators
 	 */
 	static blockValidators: ValidatorsDecl = {
-		async required({msg, showMsg = true}: Dictionary): Promise<boolean> {
+		async required({msg, showMsg = true}: ValidatorParams): Promise<ValidatorResult> {
 			if (await this.formValue == null) {
 				if (showMsg) {
 					this.error = msg || t`Required field`;
@@ -316,30 +333,37 @@ export default class iInput<T extends Dictionary = Dictionary> extends iData<T> 
 
 	/**
 	 * Validates the component value
+	 * (returns true or a failed validation name)
 	 *
 	 * @param params - additional parameters
 	 * @emits validationStart()
 	 * @emits validationSuccess()
-	 * @emits validationFail()
-	 * @emits validationEnd(result: boolean)
+	 * @emits validationFail(failedValidation: string)
+	 * @emits validationEnd(result: boolean, failedValidation?: string)
 	 */
 	@wait('ready')
-	async validate(params?: Dictionary): Promise<boolean> {
+	async validate(params?: ValidatorParams): Promise<ValidationResult> {
 		if (!this.validators.length) {
 			this.removeMod('valid');
 			return true;
 		}
 
 		this.emit('validationStart');
-		let valid;
+
+		let
+			valid,
+			failedValidation;
 
 		for (const el of this.validators) {
 			const
-				key = Object.isString(el) ? el : Object.keys(el)[0];
+				isArray = Object.isArray(el),
+				isObject = !isArray && Object.isObject(el),
+				key = <string>(isObject ? Object.keys(el)[0] : isArray ? el[0] : el);
 
 			const validator = this.blockValidators[key].call(
 				this,
-				Object.assign(Object.isObject(el) ? el[key] : {}, params)
+				// tslint:disable-next-line:prefer-object-spread
+				Object.assign(isObject ? el[key] : isArray && el[1] || {}, params)
 			);
 
 			if (validator instanceof Promise) {
@@ -348,29 +372,31 @@ export default class iInput<T extends Dictionary = Dictionary> extends iData<T> 
 			}
 
 			valid = await validator;
-			if (!valid) {
+
+			if (valid !== true) {
+				failedValidation = [key, valid];
 				break;
 			}
 		}
 
 		this.setMod('progress', false);
 
-		if (Object.isBoolean(valid)) {
-			this.setMod('valid', valid);
+		if (valid != null) {
+			this.setMod('valid', valid === true);
 
 		} else {
-			this.removeMod('valid', valid);
+			this.removeMod('valid');
 		}
 
-		if (valid) {
+		if (valid === true) {
 			this.emit('validationSuccess');
 
-		} else {
-			this.emit('validationFail');
+		} else if (valid != null) {
+			this.emit('validationFail', failedValidation);
 		}
 
-		this.emit('validationEnd', valid);
-		return valid;
+		this.emit('validationEnd', valid === true, failedValidation);
+		return valid || failedValidation;
 	}
 
 	/** @override */

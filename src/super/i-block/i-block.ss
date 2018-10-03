@@ -19,9 +19,10 @@
 
 	/**
 	 * Returns the block name
+	 * @param {string=} [name] - custom template name
 	 */
-	- block name()
-		- return blockName || /\['(.*?)'\]/.exec(TPL_NAME)[1]
+	- block name(name = TPL_NAME)
+		- return (blockName || /\['(.*?)'\]/.exec(name)[1] || '').dasherize()
 
 	/**
 	 * Returns link to a template by the specified link
@@ -32,6 +33,7 @@
 
 	- rootTag = 'div'
 	- overWrapper = true
+	- renderCounter = true
 
 	/**
 	 * Applies Typograf to the specified content
@@ -62,8 +64,9 @@
 
 	- block root
 		< _.${self.name()} ${rootAttrs|!html}
-			< .&__render-counter v-show = false
-				{{ renderCounter }}
+			- if renderCounter
+				< .&__render-counter v-show = false
+					{{ renderCounter }}
 
 			/**
 			 * Generates an icon block

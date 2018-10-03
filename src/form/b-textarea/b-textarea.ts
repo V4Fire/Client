@@ -8,7 +8,7 @@
 
 import symbolGenerator from 'core/symbol';
 import bScrollInline from 'base/b-scroll/b-scroll-inline/b-scroll-inline';
-import bInput, { component, prop, system, p, wait, watch, ModsDecl } from 'form/b-input/b-input';
+import bInput, { component, prop, system, p, hook, wait, watch, ModsDecl } from 'form/b-input/b-input';
 export * from 'form/b-input/b-input';
 
 export const
@@ -135,6 +135,17 @@ export default class bTextarea<T extends Dictionary = Dictionary> extends bInput
 	}
 
 	/**
+	 * Initializes the component height
+	 */
+	@hook('mounted')
+	protected async initHeight(): Promise<void> {
+		await this.putInStream(async () => {
+			this.minHeight = this.$refs.input.clientHeight;
+			await this.calcHeight();
+		});
+	}
+
+	/**
 	 * Minimizes the component
 	 */
 	@wait('ready', {label: $$.minimize, defer: true})
@@ -158,7 +169,7 @@ export default class bTextarea<T extends Dictionary = Dictionary> extends bInput
 	}
 
 	/**
-	 * Returns real textarea height
+	 * Returns the real textarea height
 	 */
 	@wait('ready')
 	protected calcTextHeight(): CanPromise<number> {
@@ -195,14 +206,5 @@ export default class bTextarea<T extends Dictionary = Dictionary> extends bInput
 	@watch('valueStore')
 	protected async syncValueStoreWatcher(): Promise<void> {
 		await this.calcHeight();
-	}
-
-	/** @override */
-	protected async mounted(): Promise<void> {
-		super.mounted();
-		await this.putInStream(async () => {
-			this.minHeight = this.$refs.input.clientHeight;
-			await this.calcHeight();
-		});
 	}
 }

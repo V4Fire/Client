@@ -63,7 +63,7 @@ export default class bNotifier<T extends Dictionary = Message> extends iData<T> 
 			// @ts-ignore
 			return Notification.permission;
 
-		} catch (_) {
+		} catch {
 			return 'denied';
 		}
 	}
@@ -119,7 +119,7 @@ export default class bNotifier<T extends Dictionary = Message> extends iData<T> 
 				$C(Object.select(rule, /^on/)).map((fn) => (e) => fn(e, data))
 			);
 
-		} catch (_) {}
+		} catch {}
 	}
 
 	/** @override */

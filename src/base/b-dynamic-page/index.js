@@ -6,11 +6,5 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-@import "super/i-data/i-data.styl"
-
-$p = {
-
-}
-
-b-remote-provider extends i-data
-	display none
+package('b-dynamic-page')
+	.extends('i-dynamic-page');

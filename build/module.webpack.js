@@ -15,9 +15,10 @@ const
 
 const
 	{resolve} = require('@pzlr/build-core'),
-	{output, hash, assetsJSON, inherit, depsRgxpStr} = include('build/build.webpack');
+	{output, assetsOutput, assetsJSON, hash, inherit, depsRgxpStr} = include('build/build.webpack');
 
 const
+	path = require('upath'),
 	build = include('build/entities.webpack'),
 	depsRgxp = new RegExp(`(?:^|/)node_modules/(?:(?!${depsRgxpStr}).)*?(?:/|$)`);
 
@@ -26,9 +27,11 @@ const
 	typescript = config.typescript(),
 	monic = config.monic();
 
-const fileLoaderOpts = inherit({name: hash('[path][hash]_[name].[ext]')}, {
+const fileLoaderOpts = {
+	name: path.basename(assetsOutput),
+	outputPath: path.dirname(assetsOutput),
 	limit: config.webpack.dataURILimit()
-});
+};
 
 /**
  * Returns parameters for webpack.module
@@ -203,8 +206,18 @@ module.exports = async function ({buildId, plugins}) {
 		]
 	});
 
+	loaders.rules.set('assets', {
+		test: /\.(?:ttf|eot|woff|woff2|mp3|ogg|aac)$/,
+		use: [
+			{
+				loader: 'url',
+				options: fileLoaderOpts
+			}
+		]
+	});
+
 	loaders.rules.set('img', {
-		test: /\.(?:png|gif|jpe?g|ttf|eot|woff|woff2|mp3|ogg|aac)$/,
+		test: /\.(?:png|gif|jpe?g)$/,
 		use: [
 			{
 				loader: 'url',

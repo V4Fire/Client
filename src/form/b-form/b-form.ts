@@ -9,7 +9,7 @@
 import $C = require('collection.js');
 import symbolGenerator from 'core/symbol';
 import bInputHidden from 'form/b-input-hidden/b-input-hidden';
-import iInput from 'super/i-input/i-input';
+import iInput, { ValidationError as InputValidationError } from 'super/i-input/i-input';
 import bButton from 'form/b-button/b-button';
 import iData, {
 
@@ -26,6 +26,11 @@ import iData, {
 } from 'super/i-data/i-data';
 
 export * from 'super/i-data/i-data';
+
+export interface ValidationError<V extends any = any> {
+	el: iInput;
+	validator: InputValidationError<V>;
+}
 
 export const
 	$$ = symbolGenerator();
@@ -71,7 +76,7 @@ export default class bForm<T extends Dictionary = Dictionary> extends iData<T> {
 	 * Form delegate function
 	 */
 	@prop({type: Function, required: false})
-	readonly delegate?: Function;
+	readonly delegateAction?: Function;
 
 	/**
 	 * Form request parameters
@@ -164,7 +169,7 @@ export default class bForm<T extends Dictionary = Dictionary> extends iData<T> {
 		for (const el of await this.elements) {
 			try {
 				res.push(await el.clear());
-			} catch (_) {}
+			} catch {}
 		}
 
 		if ($C(res).some((el) => el)) {
@@ -186,7 +191,7 @@ export default class bForm<T extends Dictionary = Dictionary> extends iData<T> {
 		for (const el of await this.elements) {
 			try {
 				res.push(await el.reset());
-			} catch (_) {}
+			} catch {}
 		}
 
 		if ($C(res).some((el) => el)) {
@@ -200,20 +205,24 @@ export default class bForm<T extends Dictionary = Dictionary> extends iData<T> {
 	/**
 	 * Validates child form blocks and returns an array of valid elements or false
 	 *
+	 * @param [focusOnFail] - if true, then will be set focus to an invalid element
 	 * @emits validationStart()
 	 * @emits validationSuccess()
-	 * @emits validationFail()
-	 * @emits validationEnd(result: boolean)
+	 * @emits validationFail(failedValidation: Object)
+	 * @emits validationEnd(result: boolean, failedValidation: Object)
 	 */
 	@wait('ready', {label: $$.validate, defer: true})
-	async validate(): Promise<iInput[] | false> {
+	async validate(focusOnFail?: boolean): Promise<iInput[] | false> {
 		this.emit('validationStart');
 
 		const
 			els = <iInput[]>[],
 			map = {};
 
-		let valid = true;
+		let
+			valid = true,
+			failedValidation;
+
 		for (const el of await this.elements) {
 			if (
 				el.name && (
@@ -222,8 +231,18 @@ export default class bForm<T extends Dictionary = Dictionary> extends iData<T> {
 					!Object.fastCompare(this.getField(`tmp.${el.name}`), await el.groupFormValue)
 				)
 			) {
-				if (el.mods.valid !== 'true' && !await el.validate()) {
-					await el.focus();
+				const
+					canValidate = el.mods.valid !== 'true',
+					validation = canValidate && await el.validate();
+
+				if (canValidate && validation !== true) {
+					if (focusOnFail) {
+						try {
+							await el.focus();
+						} catch {}
+					}
+
+					failedValidation = {el, validator: validation};
 					valid = false;
 					break;
 				}
@@ -239,10 +258,10 @@ export default class bForm<T extends Dictionary = Dictionary> extends iData<T> {
 			this.emit('validationSuccess');
 
 		} else {
-			this.emit('validationFail');
+			this.emit('validationFail', failedValidation);
 		}
 
-		this.emit('validationEnd', valid);
+		this.emit('validationEnd', valid, failedValidation);
 		return valid && els;
 	}
 
@@ -265,7 +284,7 @@ export default class bForm<T extends Dictionary = Dictionary> extends iData<T> {
 		));
 
 		const
-			els = await this.validate();
+			els = await this.validate(true);
 
 		let
 			throws,
@@ -307,8 +326,8 @@ export default class bForm<T extends Dictionary = Dictionary> extends iData<T> {
 			this.emit('submitStart', body, this.params, this.method);
 			try {
 				// tslint:disable-next-line
-				if (this.delegate) {
-					res = await this.delegate(this, body, this.params, els);
+				if (this.delegateAction) {
+					res = await this.delegateAction(this, body, this.params, els);
 
 				} else {
 					if (this.action) {

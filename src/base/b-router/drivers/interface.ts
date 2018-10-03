@@ -6,41 +6,59 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import { Key } from 'path-to-regexp';
 import { EventEmitter2 as EventEmitter } from 'eventemitter2';
 
-export type PageInfo<
+export type BasePageMeta<M extends Dictionary = Dictionary> = M & {
+	page?: string;
+	path?: string;
+	index?: boolean;
+	paramsFromQuery?: boolean;
+	paramsFromRoot?: boolean;
+};
+
+export type PageSchema<M extends Dictionary = Dictionary> = Dictionary<
+	string |
+	BasePageMeta<M>
+>;
+
+export type PageMeta<M extends Dictionary = Dictionary> = BasePageMeta<M> & {
+	index: boolean;
+	page: string;
+	params: Key[];
+};
+
+export interface CurrentPage<
 	P extends Dictionary = Dictionary,
 	Q extends Dictionary = Dictionary,
 	M extends Dictionary = Dictionary
-> = Dictionary & {
+> extends Dictionary {
 	page: string;
+	url?: string;
+	index: boolean;
 	params: P;
 	query: Q;
-	meta: M;
-	toPath(params?: Dictionary): string;
-};
+	meta: PageMeta<M>;
+}
 
-export type CurrentPage<
+export interface PageOpts<
 	P extends Dictionary = Dictionary,
 	Q extends Dictionary = Dictionary,
 	M extends Dictionary = Dictionary
-> = Dictionary & {
-	page: string;
-	params?: P;
-	query?: Q;
-	meta?: M;
-};
+> extends CurrentPage<P, Q, M> {
+	toPath(params?: Dictionary): string;
+}
 
-export type PageSchema<M extends Dictionary = Dictionary> = string | M & {
-	path?: string;
-};
-
-export interface Router extends EventEmitter {
-	page?: CurrentPage | undefined;
-	routes: Dictionary<PageSchema>;
+export interface Router<
+	P extends Dictionary = Dictionary,
+	Q extends Dictionary = Dictionary,
+	M extends Dictionary = Dictionary
+> extends EventEmitter {
+	page?: CurrentPage<P, Q, M> | undefined;
+	routes: PageSchema<M>;
 	id(page: string): string;
-	push(page: string, info?: PageInfo): Promise<void>;
-	replace(page: string, info?: PageInfo): Promise<void>;
+	push(page: string, info?: PageOpts<P, Q, M>): Promise<void>;
+	replace(page: string, info?: PageOpts<P, Q, M>): Promise<void>;
 	back(): void;
 	forward(): void;
 	go(pos: number): void;

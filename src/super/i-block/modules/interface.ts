@@ -27,9 +27,11 @@ export type WatchObjectField =
 export type WatchObjectFields = Array<WatchObjectField>;
 
 export interface SizeTo {
-	gt: Dictionary<string>;
-	lt: Dictionary<string>;
+	gt: Dictionary<Size>;
+	lt: Dictionary<Size>;
 }
+
+export type Size = 'xxs' | 'xs' | 's' | 'm' | 'l' | 'xl' | 'xxl';
 
 export interface SyncLink {
 	path: string;
@@ -91,6 +93,13 @@ export interface RemoteEvent<T extends object = Async> {
 		...args: any[]
 	): object | undefined;
 
+	promisifyOnce(events: string | string[], ...args: any[]): Promise<any> | undefined;
+	promisifyOnce(
+		events: string | string[],
+		params: AsyncOnceOpts<T>,
+		...args: any[]
+	): Promise<any> | undefined;
+
 	off(id?: object): void;
 	off(params: ClearOptsId<object>): void;
 }
@@ -104,7 +113,7 @@ export interface Event<T extends object = Async> {
 		handler: Function,
 		params: AsyncOnOpts<T>,
 		...args: any[]
-	): object | undefined;
+	): object;
 
 	once(events: string | string[], handler: Function, ...args: any[]): object;
 	once(
@@ -112,7 +121,14 @@ export interface Event<T extends object = Async> {
 		handler: Function,
 		params: AsyncOnceOpts<T>,
 		...args: any[]
-	): object | undefined;
+	): object;
+
+	promisifyOnce(events: string | string[], ...args: any[]): Promise<any>;
+	promisifyOnce(
+		events: string | string[],
+		params: AsyncOnceOpts<T>,
+		...args: any[]
+	): Promise<any>;
 
 	off(id?: object): void;
 	off(params: ClearOptsId<object>): void;

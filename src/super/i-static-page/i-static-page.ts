@@ -16,11 +16,11 @@ import { SetEvent } from 'core/session';
 import { StatusEvent } from 'core/net';
 
 import iBlock from 'super/i-block/i-block';
-import bRouter, { PageInfo } from 'base/b-router/b-router';
+import bRouter, { CurrentPage } from 'base/b-router/b-router';
 import iPage, { component, field, system, watch, Event } from 'super/i-page/i-page';
 
 export * from 'super/i-data/i-data';
-export { globalEvent, ResetType, PageInfo };
+export { globalEvent, ResetType, CurrentPage };
 
 export type RootMods = Dictionary<{
 	mod: string;
@@ -33,7 +33,8 @@ export const
 
 @component()
 export default class iStaticPage<
-	T extends Dictionary = Dictionary,
+	P extends Dictionary = Dictionary,
+	Q extends Dictionary = Dictionary,
 	M extends Dictionary = Dictionary,
 	D extends Dictionary = Dictionary
 > extends iPage<D> {
@@ -73,18 +74,18 @@ export default class iStaticPage<
 
 	remoteState!: Dictionary;
 
-	/**
-	 * Page information object store
-	 */
-	get pageInfo(): PageInfo<T, M> | undefined {
-		return this.getField('pageInfoStore');
+	/** @override */
+	get route(): CurrentPage<P, Q, M> | undefined {
+		return this.getField('routeStore');
 	}
 
 	/**
-	 * Sets a new page information object store
+	 * @override
+	 * @emits setRoute(value: Object)
 	 */
-	set pageInfo(value: PageInfo<T, M> | undefined) {
-		this.setField('pageInfoStore', value);
+	set route(value: CurrentPage<P, Q, M> | undefined) {
+		this.setField('routeStore', value);
+		this.emit('setRoute', value);
 	}
 
 	/** @override */
@@ -113,10 +114,10 @@ export default class iStaticPage<
 	}
 
 	/**
-	 * Page information object store
+	 * Route information object store
 	 */
 	@field()
-	protected pageInfoStore?: PageInfo<T, M>;
+	protected routeStore?: CurrentPage<P, Q, M>;
 
 	/**
 	 * Root page router instance

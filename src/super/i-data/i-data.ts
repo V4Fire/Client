@@ -159,6 +159,14 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 				return $a.once($d.event, event, fn, params, ...args);
 			},
 
+			promisifyOnce: (event, params, ...args) => {
+				if (!$d) {
+					return;
+				}
+
+				return $a.promisifyOnce($d.event, event, params, ...args);
+			},
+
 			off: (...args) => {
 				if (!$d) {
 					return;
@@ -222,6 +230,17 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 		return super.initLoad(() => this.db, silent);
 	}
 
+	/**
+	 * Alias for iBlock.initLoad
+	 *
+	 * @see iBlock.initLoad
+	 * @param data
+	 * @param silent
+	 */
+	initBaseLoad(data?: any | ((this: this) => any), silent?: boolean): CanPromise<void> {
+		return super.initLoad(data, silent);
+	}
+
 	/** override */
 	async reload(): Promise<void> {
 		if (!this.$root.isOnline && !this.needOfflineReInit) {
@@ -280,20 +299,28 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 
 		return {
 			connection,
-			on: async (event, fnOrParams, ...args) => {
+			on: (event, fnOrParams, ...args) => {
 				if (!$d) {
 					return;
 				}
 
-				return $a.on(<Socket>(await connection), event, fnOrParams, ...args);
+				return (async () => $a.on(<Socket>(await connection), event, fnOrParams, ...args))();
 			},
 
-			once: async (event, fnOrParams, ...args) => {
+			once: (event, fnOrParams, ...args) => {
 				if (!$d) {
 					return;
 				}
 
-				return $a.once(<Socket>(await connection), event, fnOrParams, ...args);
+				return (async () => $a.once(<Socket>(await connection), event, fnOrParams, ...args))();
+			},
+
+			promisifyOnce: (event, params, ...args) => {
+				if (!$d) {
+					return;
+				}
+
+				return (async () => $a.promisifyOnce(<Socket>(await connection), event, params, ...args))();
 			},
 
 			off: (...args) => {
@@ -497,6 +524,7 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 	 * @param [value]
 	 * @param [oldValue]
 	 */
+	@watch({field: 'request', deep: true})
 	@watch({field: 'requestParams', deep: true})
 	protected async syncRequestParamsWatcher(value?: RequestParams, oldValue?: RequestParams): Promise<void> {
 		if (!value) {
@@ -597,10 +625,15 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 			res = [p, {}];
 		}
 
-		res[0] = Object.mixin({
-			traits: true,
-			filter: (el) => isGet ? el != null : el !== undefined
-		}, undefined, res[0], customData);
+		if (Object.isObject(res[0]) && Object.isObject(customData)) {
+			res[0] = Object.mixin({
+				traits: true,
+				filter: (el) => isGet ? el != null : el !== undefined
+			}, undefined, res[0], customData);
+
+		} else {
+			res[0] = res[0] != null ? res[0] : customData;
+		}
 
 		res[1] = Object.mixin({deep: true}, undefined, res[1], customOpts);
 

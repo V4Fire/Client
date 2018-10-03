@@ -298,7 +298,7 @@ export default class bCalendar<T extends Dictionary = Dictionary> extends iInput
 				}
 
 				this.shown = true;
-			} catch (_) {}
+			} catch {}
 		}
 
 		return res;

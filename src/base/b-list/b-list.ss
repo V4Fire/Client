@@ -70,5 +70,5 @@
 									+= self.gIcon(['el.icon'], {'g-icon': {}})
 
 						- block progress
-							< span.&__cell.&__link-icon.&__link-progress v-if = !isFunctional
+							< span.&__cell.&__link-icon.&__link-progress v-if = dataProvider
 								< b-progress-icon v-once

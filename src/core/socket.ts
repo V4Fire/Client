@@ -23,7 +23,7 @@ export default function socket(namespace: string = ''): Socket | undefined {
 	try {
 		socket = require('socket.io-client');
 
-	} catch (_) {}
+	} catch {}
 
 	if (socket && config.api) {
 		const url = new URL(config.api);

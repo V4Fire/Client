@@ -24,6 +24,7 @@ import request, {
 	Middlewares,
 	CacheStrategy,
 	RequestQuery,
+	RequestMethods,
 	RequestResponse,
 	RequestResponseObject,
 	Response,
@@ -113,27 +114,57 @@ export default class Provider {
 	static readonly decoders: DecodersTable = {};
 
 	/**
+	 * HTTP method for .get()
+	 */
+	getMethod: RequestMethods = 'GET';
+
+	/**
+	 * HTTP method for .peek()
+	 */
+	peekMethod: RequestMethods = 'HEAD';
+
+	/**
+	 * HTTP method for .add()
+	 */
+	addMethod: RequestMethods = 'POST';
+
+	/**
+	 * HTTP method for .upd()
+	 */
+	updMethod: RequestMethods = 'PUT';
+
+	/**
+	 * HTTP method for .del()
+	 */
+	delMethod: RequestMethods = 'DELETE';
+
+	/**
 	 * Base URL for requests
 	 */
 	baseURL: string = '';
 
 	/**
-	 * Base URL for PEEK requests
+	 * Base URL for .get()
+	 */
+	baseGetURL: string = '';
+
+	/**
+	 * Base URL for .peek()
 	 */
 	basePeekURL: string = '';
 
 	/**
-	 * Base URL for ADD requests
+	 * Base URL for .add()
 	 */
 	baseAddURL: string = '';
 
 	/**
-	 * Base URL for UPD requests
+	 * Base URL for .upd()
 	 */
 	baseUpdURL: string = '';
 
 	/**
-	 * Base URL for DEL requests
+	 * Base URL for .del()
 	 */
 	baseDelURL: string = '';
 
@@ -156,6 +187,11 @@ export default class Provider {
 	 * Temporary model event name for requests
 	 */
 	tmpEventName: ModelMethods | undefined;
+
+	/**
+	 * Temporary request method
+	 */
+	tmpMethod: RequestMethods | undefined;
 
 	/**
 	 * Cache id
@@ -375,6 +411,27 @@ export default class Provider {
 	}
 
 	/**
+	 * Returns a custom request method for the operation
+	 */
+	method(): RequestMethods | undefined;
+
+	/**
+	 * Sets a custom request method for the operation
+	 * @param [value]
+	 */
+	method(value: RequestMethods): Provider;
+	method(value?: RequestMethods): Provider | RequestMethods | undefined {
+		if (value == null) {
+			const val = this.tmpMethod;
+			this.tmpMethod = undefined;
+			return val;
+		}
+
+		this.tmpMethod = value;
+		return this;
+	}
+
+	/**
 	 * Returns full request URL
 	 */
 	url(): string;
@@ -415,6 +472,36 @@ export default class Provider {
 	}
 
 	/**
+	 * Gets data
+	 *
+	 * @param [query]
+	 * @param [opts]
+	 */
+	get<T>(query?: RequestQuery, opts?: CreateRequestOptions<T>): RequestResponse {
+		if (this.baseGetURL && !this.advURL) {
+			this.base(this.baseGetURL);
+		}
+
+		const
+			url = this.url(),
+			eventName = this.name(),
+			method = this.method() || this.getMethod;
+
+		const req = this.request(url, this.resolver, this.mergeToOpts('get', {
+			externalRequest: this.externalRequest,
+			...opts,
+			query,
+			method
+		}));
+
+		if (eventName) {
+			return this.updateRequest(url, eventName, req);
+		}
+
+		return this.updateRequest(url, req);
+	}
+
+	/**
 	 * Peeks data
 	 *
 	 * @param [query]
@@ -427,37 +514,13 @@ export default class Provider {
 
 		const
 			url = this.url(),
-			eventName = this.name();
+			eventName = this.name(),
+			method = this.method() || this.peekMethod;
 
 		const req = this.request(url, this.resolver, this.mergeToOpts('peek', {
 			...opts,
 			query,
-			method: 'HEAD'
-		}));
-
-		if (eventName) {
-			return this.updateRequest(url, eventName, req);
-		}
-
-		return this.updateRequest(url, req);
-	}
-
-	/**
-	 * Gets data
-	 *
-	 * @param [query]
-	 * @param [opts]
-	 */
-	get<T>(query?: RequestQuery, opts?: CreateRequestOptions<T>): RequestResponse {
-		const
-			url = this.url(),
-			eventName = this.name();
-
-		const req = this.request(url, this.resolver, this.mergeToOpts('get', {
-			externalRequest: this.externalRequest,
-			...opts,
-			query,
-			method: 'GET'
+			method
 		}));
 
 		if (eventName) {
@@ -476,12 +539,13 @@ export default class Provider {
 	post<T>(body?: RequestBody, opts?: CreateRequestOptions<T>): RequestResponse {
 		const
 			url = this.url(),
-			eventName = this.name();
+			eventName = this.name(),
+			method = this.method() || 'POST';
 
 		const req = this.request(url, this.resolver, this.mergeToOpts(eventName || 'post', {
 			...opts,
 			body,
-			method: 'POST'
+			method
 		}));
 
 		if (eventName) {
@@ -504,17 +568,14 @@ export default class Provider {
 
 		const
 			url = this.url(),
-			eventName = this.name() || 'add';
+			eventName = this.name() || 'add',
+			method = this.method() || this.addMethod;
 
-		return this.updateRequest(
-			url,
-			eventName,
-			this.request(url, this.resolver, this.mergeToOpts('add', {
-				...opts,
-				body,
-				method: 'POST'
-			}))
-		);
+		return this.updateRequest(url, eventName, this.request(url, this.resolver, this.mergeToOpts('add', {
+			...opts,
+			body,
+			method
+		})));
 	}
 
 	/**
@@ -530,17 +591,14 @@ export default class Provider {
 
 		const
 			url = this.url(),
-			eventName = this.name() || 'upd';
+			eventName = this.name() || 'upd',
+			method = this.method() || this.updMethod;
 
-		return this.updateRequest(
-			url,
-			eventName,
-			this.request(url, this.resolver, this.mergeToOpts('upd', {
-				...opts,
-				body,
-				method: 'PUT'
-			}))
-		);
+		return this.updateRequest(url, eventName, this.request(url, this.resolver, this.mergeToOpts('upd', {
+			...opts,
+			body,
+			method
+		})));
 	}
 
 	/**
@@ -556,17 +614,14 @@ export default class Provider {
 
 		const
 			url = this.url(),
-			eventName = this.name() || 'upd';
+			eventName = this.name() || 'upd',
+			method = this.method() || this.delMethod;
 
-		return this.updateRequest(
-			url,
-			eventName,
-			this.request(url, this.resolver, this.mergeToOpts('del', {
-				...opts,
-				body,
-				method: 'DELETE'
-			}))
-		);
+		return this.updateRequest(url, eventName, this.request(url, this.resolver, this.mergeToOpts('del', {
+			...opts,
+			body,
+			method
+		})));
 	}
 
 	/**

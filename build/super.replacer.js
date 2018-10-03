@@ -20,8 +20,8 @@ const
 	{pathEqual} = require('path-equal');
 
 const {
-	config: pzlr,
-	resolve
+	resolve: {rootDependencies, depMap},
+	config: {dependencies, super: superLink}
 } = require('@pzlr/build-core');
 
 const exts = $C(include('build/resolve.webpack').extensions).to([]).reduce((list, ext) => {
@@ -31,8 +31,7 @@ const exts = $C(include('build/resolve.webpack').extensions).to([]).reduce((list
 });
 
 const
-	deps = pzlr.dependencies,
-	importRgxp = new RegExp(`(['"])(${RegExp.escape(pzlr.super)})(/.*?|(?=\\1))\\1`, 'g');
+	importRgxp = new RegExp(`(['"])(${RegExp.escape(superLink)})(/.*?|(?=\\1))\\1`, 'g');
 
 /**
  * Monic replacer for TS import declarations
@@ -42,13 +41,15 @@ const
  * @returns {string}
  */
 module.exports = function (str, file) {
-	if (!deps.length) {
+	if (!dependencies.length || !importRgxp.test(str)) {
 		return str;
 	}
 
-	let start = 0;
-	for (let o = resolve.rootDependencies, i = 0; i < o.length; i++) {
-		if (isPathInside(file, o[i])) {
+	let
+		start = 0;
+
+	for (let i = 0; i < rootDependencies.length; i++) {
+		if (isPathInside(file, rootDependencies[i])) {
 			start = i + 1;
 			break;
 		}
@@ -61,10 +62,10 @@ module.exports = function (str, file) {
 		let
 			resource;
 
-		loop: for (let o = resolve.rootDependencies, i = start; i < o.length; i++) {
+		loop: for (let i = start; i < rootDependencies.length; i++) {
 			const
-				dep = deps[i],
-				l = path.join(o[i], url);
+				dep = dependencies[i],
+				l = path.join(rootDependencies[i], url);
 
 			if (path.extname(l)) {
 				if (!pathEqual(l, file) && fs.existsSync(l)) {
@@ -90,7 +91,7 @@ module.exports = function (str, file) {
 				return `'${resource + url}'`;
 			}
 
-			return `'${path.join(resource, resolve.depMap[resource].config.sourceDir, url)}'`;
+			return `'${path.join(resource, depMap[resource].config.sourceDir, url)}'`;
 		}
 
 		return str;
