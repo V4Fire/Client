@@ -291,7 +291,7 @@ export function createMeta(parent: ComponentMeta): ComponentMeta {
 	return meta;
 }
 
-const
+export const
 	customWatcherRgxp = /^([!?]?)([^!?:]*):(.*)/;
 
 /**

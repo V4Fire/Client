@@ -59,6 +59,7 @@ import {
 	patchVNode,
 	runHook,
 	globalEvent,
+	customWatcherRgxp,
 
 	ModVal,
 	ModsDecl,
@@ -3265,13 +3266,10 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 			o = this.watchProp,
 			keys = Object.keys(o);
 
-		const
-			rootRgxp = /^([!?]?)([^:]*)/;
-
 		const normalizeField = (field) => {
-			if (rootRgxp.test(field)) {
-				return field.replace(rootRgxp, (str, prfx, emitter) =>
-					prfx + ['$parent'].concat(emitter || []).join('.'));
+			if (customWatcherRgxp.test(field)) {
+				return field.replace(customWatcherRgxp, (str, prfx, emitter, event) =>
+					`${prfx + ['$parent'].concat(emitter || []).join('.')}:${event}`);
 			}
 
 			return `$parent.${field}`;
