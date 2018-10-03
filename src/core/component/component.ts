@@ -414,11 +414,13 @@ export function bindWatchers(ctx: VueInterface, eventCtx: VueInterface = ctx): v
 				}
 
 				// @ts-ignore
-				ctx.$watch(key, {
+				const unwatch = ctx.$watch(key, {
 					deep: el.deep,
 					immediate: el.immediate,
 					handler
 				});
+
+				$a.worker(unwatch, group);
 			})();
 		}
 	}
