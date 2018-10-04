@@ -37,7 +37,7 @@ export * from 'core/component/decorators';
 export * from 'core/component/functional';
 
 export { PARENT } from 'core/component/inherit';
-export { runHook } from 'core/component/component';
+export { runHook, customWatcherRgxp } from 'core/component/component';
 export { default as VueInterface, VueElement } from 'core/component/vue';
 export { default as globalEvent, reset, ResetType } from 'core/component/event';
 
@@ -146,7 +146,7 @@ export interface WatchOptionsWithHandler<T extends VueInterface = VueInterface, 
 	args?: any | any[];
 	provideArgs?: boolean;
 	wrapper?: WatchWrapper<T, A, B>;
-	handler: WatchHandler<T, A, B>;
+	handler: string | WatchHandler<T, A, B>;
 }
 
 export interface MethodWatcher<T extends VueInterface = VueInterface, A = any, B = A> extends WatchOptions {

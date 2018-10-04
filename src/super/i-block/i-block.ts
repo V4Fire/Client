@@ -59,12 +59,14 @@ import {
 	patchVNode,
 	runHook,
 	globalEvent,
+	customWatcherRgxp,
 
 	ModVal,
 	ModsDecl,
 	VueInterface,
 	VueElement,
 	ComponentMeta,
+	MethodWatchers,
 	Hooks,
 	PARENT
 
@@ -267,6 +269,12 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 	 */
 	@prop(Boolean)
 	readonly remoteProvider: boolean = false;
+
+	/**
+	 * Remote watchers table
+	 */
+	@prop(Object)
+	readonly watchProp: Dictionary<MethodWatchers> = {};
 
 	/**
 	 * If true, then the current component is activated
@@ -3246,6 +3254,56 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 				});
 			}
 		});
+	}
+
+	/**
+	 * Initializes watchers from .watchProp
+	 */
+	@hook('beforeDataCreate')
+	protected initRemoteWatchers(): void {
+		const
+			w = this.meta.watchers,
+			o = this.watchProp,
+			keys = Object.keys(o);
+
+		const normalizeField = (field) => {
+			if (customWatcherRgxp.test(field)) {
+				return field.replace(customWatcherRgxp, (str, prfx, emitter, event) =>
+					`${prfx + ['$parent'].concat(emitter || []).join('.')}:${event}`);
+			}
+
+			return `$parent.${field}`;
+		};
+
+		for (let i = 0; i < keys.length; i++) {
+			const
+				method = keys[i],
+				watchers = (<any[]>[]).concat((<MethodWatchers>o[method]) || []);
+
+			for (let i = 0; i < watchers.length; i++) {
+				const
+					el = watchers[i],
+					isStr = Object.isString(el),
+					field = normalizeField(isStr ? el : el.field);
+
+				w[field] = w[field] || [];
+
+				if (Object.isString(el)) {
+					w[field].push({
+						method,
+						handler: method
+					});
+
+				} else {
+					w[field].push({
+						...el,
+						args: [].concat(el.args || []),
+						method,
+						handler: method
+					});
+				}
+			}
+		}
 	}
 
 	/**

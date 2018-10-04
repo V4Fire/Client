@@ -171,10 +171,6 @@ export default function inheritMeta(
 					key = keys[i],
 					parent = parentObj[key];
 
-				if (key === 'foo') {
-					console.log(computed[key]);
-				}
-
 				const
 					after = new Set(),
 					watchers = new Map();

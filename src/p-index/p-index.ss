@@ -14,6 +14,12 @@
 	- block body
 		{{ foo }}
 
+		< b-remote-provider &
+			:watch = {
+				reload: [{field: 'foo', group: ':suspend'}]
+			}
+		.
+
 		< b-input v-once | :value = 'fooo'
 		///< b-checkbox
 		///< b-textarea
