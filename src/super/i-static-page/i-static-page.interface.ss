@@ -129,7 +129,7 @@
 								}
 							});
 
-						} catch {}
+						} catch(_) {}
 
 				- if !@@fatHTML && assetsRequest
 					- block assets
