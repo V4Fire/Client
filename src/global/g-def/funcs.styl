@@ -127,6 +127,22 @@ flexbox($justify, $align = $justify)
 		flex-direction arguments[2]
 
 /**
+ * Sets sizes dictionary
+ * $flag for global: replacing global sizes
+ * $flag for local: extend global sizes
+ *
+ * @param {Tuple} $obj
+ * @param {string} [$place]
+ * @param {boolean=} [$flag]
+ */
+setSizes($obj, $place, $flag = false)
+	if ($place == 'local')
+		return getSizes($obj, $flag)
+
+	if ($place == 'global')
+		return extendSizes($obj, $flag)
+
+/**
  * Generates rules for button css reset
  */
 resetButton()
