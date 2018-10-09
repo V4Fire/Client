@@ -14,7 +14,7 @@ export interface StageTitles<T = any> extends Dictionary<TitleValue<T>> {
 	'[[DEFAULT]]': TitleValue<T>;
 }
 
-@component()
+@component({inheritMods: false})
 export default class iPage<T extends Dictionary = Dictionary> extends iData<T> {
 	/** @override */
 	readonly needReInit: boolean = true;
