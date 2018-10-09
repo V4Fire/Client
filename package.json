@@ -5,7 +5,7 @@
   "main": "src/core/index.js",
   "typings": "index.d.ts",
   "license": "MIT",
-  "version": "2.0.0-beta.88",
+  "version": "2.0.0-beta.89",
   "author": {
     "name": "kobezzza",
     "email": "kobezzza@gmail.com",
@@ -112,8 +112,8 @@
     "webpack-cli": "^3.1.0"
   },
   "devDependencies": {
-    "babel-eslint": "^9.0.0",
-    "eslint": "^5.6.0",
+    "babel-eslint": "^10.0.1",
+    "eslint": "^5.6.1",
     "tslint": "^5.11.0"
   }
 }
