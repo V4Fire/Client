@@ -20,6 +20,7 @@
 		? Object.assign(attrs, tree.getComponentPropAttrs(self.name(PARENT_TPL_NAME)))
 		? delete attrs[':dispatching']
 		? delete attrs[':is']
+		? delete attrs[':mods']
 
 		- block component(keepAlive, include, exclude)
 			: keepAliveAttrs = Object.assign({}, attrs)
@@ -35,6 +36,7 @@
 					ref = component |
 					:is = page |
 					:dispatching = true |
+					:mods = modsProp |
 					${attrs}
 				.
 
