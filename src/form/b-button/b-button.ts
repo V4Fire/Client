@@ -114,6 +114,11 @@ export default class bButton<T extends Dictionary = Dictionary> extends iData<T>
 		upper: [
 			'true',
 			['false']
+		],
+
+		theme: [
+			bButton.PARENT,
+			'icon'
 		]
 	};
 
