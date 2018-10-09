@@ -85,6 +85,7 @@ export interface ComponentParams {
 	provide?: Dictionary | (() => Dictionary);
 	inject?: InjectOptions;
 	inheritAttrs?: boolean;
+	inheritMods?: boolean;
 }
 
 export interface WatchHandler<T extends VueInterface = VueInterface, A = any, B = A> {

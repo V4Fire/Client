@@ -15,7 +15,7 @@ export type KeepAlive =
 	string[] |
 	RegExp;
 
-@component()
+@component({inheritMods: false})
 export default class bDynamicPage extends iDynamicPage {
 	/** @override */
 	readonly selfDispatching: boolean = true;

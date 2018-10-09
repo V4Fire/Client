@@ -79,6 +79,10 @@ $C(files).forEach((el) => {
 		obj.functional = p.functional;
 	}
 
+	if (p.inheritMods != null) {
+		obj.inheritMods = p.inheritMods;
+	}
+
 	let s;
 	while ((s = propsRgxp.exec(file))) {
 		obj.props[s[2].split(' ').slice(-1)[0]] = true;
@@ -115,8 +119,12 @@ function getFunctionalParameters(obj) {
 $C(componentsTree).forEach((el, key, data) => {
 	data[key].functional = getFunctionalParameters(el);
 
-	if (el.parent && data[el.parent]) {
-		Object.setPrototypeOf(el.props, data[el.parent].props);
+	const
+		p = el.parent && data[el.parent];
+
+	if (p) {
+		Object.setPrototypeOf(el, p);
+		Object.setPrototypeOf(el.props, p.props);
 	}
 });
 
@@ -236,7 +244,7 @@ function tagFilter({name, attrs = {}}) {
 			}
 		});
 
-		if (!attrs[':mods-prop']) {
+		if (c && c.inheritMods !== false && !attrs[':mods-prop']) {
 			attrs[':mods-prop'] = ['provideMods()'];
 		}
 	}
