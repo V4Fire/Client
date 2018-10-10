@@ -2053,7 +2053,7 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 				p = key.split('.');
 
 			if (p[0] === 'mods') {
-				this.setMod(p.slice(1).join('.'), el);
+				this.setMod(p[1], el);
 
 			} else if (!Object.fastCompare(el, this.getField(key))) {
 				this.setField(key, el);
@@ -2560,7 +2560,7 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 						p = key.split('.');
 
 					if (p[0] === 'mods') {
-						$a.on(this.localEvent, `block.mod.*.${p[0]}.*`, sync, storeWatchers);
+						$a.on(this.localEvent, `block.mod.*.${p[1]}.*`, sync, storeWatchers);
 
 					} else {
 						this.watch(key, (val, oldVal) => {
@@ -2667,7 +2667,7 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 					p = key.split('.');
 
 				if (p[0] === 'mods') {
-					$a.on(this.localEvent, `block.mod.*.${p[0]}.*`, sync, routerWatchers);
+					$a.on(this.localEvent, `block.mod.*.${p[1]}.*`, sync, routerWatchers);
 
 				} else {
 					this.watch(key, (val, oldVal) => {
