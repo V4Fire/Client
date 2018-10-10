@@ -144,16 +144,16 @@ module.exports = function (style) {
 			res;
 
 		if (!base) {
-			if (col && (reserved && col[0][num] || col[num])) {
-				return reserved ? pickColor(col[0][num]) : pickColor(col[num]);
+			if (col && (reserved && col[0][num - 1] || col[num])) {
+				return reserved ? pickColor(col[0][num - 1]) : pickColor(col[num]);
 			}
 
 			$C(dependencies).some((el) => {
 				col = GLOBAL.colors[el];
 
 				if (col) {
-					if (reserved && col[hue][0][num]) {
-						res = col[hue][0][num];
+					if (reserved && col[hue][0][num - 1]) {
+						res = col[hue][0][num - 1];
 						return true;
 
 					} else if (!reserved && col[hue][num]) {
@@ -168,7 +168,7 @@ module.exports = function (style) {
 				kit = GLOBAL.colors[base];
 
 			if (kit && reserved) {
-				res = kit[hue][0][num];
+				res = kit[hue][0][num - 1];
 
 			} else if (kit && kit[hue] && kit[hue][num]) {
 				res = kit[hue][num];
