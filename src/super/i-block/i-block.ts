@@ -2053,7 +2053,7 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 				p = key.split('.');
 
 			if (p[0] === 'mods') {
-				this.setMod(p[0], p.slice(1).join('.'));
+				this.setMod(p.slice(1).join('.'), el);
 
 			} else if (!Object.fastCompare(el, this.getField(key))) {
 				this.setField(key, el);
