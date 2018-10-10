@@ -2551,7 +2551,7 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 					stateFields
 				);
 
-				const sync = this.createDeferFn(this.saveStateToStorage, {
+				const sync = this.createDeferFn(() => this.saveStateToStorage(), {
 					label: $$.syncLocalStore
 				});
 
@@ -2658,7 +2658,7 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 				stateFields
 			);
 
-			const sync = this.createDeferFn(this.saveStateToRouter, {
+			const sync = this.createDeferFn(() => this.saveStateToRouter(), {
 				label: $$.syncRouter
 			});
 
