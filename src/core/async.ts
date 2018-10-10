@@ -49,7 +49,7 @@ export default class Async<CTX extends object = Async<any>> extends Super<CTX> {
 	 * @param params - parameters for the operation:
 	 *   *) [element] - link for the element
 	 *   *) [join] - if true, then competitive tasks (with same labels) will be joined to the first
-	 *   *) [label] - label for the task (previous task with the same label will be canceled)gco mas
+	 *   *) [label] - label for the task (previous task with the same label will be canceled)
 	 *   *) [group] - group name for the task
 	 *   *) [onClear] - clear handler
 	 */
