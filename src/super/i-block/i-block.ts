@@ -2503,7 +2503,6 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 	 * Saves a component state to a local storage
 	 * @param [data] - advanced data
 	 */
-	@wait({defer: true, label: $$.saveStateToStorage})
 	protected async saveStateToStorage(data?: Dictionary | undefined): Promise<void> {
 		if (!this.globalName) {
 			return;
