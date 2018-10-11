@@ -15,8 +15,11 @@ import 'core/component/event/providers';
 
 export type ResetType =
 	'load' |
+	'load.silence' |
 	'router' |
+	'router.silence' |
 	'storage' |
+	'storage.silence' |
 	'silence';
 
 /**
