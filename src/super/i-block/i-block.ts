@@ -944,7 +944,9 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 	 * Returns a string id, which is connected to the component
 	 * @param id - custom id
 	 */
-	getConnectedId(id: string | void): string | undefined {
+	getConnectedId(id: string): string;
+	getConnectedId(id: undefined | null): undefined;
+	getConnectedId(id: string | undefined | null): string | undefined {
 		if (!id) {
 			return undefined;
 		}
