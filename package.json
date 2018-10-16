@@ -5,7 +5,7 @@
   "main": "src/core/index.js",
   "typings": "index.d.ts",
   "license": "MIT",
-  "version": "2.0.0-beta.95",
+  "version": "2.0.0-beta.96",
   "author": {
     "name": "kobezzza",
     "email": "kobezzza@gmail.com",
@@ -29,7 +29,7 @@
     "@types/socket.io-client": "^1.4.32",
     "@v4fire/core": "^2.0.0-beta.18",
     "babel-polyfill": "^6.26.0",
-    "chart.js": "^2.7.2",
+    "chart.js": "^2.7.3",
     "collection.js": "^6.6.27",
     "escaper": "^2.4.34",
     "eventemitter2": "^5.0.1",
@@ -113,7 +113,7 @@
   },
   "devDependencies": {
     "babel-eslint": "^10.0.1",
-    "eslint": "^5.6.1",
+    "eslint": "^5.7.0",
     "tslint": "^5.11.0"
   }
 }
