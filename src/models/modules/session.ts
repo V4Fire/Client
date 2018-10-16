@@ -56,7 +56,7 @@ export default class Session extends Provider {
 			session = await s.get();
 
 		return {
-			[this.authHeader]: this.authPrfx + session.auth,
+			[this.authHeader]: session.auth && this.authPrfx + session.auth,
 			[this.csrfHeader]: session.csrf
 		};
 	}
