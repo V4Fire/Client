@@ -23,6 +23,7 @@ export interface Day {
 }
 
 export type Value = Date | Date[];
+export type Range = string | number | Date;
 export type Directions = 'right' | 'left';
 
 export const
@@ -45,13 +46,13 @@ export default class bCalendar<T extends Dictionary = Dictionary> extends iInput
 	 * Initial maximum date value
 	 */
 	@prop({type: [String, Number, Date], required: false})
-	readonly maxProp?: string | number | Date;
+	readonly maxProp?: Range;
 
 	/**
 	 * Initial minimum date value
 	 */
 	@prop({type: [String, Number, Date], required: false})
-	readonly minProp?: string | number | Date;
+	readonly minProp?: Range;
 
 	/**
 	 * Time margin for .min and .max
