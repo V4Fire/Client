@@ -51,6 +51,12 @@ export default class bNotifier<T extends Dictionary = Message> extends iData<T> 
 	readonly rules: Dictionary = {};
 
 	/**
+	 * Notify sound
+	 */
+	@prop(String)
+	readonly sound: string = 'door_bell';
+
+	/**
 	 * If false, the helper tooltip won't be displayed
 	 */
 	readonly showTooltip: boolean = true;
@@ -100,11 +106,15 @@ export default class bNotifier<T extends Dictionary = Message> extends iData<T> 
 			}
 
 			const
+				that = this,
 				{onshow} = rule;
 
 			rule = {...rule, silent: true};
 			rule.onshow = function (): void {
-				ion.sound.play('door_bell');
+				if (that.sound) {
+					ion.sound.play(that.sound);
+				}
+
 				onshow && onshow.apply(this, arguments);
 			};
 
