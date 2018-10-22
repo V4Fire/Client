@@ -208,8 +208,8 @@ export default class bForm<T extends Dictionary = Dictionary> extends iData<T> {
 	 * @param [focusOnFail] - if true, then will be set focus to an invalid element
 	 * @emits validationStart()
 	 * @emits validationSuccess()
-	 * @emits validationFail(failedValidation: Object)
-	 * @emits validationEnd(result: boolean, failedValidation: Object)
+	 * @emits validationFail(failedValidation: ValidationError)
+	 * @emits validationEnd(result: boolean, failedValidation: ValidationError | undefined)
 	 */
 	@wait('ready', {label: $$.validate, defer: true})
 	async validate(focusOnFail?: boolean): Promise<iInput[] | false> {
@@ -268,9 +268,9 @@ export default class bForm<T extends Dictionary = Dictionary> extends iData<T> {
 	/**
 	 * Submits the form
 	 *
-	 * @emits submitStart(body: Object, params: Object, method: string)
-	 * @emits submitSuccess(result: XMLHttpRequest)
-	 * @emits submitFail(err: error, els: iInput[])
+	 * @emits submitStart(body: RequestBody, params: CreateRequestOptions<T>, method: string)
+	 * @emits submitSuccess(result: T)
+	 * @emits submitFail(err: Error, els: iInput[])
 	 */
 	@wait('ready', {label: $$.submit, defer: true})
 	async submit(): Promise<void> {
@@ -324,6 +324,7 @@ export default class bForm<T extends Dictionary = Dictionary> extends iData<T> {
 			}
 
 			this.emit('submitStart', body, this.params, this.method);
+
 			try {
 				// tslint:disable-next-line
 				if (this.delegateAction) {

@@ -623,7 +623,7 @@ export default class bSelect<T extends Dictionary = Dictionary> extends bInput<T
 	 * Handler: option select
 	 *
 	 * @param [value]
-	 * @emits actionChange(selected?: string)
+	 * @emits actionChange(selected: string | undefined)
 	 */
 	@watch({
 		field: '?$el:click',

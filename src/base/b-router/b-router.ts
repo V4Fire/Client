@@ -284,11 +284,11 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 	 * @param [params] - additional page parameters
 	 * @param [method] - driver method
 	 *
-	 * @emits beforeChange(page: (string|null), params?: Object, method: string)
-	 * @emits change(info: Object)
-	 * @emits hardChange(info: Object)
-	 * @emits softChange(info: Object)
-	 * @emits $root.transition(info: Object, type: string)
+	 * @emits beforeChange(page: string | null, params: PageParams | undefined, method: string)
+	 * @emits change(info: PageOpts)
+	 * @emits hardChange(info: PageOpts)
+	 * @emits softChange(info: PageOpts)
+	 * @emits $root.transition(info: PageOpts, type: string)
 	 */
 	async setPage(
 		page: string | null,

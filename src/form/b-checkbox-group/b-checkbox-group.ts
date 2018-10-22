@@ -11,6 +11,7 @@ import bCheckbox from 'form/b-checkbox/b-checkbox';
 import iInput, { component, prop, field, p, ValidatorsDecl, ComponentConverter } from 'super/i-input/i-input';
 export * from 'super/i-input/i-input';
 
+export type Value = any | any[];
 export interface Option extends Dictionary {
 	id: string;
 	name: string;
@@ -26,7 +27,7 @@ export interface Option extends Dictionary {
 
 export default class bCheckboxGroup<T extends Dictionary = Dictionary> extends iInput<T> {
 	/** @override */
-	readonly valueProp: any | any[] = [];
+	readonly valueProp: Value = [];
 
 	/** @override */
 	@prop({default: (obj) => $C(obj).get('data') || obj || []})
@@ -241,7 +242,7 @@ export default class bCheckboxGroup<T extends Dictionary = Dictionary> extends i
 	 *
 	 * @param el
 	 * @param value
-	 * @emits actionChange(value?: any | any[])
+	 * @emits actionChange(value: Value | undefined)
 	 */
 	protected onActionChange(el: bCheckbox, value: boolean): void {
 		if (el.name) {

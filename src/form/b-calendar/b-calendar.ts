@@ -22,6 +22,7 @@ export interface Day {
 	text: string;
 }
 
+export type Value = Date | Date[];
 export type Directions = 'right' | 'left';
 
 export const
@@ -31,10 +32,10 @@ export const
 export default class bCalendar<T extends Dictionary = Dictionary> extends iInput<T> {
 	/** @override */
 	@prop({default: () => new Date()})
-	readonly valueProp!: Date | Date[];
+	readonly valueProp!: Value;
 
 	/** @override */
-	@prop({default(): Date | Date[] {
+	@prop({default(): Value {
 		return this.stringInput ? this.value[0] : this.value;
 	}})
 
@@ -400,7 +401,7 @@ export default class bCalendar<T extends Dictionary = Dictionary> extends iInput
 	 *
 	 * @param date - new date value
 	 * @param index - selected item index
-	 * @emits actionChange(value?: Date | Date[])
+	 * @emits actionChange(value: Value | undefined)
 	 */
 	protected setDate(date: Date, index?: number): Date[] {
 		const
@@ -439,7 +440,7 @@ export default class bCalendar<T extends Dictionary = Dictionary> extends iInput
 	 *
 	 * @param days - number of switching days
 	 * @param index - calendar index
-	 * @emits actionChange(value?: Date | Date[])
+	 * @emits actionChange(value?: Value | undefined)
 	 */
 	protected async onSwitchDay(days: number, index: number = 0): Promise<void> {
 		const selectedDay = Object.isArray(this.value) ? this.value : [this.value];
@@ -479,7 +480,7 @@ export default class bCalendar<T extends Dictionary = Dictionary> extends iInput
 	 * Handler: day select
 	 *
 	 * @param e
-	 * @emits actionChange(value?: Date | Date[])
+	 * @emits actionChange(value?: Value | undefined)
 	 */
 	@watch({field: '?$el:click', wrapper: (o, cb) => o.delegateElement('day', cb)})
 	protected onDaySelect(e: Event): void {

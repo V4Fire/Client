@@ -11,6 +11,15 @@ import symbolGenerator from 'core/symbol';
 import iDataPages, { field, prop, component, ModsDecl } from 'super/i-data-pages/i-data-pages';
 export * from 'super/i-data-pages/i-data-pages';
 
+export type SortDir =
+	'asc' |
+	'desc';
+
+export interface Sort {
+	field: string;
+	dir: SortDir;
+}
+
 export const
 	$$ = symbolGenerator();
 
@@ -72,7 +81,7 @@ export default class bGrid<T extends Dictionary = Dictionary> extends iDataPages
 
 	/**
 	 * Toggles sort direction
-	 * @emits toggleDir(dir: string)
+	 * @emits toggleDir(dir: SortDir)
 	 */
 	protected toggleDir(): string {
 		const dir = this.requestParams.get.dir = {asc: 'desc', desc: 'asc'}[this.requestParams.get.dir];
@@ -84,7 +93,7 @@ export default class bGrid<T extends Dictionary = Dictionary> extends iDataPages
 	 * Sets grid sort for the specified field
 	 *
 	 * @param field
-	 * @emits setSort({field: string, dir: string})
+	 * @emits setSort(sort: Sort)
 	 */
 	protected setSort(field: string): {field: string; dir: string} {
 		const

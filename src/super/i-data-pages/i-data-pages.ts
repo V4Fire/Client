@@ -66,7 +66,7 @@ export default class iDataPages<T extends Dictionary = Dictionary> extends iData
 
 	/**
 	 * Loads a data page for the source request
-	 * @emits loadNewPage(data: Object)
+	 * @emits loadNewPage(data: T)
 	 */
 	@wait('ready', {label: $$.loadPage, defer: true})
 	async loadPage(): Promise<void> {

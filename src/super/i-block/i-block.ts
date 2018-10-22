@@ -231,7 +231,7 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 
 	/**
 	 * Sets a new component stage
-	 * @emits stageChange(value?: string, oldValue?: string)
+	 * @emits stageChange(value: Stage | undefined, oldValue: Stage | undefined)
 	 */
 	set stage(value: Stage | undefined) {
 		const
@@ -1485,8 +1485,8 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 	 * @param [data] - data object (for events)
 	 * @param [silent] - silent mode
 	 *
-	 * @emits initLoad(data: Object | undefined, silent: boolean)
-	 * @emits dbReady(data: Object | undefined, silent: boolean)
+	 * @emits initLoad(data: any | undefined, silent: boolean)
+	 * @emits dbReady(data: any | undefined, silent: boolean)
 	 */
 	@hook('beforeDataCreate')
 	initLoad(data?: any | ((this: this) => any), silent?: boolean): CanPromise<void> {
