@@ -11,9 +11,8 @@ import symbolGenerator from 'core/symbol';
 import iDataPages, { field, prop, component, ModsDecl } from 'super/i-data-pages/i-data-pages';
 export * from 'super/i-data-pages/i-data-pages';
 
-export type SortDir =
-	'asc' |
-	'desc';
+export type SortDate = Date | Date[];
+export type SortDir = 'asc' | 'desc';
 
 export interface Sort {
 	field: string;
@@ -35,7 +34,7 @@ export default class bGrid<T extends Dictionary = Dictionary> extends iDataPages
 	 * Sort direction
 	 */
 	@prop(String)
-	readonly dir: string = 'desc';
+	readonly dir: SortDir = 'desc';
 
 	/**
 	 * If true, then time from .date wont be skipped
@@ -47,7 +46,7 @@ export default class bGrid<T extends Dictionary = Dictionary> extends iDataPages
 	 * Request date
 	 */
 	@prop({type: [Date, Array], required: false})
-	readonly date?: Date | Date[];
+	readonly date?: SortDate;
 
 	/**
 	 * Request date field
@@ -160,7 +159,7 @@ export default class bGrid<T extends Dictionary = Dictionary> extends iDataPages
 	 * @param date
 	 * @param data
 	 */
-	protected checkDateFactory(date: Date | Date[], data: Dictionary): Function {
+	protected checkDateFactory(date: SortDate, data: Dictionary): Function {
 		return () => {
 			const normalizedDate = Object.isDate(date) ? [date] : date;
 			return $C(normalizedDate).every((date, i, obj) =>
