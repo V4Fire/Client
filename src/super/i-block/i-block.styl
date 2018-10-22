@@ -17,10 +17,7 @@ $p = {
 		transform: translate(1px, 1px)
 	}
 
-	sizes: {
-		table: SIZES
-		units: rem
-	}
+	sizes: setSizes({table: SIZES, units: 'rem'}, 'global')
 }
 
 i-block
@@ -35,7 +32,7 @@ i-block
 		&_size
 			for $key, $value in $p.sizes.table
 				&_{$key}
-					font-size "%s%s" % ($value $p.sizes.units)
+					font-size unit($value, $p.sizes.units)
 
 	&_width
 		&_full

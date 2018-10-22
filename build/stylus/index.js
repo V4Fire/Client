@@ -10,8 +10,9 @@
 
 const
 	stylus = require('stylus'),
-	string = include('build/stylus/string'),
-	color = include('build/stylus/color');
+	size = include('build/stylus/size'),
+	color = include('build/stylus/color'),
+	string = include('build/stylus/string');
 
 module.exports = [
 	require('nib')(),
@@ -28,6 +29,7 @@ module.exports = [
 		});
 	},
 
+	size,
 	string,
 	color
 ];
