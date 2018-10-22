@@ -146,10 +146,8 @@ module.exports = function (style) {
 			GLOBAL.sizes.table = dict.table[0];
 
 		} else {
-			const
-				merged = {...GLOBAL.sizes.table, ...dict.table[0]};
-
-			checkAndSortSizeKeys(sizes);
+			const merged = {...GLOBAL.sizes.table, ...dict.table[0]};
+			checkAndSortSizeKeys(merged);
 			GLOBAL.sizes.table = merged;
 		}
 
