@@ -48,12 +48,12 @@ export default class bImage extends iBlock {
 
 	/**
 	 * Handler: image loaded
-	 * @emits loaded
+	 * @emits load
 	 */
 	protected onImageLoaded(): void {
 		this.setMod('loading', false);
 		this.tmp[this.src] = true;
-		this.emit('loaded');
+		this.emit('load');
 	}
 
 	/**
