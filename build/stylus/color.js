@@ -21,7 +21,7 @@ const GLOBAL = {
  * Converts stylus nodes collection to a js array
  *
  * @param {!Object} nodes
- * @returns {!Array<string>}
+ * @returns {string[]}
  */
 function kitFromNodes(nodes) {
 	const str = nodes.toString().replace(/[ ()]/g, '');
@@ -116,7 +116,7 @@ module.exports = function (style) {
 
 	/**
 	 * Sets a global colors kit
-	 * @param kit
+	 * @param {!Object} kit
 	 */
 	style.define('setGlobalColors', (kit) => {
 		saveColorsKit(kit);

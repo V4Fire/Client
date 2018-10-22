@@ -71,7 +71,7 @@ Snakeskin.importFilters({
 	 *
 	 * @param {string} url
 	 * @param {string} source
-	 * @returns {(string|!Array<string>)}
+	 * @returns {(string|string[])}
 	 */
 	b(url, source) {
 		let

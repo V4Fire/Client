@@ -16,9 +16,9 @@
 /**
  * Mixes the specified parameters and returns a new object
  *
- * @param {Object} a
- * @param {Object} b
- * @return {!Object}
+ * @param {Object=} a
+ * @param {Object=} b
+ * @returns {!Object}
  */
 - block index->mixin(a = {}, b = {})
 	: p = Object.assign({ &

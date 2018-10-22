@@ -24,8 +24,8 @@ const
 /**
  * Throws an error for sizes depends on a type
  *
- * @param type - error type
- * @param args - comments list for the output string
+ * @param {string} type - error type
+ * @param {string[]} args - comments list for the output string
  */
 function throwError(type, ...args) {
 	switch (type) {
@@ -36,21 +36,20 @@ function throwError(type, ...args) {
 			throw new Error(`Invalid identifier to specify size: ${args.join(', ')}`);
 
 		case 'structure':
-			throw new Error('Violation of the structure of the input data')
+			throw new Error('Violation of the structure of the input data');
 	}
 }
 
 /**
- * Attempt to parse object node to the javascript object.
+ * Attempt to parse object node to the javascript object
  *
- * @param {Object} obj
- * @return {Object}
- * @api private
+ * @param {!Object} obj
+ * @returns {!Object}
  */
-function parseObject(obj){
+function parseObject(obj) {
 	obj = obj.vals;
 
-	function convert(node){
+	function convert(node) {
 		switch (node.nodeName) {
 			case 'object':
 				return parseObject(node);
@@ -59,7 +58,7 @@ function parseObject(obj){
 				return node.isTrue;
 
 			case 'unit':
-				return node.type ? node.toString() : +node.val;
+				return node.type ? node.toString() : Number(node.val);
 
 			case 'string':
 			case 'literal':
@@ -70,12 +69,13 @@ function parseObject(obj){
 		}
 	}
 
-	for (let key in obj) {
+	for (const key in obj) {
 		const
 			nodes = obj[key].nodes[0].nodes;
 
 		if (nodes && nodes.length) {
 			obj[key] = [];
+
 			for (let i = 0, len = nodes.length; i < len; ++i) {
 				obj[key].push(convert(nodes[i]));
 			}
@@ -91,7 +91,7 @@ function parseObject(obj){
 /**
  * Validates values and keys, returns sorted size keys by ascending
  *
- * @param values
+ * @param {!Object} values
  * @returns {string[]}
  */
 function checkAndSortSizeKeys(values) {
@@ -125,9 +125,9 @@ module.exports = function (style) {
 	 * Extends (or replace if replace flag equals true)
 	 * table of presented sizes, or set new size table and size units
 	 *
-	 * @param {Object} obj - sizes dictionary
+	 * @param {!Object} obj - sizes dictionary
 	 * @param {boolean} [replace] - flag for replacing the global table
-	 * @returns {Object} sizes dictionary
+	 * @returns {!Object}
 	 */
 	style.define('extendSizes', (obj, replace) => {
 		const
@@ -138,7 +138,7 @@ module.exports = function (style) {
 		}
 
 		if (!dict || !dict.table) {
-			throwError('structure')
+			throwError('structure');
 		}
 
 		if (!Object.keys(GLOBAL.sizes.table).length || replace) {
@@ -165,7 +165,7 @@ module.exports = function (style) {
 	 *
 	 * @param {Object} obj - sizes dictionary
 	 * @param {boolean=} [extendGlobal] - flag for extending the global table
-	 * @returns {Object} sizes dictionary
+	 * @returns {Object}
 	 */
 	style.define('getSizes', (obj, extendGlobal) => {
 		const
@@ -176,14 +176,14 @@ module.exports = function (style) {
 		}
 
 		if (!dict || !dict.table) {
-			throwError('structure')
+			throwError('structure');
 		}
 
 		if (!extendGlobal) {
 			checkAndSortSizeKeys(dict.table);
 
 			if (!dict.units) {
-				throwError('structure')
+				throwError('structure');
 			}
 
 			return stylus.utils.coerce(dict, true);

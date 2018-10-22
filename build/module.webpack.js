@@ -37,8 +37,8 @@ const fileLoaderOpts = {
  * Returns parameters for webpack.module
  *
  * @param {(number|string)} buildId - build id
- * @param {Map} plugins - list of plugins
- * @return {Promise<Object>}
+ * @param {!Map} plugins - list of plugins
+ * @returns {!Promise<Object>}
  */
 module.exports = async function ({buildId, plugins}) {
 	const
