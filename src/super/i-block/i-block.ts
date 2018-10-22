@@ -1819,41 +1819,30 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 
 	/**
 	 * Disables the component
-	 * @emits disable()
 	 */
 	async disable(): Promise<boolean> {
-		if (await this.setMod('disabled', true)) {
-			this.emit('disable');
-			return true;
-		}
-
-		return false;
+		return this.setMod('disabled', true);
 	}
 
 	/**
 	 * Enables the component
-	 * @emits enable()
 	 */
 	async enable(): Promise<boolean> {
-		if (await this.setMod('disabled', false)) {
-			this.emit('enable');
-			return true;
-		}
-
-		return false;
+		return this.setMod('disabled', false);
 	}
 
 	/**
 	 * Sets focus for the component
-	 * @emits focus()
 	 */
 	async focus(): Promise<boolean> {
-		if (await this.setMod('focused', true)) {
-			this.emit('focus');
-			return true;
-		}
+		return this.setMod('focused', true);
+	}
 
-		return false;
+	/**
+	 * Unsets focus for the component
+	 */
+	async blur(): Promise<boolean> {
+		return this.setMod('focused', false);
 	}
 
 	/**
@@ -3196,6 +3185,15 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 
 	/**
 	 * Initializes modifiers event listeners
+	 *
+	 * @emits enable()
+	 * @emits disable()
+	 *
+	 * @emits focus()
+	 * @emits blur()
+	 *
+	 * @emits show()
+	 * @emits hide()
 	 */
 	@hook('beforeCreate')
 	protected initModEvents(): void {
@@ -3240,8 +3238,11 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 		$e.on('block.mod.*.disabled.*', (e) => {
 			if (e.value === 'false' || e.type === 'remove') {
 				$a.off({group: 'blockOnDisable'});
+				this.emit('enable');
 
 			} else {
+				this.emit('disable');
+
 				const handler = (e) => {
 					e.preventDefault();
 					e.stopImmediatePropagation();
@@ -3254,6 +3255,14 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 					}
 				});
 			}
+		});
+
+		$e.on('block.mod.*.focused.*', (e) => {
+			this.emit(e.value === 'false' || e.type === 'remove' ? 'blur' : 'focus');
+		});
+
+		$e.on('block.mod.*.hidden.*', (e) => {
+			this.emit(e.value === 'false' || e.type === 'remove' ? 'show' : 'hide');
 		});
 	}
 

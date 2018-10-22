@@ -370,6 +370,16 @@ export default class bForm<T extends Dictionary = Dictionary> extends iData<T> {
 		this.emit('submitSuccess', res, els);
 	}
 
+	/** @override */
+	protected initModEvents(): void {
+		super.initModEvents();
+		this.localEvent.on('block.mod.*.valid.*', ({type, value}) => {
+			if (type === 'remove' && value === 'false' || type === 'set' && value === 'true') {
+				this.error = undefined;
+			}
+		});
+	}
+
 	/**
 	 * Default fail handler
 	 *

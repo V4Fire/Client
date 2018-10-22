@@ -147,14 +147,7 @@ export default class iMessage extends iBlock {
 	/** @override */
 	protected initModEvents(): void {
 		super.initModEvents();
-
 		this.bindModTo('showInfo', 'infoMsg');
 		this.bindModTo('showError', 'errorMsg');
-
-		this.localEvent.on('block.mod.*.valid.*', ({type, value}) => {
-			if (type === 'remove' && value === 'false' || type === 'set' && value === 'true') {
-				this.error = undefined;
-			}
-		});
 	}
 }

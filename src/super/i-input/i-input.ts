@@ -288,7 +288,20 @@ export default class iInput<T extends Dictionary = Dictionary> extends iData<T> 
 
 		if (input && document.activeElement !== input) {
 			input.focus();
-			this.emit('focus');
+			return true;
+		}
+
+		return false;
+	}
+
+	/** @override */
+	@wait('ready')
+	async blur(): Promise<boolean> {
+		const
+			{input} = this.$refs;
+
+		if (input && document.activeElement === input) {
+			input.blur();
 			return true;
 		}
 
@@ -465,5 +478,15 @@ export default class iInput<T extends Dictionary = Dictionary> extends iData<T> 
 		const k = this.blockValueField;
 		this.watch(k + (`${k}Store` in this ? 'Store' : ''), this.onBlockValueChange);
 		this.on('actionChange', () => this.validate());
+	}
+
+	/** @override */
+	protected initModEvents(): void {
+		super.initModEvents();
+		this.localEvent.on('block.mod.*.valid.*', ({type, value}) => {
+			if (type === 'remove' && value === 'false' || type === 'set' && value === 'true') {
+				this.error = undefined;
+			}
+		});
 	}
 }

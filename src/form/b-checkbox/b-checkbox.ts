@@ -54,36 +54,24 @@ export default class bCheckbox<T extends Dictionary = Dictionary> extends iInput
 
 	/**
 	 * Checks the box
-	 * @emits check()
 	 */
 	async check(): Promise<boolean> {
 		if (!this.changeable) {
 			return false;
 		}
 
-		if (await this.setMod('checked', true)) {
-			this.emit('check');
-			return true;
-		}
-
-		return false;
+		return this.setMod('checked', true);
 	}
 
 	/**
 	 * Unchecks the box
-	 * @emits uncheck()
 	 */
 	async uncheck(): Promise<boolean> {
 		if (!this.changeable) {
 			return false;
 		}
 
-		if (await this.setMod('checked', false)) {
-			this.emit('uncheck');
-			return true;
-		}
-
-		return false;
+		return this.setMod('checked', false);
 	}
 
 	/** @override */
@@ -122,8 +110,9 @@ export default class bCheckbox<T extends Dictionary = Dictionary> extends iInput
 	protected initModEvents(): void {
 		super.initModEvents();
 		this.bindModTo('checked', 'valueStore');
-		this.localEvent.on('block.mod.*.checked.*', (el) => {
-			this.value = el.type !== 'remove' && el.value === 'true';
+		this.localEvent.on('block.mod.*.checked.*', (e) => {
+			this.value = e.type !== 'remove' && e.value === 'true';
+			this.emit(this.value ? 'check' : 'uncheck');
 		});
 	}
 }

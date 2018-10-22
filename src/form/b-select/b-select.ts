@@ -228,7 +228,6 @@ export default class bSelect<T extends Dictionary = Dictionary> extends bInput<T
 
 			if (select && document.activeElement !== select) {
 				select.focus();
-				this.emit('focus');
 				return true;
 			}
 
@@ -236,6 +235,24 @@ export default class bSelect<T extends Dictionary = Dictionary> extends bInput<T
 		}
 
 		return super.focus();
+	}
+
+	/** @override */
+	@wait('ready')
+	async blur(): Promise<boolean> {
+		if (this.b.is.mobile) {
+			const
+				{select} = this.$refs;
+
+			if (select && document.activeElement === select) {
+				select.blur();
+				return true;
+			}
+
+			return false;
+		}
+
+		return super.blur();
 	}
 
 	/** @override */
