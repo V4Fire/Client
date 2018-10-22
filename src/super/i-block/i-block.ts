@@ -3406,8 +3406,16 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 	 * (for keep-alive)
 	 */
 	protected deactivated(): void {
-		this.async
-			.muteAll()
+		const
+			$a = this.async,
+			fieldsForMute = Object.reject($a.linkNames, [$a.linkNames.promise, $a.linkNames.request]);
+
+		$C(fieldsForMute).forEach((el) => {
+			const fn = $a[`mute-${el}`.camelize(false)];
+			return fn && fn();
+		});
+
+		$a
 			.unmuteAll({group: /:suspend(?:\b|$)/})
 			.suspendAll();
 
