@@ -21,6 +21,7 @@ const
 async function buildFactory(entry, buildId) {
 	const
 		plugins = await include('build/plugins.webpack')({buildId}),
+		optimization = await include('build/optimization.webpack')({buildId, plugins}),
 		modules = await include('build/module.webpack')({buildId, plugins});
 
 	if (build.STD === buildId) {
@@ -39,7 +40,7 @@ async function buildFactory(entry, buildId) {
 		module: {...modules, rules: [...modules.rules.values()]},
 
 		mode: isProd ? 'production' : 'development',
-		optimization: await include('build/optimization.webpack')({buildId}),
+		optimization,
 		devtool: await include('build/devtool.webpack')
 	};
 }

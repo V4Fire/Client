@@ -25,9 +25,10 @@ const
  * Returns a list of webpack optimizations
  *
  * @param {number} buildId - build id
+ * @param {!Map} plugins - list of plugins
  * @returns {Array}
  */
-module.exports = async function ({buildId}) {
+module.exports = async function ({buildId, plugins}) {
 	const
 		options = {};
 
