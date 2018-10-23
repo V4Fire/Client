@@ -10,8 +10,11 @@
 
 const
 	$C = require('collection.js'),
-	config = require('config'),
-	ExtractTextPlugin = require('extract-text-webpack-plugin');
+	config = require('config');
+
+const
+	MiniCssExtractPlugin = require('mini-css-extract-plugin'),
+	OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 
 const
 	{resolve} = require('@pzlr/build-core'),
@@ -115,45 +118,53 @@ module.exports = async function ({buildId, plugins}) {
 		});
 
 	} else {
-		plugins.set(
-			'extractCSS',
-			new ExtractTextPlugin(`${hash(output, true)}.css`)
-		);
+		const
+			css = config.css();
+
+		plugins.set('extractCSS', new MiniCssExtractPlugin({
+			filename: `${hash(output, true)}.css`,
+			chunkFilename: '[id].css'
+		}));
+
+		if (css.minimize) {
+			plugins.set('minimizeCSS', new OptimizeCssAssetsPlugin({...css.minimize}));
+		}
 
 		loaders.rules.set('styl', {
 			test: /\.styl$/,
-			use: ExtractTextPlugin.extract({
-				fallback: 'style',
-				use: [].concat(
-					{
-						loader: 'css',
-						options: config.css()
-					},
+			use: [].concat(
+				{
+					loader: MiniCssExtractPlugin.loader
+				},
 
-					isProd || $C(config.postcss).length() || $C(config.autoprefixer).length() ? {
-						loader: 'postcss',
-						options: inherit(config.postcss, {
-							plugins: [require('autoprefixer')(config.autoprefixer)]
-						})
-					} : [],
+				{
+					loader: 'css',
+					options: Object.reject(css, ['minimize'])
+				},
 
-					{
-						loader: 'stylus',
-						options: inherit(config.stylus(), {
-							use: include('build/stylus')
-						})
-					},
+				isProd || $C(config.postcss).length() || $C(config.autoprefixer).length() ? {
+					loader: 'postcss',
+					options: inherit(config.postcss, {
+						plugins: [require('autoprefixer')(config.autoprefixer)]
+					})
+				} : [],
 
-					{
-						loader: 'monic',
-						options: inherit(monic.stylus, {
-							replacers: [
-								require('@pzlr/stylus-inheritance')({resolveImports: true})
-							]
-						})
-					}
-				)
-			})
+				{
+					loader: 'stylus',
+					options: inherit(config.stylus(), {
+						use: include('build/stylus')
+					})
+				},
+
+				{
+					loader: 'monic',
+					options: inherit(monic.stylus, {
+						replacers: [
+							require('@pzlr/stylus-inheritance')({resolveImports: true})
+						]
+					})
+				}
+			)
 		});
 
 		loaders.rules.set('ess', {
@@ -169,7 +180,7 @@ module.exports = async function ({buildId, plugins}) {
 				'extract',
 
 				{
-					loader: 'html-loader',
+					loader: 'html',
 					options: config.html
 				},
 
