@@ -7,7 +7,7 @@
  */
 
 $p = {
-
+	scrollerBackgroundColor: alpha(#4B494B, 0.4)
 }
 
 b-scroll_theme_light extends b-scroll
@@ -15,7 +15,7 @@ b-scroll_theme_light extends b-scroll
 		background alpha($p.scrollerBackgroundColor, 0)
 		transition background 0.4s
 
-	/theme &__scroll-wrapper:hover &__scroller,
+	/theme &__scroll-wrapper:hover &__scroller
 	/theme &__scroller_scroll_true
 		background $p.scrollerBackgroundColor
 
