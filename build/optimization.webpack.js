@@ -10,7 +10,8 @@
 
 const
 	config = require('config'),
-	UglifyJsPlugin = require('uglifyjs-webpack-plugin');
+	UglifyJsPlugin = require('uglifyjs-webpack-plugin'),
+	OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 
 const
 	{inherit, depsRgxpStr} = include('build/build.webpack'),
@@ -83,6 +84,13 @@ module.exports = async function ({buildId}) {
 
 			/* eslint-enable camelcase */
 		];
+	}
+
+	const
+		css = config.css();
+
+	if (css.minimize) {
+		plugins.set('minimizeCSS', new OptimizeCssAssetsPlugin({...css.minimize}));
 	}
 
 	return options;

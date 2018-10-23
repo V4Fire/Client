@@ -10,11 +10,8 @@
 
 const
 	$C = require('collection.js'),
-	config = require('config');
-
-const
-	MiniCssExtractPlugin = require('mini-css-extract-plugin'),
-	OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
+	config = require('config'),
+	MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 const
 	{resolve} = require('@pzlr/build-core'),
@@ -118,28 +115,19 @@ module.exports = async function ({buildId, plugins}) {
 		});
 
 	} else {
-		const
-			css = config.css();
-
 		plugins.set('extractCSS', new MiniCssExtractPlugin({
 			filename: `${hash(output, true)}.css`,
 			chunkFilename: '[id].css'
 		}));
 
-		if (css.minimize) {
-			plugins.set('minimizeCSS', new OptimizeCssAssetsPlugin({...css.minimize}));
-		}
-
 		loaders.rules.set('styl', {
 			test: /\.styl$/,
 			use: [].concat(
-				{
-					loader: MiniCssExtractPlugin.loader
-				},
+				MiniCssExtractPlugin.loader,
 
 				{
-					loader: 'css',
-					options: Object.reject(css, ['minimize'])
+					loader: 'fast-css',
+					options: Object.reject(config.css(), ['minimize'])
 				},
 
 				isProd || $C(config.postcss).length() || $C(config.autoprefixer).length() ? {
