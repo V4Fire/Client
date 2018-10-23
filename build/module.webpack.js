@@ -25,7 +25,8 @@ const
 const
 	snakeskin = config.snakeskin(),
 	typescript = config.typescript(),
-	monic = config.monic();
+	monic = config.monic(),
+	imageOpts = config.imageOpts();
 
 const fileLoaderOpts = {
 	name: path.basename(assetsOutput),
@@ -229,7 +230,7 @@ module.exports = async function ({buildId, plugins}) {
 		].concat(
 			isProd ? {
 				loader: 'image-webpack',
-				options: config.imageOpts
+				options: imageOpts
 			} : []
 		)
 	});
@@ -244,7 +245,7 @@ module.exports = async function ({buildId, plugins}) {
 		].concat(
 			isProd ? {
 				loader: 'svgo',
-				options: config.imageOpts.svgo
+				options: imageOpts.svgo
 			} : []
 		)
 	});

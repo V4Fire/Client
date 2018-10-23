@@ -126,10 +126,12 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		}
 	},
 
-	imageOpts: {
-		svgo: {
+	imageOpts() {
+		return {
+			svgo: {
 
-		}
+			}
+		};
 	},
 
 	html() {
@@ -177,12 +179,9 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	},
 
 	snakeskin() {
-		const snakeskinVars = include('build/snakeskin.vars.js');
-
-		const {
-			webpack,
-			src
-		} = this;
+		const
+			snakeskinVars = include('build/snakeskin.vars.js'),
+			{webpack, src} = this;
 
 		return {
 			client: this.extend(super.snakeskin(), {
