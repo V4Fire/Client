@@ -38,6 +38,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	},
 
 	webpack: {
+		devtool: false,
 		externals: {
 			'collection.js': '$C',
 			'eventemitter2': 'EventEmitter2',
@@ -50,8 +51,9 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 			'setimmediate': 'setImmediate'
 		},
 
-		fatHTML: false,
-		devtool: false,
+		fatHTML() {
+			return false;
+		},
 
 		longCache() {
 			return o('long-cache', {
@@ -65,11 +67,11 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		},
 
 		hashLength() {
-			return !isProd || this.fatHTML ? false : 8;
+			return !isProd || this.fatHTML() ? false : 8;
 		},
 
 		dataURILimit() {
-			return this.fatHTML ? undefined : 4096;
+			return this.fatHTML() ? undefined : 4096;
 		},
 
 		publicPath() {
@@ -85,7 +87,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 
 		output(params) {
 			const
-				res = !isProd || this.fatHTML ? '[name]' : '[hash]_[name]';
+				res = !isProd || this.fatHTML() ? '[name]' : '[hash]_[name]';
 
 			if (params) {
 				return res.replace(/_?\[(.*?)]/g, (str, key) => {
@@ -193,7 +195,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 			server: this.extend(super.snakeskin(), {
 				vars: {
 					...snakeskinVars,
-					fatHTML: webpack.fatHTML,
+					fatHTML: webpack.fatHTML(),
 					hashLength: webpack.hashLength(),
 					root: src.cwd(),
 					outputPattern: webpack.output,
