@@ -57,7 +57,7 @@ module.exports = function (gulp = require('gulp')) {
 	gulp.task('static:html', () =>
 		gulp.src(o('/**/*.html'))
 			.pipe($.plumber())
-			.pipe($.htmlmin(config.html))
+			.pipe($.htmlmin(config.html()))
 			.pipe(gulp.dest(o()))
 	);
 

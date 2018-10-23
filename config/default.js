@@ -132,24 +132,26 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		}
 	},
 
-	html: {
-		useShortDoctype: true,
-		conservativeCollapse: true,
-		removeAttributeQuotes: true,
-		removeComments: isProd,
-		collapseWhitespace: isProd
+	html() {
+		return {
+			useShortDoctype: true,
+			conservativeCollapse: true,
+			removeAttributeQuotes: true,
+			removeComments: isProd,
+			collapseWhitespace: isProd
+		};
 	},
 
-	postcss: {
-
+	postcss() {
+		return {};
 	},
 
-	autoprefixer: {
-
+	autoprefixer() {
+		return {};
 	},
 
-	uglify: {
-
+	uglify() {
+		return {};
 	},
 
 	monic() {

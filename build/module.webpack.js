@@ -120,6 +120,10 @@ module.exports = async function ({buildId, plugins}) {
 			chunkFilename: '[id].css'
 		}));
 
+		const
+			autoprefixer = config.autoprefixer(),
+			postcss = config.postcss();
+
 		loaders.rules.set('styl', {
 			test: /\.styl$/,
 			use: [].concat(
@@ -130,10 +134,10 @@ module.exports = async function ({buildId, plugins}) {
 					options: Object.reject(config.css(), ['minimize'])
 				},
 
-				isProd || $C(config.postcss).length() || $C(config.autoprefixer).length() ? {
+				isProd || $C(postcss).length() || $C(autoprefixer).length() ? {
 					loader: 'postcss',
-					options: inherit(config.postcss, {
-						plugins: [require('autoprefixer')(config.autoprefixer)]
+					options: inherit(postcss, {
+						plugins: [require('autoprefixer')(autoprefixer)]
 					})
 				} : [],
 
@@ -169,7 +173,7 @@ module.exports = async function ({buildId, plugins}) {
 
 				{
 					loader: 'html',
-					options: config.html
+					options: config.html()
 				},
 
 				{

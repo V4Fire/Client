@@ -68,7 +68,7 @@ module.exports = async function ({buildId, plugins}) {
 
 			new UglifyJsPlugin({
 				parallel: true,
-				uglifyOptions: inherit(config.uglify, {
+				uglifyOptions: inherit(config.uglify(), {
 					compress: {
 						warnings: false,
 						keep_classnames: true,
