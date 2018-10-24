@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import KeyCodes from 'core/keyCodes';
+import KeyCodes from 'core/key-codes';
 import iBlock, { component, prop, field, ModsDecl } from 'super/i-block/i-block';
 export * from 'super/i-block/i-block';
 

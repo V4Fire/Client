@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import KeyCodes from 'core/keyCodes';
+import KeyCodes from 'core/key-codes';
 import iData, { field, component, prop, hook, ModsDecl, Stage } from 'super/i-data/i-data';
 import { RequestError } from 'core/data';
 export * from 'super/i-data/i-data';

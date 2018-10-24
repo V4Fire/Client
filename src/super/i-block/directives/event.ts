@@ -7,7 +7,7 @@
  */
 
 import $C = require('collection.js');
-import KeyCodes from 'core/keyCodes';
+import KeyCodes from 'core/key-codes';
 import Vue, { VNode, VNodeDirective } from 'vue';
 
 import iBlock from 'super/i-block/i-block';

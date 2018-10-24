@@ -11,7 +11,7 @@
 import $C = require('collection.js');
 
 import Then from 'core/then';
-import StatusCodes from 'core/statusCodes';
+import StatusCodes from 'core/status-codes';
 import symbolGenerator from 'core/symbol';
 
 import { Socket } from 'core/socket';

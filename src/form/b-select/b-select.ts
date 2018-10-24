@@ -9,7 +9,7 @@
 // tslint:disable:max-file-line-count
 import $C = require('collection.js');
 import symbolGenerator from 'core/symbol';
-import KeyCodes from 'core/keyCodes';
+import KeyCodes from 'core/key-codes';
 import bScrollInline from 'base/b-scroll/b-scroll-inline/b-scroll-inline';
 import bInput, {
 
