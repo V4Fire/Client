@@ -9,7 +9,7 @@
 // tslint:disable:max-file-line-count
 import $C = require('collection.js');
 import symbolGenerator from 'core/symbol';
-import KeyCodes from 'core/key-codes';
+import keyCodes from 'core/key-codes';
 import bScrollInline from 'base/b-scroll/b-scroll-inline/b-scroll-inline';
 import bInput, {
 
@@ -490,7 +490,7 @@ export default class bSelect<T extends Dictionary = Dictionary> extends bInput<T
 			});
 
 			$a.on(document, 'keyup', (e) => {
-				if (e.keyCode === KeyCodes.ESC) {
+				if (e.keyCode === keyCodes.ESC) {
 					e.preventDefault();
 					return reset();
 				}
@@ -499,7 +499,7 @@ export default class bSelect<T extends Dictionary = Dictionary> extends bInput<T
 			});
 
 			$a.on(document, 'keydown', async (e) => {
-				if (!{[KeyCodes.UP]: true, [KeyCodes.DOWN]: true, [KeyCodes.ENTER]: true}[e.keyCode]) {
+				if (!{[keyCodes.UP]: true, [keyCodes.DOWN]: true, [keyCodes.ENTER]: true}[e.keyCode]) {
 					return;
 				}
 
@@ -514,14 +514,14 @@ export default class bSelect<T extends Dictionary = Dictionary> extends bInput<T
 				}
 
 				switch (e.keyCode) {
-					case KeyCodes.ENTER:
+					case keyCodes.ENTER:
 						if (selected) {
 							await this.onOptionSelected();
 						}
 
 						break;
 
-					case KeyCodes.UP:
+					case keyCodes.UP:
 						if (this.selected) {
 							if (selected) {
 								if (selected.previousElementSibling) {
@@ -535,7 +535,7 @@ export default class bSelect<T extends Dictionary = Dictionary> extends bInput<T
 
 						break;
 
-					case KeyCodes.DOWN: {
+					case keyCodes.DOWN: {
 						const
 							that = this;
 

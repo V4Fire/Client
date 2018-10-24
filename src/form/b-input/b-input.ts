@@ -10,7 +10,7 @@
 
 import $C = require('collection.js');
 import symbolGenerator from 'core/symbol';
-import KeyCodes from 'core/key-codes';
+import keyCodes from 'core/key-codes';
 import BlockValidators from 'form/b-input/modules/validators';
 import iInput, {
 
@@ -647,8 +647,8 @@ export default class bInput<T extends Dictionary = Dictionary> extends iInput<T>
 	 */
 	protected async onMaskBackspace(e: KeyboardEvent): Promise<void> {
 		const codes = {
-			[KeyCodes.BACKSPACE]: true,
-			[KeyCodes.DELETE]: true
+			[keyCodes.BACKSPACE]: true,
+			[keyCodes.DELETE]: true
 		};
 
 		if (!codes[e.keyCode]) {
@@ -678,7 +678,7 @@ export default class bInput<T extends Dictionary = Dictionary> extends iInput<T>
 			res = this.valueBuffer,
 			pos = 0;
 
-		if (e.keyCode === KeyCodes.DELETE) {
+		if (e.keyCode === keyCodes.DELETE) {
 			let
 				start = selectionStart,
 				end = selectionEnd;
@@ -779,9 +779,9 @@ export default class bInput<T extends Dictionary = Dictionary> extends iInput<T>
 
 		const
 			keyboardEvent = e instanceof KeyboardEvent,
-			leftKey = (<KeyboardEvent>e).keyCode === KeyCodes.LEFT;
+			leftKey = (<KeyboardEvent>e).keyCode === keyCodes.LEFT;
 
-		if (keyboardEvent ? !leftKey && (<KeyboardEvent>e).keyCode !== KeyCodes.RIGHT : (<MouseEvent>e).button !== 0) {
+		if (keyboardEvent ? !leftKey && (<KeyboardEvent>e).keyCode !== keyCodes.RIGHT : (<MouseEvent>e).button !== 0) {
 			return;
 		}
 
@@ -866,7 +866,7 @@ export default class bInput<T extends Dictionary = Dictionary> extends iInput<T>
 	 */
 	protected onMaskKeyPress(e: KeyboardEvent): void {
 		const blacklist = {
-			[KeyCodes.TAB]: true
+			[keyCodes.TAB]: true
 		};
 
 		if (e.altKey || e.shiftKey || e.ctrlKey || e.metaKey || blacklist[e.keyCode] || !this.valueBuffer || !this._mask) {

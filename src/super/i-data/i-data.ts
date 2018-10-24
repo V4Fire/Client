@@ -11,7 +11,7 @@
 import $C = require('collection.js');
 
 import Then from 'core/then';
-import StatusCodes from 'core/status-codes';
+import statusCodes from 'core/status-codes';
 import symbolGenerator from 'core/symbol';
 
 import { Socket } from 'core/socket';
@@ -678,11 +678,11 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 
 			case 'invalidStatus':
 				switch (err.details.response.status) {
-					case StatusCodes.FORBIDDEN:
+					case statusCodes.FORBIDDEN:
 						msg = t`You don't have permission for this operation`;
 						break;
 
-					case StatusCodes.NOT_FOUND:
+					case statusCodes.NOT_FOUND:
 						msg = t`The requested resource wasn't found`;
 						break;
 

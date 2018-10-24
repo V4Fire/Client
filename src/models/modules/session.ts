@@ -7,7 +7,7 @@
  */
 
 import $C = require('collection.js');
-import StatusCodes from 'core/status-codes';
+import statusCodes from 'core/status-codes';
 import Provider, { provider, Middlewares, RequestResponse, RequestFactory, Response } from 'core/data';
 import * as s from 'core/session';
 export * from 'core/data';
@@ -92,7 +92,7 @@ export default class Session extends Provider {
 				const
 					r = () => this.updateRequest(url, <string>event, <RequestFactory>factory);
 
-				if (response.status === StatusCodes.UNAUTHORIZED) {
+				if (response.status === statusCodes.UNAUTHORIZED) {
 					if (!await s.match(auth, csrf)) {
 						return r();
 					}
