@@ -20,7 +20,8 @@
 			}
 		.
 
-		< b-input v-once | :value = 'fooo'
+		< @b-input value = 'fooo'
+
 		///< b-checkbox
 		///< b-textarea
 		< b-select :value = '4545' | v-func = false | :options = [ &

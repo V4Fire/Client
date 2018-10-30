@@ -6,6 +6,8 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+// tslint:disable:max-file-line-count
+
 import Vue, {
 
 	PropOptions,
@@ -30,8 +32,8 @@ import log from 'core/log';
 import inheritMeta, { PARENT } from 'core/component/inherit';
 
 import VueInterface from 'core/component/vue';
-import { getComponent, getBaseComponent } from 'core/component/component';
-import { convertRender, createFakeCtx, patchVNode } from 'core/component/functional';
+import { getComponent, getBaseComponent, initDataObject } from 'core/component/component';
+import { convertRender, createFakeCtx, patchVNode, CTX } from 'core/component/functional';
 
 export * from 'core/component/decorators';
 export * from 'core/component/functional';
@@ -232,7 +234,8 @@ export interface ComponentMeta {
 }
 
 export const
-	isAbstractComponent = /^[iv]-/;
+	isAbstractComponent = /^[iv]-/,
+	isSmartComponent = /-functional$/;
 
 /**
  * Returns a component name
@@ -241,6 +244,9 @@ export const
 export function getComponentName(constr: Function): string {
 	return constr.name.dasherize();
 }
+
+const
+	constructors = Object.createDict();
 
 /**
  * Creates new Vue.js component
@@ -266,8 +272,7 @@ export function component(params?: ComponentParams): Function {
 		const
 			name = params && params.name || getComponentName(target),
 			parent = Object.getPrototypeOf(target),
-			parentMeta = components.get(parent),
-			isSmart = /-functional$/;
+			parentMeta = components.get(parent);
 
 		let p: ComponentParams = parentMeta ? {...params} : {
 			root: false,
@@ -287,9 +292,68 @@ export function component(params?: ComponentParams): Function {
 			}
 		}
 
+		const applyComposites = (vnode, ctx) => {
+			if (!ctx.$compositeI) {
+				return;
+			}
+
+			const search = (vnode, parent?, pos?) => {
+				const
+					attrs = vnode.data && vnode.data.attrs || {},
+					composite = attrs['v4-composite'];
+
+				if (parent && composite) {
+					const
+						constr = constructors[composite],
+						proto = constr.prototype,
+						tpl = TPLS[composite] || proto.render;
+
+					//console.log(components.get(constr));
+
+					console.log(initDataObject(
+						meta.systemFields,
+						ctx,
+						proto
+					));
+
+					console.log(initDataObject(
+						meta.fields,
+						ctx,
+						proto
+					));
+
+					// console.log(Object.getPrototypeChain(constr), Object.getPrototypeChain(ctx.instance.constructor));
+
+					/*parent.children[pos] = ctx.execRenderObject(
+						tpl.index(),
+						[Object.assign(Object.create(ctx), {componentName: composite})]
+					);*/
+
+					if (!--ctx.$compositeI) {
+						return;
+					}
+				}
+
+				const
+					{children} = vnode;
+
+				if (children) {
+					for (let i = 0; i < children.length; i++) {
+						search(children[i], vnode, i);
+
+						if (!ctx.$compositeI) {
+							return;
+						}
+					}
+				}
+			};
+
+			search(vnode);
+		};
+
 		const meta: ComponentMeta = {
 			name,
-			componentName: name.replace(isSmart, ''),
+			componentName: name.replace(isSmartComponent, ''),
 			constructor: target,
 			params: p,
 
@@ -330,12 +394,25 @@ export function component(params?: ComponentParams): Function {
 						{methods: {render: r}, component: {ctx}} = meta;
 
 					if (r) {
+						let
+							vnode,
+							that = this;
+
 						if (!r.static && p.functional === true && ctx) {
-							const fakeCtx = createFakeCtx(el, baseCtx, ctx);
-							return patchVNode(r.fn.call(fakeCtx, el, baseCtx), fakeCtx, baseCtx);
+							that = createFakeCtx(el, baseCtx, ctx);
+							vnode = patchVNode(r.fn.call(that, el, baseCtx), that, baseCtx);
+
+						} else {
+							vnode = r.fn.call(this, el, baseCtx);
+							that = r.fn[CTX] || this;
 						}
 
-						return r.fn.call(this, el, baseCtx);
+						if (that.$compositeI) {
+							applyComposites(vnode, that);
+							that.$compositeI = 0;
+						}
+
+						return vnode;
 					}
 				}
 			}
@@ -345,8 +422,9 @@ export function component(params?: ComponentParams): Function {
 			p = inheritMeta(meta, parentMeta);
 		}
 
-		if (!p.name || !isSmart.test(p.name)) {
+		if (!p.name || !isSmartComponent.test(p.name)) {
 			components.set(target, meta);
+			constructors[name] = target;
 		}
 
 		initEvent.emit('constructor', {meta, parentMeta});
