@@ -177,6 +177,7 @@ export type Hooks =
 
 export interface ComponentMethod {
 	fn: Function;
+	static?: boolean;
 	watchers: Dictionary<MethodWatcher>;
 	hooks: {[hook in Hooks]?: {
 		name: string;
@@ -329,12 +330,12 @@ export function component(params?: ComponentParams): Function {
 						{methods: {render: r}, component: {ctx}} = meta;
 
 					if (r) {
-						if (p.functional === true && ctx) {
+						if (!r.static && p.functional === true && ctx) {
 							const fakeCtx = createFakeCtx(el, baseCtx, ctx);
 							return patchVNode(r.fn.call(fakeCtx, el, baseCtx), fakeCtx, baseCtx);
 						}
 
-						return r.fn.call(this, el);
+						return r.fn.call(this, el, baseCtx);
 					}
 				}
 			}
@@ -366,25 +367,28 @@ export function component(params?: ComponentParams): Function {
 				resolve(component);
 			};
 
+			const
+				{methods} = meta;
+
 			const addRenderAndResolve = (tpls) => {
 				const
-					fns = tpls.index();
+					fns = tpls.index(),
+					renderObj = <ComponentMethod>{static: true, watchers: {}, hooks: {}};
 
 				if (p.functional === true) {
-					component.render = convertRender(fns, <any>meta.component.ctx);
+					renderObj.fn = <Function>convertRender(fns, <any>meta.component.ctx);
 
 				} else {
-					Object.assign(component, fns);
+					renderObj.fn = fns.render;
+					component.staticRenderFns = fns.staticRenderFns || [];
 				}
 
+				methods.render = renderObj;
 				success();
 			};
 
-			const
-				r = meta.component.methods.render;
-
 			if (p.tpl === false) {
-				if (r) {
+				if (methods.render) {
 					success();
 
 				} else {
@@ -397,7 +401,7 @@ export function component(params?: ComponentParams): Function {
 						fns = TPLS[meta.componentName];
 
 					if (fns) {
-						if (r) {
+						if (methods.render) {
 							success();
 
 						} else {
