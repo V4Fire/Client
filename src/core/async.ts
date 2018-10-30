@@ -7,7 +7,7 @@
  */
 
 import $C = require('collection.js');
-import Super, { AsyncOpts, AsyncCbOpts, AsyncOnOpts, ClearOptsId } from '@v4fire/core/core/async';
+import Super, { AsyncOpts, AsyncCbOpts, AsyncOnOpts, ClearOptsId, LinkNamesList } from '@v4fire/core/core/async';
 import { convertEnumToDict } from 'core/helpers/other';
 export * from '@v4fire/core/core/async';
 
@@ -39,15 +39,18 @@ export enum ClientLinkNames {
 }
 
 export type ClientLink = keyof typeof ClientLinkNames;
+export type ClientLinkNamesList = LinkNamesList & Record<ClientLink, ClientLink>;
 
 const
 	linkNamesDictionary = <Record<ClientLink, ClientLink>>convertEnumToDict(ClientLinkNames);
 
 export default class Async<CTX extends object = Async<any>> extends Super<CTX> {
 	/** @override */
+	static linkNames: ClientLinkNamesList = {...Super.linkNames, ...linkNamesDictionary};
+
+	/** @override */
 	constructor(ctx?: CTX) {
 		super(ctx);
-		this.linkNames = {...this.linkNames, ...linkNamesDictionary};
 	}
 
 	/**
@@ -78,7 +81,7 @@ export default class Async<CTX extends object = Async<any>> extends Super<CTX> {
 
 		return this.setAsync({
 			...isObj ? p : undefined,
-			name: this.linkNames.animationFrame,
+			name: Async.linkNames.animationFrame,
 			obj: fn,
 			clearFn: cancelAnimationFrame,
 			wrapper: requestAnimationFrame,
@@ -103,7 +106,7 @@ export default class Async<CTX extends object = Async<any>> extends Super<CTX> {
 
 	// tslint:disable-next-line
 	cancelAnimationFrame(p) {
-		return this.clearAsync(p, this.linkNames.animationFrame);
+		return this.clearAsync(p, Async.linkNames.animationFrame);
 	}
 
 	/**
@@ -122,7 +125,7 @@ export default class Async<CTX extends object = Async<any>> extends Super<CTX> {
 
 	// tslint:disable-next-line
 	muteAnimationFrame(p) {
-		return this.markAsync('muted', p, this.linkNames.animationFrame);
+		return this.markAsync('muted', p, Async.linkNames.animationFrame);
 	}
 
 	/**
@@ -141,7 +144,7 @@ export default class Async<CTX extends object = Async<any>> extends Super<CTX> {
 
 	// tslint:disable-next-line
 	unmuteAnimationFrame(p) {
-		return this.markAsync('!muted', p, this.linkNames.animationFrame);
+		return this.markAsync('!muted', p, Async.linkNames.animationFrame);
 	}
 
 	/**
@@ -160,7 +163,7 @@ export default class Async<CTX extends object = Async<any>> extends Super<CTX> {
 
 	// tslint:disable-next-line
 	suspendAnimationFrame(p) {
-		return this.markAsync('paused', p, this.linkNames.animationFrame);
+		return this.markAsync('paused', p, Async.linkNames.animationFrame);
 	}
 
 	/**
@@ -179,7 +182,7 @@ export default class Async<CTX extends object = Async<any>> extends Super<CTX> {
 
 	// tslint:disable-next-line
 	unsuspendAnimationFrame(p) {
-		return this.markAsync('!paused', p, this.linkNames.animationFrame);
+		return this.markAsync('!paused', p, Async.linkNames.animationFrame);
 	}
 
 	/**
