@@ -44,6 +44,7 @@ export default class VueInterface<
 	protected readonly $listeners!: Dictionary<Function | Function[]>;
 	protected readonly $activeField!: string;
 	protected $createElement!: CreateElement;
+	private $compositeI!: number;
 
 	protected log?(key: string, ...details: any[]): void;
 

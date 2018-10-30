@@ -269,7 +269,7 @@ function tagFilter({name, attrs = {}}) {
 }
 
 function tagNameFilter(tag, attrs = {}, rootTag) {
-	tag = $C(include('build/filters/tagName'))
+	tag = $C(include('build/filters/tag-name'))
 		.to('')
 		.reduce((res, filter) => res + filter(tag, attrs, rootTag));
 
