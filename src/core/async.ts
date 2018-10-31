@@ -7,7 +7,8 @@
  */
 
 import $C = require('collection.js');
-import Super, { AsyncOpts, AsyncCbOpts, AsyncOnOpts, ClearOpts, ClearOptsId } from '@v4fire/core/core/async';
+import Super, { AsyncOpts, AsyncCbOpts, AsyncOnOpts, ClearOptsId, LinkNamesList } from '@v4fire/core/core/async';
+import { convertEnumToDict } from 'core/helpers/other';
 export * from '@v4fire/core/core/async';
 
 export interface AsyncRequestAnimationFrameOpts<T extends object = Async> extends AsyncCbOpts<T> {
@@ -33,7 +34,25 @@ export interface NodeEventOpts {
 	handler: NodeEventCb;
 }
 
+export enum ClientLinkNames {
+	animationFrame
+}
+
+export type ClientLink = keyof typeof ClientLinkNames;
+export type ClientLinkNamesList = LinkNamesList & Record<ClientLink, ClientLink>;
+
+const
+	linkNamesDictionary = <Record<ClientLink, ClientLink>>convertEnumToDict(ClientLinkNames);
+
 export default class Async<CTX extends object = Async<any>> extends Super<CTX> {
+	/** @override */
+	static linkNames: ClientLinkNamesList = {...Super.linkNames, ...linkNamesDictionary};
+
+	/** @override */
+	constructor(ctx?: CTX) {
+		super(ctx);
+	}
+
 	/**
 	 * Wrapper for requestAnimationFrame
 	 *
@@ -62,7 +81,7 @@ export default class Async<CTX extends object = Async<any>> extends Super<CTX> {
 
 		return this.setAsync({
 			...isObj ? p : undefined,
-			name: 'animationFrame',
+			name: Async.linkNames.animationFrame,
 			obj: fn,
 			clearFn: cancelAnimationFrame,
 			wrapper: requestAnimationFrame,
@@ -87,7 +106,7 @@ export default class Async<CTX extends object = Async<any>> extends Super<CTX> {
 
 	// tslint:disable-next-line
 	cancelAnimationFrame(p) {
-		return this.clearAsync(p, 'animationFrame');
+		return this.clearAsync(p, Async.linkNames.animationFrame);
 	}
 
 	/**
@@ -106,7 +125,7 @@ export default class Async<CTX extends object = Async<any>> extends Super<CTX> {
 
 	// tslint:disable-next-line
 	muteAnimationFrame(p) {
-		return this.markAsync('muted', p, 'animationFrame');
+		return this.markAsync('muted', p, Async.linkNames.animationFrame);
 	}
 
 	/**
@@ -125,7 +144,7 @@ export default class Async<CTX extends object = Async<any>> extends Super<CTX> {
 
 	// tslint:disable-next-line
 	unmuteAnimationFrame(p) {
-		return this.markAsync('!muted', p, 'animationFrame');
+		return this.markAsync('!muted', p, Async.linkNames.animationFrame);
 	}
 
 	/**
@@ -144,7 +163,7 @@ export default class Async<CTX extends object = Async<any>> extends Super<CTX> {
 
 	// tslint:disable-next-line
 	suspendAnimationFrame(p) {
-		return this.markAsync('paused', p, 'animationFrame');
+		return this.markAsync('paused', p, Async.linkNames.animationFrame);
 	}
 
 	/**
@@ -163,7 +182,7 @@ export default class Async<CTX extends object = Async<any>> extends Super<CTX> {
 
 	// tslint:disable-next-line
 	unsuspendAnimationFrame(p) {
-		return this.markAsync('!paused', p, 'animationFrame');
+		return this.markAsync('!paused', p, Async.linkNames.animationFrame);
 	}
 
 	/**
@@ -307,40 +326,5 @@ export default class Async<CTX extends object = Async<any>> extends Super<CTX> {
 
 		this.on(el, 'mousedown touchstart', dragStart, {...opts, onClear: dragStartClear}, dragStartUseCapture);
 		return p.group;
-	}
-
-	/** @override */
-	clearAll(params?: ClearOpts): this {
-		const p: any = params;
-		this.cancelAnimationFrame(p);
-		return super.clearAll(p);
-	}
-
-	/** @override */
-	muteAll(params?: ClearOpts): this {
-		const p: any = params;
-		this.muteAnimationFrame(p);
-		return super.muteAll(p);
-	}
-
-	/** @override */
-	unmuteAll(params?: ClearOpts): this {
-		const p: any = params;
-		this.unmuteAnimationFrame(p);
-		return super.unmuteAll(p);
-	}
-
-	/** @override */
-	suspendAll(params?: ClearOpts): this {
-		const p: any = params;
-		this.suspendAnimationFrame(p);
-		return super.suspendAll(p);
-	}
-
-	/** @override */
-	unsuspendAll(params?: ClearOpts): this {
-		const p: any = params;
-		this.unsuspendAnimationFrame(p);
-		return super.unsuspendAll(p);
 	}
 }
