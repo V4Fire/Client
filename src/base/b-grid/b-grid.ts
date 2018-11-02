@@ -14,6 +14,16 @@ export * from 'super/i-data-pages/i-data-pages';
 export type SortDate = Date | Date[];
 export type SortDir = 'asc' | 'desc';
 
+export interface RequestParams {
+	page: number,
+	perPage: number
+	sort: string,
+	dir: SortDir,
+	keepTime: boolean,
+	date: SortDate,
+	dateField: string
+}
+
 export interface Sort {
 	field: string;
 	dir: SortDir;
@@ -73,7 +83,7 @@ export default class bGrid<T extends Dictionary = Dictionary> extends iDataPages
 		'dateField'
 	]))
 
-	protected readonly requestParams!: Dictionary<Dictionary>;
+	protected readonly requestParams!: Dictionary<RequestParams>;
 
 	/** @override */
 	protected readonly $refs!: {loadPageTrigger: HTMLElement};
@@ -83,7 +93,7 @@ export default class bGrid<T extends Dictionary = Dictionary> extends iDataPages
 	 * @emits toggleDir(dir: SortDir)
 	 */
 	protected toggleDir(): string {
-		const dir = this.requestParams.get.dir = {asc: 'desc', desc: 'asc'}[this.requestParams.get.dir];
+		const dir = this.requestParams.get.dir = <SortDir>{asc: 'desc', desc: 'asc'}[this.requestParams.get.dir];
 		this.emit('toggleDir', dir);
 		return dir;
 	}
@@ -94,7 +104,7 @@ export default class bGrid<T extends Dictionary = Dictionary> extends iDataPages
 	 * @param field
 	 * @emits setSort(sort: Sort)
 	 */
-	protected setSort(field: string): {field: string; dir: string} {
+	protected setSort(field: string): {field: string; dir: SortDir} {
 		const
 			p = this.requestParams.get;
 
@@ -173,14 +183,14 @@ export default class bGrid<T extends Dictionary = Dictionary> extends iDataPages
 
 					if (!this.keepTime) {
 						date = date.clone().beginningOfDay();
-						d = d.short();
+						d = (<Date>d).short();
 					}
 
 					if (obj.length === 1) {
-						return date.is(d);
+						return date.is(<Date>d);
 					}
 
-					return date.is(d) || i ? date.isAfter(d) : date.isBefore(d);
+					return date.is(<Date>d) || i ? date.isAfter(<Date>d) : date.isBefore(<Date>d);
 				})
 			);
 		};

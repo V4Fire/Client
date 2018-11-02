@@ -28,7 +28,7 @@ export default onEverythingReady(async () => {
 	}
 
 	const
-		{data} = component,
+		data = <Function>component.data,
 		params = JSON.parse(<string>node.dataset.blockParams);
 
 	component.data = function (): Dictionary {

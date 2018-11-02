@@ -14,10 +14,10 @@ export type ModelMethods =
 	'upd' |
 	'del';
 
-export type SocketEvent = (() => Dictionary) | {
+export type SocketEvent<T = unknown> = (() => Dictionary<T>) | {
 	type: string;
 	instance: string;
-	data: Dictionary;
+	data: Dictionary<T>;
 };
 
 export interface ProviderParams {

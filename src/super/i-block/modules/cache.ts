@@ -9,11 +9,11 @@
 /**
  * Cache helper
  */
-export default class Cache<T extends string = string> {
+export default class Cache<K extends string = string, V = unknown> {
 	/**
 	 * Cache dictionary
 	 */
-	dict: Dictionary = Object.createDict();
+	dict: Dictionary<Dictionary<V> | V> = Object.createDict();
 
 	/**
 	 * @param [namespaces] - predefined namespaces
@@ -26,16 +26,19 @@ export default class Cache<T extends string = string> {
 
 	/**
 	 * Creates a cache object by the specified parameters and returns it
+	 *
+	 * @param nms - namespace
+	 * @param [cacheKey] - cache key
 	 */
-	create(nms: T, cacheKey?: string): Dictionary {
+	create(nms: K, cacheKey?: string): Dictionary<V> {
 		const
-			cache = this.dict[nms] = this.dict[nms] || Object.createDict();
+			cache = this.dict[nms] = <any>this.dict[nms] || Object.createDict();
 
 		if (cacheKey) {
-			cache[cacheKey] = cache[cacheKey] || Object.createDict();
+			cache[cacheKey] = cache[cacheKey] || Object.createDict<V>();
 			return cache[cacheKey];
 		}
 
-		return cache;
+		return <Dictionary<V>>cache;
 	}
 }

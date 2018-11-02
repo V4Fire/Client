@@ -131,7 +131,7 @@ export default class bInput<T extends Dictionary = Dictionary> extends iInput<T>
 	 * (for using with .mask)
 	 */
 	@prop(Object)
-	readonly regs: Dictionary = {};
+	readonly regs: Dictionary<RegExp> = {};
 
 	/**
 	 * Input mask value

@@ -55,7 +55,11 @@ export default class bTimeRange<T extends Dictionary = Dictionary> extends iInpu
 	/** @override */
 	protected initModEvents(): void {
 		super.initModEvents();
-		this.bindModTo('empty', 'valueStore', (v) => !this.getField('from.length', v) && !this.getField('to.length', v));
+		this.bindModTo(
+			'empty',
+			'valueStore',
+			(v: any) => !this.getField('from.length', v) && !this.getField('to.length', v)
+		);
 	}
 
 	/**

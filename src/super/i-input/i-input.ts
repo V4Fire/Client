@@ -15,21 +15,22 @@ export interface ValidatorParams extends Dictionary {
 	showMsg?: boolean;
 }
 
-export interface ValidatorError<T extends any = any> extends Dictionary {
+export interface ValidatorError<T = unknown> extends Dictionary {
 	name: string;
 	value?: T;
 }
 
-export type ValidatorResult<T extends any = any> =
+export type ValidatorResult<T = unknown> =
 	boolean |
 	null |
 	ValidatorError<T>;
 
-export type ValidationError<T extends any = any> = [string, ValidatorError<T>];
-export type ValidationResult<T extends any = any> = boolean | ValidationError<T>;
+export type ValidationError<T = unknown> = [string, ValidatorError<T>];
+export type ValidationResult<T = unknown> = boolean | ValidationError<T>;
 
 export type Validators = Array<string | Dictionary<ValidatorParams> | [string, ValidatorParams]>;
-export type ValidatorsDecl<T extends iInput = iInput> = Dictionary<(this: T, params: any) => CanPromise<boolean | any>>;
+export type ValidatorsDecl<T extends iInput = iInput> = Dictionary<(this: T, params: unknown) =>
+	CanPromise<boolean | unknown>>;
 
 @component({
 	model: {
@@ -43,13 +44,13 @@ export default class iInput<T extends Dictionary = Dictionary> extends iData<T> 
 	 * Initial component value
 	 */
 	@prop({required: false})
-	readonly valueProp?: any;
+	readonly valueProp?: unknown;
 
 	/**
 	 * Component default value
 	 */
 	@prop({required: false})
-	readonly defaultProp?: any;
+	readonly defaultProp?: unknown;
 
 	/**
 	 * If true, then the component value will be marked as UTC
@@ -86,7 +87,7 @@ export default class iInput<T extends Dictionary = Dictionary> extends iData<T> 
 	 * Illegal component values
 	 */
 	@prop({required: false})
-	readonly disallow?: any | any[] | Function | RegExp;
+	readonly disallow?: unknown | unknown[] | Function | RegExp;
 
 	/**
 	 * Component value type factory
@@ -116,7 +117,7 @@ export default class iInput<T extends Dictionary = Dictionary> extends iData<T> 
 	 * Previous component value
 	 */
 	@system()
-	prevValue: any;
+	prevValue: unknown;
 
 	/**
 	 * Link to the component validators
@@ -139,15 +140,15 @@ export default class iInput<T extends Dictionary = Dictionary> extends iData<T> 
 	 * Link to the form that is associated to the component
 	 */
 	@p({cache: false})
-	get connectedForm(): CanPromise<HTMLFormElement | null> {
-		return this.waitStatus('ready', () => this.form ?
-			<any>document.querySelector(`#${this.form}`) : this.$el.closest('form'));
+	get connectedForm(): CanPromise<HTMLFormElement | undefined> {
+		return this.waitStatus('ready', () =>
+			(this.form ? document.querySelector<HTMLFormElement>(`#${this.form}`) : this.$el.closest('form')) || undefined);
 	}
 
 	/**
 	 * Component value
 	 */
-	get value(): any {
+	get value(): unknown {
 		return this.getField('valueStore');
 	}
 
@@ -155,14 +156,14 @@ export default class iInput<T extends Dictionary = Dictionary> extends iData<T> 
 	 * Sets a new component value
 	 * @param value
 	 */
-	set value(value: any) {
+	set value(value: unknown) {
 		this.setField('valueStore', value);
 	}
 
 	/**
 	 * Component default value
 	 */
-	get default(): any {
+	get default(): unknown {
 		return this.defaultProp;
 	}
 
@@ -170,12 +171,12 @@ export default class iInput<T extends Dictionary = Dictionary> extends iData<T> 
 	 * Form value of the component
 	 */
 	@p({cache: false})
-	get formValue(): Promise<any> {
+	get formValue(): Promise<unknown> {
 		return (async () => {
 			await this.nextTick();
 
 			const
-				test = [].concat(this.disallow),
+				test = (<unknown[]>[]).concat(this.disallow),
 				value = await this[this.blockValueField];
 
 			const match = (el) => {
@@ -202,13 +203,13 @@ export default class iInput<T extends Dictionary = Dictionary> extends iData<T> 
 	 * Grouped form value of the component
 	 */
 	@p({cache: false})
-	get groupFormValue(): Promise<any[] | any> {
+	get groupFormValue(): Promise<unknown[] | unknown> {
 		return (async () => {
 			if (this.name) {
 				const
 					form = this.connectedForm,
 					list = document.getElementsByName(this.name),
-					els = <any[]>[];
+					els = <unknown[]>[];
 
 				const promises = $C(list).to([] as Promise<void>[]).reduce((arr, el) => {
 					arr.push((async () => {
@@ -248,6 +249,7 @@ export default class iInput<T extends Dictionary = Dictionary> extends iData<T> 
 	 * Component validators
 	 */
 	static blockValidators: ValidatorsDecl = {
+		// @ts-ignore
 		async required({msg, showMsg = true}: ValidatorParams): Promise<ValidatorResult> {
 			if (await this.formValue == null) {
 				if (showMsg) {
@@ -278,7 +280,7 @@ export default class iInput<T extends Dictionary = Dictionary> extends iData<T> 
 		return ctx.initDefaultValue(val);
 	}))
 
-	protected valueStore: any;
+	protected valueStore: unknown;
 
 	/** @override */
 	@wait('ready')
@@ -419,7 +421,7 @@ export default class iInput<T extends Dictionary = Dictionary> extends iData<T> 
 	}
 
 	/** @override */
-	protected initRemoteData(): any | undefined {
+	protected initRemoteData(): unknown | undefined {
 		if (!this.db) {
 			return;
 		}
@@ -445,7 +447,7 @@ export default class iInput<T extends Dictionary = Dictionary> extends iData<T> 
 	 * Handler: component value change
 	 * @emits change(value)
 	 */
-	protected onBlockValueChange(newValue: any, oldValue: any): void {
+	protected onBlockValueChange(newValue: unknown, oldValue: unknown): void {
 		this.prevValue = oldValue;
 		if (newValue !== oldValue || newValue && typeof newValue === 'object') {
 			this.emit('change', this[this.blockValueField]);
@@ -456,7 +458,7 @@ export default class iInput<T extends Dictionary = Dictionary> extends iData<T> 
 	 * Initializes a default value (if needed) for the blockValue field
 	 * @param value - blockValue field value
 	 */
-	protected initDefaultValue(value?: any): any {
+	protected initDefaultValue(value?: unknown): unknown {
 		const
 			i = this.instance,
 			k = i.blockValueField,

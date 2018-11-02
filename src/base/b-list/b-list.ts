@@ -15,7 +15,7 @@ export const
 
 export interface Option {
 	label: string;
-	value?: any;
+	value?: unknown;
 	href?: string;
 	info?: string;
 	theme?: string;
@@ -106,9 +106,9 @@ export default class bList<T extends Dictionary = Dictionary> extends iData<T> {
 	 * Component active value
 	 */
 	@p({cache: false})
-	get active(): any {
+	get active(): unknown {
 		const v = this.getField('activeStore');
-		return this.multiple ? Object.keys(v) : v;
+		return this.multiple ? Object.keys(<object>v) : v;
 	}
 
 	/**
@@ -334,7 +334,7 @@ export default class bList<T extends Dictionary = Dictionary> extends iData<T> {
 	 */
 	protected isActive(option: Option): boolean {
 		const v = this.getField('activeStore');
-		return this.multiple ? option.value in v : option.value === v;
+		return this.multiple ? String(option.value) in v : option.value === v;
 	}
 
 	/**

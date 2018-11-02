@@ -8,7 +8,7 @@
 
 import $C = require('collection.js');
 import statusCodes from 'core/status-codes';
-import Provider, { provider, Middlewares, RequestResponse, RequestFactory, Response } from 'core/data';
+import Provider, { provider, Middlewares, RequestResponse, RequestFunctionResponse, Response } from 'core/data';
 import * as s from 'core/session';
 export * from 'core/data';
 
@@ -62,9 +62,13 @@ export default class Session extends Provider {
 	}
 
 	/** @override */
-	protected updateRequest(url: string, factory: RequestFactory): RequestResponse;
-	protected updateRequest(url: string, event: string, factory: RequestFactory): RequestResponse;
-	protected updateRequest(url: string, event: string | RequestFactory, factory?: RequestFactory): RequestResponse {
+	protected updateRequest(url: string, factory: RequestFunctionResponse): RequestResponse;
+	protected updateRequest(url: string, event: string, factory: RequestFunctionResponse): RequestResponse;
+	protected updateRequest(
+		url: string,
+		event: string | RequestFunctionResponse,
+		factory?: RequestFunctionResponse
+	): RequestResponse {
 		const
 			// @ts-ignore
 			req = super.updateRequest(url, event, factory),
@@ -90,7 +94,7 @@ export default class Session extends Provider {
 
 			if (response) {
 				const
-					r = () => this.updateRequest(url, <string>event, <RequestFactory>factory);
+					r = () => this.updateRequest(url, <string>event, <RequestFunctionResponse>factory);
 
 				if (response.status === statusCodes.UNAUTHORIZED) {
 					if (!await s.match(auth, csrf)) {

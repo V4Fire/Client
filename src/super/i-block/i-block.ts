@@ -67,6 +67,7 @@ import {
 	VueElement,
 	ComponentMeta,
 	MethodWatchers,
+	RenderObject,
 	Hooks,
 	PARENT
 
@@ -103,9 +104,14 @@ export type ComponentStatuses = Partial<Record<keyof typeof statuses, boolean>>;
 
 export const
 	$$ = symbolGenerator(),
-	modsCache = Object.createDict(),
-	literalCache = Object.createDict(),
-	classesCache = new Cache<'base' | 'blocks' | 'els'>(['base', 'blocks', 'els']);
+	modsCache = Object.createDict<ModsNTable>(),
+	literalCache = Object.createDict();
+
+const classesCache = new Cache<'base' | 'blocks' | 'els', ReadonlyArray<string> | Readonly<Dictionary<string>>>([
+	'base',
+	'blocks',
+	'els'
+]);
 
 @component()
 export default class iBlock extends VueInterface<iBlock, iStaticPage> {
@@ -176,7 +182,7 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 	 */
 	@p({cache: false})
 	get componentStatus(): Statuses {
-		return this.shadowComponentStatusStore || this.getField('componentStatusStore');
+		return this.shadowComponentStatusStore || <NonNullable<Statuses>>this.getField('componentStatusStore');
 	}
 
 	/**
@@ -332,7 +338,7 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 	 * Returns the internal advanced parameters store value
 	 */
 	get p(): Dictionary {
-		return this.getField('pStore');
+		return <NonNullable<Dictionary>>this.getField('pStore');
 	}
 
 	/**
@@ -557,8 +563,8 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 	/**
 	 * Wrapper for $refs
 	 */
-	protected get refs(): Dictionary {
-		return $C(this.$refs).map((el) => el && (<any>el).vueComponent || el);
+	protected get refs(): Dictionary<VueElement<iBlock> | Element> {
+		return $C(this.$refs).map((el) => (<VueElement<any>>el).vueComponent || <Element>el);
 	}
 
 	/**
@@ -639,7 +645,7 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 	protected get m(): Readonly<ModsNTable> {
 		const
 			o = {},
-			w = this.getField('watchModsStore'),
+			w = <NonNullable<ModsNTable>>this.getField('watchModsStore'),
 			m = this.mods;
 
 		for (let keys = Object.keys(m), i = 0; i < keys.length; i++) {
@@ -962,7 +968,7 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 	 * @param cb
 	 * @param [params] - additional parameters
 	 */
-	watch<T = any>(
+	watch<T>(
 		exprOrFn: string | ((this: this) => string),
 		cb: (this: this, n: T, o?: T) => void,
 		params?: AsyncWatchOpts
@@ -999,21 +1005,21 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 	 * @see Async.worker
 	 * @param [paramsOrWrapper] - additional parameters or wrapper
 	 */
-	link(paramsOrWrapper?: AsyncWatchOpts | LinkWrapper): any;
+	link<T>(paramsOrWrapper?: AsyncWatchOpts | LinkWrapper): T | undefined;
 
 	/**
 	 * @see Async.worker
 	 * @param params - additional parameters
 	 * @param [wrapper]
 	 */
-	link(params: AsyncWatchOpts, wrapper?: LinkWrapper): any;
+	link<T>(params: AsyncWatchOpts, wrapper?: LinkWrapper): T | undefined;
 
 	/**
 	 * @see Async.worker
 	 * @param field
 	 * @param [paramsOrWrapper]
 	 */
-	link(field: string, paramsOrWrapper?: AsyncWatchOpts | LinkWrapper): any;
+	link<T>(field: string, paramsOrWrapper?: AsyncWatchOpts | LinkWrapper): T | undefined;
 
 	/**
 	 * @see Async.worker
@@ -1021,12 +1027,12 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 	 * @param params
 	 * @param [wrapper]
 	 */
-	link(field: string, params: AsyncWatchOpts, wrapper?: LinkWrapper): any;
-	link(
+	link<T>(field: string, params: AsyncWatchOpts, wrapper?: LinkWrapper): T | undefined;
+	link<T>(
 		field?: string | AsyncWatchOpts | LinkWrapper,
 		params?: AsyncWatchOpts | LinkWrapper,
 		wrapper?: LinkWrapper
-	): any {
+	): T | undefined {
 		const
 			path = this.$activeField,
 			cache = this.syncLinkCache;
@@ -1254,7 +1260,7 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 	bindModTo<T = this>(
 		mod: string,
 		field: string,
-		converter: ((value: any, ctx: T) => any) | AsyncWatchOpts = Boolean,
+		converter: ((value: unknown, ctx: T) => unknown) | AsyncWatchOpts = Boolean,
 		params?: AsyncWatchOpts
 	): void {
 		mod = mod.camelize(false);
@@ -1300,7 +1306,7 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 	 * @param event
 	 * @param args
 	 */
-	emit(event: string, ...args: any[]): void {
+	emit(event: string, ...args: unknown[]): void {
 		event = event.dasherize();
 		this.$emit(event, this, ...args);
 		this.$emit(`on-${event}`, ...args);
@@ -1314,7 +1320,7 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 	 * @param event
 	 * @param args
 	 */
-	dispatch(event: string, ...args: any[]): void {
+	dispatch(event: string, ...args: unknown[]): void {
 		event = event.dasherize();
 
 		let
@@ -1385,7 +1391,7 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 	 * @param event
 	 * @param [params] - async parameters
 	 */
-	promisifyOnce(event: string, params?: AsyncOpts): Promise<any> {
+	promisifyOnce(event: string, params?: AsyncOpts): Promise<unknown> {
 		event = event.dasherize();
 		return this.async.promisifyOnce(this, event, params);
 	}
@@ -1464,7 +1470,7 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 			{async: $a} = this;
 
 		if (cbOrParams && Object.isFunction(cbOrParams)) {
-			this.$nextTick(<any>$a.proxy(cbOrParams, params));
+			this.$nextTick($a.proxy(cbOrParams, params));
 			return;
 		}
 
@@ -1485,11 +1491,11 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 	 * @param [data] - data object (for events)
 	 * @param [silent] - silent mode
 	 *
-	 * @emits initLoad(data: any | undefined, silent: boolean)
-	 * @emits dbReady(data: any | undefined, silent: boolean)
+	 * @emits initLoad(data: unknown | undefined, silent: boolean)
+	 * @emits dbReady(data: unknown | undefined, silent: boolean)
 	 */
 	@hook('beforeDataCreate')
-	initLoad(data?: any | ((this: this) => any), silent?: boolean): CanPromise<void> {
+	initLoad(data?: unknown | ((this: this) => unknown), silent?: boolean): CanPromise<void> {
 		this.beforeReadyListeners = 0;
 
 		if (!silent) {
@@ -1590,7 +1596,7 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 			cache = classesCache.create('blocks', this.componentName);
 
 		if (cache[key]) {
-			return cache[key];
+			return <ReadonlyArray<string>>cache[key];
 		}
 
 		const
@@ -1616,18 +1622,16 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 	 * @param name
 	 * @param value
 	 */
-	setMod(node: Element, name: string, value: any): CanPromise<boolean>;
+	setMod(node: Element, name: string, value: unknown): CanPromise<boolean>;
 
 	/**
 	 * @param name
 	 * @param value
 	 */
-	setMod(name: string, value: any): CanPromise<boolean>;
-	setMod(nodeOrName: Element | string, name: string | any, value?: any): CanPromise<boolean> {
+	setMod(name: string, value: unknown): CanPromise<boolean>;
+	setMod(nodeOrName: Element | string, name: string | unknown, value?: unknown): CanPromise<boolean> {
 		if (Object.isString(nodeOrName)) {
-			value = name;
-			name = nodeOrName;
-			return this.execCbAfterBlockReady(() => this.block.setMod(name, value));
+			return this.execCbAfterBlockReady(() => this.block.setMod(nodeOrName, name));
 		}
 
 		return Block.prototype.setMod.call(
@@ -1644,18 +1648,16 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 	 * @param name
 	 * @param [value]
 	 */
-	removeMod(node: Element, name: string, value?: any): CanPromise<boolean>;
+	removeMod(node: Element, name: string, value?: unknown): CanPromise<boolean>;
 
 	/**
 	 * @param name
 	 * @param [value]
 	 */
-	removeMod(name: string, value?: any): CanPromise<boolean>;
-	removeMod(nodeOrName: Element | string, name?: string | any, value?: any): CanPromise<boolean> {
+	removeMod(name: string, value?: unknown): CanPromise<boolean>;
+	removeMod(nodeOrName: Element | string, name?: string | unknown, value?: unknown): CanPromise<boolean> {
 		if (Object.isString(nodeOrName)) {
-			value = name;
-			name = nodeOrName;
-			return this.execCbAfterBlockReady(() => this.block.removeMod(name, value));
+			return this.execCbAfterBlockReady(() => this.block.removeMod(nodeOrName, name));
 		}
 
 		return Block.prototype.removeMod.call(
@@ -1671,7 +1673,7 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 	 * @param name
 	 * @param value
 	 */
-	setRootMod(name: string, value: any): boolean {
+	setRootMod(name: string, value: unknown): boolean {
 		return this.$root.setRootMod(name, value, this);
 	}
 
@@ -1681,7 +1683,7 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 	 * @param name
 	 * @param value
 	 */
-	removeRootMod(name: string, value?: any): boolean {
+	removeRootMod(name: string, value?: unknown): boolean {
 		return this.$root.removeRootMod(name, value, this);
 	}
 
@@ -1722,7 +1724,7 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 		const
 			els = new Set();
 
-		const exec = (ctx = this) => {
+		const exec = (ctx: iBlock = this) => {
 			els.add(ctx);
 
 			const
@@ -1730,7 +1732,7 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 
 			if (children) {
 				for (let i = 0; i < children.length; i++) {
-					exec(<any>children[i]);
+					exec(children[i]);
 				}
 			}
 		};
@@ -1775,7 +1777,7 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 		const
 			els = new Set();
 
-		const exec = (ctx = this) => {
+		const exec = (ctx: iBlock = this) => {
 			els.add(ctx);
 
 			const
@@ -1783,7 +1785,7 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 
 			if (children) {
 				for (let i = 0; i < children.length; i++) {
-					exec(<any>children[i]);
+					exec(children[i]);
 				}
 			}
 		};
@@ -1884,13 +1886,13 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 	 * @param value
 	 * @param [obj]
 	 */
-	setField(path: string, value: any, obj: object = this): any {
+	setField<T>(path: string, value: T, obj: Dictionary = this): T {
 		let
 			// tslint:disable-next-line
 			ctx: iBlock = this,
 			isComponent = obj === this;
 
-		if ((<any>obj).instance instanceof iBlock) {
+		if (obj.instance instanceof iBlock) {
 			ctx = <any>obj;
 			isComponent = true;
 		}
@@ -1924,7 +1926,7 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 				}
 			}
 
-			ref = ref[prop];
+			ref = <Dictionary>ref[prop];
 		}
 
 		if (path in ref) {
@@ -1948,13 +1950,13 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 	 * @param path - path to the property (bla.baz.foo)
 	 * @param [obj]
 	 */
-	deleteField(path: string, obj: object = this): boolean {
+	deleteField(path: string, obj: Dictionary = this): boolean {
 		let
 			// tslint:disable-next-line
 			ctx: iBlock = this,
 			isComponent = obj === this;
 
-		if ((<any>obj).instance instanceof iBlock) {
+		if (obj.instance instanceof iBlock) {
 			ctx = <any>obj;
 			isComponent = true;
 		}
@@ -1982,7 +1984,7 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 				break;
 			}
 
-			ref = ref[prop];
+			ref = <Dictionary>ref[prop];
 		}
 
 		if (test) {
@@ -2005,13 +2007,13 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 	 * @param path - path to the property (bla.baz.foo)
 	 * @param [obj]
 	 */
-	getField(path: string, obj: object = this): any {
+	getField<T>(path: string, obj: Dictionary = this): T | undefined {
 		let
 			// tslint:disable-next-line
 			ctx: iBlock = this,
 			isComponent = obj === this;
 
-		if ((<any>obj).instance instanceof iBlock) {
+		if (obj.instance instanceof iBlock) {
 			ctx = <any>obj;
 			isComponent = true;
 		}
@@ -2028,10 +2030,10 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 				return undefined;
 			}
 
-			res = res[chunks[i]];
+			res = <Dictionary>res[chunks[i]];
 		}
 
-		return res;
+		return <any>res;
 	}
 
 	/**
@@ -2088,7 +2090,7 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 	 * @param key - log key or log message options
 	 * @param [details]
 	 */
-	protected log(key: string | LogMessageOptions, ...details: any[]): void {
+	protected log(key: string | LogMessageOptions, ...details: unknown[]): void {
 		let type;
 
 		if (!Object.isString(key)) {
@@ -2128,7 +2130,7 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 	): void {
 		const
 			t = this.tmp,
-			k = <any>key,
+			k = <string>key,
 			tmp = t[k] = t[k] || {};
 
 		Object.assign(
@@ -2175,7 +2177,7 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 	 * @param [ctx] - render context
 	 */
 	protected execRenderObject(
-		renderObj: Dictionary,
+		renderObj: RenderObject,
 		ctx?: RenderContext | [Dictionary] | [Dictionary, RenderContext]
 	): VNode {
 		let
@@ -2220,8 +2222,8 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 	 * @param [modName]
 	 * @param [modValue]
 	 */
-	protected getFullBlockName(componentName: string = this.componentName, modName?: string, modValue?: any): string {
-		return Block.prototype.getFullBlockName.call({blockName: componentName}, ...[].slice.call(arguments, 1));
+	protected getFullBlockName(componentName: string = this.componentName, modName?: string, modValue?: unknown): string {
+		return Block.prototype.getFullBlockName.call({blockName: componentName}, modName, modValue);
 	}
 
 	/**
@@ -2232,15 +2234,15 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 	 * @param [modName]
 	 * @param [modValue]
 	 */
-	protected getFullElName(componentName: string, elName: string, modName?: string, modValue?: any): string;
+	protected getFullElName(componentName: string, elName: string, modName?: string, modValue?: unknown): string;
 
 	/**
 	 * @param elName
 	 * @param [modName]
 	 * @param [modValue]
 	 */
-	protected getFullElName(elName: string, modName?: string, modValue?: any): string;
-	protected getFullElName(componentName: string, elName: string, modName?: string, modValue?: any): string {
+	protected getFullElName(elName: string, modName?: string, modValue?: unknown): string;
+	protected getFullElName(componentName: string, elName: string, modName?: string, modValue?: unknown): string {
 		if (!{2: true, 4: true}[arguments.length]) {
 			modValue = modName;
 			modName = elName;
@@ -2344,7 +2346,7 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 			cache = classesCache.create('els', id || componentName);
 
 		if (cache[key]) {
-			return cache[key];
+			return <ReadonlyArray<string>>cache[key];
 		}
 
 		const
@@ -2459,7 +2461,7 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 
 		return this.async.promise(async () => {
 			try {
-				const res = await this.storage.get(id);
+				const res = await this.storage.get<T>(id);
 				this.log('settings:load', () => Object.fastClone(res));
 				return res;
 
@@ -2744,7 +2746,7 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 	 * @param el
 	 * @param [filter]
 	 */
-	protected $<T extends iBlock = iBlock>(el: VueElement<T>, filter?: string): T;
+	protected $<T extends iBlock>(el: VueElement<T>, filter?: string): T;
 
 	/**
 	 * Returns an instance of Vue component by the specified query
@@ -2752,11 +2754,11 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 	 * @param query
 	 * @param [filter]
 	 */
-	protected $<T extends iBlock = iBlock>(query: string, filter?: string): T | undefined;
-	protected $<T extends iBlock = iBlock>(query: string | VueElement<T>, filter: string = ''): T | undefined {
+	protected $<T extends iBlock>(query: string, filter?: string): T | undefined;
+	protected $<T extends iBlock>(query: string | VueElement<T>, filter: string = ''): T | undefined {
 		const
 			$0 = Object.isString(query) ? document.body.querySelector(query) : query,
-			n = $0 && $0.closest(`.i-block-helper${filter}`) as any;
+			n = $0 && $0.closest<any>(`.i-block-helper${filter}`);
 
 		return n && n.vueComponent;
 	}
@@ -2770,13 +2772,13 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 	 * @param label
 	 * @param [value] - label value (will saved in the cache only if true)
 	 */
-	protected ifOnce(label: any, value: boolean = false): 0 | 1 | 2 {
-		if (this.ifOnceStore[label]) {
+	protected ifOnce(label: unknown, value: boolean = false): 0 | 1 | 2 {
+		if (this.ifOnceStore[<string>label]) {
 			return 2;
 		}
 
 		if (value) {
-			return this.ifOnceStore[label] = 1;
+			return this.ifOnceStore[<string>label] = 1;
 		}
 
 		return 0;
@@ -2872,10 +2874,10 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 	 * @param [name] - link name or [linked] | [linked, link]
 	 * @param [value] - additional value for sync
 	 */
-	protected syncLinks(name?: string | [string] | [string, string], value?: any): void {
+	protected syncLinks(name?: string | [string] | [string, string], value?: unknown): void {
 		const
-			linkName = <string | undefined>(Object.isString(<any>name) ? name : name && name[1]),
-			fieldName = Object.isArray(<any>name) ? (<string[]>name)[0] : undefined;
+			linkName = <string | undefined>(Object.isString(name) ? name : name && name[1]),
+			fieldName = Object.isArray(name) ? name[0] : undefined;
 
 		const
 			cache = this.syncLinkCache,
@@ -3013,7 +3015,7 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 			cache = classesCache.create('base');
 
 		if (cache[key]) {
-			return cache[key];
+			return <Readonly<Dictionary<string>>>cache[key];
 		}
 
 		const
@@ -3097,9 +3099,9 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 	 * Saves to cache the specified literal and returns returns it
 	 * @param literal
 	 */
-	protected memoizeLiteral<T extends Dictionary | any[]>(literal: T): T extends any[] ? ReadonlyArray<T> : Readonly<T> {
+	protected memoizeLiteral<T>(literal: T): T extends Dictionary ? Readonly<T>: ReadonlyArray<T> {
 		const key = JSON.stringify(literal);
-		return modsCache[key] = modsCache[key] || Object.freeze(literal);
+		return literalCache[key] = literalCache[key] || Object.freeze(<any>literal);
 	}
 
 	/**
@@ -3204,7 +3206,7 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 			const
 				k = e.name,
 				v = e.value,
-				w = this.getField('watchModsStore');
+				w = <NonNullable<ModsNTable>>this.getField('watchModsStore');
 
 			this
 				.mods[k] = v;
@@ -3221,7 +3223,7 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 			if (e.reason === 'removeMod') {
 				const
 					k = e.name,
-					w = this.getField('watchModsStore');
+					w = <NonNullable<ModsNTable>>this.getField('watchModsStore');
 
 				this
 					.mods[k] = undefined;
@@ -3418,12 +3420,28 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 	protected deactivated(): void {
 		const
 			$a = this.async,
-			fieldsForMute = Object.reject($a.linkNames, [$a.linkNames.promise, $a.linkNames.request]);
+			names = Async.linkNames;
 
-		$C(fieldsForMute).forEach((el) => {
-			const fn = $a[`mute-${el}`.camelize(false)];
-			return fn && fn();
-		});
+		const mute = {
+			[names.promise]: true,
+			[names.request]: true
+		};
+
+		for (let keys = Object.keys(names), i = 0; i < keys.length; i++) {
+			const
+				key = keys[i];
+
+			if (mute[key]) {
+				continue;
+			}
+
+			const
+				fn = $a[`mute-${names[key]}`.camelize(false)];
+
+			if (Object.isFunction(fn)) {
+				fn();
+			}
+		}
 
 		$a
 			.unmuteAll({group: /:suspend(?:\b|$)/})

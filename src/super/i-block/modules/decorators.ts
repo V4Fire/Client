@@ -35,25 +35,25 @@ export interface InitFieldFn<T extends iBlock = iBlockDecorator> extends BaseIni
 
 export type MethodWatchers<
 	T extends iBlock = iBlockDecorator,
-	A = any,
+	A = unknown,
 	B = A
 > = BaseMethodWatchers<T, A, B>;
 
 export type FieldWatcher<
 	T extends iBlock = iBlockDecorator,
-	A = any,
+	A = unknown,
 	B = A
 > = BaseFieldWatcher<T, A, B>;
 
 export interface ComponentProp<
 	T extends iBlock = iBlockDecorator,
-	A = any,
+	A = unknown,
 	B = A
 > extends BaseComponentProp<T, A, B> {}
 
 export interface ComponentField<
 	T extends iBlock = iBlockDecorator,
-	A = any,
+	A = unknown,
 	B = A
 > extends BaseComponentField<T, A, B> {}
 
@@ -98,7 +98,7 @@ export const watch = watchDecorator as (params?: FieldWatcher | MethodWatchers) 
  */
 export function bindModTo<T extends iBlock = iBlockDecorator>(
 	param: string,
-	converter: ((value: any, ctx: T) => any) | WatchOptions = Boolean,
+	converter: ((value: unknown, ctx: T) => unknown) | WatchOptions = Boolean,
 	opts?: WatchOptions
 ): Function {
 	return (target, key) => {
@@ -217,7 +217,7 @@ export function wait(status: number | string | Statuses, params?: WaitOpts | Fun
  *   *) [params.fn] - callback function
  *   *) [params.defer] - if true, then the function will always return a promise
  */
-export function wait<T = any>(status: number | string | Statuses | WaitOpts, params?: WaitOpts | Function): Function {
+export function wait<T>(status: number | string | Statuses | WaitOpts, params?: WaitOpts | Function): Function {
 	let
 		ctx;
 
@@ -242,7 +242,7 @@ export function wait<T = any>(status: number | string | Statuses | WaitOpts, par
 		group,
 		defer,
 		fn
-	} = params && typeof params !== 'function' ? params : <Dictionary>{};
+	} = params && !Object.isFunction(params) ? params : <WaitOpts>{};
 
 	// tslint:enable:prefer-const
 
@@ -333,7 +333,7 @@ export function wait<T = any>(status: number | string | Statuses | WaitOpts, par
 	}
 
 	if (isDecorator) {
-		return <any>((target, key, descriptors) => {
+		return ((target, key, descriptors) => {
 			handler = descriptors.value;
 			descriptors.value = wrapper;
 		});

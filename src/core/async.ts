@@ -7,7 +7,18 @@
  */
 
 import $C = require('collection.js');
-import Super, { AsyncOpts, AsyncCbOpts, AsyncOnOpts, ClearOptsId, LinkNamesList } from '@v4fire/core/core/async';
+import Super, {
+
+	AsyncOpts,
+	AsyncCbOpts,
+	AsyncOnOpts,
+	AsyncClearHandler,
+	ClearOptsId,
+	LinkNamesList,
+	isParams
+
+} from '@v4fire/core/core/async';
+
 import { convertEnumToDict } from 'core/helpers/other';
 export * from '@v4fire/core/core/async';
 
@@ -47,11 +58,6 @@ const
 export default class Async<CTX extends object = Async<any>> extends Super<CTX> {
 	/** @override */
 	static linkNames: ClientLinkNamesList = {...Super.linkNames, ...linkNamesDictionary};
-
-	/** @override */
-	constructor(ctx?: CTX) {
-		super(ctx);
-	}
 
 	/**
 	 * Wrapper for requestAnimationFrame
@@ -235,22 +241,22 @@ export default class Async<CTX extends object = Async<any>> extends Super<CTX> {
 	 *   *) [onDragEnd]
 	 */
 	dnd(el: Element, params: AsyncDnDOpts<CTX>): string | symbol;
-
-	// tslint:disable-next-line
-	dnd(el, p) {
+	dnd(el: Element, params?: boolean | AsyncDnDOpts<CTX>): string | symbol {
 		let
-			useCapture;
+			useCapture,
+			p!: AsyncDnDOpts<CTX> & AsyncCbOpts<CTX>;
 
-		if (Object.isObject(p)) {
-			useCapture = p.options && p.options.capture;
+		if (isParams<AsyncOnOpts<CTX>>(params)) {
+			useCapture = params.options && params.options.capture;
+			p = params;
 
 		} else {
-			useCapture = p;
+			useCapture = params;
 			p = {};
 		}
 
-		(<any>p).group = p.group || `dnd.${Math.random()}`;
-		(<any>p).onClear = (<Function[]>[]).concat(p.onClear || []);
+		p.group = p.group || `dnd.${Math.random()}`;
+		p.onClear = (<AsyncClearHandler<CTX>[]>[]).concat(p.onClear || []);
 
 		// tslint:disable-next-line
 		function dragStartClear(...args) {
@@ -267,20 +273,14 @@ export default class Async<CTX extends object = Async<any>> extends Super<CTX> {
 			$C(p.onClear).forEach((fn) => fn.call(this, ...args, 'dragend'));
 		}
 
-		const dragStartUseCapture = Boolean(
-			p.onDragStart && Object.isBoolean((<any>p.onDragStart).capture) ?
-				(<NodeEventOpts>p.onDragStart).capture : useCapture
-		);
+		const dragStartUseCapture = !p.onDragStart || Object.isFunction(p.onDragStart) ?
+			useCapture : Boolean(p.onDragStart.capture);
 
-		const dragUseCapture = Boolean(
-			p.onDrag && Object.isBoolean((<any>p.onDrag).capture) ?
-				(<NodeEventOpts>p.onDrag).capture : useCapture
-		);
+		const dragUseCapture = !p.onDrag || Object.isFunction(p.onDrag) ?
+			useCapture : Boolean(p.onDrag.capture);
 
-		const dragEndUseCapture = Boolean(
-			p.onDragEnd && Object.isBoolean((<any>p.onDragEnd).capture) ?
-				(<NodeEventOpts>p.onDragEnd).capture : useCapture
-		);
+		const dragEndUseCapture = !p.onDragEnd || Object.isFunction(p.onDragEnd) ?
+			useCapture : Boolean(p.onDragEnd.capture);
 
 		const
 			that = this,
@@ -303,7 +303,7 @@ export default class Async<CTX extends object = Async<any>> extends Super<CTX> {
 			};
 
 			const
-				links: any[] = [];
+				links: object[] = [];
 
 			$C(['mousemove', 'touchmove']).forEach((e) => {
 				links.push(that.on(document, e, drag, {...opts, onClear: dragClear}, dragUseCapture));

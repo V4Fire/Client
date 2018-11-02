@@ -27,6 +27,7 @@ import request, {
 	RequestMethods,
 	RequestResponse,
 	RequestResponseObject,
+	RequestFunctionResponse,
 	Response,
 	RequestBody,
 	ResolverResult,
@@ -36,8 +37,6 @@ import request, {
 } from 'core/request';
 
 export * from 'core/data/interface';
-export type RequestFactory = (...args: any[]) => RequestResponse;
-
 export { RequestMethods, RequestError } from 'core/request';
 export {
 
@@ -48,6 +47,7 @@ export {
 	RequestQuery,
 	RequestResponse,
 	RequestResponseObject,
+	RequestFunctionResponse,
 	Response,
 	RequestBody
 
@@ -85,7 +85,7 @@ export function provider(nmsOrFn: Function | string): Function | void {
 		};
 	}
 
-	providers[nmsOrFn.name] = <any>nmsOrFn;
+	providers[nmsOrFn.name] = <typeof Provider>nmsOrFn;
 }
 
 /**
@@ -326,7 +326,7 @@ export default class Provider {
 					return;
 				}
 
-				function onClear(err: any): void {
+				function onClear(err: unknown): void {
 					reject(err);
 					delete connectCache[key];
 				}
@@ -730,15 +730,19 @@ export default class Provider {
 	 * @param url - request url
 	 * @param factory - request factory
 	 */
-	protected updateRequest(url: string, factory: RequestFactory): RequestResponse;
+	protected updateRequest(url: string, factory: RequestFunctionResponse): RequestResponse;
 
 	/**
 	 * @param url - request url
 	 * @param event - event type
 	 * @param factory - request factory
 	 */
-	protected updateRequest(url: string, event: string, factory: RequestFactory): RequestResponse;
-	protected updateRequest(url: string, event: string | RequestFactory, factory?: RequestFactory): RequestResponse {
+	protected updateRequest(url: string, event: string, factory: RequestFunctionResponse): RequestResponse;
+	protected updateRequest(
+		url: string,
+		event: string | RequestFunctionResponse,
+		factory?: RequestFunctionResponse
+	): RequestResponse {
 		if (Object.isFunction(event)) {
 			factory = event;
 			event = '';

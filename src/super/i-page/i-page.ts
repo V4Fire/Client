@@ -9,8 +9,8 @@
 import iData, { component, prop, field, system, watch, hook, Statuses } from 'super/i-data/i-data';
 export * from 'super/i-data/i-data';
 
-export type TitleValue<T = any> = string | ((ctx: T) => string);
-export interface StageTitles<T = any> extends Dictionary<TitleValue<T>> {
+export type TitleValue<T = unknown> = string | ((ctx: T) => string);
+export interface StageTitles<T = unknown> extends Dictionary<TitleValue<T>> {
 	'[[DEFAULT]]': TitleValue<T>;
 }
 
@@ -43,7 +43,7 @@ export default class iPage<T extends Dictionary = Dictionary> extends iData<T> {
 	 */
 	set pageTitle(value: string) {
 		if (this.isActivated) {
-			this.$root.setPageTitle(value, <any>this);
+			this.$root.setPageTitle(value, this);
 		}
 	}
 
@@ -90,7 +90,7 @@ export default class iPage<T extends Dictionary = Dictionary> extends iData<T> {
 			}
 
 			if (v) {
-				return this.pageTitle = this.t(Object.isFunction(v) ? v(<any>this) : v);
+				return this.pageTitle = this.t(Object.isFunction(v) ? v(this) : v);
 			}
 		}
 	}

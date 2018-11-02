@@ -30,6 +30,13 @@ export default class bBackground extends iBlock {
 	 */
 	@wait('ready', {label: $$.applyStyle, defer: true})
 	async applyStyle(className: string, dataURI: string): Promise<void> {
+		const
+			{head} = document;
+
+		if (!head) {
+			return;
+		}
+
 		if (this.globalName) {
 			className = `${this.globalName}-${className}`;
 		}
@@ -43,7 +50,7 @@ export default class bBackground extends iBlock {
 		});
 
 		this.cache[className] = dataURI;
-		document.head.appendChild(style);
+		head.appendChild(style);
 
 		this.$el.classList.add(className);
 		this.emit('applyStyle', className, dataURI);

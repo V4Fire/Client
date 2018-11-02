@@ -16,9 +16,9 @@ import { EventEmitter2 as EventEmitter } from 'eventemitter2';
 
 import {
 
+	VNode,
 	CreateElement,
 	RenderContext,
-	VNode,
 	FunctionalComponentOptions,
 	WatchOptions,
 	WatchOptionsWithHandler
@@ -27,6 +27,11 @@ import {
 
 import { VueElement, FunctionalCtx } from 'core/component';
 import { runHook, createMeta, initDataObject, bindWatchers, defaultWrapper } from 'core/component/component';
+
+export interface RenderObject {
+	staticRenderFns?: Function[];
+	render(el: CreateElement, ctx?: RenderContext): VNode;
+}
 
 const
 	$$ = symbolGenerator(),
@@ -45,7 +50,7 @@ export function createFakeCtx(
 	baseCtx: FunctionalCtx
 ): Dictionary & FunctionalCtx {
 	const
-		fakeCtx: Dictionary & FunctionalCtx = Object.create(baseCtx),
+		fakeCtx: Dictionary<any> & FunctionalCtx = Object.create(baseCtx),
 		meta = createMeta(fakeCtx.meta);
 
 	const
@@ -53,7 +58,7 @@ export function createFakeCtx(
 		{methods} = meta;
 
 	const
-		p = <Dictionary>renderCtx.parent,
+		p = <Dictionary<any>>renderCtx.parent,
 		data = {};
 
 	const
@@ -223,13 +228,13 @@ export function createFakeCtx(
 		get(): VueElement<any> | undefined {
 			const
 				id = <any>$$.el,
-				el = fakeCtx[id];
+				el = <Element>fakeCtx[id];
 
 			if (el && el.closest('html')) {
 				return el;
 			}
 
-			return (fakeCtx[id] = document.querySelector(`.i-block-helper.${fakeCtx.componentId}`));
+			return (fakeCtx[id] = document.querySelector(`.i-block-helper.${fakeCtx.componentId}`) || undefined);
 		}
 	});
 
@@ -310,7 +315,7 @@ export function createFakeCtx(
  * @param ctx - component fake context
  * @param renderCtx - Vue.RenderContext
  */
-export function patchVNode(vNode: VNode, ctx: Dictionary, renderCtx: RenderContext): VNode {
+export function patchVNode(vNode: VNode, ctx: Dictionary<any>, renderCtx: RenderContext): VNode {
 	const
 		{data: vData} = vNode,
 		{data} = renderCtx,
@@ -448,7 +453,7 @@ export function patchVNode(vNode: VNode, ctx: Dictionary, renderCtx: RenderConte
 				const
 					props = ctx.$props,
 					oldProps = oldCtx.$props,
-					linkedFields = <Dictionary>{};
+					linkedFields = <Dictionary<string>>{};
 
 				for (let keys = Object.keys(oldProps), i = 0; i < keys.length; i++) {
 					const
@@ -617,11 +622,11 @@ export function patchVNode(vNode: VNode, ctx: Dictionary, renderCtx: RenderConte
  * @param renderObject
  * @param fakeCtx
  */
-export function execRenderObject(renderObject: Dictionary, fakeCtx: Dictionary): VNode {
-	if (renderObject.staticRenderFns) {
-		const
-			fns = renderObject.staticRenderFns;
+export function execRenderObject(renderObject: RenderObject, fakeCtx: Dictionary<any>): VNode {
+	const
+		fns = renderObject.staticRenderFns;
 
+	if (fns) {
 		if (!Object.isArray(fakeCtx._staticTrees)) {
 			fakeCtx._staticTrees = [];
 		}
@@ -641,7 +646,7 @@ export function execRenderObject(renderObject: Dictionary, fakeCtx: Dictionary):
  * @param baseCtx - base component context
  */
 export function convertRender(
-	renderObject: Dictionary,
+	renderObject: RenderObject,
 	baseCtx: FunctionalCtx
 ): FunctionalComponentOptions['render'] {
 	if (cache.has(renderObject)) {

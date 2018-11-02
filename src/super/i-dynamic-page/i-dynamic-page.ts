@@ -12,7 +12,7 @@ export * from 'super/i-page/i-page';
 
 export interface OnFilterChange {
 	mixin?: Dictionary;
-	modifier?(value: any): any;
+	modifier?(value: unknown): unknown;
 }
 
 export const

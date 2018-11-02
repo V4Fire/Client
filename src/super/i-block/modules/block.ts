@@ -71,7 +71,7 @@ export default class Block {
 	/**
 	 * Link to a block node
 	 */
-	get node(): VueElement<any> {
+	get node(): VueElement<unknown> {
 		return this.component.$el;
 	}
 
@@ -112,7 +112,7 @@ export default class Block {
 	 * @param [modName]
 	 * @param [modValue]
 	 */
-	getFullBlockName(modName?: string, modValue?: any): string {
+	getFullBlockName(modName?: string, modValue?: unknown): string {
 		return this.blockName + (modName ? `_${modName.dasherize()}_${String(modValue).dasherize()}` : '');
 	}
 
@@ -123,7 +123,7 @@ export default class Block {
 	 * @param [modName]
 	 * @param [modValue]
 	 */
-	getFullElName(elName: string, modName?: string, modValue?: any): string {
+	getFullElName(elName: string, modName?: string, modValue?: unknown): string {
 		const modStr = modName ? `_${modName.dasherize()}_${String(modValue).dasherize()}` : '';
 		return `${this.blockName}__${elName.dasherize()}${modStr}`;
 	}
@@ -178,7 +178,7 @@ export default class Block {
 	 * @param value
 	 * @param [reason]
 	 */
-	setMod(name: string, value: any, reason: EventReason = 'setMod'): boolean {
+	setMod(name: string, value: unknown, reason: EventReason = 'setMod'): boolean {
 		if (value === undefined) {
 			return false;
 		}
@@ -193,7 +193,7 @@ export default class Block {
 			this.removeMod(name, undefined, 'setMod');
 
 			if (this.mods) {
-				this.mods[name] = value;
+				this.mods[name] = <string>value;
 			}
 
 			if (reason !== 'initSetMod') {
@@ -223,7 +223,7 @@ export default class Block {
 	 * @param [value]
 	 * @param [reason]
 	 */
-	removeMod(name: string, value?: any, reason: EventReason = 'removeMod'): boolean {
+	removeMod(name: string, value?: unknown, reason: EventReason = 'removeMod'): boolean {
 		name = name.camelize(false);
 		value = value !== undefined ? String(value).dasherize() : undefined;
 
@@ -282,7 +282,7 @@ export default class Block {
 	 * @param value
 	 * @param [reason]
 	 */
-	setElMod(link: Element, elName: string, modName: string, value: any, reason: EventReason = 'setMod'): boolean {
+	setElMod(link: Element, elName: string, modName: string, value: unknown, reason: EventReason = 'setMod'): boolean {
 		if (value === undefined) {
 			return false;
 		}
@@ -321,7 +321,13 @@ export default class Block {
 	 * @param [value]
 	 * @param [reason]
 	 */
-	removeElMod(link: Element, elName: string, modName: string, value?: any, reason: EventReason = 'removeMod'): boolean {
+	removeElMod(
+		link: Element,
+		elName: string,
+		modName: string,
+		value?: unknown,
+		reason: EventReason = 'removeMod'
+	): boolean {
 		elName = elName.camelize(false);
 		modName = modName.camelize(false);
 		value = value !== undefined ? String(value).dasherize() : undefined;

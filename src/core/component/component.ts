@@ -17,7 +17,7 @@ import Vue, { ComponentOptions, FunctionalComponentOptions } from 'vue';
 import { ComponentField, ComponentMeta, VueInterface } from 'core/component';
 import { GLOBAL } from 'core/const/links';
 
-export interface ComponentConstructor<T = any> {
+export interface ComponentConstructor<T = unknown> {
 	new(): T;
 }
 
@@ -259,7 +259,7 @@ export function getFunctionalComponent(
 		}
 	}
 
-	return <any>{
+	return <ReturnType<typeof getFunctionalComponent>>{
 		props,
 		name: meta.name,
 		functional: true,
@@ -362,7 +362,7 @@ export function bindWatchers(ctx: VueInterface, eventCtx: VueInterface = ctx): v
 				group = {group: el.group || 'watchers', label},
 				eventParams = {...group, options: el.options, single: el.single};
 
-			let handler = (...args) => {
+			let handler: CanPromise<(...args: unknown[]) => void> = (...args) => {
 				args = el.provideArgs === false ? [] : args;
 
 				if (handlerIsStr) {
@@ -390,12 +390,12 @@ export function bindWatchers(ctx: VueInterface, eventCtx: VueInterface = ctx): v
 			};
 
 			if (el.wrapper) {
-				handler = <any>el.wrapper(ctx, handler);
+				handler = <typeof handler>el.wrapper(ctx, handler);
 			}
 
 			(async () => {
 				if (Object.isPromise(handler)) {
-					handler = await $a.promise(handler, group);
+					handler = <typeof handler>await $a.promise(handler, group);
 				}
 
 				if (customWatcher) {
@@ -407,7 +407,7 @@ export function bindWatchers(ctx: VueInterface, eventCtx: VueInterface = ctx): v
 						ctx.$on(key, handler);
 
 					} else {
-						$a.on(root, key, handler, eventParams, ...el.args);
+						$a.on(root, key, handler, eventParams, ...<unknown[]>el.args);
 					}
 
 					return;
@@ -529,10 +529,15 @@ export function initDataObject(
  * @param ctx - link to context
  * @param args - event arguments
  */
-export async function runHook(hook: string, meta: ComponentMeta, ctx: Dictionary, ...args: any[]): Promise<void> {
+export async function runHook(
+	hook: string,
+	meta: ComponentMeta,
+	ctx: Dictionary<any>,
+	...args: unknown[]
+): Promise<void> {
 	ctx.hook = hook;
 
-	if (ctx.log) {
+	if (Object.isFunction(ctx.log)) {
 		ctx.log(`hook:${hook}`, ...args);
 
 	} else {
@@ -566,7 +571,7 @@ export async function runHook(hook: string, meta: ComponentMeta, ctx: Dictionary
 			}
 
 			const
-				tasks = <any[]>[];
+				tasks = <CanPromise<unknown>[]>[];
 
 			for (let o = this.events[event], i = 0; i < o.length; i++) {
 				const
@@ -582,7 +587,7 @@ export async function runHook(hook: string, meta: ComponentMeta, ctx: Dictionary
 
 		async fire(): Promise<void> {
 			const
-				tasks = <any[]>[];
+				tasks = <CanPromise<unknown>[]>[];
 
 			for (let i = 0; i < this.queue.length; i++) {
 				tasks.push(this.queue[i]());
@@ -612,7 +617,7 @@ export async function runHook(hook: string, meta: ComponentMeta, ctx: Dictionary
  * @param meta
  */
 export function getBaseComponent(
-	constructor: ComponentConstructor,
+	constructor: ComponentConstructor<any>,
 	meta: ComponentMeta
 ): {
 	mods: Dictionary<string | undefined>;
@@ -644,7 +649,7 @@ export function getBaseComponent(
 				group: el.group,
 				single: el.single,
 				options: el.options,
-				args: [].concat(el.args || []),
+				args: (<unknown[]>[]).concat(el.args || []),
 				provideArgs: el.provideArgs,
 				deep: el.deep,
 				immediate: el.immediate,

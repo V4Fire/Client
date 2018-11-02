@@ -25,6 +25,7 @@ import Provider, {
 	RequestBody,
 	RequestResponseObject,
 	RequestError,
+	Response,
 	ModelMethods,
 	CreateRequestOptions as BaseCreateRequestOptions
 
@@ -47,13 +48,13 @@ export interface SocketEvent<T extends object = Async> extends RemoteEvent<T> {
 	connection: Promise<Socket | void>;
 }
 
-export interface CreateRequestOptions<T = any> extends BaseCreateRequestOptions<T>, AsyncOpts {
+export interface CreateRequestOptions<T = unknown> extends BaseCreateRequestOptions<T>, AsyncOpts {
 	showProgress?: boolean;
 	hideProgress?: boolean;
 }
 
-export interface ComponentConverter<T = any> {
-	(value: any): T;
+export interface ComponentConverter<T = unknown> {
+	(value: unknown): T;
 }
 
 export const
@@ -96,7 +97,7 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 	 * Converter from .db to the component format
 	 */
 	@prop({type: Function, watch: 'initRemoteData', required: false})
-	readonly componentConverter?: ComponentConverter;
+	readonly componentConverter?: ComponentConverter<T>;
 
 	/**
 	 * If true, then the component will be reinitialized after an activated hook in offline mode
@@ -197,7 +198,7 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 
 	/** @override */
 	@wait({label: $$.initLoad, defer: true})
-	async initLoad(data?: any, silent?: boolean): Promise<void> {
+	async initLoad(data?: unknown, silent?: boolean): Promise<void> {
 		if (!silent) {
 			this.componentStatus = 'loading';
 		}
@@ -215,8 +216,8 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 				Object.assign(p[1], {...label, join: false});
 
 				try {
-					const db = this.convertDataToDB(data || await this.get(<RequestQuery>p[0], p[1]));
-					this.execCbAtTheRightTime(() => this.db = <any>db, label);
+					const db = this.convertDataToDB<T>(data || await this.get(<RequestQuery>p[0], p[1]));
+					this.execCbAtTheRightTime(() => this.db = db, label);
 
 				} catch (err) {
 					stderr(err);
@@ -237,7 +238,7 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 	 * @param data
 	 * @param silent
 	 */
-	initBaseLoad(data?: any | ((this: this) => any), silent?: boolean): CanPromise<void> {
+	initBaseLoad(data?: unknown | ((this: this) => unknown), silent?: boolean): CanPromise<void> {
 		return super.initLoad(data, silent);
 	}
 
@@ -465,22 +466,22 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 	 * Converts the specified remote data to the component format and returns it
 	 * @param data
 	 */
-	protected convertDataToDB<O>(data: any): O | T {
-		return this.dbConverter ? this.dbConverter(data && data.valueOf()) : data;
+	protected convertDataToDB<O>(data: unknown): O | T {
+		return this.dbConverter ? this.dbConverter(Object.isTable(data) ? data.valueOf() : data) : data;
 	}
 
 	/**
 	 * Converts the specified data to the internal component format and returns it
 	 * @param data
 	 */
-	protected convertDBToComponent<O>(data: any): O | T {
-		return this.componentConverter ? this.componentConverter(data && data.valueOf()) : data;
+	protected convertDBToComponent<O>(data: unknown): O | T {
+		return this.componentConverter ? this.componentConverter(Object.isTable(data) ? data.valueOf() : data) : <O | T>data;
 	}
 
 	/**
 	 * Initializes remote data
 	 */
-	protected initRemoteData(): any | undefined {
+	protected initRemoteData(): unknown | undefined {
 		return undefined;
 	}
 
@@ -606,7 +607,7 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 	 * @param method
 	 */
 	protected getDefaultRequestParams(method: string): [RequestQuery | RequestBody, CreateRequestOptions] | false {
-		const [customData, customOpts] = (<any[]>[]).concat(
+		const [customData, customOpts] = (<unknown[]>[]).concat(
 			this.request && this.request[method] || []
 		);
 
@@ -677,7 +678,7 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 				break;
 
 			case 'invalidStatus':
-				switch (err.details.response.status) {
+				switch ((<NonNullable<Response>>err.details.response).status) {
 					case statusCodes.FORBIDDEN:
 						msg = t`You don't have permission for this operation`;
 						break;
@@ -712,7 +713,7 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 		params?: CreateRequestOptions<T>
 	): Promise<T | undefined> {
 		if (!this.dp) {
-			return <any>Then.resolve();
+			return Promise.resolve(undefined);
 		}
 
 		const
@@ -722,7 +723,7 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 			asyncParams = <AsyncOpts>(Object.select(p, asyncFields));
 
 		const
-			req = this.async.request<RequestResponseObject>((<Function>this.dp[method])(data, reqParams), asyncParams),
+			req = this.async.request<RequestResponseObject<T>>((<Function>this.dp[method])(data, reqParams), asyncParams),
 			is = (v) => v !== false;
 
 		if (this.mods.progress !== 'true') {
@@ -743,7 +744,7 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 			});
 		}
 
-		return req.then((res) => res.data);
+		return req.then((res) => res.data || undefined);
 	}
 
 	/**
@@ -761,7 +762,7 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 	 * Handler: dataProvider.add
 	 * @param data
 	 */
-	protected onAddData(data: any): void {
+	protected onAddData(data: unknown): void {
 		if (data != null) {
 			this.db = this.convertDataToDB(data);
 
@@ -774,7 +775,7 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 	 * Handler: dataProvider.upd
 	 * @param data
 	 */
-	protected onUpdData(data: any): void {
+	protected onUpdData(data: unknown): void {
 		if (data != null) {
 			this.db = this.convertDataToDB(data);
 
@@ -787,7 +788,7 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 	 * Handler: dataProvider.del
 	 * @param data
 	 */
-	protected onDelData(data: any): void {
+	protected onDelData(data: unknown): void {
 		if (data != null) {
 			this.db = undefined;
 

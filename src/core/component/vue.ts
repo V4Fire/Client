@@ -38,14 +38,14 @@ export default class VueInterface<
 	protected readonly $scopedSlots!: Dictionary<ScopedSlot>;
 	protected readonly $data!: Dictionary;
 	protected readonly $$data!: Dictionary;
-	protected readonly $ssrContext!: any;
+	protected readonly $ssrContext!: unknown;
 	protected readonly $vnode!: VNode;
 	protected readonly $attrs!: Dictionary<string>;
 	protected readonly $listeners!: Dictionary<Function | Function[]>;
 	protected readonly $activeField!: string;
 	protected $createElement!: CreateElement;
 
-	protected log?(key: string, ...details: any[]): void;
+	protected log?(key: string, ...details: unknown[]): void;
 
 	// @ts-ignore
 	protected $mount(elementOrSelector?: Element | string, hydrating?: boolean): this;
@@ -65,14 +65,14 @@ export default class VueInterface<
 	protected $delete() {}
 
 	// @ts-ignore
-	protected $watch<T = any>(
+	protected $watch<T = unknown>(
 		exprOrFn: string | ((this: this) => string),
 		cb: (this: this, n: T, o?: T) => void,
 		opts?: WatchOptions
 	): Function;
 
 	// @ts-ignore
-	protected $watch<T = any>(
+	protected $watch<T = unknown>(
 		exprOrFn: string | ((this: this) => string),
 		opts: WatchOptionsWithHandler<T>
 	): Function;
@@ -96,11 +96,11 @@ export default class VueInterface<
 	protected $off() {}
 
 	// @ts-ignore
-	protected $emit(event: string, ...args: any[]): this;
+	protected $emit(event: string, ...args: unknown[]): this;
 	// tslint:disable-next-line
 	protected $emit() {}
 
-	protected $nextTick(cb: (this: this) => void): void;
+	protected $nextTick(cb: Function | ((this: this) => void)): void;
 	// @ts-ignore
 	protected $nextTick(): Promise<void>;
 	// tslint:disable-next-line

@@ -13,8 +13,9 @@ import Vue, {
 	ComputedOptions,
 	ComponentOptions,
 	FunctionalComponentOptions,
+	RenderContext,
 	CreateElement,
-	RenderContext
+	VNode
 
 } from 'vue';
 
@@ -43,7 +44,7 @@ export { default as globalEvent, reset, ResetType } from 'core/component/event';
 
 export const
 	initEvent = new EventEmitter({maxListeners: 1e3}),
-	rootComponents = Object.createDict(),
+	rootComponents = Object.createDict<Promise<ComponentOptions<Vue>>>(),
 	localComponents = new WeakMap(),
 	components = new WeakMap();
 
@@ -88,38 +89,38 @@ export interface ComponentParams {
 	inheritMods?: boolean;
 }
 
-export interface WatchHandler<T extends VueInterface = VueInterface, A = any, B = A> {
-	(a: A, b: B): any;
-	(...args: A[]): any;
-	(ctx: T, a: A, b: B): any;
-	(ctx: T, ...args: A[]): any;
+export interface WatchHandler<T extends VueInterface = VueInterface, A = unknown, B = A> {
+	(a: A, b: B): unknown;
+	(...args: A[]): unknown;
+	(ctx: T, a: A, b: B): unknown;
+	(ctx: T, ...args: A[]): unknown;
 }
 
-export interface FieldWatcher<T extends VueInterface = VueInterface, A = any, B = A> extends WatchOptions {
+export interface FieldWatcher<T extends VueInterface = VueInterface, A = unknown, B = A> extends WatchOptions {
 	fn: WatchHandler<T, A, B>;
 	provideArgs?: boolean;
 }
 
 export interface ComponentProp extends PropOptions {
 	watchers: Map<string | Function, FieldWatcher>;
-	default?: any;
+	default?: unknown;
 }
 
 export interface InitFieldFn<T extends VueInterface = VueInterface> {
-	(ctx: T, data: Dictionary): any;
+	(ctx: T, data: Dictionary): unknown;
 }
 
 export interface MergeFieldFn<T extends VueInterface = VueInterface> {
-	(ctx: T, oldCtx: T, field: string, link: string | undefined): any;
+	(ctx: T, oldCtx: T, field: string, link: string | undefined): unknown;
 }
 
 export interface UniqueFieldFn<T extends VueInterface = VueInterface> {
-	(ctx: T, oldCtx: T): any;
+	(ctx: T, oldCtx: T): unknown;
 }
 
 export interface SystemField<T extends VueInterface = VueInterface> {
 	atom?: boolean;
-	default?: any;
+	default?: unknown;
 	unique?: boolean | UniqueFieldFn<T>;
 	after: Set<string>;
 	init?: InitFieldFn<T>;
@@ -131,31 +132,35 @@ export interface ComponentField<T extends VueInterface = VueInterface> extends S
 }
 
 export interface SystemField<T extends VueInterface = VueInterface> {
-	default?: any;
+	default?: unknown;
 	init?: InitFieldFn<T>;
 }
 
-export interface WatchWrapper<T extends VueInterface = VueInterface, A = any, B = A> {
+export interface WatchWrapper<T extends VueInterface = VueInterface, A = unknown, B = A> {
 	(ctx: T, handler: WatchHandler<T, A, B>): CanPromise<WatchHandler<T, A, B> | Function>;
 }
 
-export interface WatchOptionsWithHandler<T extends VueInterface = VueInterface, A = any, B = A> extends WatchOptions {
+export interface WatchOptionsWithHandler<
+	T extends VueInterface = VueInterface,
+	A = unknown,
+	B = A
+> extends WatchOptions {
 	group?: string;
 	single?: boolean;
 	options?: AddEventListenerOptions;
 	method?: string;
-	args?: any | any[];
+	args?: unknown | unknown[];
 	provideArgs?: boolean;
 	wrapper?: WatchWrapper<T, A, B>;
 	handler: string | WatchHandler<T, A, B>;
 }
 
-export interface MethodWatcher<T extends VueInterface = VueInterface, A = any, B = A> extends WatchOptions {
+export interface MethodWatcher<T extends VueInterface = VueInterface, A = unknown, B = A> extends WatchOptions {
 	field?: string;
 	group?: string;
 	single?: boolean;
 	options?: AddEventListenerOptions;
-	args?: any | any[];
+	args?: unknown | unknown[];
 	provideArgs?: boolean;
 	wrapper?: WatchWrapper<T, A, B>;
 }
@@ -208,8 +213,8 @@ export interface ComponentMeta {
 	systemFields: Dictionary<ComponentField>;
 	mods: ModsDecl;
 
-	computed: Dictionary<ComputedOptions<any>>;
-	accessors: Dictionary<ComputedOptions<any>>;
+	computed: Dictionary<ComputedOptions<unknown>>;
+	accessors: Dictionary<ComputedOptions<unknown>>;
 	methods: Dictionary<ComponentMethod>;
 	watchers: Dictionary<WatchOptionsWithHandler[]>;
 
@@ -224,7 +229,7 @@ export interface ComponentMeta {
 		mods: Dictionary<string | undefined>;
 		props: Dictionary<PropOptions>;
 		methods: Dictionary<Function>;
-		computed: Dictionary<ComputedOptions<any>>;
+		computed: Dictionary<ComputedOptions<unknown>>;
 		render: ComponentOptions<Vue>['render'] | FunctionalComponentOptions['render'];
 		ctx?: FunctionalCtx;
 	}
@@ -324,7 +329,7 @@ export function component(params?: ComponentParams): Function {
 				props: {},
 				methods: {},
 				computed: {},
-				render(el: CreateElement, baseCtx: RenderContext): any {
+				render(el: CreateElement, baseCtx: RenderContext): VNode {
 					const
 						{methods: {render: r}, component: {ctx}} = meta;
 
@@ -336,6 +341,8 @@ export function component(params?: ComponentParams): Function {
 
 						return r.fn.call(this, el);
 					}
+
+					return el('span');
 				}
 			}
 		};
@@ -371,7 +378,12 @@ export function component(params?: ComponentParams): Function {
 					fns = tpls.index();
 
 				if (p.functional === true) {
-					component.render = convertRender(fns, <any>meta.component.ctx);
+					const
+						{ctx} = meta.component;
+
+					if (ctx) {
+						component.render = convertRender(fns, ctx);
+					}
 
 				} else {
 					Object.assign(component, fns);
@@ -423,7 +435,7 @@ export function component(params?: ComponentParams): Function {
 			Vue.component(name, obj);
 		}
 
-		if (!Object.isBoolean(<any>p.functional)) {
+		if (!Object.isBoolean(p.functional)) {
 			component({
 				...params,
 				name: `${name}-functional`,

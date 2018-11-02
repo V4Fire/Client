@@ -11,8 +11,11 @@ import bSelect, { Option } from 'form/b-select/b-select';
 import iInput, { component, prop, p, Cache } from 'super/i-input/i-input';
 export * from 'super/i-input/i-input';
 
-export const
-	selectCache = new Cache<'months' | 'days' | 'years'>(['months', 'days', 'years']);
+export const selectCache = new Cache<'months' | 'days' | 'years', ReadonlyArray<Option>>([
+	'months',
+	'days',
+	'years'
+]);
 
 @component({
 	functional: {
@@ -28,12 +31,12 @@ export default class bInputBirthday<T extends Dictionary = Dictionary> extends i
 	/** @override */
 	@p({cache: false})
 	get value(): Date {
-		return Object.fastClone(this.getField('pointerStore'));
+		return Object.fastClone(<NonNullable<Date>>this.getField('valueProp'));
 	}
 
 	/** @override */
 	set value(value: Date) {
-		this.setField('pointerStore', value);
+		this.setField('valueProp', value);
 	}
 
 	/**

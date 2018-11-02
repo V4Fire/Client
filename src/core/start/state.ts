@@ -15,7 +15,7 @@ import semaphore from 'core/start/semaphore';
 
 export default (async () => {
 	const
-		tasks = <Promise<any>[]>[];
+		tasks = <Promise<unknown>[]>[];
 
 	tasks.push(
 		lang.isInitialized,

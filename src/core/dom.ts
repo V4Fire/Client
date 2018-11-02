@@ -16,9 +16,16 @@ import $C = require('collection.js');
  * @param [handler]
  */
 export function delegate(selector: string, handler?: Function): Function {
-	function wrapper(e: any): boolean {
+	function wrapper(e: Event): boolean {
 		const
-			link = e.target.closest && e.target.closest(selector);
+			t = <Element>e.target;
+
+		if (!t || !Object.isFunction(t.closest)) {
+			return false;
+		}
+
+		const
+			link = t.closest(selector);
 
 		if (link) {
 			e.delegateTarget = link;
