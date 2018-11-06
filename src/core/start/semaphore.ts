@@ -13,7 +13,7 @@ import { onEverythingReady } from 'core/event';
 
 export default onEverythingReady(async () => {
 	const
-		node = <HTMLElement | undefined>document.querySelector('[data-init-block]');
+		node = document.querySelector<HTMLElement>('[data-init-block]');
 
 	if (!node) {
 		throw new Error('Root node is not defined');

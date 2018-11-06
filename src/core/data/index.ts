@@ -186,12 +186,12 @@ export default class Provider {
 	/**
 	 * Temporary model event name for requests
 	 */
-	tmpEventName: ModelMethods | undefined;
+	tmpEventName: CanUndef<ModelMethods>;
 
 	/**
 	 * Temporary request method
 	 */
-	tmpMethod: RequestMethods | undefined;
+	tmpMethod: CanUndef<RequestMethods>;
 
 	/**
 	 * Cache id
@@ -257,10 +257,11 @@ export default class Provider {
 	constructor(params: ProviderParams = {}) {
 		const
 			nm = this.constructor.name,
-			key = this.cacheId = `${nm}:${JSON.stringify(params)}`;
+			key = this.cacheId = `${nm}:${JSON.stringify(params)}`,
+			cacheVal = instanceCache[key];
 
-		if (instanceCache[key]) {
-			return instanceCache[key];
+		if (cacheVal) {
+			return cacheVal;
 		}
 
 		requestCache[nm] = Object.createDict();
@@ -289,7 +290,7 @@ export default class Provider {
 	 * Returns an object with authentication params
 	 * @param params - additional parameters
 	 */
-	getAuthParams(params?: Dictionary | undefined): Dictionary {
+	getAuthParams(params?: CanUndef<Dictionary>): Dictionary {
 		return {};
 	}
 
@@ -392,14 +393,14 @@ export default class Provider {
 	/**
 	 * Returns a custom event name for the operation
 	 */
-	name(): ModelMethods | undefined;
+	name(): CanUndef<ModelMethods>;
 
 	/**
 	 * Sets a custom event name for the operation
 	 * @param [value]
 	 */
 	name(value: ModelMethods): Provider;
-	name(value?: ModelMethods): Provider | ModelMethods | undefined {
+	name(value?: ModelMethods): CanUndef<Provider | ModelMethods> {
 		if (value == null) {
 			const val = this.tmpEventName;
 			this.tmpEventName = undefined;
@@ -413,14 +414,14 @@ export default class Provider {
 	/**
 	 * Returns a custom request method for the operation
 	 */
-	method(): RequestMethods | undefined;
+	method(): CanUndef<RequestMethods>;
 
 	/**
 	 * Sets a custom request method for the operation
 	 * @param [value]
 	 */
 	method(value: RequestMethods): Provider;
-	method(value?: RequestMethods): Provider | RequestMethods | undefined {
+	method(value?: RequestMethods): CanUndef<Provider | RequestMethods> {
 		if (value == null) {
 			const val = this.tmpMethod;
 			this.tmpMethod = undefined;
@@ -757,10 +758,11 @@ export default class Provider {
 
 			req.then((res) => {
 				const
-					{ctx} = res;
+					{ctx} = res,
+					cache = requestCache[this.constructor.name];
 
-				if (ctx.canCache) {
-					requestCache[this.constructor.name][res.cacheKey] = res;
+				if (ctx.canCache && cache) {
+					cache[res.cacheKey] = res;
 				}
 
 				this.setEventToQueue(this.getEventKey(e, res.data), e, () => res.data);

@@ -113,8 +113,11 @@ export function createFakeCtx(
 
 			$C(['beforeDestroy', 'destroyed']).forEach((key) => {
 				runHook(key, meta, fakeCtx).then(async () => {
-					if (methods[key]) {
-						await methods[key].fn.call(fakeCtx);
+					const
+						m = methods[key];
+
+					if (m) {
+						await m.fn.call(fakeCtx);
 					}
 				}, stderr);
 			});
@@ -212,7 +215,7 @@ export function createFakeCtx(
 			for (let keys = Object.keys(o), i = 0; i < keys.length; i++) {
 				const
 					key = keys[i],
-					el = o[key];
+					el = <StrictDictionary<any>>o[key];
 
 				if ('fn' in el) {
 					fakeCtx[key] = el.fn.bind(fakeCtx);
@@ -225,7 +228,7 @@ export function createFakeCtx(
 	}
 
 	Object.defineProperty(fakeCtx, '$el', {
-		get(): VueElement<any> | undefined {
+		get(): CanUndef<VueElement<any>> {
 			const
 				id = <any>$$.el,
 				el = <Element>fakeCtx[id];
@@ -246,7 +249,7 @@ export function createFakeCtx(
 			key = fakeCtx.$activeField = keys[i],
 			el = o[key];
 
-		if (fakeCtx[key] === undefined && Object.isFunction(el.default) && !el.default[defaultWrapper]) {
+		if (el && fakeCtx[key] === undefined && Object.isFunction(el.default) && !el.default[defaultWrapper]) {
 			fakeCtx[key] = el.type === Function ? el.default.bind(fakeCtx) : el.default.call(fakeCtx);
 		}
 	}

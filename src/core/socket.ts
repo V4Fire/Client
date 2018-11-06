@@ -17,7 +17,7 @@ export type Socket = SocketIOClient.Socket;
  * Wrapper for sockets
  * @param [namespace] - connection namespace
  */
-export default function socket(namespace: string = ''): Socket | undefined {
+export default function socket(namespace: string = ''): CanUndef<Socket> {
 	let socket;
 
 	try {

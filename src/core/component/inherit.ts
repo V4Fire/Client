@@ -172,6 +172,10 @@ export default function inheritMeta(
 					key = keys[i],
 					parent = parentObj[key];
 
+				if (!parent) {
+					continue;
+				}
+
 				const
 					after = new Set(),
 					watchers = new Map();
@@ -214,7 +218,13 @@ export default function inheritMeta(
 	for (let o = meta.methods, keys = Object.keys(methods), i = 0; i < keys.length; i++) {
 		const
 			key = keys[i],
-			parent = methods[key],
+			parent = methods[key];
+
+		if (!parent) {
+			continue;
+		}
+
+		const
 			watchers = {},
 			hooks = {};
 
