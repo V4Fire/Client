@@ -6,6 +6,8 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+// tslint:disable:max-file-line-count
+
 import $C = require('collection.js');
 import iData, { component, prop, field, system, hook, wait, p, ModsDecl } from 'super/i-data/i-data';
 export * from 'super/i-data/i-data';
@@ -39,18 +41,22 @@ export type ValidatorsDecl<T extends iInput = iInput> = Dictionary<(this: T, par
 	}
 })
 
-export default class iInput<T extends Dictionary = Dictionary> extends iData<T> {
+export default class iInput<
+	V = unknown,
+	FV = V,
+	D extends Dictionary = Dictionary
+> extends iData<D> {
 	/**
 	 * Initial component value
 	 */
 	@prop({required: false})
-	readonly valueProp?: unknown;
+	readonly valueProp?: Date | Date[];
 
 	/**
 	 * Component default value
 	 */
 	@prop({required: false})
-	readonly defaultProp?: unknown;
+	readonly defaultProp?: V;
 
 	/**
 	 * If true, then the component value will be marked as UTC
@@ -87,7 +93,7 @@ export default class iInput<T extends Dictionary = Dictionary> extends iData<T> 
 	 * Illegal component values
 	 */
 	@prop({required: false})
-	readonly disallow?: unknown | unknown[] | Function | RegExp;
+	readonly disallow?: V | V[] | Function | RegExp;
 
 	/**
 	 * Component value type factory
@@ -117,7 +123,7 @@ export default class iInput<T extends Dictionary = Dictionary> extends iData<T> 
 	 * Previous component value
 	 */
 	@system()
-	prevValue: unknown;
+	prevValue?: V;
 
 	/**
 	 * Link to the component validators
@@ -127,12 +133,12 @@ export default class iInput<T extends Dictionary = Dictionary> extends iData<T> 
 	}
 
 	/** @override */
-	get error(): string | undefined {
+	get error(): CanUndef<string> {
 		return this.errorMsg && this.errorMsg.replace(/\.$/, '');
 	}
 
 	/** @override */
-	set error(value: string | undefined) {
+	set error(value: CanUndef<string>) {
 		this.errorMsg = value;
 	}
 
@@ -140,7 +146,7 @@ export default class iInput<T extends Dictionary = Dictionary> extends iData<T> 
 	 * Link to the form that is associated to the component
 	 */
 	@p({cache: false})
-	get connectedForm(): CanPromise<HTMLFormElement | undefined> {
+	get connectedForm(): CanPromise<CanUndef<HTMLFormElement>> {
 		return this.waitStatus('ready', () =>
 			(this.form ? document.querySelector<HTMLFormElement>(`#${this.form}`) : this.$el.closest('form')) || undefined);
 	}
@@ -148,35 +154,35 @@ export default class iInput<T extends Dictionary = Dictionary> extends iData<T> 
 	/**
 	 * Component value
 	 */
-	get value(): unknown {
-		return this.getField('valueStore');
+	get value(): V {
+		return <V>this.getField('valueStore');
 	}
 
 	/**
 	 * Sets a new component value
 	 * @param value
 	 */
-	set value(value: unknown) {
+	set value(value: V) {
 		this.setField('valueStore', value);
 	}
 
 	/**
 	 * Component default value
 	 */
-	get default(): unknown {
-		return this.defaultProp;
+	get default(): V {
+		return <V>this.defaultProp;
 	}
 
 	/**
 	 * Form value of the component
 	 */
 	@p({cache: false})
-	get formValue(): Promise<unknown> {
+	get formValue(): Promise<FV> {
 		return (async () => {
 			await this.nextTick();
 
 			const
-				test = (<unknown[]>[]).concat(this.disallow),
+				test = (<any[]>[]).concat(this.disallow),
 				value = await this[this.blockValueField];
 
 			const match = (el) => {
@@ -203,13 +209,13 @@ export default class iInput<T extends Dictionary = Dictionary> extends iData<T> 
 	 * Grouped form value of the component
 	 */
 	@p({cache: false})
-	get groupFormValue(): Promise<unknown[] | unknown> {
+	get groupFormValue(): Promise<CanArray<FV>> {
 		return (async () => {
 			if (this.name) {
 				const
 					form = this.connectedForm,
 					list = document.getElementsByName(this.name),
-					els = <unknown[]>[];
+					els = <FV[]>[];
 
 				const promises = $C(list).to([] as Promise<void>[]).reduce((arr, el) => {
 					arr.push((async () => {
@@ -217,7 +223,12 @@ export default class iInput<T extends Dictionary = Dictionary> extends iData<T> 
 							block = this.$<iInput>(el, '[class*="_form_true"]');
 
 						if (block && form === block.connectedForm) {
-							els.push(await block.formValue);
+							const
+								v = await block.formValue;
+
+							if (v !== undefined) {
+								els.push(<any>v);
+							}
 						}
 					})());
 
@@ -250,7 +261,7 @@ export default class iInput<T extends Dictionary = Dictionary> extends iData<T> 
 	 */
 	static blockValidators: ValidatorsDecl = {
 		// @ts-ignore
-		async required({msg, showMsg = true}: ValidatorParams): Promise<ValidatorResult> {
+		async required({msg, showMsg = true}: ValidatorParams): Promise<ValidatorResult<V>> {
 			if (await this.formValue == null) {
 				if (showMsg) {
 					this.error = msg || t`Required field`;
@@ -280,7 +291,7 @@ export default class iInput<T extends Dictionary = Dictionary> extends iData<T> 
 		return ctx.initDefaultValue(val);
 	}))
 
-	protected valueStore: unknown;
+	protected valueStore!: V;
 
 	/** @override */
 	@wait('ready')
@@ -357,7 +368,7 @@ export default class iInput<T extends Dictionary = Dictionary> extends iData<T> 
 	 * @emits validationEnd(result: boolean, failedValidation?: string)
 	 */
 	@wait('ready')
-	async validate(params?: ValidatorParams): Promise<ValidationResult> {
+	async validate(params?: ValidatorParams): Promise<ValidationResult<FV>> {
 		if (!this.validators.length) {
 			this.removeMod('valid');
 			return true;
@@ -373,20 +384,25 @@ export default class iInput<T extends Dictionary = Dictionary> extends iData<T> 
 			const
 				isArray = Object.isArray(el),
 				isObject = !isArray && Object.isObject(el),
-				key = <string>(isObject ? Object.keys(el)[0] : isArray ? el[0] : el);
+				key = <string>(isObject ? Object.keys(el)[0] : isArray ? el[0] : el),
+				validator = this.blockValidators[key];
 
-			const validator = this.blockValidators[key].call(
+			if (!validator) {
+				throw new Error(`Validator "${key}" is not defined`);
+			}
+
+			const validation = validator.call(
 				this,
 				// tslint:disable-next-line:prefer-object-spread
 				Object.assign(isObject ? el[key] : isArray && el[1] || {}, params)
 			);
 
-			if (validator instanceof Promise) {
+			if (validation instanceof Promise) {
 				this.removeMod('valid');
 				this.setMod('progress', true);
 			}
 
-			valid = await validator;
+			valid = await validation;
 
 			if (valid !== true) {
 				failedValidation = [key, valid];
@@ -421,7 +437,7 @@ export default class iInput<T extends Dictionary = Dictionary> extends iData<T> 
 	}
 
 	/** @override */
-	protected initRemoteData(): unknown | undefined {
+	protected initRemoteData(): CanUndef<V> {
 		if (!this.db) {
 			return;
 		}
@@ -447,7 +463,7 @@ export default class iInput<T extends Dictionary = Dictionary> extends iData<T> 
 	 * Handler: component value change
 	 * @emits change(value)
 	 */
-	protected onBlockValueChange(newValue: unknown, oldValue: unknown): void {
+	protected onBlockValueChange(newValue: V, oldValue: CanUndef<V>): void {
 		this.prevValue = oldValue;
 		if (newValue !== oldValue || newValue && typeof newValue === 'object') {
 			this.emit('change', this[this.blockValueField]);
@@ -458,14 +474,14 @@ export default class iInput<T extends Dictionary = Dictionary> extends iData<T> 
 	 * Initializes a default value (if needed) for the blockValue field
 	 * @param value - blockValue field value
 	 */
-	protected initDefaultValue(value?: unknown): unknown {
+	protected initDefaultValue(value?: V): V {
 		const
 			i = this.instance,
 			k = i.blockValueField,
 			f = this.$activeField;
 
 		if (value !== undefined || f !== k && f !== `${k}Store`) {
-			return value;
+			return <V>value;
 		}
 
 		// tslint:disable-next-line

@@ -7,6 +7,7 @@
  */
 
 // tslint:disable:max-file-line-count
+
 import $C = require('collection.js');
 
 import symbolGenerator from 'core/symbol';

@@ -7,6 +7,7 @@
  */
 
 // tslint:disable:max-file-line-count
+
 import $C = require('collection.js');
 import symbolGenerator from 'core/symbol';
 import iBlock, { component, prop, system, p, wait, watch, ModsDecl } from 'super/i-block/i-block';

@@ -68,7 +68,7 @@ export default class bPaging extends iBlock {
 	 * Current page current
 	 */
 	get current(): number {
-		return this.getField('currentStore');
+		return <NonNullable<number>>this.getField('currentStore');
 	}
 
 	/**

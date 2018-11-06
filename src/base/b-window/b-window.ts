@@ -115,7 +115,7 @@ export default class bWindow<T extends Dictionary = Dictionary> extends iData<T>
 	 */
 	get title(): string {
 		const
-			v = this.getField('titleStore'),
+			v = this.getField<string>('titleStore') || '',
 			stageTitles = this.stageTitles;
 
 		if (stageTitles) {
