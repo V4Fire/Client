@@ -359,7 +359,7 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 	 * Link to the root router
 	 */
 	@p({cache: false})
-	get router(): bRouter | any | undefined {
+	get router(): CanUndef<bRouter | any> {
 		return this.getField('routerStore', this.$root);
 	}
 
@@ -367,7 +367,7 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 	 * Link to the root route object
 	 */
 	@p({cache: false})
-	get route(): CurrentPage | any | undefined {
+	get route(): CanUndef<CurrentPage | any> {
 		return this.getField('route', this.$root);
 	}
 
@@ -408,7 +408,20 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 			}
 
 			const
-				l = ctx.syncLinkCache[link][key],
+				cache = ctx.syncLinkCache[link];
+
+			if (!cache) {
+				return;
+			}
+
+			const
+				l = cache[key];
+
+			if (!l) {
+				return;
+			}
+
+			const
 				modsProp = ctx.$props[link],
 				mods = {...oldCtx.mods};
 
@@ -441,9 +454,17 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 					key = keys[i];
 
 				if (key in declMods) {
-					attrMods.push([key, attrs[key]]);
+					const
+						v = attrs[key];
+
 					o.watch(`$attrs.${key}`, (val) => o.setMod(key, modVal(val)));
 					delete attrs[key];
+
+					if (!v) {
+						continue;
+					}
+
+					attrMods.push([key, v]);
 				}
 			}
 
@@ -3057,10 +3078,11 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 	 */
 	protected provideMods(mods?: Dictionary<ModVal | Dictionary<ModVal>>): Readonly<ModsNTable> {
 		const
-			key = JSON.stringify(this.baseMods) + JSON.stringify(mods);
+			key = JSON.stringify(this.baseMods) + JSON.stringify(mods),
+			cache = modsCache[key];
 
-		if (modsCache[key]) {
-			return modsCache[key];
+		if (cache) {
+			return cache;
 		}
 
 		const
@@ -3295,19 +3317,20 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 			for (let i = 0; i < watchers.length; i++) {
 				const
 					el = watchers[i],
-					isStr = Object.isString(el),
-					field = normalizeField(isStr ? el : el.field);
+					isStr = Object.isString(el);
 
-				w[field] = w[field] || [];
+				const
+					field = normalizeField(isStr ? el : el.field),
+					wList = w[field] = w[field] || [];
 
 				if (Object.isString(el)) {
-					w[field].push({
+					wList.push({
 						method,
 						handler: method
 					});
 
 				} else {
-					w[field].push({
+					wList.push({
 						...el,
 						args: [].concat(el.args || []),
 						method,
@@ -3458,7 +3481,7 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 		this.componentStatus = 'destroyed';
 		this.async.clearAll();
 		this.localEvent.removeAllListeners();
-		delete classesCache.dict.els[this.componentId];
+		delete (<StrictDictionary<any>>classesCache).dict.els[this.componentId];
 	}
 }
 

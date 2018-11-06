@@ -10,7 +10,6 @@
 
 import $C = require('collection.js');
 
-import Then from 'core/then';
 import statusCodes from 'core/status-codes';
 import symbolGenerator from 'core/symbol';
 
@@ -566,7 +565,14 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 	@watch({field: 'dataProvider', immediate: true})
 	protected async syncDataProviderWatcher(value: string | undefined): Promise<void> {
 		if (value) {
-			this.dp = new providers[value](this.dataProviderParams);
+			const
+				Provider = providers[value];
+
+			if (!Provider) {
+				throw new Error(`Provider "${value}" is not defined`);
+			}
+
+			this.dp = new Provider(this.dataProviderParams);
 			await this.initDataListeners();
 
 		} else {
@@ -596,8 +602,18 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 	 */
 	@watch('p')
 	protected async syncDataProviderParamsWatcher(value: Dictionary, oldValue: Dictionary): Promise<void> {
-		if (this.dataProvider) {
-			this.dp = new providers[this.dataProvider](value);
+		const
+			providerNm = this.dataProvider;
+
+		if (providerNm) {
+			const
+				Provider = providers[providerNm];
+
+			if (!Provider) {
+				throw new Error(`Provider "${providerNm}" is not defined`);
+			}
+
+			this.dp = new Provider(value);
 			await this.initDataListeners();
 		}
 	}
