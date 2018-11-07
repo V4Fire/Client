@@ -209,7 +209,7 @@ export default class bForm<T extends Dictionary = Dictionary> extends iData<T> {
 	 * @emits validationStart()
 	 * @emits validationSuccess()
 	 * @emits validationFail(failedValidation: ValidationError)
-	 * @emits validationEnd(result: boolean, failedValidation: ValidationError | undefined)
+	 * @emits validationEnd(result: boolean, failedValidation: CanUndef<ValidationError>)
 	 */
 	@wait('ready', {label: $$.validate, defer: true})
 	async validate(focusOnFail?: boolean): Promise<iInput[] | false> {

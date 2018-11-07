@@ -20,7 +20,11 @@ export const
 	}
 })
 
-export default class bTextarea<T extends Dictionary = Dictionary> extends bInput<T> {
+export default class bTextarea<
+	V extends string = string,
+	FV extends string = string,
+	D extends Dictionary = Dictionary
+> extends bInput<V, FV, D> {
 	/**
 	 * Row count for extending
 	 */
@@ -37,7 +41,9 @@ export default class bTextarea<T extends Dictionary = Dictionary> extends bInput
 				{input} = this.$refs,
 				s = getComputedStyle(this.$refs.input);
 
-			return input.scrollHeight - Number.parseFloat(s.paddingTop || '') - Number.parseFloat(s.paddingBottom || '');
+			return input.scrollHeight -
+				Number.parseFloat(s.paddingTop || '') -
+				Number.parseFloat(s.paddingBottom || '');
 		});
 	}
 
@@ -65,7 +71,7 @@ export default class bTextarea<T extends Dictionary = Dictionary> extends bInput
 	/**
 	 * Number of remaining characters
 	 */
-	get limit(): number | undefined {
+	get limit(): CanUndef<number> {
 		if (this.maxlength === undefined) {
 			return;
 		}
@@ -99,7 +105,7 @@ export default class bTextarea<T extends Dictionary = Dictionary> extends bInput
 	 * Calculates the component height
 	 */
 	@wait('ready', {label: $$.calcHeight, defer: true})
-	async calcHeight(): Promise<number | void> {
+	async calcHeight(): Promise<CanUndef<number>> {
 		const
 			{input, scroll} = this.$refs,
 			{length} = this.value;

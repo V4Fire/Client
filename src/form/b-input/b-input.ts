@@ -207,9 +207,9 @@ export default class bInput<
 	};
 
 	/** @override */
-	@field((o) => o.link((val) => {
+	@field((o) => o.link<V>((val) => {
 		const ctx: bInput = <any>o;
-		val = ctx.initDefaultValue(val);
+		val = <V>ctx.initDefaultValue(val);
 		return val !== undefined ? String(val) : '';
 	}))
 
@@ -260,13 +260,13 @@ export default class bInput<
 	 * Temporary last selection start index
 	 */
 	@system()
-	private _lastMaskSelectionStartIndex?: number | null;
+	private _lastMaskSelectionStartIndex?: Nullable<number>;
 
 	/**
 	 * Temporary last selection end index
 	 */
 	@system()
-	private _lastMaskSelectionEndIndex?: number | null;
+	private _lastMaskSelectionEndIndex?: Nullable<number>;
 
 	/**
 	 * Temporary mask buffer
@@ -405,9 +405,9 @@ export default class bInput<
 			maskBuffer = this._maskBuffer
 		}: {
 			updateBuffer?: boolean;
-			start?: number | null;
-			end?: number | null;
-			cursor?: number | string | null;
+			start?: Nullable<number>;
+			end?: Nullable<number>;
+			cursor?: Nullable<number | string>;
 			maskBuffer?: string;
 		} = {}
 
@@ -530,7 +530,7 @@ export default class bInput<
 	 * Handler: value buffer update
 	 * @param value
 	 */
-	protected onValueBufferUpdate(value: any): void {
+	protected onValueBufferUpdate(value: V): void {
 		if (!this.mask) {
 			this.value = value;
 		}
@@ -624,7 +624,7 @@ export default class bInput<
 	 * @param value
 	 * @emits actionChange
 	 */
-	protected onRawDataChange(value: any): void {
+	protected onRawDataChange(value: V): void {
 		if (this.blockValueField === 'value') {
 			this.emit('actionChange', value);
 		}

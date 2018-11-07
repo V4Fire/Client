@@ -11,21 +11,25 @@ import bInputNumber from 'form/b-input-number/b-input-number';
 import iInput, { component, ModsDecl } from 'super/i-input/i-input';
 export * from 'super/i-input/i-input';
 
-export interface Value {
+export type Value = CanUndef<{
 	from?: number[];
 	to?: number[];
-}
+}>;
 
 @component()
-export default class bTimeRange<T extends Dictionary = Dictionary> extends iInput<T> {
+export default class bTimeRange<
+	V extends Value = Value,
+	FV extends Value = Value,
+	D extends Dictionary = Dictionary
+> extends iInput<V, FV, D> {
 	/** @override */
-	get value(): Value | undefined {
-		const v = this.getField('valueStore');
+	get value(): V {
+		const v = <V>this.getField('valueStore');
 		return v && Object.fastClone(v);
 	}
 
 	/** @override */
-	set value(value: Value | undefined) {
+	set value(value: V) {
 		this.setField('valueStore', value);
 	}
 
@@ -39,9 +43,6 @@ export default class bTimeRange<T extends Dictionary = Dictionary> extends iInpu
 
 	/** @override */
 	protected readonly $refs!: {input: HTMLInputElement};
-
-	/** @override */
-	protected valueStore: Value | undefined;
 
 	/** @override */
 	async clear(): Promise<boolean> {
@@ -77,7 +78,7 @@ export default class bTimeRange<T extends Dictionary = Dictionary> extends iInpu
 
 	/**
 	 * Handler: component value save
-	 * @emits actionChange(value: Value | undefined)
+	 * @emits actionChange(value: CanUndef<Value>)
 	 */
 	protected async onSave(): Promise<void> {
 		const
@@ -98,7 +99,7 @@ export default class bTimeRange<T extends Dictionary = Dictionary> extends iInpu
 		f(from);
 		f(to);
 
-		this.value = from.length || to.length ? {from, to} : undefined;
+		this.value = <V>(from.length || to.length ? {from, to} : undefined);
 		this.emit('actionChange', this.value);
 		await this.close();
 	}
