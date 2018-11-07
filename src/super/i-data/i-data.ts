@@ -41,7 +41,7 @@ export interface RequestFilterOpts {
 
 export type RequestFilter = ((data: RequestQuery | RequestBody, opts: RequestFilterOpts) => boolean) | boolean;
 export type Request = RequestQuery | RequestBody | [RequestQuery | RequestBody, CreateRequestOptions];
-export type RequestParams = Dictionary<Request>;
+export type RequestParams = StrictDictionary<Request>;
 
 export interface SocketEvent<T extends object = Async> extends RemoteEvent<T> {
 	connection: Promise<Socket | void>;

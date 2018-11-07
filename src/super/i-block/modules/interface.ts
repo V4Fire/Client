@@ -13,8 +13,8 @@ import { ModVal } from 'core/component';
 
 export type Classes = Dictionary<string | Array<string | true> | true>;
 
-export interface LinkWrapper<T = unknown> {
-	(this: this, value: T, oldValue: CanUndef<T>): T;
+export interface LinkWrapper<T = unknown, R = unknown> {
+	(value: T, oldValue: CanUndef<T>): R;
 }
 
 export type WatchObjectField<T = unknown> =

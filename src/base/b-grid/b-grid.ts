@@ -14,15 +14,15 @@ export * from 'super/i-data-pages/i-data-pages';
 export type SortDate = Date | Date[];
 export type SortDir = 'asc' | 'desc';
 
-export interface RequestParams {
-	page: number,
-	perPage: number
-	sort: string,
-	dir: SortDir,
-	keepTime: boolean,
-	date: SortDate,
-	dateField: string
-}
+export type RequestParams = StrictDictionary<{
+	page: number;
+	perPage: number;
+	sort: string;
+	dir: SortDir;
+	keepTime: boolean;
+	date: SortDate;
+	dateField: string;
+}>;
 
 export interface Sort {
 	field: string;
@@ -83,7 +83,7 @@ export default class bGrid<T extends Dictionary = Dictionary> extends iDataPages
 		'dateField'
 	]))
 
-	protected readonly requestParams!: Dictionary<RequestParams>;
+	protected readonly requestParams!: RequestParams;
 
 	/** @override */
 	protected readonly $refs!: {loadPageTrigger: HTMLElement};
