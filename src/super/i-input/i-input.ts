@@ -178,7 +178,7 @@ export default class iInput<V = unknown, FV = unknown, D extends Dictionary = Di
 			await this.nextTick();
 
 			const
-				test = (<any[]>[]).concat(this.disallow),
+				test = (<Array<V | Function | RegExp>>[]).concat(this.disallow || []),
 				value = await this[this.blockValueField];
 
 			const match = (el) => {
@@ -223,7 +223,7 @@ export default class iInput<V = unknown, FV = unknown, D extends Dictionary = Di
 								v = await block.formValue;
 
 							if (v !== undefined) {
-								els.push(<any>v);
+								els.push(<FV>v);
 							}
 						}
 					})());

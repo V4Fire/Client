@@ -1027,21 +1027,21 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 	 * @see Async.worker
 	 * @param [paramsOrWrapper] - additional parameters or wrapper
 	 */
-	link<T>(paramsOrWrapper?: AsyncWatchOpts | LinkWrapper): T | undefined;
+	link<T>(paramsOrWrapper?: AsyncWatchOpts | LinkWrapper<T>): CanUndef<T>;
 
 	/**
 	 * @see Async.worker
 	 * @param params - additional parameters
 	 * @param [wrapper]
 	 */
-	link<T>(params: AsyncWatchOpts, wrapper?: LinkWrapper): T | undefined;
+	link<T>(params: AsyncWatchOpts, wrapper?: LinkWrapper<T>): CanUndef<T>;
 
 	/**
 	 * @see Async.worker
 	 * @param field
 	 * @param [paramsOrWrapper]
 	 */
-	link<T>(field: string, paramsOrWrapper?: AsyncWatchOpts | LinkWrapper): T | undefined;
+	link<T>(field: string, paramsOrWrapper?: AsyncWatchOpts | LinkWrapper<T>): CanUndef<T>;
 
 	/**
 	 * @see Async.worker
@@ -1049,18 +1049,18 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 	 * @param params
 	 * @param [wrapper]
 	 */
-	link<T>(field: string, params: AsyncWatchOpts, wrapper?: LinkWrapper): T | undefined;
+	link<T>(field: string, params: AsyncWatchOpts, wrapper?: LinkWrapper<T>): CanUndef<T>;
 	link<T>(
-		field?: string | AsyncWatchOpts | LinkWrapper,
-		params?: AsyncWatchOpts | LinkWrapper,
-		wrapper?: LinkWrapper
+		field?: string | AsyncWatchOpts | LinkWrapper<T>,
+		params?: AsyncWatchOpts | LinkWrapper<T>,
+		wrapper?: LinkWrapper<T>
 	): T | undefined {
 		const
 			path = this.$activeField,
 			cache = this.syncLinkCache;
 
 		if (!field || !Object.isString(field)) {
-			wrapper = <LinkWrapper>params;
+			wrapper = <LinkWrapper<T>>params;
 			params = <AsyncWatchOpts>field;
 			field = `${path.replace(/Store$/, '')}Prop`;
 		}
@@ -1127,9 +1127,9 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 	 * @param path - property path
 	 * @param fields
 	 */
-	createWatchObject(
+	createWatchObject<T>(
 		path: string,
-		fields: WatchObjectFields
+		fields: WatchObjectFields<T>
 	): Dictionary;
 
 	/**
@@ -1137,16 +1137,16 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 	 * @param params - additional parameters
 	 * @param fields
 	 */
-	createWatchObject(
+	createWatchObject<T>(
 		path: string,
 		params: AsyncWatchOpts,
-		fields: WatchObjectFields
+		fields: WatchObjectFields<T>
 	): Dictionary;
 
-	createWatchObject(
+	createWatchObject<T>(
 		path: string,
-		params: AsyncWatchOpts | WatchObjectFields,
-		fields?: WatchObjectFields
+		params: AsyncWatchOpts | WatchObjectFields<T>,
+		fields?: WatchObjectFields<T>
 	): Dictionary {
 		if (Object.isArray(params)) {
 			fields = params;
@@ -1222,9 +1222,9 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 			}
 		};
 
-		for (let i = 0; i < (<WatchObjectFields>fields).length; i++) {
+		for (let i = 0; i < (<unknown[]>fields).length; i++) {
 			const
-				el = (<WatchObjectFields>fields)[i];
+				el = (<WatchObjectFields<T>>fields)[i];
 
 			if (Object.isArray(el)) {
 				let
@@ -1915,7 +1915,7 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 			isComponent = obj === this;
 
 		if (obj.instance instanceof iBlock) {
-			ctx = <any>obj;
+			ctx = <iBlock>obj;
 			isComponent = true;
 		}
 
@@ -1979,7 +1979,7 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 			isComponent = obj === this;
 
 		if (obj.instance instanceof iBlock) {
-			ctx = <any>obj;
+			ctx = <iBlock>obj;
 			isComponent = true;
 		}
 
@@ -2036,7 +2036,7 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 			isComponent = obj === this;
 
 		if (obj.instance instanceof iBlock) {
-			ctx = <any>obj;
+			ctx = <iBlock>obj;
 			isComponent = true;
 		}
 
@@ -3157,7 +3157,7 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 		this.parentEvent.on('callChild', (component: iBlock, {check, action}: ParentMessage) => {
 			if (
 				check[0] !== 'instanceOf' && check[1] === this[check[0]] ||
-				check[0] === 'instanceOf' && this.instance instanceof check[1]
+				check[0] === 'instanceOf' && this.instance instanceof <Function>check[1]
 			) {
 				return action.call(this);
 			}

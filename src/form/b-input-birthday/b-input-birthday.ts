@@ -23,19 +23,19 @@ export const selectCache = new Cache<'months' | 'days' | 'years', ReadonlyArray<
 	}
 })
 
-export default class bInputBirthday<T extends Dictionary = Dictionary> extends iInput<T> {
+export default class bInputBirthday<V extends Date = Date, D extends Dictionary = Dictionary> extends iInput<V, D> {
 	/** @override */
 	@prop({default: () => new Date().beginningOfYear()})
-	readonly valueProp!: Date;
+	readonly valueProp!: V;
 
 	/** @override */
 	@p({cache: false})
-	get value(): Date {
-		return Object.fastClone(<NonNullable<Date>>this.getField('valueProp'));
+	get value(): V {
+		return Object.fastClone(<NonNullable<V>>this.getField('valueProp'));
 	}
 
 	/** @override */
-	set value(value: Date) {
+	set value(value: V) {
 		this.setField('valueProp', value);
 	}
 
@@ -61,10 +61,11 @@ export default class bInputBirthday<T extends Dictionary = Dictionary> extends i
 
 		const
 			key = JSON.stringify(months),
-			cache = selectCache.create('months');
+			cache = selectCache.create('months'),
+			val = cache[key];
 
-		if (cache[key]) {
-			return cache[key];
+		if (val) {
+			return val;
 		}
 
 		return cache[key] = Object.freeze(months).map((label, value) => ({value, label}));
@@ -76,10 +77,11 @@ export default class bInputBirthday<T extends Dictionary = Dictionary> extends i
 	get days(): ReadonlyArray<Option> {
 		const
 			key = this.value.daysInMonth(),
-			cache = selectCache.create('days');
+			cache = selectCache.create('days'),
+			val = cache[key];
 
-		if (cache[key]) {
-			return cache[key];
+		if (val) {
+			return val;
 		}
 
 		const
@@ -101,10 +103,11 @@ export default class bInputBirthday<T extends Dictionary = Dictionary> extends i
 	get years(): ReadonlyArray<Option> {
 		const
 			key = new Date().getFullYear(),
-			cache = selectCache.create('years');
+			cache = selectCache.create('years'),
+			val = cache[key];
 
-		if (cache[key]) {
-			return cache[key];
+		if (val) {
+			return val;
 		}
 
 		const
@@ -142,7 +145,7 @@ export default class bInputBirthday<T extends Dictionary = Dictionary> extends i
 	};
 
 	/** @override */
-	protected valueStore!: Date;
+	protected valueStore!: V;
 
 	/** @override */
 	async clear(): Promise<boolean> {
@@ -206,7 +209,7 @@ export default class bInputBirthday<T extends Dictionary = Dictionary> extends i
 		});
 
 		if (String(d) !== String(this.value)) {
-			this.value = d;
+			this.value = <V>d;
 		}
 	}
 

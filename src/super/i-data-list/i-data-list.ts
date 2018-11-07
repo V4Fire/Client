@@ -24,6 +24,8 @@ export default class iDataList<T extends Dictionary = Dictionary> extends iData<
 	}
 
 	/** @override */
+	protected convertDataToDB<O>(data: unknown): O;
+	protected convertDataToDB(data: unknown): DataList<T>;
 	protected convertDataToDB<O>(data: unknown): O | DataList<T> {
 		const
 			v = super.convertDataToDB<O | DataList<T>>(data);
@@ -132,7 +134,7 @@ export default class iDataList<T extends Dictionary = Dictionary> extends iData<
 			return;
 		}
 
-		const list = (<any[]>[]).concat(this.convertDataToDB<T>(data));
+		const list = (<T[]>[]).concat(this.convertDataToDB<T>(data));
 		await this.async.wait(() => this.db);
 
 		const
@@ -179,7 +181,7 @@ export default class iDataList<T extends Dictionary = Dictionary> extends iData<
 			return;
 		}
 
-		const list = (<any[]>[]).concat(this.convertDataToDB(data));
+		const list = (<T[]>[]).concat(this.convertDataToDB<T>(data));
 		await this.async.wait(() => this.db);
 
 		for (let i = 0; i < list.length; i++) {
@@ -212,7 +214,7 @@ export default class iDataList<T extends Dictionary = Dictionary> extends iData<
 			return;
 		}
 
-		const list = (<any>[]).concat(this.convertDataToDB(data));
+		const list = (<T[]>[]).concat(this.convertDataToDB<T>(data));
 		await this.async.wait(() => this.db);
 
 		for (let i = 0; i < list.length; i++) {

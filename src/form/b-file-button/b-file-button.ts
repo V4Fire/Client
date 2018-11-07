@@ -27,7 +27,7 @@ export const
 	$$ = symbolGenerator();
 
 @component()
-export default class bFileButton extends bButton {
+export default class bFileButton<T extends Dictionary = Dictionary> extends bButton<T> {
 	/**
 	 * Test function
 	 */

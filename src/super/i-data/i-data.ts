@@ -465,6 +465,8 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 	 * Converts the specified remote data to the component format and returns it
 	 * @param data
 	 */
+	protected convertDataToDB<O>(data: unknown): O;
+	protected convertDataToDB(data: unknown): T;
 	protected convertDataToDB<O>(data: unknown): O | T {
 		return this.dbConverter ? this.dbConverter(Object.isTable(data) ? data.valueOf() : data) : data;
 	}

@@ -15,7 +15,11 @@ export * from  'super/i-input/i-input';
 	}
 })
 
-export default class bInputHidden<T extends Dictionary = Dictionary> extends iInput<T> {
+export default class bInputHidden<
+	V = unknown,
+	FV = unknown,
+	D extends Dictionary = Dictionary
+> extends iInput<V, FV, D> {
 	/** @override */
 	protected readonly $refs!: {input: HTMLInputElement};
 }

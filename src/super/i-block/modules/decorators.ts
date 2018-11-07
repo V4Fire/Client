@@ -31,7 +31,7 @@ import {
 
 } from 'core/component/decorators/base';
 
-export interface InitFieldFn<T = iBlockDecorator> extends BaseInitFieldFn<T> {}
+export interface InitFieldFn<T extends unknown = iBlockDecorator> extends BaseInitFieldFn<T> {}
 
 export type MethodWatchers<
 	T = iBlockDecorator,

@@ -27,7 +27,7 @@ import iData, {
 
 export * from 'super/i-data/i-data';
 
-export interface ValidationError<V extends any = any> {
+export interface ValidationError<V = unknown> {
 	el: iInput;
 	validator: InputValidationError<V>;
 }
@@ -127,11 +127,11 @@ export default class bForm<T extends Dictionary = Dictionary> extends iData<T> {
 		return this.waitStatus('ready', () => {
 			const els = $C(this.$refs.form.elements).to([] as iInput[]).reduce((arr, el) => {
 				const
-					component = this.$(el, '[class*="_form_true"]');
+					component = this.$<iInput>(el, '[class*="_form_true"]');
 
 				if (component && component.instance instanceof iInput && !cache[component.componentId]) {
 					cache[component.componentId] = true;
-					arr.push(<any>component);
+					arr.push(component);
 				}
 
 				return arr;
@@ -278,9 +278,9 @@ export default class bForm<T extends Dictionary = Dictionary> extends iData<T> {
 			start = Date.now(),
 			[submits, elements] = await Promise.all([this.submits, this.elements]);
 
-		await Promise.all([].concat(
-			<any>$C(elements).map((el) => el.setMod('disabled', true)),
-			<any>$C(submits).map((el) => el.setMod('progress', true))
+		await Promise.all((<CanPromise<boolean>[]>[]).concat(
+			$C(elements).map((el) => el.setMod('disabled', true)),
+			$C(submits).map((el) => el.setMod('progress', true))
 		));
 
 		const
@@ -304,7 +304,7 @@ export default class bForm<T extends Dictionary = Dictionary> extends iData<T> {
 				}
 
 				if (el.name) {
-					body[el.name] = el.utc ? this.h.setJSONToUTC(val) : val;
+					body[el.name] = el.utc && Object.isTable(val) ? this.h.setJSONToUTC(val) : val;
 				}
 			})()));
 
@@ -352,9 +352,9 @@ export default class bForm<T extends Dictionary = Dictionary> extends iData<T> {
 			await this.async.sleep(delay);
 		}
 
-		await Promise.all([].concat(
-			<any>$C(elements).map((el) => el.setMod('disabled', false)),
-			<any>$C(submits).map((el) => el.setMod('progress', false))
+		await Promise.all((<CanPromise<boolean>[]>[]).concat(
+			$C(elements).map((el) => el.setMod('disabled', false)),
+			$C(submits).map((el) => el.setMod('progress', false))
 		));
 
 		if (!els) {

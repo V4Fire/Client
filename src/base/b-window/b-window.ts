@@ -11,8 +11,8 @@ import iData, { field, component, prop, hook, ModsDecl, Stage } from 'super/i-da
 import { RequestError } from 'core/data';
 export * from 'super/i-data/i-data';
 
-export type TitleValue<T = any> = string | ((ctx: T) => string);
-export interface StageTitles<T = any> extends Dictionary<TitleValue<T>> {
+export type TitleValue<T = unknown> = string | ((ctx: T) => string);
+export interface StageTitles<T = unknown> extends Dictionary<TitleValue<T>> {
 	'[[DEFAULT]]': TitleValue<T>;
 }
 

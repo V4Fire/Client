@@ -13,18 +13,18 @@ import { ModVal } from 'core/component';
 
 export type Classes = Dictionary<string | Array<string | true> | true>;
 
-export interface LinkWrapper {
-	(this: this, value: any, oldValue: any): any;
+export interface LinkWrapper<T = unknown> {
+	(this: this, value: T, oldValue: CanUndef<T>): T;
 }
 
-export type WatchObjectField =
+export type WatchObjectField<T = unknown> =
 	string |
 	[string] |
 	[string, string] |
-	[string, LinkWrapper] |
-	[string, string, LinkWrapper];
+	[string, LinkWrapper<T>] |
+	[string, string, LinkWrapper<T>];
 
-export type WatchObjectFields = Array<WatchObjectField>;
+export type WatchObjectFields<T = unknown> = Array<WatchObjectField<T>>;
 
 export interface SizeTo {
 	gt: Dictionary<Size>;
@@ -33,12 +33,12 @@ export interface SizeTo {
 
 export type Size = 'xxs' | 'xs' | 's' | 'm' | 'l' | 'xl' | 'xxl';
 
-export interface SyncLink {
+export interface SyncLink<T = unknown> {
 	path: string;
-	sync(value?: any): void;
+	sync(value?: T): void;
 }
 
-export type SyncLinkCache = Dictionary<Dictionary<SyncLink>>;
+export type SyncLinkCache<T = unknown> = Dictionary<Dictionary<SyncLink<T>>>;
 export type ModsTable = Dictionary<ModVal>;
 export type ModsNTable = Dictionary<string | undefined>;
 
@@ -66,9 +66,9 @@ export type ParentMessageFields =
 	'componentName' |
 	'componentId';
 
-export interface ParentMessage {
-	check: [ParentMessageFields, any];
-	action(this: iBlock): Function;
+export interface ParentMessage<T = iBlock> {
+	check: [ParentMessageFields, unknown];
+	action(this: T): Function;
 }
 
 export type AsyncTaskSimpleId = string | number;
@@ -77,58 +77,58 @@ export type AsyncQueueType = 'asyncComponents' | 'asyncBackComponents';
 export type AsyncWatchOpts = WatchOptions & AsyncOpts;
 
 export interface RemoteEvent<T extends object = Async> {
-	on(events: string | string[], handler: Function, ...args: any[]): object | undefined;
+	on(events: CanArray<string>, handler: Function, ...args: unknown[]): CanUndef<object>;
 	on(
-		events: string | string[],
+		events: CanArray<string>,
 		handler: Function,
 		params: AsyncOnOpts<T>,
-		...args: any[]
-	): object | undefined;
+		...args: unknown[]
+	): CanUndef<object>;
 
-	once(events: string | string[], handler: Function, ...args: any[]): object | undefined;
+	once(events: CanArray<string>, handler: Function, ...args: unknown[]): CanUndef<object>;
 	once(
-		events: string | string[],
+		events: CanArray<string>,
 		handler: Function,
 		params: AsyncOnceOpts<T>,
-		...args: any[]
-	): object | undefined;
+		...args: unknown[]
+	): CanUndef<object>;
 
-	promisifyOnce(events: string | string[], ...args: any[]): Promise<any> | undefined;
+	promisifyOnce(events: CanArray<string>, ...args: unknown[]): CanUndef<Promise<unknown>>;
 	promisifyOnce(
-		events: string | string[],
+		events: CanArray<string>,
 		params: AsyncOnceOpts<T>,
-		...args: any[]
-	): Promise<any> | undefined;
+		...args: unknown[]
+	): CanUndef<Promise<unknown>>;
 
 	off(id?: object): void;
 	off(params: ClearOptsId<object>): void;
 }
 
 export interface Event<T extends object = Async> {
-	emit(event: string, ...args: any[]): boolean;
+	emit(event: string, ...args: unknown[]): boolean;
 
-	on(events: string | string[], handler: Function, ...args: any[]): object;
+	on(events: CanArray<string>, handler: Function, ...args: unknown[]): object;
 	on(
-		events: string | string[],
+		events: CanArray<string>,
 		handler: Function,
 		params: AsyncOnOpts<T>,
-		...args: any[]
+		...args: unknown[]
 	): object;
 
-	once(events: string | string[], handler: Function, ...args: any[]): object;
+	once(events: CanArray<string>, handler: Function, ...args: unknown[]): object;
 	once(
-		events: string | string[],
+		events: CanArray<string>,
 		handler: Function,
 		params: AsyncOnceOpts<T>,
-		...args: any[]
+		...args: unknown[]
 	): object;
 
-	promisifyOnce(events: string | string[], ...args: any[]): Promise<any>;
+	promisifyOnce(events: CanArray<string>, ...args: unknown[]): Promise<unknown>;
 	promisifyOnce(
-		events: string | string[],
+		events: CanArray<string>,
 		params: AsyncOnceOpts<T>,
-		...args: any[]
-	): Promise<any>;
+		...args: unknown[]
+	): Promise<unknown>;
 
 	off(id?: object): void;
 	off(params: ClearOptsId<object>): void;

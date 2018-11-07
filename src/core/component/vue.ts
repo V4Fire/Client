@@ -14,7 +14,7 @@ import { ComponentMeta, Hooks } from 'core/component';
 // tslint:disable:no-empty
 // tslint:disable:typedef
 
-export type VueElement<T> = Element & {vueComponent?: T};
+export type VueElement<T = unknown> = Element & {vueComponent?: T};
 export default class VueInterface<C = VueInterface<any, any>, R = VueInterface<any, any>> {
 	readonly hook!: Hooks;
 	readonly instance!: this;

@@ -98,9 +98,9 @@ export default class bRemoteProvider<T extends Dictionary = Dictionary> extends 
 
 	/**
 	 * @override
-	 * @emits addData(data: any)
+	 * @emits addData(data: unknown)
 	 */
-	protected onAddData(data: any): void {
+	protected onAddData(data: unknown): void {
 		const
 			l = this.$listeners;
 
@@ -113,9 +113,9 @@ export default class bRemoteProvider<T extends Dictionary = Dictionary> extends 
 
 	/**
 	 * @override
-	 * @emits updData(data: any)
+	 * @emits updData(data: unknown)
 	 */
-	protected onUpdData(data: any): void {
+	protected onUpdData(data: unknown): void {
 		const
 			l = this.$listeners;
 
@@ -128,9 +128,9 @@ export default class bRemoteProvider<T extends Dictionary = Dictionary> extends 
 
 	/**
 	 * @override
-	 * @emits delData(data: any)
+	 * @emits delData(data: unknown)
 	 */
-	protected onDelData(data: any): void {
+	protected onDelData(data: unknown): void {
 		const
 			l = this.$listeners;
 
