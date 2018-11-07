@@ -7,19 +7,26 @@
  */
 
 import symbolGenerator from 'core/symbol';
-import bInput, { component, prop } from 'form/b-input/b-input';
+import bInput, { component, prop, Value } from 'form/b-input/b-input';
+
 export * from 'form/b-input/b-input';
+export type FormValue = number;
 
 export const
 	$$ = symbolGenerator();
 
 @component()
-export default class bInputNumber<T extends Dictionary = Dictionary> extends bInput<T> {
+export default class bInputNumber<
+	V extends Value = Value,
+	FV extends FormValue = FormValue,
+	D extends Dictionary = Dictionary
+// @ts-ignore
+> extends bInput<V, FV, D> {
 	/** @override */
 	readonly type: string = 'number';
 
 	/** @override */
-	@prop({default(value: string): number | undefined {
+	@prop({default(value: string): CanUndef<number> {
 		return this.convertValue(value);
 	}})
 
@@ -55,7 +62,7 @@ export default class bInputNumber<T extends Dictionary = Dictionary> extends bIn
 	/**
 	 * Returns the component value as a number
 	 */
-	get numValue(): number | undefined {
+	get numValue(): CanUndef<number> {
 		return this.convertValue(this.getField('valueStore'));
 	}
 
@@ -63,7 +70,7 @@ export default class bInputNumber<T extends Dictionary = Dictionary> extends bIn
 	 * Sets a value to the component
 	 * @param [value]
 	 */
-	setValue(value: string | number | undefined): number | undefined {
+	setValue(value: CanUndef<string | number>): CanUndef<number> {
 		let
 			v = this.convertValue(value);
 
@@ -78,7 +85,7 @@ export default class bInputNumber<T extends Dictionary = Dictionary> extends bIn
 			v = this.max;
 		}
 
-		this.value = String(v);
+		this.value = <V>String(v);
 
 		const
 			{input} = this.$refs;
@@ -100,7 +107,7 @@ export default class bInputNumber<T extends Dictionary = Dictionary> extends bIn
 	 * Converts the specified value to a number and returns it
 	 * @param [value]
 	 */
-	protected convertValue(value: any): number | undefined {
+	protected convertValue(value: any): CanUndef<number> {
 		if (!isNaN(value)) {
 			return Number(value);
 		}

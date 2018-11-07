@@ -8,7 +8,7 @@
 
 import $C = require('collection.js');
 import bInputNumber from 'form/b-input-number/b-input-number';
-import iInput, { component, ModsDecl } from 'super/i-input/i-input';
+import iInput, { component, prop, ModsDecl } from 'super/i-input/i-input';
 export * from 'super/i-input/i-input';
 
 export type Value = CanUndef<{
@@ -16,12 +16,22 @@ export type Value = CanUndef<{
 	to?: number[];
 }>;
 
+export type FormValue = Value;
+
 @component()
 export default class bTimeRange<
 	V extends Value = Value,
-	FV extends Value = Value,
+	FV extends FormValue = FormValue,
 	D extends Dictionary = Dictionary
 > extends iInput<V, FV, D> {
+	/** @override */
+	@prop({type: Object, required: false})
+	readonly valueProp?: V;
+
+	/** @override */
+	@prop({type: Object, required: false})
+	readonly defaultProp?: V;
+
 	/** @override */
 	get value(): V {
 		const v = <V>this.getField('valueStore');

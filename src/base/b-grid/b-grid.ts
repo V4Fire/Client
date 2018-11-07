@@ -11,7 +11,7 @@ import symbolGenerator from 'core/symbol';
 import iDataPages, { field, prop, component, ModsDecl } from 'super/i-data-pages/i-data-pages';
 export * from 'super/i-data-pages/i-data-pages';
 
-export type SortDate = Date | Date[];
+export type SortDate = CanArray<Date>;
 export type SortDir = 'asc' | 'desc';
 
 export type RequestParams = StrictDictionary<{

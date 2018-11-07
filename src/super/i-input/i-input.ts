@@ -34,6 +34,9 @@ export type Validators = Array<string | Dictionary<ValidatorParams> | [string, V
 export type ValidatorsDecl<T = iInput, P = ValidatorParams> = Dictionary<(this: T, params: P) =>
 	CanPromise<boolean | unknown>>;
 
+export type Value = unknown;
+export type FormValue = Value;
+
 @component({
 	model: {
 		prop: 'valueProp',
@@ -41,12 +44,16 @@ export type ValidatorsDecl<T = iInput, P = ValidatorParams> = Dictionary<(this: 
 	}
 })
 
-export default class iInput<V = unknown, FV = unknown, D extends Dictionary = Dictionary> extends iData<D> {
+export default class iInput<
+	V extends Value = Value,
+	FV extends FormValue = FormValue,
+	D extends Dictionary = Dictionary
+> extends iData<D> {
 	/**
 	 * Initial component value
 	 */
 	@prop({required: false})
-	readonly valueProp?: Date | Date[];
+	readonly valueProp?: V;
 
 	/**
 	 * Component default value
@@ -470,7 +477,7 @@ export default class iInput<V = unknown, FV = unknown, D extends Dictionary = Di
 	 * Initializes a default value (if needed) for the blockValue field
 	 * @param value - blockValue field value
 	 */
-	protected initDefaultValue(value?: V): V {
+	protected initDefaultValue(value?: unknown): V {
 		const
 			i = this.instance,
 			k = i.blockValueField,

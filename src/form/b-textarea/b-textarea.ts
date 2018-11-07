@@ -8,7 +8,21 @@
 
 import symbolGenerator from 'core/symbol';
 import bScrollInline from 'base/b-scroll/b-scroll-inline/b-scroll-inline';
-import bInput, { component, prop, system, p, hook, wait, watch, ModsDecl } from 'form/b-input/b-input';
+import bInput, {
+
+	component,
+	prop,
+	system,
+	p,
+	hook,
+	wait,
+	watch,
+	Value,
+	FormValue,
+	ModsDecl
+
+} from 'form/b-input/b-input';
+
 export * from 'form/b-input/b-input';
 
 export const
@@ -21,8 +35,8 @@ export const
 })
 
 export default class bTextarea<
-	V extends string = string,
-	FV extends string = string,
+	V extends Value = Value,
+	FV extends FormValue = FormValue,
 	D extends Dictionary = Dictionary
 > extends bInput<V, FV, D> {
 	/**

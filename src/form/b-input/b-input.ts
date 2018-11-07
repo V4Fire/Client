@@ -26,6 +26,9 @@ import iInput, {
 
 export * from 'super/i-input/i-input';
 
+export type Value = string;
+export type FormValue = Value;
+
 export const
 	$$ = symbolGenerator();
 
@@ -36,10 +39,18 @@ export const
 })
 
 export default class bInput<
-	V extends string = string,
-	FV extends string = string,
+	V extends Value = Value,
+	FV extends FormValue = FormValue,
 	D extends Dictionary = Dictionary
 > extends iInput<V, FV, D> {
+	/** @override */
+	@prop({type: String, required: false})
+	readonly valueProp?: V;
+
+	/** @override */
+	@prop({type: String, required: false})
+	readonly defaultProp?: V;
+
 	/**
 	 * Input type
 	 */
@@ -177,7 +188,7 @@ export default class bInput<
 
 	/** @override */
 	get default(): V {
-		return <V>(this.defaultProp !== undefined ? String(this.defaultProp) : '');
+		return <V>(this.defaultProp != null ? String(this.defaultProp) : '');
 	}
 
 	/** @inheritDoc */
@@ -205,15 +216,6 @@ export default class bInput<
 		...<any>iInput.blockValidators,
 		...BlockValidators
 	};
-
-	/** @override */
-	@field((o) => o.link<V>((val) => {
-		const ctx: bInput = <any>o;
-		val = <V>ctx.initDefaultValue(val);
-		return val !== undefined ? String(val) : '';
-	}))
-
-	protected valueStore!: V;
 
 	/** @override */
 	protected readonly $refs!: {input: HTMLInputElement};

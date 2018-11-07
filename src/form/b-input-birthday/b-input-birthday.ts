@@ -11,6 +11,9 @@ import bSelect, { Option } from 'form/b-select/b-select';
 import iInput, { component, prop, p, Cache } from 'super/i-input/i-input';
 export * from 'super/i-input/i-input';
 
+export type Value = Date;
+export type FormValue = Value;
+
 export const selectCache = new Cache<'months' | 'days' | 'years', ReadonlyArray<Option>>([
 	'months',
 	'days',
@@ -23,10 +26,18 @@ export const selectCache = new Cache<'months' | 'days' | 'years', ReadonlyArray<
 	}
 })
 
-export default class bInputBirthday<V extends Date = Date, D extends Dictionary = Dictionary> extends iInput<V, D> {
+export default class bInputBirthday<
+	V extends Value = Value,
+	FV extends FormValue = FormValue,
+	D extends Dictionary = Dictionary
+> extends iInput<V, FV, D> {
 	/** @override */
-	@prop({default: () => new Date().beginningOfYear()})
-	readonly valueProp!: V;
+	@prop({type: Date, required: false})
+	readonly valueProp?: V;
+
+	/** @override */
+	@prop({type: Date, required: false})
+	readonly defaultProp?: V;
 
 	/** @override */
 	@p({cache: false})
@@ -37,6 +48,11 @@ export default class bInputBirthday<V extends Date = Date, D extends Dictionary 
 	/** @override */
 	set value(value: V) {
 		this.setField('valueProp', value);
+	}
+
+	/** @override */
+	get default(): V {
+		return <V>(this.defaultProp || new Date().beginningOfYear());
 	}
 
 	/**
