@@ -51,7 +51,7 @@ export default class Session extends Provider {
 	};
 
 	/** @override */
-	async getAuthParams(params?: Dictionary | undefined): Promise<Dictionary> {
+	async getAuthParams(params?: CanUndef<Dictionary>): Promise<Dictionary> {
 		const
 			session = await s.get();
 
@@ -89,7 +89,7 @@ export default class Session extends Provider {
 		req.then(update);
 		return req.catch(async (err) => {
 			const
-				response = <Response | undefined>$C(err).get('details.response'),
+				response = <CanUndef<Response>>$C(err).get('details.response'),
 				{auth, csrf} = await session;
 
 			if (response) {

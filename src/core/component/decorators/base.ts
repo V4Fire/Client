@@ -127,7 +127,7 @@ export const watch = paramsFactory<FieldWatcher | MethodWatchers>(null, (watch) 
  * @param [transformer] - transformer for parameters
  */
 export function paramsFactory<T>(
-	cluster: string | null,
+	cluster: Nullable<string>,
 	transformer?: (params: any, cluster: string) => Dictionary<any>
 ): (params?: T) => Function {
 	return (params: Dictionary<any> = {}) => (target, key, desc) => {

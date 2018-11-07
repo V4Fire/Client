@@ -7,7 +7,7 @@
  */
 
 const
-	iconsMap = Object.createDict<string | undefined>(),
+	iconsMap = Object.createDict<CanUndef<string>>(),
 	iconsList = <Function[]>[];
 
 interface Sprite {
@@ -17,7 +17,7 @@ interface Sprite {
 	node: SVGSymbolElement;
 }
 
-function icons(id: string | undefined): Sprite {
+function icons(id: CanUndef<string>): Sprite {
 	if (id) {
 		for (let i = 0; i < iconsList.length; i++) {
 			try {

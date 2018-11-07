@@ -28,7 +28,7 @@ export default class bRemoteProvider<T extends Dictionary = Dictionary> extends 
 	readonly field?: string;
 
 	/** @override */
-	set db(value: T | undefined) {
+	set db(value: CanUndef<T>) {
 		// tslint:disable-next-line:no-string-literal
 		super['dbSetter'](value);
 		this.syncDBWatcher(value);
@@ -36,10 +36,10 @@ export default class bRemoteProvider<T extends Dictionary = Dictionary> extends 
 
 	/** @override */
 	@system()
-	protected dbStore?: T | undefined;
+	protected dbStore?: CanUndef<T>;
 
 	/** @override */
-	protected onRequestError<T>(err: Error | RequestError, retry: () => Promise<T | undefined>): void {
+	protected onRequestError<T>(err: Error | RequestError, retry: () => Promise<CanUndef<T>>): void {
 		const
 			l = this.$listeners;
 
@@ -54,9 +54,9 @@ export default class bRemoteProvider<T extends Dictionary = Dictionary> extends 
 	 * Synchronization for the db field
 	 *
 	 * @param [value]
-	 * @emits change(db: T | undefined)
+	 * @emits change(db: CanUndef<T>)
 	 */
-	protected syncDBWatcher(value: T | undefined): void {
+	protected syncDBWatcher(value: CanUndef<T>): void {
 		const
 			p = this.$parent;
 

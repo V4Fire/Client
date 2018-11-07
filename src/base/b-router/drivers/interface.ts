@@ -54,7 +54,7 @@ export interface Router<
 	Q extends Dictionary = Dictionary,
 	M extends Dictionary = Dictionary
 > extends EventEmitter {
-	page?: CurrentPage<P, Q, M> | undefined;
+	page?: CanUndef<CurrentPage<P, Q, M>>;
 	routes: PageSchema<M>;
 	id(page: string): string;
 	push(page: string, info?: PageOpts<P, Q, M>): Promise<void>;

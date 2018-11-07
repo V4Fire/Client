@@ -232,15 +232,15 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 	 * Component stage store
 	 */
 	@p({cache: false})
-	get stage(): Stage | undefined {
+	get stage(): CanUndef<Stage> {
 		return this.getField('stageStore');
 	}
 
 	/**
 	 * Sets a new component stage
-	 * @emits stageChange(value: Stage | undefined, oldValue: Stage | undefined)
+	 * @emits stageChange(value: CanUndef<Stage>, oldValue: CanUndef<Stage>)
 	 */
-	set stage(value: Stage | undefined) {
+	set stage(value: CanUndef<Stage>) {
 		const
 			oldValue = this.stage;
 
@@ -974,7 +974,7 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 	 */
 	getConnectedId(id: string): string;
 	getConnectedId(id: undefined | null): undefined;
-	getConnectedId(id: string | undefined | null): string | undefined {
+	getConnectedId(id: Nullable<string>): CanUndef<string> {
 		if (!id) {
 			return undefined;
 		}
@@ -1054,7 +1054,7 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 		field?: string | AsyncWatchOpts | LinkWrapper<T>,
 		params?: AsyncWatchOpts | LinkWrapper<T>,
 		wrapper?: LinkWrapper<T>
-	): T | undefined {
+	): CanUndef<T> {
 		const
 			path = this.$activeField,
 			cache = this.syncLinkCache;
@@ -1513,8 +1513,8 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 	 * @param [data] - data object (for events)
 	 * @param [silent] - silent mode
 	 *
-	 * @emits initLoad(data: unknown | undefined, silent: boolean)
-	 * @emits dbReady(data: unknown | undefined, silent: boolean)
+	 * @emits initLoad(data: CanUndef<unknown>, silent: boolean)
+	 * @emits dbReady(data: CanUndef<unknown>, silent: boolean)
 	 */
 	@hook('beforeDataCreate')
 	initLoad(data?: unknown | ((this: this) => unknown), silent?: boolean): CanPromise<void> {
@@ -1597,20 +1597,20 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 	 * @param [componentName] - name of the source component
 	 * @param mods - map of modifiers
 	 */
-	getBlockClasses(componentName: string | undefined, mods: ModsTable): ReadonlyArray<string>;
+	getBlockClasses(componentName: CanUndef<string>, mods: ModsTable): ReadonlyArray<string>;
 
 	/**
 	 * @param mods - map of modifiers
 	 */
 	getBlockClasses(mods: ModsTable): ReadonlyArray<string>;
-	getBlockClasses(componentName: string | undefined | ModsTable, mods?: ModsTable): ReadonlyArray<string> {
+	getBlockClasses(componentName: CanUndef<string | ModsTable>, mods?: ModsTable): ReadonlyArray<string> {
 		if (arguments.length === 1) {
 			mods = <ModsTable>componentName;
 			componentName = undefined;
 
 		} else {
 			mods = <ModsTable>mods;
-			componentName = <string | undefined>componentName;
+			componentName = <CanUndef<string>>componentName;
 		}
 
 		const
@@ -1713,7 +1713,7 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 	 * Returns a value of the specified root element modifier
 	 * @param name
 	 */
-	getRootMod(name: string): string | undefined {
+	getRootMod(name: string): CanUndef<string> {
 		return this.$root.getRootMod(name, this);
 	}
 
@@ -2029,7 +2029,7 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 	 * @param path - path to the property (bla.baz.foo)
 	 * @param [obj]
 	 */
-	getField<T>(path: string, obj: Dictionary = this): T | undefined {
+	getField<T>(path: string, obj: Dictionary = this): CanUndef<T> {
 		let
 			// tslint:disable-next-line
 			ctx: iBlock = this,
@@ -2062,7 +2062,7 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 	 * Gets values from the specified object and saves it to the component state
 	 * @param [obj]
 	 */
-	setState(obj: Dictionary | undefined): void {
+	setState(obj: CanUndef<Dictionary>): void {
 		$C(obj).forEach((el, key) => {
 			const
 				p = key.split('.');
@@ -2282,7 +2282,7 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 	 * @param elName
 	 * @param [ctx] - component context
 	 */
-	protected findElFromVNode(vnode: VNode, elName: string, ctx: iBlock = this): VNode | undefined {
+	protected findElFromVNode(vnode: VNode, elName: string, ctx: iBlock = this): CanUndef<VNode> {
 		const
 			selector = ctx.getFullElName(elName);
 
@@ -2477,7 +2477,7 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 	 * Loads settings from a local storage by the specified key
 	 * @param [key] - data key
 	 */
-	protected loadSettings<T extends object = Dictionary>(key: string = ''): Promise<T | undefined> {
+	protected loadSettings<T extends object = Dictionary>(key: string = ''): Promise<CanUndef<T>> {
 		const
 			id = `${this.globalName}_${key}`;
 
@@ -2502,7 +2502,7 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 	 * @param [data] - advanced data
 	 * @param [type] - call type
 	 */
-	protected convertStateToStorage(data?: Dictionary | undefined, type: ConverterCallType = 'component'): Dictionary {
+	protected convertStateToStorage(data?: CanUndef<Dictionary>, type: ConverterCallType = 'component'): Dictionary {
 		return {...data};
 	}
 
@@ -2510,7 +2510,7 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 	 * Returns an object with default component fields for resetting a local storage
 	 * @param [data] - advanced data
 	 */
-	protected convertStateToStorageReset(data?: Dictionary | undefined): Dictionary {
+	protected convertStateToStorageReset(data?: CanUndef<Dictionary>): Dictionary {
 		return $C(this.convertStateToStorage(data)).map(() => undefined);
 	}
 
@@ -2518,7 +2518,7 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 	 * Saves a component state to a local storage
 	 * @param [data] - advanced data
 	 */
-	protected async saveStateToStorage(data?: Dictionary | undefined): Promise<void> {
+	protected async saveStateToStorage(data?: CanUndef<Dictionary>): Promise<void> {
 		if (!this.globalName) {
 			return;
 		}
@@ -2616,7 +2616,7 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 	 * @param [data] - advanced data
 	 * @param [type] - call type
 	 */
-	protected convertStateToRouter(data?: Dictionary | undefined, type: ConverterCallType = 'component'): Dictionary {
+	protected convertStateToRouter(data?: CanUndef<Dictionary>, type: ConverterCallType = 'component'): Dictionary {
 		return {...data};
 	}
 
@@ -2624,7 +2624,7 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 	 * Returns an object with default component fields for resetting a router
 	 * @param [data] - advanced data
 	 */
-	protected convertStateToRouterReset(data?: Dictionary | undefined): Dictionary {
+	protected convertStateToRouterReset(data?: CanUndef<Dictionary>): Dictionary {
 		return $C(this.convertStateToRouter(data)).map(() => undefined);
 	}
 
@@ -2632,7 +2632,7 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 	 * Saves a component state to a router
 	 * @param [data] - advanced data
 	 */
-	protected async saveStateToRouter(data?: Dictionary | undefined): Promise<boolean> {
+	protected async saveStateToRouter(data?: CanUndef<Dictionary>): Promise<boolean> {
 		data = this.convertStateToRouter(data, 'remote');
 		this.setState(this.convertStateToRouter(data));
 
@@ -2746,7 +2746,7 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 	 * Returns a link to the closest parent component for the current
 	 * @param component - component name or a link to the component constructor
 	 */
-	protected closest<T extends iBlock = iBlock>(component: string | {new: T}): T | undefined {
+	protected closest<T extends iBlock = iBlock>(component: string | {new: T}): CanUndef<T> {
 		const
 			isStr = Object.isString(component);
 
@@ -2776,8 +2776,8 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 	 * @param query
 	 * @param [filter]
 	 */
-	protected $<T extends iBlock>(query: string, filter?: string): T | undefined;
-	protected $<T extends iBlock>(query: string | VueElement<T>, filter: string = ''): T | undefined {
+	protected $<T extends iBlock>(query: string, filter?: string): CanUndef<T>;
+	protected $<T extends iBlock>(query: string | VueElement<T>, filter: string = ''): CanUndef<T> {
 		const
 			$0 = Object.isString(query) ? document.body.querySelector(query) : query,
 			n = $0 && $0.closest<any>(`.i-block-helper${filter}`);
@@ -2898,7 +2898,7 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 	 */
 	protected syncLinks(name?: string | [string] | [string, string], value?: unknown): void {
 		const
-			linkName = <string | undefined>(Object.isString(name) ? name : name && name[1]),
+			linkName = <CanUndef<string>>(Object.isString(name) ? name : name && name[1]),
 			fieldName = Object.isArray(name) ? name[0] : undefined;
 
 		const
@@ -3010,7 +3010,7 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 	 * @param [oldValue]
 	 */
 	@watch('!:onStageChange')
-	protected syncStageWatcher(value: Stage | undefined, oldValue?: Stage): void {
+	protected syncStageWatcher(value: CanUndef<Stage>, oldValue?: CanUndef<Stage>): void {
 		this.async.clearAll({group: `stage.${oldValue}`});
 	}
 

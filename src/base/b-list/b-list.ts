@@ -53,7 +53,7 @@ export default class bList<T extends Dictionary = Dictionary> extends iData<T> {
 	 * Initial component active value
 	 */
 	@prop({required: false})
-	readonly activeProp?: any | any[];
+	readonly activeProp?: CanArray<unknown>;
 
 	/**
 	 * If true, then will be generated href value for a link if it's not existed
@@ -94,7 +94,7 @@ export default class bList<T extends Dictionary = Dictionary> extends iData<T> {
 			ctx.initComponentValues();
 		},
 
-		init: (o) => o.link((val) => {
+		init: (o) => o.link<Option[]>((val) => {
 			const ctx: bList = <any>o;
 			return ctx.dataProvider ? ctx.value || [] : ctx.normalizeOptions(val);
 		})
@@ -143,7 +143,7 @@ export default class bList<T extends Dictionary = Dictionary> extends iData<T> {
 
 		if (ctx.multiple) {
 			const
-				objVal = Object.fromArray([].concat(val || []));
+				objVal = Object.fromArray((<unknown[]>[]).concat(val || []));
 
 			if (Object.fastCompare(objVal, ctx.activeStore)) {
 				return ctx.activeStore;
@@ -163,21 +163,24 @@ export default class bList<T extends Dictionary = Dictionary> extends iData<T> {
 		return res;
 	}))
 
-	protected activeStore!: any;
+	protected activeStore!: unknown;
 
 	/**
 	 * Returns link to the active element
 	 */
 	@p({cache: true})
-	protected get activeElement(): CanPromise<HTMLAnchorElement | null> {
-		return this.waitStatus<HTMLAnchorElement | null>('ready', () => {
-			if (this.active in this.values) {
+	protected get activeElement(): CanPromise<CanUndef<HTMLAnchorElement>> {
+		return this.waitStatus<CanUndef<HTMLAnchorElement>>('ready', () => {
+			const
+				val = String(this.active);
+
+			if (val in this.values) {
 				return this.block.element('link', {
-					id: this.values[this.active]
+					id: this.values[val]
 				});
 			}
 
-			return null;
+			return undefined;
 		});
 	}
 
@@ -187,19 +190,19 @@ export default class bList<T extends Dictionary = Dictionary> extends iData<T> {
 	 * @param value
 	 * @emits change(active: any)
 	 */
-	toggleActive(value: any): boolean {
+	toggleActive(value: unknown): boolean {
 		const
-			a = this.getField('activeStore');
+			active = this.getField('activeStore');
 
 		if (this.multiple) {
-			if (value in a) {
+			if (String(value) in <Dictionary>active) {
 				return this.removeActive(value);
 			}
 
 			return this.setActive(value);
 		}
 
-		if (a !== value) {
+		if (active !== value) {
 			return this.setActive(value);
 		}
 
@@ -213,18 +216,18 @@ export default class bList<T extends Dictionary = Dictionary> extends iData<T> {
 	 * @emits change(active: any)
 	 * @emits immediateChange(active: any)
 	 */
-	setActive(value: any): boolean {
+	setActive(value: unknown): boolean {
 		const
-			a = this.getField('activeStore');
+			active = this.getField('activeStore');
 
 		if (this.multiple) {
-			if (value in a) {
+			if (String(value) in <Dictionary>active) {
 				return false;
 			}
 
 			this.setField(`activeStore.${value}`, true);
 
-		} else if (a === value) {
+		} else if (active === value) {
 			return false;
 
 		} else {
@@ -236,7 +239,7 @@ export default class bList<T extends Dictionary = Dictionary> extends iData<T> {
 
 		if ($b) {
 			const
-				target = $b.element('link', {id: this.values[value]});
+				target = $b.element('link', {id: this.values[String(value)]});
 
 			if (!this.multiple) {
 				const
@@ -264,19 +267,19 @@ export default class bList<T extends Dictionary = Dictionary> extends iData<T> {
 	 * @emits change(active: any)
 	 * @emits immediateChange(active: any)
 	 */
-	removeActive(value: any): boolean {
+	removeActive(value: unknown): boolean {
 		const
-			a = this.getField('activeStore'),
+			active = this.getField('activeStore'),
 			cantCancel = !this.cancelable;
 
 		if (this.multiple) {
-			if (!(value in a) || cantCancel) {
+			if (!(String(value) in <Dictionary>active) || cantCancel) {
 				return false;
 			}
 
 			this.deleteField(`activeField.${value}`);
 
-		} else if (a !== value || cantCancel) {
+		} else if (active !== value || cantCancel) {
 			return false;
 
 		} else {
@@ -288,7 +291,7 @@ export default class bList<T extends Dictionary = Dictionary> extends iData<T> {
 
 		if ($b) {
 			const
-				target = $b.element('link', {id: this.values[value]});
+				target = $b.element('link', {id: this.values[String(value)]});
 
 			if (target) {
 				$b.setElMod(target, 'link', 'active', false);
@@ -301,7 +304,7 @@ export default class bList<T extends Dictionary = Dictionary> extends iData<T> {
 	}
 
 	/** @override */
-	protected initRemoteData(): Option[] | undefined {
+	protected initRemoteData(): CanUndef<Option[]> {
 		if (!this.db) {
 			return;
 		}
@@ -333,15 +336,15 @@ export default class bList<T extends Dictionary = Dictionary> extends iData<T> {
 	 * @param option
 	 */
 	protected isActive(option: Option): boolean {
-		const v = this.getField('activeStore');
-		return this.multiple ? String(option.value) in v : option.value === v;
+		const active = this.getField('activeStore');
+		return this.multiple ? String(option.value) in <Dictionary>active : option.value === active;
 	}
 
 	/**
 	 * Normalizes the specified options and returns it
 	 * @param options
 	 */
-	protected normalizeOptions(options: Option[] | undefined): Option[] {
+	protected normalizeOptions(options: CanUndef<Option[]>): Option[] {
 		return $C(options).map((el) => {
 			if (el.value === undefined) {
 				el.value = el.href;
@@ -363,13 +366,13 @@ export default class bList<T extends Dictionary = Dictionary> extends iData<T> {
 		const
 			values = {},
 			indexes = {},
-			a = this.getField('activeStore');
+			active = this.getField('activeStore');
 
 		$C(this.$$data.value).forEach((el, i) => {
 			const
 				val = el.value;
 
-			if (el.active && (this.multiple ? !(val in a) : a === undefined)) {
+			if (el.active && (this.multiple ? !(val in <Dictionary>active) : active === undefined)) {
 				this.setActive(val);
 			}
 
@@ -382,17 +385,17 @@ export default class bList<T extends Dictionary = Dictionary> extends iData<T> {
 	}
 
 	/** @override */
-	protected onAddData(data: any): void {
+	protected onAddData(data: unknown): void {
 		Object.assign(this.db, this.convertDataToDB(data));
 	}
 
 	/** @override */
-	protected onUpdData(data: any): void {
+	protected onUpdData(data: unknown): void {
 		Object.assign(this.db, this.convertDataToDB(data));
 	}
 
 	/** @override */
-	protected onDelData(data: any): void {
+	protected onDelData(data: unknown): void {
 		Object.assign(this.db, this.convertDataToDB(data));
 	}
 

@@ -33,7 +33,7 @@ export interface Event {
 }
 
 export interface SetEvent extends Event {
-	prev: string | undefined;
+	prev: CanUndef<string>;
 }
 
 export interface ElementEvent {
@@ -47,7 +47,7 @@ export interface ElementEvent {
 }
 
 export interface SetElementEvent extends ElementEvent {
-	prev: string | undefined;
+	prev: CanUndef<string>;
 }
 
 /**
@@ -86,7 +86,7 @@ export default class Block {
 	/**
 	 * List of applied modifiers
 	 */
-	readonly mods?: Dictionary<string | undefined>;
+	readonly mods?: Dictionary<CanUndef<string>>;
 
 	/**
 	 * iBlock instance
@@ -167,8 +167,8 @@ export default class Block {
 	 * @param elName
 	 * @param [mods]
 	 */
-	element<E extends Element = Element>(elName: string, mods?: ModsTable): E | null {
-		return this.node.querySelector(this.getElSelector(elName, mods));
+	element<E extends Element = Element>(elName: string, mods?: ModsTable): CanUndef<E> {
+		return this.node.querySelector<E>(this.getElSelector(elName, mods)) || undefined;
 	}
 
 	/**
@@ -258,7 +258,7 @@ export default class Block {
 	 * Returns a value of the specified block modifier
 	 * @param mod
 	 */
-	getMod(mod: string): string | undefined {
+	getMod(mod: string): CanUndef<string> {
 		if (this.mods) {
 			return this.mods[mod.camelize(false)];
 		}
@@ -362,7 +362,7 @@ export default class Block {
 	 * @param elName
 	 * @param modName
 	 */
-	getElMod(link: Element, elName: string, modName: string): string | undefined {
+	getElMod(link: Element, elName: string, modName: string): CanUndef<string> {
 		const
 			MOD_VALUE = 3;
 

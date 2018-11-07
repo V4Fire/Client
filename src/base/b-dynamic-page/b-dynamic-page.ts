@@ -73,7 +73,7 @@ export default class bDynamicPage extends iDynamicPage {
 	/**
 	 * Link to a page component
 	 */
-	get component(): iDynamicPage | undefined {
+	get component(): CanUndef<iDynamicPage> {
 		return this.$refs.component;
 	}
 

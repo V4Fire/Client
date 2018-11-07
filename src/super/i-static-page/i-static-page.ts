@@ -75,15 +75,15 @@ export default class iStaticPage<
 	remoteState!: Dictionary;
 
 	/** @override */
-	get route(): CurrentPage<P, Q, M> | undefined {
+	get route(): CanUndef<CurrentPage<P, Q, M>> {
 		return this.getField('routeStore');
 	}
 
 	/**
 	 * @override
-	 * @emits setRoute(value: CurrentPage<P, Q, M> | undefined)
+	 * @emits setRoute(value: CanUndef<CurrentPage<P, Q, M>>)
 	 */
-	set route(value: CurrentPage<P, Q, M> | undefined) {
+	set route(value: CanUndef<CurrentPage<P, Q, M>>) {
 		this.setField('routeStore', value);
 		this.emit('setRoute', value);
 	}

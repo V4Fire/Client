@@ -43,7 +43,7 @@ export default class bWindowForm<T extends Dictionary = Dictionary> extends bWin
 	/**
 	 * Method name
 	 */
-	get methodName(): string | undefined {
+	get methodName(): CanUndef<string> {
 		let m = this.method;
 
 		if (!m) {

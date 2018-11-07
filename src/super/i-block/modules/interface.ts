@@ -40,7 +40,7 @@ export interface SyncLink<T = unknown> {
 
 export type SyncLinkCache<T = unknown> = Dictionary<Dictionary<SyncLink<T>>>;
 export type ModsTable = Dictionary<ModVal>;
-export type ModsNTable = Dictionary<string | undefined>;
+export type ModsNTable = Dictionary<CanUndef<string>>;
 
 export type Statuses =
 	'destroyed' |

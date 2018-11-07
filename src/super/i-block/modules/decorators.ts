@@ -252,7 +252,7 @@ export function wait<T>(status: number | string | Statuses | WaitOpts, params?: 
 	const
 		isDecorator = !Object.isFunction(handler);
 
-	function wrapper(this: iBlockDecorator): CanPromise<T> | undefined {
+	function wrapper(this: iBlockDecorator): CanUndef<CanPromise<T>> {
 		const
 			getRoot = () => ctx ? this.getField(ctx) : this,
 			root = getRoot(),

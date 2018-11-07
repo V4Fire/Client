@@ -98,7 +98,7 @@ export default class bWindow<T extends Dictionary = Dictionary> extends iData<T>
 	/**
 	 * Slot name
 	 */
-	get slotName(): string | undefined {
+	get slotName(): CanUndef<string> {
 		return this.getField('slotNameStore');
 	}
 
@@ -106,7 +106,7 @@ export default class bWindow<T extends Dictionary = Dictionary> extends iData<T>
 	 * Sets a new slot name
 	 * @param value
 	 */
-	set slotName(value: string | undefined) {
+	set slotName(value: CanUndef<string>) {
 		this.setField('slotNameStore', value);
 	}
 

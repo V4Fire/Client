@@ -176,7 +176,7 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 	 * @param page
 	 * @param [params] - additional transition parameters
 	 */
-	async push(page: string | null, params?: PageParams): Promise<void> {
+	async push(page: Nullable<string>, params?: PageParams): Promise<void> {
 		await this.setPage(page, params, 'push');
 	}
 
@@ -186,7 +186,7 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 	 * @param page
 	 * @param [params] - additional transition parameters
 	 */
-	async replace(page: string | null, params?: PageParams): Promise<void> {
+	async replace(page: Nullable<string>, params?: PageParams): Promise<void> {
 		await this.setPage(page, params, 'replace');
 	}
 
@@ -283,7 +283,7 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 	 * @param [params] - additional page parameters
 	 * @param [method] - driver method
 	 *
-	 * @emits beforeChange(page: string | null, params: PageParams | undefined, method: string)
+	 * @emits beforeChange(page: Nullable<string>, params: CanUndef<PageParams>, method: string)
 	 * @emits change(info: PageOpts)
 	 * @emits hardChange(info: PageOpts)
 	 * @emits softChange(info: PageOpts)

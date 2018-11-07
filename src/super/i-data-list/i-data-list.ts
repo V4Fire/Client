@@ -19,7 +19,7 @@ export interface DataList<T> {
 @component()
 export default class iDataList<T extends Dictionary = Dictionary> extends iData<DataList<T>> {
 	/** @override */
-	get(data?: RequestQuery, params?: CreateRequestOptions<DataList<T>>): Promise<DataList<T> | undefined> {
+	get(data?: RequestQuery, params?: CreateRequestOptions<DataList<T>>): Promise<CanUndef<DataList<T>>> {
 		return super.get(data, params);
 	}
 
