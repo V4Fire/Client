@@ -25,7 +25,7 @@
     "test": "echo \"Error: no test specified\" && exit 0"
   },
   "dependencies": {
-    "@types/socket.io": "^1.4.38",
+    "@types/socket.io": "^1.4.39",
     "@types/socket.io-client": "^1.4.32",
     "@v4fire/core": "git+https://github.com/V4Fire/Core.git#type-refactoring",
     "babel-polyfill": "^6.26.0",

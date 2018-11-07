@@ -31,28 +31,28 @@ import {
 
 } from 'core/component/decorators/base';
 
-export interface InitFieldFn<T extends iBlock = iBlockDecorator> extends BaseInitFieldFn<T> {}
+export interface InitFieldFn<T = iBlockDecorator> extends BaseInitFieldFn<T> {}
 
 export type MethodWatchers<
-	T extends iBlock = iBlockDecorator,
+	T = iBlockDecorator,
 	A = unknown,
 	B = A
 > = BaseMethodWatchers<T, A, B>;
 
 export type FieldWatcher<
-	T extends iBlock = iBlockDecorator,
+	T = iBlockDecorator,
 	A = unknown,
 	B = A
 > = BaseFieldWatcher<T, A, B>;
 
 export interface ComponentProp<
-	T extends iBlock = iBlockDecorator,
+	T = iBlockDecorator,
 	A = unknown,
 	B = A
 > extends BaseComponentProp<T, A, B> {}
 
 export interface ComponentField<
-	T extends iBlock = iBlockDecorator,
+	T = iBlockDecorator,
 	A = unknown,
 	B = A
 > extends BaseComponentField<T, A, B> {}
@@ -96,7 +96,7 @@ export const watch = watchDecorator as (params?: FieldWatcher | MethodWatchers) 
  * @param [converter] - converter function
  * @param [opts] - watch options
  */
-export function bindModTo<T extends iBlock = iBlockDecorator>(
+export function bindModTo<T = iBlockDecorator>(
 	param: string,
 	converter: ((value: unknown, ctx: T) => unknown) | WatchOptions = Boolean,
 	opts?: WatchOptions

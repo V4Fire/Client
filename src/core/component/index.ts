@@ -89,14 +89,14 @@ export interface ComponentParams {
 	inheritMods?: boolean;
 }
 
-export interface WatchHandler<T extends VueInterface = VueInterface, A = unknown, B = A> {
+export interface WatchHandler<T = VueInterface, A = unknown, B = A> {
 	(a: A, b: B): unknown;
 	(...args: A[]): unknown;
 	(ctx: T, a: A, b: B): unknown;
 	(ctx: T, ...args: A[]): unknown;
 }
 
-export interface FieldWatcher<T extends VueInterface = VueInterface, A = unknown, B = A> extends WatchOptions {
+export interface FieldWatcher<T = VueInterface, A = unknown, B = A> extends WatchOptions {
 	fn: WatchHandler<T, A, B>;
 	provideArgs?: boolean;
 }
@@ -106,19 +106,19 @@ export interface ComponentProp extends PropOptions {
 	default?: unknown;
 }
 
-export interface InitFieldFn<T extends VueInterface = VueInterface> {
+export interface InitFieldFn<T = VueInterface> {
 	(ctx: T, data: Dictionary): unknown;
 }
 
-export interface MergeFieldFn<T extends VueInterface = VueInterface> {
+export interface MergeFieldFn<T = VueInterface> {
 	(ctx: T, oldCtx: T, field: string, link: CanUndef<string>): unknown;
 }
 
-export interface UniqueFieldFn<T extends VueInterface = VueInterface> {
+export interface UniqueFieldFn<T = VueInterface> {
 	(ctx: T, oldCtx: T): unknown;
 }
 
-export interface SystemField<T extends VueInterface = VueInterface> {
+export interface SystemField<T = VueInterface> {
 	atom?: boolean;
 	default?: unknown;
 	unique?: boolean | UniqueFieldFn<T>;
@@ -127,24 +127,20 @@ export interface SystemField<T extends VueInterface = VueInterface> {
 	merge?: InitFieldFn<T>;
 }
 
-export interface ComponentField<T extends VueInterface = VueInterface> extends SystemField<T> {
+export interface ComponentField<T = VueInterface> extends SystemField<T> {
 	watchers: Map<string | Function, FieldWatcher>;
 }
 
-export interface SystemField<T extends VueInterface = VueInterface> {
+export interface SystemField<T = VueInterface> {
 	default?: unknown;
 	init?: InitFieldFn<T>;
 }
 
-export interface WatchWrapper<T extends VueInterface = VueInterface, A = unknown, B = A> {
+export interface WatchWrapper<T = VueInterface, A = unknown, B = A> {
 	(ctx: T, handler: WatchHandler<T, A, B>): CanPromise<WatchHandler<T, A, B> | Function>;
 }
 
-export interface WatchOptionsWithHandler<
-	T extends VueInterface = VueInterface,
-	A = unknown,
-	B = A
-> extends WatchOptions {
+export interface WatchOptionsWithHandler<T = VueInterface, A = unknown, B = A> extends WatchOptions {
 	group?: string;
 	single?: boolean;
 	options?: AddEventListenerOptions;
@@ -155,7 +151,7 @@ export interface WatchOptionsWithHandler<
 	handler: string | WatchHandler<T, A, B>;
 }
 
-export interface MethodWatcher<T extends VueInterface = VueInterface, A = unknown, B = A> extends WatchOptions {
+export interface MethodWatcher<T = VueInterface, A = unknown, B = A> extends WatchOptions {
 	field?: string;
 	group?: string;
 	single?: boolean;

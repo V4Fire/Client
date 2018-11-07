@@ -35,7 +35,11 @@ export const
 	}
 })
 
-export default class bInput<T extends Dictionary = Dictionary> extends iInput<T> {
+export default class bInput<
+	V extends string = string,
+	FV extends string = string,
+	D extends Dictionary = Dictionary
+> extends iInput<V, FV, D> {
 	/**
 	 * Input type
 	 */
@@ -146,12 +150,12 @@ export default class bInput<T extends Dictionary = Dictionary> extends iInput<T>
 	readonly maskPlaceholder: string = '_';
 
 	/** @override */
-	get value(): string {
-		return this.getField('valueStore');
+	get value(): V {
+		return <NonNullable<V>>this.getField('valueStore');
 	}
 
 	/** @override */
-	set value(value: string) {
+	set value(value: V) {
 		this.setField('valueStore', value);
 
 		if (this.skipBuffer) {
@@ -172,8 +176,8 @@ export default class bInput<T extends Dictionary = Dictionary> extends iInput<T>
 	}
 
 	/** @override */
-	get default(): string {
-		return this.defaultProp !== undefined ? String(this.defaultProp) : '';
+	get default(): V {
+		return <V>(this.defaultProp !== undefined ? String(this.defaultProp) : '');
 	}
 
 	/** @inheritDoc */
@@ -198,7 +202,7 @@ export default class bInput<T extends Dictionary = Dictionary> extends iInput<T>
 
 	/** @override */
 	static blockValidators: ValidatorsDecl = {
-		...iInput.blockValidators,
+		...<any>iInput.blockValidators,
 		...BlockValidators
 	};
 
@@ -209,7 +213,7 @@ export default class bInput<T extends Dictionary = Dictionary> extends iInput<T>
 		return val !== undefined ? String(val) : '';
 	}))
 
-	protected valueStore!: string;
+	protected valueStore!: V;
 
 	/** @override */
 	protected readonly $refs!: {input: HTMLInputElement};
@@ -235,14 +239,14 @@ export default class bInput<T extends Dictionary = Dictionary> extends iInput<T>
 	/**
 	 * Value buffer
 	 */
-	protected get valueBuffer(): string {
-		return this.getField('valueBufferStore');
+	protected get valueBuffer(): V {
+		return <NonNullable<V>>this.getField('valueBufferStore');
 	}
 
 	/**
 	 * Sets a value to the value buffer store
 	 */
-	protected set valueBuffer(value: string) {
+	protected set valueBuffer(value: V) {
 		this.setField('valueBufferStore', value);
 	}
 
@@ -284,7 +288,7 @@ export default class bInput<T extends Dictionary = Dictionary> extends iInput<T>
 			await this.applyMaskToValue('', {updateBuffer: true});
 
 		} else {
-			this.valueBuffer = '';
+			this.valueBuffer = <V>'';
 
 			const
 				{input} = this.$refs;
@@ -492,7 +496,7 @@ export default class bInput<T extends Dictionary = Dictionary> extends iInput<T>
 		}
 
 		const {input} = this.$refs;
-		this[updateBuffer ? 'valueBuffer' : 'value'] = input.value = res;
+		this[updateBuffer ? 'valueBuffer' : 'value'] = input.value = <V>res;
 
 		if (focused) {
 			pos = cursor != null ? Number(cursor) : selectionFalse ? startPos + pos + 1 : endPos;
@@ -592,7 +596,7 @@ export default class bInput<T extends Dictionary = Dictionary> extends iInput<T>
 		}
 
 		if (this.valueBuffer === m.tpl) {
-			this.value = '';
+			this.value = <V>'';
 		}
 	}
 
@@ -701,14 +705,14 @@ export default class bInput<T extends Dictionary = Dictionary> extends iInput<T>
 			});
 
 			chunks.splice(start, selectionFalse ? 1 : end - start);
-			res = chunks.join('');
+			res = <V>chunks.join('');
 
 			if (res) {
 				await this.applyMaskToValue(res, {cursor: selectionStart, maskBuffer: ''});
 
 			} else {
 				this.skipBuffer = true;
-				this.value = '';
+				this.value = <V>'';
 				await this.applyMaskToValue('', {updateBuffer: true});
 			}
 
@@ -746,7 +750,7 @@ export default class bInput<T extends Dictionary = Dictionary> extends iInput<T>
 			}
 		}
 
-		res = chunks.join('');
+		res = <V>chunks.join('');
 
 		let
 			start = selectionFalse ? pos : selectionStart;
@@ -757,7 +761,7 @@ export default class bInput<T extends Dictionary = Dictionary> extends iInput<T>
 
 		if (res === m.tpl) {
 			this.skipBuffer = true;
-			this.value = '';
+			this.value = <V>'';
 			await this.applyMaskToValue('', {updateBuffer: true});
 
 		} else {
@@ -928,7 +932,7 @@ export default class bInput<T extends Dictionary = Dictionary> extends iInput<T>
 			start++;
 		}
 
-		this.value = input.value = res.join('');
+		this.value = input.value = <V>res.join('');
 		input.setSelectionRange(start, start);
 
 		this.onRawDataChange(this.value);
@@ -949,7 +953,7 @@ export default class bInput<T extends Dictionary = Dictionary> extends iInput<T>
 					input = await this.waitRef<HTMLInputElement>('input', {label: $$.valueBufferStoreModel});
 
 				if (input.value !== val) {
-					input.value = val;
+					input.value = <V>val;
 				}
 
 			} catch {}

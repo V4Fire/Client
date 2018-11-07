@@ -21,18 +21,18 @@ import {
 
 } from 'core/component';
 
-export interface FieldWatcherObject<T extends VueInterface = VueInterface, A = unknown, B = A> extends WatchOptions {
+export interface FieldWatcherObject<T = VueInterface, A = unknown, B = A> extends WatchOptions {
 	fn: string | WatchHandler<T, A, B>;
 	provideArgs?: boolean;
 }
 
-export type FieldWatcher<T extends VueInterface = VueInterface, A = unknown, B = A> =
+export type FieldWatcher<T = VueInterface, A = unknown, B = A> =
 	string |
 	FieldWatcherObject<T, A, B> |
 	WatchHandler<T, A, B> |
 	Array<string | FieldWatcherObject<T, A, B> | WatchHandler<T, A, B>>;
 
-export interface ComponentProp<T extends VueInterface = VueInterface, A = unknown, B = A> extends PropOptions {
+export interface ComponentProp<T = VueInterface, A = unknown, B = A> extends PropOptions {
 	watch?: FieldWatcher<T, A, B>;
 }
 
@@ -52,7 +52,7 @@ export const prop = paramsFactory<Function | ObjectConstructor | ComponentProp>(
 	return p;
 });
 
-export interface SystemField<T extends VueInterface = VueInterface> {
+export interface SystemField<T = VueInterface> {
 	atom?: boolean;
 	default?: unknown;
 	unique?: boolean | UniqueFieldFn<T>;
@@ -61,7 +61,7 @@ export interface SystemField<T extends VueInterface = VueInterface> {
 	merge?: MergeFieldFn<T> | boolean;
 }
 
-export interface ComponentField<T extends VueInterface = VueInterface, A = unknown, B = A> extends SystemField<T> {
+export interface ComponentField<T = VueInterface, A = unknown, B = A> extends SystemField<T> {
 	watch?: FieldWatcher<T, A, B>;
 }
 
@@ -91,12 +91,12 @@ export const system = paramsFactory<InitFieldFn | SystemField>('systemFields', (
 
 export type HookParams = {[hook in Hooks]?: string | string[]};
 export type ComponentHooks = Hooks | Hooks[] | HookParams | HookParams[];
-export type MethodWatchers<T extends VueInterface = VueInterface, A = unknown, B = A> =
+export type MethodWatchers<T = VueInterface, A = unknown, B = A> =
 	string |
 	MethodWatcher<T, A, B> |
 	Array<string | MethodWatcher<T, A, B>>;
 
-export interface ComponentMethod<T extends VueInterface = VueInterface, A = unknown, B = A> {
+export interface ComponentMethod<T = VueInterface, A = unknown, B = A> {
 	watch?: MethodWatchers<T, A, B>;
 	watchParams?: WatchOptions;
 	hook?: ComponentHooks;

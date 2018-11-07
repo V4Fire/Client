@@ -31,7 +31,7 @@ export type ValidationError<T = unknown> = [string, ValidatorError<T>];
 export type ValidationResult<T = unknown> = boolean | ValidationError<T>;
 
 export type Validators = Array<string | Dictionary<ValidatorParams> | [string, ValidatorParams]>;
-export type ValidatorsDecl<T extends iInput = iInput> = Dictionary<(this: T, params: unknown) =>
+export type ValidatorsDecl<T = iInput, P = ValidatorParams> = Dictionary<(this: T, params: P) =>
 	CanPromise<boolean | unknown>>;
 
 @component({
@@ -41,11 +41,7 @@ export type ValidatorsDecl<T extends iInput = iInput> = Dictionary<(this: T, par
 	}
 })
 
-export default class iInput<
-	V = unknown,
-	FV = V,
-	D extends Dictionary = Dictionary
-> extends iData<D> {
+export default class iInput<V = unknown, FV = unknown, D extends Dictionary = Dictionary> extends iData<D> {
 	/**
 	 * Initial component value
 	 */
