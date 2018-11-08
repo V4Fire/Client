@@ -300,7 +300,7 @@ export default class bForm<T extends Dictionary = Dictionary> extends iData<T> {
 				}
 
 				if (el.name) {
-					body[el.name] = el.utc && Object.isTable(val) ? this.h.setJSONToUTC(val) : val;
+					body[el.name] = el.utc && Object.isObject(val) ? this.h.setJSONToUTC(val) : val;
 				}
 			})()));
 

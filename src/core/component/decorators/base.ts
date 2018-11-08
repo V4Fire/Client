@@ -266,8 +266,8 @@ export function paramsFactory<T = unknown>(
 				const
 					el = o[i];
 
-				if (Object.isTable(el)) {
-					watchers.set(el.fn, {...el});
+				if (Object.isObject(el)) {
+					watchers.set((<Dictionary>el).fn, {...el});
 
 				} else {
 					watchers.set(el, {fn: el});
