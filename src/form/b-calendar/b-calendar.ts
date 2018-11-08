@@ -73,11 +73,6 @@ export default class bCalendar<
 	readonly timeMargin: number = (1).second();
 
 	/** @override */
-	get default(): V {
-		return <V>(<any[]>[]).concat(this.defaultProp || new Date());
-	}
-
-	/** @override */
 	@p({cache: false})
 	get value(): V {
 		return Object.fastClone(<V>this.getField('valueStore'));
@@ -101,6 +96,11 @@ export default class bCalendar<
 				this.setField(`valueStore.${i}`, v);
 			}
 		});
+	}
+
+	/** @override */
+	get default(): V {
+		return <V>(<any[]>[]).concat(this.defaultProp || new Date());
 	}
 
 	/**
