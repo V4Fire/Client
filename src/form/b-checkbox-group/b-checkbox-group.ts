@@ -253,7 +253,7 @@ export default class bCheckboxGroup<
 	 *
 	 * @param el
 	 * @param value
-	 * @emits actionChange(value: CanUndef<Value>)
+	 * @emits actionChange(value: CanUndef<V>)
 	 */
 	protected onActionChange(el: bCheckbox, value: boolean): void {
 		if (el.name) {

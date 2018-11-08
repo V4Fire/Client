@@ -122,8 +122,8 @@ export default class bList<T extends Dictionary = Dictionary> extends iData<T> {
 	/**
 	 * Component active value store
 	 *
-	 * @emits change(active: any)
-	 * @emits immediateChange(active: any)
+	 * @emits change(active: unknown)
+	 * @emits immediateChange(active: unknown)
 	 */
 	@system<bList>((o) => o.link((val) => {
 		const
@@ -183,7 +183,7 @@ export default class bList<T extends Dictionary = Dictionary> extends iData<T> {
 	 * Toggles the specified value
 	 *
 	 * @param value
-	 * @emits change(active: any)
+	 * @emits change(active: unknown)
 	 */
 	toggleActive(value: unknown): boolean {
 		const
@@ -208,8 +208,8 @@ export default class bList<T extends Dictionary = Dictionary> extends iData<T> {
 	 * Activates the specified value
 	 *
 	 * @param value
-	 * @emits change(active: any)
-	 * @emits immediateChange(active: any)
+	 * @emits change(active: unknown)
+	 * @emits immediateChange(active: unknown)
 	 */
 	setActive(value: unknown): boolean {
 		const
@@ -259,8 +259,8 @@ export default class bList<T extends Dictionary = Dictionary> extends iData<T> {
 	 * Deactivates the specified value
 	 *
 	 * @param value
-	 * @emits change(active: any)
-	 * @emits immediateChange(active: any)
+	 * @emits change(active: unknown)
+	 * @emits immediateChange(active: unknown)
 	 */
 	removeActive(value: unknown): boolean {
 		const
@@ -398,7 +398,7 @@ export default class bList<T extends Dictionary = Dictionary> extends iData<T> {
 	 * Handler: tab change
 	 *
 	 * @param e
-	 * @emits actionChange(active: any)
+	 * @emits actionChange(active: unknown)
 	 */
 	@watch({field: '?$el:click', wrapper: (o, cb) => o.delegateElement('link', cb)})
 	protected onActive(e: Event): void {

@@ -415,7 +415,7 @@ export default class bCalendar<
 	 *
 	 * @param date - new date value
 	 * @param index - selected item index
-	 * @emits actionChange(value: CanUndef<Value>)
+	 * @emits actionChange(value: CanUndef<V>)
 	 */
 	protected setDate(date: Date, index?: number): Date[] {
 		const
@@ -454,7 +454,7 @@ export default class bCalendar<
 	 *
 	 * @param days - number of switching days
 	 * @param index - calendar index
-	 * @emits actionChange(value?: CanUndef<Value>)
+	 * @emits actionChange(value?: CanUndef<V>)
 	 */
 	protected async onSwitchDay(days: number, index: number = 0): Promise<void> {
 		const selectedDay = <V>(Object.isArray(this.value) ? this.value : [this.value]);
@@ -494,7 +494,7 @@ export default class bCalendar<
 	 * Handler: day select
 	 *
 	 * @param e
-	 * @emits actionChange(value?: CanUndef<Value>)
+	 * @emits actionChange(value?: CanUndef<V>)
 	 */
 	@watch({field: '?$el:click', wrapper: (o, cb) => o.delegateElement('day', cb)})
 	protected onDaySelect(e: Event): void {

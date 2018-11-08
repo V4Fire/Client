@@ -88,7 +88,7 @@ export default class bTimeRange<
 
 	/**
 	 * Handler: component value save
-	 * @emits actionChange(value: CanUndef<Value>)
+	 * @emits actionChange(value: CanUndef<V>)
 	 */
 	protected async onSave(): Promise<void> {
 		const
