@@ -260,7 +260,6 @@ export default class bSelect<
 	}
 
 	/** @override */
-	// @ts-ignore
 	protected initRemoteData(): CanUndef<NOption[]> {
 		if (!this.db) {
 			return;

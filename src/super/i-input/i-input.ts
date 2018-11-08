@@ -290,7 +290,7 @@ export default class iInput<
 	 * Component value store
 	 */
 	@field<iInput>((o) => o.link((val) => o.initDefaultValue(val)))
-	protected valueStore!: V;
+	protected valueStore!: unknown;
 
 	/** @override */
 	@wait('ready')
@@ -436,7 +436,7 @@ export default class iInput<
 	}
 
 	/** @override */
-	protected initRemoteData(): CanUndef<V> {
+	protected initRemoteData(): CanUndef<unknown> {
 		if (!this.db) {
 			return;
 		}

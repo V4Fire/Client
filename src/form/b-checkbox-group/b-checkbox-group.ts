@@ -8,10 +8,22 @@
 
 import $C = require('collection.js');
 import bCheckbox from 'form/b-checkbox/b-checkbox';
-import iInput, { component, prop, field, p, ValidatorsDecl, ComponentConverter } from 'super/i-input/i-input';
-export * from 'super/i-input/i-input';
+import iInput, {
 
-export type Value = any | any[];
+	component,
+	prop,
+	field,
+	p,
+	ValidatorsDecl,
+	ValidatorParams,
+	ComponentConverter
+
+} from 'super/i-input/i-input';
+
+export * from 'super/i-input/i-input';
+export type Value = CanUndef<CanArray<string>>;
+export type FormValue = Value;
+
 export interface Option extends Dictionary {
 	id: string;
 	name: string;
@@ -25,10 +37,11 @@ export interface Option extends Dictionary {
 	}
 })
 
-export default class bCheckboxGroup<T extends Dictionary = Dictionary> extends iInput<T> {
-	/** @override */
-	readonly valueProp: Value = [];
-
+export default class bCheckboxGroup<
+	V extends Value = Value,
+	FV extends FormValue = FormValue,
+	D extends Dictionary = Dictionary
+> extends iInput<V, FV, D> {
 	/** @override */
 	@prop({default: (obj) => $C(obj).get('data') || obj || []})
 	readonly componentConverter!: ComponentConverter<Option[]>;
@@ -79,25 +92,30 @@ export default class bCheckboxGroup<T extends Dictionary = Dictionary> extends i
 	}
 
 	/** @override */
-	get value(): CanUndef<CanArray<string>> {
+	get value(): V {
 		const v = this.getField('valueStore');
-		return this.multiple ? Object.keys(v) : v;
+		return <V>(Object.isObject(v) ? Object.keys(v) : v);
 	}
 
 	/** @override */
-	set value(value: CanUndef<CanArray<string>>) {
+	set value(value: V) {
 		this.setField('valueStore', value && Object.isArray(value) ? Object.fromArray(value) : value);
+	}
+
+	/** @override */
+	get default(): unknown {
+		return (<unknown[]>[]).concat(this.defaultProp !== undefined ? this.defaultProp : []);
 	}
 
 	/** @override */
 	static blockValidators: ValidatorsDecl = {
 		...iInput.blockValidators,
-		async required({msg, showMsg = true}: Dictionary): Promise<boolean> {
+		async required({msg, showMsg = true}: ValidatorParams): Promise<boolean> {
 			const
 				ctx: bCheckboxGroup = <any>this,
 				value = await ctx.formValue;
 
-			if (ctx.multiple ? !value.length : value == null) {
+			if (Object.isArray(value) ? !value.length : value == null) {
 				if (showMsg) {
 					const
 						els = await ctx.elements;
@@ -116,7 +134,7 @@ export default class bCheckboxGroup<T extends Dictionary = Dictionary> extends i
 	};
 
 	/** @override */
-	@field<bCheckboxGroup>((o) => o.link((val) => o.multiple && Object.fromArray(val) || val))
+	@field<bCheckboxGroup>((o) => o.link((val) => Object.isArray(val) ? o.multiple ? Object.fromArray(val) : val[0] : val))
 	protected valueStore: CanUndef<Dictionary<boolean> | string>;
 
 	/**
@@ -206,7 +224,7 @@ export default class bCheckboxGroup<T extends Dictionary = Dictionary> extends i
 	 */
 	protected isChecked(el: Option): boolean {
 		const v = this.getField('valueStore');
-		return Boolean(this.multiple ? v && v[el.name] : v === el.name);
+		return Boolean(Object.isObject(v) ? v[el.name] : v === el.name);
 	}
 
 	/**
