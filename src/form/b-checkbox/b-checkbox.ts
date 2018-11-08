@@ -99,7 +99,7 @@ export default class bCheckbox<
 	 * Handler: checkbox trigger
 	 *
 	 * @param e
-	 * @emits actionChange(value: boolean)
+	 * @emits actionChange(value: V)
 	 */
 	@watch({
 		field: '?$el:click',

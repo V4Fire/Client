@@ -231,7 +231,7 @@ export default class bInputBirthday<
 
 	/**
 	 * Handler: action change
-	 * @emits actionChange(value: Date)
+	 * @emits actionChange(value: V)
 	 */
 	async onActionChange(): Promise<void> {
 		await this.nextTick();

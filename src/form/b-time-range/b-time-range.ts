@@ -77,7 +77,7 @@ export default class bTimeRange<
 	 * Handler: clear
 	 *
 	 * @param e
-	 * @emits actionChange(value: string)
+	 * @emits actionChange(value: V)
 	 */
 	protected async onClear(e: MouseEvent): Promise<void> {
 		if (await this.clear()) {
@@ -88,7 +88,7 @@ export default class bTimeRange<
 
 	/**
 	 * Handler: component value save
-	 * @emits actionChange(value: CanUndef<V>)
+	 * @emits actionChange(value: V)
 	 */
 	protected async onSave(): Promise<void> {
 		const

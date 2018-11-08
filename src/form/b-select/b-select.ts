@@ -644,7 +644,7 @@ export default class bSelect<
 	 * Handler: option select
 	 *
 	 * @param [value]
-	 * @emits actionChange(selected: CanUndef<string>)
+	 * @emits actionChange(selected: FV)
 	 */
 	@watch({
 		field: '?$el:click',

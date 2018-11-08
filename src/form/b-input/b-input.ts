@@ -542,7 +542,7 @@ export default class bInput<
 	 * Handler: clear
 	 *
 	 * @param e
-	 * @emits actionChange(value: string)
+	 * @emits actionChange(value: V)
 	 */
 	protected async onClear(e: MouseEvent): Promise<void> {
 		if (await this.clear()) {
@@ -554,7 +554,7 @@ export default class bInput<
 	 * Handler: edit
 	 *
 	 * @param e
-	 * @emits actionChange(value: string)
+	 * @emits actionChange(value: V)
 	 */
 	protected async onEdit(e: Event): Promise<void> {
 		this.valueBufferStore =
@@ -624,7 +624,7 @@ export default class bInput<
 	 * Raw data change handler
 	 *
 	 * @param value
-	 * @emits actionChange
+	 * @emits actionChange(value: V)
 	 */
 	protected onRawDataChange(value: V): void {
 		if (this.blockValueField === 'value') {
@@ -634,7 +634,7 @@ export default class bInput<
 
 	/**
 	 * Handler: mask input
-	 * @emits actionChange(value: string)
+	 * @emits actionChange(value: V)
 	 */
 	protected async onMaskInput(e: Event): Promise<void> {
 		await this.applyMaskToValue(undefined, {
@@ -649,7 +649,7 @@ export default class bInput<
 	 * Backspace handler for the mask
 	 *
 	 * @param e
-	 * @emits actionChange(value: string)
+	 * @emits actionChange(value: V)
 	 */
 	protected async onMaskBackspace(e: KeyboardEvent): Promise<void> {
 		const codes = {
@@ -868,7 +868,7 @@ export default class bInput<
 	 * Handler: mask input from a keyboard
 	 *
 	 * @param e
-	 * @emits actionChange(value: string)
+	 * @emits actionChange(value: V)
 	 */
 	protected onMaskKeyPress(e: KeyboardEvent): void {
 		const blacklist = {

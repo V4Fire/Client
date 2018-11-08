@@ -117,7 +117,7 @@ export default class bInputNumber<
 	 * Handler: component value increment
 	 *
 	 * @param factor
-	 * @emits actionChange(value: number)
+	 * @emits actionChange(value: V)
 	 */
 	protected onInc(factor: number): void {
 		this.setValue((this.numValue || 0) + factor * this.step);

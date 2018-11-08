@@ -363,8 +363,8 @@ export default class iInput<
 	 * @param params - additional parameters
 	 * @emits validationStart()
 	 * @emits validationSuccess()
-	 * @emits validationFail(failedValidation: string)
-	 * @emits validationEnd(result: boolean, failedValidation?: string)
+	 * @emits validationFail(failedValidation: ValidationError<FV>)
+	 * @emits validationEnd(result: boolean, failedValidation?: ValidationError<FV>)
 	 */
 	@wait('ready')
 	async validate(params?: ValidatorParams): Promise<ValidationResult<FV>> {
