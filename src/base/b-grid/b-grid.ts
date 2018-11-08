@@ -79,7 +79,7 @@ export default class bGrid<T extends Dictionary = Dictionary> extends iDataPages
 		'sort',
 		'dir',
 		'keepTime',
-		['date', (val) => o.h.setJSONToUTC(val)],
+		['date', (val: SortDate) => o.h.setJSONToUTC(val)],
 		'dateField'
 	]))
 
