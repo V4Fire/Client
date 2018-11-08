@@ -187,8 +187,8 @@ export default class bInput<
 	}
 
 	/** @override */
-	get default(): V {
-		return <V>(this.defaultProp != null ? String(this.defaultProp) : '');
+	get default(): unknown {
+		return this.defaultProp != null ? String(this.defaultProp) : '';
 	}
 
 	/** @inheritDoc */

@@ -90,13 +90,13 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 	 * Remote data converter
 	 */
 	@prop({type: Function, watch: 'reload', required: false})
-	readonly dbConverter?: Function;
+	readonly dbConverter?: ComponentConverter<any>;
 
 	/**
 	 * Converter from .db to the component format
 	 */
 	@prop({type: Function, watch: 'initRemoteData', required: false})
-	readonly componentConverter?: ComponentConverter<T>;
+	readonly componentConverter?: ComponentConverter<any>;
 
 	/**
 	 * If true, then the component will be reinitialized after an activated hook in offline mode

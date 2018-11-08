@@ -91,7 +91,7 @@ export default class bInputTime<
 
 	/** @override */
 	// @ts-ignore
-	get default(): CanUndef<Date> {
+	get default(): unknown {
 		return this.defaultProp !== undefined ? Date.create(this.defaultProp) : undefined;
 	}
 

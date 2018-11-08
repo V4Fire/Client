@@ -48,8 +48,8 @@ export default class bCheckbox<
 	readonly changeable: boolean = true;
 
 	/** @override */
-	get default(): V {
-		return <V>(this.defaultProp || false);
+	get default(): unknown {
+		return this.defaultProp || false;
 	}
 
 	/** @inheritDoc */

@@ -172,8 +172,8 @@ export default class iInput<
 	/**
 	 * Component default value
 	 */
-	get default(): V {
-		return <V>this.defaultProp;
+	get default(): unknown {
+		return this.defaultProp;
 	}
 
 	/**

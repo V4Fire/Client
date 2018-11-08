@@ -7,6 +7,7 @@
  */
 
 // tslint:disable:max-file-line-count
+
 import $C = require('collection.js');
 import symbolGenerator from 'core/symbol';
 import keyCodes from 'core/key-codes';
@@ -21,15 +22,18 @@ import bInput, {
 	watch,
 	mod,
 	wait,
-	ComponentConverter
+	ComponentConverter,
+	Value
 
 } from 'form/b-input/b-input';
 
 export * from 'form/b-input/b-input';
+export type FormValue = CanUndef<string>;
+
 export interface Option {
 	label: string;
 	inputLabel?: string;
-	value?: any;
+	value?: unknown;
 	selected?: boolean;
 	marked?: boolean;
 }
@@ -51,7 +55,12 @@ let
 	}
 })
 
-export default class bSelect<T extends Dictionary = Dictionary> extends bInput<T> {
+export default class bSelect<
+	V extends Value = Value,
+	FV extends FormValue = FormValue,
+	D extends Dictionary = Dictionary
+// @ts-ignore
+> extends bInput<V, FV, D> {
 	/** @override */
 	@prop({default: (obj) => $C(obj).get('data') || obj || []})
 	readonly componentConverter?: ComponentConverter<Option[]>;
@@ -66,7 +75,7 @@ export default class bSelect<T extends Dictionary = Dictionary> extends bInput<T
 	 * Initial selected value
 	 */
 	@prop({required: false})
-	readonly selectedProp?: any;
+	readonly selectedProp?: unknown;
 
 	/**
 	 * Option component
@@ -88,13 +97,13 @@ export default class bSelect<T extends Dictionary = Dictionary> extends bInput<T
 		return val !== undefined ? String(val) : undefined;
 	}))
 
-	selected?: string;
+	selected?: FV;
 
 	/**
 	 * Select options
 	 */
 	get options(): NOption[] {
-		return this.getField('optionsStore').slice();
+		return (<NOption[]>this.getField('optionsStore')).slice();
 	}
 
 	/**
@@ -106,8 +115,7 @@ export default class bSelect<T extends Dictionary = Dictionary> extends bInput<T
 	}
 
 	/** @override */
-	// @ts-ignore
-	get default(): CanUndef<string> {
+	get default(): unknown {
 		return this.defaultProp !== undefined ? String(this.defaultProp) : undefined;
 	}
 
@@ -123,7 +131,7 @@ export default class bSelect<T extends Dictionary = Dictionary> extends bInput<T
 			o.initComponentValues().catch(stderr);
 		},
 
-		init: (o) => o.link((val) => o.dataProvider ? o.optionsStore || [] : o.normalizeOptions(val))
+		init: (o) => o.link<Option[]>((val) => o.dataProvider ? o.optionsStore || [] : o.normalizeOptions(val))
 	})
 
 	protected optionsStore!: NOption[];
@@ -163,7 +171,7 @@ export default class bSelect<T extends Dictionary = Dictionary> extends bInput<T
 		await this.close();
 
 		if (this.value || this.selected) {
-			this.value = '';
+			this.value = <V>'';
 			await super.clear();
 			return true;
 		}
@@ -252,6 +260,7 @@ export default class bSelect<T extends Dictionary = Dictionary> extends bInput<T
 	}
 
 	/** @override */
+	// @ts-ignore
 	protected initRemoteData(): CanUndef<NOption[]> {
 		if (!this.db) {
 			return;
@@ -320,7 +329,7 @@ export default class bSelect<T extends Dictionary = Dictionary> extends bInput<T
 		if (selected === undefined) {
 			if (value) {
 				const
-					option = labels[value];
+					option = labels[String(value)];
 
 				if (option) {
 					data.selected = option.value;
@@ -328,7 +337,7 @@ export default class bSelect<T extends Dictionary = Dictionary> extends bInput<T
 			}
 
 		} else if (!value) {
-			const val = values[selected];
+			const val = values[String(selected)];
 			data.valueStore = data.valueBufferStore = val ? this.getOptionLabel(val) : '';
 		}
 
@@ -356,7 +365,7 @@ export default class bSelect<T extends Dictionary = Dictionary> extends bInput<T
 		}
 
 		if (value === undefined) {
-			this.value = '';
+			this.value = <V>'';
 			return;
 		}
 
@@ -371,7 +380,7 @@ export default class bSelect<T extends Dictionary = Dictionary> extends bInput<T
 			{mobile} = this.b.is;
 
 		if (this.mods.focused !== 'true' || mobile) {
-			this.value = this.getOptionLabel(value);
+			this.value = <V>this.getOptionLabel(value);
 		}
 
 		if (mobile) {
@@ -429,7 +438,7 @@ export default class bSelect<T extends Dictionary = Dictionary> extends bInput<T
 	 */
 	protected syncValue(selected?: string): void {
 		if (selected) {
-			this.selected = selected;
+			this.selected = <FV>selected;
 		}
 
 		if (!this.selected) {
@@ -437,10 +446,10 @@ export default class bSelect<T extends Dictionary = Dictionary> extends bInput<T
 		}
 
 		const
-			label = this.values[this.selected];
+			label = this.values[String(this.selected)];
 
 		if (label) {
-			this.value = this.getOptionLabel(label);
+			this.value = <V>this.getOptionLabel(label);
 		}
 	}
 
@@ -505,7 +514,7 @@ export default class bSelect<T extends Dictionary = Dictionary> extends bInput<T
 					{block: $b} = this,
 					selected = getSelected();
 
-				function getSelected(): HTMLElement | null {
+				function getSelected(): CanUndef<HTMLElement> {
 					return $b.element('option', {selected: true});
 				}
 
@@ -521,7 +530,7 @@ export default class bSelect<T extends Dictionary = Dictionary> extends bInput<T
 						if (this.selected) {
 							if (selected) {
 								if (selected.previousElementSibling) {
-									this.selected = (<HTMLElement>selected.previousElementSibling).dataset.value;
+									this.selected = <FV>(<HTMLElement>selected.previousElementSibling).dataset.value;
 									break;
 								}
 
@@ -556,7 +565,7 @@ export default class bSelect<T extends Dictionary = Dictionary> extends bInput<T
 									return;
 								}
 
-								that.selected = (<HTMLElement>$b.element('option')).dataset.value;
+								that.selected = <FV>(<HTMLElement>$b.element('option')).dataset.value;
 							}
 						};
 
@@ -605,7 +614,7 @@ export default class bSelect<T extends Dictionary = Dictionary> extends bInput<T
 			if (
 				$C(this.labels).some((el, key) => {
 					if (rgxp.test(key)) {
-						this.selected = el.value;
+						this.selected = <FV>(<NonNullable<Option>>el).value;
 						return true;
 					}
 				})

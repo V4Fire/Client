@@ -51,8 +51,8 @@ export default class bInputBirthday<
 	}
 
 	/** @override */
-	get default(): V {
-		return <V>(this.defaultProp || new Date().beginningOfYear());
+	get default(): unknown {
+		return this.defaultProp || new Date().beginningOfYear();
 	}
 
 	/**
