@@ -45,12 +45,12 @@ const
 	files = $C(resources).reduce((arr, el) => arr.concat(glob.sync(path.join(el, components))), []).reverse();
 
 const
-	componentClassRgxp = /^\s*export\s+default\s+class\s+((.*?)\s+extends\s+.*?)\s*{/m,
+	componentClassRgxp = /^\s*export\s+default\s+class\s+(([\s\S]*?)\s+extends\s+[\s\S]*?)\s*{/m,
 	componentRgxp = /@component\(([^@]*?)\)\n+\s*export\s+/,
 	propsRgxp = /^(\t+)@prop\s*\([^@]+?\)+\n+\1([ \w$]+)(?:\??: [ \w|&$?()[\]{}<>'"`:.]+?)?\s*(?:=|;$)/gm;
 
 const
-	genericRgxp = /<.*/,
+	genericRgxp = /<.*|\s.*/g,
 	extendsRgxp = /\s+extends\s+/;
 
 $C(files).forEach((el) => {

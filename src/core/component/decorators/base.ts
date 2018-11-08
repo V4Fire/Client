@@ -163,8 +163,8 @@ export function paramsFactory<T = unknown>(
 						const
 							el = w[i];
 
-						if (Object.isTable(el)) {
-							watchers[String(el.field)] = {...p.watchParams, ...el};
+						if (Object.isObject(el)) {
+							watchers[String((<Dictionary>el).field)] = {...p.watchParams, ...el};
 
 						} else {
 							watchers[el] = {field: el, ...p.watchParams};

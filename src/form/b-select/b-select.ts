@@ -155,7 +155,7 @@ export default class bSelect<
 	};
 
 	/** @override */
-	async initLoad(data?: any, silent?: boolean): Promise<void> {
+	async initLoad(data?: unknown, silent?: boolean): Promise<void> {
 		try {
 			/// FIXME
 			if (this.initAfterOpen && !this.b.is.mobile) {
@@ -350,11 +350,11 @@ export default class bSelect<
 
 	/**
 	 * Synchronization for the selected field
-	 * @param value
+	 * @param selected
 	 */
 	@watch('selected')
 	@wait('ready')
-	protected async syncSelectedStoreWatcher(value: any): Promise<void> {
+	protected async syncSelectedStoreWatcher(selected: FV): Promise<void> {
 		const
 			{block: $b} = this,
 			prevSelected = $b.element('option', {selected: true});
@@ -363,15 +363,15 @@ export default class bSelect<
 			$b.setElMod(prevSelected, 'option', 'selected', false);
 		}
 
-		if (value === undefined) {
+		if (selected === undefined) {
 			this.value = <V>'';
 			return;
 		}
 
-		value =
-			this.values[value];
+		const
+			option = this.values[String(selected)];
 
-		if (!value) {
+		if (!option) {
 			return;
 		}
 
@@ -379,7 +379,7 @@ export default class bSelect<
 			{mobile} = this.b.is;
 
 		if (this.mods.focused !== 'true' || mobile) {
-			this.value = <V>this.getOptionLabel(value);
+			this.value = <V>this.getOptionLabel(option);
 		}
 
 		if (mobile) {
@@ -393,14 +393,14 @@ export default class bSelect<
 			]);
 
 			const
-				selected = $b.element<HTMLElement>(`option[data-value="${value.value}"]`);
+				node = $b.element<HTMLElement>(`option[data-value="${option.value}"]`);
 
-			if (selected) {
-				$b.setElMod(selected, 'option', 'selected', true);
+			if (node) {
+				$b.setElMod(node, 'option', 'selected', true);
 
 				const
-					selTop = selected.offsetTop,
-					selHeight = selected.offsetHeight,
+					selTop = node.offsetTop,
+					selHeight = node.offsetHeight,
 					selOffset = selTop + selHeight;
 
 				const
@@ -411,7 +411,7 @@ export default class bSelect<
 					if (selOffset > scrollTop + scrollHeight) {
 						await scroll.setScrollOffset({top: selTop - scrollHeight + selHeight});
 
-					} else if (selOffset < scrollTop + selected.offsetHeight) {
+					} else if (selOffset < scrollTop + node.offsetHeight) {
 						await scroll.setScrollOffset({top: selTop});
 					}
 
@@ -631,7 +631,7 @@ export default class bSelect<
 	}
 
 	/** @override */
-	protected async onBlockValueChange(newValue: any, oldValue: any): Promise<void> {
+	protected async onBlockValueChange(newValue: V, oldValue: CanUndef<V>): Promise<void> {
 		try {
 			await this.async.wait(() => this.mods.opened !== 'true', {label: $$.onBlockValueChange});
 			super.onBlockValueChange(newValue, oldValue);
@@ -653,7 +653,7 @@ export default class bSelect<
 
 	protected async onOptionSelected(value?: string): Promise<void> {
 		const
-			v = this.values && this.values[<any>this.selected];
+			v = this.values && this.values[String(this.selected)];
 
 		if (value !== this.selected || v && this.value !== this.getOptionLabel(v)) {
 			this.syncValue(value);

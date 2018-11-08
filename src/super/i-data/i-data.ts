@@ -468,7 +468,9 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 	protected convertDataToDB<O>(data: unknown): O;
 	protected convertDataToDB(data: unknown): T;
 	protected convertDataToDB<O>(data: unknown): O | T {
-		return this.dbConverter ? this.dbConverter(Object.isTable(data) ? data.valueOf() : data) : data;
+		return this.dbConverter ? this.dbConverter(
+			Object.isArray(data) || Object.isObject(data) ? data.valueOf() : data
+		) : data;
 	}
 
 	/**
@@ -476,7 +478,9 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 	 * @param data
 	 */
 	protected convertDBToComponent<O = unknown>(data: unknown): O | T {
-		return this.componentConverter ? this.componentConverter(Object.isTable(data) ? data.valueOf() : data) : <O | T>data;
+		return this.componentConverter ? this.componentConverter(
+			Object.isArray(data) || Object.isObject(data) ? data.valueOf() : data
+		) : data;
 	}
 
 	/**
