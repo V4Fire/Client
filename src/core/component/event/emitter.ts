@@ -17,7 +17,7 @@ const emitter = new EventEmitter({
 const
 	emit = emitter.emit;
 
-// tslint:disable-next-line
+// tslint:disable-next-line:only-arrow-functions
 emitter.emit = function (event: string, ...args: unknown[]): boolean {
 	const res = emit.call(emitter, event, ...args);
 	log(`global:event:${event.replace(/\./g, ':')}`, ...args);

@@ -322,7 +322,6 @@ export default class bForm<T extends Dictionary = Dictionary> extends iData<T> {
 			this.emit('submitStart', body, this.params, this.method);
 
 			try {
-				// tslint:disable-next-line
 				if (this.delegateAction) {
 					res = await this.delegateAction(this, body, this.params, els);
 

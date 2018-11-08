@@ -483,7 +483,7 @@ export default class iInput<
 			return <V>value;
 		}
 
-		// tslint:disable-next-line
+		// tslint:disable-next-line:no-string-literal
 		return i['defaultGetter'].call(this);
 	}
 

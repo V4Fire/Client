@@ -393,7 +393,7 @@ export default class bScroll extends iBlock {
 				pos = val in map ? map[val] : val;
 
 			if (pseudo !== undefined) {
-				// tslint:disable-next-line
+				// tslint:disable-next-line:prefer-conditional-expression
 				if (pseudo) {
 					res[key] = el.scroller.style[el.pos] = pos.px;
 

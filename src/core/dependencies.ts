@@ -13,7 +13,7 @@ import { GLOBAL } from 'core/const/links';
 /**
  * Manager of modules
  */
-// tslint:disable-next-line
+// tslint:disable-next-line:prefer-object-spread
 GLOBAL.ModuleDependencies = Object.assign(GLOBAL.ModuleDependencies || {}, {
 	/**
 	 * Cache for modules

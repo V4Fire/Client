@@ -43,7 +43,7 @@ export default function inheritMeta(
 	// Provider inheritance
 	///////////////////////
 
-	// tslint:disable-next-line
+	// tslint:disable-next-line:prefer-conditional-expression
 	if (Object.isObject(p.provide) && Object.isObject(params.provide)) {
 		provide = {...params.provide, ...p.provide};
 
@@ -80,7 +80,7 @@ export default function inheritMeta(
 				key = keys[i],
 				el = o[key];
 
-			// tslint:disable-next-line
+			// tslint:disable-next-line:prefer-object-spread
 			inject[key] = Object.assign(inject[key] || {}, Object.isObject(el) ? el : {from: el});
 		}
 
@@ -97,7 +97,7 @@ export default function inheritMeta(
 				key = keys[i],
 				el = o[key];
 
-			// tslint:disable-next-line
+			// tslint:disable-next-line:prefer-object-spread
 			inject[key] = Object.assign(inject[key] || {}, Object.isObject(el) ? el : {from: el});
 		}
 
@@ -115,7 +115,7 @@ export default function inheritMeta(
 		for (let o = <string[]>p.inject, i = 0; i < o.length; i++) {
 			const key = o[i];
 
-			// tslint:disable-next-line
+			// tslint:disable-next-line:prefer-object-spread
 			inject[key] = Object.assign(inject[key] || {}, {from: key});
 		}
 
@@ -130,7 +130,7 @@ export default function inheritMeta(
 	let
 		functional;
 
-	// tslint:disable-next-line
+	// tslint:disable-next-line:prefer-conditional-expression
 	if (Object.isObject(p.functional) && Object.isObject(params.functional)) {
 		functional = {...params.functional, ...p.functional};
 

@@ -365,7 +365,7 @@ export function component(params?: ComponentParams): Function {
 		const loadTemplate = (component) => (resolve) => {
 			const success = () => {
 				if (localComponents.has(target)) {
-					// tslint:disable-next-line
+					// tslint:disable-next-line:prefer-object-spread
 					component.components = Object.assign(component.components || {}, localComponents.get(target));
 				}
 

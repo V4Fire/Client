@@ -502,7 +502,6 @@ export function initDataObject(
 					val = el.init(<any>ctx, data);
 				}
 
-				// tslint:disable-next-line
 				if (val === undefined) {
 					if (data[key] === undefined) {
 						val = el.default !== undefined ? el.default : Object.fastClone(instance[key]);
@@ -810,7 +809,7 @@ export function addMethodsToMeta(constructor: Function, meta: ComponentMeta): vo
 				continue;
 			}
 
-			// tslint:disable-next-line
+			// tslint:disable-next-line:prefer-object-spread
 			meta.methods[key] = Object.assign(meta.methods[key] || {watchers: {}, hooks: {}}, {fn});
 
 		} else {

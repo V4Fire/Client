@@ -56,12 +56,10 @@ export default class VueInterface<
 
 	protected $set<T = unknown>(object: object, key: string, value: T): T;
 	protected $set<T = unknown>(array: T[], key: number, value: T): T;
-	// tslint:disable-next-line
 	protected $set() {}
 
 	protected $delete(object: object, key: string): void;
 	protected $delete<T = unknown>(array: T[], key: number): void;
-	// tslint:disable-next-line
 	protected $delete() {}
 
 	// @ts-ignore
@@ -77,32 +75,26 @@ export default class VueInterface<
 		opts: WatchOptionsWithHandler<T>
 	): Function;
 
-	// tslint:disable-next-line
 	protected $watch() {}
 
 	// @ts-ignore
 	protected $on(event: CanArray<string>, cb: Function): this;
-	// tslint:disable-next-line
 	protected $on() {}
 
 	// @ts-ignore
 	protected $once(event: string, cb: Function): this;
-	// tslint:disable-next-line
 	protected $once() {}
 
 	// @ts-ignore
 	protected $off(event?: CanArray<string>, cb?: Function): this;
-	// tslint:disable-next-line
 	protected $off() {}
 
 	// @ts-ignore
 	protected $emit(event: string, ...args: unknown[]): this;
-	// tslint:disable-next-line
 	protected $emit() {}
 
 	protected $nextTick(cb: Function | ((this: this) => void)): void;
 	// @ts-ignore
 	protected $nextTick(): Promise<void>;
-	// tslint:disable-next-line
 	protected $nextTick() {}
 }

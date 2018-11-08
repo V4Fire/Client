@@ -812,7 +812,7 @@ export default class bInput<
 				pos;
 
 			if (keyboardEvent) {
-				// tslint:disable-next-line
+				// tslint:disable-next-line:prefer-conditional-expression
 				if (selectionStart !== selectionEnd) {
 					pos = leftKey ? selectionStart : selectionEnd;
 

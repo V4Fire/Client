@@ -243,18 +243,15 @@ export default class Async<CTX extends object = Async<any>> extends Super<CTX> {
 		p.group = p.group || `dnd.${Math.random()}`;
 		p.onClear = (<any[]>[]).concat(p.onClear || []);
 
-		// tslint:disable-next-line
-		function dragStartClear(...args) {
+		function dragStartClear(...args: unknown[]): void {
 			$C(p.onClear).forEach((fn) => fn.call(this, ...args, 'dragstart'));
 		}
 
-		// tslint:disable-next-line
-		function dragClear(...args) {
+		function dragClear(...args: unknown[]): void {
 			$C(p.onClear).forEach((fn) => fn.call(this, ...args, 'drag'));
 		}
 
-		// tslint:disable-next-line
-		function dragEndClear(...args) {
+		function dragEndClear(...args: unknown[]): void {
 			$C(p.onClear).forEach((fn) => fn.call(this, ...args, 'dragend'));
 		}
 

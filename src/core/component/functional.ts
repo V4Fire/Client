@@ -338,7 +338,7 @@ export function patchVNode(vNode: VNode, ctx: Dictionary<any>, renderCtx: Render
 		}
 
 		if (data.attrs && meta.params.inheritAttrs) {
-			// tslint:disable-next-line
+			// tslint:disable-next-line:prefer-object-spread
 			vData.attrs = Object.assign(vData.attrs || {}, data.attrs);
 		}
 

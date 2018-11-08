@@ -1162,7 +1162,7 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 		const
 			head = this.$activeField;
 
-		// tslint:disable-next-line
+		// tslint:disable-next-line:prefer-conditional-expression
 		if (path) {
 			path = [head, path].join('.');
 
@@ -1915,7 +1915,7 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 	 */
 	setField<T = unknown>(path: string, value: T, obj: Dictionary = this): T {
 		let
-			// tslint:disable-next-line
+			// tslint:disable-next-line:no-this-assignment
 			ctx: iBlock = this,
 			isComponent = obj === this;
 
@@ -1979,7 +1979,7 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 	 */
 	deleteField(path: string, obj: Dictionary = this): boolean {
 		let
-			// tslint:disable-next-line
+			// tslint:disable-next-line:no-this-assignment
 			ctx: iBlock = this,
 			isComponent = obj === this;
 
@@ -2036,7 +2036,7 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 	 */
 	getField<T = unknown>(path: string, obj: Dictionary = this): CanUndef<T> {
 		let
-			// tslint:disable-next-line
+			// tslint:disable-next-line:no-this-assignment
 			ctx: iBlock = this,
 			isComponent = obj === this;
 
@@ -2877,22 +2877,23 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 		this.off = i.off.bind(this);
 		this.delegate = i.delegate.bind(this);
 
+		// tslint:disable:no-string-literal
+
 		Object.defineProperties(this, {
 			refs: {
-				// tslint:disable-next-line
 				get: i['refsGetter']
 			},
 
 			globalEvent: {
-				// tslint:disable-next-line
 				get: i['globalEventGetter']
 			},
 
 			rootEvent: {
-				// tslint:disable-next-line
 				get: i['rootEventGetter']
 			}
 		});
+
+		// tslint:enable:no-string-literal
 	}
 
 	/**
@@ -3110,7 +3111,7 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 					el = {default: el};
 				}
 
-				// tslint:disable-next-line
+				// tslint:disable-next-line:prefer-conditional-expression
 				if (!(key in mods) || el[key] === undefined) {
 					map[mod] = el[Object.keys(el)[0]];
 

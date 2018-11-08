@@ -131,7 +131,6 @@ export function paramsFactory<T = unknown>(
 	transformer?: (params: any, cluster: string) => Dictionary<any>
 ): (params?: T) => Function {
 	return (params: Dictionary<any> = {}) => (target, key, desc) => {
-		// tslint:disable-next-line
 		initEvent.once('constructor', ({meta}: {meta: ComponentMeta}) => {
 			let
 				p = params;
