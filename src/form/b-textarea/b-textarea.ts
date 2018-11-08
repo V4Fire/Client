@@ -213,7 +213,7 @@ export default class bTextarea<
 			'z-index': -1
 		});
 
-		(<any>document.body).append(tmp);
+		document.body.appendChild(tmp);
 		const height = tmpInput.scrollHeight;
 		tmp.remove();
 
