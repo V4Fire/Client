@@ -182,7 +182,7 @@ export function createFakeCtx(
 			$e.once(e, cb);
 		},
 
-		$on(e: string | string[], cb: any): void {
+		$on(e: CanArray<string>, cb: any): void {
 			const
 				events = (<string[]>[]).concat(e);
 
@@ -191,7 +191,7 @@ export function createFakeCtx(
 			}
 		},
 
-		$off(e: string | string[], cb?: any): void {
+		$off(e: CanArray<string>, cb?: any): void {
 			const
 				events = (<string[]>[]).concat(e);
 

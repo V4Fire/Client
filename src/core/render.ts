@@ -22,7 +22,7 @@ let
 	inProgress = false,
 	isStarted = false;
 
-queue.add = backQueue.add = function addToQueue<T>(): T {
+queue.add = backQueue.add = function addToQueue<T = unknown>(): T {
 	const
 		res = add.apply(this, arguments);
 

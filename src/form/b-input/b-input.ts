@@ -397,7 +397,7 @@ export default class bInput<
 	 */
 	@wait('ready', {label: $$.applyMaskToValue})
 	async applyMaskToValue(
-		value: string | undefined = this.valueBuffer,
+		value: CanUndef<string> = this.valueBuffer,
 
 		{
 			updateBuffer,

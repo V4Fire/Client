@@ -83,8 +83,8 @@ export default class bSelect<T extends Dictionary = Dictionary> extends bInput<T
 	/**
 	 * Selected value store
 	 */
-	@field((o) => o.link((val) => {
-		val = (<any>o).initDefaultValue(val);
+	@field<bSelect>((o) => o.link((val) => {
+		val = o.initDefaultValue(val);
 		return val !== undefined ? String(val) : undefined;
 	}))
 
@@ -107,7 +107,7 @@ export default class bSelect<T extends Dictionary = Dictionary> extends bInput<T
 
 	/** @override */
 	// @ts-ignore
-	get default(): string | undefined {
+	get default(): CanUndef<string> {
 		return this.defaultProp !== undefined ? String(this.defaultProp) : undefined;
 	}
 
@@ -118,16 +118,12 @@ export default class bSelect<T extends Dictionary = Dictionary> extends bInput<T
 	/**
 	 * Select options store
 	 */
-	@field({
+	@field<bSelect>({
 		watch: (o) => {
-			const ctx: bSelect = <any>o;
-			ctx.initComponentValues().catch(stderr);
+			o.initComponentValues().catch(stderr);
 		},
 
-		init: (o) => o.link((val) => {
-			const ctx: bSelect = <any>o;
-			return ctx.dataProvider ? ctx.optionsStore || [] : ctx.normalizeOptions(val);
-		})
+		init: (o) => o.link((val) => o.dataProvider ? o.optionsStore || [] : o.normalizeOptions(val))
 	})
 
 	protected optionsStore!: NOption[];
@@ -256,7 +252,7 @@ export default class bSelect<T extends Dictionary = Dictionary> extends bInput<T
 	}
 
 	/** @override */
-	protected initRemoteData(): NOption[] | undefined {
+	protected initRemoteData(): CanUndef<NOption[]> {
 		if (!this.db) {
 			return;
 		}
@@ -281,7 +277,7 @@ export default class bSelect<T extends Dictionary = Dictionary> extends bInput<T
 	 * Normalizes the specified options and returns it
 	 * @param options
 	 */
-	protected normalizeOptions(options: Option[] | undefined): NOption[] {
+	protected normalizeOptions(options: CanUndef<Option[]>): NOption[] {
 		return $C(options).to([]).map((el) => {
 			el.label = String(el.label);
 			el.value = el.value !== undefined ? String(el.value) : el.label;
@@ -640,7 +636,7 @@ export default class bSelect<T extends Dictionary = Dictionary> extends bInput<T
 	 * Handler: option select
 	 *
 	 * @param [value]
-	 * @emits actionChange(selected: string | undefined)
+	 * @emits actionChange(selected: CanUndef<string>)
 	 */
 	@watch({
 		field: '?$el:click',

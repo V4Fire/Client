@@ -15,7 +15,10 @@ import { ComponentMeta, Hooks } from 'core/component';
 // tslint:disable:typedef
 
 export type VueElement<T = unknown> = Element & {vueComponent?: T};
-export default class VueInterface<C = VueInterface<any, any>, R = VueInterface<any, any>> {
+export default class VueInterface<
+	C extends VueInterface = VueInterface<any, any>,
+	R extends VueInterface = VueInterface<any, any>
+> {
 	readonly hook!: Hooks;
 	readonly instance!: this;
 	readonly componentName!: string;
@@ -51,13 +54,13 @@ export default class VueInterface<C = VueInterface<any, any>, R = VueInterface<a
 	protected $forceUpdate(): void {}
 	protected $destroy(): void {}
 
-	protected $set<T>(object: object, key: string, value: T): T;
-	protected $set<T>(array: T[], key: number, value: T): T;
+	protected $set<T = unknown>(object: object, key: string, value: T): T;
+	protected $set<T = unknown>(array: T[], key: number, value: T): T;
 	// tslint:disable-next-line
 	protected $set() {}
 
 	protected $delete(object: object, key: string): void;
-	protected $delete<T>(array: T[], key: number): void;
+	protected $delete<T = unknown>(array: T[], key: number): void;
 	// tslint:disable-next-line
 	protected $delete() {}
 
@@ -78,7 +81,7 @@ export default class VueInterface<C = VueInterface<any, any>, R = VueInterface<a
 	protected $watch() {}
 
 	// @ts-ignore
-	protected $on(event: string | string[], cb: Function): this;
+	protected $on(event: CanArray<string>, cb: Function): this;
 	// tslint:disable-next-line
 	protected $on() {}
 
@@ -88,7 +91,7 @@ export default class VueInterface<C = VueInterface<any, any>, R = VueInterface<a
 	protected $once() {}
 
 	// @ts-ignore
-	protected $off(event?: string | string[], cb?: Function): this;
+	protected $off(event?: CanArray<string>, cb?: Function): this;
 	// tslint:disable-next-line
 	protected $off() {}
 

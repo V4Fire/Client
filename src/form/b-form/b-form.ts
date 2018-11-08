@@ -99,12 +99,8 @@ export default class bForm<T extends Dictionary = Dictionary> extends iData<T> {
 	/**
 	 * Form request parameters store
 	 */
-	@field((o) => o.link((val) => {
-		const ctx: bForm = <any>o;
-		// tslint:disable-next-line:prefer-object-spread
-		return Object.assign(ctx.params || {}, val);
-	}))
-
+	// tslint:disable-next-line:prefer-object-spread
+	@field<bForm>((o) => o.link((val) => Object.assign(o.params || {}, val)))
 	params!: CreateRequestOptions;
 
 	/** @inheritDoc */

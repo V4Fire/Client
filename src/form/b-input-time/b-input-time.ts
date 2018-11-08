@@ -99,13 +99,10 @@ export default class bInputTime<
 	protected readonly blockValueField: string = 'pointer';
 
 	/** @override */
-	@field({
+	@field<bInputTime>({
 		after: 'pointerStore',
 		init: (o, data) => o.link<V>((val) => {
-			const ctx: bInputTime = <any>o;
-			return ctx.getTimeFormat(
-				ctx.getNPointer(val, <any>('pointerStore' in ctx ? ctx.pointerStore : data.pointerStore))
-			);
+			return o.getTimeFormat(o.getNPointer(val, <any>('pointerStore' in o ? o.pointerStore : data.pointerStore)));
 		})
 	})
 
@@ -114,12 +111,11 @@ export default class bInputTime<
 	/**
 	 * Time pointer store
 	 */
-	@field((o) => o.link<Date>((val) => {
-		const ctx: bInputTime = <any>o;
-		val = ctx.getNPointer(undefined, val, ctx.pointerStore);
+	@field<bInputTime>((o) => o.link<Date>((val) => {
+		val = o.getNPointer(undefined, val, o.pointerStore);
 
 		if (val === undefined) {
-			return ctx.initDefaultValue();
+			return o.initDefaultValue();
 		}
 
 		return val;

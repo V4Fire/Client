@@ -289,11 +289,7 @@ export default class iInput<
 	/**
 	 * Component value store
 	 */
-	@field((o) => o.link((val) => {
-		const ctx: iInput = <any>o;
-		return ctx.initDefaultValue(val);
-	}))
-
+	@field<iInput>((o) => o.link((val) => o.initDefaultValue(val)))
 	protected valueStore!: V;
 
 	/** @override */

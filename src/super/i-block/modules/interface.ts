@@ -7,14 +7,14 @@
  */
 
 import iBlock from 'super/i-block/i-block';
-import Async, { AsyncOpts, AsyncOnOpts, AsyncOnceOpts, ClearOptsId } from 'core/async';
+import Async, { AsyncOpts, AsyncOnOpts, AsyncOnceOpts, ClearOptsId, ProxyCb } from 'core/async';
 import { WatchOptions } from 'vue';
 import { ModVal } from 'core/component';
 
 export type Classes = Dictionary<string | Array<string | true> | true>;
 
-export interface LinkWrapper<T = unknown, R = unknown> {
-	(value: T, oldValue: CanUndef<T>): R;
+export interface LinkWrapper<V = unknown, R = unknown> {
+	(value: V, oldValue: CanUndef<V>): R;
 }
 
 export type WatchObjectField<T = unknown> =
@@ -25,6 +25,9 @@ export type WatchObjectField<T = unknown> =
 	[string, string, LinkWrapper<T>];
 
 export type WatchObjectFields<T = unknown> = Array<WatchObjectField<T>>;
+
+export type BindModCb<V = unknown, R = unknown, CTX extends iBlock = iBlock> =
+	((value: V, ctx: CTX) => R) | Function;
 
 export interface SizeTo {
 	gt: Dictionary<Size>;
@@ -76,59 +79,79 @@ export type AsyncTaskId = AsyncTaskSimpleId | (() => AsyncTaskObjectId) | AsyncT
 export type AsyncQueueType = 'asyncComponents' | 'asyncBackComponents';
 export type AsyncWatchOpts = WatchOptions & AsyncOpts;
 
-export interface RemoteEvent<T extends object = Async> {
-	on(events: CanArray<string>, handler: Function, ...args: unknown[]): CanUndef<object>;
-	on(
+export interface RemoteEvent<CTX extends object = Async> {
+	on<E = unknown, R = unknown>(
 		events: CanArray<string>,
-		handler: Function,
-		params: AsyncOnOpts<T>,
+		handler: ProxyCb<E, R, CTX>,
 		...args: unknown[]
 	): CanUndef<object>;
 
-	once(events: CanArray<string>, handler: Function, ...args: unknown[]): CanUndef<object>;
-	once(
+	on<E = unknown, R = unknown>(
 		events: CanArray<string>,
-		handler: Function,
-		params: AsyncOnceOpts<T>,
+		handler: ProxyCb<E, R, CTX>,
+		params: AsyncOnOpts<CTX>,
 		...args: unknown[]
 	): CanUndef<object>;
 
-	promisifyOnce(events: CanArray<string>, ...args: unknown[]): CanUndef<Promise<unknown>>;
-	promisifyOnce(
+	once<E = unknown, R = unknown>(
 		events: CanArray<string>,
-		params: AsyncOnceOpts<T>,
+		handler: ProxyCb<E, R, CTX>,
 		...args: unknown[]
-	): CanUndef<Promise<unknown>>;
+	): CanUndef<object>;
+
+	once<E = unknown, R = unknown>(
+		events: CanArray<string>,
+		handler: ProxyCb<E, R, CTX>,
+		params: AsyncOnceOpts<CTX>,
+		...args: unknown[]
+	): CanUndef<object>;
+
+	promisifyOnce<T = unknown>(events: CanArray<string>, ...args: unknown[]): CanUndef<Promise<T>>;
+	promisifyOnce<T = unknown>(
+		events: CanArray<string>,
+		params: AsyncOnceOpts<CTX>,
+		...args: unknown[]
+	): CanUndef<Promise<T>>;
 
 	off(id?: object): void;
 	off(params: ClearOptsId<object>): void;
 }
 
-export interface Event<T extends object = Async> {
+export interface Event<CTX extends object = Async> {
 	emit(event: string, ...args: unknown[]): boolean;
 
-	on(events: CanArray<string>, handler: Function, ...args: unknown[]): object;
-	on(
+	on<E = unknown, R = unknown>(
 		events: CanArray<string>,
-		handler: Function,
-		params: AsyncOnOpts<T>,
+		handler: ProxyCb<E, R, CTX>,
 		...args: unknown[]
 	): object;
 
-	once(events: CanArray<string>, handler: Function, ...args: unknown[]): object;
-	once(
+	on<E = unknown, R = unknown>(
 		events: CanArray<string>,
-		handler: Function,
-		params: AsyncOnceOpts<T>,
+		handler: ProxyCb<E, R, CTX>,
+		params: AsyncOnOpts<CTX>,
 		...args: unknown[]
 	): object;
 
-	promisifyOnce(events: CanArray<string>, ...args: unknown[]): Promise<unknown>;
-	promisifyOnce(
+	once<E = unknown, R = unknown>(
 		events: CanArray<string>,
-		params: AsyncOnceOpts<T>,
+		handler: ProxyCb<E, R, CTX>,
 		...args: unknown[]
-	): Promise<unknown>;
+	): object;
+
+	once<E = unknown, R = unknown>(
+		events: CanArray<string>,
+		handler: ProxyCb<E, R, CTX>,
+		params: AsyncOnceOpts<CTX>,
+		...args: unknown[]
+	): object;
+
+	promisifyOnce<T = unknown>(events: CanArray<string>, ...args: unknown[]): Promise<T>;
+	promisifyOnce<T = unknown>(
+		events: CanArray<string>,
+		params: AsyncOnceOpts<CTX>,
+		...args: unknown[]
+	): Promise<T>;
 
 	off(id?: object): void;
 	off(params: ClearOptsId<object>): void;

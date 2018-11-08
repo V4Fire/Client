@@ -39,7 +39,7 @@ export default class bRemoteProvider<T extends Dictionary = Dictionary> extends 
 	protected dbStore?: CanUndef<T>;
 
 	/** @override */
-	protected onRequestError<T>(err: Error | RequestError, retry: () => Promise<CanUndef<T>>): void {
+	protected onRequestError<T = unknown>(err: Error | RequestError, retry: () => Promise<CanUndef<T>>): void {
 		const
 			l = this.$listeners;
 

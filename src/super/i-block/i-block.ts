@@ -11,7 +11,7 @@
 import $C = require('collection.js');
 
 import symbolGenerator from 'core/symbol';
-import Async, { AsyncOpts, ClearOptsId } from 'core/async';
+import Async, { AsyncOpts, ClearOptsId, ProxyCb } from 'core/async';
 import log, { LogMessageOptions } from 'core/log';
 
 import * as analytics from 'core/analytics';
@@ -45,7 +45,8 @@ import {
 	RemoteEvent,
 	Event,
 	ConverterCallType,
-	Stage
+	Stage,
+	BindModCb
 
 } from 'super/i-block/modules/interface';
 
@@ -990,7 +991,7 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 	 * @param cb
 	 * @param [params] - additional parameters
 	 */
-	watch<T>(
+	watch<T = unknown>(
 		exprOrFn: string | ((this: this) => string),
 		cb: (this: this, n: T, o?: T) => void,
 		params?: AsyncWatchOpts
@@ -1027,21 +1028,21 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 	 * @see Async.worker
 	 * @param [paramsOrWrapper] - additional parameters or wrapper
 	 */
-	link<T>(paramsOrWrapper?: AsyncWatchOpts | LinkWrapper<T>): CanUndef<T>;
+	link<T = unknown>(paramsOrWrapper?: AsyncWatchOpts | LinkWrapper<T>): CanUndef<T>;
 
 	/**
 	 * @see Async.worker
 	 * @param params - additional parameters
 	 * @param [wrapper]
 	 */
-	link<T>(params: AsyncWatchOpts, wrapper?: LinkWrapper<T>): CanUndef<T>;
+	link<T = unknown>(params: AsyncWatchOpts, wrapper?: LinkWrapper<T>): CanUndef<T>;
 
 	/**
 	 * @see Async.worker
 	 * @param field
 	 * @param [paramsOrWrapper]
 	 */
-	link<T>(field: string, paramsOrWrapper?: AsyncWatchOpts | LinkWrapper<T>): CanUndef<T>;
+	link<T = unknown>(field: string, paramsOrWrapper?: AsyncWatchOpts | LinkWrapper<T>): CanUndef<T>;
 
 	/**
 	 * @see Async.worker
@@ -1049,7 +1050,7 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 	 * @param params
 	 * @param [wrapper]
 	 */
-	link<T>(field: string, params: AsyncWatchOpts, wrapper?: LinkWrapper<T>): CanUndef<T>;
+	link<T = unknown>(field: string, params: AsyncWatchOpts, wrapper?: LinkWrapper<T>): CanUndef<T>;
 	link<T>(
 		field?: string | AsyncWatchOpts | LinkWrapper<T>,
 		params?: AsyncWatchOpts | LinkWrapper<T>,
@@ -1127,7 +1128,7 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 	 * @param path - property path
 	 * @param fields
 	 */
-	createWatchObject<T>(
+	createWatchObject<T = unknown>(
 		path: string,
 		fields: WatchObjectFields<T>
 	): Dictionary;
@@ -1137,7 +1138,7 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 	 * @param params - additional parameters
 	 * @param fields
 	 */
-	createWatchObject<T>(
+	createWatchObject<T = unknown>(
 		path: string,
 		params: AsyncWatchOpts,
 		fields: WatchObjectFields<T>
@@ -1279,10 +1280,10 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 	 * @param [converter] - converter function or additional parameters
 	 * @param [params] - additional parameters
 	 */
-	bindModTo<T = this>(
+	bindModTo<V = unknown, R = unknown, CTX extends iBlock = this>(
 		mod: string,
 		field: string,
-		converter: ((value: unknown, ctx: T) => unknown) | AsyncWatchOpts = Boolean,
+		converter: BindModCb<V, R, CTX> | AsyncWatchOpts = Boolean,
 		params?: AsyncWatchOpts
 	): void {
 		mod = mod.camelize(false);
@@ -1376,7 +1377,7 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 	 * @param cb
 	 * @param [params] - async parameters
 	 */
-	on(event: string, cb: Function, params?: AsyncOpts): void {
+	on<E = unknown, R = unknown>(event: string, cb: ProxyCb<E, R, this>, params?: AsyncOpts): void {
 		event = event.dasherize();
 
 		if (params) {
@@ -1395,7 +1396,7 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 	 * @param cb
 	 * @param [params] - async parameters
 	 */
-	once(event: string, cb: Function, params?: AsyncOpts): void {
+	once<E = unknown, R = unknown>(event: string, cb: ProxyCb<E, R, this>, params?: AsyncOpts): void {
 		event = event.dasherize();
 
 		if (params) {
@@ -1413,7 +1414,7 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 	 * @param event
 	 * @param [params] - async parameters
 	 */
-	promisifyOnce(event: string, params?: AsyncOpts): Promise<unknown> {
+	promisifyOnce<T = unknown>(event: string, params?: AsyncOpts): Promise<T> {
 		event = event.dasherize();
 		return this.async.promisifyOnce(this, event, params);
 	}
@@ -1460,8 +1461,12 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 	 * @param [params] - additional parameters:
 	 *   *) [params.defer] - if true, then the function will always return a promise
 	 */
-	waitStatus<T>(status: Statuses, cb: (this: this) => T, params?: WaitStatusOpts): CanPromise<T>;
-	waitStatus<T>(status: Statuses, cbOrParams?: Function | WaitStatusOpts, params?: WaitStatusOpts): CanPromise<T> {
+	waitStatus<T = unknown>(status: Statuses, cb: (this: this) => T, params?: WaitStatusOpts): CanPromise<T>;
+	waitStatus<T = unknown>(
+		status: Statuses,
+		cbOrParams?: Function | WaitStatusOpts,
+		params?: WaitStatusOpts
+	): CanPromise<T> {
 		const
 			isFn = cbOrParams && Object.isFunction(cbOrParams),
 			p = {...(isFn ? params : cbOrParams) || {}, join: false};
@@ -1875,7 +1880,7 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 	 * @param mods - list of modifiers (['name', ['name', 'value']])
 	 * @param [value] - value of modifiers
 	 */
-	ifEveryMods(mods: Array<string | string[]>, value?: ModVal): boolean {
+	ifEveryMods(mods: Array<CanArray<string>>, value?: ModVal): boolean {
 		return $C(mods).every((el) => {
 			if (Object.isArray(el)) {
 				return this.mods[<string>el[0]] === String(el[1]);
@@ -1891,7 +1896,7 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 	 * @param mods - list of modifiers (['name', ['name', 'value']])
 	 * @param [value] - value of modifiers
 	 */
-	ifSomeMod(mods: Array<string | string[]>, value?: ModVal): boolean {
+	ifSomeMod(mods: Array<CanArray<string>>, value?: ModVal): boolean {
 		return $C(mods).some((el) => {
 			if (Object.isArray(el)) {
 				return this.mods[<string>el[0]] === String(el[1]);
@@ -1908,7 +1913,7 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 	 * @param value
 	 * @param [obj]
 	 */
-	setField<T>(path: string, value: T, obj: Dictionary = this): T {
+	setField<T = unknown>(path: string, value: T, obj: Dictionary = this): T {
 		let
 			// tslint:disable-next-line
 			ctx: iBlock = this,
@@ -2029,7 +2034,7 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 	 * @param path - path to the property (bla.baz.foo)
 	 * @param [obj]
 	 */
-	getField<T>(path: string, obj: Dictionary = this): CanUndef<T> {
+	getField<T = unknown>(path: string, obj: Dictionary = this): CanUndef<T> {
 		let
 			// tslint:disable-next-line
 			ctx: iBlock = this,
@@ -2083,7 +2088,7 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 	 * @param cb
 	 * @param [params] - async parameters
 	 */
-	execCbAtTheRightTime<T>(cb: (this: this) => T, params?: AsyncOpts): CanPromise<T | void> {
+	execCbAtTheRightTime<T = unknown>(cb: (this: this) => T, params?: AsyncOpts): CanPromise<T | void> {
 		if (this.isBeforeCreate('beforeDataCreate')) {
 			return <any>this.$async.promise(new Promise((r) => {
 				this.meta.hooks.beforeDataCreate.push({fn: () => r(cb.call(this))});
@@ -3122,7 +3127,7 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 	 * Saves to cache the specified literal and returns returns it
 	 * @param literal
 	 */
-	protected memoizeLiteral<T>(literal: T): T extends Dictionary ? Readonly<T>: ReadonlyArray<T> {
+	protected memoizeLiteral<T = unknown>(literal: T): T extends Dictionary ? Readonly<T>: ReadonlyArray<T> {
 		const key = JSON.stringify(literal);
 		return literalCache[key] = literalCache[key] || Object.freeze(<any>literal);
 	}
@@ -3363,7 +3368,7 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 	 * @param cb
 	 * @param [params] - async parameters
 	 */
-	protected execCbAfterCreated<T>(cb: (this: this) => T, params?: AsyncOpts): CanPromise<T> {
+	protected execCbAfterCreated<T = unknown>(cb: (this: this) => T, params?: AsyncOpts): CanPromise<T> {
 		if (this.isBeforeCreate()) {
 			return <any>this.$async.promise(new Promise((r) => {
 				this.meta.hooks.created.unshift({fn: () => r(cb.call(this))});
@@ -3379,7 +3384,7 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 	 * @param cb
 	 * @param [params] - async parameters
 	 */
-	protected execCbAfterBlockReady<T>(cb: (this: this) => T, params?: AsyncOpts): CanPromise<T> {
+	protected execCbAfterBlockReady<T = unknown>(cb: (this: this) => T, params?: AsyncOpts): CanPromise<T> {
 		if (this.block) {
 			return cb.call(this);
 		}

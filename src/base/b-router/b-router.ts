@@ -70,11 +70,10 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 	/**
 	 * Initial page
 	 */
-	@prop({
+	@prop<bRouter>({
 		type: [String, Object],
 		watch: (o) => {
-			const ctx: bRouter = <any>o;
-			ctx.initComponentValues().catch(stderr);
+			o.initComponentValues().catch(stderr);
 		}
 	})
 
@@ -89,12 +88,11 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 	/**
 	 * Driver constructor for router
 	 */
-	@prop({
+	@prop<bRouter>({
 		type: Function,
 		default: driver,
 		watch: (o) => {
-			const ctx: bRouter = <any>o;
-			ctx.initComponentValues().catch(stderr);
+			o.initComponentValues().catch(stderr);
 		}
 	})
 
@@ -127,30 +125,27 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 	/**
 	 * Router paths
 	 */
-	@system({
+	@system<bRouter>({
 		after: 'driver',
-		init: (o) => o.link((v) => {
-			const ctx: bRouter = <any>o;
-			return $C(v || ctx.driver.routes || {}).map((obj, page) => {
-				obj = obj || {};
+		init: (o) => o.link((v) => $C(v || o.driver.routes || {}).map((obj, page) => {
+			obj = obj || {};
 
-				const
-					isStr = Object.isString(obj),
-					pattern = isStr ? obj : obj.path,
-					params = [];
+			const
+				isStr = Object.isString(obj),
+				pattern = isStr ? obj : obj.path,
+				params = [];
 
-				page = isStr ?
-					page : obj.page || page;
+			page = isStr ?
+				page : obj.page || page;
 
-				return {
-					page,
-					pattern,
-					index: !isStr && obj.index || page === 'index',
-					rgxp: pattern != null ? path(pattern, params) : undefined,
-					meta: {...isStr ? {} : obj, page, params}
-				};
-			});
-		})
+			return {
+				page,
+				pattern,
+				index: !isStr && obj.index || page === 'index',
+				rgxp: pattern != null ? path(pattern, params) : undefined,
+				meta: {...isStr ? {} : obj, page, params}
+			};
+		}))
 	})
 
 	protected pages!: Pages;

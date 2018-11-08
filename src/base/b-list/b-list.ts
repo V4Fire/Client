@@ -88,16 +88,12 @@ export default class bList<T extends Dictionary = Dictionary> extends iData<T> {
 	/**
 	 * Component value
 	 */
-	@field({
+	@field<bList>({
 		watch: (o) => {
-			const ctx: bList = <any>o;
-			ctx.initComponentValues();
+			o.initComponentValues();
 		},
 
-		init: (o) => o.link<Option[]>((val) => {
-			const ctx: bList = <any>o;
-			return ctx.dataProvider ? ctx.value || [] : ctx.normalizeOptions(val);
-		})
+		init: (o) => o.link<Option[]>((val) => o.dataProvider ? o.value || [] : o.normalizeOptions(val))
 	})
 
 	value!: Option[];
@@ -129,24 +125,23 @@ export default class bList<T extends Dictionary = Dictionary> extends iData<T> {
 	 * @emits change(active: any)
 	 * @emits immediateChange(active: any)
 	 */
-	@system((o) => o.link((val) => {
+	@system<bList>((o) => o.link((val) => {
 		const
-			ctx: bList = <any>o,
 			beforeDataCreate = o.hook === 'beforeDataCreate';
 
 		if (val === undefined && beforeDataCreate) {
-			return ctx.activeStore;
+			return o.activeStore;
 		}
 
 		let
 			res;
 
-		if (ctx.multiple) {
+		if (o.multiple) {
 			const
 				objVal = Object.fromArray((<unknown[]>[]).concat(val || []));
 
-			if (Object.fastCompare(objVal, ctx.activeStore)) {
-				return ctx.activeStore;
+			if (Object.fastCompare(objVal, o.activeStore)) {
+				return o.activeStore;
 			}
 
 			res = objVal;
@@ -156,10 +151,10 @@ export default class bList<T extends Dictionary = Dictionary> extends iData<T> {
 		}
 
 		if (!beforeDataCreate) {
-			ctx.emit('change', res);
+			o.emit('change', res);
 		}
 
-		ctx.emit('immediateChange', res);
+		o.emit('immediateChange', res);
 		return res;
 	}))
 

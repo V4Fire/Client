@@ -21,19 +21,19 @@ import {
 
 } from 'core/component';
 
-export interface FieldWatcherObject<T = VueInterface, A = unknown, B = A> extends WatchOptions {
-	fn: string | WatchHandler<T, A, B>;
+export interface FieldWatcherObject<CTX extends VueInterface = VueInterface, A = unknown, B = A> extends WatchOptions {
+	fn: string | WatchHandler<CTX, A, B>;
 	provideArgs?: boolean;
 }
 
-export type FieldWatcher<T = VueInterface, A = unknown, B = A> =
+export type FieldWatcher<CTX extends VueInterface = VueInterface, A = unknown, B = A> =
 	string |
-	FieldWatcherObject<T, A, B> |
-	WatchHandler<T, A, B> |
-	Array<string | FieldWatcherObject<T, A, B> | WatchHandler<T, A, B>>;
+	FieldWatcherObject<CTX, A, B> |
+	WatchHandler<CTX, A, B> |
+	Array<string | FieldWatcherObject<CTX, A, B> | WatchHandler<CTX, A, B>>;
 
-export interface ComponentProp<T = VueInterface, A = unknown, B = A> extends PropOptions {
-	watch?: FieldWatcher<T, A, B>;
+export interface ComponentProp<CTX extends VueInterface = VueInterface, A = unknown, B = A> extends PropOptions {
+	watch?: FieldWatcher<CTX, A, B>;
 }
 
 export interface ComponentAccessor {
@@ -52,17 +52,17 @@ export const prop = paramsFactory<Function | ObjectConstructor | ComponentProp>(
 	return p;
 });
 
-export interface SystemField<T = VueInterface> {
+export interface SystemField<CTX extends VueInterface = VueInterface> {
 	atom?: boolean;
 	default?: unknown;
-	unique?: boolean | UniqueFieldFn<T>;
-	after?: string | string[];
-	init?: InitFieldFn<T>;
-	merge?: MergeFieldFn<T> | boolean;
+	unique?: boolean | UniqueFieldFn<CTX>;
+	after?: CanArray<string>;
+	init?: InitFieldFn<CTX>;
+	merge?: MergeFieldFn<CTX> | boolean;
 }
 
-export interface ComponentField<T = VueInterface, A = unknown, B = A> extends SystemField<T> {
-	watch?: FieldWatcher<T, A, B>;
+export interface ComponentField<CTX extends VueInterface = VueInterface, A = unknown, B = A> extends SystemField<CTX> {
+	watch?: FieldWatcher<CTX, A, B>;
 }
 
 /**
@@ -89,15 +89,15 @@ export const system = paramsFactory<InitFieldFn | SystemField>('systemFields', (
 	return p;
 });
 
-export type HookParams = {[hook in Hooks]?: string | string[]};
+export type HookParams = {[hook in Hooks]?: CanArray<string>};
 export type ComponentHooks = Hooks | Hooks[] | HookParams | HookParams[];
-export type MethodWatchers<T = VueInterface, A = unknown, B = A> =
+export type MethodWatchers<CTX extends VueInterface = VueInterface, A = unknown, B = A> =
 	string |
-	MethodWatcher<T, A, B> |
-	Array<string | MethodWatcher<T, A, B>>;
+	MethodWatcher<CTX, A, B> |
+	Array<string | MethodWatcher<CTX, A, B>>;
 
-export interface ComponentMethod<T = VueInterface, A = unknown, B = A> {
-	watch?: MethodWatchers<T, A, B>;
+export interface ComponentMethod<CTX extends VueInterface = VueInterface, A = unknown, B = A> {
+	watch?: MethodWatchers<CTX, A, B>;
 	watchParams?: WatchOptions;
 	hook?: ComponentHooks;
 }
@@ -126,7 +126,7 @@ export const watch = paramsFactory<FieldWatcher | MethodWatchers>(null, (watch) 
  * @param cluster - property cluster
  * @param [transformer] - transformer for parameters
  */
-export function paramsFactory<T>(
+export function paramsFactory<T = unknown>(
 	cluster: Nullable<string>,
 	transformer?: (params: any, cluster: string) => Dictionary<any>
 ): (params?: T) => Function {

@@ -11,7 +11,7 @@ import { statuses } from 'super/i-block/modules/const';
 
 import { AsyncOpts } from 'core/async';
 import { WatchOptions } from 'vue';
-import { initEvent, ModVal, InitFieldFn as BaseInitFieldFn } from 'core/component';
+import { initEvent, ModVal, InitFieldFn as BaseInitFieldFn, VueInterface } from 'core/component';
 
 import {
 
@@ -31,62 +31,74 @@ import {
 
 } from 'core/component/decorators/base';
 
-export interface InitFieldFn<T extends unknown = iBlockDecorator> extends BaseInitFieldFn<T> {}
+export interface InitFieldFn<T extends VueInterface = VueInterface> extends BaseInitFieldFn<T & iBlockDecorator> {}
 
 export type MethodWatchers<
-	T = iBlockDecorator,
+	CTX extends VueInterface = VueInterface,
 	A = unknown,
 	B = A
-> = BaseMethodWatchers<T, A, B>;
+> = BaseMethodWatchers<CTX & iBlockDecorator, A, B>;
 
 export type FieldWatcher<
-	T = iBlockDecorator,
+	CTX extends VueInterface = VueInterface,
 	A = unknown,
 	B = A
-> = BaseFieldWatcher<T, A, B>;
+> = BaseFieldWatcher<CTX & iBlockDecorator, A, B>;
 
 export interface ComponentProp<
-	T = iBlockDecorator,
+	CTX extends VueInterface = VueInterface,
 	A = unknown,
 	B = A
-> extends BaseComponentProp<T, A, B> {}
+> extends BaseComponentProp<CTX & iBlockDecorator, A, B> {}
 
 export interface ComponentField<
-	T = iBlockDecorator,
+	CTX extends VueInterface = VueInterface,
 	A = unknown,
 	B = A
-> extends BaseComponentField<T, A, B> {}
+> extends BaseComponentField<CTX & iBlockDecorator, A, B> {}
 
 /**
  * @see core/component/decorators/base.ts
  * @override
  */
-export const p = pDecorator as (params?: ComponentProp | ComponentField | ComponentMethod | ComponentAccessor) =>
-	Function;
+export const p = pDecorator as <CTX extends VueInterface = VueInterface, A = unknown, B = A>(
+	params?: ComponentProp<CTX, A, B> | ComponentField<CTX, A, B> | ComponentMethod<CTX, A, B> | ComponentAccessor
+) => Function;
 
 /**
  * @see core/component/decorators/base.ts
  * @override
  */
-export const prop = propDecorator as (params?: Function | ObjectConstructor | ComponentProp) => Function;
+export const prop = propDecorator as <CTX extends VueInterface = VueInterface, A = unknown, B = A>(
+	params?: Function | ObjectConstructor | ComponentProp<CTX, A, B>
+) => Function;
 
 /**
  * @see core/component/decorators/base.ts
  * @override
  */
-export const field = fieldDecorator as (params?: InitFieldFn | ComponentField) => Function;
+export const field = fieldDecorator as <CTX extends VueInterface = VueInterface, A = unknown, B = A>(
+	params?: InitFieldFn<CTX> | ComponentField<CTX, A, B>
+) => Function;
 
 /**
  * @see core/component/decorators/base.ts
  * @override
  */
-export const system = systemDecorator as (params?: InitFieldFn | ComponentField) => Function;
+export const system = systemDecorator as <CTX extends VueInterface = VueInterface, A = unknown, B = A>(
+	params?: InitFieldFn<CTX> | ComponentField<CTX, A, B>
+) => Function;
 
 /**
  * @see core/component/decorators/base.ts
  * @override
  */
-export const watch = watchDecorator as (params?: FieldWatcher | MethodWatchers) => Function;
+export const watch = watchDecorator as <CTX extends VueInterface = VueInterface, A = unknown, B = A>(
+	params?: FieldWatcher<CTX, A, B> | MethodWatchers<CTX, A, B>
+) => Function;
+
+export type BindModCb<V = unknown, R = unknown, CTX extends VueInterface = VueInterface> =
+	((value: V, ctx: CTX) => R) | Function;
 
 /**
  * Binds a modifier to the specified parameter
@@ -96,16 +108,16 @@ export const watch = watchDecorator as (params?: FieldWatcher | MethodWatchers) 
  * @param [converter] - converter function
  * @param [opts] - watch options
  */
-export function bindModTo<T = iBlockDecorator>(
+export function bindModTo<V = unknown, R = unknown, CTX extends VueInterface = VueInterface>(
 	param: string,
-	converter: ((value: unknown, ctx: T) => unknown) | WatchOptions = Boolean,
+	converter: BindModCb | WatchOptions = Boolean,
 	opts?: WatchOptions
 ): Function {
 	return (target, key) => {
 		initEvent.once('constructor', ({meta}) => {
 			meta.hooks.created.push({
-				fn(this: iBlockDecorator): void {
-					this.bindModTo<T>(key, param, converter, opts);
+				fn(this: CTX & iBlockDecorator): void {
+					this.bindModTo(key, param, converter, opts);
 				}
 			});
 		});
@@ -122,11 +134,15 @@ type EventType = 'on' | 'once';
  * @param [value]
  * @param [method]
  */
-export function mod(name: string, value: ModVal = '*', method: EventType = 'on'): Function {
+export function mod<T extends VueInterface = VueInterface>(
+	name: string,
+	value: ModVal = '*',
+	method: EventType = 'on'
+): Function {
 	return (target, key, descriptor) => {
 		initEvent.once('constructor', ({meta}) => {
 			meta.hooks.beforeCreate.push({
-				fn(this: iBlockDecorator): void {
+				fn(this: T & iBlockDecorator): void {
 					this.localEvent[method](`block.mod.set.${name}.${value}`, descriptor.value.bind(this));
 				}
 			});
@@ -142,11 +158,15 @@ export function mod(name: string, value: ModVal = '*', method: EventType = 'on')
  * @param [value]
  * @param [method]
  */
-export function removeMod(name: string, value: ModVal = '*', method: EventType = 'on'): Function {
+export function removeMod<T extends VueInterface = VueInterface>(
+	name: string,
+	value: ModVal = '*',
+	method: EventType = 'on'
+): Function {
 	return (target, key, descriptor) => {
 		initEvent.once('constructor', ({meta}) => {
 			meta.hooks.beforeCreate.push({
-				fn(this: iBlockDecorator): void {
+				fn(this: T & iBlockDecorator): void {
 					this.localEvent[method](`block.mod.remove.${name}.${value}`, descriptor.value.bind(this));
 				}
 			});
@@ -163,11 +183,16 @@ export function removeMod(name: string, value: ModVal = '*', method: EventType =
  * @param [value]
  * @param [method]
  */
-export function elMod(elName: string, modName: string, value: ModVal = '*', method: EventType = 'on'): Function {
+export function elMod<T extends VueInterface = VueInterface>(
+	elName: string,
+	modName: string,
+	value: ModVal = '*',
+	method: EventType = 'on'
+): Function {
 	return (target, key, descriptor) => {
 		initEvent.once('constructor', ({meta}) => {
 			meta.hooks.beforeCreate.push({
-				fn(this: iBlockDecorator): void {
+				fn(this: T & iBlockDecorator): void {
 					this.localEvent[method](`el.mod.set.${elName}.${modName}.${value}`, descriptor.value.bind(this));
 				}
 			});
@@ -184,11 +209,16 @@ export function elMod(elName: string, modName: string, value: ModVal = '*', meth
  * @param [value]
  * @param [method]
  */
-export function removeElMod(elName: string, modName: string, value: ModVal = '*', method: EventType = 'on'): Function {
+export function removeElMod<T extends VueInterface = VueInterface>(
+	elName: string,
+	modName: string,
+	value: ModVal = '*',
+	method: EventType = 'on'
+): Function {
 	return (target, key, descriptor) => {
 		initEvent.once('constructor', ({meta}) => {
 			meta.hooks.beforeCreate.push({
-				fn(this: iBlockDecorator): void {
+				fn(this: T & iBlockDecorator): void {
 					this.localEvent[method](`el.mod.remove.${elName}.${modName}.${value}`, descriptor.value.bind(this));
 				}
 			});
@@ -217,7 +247,10 @@ export function wait(status: number | string | Statuses, params?: WaitOpts | Fun
  *   *) [params.fn] - callback function
  *   *) [params.defer] - if true, then the function will always return a promise
  */
-export function wait<T>(status: number | string | Statuses | WaitOpts, params?: WaitOpts | Function): Function {
+export function wait<T extends VueInterface = VueInterface>(
+	status: number | string | Statuses | WaitOpts,
+	params?: WaitOpts | Function
+): Function {
 	let
 		ctx;
 
@@ -252,7 +285,7 @@ export function wait<T>(status: number | string | Statuses | WaitOpts, params?: 
 	const
 		isDecorator = !Object.isFunction(handler);
 
-	function wrapper(this: iBlockDecorator): CanUndef<CanPromise<T>> {
+	function wrapper(this: T & iBlockDecorator): CanUndef<CanPromise<T>> {
 		const
 			getRoot = () => ctx ? this.getField(ctx) : this,
 			root = getRoot(),

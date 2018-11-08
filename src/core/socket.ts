@@ -6,7 +6,6 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-/// <reference types="node"/>
 /// <reference types="socket.io-client"/>
 
 import config from 'config';

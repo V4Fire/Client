@@ -188,19 +188,16 @@ export default class bCalendar<
 	protected directions: Directions[] = ['right', 'left'];
 
 	/** @override */
-	@field((o) => o.link<V>((val) => {
-		const ctx: bCalendar = <any>o;
-		return Object.isArray(val) ? val : (<any[]>[]).concat(ctx.initDefaultValue(val) || []);
-	}))
+	@field<bCalendar>((o) => o.link<V>((val) =>
+		Object.isArray(val) ? val : (<any[]>[]).concat(o.initDefaultValue(val) || [])))
 
 	protected valueStore!: V;
 
 	/**
 	 * Date pointer store
 	 */
-	@field((o) => o.link<CanArray<Date>>('valueProp', (val = new Date()) => {
+	@field<bCalendar>((o) => o.link<CanArray<Date>>('valueProp', (val = new Date()) => {
 		const
-			ctx: bCalendar = <any>o,
 			prop = Object.isArray(val) ? val : [val];
 
 		const d = prop.map((v: Date, index) =>
@@ -212,17 +209,17 @@ export default class bCalendar<
 			})
 		);
 
-		if (ctx.pointerStore && d.isEqual(ctx.pointerStore)) {
-			return ctx.pointerStore;
+		if (o.pointerStore && d.isEqual(o.pointerStore)) {
+			return o.pointerStore;
 		}
 
-		if (ctx.shown && ctx.pointerStore) {
+		if (o.shown && o.pointerStore) {
 			const
-				oldMonth = ctx.pointerStore[0].getMonth(),
+				oldMonth = o.pointerStore[0].getMonth(),
 				newMonth = d[0].getMonth();
 
 			if (oldMonth !== newMonth) {
-				ctx.runMonthSwitching(<0 | 1>Number(newMonth > oldMonth));
+				o.runMonthSwitching(<0 | 1>Number(newMonth > oldMonth));
 			}
 		}
 

@@ -373,7 +373,7 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 	 * @param data
 	 * @param [params]
 	 */
-	post<T>(data?: RequestBody, params?: CreateRequestOptions<T>): Promise<CanUndef<T>> {
+	post<T = unknown>(data?: RequestBody, params?: CreateRequestOptions<T>): Promise<CanUndef<T>> {
 		const
 			args = arguments.length > 0 ? [data, params] : this.getDefaultRequestParams('post');
 
@@ -390,7 +390,7 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 	 * @param data
 	 * @param [params]
 	 */
-	add<T>(data?: RequestBody, params?: CreateRequestOptions<T>): Promise<CanUndef<T>> {
+	add<T = unknown>(data?: RequestBody, params?: CreateRequestOptions<T>): Promise<CanUndef<T>> {
 		const
 			args = arguments.length > 0 ? [data, params] : this.getDefaultRequestParams('add');
 
@@ -407,7 +407,7 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 	 * @param [data]
 	 * @param [params]
 	 */
-	upd<T>(data?: RequestBody, params?: CreateRequestOptions<T>): Promise<CanUndef<T>> {
+	upd<T = unknown>(data?: RequestBody, params?: CreateRequestOptions<T>): Promise<CanUndef<T>> {
 		const
 			args = arguments.length > 0 ? [data, params] : this.getDefaultRequestParams('upd');
 
@@ -424,7 +424,7 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 	 * @param [data]
 	 * @param [params]
 	 */
-	del<T>(data?: RequestBody, params?: CreateRequestOptions<T>): Promise<CanUndef<T>> {
+	del<T = unknown>(data?: RequestBody, params?: CreateRequestOptions<T>): Promise<CanUndef<T>> {
 		const
 			args = arguments.length > 0 ? [data, params] : this.getDefaultRequestParams('del');
 
@@ -475,7 +475,7 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 	 * Converts the specified data to the internal component format and returns it
 	 * @param data
 	 */
-	protected convertDBToComponent<O>(data: unknown): O | T {
+	protected convertDBToComponent<O = unknown>(data: unknown): O | T {
 		return this.componentConverter ? this.componentConverter(Object.isTable(data) ? data.valueOf() : data) : <O | T>data;
 	}
 
@@ -725,7 +725,7 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 	 * @param [data]
 	 * @param [params]
 	 */
-	protected createRequest<T>(
+	protected createRequest<T = unknown>(
 		method: ModelMethods,
 		data?: RequestBody,
 		params?: CreateRequestOptions<T>
@@ -772,7 +772,7 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 	 * @param err
 	 * @param retry - retry function
 	 */
-	protected onRequestError<T>(err: Error | RequestError, retry: () => Promise<CanUndef<T>>): void {
+	protected onRequestError<T = unknown>(err: Error | RequestError, retry: () => Promise<CanUndef<T>>): void {
 		this.emit('error', err, retry);
 	}
 

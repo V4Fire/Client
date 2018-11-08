@@ -49,7 +49,7 @@ export const
 	components = new WeakMap();
 
 ((initEventOnce) => {
-	initEvent.once = function (event: string | string[], listener: Listener): EventEmitter {
+	initEvent.once = function (event: CanArray<string>, listener: Listener): EventEmitter {
 		const
 			events = (<string[]>[]).concat(event);
 
@@ -89,15 +89,15 @@ export interface ComponentParams {
 	inheritMods?: boolean;
 }
 
-export interface WatchHandler<T = VueInterface, A = unknown, B = A> {
+export interface WatchHandler<CTX extends VueInterface = VueInterface, A = unknown, B = A> {
 	(a: A, b: B): unknown;
 	(...args: A[]): unknown;
-	(ctx: T, a: A, b: B): unknown;
-	(ctx: T, ...args: A[]): unknown;
+	(ctx: CTX, a: A, b: B): unknown;
+	(ctx: CTX, ...args: A[]): unknown;
 }
 
-export interface FieldWatcher<T = VueInterface, A = unknown, B = A> extends WatchOptions {
-	fn: WatchHandler<T, A, B>;
+export interface FieldWatcher<CTX extends VueInterface = VueInterface, A = unknown, B = A> extends WatchOptions {
+	fn: WatchHandler<CTX, A, B>;
 	provideArgs?: boolean;
 }
 
@@ -106,19 +106,19 @@ export interface ComponentProp extends PropOptions {
 	default?: unknown;
 }
 
-export interface InitFieldFn<T = VueInterface> {
+export interface InitFieldFn<T extends VueInterface = VueInterface> {
 	(ctx: T, data: Dictionary): unknown;
 }
 
-export interface MergeFieldFn<T = VueInterface> {
+export interface MergeFieldFn<T extends VueInterface = VueInterface> {
 	(ctx: T, oldCtx: T, field: string, link: CanUndef<string>): unknown;
 }
 
-export interface UniqueFieldFn<T = VueInterface> {
+export interface UniqueFieldFn<T extends VueInterface = VueInterface> {
 	(ctx: T, oldCtx: T): unknown;
 }
 
-export interface SystemField<T = VueInterface> {
+export interface SystemField<T extends VueInterface = VueInterface> {
 	atom?: boolean;
 	default?: unknown;
 	unique?: boolean | UniqueFieldFn<T>;
@@ -127,38 +127,42 @@ export interface SystemField<T = VueInterface> {
 	merge?: InitFieldFn<T>;
 }
 
-export interface ComponentField<T = VueInterface> extends SystemField<T> {
+export interface ComponentField<T extends VueInterface = VueInterface> extends SystemField<T> {
 	watchers: Map<string | Function, FieldWatcher>;
 }
 
-export interface SystemField<T = VueInterface> {
+export interface SystemField<T extends VueInterface = VueInterface> {
 	default?: unknown;
 	init?: InitFieldFn<T>;
 }
 
-export interface WatchWrapper<T = VueInterface, A = unknown, B = A> {
-	(ctx: T, handler: WatchHandler<T, A, B>): CanPromise<WatchHandler<T, A, B> | Function>;
+export interface WatchWrapper<CTX extends VueInterface = VueInterface, A = unknown, B = A> {
+	(ctx: CTX, handler: WatchHandler<CTX, A, B>): CanPromise<WatchHandler<CTX, A, B> | Function>;
 }
 
-export interface WatchOptionsWithHandler<T = VueInterface, A = unknown, B = A> extends WatchOptions {
+export interface WatchOptionsWithHandler<
+	CTX extends VueInterface = VueInterface,
+	A = unknown,
+	B = A
+> extends WatchOptions {
 	group?: string;
 	single?: boolean;
 	options?: AddEventListenerOptions;
 	method?: string;
-	args?: unknown | unknown[];
+	args?: CanArray<unknown>;
 	provideArgs?: boolean;
-	wrapper?: WatchWrapper<T, A, B>;
-	handler: string | WatchHandler<T, A, B>;
+	wrapper?: WatchWrapper<CTX, A, B>;
+	handler: string | WatchHandler<CTX, A, B>;
 }
 
-export interface MethodWatcher<T = VueInterface, A = unknown, B = A> extends WatchOptions {
+export interface MethodWatcher<CTX extends VueInterface = VueInterface, A = unknown, B = A> extends WatchOptions {
 	field?: string;
 	group?: string;
 	single?: boolean;
 	options?: AddEventListenerOptions;
-	args?: unknown | unknown[];
+	args?: CanArray<unknown>;
 	provideArgs?: boolean;
-	wrapper?: WatchWrapper<T, A, B>;
+	wrapper?: WatchWrapper<CTX, A, B>;
 }
 
 export type Hooks =

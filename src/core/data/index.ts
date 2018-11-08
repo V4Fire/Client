@@ -478,7 +478,7 @@ export default class Provider {
 	 * @param [query]
 	 * @param [opts]
 	 */
-	get<T>(query?: RequestQuery, opts?: CreateRequestOptions<T>): RequestResponse {
+	get<T = unknown>(query?: RequestQuery, opts?: CreateRequestOptions<T>): RequestResponse {
 		if (this.baseGetURL && !this.advURL) {
 			this.base(this.baseGetURL);
 		}
@@ -508,7 +508,7 @@ export default class Provider {
 	 * @param [query]
 	 * @param [opts]
 	 */
-	peek<T>(query?: RequestQuery, opts?: CreateRequestOptions<T>): RequestResponse {
+	peek<T = unknown>(query?: RequestQuery, opts?: CreateRequestOptions<T>): RequestResponse {
 		if (this.basePeekURL && !this.advURL) {
 			this.base(this.basePeekURL);
 		}
@@ -537,7 +537,7 @@ export default class Provider {
 	 * @param [body]
 	 * @param [opts]
 	 */
-	post<T>(body?: RequestBody, opts?: CreateRequestOptions<T>): RequestResponse {
+	post<T = unknown>(body?: RequestBody, opts?: CreateRequestOptions<T>): RequestResponse {
 		const
 			url = this.url(),
 			eventName = this.name(),
@@ -562,7 +562,7 @@ export default class Provider {
 	 * @param [body]
 	 * @param [opts]
 	 */
-	add<T>(body?: RequestBody, opts?: CreateRequestOptions<T>): RequestResponse {
+	add<T = unknown>(body?: RequestBody, opts?: CreateRequestOptions<T>): RequestResponse {
 		if (this.baseAddURL && !this.advURL) {
 			this.base(this.baseAddURL);
 		}
@@ -585,7 +585,7 @@ export default class Provider {
 	 * @param [body]
 	 * @param [opts]
 	 */
-	upd<T>(body?: RequestBody, opts?: CreateRequestOptions<T>): RequestResponse {
+	upd<T = unknown>(body?: RequestBody, opts?: CreateRequestOptions<T>): RequestResponse {
 		if (this.baseUpdURL && !this.advURL) {
 			this.base(this.baseUpdURL);
 		}
@@ -608,7 +608,7 @@ export default class Provider {
 	 * @param [body]
 	 * @param [opts]
 	 */
-	del<T>(body?: RequestBody, opts?: CreateRequestOptions<T>): RequestResponse {
+	del<T = unknown>(body?: RequestBody, opts?: CreateRequestOptions<T>): RequestResponse {
 		if (this.baseDelURL && !this.advURL) {
 			this.base(this.baseDelURL);
 		}

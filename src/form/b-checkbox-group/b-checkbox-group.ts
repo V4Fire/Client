@@ -54,12 +54,9 @@ export default class bCheckboxGroup<T extends Dictionary = Dictionary> extends i
 	/**
 	 * Checkboxes store
 	 */
-	@field((o) => o.link((val) => {
-		const
-			ctx: bCheckboxGroup = <any>o;
-
-		if (ctx.dataProvider) {
-			return ctx.options || [];
+	@field<bCheckboxGroup>((o) => o.link((val) => {
+		if (o.dataProvider) {
+			return o.options || [];
 		}
 
 		return val;
@@ -82,13 +79,13 @@ export default class bCheckboxGroup<T extends Dictionary = Dictionary> extends i
 	}
 
 	/** @override */
-	get value(): string | string[] | undefined {
+	get value(): CanUndef<CanArray<string>> {
 		const v = this.getField('valueStore');
 		return this.multiple ? Object.keys(v) : v;
 	}
 
 	/** @override */
-	set value(value: string | string[] | undefined) {
+	set value(value: CanUndef<CanArray<string>>) {
 		this.setField('valueStore', value && Object.isArray(value) ? Object.fromArray(value) : value);
 	}
 
@@ -119,12 +116,8 @@ export default class bCheckboxGroup<T extends Dictionary = Dictionary> extends i
 	};
 
 	/** @override */
-	@field((o) => o.link((val) => {
-		const ctx: bCheckboxGroup = <any>o;
-		return ctx.multiple && Object.fromArray(val) || val;
-	}))
-
-	protected valueStore: Dictionary<boolean> | string | undefined;
+	@field<bCheckboxGroup>((o) => o.link((val) => o.multiple && Object.fromArray(val) || val))
+	protected valueStore: CanUndef<Dictionary<boolean> | string>;
 
 	/**
 	 * Sets a checkbox value to the group
@@ -132,7 +125,7 @@ export default class bCheckboxGroup<T extends Dictionary = Dictionary> extends i
 	 * @param name - checkbox name
 	 * @param value - checkbox value
 	 */
-	setValue(name: string, value: boolean): boolean | undefined {
+	setValue(name: string, value: boolean): CanUndef<boolean> {
 		if (!this.multiple) {
 			this.setField('valueStore', value ? name : undefined);
 			return;
@@ -192,7 +185,7 @@ export default class bCheckboxGroup<T extends Dictionary = Dictionary> extends i
 	}
 
 	/** @override */
-	protected initRemoteData(): Option[] | undefined {
+	protected initRemoteData(): CanUndef<Option[]> {
 		if (!this.db) {
 			return;
 		}
@@ -242,7 +235,7 @@ export default class bCheckboxGroup<T extends Dictionary = Dictionary> extends i
 	 *
 	 * @param el
 	 * @param value
-	 * @emits actionChange(value: Value | undefined)
+	 * @emits actionChange(value: CanUndef<Value>)
 	 */
 	protected onActionChange(el: bCheckbox, value: boolean): void {
 		if (el.name) {
