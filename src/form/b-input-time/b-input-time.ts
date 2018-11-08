@@ -101,9 +101,8 @@ export default class bInputTime<
 	/** @override */
 	@field<bInputTime>({
 		after: 'pointerStore',
-		init: (o, data) => o.link<V>((val) => {
-			return o.getTimeFormat(o.getNPointer(val, <any>('pointerStore' in o ? o.pointerStore : data.pointerStore)));
-		})
+		init: (o, data) => o.link<V>((val) =>
+			o.getTimeFormat(o.getNPointer(val, ('pointerStore' in o ? o.pointerStore : <Date>data.pointerStore))))
 	})
 
 	protected valueStore!: V;
