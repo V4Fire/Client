@@ -8,7 +8,7 @@
 
 import $C = require('collection.js');
 import statusCodes from 'core/status-codes';
-import Provider, { provider, Middlewares, RequestResponse, RequestFactory, Response } from 'core/data';
+import Provider, { provider, Middlewares, RequestResponse, RequestFunctionResponse, Response } from 'core/data';
 import * as s from 'core/session';
 export * from 'core/data';
 
@@ -41,7 +41,7 @@ export default class Session extends Provider {
 
 	/** @override */
 	static readonly middlewares: Middlewares = {
-		// tslint:disable-next-line
+		// tslint:disable-next-line:typedef
 		async addSession(this: Session, {opts}) {
 			if (opts.api) {
 				const h = await this.getAuthParams();
@@ -51,7 +51,7 @@ export default class Session extends Provider {
 	};
 
 	/** @override */
-	async getAuthParams(params?: Dictionary | undefined): Promise<Dictionary> {
+	async getAuthParams(params?: CanUndef<Dictionary>): Promise<Dictionary> {
 		const
 			session = await s.get();
 
@@ -62,9 +62,13 @@ export default class Session extends Provider {
 	}
 
 	/** @override */
-	protected updateRequest(url: string, factory: RequestFactory): RequestResponse;
-	protected updateRequest(url: string, event: string, factory: RequestFactory): RequestResponse;
-	protected updateRequest(url: string, event: string | RequestFactory, factory?: RequestFactory): RequestResponse {
+	protected updateRequest(url: string, factory: RequestFunctionResponse): RequestResponse;
+	protected updateRequest(url: string, event: string, factory: RequestFunctionResponse): RequestResponse;
+	protected updateRequest(
+		url: string,
+		event: string | RequestFunctionResponse,
+		factory?: RequestFunctionResponse
+	): RequestResponse {
 		const
 			// @ts-ignore
 			req = super.updateRequest(url, event, factory),
@@ -85,12 +89,12 @@ export default class Session extends Provider {
 		req.then(update);
 		return req.catch(async (err) => {
 			const
-				response = <Response | undefined>$C(err).get('details.response'),
+				response = <CanUndef<Response>>$C(err).get('details.response'),
 				{auth, csrf} = await session;
 
 			if (response) {
 				const
-					r = () => this.updateRequest(url, <string>event, <RequestFactory>factory);
+					r = () => this.updateRequest(url, <string>event, <RequestFunctionResponse>factory);
 
 				if (response.status === statusCodes.UNAUTHORIZED) {
 					if (!await s.match(auth, csrf)) {

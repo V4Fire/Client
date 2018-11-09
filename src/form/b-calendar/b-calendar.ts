@@ -7,12 +7,16 @@
  */
 
 // tslint:disable:max-file-line-count
+
 import $C = require('collection.js');
 import symbolGenerator from 'core/symbol';
 import bInputTime from 'form/b-input-time/b-input-time';
 import iInput, { component, prop, field, system, watch, p, ModsDecl } from 'super/i-input/i-input';
-
 export * from 'super/i-input/i-input';
+
+export type Value = Date[];
+export type FormValue = CanArray<Date>;
+
 export interface Day {
 	active: boolean;
 	disabled: boolean;
@@ -22,7 +26,6 @@ export interface Day {
 	text: string;
 }
 
-export type Value = Date | Date[];
 export type Range = string | number | Date;
 export type Directions = 'right' | 'left';
 
@@ -30,13 +33,22 @@ export const
 	$$ = symbolGenerator();
 
 @component()
-export default class bCalendar<T extends Dictionary = Dictionary> extends iInput<T> {
+export default class bCalendar<
+	V extends Value = Value,
+	FV extends FormValue = FormValue,
+	D extends Dictionary = Dictionary
+> extends iInput<V, FV, D> {
 	/** @override */
-	@prop({default: () => new Date()})
-	readonly valueProp!: Value;
+	@prop({type: [Array, Date], required: false})
+	// @ts-ignore
+	readonly valueProp?: CanArray<Date>;
 
 	/** @override */
-	@prop({default(): Value {
+	@prop({type: [Array, Date], required: false})
+	readonly defaultProp?: V;
+
+	/** @override */
+	@prop({default(): FV {
 		return this.stringInput ? this.value[0] : this.value;
 	}})
 
@@ -62,15 +74,15 @@ export default class bCalendar<T extends Dictionary = Dictionary> extends iInput
 
 	/** @override */
 	@p({cache: false})
-	get value(): Date[] {
-		return Object.fastClone(this.getField('valueStore'));
+	get value(): V {
+		return Object.fastClone(<V>this.getField('valueStore'));
 	}
 
 	/** @override */
-	set value(value: Date[]) {
+	set value(value: V) {
 		const
 			{min, max} = this,
-			store = this.getField('valueStore');
+			store = <V>this.getField('valueStore');
 
 		$C(value).forEach((v, i) => {
 			if (min && min.isAfter(v)) {
@@ -86,11 +98,16 @@ export default class bCalendar<T extends Dictionary = Dictionary> extends iInput
 		});
 	}
 
+	/** @override */
+	get default(): V {
+		return <V>(<any[]>[]).concat(this.defaultProp || new Date());
+	}
+
 	/**
 	 * Date pointer
 	 */
 	get pointer(): Date[] {
-		return Object.fastClone(this.getField('pointerStore'));
+		return Object.fastClone(<Date[]>this.getField('pointerStore'));
 	}
 
 	/**
@@ -105,7 +122,7 @@ export default class bCalendar<T extends Dictionary = Dictionary> extends iInput
 	 * Minimum date value
 	 */
 	@p({cache: false})
-	get min(): Date | undefined {
+	get min(): CanUndef<Date> {
 		return this.minProp != null ? Date.create(this.minProp) : undefined;
 	}
 
@@ -113,7 +130,7 @@ export default class bCalendar<T extends Dictionary = Dictionary> extends iInput
 	 * Maximum date value
 	 */
 	@p({cache: false})
-	get max(): Date | undefined {
+	get max(): CanUndef<Date> {
 		return this.maxProp != null ? Date.create(this.maxProp) : undefined;
 	}
 
@@ -121,15 +138,14 @@ export default class bCalendar<T extends Dictionary = Dictionary> extends iInput
 	 * If true, then the component has a datepicker range
 	 */
 	get dayRange(): boolean {
-		const v = this.valueProp;
-		return Object.isArray(v) && v.length > 1;
+		return this.value.length > 1;
 	}
 
 	/**
 	 * If true, then the component has a time range
 	 */
 	get timeRange(): boolean {
-		const v = this.valueProp;
+		const v = this.value;
 		return this.dayRange && v[0].short() === v[1].short();
 	}
 
@@ -172,19 +188,16 @@ export default class bCalendar<T extends Dictionary = Dictionary> extends iInput
 	protected directions: Directions[] = ['right', 'left'];
 
 	/** @override */
-	@field((o) => o.link((val) => {
-		const ctx: bCalendar = <any>o;
-		return Object.isArray(val) ? val : [].concat(ctx.initDefaultValue(val) || []);
-	}))
+	@field<bCalendar>((o) => o.link<V>((val) =>
+		Object.isArray(val) ? val : (<any[]>[]).concat(o.initDefaultValue(val) || [])))
 
-	protected valueStore!: Date[];
+	protected valueStore!: V;
 
 	/**
 	 * Date pointer store
 	 */
-	@field((o) => o.link('valueProp', (val = new Date()) => {
+	@field<bCalendar>((o) => o.link<CanArray<Date>>('valueProp', (val = new Date()) => {
 		const
-			ctx: bCalendar = <any>o,
 			prop = Object.isArray(val) ? val : [val];
 
 		const d = prop.map((v: Date, index) =>
@@ -196,17 +209,17 @@ export default class bCalendar<T extends Dictionary = Dictionary> extends iInput
 			})
 		);
 
-		if (ctx.pointerStore && d.isEqual(ctx.pointerStore)) {
-			return ctx.pointerStore;
+		if (o.pointerStore && d.isEqual(o.pointerStore)) {
+			return o.pointerStore;
 		}
 
-		if (ctx.shown && ctx.pointerStore) {
+		if (o.shown && o.pointerStore) {
 			const
-				oldMonth = ctx.pointerStore[0].getMonth(),
+				oldMonth = o.pointerStore[0].getMonth(),
 				newMonth = d[0].getMonth();
 
 			if (oldMonth !== newMonth) {
-				ctx.runMonthSwitching(<0 | 1>Number(newMonth > oldMonth));
+				o.runMonthSwitching(<0 | 1>Number(newMonth > oldMonth));
 			}
 		}
 
@@ -402,7 +415,7 @@ export default class bCalendar<T extends Dictionary = Dictionary> extends iInput
 	 *
 	 * @param date - new date value
 	 * @param index - selected item index
-	 * @emits actionChange(value: Value | undefined)
+	 * @emits actionChange(value: V)
 	 */
 	protected setDate(date: Date, index?: number): Date[] {
 		const
@@ -410,7 +423,7 @@ export default class bCalendar<T extends Dictionary = Dictionary> extends iInput
 			next = Number(!now);
 
 		let
-			selectedDays = Object.isArray(this.value) ? this.value : [this.value];
+			selectedDays = <V>(Object.isArray(this.value) ? this.value : [this.value]);
 
 		if (selectedDays.length === 2) {
 			selectedDays[now] = date;
@@ -441,10 +454,10 @@ export default class bCalendar<T extends Dictionary = Dictionary> extends iInput
 	 *
 	 * @param days - number of switching days
 	 * @param index - calendar index
-	 * @emits actionChange(value?: Value | undefined)
+	 * @emits actionChange(value: V)
 	 */
 	protected async onSwitchDay(days: number, index: number = 0): Promise<void> {
-		const selectedDay = Object.isArray(this.value) ? this.value : [this.value];
+		const selectedDay = <V>(Object.isArray(this.value) ? this.value : [this.value]);
 		selectedDay[index] = selectedDay[index].addDays(days);
 
 		this.value = selectedDay;
@@ -481,7 +494,7 @@ export default class bCalendar<T extends Dictionary = Dictionary> extends iInput
 	 * Handler: day select
 	 *
 	 * @param e
-	 * @emits actionChange(value?: Value | undefined)
+	 * @emits actionChange(value: V)
 	 */
 	@watch({field: '?$el:click', wrapper: (o, cb) => o.delegateElement('day', cb)})
 	protected onDaySelect(e: Event): void {

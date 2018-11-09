@@ -13,11 +13,20 @@ import $C = require('collection.js');
 import log from 'core/log';
 import Async from 'core/async';
 
-import Vue, { ComponentOptions, FunctionalComponentOptions } from 'vue';
-import { ComponentField, ComponentMeta, VueInterface } from 'core/component';
+import Vue, { PropOptions, ComponentOptions, FunctionalComponentOptions } from 'vue';
 import { GLOBAL } from 'core/const/links';
+import {
 
-export interface ComponentConstructor<T = any> {
+	SystemField,
+	ComponentField,
+	ComponentProp,
+	ComponentMeta,
+	WatchOptionsWithHandler,
+	VueInterface
+
+} from 'core/component';
+
+export interface ComponentConstructor<T = unknown> {
 	new(): T;
 }
 
@@ -109,10 +118,12 @@ export function getComponent(
 					key = keys[i],
 					el = o[key];
 
-				Object.defineProperty(ctx, keys[i], {
-					get: el.get,
-					set: el.set
-				});
+				if (el) {
+					Object.defineProperty(ctx, keys[i], {
+						get: el.get,
+						set: el.set
+					});
+				}
 			}
 
 			initDataObject(
@@ -252,14 +263,14 @@ export function getFunctionalComponent(
 		const
 			key = keys[i],
 			el = o[key],
-			prop = props[key] = {...el};
+			prop: PropOptions = props[key] = {...el};
 
-		if (Object.isFunction(el.default) && !el.default[defaultWrapper]) {
+		if (el && Object.isFunction(el.default) && !el.default[defaultWrapper]) {
 			prop.default = undefined;
 		}
 	}
 
-	return <any>{
+	return <ReturnType<typeof getFunctionalComponent>>{
 		props,
 		name: meta.name,
 		functional: true,
@@ -279,13 +290,23 @@ export function createMeta(parent: ComponentMeta): ComponentMeta {
 	});
 
 	for (let o = meta.hooks, p = parent.hooks, keys = Object.keys(p), i = 0; i < keys.length; i++) {
-		const key = keys[i];
-		o[key] = p[key].slice();
+		const
+			key = keys[i],
+			v = p[key];
+
+		if (v) {
+			o[key] = v.slice();
+		}
 	}
 
 	for (let o = meta.watchers, p = parent.watchers, keys = Object.keys(p), i = 0; i < keys.length; i++) {
-		const key = keys[i];
-		o[key] = p[key].slice();
+		const
+			key = keys[i],
+			v = p[key];
+
+		if (v) {
+			o[key] = v.slice();
+		}
 	}
 
 	return meta;
@@ -344,7 +365,8 @@ export function bindWatchers(ctx: VueInterface, eventCtx: VueInterface = ctx): v
 		if (
 			isBeforeCreate && !onBeforeCreate ||
 			isCreated && (onMounted || onBeforeCreate) ||
-			isMounted && !onMounted
+			isMounted && !onMounted ||
+			!watchers
 		) {
 			continue;
 		}
@@ -362,7 +384,7 @@ export function bindWatchers(ctx: VueInterface, eventCtx: VueInterface = ctx): v
 				group = {group: el.group || 'watchers', label},
 				eventParams = {...group, options: el.options, single: el.single};
 
-			let handler = (...args) => {
+			let handler: CanPromise<(...args: unknown[]) => void> = (...args) => {
 				args = el.provideArgs === false ? [] : args;
 
 				if (handlerIsStr) {
@@ -390,12 +412,12 @@ export function bindWatchers(ctx: VueInterface, eventCtx: VueInterface = ctx): v
 			};
 
 			if (el.wrapper) {
-				handler = <any>el.wrapper(ctx, handler);
+				handler = <typeof handler>el.wrapper(ctx, handler);
 			}
 
 			(async () => {
 				if (Object.isPromise(handler)) {
-					handler = await $a.promise(handler, group);
+					handler = <typeof handler>await $a.promise(handler, group);
 				}
 
 				if (customWatcher) {
@@ -407,7 +429,7 @@ export function bindWatchers(ctx: VueInterface, eventCtx: VueInterface = ctx): v
 						ctx.$on(key, handler);
 
 					} else {
-						$a.on(root, key, handler, eventParams, ...el.args);
+						$a.on(root, key, handler, eventParams, ...<unknown[]>el.args);
 					}
 
 					return;
@@ -451,7 +473,7 @@ export function initDataObject(
 		for (let keys = Object.keys(fields), i = 0; i < keys.length; i++) {
 			const
 				key = keys[i],
-				el = o[key];
+				el = <NonNullable<SystemField>>o[key];
 
 			if (el.atom || !el.init && (el.default !== undefined || key in instance)) {
 				fieldList.unshift(key);
@@ -464,7 +486,7 @@ export function initDataObject(
 		for (let i = 0; i < fieldList.length; i++) {
 			const
 				key = ctx.$activeField = fieldList[i],
-				el = o[key];
+				el = <NonNullable<SystemField>>o[key];
 
 			if (key in data) {
 				continue;
@@ -480,7 +502,6 @@ export function initDataObject(
 					val = el.init(<any>ctx, data);
 				}
 
-				// tslint:disable-next-line
 				if (val === undefined) {
 					if (data[key] === undefined) {
 						val = el.default !== undefined ? el.default : Object.fastClone(instance[key]);
@@ -529,10 +550,15 @@ export function initDataObject(
  * @param ctx - link to context
  * @param args - event arguments
  */
-export async function runHook(hook: string, meta: ComponentMeta, ctx: Dictionary, ...args: any[]): Promise<void> {
+export async function runHook(
+	hook: string,
+	meta: ComponentMeta,
+	ctx: Dictionary<any>,
+	...args: unknown[]
+): Promise<void> {
 	ctx.hook = hook;
 
-	if (ctx.log) {
+	if (Object.isFunction(ctx.log)) {
 		ctx.log(`hook:${hook}`, ...args);
 
 	} else {
@@ -547,7 +573,7 @@ export async function runHook(hook: string, meta: ComponentMeta, ctx: Dictionary
 		queue: [] as Function[],
 		events: {} as Dictionary<{event: Set<string>; cb: Function}[]>,
 
-		on(event: Set<string> | undefined, cb: Function): void {
+		on(event: CanUndef<Set<string>>, cb: Function): void {
 			if (event && event.size) {
 				for (let v = event.values(), el = v.next(); !el.done; el = v.next()) {
 					this.events[el.value] = this.events[el.value] || [];
@@ -566,7 +592,7 @@ export async function runHook(hook: string, meta: ComponentMeta, ctx: Dictionary
 			}
 
 			const
-				tasks = <any[]>[];
+				tasks = <CanPromise<unknown>[]>[];
 
 			for (let o = this.events[event], i = 0; i < o.length; i++) {
 				const
@@ -582,7 +608,7 @@ export async function runHook(hook: string, meta: ComponentMeta, ctx: Dictionary
 
 		async fire(): Promise<void> {
 			const
-				tasks = <any[]>[];
+				tasks = <CanPromise<unknown>[]>[];
 
 			for (let i = 0; i < this.queue.length; i++) {
 				tasks.push(this.queue[i]());
@@ -612,10 +638,10 @@ export async function runHook(hook: string, meta: ComponentMeta, ctx: Dictionary
  * @param meta
  */
 export function getBaseComponent(
-	constructor: ComponentConstructor,
+	constructor: ComponentConstructor<any>,
 	meta: ComponentMeta
 ): {
-	mods: Dictionary<string | undefined>;
+	mods: Dictionary<string>;
 	component: ComponentMeta['component'];
 	instance: Dictionary;
 } {
@@ -630,21 +656,25 @@ export function getBaseComponent(
 			nm = keys[i],
 			method = o[nm];
 
+		if (!method) {
+			continue;
+		}
+
 		component.methods[nm] =
 			method.fn;
 
 		for (let o = method.watchers, keys = Object.keys(o), i = 0; i < keys.length; i++) {
 			const
 				key = keys[i],
-				el = o[key];
+				el = <NonNullable<WatchOptionsWithHandler>>o[key],
+				wList = watchers[key] = watchers[key] || [];
 
-			watchers[key] = watchers[key] || [];
-			watchers[key].push({
+			wList.push({
 				method: nm,
 				group: el.group,
 				single: el.single,
 				options: el.options,
-				args: [].concat(el.args || []),
+				args: (<unknown[]>[]).concat(el.args || []),
 				provideArgs: el.provideArgs,
 				deep: el.deep,
 				immediate: el.immediate,
@@ -674,7 +704,7 @@ export function getBaseComponent(
 	for (let o = meta.props, keys = Object.keys(o), i = 0; i < keys.length; i++) {
 		const
 			key = keys[i],
-			prop = o[key],
+			prop = <NonNullable<ComponentProp>>o[key],
 			def = instance[key];
 
 		const cloneDef = () => Object.fastClone(def);
@@ -687,12 +717,14 @@ export function getBaseComponent(
 			default: prop.default !== undefined ? prop.default : prop.type === Function ? def : cloneDef
 		};
 
-		watchers[key] = watchers[key] || [];
+		const
+			wList = watchers[key] = watchers[key] || [];
+
 		for (let w = prop.watchers.values(), el = w.next(); !el.done; el = w.next()) {
 			const
 				val = el.value;
 
-			watchers[key].push({
+			wList.push({
 				deep: val.deep,
 				immediate: val.immediate,
 				provideArgs: val.provideArgs,
@@ -704,14 +736,14 @@ export function getBaseComponent(
 	for (let o = meta.fields, keys = Object.keys(o), i = 0; i < keys.length; i++) {
 		const
 			key = keys[i],
-			field = o[key];
+			field = <NonNullable<ComponentField>>o[key];
 
 		for (let w = field.watchers.values(), el = w.next(); !el.done; el = w.next()) {
 			const
-				val = el.value;
+				val = el.value,
+				wList = watchers[key] = watchers[key] || [];
 
-			watchers[key] = watchers[key] || [];
-			watchers[key].push({
+			wList.push({
 				deep: val.deep,
 				immediate: val.immediate,
 				provideArgs: val.provideArgs,
@@ -777,7 +809,7 @@ export function addMethodsToMeta(constructor: Function, meta: ComponentMeta): vo
 				continue;
 			}
 
-			// tslint:disable-next-line
+			// tslint:disable-next-line:prefer-object-spread
 			meta.methods[key] = Object.assign(meta.methods[key] || {watchers: {}, hooks: {}}, {fn});
 
 		} else {

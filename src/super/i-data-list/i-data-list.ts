@@ -19,22 +19,25 @@ export interface DataList<T> {
 @component()
 export default class iDataList<T extends Dictionary = Dictionary> extends iData<DataList<T>> {
 	/** @override */
-	get(data?: RequestQuery, params?: CreateRequestOptions<DataList<T>>): Promise<DataList<T> | undefined> {
+	get(data?: RequestQuery, params?: CreateRequestOptions<DataList<T>>): Promise<CanUndef<DataList<T>>> {
 		return super.get(data, params);
 	}
 
 	/** @override */
-	protected convertDataToDB<O>(data: any): O | DataList<T> {
-		data = super.convertDataToDB(data);
+	protected convertDataToDB<O>(data: unknown): O;
+	protected convertDataToDB(data: unknown): DataList<T>;
+	protected convertDataToDB<O>(data: unknown): O | DataList<T> {
+		const
+			v = super.convertDataToDB<O | DataList<T>>(data);
 
-		if (Object.isFrozen(data)) {
-			return data;
+		if (Object.isFrozen(v)) {
+			return v;
 		}
 
 		const
-			obj = Object.create(data);
+			obj = Object.create(<object>v);
 
-		Object.assign(obj, Object.select(data, ['data', 'total']));
+		Object.assign(obj, Object.select(v, ['data', 'total']));
 		obj.data = $C(obj.data).map((el) => this.convertDataChunk(el));
 
 		return obj;
@@ -44,8 +47,8 @@ export default class iDataList<T extends Dictionary = Dictionary> extends iData<
 	 * Converts the specified remote data chunk to the component format and returns it
 	 * @param chunk
 	 */
-	protected convertDataChunk(chunk: any): T {
-		return chunk;
+	protected convertDataChunk(chunk: unknown): T {
+		return <T>chunk;
 	}
 
 	/**
@@ -125,13 +128,13 @@ export default class iDataList<T extends Dictionary = Dictionary> extends iData<
 	}
 
 	/** @override */
-	protected async onAddData(data: any): Promise<void> {
+	protected async onAddData(data: unknown): Promise<void> {
 		if (data == null) {
 			this.reload().catch(stderr);
 			return;
 		}
 
-		const list = (<any[]>[]).concat(this.convertDataToDB(data));
+		const list = (<T[]>[]).concat(this.convertDataToDB<T>(data));
 		await this.async.wait(() => this.db);
 
 		const
@@ -169,7 +172,7 @@ export default class iDataList<T extends Dictionary = Dictionary> extends iData<
 
 	/** @override */
 	// @ts-ignore
-	protected async onUpdData(data: any): Promise<void> {
+	protected async onUpdData(data: unknown): Promise<void> {
 		const
 			db = (<DataList<T>>this.db).data;
 
@@ -178,7 +181,7 @@ export default class iDataList<T extends Dictionary = Dictionary> extends iData<
 			return;
 		}
 
-		const list = (<any[]>[]).concat(this.convertDataToDB(data));
+		const list = (<T[]>[]).concat(this.convertDataToDB<T>(data));
 		await this.async.wait(() => this.db);
 
 		for (let i = 0; i < list.length; i++) {
@@ -202,7 +205,7 @@ export default class iDataList<T extends Dictionary = Dictionary> extends iData<
 	}
 
 	/** @override */
-	protected async onDelData(data: any): Promise<void> {
+	protected async onDelData(data: unknown): Promise<void> {
 		const
 			db = (<DataList<T>>this.db).data;
 
@@ -211,7 +214,7 @@ export default class iDataList<T extends Dictionary = Dictionary> extends iData<
 			return;
 		}
 
-		const list = (<any>[]).concat(this.convertDataToDB(data));
+		const list = (<T[]>[]).concat(this.convertDataToDB<T>(data));
 		await this.async.wait(() => this.db);
 
 		for (let i = 0; i < list.length; i++) {

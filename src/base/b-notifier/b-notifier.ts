@@ -24,17 +24,28 @@ ion.sound({
 	preload: true
 });
 
-export interface Message<T extends Dictionary = Dictionary> {
+export interface Message<T extends Dictionary = Dictionary> extends Dictionary {
 	instance: string;
 	type: string;
 	data: T;
 }
 
+export interface Rule<T = unknown> {
+	onShow?: Function;
+	title?(data: T): string;
+	body(data: T): string;
+	test?(data: T): boolean;
+}
+
+export type Rules<T = unknown> = Dictionary<
+	Dictionary<Rule<T>>
+>;
+
 export const
 	$$ = symbolGenerator();
 
 @component()
-export default class bNotifier<T extends Dictionary = Message> extends iData<T> {
+export default class bNotifier<T extends Message = Message> extends iData<T> {
 	/** @override */
 	readonly dataProviderParams: Dictionary = {listenAllEvents: true};
 
@@ -48,7 +59,7 @@ export default class bNotifier<T extends Dictionary = Message> extends iData<T> 
 	 * Notify rules
 	 */
 	@prop(Object)
-	readonly rules: Dictionary = {};
+	readonly rules: Rules<T> = {};
 
 	/**
 	 * Notify sound
@@ -98,8 +109,8 @@ export default class bNotifier<T extends Dictionary = Message> extends iData<T> 
 				return;
 			}
 
-			let
-				rule = $C(this.rules).get([data.instance, data.type]);
+			const
+				rule = <Rule<T>>$C<any>(this.rules).get([data.instance, data.type]);
 
 			if (!rule || rule.test && !rule.test(data)) {
 				return;
@@ -107,21 +118,24 @@ export default class bNotifier<T extends Dictionary = Message> extends iData<T> 
 
 			const
 				that = this,
-				{onshow} = rule;
+				{onShow} = rule;
 
-			rule = {...rule, silent: true};
-			rule.onshow = function (): void {
-				if (that.sound) {
-					ion.sound.play(that.sound);
+			const r = {
+				...rule,
+				silent: true,
+				onshow(): void {
+					if (that.sound) {
+						ion.sound.play(that.sound);
+					}
+
+					onShow && onShow.apply(this, arguments);
 				}
-
-				onshow && onshow.apply(this, arguments);
 			};
 
 			Object.assign(
-				new Notification(rule.title ? rule.title(data) : this.title, <any>{
+				new Notification(r.title ? r.title(data) : this.title, {
 					tag: data.instance,
-					body: rule.body(data),
+					body: r.body(data),
 					icon: '/assets/favicons/favicon.ico',
 					...Object.reject(rule, /^(on|body$)/)
 				}),
@@ -140,21 +154,21 @@ export default class bNotifier<T extends Dictionary = Message> extends iData<T> 
 	}
 
 	/** @override */
-	protected async onAddData(data: any): Promise<void> {
+	protected async onAddData(data: unknown): Promise<void> {
 		if (data != null) {
 			await this.notify(this.convertDataToDB(data));
 		}
 	}
 
 	/** @override */
-	protected async onUpdData(data: any): Promise<void> {
+	protected async onUpdData(data: unknown): Promise<void> {
 		if (data != null) {
 			await this.notify(this.convertDataToDB(data));
 		}
 	}
 
 	/** @override */
-	protected async onDelData(data: any): Promise<void> {
+	protected async onDelData(data: unknown): Promise<void> {
 		if (data != null) {
 			await this.notify(this.convertDataToDB(data));
 		}

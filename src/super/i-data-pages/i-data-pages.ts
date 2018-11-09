@@ -11,6 +11,10 @@ import symbolGenerator from 'core/symbol';
 import iDataList, { component, prop, field, system, wait, watch } from 'super/i-data-list/i-data-list';
 export * from 'super/i-data-list/i-data-list';
 
+export type RequestParams = StrictDictionary<{
+	page: number;
+}>;
+
 export const
 	$$ = symbolGenerator();
 
@@ -52,13 +56,13 @@ export default class iDataPages<T extends Dictionary = Dictionary> extends iData
 
 	/** @override */
 	@field((o) => o.createWatchObject('get', ['page']))
-	protected readonly requestParams!: Dictionary<Dictionary>;
+	protected readonly requestParams!: RequestParams;
 
 	/** @override */
 	protected readonly $refs!: {loadPageTrigger?: HTMLElement};
 
 	/** @override */
-	async initLoad(data?: any, silent?: boolean): Promise<void> {
+	async initLoad(data?: unknown, silent?: boolean): Promise<void> {
 		await super.initLoad(data, silent);
 		this.pageLoaded = {};
 		this.async.clearAll({group: 'loadPage'});

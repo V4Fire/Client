@@ -7,7 +7,7 @@
  */
 
 import symbolGenerator from 'core/symbol';
-import bInput, { component, prop, field, watch, p } from 'form/b-input/b-input';
+import bInput, { component, prop, field, watch, p, Value, FormValue } from 'form/b-input/b-input';
 export * from 'form/b-input/b-input';
 
 export const
@@ -20,7 +20,11 @@ export const
 	}
 })
 
-export default class bInputTime<T extends Dictionary = Dictionary> extends bInput<T> {
+export default class bInputTime<
+	V extends Value = Value,
+	FV extends FormValue = FormValue,
+	D extends Dictionary = Dictionary
+> extends bInput<V, FV, D> {
 	/** @override */
 	readonly placeholder: string = '__:__';
 
@@ -58,7 +62,7 @@ export default class bInputTime<T extends Dictionary = Dictionary> extends bInpu
 	 * Minimum date value
 	 */
 	@p({cache: false})
-	get min(): Date | undefined {
+	get min(): CanUndef<Date> {
 		return this.minProp != null ? Date.create(this.minProp) : undefined;
 	}
 
@@ -66,14 +70,14 @@ export default class bInputTime<T extends Dictionary = Dictionary> extends bInpu
 	 * Maximum date value
 	 */
 	@p({cache: false})
-	get max(): Date | undefined {
+	get max(): CanUndef<Date> {
 		return this.maxProp != null ? Date.create(this.maxProp) : undefined;
 	}
 
 	/**
 	 * Time pointer
 	 */
-	get pointer(): Date | undefined {
+	get pointer(): CanUndef<Date> {
 		return Object.fastClone(this.getField('pointerStore'));
 	}
 
@@ -81,13 +85,13 @@ export default class bInputTime<T extends Dictionary = Dictionary> extends bInpu
 	 * Sets a new time pointer
 	 * @param value
 	 */
-	set pointer(value: Date | undefined) {
+	set pointer(value: CanUndef<Date>) {
 		this.setField('pointerStore', this.getNPointer(this.value, value, this.pointerStore));
 	}
 
 	/** @override */
 	// @ts-ignore
-	get default(): Date | undefined {
+	get default(): unknown {
 		return this.defaultProp !== undefined ? Date.create(this.defaultProp) : undefined;
 	}
 
@@ -95,25 +99,22 @@ export default class bInputTime<T extends Dictionary = Dictionary> extends bInpu
 	protected readonly blockValueField: string = 'pointer';
 
 	/** @override */
-	@field({
+	@field<bInputTime>({
 		after: 'pointerStore',
-		init: (o, data) => o.link((val) => {
-			const ctx: bInputTime = <any>o;
-			return ctx.getTimeFormat(ctx.getNPointer(val, 'pointerStore' in ctx ? ctx.pointerStore : data.pointerStore));
-		})
+		init: (o, data) => o.link<V>((val) =>
+			o.getTimeFormat(o.getNPointer(val, ('pointerStore' in o ? o.pointerStore : <Date>data.pointerStore))))
 	})
 
-	protected valueStore!: string;
+	protected valueStore!: V;
 
 	/**
 	 * Time pointer store
 	 */
-	@field((o) => o.link((val) => {
-		const ctx: bInputTime = <any>o;
-		val = ctx.getNPointer(undefined, val, ctx.pointerStore);
+	@field<bInputTime>((o) => o.link<Date>((val) => {
+		val = o.getNPointer(undefined, val, o.pointerStore);
 
 		if (val === undefined) {
-			return ctx.initDefaultValue();
+			return o.initDefaultValue();
 		}
 
 		return val;
@@ -151,8 +152,8 @@ export default class bInputTime<T extends Dictionary = Dictionary> extends bInpu
 	 * Returns a string time value by the specified date
 	 * @param [date]
 	 */
-	protected getTimeFormat(date: Date | undefined): string {
-		return date ? date.format('{HH}:{mm}') : '';
+	protected getTimeFormat(date: CanUndef<Date>): V {
+		return <V>(date ? date.format('{HH}:{mm}') : '');
 	}
 
 	/**
@@ -162,7 +163,7 @@ export default class bInputTime<T extends Dictionary = Dictionary> extends bInpu
 	 * @param pointer - time pointer
 	 * @param buffer - time buffer
 	 */
-	protected getNPointer(value: string | undefined, pointer: Date, buffer?: Date | undefined): Date;
+	protected getNPointer(value: CanUndef<string>, pointer: Date, buffer?: CanUndef<Date>): Date;
 
 	/**
 	 * @param [value] - input value
@@ -170,16 +171,16 @@ export default class bInputTime<T extends Dictionary = Dictionary> extends bInpu
 	 * @param [buffer] - time buffer
 	 */
 	protected getNPointer(
-		value: string | undefined,
-		pointer?: Date | undefined,
-		buffer?: Date | undefined
-	): Date | undefined;
+		value: CanUndef<string>,
+		pointer?: CanUndef<Date>,
+		buffer?: CanUndef<Date>
+	): CanUndef<Date>;
 
 	protected getNPointer(
-		value: string | undefined,
-		pointer: Date | undefined,
-		buffer: Date | undefined = pointer
-	): Date | undefined {
+		value: CanUndef<string>,
+		pointer: CanUndef<Date>,
+		buffer: CanUndef<Date> = pointer
+	): CanUndef<Date> {
 		if (!pointer || !buffer) {
 			if (value === undefined) {
 				return undefined;

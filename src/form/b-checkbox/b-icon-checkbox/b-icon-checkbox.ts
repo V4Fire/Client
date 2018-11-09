@@ -10,7 +10,11 @@ import bCheckbox, { component, prop } from 'form/b-checkbox/b-checkbox';
 export * from 'form/b-checkbox/b-checkbox';
 
 @component()
-export default class bIconCheckbox extends bCheckbox {
+export default class bIconCheckbox<
+	V extends boolean = boolean,
+	FV extends boolean = boolean,
+	D extends Dictionary = Dictionary
+> extends bCheckbox<V, FV, D> {
 	/**
 	 * Icon component
 	 */

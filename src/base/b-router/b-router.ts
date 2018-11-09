@@ -7,6 +7,7 @@
  */
 
 // tslint:disable:max-file-line-count
+
 import $C = require('collection.js');
 import Async from 'core/async';
 
@@ -47,18 +48,16 @@ export type PageProp =
 	string |
 	PagePropObj;
 
-export type Pages = Dictionary<{
+export interface Page {
 	page: string;
 	index: boolean;
 	pattern: string;
 	rgxp: RegExp;
 	meta: RouterMeta;
-}>;
+}
 
-export type SetPage =
-	'push' |
-	'replace' |
-	'event';
+export type Pages = Dictionary<Page>;
+export type SetPage = 'push' | 'replace' | 'event';
 
 export const
 	$$ = symbolGenerator();
@@ -71,11 +70,10 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 	/**
 	 * Initial page
 	 */
-	@prop({
+	@prop<bRouter>({
 		type: [String, Object],
 		watch: (o) => {
-			const ctx: bRouter = <any>o;
-			ctx.initComponentValues().catch(stderr);
+			o.initComponentValues().catch(stderr);
 		}
 	})
 
@@ -90,12 +88,11 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 	/**
 	 * Driver constructor for router
 	 */
-	@prop({
+	@prop<bRouter>({
 		type: Function,
 		default: driver,
 		watch: (o) => {
-			const ctx: bRouter = <any>o;
-			ctx.initComponentValues().catch(stderr);
+			o.initComponentValues().catch(stderr);
 		}
 	})
 
@@ -116,7 +113,7 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 	/**
 	 * Driver for remote router
 	 */
-	@system((o) => o.link((v) => v(o)))
+	@system((o) => o.link<(v: unknown) => Router>((v) => v(o)))
 	protected driver!: Router;
 
 	/**
@@ -128,30 +125,27 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 	/**
 	 * Router paths
 	 */
-	@system({
+	@system<bRouter>({
 		after: 'driver',
-		init: (o) => o.link((v) => {
-			const ctx: bRouter = <any>o;
-			return $C(v || ctx.driver.routes || {}).map((obj, page) => {
-				obj = obj || {};
+		init: (o) => o.link((v) => $C(v || o.driver.routes || {}).map((obj, page) => {
+			obj = obj || {};
 
-				const
-					isStr = Object.isString(obj),
-					pattern = isStr ? obj : obj.path,
-					params = [];
+			const
+				isStr = Object.isString(obj),
+				pattern = isStr ? obj : obj.path,
+				params = [];
 
-				page = isStr ?
-					page : obj.page || page;
+			page = isStr ?
+				page : obj.page || page;
 
-				return {
-					page,
-					pattern,
-					index: !isStr && obj.index || page === 'index',
-					rgxp: pattern != null ? path(pattern, params) : undefined,
-					meta: {...isStr ? {} : obj, page, params}
-				};
-			});
-		})
+			return {
+				page,
+				pattern,
+				index: !isStr && obj.index || page === 'index',
+				rgxp: pattern != null ? path(pattern, params) : undefined,
+				meta: {...isStr ? {} : obj, page, params}
+			};
+		}))
 	})
 
 	protected pages!: Pages;
@@ -160,7 +154,7 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 	 * Current page
 	 */
 	@p({cache: false})
-	get page(): CurrentPage | undefined {
+	get page(): CanUndef<CurrentPage> {
 		return this.getField('pageStore');
 	}
 
@@ -168,7 +162,7 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 	 * Scrolls a document to the specified coordinates
 	 */
 	scrollTo(y?: number, x?: number): void {
-		window.scrollTo(x, y);
+		window.scrollTo(x || pageXOffset, y || pageYOffset);
 	}
 
 	/**
@@ -177,7 +171,7 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 	 * @param page
 	 * @param [params] - additional transition parameters
 	 */
-	async push(page: string | null, params?: PageParams): Promise<void> {
+	async push(page: Nullable<string>, params?: PageParams): Promise<void> {
 		await this.setPage(page, params, 'push');
 	}
 
@@ -187,7 +181,7 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 	 * @param page
 	 * @param [params] - additional transition parameters
 	 */
-	async replace(page: string | null, params?: PageParams): Promise<void> {
+	async replace(page: Nullable<string>, params?: PageParams): Promise<void> {
 		await this.setPage(page, params, 'replace');
 	}
 
@@ -217,7 +211,7 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 	 * Returns an information object of the specified page
 	 * @param [page]
 	 */
-	getPageOpts(page: string): PageOpts | undefined {
+	getPageOpts(page: string): CanUndef<PageOpts> {
 		let
 			byId = false,
 			obj;
@@ -230,7 +224,7 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 			obj = p[page];
 
 		} else {
-			obj = $C(p).one.get((el) => {
+			obj = $C(p).one.get((el: Page) => {
 				if (el.page === page) {
 					byId = true;
 					return true;
@@ -241,7 +235,7 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 		}
 
 		if (!obj) {
-			obj = $C(p).one.get((el) => el.index);
+			obj = $C(p).one.get((el: Page) => el.index);
 		}
 
 		if (obj) {
@@ -265,7 +259,7 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 					params = obj.rgxp.exec(obj.url || page);
 
 				if (params) {
-					$C(path.parse(obj.pattern) as any[]).forEach((el: Key, i) => {
+					$C(<Key[]>path.parse(obj.pattern)).forEach((el, i) => {
 						if (Object.isObject(el)) {
 							t.params[el.name] = params[i + 1];
 						}
@@ -284,17 +278,17 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 	 * @param [params] - additional page parameters
 	 * @param [method] - driver method
 	 *
-	 * @emits beforeChange(page: string | null, params: PageParams | undefined, method: string)
+	 * @emits beforeChange(page: Nullable<string>, params: CanUndef<PageParams>, method: string)
 	 * @emits change(info: PageOpts)
 	 * @emits hardChange(info: PageOpts)
 	 * @emits softChange(info: PageOpts)
 	 * @emits $root.transition(info: PageOpts, type: string)
 	 */
 	async setPage(
-		page: string | null,
+		page: Nullable<string>,
 		params?: PageParams,
 		method: SetPage = 'push'
-	): Promise<CurrentPage | undefined> {
+	): Promise<CanUndef<CurrentPage>> {
 		const
 			{$root: r, driver: d, driver: {page: c}} = this;
 

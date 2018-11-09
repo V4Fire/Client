@@ -14,7 +14,7 @@ import { ComponentMeta, Hooks } from 'core/component';
 // tslint:disable:no-empty
 // tslint:disable:typedef
 
-export type VueElement<T> = Element & {vueComponent?: T};
+export type VueElement<T = unknown> = Element & {vueComponent?: T};
 export default class VueInterface<
 	C extends VueInterface = VueInterface<any, any>,
 	R extends VueInterface = VueInterface<any, any>
@@ -38,7 +38,7 @@ export default class VueInterface<
 	protected readonly $scopedSlots!: Dictionary<ScopedSlot>;
 	protected readonly $data!: Dictionary;
 	protected readonly $$data!: Dictionary;
-	protected readonly $ssrContext!: any;
+	protected readonly $ssrContext!: unknown;
 	protected readonly $vnode!: VNode;
 	protected readonly $attrs!: Dictionary<string>;
 	protected readonly $listeners!: Dictionary<Function | Function[]>;
@@ -46,7 +46,7 @@ export default class VueInterface<
 	protected $createElement!: CreateElement;
 	private $compositeI!: number;
 
-	protected log?(key: string, ...details: any[]): void;
+	protected log?(key: string, ...details: unknown[]): void;
 
 	// @ts-ignore
 	protected $mount(elementOrSelector?: Element | string, hydrating?: boolean): this;
@@ -55,55 +55,47 @@ export default class VueInterface<
 	protected $forceUpdate(): void {}
 	protected $destroy(): void {}
 
-	protected $set<T>(object: object, key: string, value: T): T;
-	protected $set<T>(array: T[], key: number, value: T): T;
-	// tslint:disable-next-line
+	protected $set<T = unknown>(object: object, key: string, value: T): T;
+	protected $set<T = unknown>(array: T[], key: number, value: T): T;
 	protected $set() {}
 
 	protected $delete(object: object, key: string): void;
-	protected $delete<T>(array: T[], key: number): void;
-	// tslint:disable-next-line
+	protected $delete<T = unknown>(array: T[], key: number): void;
 	protected $delete() {}
 
 	// @ts-ignore
-	protected $watch<T = any>(
+	protected $watch<T = unknown>(
 		exprOrFn: string | ((this: this) => string),
 		cb: (this: this, n: T, o?: T) => void,
 		opts?: WatchOptions
 	): Function;
 
 	// @ts-ignore
-	protected $watch<T = any>(
+	protected $watch<T = unknown>(
 		exprOrFn: string | ((this: this) => string),
 		opts: WatchOptionsWithHandler<T>
 	): Function;
 
-	// tslint:disable-next-line
 	protected $watch() {}
 
 	// @ts-ignore
-	protected $on(event: string | string[], cb: Function): this;
-	// tslint:disable-next-line
+	protected $on(event: CanArray<string>, cb: Function): this;
 	protected $on() {}
 
 	// @ts-ignore
 	protected $once(event: string, cb: Function): this;
-	// tslint:disable-next-line
 	protected $once() {}
 
 	// @ts-ignore
-	protected $off(event?: string | string[], cb?: Function): this;
-	// tslint:disable-next-line
+	protected $off(event?: CanArray<string>, cb?: Function): this;
 	protected $off() {}
 
 	// @ts-ignore
-	protected $emit(event: string, ...args: any[]): this;
-	// tslint:disable-next-line
+	protected $emit(event: string, ...args: unknown[]): this;
 	protected $emit() {}
 
-	protected $nextTick(cb: (this: this) => void): void;
+	protected $nextTick(cb: Function | ((this: this) => void)): void;
 	// @ts-ignore
 	protected $nextTick(): Promise<void>;
-	// tslint:disable-next-line
 	protected $nextTick() {}
 }

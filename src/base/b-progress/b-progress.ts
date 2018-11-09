@@ -24,7 +24,7 @@ export default class bProgress extends iBlock {
 	/**
 	 * Progress value
 	 */
-	get value(): number | undefined {
+	get value(): CanUndef<number> {
 		return this.getField('valueStore');
 	}
 
@@ -34,7 +34,7 @@ export default class bProgress extends iBlock {
 	 * @param value
 	 * @emits complete()
 	 */
-	set value(value: number | undefined) {
+	set value(value: CanUndef<number>) {
 		const
 			label = {label: $$.complete};
 

@@ -77,7 +77,7 @@ export default function createRouter(ctx: bRouter): Router {
 	}
 
 	const router = Object.mixin({withAccessors: true}, Object.create(new EventEmitter()), {
-		get page(): CurrentPage | undefined {
+		get page(): CanUndef<CurrentPage> {
 			const
 				url = this.id(location.href);
 

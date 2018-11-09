@@ -7,6 +7,7 @@
  */
 
 import fetch from 'core/request';
+import bInput from 'form/b-input/b-input';
 import iInput, { ValidatorsDecl, ValidatorParams, ValidatorResult } from 'super/i-input/i-input';
 import symbolGenerator from 'core/symbol';
 import { name, password } from 'core/const/validation';
@@ -37,7 +38,7 @@ export interface PasswordValidatorParams extends ConstPatternValidatorParams {
 	old?: string;
 }
 
-export default <ValidatorsDecl>{
+export default <ValidatorsDecl<bInput, unknown>>{
 	async required({msg, showMsg = true}: ValidatorParams): Promise<ValidatorResult> {
 		if (!await this.formValue) {
 			if (showMsg) {

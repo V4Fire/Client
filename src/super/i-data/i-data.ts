@@ -10,7 +10,6 @@
 
 import $C = require('collection.js');
 
-import Then from 'core/then';
 import statusCodes from 'core/status-codes';
 import symbolGenerator from 'core/symbol';
 
@@ -25,6 +24,7 @@ import Provider, {
 	RequestBody,
 	RequestResponseObject,
 	RequestError,
+	Response,
 	ModelMethods,
 	CreateRequestOptions as BaseCreateRequestOptions
 
@@ -41,19 +41,19 @@ export interface RequestFilterOpts {
 
 export type RequestFilter = ((data: RequestQuery | RequestBody, opts: RequestFilterOpts) => boolean) | boolean;
 export type Request = RequestQuery | RequestBody | [RequestQuery | RequestBody, CreateRequestOptions];
-export type RequestParams = Dictionary<Request>;
+export type RequestParams = StrictDictionary<Request>;
 
 export interface SocketEvent<T extends object = Async> extends RemoteEvent<T> {
 	connection: Promise<Socket | void>;
 }
 
-export interface CreateRequestOptions<T = any> extends BaseCreateRequestOptions<T>, AsyncOpts {
+export interface CreateRequestOptions<T = unknown> extends BaseCreateRequestOptions<T>, AsyncOpts {
 	showProgress?: boolean;
 	hideProgress?: boolean;
 }
 
-export interface ComponentConverter<T = any> {
-	(value: any): T;
+export interface ComponentConverter<T = unknown> {
+	(value: unknown): T;
 }
 
 export const
@@ -90,13 +90,13 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 	 * Remote data converter
 	 */
 	@prop({type: Function, watch: 'reload', required: false})
-	readonly dbConverter?: Function;
+	readonly dbConverter?: ComponentConverter<any>;
 
 	/**
 	 * Converter from .db to the component format
 	 */
 	@prop({type: Function, watch: 'initRemoteData', required: false})
-	readonly componentConverter?: ComponentConverter;
+	readonly componentConverter?: ComponentConverter<any>;
 
 	/**
 	 * If true, then the component will be reinitialized after an activated hook in offline mode
@@ -107,14 +107,14 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 	/**
 	 * Component data
 	 */
-	get db(): T | undefined {
+	get db(): CanUndef<T> {
 		return this.getField('dbStore');
 	}
 
 	/**
 	 * Sets new component data
 	 */
-	set db(value: T | undefined) {
+	set db(value: CanUndef<T>) {
 		if (value === this.db) {
 			return;
 		}
@@ -187,7 +187,7 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 	 * Component data store
 	 */
 	@field()
-	protected dbStore?: T | undefined;
+	protected dbStore?: CanUndef<T>;
 
 	/**
 	 * Provider instance
@@ -197,7 +197,7 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 
 	/** @override */
 	@wait({label: $$.initLoad, defer: true})
-	async initLoad(data?: any, silent?: boolean): Promise<void> {
+	async initLoad(data?: unknown, silent?: boolean): Promise<void> {
 		if (!silent) {
 			this.componentStatus = 'loading';
 		}
@@ -215,8 +215,8 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 				Object.assign(p[1], {...label, join: false});
 
 				try {
-					const db = this.convertDataToDB(data || await this.get(<RequestQuery>p[0], p[1]));
-					this.execCbAtTheRightTime(() => this.db = <any>db, label);
+					const db = this.convertDataToDB<T>(data || await this.get(<RequestQuery>p[0], p[1]));
+					this.execCbAtTheRightTime(() => this.db = db, label);
 
 				} catch (err) {
 					stderr(err);
@@ -237,7 +237,7 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 	 * @param data
 	 * @param silent
 	 */
-	initBaseLoad(data?: any | ((this: this) => any), silent?: boolean): CanPromise<void> {
+	initBaseLoad(data?: unknown | ((this: this) => unknown), silent?: boolean): CanPromise<void> {
 		return super.initLoad(data, silent);
 	}
 
@@ -253,14 +253,14 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 	/**
 	 * Returns full request URL
 	 */
-	url(): string | undefined;
+	url(): CanUndef<string>;
 
 	/**
 	 * Sets advanced URL for requests
 	 * @param [value]
 	 */
 	url(value: string): this;
-	url(value?: string): this | string | undefined {
+	url(value?: string): CanUndef<this | string> {
 		const
 			{dp: $d} = this;
 
@@ -339,7 +339,7 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 	 * @param [data]
 	 * @param [params]
 	 */
-	peek(data?: RequestQuery, params?: CreateRequestOptions<T>): Promise<T | undefined> {
+	peek(data?: RequestQuery, params?: CreateRequestOptions<T>): Promise<CanUndef<T>> {
 		const
 			args = arguments.length > 0 ? [data, params] : this.getDefaultRequestParams('peek');
 
@@ -356,7 +356,7 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 	 * @param [data]
 	 * @param [params]
 	 */
-	get(data?: RequestQuery, params?: CreateRequestOptions<T>): Promise<T | undefined> {
+	get(data?: RequestQuery, params?: CreateRequestOptions<T>): Promise<CanUndef<T>> {
 		const
 			args = arguments.length > 0 ? [data, params] : this.getDefaultRequestParams('get');
 
@@ -373,7 +373,7 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 	 * @param data
 	 * @param [params]
 	 */
-	post<T>(data?: RequestBody, params?: CreateRequestOptions<T>): Promise<T | undefined> {
+	post<T = unknown>(data?: RequestBody, params?: CreateRequestOptions<T>): Promise<CanUndef<T>> {
 		const
 			args = arguments.length > 0 ? [data, params] : this.getDefaultRequestParams('post');
 
@@ -390,7 +390,7 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 	 * @param data
 	 * @param [params]
 	 */
-	add<T>(data?: RequestBody, params?: CreateRequestOptions<T>): Promise<T | undefined> {
+	add<T = unknown>(data?: RequestBody, params?: CreateRequestOptions<T>): Promise<CanUndef<T>> {
 		const
 			args = arguments.length > 0 ? [data, params] : this.getDefaultRequestParams('add');
 
@@ -407,7 +407,7 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 	 * @param [data]
 	 * @param [params]
 	 */
-	upd<T>(data?: RequestBody, params?: CreateRequestOptions<T>): Promise<T | undefined> {
+	upd<T = unknown>(data?: RequestBody, params?: CreateRequestOptions<T>): Promise<CanUndef<T>> {
 		const
 			args = arguments.length > 0 ? [data, params] : this.getDefaultRequestParams('upd');
 
@@ -424,7 +424,7 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 	 * @param [data]
 	 * @param [params]
 	 */
-	del<T>(data?: RequestBody, params?: CreateRequestOptions<T>): Promise<T | undefined> {
+	del<T = unknown>(data?: RequestBody, params?: CreateRequestOptions<T>): Promise<CanUndef<T>> {
 		const
 			args = arguments.length > 0 ? [data, params] : this.getDefaultRequestParams('del');
 
@@ -465,22 +465,28 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 	 * Converts the specified remote data to the component format and returns it
 	 * @param data
 	 */
-	protected convertDataToDB<O>(data: any): O | T {
-		return this.dbConverter ? this.dbConverter(data && data.valueOf()) : data;
+	protected convertDataToDB<O>(data: unknown): O;
+	protected convertDataToDB(data: unknown): T;
+	protected convertDataToDB<O>(data: unknown): O | T {
+		return this.dbConverter ? this.dbConverter(
+			Object.isArray(data) || Object.isObject(data) ? data.valueOf() : data
+		) : data;
 	}
 
 	/**
 	 * Converts the specified data to the internal component format and returns it
 	 * @param data
 	 */
-	protected convertDBToComponent<O>(data: any): O | T {
-		return this.componentConverter ? this.componentConverter(data && data.valueOf()) : data;
+	protected convertDBToComponent<O = unknown>(data: unknown): O | T {
+		return this.componentConverter ? this.componentConverter(
+			Object.isArray(data) || Object.isObject(data) ? data.valueOf() : data
+		) : data;
 	}
 
 	/**
 	 * Initializes remote data
 	 */
-	protected initRemoteData(): any | undefined {
+	protected initRemoteData(): CanUndef<unknown> {
 		return undefined;
 	}
 
@@ -563,9 +569,16 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 	 * @param value
 	 */
 	@watch({field: 'dataProvider', immediate: true})
-	protected async syncDataProviderWatcher(value: string | undefined): Promise<void> {
+	protected async syncDataProviderWatcher(value: CanUndef<string>): Promise<void> {
 		if (value) {
-			this.dp = new providers[value](this.dataProviderParams);
+			const
+				Provider = providers[value];
+
+			if (!Provider) {
+				throw new Error(`Provider "${value}" is not defined`);
+			}
+
+			this.dp = new Provider(this.dataProviderParams);
 			await this.initDataListeners();
 
 		} else {
@@ -595,8 +608,18 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 	 */
 	@watch('p')
 	protected async syncDataProviderParamsWatcher(value: Dictionary, oldValue: Dictionary): Promise<void> {
-		if (this.dataProvider) {
-			this.dp = new providers[this.dataProvider](value);
+		const
+			providerNm = this.dataProvider;
+
+		if (providerNm) {
+			const
+				Provider = providers[providerNm];
+
+			if (!Provider) {
+				throw new Error(`Provider "${providerNm}" is not defined`);
+			}
+
+			this.dp = new Provider(value);
 			await this.initDataListeners();
 		}
 	}
@@ -606,7 +629,7 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 	 * @param method
 	 */
 	protected getDefaultRequestParams(method: string): [RequestQuery | RequestBody, CreateRequestOptions] | false {
-		const [customData, customOpts] = (<any[]>[]).concat(
+		const [customData, customOpts] = (<unknown[]>[]).concat(
 			this.request && this.request[method] || []
 		);
 
@@ -677,7 +700,7 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 				break;
 
 			case 'invalidStatus':
-				switch (err.details.response.status) {
+				switch ((<NonNullable<Response>>err.details.response).status) {
 					case statusCodes.FORBIDDEN:
 						msg = t`You don't have permission for this operation`;
 						break;
@@ -706,13 +729,13 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 	 * @param [data]
 	 * @param [params]
 	 */
-	protected createRequest<T>(
+	protected createRequest<T = unknown>(
 		method: ModelMethods,
 		data?: RequestBody,
 		params?: CreateRequestOptions<T>
-	): Promise<T | undefined> {
+	): Promise<CanUndef<T>> {
 		if (!this.dp) {
-			return <any>Then.resolve();
+			return Promise.resolve(undefined);
 		}
 
 		const
@@ -722,7 +745,7 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 			asyncParams = <AsyncOpts>(Object.select(p, asyncFields));
 
 		const
-			req = this.async.request<RequestResponseObject>((<Function>this.dp[method])(data, reqParams), asyncParams),
+			req = this.async.request<RequestResponseObject<T>>((<Function>this.dp[method])(data, reqParams), asyncParams),
 			is = (v) => v !== false;
 
 		if (this.mods.progress !== 'true') {
@@ -743,7 +766,7 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 			});
 		}
 
-		return req.then((res) => res.data);
+		return req.then((res) => res.data || undefined);
 	}
 
 	/**
@@ -753,7 +776,7 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 	 * @param err
 	 * @param retry - retry function
 	 */
-	protected onRequestError<T>(err: Error | RequestError, retry: () => Promise<T | undefined>): void {
+	protected onRequestError<T = unknown>(err: Error | RequestError, retry: () => Promise<CanUndef<T>>): void {
 		this.emit('error', err, retry);
 	}
 
@@ -761,7 +784,7 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 	 * Handler: dataProvider.add
 	 * @param data
 	 */
-	protected onAddData(data: any): void {
+	protected onAddData(data: unknown): void {
 		if (data != null) {
 			this.db = this.convertDataToDB(data);
 
@@ -774,7 +797,7 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 	 * Handler: dataProvider.upd
 	 * @param data
 	 */
-	protected onUpdData(data: any): void {
+	protected onUpdData(data: unknown): void {
 		if (data != null) {
 			this.db = this.convertDataToDB(data);
 
@@ -787,7 +810,7 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 	 * Handler: dataProvider.del
 	 * @param data
 	 */
-	protected onDelData(data: any): void {
+	protected onDelData(data: unknown): void {
 		if (data != null) {
 			this.db = undefined;
 

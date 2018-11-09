@@ -11,8 +11,14 @@ import bSelect, { Option } from 'form/b-select/b-select';
 import iInput, { component, prop, p, Cache } from 'super/i-input/i-input';
 export * from 'super/i-input/i-input';
 
-export const
-	selectCache = new Cache<'months' | 'days' | 'years'>(['months', 'days', 'years']);
+export type Value = Date;
+export type FormValue = Value;
+
+export const selectCache = new Cache<'months' | 'days' | 'years', ReadonlyArray<Option>>([
+	'months',
+	'days',
+	'years'
+]);
 
 @component({
 	functional: {
@@ -20,20 +26,33 @@ export const
 	}
 })
 
-export default class bInputBirthday<T extends Dictionary = Dictionary> extends iInput<T> {
+export default class bInputBirthday<
+	V extends Value = Value,
+	FV extends FormValue = FormValue,
+	D extends Dictionary = Dictionary
+> extends iInput<V, FV, D> {
 	/** @override */
-	@prop({default: () => new Date().beginningOfYear()})
-	readonly valueProp!: Date;
+	@prop({type: Date, required: false})
+	readonly valueProp?: V;
+
+	/** @override */
+	@prop({type: Date, required: false})
+	readonly defaultProp?: V;
 
 	/** @override */
 	@p({cache: false})
-	get value(): Date {
-		return Object.fastClone(this.getField('pointerStore'));
+	get value(): V {
+		return Object.fastClone(<NonNullable<V>>this.getField('valueProp'));
 	}
 
 	/** @override */
-	set value(value: Date) {
-		this.setField('pointerStore', value);
+	set value(value: V) {
+		this.setField('valueProp', value);
+	}
+
+	/** @override */
+	get default(): unknown {
+		return this.defaultProp || new Date().beginningOfYear();
 	}
 
 	/**
@@ -58,10 +77,11 @@ export default class bInputBirthday<T extends Dictionary = Dictionary> extends i
 
 		const
 			key = JSON.stringify(months),
-			cache = selectCache.create('months');
+			cache = selectCache.create('months'),
+			val = cache[key];
 
-		if (cache[key]) {
-			return cache[key];
+		if (val) {
+			return val;
 		}
 
 		return cache[key] = Object.freeze(months).map((label, value) => ({value, label}));
@@ -73,10 +93,11 @@ export default class bInputBirthday<T extends Dictionary = Dictionary> extends i
 	get days(): ReadonlyArray<Option> {
 		const
 			key = this.value.daysInMonth(),
-			cache = selectCache.create('days');
+			cache = selectCache.create('days'),
+			val = cache[key];
 
-		if (cache[key]) {
-			return cache[key];
+		if (val) {
+			return val;
 		}
 
 		const
@@ -98,10 +119,11 @@ export default class bInputBirthday<T extends Dictionary = Dictionary> extends i
 	get years(): ReadonlyArray<Option> {
 		const
 			key = new Date().getFullYear(),
-			cache = selectCache.create('years');
+			cache = selectCache.create('years'),
+			val = cache[key];
 
-		if (cache[key]) {
-			return cache[key];
+		if (val) {
+			return val;
 		}
 
 		const
@@ -139,7 +161,7 @@ export default class bInputBirthday<T extends Dictionary = Dictionary> extends i
 	};
 
 	/** @override */
-	protected valueStore!: Date;
+	protected valueStore!: V;
 
 	/** @override */
 	async clear(): Promise<boolean> {
@@ -203,13 +225,13 @@ export default class bInputBirthday<T extends Dictionary = Dictionary> extends i
 		});
 
 		if (String(d) !== String(this.value)) {
-			this.value = d;
+			this.value = <V>d;
 		}
 	}
 
 	/**
 	 * Handler: action change
-	 * @emits actionChange(value: Date)
+	 * @emits actionChange(value: V)
 	 */
 	async onActionChange(): Promise<void> {
 		await this.nextTick();

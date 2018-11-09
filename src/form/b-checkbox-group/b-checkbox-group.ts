@@ -8,10 +8,22 @@
 
 import $C = require('collection.js');
 import bCheckbox from 'form/b-checkbox/b-checkbox';
-import iInput, { component, prop, field, p, ValidatorsDecl, ComponentConverter } from 'super/i-input/i-input';
-export * from 'super/i-input/i-input';
+import iInput, {
 
-export type Value = any | any[];
+	component,
+	prop,
+	field,
+	p,
+	ValidatorsDecl,
+	ValidatorParams,
+	ComponentConverter
+
+} from 'super/i-input/i-input';
+
+export * from 'super/i-input/i-input';
+export type Value = CanUndef<CanArray<string>>;
+export type FormValue = Value;
+
 export interface Option extends Dictionary {
 	id: string;
 	name: string;
@@ -25,10 +37,11 @@ export interface Option extends Dictionary {
 	}
 })
 
-export default class bCheckboxGroup<T extends Dictionary = Dictionary> extends iInput<T> {
-	/** @override */
-	readonly valueProp: Value = [];
-
+export default class bCheckboxGroup<
+	V extends Value = Value,
+	FV extends FormValue = FormValue,
+	D extends Dictionary = Dictionary
+> extends iInput<V, FV, D> {
 	/** @override */
 	@prop({default: (obj) => $C(obj).get('data') || obj || []})
 	readonly componentConverter!: ComponentConverter<Option[]>;
@@ -54,12 +67,9 @@ export default class bCheckboxGroup<T extends Dictionary = Dictionary> extends i
 	/**
 	 * Checkboxes store
 	 */
-	@field((o) => o.link((val) => {
-		const
-			ctx: bCheckboxGroup = <any>o;
-
-		if (ctx.dataProvider) {
-			return ctx.options || [];
+	@field<bCheckboxGroup>((o) => o.link((val) => {
+		if (o.dataProvider) {
+			return o.options || [];
 		}
 
 		return val;
@@ -82,25 +92,30 @@ export default class bCheckboxGroup<T extends Dictionary = Dictionary> extends i
 	}
 
 	/** @override */
-	get value(): string | string[] | undefined {
+	get value(): V {
 		const v = this.getField('valueStore');
-		return this.multiple ? Object.keys(v) : v;
+		return <V>(Object.isObject(v) ? Object.keys(v) : v);
 	}
 
 	/** @override */
-	set value(value: string | string[] | undefined) {
+	set value(value: V) {
 		this.setField('valueStore', value && Object.isArray(value) ? Object.fromArray(value) : value);
+	}
+
+	/** @override */
+	get default(): unknown {
+		return (<unknown[]>[]).concat(this.defaultProp !== undefined ? this.defaultProp : []);
 	}
 
 	/** @override */
 	static blockValidators: ValidatorsDecl = {
 		...iInput.blockValidators,
-		async required({msg, showMsg = true}: Dictionary): Promise<boolean> {
+		async required({msg, showMsg = true}: ValidatorParams): Promise<boolean> {
 			const
 				ctx: bCheckboxGroup = <any>this,
 				value = await ctx.formValue;
 
-			if (ctx.multiple ? !value.length : value == null) {
+			if (Object.isArray(value) ? !value.length : value == null) {
 				if (showMsg) {
 					const
 						els = await ctx.elements;
@@ -119,12 +134,8 @@ export default class bCheckboxGroup<T extends Dictionary = Dictionary> extends i
 	};
 
 	/** @override */
-	@field((o) => o.link((val) => {
-		const ctx: bCheckboxGroup = <any>o;
-		return ctx.multiple && Object.fromArray(val) || val;
-	}))
-
-	protected valueStore: Dictionary<boolean> | string | undefined;
+	@field<bCheckboxGroup>((o) => o.link((val) => Object.isArray(val) ? o.multiple ? Object.fromArray(val) : val[0] : val))
+	protected valueStore: CanUndef<Dictionary<boolean> | string>;
 
 	/**
 	 * Sets a checkbox value to the group
@@ -132,7 +143,7 @@ export default class bCheckboxGroup<T extends Dictionary = Dictionary> extends i
 	 * @param name - checkbox name
 	 * @param value - checkbox value
 	 */
-	setValue(name: string, value: boolean): boolean | undefined {
+	setValue(name: string, value: boolean): CanUndef<boolean> {
 		if (!this.multiple) {
 			this.setField('valueStore', value ? name : undefined);
 			return;
@@ -192,7 +203,7 @@ export default class bCheckboxGroup<T extends Dictionary = Dictionary> extends i
 	}
 
 	/** @override */
-	protected initRemoteData(): Option[] | undefined {
+	protected initRemoteData(): CanUndef<Option[]> {
 		if (!this.db) {
 			return;
 		}
@@ -213,7 +224,7 @@ export default class bCheckboxGroup<T extends Dictionary = Dictionary> extends i
 	 */
 	protected isChecked(el: Option): boolean {
 		const v = this.getField('valueStore');
-		return Boolean(this.multiple ? v && v[el.name] : v === el.name);
+		return Boolean(Object.isObject(v) ? v[el.name] : v === el.name);
 	}
 
 	/**
@@ -242,7 +253,7 @@ export default class bCheckboxGroup<T extends Dictionary = Dictionary> extends i
 	 *
 	 * @param el
 	 * @param value
-	 * @emits actionChange(value: Value | undefined)
+	 * @emits actionChange(value: V)
 	 */
 	protected onActionChange(el: bCheckbox, value: boolean): void {
 		if (el.name) {

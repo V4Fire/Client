@@ -11,7 +11,7 @@ import $C = require('collection.js');
 /**
  * Returns a cookie value by the specified name
  */
-export function get(name: string): string | undefined {
+export function get(name: string): CanUndef<string> {
 	const matches = document.cookie.match(new RegExp(`(?:^|; )${RegExp.escape(name)}=([^;]*)`));
 	return matches ? decodeURIComponent(matches[1]) : undefined;
 }

@@ -13,7 +13,7 @@ import { GLOBAL } from 'core/const/links';
 /**
  * Manager of modules
  */
-// tslint:disable-next-line
+// tslint:disable-next-line:prefer-object-spread
 GLOBAL.ModuleDependencies = Object.assign(GLOBAL.ModuleDependencies || {}, {
 	/**
 	 * Cache for modules
@@ -32,9 +32,17 @@ GLOBAL.ModuleDependencies = Object.assign(GLOBAL.ModuleDependencies || {}, {
 	 * @param dependencies
 	 */
 	add(moduleName: string, dependencies: string[]): void {
-		let packages = 0;
+		const
+			{head} = document;
 
-		function indicator(): void {
+		if (!head) {
+			return;
+		}
+
+		let
+			packages = 0;
+
+		const indicator = () => {
 			const blob = new Blob(
 				[`ModuleDependencies.event.emit('component.${moduleName}.loading', {packages: ${packages}})`],
 				{type: 'application/javascript'}
@@ -43,8 +51,8 @@ GLOBAL.ModuleDependencies = Object.assign(GLOBAL.ModuleDependencies || {}, {
 			const script = document.createElement('script');
 			script.src = URL.createObjectURL(blob);
 			script.async = false;
-			document.head.appendChild(script);
-		}
+			head.appendChild(script);
+		};
 
 		const
 			style: Function[] = [],
@@ -99,18 +107,18 @@ GLOBAL.ModuleDependencies = Object.assign(GLOBAL.ModuleDependencies || {}, {
 						links = document.getElementsByTagName('link');
 
 					if (links.length) {
-						(<any>links[links.length - 1]).after(link);
+						links[links.length - 1].after(link);
 
 					} else {
-						document.head.insertAdjacentElement('beforeend', link);
+						head.insertAdjacentElement('beforeend', link);
 					}
 				});
 
 				logic.push(() => {
 					indicator();
-					document.head.appendChild(tpl);
+					head.appendChild(tpl);
 					indicator();
-					document.head.appendChild(script);
+					head.appendChild(script);
 					indicator();
 				});
 			});
@@ -133,6 +141,13 @@ GLOBAL.ModuleDependencies = Object.assign(GLOBAL.ModuleDependencies || {}, {
 		}
 
 		const
+			{head} = document;
+
+		if (!head) {
+			return [];
+		}
+
+		const
 			script = document.createElement('script'),
 			url = `${module}.dependencies`;
 
@@ -143,7 +158,7 @@ GLOBAL.ModuleDependencies = Object.assign(GLOBAL.ModuleDependencies || {}, {
 		script.src = <string>PATH[`${module}.dependencies`];
 		return new Promise((resolve) => {
 			this.event.once(`dependencies.${module}`, resolve);
-			document.head.appendChild(script);
+			head.appendChild(script);
 		});
 	}
 });

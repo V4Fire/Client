@@ -7,8 +7,8 @@
  */
 
 const
-	iconsMap = Object.createDict(),
-	iconsList = <any[]>[];
+	iconsMap = Object.createDict<CanUndef<string>>(),
+	iconsList = <Function[]>[];
 
 interface Sprite {
 	id: string;
@@ -17,12 +17,14 @@ interface Sprite {
 	node: SVGSymbolElement;
 }
 
-function icons(id: string): Sprite {
-	for (let i = 0; i < iconsList.length; i++) {
-		try {
-			return iconsList[i](id).default;
+function icons(id: CanUndef<string>): Sprite {
+	if (id) {
+		for (let i = 0; i < iconsList.length; i++) {
+			try {
+				return iconsList[i](id).default;
 
-		} catch {}
+			} catch {}
+		}
 	}
 
 	throw new Error(`Cannot find module "${id}"`);

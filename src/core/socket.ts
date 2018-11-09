@@ -6,7 +6,6 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-/// <reference types="node"/>
 /// <reference types="socket.io-client"/>
 
 import config from 'config';
@@ -17,7 +16,7 @@ export type Socket = SocketIOClient.Socket;
  * Wrapper for sockets
  * @param [namespace] - connection namespace
  */
-export default function socket(namespace: string = ''): Socket | undefined {
+export default function socket(namespace: string = ''): CanUndef<Socket> {
 	let socket;
 
 	try {

@@ -9,7 +9,7 @@
 /// <reference types="@v4fire/core"/>
 
 declare let READY_STATE: number;
-declare const PATH: Dictionary<string | undefined>;
+declare const PATH: Dictionary<CanUndef<string>>;
 declare const TPLS: Dictionary;
 
 interface HTMLImageElement {

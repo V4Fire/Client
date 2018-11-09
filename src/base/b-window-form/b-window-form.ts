@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import bWindow, { component, field, prop, wait, RequestFilter, Stage } from 'base/b-window/b-window';
+import bWindow, { component, field, prop, wait, RequestParams, RequestFilter, Stage } from 'base/b-window/b-window';
 import bForm from 'form/b-form/b-form';
 export * from 'base/b-window/b-window';
 
@@ -43,7 +43,7 @@ export default class bWindowForm<T extends Dictionary = Dictionary> extends bWin
 	/**
 	 * Method name
 	 */
-	get methodName(): string | undefined {
+	get methodName(): CanUndef<string> {
 		let m = this.method;
 
 		if (!m) {
@@ -69,7 +69,7 @@ export default class bWindowForm<T extends Dictionary = Dictionary> extends bWin
 
 	/** @override */
 	@field((o) => o.createWatchObject('get', {immediate: true}, [['_id', 'id']]))
-	protected readonly requestParams!: Dictionary;
+	protected readonly requestParams!: RequestParams;
 
 	/**
 	 * Form temporary cache

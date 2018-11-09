@@ -6,6 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import { InjectOptions } from 'vue/types/options';
 import { ComponentMeta, ComponentParams } from 'core/component';
 export const PARENT = {};
 
@@ -42,8 +43,8 @@ export default function inheritMeta(
 	// Provider inheritance
 	///////////////////////
 
-	// tslint:disable-next-line
-	if (Object.isObject(<any>p.provide) && Object.isObject(<any>params.provide)) {
+	// tslint:disable-next-line:prefer-conditional-expression
+	if (Object.isObject(p.provide) && Object.isObject(params.provide)) {
 		provide = {...params.provide, ...p.provide};
 
 	} else {
@@ -55,10 +56,10 @@ export default function inheritMeta(
 	/////////////////////
 
 	const
-		pIIsObj = Object.isObject(<any>params.inject),
-		pIIsArr = !pIIsObj && Object.isArray(<any>params.inject),
-		cIIsObj = Object.isObject(<any>p.inject),
-		cIIsArr = !cIIsObj && Object.isArray(<any>p.inject);
+		pIIsObj = Object.isObject(params.inject),
+		pIIsArr = !pIIsObj && Object.isArray(params.inject),
+		cIIsObj = Object.isObject(p.inject),
+		cIIsArr = !cIIsObj && Object.isArray(p.inject);
 
 	if (pIIsArr && cIIsArr) {
 		inject = (<string[]>p.inject).union(<string[]>p.inject);
@@ -79,14 +80,14 @@ export default function inheritMeta(
 				key = keys[i],
 				el = o[key];
 
-			// tslint:disable-next-line
+			// tslint:disable-next-line:prefer-object-spread
 			inject[key] = Object.assign(inject[key] || {}, Object.isObject(el) ? el : {from: el});
 		}
 
 	} else if (pIIsArr && cIIsObj) {
 		inject = {};
 
-		for (let o = <any[]>params.inject, i = 0; i < o.length; i++) {
+		for (let o = <string[]>params.inject, i = 0; i < o.length; i++) {
 			const key = o[i];
 			inject[key] = {[key]: {from: key}};
 		}
@@ -96,7 +97,7 @@ export default function inheritMeta(
 				key = keys[i],
 				el = o[key];
 
-			// tslint:disable-next-line
+			// tslint:disable-next-line:prefer-object-spread
 			inject[key] = Object.assign(inject[key] || {}, Object.isObject(el) ? el : {from: el});
 		}
 
@@ -111,10 +112,10 @@ export default function inheritMeta(
 			inject[key] = Object.isObject(el) ? {...el} : {from: el};
 		}
 
-		for (let o = <any[]>p.inject, i = 0; i < o.length; i++) {
+		for (let o = <string[]>p.inject, i = 0; i < o.length; i++) {
 			const key = o[i];
 
-			// tslint:disable-next-line
+			// tslint:disable-next-line:prefer-object-spread
 			inject[key] = Object.assign(inject[key] || {}, {from: key});
 		}
 
@@ -129,9 +130,9 @@ export default function inheritMeta(
 	let
 		functional;
 
-	// tslint:disable-next-line
-	if (Object.isObject(<any>p.functional) && Object.isObject(<any>params.functional)) {
-		functional = {...<object>params.functional, ...<object>p.functional};
+	// tslint:disable-next-line:prefer-conditional-expression
+	if (Object.isObject(p.functional) && Object.isObject(params.functional)) {
+		functional = {...params.functional, ...p.functional};
 
 	} else {
 		functional = p.functional != null ? p.functional : params.functional;
@@ -170,6 +171,10 @@ export default function inheritMeta(
 				const
 					key = keys[i],
 					parent = parentObj[key];
+
+				if (!parent) {
+					continue;
+				}
 
 				const
 					after = new Set(),
@@ -213,7 +218,13 @@ export default function inheritMeta(
 	for (let o = meta.methods, keys = Object.keys(methods), i = 0; i < keys.length; i++) {
 		const
 			key = keys[i],
-			parent = methods[key],
+			parent = methods[key];
+
+		if (!parent) {
+			continue;
+		}
+
+		const
 			watchers = {},
 			hooks = {};
 
@@ -230,7 +241,7 @@ export default function inheritMeta(
 
 		if (parent.hooks) {
 			const
-				o = <Dictionary>parent.hooks,
+				o = parent.hooks,
 				w = Object.keys(o);
 
 			for (let i = 0; i < w.length; i++) {

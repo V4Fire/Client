@@ -8,24 +8,38 @@
 
 import $C = require('collection.js');
 import bInputNumber from 'form/b-input-number/b-input-number';
-import iInput, { component, ModsDecl } from 'super/i-input/i-input';
+import iInput, { component, prop, ModsDecl } from 'super/i-input/i-input';
 export * from 'super/i-input/i-input';
 
-export interface Value {
+export type Value = CanUndef<{
 	from?: number[];
 	to?: number[];
-}
+}>;
+
+export type FormValue = Value;
 
 @component()
-export default class bTimeRange<T extends Dictionary = Dictionary> extends iInput<T> {
+export default class bTimeRange<
+	V extends Value = Value,
+	FV extends FormValue = FormValue,
+	D extends Dictionary = Dictionary
+> extends iInput<V, FV, D> {
 	/** @override */
-	get value(): Value | undefined {
-		const v = this.getField('valueStore');
+	@prop({type: Object, required: false})
+	readonly valueProp?: V;
+
+	/** @override */
+	@prop({type: Object, required: false})
+	readonly defaultProp?: V;
+
+	/** @override */
+	get value(): V {
+		const v = <V>this.getField('valueStore');
 		return v && Object.fastClone(v);
 	}
 
 	/** @override */
-	set value(value: Value | undefined) {
+	set value(value: V) {
 		this.setField('valueStore', value);
 	}
 
@@ -41,9 +55,6 @@ export default class bTimeRange<T extends Dictionary = Dictionary> extends iInpu
 	protected readonly $refs!: {input: HTMLInputElement};
 
 	/** @override */
-	protected valueStore: Value | undefined;
-
-	/** @override */
 	async clear(): Promise<boolean> {
 		if (this.mods.empty !== 'true') {
 			return super.clear();
@@ -55,14 +66,18 @@ export default class bTimeRange<T extends Dictionary = Dictionary> extends iInpu
 	/** @override */
 	protected initModEvents(): void {
 		super.initModEvents();
-		this.bindModTo('empty', 'valueStore', (v) => !this.getField('from.length', v) && !this.getField('to.length', v));
+		this.bindModTo(
+			'empty',
+			'valueStore',
+			(v: any) => !this.getField('from.length', v) && !this.getField('to.length', v)
+		);
 	}
 
 	/**
 	 * Handler: clear
 	 *
 	 * @param e
-	 * @emits actionChange(value: string)
+	 * @emits actionChange(value: V)
 	 */
 	protected async onClear(e: MouseEvent): Promise<void> {
 		if (await this.clear()) {
@@ -73,7 +88,7 @@ export default class bTimeRange<T extends Dictionary = Dictionary> extends iInpu
 
 	/**
 	 * Handler: component value save
-	 * @emits actionChange(value: Value | undefined)
+	 * @emits actionChange(value: V)
 	 */
 	protected async onSave(): Promise<void> {
 		const
@@ -94,7 +109,7 @@ export default class bTimeRange<T extends Dictionary = Dictionary> extends iInpu
 		f(from);
 		f(to);
 
-		this.value = from.length || to.length ? {from, to} : undefined;
+		this.value = <V>(from.length || to.length ? {from, to} : undefined);
 		this.emit('actionChange', this.value);
 		await this.close();
 	}

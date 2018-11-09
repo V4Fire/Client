@@ -27,6 +27,7 @@ import request, {
 	RequestMethods,
 	RequestResponse,
 	RequestResponseObject,
+	RequestFunctionResponse,
 	Response,
 	RequestBody,
 	ResolverResult,
@@ -36,8 +37,6 @@ import request, {
 } from 'core/request';
 
 export * from 'core/data/interface';
-export type RequestFactory = (...args: any[]) => RequestResponse;
-
 export { RequestMethods, RequestError } from 'core/request';
 export {
 
@@ -48,6 +47,7 @@ export {
 	RequestQuery,
 	RequestResponse,
 	RequestResponseObject,
+	RequestFunctionResponse,
 	Response,
 	RequestBody
 
@@ -85,7 +85,7 @@ export function provider(nmsOrFn: Function | string): Function | void {
 		};
 	}
 
-	providers[nmsOrFn.name] = <any>nmsOrFn;
+	providers[nmsOrFn.name] = <typeof Provider>nmsOrFn;
 }
 
 /**
@@ -186,12 +186,12 @@ export default class Provider {
 	/**
 	 * Temporary model event name for requests
 	 */
-	tmpEventName: ModelMethods | undefined;
+	tmpEventName: CanUndef<ModelMethods>;
 
 	/**
 	 * Temporary request method
 	 */
-	tmpMethod: RequestMethods | undefined;
+	tmpMethod: CanUndef<RequestMethods>;
 
 	/**
 	 * Cache id
@@ -257,10 +257,11 @@ export default class Provider {
 	constructor(params: ProviderParams = {}) {
 		const
 			nm = this.constructor.name,
-			key = this.cacheId = `${nm}:${JSON.stringify(params)}`;
+			key = this.cacheId = `${nm}:${JSON.stringify(params)}`,
+			cacheVal = instanceCache[key];
 
-		if (instanceCache[key]) {
-			return instanceCache[key];
+		if (cacheVal) {
+			return cacheVal;
 		}
 
 		requestCache[nm] = Object.createDict();
@@ -289,7 +290,7 @@ export default class Provider {
 	 * Returns an object with authentication params
 	 * @param params - additional parameters
 	 */
-	getAuthParams(params?: Dictionary | undefined): Dictionary {
+	getAuthParams(params?: CanUndef<Dictionary>): Dictionary {
 		return {};
 	}
 
@@ -326,7 +327,7 @@ export default class Provider {
 					return;
 				}
 
-				function onClear(err: any): void {
+				function onClear(err: unknown): void {
 					reject(err);
 					delete connectCache[key];
 				}
@@ -392,14 +393,14 @@ export default class Provider {
 	/**
 	 * Returns a custom event name for the operation
 	 */
-	name(): ModelMethods | undefined;
+	name(): CanUndef<ModelMethods>;
 
 	/**
 	 * Sets a custom event name for the operation
 	 * @param [value]
 	 */
 	name(value: ModelMethods): Provider;
-	name(value?: ModelMethods): Provider | ModelMethods | undefined {
+	name(value?: ModelMethods): CanUndef<Provider | ModelMethods> {
 		if (value == null) {
 			const val = this.tmpEventName;
 			this.tmpEventName = undefined;
@@ -413,14 +414,14 @@ export default class Provider {
 	/**
 	 * Returns a custom request method for the operation
 	 */
-	method(): RequestMethods | undefined;
+	method(): CanUndef<RequestMethods>;
 
 	/**
 	 * Sets a custom request method for the operation
 	 * @param [value]
 	 */
 	method(value: RequestMethods): Provider;
-	method(value?: RequestMethods): Provider | RequestMethods | undefined {
+	method(value?: RequestMethods): CanUndef<Provider | RequestMethods> {
 		if (value == null) {
 			const val = this.tmpMethod;
 			this.tmpMethod = undefined;
@@ -477,7 +478,7 @@ export default class Provider {
 	 * @param [query]
 	 * @param [opts]
 	 */
-	get<T>(query?: RequestQuery, opts?: CreateRequestOptions<T>): RequestResponse {
+	get<T = unknown>(query?: RequestQuery, opts?: CreateRequestOptions<T>): RequestResponse {
 		if (this.baseGetURL && !this.advURL) {
 			this.base(this.baseGetURL);
 		}
@@ -507,7 +508,7 @@ export default class Provider {
 	 * @param [query]
 	 * @param [opts]
 	 */
-	peek<T>(query?: RequestQuery, opts?: CreateRequestOptions<T>): RequestResponse {
+	peek<T = unknown>(query?: RequestQuery, opts?: CreateRequestOptions<T>): RequestResponse {
 		if (this.basePeekURL && !this.advURL) {
 			this.base(this.basePeekURL);
 		}
@@ -536,7 +537,7 @@ export default class Provider {
 	 * @param [body]
 	 * @param [opts]
 	 */
-	post<T>(body?: RequestBody, opts?: CreateRequestOptions<T>): RequestResponse {
+	post<T = unknown>(body?: RequestBody, opts?: CreateRequestOptions<T>): RequestResponse {
 		const
 			url = this.url(),
 			eventName = this.name(),
@@ -561,7 +562,7 @@ export default class Provider {
 	 * @param [body]
 	 * @param [opts]
 	 */
-	add<T>(body?: RequestBody, opts?: CreateRequestOptions<T>): RequestResponse {
+	add<T = unknown>(body?: RequestBody, opts?: CreateRequestOptions<T>): RequestResponse {
 		if (this.baseAddURL && !this.advURL) {
 			this.base(this.baseAddURL);
 		}
@@ -584,7 +585,7 @@ export default class Provider {
 	 * @param [body]
 	 * @param [opts]
 	 */
-	upd<T>(body?: RequestBody, opts?: CreateRequestOptions<T>): RequestResponse {
+	upd<T = unknown>(body?: RequestBody, opts?: CreateRequestOptions<T>): RequestResponse {
 		if (this.baseUpdURL && !this.advURL) {
 			this.base(this.baseUpdURL);
 		}
@@ -607,7 +608,7 @@ export default class Provider {
 	 * @param [body]
 	 * @param [opts]
 	 */
-	del<T>(body?: RequestBody, opts?: CreateRequestOptions<T>): RequestResponse {
+	del<T = unknown>(body?: RequestBody, opts?: CreateRequestOptions<T>): RequestResponse {
 		if (this.baseDelURL && !this.advURL) {
 			this.base(this.baseDelURL);
 		}
@@ -730,15 +731,19 @@ export default class Provider {
 	 * @param url - request url
 	 * @param factory - request factory
 	 */
-	protected updateRequest(url: string, factory: RequestFactory): RequestResponse;
+	protected updateRequest(url: string, factory: RequestFunctionResponse): RequestResponse;
 
 	/**
 	 * @param url - request url
 	 * @param event - event type
 	 * @param factory - request factory
 	 */
-	protected updateRequest(url: string, event: string, factory: RequestFactory): RequestResponse;
-	protected updateRequest(url: string, event: string | RequestFactory, factory?: RequestFactory): RequestResponse {
+	protected updateRequest(url: string, event: string, factory: RequestFunctionResponse): RequestResponse;
+	protected updateRequest(
+		url: string,
+		event: string | RequestFunctionResponse,
+		factory?: RequestFunctionResponse
+	): RequestResponse {
 		if (Object.isFunction(event)) {
 			factory = event;
 			event = '';
@@ -753,10 +758,11 @@ export default class Provider {
 
 			req.then((res) => {
 				const
-					{ctx} = res;
+					{ctx} = res,
+					cache = requestCache[this.constructor.name];
 
-				if (ctx.canCache) {
-					requestCache[this.constructor.name][res.cacheKey] = res;
+				if (ctx.canCache && cache) {
+					cache[res.cacheKey] = res;
 				}
 
 				this.setEventToQueue(this.getEventKey(e, res.data), e, () => res.data);

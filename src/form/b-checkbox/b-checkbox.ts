@@ -10,6 +10,9 @@ import symbolGenerator from 'core/symbol';
 import iInput, { component, prop, watch, ModsDecl } from 'super/i-input/i-input';
 export * from 'super/i-input/i-input';
 
+export type Value = boolean;
+export type FormValue = Value;
+
 export const
 	$$ = symbolGenerator();
 
@@ -19,10 +22,18 @@ export const
 	}
 })
 
-export default class bCheckbox<T extends Dictionary = Dictionary> extends iInput<T> {
+export default class bCheckbox<
+	V extends Value = Value,
+	FV extends FormValue = FormValue,
+	D extends Dictionary = Dictionary
+> extends iInput<V, FV, D> {
 	/** @override */
-	@prop(Function)
-	readonly dataType: Function = Any;
+	@prop({type: Boolean, required: false})
+	readonly valueProp?: V;
+
+	/** @override */
+	@prop({type: Boolean, required: false})
+	readonly defaultProp?: V;
 
 	/**
 	 * Checkbox label
@@ -35,6 +46,11 @@ export default class bCheckbox<T extends Dictionary = Dictionary> extends iInput
 	 */
 	@prop(Boolean)
 	readonly changeable: boolean = true;
+
+	/** @override */
+	get default(): unknown {
+		return this.defaultProp || false;
+	}
 
 	/** @inheritDoc */
 	static readonly mods: ModsDecl = {
@@ -83,7 +99,7 @@ export default class bCheckbox<T extends Dictionary = Dictionary> extends iInput
 	 * Handler: checkbox trigger
 	 *
 	 * @param e
-	 * @emits actionChange(value: boolean)
+	 * @emits actionChange(value: V)
 	 */
 	@watch({
 		field: '?$el:click',
@@ -111,7 +127,7 @@ export default class bCheckbox<T extends Dictionary = Dictionary> extends iInput
 		super.initModEvents();
 		this.bindModTo('checked', 'valueStore');
 		this.localEvent.on('block.mod.*.checked.*', (e) => {
-			this.value = e.type !== 'remove' && e.value === 'true';
+			this.value = <V>(e.type !== 'remove' && e.value === 'true');
 			this.emit(this.value ? 'check' : 'uncheck');
 		});
 	}

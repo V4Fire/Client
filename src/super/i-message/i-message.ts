@@ -57,7 +57,7 @@ export default class iMessage extends iBlock {
 	/**
 	 * Information message
 	 */
-	get info(): string | undefined {
+	get info(): CanUndef<string> {
 		return this.infoMsg;
 	}
 
@@ -65,14 +65,14 @@ export default class iMessage extends iBlock {
 	 * Sets a new information message
 	 * @param value
 	 */
-	set info(value: string | undefined) {
+	set info(value: CanUndef<string>) {
 		this.infoMsg = value;
 	}
 
 	/**
 	 * Error message
 	 */
-	get error(): string | undefined {
+	get error(): CanUndef<string> {
 		return this.errorMsg;
 	}
 
@@ -80,7 +80,7 @@ export default class iMessage extends iBlock {
 	 * Sets a new error message
 	 * @param value
 	 */
-	set error(value: string | undefined) {
+	set error(value: CanUndef<string>) {
 		this.errorMsg = value;
 	}
 

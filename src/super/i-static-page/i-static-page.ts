@@ -75,22 +75,22 @@ export default class iStaticPage<
 	remoteState!: Dictionary;
 
 	/** @override */
-	get route(): CurrentPage<P, Q, M> | undefined {
+	get route(): CanUndef<CurrentPage<P, Q, M>> {
 		return this.getField('routeStore');
 	}
 
 	/**
 	 * @override
-	 * @emits setRoute(value: CurrentPage<P, Q, M> | undefined)
+	 * @emits setRoute(value: CanUndef<CurrentPage<P, Q, M>>)
 	 */
-	set route(value: CurrentPage<P, Q, M> | undefined) {
+	set route(value: CanUndef<CurrentPage<P, Q, M>>) {
 		this.setField('routeStore', value);
 		this.emit('setRoute', value);
 	}
 
 	/** @override */
 	get pageTitle(): string {
-		return this.getField('pageTitleStore');
+		return <NonNullable<string>>this.getField('pageTitleStore');
 	}
 
 	/** @override */
@@ -102,7 +102,7 @@ export default class iStaticPage<
 	 * System language
 	 */
 	get lang(): string {
-		return this.getField('langStore');
+		return <NonNullable<string>>this.getField('langStore');
 	}
 
 	/**
@@ -160,13 +160,15 @@ export default class iStaticPage<
 
 	/** @override */
 	// @ts-ignore
-	setRootMod(name: string, value: any, component: iBlock = this): boolean {
-		if (value === undefined) {
+	setRootMod(name: string, value: unknown, component: iBlock = this): boolean {
+		const
+			root = document.documentElement;
+
+		if (value === undefined || !root) {
 			return false;
 		}
 
 		const
-			root = document.documentElement,
 			cl = root.classList;
 
 		const
@@ -190,7 +192,7 @@ export default class iStaticPage<
 		cl.add(mod);
 		this.rootMods[name] = {
 			mod,
-			value,
+			value: <string>value,
 			component
 		};
 
@@ -199,9 +201,13 @@ export default class iStaticPage<
 
 	/** @override */
 	// @ts-ignore
-	removeRootMod(name: string, value?: any, component: iBlock = this): boolean {
+	removeRootMod(name: string, value?: unknown, component: iBlock = this): boolean {
 		const
 			root = document.documentElement;
+
+		if (!root) {
+			return false;
+		}
 
 		name = `${(component.globalName || component.componentName).dasherize()}_${name.camelize(false)}`;
 		value = value !== undefined ? String(value).dasherize() : undefined;
