@@ -12,17 +12,23 @@ import $C = require('collection.js');
 
 import log from 'core/log';
 import Async from 'core/async';
-
-import Vue, { PropOptions, ComponentOptions, FunctionalComponentOptions } from 'vue';
 import { GLOBAL } from 'core/const/links';
+
 import {
+
+	minimalCtx,
+	Driver as ComponentDriver,
+
+	PropOptions,
+	ComponentOptions,
+	FunctionalComponentOptions,
 
 	SystemField,
 	ComponentField,
 	ComponentProp,
 	ComponentMeta,
 	WatchOptionsWithHandler,
-	VueInterface
+	ComponentInterface
 
 } from 'core/component';
 
@@ -31,19 +37,7 @@ export interface ComponentConstructor<T = unknown> {
 }
 
 export const
-	defaultWrapper = Symbol('Default wrapper'),
-	vueProto = {};
-
-{
-	const
-		obj = Vue.prototype;
-
-	for (const key in obj) {
-		if (key.length === 2) {
-			vueProto[key] = obj[key];
-		}
-	}
-}
+	defaultWrapper = Symbol('Default wrapper');
 
 /**
  * Returns a meta object for the specified component
@@ -54,7 +48,7 @@ export const
 export function getComponent(
 	constructor: ComponentConstructor,
 	meta: ComponentMeta
-): ComponentOptions<Vue> | FunctionalComponentOptions<Vue> {
+): ComponentOptions<ComponentDriver> | FunctionalComponentOptions<ComponentDriver> {
 	const
 		p = meta.params,
 		m = p.model;
@@ -162,7 +156,7 @@ export function getComponent(
 		},
 
 		mounted(): void {
-			this.$el.vueComponent = this;
+			this.$el.component = this;
 			this.hook = 'mounted';
 			bindWatchers(this);
 
@@ -244,7 +238,7 @@ export function getComponent(
 export function getFunctionalComponent(
 	constructor: ComponentConstructor,
 	meta: ComponentMeta
-): FunctionalComponentOptions<Vue> {
+): FunctionalComponentOptions<ComponentDriver> {
 	const
 		{component, instance} = getBaseComponent(constructor, meta),
 		{params: p} = meta;
@@ -252,7 +246,7 @@ export function getFunctionalComponent(
 	const
 		props = {};
 
-	component.ctx = Object.assign(Object.create(vueProto), {
+	component.ctx = Object.assign(Object.create(minimalCtx), {
 		meta,
 		instance,
 		componentName: meta.componentName,
@@ -321,7 +315,7 @@ export const
  * @param ctx - component context
  * @param [eventCtx] - event component context
  */
-export function bindWatchers(ctx: VueInterface, eventCtx: VueInterface = ctx): void {
+export function bindWatchers(ctx: ComponentInterface, eventCtx: ComponentInterface = ctx): void {
 	const
 		// @ts-ignore
 		{meta, hook, $async: $a} = ctx;

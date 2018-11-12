@@ -48,7 +48,7 @@ module.exports = async function ({buildId, plugins}) {
 
 	if (buildId === build.RUNTIME) {
 		loaders.rules.set('ts', {
-			test: /^(?:(?!\/workers\/).)*\.ts$/,
+			test: /^(?:(?!\/workers\/).)*(?:\.d)?\.ts$/,
 			exclude: depsRgxp,
 			use: [
 				{
@@ -78,7 +78,7 @@ module.exports = async function ({buildId, plugins}) {
 		});
 
 		loaders.rules.set('ts.workers', {
-			test: /\/workers\/.*?\.ts$/,
+			test: /\/workers\/.*?(?:\.d)?\.ts$/,
 			exclude: depsRgxp,
 			use: [
 				{

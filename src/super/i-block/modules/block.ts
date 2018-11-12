@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import iBlock, { VueElement, ModsTable } from 'super/i-block/i-block';
+import iBlock, { ComponentElement, ModsTable } from 'super/i-block/i-block';
 import { EventEmitter2 as EventEmitter } from 'eventemitter2';
 
 export type EventType =
@@ -71,7 +71,7 @@ export default class Block {
 	/**
 	 * Link to a block node
 	 */
-	get node(): VueElement<unknown> {
+	get node(): ComponentElement<unknown> {
 		return this.component.$el;
 	}
 

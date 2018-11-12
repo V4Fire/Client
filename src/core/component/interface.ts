@@ -6,32 +6,45 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import Async from 'core/async';
-import Vue, { ComponentOptions, WatchOptions, WatchOptionsWithHandler, VNode, CreateElement } from 'vue';
-import { ScopedSlot } from 'vue/types/vnode';
-import { ComponentMeta, Hooks } from 'core/component';
-
 // tslint:disable:no-empty
 // tslint:disable:typedef
 
-export type VueElement<T = unknown> = Element & {vueComponent?: T};
-export default class VueInterface<
-	C extends VueInterface = VueInterface<any, any>,
-	R extends VueInterface = VueInterface<any, any>
+import Async from 'core/async';
+import { ComponentMeta, Hooks } from 'core/component';
+
+import Component, {
+
+	ComponentOptions,
+	WatchOptions,
+	WatchOptionsWithHandler,
+
+	CreateElement,
+	VNode,
+	ScopedSlot
+
+} from 'core/component/driver';
+
+export type ComponentElement<T = unknown> = Element & {
+	component?: T;
+};
+
+export default class ComponentInterface<
+	C extends ComponentInterface = ComponentInterface<any, any>,
+	R extends ComponentInterface = ComponentInterface<any, any>
 > {
 	readonly hook!: Hooks;
 	readonly instance!: this;
 	readonly componentName!: string;
 	readonly keepAlive!: boolean;
-	readonly $el!: VueElement<C>;
-	readonly $options!: ComponentOptions<Vue>;
+	readonly $el!: ComponentElement<C>;
+	readonly $options!: ComponentOptions<Component>;
 	readonly $props!: Dictionary;
 	readonly $children?: C[];
 	readonly $parent?: C;
 	readonly $normalParent?: C;
 	readonly $root!: R | any;
 	readonly $isServer!: boolean;
-	protected readonly $async!: Async<VueInterface>;
+	protected readonly $async!: Async<ComponentInterface>;
 	protected readonly meta!: ComponentMeta;
 	protected readonly $refs!: Dictionary;
 	protected readonly $slots!: Dictionary<VNode>;

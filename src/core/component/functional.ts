@@ -10,9 +10,10 @@
 
 import $C = require('collection.js');
 import symbolGenerator from 'core/symbol';
-
 import Async from 'core/async';
+
 import { EventEmitter2 as EventEmitter } from 'eventemitter2';
+import { ComponentElement, FunctionalCtx } from 'core/component';
 
 import {
 
@@ -23,10 +24,17 @@ import {
 	WatchOptions,
 	WatchOptionsWithHandler
 
-} from 'vue';
+} from 'core/component/driver';
 
-import { VueElement, FunctionalCtx } from 'core/component';
-import { runHook, createMeta, initDataObject, bindWatchers, defaultWrapper } from 'core/component/component';
+import {
+
+	runHook,
+	createMeta,
+	initDataObject,
+	bindWatchers,
+	defaultWrapper
+
+} from 'core/component/component';
 
 export interface RenderObject {
 	staticRenderFns?: Function[];
@@ -40,8 +48,8 @@ const
 /**
  * Generates a fake context for a function component
  *
- * @param createElement - Vue.createElement
- * @param renderCtx - Vue.RenderContext
+ * @param createElement - create element function
+ * @param renderCtx - render context
  * @param baseCtx - base component context (methods, accessors, etc.)
  */
 export function createFakeCtx(
@@ -228,7 +236,7 @@ export function createFakeCtx(
 	}
 
 	Object.defineProperty(fakeCtx, '$el', {
-		get(): CanUndef<VueElement<any>> {
+		get(): CanUndef<ComponentElement<any>> {
 			const
 				id = <any>$$.el,
 				el = <Element>fakeCtx[id];
@@ -316,7 +324,7 @@ export function createFakeCtx(
  *
  * @param vNode
  * @param ctx - component fake context
- * @param renderCtx - Vue.RenderContext
+ * @param renderCtx - render context
  */
 export function patchVNode(vNode: VNode, ctx: Dictionary<any>, renderCtx: RenderContext): VNode {
 	const
@@ -348,7 +356,7 @@ export function patchVNode(vNode: VNode, ctx: Dictionary<any>, renderCtx: Render
 			vData.ref = data.ref;
 		}
 
-		// Vue directives
+		// Directives
 
 		const
 			d = data.directives;
@@ -441,7 +449,7 @@ export function patchVNode(vNode: VNode, ctx: Dictionary<any>, renderCtx: Render
 
 		const
 			el = ctx.$el,
-			oldCtx = el.vueComponent;
+			oldCtx = el.component;
 
 		if (oldCtx === ctx) {
 			return;
@@ -532,12 +540,12 @@ export function patchVNode(vNode: VNode, ctx: Dictionary<any>, renderCtx: Render
 
 			const
 				refs = {},
-				refNodes = el.querySelectorAll(`.${ctx.componentId}[data-vue-ref]`);
+				refNodes = el.querySelectorAll(`.${ctx.componentId}[data-component-ref]`);
 
 			for (let i = 0; i < refNodes.length; i++) {
 				const
 					el = refNodes[i],
-					ref = el.dataset.vueRef;
+					ref = el.dataset.componentRef;
 
 				refs[ref] = refs[ref] ? [].concat(refs[ref], el) : el;
 			}
@@ -561,20 +569,20 @@ export function patchVNode(vNode: VNode, ctx: Dictionary<any>, renderCtx: Render
 
 							for (let i = 0; i < el.length; i++) {
 								const v = <any>el[i];
-								res.push(v.vueComponent || v);
+								res.push(v.component || v);
 							}
 
 							return cache = res;
 						}
 
-						return cache = el.vueComponent || el;
+						return cache = el.component || el;
 					}
 				});
 			}
 		}
 
 		ctx.hook = 'mounted';
-		el.vueComponent = ctx;
+		el.component = ctx;
 		bindWatchers(<any>ctx);
 
 		runHook('mounted', meta, ctx).then(async () => {
@@ -643,7 +651,7 @@ export function execRenderObject(renderObject: RenderObject, fakeCtx: Dictionary
 }
 
 /**
- * Takes an object with compiled Vue templates and returns a new render function
+ * Takes an object with compiled templates and returns a new render function
  *
  * @param renderObject
  * @param baseCtx - base component context

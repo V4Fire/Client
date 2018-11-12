@@ -142,7 +142,7 @@ Snakeskin.importFilters({
 });
 
 const
-	isVueProp = /^(:|@|v-)/;
+	isV4Prop = /^(:|@|v-)/;
 
 function tagFilter({name, attrs = {}}) {
 	$C(include('build/filters/tag')).forEach((filter) => {
@@ -182,7 +182,7 @@ function tagFilter({name, attrs = {}}) {
 		const isFunctional = c && c.functional === true || !vFunc && $C(smart).every((el, key) => {
 			key = key.dasherize();
 
-			if (!isVueProp.test(key)) {
+			if (!isV4Prop.test(key)) {
 				key = `:${key}`;
 			}
 

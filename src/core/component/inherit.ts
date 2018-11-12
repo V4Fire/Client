@@ -6,7 +6,8 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { InjectOptions } from 'vue/types/options';
+// tslint:disable:cyclomatic-complexity
+
 import { ComponentMeta, ComponentParams } from 'core/component';
 export const PARENT = {};
 

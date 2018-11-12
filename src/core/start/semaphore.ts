@@ -6,9 +6,8 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import Vue from 'vue';
 import flags from 'core/start/flags';
-import { rootComponents } from 'core/component';
+import { Driver as Component, rootComponents } from 'core/component';
 import { onEverythingReady } from 'core/event';
 
 export default onEverythingReady(async () => {
@@ -36,7 +35,7 @@ export default onEverythingReady(async () => {
 	};
 
 	// tslint:disable-next-line:no-unused-expression
-	new Vue({
+	new Component({
 		...params,
 		...component,
 		el: node

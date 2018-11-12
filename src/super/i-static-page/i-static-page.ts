@@ -9,7 +9,7 @@
 import symbolGenerator from 'core/symbol';
 import remoteState from 'core/component/state';
 
-import { reset, globalEvent, ResetType, VueInterface } from 'core/component';
+import { reset, globalEvent, ResetType, ComponentInterface } from 'core/component';
 import { setLang, lang } from 'core/i18n';
 
 import { SetEvent } from 'core/session';
@@ -25,7 +25,7 @@ export { globalEvent, ResetType, CurrentPage };
 export type RootMods = Dictionary<{
 	mod: string;
 	value: string;
-	component: VueInterface;
+	component: ComponentInterface;
 }>;
 
 export const
@@ -143,7 +143,7 @@ export default class iStaticPage<
 	 * @param value
 	 * @param component
 	 */
-	setPageTitle(value: string, component: VueInterface = this): CanPromise<boolean> {
+	setPageTitle(value: string, component: ComponentInterface = this): CanPromise<boolean> {
 		this.pageTitle = value;
 		return this.pageTitle === value;
 	}
@@ -231,7 +231,7 @@ export default class iStaticPage<
 	}
 
 	/** @override */
-	getRootMod(name: string, component: VueInterface = this): undefined | string {
+	getRootMod(name: string, component: ComponentInterface = this): undefined | string {
 		return this.removeRootMod[name] && this.removeRootMod[name].value;
 	}
 

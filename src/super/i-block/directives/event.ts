@@ -8,10 +8,9 @@
 
 import $C = require('collection.js');
 import KeyCodes from 'core/key-codes';
-import Vue, { VNode, VNodeDirective } from 'vue';
 
 import iBlock from 'super/i-block/i-block';
-import { VueElement } from 'core/component';
+import { Driver as Component, VNode, VNodeDirective, ComponentElement } from 'core/component';
 
 const
 	cache = new WeakMap(),
@@ -19,7 +18,7 @@ const
 	keyValRgxp = /\.key\.([^.]*)/;
 
 function bind(
-	node: VueElement<iBlock>,
+	node: ComponentElement<iBlock>,
 	p: VNodeDirective,
 	vNode: VNode & {context?: iBlock},
 	oldVNode: VNode
@@ -105,4 +104,4 @@ function bind(
 	}
 }
 
-Vue.directive('e', {bind: <any>bind});
+Component.directive('e', {bind: <any>bind});

@@ -6,33 +6,45 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { PropOptions, WatchOptions } from 'vue';
 import {
+
+	PropOptions,
+	WatchOptions,
 
 	Hooks,
 	initEvent,
 	InitFieldFn,
+
 	MergeFieldFn,
 	UniqueFieldFn,
-	VueInterface,
-	MethodWatcher,
+	ComponentInterface,
 	ComponentMeta,
+
+	MethodWatcher,
 	WatchHandler
 
 } from 'core/component';
 
-export interface FieldWatcherObject<CTX extends VueInterface = VueInterface, A = unknown, B = A> extends WatchOptions {
+export interface FieldWatcherObject<
+	CTX extends ComponentInterface = ComponentInterface,
+	A = unknown,
+	B = A
+> extends WatchOptions {
 	fn: string | WatchHandler<CTX, A, B>;
 	provideArgs?: boolean;
 }
 
-export type FieldWatcher<CTX extends VueInterface = VueInterface, A = unknown, B = A> =
+export type FieldWatcher<CTX extends ComponentInterface = ComponentInterface, A = unknown, B = A> =
 	string |
 	FieldWatcherObject<CTX, A, B> |
 	WatchHandler<CTX, A, B> |
 	Array<string | FieldWatcherObject<CTX, A, B> | WatchHandler<CTX, A, B>>;
 
-export interface ComponentProp<CTX extends VueInterface = VueInterface, A = unknown, B = A> extends PropOptions {
+export interface ComponentProp<
+	CTX extends ComponentInterface = ComponentInterface,
+	A = unknown,
+	B = A
+> extends PropOptions {
 	watch?: FieldWatcher<CTX, A, B>;
 }
 
@@ -52,7 +64,7 @@ export const prop = paramsFactory<Function | ObjectConstructor | ComponentProp>(
 	return p;
 });
 
-export interface SystemField<CTX extends VueInterface = VueInterface> {
+export interface SystemField<CTX extends ComponentInterface = ComponentInterface> {
 	atom?: boolean;
 	default?: unknown;
 	unique?: boolean | UniqueFieldFn<CTX>;
@@ -61,7 +73,11 @@ export interface SystemField<CTX extends VueInterface = VueInterface> {
 	merge?: MergeFieldFn<CTX> | boolean;
 }
 
-export interface ComponentField<CTX extends VueInterface = VueInterface, A = unknown, B = A> extends SystemField<CTX> {
+export interface ComponentField<
+	CTX extends ComponentInterface = ComponentInterface,
+	A = unknown,
+	B = A
+> extends SystemField<CTX> {
 	watch?: FieldWatcher<CTX, A, B>;
 }
 
@@ -91,12 +107,12 @@ export const system = paramsFactory<InitFieldFn | SystemField>('systemFields', (
 
 export type HookParams = {[hook in Hooks]?: CanArray<string>};
 export type ComponentHooks = Hooks | Hooks[] | HookParams | HookParams[];
-export type MethodWatchers<CTX extends VueInterface = VueInterface, A = unknown, B = A> =
+export type MethodWatchers<CTX extends ComponentInterface = ComponentInterface, A = unknown, B = A> =
 	string |
 	MethodWatcher<CTX, A, B> |
 	Array<string | MethodWatcher<CTX, A, B>>;
 
-export interface ComponentMethod<CTX extends VueInterface = VueInterface, A = unknown, B = A> {
+export interface ComponentMethod<CTX extends ComponentInterface = ComponentInterface, A = unknown, B = A> {
 	watch?: MethodWatchers<CTX, A, B>;
 	watchParams?: WatchOptions;
 	hook?: ComponentHooks;

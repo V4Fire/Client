@@ -84,7 +84,7 @@
 						< use :xlink:href = getIconLink('${iconId}')
 
 			/**
-			 * Generates vue transition wrapper for content
+			 * Generates a transition wrapper for a content
 			 * @param {string=} [content] - content to wrapping
 			 */
 			- block transition(content)

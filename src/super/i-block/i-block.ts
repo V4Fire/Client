@@ -16,7 +16,6 @@ import log, { LogMessageOptions } from 'core/log';
 
 import * as analytics from 'core/analytics';
 import { EventEmitter2 as EventEmitter } from 'eventemitter2';
-import { RenderContext, VNode } from 'vue';
 
 import 'super/i-block/directives';
 import Block from 'super/i-block/modules/block';
@@ -65,11 +64,16 @@ import {
 
 	ModVal,
 	ModsDecl,
-	VueInterface,
-	VueElement,
+
+	ComponentInterface,
+	ComponentElement,
 	ComponentMeta,
 	MethodWatchers,
+
 	RenderObject,
+	RenderContext,
+	VNode,
+
 	Hooks,
 	PARENT
 
@@ -116,7 +120,7 @@ const classesCache = new Cache<'base' | 'blocks' | 'els', ReadonlyArray<string> 
 ]);
 
 @component()
-export default class iBlock extends VueInterface<iBlock, iStaticPage> {
+export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	/**
 	 * Returns a link for the specified icon
 	 * @param iconId
@@ -586,8 +590,8 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 	/**
 	 * Wrapper for $refs
 	 */
-	protected get refs(): Dictionary<VueElement<iBlock> | Element> {
-		return $C(this.$refs).map((el) => (<VueElement<any>>el).vueComponent || <Element>el);
+	protected get refs(): Dictionary<ComponentElement<iBlock> | Element> {
+		return $C(this.$refs).map((el) => (<ComponentElement<any>>el).component || <Element>el);
 	}
 
 	/**
@@ -1775,7 +1779,7 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 
 			for (let i = 0; i < domEls.length; i++) {
 				const
-					el = (<VueElement<any>>domEls[i]).vueComponent;
+					el = (<ComponentElement<any>>domEls[i]).component;
 
 				if (el) {
 					els.add(el);
@@ -1828,7 +1832,7 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 
 			for (let i = 0; i < domEls.length; i++) {
 				const
-					el = (<VueElement<any>>domEls[i]).vueComponent;
+					el = (<ComponentElement<any>>domEls[i]).component;
 
 				if (el) {
 					els.add(el);
@@ -2180,8 +2184,8 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 	 */
 	protected createBlockCtxFromNode(node: Element): Dictionary {
 		const
-			$el = <VueElement<iBlock>>node,
-			comp = $el.vueComponent;
+			$el = <ComponentElement<iBlock>>node,
+			comp = $el.component;
 
 		const
 			rgxp = /(?:^| )([bpg]-[^_ ]+)(?: |$)/,
@@ -2773,7 +2777,7 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 	 * @param el
 	 * @param [filter]
 	 */
-	protected $<T extends iBlock>(el: VueElement<T>, filter?: string): T;
+	protected $<T extends iBlock>(el: ComponentElement<T>, filter?: string): T;
 
 	/**
 	 * Returns an instance of a component by the specified query
@@ -2782,12 +2786,12 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 	 * @param [filter]
 	 */
 	protected $<T extends iBlock>(query: string, filter?: string): CanUndef<T>;
-	protected $<T extends iBlock>(query: string | VueElement<T>, filter: string = ''): CanUndef<T> {
+	protected $<T extends iBlock>(query: string | ComponentElement<T>, filter: string = ''): CanUndef<T> {
 		const
 			$0 = Object.isString(query) ? document.body.querySelector(query) : query,
 			n = $0 && $0.closest<any>(`.i-block-helper${filter}`);
 
-		return n && n.vueComponent;
+		return n && n.component;
 	}
 
 	/**
@@ -2821,7 +2825,7 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 	protected async waitRef<T = iBlock | Element | iBlock[] | Element[]>(ref: string, params?: AsyncOpts): Promise<T> {
 		await this.async.wait(() => this.$refs[ref], params);
 		const link = <any>this.$refs[ref];
-		return link.vueComponent ? link.vueComponent : link;
+		return link.component ? link.component : link;
 	}
 
 	/**
@@ -3146,8 +3150,8 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 				return;
 			}
 
-			if (node && node.vueComponent === this) {
-				delete node.vueComponent;
+			if (node && node.component === this) {
+				delete node.component;
 			}
 		}
 

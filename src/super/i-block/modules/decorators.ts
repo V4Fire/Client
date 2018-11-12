@@ -6,12 +6,11 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import iBlock, { Statuses, iBlockDecorator } from 'super/i-block/i-block';
+import { Statuses, iBlockDecorator } from 'super/i-block/i-block';
 import { statuses } from 'super/i-block/modules/const';
 
 import { AsyncOpts } from 'core/async';
-import { WatchOptions } from 'vue';
-import { initEvent, ModVal, InitFieldFn as BaseInitFieldFn, VueInterface } from 'core/component';
+import { initEvent, ModVal, InitFieldFn as BaseInitFieldFn, ComponentInterface, WatchOptions } from 'core/component';
 
 import {
 
@@ -31,28 +30,30 @@ import {
 
 } from 'core/component/decorators/base';
 
-export interface InitFieldFn<T extends VueInterface = VueInterface> extends BaseInitFieldFn<T & iBlockDecorator> {}
+export interface InitFieldFn<
+	T extends ComponentInterface = ComponentInterface
+> extends BaseInitFieldFn<T & iBlockDecorator> {}
 
 export type MethodWatchers<
-	CTX extends VueInterface = VueInterface,
+	CTX extends ComponentInterface = ComponentInterface,
 	A = unknown,
 	B = A
 > = BaseMethodWatchers<CTX & iBlockDecorator, A, B>;
 
 export type FieldWatcher<
-	CTX extends VueInterface = VueInterface,
+	CTX extends ComponentInterface = ComponentInterface,
 	A = unknown,
 	B = A
 > = BaseFieldWatcher<CTX & iBlockDecorator, A, B>;
 
 export interface ComponentProp<
-	CTX extends VueInterface = VueInterface,
+	CTX extends ComponentInterface = ComponentInterface,
 	A = unknown,
 	B = A
 > extends BaseComponentProp<CTX & iBlockDecorator, A, B> {}
 
 export interface ComponentField<
-	CTX extends VueInterface = VueInterface,
+	CTX extends ComponentInterface = ComponentInterface,
 	A = unknown,
 	B = A
 > extends BaseComponentField<CTX & iBlockDecorator, A, B> {}
@@ -61,7 +62,7 @@ export interface ComponentField<
  * @see core/component/decorators/base.ts
  * @override
  */
-export const p = pDecorator as <CTX extends VueInterface = VueInterface, A = unknown, B = A>(
+export const p = pDecorator as <CTX extends ComponentInterface = ComponentInterface, A = unknown, B = A>(
 	params?: ComponentProp<CTX, A, B> | ComponentField<CTX, A, B> | ComponentMethod<CTX, A, B> | ComponentAccessor
 ) => Function;
 
@@ -69,7 +70,7 @@ export const p = pDecorator as <CTX extends VueInterface = VueInterface, A = unk
  * @see core/component/decorators/base.ts
  * @override
  */
-export const prop = propDecorator as <CTX extends VueInterface = VueInterface, A = unknown, B = A>(
+export const prop = propDecorator as <CTX extends ComponentInterface = ComponentInterface, A = unknown, B = A>(
 	params?: Function | ObjectConstructor | ComponentProp<CTX, A, B>
 ) => Function;
 
@@ -77,7 +78,7 @@ export const prop = propDecorator as <CTX extends VueInterface = VueInterface, A
  * @see core/component/decorators/base.ts
  * @override
  */
-export const field = fieldDecorator as <CTX extends VueInterface = VueInterface, A = unknown, B = A>(
+export const field = fieldDecorator as <CTX extends ComponentInterface = ComponentInterface, A = unknown, B = A>(
 	params?: InitFieldFn<CTX> | ComponentField<CTX, A, B>
 ) => Function;
 
@@ -85,7 +86,7 @@ export const field = fieldDecorator as <CTX extends VueInterface = VueInterface,
  * @see core/component/decorators/base.ts
  * @override
  */
-export const system = systemDecorator as <CTX extends VueInterface = VueInterface, A = unknown, B = A>(
+export const system = systemDecorator as <CTX extends ComponentInterface = ComponentInterface, A = unknown, B = A>(
 	params?: InitFieldFn<CTX> | ComponentField<CTX, A, B>
 ) => Function;
 
@@ -93,11 +94,11 @@ export const system = systemDecorator as <CTX extends VueInterface = VueInterfac
  * @see core/component/decorators/base.ts
  * @override
  */
-export const watch = watchDecorator as <CTX extends VueInterface = VueInterface, A = unknown, B = A>(
+export const watch = watchDecorator as <CTX extends ComponentInterface = ComponentInterface, A = unknown, B = A>(
 	params?: FieldWatcher<CTX, A, B> | MethodWatchers<CTX, A, B>
 ) => Function;
 
-export type BindModCb<V = unknown, R = unknown, CTX extends VueInterface = VueInterface> =
+export type BindModCb<V = unknown, R = unknown, CTX extends ComponentInterface = ComponentInterface> =
 	((value: V, ctx: CTX) => R) | Function;
 
 /**
@@ -108,7 +109,7 @@ export type BindModCb<V = unknown, R = unknown, CTX extends VueInterface = VueIn
  * @param [converter] - converter function
  * @param [opts] - watch options
  */
-export function bindModTo<V = unknown, R = unknown, CTX extends VueInterface = VueInterface>(
+export function bindModTo<V = unknown, R = unknown, CTX extends ComponentInterface = ComponentInterface>(
 	param: string,
 	converter: BindModCb | WatchOptions = Boolean,
 	opts?: WatchOptions
@@ -134,7 +135,7 @@ type EventType = 'on' | 'once';
  * @param [value]
  * @param [method]
  */
-export function mod<T extends VueInterface = VueInterface>(
+export function mod<T extends ComponentInterface = ComponentInterface>(
 	name: string,
 	value: ModVal = '*',
 	method: EventType = 'on'
@@ -158,7 +159,7 @@ export function mod<T extends VueInterface = VueInterface>(
  * @param [value]
  * @param [method]
  */
-export function removeMod<T extends VueInterface = VueInterface>(
+export function removeMod<T extends ComponentInterface = ComponentInterface>(
 	name: string,
 	value: ModVal = '*',
 	method: EventType = 'on'
@@ -183,7 +184,7 @@ export function removeMod<T extends VueInterface = VueInterface>(
  * @param [value]
  * @param [method]
  */
-export function elMod<T extends VueInterface = VueInterface>(
+export function elMod<T extends ComponentInterface = ComponentInterface>(
 	elName: string,
 	modName: string,
 	value: ModVal = '*',
@@ -209,7 +210,7 @@ export function elMod<T extends VueInterface = VueInterface>(
  * @param [value]
  * @param [method]
  */
-export function removeElMod<T extends VueInterface = VueInterface>(
+export function removeElMod<T extends ComponentInterface = ComponentInterface>(
 	elName: string,
 	modName: string,
 	value: ModVal = '*',
@@ -247,7 +248,7 @@ export function wait(status: number | string | Statuses, params?: WaitOpts | Fun
  *   *) [params.fn] - callback function
  *   *) [params.defer] - if true, then the function will always return a promise
  */
-export function wait<T extends VueInterface = VueInterface>(
+export function wait<T extends ComponentInterface = ComponentInterface>(
 	status: number | string | Statuses | WaitOpts,
 	params?: WaitOpts | Function
 ): Function {

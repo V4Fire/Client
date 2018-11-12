@@ -15,7 +15,7 @@ const
 const
 	isLiteral = /^\s*[[{]/,
 	isSvgRequire = /require\(.*?\.svg[\\"']+\)/,
-	isVueProp = /^(:|@|v-)/,
+	isV4Prop = /^(:|@|v-)/,
 	commaRgxp = /\s*,\s*/;
 
 const isRef = {
@@ -57,17 +57,17 @@ module.exports = [
 	 * Normalizes component attributes
 	 * @param {!Object} attrs
 	 */
-	function normalizeVueAttrs({attrs}) {
+	function normalizeComponentAttrs({attrs}) {
 		$C(attrs).forEach((el, key) => {
 			if (isRef[key]) {
-				attrs['data-vue-ref'] = [el];
+				attrs['data-component-ref'] = [el];
 
 				if (!attrs[':class']) {
 					attrs[':class'] = attachClass(['componentId']);
 				}
 			}
 
-			if (!isVueProp.test(key)) {
+			if (!isV4Prop.test(key)) {
 				return;
 			}
 

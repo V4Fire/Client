@@ -8,8 +8,7 @@
 
 import iBlock from 'super/i-block/i-block';
 import Async, { AsyncOpts, AsyncOnOpts, AsyncOnceOpts, ClearOptsId, ProxyCb } from 'core/async';
-import { WatchOptions } from 'vue';
-import { ModVal } from 'core/component';
+import { ModVal, WatchOptions } from 'core/component';
 
 export type Classes = Dictionary<string | Array<string | true> | true>;
 

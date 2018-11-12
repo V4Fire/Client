@@ -6,45 +6,48 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import Vue, {
+// @ts-ignore
+import * as defTpls from 'core/block.ss';
+
+import log from 'core/log';
+import { EventEmitter2 as EventEmitter, Listener } from 'eventemitter2';
+
+import ComponentDriver, {
 
 	PropOptions,
 	WatchOptions,
 	ComputedOptions,
 	ComponentOptions,
+	InjectOptions,
 	FunctionalComponentOptions,
 	RenderContext,
 	CreateElement,
 	VNode
 
-} from 'vue';
-
-// @ts-ignore
-import * as defTpls from 'core/block.ss';
-import { InjectOptions } from 'vue/types/options';
-import { EventEmitter2 as EventEmitter, Listener } from 'eventemitter2';
+} from 'core/component/driver';
 
 import 'core/component/filters';
 import 'core/component/directives';
 
-import log from 'core/log';
 import inheritMeta, { PARENT } from 'core/component/inherit';
+import ComponentInterface from 'core/component/interface';
 
-import VueInterface from 'core/component/vue';
 import { getComponent, getBaseComponent } from 'core/component/component';
 import { convertRender, createFakeCtx, patchVNode } from 'core/component/functional';
 
 export * from 'core/component/decorators';
 export * from 'core/component/functional';
+export * from 'core/component/driver';
 
 export { PARENT } from 'core/component/inherit';
 export { runHook, customWatcherRgxp } from 'core/component/component';
-export { default as VueInterface, VueElement } from 'core/component/vue';
+export { default as ComponentInterface, ComponentElement } from 'core/component/interface';
 export { default as globalEvent, reset, ResetType } from 'core/component/event';
+export { default as Driver } from 'core/component/driver';
 
 export const
 	initEvent = new EventEmitter({maxListeners: 1e3}),
-	rootComponents = Object.createDict<Promise<ComponentOptions<Vue>>>(),
+	rootComponents = Object.createDict<Promise<ComponentOptions<ComponentDriver>>>(),
 	localComponents = new WeakMap(),
 	components = new WeakMap();
 
@@ -82,21 +85,25 @@ export interface ComponentParams {
 	functional?: boolean | Dictionary;
 	tiny?: boolean;
 	model?: {prop?: string; event?: string};
-	parent?: Vue;
+	parent?: ComponentDriver;
 	provide?: Dictionary | (() => Dictionary);
 	inject?: InjectOptions;
 	inheritAttrs?: boolean;
 	inheritMods?: boolean;
 }
 
-export interface WatchHandler<CTX extends VueInterface = VueInterface, A = unknown, B = A> {
+export interface WatchHandler<CTX extends ComponentInterface = ComponentInterface, A = unknown, B = A> {
 	(a: A, b: B): unknown;
 	(...args: A[]): unknown;
 	(ctx: CTX, a: A, b: B): unknown;
 	(ctx: CTX, ...args: A[]): unknown;
 }
 
-export interface FieldWatcher<CTX extends VueInterface = VueInterface, A = unknown, B = A> extends WatchOptions {
+export interface FieldWatcher<
+	CTX extends ComponentInterface = ComponentInterface,
+	A = unknown,
+	B = A
+> extends WatchOptions {
 	fn: WatchHandler<CTX, A, B>;
 	provideArgs?: boolean;
 }
@@ -106,19 +113,19 @@ export interface ComponentProp extends PropOptions {
 	default?: unknown;
 }
 
-export interface InitFieldFn<T extends VueInterface = VueInterface> {
+export interface InitFieldFn<T extends ComponentInterface = ComponentInterface> {
 	(ctx: T, data: Dictionary): unknown;
 }
 
-export interface MergeFieldFn<T extends VueInterface = VueInterface> {
+export interface MergeFieldFn<T extends ComponentInterface = ComponentInterface> {
 	(ctx: T, oldCtx: T, field: string, link: CanUndef<string>): unknown;
 }
 
-export interface UniqueFieldFn<T extends VueInterface = VueInterface> {
+export interface UniqueFieldFn<T extends ComponentInterface = ComponentInterface> {
 	(ctx: T, oldCtx: T): unknown;
 }
 
-export interface SystemField<T extends VueInterface = VueInterface> {
+export interface SystemField<T extends ComponentInterface = ComponentInterface> {
 	atom?: boolean;
 	default?: unknown;
 	unique?: boolean | UniqueFieldFn<T>;
@@ -127,21 +134,21 @@ export interface SystemField<T extends VueInterface = VueInterface> {
 	merge?: InitFieldFn<T>;
 }
 
-export interface ComponentField<T extends VueInterface = VueInterface> extends SystemField<T> {
+export interface ComponentField<T extends ComponentInterface = ComponentInterface> extends SystemField<T> {
 	watchers: Map<string | Function, FieldWatcher>;
 }
 
-export interface SystemField<T extends VueInterface = VueInterface> {
+export interface SystemField<T extends ComponentInterface = ComponentInterface> {
 	default?: unknown;
 	init?: InitFieldFn<T>;
 }
 
-export interface WatchWrapper<CTX extends VueInterface = VueInterface, A = unknown, B = A> {
+export interface WatchWrapper<CTX extends ComponentInterface = ComponentInterface, A = unknown, B = A> {
 	(ctx: CTX, handler: WatchHandler<CTX, A, B>): CanPromise<WatchHandler<CTX, A, B> | Function>;
 }
 
 export interface WatchOptionsWithHandler<
-	CTX extends VueInterface = VueInterface,
+	CTX extends ComponentInterface = ComponentInterface,
 	A = unknown,
 	B = A
 > extends WatchOptions {
@@ -155,7 +162,11 @@ export interface WatchOptionsWithHandler<
 	handler: string | WatchHandler<CTX, A, B>;
 }
 
-export interface MethodWatcher<CTX extends VueInterface = VueInterface, A = unknown, B = A> extends WatchOptions {
+export interface MethodWatcher<
+	CTX extends ComponentInterface = ComponentInterface,
+	A = unknown,
+	B = A
+> extends WatchOptions {
 	field?: string;
 	group?: string;
 	single?: boolean;
@@ -230,13 +241,14 @@ export interface ComponentMeta {
 		props: Dictionary<PropOptions>;
 		methods: Dictionary<Function>;
 		computed: Dictionary<ComputedOptions<unknown>>;
-		render: ComponentOptions<Vue>['render'] | FunctionalComponentOptions['render'];
+		render: ComponentOptions<ComponentDriver>['render'] | FunctionalComponentOptions['render'];
 		ctx?: FunctionalCtx;
 	}
 }
 
 export const
-	isAbstractComponent = /^[iv]-/;
+	isAbstractComponent = /^[iv]-/,
+	isSmartComponent = /-functional$/;
 
 /**
  * Returns a component name
@@ -247,7 +259,7 @@ export function getComponentName(constr: Function): string {
 }
 
 /**
- * Creates new Vue.js component
+ * Creates a new component
  *
  * @decorator
  * @param [params] - additional parameters:
@@ -260,18 +272,20 @@ export function getComponentName(constr: Function): string {
  *
  *   *) [tiny] - if true, then the functional component will be created without advanced component shim
  *   *) [parent] - link to a parent component
- *   *) [model] - parameters for Vue.model
- *   *) [provide] - parameters for Vue.provide
- *   *) [inject] - parameters for Vue.inject
- *   *) [inheritAttrs] - parameters for Vue.inheritAttrs
+ *
+ *   // Component driver options (by default Vue):
+ *
+ *   *) [model] - parameters for a model option
+ *   *) [provide] - parameters for a provide option
+ *   *) [inject] - parameters for an inject option
+ *   *) [inheritAttrs] - parameters for an inheritAttrs option
  */
 export function component(params?: ComponentParams): Function {
 	return (target) => {
 		const
 			name = params && params.name || getComponentName(target),
 			parent = Object.getPrototypeOf(target),
-			parentMeta = components.get(parent),
-			isSmart = /-functional$/;
+			parentMeta = components.get(parent);
 
 		let p: ComponentParams = parentMeta ? {...params} : {
 			root: false,
@@ -293,7 +307,7 @@ export function component(params?: ComponentParams): Function {
 
 		const meta: ComponentMeta = {
 			name,
-			componentName: name.replace(isSmart, ''),
+			componentName: name.replace(isSmartComponent, ''),
 			constructor: target,
 			params: p,
 
@@ -351,7 +365,7 @@ export function component(params?: ComponentParams): Function {
 			p = inheritMeta(meta, parentMeta);
 		}
 
-		if (!p.name || !isSmart.test(p.name)) {
+		if (!p.name || !isSmartComponent.test(p.name)) {
 			components.set(target, meta);
 		}
 
@@ -432,7 +446,7 @@ export function component(params?: ComponentParams): Function {
 			rootComponents[name] = new Promise(obj);
 
 		} else {
-			Vue.component(name, obj);
+			ComponentDriver.component(name, obj);
 		}
 
 		if (!Object.isBoolean(p.functional)) {
