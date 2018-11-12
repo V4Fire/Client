@@ -10,18 +10,20 @@
 
 import $C = require('collection.js');
 
-import log from 'core/log';
 import Async from 'core/async';
+import log from 'core/log';
 import { GLOBAL } from 'core/const/links';
 
-import {
+import ComponentDriver, {
 
 	minimalCtx,
-	Driver as ComponentDriver,
-
 	PropOptions,
 	ComponentOptions,
-	FunctionalComponentOptions,
+	FunctionalComponentOptions
+
+} from 'core/component/driver';
+
+import {
 
 	SystemField,
 	ComponentField,

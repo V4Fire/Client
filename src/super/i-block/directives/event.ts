@@ -10,7 +10,7 @@ import $C = require('collection.js');
 import KeyCodes from 'core/key-codes';
 
 import iBlock from 'super/i-block/i-block';
-import { Driver as Component, VNode, VNodeDirective, ComponentElement } from 'core/component';
+import Component, { VNode, VNodeDirective, ComponentElement } from 'core/component';
 
 const
 	cache = new WeakMap(),

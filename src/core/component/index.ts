@@ -38,12 +38,12 @@ import { convertRender, createFakeCtx, patchVNode } from 'core/component/functio
 export * from 'core/component/decorators';
 export * from 'core/component/functional';
 export * from 'core/component/driver';
+export { default as default } from 'core/component/driver';
 
 export { PARENT } from 'core/component/inherit';
 export { runHook, customWatcherRgxp } from 'core/component/component';
 export { default as ComponentInterface, ComponentElement } from 'core/component/interface';
 export { default as globalEvent, reset, ResetType } from 'core/component/event';
-export { default as Driver } from 'core/component/driver';
 
 export const
 	initEvent = new EventEmitter({maxListeners: 1e3}),

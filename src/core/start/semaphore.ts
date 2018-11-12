@@ -7,7 +7,7 @@
  */
 
 import flags from 'core/start/flags';
-import { Driver as Component, rootComponents } from 'core/component';
+import Component, { rootComponents } from 'core/component';
 import { onEverythingReady } from 'core/event';
 
 export default onEverythingReady(async () => {
