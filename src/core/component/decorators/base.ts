@@ -41,7 +41,7 @@ export interface ComponentAccessor {
 }
 
 /**
- * Marks a class property as a Vue component initial property
+ * Marks a class property as a component initial property
  * @decorator
  */
 export const prop = paramsFactory<Function | ObjectConstructor | ComponentProp>('props', (p) => {
@@ -66,7 +66,7 @@ export interface ComponentField<CTX extends VueInterface = VueInterface, A = unk
 }
 
 /**
- * Marks a class property as a Vue component data property
+ * Marks a class property as a component data property
  * @decorator
  */
 export const field = paramsFactory<InitFieldFn | ComponentField>('fields', (p) => {

@@ -54,7 +54,7 @@ module.exports = [
 	},
 
 	/**
-	 * Normalizes Vue attributes
+	 * Normalizes component attributes
 	 * @param {!Object} attrs
 	 */
 	function normalizeVueAttrs({attrs}) {

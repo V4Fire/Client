@@ -115,7 +115,7 @@ export default class bForm<T extends Dictionary = Dictionary> extends iData<T> {
 	protected readonly $refs!: {form: HTMLFormElement};
 
 	/**
-	 * Array of form Vue elements
+	 * Array of form components
 	 */
 	@p({cache: false})
 	get elements(): CanPromise<ReadonlyArray<iInput>> {
@@ -138,7 +138,7 @@ export default class bForm<T extends Dictionary = Dictionary> extends iData<T> {
 	}
 
 	/**
-	 * Array of form submit Vue elements
+	 * Array of form submit components
 	 */
 	@p({cache: false})
 	get submits(): CanPromise<ReadonlyArray<bButton>> {

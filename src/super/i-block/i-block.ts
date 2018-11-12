@@ -732,7 +732,7 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 	protected readonly syncModCache!: Dictionary<Function>;
 
 	/**
-	 * Link to the current Vue component
+	 * Link to the current component
 	 */
 	@system({
 		atom: true,
@@ -2768,7 +2768,7 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 	}
 
 	/**
-	 * Returns an instance of Vue component by the specified element
+	 * Returns an instance of a component by the specified element
 	 *
 	 * @param el
 	 * @param [filter]
@@ -2776,7 +2776,7 @@ export default class iBlock extends VueInterface<iBlock, iStaticPage> {
 	protected $<T extends iBlock>(el: VueElement<T>, filter?: string): T;
 
 	/**
-	 * Returns an instance of Vue component by the specified query
+	 * Returns an instance of a component by the specified query
 	 *
 	 * @param query
 	 * @param [filter]

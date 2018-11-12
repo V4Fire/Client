@@ -46,7 +46,7 @@ export const
 }
 
 /**
- * Returns an object for the Vue component
+ * Returns a meta object for the specified component
  *
  * @param constructor
  * @param meta
@@ -236,7 +236,7 @@ export function getComponent(
 }
 
 /**
- * Returns an object for the Vue functional component
+ * Returns a meta object for the specified functional component
  *
  * @param constructor
  * @param meta

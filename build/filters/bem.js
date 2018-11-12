@@ -17,7 +17,7 @@ const
 
 module.exports = [
 	/**
-	 * Converts bem classes to Vue
+	 * Converts bem classes to a component
 	 *
 	 * @param {string} block
 	 * @param {!Object} attrs
@@ -25,7 +25,7 @@ module.exports = [
 	 * @param {string} value
 	 * @returns {string}
 	 */
-	function bem2Vue(block, attrs, rootTag, value) {
+	function bem2Component(block, attrs, rootTag, value) {
 		const
 			tmp = attrs[':class'] = attrs[':class'] || [];
 
