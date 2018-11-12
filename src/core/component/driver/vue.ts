@@ -8,7 +8,7 @@
 
 import Vue from 'vue';
 
-export default Vue;
+export { Vue as Component };
 export * from 'vue';
 
 //#if VueInterfaces

@@ -12,8 +12,9 @@
 import Async from 'core/async';
 import { ComponentMeta, Hooks } from 'core/component';
 
-import Component, {
+import {
 
+	Component,
 	ComponentOptions,
 	WatchOptions,
 	WatchOptionsWithHandler,

@@ -14,8 +14,9 @@ import Async from 'core/async';
 import log from 'core/log';
 import { GLOBAL } from 'core/const/links';
 
-import ComponentDriver, {
+import {
 
+	Component as ComponentDriver,
 	minimalCtx,
 	PropOptions,
 	ComponentOptions,
