@@ -16,7 +16,7 @@ const
  * Parameters for webpack.resolve
  */
 module.exports = {
-	extensions: ['.ts', '.d.ts', '.js', '.json'],
+	extensions: ['.ts', '.js', '.json'],
 	modules: [...new Set([resolve.blockSync(), resolve.sourceDir, src.cwd(), ...resolve.rootDependencies, src.lib()])],
 	alias: include('build/alias.webpack')
 };
