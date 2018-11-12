@@ -14,7 +14,7 @@ import { ComponentMeta, Hooks } from 'core/component';
 
 import {
 
-	Component,
+	ComponentDriver as Component,
 	ComponentOptions,
 	WatchOptions,
 	WatchOptionsWithHandler,

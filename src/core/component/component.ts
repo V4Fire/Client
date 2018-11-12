@@ -16,7 +16,7 @@ import { GLOBAL } from 'core/const/links';
 
 import {
 
-	Component as ComponentDriver,
+	ComponentDriver,
 	minimalCtx,
 	PropOptions,
 	ComponentOptions,

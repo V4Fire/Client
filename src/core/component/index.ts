@@ -14,7 +14,7 @@ import { EventEmitter2 as EventEmitter, Listener } from 'eventemitter2';
 
 import {
 
-	Component as ComponentDriver,
+	ComponentDriver,
 	PropOptions,
 	WatchOptions,
 	ComputedOptions,
@@ -39,7 +39,7 @@ import { convertRender, createFakeCtx, patchVNode } from 'core/component/functio
 export * from 'core/component/decorators';
 export * from 'core/component/functional';
 export * from 'core/component/driver';
-export { Component as default } from 'core/component/driver';
+export { ComponentDriver as default } from 'core/component/driver';
 
 export { PARENT } from 'core/component/inherit';
 export { runHook, customWatcherRgxp } from 'core/component/component';
