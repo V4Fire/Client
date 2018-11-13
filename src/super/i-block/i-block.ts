@@ -55,12 +55,17 @@ import { asyncLocal, AsyncNamespace } from 'core/kv-storage';
 import {
 
 	component,
-	hook,
-	execRenderObject,
-	patchVNode,
-	runHook,
+	PARENT,
+
 	globalEvent,
 	customWatcherRgxp,
+
+	hook,
+	runHook,
+	Hooks,
+
+	patchVNode,
+	execRenderObject,
 
 	ModVal,
 	ModsDecl,
@@ -68,18 +73,14 @@ import {
 	ComponentInterface,
 	ComponentElement,
 	ComponentMeta,
-	MethodWatchers,
 
 	RenderObject,
 	RenderContext,
-	VNode,
-
-	Hooks,
-	PARENT
+	VNode
 
 } from 'core/component';
 
-import { prop, field, system, watch, wait, p } from 'super/i-block/modules/decorators';
+import { prop, field, system, watch, wait, p, MethodWatchers } from 'super/i-block/modules/decorators';
 import { queue, backQueue, restart, deferRestart } from 'core/render';
 import { delegate } from 'core/dom';
 
@@ -1154,7 +1155,7 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 		fields?: WatchObjectFields<T>
 	): Dictionary {
 		if (Object.isArray(params)) {
-			fields = params;
+			fields = <WatchObjectFields<T>>params;
 			params = {};
 		}
 

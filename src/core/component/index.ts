@@ -31,7 +31,17 @@ export { PARENT } from 'core/component/inherit';
 export { runHook, customWatcherRgxp } from 'core/component/component';
 export { default as globalEvent, reset, ResetType } from 'core/component/event';
 export { prop, field, system, p, hook, watch, paramsFactory } from 'core/component/decorators';
-export { ComponentDriver as default } from 'core/component/driver';
+export {
+
+	ComponentDriver as default,
+	WatchOptions,
+
+	VNode,
+	VNodeDirective,
+	CreateElement,
+	RenderContext
+
+} from 'core/component/driver';
 
 export const
 	isAbstractComponent = /^[iv]-/,

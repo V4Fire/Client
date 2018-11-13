@@ -272,6 +272,11 @@ export default class iStaticPage<
 	/** @override */
 	protected initBaseAPI(): void {
 		super.initBaseAPI();
-		this.remoteState = remoteState;
+
+		Object.defineProperty(this, 'remoteState', {
+			writable: true,
+			configurable: true,
+			value: remoteState
+		});
 	}
 }
