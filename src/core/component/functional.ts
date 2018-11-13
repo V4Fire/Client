@@ -266,8 +266,9 @@ export function createFakeCtx(
 
 	bindWatchers(<any>fakeCtx);
 	initDataObject(meta.fields, fakeCtx, instance, data);
-	runHook('beforeDataCreate', meta, fakeCtx).catch(stderr);
-	fakeCtx.$$data = fakeCtx;
+
+	runHook('beforeDataCreate', meta, fakeCtx)
+		.catch(stderr);
 
 	if (meta.params.tiny) {
 		Object.assign(fakeCtx, data);
@@ -297,6 +298,7 @@ export function createFakeCtx(
 		}
 	}
 
+	fakeCtx.$$data = fakeCtx;
 	return fakeCtx;
 }
 
