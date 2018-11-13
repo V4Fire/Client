@@ -58,7 +58,7 @@ export default class ComponentInterface<
 	protected readonly $listeners!: Dictionary<Function | Function[]>;
 	protected readonly $activeField!: string;
 	protected $createElement!: CreateElement;
-	private $compositeI!: number;
+	protected $compositeI!: number;
 
 	protected log?(key: string, ...details: unknown[]): void;
 

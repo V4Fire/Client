@@ -37,22 +37,27 @@ import ComponentInterface from 'core/component/interface';
 
 import { getComponent, getBaseComponent } from 'core/component/component';
 import { convertRender, createFakeCtx, patchVNode, CTX } from 'core/component/functional';
+import { applyComposites } from 'core/component/composite';
 
+export * from 'core/component/composite';
 export * from 'core/component/decorators';
 export * from 'core/component/functional';
 export * from 'core/component/driver';
-export { ComponentDriver as default } from 'core/component/driver';
 
 export { PARENT } from 'core/component/inherit';
 export { runHook, customWatcherRgxp } from 'core/component/component';
 export { default as ComponentInterface, ComponentElement } from 'core/component/interface';
 export { default as globalEvent, reset, ResetType } from 'core/component/event';
+export { ComponentDriver as default } from 'core/component/driver';
 
 export const
-	initEvent = new EventEmitter({maxListeners: 1e3}),
+	initEvent = new EventEmitter({maxListeners: 1e3});
+
+export const
+	constructors = Object.createDict<Function>(),
 	rootComponents = Object.createDict<Promise<ComponentOptions<ComponentDriver>>>(),
-	localComponents = new WeakMap(),
-	components = new WeakMap();
+	localComponents = new WeakMap<Function, ComponentMeta>(),
+	components = new WeakMap<Function, ComponentMeta>();
 
 ((initEventOnce) => {
 	initEvent.once = function (event: CanArray<string>, listener: Listener): EventEmitter {
@@ -262,9 +267,6 @@ export function getComponentName(constr: Function): string {
 	return constr.name.dasherize();
 }
 
-const
-	constructors = Object.createDict<Function>();
-
 /**
  * Creates a new component
  *
@@ -312,53 +314,6 @@ export function component(params?: ComponentParams): Function {
 			}
 		}
 
-		const applyComposites = (vnode, ctx) => {
-			if (!ctx.$compositeI) {
-				return;
-			}
-
-			const search = (vnode, parent?, pos?) => {
-				const
-					attrs = vnode.data && vnode.data.attrs || {},
-					composite = attrs['v4-composite'];
-
-				if (parent && composite) {
-					const
-						constr = constructors[composite];
-
-					if (constr) {
-						const
-							proto = constr.prototype,
-							tpl = TPLS[composite] || proto.render;
-
-						parent.children[pos] = ctx.execRenderObject(
-							tpl.index(),
-							[Object.assign(Object.create(ctx), {componentName: composite})]
-						);
-					}
-
-					if (!--ctx.$compositeI) {
-						return;
-					}
-				}
-
-				const
-					{children} = vnode;
-
-				if (children) {
-					for (let i = 0; i < children.length; i++) {
-						search(children[i], vnode, i);
-
-						if (!ctx.$compositeI) {
-							return;
-						}
-					}
-				}
-			};
-
-			search(vnode);
-		};
-
 		const meta: ComponentMeta = {
 			name,
 			componentName: name.replace(isSmartComponent, ''),
@@ -397,7 +352,7 @@ export function component(params?: ComponentParams): Function {
 				props: {},
 				methods: {},
 				computed: {},
-				render(this: Dictionary, el: CreateElement, baseCtx: RenderContext): VNode {
+				render(this: ComponentInterface, el: CreateElement, baseCtx: RenderContext): VNode {
 					const
 						{methods: {render: r}, component: {ctx}} = meta;
 
@@ -407,7 +362,7 @@ export function component(params?: ComponentParams): Function {
 							that = this;
 
 						if (!r.static && p.functional === true && ctx) {
-							that = createFakeCtx(el, baseCtx, ctx);
+							that = <any>createFakeCtx(el, baseCtx, ctx);
 							vnode = patchVNode(r.fn.call(that, el, baseCtx), that, baseCtx);
 
 						} else {
@@ -415,8 +370,10 @@ export function component(params?: ComponentParams): Function {
 							that = r.fn[CTX] || this;
 						}
 
+						// @ts-ignore
 						if (that.$compositeI) {
 							applyComposites(vnode, that);
+							// @ts-ignore
 							that.$compositeI = 0;
 						}
 
