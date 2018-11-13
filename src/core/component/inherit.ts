@@ -8,7 +8,7 @@
 
 // tslint:disable:cyclomatic-complexity
 
-import { ComponentMeta, ComponentParams } from 'core/component';
+import { ComponentMeta, ComponentParams } from 'core/component/interface';
 export const PARENT = {};
 
 /**

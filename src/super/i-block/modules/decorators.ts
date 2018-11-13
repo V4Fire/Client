@@ -6,11 +6,10 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { Statuses, iBlockDecorator } from 'super/i-block/i-block';
-import { statuses } from 'super/i-block/modules/const';
-
 import { AsyncOpts } from 'core/async';
-import { initEvent, ModVal, InitFieldFn as BaseInitFieldFn, ComponentInterface, WatchOptions } from 'core/component';
+import { statuses, Statuses, iBlockDecorator } from 'super/i-block/i-block';
+import { initEvent, ModVal, InitFieldFn as BaseInitFieldFn, ComponentInterface } from 'core/component';
+import { WatchOptions } from 'core/component/driver';
 
 import {
 

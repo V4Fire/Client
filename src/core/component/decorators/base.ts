@@ -6,24 +6,23 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import { initEvent } from 'core/component/const';
+import { PropOptions, WatchOptions } from 'core/component/driver';
+
 import {
 
-	PropOptions,
-	WatchOptions,
-
-	Hooks,
-	initEvent,
-	InitFieldFn,
-
-	MergeFieldFn,
-	UniqueFieldFn,
 	ComponentInterface,
 	ComponentMeta,
+	Hooks,
+
+	InitFieldFn,
+	MergeFieldFn,
+	UniqueFieldFn,
 
 	MethodWatcher,
 	WatchHandler
 
-} from 'core/component';
+} from 'core/component/interface';
 
 export interface FieldWatcherObject<
 	CTX extends ComponentInterface = ComponentInterface,

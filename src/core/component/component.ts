@@ -26,14 +26,14 @@ import {
 
 import {
 
+	ComponentInterface,
 	SystemField,
 	ComponentField,
 	ComponentProp,
 	ComponentMeta,
-	WatchOptionsWithHandler,
-	ComponentInterface
+	WatchOptionsWithHandler
 
-} from 'core/component';
+} from 'core/component/interface';
 
 export interface ComponentConstructor<T = unknown> {
 	new(): T;
