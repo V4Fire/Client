@@ -10,10 +10,11 @@
 
 import $C = require('collection.js');
 
-import Async from 'core/async';
 import log from 'core/log';
-import { GLOBAL } from 'core/const/links';
+import symbolGenerator from 'core/symbol';
+import Async from 'core/async';
 
+import { GLOBAL } from 'core/const/links';
 import {
 
 	ComponentDriver,
@@ -39,8 +40,11 @@ export interface ComponentConstructor<T = unknown> {
 	new(): T;
 }
 
+const
+	$$ = symbolGenerator();
+
 export const
-	defaultWrapper = Symbol('Default wrapper');
+	defaultWrapper = $$.defaultWrapper;
 
 /**
  * Returns a meta object for the specified component
@@ -470,7 +474,11 @@ export function initDataObject(
 		for (let keys = Object.keys(fields), i = 0; i < keys.length; i++) {
 			const
 				key = keys[i],
-				el = <NonNullable<SystemField>>o[key];
+				el = o[key];
+
+			if (!el) {
+				continue;
+			}
 
 			if (el.atom || !el.init && (el.default !== undefined || key in instance)) {
 				fieldList.unshift(key);
@@ -483,9 +491,9 @@ export function initDataObject(
 		for (let i = 0; i < fieldList.length; i++) {
 			const
 				key = ctx.$activeField = fieldList[i],
-				el = <NonNullable<SystemField>>o[key];
+				el = o[key];
 
-			if (key in data) {
+			if (key in data || !el) {
 				continue;
 			}
 
@@ -533,6 +541,53 @@ export function initDataObject(
 
 		if (!queue.size) {
 			break;
+		}
+	}
+
+	return data;
+}
+
+/**
+ * Initializes props to the specified data object and returns it
+ *
+ * @param fields
+ * @param ctx - component context
+ * @param instance - component class instance
+ * @param [data] - data object
+ */
+export function initPropsObject(
+	fields: Dictionary<PropOptions>,
+	ctx: Dictionary,
+	instance: Dictionary,
+	data: Dictionary = {}
+): Dictionary {
+	for (let keys = Object.keys(fields), i = 0; i < keys.length; i++) {
+		const
+			key = ctx.$activeField = keys[i],
+			el = fields[key];
+
+		if (key in data || !el) {
+			continue;
+		}
+
+		let
+			val = ctx[key];
+
+		if (val === undefined) {
+			val = el.default !== undefined ? el.default : Object.fastClone(instance[key]);
+		}
+
+		if (Object.isFunction(val)) {
+			// tslint:disable-next-line:prefer-conditional-expression
+			if (el.type === Function) {
+				data[key] = val[defaultWrapper] ? val : val.bind(ctx);
+
+			} else {
+				data[key] = val.call(ctx);
+			}
+
+		} else {
+			data[key] = val;
 		}
 	}
 

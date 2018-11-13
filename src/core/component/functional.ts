@@ -31,8 +31,8 @@ import {
 	runHook,
 	createMeta,
 	initDataObject,
-	bindWatchers,
-	defaultWrapper
+	initPropsObject,
+	bindWatchers
 
 } from 'core/component/component';
 
@@ -255,67 +255,45 @@ export function createFakeCtx(
 	runHook('beforeRuntime', meta, fakeCtx)
 		.catch(stderr);
 
-	for (let o = meta.component.props, keys = Object.keys(o), i = 0; i < keys.length; i++) {
-		const
-			key = fakeCtx.$activeField = keys[i],
-			el = o[key];
+	initPropsObject(meta.component.props, fakeCtx, instance, fakeCtx);
+	initDataObject(meta.systemFields, fakeCtx, instance, fakeCtx);
 
-		if (el && fakeCtx[key] === undefined && Object.isFunction(el.default) && !el.default[defaultWrapper]) {
-			fakeCtx[key] = el.type === Function ? el.default.bind(fakeCtx) : el.default.call(fakeCtx);
+	runHook('beforeCreate', meta, fakeCtx).then(async () => {
+		if (methods.beforeCreate) {
+			await methods.beforeCreate.fn.call(fakeCtx);
 		}
-	}
+	}, stderr);
 
-	{
-		const list = [
-			meta.systemFields,
-			meta.fields
-		];
+	bindWatchers(<any>fakeCtx);
+	initDataObject(meta.fields, fakeCtx, instance, data);
+	runHook('beforeDataCreate', meta, fakeCtx).catch(stderr);
+	fakeCtx.$$data = fakeCtx;
 
-		for (let i = 0; i < list.length; i++) {
-			initDataObject(list[i], fakeCtx, instance, i ? data : fakeCtx);
+	if (meta.params.tiny) {
+		Object.assign(fakeCtx, data);
 
-			if (i) {
-				runHook('beforeDataCreate', meta, fakeCtx).catch(stderr);
-				fakeCtx.$$data = fakeCtx;
+	} else {
+		for (let keys = Object.keys(data), i = 0; i < keys.length; i++) {
+			const
+				key = keys[i];
 
-				if (meta.params.tiny) {
-					Object.assign(fakeCtx, data);
-					continue;
-				}
+			Object.defineProperty(fakeCtx, key, {
+				get(): any {
+					return data[key];
+				},
 
-				for (let keys = Object.keys(data), i = 0; i < keys.length; i++) {
+				set(val: any): void {
+					fakeCtx.$dataCache[key] = true;
+
 					const
-						key = keys[i];
+						old = data[key];
 
-					Object.defineProperty(fakeCtx, key, {
-						get(): any {
-							return data[key];
-						},
-
-						set(val: any): void {
-							fakeCtx.$dataCache[key] = true;
-
-							const
-								old = data[key];
-
-							if (val !== old) {
-								data[key] = val;
-								$w.emit(key, val, old);
-							}
-						}
-					});
+					if (val !== old) {
+						data[key] = val;
+						$w.emit(key, val, old);
+					}
 				}
-
-				continue;
-			}
-
-			runHook('beforeCreate', meta, fakeCtx).then(async () => {
-				if (methods.beforeCreate) {
-					await methods.beforeCreate.fn.call(fakeCtx);
-				}
-			}, stderr);
-
-			bindWatchers(<any>fakeCtx);
+			});
 		}
 	}
 
