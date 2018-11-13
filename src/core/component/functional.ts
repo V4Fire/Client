@@ -54,11 +54,13 @@ export const
  * @param createElement - create element function
  * @param renderCtx - render context
  * @param baseCtx - base component context (methods, accessors, etc.)
+ * @param [initProps] - if true, then component prop values will be force initialize
  */
 export function createFakeCtx(
 	createElement: CreateElement,
 	renderCtx: RenderContext,
-	baseCtx: FunctionalCtx
+	baseCtx: FunctionalCtx,
+	initProps?: boolean
 ): Dictionary & FunctionalCtx {
 	const
 		fakeCtx: Dictionary<any> & FunctionalCtx = Object.create(baseCtx),
@@ -238,24 +240,26 @@ export function createFakeCtx(
 		}
 	}
 
-	Object.defineProperty(fakeCtx, '$el', {
-		get(): CanUndef<ComponentElement<any>> {
-			const
-				id = <any>$$.el,
-				el = <Element>fakeCtx[id];
+	if (!('$el' in fakeCtx)) {
+		Object.defineProperty(fakeCtx, '$el', {
+			get(): CanUndef<ComponentElement<any>> {
+				const
+					id = <any>$$.el,
+					el = <Element>fakeCtx[id];
 
-			if (el && el.closest('html')) {
-				return el;
+				if (el && el.closest('html')) {
+					return el;
+				}
+
+				return (fakeCtx[id] = document.querySelector(`.i-block-helper.${fakeCtx.componentId}`) || undefined);
 			}
-
-			return (fakeCtx[id] = document.querySelector(`.i-block-helper.${fakeCtx.componentId}`) || undefined);
-		}
-	});
+		});
+	}
 
 	runHook('beforeRuntime', meta, fakeCtx)
 		.catch(stderr);
 
-	initPropsObject(meta.component.props, fakeCtx, instance, fakeCtx);
+	initPropsObject(meta.component.props, fakeCtx, instance, fakeCtx, initProps);
 	initDataObject(meta.systemFields, fakeCtx, instance, fakeCtx);
 
 	runHook('beforeCreate', meta, fakeCtx).then(async () => {

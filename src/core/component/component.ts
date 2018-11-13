@@ -554,12 +554,14 @@ export function initDataObject(
  * @param ctx - component context
  * @param instance - component class instance
  * @param [data] - data object
+ * @param [forceInit] - if true, then prop values will be force initialize
  */
 export function initPropsObject(
 	fields: Dictionary<PropOptions>,
 	ctx: Dictionary,
 	instance: Dictionary,
-	data: Dictionary = {}
+	data: Dictionary = {},
+	forceInit?: boolean
 ): Dictionary {
 	for (let keys = Object.keys(fields), i = 0; i < keys.length; i++) {
 		const
@@ -578,12 +580,15 @@ export function initPropsObject(
 		}
 
 		if (Object.isFunction(val)) {
+			const
+				needExec = forceInit || !val[defaultWrapper];
+
 			// tslint:disable-next-line:prefer-conditional-expression
-			if (el.type === Function) {
-				data[key] = val[defaultWrapper] ? val : val.bind(ctx);
+			if (needExec) {
+				data[key] = el.type === Function ? val.bind(ctx) : val.call(ctx);
 
 			} else {
-				data[key] = val.call(ctx);
+				data[key] = val;
 			}
 
 		} else {
