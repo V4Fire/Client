@@ -45,6 +45,9 @@ const
 	$$ = symbolGenerator(),
 	cache = new WeakMap();
 
+export const
+	CTX = $$.ctx;
+
 /**
  * Generates a fake context for a function component
  *
@@ -665,7 +668,7 @@ export function convertRender(
 	}
 
 	const render = (el, ctx) => {
-		const fakeCtx = createFakeCtx(el, ctx, baseCtx);
+		const fakeCtx = render[CTX] = createFakeCtx(el, ctx, baseCtx);
 		return patchVNode(execRenderObject(renderObject, fakeCtx), fakeCtx, ctx);
 	};
 

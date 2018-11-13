@@ -6,6 +6,8 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+// tslint:disable:max-file-line-count
+
 // @ts-ignore
 import * as defTpls from 'core/block.ss';
 
@@ -34,7 +36,7 @@ import inheritMeta, { PARENT } from 'core/component/inherit';
 import ComponentInterface from 'core/component/interface';
 
 import { getComponent, getBaseComponent } from 'core/component/component';
-import { convertRender, createFakeCtx, patchVNode } from 'core/component/functional';
+import { convertRender, createFakeCtx, patchVNode, CTX } from 'core/component/functional';
 
 export * from 'core/component/decorators';
 export * from 'core/component/functional';
@@ -194,6 +196,7 @@ export type Hooks =
 
 export interface ComponentMethod {
 	fn: Function;
+	static?: boolean;
 	watchers: Dictionary<MethodWatcher>;
 	hooks: {[hook in Hooks]?: {
 		name: string;
@@ -259,6 +262,9 @@ export function getComponentName(constr: Function): string {
 	return constr.name.dasherize();
 }
 
+const
+	constructors = Object.createDict<Function>();
+
 /**
  * Creates a new component
  *
@@ -306,6 +312,53 @@ export function component(params?: ComponentParams): Function {
 			}
 		}
 
+		const applyComposites = (vnode, ctx) => {
+			if (!ctx.$compositeI) {
+				return;
+			}
+
+			const search = (vnode, parent?, pos?) => {
+				const
+					attrs = vnode.data && vnode.data.attrs || {},
+					composite = attrs['v4-composite'];
+
+				if (parent && composite) {
+					const
+						constr = constructors[composite];
+
+					if (constr) {
+						const
+							proto = constr.prototype,
+							tpl = TPLS[composite] || proto.render;
+
+						parent.children[pos] = ctx.execRenderObject(
+							tpl.index(),
+							[Object.assign(Object.create(ctx), {componentName: composite})]
+						);
+					}
+
+					if (!--ctx.$compositeI) {
+						return;
+					}
+				}
+
+				const
+					{children} = vnode;
+
+				if (children) {
+					for (let i = 0; i < children.length; i++) {
+						search(children[i], vnode, i);
+
+						if (!ctx.$compositeI) {
+							return;
+						}
+					}
+				}
+			};
+
+			search(vnode);
+		};
+
 		const meta: ComponentMeta = {
 			name,
 			componentName: name.replace(isSmartComponent, ''),
@@ -344,17 +397,30 @@ export function component(params?: ComponentParams): Function {
 				props: {},
 				methods: {},
 				computed: {},
-				render(el: CreateElement, baseCtx: RenderContext): VNode {
+				render(this: Dictionary, el: CreateElement, baseCtx: RenderContext): VNode {
 					const
 						{methods: {render: r}, component: {ctx}} = meta;
 
 					if (r) {
-						if (p.functional === true && ctx) {
-							const fakeCtx = createFakeCtx(el, baseCtx, ctx);
-							return patchVNode(r.fn.call(fakeCtx, el, baseCtx), fakeCtx, baseCtx);
+						let
+							vnode,
+							that = this;
+
+						if (!r.static && p.functional === true && ctx) {
+							that = createFakeCtx(el, baseCtx, ctx);
+							vnode = patchVNode(r.fn.call(that, el, baseCtx), that, baseCtx);
+
+						} else {
+							vnode = r.fn.call(this, el, baseCtx);
+							that = r.fn[CTX] || this;
 						}
 
-						return r.fn.call(this, el);
+						if (that.$compositeI) {
+							applyComposites(vnode, that);
+							that.$compositeI = 0;
+						}
+
+						return vnode;
 					}
 
 					return el('span');
@@ -368,6 +434,7 @@ export function component(params?: ComponentParams): Function {
 
 		if (!p.name || !isSmartComponent.test(p.name)) {
 			components.set(target, meta);
+			constructors[name] = target;
 		}
 
 		initEvent.emit('constructor', {meta, parentMeta});
@@ -388,9 +455,13 @@ export function component(params?: ComponentParams): Function {
 				resolve(component);
 			};
 
+			const
+				{methods} = meta;
+
 			const addRenderAndResolve = (tpls) => {
 				const
-					fns = tpls.index();
+					fns = tpls.index(),
+					renderObj = <ComponentMethod>{static: true, watchers: {}, hooks: {}};
 
 				if (p.functional === true) {
 					const
@@ -401,17 +472,16 @@ export function component(params?: ComponentParams): Function {
 					}
 
 				} else {
-					Object.assign(component, fns);
+					renderObj.fn = fns.render;
+					component.staticRenderFns = fns.staticRenderFns || [];
 				}
 
+				methods.render = renderObj;
 				success();
 			};
 
-			const
-				r = meta.component.methods.render;
-
 			if (p.tpl === false) {
-				if (r) {
+				if (methods.render) {
 					success();
 
 				} else {
@@ -424,7 +494,7 @@ export function component(params?: ComponentParams): Function {
 						fns = TPLS[meta.componentName];
 
 					if (fns) {
-						if (r) {
+						if (methods.render) {
 							success();
 
 						} else {

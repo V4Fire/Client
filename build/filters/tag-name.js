@@ -22,17 +22,25 @@ module.exports = [
 	 * @returns {string}
 	 */
 	function convertAliases(tag, attrs, rootTag) {
+		if (tag[0] === '@') {
+			attrs[':reg-v4-composite'] = ['$compositeI=($compositeI || 0) + 1'];
+			attrs['v4-composite'] = [tag.slice(1)];
+			return 'span';
+		}
+
 		if (isVoidLink.test(tag)) {
 			attrs.href = ['javascript:void(0)'];
-			tag = 'a';
+			return 'a';
+		}
 
-		} else if (isButtonLink.test(tag)) {
+		if (isButtonLink.test(tag)) {
 			attrs.type = ['button'];
 			attrs.class = (attrs.class || []).concat('a');
-			tag = 'button';
+			return 'button';
+		}
 
-		} else if (tag === '_') {
-			tag = rootTag;
+		if (tag === '_') {
+			return rootTag;
 		}
 
 		return tag;
