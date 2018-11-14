@@ -53,7 +53,7 @@
 		- else
 			rootAttrs[':class'] = value
 
-	- rootAttrs = {':class': '[componentId, getBlockClasses(mods), "i-block-helper"]'}
+	- rootAttrs = {':class': '[componentId, "i-block-helper"].concat(getBlockClasses(mods))'}
 	- block rootAttrs
 
 	- attrs = {}
