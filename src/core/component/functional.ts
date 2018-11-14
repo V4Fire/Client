@@ -106,7 +106,11 @@ export function createFakeCtx(
 		$attrs: renderCtx.data.attrs,
 		$refs: {},
 
-		$slots: {default: renderCtx.children, ...renderCtx.slots()},
+		$slots: {
+			default: renderCtx.children.length ? renderCtx.children : undefined,
+			...renderCtx.slots()
+		},
+
 		$scopedSlots: {},
 		$createElement: createElement,
 
@@ -345,13 +349,10 @@ export function patchVNode(vNode: VNode, ctx: Dictionary<any>, renderCtx: Render
 
 		// Directives
 
-		const
-			d = data.directives;
-
-		if (d) {
-			for (let i = 0; i < d.length; i++) {
+		if (data.directives) {
+			for (let o = data.directives, i = 0; i < o.length; i++) {
 				const
-					el = d[i];
+					el = o[i];
 
 				if (el.name === 'show' && !el.value) {
 					vData.attrs = vData.attrs || {};
@@ -363,17 +364,11 @@ export function patchVNode(vNode: VNode, ctx: Dictionary<any>, renderCtx: Render
 
 	// Event handlers
 
-	const
-		h = data.on;
-
-	if (h) {
-		for (const key in h) {
-			if (!h.hasOwnProperty(key)) {
-				break;
-			}
-
+	if (data.on) {
+		for (let o = data.on, keys = Object.keys(o), i = 0; i < keys.length; i++) {
 			const
-				fn = h[key];
+				key = keys[i],
+				fn = o[key];
 
 			if (fn) {
 				ctx.$on(key, fn);
