@@ -6,7 +6,57 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { constructors, VNode, ComponentInterface } from 'core/component';
+import { VNode, VNodeChildren, VNodeData } from 'core/component/driver';
+import { ComponentInterface } from 'core/component/interface';
+import { minimalCtx, ComponentDriver, ComponentOptions } from 'core/component/driver';
+import { createFakeCtx } from 'core/component/functional';
+import { constructors, components } from 'core/component/const';
+
+export function getCompositeCtx<T>(component: ComponentOptions<ComponentDriver> | string, ctx): [T | undefined, ComponentInterface] {
+	const
+		constr = constructors[Object.isString(component) ? component : String(component.name)];
+
+	if (!constr) {
+		return [];
+	}
+
+	const
+		meta = components.get(constr);
+
+	if (!meta) {
+		return [];
+	}
+
+	const renderCtx = Object.assign(Object.create(ctx), {
+		data: {
+			attrs: {}
+		},
+
+		slots: () => ({}),
+		children: [],
+
+		parent: {
+			$options: {},
+			$root: {}
+		}
+	});
+
+	const baseCtx = Object.assign(Object.create(constr.prototype), minimalCtx, {
+		instance: new constr(),
+		meta,
+		componentName: meta.componentName,
+		$el: Object.isString(component) ? undefined : component.el
+	});
+
+	const
+		createElement = ctx.$createElement.bind(ctx);
+
+	const o = createFakeCtx(createElement, renderCtx, baseCtx, true);
+	return [
+		meta.component.render.call(o, createElement),
+		o
+	];
+}
 
 export function applyComposites(vnode: VNode, ctx: ComponentInterface): void {
 	// @ts-ignore

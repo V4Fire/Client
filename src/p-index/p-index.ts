@@ -20,8 +20,6 @@ export default class pIndex extends iStaticPage {
 	}
 
 	async mounted(): Promise<void> {
-		console.log(222, this.foo);
-
 		await super.mounted();
 		setTimeout(() => {
 			this.foo++;
