@@ -179,9 +179,9 @@ export function component(params?: ComponentParams): Function {
 
 		if (!p.name || !isSmartComponent.test(p.name)) {
 			components.set(target, meta);
-			constructors[name] = target;
 		}
 
+		constructors[name] = target;
 		initEvent.emit('constructor', {meta, parentMeta});
 
 		if (isAbstractComponent.test(name)) {
