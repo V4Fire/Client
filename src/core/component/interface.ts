@@ -168,7 +168,8 @@ export interface ComponentParams {
 export interface ComponentMeta {
 	name: string;
 	componentName: string;
-	constructor: Function,
+	constructor: Function;
+	instance: Dictionary;
 	params: ComponentParams;
 
 	props: Dictionary<ComponentProp>;

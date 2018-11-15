@@ -706,7 +706,7 @@ export function getBaseComponent(
 
 	const
 		{component, methods, watchers, hooks} = meta,
-		instance = new constructor();
+		instance = meta.instance = new constructor();
 
 	for (let o = methods, keys = Object.keys(o), i = 0; i < keys.length; i++) {
 		const

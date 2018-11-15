@@ -105,6 +105,7 @@ export function component(params?: ComponentParams): Function {
 			name,
 			componentName: name.replace(isSmartComponent, ''),
 			constructor: target,
+			instance: {},
 			params: p,
 
 			props: {},
@@ -149,7 +150,7 @@ export function component(params?: ComponentParams): Function {
 							that = this;
 
 						if (!r.static && p.functional === true && ctx) {
-							that = <any>createFakeCtx(el, baseCtx, ctx);
+							that = createFakeCtx<typeof this>(el, baseCtx, ctx);
 							vnode = patchVNode(r.fn.call(that, el, baseCtx), that, baseCtx);
 
 						} else {

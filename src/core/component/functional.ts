@@ -60,14 +60,14 @@ export const
  * @param baseCtx - base component context (methods, accessors, etc.)
  * @param [initProps] - if true, then component prop values will be force initialize
  */
-export function createFakeCtx(
+export function createFakeCtx<T extends Dictionary = FunctionalCtx>(
 	createElement: CreateElement,
 	renderCtx: RenderContext,
 	baseCtx: FunctionalCtx,
 	initProps?: boolean
-): Dictionary & FunctionalCtx {
+): T {
 	const
-		fakeCtx: Dictionary<any> & FunctionalCtx = Object.create(baseCtx),
+		fakeCtx = Object.create(baseCtx),
 		meta = createMeta(fakeCtx.meta);
 
 	const
