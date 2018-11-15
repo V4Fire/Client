@@ -102,13 +102,14 @@ export function createFakeCtx<T extends Dictionary = FunctionalCtx>(
 		$root: p.$root,
 		$normalParent,
 		$options: Object.assign(Object.create(p.$options), fakeCtx.$options),
-		$createElement: createElement,
+		$createElement: createElement.bind(fakeCtx),
 
 		$data: data,
 		$$data: data,
 		$dataCache: {},
 		$props: renderCtx.props,
 		$attrs: renderCtx.data.attrs,
+		$listeners: renderCtx.data.on,
 		$refs: {},
 
 		$slots: {
@@ -251,8 +252,19 @@ export function createFakeCtx<T extends Dictionary = FunctionalCtx>(
 	}
 
 	if (!('$el' in fakeCtx)) {
+		let
+			staticEl;
+
 		Object.defineProperty(fakeCtx, '$el', {
+			set(val: Element): void {
+				staticEl = val;
+			},
+
 			get(): CanUndef<ComponentElement<any>> {
+				if (staticEl) {
+					return staticEl;
+				}
+
 				const
 					id = <any>$$.el,
 					el = <Element>fakeCtx[id];
@@ -374,10 +386,15 @@ export function patchVNode(vNode: VNode, ctx: Dictionary<any>, renderCtx: Render
 		for (let o = data.on, keys = Object.keys(o), i = 0; i < keys.length; i++) {
 			const
 				key = keys[i],
-				fn = o[key];
+				fns = (<Function[]>[]).concat(o[key]);
 
-			if (fn) {
-				ctx.$on(key, fn);
+			for (let i = 0; i < fns.length; i++) {
+				const
+					fn = fns[i];
+
+				if (Object.isFunction(fn)) {
+					ctx.$on(key, fn);
+				}
 			}
 		}
 	}

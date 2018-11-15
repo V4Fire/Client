@@ -6,8 +6,9 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { getCompositeCtx } from 'core/component/composite';
+import { createComponent } from 'core/component/composite';
 import { ComponentOptions, DirectiveOptions, DirectiveFunction } from 'vue';
+import { constructors, components } from 'core/component/const';
 import { VNode, VNodeData } from 'core/component/engines';
 
 //#if VueInterfaces
@@ -55,11 +56,24 @@ export const minimalCtx = {
 		}
 
 		return nodes;
+	},
+
+	_u: (fns, res) => {
+		res = res || {};
+		for (let i = 0; i < fns.length; i++) {
+			if (Array.isArray(fns[i])) {
+				this._u(fns[i], res);
+
+			} else {
+				res[fns[i].key] = fns[i].fn;
+			}
+		}
+
+		return res;
 	}
 };
 
 const
-	isComponent = /^[bg]-/,
 	eventModifiers = {'!': 'capture', '&': 'passive', '~': 'once'},
 	eventModifiersRgxp = new RegExp(`^[${Object.keys(eventModifiers).join('')}]+`);
 
@@ -94,7 +108,7 @@ export class ComponentDriver {
 	constructor(opts: ComponentOptions<any>) {
 		const
 			{el} = opts,
-			[res] = getCompositeCtx<Element>(opts, this);
+			[res] = createComponent<Element, ComponentDriver>(opts, this);
 
 		if (el && res) {
 			if (Object.isString(el)) {
@@ -121,48 +135,119 @@ export class ComponentDriver {
 	 */
 	$createElement(
 		this: Dictionary<unknown>,
-		tag: string | Element,
-		attrs?: VNodeData | Element[],
-		children?: Element[]
-	): Element {
+		tag: string | Node,
+		attrs?: VNodeData | Node[],
+		children?: Node[]
+	): Node {
 		if (Object.isString(tag)) {
 			let
 				opts: VNodeData;
 
 			if (Object.isObject(attrs)) {
-				children = (<Element[]>[]).concat(children || []);
+				children = (<Node[]>[]).concat(children || []);
 				opts = <VNodeData>attrs;
 
 			} else {
-				children = (<Element[]>[]).concat(attrs || []);
+				children = (<Node[]>[]).concat(attrs || []);
 				opts = {};
 			}
 
-			if (isComponent.test(tag) || opts.tag === 'component') {
-				console.log(children[0].getAttribute('slot'));
+			const
+				constr = constructors[tag],
+				meta = constr && components.get(constr);
 
-				const [node = minimalCtx._e(''), ctx] = getCompositeCtx<Element>(tag, Object.assign(Object.create(this), {
-					props: opts.attrs,
+			if (meta) {
+				const
+					props = {},
+					attrs = {};
 
-					slots() {
+				if (opts.attrs) {
+					for (let o = opts.attrs, keys = Object.keys(o), i = 0; i < keys.length; i++) {
+						const
+							key = keys[i],
+							nm = key.camelize(false),
+							val = o[key];
+
+						if (meta.props[nm]) {
+							props[nm] = val;
+
+						} else {
+							attrs[key] = val;
+						}
+					}
+				}
+
+				const baseCtx = Object.assign(Object.create(this), {
+					props,
+					$createElement: ComponentDriver.prototype.$createElement,
+
+					data: {
+						attrs,
+						on: opts.on
+					},
+
+					slots: () => {
+						const
+							res = <Dictionary>{};
+
 						if (!children || !children.length) {
-							return {};
+							return res;
 						}
 
 						const
-							f = children[0];
+							f = <Element>children[0];
 
-						console.log(121, f);
+						if (f.getAttribute && f.getAttribute('slot')) {
+							for (let i = 0; i < children.length; i++) {
+								const
+									slot = <Element>children[i],
+									key = slot.getAttribute('slot');
 
-						if (children[0].slot) {
+								if (!key) {
+									continue;
+								}
 
+								res[key] = slot;
+							}
+
+							return res;
 						}
+
+						let
+							slot;
+
+						if (children.length === 1) {
+							slot = f;
+
+						} else {
+							slot = createTemplate();
+
+							for (let o = Array.from(children), i = 0; i < o.length; i++) {
+								slot.appendChild(o[i]);
+							}
+						}
+
+						res.default = slot;
+						return res;
 					},
 
-					data: {
-						attrs: opts.attrs
+					scopedSlots: () => {
+						const
+							res = {};
+
+						if (opts.scopedSlots) {
+							for (let o = opts.scopedSlots, keys = Object.keys(o), i = 0; i < keys.length; i++) {
+								const key = keys[i];
+								res[key] = o[key];
+							}
+						}
+
+						return res;
 					}
-				}));
+				});
+
+				const [node = minimalCtx._e(''), ctx] =
+					createComponent<Element, ComponentDriver>(tag, baseCtx, <ComponentDriver>this);
 
 				if (opts.nativeOn) {
 					attachEvents(node, opts.nativeOn);
@@ -227,7 +312,7 @@ export class ComponentDriver {
 				}
 			}
 
-			if (!(el instanceof DocumentFragment)) {
+			if (el instanceof Element) {
 				if (opts.ref) {
 					const r = this.$refs = <Dictionary>this.$refs || {};
 					r[opts.ref] = el;
@@ -253,9 +338,12 @@ export class ComponentDriver {
 	}
 }
 
-function createTemplate(): Element {
+function createTemplate(): DocumentFragment & {
+	getAttribute(nm: string): void;
+	setAttribute(nm: string, val: string): void;
+} {
 	const
-		el = document.createDocumentFragment(),
+		el = <any>document.createDocumentFragment(),
 		attrs = {};
 
 	el.getAttribute = (key) => attrs[key];
@@ -264,7 +352,7 @@ function createTemplate(): Element {
 	return el;
 }
 
-function attachEvents(el: Element, events: Dictionary<CanArray<Function>>): void {
+function attachEvents(el: Node, events: Dictionary<CanArray<Function>>): void {
 	for (let keys = Object.keys(events), i = 0; i < keys.length; i++) {
 		const
 			key = keys[i],
@@ -289,7 +377,7 @@ function attachEvents(el: Element, events: Dictionary<CanArray<Function>>): void
 	}
 }
 
-function appendChild(parent: Element, node: CanArray<Element>): void {
+function appendChild(parent: Node, node: CanArray<Node>): void {
 	if (Object.isArray(node)) {
 		for (let i = 0; i < node.length; i++) {
 			appendChild(parent, node[i]);

@@ -7,15 +7,30 @@
  */
 
 import { ComponentInterface } from 'core/component/interface';
-import { minimalCtx, ComponentDriver, ComponentOptions, VNode } from 'core/component/engines';
+import { minimalCtx, ComponentDriver, ComponentOptions, CreateElement, VNode } from 'core/component/engines';
+import { runHook, bindWatchers } from 'core/component/component';
 import { createFakeCtx } from 'core/component/functional';
 import { constructors, components } from 'core/component/const';
 
-export function getCompositeCtx<T>(component: ComponentOptions<ComponentDriver> | string, ctx): [T | undefined, ComponentInterface] {
+export type Composite<T = unknown> =
+	[T?, ComponentInterface?];
+
+/**
+ * Creates a composite component by the specified parameters and returns a tuple [node, ctx]
+ *
+ * @param component - component object or a component name
+ * @param ctx - base context
+ * @param [parent] - parent context
+ */
+export function createComponent<N = unknown, CTX extends Dictionary = ComponentDriver>(
+	component: ComponentOptions<ComponentDriver> | string,
+	ctx: CTX,
+	parent?: CTX
+): Composite<N> {
 	const
 		constr = constructors[Object.isString(component) ? component : String(component.name)];
 
-	if (!constr) {
+	if (!constr || !ctx.$createElement) {
 		return [];
 	}
 
@@ -26,7 +41,14 @@ export function getCompositeCtx<T>(component: ComponentOptions<ComponentDriver> 
 		return [];
 	}
 
-	const renderCtx = Object.assign(Object.create(ctx), {
+	const
+		{methods, component: {render}} = meta;
+
+	if (!render) {
+		return [];
+	}
+
+	const ctxShim = {
 		data: {
 			attrs: {}
 		},
@@ -34,27 +56,70 @@ export function getCompositeCtx<T>(component: ComponentOptions<ComponentDriver> 
 		slots: () => ({}),
 		children: [],
 
-		parent: {
+		parent: parent || {
 			$options: {},
 			$root: {}
 		}
-	});
+	};
+
+	const
+		renderCtx = Object.create(ctx);
+
+	for (let keys = Object.keys(ctxShim), i = 0; i < keys.length; i++) {
+		const
+			key = keys[i],
+			el = ctxShim[key],
+			val = renderCtx[key];
+
+		if (val) {
+			if (Object.isObject(el)) {
+				// tslint:disable-next-line:prefer-object-spread
+				renderCtx[key] = Object.assign(el, val);
+			}
+
+		} else {
+			renderCtx[key] = el;
+		}
+	}
 
 	const baseCtx = Object.assign(Object.create(constr.prototype), minimalCtx, {
-		instance: new constr(),
 		meta,
-		componentName: meta.componentName,
-		$el: Object.isString(component) ? undefined : component.el
+		instance: meta.instance,
+		componentName: meta.componentName
 	});
 
 	const
-		createElement = ctx.$createElement.bind(ctx);
+		createElement = <CreateElement>ctx.$createElement,
+		fakeCtx = createFakeCtx<ComponentInterface>(createElement, renderCtx, baseCtx, true);
 
-	const o = createFakeCtx(createElement, renderCtx, baseCtx, true);
-	return [
-		meta.component.render.call(o, createElement),
-		o
-	];
+	// @ts-ignore
+	fakeCtx.hook = 'created';
+	bindWatchers(fakeCtx);
+
+	runHook('created', meta, fakeCtx).then(async () => {
+		if (methods.created) {
+			await methods.created.fn.call(fakeCtx);
+		}
+	}, stderr);
+
+	const
+		node = render.call(fakeCtx, createElement);
+
+	// @ts-ignore
+	fakeCtx.$el = node;
+
+	// @ts-ignore
+	fakeCtx.hook = 'mounted';
+	node.component = fakeCtx;
+	bindWatchers(fakeCtx);
+
+	runHook('mounted', meta, fakeCtx).then(async () => {
+		if (methods.mounted) {
+			await methods.mounted.fn.call(fakeCtx);
+		}
+	}, stderr);
+
+	return [node, fakeCtx];
 }
 
 export function applyComposites(vnode: VNode, ctx: ComponentInterface): void {
