@@ -38,8 +38,7 @@ export {
 
 	VNode,
 	VNodeDirective,
-	CreateElement,
-	RenderContext
+	CreateElement
 
 } from 'core/component/engines';
 

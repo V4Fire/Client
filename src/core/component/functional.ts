@@ -19,7 +19,7 @@ import {
 
 	VNode,
 	CreateElement,
-	RenderContext,
+	RenderContext as BaseRenderContext,
 	FunctionalComponentOptions,
 	WatchOptions,
 	WatchOptionsWithHandler
@@ -35,6 +35,10 @@ import {
 	bindWatchers
 
 } from 'core/component/component';
+
+export interface RenderContext extends BaseRenderContext {
+	scopedSlots?(): any;
+}
 
 export interface RenderObject {
 	staticRenderFns?: Function[];
@@ -98,6 +102,7 @@ export function createFakeCtx(
 		$root: p.$root,
 		$normalParent,
 		$options: Object.assign(Object.create(p.$options), fakeCtx.$options),
+		$createElement: createElement,
 
 		$data: data,
 		$$data: data,
@@ -111,8 +116,9 @@ export function createFakeCtx(
 			...renderCtx.slots()
 		},
 
-		$scopedSlots: {},
-		$createElement: createElement,
+		$scopedSlots: {
+			...renderCtx.scopedSlots && renderCtx.scopedSlots()
+		},
 
 		$destroy(): void {
 			if (this.componentStatus === 'destroyed') {
