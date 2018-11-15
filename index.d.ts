@@ -10,7 +10,7 @@
 
 declare let READY_STATE: number;
 declare const PATH: Dictionary<CanUndef<string>>;
-declare const TPLS: Dictionary;
+declare const TPLS: Dictionary<Dictionary<Function>>;
 
 interface HTMLImageElement {
 	readonly init: Promise<this>;
