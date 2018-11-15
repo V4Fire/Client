@@ -27,7 +27,7 @@ import {
 	VNode,
 	ScopedSlot
 
-} from 'core/component/driver';
+} from 'core/component/engines';
 
 export interface WatchHandler<CTX extends ComponentInterface = ComponentInterface, A = unknown, B = A> {
 	(a: A, b: B): unknown;

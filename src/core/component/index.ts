@@ -15,7 +15,7 @@ import 'core/component/directives';
 
 import inheritMeta, { PARENT } from 'core/component/inherit';
 import { ComponentInterface, ComponentParams, ComponentMeta, ComponentMethod } from 'core/component/interface';
-import { ComponentDriver, RenderContext, CreateElement, VNode } from 'core/component/driver';
+import { ComponentDriver, RenderContext, CreateElement, VNode } from 'core/component/engines';
 
 import { getComponent, getBaseComponent } from 'core/component/component';
 import { convertRender, createFakeCtx, patchVNode, CTX } from 'core/component/functional';
@@ -41,7 +41,7 @@ export {
 	CreateElement,
 	RenderContext
 
-} from 'core/component/driver';
+} from 'core/component/engines';
 
 export const
 	isAbstractComponent = /^[iv]-/,

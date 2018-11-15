@@ -6,9 +6,8 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { VNode, VNodeChildren, VNodeData } from 'core/component/driver';
 import { ComponentInterface } from 'core/component/interface';
-import { minimalCtx, ComponentDriver, ComponentOptions } from 'core/component/driver';
+import { minimalCtx, ComponentDriver, ComponentOptions, VNode } from 'core/component/engines';
 import { createFakeCtx } from 'core/component/functional';
 import { constructors, components } from 'core/component/const';
 

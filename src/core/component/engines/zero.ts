@@ -8,7 +8,7 @@
 
 import { getCompositeCtx } from 'core/component/composite';
 import { ComponentOptions, DirectiveOptions, DirectiveFunction } from 'vue';
-import { VNode, VNodeData } from 'core/component/driver';
+import { VNode, VNodeData } from 'core/component/engines';
 
 //#if VueInterfaces
 export * from 'vue';

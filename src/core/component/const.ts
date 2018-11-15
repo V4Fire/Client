@@ -7,7 +7,7 @@
  */
 
 import { EventEmitter2 as EventEmitter, Listener } from 'eventemitter2';
-import { ComponentOptions, ComponentDriver } from 'core/component/driver';
+import { ComponentOptions, ComponentDriver } from 'core/component/engines';
 import { ComponentMeta } from 'core/component/interface';
 
 export const

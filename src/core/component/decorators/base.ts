@@ -7,7 +7,7 @@
  */
 
 import { initEvent } from 'core/component/const';
-import { PropOptions, WatchOptions } from 'core/component/driver';
+import { PropOptions, WatchOptions } from 'core/component/engines';
 
 import {
 

@@ -24,7 +24,7 @@ import {
 	WatchOptions,
 	WatchOptionsWithHandler
 
-} from 'core/component/driver';
+} from 'core/component/engines';
 
 import {
 

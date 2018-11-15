@@ -9,7 +9,7 @@
 import { AsyncOpts } from 'core/async';
 import { statuses, Statuses, iBlockDecorator } from 'super/i-block/i-block';
 import { initEvent, ModVal, InitFieldFn as BaseInitFieldFn, ComponentInterface } from 'core/component';
-import { WatchOptions } from 'core/component/driver';
+import { WatchOptions } from 'core/component/engines';
 
 import {
 

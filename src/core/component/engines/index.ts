@@ -6,4 +6,9 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-export * from 'core/component/driver/vue';
+//#if skip
+export * from 'core/component/engines/vue';
+//#endif
+
+// @ts-ignore
+export * from 'core/component/engines/zero';
