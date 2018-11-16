@@ -15,7 +15,7 @@ import 'core/component/directives';
 
 import inheritMeta, { PARENT } from 'core/component/inherit';
 import { ComponentInterface, ComponentParams, ComponentMeta, ComponentMethod } from 'core/component/interface';
-import { ComponentDriver, RenderContext, CreateElement, VNode } from 'core/component/engines';
+import { supports, ComponentDriver, RenderContext, CreateElement, VNode } from 'core/component/engines';
 
 import { getComponent, getBaseComponent } from 'core/component/component';
 import { convertRender, createFakeCtx, patchVNode, CTX } from 'core/component/functional';
@@ -149,7 +149,7 @@ export function component(params?: ComponentParams): Function {
 							vnode,
 							that = this;
 
-						if (!r.static && p.functional === true && ctx) {
+						if (!r.static && p.functional === true && supports.functional && ctx) {
 							that = createFakeCtx<typeof this>(el, baseCtx, ctx);
 							vnode = patchVNode(r.fn.call(that, el, baseCtx), that, baseCtx);
 
@@ -208,12 +208,12 @@ export function component(params?: ComponentParams): Function {
 					fns = tpls.index(),
 					renderObj = <ComponentMethod>{static: true, watchers: {}, hooks: {}};
 
-				if (p.functional === true) {
+				if (p.functional === true && supports.functional) {
 					const
 						{ctx} = meta.component;
 
 					if (ctx) {
-						component.render = convertRender(fns, ctx);
+						renderObj.fn = <Function>convertRender(fns, ctx);
 					}
 
 				} else {

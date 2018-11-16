@@ -17,8 +17,8 @@ import Async from 'core/async';
 import { GLOBAL } from 'core/const/links';
 import {
 
-	ComponentDriver,
 	minimalCtx,
+	ComponentDriver,
 	PropOptions,
 	ComponentOptions,
 	FunctionalComponentOptions
@@ -28,7 +28,6 @@ import {
 import {
 
 	ComponentInterface,
-	SystemField,
 	ComponentField,
 	ComponentProp,
 	ComponentMeta,
