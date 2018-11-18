@@ -86,7 +86,7 @@ export function createFakeCtx<T extends Dictionary = FunctionalCtx>(
 	let
 		$normalParent = p;
 
-	while ($normalParent.isFunctional) {
+	while ($normalParent && $normalParent.isFunctional) {
 		$normalParent = $normalParent.$parent;
 	}
 
