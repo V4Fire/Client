@@ -6,10 +6,11 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import symbolGenerator from 'core/symbol';
 import { createComponent } from 'core/component/composite';
 import { ComponentOptions, DirectiveOptions, DirectiveFunction } from 'vue';
 import { constructors, components } from 'core/component/const';
-import { VNode, VNodeData } from 'vue/types/vnode';
+import { VNode, VNodeData, VNodeDirective } from 'vue/types/vnode';
 import { VueConfiguration } from 'vue/types/vue';
 export { default as minimalCtx } from 'core/component/engines/zero/ctx';
 
@@ -22,6 +23,11 @@ export { VNode, ScopedSlot } from 'vue/types/vnode';
 export const supports = {
 	functional: false
 };
+
+const
+	$$ = symbolGenerator(),
+	svgNms = 'http://www.w3.org/2000/svg',
+	xlinkNms = 'http://www.w3.org/1999/xlink';
 
 const
 	eventModifiers = {'!': 'capture', '&': 'passive', '~': 'once'},
@@ -248,36 +254,11 @@ export class ComponentDriver {
 				return node || document.createComment('');
 			}
 
-			const
-				el = tag === 'template' ? createTemplate() : document.createElement(tag);
+			const el = tag === 'template' ? createTemplate() :
+				tag === 'svg' ? document.createElementNS(svgNms, tag) : document.createElement(tag);
 
-			if (opts.directives) {
-				for (let o = opts.directives, i = 0; i < o.length; i++) {
-					const
-						el = o[i];
-
-					switch (el.name) {
-						case 'show':
-							if (!el.value) {
-								opts.attrs = opts.attrs || {};
-								opts.attrs.style = (opts.attrs.style || '') + ';display: none;';
-							}
-
-							break;
-
-						case 'model':
-							opts.domProps = opts.domProps || {};
-							opts.domProps.value = el.value;
-					}
-				}
-			}
-
-			if (opts.domProps) {
-				for (let o = opts.domProps, keys = Object.keys(o), i = 0; i < keys.length; i++) {
-					const key = keys[i];
-					el[key] = o[key];
-				}
-			}
+			el[$$.data] = opts;
+			addDirectives(el, opts, opts.directives);
 
 			if (el instanceof Element) {
 				if (opts.ref) {
@@ -288,13 +269,100 @@ export class ComponentDriver {
 				attachEvents(el, opts.on);
 			}
 
+			addProps(el, opts.domProps);
 			addAttrs(el, opts.attrs);
-			appendChild(el, children);
 
+			if (el instanceof SVGElement) {
+				children = createSVGChildren(<Element[]>children, this);
+			}
+
+			appendChild(el, children);
 			return el;
 		}
 
 		return tag;
+	}
+}
+
+function createSVGChildren(children: Element[], ctx: Dictionary): SVGElement[] {
+	if (!children || !children.length) {
+		return [];
+	}
+
+	const
+		res = <ReturnType<typeof createSVGChildren>>[];
+
+	for (let i = 0; i < children.length; i++) {
+		const
+			el = children[i],
+			node = document.createElementNS(svgNms, el.tagName.toLowerCase()),
+			data = el[$$.data];
+
+		if (data) {
+			addDirectives(node, el[$$.directives], data);
+
+			addAttrs(node, el[$$.attrs]);
+			attachEvents(node, el[$$.events]);
+
+			if (el.className) {
+				node.setAttributeNS(null, 'class', el.className);
+			}
+
+			if (data.ref && Object.isObject(ctx.refs)) {
+				ctx.refs[data.ref] = el;
+			}
+
+			res.push(node);
+
+		} else {
+			res.push(<SVGElement>children[i]);
+		}
+
+		if (el.children) {
+			appendChild(node, createSVGChildren(Array.from(el.children), ctx));
+		}
+	}
+
+	return res;
+}
+
+function addDirectives(el: Element | DocumentFragmentP, data: VNodeData, directives?: VNodeDirective[]): void {
+	if (!directives) {
+		return;
+	}
+
+	el[$$.directives] = directives;
+
+	for (let o = directives, i = 0; i < o.length; i++) {
+		const
+			el = o[i];
+
+		switch (el.name) {
+			case 'show':
+				if (!el.value) {
+					data.attrs = data.attrs || {};
+					data.attrs.style = (data.attrs.style || '') + ';display: none;';
+				}
+
+				break;
+
+			case 'model':
+				data.domProps = data.domProps || {};
+				data.domProps.value = el.value;
+		}
+	}
+}
+
+function addProps(el: Element | DocumentFragmentP, props?: Dictionary<unknown>): void {
+	if (!props) {
+		return;
+	}
+
+	el[$$.props] = props;
+
+	for (let keys = Object.keys(props), i = 0; i < keys.length; i++) {
+		const key = keys[i];
+		el[key] = props[key];
 	}
 }
 
@@ -308,13 +376,20 @@ function addAttrs(el: Element | DocumentFragmentP, attrs?: Dictionary<string>): 
 		return;
 	}
 
+	el[$$.attrs] = attrs;
+
 	for (let keys = Object.keys(attrs), i = 0; i < keys.length; i++) {
 		const
 			key = keys[i],
 			val = attrs[key];
 
 		if (val != null) {
-			el.setAttribute(key, val);
+			if (el instanceof SVGElement) {
+				el.setAttributeNS(key.split(':')[0] === 'xlink' ? xlinkNms : null, key, val);
+
+			} else {
+				el.setAttribute(key, val);
+			}
 		}
 	}
 }
@@ -335,7 +410,12 @@ function addClass(el: Element, opts: VNodeData): void {
 		className = (<string[]>[]).concat(opts.staticClass || '', opts.class || []).join(' ').trim();
 
 	if (className) {
-		el.className = className;
+		if (el instanceof SVGElement) {
+			el.setAttributeNS(null, 'class', className);
+
+		} else {
+			el.setAttribute('class', className);
+		}
 	}
 }
 
@@ -362,7 +442,12 @@ function attachEvents(el: Node, events?: Dictionary<CanArray<Function>>): void {
 				fn = handlers[i];
 
 			if (Object.isFunction(fn)) {
-				el.addEventListener(key.replace(eventModifiersRgxp, ''), fn, flags);
+				const
+					event = key.replace(eventModifiersRgxp, ''),
+					cache = el[$$.events] = el[$$.events] || {};
+
+				cache[event] = {fn, flags};
+				el.addEventListener(event, fn, flags);
 			}
 		}
 	}
