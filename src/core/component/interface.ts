@@ -130,7 +130,7 @@ export type Hooks =
 
 export interface ComponentMethod {
 	fn: Function;
-	static?: boolean;
+	wrapper?: boolean;
 	watchers: Dictionary<MethodWatcher>;
 	hooks: {[hook in Hooks]?: {
 		name: string;

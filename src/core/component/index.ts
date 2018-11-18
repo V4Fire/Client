@@ -149,7 +149,7 @@ export function component(params?: ComponentParams): Function {
 							vnode,
 							that = this;
 
-						if (!r.static && p.functional === true && supports.functional && ctx) {
+						if (!r.wrapper && p.functional === true && supports.functional && ctx) {
 							that = createFakeCtx<typeof this>(el, baseCtx, ctx);
 							vnode = patchVNode(r.fn.call(that, el, baseCtx), that, baseCtx);
 
@@ -201,12 +201,12 @@ export function component(params?: ComponentParams): Function {
 			};
 
 			const
-				{methods} = meta;
+				{methods, methods: {render: r}} = meta;
 
 			const addRenderAndResolve = (tpls) => {
 				const
 					fns = tpls.index(),
-					renderObj = <ComponentMethod>{static: true, watchers: {}, hooks: {}};
+					renderObj = <ComponentMethod>{wrapper: true, watchers: {}, hooks: {}};
 
 				if (p.functional === true && supports.functional) {
 					const
@@ -226,7 +226,7 @@ export function component(params?: ComponentParams): Function {
 			};
 
 			if (p.tpl === false) {
-				if (methods.render) {
+				if (r && !r.wrapper) {
 					success();
 
 				} else {
@@ -239,7 +239,7 @@ export function component(params?: ComponentParams): Function {
 						fns = TPLS[meta.componentName];
 
 					if (fns) {
-						if (methods.render) {
+						if (r && !r.wrapper) {
 							success();
 
 						} else {

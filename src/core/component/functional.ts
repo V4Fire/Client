@@ -37,6 +37,7 @@ import {
 } from 'core/component/component';
 
 export interface RenderContext extends BaseRenderContext {
+	$root?: FunctionalCtx;
 	scopedSlots?(): any;
 }
 
@@ -91,7 +92,7 @@ export function createFakeCtx<T extends Dictionary = FunctionalCtx>(
 	}
 
 	const
-		{children} = renderCtx;
+		{children, data: opts} = renderCtx;
 
 	// Add base methods and properties
 	Object.assign(fakeCtx, renderCtx, renderCtx.props, {
@@ -101,23 +102,25 @@ export function createFakeCtx<T extends Dictionary = FunctionalCtx>(
 		meta,
 		children: [],
 
-		$async: $a,
-		$root: p.$root,
 		$normalParent,
-		$options: Object.assign(Object.create(p.$options), fakeCtx.$options),
+		$root: renderCtx.$root || p && p.$root,
+		$options: Object.assign(Object.create(p && p.$options || {}), fakeCtx.$options),
+
+		$async: $a,
 		$createElement: createElement.bind(fakeCtx),
 
 		$data: data,
 		$$data: data,
 		$dataCache: {},
-		$props: renderCtx.props,
-		$attrs: renderCtx.data.attrs,
-		$listeners: renderCtx.data.on,
+
+		$props: renderCtx.props || {},
+		$attrs: opts && opts.attrs || {},
+		$listeners: opts && opts.on || {},
 		$refs: {},
 
 		$slots: {
 			default: children && children.length ? children : undefined,
-			...renderCtx.slots()
+			...renderCtx.slots && renderCtx.slots()
 		},
 
 		$scopedSlots: {
@@ -132,13 +135,18 @@ export function createFakeCtx<T extends Dictionary = FunctionalCtx>(
 			$a.clearAll();
 
 			const
-				hooks = $normalParent.meta.hooks;
+				hooks = $normalParent.meta.hooks,
+				destroyCheckHooks = ['mounted', 'created', 'beforeDestroy'],
+				destroyHooks = ['beforeDestroy', 'destroyed'];
 
-			$C(['mounted', 'created', 'beforeDestroy']).forEach((key) => {
-				$C(hooks[key]).remove((el) => el.fn[$$.self] === fakeCtx);
-			});
+			for (let o = destroyCheckHooks, i = 0; i < o.length; i++) {
+				$C(hooks[o[i]]).remove((el) => el.fn[$$.self] === fakeCtx);
+			}
 
-			$C(['beforeDestroy', 'destroyed']).forEach((key) => {
+			for (let o = destroyHooks, i = 0; i < o.length; i++) {
+				const
+					key = o[i];
+
 				runHook(key, meta, fakeCtx).then(async () => {
 					const
 						m = methods[key];
@@ -147,7 +155,7 @@ export function createFakeCtx<T extends Dictionary = FunctionalCtx>(
 						await m.fn.call(fakeCtx);
 					}
 				}, stderr);
-			});
+			}
 		},
 
 		$nextTick(cb?: () => void): Promise<void> | void {
@@ -160,6 +168,10 @@ export function createFakeCtx<T extends Dictionary = FunctionalCtx>(
 		},
 
 		$forceUpdate(): void {
+			if (!Object.isFunction(p.$forceUpdate)) {
+				return;
+			}
+
 			$a.setImmediate(() => p.$forceUpdate(), {
 				group: 'render',
 				label: 'forceUpdate'
@@ -227,6 +239,10 @@ export function createFakeCtx<T extends Dictionary = FunctionalCtx>(
 			}
 		}
 	});
+
+	if (!fakeCtx.$root) {
+		fakeCtx.$root = fakeCtx;
+	}
 
 	{
 		const list = [

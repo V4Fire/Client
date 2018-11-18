@@ -48,21 +48,8 @@ export function createComponent<N = unknown, CTX extends Dictionary = ComponentD
 		return [];
 	}
 
-	const ctxShim = {
-		data: {
-			attrs: {}
-		},
-
-		slots: () => ({}),
-		children: [],
-
-		parent: parent || {
-			$options: {},
-			$root: {}
-		}
-	};
-
 	const
+		ctxShim = {parent},
 		renderCtx = Object.create(ctx);
 
 	for (let keys = Object.keys(ctxShim), i = 0; i < keys.length; i++) {
