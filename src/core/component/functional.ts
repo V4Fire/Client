@@ -90,6 +90,9 @@ export function createFakeCtx<T extends Dictionary = FunctionalCtx>(
 		$normalParent = $normalParent.$parent;
 	}
 
+	const
+		{children} = renderCtx;
+
 	// Add base methods and properties
 	Object.assign(fakeCtx, renderCtx, renderCtx.props, {
 		_self: fakeCtx,
@@ -113,7 +116,7 @@ export function createFakeCtx<T extends Dictionary = FunctionalCtx>(
 		$refs: {},
 
 		$slots: {
-			default: renderCtx.children.length ? renderCtx.children : undefined,
+			default: children && children.length ? children : undefined,
 			...renderCtx.slots()
 		},
 

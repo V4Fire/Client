@@ -569,7 +569,7 @@ export function initPropsObject(
 			key = ctx.$activeField = keys[i],
 			el = fields[key];
 
-		if (key in data || !el) {
+		if (!el) {
 			continue;
 		}
 
@@ -581,18 +581,11 @@ export function initPropsObject(
 		}
 
 		if (Object.isFunction(val)) {
-			const
-				needExec = forceInit || !val[defaultWrapper];
-
-			// tslint:disable-next-line:prefer-conditional-expression
-			if (needExec) {
+			if (forceInit || !val[defaultWrapper]) {
 				data[key] = el.type === Function ? val.bind(ctx) : val.call(ctx);
-
-			} else {
-				data[key] = val;
 			}
 
-		} else {
+		} else if (forceInit) {
 			data[key] = val;
 		}
 	}

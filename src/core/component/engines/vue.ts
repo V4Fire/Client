@@ -17,7 +17,7 @@ export { VNode, ScopedSlot } from 'vue/types/vnode';
 //#endif
 
 export const supports = {
-	functional: false
+	functional: true
 };
 
 export const
