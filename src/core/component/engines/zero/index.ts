@@ -300,7 +300,6 @@ function createSVGChildren(children: Element[], ctx: Dictionary): SVGElement[] {
 
 		if (data) {
 			addDirectives(node, el[$$.directives], data);
-
 			addAttrs(node, el[$$.attrs]);
 			attachEvents(node, el[$$.events]);
 
@@ -406,8 +405,11 @@ function createTemplate(): DocumentFragmentP {
 }
 
 function addClass(el: Element, opts: VNodeData): void {
-	const
-		className = (<string[]>[]).concat(opts.staticClass || '', opts.class || []).join(' ').trim();
+	const className = (<string[]>[]).concat(
+		el.getAttribute('class') || '',
+		opts.staticClass || '',
+		opts.class || []
+	).join(' ').trim();
 
 	if (className) {
 		if (el instanceof SVGElement) {
