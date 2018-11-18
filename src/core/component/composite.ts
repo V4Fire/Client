@@ -94,6 +94,9 @@ export function createComponent<N = unknown, CTX extends Dictionary = ComponentD
 
 	// @ts-ignore
 	fakeCtx.hook = 'created';
+
+	// @ts-ignore
+	fakeCtx.meta.params.functional = true;
 	bindWatchers(fakeCtx);
 
 	runHook('created', meta, fakeCtx).then(async () => {

@@ -17,6 +17,7 @@ import Async from 'core/async';
 import { GLOBAL } from 'core/const/links';
 import {
 
+	supports,
 	minimalCtx,
 	ComponentDriver,
 	PropOptions,
@@ -59,7 +60,7 @@ export function getComponent(
 		p = meta.params,
 		m = p.model;
 
-	if (p.functional === true) {
+	if (p.functional === true && supports.functional) {
 		return getFunctionalComponent(constructor, meta);
 	}
 
@@ -285,6 +286,7 @@ export function getFunctionalComponent(
  */
 export function createMeta(parent: ComponentMeta): ComponentMeta {
 	const meta = Object.assign(Object.create(parent), {
+		params: Object.create(parent.params),
 		watchers: {},
 		hooks: {}
 	});
