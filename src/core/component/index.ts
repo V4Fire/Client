@@ -234,6 +234,9 @@ export function component(params?: ComponentParams): Function {
 				}
 
 			} else {
+				let
+					i = 0;
+
 				const f = () => {
 					const
 						fns = TPLS[meta.componentName];
@@ -247,7 +250,13 @@ export function component(params?: ComponentParams): Function {
 						}
 
 					} else {
-						setImmediate(f);
+						if (i < 15) {
+							i++;
+							setImmediate(f);
+
+						} else {
+							setTimeout(f, 100);
+						}
 					}
 				};
 
