@@ -12,7 +12,7 @@
 
 - template index() extends ['b-input'].index
 	- block icons
-		< _.&__cell.&__icon.&__expand @click = setMod('opened', true)
+		< _.&__cell.&__icon.&__expand @click = open
 			+= self.gIcon('expand_more')
 
 	- block input
