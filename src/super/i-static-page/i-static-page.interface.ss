@@ -221,7 +221,9 @@
 
 					# script
 						# block initLibs
-							Vue.default = Vue;
+							if (typeof Vue !== 'undefined') {
+								Vue.default = Vue;
+							}
 
 					- block scripts
 						- script
