@@ -1011,17 +1011,11 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 				immediate: p.immediate
 			};
 
-			const asyncParams = {
-				group: p.group,
-				label: p.label,
-				join: p.join
-			};
-
 			const
 				watcher = this.$watch(exprOrFn, watchParams);
 
-			if (Object.keys(asyncParams).length) {
-				this.async.worker(watcher, asyncParams);
+			if (p.group || p.label || p.join) {
+				this.async.worker(watcher, {group: p.group, label: p.label, join: p.join});
 				return;
 			}
 		});

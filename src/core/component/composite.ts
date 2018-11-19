@@ -34,7 +34,7 @@ export function createComponent<N = unknown, CTX extends Dictionary = ComponentD
 		return [];
 	}
 
-	const
+	let
 		meta = components.get(constr);
 
 	if (!meta) {
@@ -80,10 +80,13 @@ export function createComponent<N = unknown, CTX extends Dictionary = ComponentD
 		fakeCtx = createFakeCtx<ComponentInterface>(createElement, renderCtx, baseCtx, true);
 
 	// @ts-ignore
+	meta = fakeCtx.meta;
+
+	// @ts-ignore
 	fakeCtx.hook = 'created';
 
 	// @ts-ignore
-	fakeCtx.meta.params.functional = true;
+	meta.params.functional = true;
 	bindWatchers(fakeCtx);
 
 	runHook('created', meta, fakeCtx).then(async () => {

@@ -67,8 +67,8 @@
 								+= self.gIcon(['icon'], {'g-icon': {}})
 
 					- block clear
-						< _.&__cell.&__icon.&__clear v-if = resetButton && !readonly
-							< span v-e:mousedown.prevent | @click = onClear
+						< _.&__cell.&__icon.&__clear
+							< span.bla @mousedown.prevent = true | @click = onClear
 								< b-icon &
 									:value = 'clear' |
 									:hint = l('Clear')
