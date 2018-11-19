@@ -1607,7 +1607,7 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	 * @param mods - map of modifiers
 	 */
 	getBlockClasses(mods: ModsTable): ReadonlyArray<string>;
-	getBlockClasses(componentName: CanUndef<string | ModsTable>, mods?: ModsTable): ReadonlyArray<string> {
+	getBlockClasses(componentName?: string | ModsTable, mods?: ModsTable): ReadonlyArray<string> {
 		if (arguments.length === 1) {
 			mods = <ModsTable>componentName;
 			componentName = undefined;
@@ -2066,7 +2066,7 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	 * Gets values from the specified object and saves it to the component state
 	 * @param [obj]
 	 */
-	setState(obj: CanUndef<Dictionary>): void {
+	setState(obj?: Dictionary): void {
 		$C(obj).forEach((el, key) => {
 			const
 				p = key.split('.');
@@ -2506,7 +2506,7 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	 * @param [data] - advanced data
 	 * @param [type] - call type
 	 */
-	protected convertStateToStorage(data?: CanUndef<Dictionary>, type: ConverterCallType = 'component'): Dictionary {
+	protected convertStateToStorage(data?: Dictionary, type: ConverterCallType = 'component'): Dictionary {
 		return {...data};
 	}
 
@@ -2514,7 +2514,7 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	 * Returns an object with default component fields for resetting a local storage
 	 * @param [data] - advanced data
 	 */
-	protected convertStateToStorageReset(data?: CanUndef<Dictionary>): Dictionary {
+	protected convertStateToStorageReset(data?: Dictionary): Dictionary {
 		return $C(this.convertStateToStorage(data)).map(() => undefined);
 	}
 
@@ -2522,7 +2522,7 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	 * Saves a component state to a local storage
 	 * @param [data] - advanced data
 	 */
-	protected async saveStateToStorage(data?: CanUndef<Dictionary>): Promise<void> {
+	protected async saveStateToStorage(data?: Dictionary): Promise<void> {
 		if (!this.globalName) {
 			return;
 		}
@@ -2620,7 +2620,7 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	 * @param [data] - advanced data
 	 * @param [type] - call type
 	 */
-	protected convertStateToRouter(data?: CanUndef<Dictionary>, type: ConverterCallType = 'component'): Dictionary {
+	protected convertStateToRouter(data?: Dictionary, type: ConverterCallType = 'component'): Dictionary {
 		return {...data};
 	}
 
@@ -2628,7 +2628,7 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	 * Returns an object with default component fields for resetting a router
 	 * @param [data] - advanced data
 	 */
-	protected convertStateToRouterReset(data?: CanUndef<Dictionary>): Dictionary {
+	protected convertStateToRouterReset(data?: Dictionary): Dictionary {
 		return $C(this.convertStateToRouter(data)).map(() => undefined);
 	}
 
@@ -2636,7 +2636,7 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	 * Saves a component state to a router
 	 * @param [data] - advanced data
 	 */
-	protected async saveStateToRouter(data?: CanUndef<Dictionary>): Promise<boolean> {
+	protected async saveStateToRouter(data?: Dictionary): Promise<boolean> {
 		data = this.convertStateToRouter(data, 'remote');
 		this.setState(this.convertStateToRouter(data));
 
@@ -3015,7 +3015,7 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	 * @param [oldValue]
 	 */
 	@watch('!:onStageChange')
-	protected syncStageWatcher(value: CanUndef<Stage>, oldValue?: CanUndef<Stage>): void {
+	protected syncStageWatcher(value?: Stage, oldValue?: Stage): void {
 		this.async.clearAll({group: `stage.${oldValue}`});
 	}
 

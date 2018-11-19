@@ -569,7 +569,7 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 	 * @param value
 	 */
 	@watch({field: 'dataProvider', immediate: true})
-	protected async syncDataProviderWatcher(value: CanUndef<string>): Promise<void> {
+	protected async syncDataProviderWatcher(value?: string): Promise<void> {
 		if (value) {
 			const
 				Provider = providers[value];

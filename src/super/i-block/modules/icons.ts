@@ -17,7 +17,7 @@ interface Sprite {
 	node: SVGSymbolElement;
 }
 
-function icons(id: CanUndef<string>): Sprite {
+function icons(id?: string): Sprite {
 	if (id) {
 		for (let i = 0; i < iconsList.length; i++) {
 			try {

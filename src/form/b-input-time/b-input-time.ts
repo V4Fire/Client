@@ -152,7 +152,7 @@ export default class bInputTime<
 	 * Returns a string time value by the specified date
 	 * @param [date]
 	 */
-	protected getTimeFormat(date: CanUndef<Date>): V {
+	protected getTimeFormat(date?: Date): V {
 		return <V>(date ? date.format('{HH}:{mm}') : '');
 	}
 
@@ -170,17 +170,8 @@ export default class bInputTime<
 	 * @param [pointer] - time pointer
 	 * @param [buffer] - time buffer
 	 */
-	protected getNPointer(
-		value: CanUndef<string>,
-		pointer?: CanUndef<Date>,
-		buffer?: CanUndef<Date>
-	): CanUndef<Date>;
-
-	protected getNPointer(
-		value: CanUndef<string>,
-		pointer: CanUndef<Date>,
-		buffer: CanUndef<Date> = pointer
-	): CanUndef<Date> {
+	protected getNPointer(value?: string, pointer?: Date, buffer?: Date): CanUndef<Date>;
+	protected getNPointer(value?: string, pointer?: Date, buffer: CanUndef<Date> = pointer): CanUndef<Date> {
 		if (!pointer || !buffer) {
 			if (value === undefined) {
 				return undefined;

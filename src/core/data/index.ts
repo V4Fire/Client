@@ -290,7 +290,7 @@ export default class Provider {
 	 * Returns an object with authentication params
 	 * @param params - additional parameters
 	 */
-	getAuthParams(params?: CanUndef<Dictionary>): Dictionary {
+	getAuthParams(params?: Dictionary): Dictionary {
 		return {};
 	}
 

@@ -70,7 +70,7 @@ export default class bInputNumber<
 	 * Sets a value to the component
 	 * @param [value]
 	 */
-	setValue(value: CanUndef<string | number>): CanUndef<number> {
+	setValue(value?: string | number): CanUndef<number> {
 		let
 			v = this.convertValue(value);
 

@@ -285,7 +285,7 @@ export default class bSelect<
 	 * Normalizes the specified options and returns it
 	 * @param options
 	 */
-	protected normalizeOptions(options: CanUndef<Option[]>): NOption[] {
+	protected normalizeOptions(options?: Option[]): NOption[] {
 		return $C(options).to([]).map((el) => {
 			el.label = String(el.label);
 			el.value = el.value !== undefined ? String(el.value) : el.label;
@@ -631,7 +631,7 @@ export default class bSelect<
 	}
 
 	/** @override */
-	protected async onBlockValueChange(newValue: V, oldValue: CanUndef<V>): Promise<void> {
+	protected async onBlockValueChange(newValue: V, oldValue?: V): Promise<void> {
 		try {
 			await this.async.wait(() => this.mods.opened !== 'true', {label: $$.onBlockValueChange});
 			super.onBlockValueChange(newValue, oldValue);

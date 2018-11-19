@@ -55,7 +55,7 @@ export interface InitFieldFn<T extends ComponentInterface = ComponentInterface> 
 }
 
 export interface MergeFieldFn<T extends ComponentInterface = ComponentInterface> {
-	(ctx: T, oldCtx: T, field: string, link: CanUndef<string>): unknown;
+	(ctx: T, oldCtx: T, field: string, link?: string): unknown;
 }
 
 export interface UniqueFieldFn<T extends ComponentInterface = ComponentInterface> {
