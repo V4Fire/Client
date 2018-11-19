@@ -3470,7 +3470,7 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 			}
 
 			const
-				fn = this.async[`mute-${names[key]}`.camelize(false)];
+				fn = $a[`mute-${names[key]}`.camelize(false)];
 
 			if (Object.isFunction(fn)) {
 				fn.call($a);
