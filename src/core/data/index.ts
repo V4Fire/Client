@@ -22,6 +22,7 @@ import request, {
 	globalOpts,
 	CreateRequestOptions,
 	Middlewares,
+	MiddlewareParams,
 	CacheStrategy,
 	RequestQuery,
 	RequestMethods,
