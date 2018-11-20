@@ -43,6 +43,7 @@ export {
 	globalOpts,
 	CreateRequestOptions,
 	Middlewares,
+	MiddlewareParams,
 	CacheStrategy,
 	RequestQuery,
 	RequestResponse,
