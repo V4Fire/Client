@@ -22,6 +22,7 @@ import request, {
 	globalOpts,
 	CreateRequestOptions,
 	Middlewares,
+	MiddlewareParams,
 	CacheStrategy,
 	RequestQuery,
 	RequestMethods,
@@ -43,6 +44,7 @@ export {
 	globalOpts,
 	CreateRequestOptions,
 	Middlewares,
+	MiddlewareParams,
 	CacheStrategy,
 	RequestQuery,
 	RequestResponse,
@@ -300,7 +302,7 @@ export default class Provider {
 	 * @param url - request url
 	 * @param opts - request params
 	 */
-	resolver(url: string, opts: CreateRequestOptions): ResolverResult {
+	resolver<T = unknown>(url: string, opts: CreateRequestOptions<T>): ResolverResult {
 		return undefined;
 	}
 
@@ -702,7 +704,10 @@ export default class Provider {
 	 * @param method - model method
 	 * @param opts
 	 */
-	protected mergeToOpts(method: ModelMethods, opts: CreateRequestOptions): CreateRequestOptions {
+	protected mergeToOpts<A = unknown, B = unknown>(
+		method: ModelMethods,
+		opts: CreateRequestOptions<A>
+	): CreateRequestOptions<B> {
 		opts = opts || {};
 
 		const
@@ -731,14 +736,19 @@ export default class Provider {
 	 * @param url - request url
 	 * @param factory - request factory
 	 */
-	protected updateRequest(url: string, factory: RequestFunctionResponse): RequestResponse;
+	protected updateRequest<T = unknown>(url: string, factory: RequestFunctionResponse<T>): RequestResponse<T>;
 
 	/**
 	 * @param url - request url
 	 * @param event - event type
 	 * @param factory - request factory
 	 */
-	protected updateRequest(url: string, event: string, factory: RequestFunctionResponse): RequestResponse;
+	protected updateRequest<T = unknown>(
+		url: string,
+		event: string,
+		factory: RequestFunctionResponse<T>
+	): RequestResponse<T>;
+
 	protected updateRequest(
 		url: string,
 		event: string | RequestFunctionResponse,

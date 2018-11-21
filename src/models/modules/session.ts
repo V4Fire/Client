@@ -62,8 +62,13 @@ export default class Session extends Provider {
 	}
 
 	/** @override */
-	protected updateRequest(url: string, factory: RequestFunctionResponse): RequestResponse;
-	protected updateRequest(url: string, event: string, factory: RequestFunctionResponse): RequestResponse;
+	protected updateRequest<T = unknown>(url: string, factory: RequestFunctionResponse<T>): RequestResponse<T>;
+	protected updateRequest<T = unknown>(
+		url: string,
+		event: string,
+		factory: RequestFunctionResponse<T>
+	): RequestResponse<T>;
+
 	protected updateRequest(
 		url: string,
 		event: string | RequestFunctionResponse,

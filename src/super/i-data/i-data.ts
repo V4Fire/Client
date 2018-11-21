@@ -33,15 +33,19 @@ import Provider, {
 export * from 'super/i-message/i-message';
 export { ModelMethods, RequestQuery, RequestBody, RequestResponseObject, RequestError } from 'core/data';
 
-export interface RequestFilterOpts {
+export interface RequestFilterOpts<T = unknown> {
 	isEmpty: boolean;
 	method: ModelMethods;
-	params: CreateRequestOptions;
+	params: CreateRequestOptions<T>;
 }
 
-export type RequestFilter = ((data: RequestQuery | RequestBody, opts: RequestFilterOpts) => boolean) | boolean;
-export type Request = RequestQuery | RequestBody | [RequestQuery | RequestBody, CreateRequestOptions];
-export type RequestParams = StrictDictionary<Request>;
+export type RequestFilter<T = unknown> =
+	((data: RequestQuery | RequestBody, opts: RequestFilterOpts<T>) => boolean) |
+	boolean;
+
+export type DefaultRequest<T = unknown> = [RequestQuery | RequestBody, CreateRequestOptions<T>];
+export type Request<T = unknown> = RequestQuery | RequestBody | DefaultRequest<T>;
+export type RequestParams<T = unknown> = StrictDictionary<Request<T>>;
 
 export interface SocketEvent<T extends object = Async> extends RemoteEvent<T> {
 	connection: Promise<Socket | void>;
@@ -532,7 +536,10 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 	 */
 	@watch({field: 'request', deep: true})
 	@watch({field: 'requestParams', deep: true})
-	protected async syncRequestParamsWatcher(value?: RequestParams, oldValue?: RequestParams): Promise<void> {
+	protected async syncRequestParamsWatcher<T = unknown>(
+		value?: RequestParams<T>,
+		oldValue?: RequestParams<T>
+	): Promise<void> {
 		if (!value) {
 			return;
 		}
@@ -628,7 +635,7 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 	 * Returns default request parameters for the specified method or false
 	 * @param method
 	 */
-	protected getDefaultRequestParams(method: string): [RequestQuery | RequestBody, CreateRequestOptions] | false {
+	protected getDefaultRequestParams<T = unknown>(method: string): DefaultRequest<T> | false {
 		const [customData, customOpts] = (<unknown[]>[]).concat(
 			this.request && this.request[method] || []
 		);
