@@ -25,7 +25,7 @@ import {
 	CreateElement,
 	VNode
 
-} from 'core/component/driver';
+} from 'core/component/engines';
 
 import 'core/component/filters';
 import 'core/component/directives';
@@ -38,8 +38,8 @@ import { convertRender, createFakeCtx, patchVNode } from 'core/component/functio
 
 export * from 'core/component/decorators';
 export * from 'core/component/functional';
-export * from 'core/component/driver';
-export { ComponentDriver as default } from 'core/component/driver';
+export * from 'core/component/engines';
+export { ComponentDriver as default } from 'core/component/engines';
 
 export { PARENT } from 'core/component/inherit';
 export { runHook, customWatcherRgxp } from 'core/component/component';

@@ -22,7 +22,7 @@ import {
 	ComponentOptions,
 	FunctionalComponentOptions
 
-} from 'core/component/driver';
+} from 'core/component/engines';
 
 import {
 

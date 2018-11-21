@@ -6,4 +6,4 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-export * from 'core/component/driver/vue';
+export * from 'core/component/engines/vue';

@@ -23,7 +23,7 @@ import {
 	VNode,
 	ScopedSlot
 
-} from 'core/component/driver';
+} from 'core/component/engines';
 
 export type ComponentElement<T = unknown> = Element & {
 	component?: T;
