@@ -38,6 +38,7 @@ import {
 
 export interface RenderContext extends BaseRenderContext {
 	$root?: FunctionalCtx;
+	$options?: Dictionary;
 	scopedSlots?(): any;
 }
 
@@ -95,16 +96,16 @@ export function createFakeCtx<T extends Dictionary = FunctionalCtx>(
 		{children, data: opts} = renderCtx;
 
 	// Add base methods and properties
-	Object.assign(fakeCtx, renderCtx, renderCtx.props, {
+	Object.assign(fakeCtx, renderCtx.props, {
 		_self: fakeCtx,
 		_staticTrees: [],
 
 		meta,
-		children: [],
+		children: children || [],
 
 		$normalParent,
 		$root: renderCtx.$root || p && p.$root,
-		$options: Object.assign(Object.create(p && p.$options || {}), fakeCtx.$options),
+		$options: renderCtx.$options || Object.create(p && p.$options || {}),
 
 		$async: $a,
 		$createElement: createElement.bind(fakeCtx),
@@ -115,7 +116,8 @@ export function createFakeCtx<T extends Dictionary = FunctionalCtx>(
 
 		$props: renderCtx.props || {},
 		$attrs: opts && opts.attrs || {},
-		$listeners: opts && opts.on || {},
+
+		$listeners: renderCtx.listeners || opts && opts.on || {},
 		$refs: {},
 
 		$slots: {
