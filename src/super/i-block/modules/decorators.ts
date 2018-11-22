@@ -7,7 +7,8 @@
  */
 
 import { AsyncOpts } from 'core/async';
-import { statuses, Statuses, iBlockDecorator } from 'super/i-block/i-block';
+import { statuses } from 'super/i-block/modules/const';
+import { Statuses, iBlockDecorator } from 'super/i-block/i-block';
 import { initEvent, ModVal, InitFieldFn as BaseInitFieldFn, ComponentInterface } from 'core/component';
 import { WatchOptions } from 'core/component/engines';
 
