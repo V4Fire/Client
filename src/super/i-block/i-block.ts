@@ -2767,6 +2767,16 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	}
 
 	/**
+	 * Returns true if the specified object is a component
+	 *
+	 * @param obj
+	 * @param [constructor] - component constructor
+	 */
+	protected isComponent<T extends iBlock>(obj: any, constructor?: {new(): T}): obj is T {
+		return Boolean(obj && obj.instance instanceof (constructor || iBlock));
+	}
+
+	/**
 	 * Returns an instance of a component by the specified element
 	 *
 	 * @param el
@@ -2783,10 +2793,22 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	protected $<T extends iBlock>(query: string, filter?: string): CanUndef<T>;
 	protected $<T extends iBlock>(query: string | ComponentElement<T>, filter: string = ''): CanUndef<T> {
 		const
-			$0 = Object.isString(query) ? document.body.querySelector(query) : query,
-			n = $0 && $0.closest<any>(`.i-block-helper${filter}`);
+			q = Object.isString(query) ? document.body.querySelector<ComponentElement<T>>(query) : query;
 
-		return n && n.component;
+		if (q) {
+			if (q.component && (q.component.instance instanceof iBlock)) {
+				return q.component;
+			}
+
+			const
+				el = <ComponentElement<T>>q.closest(`.i-block-helper${filter}`);
+
+			if (el) {
+				return el.component;
+			}
+		}
+
+		return undefined;
 	}
 
 	/**

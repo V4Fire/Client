@@ -71,7 +71,6 @@ module.exports = async function ({buildId, plugins}) {
 				uglifyOptions: inherit(config.uglify(), {
 					compress: {
 						warnings: false,
-						keep_classnames: true,
 						keep_fnames: true
 					},
 
