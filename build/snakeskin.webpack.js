@@ -55,12 +55,11 @@ const
 
 $C(files).forEach((el) => {
 	const
-		literals = [],
-		file = escaper.replace(fs.readFileSync(el, {encoding: 'utf-8'}), true, literals),
+		file = escaper.replace(fs.readFileSync(el, {encoding: 'utf-8'})),
 		componentClass = componentClassRgxp.exec(file);
 
 	const
-		p = ((v) => v && new Function(`return ${escaper.paste(v[1], literals) || '{}'}`)())(componentClass && componentRgxp.exec(file));
+		p = ((v) => v && new Function(`return ${escaper.paste(v[1]) || '{}'}`)())(componentClass && componentRgxp.exec(file));
 
 	if (!p) {
 		return;

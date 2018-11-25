@@ -25,7 +25,7 @@ const
 
 const
 	tagLength = 'typograf'.length,
-	escaperRules = {'@all': true, '`': false};
+	escaperRules = {'`': false};
 
 /**
  * Monic replacer for typograf`...` literals
@@ -34,19 +34,11 @@ const
  * @returns {string}
  */
 module.exports = function (str) {
-	const
-		chunks = [];
-
-	str = escaper.replace(str, escaperRules, chunks);
-	str = str.replace(literalsRgxp, (str) => {
-		const
-			chunks = [];
-
-		str = escaper.replace(str, true, chunks);
+	str = escaper.replace(str, escaperRules).replace(literalsRgxp, (str) => {
+		str = escaper.replace(str);
 		$C(chunks).set((el) => el.replace(chunkRgxp, (str, val) => tp.execute(val)));
-
-		return escaper.paste(str.slice(tagLength), chunks);
+		return escaper.paste(str.slice(tagLength));
 	});
 
-	return escaper.paste(str, chunks);
+	return escaper.paste(str);
 };
