@@ -65,7 +65,7 @@
 	- block root
 		< _.${self.name()} ${rootAttrs|!html}
 			- if renderCounter
-				< .&__render-counter v-show = false
+				< _.&__render-counter v-show = false
 					{{ renderCounter }}
 
 			/**
