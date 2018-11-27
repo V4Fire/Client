@@ -56,12 +56,12 @@ export function inheritDaemons(daemons: DaemonsDict, parentDaemons: DaemonsDict)
  */
 export function mergeDaemons(a: Daemon, b: Daemon): Daemon {
 	const
-		hook = (<Hooks[]>[]).concat(a.hook || [], b.hook || []),
-		watch = (<DaemonWatcher[]>[]).concat(a.watch || [], b.watch || []);
+		hook = (a.hook || []).concat(b.hook || []),
+		watch = (a.watch || []).concat(b.watch || []);
 
 	return {
-		...a,
 		...b,
+		...a,
 		hook,
 		watch
 	};
