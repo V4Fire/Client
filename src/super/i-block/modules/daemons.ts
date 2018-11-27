@@ -41,7 +41,7 @@ export function inheritDaemons(daemons: DaemonsDict, parentDaemons: DaemonsDict)
 			daemon = daemons[daemonName];
 
 		if (daemon && parentDaemon) {
-			mergeDaemons(daemon, parentDaemon);
+			daemons[daemonName] = mergeDaemons(daemon, parentDaemon);
 		}
 	}
 

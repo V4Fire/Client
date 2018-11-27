@@ -9,7 +9,6 @@
 import iBlock from 'super/i-block/i-block';
 import Async, { AsyncOpts, AsyncOnOpts, AsyncOnceOpts, ClearOptsId, ProxyCb } from 'core/async';
 import { ModVal, WatchOptions } from 'core/component';
-import { Statuses } from 'super/i-block/modules/interface';
 
 export type Classes = Dictionary<string | Array<string | true> | true>;
 
