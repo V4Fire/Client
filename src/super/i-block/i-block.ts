@@ -45,9 +45,7 @@ import {
 	Event,
 	ConverterCallType,
 	Stage,
-	BindModCb,
-	Daemon,
-	DaemonWatcher
+	BindModCb
 
 } from 'super/i-block/modules/interface';
 
@@ -81,6 +79,7 @@ import {
 
 } from 'core/component';
 
+import { Daemon, DaemonWatcher, DaemonsDict } from 'super/i-block/modules/daemons';
 import { prop, field, system, watch, wait, p } from 'super/i-block/modules/decorators';
 import { queue, backQueue, restart, deferRestart } from 'core/render';
 import { delegate } from 'core/dom';
@@ -90,6 +89,7 @@ import * as browser from 'core/browser';
 
 export * from 'core/component';
 export * from 'super/i-block/modules/interface';
+export * from 'super/i-block/modules/daemons';
 
 export { statuses, Cache };
 export {
@@ -2868,7 +2868,7 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	@hook('beforeRuntime')
 	protected initDaemons(): void {
 		const
-			daemons = this.getField<Dictionary<Daemon>>('instance.constructor.daemons');
+			daemons = this.getField<DaemonsDict>('instance.constructor.daemons');
 
 		if (!daemons) {
 			return;
@@ -2937,13 +2937,13 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 				fn = wait(daemon.wait, fn);
 			}
 
-			if (daemon.hook) {
+			if (daemon.hook && daemon.hook.length) {
 				daemon.hook.forEach((hook) => {
 					bindDaemonToHook(hook, daemonName, fn, daemon);
 				});
 			}
 
-			if (daemon.watch) {
+			if (daemon.watch && daemon.watch.length) {
 				daemon.watch.forEach((watch) => {
 					bindDaemonToWatch(watch, daemonName, fn, daemon);
 				});

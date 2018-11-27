@@ -8,23 +8,8 @@
 
 import iBlock from 'super/i-block/i-block';
 import Async, { AsyncOpts, AsyncOnOpts, AsyncOnceOpts, ClearOptsId, ProxyCb } from 'core/async';
-import { ModVal, WatchOptions, Hooks } from 'core/component';
+import { ModVal, WatchOptions } from 'core/component';
 import { Statuses } from 'super/i-block/modules/interface';
-
-export interface DaemonWatchObject extends WatchOptions {
-	field: string;
-}
-
-export type DaemonWatcher = DaemonWatchObject | string;
-
-export interface Daemon {
-	hook?: Hooks[];
-	watch?: DaemonWatcher[];
-	wait?: Statuses;
-	immediate?: boolean;
-	asyncOptions?: AsyncOpts;
-	fn: Function;
-}
 
 export type Classes = Dictionary<string | Array<string | true> | true>;
 
