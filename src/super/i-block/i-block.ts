@@ -2906,7 +2906,7 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 
 			const
 				watchName = Object.isObject(watch) ? watch.field : watch,
-				watchParams = Object.isObject(watch) ? Object.reject(watch, 'watch') : {};
+				watchParams = Object.isObject(watch) ? Object.reject(watch, 'field') : {};
 
 			const watchDaemon = {
 				handler: () => callDaemonFn(name, fn, daemon.immediate, daemon.asyncOptions),
