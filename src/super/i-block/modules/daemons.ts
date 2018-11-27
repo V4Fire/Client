@@ -33,7 +33,10 @@ export type DaemonsDict = Dictionary<Daemon>;
  * @param daemons
  * @param parentDaemons
  */
-export function inheritDaemons(daemons: DaemonsDict, parentDaemons: DaemonsDict): DaemonsDict {
+export function inheritDaemons(parentDaemons: DaemonsDict, daemons: DaemonsDict): DaemonsDict {
+	const
+		mixedDaemons: DaemonsDict = {};
+
 	for (let keys = Object.keys(parentDaemons), i = 0; i < keys.length; i++) {
 		const
 			daemonName = keys[i],
@@ -41,18 +44,18 @@ export function inheritDaemons(daemons: DaemonsDict, parentDaemons: DaemonsDict)
 			daemon = daemons[daemonName];
 
 		if (daemon && parentDaemon) {
-			daemons[daemonName] = mergeDaemons(daemon, parentDaemon);
+			mixedDaemons[daemonName] = mergeDaemons(parentDaemon, daemon);
 		}
 	}
 
-	return daemons;
+	return mixedDaemons;
 }
 
 /**
  * Merge two daemons
  *
- * @param a - daemon
- * @param b - parent daemon
+ * @param a - parent daemon
+ * @param b - daemon
  */
 export function mergeDaemons(a: Daemon, b: Daemon): Daemon {
 	const
@@ -60,8 +63,8 @@ export function mergeDaemons(a: Daemon, b: Daemon): Daemon {
 		watch = (a.watch || []).concat(b.watch || []);
 
 	return {
-		...b,
 		...a,
+		...b,
 		hook,
 		watch
 	};
