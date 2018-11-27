@@ -2874,7 +2874,7 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 			return;
 		}
 
-		const callDaemonFn = (name: string, fn: Function, immediate = true, asyncParams: AsyncOpts = {}) => {
+		const callDaemonFn = (name: string, fn: Function, immediate: boolean = true, asyncParams: AsyncOpts = {}) => {
 			if (immediate) {
 				Object.assign(asyncParams, {
 					group: `daemons-${this.componentName}`,
@@ -2888,7 +2888,7 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 			}
 		};
 
-		const bindDaemonToHook = (hook, name: string, fn, daemon: Daemon) => {
+		const bindDaemonToHook = (hook: string, name: string, fn: Function, daemon: Daemon) => {
 			const
 				{hooks} = this.meta,
 				hookDaemon = {
@@ -2900,7 +2900,7 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 			hooks[hook].push(hookDaemon);
 		};
 
-		const bindDaemonToWatch = (watch: DaemonWatcher, name: string, fn, daemon: Daemon) => {
+		const bindDaemonToWatch = (watch: DaemonWatcher, name: string, fn: Function, daemon: Daemon) => {
 			const
 				{watchers} = this.meta;
 
