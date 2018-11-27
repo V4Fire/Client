@@ -51,7 +51,7 @@ export function inheritDaemons(daemons: DaemonsDict, parentDaemons: DaemonsDict)
 /**
  * Merge two daemons
  *
- * @param a - target daemon
+ * @param a - daemon
  * @param b - parent daemon
  */
 export function mergeDaemons(a: Daemon, b: Daemon): Daemon {
