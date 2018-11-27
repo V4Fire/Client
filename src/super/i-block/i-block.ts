@@ -2868,7 +2868,8 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	@hook('beforeRuntime')
 	protected initDaemons(): void {
 		const
-			daemons = this.getField<DaemonsDict>('instance.constructor.daemons');
+			constructor = this.instance && <Dictionary>this.instance.constructor,
+			daemons = constructor && <CanUndef<DaemonsDict>>constructor.daemons;
 
 		if (!daemons) {
 			return;
@@ -2925,7 +2926,11 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 			}
 		};
 
-		$C(daemons).forEach((daemon, daemonName) => {
+		for (let keys = Object.keys(daemons), i = 0; i < keys.length; i++) {
+			const
+				daemonName = keys[i],
+				daemon = daemons[daemonName];
+
 			if (!daemon) {
 				return;
 			}
@@ -2948,7 +2953,7 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 					bindDaemonToWatch(watch, daemonName, fn, daemon);
 				});
 			}
-		});
+		}
 	}
 
 	/**
