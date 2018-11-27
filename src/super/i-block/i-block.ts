@@ -45,7 +45,9 @@ import {
 	Event,
 	ConverterCallType,
 	Stage,
-	BindModCb
+	BindModCb,
+	Daemon,
+	DaemonWatcher
 
 } from 'super/i-block/modules/interface';
 
@@ -2858,6 +2860,95 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	 */
 	protected sendAnalyticsEvent(event: string, details: Dictionary = {}): void {
 		analytics.send(event, details);
+	}
+
+	/**
+	 * Initializes component daemons
+	 */
+	@hook('beforeRuntime')
+	protected initDaemons(): void {
+		const
+			daemons = this.getField<Dictionary<Daemon>>('instance.constructor.daemons');
+
+		if (!daemons) {
+			return;
+		}
+
+		const callDaemonFn = (name: string, fn: Function, immediate = true, asyncParams: AsyncOpts = {}) => {
+			if (immediate) {
+				Object.assign(asyncParams, {
+					group: `daemons-${this.componentName}`,
+					label: `daemons-${name}`
+				});
+
+				this.async.setImmediate(fn, asyncParams);
+
+			} else {
+				fn.call(this);
+			}
+		};
+
+		const bindDaemonToHook = (hook, name: string, fn, daemon: Daemon) => {
+			const
+				{hooks} = this.meta,
+				hookDaemon = {
+					fn: () => callDaemonFn(name, fn, daemon.immediate, daemon.asyncOptions),
+					after: undefined,
+					name
+				};
+
+			hooks[hook].push(hookDaemon);
+		};
+
+		const bindDaemonToWatch = (watch: DaemonWatcher, name: string, fn, daemon: Daemon) => {
+			const
+				{watchers} = this.meta;
+
+			const
+				watchName = Object.isObject(watch) ? watch.field : watch,
+				watchParams = Object.isObject(watch) ? Object.reject(watch, 'watch') : {};
+
+			const watchDaemon = {
+				handler: () => callDaemonFn(name, fn, daemon.immediate, daemon.asyncOptions),
+				args: [],
+				...watchParams
+			};
+
+			const
+				w = watchers[watchName];
+
+			if (w) {
+				w.push(watchDaemon);
+
+			} else {
+				watchers[watchName] = [watchDaemon];
+			}
+		};
+
+		$C(daemons).forEach((daemon, daemonName) => {
+			if (!daemon) {
+				return;
+			}
+
+			let
+				fn = daemon.fn;
+
+			if (daemon.wait) {
+				fn = wait(daemon.wait, fn);
+			}
+
+			if (daemon.hook) {
+				daemon.hook.forEach((hook) => {
+					bindDaemonToHook(hook, daemonName, fn, daemon);
+				});
+			}
+
+			if (daemon.watch) {
+				daemon.watch.forEach((watch) => {
+					bindDaemonToWatch(watch, daemonName, fn, daemon);
+				});
+			}
+		});
 	}
 
 	/**
