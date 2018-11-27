@@ -28,7 +28,7 @@ export interface Daemon {
 export type DaemonsDict = Dictionary<Daemon>;
 
 /**
- * Inherit daemons
+ * Inherit daemons and returns new daemons dict
  *
  * @param daemons
  * @param parentDaemons
