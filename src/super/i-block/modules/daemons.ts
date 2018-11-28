@@ -22,7 +22,7 @@ export interface Daemon {
 	wait?: Statuses;
 	immediate?: boolean;
 	asyncOptions?: AsyncOpts;
-	fn(): unknown;
+	fn(...args: unknown[]): unknown;
 }
 
 export type DaemonsDict = Dictionary<Daemon>;
