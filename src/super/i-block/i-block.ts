@@ -2876,7 +2876,7 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 			return;
 		}
 
-		const callDaemonFn = (name: string, fn: Function, immediate: boolean = true, asyncParams: AsyncOpts = {}) => {
+		const callDaemonFn = (name, fn, immediate = true, asyncParams = {}) => {
 			if (immediate) {
 				Object.assign(asyncParams, {
 					group: `daemons-${this.componentName}`,
