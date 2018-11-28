@@ -2936,7 +2936,7 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 			}
 
 			let
-				fn = daemon.fn;
+				fn = <Function>daemon.fn;
 
 			if (daemon.wait) {
 				fn = wait(daemon.wait, fn);
