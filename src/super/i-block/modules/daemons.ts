@@ -16,16 +16,16 @@ export interface DaemonWatchObject extends WatchOptions {
 
 export type DaemonWatcher = DaemonWatchObject | string;
 
-export interface Daemon<T = unknown> {
+export interface Daemon {
 	hook?: Hooks[];
 	watch?: DaemonWatcher[];
 	wait?: Statuses;
 	immediate?: boolean;
 	asyncOptions?: AsyncOpts;
-	fn(this: T): unknown;
+	fn(): unknown;
 }
 
-export type DaemonsDict<T = unknown> = Dictionary<Daemon<T>>;
+export type DaemonsDict = Dictionary<Daemon>;
 
 /**
  * Inherit daemons from parent and returns new daemons dict
