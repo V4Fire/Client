@@ -28,23 +28,23 @@ export interface Daemon {
 export type DaemonsDict = Dictionary<Daemon>;
 
 /**
- * Inherit daemons and returns new daemons dict
+ * Inherit daemons from parent and returns new daemons dict
  *
- * @param daemons
- * @param parentDaemons
+ * @param base
+ * @param parent
  */
-export function inheritDaemons(parentDaemons: DaemonsDict, daemons: DaemonsDict): DaemonsDict {
+export function createDaemons(base: DaemonsDict, parent: DaemonsDict): DaemonsDict {
 	const
 		mixedDaemons: DaemonsDict = {};
 
-	for (let keys = Object.keys(parentDaemons), i = 0; i < keys.length; i++) {
+	for (let keys = Object.keys(parent), i = 0; i < keys.length; i++) {
 		const
 			daemonName = keys[i],
-			parentDaemon = parentDaemons[daemonName],
-			daemon = daemons[daemonName];
+			parentDaemon = parent[daemonName],
+			daemon = base[daemonName];
 
 		if (daemon && parentDaemon) {
-			mixedDaemons[daemonName] = mergeDaemons(parentDaemon, daemon);
+			mixedDaemons[daemonName] = mergeDaemons(daemon, parentDaemon);
 		}
 	}
 
@@ -54,8 +54,8 @@ export function inheritDaemons(parentDaemons: DaemonsDict, daemons: DaemonsDict)
 /**
  * Merge two daemons
  *
- * @param a - parent daemon
- * @param b - daemon
+ * @param a - base daemon
+ * @param b - parent daemon
  */
 export function mergeDaemons(a: Daemon, b: Daemon): Daemon {
 	const
@@ -63,8 +63,8 @@ export function mergeDaemons(a: Daemon, b: Daemon): Daemon {
 		watch = (a.watch || []).concat(b.watch || []);
 
 	return {
-		...a,
 		...b,
+		...a,
 		hook,
 		watch
 	};

@@ -589,6 +589,8 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 		}
 	};
 
+	static readonly daemons?: DaemonsDict;
+
 	/**
 	 * Wrapper for $refs
 	 */
@@ -2868,8 +2870,7 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	@hook('beforeRuntime')
 	protected initDaemons(): void {
 		const
-			constructor = this.instance && <Dictionary>this.instance.constructor,
-			daemons = constructor && <CanUndef<DaemonsDict>>constructor.daemons;
+			daemons = (<typeof iBlock>this.instance.constructor).daemons;
 
 		if (!daemons) {
 			return;
@@ -2889,19 +2890,18 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 			}
 		};
 
-		const bindDaemonToHook = (hook: string, name: string, fn: Function, daemon: Daemon) => {
+		const bindDaemonToHook = (hook, name, fn, daemon) => {
 			const
-				{hooks} = this.meta,
-				hookDaemon = {
-					fn: () => callDaemonFn(name, fn, daemon.immediate, daemon.asyncOptions),
-					after: undefined,
-					name
-				};
+				{hooks} = this.meta;
 
-			hooks[hook].push(hookDaemon);
+			hooks[hook].push({
+				fn: () => callDaemonFn(name, fn, daemon.immediate, daemon.asyncOptions),
+				after: undefined,
+				name
+			});
 		};
 
-		const bindDaemonToWatch = (watch: DaemonWatcher, name: string, fn: Function, daemon: Daemon) => {
+		const bindDaemonToWatch = (watch: DaemonWatcher, name, fn, daemon) => {
 			const
 				{watchers} = this.meta;
 
@@ -2932,7 +2932,7 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 				daemon = daemons[daemonName];
 
 			if (!daemon) {
-				return;
+				continue;
 			}
 
 			let
@@ -2943,15 +2943,15 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 			}
 
 			if (daemon.hook && daemon.hook.length) {
-				daemon.hook.forEach((hook) => {
-					bindDaemonToHook(hook, daemonName, fn, daemon);
-				});
+				for (let i = 0; i < daemon.hook.length; i++) {
+					bindDaemonToHook(daemon.hook[i], daemonName, fn, daemon);
+				}
 			}
 
 			if (daemon.watch && daemon.watch.length) {
-				daemon.watch.forEach((watch) => {
-					bindDaemonToWatch(watch, daemonName, fn, daemon);
-				});
+				for (let i = 0; i < daemon.watch.length; i++) {
+					bindDaemonToWatch(daemon.watch[i], daemonName, fn, daemon);
+				}
 			}
 		}
 	}
