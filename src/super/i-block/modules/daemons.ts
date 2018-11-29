@@ -22,7 +22,7 @@ export interface Daemon {
 	wait?: Statuses;
 	immediate?: boolean;
 	asyncOptions?: AsyncOpts;
-	fn(...args: unknown[]): unknown;
+	fn: Function;
 }
 
 export type DaemonsDict = Dictionary<Daemon>;
@@ -35,7 +35,7 @@ export type DaemonsDict = Dictionary<Daemon>;
  */
 export function createDaemons(base: DaemonsDict, parent: DaemonsDict): DaemonsDict {
 	const
-		mixedDaemons: DaemonsDict = {};
+		mixedDaemons = {...parent, ...base};
 
 	for (let keys = Object.keys(parent), i = 0; i < keys.length; i++) {
 		const
