@@ -68,7 +68,7 @@
 
 					- block clear
 						< _.&__cell.&__icon.&__clear
-							< span.bla v-e:mousedown.prevent | @click = onClear
+							< span v-e:mousedown.prevent | @click = onClear
 								< b-icon &
 									:value = 'clear' |
 									:hint = l('Clear')

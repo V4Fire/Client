@@ -6,7 +6,6 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import symbolGenerator from 'core/symbol';
 import { createComponent } from 'core/component/composite';
 import { ComponentOptions, DirectiveOptions, DirectiveFunction } from 'vue';
 import { constructors, components } from 'core/component/const';
@@ -34,9 +33,6 @@ export const options: Options = {
 	filters: {},
 	directives: {}
 };
-
-const
-	$$ = symbolGenerator();
 
 export class ComponentDriver {
 	static config: VueConfiguration = {
@@ -291,7 +287,7 @@ export class ComponentDriver {
 			const el = tag === 'template' ? _.createTemplate() :
 				tag === 'svg' ? document.createElementNS(_.SVG_NMS, tag) : document.createElement(tag);
 
-			el[$$.data] = opts;
+			el[_.$$.data] = opts;
 			_.addDirectives(el, opts, opts.directives);
 
 			if (el instanceof Element) {
