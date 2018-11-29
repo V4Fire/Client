@@ -25,6 +25,11 @@ export interface Daemon {
 	fn: Function;
 }
 
+export interface DaemonSpawnStatus {
+	spawned: boolean;
+	killed: boolean;
+}
+
 export type DaemonsDict = Dictionary<Daemon>;
 
 /**

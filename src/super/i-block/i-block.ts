@@ -79,7 +79,7 @@ import {
 
 } from 'core/component';
 
-import { DaemonWatcher, DaemonsDict, Daemon } from 'super/i-block/modules/daemons';
+import { DaemonWatcher, DaemonsDict, DaemonSpawnStatus } from 'super/i-block/modules/daemons';
 import { prop, field, system, watch, wait, p } from 'super/i-block/modules/decorators';
 import { queue, backQueue, restart, deferRestart } from 'core/render';
 import { delegate } from 'core/dom';
@@ -2865,20 +2865,46 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	}
 
 	/**
+	 * Spawns new daemon, if daemons exist, previous daemon will be killed
+	 * @param daemon
+	 */
+	protected spawnDaemon(daemonName: string, daemonFn: Function): DaemonSpawnStatus {
+		const
+			daemons = this.getField<DaemonsDict>('instance.constructor.daemons'),
+			status = {
+				spawned: false,
+				killed: false
+			};
+
+		if (!daemons) {
+			return status;
+		}
+
+		if (daemons[daemonName]) {
+			status.killed = true;
+		}
+
+		daemons[daemonName] = {fn: daemonFn};
+		status.spawned = true;
+
+		return status;
+	}
+
+	/**
 	 * Executes specified daemon
 	 *
 	 * @param daemonName
 	 * @param args
 	 */
-	protected executeDaemon(daemonName: string, ...args: unknown[]): unknown {
+	protected executeDaemon<T = unknown>(daemonName: string, ...args: unknown[]): CanUndef<T> {
 		const
-			daemon = this.getField<Function>(`instance.constructor.daemons.${daemonName}.fn`);
+			daemonFn = this.getField<Function>(`instance.constructor.daemons.${daemonName}.fn`);
 
-		if (!daemon) {
+		if (!daemonFn) {
 			return;
 		}
 
-		return daemon.apply(this, args);
+		return <T>daemonFn.apply(this, args);
 	}
 
 	/**
