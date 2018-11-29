@@ -69,7 +69,7 @@ export function callDaemon(
 }
 
 /**
- * Inherit daemons from parent and returns new daemons dict
+ * Inherits base daemons from parent and returns a new object
  *
  * @param base
  * @param parent
