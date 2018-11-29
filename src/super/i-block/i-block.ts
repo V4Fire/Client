@@ -2896,7 +2896,7 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 		}
 
 		daemons[daemonName] = {
-			fn: () => callDaemon.call(this, daemonName, daemonObj.fn, [], daemonObj.immediate)
+			fn: () => callDaemon.call(this, daemonName, daemonObj.fn, [], daemonObj.immediate, daemonObj.asyncOptions)
 		};
 		status.spawned = true;
 

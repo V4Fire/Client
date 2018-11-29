@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { AsyncOpts } from 'core/async';
+import Async, { AsyncOpts } from 'core/async';
 import { WatchOptions, Hooks } from 'core/component';
 import { Statuses } from 'super/i-block/modules/interface';
 
@@ -33,6 +33,7 @@ export interface DaemonSpawnStatus {
 export interface SpawnedDaemonObj {
 	fn: Function;
 	immediate?: boolean;
+	asyncOptions?: AsyncOpts;
 }
 
 export type SpawnedDaemon = SpawnedDaemonObj | Function;
