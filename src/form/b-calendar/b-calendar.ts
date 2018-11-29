@@ -201,7 +201,7 @@ export default class bCalendar<
 			prop = Object.isArray(val) ? val : [val];
 
 		const d = prop.map((v: Date, index) =>
-			index > 0 ? prop[index - 1].clone().addMonths(1) : v.clone().beginningOfMonth().set({
+			index > 0 ? prop[index - 1].clone().add({month: 1}) : v.clone().beginningOfMonth().set({
 				hour: v.getHours(),
 				minute: v.getMinutes(),
 				second: v.getSeconds(),
@@ -209,7 +209,7 @@ export default class bCalendar<
 			})
 		);
 
-		if (o.pointerStore && d.isEqual(o.pointerStore)) {
+		if (o.pointerStore && Object.fastCompare(d, o.pointerStore)) {
 			return o.pointerStore;
 		}
 
@@ -458,7 +458,7 @@ export default class bCalendar<
 	 */
 	protected async onSwitchDay(days: number, index: number = 0): Promise<void> {
 		const selectedDay = <V>(Object.isArray(this.value) ? this.value : [this.value]);
-		selectedDay[index] = selectedDay[index].addDays(days);
+		selectedDay[index] = selectedDay[index].add({days});
 
 		this.value = selectedDay;
 		this.emit('actionChange', this.stringInput ? this.value[0] : this.value);
@@ -483,7 +483,7 @@ export default class bCalendar<
 	 */
 	protected async onSwitchMonth(months: number): Promise<void> {
 		$C(this.pointer).forEach((el, i) => {
-			this.setField(`pointerStore.${i}`, el.addMonths(months));
+			this.setField(`pointerStore.${i}`, el.add({months}));
 		});
 
 		this.runMonthSwitching(months < 0 ? 0 : 1);
