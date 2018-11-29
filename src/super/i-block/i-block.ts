@@ -79,7 +79,17 @@ import {
 
 } from 'core/component';
 
-import { DaemonWatcher, DaemonsDict, DaemonSpawnStatus } from 'super/i-block/modules/daemons';
+import {
+
+	callDaemon,
+	DaemonWatcher,
+	DaemonsDict,
+	DaemonSpawnStatus,
+	SpawnedDaemon,
+	SpawnedDaemonObj
+
+} from 'super/i-block/modules/daemons';
+
 import { prop, field, system, watch, wait, p } from 'super/i-block/modules/decorators';
 import { queue, backQueue, restart, deferRestart } from 'core/render';
 import { delegate } from 'core/dom';
@@ -2868,9 +2878,10 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	 * Spawns new daemon, if daemons exist, previous daemon will be killed
 	 * @param daemon
 	 */
-	protected spawnDaemon(daemonName: string, daemonFn: Function): DaemonSpawnStatus {
+	protected spawnDaemon(daemonName: string, daemon: SpawnedDaemon): DaemonSpawnStatus {
 		const
 			daemons = this.getField<DaemonsDict>('instance.constructor.daemons'),
+			daemonObj = Object.isFunction(daemon) ? {fn: daemon} : daemon,
 			status = {
 				spawned: false,
 				killed: false
@@ -2884,7 +2895,9 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 			status.killed = true;
 		}
 
-		daemons[daemonName] = {fn: daemonFn};
+		daemons[daemonName] = {
+			fn: () => callDaemon.call(this, daemonName, daemonObj.fn, [], daemonObj.immediate)
+		};
 		status.spawned = true;
 
 		return status;
@@ -2919,26 +2932,12 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 			return;
 		}
 
-		const callDaemonFn = (name, fn, args, immediate = true, asyncParams = {}) => {
-			if (immediate) {
-				Object.assign(asyncParams, {
-					group: `daemons-${this.componentName}`,
-					label: `daemons-${name}`
-				});
-
-				this.async.setImmediate(() => fn.apply(this, args), asyncParams);
-
-			} else {
-				fn.call(this);
-			}
-		};
-
 		const bindDaemonToHook = (hook, name, fn, daemon) => {
 			const
 				{hooks} = this.meta;
 
 			hooks[hook].push({
-				fn: () => callDaemonFn(name, fn, daemon.immediate, daemon.asyncOptions),
+				fn: () => callDaemon.call(this, name, fn, daemon.immediate, daemon.asyncOptions),
 				after: undefined,
 				name
 			});
@@ -2953,7 +2952,7 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 				watchParams = Object.isObject(watch) ? Object.reject(watch, 'field') : {};
 
 			const watchDaemon = {
-				handler: (...args) => callDaemonFn(name, fn, args, daemon.immediate, daemon.asyncOptions),
+				handler: (...args) => callDaemon.call(this, name, fn, args, daemon.immediate, daemon.asyncOptions),
 				args: [],
 				...watchParams
 			};

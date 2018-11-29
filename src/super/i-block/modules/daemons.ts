@@ -30,7 +30,43 @@ export interface DaemonSpawnStatus {
 	killed: boolean;
 }
 
+export interface SpawnedDaemonObj {
+	fn: Function;
+	immediate?: boolean;
+}
+
+export type SpawnedDaemon = SpawnedDaemonObj | Function;
+
 export type DaemonsDict = Dictionary<Daemon>;
+
+/**
+ * Calls daemon function
+ *
+ * @param name - daemon name
+ * @param fn - daemon function
+ * @param args - arguments passed to daemon function
+ * @param immediate
+ * @param asyncParams
+ */
+export function callDaemon(
+	name: string,
+	fn: Function,
+	args: unknown[],
+	immediate: boolean = true,
+	asyncParams: AsyncOpts = {}
+): void {
+	if (immediate) {
+		Object.assign(asyncParams, {
+			group: `daemons-${this.componentName}`,
+			label: `daemons-${name}`
+		});
+
+		this.async.setImmediate(() => fn.apply(this, args), asyncParams);
+
+	} else {
+		fn.call(this);
+	}
+}
 
 /**
  * Inherit daemons from parent and returns new daemons dict
