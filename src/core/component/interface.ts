@@ -17,6 +17,7 @@ import {
 	ComponentOptions,
 	FunctionalComponentOptions,
 	InjectOptions,
+	DirectiveOptions,
 
 	PropOptions,
 	ComputedOptions,
@@ -165,6 +166,10 @@ export interface ComponentParams {
 	inheritMods?: boolean;
 }
 
+export type RenderFunction =
+	ComponentOptions<Component>['render'] |
+	FunctionalComponentOptions['render'];
+
 export interface ComponentMeta {
 	name: string;
 	componentName: string;
@@ -194,7 +199,11 @@ export interface ComponentMeta {
 		props: Dictionary<PropOptions>;
 		methods: Dictionary<Function>;
 		computed: Dictionary<ComputedOptions<unknown>>;
-		render: ComponentOptions<Component>['render'] | FunctionalComponentOptions['render'];
+		filters?: Dictionary<Function>;
+		directives?: Dictionary<DirectiveOptions>;
+		components?: Dictionary<ComponentMeta['component']>;
+		staticRenderFns: RenderFunction[];
+		render: RenderFunction;
 		ctx?: FunctionalCtx;
 	}
 }

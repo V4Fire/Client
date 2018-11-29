@@ -18,7 +18,7 @@ export const reservedAttrs = {
 
 export default {
 	_o: (v) => v,
-	_q: Object.isEqual,
+	_q: Object.fastCompare,
 	_s: (v) => v == null ? '' : String(v),
 	_v: (v) => document.createTextNode(v),
 	_e: (v) => document.createComment(v === undefined ? '' : v),
@@ -34,7 +34,7 @@ export default {
 
 	_i: (arr, val) => {
 		for (let i = 0; i < arr.length; i++) {
-			if (Object.isEqual(arr[i], val)) {
+			if (Object.fastCompare(arr[i], val)) {
 				return i;
 			}
 		}

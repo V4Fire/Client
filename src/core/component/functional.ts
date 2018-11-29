@@ -74,7 +74,7 @@ export function createFakeCtx<T extends Dictionary = FunctionalCtx>(
 
 	const
 		{instance} = fakeCtx,
-		{methods} = meta;
+		{methods, component} = meta;
 
 	const
 		p = <Dictionary<any>>renderCtx.parent,
@@ -95,9 +95,42 @@ export function createFakeCtx<T extends Dictionary = FunctionalCtx>(
 	const
 		{children, data: opts} = renderCtx;
 
+	let
+		$options;
+
+	if (p && p.$options) {
+		const {filters, directives, components} = p.$options;
+		$options = {filters: {...filters}, directives: {...directives}, components: {...components}};
+
+	} else {
+		$options = {filters: {}, directives: {}, components: {}};
+	}
+
+	const customOpts = [
+		'filters',
+		'directives',
+		'components'
+	];
+
+	if (component) {
+		Object.assign($options, Object.reject(component, customOpts));
+		Object.assign($options.filters, component.filters);
+		Object.assign($options.directives, component.directives);
+		Object.assign($options.components, component.components);
+	}
+
+	if (renderCtx.$options) {
+		const o = renderCtx.$options;
+		Object.assign($options, Object.reject(o, customOpts));
+		Object.assign($options.filters, o.filters);
+		Object.assign($options.directives, o.directives);
+		Object.assign($options.components, o.components);
+	}
+
 	// Add base methods and properties
 	Object.assign(fakeCtx, renderCtx.props, {
 		_self: fakeCtx,
+		_renderProxy: fakeCtx,
 		_staticTrees: [],
 
 		meta,
@@ -105,7 +138,7 @@ export function createFakeCtx<T extends Dictionary = FunctionalCtx>(
 
 		$normalParent,
 		$root: renderCtx.$root || p && p.$root,
-		$options: renderCtx.$options || Object.create(p && p.$options || {}),
+		$options,
 
 		$async: $a,
 		$createElement: createElement.bind(fakeCtx),

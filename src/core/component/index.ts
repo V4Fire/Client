@@ -140,6 +140,7 @@ export function component(params?: ComponentParams): Function {
 				props: {},
 				methods: {},
 				computed: {},
+				staticRenderFns: [],
 				render(this: ComponentInterface, el: CreateElement, baseCtx: RenderContext): VNode {
 					const
 						{methods: {render: r}, component: {ctx}} = meta;
@@ -218,7 +219,7 @@ export function component(params?: ComponentParams): Function {
 
 				} else {
 					renderObj.fn = fns.render;
-					component.staticRenderFns = fns.staticRenderFns || [];
+					component.staticRenderFns = meta.component.staticRenderFns = fns.staticRenderFns || [];
 				}
 
 				methods.render = renderObj;
