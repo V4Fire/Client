@@ -8,7 +8,6 @@
 
 import '@v4fire/core/core';
 import 'core/dependencies';
-import 'core/number';
 import 'core/dom';
 import 'core/image';
 import 'core/canvas';

@@ -27,7 +27,7 @@
   "dependencies": {
     "@types/socket.io": "^1.4.39",
     "@types/socket.io-client": "^1.4.32",
-    "@v4fire/core": "https://github.com/V4Fire/Core#zero",
+    "@v4fire/core": "git+https://github.com/V4Fire/Core.git#zero",
     "babel-polyfill": "^6.26.0",
     "chart.js": "^2.7.3",
     "collection.js": "^6.6.27",
@@ -40,7 +40,7 @@
     "raven-js": "^3.27.0",
     "requestidlecallback": "^0.3.0",
     "snakeskin": "^7.5.1",
-    "socket.io": "^2.1.1",
+    "socket.io": "^2.2.0",
     "sugar": "^2.0.4",
     "vue": "2.5.17-beta.0"
   },

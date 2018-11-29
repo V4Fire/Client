@@ -170,6 +170,7 @@
 					- block std
 						- script
 							+= self.addScriptDep('std', {defer: false, optional: true})
+							+= self.addScriptDep('vendor', {optional: true})
 
 					: defLibs = deps.scripts
 					- block defLibs
@@ -226,9 +227,6 @@
 							}
 
 					- block scripts
-						- script
-							+= self.addScriptDep('vendor', {optional: true})
-
 						+= self.addDependencies('scripts')
 
 						- script

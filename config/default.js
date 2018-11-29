@@ -157,10 +157,26 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	},
 
 	monic() {
+		const runtime = {
+			noGlobals: true
+		};
+
 		return {
 			stylus: {
 				flags: {
 					'+:*': true
+				}
+			},
+
+			typescript: {
+				flags: {
+					runtime
+				}
+			},
+
+			javascript: {
+				flags: {
+					runtime
 				}
 			}
 		};

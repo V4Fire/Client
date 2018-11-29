@@ -9,18 +9,8 @@
  */
 
 const
-	escaper = require('escaper');
-
-const
-	isPrelude = /\/core\/prelude\//,
-	isProto = /\.prototype$/,
-	extendRgxp = /extend\(([^,]+),\s*['"]([^'",]+)/g;
-
-const
-	methods = new Map();
-
-let
-	replaceRgxp;
+	escaper = require('escaper'),
+	{replaceRgxp, methods} = include('build/prelude.webpack');
 
 /**
  * Monic replacer for prelude module
@@ -30,29 +20,27 @@ let
  * @returns {string}
  */
 module.exports = function (str, file) {
-	if (isPrelude.test(file)) {
-		let
-			decl;
+	const
+		r = this.flags.runtime || {};
 
-		while ((decl = extendRgxp.exec(str))) {
-			const
-				target = decl[1],
-				method = decl[2],
-				protoMethod = isProto.test(target);
+	if (r.noGlobals && replaceRgxp) {
+		str = escaper.paste(
+			escaper.replace(str).replace(replaceRgxp, (str) => {
+				str = RegExp.escape(str);
 
-			methods.set(
-				RegExp.escape(`${protoMethod ? `.${method}` : `${target}.${method}`}(`),
-				`${protoMethod ? '' : target}[Symbol.for('[[V4_PROP_TRAP:${method}]]')](`
-			);
-		}
+				if (str[0] !== '\\') {
+					str = `\\b${str}`;
+				}
 
-		if (methods.size) {
-			replaceRgxp = new RegExp([...methods.keys()].join('|'), 'g');
-		}
-	}
+				str += '\\b';
 
-	if (replaceRgxp) {
-		str = str.replace(replaceRgxp, (str) => methods.get(RegExp.escape(str)));
+				if (!methods.get(str)) {
+					console.log(str);
+				}
+
+				return methods.get(str);
+			})
+		);
 	}
 
 	return str;

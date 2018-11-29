@@ -8,6 +8,16 @@
 
 /* eslint-disable prefer-arrow-callback,no-var */
 
+var global = new Function('return this')();
+
+if (typeof global['setImmediate'] !== 'function') {
+	global['setImmediate'] = function (fn) {
+		setTimeout(fn, 0);
+	}
+
+	global['cleatImmediate'] = clearTimeout;
+}
+
 exports.loadToPrototype = loadToPrototype;
 exports.loadToConstructor = loadToConstructor;
 

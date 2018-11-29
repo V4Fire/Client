@@ -361,7 +361,7 @@ export function bindWatchers(ctx: ComponentInterface, eventCtx: ComponentInterfa
 			onMounted = m === '?';
 
 			root = l ? ctxObj.get(l) || globalObj.get(l) || ctx : ctx;
-			key = customWatcher[3][l ? 'toString' : 'dasherize']();
+			key = l ? customWatcher[3].toString() : customWatcher[3].dasherize();
 		}
 
 		if (

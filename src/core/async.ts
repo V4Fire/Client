@@ -19,9 +19,7 @@ import Super, {
 
 } from '@v4fire/core/core/async';
 
-import { convertEnumToDict } from 'core/helpers/other';
 export * from '@v4fire/core/core/async';
-
 export interface AsyncRequestAnimationFrameOpts<T extends object = Async> extends AsyncCbOpts<T> {
 	element?: Element;
 }
@@ -52,7 +50,7 @@ export type ClientLink = keyof typeof ClientLinkNames;
 export type ClientLinkNamesList = LinkNamesList & Record<ClientLink, ClientLink>;
 
 const
-	linkNamesDictionary = <Record<ClientLink, ClientLink>>convertEnumToDict(ClientLinkNames);
+	linkNamesDictionary = <Record<ClientLink, ClientLink>>Object.convertEnumToDict(ClientLinkNames);
 
 export default class Async<CTX extends object = Async<any>> extends Super<CTX> {
 	/** @override */
