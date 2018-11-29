@@ -2866,6 +2866,9 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 
 	/**
 	 * Executes specified daemon
+	 *
+	 * @param daemonName
+	 * @param args
 	 */
 	protected executeDaemon(daemonName: string, ...args: unknown[]): unknown {
 		const
