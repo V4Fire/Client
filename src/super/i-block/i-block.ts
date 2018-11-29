@@ -79,7 +79,7 @@ import {
 
 } from 'core/component';
 
-import { Daemon, DaemonWatcher, DaemonsDict } from 'super/i-block/modules/daemons';
+import { DaemonWatcher, DaemonsDict, Daemon } from 'super/i-block/modules/daemons';
 import { prop, field, system, watch, wait, p } from 'super/i-block/modules/decorators';
 import { queue, backQueue, restart, deferRestart } from 'core/render';
 import { delegate } from 'core/dom';
@@ -2862,6 +2862,20 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	 */
 	protected sendAnalyticsEvent(event: string, details: Dictionary = {}): void {
 		analytics.send(event, details);
+	}
+
+	/**
+	 * Executes specified daemon
+	 */
+	protected executeDaemon(daemonName: string, ...args: unknown[]): unknown {
+		const
+			daemon = this.getField<Function>(`instance.constructor.daemons.${daemonName}.fn`);
+
+		if (!daemon) {
+			return;
+		}
+
+		return daemon.apply(this, args);
 	}
 
 	/**
