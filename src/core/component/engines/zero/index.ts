@@ -90,7 +90,7 @@ export class ComponentDriver {
 	 * @param [definition]
 	 */
 	static filter(id: string, definition?: Function): Function {
-		return options.filters[id] = definition || ((v) => v);
+		return options.filters[id] = definition || Any;
 	}
 
 	/**
@@ -221,7 +221,7 @@ export class ComponentDriver {
 							slot = f;
 
 						} else {
-							slot = _.createTemplate();
+							slot = _.createTemplate.call(this);
 
 							for (let o = Array.from(children), i = 0; i < o.length; i++) {
 								slot.appendChild(o[i]);
@@ -251,15 +251,15 @@ export class ComponentDriver {
 					createComponent<Element, ComponentDriver>(tag, baseCtx, <ComponentDriver>this);
 
 				if (node) {
-					_.addClass(node, opts);
-					_.attachEvents(node, opts.nativeOn);
+					_.addClass.call(this, node, opts);
+					_.attachEvents.call(this, node, opts.nativeOn);
 
 					if (opts.ref) {
 						refs[opts.ref] = ctx;
 					}
 
 					if (meta.params.inheritAttrs) {
-						_.addAttrs(node, attrs);
+						_.addAttrs.call(this, node, attrs);
 					}
 
 					if (opts.on) {
@@ -284,29 +284,30 @@ export class ComponentDriver {
 				return node || document.createComment('');
 			}
 
-			const el = tag === 'template' ? _.createTemplate() :
+			const el = tag === 'template' ? _.createTemplate.call(this) :
 				tag === 'svg' ? document.createElementNS(_.SVG_NMS, tag) : document.createElement(tag);
 
 			el[_.$$.data] = opts;
-			_.addDirectives(el, opts, opts.directives);
+
+			_.addDirectives.call(this, el, opts, opts.directives);
 
 			if (el instanceof Element) {
 				if (opts.ref) {
 					refs[opts.ref] = el;
 				}
 
-				_.addClass(el, opts);
-				_.attachEvents(el, opts.on);
+				_.addClass.call(this, el, opts);
+				_.attachEvents.call(this, el, opts.on);
 			}
 
-			_.addProps(el, opts.domProps);
-			_.addAttrs(el, opts.attrs);
+			_.addProps.call(this, el, opts.domProps);
+			_.addAttrs.call(this, el, opts.attrs);
 
 			if (el instanceof SVGElement) {
-				children = _.createSVGChildren(<Element[]>children, this);
+				children = _.createSVGChildren.call(this, <Element[]>children, this);
 			}
 
-			_.appendChild(el, children);
+			_.appendChild.call(this, el, children);
 			return el;
 		}
 

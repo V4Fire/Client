@@ -48,9 +48,9 @@ export function createSVGChildren(children: Element[], ctx: Dictionary): SVGElem
 			data = el[$$.data];
 
 		if (data) {
-			addDirectives(node, el[$$.directives], data);
-			addAttrs(node, el[$$.attrs]);
-			attachEvents(node, el[$$.events]);
+			addDirectives.call(this, node, data, el[$$.directives]);
+			addAttrs.call(this, node, el[$$.attrs]);
+			attachEvents.call(this, node, el[$$.events]);
 
 			if (el.className) {
 				node.setAttributeNS(null, 'class', el.className);
@@ -67,7 +67,7 @@ export function createSVGChildren(children: Element[], ctx: Dictionary): SVGElem
 		}
 
 		if (el.children) {
-			appendChild(node, createSVGChildren(Array.from(el.children), ctx));
+			appendChild.call(this, node, createSVGChildren.call(this, Array.from(el.children), ctx));
 		}
 	}
 
@@ -79,15 +79,30 @@ export function addDirectives(el: Element | DocumentFragmentP, data: VNodeData, 
 		return;
 	}
 
+	const
+		store = this.$options.directives;
+
+	if (!store) {
+		return;
+	}
+
 	el[$$.directives] = directives;
 
 	for (let o = directives, i = 0; i < o.length; i++) {
 		const
-			el = o[i];
+			dir = o[i],
+			nm = dir.name;
 
-		switch (el.name) {
+		if (store[nm]) {
+			const vnode = Object.create(el);
+			vnode.context = this;
+			store[nm].bind(el, dir, vnode);
+			continue;
+		}
+
+		switch (dir.name) {
 			case 'show':
-				if (!el.value) {
+				if (!dir.value) {
 					data.attrs = data.attrs || {};
 					data.attrs.style = (data.attrs.style || '') + ';display: none;';
 				}
@@ -96,7 +111,7 @@ export function addDirectives(el: Element | DocumentFragmentP, data: VNodeData, 
 
 			case 'model':
 				data.domProps = data.domProps || {};
-				data.domProps.value = el.value;
+				data.domProps.value = dir.value;
 		}
 	}
 }
@@ -207,7 +222,7 @@ export function attachEvents(el: Node, events?: Dictionary<CanArray<Function>>):
 export function appendChild(parent: Node, node: CanArray<Node>): void {
 	if (Object.isArray(node)) {
 		for (let i = 0; i < node.length; i++) {
-			appendChild(parent, node[i]);
+			appendChild.call(this, parent, node[i]);
 		}
 
 	} else {

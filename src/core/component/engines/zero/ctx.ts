@@ -24,7 +24,7 @@ export default {
 	_e: (v) => document.createComment(v === undefined ? '' : v),
 
 	_f(id: string): Function {
-		return resolveAsset(this.$options, 'filters', id) || identity;
+		return resolveAsset(this.$options, 'filters', id) || Any;
 	},
 
 	_n: (v) => {
@@ -220,10 +220,6 @@ export default {
 const
 	hasOwnProperty = Object.prototype.hasOwnProperty;
 
-function hasOwn(obj: object, key: string): boolean {
-	return hasOwnProperty.call(obj, key);
-}
-
 function resolveAsset(options: Dictionary<any>, type: string, id: string): CanUndef<Function> {
 	if (Object.isString(id)) {
 		return;
@@ -236,21 +232,21 @@ function resolveAsset(options: Dictionary<any>, type: string, id: string): CanUn
 		return;
 	}
 
-	if (hasOwn(assets, id)) {
+	if (hasOwnProperty.call(assets, id)) {
 		return assets[id];
 	}
 
 	const
 		camelizedId = (<string>id).camelize(false);
 
-	if (hasOwn(assets, camelizedId)) {
+	if (hasOwnProperty.call(assets, camelizedId)) {
 		return assets[camelizedId];
 	}
 
 	const
 		PascalCaseId = (<string>id).camelize();
 
-	if (hasOwn(assets, PascalCaseId)) {
+	if (hasOwnProperty.call(assets, PascalCaseId)) {
 		return assets[PascalCaseId];
 	}
 
@@ -263,8 +259,4 @@ function isKeyNotMatch(expect: CanArray<string>, actual: string): boolean {
 	}
 
 	return expect !== actual;
-}
-
-function identity(_: unknown): unknown {
-	return _;
 }
