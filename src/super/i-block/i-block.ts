@@ -2909,12 +2909,12 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	 * @param daemonName
 	 * @param args
 	 */
-	protected executeDaemon<T = unknown>(daemonName: string, ...args: unknown[]): CanUndef<T> {
+	protected executeDaemon<T = unknown>(daemonName: string, ...args: unknown[]): T | boolean {
 		const
 			daemonFn = this.getField<Function>(`instance.constructor.daemons.${daemonName}.fn`);
 
 		if (!daemonFn) {
-			return;
+			return false;
 		}
 
 		return <T>daemonFn.apply(this, args);
