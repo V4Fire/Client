@@ -2875,7 +2875,17 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	}
 
 	/**
+	 * true, if daemon exists
+	 * @param daemonName
+	 */
+	protected hasDaemon(daemonName: string): boolean {
+		return Boolean(this.getField(`instance.constructor.daemons.${daemonName}`));
+	}
+
+	/**
 	 * Spawns new daemon, if daemons exist, previous daemon will be killed
+	 *
+	 * @param daemonName
 	 * @param daemon
 	 */
 	protected spawnDaemon(daemonName: string, daemon: SpawnedDaemon): DaemonSpawnStatus {
@@ -2909,7 +2919,7 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	 * @param daemonName
 	 * @param args
 	 */
-	protected executeDaemon<T = unknown>(daemonName: string, ...args: unknown[]): T | boolean {
+	protected runDaemon<T = unknown>(daemonName: string, ...args: unknown[]): T | boolean {
 		const
 			daemonFn = this.getField<Function>(`instance.constructor.daemons.${daemonName}.fn`);
 
