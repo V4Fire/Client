@@ -468,7 +468,7 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 					o.watch(`$attrs.${key}`, (val) => o.setMod(key, modVal(val)));
 					delete attrs[key];
 
-					if (!v) {
+					if (v == null) {
 						continue;
 					}
 
