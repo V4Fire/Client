@@ -2891,11 +2891,11 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	protected spawnDaemon(daemonName: string, daemon: SpawnedDaemon): DaemonSpawnStatus {
 		const
 			daemons = this.getField<DaemonsDict>('instance.constructor.daemons'),
-			daemonObj = Object.isFunction(daemon) ? {fn: daemon} : daemon,
-			status = {
-				spawned: false,
-				killed: false
-			};
+			daemonObj = Object.isFunction(daemon) ? {fn: daemon} : daemon;
+
+		const
+			daemonFn = daemonObj.wait ? wait(daemonObj.wait, daemonObj.fn) : daemonObj.fn,
+			status = {spawned: false, killed: false};
 
 		if (!daemons) {
 			return status;
@@ -2906,7 +2906,7 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 		}
 
 		daemons[daemonName] = {
-			fn: () => callDaemon.call(this, daemonName, daemonObj.fn, [], daemonObj.immediate, daemonObj.asyncOptions)
+			fn: () => callDaemon.call(this, daemonName, daemonFn, [], daemonObj.immediate, daemonObj.asyncOptions)
 		};
 		status.spawned = true;
 

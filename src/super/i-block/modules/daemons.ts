@@ -32,6 +32,7 @@ export interface DaemonSpawnStatus {
 
 export interface SpawnedDaemonObj {
 	fn: Function;
+	wait?: Statuses;
 	immediate?: boolean;
 	asyncOptions?: AsyncOpts;
 }
