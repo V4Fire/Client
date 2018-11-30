@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import Async, { AsyncOpts } from 'core/async';
+import { AsyncOpts } from 'core/async';
 import { WatchOptions, Hooks } from 'core/component';
 import { Statuses } from 'super/i-block/modules/interface';
 
@@ -17,8 +17,8 @@ export interface DaemonWatchObject extends WatchOptions {
 export type DaemonWatcher = DaemonWatchObject | string;
 
 export interface Daemon {
-	hook?: Hooks[];
-	watch?: DaemonWatcher[];
+	hook?: Hooks | Hooks[];
+	watch?: DaemonWatcher | DaemonWatcher[];
 	wait?: Statuses;
 	immediate?: boolean;
 	asyncOptions?: AsyncOpts;
@@ -100,9 +100,13 @@ export function createDaemons(base: DaemonsDict, parent: DaemonsDict): DaemonsDi
  * @param b - parent daemon
  */
 export function mergeDaemons(a: Daemon, b: Daemon): Daemon {
+	// const
+	// 	hook = ([].concat(a.hook || [])).concat(b.hook || []),
+	// 	watch = ([].concat(a.watch || [])).concat(b.watch || []);
+
 	const
-		hook = (a.hook || []).concat(b.hook || []),
-		watch = (a.watch || []).concat(b.watch || []);
+		hook = (<Hooks[]>[]).concat(a.hook || []).concat(b.hook  || []),
+		watch = (<DaemonWatcher[]>[]).concat(a.watch || []).concat(b.watch || []);
 
 	return {
 		...b,
