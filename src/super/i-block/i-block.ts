@@ -212,6 +212,7 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 			this.setField('componentStatusStore', value);
 		}
 
+		this.setMod('status', value);
 		this.localEvent.emit(`component.status.${value}`, value);
 		this.emit(`status-${value}`, value);
 	}
@@ -467,7 +468,7 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 					o.watch(`$attrs.${key}`, (val) => o.setMod(key, modVal(val)));
 					delete attrs[key];
 
-					if (!v) {
+					if (v == null) {
 						continue;
 					}
 
@@ -523,6 +524,15 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	static readonly mods: ModsDecl = {
 		theme: [
 			['default']
+		],
+
+		status: [
+			['unloaded'],
+			'loading',
+			'beforeReady',
+			'ready',
+			'inactive',
+			'destroyed'
 		],
 
 		size: [

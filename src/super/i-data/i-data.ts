@@ -208,7 +208,7 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 
 		if (data || this.dp && this.dp.baseURL) {
 			const
-				p = this.getDefaultRequestParams('get');
+				p = this.getDefaultRequestParams<T>('get');
 
 			const label = {
 				join: true,
