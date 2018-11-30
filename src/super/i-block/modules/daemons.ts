@@ -17,8 +17,8 @@ export interface DaemonWatchObject extends WatchOptions {
 export type DaemonWatcher = DaemonWatchObject | string;
 
 export interface Daemon {
-	hook?: Hooks | Hooks[];
-	watch?: DaemonWatcher | DaemonWatcher[];
+	hook?: Hooks[];
+	watch?: DaemonWatcher[];
 	wait?: Statuses;
 	immediate?: boolean;
 	asyncOptions?: AsyncOpts;
@@ -100,13 +100,9 @@ export function createDaemons(base: DaemonsDict, parent: DaemonsDict): DaemonsDi
  * @param b - parent daemon
  */
 export function mergeDaemons(a: Daemon, b: Daemon): Daemon {
-	// const
-	// 	hook = ([].concat(a.hook || [])).concat(b.hook || []),
-	// 	watch = ([].concat(a.watch || [])).concat(b.watch || []);
-
 	const
-		hook = (<Hooks[]>[]).concat(a.hook || []).concat(b.hook  || []),
-		watch = (<DaemonWatcher[]>[]).concat(a.watch || []).concat(b.watch || []);
+		hook = (a.hook || []).concat(b.hook || []),
+		watch = (a.watch || []).concat(b.watch || []);
 
 	return {
 		...b,
