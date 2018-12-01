@@ -27,17 +27,22 @@ export interface Daemon {
 
 export interface DaemonSpawnStatus {
 	spawned: boolean;
-	killed: boolean;
+	killed: DaemonKillStatus | false;
 }
 
-export interface SpawnedDaemonObj {
+export interface DaemonKillStatus {
+	killed: boolean;
+	exists: boolean;
+}
+
+export interface DaemonSpawnedObj {
 	fn: Function;
 	wait?: Statuses;
 	immediate?: boolean;
 	asyncOptions?: AsyncOpts;
 }
 
-export type SpawnedDaemon = SpawnedDaemonObj | Function;
+export type SpawnedDaemon = DaemonSpawnedObj | Function;
 
 export type DaemonsDict = Dictionary<Daemon>;
 

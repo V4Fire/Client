@@ -376,6 +376,7 @@ export function bindWatchers(ctx: ComponentInterface, eventCtx: ComponentInterfa
 			const label = `[[WATCHER:${key}:${
 				el.method != null ? el.method : handlerIsStr ? el.handler : (<Function>el.handler).name
 			}]]`;
+			// TODO: Add a daemon watch label
 
 			const
 				group = {group: el.group || 'watchers', label},
