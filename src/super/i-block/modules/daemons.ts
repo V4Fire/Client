@@ -159,7 +159,7 @@ export default class Daemons {
 	/**
 	 * Runs a daemon fn
 	 * - without setImmediate or wait
-	 * - ignors suspend
+	 * - ignores suspend
 	 *
 	 * @param name
 	 */
