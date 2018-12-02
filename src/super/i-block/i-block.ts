@@ -18,6 +18,7 @@ import * as analytics from 'core/analytics';
 import { EventEmitter2 as EventEmitter } from 'eventemitter2';
 
 import 'super/i-block/directives';
+import Daemons from 'super/i-block/modules/daemons';
 import Block from 'super/i-block/modules/block';
 import Cache from 'super/i-block/modules/cache';
 
@@ -78,8 +79,6 @@ import {
 	PARENT
 
 } from 'core/component';
-
-import Daemons from 'super/i-block/modules/daemons';
 
 import { prop, field, system, watch, wait, p } from 'super/i-block/modules/decorators';
 import { queue, backQueue, restart, deferRestart } from 'core/render';
