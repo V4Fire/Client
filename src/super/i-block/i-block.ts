@@ -79,14 +79,7 @@ import {
 
 } from 'core/component';
 
-import {
-
-	callDaemon,
-	DaemonWatcher,
-	DaemonsDict,
-	SpawnedDaemon
-
-} from 'super/i-block/modules/daemons';
+import Daemons from 'super/i-block/modules/daemons';
 
 import { prop, field, system, watch, wait, p } from 'super/i-block/modules/decorators';
 import { queue, backQueue, restart, deferRestart } from 'core/render';
@@ -774,6 +767,12 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	 */
 	@system({unique: true})
 	protected block!: Block;
+
+	/**
+	 * Daemons API
+	 */
+	@system({unique: true})
+	protected daemons!: Daemons;
 
 	/**
 	 * Local event emitter
@@ -2873,161 +2872,6 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	}
 
 	/**
-	 * true, if daemon exists
-	 * @param name
-	 */
-	protected hasDaemon(name: string): boolean {
-		return Boolean(this.getField(`instance.constructor.daemons.${name}`));
-	}
-
-	/**
-	 * Sets a daemon state (suspended/not suspended)
-	 *
-	 * @param name
-	 * @param suspend
-	 */
-	protected setDaemonSuspend(name: string, suspend: boolean): boolean {
-		const
-			daemons = this.getField<DaemonsDict>('instance.constructor.daemons');
-
-		if (!daemons) {
-			return false;
-		}
-
-		const
-			daemon = daemons[name];
-
-		if (!daemon) {
-			return false;
-		}
-
-		daemon.suspended = suspend;
-		return true;
-	}
-
-	/**
-	 * Spawns new daemon, if daemons exist, previous daemon will be killed
-	 *
-	 * @param name
-	 * @param daemon
-	 */
-	protected spawnDaemon(name: string, daemon: SpawnedDaemon): boolean {
-		const
-			daemons = this.getField<DaemonsDict>('instance.constructor.daemons');
-
-		if (!daemons || daemons[name]) {
-			return false;
-		}
-
-		const
-			daemonObj = Object.isFunction(daemon) ? {fn: daemon} : daemon,
-			daemonFn = daemonObj.wait ? wait(daemonObj.wait, daemonObj.fn) : daemonObj.fn;
-
-		daemons[name] = {
-			fn: () => callDaemon(this, name, daemonFn, [], daemonObj.immediate, daemonObj.asyncOptions)
-		};
-
-		return true;
-	}
-
-	/**
-	 * Executes specified daemon
-	 *
-	 * @param name
-	 * @param args
-	 */
-	protected runDaemon<T = unknown>(name: string, ...args: unknown[]): T | boolean {
-		const
-			daemonFn = this.getField<Function>(`instance.constructor.daemons.${name}.fn`);
-
-		if (!daemonFn) {
-			return false;
-		}
-
-		return <T>daemonFn.apply(this, args);
-	}
-
-	/**
-	 * Initializes component daemons
-	 */
-	@hook('beforeRuntime')
-	protected initDaemons(): void {
-		const
-			daemons = (<typeof iBlock>this.instance.constructor).daemons;
-
-		if (!daemons) {
-			return;
-		}
-
-		const bindDaemonToHook = (hook, name, fn, daemon) => {
-			const
-				{hooks} = this.meta;
-
-			hooks[hook].push({
-				fn: () => callDaemon(this, name, fn, daemon.immediate, daemon.asyncOptions),
-				daemon: name,
-				after: undefined,
-				name
-			});
-		};
-
-		const bindDaemonToWatch = (watch: DaemonWatcher, name, fn, daemon) => {
-			const
-				{watchers} = this.meta;
-
-			const
-				watchName = Object.isObject(watch) ? watch.field : watch,
-				watchParams = Object.isObject(watch) ? Object.reject(watch, 'field') : {};
-
-			const watchDaemon = {
-				handler: (...args) => callDaemon(this, name, fn, args, daemon.immediate, daemon.asyncOptions),
-				daemon: name,
-				args: [],
-				...watchParams
-			};
-
-			const
-				w = watchers[watchName];
-
-			if (w) {
-				w.push(watchDaemon);
-
-			} else {
-				watchers[watchName] = [watchDaemon];
-			}
-		};
-
-		for (let keys = Object.keys(daemons), i = 0; i < keys.length; i++) {
-			const
-				name = keys[i],
-				daemon = daemons[name];
-
-			if (!daemon) {
-				continue;
-			}
-
-			let
-				fn = daemon.fn;
-
-			if (daemon.wait) {
-				fn = wait(daemon.wait, fn);
-			}
-
-			if (daemon.hook && daemon.hook.length) {
-				for (let i = 0; i < daemon.hook.length; i++) {
-					bindDaemonToHook(daemon.hook[i], name, fn, daemon);
-				}
-			}
-
-			if (daemon.watch && daemon.watch.length) {
-				for (let i = 0; i < daemon.watch.length; i++) {
-					bindDaemonToWatch(daemon.watch[i], name, fn, daemon);
-				}
-			}
-		}
-	}
-
-	/**
 	 * Initializes core component API
 	 */
 	@hook('beforeRuntime')
@@ -3069,6 +2913,8 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 		this.once = i.once.bind(this);
 		this.off = i.off.bind(this);
 		this.delegate = i.delegate.bind(this);
+
+		this.daemons = new Daemons(this);
 
 		// tslint:disable:no-string-literal
 
