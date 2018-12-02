@@ -30,11 +30,6 @@ export interface Daemon {
 	fn: Function;
 }
 
-export interface DaemonSpawnStatus {
-	spawned: boolean;
-	killed: boolean;
-}
-
 export interface DaemonSpawnedObj {
 	fn: Function;
 	wait?: Statuses;
@@ -115,7 +110,7 @@ export default class Daemons {
 	 * true, if daemon exists
 	 * @param name
 	 */
-	has(name: string): boolean {
+	exists(name: string): boolean {
 		return Boolean(this.daemons[name]);
 	}
 
@@ -163,20 +158,21 @@ export default class Daemons {
 
 	/**
 	 * Runs a daemon fn
-	 * - without wait or setImmediate
-	 * - ignores suspend state of daemon
+	 * - without setImmediate or wait
+	 * - ignors suspend
 	 *
 	 * @param name
 	 */
 	run<T>(name: string, ...args: unknown[]): CanUndef<T> {
 		const
-			daemon = this.get(name);
+			daemon = this.get(name),
+			ctx = this.component;
 
 		if (!daemon) {
 			return;
 		}
 
-		return daemon.fn();
+		return daemon.fn.apply(ctx, args);
 	}
 
 	/**
@@ -185,7 +181,7 @@ export default class Daemons {
 	 * @param name
 	 * @param args
 	 */
-	protected call(name: string, ...args: unknown[]): void {
+	protected call(name: string, ...args: unknown[]): CanPromise<unknown> {
 		const
 			ctx = this.component,
 			// @ts-ignore
@@ -206,10 +202,10 @@ export default class Daemons {
 				label: `daemons-${name}`
 			});
 
-			$a.setImmediate(() => fn.apply(ctx, args), asyncOptions);
+			return $a.setImmediate(() => fn.apply(ctx, args), asyncOptions);
 
 		} else {
-			fn.apply(ctx, args);
+			return fn.apply(ctx, args);
 		}
 	}
 
@@ -283,7 +279,7 @@ export default class Daemons {
 			watchParams = Object.isObject(watch) ? Object.reject(watch, 'field') : {};
 
 		const watchDaemon = {
-			handler: (...args) => this.call(name, args),
+			handler: (...args) => this.call(name, ...args),
 			args: [],
 			...watchParams
 		};
