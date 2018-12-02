@@ -162,7 +162,7 @@ export default class Daemons {
 	 * @param name
 	 * @param args
 	 */
-	protected call<T = unknown>(name: string, args?: unknown[]): CanPromise<CanUndef<T>> {
+	call<T = unknown>(name: string, args?: unknown[]): CanPromise<CanUndef<T>> {
 		const
 			ctx = this.component,
 			// @ts-ignore
