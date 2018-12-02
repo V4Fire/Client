@@ -6,8 +6,9 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import iBlock from 'super/i-block/i-block';
 import { AsyncOpts } from 'core/async';
-import { WatchOptions, Hooks } from 'core/component';
+import { WatchOptions, Hooks, ComponentInterface } from 'core/component';
 import { Statuses } from 'super/i-block/modules/interface';
 
 export interface DaemonWatchObject extends WatchOptions {
@@ -22,17 +23,13 @@ export interface Daemon {
 	wait?: Statuses;
 	immediate?: boolean;
 	asyncOptions?: AsyncOpts;
+	suspended?: boolean;
 	fn: Function;
 }
 
 export interface DaemonSpawnStatus {
 	spawned: boolean;
-	killed: DaemonKillStatus | false;
-}
-
-export interface DaemonKillStatus {
 	killed: boolean;
-	exists: boolean;
 }
 
 export interface DaemonSpawnedObj {
@@ -56,22 +53,39 @@ export type DaemonsDict = Dictionary<Daemon>;
  * @param asyncParams
  */
 export function callDaemon(
+	ctx: ComponentInterface,
 	name: string,
 	fn: Function,
 	args: unknown[],
 	immediate: boolean = true,
 	asyncParams: AsyncOpts = {}
 ): void {
+	const
+		// @ts-ignore
+		{$async: $a} = ctx,
+		daemons = (<typeof iBlock>ctx.instance.constructor).daemons;
+
+	if (!daemons) {
+		return;
+	}
+
+	const
+		daemon = daemons[name];
+
+	if (!daemon || daemon.suspended) {
+		return;
+	}
+
 	if (immediate) {
 		Object.assign(asyncParams, {
-			group: `daemons-${this.componentName}`,
+			group: `daemons-${ctx.componentName}`,
 			label: `daemons-${name}`
 		});
 
-		this.async.setImmediate(() => fn.apply(this, args), asyncParams);
+		$a.setImmediate(() => fn.apply(ctx, args), asyncParams);
 
 	} else {
-		fn.call(this);
+		fn.call(ctx);
 	}
 }
 
@@ -107,8 +121,8 @@ export function createDaemons(base: DaemonsDict, parent: DaemonsDict): DaemonsDi
  */
 export function mergeDaemons(a: Daemon, b: Daemon): Daemon {
 	const
-		hook = (a.hook || []).concat(b.hook || []),
-		watch = (a.watch || []).concat(b.watch || []);
+		hook = [...new Set((a.hook || []).concat(b.hook || []))],
+		watch = (b.watch || []).concat(a.watch || []);
 
 	return {
 		...b,
