@@ -137,7 +137,7 @@ export default class Daemons {
 		}
 
 		spawned = Object.isFunction(spawned) ? {fn: spawned} : spawned;
-		return this.put(name, this.wrapDaemon(<Daemon>spawned));
+		return this.put(name, this.wrapDaemonFn(<Daemon>spawned));
 	}
 
 	/**
@@ -241,7 +241,7 @@ export default class Daemons {
 	 * Creates a wrappedFn for daemon
 	 * @param daemon
 	 */
-	protected wrapDaemon(daemon: Daemon): Daemon {
+	protected wrapDaemonFn(daemon: Daemon): Daemon {
 		daemon.wrappedFn = daemon.wait ? wait(daemon.wait, daemon.fn) : daemon.fn;
 		return daemon;
 	}
@@ -311,7 +311,7 @@ export default class Daemons {
 				continue;
 			}
 
-			this.wrapDaemon(daemon);
+			this.wrapDaemonFn(daemon);
 
 			if (daemon.hook && daemon.hook.length) {
 				for (let i = 0; i < daemon.hook.length; i++) {
