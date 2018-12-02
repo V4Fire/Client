@@ -18,7 +18,7 @@ import * as analytics from 'core/analytics';
 import { EventEmitter2 as EventEmitter } from 'eventemitter2';
 
 import 'super/i-block/directives';
-import Daemons from 'super/i-block/modules/daemons';
+import Daemons, { DaemonsDict } from 'super/i-block/modules/daemons';
 import Block from 'super/i-block/modules/block';
 import Cache from 'super/i-block/modules/cache';
 
@@ -589,7 +589,7 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 		}
 	};
 
-	static readonly daemons?: DaemonsDict;
+	static readonly daemons: DaemonsDict = {};
 
 	/**
 	 * Wrapper for $refs

@@ -94,7 +94,7 @@ export default class Daemons {
 	 * Returns component daemons
 	 */
 	protected get daemons(): DaemonsDict {
-		return (<typeof iBlock>this.component.instance.constructor).daemons || {};
+		return (<typeof iBlock>this.component.instance.constructor).daemons;
 	}
 
 	/**
@@ -264,7 +264,7 @@ export default class Daemons {
 	}
 
 	/**
-	 * Bind a specified daemon to watchers
+	 * Bind a specified daemon to component watchers
 	 *
 	 * @param name
 	 * @param daemon
