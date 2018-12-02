@@ -162,12 +162,30 @@ export default class Daemons {
 	}
 
 	/**
+	 * Runs a daemon fn
+	 * - without wait or setImmediate
+	 * - ignores suspend state of daemon
+	 *
+	 * @param name
+	 */
+	run<T>(name: string, ...args: unknown[]): CanUndef<T> {
+		const
+			daemon = this.get(name);
+
+		if (!daemon) {
+			return;
+		}
+
+		return daemon.fn();
+	}
+
+	/**
 	 * Calls a daemon
 	 *
 	 * @param name
 	 * @param args
 	 */
-	call(name: string, ...args: unknown[]): void {
+	protected call(name: string, ...args: unknown[]): void {
 		const
 			ctx = this.component,
 			// @ts-ignore
