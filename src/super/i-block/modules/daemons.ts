@@ -162,7 +162,7 @@ export default class Daemons {
 	 * @param name
 	 * @param args
 	 */
-	call<T = unknown>(name: string, args?: unknown[]): CanPromise<CanUndef<T>> {
+	call<T = unknown>(name: string, args?: unknown[]): CanUndef<T> {
 		const
 			ctx = this.component,
 			// @ts-ignore
@@ -183,7 +183,7 @@ export default class Daemons {
 				label: `daemons-${name}`
 			});
 
-			return $a.setImmediate(() => fn.apply(ctx, args), asyncOptions);
+			$a.setImmediate(() => fn.apply(ctx, args), asyncOptions);
 
 		} else {
 			return fn.apply(ctx, args);
