@@ -2874,17 +2874,19 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 
 	/**
 	 * true, if daemon exists
-	 * @param daemonName
+	 * @param name
 	 */
-	protected hasDaemon(daemonName: string): boolean {
-		return Boolean(this.getField(`instance.constructor.daemons.${daemonName}`));
+	protected hasDaemon(name: string): boolean {
+		return Boolean(this.getField(`instance.constructor.daemons.${name}`));
 	}
 
 	/**
-	 * Suspends a daemon
-	 * @param daemonName
+	 * Sets a daemon state (suspended/not suspended)
+	 *
+	 * @param name
+	 * @param suspend
 	 */
-	protected suspendDaemon(daemonName: string): boolean {
+	protected setDaemonSuspend(name: string, suspend: boolean): boolean {
 		const
 			daemons = this.getField<DaemonsDict>('instance.constructor.daemons');
 
@@ -2893,26 +2895,27 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 		}
 
 		const
-			daemon = daemons[daemonName];
+			daemon = daemons[name];
 
 		if (!daemon) {
 			return false;
 		}
 
-		return daemon.suspended = true;
+		daemon.suspended = suspend;
+		return true;
 	}
 
 	/**
 	 * Spawns new daemon, if daemons exist, previous daemon will be killed
 	 *
-	 * @param daemonName
+	 * @param name
 	 * @param daemon
 	 */
-	protected spawnDaemon(daemonName: string, daemon: SpawnedDaemon): boolean {
+	protected spawnDaemon(name: string, daemon: SpawnedDaemon): boolean {
 		const
 			daemons = this.getField<DaemonsDict>('instance.constructor.daemons');
 
-		if (!daemons || daemons[daemonName]) {
+		if (!daemons || daemons[name]) {
 			return false;
 		}
 
@@ -2920,8 +2923,8 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 			daemonObj = Object.isFunction(daemon) ? {fn: daemon} : daemon,
 			daemonFn = daemonObj.wait ? wait(daemonObj.wait, daemonObj.fn) : daemonObj.fn;
 
-		daemons[daemonName] = {
-			fn: () => callDaemon(this, daemonName, daemonFn, [], daemonObj.immediate, daemonObj.asyncOptions)
+		daemons[name] = {
+			fn: () => callDaemon(this, name, daemonFn, [], daemonObj.immediate, daemonObj.asyncOptions)
 		};
 
 		return true;
@@ -2930,12 +2933,12 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	/**
 	 * Executes specified daemon
 	 *
-	 * @param daemonName
+	 * @param name
 	 * @param args
 	 */
-	protected runDaemon<T = unknown>(daemonName: string, ...args: unknown[]): T | boolean {
+	protected runDaemon<T = unknown>(name: string, ...args: unknown[]): T | boolean {
 		const
-			daemonFn = this.getField<Function>(`instance.constructor.daemons.${daemonName}.fn`);
+			daemonFn = this.getField<Function>(`instance.constructor.daemons.${name}.fn`);
 
 		if (!daemonFn) {
 			return false;
@@ -2996,8 +2999,8 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 
 		for (let keys = Object.keys(daemons), i = 0; i < keys.length; i++) {
 			const
-				daemonName = keys[i],
-				daemon = daemons[daemonName];
+				name = keys[i],
+				daemon = daemons[name];
 
 			if (!daemon) {
 				continue;
@@ -3012,13 +3015,13 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 
 			if (daemon.hook && daemon.hook.length) {
 				for (let i = 0; i < daemon.hook.length; i++) {
-					bindDaemonToHook(daemon.hook[i], daemonName, fn, daemon);
+					bindDaemonToHook(daemon.hook[i], name, fn, daemon);
 				}
 			}
 
 			if (daemon.watch && daemon.watch.length) {
 				for (let i = 0; i < daemon.watch.length; i++) {
-					bindDaemonToWatch(daemon.watch[i], daemonName, fn, daemon);
+					bindDaemonToWatch(daemon.watch[i], name, fn, daemon);
 				}
 			}
 		}
