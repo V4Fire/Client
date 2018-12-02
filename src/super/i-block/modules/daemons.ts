@@ -157,31 +157,12 @@ export default class Daemons {
 	}
 
 	/**
-	 * Runs a daemon fn
-	 * - without setImmediate or wait
-	 * - ignores suspend
-	 *
-	 * @param name
-	 */
-	run<T>(name: string, ...args: unknown[]): CanUndef<T> {
-		const
-			daemon = this.get(name),
-			ctx = this.component;
-
-		if (!daemon) {
-			return;
-		}
-
-		return daemon.fn.apply(ctx, args);
-	}
-
-	/**
 	 * Calls a daemon
 	 *
 	 * @param name
 	 * @param args
 	 */
-	protected call(name: string, args?: unknown[]): CanPromise<unknown> {
+	protected call<T = unknown>(name: string, args?: unknown[]): CanPromise<CanUndef<T>> {
 		const
 			ctx = this.component,
 			// @ts-ignore
@@ -196,7 +177,7 @@ export default class Daemons {
 			asyncOptions = daemon.asyncOptions,
 			fn = daemon.wrappedFn || daemon.fn;
 
-		if (daemon.immediate) {
+		if (!('immediate' in daemon) || daemon.immediate) {
 			Object.assign(asyncOptions, {
 				group: `daemons-${this.component.componentName}`,
 				label: `daemons-${name}`
