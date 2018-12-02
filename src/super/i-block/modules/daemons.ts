@@ -181,7 +181,7 @@ export default class Daemons {
 	 * @param name
 	 * @param args
 	 */
-	protected call(name: string, ...args: unknown[]): CanPromise<unknown> {
+	protected call(name: string, args?: unknown[]): CanPromise<unknown> {
 		const
 			ctx = this.component,
 			// @ts-ignore
@@ -279,7 +279,7 @@ export default class Daemons {
 			watchParams = Object.isObject(watch) ? Object.reject(watch, 'field') : {};
 
 		const watchDaemon = {
-			handler: (...args) => this.call(name, ...args),
+			handler: (...args) => this.call(name, args),
 			args: [],
 			...watchParams
 		};
