@@ -115,14 +115,6 @@ export default class Daemons {
 	}
 
 	/**
-	 * Returns a specified daemon
-	 * @param name
-	 */
-	get(name: string): CanUndef<Daemon> {
-		return this.daemons[name];
-	}
-
-	/**
 	 * Spawn a new daemon
 	 *
 	 * @param name
@@ -188,6 +180,14 @@ export default class Daemons {
 		} else {
 			return fn.apply(ctx, args);
 		}
+	}
+
+	/**
+	 * Returns a specified daemon
+	 * @param name
+	 */
+	protected get(name: string): CanUndef<Daemon> {
+		return this.daemons[name];
 	}
 
 	/**
