@@ -162,11 +162,11 @@ export default class Daemons {
 	 * @param name
 	 * @param args
 	 */
-	call<T = unknown>(name: string, args?: unknown[]): CanUndef<T> {
+	run<T = unknown>(name: string, ...args: unknown[]): CanUndef<T> {
 		const
 			ctx = this.component,
 			// @ts-ignore
-			{async: $a} = ctx.async,
+			{async: $a} = ctx,
 			daemon = this.get(name);
 
 		if (!daemon || daemon.suspended) {
@@ -174,7 +174,7 @@ export default class Daemons {
 		}
 
 		const
-			asyncOptions = daemon.asyncOptions,
+			asyncOptions = daemon.asyncOptions || {},
 			fn = daemon.wrappedFn || daemon.fn;
 
 		if (!('immediate' in daemon) || daemon.immediate) {
@@ -239,7 +239,7 @@ export default class Daemons {
 			{hooks} = this.component.meta;
 
 		hooks[hook].push({
-			fn: () => this.call(name),
+			fn: () => this.run(name),
 			after: undefined
 		});
 	}
@@ -260,7 +260,7 @@ export default class Daemons {
 			watchParams = Object.isObject(watch) ? Object.reject(watch, 'field') : {};
 
 		const watchDaemon = {
-			handler: (...args) => this.call(name, args),
+			handler: (...args) => this.run(name, ...args),
 			args: [],
 			...watchParams
 		};
