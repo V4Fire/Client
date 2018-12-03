@@ -770,8 +770,11 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	/**
 	 * Daemons API
 	 */
-	@system({unique: true})
-	protected daemons!: Daemons;
+	@system({
+		unique: true,
+		init: (ctx) => new Daemons(ctx)
+	})
+	protected daemons!: Daemons<this>;
 
 	/**
 	 * Local event emitter
@@ -2912,8 +2915,6 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 		this.once = i.once.bind(this);
 		this.off = i.off.bind(this);
 		this.delegate = i.delegate.bind(this);
-
-		this.daemons = new Daemons(this);
 
 		// tslint:disable:no-string-literal
 

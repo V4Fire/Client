@@ -10,7 +10,7 @@ import iBlock from 'super/i-block/i-block';
 import { wait } from 'super/i-block/modules/decorators';
 
 import { AsyncOpts } from 'core/async';
-import { WatchOptions, Hooks } from 'core/component';
+import { WatchOptions, Hooks, ComponentInterface } from 'core/component';
 import { Statuses } from 'super/i-block/modules/interface';
 
 export interface DaemonWatchObject extends WatchOptions {
@@ -38,29 +38,9 @@ export interface DaemonSpawnedObj {
 }
 
 export type SpawnedDaemon = DaemonSpawnedObj | Function;
-
 export type DaemonsDict = Dictionary<Daemon>;
 
-/**
- * Merge two daemons
- *
- * @param a - base daemon
- * @param b - parent daemon
- */
-function mergeDaemons(a: Daemon, b: Daemon): Daemon {
-	const
-	hook = [...new Set((a.hook || []).concat(b.hook || []))],
-	watch = (b.watch || []).concat(a.watch || []);
-
-	return {
-		...b,
-		...a,
-		hook,
-		watch
-	};
-}
-
-export default class Daemons {
+export default class Daemons<T extends ComponentInterface> {
 	/**
 	 * Inherits base daemons from parent and returns a new object
 	 *
@@ -88,7 +68,7 @@ export default class Daemons {
 	/**
 	 * iBlock instance
 	 */
-	protected component: iBlock;
+	protected component: T;
 
 	/**
 	 * Returns component daemons
@@ -100,9 +80,8 @@ export default class Daemons {
 	/**
 	 * @param component - component instance
 	 */
-	constructor(component: iBlock) {
+	constructor(component: T) {
 		this.component = component;
-
 		this.init();
 	}
 
@@ -115,37 +94,21 @@ export default class Daemons {
 	}
 
 	/**
-	 * Spawn a new daemon
+	 * Spawns a new daemon
 	 *
 	 * @param name
 	 * @param spawned
 	 */
 	spawn(name: string, spawned: SpawnedDaemon): boolean {
 		const
-			daemon = this.get(name);
+			exists = this.exists(name);
 
-		if (daemon) {
+		if (exists) {
 			return false;
 		}
 
 		spawned = Object.isFunction(spawned) ? {fn: spawned} : spawned;
-		return this.put(name, this.wrapDaemonFn(<Daemon>spawned));
-	}
-
-	/**
-	 * Unsuspends a daemon
-	 * @param name
-	 */
-	unsuspend(name: string): boolean {
-		return this.setSuspend(name, false);
-	}
-
-	/**
-	 * Suspends a daemon
-	 * @param name
-	 */
-	suspend(name: string): boolean {
-		return this.setSuspend(name, true);
+		return this.register(name, this.wrapDaemonFn(<Daemon>spawned));
 	}
 
 	/**
@@ -183,7 +146,7 @@ export default class Daemons {
 	}
 
 	/**
-	 * Returns a specified daemon
+	 * Returns a daemon by the specified name
 	 * @param name
 	 */
 	protected get(name: string): CanUndef<Daemon> {
@@ -191,35 +154,18 @@ export default class Daemons {
 	}
 
 	/**
-	 * Put daemon in daemons nest
+	 * Registers a new daemon by the specified name
 	 *
 	 * @param name
 	 * @param daemon
 	 */
-	protected put(name: string, daemon: Daemon): boolean {
+	protected register(name: string, daemon: Daemon): boolean {
 		this.daemons[name] = daemon;
 		return Boolean(this.daemons[name]);
 	}
 
 	/**
-	 * Sets a daemon state (suspended/not suspended)
-	 *
-	 * @param name
-	 * @param suspend
-	 */
-	protected setSuspend(name: string, suspend: boolean): boolean {
-		const daemon = this.daemons[name];
-
-		if (!daemon) {
-			return false;
-		}
-
-		daemon.suspended = suspend;
-		return true;
-	}
-
-	/**
-	 * Creates a wrappedFn for daemon
+	 * Creates a wrapped function for daemon
 	 * @param daemon
 	 */
 	protected wrapDaemonFn(daemon: Daemon): Daemon {
@@ -228,7 +174,7 @@ export default class Daemons {
 	}
 
 	/**
-	 * Bind a specified daemon to component lifecycle
+	 * Binds the specified daemon to a component lifecycle
 	 *
 	 * @param name
 	 * @param daemon
@@ -245,7 +191,7 @@ export default class Daemons {
 	}
 
 	/**
-	 * Bind a specified daemon to component watchers
+	 * Bind the specified daemon to component watchers
 	 *
 	 * @param name
 	 * @param daemon
@@ -307,4 +253,23 @@ export default class Daemons {
 			}
 		}
 	}
+}
+
+/**
+ * Merge two daemons
+ *
+ * @param a - base daemon
+ * @param b - parent daemon
+ */
+function mergeDaemons(a: Daemon, b: Daemon): Daemon {
+	const
+		hook = [...new Set((a.hook || []).concat(b.hook || []))],
+		watch = (b.watch || []).concat(a.watch || []);
+
+	return {
+		...b,
+		...a,
+		hook,
+		watch
+	};
 }
