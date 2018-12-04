@@ -123,7 +123,7 @@ export default class Daemons {
 			{async: $a} = ctx,
 			daemon = this.get(name);
 
-		if (!daemon || daemon.suspended) {
+		if (!daemon) {
 			return;
 		}
 
