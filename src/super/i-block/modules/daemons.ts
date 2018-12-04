@@ -78,7 +78,7 @@ export default class Daemons {
 	}
 
 	/**
-	 * @param component - component instance
+	 * @param component
 	 */
 	constructor(component: ComponentInterface<iBlock>) {
 		this.component = component;
@@ -263,7 +263,7 @@ export default class Daemons {
  */
 function mergeDaemons(a: Daemon, b: Daemon): Daemon {
 	const
-		hook = [...new Set((a.hook || []).concat(b.hook || []))],
+		hook = (a.hook || []).union(b.hook || []),
 		watch = (b.watch || []).concat(a.watch || []);
 
 	return {
