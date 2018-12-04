@@ -18,6 +18,7 @@ import * as analytics from 'core/analytics';
 import { EventEmitter2 as EventEmitter } from 'eventemitter2';
 
 import 'super/i-block/directives';
+import Daemons, { DaemonsDict } from 'super/i-block/modules/daemons';
 import Block from 'super/i-block/modules/block';
 import Cache from 'super/i-block/modules/cache';
 
@@ -88,6 +89,7 @@ import * as browser from 'core/browser';
 
 export * from 'core/component';
 export * from 'super/i-block/modules/interface';
+export * from 'super/i-block/modules/daemons';
 
 export { statuses, Cache };
 export {
@@ -588,6 +590,11 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	};
 
 	/**
+	 * Component daemons
+	 */
+	static readonly daemons: DaemonsDict = {};
+
+	/**
 	 * Wrapper for $refs
 	 */
 	protected get refs(): Dictionary<ComponentElement<iBlock> | Element> {
@@ -762,6 +769,16 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	 */
 	@system({unique: true})
 	protected block!: Block;
+
+	/**
+	 * Daemons API
+	 */
+	@system({
+		unique: true,
+		init: (ctx) => new Daemons(ctx)
+	})
+
+	protected daemons!: Daemons;
 
 	/**
 	 * Local event emitter
