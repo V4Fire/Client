@@ -40,7 +40,7 @@ export interface DaemonSpawnedObj {
 export type SpawnedDaemon = DaemonSpawnedObj | Function;
 export type DaemonsDict = Dictionary<Daemon>;
 
-export default class Daemons<T extends ComponentInterface> {
+export default class Daemons {
 	/**
 	 * Inherits base daemons from parent and returns a new object
 	 *
@@ -68,7 +68,7 @@ export default class Daemons<T extends ComponentInterface> {
 	/**
 	 * iBlock instance
 	 */
-	protected component: T;
+	protected component: ComponentInterface<iBlock>;
 
 	/**
 	 * Returns component daemons
@@ -80,13 +80,13 @@ export default class Daemons<T extends ComponentInterface> {
 	/**
 	 * @param component - component instance
 	 */
-	constructor(component: T) {
+	constructor(component: ComponentInterface<iBlock>) {
 		this.component = component;
 		this.init();
 	}
 
 	/**
-	 * true, if daemon exists
+	 * Returns true if a daemon by the specified name exists
 	 * @param name
 	 */
 	exists(name: string): boolean {

@@ -774,7 +774,7 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 		unique: true,
 		init: (ctx) => new Daemons(ctx)
 	})
-	protected daemons!: Daemons<this>;
+	protected daemons!: Daemons;
 
 	/**
 	 * Local event emitter
