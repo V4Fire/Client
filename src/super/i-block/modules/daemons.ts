@@ -25,7 +25,6 @@ export interface Daemon {
 	wait?: Statuses;
 	immediate?: boolean;
 	asyncOptions?: AsyncOpts;
-	suspended?: boolean;
 	wrappedFn?: Function;
 	fn: Function;
 }
@@ -132,7 +131,7 @@ export default class Daemons {
 			asyncOptions = daemon.asyncOptions || {},
 			fn = daemon.wrappedFn || daemon.fn;
 
-		if (!('immediate' in daemon) || daemon.immediate) {
+		if (daemon.immediate !== false) {
 			Object.assign(asyncOptions, {
 				group: `daemons-${this.component.componentName}`,
 				label: `daemons-${name}`
