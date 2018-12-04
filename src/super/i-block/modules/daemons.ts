@@ -66,7 +66,7 @@ export default class Daemons {
 	}
 
 	/**
-	 * iBlock instance
+	 * Component instance
 	 */
 	protected component: ComponentInterface<iBlock>;
 
@@ -89,7 +89,7 @@ export default class Daemons {
 	 * Returns true if a daemon by the specified name exists
 	 * @param name
 	 */
-	exists(name: string): boolean {
+	isExists(name: string): boolean {
 		return Boolean(this.daemons[name]);
 	}
 
@@ -101,7 +101,7 @@ export default class Daemons {
 	 */
 	spawn(name: string, spawned: SpawnedDaemon): boolean {
 		const
-			exists = this.exists(name);
+			exists = this.isExists(name);
 
 		if (exists) {
 			return false;
@@ -112,7 +112,7 @@ export default class Daemons {
 	}
 
 	/**
-	 * Calls a daemon
+	 * Calls a daemon with specified parameters
 	 *
 	 * @param name
 	 * @param args
@@ -176,8 +176,8 @@ export default class Daemons {
 	/**
 	 * Binds the specified daemon to a component lifecycle
 	 *
+	 * @param hook
 	 * @param name
-	 * @param daemon
 	 */
 	protected bindToHook(hook: string, name: string): void {
 		const
@@ -193,8 +193,8 @@ export default class Daemons {
 	/**
 	 * Bind the specified daemon to component watchers
 	 *
+	 * @param watch
 	 * @param name
-	 * @param daemon
 	 */
 	protected bindToWatch(watch: DaemonWatcher, name: string): void {
 		const

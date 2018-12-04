@@ -589,6 +589,9 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 		}
 	};
 
+	/**
+	 * Component daemons
+	 */
 	static readonly daemons: DaemonsDict = {};
 
 	/**
@@ -774,6 +777,7 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 		unique: true,
 		init: (ctx) => new Daemons(ctx)
 	})
+
 	protected daemons!: Daemons;
 
 	/**
