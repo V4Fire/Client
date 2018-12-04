@@ -112,6 +112,47 @@ export function createComponent<N = unknown, CTX extends Dictionary = ComponentD
 		}
 	}, stderr);
 
+	const
+		// @ts-ignore
+		{$async: $a} = fakeCtx,
+		watchRoot = document.body;
+
+	if (!fakeCtx.keepAlive) {
+		if (typeof MutationObserver === 'function') {
+			const observer = new MutationObserver((mutations) => {
+				for (let i = 0; i < mutations.length; i++) {
+					for (let o = mutations[i].removedNodes, j = 0; j < o.length; j++) {
+						const
+							el = o[j];
+
+						if (el === node || el.contains(node)) {
+							// @ts-ignore
+							fakeCtx.$destroy();
+						}
+					}
+				}
+			});
+
+			observer.observe(watchRoot, {
+				childList: true
+			});
+
+			$a.worker(observer);
+
+		} else {
+			$a.on(watchRoot, 'DOMNodeRemoved', ({srcElement: el}) => {
+				if (!el) {
+					return;
+				}
+
+				if (el === node || el.contains(node)) {
+					// @ts-ignore
+					fakeCtx.$destroy();
+				}
+			});
+		}
+	}
+
 	return [node, fakeCtx];
 }
 

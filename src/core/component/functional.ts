@@ -8,7 +8,6 @@
 
 // tslint:disable:max-file-line-count
 
-import $C = require('collection.js');
 import symbolGenerator from 'core/symbol';
 import Async from 'core/async';
 
@@ -17,6 +16,7 @@ import { ComponentElement, FunctionalCtx } from 'core/component/interface';
 
 import {
 
+	patchVNode as patch,
 	VNode,
 	CreateElement,
 	RenderContext as BaseRenderContext,
@@ -169,14 +169,33 @@ export function createFakeCtx<T extends Dictionary = FunctionalCtx>(
 
 			$a.clearAll();
 
-			const
-				hooks = $normalParent.meta.hooks,
-				destroyCheckHooks = ['mounted', 'created', 'beforeDestroy'],
-				destroyHooks = ['beforeDestroy', 'destroyed'];
+			if ($normalParent) {
+				const
+					hooks = $normalParent.meta.hooks,
+					destroyCheckHooks = ['mounted', 'created', 'beforeDestroy'];
 
-			for (let o = destroyCheckHooks, i = 0; i < o.length; i++) {
-				$C(hooks[o[i]]).remove((el) => el.fn[$$.self] === fakeCtx);
+				for (let o = destroyCheckHooks, i = 0; i < o.length; i++) {
+					const
+						hook = o[i],
+						filteredHooks = <unknown[]>[];
+
+					for (let list = hooks[hook], j = 0; j < list.length; j++) {
+						const
+							el = list[j];
+
+						if (el.fn[$$.self] !== fakeCtx) {
+							filteredHooks.push(el);
+						}
+					}
+
+					hooks[hook] = filteredHooks;
+				}
 			}
+
+			const destroyHooks = [
+				'beforeDestroy',
+				'destroyed'
+			];
 
 			for (let o = destroyHooks, i = 0; i < o.length; i++) {
 				const
@@ -391,48 +410,14 @@ export function createFakeCtx<T extends Dictionary = FunctionalCtx>(
  */
 export function patchVNode(vNode: VNode, ctx: Dictionary<any>, renderCtx: RenderContext): VNode {
 	const
-		{data: vData} = vNode,
 		{data} = renderCtx,
 		{meta, meta: {methods}} = ctx;
 
-	if (vData) {
-		vData.staticClass = vData.staticClass || '';
-
-		// Custom classes and attributes
-
-		if (data.staticClass) {
-			vData.staticClass += ` ${data.staticClass}`;
-		}
-
-		if (data.class) {
-			vData.class = [].concat(vData.class, data.class);
-		}
-
-		if (data.attrs && meta.params.inheritAttrs) {
-			// tslint:disable-next-line:prefer-object-spread
-			vData.attrs = Object.assign(vData.attrs || {}, data.attrs);
-		}
-
-		// Reference to the element
-
-		if (data.ref) {
-			vData.ref = data.ref;
-		}
-
-		// Directives
-
-		if (data.directives) {
-			for (let o = data.directives, i = 0; i < o.length; i++) {
-				const
-					el = o[i];
-
-				if (el.name === 'show' && !el.value) {
-					vData.attrs = vData.attrs || {};
-					vData.attrs.style = (vData.attrs.style || '') + ';display: none;';
-				}
-			}
-		}
-	}
+	patch(
+		vNode,
+		ctx,
+		renderCtx
+	);
 
 	// Event handlers
 
@@ -660,15 +645,24 @@ export function patchVNode(vNode: VNode, ctx: Dictionary<any>, renderCtx: Render
 		deactivated: 'activated'
 	}[p.hook];
 
-	$C(['mounted', 'updated', 'activated']).forEach((hook) => {
+	const hookList = [
+		'mounted',
+		'updated',
+		'activated'
+	];
+
+	for (let i = 0; i < hookList.length; i++) {
+		const
+			hook = hookList[i];
+
 		if (hook === parentHook) {
-			return;
+			continue;
 		}
 
 		hooks[hook].unshift({
 			fn: mount
 		});
-	});
+	}
 
 	if (parentHook) {
 		hooks[parentHook].unshift({

@@ -7,7 +7,7 @@
  */
 
 import { createComponent } from 'core/component/composite';
-import { ComponentOptions, DirectiveOptions, DirectiveFunction } from 'vue';
+import { ComponentOptions, DirectiveOptions, DirectiveFunction, RenderContext } from 'vue';
 import { constructors, components } from 'core/component/const';
 import { VNode, VNodeData } from 'vue/types/vnode';
 import { VueConfiguration } from 'vue/types/vue';
@@ -33,6 +33,27 @@ export const options: Options = {
 	filters: {},
 	directives: {}
 };
+
+/**
+ * Patches the specified virtual node: add classes, event handlers, etc.
+ *
+ * @param vNode
+ * @param ctx - component fake context
+ * @param renderCtx - render context
+ */
+export function patchVNode(vNode: Element, ctx: Dictionary<any>, renderCtx: RenderContext): void {
+	const
+		{data} = renderCtx,
+		{meta} = ctx;
+
+	_.addClass.call(ctx, vNode, data);
+
+	if (data.attrs && meta.params.inheritAttrs) {
+		_.addAttrs.call(ctx, vNode, data.attrs);
+	}
+
+	_.addDirectives.call(ctx, vNode, data);
+}
 
 export class ComponentDriver {
 	static config: VueConfiguration = {
