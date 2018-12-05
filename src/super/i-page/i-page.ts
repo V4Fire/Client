@@ -15,6 +15,11 @@ export interface StageTitles<T = any> extends Dictionary<TitleValue<T>> {
 	'[[DEFAULT]]': TitleValue<T>;
 }
 
+export interface ScrollOpts extends ScrollToOptions {
+	x?: number;
+	y?: number;
+}
+
 const
 	$$ = symbolGenerator();
 
@@ -72,12 +77,30 @@ export default class iPage<T extends Dictionary = Dictionary> extends iData<T> {
 	/**
 	 * Scrolls page to specified coordinates
 	 *
+	 * @param p
+	 */
+	scrollTo(p: ScrollOpts): void;
+
+	/**
 	 * @param x
 	 * @param y
 	 */
-	scrollTo(x: number, y: number): void {
+	scrollTo(x?: number, y?: number): void;
+
+	// tslint:disable-next-line
+	scrollTo(p?: ScrollOpts | number, y?: number): void {
 		this.async.cancelProxy({label: $$.scrollTo});
-		scrollTo(x, y);
+
+		if (p && Object.isObject(p)) {
+			const
+				{x, y} = <ScrollOpts>p,
+				opts = <ScrollToOptions>Object.reject(p, ['x', 'y']);
+
+			scrollTo({left: x, top: y, ...opts});
+
+		} else {
+			scrollTo({left: <number | undefined>p, top: y});
+		}
 	}
 
 	/** @override */
@@ -96,7 +119,14 @@ export default class iPage<T extends Dictionary = Dictionary> extends iData<T> {
 	 * Returns proxy wrapper for the scrollTo method
 	 */
 	protected scrollToProxyFn(): Function {
-		return this.async.proxy((x: number, y: number) => this.scrollTo(x, y), {
+		return this.async.proxy((x?: number | ScrollOpts, y?: number) => {
+			if (x && Object.isObject(x)) {
+				this.scrollTo(<ScrollOpts>x);
+
+			} else {
+				this.scrollTo(<number | undefined>x, y);
+			}
+		}, {
 			single: false,
 			label: $$.scrollTo
 		});
