@@ -103,7 +103,7 @@ export default class iPage<T extends Dictionary = Dictionary> extends iData<T> {
 			scrollTo({left: x, top: y, ...opts});
 
 		} else {
-			scrollTo({left: <number | undefined>p, top: y});
+			scrollTo({left: <CanUndef<number>>p, top: y});
 		}
 	}
 
