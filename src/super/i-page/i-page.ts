@@ -80,7 +80,7 @@ export default class iPage<T extends Dictionary = Dictionary> extends iData<T> {
 	protected pageTitleStore!: string;
 
 	/**
-	 * Scrolls page to specified coordinates
+	 * Scrolls a page to specified coordinates
 	 * @param p
 	 */
 	scrollTo(p: ScrollOpts): void;
