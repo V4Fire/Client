@@ -6,13 +6,17 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import iData, { component, prop, field, system, watch, hook, Statuses } from 'super/i-data/i-data';
+import iData, { component, prop, field, system, watch, hook, p, Statuses } from 'super/i-data/i-data';
+import symbolGenerator from 'core/symbol';
 export * from 'super/i-data/i-data';
 
 export type TitleValue<T = any> = string | ((ctx: T) => string);
 export interface StageTitles<T = any> extends Dictionary<TitleValue<T>> {
 	'[[DEFAULT]]': TitleValue<T>;
 }
+
+const
+	$$ = symbolGenerator();
 
 @component({inheritMods: false})
 export default class iPage<T extends Dictionary = Dictionary> extends iData<T> {
@@ -47,6 +51,14 @@ export default class iPage<T extends Dictionary = Dictionary> extends iData<T> {
 		}
 	}
 
+	/**
+	 * Proxy wrapper for the scrollTo method
+	 */
+	@p({cache: false})
+	get scrollToProxy(): Function {
+		return this.scrollToProxyFn();
+	}
+
 	/** @override */
 	@field()
 	protected componentStatusStore!: Statuses;
@@ -56,6 +68,17 @@ export default class iPage<T extends Dictionary = Dictionary> extends iData<T> {
 	 */
 	@system((o) => o.link((v) => Object.isFunction(v) ? v(o) : v))
 	protected pageTitleStore!: string;
+
+	/**
+	 * Scrolls page to specified coordinates
+	 *
+	 * @param x
+	 * @param y
+	 */
+	scrollTo(x: number, y: number): void {
+		this.async.cancelProxy({label: $$.scrollTo});
+		scrollTo(x, y);
+	}
 
 	/** @override */
 	activate(force?: boolean): void {
@@ -67,6 +90,16 @@ export default class iPage<T extends Dictionary = Dictionary> extends iData<T> {
 	deactivate(): void {
 		this.setRootMod('active', false);
 		super.deactivate();
+	}
+
+	/**
+	 * Returns proxy wrapper for the scrollTo method
+	 */
+	protected scrollToProxyFn(): Function {
+		return this.async.proxy((x: number, y: number) => this.scrollTo(x, y), {
+			single: false,
+			label: $$.scrollTo
+		});
 	}
 
 	/**
