@@ -29,7 +29,7 @@ export default class bUp extends iBlock {
 	 */
 	@watch('?$el:click')
 	protected onClick(): void {
-		scrollTo(0, 0);
+		this.r.scrollToProxy(0, 0);
 		this.emit('up');
 	}
 
