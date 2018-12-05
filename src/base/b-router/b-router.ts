@@ -162,7 +162,7 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 	 * Scrolls a document to the specified coordinates
 	 */
 	scrollTo(y?: number, x?: number): void {
-		window.scrollTo(x || pageXOffset, y || pageYOffset);
+		this.r.scrollTo(x, y);
 	}
 
 	/**
