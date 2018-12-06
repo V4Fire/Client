@@ -8,6 +8,7 @@
 
 import symbolGenerator from 'core/symbol';
 import { DirectiveOptions } from 'vue';
+import { ComponentInterface, ComponentElement } from 'core/component/interface';
 import { VNodeData, VNodeDirective } from 'vue/types/vnode';
 
 export interface Options extends Dictionary {
@@ -24,6 +25,11 @@ export const options: Options = {
 	directives: {}
 };
 
+export type DirElement =
+	Element |
+	ComponentElement |
+	DocumentFragmentP;
+
 export const
 	$$ = symbolGenerator(),
 	SVG_NMS = 'http://www.w3.org/2000/svg',
@@ -33,7 +39,7 @@ const
 	eventModifiers = {'!': 'capture', '&': 'passive', '~': 'once'},
 	eventModifiersRgxp = new RegExp(`^[${Object.keys(eventModifiers).join('')}]+`);
 
-export function createSVGChildren(children: Element[], ctx: Dictionary): SVGElement[] {
+export function createSVGChildren(this: ComponentInterface, children: Element[], ctx: Dictionary): SVGElement[] {
 	if (!children || !children.length) {
 		return [];
 	}
@@ -74,7 +80,12 @@ export function createSVGChildren(children: Element[], ctx: Dictionary): SVGElem
 	return res;
 }
 
-export function addDirectives(el: Element | DocumentFragmentP, data: VNodeData, directives?: VNodeDirective[]): void {
+export function addDirectives(
+	this: ComponentInterface,
+	el: DirElement,
+	data: VNodeData,
+	directives?: VNodeDirective[]
+): void {
 	if (!directives) {
 		return;
 	}
@@ -91,12 +102,17 @@ export function addDirectives(el: Element | DocumentFragmentP, data: VNodeData, 
 	for (let o = directives, i = 0; i < o.length; i++) {
 		const
 			dir = o[i],
-			nm = dir.name;
+			nm = dir.name,
+			customDir = store[nm];
 
-		if (store[nm]) {
+		if (customDir) {
 			const vnode = Object.create(el);
 			vnode.context = this;
-			store[nm].bind(el, dir, vnode);
+
+			if (customDir.bind) {
+				customDir.bind.call(undefined, el, dir, vnode);
+			}
+
 			continue;
 		}
 
@@ -116,7 +132,11 @@ export function addDirectives(el: Element | DocumentFragmentP, data: VNodeData, 
 	}
 }
 
-export function addProps(el: Element | DocumentFragmentP, props?: Dictionary<unknown>): void {
+export function addProps(
+	this: ComponentInterface,
+	el: DirElement,
+	props?: Dictionary<unknown>
+): void {
 	if (!props) {
 		return;
 	}
@@ -134,7 +154,11 @@ type DocumentFragmentP = DocumentFragment & {
 	setAttribute(nm: string, val: string): void;
 };
 
-export function addAttrs(el: Element | DocumentFragmentP, attrs?: Dictionary<string>): void {
+export function addAttrs(
+	this: ComponentInterface,
+	el: DirElement,
+	attrs?: Dictionary<string>
+): void {
 	if (!attrs) {
 		return;
 	}
@@ -168,7 +192,7 @@ export function createTemplate(): DocumentFragmentP {
 	return el;
 }
 
-export function addClass(el: Element, opts: VNodeData): void {
+export function addClass(this: ComponentInterface, el: Element, opts: VNodeData): void {
 	const className = (<string[]>[]).concat(
 		el.getAttribute('class') || '',
 		opts.staticClass || '',
@@ -185,7 +209,7 @@ export function addClass(el: Element, opts: VNodeData): void {
 	}
 }
 
-export function attachEvents(el: Node, events?: Dictionary<CanArray<Function>>): void {
+export function attachEvents(this: ComponentInterface, el: Node, events?: Dictionary<CanArray<Function>>): void {
 	if (!events) {
 		return;
 	}
@@ -219,7 +243,7 @@ export function attachEvents(el: Node, events?: Dictionary<CanArray<Function>>):
 	}
 }
 
-export function appendChild(parent: Node, node: CanArray<Node>): void {
+export function appendChild(this: ComponentInterface, parent: Node, node: CanArray<Node>): void {
 	if (Object.isArray(node)) {
 		for (let i = 0; i < node.length; i++) {
 			appendChild.call(this, parent, node[i]);

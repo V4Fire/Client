@@ -9,7 +9,7 @@
 import { createComponent } from 'core/component/composite';
 import { ComponentOptions, DirectiveOptions, DirectiveFunction, RenderContext } from 'vue';
 import { constructors, components } from 'core/component/const';
-import { VNode, VNodeData } from 'vue/types/vnode';
+import { VNode, VNodeData as BaseVNodeData } from 'vue/types/vnode';
 import { VueConfiguration } from 'vue/types/vue';
 import * as _ from 'core/component/engines/zero/helpers';
 export { default as minimalCtx } from 'core/component/engines/zero/ctx';
@@ -19,6 +19,14 @@ export * from 'vue';
 export { InjectOptions } from 'vue/types/options';
 export { VNode, ScopedSlot } from 'vue/types/vnode';
 //#endif
+
+export interface VNodeData extends BaseVNodeData {
+	model?: {
+		expression: string;
+		value: unknown;
+		callback(value: unknown): void;
+	};
+}
 
 export interface Options extends Dictionary {
 	filters: Dictionary<Function>;
@@ -197,6 +205,20 @@ export class ComponentDriver {
 					}
 				}
 
+				const
+					componentModel = meta.params.model;
+
+				if (opts.model && componentModel) {
+					const
+						{prop, event} = componentModel;
+
+					if (prop && event) {
+						props[prop] = opts.model.value;
+						opts.on = opts.on || {};
+						opts.on[event] = opts.model.callback;
+					}
+				}
+
 				const baseCtx = Object.assign(Object.create(this), {
 					props,
 
@@ -272,6 +294,9 @@ export class ComponentDriver {
 					createComponent<Element, ComponentDriver>(tag, baseCtx, <ComponentDriver>this);
 
 				if (node) {
+					node[_.$$.data] = opts;
+
+					_.addDirectives.call(this, node, opts, opts.directives);
 					_.addClass.call(this, node, opts);
 					_.attachEvents.call(this, node, opts.nativeOn);
 
@@ -283,20 +308,22 @@ export class ComponentDriver {
 						_.addAttrs.call(this, node, attrs);
 					}
 
-					if (opts.on) {
-						for (let o = opts.on, keys = Object.keys(o), i = 0; i < keys.length; i++) {
+					console.log(opts);
+				}
+
+				if (opts.on) {
+					for (let o = opts.on, keys = Object.keys(o), i = 0; i < keys.length; i++) {
+						const
+							key = keys[i],
+							fns = (<Function[]>[]).concat(o[key]);
+
+						for (let i = 0; i < fns.length; i++) {
 							const
-								key = keys[i],
-								fns = (<Function[]>[]).concat(o[key]);
+								fn = fns[i];
 
-							for (let i = 0; i < fns.length; i++) {
-								const
-									fn = fns[i];
-
-								if (Object.isFunction(fn)) {
-									// @ts-ignore
-									ctx.$on(key, fn);
-								}
+							if (Object.isFunction(fn)) {
+								// @ts-ignore
+								ctx.$on(key, fn);
 							}
 						}
 					}
@@ -305,11 +332,23 @@ export class ComponentDriver {
 				return node || document.createComment('');
 			}
 
-			const el = tag === 'template' ? _.createTemplate.call(this) :
-				tag === 'svg' ? document.createElementNS(_.SVG_NMS, tag) : document.createElement(tag);
+			let
+				el;
+
+			switch (tag) {
+				case 'template':
+					el = _.createTemplate.call(this);
+					break;
+
+				case 'svg':
+					el = document.createElementNS(_.SVG_NMS, tag);
+					break;
+
+				default:
+					el = document.createElement(tag);
+			}
 
 			el[_.$$.data] = opts;
-
 			_.addDirectives.call(this, el, opts, opts.directives);
 
 			if (el instanceof Element) {
