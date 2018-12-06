@@ -2694,9 +2694,16 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 				p = this.$root.route || {},
 				stateFields = this.convertStateToRouter(Object.assign(Object.create(p), p.params, p.query));
 
-			this.setState(
-				stateFields
-			);
+			this.setState(stateFields);
+
+			const
+				routerState = this.convertStateToRouter(stateFields, 'remote');
+
+			if (Object.keys(routerState).length) {
+				this.$root.router.replace(null, {
+					query: routerState
+				});
+			}
 
 			const sync = this.createDeferFn(() => this.saveStateToRouter(), {
 				label: $$.syncRouter
