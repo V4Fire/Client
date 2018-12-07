@@ -5,7 +5,7 @@
   "main": "src/core/index.js",
   "typings": "index.d.ts",
   "license": "MIT",
-  "version": "2.0.0-beta.104",
+  "version": "2.0.0-beta.105",
   "author": {
     "name": "kobezzza",
     "email": "kobezzza@gmail.com",
@@ -25,9 +25,9 @@
     "test": "echo \"Error: no test specified\" && exit 0"
   },
   "dependencies": {
-    "@types/socket.io": "^1.4.39",
+    "@types/socket.io": "^1.4.40",
     "@types/socket.io-client": "^1.4.32",
-    "@v4fire/core": "^2.0.0-beta.23",
+    "@v4fire/core": "^2.0.0-beta.24",
     "babel-polyfill": "^6.26.0",
     "chart.js": "^2.7.3",
     "collection.js": "^6.6.27",
@@ -41,7 +41,7 @@
     "requestidlecallback": "^0.3.0",
     "snakeskin": "^7.5.1",
     "socket.io": "^2.2.0",
-    "sugar": "2.0.4",
+    "sugar": "^2.0.6",
     "vue": "2.5.17-beta.0"
   },
   "optionalDependencies": {
