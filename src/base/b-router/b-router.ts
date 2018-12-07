@@ -358,7 +358,7 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 		};
 
 		if (c && method === 'push') {
-			// await d.replace(c.url || c.page, Object.mixin(true, undefined, c, scroll));
+			await d.replace(c.url || c.page, Object.mixin(true, undefined, c, scroll));
 		}
 
 		const
