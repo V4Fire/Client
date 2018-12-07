@@ -13,15 +13,15 @@ import { ModVal, WatchOptions } from 'core/component';
 export type Classes = Dictionary<string | Array<string | true> | true>;
 
 export interface LinkWrapper<V = unknown, R = unknown> {
-	(value: V, oldValue: CanUndef<V>): R;
+	(value: V, oldValue?: V): R;
 }
 
 export type WatchObjectField<T = unknown> =
 	string |
 	[string] |
 	[string, string] |
-	[string, LinkWrapper<T>] |
-	[string, string, LinkWrapper<T>];
+	[string, LinkWrapper<T, any>] |
+	[string, string, LinkWrapper<T, any>];
 
 export type WatchObjectFields<T = unknown> = Array<WatchObjectField<T>>;
 

@@ -198,6 +198,7 @@ export default class bSelect<
 			}
 
 			if (this.ifOnce('opened') < 2) {
+				// @ts-ignore
 				await Promise.all([this.nextTick(), this.waitRef('scroll')]);
 			}
 
@@ -387,6 +388,7 @@ export default class bSelect<
 		}
 
 		try {
+			// @ts-ignore
 			const [scroll] = await Promise.all([
 				this.waitRef<bScrollInline>('scroll', {label: $$.$$selectedWait}),
 				this.nextTick({label: $$.$$selected})

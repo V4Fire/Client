@@ -272,6 +272,7 @@ export default class bForm<T extends Dictionary = Dictionary> extends iData<T> {
 	async submit(): Promise<void> {
 		const
 			start = Date.now(),
+			// @ts-ignore
 			[submits, elements] = await Promise.all([this.submits, this.elements]);
 
 		await Promise.all((<CanPromise<boolean>[]>[]).concat(
