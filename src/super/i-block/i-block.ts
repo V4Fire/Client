@@ -179,6 +179,12 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	readonly globalName?: string;
 
 	/**
+	 * If true, then the component state will be synchronized with the router after initializing
+	 */
+	@prop(Boolean)
+	readonly syncRouterStoreOnInit: boolean = false;
+
+	/**
 	 * Link to the remote state object
 	 */
 	get remoteState(): Dictionary {
@@ -2718,14 +2724,29 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 			const
 				{router} = this.$root;
 
-			if (router) {
+			if (this.syncRouterStoreOnInit && router) {
 				const
+					currentRoute = this.$root.route || {},
 					routerState = this.convertStateToRouter(stateFields, 'remote');
 
 				if (Object.keys(routerState).length) {
-					router.replace(null, {
-						query: routerState
-					});
+					const
+						modState = {};
+
+					for (let keys = Object.keys(routerState), i = 0; i < keys.length; i++) {
+						const
+							key = keys[i];
+
+						if (currentRoute.params[key] == null && currentRoute.query[key] == null) {
+							modState[key] = routerState[key];
+						}
+					}
+
+					if (Object.keys(modState).length) {
+						router.replace(null, {
+							query: modState
+						});
+					}
 				}
 			}
 
