@@ -6,11 +6,11 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import 'core/start/state';
-import 'core/start/abt';
 import semaphore from 'core/start/semaphore';
-import { whenDomLoaded } from 'core/event';
+import state from 'core/component/state';
+import saveABT from 'core/abt';
 
-export default whenDomLoaded(() => {
-	semaphore('domReady');
-});
+export default (() => {
+	saveABT(state.env);
+	semaphore('ABTReady');
+})();
