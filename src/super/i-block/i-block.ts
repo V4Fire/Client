@@ -11,7 +11,7 @@
 import $C = require('collection.js');
 
 import symbolGenerator from 'core/symbol';
-import Async, { AsyncOpts, ClearOptsId, ProxyCb } from 'core/async';
+import Async, { AsyncOpts, ClearOptsId, ProxyCb, WrappedFunction } from 'core/async';
 import log, { LogMessageOptions } from 'core/log';
 
 import * as analytics from 'core/analytics';
@@ -1506,19 +1506,19 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	 * @param cb
 	 * @param [params] - async parameters
 	 */
-	nextTick(cb: ((this: this) => void), params?: AsyncOpts): void;
+	nextTick(cb: WrappedFunction, params?: AsyncOpts): void;
 
 	/**
 	 * @see Async.promise
 	 * @param [params] - async parameters
 	 */
 	nextTick(params?: AsyncOpts): Promise<void>;
-	nextTick(cbOrParams?: Function | AsyncOpts, params?: AsyncOpts): CanPromise<void> {
+	nextTick(cbOrParams?: WrappedFunction | AsyncOpts, params?: AsyncOpts): CanPromise<void> {
 		const
 			{async: $a} = this;
 
 		if (cbOrParams && Object.isFunction(cbOrParams)) {
-			this.$nextTick($a.proxy(cbOrParams, params));
+			this.$nextTick($a.proxy(<WrappedFunction>cbOrParams, params));
 			return;
 		}
 
