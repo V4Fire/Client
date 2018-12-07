@@ -1543,7 +1543,7 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 			{async: $a} = this;
 
 		if (cbOrParams && Object.isFunction(cbOrParams)) {
-			this.$nextTick($a.proxy(cbOrParams, params));
+			this.$nextTick($a.proxy(<WrappedFunction>cbOrParams, params));
 			return;
 		}
 
