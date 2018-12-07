@@ -8,5 +8,6 @@
 
 export default [
 	'domReady',
+	'ABTReady',
 	'stateReady'
 ];
