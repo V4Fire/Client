@@ -597,8 +597,27 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	/**
 	 * Wrapper for $refs
 	 */
+	@p({cache: false})
 	protected get refs(): Dictionary<ComponentElement<iBlock> | Element> {
-		return $C(this.$refs).map((el) => (<ComponentElement<any>>el).component || <Element>el);
+		const
+			obj = this.$refs,
+			res = {};
+
+		if (obj) {
+			for (let keys = Object.keys(obj), i = 0; i < keys.length; i++) {
+				const
+					key = keys[i],
+					el = obj[key];
+
+				if (!el) {
+					continue;
+				}
+
+				res[key] = (<ComponentElement>el).component || <Element>el;
+			}
+		}
+
+		return res;
 	}
 
 	/**
