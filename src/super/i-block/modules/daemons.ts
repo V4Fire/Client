@@ -190,7 +190,7 @@ export default class Daemons {
 	}
 
 	/**
-	 * Bind the specified daemon to component watchers
+	 * Binds the specified daemon to component watchers
 	 *
 	 * @param watch
 	 * @param name
@@ -206,6 +206,7 @@ export default class Daemons {
 
 		const watchDaemon = {
 			handler: (...args) => this.run(name, ...args),
+			method: name,
 			args: [],
 			...watchParams
 		};

@@ -162,7 +162,7 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 	 * Scrolls a document to the specified coordinates
 	 */
 	scrollTo(y?: number, x?: number): void {
-		window.scrollTo(x || pageXOffset, y || pageYOffset);
+		this.r.scrollTo(x, y);
 	}
 
 	/**
@@ -376,16 +376,20 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 			info.page = c.page;
 		}
 
-		Object.mixin({deep: true, withUndef: true}, info, rejectParams(params));
+		const
+			current = this.getField<CurrentPage>('pageStore'),
+			f = (v) => $C(v).filter((el, key) => !Object.isFunction(el) && key !== 'meta').object(true).map();
+
+		const extend = (parent) => {
+			Object.mixin({deep: true, withUndef: true}, info, p ? rejectParams(f(p)) : undefined, rejectParams(params));
+		};
+
+		extend(current && current.page === info.page ? current : undefined);
 
 		const
 			meta = info.meta,
 			nonWatchValues = {query: info.query, meta},
 			store = Object.assign(Object.create(nonWatchValues), Object.reject(info, Object.keys(nonWatchValues)));
-
-		const
-			current = this.getField('pageStore'),
-			f = (v) => $C(v).filter((el, key) => !Object.isFunction(el) && key !== 'meta').object(true).map();
 
 		let
 			hardChange = false;

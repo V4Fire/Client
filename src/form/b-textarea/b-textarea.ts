@@ -175,6 +175,7 @@ export default class bTextarea<
 
 		const
 			val = this.value,
+			// @ts-ignore
 			[minHeight, maxHeight]: [any, number] = await Promise.all([this.minHeight, this.maxHeight]);
 
 		let newHeight = await this.calcTextHeight();
