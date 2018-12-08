@@ -22,6 +22,7 @@ import Daemons, { DaemonsDict } from 'super/i-block/modules/daemons';
 import Block from 'super/i-block/modules/block';
 import Cache from 'super/i-block/modules/cache';
 
+import { GLOBAL } from 'core/const/links';
 import { statuses } from 'super/i-block/modules/const';
 import { icons, iconsMap } from 'super/i-block/modules/icons';
 
@@ -988,7 +989,7 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	@system({
 		atom: true,
 		unique: true,
-		init: () => l
+		init: () => GLOBAL.l
 	})
 
 	protected readonly l!: typeof l;

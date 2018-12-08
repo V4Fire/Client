@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import * as lang from 'core/i18n';
+import * as lang from 'core/prelude/i18n';
 import * as net from 'core/net';
 import * as session from 'core/session';
 

@@ -8,7 +8,7 @@
 
 import * as net from 'core/net';
 import * as session from 'core/session';
-import * as i18n from 'core/i18n';
+import * as i18n from 'core/prelude/i18n';
 
 import emitter from 'core/component/event/emitter';
 import 'core/component/event/providers';

@@ -158,7 +158,8 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 
 	monic() {
 		const runtime = {
-			noGlobals: true
+			'noGlobals': true,
+			'kv-storage': true
 		};
 
 		return {

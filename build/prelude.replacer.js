@@ -10,37 +10,42 @@
 
 const
 	escaper = require('escaper'),
-	{replaceRgxp, methods} = include('build/prelude.webpack');
+	{tokens, globalLink, replaceRgxp} = include('build/prelude.webpack');
 
 /**
  * Monic replacer for prelude module
  *
  * @param {string} str
- * @param {string} file
  * @returns {string}
  */
-module.exports = function (str, file) {
+module.exports = function (str) {
 	const
 		r = this.flags.runtime || {};
 
 	if (r.noGlobals && replaceRgxp) {
+		let
+			initGlobals = false;
+
 		str = escaper.paste(
 			escaper.replace(str).replace(replaceRgxp, (str) => {
-				str = RegExp.escape(str);
+				const
+					token = tokens.get(str);
 
-				if (str[0] !== '\\') {
-					str = `\\b${str}`;
+				if (token) {
+					if (token.global) {
+						initGlobals = true;
+					}
+
+					return token.link;
 				}
 
-				str += '\\b';
-
-				if (!methods.get(str)) {
-					console.log(str);
-				}
-
-				return methods.get(str);
+				return str;
 			})
 		);
+
+		if (initGlobals) {
+			str = `const ${globalLink} = Function('return this')();\n\n${str}`;
+		}
 	}
 
 	return str;

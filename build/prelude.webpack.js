@@ -30,7 +30,9 @@ const
 	extendRgxp = /\bextend\(([^,]+),\s*['"]([^'",]+)/g;
 
 const
-	methods = new Map();
+	regExps = new Set(),
+	tokens = new Map(),
+	globalLink = `GLOBAL_${Number.random(1e6)}`;
 
 let
 	replaceRgxp;
@@ -46,17 +48,28 @@ $C(files).forEach((el) => {
 		const
 			target = decl[1],
 			method = decl[2],
-			protoMethod = isProto.test(target);
+			link = `[Symbol.for('[[V4_PROP_TRAP:${method}]]')]`;
 
-		methods.set(
-			protoMethod ? `\\.${method}\\b` : `\\b${target}\\.${method}\\b`,
-			`${protoMethod ? '' : target}[Symbol.for('[[V4_PROP_TRAP:${method}]]')]`
-		);
+		if (target === 'GLOBAL') {
+			regExps.add(`GLOBAL\\.${method}\\b`);
+			regExps.add(`(?<=[^.]|^)\\b${method}\\b\\s*(?=${method.length > 3 ? '\\(|`' : '`'})`);
+			tokens.set(method, {global: true, link: globalLink + link});
+			continue;
+		}
+
+		if (isProto.test(target)) {
+			regExps.add(`\\.${method}\\b`);
+			tokens.set(`.${method}`, {global: false, link});
+			continue;
+		}
+
+		regExps.add(`\\b${target}\\.${method}\\b`);
+		tokens.set(`${target}.${method}`, {global: false, link: target + link});
 	}
 });
 
-if (methods.size) {
-	replaceRgxp = new RegExp([...methods.keys()].join('|'), 'g');
+if (tokens.size) {
+	replaceRgxp = new RegExp([...regExps.keys()].join('|'), 'g');
 }
 
-module.exports = {methods, replaceRgxp};
+module.exports = {tokens, globalLink, replaceRgxp};

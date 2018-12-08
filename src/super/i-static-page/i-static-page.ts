@@ -9,8 +9,9 @@
 import symbolGenerator from 'core/symbol';
 import remoteState from 'core/component/state';
 
+import { GLOBAL } from 'core/const/links';
 import { reset, globalEvent, ResetType, ComponentInterface } from 'core/component';
-import { setLang, lang } from 'core/i18n';
+import { setLang, lang } from 'core/prelude/i18n';
 
 import { SetEvent } from 'core/session';
 import { StatusEvent } from 'core/net';
@@ -42,7 +43,7 @@ export default class iStaticPage<
 	 * Link to i18n function
 	 */
 	@system()
-	readonly i18n: typeof i18n = i18n;
+	readonly i18n: typeof i18n = GLOBAL.i18n;
 
 	/** @override */
 	@system(() => globalEvent)
