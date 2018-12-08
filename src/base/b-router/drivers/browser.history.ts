@@ -9,7 +9,7 @@
 import symbolGenerator from 'core/symbol';
 import bRouter from 'base/b-router/b-router';
 
-import { toQueryString } from 'core/url';
+import { fromQueryString, toQueryString } from 'core/url';
 import { EventEmitter2 as EventEmitter } from 'eventemitter2';
 import { Router, PageOpts, CurrentPage } from 'base/b-router/drivers/interface';
 
@@ -35,7 +35,7 @@ export default function createRouter(ctx: bRouter): Router {
 						return {};
 					}
 
-					return Object.fromQueryString(s, {deep: true});
+					return fromQueryString(s);
 				};
 
 				info.query = Object.assign(parse(page, true), info.query);
@@ -76,14 +76,14 @@ export default function createRouter(ctx: bRouter): Router {
 		});
 	}
 
-	const router = Object.mixin({withAccessors: true}, Object.create(new EventEmitter()), {
+	const router = Object.mixin<Router>({withAccessors: true}, Object.create(new EventEmitter()), {
 		get page(): CanUndef<CurrentPage> {
 			const
 				url = this.id(location.href);
 
 			return {
 				page: url,
-				query: Object.fromQueryString(location.search, {deep: true}),
+				query: fromQueryString(location.search),
 				...history.state,
 				url
 			};
