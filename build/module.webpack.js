@@ -110,9 +110,7 @@ module.exports = async function ({buildId, plugins}) {
 				options: inherit(monic.javascript, {
 					replacers: [
 						include('build/context.replacer'),
-						include('build/super.replacer'),
-						include('build/typograf.replacer'),
-						include('build/prelude.replacer')
+						include('build/super.replacer')
 					]
 				})
 			}]
