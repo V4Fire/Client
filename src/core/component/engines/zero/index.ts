@@ -299,6 +299,7 @@ export class ComponentDriver {
 					_.addDirectives.call(this, node, opts, opts.directives);
 					_.addClass.call(this, node, opts);
 					_.attachEvents.call(this, node, opts.nativeOn);
+					_.addStyles.call(this, node, opts.style);
 
 					if (opts.ref) {
 						refs[opts.ref] = ctx;
@@ -361,6 +362,7 @@ export class ComponentDriver {
 			}
 
 			_.addProps.call(this, el, opts.domProps);
+			_.addStyles.call(this, el, opts.style);
 			_.addAttrs.call(this, el, opts.attrs);
 
 			if (el instanceof SVGElement) {

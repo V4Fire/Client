@@ -55,6 +55,7 @@ export function createSVGChildren(this: ComponentInterface, children: Element[],
 
 		if (data) {
 			addDirectives.call(this, node, data, el[$$.directives]);
+			addStyles.call(this, node, el[$$.styles]);
 			addAttrs.call(this, node, el[$$.attrs]);
 			attachEvents.call(this, node, el[$$.events]);
 
@@ -179,6 +180,49 @@ export function addAttrs(
 			}
 		}
 	}
+}
+
+export function addStyles(
+	this: ComponentInterface,
+	el: DirElement,
+	styles?: CanArray<Dictionary<string> | string>
+): void {
+	const
+		normalizedStyles = (<Array<Dictionary<string> | string>>[]).concat(styles || []);
+
+	if (!normalizedStyles.length) {
+		return;
+	}
+
+	el[$$.styles] = normalizedStyles;
+
+	const
+		strStyles = <string[]>[];
+
+	for (let i = 0; i < normalizedStyles.length; i++) {
+		const
+			styles = normalizedStyles[i];
+
+		if (Object.isString(styles)) {
+			strStyles.push(styles);
+			continue;
+		}
+
+		let
+			str = '';
+
+		for (let keys = Object.keys(styles), i = 0; i < keys.length; i++) {
+			const
+				key = keys[i],
+				el = styles[key];
+
+			str += `${key.dasherize()}: ${el};`;
+		}
+
+		strStyles.push(str);
+	}
+
+	el.setAttribute('style', strStyles.join(';'));
 }
 
 export function createTemplate(): DocumentFragmentP {
