@@ -20,8 +20,5 @@ export default function saveABT(options: unknown): void {
 	if (Object.isArray(config)) {
 		state.experiments = config;
 		event.emit('set', config);
-
-	} else {
-		throw new Error('Wrong format for an ABT config');
 	}
 }
