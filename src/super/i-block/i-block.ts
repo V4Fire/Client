@@ -13,6 +13,7 @@ import $C = require('collection.js');
 import symbolGenerator from 'core/symbol';
 import Async, { AsyncOpts, ClearOptsId, ProxyCb, WrappedFunction } from 'core/async';
 import log, { LogMessageOptions } from 'core/log';
+import { ExperimentsSet } from 'core/abt/interface';
 
 import * as analytics from 'core/analytics';
 import { EventEmitter2 as EventEmitter } from 'eventemitter2';
@@ -398,11 +399,22 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	 */
 	get baseMods(): Readonly<ModsNTable> {
 		const
-			m = this.mods;
+			m = this.mods,
+			{ experiments } = this.remoteState,
+			exp = {};
+
+		if (Object.isArray(experiments)) {
+			(<ExperimentsSet>experiments).forEach((el) => {
+				if (el.meta && el.meta.mod) {
+					Object.assign(exp, el.meta.mod);
+				}
+			});
+		}
 
 		return Object.freeze({
 			theme: m.theme,
-			size: m.size
+			size: m.size,
+			...exp
 		});
 	}
 
