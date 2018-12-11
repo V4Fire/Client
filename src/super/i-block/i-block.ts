@@ -405,22 +405,11 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	 */
 	get baseMods(): Readonly<ModsNTable> {
 		const
-			exp = {},
-			m = this.mods,
-			{experiments} = this.remoteState;
-
-		if (Object.isArray(experiments)) {
-			(<ExperimentsSet>experiments).forEach((el) => {
-				if (el.meta && el.meta.mods) {
-					Object.assign(exp, el.meta.mods);
-				}
-			});
-		}
+			m = this.mods;
 
 		return Object.freeze({
 			theme: m.theme,
-			size: m.size,
-			...exp
+			size: m.size
 		});
 	}
 
@@ -498,11 +487,20 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 				const
 					declMods = o.meta.component.mods,
 					// tslint:disable-next-line:prefer-object-spread
-					mods = Object.assign(o.mods || {...declMods}, val);
+					mods = Object.assign(o.mods || {...declMods}, val),
+					{experiments} = o.$root.remoteState;
 
 				for (let i = 0; i < attrMods.length; i++) {
 					const [key, val] = attrMods[i];
 					mods[key] = val;
+				}
+
+				if (Object.isArray(experiments)) {
+					(<ExperimentsSet>experiments).forEach((el) => {
+						if (el.meta && el.meta.mods) {
+							Object.assign(mods, el.meta.mods);
+						}
+					});
 				}
 
 				for (let keys = Object.keys(mods), i = 0; i < keys.length; i++) {
