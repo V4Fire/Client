@@ -308,8 +308,6 @@ export class ComponentDriver {
 					if (meta.params.inheritAttrs) {
 						_.addAttrs.call(this, node, attrs);
 					}
-
-					console.log(opts);
 				}
 
 				if (opts.on) {
