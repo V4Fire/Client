@@ -399,14 +399,14 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	 */
 	get baseMods(): Readonly<ModsNTable> {
 		const
+			exp = {},
 			m = this.mods,
-			{ experiments } = this.remoteState,
-			exp = {};
+			{experiments} = this.remoteState;
 
 		if (Object.isArray(experiments)) {
 			(<ExperimentsSet>experiments).forEach((el) => {
-				if (el.meta && el.meta.mod) {
-					Object.assign(exp, el.meta.mod);
+				if (el.meta && el.meta.mods) {
+					Object.assign(exp, el.meta.mods);
 				}
 			});
 		}
