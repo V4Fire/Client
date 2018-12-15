@@ -45,7 +45,7 @@ export default class Session extends Provider {
 		async addSession(this: Session, {opts}) {
 			if (opts.api) {
 				const h = await this.getAuthParams();
-				Object.assign(opts.headers, h);
+				Object.mixin({traits: true}, opts.headers, h);
 			}
 		}
 	};
