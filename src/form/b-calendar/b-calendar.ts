@@ -250,7 +250,7 @@ export default class bCalendar<
 	@p({cache: false})
 	protected get dropdownTitle(): string {
 		const title = $C(this.pointer).reduce(
-			(str, item, i) => str + (i > 0 ? ' - ' : '') + this.t(item.format('{Month}', 'en')), '');
+			(str, item, i) => str + (i > 0 ? ' - ' : '') + item.format('M:long'), '');
 
 		return title.capitalize();
 	}
@@ -269,13 +269,13 @@ export default class bCalendar<
 	protected get labelText(): string {
 		const
 			val = this.value,
-			date = '{dd}.{MM}.{yyyy}';
+			date = 'd;M;Y;';
 
 		let res;
 		if (this.timeRange) {
 			const from = $C(val)
 				.to('')
-				.reduce((str, v, ind) => str + (ind > 0 && t` to ` || '') + v.format('{HH}:{mm}'));
+				.reduce((str, v, ind) => str + (ind > 0 && t` to ` || '') + v.format('h;m'));
 
 			res = t`${val[0].format(date)} from ${from}`;
 
@@ -362,7 +362,7 @@ export default class bCalendar<
 			}
 
 			const
-				day = pointer.clone().set({date: i + 1}),
+				day = pointer.clone().set({day: i + 1}),
 				short = day.short();
 
 			const rangeBorders = this.dayRange ? {
@@ -467,7 +467,7 @@ export default class bCalendar<
 			val = this.value[index],
 			pointer = this.pointer[index];
 
-		if (val.format('{MM}:{yyyy}') !== pointer.format('{MM}:{yyyy}')) {
+		if (val.format('M:Y') !== pointer.format('M:Y')) {
 			this.setField(`pointerStore.${index}`, pointer.set({
 				month: val.getMonth(),
 				year: val.getFullYear()
@@ -503,7 +503,7 @@ export default class bCalendar<
 			calendar = Number(target.dataset.calendar);
 
 		if (this.block.getElMod(target, 'day', 'active') !== 'true' || this.value.length > 1) {
-			this.setDate(this.pointer[calendar].clone().set({date: Number(target.textContent)}));
+			this.setDate(this.pointer[calendar].clone().set({day: Number(target.textContent)}));
 		}
 	}
 

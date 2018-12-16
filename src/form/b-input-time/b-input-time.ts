@@ -153,7 +153,7 @@ export default class bInputTime<
 	 * @param [date]
 	 */
 	protected getTimeFormat(date?: Date): V {
-		return <V>(date ? date.format('{HH}:{mm}') : '');
+		return <V>(date ? date.format('h;m') : '');
 	}
 
 	/**
