@@ -17,7 +17,7 @@ export default function saveABT(options: unknown): void {
 	const
 		config = adapter(options);
 
-	if (Object.isArray(config)) {
+	if (Object.isArray(config) && !Object.fastCompare(state.experiments, config)) {
 		state.experiments = config;
 		event.emit('set', config);
 	}
