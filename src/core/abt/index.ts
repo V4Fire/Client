@@ -13,9 +13,9 @@ import { EventEmitter2 as EventEmitter } from 'eventemitter2';
 export const
 	event = new EventEmitter({maxListeners: 100});
 
-export default function saveABT(options: unknown): void {
+export default async function saveABT(options: unknown): Promise<void> {
 	const
-		config = adapter(options);
+		config = await adapter(options);
 
 	if (Object.isArray(config) && !Object.fastCompare(state.experiments, config)) {
 		state.experiments = config;
