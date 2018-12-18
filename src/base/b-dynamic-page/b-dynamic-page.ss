@@ -20,8 +20,6 @@
 		? Object.assign(attrs, tree.getComponentPropAttrs(self.name(PARENT_TPL_NAME)))
 		? delete attrs[':is']
 		? delete attrs[':dispatching']
-		? delete attrs[':modsProp']
-		? delete attrs[':pageTitleProp']
 
 		- block component(keepAlive, include, exclude)
 			: keepAliveAttrs = Object.assign({}, attrs)
@@ -38,8 +36,6 @@
 					:instanceOf = iDynamicPage |
 					:is = page |
 					:dispatching = true |
-					:mods = modsProp |
-					:pageTitle = pageTitle || undefined |
 					${attrs}
 				.
 
