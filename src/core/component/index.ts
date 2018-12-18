@@ -91,6 +91,7 @@ export interface ComponentParams {
 	inject?: InjectOptions;
 	inheritAttrs?: boolean;
 	inheritMods?: boolean;
+	defaultProps?: boolean;
 }
 
 export interface WatchHandler<CTX extends ComponentInterface = ComponentInterface, A = unknown, B = A> {
