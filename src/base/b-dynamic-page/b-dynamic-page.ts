@@ -22,6 +22,7 @@ export type KeepAlive =
 
 export default class bDynamicPage extends iDynamicPage {
 	/** @override */
+	@prop({forceDefault: true})
 	readonly selfDispatching: boolean = true;
 
 	/**
@@ -56,7 +57,12 @@ export default class bDynamicPage extends iDynamicPage {
 	/**
 	 * Event name for listening
 	 */
-	@prop({type: String, required: false})
+	@prop({
+		type: String,
+		required: false,
+		forceDefault: true
+	})
+
 	readonly event?: string = 'setRoute';
 
 	/**

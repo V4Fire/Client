@@ -46,6 +46,7 @@ export interface ComponentProp<
 	B = A
 > extends PropOptions {
 	watch?: FieldWatcher<CTX, A, B>;
+	forceDefault?: boolean;
 }
 
 export interface ComponentAccessor {

@@ -727,9 +727,11 @@ export function getBaseComponent(
 		let
 			def,
 			defWrapper,
-			isFunc;
+			isFunc,
+			skipDefault = true;
 
-		if (defaultProps) {
+		if (defaultProps || prop.forceDefault) {
+			skipDefault = false;
 			def = defWrapper = instance[key];
 			isFunc = canFunc(prop.type);
 
@@ -743,7 +745,7 @@ export function getBaseComponent(
 			type: prop.type,
 			required: prop.required,
 			validator: prop.validator,
-			default: defaultProps ? prop.default !== undefined ? prop.default : defWrapper : undefined
+			default: !skipDefault ? prop.default !== undefined ? prop.default : defWrapper : undefined
 		};
 
 		const

@@ -112,6 +112,7 @@ export interface FieldWatcher<
 
 export interface ComponentProp extends PropOptions {
 	watchers: Map<string | Function, FieldWatcher>;
+	forceDefault?: boolean;
 	default?: unknown;
 }
 
