@@ -22,7 +22,7 @@
 		? delete attrs[':dispatching']
 
 		- block component(keepAlive, include, exclude)
-			: keepAliveAttrs = Object.assign({}, attrs)
+			: keepAliveAttrs = {}
 
 			- if include
 				? keepAliveAttrs[':include'] = 'include'
