@@ -380,7 +380,7 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 			current = this.getField<CurrentPage>('pageStore'),
 			f = (v) => $C(v).filter((el, key) => !Object.isFunction(el) && key !== 'meta').object(true).map();
 
-		const extend = (parent) => {
+		const extend = (params) => {
 			Object.mixin({deep: true, withUndef: true}, info, p ? rejectParams(f(p)) : undefined, rejectParams(params));
 		};
 
@@ -403,6 +403,15 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 			this.setField('pageStore', store);
 
 			if (isNotEvent) {
+				if (c && method === 'push') {
+					const
+						f = ({page, params, query, meta}) => ({page, query: {...params, ...query}, meta: {...meta}});
+
+					if (Object.fastCompare(f({...c}), f({...info}))) {
+						method = 'replace';
+					}
+				}
+
 				await d[method](info.toPath(getPageParams(info)), info);
 			}
 
