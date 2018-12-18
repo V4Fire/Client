@@ -15,10 +15,18 @@ export const
 
 export default async function saveABT(options: unknown): Promise<void> {
 	const
-		config = await adapter(options);
+		config = adapter(options);
+
+	if (Object.isPromise(config)) {
+		await config.catch(stderr);
+	}
 
 	if (Object.isArray(config) && !Object.fastCompare(state.experiments, config)) {
 		state.experiments = config;
 		event.emit('set', config);
+
+	} else {
+		state.experiments = [];
+		event.emit('clear', config);
 	}
 }
