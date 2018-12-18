@@ -95,16 +95,26 @@ export default class iPage<T extends Dictionary = Dictionary> extends iData<T> {
 	scrollTo(p?: ScrollOpts | number, y?: number): void {
 		this.async.cancelProxy({label: $$.scrollTo});
 
+		const scroll = (p: ScrollToOptions) => {
+			try {
+				scrollTo(p);
+
+			} catch {
+				scrollTo(p.left == null ? pageXOffset : p.left, p.top == null ? pageYOffset : p.top);
+			}
+		};
+
 		if (p && Object.isObject(p)) {
 			const
 				{x, y} = <ScrollOpts>p,
 				opts = <ScrollOptions>Object.reject(p, ['x', 'y']);
 
-			scrollTo({left: x, top: y, ...opts});
+			scroll({left: x, top: y, ...opts});
 
 		} else {
-			scrollTo({left: <CanUndef<number>>p, top: y});
+			scroll({left: <CanUndef<number>>p, top: y});
 		}
+
 	}
 
 	/** @override */
