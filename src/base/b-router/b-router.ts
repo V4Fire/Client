@@ -380,7 +380,7 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 			current = this.getField<CurrentPage>('pageStore'),
 			f = (v) => $C(v).filter((el, key) => !Object.isFunction(el) && key !== 'meta').object(true).map();
 
-		const extend = (params) => {
+		const extend = (p) => {
 			Object.mixin({deep: true, withUndef: true}, info, p ? rejectParams(f(p)) : undefined, rejectParams(params));
 		};
 
