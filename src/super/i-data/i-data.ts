@@ -8,8 +8,6 @@
 
 // tslint:disable:max-file-line-count
 
-import $C = require('collection.js');
-
 import statusCodes from 'core/status-codes';
 import symbolGenerator from 'core/symbol';
 
@@ -669,7 +667,7 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 
 		const
 			f = this.requestFilter,
-			isEmpty = !$C(res[0]).length();
+			isEmpty = !Object.size(res[0]);
 
 		const info = {
 			isEmpty,

@@ -6,7 +6,6 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import $C = require('collection.js');
 import iData, { component, CreateRequestOptions } from 'super/i-data/i-data';
 import { RequestQuery } from 'core/data';
 export * from 'super/i-data/i-data';
@@ -35,10 +34,14 @@ export default class iDataList<T extends Dictionary = Dictionary> extends iData<
 		}
 
 		const
-			obj = Object.create(<object>v);
+			obj = Object.assign(Object.create(<object>v), Object.select(v, ['data', 'total'])),
+			list = obj.data;
 
-		Object.assign(obj, Object.select(v, ['data', 'total']));
-		obj.data = $C(obj.data).map((el) => this.convertDataChunk(el));
+		if (list) {
+			for (let i = 0; i < list.legth; i++) {
+				list[i] = this.convertDataChunk(list[i]);
+			}
+		}
 
 		return obj;
 	}

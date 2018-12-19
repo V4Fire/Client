@@ -6,7 +6,6 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import $C = require('collection.js');
 import symbolGenerator from 'core/symbol';
 import iDataList, { component, prop, field, system, wait, watch } from 'super/i-data-list/i-data-list';
 export * from 'super/i-data-list/i-data-list';
@@ -91,15 +90,25 @@ export default class iDataPages<T extends Dictionary = Dictionary> extends iData
 		}
 
 		const
-			p = this.getDefaultRequestParams('get');
+			p = this.getDefaultRequestParams('get'),
+			requestParams = p[0] || {};
 
-		p[0] = $C(p[0]).filter((el) => el != null).map();
+		if (Object.isObject(requestParams)) {
+			for (let keys = Object.keys(requestParams), i = 0; i < keys.length; i++) {
+				const
+					key = keys[i];
+
+				if (requestParams[key] == null) {
+					delete requestParams[key];
+				}
+			}
+		}
 
 		let
 			page = this.page + 1;
 
 		if (this.page !== 1) {
-			page = ($C(p[0]).get('page') || 0) + page;
+			page = (requestParams.page || 0) + page;
 		}
 
 		if (this.pageLoaded[page]) {
