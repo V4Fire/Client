@@ -169,4 +169,4 @@
 					+= self.addScriptDep(tpl)
 					+= self.addScriptDep(el)
 
-				ModuleDependencies.fileCache['{el}'] = true;
+				window[#{globals.MODULE_DEPENDENCIES}].fileCache['{el}'] = true;

@@ -11,7 +11,7 @@ import remoteState from 'core/component/state';
 
 import { GLOBAL } from 'core/const/links';
 import { reset, globalEvent, ResetType, ComponentInterface } from 'core/component';
-import { setLang, lang } from 'core/prelude/i18n';
+import { setLang, lang } from 'core/i18n';
 
 import { SetEvent } from 'core/session';
 import { StatusEvent } from 'core/net';

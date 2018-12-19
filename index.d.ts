@@ -9,6 +9,7 @@
 /// <reference types="@v4fire/core"/>
 
 declare let READY_STATE: number;
+declare const MODULE_DEPENDENCIES: string;
 declare const PATH: Dictionary<CanUndef<string>>;
 declare const TPLS: Dictionary<Dictionary<Function>>;
 
@@ -28,13 +29,18 @@ declare let ModuleDependencies: {
 	get(module: string): Promise<string[]>;
 };
 
+interface ElementPosition {
+	top: number;
+	left: number;
+}
+
 interface Element {
-	getPosition(): {top: number; left: number};
+	getPosition(): ElementPosition;
 	getIndex(): number | null;
 }
 
 interface Node {
-	getOffset(parent?: Element | string): {top: number; left: number};
+	getOffset(parent?: Element | string): ElementPosition;
 }
 
 interface Number {

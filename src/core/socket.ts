@@ -21,7 +21,6 @@ export default function socket(namespace: string = ''): CanUndef<Socket> {
 
 	try {
 		socket = require('socket.io-client');
-
 	} catch {}
 
 	if (socket && config.api) {

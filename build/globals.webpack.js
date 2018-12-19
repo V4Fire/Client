@@ -18,6 +18,7 @@ module.exports = {
 	LANG: s(LANG),
 	API_URL: s(API_URL),
 	APP_NAME: s(APP_NAME),
+	MODULE_DEPENDENCIES: s(`ModuleDependencies_${Number.random(1e6)}`),
 	'process.env': {
 		NODE_ENV: s(process.env.NODE_ENV)
 	}

@@ -24,7 +24,9 @@
 - async template index() extends ['i-page'].index
 	- assets = Object.create(null)
 	- lib = path.join(@@output, @@outputPattern({name: 'lib'}))
+
 	- deps = include('src/super/i-static-page/deps')
+	- globals = include('build/globals.webpack')
 
 	- title = @@appName
 	- pageData = {}
@@ -112,10 +114,11 @@
 
 				# script
 					# block initVars
+						window[#{globals.MODULE_DEPENDENCIES}] = {fileCache: {}};
+
 						var
 							READY_STATE = 0,
-							PATH = #{assets|json},
-							ModuleDependencies = {fileCache: {}};
+							PATH = #{assets|json};
 
 						try {
 							PATH = new Proxy(PATH, {

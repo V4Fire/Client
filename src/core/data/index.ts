@@ -8,7 +8,6 @@
 
 // tslint:disable:max-file-line-count
 
-import $C = require('collection.js');
 import { EventEmitter2 as EventEmitter } from 'eventemitter2';
 
 import symbolGenerator from 'core/symbol';
@@ -379,16 +378,22 @@ export default class Provider {
 	 */
 	bindEvents(...providers: string[]): void {
 		this.attachToSocket((socket) => {
-			$C(providers).forEach((provider) => {
-				$C(this.events).forEach((type) => {
+			for (let i = 0; i < providers.length; i++) {
+				const
+					provider = providers[i];
+
+				for (let i = 0; i < this.events.length; i++) {
+					const
+						type = this.events[i];
+
 					socket.on(type, ({instance, type, data}) => {
 						if (instance === provider) {
 							this.dropCache();
 							this.event.emit(type, data);
 						}
 					});
-				});
-			});
+				}
+			}
 		}, {label: $$.bindEvents});
 	}
 
@@ -469,8 +474,21 @@ export default class Provider {
 	 * Drops the request cache
 	 */
 	dropCache(): void {
-		const nm = this.constructor.name;
-		$C(requestCache[nm]).forEach((el) => el.dropCache());
+		const
+			nm = this.constructor.name,
+			cache = requestCache[nm];
+
+		if (cache) {
+			for (let keys = Object.keys(cache), i = 0; i < keys.length; i++) {
+				const
+					obj = cache[keys[i]];
+
+				if (obj) {
+					obj.dropCache();
+				}
+			}
+		}
+
 		requestCache[nm] = Object.createDict();
 	}
 
@@ -654,7 +672,12 @@ export default class Provider {
 
 		$m.set(key, {event, data});
 		$a.setTimeout(() => {
-			$C($m).remove((el) => ($e.emit(el.event, el.data), true));
+			for (let o = $m.values(), val = o.next(); !val.done; val = o.next()) {
+				const el = val.value;
+				$e.emit(el.event, el.data);
+			}
+
+			$m.clear();
 			$e.emit('drain');
 		}, 0.1.second(), {label: $$.setEventToQueue});
 	}
@@ -667,13 +690,22 @@ export default class Provider {
 			{async: $a, constructor: {name: nm}} = this;
 
 		this.attachToSocket((socket) => {
-			$C(this.events).forEach((type) => {
+			const label = {
+				label: $$.listenSocketEvents
+			};
+
+			for (let i = 0; i < this.events.length; i++) {
+				const
+					type = this.events[i];
+
 				$a.on(socket, type, ({instance, type, data}) => {
 					const
 						f = () => Object.fastClone(data),
 						key = this.getEventKey(type, data);
 
-					this.dropCache();
+					this
+						.dropCache();
+
 					if (this.listenAllEvents) {
 						this.setEventToQueue(key, type, {
 							type,
@@ -683,13 +715,12 @@ export default class Provider {
 							}
 						});
 
-					} else if (nm && (<string>nm).camelize(false) === instance) {
+					} else if (nm.camelize(false) === instance) {
 						this.setEventToQueue(key, type, f);
 					}
-				}, {
-					label: $$.listenSocketEvents
-				});
-			});
+
+				}, label);
+			}
 
 			$a.on(socket, 'alive?', () => socket.emit('alive!'), {
 				label: $$.alive
@@ -719,10 +750,20 @@ export default class Provider {
 			return {...a, ...b};
 		};
 
+		const
+			mappedMiddlewares = merge(middlewares, opts.middlewares);
+
+		for (let keys = Object.keys(mappedMiddlewares), i = 0; i < keys.length; i++) {
+			const
+				key = keys[i];
+
+			mappedMiddlewares[key] = mappedMiddlewares[key].bind(this);
+		}
+
 		return {
 			...opts,
 			cacheId: this.cacheId,
-			middlewares: $C(merge(middlewares, opts.middlewares)).map((fn) => fn.bind(this)),
+			middlewares: mappedMiddlewares,
 			// tslint:disable-next-line:no-string-literal
 			encoder: merge(encoders[method] || encoders['def'], opts.encoder),
 			// tslint:disable-next-line:no-string-literal

@@ -6,13 +6,19 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import extend from 'core/prelude/extend';
+
 /**
  * Executes the specified functions after the source image load
  *
  * @param onSuccess
  * @param [onFail]
  */
-HTMLImageElement.prototype.onInit = function (onSuccess: () => void, onFail?: (err?: Error) => void): void {
+extend(HTMLImageElement.prototype, 'onInit', function (
+	this: HTMLImageElement,
+	onSuccess: () => void,
+	onFail?: (err?: Error) => void
+): void {
 	setImmediate(() => {
 		if (this.complete) {
 			if (this.height || this.width) {
@@ -39,12 +45,12 @@ HTMLImageElement.prototype.onInit = function (onSuccess: () => void, onFail?: (e
 			this.addEventListener('load', onLoad);
 		}
 	});
-};
+});
 
 /**
  * Promisify version of HTMLImageElement.onInit
  */
-Object.defineProperty(HTMLImageElement.prototype, 'init', {
+extend(HTMLImageElement.prototype, 'init', {
 	get(): Promise<HTMLImageElement> {
 		return new Promise((resolve, reject) => this.onInit(() => resolve(this), reject));
 	}

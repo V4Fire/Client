@@ -156,11 +156,16 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		return {};
 	},
 
-	monic() {
-		const runtime = {
+	runtime() {
+		return {
 			'noGlobals': true,
 			'kv-storage': true
 		};
+	},
+
+	monic() {
+		const
+			runtime = this.runtime();
 
 		return {
 			stylus: {

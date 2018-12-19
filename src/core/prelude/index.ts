@@ -6,4 +6,8 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-export { default as default } from 'core/prelude/dependencies';
+import '@v4fire/core/core/prelude';
+import 'core/prelude/image';
+import 'core/prelude/canvas';
+import 'core/prelude/dom';
+import 'core/prelude/dependencies';

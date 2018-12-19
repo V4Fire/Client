@@ -6,7 +6,6 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import $C = require('collection.js');
 import Super, {
 
 	AsyncOpts,
@@ -239,18 +238,26 @@ export default class Async<CTX extends object = Async<any>> extends Super<CTX> {
 		}
 
 		p.group = p.group || `dnd.${Math.random()}`;
-		p.onClear = (<any[]>[]).concat(p.onClear || []);
+
+		const
+			clearHandlers = p.onClear = (<any[]>[]).concat(p.onClear || []);
 
 		function dragStartClear(...args: unknown[]): void {
-			$C(p.onClear).forEach((fn) => fn.call(this, ...args, 'dragstart'));
+			for (let i = 0; i < clearHandlers.length; i++) {
+				clearHandlers[i].call(this, ...args, 'dragstart');
+			}
 		}
 
 		function dragClear(...args: unknown[]): void {
-			$C(p.onClear).forEach((fn) => fn.call(this, ...args, 'drag'));
+			for (let i = 0; i < clearHandlers.length; i++) {
+				clearHandlers[i].call(this, ...args, 'drag');
+			}
 		}
 
 		function dragEndClear(...args: unknown[]): void {
-			$C(p.onClear).forEach((fn) => fn.call(this, ...args, 'dragend'));
+			for (let i = 0; i < clearHandlers.length; i++) {
+				clearHandlers[i].call(this, ...args, 'dragend');
+			}
 		}
 
 		const dragStartUseCapture = !p.onDragStart || Object.isFunction(p.onDragStart) ?
@@ -285,9 +292,14 @@ export default class Async<CTX extends object = Async<any>> extends Super<CTX> {
 			const
 				links: object[] = [];
 
-			$C(['mousemove', 'touchmove']).forEach((e) => {
-				links.push(that.on(document, e, drag, {...opts, onClear: dragClear}, dragUseCapture));
-			});
+			{
+				const
+					e = ['mousemove', 'touchmove'];
+
+				for (let i = 0; i < e.length; i++) {
+					links.push(that.on(document, e[i], drag, {...opts, onClear: dragClear}, dragUseCapture));
+				}
+			}
 
 			const dragEnd = (e) => {
 				e.preventDefault();
@@ -296,12 +308,22 @@ export default class Async<CTX extends object = Async<any>> extends Super<CTX> {
 					res = (<DnDCb>((<DnDEventOpts>p.onDragEnd).handler || p.onDragEnd)).call(this, e, el);
 				}
 
-				$C(links).forEach((id) => that.off({id, group: p.group}));
+				for (let i = 0; i < links.length; i++) {
+					that.off({
+						id: links[i],
+						group: p.group
+					});
+				}
 			};
 
-			$C(['mouseup', 'touchend']).forEach((e) => {
-				links.push(that.on(document, e, dragEnd, {...opts, onClear: dragEndClear}, dragEndUseCapture));
-			});
+			{
+				const
+					e = ['mouseup', 'touchend'];
+
+				for (let i = 0; i < e.length; i++) {
+					links.push(that.on(document, e[i], dragEnd, {...opts, onClear: dragEndClear}, dragEndUseCapture));
+				}
+			}
 		}
 
 		this.on<Event>(el, 'mousedown touchstart', dragStart, {...opts, onClear: dragStartClear}, dragStartUseCapture);

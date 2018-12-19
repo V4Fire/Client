@@ -8,8 +8,6 @@
 
 // tslint:disable:max-file-line-count
 
-import $C = require('collection.js');
-
 import log from 'core/log';
 import symbolGenerator from 'core/symbol';
 import Async from 'core/async';
@@ -333,10 +331,6 @@ export function bindWatchers(ctx: ComponentInterface, eventCtx: ComponentInterfa
 	}
 
 	const
-		ctxObj = $C(eventCtx),
-		globalObj = $C(GLOBAL);
-
-	const
 		isBeforeCreate = hook === 'beforeCreate',
 		isCreated = hook === 'created',
 		isMounted = hook === 'mounted';
@@ -360,7 +354,7 @@ export function bindWatchers(ctx: ComponentInterface, eventCtx: ComponentInterfa
 			onBeforeCreate = m === '!';
 			onMounted = m === '?';
 
-			root = l ? ctxObj.get(l) || globalObj.get(l) || ctx : ctx;
+			root = l ? Object.get(eventCtx, l) || Object.get(GLOBAL, l) || ctx : ctx;
 			key = l ? customWatcher[3].toString() : customWatcher[3].dasherize();
 		}
 

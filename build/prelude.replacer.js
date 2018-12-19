@@ -19,10 +19,7 @@ const
  * @returns {string}
  */
 module.exports = function (str) {
-	const
-		r = this.flags.runtime || {};
-
-	if (r.noGlobals && replaceRgxp) {
+	if (replaceRgxp) {
 		let
 			initGlobals = false;
 

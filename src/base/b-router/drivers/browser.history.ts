@@ -7,6 +7,7 @@
  */
 
 import symbolGenerator from 'core/symbol';
+import moduleDependencies from 'core/dependencies';
 import bRouter from 'base/b-router/b-router';
 
 import { fromQueryString, toQueryString } from 'core/url';
@@ -52,13 +53,13 @@ export default function createRouter(ctx: bRouter): Router {
 					history[method](info, info.page, page);
 				}
 
-				if (Object.isArray(ModuleDependencies.get(info.page))) {
+				if (Object.isArray(moduleDependencies.get(info.page))) {
 					resolve();
 					return;
 				}
 
 				let i = 0;
-				ModuleDependencies.event.on(`component.${info.page}.loading`, $a.proxy(
+				moduleDependencies.event.on(`component.${info.page}.loading`, $a.proxy(
 					({packages}) => {
 						ctx.setField('status', (++i * 100) / packages);
 						(i === packages) && resolve();
