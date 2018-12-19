@@ -6,7 +6,6 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import $C = require('collection.js');
 import bInputNumber from 'form/b-input-number/b-input-number';
 import iInput, { component, prop, ModsDecl } from 'super/i-input/i-input';
 export * from 'super/i-input/i-input';
@@ -91,10 +90,26 @@ export default class bTimeRange<
 	 * @emits actionChange(value: V)
 	 */
 	protected async onSave(): Promise<void> {
+		const get = (s) => {
+			const
+				els = this.block.elements(s),
+				res = <Promise<number>[]>[];
+
+			for (let i = 0; i < els.length; i++) {
+				const
+					el = this.$<bInputNumber>(els[i]);
+
+				if (el) {
+					res.push(el.formValue);
+				}
+			}
+
+			return res;
+		};
+
 		const
-			get = (s) => $C(this.block.elements(s)).to([]).map((el) => this.$<bInputNumber>(el).formValue),
-			from = <number[]>await Promise.all(get('input-from')),
-			to = <number[]>await Promise.all(get('input-to'));
+			from = await Promise.all(get('input-from')),
+			to = await Promise.all(get('input-to'));
 
 		const f = (arr) => {
 			if (arr[0] == null && arr[1] == null) {

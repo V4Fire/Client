@@ -8,7 +8,7 @@
 
 // tslint:disable:max-file-line-count
 
-import $C = require('collection.js');
+import Range from 'core/range';
 import symbolGenerator from 'core/symbol';
 import iBlock, { component, prop, system, p, wait, watch, ModsDecl } from 'super/i-block/i-block';
 
@@ -273,9 +273,13 @@ export default class bScroll extends iBlock {
 			});
 		}
 
-		const fxs = this.fixSize;
-		$C(side ? [side] : ['y', 'x']).forEach((key) => {
+		const
+			fxs = this.fixSize,
+			axis = side ? [side] : ['y', 'x'];
+
+		for (let i = 0; i < axis.length; i++) {
 			const
+				key = axis[i],
 				el = get[key];
 
 			const
@@ -307,11 +311,14 @@ export default class bScroll extends iBlock {
 
 			if (show) {
 				el.scroller.style[el.size] = (scrollerSize < scrollerMinSize ? scrollerMinSize : scrollerSize).px;
-				const offset = el.scroller[offsetVal];
+
+				const
+					offset = el.scroller[offsetVal];
+
 				this[el.cache] = scrollerMaxSize - offset;
 				this[el.delta] = (contentSize - scrollerMaxSize) / (scrollerMaxSize - offset);
 			}
-		});
+		}
 
 		const
 			{offsetWidth, offsetHeight, clientWidth, clientHeight} = r.area;
@@ -381,9 +388,12 @@ export default class bScroll extends iBlock {
 			return val.camelize(false);
 		}
 
-		return $C({x, y}).to({}).reduce((res, val, key) => {
+		const
+			res = {};
+
+		const addToRes = (val, key) => {
 			if (val == null) {
-				return res;
+				return;
 			}
 
 			const
@@ -409,9 +419,12 @@ export default class bScroll extends iBlock {
 					).px;
 				}
 			}
+		};
 
-			return res;
-		});
+		addToRes(x, 'x');
+		addToRes(y, 'y');
+
+		return res;
 	}
 
 	/**
@@ -438,7 +451,10 @@ export default class bScroll extends iBlock {
 			breakpoints = {left: 0, top: 0},
 			{scrollWidth: areaWidth, scrollHeight: areaHeight} = this.$el;
 
-		$C(children).forEach((el) => {
+		for (let i = 0; i < children.length; i++) {
+			const
+				el = children[i];
+
 			if (this.$(el)) {
 				const
 					{height, width} = el.getBoundingClientRect();
@@ -456,8 +472,8 @@ export default class bScroll extends iBlock {
 					};
 
 					const
-						areaRange = Number.range(this.scrollOffset[dir], s[dir].area + this.scrollOffset[dir]),
-						itemRange = Number.range(breakpoints[dir], breakpoints[dir] + s[dir].self);
+						areaRange = new Range(this.scrollOffset[dir], s[dir].area + this.scrollOffset[dir]),
+						itemRange = new Range(breakpoints[dir], breakpoints[dir] + s[dir].self);
 
 					return Boolean(areaRange.intersect(itemRange).toArray().length);
 				};
@@ -476,7 +492,7 @@ export default class bScroll extends iBlock {
 					breakpoints.top += dirs.y !== undefined ? height : 0;
 				}
 			}
-		});
+		}
 	}
 
 	/**
@@ -532,9 +548,9 @@ export default class bScroll extends iBlock {
 	 * Handler: scroller drag end
 	 */
 	protected onScrollerDragEnd(): void {
-		$C(['scrollerX', 'scrollerY']).forEach((el) => {
-			this.block.setElMod(this.$refs[el], 'scroller', 'active', false);
-		});
+		const {block: $b, $refs: $r} = this;
+		$b.setElMod($r.scrollerX, 'scroller', 'active', false);
+		$b.setElMod($r.scrollerY, 'scroller', 'active', false);
 	}
 
 	/**

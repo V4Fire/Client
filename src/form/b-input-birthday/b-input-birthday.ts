@@ -6,7 +6,6 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import $C = require('collection.js');
 import bSelect, { Option } from 'form/b-select/b-select';
 import iInput, { component, prop, p, Cache } from 'super/i-input/i-input';
 export * from 'super/i-input/i-input';
@@ -174,7 +173,17 @@ export default class bInputBirthday<
 			} catch {}
 		}
 
-		if ($C(res).some((el) => el)) {
+		let
+			some = false;
+
+		for (let i = 0; i < res.length; i++) {
+			if (res[i]) {
+				some = true;
+				break;
+			}
+		}
+
+		if (some) {
 			this.emit('clear');
 			return true;
 		}
@@ -193,7 +202,17 @@ export default class bInputBirthday<
 			} catch {}
 		}
 
-		if ($C(res).some((el) => el)) {
+		let
+			some = false;
+
+		for (let i = 0; i < res.length; i++) {
+			if (res[i]) {
+				some = true;
+				break;
+			}
+		}
+
+		if (some) {
 			this.emit('reset');
 			return true;
 		}
@@ -217,7 +236,7 @@ export default class bInputBirthday<
 		}
 
 		d.set({
-			day: day.selected,
+			day: day.selected ? Number(day.selected) : 0,
 			hours: 0,
 			minutes: 0,
 			seconds: 0,

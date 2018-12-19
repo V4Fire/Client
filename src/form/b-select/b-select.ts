@@ -8,7 +8,6 @@
 
 // tslint:disable:max-file-line-count
 
-import $C = require('collection.js');
 import symbolGenerator from 'core/symbol';
 import keyCodes from 'core/key-codes';
 import bScrollInline from 'base/b-scroll/b-scroll-inline/b-scroll-inline';
@@ -62,7 +61,7 @@ export default class bSelect<
 // @ts-ignore
 > extends bInput<V, FV, D> {
 	/** @override */
-	@prop({default: (obj) => $C(obj).get('data') || obj || []})
+	@prop({default: (obj) => obj && obj.data || obj || []})
 	readonly componentConverter?: ComponentConverter<Option[]>;
 
 	/**
@@ -287,11 +286,22 @@ export default class bSelect<
 	 * @param options
 	 */
 	protected normalizeOptions(options?: Option[]): NOption[] {
-		return $C(options).to([]).map((el) => {
-			el.label = String(el.label);
-			el.value = el.value !== undefined ? String(el.value) : el.label;
-			return el;
-		});
+		const
+			res = <NOption[]>[];
+
+		if (options) {
+			for (let i = 0; i < options.length; i++) {
+				const
+					el = options[i];
+
+				res.push({
+					label: String(el.label),
+					value: el.value !== undefined ? String(el.value) : el.label
+				});
+			}
+		}
+
+		return res;
 	}
 
 	/**
@@ -304,8 +314,9 @@ export default class bSelect<
 			labels = {},
 			values = {};
 
-		$C(data.optionsStore).forEach((el) => {
+		for (let o = <NOption[]>data.optionsStore, i = 0; i < o.length; i++) {
 			const
+				el = o[i],
 				val = el.value;
 
 			if (el.selected && !this.selected && !this.value) {
@@ -318,7 +329,7 @@ export default class bSelect<
 
 			values[val] = el;
 			labels[el.label] = el;
-		});
+		}
 
 		this.labels = labels;
 		this.values = values;
@@ -612,15 +623,22 @@ export default class bSelect<
 			const
 				rgxp = new RegExp(`^${RegExp.escape(this.value)}`, 'i');
 
-			if (
-				$C(this.labels).some((el, key) => {
-					if (rgxp.test(key)) {
-						this.selected = <FV>(<NonNullable<Option>>el).value;
-						return true;
-					}
-				})
+			let
+				some = false;
 
-			) {
+			for (let keys = Object.keys(this.labels), i = 0; i < keys.length; i++) {
+				const
+					key = keys[i],
+					el = this.labels[key];
+
+				if (el && rgxp.test(key)) {
+					this.selected = <FV>el.value;
+					some = true;
+					break;
+				}
+			}
+
+			if (some) {
 				return this.open();
 			}
 
