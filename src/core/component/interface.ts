@@ -48,6 +48,7 @@ export interface FieldWatcher<
 
 export interface ComponentProp extends PropOptions {
 	watchers: Map<string | Function, FieldWatcher>;
+	forceDefault?: boolean;
 	default?: unknown;
 }
 
@@ -164,6 +165,7 @@ export interface ComponentParams {
 	inject?: InjectOptions;
 	inheritAttrs?: boolean;
 	inheritMods?: boolean;
+	defaultProps?: boolean;
 }
 
 export type RenderFunction =

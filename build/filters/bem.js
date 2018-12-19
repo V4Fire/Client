@@ -30,7 +30,7 @@ module.exports = [
 			tmp = attrs[':class'] = attrs[':class'] || [];
 
 		if (!$C(tmp).includes('componentId')) {
-			attrs[':class'] = attachClass(tmp.concat('componentId', `classes['${value.replace(elSeparatorRgxp, '')}']`));
+			attrs[':class'] = attachClass(tmp.concat('componentId', `classes && classes['${value.replace(elSeparatorRgxp, '')}']`));
 		}
 
 		return block + value;

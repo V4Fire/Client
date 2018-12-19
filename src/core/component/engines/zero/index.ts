@@ -73,7 +73,8 @@ export class ComponentDriver {
 		keyCodes: {},
 		ignoredElements: [],
 		errorHandler: console.error,
-		warnHandler: console.warn
+		warnHandler: console.warn,
+		async: false
 	};
 
 	/**
