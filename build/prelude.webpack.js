@@ -51,9 +51,17 @@ if (config.runtime().noGlobals) {
 				link = `[Symbol.for('[[V4_PROP_TRAP:${method}]]')]`;
 
 			if (target === 'GLOBAL') {
-				regExps.add(`GLOBAL\\.${method}\\b`);
+				regExps.add(`\\bGLOBAL\\.${method}\\b`);
 				regExps.add(`(?<=[^.]|^)\\b${method}\\b\\s*(?=${method.length > 3 ? '\\(|`' : '`'})`);
-				tokens.set(method, {global: true, link: globalLink + link});
+
+				const meta = {
+					global: true,
+					link: globalLink + link
+				};
+
+				tokens.set(method, meta);
+				tokens.set(`GLOBAL.${method}`, meta);
+
 				continue;
 			}
 
