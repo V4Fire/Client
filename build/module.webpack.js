@@ -207,6 +207,15 @@ module.exports = async function ({buildId, plugins}) {
 			{
 				loader: 'snakeskin',
 				options: snakeskin.client
+			},
+
+			{
+				loader: 'monic',
+				options: inherit(monic.snakeskin, {
+					replacers: [
+						include('build/prelude.replacer')
+					]
+				})
 			}
 		]
 	});
