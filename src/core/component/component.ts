@@ -698,20 +698,54 @@ export function getBaseComponent(
 		component.computed[key] = o[key];
 	}
 
+	const canFunc = (type) => {
+		if (!type) {
+			return false;
+		}
+
+		if (Object.isArray(type)) {
+			for (let i = 0; i < type.length; i++) {
+				if (type[i] === Function) {
+					return true;
+				}
+			}
+
+			return false;
+		}
+
+		return type === Function;
+	};
+
+	const
+		defaultProps = meta.params.defaultProps !== false;
+
 	for (let o = meta.props, keys = Object.keys(o), i = 0; i < keys.length; i++) {
 		const
 			key = keys[i],
-			prop = <NonNullable<ComponentProp>>o[key],
-			def = instance[key];
+			prop = <NonNullable<ComponentProp>>o[key];
 
-		const cloneDef = () => Object.fastClone(def);
-		cloneDef[defaultWrapper] = true;
+		let
+			def,
+			defWrapper,
+			isFunc,
+			skipDefault = true;
+
+		if (defaultProps || prop.forceDefault) {
+			skipDefault = false;
+			def = defWrapper = instance[key];
+			isFunc = canFunc(prop.type);
+
+			if (def && typeof def === 'object' && (!isFunc || !Object.isFunction(def))) {
+				defWrapper = () => Object.fastClone(def);
+				defWrapper[defaultWrapper] = true;
+			}
+		}
 
 		component.props[key] = {
 			type: prop.type,
 			required: prop.required,
 			validator: prop.validator,
-			default: prop.default !== undefined ? prop.default : prop.type === Function ? def : cloneDef
+			default: !skipDefault ? prop.default !== undefined ? prop.default : defWrapper : undefined
 		};
 
 		const

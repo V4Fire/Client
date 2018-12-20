@@ -3409,7 +3409,13 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	protected initRemoteWatchers(): void {
 		const
 			w = this.meta.watchers,
-			o = this.watchProp,
+			o = this.watchProp;
+
+		if (!o) {
+			return;
+		}
+
+		const
 			keys = Object.keys(o);
 
 		const normalizeField = (field) => {

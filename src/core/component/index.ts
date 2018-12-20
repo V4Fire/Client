@@ -91,6 +91,7 @@ export interface ComponentParams {
 	inject?: InjectOptions;
 	inheritAttrs?: boolean;
 	inheritMods?: boolean;
+	defaultProps?: boolean;
 }
 
 export interface WatchHandler<CTX extends ComponentInterface = ComponentInterface, A = unknown, B = A> {
@@ -111,6 +112,7 @@ export interface FieldWatcher<
 
 export interface ComponentProp extends PropOptions {
 	watchers: Map<string | Function, FieldWatcher>;
+	forceDefault?: boolean;
 	default?: unknown;
 }
 
