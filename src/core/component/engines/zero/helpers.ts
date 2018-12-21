@@ -216,7 +216,9 @@ export function addStyles(
 				key = keys[i],
 				el = styles[key];
 
-			str += `${key.dasherize()}: ${el};`;
+			if (el != null && el !== '') {
+				str += `${key.dasherize()}: ${el};`;
+			}
 		}
 
 		strStyles.push(str);
