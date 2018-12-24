@@ -496,11 +496,17 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 				}
 
 				if (Object.isArray(experiments)) {
-					(<ExperimentsSet>experiments).forEach((el) => {
+					const
+						{length} = experiments;
+
+					for (let i = 0; i < length; i++) {
+						const
+							el = (<ExperimentsSet>experiments)[i];
+
 						if (el.meta && el.meta.mods) {
 							Object.assign(mods, el.meta.mods);
 						}
-					});
+					}
 				}
 
 				for (let keys = Object.keys(mods), i = 0; i < keys.length; i++) {

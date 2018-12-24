@@ -26,6 +26,7 @@ export default async function saveABT(options: unknown): Promise<void> {
 			state.experiments = config;
 			event.emit('set', config);
 		}
+
 	} else {
 		state.experiments = [];
 		event.emit('clear', config);
