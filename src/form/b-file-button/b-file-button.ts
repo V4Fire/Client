@@ -76,7 +76,7 @@ export default class bFileButton<T extends Dictionary = Dictionary> extends bBut
 			return;
 		}
 
-		reader.addEventListener('load', <any>this.async.proxy((e) => this.emit('change', e.target.result)));
+		this.async.on(reader, 'load', (e) => this.emit('change', e.target.result));
 		reader[this.read](file);
 	}
 

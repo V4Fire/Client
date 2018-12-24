@@ -27,7 +27,7 @@ module.exports = {
 				Snakeskin.Vars['globalNames'][el] = dir;
 
 			} else if (Snakeskin.Vars['globalNames'][el] !== dir) {
-				throw new Error(`Name ${el} is already in global namespace`);
+				throw new Error(`Name ${el} is already in the global namespace`);
 			}
 		});
 	}

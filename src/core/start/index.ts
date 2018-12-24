@@ -7,6 +7,7 @@
  */
 
 import 'core/start/state';
+import 'core/start/abt';
 import semaphore from 'core/start/semaphore';
 import { whenDomLoaded } from 'core/event';
 

@@ -13,6 +13,7 @@ import $C = require('collection.js');
 import symbolGenerator from 'core/symbol';
 import Async, { AsyncOpts, ClearOptsId, WrappedFunction, ProxyCb } from 'core/async';
 import log, { LogMessageOptions } from 'core/log';
+import { ExperimentsSet } from 'core/abt/interface';
 
 import * as analytics from 'core/analytics';
 import { EventEmitter2 as EventEmitter } from 'eventemitter2';
@@ -486,11 +487,23 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 				const
 					declMods = o.meta.component.mods,
 					// tslint:disable-next-line:prefer-object-spread
-					mods = Object.assign(o.mods || {...declMods}, val);
+					mods = Object.assign(o.mods || {...declMods}, val),
+					{experiments} = o.$root.remoteState;
 
 				for (let i = 0; i < attrMods.length; i++) {
 					const [key, val] = attrMods[i];
 					mods[key] = val;
+				}
+
+				if (Object.isArray(experiments)) {
+					for (let i = 0; i < experiments.length; i++) {
+						const
+							el = (<ExperimentsSet>experiments)[i];
+
+						if (el.meta && el.meta.mods) {
+							Object.assign(mods, el.meta.mods);
+						}
+					}
 				}
 
 				for (let keys = Object.keys(mods), i = 0; i < keys.length; i++) {
@@ -1543,7 +1556,7 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 			{async: $a} = this;
 
 		if (cbOrParams && Object.isFunction(cbOrParams)) {
-			this.$nextTick($a.proxy(cbOrParams, params));
+			this.$nextTick($a.proxy(<WrappedFunction>cbOrParams, params));
 			return;
 		}
 
