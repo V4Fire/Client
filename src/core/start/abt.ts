@@ -6,8 +6,8 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-export default [
-	'domReady',
-	'ABTReady',
-	'stateReady'
-];
+import semaphore from 'core/start/semaphore';
+
+export default (() => {
+	semaphore('ABTReady');
+})();
