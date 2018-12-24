@@ -28,7 +28,7 @@ const
 	escaperRules = {'`': false};
 
 /**
- * Monic replacer for typograf`...` literals
+ * Webpack loader for typograf`...` literals
  *
  * @param {string} str
  * @returns {string}

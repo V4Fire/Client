@@ -13,7 +13,7 @@ const
 	{tokens, globalLink, replaceRgxp} = include('build/prelude.webpack');
 
 /**
- * Monic replacer for prelude module
+ * WebPack loader for prelude modules
  *
  * @param {string} str
  * @returns {string}
