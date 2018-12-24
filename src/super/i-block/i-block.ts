@@ -496,10 +496,7 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 				}
 
 				if (Object.isArray(experiments)) {
-					const
-						{length} = experiments;
-
-					for (let i = 0; i < length; i++) {
+					for (let i = 0; i < experiments.length; i++) {
 						const
 							el = (<ExperimentsSet>experiments)[i];
 
