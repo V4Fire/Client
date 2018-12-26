@@ -3566,7 +3566,7 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 			$a = this.async,
 			names = Async.linkNames;
 
-		const mute = {
+		const nonMute = {
 			[names.promise]: true,
 			[names.request]: true
 		};
@@ -3575,7 +3575,7 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 			const
 				key = keys[i];
 
-			if (mute[key]) {
+			if (nonMute[key]) {
 				continue;
 			}
 
