@@ -6,8 +6,9 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { EventEmitterLike } from 'core/async';
+import iBlock from 'super/i-block/i-block';
 import iDynamicPage, { component, prop, field, watch } from 'super/i-dynamic-page/i-dynamic-page';
+import { EventEmitterLike } from 'core/async';
 export * from 'super/i-data/i-data';
 
 export type KeepAlive =
@@ -100,7 +101,11 @@ export default class bDynamicPage extends iDynamicPage {
 		$a.clearAll(group);
 
 		if (this.event) {
-			$a.on(this.emitter || this.$root, this.event, (e) => {
+			$a.on(this.emitter || this.$root, this.event, (component, e) => {
+				if (component != null && !((<Dictionary>component).instance instanceof iBlock)) {
+					e = component;
+				}
+
 				this.page = this.eventConverter ? this.eventConverter(e, this.page) : e;
 			}, group);
 		}
