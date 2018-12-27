@@ -1806,13 +1806,20 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 		if (!this.isActivated || force) {
 			this.initStateFromRouter();
 			this.execCbAfterCreated(() => this.rootEvent.on('onTransition', async (route, type) => {
-				if (type === 'hard' && route !== this.r.route) {
-					await this.rootEvent.promisifyOnce('setRoute', {
-						label: $$.activateAfterTransition
-					});
+				if (type === 'hard') {
+					if (route !== this.r.route) {
+						await this.rootEvent.promisifyOnce('setRoute', {
+							label: $$.activateAfterTransition
+						});
+
+					} else {
+						await this.nextTick({label: $$.activateAfterHardChange});
+					}
 				}
 
-				this.initStateFromRouter();
+				if (!{destroyed: true, inactive: true}[this.componentStatus]) {
+					this.initStateFromRouter();
+				}
 
 			}, {
 				label: $$.activate,
@@ -3583,7 +3590,7 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 			$a = this.async,
 			names = Async.linkNames;
 
-		const mute = {
+		const nonMute = {
 			[names.promise]: true,
 			[names.request]: true
 		};
@@ -3592,7 +3599,7 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 			const
 				key = keys[i];
 
-			if (mute[key]) {
+			if (nonMute[key]) {
 				continue;
 			}
 

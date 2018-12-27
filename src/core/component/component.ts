@@ -66,6 +66,25 @@ export function getComponent(
 		{component, instance} = getBaseComponent(constructor, meta),
 		{methods} = meta;
 
+	const callMethod = (ctx, method) => {
+		const
+			obj = methods[method];
+
+		if (obj) {
+			try {
+				const
+					res = obj.fn.call(ctx);
+
+				if (Object.isPromise(res)) {
+					res.catch(stderr);
+				}
+
+			} catch (err) {
+				stderr(err);
+			}
+		}
+	};
+
 	return {
 		...<any>component,
 
@@ -132,32 +151,21 @@ export function getComponent(
 				ctx
 			);
 
-			runHook('beforeCreate', meta, ctx).then(async () => {
-				if (methods.beforeCreate) {
-					await methods.beforeCreate.fn.call(ctx);
-				}
-			}, stderr);
-
+			runHook('beforeCreate', meta, ctx).catch(stderr);
+			callMethod(ctx, 'beforeCreate');
 			bindWatchers(ctx);
 		},
 
 		created(): void {
 			this.hook = 'created';
 			bindWatchers(this);
-
-			runHook('created', this.meta, this).then(async () => {
-				if (methods.created) {
-					await methods.created.fn.call(this);
-				}
-			}, stderr);
+			runHook('created', this.meta, this).catch(stderr);
+			callMethod(this, 'created');
 		},
 
 		beforeMount(): void {
-			runHook('beforeMount', this.meta, this).then(async () => {
-				if (methods.beforeMount) {
-					await methods.beforeMount.fn.call(this);
-				}
-			}, stderr);
+			runHook('beforeMount', this.meta, this).catch(stderr);
+			callMethod(this, 'beforeMount');
 		},
 
 		mounted(): void {
@@ -173,11 +181,8 @@ export function getComponent(
 		},
 
 		beforeUpdate(): void {
-			runHook('beforeUpdate', this.meta, this).then(async () => {
-				if (methods.beforeUpdate) {
-					await methods.beforeUpdate.fn.call(this);
-				}
-			}, stderr);
+			runHook('beforeUpdate', this.meta, this).catch(stderr);
+			callMethod(this, 'beforeUpdate');
 		},
 
 		updated(): void {
@@ -189,28 +194,19 @@ export function getComponent(
 		},
 
 		activated(): void {
-			runHook('activated', this.meta, this).then(async () => {
-				if (methods.activated) {
-					await methods.activated.fn.call(this);
-				}
-			}, stderr);
+			runHook('activated', this.meta, this).catch(stderr);
+			callMethod(this, 'activated');
 		},
 
 		deactivated(): void {
-			runHook('deactivated', this.meta, this).then(async () => {
-				if (methods.deactivated) {
-					await methods.deactivated.fn.call(this);
-				}
-			}, stderr);
+			runHook('deactivated', this.meta, this).catch(stderr);
+			callMethod(this, 'deactivated');
 		},
 
 		beforeDestroy(): void {
+			runHook('beforeDestroy', this.meta, this).catch(stderr);
+			callMethod(this, 'beforeDestroy');
 			this.$async.clearAll();
-			runHook('beforeDestroy', this.meta, this).then(async () => {
-				if (methods.beforeDestroy) {
-					await methods.beforeDestroy.fn.call(this);
-				}
-			}, stderr);
 		},
 
 		destroyed(): void {
@@ -595,7 +591,7 @@ export function initPropsObject(
  * @param ctx - link to context
  * @param args - event arguments
  */
-export async function runHook(
+export function runHook(
 	hook: string,
 	meta: ComponentMeta,
 	ctx: Dictionary<any>,
@@ -611,7 +607,7 @@ export async function runHook(
 	}
 
 	if (!meta.hooks[hook].length) {
-		return;
+		return createSyncPromise();
 	}
 
 	const event = {
@@ -631,7 +627,7 @@ export async function runHook(
 			this.queue.push(cb);
 		},
 
-		async emit(event: string): Promise<void> {
+		emit(event: string): CanPromise<void> {
 			if (!this.events[event]) {
 				return;
 			}
@@ -644,22 +640,36 @@ export async function runHook(
 					el = o[i];
 
 				if (!el.event.delete(event).size) {
-					tasks.push(el.cb());
+					const
+						task = el.cb();
+
+					if (Object.isPromise(task)) {
+						tasks.push(task);
+					}
 				}
 			}
 
-			await Promise.all(tasks);
+			if (tasks.length) {
+				return Promise.all(tasks).then(() => undefined);
+			}
 		},
 
-		async fire(): Promise<void> {
+		fire(): CanPromise<void> {
 			const
-				tasks = <CanPromise<unknown>[]>[];
+				tasks = <Promise<unknown>[]>[];
 
 			for (let i = 0; i < this.queue.length; i++) {
-				tasks.push(this.queue[i]());
+				const
+					task = this.queue[i]();
+
+				if (Object.isPromise(task)) {
+					tasks.push(task);
+				}
 			}
 
-			await Promise.all(tasks);
+			if (tasks.length) {
+				return Promise.all(tasks).then(() => undefined);
+			}
 		}
 	};
 
@@ -667,13 +677,32 @@ export async function runHook(
 		const
 			el = hooks[i];
 
-		event.on(el.after, async () => {
-			await el.fn.apply(ctx, args);
-			await event.emit(el.name || Math.random().toString());
+		event.on(el.after, () => {
+			const
+				res = el.fn.apply(ctx, args),
+				emit = () => event.emit(el.name || Math.random().toString());
+
+			if (Object.isPromise(res)) {
+				return res.then(emit);
+			}
+
+			const
+				tasks = emit();
+
+			if (Object.isPromise(tasks)) {
+				return tasks;
+			}
 		});
 	}
 
-	await event.fire();
+	const
+		tasks = event.fire();
+
+	if (Object.isPromise(tasks)) {
+		return tasks;
+	}
+
+	return createSyncPromise();
 }
 
 /**
@@ -944,4 +973,24 @@ export function addMethodsToMeta(constructor: Function, meta: ComponentMeta): vo
 			});
 		}
 	}
+}
+
+function createSyncPromise<R = unknown>(val?: R, err?: unknown): Promise<R> {
+	return <any>{
+		then: (resolve, reject) => {
+			try {
+				if (err !== undefined) {
+					return createSyncPromise(undefined, reject ? reject(err) : err);
+				}
+
+				return createSyncPromise(resolve ? resolve(val) : val);
+
+			} catch (err) {
+				return createSyncPromise(undefined, reject ? reject(err) : err);
+			}
+		},
+
+		catch: (cb) => createSyncPromise(undefined, cb(err)),
+		finally: (cb) => createSyncPromise(cb())
+	};
 }

@@ -548,9 +548,13 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 		this.setPage = this.instance.setPage.bind(this);
 	}
 
-	/** @override */
+	/**
+	 * @override
+	 * @emits $root.initRouter(router: bRouter)
+	 */
 	protected created(): void {
 		super.created();
 		this.setField('routerStore', this, this.$root);
+		this.r.emit('initRouter', this);
 	}
 }
