@@ -64,14 +64,14 @@ export function getComponent(
 		{component, instance} = getBaseComponent(constructor, meta),
 		{methods} = meta;
 
-	const callMethod = (method) => {
+	const callMethod = (ctx, method) => {
 		const
 			obj = methods[method];
 
 		if (obj) {
 			try {
 				const
-					res = obj.fn.call(this);
+					res = obj.fn.call(ctx);
 
 				if (Object.isPromise(res)) {
 					res.catch(stderr);
@@ -150,7 +150,7 @@ export function getComponent(
 			);
 
 			runHook('beforeCreate', meta, ctx).catch(stderr);
-			callMethod('beforeCreate');
+			callMethod(ctx, 'beforeCreate');
 			bindWatchers(ctx);
 		},
 
@@ -158,12 +158,12 @@ export function getComponent(
 			this.hook = 'created';
 			bindWatchers(this);
 			runHook('created', this.meta, this).catch(stderr);
-			callMethod('created');
+			callMethod(this, 'created');
 		},
 
 		beforeMount(): void {
 			runHook('beforeMount', this.meta, this).catch(stderr);
-			callMethod('beforeMount');
+			callMethod(this, 'beforeMount');
 		},
 
 		mounted(): void {
@@ -180,7 +180,7 @@ export function getComponent(
 
 		beforeUpdate(): void {
 			runHook('beforeUpdate', this.meta, this).catch(stderr);
-			callMethod('beforeUpdate');
+			callMethod(this, 'beforeUpdate');
 		},
 
 		updated(): void {
@@ -193,17 +193,17 @@ export function getComponent(
 
 		activated(): void {
 			runHook('activated', this.meta, this).catch(stderr);
-			callMethod('activated');
+			callMethod(this, 'activated');
 		},
 
 		deactivated(): void {
 			runHook('deactivated', this.meta, this).catch(stderr);
-			callMethod('deactivated');
+			callMethod(this, 'deactivated');
 		},
 
 		beforeDestroy(): void {
 			runHook('beforeDestroy', this.meta, this).catch(stderr);
-			callMethod('beforeDestroy');
+			callMethod(this, 'beforeDestroy');
 			this.$async.clearAll();
 		},
 
