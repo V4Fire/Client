@@ -18,7 +18,12 @@ const
 
 const alias = $C([resolve.cwd, ...config.dependencies]).to({}).reduce((map, el) => {
 	$C(glob.sync(path.join(resolve.lib, el, 'build/loaders/*.js'))).forEach((el) => {
-		map[path.basename(el, path.extname(el))] = el;
+		const
+			key = path.basename(el, path.extname(el));
+
+		if (!map[key]) {
+			map[key] = el;
+		}
 	});
 
 	return map;
