@@ -2688,7 +2688,7 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	 * @param [type] - call type
 	 */
 	protected convertStateToRouter(data?: CanUndef<Dictionary>, type: ConverterCallType = 'component'): Dictionary {
-		return {...data};
+		return {};
 	}
 
 	/**
