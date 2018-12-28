@@ -2742,7 +2742,7 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 				{router} = r;
 
 			if (!router) {
-				await this.async.promisifyOnce(this.$root, 'initRouter', {
+				await $a.promisifyOnce(this.$root, 'initRouter', {
 					label: $$.initStateFromRouter
 				});
 
