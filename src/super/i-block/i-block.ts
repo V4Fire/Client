@@ -2705,7 +2705,7 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	 * @param [type] - call type
 	 */
 	protected convertStateToRouter(data?: Dictionary, type: ConverterCallType = 'component'): Dictionary {
-		return {...data};
+		return {};
 	}
 
 	/**
@@ -2751,40 +2751,55 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 			routerWatchers
 		);
 
-		this.execCbAtTheRightTime(() => {
+		this.execCbAtTheRightTime(async () => {
 			const
-				p = this.$root.route || {},
-				stateFields = this.convertStateToRouter(Object.assign(Object.create(p), p.params, p.query));
+				r = this.$root;
 
-			this.setState(stateFields);
+			let
+				{router} = r;
+
+			if (!router) {
+				await $a.promisifyOnce(this.$root, 'initRouter', {
+					label: $$.initStateFromRouter
+				});
+
+				({router} = r);
+			}
+
+			if (!router) {
+				return;
+			}
 
 			const
-				{router} = this.$root;
+				route = r.route || {},
+				stateFields = this.convertStateToRouter(Object.assign(Object.create(route), route.params, route.query));
 
-			if (this.syncRouterStoreOnInit && router) {
+			this.setState(
+				stateFields
+			);
+
+			if (this.syncRouterStoreOnInit) {
 				const
-					currentRoute = this.$root.route || {},
 					routerState = this.convertStateToRouter(stateFields, 'remote');
 
 				if (Object.keys(routerState).length) {
-					const
-						modState = {};
+					let
+						modState;
 
 					for (let keys = Object.keys(routerState), i = 0; i < keys.length; i++) {
 						const
 							key = keys[i],
-							p = currentRoute.params,
-							q = currentRoute.query;
+							p = route.params,
+							q = route.query;
 
 						if ((!p || p[key] == null) && (!q || q[key] == null)) {
+							modState = modState || {};
 							modState[key] = routerState[key];
 						}
 					}
 
-					if (Object.keys(modState).length) {
-						router.replace(null, {
-							query: modState
-						});
+					if (modState) {
+						router.replace(null, {query: modState});
 					}
 				}
 			}
