@@ -2772,9 +2772,11 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 
 					for (let keys = Object.keys(routerState), i = 0; i < keys.length; i++) {
 						const
-							key = keys[i];
+							key = keys[i],
+							p = currentRoute.params,
+							q = currentRoute.query;
 
-						if (currentRoute.params[key] == null && currentRoute.query[key] == null) {
+						if ((!p || p[key] == null) && (!q || q[key] == null)) {
 							modState[key] = routerState[key];
 						}
 					}
