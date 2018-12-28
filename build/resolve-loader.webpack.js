@@ -10,14 +10,14 @@
 
 const
 	$C = require('collection.js'),
-	{resolve} = require('@pzlr/build-core');
+	{config, resolve} = require('@pzlr/build-core');
 
 const
 	glob = require('glob'),
 	path = require('path');
 
-const alias = $C([resolve.cwd, ...resolve.rootDependencies]).to({}).reduce((map, el) => {
-	$C(glob.sync(path.join(el, 'build/loaders/*.js'))).forEach((el) => {
+const alias = $C([resolve.cwd, ...config.dependencies]).to({}).reduce((map, el) => {
+	$C(glob.sync(path.join(resolve.lib, el, 'build/loaders/*.js'))).forEach((el) => {
 		map[path.basename(el, path.extname(el))] = el;
 	});
 
