@@ -16,8 +16,8 @@ const
 	glob = require('glob'),
 	path = require('path');
 
-const alias = $C([resolve.cwd, ...config.dependencies]).to({}).reduce((map, el) => {
-	$C(glob.sync(path.join(resolve.lib, el, 'build/loaders/*.js'))).forEach((el) => {
+const alias = $C([resolve.cwd, ...config.dependencies]).to({}).reduce((map, el, i) => {
+	$C(glob.sync(path.join(i ? resolve.lib : '', el, 'build/loaders/*.js'))).forEach((el) => {
 		const
 			key = path.basename(el, path.extname(el));
 
