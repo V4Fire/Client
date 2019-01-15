@@ -22,13 +22,15 @@
     "V4Fire"
   ],
   "scripts": {
+    "build": "npx gulp build:tsconfig && npx webpack",
     "test": "echo \"Error: no test specified\" && exit 0",
-    "postinstall": "rm -rf ./node_modules/@types/node"
+    "removeBadDeps": "rm -rf ./node_modules/@types/node",
+    "postinstall": "npm run removeBadDeps"
   },
   "dependencies": {
-    "@v4fire/core": "git+https://github.com/V4Fire/Core.git#zero",
     "@types/socket.io": "^1.4.40",
     "@types/socket.io-client": "^1.4.32",
+    "@v4fire/core": "git+https://github.com/V4Fire/Core.git#zero",
     "babel-polyfill": "^6.26.0",
     "chart.js": "^2.7.3",
     "collection.js": "^6.6.27",
@@ -42,8 +44,7 @@
     "requestidlecallback": "^0.3.0",
     "snakeskin": "^7.5.1",
     "socket.io": "^2.2.0",
-    "sugar": "^2.0.6",
-    "vue": "^2.5.21"
+    "vue": "^2.5.22"
   },
   "optionalDependencies": {
     "@pzlr/build-core": "^2.8.11",
@@ -110,14 +111,14 @@
     "uniconf": "^2.0.0",
     "upath": "^1.1.0",
     "url-loader": "^1.1.2",
-    "vue-template-compiler": "^2.5.21",
+    "vue-template-compiler": "^2.5.22",
     "vue-template-es2015-compiler": "^1.6.0",
     "webpack": "^4.19.0",
     "webpack-cli": "^3.1.2"
   },
   "devDependencies": {
     "babel-eslint": "^10.0.1",
-    "eslint": "^5.11.1",
-    "tslint": "^5.12.0"
+    "eslint": "^5.12.0",
+    "tslint": "^5.12.1"
   }
 }
