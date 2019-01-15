@@ -20,6 +20,7 @@ export default function socket(namespace: string = ''): CanUndef<Socket> {
 	let socket;
 
 	try {
+		// @ts-ignore
 		socket = require('socket.io-client');
 	} catch {}
 

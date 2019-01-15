@@ -36,6 +36,7 @@ let
 	ctx;
 
 if (IS_PROD) {
+	// @ts-ignore
 	ctx = (<any>require).context(
 		'!!svg-sprite!svg-fill?fill=currentColor!svgo!@sprite',
 		true,
@@ -43,6 +44,7 @@ if (IS_PROD) {
 	);
 
 } else {
+	// @ts-ignore
 	ctx = (<any>require).context(
 		'!!svg-sprite!svg-fill?fill=currentColor!@sprite',
 		true,
