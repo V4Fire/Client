@@ -74,6 +74,7 @@ import {
 	ComponentInterface,
 	ComponentElement,
 	ComponentMeta,
+	MethodWatcher,
 
 	RenderObject,
 	RenderContext,
@@ -110,11 +111,12 @@ export {
 } from 'super/i-block/modules/decorators';
 
 export type ComponentStatuses = Partial<Record<keyof typeof statuses, boolean>>;
+export type MemoizedLiteral<T = unknown> = Readonly<Dictionary<T>> | ReadonlyArray<T>;
 
 export const
 	$$ = symbolGenerator(),
 	modsCache = Object.createDict<ModsNTable>(),
-	literalCache = Object.createDict();
+	literalCache = Object.createDict<MemoizedLiteral>();
 
 const classesCache = new Cache<'base' | 'blocks' | 'els', ReadonlyArray<string> | Readonly<Dictionary<string>>>([
 	'base',
@@ -1734,7 +1736,7 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	 * @param value
 	 */
 	setMod(name: string, value: unknown): CanPromise<boolean>;
-	setMod(nodeOrName: Element | string, name: string | unknown, value?: unknown): CanPromise<boolean> {
+	setMod(nodeOrName: Element | string, name: string | unknown, value?: unknown): CanPromise<boolean | void> {
 		if (Object.isString(nodeOrName)) {
 			return this.execCbAfterBlockReady(() => this.block.setMod(nodeOrName, name));
 		}
@@ -1760,7 +1762,7 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	 * @param [value]
 	 */
 	removeMod(name: string, value?: unknown): CanPromise<boolean>;
-	removeMod(nodeOrName: Element | string, name?: string | unknown, value?: unknown): CanPromise<boolean> {
+	removeMod(nodeOrName: Element | string, name?: string | unknown, value?: unknown): CanPromise<boolean | void> {
 		if (Object.isString(nodeOrName)) {
 			return this.execCbAfterBlockReady(() => this.block.removeMod(nodeOrName, name));
 		}
@@ -1860,7 +1862,7 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 
 			for (let i = 0; i < domEls.length; i++) {
 				const
-					el = (<ComponentElement<any>>domEls[i]).component;
+					el = (<ComponentElement>domEls[i]).component;
 
 				if (el) {
 					els.add(el);
@@ -1913,7 +1915,7 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 
 			for (let i = 0; i < domEls.length; i++) {
 				const
-					el = (<ComponentElement<any>>domEls[i]).component;
+					el = (<ComponentElement>domEls[i]).component;
 
 				if (el) {
 					els.add(el);
@@ -2175,7 +2177,7 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 			res = <Dictionary>res[chunks[i]];
 		}
 
-		return <any>res;
+		return <CanUndef<T>>res;
 	}
 
 	/**
@@ -2209,9 +2211,9 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	 * @param cb
 	 * @param [params] - async parameters
 	 */
-	execCbAtTheRightTime<T = unknown>(cb: (this: this) => T, params?: AsyncOpts): CanPromise<T | void> {
+	execCbAtTheRightTime<T = unknown>(cb: (this: this) => T, params?: AsyncOpts): CanPromise<CanVoid<T>> {
 		if (this.isBeforeCreate('beforeDataCreate')) {
-			return <any>this.$async.promise(new Promise((r) => {
+			return this.$async.promise(new Promise<T>((r) => {
 				this.meta.hooks.beforeDataCreate.push({fn: () => r(cb.call(this))});
 			}), params).catch(stderr);
 		}
@@ -2934,7 +2936,7 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	 * @param elName
 	 * @param handler
 	 */
-	protected delegateElement(elName: string, handler: Function): CanPromise<Function> {
+	protected delegateElement(elName: string, handler: Function): CanPromise<CanVoid<Function>> {
 		return this.execCbAfterBlockReady(() => this.delegate(this.block.getElSelector(elName), handler));
 	}
 
@@ -2942,20 +2944,22 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	 * Returns a link to the closest parent component for the current
 	 * @param component - component name or a link to the component constructor
 	 */
-	protected closest<T extends iBlock = iBlock>(component: string | {new: T}): CanUndef<T> {
+	protected closest<T extends iBlock = iBlock>(component: string | ClassConstructor<T>): CanUndef<T> {
 		const
-			isStr = Object.isString(component);
+			nm = Object.isString(component) ? component.dasherize() : undefined;
 
-		let el = this.$parent;
-		while (el && (
-			isStr ?
-				el.componentName !== (<string>component).dasherize() :
-				!(el.instance instanceof <any>component)
-		)) {
-			el = el.$parent;
+		let
+			el = <CanUndef<T>>this.$parent;
+
+		while (el) {
+			if (Object.isFunction(component) && el.instance instanceof component || el.componentName === nm) {
+				return el;
+			}
+
+			el = <CanUndef<T>>el.$parent;
 		}
 
-		return <any>el;
+		return undefined;
 	}
 
 	/**
@@ -2964,8 +2968,8 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	 * @param obj
 	 * @param [constructor] - component constructor
 	 */
-	protected isComponent<T extends iBlock>(obj: any, constructor?: {new(): T}): obj is T {
-		return Boolean(obj && obj.instance instanceof (constructor || iBlock));
+	protected isComponent<T extends iBlock>(obj: unknown, constructor?: {new(): T}): obj is T {
+		return Boolean(obj && (<Dictionary>obj).instance instanceof (constructor || iBlock));
 	}
 
 	/**
@@ -3033,8 +3037,15 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	 */
 	protected async waitRef<T = iBlock | Element | iBlock[] | Element[]>(ref: string, params?: AsyncOpts): Promise<T> {
 		await this.async.wait(() => this.$refs[ref], params);
-		const link = <any>this.$refs[ref];
-		return link.component ? link.component : link;
+
+		const
+			link = <T>this.$refs[ref];
+
+		if (link instanceof Element) {
+			return (<ComponentElement<T>>link).component || link;
+		}
+
+		return link;
 	}
 
 	/**
@@ -3277,10 +3288,11 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 
 		const
 			key = JSON.stringify(classes),
-			cache = classesCache.create('base');
+			cache = classesCache.create('base'),
+			cacheVal = cache[key];
 
-		if (cache[key]) {
-			return <Readonly<Dictionary<string>>>cache[key];
+		if (cacheVal) {
+			return <Readonly<Dictionary<string>>>cacheVal;
 		}
 
 		const
@@ -3309,7 +3321,7 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 					}
 				}
 
-				map[key.dasherize()] = this.getFullElName.apply(this, (<any[]>[componentName]).concat(el));
+				map[key.dasherize()] = this.getFullElName.apply(this, (<unknown[]>[componentName]).concat(el));
 			}
 		}
 
@@ -3342,7 +3354,7 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 					mod = key.dasherize();
 
 				let
-					el = <any>mods[key];
+					el = <Dictionary>mods[key];
 
 				if (!Object.isObject(el)) {
 					el = {default: el};
@@ -3365,9 +3377,19 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	 * Saves to cache the specified literal and returns returns it
 	 * @param literal
 	 */
-	protected memoizeLiteral<T = unknown>(literal: T): T extends Dictionary ? Readonly<T>: ReadonlyArray<T> {
-		const key = JSON.stringify(literal);
-		return literalCache[key] = literalCache[key] || Object.freeze(<any>literal);
+	protected memoizeLiteral<T>(
+		literal: T
+	): T extends (infer V)[] ? ReadonlyArray<V> : T extends Dictionary ? Readonly<T> : T {
+		if (Object.isArray(literal) || Object.isObject(literal)) {
+			if (Object.isFrozen(literal)) {
+				return <any>literal;
+			}
+
+			const key = JSON.stringify(literal);
+			return literalCache[key] = literalCache[key] || Object.freeze(<any>literal);
+		}
+
+		return <any>literal;
 	}
 
 	/**
@@ -3547,9 +3569,6 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 			return;
 		}
 
-		const
-			keys = Object.keys(o);
-
 		const normalizeField = (field) => {
 			if (customWatcherRgxp.test(field)) {
 				return field.replace(customWatcherRgxp, (str, prfx, emitter, event) =>
@@ -3559,30 +3578,33 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 			return `$parent.${field}`;
 		};
 
-		for (let i = 0; i < keys.length; i++) {
+		for (let keys = Object.keys(o), i = 0; i < keys.length; i++) {
 			const
 				method = keys[i],
-				watchers = (<any[]>[]).concat((<MethodWatchers>o[method]) || []);
+				watchers = (<Array<string | MethodWatcher>>[]).concat(<CanArray<string | MethodWatcher>>o[method] || []);
 
 			for (let i = 0; i < watchers.length; i++) {
 				const
-					el = watchers[i],
-					isStr = Object.isString(el);
-
-				const
-					field = normalizeField(isStr ? el : el.field),
-					wList = w[field] = w[field] || [];
+					el = watchers[i];
 
 				if (Object.isString(el)) {
+					const
+						field = normalizeField(el),
+						wList = w[field] = w[field] || [];
+
 					wList.push({
 						method,
 						handler: method
 					});
 
 				} else {
+					const
+						field = normalizeField(el.field),
+						wList = w[field] = w[field] || [];
+
 					wList.push({
 						...el,
-						args: [].concat(el.args || []),
+						args: (<unknown[]>[]).concat(el.args || []),
 						method,
 						handler: method
 					});
@@ -3612,9 +3634,9 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	 * @param cb
 	 * @param [params] - async parameters
 	 */
-	protected execCbAfterCreated<T = unknown>(cb: (this: this) => T, params?: AsyncOpts): CanPromise<T> {
+	protected execCbAfterCreated<T = unknown>(cb: (this: this) => T, params?: AsyncOpts): CanPromise<CanVoid<T>> {
 		if (this.isBeforeCreate()) {
-			return <any>this.$async.promise(new Promise((r) => {
+			return this.$async.promise(new Promise<T>((r) => {
 				this.meta.hooks.created.unshift({fn: () => r(cb.call(this))});
 			}), params).catch(stderr);
 		}
@@ -3628,12 +3650,12 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	 * @param cb
 	 * @param [params] - async parameters
 	 */
-	protected execCbAfterBlockReady<T = unknown>(cb: (this: this) => T, params?: AsyncOpts): CanPromise<T> {
+	protected execCbAfterBlockReady<T = unknown>(cb: (this: this) => T, params?: AsyncOpts): CanPromise<CanVoid<T>> {
 		if (this.block) {
 			return cb.call(this);
 		}
 
-		return <any>this.$async.promise(new Promise((r) => {
+		return this.$async.promise(new Promise<T>((r) => {
 			this.localEvent.once('block.ready', () => r(cb.call(this)));
 		}), params).catch(stderr);
 	}
@@ -3731,7 +3753,10 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 		this.componentStatus = 'destroyed';
 		this.async.clearAll();
 		this.localEvent.removeAllListeners();
-		delete (<StrictDictionary<any>>classesCache).dict.els[this.componentId];
+
+		if (classesCache.dict && classesCache.dict.els) {
+			delete classesCache.dict.els[this.componentId];
+		}
 	}
 }
 
