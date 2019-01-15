@@ -10,11 +10,12 @@
 
 $p = {
 	width: auto
+	zIndexPos: overall
 }
 
 b-window extends i-data
 	absolute top 0 left 0
-	zIndex(overall)
+	zIndex($p.zIndexPos)
 	min-width 100%
 
 	&_width_full &__window
