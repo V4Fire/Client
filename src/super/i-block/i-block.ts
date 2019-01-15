@@ -8,8 +8,6 @@
 
 // tslint:disable:max-file-line-count
 
-import $C = require('collection.js');
-
 import symbolGenerator from 'core/symbol';
 import Async, { AsyncOpts, ClearOptsId, WrappedFunction, ProxyCb } from 'core/async';
 import log, { LogMessageOptions } from 'core/log';
@@ -1232,8 +1230,7 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 
 		const
 			hooks = this.meta.hooks.beforeDataCreate,
-			syncLinkCache = this.syncLinkCache,
-			linksCache = $C(this.linksCache);
+			{syncLinkCache, linksCache} = this;
 
 		const
 			head = this.$activeField;
@@ -1251,11 +1248,11 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 			obj = {};
 
 		if (tail.length) {
-			$C(obj).set({}, tail);
+			Object.set(obj, tail, {});
 		}
 
 		const
-			cursor = $C(obj).get(tail);
+			cursor = Object.get<StrictDictionary>(obj, tail);
 
 		const merge = (...args) => Object.mixin({
 			deep: true,
@@ -1266,14 +1263,14 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 			const
 				newObj = {};
 
-			$C(newObj).set(val, path.split('.').slice(1));
+			Object.set(newObj, path.split('.').slice(1), val);
 			this.setField(head, merge(this.getField(head), newObj));
 
 			return val;
 		};
 
 		const attachWatcher = (field, path, getVal) => {
-			linksCache.set(true, path);
+			Object.set(linksCache, path, true);
 
 			this.watch(field, (val, oldVal) => {
 				if (Object.fastCompare(val, oldVal) || Object.fastCompare(val, this.getField(path))) {
@@ -1323,7 +1320,7 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 				const
 					l = [path, el[0]].join('.');
 
-				if (!linksCache.get(l)) {
+				if (!Object.get(linksCache, l)) {
 					const getVal = (val?) => {
 						val = val || this.getField(field);
 						return wrapper ? wrapper.call(this, val) : val;
@@ -1337,7 +1334,7 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 				const
 					l = [path, el].join('.');
 
-				if (!linksCache.get(l)) {
+				if (!Object.get(linksCache, l)) {
 					const getVal = (val?) => val || this.getField(el);
 					attachWatcher(el, l, getVal);
 					cursor[el] = getVal();
@@ -1643,17 +1640,22 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 				await this.initStateFromStorage();
 
 				if (providers.size) {
-					await $a.wait(() => $C(providers).every((el) => {
-						const
-							st = <string>el.componentStatus;
+					await $a.wait(() => {
+						for (let o = providers.values(), el = o.next(); !el.done; el = o.next()) {
+							const
+								val = el.value,
+								st = <string>val.componentStatus;
 
-						if (st === 'ready' || statuses[st] <= 0) {
-							providers.delete(el);
-							return true;
+							if (st === 'ready' || statuses[st] <= 0) {
+								providers.delete(val);
+								continue;
+							}
+
+							return false;
 						}
 
-						return false;
-					}));
+						return true;
+					});
 				}
 
 				done();
@@ -1964,13 +1966,29 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	 * @param [value] - value of modifiers
 	 */
 	ifEveryMods(mods: Array<CanArray<string>>, value?: ModVal): boolean {
-		return $C(mods).every((el) => {
+		const
+			base = this.mods;
+
+		for (let i = 0; i < mods.length; i++) {
+			const
+				el = mods[i];
+
 			if (Object.isArray(el)) {
-				return this.mods[<string>el[0]] === String(el[1]);
+				if (base[<string>el[0]] === String(el[1])) {
+					continue;
+				}
+
+				return false;
 			}
 
-			return this.mods[el] === String(value);
-		});
+			if (base[el] === String(value)) {
+				continue;
+			}
+
+			return false;
+		}
+
+		return true;
 	}
 
 	/**
@@ -1980,13 +1998,27 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	 * @param [value] - value of modifiers
 	 */
 	ifSomeMod(mods: Array<CanArray<string>>, value?: ModVal): boolean {
-		return $C(mods).some((el) => {
+		const
+			base = this.mods;
+
+		for (let i = 0; i < mods.length; i++) {
+			const
+				el = mods[i];
+
 			if (Object.isArray(el)) {
-				return this.mods[<string>el[0]] === String(el[1]);
+				if (base[<string>el[0]] === String(el[1])) {
+					return true;
+				}
+
+				continue;
 			}
 
-			return this.mods[el] === String(value);
-		});
+			if (base[el] === String(value)) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	/**
@@ -2151,8 +2183,14 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	 * @param [obj]
 	 */
 	setState(obj?: Dictionary): void {
-		$C(obj).forEach((el, key) => {
+		if (!obj) {
+			return;
+		}
+
+		for (let keys = Object.keys(obj), i = 0; i < keys.length; i++) {
 			const
+				key = keys[i],
+				el = obj[key],
 				p = key.split('.');
 
 			if (p[0] === 'mods') {
@@ -2161,7 +2199,7 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 			} else if (!Object.fastCompare(el, this.getField(key))) {
 				this.setField(key, el);
 			}
-		});
+		}
 	}
 
 	/**
@@ -2268,7 +2306,7 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 
 		const
 			rgxp = /(?:^| )([bpg]-[^_ ]+)(?: |$)/,
-			componentName = comp ? comp.componentName : $C(rgxp.exec($el.className)).get('1') || this.componentName;
+			componentName = comp ? comp.componentName : Object.get(rgxp.exec($el.className), '1') || this.componentName;
 
 		return Object.assign(Object.create(Block.prototype), {
 			component: {
@@ -2598,8 +2636,18 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	 * Returns an object with default component fields for resetting a local storage
 	 * @param [data] - advanced data
 	 */
-	protected convertStateToStorageReset(data?: Dictionary): Dictionary {
-		return $C(this.convertStateToStorage(data)).map(() => undefined);
+	protected convertStateToStorageReset(data?: Dictionary): Dictionary<undefined> {
+		const
+			stateFields = this.convertStateToStorage(data),
+			res = {};
+
+		if (stateFields) {
+			for (let keys = Object.keys(stateFields), i = 0; i < keys.length; i++) {
+				res[keys[i]] = undefined;
+			}
+		}
+
+		return res;
 	}
 
 	/**
@@ -2657,21 +2705,24 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 					label: $$.syncLocalStore
 				});
 
-				$C(stateFields).forEach((el, key) => {
-					const
-						p = key.split('.');
+				if (stateFields) {
+					for (let keys = Object.keys(stateFields), i = 0; i < keys.length; i++) {
+						const
+							key = keys[i],
+							p = key.split('.');
 
-					if (p[0] === 'mods') {
-						$a.on(this.localEvent, `block.mod.*.${p[1]}.*`, sync, storeWatchers);
+						if (p[0] === 'mods') {
+							$a.on(this.localEvent, `block.mod.*.${p[1]}.*`, sync, storeWatchers);
 
-					} else {
-						this.watch(key, (val, oldVal) => {
-							if (!Object.fastCompare(val, oldVal)) {
-								sync();
-							}
-						}, storeWatchers);
+						} else {
+							this.watch(key, (val, oldVal) => {
+								if (!Object.fastCompare(val, oldVal)) {
+									sync();
+								}
+							}, storeWatchers);
+						}
 					}
-				});
+				}
 
 				this.log('state:init:storage', this, stateFields);
 			});
@@ -2712,8 +2763,18 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	 * Returns an object with default component fields for resetting a router
 	 * @param [data] - advanced data
 	 */
-	protected convertStateToRouterReset(data?: Dictionary): Dictionary {
-		return $C(this.convertStateToRouter(data)).map(() => undefined);
+	protected convertStateToRouterReset(data?: Dictionary): Dictionary<undefined> {
+		const
+			stateFields = this.convertStateToRouter(data),
+			res = {};
+
+		if (stateFields) {
+			for (let keys = Object.keys(stateFields), i = 0; i < keys.length; i++) {
+				res[keys[i]] = undefined;
+			}
+		}
+
+		return res;
 	}
 
 	/**
@@ -2808,21 +2869,24 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 				label: $$.syncRouter
 			});
 
-			$C(stateFields).forEach((el, key) => {
-				const
-					p = key.split('.');
+			if (stateFields) {
+				for (let keys = Object.keys(stateFields), i = 0; i < keys.length; i++) {
+					const
+						key = keys[i],
+						p = key.split('.');
 
-				if (p[0] === 'mods') {
-					$a.on(this.localEvent, `block.mod.*.${p[1]}.*`, sync, routerWatchers);
+					if (p[0] === 'mods') {
+						$a.on(this.localEvent, `block.mod.*.${p[1]}.*`, sync, routerWatchers);
 
-				} else {
-					this.watch(key, (val, oldVal) => {
-						if (!Object.fastCompare(val, oldVal)) {
-							sync();
-						}
-					}, routerWatchers);
+					} else {
+						this.watch(key, (val, oldVal) => {
+							if (!Object.fastCompare(val, oldVal)) {
+								sync();
+							}
+						}, routerWatchers);
+					}
 				}
-			});
+			}
 
 			this.log('state:init:router', this, stateFields);
 
@@ -3057,14 +3121,38 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 			fieldName = Object.isArray(name) ? name[0] : undefined;
 
 		const
-			cache = this.syncLinkCache,
-			sync = (el, key) => (!fieldName || key === fieldName) && el.sync(value);
+			cache = this.syncLinkCache;
+
+		const sync = (linkName) => {
+			const
+				o = cache[linkName];
+
+			if (!o) {
+				return;
+			}
+
+			for (let keys = Object.keys(o), i = 0; i < keys.length; i++) {
+				const
+					key = keys[i],
+					el = o[key];
+
+				if (!el) {
+					continue;
+				}
+
+				if (!fieldName || key === fieldName) {
+					el.sync(value);
+				}
+			}
+		};
 
 		if (linkName) {
-			$C(cache[linkName]).forEach(sync);
+			sync(linkName);
 
 		} else {
-			$C(cache).forEach((el) => $C(el).forEach(sync));
+			for (let keys = Object.keys(cache), i = 0; i < keys.length; i++) {
+				sync(keys[i]);
+			}
 		}
 	}
 
