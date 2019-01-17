@@ -17,8 +17,11 @@ import { SetEvent } from 'core/session';
 import { StatusEvent } from 'core/net';
 
 import iBlock from 'super/i-block/i-block';
-import bRouter, { CurrentPage } from 'base/b-router/b-router';
 import iPage, { component, field, system, watch, Event } from 'super/i-page/i-page';
+
+//#if runtime has router
+import bRouter, { CurrentPage } from 'base/b-router/b-router';
+//#endif
 
 export * from 'super/i-data/i-data';
 export { globalEvent, ResetType, CurrentPage };

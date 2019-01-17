@@ -51,8 +51,12 @@ import {
 } from 'super/i-block/modules/interface';
 
 import iStaticPage from 'super/i-static-page/i-static-page';
-import bRouter, { CurrentPage } from 'base/b-router/b-router';
 import { asyncLocal, AsyncNamespace } from 'core/kv-storage';
+
+//#if runtime has router
+import bRouter, { CurrentPage } from 'base/b-router/b-router';
+//#endif
+
 import {
 
 	component,
