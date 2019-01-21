@@ -159,7 +159,10 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	runtime() {
 		return {
 			'noGlobals': true,
-			'kv-storage': true
+			'core/kv-storage': true,
+			'core/helpers': true,
+			'core/browser': true,
+			'core/analytics': true
 		};
 	},
 

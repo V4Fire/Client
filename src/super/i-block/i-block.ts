@@ -9,14 +9,39 @@
 // tslint:disable:max-file-line-count
 
 import symbolGenerator from 'core/symbol';
+
 import Async, { AsyncOpts, ClearOptsId, WrappedFunction, ProxyCb } from 'core/async';
 import log, { LogMessageOptions } from 'core/log';
+
+import { EventEmitter2 as EventEmitter } from 'eventemitter2';
 import { ExperimentsSet } from 'core/abt/interface';
 
+//#if runtime has core/analytics
 import * as analytics from 'core/analytics';
-import { EventEmitter2 as EventEmitter } from 'eventemitter2';
+//#endif
+
+//#if runtime has core/helpers
+import * as helpers from 'core/helpers';
+//#endif
+
+//#if runtime has core/browser
+import * as browser from 'core/browser';
+//#endif
+
+//#if runtime has core/kv-storage
+import { asyncLocal, AsyncNamespace } from 'core/kv-storage';
+//#endif
+
+//#if runtime has bRouter
+import bRouter, { CurrentPage } from 'base/b-router/b-router';
+//#endif
+
+//#if runtime has iStaticPage
+import iStaticPage from 'super/i-static-page/i-static-page';
+//#endif
 
 import 'super/i-block/directives';
+
 import Daemons, { DaemonsDict } from 'super/i-block/modules/daemons';
 import Block from 'super/i-block/modules/block';
 import Cache from 'super/i-block/modules/cache';
@@ -50,13 +75,6 @@ import {
 
 } from 'super/i-block/modules/interface';
 
-import iStaticPage from 'super/i-static-page/i-static-page';
-import { asyncLocal, AsyncNamespace } from 'core/kv-storage';
-
-//#if runtime has router
-import bRouter, { CurrentPage } from 'base/b-router/b-router';
-//#endif
-
 import {
 
 	component,
@@ -89,9 +107,6 @@ import {
 import { prop, field, system, watch, wait, p, MethodWatchers } from 'super/i-block/modules/decorators';
 import { queue, backQueue, restart, deferRestart } from 'core/render';
 import { delegate } from 'core/dom';
-
-import * as helpers from 'core/helpers';
-import * as browser from 'core/browser';
 
 export * from 'core/component';
 export * from 'super/i-block/modules/interface';
@@ -951,10 +966,16 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	@system({
 		atom: true,
 		unique: true,
-		init: (o) => asyncLocal.namespace(o.componentName)
+
+		// tslint:disable-next-line:arrow-return-shorthand
+		init: (o) => {
+			//#if runtime has core/has kv-storage
+			return asyncLocal.namespace(o.componentName);
+			//#endif
+		}
 	})
 
-	protected readonly storage!: AsyncNamespace;
+	protected readonly storage!: CanUndef<AsyncNamespace>;
 
 	/**
 	 * Cache of child async components
@@ -974,7 +995,15 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	@system({
 		atom: true,
 		unique: true,
-		init: () => helpers
+		init: () => {
+			//#if runtime has core/helpers
+			return helpers;
+			//#endif
+
+			//#unless runtime has core/helpers
+			return {};
+			//#endunless
+		}
 	})
 
 	protected readonly h!: typeof helpers;
@@ -985,7 +1014,15 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	@system({
 		atom: true,
 		unique: true,
-		init: () => browser
+		init: () => {
+			//#if runtime has core/browser
+			return browser;
+			//#endif
+
+			//#unless runtime has core/browser
+			return {};
+			//#endunless
+		}
 	})
 
 	protected readonly b!: typeof browser;
@@ -2591,8 +2628,13 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 
 		return $a.promise(async () => {
 			try {
-				await this.storage.set(id, settings);
-				this.log('settings:save', () => Object.fastClone(settings));
+				const
+					s = this.storage;
+
+				if (s) {
+					await s.set(id, settings);
+					this.log('settings:save', () => Object.fastClone(settings));
+				}
 
 			} catch {}
 
@@ -2615,9 +2657,14 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 
 		return this.async.promise(async () => {
 			try {
-				const res = await this.storage.get<T>(id);
-				this.log('settings:load', () => Object.fastClone(res));
-				return res;
+				const
+					s = this.storage;
+
+				if (s) {
+					const res = await s.get<T>(id);
+					this.log('settings:load', () => Object.fastClone(res));
+					return res;
+				}
 
 			} catch {}
 
@@ -3059,7 +3106,9 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	 * @param [details] - event details
 	 */
 	protected sendAnalyticsEvent(event: string, details: Dictionary = {}): void {
+		//#if runtime has core/analytics
 		analytics.send(event, details);
+		//#endif
 	}
 
 	/**

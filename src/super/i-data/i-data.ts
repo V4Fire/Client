@@ -11,26 +11,39 @@
 import statusCodes from 'core/status-codes';
 import symbolGenerator from 'core/symbol';
 
-import { Socket } from 'core/socket';
 import Async, { AsyncOpts, AsyncCbOpts } from 'core/async';
-
 import iMessage, { component, prop, field, system, watch, wait, RemoteEvent } from 'super/i-message/i-message';
+import { providers } from 'core/data/const';
+
+//#if runtime has core/data
+
 import Provider, {
 
-	providers,
+	Socket,
 	RequestQuery,
 	RequestBody,
 	RequestResponseObject,
 	RequestError,
 	Response,
 	ModelMethods,
+	ProviderParams,
 	CreateRequestOptions as BaseCreateRequestOptions
 
 } from 'core/data';
 
-export * from 'super/i-message/i-message';
-export { ModelMethods, RequestQuery, RequestBody, RequestResponseObject, RequestError } from 'core/data';
+export {
 
+	ModelMethods,
+	RequestQuery,
+	RequestBody,
+	RequestResponseObject,
+	RequestError
+
+} from 'core/data';
+
+//#endif
+
+export * from 'super/i-message/i-message';
 export interface RequestFilterOpts<T = unknown> {
 	isEmpty: boolean;
 	method: ModelMethods;
@@ -73,7 +86,7 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 	 * Parameters for a data provider instance
 	 */
 	@prop(Object)
-	readonly dataProviderParams: Dictionary = {};
+	readonly dataProviderParams: ProviderParams = {};
 
 	/**
 	 * Initial request parameters
@@ -580,13 +593,13 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 	protected async syncDataProviderWatcher(value?: string): Promise<void> {
 		if (value) {
 			const
-				Provider = providers[value];
+				ProviderConstructor = <typeof Provider>providers[value];
 
-			if (!Provider) {
+			if (!ProviderConstructor) {
 				throw new Error(`Provider "${value}" is not defined`);
 			}
 
-			this.dp = new Provider(this.dataProviderParams);
+			this.dp = new ProviderConstructor(this.dataProviderParams);
 			await this.initDataListeners();
 
 		} else {
@@ -621,13 +634,13 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 
 		if (providerNm) {
 			const
-				Provider = providers[providerNm];
+				ProviderConstructor = <typeof Provider>providers[providerNm];
 
-			if (!Provider) {
+			if (!ProviderConstructor) {
 				throw new Error(`Provider "${providerNm}" is not defined`);
 			}
 
-			this.dp = new Provider(value);
+			this.dp = new ProviderConstructor(value);
 			await this.initDataListeners();
 		}
 	}

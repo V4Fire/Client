@@ -19,7 +19,7 @@ import { StatusEvent } from 'core/net';
 import iBlock from 'super/i-block/i-block';
 import iPage, { component, field, system, watch, Event } from 'super/i-page/i-page';
 
-//#if runtime has router
+//#if runtime has bRouter
 import bRouter, { CurrentPage } from 'base/b-router/b-router';
 //#endif
 

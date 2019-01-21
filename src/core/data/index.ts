@@ -16,6 +16,8 @@ import IO, { Socket } from 'core/socket';
 
 import { concatUrls } from 'core/url';
 import { ModelMethods, SocketEvent, ProviderParams } from 'core/data/interface';
+import { providers } from 'core/data/const';
+
 import request, {
 
 	globalOpts,
@@ -36,11 +38,14 @@ import request, {
 
 } from 'core/request';
 
+export * from 'core/data/const';
 export * from 'core/data/interface';
+
 export { RequestMethods, RequestError } from 'core/request';
 export {
 
 	globalOpts,
+	Socket,
 	CreateRequestOptions,
 	Middlewares,
 	MiddlewareParams,
@@ -51,7 +56,6 @@ export {
 	RequestFunctionResponse,
 	Response,
 	RequestBody
-
 };
 
 export type EncodersTable = Record<ModelMethods | 'def', Encoders> | {};
@@ -62,8 +66,7 @@ const globalEvent = new EventEmitter({
 	wildcard: true
 });
 
-export const
-	providers: Dictionary<typeof Provider> = Object.createDict(),
+const
 	instanceCache: Dictionary<Provider> = Object.createDict(),
 	requestCache: Dictionary<Dictionary<RequestResponseObject>> = Object.createDict(),
 	connectCache: Dictionary<Promise<Socket>> = Object.createDict();
