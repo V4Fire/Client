@@ -218,7 +218,7 @@ export default class Provider {
 	/**
 	 * If true, then the provider will be listen all events
 	 */
-	readonly listenAllEvents!: boolean;
+	readonly listenAllEvents: boolean = false;
 
 	/**
 	 * Event emitter object
@@ -266,10 +266,19 @@ export default class Provider {
 			return cacheVal;
 		}
 
-		requestCache[nm] = Object.createDict();
+		requestCache[nm] =
+			Object.createDict();
+
 		this.async = new Async(this);
 		this.event = new EventEmitter({maxListeners: 1e3, wildcard: true});
-		this.listenAllEvents = Boolean(params.listenAllEvents);
+
+		if (Object.isBoolean(params.listenAllEvents)) {
+			this.listenAllEvents = params.listenAllEvents;
+		}
+
+		if (Object.isBoolean(params.externalRequest)) {
+			this.externalRequest = params.externalRequest;
+		}
 
 		const
 			c = this.connect();
