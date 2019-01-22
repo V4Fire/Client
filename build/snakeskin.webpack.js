@@ -235,7 +235,7 @@ function tagFilter({name, attrs = {}}) {
 			}
 
 			const
-				base = key.slice(1),
+				base = key.slice(1).camelize(false),
 				prop = `${base}Prop`;
 
 			if (c && !c.props[base] && c.props[prop]) {
