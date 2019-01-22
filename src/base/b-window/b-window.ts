@@ -156,14 +156,14 @@ export default class bWindow<T extends Dictionary = Dictionary> extends iData<T>
 	protected initCloseHelpers(): void {
 		const
 			{async: $a, localEvent: $e} = this,
-			group = 'closeHelpers';
+			group = {group: 'closeHelpers'};
 
 		const closeHelpers = () => {
 			$a.on(document, 'keyup', async (e) => {
 				if (e.keyCode === KeyCodes.ESC) {
 					await this.close();
 				}
-			}, {group});
+			}, group);
 
 			$a.on(document, 'mousedown touchstart', async (e) => {
 				if (e.target.matches(this.block.getElSelector('wrapper'))) {
@@ -171,15 +171,15 @@ export default class bWindow<T extends Dictionary = Dictionary> extends iData<T>
 
 					$a.once(document, 'click mouseup touchend', (e) => {
 						e.stopImmediatePropagation();
-					}, {group}, {capture: true});
+					}, group, {capture: true});
 				}
-			}, {group});
+			}, group);
 		};
 
 		$e.removeAllListeners('block.mod.*.hidden.*');
 		$e.on('block.mod.remove.hidden.*', closeHelpers);
 		$e.on('block.mod.set.hidden.false', closeHelpers);
-		$e.on('block.mod.set.hidden.true', () => $a.off({group}));
+		$e.on('block.mod.set.hidden.true', () => $a.off(group));
 	}
 
 	/**
