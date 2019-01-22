@@ -143,13 +143,9 @@ export default class bTextarea<
 		input.style.height = newHeight.px;
 		await scroll.setHeight(fixedNewHeight);
 
-		/* eslint-disable no-extra-parens */
-
 		if (isEnd && height !== fixedNewHeight && (await scroll.scrollOffset).top) {
 			await scroll.setScrollerPosition({y: 'bottom'});
 		}
-
-		/* eslint-enable no-extra-parens */
 
 		return fixedNewHeight;
 	}

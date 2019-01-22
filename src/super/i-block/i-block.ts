@@ -91,6 +91,7 @@ import * as browser from 'core/browser';
 export * from 'core/component';
 export * from 'super/i-block/modules/interface';
 export * from 'super/i-block/modules/daemons';
+export * from 'super/i-block/modules/block';
 
 export { statuses, Cache };
 export {
@@ -556,7 +557,7 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 
 		progress: [
 			'true',
-			['false']
+			'false'
 		],
 
 		disabled: [
@@ -566,12 +567,12 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 
 		focused: [
 			'true',
-			['false']
+			'false'
 		],
 
 		hidden: [
 			'true',
-			['false']
+			'false'
 		],
 
 		width: [

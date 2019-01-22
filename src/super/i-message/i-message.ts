@@ -7,8 +7,13 @@
  */
 
 import keyCodes from 'core/key-codes';
-import iBlock, { component, prop, field, ModsDecl } from 'super/i-block/i-block';
+import iBlock, { component, prop, field, hook, ModsDecl, ModEvent, SetModEvent } from 'super/i-block/i-block';
 export * from 'super/i-block/i-block';
+
+export interface CloseHelperEvents {
+	key?: string;
+	touch?: string;
+}
 
 @component()
 export default class iMessage extends iBlock {
@@ -40,17 +45,17 @@ export default class iMessage extends iBlock {
 	static readonly mods: ModsDecl = {
 		showInfo: [
 			'true',
-			['false']
+			'false'
 		],
 
 		showError: [
 			'true',
-			['false']
+			'false'
 		],
 
 		opened: [
 			'true',
-			['false']
+			'false'
 		]
 	};
 
@@ -119,29 +124,58 @@ export default class iMessage extends iBlock {
 
 	/**
 	 * Initializes close helpers
+	 * @param [events] - event names for helpers
 	 */
-	protected initCloseHelpers(): void {
+	@hook('created')
+	protected initCloseHelpers(events: CloseHelperEvents = {}): void {
 		const
 			{async: $a, localEvent: $e} = this,
 			group = {group: 'closeHelpers'};
 
 		const closeHelpers = () => {
-			$a.on(document, 'keyup', (e) => {
-				if (e.keyCode === keyCodes.ESC) {
-					return this.close();
-				}
-			}, group);
-
-			$a.on(document, 'click', (e) => {
-				if (!e.target.closest(`.${this.componentId}`)) {
-					return this.close();
-				}
-			}, group);
+			$a.on(document, events.key || 'keyup', this.onKeyClose, group);
+			$a.on(document, events.touch || 'click', this.onTouchClose, group);
 		};
 
-		$e.removeAllListeners('block.mod.set.opened.*');
+		$e.removeAllListeners('block.mod.*.opened.*');
 		$e.on('block.mod.set.opened.true', closeHelpers);
 		$e.on('block.mod.set.opened.false', () => $a.off(group));
+		$e.on('block.mod.*.opened.*', this.onOpenedChange);
+	}
+
+	/**
+	 * Handler: opened modifier change
+	 * @param e
+	 */
+	protected onOpenedChange(e: ModEvent | SetModEvent): void {
+		return undefined;
+	}
+
+	/**
+	 * Handler: close by a keyboard event
+	 * @param e
+	 */
+	protected async onKeyClose(e: KeyboardEvent): Promise<void> {
+		if (e.keyCode === keyCodes.ESC) {
+			await this.close();
+		}
+	}
+
+	/**
+	 * Handler: close by a touch event
+	 * @param e
+	 */
+	protected async onTouchClose(e: MouseEvent): Promise<void> {
+		const
+			target = <Element>e.target;
+
+		if (!target) {
+			return;
+		}
+
+		if (!target.closest(`.${this.componentId}`)) {
+			await this.close();
+		}
 	}
 
 	/** @override */

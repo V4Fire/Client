@@ -6,8 +6,20 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import KeyCodes from 'core/key-codes';
-import iData, { field, component, prop, hook, ModsDecl, Stage } from 'super/i-data/i-data';
+import iData, {
+
+	field,
+	component,
+	prop,
+	hook,
+	ModsDecl,
+	Stage,
+	CloseHelperEvents,
+	ModEvent,
+	SetModEvent
+
+} from 'super/i-data/i-data';
+
 import { RequestError } from 'core/data';
 export * from 'super/i-data/i-data';
 
@@ -38,9 +50,9 @@ export default class bWindow<T extends Dictionary = Dictionary> extends iData<T>
 
 	/** @inheritDoc */
 	static readonly mods: ModsDecl = {
-		hidden: [
-			['true'],
-			'false'
+		opened: [
+			'true',
+			['false']
 		]
 	};
 
@@ -70,7 +82,7 @@ export default class bWindow<T extends Dictionary = Dictionary> extends iData<T>
 	 * @param [stage] - window stage
 	 */
 	async open(stage?: Stage): Promise<boolean> {
-		if (await this.setMod('hidden', false)) {
+		if (await super.open()) {
 			if (stage) {
 				this.stage = stage;
 			}
@@ -86,7 +98,7 @@ export default class bWindow<T extends Dictionary = Dictionary> extends iData<T>
 
 	/** @override */
 	async close(): Promise<boolean> {
-		if (await this.setMod('hidden', true)) {
+		if (await super.close()) {
 			this.setRootMod('hidden', true);
 			this.emit('close');
 			return true;
@@ -143,6 +155,19 @@ export default class bWindow<T extends Dictionary = Dictionary> extends iData<T>
 		this.setField('titleStore', value);
 	}
 
+	/** @override */
+	protected initCloseHelpers(events: CloseHelperEvents): void {
+		super.initCloseHelpers({touch: 'mousedown touchstart', ...events});
+	}
+
+	/**
+	 * Initializes the component placement within a document
+	 */
+	@hook('mounted')
+	protected initDocumentPlacement(): void {
+		document.body.insertAdjacentElement('beforeend', this.$el);
+	}
+
 	/**
 	 * Handler: error
 	 * @param err
@@ -152,42 +177,26 @@ export default class bWindow<T extends Dictionary = Dictionary> extends iData<T>
 	}
 
 	/** @override */
-	@hook('created')
-	protected initCloseHelpers(): void {
-		const
-			{async: $a, localEvent: $e} = this,
-			group = {group: 'closeHelpers'};
-
-		const closeHelpers = () => {
-			$a.on(document, 'keyup', async (e) => {
-				if (e.keyCode === KeyCodes.ESC) {
-					await this.close();
-				}
-			}, group);
-
-			$a.on(document, 'mousedown touchstart', async (e) => {
-				if (e.target.matches(this.block.getElSelector('wrapper'))) {
-					await this.close();
-
-					$a.once(document, 'click mouseup touchend', (e) => {
-						e.stopImmediatePropagation();
-					}, group, {capture: true});
-				}
-			}, group);
-		};
-
-		$e.removeAllListeners('block.mod.*.hidden.*');
-		$e.on('block.mod.remove.hidden.*', closeHelpers);
-		$e.on('block.mod.set.hidden.false', closeHelpers);
-		$e.on('block.mod.set.hidden.true', () => $a.off(group));
+	protected async onOpenedChange(e: ModEvent | SetModEvent): Promise<void> {
+		await this.setMod('hidden', e.type === 'remove' ? true : e.value === 'false');
 	}
 
-	/**
-	 * Initializes the component placement within a document
-	 */
-	@hook('mounted')
-	protected initDocumentPlacement(): void {
-		document.body.insertAdjacentElement('beforeend', this.$el);
+	/** @override */
+	protected async onTouchClose(e: MouseEvent): Promise<void> {
+		const
+			target = <Element>e.target;
+
+		if (!target) {
+			return;
+		}
+
+		if (target.matches(this.block.getElSelector('wrapper'))) {
+			await this.close();
+
+			this.async.once(document, 'click mouseup touchend', (e) => {
+				e.stopImmediatePropagation();
+			}, {group: 'closeHelpers'}, {capture: true});
+		}
 	}
 
 	/** @override */

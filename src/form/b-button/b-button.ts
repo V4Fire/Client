@@ -104,6 +104,11 @@ export default class bButton<T extends Dictionary = Dictionary> extends iData<T>
 
 	/** @inheritDoc */
 	static readonly mods: ModsDecl = {
+		theme: [
+			bButton.PARENT,
+			'icon'
+		],
+
 		rounding: [
 			'none',
 			['small'],
@@ -116,9 +121,9 @@ export default class bButton<T extends Dictionary = Dictionary> extends iData<T>
 			['false']
 		],
 
-		theme: [
-			bButton.PARENT,
-			'icon'
+		opened: [
+			'true',
+			['false']
 		]
 	};
 
@@ -151,11 +156,5 @@ export default class bButton<T extends Dictionary = Dictionary> extends iData<T>
 		}
 
 		this.emit('click', e);
-	}
-
-	/* @override */
-	protected created(): void {
-		super.created();
-		this.initCloseHelpers();
 	}
 }

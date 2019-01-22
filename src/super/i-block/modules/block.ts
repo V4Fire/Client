@@ -9,44 +9,44 @@
 import iBlock, { ComponentElement, ModsTable } from 'super/i-block/i-block';
 import { EventEmitter2 as EventEmitter } from 'eventemitter2';
 
-export type EventType =
+export type ModEventType =
 	'set' |
 	'remove';
 
-export type EventName =
+export type ModEventName =
 	'block.mod.set' |
 	'block.mod.remove' |
 	'el.mod.set' |
 	'el.mod.remove';
 
-export type EventReason =
+export type ModEventReason =
 	'initSetMod' |
 	'setMod' |
 	'removeMod';
 
-export interface Event {
-	event: EventName;
-	type: EventType;
-	reason: EventReason;
+export interface ModEvent {
+	event: ModEventName;
+	type: ModEventType;
+	reason: ModEventReason;
 	name: string;
 	value: string;
 }
 
-export interface SetEvent extends Event {
+export interface SetModEvent extends ModEvent {
 	prev: CanUndef<string>;
 }
 
-export interface ElementEvent {
-	event: EventName;
-	type: EventType;
-	reason: EventReason;
+export interface ElementModEvent {
+	event: ModEventName;
+	type: ModEventType;
+	reason: ModEventReason;
 	element: string;
 	link: HTMLElement;
 	modName: string;
 	value: string;
 }
 
-export interface SetElementEvent extends ElementEvent {
+export interface SetElementModEvent extends ElementModEvent {
 	prev: CanUndef<string>;
 }
 
@@ -178,7 +178,7 @@ export default class Block {
 	 * @param value
 	 * @param [reason]
 	 */
-	setMod(name: string, value: unknown, reason: EventReason = 'setMod'): boolean {
+	setMod(name: string, value: unknown, reason: ModEventReason = 'setMod'): boolean {
 		if (value === undefined) {
 			return false;
 		}
@@ -200,7 +200,7 @@ export default class Block {
 				this.node.classList.add(this.getFullBlockName(name, value));
 			}
 
-			const event = <SetEvent>{
+			const event = <SetModEvent>{
 				event: 'block.mod.set',
 				type: 'set',
 				name,
@@ -223,7 +223,7 @@ export default class Block {
 	 * @param [value]
 	 * @param [reason]
 	 */
-	removeMod(name: string, value?: unknown, reason: EventReason = 'removeMod'): boolean {
+	removeMod(name: string, value?: unknown, reason: ModEventReason = 'removeMod'): boolean {
 		name = name.camelize(false);
 		value = value !== undefined ? String(value).dasherize() : undefined;
 
@@ -239,7 +239,7 @@ export default class Block {
 				this.getFullBlockName(name, current)
 			);
 
-			const event = <Event>{
+			const event = <ModEvent>{
 				event: 'block.mod.remove',
 				type: 'remove',
 				name,
@@ -282,7 +282,7 @@ export default class Block {
 	 * @param value
 	 * @param [reason]
 	 */
-	setElMod(link: Element, elName: string, modName: string, value: unknown, reason: EventReason = 'setMod'): boolean {
+	setElMod(link: Element, elName: string, modName: string, value: unknown, reason: ModEventReason = 'setMod'): boolean {
 		if (value === undefined) {
 			return false;
 		}
@@ -295,7 +295,7 @@ export default class Block {
 			this.removeElMod(link, elName, modName, undefined, 'setMod');
 			link.classList.add(this.getFullElName(elName, modName, value));
 
-			const event = <SetElementEvent>{
+			const event = <SetElementModEvent>{
 				element: elName,
 				event: 'el.mod.set',
 				type: 'set',
@@ -326,7 +326,7 @@ export default class Block {
 		elName: string,
 		modName: string,
 		value?: unknown,
-		reason: EventReason = 'removeMod'
+		reason: ModEventReason = 'removeMod'
 	): boolean {
 		elName = elName.camelize(false);
 		modName = modName.camelize(false);
@@ -338,7 +338,7 @@ export default class Block {
 		if (current !== undefined && (value === undefined || current === value)) {
 			link.classList.remove(this.getFullElName(elName, modName, current));
 
-			const event = <ElementEvent>{
+			const event = <ElementModEvent>{
 				element: elName,
 				event: 'el.mod.remove',
 				type: 'remove',
