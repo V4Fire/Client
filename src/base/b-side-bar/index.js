@@ -6,5 +6,5 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-package('b-chart')
-	.extends('i-data');
+package('b-side-bar')
+	.extends('i-message');
