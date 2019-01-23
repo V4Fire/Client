@@ -12,4 +12,5 @@
 
 - template index() extends ['i-message'].index
 	- block body
-		+= self.slot()
+		< .&__content
+			+= self.slot()
