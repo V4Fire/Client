@@ -28,7 +28,7 @@
 				- block labelPrev
 					< button:a.&__cell.&__icon.&__prev &
 						@click.capture.stop = onSwitchDay(-1) |
-						v-if = m.theme === 'default' && !dayRange
+						v-if = !dayRange
 					.
 						+= self.gIcon('keyboard_arrow_left')
 
@@ -42,7 +42,7 @@
 				- block labelNext
 					< button:a.&__cell.&__icon.&__next &
 						@click.capture.stop = onSwitchDay(1) |
-						v-if = m.theme === 'default' && !dayRange
+						v-if = !dayRange
 					.
 						+= self.gIcon('keyboard_arrow_right')
 

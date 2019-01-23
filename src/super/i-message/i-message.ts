@@ -132,15 +132,15 @@ export default class iMessage extends iBlock {
 			{async: $a, localEvent: $e} = this,
 			group = {group: 'closeHelpers'};
 
-		const closeHelpers = () => {
+		$e.removeAllListeners('block.mod.*.opened.*');
+
+		$e.on('block.mod.*.opened.*', this.onOpenedChange);
+		$e.on('block.mod.set.opened.false', () => $a.off(group));
+
+		$e.on('block.mod.set.opened.true', () => {
 			$a.on(document, events.key || 'keyup', this.onKeyClose, group);
 			$a.on(document, events.touch || 'click', this.onTouchClose, group);
-		};
-
-		$e.removeAllListeners('block.mod.*.opened.*');
-		$e.on('block.mod.set.opened.true', closeHelpers);
-		$e.on('block.mod.set.opened.false', () => $a.off(group));
-		$e.on('block.mod.*.opened.*', this.onOpenedChange);
+		});
 	}
 
 	/**

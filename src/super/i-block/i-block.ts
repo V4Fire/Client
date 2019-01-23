@@ -546,7 +546,7 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	 */
 	static readonly mods: ModsDecl = {
 		theme: [
-			['default']
+			'default'
 		],
 
 		size: [
@@ -565,7 +565,7 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 
 		disabled: [
 			'true',
-			['false']
+			'false'
 		],
 
 		focused: [
@@ -579,7 +579,7 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 		],
 
 		width: [
-			['normal'],
+			'normal',
 			'full',
 			'auto'
 		]
@@ -1346,7 +1346,7 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	bindModTo<V = unknown, R = unknown, CTX extends iBlock = this>(
 		mod: string,
 		field: string,
-		converter: BindModCb<V, R, CTX> | AsyncWatchOpts = Boolean,
+		converter: BindModCb<V, R, CTX> | AsyncWatchOpts = (v) => v != null ? Boolean(v) : undefined,
 		params?: AsyncWatchOpts
 	): void {
 		mod = mod.camelize(false);
@@ -1361,13 +1361,23 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 
 		const setWatcher = () => {
 			this.watch(field, (val) => {
-				this.setMod(mod, fn(val, this));
+				val = fn(val, this);
+
+				if (val !== undefined) {
+					this.setMod(mod, val);
+				}
+
 			}, params);
 		};
 
 		if (this.isBeforeCreate()) {
 			const sync = this.syncModCache[mod] = () => {
-				this.mods[mod] = String(fn(this.getField(field), this));
+				const
+					v = fn(this.getField(field), this);
+
+				if (v !== undefined) {
+					this.mods[mod] = String(v);
+				}
 			};
 
 			if (this.hook !== 'beforeDataCreate') {

@@ -51,7 +51,7 @@ export default class bTimeRange<
 		],
 
 		opened: [
-			'true',
+			bTimeRange.PARENT,
 			['false']
 		]
 	};

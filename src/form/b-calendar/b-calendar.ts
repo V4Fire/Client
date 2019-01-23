@@ -157,7 +157,7 @@ export default class bCalendar<
 		],
 
 		opened: [
-			'true',
+			bCalendar.PARENT,
 			['false']
 		]
 	};

@@ -122,7 +122,7 @@ export default class bButton<T extends Dictionary = Dictionary> extends iData<T>
 		],
 
 		opened: [
-			'true',
+			bButton.PARENT,
 			['false']
 		]
 	};

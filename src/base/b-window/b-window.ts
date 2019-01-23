@@ -51,7 +51,7 @@ export default class bWindow<T extends Dictionary = Dictionary> extends iData<T>
 	/** @inheritDoc */
 	static readonly mods: ModsDecl = {
 		opened: [
-			'true',
+			bWindow.PARENT,
 			['false']
 		]
 	};
@@ -191,11 +191,11 @@ export default class bWindow<T extends Dictionary = Dictionary> extends iData<T>
 		}
 
 		if (target.matches(this.block.getElSelector('wrapper'))) {
-			await this.close();
-
 			this.async.once(document, 'click mouseup touchend', (e) => {
 				e.stopImmediatePropagation();
 			}, {group: 'closeHelpers'}, {capture: true});
+
+			await this.close();
 		}
 	}
 
