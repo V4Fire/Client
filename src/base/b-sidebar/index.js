@@ -6,5 +6,5 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-package('b-side-bar')
+package('b-sidebar')
 	.extends('i-message');

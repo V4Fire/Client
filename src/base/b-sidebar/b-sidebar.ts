@@ -10,7 +10,7 @@ import iMessage, { component } from 'super/i-message/i-message';
 export * from 'super/i-message/i-message';
 
 @component()
-export default class bSideBar extends iMessage {
+export default class bSidebar extends iMessage {
 	/** @override */
 	protected convertStateToStorage(): Dictionary {
 		return {
