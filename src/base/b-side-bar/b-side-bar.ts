@@ -17,4 +17,19 @@ export default class bSideBar extends iMessage {
 			'mods.opened': this.mods.opened
 		};
 	}
+
+	/** @override */
+	protected async onTouchClose(e: MouseEvent): Promise<void> {
+		const
+			target = <Element>e.target;
+
+		if (!target) {
+			return;
+		}
+
+		if (target.matches(this.block.getElSelector('overWrapper'))) {
+			e.preventDefault();
+			await this.close();
+		}
+	}
 }

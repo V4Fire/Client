@@ -14,7 +14,6 @@ import iData, {
 	hook,
 	ModsDecl,
 	Stage,
-	CloseHelperEvents,
 	ModEvent,
 	SetModEvent
 
@@ -155,11 +154,6 @@ export default class bWindow<T extends Dictionary = Dictionary> extends iData<T>
 		this.setField('titleStore', value);
 	}
 
-	/** @override */
-	protected initCloseHelpers(events: CloseHelperEvents): void {
-		super.initCloseHelpers({touch: 'mousedown touchstart', ...events});
-	}
-
 	/**
 	 * Initializes the component placement within a document
 	 */
@@ -191,10 +185,7 @@ export default class bWindow<T extends Dictionary = Dictionary> extends iData<T>
 		}
 
 		if (target.matches(this.block.getElSelector('wrapper'))) {
-			this.async.once(document, 'click mouseup touchend', (e) => {
-				e.stopImmediatePropagation();
-			}, {group: 'closeHelpers'}, {capture: true});
-
+			e.preventDefault();
 			await this.close();
 		}
 	}
