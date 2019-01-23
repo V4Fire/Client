@@ -15,9 +15,7 @@ import symbolGenerator from 'core/symbol';
 import Async, { AsyncCbOpts } from 'core/async';
 import IO, { Socket } from 'core/socket';
 
-import { once } from 'core/decorators';
 import { concatUrls } from 'core/url';
-
 import { ModelMethods, SocketEvent, ProviderParams } from 'core/data/interface';
 import request, {
 
