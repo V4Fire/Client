@@ -111,6 +111,7 @@ import { delegate } from 'core/dom';
 export * from 'core/component';
 export * from 'super/i-block/modules/interface';
 export * from 'super/i-block/modules/daemons';
+export * from 'super/i-block/modules/block';
 
 export { statuses, Cache };
 export {
@@ -131,6 +132,9 @@ export {
 
 export type ComponentStatuses = Partial<Record<keyof typeof statuses, boolean>>;
 export type MemoizedLiteral<T = unknown> = Readonly<Dictionary<T>> | ReadonlyArray<T>;
+export interface FieldGetter<R = unknown, D = unknown> {
+	(key: string, data: NonNullable<D>): R;
+}
 
 export const
 	$$ = symbolGenerator(),
@@ -564,7 +568,7 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	 */
 	static readonly mods: ModsDecl = {
 		theme: [
-			['default']
+			'default'
 		],
 
 		status: [
@@ -587,26 +591,26 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 
 		progress: [
 			'true',
-			['false']
+			'false'
 		],
 
 		disabled: [
 			'true',
-			['false']
+			'false'
 		],
 
 		focused: [
 			'true',
-			['false']
+			'false'
 		],
 
 		hidden: [
 			'true',
-			['false']
+			'false'
 		],
 
 		width: [
-			['normal'],
+			'normal',
 			'full',
 			'auto'
 		]
@@ -1399,7 +1403,7 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	bindModTo<V = unknown, R = unknown, CTX extends iBlock = this>(
 		mod: string,
 		field: string,
-		converter: BindModCb<V, R, CTX> | AsyncWatchOpts = Boolean,
+		converter: BindModCb<V, R, CTX> | AsyncWatchOpts = (v) => v != null ? Boolean(v) : undefined,
 		params?: AsyncWatchOpts
 	): void {
 		mod = mod.camelize(false);
@@ -1414,13 +1418,23 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 
 		const setWatcher = () => {
 			this.watch(field, (val) => {
-				this.setMod(mod, fn(val, this));
+				val = fn(val, this);
+
+				if (val !== undefined) {
+					this.setMod(mod, val);
+				}
+
 			}, params);
 		};
 
 		if (this.isBeforeCreate()) {
 			const sync = this.syncModCache[mod] = () => {
-				this.mods[mod] = String(fn(this.getField(field), this));
+				const
+					v = fn(this.getField(field), this);
+
+				if (v !== undefined) {
+					this.mods[mod] = String(v);
+				}
 			};
 
 			if (this.hook !== 'beforeDataCreate') {
@@ -2065,6 +2079,59 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	}
 
 	/**
+	 * Returns a property from the specified object
+	 *
+	 * @param path - path to the property (bla.baz.foo)
+	 * @param [getter] - field getter
+	 */
+	getField<T = unknown>(path: string, getter?: FieldGetter): CanUndef<T>;
+
+	/**
+	 * @param path - path to the property (bla.baz.foo)
+	 * @param [obj]
+	 * @param [getter] - field getter
+	 */
+	getField<T = unknown>(path: string, obj: Dictionary, getter?: FieldGetter): CanUndef<T>;
+	getField<T = unknown>(
+		path: string,
+		obj: Dictionary | FieldGetter = this,
+		getter?: FieldGetter
+	): CanUndef<T> {
+		if (!getter && Object.isFunction(obj)) {
+			getter = <FieldGetter>obj;
+			obj = this;
+		}
+
+		let
+			// tslint:disable-next-line:no-this-assignment
+			ctx: iBlock = this,
+			isComponent = obj === this;
+
+		if ((<Dictionary>obj).instance instanceof iBlock) {
+			ctx = <iBlock>obj;
+			isComponent = true;
+		}
+
+		const
+			chunks = path.split('.'),
+			isField = isComponent && ctx.meta.fields[chunks[0]];
+
+		let
+			res = isField ? ctx.$$data : obj;
+
+		for (let i = 0; i < chunks.length; i++) {
+			if (res == null) {
+				return undefined;
+			}
+
+			const prop = chunks[i];
+			res = <Dictionary>(getter ? getter(prop, res) : res[prop]);
+		}
+
+		return <any>res;
+	}
+
+	/**
 	 * Sets a new property to the specified object
 	 *
 	 * @param path - path to the property (bla.baz.foo)
@@ -2184,41 +2251,6 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 		}
 
 		return false;
-	}
-
-	/**
-	 * Returns a property from the specified object
-	 *
-	 * @param path - path to the property (bla.baz.foo)
-	 * @param [obj]
-	 */
-	getField<T = unknown>(path: string, obj: Dictionary = this): CanUndef<T> {
-		let
-			// tslint:disable-next-line:no-this-assignment
-			ctx: iBlock = this,
-			isComponent = obj === this;
-
-		if (obj.instance instanceof iBlock) {
-			ctx = <iBlock>obj;
-			isComponent = true;
-		}
-
-		const
-			chunks = path.split('.'),
-			isField = isComponent && ctx.meta.fields[chunks[0]];
-
-		let
-			res = isField ? ctx.$$data : obj;
-
-		for (let i = 0; i < chunks.length; i++) {
-			if (res == null) {
-				return undefined;
-			}
-
-			res = <Dictionary>res[chunks[i]];
-		}
-
-		return <CanUndef<T>>res;
 	}
 
 	/**

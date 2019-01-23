@@ -6,6 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import 'core/data';
 import $C = require('collection.js');
 import symbolGenerator from 'core/symbol';
 import bInputHidden from 'form/b-input-hidden/b-input-hidden';

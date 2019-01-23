@@ -39,7 +39,7 @@ i-message
 			arrow: "&::before, &::after",
 			wrapper: "&__dropdown",
 			content: "%s__dropdown-content" % unquote(selector()),
-			showSelector: "&_opened_true&_disabled_false &__dropdown",
+			showSelector: "&_opened_true:not(&_disabled_true) &__dropdown",
 			fontSize: 1em,
 			vertArrowSize: 1.2em,
 			color: $p.hintColor,

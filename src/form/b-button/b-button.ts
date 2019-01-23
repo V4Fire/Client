@@ -6,6 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import 'core/data';
 import bForm from 'form/b-form/b-form';
 import iData, { component, prop, ModsDecl, ModelMethods, RequestFilter } from 'super/i-data/i-data';
 export * from 'super/i-data/i-data';
@@ -104,6 +105,11 @@ export default class bButton<T extends Dictionary = Dictionary> extends iData<T>
 
 	/** @inheritDoc */
 	static readonly mods: ModsDecl = {
+		theme: [
+			bButton.PARENT,
+			'icon'
+		],
+
 		rounding: [
 			'none',
 			['small'],
@@ -116,9 +122,9 @@ export default class bButton<T extends Dictionary = Dictionary> extends iData<T>
 			['false']
 		],
 
-		theme: [
+		opened: [
 			bButton.PARENT,
-			'icon'
+			['false']
 		]
 	};
 
@@ -151,11 +157,5 @@ export default class bButton<T extends Dictionary = Dictionary> extends iData<T>
 		}
 
 		this.emit('click', e);
-	}
-
-	/* @override */
-	protected created(): void {
-		super.created();
-		this.initCloseHelpers();
 	}
 }

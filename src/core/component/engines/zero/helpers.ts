@@ -290,12 +290,21 @@ export function attachEvents(this: ComponentInterface, el: Node, events?: Dictio
 }
 
 export function appendChild(this: ComponentInterface, parent: Node, node: CanArray<Node>): void {
+	if (!parent) {
+		return;
+	}
+
 	if (Object.isArray(node)) {
 		for (let i = 0; i < node.length; i++) {
-			appendChild.call(this, parent, node[i]);
+			const
+				el = node[i];
+
+			if (el) {
+				appendChild.call(this, parent, el);
+			}
 		}
 
-	} else {
+	} else if (node) {
 		parent.appendChild(node);
 	}
 }

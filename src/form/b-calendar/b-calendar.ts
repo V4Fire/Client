@@ -154,6 +154,11 @@ export default class bCalendar<
 		rounding: [
 			bCalendar.PARENT,
 			['small']
+		],
+
+		opened: [
+			bCalendar.PARENT,
+			['false']
 		]
 	};
 
@@ -520,11 +525,5 @@ export default class bCalendar<
 	 */
 	protected async onMonthSwitchEnd(): Promise<void> {
 		this.monthSwitchAnimation = false;
-	}
-
-	/** @override */
-	protected created(): void {
-		super.created();
-		this.initCloseHelpers();
 	}
 }

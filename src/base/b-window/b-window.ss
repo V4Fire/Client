@@ -14,6 +14,9 @@
 - template index() extends ['i-data'].index
 	- overWrapper = false
 
+	/// FIXME: missing closing or opening directives in the template
+	/// - thirdPartySlots = true
+
 	- block rootAttrs
 		- super
 		? Object.assign(rootAttrs, {':style': "{top: global.pageYOffset + 'px'}"})
@@ -21,37 +24,39 @@
 	- block body
 		- super
 		- block window
-			/* FIXME: при переносе наверх ss падает с ошибкой missing closing or opening directives in the template */
 			- thirdPartySlots = true
+
 			< .&__back
+			< .&__wrapper v-if = &
+				isFunctional ||
+				ifOnce('hidden', m.hidden !== 'true') && delete watchModsStore.hidden
+			.
 
-			+= self.transition()
-				< .&__wrapper v-if = isFunctional || ifOnce('hidden', m.hidden !== 'true')
-						< section.&__window
-							- if thirdPartySlots
-								< template v-if = slotName
-									: isSlot = /^slot[A-Z]/
-									- forEach self => el, key
-										- if isSlot.test(key)
-											< template v-if = slotName === '${key}'
-												+= el(@@globalNames[key])
+				< section.&__window
+					- if thirdPartySlots
+						< template v-if = slotName
+							: isSlot = /^slot[A-Z]/
+							- forEach self => el, key
+								- if isSlot.test(key)
+									< template v-if = slotName === '${key}'
+										+= el(@@globalNames[key])
 
-							< template v-else
-								+= self.slot()
-									< h1.&__title v-if = title || $slots.title
-										+= self.slot('title')
-											- block title
-												{{ title }}
+					< template v-else
+						+= self.slot()
+							< h1.&__title v-if = title || $slots.title
+								+= self.slot('title')
+									- block title
+										{{ title }}
 
-									< .&__content
-										+= self.slot('body')
-											- block content
+							< .&__content
+								+= self.slot('body')
+									- block content
 
-									< .&__controls
-										+= self.slot('control')
-											- block controls
-												< b-button &
-													:mods = provideMods({theme: 'dark', size: gt[m.size]}) |
-													@click = close
-												.
-													{{ `Close` }}
+							< .&__controls
+								+= self.slot('control')
+									- block controls
+										< b-button &
+											:mods = provideMods({theme: 'dark', size: gt[m.size]}) |
+											@click = close
+										.
+											{{ `Close` }}

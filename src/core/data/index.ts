@@ -275,11 +275,11 @@ export default class Provider {
 		this.event = new EventEmitter({maxListeners: 1e3, wildcard: true});
 
 		if (Object.isBoolean(params.listenAllEvents)) {
-			this.listenAllEvents = params.listenAllEvents;
+			this.setReadonlyParam('listenAllEvents', params.listenAllEvents);
 		}
 
 		if (Object.isBoolean(params.externalRequest)) {
-			this.externalRequest = params.externalRequest;
+			this.setReadonlyParam('externalRequest', params.externalRequest);
 		}
 
 		const
@@ -655,6 +655,16 @@ export default class Provider {
 			body,
 			method
 		})));
+	}
+
+	/**
+	 * Sets a value by the specified key to the provider as readonly
+	 */
+	protected setReadonlyParam(key: string, val: unknown): void {
+		Object.defineProperty(this, key, {
+			get: () => val,
+			set: (v) => v
+		});
 	}
 
 	/**

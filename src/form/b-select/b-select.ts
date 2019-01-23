@@ -21,8 +21,11 @@ import bInput, {
 	watch,
 	mod,
 	wait,
+	Value,
 	ComponentConverter,
-	Value
+	CloseHelperEvents,
+	ModEvent,
+	SetModEvent
 
 } from 'form/b-input/b-input';
 
@@ -218,6 +221,19 @@ export default class bSelect<
 			}
 
 			return false;
+		}
+
+		return false;
+	}
+
+	/** @override */
+	async close(): Promise<boolean> {
+		if (await super.close()) {
+			if (this.selected) {
+				await this.onOptionSelected(this.selected);
+			}
+
+			return true;
 		}
 
 		return false;
@@ -474,144 +490,35 @@ export default class bSelect<
 	}
 
 	/** @override */
-	protected initCloseHelpers(): void {
+	protected initCloseHelpers(events?: CloseHelperEvents): void {
+		if (this.b.is.mobile) {
+			return;
+		}
+
+		super.initCloseHelpers(events);
+	}
+
+	/**
+	 * Handler: option select
+	 *
+	 * @param [value]
+	 * @emits actionChange(selected: FV)
+	 */
+	@watch({
+		field: '?$el:click',
+		wrapper: (o, cb) => o.delegateElement('option', (e) => cb(e.delegateTarget.dataset.value))
+	})
+
+	protected async onOptionSelected(value?: string): Promise<void> {
 		const
-			{async: $a, localEvent: $e} = this;
+			v = this.values && this.values[String(this.selected)];
 
-		$e.on('block.mod.set.opened.true', () => {
-			$a.off({group: 'navigation'});
+		if (value !== this.selected || v && this.value !== this.getOptionLabel(v)) {
+			this.syncValue(value);
+			this.emit('actionChange', this.selected);
+		}
 
-			if (openedSelect) {
-				openedSelect.close().catch(() => undefined);
-			}
-
-			openedSelect = this;
-
-			const
-				{selected} = this;
-
-			const reset = async () => {
-				if (selected) {
-					await this.onOptionSelected(selected);
-				}
-
-				await this.close();
-			};
-
-			$a.on(document, 'click', (e) => {
-				if (!e.target.closest(`.${this.componentId}`)) {
-					return reset();
-				}
-			}, {
-				group: 'global'
-			});
-
-			$a.on(document, 'keyup', (e) => {
-				if (e.keyCode === keyCodes.ESC) {
-					e.preventDefault();
-					return reset();
-				}
-			}, {
-				group: 'global'
-			});
-
-			$a.on(document, 'keydown', async (e) => {
-				if (!{[keyCodes.UP]: true, [keyCodes.DOWN]: true, [keyCodes.ENTER]: true}[e.keyCode]) {
-					return;
-				}
-
-				e.preventDefault();
-
-				const
-					{block: $b} = this,
-					selected = getSelected();
-
-				function getSelected(): CanUndef<HTMLElement> {
-					return $b.element('option', {selected: true});
-				}
-
-				switch (e.keyCode) {
-					case keyCodes.ENTER:
-						if (selected) {
-							await this.onOptionSelected();
-						}
-
-						break;
-
-					case keyCodes.UP:
-						if (this.selected) {
-							if (selected) {
-								if (selected.previousElementSibling) {
-									this.selected = <FV>(<HTMLElement>selected.previousElementSibling).dataset.value;
-									break;
-								}
-
-								await this.close();
-							}
-						}
-
-						break;
-
-					case keyCodes.DOWN: {
-						const
-							that = this;
-
-						// Use "that" instead of "this" because of TS generates invalid code
-						const select = async (el) => {
-							if (that.mods.opened !== 'true') {
-								await that.open();
-								el = getSelected();
-								if (that.selected) {
-									return;
-								}
-							}
-
-							if (el) {
-								if (!that.selected) {
-									that.selected = el.dataset.value;
-									return;
-								}
-
-								if (el.nextElementSibling) {
-									that.selected = el.nextElementSibling.dataset.value;
-									return;
-								}
-
-								that.selected = <FV>(<HTMLElement>$b.element('option')).dataset.value;
-							}
-						};
-
-						if (this.selected) {
-							if (selected) {
-								await select(selected);
-								break;
-							}
-						}
-
-						await select($b.element('option'));
-					}
-				}
-			}, {
-				group: 'navigation'
-			});
-		});
-
-		$e.on('block.mod.set.opened.false', () => {
-			if (openedSelect === this) {
-				openedSelect = null;
-			}
-
-			$a.off({group: 'global'});
-			if (this.mods.focused !== 'true') {
-				$a.off({group: 'navigation'});
-			}
-		});
-
-		$e.on('block.mod.set.focused.false', () => {
-			if (this.mods.opened !== 'true') {
-				$a.off({group: 'navigation'});
-			}
-		});
+		await this.close();
 	}
 
 	/** @override */
@@ -658,29 +565,115 @@ export default class bSelect<
 		} catch {}
 	}
 
-	/* eslint-enable no-unused-vars */
-
-	/**
-	 * Handler: option select
-	 *
-	 * @param [value]
-	 * @emits actionChange(selected: FV)
-	 */
-	@watch({
-		field: '?$el:click',
-		wrapper: (o, cb) => o.delegateElement('option', (e) => cb(e.delegateTarget.dataset.value))
-	})
-
-	protected async onOptionSelected(value?: string): Promise<void> {
+	/** @override */
+	protected onOpenedChange(e: ModEvent | SetModEvent): void {
 		const
-			v = this.values && this.values[String(this.selected)];
+			{async: $a} = this;
 
-		if (value !== this.selected || v && this.value !== this.getOptionLabel(v)) {
-			this.syncValue(value);
-			this.emit('actionChange', this.selected);
+		// opened == false or opened == null
+		if (e.type === 'set' && e.value === 'false' || e.type === 'remove') {
+			if (openedSelect === this) {
+				openedSelect = null;
+			}
+
+			if (this.mods.focused !== 'true') {
+				$a.off({
+					group: 'navigation'
+				});
+			}
+
+			return;
 		}
 
-		await this.close();
+		$a.off({
+			group: 'navigation'
+		});
+
+		if (openedSelect) {
+			openedSelect.close().catch(() => undefined);
+		}
+
+		openedSelect = this;
+
+		$a.on(document, 'keydown', async (e) => {
+			if (!{[keyCodes.UP]: true, [keyCodes.DOWN]: true, [keyCodes.ENTER]: true}[e.keyCode]) {
+				return;
+			}
+
+			e.preventDefault();
+
+			const
+				{block: $b} = this,
+				selected = getSelected();
+
+			function getSelected(): CanUndef<HTMLElement> {
+				return $b.element('option', {selected: true});
+			}
+
+			switch (e.keyCode) {
+				case keyCodes.ENTER:
+					if (selected) {
+						await this.onOptionSelected();
+					}
+
+					break;
+
+				case keyCodes.UP:
+					if (this.selected) {
+						if (selected) {
+							if (selected.previousElementSibling) {
+								this.selected = <FV>(<HTMLElement>selected.previousElementSibling).dataset.value;
+								break;
+							}
+
+							await this.close();
+						}
+					}
+
+					break;
+
+				case keyCodes.DOWN: {
+					const
+						that = this;
+
+					// Use "that" instead of "this" because of TS generates invalid code
+					const select = async (el) => {
+						if (that.mods.opened !== 'true') {
+							await that.open();
+							el = getSelected();
+							if (that.selected) {
+								return;
+							}
+						}
+
+						if (el) {
+							if (!that.selected) {
+								that.selected = el.dataset.value;
+								return;
+							}
+
+							if (el.nextElementSibling) {
+								that.selected = el.nextElementSibling.dataset.value;
+								return;
+							}
+
+							that.selected = <FV>(<HTMLElement>$b.element('option')).dataset.value;
+						}
+					};
+
+					if (this.selected) {
+						if (selected) {
+							await select(selected);
+							break;
+						}
+					}
+
+					await select($b.element('option'));
+				}
+			}
+		}, {
+			group: 'navigation'
+		});
 	}
 
 	/** @override */
@@ -693,8 +686,6 @@ export default class bSelect<
 					await (await this.waitRef<bScrollInline>('scroll')).initScroll();
 				} catch {}
 			});
-
-			this.initCloseHelpers();
 		}
 	}
 }

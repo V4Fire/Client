@@ -45,7 +45,6 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 			'localforage': 'localforage',
 			'sugar': 'Sugar',
 			'vue': 'Vue',
-			'chart.js': 'Chart',
 			'ion-sound': 'ion',
 			'socket.io-client': 'io',
 			'setimmediate': 'setImmediate'
