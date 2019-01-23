@@ -1987,6 +1987,59 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	}
 
 	/**
+	 * Returns a property from the specified object
+	 *
+	 * @param path - path to the property (bla.baz.foo)
+	 * @param [getter] - field getter
+	 */
+	getField<T = unknown>(path: string, getter?: FieldGetter): CanUndef<T>;
+
+	/**
+	 * @param path - path to the property (bla.baz.foo)
+	 * @param [obj]
+	 * @param [getter] - field getter
+	 */
+	getField<T = unknown>(path: string, obj: Dictionary, getter?: FieldGetter): CanUndef<T>;
+	getField<T = unknown>(
+		path: string,
+		obj: Dictionary | FieldGetter = this,
+		getter?: FieldGetter
+	): CanUndef<T> {
+		if (!getter && Object.isFunction(obj)) {
+			getter = <FieldGetter>obj;
+			obj = this;
+		}
+
+		let
+			// tslint:disable-next-line:no-this-assignment
+			ctx: iBlock = this,
+			isComponent = obj === this;
+
+		if ((<Dictionary>obj).instance instanceof iBlock) {
+			ctx = <iBlock>obj;
+			isComponent = true;
+		}
+
+		const
+			chunks = path.split('.'),
+			isField = isComponent && ctx.meta.fields[chunks[0]];
+
+		let
+			res = isField ? ctx.$$data : obj;
+
+		for (let i = 0; i < chunks.length; i++) {
+			if (res == null) {
+				return undefined;
+			}
+
+			const prop = chunks[i];
+			res = <Dictionary>(getter ? getter(prop, res) : res[prop]);
+		}
+
+		return <any>res;
+	}
+
+	/**
 	 * Sets a new property to the specified object
 	 *
 	 * @param path - path to the property (bla.baz.foo)
@@ -2106,59 +2159,6 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 		}
 
 		return false;
-	}
-
-	/**
-	 * Returns a property from the specified object
-	 *
-	 * @param path - path to the property (bla.baz.foo)
-	 * @param [getter] - field getter
-	 */
-	getField<T = unknown>(path: string, getter?: FieldGetter): CanUndef<T>;
-
-	/**
-	 * @param path - path to the property (bla.baz.foo)
-	 * @param [obj]
-	 * @param [getter] - field getter
-	 */
-	getField<T = unknown>(path: string, obj: Dictionary, getter?: FieldGetter): CanUndef<T>;
-	getField<T = unknown>(
-		path: string,
-		obj: Dictionary | FieldGetter = this,
-		getter?: FieldGetter
-	): CanUndef<T> {
-		if (!getter && Object.isFunction(obj)) {
-			getter = <FieldGetter>obj;
-			obj = this;
-		}
-
-		let
-			// tslint:disable-next-line:no-this-assignment
-			ctx: iBlock = this,
-			isComponent = obj === this;
-
-		if ((<Dictionary>obj).instance instanceof iBlock) {
-			ctx = <iBlock>obj;
-			isComponent = true;
-		}
-
-		const
-			chunks = path.split('.'),
-			isField = isComponent && ctx.meta.fields[chunks[0]];
-
-		let
-			res = isField ? ctx.$$data : obj;
-
-		for (let i = 0; i < chunks.length; i++) {
-			if (res == null) {
-				return undefined;
-			}
-
-			const prop = chunks[i];
-			res = <Dictionary>(getter ? getter(prop, res) : res[prop]);
-		}
-
-		return <any>res;
 	}
 
 	/**
