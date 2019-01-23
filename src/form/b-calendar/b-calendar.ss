@@ -48,7 +48,7 @@
 
 		- block dropdown
 			< .&__dropdown &
-				v-if = ifOnce('opened', m.opened !== 'false') |
+				v-if = ifOnce('opened', m.opened !== 'false') && delete watchModsStore.opened |
 				:class = getElClasses({dropdown: {pos: position, 'immediately-shown': shown}})
 			.
 				< .&__dropdown-content ref = dropdown
