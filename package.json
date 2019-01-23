@@ -29,7 +29,6 @@
     "@types/socket.io-client": "^1.4.32",
     "@v4fire/core": "^2.0.0-beta.27",
     "babel-polyfill": "^6.26.0",
-    "chart.js": "^2.7.3",
     "collection.js": "^6.6.27",
     "escaper": "^2.4.34",
     "eventemitter2": "^5.0.1",
