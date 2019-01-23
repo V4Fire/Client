@@ -110,6 +110,9 @@ export {
 } from 'super/i-block/modules/decorators';
 
 export type ComponentStatuses = Partial<Record<keyof typeof statuses, boolean>>;
+export interface FieldGetter<R = unknown, D = unknown> {
+	(key: string, data: NonNullable<D>): R;
+}
 
 export const
 	$$ = symbolGenerator(),
@@ -2098,15 +2101,32 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	 * Returns a property from the specified object
 	 *
 	 * @param path - path to the property (bla.baz.foo)
-	 * @param [obj]
+	 * @param [getter] - field getter
 	 */
-	getField<T = unknown>(path: string, obj: Dictionary = this): CanUndef<T> {
+	getField<T = unknown>(path: string, getter?: FieldGetter): CanUndef<T>;
+
+	/**
+	 * @param path - path to the property (bla.baz.foo)
+	 * @param [obj]
+	 * @param [getter] - field getter
+	 */
+	getField<T = unknown>(path: string, obj: Dictionary, getter?: FieldGetter): CanUndef<T>;
+	getField<T = unknown>(
+		path: string,
+		obj: Dictionary | FieldGetter = this,
+		getter?: FieldGetter
+	): CanUndef<T> {
+		if (!getter && Object.isFunction(obj)) {
+			getter = <FieldGetter>obj;
+			obj = this;
+		}
+
 		let
 			// tslint:disable-next-line:no-this-assignment
 			ctx: iBlock = this,
 			isComponent = obj === this;
 
-		if (obj.instance instanceof iBlock) {
+		if ((<Dictionary>obj).instance instanceof iBlock) {
 			ctx = <iBlock>obj;
 			isComponent = true;
 		}
@@ -2123,7 +2143,8 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 				return undefined;
 			}
 
-			res = <Dictionary>res[chunks[i]];
+			const prop = chunks[i];
+			res = <Dictionary>(getter ? getter(prop, res) : res[prop]);
 		}
 
 		return <any>res;
