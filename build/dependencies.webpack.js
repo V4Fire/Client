@@ -10,7 +10,7 @@
 
 const
 	$C = require('collection.js'),
-	config = require('config');
+	{webpack} = require('config');
 
 const
 	fs = require('fs'),
@@ -30,10 +30,6 @@ const
  * @returns {!Function}
  */
 module.exports = function ({graph}) {
-	const
-		p = config.webpack.publicPath(),
-		publicPath = (src) => p + path.basename(src);
-
 	return {
 		apply(compiler) {
 			compiler.hooks.emit.tap('DependenciesPlugin', (compilation) => {
@@ -49,7 +45,7 @@ module.exports = function ({graph}) {
 						.replace(/\[name]/g, `${name}.js`)
 						.replace(/\[hash:?(\d*)]/, (str, length) => hash(content, Number(length)));
 
-					manifest[name] = publicPath(src);
+					manifest[name] = webpack.publicPath(src);
 					fs.writeFileSync(src, content);
 				});
 
@@ -58,7 +54,7 @@ module.exports = function ({graph}) {
 						file = $C(files).one.filter((src) => path.extname(src)).get();
 
 					if (file) {
-						manifest[path.basename(name, path.extname(name))] = publicPath(file);
+						manifest[path.basename(name, path.extname(name))] = webpack.publicPath(file);
 					}
 				});
 
