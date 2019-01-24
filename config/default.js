@@ -18,7 +18,6 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	build: {
 		entries: o('entries', {
 			env: true,
-			short: 'e',
 			coerce: (v) => v ? v.split(',') : []
 		}),
 
@@ -75,11 +74,20 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 			return '[confighash]';
 		},
 
-		publicPath() {
-			return this.fatHTML() ? '' : o('public-path', {
+		publicPath(...args) {
+			const
+				concatUrls = require('urlconcat').concat;
+
+			const v = this.fatHTML() ? '' : o('public-path', {
 				env: true,
-				default: ''
+				default: '/'
 			});
+
+			if (args.length) {
+				return concatUrls(v, ...args.map((el) => el.replace(/^\.?\//, '')));
+			}
+
+			return v;
 		},
 
 		output(params) {
@@ -181,11 +189,8 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 
 	snakeskin() {
 		const
-			{webpack, src} = this;
-
-		const
-			snakeskinVars = include('build/snakeskin.vars.js'),
-			publicPath = webpack.publicPath();
+			{webpack, src} = this,
+			snakeskinVars = include('build/snakeskin.vars.js');
 
 		return {
 			client: this.extend(super.snakeskin(), {
@@ -200,15 +205,19 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 			server: this.extend(super.snakeskin(), {
 				vars: {
 					...snakeskinVars,
+
+					rel: src.rel,
 					root: src.cwd(),
-					publicPath: (src) => publicPath + src,
+					lib: src.lib(),
+					assets: src.assets(),
+					favicons: this.favicons().path,
+
+					publicPath: webpack.publicPath,
 					output: src.clientOutput(),
 					outputPattern: webpack.output,
-					hashFunction: webpack.hashFunction(),
+
 					fatHTML: webpack.fatHTML(),
-					favicons: this.favicons().path,
-					assets: src.assets(),
-					lib: src.lib()
+					hashFunction: webpack.hashFunction()
 				}
 			})
 		};
