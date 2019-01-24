@@ -15,7 +15,6 @@
 - import fs from 'fs-extra-promise'
 - import glob from 'glob'
 - import path from 'upath'
-- import hashFiles from 'hash-files'
 - import delay from 'delay'
 
 /**
@@ -24,7 +23,9 @@
 - async template index() extends ['i-page'].index
 	- assets = Object.create(null)
 	- lib = path.join(@@output, @@outputPattern({name: 'lib'}))
+
 	- deps = include('src/super/i-static-page/deps')
+	- genHash = include('build/hash')
 
 	- title = @@appName
 	- pageData = {}
@@ -134,7 +135,7 @@
 				- if !@@fatHTML && assetsRequest
 					- block assets
 						: assetJS = path.relative(@@output, @@assetsJSON.replace(/json$/, 'js'))
-						- script js src = ${assetJS}
+						- script js src = ${@@publicPath(assetJS)}
 
 				- block head
 					: defStyles = deps.styles
@@ -143,7 +144,7 @@
 					+= $C(defStyles).to('').reduce()
 						() => res, url
 							: notDefer = Array.isArray(url)
-							? url = self.join(@@lib, notDefer ? url[0] : url)
+							? url = @@publicPath(self.join(@@lib, notDefer ? url[0] : url))
 
 							- block loadDefStyles
 								- if @@fatHTML
@@ -183,32 +184,30 @@
 									: &
 										src,
 										newSrc,
-										relativeSrc,
+										folderLink,
 										basename = path.basename(url)
 									.
 
 									- if !foldersCache[basename]
 										? src = path.join(@@lib, url)
-										: hash = ''
 
-										- if @@hashLength
-											? hash = hashFiles.sync({files: [path.join(src, '/**/*')]}).substr(0, @@hashLength) + '_'
-
+										: hash = @@hashFunction ? genHash(path.join(src, '/**/*')) + '_' : ''
 										? newSrc = path.join(lib, hash + basename)
-										? relativeSrc = path.relative(@@output, newSrc)
-										? foldersCache[basename] = fs.existsSync(newSrc) && relativeSrc
+
+										? folderLink = @@publicPath(path.relative(@@output, newSrc))
+										? foldersCache[basename] = fs.existsSync(newSrc) && folderLink
 
 									- if !foldersCache[basename]
 										? fs.mkdirpSync(newSrc)
 										? fs.copySync(src, newSrc)
-										? foldersCache[basename] = relativeSrc
+										? foldersCache[basename] = folderLink
 
 									- script :: PATH['{basename}'] = '{foldersCache[basename]}';
 
 							- else
 								- block loadDefLibs
 									: notDefer = Array.isArray(url)
-									? url = self.join(@@lib, notDefer ? url[0] : url)
+									? url = @@publicPath(self.join(@@lib, notDefer ? url[0] : url))
 
 									- if @@fatHTML
 										- script

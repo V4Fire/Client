@@ -9,14 +9,15 @@
  */
 
 const
-	$C = require('collection.js');
+	$C = require('collection.js'),
+	config = require('config');
 
 const
 	fs = require('fs'),
-	path = require('path'),
-	hasha = require('hasha');
+	path = require('path');
 
 const
+	hash = include('build/hash'),
 	{output, assetsJSON} = include('build/build.webpack');
 
 /**
@@ -26,6 +27,10 @@ const
  * @returns {!Function}
  */
 module.exports = function ({graph}) {
+	const
+		p = config.webpack.publicPath(),
+		publicPath = (src) => p + path.basename(src);
+
 	return {
 		apply(compiler) {
 			compiler.hooks.emit.tap('DependenciesPlugin', (compilation) => {
@@ -39,12 +44,9 @@ module.exports = function ({graph}) {
 
 					const src = output
 						.replace(/\[name]/g, `${name}.js`)
-						.replace(/\[hash:?(\d*)]/, (str, length) => {
-							const res = hasha(content, {algorithm: 'md5'});
-							return length ? res.substr(0, Number(length)) : res;
-						});
+						.replace(/\[hash:?(\d*)]/, (str, length) => hash(content, Number(length)));
 
-					manifest[name] = path.basename(src);
+					manifest[name] = publicPath(src);
 					fs.writeFileSync(src, content);
 				});
 
@@ -53,7 +55,7 @@ module.exports = function ({graph}) {
 						file = $C(files).one.filter((src) => path.extname(src)).get();
 
 					if (file) {
-						manifest[path.basename(name, path.extname(name))] = path.basename(file);
+						manifest[path.basename(name, path.extname(name))] = publicPath(file);
 					}
 				});
 

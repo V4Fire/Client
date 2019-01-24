@@ -10,9 +10,8 @@
 
 - include 'super/i-block'|b as placeholder
 
+- import config from 'config'
 - import fs from 'fs-extra-promise'
-- import path from 'upath'
-- import hasha from 'hasha'
 
 /**
  * Injects the specified file to the template
@@ -50,12 +49,10 @@
 
 		- if !libCache[basename]
 			? file = fs.readFileSync(src)
-			: hash = ''
 
-			- if @@hashLength
-				? hash = hasha(src, {algorithm: 'md5'}).substr(0, @@hashLength) + '_'
-
+			: hash = @@hashFunction ? genHash(file) + '_' : ''
 			? newSrc = path.join(lib, hash + basename)
+
 			? fileLink = @@fatHTML ? newSrc : path.relative(@@output, newSrc)
 			? libCache[basename] = fs.existsSync(newSrc) && fileLink
 

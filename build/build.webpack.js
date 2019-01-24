@@ -66,7 +66,7 @@ exports.hash = hash;
  * @param {boolean=} [chunk] - if true, then the specified output is a chunk
  */
 function hash(output, chunk) {
-	const l = webpack.hashLength();
+	const l = webpack.hashLength;
 	return output.replace(/\[(chunk)?hash(:\d+)?]_/g, l ? chunk ? `[chunkhash:${l}]_` : `[hash:${l}]_` : '');
 }
 

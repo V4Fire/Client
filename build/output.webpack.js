@@ -15,8 +15,9 @@ const
 /**
  * Parameters for webpack.output
  */
-module.exports = {
+module.exports = exports = {
 	path: src.cwd(),
 	publicPath: webpack.publicPath(),
-	filename: hash(output, true)
+	filename: hash(output, true),
+	hashFunction: webpack.hashFunction()
 };

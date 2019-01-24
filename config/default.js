@@ -39,6 +39,20 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 
 	webpack: {
 		devtool: false,
+		hashLength: 8,
+
+		hashFunction() {
+			return !isProd || this.fatHTML() ? undefined : 'md5';
+		},
+
+		fatHTML() {
+			return false;
+		},
+
+		dataURILimit() {
+			return this.fatHTML() ? undefined : 4096;
+		},
+
 		externals: {
 			'collection.js': '$C',
 			'eventemitter2': 'EventEmitter2',
@@ -48,10 +62,6 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 			'ion-sound': 'ion',
 			'socket.io-client': 'io',
 			'setimmediate': 'setImmediate'
-		},
-
-		fatHTML() {
-			return false;
 		},
 
 		longCache() {
@@ -65,23 +75,11 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 			return '[confighash]';
 		},
 
-		hashLength() {
-			return !isProd || this.fatHTML() ? false : 8;
-		},
-
-		dataURILimit() {
-			return this.fatHTML() ? undefined : 4096;
-		},
-
 		publicPath() {
-			return o('public-path', {
+			return this.fatHTML() ? '' : o('public-path', {
 				env: true,
-				default: '/'
+				default: ''
 			});
-		},
-
-		dllOutput(params) {
-			return this.output(params);
 		},
 
 		output(params) {
@@ -101,22 +99,26 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 			return res;
 		},
 
+		dllOutput(params) {
+			return this.output(params);
+		},
+
 		assetsOutput(params) {
 			const
 				root = 'assets';
 
-			if (isProd) {
+			if (!isProd || this.fatHTML()) {
 				return this.output({
 					...params,
-					hash: `${root}/[hash].[ext]`,
-					name: null
+					name: `${root}/[path][name].[ext]`,
+					hash: null
 				});
 			}
 
 			return this.output({
 				...params,
-				name: `${root}/[path][name].[ext]`,
-				hash: null
+				hash: `${root}/[hash].[ext]`,
+				name: null
 			});
 		},
 
@@ -179,8 +181,11 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 
 	snakeskin() {
 		const
-			snakeskinVars = include('build/snakeskin.vars.js'),
 			{webpack, src} = this;
+
+		const
+			snakeskinVars = include('build/snakeskin.vars.js'),
+			publicPath = webpack.publicPath();
 
 		return {
 			client: this.extend(super.snakeskin(), {
@@ -195,11 +200,12 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 			server: this.extend(super.snakeskin(), {
 				vars: {
 					...snakeskinVars,
-					fatHTML: webpack.fatHTML(),
-					hashLength: webpack.hashLength(),
 					root: src.cwd(),
-					outputPattern: webpack.output,
+					publicPath: (src) => publicPath + src,
 					output: src.clientOutput(),
+					outputPattern: webpack.output,
+					hashFunction: webpack.hashFunction(),
+					fatHTML: webpack.fatHTML(),
 					favicons: this.favicons().path,
 					assets: src.assets(),
 					lib: src.lib()
