@@ -91,28 +91,16 @@ export default class iMessage extends iBlock {
 
 	/**
 	 * Opens the component
-	 * @emits open()
 	 */
 	async open(): Promise<boolean> {
-		if (await this.setMod('opened', true)) {
-			this.emit('open');
-			return true;
-		}
-
-		return false;
+		return this.setMod('opened', true);
 	}
 
 	/**
 	 * Closes the component
-	 * @emits close()
 	 */
 	async close(): Promise<boolean> {
-		if (await this.setMod('opened', false)) {
-			this.emit('close');
-			return true;
-		}
-
-		return false;
+		return this.setMod('opened', false);
 	}
 
 	/**
@@ -178,10 +166,19 @@ export default class iMessage extends iBlock {
 		}
 	}
 
-	/** @override */
+	/**
+	 * @override
+	 * @emits open()
+	 * @emits close()
+	 */
 	protected initModEvents(): void {
 		super.initModEvents();
+
 		this.bindModTo('showInfo', 'infoMsg');
 		this.bindModTo('showError', 'errorMsg');
+
+		this.localEvent.on('block.mod.*.focused.*', (e) => {
+			this.emit(e.value === 'false' || e.type === 'remove' ? 'close' : 'open');
+		});
 	}
 }
