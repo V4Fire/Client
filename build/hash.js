@@ -34,7 +34,7 @@ module.exports = function (value, length = webpack.hashLength) {
 	let
 		res;
 
-	if (path.extname(value)) {
+	if (Object.isString(value) && path.extname(value)) {
 		res = hashFiles.sync({files: [value], algorithm});
 
 	} else {
