@@ -76,6 +76,9 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		},
 
 		publicPath(...args) {
+			const
+				concatUrls = require('urlconcat').concat;
+
 			let
 				pathVal;
 
@@ -85,7 +88,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 			} else {
 				pathVal = o('public-path', {
 					env: true,
-					default: '/'
+					default: concatUrls('/', this.config.src.rel('clientOutput'))
 				});
 
 				if (!Object.isString(pathVal)) {
@@ -94,7 +97,6 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 			}
 
 			if (args.length) {
-				const concatUrls = require('urlconcat').concat;
 				args = args.map((el) => el.replace(/^\.?/, ''));
 
 				if (pathVal) {
