@@ -64,7 +64,7 @@
 
 		< html
 			< head
-				: base = path.join('/', @@rel('clientOutput'), '/')
+				: base = @@publicPath()
 
 				- block meta
 					< meta ${charset}
