@@ -39,7 +39,6 @@ import {
 export interface RenderContext extends BaseRenderContext {
 	$root?: FunctionalCtx;
 	$options?: Dictionary;
-	scopedSlots?(): any;
 }
 
 export interface RenderObject {
@@ -159,7 +158,7 @@ export function createFakeCtx<T extends Dictionary = FunctionalCtx>(
 		},
 
 		$scopedSlots: {
-			...renderCtx.scopedSlots && renderCtx.scopedSlots()
+			...Object.isFunction(renderCtx.scopedSlots) ? renderCtx.scopedSlots() : renderCtx.scopedSlots
 		},
 
 		$destroy(): void {
