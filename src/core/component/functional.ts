@@ -226,8 +226,7 @@ export function createFakeCtx<T extends Dictionary = FunctionalCtx>(
 			}
 
 			$a.setImmediate(() => p.$forceUpdate(), {
-				group: 'render',
-				label: 'forceUpdate'
+				label: $$.forceUpdate
 			});
 		},
 

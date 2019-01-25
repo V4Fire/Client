@@ -6,6 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import symbolGenerator from 'core/symbol';
 import { ComponentInterface } from 'core/component/interface';
 import { minimalCtx, ComponentDriver, ComponentOptions, CreateElement, VNode } from 'core/component/engines';
 import { runHook, bindWatchers } from 'core/component/component';
@@ -13,7 +14,10 @@ import { createFakeCtx } from 'core/component/functional';
 import { constructors, components } from 'core/component/const';
 
 export type Composite<T = unknown> =
-	[T?, ComponentInterface?];
+	[] | [T?, ComponentInterface?];
+
+const
+	$$ = symbolGenerator();
 
 /**
  * Creates a composite component by the specified parameters and returns a tuple [node, ctx]
@@ -100,54 +104,93 @@ export function createComponent<N = unknown, CTX extends Dictionary = ComponentD
 
 	// @ts-ignore
 	fakeCtx.$el = node;
-
-	// @ts-ignore
-	fakeCtx.hook = 'mounted';
 	node.component = fakeCtx;
-	bindWatchers(fakeCtx);
-
-	runHook('mounted', meta, fakeCtx).then(async () => {
-		if (methods.mounted) {
-			await methods.mounted.fn.call(fakeCtx);
-		}
-	}, stderr);
 
 	const
 		// @ts-ignore
 		{$async: $a} = fakeCtx,
 		watchRoot = document.body;
 
+	let
+		mounted;
+
+	const mount = () => {
+		if (mounted) {
+			return;
+		}
+
+		// @ts-ignore
+		fakeCtx.hook = 'mounted';
+		mounted = true;
+		bindWatchers(fakeCtx);
+
+		runHook('mounted', <NonNullable<typeof meta>>meta, fakeCtx).then(async () => {
+			if (methods.mounted) {
+				await methods.mounted.fn.call(fakeCtx);
+			}
+		}, stderr);
+	};
+
+	const destroy = () => {
+		// @ts-ignore
+		fakeCtx.$destroy();
+	};
+
 	if (!fakeCtx.keepAlive) {
+		const
+			is = (el) => el === node || el.contains(node);
+
 		if (typeof MutationObserver === 'function') {
 			const observer = new MutationObserver((mutations) => {
 				for (let i = 0; i < mutations.length; i++) {
-					for (let o = mutations[i].removedNodes, j = 0; j < o.length; j++) {
+					const
+						mut = mutations[i];
+
+					if (!mounted) {
+						for (let o = mut.addedNodes, j = 0; j < o.length; j++) {
+							if (is(o[j])) {
+								mount();
+								break;
+							}
+						}
+					}
+
+					for (let o = mut.removedNodes, j = 0; j < o.length; j++) {
 						const
 							el = o[j];
 
-						if (el === node || el.contains(node)) {
-							// @ts-ignore
-							fakeCtx.$destroy();
+						if (is(el)) {
+							$a.setImmediate(() => {
+								if (!document.body.contains(el)) {
+									destroy();
+								}
+							}, {
+								label: $$.removeFromDOM
+							});
+
+							break;
 						}
 					}
 				}
 			});
 
 			observer.observe(watchRoot, {
-				childList: true
+				childList: true,
+				subtree: true
 			});
 
 			$a.worker(observer);
 
 		} else {
-			$a.on(watchRoot, 'DOMNodeRemoved', ({srcElement: el}) => {
-				if (!el) {
-					return;
+			$a.on(watchRoot, 'DOMNodeInserted', ({srcElement}) => {
+				if (is(srcElement)) {
+					mount();
 				}
+			});
 
-				if (el === node || el.contains(node)) {
-					// @ts-ignore
-					fakeCtx.$destroy();
+			$a.on(watchRoot, 'DOMNodeRemoved', ({srcElement}) => {
+				if (is(srcElement)) {
+					destroy();
 				}
 			});
 		}
