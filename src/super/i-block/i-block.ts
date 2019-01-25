@@ -1881,8 +1881,7 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 				}
 
 			}, {
-				label: $$.activate,
-				group: 'routerStateWatchers'
+				label: $$.activate
 			}));
 		}
 
