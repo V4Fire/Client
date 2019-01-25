@@ -10,8 +10,10 @@ import { createComponent } from 'core/component/composite';
 import { ComponentOptions, DirectiveOptions, DirectiveFunction, RenderContext } from 'vue';
 import { constructors, components } from 'core/component/const';
 import { VNode, VNodeData as BaseVNodeData } from 'vue/types/vnode';
-import { VueConfiguration } from 'vue/types/vue';
+
+import config from 'core/component/engines/zero/config';
 import * as _ from 'core/component/engines/zero/helpers';
+
 export { default as minimalCtx } from 'core/component/engines/zero/ctx';
 
 //#if VueInterfaces
@@ -64,18 +66,7 @@ export function patchVNode(vNode: Element, ctx: Dictionary<any>, renderCtx: Rend
 }
 
 export class ComponentDriver {
-	static config: VueConfiguration = {
-		silent: true,
-		devtools: false,
-		productionTip: false,
-		performance: false,
-		optionMergeStrategies: {},
-		keyCodes: {},
-		ignoredElements: [],
-		errorHandler: console.error,
-		warnHandler: console.warn,
-		async: false
-	};
+	static config: typeof config = config;
 
 	/**
 	 * Shim for Vue.component

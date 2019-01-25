@@ -6,7 +6,8 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { ComponentDriver } from 'core/component/engines';
+import config from 'core/component/engines/zero/config';
+import { warn } from 'core/component/engines/zero/helpers';
 
 export const reservedAttrs = {
 	'is': true,
@@ -24,7 +25,7 @@ export default {
 	_e: (v) => document.createComment(v === undefined ? '' : v),
 
 	_f(id: string): Function {
-		return resolveAsset(this.$options, 'filters', id) || Any;
+		return resolveAsset(this.$options, 'filters', id, true) || Any;
 	},
 
 	_n: (v) => {
@@ -106,6 +107,9 @@ export default {
 
 				on[key] = existing ? [].concat(existing, ours) : ours;
 			}
+
+		} else {
+			warn('v-on without argument expects an Object value', this);
 		}
 
 		return data;
@@ -113,7 +117,6 @@ export default {
 
 	_k: (eventKeyCode, key, builtInKeyCode, eventKeyName, builtInKeyName) => {
 		const
-			config = ComponentDriver.config,
 			mappedKeyCode = config.keyCodes[key] || builtInKeyCode;
 
 		if (builtInKeyName && eventKeyName && !config.keyCodes[key]) {
@@ -160,6 +163,9 @@ export default {
 			for (const key in val) {
 				loop(key);
 			}
+
+		} else {
+			warn('v-bind without argument expects an Object or Array value', this);
 		}
 
 		return data;
@@ -176,6 +182,10 @@ export default {
 			props = props || {};
 
 			if (bindObject) {
+				if (typeof bindObject !== 'object') {
+					warn('slot v-bind without argument expects an Object', this);
+				}
+
 				props = {...bindObject, ...props};
 			}
 
@@ -220,7 +230,7 @@ export default {
 const
 	hasOwnProperty = Object.prototype.hasOwnProperty;
 
-function resolveAsset(options: Dictionary<any>, type: string, id: string): CanUndef<Function> {
+function resolveAsset(options: Dictionary<any>, type: string, id: string, warnMissing: boolean): CanUndef<Function> {
 	if (Object.isString(id)) {
 		return;
 	}
@@ -250,7 +260,14 @@ function resolveAsset(options: Dictionary<any>, type: string, id: string): CanUn
 		return assets[PascalCaseId];
 	}
 
-	return assets[id] || assets[camelizedId] || assets[PascalCaseId];
+	const
+		res = assets[id] || assets[camelizedId] || assets[PascalCaseId];
+
+	if (warnMissing && !res) {
+		warn(`Failed to resolve ${type.slice(0, -1)}: ${id}`, options);
+	}
+
+	return res;
 }
 
 function isKeyNotMatch(expect: CanArray<string>, actual: string): boolean {

@@ -7,6 +7,8 @@
  */
 
 import symbolGenerator from 'core/symbol';
+import config from 'core/component/engines/zero/config';
+
 import { DirectiveOptions } from 'vue';
 import { ComponentInterface, ComponentElement } from 'core/component/interface';
 import { VNodeData, VNodeDirective } from 'vue/types/vnode';
@@ -306,5 +308,14 @@ export function appendChild(this: ComponentInterface, parent: Node, node: CanArr
 
 	} else if (node) {
 		parent.appendChild(node);
+	}
+}
+
+export function warn(message: string, vm: object): void {
+	if (Object.isFunction(config.warnHandler)) {
+		config.warnHandler.call(null, message, vm);
+
+	} else if (typeof console !== 'undefined' && Object.isFunction(console.error) && !config.silent) {
+		console.error(`[Vue warn]: ${message}`);
 	}
 }
