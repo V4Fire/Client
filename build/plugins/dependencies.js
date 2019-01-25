@@ -9,19 +9,17 @@
  */
 
 const
-	$C = require('collection.js'),
-	{webpack} = require('config');
+	$C = require('collection.js');
 
 const
 	fs = require('fs'),
-	path = require('path');
-
-const
-	{output, assetsJSON} = include('build/build.webpack'),
-	{MODULE_DEPENDENCIES} = include('build/globals.webpack');
-
-const
+	path = require('path'),
 	hash = include('build/hash');
+
+const
+	{webpack, src: {clientOutput}} = require('config'),
+	{assetsJSON, assetsJS} = include('build/build.webpack'),
+	{MODULE_DEPENDENCIES} = include('build/globals.webpack');
 
 /**
  * WebPack plugin for .dependencies.js files and assets.js
@@ -41,12 +39,13 @@ module.exports = function ({graph}) {
 						content = `window[${MODULE_DEPENDENCIES}].add("${key}", ${JSON.stringify([...el])});`,
 						name = `${key}.dependencies`;
 
-					const src = output
-						.replace(/\[name]/g, `${name}.js`)
-						.replace(/\[hash:?(\d*)]/, (str, length) => hash(content, Number(length)));
+					const src = webpack.output({
+						name: `${name}.js`,
+						hash: hash(content)
+					});
 
 					manifest[name] = webpack.publicPath(src);
-					fs.writeFileSync(src, content);
+					fs.writeFileSync(path.join(clientOutput(), src), content);
 				});
 
 				$C(compilation.chunks).forEach(({name, files}) => {
@@ -82,7 +81,7 @@ module.exports = function ({graph}) {
 				fs.writeFileSync(fd, JSON.stringify(assets));
 				fs.closeSync(fd);
 
-				fs.writeFileSync(assetsJSON.replace(/\.json$/, '.js'), $C(assets).to('').map((el, key) => `PATH['${key}'] = '${el}';\n`));
+				fs.writeFileSync(assetsJS, $C(assets).to('').map((el, key) => `PATH['${key}'] = '${el}';\n`));
 			});
 		}
 	};

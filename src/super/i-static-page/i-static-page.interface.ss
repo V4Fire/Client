@@ -134,11 +134,7 @@
 
 				- if !@@fatHTML && assetsRequest
 					- block assets
-						: assetJS = @@rel( &
-							@@assetsJSON.replace(/json$/, 'js')
-						) .
-
-						- script js src = ${@@publicPath(assetJS)}
+						- script js src = ${@@publicPath(@@assetsJS)}
 
 				- block head
 					: defStyles = deps.styles
@@ -155,7 +151,7 @@
 										requireMonic({url})
 
 								- else
-									? url = @@publicPath(@@rel('clientOutput', url))
+									? url = @@publicPath(url)
 
 									- if notDefer
 										- link css href = ${url}
@@ -194,7 +190,7 @@
 
 							- if isFolder
 								- block loadFolders
-									? url = @@publicPath(@@rel('clientOutput', url))
+									? url = @@publicPath(url)
 									- script :: PATH['{basename}'] = '{url}';
 
 							- else
@@ -204,7 +200,7 @@
 											requireMonic({url})
 
 									- else
-										? url = @@publicPath(@@rel('clientOutput', url))
+										? url = @@publicPath(url)
 										- script js src = ${url} | ${notDefer ? '' : 'defer'}
 
 							- return res + getTplResult()

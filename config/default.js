@@ -9,6 +9,7 @@
  */
 
 const
+	path = require('upath'),
 	config = require('@v4fire/core/config/default'),
 	o = require('uniconf/options').option;
 
@@ -75,19 +76,35 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		},
 
 		publicPath(...args) {
-			const
-				concatUrls = require('urlconcat').concat;
+			let
+				pathVal;
 
-			const v = this.fatHTML() ? '' : o('public-path', {
-				env: true,
-				default: '/'
-			});
+			if (this.fatHTML()) {
+				pathVal = '';
 
-			if (args.length) {
-				return concatUrls(v, ...args.map((el) => el.replace(/^\.?\//, '')));
+			} else {
+				pathVal = o('public-path', {
+					env: true,
+					default: '/'
+				});
+
+				if (!Object.isString(pathVal)) {
+					pathVal = '';
+				}
 			}
 
-			return v;
+			if (args.length) {
+				const concatUrls = require('urlconcat').concat;
+				args = args.map((el) => el.replace(/^\.?/, ''));
+
+				if (pathVal) {
+					return concatUrls(pathVal, ...args);
+				}
+
+				return concatUrls(...args);
+			}
+
+			return pathVal;
 		},
 
 		output(params) {
@@ -132,6 +149,10 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 
 		assetsJSON() {
 			return 'assets.json';
+		},
+
+		assetsJS() {
+			return path.changeExt(this.assetsJSON(), '.js');
 		}
 	},
 
@@ -235,6 +256,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 					root: src.cwd(),
 					lib: src.lib(),
 					assets: src.assets(),
+					assetsJS: webpack.assetsJS(),
 					favicons: this.favicons().path,
 
 					publicPath: webpack.publicPath,
