@@ -41,7 +41,7 @@
     "snakeskin": "^7.5.1",
     "socket.io": "^2.2.0",
     "sugar": "^2.0.6",
-    "vue": "^2.5.22"
+    "vue": "^2.6.0-beta.1"
   },
   "optionalDependencies": {
     "@pzlr/build-core": "^2.8.11",
@@ -107,7 +107,7 @@
     "upath": "^1.1.0",
     "url-loader": "^1.1.2",
     "urlconcat": "0.0.12",
-    "vue-template-compiler": "^2.5.22",
+    "vue-template-compiler": "^2.6.0-beta.1",
     "vue-template-es2015-compiler": "^1.6.0",
     "webpack": "^4.19.0",
     "webpack-cli": "^3.1.2"
