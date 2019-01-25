@@ -6,13 +6,13 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import symbolGenerator from 'core/symbol';
 import config from 'core/component/engines/zero/config';
-
 import { DirectiveOptions } from 'vue';
-import { ComponentInterface, ComponentElement } from 'core/component/interface';
-import { VNodeData, VNodeDirective } from 'vue/types/vnode';
+import { ComponentInterface } from 'core/component/interface';
+import { addDirectives, addStaticDirectives, $$, DirElement, DocumentFragmentP } from 'core/component/engines/helpers';
+import { VNodeData } from 'vue/types/vnode';
 
+export * from 'core/component/engines/helpers';
 export interface Options extends Dictionary {
 	filters: Dictionary<Function>;
 	directives: Dictionary<DirectiveOptions>;
@@ -27,13 +27,7 @@ export const options: Options = {
 	directives: {}
 };
 
-export type DirElement =
-	Element |
-	ComponentElement |
-	DocumentFragmentP;
-
 export const
-	$$ = symbolGenerator(),
 	SVG_NMS = 'http://www.w3.org/2000/svg',
 	XLINK_NMS = 'http://www.w3.org/1999/xlink';
 
@@ -41,7 +35,7 @@ const
 	eventModifiers = {'!': 'capture', '&': 'passive', '~': 'once'},
 	eventModifiersRgxp = new RegExp(`^[${Object.keys(eventModifiers).join('')}]+`);
 
-export function createSVGChildren(this: ComponentInterface, children: Element[], ctx: Dictionary): SVGElement[] {
+export function createSVGChildren(ctx: ComponentInterface, children: Element[]): SVGElement[] {
 	if (!children || !children.length) {
 		return [];
 	}
@@ -56,17 +50,26 @@ export function createSVGChildren(this: ComponentInterface, children: Element[],
 			data = el[$$.data];
 
 		if (data) {
-			addDirectives.call(this, node, data, el[$$.directives]);
-			addStyles.call(this, node, el[$$.styles]);
-			addAttrs.call(this, node, el[$$.attrs]);
-			attachEvents.call(this, node, el[$$.events]);
+			const
+				dirs = el[$$.directives];
+
+			addStaticDirectives(this, data, dirs, node);
+			addDirectives(ctx, node, data, dirs);
+
+			addStyles(node, el[$$.styles]);
+			addAttrs(node, el[$$.attrs]);
+			attachEvents(node, el[$$.events]);
 
 			if (el.className) {
 				node.setAttributeNS(null, 'class', el.className);
 			}
 
-			if (data.ref && Object.isObject(ctx.refs)) {
-				ctx.refs[data.ref] = el;
+			const
+				// @ts-ignore
+				refs = ctx.$refs;
+
+			if (data.ref && Object.isObject(refs)) {
+				refs[data.ref] = el;
 			}
 
 			res.push(node);
@@ -76,70 +79,14 @@ export function createSVGChildren(this: ComponentInterface, children: Element[],
 		}
 
 		if (el.children) {
-			appendChild.call(this, node, createSVGChildren.call(this, Array.from(el.children), ctx));
+			appendChild(node, createSVGChildren(ctx, Array.from(el.children)));
 		}
 	}
 
 	return res;
 }
 
-export function addDirectives(
-	this: ComponentInterface,
-	el: DirElement,
-	data: VNodeData,
-	directives?: VNodeDirective[]
-): void {
-	if (!directives) {
-		return;
-	}
-
-	const
-		store = this.$options.directives;
-
-	if (!store) {
-		return;
-	}
-
-	el[$$.directives] = directives;
-
-	for (let o = directives, i = 0; i < o.length; i++) {
-		const
-			dir = o[i],
-			nm = dir.name,
-			customDir = store[nm];
-
-		if (customDir) {
-			const vnode = Object.create(el);
-			vnode.context = this;
-
-			if (customDir.bind) {
-				customDir.bind.call(undefined, el, dir, vnode);
-			}
-
-			continue;
-		}
-
-		switch (dir.name) {
-			case 'show':
-				if (!dir.value) {
-					data.attrs = data.attrs || {};
-					data.attrs.style = (data.attrs.style || '') + ';display: none;';
-				}
-
-				break;
-
-			case 'model':
-				data.domProps = data.domProps || {};
-				data.domProps.value = dir.value;
-		}
-	}
-}
-
-export function addProps(
-	this: ComponentInterface,
-	el: DirElement,
-	props?: Dictionary<unknown>
-): void {
+export function addProps(el: DirElement, props?: Dictionary<unknown>): void {
 	if (!props) {
 		return;
 	}
@@ -152,16 +99,7 @@ export function addProps(
 	}
 }
 
-type DocumentFragmentP = DocumentFragment & {
-	getAttribute(nm: string): void;
-	setAttribute(nm: string, val: string): void;
-};
-
-export function addAttrs(
-	this: ComponentInterface,
-	el: DirElement,
-	attrs?: Dictionary<string>
-): void {
+export function addAttrs(el: DirElement, attrs?: Dictionary<string>): void {
 	if (!attrs) {
 		return;
 	}
@@ -184,13 +122,9 @@ export function addAttrs(
 	}
 }
 
-export function addStyles(
-	this: ComponentInterface,
-	el: DirElement,
-	styles?: CanArray<Dictionary<string> | string>
-): void {
+export function addStyles(el: DirElement, styles?: CanArray<object>): void {
 	const
-		normalizedStyles = (<Array<Dictionary<string> | string>>[]).concat(styles || []);
+		normalizedStyles = (<object[]>[]).concat(styles || []);
 
 	if (!normalizedStyles.length) {
 		return;
@@ -240,7 +174,7 @@ export function createTemplate(): DocumentFragmentP {
 	return el;
 }
 
-export function addClass(this: ComponentInterface, el: Element, opts: VNodeData): void {
+export function addClass(el: Element, opts: VNodeData): void {
 	const className = (<string[]>[]).concat(
 		el.getAttribute('class') || '',
 		opts.staticClass || '',
@@ -257,7 +191,7 @@ export function addClass(this: ComponentInterface, el: Element, opts: VNodeData)
 	}
 }
 
-export function attachEvents(this: ComponentInterface, el: Node, events?: Dictionary<CanArray<Function>>): void {
+export function attachEvents(el: Node, events?: Dictionary<CanArray<Function>>): void {
 	if (!events) {
 		return;
 	}
@@ -291,7 +225,7 @@ export function attachEvents(this: ComponentInterface, el: Node, events?: Dictio
 	}
 }
 
-export function appendChild(this: ComponentInterface, parent: Node, node: CanArray<Node>): void {
+export function appendChild(parent: Node, node: CanArray<Node>): void {
 	if (!parent) {
 		return;
 	}
@@ -302,7 +236,7 @@ export function appendChild(this: ComponentInterface, parent: Node, node: CanArr
 				el = node[i];
 
 			if (el) {
-				appendChild.call(this, parent, el);
+				appendChild(parent, el);
 			}
 		}
 

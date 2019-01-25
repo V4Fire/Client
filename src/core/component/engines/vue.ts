@@ -7,6 +7,7 @@
  */
 
 import Vue, { VNode, RenderContext } from 'vue';
+import { addStaticDirectives } from 'core/component/engines/helpers';
 
 export { Vue as ComponentDriver };
 export * from 'vue';
@@ -72,17 +73,6 @@ export function patchVNode(vNode: VNode, ctx: Dictionary<any>, renderCtx: Render
 		}
 
 		// Directives
-
-		if (data.directives) {
-			for (let o = data.directives, i = 0; i < o.length; i++) {
-				const
-					el = o[i];
-
-				if (el.name === 'show' && !el.value) {
-					vData.attrs = vData.attrs || {};
-					vData.attrs.style = (vData.attrs.style || '') + ';display: none;';
-				}
-			}
-		}
+		addStaticDirectives(<any>ctx, vData, data.directives, <Element>vNode.elm);
 	}
 }

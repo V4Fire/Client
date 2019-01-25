@@ -8,13 +8,13 @@
 
 import symbolGenerator from 'core/symbol';
 import { ComponentInterface } from 'core/component/interface';
-import { minimalCtx, ComponentDriver, ComponentOptions, CreateElement, VNode } from 'core/component/engines';
+import { minimalCtx, ComponentDriver, ComponentOptions, VNode } from 'core/component/engines';
 import { runHook, bindWatchers } from 'core/component/component';
 import { createFakeCtx } from 'core/component/functional';
 import { constructors, components } from 'core/component/const';
 
 export type Composite<T = unknown> =
-	[] | [T?, ComponentInterface?];
+	[T?, ComponentInterface?];
 
 const
 	$$ = symbolGenerator();
@@ -26,15 +26,17 @@ const
  * @param ctx - base context
  * @param [parent] - parent context
  */
-export function createComponent<N = unknown, CTX extends Dictionary = ComponentDriver>(
+export function createComponent<T>(
 	component: ComponentOptions<ComponentDriver> | string,
-	ctx: CTX,
-	parent?: CTX
-): Composite<N> {
+	ctx: ComponentInterface,
+	parent?: ComponentInterface
+): Composite<T> {
 	const
-		constr = constructors[Object.isString(component) ? component : String(component.name)];
+		constr = constructors[Object.isString(component) ? component : String(component.name)],
+		// @ts-ignore
+		createElement = ctx.$createElement;
 
-	if (!constr || !ctx.$createElement) {
+	if (!constr || !createElement) {
 		return [];
 	}
 
@@ -80,7 +82,6 @@ export function createComponent<N = unknown, CTX extends Dictionary = ComponentD
 	});
 
 	const
-		createElement = <CreateElement>ctx.$createElement,
 		fakeCtx = createFakeCtx<ComponentInterface>(createElement, renderCtx, baseCtx, true);
 
 	// @ts-ignore
@@ -136,64 +137,66 @@ export function createComponent<N = unknown, CTX extends Dictionary = ComponentD
 		fakeCtx.$destroy();
 	};
 
-	if (!fakeCtx.keepAlive) {
-		const
-			is = (el) => el === node || el.contains(node);
+	const
+		is = (el) => el === node || el.contains(node);
 
-		if (typeof MutationObserver === 'function') {
-			const observer = new MutationObserver((mutations) => {
-				for (let i = 0; i < mutations.length; i++) {
-					const
-						mut = mutations[i];
+	if (typeof MutationObserver === 'function') {
+		const observer = new MutationObserver((mutations) => {
+			for (let i = 0; i < mutations.length; i++) {
+				const
+					mut = mutations[i];
 
-					if (!mounted) {
-						for (let o = mut.addedNodes, j = 0; j < o.length; j++) {
-							if (is(o[j])) {
-								mount();
-								break;
-							}
-						}
-					}
-
-					for (let o = mut.removedNodes, j = 0; j < o.length; j++) {
-						const
-							el = o[j];
-
-						if (is(el)) {
-							$a.setImmediate(() => {
-								if (!document.body.contains(el)) {
-									destroy();
-								}
-							}, {
-								label: $$.removeFromDOM
-							});
-
+				if (!mounted) {
+					for (let o = mut.addedNodes, j = 0; j < o.length; j++) {
+						if (is(o[j])) {
+							mount();
 							break;
 						}
 					}
 				}
-			});
 
-			observer.observe(watchRoot, {
-				childList: true,
-				subtree: true
-			});
-
-			$a.worker(observer);
-
-		} else {
-			$a.on(watchRoot, 'DOMNodeInserted', ({srcElement}) => {
-				if (is(srcElement)) {
-					mount();
+				if (fakeCtx.keepAlive) {
+					break;
 				}
-			});
 
-			$a.on(watchRoot, 'DOMNodeRemoved', ({srcElement}) => {
-				if (is(srcElement)) {
-					destroy();
+				for (let o = mut.removedNodes, j = 0; j < o.length; j++) {
+					const
+						el = o[j];
+
+					if (is(el)) {
+						$a.setImmediate(() => {
+							if (!document.body.contains(el)) {
+								destroy();
+							}
+						}, {
+							label: $$.removeFromDOM
+						});
+
+						break;
+					}
 				}
-			});
-		}
+			}
+		});
+
+		observer.observe(watchRoot, {
+			childList: true,
+			subtree: true
+		});
+
+		$a.worker(observer);
+
+	} else {
+		$a.on(watchRoot, 'DOMNodeInserted', ({srcElement}) => {
+			if (is(srcElement)) {
+				mount();
+			}
+		});
+
+		$a.on(watchRoot, 'DOMNodeRemoved', ({srcElement}) => {
+			if (is(srcElement)) {
+				destroy();
+			}
+		});
 	}
 
 	return [node, fakeCtx];

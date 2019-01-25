@@ -13,6 +13,7 @@ import Async from 'core/async';
 
 import { EventEmitter2 as EventEmitter } from 'eventemitter2';
 import { ComponentElement, FunctionalCtx } from 'core/component/interface';
+import { addDirectives, addStaticDirectives } from 'core/component/engines/helpers';
 
 import {
 
@@ -497,9 +498,8 @@ export function patchVNode(vNode: VNode, ctx: Dictionary<any>, renderCtx: Render
 			return;
 		}
 
-		if (oldCtx) {
-			oldCtx.$destroy();
-		}
+		addDirectives(<any>ctx, el, data, data.directives);
+		oldCtx && oldCtx.$destroy();
 
 		if (!meta.params.tiny) {
 			if (oldCtx) {

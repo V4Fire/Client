@@ -7,6 +7,7 @@
  */
 
 import { createComponent } from 'core/component/composite';
+import { ComponentInterface } from 'core/component/interface';
 import { ComponentOptions, DirectiveOptions, DirectiveFunction, RenderContext } from 'vue';
 import { constructors, components } from 'core/component/const';
 import { VNode, VNodeData as BaseVNodeData } from 'vue/types/vnode';
@@ -51,18 +52,19 @@ export const options: Options = {
  * @param ctx - component fake context
  * @param renderCtx - render context
  */
-export function patchVNode(vNode: Element, ctx: Dictionary<any>, renderCtx: RenderContext): void {
+export function patchVNode(vNode: Element, ctx: ComponentInterface, renderCtx: RenderContext): void {
 	const
 		{data} = renderCtx,
+		// @ts-ignore
 		{meta} = ctx;
 
-	_.addClass.call(ctx, vNode, data);
+	_.addClass(vNode, data);
 
 	if (data.attrs && meta.params.inheritAttrs) {
-		_.addAttrs.call(ctx, vNode, data.attrs);
+		_.addAttrs(vNode, data.attrs);
 	}
 
-	_.addDirectives.call(ctx, vNode, data);
+	_.addStaticDirectives(ctx, data, vNode[_.$$.directives], vNode);
 }
 
 export class ComponentDriver {
@@ -125,7 +127,7 @@ export class ComponentDriver {
 	constructor(opts: ComponentOptions<any>) {
 		const
 			{el} = opts,
-			[res] = createComponent<Element, ComponentDriver>(opts, this);
+			[res] = createComponent<Element>(opts, <any>this);
 
 		if (el && res) {
 			if (Object.isString(el)) {
@@ -151,14 +153,15 @@ export class ComponentDriver {
 	 * @param children
 	 */
 	$createElement(
-		this: Dictionary<unknown>,
+		this: ComponentInterface,
 		tag: string | Node,
 		attrs?: VNodeData | Node[],
 		children?: Node[]
 	): Node {
 		if (Object.isString(tag)) {
 			const
-				refs = this.$refs = <Dictionary>this.$refs || {};
+				// @ts-ignore
+				refs = this.$refs = this.$refs || {};
 
 			let
 				opts: VNodeData;
@@ -256,7 +259,7 @@ export class ComponentDriver {
 							slot = f;
 
 						} else {
-							slot = _.createTemplate.call(this);
+							slot = _.createTemplate();
 
 							for (let o = Array.from(children), i = 0; i < o.length; i++) {
 								slot.appendChild(o[i]);
@@ -283,22 +286,23 @@ export class ComponentDriver {
 				});
 
 				const [node, ctx] =
-					createComponent<Element, ComponentDriver>(tag, baseCtx, <ComponentDriver>this);
+					createComponent<Element>(tag, baseCtx, this);
 
 				if (node) {
 					node[_.$$.data] = opts;
 
-					_.addDirectives.call(this, node, opts, opts.directives);
-					_.addClass.call(this, node, opts);
-					_.attachEvents.call(this, node, opts.nativeOn);
-					_.addStyles.call(this, node, opts.style);
+					_.addStaticDirectives(this, opts, opts.directives, node);
+					_.addDirectives(this, node, opts, opts.directives);
+					_.addClass(node, opts);
+					_.attachEvents(node, opts.nativeOn);
+					_.addStyles(node, opts.style);
 
 					if (opts.ref) {
 						refs[opts.ref] = ctx;
 					}
 
 					if (meta.params.inheritAttrs) {
-						_.addAttrs.call(this, node, attrs);
+						_.addAttrs(node, attrs);
 					}
 				}
 
@@ -324,43 +328,44 @@ export class ComponentDriver {
 			}
 
 			let
-				el;
+				node;
 
 			switch (tag) {
 				case 'template':
-					el = _.createTemplate.call(this);
+					node = _.createTemplate();
 					break;
 
 				case 'svg':
-					el = document.createElementNS(_.SVG_NMS, tag);
+					node = document.createElementNS(_.SVG_NMS, tag);
 					break;
 
 				default:
-					el = document.createElement(tag);
+					node = document.createElement(tag);
 			}
 
-			el[_.$$.data] = opts;
-			_.addDirectives.call(this, el, opts, opts.directives);
+			node[_.$$.data] = opts;
+			_.addStaticDirectives(this, opts, opts.directives, node);
+			_.addDirectives(this, node, opts, opts.directives);
 
-			if (el instanceof Element) {
+			if (node instanceof Element) {
 				if (opts.ref) {
-					refs[opts.ref] = el;
+					refs[opts.ref] = node;
 				}
 
-				_.addClass.call(this, el, opts);
-				_.attachEvents.call(this, el, opts.on);
+				_.addClass(node, opts);
+				_.attachEvents(node, opts.on);
 			}
 
-			_.addProps.call(this, el, opts.domProps);
-			_.addStyles.call(this, el, opts.style);
-			_.addAttrs.call(this, el, opts.attrs);
+			_.addProps(node, opts.domProps);
+			_.addStyles(node, opts.style);
+			_.addAttrs(node, opts.attrs);
 
-			if (el instanceof SVGElement) {
-				children = _.createSVGChildren.call(this, <Element[]>children, this);
+			if (node instanceof SVGElement) {
+				children = _.createSVGChildren(this, <Element[]>children);
 			}
 
-			_.appendChild.call(this, el, children);
-			return el;
+			_.appendChild(node, children);
+			return node;
 		}
 
 		return tag;
