@@ -14,8 +14,9 @@ const
 	MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 const
+	{webpack} = config,
 	{resolve} = require('@pzlr/build-core'),
-	{output, assetsOutput, assetsJSON, hash, inherit, depsRgxpStr} = include('build/build.webpack');
+	{output, assetsOutput, inherit, depsRgxpStr, hash, hashRgxp} = include('build/build.webpack');
 
 const
 	path = require('upath'),
@@ -31,7 +32,7 @@ const
 const fileLoaderOpts = {
 	name: path.basename(assetsOutput),
 	outputPath: path.dirname(assetsOutput),
-	limit: config.webpack.dataURILimit()
+	limit: webpack.dataURILimit()
 };
 
 /**
@@ -166,7 +167,7 @@ module.exports = async function ({buildId, plugins}) {
 				{
 					loader: 'file',
 					options: {
-						name: `${output.replace(/\[hash:\d+]_/, '')}.html`
+						name: `${output.replace(hashRgxp, '')}.html`
 					}
 				},
 
@@ -191,8 +192,7 @@ module.exports = async function ({buildId, plugins}) {
 					options: inherit(snakeskin.server, {
 						exec: true,
 						vars: {
-							dependencies: graph.dependencies,
-							assetsJSON
+							dependencies: graph.dependencies
 						}
 					})
 				}
