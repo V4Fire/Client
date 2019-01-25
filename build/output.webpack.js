@@ -12,12 +12,16 @@ const
 	{src, webpack} = require('config'),
 	{hash, output} = include('build/build.webpack');
 
+const
+	concatUrl = require('urlconcat').concat,
+	publicPath = webpack.publicPath();
+
 /**
  * Parameters for webpack.output
  */
 module.exports = {
 	path: src.clientOutput(),
-	publicPath: webpack.publicPath(),
+	publicPath: publicPath ? concatUrl(publicPath, '/') : '',
 	filename: hash(output, true),
 	hashFunction: webpack.hashFunction()
 };
