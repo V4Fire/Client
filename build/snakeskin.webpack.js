@@ -47,7 +47,7 @@ const
 const
 	componentClassRgxp = /^\s*export\s+default\s+class\s+(([\s\S]*?)\s+extends\s+[\s\S]*?)\s*{/m,
 	componentRgxp = /@component\(([^@]*?)\)\n+\s*export\s+/,
-	propsRgxp = /^(\t+)@prop\s*\([^@]+?\)+\n+\1([ \w$]+)(?:\??: [ \w|&$?()[\]{}<>'"`:.]+?)?\s*(?:=|;$)/gm;
+	propsRgxp = /^(\t+)@prop\s*\([^@]+?\)+\n+\1([ \w$]+)(?:[\?!]?:\s*[ \w|&$?()\[\]{}<>'"`:.]+?)?\s*(?:=|;$)/gm;
 
 const
 	genericRgxp = /<.*|\s.*/g,
