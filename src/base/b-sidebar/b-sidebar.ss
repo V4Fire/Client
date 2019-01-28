@@ -13,4 +13,5 @@
 - template index() extends ['i-data'].index
 	- block body
 		< .&__content
-			+= self.slot()
+			- block content
+				+= self.slot()
