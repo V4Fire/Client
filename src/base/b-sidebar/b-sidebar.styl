@@ -37,8 +37,9 @@ b-sidebar extends i-data
 
 	if $p.overlayBg
 		&__over-wrapper
-			opacity 0
+			zIndex(layer)
 			background $p.overlayBg
+			opacity 0
 
 			if $p.overlayTansition
 				transition opacity $p.overlayTansition
