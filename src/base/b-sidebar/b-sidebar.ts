@@ -10,7 +10,7 @@ import iData, { component } from 'super/i-data/i-data';
 export * from 'super/i-data/i-data';
 
 @component()
-export default class bSidebar extends iData {
+export default class bSidebar<T extends Dictionary = Dictionary> extends iData<T> {
 	/** @override */
 	protected convertStateToStorage(): Dictionary {
 		return {
