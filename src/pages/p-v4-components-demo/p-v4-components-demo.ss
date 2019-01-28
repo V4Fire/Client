@@ -12,11 +12,10 @@
 
 - template index() extends ['i-static-page.component'].index
 	- block body
-		3434
 		< b-window ref = window
 			Hello world!
 
-		< b-button @click = $refs.window.toggle()
+		< b-button v-e:click = e
 			Toggle window
 
 		< b-select :options = [ &
@@ -49,4 +48,4 @@
 				value: '5',
 				label: '5'
 			}
-		] .
+		] | v-model = bla .
