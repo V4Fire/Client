@@ -8,9 +8,9 @@
 
 - namespace [%fileName%]
 
-- include 'super/i-message'|b as placeholder
+- include 'super/i-data'|b as placeholder
 
-- template index() extends ['i-message'].index
+- template index() extends ['i-data'].index
 	- block body
 		< .&__content
 			+= self.slot()

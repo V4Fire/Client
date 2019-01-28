@@ -7,4 +7,4 @@
  */
 
 package('b-sidebar')
-	.extends('i-message');
+	.extends('i-data');
