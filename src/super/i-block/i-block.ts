@@ -1999,7 +1999,7 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	 * @param [obj]
 	 * @param [getter] - field getter
 	 */
-	getField<T = unknown>(path: string, obj: Dictionary, getter?: FieldGetter): CanUndef<T>;
+	getField<T = unknown>(path: string, obj?: Dictionary, getter?: FieldGetter): CanUndef<T>;
 	getField<T = unknown>(
 		path: string,
 		obj: Dictionary | FieldGetter = this,
