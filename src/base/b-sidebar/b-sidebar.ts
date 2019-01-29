@@ -6,11 +6,11 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import iMessage, { component } from 'super/i-message/i-message';
-export * from 'super/i-message/i-message';
+import iData, { component } from 'super/i-data/i-data';
+export * from 'super/i-data/i-data';
 
 @component()
-export default class bSidebar extends iMessage {
+export default class bSidebar<T extends Dictionary = Dictionary> extends iData<T> {
 	/** @override */
 	protected convertStateToStorage(): Dictionary {
 		return {
