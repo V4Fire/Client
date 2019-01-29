@@ -126,8 +126,10 @@ export default class iMessage extends iBlock {
 		$e.on('block.mod.set.opened.false', () => $a.off(group));
 
 		$e.on('block.mod.set.opened.true', () => {
-			$a.on(document, events.key || 'keyup', this.onKeyClose, group);
-			$a.on(document, events.touch || 'click', this.onTouchClose, group);
+			$a.setImmediate(() => {
+				$a.on(document, events.key || 'keyup', this.onKeyClose, group);
+				$a.on(document, events.touch || 'click', this.onTouchClose, group);
+			}, group);
 		});
 	}
 
