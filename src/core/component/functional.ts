@@ -106,10 +106,6 @@ export function createFakeCtx(
 		$createElement: createElement,
 
 		$destroy(): void {
-			if (this.componentStatus === 'destroyed') {
-				return;
-			}
-
 			$a.clearAll();
 
 			const
