@@ -456,17 +456,17 @@ export function initDataObject(
 	data: Dictionary = {}
 ): Dictionary {
 	const
-		queue = new Set();
+		queue = new Set(),
+		atomQueue = new Set();
 
 	while (true) {
 		const
-			o = fields,
 			fieldList = <string[]>[];
 
 		for (let keys = Object.keys(fields), i = 0; i < keys.length; i++) {
 			const
 				key = keys[i],
-				el = <NonNullable<SystemField>>o[key];
+				el = <NonNullable<SystemField>>fields[key];
 
 			if (el.atom || !el.init && (el.default !== undefined || key in instance)) {
 				fieldList.unshift(key);
@@ -479,7 +479,7 @@ export function initDataObject(
 		for (let i = 0; i < fieldList.length; i++) {
 			const
 				key = ctx.$activeField = fieldList[i],
-				el = <NonNullable<SystemField>>o[key];
+				el = <NonNullable<SystemField>>fields[key];
 
 			if (key in data) {
 				continue;
@@ -487,6 +487,7 @@ export function initDataObject(
 
 			const initVal = () => {
 				queue.delete(key);
+				atomQueue.delete(key);
 
 				let
 					val;
@@ -506,28 +507,42 @@ export function initDataObject(
 				}
 			};
 
-			if (el.after.size) {
-				let
-					res = true;
+			let
+				canInit = el.atom || atomQueue.size === 0;
 
+			if (el.after.size) {
 				for (let o = el.after.values(), val = o.next(); !val.done; val = o.next()) {
-					if (!(val.value in data)) {
+					const
+						waitFieldKey = val.value,
+						waitField = fields[waitFieldKey];
+
+					if (!waitField) {
+						throw new ReferenceError(`Field "${waitFieldKey}" is not defined`);
+					}
+
+					if (el.atom && !waitField.atom) {
+						throw new Error(`Atom field "${key}" can't wait the non atom field "${waitFieldKey}"`);
+					}
+
+					if (!(waitFieldKey in data)) {
 						queue.add(key);
-						res = false;
+
+						if (el.atom) {
+							atomQueue.add(key);
+						}
+
+						canInit = false;
 						break;
 					}
 				}
+			}
 
-				if (res) {
-					initVal();
-				}
-
-			} else {
+			if (canInit) {
 				initVal();
 			}
 		}
 
-		if (!queue.size) {
+		if (!atomQueue.size && !queue.size) {
 			break;
 		}
 	}
