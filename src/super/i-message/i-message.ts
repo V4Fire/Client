@@ -114,23 +114,27 @@ export default class iMessage extends iBlock {
 	 * Initializes close helpers
 	 * @param [events] - event names for helpers
 	 */
-	@hook('created')
+	@hook('beforeDataCreate')
 	protected initCloseHelpers(events: CloseHelperEvents = {}): void {
 		const
-			{async: $a, localEvent: $e} = this,
-			group = {group: 'closeHelpers'};
+			{async: $a, localEvent: $e} = this;
 
-		$e.removeAllListeners('block.mod.*.opened.*');
+		const
+			helpersGroup = {group: 'closeHelpers'},
+			modsGroup = {group: 'closeHelpers:mods'};
 
-		$e.on('block.mod.*.opened.*', this.onOpenedChange);
-		$e.on('block.mod.set.opened.false', () => $a.off(group));
+		$e.off({group: /closeHelpers/});
+		$e.on('block.mod.*.opened.*', this.onOpenedChange, modsGroup);
+		$e.on('block.mod.set.opened.false', () => $e.off(helpersGroup), modsGroup);
 
-		$e.on('block.mod.set.opened.true', () => {
+		const onOpened = () => {
 			$a.setImmediate(() => {
-				$a.on(document, events.key || 'keyup', this.onKeyClose, group);
-				$a.on(document, events.touch || 'click', this.onTouchClose, group);
-			}, group);
-		});
+				$a.on(document, events.key || 'keyup', this.onKeyClose, helpersGroup);
+				$a.on(document, events.touch || 'click', this.onTouchClose, helpersGroup);
+			}, helpersGroup);
+		};
+
+		$e.on('block.mod.set.opened.true', onOpened, modsGroup);
 	}
 
 	/**

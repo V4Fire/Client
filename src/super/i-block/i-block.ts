@@ -20,7 +20,7 @@ import { EventEmitter2 as EventEmitter } from 'eventemitter2';
 
 import 'super/i-block/directives';
 import Daemons, { DaemonsDict } from 'super/i-block/modules/daemons';
-import Block from 'super/i-block/modules/block';
+import Block, { ModEvent } from 'super/i-block/modules/block';
 import Cache from 'super/i-block/modules/cache';
 
 import { statuses } from 'super/i-block/modules/const';
@@ -440,8 +440,30 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 				return;
 			}
 
+			const getFullModsProp = (o) => {
+				const
+					declMods = o.meta.component.mods,
+					res = {...o.$props[link]};
+
+				for (let attrs = o.$attrs, keys = Object.keys(attrs), i = 0; i < keys.length; i++) {
+					const
+						key = keys[i];
+
+					if (key in declMods) {
+						const
+							attrVal = attrs[key];
+
+						if (attrVal != null) {
+							res[key] = attrVal;
+						}
+					}
+				}
+
+				return res;
+			};
+
 			const
-				modsProp = ctx.$props[link],
+				modsProp = getFullModsProp(ctx),
 				mods = {...oldCtx.mods};
 
 			for (let keys = Object.keys(mods), i = 0; i < keys.length; i++) {
@@ -453,7 +475,7 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 				}
 			}
 
-			if (Object.fastCompare(modsProp, oldCtx.$props[link])) {
+			if (Object.fastCompare(modsProp, getFullModsProp(oldCtx))) {
 				l.sync(mods);
 
 			} else {
@@ -473,17 +495,14 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 					key = keys[i];
 
 				if (key in declMods) {
-					const
-						v = attrs[key];
-
+					const attrVal = attrs[key];
 					o.watch(`$attrs.${key}`, (val) => o.setMod(key, modVal(val)));
-					delete attrs[key];
 
-					if (v == null) {
+					if (attrVal == null) {
 						continue;
 					}
 
-					attrMods.push([key, v]);
+					attrMods.push([key, attrVal]);
 				}
 			}
 
@@ -827,69 +846,97 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	 */
 	@system({
 		atom: true,
+		after: 'async',
 		unique: true,
-		init: () => new EventEmitter({maxListeners: 100, wildcard: true})
+		init: (o, d) => {
+			const
+				$a = <Async>d.async,
+				$e = new EventEmitter({maxListeners: 100, wildcard: true});
+
+			return {
+				emit: (event, ...args) => $e.emit(event, ...args),
+				on: (event, fn, params, ...args) => $a.on($e, event, fn, params, ...args),
+				once: (event, fn, params, ...args) => $a.once($e, event, fn, params, ...args),
+				promisifyOnce: (event, params, ...args) => $a.promisifyOnce($e, event, params, ...args),
+				off: (...args) => $a.off(...args)
+			};
+		}
 	})
 
-	protected readonly localEvent!: EventEmitter;
+	protected readonly localEvent!: Event<this>;
 
 	/**
 	 * Global event emitter
 	 */
-	protected get globalEvent(): Event<this> {
-		const
-			{async: $a} = this;
+	@system({
+		atom: true,
+		after: 'async',
+		unique: true,
+		init: (o, d) => {
+			const
+				$a = <Async>d.async;
 
-		return {
-			emit: (event, ...args) => globalEvent.emit(event, ...args),
-			on: (event, fn, params, ...args) => $a.on(globalEvent, event, fn, params, ...args),
-			once: (event, fn, params, ...args) => $a.once(globalEvent, event, fn, params, ...args),
-			promisifyOnce: (event, params, ...args) => $a.promisifyOnce(globalEvent, event, params, ...args),
-			off: (...args) => $a.off(...args)
-		};
-	}
+			return {
+				emit: (event, ...args) => globalEvent.emit(event, ...args),
+				on: (event, fn, params, ...args) => $a.on(globalEvent, event, fn, params, ...args),
+				once: (event, fn, params, ...args) => $a.once(globalEvent, event, fn, params, ...args),
+				promisifyOnce: (event, params, ...args) => $a.promisifyOnce(globalEvent, event, params, ...args),
+				off: (...args) => $a.off(...args)
+			};
+		}
+	})
+
+	protected readonly globalEvent!: Event<this>;
 
 	/**
 	 * Root event emitter
 	 */
-	protected get rootEvent(): RemoteEvent<this> {
-		const
-			{async: $a, $root: $e} = this;
+	@system({
+		atom: true,
+		after: 'async',
+		unique: true,
+		init: (o, d) => {
+			const
+				$e = o.$root,
+				$a = <Async>d.async;
 
-		return {
-			on: (event, fn, params, ...args) => {
-				if (!$e) {
-					return;
+			return {
+				on: (event, fn, params, ...args) => {
+					if (!$e) {
+						return;
+					}
+
+					return $a.on($e, event, fn, params, ...args);
+				},
+
+				once: (event, fn, params, ...args) => {
+					if (!$e) {
+						return;
+					}
+
+					return $a.once($e, event, fn, params, ...args);
+				},
+
+				promisifyOnce: (event, params, ...args) => {
+					if (!$e) {
+						return;
+					}
+
+					return $a.promisifyOnce($e, event, params, ...args);
+				},
+
+				off: (...args) => {
+					if (!$e) {
+						return;
+					}
+
+					$a.off(...args);
 				}
+			};
+		}
+	})
 
-				return $a.on($e, event, fn, params, ...args);
-			},
-
-			once: (event, fn, params, ...args) => {
-				if (!$e) {
-					return;
-				}
-
-				return $a.once($e, event, fn, params, ...args);
-			},
-
-			promisifyOnce: (event, params, ...args) => {
-				if (!$e) {
-					return;
-				}
-
-				return $a.promisifyOnce($e, event, params, ...args);
-			},
-
-			off: (...args) => {
-				if (!$e) {
-					return;
-				}
-
-				$a.off(...args);
-			}
-		};
-	}
+	protected readonly rootEvent!: RemoteEvent<this>;
 
 	/**
 	 * Parent event emitter
@@ -1731,7 +1778,7 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	setMod(name: string, value: unknown): CanPromise<boolean>;
 	setMod(nodeOrName: Element | string, name: string | unknown, value?: unknown): CanPromise<boolean> {
 		if (Object.isString(nodeOrName)) {
-			return this.execCbAfterBlockReady(() => this.block.setMod(nodeOrName, name));
+			return this.execCbAfterBlockReady(() => this.block.setMod(nodeOrName, name)) || false;
 		}
 
 		return Block.prototype.setMod.call(
@@ -1757,7 +1804,7 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	removeMod(name: string, value?: unknown): CanPromise<boolean>;
 	removeMod(nodeOrName: Element | string, name?: string | unknown, value?: unknown): CanPromise<boolean> {
 		if (Object.isString(nodeOrName)) {
-			return this.execCbAfterBlockReady(() => this.block.removeMod(nodeOrName, name));
+			return this.execCbAfterBlockReady(() => this.block.removeMod(nodeOrName, name)) || false;
 		}
 
 		return Block.prototype.removeMod.call(
@@ -2886,7 +2933,7 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	 * @param handler
 	 */
 	protected delegateElement(elName: string, handler: Function): CanPromise<Function> {
-		return this.execCbAfterBlockReady(() => this.delegate(this.block.getElSelector(elName), handler));
+		return this.execCbAfterBlockReady(() => this.delegate(this.block.getElSelector(elName), handler)) || Any;
 	}
 
 	/**
@@ -3046,14 +3093,6 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 		Object.defineProperties(this, {
 			refs: {
 				get: i['refsGetter']
-			},
-
-			globalEvent: {
-				get: i['globalEventGetter']
-			},
-
-			rootEvent: {
-				get: i['rootEventGetter']
 			}
 		});
 
@@ -3395,7 +3434,7 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 		const
 			{async: $a, localEvent: $e} = this;
 
-		$e.on('block.mod.set.**', (e) => {
+		$e.on('block.mod.set.**', (e: ModEvent) => {
 			const
 				k = e.name,
 				v = e.value,
@@ -3412,7 +3451,7 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 			this.emit(`mod-set-${k}-${v}`, e);
 		});
 
-		$e.on('block.mod.remove.**', (e) => {
+		$e.on('block.mod.remove.**', (e: ModEvent) => {
 			if (e.reason === 'removeMod') {
 				const
 					k = e.name,
@@ -3430,7 +3469,7 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 			}
 		});
 
-		$e.on('block.mod.*.disabled.*', (e) => {
+		$e.on('block.mod.*.disabled.*', (e: ModEvent) => {
 			if (e.value === 'false' || e.type === 'remove') {
 				$a.off({group: 'blockOnDisable'});
 				this.emit('enable');
@@ -3452,11 +3491,11 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 			}
 		});
 
-		$e.on('block.mod.*.focused.*', (e) => {
+		$e.on('block.mod.*.focused.*', (e: ModEvent) => {
 			this.emit(e.value === 'false' || e.type === 'remove' ? 'blur' : 'focus');
 		});
 
-		$e.on('block.mod.*.hidden.*', (e) => {
+		$e.on('block.mod.*.hidden.*', (e: ModEvent) => {
 			this.emit(e.value === 'false' || e.type === 'remove' ? 'show' : 'hide');
 		});
 	}
@@ -3539,14 +3578,16 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	 * @param cb
 	 * @param [params] - async parameters
 	 */
-	protected execCbAfterCreated<T = unknown>(cb: (this: this) => T, params?: AsyncOpts): CanPromise<T> {
+	protected execCbAfterCreated<T = unknown>(cb: (this: this) => T, params?: AsyncOpts): CanUndef<CanPromise<T>> {
 		if (this.isBeforeCreate()) {
 			return <any>this.$async.promise(new Promise((r) => {
 				this.meta.hooks.created.unshift({fn: () => r(cb.call(this))});
 			}), params).catch(stderr);
 		}
 
-		return cb.call(this);
+		if (statuses[this.componentStatus] >= 0) {
+			return cb.call(this);
+		}
 	}
 
 	/**
@@ -3555,9 +3596,13 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	 * @param cb
 	 * @param [params] - async parameters
 	 */
-	protected execCbAfterBlockReady<T = unknown>(cb: (this: this) => T, params?: AsyncOpts): CanPromise<T> {
+	protected execCbAfterBlockReady<T = unknown>(cb: (this: this) => T, params?: AsyncOpts): CanUndef<CanPromise<T>> {
 		if (this.block) {
-			return cb.call(this);
+			if (statuses[this.componentStatus] >= 0) {
+				return cb.call(this);
+			}
+
+			return;
 		}
 
 		return <any>this.$async.promise(new Promise((r) => {
@@ -3657,7 +3702,6 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	protected beforeDestroy(): void {
 		this.componentStatus = 'destroyed';
 		this.async.clearAll();
-		this.localEvent.removeAllListeners();
 		delete (<StrictDictionary<any>>classesCache).dict.els[this.componentId];
 	}
 }
@@ -3677,7 +3721,10 @@ export abstract class iBlockDecorator extends iBlock {
 
 	public readonly async!: Async<this>;
 	public readonly block!: Block;
-	public readonly localEvent!: EventEmitter;
+
+	public readonly localEvent!: Event<this>;
+	public readonly globalEvent!: Event<this>;
+	public readonly rootEvent!: RemoteEvent<this>;
 
 	public delegate(selector: string, handler?: Function): Function {
 		return () => ({});
