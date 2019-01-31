@@ -71,7 +71,7 @@ export default class Block {
 	/**
 	 * Link to a block node
 	 */
-	get node(): ComponentElement<unknown> {
+	get node(): CanUndef<ComponentElement<unknown>> {
 		return this.component.$el;
 	}
 
@@ -158,7 +158,14 @@ export default class Block {
 	 * @param [mods]
 	 */
 	elements<E extends Element = Element>(elName: string, mods?: ModsTable): NodeListOf<E> {
-		return this.node.querySelectorAll(this.getElSelector(elName, mods));
+		const
+			{node} = this;
+
+		if (!node) {
+			return document.createElement('div').querySelectorAll('loopback');
+		}
+
+		return node.querySelectorAll(this.getElSelector(elName, mods));
 	}
 
 	/**
@@ -168,7 +175,14 @@ export default class Block {
 	 * @param [mods]
 	 */
 	element<E extends Element = Element>(elName: string, mods?: ModsTable): CanUndef<E> {
-		return this.node.querySelector<E>(this.getElSelector(elName, mods)) || undefined;
+		const
+			{node} = this;
+
+		if (!node) {
+			return undefined;
+		}
+
+		return node.querySelector<E>(this.getElSelector(elName, mods)) || undefined;
 	}
 
 	/**
@@ -187,17 +201,18 @@ export default class Block {
 		value = String(value).dasherize();
 
 		const
+			{mods, node} = this,
 			prev = this.getMod(name);
 
 		if (prev !== value) {
 			this.removeMod(name, undefined, 'setMod');
 
-			if (this.mods) {
-				this.mods[name] = <string>value;
+			if (mods) {
+				mods[name] = <string>value;
 			}
 
-			if (reason !== 'initSetMod') {
-				this.node.classList.add(this.getFullBlockName(name, value));
+			if (reason !== 'initSetMod' && node) {
+				node.classList.add(this.getFullBlockName(name, value));
 			}
 
 			const event = <SetModEvent>{
@@ -228,16 +243,17 @@ export default class Block {
 		value = value !== undefined ? String(value).dasherize() : undefined;
 
 		const
+			{mods, node} = this,
 			current = this.getMod(name);
 
 		if (current !== undefined && (value === undefined || current === value)) {
-			if (this.mods) {
-				this.mods[name] = undefined;
+			if (mods) {
+				mods[name] = undefined;
 			}
 
-			this.node.classList.remove(
-				this.getFullBlockName(name, current)
-			);
+			if (node) {
+				node.classList.remove(this.getFullBlockName(name, current));
+			}
 
 			const event = <ModEvent>{
 				event: 'block.mod.remove',
@@ -259,8 +275,15 @@ export default class Block {
 	 * @param mod
 	 */
 	getMod(mod: string): CanUndef<string> {
-		if (this.mods) {
-			return this.mods[mod.camelize(false)];
+		const
+			{mods, node} = this;
+
+		if (mods) {
+			return mods[mod.camelize(false)];
+		}
+
+		if (!node) {
+			return undefined;
 		}
 
 		const
@@ -268,7 +291,7 @@ export default class Block {
 
 		const
 			rgxp = new RegExp(`(?:^| )(${this.getFullBlockName(mod, '')}[^_ ]*)`),
-			el = rgxp.exec(this.node.className);
+			el = rgxp.exec(node.className);
 
 		return el ? el[1].split('_')[MOD_VALUE] : undefined;
 	}
@@ -282,8 +305,14 @@ export default class Block {
 	 * @param value
 	 * @param [reason]
 	 */
-	setElMod(link: Element, elName: string, modName: string, value: unknown, reason: ModEventReason = 'setMod'): boolean {
-		if (value === undefined) {
+	setElMod(
+		link: Nullable<Element>,
+		elName: string,
+		modName: string,
+		value: unknown,
+		reason: ModEventReason = 'setMod'
+	): boolean {
+		if (!link || value === undefined) {
 			return false;
 		}
 
@@ -322,12 +351,16 @@ export default class Block {
 	 * @param [reason]
 	 */
 	removeElMod(
-		link: Element,
+		link: Nullable<Element>,
 		elName: string,
 		modName: string,
 		value?: unknown,
 		reason: ModEventReason = 'removeMod'
 	): boolean {
+		if (!link) {
+			return false;
+		}
+
 		elName = elName.camelize(false);
 		modName = modName.camelize(false);
 		value = value !== undefined ? String(value).dasherize() : undefined;
@@ -362,7 +395,11 @@ export default class Block {
 	 * @param elName
 	 * @param modName
 	 */
-	getElMod(link: Element, elName: string, modName: string): CanUndef<string> {
+	getElMod(link: Nullable<Element>, elName: string, modName: string): CanUndef<string> {
+		if (!link) {
+			return undefined;
+		}
+
 		const
 			MOD_VALUE = 3;
 

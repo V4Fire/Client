@@ -162,10 +162,6 @@ export function createFakeCtx<T extends Dictionary = FunctionalCtx>(
 		},
 
 		$destroy(): void {
-			if (this.componentStatus === 'destroyed') {
-				return;
-			}
-
 			$a.clearAll();
 
 			if ($normalParent) {
