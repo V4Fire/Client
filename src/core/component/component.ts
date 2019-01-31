@@ -442,7 +442,7 @@ export function bindWatchers(ctx: ComponentInterface, eventCtx: ComponentInterfa
 }
 
 /**
- * Initializes fields to the specified data object and returns it
+ * Initializes the specified fields to a data object and returns it
  *
  * @param fields
  * @param ctx - component context
@@ -459,53 +459,34 @@ export function initDataObject(
 		queue = new Set(),
 		atomQueue = new Set();
 
-	while (true) {
+	const
+		fieldList = <string[]>[];
+
+	// Sorting atoms
+	for (let keys = Object.keys(fields), i = 0; i < keys.length; i++) {
 		const
-			fieldList = <string[]>[];
+			key = keys[i],
+			el = <NonNullable<SystemField>>fields[key];
 
-		for (let keys = Object.keys(fields), i = 0; i < keys.length; i++) {
-			const
-				key = keys[i],
-				el = <NonNullable<SystemField>>fields[key];
+		if (el.atom || !el.init && (el.default !== undefined || key in instance)) {
+			fieldList.unshift(key);
 
-			if (el.atom || !el.init && (el.default !== undefined || key in instance)) {
-				fieldList.unshift(key);
-
-			} else {
-				fieldList.push(key);
-			}
+		} else {
+			fieldList.push(key);
 		}
+	}
 
+	while (true) {
 		for (let i = 0; i < fieldList.length; i++) {
 			const
-				key = ctx.$activeField = fieldList[i],
-				el = <NonNullable<SystemField>>fields[key];
+				key = fieldList[i];
 
 			if (key in data) {
 				continue;
 			}
 
-			const initVal = () => {
-				queue.delete(key);
-				atomQueue.delete(key);
-
-				let
-					val;
-
-				if (el.init) {
-					val = el.init(<any>ctx, data);
-				}
-
-				if (val === undefined) {
-					if (data[key] === undefined) {
-						val = el.default !== undefined ? el.default : Object.fastClone(instance[key]);
-						data[key] = val;
-					}
-
-				} else {
-					data[key] = val;
-				}
-			};
+			const
+				el = <NonNullable<SystemField>>fields[key];
 
 			let
 				canInit = el.atom || atomQueue.size === 0;
@@ -538,7 +519,27 @@ export function initDataObject(
 			}
 
 			if (canInit) {
-				initVal();
+				ctx.$activeField = key;
+
+				queue.delete(key);
+				atomQueue.delete(key);
+
+				let
+					val;
+
+				if (el.init) {
+					val = el.init(<any>ctx, data);
+				}
+
+				if (val === undefined) {
+					if (data[key] === undefined) {
+						val = el.default !== undefined ? el.default : Object.fastClone(instance[key]);
+						data[key] = val;
+					}
+
+				} else {
+					data[key] = val;
+				}
 			}
 		}
 
