@@ -13,7 +13,8 @@
 - template index() extends ['i-static-page.component'].index
 	- block body
 		< b-window ref = window
-			Hello world!
+			< template slot = default
+				Hello world!
 
 		< b-button @click = $refs.window.toggle()
 			Toggle window
