@@ -113,7 +113,7 @@ $OVERLAYS = ( layer modal overall )
  */
 zIndex($pos, $mod = 0)
 	if $pos == underall
-		zIndex(underall)
+		z-index -1
 
 	else
 		z-index index($OVERLAYS, $pos) * 1000 + $mod
