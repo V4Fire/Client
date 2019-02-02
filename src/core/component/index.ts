@@ -219,6 +219,8 @@ export interface FunctionalCtx {
 export interface ComponentMeta {
 	name: string;
 	componentName: string;
+
+	parentMeta?: ComponentMeta,
 	constructor: Function,
 	params: ComponentParams;
 
@@ -311,6 +313,8 @@ export function component(params?: ComponentParams): Function {
 		const meta: ComponentMeta = {
 			name,
 			componentName: name.replace(isSmartComponent, ''),
+
+			parentMeta,
 			constructor: target,
 			params: p,
 
