@@ -8,4 +8,9 @@
 
 package('p-v4-components-demo')
 	.extends('i-static-page')
-	.dependencies('b-select', 'b-button', 'b-window');
+	.dependencies(
+		'b-v4-component-demo',
+		'b-select',
+		'b-button',
+		'b-checkbox'
+	);
