@@ -13,11 +13,11 @@
 - template index() extends ['i-static-page.component'].index
 	- block body
 		< b-v4-component-demo #default = {ctx}
-			< b-button @statusReady = ctx.debug
+			< b-button v-func = false | @statusReady = ctx.debug
 				Some text
 
 		< b-v4-component-demo #default = {ctx}
-			< b-checkbox @statusReady = ctx.debug
+			< b-checkbox v-func = false | @statusReady = ctx.debug
 				Some text
 
 		/*< b-v4-component-demo #default = {ctx}
