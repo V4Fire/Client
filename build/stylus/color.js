@@ -14,18 +14,54 @@ const
 	pzlr = require('@pzlr/build-core');
 
 const GLOBAL = {
-	colors: {}
+	kits: {},
+	space: {}
 };
+
+/**
+ * Saves HEXs to the global space with its kit names
+ *
+ * @param {!Array} colors
+ * @param {!string} name
+ */
+function saveToSpace(colors, name) {
+	$C(colors).forEach((el) => {
+		GLOBAL.space[el] = name;
+	});
+}
+
+/**
+ * Throws an error if a color
+ * already exists in the global space
+ *
+ * @param {!RGBA} hex
+ * @returns {RGBA}
+ */
+function checkInGlobalSpace(hex) {
+	const
+		color = hex.raw || hex.string || hex.name;
+
+	if (GLOBAL.space[color]) {
+		throw new Error(`Identical HEX was found at the kit with name '${GLOBAL.space[color]}'`);
+	}
+
+	return hex;
+}
 
 /**
  * Converts stylus nodes collection to a js array
  *
  * @param {!Object} nodes
+ * @param {string} name
  * @returns {string[]}
  */
-function kitFromNodes(nodes) {
-	const str = nodes.toString().replace(/[ ()]/g, '');
-	return str.split(',');
+function kitFromNodes(nodes, name) {
+	const
+		str = nodes.toString().replace(/[ ()]/g, ''),
+		values = str.split(',');
+
+	saveToSpace(values, name);
+	return values;
 }
 
 /**
@@ -37,25 +73,26 @@ function kitFromNodes(nodes) {
 function saveColorsKit(kit, nm) {
 	const reduce = (s) => $C(s).reduce((res, el, name) => {
 		if (el.nodes) {
-			res[name] = [].concat([[]], kitFromNodes(el.nodes));
+			res[name] = [].concat([[]], kitFromNodes(el.nodes, name));
 		}
+
 		return res;
 	}, {});
 
 	if (nm) {
-		GLOBAL.colors[nm] = reduce(kit);
+		GLOBAL.kits[nm] = reduce(kit);
 
 	} else {
 		const
 			res = reduce(kit);
 
-		$C(GLOBAL.colors).forEach((el, key) => {
+		$C(GLOBAL.kits).forEach((el, key) => {
 			if (Array.isArray(el[0]) && res[key]) {
 				res[key][0] = el[0];
 			}
 		});
 
-		GLOBAL.colors = res;
+		GLOBAL.kits = res;
 	}
 }
 
@@ -100,7 +137,7 @@ module.exports = function (style) {
 	style.define('setReservedColorKits', (kit, proto) => {
 		$C(kit.vals).forEach((el, key) => {
 			const
-				base = proto ? GLOBAL.colors[proto.val] : GLOBAL.colors;
+				base = proto ? GLOBAL.kits[proto.val] : GLOBAL.kits;
 
 			if (!base) {
 				throw new Error(`Field with name ${proto} not found`);
@@ -110,7 +147,7 @@ module.exports = function (style) {
 				base[key] = [[]];
 			}
 
-			base[key][0] = kitFromNodes(el.nodes);
+			base[key][0] = kitFromNodes(el.nodes, key);
 		});
 	});
 
@@ -125,13 +162,17 @@ module.exports = function (style) {
 	/**
 	 * Returns a global color value
 	 *
-	 * @param {!Object} hueInput - color name
+	 * @param {!Object} hueInput - color
 	 * @param {!Object} numInput - color position in a kit
 	 * @param {(!Object|boolean)} reservedInput - is value in reserved kit
 	 * @param (!Object|boolean) baseInput - proto field name
 	 * @returns {string}
 	 */
 	style.define('getGlobalColor', (hueInput, numInput, reservedInput = false, baseInput = false) => {
+		if (arguments.length === 1 && hueInput.raw) {
+			return checkInGlobalSpace(hueInput);
+		}
+
 		const
 			{dependencies} = pzlr.config,
 			hue = hueInput.string || hueInput.name,
@@ -140,7 +181,7 @@ module.exports = function (style) {
 			base = baseInput && baseInput.val || false;
 
 		let
-			col = GLOBAL.colors[hue],
+			col = GLOBAL.kits[hue],
 			res;
 
 		if (!base) {
@@ -149,7 +190,7 @@ module.exports = function (style) {
 			}
 
 			$C(dependencies).some((el) => {
-				col = GLOBAL.colors[el];
+				col = GLOBAL.kits[el];
 
 				if (col) {
 					if (reserved && col[hue][0][num - 1]) {
@@ -165,7 +206,7 @@ module.exports = function (style) {
 
 		} else {
 			const
-				kit = GLOBAL.colors[base];
+				kit = GLOBAL.kits[base];
 
 			if (kit && reserved) {
 				res = kit[hue][0][num - 1];

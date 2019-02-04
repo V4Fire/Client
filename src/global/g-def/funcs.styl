@@ -66,6 +66,17 @@ execFontPattern($type = "")
 		unquote(replace("%t", "", BASE_FONT_PATTERN))
 
 /**
+ * Returns a color from global kits
+ *
+ * @param {RGBA} $hue
+ * @param {number} [$num]
+ * @param {boolean=} [$reserved]
+ * @param {boolean=} [$base]
+ */
+c($hue, $num = null, $reserved = false, $base = false)
+	getGlobalColor($hue, $num, $reserved, $base)
+
+/**
  * Generates rules for colorized styles
  *
  * @param {Tuple} [$set] - set of colors
