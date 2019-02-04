@@ -7,7 +7,7 @@
  */
 
 /**
- * Returns a srcset string for img tag
+ * Returns a srcset string for an img tag
  * @param resolutions - map, where key is a picture multiplier and value is a picture url
  *
  * @example
