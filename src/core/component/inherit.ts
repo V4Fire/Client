@@ -315,7 +315,6 @@ export default function inheritMeta(
 				}
 
 				current.splice(i, 1, ...parent);
-				break;
 			}
 
 			o[key] = Object.values(values);
