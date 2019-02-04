@@ -8,7 +8,7 @@
 
 /**
  * Returns a srcset string for img tag
- * @param resolutions - map, where key is picture multiplier and value is a picture url
+ * @param resolutions - map, where key is a picture multiplier and value is a picture url
  *
  * @example
  * getSrcSet({'2x': 'http://img-hdpi.png', '3x': 'http://img-xhdpi.png'})
