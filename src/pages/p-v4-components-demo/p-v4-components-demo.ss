@@ -12,41 +12,43 @@
 
 - template index() extends ['i-static-page.component'].index
 	- block body
-		3434
-		< b-window ref = window
-			Hello world!
+		< b-v4-component-demo #default = {ctx}
+			< b-button v-func = false | @statusReady = ctx.debug
+				Some text
 
-		< b-button @click = $refs.window.toggle()
-			Toggle window
+		< b-v4-component-demo #default = {ctx}
+			< b-checkbox v-func = false | @statusReady = ctx.debug
+				Some text
 
-		< b-select :options = [ &
-			{
-				value: '0',
-				label: '0'
-			},
+		/*< b-v4-component-demo #default = {ctx}
+			< b-select @statusReady = ctx.debug | :options = [ &
+				{
+					value: '0',
+					label: '0'
+				},
 
-			{
-				value: '1',
-				label: '1'
-			},
+				{
+					value: '1',
+					label: '1'
+				},
 
-			{
-				value: '2',
-				label: '2'
-			},
+				{
+					value: '2',
+					label: '2'
+				},
 
-			{
-				value: '3',
-				label: '3'
-			},
+				{
+					value: '3',
+					label: '3'
+				},
 
-			{
-				value: '4',
-				label: '4'
-			},
+				{
+					value: '4',
+					label: '4'
+				},
 
-			{
-				value: '5',
-				label: '5'
-			}
-		] .
+				{
+					value: '5',
+					label: '5'
+				}
+			] .*/

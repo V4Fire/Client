@@ -66,6 +66,17 @@ execFontPattern($type = "")
 		unquote(replace("%t", "", BASE_FONT_PATTERN))
 
 /**
+ * Returns a color from global kits
+ *
+ * @param {RGBA} $hue
+ * @param {number} [$num]
+ * @param {boolean=} [$reserved]
+ * @param {boolean=} [$base]
+ */
+c($hue, $num = null, $reserved = false, $base = false)
+	getGlobalColor($hue, $num, $reserved, $base)
+
+/**
  * Generates rules for colorized styles
  *
  * @param {Tuple} [$set] - set of colors
@@ -107,10 +118,16 @@ $OVERLAYS = ( layer modal overall )
 
 /**
  * Sets a z-index for the specified layer position
- * @param {string} $pos
+ *
+ * @param {string} $pos - layer variants: underall, layer, modal, overall
+ * @param {number} [$mod] - value modifier
  */
-zIndex($pos)
-	z-index index($OVERLAYS, $pos) * 1000
+zIndex($pos, $mod = 0)
+	if $pos == underall
+		z-index -1
+
+	else
+		z-index index($OVERLAYS, $pos) * 1000 + $mod
 
 /**
  * Generates rules for flexbox

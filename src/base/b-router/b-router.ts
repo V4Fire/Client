@@ -299,12 +299,12 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 					params = obj.rgxp.exec(obj.url || page);
 
 				if (params) {
-					for (let o = path.parse(obj.pattern), i = 0; i < o.length; i++) {
+					for (let o = path.parse(obj.pattern), i = 0, j = 0; i < o.length; i++) {
 						const
 							el = o[i];
 
 						if (Object.isObject(el)) {
-							t.params[el.name] = params[i + 1];
+							t.params[el.name] = params[++j];
 						}
 					}
 				}
@@ -625,8 +625,8 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 
 				default:
 					await this[method === 'replace' ? 'replace' : 'push'](href, {
-						params: Object.parse(data.params),
-						query: Object.parse(data.query)
+						params: Object.parse(data.params) || {},
+						query: Object.parse(data.query) || {}
 					});
 			}
 		}

@@ -604,8 +604,8 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 			'xs',
 			's',
 			['m'],
-			'xs',
-			'xxs'
+			'xl',
+			'xxl'
 		],
 
 		progress: [
