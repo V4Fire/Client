@@ -259,9 +259,12 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 					params = obj.rgxp.exec(obj.url || page);
 
 				if (params) {
-					$C(<Key[]>path.parse(obj.pattern)).forEach((el, i) => {
+					let
+						i = 0;
+
+					$C(<Key[]>path.parse(obj.pattern)).forEach((el) => {
 						if (Object.isObject(el)) {
-							t.params[el.name] = params[i + 1];
+							t.params[el.name] = params[++i];
 						}
 					});
 				}
