@@ -535,8 +535,8 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 
 				default:
 					await this[method === 'replace' ? 'replace' : 'push'](href, {
-						params: Object.parse(data.params),
-						query: Object.parse(data.query)
+						params: Object.parse(data.params) || {},
+						query: Object.parse(data.query) || {}
 					});
 			}
 		}
