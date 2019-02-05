@@ -205,8 +205,11 @@ export interface ComponentMethod {
 }
 
 export type ModVal = string | boolean | number;
+export type StrictModDeclVal = CanArray<ModVal>;
+export type ModDeclVal = StrictModDeclVal | typeof PARENT;
+
 export interface ModsDecl {
-	[name: string]: Array<ModVal | ModVal[] | typeof PARENT> | void;
+	[name: string]: Array<ModDeclVal> | void;
 }
 
 export interface FunctionalCtx {

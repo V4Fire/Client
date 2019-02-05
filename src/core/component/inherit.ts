@@ -8,7 +8,7 @@
 
 // tslint:disable:cyclomatic-complexity
 
-import { ComponentMeta, ComponentParams } from 'core/component';
+import { ComponentMeta, ComponentParams, StrictModDeclVal } from 'core/component';
 export const PARENT = {};
 
 /**
@@ -273,7 +273,7 @@ export default function inheritMeta(
 
 		if (current) {
 			const
-				values = Object.createDict();
+				values = <StrictDictionary<StrictModDeclVal>>Object.createDict();
 
 			for (let i = 0; i < current.length; i++) {
 				const
@@ -281,7 +281,7 @@ export default function inheritMeta(
 
 				if (el !== PARENT) {
 					if (!(el in values) || Object.isArray(el)) {
-						values[String(el)] = el;
+						values[String(el)] = <StrictModDeclVal>el;
 					}
 
 					continue;
@@ -305,7 +305,7 @@ export default function inheritMeta(
 						el = parent[i];
 
 					if (!(el in values)) {
-						values[String(el)] = el;
+						values[String(el)] = <StrictModDeclVal>el;
 					}
 
 					if (!parentDef && Object.isArray(el)) {
@@ -317,7 +317,14 @@ export default function inheritMeta(
 				current.splice(i, 1, ...parent);
 			}
 
-			o[key] = Object.values(values);
+			const
+				valuesList = <StrictModDeclVal[]>[];
+
+			for (let keys = Object.keys(values), i = 0; i < keys.length; i++) {
+				valuesList.push(values[keys[i]]);
+			}
+
+			o[key] = valuesList;
 
 		} else if (!(key in o)) {
 			o[key] = parent;
