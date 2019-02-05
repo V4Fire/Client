@@ -6,11 +6,5 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-package('p-v4-components-demo')
-	.extends('i-static-page')
-	.dependencies(
-		'b-v4-component-demo',
-		'b-select',
-		'b-button',
-		'b-checkbox'
-	);
+package('b-v4-component-demo')
+	.extends('i-block');

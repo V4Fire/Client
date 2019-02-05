@@ -175,6 +175,8 @@ export type RenderFunction =
 export interface ComponentMeta {
 	name: string;
 	componentName: string;
+
+	parentMeta?: ComponentMeta;
 	constructor: Function;
 	instance: Dictionary;
 	params: ComponentParams;

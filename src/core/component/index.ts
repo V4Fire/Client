@@ -104,6 +104,8 @@ export function component(params?: ComponentParams): Function {
 		const meta: ComponentMeta = {
 			name,
 			componentName: name.replace(isSmartComponent, ''),
+
+			parentMeta,
 			constructor: target,
 			instance: {},
 			params: p,
