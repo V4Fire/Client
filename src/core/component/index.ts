@@ -220,8 +220,8 @@ export interface ComponentMeta {
 	name: string;
 	componentName: string;
 
-	parentMeta?: ComponentMeta,
-	constructor: Function,
+	parentMeta?: ComponentMeta;
+	constructor: Function;
 	params: ComponentParams;
 
 	props: Dictionary<ComponentProp>;
