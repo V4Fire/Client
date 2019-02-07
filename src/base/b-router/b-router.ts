@@ -71,10 +71,10 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 	public async!: Async<this>;
 
 	/**
-	 * Base route URL
+	 * Base route path
 	 */
 	@prop()
-	readonly baseRouteURL: string = '/';
+	readonly basePath: string = '/';
 
 	/**
 	 * Initial page
@@ -138,7 +138,7 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 		after: 'driver',
 		init: (o) => o.link((v) => {
 			const
-				base = o.baseRouteURL,
+				base = o.basePath,
 				routes = <PageSchemaDict>(v || o.driver.routes || {}),
 				pages = {};
 
@@ -260,7 +260,7 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 		const
 			p = this.pages,
 			keys = Object.keys(p),
-			base = this.baseRouteURL;
+			base = this.basePath;
 
 		const
 			normalizeBaseRgxp = /(.*)?[\\//]+$/;
