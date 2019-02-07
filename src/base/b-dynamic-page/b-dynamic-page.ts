@@ -69,8 +69,12 @@ export default class bDynamicPage extends iDynamicPage {
 	/**
 	 * Event value converter
 	 */
-	@prop({type: Function, required: false})
-	readonly eventConverter?: Function;
+	@prop({
+		type: Function,
+		default: (e) => e && (e.component || e.page)
+	})
+
+	readonly eventConverter!: Function;
 
 	/**
 	 * Component name
@@ -106,7 +110,13 @@ export default class bDynamicPage extends iDynamicPage {
 					e = component;
 				}
 
-				this.page = this.eventConverter ? this.eventConverter(e, this.page) : e;
+				const
+					v = this.eventConverter ? this.eventConverter(e, this.page) : e;
+
+				if (v == null || Object.isString(v)) {
+					this.page = v;
+				}
+
 			}, group);
 		}
 	}
