@@ -6,13 +6,16 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { Key } from 'path-to-regexp';
+import { Key, RegExpOptions, ParseOptions } from 'path-to-regexp';
 import { EventEmitter2 as EventEmitter } from 'eventemitter2';
 
 export type BasePageMeta<M extends Dictionary = Dictionary> = M & {
 	page?: string;
 	path?: string;
+	pathOpts?: RegExpOptions & ParseOptions;
 	index?: boolean;
+	alias?: string;
+	redirect?: string;
 	paramsFromQuery?: boolean;
 	paramsFromRoot?: boolean;
 };
