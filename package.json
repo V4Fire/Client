@@ -5,7 +5,7 @@
   "main": "src/core/index.js",
   "typings": "index.d.ts",
   "license": "MIT",
-  "version": "2.0.0-beta.152",
+  "version": "2.0.0-beta.153",
   "author": {
     "name": "kobezzza",
     "email": "kobezzza@gmail.com",
@@ -50,6 +50,7 @@
     "@types/glob": "^7.1.1",
     "@types/webpack": "^4.4.17",
     "autoprefixer": "^9.3.0",
+    "camelize": "^1.0.0",
     "config": "^1.31.0",
     "copy-dir": "^0.4.0",
     "cssnano": "^4.1.7",
@@ -115,7 +116,6 @@
   },
   "devDependencies": {
     "babel-eslint": "^10.0.1",
-    "camelize": "^1.0.0",
     "eslint": "^5.13.0",
     "tslint": "^5.12.1"
   }
