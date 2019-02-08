@@ -540,7 +540,7 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 			return params;
 		};
 
-		if (currentPage && method !== 'replace') {
+		if (currentPage && method === 'push') {
 			await engine.replace(
 				currentPage.url || currentPage.page, Object.mixin(true, undefined, currentPage, scroll)
 			);
