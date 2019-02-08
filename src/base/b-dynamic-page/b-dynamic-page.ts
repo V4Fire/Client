@@ -71,7 +71,8 @@ export default class bDynamicPage extends iDynamicPage {
 	 */
 	@prop({
 		type: Function,
-		default: (e) => e && (e.component || e.page)
+		default: (e) => e && (e.component || e.page),
+		forceDefault: true
 	})
 
 	readonly eventConverter!: Function;
