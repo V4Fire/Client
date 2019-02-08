@@ -8,6 +8,7 @@
 
 // tslint:disable:max-file-line-count
 
+import $C = require('collection.js');
 import Async from 'core/async';
 
 import path = require('path-to-regexp');
@@ -431,8 +432,8 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 		if (params) {
 			isEmptyParams = true;
 
-			for (let keys = Object.keys(params), i = keys.length; i < keys.length; i++) {
-				if (Object.size(params[keys[i]])) {
+			for (let keys = Object.keys(params), i = 0; i < keys.length; i++) {
+				if ($C(params[keys[i]]).length()) {
 					isEmptyParams = false;
 					break;
 				}
