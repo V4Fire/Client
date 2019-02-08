@@ -1080,6 +1080,30 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	protected readonly global!: Window;
 
 	/**
+	 * Returns a full route path string by the specified parameters
+	 *
+	 * @param path - base path
+	 * @param [params] - route parameters
+	 */
+	getRoutePath(path: string, params: Dictionary = {}): CanUndef<string> {
+		const
+			r = this.router;
+
+		if (!r) {
+			return;
+		}
+
+		const
+			route = r.getPageOpts(path);
+
+		if (!route) {
+			return;
+		}
+
+		return route.toPath(params);
+	}
+
+	/**
 	 * Returns a string id, which is connected to the component
 	 * @param id - custom id
 	 */
