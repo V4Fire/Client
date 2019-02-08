@@ -11,7 +11,7 @@ import bRouter from 'base/b-router/b-router';
 
 import { toQueryString } from 'core/url';
 import { EventEmitter2 as EventEmitter } from 'eventemitter2';
-import { Router, PageOpts, CurrentPage } from 'base/b-router/drivers/interface';
+import { Router, CurrentPage, PageInfo } from 'base/b-router/drivers/interface';
 
 export const
 	$$ = symbolGenerator();
@@ -20,13 +20,15 @@ export default function createRouter(ctx: bRouter): Router {
 	const
 		{async: $a} = ctx;
 
-	function load(page: string, info?: PageOpts, method: string = 'pushState'): Promise<void> {
+	function load(page: string, info?: PageInfo, method: string = 'pushState'): Promise<void> {
 		if (!page) {
 			throw new Error('Page to load is not defined');
 		}
 
 		return new Promise((resolve) => {
 			if (info) {
+				info = {...info};
+
 				const
 					qs = /\?.*/;
 
@@ -52,23 +54,27 @@ export default function createRouter(ctx: bRouter): Router {
 					history[method](info, info.page, page);
 				}
 
-				if (Object.isArray(ModuleDependencies.get(info.page))) {
-					resolve();
-					return;
-				}
-
-				let i = 0;
-				ModuleDependencies.event.on(`component.${info.page}.loading`, $a.proxy(
-					({packages}) => {
-						ctx.setField('status', (++i * 100) / packages);
-						(i === packages) && resolve();
-					},
-
-					{
-						label: $$.component,
-						single: false
+				if (info.page) {
+					if (Object.isArray(ModuleDependencies.get(info.page))) {
+						resolve();
+						return;
 					}
-				));
+
+					let
+						i = 0;
+
+					ModuleDependencies.event.on(`component.${info.page}.loading`, $a.proxy(
+						({packages}) => {
+							ctx.setField('status', (++i * 100) / packages);
+							(i === packages) && resolve();
+						},
+
+						{
+							label: $$.component,
+							single: false
+						}
+					));
+				}
 
 			} else {
 				location.href = page;
@@ -98,24 +104,24 @@ export default function createRouter(ctx: bRouter): Router {
 			}
 		},
 
-		push(page: string, info?: PageOpts): Promise<void> {
+		push(page: string, info?: PageInfo): Promise<void> {
 			return load(page, info);
 		},
 
-		replace(page: string, info?: PageOpts): Promise<void> {
+		replace(page: string, info?: PageInfo): Promise<void> {
 			return load(page, info, 'replaceState');
 		},
 
-		back(): void {
-			history.back();
+		go(pos: number): void {
+			history.go(pos);
 		},
 
 		forward(): void {
 			history.forward();
 		},
 
-		go(pos: number): void {
-			history.go(pos);
+		back(): void {
+			history.back();
 		}
 	});
 

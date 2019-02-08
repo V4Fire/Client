@@ -14,15 +14,23 @@ import Async from 'core/async';
 import path = require('path-to-regexp');
 import { RegExpOptions } from 'path-to-regexp';
 
-import driver from 'base/b-router/drivers';
+import engine from 'base/b-router/drivers';
 import symbolGenerator from 'core/symbol';
 
 import { concatUrls } from 'core/url';
-import { Router, BasePageMeta, PageSchema, CurrentPage, PageOpts } from 'base/b-router/drivers/interface';
+import { Router, BasePageMeta, PageSchema, CurrentPage } from 'base/b-router/drivers/interface';
 import iData, { component, prop, system, hook, watch, p } from 'super/i-data/i-data';
 
 export * from 'super/i-data/i-data';
 export * from 'base/b-router/drivers/interface';
+
+export interface PageOpts<
+	P extends Dictionary = Dictionary,
+	Q extends Dictionary = Dictionary,
+	M extends Dictionary = Dictionary
+> extends CurrentPage<P, Q, M> {
+	toPath(params?: Dictionary): string;
+}
 
 export type RouterMeta = BasePageMeta & {
 	autoScroll?: boolean;
@@ -96,17 +104,17 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 	readonly pagesProp?: PageSchemaDict;
 
 	/**
-	 * Driver constructor for router
+	 * Engine constructor for router
 	 */
 	@prop<bRouter>({
 		type: Function,
-		default: driver,
+		default: engine,
 		watch: (o) => {
 			o.initComponentValues().catch(stderr);
 		}
 	})
 
-	readonly driverProp!: () => Router;
+	readonly engineProp!: () => Router;
 
 	/**
 	 * If true, then will be shown page load status on transitions
@@ -121,10 +129,10 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 	status: number = 0;
 
 	/**
-	 * Driver for remote router
+	 * Engine for remote router
 	 */
 	@system((o) => o.link<(v: unknown) => Router>((v) => v(o)))
-	protected driver!: Router;
+	protected engine!: Router;
 
 	/**
 	 * Page store
@@ -136,11 +144,11 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 	 * Router paths
 	 */
 	@system<bRouter>({
-		after: 'driver',
+		after: 'engine',
 		init: (o) => o.link((v) => {
 			const
 				base = o.basePath,
-				routes = <PageSchemaDict>(v || o.driver.routes || {}),
+				routes = <PageSchemaDict>(v || o.engine.routes || {}),
 				pages = {};
 
 			for (let keys = Object.keys(routes), i = 0; i < keys.length; i++) {
@@ -235,14 +243,14 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 	 * Router.back
 	 */
 	back(): void {
-		this.driver.back();
+		this.engine.back();
 	}
 
 	/**
 	 * Router.forward
 	 */
 	forward(): void {
-		this.driver.forward();
+		this.engine.forward();
 	}
 
 	/**
@@ -250,7 +258,7 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 	 * @param pos
 	 */
 	go(pos: number): void {
-		this.driver.go(pos);
+		this.engine.go(pos);
 	}
 
 	/**
@@ -264,7 +272,7 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 			base = this.basePath;
 
 		const
-			normalizeBaseRgxp = /(.*)?[\\//]+$/;
+			normalizeBaseRgxp = /(.*)?[\\/]+$/;
 
 		let
 			byId = false,
@@ -407,7 +415,7 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 	 *
 	 * @param page
 	 * @param [params] - additional page parameters
-	 * @param [method] - driver method
+	 * @param [method] - engine method
 	 *
 	 * @emits beforeChange(page: Nullable<string>, params: CanUndef<PageParams>, method: string)
 	 * @emits change(info: PageOpts)
@@ -421,9 +429,7 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 		method: SetPage = 'push'
 	): Promise<CanUndef<CurrentPage>> {
 		const
-			{$root: r, driver: d, driver: {page: c}} = this;
-
-		const
+			{$root: r, engine, engine: {page: currentPage}} = this,
 			rejectParams = (o) => o && Object.reject(o, ['page', 'url']);
 
 		let
@@ -450,16 +456,16 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 			info;
 
 		if (page) {
-			info = this.getPageOpts(d.id(page));
+			info = this.getPageOpts(engine.id(page));
 
-		} else if (c) {
-			page = c.url || c.page;
+		} else if (currentPage) {
+			page = currentPage.url || currentPage.page;
 
 			const
 				p = this.getPageOpts(page);
 
 			if (p) {
-				info = Object.mixin(true, p, rejectParams(c));
+				info = Object.mixin(true, p, rejectParams(currentPage));
 			}
 		}
 
@@ -501,23 +507,22 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 			return params;
 		};
 
-		if (c && method === 'push') {
-			await d.replace(c.url || c.page, Object.mixin(true, undefined, c, scroll));
+		if (currentPage && method !== 'replace') {
+			await engine.replace(
+				currentPage.url || currentPage.page, Object.mixin(true, undefined, currentPage, scroll)
+			);
 		}
 
-		const
-			isNotEvent = method !== 'event';
-
 		if (!info) {
-			if (isNotEvent && page != null) {
-				await d[method](page, scroll);
+			if (method !== 'event' && page != null) {
+				await engine[method](page, scroll);
 			}
 
 			return;
 		}
 
-		if (!info.page && c && c.page) {
-			info.page = c.page;
+		if (!info.page && currentPage && currentPage.page) {
+			info.page = currentPage.page;
 		}
 
 		const
@@ -563,18 +568,20 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 		if (!Object.fastCompare(f(current), f(store))) {
 			this.setField('pageStore', store);
 
-			if (isNotEvent) {
-				if (c && method === 'push') {
-					const
-						f = ({page, params, query, meta}) => ({page, query: {...params, ...query}, meta: {...meta}});
+			if (currentPage && method !== 'replace') {
+				const
+					f = ({page, params, query, meta}) => ({page, query: {...params, ...query}, meta: {...meta}});
 
-					if (Object.fastCompare(f({...c}), f({...info}))) {
-						method = 'replace';
-					}
+				if (Object.fastCompare(f({...currentPage}), f({...info}))) {
+					method = 'replace';
 				}
-
-				await d[method](info.toPath(getPageParams(info)), info);
 			}
+
+			if (!Object.isFunction(engine[method])) {
+				method = 'replace';
+			}
+
+			await engine[method](info.toPath(getPageParams(info)), info);
 
 			const f = (v) => {
 				const

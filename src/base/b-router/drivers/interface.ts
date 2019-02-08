@@ -16,8 +16,8 @@ export type BasePageMeta<M extends Dictionary = Dictionary> = M & {
 	index?: boolean;
 	alias?: string;
 	redirect?: string;
-	paramsFromQuery?: boolean;
 	paramsFromRoot?: boolean;
+	paramsFromQuery?: boolean;
 };
 
 export type PageSchema<M extends Dictionary = Dictionary> = Dictionary<
@@ -26,8 +26,8 @@ export type PageSchema<M extends Dictionary = Dictionary> = Dictionary<
 >;
 
 export type PageMeta<M extends Dictionary = Dictionary> = BasePageMeta<M> & {
-	index: boolean;
 	page: string;
+	index: boolean;
 	params: Key[];
 };
 
@@ -44,12 +44,13 @@ export interface CurrentPage<
 	meta: PageMeta<M>;
 }
 
-export interface PageOpts<
-	P extends Dictionary = Dictionary,
-	Q extends Dictionary = Dictionary,
-	M extends Dictionary = Dictionary
-> extends CurrentPage<P, Q, M> {
-	toPath(params?: Dictionary): string;
+export interface PageInfo extends Dictionary {
+	page?: string;
+	url?: string;
+	index?: boolean;
+	params?: Dictionary;
+	query?: Dictionary;
+	meta?: Dictionary;
 }
 
 export interface Router<
@@ -60,9 +61,9 @@ export interface Router<
 	page?: CanUndef<CurrentPage<P, Q, M>>;
 	routes: PageSchema<M>;
 	id(page: string): string;
-	push(page: string, info?: PageOpts<P, Q, M>): Promise<void>;
-	replace(page: string, info?: PageOpts<P, Q, M>): Promise<void>;
-	back(): void;
-	forward(): void;
+	push(page: string, info?: PageInfo): Promise<void>;
+	replace(page: string, info?: PageInfo): Promise<void>;
 	go(pos: number): void;
+	forward(): void;
+	back(): void;
 }
