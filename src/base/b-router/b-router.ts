@@ -436,6 +436,7 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 			isEmptyParams = !params;
 
 		if (params) {
+			params = Object.fastClone(params);
 			isEmptyParams = true;
 
 			for (let keys = Object.keys(params), i = 0; i < keys.length; i++) {
@@ -443,6 +444,38 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 					isEmptyParams = false;
 					break;
 				}
+			}
+
+			if (!isEmptyParams) {
+				const normalizeParams = (obj, key?, data?) => {
+					if (!obj) {
+						return;
+					}
+
+					if (Object.isObject(obj)) {
+						for (let keys = Object.keys(obj), i = 0; i < keys.length; i++) {
+							const key = keys[i];
+							normalizeParams(obj[key], key, obj);
+						}
+
+						return;
+					}
+
+					if (Object.isArray(obj)) {
+						for (let i = 0; i < obj.length; i++) {
+							normalizeParams(obj[i], i, obj);
+						}
+
+						return;
+					}
+
+					if (data && obj != null) {
+						data[key] = String(obj);
+					}
+				};
+
+				normalizeParams(params.params);
+				normalizeParams(params.query);
 			}
 		}
 

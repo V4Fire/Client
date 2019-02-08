@@ -27,8 +27,6 @@ export default function createRouter(ctx: bRouter): Router {
 
 		return new Promise((resolve) => {
 			if (info) {
-				info = {...info};
-
 				const
 					qs = /\?.*/;
 
