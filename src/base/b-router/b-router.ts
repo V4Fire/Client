@@ -540,10 +540,13 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 			return params;
 		};
 
-		if (currentPage && method === 'push') {
-			await engine.replace(
-				currentPage.url || currentPage.page, Object.mixin(true, undefined, currentPage, scroll)
-			);
+		if (currentPage && method !== 'replace') {
+			const
+				modCurrentPage = Object.mixin(true, undefined, currentPage, scroll);
+
+			if (!Object.fastCompare(currentPage, modCurrentPage)) {
+				await engine.replace(currentPage.url || currentPage.page, modCurrentPage);
+			}
 		}
 
 		if (!info) {
