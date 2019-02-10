@@ -18,6 +18,11 @@ export type BasePageMeta<M extends Dictionary = Dictionary> = M & {
 	redirect?: string;
 	paramsFromRoot?: boolean;
 	paramsFromQuery?: boolean;
+	autoScroll?: boolean;
+	scroll?: {
+		x: number;
+		y: number;
+	};
 };
 
 export type PageSchema<M extends Dictionary = Dictionary> = Dictionary<
@@ -36,8 +41,8 @@ export interface CurrentPage<
 	Q extends Dictionary = Dictionary,
 	M extends Dictionary = Dictionary
 > extends Dictionary {
-	page: string;
 	url?: string;
+	page: string;
 	index: boolean;
 	params: P;
 	query: Q;
@@ -45,12 +50,16 @@ export interface CurrentPage<
 }
 
 export interface PageInfo extends Dictionary {
-	page?: string;
 	url?: string;
+	page?: string;
 	index?: boolean;
 	params?: Dictionary;
 	query?: Dictionary;
 	meta?: Dictionary;
+}
+
+export interface HistoryCleanFn {
+	(page: PageInfo): unknown;
 }
 
 export interface Router<
@@ -59,6 +68,7 @@ export interface Router<
 	M extends Dictionary = Dictionary
 > extends EventEmitter {
 	page?: CanUndef<CurrentPage<P, Q, M>>;
+	history: CurrentPage<P, Q, M>[];
 	routes: PageSchema<M>;
 	id(page: string): string;
 	push(page: string, info?: PageInfo): Promise<void>;
@@ -66,4 +76,6 @@ export interface Router<
 	go(pos: number): void;
 	forward(): void;
 	back(): void;
+	clean(fn?: HistoryCleanFn): Promise<void>;
+	cleanTmp(): Promise<void>;
 }
