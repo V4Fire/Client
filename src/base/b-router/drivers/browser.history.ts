@@ -76,6 +76,9 @@ export default function createRouter(ctx: bRouter): Router {
 			throw new Error('Page to load is not defined');
 		}
 
+		// Normalizing
+		page = page.replace(/[#?]\s*$/, '');
+
 		return new Promise((resolve) => {
 			let
 				syncMethod = method;
@@ -111,24 +114,23 @@ export default function createRouter(ctx: bRouter): Router {
 				saveHistoryLog();
 
 				const
-					qs = /\?.*/;
+					qsRgxp = /\?.*?(?=#|$)/;
 
-				const parse = (s, test?) => {
-					if (test && !qs.test(s)) {
+				const parseQuery = (s, test?) => {
+					if (test && !qsRgxp.test(s)) {
 						return {};
 					}
 
 					return Object.fromQueryString(s, {deep: true});
 				};
 
-				info.query = Object.assign(parse(page, true), info.query);
-				page = page.replace(qs, '');
+				info.query = Object.assign(parseQuery(page, true), info.query);
 
 				const
-					q = toQueryString(info.query);
+					qs = toQueryString(info.query);
 
-				if (q) {
-					page += `?${q}`;
+				if (qs) {
+					page = page.replace(qsRgxp, `?${qs}`);
 				}
 
 				if (location.href !== page) {

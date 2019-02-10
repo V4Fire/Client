@@ -32,23 +32,15 @@ export interface PageOpts<
 	toPath(params?: Dictionary): string;
 }
 
-export type RouterMeta = BasePageMeta & {
-	autoScroll?: boolean;
-	scroll?: {
-		x: number;
-		y: number;
-	};
-};
-
 export interface PagePropObj {
 	page: string;
-	meta?: RouterMeta;
+	meta?: BasePageMeta;
 	params?: Dictionary;
 	query?: Dictionary;
 }
 
 export interface PageParams {
-	meta?: RouterMeta;
+	meta?: BasePageMeta;
 	params?: Dictionary;
 	query?: Dictionary;
 }
@@ -59,12 +51,12 @@ export type PageProp =
 
 export interface Page {
 	page: string;
-	index: boolean;
-	meta: RouterMeta;
-	alias?: string;
-	redirect?: string;
 	pattern?: string;
 	rgxp?: RegExp;
+	index: boolean;
+	alias?: string;
+	redirect?: string;
+	meta: BasePageMeta;
 }
 
 export type Pages = Dictionary<Page>;
