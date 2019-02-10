@@ -67,9 +67,9 @@ export interface Router<
 	Q extends Dictionary = Dictionary,
 	M extends Dictionary = Dictionary
 > extends EventEmitter {
-	page?: CanUndef<CurrentPage<P, Q, M>>;
-	history: CurrentPage<P, Q, M>[];
-	routes: PageSchema<M>;
+	readonly page?: CanUndef<CurrentPage<P, Q, M>>;
+	readonly history: PageInfo[];
+	readonly routes?: PageSchema<M>;
 	id(page: string): string;
 	push(page: string, info?: PageInfo): Promise<void>;
 	replace(page: string, info?: PageInfo): Promise<void>;

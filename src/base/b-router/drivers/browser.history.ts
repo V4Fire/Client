@@ -183,6 +183,17 @@ export default function createRouter(ctx: bRouter): Router {
 			};
 		},
 
+		get history(): PageInfo[] {
+			const
+				list = <PageInfo[]>[];
+
+			for (let i = 0; i < historyLog.length; i++) {
+				list.push(historyLog[i].info);
+			}
+
+			return list;
+		},
+
 		id(page: string): string {
 			try {
 				return new URL(page).pathname;
