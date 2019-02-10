@@ -13,6 +13,8 @@ import $C = require('collection.js');
 import symbolGenerator from 'core/symbol';
 import Async, { AsyncOpts, ClearOptsId, WrappedFunction, ProxyCb } from 'core/async';
 import log, { LogMessageOptions } from 'core/log';
+
+import { toQueryString } from 'core/url';
 import { ExperimentsSet } from 'core/abt/interface';
 
 import * as analytics from 'core/analytics';
@@ -113,6 +115,11 @@ export {
 export type ComponentStatuses = Partial<Record<keyof typeof statuses, boolean>>;
 export interface FieldGetter<R = unknown, D = unknown> {
 	(key: string, data: NonNullable<D>): R;
+}
+
+export interface RouteParams {
+	params?: Dictionary;
+	query?: Dictionary;
 }
 
 export const
@@ -1083,9 +1090,9 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	 * Returns a full route path string by the specified parameters
 	 *
 	 * @param path - base path
-	 * @param [params] - route parameters
+	 * @param [opts] - route options
 	 */
-	getRoutePath(path: string, params: Dictionary = {}): CanUndef<string> {
+	getRoutePath(path: string, opts: RouteParams = {}): CanUndef<string> {
 		const
 			r = this.router;
 
@@ -1100,7 +1107,19 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 			return;
 		}
 
-		return route.toPath(params);
+		let
+			res = route.toPath(opts.params);
+
+		if (opts.query) {
+			const
+				q = toQueryString(opts.query, false);
+
+			if (q) {
+				res += `?${q}`;
+			}
+		}
+
+		return res.replace(/[#?]\s*$/, '');
 	}
 
 	/**
