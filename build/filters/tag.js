@@ -97,7 +97,7 @@ module.exports = [
 					}
 				});
 
-			} else {
+			} else if (key[0] === '@') {
 				const
 					tmp = key.dasherize();
 

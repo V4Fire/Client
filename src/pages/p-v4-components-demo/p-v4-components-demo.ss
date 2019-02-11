@@ -12,12 +12,20 @@
 
 - template index() extends ['i-static-page.component'].index
 	- block body
-		< b-v4-component-demo #default = {ctx}
-			< b-button v-func = false | @statusReady = ctx.debug
+		< b-v4-component-demo
+			< b-button &
+				v-func = false |
+				slot-scope = {ctx} |
+				@statusReady = ctx.debug
+			.
 				Some text
 
-		< b-v4-component-demo #default = {ctx}
-			< b-checkbox v-func = false | @statusReady = ctx.debug
+		< b-v4-component-demo
+			< b-checkbox &
+				v-func = false |
+				slot-scope = {ctx} |
+				@statusReady = ctx.debug
+			.
 				Some text
 
 		/*< b-v4-component-demo #default = {ctx}

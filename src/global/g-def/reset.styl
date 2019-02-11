@@ -8,16 +8,35 @@
 
 @import "nib/reset"
 
-global-reset()
-reset-html5()
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td
+	reset-box-model()
+	reset-font()
+
+ol, ul
+	list-style none
+
+table
+	reset-table()
+
+caption, th, td
+	reset-table-cell()
+
+a, .a
+	img
+		border none
 
 html
 	font-family BASE_FONT
 
+reset-html5()
+
 .a
 	resetButton()
 	cursor pointer
-
-a, .a
-	img
-		border 0

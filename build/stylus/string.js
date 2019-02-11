@@ -9,6 +9,7 @@
  */
 
 const
+	camelize = require('camelize'),
 	SVGO = require('svgo-sync'),
 	svgo = new SVGO();
 
@@ -36,10 +37,13 @@ module.exports = function (style) {
 	 * Link to Sugar.String.camelize
 	 *
 	 * @param {?} str - source string
+	 * @param {boolean} [upper]
 	 * @returns {string}
 	 */
-	style.define('camelize',
-		(str, upper) => str.string.camelize(upper));
+	style.define('camelize', (str, upper) => {
+		const res = camelize(str.string);
+		return upper ? res[0].toUpperCase() + res.slice(1) : res;
+	});
 
 	/**
 	 * Converts plain svg text to dataURI

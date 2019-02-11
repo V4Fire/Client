@@ -13,11 +13,12 @@ include('build/filters');
 const
 	$C = require('collection.js'),
 	Snakeskin = require('snakeskin'),
-	escaper = require('escaper');
+	escaper = require('escaper'),
+	camelize = require('camelize');
 
 const componentsTree = module.exports = {
 	getComponentPropAttrs(name) {
-		name = name.camelize(false);
+		name = camelize(name);
 
 		if (!this[name]) {
 			throw new Error(`The specified component "${name}" is not defined`);
@@ -170,7 +171,7 @@ function tagFilter({name, attrs = {}}) {
 			delete attrs[':instance-of'];
 
 		} else {
-			componentName = name === 'component' ? 'iBlock' : name.camelize(false);
+			componentName = name === 'component' ? 'iBlock' : camelize(name);
 		}
 
 		const
@@ -234,7 +235,7 @@ function tagFilter({name, attrs = {}}) {
 			}
 
 			const
-				base = key.slice(1).camelize(false),
+				base = camelize(key.slice(1)),
 				prop = `${base}Prop`;
 
 			if (c && !c.props[base] && c.props[prop]) {
@@ -273,7 +274,7 @@ function tagNameFilter(tag, attrs = {}, rootTag) {
 		.reduce((res, filter) => res + filter(tag, attrs, rootTag));
 
 	const
-		nm = tag.camelize(false),
+		nm = camelize(tag),
 		component = componentsTree[nm];
 
 	if (component && !Object.isBoolean(component.functional)) {

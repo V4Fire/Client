@@ -11,7 +11,8 @@
 const
 	$C = require('collection.js'),
 	fs = require('fs-extra-promise'),
-	path = require('upath');
+	path = require('upath'),
+	camelize = require('camelize');
 
 const
 	{build, src} = require('config'),
@@ -158,7 +159,7 @@ module.exports = (async () => {
 							str +=
 							`
 .${name}
-	extends($${name.camelize(false)})
+	extends($${camelize(name)})
 
 `;
 						}
