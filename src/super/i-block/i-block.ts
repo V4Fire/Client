@@ -14,6 +14,7 @@ import Async, { AsyncOpts, ClearOptsId, WrappedFunction, ProxyCb } from 'core/as
 import log, { LogMessageOptions } from 'core/log';
 
 import { EventEmitter2 as EventEmitter } from 'eventemitter2';
+import { toQueryString } from 'core/url';
 import { ExperimentsSet } from 'core/abt/interface';
 
 //#if runtime has core/analytics
@@ -134,6 +135,11 @@ export type ComponentStatuses = Partial<Record<keyof typeof statuses, boolean>>;
 export type MemoizedLiteral<T = unknown> = Readonly<Dictionary<T>> | ReadonlyArray<T>;
 export interface FieldGetter<R = unknown, D = unknown> {
 	(key: string, data: NonNullable<D>): R;
+}
+
+export interface RouteParams {
+	params?: Dictionary;
+	query?: Dictionary;
 }
 
 export const
@@ -1142,6 +1148,42 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	})
 
 	protected readonly global!: Window;
+
+	/**
+	 * Returns a full route path string by the specified parameters
+	 *
+	 * @param path - base path
+	 * @param [opts] - route options
+	 */
+	getRoutePath(path: string, opts: RouteParams = {}): CanUndef<string> {
+		const
+			r = this.router;
+
+		if (!r) {
+			return;
+		}
+
+		const
+			route = r.getPageOpts(path);
+
+		if (!route) {
+			return;
+		}
+
+		let
+			res = route.toPath(opts.params);
+
+		if (opts.query) {
+			const
+				q = toQueryString(opts.query, false);
+
+			if (q) {
+				res += `?${q}`;
+			}
+		}
+
+		return res.replace(/[#?]\s*$/, '');
+	}
 
 	/**
 	 * Returns a string id, which is connected to the component
