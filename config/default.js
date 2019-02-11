@@ -238,7 +238,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	snakeskin() {
 		const
 			{webpack, src} = this,
-			snakeskinVars = include('build/snakeskin.vars.js');
+			snakeskinVars = include('build/snakeskin.vars');
 
 		return {
 			client: this.extend(super.snakeskin(), {
