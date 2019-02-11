@@ -31,7 +31,7 @@ module.exports = function (style) {
 	 * @returns {string}
 	 */
 	style.define('dasherize',
-		(str) => str.string.dasherize());
+		(str) => require('string-dasherize')(str.string));
 
 	/**
 	 * Link to Sugar.String.camelize

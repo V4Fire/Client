@@ -13,7 +13,10 @@ include('build/filters');
 const
 	$C = require('collection.js'),
 	Snakeskin = require('snakeskin'),
-	escaper = require('escaper'),
+	escaper = require('escaper');
+
+const
+	dasherize = require('string-dasherize'),
 	camelize = require('camelize');
 
 const componentsTree = module.exports = {
@@ -181,7 +184,7 @@ function tagFilter({name, attrs = {}}) {
 			vFunc = [attrs['v-func'], delete attrs['v-func']][0];
 
 		const isFunctional = c && c.functional === true || !vFunc && $C(smart).every((el, key) => {
-			key = key.dasherize();
+			key = dasherize(key);
 
 			if (!isV4Prop.test(key)) {
 				key = `:${key}`;
@@ -240,7 +243,7 @@ function tagFilter({name, attrs = {}}) {
 				prop = `${base}Prop`;
 
 			if (c && !c.props[base] && c.props[prop]) {
-				attrs[`:${prop.dasherize()}`] = el;
+				attrs[`:${dasherize(prop)}`] = el;
 				delete attrs[key];
 			}
 		});
