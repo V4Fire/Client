@@ -78,6 +78,8 @@ $C(files).forEach((el) => {
 		parent
 	};
 
+	obj.model = p.model;
+
 	if (p.functional != null) {
 		obj.functional = p.functional;
 	}
@@ -92,42 +94,61 @@ $C(files).forEach((el) => {
 	}
 });
 
-function getFunctionalParameters(obj) {
-	if (!obj) {
-		return false;
+function getInheritParameters(obj) {
+	if (!obj || !obj.parent) {
+		return {};
 	}
+
+	const fields = [
+		['functional', false],
+		['model']
+	];
 
 	const
-		v = obj.functional,
-		isObj = Object.isObject(v);
+		res = {},
+		parent = getInheritParameters(componentsTree[obj.parent]);
 
-	if (obj.parent && (v === undefined || isObj)) {
+	for (let i = 0; i < fields.length; i++) {
 		const
-			p = getFunctionalParameters(componentsTree[obj.parent]);
+			[key, def] = fields[i];
 
-		if (Object.isObject(p)) {
-			return {...p, ...v};
+		const
+			val = obj[key],
+			isObj = Object.isObject(val);
+
+		if (val === undefined || isObj) {
+			const
+				parentVal = parent[key];
+
+			if (Object.isObject(parentVal)) {
+				res[key] = {...parentVal, ...val};
+				continue;
+			}
+
+			if (isObj) {
+				res[key] = val;
+				continue;
+			}
+
+			res[key] = parentVal !== undefined ? parentVal : def;
+			continue;
 		}
 
-		if (isObj) {
-			return v;
-		}
-
-		return p;
+		res[key] = val;
 	}
 
-	return v || false;
+	return res;
 }
 
 $C(componentsTree).forEach((el, key, data) => {
-	data[key].functional = getFunctionalParameters(el);
+	Object.assign(el, getInheritParameters(el));
 
 	const
-		p = el.parent && data[el.parent];
+		parent = el.parent && data[el.parent];
 
-	if (p) {
-		Object.setPrototypeOf(el, p);
-		Object.setPrototypeOf(el.props, p.props);
+	if (parent) {
+		Object.setPrototypeOf(el, parent);
+		Object.setPrototypeOf(el.props, parent.props);
 	}
 });
 
@@ -178,11 +199,14 @@ function tagFilter({name, attrs = {}}) {
 		}
 
 		const
-			c = componentsTree[componentName],
-			smart = [attrs['v-func-placeholder'], delete attrs['v-func-placeholder']][0] && c && c.functional,
+			component = componentsTree[componentName],
+			props = component ? component.props : Object.create(null);
+
+		const
+			smart = [attrs['v-func-placeholder'], delete attrs['v-func-placeholder']][0] && component && component.functional,
 			vFunc = [attrs['v-func'], delete attrs['v-func']][0];
 
-		const isFunctional = c && c.functional === true || !vFunc && $C(smart).every((el, key) => {
+		const isFunctional = component && component.functional === true || !vFunc && $C(smart).every((el, key) => {
 			key = dasherize(key);
 
 			if (!isV4Prop.test(key)) {
@@ -217,6 +241,20 @@ function tagFilter({name, attrs = {}}) {
 		});
 
 		if (isFunctional || vFunc) {
+			const
+				model = attrs['v-model'];
+
+			if (component && model) {
+				const
+					modelInfo = component.model;
+
+				if (modelInfo) {
+					attrs[`:${dasherize(modelInfo.prop)}`] = model;
+					attrs[`@${dasherize(modelInfo.event)}`] = [`${model[0]}=$event`];
+					delete attrs['v-model'];
+				}
+			}
+
 			if (smart) {
 				if (vFunc) {
 					attrs[':is'] = [`'${attrs['is'][0]}' + (${vFunc[0]} ? '-functional' : '')`];
@@ -241,13 +279,13 @@ function tagFilter({name, attrs = {}}) {
 				base = camelize(key.slice(1)),
 				prop = `${base}Prop`;
 
-			if (c && !c.props[base] && c.props[prop]) {
+			if (!props[base] && props[prop]) {
 				attrs[`:${dasherize(prop)}`] = el;
 				delete attrs[key];
 			}
 		});
 
-		if (c && c.inheritMods !== false && !attrs[':mods-prop']) {
+		if (component && component.inheritMods !== false && !attrs[':mods-prop']) {
 			attrs[':mods-prop'] = ['provideMods()'];
 		}
 	}
