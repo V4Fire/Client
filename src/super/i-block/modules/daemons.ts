@@ -134,7 +134,7 @@ export default class Daemons {
 
 		if (daemon.immediate !== false) {
 			const
-				salt = daemon.cancelable === false ? Math.random() : '';
+				salt = daemon.cancelable === false ? String(Math.random()) : '';
 
 			Object.assign(asyncOptions, {
 				group: `daemons-${this.component.componentName}`,
