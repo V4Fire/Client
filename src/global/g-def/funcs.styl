@@ -163,7 +163,7 @@ flex-row($justify, $align = $justify)
  * @param {string=} [$align]
  */
 flex-row-rev($justify, $align = $justify)
-	flex($justify, $align)
+	flex-row($justify, $align)
 	flex-direction row-reverse
 
 /**
@@ -173,7 +173,7 @@ flex-row-rev($justify, $align = $justify)
  * @param {string=} [$align]
  */
 flex-col($justify, $align = $justify)
-	flex($justify, $align)
+	flex-row($justify, $align)
 	flex-direction column
 
 /**
@@ -183,7 +183,7 @@ flex-col($justify, $align = $justify)
  * @param {string=} [$align]
  */
 flex-col-rev($justify, $align = $justify)
-	flex($justify, $align)
+	flex-row($justify, $align)
 	flex-direction column-reverse
 
 /**
