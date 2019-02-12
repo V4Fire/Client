@@ -38,7 +38,7 @@ g-hint
 			font normal $p.fontSize BASE_FONT
 
 		{$p.content}
-			zIndex($p.zIndexPos)
+			z-index-pos $p.zIndexPos
 			padding ($p.fontSize / 1.8)
 			border-radius $p.rounding
 			background $p.backgroundColor
@@ -50,7 +50,7 @@ g-hint
 				content attr($p.hintData)
 
 		{$p.arrow}
-			zIndex($p.zIndexPos, 1)
+			z-index-pos $p.zIndexPos 1
 			border $p.vertArrowSize solid transparent
 			content ""
 

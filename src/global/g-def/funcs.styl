@@ -114,7 +114,7 @@ useGPU()
 /**
  * Global overlays map
  */
-$OVERLAYS = ( 'layer' 'modal' 'overall' )
+$OVERLAYS = ( "layer" "modal" "overall" )
 
 /**
  * Sets a z-index for the specified layer position
@@ -130,6 +130,12 @@ zIndex($pos, $mod = 0)
 		z-index index($OVERLAYS, $pos) * 1000 + $mod
 
 /**
+ * Alias for zIndex mixin
+ */
+z-index-pos($pos, $mod = 0)
+	zIndex($pos, $mod)
+
+/**
  * Sets sizes dictionary
  * $flag for global: replacing global sizes
  * $flag for local: extending global sizes
@@ -139,10 +145,10 @@ zIndex($pos, $mod = 0)
  * @param {boolean=} [$flag]
  */
 setSizes($obj, $place, $flag = false)
-	if ($place == 'local')
+	if ($place == "local")
 		return getSizes($obj, $flag)
 
-	if ($place == 'global')
+	if ($place == "global")
 		return extendSizes($obj, $flag)
 
 /**
@@ -154,10 +160,10 @@ setSizes($obj, $place, $flag = false)
 flex-row($justify, $align = $justify)
 	display flex
 
-	if $justify != 'def'
+	if $justify != "def"
 		justify-content $justify
 
-	if $align != 'def'
+	if $align != "def"
 		align-items $align
 
 /**
@@ -196,8 +202,8 @@ flex-col-rev($justify, $align = $justify)
  * @param {string} $position - position type
  * @param {string=} [$zIndexPos] - zIndex position
  */
-modal($position, $zIndexPos = 'modal')
-	position fixed
+modal($position, $zIndexPos = "modal")
+	position $position
 	top 0
 	left 0
 	bottom 0
