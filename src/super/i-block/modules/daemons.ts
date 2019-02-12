@@ -24,6 +24,7 @@ export interface Daemon {
 	watch?: DaemonWatcher[];
 	wait?: Statuses;
 	immediate?: boolean;
+	cancelable?: boolean;
 	asyncOptions?: AsyncOpts;
 	wrappedFn?: Function;
 	fn: Function;
@@ -132,9 +133,12 @@ export default class Daemons {
 			fn = daemon.wrappedFn || daemon.fn;
 
 		if (daemon.immediate !== false) {
+			const
+				salt = daemon.cancelable === false ? Math.random() : '';
+
 			Object.assign(asyncOptions, {
 				group: `daemons-${this.component.componentName}`,
-				label: `daemons-${name}`
+				label: `daemons-${name}${salt}`
 			});
 
 			$a.setImmediate(() => fn.apply(ctx, args), asyncOptions);
