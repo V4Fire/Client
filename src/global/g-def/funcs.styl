@@ -134,6 +134,7 @@ zIndex($pos, $mod = 0)
  *
  * @param {string} $justify
  * @param {string=} [$align]
+ * @param {string=} [$direction]
  */
 flexbox($justify, $align = $justify)
 	display flex
@@ -158,27 +159,3 @@ setSizes($obj, $place, $flag = false)
 
 	if ($place == 'global')
 		return extendSizes($obj, $flag)
-
-/**
- * Generates rules for button css reset
- */
-resetButton()
-	display inline-block
-	box-sizing border-box
-	margin 0
-	padding 0
-	outline 0
-	border 0
-	border-spacing 0
-	background none
-	vertical-align middle
-	text-align left
-	text-decoration none
-	text-indent 0
-	white-space normal
-	font-weight normal
-	font-family BASE_FONT
-	line-height 1
-
-	&:focus
-		outline 0
