@@ -33,6 +33,7 @@
 
 	- rootTag = 'div'
 	- overWrapper = true
+	- renderCounter = true
 
 	/**
 	 * Applies Typograf to the specified content
