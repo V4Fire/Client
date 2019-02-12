@@ -33,7 +33,6 @@
 
 	- rootTag = 'div'
 	- overWrapper = true
-	- renderCounter = true
 
 	/**
 	 * Applies Typograf to the specified content
@@ -53,7 +52,11 @@
 		- else
 			rootAttrs[':class'] = value
 
-	- rootAttrs = {':class': '[componentId, getBlockClasses(mods), "i-block-helper"]'}
+	- rootAttrs = { &
+		':class': '[componentId, getBlockClasses(mods), "i-block-helper"]',
+		':-render-counter': 'renderCounter'
+	} .
+
 	- block rootAttrs
 
 	- attrs = {}
@@ -64,9 +67,6 @@
 
 	- block root
 		< _.${self.name()} ${rootAttrs|!html}
-			- if renderCounter
-				< .&__render-counter v-show = false
-					{{ renderCounter }}
 
 			/**
 			 * Generates an icon block
