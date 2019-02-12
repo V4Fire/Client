@@ -130,21 +130,6 @@ zIndex($pos, $mod = 0)
 		z-index index($OVERLAYS, $pos) * 1000 + $mod
 
 /**
- * Generates rules for flexbox
- *
- * @param {string} $justify
- * @param {string=} [$align]
- * @param {string=} [$direction]
- */
-flexbox($justify, $align = $justify)
-	display flex
-	justify-content $justify
-	align-items $align
-
-	if arguments[2]
-		flex-direction arguments[2]
-
-/**
  * Sets sizes dictionary
  * $flag for global: replacing global sizes
  * $flag for local: extending global sizes
@@ -159,3 +144,68 @@ setSizes($obj, $place, $flag = false)
 
 	if ($place == 'global')
 		return extendSizes($obj, $flag)
+
+/**
+ * Generates rules for flexbox (direction: row)
+ *
+ * @param {string} $justify
+ * @param {string=} [$align]
+ */
+flex($justify, $align = $justify)
+	display flex
+	justify-content $justify
+	align-items $align
+
+/**
+ * Generates rules for flexbox (direction: row-reverse)
+ *
+ * @param {string} $justify
+ * @param {string=} [$align]
+ */
+flexRev($justify, $align = $justify)
+	flex($justify, $align)
+	flex-direction row-reverse
+
+/**
+ * Generates rules for flexbox (direction: column)
+ *
+ * @param {string} $justify
+ * @param {string=} [$align]
+ */
+flexColumn($justify, $align = $justify)
+	flex($justify, $align)
+	flex-direction column
+
+/**
+ * Generates rules for flexbox (direction: column-reverse)
+ *
+ * @param {string} $justify
+ * @param {string=} [$align]
+ */
+flexColumnRev($justify, $align = $justify)
+	flex($justify, $align)
+	flex-direction column-reverse
+
+/**
+ * Generates rules for a modal window (fixed position)
+ * @param {string=} [$pos] - zIndex position
+ */
+fixedModal($pos = 'modal')
+	position fixed
+	top 0
+	left 0
+	bottom 0
+	right 0
+	zIndex($pos)
+
+/**
+ * Generates rules for a modal window (absolute position)
+ * @param {string=} [$pos] - zIndex position
+ */
+absoluteModal($pos = 'modal')
+	position absolute
+	top 0
+	left 0
+	bottom 0
+	right 0
+	zIndex($pos)
