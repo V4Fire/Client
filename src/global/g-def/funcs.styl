@@ -114,7 +114,7 @@ useGPU()
 /**
  * Global overlays map
  */
-$OVERLAYS = ( layer modal overall )
+$OVERLAYS = ( 'layer' 'modal' 'overall' )
 
 /**
  * Sets a z-index for the specified layer position
@@ -123,7 +123,7 @@ $OVERLAYS = ( layer modal overall )
  * @param {number} [$mod] - value modifier
  */
 zIndex($pos, $mod = 0)
-	if $pos == underall
+	if $pos == "underall"
 		z-index -1
 
 	else
@@ -148,19 +148,23 @@ setSizes($obj, $place, $flag = false)
 /**
  * Generates rules for flexbox (direction: row)
  *
- * @param {string} $justify
- * @param {string=} [$align]
+ * @param {string} $justify - justify-content (def for default)
+ * @param {string=} [$align] - align-items (def for default)
  */
 flex-row($justify, $align = $justify)
 	display flex
-	justify-content $justify
-	align-items $align
+
+	if $justify != 'def'
+		justify-content $justify
+
+	if $align != 'def'
+		align-items $align
 
 /**
  * Generates rules for flexbox (direction: row-reverse)
  *
- * @param {string} $justify
- * @param {string=} [$align]
+ * @param {string} $justify - justify-content (def for default)
+ * @param {string=} [$align] - align-items (def for default)
  */
 flex-row-rev($justify, $align = $justify)
 	flex-row($justify, $align)
@@ -169,8 +173,8 @@ flex-row-rev($justify, $align = $justify)
 /**
  * Generates rules for flexbox (direction: column)
  *
- * @param {string} $justify
- * @param {string=} [$align]
+ * @param {string} $justify - justify-content (def for default)
+ * @param {string=} [$align] - align-items (def for default)
  */
 flex-col($justify, $align = $justify)
 	flex-row($justify, $align)
@@ -179,8 +183,8 @@ flex-col($justify, $align = $justify)
 /**
  * Generates rules for flexbox (direction: column-reverse)
  *
- * @param {string} $justify
- * @param {string=} [$align]
+ * @param {string} $justify - justify-content (def for default)
+ * @param {string=} [$align] - align-items (def for default)
  */
 flex-col-rev($justify, $align = $justify)
 	flex-row($justify, $align)
