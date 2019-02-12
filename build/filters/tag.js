@@ -102,7 +102,7 @@ module.exports = [
 
 			} else {
 				const
-					tmp = dasherize(key);
+					tmp = key[0] === ':' ? dasherize(key) : key.dasherize();
 
 				if (tmp !== key) {
 					delete attrs[key];

@@ -251,7 +251,7 @@ function tagFilter({name, attrs = {}}) {
 
 				if (modelInfo) {
 					attrs[`:${dasherize(modelInfo.prop)}`] = model;
-					attrs[`@${dasherize(modelInfo.event)}`] = [`${model[0]}=$event`];
+					attrs[`@${modelInfo.event.dasherize()}`] = [`${model[0]}=$event`];
 					delete attrs['v-model'];
 				}
 			}
