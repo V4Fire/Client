@@ -1,0 +1,53 @@
+/*!
+ * V4Fire Client Core
+ * https://github.com/V4Fire/Client
+ *
+ * Released under the MIT license
+ * https://github.com/V4Fire/Client/blob/master/LICENSE
+ */
+
+@import "super/i-data/i-data.styl"
+
+$p = {
+	lockHelpers: false
+	sideBarTransition: EASING_DURATION linear
+	overlayTansition: EASING_DURATION ease-in
+}
+
+b-sidebar extends i-data
+	fixed top 0 left 0
+	z-index-pos modal
+
+	&
+	&__content
+		transform translateX(-100%)
+
+	&
+	&__root-wrapper
+		size 100%
+
+	if $p.sideBarTransition
+		transition transform 0s $p.sideBarTransition
+
+		&__content
+			transition transform $p.sideBarTransition
+
+		&_opened_true
+			transition none
+
+	if $p.overlayBg
+		&__over-wrapper
+			z-index-pos layer
+			background $p.overlayBg
+			opacity 0
+
+			if $p.overlayTansition
+				transition opacity $p.overlayTansition
+
+		&_opened_true &__over-wrapper
+			display block
+			opacity 1
+
+	&_opened_true
+	&_opened_true &__content
+		transform translateX(0)

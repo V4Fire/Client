@@ -6,8 +6,9 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import iBlock from 'super/i-block/i-block';
+import iDynamicPage, { component, prop, field, watch } from 'super/i-dynamic-page/i-dynamic-page';
 import { EventEmitterLike } from 'core/async';
-import iDynamicPage, { component, prop, field, watch, TitleValue } from 'super/i-dynamic-page/i-dynamic-page';
 export * from 'super/i-data/i-data';
 
 export type KeepAlive =
@@ -15,13 +16,15 @@ export type KeepAlive =
 	string[] |
 	RegExp;
 
-@component({inheritMods: false})
+@component({
+	inheritMods: false,
+	defaultProps: false
+})
+
 export default class bDynamicPage extends iDynamicPage {
 	/** @override */
+	@prop({forceDefault: true})
 	readonly selfDispatching: boolean = true;
-
-	/** @override */
-	readonly pageTitleProp: TitleValue = '';
 
 	/**
 	 * Initial component name
@@ -55,14 +58,24 @@ export default class bDynamicPage extends iDynamicPage {
 	/**
 	 * Event name for listening
 	 */
-	@prop({type: String, required: false})
+	@prop({
+		type: String,
+		required: false,
+		forceDefault: true
+	})
+
 	readonly event?: string = 'setRoute';
 
 	/**
 	 * Event value converter
 	 */
-	@prop({type: Function, required: false})
-	readonly eventConverter?: Function;
+	@prop({
+		type: Function,
+		default: (e) => e && (e.component || e.page),
+		forceDefault: true
+	})
+
+	readonly eventConverter!: Function;
 
 	/**
 	 * Component name
@@ -93,8 +106,18 @@ export default class bDynamicPage extends iDynamicPage {
 		$a.clearAll(group);
 
 		if (this.event) {
-			$a.on(this.emitter || this.$root, this.event, (e) => {
-				this.page = this.eventConverter ? this.eventConverter(e, this.page) : e;
+			$a.on(this.emitter || this.$root, this.event, (component, e) => {
+				if (component != null && !((<Dictionary>component).instance instanceof iBlock)) {
+					e = component;
+				}
+
+				const
+					v = this.eventConverter ? this.eventConverter(e, this.page) : e;
+
+				if (v == null || Object.isString(v)) {
+					this.page = v;
+				}
+
 			}, group);
 		}
 	}

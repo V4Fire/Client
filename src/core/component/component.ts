@@ -64,6 +64,25 @@ export function getComponent(
 		{component, instance} = getBaseComponent(constructor, meta),
 		{methods} = meta;
 
+	const callMethod = (ctx, method) => {
+		const
+			obj = methods[method];
+
+		if (obj) {
+			try {
+				const
+					res = obj.fn.call(ctx);
+
+				if (Object.isPromise(res)) {
+					res.catch(stderr);
+				}
+
+			} catch (err) {
+				stderr(err);
+			}
+		}
+	};
+
 	return {
 		...<any>component,
 
@@ -130,32 +149,21 @@ export function getComponent(
 				ctx
 			);
 
-			runHook('beforeCreate', meta, ctx).then(async () => {
-				if (methods.beforeCreate) {
-					await methods.beforeCreate.fn.call(ctx);
-				}
-			}, stderr);
-
+			runHook('beforeCreate', meta, ctx).catch(stderr);
+			callMethod(ctx, 'beforeCreate');
 			bindWatchers(ctx);
 		},
 
 		created(): void {
 			this.hook = 'created';
 			bindWatchers(this);
-
-			runHook('created', this.meta, this).then(async () => {
-				if (methods.created) {
-					await methods.created.fn.call(this);
-				}
-			}, stderr);
+			runHook('created', this.meta, this).catch(stderr);
+			callMethod(this, 'created');
 		},
 
 		beforeMount(): void {
-			runHook('beforeMount', this.meta, this).then(async () => {
-				if (methods.beforeMount) {
-					await methods.beforeMount.fn.call(this);
-				}
-			}, stderr);
+			runHook('beforeMount', this.meta, this).catch(stderr);
+			callMethod(this, 'beforeMount');
 		},
 
 		mounted(): void {
@@ -171,11 +179,8 @@ export function getComponent(
 		},
 
 		beforeUpdate(): void {
-			runHook('beforeUpdate', this.meta, this).then(async () => {
-				if (methods.beforeUpdate) {
-					await methods.beforeUpdate.fn.call(this);
-				}
-			}, stderr);
+			runHook('beforeUpdate', this.meta, this).catch(stderr);
+			callMethod(this, 'beforeUpdate');
 		},
 
 		updated(): void {
@@ -187,28 +192,19 @@ export function getComponent(
 		},
 
 		activated(): void {
-			runHook('activated', this.meta, this).then(async () => {
-				if (methods.activated) {
-					await methods.activated.fn.call(this);
-				}
-			}, stderr);
+			runHook('activated', this.meta, this).catch(stderr);
+			callMethod(this, 'activated');
 		},
 
 		deactivated(): void {
-			runHook('deactivated', this.meta, this).then(async () => {
-				if (methods.deactivated) {
-					await methods.deactivated.fn.call(this);
-				}
-			}, stderr);
+			runHook('deactivated', this.meta, this).catch(stderr);
+			callMethod(this, 'deactivated');
 		},
 
 		beforeDestroy(): void {
+			runHook('beforeDestroy', this.meta, this).catch(stderr);
+			callMethod(this, 'beforeDestroy');
 			this.$async.clearAll();
-			runHook('beforeDestroy', this.meta, this).then(async () => {
-				if (methods.beforeDestroy) {
-					await methods.beforeDestroy.fn.call(this);
-				}
-			}, stderr);
 		},
 
 		destroyed(): void {
@@ -446,7 +442,7 @@ export function bindWatchers(ctx: ComponentInterface, eventCtx: ComponentInterfa
 }
 
 /**
- * Initializes fields to the specified data object and returns it
+ * Initializes the specified fields to a data object and returns it
  *
  * @param fields
  * @param ctx - component context
@@ -460,37 +456,73 @@ export function initDataObject(
 	data: Dictionary = {}
 ): Dictionary {
 	const
-		queue = new Set();
+		queue = new Set(),
+		atomQueue = new Set();
+
+	const
+		fieldList = <string[]>[];
+
+	// Sorting atoms
+	for (let keys = Object.keys(fields), i = 0; i < keys.length; i++) {
+		const
+			key = keys[i],
+			el = <NonNullable<SystemField>>fields[key];
+
+		if (el.atom || !el.init && (el.default !== undefined || key in instance)) {
+			fieldList.unshift(key);
+
+		} else {
+			fieldList.push(key);
+		}
+	}
 
 	while (true) {
-		const
-			o = fields,
-			fieldList = <string[]>[];
-
-		for (let keys = Object.keys(fields), i = 0; i < keys.length; i++) {
-			const
-				key = keys[i],
-				el = <NonNullable<SystemField>>o[key];
-
-			if (el.atom || !el.init && (el.default !== undefined || key in instance)) {
-				fieldList.unshift(key);
-
-			} else {
-				fieldList.push(key);
-			}
-		}
-
 		for (let i = 0; i < fieldList.length; i++) {
 			const
-				key = ctx.$activeField = fieldList[i],
-				el = <NonNullable<SystemField>>o[key];
+				key = fieldList[i];
 
 			if (key in data) {
 				continue;
 			}
 
-			const initVal = () => {
+			const
+				el = <NonNullable<SystemField>>fields[key];
+
+			let
+				canInit = el.atom || atomQueue.size === 0;
+
+			if (el.after.size) {
+				for (let o = el.after.values(), val = o.next(); !val.done; val = o.next()) {
+					const
+						waitFieldKey = val.value,
+						waitField = fields[waitFieldKey];
+
+					if (!waitField) {
+						throw new ReferenceError(`Field "${waitFieldKey}" is not defined`);
+					}
+
+					if (el.atom && !waitField.atom) {
+						throw new Error(`Atom field "${key}" can't wait the non atom field "${waitFieldKey}"`);
+					}
+
+					if (!(waitFieldKey in data)) {
+						queue.add(key);
+
+						if (el.atom) {
+							atomQueue.add(key);
+						}
+
+						canInit = false;
+						break;
+					}
+				}
+			}
+
+			if (canInit) {
+				ctx.$activeField = key;
+
 				queue.delete(key);
+				atomQueue.delete(key);
 
 				let
 					val;
@@ -508,30 +540,10 @@ export function initDataObject(
 				} else {
 					data[key] = val;
 				}
-			};
-
-			if (el.after.size) {
-				let
-					res = true;
-
-				for (let o = el.after.values(), val = o.next(); !val.done; val = o.next()) {
-					if (!(val.value in data)) {
-						queue.add(key);
-						res = false;
-						break;
-					}
-				}
-
-				if (res) {
-					initVal();
-				}
-
-			} else {
-				initVal();
 			}
 		}
 
-		if (!queue.size) {
+		if (!atomQueue.size && !queue.size) {
 			break;
 		}
 	}
@@ -547,7 +559,7 @@ export function initDataObject(
  * @param ctx - link to context
  * @param args - event arguments
  */
-export async function runHook(
+export function runHook(
 	hook: string,
 	meta: ComponentMeta,
 	ctx: Dictionary<any>,
@@ -563,7 +575,7 @@ export async function runHook(
 	}
 
 	if (!meta.hooks[hook].length) {
-		return;
+		return createSyncPromise();
 	}
 
 	const event = {
@@ -583,7 +595,7 @@ export async function runHook(
 			this.queue.push(cb);
 		},
 
-		async emit(event: string): Promise<void> {
+		emit(event: string): CanPromise<void> {
 			if (!this.events[event]) {
 				return;
 			}
@@ -596,22 +608,36 @@ export async function runHook(
 					el = o[i];
 
 				if (!el.event.delete(event).size) {
-					tasks.push(el.cb());
+					const
+						task = el.cb();
+
+					if (Object.isPromise(task)) {
+						tasks.push(task);
+					}
 				}
 			}
 
-			await Promise.all(tasks);
+			if (tasks.length) {
+				return Promise.all(tasks).then(() => undefined);
+			}
 		},
 
-		async fire(): Promise<void> {
+		fire(): CanPromise<void> {
 			const
-				tasks = <CanPromise<unknown>[]>[];
+				tasks = <Promise<unknown>[]>[];
 
 			for (let i = 0; i < this.queue.length; i++) {
-				tasks.push(this.queue[i]());
+				const
+					task = this.queue[i]();
+
+				if (Object.isPromise(task)) {
+					tasks.push(task);
+				}
 			}
 
-			await Promise.all(tasks);
+			if (tasks.length) {
+				return Promise.all(tasks).then(() => undefined);
+			}
 		}
 	};
 
@@ -619,13 +645,32 @@ export async function runHook(
 		const
 			el = hooks[i];
 
-		event.on(el.after, async () => {
-			await el.fn.apply(ctx, args);
-			await event.emit(el.name || Math.random().toString());
+		event.on(el.after, () => {
+			const
+				res = el.fn.apply(ctx, args),
+				emit = () => event.emit(el.name || Math.random().toString());
+
+			if (Object.isPromise(res)) {
+				return res.then(emit);
+			}
+
+			const
+				tasks = emit();
+
+			if (Object.isPromise(tasks)) {
+				return tasks;
+			}
 		});
 	}
 
-	await event.fire();
+	const
+		tasks = event.fire();
+
+	if (Object.isPromise(tasks)) {
+		return tasks;
+	}
+
+	return createSyncPromise();
 }
 
 /**
@@ -698,20 +743,54 @@ export function getBaseComponent(
 		component.computed[key] = o[key];
 	}
 
+	const canFunc = (type) => {
+		if (!type) {
+			return false;
+		}
+
+		if (Object.isArray(type)) {
+			for (let i = 0; i < type.length; i++) {
+				if (type[i] === Function) {
+					return true;
+				}
+			}
+
+			return false;
+		}
+
+		return type === Function;
+	};
+
+	const
+		defaultProps = meta.params.defaultProps !== false;
+
 	for (let o = meta.props, keys = Object.keys(o), i = 0; i < keys.length; i++) {
 		const
 			key = keys[i],
-			prop = <NonNullable<ComponentProp>>o[key],
-			def = instance[key];
+			prop = <NonNullable<ComponentProp>>o[key];
 
-		const cloneDef = () => Object.fastClone(def);
-		cloneDef[defaultWrapper] = true;
+		let
+			def,
+			defWrapper,
+			isFunc,
+			skipDefault = true;
+
+		if (defaultProps || prop.forceDefault) {
+			skipDefault = false;
+			def = defWrapper = instance[key];
+			isFunc = canFunc(prop.type);
+
+			if (def && typeof def === 'object' && (!isFunc || !Object.isFunction(def))) {
+				defWrapper = () => Object.fastClone(def);
+				defWrapper[defaultWrapper] = true;
+			}
+		}
 
 		component.props[key] = {
 			type: prop.type,
 			required: prop.required,
 			validator: prop.validator,
-			default: prop.default !== undefined ? prop.default : prop.type === Function ? def : cloneDef
+			default: !skipDefault ? prop.default !== undefined ? prop.default : defWrapper : undefined
 		};
 
 		const
@@ -862,4 +941,24 @@ export function addMethodsToMeta(constructor: Function, meta: ComponentMeta): vo
 			});
 		}
 	}
+}
+
+function createSyncPromise<R = unknown>(val?: R, err?: unknown): Promise<R> {
+	return <any>{
+		then: (resolve, reject) => {
+			try {
+				if (err !== undefined) {
+					return createSyncPromise(undefined, reject ? reject(err) : err);
+				}
+
+				return createSyncPromise(resolve ? resolve(val) : val);
+
+			} catch (err) {
+				return createSyncPromise(undefined, reject ? reject(err) : err);
+			}
+		},
+
+		catch: (cb) => createSyncPromise(undefined, cb(err)),
+		finally: (cb) => createSyncPromise(cb())
+	};
 }

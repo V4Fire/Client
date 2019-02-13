@@ -15,9 +15,13 @@ const
 	Snakeskin = require('snakeskin'),
 	escaper = require('escaper');
 
+const
+	dasherize = require('string-dasherize'),
+	camelize = require('camelize');
+
 const componentsTree = module.exports = {
 	getComponentPropAttrs(name) {
-		name = name.camelize(false);
+		name = camelize(name);
 
 		if (!this[name]) {
 			throw new Error(`The specified component "${name}" is not defined`);
@@ -47,7 +51,7 @@ const
 const
 	componentClassRgxp = /^\s*export\s+default\s+class\s+(([\s\S]*?)\s+extends\s+[\s\S]*?)\s*{/m,
 	componentRgxp = /@component\(([^@]*?)\)\n+\s*export\s+/,
-	propsRgxp = /^(\t+)@prop\s*\([^@]+?\)+\n+\1([ \w$]+)(?:\??: [ \w|&$?()[\]{}<>'"`:.]+?)?\s*(?:=|;$)/gm;
+	propsRgxp = /^(\t+)@prop\s*\([^@]+?\)+\n+\1([ \w$]+)(?:[\?!]?:\s*[ \w|&$?()\[\]{}<>'"`:.]+?)?\s*(?:=|;$)/gm;
 
 const
 	genericRgxp = /<.*|\s.*/g,
@@ -75,6 +79,8 @@ $C(files).forEach((el) => {
 		parent
 	};
 
+	obj.model = p.model;
+
 	if (p.functional != null) {
 		obj.functional = p.functional;
 	}
@@ -89,42 +95,61 @@ $C(files).forEach((el) => {
 	}
 });
 
-function getFunctionalParameters(obj) {
-	if (!obj) {
-		return false;
+function getInheritParameters(obj) {
+	if (!obj || !obj.parent) {
+		return {};
 	}
+
+	const fields = [
+		['functional', false],
+		['model']
+	];
 
 	const
-		v = obj.functional,
-		isObj = Object.isObject(v);
+		res = {},
+		parent = getInheritParameters(componentsTree[obj.parent]);
 
-	if (obj.parent && (v === undefined || isObj)) {
+	for (let i = 0; i < fields.length; i++) {
 		const
-			p = getFunctionalParameters(componentsTree[obj.parent]);
+			[key, def] = fields[i];
 
-		if (Object.isObject(p)) {
-			return {...p, ...v};
+		const
+			val = obj[key],
+			isObj = Object.isObject(val);
+
+		if (val === undefined || isObj) {
+			const
+				parentVal = parent[key];
+
+			if (Object.isObject(parentVal)) {
+				res[key] = {...parentVal, ...val};
+				continue;
+			}
+
+			if (isObj) {
+				res[key] = val;
+				continue;
+			}
+
+			res[key] = parentVal !== undefined ? parentVal : def;
+			continue;
 		}
 
-		if (isObj) {
-			return v;
-		}
-
-		return p;
+		res[key] = val;
 	}
 
-	return v || false;
+	return res;
 }
 
 $C(componentsTree).forEach((el, key, data) => {
-	data[key].functional = getFunctionalParameters(el);
+	Object.assign(el, getInheritParameters(el));
 
 	const
-		p = el.parent && data[el.parent];
+		parent = el.parent && data[el.parent];
 
-	if (p) {
-		Object.setPrototypeOf(el, p);
-		Object.setPrototypeOf(el.props, p.props);
+	if (parent) {
+		Object.setPrototypeOf(el, parent);
+		Object.setPrototypeOf(el.props, parent.props);
 	}
 });
 
@@ -171,16 +196,19 @@ function tagFilter({name, attrs = {}}) {
 			delete attrs[':instance-of'];
 
 		} else {
-			componentName = name === 'component' ? 'iBlock' : name.camelize(false);
+			componentName = name === 'component' ? 'iBlock' : camelize(name);
 		}
 
 		const
-			c = componentsTree[componentName],
-			smart = [attrs['v-func-placeholder'], delete attrs['v-func-placeholder']][0] && c && c.functional,
+			component = componentsTree[componentName],
+			props = component ? component.props : Object.create(null);
+
+		const
+			smart = [attrs['v-func-placeholder'], delete attrs['v-func-placeholder']][0] && component && component.functional,
 			vFunc = [attrs['v-func'], delete attrs['v-func']][0];
 
-		const isFunctional = c && c.functional === true || !vFunc && $C(smart).every((el, key) => {
-			key = key.dasherize();
+		const isFunctional = component && component.functional === true || !vFunc && $C(smart).every((el, key) => {
+			key = dasherize(key);
 
 			if (!isV4Prop.test(key)) {
 				key = `:${key}`;
@@ -214,6 +242,20 @@ function tagFilter({name, attrs = {}}) {
 		});
 
 		if (isFunctional || vFunc) {
+			const
+				model = attrs['v-model'];
+
+			if (component && model) {
+				const
+					modelInfo = component.model;
+
+				if (modelInfo) {
+					attrs[`:${dasherize(modelInfo.prop)}`] = model;
+					attrs[`@${modelInfo.event.dasherize()}`] = [`${model[0]}=$event`];
+					delete attrs['v-model'];
+				}
+			}
+
 			if (smart) {
 				if (vFunc) {
 					attrs[':is'] = [`'${attrs['is'][0]}' + (${vFunc[0]} ? '-functional' : '')`];
@@ -235,16 +277,16 @@ function tagFilter({name, attrs = {}}) {
 			}
 
 			const
-				base = key.slice(1),
+				base = camelize(key.slice(1)),
 				prop = `${base}Prop`;
 
-			if (c && !c.props[base] && c.props[prop]) {
-				attrs[`:${prop.dasherize()}`] = el;
+			if (!props[base] && props[prop]) {
+				attrs[`:${dasherize(prop)}`] = el;
 				delete attrs[key];
 			}
 		});
 
-		if (c && c.inheritMods !== false && !attrs[':mods-prop']) {
+		if (component && component.inheritMods !== false && !attrs[':mods-prop']) {
 			attrs[':mods-prop'] = ['provideMods()'];
 		}
 	}
@@ -274,7 +316,7 @@ function tagNameFilter(tag, attrs = {}, rootTag) {
 		.reduce((res, filter) => res + filter(tag, attrs, rootTag));
 
 	const
-		nm = tag.camelize(false),
+		nm = camelize(tag),
 		component = componentsTree[nm];
 
 	if (component && !Object.isBoolean(component.functional)) {

@@ -48,6 +48,11 @@ export default class bTimeRange<
 		empty: [
 			'true',
 			'false'
+		],
+
+		opened: [
+			bTimeRange.PARENT,
+			['false']
 		]
 	};
 
@@ -112,11 +117,5 @@ export default class bTimeRange<
 		this.value = <V>(from.length || to.length ? {from, to} : undefined);
 		this.emit('actionChange', this.value);
 		await this.close();
-	}
-
-	/* @override */
-	protected created(): void {
-		super.created();
-		this.initCloseHelpers();
 	}
 }

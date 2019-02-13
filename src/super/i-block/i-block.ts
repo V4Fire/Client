@@ -11,15 +11,18 @@
 import $C = require('collection.js');
 
 import symbolGenerator from 'core/symbol';
-import Async, { AsyncOpts, ClearOptsId, ProxyCb } from 'core/async';
+import Async, { AsyncOpts, ClearOptsId, WrappedFunction, ProxyCb } from 'core/async';
 import log, { LogMessageOptions } from 'core/log';
+
+import { toQueryString } from 'core/url';
+import { ExperimentsSet } from 'core/abt/interface';
 
 import * as analytics from 'core/analytics';
 import { EventEmitter2 as EventEmitter } from 'eventemitter2';
 
 import 'super/i-block/directives';
 import Daemons, { DaemonsDict } from 'super/i-block/modules/daemons';
-import Block from 'super/i-block/modules/block';
+import Block, { ModEvent } from 'super/i-block/modules/block';
 import Cache from 'super/i-block/modules/cache';
 
 import { statuses } from 'super/i-block/modules/const';
@@ -90,6 +93,7 @@ import * as browser from 'core/browser';
 export * from 'core/component';
 export * from 'super/i-block/modules/interface';
 export * from 'super/i-block/modules/daemons';
+export * from 'super/i-block/modules/block';
 
 export { statuses, Cache };
 export {
@@ -109,6 +113,14 @@ export {
 } from 'super/i-block/modules/decorators';
 
 export type ComponentStatuses = Partial<Record<keyof typeof statuses, boolean>>;
+export interface FieldGetter<R = unknown, D = unknown> {
+	(key: string, data: NonNullable<D>): R;
+}
+
+export interface RouteParams {
+	params?: Dictionary;
+	query?: Dictionary;
+}
 
 export const
 	$$ = symbolGenerator(),
@@ -177,6 +189,12 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	 */
 	@prop({type: String, required: false})
 	readonly globalName?: string;
+
+	/**
+	 * If true, then the component state will be synchronized with the router after initializing
+	 */
+	@prop(Boolean)
+	readonly syncRouterStoreOnInit: boolean = false;
 
 	/**
 	 * Link to the remote state object
@@ -429,8 +447,30 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 				return;
 			}
 
+			const getFullModsProp = (o) => {
+				const
+					declMods = o.meta.component.mods,
+					res = {...o.$props[link]};
+
+				for (let attrs = o.$attrs, keys = Object.keys(attrs), i = 0; i < keys.length; i++) {
+					const
+						key = keys[i];
+
+					if (key in declMods) {
+						const
+							attrVal = attrs[key];
+
+						if (attrVal != null) {
+							res[key] = attrVal;
+						}
+					}
+				}
+
+				return res;
+			};
+
 			const
-				modsProp = ctx.$props[link],
+				modsProp = getFullModsProp(ctx),
 				mods = {...oldCtx.mods};
 
 			for (let keys = Object.keys(mods), i = 0; i < keys.length; i++) {
@@ -442,7 +482,7 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 				}
 			}
 
-			if (Object.fastCompare(modsProp, oldCtx.$props[link])) {
+			if (Object.fastCompare(modsProp, getFullModsProp(oldCtx))) {
 				l.sync(mods);
 
 			} else {
@@ -462,17 +502,14 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 					key = keys[i];
 
 				if (key in declMods) {
-					const
-						v = attrs[key];
-
+					const attrVal = attrs[key];
 					o.watch(`$attrs.${key}`, (val) => o.setMod(key, modVal(val)));
-					delete attrs[key];
 
-					if (v == null) {
+					if (attrVal == null) {
 						continue;
 					}
 
-					attrMods.push([key, v]);
+					attrMods.push([key, attrVal]);
 				}
 			}
 
@@ -480,11 +517,23 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 				const
 					declMods = o.meta.component.mods,
 					// tslint:disable-next-line:prefer-object-spread
-					mods = Object.assign(o.mods || {...declMods}, val);
+					mods = Object.assign(o.mods || {...declMods}, val),
+					{experiments} = o.$root.remoteState;
 
 				for (let i = 0; i < attrMods.length; i++) {
 					const [key, val] = attrMods[i];
 					mods[key] = val;
+				}
+
+				if (Object.isArray(experiments)) {
+					for (let i = 0; i < experiments.length; i++) {
+						const
+							el = (<ExperimentsSet>experiments)[i];
+
+						if (el.meta && el.meta.mods) {
+							Object.assign(mods, el.meta.mods);
+						}
+					}
 				}
 
 				for (let keys = Object.keys(mods), i = 0; i < keys.length; i++) {
@@ -523,7 +572,7 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	 */
 	static readonly mods: ModsDecl = {
 		theme: [
-			['default']
+			'default'
 		],
 
 		size: [
@@ -531,32 +580,32 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 			'xs',
 			's',
 			['m'],
-			'xs',
-			'xxs'
+			'xl',
+			'xxl'
 		],
 
 		progress: [
 			'true',
-			['false']
+			'false'
 		],
 
 		disabled: [
 			'true',
-			['false']
+			'false'
 		],
 
 		focused: [
 			'true',
-			['false']
+			'false'
 		],
 
 		hidden: [
 			'true',
-			['false']
+			'false'
 		],
 
 		width: [
-			['normal'],
+			'normal',
 			'full',
 			'auto'
 		]
@@ -597,8 +646,27 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	/**
 	 * Wrapper for $refs
 	 */
+	@p({cache: false})
 	protected get refs(): Dictionary<ComponentElement<iBlock> | Element> {
-		return $C(this.$refs).map((el) => (<ComponentElement<any>>el).component || <Element>el);
+		const
+			obj = this.$refs,
+			res = {};
+
+		if (obj) {
+			for (let keys = Object.keys(obj), i = 0; i < keys.length; i++) {
+				const
+					key = keys[i],
+					el = obj[key];
+
+				if (!el) {
+					continue;
+				}
+
+				res[key] = (<ComponentElement>el).component || <Element>el;
+			}
+		}
+
+		return res;
 	}
 
 	/**
@@ -785,69 +853,97 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	 */
 	@system({
 		atom: true,
+		after: 'async',
 		unique: true,
-		init: () => new EventEmitter({maxListeners: 100, wildcard: true})
+		init: (o, d) => {
+			const
+				$a = <Async>d.async,
+				$e = new EventEmitter({maxListeners: 100, wildcard: true});
+
+			return {
+				emit: (event, ...args) => $e.emit(event, ...args),
+				on: (event, fn, params, ...args) => $a.on($e, event, fn, params, ...args),
+				once: (event, fn, params, ...args) => $a.once($e, event, fn, params, ...args),
+				promisifyOnce: (event, params, ...args) => $a.promisifyOnce($e, event, params, ...args),
+				off: (...args) => $a.off(...args)
+			};
+		}
 	})
 
-	protected readonly localEvent!: EventEmitter;
+	protected readonly localEvent!: Event<this>;
 
 	/**
 	 * Global event emitter
 	 */
-	protected get globalEvent(): Event<this> {
-		const
-			{async: $a} = this;
+	@system({
+		atom: true,
+		after: 'async',
+		unique: true,
+		init: (o, d) => {
+			const
+				$a = <Async>d.async;
 
-		return {
-			emit: (event, ...args) => globalEvent.emit(event, ...args),
-			on: (event, fn, params, ...args) => $a.on(globalEvent, event, fn, params, ...args),
-			once: (event, fn, params, ...args) => $a.once(globalEvent, event, fn, params, ...args),
-			promisifyOnce: (event, params, ...args) => $a.promisifyOnce(globalEvent, event, params, ...args),
-			off: (...args) => $a.off(...args)
-		};
-	}
+			return {
+				emit: (event, ...args) => globalEvent.emit(event, ...args),
+				on: (event, fn, params, ...args) => $a.on(globalEvent, event, fn, params, ...args),
+				once: (event, fn, params, ...args) => $a.once(globalEvent, event, fn, params, ...args),
+				promisifyOnce: (event, params, ...args) => $a.promisifyOnce(globalEvent, event, params, ...args),
+				off: (...args) => $a.off(...args)
+			};
+		}
+	})
+
+	protected readonly globalEvent!: Event<this>;
 
 	/**
 	 * Root event emitter
 	 */
-	protected get rootEvent(): RemoteEvent<this> {
-		const
-			{async: $a, $root: $e} = this;
+	@system({
+		atom: true,
+		after: 'async',
+		unique: true,
+		init: (o, d) => {
+			const
+				$e = o.$root,
+				$a = <Async>d.async;
 
-		return {
-			on: (event, fn, params, ...args) => {
-				if (!$e) {
-					return;
+			return {
+				on: (event, fn, params, ...args) => {
+					if (!$e) {
+						return;
+					}
+
+					return $a.on($e, event, fn, params, ...args);
+				},
+
+				once: (event, fn, params, ...args) => {
+					if (!$e) {
+						return;
+					}
+
+					return $a.once($e, event, fn, params, ...args);
+				},
+
+				promisifyOnce: (event, params, ...args) => {
+					if (!$e) {
+						return;
+					}
+
+					return $a.promisifyOnce($e, event, params, ...args);
+				},
+
+				off: (...args) => {
+					if (!$e) {
+						return;
+					}
+
+					$a.off(...args);
 				}
+			};
+		}
+	})
 
-				return $a.on($e, event, fn, params, ...args);
-			},
-
-			once: (event, fn, params, ...args) => {
-				if (!$e) {
-					return;
-				}
-
-				return $a.once($e, event, fn, params, ...args);
-			},
-
-			promisifyOnce: (event, params, ...args) => {
-				if (!$e) {
-					return;
-				}
-
-				return $a.promisifyOnce($e, event, params, ...args);
-			},
-
-			off: (...args) => {
-				if (!$e) {
-					return;
-				}
-
-				$a.off(...args);
-			}
-		};
-	}
+	protected readonly rootEvent!: RemoteEvent<this>;
 
 	/**
 	 * Parent event emitter
@@ -989,6 +1085,42 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	})
 
 	protected readonly global!: Window;
+
+	/**
+	 * Returns a full route path string by the specified parameters
+	 *
+	 * @param path - base path
+	 * @param [opts] - route options
+	 */
+	getRoutePath(path: string, opts: RouteParams = {}): CanUndef<string> {
+		const
+			r = this.router;
+
+		if (!r) {
+			return;
+		}
+
+		const
+			route = r.getPageOpts(path);
+
+		if (!route) {
+			return;
+		}
+
+		let
+			res = route.toPath(opts.params);
+
+		if (opts.query) {
+			const
+				q = toQueryString(opts.query, false);
+
+			if (q) {
+				res += `?${q}`;
+			}
+		}
+
+		return res.replace(/[#?]\s*$/, '');
+	}
 
 	/**
 	 * Returns a string id, which is connected to the component
@@ -1304,7 +1436,7 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	bindModTo<V = unknown, R = unknown, CTX extends iBlock = this>(
 		mod: string,
 		field: string,
-		converter: BindModCb<V, R, CTX> | AsyncWatchOpts = Boolean,
+		converter: BindModCb<V, R, CTX> | AsyncWatchOpts = (v) => v != null ? Boolean(v) : undefined,
 		params?: AsyncWatchOpts
 	): void {
 		mod = mod.camelize(false);
@@ -1319,13 +1451,23 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 
 		const setWatcher = () => {
 			this.watch(field, (val) => {
-				this.setMod(mod, fn(val, this));
+				val = fn(val, this);
+
+				if (val !== undefined) {
+					this.setMod(mod, val);
+				}
+
 			}, params);
 		};
 
 		if (this.isBeforeCreate()) {
 			const sync = this.syncModCache[mod] = () => {
-				this.mods[mod] = String(fn(this.getField(field), this));
+				const
+					v = fn(this.getField(field), this);
+
+				if (v !== undefined) {
+					this.mods[mod] = String(v);
+				}
 			};
 
 			if (this.hook !== 'beforeDataCreate') {
@@ -1506,19 +1648,19 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	 * @param cb
 	 * @param [params] - async parameters
 	 */
-	nextTick(cb: ((this: this) => void), params?: AsyncOpts): void;
+	nextTick(cb: WrappedFunction, params?: AsyncOpts): void;
 
 	/**
 	 * @see Async.promise
 	 * @param [params] - async parameters
 	 */
 	nextTick(params?: AsyncOpts): Promise<void>;
-	nextTick(cbOrParams?: Function | AsyncOpts, params?: AsyncOpts): CanPromise<void> {
+	nextTick(cbOrParams?: WrappedFunction | AsyncOpts, params?: AsyncOpts): CanPromise<void> {
 		const
 			{async: $a} = this;
 
 		if (cbOrParams && Object.isFunction(cbOrParams)) {
-			this.$nextTick($a.proxy(cbOrParams, params));
+			this.$nextTick($a.proxy(<WrappedFunction>cbOrParams, params));
 			return;
 		}
 
@@ -1679,7 +1821,7 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	setMod(name: string, value: unknown): CanPromise<boolean>;
 	setMod(nodeOrName: Element | string, name: string | unknown, value?: unknown): CanPromise<boolean> {
 		if (Object.isString(nodeOrName)) {
-			return this.execCbAfterBlockReady(() => this.block.setMod(nodeOrName, name));
+			return this.execCbAfterBlockReady(() => this.block.setMod(nodeOrName, name)) || false;
 		}
 
 		return Block.prototype.setMod.call(
@@ -1705,7 +1847,7 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	removeMod(name: string, value?: unknown): CanPromise<boolean>;
 	removeMod(nodeOrName: Element | string, name?: string | unknown, value?: unknown): CanPromise<boolean> {
 		if (Object.isString(nodeOrName)) {
-			return this.execCbAfterBlockReady(() => this.block.removeMod(nodeOrName, name));
+			return this.execCbAfterBlockReady(() => this.block.removeMod(nodeOrName, name)) || false;
 		}
 
 		return Block.prototype.removeMod.call(
@@ -1751,13 +1893,20 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 		if (!this.isActivated || force) {
 			this.initStateFromRouter();
 			this.execCbAfterCreated(() => this.rootEvent.on('onTransition', async (route, type) => {
-				if (type === 'hard' && route !== this.r.route) {
-					await this.rootEvent.promisifyOnce('setRoute', {
-						label: $$.activateAfterTransition
-					});
+				if (type === 'hard') {
+					if (route !== this.r.route) {
+						await this.rootEvent.promisifyOnce('setRoute', {
+							label: $$.activateAfterTransition
+						});
+
+					} else {
+						await this.nextTick({label: $$.activateAfterHardChange});
+					}
 				}
 
-				this.initStateFromRouter();
+				if (!{destroyed: true, inactive: true}[this.componentStatus]) {
+					this.initStateFromRouter();
+				}
 
 			}, {
 				label: $$.activate,
@@ -1928,6 +2077,59 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	}
 
 	/**
+	 * Returns a property from the specified object
+	 *
+	 * @param path - path to the property (bla.baz.foo)
+	 * @param [getter] - field getter
+	 */
+	getField<T = unknown>(path: string, getter?: FieldGetter): CanUndef<T>;
+
+	/**
+	 * @param path - path to the property (bla.baz.foo)
+	 * @param [obj]
+	 * @param [getter] - field getter
+	 */
+	getField<T = unknown>(path: string, obj?: Dictionary, getter?: FieldGetter): CanUndef<T>;
+	getField<T = unknown>(
+		path: string,
+		obj: Dictionary | FieldGetter = this,
+		getter?: FieldGetter
+	): CanUndef<T> {
+		if (!getter && Object.isFunction(obj)) {
+			getter = <FieldGetter>obj;
+			obj = this;
+		}
+
+		let
+			// tslint:disable-next-line:no-this-assignment
+			ctx: iBlock = this,
+			isComponent = obj === this;
+
+		if ((<Dictionary>obj).instance instanceof iBlock) {
+			ctx = <iBlock>obj;
+			isComponent = true;
+		}
+
+		const
+			chunks = path.split('.'),
+			isField = isComponent && ctx.meta.fields[chunks[0]];
+
+		let
+			res = isField ? ctx.$$data : obj;
+
+		for (let i = 0; i < chunks.length; i++) {
+			if (res == null) {
+				return undefined;
+			}
+
+			const prop = chunks[i];
+			res = <Dictionary>(getter ? getter(prop, res) : res[prop]);
+		}
+
+		return <any>res;
+	}
+
+	/**
 	 * Sets a new property to the specified object
 	 *
 	 * @param path - path to the property (bla.baz.foo)
@@ -2047,41 +2249,6 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 		}
 
 		return false;
-	}
-
-	/**
-	 * Returns a property from the specified object
-	 *
-	 * @param path - path to the property (bla.baz.foo)
-	 * @param [obj]
-	 */
-	getField<T = unknown>(path: string, obj: Dictionary = this): CanUndef<T> {
-		let
-			// tslint:disable-next-line:no-this-assignment
-			ctx: iBlock = this,
-			isComponent = obj === this;
-
-		if (obj.instance instanceof iBlock) {
-			ctx = <iBlock>obj;
-			isComponent = true;
-		}
-
-		const
-			chunks = path.split('.'),
-			isField = isComponent && ctx.meta.fields[chunks[0]];
-
-		let
-			res = isField ? ctx.$$data : obj;
-
-		for (let i = 0; i < chunks.length; i++) {
-			if (res == null) {
-				return undefined;
-			}
-
-			res = <Dictionary>res[chunks[i]];
-		}
-
-		return <any>res;
 	}
 
 	/**
@@ -2643,7 +2810,7 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	 * @param [type] - call type
 	 */
 	protected convertStateToRouter(data?: CanUndef<Dictionary>, type: ConverterCallType = 'component'): Dictionary {
-		return {...data};
+		return {};
 	}
 
 	/**
@@ -2689,14 +2856,58 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 			routerWatchers
 		);
 
-		this.execCbAtTheRightTime(() => {
+		this.execCbAtTheRightTime(async () => {
 			const
-				p = this.$root.route || {},
-				stateFields = this.convertStateToRouter(Object.assign(Object.create(p), p.params, p.query));
+				r = this.$root;
+
+			let
+				{router} = r;
+
+			if (!router) {
+				await $a.promisifyOnce(this.$root, 'initRouter', {
+					label: $$.initStateFromRouter
+				});
+
+				({router} = r);
+			}
+
+			if (!router) {
+				return;
+			}
+
+			const
+				route = r.route || {},
+				stateFields = this.convertStateToRouter(Object.assign(Object.create(route), route.params, route.query));
 
 			this.setState(
 				stateFields
 			);
+
+			if (this.syncRouterStoreOnInit) {
+				const
+					routerState = this.convertStateToRouter(stateFields, 'remote');
+
+				if (Object.keys(routerState).length) {
+					let
+						modState;
+
+					for (let keys = Object.keys(routerState), i = 0; i < keys.length; i++) {
+						const
+							key = keys[i],
+							p = route.params,
+							q = route.query;
+
+						if ((!p || p[key] == null) && (!q || q[key] == null)) {
+							modState = modState || {};
+							modState[key] = routerState[key];
+						}
+					}
+
+					if (modState) {
+						router.replace(null, {query: modState});
+					}
+				}
+			}
 
 			const sync = this.createDeferFn(() => this.saveStateToRouter(), {
 				label: $$.syncRouter
@@ -2765,7 +2976,7 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	 * @param handler
 	 */
 	protected delegateElement(elName: string, handler: Function): CanPromise<Function> {
-		return this.execCbAfterBlockReady(() => this.delegate(this.block.getElSelector(elName), handler));
+		return this.execCbAfterBlockReady(() => this.delegate(this.block.getElSelector(elName), handler)) || Any;
 	}
 
 	/**
@@ -2925,14 +3136,6 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 		Object.defineProperties(this, {
 			refs: {
 				get: i['refsGetter']
-			},
-
-			globalEvent: {
-				get: i['globalEventGetter']
-			},
-
-			rootEvent: {
-				get: i['rootEventGetter']
 			}
 		});
 
@@ -3274,7 +3477,7 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 		const
 			{async: $a, localEvent: $e} = this;
 
-		$e.on('block.mod.set.**', (e) => {
+		$e.on('block.mod.set.**', (e: ModEvent) => {
 			const
 				k = e.name,
 				v = e.value,
@@ -3291,7 +3494,7 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 			this.emit(`mod-set-${k}-${v}`, e);
 		});
 
-		$e.on('block.mod.remove.**', (e) => {
+		$e.on('block.mod.remove.**', (e: ModEvent) => {
 			if (e.reason === 'removeMod') {
 				const
 					k = e.name,
@@ -3309,7 +3512,7 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 			}
 		});
 
-		$e.on('block.mod.*.disabled.*', (e) => {
+		$e.on('block.mod.*.disabled.*', (e: ModEvent) => {
 			if (e.value === 'false' || e.type === 'remove') {
 				$a.off({group: 'blockOnDisable'});
 				this.emit('enable');
@@ -3331,11 +3534,11 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 			}
 		});
 
-		$e.on('block.mod.*.focused.*', (e) => {
+		$e.on('block.mod.*.focused.*', (e: ModEvent) => {
 			this.emit(e.value === 'false' || e.type === 'remove' ? 'blur' : 'focus');
 		});
 
-		$e.on('block.mod.*.hidden.*', (e) => {
+		$e.on('block.mod.*.hidden.*', (e: ModEvent) => {
 			this.emit(e.value === 'false' || e.type === 'remove' ? 'show' : 'hide');
 		});
 	}
@@ -3347,7 +3550,13 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	protected initRemoteWatchers(): void {
 		const
 			w = this.meta.watchers,
-			o = this.watchProp,
+			o = this.watchProp;
+
+		if (!o) {
+			return;
+		}
+
+		const
 			keys = Object.keys(o);
 
 		const normalizeField = (field) => {
@@ -3412,14 +3621,16 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	 * @param cb
 	 * @param [params] - async parameters
 	 */
-	protected execCbAfterCreated<T = unknown>(cb: (this: this) => T, params?: AsyncOpts): CanPromise<T> {
+	protected execCbAfterCreated<T = unknown>(cb: (this: this) => T, params?: AsyncOpts): CanUndef<CanPromise<T>> {
 		if (this.isBeforeCreate()) {
 			return <any>this.$async.promise(new Promise((r) => {
 				this.meta.hooks.created.unshift({fn: () => r(cb.call(this))});
 			}), params).catch(stderr);
 		}
 
-		return cb.call(this);
+		if (statuses[this.componentStatus] >= 0) {
+			return cb.call(this);
+		}
 	}
 
 	/**
@@ -3428,9 +3639,13 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	 * @param cb
 	 * @param [params] - async parameters
 	 */
-	protected execCbAfterBlockReady<T = unknown>(cb: (this: this) => T, params?: AsyncOpts): CanPromise<T> {
+	protected execCbAfterBlockReady<T = unknown>(cb: (this: this) => T, params?: AsyncOpts): CanUndef<CanPromise<T>> {
 		if (this.block) {
-			return cb.call(this);
+			if (statuses[this.componentStatus] >= 0) {
+				return cb.call(this);
+			}
+
+			return;
 		}
 
 		return <any>this.$async.promise(new Promise((r) => {
@@ -3495,7 +3710,7 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 			$a = this.async,
 			names = Async.linkNames;
 
-		const mute = {
+		const nonMute = {
 			[names.promise]: true,
 			[names.request]: true
 		};
@@ -3504,7 +3719,7 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 			const
 				key = keys[i];
 
-			if (mute[key]) {
+			if (nonMute[key]) {
 				continue;
 			}
 
@@ -3530,7 +3745,6 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	protected beforeDestroy(): void {
 		this.componentStatus = 'destroyed';
 		this.async.clearAll();
-		this.localEvent.removeAllListeners();
 		delete (<StrictDictionary<any>>classesCache).dict.els[this.componentId];
 	}
 }
@@ -3550,7 +3764,10 @@ export abstract class iBlockDecorator extends iBlock {
 
 	public readonly async!: Async<this>;
 	public readonly block!: Block;
-	public readonly localEvent!: EventEmitter;
+
+	public readonly localEvent!: Event<this>;
+	public readonly globalEvent!: Event<this>;
+	public readonly rootEvent!: RemoteEvent<this>;
 
 	public delegate(selector: string, handler?: Function): Function {
 		return () => ({});

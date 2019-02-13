@@ -7,4 +7,4 @@
  */
 
 import './index';
-import '../p-index';
+import '../pages/p-v4-components-demo';

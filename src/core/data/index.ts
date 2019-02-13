@@ -218,7 +218,7 @@ export default class Provider {
 	/**
 	 * If true, then the provider will be listen all events
 	 */
-	readonly listenAllEvents!: boolean;
+	readonly listenAllEvents: boolean = false;
 
 	/**
 	 * Event emitter object
@@ -266,10 +266,19 @@ export default class Provider {
 			return cacheVal;
 		}
 
-		requestCache[nm] = Object.createDict();
+		requestCache[nm] =
+			Object.createDict();
+
 		this.async = new Async(this);
 		this.event = new EventEmitter({maxListeners: 1e3, wildcard: true});
-		this.listenAllEvents = Boolean(params.listenAllEvents);
+
+		if (Object.isBoolean(params.listenAllEvents)) {
+			this.setReadonlyParam('listenAllEvents', params.listenAllEvents);
+		}
+
+		if (Object.isBoolean(params.externalRequest)) {
+			this.setReadonlyParam('externalRequest', params.externalRequest);
+		}
 
 		const
 			c = this.connect();
@@ -625,6 +634,16 @@ export default class Provider {
 			body,
 			method
 		})));
+	}
+
+	/**
+	 * Sets a value by the specified key to the provider as readonly
+	 */
+	protected setReadonlyParam(key: string, val: unknown): void {
+		Object.defineProperty(this, key, {
+			get: () => val,
+			set: (v) => v
+		});
 	}
 
 	/**

@@ -143,13 +143,9 @@ export default class bTextarea<
 		input.style.height = newHeight.px;
 		await scroll.setHeight(fixedNewHeight);
 
-		/* eslint-disable no-extra-parens */
-
 		if (isEnd && height !== fixedNewHeight && (await scroll.scrollOffset).top) {
 			await scroll.setScrollerPosition({y: 'bottom'});
 		}
-
-		/* eslint-enable no-extra-parens */
 
 		return fixedNewHeight;
 	}
@@ -175,6 +171,7 @@ export default class bTextarea<
 
 		const
 			val = this.value,
+			// @ts-ignore
 			[minHeight, maxHeight]: [any, number] = await Promise.all([this.minHeight, this.maxHeight]);
 
 		let newHeight = await this.calcTextHeight();

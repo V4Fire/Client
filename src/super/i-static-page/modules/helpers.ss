@@ -10,9 +10,8 @@
 
 - include 'super/i-block'|b as placeholder
 
+- import config from 'config'
 - import fs from 'fs-extra-promise'
-- import path from 'upath'
-- import hasha from 'hasha'
 
 /**
  * Injects the specified file to the template
@@ -22,51 +21,66 @@
 	- return fs.readFileSync(src).toString()
 
 : &
-	libCache = Object.create(null),
+	filesCache = Object.create(null),
 	foldersCache = Object.create(null)
 .
 
 /**
- * Joins the specified urls
+ * Joins the specified paths and load a file/catalog by the final path to a library folder
  * @param {...string} url
  */
-- block index->join()
-	: lastChunk = arguments[arguments.length - 1]
+- block index->loadToLib()
+	: &
+		args = [].slice.call(arguments),
+		lastChunk = args[args.length - 1]
+	.
 
 	- if /^(\w+:)?\/\//.test(lastChunk)
 		- return lastChunk
 
+	: genHash = include('build/hash')
+
 	: &
-		src = path.join.apply(path, arguments),
+		src = path.join.apply(path, [@@lib].concat(args)),
 		basename = path.basename(src)
 	.
 
-	- if path.extname(basename)
-		: &
-			newSrc,
-			fileLink,
-			file
-		.
+	: &
+		isFile = true,
+		file,
+		newSrc,
+		ref
+	.
 
-		- if !libCache[basename]
-			? file = fs.readFileSync(src)
-			: hash = ''
+	- if /\/$/.test(src)
+		? isFile = false
+		? src = src.replace(/\/$/, '')
 
-			- if @@hashLength
-				? hash = hasha(src, {algorithm: 'md5'}).substr(0, @@hashLength) + '_'
-
+		- if !foldersCache[basename]
+			: hash = @@hashFunction ? genHash(path.join(src, '/**/*')) + '_' : ''
 			? newSrc = path.join(lib, hash + basename)
-			? fileLink = @@fatHTML ? newSrc : path.relative(@@output, newSrc)
-			? libCache[basename] = fs.existsSync(newSrc) && fileLink
 
-		- if !libCache[basename]
+	- else if !filesCache[basename]
+		? file = fs.readFileSync(src)
+		: hash = @@hashFunction ? genHash(file) + '_' : ''
+		? newSrc = path.join(lib, hash + basename)
+
+	: cache = isFile ? filesCache : foldersCache
+	? ref = @@fatHTML ? newSrc : path.relative(@@output, newSrc)
+	? cache[basename] = fs.existsSync(newSrc) && ref
+
+	- if !cache[basename]
+		- if isFile
 			? fs.mkdirpSync(lib)
 			? fs.writeFileSync(newSrc, file.toString().replace(/\/\/# sourceMappingURL=.*/, ''))
-			? libCache[basename] = fileLink
 
-		- return libCache[basename]
+		- else
+			? fs.mkdirpSync(newSrc)
+			? fs.copySync(src, newSrc)
 
-	- return src
+		? cache[basename] = ref
+
+	- return cache[basename]
 
 /**
  * Adds a script dependence

@@ -1,0 +1,65 @@
+/*!
+ * V4Fire Client Core
+ * https://github.com/V4Fire/Client
+ *
+ * Released under the MIT license
+ * https://github.com/V4Fire/Client/blob/master/LICENSE
+ */
+
+@import "super/i-block/i-block.styl"
+
+$p = {
+	maxHeight: 200px
+}
+
+b-v4-component-demo extends i-block
+	width 70%
+
+	margin 10px
+	padding 10px
+
+	border 1px dotted #CCC
+	background-color alpha(#EEE, 0.2)
+
+	&__root-wrapper
+		display flex
+		justify-content flex-start
+		align-content center
+
+	&__mods
+		flex-grow 1
+
+		max-height $p.maxHeight
+		margin-left 20px
+		padding-left @margin-left
+
+		border-left 1px dotted #CCC
+		overflow auto
+
+	&__mod
+		white-space nowrap
+		font-size 14px
+		font-weight bold
+
+	&__mod + &__mod
+		margin-top 10px
+
+	&__mod-value
+		border 0
+
+		&_selected_true
+			color #FFF
+			background-color #008000
+
+	&__mod-value + &__mod-value
+		margin-left 5px
+
+	&__title
+		margin-bottom 10px
+
+		font-size 18px
+		font-weight bold
+
+	&__parents
+		font-weight normal
+		font-size 16px

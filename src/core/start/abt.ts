@@ -6,10 +6,8 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-@import "super/i-static-page/i-static-page.styl"
+import semaphore from 'core/start/semaphore';
 
-$p = {
-
-}
-
-p-index extends i-static-page
+export default (() => {
+	semaphore('ABTReady');
+})();

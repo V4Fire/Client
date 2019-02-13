@@ -14,10 +14,11 @@ const
 const
 	fs = require('fs'),
 	path = require('path'),
-	hasha = require('hasha');
+	hash = include('build/hash');
 
 const
-	{output, assetsJSON} = include('build/build.webpack');
+	{webpack, src: {clientOutput}} = require('config'),
+	{assetsJSON, assetsJS} = include('build/build.webpack');
 
 /**
  * WebPack plugin for .dependencies.js files and assets.js
@@ -37,15 +38,13 @@ module.exports = function ({graph}) {
 						content = `ModuleDependencies.add("${key}", ${JSON.stringify([...el])});`,
 						name = `${key}.dependencies`;
 
-					const src = output
-						.replace(/\[name]/g, `${name}.js`)
-						.replace(/\[hash:?(\d*)]/, (str, length) => {
-							const res = hasha(content, {algorithm: 'md5'});
-							return length ? res.substr(0, Number(length)) : res;
-						});
+					const src = webpack.output({
+						name: `${name}.js`,
+						hash: hash(content)
+					});
 
-					manifest[name] = path.basename(src);
-					fs.writeFileSync(src, content);
+					manifest[name] = webpack.publicPath(src);
+					fs.writeFileSync(path.join(clientOutput(), src), content);
 				});
 
 				$C(compilation.chunks).forEach(({name, files}) => {
@@ -53,7 +52,7 @@ module.exports = function ({graph}) {
 						file = $C(files).one.filter((src) => path.extname(src)).get();
 
 					if (file) {
-						manifest[path.basename(name, path.extname(name))] = path.basename(file);
+						manifest[path.basename(name, path.extname(name))] = webpack.publicPath(file);
 					}
 				});
 
@@ -81,7 +80,7 @@ module.exports = function ({graph}) {
 				fs.writeFileSync(fd, JSON.stringify(assets));
 				fs.closeSync(fd);
 
-				fs.writeFileSync(assetsJSON.replace(/\.json$/, '.js'), $C(assets).to('').map((el, key) => `PATH['${key}'] = '${el}';\n`));
+				fs.writeFileSync(assetsJS, $C(assets).to('').map((el, key) => `PATH['${key}'] = '${el}';\n`));
 			});
 		}
 	};

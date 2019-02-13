@@ -66,6 +66,17 @@ execFontPattern($type = "")
 		unquote(replace("%t", "", BASE_FONT_PATTERN))
 
 /**
+ * Returns a color from global kits
+ *
+ * @param {RGBA} $hue
+ * @param {number} [$num]
+ * @param {boolean=} [$reserved]
+ * @param {boolean=} [$base]
+ */
+c($hue, $num = null, $reserved = false, $base = false)
+	getGlobalColor($hue, $num, $reserved, $base)
+
+/**
  * Generates rules for colorized styles
  *
  * @param {Tuple} [$set] - set of colors
@@ -103,28 +114,26 @@ useGPU()
 /**
  * Global overlays map
  */
-$OVERLAYS = ( layer modal overall )
+$OVERLAYS = ( "layer" "modal" "overall" )
 
 /**
  * Sets a z-index for the specified layer position
- * @param {string} $pos
+ *
+ * @param {string} $pos - layer variants: underall, layer, modal, overall
+ * @param {number} [$mod] - value modifier
  */
-zIndex($pos)
-	z-index index($OVERLAYS, $pos) * 1000
+zIndex($pos, $mod = 0)
+	if $pos == "underall"
+		z-index -1
+
+	else
+		z-index index($OVERLAYS, $pos) * 1000 + $mod
 
 /**
- * Generates rules for flexbox
- *
- * @param {string} $justify
- * @param {string=} [$align]
+ * Alias for zIndex mixin
  */
-flexbox($justify, $align = $justify)
-	display flex
-	justify-content $justify
-	align-items $align
-
-	if arguments[2]
-		flex-direction arguments[2]
+z-index-pos($pos, $mod = 0)
+	zIndex($pos, $mod)
 
 /**
  * Sets sizes dictionary
@@ -136,32 +145,67 @@ flexbox($justify, $align = $justify)
  * @param {boolean=} [$flag]
  */
 setSizes($obj, $place, $flag = false)
-	if ($place == 'local')
+	if ($place == "local")
 		return getSizes($obj, $flag)
 
-	if ($place == 'global')
+	if ($place == "global")
 		return extendSizes($obj, $flag)
 
 /**
- * Generates rules for button css reset
+ * Generates rules for flexbox (direction: row)
+ *
+ * @param {string} $justify - justify-content (def for default)
+ * @param {string=} [$align] - align-items (def for default)
  */
-resetButton()
-	display inline-block
-	box-sizing border-box
-	margin 0
-	padding 0
-	outline 0
-	border 0
-	border-spacing 0
-	background none
-	vertical-align middle
-	text-align left
-	text-decoration none
-	text-indent 0
-	white-space normal
-	font-weight normal
-	font-family BASE_FONT
-	line-height 1
+flex-row($justify, $align = $justify)
+	display flex
 
-	&:focus
-		outline 0
+	if $justify != "def"
+		justify-content $justify
+
+	if $align != "def"
+		align-items $align
+
+/**
+ * Generates rules for flexbox (direction: row-reverse)
+ *
+ * @param {string} $justify - justify-content (def for default)
+ * @param {string=} [$align] - align-items (def for default)
+ */
+flex-row-rev($justify, $align = $justify)
+	flex-row($justify, $align)
+	flex-direction row-reverse
+
+/**
+ * Generates rules for flexbox (direction: column)
+ *
+ * @param {string} $justify - justify-content (def for default)
+ * @param {string=} [$align] - align-items (def for default)
+ */
+flex-col($justify, $align = $justify)
+	flex-row($justify, $align)
+	flex-direction column
+
+/**
+ * Generates rules for flexbox (direction: column-reverse)
+ *
+ * @param {string} $justify - justify-content (def for default)
+ * @param {string=} [$align] - align-items (def for default)
+ */
+flex-col-rev($justify, $align = $justify)
+	flex-row($justify, $align)
+	flex-direction column-reverse
+
+/**
+ * Generates rules for a stretch modal layer
+ *
+ * @param {string} $position - position type
+ * @param {string=} [$zIndexPos] - zIndex position
+ */
+stretch-layer($position, $zIndexPos = "modal")
+	position $position
+	top 0
+	left 0
+	bottom 0
+	right 0
+	zIndex($zIndexPos)

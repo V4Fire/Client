@@ -9,10 +9,7 @@
  */
 
 const
-	$C = require('collection.js');
-
-const
-	Sugar = require('sugar'),
+	$C = require('collection.js'),
 	path = require('path');
 
 const
@@ -27,17 +24,22 @@ exports.depsRgxpStr = dependencies.map((el) => RegExp.escape(el || el.src)).join
 /**
  * Output pattern
  */
-exports.output = hash(r(webpack.output()));
+exports.output = hash(webpack.output());
 
 /**
  * Output pattern for assets
  */
-exports.assetsOutput = hash(r(webpack.assetsOutput()));
+exports.assetsOutput = hash(webpack.assetsOutput());
 
 /**
  * Path to assets.json
  */
 exports.assetsJSON = path.join(src.clientOutput(), webpack.assetsJSON());
+
+/**
+ * Path to assets.js
+ */
+exports.assetsJS = path.join(src.clientOutput(), webpack.assetsJS());
 
 /**
  * Path to dll-manifest.json
@@ -57,6 +59,7 @@ exports.stdCache = path.join(src.cwd(), 'app-std-cache');
 // Some helpers
 
 exports.hash = hash;
+exports.hashRgxp = /\[(chunk)?hash(:\d+)?]_/g;
 
 /**
  * Returns WebPack output path string from the specified with hash parameters
@@ -66,8 +69,8 @@ exports.hash = hash;
  * @param {boolean=} [chunk] - if true, then the specified output is a chunk
  */
 function hash(output, chunk) {
-	const l = webpack.hashLength();
-	return output.replace(/\[(chunk)?hash(:\d+)?]_/g, l ? chunk ? `[chunkhash:${l}]_` : `[hash:${l}]_` : '');
+	const l = webpack.hashLength;
+	return output.replace(exports.hashRgxp, chunk ? `[chunkhash:${l}]_` : `[hash:${l}]_`);
 }
 
 exports.inherit = inherit;
@@ -79,12 +82,8 @@ function inherit() {
 	const extOpts = {
 		deep: true,
 		concatArray: true,
-		concatFn: Sugar.Array.union
+		concatFn: Array.union
 	};
 
 	return $C.extend(extOpts, {}, ...arguments);
-}
-
-function r(file) {
-	return `./${path.relative(src.cwd(), path.join(src.clientOutput(), file))}`;
 }

@@ -194,7 +194,7 @@ export default class bInput<
 	/** @inheritDoc */
 	static readonly mods: ModsDecl = {
 		rounding: [
-			['none'],
+			'none',
 			'small',
 			'normal',
 			'big'

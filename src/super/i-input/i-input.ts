@@ -8,7 +8,6 @@
 
 // tslint:disable:max-file-line-count
 
-import $C = require('collection.js');
 import iData, { component, prop, field, system, hook, wait, p, ModsDecl } from 'super/i-data/i-data';
 export * from 'super/i-data/i-data';
 
@@ -200,7 +199,17 @@ export default class iInput<
 				return el === value;
 			};
 
-			if (!$C(test).every(match)) {
+			let
+				allow = true;
+
+			for (let i = 0; i < test.length; i++) {
+				if (match(test[i])) {
+					allow = false;
+					break;
+				}
+			}
+
+			if (allow) {
 				return this.dataType(value);
 			}
 
@@ -217,13 +226,16 @@ export default class iInput<
 			if (this.name) {
 				const
 					form = this.connectedForm,
-					list = document.getElementsByName(this.name),
-					els = <FV[]>[];
+					list = document.getElementsByName(this.name) || [];
 
-				const promises = $C(list).to([] as Promise<void>[]).reduce((arr, el) => {
-					arr.push((async () => {
+				const
+					els = <FV[]>[],
+					promises = <Promise<void>[]>[];
+
+				for (let i = 0; i < list.length; i++) {
+					promises.push((async () => {
 						const
-							block = this.$<iInput>(el, '[class*="_form_true"]');
+							block = this.$<iInput>(list[i], '[class*="_form_true"]');
 
 						if (block && form === block.connectedForm) {
 							const
@@ -234,9 +246,7 @@ export default class iInput<
 							}
 						}
 					})());
-
-					return arr;
-				});
+				}
 
 				await Promise.all(promises);
 				return els.length > 1 ? els : els[0];

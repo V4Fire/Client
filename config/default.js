@@ -9,6 +9,7 @@
  */
 
 const
+	path = require('upath'),
 	config = require('@v4fire/core/config/default'),
 	o = require('uniconf/options').option;
 
@@ -18,7 +19,6 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	build: {
 		entries: o('entries', {
 			env: true,
-			short: 'e',
 			coerce: (v) => v ? v.split(',') : []
 		}),
 
@@ -39,20 +39,29 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 
 	webpack: {
 		devtool: false,
+		hashLength: 8,
+
+		hashFunction() {
+			return !isProd || this.fatHTML() ? undefined : 'md5';
+		},
+
+		fatHTML() {
+			return false;
+		},
+
+		dataURILimit() {
+			return this.fatHTML() ? undefined : 4096;
+		},
+
 		externals: {
 			'collection.js': '$C',
 			'eventemitter2': 'EventEmitter2',
 			'localforage': 'localforage',
 			'sugar': 'Sugar',
 			'vue': 'Vue',
-			'chart.js': 'Chart',
 			'ion-sound': 'ion',
 			'socket.io-client': 'io',
 			'setimmediate': 'setImmediate'
-		},
-
-		fatHTML() {
-			return false;
 		},
 
 		longCache() {
@@ -66,23 +75,38 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 			return '[confighash]';
 		},
 
-		hashLength() {
-			return !isProd || this.fatHTML() ? false : 8;
-		},
+		publicPath(...args) {
+			const
+				concatUrls = require('urlconcat').concat;
 
-		dataURILimit() {
-			return this.fatHTML() ? undefined : 4096;
-		},
+			let
+				pathVal;
 
-		publicPath() {
-			return o('public-path', {
-				env: true,
-				default: '/'
-			});
-		},
+			if (this.fatHTML()) {
+				pathVal = '';
 
-		dllOutput(params) {
-			return this.output(params);
+			} else {
+				pathVal = o('public-path', {
+					env: true,
+					default: concatUrls('/', this.config.src.rel('clientOutput'))
+				});
+
+				if (!Object.isString(pathVal)) {
+					pathVal = '';
+				}
+			}
+
+			if (args.length) {
+				args = args.map((el) => el.replace(/^\.?/, ''));
+
+				if (pathVal) {
+					return concatUrls(pathVal, ...args);
+				}
+
+				return concatUrls(...args);
+			}
+
+			return pathVal;
 		},
 
 		output(params) {
@@ -102,27 +126,35 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 			return res;
 		},
 
+		dllOutput(params) {
+			return this.output(params);
+		},
+
 		assetsOutput(params) {
 			const
 				root = 'assets';
 
-			if (isProd) {
+			if (!isProd || this.fatHTML()) {
 				return this.output({
 					...params,
-					hash: `${root}/[hash].[ext]`,
-					name: null
+					name: `${root}/[path][name].[ext]`,
+					hash: null
 				});
 			}
 
 			return this.output({
 				...params,
-				name: `${root}/[path][name].[ext]`,
-				hash: null
+				hash: `${root}/[hash].[ext]`,
+				name: null
 			});
 		},
 
 		assetsJSON() {
 			return 'assets.json';
+		},
+
+		assetsJS() {
+			return path.changeExt(this.assetsJSON(), '.js');
 		}
 	},
 
@@ -180,8 +212,8 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 
 	snakeskin() {
 		const
-			snakeskinVars = include('build/snakeskin.vars.js'),
-			{webpack, src} = this;
+			{webpack, src} = this,
+			snakeskinVars = include('build/snakeskin.vars');
 
 		return {
 			client: this.extend(super.snakeskin(), {
@@ -196,14 +228,20 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 			server: this.extend(super.snakeskin(), {
 				vars: {
 					...snakeskinVars,
-					fatHTML: webpack.fatHTML(),
-					hashLength: webpack.hashLength(),
+
+					rel: src.rel,
 					root: src.cwd(),
-					outputPattern: webpack.output,
-					output: src.clientOutput(),
-					favicons: this.favicons().path,
+					lib: src.lib(),
 					assets: src.assets(),
-					lib: src.lib()
+					assetsJS: webpack.assetsJS(),
+					favicons: this.favicons().path,
+
+					publicPath: webpack.publicPath,
+					output: src.clientOutput(),
+					outputPattern: webpack.output,
+
+					fatHTML: webpack.fatHTML(),
+					hashFunction: webpack.hashFunction()
 				}
 			})
 		};

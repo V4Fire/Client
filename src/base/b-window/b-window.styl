@@ -10,12 +10,12 @@
 
 $p = {
 	width: auto
-	zIndex: 100
+	zIndexPos: overall
 }
 
 b-window extends i-data
 	absolute top 0 left 0
-	z-index $p.zIndex
+	z-index-pos $p.zIndexPos
 	min-width 100%
 
 	&_width_full &__window
@@ -30,7 +30,7 @@ b-window extends i-data
 
 	&__wrapper
 		position relative
-		z-index 1
+		z-index-pos layer 1
 		display flex
 		justify-content center
 		size 100% 100vh

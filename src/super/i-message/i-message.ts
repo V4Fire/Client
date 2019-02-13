@@ -7,8 +7,13 @@
  */
 
 import keyCodes from 'core/key-codes';
-import iBlock, { component, prop, field, ModsDecl } from 'super/i-block/i-block';
+import iBlock, { component, prop, field, hook, ModsDecl, ModEvent, SetModEvent } from 'super/i-block/i-block';
 export * from 'super/i-block/i-block';
+
+export interface CloseHelperEvents {
+	key?: string;
+	touch?: string;
+}
 
 @component()
 export default class iMessage extends iBlock {
@@ -40,17 +45,17 @@ export default class iMessage extends iBlock {
 	static readonly mods: ModsDecl = {
 		showInfo: [
 			'true',
-			['false']
+			'false'
 		],
 
 		showError: [
 			'true',
-			['false']
+			'false'
 		],
 
 		opened: [
 			'true',
-			['false']
+			'false'
 		]
 	};
 
@@ -86,28 +91,16 @@ export default class iMessage extends iBlock {
 
 	/**
 	 * Opens the component
-	 * @emits open()
 	 */
 	async open(): Promise<boolean> {
-		if (await this.setMod('opened', true)) {
-			this.emit('open');
-			return true;
-		}
-
-		return false;
+		return this.setMod('opened', true);
 	}
 
 	/**
 	 * Closes the component
-	 * @emits close()
 	 */
 	async close(): Promise<boolean> {
-		if (await this.setMod('opened', false)) {
-			this.emit('close');
-			return true;
-		}
-
-		return false;
+		return this.setMod('opened', false);
 	}
 
 	/**
@@ -119,35 +112,79 @@ export default class iMessage extends iBlock {
 
 	/**
 	 * Initializes close helpers
+	 * @param [events] - event names for helpers
 	 */
-	protected initCloseHelpers(): void {
+	@hook('beforeDataCreate')
+	protected initCloseHelpers(events: CloseHelperEvents = {}): void {
 		const
-			{async: $a, localEvent: $e} = this,
-			group = {group: 'closeHelpers'};
+			{async: $a, localEvent: $e} = this;
 
-		const closeHelpers = () => {
-			$a.on(document, 'keyup', (e) => {
-				if (e.keyCode === keyCodes.ESC) {
-					return this.close();
-				}
-			}, group);
+		const
+			helpersGroup = {group: 'closeHelpers'},
+			modsGroup = {group: 'closeHelpers:mods'};
 
-			$a.on(document, 'click', (e) => {
-				if (!e.target.closest(`.${this.componentId}`)) {
-					return this.close();
-				}
-			}, group);
+		$e.off({group: /closeHelpers/});
+		$e.on('block.mod.*.opened.*', this.onOpenedChange, modsGroup);
+		$e.on('block.mod.set.opened.false', () => $e.off(helpersGroup), modsGroup);
+
+		const onOpened = () => {
+			$a.setImmediate(() => {
+				$a.on(document, events.key || 'keyup', this.onKeyClose, helpersGroup);
+				$a.on(document, events.touch || 'click', this.onTouchClose, helpersGroup);
+			}, helpersGroup);
 		};
 
-		$e.removeAllListeners('block.mod.set.opened.*');
-		$e.on('block.mod.set.opened.true', closeHelpers);
-		$e.on('block.mod.set.opened.false', () => $a.off(group));
+		$e.on('block.mod.set.opened.true', onOpened, modsGroup);
 	}
 
-	/** @override */
+	/**
+	 * Handler: opened modifier change
+	 * @param e
+	 */
+	protected onOpenedChange(e: ModEvent | SetModEvent): void {
+		return undefined;
+	}
+
+	/**
+	 * Handler: close by a keyboard event
+	 * @param e
+	 */
+	protected async onKeyClose(e: KeyboardEvent): Promise<void> {
+		if (e.keyCode === keyCodes.ESC) {
+			await this.close();
+		}
+	}
+
+	/**
+	 * Handler: close by a touch event
+	 * @param e
+	 */
+	protected async onTouchClose(e: MouseEvent): Promise<void> {
+		const
+			target = <Element>e.target;
+
+		if (!target) {
+			return;
+		}
+
+		if (!target.closest(`.${this.componentId}`)) {
+			await this.close();
+		}
+	}
+
+	/**
+	 * @override
+	 * @emits open()
+	 * @emits close()
+	 */
 	protected initModEvents(): void {
 		super.initModEvents();
+
 		this.bindModTo('showInfo', 'infoMsg');
 		this.bindModTo('showError', 'errorMsg');
+
+		this.localEvent.on('block.mod.*.focused.*', (e) => {
+			this.emit(e.value === 'false' || e.type === 'remove' ? 'close' : 'open');
+		});
 	}
 }

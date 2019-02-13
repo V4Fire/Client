@@ -6,16 +6,11 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-package('p-index')
+package('p-v4-components-demo')
 	.extends('i-static-page')
 	.dependencies(
+		'b-v4-component-demo',
 		'b-select',
-		'b-input',
-		'b-input-time',
-		'b-calendar',
-		'b-input-birthday',
-		'b-time-range',
-		'b-textarea',
-		'b-checkbox',
-		'b-remote-provider'
+		'b-button',
+		'b-checkbox'
 	);

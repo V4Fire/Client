@@ -13,6 +13,9 @@ const
 	{attachClass} = include('build/filters/helpers');
 
 const
+	dasherize = require('string-dasherize');
+
+const
 	isLiteral = /^\s*[[{]/,
 	isSvgRequire = /require\(.*?\.svg[\\"']+\)/,
 	isV4Prop = /^(:|@|v-)/,
@@ -99,7 +102,7 @@ module.exports = [
 
 			} else {
 				const
-					tmp = key.dasherize();
+					tmp = key[0] === ':' ? dasherize(key) : key.dasherize();
 
 				if (tmp !== key) {
 					delete attrs[key];

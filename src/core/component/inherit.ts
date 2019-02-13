@@ -8,7 +8,7 @@
 
 // tslint:disable:cyclomatic-complexity
 
-import { ComponentMeta, ComponentParams } from 'core/component';
+import { ComponentMeta, ComponentParams, StrictModDeclVal } from 'core/component';
 export const PARENT = {};
 
 /**
@@ -267,42 +267,64 @@ export default function inheritMeta(
 
 	for (let o = meta.mods, keys = Object.keys(mods), i = 0; i < keys.length; i++) {
 		const
-			key = keys[i].camelize(false),
+			key = keys[i],
 			current = o[key],
 			parent = (mods[key] || []).slice();
 
 		if (current) {
+			const
+				values = <StrictDictionary<StrictModDeclVal>>Object.createDict();
+
 			for (let i = 0; i < current.length; i++) {
 				const
 					el = current[i];
 
 				if (el !== PARENT) {
+					if (!(el in values) || Object.isArray(el)) {
+						values[String(el)] = <StrictModDeclVal>el;
+					}
+
 					continue;
 				}
 
-				let hasDefault = false;
+				let
+					hasDefault = false;
+
 				for (let i = 0; i < current.length; i++) {
-					if (Object.isArray(current[i])) {
+					if (Object.isArray(el)) {
 						hasDefault = true;
 						break;
 					}
 				}
 
-				if (hasDefault) {
-					for (let i = 0; i < parent.length; i++) {
-						const
-							el = parent[i];
+				let
+					parentDef = !hasDefault;
 
-						if (Object.isArray(el)) {
-							parent[i] = el[0];
-							break;
-						}
+				for (let i = 0; i < parent.length; i++) {
+					const
+						el = parent[i];
+
+					if (!(el in values)) {
+						values[String(el)] = <StrictModDeclVal>el;
+					}
+
+					if (!parentDef && Object.isArray(el)) {
+						parent[i] = el[0];
+						parentDef = true;
 					}
 				}
 
 				current.splice(i, 1, ...parent);
-				break;
 			}
+
+			const
+				valuesList = <StrictModDeclVal[]>[];
+
+			for (let keys = Object.keys(values), i = 0; i < keys.length; i++) {
+				valuesList.push(values[keys[i]]);
+			}
+
+			o[key] = valuesList;
 
 		} else if (!(key in o)) {
 			o[key] = parent;

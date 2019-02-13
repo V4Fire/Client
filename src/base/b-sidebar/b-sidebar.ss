@@ -1,5 +1,3 @@
-- namespace [%fileName%]
-
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -8,20 +6,12 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+- namespace [%fileName%]
+
 - include 'super/i-data'|b as placeholder
 
 - template index() extends ['i-data'].index
 	- block body
-		- super
-
-		- block canvas
-			< .&__container v-show = hasData
-				< canvas &
-					ref = chart |
-					:width = width |
-					:height = height
-				.
-
-		- block emptyState
-			< .&__empty v-if = !hasData
-				{{ `No data to display` }}
+		< .&__content
+			- block content
+				+= self.slot()

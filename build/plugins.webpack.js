@@ -35,7 +35,7 @@ module.exports = async function ({buildId}) {
 
 	const plugins = new Map([
 		['globals', new webpack.DefinePlugin(include('build/globals.webpack'))],
-		['dependencies', include('build/dependencies.webpack')({graph})]
+		['dependencies', include('build/plugins/dependencies')({graph})]
 	]);
 
 	if (wp.longCache()) {

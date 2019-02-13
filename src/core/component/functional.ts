@@ -102,14 +102,10 @@ export function createFakeCtx(
 		$refs: {},
 
 		$slots: {default: renderCtx.children, ...renderCtx.slots()},
-		$scopedSlots: {},
+		$scopedSlots: {...renderCtx.scopedSlots},
 		$createElement: createElement,
 
 		$destroy(): void {
-			if (this.componentStatus === 'destroyed') {
-				return;
-			}
-
 			$a.clearAll();
 
 			const

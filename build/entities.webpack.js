@@ -11,10 +11,11 @@
 const
 	$C = require('collection.js'),
 	fs = require('fs-extra-promise'),
-	path = require('upath');
+	path = require('upath'),
+	camelize = require('camelize');
 
 const
-	{build} = require('config'),
+	{build, src} = require('config'),
 	{resolve, entries, block} = require('@pzlr/build-core'),
 	{output, buildCache} = include('build/build.webpack');
 
@@ -39,12 +40,6 @@ MAX_PROCESS += MAX_PROCESS <= I ? 1 : 0;
  * @type {Promise<{entry, processes, dependencies}>}
  */
 module.exports = (async () => {
-	const mkdirp = (src) => {
-		if (!fs.existsSync(src)) {
-			fs.mkdirpSync(src);
-		}
-	};
-
 	const
 		cacheFile = path.join(buildCache, 'graph.json');
 
@@ -70,7 +65,7 @@ module.exports = (async () => {
 		}
 
 	} else {
-		mkdirp(buildCache);
+		fs.mkdirpSync(buildCache);
 		fs.writeFileSync(cacheFile, '');
 		process.env.BUILD_GRAPH_FROM_CACHE = 1;
 	}
@@ -78,8 +73,8 @@ module.exports = (async () => {
 	const
 		tmpEntries = path.join(resolve.entry(), 'tmp');
 
-	mkdirp(tmpEntries);
-	mkdirp(path.dirname(output));
+	fs.mkdirpSync(tmpEntries);
+	fs.mkdirpSync(path.join(src.clientOutput(), path.dirname(output)));
 
 	let
 		entriesFilter;
@@ -164,7 +159,7 @@ module.exports = (async () => {
 							str +=
 							`
 .${name}
-	extends($${name.camelize(false)})
+	extends($${camelize(name)})
 
 `;
 						}

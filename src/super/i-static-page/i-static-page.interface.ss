@@ -15,19 +15,18 @@
 - import fs from 'fs-extra-promise'
 - import glob from 'glob'
 - import path from 'upath'
-- import hashFiles from 'hash-files'
 - import delay from 'delay'
 
 /**
  * Base page template
  */
 - async template index() extends ['i-page'].index
-	- assets = Object.create(null)
 	- lib = path.join(@@output, @@outputPattern({name: 'lib'}))
 	- deps = include('src/super/i-static-page/deps')
 
 	- title = @@appName
-	- pageData = {}
+	- pageData = Object.create(null)
+	- assets = Object.create(null)
 
 	- defineBase = false
 	- assetsRequest = true
@@ -65,7 +64,7 @@
 
 		< html
 			< head
-				: base = self.join('/', path.relative(@@root, @@output), '/')
+				: base = @@publicPath()
 
 				- block meta
 					< meta ${charset}
@@ -133,8 +132,7 @@
 
 				- if !@@fatHTML && assetsRequest
 					- block assets
-						: assetJS = path.relative(@@output, @@assetsJSON.replace(/json$/, 'js'))
-						- script js src = ${assetJS}
+						- script js src = ${@@publicPath(@@assetsJS)}
 
 				- block head
 					: defStyles = deps.styles
@@ -143,7 +141,7 @@
 					+= $C(defStyles).to('').reduce()
 						() => res, url
 							: notDefer = Array.isArray(url)
-							? url = self.join(@@lib, notDefer ? url[0] : url)
+							? url = self.loadToLib(notDefer ? url[0] : url)
 
 							- block loadDefStyles
 								- if @@fatHTML
@@ -151,6 +149,8 @@
 										requireMonic({url})
 
 								- else
+									? url = @@publicPath(url)
+
 									- if notDefer
 										- link css href = ${url}
 
@@ -176,45 +176,28 @@
 
 					+= $C(defLibs).to('').reduce()
 						() => res, url
-							- if Object.isString(url) && /\/$/.test(url)
-								- block loadFolder
-									? url = url.replace(/\/$/, '')
+							: &
+								isFolder = Object.isString(url) && /\/$/.test(url),
+								notDefer = Array.isArray(url)
+							.
 
-									: &
-										src,
-										newSrc,
-										relativeSrc,
-										basename = path.basename(url)
-									.
+							? url = notDefer ? url[0] : url
+							: basename = path.basename(url)
+							? url = self.loadToLib(url)
 
-									- if !foldersCache[basename]
-										? src = path.join(@@lib, url)
-										: hash = ''
-
-										- if @@hashLength
-											? hash = hashFiles.sync({files: [path.join(src, '/**/*')]}).substr(0, @@hashLength) + '_'
-
-										? newSrc = path.join(lib, hash + basename)
-										? relativeSrc = path.relative(@@output, newSrc)
-										? foldersCache[basename] = fs.existsSync(newSrc) && relativeSrc
-
-									- if !foldersCache[basename]
-										? fs.mkdirpSync(newSrc)
-										? fs.copySync(src, newSrc)
-										? foldersCache[basename] = relativeSrc
-
-									- script :: PATH['{basename}'] = '{foldersCache[basename]}';
+							- if isFolder
+								- block loadFolders
+									? url = @@publicPath(url)
+									- script :: PATH['{basename}'] = '{url}';
 
 							- else
 								- block loadDefLibs
-									: notDefer = Array.isArray(url)
-									? url = self.join(@@lib, notDefer ? url[0] : url)
-
 									- if @@fatHTML
 										- script
 											requireMonic({url})
 
 									- else
+										? url = @@publicPath(url)
 										- script js src = ${url} | ${notDefer ? '' : 'defer'}
 
 							- return res + getTplResult()

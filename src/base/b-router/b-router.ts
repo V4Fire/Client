@@ -12,34 +12,35 @@ import $C = require('collection.js');
 import Async from 'core/async';
 
 import path = require('path-to-regexp');
-import { Key } from 'path-to-regexp';
+import { RegExpOptions } from 'path-to-regexp';
 
-import driver from 'base/b-router/drivers';
+import engine from 'base/b-router/drivers';
 import symbolGenerator from 'core/symbol';
 
-import { Router, BasePageMeta, PageSchema, CurrentPage, PageOpts } from 'base/b-router/drivers/interface';
+import { concatUrls } from 'core/url';
+import { Router, BasePageMeta, PageSchema, CurrentPage } from 'base/b-router/drivers/interface';
 import iData, { component, prop, system, hook, watch, p } from 'super/i-data/i-data';
 
 export * from 'super/i-data/i-data';
 export * from 'base/b-router/drivers/interface';
 
-export type RouterMeta = BasePageMeta & {
-	autoScroll?: boolean;
-	scroll?: {
-		x: number;
-		y: number;
-	};
-};
+export interface PageOpts<
+	P extends Dictionary = Dictionary,
+	Q extends Dictionary = Dictionary,
+	M extends Dictionary = Dictionary
+> extends CurrentPage<P, Q, M> {
+	toPath(params?: Dictionary): string;
+}
 
 export interface PagePropObj {
 	page: string;
-	meta?: RouterMeta;
+	meta?: BasePageMeta;
 	params?: Dictionary;
 	query?: Dictionary;
 }
 
 export interface PageParams {
-	meta?: RouterMeta;
+	meta?: BasePageMeta;
 	params?: Dictionary;
 	query?: Dictionary;
 }
@@ -50,13 +51,16 @@ export type PageProp =
 
 export interface Page {
 	page: string;
+	pattern?: string;
+	rgxp?: RegExp;
 	index: boolean;
-	pattern: string;
-	rgxp: RegExp;
-	meta: RouterMeta;
+	alias?: string;
+	redirect?: string;
+	meta: BasePageMeta;
 }
 
 export type Pages = Dictionary<Page>;
+export type PageSchemaDict = Dictionary<PageSchema>;
 export type SetPage = 'push' | 'replace' | 'event';
 
 export const
@@ -66,6 +70,12 @@ export const
 export default class bRouter<T extends Dictionary = Dictionary> extends iData<T> {
 	/* @override */
 	public async!: Async<this>;
+
+	/**
+	 * Base route path
+	 */
+	@prop()
+	readonly basePath: string = '/';
 
 	/**
 	 * Initial page
@@ -83,20 +93,20 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 	 * Initial router paths
 	 */
 	@prop({type: Object, required: false})
-	readonly pagesProp?: Dictionary<PageSchema>;
+	readonly pagesProp?: PageSchemaDict;
 
 	/**
-	 * Driver constructor for router
+	 * Engine constructor for router
 	 */
 	@prop<bRouter>({
 		type: Function,
-		default: driver,
+		default: engine,
 		watch: (o) => {
 			o.initComponentValues().catch(stderr);
 		}
 	})
 
-	readonly driverProp!: () => Router;
+	readonly engineProp!: () => Router;
 
 	/**
 	 * If true, then will be shown page load status on transitions
@@ -111,10 +121,10 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 	status: number = 0;
 
 	/**
-	 * Driver for remote router
+	 * Engine for remote router
 	 */
 	@system((o) => o.link<(v: unknown) => Router>((v) => v(o)))
-	protected driver!: Router;
+	protected engine!: Router;
 
 	/**
 	 * Page store
@@ -126,26 +136,62 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 	 * Router paths
 	 */
 	@system<bRouter>({
-		after: 'driver',
-		init: (o) => o.link((v) => $C(v || o.driver.routes || {}).map((obj, page) => {
-			obj = obj || {};
-
+		after: 'engine',
+		init: (o) => o.link((v) => {
 			const
-				isStr = Object.isString(obj),
-				pattern = isStr ? obj : obj.path,
-				params = [];
+				base = o.basePath,
+				routes = <PageSchemaDict>(v || o.engine.routes || {}),
+				pages = {};
 
-			page = isStr ?
-				page : obj.page || page;
+			for (let keys = Object.keys(routes), i = 0; i < keys.length; i++) {
+				const
+					key = keys[i],
+					obj = routes[key] || {},
+					params = [];
 
-			return {
-				page,
-				pattern,
-				index: !isStr && obj.index || page === 'index',
-				rgxp: pattern != null ? path(pattern, params) : undefined,
-				meta: {...isStr ? {} : obj, page, params}
-			};
-		}))
+				let
+					page = key;
+
+				if (Object.isString(obj)) {
+					let
+						pattern;
+
+					if (obj && base) {
+						pattern = concatUrls(base, obj);
+					}
+
+					pages[key] = {
+						page,
+						pattern,
+						index: page === 'index',
+						rgxp: pattern != null ? path(pattern, params) : undefined,
+						meta: {page, params}
+					};
+
+				} else {
+					page = String(obj.page || page);
+
+					let
+						pattern;
+
+					if (Object.isString(obj.path) && base) {
+						pattern = concatUrls(base, obj.path);
+					}
+
+					pages[key] = {
+						page,
+						pattern,
+						alias: obj.alias,
+						redirect: obj.redirect,
+						index: obj.index || page === 'index',
+						rgxp: pattern != null ? path(pattern, params, <RegExpOptions>obj.pathOpts) : undefined,
+						meta: {...obj, page, params}
+					};
+				}
+			}
+
+			return pages;
+		})
 	})
 
 	protected pages!: Pages;
@@ -162,7 +208,7 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 	 * Scrolls a document to the specified coordinates
 	 */
 	scrollTo(y?: number, x?: number): void {
-		window.scrollTo(x || pageXOffset, y || pageYOffset);
+		this.r.scrollTo(x, y);
 	}
 
 	/**
@@ -189,14 +235,14 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 	 * Router.back
 	 */
 	back(): void {
-		this.driver.back();
+		this.engine.back();
 	}
 
 	/**
 	 * Router.forward
 	 */
 	forward(): void {
-		this.driver.forward();
+		this.engine.forward();
 	}
 
 	/**
@@ -204,7 +250,7 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 	 * @param pos
 	 */
 	go(pos: number): void {
-		this.driver.go(pos);
+		this.engine.go(pos);
 	}
 
 	/**
@@ -212,37 +258,119 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 	 * @param [page]
 	 */
 	getPageOpts(page: string): CanUndef<PageOpts> {
-		let
-			byId = false,
-			obj;
+		const
+			p = this.pages,
+			keys = Object.keys(p),
+			base = this.basePath;
 
 		const
-			p = this.pages;
+			normalizeBaseRgxp = /(.*)?[\\/]+$/;
 
-		if (page in p) {
-			byId = true;
-			obj = p[page];
+		let
+			byId = false,
+			alias,
+			obj;
 
-		} else {
-			obj = $C(p).one.get((el: Page) => {
-				if (el.page === page) {
-					byId = true;
-					return true;
+		let
+			pageRef = page,
+			basePage = true;
+
+		while (true) {
+			if (pageRef in p) {
+				byId = true;
+				obj = p[pageRef];
+				break;
+
+			} else {
+				if (base) {
+					const v = base.replace(normalizeBaseRgxp, (str, base) => `${RegExp.escape(base)}/*`);
+					pageRef = concatUrls(base, pageRef.replace(new RegExp(`^${v}`), ''));
+
+					if (basePage) {
+						page = pageRef;
+						basePage = false;
+					}
 				}
 
-				return el.rgxp && el.rgxp.test(page);
-			});
+				for (let i = 0; i < keys.length; i++) {
+					const
+						el = p[keys[i]];
+
+					if (!el) {
+						continue;
+					}
+
+					if (el.page === pageRef) {
+						byId = true;
+						obj = el;
+						break;
+					}
+
+					if (el.rgxp && el.rgxp.test(pageRef) && (
+						!obj ||
+						(<string>el.pattern).length > obj.pattern.length
+					)) {
+						obj = el;
+					}
+				}
+			}
+
+			if (!obj || !obj.redirect && !obj.alias) {
+				break;
+			}
+
+			if (obj.alias) {
+				if (alias == null) {
+					alias = obj;
+				}
+
+				pageRef = obj.alias;
+
+			} else {
+				pageRef = page = obj.redirect;
+
+				if (alias == null) {
+					alias = false;
+				}
+			}
+
+			obj = undefined;
 		}
 
 		if (!obj) {
-			obj = $C(p).one.get((el: Page) => el.index);
+			for (let i = 0; i < keys.length; i++) {
+				const
+					el = p[keys[i]];
+
+				if (el && el.index) {
+					obj = el;
+					break;
+				}
+			}
+
+		} else if (alias) {
+			obj = {...obj, pattern: alias.pattern};
 		}
 
 		if (obj) {
 			const meta = Object.create({
 				meta: Object.mixin(true, {}, obj.meta),
-				toPath(p?: Dictionary): string {
-					p = $C(p).filter((el) => el != null).map(String);
+				toPath(initParams?: Dictionary): string {
+					const
+						p = {};
+
+					if (initParams) {
+						for (let keys = Object.keys(initParams), i = 0; i < keys.length; i++) {
+							const
+								key = keys[i],
+								el = initParams[key];
+
+							if (el != null) {
+								p[key] = String(el);
+							}
+						}
+					}
+
 					return path.compile(obj.pattern || page)(p);
 				}
 			});
@@ -259,11 +387,14 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 					params = obj.rgxp.exec(obj.url || page);
 
 				if (params) {
-					$C(<Key[]>path.parse(obj.pattern)).forEach((el, i) => {
+					for (let o = path.parse(obj.pattern), i = 0, j = 0; i < o.length; i++) {
+						const
+							el = o[i];
+
 						if (Object.isObject(el)) {
-							t.params[el.name] = params[i + 1];
+							t.params[el.name] = params[++j];
 						}
-					});
+					}
 				}
 			}
 
@@ -276,7 +407,7 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 	 *
 	 * @param page
 	 * @param [params] - additional page parameters
-	 * @param [method] - driver method
+	 * @param [method] - engine method
 	 *
 	 * @emits beforeChange(page: Nullable<string>, params: CanUndef<PageParams>, method: string)
 	 * @emits change(info: PageOpts)
@@ -290,11 +421,55 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 		method: SetPage = 'push'
 	): Promise<CanUndef<CurrentPage>> {
 		const
-			{$root: r, driver: d, driver: {page: c}} = this;
+			{$root: r, engine, engine: {page: currentPage}} = this,
+			rejectParams = (o) => o && Object.reject(o, ['page', 'url']);
 
-		const
-			rejectParams = (o) => o && Object.reject(o, ['page', 'url']),
-			isEmptyParams = !params || $C(params).every((el) => !$C(el).length());
+		let
+			isEmptyParams = !params;
+
+		if (params) {
+			params = Object.fastClone(params);
+			isEmptyParams = true;
+
+			for (let keys = Object.keys(params), i = 0; i < keys.length; i++) {
+				if ($C(params[keys[i]]).length()) {
+					isEmptyParams = false;
+					break;
+				}
+			}
+
+			if (!isEmptyParams) {
+				const normalizeParams = (obj, key?, data?) => {
+					if (!obj) {
+						return;
+					}
+
+					if (Object.isObject(obj)) {
+						for (let keys = Object.keys(obj), i = 0; i < keys.length; i++) {
+							const key = keys[i];
+							normalizeParams(obj[key], key, obj);
+						}
+
+						return;
+					}
+
+					if (Object.isArray(obj)) {
+						for (let i = 0; i < obj.length; i++) {
+							normalizeParams(obj[i], i, obj);
+						}
+
+						return;
+					}
+
+					if (data && obj != null) {
+						data[key] = String(obj);
+					}
+				};
+
+				normalizeParams(params.params);
+				normalizeParams(params.query);
+			}
+		}
 
 		if (!page && isEmptyParams && !this.isBeforeCreate()) {
 			return;
@@ -306,16 +481,16 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 			info;
 
 		if (page) {
-			info = this.getPageOpts(d.id(page));
+			info = this.getPageOpts(engine.id(page));
 
-		} else if (c) {
-			page = c.url || c.page;
+		} else if (currentPage) {
+			page = currentPage.url || currentPage.page;
 
 			const
 				p = this.getPageOpts(page);
 
 			if (p) {
-				info = Object.mixin(true, p, rejectParams(c));
+				info = Object.mixin(true, p, rejectParams(currentPage));
 			}
 		}
 
@@ -357,35 +532,58 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 			return params;
 		};
 
-		if (c && method === 'push') {
-			await d.replace(c.url || c.page, Object.mixin(true, undefined, c, scroll));
+		if (currentPage && method !== 'replace') {
+			const
+				modCurrentPage = Object.mixin(true, undefined, currentPage, scroll);
+
+			if (!Object.fastCompare(currentPage, modCurrentPage)) {
+				await engine.replace(currentPage.url || currentPage.page, modCurrentPage);
+			}
 		}
 
-		const
-			isNotEvent = method !== 'event';
-
 		if (!info) {
-			if (isNotEvent && page != null) {
-				await d[method](page, scroll);
+			if (method !== 'event' && page != null) {
+				await engine[method](page, scroll);
 			}
 
 			return;
 		}
 
-		if (!info.page && c && c.page) {
-			info.page = c.page;
+		if (!info.page && currentPage && currentPage.page) {
+			info.page = currentPage.page;
 		}
 
-		Object.mixin({deep: true, withUndef: true}, info, rejectParams(params));
+		const
+			current = this.getField<CurrentPage>('pageStore');
+
+		const f = (v) => {
+			const
+				res = {};
+
+			if (v) {
+				for (const key in v) {
+					const
+						el = v[key];
+
+					if (!Object.isFunction(el) && key !== 'meta') {
+						res[key] = el;
+					}
+				}
+			}
+
+			return res;
+		};
+
+		const extend = (p) => {
+			Object.mixin({deep: true, withUndef: true}, info, p ? rejectParams(f(p)) : undefined, rejectParams(params));
+		};
+
+		extend(current && current.page === info.page ? current : undefined);
 
 		const
 			meta = info.meta,
 			nonWatchValues = {query: info.query, meta},
 			store = Object.assign(Object.create(nonWatchValues), Object.reject(info, Object.keys(nonWatchValues)));
-
-		const
-			current = this.getField('pageStore'),
-			f = (v) => $C(v).filter((el, key) => !Object.isFunction(el) && key !== 'meta').object(true).map();
 
 		let
 			hardChange = false;
@@ -398,20 +596,48 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 		if (!Object.fastCompare(f(current), f(store))) {
 			this.setField('pageStore', store);
 
-			if (isNotEvent) {
-				await d[method](info.toPath(getPageParams(info)), info);
+			if (currentPage && method !== 'replace') {
+				const
+					f = ({page, params, query, meta}) => ({page, query: {...params, ...query}, meta: {...meta}});
+
+				if (Object.fastCompare(f({...currentPage}), f({...info}))) {
+					method = 'replace';
+				}
 			}
 
-			const
-				f = (v) => $C(v).filter((el) => !Object.isFunction(el)).map();
+			if (!Object.isFunction(engine[method])) {
+				method = 'replace';
+			}
+
+			await engine[method](info.toPath(getPageParams(info)), info);
+
+			const f = (v) => {
+				const
+					res = {};
+
+				if (v) {
+					for (let keys = Object.keys(v), i = 0; i < keys.length; i++) {
+						const
+							key = keys[i],
+							el = v[key];
+
+						if (!Object.isFunction(el)) {
+							res[key] = el;
+						}
+					}
+				}
+
+				return res;
+			};
 
 			if (r.route && Object.fastCompare(f(current), f(store))) {
 				const
 					proto = Object.getPrototypeOf(r.route);
 
-				$C(nonWatchValues).forEach((el, key) => {
-					proto[key] = el;
-				});
+				for (let keys = Object.keys(nonWatchValues), i = 0; i < keys.length; i++) {
+					const key = keys[i];
+					proto[key] = nonWatchValues[key];
+				}
 
 				this.emit('softChange', store);
 
@@ -522,8 +748,8 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 
 				default:
 					await this[method === 'replace' ? 'replace' : 'push'](href, {
-						params: Object.parse(data.params),
-						query: Object.parse(data.query)
+						params: Object.parse(data.params) || {},
+						query: Object.parse(data.query) || {}
 					});
 			}
 		}
@@ -535,9 +761,13 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 		this.setPage = this.instance.setPage.bind(this);
 	}
 
-	/** @override */
+	/**
+	 * @override
+	 * @emits $root.initRouter(router: bRouter)
+	 */
 	protected created(): void {
 		super.created();
 		this.setField('routerStore', this, this.$root);
+		this.r.emit('initRouter', this);
 	}
 }
