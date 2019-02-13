@@ -54,7 +54,7 @@
 			rootAttrs[':class'] = value
 
 	- rootAttrs = { &
-		':class': '[componentId, getBlockClasses(mods), "i-block-helper"]',
+		':class': '[getBlockClasses(mods), "i-block-helper", componentId]',
 		':-render-counter': 'renderCounter'
 	} .
 
@@ -67,76 +67,77 @@
 	- block slotAttrs
 
 	- block root
-		< _.${self.name()} ${rootAttrs|!html}
+		< ?.${self.name()}
+			< _ ${rootAttrs|!html}
 
-			/**
-			 * Generates an icon block
-			 *
-			 * @param {(string|!Array<gIcon>)} iconId
-			 * @param {Object=} [classes]
-			 * @param {Object=} [attrs]
-			 */
-			- block index->gIcon(iconId, classes = {}, attrs = {})
-				< svg[.g-icon] :class = getElClasses(${classes|json}) | ${attrs}
-					- if Object.isArray(iconId)
-						< use :xlink:href = getIconLink(${iconId})
+				/**
+				 * Generates an icon block
+				 *
+				 * @param {(string|!Array<gIcon>)} iconId
+				 * @param {Object=} [classes]
+				 * @param {Object=} [attrs]
+				 */
+				- block index->gIcon(iconId, classes = {}, attrs = {})
+					< svg[.g-icon] :class = getElClasses(${classes|json}) | ${attrs}
+						- if Object.isArray(iconId)
+							< use :xlink:href = getIconLink(${iconId})
+
+						- else
+							< use :xlink:href = getIconLink('${iconId}')
+
+				/**
+				 * Generates a transition wrapper for a content
+				 * @param {string=} [content] - content to wrapping
+				 */
+				- block transition(content)
+					: elName = (content + '' |getFirstTagElementName)
+
+					- if !elName
+						< transition
+							{content}
 
 					- else
-						< use :xlink:href = getIconLink('${iconId}')
+						: a = {}
 
-			/**
-			 * Generates a transition wrapper for a content
-			 * @param {string=} [content] - content to wrapping
-			 */
-			- block transition(content)
-				: elName = (content + '' |getFirstTagElementName)
+						- forEach ['enter', 'enter-active', 'enter-to', 'leave', 'leave-active', 'leave-to'] => type
+							? a[type + '-class'] = elName + '_' + type + '_true';
 
-				- if !elName
-					< transition
-						{content}
+						< transition ${a}
+							{content}
 
-				- else
-					: a = {}
+				/**
+				 * Generates double slot declaration (scoped and plain)
+				 *
+				 * @param {string=} [name] - slot name
+				 * @param {Object=} [attrs] - scoped slot attributes
+				 * @param {string=} [content] - slot content
+				 */
+				- block slot(name = 'default', attrs, content)
+					- switch arguments.length
+						> 1
+							- if name instanceof Unsafe
+								? content = name
+								? name = 'default'
 
-					- forEach ['enter', 'enter-active', 'enter-to', 'leave', 'leave-active', 'leave-to'] => type
-						? a[type + '-class'] = elName + '_' + type + '_true';
+						> 2
+							- if attrs instanceof Unsafe
+								? content = attrs
+								? attrs = {}
 
-					< transition ${a}
-						{content}
+					< template v-if = $scopedSlots['${name}']
+						< slot name = ${name} | ${Object.assign({}, slotAttrs, attrs)|!html}
 
-			/**
-			 * Generates double slot declaration (scoped and plain)
-			 *
-			 * @param {string=} [name] - slot name
-			 * @param {Object=} [attrs] - scoped slot attributes
-			 * @param {string=} [content] - slot content
-			 */
-			- block slot(name = 'default', attrs, content)
-				- switch arguments.length
-					> 1
-						- if name instanceof Unsafe
-							? content = name
-							? name = 'default'
+					< template v-else
+						< slot name = ${name}
+							{content}
 
-					> 2
-						- if attrs instanceof Unsafe
-							? content = attrs
-							? attrs = {}
+				- block headHelpers
+				- block innerRoot
+					< _.&__root-wrapper
+						- if overWrapper
+							< _.&__over-wrapper
+								- block overWrapper
 
-				< template v-if = $scopedSlots['${name}']
-					< slot name = ${name} | ${Object.assign({}, slotAttrs, attrs)|!html}
-
-				< template v-else
-					< slot name = ${name}
-						{content}
-
-			- block headHelpers
-			- block innerRoot
-				< _.&__root-wrapper
-					- if overWrapper
-						< _.&__over-wrapper
-							- block overWrapper
-
-					- block body
-				- block helpers
-				- block providers
+						- block body
+					- block helpers
+					- block providers
