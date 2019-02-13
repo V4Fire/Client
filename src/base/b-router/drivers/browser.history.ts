@@ -126,11 +126,18 @@ export default function createRouter(ctx: bRouter): Router {
 
 				info.query = Object.assign(parseQuery(page, true), info.query);
 
-				const
+				let
 					qs = toQueryString(info.query);
 
 				if (qs) {
-					page = page.replace(qsRgxp, `?${qs}`);
+					qs = `?${qs}`;
+
+					if (qsRgxp.test(page)) {
+						page = page.replace(qsRgxp, qs);
+
+					} else {
+						page += qs;
+					}
 				}
 
 				if (location.href !== page) {
