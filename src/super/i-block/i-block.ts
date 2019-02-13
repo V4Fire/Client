@@ -1227,23 +1227,23 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 		if (!(path in this.linksCache)) {
 			this.linksCache[path] = {};
 
+			const sync = (val?, oldVal?) => {
+				val = val !== undefined ? val : this.getField(<string>field);
+
+				const
+					res = wrapper ? wrapper.call(this, val, oldVal) : val;
+
+				this.setField(path, res);
+				return res;
+			};
+
 			this.watch(field, async (val, oldVal) => {
 				if (Object.fastCompare(val, oldVal) || Object.fastCompare(val, this.getField(path))) {
 					return;
 				}
 
-				this.setField(path, wrapper ? wrapper.call(this, val, oldVal) : val);
+				sync(val, oldVal);
 			}, params);
-
-			const sync = (val?) => {
-				val = val || this.getField(<string>field);
-
-				const
-					res = wrapper ? wrapper.call(this, val) : val;
-
-				this.setField(path, res);
-				return res;
-			};
 
 			// tslint:disable-next-line:prefer-object-spread
 			cache[field] = Object.assign(cache[field] || {}, {
@@ -1350,18 +1350,16 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 		};
 
 		const attachWatcher = (field, path, getVal) => {
-			linksCache.set(true, path);
+			const
+				sync = (val?, oldVal?) => setField(path, getVal(val, oldVal));
 
 			this.watch(field, (val, oldVal) => {
 				if (Object.fastCompare(val, oldVal) || Object.fastCompare(val, this.getField(path))) {
 					return;
 				}
 
-				setField(path, val);
+				sync(val, oldVal);
 			}, <AsyncWatchOpts>params);
-
-			const
-				sync = (val?) => setField(path, getVal(val));
 
 			// tslint:disable-next-line:prefer-object-spread
 			syncLinkCache[field] = Object.assign(syncLinkCache[field] || {}, {
@@ -1401,9 +1399,9 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 					l = [path, el[0]].join('.');
 
 				if (!linksCache.get(l)) {
-					const getVal = (val?) => {
-						val = val || this.getField(field);
-						return wrapper ? wrapper.call(this, val) : val;
+					const getVal = (val?, oldVal?) => {
+						val = val !== undefined ? val : this.getField(field);
+						return wrapper ? wrapper.call(this, val, oldVal) : val;
 					};
 
 					attachWatcher(field, l, getVal);
