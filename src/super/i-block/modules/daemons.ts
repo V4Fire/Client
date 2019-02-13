@@ -128,13 +128,17 @@ export default class Daemons {
 		}
 
 		const
-			asyncOptions = daemon.asyncOptions || {},
 			fn = daemon.wrappedFn || daemon.fn;
 
 		if (daemon.immediate !== false) {
-			Object.assign(asyncOptions, {
-				group: `daemons-${this.component.componentName}`
-			});
+			const asyncOptions = Object.assign({
+				group: `daemons-${this.component.componentName}`,
+				label: `daemons-${name}`
+			}, daemon.asyncOptions || {});
+
+			if (asyncOptions.label == null) {
+				delete asyncOptions.label;
+			}
 
 			$a.setImmediate(() => fn.apply(ctx, args), asyncOptions);
 
