@@ -6,18 +6,18 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-@import "super/i-block/i-block.styl"
+@import "super/i-message/i-message.styl"
 
 $p = {
 
 }
 
-b-image extends i-block
+b-image extends i-message
 	&__root-wrapper
 		size 100%
 
 	&__overlay
-	&__damaged
+	&__broken
 		position absolute
 		size 100%
 		pointer-events none
@@ -25,14 +25,8 @@ b-image extends i-block
 	&__overlay
 		opacity 0
 
-	&__damaged
+	&__broken
 		display none
-
-	&_error_true &__damaged
-		display flex
-		align-items center
-		justify-content center
-		z-index 2
 
 	&_disabled_true &__overlay
 	&_loading_true &__overlay
@@ -40,3 +34,13 @@ b-image extends i-block
 
 	&__img
 		width 100%
+
+		img
+			max-width 100%
+
+	&_show-error_true &__broken
+		z-index-pos modal
+		display block
+
+	&_show-error_true &__img
+		display none

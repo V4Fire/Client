@@ -8,22 +8,19 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-- include 'super/i-block'|b as placeholder
+- include 'super/i-message'|b as placeholder
 
-- template index() extends ['i-block'].index
+- template index() extends ['i-message'].index
 	- block body
 		- super
 
-		- block damaged
-			< .&__damaged
-				+= self.gIcon(['brokenIcon'])
+		- block broken
+			< .&__broken
+				+= self.slot('broken')
 
 		- block overlay
 			< .&__overlay
+				+= self.slot('overlay')
 
 		- block image
-			< .&__img
-				< img &
-					ref = img |
-					:src = load && src
-				.
+			< .&__img ref = img
