@@ -205,11 +205,22 @@ export default class Block {
 
 		const
 			initSetMod = reason === 'initSetMod',
-			funcInit = initSetMod && this.component.isFunctional,
 			prev = this.getMod(name);
 
 		if (prev !== value) {
-			if (!funcInit) {
+			let
+				domPrev,
+				needSync = false;
+
+			if (initSetMod) {
+				domPrev = this.getMod(name, true);
+				needSync = domPrev !== value;
+			}
+
+			if (needSync) {
+				this.removeMod(name, domPrev, 'initSetMod');
+
+			} else if (!initSetMod) {
 				this.removeMod(name, undefined, 'setMod');
 			}
 
@@ -217,11 +228,7 @@ export default class Block {
 				mods[name] = <string>value;
 			}
 
-			if (node && (!initSetMod || funcInit)) {
-				if (funcInit) {
-					this.removeMod(name, undefined, 'initSetMod');
-				}
-
+			if (node && (!initSetMod || needSync)) {
 				node.classList.add(this.getFullBlockName(name, value));
 			}
 
