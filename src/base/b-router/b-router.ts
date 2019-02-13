@@ -32,17 +32,14 @@ export interface PageOpts<
 	toPath(params?: Dictionary): string;
 }
 
-export interface PagePropObj {
-	page: string;
+export interface PageOptsProp {
 	meta?: BasePageMeta;
 	params?: Dictionary;
 	query?: Dictionary;
 }
 
-export interface PageParams {
-	meta?: BasePageMeta;
-	params?: Dictionary;
-	query?: Dictionary;
+export interface PagePropObj extends PageOptsProp {
+	page: string;
 }
 
 export type PageProp =
@@ -215,20 +212,20 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 	 * Pushes a new transition to router
 	 *
 	 * @param page
-	 * @param [params] - additional transition parameters
+	 * @param [opts] - additional transition options
 	 */
-	async push(page: Nullable<string>, params?: PageParams): Promise<void> {
-		await this.setPage(page, params, 'push');
+	async push(page: Nullable<string>, opts?: PageOptsProp): Promise<void> {
+		await this.setPage(page, opts, 'push');
 	}
 
 	/**
 	 * Replaces the current transition to a new
 	 *
 	 * @param page
-	 * @param [params] - additional transition parameters
+	 * @param [opts] - additional transition options
 	 */
-	async replace(page: Nullable<string>, params?: PageParams): Promise<void> {
-		await this.setPage(page, params, 'replace');
+	async replace(page: Nullable<string>, opts?: PageOptsProp): Promise<void> {
+		await this.setPage(page, opts, 'replace');
 	}
 
 	/**
@@ -406,10 +403,10 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 	 * Sets a new page
 	 *
 	 * @param page
-	 * @param [params] - additional page parameters
+	 * @param [opts] - additional transition options
 	 * @param [method] - engine method
 	 *
-	 * @emits beforeChange(page: Nullable<string>, params: CanUndef<PageParams>, method: string)
+	 * @emits beforeChange(page: Nullable<string>, params: CanUndef<PageOptsProp>, method: string)
 	 * @emits change(info: PageOpts)
 	 * @emits hardChange(info: PageOpts)
 	 * @emits softChange(info: PageOpts)
@@ -417,7 +414,7 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 	 */
 	async setPage(
 		page: Nullable<string>,
-		params?: PageParams,
+		opts?: PageOptsProp,
 		method: SetPage = 'push'
 	): Promise<CanUndef<CurrentPage>> {
 		const
@@ -425,21 +422,21 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 			rejectParams = (o) => o && Object.reject(o, ['page', 'url']);
 
 		let
-			isEmptyParams = !params;
+			isEmptyOpts = !opts;
 
-		if (params) {
-			params = Object.fastClone(params);
-			isEmptyParams = true;
+		if (opts) {
+			opts = Object.fastClone(opts);
+			isEmptyOpts = true;
 
-			for (let keys = Object.keys(params), i = 0; i < keys.length; i++) {
-				if ($C(params[keys[i]]).length()) {
-					isEmptyParams = false;
+			for (let keys = Object.keys(opts), i = 0; i < keys.length; i++) {
+				if ($C(opts[keys[i]]).length()) {
+					isEmptyOpts = false;
 					break;
 				}
 			}
 
-			if (!isEmptyParams) {
-				const normalizeParams = (obj, key?, data?) => {
+			if (!isEmptyOpts) {
+				const normalizeOpts = (obj, key?, data?) => {
 					if (!obj) {
 						return;
 					}
@@ -447,7 +444,7 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 					if (Object.isObject(obj)) {
 						for (let keys = Object.keys(obj), i = 0; i < keys.length; i++) {
 							const key = keys[i];
-							normalizeParams(obj[key], key, obj);
+							normalizeOpts(obj[key], key, obj);
 						}
 
 						return;
@@ -455,7 +452,7 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 
 					if (Object.isArray(obj)) {
 						for (let i = 0; i < obj.length; i++) {
-							normalizeParams(obj[i], i, obj);
+							normalizeOpts(obj[i], i, obj);
 						}
 
 						return;
@@ -466,16 +463,16 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 					}
 				};
 
-				normalizeParams(params.params);
-				normalizeParams(params.query);
+				normalizeOpts(opts.params);
+				normalizeOpts(opts.query);
 			}
 		}
 
-		if (!page && isEmptyParams && !this.isBeforeCreate()) {
+		if (!page && isEmptyOpts && !this.isBeforeCreate()) {
 			return;
 		}
 
-		this.emit('beforeChange', page, params, method);
+		this.emit('beforeChange', page, opts, method);
 
 		let
 			info;
@@ -501,35 +498,6 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 					y: pageYOffset
 				}
 			}
-		};
-
-		const getPageParams = (info) => {
-			const
-				{meta, params, query} = info;
-
-			if (meta.paramsFromQuery !== false) {
-				const
-					rootState = r.convertStateToRouter(undefined, 'remote');
-
-				for (let o = meta.params, i = 0; i < o.length; i++) {
-					const
-						key = o[i],
-						nm = key.name,
-						val = query[nm];
-
-					if (params[nm] == null) {
-						if (val != null && new RegExp(key.pattern).test(val)) {
-							params[nm] = val;
-							delete query[nm];
-
-						} else if (meta.paramsFromRoot !== false) {
-							params[nm] = rootState[nm];
-						}
-					}
-				}
-			}
-
-			return params;
 		};
 
 		if (currentPage && method !== 'replace') {
@@ -574,14 +542,50 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 			return res;
 		};
 
-		const extend = (p) => {
-			Object.mixin({deep: true, withUndef: true}, info, p ? rejectParams(f(p)) : undefined, rejectParams(params));
-		};
+		{
+			const p = current && current.page === info.page ? current : undefined;
+			Object.mixin({deep: true, withUndef: true}, info, p ? rejectParams(f(p)) : undefined, rejectParams(opts));
+		}
 
-		extend(current && current.page === info.page ? current : undefined);
+		const {
+			meta,
+			query,
+			params
+		} = info;
+
+		if (meta.paramsFromQuery !== false) {
+			const
+				paramsFromRoot = meta.paramsFromRoot !== false,
+				rootState = r.convertStateToRouter(undefined, 'remote');
+
+			for (let o = meta.params, i = 0; i < o.length; i++) {
+				const
+					key = o[i],
+					nm = key.name,
+					val = query[nm];
+
+				if (params[nm] == null) {
+					if (val != null && new RegExp(key.pattern).test(val)) {
+						params[nm] = val;
+						delete query[nm];
+
+					} else if (paramsFromRoot) {
+						params[nm] = rootState[nm];
+					}
+
+				} else {
+					delete query[nm];
+				}
+			}
+
+			if (paramsFromRoot) {
+				for (let keys = Object.keys(rootState), i = 0; i < keys.length; i++) {
+					delete query[keys[i]];
+				}
+			}
+		}
 
 		const
-			meta = info.meta,
 			nonWatchValues = {query: info.query, meta},
 			store = Object.assign(Object.create(nonWatchValues), Object.reject(info, Object.keys(nonWatchValues)));
 
@@ -609,7 +613,7 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 				method = 'replace';
 			}
 
-			await engine[method](info.toPath(getPageParams(info)), info);
+			await engine[method](info.toPath(info.params), info);
 
 			const f = (v) => {
 				const
