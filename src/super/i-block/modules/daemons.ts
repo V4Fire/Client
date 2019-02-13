@@ -140,7 +140,7 @@ export default class Daemons {
 			const asyncOptions = {
 				group: `daemons-${this.component.componentName}`,
 				label: `daemons-${name}`,
-				...daemon.asyncOptions || {}
+				...daemon.asyncOptions
 			};
 
 			if (asyncOptions.label === null) {
