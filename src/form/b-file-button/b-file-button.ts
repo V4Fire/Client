@@ -6,43 +6,16 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import symbolGenerator from 'core/symbol';
-import bButton, { component, prop, wait, ButtonType } from 'form/b-button/b-button';
-
+import bButton, { component, prop, wait } from 'form/b-button/b-button';
 export * from 'form/b-button/b-button';
-export class bUploaderError extends Error {}
-
-export interface Test {
-	(file: File): boolean;
-}
-
-export type ReadType =
-	'readAsArrayBuffer' |
-	'readAsBinaryString' |
-	'readAsBlob' |
-	'readAsDataURL' |
-	'readAsText';
-
-export const
-	$$ = symbolGenerator();
 
 @component()
 export default class bFileButton<T extends Dictionary = Dictionary> extends bButton<T> {
-	/** @override */
-	@prop(String)
-	readonly type: ButtonType<ReadType> = 'readAsBlob';
-
 	/**
 	 * Accept string
 	 */
 	@prop({type: String, required: false})
 	readonly accept?: string;
-
-	/**
-	 * Test function
-	 */
-	@prop({type: Function, required: false})
-	readonly test?: Test;
 
 	/** @override */
 	protected readonly $refs!: bButton['$refs'] & {
@@ -62,21 +35,9 @@ export default class bFileButton<T extends Dictionary = Dictionary> extends bBut
 	 *
 	 * @param e
 	 * @emits change(result: InputEvent.target.result)
-	 * @emits error(err: bUploaderError)
 	 */
-	protected onFileSelected(e: Event): void {
-		const
-			file = (<any>e.target).files[0],
-			reader = new FileReader(),
-			read = this.type;
-
-		if (this.test && !this.test(file)) {
-			this.emit('error', new bUploaderError('TEST_FAIL'));
-			return;
-		}
-
-		this.async.on(reader, 'load', (e) => this.emit('change', e.target.result));
-		reader[Object.isFunction(reader[read]) ? read : 'readAsBlob'](file);
+	protected onChange(e: Event): void {
+		this.emit('change', e);
 	}
 
 	/** @override */

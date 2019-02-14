@@ -12,13 +12,6 @@
 
 - template index() extends ['b-button'].index
 	/** @override */
-	- block buttonAttrs()
-		- return { &
-			':form': 'form',
-			'type': 'button'
-		} .
-
-	/** @override */
 	- block button()
 		- super
 
@@ -27,6 +20,5 @@
 			type = file |
 			:accept = accept |
 			:form = form |
-			@change = onFileSelected |
-			@click = onClick
+			@change = onChange
 		.
