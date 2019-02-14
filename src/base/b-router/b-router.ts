@@ -425,7 +425,7 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 			isEmptyOpts = !opts;
 
 		if (opts) {
-			opts = Object.fastClone(opts);
+			opts = Object.mixin(true, {}, opts);
 			isEmptyOpts = true;
 
 			for (let keys = Object.keys(opts), i = 0; i < keys.length; i++) {
