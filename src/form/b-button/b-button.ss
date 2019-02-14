@@ -16,7 +16,14 @@
 
 	- block body
 		- super
-		- block button(type = 'button')
+
+		/**
+		 * Returns an object with button attributes for the specified type
+		 *
+		 * @param {string=} [type]
+		 * @returns {!Object}
+		 */
+		- block buttonAttrs(type = 'button')
 			: buttonAttrs
 
 			- if type === 'a'
@@ -30,13 +37,20 @@
 					':type': 'type'
 				} .
 
+			- return buttonAttrs
+
+		/**
+		 * Generates a button markup for the specified type
+		 * @param {string=} [type]
+		 */
+		- block button(type = 'button')
 			< ${type}.&__button &
 				ref = button |
 				:class = setHint(hintPos) |
 				:autofocus = autofocus |
 				:-hint = t(hint) |
 				@click = onClick |
-				${buttonAttrs} |
+				${self.buttonAttrs(type)} |
 				${attrs|!html}
 			.
 

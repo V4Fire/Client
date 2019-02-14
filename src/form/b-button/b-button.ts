@@ -10,11 +10,12 @@ import bForm from 'form/b-form/b-form';
 import iData, { component, prop, ModsDecl, ModelMethods, RequestFilter } from 'super/i-data/i-data';
 export * from 'super/i-data/i-data';
 
-export type ButtonType =
+export type ButtonType<T extends string = any> =
 	'submit' |
 	'button' |
 	'image' |
-	'link';
+	'link' |
+	T;
 
 @component({
 	functional: {

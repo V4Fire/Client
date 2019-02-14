@@ -13,6 +13,14 @@
 - template index() extends ['i-static-page.component'].index
 	- block body
 		< b-v4-component-demo
+			< b-file-button &
+				v-func = false |
+				slot-scope = {ctx} |
+				@statusReady = ctx.debug
+			.
+				Some text
+
+		< b-v4-component-demo
 			< b-button &
 				v-func = false |
 				slot-scope = {ctx} |

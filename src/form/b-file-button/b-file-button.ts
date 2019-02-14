@@ -7,7 +7,7 @@
  */
 
 import symbolGenerator from 'core/symbol';
-import bButton, { component, prop, wait } from 'form/b-button/b-button';
+import bButton, { component, prop, wait, ButtonType } from 'form/b-button/b-button';
 
 export * from 'form/b-button/b-button';
 export class bUploaderError extends Error {}
@@ -28,11 +28,9 @@ export const
 
 @component()
 export default class bFileButton<T extends Dictionary = Dictionary> extends bButton<T> {
-	/**
-	 * Test function
-	 */
-	@prop({type: Function, required: false})
-	readonly test?: Test;
+	/** @override */
+	@prop(String)
+	readonly type: ButtonType<ReadType> = 'readAsBlob';
 
 	/**
 	 * Accept string
@@ -41,10 +39,10 @@ export default class bFileButton<T extends Dictionary = Dictionary> extends bBut
 	readonly accept?: string;
 
 	/**
-	 * Read type
+	 * Test function
 	 */
-	@prop(String)
-	read: ReadType = 'readAsDataURL';
+	@prop({type: Function, required: false})
+	readonly test?: Test;
 
 	/** @override */
 	protected readonly $refs!: bButton['$refs'] & {
@@ -69,7 +67,8 @@ export default class bFileButton<T extends Dictionary = Dictionary> extends bBut
 	protected onFileSelected(e: Event): void {
 		const
 			file = (<any>e.target).files[0],
-			reader = new FileReader();
+			reader = new FileReader(),
+			read = this.type;
 
 		if (this.test && !this.test(file)) {
 			this.emit('error', new bUploaderError('TEST_FAIL'));
@@ -77,20 +76,12 @@ export default class bFileButton<T extends Dictionary = Dictionary> extends bBut
 		}
 
 		this.async.on(reader, 'load', (e) => this.emit('change', e.target.result));
-		reader[this.read](file);
+		reader[Object.isFunction(reader[read]) ? read : 'readAsBlob'](file);
 	}
 
 	/** @override */
-	protected async mounted(): Promise<void> {
-		await super.mounted();
-
-		const {
-			file,
-			button
-		} = this.$refs;
-
-		this.async.on(button, 'click', () => file.click(), {
-			label: $$.activation
-		});
+	protected async onClick(e: Event): Promise<void> {
+		this.$refs.file.click();
+		this.emit('click', e);
 	}
 }
