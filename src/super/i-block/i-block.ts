@@ -2593,14 +2593,13 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	}
 
 	/**
-	 * Puts the component root element to the render stream
+	 * Puts the specified element to the render stream
+	 *
 	 * @param cb
+	 * @param [el]
 	 */
 	@wait('ready')
-	protected async putInStream(cb: (el: Element) => void): Promise<boolean> {
-		const
-			el = this.$el;
-
+	protected async putInStream(cb: (el: Element) => void, el: Element = this.$el): Promise<boolean> {
 		if (el.clientHeight) {
 			cb.call(this, el);
 			return false;
