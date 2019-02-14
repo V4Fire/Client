@@ -34,7 +34,7 @@ export default class bFileButton<T extends Dictionary = Dictionary> extends bBut
 	 * Handler: file change
 	 *
 	 * @param e
-	 * @emits change(result: InputEvent.target.result)
+	 * @emits change(result: InputEvent)
 	 */
 	protected onChange(e: Event): void {
 		this.emit('change', e);
