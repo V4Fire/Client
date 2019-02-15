@@ -10,65 +10,67 @@
 
 - include 'super/i-data'|b as placeholder
 
+- block index->headHelpers
+	- block list(value)
+		< ${listElTag}.&__el v-for = el in ${value}
+			< a &
+				:class = setHint(el.hintPos).concat(getElClasses({link: {
+					id: values[el.value],
+					active: isActive(el),
+					theme: el.theme,
+					hidden: el.hidden,
+					progress: el.progress
+				}})) |
+
+				:href = el.href |
+				:-hint = el.hint |
+					:-id = values[el.value]
+			.
+				- block preIcon
+					< span.&__cell.&__link-icon.&__link-pre-icon v-if = el.preIcon
+						< component.&__b-icon &
+							v-if = el.preIconComponent || el.preIconHint |
+							:instanceOf = bIcon |
+							:is = el.preIconComponent || 'b-icon' |
+							:value = el.preIcon |
+							:hint = el.preIconHint
+						.
+
+						< template v-else
+							+= self.gIcon(['el.preIcon'], {'g-icon': {}})
+
+				- block text
+					< span.&__cell.&__link-text v-if = !hideLabels
+						{{ t(el.label) }}
+
+				- block info
+					< span.&__cell.&__link-info v-if = db && el.info && getField('db.' + el.info)
+						{{ getField('db.' + el.info) }}
+
+				- block icon
+					< span.&__cell.&__link-icon.&__link-post-icon v-if = el.icon
+						< component.&__b-icon &
+							v-if = el.iconComponent || el.iconHint || hideLabels |
+							:instanceOf = bIcon |
+							:is = el.iconComponent || 'b-icon' |
+							:value = el.icon |
+							:hint = el.iconHint || (hideLabels ? t(el.label) : undefined)
+						.
+
+						< template v-else
+							+= self.gIcon(['el.icon'], {'g-icon': {}})
+
+				- block progress
+					< span.&__cell.&__link-icon.&__link-progress v-if = dataProvider
+						< b-progress-icon v-once
+
 - template index() extends ['i-data'].index
 	- overWrapper = false
+	- listTag = 'ul'
+	- listElTag = 'li'
 
 	- block body
 		- super
 
-		- listTag = 'ul'
-		- listElTag = 'li'
-
 		< ${listTag}.&__wrapper
-			- block list
-				< ${listElTag}.&__el v-for = (el, i) in value
-					< a &
-						:class = setHint(el.hintPos).concat(getElClasses({link: {
-							id: i,
-							active: isActive(el),
-							theme: el.theme,
-							hidden: el.hidden,
-							progress: el.progress
-						}})) |
-
-						:href = el.href |
-						:-hint = el.hint |
-						:-id = i
-					.
-						- block preIcon
-							< span.&__cell.&__link-icon.&__link-pre-icon v-if = el.preIcon
-								< component.&__b-icon &
-									v-if = el.preIconComponent || el.preIconHint |
-									:instanceOf = bIcon |
-									:is = el.preIconComponent || 'b-icon' |
-									:value = el.preIcon |
-									:hint = el.preIconHint
-								.
-
-								< template v-else
-									+= self.gIcon(['el.preIcon'], {'g-icon': {}})
-
-						- block text
-							< span.&__cell.&__link-text v-if = !hideLabels
-								{{ t(el.label) }}
-
-						- block info
-							< span.&__cell.&__link-info v-if = db && el.info && getField('db.' + el.info)
-								{{ getField('db.' + el.info) }}
-
-						- block icon
-							< span.&__cell.&__link-icon.&__link-post-icon v-if = el.icon
-								< component.&__b-icon &
-									v-if = el.iconComponent || el.iconHint || hideLabels |
-									:instanceOf = bIcon |
-									:is = el.iconComponent || 'b-icon' |
-									:value = el.icon |
-									:hint = el.iconHint || (hideLabels ? t(el.label) : undefined)
-								.
-
-								< template v-else
-									+= self.gIcon(['el.icon'], {'g-icon': {}})
-
-						- block progress
-							< span.&__cell.&__link-icon.&__link-progress v-if = dataProvider
-								< b-progress-icon v-once
+			+= self.list('value')
