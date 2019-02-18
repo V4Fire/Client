@@ -67,9 +67,9 @@ export default class bImage extends iMessage {
 	@wait('ready', {label: $$.initOverlay})
 	protected initOverlay(): void {
 		const
-			$r = this.$refs;
+			temp = this.tmp[this.src];
 
-		if (!this.tmp[this.src]) {
+		if (!temp) {
 			this.setMod('progress', true);
 
 			const img = new Image();
@@ -80,19 +80,24 @@ export default class bImage extends iMessage {
 				.then(() => this.onImageLoaded(img), this.onImageError);
 
 		} else {
-			$r.img.innerHTML = <string>this.tmp[this.src];
+			const
+				{img} = this.$refs;
+
+			img.innerHTML = <string>this.tmp[this.src];
 		}
 	}
 
 	/**
-	 * Caches and destroys an image image content
+	 * Caches and destroys an image content
 	 */
 	@hook('beforeDestroy')
 	protected destroyImage(): void {
-		if (this.$refs.img.innerHTML) {
-			this.tmp[this.src] = this.$refs.img.innerHTML;
+		const {img} = this.$refs;
+
+		if (img.innerHTML) {
+			this.tmp[this.src] = img.innerHTML;
 		}
 
-		this.$refs.img.innerHTML = '';
+		img.innerHTML = '';
 	}
 }
