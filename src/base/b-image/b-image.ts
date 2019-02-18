@@ -42,12 +42,14 @@ export default class bImage extends iMessage {
 
 	/**
 	 * Handler: image load error
+	 *
+	 * @param err
 	 * @emits loadError
 	 */
-	protected onImageError(): void {
+	protected onImageError(err: Error): void {
 		this.setMod('progress', false);
 		this.setMod('showError', true);
-		this.emit('loadError');
+		this.emit('loadError', err);
 	}
 
 	/** @override */
