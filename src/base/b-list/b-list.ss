@@ -18,6 +18,11 @@
 	- block headHelpers
 		- super
 
+	/**
+	 * Generates list block
+	 *
+	 * @param value - array of values
+	 */
 		- block list(value)
 			< ${listElTag}.&__el v-for = el in ${value}
 				< a &
