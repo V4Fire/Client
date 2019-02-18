@@ -82,7 +82,7 @@ export default class bImage extends iMessage {
 	}
 
 	/**
-	 * Caches and destroys an image content
+	 * Saves image content within a cache and destroy it
 	 */
 	@hook('beforeDestroy')
 	protected destroyImage(): void {
