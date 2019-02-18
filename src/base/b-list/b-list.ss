@@ -21,7 +21,7 @@
 		/**
 		 * Generates list block
 		 *
-		 * @param {Option[]} value - array of values
+		 * @param {Option[]} [value] - array of values
 		 */
 		- block list(value)
 			< ${listElTag}.&__el v-for = el in ${value}
