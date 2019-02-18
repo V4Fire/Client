@@ -7,8 +7,8 @@
  */
 
 import symbolGenerator from 'core/symbol';
-import iMessage, { component, prop, wait, hook, ModsDecl } from 'super/i-message/i-message';
-export * from 'super/i-block/i-block';
+import iMessage, { component, prop, wait, hook } from 'super/i-message/i-message';
+export * from 'super/i-message/i-message';
 
 export const
 	$$ = symbolGenerator();
@@ -20,12 +20,6 @@ export default class bImage extends iMessage {
 	 */
 	@prop({type: String, watch: {fn: 'initOverlay', immediate: true}})
 	readonly src!: string;
-
-	/**
-	 * Icon value for a broken state
-	 */
-	@prop(String)
-	readonly brokenIcon!: string;
 
 	/** @override */
 	protected readonly $refs!: {
@@ -65,11 +59,11 @@ export default class bImage extends iMessage {
 	 * Initializes an image loading process
 	 */
 	@wait('ready', {label: $$.initOverlay})
-	protected initOverlay(): void {
+	protected initOverlay(): CanPromise<void> {
 		const
-			temp = this.tmp[this.src];
+			tempSrc = <CanUndef<string>>this.tmp[this.src];
 
-		if (!temp) {
+		if (!tempSrc) {
 			this.setMod('progress', true);
 
 			const img = new Image();
@@ -79,12 +73,10 @@ export default class bImage extends iMessage {
 				.promise(img.init, {label: $$.loadImage})
 				.then(() => this.onImageLoaded(img), this.onImageError);
 
-		} else {
-			const
-				{img} = this.$refs;
-
-			img.innerHTML = <string>this.tmp[this.src];
+			return;
 		}
+
+		this.$refs.img.innerHTML = tempSrc;
 	}
 
 	/**
