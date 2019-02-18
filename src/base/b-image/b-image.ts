@@ -27,14 +27,6 @@ export default class bImage extends iMessage {
 	@prop(String)
 	readonly brokenIcon!: string;
 
-	/** @inheritDoc */
-	static readonly mods: ModsDecl = {
-		loading: [
-			'true',
-			'false'
-		]
-	};
-
 	/** @override */
 	protected readonly $refs!: {
 		img: HTMLImageElement;
@@ -47,7 +39,7 @@ export default class bImage extends iMessage {
 	 * @emits load
 	 */
 	protected onImageLoaded(img: HTMLImageElement): void {
-		this.setMod('loading', false);
+		this.setMod('progress', false);
 		this.setMod('showError', false);
 
 		this.$refs.img.insertAdjacentElement('afterbegin', img);
@@ -59,7 +51,7 @@ export default class bImage extends iMessage {
 	 * @emits loadError
 	 */
 	protected onImageError(): void {
-		this.setMod('loading', false);
+		this.setMod('progress', false);
 		this.setMod('showError', true);
 		this.emit('loadError');
 	}
@@ -78,7 +70,7 @@ export default class bImage extends iMessage {
 			$r = this.$refs;
 
 		if (!this.tmp[this.src]) {
-			this.setMod('loading', true);
+			this.setMod('progress', true);
 
 			const img = new Image();
 			img.src = this.src;
