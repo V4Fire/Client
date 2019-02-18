@@ -1510,15 +1510,25 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 		let
 			obj = this.$parent;
 
+		const
+			nm = this.componentName,
+			globalNm = (this.globalName || '').dasherize();
+
 		while (obj) {
 			if (obj.selfDispatching) {
 				obj.$emit(event, this, ...args);
+				obj.$emit(`on-${event}`, this, ...args);
+				obj.log(`event:${event}`, this, ...args);
 
 			} else {
-				obj.$emit(`${this.componentName}::${event}`, this, ...args);
+				obj.$emit(`${nm}::${event}`, this, ...args);
+				obj.$emit(`${nm}::on-${event}`, this, ...args);
+				obj.log(`event:${nm}::${event}`, this, ...args);
 
-				if (this.globalName) {
-					obj.$emit(`${this.globalName.dasherize()}::${event}`, this, ...args);
+				if (globalNm) {
+					obj.$emit(`${globalNm}::${event}`, this, ...args);
+					obj.$emit(`${globalNm}::on-${event}`, this, ...args);
+					obj.log(`event:${globalNm}::${event}`, this, ...args);
 				}
 			}
 
