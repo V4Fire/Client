@@ -20,7 +20,6 @@
 
 		/**
 		 * Generates list block
-		 *
 		 * @param {Option[]} [value] - array of values
 		 */
 		- block list(value)
