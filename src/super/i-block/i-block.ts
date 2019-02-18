@@ -908,6 +908,14 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 				$a = <Async>d.async;
 
 			return {
+				emit: (event, ...args) => {
+					if (!$e) {
+						return;
+					}
+
+					return $e.emit(event, ...args);
+				},
+
 				on: (event, fn, params, ...args) => {
 					if (!$e) {
 						return;
@@ -943,7 +951,7 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 		}
 	})
 
-	protected readonly rootEvent!: RemoteEvent<this>;
+	protected readonly rootEvent!: Event<this>;
 
 	/**
 	 * Parent event emitter
@@ -3774,7 +3782,7 @@ export abstract class iBlockDecorator extends iBlock {
 
 	public readonly localEvent!: Event<this>;
 	public readonly globalEvent!: Event<this>;
-	public readonly rootEvent!: RemoteEvent<this>;
+	public readonly rootEvent!: Event<this>;
 
 	public delegate(selector: string, handler?: Function): Function {
 		return () => ({});
