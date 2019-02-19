@@ -297,7 +297,7 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 						continue;
 					}
 
-					if (el.page === pageRef) {
+					if (el.page === pageRef || el.pattern === pageRef) {
 						byId = true;
 						obj = el;
 						break;
