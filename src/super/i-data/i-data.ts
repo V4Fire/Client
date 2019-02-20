@@ -772,7 +772,6 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 			req.then(then, (err) => {
 				this.onRequestError(err, () => this.createRequest<T>(method, data, params));
 				then();
-				throw err;
 			});
 		}
 
