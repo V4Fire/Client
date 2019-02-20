@@ -8,6 +8,9 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-module.exports = {
+const
+	config = include('config/default');
 
-};
+module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
+	__proto__: config
+});
