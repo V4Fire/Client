@@ -100,10 +100,16 @@ function saveColorsKit(kit, nm) {
  * Picks an rgba color from the specified hex string
  *
  * @param {string} str - hex value
+ * @param {?Object} meta - additional info
  * @returns {string}
  */
-function pickColor(str) {
-	return new stylus.Parser(str).peek().val;
+function pickColor(str, meta = {}) {
+	try {
+		return new stylus.Parser(str).peek().val;
+
+	} catch {
+		throw new Error(`Can't find a color with the hex value ${str}. Additional info ${JSON.stringify(meta)}`);
+	}
 }
 
 module.exports = function (style) {
@@ -178,7 +184,8 @@ module.exports = function (style) {
 			hue = hueInput.string || hueInput.name,
 			num = numInput.string || numInput.val,
 			reserved = reservedInput && reservedInput.val || false,
-			base = baseInput && baseInput.val || false;
+			base = baseInput && baseInput.val || false,
+			meta = {hue, num, reserved, base};
 
 		let
 			col = GLOBAL.kits[hue],
@@ -186,7 +193,7 @@ module.exports = function (style) {
 
 		if (!base) {
 			if (col && (reserved && col[0][num - 1] || col[num])) {
-				return reserved ? pickColor(col[0][num - 1]) : pickColor(col[num]);
+				return reserved ? pickColor(col[0][num - 1], meta) : pickColor(col[num], meta);
 			}
 
 			$C(dependencies).some((el) => {
@@ -216,6 +223,6 @@ module.exports = function (style) {
 			}
 		}
 
-		return pickColor(res);
+		return pickColor(res, meta);
 	});
 };
