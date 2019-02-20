@@ -12,7 +12,7 @@ import { session } from 'core/kv-storage';
 
 import { toQueryString } from 'core/url';
 import { EventEmitter2 as EventEmitter } from 'eventemitter2';
-import { Router, CurrentPage, PageInfo, HistoryCleanFn } from 'base/b-router/drivers/interface';
+import { Router, CurrentPage, PageInfo, HistoryCleanFilter } from 'base/b-router/drivers/interface';
 
 export const
 	$$ = symbolGenerator();
@@ -230,7 +230,7 @@ export default function createRouter(ctx: bRouter): Router {
 			history.back();
 		},
 
-		async clean(fn?: HistoryCleanFn): Promise<void> {
+		async clean(fn?: HistoryCleanFilter): Promise<void> {
 			$a.muteEventListeners(popstate);
 			truncateHistoryLog();
 

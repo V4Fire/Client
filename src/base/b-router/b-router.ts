@@ -18,7 +18,7 @@ import engine from 'base/b-router/drivers';
 import symbolGenerator from 'core/symbol';
 
 import { concatUrls } from 'core/url';
-import { Router, BasePageMeta, PageSchema, CurrentPage } from 'base/b-router/drivers/interface';
+import { Router, BasePageMeta, PageSchema, CurrentPage, HistoryCleanFilter } from 'base/b-router/drivers/interface';
 import iData, { component, prop, system, hook, watch, p } from 'super/i-data/i-data';
 
 export * from 'super/i-data/i-data';
@@ -209,7 +209,7 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 	}
 
 	/**
-	 * Pushes a new transition to router
+	 * Pushes a new transition to the history
 	 *
 	 * @param page
 	 * @param [opts] - additional transition options
@@ -219,7 +219,7 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 	}
 
 	/**
-	 * Replaces the current transition to a new
+	 * Replaces the current transition from the history to a new
 	 *
 	 * @param page
 	 * @param [opts] - additional transition options
@@ -229,25 +229,42 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 	}
 
 	/**
-	 * Router.back
+	 * Loads a page from the history, identified by its relative position to the current page
+	 * (with the current page being relative index 0)
+	 *
+	 * @param pos
 	 */
-	back(): void {
-		this.engine.back();
+	go(pos: number): void {
+		this.engine.go(pos);
 	}
 
 	/**
-	 * Router.forward
+	 * Moves forward through the history
 	 */
 	forward(): void {
 		this.engine.forward();
 	}
 
 	/**
-	 * Router.go
-	 * @param pos
+	 * Moves backward through the history
 	 */
-	go(pos: number): void {
-		this.engine.go(pos);
+	back(): void {
+		this.engine.back();
+	}
+
+	/**
+	 * Cleans the history session: if specified filter, then all matched transitions will be cleared
+	 * @param [filter]
+	 */
+	clean(filter?: HistoryCleanFilter): Promise<void> {
+		return this.engine.clean(filter);
+	}
+
+	/**
+	 * Cleans temporary history transitions
+	 */
+	cleanTmp(): Promise<void> {
+		return this.engine.cleanTmp();
 	}
 
 	/**
@@ -459,7 +476,13 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 					}
 
 					if (data && obj != null) {
-						data[key] = String(obj);
+						// tslint:disable-next-line:prefer-conditional-expression
+						if ({true: true, false: true}[obj]) {
+							data[key] = Object.isString(obj) ? Object.parse(obj) : obj;
+
+						} else {
+							data[key] = isNaN(obj) ? String(obj) : Number(obj);
+						}
 					}
 				};
 

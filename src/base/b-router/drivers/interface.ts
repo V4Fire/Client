@@ -58,7 +58,7 @@ export interface PageInfo extends Dictionary {
 	meta?: Dictionary;
 }
 
-export interface HistoryCleanFn {
+export interface HistoryCleanFilter {
 	(page: PageInfo): unknown;
 }
 
@@ -76,6 +76,6 @@ export interface Router<
 	go(pos: number): void;
 	forward(): void;
 	back(): void;
-	clean(fn?: HistoryCleanFn): Promise<void>;
+	clean(filter?: HistoryCleanFilter): Promise<void>;
 	cleanTmp(): Promise<void>;
 }
