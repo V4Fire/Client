@@ -2333,24 +2333,36 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	/**
 	 * Puts the specified parameters to log
 	 *
-	 * @param contextOrOptions - logging context
+	 * @param ctxOrOpts - log context or log options (logLevel, context)
 	 * @param [details]
 	 */
-	protected log(contextOrOptions: string | LogMessageOptions, ...details: unknown[]): void {
+	protected log(ctxOrOpts: string | LogMessageOptions, ...details: unknown[]): void {
 		let
-			context = contextOrOptions,
+			context = ctxOrOpts,
 			logLevel;
 
-		if (!Object.isString(contextOrOptions)) {
-			logLevel = contextOrOptions.logLevel;
-			context = contextOrOptions.context;
+		if (!Object.isString(ctxOrOpts)) {
+			logLevel = ctxOrOpts.logLevel;
+			context = ctxOrOpts.context;
 		}
 
-		log({context: ['component', context, this.componentName].join(':'), logLevel}, ...details, this);
+		log(
+			{
+				context: ['component', context, this.componentName].join(':'),
+				logLevel
+			},
+
+			...details,
+			this
+		);
 
 		if (this.globalName) {
 			log(
-				{context: ['component:global', this.globalName, context, this.componentName].join(':'), logLevel},
+				{
+					context: ['component:global', this.globalName, context, this.componentName].join(':'),
+					logLevel
+				},
+
 				...details,
 				this
 			);
@@ -3090,12 +3102,12 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	 * @param [value] - label value (will saved in the cache only if true)
 	 */
 	protected ifOnce(label: unknown, value: boolean = false): 0 | 1 | 2 {
-		if (this.ifOnceStore[<string>label]) {
+		if (this.ifOnceStore[String(label)]) {
 			return 2;
 		}
 
 		if (value) {
-			return this.ifOnceStore[<string>label] = 1;
+			return this.ifOnceStore[String(label)] = 1;
 		}
 
 		return 0;
@@ -3322,10 +3334,11 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 
 		const
 			key = JSON.stringify(classes),
-			cache = classesCache.create('base');
+			cache = classesCache.create('base'),
+			cacheVal = cache[key];
 
-		if (cache[key]) {
-			return <Readonly<Dictionary<string>>>cache[key];
+		if (cacheVal) {
+			return <Readonly<Dictionary<string>>>cacheVal;
 		}
 
 		const
