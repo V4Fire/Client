@@ -662,7 +662,8 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 					continue;
 				}
 
-				res[key] = (<ComponentElement>el).component || <Element>el;
+				const component = (<ComponentElement>el).component;
+				res[key] = component && (<iBlock>component).$el === el ? component : <Element>el;
 			}
 		}
 
@@ -3773,7 +3774,7 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	 */
 	protected beforeDestroy(): void {
 		this.componentStatus = 'destroyed';
-		this.async.clearAll();
+		this.async.clearAll().locked = true;
 		delete (<StrictDictionary<any>>classesCache).dict.els[this.componentId];
 	}
 }

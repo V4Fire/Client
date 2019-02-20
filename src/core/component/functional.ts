@@ -106,7 +106,11 @@ export function createFakeCtx(
 		$createElement: createElement,
 
 		$destroy(): void {
-			$a.clearAll();
+			if (fakeCtx.componentStatus === 'destroyed') {
+				return;
+			}
+
+			$a.clearAll().locked = true;
 
 			const
 				hooks = $normalParent.meta.hooks;
@@ -444,11 +448,24 @@ export function patchVNode(vNode: VNode, ctx: Dictionary<any>, renderCtx: Render
 		}
 
 		const
-			el = ctx.$el,
+			el = ctx.$el;
+
+		let
 			oldCtx = el.component;
 
 		if (oldCtx === ctx) {
 			return;
+		}
+
+		if (oldCtx) {
+			if (oldCtx === ctx) {
+				return;
+			}
+
+			if (ctx.componentName !== oldCtx.componentName) {
+				oldCtx = undefined;
+				delete el.component;
+			}
 		}
 
 		if (oldCtx) {
