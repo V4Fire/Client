@@ -2333,21 +2333,27 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	/**
 	 * Puts the specified parameters to log
 	 *
-	 * @param key - log key or log message options
+	 * @param contextOrOptions - logging context
 	 * @param [details]
 	 */
-	protected log(key: string | LogMessageOptions, ...details: unknown[]): void {
-		let type;
+	protected log(contextOrOptions: string | LogMessageOptions, ...details: unknown[]): void {
+		let
+			context = contextOrOptions,
+			logLevel;
 
-		if (!Object.isString(key)) {
-			type = key.type;
-			key = key.key;
+		if (!Object.isString(contextOrOptions)) {
+			logLevel = contextOrOptions.logLevel;
+			context = contextOrOptions.context;
 		}
 
-		log({key: ['component', key, this.componentName].join(':'), type}, ...details, this);
+		log({context: ['component', context, this.componentName].join(':'), logLevel}, ...details, this);
 
 		if (this.globalName) {
-			log({key: ['component:global', this.globalName, key, this.componentName].join(':'), type}, ...details, this);
+			log(
+				{context: ['component:global', this.globalName, context, this.componentName].join(':'), logLevel},
+				...details,
+				this
+			);
 		}
 	}
 
