@@ -317,7 +317,8 @@ export default function createRouter(ctx: bRouter): Router {
 		},
 
 		cleanTmp(): Promise<void> {
-			return this.clean((el) => el.params.tmp || el.query.tmp || el.meta.tmp);
+			return this.clean((el) =>
+				el.params && el.params.tmp || el.query && el.query.tmp || el.meta && el.meta.tmp);
 		}
 	});
 
