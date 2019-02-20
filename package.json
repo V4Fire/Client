@@ -27,7 +27,7 @@
   "dependencies": {
     "@types/socket.io": "^1.4.40",
     "@types/socket.io-client": "^1.4.32",
-    "@v4fire/core": "^2.0.0-beta.46",
+    "@v4fire/core": "^2.0.0-beta.47",
     "babel-polyfill": "^6.26.0",
     "collection.js": "^6.6.27",
     "escaper": "^2.4.34",
