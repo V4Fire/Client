@@ -100,7 +100,7 @@ function saveColorsKit(kit, nm) {
  * Picks an rgba color from the specified hex string
  *
  * @param {string} str - hex value
- * @param {?Object} meta - additional info
+ * @param {Object=} [meta] - additional info
  * @returns {string}
  */
 function pickColor(str, meta = {}) {
