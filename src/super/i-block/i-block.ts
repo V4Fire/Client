@@ -1435,9 +1435,9 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 					l = [path, el].join('.');
 
 				if (!linksCache.get(l)) {
-					const getVal = (val?) => val || this.getField(<string>el);
+					const getVal = (val?) => val || this.getField(el);
 					attachWatcher(el, l, getVal);
-					cursor[<string>el] = getVal();
+					cursor[el] = getVal();
 				}
 			}
 		}
