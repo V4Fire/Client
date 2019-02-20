@@ -11,6 +11,6 @@
 const
 	config = include('config/default');
 
-module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
+module.exports = config.createConfig({dirs: [__dirname], mod: '@super/config/development'}, {
 	__proto__: config
 });

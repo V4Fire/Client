@@ -11,12 +11,8 @@
 const
 	config = include('config/default');
 
-module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
+module.exports = config.createConfig({dirs: [__dirname], mod: '@super/config/production'}, {
 	__proto__: config,
-
-	api: {
-		proxy: false
-	},
 
 	externals: {
 		'raven-js': 'Raven'
