@@ -186,7 +186,7 @@ export default class iMessage extends iBlock {
 		this.bindModTo('showInfo', 'infoMsg');
 		this.bindModTo('showError', 'errorMsg');
 
-		this.localEvent.on('block.mod.*.focused.*', (e) => {
+		this.localEvent.on('block.mod.*.opened.*', (e) => {
 			this.emit(e.value === 'false' || e.type === 'remove' ? 'close' : 'open');
 		});
 	}
