@@ -163,7 +163,11 @@ export function createFakeCtx<T extends Dictionary = FunctionalCtx>(
 		},
 
 		$destroy(): void {
-			$a.clearAll();
+			if (fakeCtx.componentStatus === 'destroyed') {
+				return;
+			}
+
+			$a.clearAll().locked = true;
 
 			if ($normalParent) {
 				const
@@ -487,11 +491,20 @@ export function patchVNode(vNode: VNode, ctx: Dictionary<any>, renderCtx: Render
 		}
 
 		const
-			el = ctx.$el,
+			el = ctx.$el;
+
+		let
 			oldCtx = el.component;
 
-		if (oldCtx === ctx) {
-			return;
+		if (oldCtx) {
+			if (oldCtx === ctx) {
+				return;
+			}
+
+			if (ctx.componentName !== oldCtx.componentName) {
+				oldCtx = undefined;
+				delete el.component;
+			}
 		}
 
 		addDirectives(<any>ctx, el, data, data.directives);

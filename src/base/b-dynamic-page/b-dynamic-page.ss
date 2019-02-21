@@ -31,7 +31,7 @@
 				? keepAliveAttrs[':exclude'] = 'exclude'
 
 			< ${keepAlive ? 'keep-alive' : '?'} ${keepAliveAttrs}
-				< component &
+				< component.&__component &
 					ref = component |
 					:instanceOf = iDynamicPage |
 					:is = page |

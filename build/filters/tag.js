@@ -19,6 +19,7 @@ const
 	isLiteral = /^\s*[[{]/,
 	isSvgRequire = /require\(.*?\.svg[\\"']+\)/,
 	isV4Prop = /^(:|@|v-)/,
+	isStaticV4Prop = /^[^[]+$/,
 	commaRgxp = /\s*,\s*/;
 
 const isRef = {
@@ -100,7 +101,7 @@ module.exports = [
 					}
 				});
 
-			} else {
+			} else if (isStaticV4Prop.test(key)) {
 				const
 					tmp = key[0] === ':' ? dasherize(key) : key.dasherize();
 

@@ -11,11 +11,14 @@
 - include 'form/b-button'|b as placeholder
 
 - template index() extends ['b-button'].index
+	/** @override */
 	- block button()
 		- super
+
 		< input.&__file &
 			ref = file |
 			type = file |
 			:accept = accept |
-			@change = onFileSelected
+			:form = form |
+			@change = onChange
 		.

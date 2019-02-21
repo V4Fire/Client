@@ -8,6 +8,31 @@
 
 @import "nib/reset"
 
+/**
+ * Generates rules for input css reset
+ */
+reset-input()
+	reset-box-model()
+
+	display inline-block
+	box-sizing border-box
+
+	vertical-align middle
+	text-align left
+	text-decoration none
+	text-indent 0
+
+	white-space normal
+	font-weight normal
+	font-family BASE_FONT
+	line-height 1
+
+	border-spacing 0
+	background-color transparent
+
+	&:focus
+		outline 0
+
 html, body, div, span, applet, object, iframe,
 h1, h2, h3, h4, h5, h6, p, blockquote, pre,
 a, abbr, acronym, address, big, cite, code,
@@ -30,7 +55,7 @@ caption, th, td
 
 a, .a
 	img
-		border none
+		border 0
 
 html
 	font-family BASE_FONT
@@ -38,5 +63,5 @@ html
 reset-html5()
 
 .a
-	resetButton()
+	reset-input()
 	cursor pointer

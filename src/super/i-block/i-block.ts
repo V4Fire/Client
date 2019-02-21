@@ -692,7 +692,8 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 					continue;
 				}
 
-				res[key] = (<ComponentElement>el).component || <Element>el;
+				const component = (<ComponentElement>el).component;
+				res[key] = component && (<iBlock>component).$el === el ? component : <Element>el;
 			}
 		}
 
@@ -938,6 +939,14 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 				$a = <Async>d.async;
 
 			return {
+				emit: (event, ...args) => {
+					if (!$e) {
+						return;
+					}
+
+					return $e.emit(event, ...args);
+				},
+
 				on: (event, fn, params, ...args) => {
 					if (!$e) {
 						return;
@@ -973,7 +982,7 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 		}
 	})
 
-	protected readonly rootEvent!: RemoteEvent<this>;
+	protected readonly rootEvent!: Event<this>;
 
 	/**
 	 * Parent event emitter
@@ -1214,10 +1223,24 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	): void {
 		this.execCbAfterCreated(() => {
 			const
-				p = params || {};
+				p = params || {},
+				fork = (obj) => Object.mixin(true, undefined, obj);
+
+			let
+				oldVal: unknown = fork(this.getField(Object.isFunction(exprOrFn) ? exprOrFn.call(this) : exprOrFn));
 
 			const watchParams = {
-				handler: cb,
+				handler(val: unknown, defOldVal: unknown): unknown {
+					if (val !== defOldVal) {
+						oldVal = defOldVal;
+						return cb.call(this, val, defOldVal);
+					}
+
+					const res = cb.call(this, val, oldVal);
+					oldVal = fork(val);
+					return res;
+				},
+
 				deep: p.deep,
 				immediate: p.immediate
 			};
@@ -1284,23 +1307,23 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 		if (!(path in this.linksCache)) {
 			this.linksCache[path] = {};
 
+			const sync = (val?, oldVal?) => {
+				val = val !== undefined ? val : this.getField(<string>field);
+
+				const
+					res = wrapper ? wrapper.call(this, val, oldVal) : val;
+
+				this.setField(path, res);
+				return res;
+			};
+
 			this.watch(field, async (val, oldVal) => {
 				if (Object.fastCompare(val, oldVal) || Object.fastCompare(val, this.getField(path))) {
 					return;
 				}
 
-				this.setField(path, wrapper ? wrapper.call(this, val, oldVal) : val);
+				sync(val, oldVal);
 			}, params);
-
-			const sync = (val?) => {
-				val = val || this.getField(<string>field);
-
-				const
-					res = wrapper ? wrapper.call(this, val) : val;
-
-				this.setField(path, res);
-				return res;
-			};
 
 			// tslint:disable-next-line:prefer-object-spread
 			cache[field] = Object.assign(cache[field] || {}, {
@@ -1408,16 +1431,16 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 		const attachWatcher = (field, path, getVal) => {
 			Object.set(linksCache, path, true);
 
+			const
+				sync = (val?, oldVal?) => setField(path, getVal(val, oldVal));
+
 			this.watch(field, (val, oldVal) => {
 				if (Object.fastCompare(val, oldVal) || Object.fastCompare(val, this.getField(path))) {
 					return;
 				}
 
-				setField(path, val);
+				sync(val, oldVal);
 			}, <AsyncWatchOpts>params);
-
-			const
-				sync = (val?) => setField(path, getVal(val));
 
 			// tslint:disable-next-line:prefer-object-spread
 			syncLinkCache[field] = Object.assign(syncLinkCache[field] || {}, {
@@ -1457,9 +1480,9 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 					l = [path, el[0]].join('.');
 
 				if (!Object.get(linksCache, l)) {
-					const getVal = (val?) => {
+					const getVal = (val?, oldVal?) => {
 						val = val || this.getField(field);
-						return wrapper ? wrapper.call(this, val) : val;
+						return wrapper ? wrapper.call(this, val, oldVal) : val;
 					};
 
 					attachWatcher(field, l, getVal);
@@ -1568,15 +1591,25 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 		let
 			obj = this.$parent;
 
+		const
+			nm = this.componentName,
+			globalNm = (this.globalName || '').dasherize();
+
 		while (obj) {
 			if (obj.selfDispatching) {
 				obj.$emit(event, this, ...args);
+				obj.$emit(`on-${event}`, this, ...args);
+				obj.log(`event:${event}`, this, ...args);
 
 			} else {
-				obj.$emit(`${this.componentName}::${event}`, this, ...args);
+				obj.$emit(`${nm}::${event}`, this, ...args);
+				obj.$emit(`${nm}::on-${event}`, this, ...args);
+				obj.log(`event:${nm}::${event}`, this, ...args);
 
-				if (this.globalName) {
-					obj.$emit(`${this.globalName.dasherize()}::${event}`, this, ...args);
+				if (globalNm) {
+					obj.$emit(`${globalNm}::${event}`, this, ...args);
+					obj.$emit(`${globalNm}::on-${event}`, this, ...args);
+					obj.log(`event:${globalNm}::${event}`, this, ...args);
 				}
 			}
 
@@ -1954,19 +1987,24 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 		if (!this.isActivated || force) {
 			this.initStateFromRouter();
 			this.execCbAfterCreated(() => this.rootEvent.on('onTransition', async (route, type) => {
-				if (type === 'hard') {
-					if (route !== this.r.route) {
-						await this.rootEvent.promisifyOnce('setRoute', {
-							label: $$.activateAfterTransition
-						});
+				try {
+					if (type === 'hard') {
+						if (route !== this.r.route) {
+							await this.rootEvent.promisifyOnce('setRoute', {
+								label: $$.activateAfterTransition
+							});
 
-					} else {
-						await this.nextTick({label: $$.activateAfterHardChange});
+						} else {
+							await this.nextTick({label: $$.activateAfterHardChange});
+						}
 					}
-				}
 
-				if (!{destroyed: true, inactive: true}[this.componentStatus]) {
-					this.initStateFromRouter();
+					if (!{destroyed: true, inactive: true}[this.componentStatus]) {
+						this.initStateFromRouter();
+					}
+
+				} catch (err) {
+					stderr(err);
 				}
 
 			}, {
@@ -2398,21 +2436,39 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	/**
 	 * Puts the specified parameters to log
 	 *
-	 * @param key - log key or log message options
+	 * @param ctxOrOpts - log context or log options (logLevel, context)
 	 * @param [details]
 	 */
-	protected log(key: string | LogMessageOptions, ...details: unknown[]): void {
-		let type;
+	protected log(ctxOrOpts: string | LogMessageOptions, ...details: unknown[]): void {
+		let
+			context = ctxOrOpts,
+			logLevel;
 
-		if (!Object.isString(key)) {
-			type = key.type;
-			key = key.key;
+		if (!Object.isString(ctxOrOpts)) {
+			logLevel = ctxOrOpts.logLevel;
+			context = ctxOrOpts.context;
 		}
 
-		log({key: ['component', key, this.componentName].join(':'), type}, ...details, this);
+		log(
+			{
+				context: ['component', context, this.componentName].join(':'),
+				logLevel
+			},
+
+			...details,
+			this
+		);
 
 		if (this.globalName) {
-			log({key: ['component:global', this.globalName, key, this.componentName].join(':'), type}, ...details, this);
+			log(
+				{
+					context: ['component:global', this.globalName, context, this.componentName].join(':'),
+					logLevel
+				},
+
+				...details,
+				this
+			);
 		}
 	}
 
@@ -2691,14 +2747,13 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	}
 
 	/**
-	 * Puts the component root element to the render stream
+	 * Puts the specified element to the render stream
+	 *
 	 * @param cb
+	 * @param [el]
 	 */
 	@wait('ready')
-	protected async putInStream(cb: (el: Element) => void): Promise<boolean> {
-		const
-			el = this.$el;
-
+	protected async putInStream(cb: (el: Element) => void, el: Element = this.$el): Promise<boolean> {
 		if (el.clientHeight) {
 			cb.call(this, el);
 			return false;
@@ -3195,12 +3250,12 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	 * @param [value] - label value (will saved in the cache only if true)
 	 */
 	protected ifOnce(label: unknown, value: boolean = false): 0 | 1 | 2 {
-		if (this.ifOnceStore[<string>label]) {
+		if (this.ifOnceStore[String(label)]) {
 			return 2;
 		}
 
 		if (value) {
-			return this.ifOnceStore[<string>label] = 1;
+			return this.ifOnceStore[String(label)] = 1;
 		}
 
 		return 0;
@@ -3929,7 +3984,7 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	 */
 	protected beforeDestroy(): void {
 		this.componentStatus = 'destroyed';
-		this.async.clearAll();
+		this.async.clearAll().locked = true;
 
 		if (classesCache.dict && classesCache.dict.els) {
 			delete classesCache.dict.els[this.componentId];
@@ -3955,7 +4010,7 @@ export abstract class iBlockDecorator extends iBlock {
 
 	public readonly localEvent!: Event<this>;
 	public readonly globalEvent!: Event<this>;
-	public readonly rootEvent!: RemoteEvent<this>;
+	public readonly rootEvent!: Event<this>;
 
 	public delegate(selector: string, handler?: Function): Function {
 		return () => ({});

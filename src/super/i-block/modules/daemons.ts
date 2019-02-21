@@ -19,12 +19,18 @@ export interface DaemonWatchObject extends WatchOptions {
 
 export type DaemonWatcher = DaemonWatchObject | string;
 
+export interface DaemonsAsyncOpts {
+	label?: Nullable<AsyncOpts['label']>;
+	group?: AsyncOpts['group'];
+	join?: AsyncOpts['join'];
+}
+
 export interface Daemon {
 	hook?: Hooks[];
 	watch?: DaemonWatcher[];
 	wait?: Statuses;
 	immediate?: boolean;
-	asyncOptions?: AsyncOpts;
+	asyncOptions?: DaemonsAsyncOpts;
 	wrappedFn?: Function;
 	fn: Function;
 }
@@ -33,7 +39,7 @@ export interface DaemonSpawnedObj {
 	fn: Function;
 	wait?: Statuses;
 	immediate?: boolean;
-	asyncOptions?: AsyncOpts;
+	asyncOptions?: DaemonsAsyncOpts;
 }
 
 export type SpawnedDaemon = DaemonSpawnedObj | Function;
@@ -128,14 +134,18 @@ export default class Daemons {
 		}
 
 		const
-			asyncOptions = daemon.asyncOptions || {},
 			fn = daemon.wrappedFn || daemon.fn;
 
 		if (daemon.immediate !== false) {
-			Object.assign(asyncOptions, {
+			const asyncOptions = {
 				group: `daemons-${this.component.componentName}`,
-				label: `daemons-${name}`
-			});
+				label: `daemons-${name}`,
+				...daemon.asyncOptions
+			};
+
+			if (asyncOptions.label === null) {
+				delete asyncOptions.label;
+			}
 
 			$a.setImmediate(() => fn.apply(ctx, args), asyncOptions);
 

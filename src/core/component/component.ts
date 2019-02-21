@@ -207,7 +207,7 @@ export function getComponent(
 		beforeDestroy(): void {
 			runHook('beforeDestroy', this.meta, this).catch(stderr);
 			callMethod(this, 'beforeDestroy');
-			this.$async.clearAll();
+			this.$async.clearAll().locked = true;
 		},
 
 		destroyed(): void {

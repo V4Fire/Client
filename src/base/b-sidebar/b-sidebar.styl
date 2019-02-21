@@ -16,7 +16,7 @@ $p = {
 
 b-sidebar extends i-data
 	fixed top 0 left 0
-	zIndex(modal)
+	z-index-pos modal
 
 	&
 	&__content
@@ -37,7 +37,7 @@ b-sidebar extends i-data
 
 	if $p.overlayBg
 		&__over-wrapper
-			zIndex(layer)
+			z-index-pos layer
 			background $p.overlayBg
 			opacity 0
 

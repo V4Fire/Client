@@ -7,39 +7,19 @@
  */
 
 import symbolGenerator from 'core/symbol';
-import iBlock, { component, prop, wait, ModsDecl } from 'super/i-block/i-block';
-export * from 'super/i-block/i-block';
+import iMessage, { component, prop, wait, hook } from 'super/i-message/i-message';
+export * from 'super/i-message/i-message';
 
 export const
 	$$ = symbolGenerator();
 
 @component({functional: true})
-export default class bImage extends iBlock {
+export default class bImage extends iMessage {
 	/**
 	 * Target image src
 	 */
 	@prop({type: String, watch: {fn: 'initOverlay', immediate: true}})
 	readonly src!: string;
-
-	/**
-	 * Show lazy overlay if true
-	 */
-	@prop({type: Boolean, watch: 'initOverlay'})
-	readonly load: boolean = false;
-
-	/**
-	 * Icon value for a broken state
-	 */
-	@prop(String)
-	readonly brokenIcon: string = 'damaged';
-
-	/** @inheritDoc */
-	static readonly mods: ModsDecl = {
-		hideImage: [
-			'true',
-			['false']
-		]
-	};
 
 	/** @override */
 	protected readonly $refs!: {
@@ -48,56 +28,70 @@ export default class bImage extends iBlock {
 
 	/**
 	 * Handler: image loaded
+	 *
+	 * @param img
 	 * @emits load
 	 */
-	protected onImageLoaded(): void {
-		this.setMod('loading', false);
-		this.tmp[this.src] = true;
+	protected onImageLoaded(img: HTMLImageElement): void {
+		this.setMod('progress', false);
+		this.setMod('showError', false);
+
+		this.$refs.img.insertAdjacentElement('afterbegin', img);
 		this.emit('load');
 	}
 
 	/**
 	 * Handler: image load error
+	 *
+	 * @param err
 	 * @emits loadError
 	 */
-	protected onImageError(): void {
-		this.setMod('error', true);
-		this.emit('loadError');
-	}
-
-	/**
-	 * Initializes overlay, that shown during the image loading process
-	 */
-	@wait('ready', {label: $$.initOverlay, defer: true})
-	protected async initOverlay(): Promise<void> {
-		if (this.load && !this.tmp[this.src]) {
-			await this.setMod('disabled', false);
-			await this.setMod('loading', true);
-			await this.waitRef('img');
-
-			const
-				{async: $a} = this,
-				{img} = this.$refs,
-				{width, height} = img;
-
-			if (width || height) {
-				this.onImageLoaded();
-
-			} else {
-				$a.on(img, 'load', this.onImageLoaded, {
-					label: $$.imgLoad
-				});
-
-				$a.on(img, 'error', this.onImageError, {
-					label: $$.imgLoad
-				});
-			}
-		}
+	protected onImageError(err: Error): void {
+		this.setMod('progress', false);
+		this.setMod('showError', true);
+		this.emit('loadError', err);
 	}
 
 	/** @override */
-	protected initModEvents(): void {
-		super.initModEvents();
-		this.bindModTo('disabled', 'load');
+	protected initCloseHelpers(): void {
+		return;
+	}
+
+	/**
+	 * Initializes an image loading process
+	 */
+	@wait('ready', {label: $$.initOverlay})
+	protected initOverlay(): CanPromise<void> {
+		const
+			tempSrc = <CanUndef<string>>this.tmp[this.src];
+
+		if (!tempSrc) {
+			this.setMod('progress', true);
+
+			const img = new Image();
+			img.src = this.src;
+
+			this.async
+				.promise(img.init, {label: $$.loadImage})
+				.then(() => this.onImageLoaded(img), this.onImageError);
+
+			return;
+		}
+
+		this.$refs.img.innerHTML = tempSrc;
+	}
+
+	/**
+	 * Saves image content within a cache and destroy it
+	 */
+	@hook('beforeDestroy')
+	protected destroyImage(): void {
+		const {img} = this.$refs;
+
+		if (img.innerHTML) {
+			this.tmp[this.src] = img.innerHTML;
+		}
+
+		img.innerHTML = '';
 	}
 }

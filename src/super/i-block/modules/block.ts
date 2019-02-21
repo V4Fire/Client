@@ -201,17 +201,34 @@ export default class Block {
 		value = String(value).dasherize();
 
 		const
-			{mods, node} = this,
+			{mods, node} = this;
+
+		const
+			initSetMod = reason === 'initSetMod',
 			prev = this.getMod(name);
 
 		if (prev !== value) {
-			this.removeMod(name, undefined, 'setMod');
+			let
+				domPrev,
+				needSync = false;
+
+			if (initSetMod) {
+				domPrev = this.getMod(name, true);
+				needSync = domPrev !== value;
+			}
+
+			if (needSync) {
+				this.removeMod(name, domPrev, 'initSetMod');
+
+			} else if (!initSetMod) {
+				this.removeMod(name, undefined, 'setMod');
+			}
 
 			if (mods) {
 				mods[name] = <string>value;
 			}
 
-			if (reason !== 'initSetMod' && node) {
+			if (node && (!initSetMod || needSync)) {
 				node.classList.add(this.getFullBlockName(name, value));
 			}
 
@@ -244,7 +261,7 @@ export default class Block {
 
 		const
 			{mods, node} = this,
-			current = this.getMod(name);
+			current = this.getMod(name, reason === 'initSetMod');
 
 		if (current !== undefined && (value === undefined || current === value)) {
 			if (mods) {
@@ -272,13 +289,15 @@ export default class Block {
 
 	/**
 	 * Returns a value of the specified block modifier
+	 *
 	 * @param mod
+	 * @param [strict] - if true, then the modifier value will always taken from a dom node
 	 */
-	getMod(mod: string): CanUndef<string> {
+	getMod(mod: string, strict?: boolean): CanUndef<string> {
 		const
 			{mods, node} = this;
 
-		if (mods) {
+		if (mods && !strict) {
 			return mods[mod.camelize(false)];
 		}
 

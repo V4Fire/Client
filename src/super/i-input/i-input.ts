@@ -200,16 +200,16 @@ export default class iInput<
 			};
 
 			let
-				every = true;
+				allow = true;
 
 			for (let i = 0; i < test.length; i++) {
-				if (!match(test[i])) {
-					every = false;
+				if (match(test[i])) {
+					allow = false;
 					break;
 				}
 			}
 
-			if (!every) {
+			if (allow) {
 				return this.dataType(value);
 			}
 

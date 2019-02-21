@@ -7,13 +7,13 @@
  */
 
 import symbolGenerator from 'core/symbol';
-import moduleDependencies from 'core/dependencies';
+import ModuleDependencies from 'core/dependencies';
 import bRouter from 'base/b-router/b-router';
 import { session } from 'core/kv-storage';
 
 import { fromQueryString, toQueryString } from 'core/url';
 import { EventEmitter2 as EventEmitter } from 'eventemitter2';
-import { Router, CurrentPage, PageInfo, HistoryCleanFn } from 'base/b-router/drivers/interface';
+import { Router, CurrentPage, PageInfo, HistoryCleanFilter } from 'base/b-router/drivers/interface';
 
 export const
 	$$ = symbolGenerator();
@@ -131,11 +131,18 @@ export default function createRouter(ctx: bRouter): Router {
 
 			info.query = Object.assign(parseQuery(page, true), info.query);
 
-			const
+			let
 				qs = toQueryString(info.query);
 
 			if (qs) {
-				page = page.replace(qsRgxp, `?${qs}`);
+				qs = `?${qs}`;
+
+				if (qsRgxp.test(page)) {
+					page = page.replace(qsRgxp, qs);
+
+				} else {
+					page += qs;
+				}
 			}
 
 			if (location.href !== page) {
@@ -226,7 +233,7 @@ export default function createRouter(ctx: bRouter): Router {
 			history.back();
 		},
 
-		async clean(fn?: HistoryCleanFn): Promise<void> {
+		async clean(fn?: HistoryCleanFilter): Promise<void> {
 			$a.muteEventListeners(popstate);
 			truncateHistoryLog();
 
@@ -313,7 +320,8 @@ export default function createRouter(ctx: bRouter): Router {
 		},
 
 		cleanTmp(): Promise<void> {
-			return this.clean((el) => el.params.tmp || el.query.tmp || el.meta.tmp);
+			return this.clean((el) =>
+				el.params && el.params.tmp || el.query && el.query.tmp || el.meta && el.meta.tmp);
 		}
 	});
 
