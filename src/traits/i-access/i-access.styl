@@ -1,0 +1,25 @@
+/*!
+ * V4Fire Client Core
+ * https://github.com/V4Fire/Client
+ *
+ * Released under the MIT license
+ * https://github.com/V4Fire/Client/blob/master/LICENSE
+ */
+
+$p = {
+	helpers: true
+}
+
+i-access
+	if $p.helpers
+		&_disabled_true
+		&_progress_true
+			pointer-events none
+
+		&_disabled_true &__over-wrapper
+		&_progress_true &__over-wrapper
+			display block
+
+		&_disabled_true &__root-wrapper
+		&_progress_true &__root-wrapper
+			cursor default
