@@ -50,6 +50,7 @@ export interface ComponentProp extends PropOptions {
 	watchers: Map<string | Function, FieldWatcher>;
 	forceDefault?: boolean;
 	default?: unknown;
+	meta: Dictionary;
 }
 
 export interface InitFieldFn<T extends ComponentInterface = ComponentInterface> {
@@ -71,6 +72,7 @@ export interface SystemField<T extends ComponentInterface = ComponentInterface> 
 	after: Set<string>;
 	init?: InitFieldFn<T>;
 	merge?: InitFieldFn<T>;
+	meta: Dictionary;
 }
 
 export interface ComponentField<T extends ComponentInterface = ComponentInterface> extends SystemField<T> {

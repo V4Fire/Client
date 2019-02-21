@@ -601,8 +601,26 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 			}
 
 			if (paramsFromRoot) {
+				const
+					rootField = r.meta.fields,
+					rootSystemFields = r.meta.systemFields;
+
 				for (let keys = Object.keys(rootState), i = 0; i < keys.length; i++) {
-					delete query[keys[i]];
+					const
+						key = keys[i],
+						rootVal = rootState[key];
+
+					if (query[key] == null) {
+						const
+							field = rootField[key] || rootSystemFields[key];
+
+						if (field && field.meta['router.query']) {
+							query[key] = rootVal;
+
+						} else {
+							delete query[key];
+						}
+					}
 				}
 			}
 		}
