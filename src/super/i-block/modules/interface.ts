@@ -10,7 +10,11 @@ import iBlock from 'super/i-block/i-block';
 import Async, { AsyncOpts, AsyncOnOpts, AsyncOnceOpts, ClearOptsId, ProxyCb } from 'core/async';
 import { ModVal, WatchOptions } from 'core/component';
 
-export type Classes = Dictionary<string | Array<string | true> | true>;
+export type Classes = Dictionary<
+	string |
+	Array<string | true> |
+	true
+>;
 
 export interface LinkWrapper<V = unknown, R = unknown> {
 	(value: V, oldValue?: V): R;
@@ -23,17 +27,12 @@ export type WatchObjectField<T = unknown> =
 	[string, LinkWrapper<T, any>] |
 	[string, string, LinkWrapper<T, any>];
 
-export type WatchObjectFields<T = unknown> = Array<WatchObjectField<T>>;
+export type WatchObjectFields<T = unknown> = Array<
+	WatchObjectField<T>
+>;
 
 export type BindModCb<V = unknown, R = unknown, CTX extends iBlock = iBlock> =
 	((value: V, ctx: CTX) => R) | Function;
-
-export interface SizeTo {
-	gt: Dictionary<Size>;
-	lt: Dictionary<Size>;
-}
-
-export type Size = 'xxs' | 'xs' | 's' | 'm' | 'l' | 'xl' | 'xxl';
 
 export interface SyncLink<T = unknown> {
 	path: string;
@@ -56,12 +55,6 @@ export interface WaitStatusOpts extends AsyncOpts {
 	defer?: boolean;
 }
 
-export interface AsyncTaskObjectId {
-	id: AsyncTaskSimpleId;
-	weight?: number;
-	filter?(id: AsyncTaskSimpleId): boolean;
-}
-
 export type ParentMessageFields =
 	'instanceOf' |
 	'globalName' |
@@ -73,9 +66,6 @@ export interface ParentMessage<T = iBlock> {
 	action(this: T): Function;
 }
 
-export type AsyncTaskSimpleId = string | number;
-export type AsyncTaskId = AsyncTaskSimpleId | (() => AsyncTaskObjectId) | AsyncTaskObjectId;
-export type AsyncQueueType = 'asyncComponents' | 'asyncBackComponents';
 export type AsyncWatchOpts = WatchOptions & AsyncOpts;
 
 export interface RemoteEvent<CTX extends object = Async> {

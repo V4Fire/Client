@@ -266,6 +266,42 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 	}
 
 	/**
+	 * Returns a full route path string by the specified parameters
+	 *
+	 * @param path - base path
+	 * @param [opts] - route options
+	 */
+	getRoutePath(path: string, opts: RouteParams = {}): CanUndef<string> {
+		const
+			r = this.router;
+
+		if (!r) {
+			return;
+		}
+
+		const
+			route = r.getPageOpts(path);
+
+		if (!route) {
+			return;
+		}
+
+		let
+			res = route.toPath(opts.params);
+
+		if (opts.query) {
+			const
+				q = toQueryString(opts.query, false);
+
+			if (q) {
+				res += `?${q}`;
+			}
+		}
+
+		return res.replace(/[#?]\s*$/, '');
+	}
+
+	/**
 	 * Returns an information object of the specified page
 	 * @param [page]
 	 */

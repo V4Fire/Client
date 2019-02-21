@@ -57,14 +57,14 @@ export default class Block {
 	/**
 	 * Current block id
 	 */
-	get blockId(): string {
+	get id(): string {
 		return this.component.componentId;
 	}
 
 	/**
 	 * Current block name
 	 */
-	get blockName(): string {
+	get name(): string {
 		return this.component.componentName;
 	}
 
@@ -78,7 +78,7 @@ export default class Block {
 	/**
 	 * Local event emitter
 	 */
-	get event(): EventEmitter {
+	protected get event(): EventEmitter {
 		// @ts-ignore
 		return this.component.localEvent;
 	}
@@ -86,12 +86,12 @@ export default class Block {
 	/**
 	 * List of applied modifiers
 	 */
-	readonly mods?: Dictionary<CanUndef<string>>;
+	protected readonly mods?: Dictionary<CanUndef<string>>;
 
 	/**
 	 * iBlock instance
 	 */
-	readonly component: iBlock;
+	protected readonly component: iBlock;
 
 	/**
 	 * @param component - component instance
@@ -107,13 +107,83 @@ export default class Block {
 	}
 
 	/**
+	 * Returns true if the block has all modifiers from specified
+	 *
+	 * @param mods - list of modifiers (['name', ['name', 'value']])
+	 * @param [value] - value of modifiers
+	 */
+	ifEveryMods(mods: Array<CanArray<string>>, value?: unknown): boolean {
+		const
+			base = this.mods;
+
+		if (!base) {
+			return false;
+		}
+
+		for (let i = 0; i < mods.length; i++) {
+			const
+				el = mods[i];
+
+			if (Object.isArray(el)) {
+				if (base[<string>el[0]] === String(el[1])) {
+					continue;
+				}
+
+				return false;
+			}
+
+			if (base[el] === String(value)) {
+				continue;
+			}
+
+			return false;
+		}
+
+		return true;
+	}
+
+	/**
+	 * Returns true if the block has at least one modifier from specified
+	 *
+	 * @param mods - list of modifiers (['name', ['name', 'value']])
+	 * @param [value] - value of modifiers
+	 */
+	ifSomeMod(mods: Array<CanArray<string>>, value?: unknown): boolean {
+		const
+			base = this.mods;
+
+		if (!base) {
+			return false;
+		}
+
+		for (let i = 0; i < mods.length; i++) {
+			const
+				el = mods[i];
+
+			if (Object.isArray(el)) {
+				if (base[<string>el[0]] === String(el[1])) {
+					return true;
+				}
+
+				continue;
+			}
+
+			if (base[el] === String(value)) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	/**
 	 * Returns a full name of the current block
 	 *
 	 * @param [modName]
 	 * @param [modValue]
 	 */
 	getFullBlockName(modName?: string, modValue?: unknown): string {
-		return this.blockName + (modName ? `_${modName.dasherize()}_${String(modValue).dasherize()}` : '');
+		return this.name + (modName ? `_${modName.dasherize()}_${String(modValue).dasherize()}` : '');
 	}
 
 	/**
@@ -125,7 +195,7 @@ export default class Block {
 	 */
 	getFullElName(elName: string, modName?: string, modValue?: unknown): string {
 		const modStr = modName ? `_${modName.dasherize()}_${String(modValue).dasherize()}` : '';
-		return `${this.blockName}__${elName.dasherize()}${modStr}`;
+		return `${this.name}__${elName.dasherize()}${modStr}`;
 	}
 
 	/**
@@ -139,7 +209,7 @@ export default class Block {
 			sel = `.${this.getFullElName(elName)}`;
 
 		let
-			res = `${sel}.${this.blockId}`;
+			res = `${sel}.${this.id}`;
 
 		if (mods) {
 			for (let keys = Object.keys(mods), i = 0; i < keys.length; i++) {

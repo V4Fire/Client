@@ -14,7 +14,6 @@ import Async, { AsyncOpts, ClearOptsId, WrappedFunction, ProxyCb } from 'core/as
 import log, { LogMessageOptions } from 'core/log';
 
 import { EventEmitter2 as EventEmitter } from 'eventemitter2';
-import { toQueryString } from 'core/url';
 import { ExperimentsSet } from 'core/abt/interface';
 
 //#if runtime has core/analytics
@@ -55,7 +54,6 @@ import {
 
 	Classes,
 	WatchObjectFields,
-	SizeTo,
 	SyncLinkCache,
 	ModsTable,
 	ModsNTable,
@@ -63,10 +61,6 @@ import {
 	LinkWrapper,
 	WaitStatusOpts,
 	ParentMessage,
-	AsyncTaskId,
-	AsyncTaskObjectId,
-	AsyncTaskSimpleId,
-	AsyncQueueType,
 	AsyncWatchOpts,
 	RemoteEvent,
 	Event,
@@ -86,10 +80,6 @@ import {
 
 	hook,
 	runHook,
-	Hooks,
-
-	patchVNode,
-	execRenderObject,
 
 	ModVal,
 	ModsDecl,
@@ -97,17 +87,11 @@ import {
 	ComponentInterface,
 	ComponentElement,
 	ComponentMeta,
-	MethodWatcher,
-
-	RenderObject,
-	RenderContext,
-	VNode
+	MethodWatcher
 
 } from 'core/component';
 
 import { prop, field, system, watch, wait, p, MethodWatchers } from 'super/i-block/modules/decorators';
-import { queue, backQueue, restart, deferRestart } from 'core/render';
-import { delegate } from 'core/dom';
 
 export * from 'core/component';
 export * from 'super/i-block/modules/interface';
@@ -592,10 +576,6 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	 * Component modifiers
 	 */
 	static readonly mods: ModsDecl = {
-		theme: [
-			'default'
-		],
-
 		status: [
 			['unloaded'],
 			'loading',
@@ -603,69 +583,7 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 			'ready',
 			'inactive',
 			'destroyed'
-		],
-
-		size: [
-			'xxs',
-			'xs',
-			's',
-			['m'],
-			'xl',
-			'xxl'
-		],
-
-		progress: [
-			'true',
-			'false'
-		],
-
-		disabled: [
-			'true',
-			'false'
-		],
-
-		focused: [
-			'true',
-			'false'
-		],
-
-		hidden: [
-			'true',
-			'false'
-		],
-
-		width: [
-			'normal',
-			'full',
-			'auto'
 		]
-	};
-
-	/**
-	 * Size converter
-	 */
-	static sizeTo: SizeTo = {
-		gt: {
-			xxl: 'xxl',
-			xl: 'xxl',
-			l: 'xl',
-			m: 'l',
-			undefined: 'l',
-			s: 'm',
-			xs: 's',
-			xxs: 'xs'
-		},
-
-		lt: {
-			xxl: 'xl',
-			xl: 'l',
-			l: 'm',
-			m: 's',
-			undefined: 's',
-			s: 'xs',
-			xs: 'xxs',
-			xxs: 'xxs'
-		}
 	};
 
 	/**
@@ -698,20 +616,6 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 		}
 
 		return res;
-	}
-
-	/**
-	 * Alias for iBlock.sizeTo.gt
-	 */
-	protected get gt(): Dictionary<string> {
-		return (<typeof iBlock>this.instance.constructor).sizeTo.gt;
-	}
-
-	/**
-	 * Alias for iBlock.sizeTo.lt
-	 */
-	protected get lt(): Dictionary<string> {
-		return (<typeof iBlock>this.instance.constructor).sizeTo.lt;
 	}
 
 	/**
@@ -1157,56 +1061,6 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	})
 
 	protected readonly global!: Window;
-
-	/**
-	 * Returns a full route path string by the specified parameters
-	 *
-	 * @param path - base path
-	 * @param [opts] - route options
-	 */
-	getRoutePath(path: string, opts: RouteParams = {}): CanUndef<string> {
-		const
-			r = this.router;
-
-		if (!r) {
-			return;
-		}
-
-		const
-			route = r.getPageOpts(path);
-
-		if (!route) {
-			return;
-		}
-
-		let
-			res = route.toPath(opts.params);
-
-		if (opts.query) {
-			const
-				q = toQueryString(opts.query, false);
-
-			if (q) {
-				res += `?${q}`;
-			}
-		}
-
-		return res.replace(/[#?]\s*$/, '');
-	}
-
-	/**
-	 * Returns a string id, which is connected to the component
-	 * @param id - custom id
-	 */
-	getConnectedId(id: string): string;
-	getConnectedId(id: undefined | null): undefined;
-	getConnectedId(id: Nullable<string>): CanUndef<string> {
-		if (!id) {
-			return undefined;
-		}
-
-		return `${this.componentId}-${id}`;
-	}
 
 	/**
 	 * Wrapper for $watch
@@ -2115,271 +1969,6 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	}
 
 	/**
-	 * Disables the component
-	 */
-	async disable(): Promise<boolean> {
-		return this.setMod('disabled', true);
-	}
-
-	/**
-	 * Enables the component
-	 */
-	async enable(): Promise<boolean> {
-		return this.setMod('disabled', false);
-	}
-
-	/**
-	 * Sets focus for the component
-	 */
-	async focus(): Promise<boolean> {
-		return this.setMod('focused', true);
-	}
-
-	/**
-	 * Unsets focus for the component
-	 */
-	async blur(): Promise<boolean> {
-		return this.setMod('focused', false);
-	}
-
-	/**
-	 * Returns true if the component has all modifiers from specified
-	 *
-	 * @param mods - list of modifiers (['name', ['name', 'value']])
-	 * @param [value] - value of modifiers
-	 */
-	ifEveryMods(mods: Array<CanArray<string>>, value?: ModVal): boolean {
-		const
-			base = this.mods;
-
-		for (let i = 0; i < mods.length; i++) {
-			const
-				el = mods[i];
-
-			if (Object.isArray(el)) {
-				if (base[<string>el[0]] === String(el[1])) {
-					continue;
-				}
-
-				return false;
-			}
-
-			if (base[el] === String(value)) {
-				continue;
-			}
-
-			return false;
-		}
-
-		return true;
-	}
-
-	/**
-	 * Returns true if the component has at least one modifier from specified
-	 *
-	 * @param mods - list of modifiers (['name', ['name', 'value']])
-	 * @param [value] - value of modifiers
-	 */
-	ifSomeMod(mods: Array<CanArray<string>>, value?: ModVal): boolean {
-		const
-			base = this.mods;
-
-		for (let i = 0; i < mods.length; i++) {
-			const
-				el = mods[i];
-
-			if (Object.isArray(el)) {
-				if (base[<string>el[0]] === String(el[1])) {
-					return true;
-				}
-
-				continue;
-			}
-
-			if (base[el] === String(value)) {
-				return true;
-			}
-		}
-
-		return false;
-	}
-
-	/**
-	 * Returns a property from the specified object
-	 *
-	 * @param path - path to the property (bla.baz.foo)
-	 * @param [getter] - field getter
-	 */
-	getField<T = unknown>(path: string, getter?: FieldGetter): CanUndef<T>;
-
-	/**
-	 * @param path - path to the property (bla.baz.foo)
-	 * @param [obj]
-	 * @param [getter] - field getter
-	 */
-	getField<T = unknown>(path: string, obj?: Dictionary, getter?: FieldGetter): CanUndef<T>;
-	getField<T = unknown>(
-		path: string,
-		obj: Dictionary | FieldGetter = this,
-		getter?: FieldGetter
-	): CanUndef<T> {
-		if (!getter && Object.isFunction(obj)) {
-			getter = <FieldGetter>obj;
-			obj = this;
-		}
-
-		let
-			// tslint:disable-next-line:no-this-assignment
-			ctx: iBlock = this,
-			isComponent = obj === this;
-
-		if ((<Dictionary>obj).instance instanceof iBlock) {
-			ctx = <iBlock>obj;
-			isComponent = true;
-		}
-
-		const
-			chunks = path.split('.'),
-			isField = isComponent && ctx.meta.fields[chunks[0]];
-
-		let
-			res = isField ? ctx.$$data : obj;
-
-		for (let i = 0; i < chunks.length; i++) {
-			if (res == null) {
-				return undefined;
-			}
-
-			const prop = chunks[i];
-			res = <Dictionary>(getter ? getter(prop, res) : res[prop]);
-		}
-
-		return <any>res;
-	}
-
-	/**
-	 * Sets a new property to the specified object
-	 *
-	 * @param path - path to the property (bla.baz.foo)
-	 * @param value
-	 * @param [obj]
-	 */
-	setField<T = unknown>(path: string, value: T, obj: Dictionary = this): T {
-		let
-			// tslint:disable-next-line:no-this-assignment
-			ctx: iBlock = this,
-			isComponent = obj === this;
-
-		if (obj.instance instanceof iBlock) {
-			ctx = <iBlock>obj;
-			isComponent = true;
-		}
-
-		const
-			chunks = path.split('.'),
-			isField = isComponent && ctx.meta.fields[chunks[0]],
-			isReady = !ctx.isBeforeCreate();
-
-		let
-			ref = isField ? ctx.$$data : obj;
-
-		for (let i = 0; i < chunks.length; i++) {
-			const
-				prop = chunks[i];
-
-			if (chunks.length === i + 1) {
-				path = prop;
-				continue;
-			}
-
-			if (!ref[prop] || typeof ref[prop] !== 'object') {
-				const
-					val = isNaN(Number(chunks[i + 1])) ? {} : [];
-
-				if (isField && isReady) {
-					ctx.$set(ref, prop, val);
-
-				} else {
-					ref[prop] = val;
-				}
-			}
-
-			ref = <Dictionary>ref[prop];
-		}
-
-		if (path in ref) {
-			ref[path] = value;
-
-		} else {
-			if (isField && isReady) {
-				ctx.$set(ref, path, value);
-
-			} else {
-				ref[path] = value;
-			}
-		}
-
-		return value;
-	}
-
-	/**
-	 * Deletes a property from the specified object
-	 *
-	 * @param path - path to the property (bla.baz.foo)
-	 * @param [obj]
-	 */
-	deleteField(path: string, obj: Dictionary = this): boolean {
-		let
-			// tslint:disable-next-line:no-this-assignment
-			ctx: iBlock = this,
-			isComponent = obj === this;
-
-		if (obj.instance instanceof iBlock) {
-			ctx = <iBlock>obj;
-			isComponent = true;
-		}
-
-		const
-			chunks = path.split('.'),
-			isField = isComponent && ctx.meta.fields[chunks[0]],
-			isReady = !ctx.isBeforeCreate();
-
-		let
-			test = true,
-			ref = isField ? ctx.$$data : obj;
-
-		for (let i = 0; i < chunks.length; i++) {
-			const
-				prop = chunks[i];
-
-			if (chunks.length === i + 1) {
-				path = prop;
-				continue;
-			}
-
-			if (!ref[prop] || typeof ref[prop] !== 'object') {
-				test = false;
-				break;
-			}
-
-			ref = <Dictionary>ref[prop];
-		}
-
-		if (test) {
-			if (isField && isReady) {
-				ctx.$delete(ref, path);
-
-			} else {
-				delete ref[path];
-			}
-
-			return true;
-		}
-
-		return false;
-	}
-
-	/**
 	 * Gets values from the specified object and saves it to the component state
 	 * @param [obj]
 	 */
@@ -2401,36 +1990,6 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 				this.setField(key, el);
 			}
 		}
-	}
-
-	/**
-	 * Executes the specified callback after beforeDataCreate hook or beforeReady event
-	 *
-	 * @see Async.proxy
-	 * @param cb
-	 * @param [params] - async parameters
-	 */
-	execCbAtTheRightTime<T = unknown>(cb: (this: this) => T, params?: AsyncOpts): CanPromise<CanVoid<T>> {
-		if (this.isBeforeCreate('beforeDataCreate')) {
-			return this.$async.promise(new Promise<T>((r) => {
-				this.meta.hooks.beforeDataCreate.push({fn: () => r(cb.call(this))});
-			}), params).catch(stderr);
-		}
-
-		if (this.hook === 'beforeDataCreate') {
-			return cb.call(this);
-		}
-
-		this.beforeReadyListeners++;
-
-		const
-			res = this.waitStatus('beforeReady', cb, params);
-
-		if (Object.isPromise(res)) {
-			return res.catch(stderr);
-		}
-
-		return res;
 	}
 
 	/**
@@ -2473,116 +2032,6 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	}
 
 	/**
-	 * Creates a new function from the specified that executes deferredly
-	 *
-	 * @see Async.setTimeout
-	 * @param fn
-	 * @param [params] - async parameters
-	 */
-	protected createDeferFn(fn: Function, params?: AsyncOpts): Function {
-		return (...args) => this.async.setTimeout(() => fn.call(this, ...args), 0.2.second(), params);
-	}
-
-	/**
-	 * Accumulates a temporary object and apply it with the specified function
-	 *
-	 * @param obj
-	 * @param key - cache key
-	 * @param fn
-	 */
-	protected accumulateTmpObj(
-		obj: Dictionary,
-		key: string | symbol,
-		fn: (this: this, obj: Dictionary) => void
-	): void {
-		const
-			t = this.tmp,
-			k = <string>key,
-			tmp = t[k] = t[k] || {};
-
-		Object.assign(
-			tmp,
-			obj
-		);
-
-		this.createDeferFn(() => {
-			fn.call(this, tmp);
-			t[k] = undefined;
-
-		}, {
-			label: $$.accumulateTmpObj
-		})();
-	}
-
-	/**
-	 * Creates a fake context for a Block instance from the specified node
-	 * @param node
-	 */
-	protected createBlockCtxFromNode(node: Element): Dictionary {
-		const
-			$el = <ComponentElement<iBlock>>node,
-			comp = $el.component;
-
-		const
-			rgxp = /(?:^| )([bpg]-[^_ ]+)(?: |$)/,
-			componentName = comp ? comp.componentName : Object.get(rgxp.exec($el.className), '1') || this.componentName;
-
-		return Object.assign(Object.create(Block.prototype), {
-			component: {
-				$el,
-				componentName,
-				localEvent: comp ? comp.localEvent : {emit(): void { /* loopback */ }},
-				mods: comp ? comp.mods : undefined
-			}
-		});
-	}
-
-	/**
-	 * Executes the specified render object
-	 *
-	 * @param renderObj
-	 * @param [ctx] - render context
-	 */
-	protected execRenderObject(
-		renderObj: RenderObject,
-		ctx?: RenderContext | [Dictionary] | [Dictionary, RenderContext]
-	): VNode {
-		let
-			instanceCtx,
-			renderCtx;
-
-		const
-			i = this.instance;
-
-		if (ctx && Object.isArray(ctx)) {
-			instanceCtx = ctx[0] || this;
-			renderCtx = ctx[1];
-
-			if (instanceCtx !== this) {
-				instanceCtx.getBlockClasses = i.getBlockClasses.bind(instanceCtx);
-				instanceCtx.getFullBlockName = i.getFullBlockName.bind(instanceCtx);
-				instanceCtx.getFullElName = i.getFullElName.bind(instanceCtx);
-				instanceCtx.getElClasses = i.getElClasses.bind(instanceCtx);
-				instanceCtx.execRenderObject = i.execRenderObject.bind(instanceCtx);
-				instanceCtx.findElFromVNode = i.findElFromVNode.bind(instanceCtx);
-			}
-
-		} else {
-			instanceCtx = this;
-			renderCtx = ctx;
-		}
-
-		const
-			vnode = execRenderObject(renderObj, instanceCtx);
-
-		if (renderCtx) {
-			return patchVNode(vnode, instanceCtx, renderCtx);
-		}
-
-		return vnode;
-	}
-
-	/**
 	 * Returns a full name of the specified component
 	 *
 	 * @param [componentName]
@@ -2590,7 +2039,7 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	 * @param [modValue]
 	 */
 	protected getFullBlockName(componentName: string = this.componentName, modName?: string, modValue?: unknown): string {
-		return Block.prototype.getFullBlockName.call({blockName: componentName}, modName, modValue);
+		return Block.prototype.getFullBlockName.call({name: componentName}, modName, modValue);
 	}
 
 	/**
@@ -2617,48 +2066,7 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 			componentName = this.componentName;
 		}
 
-		return Block.prototype.getFullElName.call({blockName: componentName}, elName, modName, modValue);
-	}
-
-	/**
-	 * Searches an element by the specified name from a virtual node
-	 *
-	 * @param vnode
-	 * @param elName
-	 * @param [ctx] - component context
-	 */
-	protected findElFromVNode(vnode: VNode, elName: string, ctx: iBlock = this): CanUndef<VNode> {
-		const
-			selector = ctx.getFullElName(elName);
-
-		const search = (vnode) => {
-			const
-				data = vnode.data || {};
-
-			const classes = Object.fromArray([].concat(
-				(data.staticClass || '').split(' '),
-				data.class || []
-			));
-
-			if (classes[selector]) {
-				return vnode;
-			}
-
-			if (vnode.children) {
-				for (let i = 0; i < vnode.children.length; i++) {
-					const
-						res = search(vnode.children[i]);
-
-					if (res) {
-						return res;
-					}
-				}
-			}
-
-			return undefined;
-		};
-
-		return search(vnode);
+		return Block.prototype.getFullElName.call({name: componentName}, elName, modName, modValue);
 	}
 
 	/**
@@ -2744,50 +2152,6 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 		}
 
 		return Object.freeze(classes);
-	}
-
-	/**
-	 * Puts the specified element to the render stream
-	 *
-	 * @param cb
-	 * @param [el]
-	 */
-	@wait('ready')
-	protected async putInStream(cb: (el: Element) => void, el: Element = this.$el): Promise<boolean> {
-		if (el.clientHeight) {
-			cb.call(this, el);
-			return false;
-		}
-
-		const wrapper = document.createElement('div');
-		Object.assign(wrapper.style, {
-			'display': 'block',
-			'position': 'absolute',
-			'top': 0,
-			'left': 0,
-			'z-index': -1,
-			'opacity': 0
-		});
-
-		const
-			parent = el.parentNode,
-			before = el.nextSibling;
-
-		wrapper.appendChild(el);
-		document.body.appendChild(wrapper);
-		await cb.call(this, el);
-
-		if (parent) {
-			if (before) {
-				parent.insertBefore(el, before);
-
-			} else {
-				parent.appendChild(el);
-			}
-		}
-
-		wrapper.remove();
-		return true;
 	}
 
 	/**
@@ -3147,55 +2511,6 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	}
 
 	/**
-	 * Wrapper for core/dom -> delegate
-	 *
-	 * @param selector
-	 * @param handler
-	 */
-	protected delegate(selector: string, handler?: Function): Function {
-		return delegate(selector, handler);
-	}
-
-	/**
-	 * Wraps a handler for delegation of the specified element
-	 *
-	 * @param elName
-	 * @param handler
-	 */
-	protected delegateElement(elName: string, handler: Function): CanPromise<Function> {
-		const
-			res = this.execCbAfterBlockReady(() => this.delegate(this.block.getElSelector(elName), handler));
-
-		if (Object.isPromise(res)) {
-			return res.then((fn) => fn || Any);
-		}
-
-		return res || Any;
-	}
-
-	/**
-	 * Returns a link to the closest parent component for the current
-	 * @param component - component name or a link to the component constructor
-	 */
-	protected closest<T extends iBlock = iBlock>(component: string | ClassConstructor<T>): CanUndef<T> {
-		const
-			nm = Object.isString(component) ? component.dasherize() : undefined;
-
-		let
-			el = <CanUndef<T>>this.$parent;
-
-		while (el) {
-			if (Object.isFunction(component) && el.instance instanceof component || el.componentName === nm) {
-				return el;
-			}
-
-			el = <CanUndef<T>>el.$parent;
-		}
-
-		return undefined;
-	}
-
-	/**
 	 * Returns true if the specified object is a component
 	 *
 	 * @param obj
@@ -3203,62 +2518,6 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	 */
 	protected isComponent<T extends iBlock>(obj: unknown, constructor?: {new(): T}): obj is T {
 		return Boolean(obj && (<Dictionary>obj).instance instanceof (constructor || iBlock));
-	}
-
-	/**
-	 * Returns an instance of a component by the specified element
-	 *
-	 * @param el
-	 * @param [filter]
-	 */
-	protected $<T extends iBlock>(el: ComponentElement<T>, filter?: string): T;
-
-	/**
-	 * Returns an instance of a component by the specified query
-	 *
-	 * @param query
-	 * @param [filter]
-	 */
-	protected $<T extends iBlock>(query: string, filter?: string): CanUndef<T>;
-	protected $<T extends iBlock>(query: string | ComponentElement<T>, filter: string = ''): CanUndef<T> {
-		const
-			q = Object.isString(query) ? document.body.querySelector<ComponentElement<T>>(query) : query;
-
-		if (q) {
-			if (q.component && (q.component.instance instanceof iBlock)) {
-				return q.component;
-			}
-
-			const
-				el = <ComponentElement<T>>q.closest(`.i-block-helper${filter}`);
-
-			if (el) {
-				return el.component;
-			}
-		}
-
-		return undefined;
-	}
-
-	/**
-	 * Returns if the specified label:
-	 *   2 -> already exists in the cache;
-	 *   1 -> just written in the cache;
-	 *   0 -> doesn't exist in the cache.
-	 *
-	 * @param label
-	 * @param [value] - label value (will saved in the cache only if true)
-	 */
-	protected ifOnce(label: unknown, value: boolean = false): 0 | 1 | 2 {
-		if (this.ifOnceStore[String(label)]) {
-			return 2;
-		}
-
-		if (value) {
-			return this.ifOnceStore[String(label)] = 1;
-		}
-
-		return 0;
 	}
 
 	/**
@@ -3313,16 +2572,7 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 		this.link = i.link.bind(this);
 		this.createWatchObject = i.createWatchObject.bind(this);
 
-		this.isBeforeCreate = i.isBeforeCreate.bind(this);
-		this.execCbAfterCreated = i.execCbAfterCreated.bind(this);
-		this.execCbAfterBlockReady = i.execCbAfterBlockReady.bind(this);
-		this.execCbAtTheRightTime = i.execCbAtTheRightTime.bind(this);
-
 		this.bindModTo = i.bindModTo.bind(this);
-		this.getField = i.getField.bind(this);
-		this.setField = i.setField.bind(this);
-		this.deleteField = i.deleteField.bind(this);
-
 		this.convertStateToStorage = i.convertStateToStorage.bind(this);
 		this.initStateFromStorage = i.initStateFromStorage.bind(this);
 		this.convertStateToRouter = i.convertStateToRouter.bind(this);
@@ -3334,7 +2584,6 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 		this.on = i.on.bind(this);
 		this.once = i.once.bind(this);
 		this.off = i.off.bind(this);
-		this.delegate = i.delegate.bind(this);
 
 		// tslint:disable:no-string-literal
 
@@ -3392,86 +2641,6 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 				sync(keys[i]);
 			}
 		}
-	}
-
-	/**
-	 * Restarts the async render daemon for forcing render
-	 */
-	protected forceAsyncRender(): void {
-		restart();
-	}
-
-	/**
-	 * Restarts the async render daemon for forcing render
-	 * (runs on a next tick)
-	 */
-	protected deferForceAsyncRender(): void {
-		deferRestart();
-	}
-
-	/**
-	 * Adds a component to the render queue
-	 *
-	 * @param id - task id
-	 * @param [group] - task group
-	 */
-	protected regAsyncComponent(id: AsyncTaskId, group: AsyncQueueType = 'asyncComponents'): AsyncTaskSimpleId {
-		id = Object.isFunction(id) ? id() : id;
-
-		let
-			filter,
-			simpleId,
-			weight;
-
-		if (Object.isObject(id)) {
-			simpleId = (<AsyncTaskObjectId>id).id;
-			filter = (<AsyncTaskObjectId>id).filter;
-			weight = (<AsyncTaskObjectId>id).weight;
-
-		} else {
-			simpleId = id;
-		}
-
-		weight =
-			weight ||
-			this.weight ||
-			this.isFunctional ? 0.5 : 1;
-
-		const
-			cursor = group === 'asyncComponents' ? queue : backQueue,
-			store = <Dictionary>this[group];
-
-		if (!(simpleId in store)) {
-			const obj = {
-				weight,
-				fn: this.async.proxy(() => {
-					if (filter && !filter(simpleId)) {
-						return false;
-					}
-
-					store[simpleId] = true;
-					return true;
-
-				}, {
-					onClear: () => cursor.delete(obj),
-					single: false,
-					group
-				})
-			};
-
-			this.$set(store, simpleId, false);
-			cursor.add(obj);
-		}
-
-		return simpleId;
-	}
-
-	/**
-	 * Adds a component to the background render queue
-	 * @param id - task id
-	 */
-	protected regAsyncBackComponent(id: AsyncTaskId): AsyncTaskSimpleId {
-		return this.regAsyncComponent(id, 'asyncBackComponents');
 	}
 
 	/**
@@ -3601,25 +2770,6 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	}
 
 	/**
-	 * Saves to cache the specified literal and returns returns it
-	 * @param literal
-	 */
-	protected memoizeLiteral<T>(
-		literal: T
-	): T extends (infer V)[] ? ReadonlyArray<V> : T extends Dictionary ? Readonly<T> : T {
-		if (Object.isArray(literal) || Object.isObject(literal)) {
-			if (Object.isFrozen(literal)) {
-				return <any>literal;
-			}
-
-			const key = JSON.stringify(literal);
-			return literalCache[key] = literalCache[key] || Object.freeze(<any>literal);
-		}
-
-		return <any>literal;
-	}
-
-	/**
 	 * Initializes component instance
 	 */
 	@hook('mounted')
@@ -3702,20 +2852,11 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 
 	/**
 	 * Initializes modifiers event listeners
-	 *
-	 * @emits enable()
-	 * @emits disable()
-	 *
-	 * @emits focus()
-	 * @emits blur()
-	 *
-	 * @emits show()
-	 * @emits hide()
 	 */
 	@hook('beforeCreate')
 	protected initModEvents(): void {
 		const
-			{async: $a, localEvent: $e} = this;
+			{localEvent: $e} = this;
 
 		$e.on('block.mod.set.**', (e: ModEvent) => {
 			const
@@ -3750,36 +2891,6 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 
 				this.emit(`mod-remove-${k}-${e.value}`, e);
 			}
-		});
-
-		$e.on('block.mod.*.disabled.*', (e: ModEvent) => {
-			if (e.value === 'false' || e.type === 'remove') {
-				$a.off({group: 'blockOnDisable'});
-				this.emit('enable');
-
-			} else {
-				this.emit('disable');
-
-				const handler = (e) => {
-					e.preventDefault();
-					e.stopImmediatePropagation();
-				};
-
-				$a.on(this.$el, 'click mousedown touchstart keydown input change scroll', handler, {
-					group: 'blockOnDisable',
-					options: {
-						capture: true
-					}
-				});
-			}
-		});
-
-		$e.on('block.mod.*.focused.*', (e: ModEvent) => {
-			this.emit(e.value === 'false' || e.type === 'remove' ? 'blur' : 'focus');
-		});
-
-		$e.on('block.mod.*.hidden.*', (e: ModEvent) => {
-			this.emit(e.value === 'false' || e.type === 'remove' ? 'show' : 'hide');
 		});
 	}
 
@@ -3838,59 +2949,6 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 				}
 			}
 		}
-	}
-
-	/**
-	 * Returns true if the component hook is equal one of "before" hooks
-	 * @param [skip] - name of a skipped hook
-	 */
-	protected isBeforeCreate(...skip: Hooks[]): boolean {
-		const
-			hooks = {beforeRuntime: true, beforeCreate: true, beforeDataCreate: true};
-
-		for (let i = 0; i < skip.length; i++) {
-			hooks[skip[i]] = false;
-		}
-
-		return Boolean(hooks[this.hook]);
-	}
-
-	/**
-	 * Executes the specified callback after created hook and returns the result
-	 *
-	 * @param cb
-	 * @param [params] - async parameters
-	 */
-	protected execCbAfterCreated<T = unknown>(cb: (this: this) => T, params?: AsyncOpts): CanPromise<CanVoid<T>> {
-		if (this.isBeforeCreate()) {
-			return this.$async.promise(new Promise<T>((r) => {
-				this.meta.hooks.created.unshift({fn: () => r(cb.call(this))});
-			}), params).catch(stderr);
-		}
-
-		if (statuses[this.componentStatus] >= 0) {
-			return cb.call(this);
-		}
-	}
-
-	/**
-	 * Executes the specified callback after block.ready event and returns the result
-	 *
-	 * @param cb
-	 * @param [params] - async parameters
-	 */
-	protected execCbAfterBlockReady<T = unknown>(cb: (this: this) => T, params?: AsyncOpts): CanPromise<CanVoid<T>> {
-		if (this.block) {
-			if (statuses[this.componentStatus] >= 0) {
-				return cb.call(this);
-			}
-
-			return;
-		}
-
-		return this.$async.promise(new Promise<T>((r) => {
-			this.localEvent.once('block.ready', () => r(cb.call(this)));
-		}), params).catch(stderr);
 	}
 
 	/**
@@ -4011,14 +3069,6 @@ export abstract class iBlockDecorator extends iBlock {
 	public readonly localEvent!: Event<this>;
 	public readonly globalEvent!: Event<this>;
 	public readonly rootEvent!: Event<this>;
-
-	public delegate(selector: string, handler?: Function): Function {
-		return () => ({});
-	}
-
-	public delegateElement(elName: string, handler: Function): CanPromise<Function> {
-		return () => ({});
-	}
 }
 
 function defaultI18n(): string {
