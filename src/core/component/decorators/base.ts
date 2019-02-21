@@ -47,6 +47,7 @@ export interface ComponentProp<
 > extends PropOptions {
 	watch?: FieldWatcher<CTX, A, B>;
 	forceDefault?: boolean;
+	meta?: Dictionary;
 }
 
 export interface ComponentAccessor {
@@ -72,6 +73,7 @@ export interface SystemField<CTX extends ComponentInterface = ComponentInterface
 	after?: CanArray<string>;
 	init?: InitFieldFn<CTX>;
 	merge?: MergeFieldFn<CTX> | boolean;
+	meta?: Dictionary;
 }
 
 export interface ComponentField<
@@ -167,13 +169,13 @@ export function paramsFactory<T = unknown>(
 
 				const
 					obj = meta[metaKey],
-					el = <Dictionary<any>>obj[key];
+					el = <Dictionary<any>>obj[key] || {};
 
 				if (metaKey === 'methods') {
 					const
 						name = key,
 						w = <any[]>[].concat(p.watch || []),
-						watchers = el && el.watchers || {};
+						watchers = el.watchers || {};
 
 					for (let i = 0; i < w.length; i++) {
 						const
@@ -189,7 +191,7 @@ export function paramsFactory<T = unknown>(
 
 					const
 						h = <any[]>[].concat(p.hook || []),
-						hooks = el && el.hooks || {};
+						hooks = el.hooks || {};
 
 					for (let i = 0; i < h.length; i++) {
 						const
@@ -270,9 +272,9 @@ export function paramsFactory<T = unknown>(
 			}
 
 			const
-				el = obj[key],
-				watchers = el && el.watchers || new Map(),
-				after = el && el.after || new Set();
+				el = obj[key] || {},
+				watchers = el.watchers || new Map(),
+				after = el.after || new Set();
 
 			for (let o = <any[]>[].concat(p.after || []), i = 0; i < o.length; i++) {
 				after.add(o[i]);
@@ -293,8 +295,14 @@ export function paramsFactory<T = unknown>(
 			obj[key] = {
 				...el,
 				...p,
+
 				after,
-				watchers
+				watchers,
+
+				meta: {
+					...el.meta,
+					...p.meta
+				}
 			};
 		});
 	};
