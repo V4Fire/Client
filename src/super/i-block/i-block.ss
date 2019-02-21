@@ -32,8 +32,8 @@
 		- return $C(exports).get(nms)
 
 	- rootTag = 'div'
-	- overWrapper = true
-	- renderCounter = true
+	- rootWrapper = false
+	- overWrapper = false
 
 	/**
 	 * Applies Typograf to the specified content
@@ -133,10 +133,9 @@
 
 				- block headHelpers
 				- block innerRoot
-					< _.&__root-wrapper
-						- if overWrapper
-							< _.&__over-wrapper
-								- block overWrapper
+					< ${rootWrapper ? '_' : '?'}.&__root-wrapper
+						< ${overWrapper ? '_' : '?'}.&__over-wrapper
+							- block overWrapper
 
 						- block body
 					- block helpers
