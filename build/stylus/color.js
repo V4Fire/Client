@@ -42,7 +42,7 @@ function checkInGlobalSpace(hex) {
 		color = hex.raw || hex.string || hex.name;
 
 	if (GLOBAL.space[color]) {
-		throw new Error(`Identical HEX was found at the kit with name '${GLOBAL.space[color]}'`);
+		throw new Error(`Identical HEX '${hex}' was found at the kit with name '${GLOBAL.space[color]}'`);
 	}
 
 	return hex;
@@ -68,7 +68,7 @@ function kitFromNodes(nodes, name) {
  * Saves subset of colors to a global color sets variable
  *
  * @param {!Object} kit - subset
- * @param {string} nm - name of a subset
+ * @param {string} [nm] - name of a subset
  */
 function saveColorsKit(kit, nm) {
 	const reduce = (s) => $C(s).reduce((res, el, name) => {
