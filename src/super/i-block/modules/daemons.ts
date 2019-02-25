@@ -17,7 +17,9 @@ export interface DaemonWatchObject extends WatchOptions {
 	field: string;
 }
 
-export type DaemonWatcher = DaemonWatchObject | string;
+export type DaemonWatcher =
+	DaemonWatchObject |
+	string;
 
 export interface DaemonsAsyncOpts {
 	label?: Nullable<AsyncOpts['label']>;

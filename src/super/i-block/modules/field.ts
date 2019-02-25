@@ -7,26 +7,41 @@
  */
 
 import iBlock from 'super/i-block/i-block';
-import Async, { AsyncOpts } from 'core/async';
+
+export interface FieldGetter<R = unknown, D = unknown> {
+	(key: string, data: NonNullable<D>): R;
+}
 
 export default class Field {
+	/**
+	 * iBlock instance
+	 */
+	protected readonly component: iBlock;
+
+	/**
+	 * @param component - component instance
+	 */
+	constructor(component: iBlock) {
+		this.component = component;
+	}
+
 	/**
 	 * Returns a property from the specified object
 	 *
 	 * @param path - path to the property (bla.baz.foo)
 	 * @param [getter] - field getter
 	 */
-	getField<T = unknown>(path: string, getter?: FieldGetter): CanUndef<T>;
+	get<T = unknown>(path: string, getter?: FieldGetter): CanUndef<T>;
 
 	/**
 	 * @param path - path to the property (bla.baz.foo)
 	 * @param [obj]
 	 * @param [getter] - field getter
 	 */
-	getField<T = unknown>(path: string, obj?: Dictionary, getter?: FieldGetter): CanUndef<T>;
-	getField<T = unknown>(
+	get<T = unknown>(path: string, obj?: Dictionary, getter?: FieldGetter): CanUndef<T>;
+	get<T = unknown>(
 		path: string,
-		obj: Dictionary | FieldGetter = this,
+		obj: Dictionary | FieldGetter = this.component,
 		getter?: FieldGetter
 	): CanUndef<T> {
 		if (!getter && Object.isFunction(obj)) {
@@ -35,9 +50,8 @@ export default class Field {
 		}
 
 		let
-			// tslint:disable-next-line:no-this-assignment
-			ctx: iBlock = this,
-			isComponent = obj === this;
+			ctx = this.component,
+			isComponent = false;
 
 		if ((<Dictionary>obj).instance instanceof iBlock) {
 			ctx = <iBlock>obj;
@@ -46,9 +60,11 @@ export default class Field {
 
 		const
 			chunks = path.split('.'),
+			// @ts-ignore
 			isField = isComponent && ctx.meta.fields[chunks[0]];
 
 		let
+			// @ts-ignore
 			res = isField ? ctx.$$data : obj;
 
 		for (let i = 0; i < chunks.length; i++) {
@@ -70,11 +86,10 @@ export default class Field {
 	 * @param value
 	 * @param [obj]
 	 */
-	setField<T = unknown>(path: string, value: T, obj: Dictionary = this): T {
+	set<T = unknown>(path: string, value: T, obj: Dictionary = this.component): T {
 		let
-			// tslint:disable-next-line:no-this-assignment
-			ctx: iBlock = this,
-			isComponent = obj === this;
+			ctx = this.component,
+			isComponent = false;
 
 		if (obj.instance instanceof iBlock) {
 			ctx = <iBlock>obj;
@@ -83,10 +98,12 @@ export default class Field {
 
 		const
 			chunks = path.split('.'),
+			// @ts-ignore
 			isField = isComponent && ctx.meta.fields[chunks[0]],
-			isReady = !ctx.isBeforeCreate();
+			isReady = !ctx.life.isBeforeCreate();
 
 		let
+			// @ts-ignore
 			ref = isField ? ctx.$$data : obj;
 
 		for (let i = 0; i < chunks.length; i++) {
@@ -103,6 +120,7 @@ export default class Field {
 					val = isNaN(Number(chunks[i + 1])) ? {} : [];
 
 				if (isField && isReady) {
+					// @ts-ignore
 					ctx.$set(ref, prop, val);
 
 				} else {
@@ -118,6 +136,7 @@ export default class Field {
 
 		} else {
 			if (isField && isReady) {
+				// @ts-ignore
 				ctx.$set(ref, path, value);
 
 			} else {
@@ -134,11 +153,10 @@ export default class Field {
 	 * @param path - path to the property (bla.baz.foo)
 	 * @param [obj]
 	 */
-	deleteField(path: string, obj: Dictionary = this): boolean {
+	delete(path: string, obj: Dictionary = this.component): boolean {
 		let
-			// tslint:disable-next-line:no-this-assignment
-			ctx: iBlock = this,
-			isComponent = obj === this;
+			ctx = this.component,
+			isComponent = false;
 
 		if (obj.instance instanceof iBlock) {
 			ctx = <iBlock>obj;
@@ -147,11 +165,13 @@ export default class Field {
 
 		const
 			chunks = path.split('.'),
+			// @ts-ignore
 			isField = isComponent && ctx.meta.fields[chunks[0]],
-			isReady = !ctx.isBeforeCreate();
+			isReady = !ctx.life.isBeforeCreate();
 
 		let
 			test = true,
+			// @ts-ignore
 			ref = isField ? ctx.$$data : obj;
 
 		for (let i = 0; i < chunks.length; i++) {
@@ -173,6 +193,7 @@ export default class Field {
 
 		if (test) {
 			if (isField && isReady) {
+				// @ts-ignore
 				ctx.$delete(ref, path);
 
 			} else {

@@ -73,20 +73,20 @@ export default class bRemoteProvider<T extends Dictionary = Dictionary> extends 
 
 		if (f) {
 			const
-				field = p.getField(f);
+				field = p.field.get(f);
 
 			if (Object.isFunction(field)) {
 				action = () => field.call(p, value);
 				needUpdate = true;
 
 			} else if (!Object.fastCompare(value, field)) {
-				action = () => p.setField(f, value);
+				action = () => p.field.set(f, value);
 				needUpdate = true;
 			}
 		}
 
 		if (needUpdate) {
-			p.execCbAtTheRightTime(() => {
+			p.life.execCbAtTheRightTime(() => {
 				action && action();
 				this.emit('change', value);
 

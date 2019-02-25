@@ -107,32 +107,148 @@ export default class Block {
 	}
 
 	/**
+	 * Returns an array of component classes by the specified parameters
+	 *
+	 * @param [componentName] - name of the source component
+	 * @param mods - map of modifiers
+	 */
+	getBlockClasses(componentName: CanUndef<string>, mods: ModsTable): ReadonlyArray<string>;
+
+	/**
+	 * @param mods - map of modifiers
+	 */
+	getBlockClasses(mods: ModsTable): ReadonlyArray<string>;
+	getBlockClasses(componentName?: string | ModsTable, mods?: ModsTable): ReadonlyArray<string> {
+		if (arguments.length === 1) {
+			mods = <ModsTable>componentName;
+			componentName = undefined;
+
+		} else {
+			mods = <ModsTable>mods;
+			componentName = <CanUndef<string>>componentName;
+		}
+
+		const
+			key = JSON.stringify(mods) + componentName,
+			cache = classesCache.create('blocks', this.componentName);
+
+		if (cache[key]) {
+			return <ReadonlyArray<string>>cache[key];
+		}
+
+		const
+			classes = cache[key] = [this.getFullBlockName(componentName)];
+
+		for (let keys = Object.keys(mods), i = 0; i < keys.length; i++) {
+			const
+				key = keys[i],
+				val = mods[key];
+
+			if (val !== undefined) {
+				classes.push(this.getFullBlockName(componentName, key, val));
+			}
+		}
+
+		return classes;
+	}
+
+	/**
+	 * Returns an array of element classes by the specified parameters
+	 *
+	 * @param componentNameOrCtx
+	 * @param els - map of elements with map of modifiers ({button: {focused: true}})
+	 */
+	protected getElClasses(componentNameOrCtx: string | iBlock, els: Dictionary<ModsTable>): ReadonlyArray<string>;
+
+	/**
+	 * @param els - map of elements with map of modifiers ({button: {focused: true}})
+	 */
+	protected getElClasses(els: Dictionary<ModsTable>): ReadonlyArray<string>;
+	protected getElClasses(
+		componentNameOrCtx: string | iBlock | Dictionary<ModsTable>,
+		els?: Dictionary<ModsTable>
+	): ReadonlyArray<string> {
+		let
+			id,
+			componentName;
+
+		if (arguments.length === 1) {
+			id = this.componentId;
+			componentName = this.componentName;
+			els = <Dictionary<ModsTable>>componentNameOrCtx;
+
+		} else {
+			if (Object.isString(componentNameOrCtx)) {
+				componentName = componentNameOrCtx;
+
+			} else {
+				id = (<iBlock>componentNameOrCtx).componentId;
+				componentName = (<iBlock>componentNameOrCtx).componentName;
+			}
+		}
+
+		if (!els) {
+			return Object.freeze([]);
+		}
+
+		const
+			key = JSON.stringify(els),
+			cache = classesCache.create('els', id || componentName);
+
+		if (cache[key]) {
+			return <ReadonlyArray<string>>cache[key];
+		}
+
+		const
+			classes = cache[key] = id ? [id] : [];
+
+		for (let keys = Object.keys(els), i = 0; i < keys.length; i++) {
+			const
+				el = keys[i],
+				mods = els[el];
+
+			classes.push(
+				this.getFullElName(<string>componentName, el)
+			);
+
+			if (!Object.isObject(mods)) {
+				continue;
+			}
+
+			for (let keys = Object.keys(mods), i = 0; i < keys.length; i++) {
+				const
+					key = keys[i],
+					val = mods[key];
+
+				if (val !== undefined) {
+					classes.push(this.getFullElName(<string>componentName, el, key, val));
+				}
+			}
+		}
+
+		return Object.freeze(classes);
+	}
+
+	/**
 	 * Returns true if the block has all modifiers from specified
 	 *
 	 * @param mods - list of modifiers (['name', ['name', 'value']])
 	 * @param [value] - value of modifiers
 	 */
 	ifEveryMods(mods: Array<CanArray<string>>, value?: unknown): boolean {
-		const
-			base = this.mods;
-
-		if (!base) {
-			return false;
-		}
-
 		for (let i = 0; i < mods.length; i++) {
 			const
 				el = mods[i];
 
 			if (Object.isArray(el)) {
-				if (base[<string>el[0]] === String(el[1])) {
+				if (this.getMod(el[0]) === String(el[1])) {
 					continue;
 				}
 
 				return false;
 			}
 
-			if (base[el] === String(value)) {
+			if (this.getMod(el) === String(value)) {
 				continue;
 			}
 
@@ -149,26 +265,19 @@ export default class Block {
 	 * @param [value] - value of modifiers
 	 */
 	ifSomeMod(mods: Array<CanArray<string>>, value?: unknown): boolean {
-		const
-			base = this.mods;
-
-		if (!base) {
-			return false;
-		}
-
 		for (let i = 0; i < mods.length; i++) {
 			const
 				el = mods[i];
 
 			if (Object.isArray(el)) {
-				if (base[<string>el[0]] === String(el[1])) {
+				if (this.getMod(el[0]) === String(el[1])) {
 					return true;
 				}
 
 				continue;
 			}
 
-			if (base[el] === String(value)) {
+			if (this.getMod(el) === String(value)) {
 				return true;
 			}
 		}

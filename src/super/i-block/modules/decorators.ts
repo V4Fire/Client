@@ -288,7 +288,7 @@ export function wait<T extends ComponentInterface = ComponentInterface>(
 
 	function wrapper(this: T & iBlockDecorator): CanUndef<CanPromise<T>> {
 		const
-			getRoot = () => ctx ? this.getField(ctx) : this,
+			getRoot = () => ctx ? this.field.get(ctx) : this,
 			root = getRoot(),
 			args = arguments;
 
@@ -303,7 +303,7 @@ export function wait<T extends ComponentInterface = ComponentInterface>(
 		const exec = (ctx) => {
 			const
 				// @ts-ignore
-				componentStatus = <number>statuses[this.getField('componentStatusStore', ctx)];
+				componentStatus = <number>statuses[this.field.get('componentStatusStore', ctx)];
 
 			let
 				res,

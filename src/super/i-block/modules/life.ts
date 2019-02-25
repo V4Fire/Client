@@ -18,11 +18,11 @@ const beforeHooks = {
 	beforeDataCreate: true
 };
 
-export default class Hook {
+export default class Life {
 	/**
 	 * Current component hook
 	 */
-	get current(): Hooks {
+	get hook(): Hooks {
 		return this.component.hook;
 	}
 
@@ -71,7 +71,7 @@ export default class Hook {
 			beforeHooks[skip[i]] = false;
 		}
 
-		return Boolean(beforeHooks[this.current]);
+		return Boolean(beforeHooks[this.hook]);
 	}
 
 	/**
@@ -88,7 +88,7 @@ export default class Hook {
 			}), params).catch(stderr);
 		}
 
-		if (this.current === 'beforeDataCreate') {
+		if (this.hook === 'beforeDataCreate') {
 			return cb.call(this);
 		}
 

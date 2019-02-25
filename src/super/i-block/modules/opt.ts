@@ -7,20 +7,26 @@
  */
 
 import iBlock from 'super/i-block/i-block';
-import Async, { AsyncOpts } from 'core/async';
 
-export default class Lazy {
+export type MemoizedLiteral<T = unknown> =
+	Readonly<Dictionary<T>> |
+	ReadonlyArray<T>;
+
+export const
+	literalCache = Object.createDict<MemoizedLiteral>();
+
+export default class Opt {
 	/**
 	 * iBlock instance
 	 */
 	protected readonly component: iBlock;
 
 	/**
-	 * Async instance
+	 * Cache of ifOnce
 	 */
-	protected get async(): Async {
+	protected get ifOnceStore(): Dictionary {
 		// @ts-ignore
-		return this.component.async;
+		return this.component.ifOnceStore;
 	}
 
 	/**
@@ -31,7 +37,7 @@ export default class Lazy {
 	}
 
 	/**
-	 * Returns if the specified label:
+	 * Returns a number if the specified label:
 	 *   2 -> already exists in the cache;
 	 *   1 -> just written in the cache;
 	 *   0 -> doesn't exist in the cache.
@@ -52,7 +58,7 @@ export default class Lazy {
 	}
 
 	/**
-	 * Saves to cache the specified literal and returns returns it
+	 * Saves a literal to the cache and returns it
 	 * @param literal
 	 */
 	protected memoizeLiteral<T>(

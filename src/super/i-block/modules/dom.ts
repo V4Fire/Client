@@ -11,6 +11,10 @@ import Block from 'super/i-block/modules/block';
 
 import { delegate } from 'core/dom';
 import { wait } from 'super/i-block/modules/decorators';
+import { ComponentElement } from 'core/component';
+
+const
+	componentRgxp = /(?:^| )([bpg]-[^_ ]+)(?: |$)/;
 
 export default class Dom {
 	/**
@@ -65,12 +69,12 @@ export default class Dom {
 	 */
 	delegateElement(name: string, handler: Function): CanPromise<Function> {
 		// @ts-ignore
-		const res = this.component.execCbAfterBlockReady(() =>
+		const res = this.component.life.execCbAfterComponentReady(() =>
 			this.delegate(this.block.getElSelector(name), handler)
 		);
 
 		if (Object.isPromise(res)) {
-			return res.then((fn) => <Function>fn || Any);
+			return res.then((fn) => fn || Any);
 		}
 
 		return res || Any;
@@ -139,14 +143,14 @@ export default class Dom {
 			$el = <ComponentElement<iBlock>>node,
 			comp = $el.component;
 
-		const
-			rgxp = /(?:^| )([bpg]-[^_ ]+)(?: |$)/,
-			componentName = comp ? comp.componentName : Object.get(rgxp.exec($el.className), '1') || this.componentName;
+		const componentName = comp ?
+				comp.componentName : Object.get(componentRgxp.exec($el.className), '1') || this.component.componentName;
 
 		return Object.assign(Object.create(Block.prototype), {
 			component: {
 				$el,
 				componentName,
+				// @ts-ignore
 				localEvent: comp ? comp.localEvent : {emit(): void { /* loopback */ }},
 				mods: comp ? comp.mods : undefined
 			}
