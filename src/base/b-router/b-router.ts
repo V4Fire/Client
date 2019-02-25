@@ -567,7 +567,13 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 
 		{
 			const p = current && current.page === info.page ? current : undefined;
-			Object.mixin({deep: true, withUndef: true}, info, p ? rejectParams(f(p)) : undefined, rejectParams(opts));
+			const normalize = (val) => Object.mixin(true, val && rejectParams(val), {
+				query: {},
+				params: {},
+				meta: {}
+			});
+
+			Object.mixin({deep: true, withUndef: true}, info, normalize(f(p)), normalize(opts));
 		}
 
 		const {
