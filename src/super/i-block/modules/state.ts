@@ -209,7 +209,7 @@ export default class State {
 	/**
 	 * Resets a component storage state
 	 */
-	protected async resetStorageState(): Promise<boolean> {
+	async resetStorageState(): Promise<boolean> {
 		const
 			c = this.component,
 			// @ts-ignore
@@ -229,7 +229,7 @@ export default class State {
 	 * Saves a component state to a router
 	 * @param [data] - advanced data
 	 */
-	protected async saveStateToRouter(data?: Dictionary): Promise<boolean> {
+	async saveStateToRouter(data?: Dictionary): Promise<boolean> {
 		const
 			c = this.component;
 
@@ -257,7 +257,7 @@ export default class State {
 	/**
 	 * Initializes a component state from a router
 	 */
-	protected initStateFromRouter(): void {
+	initStateFromRouter(): void {
 		const
 			c = this.component,
 			routerWatchers = {group: 'routerWatchers'};
@@ -354,7 +354,7 @@ export default class State {
 	/**
 	 * Resets a component router state
 	 */
-	protected async resetRouterState(): Promise<boolean> {
+	async resetRouterState(): Promise<boolean> {
 		const
 			c = this.component,
 			// @ts-ignore

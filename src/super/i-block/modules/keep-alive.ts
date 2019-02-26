@@ -6,31 +6,48 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import Async from 'core/async';
 import symbolGenerator from 'core/symbol';
 import iBlock from 'super/i-block/i-block';
-import Async from 'core/async';
+import { runHook, ComponentElement } from 'core/component';
 
 const
 	$$ = symbolGenerator();
 
+const inactiveStatuses = {
+	destroyed: true,
+	inactive: true
+};
+
+/**
+ * Activates the component
+ *
+ * @param component
+ * @param [force]
+ */
 export function activate(component: iBlock, force?: boolean): void {
-	if (!this.isActivated || force) {
-		this.initStateFromRouter();
-		this.execCbAfterCreated(() => this.rootEvent.on('onTransition', async (route, type) => {
+	const
+		c = component,
+		// @ts-ignore
+		event = c.rootEvent;
+
+	if (!c.isActivated || force) {
+		c.state.initStateFromRouter();
+		c.lfc.execCbAfterComponentCreated(() => event.on('onTransition', async (route, type) => {
 			try {
 				if (type === 'hard') {
-					if (route !== this.r.route) {
-						await this.rootEvent.promisifyOnce('setRoute', {
+					if (route !== c.r.route) {
+						await event.promisifyOnce('setRoute', {
 							label: $$.activateAfterTransition
 						});
 
 					} else {
-						await this.nextTick({label: $$.activateAfterHardChange});
+						await c.nextTick({label: $$.activateAfterHardChange});
 					}
 				}
 
-				if (!{destroyed: true, inactive: true}[this.componentStatus]) {
-					this.initStateFromRouter();
+				if (!inactiveStatuses[c.componentStatus]) {
+					c.state.initStateFromRouter();
 				}
 
 			} catch (err) {
@@ -42,14 +59,14 @@ export function activate(component: iBlock, force?: boolean): void {
 		}));
 	}
 
-	if (this.isBeforeCreate()) {
+	if (c.lfc.isBeforeCreate()) {
 		return;
 	}
 
 	const
 		els = new Set();
 
-	const exec = (ctx: iBlock = this) => {
+	const exec = (ctx: iBlock = c) => {
 		els.add(ctx);
 
 		const
@@ -65,9 +82,9 @@ export function activate(component: iBlock, force?: boolean): void {
 	exec();
 
 	const
-		{$el} = this;
+		{$el} = c;
 
-	if (this.forceActivation && $el) {
+	if (c.forceActivation && $el) {
 		const
 			domEls = $el.querySelectorAll('.i-block-helper');
 
@@ -93,16 +110,20 @@ export function activate(component: iBlock, force?: boolean): void {
 
 /**
  * Deactivates the component
+ * @param component
  */
 export function deactivate(component: iBlock): void {
-	if (this.isBeforeCreate()) {
+	const
+		c = component;
+
+	if (c.lfc.isBeforeCreate()) {
 		return;
 	}
 
 	const
 		els = new Set();
 
-	const exec = (ctx: iBlock = this) => {
+	const exec = (ctx: iBlock = c) => {
 		els.add(ctx);
 
 		const
@@ -118,9 +139,9 @@ export function deactivate(component: iBlock): void {
 	exec();
 
 	const
-		{$el} = this;
+		{$el} = c;
 
-	if (this.forceActivation && $el) {
+	if (c.forceActivation && $el) {
 		const
 			domEls = $el.querySelectorAll('.i-block-helper');
 
@@ -155,20 +176,22 @@ const readyEvents = {
  */
 export function onActivated(component: iBlock): void {
 	const
-		// @ts-ignore
-		{async: $a} = component;
+		c = component,
 
-	if (component.isActivated) {
+		// @ts-ignore
+		{async: $a} = c;
+
+	if (c.isActivated) {
 		return;
 	}
 
 	$a.unmuteAll().unsuspendAll();
-	component.componentStatus = 'beforeReady';
+	c.componentStatus = 'beforeReady';
 
-	if (component.needReInit) {
+	if (c.needReInit) {
 		$a.setImmediate(() => {
 			const
-				v = component.reload();
+				v = c.reload();
 
 			if (Object.isPromise(v)) {
 				v.catch(stderr);
@@ -179,12 +202,12 @@ export function onActivated(component: iBlock): void {
 		});
 	}
 
-	if (!readyEvents[component.componentStatus]) {
-		component.componentStatus = 'beforeReady';
+	if (!readyEvents[c.componentStatus]) {
+		c.componentStatus = 'beforeReady';
 	}
 
-	component.componentStatus = 'ready';
-	component.isActivated = true;
+	c.componentStatus = 'ready';
+	c.isActivated = true;
 }
 
 const
