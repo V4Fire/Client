@@ -10,6 +10,7 @@ import iBlock from 'super/i-block/i-block';
 import { ExperimentsSet } from 'core/abt/interface';
 import { ModVal } from 'core/component';
 
+export { ModVal };
 export type ModsTable = Dictionary<ModVal>;
 export type ModsNTable = Dictionary<CanUndef<string>>;
 
@@ -156,9 +157,13 @@ export function initMods(component: iBlock): ModsNTable {
 		return mods;
 	}
 
-	return component.link<any>(link);
+	return component.sync.link<any>(link);
 }
 
+/**
+ * Returns an object with watchable modifiers
+ * @param component
+ */
 export function getWatchableMods(component: iBlock): Readonly<ModsNTable> {
 	const
 		o = {},
