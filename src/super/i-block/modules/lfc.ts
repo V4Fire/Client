@@ -18,7 +18,7 @@ const beforeHooks = {
 	beforeDataCreate: true
 };
 
-export default class Life {
+export default class Lfc {
 	/**
 	 * Current component hook
 	 */
@@ -27,7 +27,7 @@ export default class Life {
 	}
 
 	/**
-	 * iBlock instance
+	 * Component instance
 	 */
 	protected readonly component: iBlock;
 
