@@ -118,7 +118,7 @@ export function bindModTo<V = unknown, R = unknown, CTX extends ComponentInterfa
 		initEvent.once('constructor', ({meta}) => {
 			meta.hooks.created.push({
 				fn(this: CTX & iBlockDecorator): void {
-					this.bindModTo(key, param, converter, opts);
+					this.sync.mod(key, param, converter, opts);
 				}
 			});
 		});
@@ -235,19 +235,26 @@ export interface WaitOpts extends AsyncOpts {
 const
 	waitCtxRgxp = /([^:]+):(\w+)/;
 
-export function wait(params: WaitOpts): Function;
-export function wait(status: number | string | Statuses, params?: WaitOpts | Function): Function;
-
 /**
  * Decorates a method or a function for using with the specified init status
  *
  * @see Async.wait
  * @decorator
- * @param status
- * @param [params] - additional parameters:
+ * @param params - additional parameters:
  *   *) [params.fn] - callback function
  *   *) [params.defer] - if true, then the function will always return a promise
  */
+export function wait(params: WaitOpts): Function;
+
+/**
+ * @see Async.wait
+ * @decorator
+ * @param status
+ * @param [params]
+ */
+// tslint:disable-next-line:completed-docs
+export function wait(status: number | string | Statuses, params?: WaitOpts | Function): Function;
+// tslint:disable-next-line:completed-docs
 export function wait<T extends ComponentInterface = ComponentInterface>(
 	status: number | string | Statuses | WaitOpts,
 	params?: WaitOpts | Function

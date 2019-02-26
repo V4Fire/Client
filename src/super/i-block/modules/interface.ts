@@ -7,41 +7,7 @@
  */
 
 import iBlock from 'super/i-block/i-block';
-import Async, { AsyncOpts, AsyncOnOpts, AsyncOnceOpts, ClearOptsId, ProxyCb } from 'core/async';
-import { ModVal, WatchOptions } from 'core/component';
-
-export type Classes = Dictionary<
-	string |
-	Array<string | true> |
-	true
->;
-
-export interface LinkWrapper<V = unknown, R = unknown> {
-	(value: V, oldValue?: V): R;
-}
-
-export type WatchObjectField<T = unknown> =
-	string |
-	[string] |
-	[string, string] |
-	[string, LinkWrapper<T, any>] |
-	[string, string, LinkWrapper<T, any>];
-
-export type WatchObjectFields<T = unknown> = Array<
-	WatchObjectField<T>
->;
-
-export type BindModCb<V = unknown, R = unknown, CTX extends iBlock = iBlock> =
-	((value: V, ctx: CTX) => R) | Function;
-
-export interface SyncLink<T = unknown> {
-	path: string;
-	sync(value?: T): void;
-}
-
-export type SyncLinkCache<T = unknown> = Dictionary<Dictionary<SyncLink<T>>>;
-export type ModsTable = Dictionary<ModVal>;
-export type ModsNTable = Dictionary<CanUndef<string>>;
+import { AsyncOpts } from 'core/async';
 
 export type Statuses =
 	'destroyed' |
@@ -61,12 +27,10 @@ export type ParentMessageFields =
 	'componentName' |
 	'componentId';
 
-export interface ParentMessage<T = iBlock> {
+export interface ParentMessage<T extends iBlock = iBlock> {
 	check: [ParentMessageFields, unknown];
 	action(this: T): Function;
 }
-
-export type AsyncWatchOpts = WatchOptions & AsyncOpts;
 
 export type ConverterCallType = 'component' | 'remote';
 export type Stage = string | number;

@@ -6,6 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import Async from 'core/async';
 import iBlock from 'super/i-block/i-block';
 import { patchVNode, execRenderObject, RenderObject, RenderContext, VNode } from 'core/component';
 import { queue, backQueue, restart, deferRestart } from 'core/render';
@@ -22,9 +23,31 @@ export type AsyncQueueType = 'asyncComponents' | 'asyncBackComponents';
 
 export default class Render {
 	/**
+	 * Component render weight
+	 */
+	get weight(): CanUndef<number> {
+		return this.component.weight;
+	}
+
+	/**
+	 * True if the current component is functional
+	 */
+	get isFunctional(): boolean {
+		return this.component.isFunctional;
+	}
+
+	/**
 	 * iBlock instance
 	 */
 	protected readonly component: iBlock;
+
+	/**
+	 * Async instance
+	 */
+	protected get async(): Async {
+		// @ts-ignore
+		return this.component.$async;
+	}
 
 	/**
 	 * @param component - component instance
@@ -78,7 +101,7 @@ export default class Render {
 
 		const
 			cursor = group === 'asyncComponents' ? queue : backQueue,
-			store = <Dictionary>this[group];
+			store = <Dictionary>this.component[group];
 
 		if (!(simpleId in store)) {
 			const obj = {
@@ -98,7 +121,8 @@ export default class Render {
 				})
 			};
 
-			this.$set(store, simpleId, false);
+			// @ts-ignore
+			c.$set(store, simpleId, false);
 			cursor.add(obj);
 		}
 
@@ -127,21 +151,9 @@ export default class Render {
 			instanceCtx,
 			renderCtx;
 
-		const
-			i = this.component.instance;
-
 		if (ctx && Object.isArray(ctx)) {
 			instanceCtx = ctx[0] || this;
 			renderCtx = ctx[1];
-
-			if (instanceCtx !== this) {
-				instanceCtx.getBlockClasses = i.getBlockClasses.bind(instanceCtx);
-				instanceCtx.getFullBlockName = i.getFullBlockName.bind(instanceCtx);
-				instanceCtx.getFullElName = i.getFullElName.bind(instanceCtx);
-				instanceCtx.getElClasses = i.getElClasses.bind(instanceCtx);
-				instanceCtx.execRenderObject = i.execRenderObject.bind(instanceCtx);
-				instanceCtx.findElFromVNode = i.findElFromVNode.bind(instanceCtx);
-			}
 
 		} else {
 			instanceCtx = this;
