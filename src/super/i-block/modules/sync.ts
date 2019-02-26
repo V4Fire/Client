@@ -7,38 +7,51 @@
  */
 
 import iBlock from 'super/i-block/i-block';
+import Lfc from 'super/i-block/modules/lfc';
+import Field from 'super/i-block/modules/field';
 import Async, { AsyncOpts } from 'core/async';
-import { Hooks, ComponentMeta } from 'core/component';
-import { Statuses } from 'super/i-block/modules/interface';
 
-export default class Life {
-	/**
-	 * Current component hook
-	 */
-	get hook(): Hooks {
-		return this.component.hook;
-	}
+import { statuses } from 'super/i-block/modules/const';
+import { WatchOptions, ComponentMeta } from 'core/component';
 
+export type AsyncWatchOpts =
+	WatchOptions & AsyncOpts;
+
+export interface SyncLink<T = unknown> {
+	path: string;
+	sync(value?: T): void;
+}
+
+export type SyncLinkCache<T = unknown> = Dictionary<
+	Dictionary<SyncLink<T>>
+>;
+
+export interface LinkWrapper<V = unknown, R = unknown> {
+	(value: V, oldValue?: V): R;
+}
+
+export type BindModCb<V = unknown, R = unknown> =
+	((value: V) => R) | Function;
+
+export type SyncObjectField<T = unknown> =
+	string |
+	[string] |
+	[string, string] |
+	[string, LinkWrapper<T, any>] |
+	[string, string, LinkWrapper<T, any>];
+
+export type SyncObjectFields<T = unknown> = Array<
+	SyncObjectField<T>
+>;
+
+const
+	storeRgxp = /Store$/;
+
+export default class Sync {
 	/**
-	 * iBlock instance
+	 * Component instance
 	 */
 	protected readonly component: iBlock;
-
-	/**
-	 * Async instance
-	 */
-	protected get componentStatus(): Statuses {
-		// @ts-ignore
-		return this.component.status;
-	}
-
-	/**
-	 * Async instance
-	 */
-	protected get async(): Async {
-		// @ts-ignore
-		return this.component.$async;
-	}
 
 	/**
 	 * Component meta object
@@ -46,6 +59,52 @@ export default class Life {
 	protected get meta(): ComponentMeta {
 		// @ts-ignore
 		return this.component.meta;
+	}
+
+	/**
+	 * API for component life cycle helpers
+	 */
+	protected get lfc(): Lfc {
+		return this.component.lfc;
+	}
+
+	/**
+	 * API for component field accessors
+	 */
+	protected get field(): Field {
+		return this.component.field;
+	}
+
+	/**
+	 * Link to the component $activeField
+	 */
+	protected get activeField(): string {
+		// @ts-ignore
+		return this.component.$activeField;
+	}
+
+	/**
+	 * Cache for prop/field links
+	 */
+	protected get linksCache(): Dictionary<Dictionary> {
+		// @ts-ignore
+		return this.component.linksCache;
+	}
+
+	/**
+	 * Cache for prop/field synchronize functions
+	 */
+	protected get syncLinkCache(): SyncLinkCache {
+		// @ts-ignore
+		return this.component.syncLinkCache;
+	}
+
+	/**
+	 * Cache for modifiers synchronize functions
+	 */
+	protected get syncModCache(): Dictionary<Function> {
+		// @ts-ignore
+		return this.component.syncModCache;
 	}
 
 	/**
@@ -90,13 +149,13 @@ export default class Life {
 		wrapper?: LinkWrapper<D>
 	): CanUndef<R> {
 		const
-			path = this.$activeField,
+			path = this.activeField,
 			cache = this.syncLinkCache;
 
 		if (!field || !Object.isString(field)) {
 			wrapper = <LinkWrapper<D>>params;
 			params = <AsyncWatchOpts>field;
-			field = `${path.replace(/Store$/, '')}Prop`;
+			field = `${path.replace(storeRgxp, '')}Prop`;
 		}
 
 		if (params && Object.isFunction(params)) {
@@ -117,7 +176,7 @@ export default class Life {
 				return res;
 			};
 
-			this.watch(field, async (val, oldVal) => {
+			this.component.watch(field, async (val, oldVal) => {
 				if (Object.fastCompare(val, oldVal) || Object.fastCompare(val, this.field.get(path))) {
 					return;
 				}
@@ -133,7 +192,7 @@ export default class Life {
 				}
 			});
 
-			if (this.isBeforeCreate('beforeDataCreate')) {
+			if (this.lfc.isBeforeCreate('beforeDataCreate')) {
 				const
 					name = '[[SYNC]]',
 					hooks = this.meta.hooks.beforeDataCreate;
@@ -163,7 +222,7 @@ export default class Life {
 	 */
 	object<T = unknown>(
 		path: string,
-		fields: WatchObjectFields<T>
+		fields: SyncObjectFields<T>
 	): Dictionary;
 
 	/**
@@ -174,16 +233,16 @@ export default class Life {
 	object<T = unknown>(
 		path: string,
 		params: AsyncWatchOpts,
-		fields: WatchObjectFields<T>
+		fields: SyncObjectFields<T>
 	): Dictionary;
 
 	object<T>(
 		path: string,
-		params: AsyncWatchOpts | WatchObjectFields<T>,
-		fields?: WatchObjectFields<T>
+		params: AsyncWatchOpts | SyncObjectFields<T>,
+		fields?: SyncObjectFields<T>
 	): Dictionary {
 		if (Object.isArray(params)) {
-			fields = <WatchObjectFields<T>>params;
+			fields = <SyncObjectFields<T>>params;
 			params = {};
 		}
 
@@ -192,7 +251,7 @@ export default class Life {
 			{syncLinkCache, linksCache} = this;
 
 		const
-			head = this.$activeField;
+			head = this.activeField;
 
 		// tslint:disable-next-line:prefer-conditional-expression
 		if (path) {
@@ -234,7 +293,7 @@ export default class Life {
 			const
 				sync = (val?, oldVal?) => setField(path, getVal(val, oldVal));
 
-			this.watch(field, (val, oldVal) => {
+			this.component.watch(field, (val, oldVal) => {
 				if (Object.fastCompare(val, oldVal) || Object.fastCompare(val, this.field.get(path))) {
 					return;
 				}
@@ -250,14 +309,14 @@ export default class Life {
 				}
 			});
 
-			if (this.isBeforeCreate('beforeDataCreate')) {
+			if (this.lfc.isBeforeCreate('beforeDataCreate')) {
 				hooks.push({fn: sync});
 			}
 		};
 
 		for (let i = 0; i < (<unknown[]>fields).length; i++) {
 			const
-				el = (<WatchObjectFields<T>>fields)[i];
+				el = (<SyncObjectFields<T>>fields)[i];
 
 			if (Object.isArray(el)) {
 				let
@@ -348,6 +407,70 @@ export default class Life {
 			for (let keys = Object.keys(cache), i = 0; i < keys.length; i++) {
 				sync(keys[i]);
 			}
+		}
+	}
+
+	/**
+	 * Binds a modifier to the specified field
+	 *
+	 * @param mod
+	 * @param field
+	 * @param [converter] - converter function or additional parameters
+	 * @param [params] - additional parameters
+	 */
+	mod<D = unknown, R = unknown>(
+		mod: string,
+		field: string,
+		converter: BindModCb<D, R> | AsyncWatchOpts = (v) => v != null ? Boolean(v) : undefined,
+		params?: AsyncWatchOpts
+	): void {
+		mod = mod.camelize(false);
+
+		if (!Object.isFunction(converter)) {
+			params = converter;
+			converter = Boolean;
+		}
+
+		const
+			fn = <Function>converter;
+
+		const setWatcher = () => {
+			this.component.watch(field, (val) => {
+				val = fn.call(this, val);
+
+				if (val !== undefined) {
+					this.component.setMod(mod, val);
+				}
+
+			}, params);
+		};
+
+		const
+			{mods} = this.component;
+
+		if (this.lfc.isBeforeCreate()) {
+			const sync = this.syncModCache[mod] = () => {
+				const
+					v = fn.call(this, this.field.get(field));
+
+				if (v !== undefined) {
+					mods[mod] = String(v);
+				}
+			};
+
+			if (this.component.hook !== 'beforeDataCreate') {
+				this.meta.hooks.beforeDataCreate.push({
+					fn: sync
+				});
+
+			} else {
+				sync();
+			}
+
+			setWatcher();
+
+		} else if (statuses[this.component.componentStatus] >= 1) {
+			setWatcher();
 		}
 	}
 }
