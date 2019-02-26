@@ -1,29 +1,35 @@
-/**
- * Initializes an update from the parent listener
+/*!
+ * V4Fire Client Core
+ * https://github.com/V4Fire/Client
+ *
+ * Released under the MIT license
+ * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
-@hook('created')
-function initParentCallEvent(): void {
-	this.parentEvent.on('callChild', (component: iBlock, {check, action}: ParentMessage) => {
-		if (
-			check[0] !== 'instanceOf' && check[1] === this[check[0]] ||
-			check[0] === 'instanceOf' && this.instance instanceof <Function>check[1]
-		) {
-			return action.call(this);
-		}
-	});
-}
+
+import symbolGenerator from 'core/symbol';
+import iBlock from 'super/i-block/i-block';
+import { ModEvent } from 'super/i-block/modules/block';
+import { ModsNTable } from 'super/i-block/modules/mods';
+import { customWatcherRgxp, MethodWatcher } from 'core/component';
+
+const
+	$$ = symbolGenerator();
 
 /**
- * Initializes global event listeners
+ * Initializes global event listeners for the specified component
+ * @param component
  */
-@hook('created')
-function initGlobalEvents(): void {
+export function initGlobalEvents(component: iBlock): void {
 	const
-		{globalEvent: $e} = this;
+		c = component;
+
+	const
+		// @ts-ignore
+		{globalEvent: $e} = c;
 
 	const waitNextTick = (fn) => async () => {
 		try {
-			await this.nextTick({label: $$.reset});
+			await c.nextTick({label: $$.reset});
 			await fn();
 
 		} catch (err) {
@@ -31,84 +37,90 @@ function initGlobalEvents(): void {
 		}
 	};
 
-	$e.on('reset.load', waitNextTick(this.initLoad));
-	$e.on('reset.load.silence', waitNextTick(this.reload));
-	$e.on('reset.router', this.resetRouterState);
-	$e.on('reset.storage', this.resetStorageState);
+	$e.on('reset.load', waitNextTick(c.initLoad));
+	$e.on('reset.load.silence', waitNextTick(c.reload));
+	$e.on('reset.router', c.state.resetRouterState);
+	$e.on('reset.storage', c.state.resetStorageState);
 
 	$e.on('reset', waitNextTick(async () => {
-		this.componentStatus = 'loading';
+		c.componentStatus = 'loading';
 
 		await Promise.all([
-			this.resetRouterState(),
-			this.resetStorageState()
+			c.state.resetRouterState(),
+			c.state.resetStorageState()
 		]);
 
-		await this.initLoad();
+		await c.initLoad();
 	}));
 
 	$e.on('reset.silence', waitNextTick(async () => {
 		await Promise.all([
-			this.resetRouterState(),
-			this.resetStorageState()
+			c.state.resetRouterState(),
+			c.state.resetStorageState()
 		]);
 
-		await this.reload();
+		await c.reload();
 	}));
 }
 
 /**
- * Initializes modifiers event listeners
+ * Initializes modifiers event listeners for the specified component
+ * @param component
  */
-@hook('beforeCreate')
-function initModEvents(): void {
+export function initModEvents(component: iBlock): void {
 	const
-		{localEvent: $e} = this;
+		c = component;
+
+	const
+		// @ts-ignore
+		{localEvent: $e} = c;
 
 	$e.on('block.mod.set.**', (e: ModEvent) => {
 		const
 			k = e.name,
 			v = e.value,
-			w = <NonNullable<ModsNTable>>this.field.get('watchModsStore');
+			w = <NonNullable<ModsNTable>>c.field.get('watchModsStore');
 
-		this
+		c
 			.mods[k] = v;
 
 		if (k in w && w[k] !== v) {
 			delete w[k];
-			this.field.set(`watchModsStore.${k}`, v);
+			c.field.set(`watchModsStore.${k}`, v);
 		}
 
-		this.emit(`mod-set-${k}-${v}`, e);
+		c.emit(`mod-set-${k}-${v}`, e);
 	});
 
 	$e.on('block.mod.remove.**', (e: ModEvent) => {
 		if (e.reason === 'removeMod') {
 			const
 				k = e.name,
-				w = <NonNullable<ModsNTable>>this.field.get('watchModsStore');
+				w = <NonNullable<ModsNTable>>c.field.get('watchModsStore');
 
-			this
+			c
 				.mods[k] = undefined;
 
 			if (k in w && w[k]) {
 				delete w[k];
-				this.field.set(`watchModsStore.${k}`, undefined);
+				c.field.set(`watchModsStore.${k}`, undefined);
 			}
 
-			this.emit(`mod-remove-${k}-${e.value}`, e);
+			c.emit(`mod-remove-${k}-${e.value}`, e);
 		}
 	});
 }
 
 /**
- * Initializes watchers from .watchProp
+ * Initializes watchers from .watchProp for the specified component
+ * @param component
  */
-@hook('beforeDataCreate')
-function initRemoteWatchers(): void {
+export function initRemoteWatchers(component: iBlock): void {
 	const
-		w = this.meta.watchers,
-		o = this.watchProp;
+		c = component,
+		// @ts-ignore
+		w = c.meta.watchers,
+		o = c.watchProp;
 
 	if (!o) {
 		return;
