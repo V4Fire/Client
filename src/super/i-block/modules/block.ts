@@ -6,8 +6,10 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import iBlock, { ComponentElement, ModsTable } from 'super/i-block/i-block';
-import { EventEmitter2 as EventEmitter } from 'eventemitter2';
+import iBlock from 'super/i-block/i-block';
+import { Event } from 'super/i-block/modules/event';
+import { ModsTable } from 'super/i-block/modules/mods';
+import { ComponentElement } from 'core/component';
 
 export type ModEventType =
 	'set' |
@@ -78,7 +80,7 @@ export default class Block {
 	/**
 	 * Local event emitter
 	 */
-	protected get event(): EventEmitter {
+	protected get event(): Event {
 		// @ts-ignore
 		return this.component.localEvent;
 	}

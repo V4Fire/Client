@@ -6,12 +6,22 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import iBlock from 'super/i-block/i-block';
-import Async, { AsyncOpts } from 'core/async';
-import { Hooks, ComponentMeta } from 'core/component';
-import { Statuses } from 'super/i-block/modules/interface';
+import Async from 'core/async';
+import symbolGenerator from 'core/symbol';
 
-export default class Life {
+import iBlock from 'super/i-block/i-block';
+import Field from 'super/i-block/modules/field';
+import Storage from 'super/i-block/modules/storage';
+import Lazy from 'super/i-block/modules/lazy';
+import Lfc from 'super/i-block/modules/lfc';
+
+import { Event } from 'super/i-block/modules/event';
+import { Hooks } from 'core/component';
+
+const
+	$$ = symbolGenerator();
+
+export default class State {
 	/**
 	 * Current component hook
 	 */
@@ -20,16 +30,51 @@ export default class Life {
 	}
 
 	/**
-	 * iBlock instance
+	 * Component instance
 	 */
 	protected readonly component: iBlock;
 
 	/**
-	 * Async instance
+	 * Component unique name
 	 */
-	protected get componentStatus(): Statuses {
+	protected get globalName(): CanUndef<string> {
+		return this.component.globalName;
+	}
+
+	/**
+	 * API for component field accessors
+	 */
+	protected get field(): Field {
+		return this.component.field;
+	}
+
+	/**
+	 * API for a component storage
+	 */
+	protected get storage(): Storage {
+		return this.component.storage;
+	}
+
+	/**
+	 * API for lazy operations
+	 */
+	protected get lazy(): Lazy {
+		return this.component.lazy;
+	}
+
+	/**
+	 * API for component life cycle helpers
+	 */
+	protected get lfc(): Lfc {
+		return this.component.lfc;
+	}
+
+	/**
+	 * Local event emitter
+	 */
+	protected get localEvent(): Event {
 		// @ts-ignore
-		return this.component.status;
+		return this.component.localEvent;
 	}
 
 	/**
@@ -38,14 +83,6 @@ export default class Life {
 	protected get async(): Async {
 		// @ts-ignore
 		return this.component.$async;
-	}
-
-	/**
-	 * Component meta object
-	 */
-	protected get meta(): ComponentMeta {
-		// @ts-ignore
-		return this.component.meta;
 	}
 
 	/**
@@ -71,7 +108,7 @@ export default class Life {
 				p = key.split('.');
 
 			if (p[0] === 'mods') {
-				this.setMod(p[1], el);
+				this.component.setMod(p[1], el);
 
 			} else if (!Object.fastCompare(el, this.field.get(key))) {
 				this.field.set(key, el);
@@ -80,25 +117,31 @@ export default class Life {
 	}
 
 	/**
-	 * Saves a component state to a local storage
+	 * Saves a component state to a storage
 	 * @param [data] - advanced data
 	 */
-	protected async saveStateToStorage(data?: Dictionary): Promise<void> {
+	async saveStateToStorage(data?: Dictionary): Promise<void> {
 		if (!this.globalName) {
 			return;
 		}
 
-		data = this.convertStateToStorage(data, 'remote');
-		this.setState(this.convertStateToStorage(data));
+		const
+			c = this.component;
 
-		await this.saveSettings(data, '[[STORE]]');
-		this.log('state:save:storage', this, data);
+		// @ts-ignore
+		data = c.syncStorageState(data, 'remote');
+		// @ts-ignore
+		this.setState(c.syncStorageState(data));
+
+		await this.storage.set(data, '[[STORE]]');
+		// @ts-ignore
+		c.log('state:save:storage', this, data);
 	}
 
 	/**
-	 * Initializes a component state from a local storage
+	 * Initializes a component state from a storage
 	 */
-	protected async initStateFromStorage(): Promise<void> {
+	async initStateFromStorage(): Promise<void> {
 		if (!this.globalName) {
 			return;
 		}
@@ -111,26 +154,26 @@ export default class Life {
 		}
 
 		const
-			$a = this.async,
+			c = this.component,
 			storeWatchers = {group: 'storeWatchers'};
 
-		$a.clearAll(
-			storeWatchers
-		);
+		const {async: $a} = this;
+		$a.clearAll(storeWatchers);
 
 		return this[key] = $a.promise(async () => {
 			const
-				data = await this.loadSettings('[[STORE]]');
+				data = await this.storage.get('[[STORE]]');
 
-			this.life.execCbAtTheRightTime(() => {
+			this.lfc.execCbAtTheRightTime(() => {
 				const
-					stateFields = this.convertStateToStorage(data);
+					// @ts-ignore
+					stateFields = c.syncStorageState(data);
 
 				this.setState(
 					stateFields
 				);
 
-				const sync = this.createDeferFn(() => this.saveStateToStorage(), {
+				const sync = this.lazy.createLazyFn(() => this.saveStateToStorage(), {
 					label: $$.syncLocalStore
 				});
 
@@ -144,7 +187,7 @@ export default class Life {
 							$a.on(this.localEvent, `block.mod.*.${p[1]}.*`, sync, storeWatchers);
 
 						} else {
-							this.watch(key, (val, oldVal) => {
+							c.watch(key, (val, oldVal) => {
 								if (!Object.fastCompare(val, oldVal)) {
 									sync();
 								}
@@ -153,7 +196,8 @@ export default class Life {
 					}
 				}
 
-				this.log('state:init:storage', this, stateFields);
+				// @ts-ignore
+				c.log('state:init:storage', this, stateFields);
 			});
 
 		}, {
@@ -167,14 +211,17 @@ export default class Life {
 	 */
 	protected async resetStorageState(): Promise<boolean> {
 		const
-			stateFields = this.convertStateToStorageReset();
+			c = this.component,
+			// @ts-ignore
+			stateFields = c.convertStateToStorageReset();
 
 		this.setState(
 			stateFields
 		);
 
 		await this.saveStateToStorage();
-		this.log('state:reset:storage', this, stateFields);
+		// @ts-ignore
+		c.log('state:reset:storage', this, stateFields);
 		return true;
 	}
 
@@ -183,13 +230,18 @@ export default class Life {
 	 * @param [data] - advanced data
 	 */
 	protected async saveStateToRouter(data?: Dictionary): Promise<boolean> {
-		data = this.convertStateToRouter(data, 'remote');
-		this.setState(this.convertStateToRouter(data));
+		const
+			c = this.component;
+
+		// @ts-ignore
+		data = c.syncRouterState(data, 'remote');
+		// @ts-ignore
+		this.setState(c.syncRouterState(data));
 
 		const
-			r = this.$root.router;
+			r = c.$root.router;
 
-		if (!this.isActivated || !r) {
+		if (!c.isActivated || !r) {
 			return false;
 		}
 
@@ -197,7 +249,8 @@ export default class Life {
 			query: data
 		});
 
-		this.log('state:save:router', this, data);
+		// @ts-ignore
+		c.log('state:save:router', this, data);
 		return true;
 	}
 
@@ -206,22 +259,21 @@ export default class Life {
 	 */
 	protected initStateFromRouter(): void {
 		const
-			{async: $a} = this,
+			c = this.component,
 			routerWatchers = {group: 'routerWatchers'};
 
-		$a.clearAll(
-			routerWatchers
-		);
+		const {async: $a} = this;
+		$a.clearAll(routerWatchers);
 
-		this.life.execCbAtTheRightTime(async () => {
+		this.lfc.execCbAtTheRightTime(async () => {
 			const
-				r = this.$root;
+				r = c.$root;
 
 			let
 				{router} = r;
 
 			if (!router) {
-				await $a.promisifyOnce(this.$root, 'initRouter', {
+				await $a.promisifyOnce(r, 'initRouter', {
 					label: $$.initStateFromRouter
 				});
 
@@ -234,15 +286,17 @@ export default class Life {
 
 			const
 				route = r.route || {},
-				stateFields = this.convertStateToRouter(Object.assign(Object.create(route), route.params, route.query));
+				// @ts-ignore
+				stateFields = c.syncRouterState(Object.assign(Object.create(route), route.params, route.query));
 
 			this.setState(
 				stateFields
 			);
 
-			if (this.syncRouterStoreOnInit) {
+			if (c.syncRouterStoreOnInit) {
 				const
-					routerState = this.convertStateToRouter(stateFields, 'remote');
+					// @ts-ignore
+					routerState = c.syncRouterState(stateFields, 'remote');
 
 				if (Object.keys(routerState).length) {
 					let
@@ -266,7 +320,7 @@ export default class Life {
 				}
 			}
 
-			const sync = this.createDeferFn(() => this.saveStateToRouter(), {
+			const sync = this.lazy.createLazyFn(() => this.saveStateToRouter(), {
 				label: $$.syncRouter
 			});
 
@@ -280,7 +334,7 @@ export default class Life {
 						$a.on(this.localEvent, `block.mod.*.${p[1]}.*`, sync, routerWatchers);
 
 					} else {
-						this.watch(key, (val, oldVal) => {
+						this.component.watch(key, (val, oldVal) => {
 							if (!Object.fastCompare(val, oldVal)) {
 								sync();
 							}
@@ -289,7 +343,8 @@ export default class Life {
 				}
 			}
 
-			this.log('state:init:router', this, stateFields);
+			// @ts-ignore
+			c.log('state:init:router', this, stateFields);
 
 		}, {
 			label: $$.initStateFromRouter
@@ -301,21 +356,24 @@ export default class Life {
 	 */
 	protected async resetRouterState(): Promise<boolean> {
 		const
-			stateFields = this.convertStateToRouterReset();
+			c = this.component,
+			// @ts-ignore
+			stateFields = c.convertStateToRouterReset();
 
 		this.setState(
 			stateFields
 		);
 
 		const
-			r = this.$root.router;
+			r = c.$root.router;
 
-		if (!this.isActivated || !r) {
+		if (!this.component.isActivated || !r) {
 			return false;
 		}
 
 		await r.push(null);
-		this.log('state:reset:router', this, stateFields);
+		// @ts-ignore
+		c.log('state:reset:router', this, stateFields);
 		return true;
 	}
 }

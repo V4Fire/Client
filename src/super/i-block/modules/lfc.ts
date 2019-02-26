@@ -27,17 +27,17 @@ export default class Lfc {
 	}
 
 	/**
+	 * Component status
+	 */
+	get status(): Statuses {
+		// @ts-ignore
+		return this.component.componentStatus;
+	}
+
+	/**
 	 * Component instance
 	 */
 	protected readonly component: iBlock;
-
-	/**
-	 * Async instance
-	 */
-	protected get componentStatus(): Statuses {
-		// @ts-ignore
-		return this.component.status;
-	}
 
 	/**
 	 * Async instance
@@ -114,7 +114,7 @@ export default class Lfc {
 	execCbAfterComponentReady<T = unknown>(cb: (this: this) => T, params?: AsyncOpts): CanPromise<CanVoid<T>> {
 		// @ts-ignore
 		if (this.component.block) {
-			if (statuses[this.componentStatus] >= 0) {
+			if (statuses[this.status] >= 0) {
 				return cb.call(this);
 			}
 
@@ -140,7 +140,7 @@ export default class Lfc {
 			}), params).catch(stderr);
 		}
 
-		if (statuses[this.componentStatus] >= 0) {
+		if (statuses[this.status] >= 0) {
 			return cb.call(this);
 		}
 	}

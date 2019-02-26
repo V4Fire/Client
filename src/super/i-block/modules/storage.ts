@@ -40,14 +40,6 @@ export default class Storage {
 	}
 
 	/**
-	 * Link to a component log function
-	 */
-	protected get log(): typeof iBlock.prototype['log'] {
-		// @ts-ignore
-		return this.component.log;
-	}
-
-	/**
 	 * @param component - component instance
 	 */
 	constructor(component: iBlock) {
@@ -75,7 +67,8 @@ export default class Storage {
 
 				if (engine) {
 					const res = await engine.get<T>(id, ...args);
-					this.log('storage:load', () => Object.fastClone(res));
+					// @ts-ignore
+					this.component.log('storage:load', () => Object.fastClone(res));
 					return res;
 				}
 
@@ -106,7 +99,8 @@ export default class Storage {
 
 				if (engine) {
 					await engine.set(id, value, ...args);
-					this.log('storage:save', () => Object.fastClone(value));
+					// @ts-ignore
+					this.component.log('storage:save', () => Object.fastClone(value));
 				}
 
 			} catch {}
@@ -137,7 +131,8 @@ export default class Storage {
 
 				if (engine) {
 					await engine.remove(id, ...args);
-					this.log('storage:remove', id);
+					// @ts-ignore
+					this.component.log('storage:remove', id);
 				}
 
 			} catch {}
