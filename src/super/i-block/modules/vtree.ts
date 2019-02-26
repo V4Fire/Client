@@ -7,7 +7,7 @@
  */
 
 import iBlock from 'super/i-block/i-block';
-import { ComponentElement } from 'core/component';
+import { VNode } from 'core/component';
 
 export default class VTree {
 	/**
@@ -51,9 +51,9 @@ export default class VTree {
 	 * @param elName
 	 * @param [ctx] - component context
 	 */
-	protected findElFromVNode(vnode: VNode, elName: string, ctx: iBlock = this): CanUndef<VNode> {
+	findElFromVNode(vnode: VNode, elName: string, ctx: iBlock = this.component): CanUndef<VNode> {
 		const
-			selector = ctx.getFullElName(elName);
+			selector = ctx.provide.fullElName(elName);
 
 		const search = (vnode) => {
 			const
@@ -83,40 +83,5 @@ export default class VTree {
 		};
 
 		return search(vnode);
-	}
-
-	/**
-	 * Returns an instance of a component by the specified element
-	 *
-	 * @param el
-	 * @param [filter]
-	 */
-	$<T extends iBlock>(el: ComponentElement<T>, filter?: string): T;
-
-	/**
-	 * Returns an instance of a component by the specified query
-	 *
-	 * @param query
-	 * @param [filter]
-	 */
-	$<T extends iBlock>(query: string, filter?: string): CanUndef<T>;
-	$<T extends iBlock>(query: string | ComponentElement<T>, filter: string = ''): CanUndef<T> {
-		const
-			q = Object.isString(query) ? document.body.querySelector<ComponentElement<T>>(query) : query;
-
-		if (q) {
-			if (q.component && (q.component.instance instanceof iBlock)) {
-				return q.component;
-			}
-
-			const
-				el = <ComponentElement<T>>q.closest(`.i-block-helper${filter}`);
-
-			if (el) {
-				return el.component;
-			}
-		}
-
-		return undefined;
 	}
 }

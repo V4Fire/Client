@@ -16,7 +16,7 @@ import { ComponentElement } from 'core/component';
 const
 	componentRgxp = /(?:^| )([bpg]-[^_ ]+)(?: |$)/;
 
-export default class Dom {
+export default class DOM {
 	/**
 	 * iBlock instance
 	 */
@@ -135,10 +135,45 @@ export default class Dom {
 	}
 
 	/**
+	 * Returns an instance of a component by the specified element
+	 *
+	 * @param el
+	 * @param [filter]
+	 */
+	getComponent<T extends iBlock>(el: ComponentElement<T>, filter?: string): T;
+
+	/**
+	 * Returns an instance of a component by the specified query
+	 *
+	 * @param query
+	 * @param [filter]
+	 */
+	getComponent<T extends iBlock>(query: string, filter?: string): CanUndef<T>;
+	getComponent<T extends iBlock>(query: string | ComponentElement<T>, filter: string = ''): CanUndef<T> {
+		const
+			q = Object.isString(query) ? document.body.querySelector<ComponentElement<T>>(query) : query;
+
+		if (q) {
+			if (q.component && (q.component.instance instanceof iBlock)) {
+				return q.component;
+			}
+
+			const
+				el = <ComponentElement<T>>q.closest(`.i-block-helper${filter}`);
+
+			if (el) {
+				return el.component;
+			}
+		}
+
+		return undefined;
+	}
+
+	/**
 	 * Creates a fake context for a component instance from the specified node
 	 * @param node
 	 */
-	protected createComponentCtxFromNode(node: Element): Dictionary {
+	createComponentCtxFromNode(node: Element): Dictionary {
 		const
 			$el = <ComponentElement<iBlock>>node,
 			comp = $el.component;
