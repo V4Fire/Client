@@ -6,29 +6,45 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-/*!
- * V4Fire Client Core
- * https://github.com/V4Fire/Client
- *
- * Released under the MIT license
- * https://github.com/V4Fire/Client/blob/master/LICENSE
- */
-
 import iBlock from 'super/i-block/i-block';
-import Async, { AsyncOpts } from 'core/async';
-import { statuses } from 'super/i-block/modules/const';
-import { Hooks, ComponentMeta } from 'core/component';
-import { Statuses } from 'super/i-block/modules/interface';
+import Cache from 'super/i-block/modules/cache';
+import Block from 'super/i-block/modules/block';
+import { ModVal, ModsTable, ModsNTable } from 'super/i-block/modules/mods';
 
-const beforeHooks = {
-	beforeRuntime: true,
-	beforeCreate: true,
-	beforeDataCreate: true
-};
+export type Classes = Dictionary<
+	string |
+	Array<string | true> |
+	true
+>;
 
-export default class Life {
+export type ClassesCacheNms =
+	'base' |
+	'blocks' |
+	'els';
+
+export type ClassesCacheValue =
+	ReadonlyArray<string> |
+	Readonly<Dictionary<string>>;
+
+export const
+	modsCache = Object.createDict<ModsNTable>();
+
+export const classesCache = new Cache<ClassesCacheNms, ClassesCacheValue>([
+	'base',
+	'blocks',
+	'els'
+]);
+
+export default class Provide {
 	/**
-	 * iBlock instance
+	 * Component name
+	 */
+	get componentName(): string {
+		return this.component.componentName;
+	}
+
+	/**
+	 * Component instance
 	 */
 	protected readonly component: iBlock;
 
@@ -40,18 +56,56 @@ export default class Life {
 	}
 
 	/**
+	 * Returns a full name of the specified component block
+	 *
+	 * @param [componentName]
+	 * @param [modName]
+	 * @param [modValue]
+	 */
+	fullBlockName(componentName: string = this.componentName, modName?: string, modValue?: unknown): string {
+		return Block.prototype.getFullBlockName.call({blockName: componentName}, modName, modValue);
+	}
+
+	/**
+	 * Returns a full name of the specified element
+	 *
+	 * @param componentName
+	 * @param elName
+	 * @param [modName]
+	 * @param [modValue]
+	 */
+	fullElName(componentName: string, elName: string, modName?: string, modValue?: unknown): string;
+
+	/**
+	 * @param elName
+	 * @param [modName]
+	 * @param [modValue]
+	 */
+	fullElName(elName: string, modName?: string, modValue?: unknown): string;
+	fullElName(componentName: string, elName: string, modName?: string, modValue?: unknown): string {
+		if (!{2: true, 4: true}[arguments.length]) {
+			modValue = modName;
+			modName = elName;
+			elName = componentName;
+			componentName = this.componentName;
+		}
+
+		return Block.prototype.getFullElName.call({blockName: componentName}, elName, modName, modValue);
+	}
+
+	/**
 	 * Returns an object with classes for elements of an another component
 	 *
 	 * @param componentName
 	 * @param classes - additional classes ({baseElementName: newElementName})
 	 */
-	protected classes(componentName: string, classes?: Classes): Readonly<Dictionary<string>>;
+	classes(componentName: string, classes?: Classes): Readonly<Dictionary<string>>;
 
 	/**
 	 * @param classes - additional classes ({baseElementName: newElementName})
 	 */
-	protected classes(classes: Classes): Readonly<Dictionary<string>>;
-	protected classes(componentName: string | Classes, classes?: Classes): Readonly<Dictionary<string>> {
+	classes(classes: Classes): Readonly<Dictionary<string>>;
+	classes(componentName: string | Classes, classes?: Classes): Readonly<Dictionary<string>> {
 		if (!Object.isString(componentName)) {
 			classes = componentName;
 			componentName = this.componentName;
@@ -92,7 +146,7 @@ export default class Life {
 					}
 				}
 
-				map[key.dasherize()] = this.getFullElName.apply(this, (<unknown[]>[componentName]).concat(el));
+				map[key.dasherize()] = this.fullElName.apply(this, (<unknown[]>[componentName]).concat(el));
 			}
 		}
 
@@ -103,9 +157,12 @@ export default class Life {
 	 * Returns an object with base component modifiers
 	 * @param mods - additional modifiers ({modifier: {currentValue: value}} || {modifier: value})
 	 */
-	protected mods(mods?: Dictionary<ModVal | Dictionary<ModVal>>): Readonly<ModsNTable> {
+	mods(mods?: Dictionary<ModVal | Dictionary<ModVal>>): Readonly<ModsNTable> {
 		const
-			key = JSON.stringify(this.baseMods) + JSON.stringify(mods),
+			{baseMods} = this.component;
+
+		const
+			key = JSON.stringify(baseMods) + JSON.stringify(mods),
 			cache = modsCache[key];
 
 		if (cache) {
@@ -113,7 +170,7 @@ export default class Life {
 		}
 
 		const
-			map = modsCache[key] = {...this.baseMods};
+			map = modsCache[key] = {...baseMods};
 
 		if (mods) {
 			const
@@ -142,5 +199,128 @@ export default class Life {
 		}
 
 		return Object.freeze(map);
+	}
+
+	/**
+	 * Returns an array of component classes by the specified parameters
+	 *
+	 * @param [componentName] - name of the source component
+	 * @param mods - map of modifiers
+	 */
+	blockClasses(componentName: CanUndef<string>, mods: ModsTable): ReadonlyArray<string>;
+
+	/**
+	 * @param mods - map of modifiers
+	 */
+	blockClasses(mods: ModsTable): ReadonlyArray<string>;
+	blockClasses(componentName?: string | ModsTable, mods?: ModsTable): ReadonlyArray<string> {
+		if (arguments.length === 1) {
+			mods = <ModsTable>componentName;
+			componentName = undefined;
+
+		} else {
+			mods = <ModsTable>mods;
+			componentName = <CanUndef<string>>componentName;
+		}
+
+		const
+			key = JSON.stringify(mods) + componentName,
+			cache = classesCache.create('blocks', this.componentName);
+
+		if (cache[key]) {
+			return <ReadonlyArray<string>>cache[key];
+		}
+
+		const
+			classes = cache[key] = [this.fullBlockName(componentName)];
+
+		for (let keys = Object.keys(mods), i = 0; i < keys.length; i++) {
+			const
+				key = keys[i],
+				val = mods[key];
+
+			if (val !== undefined) {
+				classes.push(this.fullBlockName(componentName, key, val));
+			}
+		}
+
+		return classes;
+	}
+
+	/**
+	 * Returns an array of element classes by the specified parameters
+	 *
+	 * @param componentNameOrCtx
+	 * @param els - map of elements with map of modifiers ({button: {focused: true}})
+	 */
+	protected getElClasses(componentNameOrCtx: string | iBlock, els: Dictionary<ModsTable>): ReadonlyArray<string>;
+
+	/**
+	 * @param els - map of elements with map of modifiers ({button: {focused: true}})
+	 */
+	protected getElClasses(els: Dictionary<ModsTable>): ReadonlyArray<string>;
+	protected getElClasses(
+		componentNameOrCtx: string | iBlock | Dictionary<ModsTable>,
+		els?: Dictionary<ModsTable>
+	): ReadonlyArray<string> {
+		let
+			id,
+			componentName;
+
+		if (arguments.length === 1) {
+			id = this.component.componentId;
+			componentName = this.componentName;
+			els = <Dictionary<ModsTable>>componentNameOrCtx;
+
+		} else {
+			if (Object.isString(componentNameOrCtx)) {
+				componentName = componentNameOrCtx;
+
+			} else {
+				id = (<iBlock>componentNameOrCtx).componentId;
+				componentName = (<iBlock>componentNameOrCtx).componentName;
+			}
+		}
+
+		if (!els) {
+			return Object.freeze([]);
+		}
+
+		const
+			key = JSON.stringify(els),
+			cache = classesCache.create('els', id || componentName);
+
+		if (cache[key]) {
+			return <ReadonlyArray<string>>cache[key];
+		}
+
+		const
+			classes = cache[key] = id ? [id] : [];
+
+		for (let keys = Object.keys(els), i = 0; i < keys.length; i++) {
+			const
+				el = keys[i],
+				mods = els[el];
+
+			classes.push(
+				this.fullElName(<string>componentName, el)
+			);
+
+			if (!Object.isObject(mods)) {
+				continue;
+			}
+
+			for (let keys = Object.keys(mods), i = 0; i < keys.length; i++) {
+				const
+					key = keys[i],
+					val = mods[key];
+
+				if (val !== undefined) {
+					classes.push(this.fullElName(<string>componentName, el, key, val));
+				}
+			}
+		}
+
+		return Object.freeze(classes);
 	}
 }
