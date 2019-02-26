@@ -6,8 +6,8 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import iBlock from 'super/i-block/i-block';
 import Async, { AsyncOpts } from 'core/async';
+import iBlock from 'super/i-block/i-block';
 
 export default class Lazy {
 	/**

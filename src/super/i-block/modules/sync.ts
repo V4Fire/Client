@@ -6,10 +6,10 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import Async, { AsyncOpts } from 'core/async';
 import iBlock from 'super/i-block/i-block';
 import Lfc from 'super/i-block/modules/lfc';
 import Field from 'super/i-block/modules/field';
-import Async, { AsyncOpts } from 'core/async';
 
 import { statuses } from 'super/i-block/modules/const';
 import { WatchOptions, ComponentMeta } from 'core/component';
@@ -86,32 +86,26 @@ export default class Sync {
 	/**
 	 * Cache for prop/field links
 	 */
-	protected get linksCache(): Dictionary<Dictionary> {
-		// @ts-ignore
-		return this.component.linksCache;
-	}
+	protected readonly linksCache!: Dictionary<Dictionary>;
 
 	/**
 	 * Cache for prop/field synchronize functions
 	 */
-	protected get syncLinkCache(): SyncLinkCache {
-		// @ts-ignore
-		return this.component.syncLinkCache;
-	}
+	protected readonly syncLinkCache!: SyncLinkCache;
 
 	/**
 	 * Cache for modifiers synchronize functions
 	 */
-	protected get syncModCache(): Dictionary<Function> {
-		// @ts-ignore
-		return this.component.syncModCache;
-	}
+	protected readonly syncModCache!: Dictionary<Function>;
 
 	/**
 	 * @param component - component instance
 	 */
 	constructor(component: iBlock) {
 		this.component = component;
+		this.linksCache = {};
+		this.syncLinkCache = {};
+		this.syncModCache = {};
 	}
 
 	/**

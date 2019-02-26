@@ -6,8 +6,8 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import iBlock from 'super/i-block/i-block';
 import Async, { AsyncOpts } from 'core/async';
+import iBlock from 'super/i-block/i-block';
 import { statuses } from 'super/i-block/modules/const';
 import { Hooks, ComponentMeta } from 'core/component';
 import { Statuses } from 'super/i-block/modules/interface';

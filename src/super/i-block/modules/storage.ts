@@ -6,27 +6,45 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import Async from 'core/async';
 import iBlock from 'super/i-block/i-block';
 
-export type MemoizedLiteral<T = unknown> =
-	Readonly<Dictionary<T>> |
-	ReadonlyArray<T>;
+//#if runtime has core/kv-storage
+import { asyncLocal, AsyncNamespace, ClearFilter } from 'core/kv-storage';
+//#endif
 
-export const
-	literalCache = Object.createDict<MemoizedLiteral>();
+export default class Storage {
+	/**
+	 * Component unique name
+	 */
+	get globalName(): CanUndef<string> {
+		return this.component.globalName;
+	}
 
-export default class Opt {
+	/**
+	 * Storage engine object
+	 */
+	readonly engine: CanUndef<AsyncNamespace>;
+
 	/**
 	 * iBlock instance
 	 */
 	protected readonly component: iBlock;
 
 	/**
-	 * Cache of ifOnce
+	 * Async instance
 	 */
-	protected get ifOnceStore(): Dictionary {
+	protected get async(): Async {
 		// @ts-ignore
-		return this.component.ifOnceStore;
+		return this.component.async;
+	}
+
+	/**
+	 * Link to a component log function
+	 */
+	protected get log(): typeof iBlock.prototype['log'] {
+		// @ts-ignore
+		return this.component.log;
 	}
 
 	/**
@@ -34,56 +52,30 @@ export default class Opt {
 	 */
 	constructor(component: iBlock) {
 		this.component = component;
+
+		//#if runtime has core/has kv-storage
+		this.engine = asyncLocal.namespace(component.componentName);
+		//#endif
 	}
 
 	/**
-	 * Saves the specified settings to a local storage by a key
+	 * Returns a value from a storage by the specified key
 	 *
-	 * @param settings
-	 * @param [key] - data storage key
+	 * @param [key]
+	 * @param [args]
 	 */
-	protected async save<T extends object = Dictionary>(settings: T, key: string = ''): Promise<T> {
-		const
-			$a = this.async,
-			id = `${this.globalName}_${key}`;
-
-		return $a.promise(async () => {
-			try {
-				const
-					s = this.storage;
-
-				if (s) {
-					await s.set(id, settings);
-					this.log('settings:save', () => Object.fastClone(settings));
-				}
-
-			} catch {}
-
-			return settings;
-
-		}, {
-			label: id,
-			group: 'saveSettings',
-			join: 'replace'
-		});
-	}
-
-	/**
-	 * Loads settings from a local storage by the specified key
-	 * @param [key] - data key
-	 */
-	protected load<T extends object = Dictionary>(key: string = ''): Promise<CanUndef<T>> {
+	get<T extends object = Dictionary>(key: string = '', ...args: unknown[]): Promise<CanUndef<T>> {
 		const
 			id = `${this.globalName}_${key}`;
 
 		return this.async.promise(async () => {
 			try {
 				const
-					s = this.storage;
+					{engine} = this;
 
-				if (s) {
-					const res = await s.get<T>(id);
-					this.log('settings:load', () => Object.fastClone(res));
+				if (engine) {
+					const res = await engine.get<T>(id, ...args);
+					this.log('storage:load', () => Object.fastClone(res));
 					return res;
 				}
 
@@ -91,8 +83,69 @@ export default class Opt {
 
 		}, {
 			label: id,
-			group: 'loadSettings',
+			group: 'storage:load',
 			join: true
+		});
+	}
+
+	/**
+	 * Saves a value to a storage by the specified key
+	 *
+	 * @param value
+	 * @param [key]
+	 * @param [args]
+	 */
+	set<T extends object = Dictionary>(value: T, key: string = '', ...args: unknown[]): Promise<T> {
+		const
+			id = `${this.globalName}_${key}`;
+
+		return this.async.promise(async () => {
+			try {
+				const
+					{engine} = this;
+
+				if (engine) {
+					await engine.set(id, value, ...args);
+					this.log('storage:save', () => Object.fastClone(value));
+				}
+
+			} catch {}
+
+			return value;
+
+		}, {
+			label: id,
+			group: 'storage:save',
+			join: 'replace'
+		});
+	}
+
+	/**
+	 * Removes a value from a storage by the specified key
+	 *
+	 * @param [key]
+	 * @param [args]
+	 */
+	remove(key: string = '', ...args: unknown[]): Promise<void> {
+		const
+			id = `${this.globalName}_${key}`;
+
+		return this.async.promise(async () => {
+			try {
+				const
+					{engine} = this;
+
+				if (engine) {
+					await engine.remove(id, ...args);
+					this.log('storage:remove', id);
+				}
+
+			} catch {}
+
+		}, {
+			label: id,
+			group: 'storage:remove',
+			join: 'replace'
 		});
 	}
 }

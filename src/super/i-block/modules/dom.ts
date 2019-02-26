@@ -41,9 +41,9 @@ export default class Dom {
 	 * Returns a string id, which is connected to the component
 	 * @param id - custom id
 	 */
-	getConnectedId(id: string): string;
-	getConnectedId(id: undefined | null): undefined;
-	getConnectedId(id: Nullable<string>): CanUndef<string> {
+	getId(id: string): string;
+	getId(id: undefined | null): undefined;
+	getId(id: Nullable<string>): CanUndef<string> {
 		if (!id) {
 			return undefined;
 		}
@@ -69,7 +69,7 @@ export default class Dom {
 	 */
 	delegateElement(name: string, handler: Function): CanPromise<Function> {
 		// @ts-ignore
-		const res = this.component.life.execCbAfterComponentReady(() =>
+		const res = this.component.lfc.execCbAfterComponentReady(() =>
 			this.delegate(this.block.getElSelector(name), handler)
 		);
 
