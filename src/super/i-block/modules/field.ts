@@ -100,7 +100,7 @@ export default class Field {
 			chunks = path.split('.'),
 			// @ts-ignore
 			isField = isComponent && ctx.meta.fields[chunks[0]],
-			isReady = !ctx.life.isBeforeCreate();
+			isReady = !ctx.lfc.isBeforeCreate();
 
 		let
 			// @ts-ignore
@@ -167,7 +167,7 @@ export default class Field {
 			chunks = path.split('.'),
 			// @ts-ignore
 			isField = isComponent && ctx.meta.fields[chunks[0]],
-			isReady = !ctx.life.isBeforeCreate();
+			isReady = !ctx.lfc.isBeforeCreate();
 
 		let
 			test = true,
