@@ -7,6 +7,7 @@
  */
 
 import iBlock from 'super/i-block/i-block';
+import { statuses } from 'super/i-block/modules/const';
 import { AsyncOpts } from 'core/async';
 
 export type Statuses =
@@ -32,5 +33,5 @@ export interface ParentMessage<T extends iBlock = iBlock> {
 	action(this: T): Function;
 }
 
-export type ConverterCallType = 'component' | 'remote';
 export type Stage = string | number;
+export type ComponentStatuses = Partial<Record<keyof typeof statuses, boolean>>;

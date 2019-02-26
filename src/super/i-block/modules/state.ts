@@ -18,6 +18,10 @@ import Lfc from 'super/i-block/modules/lfc';
 import { Event } from 'super/i-block/modules/event';
 import { Hooks } from 'core/component';
 
+export type ConverterCallType =
+	'component' |
+	'remote';
+
 const
 	$$ = symbolGenerator();
 

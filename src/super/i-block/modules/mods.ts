@@ -8,9 +8,9 @@
 
 import iBlock from 'super/i-block/i-block';
 import { ExperimentsSet } from 'core/abt/interface';
-import { ModVal } from 'core/component';
+import { ModVal, ModsDecl } from 'core/component';
 
-export { ModVal };
+export { ModVal, ModsDecl };
 export type ModsTable = Dictionary<ModVal>;
 export type ModsNTable = Dictionary<CanUndef<string>>;
 

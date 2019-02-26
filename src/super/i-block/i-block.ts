@@ -13,6 +13,7 @@ import symbolGenerator from 'core/symbol';
 import Async, { AsyncOpts, ClearOptsId, WrappedFunction, ProxyCb } from 'core/async';
 import log, { LogMessageOptions } from 'core/log';
 
+import { GLOBAL } from 'core/const/links';
 import { EventEmitter2 as EventEmitter } from 'eventemitter2';
 
 //#if runtime has core/analytics
@@ -41,29 +42,40 @@ import iStaticPage from 'super/i-static-page/i-static-page';
 
 import 'super/i-block/directives';
 
-import Daemons, { DaemonsDict } from 'super/i-block/modules/daemons';
+import { statuses } from 'super/i-block/modules/const';
+
 import Block from 'super/i-block/modules/block';
 import Cache from 'super/i-block/modules/cache';
+import Daemons, { DaemonsDict } from 'super/i-block/modules/daemons';
+import DOM from 'super/i-block/modules/dom';
+import Field from 'super/i-block/modules/field';
+import Lazy from 'super/i-block/modules/lazy';
+import Lfc from 'super/i-block/modules/lfc';
+import Opt from 'super/i-block/modules/opt';
+import Provide, { classesCache, Classes } from 'super/i-block/modules/provide';
+import Render from 'super/i-block/modules/render';
+import State, { ConverterCallType } from 'super/i-block/modules/state';
+import Storage from 'super/i-block/modules/storage';
+import Sync, { AsyncWatchOpts } from 'super/i-block/modules/sync';
+import VTree from 'super/i-block/modules/vtree';
 
-import { GLOBAL } from 'core/const/links';
-import { statuses } from 'super/i-block/modules/const';
+import { eventFactory, Event, RemoteEvent } from 'super/i-block/modules/event';
+import { initGlobalEvents, initModEvents, initRemoteWatchers } from 'super/i-block/modules/listeners';
+import { activate, deactivate, onActivated, onDeactivated } from 'super/i-block/modules/keep-alive';
+import { Statuses, WaitStatusOpts, Stage, ParentMessage, ComponentStatuses } from 'super/i-block/modules/interface';
 
 import {
 
-	Classes,
-	SyncLinkCache,
-	ModsTable,
-	ModsNTable,
-	Statuses,
-	WaitStatusOpts,
-	AsyncWatchOpts,
-	RemoteEvent,
-	Event,
-	ConverterCallType,
-	Stage,
-	BindModCb
+	mergeMods,
+	initMods,
+	getWatchableMods,
 
-} from 'super/i-block/modules/interface';
+	ModVal,
+	ModsDecl,
+	ModsTable,
+	ModsNTable
+
+} from 'super/i-block/modules/mods';
 
 import {
 
@@ -72,7 +84,6 @@ import {
 
 	globalEvent,
 	hook,
-	ModsDecl,
 
 	ComponentInterface,
 	ComponentElement,
@@ -80,20 +91,43 @@ import {
 
 } from 'core/component';
 
-import { prop, field, system, watch, wait, p, MethodWatchers } from 'super/i-block/modules/decorators';
+import {
 
-import Life from 'super/i-block/modules/life';
-import Field from 'super/i-block/modules/field';
-import { mergeMods, initMods, getWatchableMods } from 'super/i-block/modules/mods';
-import { activate, deactivate, onActivated, onDeactivated } from 'super/i-block/modules/keep-alive';
-import { eventFactory } from 'super/i-block/modules/event';
+	prop,
+	field,
+	system,
+	watch,
+	wait,
+	p,
+	MethodWatchers
+
+} from 'super/i-block/modules/decorators';
 
 export * from 'core/component';
 export * from 'super/i-block/modules/interface';
 export * from 'super/i-block/modules/daemons';
 export * from 'super/i-block/modules/block';
 
-export { statuses, Cache };
+export {
+
+	statuses,
+
+	AsyncWatchOpts,
+	ConverterCallType,
+
+	Cache,
+	Classes,
+
+	ModVal,
+	ModsDecl,
+	ModsTable,
+	ModsNTable,
+
+	Event,
+	RemoteEvent
+
+};
+
 export {
 
 	p,
@@ -110,22 +144,9 @@ export {
 
 } from 'super/i-block/modules/decorators';
 
-export type ComponentStatuses = Partial<Record<keyof typeof statuses, boolean>>;
-
-export interface RouteParams {
-	params?: Dictionary;
-	query?: Dictionary;
-}
-
 export const
 	$$ = symbolGenerator(),
 	modsCache = Object.createDict<ModsNTable>();
-
-const classesCache = new Cache<'base' | 'blocks' | 'els', ReadonlyArray<string> | Readonly<Dictionary<string>>>([
-	'base',
-	'blocks',
-	'els'
-]);
 
 @component()
 export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
@@ -139,6 +160,12 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	})
 
 	readonly componentId!: string;
+
+	/**
+	 * Component unique name
+	 */
+	@prop({type: String, required: false})
+	readonly globalName?: string;
 
 	/**
 	 * If true, then if the component is functional it won't be destroyed after removal from DOM
@@ -164,12 +191,6 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	 */
 	@prop(Function)
 	readonly i18n: typeof i18n = defaultI18n;
-
-	/**
-	 * Component unique name
-	 */
-	@prop({type: String, required: false})
-	readonly globalName?: string;
 
 	/**
 	 * If true, then the component state will be synchronized with the router after initializing
@@ -300,7 +321,7 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	 * True if the current component is activated
 	 */
 	@system((o) => {
-		o.life.execCbAtTheRightTime(() => {
+		o.lfc.execCbAtTheRightTime(() => {
 			if (o.isFunctional && !o.field.get('forceSelfActivation')) {
 				return;
 			}
@@ -313,7 +334,7 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 			}
 		});
 
-		return o.link('activatedProp', (val) => {
+		return o.sync.link('activatedProp', (val) => {
 			if (o.hook !== 'beforeDataCreate') {
 				o[val ? 'activate' : 'deactivate']();
 			}
@@ -418,10 +439,10 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	@system({
 		atom: true,
 		unique: true,
-		init: (ctx: iBlock) => new Life(ctx)
+		init: (ctx: iBlock) => new Lfc(ctx)
 	})
 
-	readonly life!: Life;
+	readonly lfc!: Lfc;
 
 	/**
 	 * API for component field accessors
@@ -433,6 +454,83 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	})
 
 	readonly field!: Field;
+
+	/**
+	 * API for component option providers
+	 */
+	@system({
+		atom: true,
+		unique: true,
+		init: (ctx: iBlock) => new Provide(ctx)
+	})
+
+	readonly provide!: Provide;
+
+	/**
+	 * API for component option providers
+	 */
+	@system({
+		atom: true,
+		unique: true,
+		init: (ctx: iBlock) => new Sync(ctx)
+	})
+
+	readonly sync!: Sync;
+
+	/**
+	 * API for component option providers
+	 */
+	@system({
+		atom: true,
+		unique: true,
+		init: (ctx: iBlock) => new Storage(ctx)
+	})
+
+	readonly storage!: Storage;
+
+	/**
+	 * API for component option providers
+	 */
+	@system({
+		atom: true,
+		unique: true,
+		init: (ctx: iBlock) => new State(ctx)
+	})
+
+	readonly state!: State;
+
+	/**
+	 * API for component option providers
+	 */
+	@system({
+		atom: true,
+		unique: true,
+		init: (ctx: iBlock) => new Lazy(ctx)
+	})
+
+	readonly lazy!: Lazy;
+
+	/**
+	 * API for component option providers
+	 */
+	@system({
+		atom: true,
+		unique: true,
+		init: (ctx: iBlock) => new VTree(ctx)
+	})
+
+	readonly vTree!: VTree;
+
+	/**
+	 * API for component option providers
+	 */
+	@system({
+		atom: true,
+		unique: true,
+		init: (ctx: iBlock) => new DOM(ctx)
+	})
+
+	readonly dom!: DOM;
 
 	/**
 	 * Parent link
@@ -510,7 +608,7 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	/**
 	 * Component stage store
 	 */
-	@field((o) => o.link((val, old) => {
+	@field((o) => o.sync.link((val, old) => {
 		if (val === old) {
 			return;
 		}
@@ -569,24 +667,6 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	 */
 	@field({merge: true})
 	protected watchTmp: Dictionary = {};
-
-	/**
-	 * Cache for prop/field links
-	 */
-	@system({unique: true})
-	protected readonly linksCache!: Dictionary<Dictionary>;
-
-	/**
-	 * Cache for prop/field synchronize functions
-	 */
-	@system({unique: true})
-	protected readonly syncLinkCache!: SyncLinkCache;
-
-	/**
-	 * Cache for modifiers synchronize functions
-	 */
-	@system({unique: true})
-	protected readonly syncModCache!: Dictionary<Function>;
 
 	/**
 	 * Link to the current component
@@ -672,27 +752,10 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 		atom: true,
 		after: 'async',
 		unique: true,
-		init: (o, d) => eventFactory(<Async>d.async, () => o.$parent)
+		init: (o, d) => eventFactory(<Async>d.async, () => o.$parent, true)
 	})
 
-	protected readonly parentEvent!: Event<this>;
-
-	/**
-	 * Storage object
-	 */
-	@system({
-		atom: true,
-		unique: true,
-
-		// tslint:disable-next-line:arrow-return-shorthand
-		init: (o) => {
-			//#if runtime has core/has kv-storage
-			return asyncLocal.namespace(o.componentName);
-			//#endif
-		}
-	})
-
-	protected readonly storage!: CanUndef<AsyncNamespace>;
+	protected readonly parentEvent!: RemoteEvent<this>;
 
 	/**
 	 * Cache of child async components
@@ -705,6 +768,25 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	 */
 	@field({unique: true})
 	protected readonly asyncBackComponents: Dictionary<string> = {};
+
+	/**
+	 * Browser constants
+	 */
+	@system({
+		atom: true,
+		unique: true,
+		init: () => {
+			//#if runtime has core/browser
+			return browser;
+			//#endif
+
+			//#unless runtime has core/browser
+			return {};
+			//#endunless
+		}
+	})
+
+	protected readonly browser!: typeof browser;
 
 	/**
 	 * Some helpers
@@ -726,30 +808,11 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	protected readonly h!: typeof helpers;
 
 	/**
-	 * Browser constants
-	 */
-	@system({
-		atom: true,
-		unique: true,
-		init: () => {
-			//#if runtime has core/browser
-			return browser;
-			//#endif
-
-			//#unless runtime has core/browser
-			return {};
-			//#endunless
-		}
-	})
-
-	protected readonly b!: typeof browser;
-
-	/**
 	 * Alias for .i18n
 	 */
 	@system({
 		atom: true,
-		init: (o) => o.link('i18n')
+		init: (o) => o.sync.link('i18n')
 	})
 
 	protected readonly t!: typeof i18n;
@@ -822,7 +885,7 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 		cb: (this: this, n: T, o?: T) => void,
 		params?: AsyncWatchOpts
 	): void {
-		this.execCbAfterCreated(() => {
+		this.lfc.execCbAfterComponentCreated(() => {
 			const
 				p = params || {},
 				fork = (obj) => Object.mixin(true, undefined, obj);
@@ -854,67 +917,6 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 				return;
 			}
 		});
-	}
-
-	/**
-	 * Binds a modifier to the specified field
-	 *
-	 * @param mod
-	 * @param field
-	 * @param [converter] - converter function or additional parameters
-	 * @param [params] - additional parameters
-	 */
-	bindModTo<V = unknown, R = unknown, CTX extends iBlock = this>(
-		mod: string,
-		field: string,
-		converter: BindModCb<V, R, CTX> | AsyncWatchOpts = (v) => v != null ? Boolean(v) : undefined,
-		params?: AsyncWatchOpts
-	): void {
-		mod = mod.camelize(false);
-
-		if (!Object.isFunction(converter)) {
-			params = converter;
-			converter = Boolean;
-		}
-
-		const
-			fn = <Function>converter;
-
-		const setWatcher = () => {
-			this.watch(field, (val) => {
-				val = fn(val, this);
-
-				if (val !== undefined) {
-					this.setMod(mod, val);
-				}
-
-			}, params);
-		};
-
-		if (this.isBeforeCreate()) {
-			const sync = this.syncModCache[mod] = () => {
-				const
-					v = fn(this.field.get(field), this);
-
-				if (v !== undefined) {
-					this.mods[mod] = String(v);
-				}
-			};
-
-			if (this.hook !== 'beforeDataCreate') {
-				this.meta.hooks.beforeDataCreate.push({
-					fn: sync
-				});
-
-			} else {
-				sync();
-			}
-
-			setWatcher();
-
-		} else if (statuses[this.componentStatus] >= 1) {
-			setWatcher();
-		}
 	}
 
 	/**
@@ -1152,10 +1154,10 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 			const
 				get = () => Object.isFunction(data) ? data.call(this) : data;
 
-			this.life.execCbAtTheRightTime(() => this.emit('dbReady', get(), silent));
+			this.lfc.execCbAtTheRightTime(() => this.emit('dbReady', get(), silent));
 			this.componentStatus = 'beforeReady';
 
-			this.execCbAfterBlockReady(async () => {
+			this.lfc.execCbAfterComponentReady(async () => {
 				if (this.beforeReadyListeners > 1) {
 					await this.nextTick();
 					this.beforeReadyListeners = 0;
@@ -1168,7 +1170,7 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 
 		if (this.globalName || providers.size) {
 			const init = async () => {
-				await this.initStateFromStorage();
+				await this.state.initStateFromStorage();
 
 				if (providers.size) {
 					await $a.wait(() => {
@@ -1221,11 +1223,11 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	setMod(name: string, value: unknown): CanPromise<boolean>;
 	setMod(nodeOrName: Element | string, name: string | unknown, value?: unknown): CanPromise<boolean | void> {
 		if (Object.isString(nodeOrName)) {
-			return this.execCbAfterBlockReady(() => this.block.setMod(nodeOrName, name)) || false;
+			return this.lfc.execCbAfterComponentReady(() => this.block.setMod(nodeOrName, name)) || false;
 		}
 
 		return Block.prototype.setMod.call(
-			this.createBlockCtxFromNode(nodeOrName),
+			this.dom.createComponentCtxFromNode(nodeOrName),
 			name,
 			value
 		);
@@ -1247,11 +1249,11 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	removeMod(name: string, value?: unknown): CanPromise<boolean>;
 	removeMod(nodeOrName: Element | string, name?: string | unknown, value?: unknown): CanPromise<boolean | void> {
 		if (Object.isString(nodeOrName)) {
-			return this.execCbAfterBlockReady(() => this.block.removeMod(nodeOrName, name)) || false;
+			return this.lfc.execCbAfterComponentReady(() => this.block.removeMod(nodeOrName, name)) || false;
 		}
 
 		return Block.prototype.removeMod.call(
-			this.createBlockCtxFromNode(nodeOrName),
+			this.dom.createComponentCtxFromNode(nodeOrName),
 			name,
 			value
 		);
@@ -1345,7 +1347,7 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	 * @param [data] - advanced data
 	 * @param [type] - call type
 	 */
-	protected convertStateToStorage(data?: Dictionary, type: ConverterCallType = 'component'): Dictionary {
+	protected syncStorageState(data?: Dictionary, type: ConverterCallType = 'component'): Dictionary {
 		return {...data};
 	}
 
@@ -1355,7 +1357,7 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	 */
 	protected convertStateToStorageReset(data?: Dictionary): Dictionary<undefined> {
 		const
-			stateFields = this.convertStateToStorage(data),
+			stateFields = this.syncStorageState(data),
 			res = {};
 
 		if (stateFields) {
@@ -1373,7 +1375,7 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	 * @param [data] - advanced data
 	 * @param [type] - call type
 	 */
-	protected convertStateToRouter(data?: Dictionary, type: ConverterCallType = 'component'): Dictionary {
+	protected syncRouterState(data?: Dictionary, type: ConverterCallType = 'component'): Dictionary {
 		return {};
 	}
 
@@ -1383,7 +1385,7 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	 */
 	protected convertStateToRouterReset(data?: Dictionary): Dictionary<undefined> {
 		const
-			stateFields = this.convertStateToRouter(data),
+			stateFields = this.syncRouterState(data),
 			res = {};
 
 		if (stateFields) {
@@ -1442,24 +1444,13 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	 */
 	@hook('beforeRuntime')
 	protected initBaseAPI(): void {
-		// @ts-ignore
-		this.linksCache = {};
-
-		// @ts-ignore
-		this.syncLinkCache = {};
-
-		// @ts-ignore
-		this.syncModCache = {};
-
 		const
 			i = this.instance;
 
-		this.bindModTo = i.bindModTo.bind(this);
-		this.convertStateToStorage = i.convertStateToStorage.bind(this);
-		this.convertStateToRouter = i.convertStateToRouter.bind(this);
+		this.syncStorageState = i.syncStorageState.bind(this);
+		this.syncRouterState = i.syncRouterState.bind(this);
 
 		this.watch = i.watch.bind(this);
-
 		this.on = i.on.bind(this);
 		this.once = i.once.bind(this);
 		this.off = i.off.bind(this);
@@ -1519,6 +1510,44 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	}
 
 	/**
+	 * Initializes global event listeners
+	 */
+	@hook('created')
+	protected initGlobalEvents(): void {
+		initGlobalEvents(this);
+	}
+
+	/**
+	 * Initializes modifiers event listeners
+	 */
+	@hook('beforeCreate')
+	protected initModEvents(): void {
+		initModEvents(this);
+	}
+
+	/**
+	 * Initializes watchers from .watchProp
+	 */
+	@hook('beforeCreate')
+	protected initRemoteWatchers(): void {
+		initRemoteWatchers(this);
+	}
+
+	/**
+	 * Handler: parent call child event
+	 * @param e
+	 */
+	@watch('parentEvent:onCallChild')
+	protected onCallChild(e: ParentMessage): void {
+		if (
+			e.check[0] !== 'instanceOf' && e.check[1] === this[e.check[0]] ||
+			e.check[0] === 'instanceOf' && this.instance instanceof <Function>e.check[1]
+		) {
+			return e.action.call(this);
+		}
+	}
+
+	/**
 	 * Component created
 	 */
 	protected created(): void {
@@ -1566,12 +1595,10 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
  */
 export abstract class iBlockDecorator extends iBlock {
 	public readonly h!: typeof helpers;
-	public readonly b!: typeof browser;
+	public readonly browser!: typeof browser;
 	public readonly t!: typeof i18n;
 
 	public readonly meta!: ComponentMeta;
-	public readonly linksCache!: Dictionary<Dictionary>;
-	public readonly syncLinkCache!: SyncLinkCache;
 	public readonly $attrs!: Dictionary<string>;
 
 	public readonly async!: Async<this>;
