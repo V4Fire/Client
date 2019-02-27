@@ -25,19 +25,21 @@ const inactiveStatuses = {
  * @param component
  * @param [force]
  */
-export function activate(component: iBlock, force?: boolean): void {
+export function activate<T extends iBlock>(component: T, force?: boolean): void {
 	const
-		c = component,
+		c = component;
+
+	const
 		// @ts-ignore
-		event = c.rootEvent;
+		{event: $e, state: $s} = c;
 
 	if (!c.isActivated || force) {
-		c.state.initStateFromRouter();
-		c.lfc.execCbAfterComponentCreated(() => event.on('onTransition', async (route, type) => {
+		$s.initFromRouter();
+		c.lfc.execCbAfterComponentCreated(() => $e.on('onTransition', async (route, type) => {
 			try {
 				if (type === 'hard') {
 					if (route !== c.r.route) {
-						await event.promisifyOnce('setRoute', {
+						await $e.promisifyOnce('setRoute', {
 							label: $$.activateAfterTransition
 						});
 
@@ -47,7 +49,7 @@ export function activate(component: iBlock, force?: boolean): void {
 				}
 
 				if (!inactiveStatuses[c.componentStatus]) {
-					c.state.initStateFromRouter();
+					$s.initFromRouter();
 				}
 
 			} catch (err) {
@@ -112,7 +114,7 @@ export function activate(component: iBlock, force?: boolean): void {
  * Deactivates the component
  * @param component
  */
-export function deactivate(component: iBlock): void {
+export function deactivate<T extends iBlock>(component: T): void {
 	const
 		c = component;
 
@@ -174,7 +176,7 @@ const readyEvents = {
  * Handler: component activated hook
  * @param component
  */
-export function onActivated(component: iBlock): void {
+export function onActivated<T extends iBlock>(component: T): void {
 	const
 		c = component,
 
@@ -223,7 +225,7 @@ const nonMuteAsync = {
  * Handler: component deactivated hook
  * @param component
  */
-export function onDeactivated(component: iBlock): void {
+export function onDeactivated<T extends iBlock>(component: T): void {
 	const
 		// @ts-ignore
 		{async: $a} = component;

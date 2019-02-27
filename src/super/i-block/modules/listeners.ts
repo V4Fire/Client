@@ -25,7 +25,7 @@ export function initGlobalEvents(component: iBlock): void {
 
 	const
 		// @ts-ignore
-		{globalEvent: $e} = c;
+		{globalEvent: $e, state: $s} = c;
 
 	const waitNextTick = (fn) => async () => {
 		try {
@@ -39,15 +39,15 @@ export function initGlobalEvents(component: iBlock): void {
 
 	$e.on('reset.load', waitNextTick(c.initLoad));
 	$e.on('reset.load.silence', waitNextTick(c.reload));
-	$e.on('reset.router', c.state.resetRouterState);
-	$e.on('reset.storage', c.state.resetStorageState);
+	$e.on('reset.router', $s.resetRouter);
+	$e.on('reset.storage', $s.resetStorage);
 
 	$e.on('reset', waitNextTick(async () => {
 		c.componentStatus = 'loading';
 
 		await Promise.all([
-			c.state.resetRouterState(),
-			c.state.resetStorageState()
+			$s.resetRouter(),
+			$s.resetStorage()
 		]);
 
 		await c.initLoad();
@@ -55,8 +55,8 @@ export function initGlobalEvents(component: iBlock): void {
 
 	$e.on('reset.silence', waitNextTick(async () => {
 		await Promise.all([
-			c.state.resetRouterState(),
-			c.state.resetStorageState()
+			$s.resetRouter(),
+			$s.resetStorage()
 		]);
 
 		await c.reload();

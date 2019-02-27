@@ -109,62 +109,6 @@ export default class Block {
 	}
 
 	/**
-	 * Returns true if the block has all modifiers from specified
-	 *
-	 * @param mods - list of modifiers (['name', ['name', 'value']])
-	 * @param [value] - value of modifiers
-	 */
-	ifEveryMods(mods: Array<CanArray<string>>, value?: unknown): boolean {
-		for (let i = 0; i < mods.length; i++) {
-			const
-				el = mods[i];
-
-			if (Object.isArray(el)) {
-				if (this.getMod(el[0]) === String(el[1])) {
-					continue;
-				}
-
-				return false;
-			}
-
-			if (this.getMod(el) === String(value)) {
-				continue;
-			}
-
-			return false;
-		}
-
-		return true;
-	}
-
-	/**
-	 * Returns true if the block has at least one modifier from specified
-	 *
-	 * @param mods - list of modifiers (['name', ['name', 'value']])
-	 * @param [value] - value of modifiers
-	 */
-	ifSomeMod(mods: Array<CanArray<string>>, value?: unknown): boolean {
-		for (let i = 0; i < mods.length; i++) {
-			const
-				el = mods[i];
-
-			if (Object.isArray(el)) {
-				if (this.getMod(el[0]) === String(el[1])) {
-					return true;
-				}
-
-				continue;
-			}
-
-			if (this.getMod(el) === String(value)) {
-				return true;
-			}
-		}
-
-		return false;
-	}
-
-	/**
 	 * Returns a full name of the current block
 	 *
 	 * @param [modName]

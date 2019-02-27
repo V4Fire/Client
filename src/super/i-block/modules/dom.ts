@@ -68,7 +68,6 @@ export default class DOM {
 	 * @param handler
 	 */
 	delegateElement(name: string, handler: Function): CanPromise<Function> {
-		// @ts-ignore
 		const res = this.component.lfc.execCbAfterComponentReady(() =>
 			this.delegate(this.block.getElSelector(name), handler)
 		);
@@ -87,8 +86,8 @@ export default class DOM {
 	 * @param [el] - link to a dome element or an element name
 	 */
 	@wait('ready')
-	async putInStream(
-		cb: (this: iBlock, el: Element) => void,
+	async putInStream<T extends iBlock>(
+		cb: (this: T, el: Element) => void,
 		el: Element | string = this.component.$el
 	): Promise<boolean> {
 		const

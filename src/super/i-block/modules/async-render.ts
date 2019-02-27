@@ -8,7 +8,6 @@
 
 import Async from 'core/async';
 import iBlock from 'super/i-block/i-block';
-import { patchVNode, execRenderObject, RenderObject, RenderContext, VNode } from 'core/component';
 import { queue, backQueue, restart, deferRestart } from 'core/render';
 
 export interface AsyncTaskObjectId {
@@ -21,7 +20,7 @@ export type AsyncTaskSimpleId = string | number;
 export type AsyncTaskId = AsyncTaskSimpleId | (() => AsyncTaskObjectId) | AsyncTaskObjectId;
 export type AsyncQueueType = 'asyncComponents' | 'asyncBackComponents';
 
-export default class Render {
+export default class AsyncRender {
 	/**
 	 * Component render weight
 	 */
@@ -59,7 +58,7 @@ export default class Render {
 	/**
 	 * Restarts the async render daemon for forcing render
 	 */
-	forceAsyncRender(): void {
+	forceRender(): void {
 		restart();
 	}
 
@@ -67,7 +66,7 @@ export default class Render {
 	 * Restarts the async render daemon for forcing render
 	 * (runs on a next tick)
 	 */
-	deferForceAsyncRender(): void {
+	deferForceRender(): void {
 		deferRestart();
 	}
 
@@ -135,38 +134,5 @@ export default class Render {
 	 */
 	regAsyncBackComponent(id: AsyncTaskId): AsyncTaskSimpleId {
 		return this.regAsyncComponent(id, 'asyncBackComponents');
-	}
-
-	/**
-	 * Executes the specified render object
-	 *
-	 * @param renderObj
-	 * @param [ctx] - render context
-	 */
-	execRenderObject(
-		renderObj: RenderObject,
-		ctx?: RenderContext | [Dictionary] | [Dictionary, RenderContext]
-	): VNode {
-		let
-			instanceCtx,
-			renderCtx;
-
-		if (ctx && Object.isArray(ctx)) {
-			instanceCtx = ctx[0] || this;
-			renderCtx = ctx[1];
-
-		} else {
-			instanceCtx = this;
-			renderCtx = ctx;
-		}
-
-		const
-			vnode = execRenderObject(renderObj, instanceCtx);
-
-		if (renderCtx) {
-			return patchVNode(vnode, instanceCtx, renderCtx);
-		}
-
-		return vnode;
 	}
 }

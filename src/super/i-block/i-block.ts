@@ -44,20 +44,25 @@ import 'super/i-block/directives';
 
 import { statuses } from 'super/i-block/modules/const';
 
-import Block from 'super/i-block/modules/block';
 import Cache from 'super/i-block/modules/cache';
-import Daemons, { DaemonsDict } from 'super/i-block/modules/daemons';
-import DOM from 'super/i-block/modules/dom';
-import Field from 'super/i-block/modules/field';
-import Lazy from 'super/i-block/modules/lazy';
-import Lfc from 'super/i-block/modules/lfc';
 import Opt from 'super/i-block/modules/opt';
+import Lazy from 'super/i-block/modules/lazy';
+
+import Daemons, { DaemonsDict } from 'super/i-block/modules/daemons';
+
+import DOM from 'super/i-block/modules/dom';
+import VDOM from 'super/i-block/modules/vdom';
+
+import Lfc from 'super/i-block/modules/lfc';
+import AsyncRender from 'super/i-block/modules/async-render';
+
+import Block from 'super/i-block/modules/block';
+import Field from 'super/i-block/modules/field';
+
 import Provide, { classesCache, Classes } from 'super/i-block/modules/provide';
-import Render from 'super/i-block/modules/render';
 import State, { ConverterCallType } from 'super/i-block/modules/state';
 import Storage from 'super/i-block/modules/storage';
 import Sync, { AsyncWatchOpts } from 'super/i-block/modules/sync';
-import VTree from 'super/i-block/modules/vtree';
 
 import { eventFactory, Event, RemoteEvent } from 'super/i-block/modules/event';
 import { initGlobalEvents, initModEvents, initRemoteWatchers } from 'super/i-block/modules/listeners';
@@ -168,10 +173,46 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	readonly globalName?: string;
 
 	/**
+	 * If true, then the current component is activated
+	 */
+	@prop(Boolean)
+	readonly activatedProp: boolean = true;
+
+	/**
 	 * If true, then if the component is functional it won't be destroyed after removal from DOM
 	 */
 	@prop(Boolean)
 	readonly keepAlive: boolean = false;
+
+	/**
+	 * If true, then the component will be reinitialized after an activated hook
+	 */
+	@prop(Boolean)
+	readonly needReInit: boolean = false;
+
+	/**
+	 * Initial component modifiers
+	 */
+	@prop(Object)
+	readonly modsProp: ModsTable = {};
+
+	/**
+	 * Remote watchers table
+	 */
+	@prop(Object)
+	readonly watchProp: Dictionary<MethodWatchers> = {};
+
+	/**
+	 * Initial component stage
+	 */
+	@prop({type: [String, Number], required: false})
+	readonly stageProp?: Stage;
+
+	/**
+	 * Component render weight
+	 */
+	@prop({type: Number, required: false})
+	readonly weight?: number;
 
 	/**
 	 * If true, then will be forcing activation hooks for all components instead of non functional components
@@ -187,16 +228,46 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	readonly forceInitialActivation: boolean = false;
 
 	/**
-	 * Link to i18n function
-	 */
-	@prop(Function)
-	readonly i18n: typeof i18n = defaultI18n;
-
-	/**
 	 * If true, then the component state will be synchronized with the router after initializing
 	 */
 	@prop(Boolean)
 	readonly syncRouterStoreOnInit: boolean = false;
+
+	/**
+	 * Dispatching mode
+	 */
+	@prop(Boolean)
+	readonly dispatching: boolean = false;
+
+	/**
+	 * If true, then all dispatching events will be emits as self component events
+	 */
+	@prop(Boolean)
+	readonly selfDispatching: boolean = false;
+
+	/**
+	 * If true, then the component marked as a remote provider
+	 */
+	@prop(Boolean)
+	readonly remoteProvider: boolean = false;
+
+	/**
+	 * Additional classes for component elements
+	 */
+	@prop(Object)
+	readonly classes: Classes = {};
+
+	/**
+	 * Advanced component parameters
+	 */
+	@prop(Object)
+	readonly pProp: Dictionary = {};
+
+	/**
+	 * Link to i18n function
+	 */
+	@prop(Function)
+	readonly i18n: typeof i18n = defaultI18n;
 
 	/**
 	 * Link to the remote state object
@@ -239,24 +310,6 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	}
 
 	/**
-	 * Initial component modifiers
-	 */
-	@prop(Object)
-	readonly modsProp: ModsTable = {};
-
-	/**
-	 * Initial component stage
-	 */
-	@prop({type: [String, Number], required: false})
-	readonly stageProp?: Stage;
-
-	/**
-	 * Component render weight
-	 */
-	@prop({type: Number, required: false})
-	readonly weight?: number;
-
-	/**
 	 * Component stage store
 	 */
 	@p({cache: false})
@@ -288,36 +341,6 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	}
 
 	/**
-	 * Dispatching mode
-	 */
-	@prop(Boolean)
-	readonly dispatching: boolean = false;
-
-	/**
-	 * If true, then all dispatching events will be emits as self component events
-	 */
-	@prop(Boolean)
-	readonly selfDispatching: boolean = false;
-
-	/**
-	 * If true, then the component marked as a remote provider
-	 */
-	@prop(Boolean)
-	readonly remoteProvider: boolean = false;
-
-	/**
-	 * Remote watchers table
-	 */
-	@prop(Object)
-	readonly watchProp: Dictionary<MethodWatchers> = {};
-
-	/**
-	 * If true, then the current component is activated
-	 */
-	@prop(Boolean)
-	readonly activatedProp: boolean = true;
-
-	/**
 	 * True if the current component is activated
 	 */
 	@system((o) => {
@@ -344,24 +367,6 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	})
 
 	isActivated!: boolean;
-
-	/**
-	 * If true, then the component will be reinitialized after an activated hook
-	 */
-	@prop(Boolean)
-	readonly needReInit: boolean = false;
-
-	/**
-	 * Additional classes for component elements
-	 */
-	@prop(Object)
-	readonly classes: Classes = {};
-
-	/**
-	 * Advanced component parameters
-	 */
-	@prop(Object)
-	readonly pProp: Dictionary = {};
 
 	/**
 	 * Returns the internal advanced parameters store value
@@ -478,61 +483,6 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	readonly sync!: Sync;
 
 	/**
-	 * API for component option providers
-	 */
-	@system({
-		atom: true,
-		unique: true,
-		init: (ctx: iBlock) => new Storage(ctx)
-	})
-
-	readonly storage!: Storage;
-
-	/**
-	 * API for component option providers
-	 */
-	@system({
-		atom: true,
-		unique: true,
-		init: (ctx: iBlock) => new State(ctx)
-	})
-
-	readonly state!: State;
-
-	/**
-	 * API for component option providers
-	 */
-	@system({
-		atom: true,
-		unique: true,
-		init: (ctx: iBlock) => new Lazy(ctx)
-	})
-
-	readonly lazy!: Lazy;
-
-	/**
-	 * API for component option providers
-	 */
-	@system({
-		atom: true,
-		unique: true,
-		init: (ctx: iBlock) => new VTree(ctx)
-	})
-
-	readonly vTree!: VTree;
-
-	/**
-	 * API for component option providers
-	 */
-	@system({
-		atom: true,
-		unique: true,
-		init: (ctx: iBlock) => new DOM(ctx)
-	})
-
-	readonly dom!: DOM;
-
-	/**
 	 * Parent link
 	 */
 	static readonly PARENT: object = PARENT;
@@ -565,6 +515,83 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	 * Component daemons
 	 */
 	static readonly daemons: DaemonsDict = {};
+
+	/**
+	 * API for a component storage
+	 */
+	@system({
+		atom: true,
+		unique: true,
+		init: (ctx: iBlock) => new Storage(ctx)
+	})
+
+	protected readonly storage!: Storage;
+
+	/**
+	 * API for a component state
+	 */
+	@system({
+		atom: true,
+		unique: true,
+		init: (ctx: iBlock) => new State(ctx)
+	})
+
+	protected readonly state!: State;
+
+	/**
+	 * API for component DOM operations
+	 */
+	@system({
+		atom: true,
+		unique: true,
+		init: (ctx: iBlock) => new DOM(ctx)
+	})
+
+	protected readonly dom!: DOM;
+
+	/**
+	 * API for component VDOM operations
+	 */
+	@system({
+		atom: true,
+		unique: true,
+		init: (ctx: iBlock) => new VDOM(ctx)
+	})
+
+	protected readonly vdom!: VDOM;
+
+	/**
+	 * API for async render
+	 */
+	@system({
+		atom: true,
+		unique: true,
+		init: (ctx: iBlock) => new AsyncRender(ctx)
+	})
+
+	protected readonly asyncRender!: AsyncRender;
+
+	/**
+	 * API for lazy operations
+	 */
+	@system({
+		atom: true,
+		unique: true,
+		init: (ctx: iBlock) => new Lazy(ctx)
+	})
+
+	protected readonly lazy!: Lazy;
+
+	/**
+	 * API for optimize operations
+	 */
+	@system({
+		atom: true,
+		unique: true,
+		init: (ctx: iBlock) => new Opt(ctx)
+	})
+
+	protected readonly opt!: Opt;
 
 	/**
 	 * Wrapper for $refs
@@ -983,7 +1010,7 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	 * @param cb
 	 * @param [params] - async parameters
 	 */
-	on<E = unknown, R = unknown>(event: string, cb: ProxyCb<E, R, this>, params?: AsyncOpts): void {
+	on<E = unknown, R = unknown>(event: string, cb: ProxyCb<E, R, any>, params?: AsyncOpts): void {
 		event = event.dasherize();
 
 		if (params) {
@@ -1002,7 +1029,7 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	 * @param cb
 	 * @param [params] - async parameters
 	 */
-	once<E = unknown, R = unknown>(event: string, cb: ProxyCb<E, R, this>, params?: AsyncOpts): void {
+	once<E = unknown, R = unknown>(event: string, cb: ProxyCb<E, R, any>, params?: AsyncOpts): void {
 		event = event.dasherize();
 
 		if (params) {
@@ -1170,7 +1197,7 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 
 		if (this.globalName || providers.size) {
 			const init = async () => {
-				await this.state.initStateFromStorage();
+				await this.state.initFromStorage();
 
 				if (providers.size) {
 					await $a.wait(() => {
@@ -1205,6 +1232,62 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	 */
 	async reload(): Promise<void> {
 		await this.initLoad(undefined, true);
+	}
+
+	/**
+	 * Returns true if the block has all modifiers from specified
+	 *
+	 * @param mods - list of modifiers (['name', ['name', 'value']])
+	 * @param [value] - value of modifiers
+	 */
+	ifEveryMods(mods: Array<CanArray<string>>, value?: unknown): boolean {
+		for (let i = 0; i < mods.length; i++) {
+			const
+				el = mods[i];
+
+			if (Object.isArray(el)) {
+				if (this.mods[el[0]] === String(el[1])) {
+					continue;
+				}
+
+				return false;
+			}
+
+			if (this.mods[el] === String(value)) {
+				continue;
+			}
+
+			return false;
+		}
+
+		return true;
+	}
+
+	/**
+	 * Returns true if the block has at least one modifier from specified
+	 *
+	 * @param mods - list of modifiers (['name', ['name', 'value']])
+	 * @param [value] - value of modifiers
+	 */
+	ifSomeMod(mods: Array<CanArray<string>>, value?: unknown): boolean {
+		for (let i = 0; i < mods.length; i++) {
+			const
+				el = mods[i];
+
+			if (Object.isArray(el)) {
+				if (this.mods[el[0]] === String(el[1])) {
+					return true;
+				}
+
+				continue;
+			}
+
+			if (this.mods[el] === String(value)) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	/**

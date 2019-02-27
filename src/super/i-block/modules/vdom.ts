@@ -7,9 +7,9 @@
  */
 
 import iBlock from 'super/i-block/i-block';
-import { VNode } from 'core/component';
+import { patchVNode, execRenderObject, RenderObject, RenderContext, VNode } from 'core/component';
 
-export default class VTree {
+export default class VDOM {
 	/**
 	 * iBlock instance
 	 */
@@ -51,7 +51,12 @@ export default class VTree {
 	 * @param elName
 	 * @param [ctx] - component context
 	 */
-	findElFromVNode(vnode: VNode, elName: string, ctx: iBlock = this.component): CanUndef<VNode> {
+	findElFromVNode<T extends iBlock>(
+		vnode: VNode,
+		elName: string,
+		// @ts-ignore
+		ctx: T = this.component
+	): CanUndef<VNode> {
 		const
 			selector = ctx.provide.fullElName(elName);
 
@@ -83,5 +88,38 @@ export default class VTree {
 		};
 
 		return search(vnode);
+	}
+
+	/**
+	 * Executes the specified render object
+	 *
+	 * @param renderObj
+	 * @param [ctx] - render context
+	 */
+	execRenderObject(
+		renderObj: RenderObject,
+		ctx?: RenderContext | [Dictionary] | [Dictionary, RenderContext]
+	): VNode {
+		let
+			instanceCtx,
+			renderCtx;
+
+		if (ctx && Object.isArray(ctx)) {
+			instanceCtx = ctx[0] || this;
+			renderCtx = ctx[1];
+
+		} else {
+			instanceCtx = this;
+			renderCtx = ctx;
+		}
+
+		const
+			vnode = execRenderObject(renderObj, instanceCtx);
+
+		if (renderCtx) {
+			return patchVNode(vnode, instanceCtx, renderCtx);
+		}
+
+		return vnode;
 	}
 }

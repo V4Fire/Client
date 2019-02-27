@@ -23,9 +23,9 @@ export type ModsNTable = Dictionary<CanUndef<string>>;
  * @param key - field key
  * @param link - link key
  */
-export function mergeMods(
-	component: iBlock,
-	oldComponent: iBlock,
+export function mergeMods<T extends iBlock>(
+	component: T,
+	oldComponent: T,
 	key: string,
 	link?: string
 ): void {
@@ -97,7 +97,7 @@ export function mergeMods(
  * Initializes the component modifiers
  * @param component
  */
-export function initMods(component: iBlock): ModsNTable {
+export function initMods<T extends iBlock>(component: T): ModsNTable {
 	const
 		// @ts-ignore
 		declMods = component.meta.component.mods,
@@ -164,7 +164,7 @@ export function initMods(component: iBlock): ModsNTable {
  * Returns an object with watchable modifiers
  * @param component
  */
-export function getWatchableMods(component: iBlock): Readonly<ModsNTable> {
+export function getWatchableMods<T extends iBlock>(component: T): Readonly<ModsNTable> {
 	const
 		o = {},
 		w = <NonNullable<ModsNTable>>component.field.get('watchModsStore'),

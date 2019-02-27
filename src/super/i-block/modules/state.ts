@@ -56,6 +56,7 @@ export default class State {
 	 * API for a component storage
 	 */
 	protected get storage(): Storage {
+		// @ts-ignore
 		return this.component.storage;
 	}
 
@@ -63,6 +64,7 @@ export default class State {
 	 * API for lazy operations
 	 */
 	protected get lazy(): Lazy {
+		// @ts-ignore
 		return this.component.lazy;
 	}
 
@@ -100,7 +102,7 @@ export default class State {
 	 * Gets values from the specified object and saves it to the component state
 	 * @param [obj]
 	 */
-	setState(obj?: Dictionary): void {
+	set(obj?: Dictionary): void {
 		if (!obj) {
 			return;
 		}
@@ -124,7 +126,7 @@ export default class State {
 	 * Saves a component state to a storage
 	 * @param [data] - advanced data
 	 */
-	async saveStateToStorage(data?: Dictionary): Promise<void> {
+	async saveToStorage(data?: Dictionary): Promise<void> {
 		if (!this.globalName) {
 			return;
 		}
@@ -135,7 +137,7 @@ export default class State {
 		// @ts-ignore
 		data = c.syncStorageState(data, 'remote');
 		// @ts-ignore
-		this.setState(c.syncStorageState(data));
+		this.set(c.syncStorageState(data));
 
 		await this.storage.set(data, '[[STORE]]');
 		// @ts-ignore
@@ -145,7 +147,7 @@ export default class State {
 	/**
 	 * Initializes a component state from a storage
 	 */
-	async initStateFromStorage(): Promise<void> {
+	async initFromStorage(): Promise<void> {
 		if (!this.globalName) {
 			return;
 		}
@@ -173,11 +175,11 @@ export default class State {
 					// @ts-ignore
 					stateFields = c.syncStorageState(data);
 
-				this.setState(
+				this.set(
 					stateFields
 				);
 
-				const sync = this.lazy.createLazyFn(() => this.saveStateToStorage(), {
+				const sync = this.lazy.createLazyFn(() => this.saveToStorage(), {
 					label: $$.syncLocalStore
 				});
 
@@ -213,17 +215,17 @@ export default class State {
 	/**
 	 * Resets a component storage state
 	 */
-	async resetStorageState(): Promise<boolean> {
+	async resetStorage(): Promise<boolean> {
 		const
 			c = this.component,
 			// @ts-ignore
 			stateFields = c.convertStateToStorageReset();
 
-		this.setState(
+		this.set(
 			stateFields
 		);
 
-		await this.saveStateToStorage();
+		await this.saveToStorage();
 		// @ts-ignore
 		c.log('state:reset:storage', this, stateFields);
 		return true;
@@ -233,14 +235,14 @@ export default class State {
 	 * Saves a component state to a router
 	 * @param [data] - advanced data
 	 */
-	async saveStateToRouter(data?: Dictionary): Promise<boolean> {
+	async saveToRouter(data?: Dictionary): Promise<boolean> {
 		const
 			c = this.component;
 
 		// @ts-ignore
 		data = c.syncRouterState(data, 'remote');
 		// @ts-ignore
-		this.setState(c.syncRouterState(data));
+		this.set(c.syncRouterState(data));
 
 		const
 			r = c.$root.router;
@@ -261,7 +263,7 @@ export default class State {
 	/**
 	 * Initializes a component state from a router
 	 */
-	initStateFromRouter(): void {
+	initFromRouter(): void {
 		const
 			c = this.component,
 			routerWatchers = {group: 'routerWatchers'};
@@ -278,7 +280,7 @@ export default class State {
 
 			if (!router) {
 				await $a.promisifyOnce(r, 'initRouter', {
-					label: $$.initStateFromRouter
+					label: $$.initFromRouter
 				});
 
 				({router} = r);
@@ -293,7 +295,7 @@ export default class State {
 				// @ts-ignore
 				stateFields = c.syncRouterState(Object.assign(Object.create(route), route.params, route.query));
 
-			this.setState(
+			this.set(
 				stateFields
 			);
 
@@ -324,7 +326,7 @@ export default class State {
 				}
 			}
 
-			const sync = this.lazy.createLazyFn(() => this.saveStateToRouter(), {
+			const sync = this.lazy.createLazyFn(() => this.saveToRouter(), {
 				label: $$.syncRouter
 			});
 
@@ -351,20 +353,20 @@ export default class State {
 			c.log('state:init:router', this, stateFields);
 
 		}, {
-			label: $$.initStateFromRouter
+			label: $$.initFromRouter
 		});
 	}
 
 	/**
 	 * Resets a component router state
 	 */
-	async resetRouterState(): Promise<boolean> {
+	async resetRouter(): Promise<boolean> {
 		const
 			c = this.component,
 			// @ts-ignore
 			stateFields = c.convertStateToRouterReset();
 
-		this.setState(
+		this.set(
 			stateFields
 		);
 
