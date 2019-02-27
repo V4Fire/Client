@@ -301,7 +301,7 @@ function tagFilter({name, attrs = {}}) {
 			key = attrs['v-else'] ? 'v-else-if' : attrs['v-else-if'] ? 'v-else-if' : 'v-if';
 
 		attrs[key] = attachVIf(
-			(attrs[key] || []).concat(`async${p}Components[regAsync${p}Component(${id})]`),
+			(attrs[key] || []).concat(`async${p}Components[async.reg${p}Component(${id})]`),
 			asyncBackVal ? '||' : '&&'
 		);
 

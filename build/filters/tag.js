@@ -77,7 +77,7 @@ module.exports = [
 
 			el = $C(el).map((el) => {
 				if (Object.isString(el) && isLiteral.test(el) && isStaticLiteral(el)) {
-					return `memoizeLiteral(${el})`;
+					return `opt.memoizeLiteral(${el})`;
 				}
 
 				return el;

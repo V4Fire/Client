@@ -23,5 +23,5 @@ export default abstract class iIcon {
 	 * Sets g-hint for the specified element
 	 * @param [pos] - hint position
 	 */
-	protected abstract setHint(pos: string): ReadonlyArray<string>;
+	abstract setHint(pos: string): ReadonlyArray<string>;
 }

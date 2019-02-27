@@ -6,5 +6,5 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-package('i-data-pages')
-	.extends('i-data-list');
+package('i-open-toggle')
+	.extends('i-open');

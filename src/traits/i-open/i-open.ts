@@ -136,17 +136,17 @@ export default abstract class iOpen {
 	 * Handler: opened modifier change
 	 * @param e
 	 */
-	protected abstract onOpenedChange(e: ModEvent | SetModEvent): void;
+	abstract onOpenedChange(e: ModEvent | SetModEvent): void;
 
 	/**
 	 * Handler: close by a keyboard event
 	 * @param e
 	 */
-	protected abstract onKeyClose(e: KeyboardEvent): Promise<void>;
+	abstract onKeyClose(e: KeyboardEvent): Promise<void>;
 
 	/**
 	 * Handler: close by a touch event
 	 * @param e
 	 */
-	protected abstract onTouchClose(e: MouseEvent): Promise<void>;
+	abstract onTouchClose(e: MouseEvent): Promise<void>;
 }

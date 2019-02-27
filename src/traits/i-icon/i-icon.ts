@@ -25,5 +25,5 @@ export default abstract class iIcon {
 	/**
 	 * Link to iIcon.getIconLink
 	 */
-	protected abstract getIconLink: typeof iIcon.getIconLink;
+	abstract getIconLink: typeof iIcon.getIconLink;
 }
