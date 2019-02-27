@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import iData, { component, CreateRequestOptions } from 'super/i-data/i-data';
+import iData, { component, CreateRequestOpts } from 'super/i-data/i-data';
 import { RequestQuery } from 'core/data';
 export * from 'super/i-data/i-data';
 
@@ -18,7 +18,7 @@ export interface DataList<T> {
 @component()
 export default class iDataList<T extends Dictionary = Dictionary> extends iData<DataList<T>> {
 	/** @override */
-	get(data?: RequestQuery, params?: CreateRequestOptions<DataList<T>>): Promise<CanUndef<DataList<T>>> {
+	get(data?: RequestQuery, params?: CreateRequestOpts<DataList<T>>): Promise<CanUndef<DataList<T>>> {
 		return super.get(data, params);
 	}
 

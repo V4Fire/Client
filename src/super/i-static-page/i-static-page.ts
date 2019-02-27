@@ -80,7 +80,7 @@ export default class iStaticPage<
 
 	/** @override */
 	get route(): CanUndef<CurrentPage<P, Q, M>> {
-		return this.getField('routeStore');
+		return this.field.get('routeStore');
 	}
 
 	/**
@@ -88,13 +88,13 @@ export default class iStaticPage<
 	 * @emits setRoute(value: CanUndef<CurrentPage<P, Q, M>>)
 	 */
 	set route(value: CanUndef<CurrentPage<P, Q, M>>) {
-		this.setField('routeStore', value);
+		this.field.set('routeStore', value);
 		this.emit('setRoute', value);
 	}
 
 	/** @override */
 	get pageTitle(): string {
-		return <NonNullable<string>>this.getField('pageTitleStore');
+		return <NonNullable<string>>this.field.get('pageTitleStore');
 	}
 
 	/** @override */
@@ -106,14 +106,14 @@ export default class iStaticPage<
 	 * System language
 	 */
 	get lang(): string {
-		return <NonNullable<string>>this.getField('langStore');
+		return <NonNullable<string>>this.field.get('langStore');
 	}
 
 	/**
 	 * Sets a new system language
 	 */
 	set lang(value: string) {
-		this.setField('langStore', value);
+		this.field.set('langStore', value);
 		setLang(value);
 	}
 

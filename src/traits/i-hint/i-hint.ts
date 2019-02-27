@@ -15,8 +15,8 @@ export default abstract class iIcon {
 	 * @param component
 	 * @param [pos] - hint position
 	 */
-	static setHint(component: iBlock, pos: string = 'bottom'): ReadonlyArray<string> {
-		return component.getBlockClasses('g-hint', {pos});
+	static setHint<T extends iBlock>(component: T, pos: string = 'bottom'): ReadonlyArray<string> {
+		return component.provide.blockClasses('g-hint', {pos});
 	}
 
 	/**

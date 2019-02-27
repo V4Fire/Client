@@ -13,7 +13,7 @@ export default abstract class iAccess {
 	 * Disables the component
 	 * @param component
 	 */
-	static async disable(component: iBlock): Promise<boolean> {
+	static async disable<T extends iBlock>(component: T): Promise<boolean> {
 		return component.setMod('disabled', true);
 	}
 
@@ -21,7 +21,7 @@ export default abstract class iAccess {
 	 * Enables the component
 	 * @param component
 	 */
-	static async enable(component: iBlock): Promise<boolean> {
+	static async enable<T extends iBlock>(component: T): Promise<boolean> {
 		return component.setMod('disabled', false);
 	}
 
@@ -29,7 +29,7 @@ export default abstract class iAccess {
 	 * Sets focus for the component
 	 * @param component
 	 */
-	static async focus(component: iBlock): Promise<boolean> {
+	static async focus<T extends iBlock>(component: T): Promise<boolean> {
 		return component.setMod('focused', true);
 	}
 
@@ -37,7 +37,7 @@ export default abstract class iAccess {
 	 * Unsets focus for the component
 	 * @param component
 	 */
-	static async blur(component: iBlock): Promise<boolean> {
+	static async blur<T extends iBlock>(component: T): Promise<boolean> {
 		return component.setMod('focused', false);
 	}
 
@@ -52,7 +52,7 @@ export default abstract class iAccess {
 	 *
 	 * @param component
 	 */
-	static initModEvents(component: iBlock): void {
+	static initModEvents<T extends iBlock>(component: T): void {
 		const
 			// @ts-ignore
 			{localEvent: $e, async: $a} = component;

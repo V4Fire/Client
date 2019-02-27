@@ -17,7 +17,7 @@ export default abstract class iVisible {
 	 *
 	 * @param component
 	 */
-	static initModEvents(component: iBlock): void {
+	static initModEvents<T extends iBlock>(component: T): void {
 		const
 			// @ts-ignore
 			{localEvent: $e} = component;

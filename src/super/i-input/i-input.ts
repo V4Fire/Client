@@ -6,35 +6,13 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-// tslint:disable:max-file-line-count
-
 import iData, { component, prop, field, system, hook, wait, p, ModsDecl } from 'super/i-data/i-data';
+import {
+	Value, FormValue, Validators, ValidatorParams, ValidationResult, ValidatorsDecl
+} from 'super/i-input/modules/interface';
+
+export * from 'super/i-input/modules/interface';
 export * from 'super/i-data/i-data';
-
-export interface ValidatorParams extends Dictionary {
-	msg?: string;
-	showMsg?: boolean;
-}
-
-export interface ValidatorError<T = unknown> extends Dictionary {
-	name: string;
-	value?: T;
-}
-
-export type ValidatorResult<T = unknown> =
-	boolean |
-	null |
-	ValidatorError<T>;
-
-export type ValidationError<T = unknown> = [string, ValidatorError<T>];
-export type ValidationResult<T = unknown> = boolean | ValidationError<T>;
-
-export type Validators = Array<string | Dictionary<ValidatorParams> | [string, ValidatorParams]>;
-export type ValidatorsDecl<T = iInput, P = ValidatorParams> = Dictionary<(this: T, params: P) =>
-	CanPromise<boolean | unknown>>;
-
-export type Value = unknown;
-export type FormValue = Value;
 
 @component({
 	model: {
@@ -157,7 +135,7 @@ export default class iInput<
 	 * Component value
 	 */
 	get value(): V {
-		return <V>this.getField('valueStore');
+		return <V>this.field.get('valueStore');
 	}
 
 	/**
@@ -165,7 +143,7 @@ export default class iInput<
 	 * @param value
 	 */
 	set value(value: V) {
-		this.setField('valueStore', value);
+		this.field.set('valueStore', value);
 	}
 
 	/**
@@ -235,7 +213,7 @@ export default class iInput<
 				for (let i = 0; i < list.length; i++) {
 					promises.push((async () => {
 						const
-							block = this.$<iInput>(list[i], '[class*="_form_true"]');
+							block = this.dom.getComponent<iInput>(list[i], '[class*="_form_true"]');
 
 						if (block && form === block.connectedForm) {
 							const
@@ -299,7 +277,7 @@ export default class iInput<
 	/**
 	 * Component value store
 	 */
-	@field<iInput>((o) => o.link((val) => o.initDefaultValue(val)))
+	@field<iInput>((o) => o.sync.link((val) => o.initDefaultValue(val)))
 	protected valueStore!: unknown;
 
 	/** @override */

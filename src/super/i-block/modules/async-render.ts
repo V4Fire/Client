@@ -76,7 +76,7 @@ export default class AsyncRender {
 	 * @param id - task id
 	 * @param [group] - task group
 	 */
-	regAsyncComponent(id: AsyncTaskId, group: AsyncQueueType = 'asyncComponents'): AsyncTaskSimpleId {
+	regComponent(id: AsyncTaskId, group: AsyncQueueType = 'asyncComponents'): AsyncTaskSimpleId {
 		id = Object.isFunction(id) ? id() : id;
 
 		let
@@ -132,7 +132,7 @@ export default class AsyncRender {
 	 * Adds a component to the background render queue
 	 * @param id - task id
 	 */
-	regAsyncBackComponent(id: AsyncTaskId): AsyncTaskSimpleId {
-		return this.regAsyncComponent(id, 'asyncBackComponents');
+	regBackComponent(id: AsyncTaskId): AsyncTaskSimpleId {
+		return this.regComponent(id, 'asyncBackComponents');
 	}
 }

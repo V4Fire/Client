@@ -31,13 +31,13 @@ export default class iMessage extends iBlock {
 	/**
 	 * Information message store
 	 */
-	@field((o) => o.link('infoProp'))
+	@field((o) => o.sync.link('infoProp'))
 	infoMsg?: string;
 
 	/**
 	 * Error message store
 	 */
-	@field((o) => o.link('errorProp'))
+	@field((o) => o.sync.link('errorProp'))
 	errorMsg?: string;
 
 	/** @inheritDoc */
@@ -90,7 +90,7 @@ export default class iMessage extends iBlock {
 	 */
 	protected initModEvents(): void {
 		super.initModEvents();
-		this.bindModTo('showInfo', 'infoMsg');
-		this.bindModTo('showError', 'errorMsg');
+		this.sync.mod('showInfo', 'infoMsg');
+		this.sync.mod('showError', 'errorMsg');
 	}
 }

@@ -46,7 +46,7 @@ export default class iDataPages<T extends Dictionary = Dictionary> extends iData
 	/**
 	 * Page number
 	 */
-	@field((o) => o.link())
+	@field((o) => o.sync.link())
 	page!: number;
 
 	/** @private */
@@ -54,7 +54,7 @@ export default class iDataPages<T extends Dictionary = Dictionary> extends iData
 	protected pageLoaded: Dictionary = {};
 
 	/** @override */
-	@field((o) => o.createWatchObject('get', ['page']))
+	@field((o) => o.sync.object('get', ['page']))
 	protected readonly requestParams!: RequestParams;
 
 	/** @override */

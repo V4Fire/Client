@@ -76,7 +76,7 @@ export default class iPage<T extends Dictionary = Dictionary> extends iData<T> {
 	/**
 	 * Page title store
 	 */
-	@system((o) => o.link((v) => Object.isFunction(v) ? v(o) : v))
+	@system((o) => o.sync.link((v) => Object.isFunction(v) ? v(o) : v))
 	protected pageTitleStore!: string;
 
 	/**

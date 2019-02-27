@@ -45,7 +45,7 @@ export default class Opt {
 	 * @param label
 	 * @param [value] - label value (will saved in the cache only if true)
 	 */
-	protected ifOnce(label: unknown, value: boolean = false): 0 | 1 | 2 {
+	ifOnce(label: unknown, value: boolean = false): 0 | 1 | 2 {
 		if (this.ifOnceStore[String(label)]) {
 			return 2;
 		}
@@ -61,7 +61,7 @@ export default class Opt {
 	 * Saves a literal to the cache and returns it
 	 * @param literal
 	 */
-	protected memoizeLiteral<T>(
+	memoizeLiteral<T>(
 		literal: T
 	): T extends (infer V)[] ? ReadonlyArray<V> : T extends Dictionary ? Readonly<T> : T {
 		if (Object.isArray(literal) || Object.isObject(literal)) {

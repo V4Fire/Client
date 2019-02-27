@@ -116,6 +116,7 @@ export * from 'super/i-block/modules/block';
 export {
 
 	statuses,
+	eventFactory,
 
 	AsyncWatchOpts,
 	ConverterCallType,

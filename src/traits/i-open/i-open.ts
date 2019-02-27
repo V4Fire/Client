@@ -19,7 +19,7 @@ export default abstract class iOpen {
 	 * Opens the component
 	 * @param component
 	 */
-	static async open(component: iBlock): Promise<boolean> {
+	static async open<T extends iBlock>(component: T): Promise<boolean> {
 		return component.setMod('opened', true);
 	}
 
@@ -27,7 +27,7 @@ export default abstract class iOpen {
 	 * Closes the component
 	 * @param component
 	 */
-	static async close(component: iBlock): Promise<boolean> {
+	static async close<T extends iBlock>(component: T): Promise<boolean> {
 		return component.setMod('opened', false);
 	}
 
@@ -37,7 +37,7 @@ export default abstract class iOpen {
 	 * @param component
 	 * @param [events] - event names for helpers
 	 */
-	static initCloseHelpers(component: iBlock & iOpen, events: CloseHelperEvents = {}): void {
+	static initCloseHelpers<T extends iBlock>(component: T & iOpen, events: CloseHelperEvents = {}): void {
 		const
 			// @ts-ignore
 			{async: $a, localEvent: $e} = component;
@@ -71,7 +71,7 @@ export default abstract class iOpen {
 	 *
 	 * @param component
 	 */
-	static initModEvents(component: iBlock): void {
+	static initModEvents<T extends iBlock>(component: T): void {
 		const
 			// @ts-ignore
 			{localEvent: $e} = component;
@@ -87,7 +87,7 @@ export default abstract class iOpen {
 	 * @param component
 	 * @param e
 	 */
-	static async onKeyClose(component: iBlock & iOpen, e: KeyboardEvent): Promise<void> {
+	static async onKeyClose<T extends iBlock>(component: T & iOpen, e: KeyboardEvent): Promise<void> {
 		if (e.keyCode === keyCodes.ESC) {
 			await component.close();
 		}
@@ -99,7 +99,7 @@ export default abstract class iOpen {
 	 * @param component
 	 * @param e
 	 */
-	static async onTouchClose(component: iBlock & iOpen, e: MouseEvent): Promise<void> {
+	static async onTouchClose<T extends iBlock>(component: T & iOpen, e: MouseEvent): Promise<void> {
 		const
 			target = <Element>e.target;
 

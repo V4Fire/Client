@@ -62,18 +62,20 @@ export interface BaseEvent<L, CTX extends object> {
 		...args: unknown[]
 	): L;
 
-	promisifyOnce<T = unknown>(events: CanArray<string>, ...args: unknown[]): Promise<T>;
+	promisifyOnce<T = unknown>(events: CanArray<string>, ...args: unknown[]): Promise<CanUndef<T>>;
 	promisifyOnce<T = unknown>(
 		events: CanArray<string>,
 		params: AsyncOnceOpts<CTX>,
 		...args: unknown[]
-	): Promise<T>;
+	): Promise<CanUndef<T>>;
 
 	off(id?: object): void;
 	off(params: ClearOptsId<object>): void;
 }
 
-export interface RemoteEvent<CTX extends object = Async> extends BaseEvent<CanUndef<object>, CTX> {}
+export interface RemoteEvent<CTX extends object = Async> extends BaseEvent<CanUndef<object>, CTX> {
+
+}
 
 export interface Event<CTX extends object = Async> extends BaseEvent<object, CTX> {
 	emit(event: string, ...args: unknown[]): boolean;
@@ -92,7 +94,9 @@ export function eventFactory($a: Async, emitter: EventEmitterLikeP): Event;
  * @param emitter
  * @param remote - if true, then the return type will be RemoteEvent
  */
+// tslint:disable-next-line:completed-docs
 export function eventFactory($a: Async, emitter: EventEmitterLikeP, remote: true): RemoteEvent;
+// tslint:disable-next-line:completed-docs
 export function eventFactory($a: Async, emitter: EventEmitterLikeP, remote?: boolean): Event {
 	const wrappedEmitter = {
 		on: (event, fn, params, ...args) => {
@@ -134,7 +138,7 @@ export function eventFactory($a: Async, emitter: EventEmitterLikeP, remote?: boo
 			}
 
 			if (!e) {
-				return;
+				return Promise.resolve();
 			}
 
 			return $a.promisifyOnce(e, event, params, ...args);
