@@ -8,7 +8,14 @@
 
 import iData, { component, prop, field, system, hook, wait, p, ModsDecl } from 'super/i-data/i-data';
 import {
-	Value, FormValue, Validators, ValidatorParams, ValidationResult, ValidatorsDecl
+
+	Value,
+	FormValue,
+	Validators,
+	ValidatorParams,
+	ValidationResult,
+	ValidatorsDecl
+
 } from 'super/i-input/modules/interface';
 
 export * from 'super/i-input/modules/interface';

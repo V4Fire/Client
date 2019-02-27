@@ -63,7 +63,7 @@ export default class bInputNumber<
 	 * Returns the component value as a number
 	 */
 	get numValue(): CanUndef<number> {
-		return this.convertValue(this.getField('valueStore'));
+		return this.convertValue(this.field.get('valueStore'));
 	}
 
 	/**

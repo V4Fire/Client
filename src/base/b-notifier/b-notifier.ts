@@ -147,7 +147,7 @@ export default class bNotifier<T extends Message = Message> extends iData<T> {
 	}
 
 	/** @override */
-	protected convertStateToStorage(): Dictionary {
+	protected syncStorageState(): Dictionary {
 		return {
 			'mods.hidden': this.mods.opened
 		};

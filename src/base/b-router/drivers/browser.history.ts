@@ -164,7 +164,7 @@ export default function createRouter(ctx: bRouter): Router {
 
 			ModuleDependencies.event.on(`component.${info.page}.loading`, $a.proxy(
 				({packages}) => {
-					ctx.setField('status', (++i * 100) / packages);
+					ctx.field.set('status', (++i * 100) / packages);
 					(i === packages) && resolve();
 				},
 

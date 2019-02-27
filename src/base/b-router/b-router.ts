@@ -58,6 +58,11 @@ export type Pages = Dictionary<Page>;
 export type PageSchemaDict = Dictionary<PageSchema>;
 export type SetPage = 'push' | 'replace' | 'event';
 
+export interface RouteParams {
+	params?: Dictionary;
+	query?: Dictionary;
+}
+
 export const
 	$$ = symbolGenerator();
 
@@ -118,7 +123,7 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 	/**
 	 * Engine for remote router
 	 */
-	@system((o) => o.link<(v: unknown) => Router>((v) => v(o)))
+	@system((o) => o.sync.link<(v: unknown) => Router>((v) => v(o)))
 	protected engine!: Router;
 
 	/**
@@ -132,7 +137,7 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 	 */
 	@system<bRouter>({
 		after: 'engine',
-		init: (o) => o.link((v) => {
+		init: (o) => o.sync.link((v) => {
 			const
 				base = o.basePath,
 				routes = <PageSchemaDict>(v || o.engine.routes || {}),
@@ -196,7 +201,7 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 	 */
 	@p({cache: false})
 	get page(): CanUndef<CurrentPage> {
-		return this.getField('pageStore');
+		return this.field.get('pageStore');
 	}
 
 	/**
@@ -580,7 +585,7 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 		}
 
 		const
-			current = this.getField<CurrentPage>('pageStore');
+			current = this.field.get<CurrentPage>('pageStore');
 
 		const f = (v) => {
 			const
@@ -614,7 +619,7 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 		if (meta.paramsFromQuery !== false) {
 			const
 				paramsFromRoot = meta.paramsFromRoot !== false,
-				rootState = r.convertStateToRouter(undefined, 'remote');
+				rootState = r.syncRouterState(undefined, 'remote');
 
 			for (let o = meta.params, i = 0; i < o.length; i++) {
 				const
@@ -674,7 +679,7 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 		};
 
 		if (!Object.fastCompare(f(current), f(store))) {
-			this.setField('pageStore', store);
+			this.field.set('pageStore', store);
 
 			if (currentPage && method !== 'replace') {
 				const
@@ -847,7 +852,7 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 	 */
 	protected created(): void {
 		super.created();
-		this.setField('routerStore', this, this.$root);
+		this.field.set('routerStore', this, this.$root);
 		this.r.emit('initRouter', this);
 	}
 }

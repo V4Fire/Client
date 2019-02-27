@@ -11,7 +11,7 @@
 import Editor from 'core/imageEditor';
 import iBlock, { abstract, field, wait } from 'super/i-block/i-block';
 import { component } from 'core/component';
-import type { $$size } from 'base/b-crop/b-crop';
+import type { $$size } from 'base/browser-crop/browser-crop';
 
 const
 	$C = require('collection.js');
@@ -84,13 +84,13 @@ export default class bImageEditor extends iBlock {
 	/**
 	 * Image src
 	 */
-	@field((o) => o.link('srcProp'))
+	@field((o) => o.sync.link('srcProp'))
 	src: string;
 
 	/**
 	 * Image tools options
 	 */
-	@field((o) => o.link('toolsProp', (val) => {
+	@field((o) => o.sync.link('toolsProp', (val) => {
 		if (Object.fastCompare(val, o.tools)) {
 			return o.tools;
 		}

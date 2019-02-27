@@ -75,14 +75,14 @@ export default class bCalendar<
 	/** @override */
 	@p({cache: false})
 	get value(): V {
-		return Object.fastClone(<V>this.getField('valueStore'));
+		return Object.fastClone(<V>this.field.get('valueStore'));
 	}
 
 	/** @override */
 	set value(value: V) {
 		const
 			{min, max} = this,
-			store = <V>this.getField('valueStore');
+			store = <V>this.field.get('valueStore');
 
 		$C(value).forEach((v, i) => {
 			if (min && min.isAfter(v)) {
@@ -93,7 +93,7 @@ export default class bCalendar<
 			}
 
 			if (!store[i] || (<number>Math.abs(store[i].valueOf() - v.valueOf())).seconds() >= this.timeMargin) {
-				this.setField(`valueStore.${i}`, v);
+				this.field.set(`valueStore.${i}`, v);
 			}
 		});
 	}
@@ -107,7 +107,7 @@ export default class bCalendar<
 	 * Date pointer
 	 */
 	get pointer(): Date[] {
-		return Object.fastClone(<Date[]>this.getField('pointerStore'));
+		return Object.fastClone(<Date[]>this.field.get('pointerStore'));
 	}
 
 	/**
@@ -115,7 +115,7 @@ export default class bCalendar<
 	 * @param value
 	 */
 	set pointer(value: Date[]) {
-		this.setField('pointerStore', value);
+		this.field.set('pointerStore', value);
 	}
 
 	/**
@@ -193,7 +193,7 @@ export default class bCalendar<
 	protected directions: Directions[] = ['right', 'left'];
 
 	/** @override */
-	@field<bCalendar>((o) => o.link<V>((val) =>
+	@field<bCalendar>((o) => o.sync.link<V>((val) =>
 		Object.isArray(val) ? val : (<any[]>[]).concat(o.initDefaultValue(val) || [])))
 
 	protected valueStore!: V;
@@ -201,7 +201,7 @@ export default class bCalendar<
 	/**
 	 * Date pointer store
 	 */
-	@field<bCalendar>((o) => o.link<CanArray<Date>>('valueProp', (val = new Date()) => {
+	@field<bCalendar>((o) => o.sync.link<CanArray<Date>>('valueProp', (val = new Date()) => {
 		const
 			prop = Object.isArray(val) ? val : [val];
 
@@ -473,7 +473,7 @@ export default class bCalendar<
 			pointer = this.pointer[index];
 
 		if (val.format('M:Y') !== pointer.format('M:Y')) {
-			this.setField(`pointerStore.${index}`, pointer.set({
+			this.field.set(`pointerStore.${index}`, pointer.set({
 				month: val.getMonth(),
 				year: val.getFullYear()
 			}));
@@ -488,7 +488,7 @@ export default class bCalendar<
 	 */
 	protected async onSwitchMonth(months: number): Promise<void> {
 		$C(this.pointer).forEach((el, i) => {
-			this.setField(`pointerStore.${i}`, el.add({months}));
+			this.field.set(`pointerStore.${i}`, el.add({months}));
 		});
 
 		this.runMonthSwitching(months < 0 ? 0 : 1);

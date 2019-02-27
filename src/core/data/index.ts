@@ -6,8 +6,6 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-// tslint:disable:max-file-line-count
-
 import { EventEmitter2 as EventEmitter } from 'eventemitter2';
 
 import symbolGenerator from 'core/symbol';
@@ -21,7 +19,7 @@ import { providers } from 'core/data/const';
 import request, {
 
 	globalOpts,
-	CreateRequestOptions,
+	CreateRequestOpts,
 	Middlewares,
 	MiddlewareParams,
 	CacheStrategy,
@@ -46,7 +44,7 @@ export {
 
 	globalOpts,
 	Socket,
-	CreateRequestOptions,
+	CreateRequestOpts,
 	Middlewares,
 	MiddlewareParams,
 	CacheStrategy,
@@ -75,13 +73,21 @@ export const
 	$$ = symbolGenerator();
 
 /**
- * Adds a data provider to the global cache
+ * Adds a data provider to the global cache with the specified namespace
  *
  * @decorator
  * @param namespace
  */
 export function provider(namespace: string): (target: Function) => void;
+
+/**
+ * Adds a data provider to the global cache
+ *
+ * @decorator
+ * @param target
+ */
 export function provider(target: Function): void;
+// tslint:disable-next-line:completed-docs
 export function provider(nmsOrFn: Function | string): Function | void {
 	if (Object.isString(nmsOrFn)) {
 		return (target) => {
@@ -313,7 +319,7 @@ export default class Provider {
 	 * @param url - request url
 	 * @param opts - request params
 	 */
-	resolver<T = unknown>(url: string, opts: CreateRequestOptions<T>): ResolverResult {
+	resolver<T = unknown>(url: string, opts: CreateRequestOpts<T>): ResolverResult {
 		return undefined;
 	}
 
@@ -510,7 +516,7 @@ export default class Provider {
 	 * @param [query]
 	 * @param [opts]
 	 */
-	get<T = unknown>(query?: RequestQuery, opts?: CreateRequestOptions<T>): RequestResponse {
+	get<T = unknown>(query?: RequestQuery, opts?: CreateRequestOpts<T>): RequestResponse {
 		if (this.baseGetURL && !this.advURL) {
 			this.base(this.baseGetURL);
 		}
@@ -540,7 +546,7 @@ export default class Provider {
 	 * @param [query]
 	 * @param [opts]
 	 */
-	peek<T = unknown>(query?: RequestQuery, opts?: CreateRequestOptions<T>): RequestResponse {
+	peek<T = unknown>(query?: RequestQuery, opts?: CreateRequestOpts<T>): RequestResponse {
 		if (this.basePeekURL && !this.advURL) {
 			this.base(this.basePeekURL);
 		}
@@ -569,7 +575,7 @@ export default class Provider {
 	 * @param [body]
 	 * @param [opts]
 	 */
-	post<T = unknown>(body?: RequestBody, opts?: CreateRequestOptions<T>): RequestResponse {
+	post<T = unknown>(body?: RequestBody, opts?: CreateRequestOpts<T>): RequestResponse {
 		const
 			url = this.url(),
 			eventName = this.name(),
@@ -594,7 +600,7 @@ export default class Provider {
 	 * @param [body]
 	 * @param [opts]
 	 */
-	add<T = unknown>(body?: RequestBody, opts?: CreateRequestOptions<T>): RequestResponse {
+	add<T = unknown>(body?: RequestBody, opts?: CreateRequestOpts<T>): RequestResponse {
 		if (this.baseAddURL && !this.advURL) {
 			this.base(this.baseAddURL);
 		}
@@ -617,7 +623,7 @@ export default class Provider {
 	 * @param [body]
 	 * @param [opts]
 	 */
-	upd<T = unknown>(body?: RequestBody, opts?: CreateRequestOptions<T>): RequestResponse {
+	upd<T = unknown>(body?: RequestBody, opts?: CreateRequestOpts<T>): RequestResponse {
 		if (this.baseUpdURL && !this.advURL) {
 			this.base(this.baseUpdURL);
 		}
@@ -640,7 +646,7 @@ export default class Provider {
 	 * @param [body]
 	 * @param [opts]
 	 */
-	del<T = unknown>(body?: RequestBody, opts?: CreateRequestOptions<T>): RequestResponse {
+	del<T = unknown>(body?: RequestBody, opts?: CreateRequestOpts<T>): RequestResponse {
 		if (this.baseDelURL && !this.advURL) {
 			this.base(this.baseDelURL);
 		}
@@ -759,8 +765,8 @@ export default class Provider {
 	 */
 	protected mergeToOpts<A = unknown, B = unknown>(
 		method: ModelMethods,
-		opts: CreateRequestOptions<A>
-	): CreateRequestOptions<B> {
+		opts: CreateRequestOpts<A>
+	): CreateRequestOpts<B> {
 		opts = opts || {};
 
 		const

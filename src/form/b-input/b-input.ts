@@ -162,12 +162,12 @@ export default class bInput<
 
 	/** @override */
 	get value(): V {
-		return <NonNullable<V>>this.getField('valueStore');
+		return <NonNullable<V>>this.field.get('valueStore');
 	}
 
 	/** @override */
 	set value(value: V) {
-		this.setField('valueStore', value);
+		this.field.set('valueStore', value);
 
 		if (this.skipBuffer) {
 			this.skipBuffer = false;
@@ -230,7 +230,7 @@ export default class bInput<
 			immediate: true
 		},
 
-		init: (o, data) => o.link('valueProp', (val) => {
+		init: (o, data) => o.sync.link('valueProp', (val) => {
 			val = val === undefined ? data.valueStore : val;
 			return val !== undefined ? String(val) : '';
 		})
@@ -242,14 +242,14 @@ export default class bInput<
 	 * Value buffer
 	 */
 	protected get valueBuffer(): V {
-		return <NonNullable<V>>this.getField('valueBufferStore');
+		return <NonNullable<V>>this.field.get('valueBufferStore');
 	}
 
 	/**
 	 * Sets a value to the value buffer store
 	 */
 	protected set valueBuffer(value: V) {
-		this.setField('valueBufferStore', value);
+		this.field.set('valueBufferStore', value);
 	}
 
 	/**
@@ -344,7 +344,7 @@ export default class bInput<
 				...group
 			});
 
-			$a.on(input, this.b.is.Android ? 'keyup' : 'keypress', this.onMaskKeyPress, group);
+			$a.on(input, this.browser.is.Android ? 'keyup' : 'keypress', this.onMaskKeyPress, group);
 			$a.on(input, 'keydown', this.onMaskBackspace, group);
 			$a.on(input, 'input', this.onMaskInput, group);
 			$a.on(input, 'focus', this.onMaskFocus, group);
@@ -519,7 +519,7 @@ export default class bInput<
 		if (!this.readonly && input.hasAttribute('readonly')) {
 			input.removeAttribute('readonly');
 
-			if (this.b.is.iOS) {
+			if (this.browser.is.iOS) {
 				input.blur();
 				input.focus();
 			}
@@ -943,7 +943,7 @@ export default class bInput<
 	/** @override */
 	protected initModEvents(): void {
 		super.initModEvents();
-		this.bindModTo('empty', 'valueBufferStore', (v) => !v);
+		this.sync.mod('empty', 'valueBufferStore', (v) => !v);
 	}
 
 	/** @override */

@@ -7,10 +7,33 @@
  */
 
 import 'core/data';
-import bForm from 'form/b-form/b-form';
-import iData, { component, prop, ModsDecl, ModelMethods, RequestFilter } from 'super/i-data/i-data';
-export * from 'super/i-data/i-data';
 
+//#if runtime has bForm
+import bForm from 'form/b-form/b-form';
+//#endif
+
+import iTheme from 'traits/i-theme/i-theme';
+import iAccess from 'traits/i-access/i-access';
+import iProgress from 'traits/i-progress/i-progress';
+import iVisible from 'traits/i-visible/i-visible';
+import iSize, { SizeDictionary } from 'traits/i-size/i-size';
+import iOpenToggle from 'traits/i-open-toggle/i-open-toggle';
+import iIcon from 'traits/i-icon/i-icon';
+import iHint from 'traits/i-hint/i-hint';
+
+import iData, {
+
+	component,
+	prop,
+	ModsDecl,
+	ModelMethods,
+	RequestFilter,
+	ModEvent,
+	SetModEvent
+
+} from 'super/i-data/i-data';
+
+export * from 'super/i-data/i-data';
 export type ButtonType<T extends string = any> =
 	'submit' |
 	'button' |
@@ -25,7 +48,9 @@ export type ButtonType<T extends string = any> =
 	}
 })
 
-export default class bButton<T extends Dictionary = Dictionary> extends iData<T> {
+export default class bButton<T extends Dictionary = Dictionary> extends iData<T>
+	implements iTheme, iAccess, iProgress, iOpenToggle, iIcon, iHint, iVisible, iSize {
+
 	/** @override */
 	readonly dataProvider: string = 'Provider';
 
@@ -104,6 +129,16 @@ export default class bButton<T extends Dictionary = Dictionary> extends iData<T>
 	@prop(String)
 	readonly dropdown: string = 'bottom';
 
+	/** @see iSize.lt */
+	get lt(): SizeDictionary {
+		return iSize.lt;
+	}
+
+	/** @see iSize.gt */
+	get gt(): SizeDictionary {
+		return iSize.gt;
+	}
+
 	/** @inheritDoc */
 	static readonly mods: ModsDecl = {
 		theme: [
@@ -123,14 +158,89 @@ export default class bButton<T extends Dictionary = Dictionary> extends iData<T>
 			['false']
 		],
 
-		opened: [
-			bButton.PARENT,
-			['false']
-		]
+		...iTheme.mods,
+		...iAccess.mods,
+		...iProgress.mods,
+		...iOpenToggle.mods,
+		...iVisible.mods,
+		...iSize.mods
 	};
 
 	/** @override */
 	protected readonly $refs!: {button: HTMLButtonElement};
+
+	/** @see iAccess.focus */
+	focus(): Promise<boolean> {
+		return iAccess.focus(this);
+	}
+
+	/** @see iAccess.focus */
+	blur(): Promise<boolean> {
+		return iAccess.blur(this);
+	}
+
+	/** @see iAccess.enable */
+	enable(): Promise<boolean> {
+		return iAccess.enable(this);
+	}
+
+	/** @see iAccess.disable */
+	disable(): Promise<boolean> {
+		return iAccess.disable(this);
+	}
+
+	/** @see iOpenToggle.open */
+	open(): Promise<boolean> {
+		return iOpenToggle.open(this);
+	}
+
+	/** @see iOpenToggle.close */
+	close(): Promise<boolean> {
+		return iOpenToggle.close(this);
+	}
+
+	/** @see iOpenToggle.toggle */
+	toggle(): Promise<boolean> {
+		return iOpenToggle.toggle(this);
+	}
+
+	/** @see iHint.toggle */
+	setHint(pos: string): ReadonlyArray<string> {
+		return iHint.setHint(this, pos);
+	}
+
+	/** @see iIcon.getIconLink */
+	getIconLink(iconId: string): string {
+		return iIcon.getIconLink(iconId);
+	}
+
+	/** @see iOpenToggle.onOpenedChange */
+	onOpenedChange(e: ModEvent | SetModEvent): void {
+		// ...
+	}
+
+	/** @see iOpenToggle.onKeyClose */
+	onKeyClose(e: KeyboardEvent): Promise<void> {
+		return iOpenToggle.onKeyClose(this, e);
+	}
+
+	/** @see iOpenToggle.onTouchClose */
+	onTouchClose(e: MouseEvent): Promise<void> {
+		return iOpenToggle.onTouchClose(this, e);
+	}
+
+	/** @see iOpenToggle.initCloseHelpers */
+	protected initCloseHelpers(): void {
+		iOpenToggle.initCloseHelpers(this);
+	}
+
+	/** @override */
+	protected initModEvents(): void {
+		super.initModEvents();
+		iAccess.initModEvents(this);
+		iOpenToggle.initModEvents(this);
+		iVisible.initModEvents(this);
+	}
 
 	/**
 	 * Handler: button trigger
@@ -150,7 +260,7 @@ export default class bButton<T extends Dictionary = Dictionary> extends iData<T>
 			// Form attribute fix for MS Edge && IE
 			} else if (this.form && this.type === 'submit') {
 				e.preventDefault();
-				const form = <bForm>this.$(`#${this.form}`);
+				const form = <bForm>this.dom.getComponent(`#${this.form}`);
 				form && await form.submit();
 			}
 

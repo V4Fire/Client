@@ -37,7 +37,7 @@ export default class bWindowForm<T extends Dictionary = Dictionary> extends bWin
 	/**
 	 * Requested id
 	 */
-	@field((o) => o.link())
+	@field((o) => o.sync.link())
 	id?: string;
 
 	/**
@@ -68,7 +68,7 @@ export default class bWindowForm<T extends Dictionary = Dictionary> extends bWin
 	}
 
 	/** @override */
-	@field((o) => o.createWatchObject('get', {immediate: true}, [['_id', 'id']]))
+	@field((o) => o.sync.object('get', {immediate: true}, [['_id', 'id']]))
 	protected readonly requestParams!: RequestParams;
 
 	/**

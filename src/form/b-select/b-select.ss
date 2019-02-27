@@ -34,7 +34,7 @@
 			< _.&__dropdown[.&_pos_bottom-left] &
 				v-if = !b.is.mobile && options.length && (
 					isFunctional ||
-					ifOnce('opened', m.opened !== 'false') && delete watchModsStore.opened
+					opt.ifOnce('opened', m.opened !== 'false') && delete watchModsStore.opened
 				)
 			.
 				< _.&__dropdown-content
@@ -43,7 +43,7 @@
 							v-func = isFunctional |
 							ref = scroll |
 							:fixSize = true |
-							:mods = provideMods({size: 'm'})
+							:mods = provide.mods({size: 'm'})
 						.
 							< _ &
 								v-for = el in options |

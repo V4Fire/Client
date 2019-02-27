@@ -101,7 +101,7 @@
 			< . &
 				v-if = $slots.dropdown && (
 					isFunctional ||
-					ifOnce('opened', m.opened !== 'false') && delete watchModsStore.opened
+					opt.ifOnce('opened', m.opened !== 'false') && delete watchModsStore.opened
 				) |
 
 				:class = getElClasses({dropdown: {pos: dropdown}})

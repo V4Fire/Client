@@ -25,7 +25,7 @@ export default class bProgress extends iBlock {
 	 * Progress value
 	 */
 	get value(): CanUndef<number> {
-		return this.getField('valueStore');
+		return this.field.get('valueStore');
 	}
 
 	/**
@@ -39,12 +39,12 @@ export default class bProgress extends iBlock {
 			label = {label: $$.complete};
 
 		(async () => {
-			this.setField('valueStore', value);
+			this.field.set('valueStore', value);
 
 			if (value === 100) {
 				try {
 					await this.async.sleep(0.8.second(), label);
-					this.setField('valueStore', 0);
+					this.field.set('valueStore', 0);
 					this.emit('complete');
 
 				} catch {}
@@ -65,12 +65,12 @@ export default class bProgress extends iBlock {
 	/**
 	 * Progress value store
 	 */
-	@field((o) => o.link())
+	@field((o) => o.sync.link())
 	protected valueStore?: number;
 
 	/** @override */
 	protected initModEvents(): void {
 		super.initModEvents();
-		this.bindModTo('progress', 'valueStore', Object.isNumber);
+		this.sync.mod('progress', 'valueStore', Object.isNumber);
 	}
 }

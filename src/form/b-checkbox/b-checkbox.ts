@@ -125,7 +125,7 @@ export default class bCheckbox<
 	/** @override */
 	protected initModEvents(): void {
 		super.initModEvents();
-		this.bindModTo('checked', 'valueStore');
+		this.sync.mod('checked', 'valueStore');
 		this.localEvent.on('block.mod.*.checked.*', (e) => {
 			this.value = <V>(e.type !== 'remove' && e.value === 'true');
 			this.emit(this.value ? 'check' : 'uncheck');

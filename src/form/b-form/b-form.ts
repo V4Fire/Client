@@ -21,7 +21,7 @@ import iData, {
 	p,
 	ModsDecl,
 	ModelMethods,
-	CreateRequestOptions,
+	CreateRequestOpts,
 	RequestFilter
 
 } from 'super/i-data/i-data';
@@ -83,7 +83,7 @@ export default class bForm<T extends Dictionary = Dictionary> extends iData<T> {
 	 * Form request parameters
 	 */
 	@prop(Object)
-	readonly paramsProp: CreateRequestOptions = {};
+	readonly paramsProp: CreateRequestOpts = {};
 
 	/**
 	 * If true, then form elements will be cached
@@ -101,8 +101,8 @@ export default class bForm<T extends Dictionary = Dictionary> extends iData<T> {
 	 * Form request parameters store
 	 */
 	// tslint:disable-next-line:prefer-object-spread
-	@field<bForm>((o) => o.link((val) => Object.assign(o.params || {}, val)))
-	params!: CreateRequestOptions;
+	@field<bForm>((o) => o.sync.link((val) => Object.assign(o.params || {}, val)))
+	params!: CreateRequestOpts;
 
 	/** @inheritDoc */
 	static readonly mods: ModsDecl = {
@@ -225,7 +225,7 @@ export default class bForm<T extends Dictionary = Dictionary> extends iData<T> {
 				el.name && (
 					!this.cache ||
 					!el.cache ||
-					!Object.fastCompare(this.getField(`tmp.${el.name}`), await el.groupFormValue)
+					!Object.fastCompare(this.field.get(`tmp.${el.name}`), await el.groupFormValue)
 				)
 			) {
 				const
@@ -265,7 +265,7 @@ export default class bForm<T extends Dictionary = Dictionary> extends iData<T> {
 	/**
 	 * Submits the form
 	 *
-	 * @emits submitStart(body: RequestBody, params: CreateRequestOptions<T>, method: string)
+	 * @emits submitStart(body: RequestBody, params: CreateRequestOpts<T>, method: string)
 	 * @emits submitSuccess(result: T)
 	 * @emits submitFail(err: Error, els: iInput[])
 	 */

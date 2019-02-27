@@ -17,4 +17,4 @@
 		- super
 		- block status
 			< template v-if = showStatus
-				< b-progress :value = status | :mods = provideMods({theme: 'fine-line'})
+				< b-progress :value = status | :mods = provide.mods({theme: 'fine-line'})

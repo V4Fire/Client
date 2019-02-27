@@ -29,7 +29,7 @@
 							':autofocus': 'el.autofocus',
 							':value': 'isChecked(el)',
 							':changeable': 'isChangeable(el)',
-							':mods': 'provideMods({form: false})'
+							':mods': 'provide.mods({form: false})'
 						} .
 
 						< template v-if = $scopedSlots.default

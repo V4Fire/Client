@@ -29,7 +29,7 @@
 			< .&__back
 			< .&__wrapper v-if = &
 				isFunctional ||
-				ifOnce('hidden', m.hidden !== 'true') && delete watchModsStore.hidden
+				opt.ifOnce('hidden', m.hidden !== 'true') && delete watchModsStore.hidden
 			.
 
 				< section.&__window
@@ -56,7 +56,7 @@
 								+= self.slot('control')
 									- block controls
 										< b-button &
-											:mods = provideMods({theme: 'dark', size: gt[m.size]}) |
+											:mods = provide.mods({theme: 'dark', size: gt[m.size]}) |
 											@click = close
 										.
 											{{ `Close` }}

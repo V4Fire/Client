@@ -93,7 +93,7 @@ export default class bList<T extends Dictionary = Dictionary> extends iData<T> {
 			o.initComponentValues();
 		},
 
-		init: (o) => o.link<Option[]>((val) => o.dataProvider ? o.value || [] : o.normalizeOptions(val))
+		init: (o) => o.sync.link<Option[]>((val) => o.dataProvider ? o.value || [] : o.normalizeOptions(val))
 	})
 
 	value!: Option[];
@@ -103,7 +103,7 @@ export default class bList<T extends Dictionary = Dictionary> extends iData<T> {
 	 */
 	@p({cache: false})
 	get active(): unknown {
-		const v = this.getField('activeStore');
+		const v = this.field.get('activeStore');
 		return this.multiple ? Object.keys(<object>v) : v;
 	}
 
@@ -125,7 +125,7 @@ export default class bList<T extends Dictionary = Dictionary> extends iData<T> {
 	 * @emits change(active: unknown)
 	 * @emits immediateChange(active: unknown)
 	 */
-	@system<bList>((o) => o.link((val) => {
+	@system<bList>((o) => o.sync.link((val) => {
 		const
 			beforeDataCreate = o.hook === 'beforeDataCreate';
 
@@ -187,7 +187,7 @@ export default class bList<T extends Dictionary = Dictionary> extends iData<T> {
 	 */
 	toggleActive(value: unknown): boolean {
 		const
-			active = this.getField('activeStore');
+			active = this.field.get('activeStore');
 
 		if (this.multiple) {
 			if (String(value) in <Dictionary>active) {
@@ -213,20 +213,20 @@ export default class bList<T extends Dictionary = Dictionary> extends iData<T> {
 	 */
 	setActive(value: unknown): boolean {
 		const
-			active = this.getField('activeStore');
+			active = this.field.get('activeStore');
 
 		if (this.multiple) {
 			if (String(value) in <Dictionary>active) {
 				return false;
 			}
 
-			this.setField(`activeStore.${value}`, true);
+			this.field.set(`activeStore.${value}`, true);
 
 		} else if (active === value) {
 			return false;
 
 		} else {
-			this.setField('activeStore', value);
+			this.field.set('activeStore', value);
 		}
 
 		const
@@ -264,7 +264,7 @@ export default class bList<T extends Dictionary = Dictionary> extends iData<T> {
 	 */
 	removeActive(value: unknown): boolean {
 		const
-			active = this.getField('activeStore'),
+			active = this.field.get('activeStore'),
 			cantCancel = !this.cancelable;
 
 		if (this.multiple) {
@@ -272,13 +272,13 @@ export default class bList<T extends Dictionary = Dictionary> extends iData<T> {
 				return false;
 			}
 
-			this.deleteField(`activeField.${value}`);
+			this.field.delete(`activeField.${value}`);
 
 		} else if (active !== value || cantCancel) {
 			return false;
 
 		} else {
-			this.setField('activeStore', undefined);
+			this.field.set('activeStore', undefined);
 		}
 
 		const
@@ -331,7 +331,7 @@ export default class bList<T extends Dictionary = Dictionary> extends iData<T> {
 	 * @param option
 	 */
 	protected isActive(option: Option): boolean {
-		const active = this.getField('activeStore');
+		const active = this.field.get('activeStore');
 		return this.multiple ? String(option.value) in <Dictionary>active : option.value === active;
 	}
 
@@ -361,7 +361,7 @@ export default class bList<T extends Dictionary = Dictionary> extends iData<T> {
 		const
 			values = {},
 			indexes = {},
-			active = this.getField('activeStore');
+			active = this.field.get('activeStore');
 
 		$C(this.$$data.value).forEach((el, i) => {
 			const

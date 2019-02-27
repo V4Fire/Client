@@ -94,7 +94,7 @@ export default class bSelect<
 	/**
 	 * Selected value store
 	 */
-	@field<bSelect>((o) => o.link((val) => {
+	@field<bSelect>((o) => o.sync.link((val) => {
 		val = o.initDefaultValue(val);
 		return val !== undefined ? String(val) : undefined;
 	}))
@@ -105,7 +105,7 @@ export default class bSelect<
 	 * Select options
 	 */
 	get options(): NOption[] {
-		return (<NOption[]>this.getField('optionsStore')).slice();
+		return (<NOption[]>this.field.get('optionsStore')).slice();
 	}
 
 	/**
@@ -113,7 +113,7 @@ export default class bSelect<
 	 * @param value
 	 */
 	set options(value: NOption[]) {
-		this.setField('optionsStore', value);
+		this.field.set('optionsStore', value);
 	}
 
 	/** @override */
@@ -133,7 +133,7 @@ export default class bSelect<
 			o.initComponentValues().catch(stderr);
 		},
 
-		init: (o) => o.link<Option[]>((val) => o.dataProvider ? o.optionsStore || [] : o.normalizeOptions(val))
+		init: (o) => o.sync.link<Option[]>((val) => o.dataProvider ? o.optionsStore || [] : o.normalizeOptions(val))
 	})
 
 	protected optionsStore!: NOption[];
@@ -160,7 +160,7 @@ export default class bSelect<
 	async initLoad(data?: unknown, silent?: boolean): Promise<void> {
 		try {
 			/// FIXME
-			if (this.initAfterOpen && !this.b.is.mobile) {
+			if (this.initAfterOpen && !this.browser.is.mobile) {
 				await this.async.wait(() => this.mods.opened !== 'false' || this.mods.focused === 'true');
 			}
 
@@ -188,7 +188,7 @@ export default class bSelect<
 		const
 			{select} = this.$refs;
 
-		if (this.b.is.mobile) {
+		if (this.browser.is.mobile) {
 			select && select.focus();
 			this.emit('open');
 			return true;
@@ -199,7 +199,7 @@ export default class bSelect<
 				return true;
 			}
 
-			if (this.ifOnce('opened') < 2) {
+			if (this.opt.ifOnce('opened') < 2) {
 				// @ts-ignore
 				await Promise.all([this.nextTick(), this.waitRef('scroll')]);
 			}
@@ -242,7 +242,7 @@ export default class bSelect<
 	/** @override */
 	@wait('ready')
 	async focus(): Promise<boolean> {
-		if (this.b.is.mobile) {
+		if (this.browser.is.mobile) {
 			const
 				{select} = this.$refs;
 
@@ -260,7 +260,7 @@ export default class bSelect<
 	/** @override */
 	@wait('ready')
 	async blur(): Promise<boolean> {
-		if (this.b.is.mobile) {
+		if (this.browser.is.mobile) {
 			const
 				{select} = this.$refs;
 
@@ -404,7 +404,7 @@ export default class bSelect<
 		}
 
 		const
-			{mobile} = this.b.is;
+			{mobile} = this.browser.is;
 
 		if (this.mods.focused !== 'true' || mobile) {
 			this.value = <V>this.getOptionLabel(option);
@@ -491,7 +491,7 @@ export default class bSelect<
 
 	/** @override */
 	protected initCloseHelpers(events?: CloseHelperEvents): void {
-		if (this.b.is.mobile) {
+		if (this.browser.is.mobile) {
 			return;
 		}
 
@@ -680,7 +680,7 @@ export default class bSelect<
 	protected created(): void {
 		super.created();
 
-		if (!this.b.is.mobile) {
+		if (!this.browser.is.mobile) {
 			this.on('asyncRender', async () => {
 				try {
 					await (await this.waitRef<bScrollInline>('scroll')).initScroll();

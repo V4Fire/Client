@@ -70,7 +70,7 @@
 						? el['@' + key] = val
 
 	- if p.mods
-		? p.props[':mods'] = 'provideMods(' + (p.mods|json|replace /:\s*"(.*?)"/g, ':$1') + ')'
+		? p.props[':mods'] = 'provide.mods(' + (p.mods|json|replace /:\s*"(.*?)"/g, ':$1') + ')'
 
 	- if p.classes
 		? p.props[':class'] = p.classes

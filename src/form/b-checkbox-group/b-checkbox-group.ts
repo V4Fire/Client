@@ -62,12 +62,12 @@ export default class bCheckboxGroup<
 	 * Checkbox component
 	 */
 	@prop(String)
-	readonly option: string = 'b-checkbox';
+	readonly option: string = 'browser-checkbox';
 
 	/**
 	 * Checkboxes store
 	 */
-	@field<bCheckboxGroup>((o) => o.link((val) => {
+	@field<bCheckboxGroup>((o) => o.sync.link((val) => {
 		if (o.dataProvider) {
 			return o.options || [];
 		}
@@ -85,7 +85,7 @@ export default class bCheckboxGroup<
 		return this.waitStatus('ready', () => {
 			const els = $C(this.block.elements('checkbox'))
 				.to([])
-				.map((el) => this.$(el));
+				.map((el) => this.dom.getComponent(el));
 
 			return Object.freeze(els);
 		});
@@ -93,13 +93,13 @@ export default class bCheckboxGroup<
 
 	/** @override */
 	get value(): V {
-		const v = this.getField('valueStore');
+		const v = this.field.get('valueStore');
 		return <V>(Object.isObject(v) ? Object.keys(v) : v);
 	}
 
 	/** @override */
 	set value(value: V) {
-		this.setField('valueStore', value && Object.isArray(value) ? Object.fromArray(value) : value);
+		this.field.set('valueStore', value && Object.isArray(value) ? Object.fromArray(value) : value);
 	}
 
 	/** @override */
@@ -134,7 +134,10 @@ export default class bCheckboxGroup<
 	};
 
 	/** @override */
-	@field<bCheckboxGroup>((o) => o.link((val) => Object.isArray(val) ? o.multiple ? Object.fromArray(val) : val[0] : val))
+	@field<bCheckboxGroup>((o) =>
+		o.sync.link((val) => Object.isArray(val) ? o.multiple ? Object.fromArray(val) : val[0] : val)
+	)
+
 	protected valueStore: CanUndef<Dictionary<boolean> | string>;
 
 	/**
@@ -145,20 +148,20 @@ export default class bCheckboxGroup<
 	 */
 	setValue(name: string, value: boolean): CanUndef<boolean> {
 		if (!this.multiple) {
-			this.setField('valueStore', value ? name : undefined);
+			this.field.set('valueStore', value ? name : undefined);
 			return;
 		}
 
 		if (Object.isArray(value)) {
 			if (value[1]) {
-				this.setField(`valueStore.${value[0]}`, true);
+				this.field.set(`valueStore.${value[0]}`, true);
 
 			} else {
-				this.deleteField(`valueStore.${value[0]}`);
+				this.field.delete(`valueStore.${value[0]}`);
 			}
 
 		} else {
-			this.setField(`valueStore.${value}`, true);
+			this.field.set(`valueStore.${value}`, true);
 		}
 
 		return value;
@@ -223,7 +226,7 @@ export default class bCheckboxGroup<
 	 * @param el
 	 */
 	protected isChecked(el: Option): boolean {
-		const v = this.getField('valueStore');
+		const v = this.field.get('valueStore');
 		return Boolean(Object.isObject(v) ? v[el.name] : v === el.name);
 	}
 
@@ -232,7 +235,7 @@ export default class bCheckboxGroup<
 	 * @param el
 	 */
 	protected isChangeable(el: Option): boolean {
-		const v = this.getField('valueStore');
+		const v = this.field.get('valueStore');
 		return this.multiple || v && v !== el.name;
 	}
 

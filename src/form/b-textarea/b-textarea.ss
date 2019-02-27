@@ -15,7 +15,7 @@
 		< b-scroll-inline.&__scroll &
 			v-func = isFunctional |
 			ref = scroll |
-			:mods = provideMods({
+			:mods = provide.mods({
 				theme: 'light',
 				width: 'full',
 				size: 'm'

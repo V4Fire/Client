@@ -251,7 +251,7 @@ export function createFakeCtx<T extends Dictionary = FunctionalCtx>(
 			$w.on(expr, cb);
 
 			if (opts && opts.immediate) {
-				$w.emit(expr, this.getField(expr));
+				$w.emit(expr, this.field.get(expr));
 			}
 
 			return () => $w.off(expr, cb);

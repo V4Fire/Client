@@ -86,7 +86,7 @@ export default class bRemoteProvider<T extends Dictionary = Dictionary> extends 
 		}
 
 		if (needUpdate) {
-			p.life.execCbAtTheRightTime(() => {
+			p.lfc.execCbAtTheRightTime(() => {
 				action && action();
 				this.emit('change', value);
 

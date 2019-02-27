@@ -12,7 +12,7 @@ export * from 'super/i-data/i-data';
 @component()
 export default class bSidebar<T extends Dictionary = Dictionary> extends iData<T> {
 	/** @override */
-	protected convertStateToStorage(): Dictionary {
+	protected syncStorageState(): Dictionary {
 		return {
 			'mods.opened': this.mods.opened
 		};

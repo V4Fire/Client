@@ -286,7 +286,7 @@ function tagFilter({name, attrs = {}}) {
 		});
 
 		if (component && component.inheritMods !== false && !attrs[':mods-prop']) {
-			attrs[':mods-prop'] = ['provideMods()'];
+			attrs[':mods-prop'] = ['provide.mods()'];
 		}
 	}
 

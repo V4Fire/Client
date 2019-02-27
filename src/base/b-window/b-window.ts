@@ -58,13 +58,13 @@ export default class bWindow<T extends Dictionary = Dictionary> extends iData<T>
 	/**
 	 * Window title store
 	 */
-	@field((o) => o.link())
+	@field((o) => o.sync.link())
 	protected titleStore?: string;
 
 	/**
 	 * Slot name store
 	 */
-	@field((o) => o.link())
+	@field((o) => o.sync.link())
 	protected slotNameStore?: string;
 
 	/** @override */
@@ -110,7 +110,7 @@ export default class bWindow<T extends Dictionary = Dictionary> extends iData<T>
 	 * Slot name
 	 */
 	get slotName(): CanUndef<string> {
-		return this.getField('slotNameStore');
+		return this.field.get('slotNameStore');
 	}
 
 	/**
@@ -118,7 +118,7 @@ export default class bWindow<T extends Dictionary = Dictionary> extends iData<T>
 	 * @param value
 	 */
 	set slotName(value: CanUndef<string>) {
-		this.setField('slotNameStore', value);
+		this.field.set('slotNameStore', value);
 	}
 
 	/**
@@ -126,7 +126,7 @@ export default class bWindow<T extends Dictionary = Dictionary> extends iData<T>
 	 */
 	get title(): string {
 		const
-			v = this.getField<string>('titleStore') || '',
+			v = this.field.get<string>('titleStore') || '',
 			stageTitles = this.stageTitles;
 
 		if (stageTitles) {
@@ -151,7 +151,7 @@ export default class bWindow<T extends Dictionary = Dictionary> extends iData<T>
 	 * Sets a new window title
 	 */
 	set title(value: string) {
-		this.setField('titleStore', value);
+		this.field.set('titleStore', value);
 	}
 
 	/**
