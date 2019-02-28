@@ -199,7 +199,7 @@ export default class bButton<T extends Dictionary = Dictionary> extends iData<T>
 		return iOpenToggle.toggle(this);
 	}
 
-	/** @see iHint.toggle */
+	/** @see iHint.setHint */
 	setHint(pos: string): ReadonlyArray<string> {
 		return iHint.setHint(this, pos);
 	}

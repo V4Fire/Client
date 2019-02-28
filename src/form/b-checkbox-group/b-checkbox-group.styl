@@ -26,7 +26,7 @@ b-checkbox-group extends i-input
 
 	&__el
 		width ($p.elWidth != auto ? "calc(%s - %s)" % ($p.elWidth ($p.elMargin && $p.elMargin * 2) || $p.elHorMargin || 0px) : $p.elWidth)
-		margin: $p.elMargin
+		margin $p.elMargin
 
 		if !$p.elMargin
 			&:nth-child(odd)

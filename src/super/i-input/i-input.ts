@@ -9,6 +9,7 @@
 import iTheme from 'traits/i-theme/i-theme';
 import iAccess from 'traits/i-access/i-access';
 import iVisible from 'traits/i-visible/i-visible';
+import iHint from 'traits/i-hint/i-hint';
 
 import iData, {
 
@@ -48,7 +49,7 @@ export default class iInput<
 	V extends Value = Value,
 	FV extends FormValue = FormValue,
 	D extends Dictionary = Dictionary
-> extends iData<D> {
+> extends iData<D> implements iTheme, iVisible, iAccess, iHint {
 	/**
 	 * Initial component value
 	 */
@@ -299,6 +300,11 @@ export default class iInput<
 	 */
 	@field<iInput>((o) => o.sync.link((val) => o.initDefaultValue(val)))
 	protected valueStore!: unknown;
+
+	/** @see iHint.setHint */
+	setHint(pos: string): ReadonlyArray<string> {
+		return iHint.setHint(this, pos);
+	}
 
 	/** @see iAccess.enable */
 	enable(): Promise<boolean> {

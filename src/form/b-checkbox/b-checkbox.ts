@@ -7,6 +7,7 @@
  */
 
 import symbolGenerator from 'core/symbol';
+import iSize, { SizeDictionary } from 'traits/i-size/i-size';
 import iInput, { component, prop, watch, ModsDecl } from 'super/i-input/i-input';
 export * from 'super/i-input/i-input';
 
@@ -26,7 +27,7 @@ export default class bCheckbox<
 	V extends Value = Value,
 	FV extends FormValue = FormValue,
 	D extends Dictionary = Dictionary
-> extends iInput<V, FV, D> {
+> extends iInput<V, FV, D> implements iSize {
 	/** @override */
 	@prop({type: Boolean, required: false})
 	readonly valueProp?: V;
@@ -52,6 +53,16 @@ export default class bCheckbox<
 		return this.defaultProp || false;
 	}
 
+	/** @see iSize.lt */
+	get lt(): SizeDictionary {
+		return iSize.lt;
+	}
+
+	/** @see iSize.gt */
+	get gt(): SizeDictionary {
+		return iSize.gt;
+	}
+
 	/** @inheritDoc */
 	static readonly mods: ModsDecl = {
 		checked: [
@@ -59,10 +70,7 @@ export default class bCheckbox<
 			'false'
 		],
 
-		theme: [
-			bCheckbox.PARENT,
-			'menu'
-		]
+		...iSize.mods
 	};
 
 	/** @override */

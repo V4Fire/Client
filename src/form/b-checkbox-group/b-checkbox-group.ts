@@ -6,7 +6,6 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import $C = require('collection.js');
 import bCheckbox from 'form/b-checkbox/b-checkbox';
 import iInput, {
 
@@ -43,7 +42,11 @@ export default class bCheckboxGroup<
 	D extends Dictionary = Dictionary
 > extends iInput<V, FV, D> {
 	/** @override */
-	@prop({default: (obj) => $C(obj).get('data') || obj || []})
+	@prop({
+		type: Array,
+		default: (obj) => obj && obj.data || obj || []
+	})
+
 	readonly componentConverter!: ComponentConverter<Option[]>;
 
 	/**
@@ -83,9 +86,12 @@ export default class bCheckboxGroup<
 	@p({cache: false})
 	get elements(): CanPromise<ReadonlyArray<bCheckbox>> {
 		return this.waitStatus('ready', () => {
-			const els = $C(this.block.elements('checkbox'))
-				.to([])
-				.map((el) => this.dom.getComponent(el));
+			const
+				els = <bCheckbox[]>[];
+
+			for (let o = this.block.elements('checkbox'), i = 0; i < o.length; i++) {
+				els.push(this.dom.getComponent(o[i]));
+			}
 
 			return Object.freeze(els);
 		});
@@ -178,9 +184,11 @@ export default class bCheckboxGroup<
 			} catch {}
 		}
 
-		if ($C(res).some((el) => el)) {
-			this.emit('clear');
-			return true;
+		for (let i = 0; i < res.length; i++) {
+			if (res[i]) {
+				this.emit('clear');
+				return true;
+			}
 		}
 
 		return false;
@@ -197,9 +205,11 @@ export default class bCheckboxGroup<
 			} catch {}
 		}
 
-		if ($C(res).some((el) => el)) {
-			this.emit('reset');
-			return true;
+		for (let i = 0; i < res.length; i++) {
+			if (res[i]) {
+				this.emit('reset');
+				return true;
+			}
 		}
 
 		return false;
@@ -231,7 +241,7 @@ export default class bCheckboxGroup<
 	}
 
 	/**
-	 * Returns true if he specified checkbox can change state
+	 * Returns true if the specified checkbox can change state
 	 * @param el
 	 */
 	protected isChangeable(el: Option): boolean {
