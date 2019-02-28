@@ -7,12 +7,14 @@
  */
 
 @import "super/i-input/i-input.styl"
+@import "traits/i-width/i-width.styl"
 
 $p = {
-
+	widthHelpers: true
 }
 
 b-input-birthday extends i-input
+	i-width({helpers: $p.widthHelpers})
 	display inline-block
 
 	&__wrapper

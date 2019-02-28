@@ -6,8 +6,9 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import iWidth from 'traits/i-width/i-width';
 import bSelect, { Option } from 'form/b-select/b-select';
-import iInput, { component, prop, p, Cache } from 'super/i-input/i-input';
+import iInput, { component, prop, p, Cache, ModsDecl } from 'super/i-input/i-input';
 export * from 'super/i-input/i-input';
 
 export type Value = Date;
@@ -29,7 +30,7 @@ export default class bInputBirthday<
 	V extends Value = Value,
 	FV extends FormValue = FormValue,
 	D extends Dictionary = Dictionary
-> extends iInput<V, FV, D> {
+> extends iInput<V, FV, D> implements iWidth {
 	/** @override */
 	@prop({type: Date, required: false})
 	readonly valueProp?: V;
@@ -150,6 +151,11 @@ export default class bInputBirthday<
 			return Object.freeze([r.month, r.day, r.year]);
 		});
 	}
+
+	/** @inheritDoc */
+	static readonly mods: ModsDecl = {
+		...iWidth.mods
+	};
 
 	/** @override */
 	protected readonly $refs!: {

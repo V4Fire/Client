@@ -7,20 +7,18 @@
  */
 
 @import "super/i-input/i-input.styl"
+@import "traits/i-width/i-width.styl"
+@import "traits/i-size/i-size.styl"
 
 $p = {
-	width: 15em
+	widthHelpers: true
+	sizeHelpers: true
 }
 
 b-input extends i-input
+	i-width({helpers: $p.widthHelpers})
+	i-size({helpers: $p.sizeHelpers})
 	display inline-block
-	width $p.width
-
-	&_focused_true
-		z-index-pos layer 1
-
-	&_progress_true
-		pointer-events auto
 
 	&__root-wrapper
 	&__super-wrapper
@@ -79,6 +77,12 @@ b-input extends i-input
 	&__valid-status
 	&__progress
 		pointer-events none
+
+	&_progress_true
+		pointer-events auto
+
+	&_focused_true
+		z-index-pos layer 1
 
 	&_focused_true &__valid-status
 		display none

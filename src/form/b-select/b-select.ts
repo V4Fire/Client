@@ -6,11 +6,12 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-// tslint:disable:max-file-line-count
-
 import symbolGenerator from 'core/symbol';
 import keyCodes from 'core/key-codes';
+
+import iOpenToggle from 'traits/i-open-toggle/i-open-toggle';
 import bScrollInline from 'base/b-scroll/b-scroll-inline/b-scroll-inline';
+
 import bInput, {
 
 	component,
@@ -21,11 +22,13 @@ import bInput, {
 	watch,
 	mod,
 	wait,
+
 	Value,
 	ComponentConverter,
 	CloseHelperEvents,
 	ModEvent,
-	SetModEvent
+	SetModEvent,
+	ModsDecl
 
 } from 'form/b-input/b-input';
 
@@ -62,7 +65,7 @@ export default class bSelect<
 	FV extends FormValue = FormValue,
 	D extends Dictionary = Dictionary
 // @ts-ignore
-> extends bInput<V, FV, D> {
+> extends bInput<V, FV, D> implements iOpenToggle {
 	/** @override */
 	@prop({default: (obj) => obj && obj.data || obj || []})
 	readonly componentConverter?: ComponentConverter<Option[]>;
@@ -120,6 +123,11 @@ export default class bSelect<
 	get default(): unknown {
 		return this.defaultProp !== undefined ? String(this.defaultProp) : undefined;
 	}
+
+	/** @inheritDoc */
+	static readonly mods: ModsDecl = {
+		...iOpenToggle.mods
+	};
 
 	/** @override */
 	@field()
@@ -181,7 +189,7 @@ export default class bSelect<
 		return false;
 	}
 
-	/** @override */
+	/** @see iOpenToggle.open */
 	@mod('focused', true)
 	@wait('ready')
 	async open(): Promise<boolean> {
@@ -226,9 +234,9 @@ export default class bSelect<
 		return false;
 	}
 
-	/** @override */
+	/** @see iOpenToggle.close */
 	async close(): Promise<boolean> {
-		if (await super.close()) {
+		if (await iOpenToggle.close(this)) {
 			if (this.selected) {
 				await this.onOptionSelected(this.selected);
 			}
@@ -237,6 +245,11 @@ export default class bSelect<
 		}
 
 		return false;
+	}
+
+	/** @see iOpenToggle.toggle */
+	toggle(): Promise<boolean> {
+		return iOpenToggle.toggle(this);
 	}
 
 	/** @override */
@@ -273,6 +286,127 @@ export default class bSelect<
 		}
 
 		return super.blur();
+	}
+
+	/** @see iOpenToggle.onOpenedChange */
+	onOpenedChange(e: ModEvent | SetModEvent): void {
+		const
+			{async: $a} = this;
+
+		// opened == false or opened == null
+		if (e.type === 'set' && e.value === 'false' || e.type === 'remove') {
+			if (openedSelect === this) {
+				openedSelect = null;
+			}
+
+			if (this.mods.focused !== 'true') {
+				$a.off({
+					group: 'navigation'
+				});
+			}
+
+			return;
+		}
+
+		$a.off({
+			group: 'navigation'
+		});
+
+		if (openedSelect) {
+			openedSelect.close().catch(() => undefined);
+		}
+
+		openedSelect = this;
+
+		$a.on(document, 'keydown', async (e) => {
+			if (!{[keyCodes.UP]: true, [keyCodes.DOWN]: true, [keyCodes.ENTER]: true}[e.keyCode]) {
+				return;
+			}
+
+			e.preventDefault();
+
+			const
+				{block: $b} = this,
+				selected = getSelected();
+
+			function getSelected(): CanUndef<HTMLElement> {
+				return $b.element('option', {selected: true});
+			}
+
+			switch (e.keyCode) {
+				case keyCodes.ENTER:
+					if (selected) {
+						await this.onOptionSelected();
+					}
+
+					break;
+
+				case keyCodes.UP:
+					if (this.selected) {
+						if (selected) {
+							if (selected.previousElementSibling) {
+								this.selected = <FV>(<HTMLElement>selected.previousElementSibling).dataset.value;
+								break;
+							}
+
+							await this.close();
+						}
+					}
+
+					break;
+
+				case keyCodes.DOWN: {
+					const
+						that = this;
+
+					// Use "that" instead of "this" because of TS generates invalid code
+					const select = async (el) => {
+						if (that.mods.opened !== 'true') {
+							await that.open();
+							el = getSelected();
+							if (that.selected) {
+								return;
+							}
+						}
+
+						if (el) {
+							if (!that.selected) {
+								that.selected = el.dataset.value;
+								return;
+							}
+
+							if (el.nextElementSibling) {
+								that.selected = el.nextElementSibling.dataset.value;
+								return;
+							}
+
+							that.selected = <FV>(<HTMLElement>$b.element('option')).dataset.value;
+						}
+					};
+
+					if (this.selected) {
+						if (selected) {
+							await select(selected);
+							break;
+						}
+					}
+
+					await select($b.element('option'));
+				}
+			}
+		}, {
+			group: 'navigation'
+		});
+	}
+
+	/** @see iOpenToggle.onKeyClose */
+	onKeyClose(e: KeyboardEvent): Promise<void> {
+		return iOpenToggle.onKeyClose(this, e);
+	}
+
+	/** @see iOpenToggle.onTouchClose */
+	onTouchClose(e: MouseEvent): Promise<void> {
+		return iOpenToggle.onTouchClose(this, e);
 	}
 
 	/** @override */
@@ -337,7 +471,7 @@ export default class bSelect<
 
 			if (el.selected && !this.selected && !this.value) {
 				if (this.mods.focused !== 'true') {
-					this.syncLinks('valueProp', this.getOptionLabel(el));
+					this.sync.syncLinks('valueProp', this.getOptionLabel(el));
 				}
 
 				data.selected = val;
@@ -489,13 +623,13 @@ export default class bSelect<
 		return this.selected || this.value ? option.value === this.selected : Boolean(option.selected);
 	}
 
-	/** @override */
+	/** @see iOpenToggle.initCloseHelpers */
 	protected initCloseHelpers(events?: CloseHelperEvents): void {
 		if (this.browser.is.mobile) {
 			return;
 		}
 
-		super.initCloseHelpers(events);
+		iOpenToggle.initModEvents(this);
 	}
 
 	/**
@@ -506,7 +640,7 @@ export default class bSelect<
 	 */
 	@watch({
 		field: '?$el:click',
-		wrapper: (o, cb) => o.delegateElement('option', (e) => cb(e.delegateTarget.dataset.value))
+		wrapper: (o, cb) => o.dom.delegateElement('option', (e) => cb(e.delegateTarget.dataset.value))
 	})
 
 	protected async onOptionSelected(value?: string): Promise<void> {
@@ -563,117 +697,6 @@ export default class bSelect<
 			await this.async.wait(() => this.mods.opened !== 'true', {label: $$.onBlockValueChange});
 			super.onBlockValueChange(newValue, oldValue);
 		} catch {}
-	}
-
-	/** @override */
-	protected onOpenedChange(e: ModEvent | SetModEvent): void {
-		const
-			{async: $a} = this;
-
-		// opened == false or opened == null
-		if (e.type === 'set' && e.value === 'false' || e.type === 'remove') {
-			if (openedSelect === this) {
-				openedSelect = null;
-			}
-
-			if (this.mods.focused !== 'true') {
-				$a.off({
-					group: 'navigation'
-				});
-			}
-
-			return;
-		}
-
-		$a.off({
-			group: 'navigation'
-		});
-
-		if (openedSelect) {
-			openedSelect.close().catch(() => undefined);
-		}
-
-		openedSelect = this;
-
-		$a.on(document, 'keydown', async (e) => {
-			if (!{[keyCodes.UP]: true, [keyCodes.DOWN]: true, [keyCodes.ENTER]: true}[e.keyCode]) {
-				return;
-			}
-
-			e.preventDefault();
-
-			const
-				{block: $b} = this,
-				selected = getSelected();
-
-			function getSelected(): CanUndef<HTMLElement> {
-				return $b.element('option', {selected: true});
-			}
-
-			switch (e.keyCode) {
-				case keyCodes.ENTER:
-					if (selected) {
-						await this.onOptionSelected();
-					}
-
-					break;
-
-				case keyCodes.UP:
-					if (this.selected) {
-						if (selected) {
-							if (selected.previousElementSibling) {
-								this.selected = <FV>(<HTMLElement>selected.previousElementSibling).dataset.value;
-								break;
-							}
-
-							await this.close();
-						}
-					}
-
-					break;
-
-				case keyCodes.DOWN: {
-					const
-						that = this;
-
-					// Use "that" instead of "this" because of TS generates invalid code
-					const select = async (el) => {
-						if (that.mods.opened !== 'true') {
-							await that.open();
-							el = getSelected();
-							if (that.selected) {
-								return;
-							}
-						}
-
-						if (el) {
-							if (!that.selected) {
-								that.selected = el.dataset.value;
-								return;
-							}
-
-							if (el.nextElementSibling) {
-								that.selected = el.nextElementSibling.dataset.value;
-								return;
-							}
-
-							that.selected = <FV>(<HTMLElement>$b.element('option')).dataset.value;
-						}
-					};
-
-					if (this.selected) {
-						if (selected) {
-							await select(selected);
-							break;
-						}
-					}
-
-					await select($b.element('option'));
-				}
-			}
-		}, {
-			group: 'navigation'
-		});
 	}
 
 	/** @override */

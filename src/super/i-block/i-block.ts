@@ -11,7 +11,7 @@
 import symbolGenerator from 'core/symbol';
 
 import Async, { AsyncOpts, ClearOptsId, WrappedFunction, ProxyCb } from 'core/async';
-import log, { LogMessageOptions } from 'core/log';
+import log, { LogMessageOpts } from 'core/log';
 
 import { GLOBAL } from 'core/const/links';
 import { EventEmitter2 as EventEmitter } from 'eventemitter2';
@@ -1392,7 +1392,7 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	 * @param ctxOrOpts - log context or log options (logLevel, context)
 	 * @param [details]
 	 */
-	protected log(ctxOrOpts: string | LogMessageOptions, ...details: unknown[]): void {
+	protected log(ctxOrOpts: string | LogMessageOpts, ...details: unknown[]): void {
 		let
 			context = ctxOrOpts,
 			logLevel;
@@ -1687,6 +1687,7 @@ export abstract class iBlockDecorator extends iBlock {
 
 	public readonly async!: Async<this>;
 	public readonly block!: Block;
+	public readonly dom!: DOM;
 
 	public readonly localEvent!: Event<this>;
 	public readonly globalEvent!: Event<this>;

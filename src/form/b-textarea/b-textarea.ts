@@ -155,7 +155,7 @@ export default class bTextarea<
 	 */
 	@hook('mounted')
 	protected async initHeight(): Promise<void> {
-		await this.putInStream(async () => {
+		await this.dom.putInStream(async () => {
 			this.minHeight = this.$refs.input.clientHeight;
 			await this.calcHeight();
 		});

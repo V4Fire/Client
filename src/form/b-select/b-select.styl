@@ -13,13 +13,9 @@ $p = {
 }
 
 b-select extends b-input
-	&_opened_true
-		z-index-pos layer 1
-
 	&__native
 		absolute top 0 left 0
-		width 100%
-		height 100%
+		size 100%
 		opacity 0
 
 	&__option
@@ -37,3 +33,6 @@ b-select extends b-input
 
 	&__input[readonly="readonly"]
 		cursor pointer
+
+	&_opened_true
+		z-index-pos layer 1
