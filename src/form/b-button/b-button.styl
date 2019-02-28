@@ -7,28 +7,28 @@
  */
 
 @import "super/i-data/i-data.styl"
+@import "traits/i-access/i-access.styl"
+@import "traits/i-visible/i-visible.styl"
+@import "traits/i-width/i-width.styl"
+@import "traits/i-size/i-size.styl"
 
 $p = {
-	lockHelpers: true
+	accessHelpers: true
+	visibleHelpers: true
+	widthHelpers: auto
 	sizeHelpers: true
 	messageHelpers: true
 	dropdownHelpers: true
-	width: auto
 }
 
 b-button extends i-data
+	i-access({helpers: $p.accessHelpers})
+	i-visible({helpers: $p.visibleHelpers})
+	i-width({helpers: $p.widthHelpers})
+	i-size({helpers: $p.sizeHelpers})
+
 	display inline-block
 	user-select none
-
-	&_upper_true &__button
-		text-transform uppercase
-
-	&_width_full &__button
-	&_width_full &__value
-		width 100%
-
-	&_width_auto &__value
-		width auto
 
 	&__root-wrapper
 		flex-direction column
@@ -76,3 +76,6 @@ b-button extends i-data
 	&__g-icon
 		display inline-block
 		size 100%
+
+	&_upper_true &__button
+		text-transform uppercase

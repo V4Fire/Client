@@ -14,8 +14,8 @@ import bForm from 'form/b-form/b-form';
 
 import iTheme from 'traits/i-theme/i-theme';
 import iAccess from 'traits/i-access/i-access';
-import iProgress from 'traits/i-progress/i-progress';
 import iVisible from 'traits/i-visible/i-visible';
+import iWidth from 'traits/i-width/i-width';
 import iSize, { SizeDictionary } from 'traits/i-size/i-size';
 import iOpenToggle from 'traits/i-open-toggle/i-open-toggle';
 import iIcon from 'traits/i-icon/i-icon';
@@ -49,7 +49,7 @@ export type ButtonType<T extends string = any> =
 })
 
 export default class bButton<T extends Dictionary = Dictionary> extends iData<T>
-	implements iTheme, iAccess, iProgress, iOpenToggle, iIcon, iHint, iVisible, iSize {
+	implements iTheme, iAccess, iOpenToggle, iIcon, iHint, iVisible, iWidth, iSize {
 
 	/** @override */
 	readonly dataProvider: string = 'Provider';
@@ -141,11 +141,6 @@ export default class bButton<T extends Dictionary = Dictionary> extends iData<T>
 
 	/** @inheritDoc */
 	static readonly mods: ModsDecl = {
-		theme: [
-			bButton.PARENT,
-			'icon'
-		],
-
 		rounding: [
 			'none',
 			['small'],
@@ -160,9 +155,9 @@ export default class bButton<T extends Dictionary = Dictionary> extends iData<T>
 
 		...iTheme.mods,
 		...iAccess.mods,
-		...iProgress.mods,
 		...iOpenToggle.mods,
 		...iVisible.mods,
+		...iWidth.mods,
 		...iSize.mods
 	};
 
@@ -174,7 +169,7 @@ export default class bButton<T extends Dictionary = Dictionary> extends iData<T>
 		return iAccess.focus(this);
 	}
 
-	/** @see iAccess.focus */
+	/** @see iAccess.blur */
 	blur(): Promise<boolean> {
 		return iAccess.blur(this);
 	}
