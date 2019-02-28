@@ -12,11 +12,6 @@
 - include '**/*.window.ss'|b
 
 - template index() extends ['i-data'].index
-	- overWrapper = false
-
-	/// FIXME: missing closing or opening directives in the template
-	/// - thirdPartySlots = true
-
 	- block rootAttrs
 		- super
 		? Object.assign(rootAttrs, {':style': "{top: global.pageYOffset + 'px'}"})

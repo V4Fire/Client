@@ -9,16 +9,15 @@
 @import "super/i-input/i-input.styl"
 
 $p =  {
-	width: auto
 	elWidth: 100%
 	elHorMargin: 0
 	elVertMargin: 0
 	elMargin: 0
+	widthHelpers: true
 }
 
 b-checkbox-group extends i-input
-	&__root-wrapper
-		width $p.width
+	i-width({helpers: $p.widthHelpers, selector: '&__root-wrapper'})
 
 	&__list
 		display flex

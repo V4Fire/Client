@@ -15,7 +15,7 @@
 $p = {
 	accessHelpers: true
 	visibleHelpers: true
-	widthHelpers: auto
+	widthHelpers: true
 	sizeHelpers: true
 	messageHelpers: true
 	dropdownHelpers: true
@@ -24,7 +24,7 @@ $p = {
 b-button extends i-data
 	i-access({helpers: $p.accessHelpers})
 	i-visible({helpers: $p.visibleHelpers})
-	i-width({helpers: $p.widthHelpers})
+	i-width({helpers: $p.widthHelpers, selector: ('&__button' '&__value')})
 	i-size({helpers: $p.sizeHelpers})
 
 	display inline-block

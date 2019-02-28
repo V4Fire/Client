@@ -6,7 +6,9 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import iWidth from 'traits/i-width/i-width';
 import bCheckbox from 'form/b-checkbox/b-checkbox';
+
 import iInput, {
 
 	component,
@@ -15,7 +17,8 @@ import iInput, {
 	p,
 	ValidatorsDecl,
 	ValidatorParams,
-	ComponentConverter
+	ComponentConverter,
+	ModsDecl
 
 } from 'super/i-input/i-input';
 
@@ -40,7 +43,7 @@ export default class bCheckboxGroup<
 	V extends Value = Value,
 	FV extends FormValue = FormValue,
 	D extends Dictionary = Dictionary
-> extends iInput<V, FV, D> {
+> extends iInput<V, FV, D> implements iWidth {
 	/** @override */
 	@prop({
 		type: Array,
@@ -112,6 +115,11 @@ export default class bCheckboxGroup<
 	get default(): unknown {
 		return (<unknown[]>[]).concat(this.defaultProp !== undefined ? this.defaultProp : []);
 	}
+
+	/** @inheritDoc */
+	static readonly mods: ModsDecl = {
+		...iWidth.mods
+	};
 
 	/** @override */
 	static blockValidators: ValidatorsDecl = {

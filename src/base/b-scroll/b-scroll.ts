@@ -6,42 +6,33 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-// tslint:disable:max-file-line-count
-
 import Range from 'core/range';
 import symbolGenerator from 'core/symbol';
+
+import iTheme from 'traits/i-theme/i-theme';
+import iVisible from 'traits/i-visible/i-visible';
+
 import iBlock, { component, prop, system, p, wait, watch, ModsDecl } from 'super/i-block/i-block';
+import {
+
+	Offset,
+	OverflowTypes,
+	InputScrollerPosition,
+	FixSizeTypes,
+	ScrollSide,
+	ScrollSize,
+	ScrollerPosition
+
+} from 'base/b-scroll/modules/interface';
 
 export * from 'super/i-block/i-block';
-export type ScrollSide = 'x' | 'y';
-export type FixSizeTypes = 'width' | 'height';
-export type OverflowTypes = 'auto' | 'hidden' | 'scroll' | 'visible' | 'inherit';
-
-export interface ScrollSize {
-	width?: number;
-	height?: number;
-}
-
-export interface Offset {
-	top: number;
-	left: number;
-}
-
-export interface ScrollerPosition {
-	x?: number;
-	y?: number;
-}
-
-export interface InputScrollerPosition {
-	x?: number | 'left' | 'right';
-	y?: number | 'top' | 'bottom';
-}
+export * from 'base/b-scroll/modules/interface';
 
 export const
 	$$ = symbolGenerator();
 
 @component({functional: {}})
-export default class bScroll extends iBlock {
+export default class bScroll extends iBlock implements iTheme, iVisible {
 	/**
 	 * If true, then the content size will be extended with scroll bars
 	 * ('width' or 'height' for extending one of sides)
@@ -104,14 +95,16 @@ export default class bScroll extends iBlock {
 	/** @inheritDoc */
 	static readonly mods: ModsDecl = {
 		theme: [
-			bScroll.PARENT,
+			...iTheme.mods.theme,
 			'light'
 		],
 
 		scroll: [
 			'true',
 			['false']
-		]
+		],
+
+		...iVisible.mods
 	};
 
 	/**
@@ -199,7 +192,7 @@ export default class bScroll extends iBlock {
 	@wait('ready', {defer: true})
 	initScroll(scrollerPosition?: InputScrollerPosition, side?: ScrollSide): Promise<void> {
 		return this.async.promise(new Promise(async (resolve) => {
-			await this.putInStream(async () => {
+			await this.dom.putInStream(async () => {
 				await this.calcScroll(side);
 				scrollerPosition && this.setScrollerPosition(scrollerPosition);
 				resolve();
@@ -455,7 +448,7 @@ export default class bScroll extends iBlock {
 			const
 				el = children[i];
 
-			if (this.$(el)) {
+			if (this.dom.getComponent(el)) {
 				const
 					{height, width} = el.getBoundingClientRect();
 
@@ -484,7 +477,7 @@ export default class bScroll extends iBlock {
 				};
 
 				const
-					block = this.$(el);
+					block = this.dom.getComponent(el);
 
 				if (block) {
 					block.setMod('view', inView.left && inView.top);
@@ -493,6 +486,12 @@ export default class bScroll extends iBlock {
 				}
 			}
 		}
+	}
+
+	/** @override */
+	protected initModEvents(): void {
+		super.initModEvents();
+		iVisible.initModEvents(this);
 	}
 
 	/**

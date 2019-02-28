@@ -7,13 +7,17 @@
  */
 
 @import "super/i-block/i-block.styl"
+@import "traits/i-visible/i-visible.styl"
 
 $p = {
+	visibleHelpers: true
 	backgroundColor: inherit
 	scrollerSize: 6px
 }
 
 b-scroll extends i-block
+	i-visible({helpers: $p.visibleHelpers})
+
 	display block
 	height 100%
 	background inherit
