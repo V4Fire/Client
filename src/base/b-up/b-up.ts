@@ -7,6 +7,7 @@
  */
 
 import symbolGenerator from 'core/symbol';
+import iVisible from 'traits/i-visible/i-visible';
 import iBlock, { component, hook, watch, ModsDecl } from 'super/i-block/i-block';
 export * from 'super/i-block/i-block';
 
@@ -14,12 +15,12 @@ export const
 	$$ = symbolGenerator();
 
 @component({functional: true})
-export default class bUp extends iBlock {
+export default class bUp extends iBlock implements iVisible {
 	/** @inheritDoc */
 	static readonly mods: ModsDecl = {
 		hidden: [
-			['true'],
-			'false'
+			...iVisible.mods.hidden,
+			['true']
 		]
 	};
 
@@ -41,5 +42,11 @@ export default class bUp extends iBlock {
 	@watch('document:scroll')
 	protected onScroll(): void {
 		this.setMod('hidden', !(pageYOffset > innerHeight / 3));
+	}
+
+	/** @override */
+	protected initModEvents(): void {
+		super.initModEvents();
+		iVisible.initModEvents(this);
 	}
 }
