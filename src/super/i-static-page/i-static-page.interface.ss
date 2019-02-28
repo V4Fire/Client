@@ -31,7 +31,6 @@
 
 	- defineBase = false
 	- assetsRequest = true
-	- overWrapper = false
 
 	- charset = { &
 		charset: 'utf-8'

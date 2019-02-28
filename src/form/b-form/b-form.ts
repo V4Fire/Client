@@ -7,11 +7,16 @@
  */
 
 import 'core/data';
-import $C = require('collection.js');
 import symbolGenerator from 'core/symbol';
+
+import iVisible from 'traits/i-visible/i-visible';
 import bInputHidden from 'form/b-input-hidden/b-input-hidden';
-import iInput, { ValidationError as InputValidationError } from 'super/i-input/i-input';
 import bButton from 'form/b-button/b-button';
+
+//#if runtime has iInput
+import iInput, { ValidationError as InputValidationError } from 'super/i-input/i-input';
+//#endif
+
 import iData, {
 
 	component,
@@ -109,7 +114,9 @@ export default class bForm<T extends Dictionary = Dictionary> extends iData<T> {
 		valid: [
 			'true',
 			'false'
-		]
+		],
+
+		...iVisible.mods
 	};
 
 	/** @override */
@@ -122,17 +129,18 @@ export default class bForm<T extends Dictionary = Dictionary> extends iData<T> {
 	get elements(): CanPromise<ReadonlyArray<iInput>> {
 		const cache = {};
 		return this.waitStatus('ready', () => {
-			const els = $C(this.$refs.form.elements).to([] as iInput[]).reduce((arr, el) => {
+			const
+				els = <iInput[]>[];
+
+			for (let o = Array.from(this.$refs.form.elements), i = 0; i < o.length; i++) {
 				const
-					component = this.$<iInput>(el, '[class*="_form_true"]');
+					component = this.dom.getComponent<iInput>(o[i], '[class*="_form_true"]');
 
 				if (component && component.instance instanceof iInput && !cache[component.componentId]) {
 					cache[component.componentId] = true;
-					arr.push(component);
+					els.push(component);
 				}
-
-				return arr;
-			});
+			}
 
 			return Object.freeze(els);
 		});
@@ -144,12 +152,16 @@ export default class bForm<T extends Dictionary = Dictionary> extends iData<T> {
 	@p({cache: false})
 	get submits(): CanPromise<ReadonlyArray<bButton>> {
 		return this.waitStatus('ready', () => {
-			const els = $C(
-				Array.from(this.$el.querySelectorAll('button[type="submit"]')).concat(
-					this.id ? Array.from(document.body.querySelectorAll(`button[type="submit"][form="${this.id}"]`)) : []
-				)
+			const arr = Array.from(this.$el.querySelectorAll('button[type="submit"]')).concat(
+				this.id ? Array.from(document.body.querySelectorAll(`button[type="submit"][form="${this.id}"]`)) : []
+			);
 
-			).map((el) => <bButton>this.$(el));
+			const
+				els = <bButton[]>[];
+
+			for (let i = 0; i < arr.length; i++) {
+				els.push(<bButton>this.dom.getComponent(arr[i]));
+			}
 
 			return Object.freeze(els);
 		});
@@ -169,9 +181,11 @@ export default class bForm<T extends Dictionary = Dictionary> extends iData<T> {
 			} catch {}
 		}
 
-		if ($C(res).some((el) => el)) {
-			this.emit('clear');
-			return true;
+		for (let i = 0; i < res.length; i++) {
+			if (res[i]) {
+				this.emit('clear');
+				return true;
+			}
 		}
 
 		return false;
@@ -191,9 +205,11 @@ export default class bForm<T extends Dictionary = Dictionary> extends iData<T> {
 			} catch {}
 		}
 
-		if ($C(res).some((el) => el)) {
-			this.emit('reset');
-			return true;
+		for (let i = 0; i < res.length; i++) {
+			if (res[i]) {
+				this.emit('reset');
+				return true;
+			}
 		}
 
 		return false;
@@ -276,10 +292,21 @@ export default class bForm<T extends Dictionary = Dictionary> extends iData<T> {
 			// @ts-ignore
 			[submits, elements] = await Promise.all([this.submits, this.elements]);
 
-		await Promise.all((<CanPromise<boolean>[]>[]).concat(
-			$C(elements).map((el) => el.setMod('disabled', true)),
-			$C(submits).map((el) => el.setMod('progress', true))
-		));
+		{
+			const
+				elementTasks = <CanPromise<boolean>[]>[],
+				submitTasks = <CanPromise<boolean>[]>[];
+
+			for (let i = 0; i < elements.length; i++) {
+				elementTasks.push(elements[i].setMod('disabled', true));
+			}
+
+			for (let i = 0; i < submits.length; i++) {
+				submitTasks.push(submits[i].setMod('progress', true));
+			}
+
+			await Promise.all([...elementTasks, ...submitTasks]);
+		}
 
 		const
 			els = await this.validate(true);
@@ -293,31 +320,43 @@ export default class bForm<T extends Dictionary = Dictionary> extends iData<T> {
 				body = {},
 				isMultipart = false;
 
-			await Promise.all($C(els as iInput[]).map((el) => (async () => {
-				let val = await el.groupFormValue;
-				val = el.formConverter ? await el.formConverter(val) : val;
+			const
+				tasks = <Promise<unknown>[]>[];
 
-				if (val instanceof Blob || val instanceof File || val instanceof FileList) {
-					isMultipart = true;
-				}
+			for (let i = 0; i < els.length; i++) {
+				const
+					el = els[i];
 
-				if (el.name) {
-					body[el.name] = el.utc && Object.isObject(val) ? this.h.setJSONToUTC(val) : val;
-				}
-			})()));
+				tasks.push((async () => {
+					let val = await el.groupFormValue;
+					val = el.formConverter ? await el.formConverter(val) : val;
+
+					if (val instanceof Blob || val instanceof File || val instanceof FileList) {
+						isMultipart = true;
+					}
+				})());
+			}
+
+			await Promise.all(tasks);
 
 			if (isMultipart) {
-				body = $C(body).reduce((res, el, key) => {
+				const
+					form = new FormData();
+
+				for (let keys = Object.keys(body), i = 0; i < keys.length; i++) {
+					const
+						key = keys[i],
+						el = body[key];
+
 					if (el instanceof Blob) {
-						res.append(key, el, `blob.${el.type.split('/')[1]}`);
+						form.append(key, el, `blob.${el.type.split('/')[1]}`);
 
 					} else {
-						res.append(key, el);
+						form.append(key, el);
 					}
+				}
 
-					return res;
-				}, new FormData());
-
+				body = form;
 				this.params.responseType = 'text';
 			}
 
@@ -349,10 +388,21 @@ export default class bForm<T extends Dictionary = Dictionary> extends iData<T> {
 			await this.async.sleep(delay);
 		}
 
-		await Promise.all((<CanPromise<boolean>[]>[]).concat(
-			$C(elements).map((el) => el.setMod('disabled', false)),
-			$C(submits).map((el) => el.setMod('progress', false))
-		));
+		{
+			const
+				elementTasks = <CanPromise<boolean>[]>[],
+				submitTasks = <CanPromise<boolean>[]>[];
+
+			for (let i = 0; i < elements.length; i++) {
+				elementTasks.push(elements[i].setMod('disabled', false));
+			}
+
+			for (let i = 0; i < submits.length; i++) {
+				submitTasks.push(submits[i].setMod('progress', false));
+			}
+
+			await Promise.all([...elementTasks, ...submitTasks]);
+		}
 
 		if (!els) {
 			return;
@@ -370,6 +420,8 @@ export default class bForm<T extends Dictionary = Dictionary> extends iData<T> {
 	/** @override */
 	protected initModEvents(): void {
 		super.initModEvents();
+		iVisible.initModEvents(this);
+
 		this.localEvent.on('block.mod.*.valid.*', ({type, value}) => {
 			if (type === 'remove' && value === 'false' || type === 'set' && value === 'true') {
 				this.error = undefined;
@@ -384,14 +436,21 @@ export default class bForm<T extends Dictionary = Dictionary> extends iData<T> {
 	 * @param els
 	 */
 	protected async onError(err: Error, els: iInput[]): Promise<void> {
-		$C(els).forEach((el) => el.setMod('valid', false));
+		let
+			firstInput;
 
-		const
-			el = $C(els).one.get((el) => !(el.instance instanceof bInputHidden));
+		for (let i = 0; i < els.length; i++) {
+			const el = els[i];
+			el.setMod('valid', false);
 
-		if (el) {
-			el.error = this.getDefaultErrorText(err);
-			await el.focus();
+			if (!firstInput && !(el.instance instanceof bInputHidden)) {
+				firstInput = el;
+			}
+		}
+
+		if (firstInput) {
+			firstInput.error = this.getDefaultErrorText(err);
+			await firstInput.focus();
 		}
 	}
 }

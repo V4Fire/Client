@@ -14,8 +14,6 @@
  * Base page component template
  */
 - template index() extends ['i-page'].index
-	- overWrapper = false
-
 	- block innerRoot
 		< .&__root-wrapper[.page-wrapper]
 			- block body
