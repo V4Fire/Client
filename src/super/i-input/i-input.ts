@@ -6,7 +6,23 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import iData, { component, prop, field, system, hook, wait, p, ModsDecl } from 'super/i-data/i-data';
+import iTheme from 'traits/i-theme/i-theme';
+import iAccess from 'traits/i-access/i-access';
+import iVisible from 'traits/i-visible/i-visible';
+
+import iData, {
+
+	component,
+	prop,
+	field,
+	system,
+	hook,
+	wait,
+	p,
+	ModsDecl
+
+} from 'super/i-data/i-data';
+
 import {
 
 	Value,
@@ -44,13 +60,6 @@ export default class iInput<
 	 */
 	@prop({required: false})
 	readonly defaultProp?: V;
-
-	/**
-	 * If true, then the component value will be marked as UTC
-	 * (if value is date)
-	 */
-	@prop(Boolean)
-	readonly utc: boolean = false;
 
 	/**
 	 * Input id
@@ -251,7 +260,11 @@ export default class iInput<
 		valid: [
 			'true',
 			'false'
-		]
+		],
+
+		...iTheme.mods,
+		...iAccess.mods,
+		...iVisible.mods
 	};
 
 	/**
@@ -287,7 +300,17 @@ export default class iInput<
 	@field<iInput>((o) => o.sync.link((val) => o.initDefaultValue(val)))
 	protected valueStore!: unknown;
 
-	/** @override */
+	/** @see iAccess.enable */
+	enable(): Promise<boolean> {
+		return iAccess.enable(this);
+	}
+
+	/** @see iAccess.disable */
+	disable(): Promise<boolean> {
+		return iAccess.disable(this);
+	}
+
+	/** @see iAccess.focus */
 	@wait('ready')
 	async focus(): Promise<boolean> {
 		const
@@ -301,7 +324,7 @@ export default class iInput<
 		return false;
 	}
 
-	/** @override */
+	/** @see iAccess.blur */
 	@wait('ready')
 	async blur(): Promise<boolean> {
 		const
@@ -495,6 +518,10 @@ export default class iInput<
 	/** @override */
 	protected initModEvents(): void {
 		super.initModEvents();
+
+		iAccess.initModEvents(this);
+		iVisible.initModEvents(this);
+
 		this.localEvent.on('block.mod.*.valid.*', ({type, value}) => {
 			if (type === 'remove' && value === 'false' || type === 'set' && value === 'true') {
 				this.error = undefined;

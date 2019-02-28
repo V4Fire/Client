@@ -6,8 +6,9 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import statusCodes from 'core/status-codes';
 import symbolGenerator from 'core/symbol';
+import statusCodes from 'core/status-codes';
+import iProgress from 'traits/i-progress/i-progress';
 import { providers } from 'core/data/const';
 
 import Async, { AsyncOpts, AsyncCbOpts } from 'core/async';
@@ -20,7 +21,8 @@ import iMessage, {
 	watch,
 	wait,
 	eventFactory,
-	RemoteEvent
+	RemoteEvent,
+	ModsDecl
 
 } from 'super/i-message/i-message';
 
@@ -59,7 +61,7 @@ export const
 	$$ = symbolGenerator();
 
 @component()
-export default class iData<T extends Dictionary = Dictionary> extends iMessage {
+export default class iData<T extends Dictionary = Dictionary> extends iMessage implements iProgress {
 	/**
 	 * Data provider name
 	 */
@@ -133,6 +135,11 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 			label: $$.db
 		});
 	}
+
+	/** @inheritDoc */
+	static readonly mods: ModsDecl = {
+		...iProgress.mods
+	};
 
 	/**
 	 * Data provider event emitter

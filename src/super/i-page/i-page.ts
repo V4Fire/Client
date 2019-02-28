@@ -6,9 +6,13 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import iData, { component, prop, field, system, watch, hook, p, Statuses } from 'super/i-data/i-data';
 import symbolGenerator from 'core/symbol';
 import { WrappedFunction } from 'core/async';
+
+import iTheme from 'traits/i-theme/i-theme';
+import iVisible from 'traits/i-visible/i-visible';
+
+import iData, { component, prop, field, system, watch, hook, p, Statuses, ModsDecl } from 'super/i-data/i-data';
 export * from 'super/i-data/i-data';
 
 export type TitleValue<T = unknown> = string | ((ctx: T) => string);
@@ -29,7 +33,7 @@ const
 	$$ = symbolGenerator();
 
 @component({inheritMods: false})
-export default class iPage<T extends Dictionary = Dictionary> extends iData<T> {
+export default class iPage<T extends Dictionary = Dictionary> extends iData<T> implements iTheme, iVisible {
 	/** @override */
 	readonly needReInit: boolean = true;
 
@@ -68,6 +72,12 @@ export default class iPage<T extends Dictionary = Dictionary> extends iData<T> {
 	get scrollToProxy(): ScrollToFn {
 		return this.scrollToProxyFn();
 	}
+
+	/** @inheritDoc */
+	static readonly mods: ModsDecl = {
+		...iTheme.mods,
+		...iVisible.mods
+	};
 
 	/** @override */
 	@field()
@@ -180,6 +190,12 @@ export default class iPage<T extends Dictionary = Dictionary> extends iData<T> {
 		if (!this.syncStageTitles() && this.pageTitleStore) {
 			this.pageTitle = this.pageTitleStore;
 		}
+	}
+
+	/** @override */
+	protected initModEvents(): void {
+		super.initModEvents();
+		iVisible.initModEvents(this);
 	}
 
 	/** @override */
