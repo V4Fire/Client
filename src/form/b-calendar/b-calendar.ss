@@ -23,12 +23,12 @@
 		- block label
 			< _ &
 				@click.prevent = focus(), toggle() |
-				:class = getElClasses({'label-nav': {buttons: !dayRange}})
+				:class = getElClasses({'label-nav': {buttons: !hasDayRange}})
 			.
 				- block labelPrev
 					< button:a.&__cell.&__icon.&__prev &
 						@click.capture.stop = onSwitchDay(-1) |
-						v-if = !dayRange
+						v-if = !hasDayRange
 					.
 						+= self.gIcon('keyboard_arrow_left')
 
@@ -42,7 +42,7 @@
 				- block labelNext
 					< button:a.&__cell.&__icon.&__next &
 						@click.capture.stop = onSwitchDay(1) |
-						v-if = !dayRange
+						v-if = !hasDayRange
 					.
 						+= self.gIcon('keyboard_arrow_right')
 
@@ -116,7 +116,7 @@
 														{{ day.text }}
 
 					- block time
-						< template v-if = timeRange && value.length === 2
+						< template v-if = hasTimeRange && value.length === 2
 							< .&__hr
 							< .&__time-block
 
