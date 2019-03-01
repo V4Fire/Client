@@ -7,4 +7,4 @@
  */
 
 package('b-icon')
-	.dependencies('i-block');
+	.extends('i-block');

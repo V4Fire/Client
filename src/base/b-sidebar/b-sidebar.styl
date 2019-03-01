@@ -19,7 +19,7 @@ b-sidebar extends i-data
 	z-index-pos modal
 
 	&
-	&__content
+	&__content-wrapper
 		transform translateX(-100%)
 
 	&
@@ -29,7 +29,7 @@ b-sidebar extends i-data
 	if $p.sideBarTransition
 		transition transform 0s $p.sideBarTransition
 
-		&__content
+		&__content-wrapper
 			transition transform $p.sideBarTransition
 
 		&_opened_true
@@ -38,6 +38,7 @@ b-sidebar extends i-data
 	if $p.overlayBg
 		&__over-wrapper
 			z-index-pos layer
+			display block
 			background $p.overlayBg
 			opacity 0
 
@@ -45,9 +46,8 @@ b-sidebar extends i-data
 				transition opacity $p.overlayTansition
 
 		&_opened_true &__over-wrapper
-			display block
 			opacity 1
 
 	&_opened_true
-	&_opened_true &__content
+	&_opened_true &__content-wrapper
 		transform translateX(0)

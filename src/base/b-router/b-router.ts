@@ -472,8 +472,7 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 		method: SetPage = 'push'
 	): Promise<CanUndef<CurrentPage>> {
 		const
-			{$root: r, engine, engine: {page: currentPage}} = this,
-			rejectParams = (o) => o && Object.reject(o, ['page', 'url']);
+			{$root: r, engine, engine: {page: currentPage}} = this;
 
 		let
 			isEmptyOpts = !opts;
@@ -534,6 +533,38 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 
 		this.emit('beforeChange', page, opts, method);
 
+		const rejectSystemOpts = (obj) => {
+			if (obj) {
+				return Object.reject(obj, ['page', 'url']);
+			}
+
+			return {};
+		};
+
+		const getPlainOpts = (obj) => {
+			const
+				res = {};
+
+			if (obj) {
+				for (const key in obj) {
+					const
+						el = obj[key];
+
+					if (!Object.isFunction(el)) {
+						res[key] = el;
+					}
+				}
+			}
+
+			return res;
+		};
+
+		const getPlainWatchOpts = (obj) => {
+			const res = <Dictionary>getPlainOpts(obj);
+			delete res.meta;
+			return res;
+		};
+
 		let
 			info;
 
@@ -547,7 +578,7 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 				p = this.getPageOpts(page);
 
 			if (p) {
-				info = Object.mixin(true, p, rejectParams(currentPage));
+				info = Object.mixin(true, p, rejectSystemOpts(currentPage));
 			}
 		}
 
@@ -560,6 +591,7 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 			}
 		};
 
+		// Attach scroll position
 		if (currentPage && method !== 'replace') {
 			const
 				modCurrentPage = Object.mixin<CurrentPage>(true, undefined, currentPage, scroll);
@@ -585,27 +617,15 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 		const
 			current = this.field.get<CurrentPage>('pageStore');
 
-		const f = (v) => {
-			const
-				res = {};
-
-			if (v) {
-				for (const key in v) {
-					const
-						el = v[key];
-
-					if (!Object.isFunction(el) && key !== 'meta') {
-						res[key] = el;
-					}
-				}
-			}
-
-			return res;
-		};
-
 		{
+			const normalize = (val) => Object.mixin(true, val && rejectSystemOpts(val), {
+				query: {},
+				params: {},
+				meta: {}
+			});
+
 			const p = current && current.page === info.page ? current : undefined;
-			Object.mixin({deep: true, withUndef: true}, info, p ? rejectParams(f(p)) : undefined, rejectParams(opts));
+			Object.mixin({deep: true, withUndef: true}, info, normalize(getPlainOpts(p)), normalize(opts));
 		}
 
 		const {
@@ -676,25 +696,30 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 			r.emit('transition', store, hardChange ? 'hard' : 'soft');
 		};
 
-		if (!Object.fastCompare(f(current), f(store))) {
+		if (!Object.fastCompare(getPlainWatchOpts(current), getPlainWatchOpts(store))) {
 			this.field.set('pageStore', store);
 
-			if (currentPage && method !== 'replace') {
-				const
-					f = ({page, params, query, meta}) => ({page, query: {...params, ...query}, meta: {...meta}});
+			const
+				plainInfo = getPlainOpts(info);
 
-				if (Object.fastCompare(f({...currentPage}), f({...info}))) {
-					method = 'replace';
-				}
+			if (
+				currentPage &&
+				method !== 'replace' &&
+				Object.fastCompare(getPlainOpts(currentPage), plainInfo)
+			) {
+				method = 'replace';
 			}
 
 			if (!Object.isFunction(engine[method])) {
 				method = 'replace';
 			}
 
-			await engine[method](info.toPath(info.params), info);
+			await engine[method](
+				info.toPath(info.params),
+				plainInfo
+			);
 
-			const f = (v) => {
+			const getPlainOptsWithoutProto = (v) => {
 				const
 					res = {};
 
@@ -713,7 +738,7 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 				return res;
 			};
 
-			if (r.route && Object.fastCompare(f(current), f(store))) {
+			if (r.route && Object.fastCompare(getPlainOptsWithoutProto(current), getPlainOptsWithoutProto(store))) {
 				const
 					proto = Object.getPrototypeOf(r.route);
 
