@@ -32,7 +32,6 @@
     "@types/socket.io-client": "^1.4.32",
     "@v4fire/core": "git+https://github.com/V4Fire/Core.git#zero",
     "babel-polyfill": "^6.26.0",
-    "collection.js": "^6.6.27",
     "escaper": "^3.0.1",
     "eventemitter2": "^5.0.1",
     "fg-loadcss": "^2.1.0",
@@ -43,7 +42,7 @@
     "requestidlecallback": "^0.3.0",
     "snakeskin": "^7.5.1",
     "socket.io": "^2.2.0",
-    "vue": "^2.6.6"
+    "vue": "^2.6.7"
   },
   "optionalDependencies": {
     "@pzlr/build-core": "^2.8.11",
@@ -55,6 +54,7 @@
     "@types/webpack": "^4.4.17",
     "autoprefixer": "^9.3.0",
     "camelize": "^1.0.0",
+    "collection.js": "^6.6.27",
     "config": "^1.31.0",
     "copy-dir": "^0.4.0",
     "cssnano": "^4.1.7",
@@ -121,6 +121,6 @@
   "devDependencies": {
     "babel-eslint": "^10.0.1",
     "eslint": "^5.14.1",
-    "tslint": "^5.12.1"
+    "tslint": "^5.13.1"
   }
 }
