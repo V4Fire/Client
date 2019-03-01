@@ -6,8 +6,6 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-// tslint:disable:max-file-line-count
-
 import symbolGenerator from 'core/symbol';
 import Async from 'core/async';
 

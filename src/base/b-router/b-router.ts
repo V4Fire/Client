@@ -6,8 +6,6 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-// tslint:disable:max-file-line-count
-
 import Async from 'core/async';
 import path = require('path-to-regexp');
 import { RegExpOptions } from 'path-to-regexp';
@@ -15,7 +13,7 @@ import { RegExpOptions } from 'path-to-regexp';
 import engine from 'base/b-router/drivers';
 import symbolGenerator from 'core/symbol';
 
-import { concatUrls } from 'core/url';
+import { concatUrls, toQueryString } from 'core/url';
 import { Router, BasePageMeta, PageSchema, CurrentPage, HistoryCleanFilter } from 'base/b-router/drivers/interface';
 import iData, { component, prop, system, hook, watch, p } from 'super/i-data/i-data';
 
@@ -123,7 +121,7 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 	/**
 	 * Engine for remote router
 	 */
-	@system((o) => o.sync.link<(v: unknown) => Router>((v) => v(o)))
+	@system((o) => o.sync.link<(v: unknown) => Router>((v) => <any>v(o)))
 	protected engine!: Router;
 
 	/**
@@ -530,7 +528,7 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 			}
 		}
 
-		if (!page && isEmptyOpts && !this.isBeforeCreate()) {
+		if (!page && isEmptyOpts && !this.lfc.isBeforeCreate()) {
 			return;
 		}
 
@@ -795,7 +793,11 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 	 * Handler: link trigger
 	 * @param e
 	 */
-	@watch({field: 'document:click', wrapper: (o, cb) => o.delegate('[href]', cb)})
+	@watch({
+		field: 'document:click',
+		wrapper: (o, cb) => o.dom.delegate('[href]', cb)
+	})
+
 	protected async onLink(e: MouseEvent): Promise<void> {
 		const
 			a = <HTMLElement>e.delegateTarget,
