@@ -13,6 +13,8 @@ $p = {
 	roundings: (none 0) (small 0.5em) (normal 1em) (big 2em)
 	buttonPadding: 0.5em 1em
 	buttonFontWeight: bold
+	offsetBetweenCells: 0.3em
+	colorBrightnessOnAction: 20%
 }
 
 b-button
@@ -29,19 +31,21 @@ b-button
 		&:focus
 			box-shadow $p.shadow
 
-		&:hover
-			background lighten($p.backgroundColor, 20%)
+		if ($p.colorBrightnessOnAction)
+			&:hover
+				background lighten($p.backgroundColor, $p.colorBrightnessOnAction)
 
-		&:active
-			background darken($p.backgroundColor, 20%)
+			&:active
+				background darken($p.backgroundColor, $p.colorBrightnessOnAction)
 
 	@supports (-ms-accelerator:true)
 		&__button
 			border-width 0.1em
 
-	&_disabled_true &__button
-	&_progress_true &__button
-		color lighten($p.color, 20%)
+	if ($p.colorBrightnessOnAction)
+		&_disabled_true &__button
+		&_progress_true &__button
+			color lighten($p.color, $p.colorBrightnessOnAction)
 
 	&__cell + &__cell
-		margin-left 0.3em
+		margin-left $p.offsetBetweenCells
