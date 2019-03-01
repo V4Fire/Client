@@ -9,22 +9,25 @@
 $p = {
 	color: #FFF
 	backgroundColor: #6153B9
-	shadowColor: alpha(#222, 0.5)
+	shadow: 0 0 0.45em alpha(#222, 0.5)
+	roundings: (none 0) (small 0.5em) (normal 1em) (big 2em)
+	buttonPadding: 0.5em 1em
+	buttonFontWeight: bold
 }
 
 b-button
-	for $el in (none 0) (small 0.5em) (normal 1em) (big 2em)
+	for $el in $p.roundings
 		&_rounding_{$el[0]} &__button
 			border-radius $el[1]
 
 	&__button
-		padding 0.5em 1em
+		padding $p.buttonPadding
 		background $p.backgroundColor
 		color $p.color
-		font-weight bold
+		font-weight $p.buttonFontWeight
 
 		&:focus
-			box-shadow 0 0 0.45em $p.shadowColor
+			box-shadow $p.shadow
 
 		&:hover
 			background lighten($p.backgroundColor, 20%)
