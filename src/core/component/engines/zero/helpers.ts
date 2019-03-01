@@ -6,6 +6,8 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+// tslint:disable:completed-docs
+
 import config from 'core/component/engines/zero/config';
 import { DirectiveOptions } from 'vue';
 import { ComponentInterface } from 'core/component/interface';
@@ -178,7 +180,7 @@ export function addClass(el: Element, opts: VNodeData): void {
 	const className = (<string[]>[]).concat(
 		el.getAttribute('class') || '',
 		opts.staticClass || '',
-		opts.class || []
+		...Object.isArray(opts.class) ? opts.class : [opts.class]
 	).join(' ').trim();
 
 	if (className) {
