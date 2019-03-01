@@ -11,6 +11,7 @@
 /* eslint-disable quote-props */
 
 const
+	config = require('config'),
 	s = JSON.stringify;
 
 module.exports = {
@@ -18,6 +19,7 @@ module.exports = {
 	LANG: s(LANG),
 	API_URL: s(API_URL),
 	APP_NAME: s(APP_NAME),
+	PUBLIC_PATH: s(config.webpack.publicPath()),
 	MODULE_DEPENDENCIES: s(`ModuleDependencies_${Number.random(1e6)}`),
 	'process.env': {
 		NODE_ENV: s(process.env.NODE_ENV)
