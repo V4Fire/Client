@@ -16,10 +16,6 @@ import log, { LogMessageOpts } from 'core/log';
 import { GLOBAL } from 'core/const/links';
 import { EventEmitter2 as EventEmitter } from 'eventemitter2';
 
-//#if runtime has core/analytics
-import * as analytics from 'core/analytics';
-//#endif
-
 //#if runtime has core/helpers
 import * as helpers from 'core/helpers';
 //#endif
@@ -49,6 +45,7 @@ import Opt from 'super/i-block/modules/opt';
 import Lazy from 'super/i-block/modules/lazy';
 
 import Daemons, { DaemonsDict } from 'super/i-block/modules/daemons';
+import Analytics from 'super/i-block/modules/analytics';
 
 import DOM from 'super/i-block/modules/dom';
 import VDOM from 'super/i-block/modules/vdom';
@@ -571,6 +568,17 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	})
 
 	protected readonly asyncRender!: AsyncRender;
+
+	/**
+	 * API for analytics
+	 */
+	@system({
+		atom: true,
+		unique: true,
+		init: (ctx: iBlock) => new Analytics(ctx)
+	})
+
+	protected readonly analytics!: Analytics;
 
 	/**
 	 * API for lazy operations
@@ -1510,18 +1518,6 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 		}
 
 		return link;
-	}
-
-	/**
-	 * Sends an analytic event with the specified parameters
-	 *
-	 * @param event - event name
-	 * @param [details] - event details
-	 */
-	protected sendAnalyticsEvent(event: string, details: Dictionary = {}): void {
-		//#if runtime has core/analytics
-		analytics.send(event, details);
-		//#endif
 	}
 
 	/**
