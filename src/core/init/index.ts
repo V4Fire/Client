@@ -6,9 +6,9 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import 'core/start/state';
-import 'core/start/abt';
-import semaphore from 'core/start/semaphore';
+import 'core/init/state';
+import 'core/init/abt';
+import semaphore from 'core/init/semaphore';
 import { whenDomLoaded } from 'core/event';
 
 export default whenDomLoaded(() => {

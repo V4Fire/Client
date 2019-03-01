@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import flags from 'core/start/flags';
+import flags from 'core/init/flags';
 import Component, { rootComponents } from 'core/component';
 import { onEverythingReady } from 'core/event';
 

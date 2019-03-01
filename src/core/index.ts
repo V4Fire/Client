@@ -7,4 +7,4 @@
  */
 
 import '@v4fire/core/core';
-import 'core/start';
+import 'core/init';

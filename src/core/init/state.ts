@@ -11,7 +11,7 @@ import * as net from 'core/net';
 import * as session from 'core/session';
 
 import state from 'core/component/state';
-import semaphore from 'core/start/semaphore';
+import semaphore from 'core/init/semaphore';
 
 export default (async () => {
 	const
