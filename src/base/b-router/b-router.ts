@@ -10,15 +10,15 @@ import Async from 'core/async';
 import path = require('path-to-regexp');
 import { RegExpOptions } from 'path-to-regexp';
 
-import engine from 'base/b-router/drivers';
+import engine from 'core/router';
 import symbolGenerator from 'core/symbol';
 
 import { concatUrls, toQueryString } from 'core/url';
-import { Router, BasePageMeta, PageSchema, CurrentPage, HistoryCleanFilter } from 'base/b-router/drivers/interface';
+import { Router, BasePageMeta, PageSchema, CurrentPage, HistoryCleanFilter } from 'core/router/interface';
 import iData, { component, prop, system, hook, watch, p } from 'super/i-data/i-data';
 
 export * from 'super/i-data/i-data';
-export * from 'base/b-router/drivers/interface';
+export * from 'core/router/interface';
 
 export interface PageOpts<
 	P extends Dictionary = Dictionary,
