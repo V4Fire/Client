@@ -52,7 +52,7 @@ if (IS_PROD) {
 	);
 }
 
-$C(ctx.keys()).forEach((el) => {
+Object.forEach(ctx.keys(), (el: string) => {
 	iconsMap[normalize(el)] = el;
 });
 

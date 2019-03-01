@@ -7,6 +7,11 @@
  */
 
 import symbolGenerator from 'core/symbol';
+
+import iTheme from 'traits/i-theme/i-theme';
+import iProgress from 'traits/i-progress/i-progress';
+import iVisible from 'traits/i-visible/i-visible';
+
 import iBlock, { component, prop, field, ModsDecl } from 'super/i-block/i-block';
 export * from 'super/i-block/i-block';
 
@@ -14,7 +19,7 @@ export const
 	$$ = symbolGenerator();
 
 @component()
-export default class bProgress extends iBlock {
+export default class bProgress extends iBlock implements iTheme, iProgress, iVisible {
 	/**
 	 * Initial progress value store
 	 */
@@ -57,9 +62,9 @@ export default class bProgress extends iBlock {
 
 	/** @inheritDoc */
 	static readonly mods: ModsDecl = {
-		progress: [
-			bProgress.PARENT
-		]
+		...iTheme.mods,
+		...iProgress.mods,
+		...iVisible.mods
 	};
 
 	/**
@@ -71,6 +76,7 @@ export default class bProgress extends iBlock {
 	/** @override */
 	protected initModEvents(): void {
 		super.initModEvents();
+		iVisible.initModEvents(this);
 		this.sync.mod('progress', 'valueStore', Object.isNumber);
 	}
 }

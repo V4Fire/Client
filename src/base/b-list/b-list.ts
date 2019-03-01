@@ -7,29 +7,20 @@
  */
 
 import symbolGenerator from 'core/symbol';
-import iData, { component, prop, field, system, hook, watch, p } from 'super/i-data/i-data';
+
+import iTheme from 'traits/i-theme/i-theme';
+import iVisible from 'traits/i-visible/i-visible';
+import iIcon from 'traits/i-icon/i-icon';
+import iHint from 'traits/i-hint/i-hint';
+
+import iData, { component, prop, field, system, hook, watch, p, ModsDecl } from 'super/i-data/i-data';
+import { Option } from 'base/b-list/modules/interface';
+
 export * from 'super/i-data/i-data';
+export * from 'base/b-list/modules/interface';
 
 export const
 	$$ = symbolGenerator();
-
-export interface Option {
-	label: string;
-	value?: unknown;
-	href?: string;
-	info?: string;
-	theme?: string;
-	active?: boolean;
-	hidden?: boolean;
-	progress?: boolean;
-	hint?: string;
-	preIcon?: string;
-	preIconHint?: string;
-	preIconComponent?: string;
-	icon?: string;
-	iconHint?: string;
-	iconComponent?: string;
-}
 
 @component({
 	functional: {
@@ -42,7 +33,9 @@ export interface Option {
 	}
 })
 
-export default class bList<T extends Dictionary = Dictionary> extends iData<T> {
+export default class bList<T extends Dictionary = Dictionary> extends iData<T>
+	implements iTheme, iIcon, iHint, iVisible {
+
 	/**
 	 * Initial component value
 	 */
@@ -106,6 +99,12 @@ export default class bList<T extends Dictionary = Dictionary> extends iData<T> {
 		const v = this.field.get('activeStore');
 		return this.multiple ? Object.keys(<object>v) : v;
 	}
+
+	/** @inheritDoc */
+	static readonly mods: ModsDecl = {
+		...iTheme.mods,
+		...iVisible.mods
+	};
 
 	/**
 	 * Temporary index table
@@ -177,6 +176,16 @@ export default class bList<T extends Dictionary = Dictionary> extends iData<T> {
 
 			return undefined;
 		});
+	}
+
+	/** @see iHint.setHint */
+	setHint(pos: string): ReadonlyArray<string> {
+		return iHint.setHint(this, pos);
+	}
+
+	/** @see iIcon.getIconLink */
+	getIconLink(iconId: string): string {
+		return iIcon.getIconLink(iconId);
 	}
 
 	/**
@@ -340,7 +349,17 @@ export default class bList<T extends Dictionary = Dictionary> extends iData<T> {
 	 * @param options
 	 */
 	protected normalizeOptions(options: CanUndef<Option[]>): Option[] {
-		return $C(options).map((el) => {
+		const
+			res = <Option[]>[];
+
+		if (!options) {
+			return res;
+		}
+
+		for (let i = 0; i < options.length; i++) {
+			const
+				el = options[i];
+
 			if (el.value === undefined) {
 				el.value = el.href;
 			}
@@ -349,8 +368,10 @@ export default class bList<T extends Dictionary = Dictionary> extends iData<T> {
 				el.href = this.autoHref && el.value !== undefined ? `#${el.value}` : 'javascript:void(0)';
 			}
 
-			return el;
-		});
+			res.push(el);
+		}
+
+		return res;
 	}
 
 	/**
@@ -363,20 +384,27 @@ export default class bList<T extends Dictionary = Dictionary> extends iData<T> {
 			indexes = {},
 			active = this.field.get('activeStore');
 
-		$C(this.$$data.value).forEach((el, i) => {
+		for (let o = <Option[]>this.$$data.value || [], i = 0; i < o.length; i++) {
 			const
+				el = o[i],
 				val = el.value;
 
-			if (el.active && (this.multiple ? !(val in <Dictionary>active) : active === undefined)) {
+			if (el.active && (this.multiple ? !(<string>val in <Dictionary>active) : active === undefined)) {
 				this.setActive(val);
 			}
 
-			values[val] = i;
+			values[<string>val] = i;
 			indexes[i] = val;
-		});
+		}
 
 		this.values = values;
 		this.indexes = indexes;
+	}
+
+	/** @override */
+	protected initModEvents(): void {
+		super.initModEvents();
+		iVisible.initModEvents(this);
 	}
 
 	/** @override */
@@ -400,7 +428,11 @@ export default class bList<T extends Dictionary = Dictionary> extends iData<T> {
 	 * @param e
 	 * @emits actionChange(active: unknown)
 	 */
-	@watch({field: '?$el:click', wrapper: (o, cb) => o.delegateElement('link', cb)})
+	@watch({
+		field: '?$el:click',
+		wrapper: (o, cb) => o.dom.delegateElement('link', cb)
+	})
+
 	protected onActive(e: Event): void {
 		const
 			target = <Element>e.delegateTarget,

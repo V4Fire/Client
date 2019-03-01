@@ -25,7 +25,7 @@ export default class bRemoteProvider<T extends Dictionary = Dictionary> extends 
 	 * Field for setting to a component parent
 	 */
 	@prop({type: String, required: false})
-	readonly field?: string;
+	readonly fieldProp?: string;
 
 	/** @override */
 	set db(value: CanUndef<T>) {
@@ -65,7 +65,7 @@ export default class bRemoteProvider<T extends Dictionary = Dictionary> extends 
 		}
 
 		const
-			f = this.field;
+			f = this.fieldProp;
 
 		let
 			needUpdate = !f,

@@ -7,14 +7,22 @@
  */
 
 @import "super/i-data/i-data.styl"
+@import "traits/i-access/i-access.styl"
+@import "traits/i-visible/i-visible.styl"
+@import "traits/i-size/i-size.styl"
 
 $p = {
-	lockHelpers: true
+	accessHelpers: true
+	visibleHelpers: true
+	widthHelpers: true
 	sizeHelpers: true
 	messageHelpers: true
 }
 
 b-link extends i-data
+	i-access({helpers: $p.accessHelpers})
+	i-visible({helpers: $p.visibleHelpers})
+	i-size({helpers: $p.sizeHelpers})
 	display inline-block
 
 	&__root-wrapper

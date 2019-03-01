@@ -52,7 +52,9 @@ export default class bTextarea<
 	get height(): CanPromise<number> {
 		return this.waitStatus('ready', () => {
 			const
-				{input} = this.$refs,
+				{input} = this.$refs;
+
+			const
 				s = getComputedStyle(this.$refs.input);
 
 			return input.scrollHeight -

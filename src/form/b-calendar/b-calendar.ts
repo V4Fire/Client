@@ -330,11 +330,6 @@ export default class bCalendar<
 	@system()
 	private _nextSelectItem?: number;
 
-	/** @see iIcon.getIconLink */
-	getIconLink(iconId: string): string {
-		return iIcon.getIconLink(iconId);
-	}
-
 	/** @see iOpenToggle.open */
 	async open(): Promise<boolean> {
 		const
@@ -375,6 +370,11 @@ export default class bCalendar<
 	/** @see iOpenToggle.toggle */
 	toggle(): Promise<boolean> {
 		return iOpenToggle.toggle(this);
+	}
+
+	/** @see iIcon.getIconLink */
+	getIconLink(iconId: string): string {
+		return iIcon.getIconLink(iconId);
 	}
 
 	/** @see iOpenToggle.onOpenedChange */
