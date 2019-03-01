@@ -840,6 +840,7 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	 */
 	@system({
 		atom: true,
+		after: 'sync',
 		init: (o) => o.sync.link('i18n')
 	})
 
@@ -1612,7 +1613,7 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	/**
 	 * Initializes watchers from .watchProp
 	 */
-	@hook('beforeCreate')
+	@hook('beforeDataCreate')
 	protected initRemoteWatchers(): void {
 		initRemoteWatchers(this);
 	}

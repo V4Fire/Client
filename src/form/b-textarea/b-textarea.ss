@@ -40,7 +40,7 @@
 		- super
 		- block limit
 			+= self.slot('limit', {':limit': 'limit', ':maxlength': 'maxlength'})
-				< _ v-if = maxlength | :class = getElClasses({ &
+				< _ v-if = maxlength | :class = provide.elClasses({ &
 					limit: {
 						hidden: limit > maxlength / 1.5,
 						warning: limit < maxlength / 4

@@ -11,6 +11,8 @@
 - include 'super/i-data'|b as placeholder
 
 - template index() extends ['i-data'].index
+	- rootWrapper = true
+
 	- block body
 		< .&__content-wrapper
 			< .&__content

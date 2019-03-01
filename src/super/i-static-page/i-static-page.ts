@@ -177,7 +177,7 @@ export default class iStaticPage<
 
 		const
 			c = (component.globalName || component.componentName).dasherize(),
-			mod = this.getFullBlockName(c, name, value).replace(/_/g, '-');
+			mod = this.provide.fullBlockName(c, name, value).replace(/_/g, '-');
 
 		name = `${c}_${name.camelize(false)}`;
 		value = String(value).dasherize();

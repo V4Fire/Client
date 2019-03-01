@@ -63,7 +63,7 @@ export default class Provide {
 	 * @param [modValue]
 	 */
 	fullBlockName(componentName: string = this.componentName, modName?: string, modValue?: unknown): string {
-		return Block.prototype.getFullBlockName.call({blockName: componentName}, modName, modValue);
+		return Block.prototype.getFullBlockName.call({name: componentName}, modName, modValue);
 	}
 
 	/**
@@ -90,7 +90,7 @@ export default class Provide {
 			componentName = this.componentName;
 		}
 
-		return Block.prototype.getFullElName.call({blockName: componentName}, elName, modName, modValue);
+		return Block.prototype.getFullElName.call({name: componentName}, elName, modName, modValue);
 	}
 
 	/**
@@ -253,13 +253,13 @@ export default class Provide {
 	 * @param componentNameOrCtx
 	 * @param els - map of elements with map of modifiers ({button: {focused: true}})
 	 */
-	protected getElClasses(componentNameOrCtx: string | iBlock, els: Dictionary<ModsTable>): ReadonlyArray<string>;
+	protected elClasses(componentNameOrCtx: string | iBlock, els: Dictionary<ModsTable>): ReadonlyArray<string>;
 
 	/**
 	 * @param els - map of elements with map of modifiers ({button: {focused: true}})
 	 */
-	protected getElClasses(els: Dictionary<ModsTable>): ReadonlyArray<string>;
-	protected getElClasses(
+	protected elClasses(els: Dictionary<ModsTable>): ReadonlyArray<string>;
+	protected elClasses(
 		componentNameOrCtx: string | iBlock | Dictionary<ModsTable>,
 		els?: Dictionary<ModsTable>
 	): ReadonlyArray<string> {

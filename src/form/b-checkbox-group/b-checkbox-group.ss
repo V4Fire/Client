@@ -11,6 +11,8 @@
 - include 'super/i-input'|b as placeholder
 
 - template index() extends ['i-input'].index
+	- rootWrapper = true
+
 	- block body
 		- super
 

@@ -426,6 +426,7 @@ export default class Sync {
 		}
 
 		const
+			c = this.component,
 			fn = <Function>converter;
 
 		const setWatcher = () => {
@@ -439,20 +440,17 @@ export default class Sync {
 			}, params);
 		};
 
-		const
-			{mods} = this.component;
-
 		if (this.lfc.isBeforeCreate()) {
 			const sync = this.syncModCache[mod] = () => {
 				const
 					v = fn.call(this, this.field.get(field));
 
 				if (v !== undefined) {
-					mods[mod] = String(v);
+					c.mods[mod] = String(v);
 				}
 			};
 
-			if (this.component.hook !== 'beforeDataCreate') {
+			if (c.hook !== 'beforeDataCreate') {
 				this.meta.hooks.beforeDataCreate.push({
 					fn: sync
 				});
@@ -463,7 +461,7 @@ export default class Sync {
 
 			setWatcher();
 
-		} else if (statuses[this.component.componentStatus] >= 1) {
+		} else if (statuses[c.componentStatus] >= 1) {
 			setWatcher();
 		}
 	}

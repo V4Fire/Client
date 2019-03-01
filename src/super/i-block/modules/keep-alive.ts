@@ -31,15 +31,15 @@ export function activate<T extends iBlock>(component: T, force?: boolean): void 
 
 	const
 		// @ts-ignore
-		{event: $e, state: $s} = c;
+		{state: $s} = c;
 
 	if (!c.isActivated || force) {
 		$s.initFromRouter();
-		c.lfc.execCbAfterComponentCreated(() => $e.on('onTransition', async (route, type) => {
+		c.lfc.execCbAfterComponentCreated(() => c.on('onTransition', async (route, type) => {
 			try {
 				if (type === 'hard') {
 					if (route !== c.r.route) {
-						await $e.promisifyOnce('setRoute', {
+						await c.promisifyOnce('setRoute', {
 							label: $$.activateAfterTransition
 						});
 

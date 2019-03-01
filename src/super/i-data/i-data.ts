@@ -149,7 +149,7 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage i
 		after: 'async',
 		unique: true,
 		// @ts-ignore
-		init: (o, d) => eventFactory(<Async>d.async, () => o.dp, true)
+		init: (o, d) => eventFactory(<Async>d.async, () => o.dp && o.dp.event, true)
 	})
 
 	protected readonly dataEvent!: RemoteEvent<this>;

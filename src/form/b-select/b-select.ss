@@ -48,7 +48,7 @@
 							< _ &
 								v-for = el in options |
 								:key = :-value, el.value |
-								:class = getElClasses({
+								:class = provide.elClasses({
 									option: {
 										marked: el.marked,
 										selected: isSelected(el)

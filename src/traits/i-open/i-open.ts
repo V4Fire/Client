@@ -53,8 +53,19 @@ export default abstract class iOpen {
 		const onOpened = () => {
 			$a.setImmediate(() => {
 				try {
-					$a.on(document, events.key || 'keyup', this.onKeyClose, helpersGroup);
-					$a.on(document, events.touch || 'click', this.onTouchClose, helpersGroup);
+					$a.on(document, events.key || 'keyup', (e) => {
+						if (e) {
+							return component.onKeyClose(e);
+						}
+
+					}, helpersGroup);
+
+					$a.on(document, events.touch || 'click touchstart', (e) => {
+						if (e) {
+							return component.onTouchClose(e);
+						}
+
+					}, helpersGroup);
 
 				} catch {}
 			}, helpersGroup);

@@ -13,6 +13,7 @@
 - template index() extends ['i-data'].index
 	- rootTag = 'span'
 	- messageHelpers = true
+	- rootWrapper = true
 
 	- block body
 		- super
@@ -104,7 +105,7 @@
 					opt.ifOnce('opened', m.opened !== 'false') && delete watchModsStore.opened
 				) |
 
-				:class = getElClasses({dropdown: {pos: dropdown}})
+				:class = provide.elClasses({dropdown: {pos: dropdown}})
 			.
 				< .&__dropdown-content
 					+= self.slot('dropdown')

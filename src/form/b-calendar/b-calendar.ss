@@ -11,6 +11,8 @@
 - include 'super/i-input'|b as placeholder
 
 - template index() extends ['i-input'].index
+	- rootWrapper = true
+
 	- block attrs
 		? Object.assign(attrs, {'@click': 'toggle'})
 
@@ -23,7 +25,7 @@
 		- block label
 			< _ &
 				@click.prevent = focus(), toggle() |
-				:class = getElClasses({'label-nav': {buttons: !hasDayRange}})
+				:class = provide.elClasses({'label-nav': {buttons: !hasDayRange}})
 			.
 				- block labelPrev
 					< button:a.&__cell.&__icon.&__prev &
@@ -49,13 +51,13 @@
 		- block dropdown
 			< .&__dropdown &
 				v-if = opt.ifOnce('opened', m.opened !== 'false') && delete watchModsStore.opened |
-				:class = getElClasses({dropdown: {pos: position, 'immediately-shown': shown}})
+				:class = provide.elClasses({dropdown: {pos: position, 'immediately-shown': shown}})
 			.
 				< .&__dropdown-content ref = dropdown
 					- block nav
 						< .&__nav
 							- block dropdownControls
-								< . :class = getElClasses({'label-year': {once: value.length === 1}})
+								< . :class = provide.elClasses({'label-year': {once: value.length === 1}})
 									{{ pointer[0].getFullYear() }}
 
 								< .&__dropdown-controls
@@ -94,7 +96,7 @@
 											< .&__row v-for = days in getMonthDays(index)
 												< .&__td &
 													v-for = day in days |
-													:class = getElClasses({
+													:class = provide.elClasses({
 														cell: {
 															touch: !!day.text.length,
 															'in-range': day.inRange,
@@ -106,7 +108,7 @@
 
 													< button:a &
 														v-if = day.text |
-														:class = getElClasses({day: {active: day.active, disabled: day.disabled}}) |
+														:class = provide.elClasses({day: {active: day.active, disabled: day.disabled}}) |
 														:disabled = day.disabled |
 														:-calendar = index
 													.

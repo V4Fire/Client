@@ -54,7 +54,7 @@
 			rootAttrs[':class'] = value
 
 	- rootAttrs = { &
-		':class': '[getBlockClasses(mods), "i-block-helper", componentId]',
+		':class': '[...provide.blockClasses(mods), "i-block-helper", componentId]',
 		':-render-counter': 'renderCounter'
 	} .
 
@@ -78,7 +78,7 @@
 				 * @param {Object=} [attrs]
 				 */
 				- block index->gIcon(iconId, classes = {}, attrs = {})
-					< svg[.g-icon] :class = getElClasses(${classes|json}) | ${attrs}
+					< svg[.g-icon] :class = provide.elClasses(${classes|json}) | ${attrs}
 						- if Object.isArray(iconId)
 							< use :xlink:href = getIconLink(${iconId})
 

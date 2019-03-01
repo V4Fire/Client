@@ -11,7 +11,6 @@ const
 
 const deps = module.exports = {
 	scripts: new Map([
-		['collection.js', ['collection.js/dist/collection.sync.min.js']],
 		['vue', [`vue/dist/vue.runtime${isProd ? '.min' : ''}.js`]],
 		['requestidlecallback', 'requestidlecallback/index.js'],
 		['eventemitter2', 'eventemitter2/lib/eventemitter2.js']

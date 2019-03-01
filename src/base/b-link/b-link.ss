@@ -13,6 +13,7 @@
 - template index() extends ['i-data'].index
 	- rootTag = 'span'
 	- messageHelpers = true
+	- rootWrapper = true
 
 	- block body
 		- super

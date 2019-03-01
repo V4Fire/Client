@@ -24,7 +24,7 @@
 		- block list(value)
 			< ${listElTag}.&__el v-for = el in ${value}
 				< a &
-					:class = setHint(el.hintPos).concat(getElClasses({link: {
+					:class = setHint(el.hintPos).concat(provide.elClasses({link: {
 						id: values[el.value],
 						active: isActive(el),
 						theme: el.theme,

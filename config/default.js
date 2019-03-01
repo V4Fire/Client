@@ -54,7 +54,6 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		},
 
 		externals: {
-			'collection.js': '$C',
 			'eventemitter2': 'EventEmitter2',
 			'localforage': 'localforage',
 			'sugar': 'Sugar',
