@@ -9,6 +9,8 @@
 import symbolGenerator from 'core/symbol';
 import iSize, { SizeDictionary } from 'traits/i-size/i-size';
 import iInput, { component, prop, watch, ModsDecl } from 'super/i-input/i-input';
+
+export { SizeDictionary };
 export * from 'super/i-input/i-input';
 
 export type Value = boolean;

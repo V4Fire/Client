@@ -27,7 +27,9 @@ import iInput, {
 import BlockValidators from 'form/b-input/modules/validators';
 import * as mask from 'form/b-input/modules/mask';
 
+export { SizeDictionary };
 export * from 'super/i-input/i-input';
+
 export type Value = string;
 export type FormValue = Value;
 

@@ -9,11 +9,6 @@
 import iBlock, { component, prop, field, ModsDecl } from 'super/i-block/i-block';
 export * from 'super/i-block/i-block';
 
-export interface CloseHelperEvents {
-	key?: string;
-	touch?: string;
-}
-
 @component()
 export default class iMessage extends iBlock {
 	/**

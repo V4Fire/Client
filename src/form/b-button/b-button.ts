@@ -17,7 +17,7 @@ import iAccess from 'traits/i-access/i-access';
 import iVisible from 'traits/i-visible/i-visible';
 import iWidth from 'traits/i-width/i-width';
 import iSize, { SizeDictionary } from 'traits/i-size/i-size';
-import iOpenToggle from 'traits/i-open-toggle/i-open-toggle';
+import iOpenToggle, { CloseHelperEvents } from 'traits/i-open-toggle/i-open-toggle';
 import iIcon from 'traits/i-icon/i-icon';
 import iHint from 'traits/i-hint/i-hint';
 
@@ -25,6 +25,8 @@ import iData, {
 
 	component,
 	prop,
+	hook,
+
 	ModsDecl,
 	ModelMethods,
 	RequestFilter,
@@ -33,7 +35,9 @@ import iData, {
 
 } from 'super/i-data/i-data';
 
+export { SizeDictionary, CloseHelperEvents };
 export * from 'super/i-data/i-data';
+
 export type ButtonType<T extends string = any> =
 	'submit' |
 	'button' |
@@ -225,8 +229,9 @@ export default class bButton<T extends Dictionary = Dictionary> extends iData<T>
 	}
 
 	/** @see iOpenToggle.initCloseHelpers */
-	protected initCloseHelpers(): void {
-		iOpenToggle.initCloseHelpers(this);
+	@hook('beforeDataCreate')
+	protected initCloseHelpers(events?: CloseHelperEvents): void {
+		iOpenToggle.initCloseHelpers(this, events);
 	}
 
 	/** @override */

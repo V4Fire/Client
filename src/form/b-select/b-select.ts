@@ -9,7 +9,7 @@
 import symbolGenerator from 'core/symbol';
 import keyCodes from 'core/key-codes';
 
-import iOpenToggle from 'traits/i-open-toggle/i-open-toggle';
+import iOpenToggle, { CloseHelperEvents } from 'traits/i-open-toggle/i-open-toggle';
 import bScrollInline from 'base/b-scroll/b-scroll-inline/b-scroll-inline';
 
 import bInput, {
@@ -25,15 +25,18 @@ import bInput, {
 
 	Value,
 	ComponentConverter,
-	CloseHelperEvents,
 	ModEvent,
 	SetModEvent,
 	ModsDecl
 
 } from 'form/b-input/b-input';
 
+export { CloseHelperEvents };
 export * from 'form/b-input/b-input';
-export type FormValue = CanUndef<string>;
+
+export type FormValue = CanUndef<
+	string
+>;
 
 export interface Option {
 	label: string;
@@ -624,12 +627,13 @@ export default class bSelect<
 	}
 
 	/** @see iOpenToggle.initCloseHelpers */
+	@hook('beforeDataCreate')
 	protected initCloseHelpers(events?: CloseHelperEvents): void {
 		if (this.browser.is.mobile) {
 			return;
 		}
 
-		iOpenToggle.initModEvents(this);
+		iOpenToggle.initCloseHelpers(this, events);
 	}
 
 	/**

@@ -12,7 +12,7 @@ import bInputTime from 'form/b-input-time/b-input-time';
 import iWidth from 'traits/i-width/i-width';
 import iSize, { SizeDictionary } from 'traits/i-size/i-size';
 import iIcon from 'traits/i-icon/i-icon';
-import iOpenToggle from 'traits/i-open-toggle/i-open-toggle';
+import iOpenToggle, { CloseHelperEvents } from 'traits/i-open-toggle/i-open-toggle';
 
 import iInput, {
 
@@ -21,6 +21,7 @@ import iInput, {
 	field,
 	system,
 	watch,
+	hook,
 	p,
 
 	ModsDecl,
@@ -30,7 +31,7 @@ import iInput, {
 } from 'super/i-input/i-input';
 
 import { Value, FormValue, Day, Range, Directions } from 'form/b-calendar/modules/interface';
-export { Value, FormValue, Day, Range, Directions };
+export { SizeDictionary, CloseHelperEvents, Value, FormValue, Day, Range, Directions };
 export * from 'super/i-input/i-input';
 
 export const
@@ -524,8 +525,9 @@ export default class bCalendar<
 	}
 
 	/** @see iOpenToggle.initCloseHelpers */
-	protected initCloseHelpers(): void {
-		iOpenToggle.initCloseHelpers(this);
+	@hook('beforeDataCreate')
+	protected initCloseHelpers(events?: CloseHelperEvents): void {
+		iOpenToggle.initCloseHelpers(this, events);
 	}
 
 	/** @override */
