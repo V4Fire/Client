@@ -11,10 +11,18 @@
 import config from 'core/component/engines/zero/config';
 import { DirectiveOptions } from 'vue';
 import { ComponentInterface } from 'core/component/interface';
-import { addDirectives, addStaticDirectives, $$, DirElement, DocumentFragmentP } from 'core/component/engines/helpers';
 import { VNodeData } from 'vue/types/vnode';
+import {
 
-export * from 'core/component/engines/helpers';
+	addDirectives,
+	addStaticDirectives,
+	$$,
+	DirElement,
+	DocumentFragmentP
+
+} from 'core/component/create/directive';
+
+export * from 'core/component/create/directive';
 export interface Options extends Dictionary {
 	filters: Dictionary<Function>;
 	directives: Dictionary<DirectiveOptions>;

@@ -11,7 +11,7 @@ import Async from 'core/async';
 
 import { EventEmitter2 as EventEmitter } from 'eventemitter2';
 import { ComponentElement, FunctionalCtx } from 'core/component/interface';
-import { addDirectives } from 'core/component/engines/helpers';
+import { addDirectives } from 'core/component/create/directive';
 
 import {
 

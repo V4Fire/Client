@@ -7,7 +7,7 @@
  */
 
 import Vue, { VNode, RenderContext } from 'vue';
-import { addStaticDirectives } from 'core/component/engines/helpers';
+import { addStaticDirectives } from 'core/component/create/directive';
 
 export { Vue as ComponentDriver };
 export * from 'vue';

@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { createComponent } from 'core/component/composite';
+import { createComponent } from 'core/component/create/composite';
 import { ComponentInterface } from 'core/component/interface';
 import { ComponentOptions, DirectiveOptions, DirectiveFunction, RenderContext } from 'vue';
 import { constructors, components } from 'core/component/const';

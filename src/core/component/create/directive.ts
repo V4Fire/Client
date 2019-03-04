@@ -23,8 +23,16 @@ export type DirElement =
 export const
 	$$ = symbolGenerator();
 
+/**
+ * Adds a static directive to the component
+ *
+ * @param component
+ * @param data
+ * @param directives
+ * @param node
+ */
 export function addStaticDirectives(
-	ctx: ComponentInterface,
+	component: ComponentInterface,
 	data: VNodeData,
 	directives?: VNodeDirective[],
 	node?: DirElement
@@ -34,7 +42,7 @@ export function addStaticDirectives(
 	}
 
 	const
-		store = ctx.$options.directives;
+		store = component.$options.directives;
 
 	if (!store) {
 		return;
@@ -72,8 +80,16 @@ export function addStaticDirectives(
 	}
 }
 
+/**
+ * Adds a directive to the component
+ *
+ * @param component
+ * @param data
+ * @param directives
+ * @param node
+ */
 export function addDirectives(
-	ctx: ComponentInterface,
+	component: ComponentInterface,
 	node: DirElement,
 	data: VNodeData,
 	directives?: VNodeDirective[]
@@ -83,7 +99,7 @@ export function addDirectives(
 	}
 
 	const
-		store = ctx.$options.directives;
+		store = component.$options.directives;
 
 	if (!store) {
 		return;
@@ -102,7 +118,7 @@ export function addDirectives(
 		}
 
 		const vNode = Object.create(node);
-		vNode.context = ctx;
+		vNode.context = component;
 
 		if (customDir.bind) {
 			customDir.bind.call(undefined, node, dir, vNode);
