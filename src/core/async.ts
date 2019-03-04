@@ -12,7 +12,8 @@ import Super, {
 	AsyncCbOpts,
 	AsyncOnOpts,
 	ClearOptsId,
-	LinkNamesList,
+	Link as SuperLink,
+	LinkNamesList as SuperLinkNamesList,
 	ProxyCb,
 	isParams
 
@@ -42,18 +43,25 @@ export interface DnDEventOpts<R = unknown, CTX extends object = Async> {
 }
 
 export enum ClientLinkNames {
-	animationFrame
+	animationFrame,
+	animationFramePromise
 }
 
 export type ClientLink = keyof typeof ClientLinkNames;
-export type ClientLinkNamesList = LinkNamesList & Record<ClientLink, ClientLink>;
+export type Link = SuperLink | keyof typeof ClientLinkNames;
+export type LinkNamesList = SuperLinkNamesList & Record<ClientLink, ClientLink>;
 
 const
-	linkNamesDictionary = <Record<ClientLink, ClientLink>>Object.convertEnumToDict(ClientLinkNames);
+	linkNamesDictionary = <LinkNamesList>{...Super.linkNames, ...Object.convertEnumToDict(ClientLinkNames)};
 
 export default class Async<CTX extends object = Async<any>> extends Super<CTX> {
 	/** @override */
-	static linkNames: ClientLinkNamesList = {...Super.linkNames, ...linkNamesDictionary};
+	static linkNames: LinkNamesList = linkNamesDictionary;
+
+	/** @override */
+	protected get linkNames(): LinkNamesList {
+		return (<typeof Async>this.constructor).linkNames;
+	}
 
 	/**
 	 * Wrapper for requestAnimationFrame
@@ -81,7 +89,7 @@ export default class Async<CTX extends object = Async<any>> extends Super<CTX> {
 
 		return this.setAsync({
 			...isObj ? p : undefined,
-			name: Async.linkNames.animationFrame,
+			name: this.linkNames.animationFrame,
 			obj: fn,
 			clearFn: cancelAnimationFrame,
 			wrapper: requestAnimationFrame,
@@ -104,7 +112,9 @@ export default class Async<CTX extends object = Async<any>> extends Super<CTX> {
 	 */
 	cancelAnimationFrame(params: ClearOptsId<number>): this;
 	cancelAnimationFrame(p: any): this {
-		return this.clearAsync(p, Async.linkNames.animationFrame);
+		return this
+			.clearAsync(p, this.linkNames.animationFrame)
+			.clearAsync(p, this.linkNames.animationFramePromise);
 	}
 
 	/**
@@ -121,7 +131,7 @@ export default class Async<CTX extends object = Async<any>> extends Super<CTX> {
 	 */
 	muteAnimationFrame(params: ClearOptsId<number>): this;
 	muteAnimationFrame(p: any): this {
-		return this.markAsync('muted', p, Async.linkNames.animationFrame);
+		return this.markAsync('muted', p, this.linkNames.animationFrame);
 	}
 
 	/**
@@ -138,7 +148,7 @@ export default class Async<CTX extends object = Async<any>> extends Super<CTX> {
 	 */
 	unmuteAnimationFrame(params: ClearOptsId<number>): this;
 	unmuteAnimationFrame(p: any): this {
-		return this.markAsync('!muted', p, Async.linkNames.animationFrame);
+		return this.markAsync('!muted', p, this.linkNames.animationFrame);
 	}
 
 	/**
@@ -155,7 +165,7 @@ export default class Async<CTX extends object = Async<any>> extends Super<CTX> {
 	 */
 	suspendAnimationFrame(params: ClearOptsId<number>): this;
 	suspendAnimationFrame(p: any): this {
-		return this.markAsync('paused', p, Async.linkNames.animationFrame);
+		return this.markAsync('paused', p, this.linkNames.animationFrame);
 	}
 
 	/**
@@ -172,7 +182,7 @@ export default class Async<CTX extends object = Async<any>> extends Super<CTX> {
 	 */
 	unsuspendAnimationFrame(params: ClearOptsId<number>): this;
 	unsuspendAnimationFrame(p: any): this {
-		return this.markAsync('!paused', p, Async.linkNames.animationFrame);
+		return this.markAsync('!paused', p, this.linkNames.animationFrame);
 	}
 
 	/**
@@ -297,7 +307,12 @@ export default class Async<CTX extends object = Async<any>> extends Super<CTX> {
 					e = ['mousemove', 'touchmove'];
 
 				for (let i = 0; i < e.length; i++) {
-					links.push(that.on(document, e[i], drag, {...opts, onClear: dragClear}, dragUseCapture));
+					const
+						link = that.on(document, e[i], drag, {...opts, onClear: dragClear}, dragUseCapture);
+
+					if (link) {
+						links.push(link);
+					}
 				}
 			}
 
@@ -321,7 +336,12 @@ export default class Async<CTX extends object = Async<any>> extends Super<CTX> {
 					e = ['mouseup', 'touchend'];
 
 				for (let i = 0; i < e.length; i++) {
-					links.push(that.on(document, e[i], dragEnd, {...opts, onClear: dragEndClear}, dragEndUseCapture));
+					const
+						link = that.on(document, e[i], dragEnd, {...opts, onClear: dragEndClear}, dragEndUseCapture);
+
+					if (link) {
+						links.push(link);
+					}
 				}
 			}
 		}
