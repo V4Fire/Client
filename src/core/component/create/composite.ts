@@ -9,8 +9,8 @@
 import symbolGenerator from 'core/symbol';
 import { ComponentInterface } from 'core/component/interface';
 import { minimalCtx, ComponentDriver, ComponentOptions, VNode } from 'core/component/engines';
-import { runHook, bindWatchers } from 'core/component/component';
-import { createFakeCtx } from 'core/component/functional';
+import { runHook, bindWatchers } from 'core/component/create/helpers';
+import { createFakeCtx } from 'core/component/create/functional';
 import { constructors, components } from 'core/component/const';
 
 export type Composite<T = unknown> =

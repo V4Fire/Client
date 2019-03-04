@@ -13,22 +13,22 @@ import log from 'core/log';
 import 'core/component/filters';
 import 'core/component/directives';
 
-import inheritMeta, { PARENT } from 'core/component/inherit';
+import inheritMeta from 'core/component/create/inherit';
 import { ComponentInterface, ComponentParams, ComponentMeta, ComponentMethod } from 'core/component/interface';
 import { supports, ComponentDriver, RenderContext, CreateElement, VNode } from 'core/component/engines';
 
-import { getComponent, getBaseComponent } from 'core/component/component';
-import { convertRender, createFakeCtx, patchVNode, CTX } from 'core/component/functional';
+import { getComponent, getBaseComponent } from 'core/component/create';
+import { convertRender, createFakeCtx, patchVNode, CTX } from 'core/component/create/functional';
 import { constructors, components, localComponents, rootComponents, initEvent } from 'core/component/const';
-import { applyComposites } from 'core/component/composite';
+import { applyComposites } from 'core/component/create/composite';
 
 export * from 'core/component/interface';
 export * from 'core/component/const';
-export * from 'core/component/functional';
-export * from 'core/component/composite';
+export * from 'core/component/create/functional';
+export * from 'core/component/create/composite';
 
-export { PARENT } from 'core/component/inherit';
-export { runHook, customWatcherRgxp } from 'core/component/component';
+export { PARENT } from 'core/component/create/inherit';
+export { runHook, customWatcherRgxp } from 'core/component/create/helpers';
 export { default as globalEvent, reset, ResetType } from 'core/component/event';
 export { prop, field, system, p, hook, watch, paramsFactory } from 'core/component/decorators';
 export {

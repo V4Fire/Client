@@ -33,7 +33,7 @@ import {
 	initPropsObject,
 	bindWatchers
 
-} from 'core/component/component';
+} from 'core/component/create/helpers';
 
 export interface RenderContext extends BaseRenderContext {
 	$root?: FunctionalCtx;
