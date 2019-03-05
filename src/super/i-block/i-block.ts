@@ -433,7 +433,12 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	/**
 	 * Component modifiers
 	 */
-	@system({merge: mergeMods, init: initMods})
+	@system({
+		replace: false,
+		merge: mergeMods,
+		init: initMods
+	})
+
 	readonly mods!: ModsNTable;
 
 	/**
@@ -764,6 +769,7 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 		atom: true,
 		after: 'async',
 		unique: true,
+		replace: true,
 		init: (o, d) => eventFactory(<Async>d.async, globalEvent)
 	})
 
@@ -776,6 +782,7 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 		atom: true,
 		after: 'async',
 		unique: true,
+		replace: true,
 		init: (o, d) => eventFactory(<Async>d.async, o.$root)
 	})
 
@@ -811,6 +818,7 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	@system({
 		atom: true,
 		unique: true,
+		replace: true,
 		init: () => {
 			//#if runtime has core/browser
 			return browser;
@@ -830,6 +838,7 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	@system({
 		atom: true,
 		unique: true,
+		replace: true,
 		init: () => {
 			//#if runtime has core/helpers
 			return helpers;
@@ -860,6 +869,7 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	@system({
 		atom: true,
 		unique: true,
+		replace: true,
 		init: () => GLOBAL.l
 	})
 
@@ -871,6 +881,7 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	@system({
 		atom: true,
 		unique: true,
+		replace: true,
 		init: () => Symbol
 	})
 
@@ -882,6 +893,7 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	@system({
 		atom: true,
 		unique: true,
+		replace: true,
 		init: () => console
 	})
 
@@ -893,6 +905,7 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	@system({
 		atom: true,
 		unique: true,
+		replace: true,
 		init: () => location
 	})
 
@@ -904,6 +917,7 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	@system({
 		atom: true,
 		unique: true,
+		replace: true,
 		init: () => window
 	})
 

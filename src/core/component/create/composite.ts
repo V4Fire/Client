@@ -7,11 +7,20 @@
  */
 
 import symbolGenerator from 'core/symbol';
+
 import { ComponentInterface } from 'core/component/interface';
 import { minimalCtx, ComponentDriver, ComponentOptions, VNode } from 'core/component/engines';
-import { runHook, bindWatchers } from 'core/component/create/helpers';
 import { createFakeCtx } from 'core/component/create/functional';
 import { constructors, components } from 'core/component/const';
+import {
+
+	runHook,
+	initDataObject,
+	initPropsObject,
+	bindWatchers,
+	addMethodsFromMeta
+
+} from 'core/component/create/helpers';
 
 export type Composite<T = unknown> =
 	[T?, ComponentInterface?];
@@ -202,6 +211,13 @@ export function createComponent<T>(
 	return [node, fakeCtx];
 }
 
+const defField = {
+	configurable: true,
+	enumerable: true,
+	writable: true,
+	value: undefined
+};
+
 export function applyComposites(vnode: VNode, ctx: ComponentInterface): void {
 	// @ts-ignore
 	if (!ctx.$compositeI) {
@@ -219,13 +235,99 @@ export function applyComposites(vnode: VNode, ctx: ComponentInterface): void {
 
 			if (constr) {
 				const
-					proto = constr.prototype,
-					tpl = TPLS[composite] || proto.render;
+					meta = components.get(constr);
 
-				/*parent.children[pos] = ctx.execRenderObject(
-					tpl.index(),
-					[Object.assign(Object.create(ctx), {componentName: composite})]
-				);*/
+				if (meta) {
+					const
+						nodeAttrs = vnode.data && vnode.data.attrs,
+						propsObj = meta.component.props;
+
+					const
+						attrs = {},
+						props = {};
+
+					for (let keys = Object.keys(propsObj), i = 0; i < keys.length; i++) {
+						props[keys[i]] = undefined;
+					}
+
+					if (nodeAttrs) {
+						for (let keys = Object.keys(nodeAttrs), i = 0; i < keys.length; i++) {
+							const
+								key = keys[i],
+								prop = key.camelize(false),
+								val = nodeAttrs[key];
+
+							if (propsObj[prop]) {
+								props[prop] = val;
+								delete nodeAttrs[key];
+
+							} else {
+								attrs[key] = val;
+							}
+						}
+					}
+
+					const
+						proto = constr.prototype,
+						tpl = TPLS[composite] || proto.render;
+
+					const fakeCtx = Object.assign(Object.create(ctx), {
+						meta,
+						hook: 'beforeDataCreate',
+						componentStatusStore: 'unloaded',
+						instance: meta.instance,
+						componentName: meta.componentName
+					});
+
+					Object.defineProperty(fakeCtx, '$attrs', {value: attrs});
+					Object.defineProperty(fakeCtx, '$parent', {value: ctx});
+					Object.defineProperty(fakeCtx, '$slots', {value: {default: vnode.children}});
+
+					for (let keys = Object.keys(props), i = 0; i < keys.length; i++) {
+						const
+							key = keys[i],
+							value = props[key];
+
+						Object.defineProperty(fakeCtx, key, value !== undefined ? {...defField, value} : defField);
+					}
+
+					const
+						{methods, systemFields} = meta;
+
+					for (let keys = Object.keys(systemFields), i = 0; i < keys.length; i++) {
+						const
+							key = keys[i],
+							val = systemFields[key];
+
+						if (val && (val.unique && val.replace !== true || val.replace === false)) {
+							Object.defineProperty(fakeCtx, key, defField);
+						}
+					}
+
+					addMethodsFromMeta(meta, fakeCtx, true);
+					initPropsObject(propsObj, fakeCtx, meta.instance, fakeCtx, true);
+					initDataObject(systemFields, fakeCtx, meta.instance, fakeCtx);
+					initDataObject(meta.fields, fakeCtx, meta.instance, fakeCtx);
+
+					runHook('created', meta, ctx).then(async () => {
+						if (methods.created) {
+							await methods.created.fn.call(ctx);
+						}
+					}, stderr);
+
+					ctx.meta.hooks.mounted.unshift({
+						fn: () => {
+							runHook('mounted', meta, ctx).then(async () => {
+								if (methods.mounted) {
+									await methods.mounted.fn.call(ctx);
+								}
+							}, stderr);
+						}
+					});
+
+					parent.children[pos] = fakeCtx.vdom
+						.execRenderObject(tpl.index(), [fakeCtx]);
+				}
 			}
 
 			// @ts-ignore

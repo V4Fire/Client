@@ -53,35 +53,31 @@ export interface ComponentProp extends PropOptions {
 	meta: Dictionary;
 }
 
-export interface InitFieldFn<T extends ComponentInterface = ComponentInterface> {
-	(ctx: T, data: Dictionary): unknown;
+export interface InitFieldFn<CTX extends ComponentInterface = ComponentInterface> {
+	(ctx: CTX, data: Dictionary): unknown;
 }
 
-export interface MergeFieldFn<T extends ComponentInterface = ComponentInterface> {
-	(ctx: T, oldCtx: T, field: string, link?: string): unknown;
+export interface MergeFieldFn<CTX extends ComponentInterface = ComponentInterface> {
+	(ctx: CTX, oldCtx: CTX, field: string, link?: string): unknown;
 }
 
-export interface UniqueFieldFn<T extends ComponentInterface = ComponentInterface> {
-	(ctx: T, oldCtx: T): unknown;
+export interface UniqueFieldFn<CTX extends ComponentInterface = ComponentInterface> {
+	(ctx: CTX, oldCtx: CTX): unknown;
 }
 
-export interface SystemField<T extends ComponentInterface = ComponentInterface> {
+export interface SystemField<CTX extends ComponentInterface = ComponentInterface> {
 	atom?: boolean;
 	default?: unknown;
-	unique?: boolean | UniqueFieldFn<T>;
+	unique?: boolean | UniqueFieldFn<CTX>;
+	replace?: boolean;
 	after: Set<string>;
-	init?: InitFieldFn<T>;
-	merge?: InitFieldFn<T>;
+	init?: InitFieldFn<CTX>;
+	merge?: InitFieldFn<CTX>;
 	meta: Dictionary;
 }
 
-export interface ComponentField<T extends ComponentInterface = ComponentInterface> extends SystemField<T> {
+export interface ComponentField<CTX extends ComponentInterface = ComponentInterface> extends SystemField<CTX> {
 	watchers: Map<string | Function, FieldWatcher>;
-}
-
-export interface SystemField<T extends ComponentInterface = ComponentInterface> {
-	default?: unknown;
-	init?: InitFieldFn<T>;
 }
 
 export interface WatchWrapper<CTX extends ComponentInterface = ComponentInterface, A = unknown, B = A> {
@@ -164,6 +160,7 @@ export interface ComponentParams {
 	tpl?: boolean;
 	functional?: boolean | Dictionary;
 	tiny?: boolean;
+	flyweight?: boolean;
 	model?: {prop?: string; event?: string};
 	parent?: Component;
 	provide?: Dictionary | (() => Dictionary);

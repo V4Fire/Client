@@ -7,6 +7,11 @@
  */
 
 import iBlock from 'super/i-block/i-block';
+
+import Opt from 'super/i-block/modules/opt';
+import Field from 'super/i-block/modules/field';
+import Provide from 'super/i-block/modules/provide';
+
 import { patchVNode, execRenderObject, RenderObject, RenderContext, VNode } from 'core/component';
 
 export default class VDOM {
@@ -107,6 +112,12 @@ export default class VDOM {
 		if (ctx && Object.isArray(ctx)) {
 			instanceCtx = ctx[0] || this;
 			renderCtx = ctx[1];
+
+			if (instanceCtx !== instanceCtx.provide.component) {
+				instanceCtx.field = new Field(instanceCtx);
+				instanceCtx.provide = new Provide(instanceCtx);
+				instanceCtx.opts = new Opt(instanceCtx);
+			}
 
 		} else {
 			instanceCtx = this;

@@ -31,7 +31,8 @@ import {
 	createMeta,
 	initDataObject,
 	initPropsObject,
-	bindWatchers
+	bindWatchers,
+	addMethodsFromMeta
 
 } from 'core/component/create/helpers';
 
@@ -295,31 +296,7 @@ export function createFakeCtx<T extends Dictionary = FunctionalCtx>(
 		fakeCtx.$root = fakeCtx;
 	}
 
-	{
-		const list = [
-			meta.accessors,
-			meta.computed,
-			methods
-		];
-
-		for (let i = 0; i < list.length; i++) {
-			const
-				o = list[i];
-
-			for (let keys = Object.keys(o), i = 0; i < keys.length; i++) {
-				const
-					key = keys[i],
-					el = <StrictDictionary<any>>o[key];
-
-				if ('fn' in el) {
-					fakeCtx[key] = el.fn.bind(fakeCtx);
-
-				} else {
-					Object.defineProperty(fakeCtx, key, el);
-				}
-			}
-		}
-	}
+	addMethodsFromMeta(meta, fakeCtx);
 
 	if (!('$el' in fakeCtx)) {
 		let

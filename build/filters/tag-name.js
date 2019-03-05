@@ -24,7 +24,7 @@ module.exports = [
 	function convertAliases(tag, attrs, rootTag) {
 		if (tag[0] === '@') {
 			attrs[':reg-v4-composite'] = ['$compositeI=($compositeI || 0) + 1'];
-			attrs['v4-composite'] = [tag.slice(1)];
+			attrs['v4-composite'] = attrs[':instance-of'] = [tag.slice(1)];
 			return 'span';
 		}
 

@@ -69,6 +69,7 @@ export interface SystemField<CTX extends ComponentInterface = ComponentInterface
 	atom?: boolean;
 	default?: unknown;
 	unique?: boolean | UniqueFieldFn<CTX>;
+	replace?: boolean;
 	after?: CanArray<string>;
 	init?: InitFieldFn<CTX>;
 	merge?: MergeFieldFn<CTX> | boolean;

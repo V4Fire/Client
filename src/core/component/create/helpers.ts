@@ -207,7 +207,7 @@ export function initDataObject(
 			const
 				key = fieldList[i];
 
-			if (key in data) {
+			if (data[key] !== undefined) {
 				continue;
 			}
 
@@ -566,6 +566,52 @@ export function addMethodsToMeta(constructor: Function, meta: ComponentMeta): vo
 					set
 				}
 			});
+		}
+	}
+}
+
+/**
+ * Adds methods from a meta object to the specified context
+ *
+ * @param meta
+ * @param ctx
+ * @param [safe] - if true, then will be using safe access to properties
+ */
+export function addMethodsFromMeta(meta: ComponentMeta, ctx: Dictionary<any>, safe?: boolean): void {
+	const list = [
+		meta.accessors,
+		meta.computed,
+		meta.methods
+	];
+
+	for (let i = 0; i < list.length; i++) {
+		const
+			o = list[i];
+
+		for (let keys = Object.keys(o), i = 0; i < keys.length; i++) {
+			const
+				key = keys[i],
+				el = <StrictDictionary<any>>o[key];
+
+			if ((safe ? Object.getOwnPropertyDescriptor(ctx, key) : ctx[key]) !== undefined) {
+				continue;
+			}
+
+			if ('fn' in el) {
+				if (safe) {
+					Object.defineProperty(ctx, key, {
+						configurable: true,
+						writable: true,
+						value: el.fn.bind(ctx)
+					});
+
+				} else {
+					ctx[key] = el.fn.bind(ctx);
+				}
+
+			} else {
+				Object.defineProperty(ctx, key, el);
+			}
 		}
 	}
 }

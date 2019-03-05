@@ -186,12 +186,12 @@ function tagFilter({name, attrs = {}}) {
 	delete attrs['v-async-back'];
 	delete attrs['v-async-counter'];
 
-	if (name === 'component' || validators.blockName(name)) {
+	if (name === 'component' || attrs[':instance-of'] || validators.blockName(name)) {
 		let
 			componentName;
 
 		if (attrs[':instance-of']) {
-			componentName = attrs[':instance-of'][0];
+			componentName = camelize(attrs[':instance-of'][0]);
 			delete attrs[':instance-of'];
 
 		} else {
