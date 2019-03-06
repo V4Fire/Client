@@ -9,9 +9,13 @@
 // tslint:disable:completed-docs
 
 import config from 'core/component/engines/zero/config';
-import { DirectiveOptions } from 'vue';
 import { ComponentInterface } from 'core/component/interface';
+
+//#if VueInterfaces
+import { DirectiveOptions } from 'vue';
 import { VNodeData } from 'vue/types/vnode';
+//#endif
+
 import {
 
 	addDirectives,

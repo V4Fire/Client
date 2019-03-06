@@ -15,8 +15,7 @@ import {
 	createMeta,
 	initDataObject,
 	bindWatchers,
-	addMethodsToMeta,
-	ComponentConstructor
+	addMethodsToMeta
 
 } from 'core/component/create/helpers';
 
@@ -39,6 +38,10 @@ import {
 	WatchOptionsWithHandler
 
 } from 'core/component/interface';
+
+export interface ComponentConstructor<T = unknown> {
+	new(): T;
+}
 
 /**
  * Returns a meta object for the specified component

@@ -131,12 +131,17 @@ export type Hooks =
 export interface ComponentMethod {
 	fn: Function;
 	wrapper?: boolean;
+	replace?: boolean;
 	watchers: Dictionary<MethodWatcher>;
 	hooks: {[hook in Hooks]?: {
 		name: string;
 		hook: string;
 		after: Set<string>;
 	}};
+}
+
+export interface ComponentAccessor extends ComputedOptions<unknown> {
+	replace?: boolean;
 }
 
 export type ModVal = string | boolean | number;
@@ -159,7 +164,6 @@ export interface ComponentParams {
 	root?: boolean;
 	tpl?: boolean;
 	functional?: boolean | Dictionary;
-	tiny?: boolean;
 	flyweight?: boolean;
 	model?: {prop?: string; event?: string};
 	parent?: Component;
@@ -188,8 +192,8 @@ export interface ComponentMeta {
 	systemFields: Dictionary<ComponentField>;
 	mods: ModsDecl;
 
-	computed: Dictionary<ComputedOptions<unknown>>;
-	accessors: Dictionary<ComputedOptions<unknown>>;
+	computed: Dictionary<ComponentAccessor>;
+	accessors: Dictionary<ComponentAccessor>;
 	methods: Dictionary<ComponentMethod>;
 	watchers: Dictionary<WatchOptionsWithHandler[]>;
 
@@ -222,9 +226,10 @@ export class ComponentInterface<
 	C extends ComponentInterface = ComponentInterface<any, any>,
 	R extends ComponentInterface = ComponentInterface<any, any>
 > {
-	readonly hook!: Hooks;
-	readonly instance!: this;
+	readonly componentId!: string;
 	readonly componentName!: string;
+	readonly instance!: this;
+	readonly hook!: Hooks;
 	readonly keepAlive!: boolean;
 	readonly $el!: ComponentElement<C>;
 	readonly $options!: ComponentOptions<Component>;
@@ -234,6 +239,7 @@ export class ComponentInterface<
 	readonly $normalParent?: C;
 	readonly $root!: R | any;
 	readonly $isServer!: boolean;
+	readonly $isFlyweight?: boolean;
 	protected readonly $async!: Async<ComponentInterface>;
 	protected readonly meta!: ComponentMeta;
 	protected readonly $refs!: Dictionary;

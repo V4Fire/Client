@@ -6,22 +6,27 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { createComponent } from 'core/component/create/composite';
+import symbolGenerator from 'core/symbol';
+
 import { ComponentInterface } from 'core/component/interface';
-import { ComponentOptions, DirectiveOptions, DirectiveFunction, RenderContext } from 'vue';
 import { constructors, components } from 'core/component/const';
-import { VNode, VNodeData as BaseVNodeData } from 'vue/types/vnode';
+import { runHook, bindWatchers } from 'core/component/create/helpers';
+import { createFakeCtx } from 'core/component/create/functional';
 
 import config from 'core/component/engines/zero/config';
+import minimalCtx from 'core/component/engines/zero/ctx';
 import * as _ from 'core/component/engines/zero/helpers';
 
-export { default as minimalCtx } from 'core/component/engines/zero/ctx';
-
 //#if VueInterfaces
+import Vue, { ComponentOptions, DirectiveOptions, DirectiveFunction, RenderContext } from 'vue';
+import { VNode, VNodeData as BaseVNodeData } from 'vue/types/vnode';
+
 export * from 'vue';
 export { InjectOptions } from 'vue/types/options';
 export { VNode, ScopedSlot } from 'vue/types/vnode';
 //#endif
+
+export { minimalCtx };
 
 export interface VNodeData extends BaseVNodeData {
 	model?: {
@@ -45,27 +50,8 @@ export const options: Options = {
 	directives: {}
 };
 
-/**
- * Patches the specified virtual node: add classes, event handlers, etc.
- *
- * @param vNode
- * @param ctx - component fake context
- * @param renderCtx - render context
- */
-export function patchVNode(vNode: Element, ctx: ComponentInterface, renderCtx: RenderContext): void {
-	const
-		{data} = renderCtx,
-		// @ts-ignore
-		{meta} = ctx;
-
-	_.addClass(vNode, data);
-
-	if (data.attrs && meta.params.inheritAttrs) {
-		_.addAttrs(vNode, data.attrs);
-	}
-
-	_.addStaticDirectives(ctx, data, vNode[_.$$.directives], vNode);
-}
+const
+	$$ = symbolGenerator();
 
 export class ComponentDriver {
 	static config: typeof config = config;
@@ -370,4 +356,209 @@ export class ComponentDriver {
 
 		return tag;
 	}
+}
+
+/**
+ * Patches the specified virtual node: add classes, event handlers, etc.
+ *
+ * @param vNode
+ * @param ctx - component fake context
+ * @param renderCtx - render context
+ */
+export function patchVNode(vNode: Element, ctx: ComponentInterface, renderCtx: RenderContext): void {
+	const
+		{data} = renderCtx,
+		// @ts-ignore
+		{meta} = ctx;
+
+	_.addClass(vNode, data);
+
+	if (data.attrs && meta.params.inheritAttrs) {
+		_.addAttrs(vNode, data.attrs);
+	}
+
+	_.addStaticDirectives(ctx, data, vNode[_.$$.directives], vNode);
+}
+
+/**
+ * Creates a zero component by the specified parameters and returns a tuple [node, ctx]
+ *
+ * @param component - component object or a component name
+ * @param ctx - base context
+ * @param [parent] - parent context
+ */
+export function createComponent<T>(
+	component: ComponentOptions<Vue> | string,
+	ctx: ComponentInterface,
+	parent?: ComponentInterface
+): [T?, ComponentInterface?] {
+	const
+		constr = constructors[Object.isString(component) ? component : String(component.name)],
+		// @ts-ignore
+		createElement = ctx.$createElement;
+
+	if (!constr || !createElement) {
+		return [];
+	}
+
+	let
+		meta = components.get(constr);
+
+	if (!meta) {
+		return [];
+	}
+
+	const
+		{methods, component: {render}} = meta;
+
+	if (!render) {
+		return [];
+	}
+
+	const
+		ctxShim = {parent},
+		renderCtx = Object.create(ctx);
+
+	for (let keys = Object.keys(ctxShim), i = 0; i < keys.length; i++) {
+		const
+			key = keys[i],
+			el = ctxShim[key],
+			val = renderCtx[key];
+
+		if (val) {
+			if (Object.isObject(el)) {
+				// tslint:disable-next-line:prefer-object-spread
+				renderCtx[key] = Object.assign(el, val);
+			}
+
+		} else {
+			renderCtx[key] = el;
+		}
+	}
+
+	const baseCtx = Object.assign(Object.create(constr.prototype), minimalCtx, {
+		meta,
+		instance: meta.instance,
+		componentName: meta.componentName
+	});
+
+	const
+		fakeCtx = createFakeCtx<ComponentInterface>(createElement, renderCtx, baseCtx, true);
+
+	// @ts-ignore
+	meta = fakeCtx.meta;
+
+	// @ts-ignore
+	fakeCtx.hook = 'created';
+
+	// @ts-ignore
+	meta.params.functional = true;
+	bindWatchers(fakeCtx);
+
+	runHook('created', meta, fakeCtx).then(async () => {
+		if (methods.created) {
+			await methods.created.fn.call(fakeCtx);
+		}
+	}, stderr);
+
+	const
+		node = render.call(fakeCtx, createElement);
+
+	// @ts-ignore
+	fakeCtx.$el = node;
+	node.component = fakeCtx;
+
+	const
+		// @ts-ignore
+		{$async: $a} = fakeCtx,
+		watchRoot = document.body;
+
+	let
+		mounted;
+
+	const mount = () => {
+		if (mounted) {
+			return;
+		}
+
+		// @ts-ignore
+		fakeCtx.hook = 'mounted';
+		mounted = true;
+		bindWatchers(fakeCtx);
+
+		runHook('mounted', <NonNullable<typeof meta>>meta, fakeCtx).then(async () => {
+			if (methods.mounted) {
+				await methods.mounted.fn.call(fakeCtx);
+			}
+		}, stderr);
+	};
+
+	const destroy = () => {
+		// @ts-ignore
+		fakeCtx.$destroy();
+	};
+
+	const
+		is = (el) => el === node || el.contains(node);
+
+	if (typeof MutationObserver === 'function') {
+		const observer = new MutationObserver((mutations) => {
+			for (let i = 0; i < mutations.length; i++) {
+				const
+					mut = mutations[i];
+
+				if (!mounted) {
+					for (let o = mut.addedNodes, j = 0; j < o.length; j++) {
+						if (is(o[j])) {
+							mount();
+							break;
+						}
+					}
+				}
+
+				if (fakeCtx.keepAlive) {
+					break;
+				}
+
+				for (let o = mut.removedNodes, j = 0; j < o.length; j++) {
+					const
+						el = o[j];
+
+					if (is(el)) {
+						$a.setImmediate(() => {
+							if (!document.body.contains(el)) {
+								destroy();
+							}
+						}, {
+							label: $$.removeFromDOM
+						});
+
+						break;
+					}
+				}
+			}
+		});
+
+		observer.observe(watchRoot, {
+			childList: true,
+			subtree: true
+		});
+
+		$a.worker(observer);
+
+	} else {
+		$a.on(watchRoot, 'DOMNodeInserted', ({srcElement}) => {
+			if (is(srcElement)) {
+				mount();
+			}
+		});
+
+		$a.on(watchRoot, 'DOMNodeRemoved', ({srcElement}) => {
+			if (is(srcElement)) {
+				destroy();
+			}
+		});
+	}
+
+	return [node, fakeCtx];
 }

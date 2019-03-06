@@ -32,7 +32,8 @@ import {
 	initDataObject,
 	initPropsObject,
 	bindWatchers,
-	addMethodsFromMeta
+	addMethodsFromMeta,
+	addElAccessor
 
 } from 'core/component/create/helpers';
 
@@ -299,30 +300,7 @@ export function createFakeCtx<T extends Dictionary = FunctionalCtx>(
 	addMethodsFromMeta(meta, fakeCtx);
 
 	if (!('$el' in fakeCtx)) {
-		let
-			staticEl;
-
-		Object.defineProperty(fakeCtx, '$el', {
-			set(val: Element): void {
-				staticEl = val;
-			},
-
-			get(): CanUndef<ComponentElement<any>> {
-				if (staticEl) {
-					return staticEl;
-				}
-
-				const
-					id = <any>$$.el,
-					el = <Element>fakeCtx[id];
-
-				if (el && el.closest('html')) {
-					return el;
-				}
-
-				return (fakeCtx[id] = document.querySelector(`.i-block-helper.${fakeCtx.componentId}`) || undefined);
-			}
-		});
+		addElAccessor($$.el, fakeCtx);
 	}
 
 	runHook('beforeRuntime', meta, fakeCtx)
@@ -343,7 +321,7 @@ export function createFakeCtx<T extends Dictionary = FunctionalCtx>(
 	runHook('beforeDataCreate', meta, fakeCtx)
 		.catch(stderr);
 
-	if (meta.params.tiny) {
+	if (meta.params.flyweight) {
 		Object.assign(fakeCtx, data);
 
 	} else {
@@ -485,7 +463,7 @@ export function patchVNode(vNode: VNode, ctx: Dictionary<any>, renderCtx: Render
 		addDirectives(<any>ctx, el, data, data.directives);
 		oldCtx && oldCtx.$destroy();
 
-		if (!meta.params.tiny) {
+		if (!meta.params.flyweight) {
 			if (oldCtx) {
 				const
 					props = ctx.$props,

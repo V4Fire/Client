@@ -7,29 +7,21 @@
  */
 
 import log from 'core/log';
-import symbolGenerator from 'core/symbol';
-
 import { GLOBAL } from 'core/const/links';
 import { PropOptions } from 'core/component/engines';
 
 import {
 
 	SystemField,
+	ComponentElement,
 	ComponentInterface,
 	ComponentField,
 	ComponentMeta
 
 } from 'core/component/interface';
 
-export interface ComponentConstructor<T = unknown> {
-	new(): T;
-}
-
-const
-	$$ = symbolGenerator();
-
 export const
-	defaultWrapper = $$.defaultWrapper,
+	defaultWrapper = Symbol('defaultWrapper'),
 	customWatcherRgxp = /^([!?]?)([^!?:]*):(.*)/;
 
 const watcherHooks = {
@@ -235,7 +227,7 @@ export function initDataObject(
 						throw new Error(`Atom field "${key}" can't wait the non atom field "${waitFieldKey}"`);
 					}
 
-					if (!(waitFieldKey in data)) {
+					if (data[waitFieldKey] === undefined) {
 						queue.add(key);
 
 						if (el.atom) {
@@ -593,7 +585,7 @@ export function addMethodsFromMeta(meta: ComponentMeta, ctx: Dictionary<any>, sa
 				key = keys[i],
 				el = <StrictDictionary<any>>o[key];
 
-			if ((safe ? Object.getOwnPropertyDescriptor(ctx, key) : ctx[key]) !== undefined) {
+			if ((safe ? Object.getOwnPropertyDescriptor(ctx, key) : ctx[key]) !== undefined && el.replace !== false) {
 				continue;
 			}
 
@@ -614,6 +606,36 @@ export function addMethodsFromMeta(meta: ComponentMeta, ctx: Dictionary<any>, sa
 			}
 		}
 	}
+}
+
+/**
+ *
+ * @param ctx
+ */
+export function addElAccessor(elId: symbol, ctx: ComponentInterface): void {
+	let
+		staticEl;
+
+	Object.defineProperty(ctx, '$el', {
+		set(val: Element): void {
+			staticEl = val;
+		},
+
+		get(): CanUndef<ComponentElement<any>> {
+			if (staticEl) {
+				return staticEl;
+			}
+
+			const
+				el = <Element>ctx[elId];
+
+			if (el && el.closest('html')) {
+				return el;
+			}
+
+			return (ctx[elId] = document.querySelector(`.i-block-helper.${ctx.componentId}`) || undefined);
+		}
+	});
 }
 
 function createSyncPromise<R = unknown>(val?: R, err?: unknown): Promise<R> {

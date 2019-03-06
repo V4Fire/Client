@@ -20,7 +20,7 @@ import { supports, ComponentDriver, RenderContext, CreateElement, VNode } from '
 import { getComponent, getBaseComponent } from 'core/component/create';
 import { convertRender, createFakeCtx, patchVNode, CTX } from 'core/component/create/functional';
 import { constructors, components, localComponents, rootComponents, initEvent } from 'core/component/const';
-import { applyComposites } from 'core/component/create/composite';
+import { buildComposite } from 'core/component/create/composite';
 
 export * from 'core/component/interface';
 export * from 'core/component/const';
@@ -66,7 +66,7 @@ export function getComponentName(constr: Function): string {
  *        *) if true, then the component will be created as functional
  *        *) if a table with parameters, then the component will be created as smart component
  *
- *   *) [tiny] - if true, then the functional component will be created without advanced component shim
+ *   *) [flyweight] - if true, then the component can be used as flyweight (within a composite virtual tree)
  *   *) [parent] - link to a parent component
  *
  *   // Component driver options (by default Vue):
@@ -163,7 +163,7 @@ export function component(params?: ComponentParams): Function {
 
 						// @ts-ignore
 						if (that.$compositeI) {
-							applyComposites(vnode, that);
+							buildComposite(vnode, that);
 							// @ts-ignore
 							that.$compositeI = 0;
 						}

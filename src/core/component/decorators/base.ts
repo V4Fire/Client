@@ -151,6 +151,14 @@ export function paramsFactory<T = unknown>(
 ): (params?: T) => Function {
 	return (params: Dictionary<any> = {}) => (target, key, desc) => {
 		initEvent.once('constructor', ({meta}: {meta: ComponentMeta}) => {
+			const wrapOpts = (opts) => {
+				if (opts.replace === undefined && meta.params.flyweight) {
+					opts.replace = false;
+				}
+
+				return opts;
+			};
+
 			let
 				p = params;
 
@@ -212,16 +220,19 @@ export function paramsFactory<T = unknown>(
 						}
 					}
 
-					obj[key] = {...el, ...p, watchers, hooks};
+					obj[key] = wrapOpts({...el, ...p, watchers, hooks});
 					return;
 				}
 
-				if (metaKey === 'accessors' ? key in meta.computed : !('cache' in p) && key in meta.accessors) {
-					obj.accessors = meta.computed[key];
+				const hasCache = 'cache' in p;
+				delete p.cache;
+
+				if (metaKey === 'accessors' ? key in meta.computed : !hasCache && key in meta.accessors) {
+					obj.accessors = wrapOpts({...meta.computed[key], ...p});
 					delete meta.computed[key];
 
 				} else {
-					obj[key] = {};
+					obj[key] = wrapOpts({...el, ...p});
 				}
 
 				return;
@@ -292,7 +303,7 @@ export function paramsFactory<T = unknown>(
 				}
 			}
 
-			obj[key] = {
+			obj[key] = wrapOpts({
 				...el,
 				...p,
 
@@ -303,7 +314,7 @@ export function paramsFactory<T = unknown>(
 					...el.meta,
 					...p.meta
 				}
-			};
+			});
 		});
 	};
 }
