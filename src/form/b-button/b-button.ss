@@ -73,7 +73,7 @@
 							+= self.slot()
 
 					- block expand
-						< _.&__cell.&__icon.&__expand
+						< _.&__cell.&__icon.&__expand v-if = $slots.dropdown
 							< @b-icon :value = 'expand_more'
 
 					- block icon
