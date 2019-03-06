@@ -10,7 +10,7 @@ import symbolGenerator from 'core/symbol';
 import Async from 'core/async';
 
 import { EventEmitter2 as EventEmitter } from 'eventemitter2';
-import { ComponentElement, FunctionalCtx } from 'core/component/interface';
+import { FunctionalCtx } from 'core/component/interface';
 import { addDirectives } from 'core/component/create/directive';
 
 import {
@@ -32,6 +32,7 @@ import {
 	initDataObject,
 	initPropsObject,
 	bindWatchers,
+	addEventAPI,
 	addMethodsFromMeta,
 	addElAccessor
 
@@ -82,7 +83,6 @@ export function createFakeCtx<T extends Dictionary = FunctionalCtx>(
 
 	const
 		$w = new EventEmitter({maxListeners: 1e3}),
-		$e = new EventEmitter({maxListeners: 1e3}),
 		$a = new Async(this);
 
 	let
@@ -264,34 +264,10 @@ export function createFakeCtx<T extends Dictionary = FunctionalCtx>(
 
 		$delete(obj: object, key: string): void {
 			delete obj[key];
-		},
-
-		$emit(e: string, ...args: any[]): void {
-			$e.emit(e, ...args);
-		},
-
-		$once(e: string, cb: any): void {
-			$e.once(e, cb);
-		},
-
-		$on(e: CanArray<string>, cb: any): void {
-			const
-				events = (<string[]>[]).concat(e);
-
-			for (let i = 0; i < events.length; i++) {
-				$e.on(events[i], cb);
-			}
-		},
-
-		$off(e: CanArray<string>, cb?: any): void {
-			const
-				events = (<string[]>[]).concat(e);
-
-			for (let i = 0; i < events.length; i++) {
-				$e.off(events[i], cb);
-			}
 		}
 	});
+
+	addEventAPI(fakeCtx);
 
 	if (!fakeCtx.$root) {
 		fakeCtx.$root = fakeCtx;

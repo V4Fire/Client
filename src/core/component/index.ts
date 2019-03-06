@@ -28,7 +28,7 @@ export * from 'core/component/create/functional';
 export * from 'core/component/create/composite';
 
 export { PARENT } from 'core/component/create/inherit';
-export { runHook, customWatcherRgxp } from 'core/component/create/helpers';
+export { customWatcherRgxp, runHook } from 'core/component/create/helpers';
 export { default as globalEvent, reset, ResetType } from 'core/component/event';
 export { prop, field, system, p, hook, watch, paramsFactory } from 'core/component/decorators';
 export {

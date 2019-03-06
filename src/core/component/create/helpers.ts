@@ -7,7 +7,9 @@
  */
 
 import log from 'core/log';
+
 import { GLOBAL } from 'core/const/links';
+import { EventEmitter2 as EventEmitter } from 'eventemitter2';
 import { PropOptions } from 'core/component/engines';
 
 import {
@@ -323,7 +325,7 @@ export function initPropsObject(
  *
  * @param hook
  * @param meta
- * @param ctx - link to context
+ * @param ctx - component context
  * @param args - event arguments
  */
 export function runHook(
@@ -563,10 +565,10 @@ export function addMethodsToMeta(constructor: Function, meta: ComponentMeta): vo
 }
 
 /**
- * Adds methods from a meta object to the specified context
+ * Adds methods from a meta object to the specified component
  *
  * @param meta
- * @param ctx
+ * @param ctx - component context
  * @param [safe] - if true, then will be using safe access to properties
  */
 export function addMethodsFromMeta(meta: ComponentMeta, ctx: Dictionary<any>, safe?: boolean): void {
@@ -609,8 +611,10 @@ export function addMethodsFromMeta(meta: ComponentMeta, ctx: Dictionary<any>, sa
 }
 
 /**
+ * Adds an $el accessor to the specified component
  *
- * @param ctx
+ * @param elId - element unique id
+ * @param ctx - component context
  */
 export function addElAccessor(elId: symbol, ctx: ComponentInterface): void {
 	let
@@ -634,6 +638,43 @@ export function addElAccessor(elId: symbol, ctx: ComponentInterface): void {
 			}
 
 			return (ctx[elId] = document.querySelector(`.i-block-helper.${ctx.componentId}`) || undefined);
+		}
+	});
+}
+
+/**
+ * Adds the component event API to the specified component
+ * @param ctx
+ */
+export function addEventAPI(ctx: Dictionary<any>): void {
+	const
+		$e = new EventEmitter({maxListeners: 1e3});
+
+	Object.assign(ctx, {
+		$emit(e: string, ...args: any[]): void {
+			$e.emit(e, ...args);
+		},
+
+		$once(e: string, cb: any): void {
+			$e.once(e, cb);
+		},
+
+		$on(e: CanArray<string>, cb: any): void {
+			const
+				events = (<string[]>[]).concat(e);
+
+			for (let i = 0; i < events.length; i++) {
+				$e.on(events[i], cb);
+			}
+		},
+
+		$off(e: CanArray<string>, cb?: any): void {
+			const
+				events = (<string[]>[]).concat(e);
+
+			for (let i = 0; i < events.length; i++) {
+				$e.off(events[i], cb);
+			}
 		}
 	});
 }

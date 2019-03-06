@@ -11,7 +11,15 @@ import symbolGenerator from 'core/symbol';
 import { ComponentInterface } from 'core/component/interface';
 import { VNode } from 'core/component/engines';
 import { constructors, components } from 'core/component/const';
-import { initDataObject, initPropsObject, addMethodsFromMeta, addElAccessor } from 'core/component/create/helpers';
+import {
+
+	initDataObject,
+	initPropsObject,
+	addEventAPI,
+	addMethodsFromMeta,
+	addElAccessor
+
+} from 'core/component/create/helpers';
 
 const
 	$$ = symbolGenerator();
@@ -27,7 +35,7 @@ const defField = {
  * Builds a composite virtual tree
  *
  * @param vnode
- * @param ctx
+ * @param ctx - component context
  */
 export function buildComposite(vnode: VNode, ctx: ComponentInterface): void {
 	// @ts-ignore
@@ -91,7 +99,9 @@ export function buildComposite(vnode: VNode, ctx: ComponentInterface): void {
 					$compositeI: 0
 				});
 
+				addEventAPI(fakeCtx);
 				addElAccessor($$.el, fakeCtx);
+
 				Object.defineProperty(fakeCtx, '$attrs', {value: attrs});
 				Object.defineProperty(fakeCtx, '$parent', {value: ctx});
 				Object.defineProperty(fakeCtx, '$slots', {value: {default: vnode.children, ...vCtx.$slots}});
