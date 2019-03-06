@@ -7,4 +7,5 @@
  */
 
 package('b-input-number')
-	.extends('b-input');
+	.extends('b-input')
+	.dependencies('b-icon');

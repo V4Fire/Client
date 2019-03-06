@@ -157,6 +157,11 @@ export function initMods<T extends iBlock>(component: T): ModsNTable {
 		return mods;
 	}
 
+	/*if (component.componentName === 'b-file-button') {
+		console.log(66666666666662, component.componentName, component.sync.component.componentName);
+		console.log(component.sync.link<any>(link));
+	}*/
+
 	return component.sync.link<any>(link);
 }
 

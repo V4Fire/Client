@@ -6,11 +6,14 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import iIcon from 'traits/i-icon/i-icon';
+import iHint from 'traits/i-hint/i-hint';
+
 import iBlock, { component, prop } from 'super/i-block/i-block';
 export * from 'super/i-block/i-block';
 
-@component({functional: true, tiny: true})
-export default class bIcon extends iBlock {
+@component({functional: true, flyweight: true})
+export default class bIcon extends iBlock implements iIcon, iHint {
 	/**
 	 * Component value
 	 */
@@ -34,4 +37,14 @@ export default class bIcon extends iBlock {
 	 */
 	@prop(String)
 	readonly hintPos: string = 'bottom';
+
+	/** @see iHint.setHint */
+	setHint(pos: string): ReadonlyArray<string> {
+		return iHint.setHint(this, pos);
+	}
+
+	/** @see iIcon.getIconLink */
+	getIconLink(iconId: string): string {
+		return iIcon.getIconLink(iconId);
+	}
 }

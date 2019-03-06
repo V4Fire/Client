@@ -17,7 +17,6 @@ import iData, {
 	prop,
 	field,
 	system,
-	hook,
 	wait,
 	p,
 	ModsDecl
@@ -119,12 +118,13 @@ export default class iInput<
 	/**
 	 * Previous component value
 	 */
-	@system()
+	@system({replace: false})
 	prevValue?: V;
 
 	/**
 	 * Link to the component validators
 	 */
+	@p({replace: false})
 	get blockValidators(): typeof iInput['blockValidators'] {
 		return (<typeof iInput>this.instance.constructor).blockValidators;
 	}
@@ -142,7 +142,7 @@ export default class iInput<
 	/**
 	 * Link to the form that is associated to the component
 	 */
-	@p({cache: false})
+	@p({cache: false, replace: false})
 	get connectedForm(): CanPromise<CanUndef<HTMLFormElement>> {
 		return this.waitStatus('ready', () =>
 			(this.form ? document.querySelector<HTMLFormElement>(`#${this.form}`) : this.$el.closest('form')) || undefined);
@@ -151,6 +151,7 @@ export default class iInput<
 	/**
 	 * Component value
 	 */
+	@p({replace: false})
 	get value(): V {
 		return <V>this.field.get('valueStore');
 	}
@@ -166,6 +167,7 @@ export default class iInput<
 	/**
 	 * Component default value
 	 */
+	@p({replace: false})
 	get default(): unknown {
 		return this.defaultProp;
 	}
@@ -173,7 +175,7 @@ export default class iInput<
 	/**
 	 * Form value of the component
 	 */
-	@p({cache: false})
+	@p({cache: false, replace: false})
 	get formValue(): Promise<FV> {
 		return (async () => {
 			await this.nextTick();
@@ -215,7 +217,7 @@ export default class iInput<
 	/**
 	 * Grouped form value of the component
 	 */
-	@p({cache: false})
+	@p({cache: false, replace: false})
 	get groupFormValue(): Promise<CanArray<FV>> {
 		return (async () => {
 			if (this.name) {
@@ -289,7 +291,7 @@ export default class iInput<
 	/**
 	 * Component value field name
 	 */
-	@field()
+	@field({replace: false})
 	protected readonly blockValueField: string = 'value';
 
 	/** @override */
@@ -298,25 +300,33 @@ export default class iInput<
 	/**
 	 * Component value store
 	 */
-	@field<iInput>((o) => o.sync.link((val) => o.initDefaultValue(val)))
+	@field<iInput>({
+		replace: false,
+		init: (o) => o.sync.link((val) => o.initDefaultValue(val))
+	})
+
 	protected valueStore!: unknown;
 
 	/** @see iHint.setHint */
+	@p({replace: false})
 	setHint(pos: string): ReadonlyArray<string> {
 		return iHint.setHint(this, pos);
 	}
 
 	/** @see iAccess.enable */
+	@p({replace: false})
 	enable(): Promise<boolean> {
 		return iAccess.enable(this);
 	}
 
 	/** @see iAccess.disable */
+	@p({replace: false})
 	disable(): Promise<boolean> {
 		return iAccess.disable(this);
 	}
 
 	/** @see iAccess.focus */
+	@p({replace: false})
 	@wait('ready')
 	async focus(): Promise<boolean> {
 		const
@@ -331,6 +341,7 @@ export default class iInput<
 	}
 
 	/** @see iAccess.blur */
+	@p({replace: false})
 	@wait('ready')
 	async blur(): Promise<boolean> {
 		const
@@ -348,6 +359,7 @@ export default class iInput<
 	 * Clears value of the component
 	 * @emits clear()
 	 */
+	@p({replace: false})
 	@wait('ready')
 	async clear(): Promise<boolean> {
 		if (this[this.blockValueField]) {
@@ -366,6 +378,7 @@ export default class iInput<
 	 * Resets the component value to default
 	 * @emits reset()
 	 */
+	@p({replace: false})
 	@wait('ready')
 	async reset(): Promise<boolean> {
 		if (this[this.blockValueField] !== this.default) {
@@ -390,6 +403,7 @@ export default class iInput<
 	 * @emits validationFail(failedValidation: ValidationError<FV>)
 	 * @emits validationEnd(result: boolean, failedValidation?: ValidationError<FV>)
 	 */
+	@p({replace: false})
 	@wait('ready')
 	async validate(params?: ValidatorParams): Promise<ValidationResult<FV>> {
 		if (!this.validators.length) {
@@ -471,6 +485,7 @@ export default class iInput<
 	/**
 	 * Handler: focus
 	 */
+	@p({replace: false})
 	protected onFocus(): void {
 		this.setMod('focused', true);
 	}
@@ -478,6 +493,7 @@ export default class iInput<
 	/**
 	 * Handler: blur
 	 */
+	@p({replace: false})
 	protected onBlur(): void {
 		this.setMod('focused', false);
 	}
@@ -486,6 +502,7 @@ export default class iInput<
 	 * Handler: component value change
 	 * @emits change(value)
 	 */
+	@p({replace: false})
 	protected onBlockValueChange(newValue: V, oldValue: CanUndef<V>): void {
 		this.prevValue = oldValue;
 		if (newValue !== oldValue || newValue && typeof newValue === 'object') {
@@ -497,6 +514,7 @@ export default class iInput<
 	 * Initializes a default value (if needed) for the blockValue field
 	 * @param value - blockValue field value
 	 */
+	@p({replace: false})
 	protected initDefaultValue(value?: unknown): V {
 		const
 			i = this.instance,
@@ -514,7 +532,7 @@ export default class iInput<
 	/**
 	 * Initializes events for valueStore
 	 */
-	@hook('created')
+	@p({hook: 'created', replace: false})
 	protected initValueEvents(): void {
 		const k = this.blockValueField;
 		this.watch(k + (`${k}Store` in this ? 'Store' : ''), this.onBlockValueChange);

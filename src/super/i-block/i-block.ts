@@ -277,7 +277,7 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	/**
 	 * Component initialize status
 	 */
-	@p({cache: false})
+	@p({cache: false, replace: false})
 	get componentStatus(): Statuses {
 		return this.shadowComponentStatusStore || <NonNullable<Statuses>>this.field.get('componentStatusStore');
 	}
@@ -310,7 +310,7 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	/**
 	 * Component stage store
 	 */
-	@p({cache: false})
+	@p({cache: false, replace: false})
 	get stage(): CanUndef<Stage> {
 		return this.field.get('stageStore');
 	}
@@ -334,6 +334,7 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	/**
 	 * Group name for the current stage
 	 */
+	@p({replace: false})
 	get stageGroup(): string {
 		return `stage.${this.stage}`;
 	}
@@ -369,6 +370,7 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	/**
 	 * Returns the internal advanced parameters store value
 	 */
+	@p({replace: false})
 	get p(): Dictionary {
 		return <NonNullable<Dictionary>>this.field.get('pStore');
 	}
@@ -406,6 +408,7 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	/**
 	 * True if the current component is ready (componentStatus == ready)
 	 */
+	@p({replace: false})
 	get isReady(): boolean {
 		return this.componentStatus === 'ready';
 	}
@@ -413,13 +416,23 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	/**
 	 * True if the current component is functional
 	 */
+	@p({replace: false})
 	get isFunctional(): boolean {
 		return this.meta.params.functional === true;
 	}
 
 	/**
+	 * True if the current component is flyweight
+	 */
+	@p({replace: false})
+	get isFlyweight(): boolean {
+		return Boolean(this.$isFlyweight);
+	}
+
+	/**
 	 * Base component modifiers
 	 */
+	@p({replace: false})
 	get baseMods(): Readonly<ModsNTable> {
 		const
 			m = this.mods;
@@ -525,6 +538,7 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	@system({
 		atom: true,
 		unique: true,
+		replace: true,
 		init: (ctx: iBlock) => new Storage(ctx)
 	})
 
@@ -536,6 +550,7 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	@system({
 		atom: true,
 		unique: true,
+		replace: true,
 		init: (ctx: iBlock) => new State(ctx)
 	})
 
@@ -569,6 +584,7 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	@system({
 		atom: true,
 		unique: true,
+		replace: true,
 		init: (ctx: iBlock) => new AsyncRender(ctx)
 	})
 
@@ -591,6 +607,7 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	@system({
 		atom: true,
 		unique: true,
+		replace: true,
 		init: (ctx: iBlock) => new Lazy(ctx)
 	})
 
@@ -643,20 +660,27 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	/**
 	 * Advanced component parameters internal storage
 	 */
-	@field((o) => o.sync.link())
+	@field({
+		replace: false,
+		init: (o) => o.sync.link()
+	})
+
 	protected pStore: Dictionary = {};
 
 	/**
 	 * Component stage store
 	 */
-	@field((o) => o.sync.link((val, old) => {
-		if (val === old) {
-			return;
-		}
+	@field({
+		replace: false,
+		init: (o) => o.sync.link((val, old) => {
+			if (val === old) {
+				return;
+			}
 
-		o.emit('stageChange', val, old);
-		return val;
-	}))
+			o.emit('stageChange', val, old);
+			return val;
+		})
+	})
 
 	protected stageStore?: Stage;
 
@@ -675,18 +699,19 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	/**
 	 * Component initialize status store for non watch statuses
 	 */
-	@system()
+	@system({replace: false})
 	protected shadowComponentStatusStore?: Statuses;
 
 	/**
 	 * Watched store of component modifiers
 	 */
-	@field({merge: true})
+	@field({merge: true, replace: false})
 	protected watchModsStore: ModsNTable = {};
 
 	/**
 	 * Watched component modifiers
 	 */
+	@p({replace: false})
 	protected get m(): Readonly<ModsNTable> {
 		return getWatchableMods(this);
 	}
@@ -694,13 +719,13 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	/**
 	 * Cache of ifOnce
 	 */
-	@field({merge: true})
+	@field({merge: true, replace: false})
 	protected readonly ifOnceStore: Dictionary = {};
 
 	/**
 	 * Temporary cache
 	 */
-	@system({merge: true})
+	@system({merge: true, replace: false})
 	protected tmp: Dictionary = {};
 
 	/**
@@ -726,6 +751,7 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	@system({
 		atom: true,
 		unique: true,
+		replace: true,
 		init: (ctx) => new Async(ctx)
 	})
 
@@ -858,7 +884,7 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	@system({
 		atom: true,
 		after: 'sync',
-		init: (o) => o.sync.link('i18n')
+		init: (o, d) => (<Sync>d.sync).link('i18n')
 	})
 
 	protected readonly t!: typeof i18n;
@@ -931,11 +957,16 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	 * @param cb
 	 * @param [params] - additional parameters
 	 */
+	@p({replace: false})
 	watch<T = unknown>(
 		exprOrFn: string | ((this: this) => string),
 		cb: (this: this, n: T, o?: T) => void,
 		params?: AsyncWatchOpts
 	): void {
+		if (this.isFlyweight) {
+			return;
+		}
+
 		this.lfc.execCbAfterComponentCreated(() => {
 			const
 				p = params || {},
@@ -976,6 +1007,7 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	 * @param event
 	 * @param args
 	 */
+	@p({replace: false})
 	emit(event: string, ...args: unknown[]): void {
 		event = event.dasherize();
 		this.$emit(event, this, ...args);
@@ -990,6 +1022,7 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	 * @param event
 	 * @param args
 	 */
+	@p({replace: false})
 	dispatch(event: string, ...args: unknown[]): void {
 		event = event.dasherize();
 
@@ -1034,6 +1067,7 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	 * @param cb
 	 * @param [params] - async parameters
 	 */
+	@p({replace: false})
 	on<E = unknown, R = unknown>(event: string, cb: ProxyCb<E, R, any>, params?: AsyncOpts): void {
 		event = event.dasherize();
 
@@ -1053,6 +1087,7 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	 * @param cb
 	 * @param [params] - async parameters
 	 */
+	@p({replace: false})
 	once<E = unknown, R = unknown>(event: string, cb: ProxyCb<E, R, any>, params?: AsyncOpts): void {
 		event = event.dasherize();
 
@@ -1071,6 +1106,7 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	 * @param event
 	 * @param [params] - async parameters
 	 */
+	@p({replace: false})
 	promisifyOnce<T = unknown>(event: string, params?: AsyncOpts): Promise<T> {
 		event = event.dasherize();
 		return this.async.promisifyOnce(this, event, params);
@@ -1089,6 +1125,8 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	 * @param [params] - async parameters
 	 */
 	off(params: ClearOptsId<object>): void;
+
+	@p({replace: false})
 	off(eventOrParams?: string | ClearOptsId<object>, cb?: Function): void {
 		if (!eventOrParams || Object.isString(eventOrParams)) {
 			const
@@ -1119,6 +1157,8 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	 *   *) [params.defer] - if true, then the function will always return a promise
 	 */
 	waitStatus<T = unknown>(status: Statuses, cb: (this: this) => T, params?: WaitStatusOpts): CanPromise<T>;
+
+	@p({replace: false})
 	waitStatus<T = unknown>(
 		status: Statuses,
 		cbOrParams?: Function | WaitStatusOpts,
@@ -1264,6 +1304,7 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	 * @param mods - list of modifiers (['name', ['name', 'value']])
 	 * @param [value] - value of modifiers
 	 */
+	@p({replace: false})
 	ifEveryMods(mods: Array<CanArray<string>>, value?: unknown): boolean {
 		for (let i = 0; i < mods.length; i++) {
 			const
@@ -1293,6 +1334,7 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	 * @param mods - list of modifiers (['name', ['name', 'value']])
 	 * @param [value] - value of modifiers
 	 */
+	@p({replace: false})
 	ifSomeMod(mods: Array<CanArray<string>>, value?: unknown): boolean {
 		for (let i = 0; i < mods.length; i++) {
 			const
@@ -1328,13 +1370,23 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	 * @param value
 	 */
 	setMod(name: string, value: unknown): CanPromise<boolean>;
+
+	@p({replace: false})
 	setMod(nodeOrName: Element | string, name: string | unknown, value?: unknown): CanPromise<boolean | void> {
 		if (Object.isString(nodeOrName)) {
+			if (this.isFlyweight) {
+				return Block.prototype.setMod.call(
+					this.dom.createBlockCtxFromNode(this.$el, this),
+					name,
+					value
+				);
+			}
+
 			return this.lfc.execCbAfterComponentReady(() => this.block.setMod(nodeOrName, name)) || false;
 		}
 
 		return Block.prototype.setMod.call(
-			this.dom.createComponentCtxFromNode(nodeOrName),
+			this.dom.createBlockCtxFromNode(nodeOrName),
 			name,
 			value
 		);
@@ -1354,13 +1406,23 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	 * @param [value]
 	 */
 	removeMod(name: string, value?: unknown): CanPromise<boolean>;
+
+	@p({replace: false})
 	removeMod(nodeOrName: Element | string, name?: string | unknown, value?: unknown): CanPromise<boolean | void> {
 		if (Object.isString(nodeOrName)) {
+			if (this.isFlyweight) {
+				return Block.prototype.removeMod.call(
+					this.dom.createBlockCtxFromNode(this.$el, this),
+					name,
+					value
+				);
+			}
+
 			return this.lfc.execCbAfterComponentReady(() => this.block.removeMod(nodeOrName, name)) || false;
 		}
 
 		return Block.prototype.removeMod.call(
-			this.dom.createComponentCtxFromNode(nodeOrName),
+			this.dom.createBlockCtxFromNode(nodeOrName),
 			name,
 			value
 		);
@@ -1372,6 +1434,7 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	 * @param name
 	 * @param value
 	 */
+	@p({replace: false})
 	setRootMod(name: string, value: unknown): boolean {
 		return this.$root.setRootMod(name, value, this);
 	}
@@ -1382,6 +1445,7 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	 * @param name
 	 * @param value
 	 */
+	@p({replace: false})
 	removeRootMod(name: string, value?: unknown): boolean {
 		return this.$root.removeRootMod(name, value, this);
 	}
@@ -1390,6 +1454,7 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	 * Returns a value of the specified root element modifier
 	 * @param name
 	 */
+	@p({replace: false})
 	getRootMod(name: string): CanUndef<string> {
 		return this.$root.getRootMod(name, this);
 	}
@@ -1415,6 +1480,7 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	 * @param ctxOrOpts - log context or log options (logLevel, context)
 	 * @param [details]
 	 */
+	@p({replace: false})
 	protected log(ctxOrOpts: string | LogMessageOpts, ...details: unknown[]): void {
 		let
 			context = ctxOrOpts,
@@ -1675,6 +1741,7 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	/**
 	 * Component before destroy
 	 */
+	@p({replace: false})
 	protected beforeDestroy(): void {
 		this.componentStatus = 'destroyed';
 		this.async.clearAll().locked = true;

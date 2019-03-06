@@ -169,16 +169,19 @@ export default class DOM {
 	}
 
 	/**
-	 * Creates a fake context for a component instance from the specified node
+	 * Creates a Block instance from the specified node
+	 *
 	 * @param node
+	 * @param [component]
 	 */
-	createComponentCtxFromNode(node: Element): Dictionary {
+	createBlockCtxFromNode(node: Element, component?: iBlock): Dictionary {
 		const
 			$el = <ComponentElement<iBlock>>node,
-			comp = $el.component;
+			comp = component || $el.component;
 
 		const componentName = comp ?
-				comp.componentName : Object.get(componentRgxp.exec($el.className), '1') || this.component.componentName;
+			comp.componentName :
+			Object.get(componentRgxp.exec($el.className), '1') || this.component.componentName;
 
 		return Object.assign(Object.create(Block.prototype), {
 			component: {

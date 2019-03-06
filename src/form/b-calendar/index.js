@@ -8,4 +8,4 @@
 
 package('b-calendar')
 	.extends('i-input')
-	.dependencies('b-progress-icon', 'b-input-time');
+	.dependencies('b-icon', 'b-progress-icon', 'b-input-time');

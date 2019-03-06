@@ -9,7 +9,7 @@
 import bButton, { component, prop, wait } from 'form/b-button/b-button';
 export * from 'form/b-button/b-button';
 
-@component()
+@component({flyweight: true})
 export default class bFileButton<T extends Dictionary = Dictionary> extends bButton<T> {
 	/**
 	 * Accept string

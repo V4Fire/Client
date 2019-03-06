@@ -56,5 +56,5 @@
 							+= self.gIcon(['icon'], {'g-icon': {}})
 
 				- block progress
-					< _.&__cell.&__icon.&__progress v-if = dataProvider
-						< b-progress-icon v-once
+					< _.&__cell.&__icon.&__progress
+						< @b-progress-icon

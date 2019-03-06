@@ -32,12 +32,13 @@
 						@click.capture.stop = onSwitchDay(-1) |
 						v-if = !hasDayRange
 					.
-						+= self.gIcon('keyboard_arrow_left')
+
+						< @b-icon :value = 'keyboard_arrow_left'
 
 				- block labelValue
 					< .&__cell.&__value
 						< .&__calendar-icon
-							+= self.gIcon('calendar')
+							< @b-icon :value = 'calendar'
 
 						{{ labelText }}
 
@@ -46,7 +47,7 @@
 						@click.capture.stop = onSwitchDay(1) |
 						v-if = !hasDayRange
 					.
-						+= self.gIcon('keyboard_arrow_right')
+						< @b-icon :value = 'keyboard_arrow_right'
 
 		- block dropdown
 			< .&__dropdown &
@@ -63,7 +64,7 @@
 								< .&__dropdown-controls
 									- block navPrev
 										< .&__cell.&__icon.&__prev @click = onSwitchMonth(-1)
-											+= self.gIcon('keyboard_arrow_left')
+											< @b-icon :value = 'keyboard_arrow_left'
 
 									- block navValue
 										< .&__cell.&__value
@@ -71,7 +72,7 @@
 
 									- block navNext
 										< .&__cell.&__icon.&__next @click = onSwitchMonth(1)
-											+= self.gIcon('keyboard_arrow_right')
+											< @b-icon :value = 'keyboard_arrow_right'
 
 								< .&__label-year
 									< template v-if = value.length > 1

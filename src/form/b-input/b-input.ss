@@ -70,7 +70,7 @@
 					- block clear
 						< _.&__cell.&__icon.&__clear
 							< span v-e:mousedown.prevent | @click = onClear
-								< b-icon &
+								< @b-icon &
 									:value = 'clear' |
 									:hint = l('Clear')
 								.
@@ -80,7 +80,7 @@
 							+= self.gIcon(["{true: 'done', false: 'clear'}[m.valid]"])
 
 					- block progress
-						< _.&__cell.&__icon.&__progress v-if = dataProvider
-							< b-progress-icon v-once
+						< _.&__cell.&__icon.&__progress
+							< @b-progress-icon
 
 					- block icons

@@ -26,6 +26,7 @@ import iData, {
 	component,
 	prop,
 	hook,
+	p,
 
 	ModsDecl,
 	ModelMethods,
@@ -46,8 +47,6 @@ export type ButtonType<T extends string = any> =
 	T;
 
 @component({
-	flyweight: true,
-
 	functional: {
 		dataProvider: undefined,
 		href: undefined
@@ -136,11 +135,13 @@ export default class bButton<T extends Dictionary = Dictionary> extends iData<T>
 	readonly dropdown: string = 'bottom';
 
 	/** @see iSize.lt */
+	@p({replace: false})
 	get lt(): SizeDictionary {
 		return iSize.lt;
 	}
 
 	/** @see iSize.gt */
+	@p({replace: false})
 	get gt(): SizeDictionary {
 		return iSize.gt;
 	}
@@ -232,6 +233,7 @@ export default class bButton<T extends Dictionary = Dictionary> extends iData<T>
 
 	/** @see iOpenToggle.initCloseHelpers */
 	@hook('beforeDataCreate')
+	@p({replace: false})
 	protected initCloseHelpers(events?: CloseHelperEvents): void {
 		iOpenToggle.initCloseHelpers(this, events);
 	}
