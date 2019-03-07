@@ -55,6 +55,10 @@ export default class bWindow<T extends Dictionary = Dictionary> extends iData<T>
 		]
 	};
 
+	protected readonly $refs!: {
+		window: HTMLElement;
+	};
+
 	/**
 	 * Window title store
 	 */
