@@ -12,6 +12,9 @@ const
 	escaper = require('escaper'),
 	{tokens, globalLink, replaceRgxp} = include('build/prelude.webpack');
 
+const
+	labelRgxp = /\[__ESCAPER_QUOT__(\d+)_]/g;
+
 /**
  * WebPack loader for prelude modules
  *
@@ -20,11 +23,14 @@ const
  */
 module.exports = function (str) {
 	if (replaceRgxp) {
+		const
+			content = [];
+
 		let
 			initGlobals = false;
 
 		str = escaper.paste(
-			escaper.replace(str).replace(replaceRgxp, (str) => {
+			escaper.replace(str, {label: '[__ESCAPER_QUOT__${pos}_]'}, content).replace(replaceRgxp, (str) => {
 				const
 					token = tokens.get(str);
 
@@ -37,7 +43,10 @@ module.exports = function (str) {
 				}
 
 				return str;
-			})
+			}),
+
+			content,
+			labelRgxp
 		);
 
 		if (initGlobals) {

@@ -189,7 +189,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 
 	runtime() {
 		return {
-			'noGlobals': true,
+			'noGlobals': false,
 			'core/kv-storage': true,
 			'core/helpers': true,
 			'core/browser': true,
