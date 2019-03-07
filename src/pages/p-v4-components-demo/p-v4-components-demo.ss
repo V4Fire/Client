@@ -12,10 +12,7 @@
 
 - template index() extends ['i-static-page.component'].index
 	- block body
-		< @b-file-button :theme = 'bla' | :mods = {size: 'zzl'}
-			Some text
-
-		/*< b-v4-component-demo
+		< b-v4-component-demo
 			< b-file-button &
 				v-func = false |
 				slot-scope = {ctx} |
@@ -37,10 +34,18 @@
 				slot-scope = {ctx} |
 				@statusReady = ctx.debug
 			.
-				Some text*/
+				Some text
 
-		/*< b-v4-component-demo #default = {ctx}
-			< b-select @statusReady = ctx.debug | :options = [ &
+		< b-v4-component-demo
+			< b-input &
+				v-func = false |
+				slot-scope = {ctx} |
+				@statusReady = ctx.debug
+			.
+				Some text
+
+		< b-v4-component-demo
+			< b-select v-func = false | slot-scope = {ctx} | @statusReady = ctx.debug | :options = [ &
 				{
 					value: '0',
 					label: '0'
@@ -69,5 +74,35 @@
 				{
 					value: '5',
 					label: '5'
+				},
+
+				{
+					value: '6',
+					label: '6'
+				},
+
+				{
+					value: '7',
+					label: '7'
+				},
+
+				{
+					value: '8',
+					label: '8'
+				},
+
+				{
+					value: '9',
+					label: '9'
+				},
+
+				{
+					value: '10',
+					label: '10'
+				},
+
+				{
+					value: '11',
+					label: '11'
 				}
-			] .*/
+			] .
