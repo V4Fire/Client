@@ -534,8 +534,7 @@ export default class iInput<
 	 */
 	@p({hook: 'created', replace: false})
 	protected initValueEvents(): void {
-		const k = this.blockValueField;
-		this.watch(k + (`${k}Store` in this ? 'Store' : ''), this.onBlockValueChange);
+		this.watch(this.blockValueField, this.onBlockValueChange);
 		this.on('actionChange', () => this.validate());
 	}
 
