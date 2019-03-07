@@ -11,7 +11,7 @@ import iBlock from 'super/i-block/i-block';
 
 export default class Lazy {
 	/**
-	 * iBlock instance
+	 * Component instance
 	 */
 	protected readonly component: iBlock;
 

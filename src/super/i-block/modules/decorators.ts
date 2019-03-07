@@ -31,8 +31,8 @@ import {
 } from 'core/component/decorators/base';
 
 export interface InitFieldFn<
-	T extends ComponentInterface = ComponentInterface
-> extends BaseInitFieldFn<T & iBlockDecorator> {}
+	CTX extends ComponentInterface = ComponentInterface
+> extends BaseInitFieldFn<CTX & iBlockDecorator> {}
 
 export type MethodWatchers<
 	CTX extends ComponentInterface = ComponentInterface,
@@ -101,6 +101,21 @@ export const watch = watchDecorator as <CTX extends ComponentInterface = Compone
 export type BindModCb<V = unknown, R = unknown, CTX extends ComponentInterface = ComponentInterface> =
 	((value: V, ctx: CTX) => R) | Function;
 
+export type DecoratorCtx<CTX> = {component: CTX} | CTX;
+
+/**
+ * Returns a component instance from a decorator wrapper
+ * @param val
+ */
+export function getComponentCtx<CTX>(val: DecoratorCtx<CTX>): CTX {
+	// @ts-ignore
+	if ('component' in val) {
+		return val.component;
+	}
+
+	return val;
+}
+
 /**
  * Binds a modifier to the specified parameter
  *
@@ -117,8 +132,8 @@ export function bindModTo<V = unknown, R = unknown, CTX extends ComponentInterfa
 	return (target, key) => {
 		initEvent.once('constructor', ({meta}) => {
 			meta.hooks.created.push({
-				fn(this: CTX & iBlockDecorator): void {
-					this.sync.mod(key, param, converter, opts);
+				fn(this: DecoratorCtx<CTX & iBlockDecorator>): void {
+					getComponentCtx(this).sync.mod(key, param, converter, opts);
 				}
 			});
 		});
@@ -135,7 +150,7 @@ type EventType = 'on' | 'once';
  * @param [value]
  * @param [method]
  */
-export function mod<T extends ComponentInterface = ComponentInterface>(
+export function mod<CTX extends ComponentInterface = ComponentInterface>(
 	name: string,
 	value: ModVal = '*',
 	method: EventType = 'on'
@@ -143,8 +158,9 @@ export function mod<T extends ComponentInterface = ComponentInterface>(
 	return (target, key, descriptor) => {
 		initEvent.once('constructor', ({meta}) => {
 			meta.hooks.beforeCreate.push({
-				fn(this: T & iBlockDecorator): void {
-					this.localEvent[method](`block.mod.set.${name}.${value}`, descriptor.value.bind(this));
+				fn(this: DecoratorCtx<CTX & iBlockDecorator>): void {
+					const c = getComponentCtx(this);
+					c.localEvent[method](`block.mod.set.${name}.${value}`, descriptor.value.bind(c));
 				}
 			});
 		});
@@ -159,7 +175,7 @@ export function mod<T extends ComponentInterface = ComponentInterface>(
  * @param [value]
  * @param [method]
  */
-export function removeMod<T extends ComponentInterface = ComponentInterface>(
+export function removeMod<CTX extends ComponentInterface = ComponentInterface>(
 	name: string,
 	value: ModVal = '*',
 	method: EventType = 'on'
@@ -167,8 +183,9 @@ export function removeMod<T extends ComponentInterface = ComponentInterface>(
 	return (target, key, descriptor) => {
 		initEvent.once('constructor', ({meta}) => {
 			meta.hooks.beforeCreate.push({
-				fn(this: T & iBlockDecorator): void {
-					this.localEvent[method](`block.mod.remove.${name}.${value}`, descriptor.value.bind(this));
+				fn(this: DecoratorCtx<CTX & iBlockDecorator>): void {
+					const c = getComponentCtx(this);
+					c.localEvent[method](`block.mod.remove.${name}.${value}`, descriptor.value.bind(c));
 				}
 			});
 		});
@@ -184,7 +201,7 @@ export function removeMod<T extends ComponentInterface = ComponentInterface>(
  * @param [value]
  * @param [method]
  */
-export function elMod<T extends ComponentInterface = ComponentInterface>(
+export function elMod<CTX extends ComponentInterface = ComponentInterface>(
 	elName: string,
 	modName: string,
 	value: ModVal = '*',
@@ -193,8 +210,9 @@ export function elMod<T extends ComponentInterface = ComponentInterface>(
 	return (target, key, descriptor) => {
 		initEvent.once('constructor', ({meta}) => {
 			meta.hooks.beforeCreate.push({
-				fn(this: T & iBlockDecorator): void {
-					this.localEvent[method](`el.mod.set.${elName}.${modName}.${value}`, descriptor.value.bind(this));
+				fn(this: DecoratorCtx<CTX & iBlockDecorator>): void {
+					const c = getComponentCtx(this);
+					c.localEvent[method](`el.mod.set.${elName}.${modName}.${value}`, descriptor.value.bind(c));
 				}
 			});
 		});
@@ -210,7 +228,7 @@ export function elMod<T extends ComponentInterface = ComponentInterface>(
  * @param [value]
  * @param [method]
  */
-export function removeElMod<T extends ComponentInterface = ComponentInterface>(
+export function removeElMod<CTX extends ComponentInterface = ComponentInterface>(
 	elName: string,
 	modName: string,
 	value: ModVal = '*',
@@ -219,8 +237,9 @@ export function removeElMod<T extends ComponentInterface = ComponentInterface>(
 	return (target, key, descriptor) => {
 		initEvent.once('constructor', ({meta}) => {
 			meta.hooks.beforeCreate.push({
-				fn(this: T & iBlockDecorator): void {
-					this.localEvent[method](`el.mod.remove.${elName}.${modName}.${value}`, descriptor.value.bind(this));
+				fn(this: DecoratorCtx<CTX & iBlockDecorator>): void {
+					const c = getComponentCtx(this);
+					c.localEvent[method](`el.mod.remove.${elName}.${modName}.${value}`, descriptor.value.bind(c));
 				}
 			});
 		});
@@ -255,7 +274,7 @@ export function wait(params: WaitOpts): Function;
 // tslint:disable-next-line:completed-docs
 export function wait(status: number | string | Statuses, params?: WaitOpts | Function): Function;
 // tslint:disable-next-line:completed-docs
-export function wait<T extends ComponentInterface = ComponentInterface>(
+export function wait<CTX extends ComponentInterface = ComponentInterface>(
 	status: number | string | Statuses | WaitOpts,
 	params?: WaitOpts | Function
 ): Function {
@@ -293,9 +312,12 @@ export function wait<T extends ComponentInterface = ComponentInterface>(
 	const
 		isDecorator = !Object.isFunction(handler);
 
-	function wrapper(this: T & iBlockDecorator): CanUndef<CanPromise<T>> {
+	function wrapper(this: DecoratorCtx<CTX & iBlockDecorator>): CanUndef<CanPromise<CTX>> {
 		const
-			getRoot = () => ctx ? this.field.get(ctx) : this,
+			component = getComponentCtx(this);
+
+		const
+			getRoot = () => ctx ? component.field.get(ctx) : component,
 			root = getRoot(),
 			args = arguments;
 
@@ -304,13 +326,13 @@ export function wait<T extends ComponentInterface = ComponentInterface>(
 		}
 
 		const
-			{async: $a} = this,
+			{async: $a} = component,
 			p = {join, label, group};
 
 		const exec = (ctx) => {
 			const
 				// @ts-ignore
-				componentStatus = <number>statuses[this.field.get('componentStatusStore', ctx)];
+				componentStatus = <number>statuses[component.field.get('componentStatusStore', ctx)];
 
 			let
 				res,
@@ -322,7 +344,7 @@ export function wait<T extends ComponentInterface = ComponentInterface>(
 				});
 			}
 
-			if (componentStatus >= status) {
+			if (component.$isFlyweight || componentStatus >= status) {
 				init = true;
 
 				if (defer) {

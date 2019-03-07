@@ -19,7 +19,7 @@
 		- super
 		< select.&__native &
 			ref = select |
-			v-if = b.is.mobile |
+			v-if = browser.is.mobile |
 			v-model = selectedStore |
 			@focus = onFocus |
 			@blur = onBlur |
@@ -32,7 +32,7 @@
 		- super
 		- block dropdown
 			< _.&__dropdown[.&_pos_bottom-left] &
-				v-if = !b.is.mobile && options.length && (
+				v-if = !browser.is.mobile && options.length && (
 					isFunctional ||
 					opt.ifOnce('opened', m.opened !== 'false') && delete watchModsStore.opened
 				)

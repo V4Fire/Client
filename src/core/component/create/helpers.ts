@@ -23,6 +23,7 @@ import {
 } from 'core/component/interface';
 
 export const
+	NULL = {},
 	defaultWrapper = Symbol('defaultWrapper'),
 	customWatcherRgxp = /^([!?]?)([^!?:]*):(.*)/;
 
@@ -201,7 +202,7 @@ export function initDataObject(
 			const
 				key = fieldList[i];
 
-			if (data[key] !== undefined) {
+			if (key in data && data[key] !== NULL) {
 				continue;
 			}
 
@@ -229,7 +230,7 @@ export function initDataObject(
 						throw new Error(`Atom field "${key}" can't wait the non atom field "${waitFieldKey}"`);
 					}
 
-					if (data[waitFieldKey] === undefined) {
+					if (!(waitFieldKey in data) || data[waitFieldKey] === NULL) {
 						queue.add(key);
 
 						if (el.atom) {

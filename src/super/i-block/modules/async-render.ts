@@ -36,7 +36,7 @@ export default class AsyncRender {
 	}
 
 	/**
-	 * iBlock instance
+	 * Component instance
 	 */
 	protected readonly component: iBlock;
 

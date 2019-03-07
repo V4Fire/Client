@@ -47,7 +47,7 @@
 							.
 
 							< template v-else
-								+= self.gIcon(['el.preIcon'], {'g-icon': {}})
+								< @b-icon :value = el.preIcon
 
 					- block text
 						< span.&__cell.&__link-text v-if = !hideLabels
@@ -68,7 +68,7 @@
 							.
 
 							< template v-else
-								+= self.gIcon(['el.icon'], {'g-icon': {}})
+								< @b-icon :value = el.icon
 
 					- block progress
 						< span.&__cell.&__link-icon.&__link-progress

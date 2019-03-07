@@ -27,7 +27,7 @@ export default class Storage {
 	readonly engine: CanUndef<AsyncNamespace>;
 
 	/**
-	 * iBlock instance
+	 * Component instance
 	 */
 	protected readonly component: iBlock;
 

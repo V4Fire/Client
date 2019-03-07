@@ -16,7 +16,7 @@ import { patchVNode, execRenderObject, RenderObject, RenderContext, VNode } from
 
 export default class VDOM {
 	/**
-	 * iBlock instance
+	 * Component instance
 	 */
 	protected readonly component: iBlock;
 

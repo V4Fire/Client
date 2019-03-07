@@ -66,7 +66,7 @@
 							.
 
 							< template v-else
-								+= self.gIcon(['preIcon'], {'g-icon': {}})
+								< @b-icon :value = preIcon
 
 					- block value
 						< _.&__cell.&__value
@@ -86,7 +86,7 @@
 							.
 
 							< template v-else
-								+= self.gIcon(['icon'], {'g-icon': {}})
+								< @b-icon :value = icon
 
 					- block progress
 						< _.&__cell.&__icon.&__progress

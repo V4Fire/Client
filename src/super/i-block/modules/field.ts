@@ -14,7 +14,7 @@ export interface FieldGetter<R = unknown, D = unknown> {
 
 export default class Field {
 	/**
-	 * iBlock instance
+	 * Component instance
 	 */
 	protected readonly component: iBlock;
 

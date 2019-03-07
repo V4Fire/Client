@@ -13,6 +13,7 @@ import { VNode } from 'core/component/engines';
 import { constructors, components } from 'core/component/const';
 import {
 
+	NULL,
 	initDataObject,
 	initPropsObject,
 	addEventAPI,
@@ -24,11 +25,16 @@ import {
 const
 	$$ = symbolGenerator();
 
-const defField = {
+const defProp = {
 	configurable: true,
 	enumerable: true,
 	writable: true,
 	value: undefined
+};
+
+const defField = {
+	...defProp,
+	value: NULL
 };
 
 /**
@@ -112,7 +118,7 @@ export function buildComposite(vnode: VNode, ctx: ComponentInterface): void {
 						key = keys[i],
 						value = props[key];
 
-					Object.defineProperty(fakeCtx, key, value !== undefined ? {...defField, value} : defField);
+					Object.defineProperty(fakeCtx, key, value !== undefined ? {...defProp, value} : defProp);
 				}
 
 				const

@@ -17,7 +17,7 @@ export const
 
 export default class Opt {
 	/**
-	 * iBlock instance
+	 * Component instance
 	 */
 	protected readonly component: iBlock;
 

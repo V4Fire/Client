@@ -18,7 +18,7 @@ const
 
 export default class DOM {
 	/**
-	 * iBlock instance
+	 * Component instance
 	 */
 	protected readonly component: iBlock;
 
