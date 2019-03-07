@@ -149,8 +149,11 @@ export function bindWatchers(ctx: ComponentInterface, eventCtx: ComponentInterfa
 					return;
 				}
 
+				const
+					storeKey = `${key}Store`;
+
 				// @ts-ignore
-				const unwatch = ctx.$watch(key, {
+				const unwatch = ctx.$watch(storeKey in ctx ? storeKey : key, {
 					deep: el.deep,
 					immediate: el.immediate,
 					handler

@@ -991,6 +991,15 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 				immediate: p.immediate
 			};
 
+			if (Object.isString(exprOrFn)) {
+				const
+					storeKey = `${exprOrFn}Store`;
+
+				if (storeKey in this) {
+					exprOrFn = storeKey;
+				}
+			}
+
 			const
 				watcher = this.$watch(exprOrFn, watchParams);
 
