@@ -44,7 +44,7 @@ export * from 'super/i-data/i-data';
 	}
 })
 
-export default class iInput<
+export default abstract class iInput<
 	V extends Value = Value,
 	FV extends FormValue = FormValue,
 	D extends Dictionary = Dictionary

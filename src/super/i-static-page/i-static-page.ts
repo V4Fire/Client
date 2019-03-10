@@ -36,7 +36,7 @@ export const
 	$$ = symbolGenerator();
 
 @component()
-export default class iStaticPage<
+export default abstract class iStaticPage<
 	P extends Dictionary = Dictionary,
 	Q extends Dictionary = Dictionary,
 	M extends Dictionary = Dictionary,

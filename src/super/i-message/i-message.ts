@@ -10,7 +10,7 @@ import iBlock, { component, prop, field, p, ModsDecl } from 'super/i-block/i-blo
 export * from 'super/i-block/i-block';
 
 @component()
-export default class iMessage extends iBlock {
+export default abstract class iMessage extends iBlock {
 	/**
 	 * Initial information message
 	 */

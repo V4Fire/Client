@@ -152,7 +152,7 @@ export const
 	modsCache = Object.createDict<ModsNTable>();
 
 @component()
-export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
+export default abstract class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	/**
 	 * Component unique id
 	 */
