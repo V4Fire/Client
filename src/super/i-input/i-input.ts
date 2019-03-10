@@ -307,10 +307,10 @@ export default abstract class iInput<
 
 	protected valueStore!: unknown;
 
-	/** @see iHint.setHint */
+	/** @see iHint.getHintClass */
 	@p({replace: false})
-	setHint(pos: string): ReadonlyArray<string> {
-		return iHint.setHint(this, pos);
+	getHintClass(pos: string): ReadonlyArray<string> {
+		return iHint.getHintClass(this, pos);
 	}
 
 	/** @see iAccess.enable */

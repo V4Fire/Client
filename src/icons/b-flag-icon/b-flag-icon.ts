@@ -18,8 +18,8 @@ export default class bFlagIcon extends iBlock implements iHint {
 	@prop(String)
 	readonly value!: string;
 
-	/** @see iHint.setHint */
-	setHint(pos: string): ReadonlyArray<string> {
-		return iHint.setHint(this, pos);
+	/** @see iHint.getHintClass */
+	getHintClass(pos: string): ReadonlyArray<string> {
+		return iHint.getHintClass(this, pos);
 	}
 }

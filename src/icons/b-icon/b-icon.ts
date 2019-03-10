@@ -38,9 +38,9 @@ export default class bIcon extends iBlock implements iIcon, iHint {
 	@prop(String)
 	readonly hintPos: string = 'bottom';
 
-	/** @see iHint.setHint */
-	setHint(pos: string): ReadonlyArray<string> {
-		return iHint.setHint(this, pos);
+	/** @see iHint.getHintClass */
+	getHintClass(pos: string): ReadonlyArray<string> {
+		return iHint.getHintClass(this, pos);
 	}
 
 	/** @see iIcon.getIconLink */

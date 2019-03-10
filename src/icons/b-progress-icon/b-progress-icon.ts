@@ -14,9 +14,9 @@ export * from 'super/i-block/i-block';
 
 @component({functional: true, flyweight: true})
 export default class bProgressIcon extends iBlock implements iIcon, iHint {
-	/** @see iHint.setHint */
-	setHint(pos: string): ReadonlyArray<string> {
-		return iHint.setHint(this, pos);
+	/** @see iHint.getHintClass */
+	getHintClass(pos: string): ReadonlyArray<string> {
+		return iHint.getHintClass(this, pos);
 	}
 
 	/** @see iIcon.getIconLink */

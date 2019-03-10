@@ -178,9 +178,9 @@ export default class bList<T extends Dictionary = Dictionary> extends iData<T>
 		});
 	}
 
-	/** @see iHint.setHint */
-	setHint(pos: string): ReadonlyArray<string> {
-		return iHint.setHint(this, pos);
+	/** @see iHint.getHintClass */
+	getHintClass(pos: string): ReadonlyArray<string> {
+		return iHint.getHintClass(this, pos);
 	}
 
 	/** @see iIcon.getIconLink */
