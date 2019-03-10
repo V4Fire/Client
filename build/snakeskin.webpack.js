@@ -49,8 +49,8 @@ const
 	files = $C(resources).reduce((arr, el) => arr.concat(glob.sync(path.join(el, components))), []).reverse();
 
 const
-	componentClassRgxp = /^\s*export\s+default\s+class\s+(([\s\S]*?)\s+extends\s+[\s\S]*?)\s*{/m,
 	componentRgxp = /@component\(([^@]*?)\)\n+\s*export\s+/,
+	componentClassRgxp = /^\s*export\s+default\s+(?:abstract\s+)?class\s+(([\s\S]*?)\s+extends\s+[\s\S]*?)(?:\s+implements\s+|\s*)?[\s\S]*?\{/m,
 	propsRgxp = /^(\t+)@prop\s*\([^@]+?\)+\n+\1([ \w$]+)(?:[\?!]?:\s*[ \w|&$?()\[\]{}<>'"`:.]+?)?\s*(?:=|;$)/gm;
 
 const
