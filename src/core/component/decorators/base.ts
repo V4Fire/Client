@@ -58,7 +58,7 @@ export interface ComponentAccessor {
  * @decorator
  */
 export const prop = paramsFactory<Function | ObjectConstructor | ComponentProp>('props', (p) => {
-	if (Object.isFunction(p)) {
+	if (Object.isFunction(p) || Object.isArray(p)) {
 		return {type: p};
 	}
 
