@@ -20,6 +20,7 @@ export const
 	$$ = symbolGenerator();
 
 @component({
+	flyweight: true,
 	functional: {
 		dataProvider: undefined
 	}
@@ -111,21 +112,6 @@ export default class bCheckbox<
 	 * @param e
 	 * @emits actionChange(value: V)
 	 */
-	@watch({
-		field: '?$el:click',
-		wrapper: (o, cb) => (e) => {
-			const
-				{block: $b} = o;
-
-			if (
-				e.target.closest($b.getElSelector('wrapper')) ||
-				e.target.closest($b.getElSelector('hidden-input'))
-			) {
-				return cb(e);
-			}
-		}
-	})
-
 	protected async onClick(e: Event): Promise<void> {
 		await this.focus();
 		await this.toggle();

@@ -18,7 +18,8 @@ import {
 	initPropsObject,
 	addEventAPI,
 	addMethodsFromMeta,
-	addElAccessor
+	addElAccessor,
+	getNormalParent
 
 } from 'core/component/create/helpers';
 
@@ -108,10 +109,15 @@ export function buildComposite(vnode: VNode, ctx: ComponentInterface): void {
 				addEventAPI(fakeCtx);
 				addElAccessor($$.el, fakeCtx);
 
+				Object.defineProperty(fakeCtx, '$props', {value: {}});
+				Object.defineProperty(fakeCtx, '$data', {value: {}});
+				Object.defineProperty(fakeCtx, '$$data', {writable: true, value: fakeCtx.$data});
 				Object.defineProperty(fakeCtx, '$attrs', {value: attrs});
-				Object.defineProperty(fakeCtx, '$parent', {value: ctx});
 				Object.defineProperty(fakeCtx, '$slots', {value: {default: vnode.children, ...vCtx.$slots}});
 				Object.defineProperty(fakeCtx, '$scopedSlots', {value: {...vData && vData.scopedSlots}});
+				Object.defineProperty(fakeCtx, '$parent', {value: ctx});
+				Object.defineProperty(fakeCtx, '$normalParent', {value: getNormalParent(fakeCtx)});
+				Object.defineProperty(fakeCtx, '$children', {value: vnode.children});
 
 				for (let keys = Object.keys(props), i = 0; i < keys.length; i++) {
 					const
@@ -119,6 +125,7 @@ export function buildComposite(vnode: VNode, ctx: ComponentInterface): void {
 						value = props[key];
 
 					Object.defineProperty(fakeCtx, key, value !== undefined ? {...defProp, value} : defProp);
+					fakeCtx.$props[key] = value;
 				}
 
 				const
@@ -133,7 +140,7 @@ export function buildComposite(vnode: VNode, ctx: ComponentInterface): void {
 							key = keys[i],
 							val = fields[key];
 
-						if (val && (val.unique && val.replace !== true || val.replace === false)) {
+						if (val && (val.replace !== true && (val.unique || val.src === meta.componentName) || val.replace === false)) {
 							Object.defineProperty(fakeCtx, key, defField);
 						}
 					}
@@ -144,6 +151,7 @@ export function buildComposite(vnode: VNode, ctx: ComponentInterface): void {
 				initDataObject(systemFields, fakeCtx, meta.instance, fakeCtx);
 				initDataObject(fields, fakeCtx, meta.instance, fakeCtx);
 
+				fakeCtx.$$data = fakeCtx;
 				fakeCtx.hook = 'created';
 				fakeCtx.componentStatus = 'ready';
 

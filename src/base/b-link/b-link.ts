@@ -16,6 +16,7 @@ import iData, { component, prop, ModsDecl } from 'super/i-data/i-data';
 export * from 'super/i-data/i-data';
 
 @component({
+	flyweight: true,
 	functional: {
 		dataProvider: undefined
 	}

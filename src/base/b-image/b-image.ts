@@ -17,7 +17,7 @@ export * from 'super/i-message/i-message';
 export const
 	$$ = symbolGenerator();
 
-@component({functional: true})
+@component({flyweight: true, functional: true})
 export default class bImage extends iMessage implements iProgress, iVisible {
 	/**
 	 * Target image src

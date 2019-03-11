@@ -15,7 +15,8 @@ import {
 	createMeta,
 	initDataObject,
 	bindWatchers,
-	addMethodsToMeta
+	addMethodsToMeta,
+	getNormalParent
 
 } from 'core/component/create/helpers';
 
@@ -113,15 +114,8 @@ export function getComponent(
 			const
 				ctx = <any>this;
 
-			let
-				p = ctx.$parent;
-
-			while (p && p.isFunctional) {
-				p = p.$parent;
-			}
-
 			ctx.$$data = {};
-			ctx.$normalParent = p;
+			ctx.$normalParent = getNormalParent(ctx);
 			ctx.$async = new Async(this);
 			ctx.instance = instance;
 			ctx.componentName = meta.name;

@@ -177,7 +177,7 @@ export function paramsFactory<T = unknown>(
 
 				const
 					obj = meta[metaKey],
-					el = <Dictionary<any>>obj[key] || {};
+					el = obj[key] || {src: meta.componentName};
 
 				if (metaKey === 'methods') {
 					const
@@ -283,7 +283,7 @@ export function paramsFactory<T = unknown>(
 			}
 
 			const
-				el = obj[key] || {},
+				el = obj[key] || {src: meta.componentName},
 				watchers = el.watchers || new Map(),
 				after = el.after || new Set();
 

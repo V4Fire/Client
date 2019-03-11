@@ -203,9 +203,10 @@ export function initDataObject(
 	while (true) {
 		for (let i = 0; i < fieldList.length; i++) {
 			const
-				key = fieldList[i];
+				key = fieldList[i],
+				isNull = data[key] === NULL;
 
-			if (key in data && data[key] !== NULL) {
+			if (key in data && !isNull) {
 				continue;
 			}
 
@@ -247,8 +248,11 @@ export function initDataObject(
 			}
 
 			if (canInit) {
-				ctx.$activeField = key;
+				if (isNull) {
+					data[key] = undefined;
+				}
 
+				ctx.$activeField = key;
 				queue.delete(key);
 				atomQueue.delete(key);
 
@@ -500,6 +504,8 @@ export function addMethodsToMeta(constructor: Function, meta: ComponentMeta): vo
 		}
 
 		const
+			src = meta.componentName,
+			replace = !meta.params.flyweight,
 			desc = <PropertyDescriptor>Object.getOwnPropertyDescriptor(proto, key);
 
 		if ('value' in desc) {
@@ -511,7 +517,7 @@ export function addMethodsToMeta(constructor: Function, meta: ComponentMeta): vo
 			}
 
 			// tslint:disable-next-line:prefer-object-spread
-			meta.methods[key] = Object.assign(meta.methods[key] || {watchers: {}, hooks: {}}, {fn});
+			meta.methods[key] = Object.assign(meta.methods[key] || {replace, watchers: {}, hooks: {}}, {src, fn});
 
 		} else {
 			const
@@ -540,6 +546,8 @@ export function addMethodsToMeta(constructor: Function, meta: ComponentMeta): vo
 
 				proto[k] = set;
 				meta.methods[k] = {
+					src,
+					replace,
 					fn: set,
 					watchers: {},
 					hooks: {}
@@ -552,17 +560,19 @@ export function addMethodsToMeta(constructor: Function, meta: ComponentMeta): vo
 
 				proto[k] = get;
 				meta.methods[k] = {
+					src,
+					replace,
 					fn: get,
 					watchers: {},
 					hooks: {}
 				};
 			}
 
-			Object.assign(obj, {
-				[key]: {
-					get: desc.get || old && old.get,
-					set
-				}
+			// tslint:disable-next-line:prefer-object-spread
+			obj[key] = Object.assign(obj[key] || {replace}, {
+				src,
+				get: desc.get || old && old.get,
+				set
 			});
 		}
 	}
@@ -648,7 +658,7 @@ export function addElAccessor(elId: symbol, ctx: ComponentInterface): void {
 
 /**
  * Adds the component event API to the specified component
- * @param ctx
+ * @param ctx - component context
  */
 export function addEventAPI(ctx: Dictionary<any>): void {
 	const
@@ -681,6 +691,22 @@ export function addEventAPI(ctx: Dictionary<any>): void {
 			}
 		}
 	});
+}
+
+/**
+ * Returns link to the "normal" (non functional and non flyweight) parent component for the specified component
+ * @param ctx - component context
+ */
+export function getNormalParent(ctx: ComponentInterface): CanUndef<ComponentInterface> {
+	let
+		normalParent: CanUndef<ComponentInterface> = ctx.$parent;
+
+	// @ts-ignore
+	while (normalParent && (normalParent.$isFlyweight || normalParent.meta.params.functional)) {
+		normalParent = normalParent.$parent;
+	}
+
+	return normalParent;
 }
 
 function createSyncPromise<R = unknown>(val?: R, err?: unknown): Promise<R> {

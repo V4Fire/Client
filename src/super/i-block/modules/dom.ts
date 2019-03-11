@@ -184,12 +184,10 @@ export default class DOM {
 			Object.get(componentRgxp.exec($el.className), '1') || this.component.componentName;
 
 		return Object.assign(Object.create(Block.prototype), {
-			component: {
+			component: comp || {
 				$el,
 				componentName,
-				// @ts-ignore
-				localEvent: comp ? comp.localEvent : {emit(): void { /* loopback */ }},
-				mods: comp ? comp.mods : undefined
+				localEvent: {emit(): void { /* loopback */ }}
 			}
 		});
 	}

@@ -109,11 +109,7 @@ export type DecoratorCtx<CTX> = {component: CTX} | CTX;
  */
 export function getComponentCtx<CTX>(val: DecoratorCtx<CTX>): CTX {
 	// @ts-ignore
-	if ('component' in val) {
-		return val.component;
-	}
-
-	return val;
+	return val.component || val;
 }
 
 /**

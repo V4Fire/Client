@@ -34,7 +34,8 @@ import {
 	bindWatchers,
 	addEventAPI,
 	addMethodsFromMeta,
-	addElAccessor
+	addElAccessor,
+	getNormalParent
 
 } from 'core/component/create/helpers';
 
@@ -85,13 +86,6 @@ export function createFakeCtx<T extends Dictionary = FunctionalCtx>(
 		$w = new EventEmitter({maxListeners: 1e3}),
 		$a = new Async(this);
 
-	let
-		$normalParent = p;
-
-	while ($normalParent && $normalParent.isFunctional) {
-		$normalParent = $normalParent.$parent;
-	}
-
 	const
 		{children, data: opts} = renderCtx;
 
@@ -136,7 +130,7 @@ export function createFakeCtx<T extends Dictionary = FunctionalCtx>(
 		meta,
 		children: children || [],
 
-		$normalParent,
+		$parent: p,
 		$root: renderCtx.$root || p && p.$root,
 		$options,
 
@@ -169,8 +163,9 @@ export function createFakeCtx<T extends Dictionary = FunctionalCtx>(
 
 			$a.clearAll().locked = true;
 
-			if ($normalParent) {
+			if (this.$normalParent) {
 				const
+					// @ts-ignore
 					hooks = $normalParent.meta.hooks,
 					destroyCheckHooks = ['mounted', 'created', 'beforeDestroy'];
 
@@ -267,6 +262,7 @@ export function createFakeCtx<T extends Dictionary = FunctionalCtx>(
 		}
 	});
 
+	fakeCtx.$normalParent = getNormalParent(fakeCtx);
 	addEventAPI(fakeCtx);
 
 	if (!fakeCtx.$root) {
@@ -297,32 +293,27 @@ export function createFakeCtx<T extends Dictionary = FunctionalCtx>(
 	runHook('beforeDataCreate', meta, fakeCtx)
 		.catch(stderr);
 
-	if (meta.params.flyweight) {
-		Object.assign(fakeCtx, data);
+	for (let keys = Object.keys(data), i = 0; i < keys.length; i++) {
+		const
+			key = keys[i];
 
-	} else {
-		for (let keys = Object.keys(data), i = 0; i < keys.length; i++) {
-			const
-				key = keys[i];
+		Object.defineProperty(fakeCtx, key, {
+			get(): any {
+				return data[key];
+			},
 
-			Object.defineProperty(fakeCtx, key, {
-				get(): any {
-					return data[key];
-				},
+			set(val: any): void {
+				fakeCtx.$dataCache[key] = true;
 
-				set(val: any): void {
-					fakeCtx.$dataCache[key] = true;
+				const
+					old = data[key];
 
-					const
-						old = data[key];
-
-					if (val !== old) {
-						data[key] = val;
-						$w.emit(key, val, old);
-					}
+				if (val !== old) {
+					data[key] = val;
+					$w.emit(key, val, old);
 				}
-			});
-		}
+			}
+		});
 	}
 
 	fakeCtx.$$data = fakeCtx;
@@ -439,126 +430,124 @@ export function patchVNode(vNode: VNode, ctx: Dictionary<any>, renderCtx: Render
 		addDirectives(<any>ctx, el, data, data.directives);
 		oldCtx && oldCtx.$destroy();
 
-		if (!meta.params.flyweight) {
-			if (oldCtx) {
-				const
-					props = ctx.$props,
-					oldProps = oldCtx.$props,
-					linkedFields = <Dictionary<string>>{};
-
-				for (let keys = Object.keys(oldProps), i = 0; i < keys.length; i++) {
-					const
-						key = keys[i],
-						linked = oldCtx.syncLinkCache[key];
-
-					if (linked) {
-						for (let keys = Object.keys(linked), i = 0; i < keys.length; i++) {
-							linkedFields[linked[keys[i]].path] = key;
-						}
-					}
-				}
-
-				{
-					const list = [
-						oldCtx.meta.systemFields,
-						oldCtx.meta.fields
-					];
-
-					for (let i = 0; i < list.length; i++) {
-						const
-							obj = list[i],
-							keys = Object.keys(obj);
-
-						for (let j = 0; j < keys.length; j++) {
-							const
-								key = keys[j],
-								field = obj[key],
-								link = linkedFields[key];
-
-							const
-								val = ctx[key],
-								old = oldCtx[key];
-
-							if (
-								!ctx.$dataCache[key] &&
-								(Object.isFunction(field.unique) ? !field.unique(ctx, oldCtx) : !field.unique) &&
-								!Object.fastCompare(val, old) &&
-
-								(
-									!link ||
-									link && Object.fastCompare(props[link], oldProps[link])
-								)
-							) {
-								if (field.merge) {
-									if (field.merge === true) {
-										let
-											newVal = old;
-
-										if (Object.isObject(val) || Object.isObject(old)) {
-											// tslint:disable-next-line:prefer-object-spread
-											newVal = Object.assign({}, val, old);
-
-										} else if (Object.isArray(val) || Object.isArray(old)) {
-											// tslint:disable-next-line:prefer-object-spread
-											newVal = Object.assign([], val, old);
-										}
-
-										ctx[key] = newVal;
-
-									} else {
-										field.merge(ctx, oldCtx, key, link);
-									}
-
-								} else {
-									ctx[key] = oldCtx[key];
-								}
-							}
-						}
-					}
-				}
-			}
-
+		if (oldCtx) {
 			const
-				refs = {},
-				refNodes = el.querySelectorAll(`.${ctx.componentId}[data-component-ref]`);
+				props = ctx.$props,
+				oldProps = oldCtx.$props,
+				linkedFields = <Dictionary<string>>{};
 
-			for (let i = 0; i < refNodes.length; i++) {
-				const
-					el = refNodes[i],
-					ref = el.dataset.componentRef;
-
-				refs[ref] = refs[ref] ? [].concat(refs[ref], el) : el;
-			}
-
-			for (let keys = Object.keys(refs), i = 0; i < keys.length; i++) {
+			for (let keys = Object.keys(oldProps), i = 0; i < keys.length; i++) {
 				const
 					key = keys[i],
-					el = refs[key];
+					linked = oldCtx.syncLinkCache[key];
 
-				let cache;
-				Object.defineProperty(ctx.$refs, key, {
-					configurable: true,
-					get(): any {
-						if (cache) {
-							return cache;
-						}
-
-						if (Object.isArray(el)) {
-							const
-								res = <any[]>[];
-
-							for (let i = 0; i < el.length; i++) {
-								const v = <any>el[i];
-								res.push(v.component || v);
-							}
-
-							return cache = res;
-						}
-
-						return cache = el.component || el;
+				if (linked) {
+					for (let keys = Object.keys(linked), i = 0; i < keys.length; i++) {
+						linkedFields[linked[keys[i]].path] = key;
 					}
-				});
+				}
 			}
+
+			{
+				const list = [
+					oldCtx.meta.systemFields,
+					oldCtx.meta.fields
+				];
+
+				for (let i = 0; i < list.length; i++) {
+					const
+						obj = list[i],
+						keys = Object.keys(obj);
+
+					for (let j = 0; j < keys.length; j++) {
+						const
+							key = keys[j],
+							field = obj[key],
+							link = linkedFields[key];
+
+						const
+							val = ctx[key],
+							old = oldCtx[key];
+
+						if (
+							!ctx.$dataCache[key] &&
+							(Object.isFunction(field.unique) ? !field.unique(ctx, oldCtx) : !field.unique) &&
+							!Object.fastCompare(val, old) &&
+
+							(
+								!link ||
+								link && Object.fastCompare(props[link], oldProps[link])
+							)
+						) {
+							if (field.merge) {
+								if (field.merge === true) {
+									let
+										newVal = old;
+
+									if (Object.isObject(val) || Object.isObject(old)) {
+										// tslint:disable-next-line:prefer-object-spread
+										newVal = Object.assign({}, val, old);
+
+									} else if (Object.isArray(val) || Object.isArray(old)) {
+										// tslint:disable-next-line:prefer-object-spread
+										newVal = Object.assign([], val, old);
+									}
+
+									ctx[key] = newVal;
+
+								} else {
+									field.merge(ctx, oldCtx, key, link);
+								}
+
+							} else {
+								ctx[key] = oldCtx[key];
+							}
+						}
+					}
+				}
+			}
+		}
+
+		const
+			refs = {},
+			refNodes = el.querySelectorAll(`.${ctx.componentId}[data-component-ref]`);
+
+		for (let i = 0; i < refNodes.length; i++) {
+			const
+				el = refNodes[i],
+				ref = el.dataset.componentRef;
+
+			refs[ref] = refs[ref] ? [].concat(refs[ref], el) : el;
+		}
+
+		for (let keys = Object.keys(refs), i = 0; i < keys.length; i++) {
+			const
+				key = keys[i],
+				el = refs[key];
+
+			let cache;
+			Object.defineProperty(ctx.$refs, key, {
+				configurable: true,
+				get(): any {
+					if (cache) {
+						return cache;
+					}
+
+					if (Object.isArray(el)) {
+						const
+							res = <any[]>[];
+
+						for (let i = 0; i < el.length; i++) {
+							const v = <any>el[i];
+							res.push(v.component || v);
+						}
+
+						return cache = res;
+					}
+
+					return cache = el.component || el;
+				}
+			});
 		}
 
 		ctx.hook = 'mounted';

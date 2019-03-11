@@ -66,6 +66,7 @@ export interface UniqueFieldFn<CTX extends ComponentInterface = ComponentInterfa
 }
 
 export interface SystemField<CTX extends ComponentInterface = ComponentInterface> {
+	src: string;
 	atom?: boolean;
 	default?: unknown;
 	unique?: boolean | UniqueFieldFn<CTX>;
@@ -130,6 +131,7 @@ export type Hooks =
 
 export interface ComponentMethod {
 	fn: Function;
+	src: string;
 	wrapper?: boolean;
 	replace?: boolean;
 	watchers: Dictionary<MethodWatcher>;
@@ -141,6 +143,7 @@ export interface ComponentMethod {
 }
 
 export interface ComponentAccessor extends ComputedOptions<unknown> {
+	src: string;
 	replace?: boolean;
 }
 

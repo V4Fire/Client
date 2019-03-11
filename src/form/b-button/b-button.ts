@@ -46,6 +46,7 @@ export type ButtonType<T extends string = any> =
 	T;
 
 @component({
+	flyweight: true,
 	functional: {
 		dataProvider: undefined,
 		href: undefined
