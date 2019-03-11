@@ -31,7 +31,7 @@ export default class Analytics {
 	 * @param event - event name
 	 * @param [details] - event details
 	 */
-	protected sendEvent(event: string, details: Dictionary = {}): void {
+	sendEvent(event: string, details: Dictionary = {}): void {
 		//#if runtime has core/analytics
 		analytics.send(event, details);
 		//#endif
