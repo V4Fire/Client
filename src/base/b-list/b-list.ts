@@ -11,7 +11,6 @@ import symbolGenerator from 'core/symbol';
 import iTheme from 'traits/i-theme/i-theme';
 import iVisible from 'traits/i-visible/i-visible';
 import iIcon from 'traits/i-icon/i-icon';
-import iHint from 'traits/i-hint/i-hint';
 
 import iData, { component, prop, field, system, hook, watch, p, ModsDecl } from 'super/i-data/i-data';
 import { Option } from 'base/b-list/modules/interface';
@@ -34,7 +33,7 @@ export const
 })
 
 export default class bList<T extends Dictionary = Dictionary> extends iData<T>
-	implements iTheme, iIcon, iHint, iVisible {
+	implements iTheme, iIcon, iVisible {
 
 	/**
 	 * Initial component value
@@ -176,11 +175,6 @@ export default class bList<T extends Dictionary = Dictionary> extends iData<T>
 
 			return undefined;
 		});
-	}
-
-	/** @see iHint.getHintClass */
-	getHintClass(pos: string): ReadonlyArray<string> {
-		return iHint.getHintClass(this, pos);
 	}
 
 	/** @see iIcon.getIconLink */

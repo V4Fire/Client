@@ -11,7 +11,6 @@ import iAccess from 'traits/i-access/i-access';
 import iVisible from 'traits/i-visible/i-visible';
 import iSize, { SizeDictionary } from 'traits/i-size/i-size';
 import iIcon from 'traits/i-icon/i-icon';
-import iHint from 'traits/i-hint/i-hint';
 
 import iData, { component, prop, ModsDecl } from 'super/i-data/i-data';
 export * from 'super/i-data/i-data';
@@ -23,7 +22,7 @@ export * from 'super/i-data/i-data';
 })
 
 export default class bLink<T extends Dictionary = Dictionary> extends iData<T>
-	implements iTheme, iAccess, iIcon, iHint, iVisible, iSize {
+	implements iTheme, iAccess, iIcon, iVisible, iSize {
 
 	/**
 	 * Link href
@@ -111,11 +110,6 @@ export default class bLink<T extends Dictionary = Dictionary> extends iData<T>
 	/** @see iAccess.disable */
 	disable(): Promise<boolean> {
 		return iAccess.disable(this);
-	}
-
-	/** @see iHint.getHintClass */
-	getHintClass(pos: string): ReadonlyArray<string> {
-		return iHint.getHintClass(this, pos);
 	}
 
 	/** @see iIcon.getIconLink */

@@ -7,13 +7,11 @@
  */
 
 import iIcon from 'traits/i-icon/i-icon';
-import iHint from 'traits/i-hint/i-hint';
-
 import iBlock, { component, prop } from 'super/i-block/i-block';
 export * from 'super/i-block/i-block';
 
 @component({functional: true, flyweight: true})
-export default class bIcon extends iBlock implements iIcon, iHint {
+export default class bIcon extends iBlock implements iIcon {
 	/**
 	 * Component value
 	 */
@@ -37,11 +35,6 @@ export default class bIcon extends iBlock implements iIcon, iHint {
 	 */
 	@prop(String)
 	readonly hintPos: string = 'bottom';
-
-	/** @see iHint.getHintClass */
-	getHintClass(pos: string): ReadonlyArray<string> {
-		return iHint.getHintClass(this, pos);
-	}
 
 	/** @see iIcon.getIconLink */
 	getIconLink(iconId: string): string {

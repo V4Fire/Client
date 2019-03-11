@@ -94,6 +94,54 @@ export default class Provide {
 	}
 
 	/**
+	 * Returns an object with base component modifiers
+	 * @param mods - additional modifiers ({modifier: {currentValue: value}} || {modifier: value})
+	 */
+	mods(mods?: Dictionary<ModVal | Dictionary<ModVal>>): Readonly<ModsNTable> {
+		const
+			{baseMods} = this.component;
+
+		const
+			key = JSON.stringify(baseMods) + JSON.stringify(mods),
+			cache = modsCache[key];
+
+		if (cache) {
+			return cache;
+		}
+
+		const
+			map = modsCache[key] = {...baseMods};
+
+		if (mods) {
+			const
+				keys = Object.keys(mods);
+
+			for (let i = 0; i < keys.length; i++) {
+				const
+					key = keys[i],
+					mod = key.dasherize();
+
+				let
+					el = <Dictionary>mods[key];
+
+				if (!Object.isObject(el)) {
+					el = {default: el};
+				}
+
+				// tslint:disable-next-line:prefer-conditional-expression
+				if (!(key in mods) || el[key] === undefined) {
+					map[mod] = el[Object.keys(el)[0]];
+
+				} else {
+					map[mod] = el[key];
+				}
+			}
+		}
+
+		return Object.freeze(map);
+	}
+
+	/**
 	 * Returns an object with classes for elements of an another component
 	 *
 	 * @param componentName
@@ -154,54 +202,6 @@ export default class Provide {
 	}
 
 	/**
-	 * Returns an object with base component modifiers
-	 * @param mods - additional modifiers ({modifier: {currentValue: value}} || {modifier: value})
-	 */
-	mods(mods?: Dictionary<ModVal | Dictionary<ModVal>>): Readonly<ModsNTable> {
-		const
-			{baseMods} = this.component;
-
-		const
-			key = JSON.stringify(baseMods) + JSON.stringify(mods),
-			cache = modsCache[key];
-
-		if (cache) {
-			return cache;
-		}
-
-		const
-			map = modsCache[key] = {...baseMods};
-
-		if (mods) {
-			const
-				keys = Object.keys(mods);
-
-			for (let i = 0; i < keys.length; i++) {
-				const
-					key = keys[i],
-					mod = key.dasherize();
-
-				let
-					el = <Dictionary>mods[key];
-
-				if (!Object.isObject(el)) {
-					el = {default: el};
-				}
-
-				// tslint:disable-next-line:prefer-conditional-expression
-				if (!(key in mods) || el[key] === undefined) {
-					map[mod] = el[Object.keys(el)[0]];
-
-				} else {
-					map[mod] = el[key];
-				}
-			}
-		}
-
-		return Object.freeze(map);
-	}
-
-	/**
 	 * Returns an array of component classes by the specified parameters
 	 *
 	 * @param [componentName] - name of the source component
@@ -253,13 +253,13 @@ export default class Provide {
 	 * @param componentNameOrCtx
 	 * @param els - map of elements with map of modifiers ({button: {focused: true}})
 	 */
-	protected elClasses(componentNameOrCtx: string | iBlock, els: Dictionary<ModsTable>): ReadonlyArray<string>;
+	elClasses(componentNameOrCtx: string | iBlock, els: Dictionary<ModsTable>): ReadonlyArray<string>;
 
 	/**
 	 * @param els - map of elements with map of modifiers ({button: {focused: true}})
 	 */
-	protected elClasses(els: Dictionary<ModsTable>): ReadonlyArray<string>;
-	protected elClasses(
+	elClasses(els: Dictionary<ModsTable>): ReadonlyArray<string>;
+	elClasses(
 		componentNameOrCtx: string | iBlock | Dictionary<ModsTable>,
 		els?: Dictionary<ModsTable>
 	): ReadonlyArray<string> {
@@ -322,5 +322,13 @@ export default class Provide {
 		}
 
 		return Object.freeze(classes);
+	}
+
+	/**
+	 * Returns hint classes by the specified parameters
+	 * @param [pos] - hint position
+	 */
+	hintClasses(pos: string = 'bottom'): ReadonlyArray<string> {
+		return this.blockClasses('g-hint', {pos});
 	}
 }

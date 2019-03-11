@@ -36,7 +36,7 @@
 					< a.&__cell.&__link &
 						ref = link |
 						:href = href |
-						:class = getHintClass(hintPos) |
+						:class = provide.hintClasses(hintPos) |
 						:-hint = t(hint) |
 						${attrs|!html}
 					.

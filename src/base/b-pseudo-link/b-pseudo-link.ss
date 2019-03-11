@@ -14,7 +14,7 @@
 	- block link
 		< a:void.&__cell.&__link &
 			ref = link |
-			:class = getHintClass(hintPos) |
+			:class = provide.hintClasses(hintPos) |
 			:-hint = t(hint) |
 			${attrs|!html}
 		.

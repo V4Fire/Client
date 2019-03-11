@@ -7,18 +7,11 @@
  */
 
 import iIcon from 'traits/i-icon/i-icon';
-import iHint from 'traits/i-hint/i-hint';
-
-import iBlock, { component, ModsDecl } from 'super/i-block/i-block';
+import iBlock, { component } from 'super/i-block/i-block';
 export * from 'super/i-block/i-block';
 
 @component({functional: true, flyweight: true})
-export default class bProgressIcon extends iBlock implements iIcon, iHint {
-	/** @see iHint.getHintClass */
-	getHintClass(pos: string): ReadonlyArray<string> {
-		return iHint.getHintClass(this, pos);
-	}
-
+export default class bProgressIcon extends iBlock implements iIcon {
 	/** @see iIcon.getIconLink */
 	getIconLink(iconId: string): string {
 		return iIcon.getIconLink(iconId);
