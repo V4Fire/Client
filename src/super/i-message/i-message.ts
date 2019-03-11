@@ -131,7 +131,7 @@ export default class iMessage extends iBlock {
 			$a.setImmediate(() => {
 				try {
 					$a.on(document, events.key || 'keyup', this.onKeyClose, helpersGroup);
-					$a.on(document, events.touch || 'click', this.onTouchClose, helpersGroup);
+					$a.on(document, events.touch || 'click touchstart', this.onTouchClose, helpersGroup);
 
 				} catch {}
 			}, helpersGroup);
