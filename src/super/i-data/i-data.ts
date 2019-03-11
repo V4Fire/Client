@@ -61,7 +61,7 @@ export const
 	$$ = symbolGenerator();
 
 @component()
-export default class iData<T extends Dictionary = Dictionary> extends iMessage implements iProgress {
+export default abstract class iData<T extends Dictionary = Dictionary> extends iMessage implements iProgress {
 	/**
 	 * Data provider name
 	 */

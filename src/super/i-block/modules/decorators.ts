@@ -71,7 +71,7 @@ export const p = pDecorator as <CTX extends ComponentInterface = ComponentInterf
  * @override
  */
 export const prop = propDecorator as <CTX extends ComponentInterface = ComponentInterface, A = unknown, B = A>(
-	params?: Function | ObjectConstructor | ComponentProp<CTX, A, B>
+	params?: CanArray<Function> | ObjectConstructor | ComponentProp<CTX, A, B>
 ) => Function;
 
 /**

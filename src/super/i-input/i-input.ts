@@ -9,7 +9,6 @@
 import iTheme from 'traits/i-theme/i-theme';
 import iAccess from 'traits/i-access/i-access';
 import iVisible from 'traits/i-visible/i-visible';
-import iHint from 'traits/i-hint/i-hint';
 
 import iData, {
 
@@ -44,11 +43,11 @@ export * from 'super/i-data/i-data';
 	}
 })
 
-export default class iInput<
+export default abstract class iInput<
 	V extends Value = Value,
 	FV extends FormValue = FormValue,
 	D extends Dictionary = Dictionary
-> extends iData<D> implements iTheme, iVisible, iAccess, iHint {
+> extends iData<D> implements iTheme, iVisible, iAccess {
 	/**
 	 * Initial component value
 	 */
@@ -306,12 +305,6 @@ export default class iInput<
 	})
 
 	protected valueStore!: unknown;
-
-	/** @see iHint.setHint */
-	@p({replace: false})
-	setHint(pos: string): ReadonlyArray<string> {
-		return iHint.setHint(this, pos);
-	}
 
 	/** @see iAccess.enable */
 	@p({replace: false})

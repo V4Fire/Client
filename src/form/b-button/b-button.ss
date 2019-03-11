@@ -47,7 +47,7 @@
 		- block button(type = 'button')
 			< ${type}.&__button &
 				ref = button |
-				:class = setHint(hintPos) |
+				:class = provide.hintClasses(hintPos) |
 				:autofocus = autofocus |
 				:-hint = t(hint) |
 				@click = onClick |

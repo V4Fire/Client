@@ -19,7 +19,6 @@ import iWidth from 'traits/i-width/i-width';
 import iSize, { SizeDictionary } from 'traits/i-size/i-size';
 import iOpenToggle, { CloseHelperEvents } from 'traits/i-open-toggle/i-open-toggle';
 import iIcon from 'traits/i-icon/i-icon';
-import iHint from 'traits/i-hint/i-hint';
 
 import iData, {
 
@@ -54,7 +53,7 @@ export type ButtonType<T extends string = any> =
 })
 
 export default class bButton<T extends Dictionary = Dictionary> extends iData<T>
-	implements iTheme, iAccess, iOpenToggle, iIcon, iHint, iVisible, iWidth, iSize {
+	implements iTheme, iAccess, iOpenToggle, iIcon, iVisible, iWidth, iSize {
 
 	/** @override */
 	readonly dataProvider: string = 'Provider';
@@ -204,11 +203,6 @@ export default class bButton<T extends Dictionary = Dictionary> extends iData<T>
 	/** @see iOpenToggle.toggle */
 	toggle(): Promise<boolean> {
 		return iOpenToggle.toggle(this);
-	}
-
-	/** @see iHint.setHint */
-	setHint(pos: string): ReadonlyArray<string> {
-		return iHint.setHint(this, pos);
 	}
 
 	/** @see iIcon.getIconLink */
