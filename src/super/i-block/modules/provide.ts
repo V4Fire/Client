@@ -325,7 +325,7 @@ export default class Provide {
 	}
 
 	/**
-	 * Returns hint classes by the specified parameters
+	 * Returns an array of hint classes by the specified parameters
 	 * @param [pos] - hint position
 	 */
 	hintClasses(pos: string = 'bottom'): ReadonlyArray<string> {
