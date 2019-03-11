@@ -19,12 +19,15 @@ b-sidebar extends i-data
 	z-index-pos modal
 
 	&
+	&__root-wrapper
+		size 100%
+
+	&
 	&__content-wrapper
 		transform translateX(-100%)
 
-	&
-	&__root-wrapper
-		size 100%
+	&__content-wrapper
+		display inline-block
 
 	if $p.sideBarTransition
 		transition transform 0s $p.sideBarTransition
