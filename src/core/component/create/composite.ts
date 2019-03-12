@@ -8,8 +8,8 @@
 
 import symbolGenerator from 'core/symbol';
 
-import { ComponentInterface } from 'core/component/interface';
 import { VNode } from 'core/component/engines';
+import { ComponentInterface } from 'core/component/interface';
 import { constructors, components } from 'core/component/const';
 import {
 
@@ -102,8 +102,9 @@ export function buildComposite(vnode: VNode, ctx: ComponentInterface): void {
 					componentStatusStore: 'unloaded',
 					instance: meta.instance,
 					componentName: meta.componentName,
-					$isFlyweight: true,
-					$compositeI: 0
+					$refI: 0,
+					$compositeI: 0,
+					$isFlyweight: true
 				});
 
 				addEventAPI(fakeCtx);

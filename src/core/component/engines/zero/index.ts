@@ -455,9 +455,9 @@ export function createComponent<T>(
 	meta.params.functional = true;
 	bindWatchers(fakeCtx);
 
-	runHook('created', meta, fakeCtx).then(async () => {
+	runHook('created', meta, fakeCtx).then(() => {
 		if (methods.created) {
-			await methods.created.fn.call(fakeCtx);
+			return methods.created.fn.call(fakeCtx);
 		}
 	}, stderr);
 
@@ -486,9 +486,9 @@ export function createComponent<T>(
 		mounted = true;
 		bindWatchers(fakeCtx);
 
-		runHook('mounted', <NonNullable<typeof meta>>meta, fakeCtx).then(async () => {
+		runHook('mounted', <NonNullable<typeof meta>>meta, fakeCtx).then(() => {
 			if (methods.mounted) {
-				await methods.mounted.fn.call(fakeCtx);
+				return methods.mounted.fn.call(fakeCtx);
 			}
 		}, stderr);
 	};

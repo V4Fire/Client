@@ -17,7 +17,7 @@ import inheritMeta from 'core/component/create/inherit';
 import { ComponentInterface, ComponentParams, ComponentMeta, ComponentMethod } from 'core/component/interface';
 import { supports, ComponentDriver, RenderContext, CreateElement, VNode } from 'core/component/engines';
 
-import { getComponent, getBaseComponent } from 'core/component/create';
+import { isAbstractComponent, getComponent, getBaseComponent } from 'core/component/create';
 import { convertRender, createFakeCtx, patchVNode, CTX } from 'core/component/create/functional';
 import { constructors, components, localComponents, rootComponents, initEvent } from 'core/component/const';
 import { buildComposite } from 'core/component/create/composite';
@@ -43,7 +43,6 @@ export {
 } from 'core/component/engines';
 
 export const
-	isAbstractComponent = /^[iv]-/,
 	isSmartComponent = /-functional$/;
 
 /**

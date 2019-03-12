@@ -211,7 +211,7 @@ export default function inheritMeta(
 
 			for (let keys = Object.keys(parentObj), i = 0; i < keys.length; i++) {
 				const key = keys[i];
-				o[key] = {...parentObj[key]};
+				(<Dictionary>o[key]) = {...parentObj[key]};
 			}
 		}
 	}

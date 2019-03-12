@@ -64,7 +64,7 @@ module.exports = [
 	function normalizeComponentAttrs({attrs}) {
 		$C(attrs).forEach((el, key) => {
 			if (isRef[key]) {
-				attrs['data-component-ref'] = [el];
+				attrs[':data-component-ref'] = [`($refI=($refI || 0) + 1), ${el}`];
 
 				if (!attrs[':class']) {
 					attrs[':class'] = attachClass(['componentId']);

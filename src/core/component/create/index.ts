@@ -33,6 +33,7 @@ import {
 
 import {
 
+	ComponentInterface,
 	ComponentField,
 	ComponentProp,
 	ComponentMeta,
@@ -43,6 +44,9 @@ import {
 export interface ComponentConstructor<T = unknown> {
 	new(): T;
 }
+
+export const
+	isAbstractComponent = /^[iv]-/;
 
 /**
  * Returns a meta object for the specified component
@@ -66,24 +70,9 @@ export function getComponent(
 		{component, instance} = getBaseComponent(constructor, meta),
 		{methods} = meta;
 
-	const callMethod = (ctx, method) => {
-		const
-			obj = methods[method];
-
-		if (obj) {
-			try {
-				const
-					res = obj.fn.call(ctx);
-
-				if (Object.isPromise(res)) {
-					res.catch(stderr);
-				}
-
-			} catch (err) {
-				stderr(err);
-			}
-		}
-	};
+	if (isAbstractComponent.test(meta.componentName)) {
+		return {};
+	}
 
 	return {
 		...<any>component,
@@ -145,7 +134,7 @@ export function getComponent(
 			);
 
 			runHook('beforeCreate', meta, ctx).catch(stderr);
-			callMethod(ctx, 'beforeCreate');
+			callMethodFromMeta(ctx, 'beforeCreate');
 			bindWatchers(ctx);
 		},
 
@@ -153,12 +142,12 @@ export function getComponent(
 			this.hook = 'created';
 			bindWatchers(this);
 			runHook('created', this.meta, this).catch(stderr);
-			callMethod(this, 'created');
+			callMethodFromMeta(this, 'created');
 		},
 
 		beforeMount(): void {
 			runHook('beforeMount', this.meta, this).catch(stderr);
-			callMethod(this, 'beforeMount');
+			callMethodFromMeta(this, 'beforeMount');
 		},
 
 		mounted(): void {
@@ -166,46 +155,46 @@ export function getComponent(
 			this.hook = 'mounted';
 			bindWatchers(this);
 
-			runHook('mounted', this.meta, this).then(async () => {
+			runHook('mounted', this.meta, this).then(() => {
 				if (methods.mounted) {
-					await methods.mounted.fn.call(this);
+					return methods.mounted.fn.call(this);
 				}
 			}, stderr);
 		},
 
 		beforeUpdate(): void {
 			runHook('beforeUpdate', this.meta, this).catch(stderr);
-			callMethod(this, 'beforeUpdate');
+			callMethodFromMeta(this, 'beforeUpdate');
 		},
 
 		updated(): void {
-			runHook('updated', this.meta, this).then(async () => {
+			runHook('updated', this.meta, this).then(() => {
 				if (methods.updated) {
-					await methods.updated.fn.call(this);
+					return methods.updated.fn.call(this);
 				}
 			}, stderr);
 		},
 
 		activated(): void {
 			runHook('activated', this.meta, this).catch(stderr);
-			callMethod(this, 'activated');
+			callMethodFromMeta(this, 'activated');
 		},
 
 		deactivated(): void {
 			runHook('deactivated', this.meta, this).catch(stderr);
-			callMethod(this, 'deactivated');
+			callMethodFromMeta(this, 'deactivated');
 		},
 
 		beforeDestroy(): void {
 			runHook('beforeDestroy', this.meta, this).catch(stderr);
-			callMethod(this, 'beforeDestroy');
+			callMethodFromMeta(this, 'beforeDestroy');
 			this.$async.clearAll().locked = true;
 		},
 
 		destroyed(): void {
-			runHook('destroyed', this.meta, this).then(async () => {
+			runHook('destroyed', this.meta, this).then(() => {
 				if (methods.destroyed) {
-					await methods.destroyed.fn.call(this);
+					return methods.destroyed.fn.call(this);
 				}
 			}, stderr);
 		},
@@ -214,13 +203,33 @@ export function getComponent(
 			const
 				args = arguments;
 
-			runHook('errorCaptured', this.meta, this, ...args).then(async () => {
+			runHook('errorCaptured', this.meta, this, ...args).then(() => {
 				if (methods.errorCaptured) {
-					await methods.errorCaptured.fn.apply(this, args);
+					return methods.errorCaptured.fn.apply(this, args);
 				}
 			}, stderr);
 		}
 	};
+}
+
+function callMethodFromMeta(ctx: ComponentInterface, method: string): void {
+	const
+		// @ts-ignore
+		obj = ctx.meta.methods[method];
+
+	if (obj) {
+		try {
+			const
+				res = obj.fn.call(ctx);
+
+			if (Object.isPromise(res)) {
+				res.catch(stderr);
+			}
+
+		} catch (err) {
+			stderr(err);
+		}
+	}
 }
 
 /**
@@ -240,21 +249,23 @@ export function getFunctionalComponent(
 	const
 		props = {};
 
-	component.ctx = Object.assign(Object.create(minimalCtx), {
-		meta,
-		instance,
-		componentName: meta.componentName,
-		$options: {}
-	});
+	if (!isAbstractComponent.test(meta.componentName)) {
+		component.ctx = Object.assign(Object.create(minimalCtx), {
+			meta,
+			instance,
+			componentName: meta.componentName,
+			$options: {}
+		});
 
-	for (let o = component.props, keys = Object.keys(o), i = 0; i < keys.length; i++) {
-		const
-			key = keys[i],
-			el = o[key],
-			prop: PropOptions = props[key] = {...el};
+		for (let o = component.props, keys = Object.keys(o), i = 0; i < keys.length; i++) {
+			const
+				key = keys[i],
+				el = o[key],
+				prop: PropOptions = props[key] = {...el};
 
-		if (el && Object.isFunction(el.default) && !el.default[defaultWrapper]) {
-			prop.default = undefined;
+			if (el && Object.isFunction(el.default) && !el.default[defaultWrapper]) {
+				prop.default = undefined;
+			}
 		}
 	}
 
@@ -286,6 +297,10 @@ export function getBaseComponent(
 	const
 		{component, methods, watchers, hooks} = meta,
 		instance = meta.instance = new constructor();
+
+	if (isAbstractComponent.test(meta.componentName)) {
+		return {mods: component.mods, component, instance};
+	}
 
 	for (let o = methods, keys = Object.keys(o), i = 0; i < keys.length; i++) {
 		const
@@ -337,24 +352,6 @@ export function getBaseComponent(
 		component.computed[key] = o[key];
 	}
 
-	const canFunc = (type) => {
-		if (!type) {
-			return false;
-		}
-
-		if (Object.isArray(type)) {
-			for (let i = 0; i < type.length; i++) {
-				if (type[i] === Function) {
-					return true;
-				}
-			}
-
-			return false;
-		}
-
-		return type === Function;
-	};
-
 	const
 		defaultProps = meta.params.defaultProps !== false;
 
@@ -372,7 +369,7 @@ export function getBaseComponent(
 		if (defaultProps || prop.forceDefault) {
 			skipDefault = false;
 			def = defWrapper = instance[key];
-			isFunc = canFunc(prop.type);
+			isFunc = hasPropCanFunc(prop.type);
 
 			if (def && typeof def === 'object' && (!isFunc || !Object.isFunction(def))) {
 				defWrapper = () => Object.fastClone(def);
@@ -387,19 +384,21 @@ export function getBaseComponent(
 			default: !skipDefault ? prop.default !== undefined ? prop.default : defWrapper : undefined
 		};
 
-		const
-			wList = watchers[key] = watchers[key] || [];
-
-		for (let w = prop.watchers.values(), el = w.next(); !el.done; el = w.next()) {
+		if (prop.watchers.size) {
 			const
-				val = el.value;
+				wList = watchers[key] = watchers[key] || [];
 
-			wList.push({
-				deep: val.deep,
-				immediate: val.immediate,
-				provideArgs: val.provideArgs,
-				handler: val.fn
-			});
+			for (let w = prop.watchers.values(), el = w.next(); !el.done; el = w.next()) {
+				const
+					val = el.value;
+
+				wList.push({
+					deep: val.deep,
+					immediate: val.immediate,
+					provideArgs: val.provideArgs,
+					handler: val.fn
+				});
+			}
 		}
 	}
 
@@ -430,7 +429,9 @@ export function getBaseComponent(
 			key = keys[i],
 			mod = o[key];
 
-		let def;
+		let
+			def;
+
 		if (mod) {
 			for (let i = 0; i < mod.length; i++) {
 				const
@@ -447,4 +448,22 @@ export function getBaseComponent(
 	}
 
 	return {mods, component, instance};
+}
+
+function hasPropCanFunc(type: CanUndef<CanArray<Function>>): boolean {
+	if (!type) {
+		return false;
+	}
+
+	if (Object.isArray(type)) {
+		for (let i = 0; i < type.length; i++) {
+			if (type[i] === Function) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	return type === Function;
 }

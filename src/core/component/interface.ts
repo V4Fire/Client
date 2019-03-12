@@ -129,6 +129,12 @@ export type Hooks =
 	'destroyed' |
 	'errorCaptured';
 
+export interface Hook {
+	fn: Function;
+	name?: string;
+	after?: Set<string>;
+}
+
 export interface ComponentMethod {
 	fn: Function;
 	src: string;
@@ -166,6 +172,7 @@ export interface ComponentParams {
 	name?: string;
 	root?: boolean;
 	tpl?: boolean;
+	tiny?: boolean;
 	functional?: boolean | Dictionary;
 	flyweight?: boolean;
 	model?: {prop?: string; event?: string};
@@ -199,12 +206,7 @@ export interface ComponentMeta {
 	accessors: Dictionary<ComponentAccessor>;
 	methods: Dictionary<ComponentMethod>;
 	watchers: Dictionary<WatchOptionsWithHandler[]>;
-
-	hooks: {[hook in Hooks]: Array<{
-		fn: Function;
-		name?: string;
-		after?: Set<string>;
-	}>};
+	hooks: {[H in Hooks]: Hook[]};
 
 	component: {
 		name: string;
@@ -257,6 +259,7 @@ export class ComponentInterface<
 	protected readonly $activeField!: string;
 	protected $createElement!: CreateElement;
 	protected $compositeI!: number;
+	protected $refI!: number;
 
 	protected log?(key: string, ...details: unknown[]): void;
 
