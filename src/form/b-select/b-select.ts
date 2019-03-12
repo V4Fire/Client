@@ -705,8 +705,6 @@ export default class bSelect<
 
 	/** @override */
 	protected created(): void {
-		super.created();
-
 		if (!this.browser.is.mobile) {
 			this.on('asyncRender', async () => {
 				try {

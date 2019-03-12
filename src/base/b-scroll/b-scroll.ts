@@ -590,7 +590,6 @@ export default class bScroll extends iBlock implements iTheme, iVisible {
 
 	/** @override */
 	protected async mounted(): Promise<void> {
-		super.mounted();
 		await this.initScroll();
 
 		let

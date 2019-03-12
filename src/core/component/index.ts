@@ -18,9 +18,9 @@ import { ComponentInterface, ComponentParams, ComponentMeta, ComponentMethod } f
 import { supports, ComponentDriver, RenderContext, CreateElement, VNode } from 'core/component/engines';
 
 import { isAbstractComponent, getComponent, getBaseComponent } from 'core/component/create';
-import { convertRender, createFakeCtx, patchVNode, CTX } from 'core/component/create/functional';
+import { convertRender, createFakeCtx, patchVNode } from 'core/component/create/functional';
+import { createCompositeElement } from 'core/component/create/composite';
 import { constructors, components, localComponents, rootComponents, initEvent } from 'core/component/const';
-import { buildComposite } from 'core/component/create/composite';
 
 export * from 'core/component/interface';
 export * from 'core/component/const';
@@ -142,35 +142,43 @@ export function component(params?: ComponentParams): Function {
 				methods: {},
 				computed: {},
 				staticRenderFns: [],
-				render(this: ComponentInterface, el: CreateElement, baseCtx: RenderContext): VNode {
+				render(this: ComponentInterface, nativeCreate: CreateElement, baseCtx: RenderContext): VNode {
+					'use strict';
+
 					const
 						{methods: {render: r}, component: {ctx}} = meta;
 
 					if (r) {
 						let
-							vnode,
+							needPatch,
 							that = this;
 
 						if (!r.wrapper && p.functional === true && supports.functional && ctx) {
-							that = createFakeCtx<typeof this>(el, baseCtx, ctx);
-							vnode = patchVNode(r.fn.call(that, el, baseCtx), that, baseCtx);
-
-						} else {
-							vnode = r.fn.call(this, el, baseCtx);
-							that = r.fn[CTX] || this;
+							that = createFakeCtx<typeof this>(nativeCreate, baseCtx, ctx);
+							needPatch = true;
 						}
 
-						// @ts-ignore
-						if (that.$compositeI) {
-							buildComposite(vnode, that);
+						const createElement = function (): VNode {
+							const
+								ctx = this || that;
+
+							return createCompositeElement(
+								nativeCreate.apply(ctx, arguments),
+								ctx
+							);
+						};
+
+						if (that) {
 							// @ts-ignore
-							that.$compositeI = 0;
+							that.$createElement = that._c = createElement;
 						}
 
-						return vnode;
+						return needPatch ?
+							patchVNode(r.fn.call(that, createElement, baseCtx), that, baseCtx) :
+							r.fn.call(that, createElement, baseCtx);
 					}
 
-					return el('span');
+					return nativeCreate('span');
 				}
 			}
 		};

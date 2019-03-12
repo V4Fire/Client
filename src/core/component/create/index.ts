@@ -139,8 +139,6 @@ export function getComponent(
 		},
 
 		created(): void {
-			this.hook = 'created';
-			bindWatchers(this);
 			runHook('created', this.meta, this).catch(stderr);
 			callMethodFromMeta(this, 'created');
 		},
@@ -152,8 +150,6 @@ export function getComponent(
 
 		mounted(): void {
 			this.$el.component = this;
-			this.hook = 'mounted';
-			bindWatchers(this);
 
 			runHook('mounted', this.meta, this).then(() => {
 				if (methods.mounted) {

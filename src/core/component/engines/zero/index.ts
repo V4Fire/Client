@@ -481,11 +481,7 @@ export function createComponent<T>(
 			return;
 		}
 
-		// @ts-ignore
-		fakeCtx.hook = 'mounted';
 		mounted = true;
-		bindWatchers(fakeCtx);
-
 		runHook('mounted', <NonNullable<typeof meta>>meta, fakeCtx).then(() => {
 			if (methods.mounted) {
 				return methods.mounted.fn.call(fakeCtx);

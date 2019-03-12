@@ -8,4 +8,4 @@
 
 export const
 	NULL = {},
-	defaultWrapper = Symbol('defaultWrapper');
+	defaultWrapper = Symbol('default wrapper');

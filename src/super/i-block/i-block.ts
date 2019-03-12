@@ -1383,7 +1383,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	@p({replace: false})
 	setMod(nodeOrName: Element | string, name: string | unknown, value?: unknown): CanPromise<boolean | void> {
 		if (Object.isString(nodeOrName)) {
-			if (this.isFlyweight) {
+			if (this.isFlyweight || this.isFunctional) {
 				const res = Block.prototype.setMod.call(
 					this.dom.createBlockCtxFromNode(this.$el, this),
 					nodeOrName,
@@ -1425,7 +1425,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	@p({replace: false})
 	removeMod(nodeOrName: Element | string, name?: string | unknown, value?: unknown): CanPromise<boolean | void> {
 		if (Object.isString(nodeOrName)) {
-			if (this.isFlyweight) {
+			if (this.isFlyweight || this.isFunctional) {
 				const res = Block.prototype.removeMod.call(
 					this.dom.createBlockCtxFromNode(this.$el, this),
 					nodeOrName,
@@ -1727,20 +1727,6 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 		) {
 			return e.action.call(this);
 		}
-	}
-
-	/**
-	 * Component created
-	 */
-	protected created(): void {
-		return undefined;
-	}
-
-	/**
-	 * Component mounted to DOM
-	 */
-	protected mounted(): void {
-		return undefined;
 	}
 
 	/**

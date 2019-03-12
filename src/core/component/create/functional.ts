@@ -345,17 +345,17 @@ export function createFakeCtx<T extends Dictionary = FunctionalCtx>(
 /**
  * Patches the specified virtual node: add classes, event handlers, etc.
  *
- * @param vNode
+ * @param vnode
  * @param ctx - component fake context
  * @param renderCtx - render context
  */
-export function patchVNode(vNode: VNode, ctx: Dictionary<any>, renderCtx: RenderContext): VNode {
+export function patchVNode(vnode: VNode, ctx: Dictionary<any>, renderCtx: RenderContext): VNode {
 	const
 		{data} = renderCtx,
 		{meta, meta: {methods}} = ctx;
 
 	patch(
-		vNode,
+		vnode,
 		ctx,
 		renderCtx
 	);
@@ -379,9 +379,6 @@ export function patchVNode(vNode: VNode, ctx: Dictionary<any>, renderCtx: Render
 		}
 	}
 
-	ctx.hook = 'created';
-	bindWatchers(<any>ctx);
-
 	runHook('created', meta, ctx).then(() => {
 		if (methods.created) {
 			return methods.created.fn.call(ctx);
@@ -399,6 +396,17 @@ export function patchVNode(vNode: VNode, ctx: Dictionary<any>, renderCtx: Render
 		ctx.$destroy();
 		destroyed = true;
 	};
+
+	destroy[$$.self] = ctx;
+	hooks.beforeDestroy.unshift({fn: destroy});
+
+	const
+		mountedHooks = meta.hooks.mounted;
+
+	/*if (!ctx.mounted && (mountedHooks.length > 1 || mountedHooks[0] && mountedHooks[0].name === 'initBlockInstance')) {
+		ctx.localEvent.emit('block.ready');
+		return vnode;
+	}*/
 
 	// tslint:disable-next-line:cyclomatic-complexity
 	const mount = (retry?) => {
@@ -575,7 +583,6 @@ export function patchVNode(vNode: VNode, ctx: Dictionary<any>, renderCtx: Render
 		ctx.hook = 'mounted';
 		el.component = ctx;
 
-		bindWatchers(<any>ctx);
 		runHook('mounted', meta, ctx).then(() => {
 			if (methods.mounted) {
 				return methods.mounted.fn.call(ctx);
@@ -584,7 +591,6 @@ export function patchVNode(vNode: VNode, ctx: Dictionary<any>, renderCtx: Render
 	};
 
 	mount[$$.self] = ctx;
-	destroy[$$.self] = ctx;
 
 	const
 		parentHook = parentMountMap[p.hook];
@@ -611,11 +617,7 @@ export function patchVNode(vNode: VNode, ctx: Dictionary<any>, renderCtx: Render
 		mount().catch(stderr);
 	}
 
-	hooks.beforeDestroy.unshift({
-		fn: destroy
-	});
-
-	return vNode;
+	return vnode;
 }
 
 /**

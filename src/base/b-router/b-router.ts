@@ -874,11 +874,9 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 	}
 
 	/**
-	 * @override
 	 * @emits $root.initRouter(router: bRouter)
 	 */
 	protected created(): void {
-		super.created();
 		this.field.set('routerStore', this, this.$root);
 		this.r.emit('initRouter', this);
 	}
