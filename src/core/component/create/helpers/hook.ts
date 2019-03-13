@@ -7,7 +7,7 @@
  */
 
 import log from 'core/log';
-import { ComponentMeta, Hook } from 'core/component/interface';
+import { ComponentMeta } from 'core/component/interface';
 
 /**
  * Runs a hook from the specified meta object
@@ -40,8 +40,25 @@ export function runHook(
 		event = new HookEmitter();
 
 	for (let hooks = meta.hooks[hook], i = 0; i < hooks.length; i++) {
-		const hook = hooks[i];
-		event.on(hook.after, createHookCb(hook, event, args, ctx));
+		const
+			hook = hooks[i];
+
+		event.on(hook.after, () => {
+			const
+				res = hook.fn.apply(ctx, args),
+				emit = () => event.emit(hook.name || Math.random().toString());
+
+			if (Object.isPromise(res)) {
+				return res.then(emit);
+			}
+
+			const
+				tasks = emit();
+
+			if (Object.isPromise(tasks)) {
+				return tasks;
+			}
+		});
 	}
 
 	const
@@ -133,25 +150,6 @@ class HookEmitter {
 			return Promise.all(tasks).then(() => undefined);
 		}
 	}
-}
-
-function createHookCb(hook: Hook, emitter: HookEmitter, args: unknown[], ctx: Dictionary<any>): Function {
-	return () => {
-		const
-			res = hook.fn.apply(ctx, args),
-			emit = () => emitter.emit(hook.name || Math.random().toString());
-
-		if (Object.isPromise(res)) {
-			return res.then(emit);
-		}
-
-		const
-			tasks = emit();
-
-		if (Object.isPromise(tasks)) {
-			return tasks;
-		}
-	};
 }
 
 function createSyncPromise<R = unknown>(val?: R, err?: unknown): Promise<R> {

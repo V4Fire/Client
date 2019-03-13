@@ -28,7 +28,7 @@ const watcherHooks = {
 export function bindWatchers(ctx: ComponentInterface, eventCtx: ComponentInterface = ctx): void {
 	const
 		// @ts-ignore
-		{meta, meta: {hooks, props}, hook, $async: $a} = ctx;
+		{meta, meta: {props}, hook, $async: $a} = ctx;
 
 	if (!watcherHooks[hook]) {
 		return;

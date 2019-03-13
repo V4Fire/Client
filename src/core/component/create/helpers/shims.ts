@@ -14,7 +14,7 @@ import { EventEmitter2 as EventEmitter } from 'eventemitter2';
  */
 export function addEventAPI(ctx: Dictionary<any>): void {
 	const
-		$e = new EventEmitter({maxListeners: 1e3});
+		$e = new EventEmitter({verboseMemoryLeak: false});
 
 	Object.assign(ctx, {
 		$emit(e: string, ...args: any[]): void {
