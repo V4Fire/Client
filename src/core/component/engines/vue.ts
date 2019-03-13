@@ -7,7 +7,7 @@
  */
 
 import Vue, { VNode, RenderContext } from 'vue';
-import { addStaticDirectives } from 'core/component/create/directive';
+import { ComponentInterface } from 'core/component/interface';
 
 export { Vue as ComponentDriver };
 export * from 'vue';
@@ -38,14 +38,16 @@ export const
 /**
  * Patches the specified virtual node: add classes, event handlers, etc.
  *
- * @param vNode
+ * @param vnode
  * @param ctx - component fake context
  * @param renderCtx - render context
  */
-export function patchVNode(vNode: VNode, ctx: Dictionary<any>, renderCtx: RenderContext): void {
+export function patchVNode(vnode: VNode, ctx: ComponentInterface, renderCtx: RenderContext): void {
 	const
-		{data: vData} = vNode,
+		{data: vData} = vnode,
 		{data} = renderCtx,
+
+		// @ts-ignore
 		{meta} = ctx;
 
 	if (vData) {
@@ -66,13 +68,11 @@ export function patchVNode(vNode: VNode, ctx: Dictionary<any>, renderCtx: Render
 			vData.attrs = Object.assign(vData.attrs || {}, data.attrs);
 		}
 
+		vData.directives = data.directives;
+
 		// Reference to the element
 
-		if (data.ref) {
-			vData.ref = data.ref;
-		}
-
-		// Directives
-		addStaticDirectives(<any>ctx, vData, data.directives, <Element>vNode.elm);
+		vData.ref = data.ref;
+		vData.refInFor = data.refInFor;
 	}
 }

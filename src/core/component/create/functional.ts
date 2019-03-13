@@ -10,16 +10,16 @@ import symbolGenerator from 'core/symbol';
 import Async from 'core/async';
 
 import { EventEmitter2 as EventEmitter } from 'eventemitter2';
-import { FunctionalCtx } from 'core/component/interface';
-import { addDirectives } from 'core/component/create/directive';
+import { ComponentInterface, FunctionalCtx } from 'core/component/interface';
 
 import {
 
 	patchVNode as patch,
-	VNode,
+
 	CreateElement,
 	RenderContext as BaseRenderContext,
-	FunctionalComponentOptions,
+
+	VNode,
 	WatchOptions,
 	WatchOptionsWithHandler
 
@@ -34,7 +34,6 @@ import {
 	bindWatchers,
 	addEventAPI,
 	addMethodsFromMeta,
-	addElAccessor,
 	getNormalParent
 
 } from 'core/component/create/helpers';
@@ -50,11 +49,7 @@ export interface RenderObject {
 }
 
 const
-	$$ = symbolGenerator(),
-	cache = new WeakMap();
-
-export const
-	CTX = $$.ctx;
+	$$ = symbolGenerator();
 
 const customOpts = [
 	'filters',
@@ -112,7 +107,7 @@ export function createFakeCtx<T extends Dictionary = FunctionalCtx>(
 		data = {};
 
 	const
-		$w = new EventEmitter({maxListeners: 1e3}),
+		$w = new EventEmitter({verboseMemoryLeak: false}),
 		$a = new Async(this);
 
 	const
@@ -287,13 +282,7 @@ export function createFakeCtx<T extends Dictionary = FunctionalCtx>(
 	}
 
 	addMethodsFromMeta(meta, fakeCtx);
-
-	if (!('$el' in fakeCtx)) {
-		addElAccessor($$.el, fakeCtx);
-	}
-
-	runHook('beforeRuntime', meta, fakeCtx)
-		.catch(stderr);
+	runHook('beforeRuntime', meta, fakeCtx).catch(stderr);
 
 	initPropsObject(meta.component.props, fakeCtx, instance, fakeCtx, initProps);
 	initDataObject(meta.systemFields, fakeCtx, instance, fakeCtx);
@@ -306,36 +295,29 @@ export function createFakeCtx<T extends Dictionary = FunctionalCtx>(
 
 	bindWatchers(<any>fakeCtx);
 	initDataObject(meta.fields, fakeCtx, instance, data);
+	runHook('beforeDataCreate', meta, fakeCtx).catch(stderr);
 
-	runHook('beforeDataCreate', meta, fakeCtx)
-		.catch(stderr);
+	for (let keys = Object.keys(data), i = 0; i < keys.length; i++) {
+		const
+			key = keys[i];
 
-	if (meta.params.tiny) {
-		Object.assign(fakeCtx, data);
+		Object.defineProperty(fakeCtx, key, {
+			get(): any {
+				return data[key];
+			},
 
-	} else {
-		for (let keys = Object.keys(data), i = 0; i < keys.length; i++) {
-			const
-				key = keys[i];
+			set(val: any): void {
+				fakeCtx.$dataCache[key] = true;
 
-			Object.defineProperty(fakeCtx, key, {
-				get(): any {
-					return data[key];
-				},
+				const
+					old = data[key];
 
-				set(val: any): void {
-					fakeCtx.$dataCache[key] = true;
-
-					const
-						old = data[key];
-
-					if (val !== old) {
-						data[key] = val;
-						$w.emit(key, val, old);
-					}
+				if (val !== old) {
+					data[key] = val;
+					$w.emit(key, val, old);
 				}
-			});
-		}
+			}
+		});
 	}
 
 	fakeCtx.$$data = fakeCtx;
@@ -349,9 +331,14 @@ export function createFakeCtx<T extends Dictionary = FunctionalCtx>(
  * @param ctx - component fake context
  * @param renderCtx - render context
  */
-export function patchVNode(vnode: VNode, ctx: Dictionary<any>, renderCtx: RenderContext): VNode {
+export function patchVNode(vnode: VNode, ctx: ComponentInterface, renderCtx: RenderContext): VNode {
+	// @ts-ignore
+	vnode.context = ctx;
+
 	const
 		{data} = renderCtx,
+
+		// @ts-ignore
 		{meta, meta: {methods}} = ctx;
 
 	patch(
@@ -373,6 +360,7 @@ export function patchVNode(vnode: VNode, ctx: Dictionary<any>, renderCtx: Render
 					fn = fns[i];
 
 				if (Object.isFunction(fn)) {
+					// @ts-ignore
 					ctx.$on(key, fn);
 				}
 			}
@@ -386,13 +374,21 @@ export function patchVNode(vnode: VNode, ctx: Dictionary<any>, renderCtx: Render
 	}, stderr);
 
 	const
-		p = ctx.$normalParent,
+		p = ctx.$normalParent;
+
+	if (!p) {
+		return vnode;
+	}
+
+	const
+		// @ts-ignore
 		hooks = p.meta.hooks;
 
 	let
 		destroyed;
 
 	const destroy = () => {
+		// @ts-ignore
 		ctx.$destroy();
 		destroyed = true;
 	};
@@ -401,12 +397,8 @@ export function patchVNode(vnode: VNode, ctx: Dictionary<any>, renderCtx: Render
 	hooks.beforeDestroy.unshift({fn: destroy});
 
 	const
-		mountedHooks = meta.hooks.mounted;
-
-	/*if (!ctx.mounted && (mountedHooks.length > 1 || mountedHooks[0] && mountedHooks[0].name === 'initBlockInstance')) {
-		ctx.localEvent.emit('block.ready');
-		return vnode;
-	}*/
+		// @ts-ignore
+		{$async: $a} = ctx;
 
 	// tslint:disable-next-line:cyclomatic-complexity
 	const mount = (retry?) => {
@@ -422,14 +414,13 @@ export function patchVNode(vnode: VNode, ctx: Dictionary<any>, renderCtx: Render
 			return;
 		}
 
-		ctx[<any>$$.el] = undefined;
-
 		if (!ctx.$el) {
 			if (retry) {
 				return;
 			}
 
-			return ctx.$async.promise(p.nextTick(), {
+			// @ts-ignore
+			return $a.promise(p.$nextTick(), {
 				label: $$.findElWait
 			}).then(() => mount(true), stderr);
 		}
@@ -451,10 +442,10 @@ export function patchVNode(vnode: VNode, ctx: Dictionary<any>, renderCtx: Render
 			}
 		}
 
-		addDirectives(<any>ctx, el, data, data.directives);
+		// @ts-ignore
 		oldCtx && oldCtx.$destroy();
 
-		if (!meta.params.tiny && oldCtx) {
+		if (oldCtx) {
 			const
 				props = ctx.$props,
 				oldProps = oldCtx.$props,
@@ -463,18 +454,26 @@ export function patchVNode(vnode: VNode, ctx: Dictionary<any>, renderCtx: Render
 			for (let keys = Object.keys(oldProps), i = 0; i < keys.length; i++) {
 				const
 					key = keys[i],
-					linked = oldCtx.syncLinkCache[key];
+					// @ts-ignore
+					linked = oldCtx.$syncLinkCache[key];
 
 				if (linked) {
 					for (let keys = Object.keys(linked), i = 0; i < keys.length; i++) {
-						linkedFields[linked[keys[i]].path] = key;
+						const
+							link = linked[keys[i]];
+
+						if (link) {
+							linkedFields[link.path] = key;
+						}
 					}
 				}
 			}
 
 			{
 				const list = [
+					// @ts-ignore
 					oldCtx.meta.systemFields,
+					// @ts-ignore
 					oldCtx.meta.fields
 				];
 
@@ -489,11 +488,16 @@ export function patchVNode(vnode: VNode, ctx: Dictionary<any>, renderCtx: Render
 							field = obj[key],
 							link = linkedFields[key];
 
+						if (!field) {
+							continue;
+						}
+
 						const
 							val = ctx[key],
 							old = oldCtx[key];
 
 						if (
+							// @ts-ignore
 							!ctx.$dataCache[key] &&
 							(Object.isFunction(field.unique) ? !field.unique(ctx, oldCtx) : !field.unique) &&
 							!Object.fastCompare(val, old) &&
@@ -532,57 +536,7 @@ export function patchVNode(vnode: VNode, ctx: Dictionary<any>, renderCtx: Render
 			}
 		}
 
-		if (ctx.$refI) {
-			const
-				refs = {},
-				refNodes = el.querySelectorAll(`.${ctx.componentId}[data-component-ref]`);
-
-			for (let i = 0; i < refNodes.length; i++) {
-				const
-					el = refNodes[i],
-					ref = el.dataset.componentRef;
-
-				refs[ref] = refs[ref] ? [].concat(refs[ref], el) : el;
-			}
-
-			for (let keys = Object.keys(refs), i = 0; i < keys.length; i++) {
-				const
-					key = keys[i],
-					el = refs[key];
-
-				let
-					cache;
-
-				Object.defineProperty(ctx.$refs, key, {
-					enumerable: true,
-					configurable: true,
-
-					get(): any {
-						if (cache) {
-							return cache;
-						}
-
-						if (Object.isArray(el)) {
-							const
-								res = <any[]>[];
-
-							for (let i = 0; i < el.length; i++) {
-								const v = <any>el[i];
-								res.push(v.component || v);
-							}
-
-							return cache = res;
-						}
-
-						return cache = el.component || el;
-					}
-				});
-			}
-		}
-
-		ctx.hook = 'mounted';
 		el.component = ctx;
-
 		runHook('mounted', meta, ctx).then(() => {
 			if (methods.mounted) {
 				return methods.mounted.fn.call(ctx);
@@ -590,7 +544,13 @@ export function patchVNode(vnode: VNode, ctx: Dictionary<any>, renderCtx: Render
 		}, stderr);
 	};
 
-	mount[$$.self] = ctx;
+	const deferMount = () => {
+		$a.setImmediate(mount, {
+			label: $$.mount
+		});
+	};
+
+	deferMount[$$.self] = ctx;
 
 	const
 		parentHook = parentMountMap[p.hook];
@@ -604,17 +564,17 @@ export function patchVNode(vnode: VNode, ctx: Dictionary<any>, renderCtx: Render
 		}
 
 		hooks[hook].unshift({
-			fn: mount
+			fn: deferMount
 		});
 	}
 
 	if (parentHook) {
 		hooks[parentHook].unshift({
-			fn: mount
+			fn: deferMount
 		});
 
 	} else {
-		mount().catch(stderr);
+		deferMount();
 	}
 
 	return vnode;
@@ -641,27 +601,4 @@ export function execRenderObject(renderObject: RenderObject, fakeCtx: Dictionary
 	}
 
 	return renderObject.render.call(fakeCtx);
-}
-
-/**
- * Takes an object with compiled templates and returns a new render function
- *
- * @param renderObject
- * @param baseCtx - base component context
- */
-export function convertRender(
-	renderObject: RenderObject,
-	baseCtx: FunctionalCtx
-): FunctionalComponentOptions['render'] {
-	if (cache.has(renderObject)) {
-		return cache.get(renderObject);
-	}
-
-	const render = (el, ctx) => {
-		const fakeCtx = render[CTX] = createFakeCtx(el, ctx, baseCtx);
-		return patchVNode(execRenderObject(renderObject, fakeCtx), fakeCtx, ctx);
-	};
-
-	cache.set(renderObject, render);
-	return render;
 }

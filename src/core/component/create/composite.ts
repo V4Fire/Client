@@ -20,20 +20,12 @@ import {
 
 } from 'core/component/create/helpers';
 
-interface ComponentModel {
-	value: unknown;
-	expression: string;
-	callback(value: unknown): unknown;
-}
-
 interface ComponentOpts {
 	ref?: string;
 	refInFor?: boolean;
 
 	attrs: Dictionary;
 	props: Dictionary;
-
-	model?: ComponentModel;
 	directives: VNodeDirective[];
 
 	slots: Dictionary<CanArray<VNode>>;
@@ -44,6 +36,12 @@ interface ComponentOpts {
 
 	class: string[];
 	staticClass: string;
+}
+
+interface ComponentModel {
+	value: unknown;
+	expression: string;
+	callback(value: unknown): unknown;
 }
 
 const defProp = {
@@ -102,6 +100,22 @@ export function getComponentDataFromVnode(component: string, vnode: VNode): Comp
 	if (!constr || !meta) {
 		res.attrs = vData.attrs || res.attrs;
 		return res;
+	}
+
+	const
+		// @ts-ignore
+		model = <ComponentModel>vData.model,
+		componentModel = meta.params.model;
+
+	if (model && componentModel) {
+		const
+			{value, callback} = model,
+			{prop, event} = componentModel;
+
+		if (prop && event) {
+			res.props[prop] = value;
+			res.on[event] = callback;
+		}
 	}
 
 	const

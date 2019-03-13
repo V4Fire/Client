@@ -22,10 +22,7 @@ import {
 
 import {
 
-	supports,
-	minimalCtx,
 	ComponentDriver,
-	PropOptions,
 	ComponentOptions,
 	FunctionalComponentOptions
 
@@ -62,15 +59,11 @@ export function getComponent(
 		p = meta.params,
 		m = p.model;
 
-	if (p.functional === true && supports.functional) {
-		return getFunctionalComponent(constructor, meta);
-	}
-
 	const
 		{component, instance} = getBaseComponent(constructor, meta),
 		{methods} = meta;
 
-	if (isAbstractComponent.test(meta.componentName)) {
+	if (p.functional === true || isAbstractComponent.test(meta.componentName)) {
 		return {};
 	}
 
@@ -104,8 +97,9 @@ export function getComponent(
 				ctx = <any>this;
 
 			ctx.$$data = {};
-			ctx.$normalParent = getNormalParent(ctx);
 			ctx.$async = new Async(this);
+			ctx.$normalParent = getNormalParent(ctx);
+
 			ctx.instance = instance;
 			ctx.componentName = meta.name;
 			ctx.meta = createMeta(meta);
@@ -226,52 +220,6 @@ function callMethodFromMeta(ctx: ComponentInterface, method: string): void {
 			stderr(err);
 		}
 	}
-}
-
-/**
- * Returns a meta object for the specified functional component
- *
- * @param constructor
- * @param meta
- */
-export function getFunctionalComponent(
-	constructor: ComponentConstructor,
-	meta: ComponentMeta
-): FunctionalComponentOptions<ComponentDriver> {
-	const
-		{component, instance} = getBaseComponent(constructor, meta),
-		{params: p} = meta;
-
-	const
-		props = {};
-
-	if (!isAbstractComponent.test(meta.componentName)) {
-		component.ctx = Object.assign(Object.create(minimalCtx), {
-			meta,
-			instance,
-			componentName: meta.componentName,
-			$options: {}
-		});
-
-		for (let o = component.props, keys = Object.keys(o), i = 0; i < keys.length; i++) {
-			const
-				key = keys[i],
-				el = o[key],
-				prop: PropOptions = props[key] = {...el};
-
-			if (el && Object.isFunction(el.default) && !el.default[defaultWrapper]) {
-				prop.default = undefined;
-			}
-		}
-	}
-
-	return <ReturnType<typeof getFunctionalComponent>>{
-		props,
-		name: meta.name,
-		functional: true,
-		inject: p.inject,
-		render: component.render
-	};
 }
 
 /**

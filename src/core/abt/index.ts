@@ -11,7 +11,7 @@ import state from 'core/component/state';
 import { EventEmitter2 as EventEmitter } from 'eventemitter2';
 
 export const
-	event = new EventEmitter({maxListeners: 100});
+	event = new EventEmitter({verboseMemoryLeak: false});
 
 export default async function saveABT(options: unknown): Promise<void> {
 	const

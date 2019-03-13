@@ -35,7 +35,7 @@ export function mergeMods<T extends iBlock>(
 
 	const
 		// @ts-ignore
-		cache = component.syncLinkCache[link];
+		cache = component.$syncLinkCache[link];
 
 	if (!cache) {
 		return;

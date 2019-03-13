@@ -342,32 +342,14 @@ export function wait<CTX extends ComponentInterface = ComponentInterface>(
 
 			if (component.$isFlyweight || componentStatus >= status) {
 				init = true;
-
-				if (defer) {
-					res = $a.promise(
-						(async () => {
-							await $a.nextTick();
-							return handler.apply(this, args);
-						})(),
-
-						p
-					);
-
-				} else {
-					res = handler.apply(this, args);
-				}
+				res = defer ?
+					$a.promise($a.nextTick().then(() => handler.apply(this, args)), p) :
+					handler.apply(this, args);
 			}
 
 			if (!init) {
-				res = $a.promise(
-					new Promise((resolve) => {
-						$a.once(ctx.localEvent, `component.status.${statuses[<number>status]}`, () => {
-							resolve(handler.apply(this, args));
-						});
-					}),
-
-					p
-				);
+				res = $a.promisifyOnce(ctx.localEvent, `component.status.${statuses[<number>status]}`, p)
+					.then(() => handler.apply(this, args));
 			}
 
 			if (isDecorator && Object.isPromise(res)) {

@@ -15,11 +15,11 @@ import 'core/component/directives';
 
 import inheritMeta from 'core/component/create/inherit';
 import { ComponentInterface, ComponentParams, ComponentMeta, ComponentMethod } from 'core/component/interface';
-import { supports, ComponentDriver, RenderContext, CreateElement, VNode } from 'core/component/engines';
+import { minimalCtx, ComponentDriver, RenderContext, CreateElement, VNode, VNodeData } from 'core/component/engines';
 
 import { isAbstractComponent, getComponent, getBaseComponent } from 'core/component/create';
-import { convertRender, createFakeCtx, patchVNode } from 'core/component/create/functional';
-import { createCompositeElement } from 'core/component/create/composite';
+import { createFakeCtx, execRenderObject, patchVNode } from 'core/component/create/functional';
+import { getComponentDataFromVnode, createCompositeElement } from 'core/component/create/composite';
 import { constructors, components, localComponents, rootComponents, initEvent } from 'core/component/const';
 
 export * from 'core/component/interface';
@@ -52,6 +52,9 @@ export const
 export function getComponentName(constr: Function): string {
 	return constr.name.dasherize();
 }
+
+const
+	minimalCtxCache = Object.create(null);
 
 /**
  * Creates a new component
@@ -143,29 +146,110 @@ export function component(params?: ComponentParams): Function {
 				computed: {},
 				staticRenderFns: [],
 				render(this: ComponentInterface, nativeCreate: CreateElement, baseCtx: RenderContext): VNode {
-					'use strict';
-
 					const
-						{methods: {render: r}, component: {ctx}} = meta;
+						{methods: {render: r}} = meta;
 
 					if (r) {
-						let
-							needPatch,
+						const
 							that = this;
 
-						if (!r.wrapper && p.functional === true && supports.functional && ctx) {
-							that = createFakeCtx<typeof this>(nativeCreate, baseCtx, ctx);
-							needPatch = true;
-						}
+						const createElement = function (tag: string, opts?: VNodeData, children?: VNode[]): VNode {
+							'use strict';
 
-						const createElement = function (): VNode {
+							let
+								vnode,
+								needEl = Boolean(Object.isObject(opts) && opts.attrs && opts.attrs['v4-composite']);
+
 							const
 								ctx = this || that;
 
-							return createCompositeElement(
-								nativeCreate.apply(ctx, arguments),
-								ctx
-							);
+							if (opts && opts.tag === 'component') {
+								const
+									constr = constructors[tag],
+									component = constr && components.get(constr);
+
+								if (component && (isSmartComponent.test(tag) || component.params.functional === true)) {
+									needEl = true;
+
+									const
+										nm = component.componentName,
+										tpl = TPLS[nm];
+
+									if (!tpl) {
+										return nativeCreate('span');
+									}
+
+									const
+										node = nativeCreate('span', {...opts, tag: undefined}, children),
+										data = getComponentDataFromVnode(nm, node);
+
+									const renderCtx: RenderContext = {
+										parent: ctx,
+										children: node.children || [],
+										props: data.props,
+
+										// @ts-ignore
+										listeners: data.on,
+
+										slots: () => data.slots,
+										// @ts-ignore
+										scopedSlots: data.scopedSlots,
+
+										data: {
+											ref: data.ref,
+											refInFor: data.refInFor,
+											// @ts-ignore
+											on: data.on,
+											attrs: data.attrs,
+											class: data.class,
+											staticClass: data.staticClass
+										}
+									};
+
+									const fakeCtx = createFakeCtx(
+										// @ts-ignore
+										createElement,
+										renderCtx,
+
+										minimalCtxCache[nm] = minimalCtxCache[nm] || Object.assign(Object.create(minimalCtx), {
+											meta: component,
+											instance: component.instance,
+											componentName: component.componentName,
+											$options: {}
+										}),
+
+										true
+									);
+
+									// @ts-ignore
+									const renderObject = tpl.index();
+									vnode = patchVNode(execRenderObject(renderObject, fakeCtx), fakeCtx, renderCtx);
+								}
+							}
+
+							if (!vnode) {
+								vnode = createCompositeElement(
+									nativeCreate.apply(ctx, arguments),
+									ctx
+								);
+							}
+
+							if (needEl) {
+								Object.defineProperty(vnode.context, '$el', {
+									enumerable: true,
+									configurable: true,
+
+									set(): void {
+										return undefined;
+									},
+
+									get(): CanUndef<Node> {
+										return vnode.elm;
+									}
+								});
+							}
+
+							return vnode;
 						};
 
 						if (that) {
@@ -173,9 +257,7 @@ export function component(params?: ComponentParams): Function {
 							that.$createElement = that._c = createElement;
 						}
 
-						return needPatch ?
-							patchVNode(r.fn.call(that, createElement, baseCtx), that, baseCtx) :
-							r.fn.call(that, createElement, baseCtx);
+						return r.fn.call(that, createElement, baseCtx);
 					}
 
 					return nativeCreate('span');
@@ -218,18 +300,8 @@ export function component(params?: ComponentParams): Function {
 					fns = tpls.index(),
 					renderObj = <ComponentMethod>{wrapper: true, watchers: {}, hooks: {}};
 
-				if (p.functional === true && supports.functional) {
-					const
-						{ctx} = meta.component;
-
-					if (ctx) {
-						renderObj.fn = <Function>convertRender(fns, ctx);
-					}
-
-				} else {
-					renderObj.fn = fns.render;
-					component.staticRenderFns = meta.component.staticRenderFns = fns.staticRenderFns || [];
-				}
+				renderObj.fn = fns.render;
+				component.staticRenderFns = meta.component.staticRenderFns = fns.staticRenderFns || [];
 
 				methods.render = renderObj;
 				success();

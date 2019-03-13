@@ -182,9 +182,10 @@ export default function createRouter(component: bRouter): Router {
 
 	const
 		popstate = {label: $$.popstate},
-		modHistory = {label: $$.modHistory};
+		modHistory = {label: $$.modHistory},
+		emitter = new EventEmitter({maxListeners: 1e3});
 
-	const router = Object.mixin<Router>({withAccessors: true}, Object.create(new EventEmitter()), {
+	const router = Object.mixin<Router>({withAccessors: true}, Object.create(emitter), {
 		get page(): CanUndef<CurrentPage> {
 			const
 				url = this.id(location.href);

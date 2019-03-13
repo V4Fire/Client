@@ -278,7 +278,7 @@ export default class Provider {
 			Object.createDict();
 
 		this.async = new Async(this);
-		this.event = new EventEmitter({maxListeners: 1e3, wildcard: true});
+		this.event = new EventEmitter({maxListeners: 1e3});
 
 		if (Object.isBoolean(params.listenAllEvents)) {
 			this.setReadonlyParam('listenAllEvents', params.listenAllEvents);

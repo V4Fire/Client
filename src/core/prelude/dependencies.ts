@@ -22,7 +22,7 @@ export default GLOBAL[MODULE_DEPENDENCIES] = Object.assign(GLOBAL[MODULE_DEPENDE
 	/**
 	 * Event emitter instance
 	 */
-	event: new EventEmitter({maxListeners: 100, wildcard: true}),
+	event: new EventEmitter({maxListeners: 100}),
 
 	/**
 	 * Adds new dependencies to the cache

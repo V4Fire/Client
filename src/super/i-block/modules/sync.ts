@@ -84,14 +84,26 @@ export default class Sync {
 	}
 
 	/**
+	 * Cache for prop/field synchronize functions
+	 */
+	protected get syncLinkCache(): SyncLinkCache {
+		// @ts-ignore
+		return this.component.$syncLinkCache;
+	}
+
+	/**
+	 * Sets a new cache for prop/field synchronize functions
+	 * @param value
+	 */
+	protected set syncLinkCache(value: SyncLinkCache) {
+		// @ts-ignore
+		this.component.$syncLinkCache = value;
+	}
+
+	/**
 	 * Cache for prop/field links
 	 */
 	protected readonly linksCache!: Dictionary<Dictionary>;
-
-	/**
-	 * Cache for prop/field synchronize functions
-	 */
-	protected readonly syncLinkCache!: SyncLinkCache;
 
 	/**
 	 * Cache for modifiers synchronize functions

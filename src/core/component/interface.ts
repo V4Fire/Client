@@ -73,7 +73,7 @@ export interface SystemField<CTX extends ComponentInterface = ComponentInterface
 	replace?: boolean;
 	after: Set<string>;
 	init?: InitFieldFn<CTX>;
-	merge?: InitFieldFn<CTX>;
+	merge?: MergeFieldFn<CTX> | boolean;
 	meta: Dictionary;
 }
 
@@ -172,7 +172,6 @@ export interface ComponentParams {
 	name?: string;
 	root?: boolean;
 	tpl?: boolean;
-	tiny?: boolean;
 	functional?: boolean | Dictionary;
 	flyweight?: boolean;
 	model?: {prop?: string; event?: string};
@@ -219,9 +218,17 @@ export interface ComponentMeta {
 		components?: Dictionary<ComponentMeta['component']>;
 		staticRenderFns: RenderFunction[];
 		render: RenderFunction;
-		ctx?: FunctionalCtx;
 	}
 }
+
+export interface SyncLink<T = unknown> {
+	path: string;
+	sync(value?: T): void;
+}
+
+export type SyncLinkCache<T = unknown> = Dictionary<
+	Dictionary<SyncLink<T>>
+>;
 
 export type ComponentElement<T = unknown> = Element & {
 	component?: T;
@@ -245,20 +252,21 @@ export class ComponentInterface<
 	readonly $root!: R | any;
 	readonly $isServer!: boolean;
 	readonly $isFlyweight?: boolean;
-	protected readonly $async!: Async<ComponentInterface>;
 	protected readonly meta!: ComponentMeta;
+	protected readonly $async!: Async<ComponentInterface>;
 	protected readonly $refs!: Dictionary;
 	protected readonly $slots!: Dictionary<VNode>;
 	protected readonly $scopedSlots!: Dictionary<ScopedSlot>;
 	protected readonly $data!: Dictionary;
 	protected readonly $$data!: Dictionary;
+	protected readonly $dataCache!: Dictionary;
 	protected readonly $ssrContext!: unknown;
 	protected readonly $vnode!: VNode;
 	protected readonly $attrs!: Dictionary<string>;
 	protected readonly $listeners!: Dictionary<Function | Function[]>;
 	protected readonly $activeField!: string;
+	protected readonly $syncLinkCache!: SyncLinkCache;
 	protected $createElement!: CreateElement;
-	protected $refI!: number;
 
 	protected log?(key: string, ...details: unknown[]): void;
 

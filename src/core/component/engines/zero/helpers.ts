@@ -32,10 +32,6 @@ export interface Options extends Dictionary {
 	directives: Dictionary<DirectiveOptions>;
 }
 
-export const supports = {
-	functional: false
-};
-
 export const options: Options = {
 	filters: {},
 	directives: {}
