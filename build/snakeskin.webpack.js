@@ -241,20 +241,6 @@ function tagFilter({name, attrs = {}}) {
 		});
 
 		if (isFunctional || vFunc) {
-			const
-				model = attrs['v-model'];
-
-			if (component && model) {
-				const
-					modelInfo = component.model;
-
-				if (modelInfo) {
-					attrs[`:${dasherize(modelInfo.prop)}`] = model;
-					attrs[`@${modelInfo.event.dasherize()}`] = [`${model[0]}=$event`];
-					delete attrs['v-model'];
-				}
-			}
-
 			if (smart) {
 				if (vFunc) {
 					attrs[':is'] = [`'${attrs['is'][0]}' + (${vFunc[0]} ? '-functional' : '')`];
