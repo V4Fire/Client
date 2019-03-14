@@ -8,25 +8,25 @@
 
 // tslint:disable:completed-docs
 
+import symbolGenerator from 'core/symbol';
 import config from 'core/component/engines/zero/config';
-import { ComponentInterface } from 'core/component/interface';
+import { ComponentInterface, ComponentElement } from 'core/component/interface';
 
 //#if VueInterfaces
 import { DirectiveOptions } from 'vue';
-import { VNodeData } from 'vue/types/vnode';
+import { VNodeData, VNodeDirective } from 'vue/types/vnode';
 //#endif
 
-import {
+export type DocumentFragmentP = DocumentFragment & {
+	getAttribute(nm: string): void;
+	setAttribute(nm: string, val: string): void;
+};
 
-	addDirectives,
-	addStaticDirectives,
-	$$,
-	DirElement,
-	DocumentFragmentP
+export type DirElement =
+	Element |
+	ComponentElement |
+	DocumentFragmentP;
 
-} from 'core/component/create/directive';
-
-export * from 'core/component/create/directive';
 export interface Options extends Dictionary {
 	filters: Dictionary<Function>;
 	directives: Dictionary<DirectiveOptions>;
@@ -36,6 +36,9 @@ export const options: Options = {
 	filters: {},
 	directives: {}
 };
+
+export const
+	$$ = symbolGenerator();
 
 export const
 	SVG_NMS = 'http://www.w3.org/2000/svg',
@@ -261,5 +264,92 @@ export function warn(message: string, vm: object): void {
 
 	} else if (typeof console !== 'undefined' && Object.isFunction(console.error) && !config.silent) {
 		console.error(`[Vue warn]: ${message}`);
+	}
+}
+
+export function addStaticDirectives(
+	component: ComponentInterface,
+	data: VNodeData,
+	directives?: VNodeDirective[],
+	node?: DirElement
+): void {
+	if (!directives) {
+		return;
+	}
+
+	const
+		store = component.$options.directives;
+
+	if (!store) {
+		return;
+	}
+
+	if (node) {
+		node[$$.directives] = directives;
+	}
+
+	for (let o = directives, i = 0; i < o.length; i++) {
+		const
+			dir = o[i];
+
+		switch (dir.name) {
+			case 'show':
+				if (!dir.value) {
+					const
+						rule = ';display: none;';
+
+					if (data.tag === 'component' && node) {
+						node.setAttribute('style', (node.getAttribute('style') || '') + rule);
+
+					} else {
+						data.attrs = data.attrs || {};
+						data.attrs.style = (data.attrs.style || '') + rule;
+					}
+				}
+
+				break;
+
+			case 'model':
+				data.domProps = data.domProps || {};
+				data.domProps.value = dir.value;
+		}
+	}
+}
+
+export function addDirectives(
+	component: ComponentInterface,
+	node: DirElement,
+	data: VNodeData,
+	directives?: VNodeDirective[]
+): void {
+	if (!directives) {
+		return;
+	}
+
+	const
+		store = component.$options.directives;
+
+	if (!store) {
+		return;
+	}
+
+	node[$$.directives] =
+		directives;
+
+	for (let o = directives, i = 0; i < o.length; i++) {
+		const
+			dir = o[i],
+			customDir = store[dir.name];
+
+		if (!customDir) {
+			continue;
+		}
+
+		const vNode = Object.create(node);
+		vNode.context = component;
+
+		if (customDir.bind) {
+			customDir.bind.call(undefined, node, dir, vNode);
+		}
 	}
 }
