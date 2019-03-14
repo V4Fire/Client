@@ -626,33 +626,6 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	protected readonly opt!: Opt;
 
 	/**
-	 * Wrapper for $refs
-	 */
-	@p({cache: false})
-	protected get refs(): Dictionary<ComponentElement<iBlock> | Element> {
-		const
-			obj = this.$refs,
-			res = {};
-
-		if (obj) {
-			for (let keys = Object.keys(obj), i = 0; i < keys.length; i++) {
-				const
-					key = keys[i],
-					el = obj[key];
-
-				if (!el) {
-					continue;
-				}
-
-				const component = (<ComponentElement>el).component;
-				res[key] = component && (<iBlock>component).$el === el ? component : <Element>el;
-			}
-		}
-
-		return res;
-	}
-
-	/**
 	 * Render counter (for forceUpdate)
 	 */
 	@field({functional: false})
@@ -1650,16 +1623,6 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 		this.on = i.on.bind(this);
 		this.once = i.once.bind(this);
 		this.off = i.off.bind(this);
-
-		// tslint:disable:no-string-literal
-
-		Object.defineProperties(this, {
-			refs: {
-				get: i['refsGetter']
-			}
-		});
-
-		// tslint:enable:no-string-literal
 	}
 
 	/**
