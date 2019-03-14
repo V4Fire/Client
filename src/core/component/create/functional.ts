@@ -87,12 +87,13 @@ const parentMountMap = {
  * @param renderCtx - render context
  * @param baseCtx - base component context (methods, accessors, etc.)
  * @param [initProps] - if true, then component prop values will be force initialize
+ * @param [safe] - if true, then will be using safe access to properties
  */
 export function createFakeCtx<T extends Dictionary = FunctionalCtx>(
 	createElement: CreateElement,
 	renderCtx: RenderContext,
 	baseCtx: FunctionalCtx,
-	initProps?: boolean
+	{initProps, safe}: {initProps?: boolean; safe?: boolean} = {}
 ): T {
 	const
 		fakeCtx = Object.create(baseCtx),
@@ -281,7 +282,7 @@ export function createFakeCtx<T extends Dictionary = FunctionalCtx>(
 		fakeCtx.$root = fakeCtx;
 	}
 
-	addMethodsFromMeta(meta, fakeCtx);
+	addMethodsFromMeta(meta, fakeCtx, safe);
 	runHook('beforeRuntime', meta, fakeCtx).catch(stderr);
 
 	initPropsObject(meta.component.props, fakeCtx, instance, fakeCtx, initProps);

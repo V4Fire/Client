@@ -36,6 +36,7 @@ interface ComponentOpts {
 
 	class: string[];
 	staticClass: string;
+	style: CanArray<string | Dictionary>;
 }
 
 interface ComponentModel {
@@ -90,7 +91,8 @@ export function getComponentDataFromVnode(component: string, vnode: VNode): Comp
 		nativeOn: {...vData.nativeOn},
 
 		class: [].concat(vData.class || []),
-		staticClass: vData.staticClass
+		staticClass: vData.staticClass,
+		style: vData.style
 	};
 
 	const
