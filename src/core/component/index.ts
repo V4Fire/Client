@@ -15,7 +15,18 @@ import 'core/component/directives';
 
 import inheritMeta from 'core/component/create/inherit';
 import { ComponentInterface, ComponentParams, ComponentMeta, ComponentMethod } from 'core/component/interface';
-import { minimalCtx, ComponentDriver, RenderContext, CreateElement, VNode, VNodeData } from 'core/component/engines';
+import {
+
+	supports,
+	minimalCtx,
+
+	ComponentDriver,
+	RenderContext,
+	CreateElement,
+	VNode,
+	VNodeData
+
+} from 'core/component/engines';
 
 import { isAbstractComponent, getComponent, getBaseComponent } from 'core/component/create';
 import { createFakeCtx, execRenderObject, patchVNode } from 'core/component/create/functional';
@@ -167,7 +178,7 @@ export function component(params?: ComponentParams): Function {
 							const
 								ctx = this || rootCtx;
 
-							if (opts && opts.tag === 'component') {
+							if (supports.functional && opts && opts.tag === 'component') {
 								const
 									component = components.get(tag);
 
@@ -205,7 +216,9 @@ export function component(params?: ComponentParams): Function {
 											on: data.on,
 											attrs: data.attrs,
 											class: data.class,
-											staticClass: data.staticClass
+											staticClass: data.staticClass,
+											// @ts-ignore
+											style: data.style
 										}
 									};
 
@@ -221,7 +234,7 @@ export function component(params?: ComponentParams): Function {
 											$options: {}
 										}),
 
-										true
+										{initProps: true}
 									);
 
 									// @ts-ignore

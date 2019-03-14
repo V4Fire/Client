@@ -44,13 +44,14 @@ export const
  */
 export function patchVNode(vnode: VNode, ctx: ComponentInterface, renderCtx: RenderContext): void {
 	const
-		{data: vData} = vnode,
-		{data} = renderCtx,
+		vData = vnode.data = vnode.data || {};
 
+	const
+		{data} = renderCtx,
 		// @ts-ignore
 		{meta} = ctx;
 
-	if (vData) {
+	if (data) {
 		vData.staticClass = vData.staticClass || '';
 
 		// Custom classes and attributes
@@ -61,6 +62,14 @@ export function patchVNode(vnode: VNode, ctx: ComponentInterface, renderCtx: Ren
 
 		if (data.class) {
 			vData.class = [].concat(vData.class, data.class);
+		}
+
+		if (data.class) {
+			vData.class = [].concat(vData.class, data.class);
+		}
+
+		if (data.style) {
+			vData.style = (<unknown[]>[]).concat(vData.style || [], data.style);
 		}
 
 		if (data.attrs && meta.params.inheritAttrs) {
