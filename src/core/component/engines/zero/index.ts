@@ -9,7 +9,7 @@
 import symbolGenerator from 'core/symbol';
 
 import { ComponentInterface } from 'core/component/interface';
-import { constructors, components } from 'core/component/const';
+import { components } from 'core/component/const';
 import { runHook, bindWatchers } from 'core/component/create/helpers';
 import { createFakeCtx } from 'core/component/create/functional';
 
@@ -162,8 +162,7 @@ export class ComponentDriver {
 			}
 
 			const
-				constr = constructors[tag],
-				meta = constr && components.get(constr);
+				meta = components.get(tag);
 
 			if (meta) {
 				const
@@ -393,16 +392,15 @@ export function createComponent<T>(
 	parent?: ComponentInterface
 ): [T?, ComponentInterface?] {
 	const
-		constr = constructors[Object.isString(component) ? component : String(component.name)],
 		// @ts-ignore
 		createElement = ctx.$createElement;
 
-	if (!constr || !createElement) {
+	if (!createElement) {
 		return [];
 	}
 
 	let
-		meta = components.get(constr);
+		meta = components.get(Object.isString(component) ? component : String(component.name));
 
 	if (!meta) {
 		return [];
@@ -436,7 +434,7 @@ export function createComponent<T>(
 		}
 	}
 
-	const baseCtx = Object.assign(Object.create(constr.prototype), minimalCtx, {
+	const baseCtx = Object.assign(Object.create(meta.constructor.prototype), minimalCtx, {
 		meta,
 		instance: meta.instance,
 		componentName: meta.componentName

@@ -19,7 +19,7 @@ import {
 	InjectOptions,
 	DirectiveOptions,
 
-	PropOptions,
+	PropOptions as BasePropOptions,
 	ComputedOptions,
 	WatchOptions,
 	WatchOptionsWithHandler as BaseWatchOptionsWithHandler,
@@ -43,7 +43,12 @@ export interface FieldWatcher<
 	B = A
 > extends WatchOptions {
 	fn: WatchHandler<CTX, A, B>;
+	functional?: boolean;
 	provideArgs?: boolean;
+}
+
+export interface PropOptions extends BasePropOptions {
+	functional?: boolean;
 }
 
 export interface ComponentProp extends PropOptions {
@@ -71,6 +76,7 @@ export interface SystemField<CTX extends ComponentInterface = ComponentInterface
 	default?: unknown;
 	unique?: boolean | UniqueFieldFn<CTX>;
 	replace?: boolean;
+	functional?: boolean;
 	after: Set<string>;
 	init?: InitFieldFn<CTX>;
 	merge?: MergeFieldFn<CTX> | boolean;
@@ -92,6 +98,7 @@ export interface WatchOptionsWithHandler<
 > extends WatchOptions {
 	group?: string;
 	single?: boolean;
+	functional?: boolean;
 	options?: AddEventListenerOptions;
 	method?: string;
 	args?: CanArray<unknown>;
@@ -108,6 +115,7 @@ export interface MethodWatcher<
 	field?: string;
 	group?: string;
 	single?: boolean;
+	functional?: boolean;
 	options?: AddEventListenerOptions;
 	args?: CanArray<unknown>;
 	provideArgs?: boolean;
@@ -132,6 +140,7 @@ export type Hooks =
 export interface Hook {
 	fn: Function;
 	name?: string;
+	functional?: boolean;
 	after?: Set<string>;
 }
 
@@ -140,6 +149,7 @@ export interface ComponentMethod {
 	src: string;
 	wrapper?: boolean;
 	replace?: boolean;
+	functional?: boolean;
 	watchers: Dictionary<MethodWatcher>;
 	hooks: {[hook in Hooks]?: {
 		name: string;
@@ -151,6 +161,7 @@ export interface ComponentMethod {
 export interface ComponentAccessor extends ComputedOptions<unknown> {
 	src: string;
 	replace?: boolean;
+	functional?: boolean;
 }
 
 export type ModVal = string | boolean | number;

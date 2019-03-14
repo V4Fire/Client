@@ -212,7 +212,7 @@ function callMethodFromMeta(ctx: ComponentInterface, method: string): void {
 			const
 				res = obj.fn.call(ctx);
 
-			if (Object.isPromise(res)) {
+			if (res instanceof Promise) {
 				res.catch(stderr);
 			}
 
@@ -246,6 +246,11 @@ export function getBaseComponent(
 		return {mods: component.mods, component, instance};
 	}
 
+	const
+		isFunctional = meta.params.functional === true;
+
+	// Methods
+
 	for (let o = methods, keys = Object.keys(o), i = 0; i < keys.length; i++) {
 		const
 			nm = keys[i],
@@ -261,40 +266,54 @@ export function getBaseComponent(
 		for (let o = method.watchers, keys = Object.keys(o), i = 0; i < keys.length; i++) {
 			const
 				key = keys[i],
-				el = <NonNullable<WatchOptionsWithHandler>>o[key],
+				watcher = <NonNullable<WatchOptionsWithHandler>>o[key],
 				wList = watchers[key] = watchers[key] || [];
+
+			if (isFunctional && watcher.functional === false) {
+				continue;
+			}
 
 			wList.push({
 				method: nm,
-				group: el.group,
-				single: el.single,
-				options: el.options,
-				args: (<unknown[]>[]).concat(el.args || []),
-				provideArgs: el.provideArgs,
-				deep: el.deep,
-				immediate: el.immediate,
-				wrapper: el.wrapper,
+				group: watcher.group,
+				single: watcher.single,
+				options: watcher.options,
+				args: (<unknown[]>[]).concat(watcher.args || []),
+				provideArgs: watcher.provideArgs,
+				deep: watcher.deep,
+				immediate: watcher.immediate,
+				wrapper: watcher.wrapper,
 				handler: <any>method.fn
 			});
 		}
 
+		// Hooks
+
 		for (let o = method.hooks, keys = Object.keys(o), i = 0; i < keys.length; i++) {
 			const
 				key = keys[i],
-				el = o[key];
+				watcher = o[key];
+
+			if (isFunctional && watcher.functional === false) {
+				continue;
+			}
 
 			hooks[key].push({
-				name: el.name,
+				name: watcher.name,
 				fn: method.fn,
-				after: el.after
+				after: watcher.after
 			});
 		}
 	}
+
+	// Computed properties
 
 	for (let o = meta.computed, keys = Object.keys(o), i = 0; i < keys.length; i++) {
 		const key = keys[i];
 		component.computed[key] = o[key];
 	}
+
+	// Props
 
 	const
 		defaultProps = meta.params.defaultProps !== false;
@@ -325,22 +344,23 @@ export function getBaseComponent(
 			type: prop.type,
 			required: prop.required,
 			validator: prop.validator,
+			functional: prop.functional,
 			default: !skipDefault ? prop.default !== undefined ? prop.default : defWrapper : undefined
 		};
 
-		if (prop.watchers.size) {
+		if (!isFunctional && prop.watchers.size) {
 			const
 				wList = watchers[key] = watchers[key] || [];
 
 			for (let w = prop.watchers.values(), el = w.next(); !el.done; el = w.next()) {
 				const
-					val = el.value;
+					watcher = el.value;
 
 				wList.push({
-					deep: val.deep,
-					immediate: val.immediate,
-					provideArgs: val.provideArgs,
-					handler: val.fn
+					deep: watcher.deep,
+					immediate: watcher.immediate,
+					provideArgs: watcher.provideArgs,
+					handler: watcher.fn
 				});
 			}
 		}
@@ -353,14 +373,18 @@ export function getBaseComponent(
 
 		for (let w = field.watchers.values(), el = w.next(); !el.done; el = w.next()) {
 			const
-				val = el.value,
+				watcher = el.value,
 				wList = watchers[key] = watchers[key] || [];
 
+			if (isFunctional && watcher.functional === false) {
+				continue;
+			}
+
 			wList.push({
-				deep: val.deep,
-				immediate: val.immediate,
-				provideArgs: val.provideArgs,
-				handler: val.fn
+				deep: watcher.deep,
+				immediate: watcher.immediate,
+				provideArgs: watcher.provideArgs,
+				handler: watcher.fn
 			});
 		}
 	}

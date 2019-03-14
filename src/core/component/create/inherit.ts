@@ -251,8 +251,7 @@ export default function inheritMeta(
 					el = o[key];
 
 				hooks[key] = {
-					name: el.name,
-					hook: el.hook,
+					...el,
 					after: new Set(el.after)
 				};
 			}

@@ -143,12 +143,15 @@ export function addMethodsToMeta(constructor: Function, meta: ComponentMeta): vo
  * @param ctx - component context
  * @param [safe] - if true, then will be using safe access to properties
  */
-export function addMethodsFromMeta(meta: ComponentMeta, ctx: Dictionary<any>, safe?: boolean): void {
+export function addMethodsFromMeta(meta: ComponentMeta, ctx: ComponentInterface, safe?: boolean): void {
 	const list = [
 		meta.accessors,
 		meta.computed,
 		meta.methods
 	];
+
+	const
+		isFlyweight = ctx.$isFlyweight || meta.params.functional === true;
 
 	for (let i = 0; i < list.length; i++) {
 		const
@@ -159,7 +162,14 @@ export function addMethodsFromMeta(meta: ComponentMeta, ctx: Dictionary<any>, sa
 				key = keys[i],
 				el = <StrictDictionary<any>>o[key];
 
-			if ((safe ? Object.getOwnPropertyDescriptor(ctx, key) : ctx[key]) !== undefined && el.replace !== false) {
+			if (isFlyweight && el.functional === false) {
+				continue;
+			}
+
+			const
+				alreadyExists = safe ? Object.getOwnPropertyDescriptor(ctx, key) : ctx[key];
+
+			if (alreadyExists && (!isFlyweight || el.replace !== false)) {
 				continue;
 			}
 

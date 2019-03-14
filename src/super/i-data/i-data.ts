@@ -60,7 +60,7 @@ export * from 'super/i-message/i-message';
 export const
 	$$ = symbolGenerator();
 
-@component()
+@component({functional: false})
 export default abstract class iData<T extends Dictionary = Dictionary> extends iMessage implements iProgress {
 	/**
 	 * Data provider name
@@ -174,7 +174,7 @@ export default abstract class iData<T extends Dictionary = Dictionary> extends i
 
 	/** @override */
 	@wait({label: $$.initLoad, defer: true})
-	async initLoad(data?: unknown, silent?: boolean): Promise<void> {
+	initLoad(data?: unknown, silent?: boolean): CanPromise<void> {
 		const
 			important = this.componentStatus === 'unloaded';
 
@@ -194,12 +194,15 @@ export default abstract class iData<T extends Dictionary = Dictionary> extends i
 			if (p) {
 				Object.assign(p[1], {...label, important, join: false});
 
-				try {
-					const db = this.convertDataToDB<T>(data || await this.get(<RequestQuery>p[0], p[1]));
+				if (data) {
+					const db = this.convertDataToDB<T>(data);
 					this.lfc.execCbAtTheRightTime(() => this.db = db, label);
 
-				} catch (err) {
-					stderr(err);
+				} else {
+					this.get(<RequestQuery>p[0], p[1]).then((data) => {
+						const db = this.convertDataToDB<T>(data);
+						this.lfc.execCbAtTheRightTime(() => this.db = db, label);
+					}, stderr);
 				}
 
 			} else if (this.db) {
@@ -222,12 +225,12 @@ export default abstract class iData<T extends Dictionary = Dictionary> extends i
 	}
 
 	/** override */
-	async reload(): Promise<void> {
+	reload(): Promise<void> {
 		if (!this.$root.isOnline && !this.needOfflineReInit) {
-			return;
+			return Promise.resolve();
 		}
 
-		await super.reload();
+		return super.reload();
 	}
 
 	/**
@@ -275,7 +278,7 @@ export default abstract class iData<T extends Dictionary = Dictionary> extends i
 	connect(params?: Dictionary): SocketEvent<this> {
 		const
 			{async: $a, dp: $d} = this,
-			connection = (async () => $d && $d.connect(params))();
+			connection = Promise.resolve($d && $d.connect(params));
 
 		return {
 			connection,
@@ -284,7 +287,7 @@ export default abstract class iData<T extends Dictionary = Dictionary> extends i
 					return;
 				}
 
-				return (async () => $a.on(<Socket>(await connection), event, fnOrParams, ...args))();
+				return connection.then((connection) => $a.on(<Socket>connection, event, fnOrParams, ...args));
 			},
 
 			once: (event, fnOrParams, ...args) => {
@@ -292,7 +295,7 @@ export default abstract class iData<T extends Dictionary = Dictionary> extends i
 					return;
 				}
 
-				return (async () => $a.once(<Socket>(await connection), event, fnOrParams, ...args))();
+				return connection.then((connection) => $a.once(<Socket>connection, event, fnOrParams, ...args));
 			},
 
 			promisifyOnce: (event, params, ...args) => {
@@ -300,7 +303,7 @@ export default abstract class iData<T extends Dictionary = Dictionary> extends i
 					return Promise.resolve();
 				}
 
-				return (async () => $a.promisifyOnce(<Socket>(await connection), event, params, ...args))();
+				return connection.then((connection) => $a.promisifyOnce(<Socket>connection, event, params, ...args));
 			},
 
 			off: (...args) => {
@@ -474,7 +477,7 @@ export default abstract class iData<T extends Dictionary = Dictionary> extends i
 	 * Initializes data event listeners
 	 */
 	@wait('ready')
-	protected async initDataListeners(): Promise<void> {
+	protected initDataListeners(): void {
 		const
 			{dataEvent: $e} = this,
 			group = {group: 'dataProviderSync'};
@@ -512,16 +515,16 @@ export default abstract class iData<T extends Dictionary = Dictionary> extends i
 	 */
 	@watch({field: 'request', deep: true})
 	@watch({field: 'requestParams', deep: true})
-	protected async syncRequestParamsWatcher<T = unknown>(
+	protected syncRequestParamsWatcher<T = unknown>(
 		value?: RequestParams<T>,
 		oldValue?: RequestParams<T>
 	): Promise<void> {
 		if (!value) {
-			return;
+			return Promise.resolve();
 		}
 
 		const
-			tasks = <Promise<void>[]>[];
+			tasks = <CanPromise<void>[]>[];
 
 		for (let o = Object.keys(value), i = 0; i < o.length; i++) {
 			const
@@ -544,7 +547,7 @@ export default abstract class iData<T extends Dictionary = Dictionary> extends i
 			}
 		}
 
-		await Promise.all(tasks);
+		return Promise.all(tasks).then(() => undefined);
 	}
 
 	/**
@@ -552,7 +555,7 @@ export default abstract class iData<T extends Dictionary = Dictionary> extends i
 	 * @param value
 	 */
 	@watch({field: 'dataProvider', immediate: true})
-	protected async syncDataProviderWatcher(value?: string): Promise<void> {
+	protected syncDataProviderWatcher(value?: string): void {
 		if (value) {
 			const
 				ProviderConstructor = <typeof Provider>providers[value];
@@ -562,7 +565,7 @@ export default abstract class iData<T extends Dictionary = Dictionary> extends i
 			}
 
 			this.dp = new ProviderConstructor(this.dataProviderParams);
-			await this.initDataListeners();
+			this.initDataListeners();
 
 		} else {
 			this.dp = undefined;
@@ -590,7 +593,7 @@ export default abstract class iData<T extends Dictionary = Dictionary> extends i
 	 * @param [oldValue]
 	 */
 	@watch('p')
-	protected async syncDataProviderParamsWatcher(value: Dictionary, oldValue: Dictionary): Promise<void> {
+	protected syncDataProviderParamsWatcher(value: Dictionary, oldValue: Dictionary): void {
 		const
 			providerNm = this.dataProvider;
 
@@ -603,7 +606,7 @@ export default abstract class iData<T extends Dictionary = Dictionary> extends i
 			}
 
 			this.dp = new ProviderConstructor(value);
-			await this.initDataListeners();
+			this.initDataListeners();
 		}
 	}
 
@@ -805,7 +808,7 @@ export default abstract class iData<T extends Dictionary = Dictionary> extends i
 	 * Handler: dataProvider.refresh
 	 * @param data
 	 */
-	protected async onRefreshData(data: T): Promise<void> {
-		await this.reload();
+	protected onRefreshData(data: T): Promise<void> {
+		return this.reload();
 	}
 }

@@ -20,7 +20,7 @@ import { minimalCtx, ComponentDriver, RenderContext, CreateElement, VNode, VNode
 import { isAbstractComponent, getComponent, getBaseComponent } from 'core/component/create';
 import { createFakeCtx, execRenderObject, patchVNode } from 'core/component/create/functional';
 import { getComponentDataFromVnode, createCompositeElement } from 'core/component/create/composite';
-import { constructors, components, localComponents, rootComponents, initEvent } from 'core/component/const';
+import { components, localComponents, rootComponents, initEvent } from 'core/component/const';
 
 export * from 'core/component/interface';
 export * from 'core/component/const';
@@ -54,7 +54,8 @@ export function getComponentName(constr: Function): string {
 }
 
 const
-	minimalCtxCache = Object.create(null);
+	minimalCtxCache = Object.create(null),
+	tplCache = Object.create(null);
 
 /**
  * Creates a new component
@@ -88,7 +89,6 @@ export function component(params?: ComponentParams): Function {
 		let p: ComponentParams = parentMeta ? {...params} : {
 			root: false,
 			tpl: true,
-			functional: false,
 			inheritAttrs: true,
 			...params
 		};
@@ -165,8 +165,7 @@ export function component(params?: ComponentParams): Function {
 
 							if (opts && opts.tag === 'component') {
 								const
-									constr = constructors[tag],
-									component = constr && components.get(constr);
+									component = components.get(tag);
 
 								if (component && (isSmartComponent.test(tag) || component.params.functional === true)) {
 									needEl = true;
@@ -222,7 +221,7 @@ export function component(params?: ComponentParams): Function {
 									);
 
 									// @ts-ignore
-									const renderObject = tpl.index();
+									const renderObject = tplCache[nm] = tplCache[nm] || tpl.index();
 									vnode = patchVNode(execRenderObject(renderObject, fakeCtx), fakeCtx, renderCtx);
 								}
 							}
@@ -234,8 +233,24 @@ export function component(params?: ComponentParams): Function {
 								);
 							}
 
-							if (needEl) {
-								Object.defineProperty(vnode.context, '$el', {
+							/*const
+								vData = vnode.data || {},
+								ref = vData.ref;
+
+							if (ref) {
+								console.log(ref, vnode, vnode.context.$refs, vData.refInFor);
+
+								if (needEl) {
+									const
+										{$refs} = vnode.context.$parent;
+
+									//console.log(vnode.context.$parent.$refs);
+									//console.log(ref, vnode.context.$refs, vData.refInFor);
+								}
+							}*/
+
+							if (needEl && vnode.context2) {
+								Object.defineProperty(vnode.context2, '$el', {
 									enumerable: true,
 									configurable: true,
 
@@ -273,7 +288,7 @@ export function component(params?: ComponentParams): Function {
 			components.set(target, meta);
 		}
 
-		constructors[name] = target;
+		components.set(name, meta);
 		initEvent.emit('constructor', {meta, parentMeta});
 
 		if (isAbstractComponent.test(name)) {
@@ -297,7 +312,7 @@ export function component(params?: ComponentParams): Function {
 
 			const addRenderAndResolve = (tpls) => {
 				const
-					fns = tpls.index(),
+					fns = tplCache[name] = tplCache[name] || tpls.index(),
 					renderObj = <ComponentMethod>{wrapper: true, watchers: {}, hooks: {}};
 
 				renderObj.fn = fns.render;

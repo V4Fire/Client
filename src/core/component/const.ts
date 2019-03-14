@@ -14,10 +14,9 @@ export const
 	initEvent = new EventEmitter({maxListeners: 1e3});
 
 export const
-	constructors = Object.createDict<Function>(),
 	rootComponents = Object.createDict<Promise<ComponentOptions<ComponentDriver>>>(),
 	localComponents = new WeakMap<Function, ComponentMeta>(),
-	components = new WeakMap<Function, ComponentMeta>();
+	components = new Map<Function | string, ComponentMeta>();
 
 ((initEventOnce) => {
 	initEvent.once = function (event: CanArray<string>, listener: Listener): EventEmitter {

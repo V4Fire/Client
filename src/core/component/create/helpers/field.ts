@@ -6,8 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { PropOptions } from 'core/component/engines';
-import { ComponentField, SystemField } from 'core/component/interface';
+import { ComponentInterface, PropOptions, ComponentField, SystemField } from 'core/component/interface';
 import { defaultWrapper, NULL } from 'core/component/create/helpers/const';
 
 /**
@@ -22,12 +21,17 @@ import { defaultWrapper, NULL } from 'core/component/create/helpers/const';
 // tslint:disable-next-line:cyclomatic-complexity
 export function initDataObject(
 	fields: Dictionary<ComponentField>,
-	ctx: Dictionary,
+	ctx: ComponentInterface,
 	instance: Dictionary,
 	data: Dictionary = {}
 ): Dictionary {
 	const
-		queue = new Set();
+		// @ts-ignore
+		isFlyweight = ctx.$isFlyweight || ctx.meta.params.functional === true;
+
+	const
+		queue = new Set(),
+		skipped = Object.create(null);
 
 	const
 		atomList = <string[]>[],
@@ -39,6 +43,11 @@ export function initDataObject(
 			key = keys[i],
 			el = <NonNullable<SystemField>>fields[key];
 
+		if (isFlyweight && el.functional === false) {
+			skipped[key] = true;
+			continue;
+		}
+
 		if (el.atom || !el.init && (el.default !== undefined || key in instance)) {
 			if (el.after.size) {
 				atomList.push(key);
@@ -48,6 +57,7 @@ export function initDataObject(
 					data[key] = undefined;
 				}
 
+				// @ts-ignore
 				ctx.$activeField = key;
 
 				let
@@ -105,6 +115,10 @@ export function initDataObject(
 						waitFieldKey = val.value,
 						waitField = fields[waitFieldKey];
 
+					if (skipped[waitFieldKey]) {
+						continue;
+					}
+
 					if (!waitField) {
 						throw new ReferenceError(`Field "${waitFieldKey}" is not defined`);
 					}
@@ -130,6 +144,7 @@ export function initDataObject(
 					data[key] = undefined;
 				}
 
+				// @ts-ignore
 				ctx.$activeField = key;
 				queue.delete(key);
 
@@ -189,6 +204,10 @@ export function initDataObject(
 						waitFieldKey = val.value,
 						waitField = fields[waitFieldKey];
 
+					if (skipped[waitFieldKey]) {
+						continue;
+					}
+
 					if (!waitField) {
 						throw new ReferenceError(`Field "${waitFieldKey}" is not defined`);
 					}
@@ -210,6 +229,7 @@ export function initDataObject(
 					data[key] = undefined;
 				}
 
+				// @ts-ignore
 				ctx.$activeField = key;
 				queue.delete(key);
 
@@ -251,17 +271,22 @@ export function initDataObject(
  */
 export function initPropsObject(
 	fields: Dictionary<PropOptions>,
-	ctx: Dictionary,
+	ctx: ComponentInterface,
 	instance: Dictionary,
 	data: Dictionary = {},
 	forceInit?: boolean
 ): Dictionary {
+	const
+		// @ts-ignore
+		isFlyweight = ctx.$isFlyweight || ctx.meta.params.functional === true;
+
 	for (let keys = Object.keys(fields), i = 0; i < keys.length; i++) {
 		const
+			// @ts-ignore
 			key = ctx.$activeField = keys[i],
 			el = fields[key];
 
-		if (!el) {
+		if (!el || isFlyweight && el.functional === false) {
 			continue;
 		}
 

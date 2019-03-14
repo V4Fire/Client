@@ -8,7 +8,7 @@
 
 import { VNode, VNodeDirective, ScopedSlot } from 'core/component/engines';
 import { ComponentInterface } from 'core/component/interface';
-import { constructors, components } from 'core/component/const';
+import { components } from 'core/component/const';
 import {
 
 	NULL,
@@ -94,10 +94,9 @@ export function getComponentDataFromVnode(component: string, vnode: VNode): Comp
 	};
 
 	const
-		constr = constructors[component],
-		meta = constr && components.get(constr);
+		meta = components.get(component);
 
-	if (!constr || !meta) {
+	if (!meta) {
 		res.attrs = vData.attrs || res.attrs;
 		return res;
 	}
@@ -184,18 +183,15 @@ export function createCompositeElement(vnode: VNode, ctx: ComponentInterface): V
 	}
 
 	const
-		constr = constructors[composite],
-		meta = constr && components.get(constr);
+		meta = components.get(composite);
 
-	if (!constr || !meta) {
+	if (!meta) {
 		return vnode;
 	}
 
 	const
-		vData = getComponentDataFromVnode(composite, vnode);
-
-	const
-		proto = constr.prototype,
+		vData = getComponentDataFromVnode(composite, vnode),
+		proto = meta.constructor.prototype,
 		tpl = TPLS[composite] || proto.render;
 
 	const fakeCtx = Object.assign(Object.create(ctx), {
@@ -209,6 +205,7 @@ export function createCompositeElement(vnode: VNode, ctx: ComponentInterface): V
 
 	addEventAPI(fakeCtx);
 
+	Object.defineProperty(fakeCtx, '$refs', {...defReadonlyProp, value: {}});
 	Object.defineProperty(fakeCtx, '$props', {...defReadonlyProp, value: {}});
 	Object.defineProperty(fakeCtx, '$attrs', {...defReadonlyProp, value: vData.attrs});
 
@@ -275,7 +272,7 @@ export function createCompositeElement(vnode: VNode, ctx: ComponentInterface): V
 	newVData.class = (<string[]>[]).concat(newVData.class || [], vData.class);
 
 	newVData.directives = vData.directives;
-	newVNode.context = fakeCtx;
+	//newVNode.componentInstance = fakeCtx;
 
 	return newVNode;
 }

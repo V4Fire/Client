@@ -169,6 +169,9 @@ export default class Sync {
 			params = undefined;
 		}
 
+		const
+			{meta, component} = this;
+
 		if (!(path in this.linksCache)) {
 			this.linksCache[path] = {};
 
@@ -182,13 +185,15 @@ export default class Sync {
 				return res;
 			};
 
-			this.component.watch(field, async (val, oldVal) => {
-				if (Object.fastCompare(val, oldVal) || Object.fastCompare(val, this.field.get(path))) {
-					return;
-				}
+			if (!component.isFlyweight && (!meta.props[field] || !component.isFunctional)) {
+				component.watch(field, async (val, oldVal) => {
+					if (Object.fastCompare(val, oldVal) || Object.fastCompare(val, this.field.get(path))) {
+						return;
+					}
 
-				sync(val, oldVal);
-			}, params);
+					sync(val, oldVal);
+				}, params);
+			}
 
 			// tslint:disable-next-line:prefer-object-spread
 			cache[field] = Object.assign(cache[field] || {}, {
@@ -201,7 +206,7 @@ export default class Sync {
 			if (this.lfc.isBeforeCreate('beforeDataCreate')) {
 				const
 					name = '[[SYNC]]',
-					hooks = this.meta.hooks.beforeDataCreate;
+					hooks = meta.hooks.beforeDataCreate;
 
 				let
 					pos = 0;
@@ -253,10 +258,10 @@ export default class Sync {
 		}
 
 		const
-			hooks = this.meta.hooks.beforeDataCreate,
-			{syncLinkCache, linksCache} = this;
+			{meta, component, syncLinkCache, linksCache} = this;
 
 		const
+			hooks = meta.hooks.beforeDataCreate,
 			head = this.activeField;
 
 		// tslint:disable-next-line:prefer-conditional-expression
@@ -299,13 +304,15 @@ export default class Sync {
 			const
 				sync = (val?, oldVal?) => setField(path, getVal(val, oldVal));
 
-			this.component.watch(field, (val, oldVal) => {
-				if (Object.fastCompare(val, oldVal) || Object.fastCompare(val, this.field.get(path))) {
-					return;
-				}
+			if (!component.isFlyweight && (!meta.props[field] || !component.isFunctional)) {
+				component.watch(field, (val, oldVal) => {
+					if (Object.fastCompare(val, oldVal) || Object.fastCompare(val, this.field.get(path))) {
+						return;
+					}
 
-				sync(val, oldVal);
-			}, <AsyncWatchOpts>params);
+					sync(val, oldVal);
+				}, <AsyncWatchOpts>params);
+			}
 
 			// tslint:disable-next-line:prefer-object-spread
 			syncLinkCache[field] = Object.assign(syncLinkCache[field] || {}, {
@@ -438,11 +445,13 @@ export default class Sync {
 		}
 
 		const
-			c = this.component,
+			{component} = this;
+
+		const
 			fn = <Function>converter;
 
 		const setWatcher = () => {
-			this.component.watch(field, (val) => {
+			component.watch(field, (val) => {
 				val = fn.call(this, val);
 
 				if (val !== undefined) {
@@ -458,11 +467,11 @@ export default class Sync {
 					v = fn.call(this, this.field.get(field));
 
 				if (v !== undefined) {
-					c.mods[mod] = String(v);
+					component.mods[mod] = String(v);
 				}
 			};
 
-			if (c.hook !== 'beforeDataCreate') {
+			if (component.hook !== 'beforeDataCreate') {
 				this.meta.hooks.beforeDataCreate.push({
 					fn: sync
 				});
@@ -473,7 +482,7 @@ export default class Sync {
 
 			setWatcher();
 
-		} else if (statuses[c.componentStatus] >= 1) {
+		} else if (statuses[component.componentStatus] >= 1) {
 			setWatcher();
 		}
 	}

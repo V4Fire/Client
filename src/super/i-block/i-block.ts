@@ -585,6 +585,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 		atom: true,
 		unique: true,
 		replace: true,
+		functional: false,
 		init: (ctx: iBlock) => new AsyncRender(ctx)
 	})
 
@@ -654,7 +655,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	/**
 	 * Render counter (for forceUpdate)
 	 */
-	@field()
+	@field({functional: false})
 	protected renderCounter: number = 0;
 
 	/**
@@ -1214,8 +1215,9 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	 * Wrapper for $forceUpdate
 	 */
 	@wait({defer: true, label: $$.forceUpdate})
-	async forceUpdate(): Promise<void> {
+	forceUpdate(): Promise<void> {
 		this.renderCounter++;
+		return Promise.resolve();
 	}
 
 	/**
@@ -1257,14 +1259,18 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 			this.lfc.execCbAtTheRightTime(() => this.emit('dbReady', get(), silent));
 			this.componentStatus = 'beforeReady';
 
-			this.lfc.execCbAfterComponentReady(async () => {
+			this.lfc.execCbAfterComponentReady(() => {
 				if (this.beforeReadyListeners > 1) {
-					await this.nextTick();
-					this.beforeReadyListeners = 0;
-				}
+					this.nextTick().then(() => {
+						this.beforeReadyListeners = 0;
+						this.componentStatus = 'ready';
+						this.emit('initLoad', get(), silent);
+					});
 
-				this.componentStatus = 'ready';
-				this.emit('initLoad', get(), silent);
+				} else {
+					this.componentStatus = 'ready';
+					this.emit('initLoad', get(), silent);
+				}
 			});
 		};
 
@@ -1303,8 +1309,15 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	/**
 	 * Reloads component data
 	 */
-	async reload(): Promise<void> {
-		await this.initLoad(undefined, true);
+	reload(): Promise<void> {
+		const
+			res = this.initLoad(undefined, true);
+
+		if (res instanceof Promise) {
+			return res;
+		}
+
+		return Promise.resolve();
 	}
 
 	/**
@@ -1608,24 +1621,25 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	 * @param ref
 	 * @param [params] - async parameters
 	 */
-	protected async waitRef<T = iBlock | Element | iBlock[] | Element[]>(ref: string, params?: AsyncOpts): Promise<T> {
-		await this.async.wait(() => this.$refs[ref], params);
+	protected waitRef<T = iBlock | Element | iBlock[] | Element[]>(ref: string, params?: AsyncOpts): Promise<T> {
+		return this.async.wait(() => this.$refs[ref], params).then(() => {
+			const
+				link = <T>this.$refs[ref];
 
-		const
-			link = <T>this.$refs[ref];
+			if (link instanceof Element) {
+				return (<ComponentElement<T>>link).component || link;
+			}
 
-		if (link instanceof Element) {
-			return (<ComponentElement<T>>link).component || link;
-		}
-
-		return link;
+			return link;
+		});
 	}
 
 	/**
 	 * Initializes core component API
 	 */
-	@hook('beforeRuntime')
+	@hook({beforeRuntime: {functional: false}})
 	protected initBaseAPI(): void {
+
 		const
 			i = this.instance;
 
@@ -1652,8 +1666,8 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	 * Synchronization for the asyncComponents field
 	 * @emits asyncRender()
 	 */
-	@watch({field: 'asyncComponents', deep: true})
-	@watch({field: 'asyncBackComponents', deep: true})
+	@watch({field: 'asyncComponents', deep: true, functional: false})
+	@watch({field: 'asyncBackComponents', deep: true, functional: false})
 	protected syncAsyncComponentsWatcher(): void {
 		this.emit('asyncRender');
 	}
@@ -1694,7 +1708,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	/**
 	 * Initializes global event listeners
 	 */
-	@hook('created')
+	@hook({created: {functional: false}})
 	protected initGlobalEvents(): void {
 		initGlobalEvents(this);
 	}
@@ -1710,7 +1724,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	/**
 	 * Initializes watchers from .watchProp
 	 */
-	@hook('beforeDataCreate')
+	@hook({beforeDataCreate: {functional: false}})
 	protected initRemoteWatchers(): void {
 		initRemoteWatchers(this);
 	}

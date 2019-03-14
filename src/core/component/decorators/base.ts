@@ -7,10 +7,11 @@
  */
 
 import { initEvent } from 'core/component/const';
-import { PropOptions, WatchOptions } from 'core/component/engines';
+import { WatchOptions } from 'core/component/engines';
 
 import {
 
+	PropOptions,
 	ComponentInterface,
 	ComponentMeta,
 	Hooks,
@@ -44,12 +45,17 @@ export interface ComponentProp<
 	A = unknown,
 	B = A
 > extends PropOptions {
-	watch?: FieldWatcher<CTX, A, B>;
 	forceDefault?: boolean;
+	watch?: FieldWatcher<CTX, A, B>;
 	meta?: Dictionary;
 }
 
-export interface ComponentAccessor {
+export interface FunctionalOpts {
+	replace?: boolean;
+	functional?: boolean;
+}
+
+export interface ComponentAccessor extends FunctionalOpts {
 	cache: boolean;
 }
 
@@ -57,7 +63,7 @@ export interface ComponentAccessor {
  * Marks a class property as a component initial property
  * @decorator
  */
-export const prop = paramsFactory<Function | ObjectConstructor | ComponentProp>('props', (p) => {
+export const prop = paramsFactory<CanArray<Function> | ObjectConstructor | ComponentProp>('props', (p) => {
 	if (Object.isFunction(p) || Object.isArray(p)) {
 		return {type: p};
 	}
@@ -65,11 +71,10 @@ export const prop = paramsFactory<Function | ObjectConstructor | ComponentProp>(
 	return p;
 });
 
-export interface SystemField<CTX extends ComponentInterface = ComponentInterface> {
+export interface SystemField<CTX extends ComponentInterface = ComponentInterface> extends FunctionalOpts {
 	atom?: boolean;
 	default?: unknown;
 	unique?: boolean | UniqueFieldFn<CTX>;
-	replace?: boolean;
 	after?: CanArray<string>;
 	init?: InitFieldFn<CTX>;
 	merge?: MergeFieldFn<CTX> | boolean;
@@ -108,8 +113,18 @@ export const system = paramsFactory<InitFieldFn | SystemField>('systemFields', (
 	return p;
 });
 
-export type HookParams = {[hook in Hooks]?: CanArray<string>};
-export type ComponentHooks = Hooks | Hooks[] | HookParams | HookParams[];
+export type HookParams = {
+	[hook in Hooks]?: FunctionalOpts & {
+		after?: CanArray<string>;
+	}
+};
+
+export type ComponentHooks =
+	Hooks |
+	Hooks[] |
+	HookParams |
+	HookParams[];
+
 export type MethodWatchers<CTX extends ComponentInterface = ComponentInterface, A = unknown, B = A> =
 	string |
 	MethodWatcher<CTX, A, B> |
@@ -152,8 +167,15 @@ export function paramsFactory<T = unknown>(
 	return (params: Dictionary<any> = {}) => (target, key, desc) => {
 		initEvent.once('constructor', ({meta}: {meta: ComponentMeta}) => {
 			const wrapOpts = (opts) => {
-				if (opts.replace === undefined && meta.params.flyweight) {
+				const
+					p = meta.params;
+
+				if (opts.replace === undefined && p.flyweight) {
 					opts.replace = false;
+				}
+
+				if (opts.functional === undefined && p.functional === false) {
+					opts.functional = false;
 				}
 
 				return opts;
@@ -190,7 +212,7 @@ export function paramsFactory<T = unknown>(
 							el = w[i];
 
 						if (Object.isObject(el)) {
-							watchers[String((<Dictionary>el).field)] = {...p.watchParams, ...el};
+							watchers[String((<Dictionary>el).field)] = wrapOpts({...p.watchParams, ...el});
 
 						} else {
 							watchers[el] = {field: el, ...p.watchParams};
@@ -207,13 +229,15 @@ export function paramsFactory<T = unknown>(
 
 						if (Object.isObject(el)) {
 							const
-								key = Object.keys(el)[0];
+								key = Object.keys(el)[0],
+								val = el[key];
 
-							hooks[key] = {
+							hooks[key] = wrapOpts({
+								...val,
 								name,
 								hook: key,
-								after: new Set([].concat(el[key] || []))
-							};
+								after: new Set(val.after || [])
+							});
 
 						} else {
 							hooks[el] = {name, hook: el};
@@ -296,7 +320,7 @@ export function paramsFactory<T = unknown>(
 					el = o[i];
 
 				if (Object.isObject(el)) {
-					watchers.set((<Dictionary>el).fn, {...el});
+					watchers.set((<Dictionary>el).fn, wrapOpts({...el}));
 
 				} else {
 					watchers.set(el, {fn: el});

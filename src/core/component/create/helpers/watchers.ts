@@ -21,6 +21,7 @@ const watcherHooks = {
 
 /**
  * Binds watchers to the specified component
+ * (very critical for loading time)
  *
  * @param ctx - component context
  * @param [eventCtx] - event component context
@@ -74,59 +75,29 @@ export function bindWatchers(ctx: ComponentInterface, eventCtx: ComponentInterfa
 			!watchers
 		) {
 			if (watchers) {
-				meta.hooks[onMounted ? 'mounted' : 'created'].unshift({
-					fn: () => {
-						for (let i = 0; i < watchers.length; i++) {
-							const
-								el = watchers[i],
-								handlerIsStr = Object.isString(el.handler);
+				const fn = () => () => {
+					for (let i = 0; i < watchers.length; i++) {
+						const
+							el = watchers[i],
+							handlerIsStr = Object.isString(el.handler);
 
-							const label = `[[WATCHER:${key}:${
-								el.method != null ? el.method : handlerIsStr ? el.handler : (<Function>el.handler).name
-							}]]`;
+						const label = `[[WATCHER:${key}:${
+							el.method != null ? el.method : handlerIsStr ? el.handler : (<Function>el.handler).name
+						}]]`;
 
-							const
-								group = {group: el.group || 'watchers', label},
-								eventParams = {...group, options: el.options, single: el.single};
+						const
+							group = {group: el.group || 'watchers', label},
+							eventParams = {...group, options: el.options, single: el.single};
 
-							let
-								handler = createWatchCb(el, group, ctx);
+						let
+							handler = createWatchCb(el, group, ctx);
 
-							if (el.wrapper) {
-								handler = <typeof handler>el.wrapper(ctx, handler);
-							}
+						if (el.wrapper) {
+							handler = <typeof handler>el.wrapper(ctx, handler);
+						}
 
-							if (Object.isPromise(handler)) {
-								$a.promise<typeof handler>(<any>handler, group).then((handler) => {
-									if (customWatcher) {
-										const
-											needDefEmitter = root === ctx && !Object.isFunction(root.on) && !Object.isFunction(root.addListener);
-
-										if (needDefEmitter) {
-											// @ts-ignore
-											ctx.$on(key, handler);
-
-										} else {
-											$a.on(root, key, handler, eventParams, ...<unknown[]>el.args);
-										}
-
-										return;
-									}
-
-									const
-										storeKey = `${key}Store`;
-
-									// @ts-ignore
-									const unwatch = ctx.$watch(storeKey in ctx ? storeKey : key, {
-										deep: el.deep,
-										immediate: el.immediate,
-										handler
-									});
-
-									$a.worker(unwatch, group);
-								});
-
-							} else {
+						if (handler instanceof Promise) {
+							$a.promise<typeof handler>(<any>handler, group).then((handler) => {
 								if (customWatcher) {
 									const
 										needDefEmitter = root === ctx && !Object.isFunction(root.on) && !Object.isFunction(root.addListener);
@@ -153,10 +124,40 @@ export function bindWatchers(ctx: ComponentInterface, eventCtx: ComponentInterfa
 								});
 
 								$a.worker(unwatch, group);
+							});
+
+						} else {
+							if (customWatcher) {
+								const
+									needDefEmitter = root === ctx && !Object.isFunction(root.on) && !Object.isFunction(root.addListener);
+
+								if (needDefEmitter) {
+									// @ts-ignore
+									ctx.$on(key, handler);
+
+								} else {
+									$a.on(root, key, handler, eventParams, ...<unknown[]>el.args);
+								}
+
+								return;
 							}
+
+							const
+								storeKey = `${key}Store`;
+
+							// @ts-ignore
+							const unwatch = ctx.$watch(storeKey in ctx ? storeKey : key, {
+								deep: el.deep,
+								immediate: el.immediate,
+								handler
+							});
+
+							$a.worker(unwatch, group);
 						}
 					}
-				});
+				};
+
+				meta.hooks[onMounted ? 'mounted' : 'created'].unshift({fn});
 			}
 
 			continue;
@@ -182,7 +183,7 @@ export function bindWatchers(ctx: ComponentInterface, eventCtx: ComponentInterfa
 				handler = <typeof handler>el.wrapper(ctx, handler);
 			}
 
-			if (Object.isPromise(handler)) {
+			if (handler instanceof Promise) {
 				$a.promise<typeof handler>(<any>handler, group).then((handler) => {
 					if (customWatcher) {
 						const
