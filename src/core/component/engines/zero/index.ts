@@ -8,8 +8,9 @@
 
 import symbolGenerator from 'core/symbol';
 
-import { ComponentInterface } from 'core/component/interface';
 import { components } from 'core/component/const';
+import { ComponentInterface } from 'core/component/interface';
+import { getComponentDataFromVnode } from 'core/component/create/composite';
 import { runHook, bindWatchers } from 'core/component/create/helpers';
 import { createFakeCtx } from 'core/component/create/functional';
 
@@ -42,7 +43,8 @@ export interface Options extends Dictionary {
 }
 
 export const supports = {
-	functional: false
+	functional: false,
+	composite: false
 };
 
 export const options: Options = {
@@ -166,48 +168,18 @@ export class ComponentDriver {
 
 			if (meta) {
 				const
-					props = {},
-					attrs = {};
-
-				if (opts.attrs) {
-					for (let o = opts.attrs, keys = Object.keys(o), i = 0; i < keys.length; i++) {
-						const
-							key = keys[i],
-							nm = key.camelize(false),
-							val = o[key];
-
-						if (meta.props[nm]) {
-							props[nm] = val;
-
-						} else {
-							attrs[key] = val;
-						}
-					}
-				}
-
-				const
-					componentModel = meta.params.model;
-
-				if (opts.model && componentModel) {
-					const
-						{prop, event} = componentModel;
-
-					if (prop && event) {
-						props[prop] = opts.model.value;
-						opts.on = opts.on || {};
-						opts.on[event] = opts.model.callback;
-					}
-				}
+					data = <VNodeData>getComponentDataFromVnode(meta.componentName, <any>{data: opts});
 
 				const baseCtx = Object.assign(Object.create(this), {
-					props,
+					props: data.props,
 
 					$createElement: ComponentDriver.prototype.$createElement,
+					$listeners: data.on,
 					$options: {...options},
 
 					data: {
-						attrs,
-						on: opts.on
+						attrs: data.attrs,
+						on: data.on
 					},
 
 					slots: () => {
@@ -255,19 +227,7 @@ export class ComponentDriver {
 						return res;
 					},
 
-					scopedSlots: () => {
-						const
-							res = {};
-
-						if (opts.scopedSlots) {
-							for (let o = opts.scopedSlots, keys = Object.keys(o), i = 0; i < keys.length; i++) {
-								const key = keys[i];
-								res[key] = o[key];
-							}
-						}
-
-						return res;
-					}
+					scopedSlots: () => data.scopedSlots
 				});
 
 				const [node, ctx] =
@@ -276,18 +236,24 @@ export class ComponentDriver {
 				if (node) {
 					node[_.$$.data] = opts;
 
-					_.addStaticDirectives(this, opts, opts.directives, node);
-					_.addDirectives(this, node, opts, opts.directives);
-					_.addClass(node, opts);
-					_.attachEvents(node, opts.nativeOn);
-					_.addStyles(node, opts.style);
+					_.addStaticDirectives(this, opts, data.directives, node);
+					_.addDirectives(this, node, opts, data.directives);
+					_.addClass(node, data);
+					_.attachEvents(node, data.nativeOn);
+					_.addStyles(node, data.style);
 
-					if (opts.ref) {
-						refs[opts.ref] = ctx;
+					if (data.ref) {
+						if (data.refInFor) {
+							const arr = refs[data.ref] = <typeof ctx[]>(refs[data.ref] || []);
+							arr.push(ctx);
+
+						} else {
+							refs[data.ref] = ctx;
+						}
 					}
 
 					if (meta.params.inheritAttrs) {
-						_.addAttrs(node, attrs);
+						_.addAttrs(node, data.attrs);
 					}
 				}
 
@@ -334,7 +300,13 @@ export class ComponentDriver {
 
 			if (node instanceof Element) {
 				if (opts.ref) {
-					refs[opts.ref] = node;
+					if (opts.refInFor) {
+						const arr = refs[opts.ref] = <Element[]>(refs[opts.ref] || []);
+						arr.push(node);
+
+					} else {
+						refs[opts.ref] = node;
+					}
 				}
 
 				_.addClass(node, opts);
@@ -378,6 +350,9 @@ export function patchVNode(vNode: Element, ctx: ComponentInterface, renderCtx: R
 
 	_.addStaticDirectives(ctx, data, vNode[_.$$.directives], vNode);
 }
+
+const
+	minimalCtxCache = Object.create(null);
 
 /**
  * Creates a zero component by the specified parameters and returns a tuple [node, ctx]
@@ -434,14 +409,18 @@ export function createComponent<T>(
 		}
 	}
 
-	const baseCtx = Object.assign(Object.create(meta.constructor.prototype), minimalCtx, {
-		meta,
-		instance: meta.instance,
-		componentName: meta.componentName
-	});
+	const baseCtx = minimalCtxCache[meta.componentName] = minimalCtxCache[meta.componentName] || Object.assign(
+		Object.create(meta.constructor.prototype), minimalCtx, {
+			meta,
+			instance: meta.instance,
+			componentName: meta.componentName
+		}
+	);
 
-	const
-		fakeCtx = createFakeCtx<ComponentInterface>(createElement, renderCtx, baseCtx, true);
+	const fakeCtx = createFakeCtx<ComponentInterface>(createElement, renderCtx, baseCtx, {
+		initProps: true,
+		safe: true
+	});
 
 	// @ts-ignore
 	meta = fakeCtx.meta;

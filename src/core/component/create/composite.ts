@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { VNode, VNodeDirective, ScopedSlot } from 'core/component/engines';
+import { supports, VNode, VNodeDirective, ScopedSlot } from 'core/component/engines';
 import { ComponentInterface } from 'core/component/interface';
 import { components } from 'core/component/const';
 import {
@@ -180,7 +180,7 @@ export function createCompositeElement(vnode: VNode, ctx: ComponentInterface): V
 	const
 		composite = vnode.data && vnode.data.attrs && vnode.data.attrs['v4-composite'];
 
-	if (!composite) {
+	if (!supports.composite || !composite) {
 		return vnode;
 	}
 

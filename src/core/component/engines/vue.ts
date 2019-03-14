@@ -18,7 +18,8 @@ export { VNode, ScopedSlot } from 'vue/types/vnode';
 //#endif
 
 export const supports = {
-	functional: true
+	functional: true,
+	composite: true
 };
 
 export const

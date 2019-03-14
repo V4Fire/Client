@@ -82,7 +82,13 @@ export function createSVGChildren(ctx: ComponentInterface, children: Element[]):
 				refs = ctx.$refs;
 
 			if (data.ref && Object.isObject(refs)) {
-				refs[data.ref] = el;
+				if (data.refInFor) {
+					const arr = refs[data.ref] = <Element[]>(refs[data.ref] || []);
+					arr.push(el);
+
+				} else {
+					refs[data.ref] = el;
+				}
 			}
 
 			res.push(node);
