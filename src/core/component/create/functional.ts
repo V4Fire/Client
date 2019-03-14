@@ -58,7 +58,7 @@ const customOpts = [
 ];
 
 const destroyCheckHooks = [
-	'mounted',
+	'beforeMounted',
 	'created',
 	'beforeDestroy'
 ];
@@ -69,15 +69,15 @@ const destroyHooks = [
 ];
 
 const mountHooks = [
-	'mounted',
-	'updated',
-	'activated'
+	'beforeMounted',
+	'beforeUpdated',
+	'beforeActivated'
 ];
 
 const parentMountMap = {
-	beforeMount: 'mounted',
-	beforeUpdate: 'updated',
-	deactivated: 'activated'
+	beforeMount: 'beforeMounted',
+	beforeUpdate: 'beforeUpdated',
+	deactivated: 'beforeActivated'
 };
 
 /**
@@ -107,7 +107,7 @@ export function createFakeCtx<T extends Dictionary = FunctionalCtx>(
 		data = {};
 
 	const
-		$w = new EventEmitter({verboseMemoryLeak: false}),
+		$w = new EventEmitter({maxListeners: 1e6, newListener: false}),
 		$a = new Async(this);
 
 	const
@@ -333,7 +333,7 @@ export function createFakeCtx<T extends Dictionary = FunctionalCtx>(
  */
 export function patchVNode(vnode: VNode, ctx: ComponentInterface, renderCtx: RenderContext): VNode {
 	// @ts-ignore
-	vnode.context = ctx;
+	vnode.fakeContext = ctx;
 
 	const
 		{data} = renderCtx,
@@ -429,7 +429,7 @@ export function patchVNode(vnode: VNode, ctx: ComponentInterface, renderCtx: Ren
 			el = ctx.$el;
 
 		let
-			oldCtx = el.component;
+			oldCtx = el[$$.component];
 
 		if (oldCtx) {
 			if (oldCtx === ctx) {
@@ -438,7 +438,7 @@ export function patchVNode(vnode: VNode, ctx: ComponentInterface, renderCtx: Ren
 
 			if (ctx.componentName !== oldCtx.componentName) {
 				oldCtx = undefined;
-				delete el.component;
+				delete el[$$.component];
 			}
 		}
 
@@ -536,7 +536,7 @@ export function patchVNode(vnode: VNode, ctx: ComponentInterface, renderCtx: Ren
 			}
 		}
 
-		el.component = ctx;
+		el[$$.component] = ctx;
 		runHook('mounted', meta, ctx).then(() => {
 			if (methods.mounted) {
 				return methods.mounted.fn.call(ctx);
@@ -545,6 +545,10 @@ export function patchVNode(vnode: VNode, ctx: ComponentInterface, renderCtx: Ren
 	};
 
 	const deferMount = () => {
+		if (ctx.$el) {
+			ctx.$el.component = ctx;
+		}
+
 		$a.setImmediate(mount, {
 			label: $$.mount
 		});

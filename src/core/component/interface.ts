@@ -128,9 +128,12 @@ export type Hooks =
 	'beforeDataCreate' |
 	'created' |
 	'beforeMount' |
+	'beforeMounted' |
 	'mounted' |
 	'beforeUpdate' |
+	'beforeUpdated' |
 	'updated' |
+	'beforeActivated' |
 	'activated' |
 	'deactivated' |
 	'beforeDestroy' |
@@ -183,7 +186,7 @@ export interface ComponentParams {
 	name?: string;
 	root?: boolean;
 	tpl?: boolean;
-	functional?: boolean | Dictionary;
+	functional?: Nullable<boolean> | Dictionary;
 	flyweight?: boolean;
 	model?: {prop?: string; event?: string};
 	parent?: Component;

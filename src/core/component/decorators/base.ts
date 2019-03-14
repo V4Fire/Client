@@ -174,7 +174,7 @@ export function paramsFactory<T = unknown>(
 					opts.replace = false;
 				}
 
-				if (opts.functional === undefined && p.functional === false) {
+				if (opts.functional === undefined && p.functional === null) {
 					opts.functional = false;
 				}
 

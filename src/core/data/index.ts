@@ -61,6 +61,7 @@ export type DecodersTable = Record<ModelMethods | 'def', Decoders> | {};
 
 const globalEvent = new EventEmitter({
 	maxListeners: 1e3,
+	newListener: false,
 	wildcard: true
 });
 
@@ -278,7 +279,7 @@ export default class Provider {
 			Object.createDict();
 
 		this.async = new Async(this);
-		this.event = new EventEmitter({maxListeners: 1e3});
+		this.event = new EventEmitter({maxListeners: 1e3, newListener: false});
 
 		if (Object.isBoolean(params.listenAllEvents)) {
 			this.setReadonlyParam('listenAllEvents', params.listenAllEvents);

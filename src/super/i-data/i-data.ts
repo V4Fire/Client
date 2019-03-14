@@ -60,7 +60,7 @@ export * from 'super/i-message/i-message';
 export const
 	$$ = symbolGenerator();
 
-@component({functional: false})
+@component({functional: null})
 export default abstract class iData<T extends Dictionary = Dictionary> extends iMessage implements iProgress {
 	/**
 	 * Data provider name

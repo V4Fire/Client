@@ -30,6 +30,7 @@ import {
 
 import {
 
+	ComponentElement,
 	ComponentInterface,
 	ComponentField,
 	ComponentProp,
@@ -144,6 +145,8 @@ export function getComponent(
 
 		mounted(): void {
 			this.$el.component = this;
+			runHook('beforeMounted', this.meta, this).catch(stderr);
+			patchRefs(this);
 
 			runHook('mounted', this.meta, this).then(() => {
 				if (methods.mounted) {
@@ -158,6 +161,8 @@ export function getComponent(
 		},
 
 		updated(): void {
+			runHook('beforeUpdated', this.meta, this).catch(stderr);
+			patchRefs(this);
 			runHook('updated', this.meta, this).then(() => {
 				if (methods.updated) {
 					return methods.updated.fn.call(this);
@@ -166,6 +171,8 @@ export function getComponent(
 		},
 
 		activated(): void {
+			runHook('beforeActivated', this.meta, this).catch(stderr);
+			patchRefs(this);
 			runHook('activated', this.meta, this).catch(stderr);
 			callMethodFromMeta(this, 'activated');
 		},
@@ -218,6 +225,68 @@ function callMethodFromMeta(ctx: ComponentInterface, method: string): void {
 
 		} catch (err) {
 			stderr(err);
+		}
+	}
+}
+
+function patchRefs(ctx: ComponentInterface): void {
+	const
+		// @ts-ignore
+		{$refs} = ctx;
+
+	if ($refs) {
+		for (let keys = Object.keys($refs), i = 0; i < keys.length; i++) {
+			const
+				key = keys[i],
+				el = $refs[key];
+
+			if (!el) {
+				continue;
+			}
+
+			if (Object.isArray(el)) {
+				const
+					arr = <unknown[]>[];
+
+				let
+					needRewrite;
+
+				for (let i = 0; i < el.length; i++) {
+					const
+						val = el[i],
+						component = (<ComponentElement>val).component;
+
+					if (component && (<ComponentInterface>component).$el === val) {
+						needRewrite = true;
+						arr.push(component);
+
+					} else {
+						arr.push(val);
+					}
+				}
+
+				if (needRewrite) {
+					Object.defineProperty($refs, key, {
+						writable: true,
+						configurable: true,
+						enumerable: true,
+						value: arr
+					});
+				}
+
+			} else {
+				const
+					component = (<ComponentElement>el).component;
+
+				if (component && (<ComponentInterface>component).$el === el) {
+					Object.defineProperty($refs, key, {
+						writable: true,
+						configurable: true,
+						enumerable: true,
+						value: component
+					});
+				}
+			}
 		}
 	}
 }

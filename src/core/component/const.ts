@@ -11,7 +11,7 @@ import { ComponentOptions, ComponentDriver } from 'core/component/engines';
 import { ComponentMeta } from 'core/component/interface';
 
 export const
-	initEvent = new EventEmitter({maxListeners: 1e3});
+	initEvent = new EventEmitter({maxListeners: 1e3, newListener: false});
 
 export const
 	rootComponents = Object.createDict<Promise<ComponentOptions<ComponentDriver>>>(),

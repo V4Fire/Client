@@ -128,9 +128,12 @@ export function component(params?: ComponentParams): Function {
 				beforeDataCreate: [],
 				created: [],
 				beforeMount: [],
+				beforeMounted: [],
 				mounted: [],
 				beforeUpdate: [],
+				beforeUpdated: [],
 				updated: [],
+				beforeActivated: [],
 				activated: [],
 				deactivated: [],
 				beforeDestroy: [],
@@ -151,7 +154,8 @@ export function component(params?: ComponentParams): Function {
 
 					if (r) {
 						const
-							that = this;
+							// tslint:disable-next-line:no-this-assignment
+							rootCtx = this;
 
 						const createElement = function (tag: string, opts?: VNodeData, children?: VNode[]): VNode {
 							'use strict';
@@ -161,7 +165,7 @@ export function component(params?: ComponentParams): Function {
 								needEl = Boolean(Object.isObject(opts) && opts.attrs && opts.attrs['v4-composite']);
 
 							const
-								ctx = this || that;
+								ctx = this || rootCtx;
 
 							if (opts && opts.tag === 'component') {
 								const
@@ -233,24 +237,24 @@ export function component(params?: ComponentParams): Function {
 								);
 							}
 
-							/*const
+							const
 								vData = vnode.data || {},
 								ref = vData.ref;
 
-							if (ref) {
-								console.log(ref, vnode, vnode.context.$refs, vData.refInFor);
+							if (ref && ctx !== rootCtx) {
+								const
+									newRef = vData.ref = `${ref}:${ctx.componentId}`;
 
-								if (needEl) {
-									const
-										{$refs} = vnode.context.$parent;
+								Object.defineProperty(ctx.$refs, ref, {
+									configurable: true,
+									enumerable: true,
+									// @ts-ignore
+									get: () => rootCtx.$refs[newRef]
+								});
+							}
 
-									//console.log(vnode.context.$parent.$refs);
-									//console.log(ref, vnode.context.$refs, vData.refInFor);
-								}
-							}*/
-
-							if (needEl && vnode.context2) {
-								Object.defineProperty(vnode.context2, '$el', {
+							if (needEl && vnode.fakeContext) {
+								Object.defineProperty(vnode.fakeContext, '$el', {
 									enumerable: true,
 									configurable: true,
 
@@ -267,12 +271,12 @@ export function component(params?: ComponentParams): Function {
 							return vnode;
 						};
 
-						if (that) {
+						if (rootCtx) {
 							// @ts-ignore
-							that.$createElement = that._c = createElement;
+							rootCtx.$createElement = rootCtx._c = createElement;
 						}
 
-						return r.fn.call(that, createElement, baseCtx);
+						return r.fn.call(rootCtx, createElement, baseCtx);
 					}
 
 					return nativeCreate('span');

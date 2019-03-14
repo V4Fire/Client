@@ -272,7 +272,7 @@ export function createCompositeElement(vnode: VNode, ctx: ComponentInterface): V
 	newVData.class = (<string[]>[]).concat(newVData.class || [], vData.class);
 
 	newVData.directives = vData.directives;
-	//newVNode.componentInstance = fakeCtx;
+	newVNode.fakeContext = fakeCtx;
 
 	return newVNode;
 }

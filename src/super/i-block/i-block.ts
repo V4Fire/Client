@@ -782,7 +782,8 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 		after: 'async',
 		unique: true,
 		init: (o, d) => eventFactory(<Async>d.async, new EventEmitter({
-			maxListeners: 100,
+			maxListeners: 1e3,
+			newListener: false,
 			wildcard: true
 		}))
 	})
@@ -1639,7 +1640,6 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	 */
 	@hook({beforeRuntime: {functional: false}})
 	protected initBaseAPI(): void {
-
 		const
 			i = this.instance;
 
