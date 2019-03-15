@@ -26,6 +26,7 @@ import bRouter, { CurrentPage } from 'base/b-router/b-router';
 export * from 'super/i-data/i-data';
 export { globalEvent, ResetType, CurrentPage };
 
+export type RemoteState = typeof remoteState;
 export type RootMods = Dictionary<{
 	mod: string;
 	value: string;
@@ -55,19 +56,27 @@ export default abstract class iStaticPage<
 	/**
 	 * Authorization status
 	 */
-	@field((o) => o.remoteState.isAuth)
+	@field({
+		after: 'remoteState',
+		init: (o) => o.sync.link('remoteState', (state: RemoteState) => state.isAuth)
+	})
+
 	isAuth!: boolean;
 
 	/**
 	 * Online status
 	 */
-	@field((o) => o.remoteState.isOnline)
+	@field({
+		after: 'remoteState',
+		init: (o) => o.sync.link('remoteState', (state: RemoteState) => state.isOnline)
+	})
+
 	isOnline!: boolean;
 
 	/**
 	 * Last online date
 	 */
-	@system((o) => o.remoteState.lastOnlineDate)
+	@system((o) => o.sync.link('remoteState', (state: RemoteState) => state.lastOnlineDate))
 	lastOnlineDate?: Date;
 
 	/** @override */

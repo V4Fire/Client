@@ -65,7 +65,7 @@ export function getComponent(
 		{methods} = meta;
 
 	if (p.functional === true || isAbstractComponent.test(meta.componentName)) {
-		return {};
+		return Object.create(component);
 	}
 
 	return {

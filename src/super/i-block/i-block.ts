@@ -1641,7 +1641,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	 * @param value
 	 * @param [oldValue]
 	 */
-	@watch('!:onStageChange')
+	@watch({field: '!:onStageChange', functional: false})
 	protected syncStageWatcher(value?: Stage, oldValue?: Stage): void {
 		this.async.clearAll({group: `stage.${oldValue}`});
 	}
@@ -1696,7 +1696,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	 * Handler: parent call child event
 	 * @param e
 	 */
-	@watch('parentEvent:onCallChild')
+	@watch({field: 'parentEvent:onCallChild', functional: false})
 	protected onCallChild(e: ParentMessage): void {
 		if (
 			e.check[0] !== 'instanceOf' && e.check[1] === this[e.check[0]] ||
