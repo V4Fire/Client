@@ -31,7 +31,10 @@ export const
 				initEventOnce(el, (obj) => {
 					listener(obj);
 
-					if (!Object.isBoolean(obj.meta.params.functional)) {
+					const
+						func = obj.meta.params.functional;
+
+					if (func && typeof func === 'object') {
 						initEventOnce(el, listener);
 					}
 				});
