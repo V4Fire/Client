@@ -42,90 +42,58 @@ export function bindWatchers(ctx: ComponentInterface, eventCtx: ComponentInterfa
 
 	for (let o = meta.watchers, keys = Object.keys(o), i = 0; i < keys.length; i++) {
 		let
-			key = keys[i],
-			onCreated = true,
-			onMounted = false,
-			root = <any>ctx;
-
-		if (isFunctional && key in props) {
-			continue;
-		}
+			key = keys[i];
 
 		const
 			watchers = o[key];
 
-		if (!watchers) {
+		if (!watchers || isFunctional && key in props) {
 			continue;
 		}
+
+		let
+			root = <any>ctx,
+			onCreated = true,
+			onMounted = false;
 
 		const
 			customWatcher = customWatcherRgxp.exec(key);
 
 		if (customWatcher) {
-			const
-				m = customWatcher[1],
-				l = customWatcher[2];
-
+			const m = customWatcher[1];
 			onCreated = !m;
 			onMounted = m === '?';
-
-			root = l ? Object.get(eventCtx, l) || Object.get(GLOBAL, l) || ctx : ctx;
-			key = l ? customWatcher[3].toString() : customWatcher[3].dasherize();
 		}
 
-		if (!onCreated && !isCreated || !onMounted && !isMounted) {
-			const fn = () => {
-				for (let i = 0; i < watchers.length; i++) {
-					const
-						el = watchers[i],
-						handlerIsStr = Object.isString(el.handler);
+		const exec = () => {
+			if (customWatcher) {
+				const l = customWatcher[2];
+				root = l ? Object.get(eventCtx, l) || Object.get(GLOBAL, l) || ctx : ctx;
+				key = l ? customWatcher[3].toString() : customWatcher[3].dasherize();
+			}
 
-					const label = `[[WATCHER:${key}:${
-						el.method != null ? el.method : handlerIsStr ? el.handler : (<Function>el.handler).name
-					}]]`;
+			for (let i = 0; i < watchers.length; i++) {
+				const
+					el = watchers[i],
+					handlerIsStr = Object.isString(el.handler);
 
-					const
-						group = {group: el.group || 'watchers', label},
-						eventParams = {...group, options: el.options, single: el.single};
+				const label = `[[WATCHER:${key}:${
+					el.method != null ? el.method : handlerIsStr ? el.handler : (<Function>el.handler).name
+				}]]`;
 
-					let
-						handler = createWatchCb(el, group, ctx);
+				const
+					group = {group: el.group || 'watchers', label},
+					eventParams = {...group, options: el.options, single: el.single};
 
-					if (el.wrapper) {
-						handler = <typeof handler>el.wrapper(ctx, handler);
-					}
+				let
+					handler = createWatchCb(el, group, ctx);
 
-					if (handler instanceof Promise) {
-						$a.promise<typeof handler>(<any>handler, group).then((handler) => {
-							if (customWatcher) {
-								const
-									needDefEmitter = root === ctx && !Object.isFunction(root.on) && !Object.isFunction(root.addListener);
+				if (el.wrapper) {
+					handler = <typeof handler>el.wrapper(ctx, handler);
+				}
 
-								if (needDefEmitter) {
-									// @ts-ignore
-									ctx.$on(key, handler);
-
-								} else {
-									$a.on(root, key, handler, eventParams, ...<unknown[]>el.args);
-								}
-
-								return;
-							}
-
-							const
-								storeKey = `${key}Store`;
-
-							// @ts-ignore
-							const unwatch = ctx.$watch(storeKey in ctx ? storeKey : key, {
-								deep: el.deep,
-								immediate: el.immediate,
-								handler
-							});
-
-							$a.worker(unwatch, group);
-						});
-
-					} else {
+				if (handler instanceof Promise) {
+					$a.promise<typeof handler>(<any>handler, group).then((handler) => {
 						if (customWatcher) {
 							const
 								needDefEmitter = root === ctx && !Object.isFunction(root.on) && !Object.isFunction(root.addListener);
@@ -138,7 +106,7 @@ export function bindWatchers(ctx: ComponentInterface, eventCtx: ComponentInterfa
 								$a.on(root, key, handler, eventParams, ...<unknown[]>el.args);
 							}
 
-							continue;
+							return;
 						}
 
 						const
@@ -152,36 +120,9 @@ export function bindWatchers(ctx: ComponentInterface, eventCtx: ComponentInterfa
 						});
 
 						$a.worker(unwatch, group);
-					}
-				}
-			};
+					});
 
-			meta.hooks[onMounted ? 'mounted' : 'created'].unshift({fn});
-			continue;
-		}
-
-		for (let i = 0; i < watchers.length; i++) {
-			const
-				el = watchers[i],
-				handlerIsStr = Object.isString(el.handler);
-
-			const label = `[[WATCHER:${key}:${
-				el.method != null ? el.method : handlerIsStr ? el.handler : (<Function>el.handler).name
-			}]]`;
-
-			const
-				group = {group: el.group || 'watchers', label},
-				eventParams = {...group, options: el.options, single: el.single};
-
-			let
-				handler = createWatchCb(el, group, ctx);
-
-			if (el.wrapper) {
-				handler = <typeof handler>el.wrapper(ctx, handler);
-			}
-
-			if (handler instanceof Promise) {
-				$a.promise<typeof handler>(<any>handler, group).then((handler) => {
+				} else {
 					if (customWatcher) {
 						const
 							needDefEmitter = root === ctx && !Object.isFunction(root.on) && !Object.isFunction(root.addListener);
@@ -194,7 +135,7 @@ export function bindWatchers(ctx: ComponentInterface, eventCtx: ComponentInterfa
 							$a.on(root, key, handler, eventParams, ...<unknown[]>el.args);
 						}
 
-						return;
+						continue;
 					}
 
 					const
@@ -208,37 +149,16 @@ export function bindWatchers(ctx: ComponentInterface, eventCtx: ComponentInterfa
 					});
 
 					$a.worker(unwatch, group);
-				});
-
-			} else {
-				if (customWatcher) {
-					const
-						needDefEmitter = root === ctx && !Object.isFunction(root.on) && !Object.isFunction(root.addListener);
-
-					if (needDefEmitter) {
-						// @ts-ignore
-						ctx.$on(key, handler);
-
-					} else {
-						$a.on(root, key, handler, eventParams, ...<unknown[]>el.args);
-					}
-
-					continue;
 				}
-
-				const
-					storeKey = `${key}Store`;
-
-				// @ts-ignore
-				const unwatch = ctx.$watch(storeKey in ctx ? storeKey : key, {
-					deep: el.deep,
-					immediate: el.immediate,
-					handler
-				});
-
-				$a.worker(unwatch, group);
 			}
+		};
+
+		if (!onCreated && !isCreated || !onMounted && !isMounted) {
+			meta.hooks[onMounted ? 'mounted' : 'created'].unshift({fn: exec});
+			continue;
 		}
+
+		exec();
 	}
 }
 
