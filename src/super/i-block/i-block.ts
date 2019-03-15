@@ -344,7 +344,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	 */
 	@system((o) => {
 		o.lfc.execCbAtTheRightTime(() => {
-			if (o.isFunctional && !o.field.get('forceSelfActivation')) {
+			if (o.isFunctional && !o.field.get('forceInitialActivation')) {
 				return;
 			}
 
