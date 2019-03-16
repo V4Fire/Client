@@ -8,6 +8,7 @@
 
 import '@v4fire/core/core/prelude';
 import 'core/prelude/image';
+import 'core/prelude/blob';
 import 'core/prelude/canvas';
 import 'core/prelude/dom';
 import 'core/prelude/dependencies';

@@ -13,6 +13,31 @@ declare const MODULE_DEPENDENCIES: string;
 declare const PATH: Dictionary<CanUndef<string>>;
 declare const TPLS: Dictionary<Dictionary<Function>>;
 
+interface Blob {
+	mozSlice(start?: number, end?: number, type?: string): Blob;
+	webkitSlice(start?: number, end?: number, type?: string): Blob;
+}
+
+interface BlobBuilder {
+	append(data: unknown, endings?: BlobPropertyBag['endings']): void;
+	getBlob(type?: BlobPropertyBag['type']): Blob;
+}
+
+interface BlobBuilderConstructor {
+	prototype: BlobBuilder;
+	new(): BlobBuilder;
+}
+
+interface Window {
+	Blob: typeof Blob;
+	BlobBuilder?: BlobBuilderConstructor;
+	WebKitBlobBuilder?: BlobBuilderConstructor;
+	MozBlobBuilder?: BlobBuilderConstructor;
+	MSBlobBuilder?: BlobBuilderConstructor;
+	DataView: typeof DataView;
+	webkitURL?: typeof URL;
+}
+
 interface HTMLImageElement {
 	readonly init: Promise<this>;
 	onInit(onSuccess: () => void, onFail?: (err?: Error) => void): void;
