@@ -136,7 +136,7 @@ export default function inheritMeta(
 		functional = {...params.functional, ...p.functional};
 
 	} else {
-		functional = p.functional != null ? p.functional : params.functional;
+		functional = p.functional !== undefined ? p.functional : params.functional || false;
 	}
 
 	///////////////////////////////////

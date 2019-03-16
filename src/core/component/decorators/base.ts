@@ -215,7 +215,7 @@ export function paramsFactory<T = unknown>(
 							watchers[String((<Dictionary>el).field)] = wrapOpts({...p.watchParams, ...el});
 
 						} else {
-							watchers[el] = {field: el, ...p.watchParams};
+							watchers[el] = wrapOpts({field: el, ...p.watchParams});
 						}
 					}
 
@@ -240,7 +240,7 @@ export function paramsFactory<T = unknown>(
 							});
 
 						} else {
-							hooks[el] = {name, hook: el};
+							hooks[el] = wrapOpts({name, hook: el});
 						}
 					}
 
@@ -323,7 +323,7 @@ export function paramsFactory<T = unknown>(
 					watchers.set((<Dictionary>el).fn, wrapOpts({...el}));
 
 				} else {
-					watchers.set(el, {fn: el});
+					watchers.set(el, wrapOpts({fn: el}));
 				}
 			}
 

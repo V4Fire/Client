@@ -121,7 +121,7 @@ export default class AsyncRender {
 			};
 
 			// @ts-ignore
-			c.$set(store, simpleId, false);
+			this.component.$set(store, simpleId, false);
 			cursor.add(obj);
 		}
 

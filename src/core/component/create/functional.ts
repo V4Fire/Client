@@ -182,10 +182,12 @@ export function createFakeCtx<T extends Dictionary = FunctionalCtx>(
 
 			$a.clearAll().locked = true;
 
-			if (this.$normalParent) {
+			const
+				parent = this.$normalParent;
+
+			if (parent) {
 				const
-					// @ts-ignore
-					hooks = $normalParent.meta.hooks;
+					hooks = parent.meta.hooks;
 
 				for (let o = destroyCheckHooks, i = 0; i < o.length; i++) {
 					const

@@ -280,14 +280,14 @@ function tagFilter({name, attrs = {}}) {
 		const
 			uid = Math.random(),
 			selfId = asyncVal ? asyncVal[0] : asyncBackVal[0],
-			id = selfId !== true ? selfId : asyncCounter ? `'${uid}' + ${asyncCounter[0]}` : `'${uid}'`;
+			id = Object.isString(selfId) ? selfId : asyncCounter ? `'${uid}' + ${asyncCounter[0]}` : `'${uid}'`;
 
 		const
 			p = asyncBackVal ? 'Back' : '',
 			key = attrs['v-else'] ? 'v-else-if' : attrs['v-else-if'] ? 'v-else-if' : 'v-if';
 
 		attrs[key] = attachVIf(
-			(attrs[key] || []).concat(`async${p}Components[async.reg${p}Component(${id})]`),
+			(attrs[key] || []).concat(`async${p}Components[asyncRender.reg${p}Component(${id})]`),
 			asyncBackVal ? '||' : '&&'
 		);
 

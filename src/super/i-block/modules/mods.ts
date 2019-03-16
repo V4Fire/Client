@@ -79,7 +79,7 @@ export function mergeMods<T extends iBlock>(
 			key = keys[i];
 
 		// @ts-ignore
-		if (component.syncModCache[key]) {
+		if (component.sync.syncModCache[key]) {
 			delete mods[key];
 		}
 	}
