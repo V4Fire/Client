@@ -742,6 +742,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	 */
 	@system({
 		unique: true,
+		replace: true,
 		init: (ctx) => new Daemons(ctx)
 	})
 
