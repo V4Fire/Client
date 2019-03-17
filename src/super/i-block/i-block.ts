@@ -803,18 +803,6 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	protected readonly parentEvent!: RemoteEvent<this>;
 
 	/**
-	 * Cache of child async components
-	 */
-	@field({unique: true})
-	protected readonly asyncComponents: Dictionary<string> = {};
-
-	/**
-	 * Cache of child background async components
-	 */
-	@field({unique: true})
-	protected readonly asyncBackComponents: Dictionary<string> = {};
-
-	/**
 	 * Browser constants
 	 */
 	@system({
@@ -1624,16 +1612,6 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 		this.on = i.on.bind(this);
 		this.once = i.once.bind(this);
 		this.off = i.off.bind(this);
-	}
-
-	/**
-	 * Synchronization for the asyncComponents field
-	 * @emits asyncRender()
-	 */
-	@watch({field: 'asyncComponents', deep: true, functional: false})
-	@watch({field: 'asyncBackComponents', deep: true, functional: false})
-	protected syncAsyncComponentsWatcher(): void {
-		this.emit('asyncRender');
 	}
 
 	/**

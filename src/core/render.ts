@@ -19,7 +19,6 @@ export const
 
 export const
 	queue = new Set<Task>(),
-	backQueue = new Set<Task>(),
 	add = queue.add,
 	daemon = new Async();
 
@@ -27,7 +26,7 @@ let
 	inProgress = false,
 	isStarted = false;
 
-queue.add = backQueue.add = function addToQueue<T = unknown>(): T {
+queue.add = function addToQueue<T = unknown>(): T {
 	const
 		res = add.apply(this, arguments);
 
@@ -58,9 +57,6 @@ export function deferRestart(): void {
 function run(): void {
 	daemon.clearAll();
 
-	const
-		cursor = queue.size ? queue : backQueue;
-
 	const exec = async () => {
 		inProgress = isStarted = true;
 
@@ -68,7 +64,7 @@ function run(): void {
 			time = Date.now(),
 			done = COMPONENTS_PER_TICK;
 
-		for (let w = cursor.values(), el = w.next(); !el.done; el = w.next()) {
+		for (let w = queue.values(), el = w.next(); !el.done; el = w.next()) {
 			const
 				val = el.value;
 
@@ -87,7 +83,7 @@ function run(): void {
 
 			if (val.fn()) {
 				done -= val.weight || 1;
-				cursor.delete(val);
+				queue.delete(val);
 			}
 		}
 
@@ -99,7 +95,7 @@ function run(): void {
 		}
 	};
 
-	if (inProgress || cursor.size >= COMPONENTS_PER_TICK) {
+	if (inProgress || queue.size >= COMPONENTS_PER_TICK) {
 		exec().catch(stderr);
 
 	} else {
@@ -108,7 +104,7 @@ function run(): void {
 }
 
 function canProcessing(): boolean {
-	return Boolean(queue.size || backQueue.size);
+	return Boolean(queue.size);
 }
 
 function runOnNextTick(): boolean {

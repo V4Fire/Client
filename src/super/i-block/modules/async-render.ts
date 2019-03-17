@@ -8,7 +8,7 @@
 
 import Async from 'core/async';
 import iBlock from 'super/i-block/i-block';
-import { queue, backQueue, restart, deferRestart, COMPONENTS_PER_TICK } from 'core/render';
+import { queue, restart, deferRestart, COMPONENTS_PER_TICK } from 'core/render';
 
 export interface AsyncTaskObjectId {
 	id: AsyncTaskSimpleId;
@@ -86,42 +86,6 @@ export default class AsyncRender {
 	}
 
 	/**
-	 * Adds a component to the render queue
-	 *
-	 * @param id - task id
-	 * @param [group] - task group
-	 */
-	regComponent(id: AsyncTaskId, group: AsyncQueueType = 'asyncComponents'): AsyncTaskSimpleId {
-		id = Object.isFunction(id) ? id() : id;
-
-		const
-			simpleId = Object.isObject(id) ? (<AsyncTaskObjectId>id).id : id,
-			taskQueue = group === 'asyncComponents' ? queue : backQueue,
-			store = <Dictionary>this.component[group];
-
-		if (!(simpleId in store)) {
-			// @ts-ignore
-			this.component.$set(store, simpleId, false);
-
-			const
-				cb = () => store[simpleId] = true,
-				w = this.weight || this.isFlyweight ? 0.3 : this.isFunctional ? 0.5 : 1;
-
-			this.createTask(taskQueue, cb, id, w);
-		}
-
-		return simpleId;
-	}
-
-	/**
-	 * Adds a component to the background render queue
-	 * @param id - task id
-	 */
-	regBackComponent(id: AsyncTaskId): AsyncTaskSimpleId {
-		return this.regComponent(id, 'asyncBackComponents');
-	}
-
-	/**
 	 * Creates an asynchronous array from the specified
 	 *
 	 * @param value
@@ -153,7 +117,7 @@ export default class AsyncRender {
 
 			while (from < value.length) {
 				const data = value.slice(from, from + to);
-				this.createTask(queue, () => cb(data), id, w, data);
+				this.createTask(() => cb(data), id, w, data);
 
 				if (from + to > value.length) {
 					from += from + to - value.length;
@@ -170,14 +134,12 @@ export default class AsyncRender {
 	/**
 	 * Creates a render task by the specified parameters
 	 *
-	 * @param taskQueue
 	 * @param cb
 	 * @param id
 	 * @param args
 	 * @param defWeight
 	 */
 	protected createTask(
-		taskQueue: Set<unknown>,
 		cb: (...args: unknown[]) => void,
 		id: AsyncTaskId = Math.random().toString(),
 		defWeight: number = 1,
@@ -210,12 +172,12 @@ export default class AsyncRender {
 				return true;
 
 			}, {
-				onClear: () => taskQueue.delete(task),
+				onClear: () => queue.delete(task),
 				single: false,
-				group: `async${taskQueue === backQueue ? 'Back' : ''}Components`
+				group: 'asyncComponents'
 			})
 		};
 
-		taskQueue.add(task);
+		queue.add(task);
 	}
 }

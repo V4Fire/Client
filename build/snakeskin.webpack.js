@@ -173,19 +173,6 @@ function tagFilter({name, attrs = {}}) {
 		filter({name, attrs});
 	});
 
-	let
-		isSync = attrs['v-sync'];
-
-	const
-		asyncVal = attrs['v-async'],
-		asyncBackVal = attrs['v-async-back'],
-		asyncCounter = attrs['v-async-counter'];
-
-	delete attrs['v-sync'];
-	delete attrs['v-async'];
-	delete attrs['v-async-back'];
-	delete attrs['v-async-counter'];
-
 	if (name === 'component' || attrs[':instance-of'] || validators.blockName(name)) {
 		let
 			componentName;
@@ -250,10 +237,6 @@ function tagFilter({name, attrs = {}}) {
 					attrs['is'] = [`${attrs['is'][0]}-functional`];
 				}
 			}
-
-			if (!asyncVal && !asyncBackVal) {
-				isSync = true;
-			}
 		}
 
 		$C(attrs).forEach((el, key) => {
@@ -274,24 +257,6 @@ function tagFilter({name, attrs = {}}) {
 		if (component && component.inheritMods !== false && !attrs[':mods-prop']) {
 			attrs[':mods-prop'] = ['provide.mods()'];
 		}
-	}
-
-	if (!isSync && !attrs.ref && !attrs[':ref'] && (asyncVal || asyncBackVal)) {
-		const
-			uid = Number.random(1e6),
-			selfId = asyncVal ? asyncVal[0] : asyncBackVal[0],
-			id = Object.isString(selfId) ? selfId : asyncCounter ? `'${uid}-' + ${asyncCounter[0]}` : `'${uid}'`;
-
-		const
-			p = asyncBackVal ? 'Back' : '',
-			key = attrs['v-else'] ? 'v-else-if' : attrs['v-else-if'] ? 'v-else-if' : 'v-if';
-
-		attrs[key] = attachVIf(
-			(attrs[key] || []).concat(`async${p}Components[asyncRender.reg${p}Component(${id})]`),
-			asyncBackVal ? '||' : '&&'
-		);
-
-		delete attrs['v-else'];
 	}
 }
 
