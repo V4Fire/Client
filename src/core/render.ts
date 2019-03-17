@@ -8,13 +8,18 @@
 
 import Async from 'core/async';
 
-const
+export interface Task {
+	fn: Function;
+	weight?: number;
+}
+
+export const
 	COMPONENTS_PER_TICK = 10,
 	DELAY = 40;
 
 export const
-	queue = new Set(),
-	backQueue = new Set(),
+	queue = new Set<Task>(),
+	backQueue = new Set<Task>(),
 	add = queue.add,
 	daemon = new Async();
 
@@ -82,7 +87,7 @@ function run(): void {
 
 			if (val.fn()) {
 				done -= val.weight || 1;
-				cursor.delete(el);
+				cursor.delete(val);
 			}
 		}
 
