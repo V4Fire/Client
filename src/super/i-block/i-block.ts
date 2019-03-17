@@ -207,12 +207,6 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	readonly stageProp?: Stage;
 
 	/**
-	 * Component render weight
-	 */
-	@prop({type: Number, required: false})
-	readonly weight?: number;
-
-	/**
 	 * If true, then will be forcing activation hooks for all components instead of non functional components
 	 */
 	@prop(Boolean)
