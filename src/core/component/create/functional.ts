@@ -6,9 +6,10 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import symbolGenerator from 'core/symbol';
 import Async from 'core/async';
+import { asyncLabel } from 'core/component/const';
 
+import symbolGenerator from 'core/symbol';
 import { EventEmitter2 as EventEmitter } from 'eventemitter2';
 import { ComponentInterface, FunctionalCtx } from 'core/component/interface';
 
@@ -154,6 +155,7 @@ export function createFakeCtx<T extends Dictionary = FunctionalCtx>(
 		$options,
 
 		$async: $a,
+		$asyncLabel: asyncLabel,
 		$createElement: createElement.bind(fakeCtx),
 
 		$data: data,

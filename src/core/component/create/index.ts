@@ -7,6 +7,7 @@
  */
 
 import Async from 'core/async';
+import { asyncLabel } from 'core/component/const';
 
 import {
 
@@ -99,6 +100,7 @@ export function getComponent(
 
 			ctx.$$data = {};
 			ctx.$async = new Async(this);
+			ctx.$asyncLabel = asyncLabel;
 			ctx.$normalParent = getNormalParent(ctx);
 
 			ctx.instance = instance;

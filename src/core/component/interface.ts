@@ -267,6 +267,7 @@ export class ComponentInterface<
 	readonly $isServer!: boolean;
 	readonly $isFlyweight?: boolean;
 	protected readonly meta!: ComponentMeta;
+	protected readonly $asyncLabel!: symbol;
 	protected readonly $async!: Async<ComponentInterface>;
 	protected readonly $refs!: Dictionary;
 	protected readonly $slots!: Dictionary<VNode>;
