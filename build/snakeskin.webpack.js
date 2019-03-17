@@ -278,9 +278,9 @@ function tagFilter({name, attrs = {}}) {
 
 	if (!isSync && !attrs.ref && !attrs[':ref'] && (asyncVal || asyncBackVal)) {
 		const
-			uid = Math.random(),
+			uid = Number.random(1e6),
 			selfId = asyncVal ? asyncVal[0] : asyncBackVal[0],
-			id = Object.isString(selfId) ? selfId : asyncCounter ? `'${uid}' + ${asyncCounter[0]}` : `'${uid}'`;
+			id = Object.isString(selfId) ? selfId : asyncCounter ? `'${uid}-' + ${asyncCounter[0]}` : `'${uid}'`;
 
 		const
 			p = asyncBackVal ? 'Back' : '',
