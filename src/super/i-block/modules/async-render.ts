@@ -8,40 +8,14 @@
 
 import Async from 'core/async';
 import iBlock from 'super/i-block/i-block';
-import { queue, restart, deferRestart, COMPONENTS_PER_TICK } from 'core/render';
+import { queue, restart, deferRestart } from 'core/render';
 
-export interface AsyncTaskObjectId {
-	id: AsyncTaskSimpleId;
+export interface TaskOpts {
 	weight?: number;
-	filter?(id: AsyncTaskSimpleId): boolean;
+	filter?: Function;
 }
 
-export type AsyncTaskSimpleId = string | number;
-export type AsyncTaskId = AsyncTaskSimpleId | (() => AsyncTaskObjectId) | AsyncTaskObjectId;
-export type AsyncQueueType = 'asyncComponents' | 'asyncBackComponents';
-
 export default class AsyncRender {
-	/**
-	 * Component render weight
-	 */
-	get weight(): CanUndef<number> {
-		return this.component.weight;
-	}
-
-	/**
-	 * True if the current component is functional
-	 */
-	get isFunctional(): boolean {
-		return this.component.isFunctional;
-	}
-
-	/**
-	 * True if the current component is flyweight
-	 */
-	get isFlyweight(): boolean {
-		return this.component.isFlyweight;
-	}
-
 	/**
 	 * Component async label
 	 */
@@ -90,86 +64,94 @@ export default class AsyncRender {
 	 *
 	 * @param value
 	 * @param slice - elements per chunk or [elements per chunk, start position]
-	 * @param [id] - task id
+	 * @param [params]
 	 */
-	array(value: unknown[], slice: CanArray<number>, id?: AsyncTaskId): unknown[] {
+	array(value: unknown[], slice: CanArray<number>, params: TaskOpts = {}): unknown[] {
 		let
 			from = 0,
-			to;
+			count;
 
 		if (Object.isArray(slice)) {
 			from = slice[1] || from;
-			to = slice[0];
+			count = slice[0];
 
 		} else {
-			to = slice;
+			count = slice;
 		}
 
 		const
-			newArray = value.slice(from, to);
+			f = params.filter,
+			finalArr = <unknown[]>[],
+			filteredArr = <unknown[]>[];
 
-		newArray[this.asyncLabel] = (cb) => {
-			let
-				from = to;
-
+		for (let i = 0, j = 0; i < count; from++, j++) {
 			const
-				w = to > COMPONENTS_PER_TICK ? COMPONENTS_PER_TICK : to;
+				el = value[from];
 
-			while (from < value.length) {
-				const data = value.slice(from, from + to);
-				this.createTask(() => cb(data), id, w, data);
+			if (!f || f.call(this.component, el, j)) {
+				i++;
+				finalArr.push(el);
 
-				if (from + to > value.length) {
-					from += from + to - value.length;
-
-				} else {
-					from += to;
-				}
+			} else {
+				filteredArr.push(el);
 			}
-		};
+		}
 
-		return newArray;
+		if (finalArr.length !== value.length) {
+			finalArr[this.asyncLabel] = (cb) => {
+				const
+					weight = params.weight || 1,
+					sourceArr = filteredArr.concat(value.slice(from));
+
+				let
+					j = 0,
+					z = 0,
+					newArray = <unknown[]>[];
+
+				for (let i = 0; i < sourceArr.length; i++) {
+					const
+						el = sourceArr[i];
+
+					const fn = () => {
+						if (j++ >= count || z === sourceArr.length - 1) {
+							cb(newArray, from);
+							j = 0;
+							newArray = [];
+
+						} else {
+							newArray.push(el);
+						}
+
+						z++;
+					};
+
+					this.createTask(fn, {
+						weight,
+						filter: f && f.bind(this.component, el, i)
+					});
+				}
+			};
+		}
+
+		return finalArr;
 	}
 
 	/**
 	 * Creates a render task by the specified parameters
 	 *
 	 * @param cb
-	 * @param id
-	 * @param args
-	 * @param defWeight
+	 * @param [params]
 	 */
-	protected createTask(
-		cb: (...args: unknown[]) => void,
-		id: AsyncTaskId = Math.random().toString(),
-		defWeight: number = 1,
-		args: unknown[] = []
-	): void {
-		let
-			filter,
-			simpleId,
-			weight;
-
-		if (Object.isObject(id)) {
-			simpleId = (<AsyncTaskObjectId>id).id;
-			filter = (<AsyncTaskObjectId>id).filter;
-			weight = (<AsyncTaskObjectId>id).weight;
-
-		} else {
-			simpleId = id;
-		}
-
-		weight = weight || defWeight;
-
+	protected createTask(cb: (...args: unknown[]) => void, params: TaskOpts = {}): void {
 		const task = {
-			weight,
+			weight: params.weight,
 			fn: this.async.proxy(() => {
-				if (filter && !filter(...args, simpleId)) {
-					return false;
+				if (!params.filter || params.filter()) {
+					cb();
+					return true;
 				}
 
-				cb(...args, simpleId);
-				return true;
+				return false;
 
 			}, {
 				onClear: () => queue.delete(task),

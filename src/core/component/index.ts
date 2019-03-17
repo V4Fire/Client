@@ -331,7 +331,7 @@ export function component(params?: ComponentParams): Function {
 
 											ctx.meta.hooks[hook] = filteredHooks;
 
-											obj[asyncLabel]((obj) => {
+											obj[asyncLabel]((obj, from) => {
 												for (let o = renderData(<VNode[]>forEach(obj, cb)), i = 0; i < o.length; i++) {
 													vnode.elm.appendChild(o[i]);
 												}

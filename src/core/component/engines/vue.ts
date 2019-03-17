@@ -54,7 +54,7 @@ export function renderData(data: CanArray<VNode>): CanArray<Node> {
 	const el = document.createElement('div');
 	vue.$mount(el);
 
-	return isArr ? Array.from(el.children) : el;
+	return isArr ? Array.from(vue.$el.children) : vue.$el;
 }
 
 /**
