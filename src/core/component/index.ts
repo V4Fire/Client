@@ -19,6 +19,7 @@ import {
 
 	supports,
 	minimalCtx,
+	renderData,
 
 	ComponentDriver,
 	RenderContext,
@@ -166,7 +167,13 @@ export function component(params?: ComponentParams): Function {
 					if (r) {
 						const
 							// tslint:disable-next-line:no-this-assignment
-							rootCtx = this;
+							rootCtx = this,
+
+							// @ts-ignore
+							asyncLabel = rootCtx.$asyncLabel;
+
+						let
+							tasks = <Function[]>[];
 
 						const createElement = function (tag: string, opts?: VNodeData, children?: VNode[]): VNode {
 							'use strict';
@@ -237,6 +244,8 @@ export function component(params?: ComponentParams): Function {
 								// @ts-ignore
 								const renderObject = tplCache[nm] = tplCache[nm] || tpl.index();
 								vnode = patchVNode(execRenderObject(renderObject, fakeCtx), fakeCtx, renderCtx);
+
+								// ctx.localEvent.emit('aa', vnode);
 							}
 
 							if (!vnode) {
@@ -277,12 +286,64 @@ export function component(params?: ComponentParams): Function {
 								});
 							}
 
+							if (tasks.length) {
+								for (let i = 0; i < tasks.length; i++) {
+									tasks[i](vnode);
+								}
+
+								tasks = [];
+							}
+
 							return vnode;
 						};
 
 						if (rootCtx) {
 							// @ts-ignore
 							rootCtx.$createElement = rootCtx._c = createElement;
+
+							// @ts-ignore
+							const forEach = rootCtx._l;
+
+							// @ts-ignore
+							rootCtx._l = (obj, cb) => {
+								const
+									res = forEach(obj, cb);
+
+								if (obj[asyncLabel]) {
+									tasks.push((vnode) => {
+										const
+											ctx = vnode.fakeContext = vnode.context,
+											hook = ctx.hook === 'beforeMount' ? 'mounted' : 'updated',
+											hooks = ctx.meta.hooks[hook];
+
+										const fn = () => {
+											const
+												filteredHooks = <unknown[]>[];
+
+											for (let i = hooks.length; i--;) {
+												const
+													el = hooks[i];
+
+												if (el && el.fn !== fn) {
+													filteredHooks.push(el);
+												}
+											}
+
+											ctx.meta.hooks[hook] = filteredHooks;
+
+											obj[asyncLabel]((obj) => {
+												for (let o = renderData(<VNode[]>forEach(obj, cb)), i = 0; i < o.length; i++) {
+													vnode.elm.appendChild(o[i]);
+												}
+											});
+										};
+
+										hooks.push({fn});
+									});
+								}
+
+								return res;
+							};
 						}
 
 						return r.fn.call(rootCtx, createElement, baseCtx);

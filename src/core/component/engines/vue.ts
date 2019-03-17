@@ -37,6 +37,27 @@ export const
 }
 
 /**
+ * Renders the specified data
+ * @param data
+ */
+export function renderData(data: VNode): Node;
+export function renderData(data: VNode[]): Node[];
+export function renderData(data: CanArray<VNode>): CanArray<Node> {
+	const
+		isArr = Object.isArray(data);
+
+	// @ts-ignore
+	const vue = new Vue({
+		render: (c) => isArr ? c('div', [data]) : data
+	});
+
+	const el = document.createElement('div');
+	vue.$mount(el);
+
+	return isArr ? Array.from(el.children) : el;
+}
+
+/**
  * Patches the specified virtual node: add classes, event handlers, etc.
  *
  * @param vnode
