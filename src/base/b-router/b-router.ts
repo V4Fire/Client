@@ -278,7 +278,7 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 			base = this.basePath;
 
 		const
-			externalLinkRgxp = /^((https?):)?\/\/(-\.)?([^\s/?\.#-]+\.?)+(\/[^\s]*)?$/,
+			externalLinkRgxp = /^(?:https?:)?\/\/(?:-\.)?(?:[^\s/?\.#-]+\.?)+(?:\/[^\s]*)?$/,
 			normalizeBaseRgxp = /(.*)?[\\/]+$/,
 			initialPageString = page;
 
