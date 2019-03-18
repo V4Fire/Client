@@ -278,7 +278,9 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 			base = this.basePath;
 
 		const
-			normalizeBaseRgxp = /(.*)?[\\/]+$/;
+			externalLinkRgxp = /^(?:https?:)?\/\/(?:[^\s]*)+$/,
+			normalizeBaseRgxp = /(.*)?[\\/]+$/,
+			initialPage = page;
 
 		let
 			byId = false,
@@ -348,7 +350,13 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 				}
 			}
 
-			obj = undefined;
+			if (obj.meta.external !== false && externalLinkRgxp.test(pageRef)) {
+				obj.meta.external = true;
+				break;
+
+			} else {
+				obj = undefined;
+			}
 		}
 
 		if (!obj) {
@@ -385,6 +393,10 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 						}
 					}
 
+					if (obj.meta.external) {
+						return path.compile(pageRef)(p);
+					}
+
 					return path.compile(obj.pattern || page)(p);
 				}
 			});
@@ -398,7 +410,8 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 
 			if (!byId && obj.pattern) {
 				const
-					params = obj.rgxp.exec(obj.url || page);
+					url = obj.meta.external ? initialPage : obj.url || page,
+					params = obj.rgxp.exec(url);
 
 				if (params) {
 					for (let o = path.parse(obj.pattern), i = 0, j = 0; i < o.length; i++) {
@@ -474,7 +487,7 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 						return;
 					}
 
-					if (data && obj != null) {
+					if (data) {
 						// tslint:disable-next-line:prefer-conditional-expression
 						if ({true: true, false: true}[obj]) {
 							data[key] = Object.isString(obj) ? Object.parse(obj) : obj;
@@ -674,6 +687,11 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 
 			if (!Object.isFunction(engine[method])) {
 				method = 'replace';
+			}
+
+			if (info.meta.external) {
+				location.replace(info.toPath(info.params));
+				return;
 			}
 
 			await engine[method](

@@ -9,36 +9,43 @@
 $p = {
 	color: #FFF
 	backgroundColor: #6153B9
-	shadowColor: alpha(#222, 0.5)
+	shadow: 0 0 0.45em alpha(#222, 0.5)
+	roundings: (none 0) (small 0.5em) (normal 1em) (big 2em)
+	buttonPadding: 0.5em 1em
+	buttonFontWeight: bold
+	offsetBetweenCells: 0.3em
+	colorBrightnessOnAction: 20%
 }
 
 b-button
-	for $el in (none 0) (small 0.5em) (normal 1em) (big 2em)
+	for $el in $p.roundings
 		&_rounding_{$el[0]} &__button
 			border-radius $el[1]
 
 	&__button
-		padding 0.5em 1em
+		padding $p.buttonPadding
 		background $p.backgroundColor
 		color $p.color
-		font-weight bold
+		font-weight $p.buttonFontWeight
 
 		&:focus
-			box-shadow 0 0 0.45em $p.shadowColor
+			box-shadow $p.shadow
 
-		&:hover
-			background lighten($p.backgroundColor, 20%)
+		if ($p.colorBrightnessOnAction)
+			&:hover
+				background lighten($p.backgroundColor, $p.colorBrightnessOnAction)
 
-		&:active
-			background darken($p.backgroundColor, 20%)
+			&:active
+				background darken($p.backgroundColor, $p.colorBrightnessOnAction)
 
 	@supports (-ms-accelerator:true)
 		&__button
 			border-width 0.1em
 
-	&_disabled_true &__button
-	&_progress_true &__button
-		color lighten($p.color, 20%)
+	if ($p.colorBrightnessOnAction)
+		&_disabled_true &__button
+		&_progress_true &__button
+			color lighten($p.color, $p.colorBrightnessOnAction)
 
 	&__cell + &__cell
-		margin-left 0.3em
+		margin-left $p.offsetBetweenCells

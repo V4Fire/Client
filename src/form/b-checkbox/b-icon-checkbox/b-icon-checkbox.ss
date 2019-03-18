@@ -17,7 +17,10 @@
 				{{ label }}
 
 		- block icon
-			< .&__cell.&__icon
+			< .&__cell.&__icon v-if = $slots.icon
+				+= self.slot('icon')
+
+			< .&__cell.&__icon v-else
 				< component &
 					:instanceOf = bIcon |
 					:is = p.iconComponent || icon |
