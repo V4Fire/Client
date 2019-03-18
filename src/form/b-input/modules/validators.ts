@@ -27,6 +27,7 @@ export interface NumberValidatorParams extends ValidatorParams {
 	min?: number;
 	max?: number;
 	precision?: number;
+	decimal?: boolean;
 	separator?: CanArray<string>;
 }
 
@@ -66,6 +67,7 @@ export default <ValidatorsDecl<bInput, unknown>>{
 		min,
 		max,
 		precision,
+		decimal,
 		separator,
 		showMsg = true
 	}: NumberValidatorParams): Promise<ValidatorResult> {
@@ -117,16 +119,29 @@ export default <ValidatorsDecl<bInput, unknown>>{
 				break;
 
 			case 'ufloat':
-				if (!new RegExp(`^\\d+(?:${s}\\d{1,${pr}|$)`).test(value)) {
+				if (!new RegExp(`^\\d+(?:${s}\\d{1,${pr}}|$)`).test(value)) {
 					return error();
 				}
 
 				break;
 
 			default:
-				if (!new RegExp(`^-?\\d+(?:${s}\\d{1,${pr}|$)`).test(value)) {
+				if (!new RegExp(`^-?\\d+(?:${s}\\d{1,${pr}}|$)`).test(value)) {
 					return error();
 				}
+		}
+
+		const
+			chunks = value.split(new RegExp(s));
+
+		if (decimal) {
+			if (!chunks[1]) {
+				return error(value, 'DECIMAL', t`Value must have a decimal part`);
+			}
+
+			if (precision != null && chunks[1].length !== precision) {
+				return error(precision, 'DECIMAL_LENGTH', t`The decimal part should have ${precision} digits`);
+			}
 		}
 
 		const
