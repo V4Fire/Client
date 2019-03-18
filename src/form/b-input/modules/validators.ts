@@ -7,9 +7,10 @@
  */
 
 import fetch from 'core/request';
+import symbolGenerator from 'core/symbol';
+
 import bInput from 'form/b-input/b-input';
 import iInput, { ValidatorsDecl, ValidatorParams, ValidatorResult } from 'super/i-input/i-input';
-import symbolGenerator from 'core/symbol';
 import { name, password } from 'core/const/validation';
 
 export const
@@ -21,8 +22,16 @@ export interface ConstPatternValidatorParams extends ValidatorParams {
 	skipLength?: boolean;
 }
 
+export interface NumberValidatorParams extends ValidatorParams {
+	type?: 'int' | 'uint' | 'float' | 'ufloat';
+	min?: number;
+	max?: number;
+	precision?: number;
+	separator?: CanArray<string>;
+}
+
 export interface PatternValidatorParams extends ConstPatternValidatorParams {
-	pattern?: RegExp;
+	pattern?: RegExp | string;
 	minLength?: number;
 	maxLength?: number;
 	skipLength?: boolean;
@@ -51,16 +60,109 @@ export default <ValidatorsDecl<bInput, unknown>>{
 		return true;
 	},
 
-	async number({msg, showMsg = true}: ConstPatternValidatorParams): Promise<ValidatorResult> {
+	async number({
+		msg,
+		type,
+		min,
+		max,
+		precision,
+		separator,
+		showMsg = true
+	}: NumberValidatorParams): Promise<ValidatorResult> {
 		const
 			value = (await this.formValue).trim();
 
-		if (value && /[^\d]/.test(value)) {
+		if (!value) {
+			const
+				// @ts-ignore
+				{input} = this.$refs;
+
+			if (input && (!input.validity || input.validity.valid)) {
+				return true;
+			}
+		}
+
+		const
+			s = `[${(<string[]>[]).concat(separator || ['.', ',']).join('|')}]`,
+			pr = precision ? String(precision) : '';
+
+		const error = (
+			val: unknown = value,
+			type = 'INVALID_CHARS',
+			defMsg = t`Value is not a number`
+		) => {
 			if (showMsg) {
-				this.error = msg || t`Invalid number format`;
+				this.error = msg || defMsg;
 			}
 
-			return false;
+			return {
+				name: type,
+				value: val
+			};
+		};
+
+		switch (type) {
+			case 'uint':
+				if (/[^\d]/.test(value)) {
+					return error();
+				}
+
+				break;
+
+			case 'int':
+				if (!/^-?\d+$/.test(value)) {
+					return error();
+				}
+
+				break;
+
+			case 'ufloat':
+				if (!new RegExp(`^\\d+(?:${s}\\d{1,${pr}|$)`).test(value)) {
+					return error();
+				}
+
+				break;
+
+			default:
+				if (!new RegExp(`^-?\\d+(?:${s}\\d{1,${pr}|$)`).test(value)) {
+					return error();
+				}
+		}
+
+		const
+			numValue = parseFloat(value.replace(new RegExp(s), '.'));
+
+		if (min != null && numValue < min) {
+			return error(min, 'MIN', t`Value must be at least ${min}`);
+		}
+
+		if (max != null && numValue > max) {
+			return error(max, 'MAX', t`Value must be no more than ${max}`);
+		}
+
+		return true;
+	},
+
+	async stringDate({msg, showMsg = true}: ValidatorParams): Promise<ValidatorResult> {
+		const
+			value = await this.formValue;
+
+		if (/[^\d.-:()]/.test(this.value)) {
+			return {
+				name: 'INVALID_CHARS',
+				value: this.value
+			};
+		}
+
+		if (!Object.isDate(value) || isNaN(Date.parse(<any>value))) {
+			if (showMsg) {
+				this.error = msg || t`Invalid date`;
+			}
+
+			return {
+				name: 'INVALID_DATE',
+				value
+			};
 		}
 
 		return true;
@@ -77,7 +179,17 @@ export default <ValidatorsDecl<bInput, unknown>>{
 		const
 			value = await this.formValue;
 
-		if (pattern && !pattern.test(value)) {
+		let
+			rgxp;
+
+		if (Object.isString(pattern)) {
+			rgxp = new RegExp(pattern);
+
+		} else if (Object.isRegExp(pattern)) {
+			rgxp = pattern;
+		}
+
+		if (rgxp && !rgxp.test(value)) {
 			if (showMsg) {
 				this.error = msg || t`Invalid characters`;
 			}
@@ -337,31 +449,6 @@ export default <ValidatorsDecl<bInput, unknown>>{
 
 				connectedInput.setMod('valid', true);
 			}
-		}
-
-		return true;
-	},
-
-	async dateFromInput({msg, showMsg = true}: ValidatorParams): Promise<ValidatorResult> {
-		const
-			value = await this.formValue;
-
-		if (/[^\d.-:()]/.test(this.value)) {
-			return {
-				name: 'INVALID_CHARS',
-				value: this.value
-			};
-		}
-
-		if (!Object.isDate(value) || isNaN(Date.parse(<any>value))) {
-			if (showMsg) {
-				this.error = msg || t`Invalid date`;
-			}
-
-			return {
-				name: 'INVALID_DATE',
-				value
-			};
 		}
 
 		return true;
