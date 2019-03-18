@@ -280,7 +280,7 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 		const
 			externalLinkRgxp = /^(?:https?:)?\/\/(?:[^\s]*)+$/,
 			normalizeBaseRgxp = /(.*)?[\\/]+$/,
-			initialPageString = page;
+			initialPage = page;
 
 		let
 			byId = false,
@@ -410,7 +410,7 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 
 			if (!byId && obj.pattern) {
 				const
-					url = obj.meta.external ? initialPageString : obj.url || page,
+					url = obj.meta.external ? initialPage : obj.url || page,
 					params = obj.rgxp.exec(url);
 
 				if (params) {
