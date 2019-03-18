@@ -28,7 +28,7 @@ export interface PageOpts<
 	P extends Dictionary = Dictionary,
 	Q extends Dictionary = Dictionary,
 	M extends Dictionary = Dictionary
-	> extends CurrentPage<P, Q, M> {
+> extends CurrentPage<P, Q, M> {
 	toPath(params?: Dictionary): string;
 }
 
@@ -278,7 +278,7 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 			base = this.basePath;
 
 		const
-			externalLinkRgxp = /^(?:https?:)?\/\/(?:-\.)?(?:[^\s/?\.#-]+\.?)+(?:\/[^\s]*)?$/,
+			externalLinkRgxp = /^(?:https?:)?\/\/(?:[^\s]*)+$/,
 			normalizeBaseRgxp = /(.*)?[\\/]+$/,
 			initialPageString = page;
 
@@ -350,7 +350,7 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 				}
 			}
 
-			if (externalLinkRgxp.test(pageRef)) {
+			if (obj.meta.external !== false && externalLinkRgxp.test(pageRef)) {
 				obj.meta.external = true;
 				break;
 
