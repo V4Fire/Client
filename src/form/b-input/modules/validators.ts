@@ -51,6 +51,21 @@ export default <ValidatorsDecl<bInput, unknown>>{
 		return true;
 	},
 
+	async number({msg, showMsg = true}: ConstPatternValidatorParams): Promise<ValidatorResult> {
+		const
+			value = (await this.formValue).trim();
+
+		if (value && /[^\d]/.test(value)) {
+			if (showMsg) {
+				this.error = msg || t`Invalid number format`;
+			}
+
+			return false;
+		}
+
+		return true;
+	},
+
 	async pattern({
 		msg,
 		pattern,
