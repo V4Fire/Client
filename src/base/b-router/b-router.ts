@@ -487,7 +487,7 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 						return;
 					}
 
-					if (data && obj != null) {
+					if (data) {
 						// tslint:disable-next-line:prefer-conditional-expression
 						if ({true: true, false: true}[obj]) {
 							data[key] = Object.isString(obj) ? Object.parse(obj) : obj;
