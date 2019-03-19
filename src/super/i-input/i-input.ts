@@ -11,8 +11,14 @@
 import iData, { component, prop, field, system, hook, wait, p, ModsDecl } from 'super/i-data/i-data';
 export * from 'super/i-data/i-data';
 
+export type ValidatorMsg = Nullable<
+	string |
+	Dictionary<string> |
+	((err: ValidatorResult) => string)
+>;
+
 export interface ValidatorParams extends Dictionary {
-	msg?: string;
+	msg?: ValidatorMsg;
 	showMsg?: boolean;
 }
 
@@ -273,11 +279,10 @@ export default class iInput<
 	 * Component validators
 	 */
 	static blockValidators: ValidatorsDecl = {
-		// @ts-ignore
-		async required({msg, showMsg = true}: ValidatorParams): Promise<ValidatorResult<V>> {
+		async required({msg, showMsg = true}: ValidatorParams): Promise<ValidatorResult<boolean>> {
 			if (await this.formValue == null) {
 				if (showMsg) {
-					this.error = msg || t`Required field`;
+					this.error = this.getValidatorMsg(false, msg, t`Required field`);
 				}
 
 				return false;
@@ -364,6 +369,25 @@ export default class iInput<
 		}
 
 		return false;
+	}
+
+	/**
+	 * Sets a validator error message to the component
+	 *
+	 * @param err - error details
+	 * @param msg - error message / error table / error function
+	 * @param defMsg - default error message
+	 */
+	getValidatorMsg(err: ValidatorResult, msg: ValidatorMsg, defMsg: string): string {
+		if (Object.isFunction(msg)) {
+			return msg(err) || defMsg;
+		}
+
+		if (Object.isObject(msg)) {
+			return Object.isObject(err) && msg[err.name] || defMsg;
+		}
+
+		return msg || defMsg;
 	}
 
 	/**
