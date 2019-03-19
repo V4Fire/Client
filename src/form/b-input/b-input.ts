@@ -58,6 +58,12 @@ export default class bInput<
 	readonly type: string = 'text';
 
 	/**
+	 * Input autocomplete mode
+	 */
+	@prop(String)
+	readonly autocomplete: string = 'off';
+
+	/**
 	 * Input placeholder
 	 */
 	@prop({type: String, required: false})
@@ -76,22 +82,28 @@ export default class bInput<
 	readonly readonly?: boolean;
 
 	/**
+	 * Input maximum value length
+	 */
+	@prop({type: Number, required: false})
+	readonly maxlength?: number;
+
+	/**
+	 * Input minimum value (for number and date)
+	 */
+	@prop({type: [Number, String], required: false})
+	readonly min?: number;
+
+	/**
+	 * Input maximum value (for number and date)
+	 */
+	@prop({type: [Number, String], required: false})
+	readonly max?: number;
+
+	/**
 	 * Reset button for input
 	 */
 	@prop(Boolean)
 	readonly resetButton: boolean = true;
-
-	/**
-	 * Input autocomplete mode
-	 */
-	@prop(String)
-	readonly autocomplete: string = 'off';
-
-	/**
-	 * Input maximum value length
-	 */
-	@prop({type: String, required: false})
-	readonly maxlength?: number;
 
 	/**
 	 * Icon before input

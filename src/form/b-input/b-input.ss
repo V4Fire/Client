@@ -48,6 +48,8 @@
 								:autocomplete = autocomplete |
 								:autofocus = autofocus |
 								:maxlength = maxlength |
+								:min = min |
+								:max = max |
 								:readonly = readonly || autocomplete === 'off' ? 'readonly' : undefined |
 								@focus = onFocus |
 								@input = onEdit |
