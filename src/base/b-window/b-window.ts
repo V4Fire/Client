@@ -62,6 +62,10 @@ export default class bWindow<T extends Dictionary = Dictionary> extends iData<T>
 		...iOpenToggle.mods
 	};
 
+	protected readonly $refs!: {
+		window: HTMLElement;
+	};
+
 	/**
 	 * Window title store
 	 */

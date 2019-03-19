@@ -135,7 +135,7 @@ export default class bCheckboxGroup<
 						els = await ctx.elements;
 
 					if (els.length) {
-						els[0].error = msg || t`Required field`;
+						els[0].error = this.getValidatorMsg(false, msg, t`Required field`);
 						els[0].setMod('valid', false);
 					}
 				}

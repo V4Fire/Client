@@ -6,46 +6,244 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import fetch from 'core/request';
 import bInput from 'form/b-input/b-input';
-import iInput, { ValidatorsDecl, ValidatorParams, ValidatorResult } from 'super/i-input/i-input';
-import symbolGenerator from 'core/symbol';
-import { name, password } from 'core/const/validation';
+import iInput, { ValidatorsDecl, ValidatorParams, ValidatorResult, ValidatorError } from 'super/i-input/i-input';
 
-export const
-	$$ = symbolGenerator(),
-	DELAY = 0.3.second(),
-	group = 'validation';
+export interface NumberValidatorParams extends ValidatorParams {
+	type?: 'int' | 'uint' | 'float' | 'ufloat';
+	min?: number;
+	max?: number;
+	precision?: number;
+	strictPrecision?: boolean;
+	separator?: CanArray<string>;
+	styleSeparator?: CanArray<string>;
+}
+
+export interface NumberValidatorResult extends ValidatorError<string | number> {
+	name: 'INVALID_VALUE' | 'DECIMAL_LENGTH' | 'MIN' | 'MAX';
+}
+
+export interface DateValidatorParams extends ValidatorParams {
+	past?: boolean;
+	future?: boolean;
+	min?: Date | number | string;
+	max?: Date | number | string;
+}
+
+export interface DateValidatorResult extends ValidatorError<Date | number> {
+	name: 'INVALID_VALUE' | 'NOT_FUTURE' | 'IS_FUTURE' | 'NOT_PAST' | 'IS_PAST' | 'MIN' | 'MAX';
+}
 
 export interface ConstPatternValidatorParams extends ValidatorParams {
 	skipLength?: boolean;
 }
 
 export interface PatternValidatorParams extends ConstPatternValidatorParams {
-	pattern?: RegExp;
-	minLength?: number;
-	maxLength?: number;
-	skipLength?: boolean;
+	pattern?: RegExp | string;
+	min?: number;
+	max?: number;
 }
 
-export interface CheckExistsValidatorParams extends ValidatorParams {
-	url: string;
-	own?: any;
+export interface PatternValidatorResult extends ValidatorError<string | number> {
+	name: 'INVALID_VALUE' | 'MIN' | 'MAX';
 }
 
-export interface PasswordValidatorParams extends ConstPatternValidatorParams {
+export interface PasswordValidatorParams extends PatternValidatorParams {
 	connected?: string;
 	old?: string;
 }
 
+export interface PasswordValidatorResult extends ValidatorError<string | number | [string, string]> {
+	name: 'INVALID_VALUE' | 'MIN' | 'MAX' | 'OLD_IS_NEW' | 'NOT_CONFIRM';
+}
+
 export default <ValidatorsDecl<bInput, unknown>>{
-	async required({msg, showMsg = true}: ValidatorParams): Promise<ValidatorResult> {
+	async required({msg, showMsg = true}: ValidatorParams): Promise<ValidatorResult<boolean>> {
 		if (!await this.formValue) {
 			if (showMsg) {
-				this.error = msg || t`Required field`;
+				this.error = this.getValidatorMsg(false, msg, t`Required field`);
 			}
 
 			return false;
+		}
+
+		return true;
+	},
+
+	async number({
+		msg,
+		type,
+		min,
+		max,
+		precision,
+		strictPrecision,
+		separator = ['.', ','],
+		styleSeparator = [],
+		showMsg = true
+	}: NumberValidatorParams): Promise<ValidatorResult<NumberValidatorResult>> {
+		const
+			value = (await this.formValue).trim();
+
+		if (!value) {
+			const
+				// @ts-ignore
+				{input} = this.$refs;
+
+			if (input && (!input.validity || input.validity.valid)) {
+				return true;
+			}
+		}
+
+		if (precision != null && precision <= 0) {
+			throw new TypeError(`Invalid precision value "${precision}"`);
+		}
+
+		const
+			s = `[${(<string[]>[]).concat(separator).join('')}]`,
+			ss = `[${(<string[]>[]).concat(styleSeparator).join('')}]`,
+			pr = precision ? String(precision) : '';
+
+		const error = (
+			type: NumberValidatorResult['name'] = 'INVALID_VALUE',
+			val: string | number = value,
+			defMsg = t`Value is not a number`
+		) => {
+			const err = <NumberValidatorResult>{
+				name: type,
+				value: val
+			};
+
+			if (showMsg) {
+				this.error = this.getValidatorMsg(err, msg, defMsg);
+			}
+
+			return <ValidatorResult<NumberValidatorResult>>err;
+		};
+
+		const
+			d = `^\\d(?:\\d|${ss})*`;
+
+		switch (type) {
+			case 'uint':
+				if (!new RegExp(`^${d}$`).test(value)) {
+					return error();
+				}
+
+				break;
+
+			case 'int':
+				if (!new RegExp(`^-?${d}$`).test(value)) {
+					return error();
+				}
+
+				break;
+
+			case 'ufloat':
+				if (!new RegExp(`^${d}?(?:${s}\\d{0,${pr}}|$)`).test(value)) {
+					return error();
+				}
+
+				break;
+
+			default:
+				if (!new RegExp(`^-?${d}?(?:${s}\\d{0,${pr}}|$)`).test(value)) {
+					return error();
+				}
+		}
+
+		const
+			chunks = value.split(new RegExp(s));
+
+		if (
+			strictPrecision &&
+			precision != null &&
+			chunks[1] != null && chunks[1].length !== precision
+		) {
+			return error('DECIMAL_LENGTH', precision, t`The decimal part should have ${precision} digits`);
+		}
+
+		const
+			numValue = parseFloat(value.replace(new RegExp(s), '.'));
+
+		if (min != null && numValue < min) {
+			return error('MIN', min, t`Value must be at least ${min}`);
+		}
+
+		if (max != null && numValue > max) {
+			return error('MAX', max, t`Value must be no more than ${max}`);
+		}
+
+		return true;
+	},
+
+	async date({
+		msg,
+		past,
+		future,
+		min,
+		max,
+		showMsg = true
+	}: DateValidatorParams): Promise<ValidatorResult<DateValidatorResult>> {
+		const
+			src = await this.formValue;
+
+		if (!src) {
+			return true;
+		}
+
+		const
+			value = Date.create(src);
+
+		const error = (
+			type: DateValidatorResult['name'] = 'INVALID_VALUE',
+			val: Date | number = value,
+			defMsg = t`Invalid date value`
+		) => {
+			const err = <DateValidatorResult>{
+				name: type,
+				value: val
+			};
+
+			if (showMsg) {
+				this.error = this.getValidatorMsg(err, msg, defMsg);
+			}
+
+			return <ValidatorResult<DateValidatorResult>>err;
+		};
+
+		if (isNaN(value.valueOf())) {
+			return error();
+		}
+
+		const
+			isPast = value.isPast(),
+			isFuture = value.isFuture();
+
+		if (past && !isPast) {
+			return error('NOT_PAST', value, t`Date isn't the past`);
+		}
+
+		if (past === false && isPast) {
+			return error('IS_PAST', value, t`Date is the past`);
+		}
+
+		if (future && !isFuture) {
+			return error('NOT_FUTURE', value, t`Date isn't the future`);
+		}
+
+		if (future === false && isFuture) {
+			return error('IS_FUTURE', value, t`Date is the future`);
+		}
+
+		min = min != null ? Date.create(min) : min;
+		max = max != null ? Date.create(max) : min;
+
+		if (Object.isDate(min) && !min.isBefore(value)) {
+			return error('MIN', min, t`Date must be at least ${min}`);
+		}
+
+		if (Object.isDate(max) && !max.isAfter(value)) {
+			return error('MAX', min, t`Date must be no more than ${max}`);
 		}
 
 		return true;
@@ -54,143 +252,65 @@ export default <ValidatorsDecl<bInput, unknown>>{
 	async pattern({
 		msg,
 		pattern,
-		minLength,
-		maxLength,
+		min,
+		max,
 		skipLength,
 		showMsg = true
 	}: PatternValidatorParams): Promise<ValidatorResult> {
 		const
 			value = await this.formValue;
 
-		if (pattern && !pattern.test(value)) {
+		let
+			rgxp;
+
+		if (Object.isString(pattern)) {
+			rgxp = new RegExp(pattern);
+
+		} else if (Object.isRegExp(pattern)) {
+			rgxp = pattern;
+		}
+
+		const error = (
+			type: PatternValidatorResult['name'] = 'INVALID_VALUE',
+			val: string | number = value,
+			defMsg = t`Invalid characters`
+		) => {
+			const err = <PatternValidatorResult>{
+				name: type,
+				value: val
+			};
+
 			if (showMsg) {
-				this.error = msg || t`Invalid characters`;
+				this.error = this.getValidatorMsg(err, msg, defMsg);
 			}
 
-			return {
-				name: 'INVALID_CHARS',
-				value
-			};
+			return <ValidatorResult<PatternValidatorResult>>err;
+		};
+
+		if (rgxp && !rgxp.test(value)) {
+			return error('INVALID_VALUE', value, t`Invalid characters`);
 		}
 
 		if (!skipLength) {
-			if (Object.isNumber(minLength) && value.length < minLength) {
-				if (showMsg) {
-					this.error = msg || t`Value length must be at least ${minLength} characters`;
-				}
-
-				return {
-					name: 'MIN_LENGTH',
-					value: minLength
-				};
+			if (min != null && value.length < min) {
+				return error('MIN', min, t`Value length must be at least ${min} characters`);
 			}
 
-			if (Object.isNumber(maxLength) && value.length > maxLength) {
-				if (showMsg) {
-					this.error = msg || t`Value length must be no more than ${maxLength} characters`;
-				}
-
-				return {
-					name: 'MAX_LENGTH',
-					value: maxLength
-				};
+			if (max != null && value.length > max) {
+				return error('MAX', max, t`Value length must be no more than ${max} characters`);
 			}
 		}
 
 		return true;
 	},
 
-	async name({msg, skipLength, showMsg = true}: ConstPatternValidatorParams): Promise<ValidatorResult> {
-		const
-			value = await this.formValue;
-
-		if (!name.pattern.test(value)) {
-			if (showMsg) {
-				this.error = msg ||
-					t`Invalid characters. <br>Allowed only Latin characters, numbers and underscore`;
-			}
-
-			return {
-				name: 'INVALID_CHARS',
-				value
-			};
-		}
-
-		if (!skipLength) {
-			if (value.length < name.min) {
-				if (showMsg) {
-					this.error = msg || t`Name length must be at least ${name.min} characters`;
-				}
-
-				return {
-					name: 'MIN_LENGTH',
-					value: name.min
-				};
-			}
-
-			if (value.length > name.max) {
-				if (showMsg) {
-					this.error = msg || t`Name length must be no more than ${name.max} characters`;
-				}
-
-				return {
-					name: 'MAX_LENGTH',
-					value: name.max
-				};
-			}
-		}
-
-		return true;
-	},
-
-	async nameNotExists({url, msg, own, showMsg = true}: CheckExistsValidatorParams): Promise<ValidatorResult> {
-		const
-			value = await this.formValue;
-
-		if (own !== undefined && own === value) {
-			return true;
-		}
-
-		return new Promise<boolean | null>((resolve) => {
-			// @ts-ignore
-			this.async.setTimeout(async () => {
-				try {
-					// @ts-ignore
-					const {result} = await this.async.request(fetch(url, {method: 'GET', query: {value}})(), {
-						group,
-						label: $$.nameNotExists
-					});
-
-					if (result === true && showMsg) {
-						this.error = msg || t`This name is already taken`;
-					}
-
-					resolve(result !== true);
-
-				} catch (err) {
-					if (showMsg) {
-						// @ts-ignore
-						this.error = this.getDefaultErrorText(err);
-					}
-
-					resolve(err.type !== 'abort' ? false : null);
-				}
-
-			}, DELAY, {
-				group,
-				label: $$.nameNotExists,
-				onClear: () => resolve(false)
-			});
-		});
-	},
-
-	async email({msg, showMsg = true}: ConstPatternValidatorParams): Promise<ValidatorResult> {
+	async email({msg, showMsg = true}: ValidatorParams): Promise<ValidatorResult<boolean>> {
 		const
 			value = (await this.formValue).trim();
 
 		if (value && !/@/.test(value)) {
 			if (showMsg) {
-				this.error = msg || t`Invalid email format`;
+				this.error = this.getValidatorMsg(false, msg, t`Invalid email format`);
 			}
 
 			return false;
@@ -199,84 +319,61 @@ export default <ValidatorsDecl<bInput, unknown>>{
 		return true;
 	},
 
-	async emailNotExists({url, msg, own, showMsg = true}: CheckExistsValidatorParams): Promise<ValidatorResult> {
+	async password({
+		msg,
+		pattern = /^\w*$/,
+		min = 6,
+		max = 18,
+		connected,
+		old,
+		skipLength,
+		showMsg = true
+	}: PasswordValidatorParams): Promise<ValidatorResult> {
 		const
 			value = await this.formValue;
 
-		if (own !== undefined && own === value) {
-			return true;
-		}
+		const error = (
+			type: PasswordValidatorResult['name'] = 'INVALID_VALUE',
+			val: string | number | [string, string] = value,
+			defMsg = t`Invalid characters`
+		) => {
+			const err = <PasswordValidatorResult>{
+				name: type,
+				value: val
+			};
 
-		return new Promise<boolean | null>((resolve) => {
-			// @ts-ignore
-			this.async.setTimeout(async () => {
-				try {
-					// @ts-ignore
-					const {result} = await this.async.request(fetch(url, {method: 'GET', query: {value}}), {
-						group,
-						label: $$.emailNotExists
-					});
-
-					if (result === true && showMsg) {
-						this.error = msg || t`This email is already taken`;
-					}
-
-					resolve(result !== true);
-
-				} catch (err) {
-					if (showMsg) {
-						// @ts-ignore
-						this.error = this.getDefaultErrorText(err);
-					}
-
-					resolve(err.type !== 'abort' ? false : null);
-				}
-
-			}, DELAY, {
-				group,
-				label: $$.emailNotExists,
-				onClear: () => resolve(false)
-			});
-		});
-	},
-
-	async password({msg, connected, old, skipLength, showMsg = true}: PasswordValidatorParams): Promise<ValidatorResult> {
-		const
-			value = await this.formValue;
-
-		if (!password.pattern.test(value)) {
 			if (showMsg) {
-				this.error = msg ||
-					t`Invalid characters. <br>Allowed only Latin characters, numbers and underscore`;
+				this.error = this.getValidatorMsg(err, msg, defMsg);
 			}
 
-			return {
-				name: 'INVALID_CHARS',
-				value
-			};
+			return <ValidatorResult<PasswordValidatorResult>>err;
+		};
+
+		let
+			rgxp;
+
+		if (Object.isString(pattern)) {
+			rgxp = new RegExp(pattern);
+
+		} else if (Object.isRegExp(pattern)) {
+			rgxp = pattern;
+		}
+
+		if (!rgxp) {
+			throw new ReferenceError('Password pattern is not defined');
+		}
+
+		if (!rgxp.test(value)) {
+			return error('INVALID_VALUE', value, t`Invalid characters.`);
 		}
 
 		if (!skipLength) {
-			if (value.length < password.min) {
-				if (showMsg) {
-					this.error = msg || t`Password length must be at least ${password.min} characters`;
-				}
-
-				return {
-					name: 'MIN_LENGTH',
-					value: password.min
-				};
+			if (min != null && value.length < min) {
+				return error('MIN', min, t`Password length must be at least ${min} characters`);
 			}
 
-			if (value.length > password.max) {
-				if (showMsg) {
-					this.error = msg || t`Password length must be no more than ${password.max} characters`;
-				}
-
-				return {
-					name: 'MAX_LENGTH',
-					value: password.max
-				};
+			if (max != null && value.length > max) {
+				return error('MAX', max, t`Password length must be no more than ${max} characters`);
 			}
 		}
 
@@ -288,14 +385,7 @@ export default <ValidatorsDecl<bInput, unknown>>{
 
 			if (connectedValue) {
 				if (connectedValue === value) {
-					if (showMsg) {
-						this.error = msg || t`Old and new password are the same`;
-					}
-
-					return {
-						name: 'OLD_IS_NEW',
-						value
-					};
+					return error('OLD_IS_NEW', value, t`Old and new password are the same`);
 				}
 
 				connectedInput.setMod('valid', true);
@@ -310,43 +400,11 @@ export default <ValidatorsDecl<bInput, unknown>>{
 
 			if (connectedValue) {
 				if (connectedValue !== value) {
-					if (showMsg) {
-						this.error = msg || t`Passwords don't match`;
-					}
-
-					return {
-						name: 'NOT_CONFIRM',
-						value: [value, connectedValue]
-					};
+					return error('NOT_CONFIRM', [value, String(connectedValue)], t`Passwords don't match`);
 				}
 
 				connectedInput.setMod('valid', true);
 			}
-		}
-
-		return true;
-	},
-
-	async dateFromInput({msg, showMsg = true}: ValidatorParams): Promise<ValidatorResult> {
-		const
-			value = await this.formValue;
-
-		if (/[^\d.-:()]/.test(this.value)) {
-			return {
-				name: 'INVALID_CHARS',
-				value: this.value
-			};
-		}
-
-		if (!Object.isDate(value) || isNaN(Date.parse(<any>value))) {
-			if (showMsg) {
-				this.error = msg || t`Invalid date`;
-			}
-
-			return {
-				name: 'INVALID_DATE',
-				value
-			};
 		}
 
 		return true;

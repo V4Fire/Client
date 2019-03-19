@@ -34,10 +34,13 @@
 
 					:href = el.href |
 					:-hint = el.hint |
-						:-id = values[el.value]
+					:-id = values[el.value]
 				.
 					- block preIcon
-						< span.&__cell.&__link-icon.&__link-pre-icon v-if = el.preIcon
+						< span.&__cell.&__link-icon.&__link-pre-icon v-if = $slots['pre-icon']
+							+= self.slot('pre-icon')
+
+						< span.&__cell.&__link-icon.&__link-pre-icon v-else-if = el.preIcon
 							< component.&__b-icon &
 								v-if = el.preIconComponent || el.preIconHint |
 								:instanceOf = bIcon |
@@ -58,7 +61,10 @@
 							{{ getField('db.' + el.info) }}
 
 					- block icon
-						< span.&__cell.&__link-icon.&__link-post-icon v-if = el.icon
+						< span.&__cell.&__link-icon.&__link-post-icon v-if = $slots.icon
+							+= self.slot('icon')
+
+						< span.&__cell.&__link-icon.&__link-post-icon v-else-if = el.icon
 							< component.&__b-icon &
 								v-if = el.iconComponent || el.iconHint || hideLabels |
 								:instanceOf = bIcon |
@@ -73,7 +79,6 @@
 					- block progress
 						< span.&__cell.&__link-icon.&__link-progress
 							< @b-progress-icon
-
 
 	- block body
 		- super

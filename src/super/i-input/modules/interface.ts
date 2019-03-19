@@ -8,8 +8,14 @@
 
 import iInput from 'super/i-input/i-input';
 
+export type ValidatorMsg = Nullable<
+	string |
+	Dictionary<string> |
+	((err: ValidatorResult) => string)
+>;
+
 export interface ValidatorParams extends Dictionary {
-	msg?: string;
+	msg?: ValidatorMsg;
 	showMsg?: boolean;
 }
 

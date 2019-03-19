@@ -52,20 +52,25 @@ export default abstract class iOpen {
 
 		const onOpened = () => {
 			$a.setImmediate(() => {
+				const opts = {
+					...helpersGroup,
+					options: {passive: false}
+				};
+
 				try {
 					$a.on(document, events.key || 'keyup', (e) => {
 						if (e) {
 							return component.onKeyClose(e);
 						}
 
-					}, helpersGroup);
+					}, opts);
 
 					$a.on(document, events.touch || 'click touchstart', (e) => {
 						if (e) {
 							return component.onTouchClose(e);
 						}
 
-					}, helpersGroup);
+					}, opts);
 
 				} catch {}
 			}, helpersGroup);

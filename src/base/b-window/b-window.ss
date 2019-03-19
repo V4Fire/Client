@@ -27,7 +27,7 @@
 				opt.ifOnce('hidden', m.hidden !== 'true') && delete watchModsStore.hidden
 			.
 
-				< section.&__window
+				< section.&__window ref = window
 					- if thirdPartySlots
 						< template v-if = slotName
 							: isSlot = /^slot[A-Z]/
