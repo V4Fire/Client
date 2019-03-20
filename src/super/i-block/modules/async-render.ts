@@ -89,6 +89,10 @@ export default class AsyncRender {
 			count = slice;
 		}
 
+		if (count > value.length) {
+			count = value.length;
+		}
+
 		const
 			f = params.filter,
 			finalArr = <unknown[]>[],
