@@ -34,7 +34,7 @@ export default class AsyncRender {
 	 */
 	protected get async(): Async {
 		// @ts-ignore
-		return this.component.$async;
+		return this.component.async;
 	}
 
 	/**
@@ -42,6 +42,16 @@ export default class AsyncRender {
 	 */
 	constructor(component: iBlock) {
 		this.component = component;
+
+		const
+			// @ts-ignore
+			{hooks} = component.meta;
+
+		hooks.beforeUpdate.push({fn: () => {
+			this.async
+				.cancelProxy({group: 'asyncComponents'})
+				.terminateWorker({group: 'asyncComponents'});
+		}});
 	}
 
 	/**
@@ -114,9 +124,23 @@ export default class AsyncRender {
 
 					const fn = () => {
 						if (j++ >= count || z === sourceArr.length - 1) {
-							cb(newArray, from);
+							const
+								els = <Node[]>cb(newArray, from);
+
 							j = 0;
 							newArray = [];
+
+							this.async.worker(() => {
+								for (let i = 0; i < els.length; i++) {
+									const
+										el = els[i];
+
+									if (el.parentNode) {
+										el.parentNode.removeChild(el);
+									}
+								}
+
+							}, {group: 'asyncComponents'});
 
 						} else {
 							newArray.push(el);

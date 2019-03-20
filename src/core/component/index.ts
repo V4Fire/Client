@@ -331,10 +331,15 @@ export function component(params?: ComponentParams): Function {
 
 											ctx.meta.hooks[hook] = filteredHooks;
 
-											obj[asyncLabel]((obj, from) => {
+											obj[asyncLabel]((obj) => {
+												const
+													els = <Node[]>[];
+
 												for (let o = renderData(<VNode[]>forEach(obj, cb)), i = 0; i < o.length; i++) {
-													vnode.elm.appendChild(o[i]);
+													els.push(vnode.elm.appendChild(o[i]));
 												}
+
+												return els;
 											});
 										};
 
