@@ -7,8 +7,7 @@
  */
 
 import { GLOBAL } from 'core/const/links';
-import { AsyncOpts } from 'core/async';
-import { ComponentInterface, WatchOptionsWithHandler } from 'core/component/interface';
+import { ComponentInterface } from 'core/component/interface';
 
 export const
 	customWatcherRgxp = /^([!?]?)([^!?:]*):(.*)/;
@@ -85,8 +84,35 @@ export function bindWatchers(ctx: ComponentInterface, eventCtx: ComponentInterfa
 					group = {group: el.group || 'watchers', label},
 					eventParams = {...group, options: el.options, single: el.single};
 
-				let
-					handler = createWatchCb(el, group, ctx);
+				let handler = (...args) => {
+					args = el.provideArgs === false ? [] : args;
+
+					if (Object.isString(el.handler)) {
+						const
+							method = <string>el.handler;
+
+						if (!Object.isFunction(ctx[method])) {
+							throw new ReferenceError(`The specified method (${method}) for watching is not defined`);
+						}
+
+						// @ts-ignore
+						ctx.$async.setImmediate(
+							() => ctx[method](...args),
+							group
+						);
+
+					} else {
+						const
+							fn = <Function>el.handler;
+
+						if (el.method) {
+							fn.call(ctx, ...args);
+
+						} else {
+							fn(ctx, ...args);
+						}
+					}
+				};
 
 				if (el.wrapper) {
 					handler = <typeof handler>el.wrapper(ctx, handler);
@@ -160,40 +186,4 @@ export function bindWatchers(ctx: ComponentInterface, eventCtx: ComponentInterfa
 
 		exec();
 	}
-}
-
-function createWatchCb(
-	el: WatchOptionsWithHandler,
-	group: AsyncOpts,
-	ctx: ComponentInterface
-): (...args: unknown[]) => void {
-	return (...args) => {
-		args = el.provideArgs === false ? [] : args;
-
-		if (Object.isString(el.handler)) {
-			const
-				method = <string>el.handler;
-
-			if (!Object.isFunction(ctx[method])) {
-				throw new ReferenceError(`The specified method (${method}) for watching is not defined`);
-			}
-
-			// @ts-ignore
-			ctx.$async.setImmediate(
-				() => ctx[method](...args),
-				group
-			);
-
-		} else {
-			const
-				fn = <Function>el.handler;
-
-			if (el.method) {
-				fn.call(ctx, ...args);
-
-			} else {
-				fn(ctx, ...args);
-			}
-		}
-	};
 }
