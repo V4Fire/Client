@@ -165,6 +165,12 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	readonly componentId!: string;
 
 	/**
+	 * Component render cache key
+	 */
+	@prop({required: false})
+	readonly renderKey?: string;
+
+	/**
 	 * Component unique name
 	 */
 	@prop({type: String, required: false})
@@ -693,8 +699,24 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	/**
 	 * Temporary cache
 	 */
-	@system({merge: true, replace: false})
-	protected tmp: Dictionary = {};
+	@system({
+		merge: true,
+		replace: false,
+		init: () => Object.create(null)
+	})
+
+	protected tmp!: Dictionary;
+
+	/**
+	 * Render temporary cache
+	 */
+	@system({
+		merge: true,
+		replace: false,
+		init: () => Object.create(null)
+	})
+
+	protected renderTmp!: Dictionary;
 
 	/**
 	 * Temporary cache with watching

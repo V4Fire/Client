@@ -101,8 +101,15 @@ export function getComponent(
 			ctx.$$data = {};
 			ctx.$async = new Async(this);
 			ctx.$asyncLabel = asyncLabel;
-			ctx.$normalParent = getNormalParent(ctx);
 
+			const
+				parent = ctx.$parent;
+
+			if (parent && !parent.componentName) {
+				ctx.$parent = ctx.$root.$$parent;
+			}
+
+			ctx.$normalParent = getNormalParent(ctx);
 			ctx.instance = instance;
 			ctx.componentName = meta.name;
 			ctx.meta = createMeta(meta);

@@ -178,74 +178,82 @@ export function component(params?: ComponentParams): Function {
 						const createElement = function (tag: string, opts?: VNodeData, children?: VNode[]): VNode {
 							'use strict';
 
-							let
-								vnode,
-								needEl = Boolean(Object.isObject(opts) && opts.attrs && opts.attrs['v4-composite']);
+							const
+								ctx = this || rootCtx;
 
 							const
-								ctx = this || rootCtx,
-								component = components.get(tag);
+								attrOpts = Object.isObject(opts) && opts.attrs || {},
+								tagName = attrOpts['v4-composite'] || tag,
+								renderKey = attrOpts['render-key'] != null ?
+									`${tagName}:${attrOpts['global-name']}:${attrOpts['render-key']}` : '';
 
-							if (supports.functional && component && component.params.functional === true) {
-								needEl = true;
+							let
+								vnode = ctx.renderTmp[renderKey],
+								needEl = Boolean(attrOpts['v4-composite']);
 
+							if (!vnode) {
 								const
-									nm = component.componentName,
-									tpl = TPLS[nm];
+									component = components.get(tag);
 
-								if (!tpl) {
-									return nativeCreate('span');
-								}
+								if (supports.functional && component && component.params.functional === true) {
+									needEl = true;
 
-								const
-									node = nativeCreate('span', {...opts, tag: undefined}, children),
-									data = getComponentDataFromVnode(nm, node);
+									const
+										nm = component.componentName,
+										tpl = TPLS[nm];
 
-								const renderCtx: RenderContext = {
-									parent: ctx,
-									children: node.children || [],
-									props: data.props,
-
-									// @ts-ignore
-									listeners: data.on,
-
-									slots: () => data.slots,
-									// @ts-ignore
-									scopedSlots: data.scopedSlots,
-
-									data: {
-										ref: data.ref,
-										refInFor: data.refInFor,
-										// @ts-ignore
-										on: data.on,
-										attrs: data.attrs,
-										class: data.class,
-										staticClass: data.staticClass,
-										// @ts-ignore
-										style: data.style
+									if (!tpl) {
+										return nativeCreate('span');
 									}
-								};
 
-								const fakeCtx = createFakeCtx(
+									const
+										node = nativeCreate('span', {...opts, tag: undefined}, children),
+										data = getComponentDataFromVnode(nm, node);
+
+									const renderCtx: RenderContext = {
+										parent: ctx,
+										children: node.children || [],
+										props: data.props,
+
+										// @ts-ignore
+										listeners: data.on,
+
+										slots: () => data.slots,
+										// @ts-ignore
+										scopedSlots: data.scopedSlots,
+
+										data: {
+											ref: data.ref,
+											refInFor: data.refInFor,
+											// @ts-ignore
+											on: data.on,
+											attrs: data.attrs,
+											class: data.class,
+											staticClass: data.staticClass,
+											// @ts-ignore
+											style: data.style
+										}
+									};
+
+									const fakeCtx = createFakeCtx(
+										// @ts-ignore
+										createElement,
+										renderCtx,
+
+										minimalCtxCache[nm] = minimalCtxCache[nm] || Object.assign(Object.create(minimalCtx), {
+											meta: component,
+											instance: component.instance,
+											componentName: component.componentName,
+											$options: {}
+										}),
+
+										{initProps: true}
+									);
+
 									// @ts-ignore
-									createElement,
-									renderCtx,
-
-									minimalCtxCache[nm] = minimalCtxCache[nm] || Object.assign(Object.create(minimalCtx), {
-										meta: component,
-										instance: component.instance,
-										componentName: component.componentName,
-										$options: {}
-									}),
-
-									{initProps: true}
-								);
-
-								// @ts-ignore
-								const renderObject = tplCache[nm] = tplCache[nm] || tpl.index();
-								vnode = patchVNode(execRenderObject(renderObject, fakeCtx), fakeCtx, renderCtx);
-
-								// ctx.localEvent.emit('aa', vnode);
+									const renderObject = tplCache[nm] = tplCache[nm] || tpl.index();
+									vnode = patchVNode(execRenderObject(renderObject, fakeCtx), fakeCtx, renderCtx);
+								}
 							}
 
 							if (!vnode) {
@@ -258,6 +266,10 @@ export function component(params?: ComponentParams): Function {
 							const
 								vData = vnode.data || {},
 								ref = vData.ref;
+
+							if (renderKey) {
+								ctx.renderTmp[renderKey] = vnode;
+							}
 
 							if (ref && ctx !== rootCtx) {
 								const
@@ -335,7 +347,7 @@ export function component(params?: ComponentParams): Function {
 												const
 													els = <Node[]>[];
 
-												for (let o = renderData(<VNode[]>forEach(obj, cb)), i = 0; i < o.length; i++) {
+												for (let o = renderData(<VNode[]>forEach(obj, cb), vnode.context), i = 0; i < o.length; i++) {
 													els.push(vnode.elm.appendChild(o[i]));
 												}
 

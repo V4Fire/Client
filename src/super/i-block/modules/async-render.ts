@@ -127,7 +127,9 @@ export default class AsyncRender {
 						el = sourceArr[i];
 
 					const fn = () => {
-						if (j++ >= count || z === sourceArr.length - 1) {
+						newArray.push(el);
+
+						if (++j >= count || z === sourceArr.length - 1) {
 							const
 								els = <Node[]>cb(newArray, from);
 
@@ -145,9 +147,6 @@ export default class AsyncRender {
 								}
 
 							}, {group: 'asyncComponents'});
-
-						} else {
-							newArray.push(el);
 						}
 
 						z++;

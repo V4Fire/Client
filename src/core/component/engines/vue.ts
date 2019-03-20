@@ -38,11 +38,13 @@ export const
 
 /**
  * Renders the specified data
+ *
  * @param data
+ * @param parent - parent component
  */
-export function renderData(data: VNode): Node;
-export function renderData(data: VNode[]): Node[];
-export function renderData(data: CanArray<VNode>): CanArray<Node> {
+export function renderData(data: VNode, parent: ComponentInterface): Node;
+export function renderData(data: VNode[], parent: ComponentInterface): Node[];
+export function renderData(data: CanArray<VNode>, parent: ComponentInterface): CanArray<Node> {
 	const
 		isArr = Object.isArray(data);
 
@@ -50,6 +52,9 @@ export function renderData(data: CanArray<VNode>): CanArray<Node> {
 	const vue = new Vue({
 		render: (c) => isArr ? c('div', [data]) : data
 	});
+
+	vue.$root = Object.create(parent.$root);
+	vue.$root.$$parent = parent;
 
 	const el = document.createElement('div');
 	vue.$mount(el);

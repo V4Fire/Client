@@ -254,6 +254,7 @@ export class ComponentInterface<
 > {
 	readonly componentId!: string;
 	readonly componentName!: string;
+	readonly globalName?: string;
 	readonly instance!: this;
 	readonly hook!: Hooks;
 	readonly keepAlive!: boolean;
@@ -267,6 +268,8 @@ export class ComponentInterface<
 	readonly $isServer!: boolean;
 	readonly $isFlyweight?: boolean;
 	protected readonly meta!: ComponentMeta;
+	protected readonly renderTmp!: Dictionary<VNode>;
+	protected readonly $$parent?: C;
 	protected readonly $asyncLabel!: symbol;
 	protected readonly $async!: Async<ComponentInterface>;
 	protected readonly $refs!: Dictionary;
