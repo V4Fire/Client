@@ -65,7 +65,7 @@ export default abstract class iOpen {
 
 					}, opts);
 
-					$a.on(document, events.touch || 'click touchstart', (e) => {
+					$a.on(document, events.touch || 'click touchend', (e) => {
 						if (e) {
 							return component.onTouchClose(e);
 						}
