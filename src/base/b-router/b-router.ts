@@ -350,7 +350,7 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 				}
 			}
 
-			if (obj.meta.external !== false && externalLinkRgxp.test(pageRef)) {
+			if (obj.meta.external || obj.meta.external !== false && externalLinkRgxp.test(pageRef)) {
 				obj.meta.external = true;
 				break;
 
@@ -690,7 +690,7 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 			}
 
 			if (info.meta.external) {
-				location.replace(info.toPath(info.params));
+				location.replace(info.toPath(info.params) || '/');
 				return;
 			}
 
