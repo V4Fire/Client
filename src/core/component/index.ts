@@ -45,6 +45,7 @@ export { default as globalEvent, reset, ResetType } from 'core/component/event';
 export { prop, field, system, p, hook, watch, paramsFactory } from 'core/component/decorators';
 export {
 
+	renderData,
 	ComponentDriver as default,
 	WatchOptions,
 

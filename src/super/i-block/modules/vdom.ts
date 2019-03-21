@@ -12,7 +12,7 @@ import Opt from 'super/i-block/modules/opt';
 import Field from 'super/i-block/modules/field';
 import Provide from 'super/i-block/modules/provide';
 
-import { patchVNode, execRenderObject, RenderObject, RenderContext, VNode } from 'core/component';
+import { renderData, patchVNode, execRenderObject, RenderObject, RenderContext, VNode } from 'core/component';
 
 const
 	tplCache = Object.create(null);
@@ -28,6 +28,16 @@ export default class VDOM {
 	 */
 	constructor(component: iBlock) {
 		this.component = component;
+	}
+
+	/**
+	 * Renders the specified data
+	 * @param data
+	 */
+	render(data: VNode): Node;
+	render(data: VNode[]): Node[];
+	render(data: CanArray<VNode>): CanArray<Node> {
+		return renderData(<any>data, this.component);
 	}
 
 	/**
@@ -59,6 +69,45 @@ export default class VDOM {
 		if (Object.isFunction(fn)) {
 			return tplCache[key] = fn();
 		}
+	}
+
+	/**
+	 * Executes the specified render object
+	 *
+	 * @param renderObj
+	 * @param [ctx] - render context
+	 */
+	execRenderObject(
+		renderObj: RenderObject,
+		ctx?: RenderContext | [Dictionary] | [Dictionary, RenderContext]
+	): VNode {
+		let
+			instanceCtx,
+			renderCtx;
+
+		if (ctx && Object.isArray(ctx)) {
+			instanceCtx = ctx[0] || this;
+			renderCtx = ctx[1];
+
+			if (instanceCtx !== instanceCtx.provide.component) {
+				instanceCtx.field = new Field(instanceCtx);
+				instanceCtx.provide = new Provide(instanceCtx);
+				instanceCtx.opts = new Opt(instanceCtx);
+			}
+
+		} else {
+			instanceCtx = this;
+			renderCtx = ctx;
+		}
+
+		const
+			vnode = execRenderObject(renderObj, instanceCtx);
+
+		if (renderCtx) {
+			return patchVNode(vnode, instanceCtx, renderCtx);
+		}
+
+		return vnode;
 	}
 
 	/**
@@ -127,44 +176,5 @@ export default class VDOM {
 		};
 
 		return search(vnode);
-	}
-
-	/**
-	 * Executes the specified render object
-	 *
-	 * @param renderObj
-	 * @param [ctx] - render context
-	 */
-	execRenderObject(
-		renderObj: RenderObject,
-		ctx?: RenderContext | [Dictionary] | [Dictionary, RenderContext]
-	): VNode {
-		let
-			instanceCtx,
-			renderCtx;
-
-		if (ctx && Object.isArray(ctx)) {
-			instanceCtx = ctx[0] || this;
-			renderCtx = ctx[1];
-
-			if (instanceCtx !== instanceCtx.provide.component) {
-				instanceCtx.field = new Field(instanceCtx);
-				instanceCtx.provide = new Provide(instanceCtx);
-				instanceCtx.opts = new Opt(instanceCtx);
-			}
-
-		} else {
-			instanceCtx = this;
-			renderCtx = ctx;
-		}
-
-		const
-			vnode = execRenderObject(renderObj, instanceCtx);
-
-		if (renderCtx) {
-			return patchVNode(vnode, instanceCtx, renderCtx);
-		}
-
-		return vnode;
 	}
 }
