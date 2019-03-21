@@ -14,6 +14,9 @@ import Provide from 'super/i-block/modules/provide';
 
 import { patchVNode, execRenderObject, RenderObject, RenderContext, VNode } from 'core/component';
 
+const
+	tplCache = Object.create(null);
+
 export default class VDOM {
 	/**
 	 * Component instance
@@ -25,6 +28,37 @@ export default class VDOM {
 	 */
 	constructor(component: iBlock) {
 		this.component = component;
+	}
+
+	/**
+	 * Returns a render object by the specified path
+	 * @param path - template path (bExample | bExample.foo ...)
+	 */
+	getRenderObject(path: string): CanUndef<RenderObject> {
+		const chunks = path.split('.');
+		chunks[0] = chunks[0].dasherize();
+
+		const
+			key = chunks.join('.'),
+			cache = tplCache[key];
+
+		if (cache) {
+			return cache;
+		}
+
+		const
+			tpl = TPLS[chunks[0]];
+
+		if (!tpl) {
+			return;
+		}
+
+		const
+			fn = chunks.length === 1 ? tpl.index : Object.get(tpl, chunks.slice(1));
+
+		if (Object.isFunction(fn)) {
+			return tplCache[key] = fn();
+		}
 	}
 
 	/**
