@@ -63,6 +63,14 @@ export function renderData(data: CanArray<VNode>, parent: ComponentInterface): C
 }
 
 /**
+ * Clones the specified vnode
+ * @param vnode
+ */
+export function cloneVNode(vnode: VNode): VNode {
+	return vnode;
+}
+
+/**
  * Patches the specified virtual node: add classes, event handlers, etc.
  *
  * @param vnode

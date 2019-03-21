@@ -20,6 +20,7 @@ import {
 	supports,
 	minimalCtx,
 	renderData,
+	cloneVNode,
 
 	ComponentDriver,
 	RenderContext,
@@ -269,7 +270,7 @@ export function component(params?: ComponentParams): Function {
 								ref = vData.ref;
 
 							if (renderKey) {
-								ctx.renderTmp[renderKey] = vnode;
+								ctx.renderTmp[renderKey] = cloneVNode(vnode);
 							}
 
 							if (ref && ctx !== rootCtx) {
