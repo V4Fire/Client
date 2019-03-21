@@ -134,6 +134,30 @@ export default class DOM {
 	}
 
 	/**
+	 * Replaces an element with the specified
+	 *
+	 * @param el - element name or a link to the node
+	 * @param newNode
+	 */
+	replaceWith(el: string | Element, newNode: Node): Function | boolean {
+		const
+			node = Object.isString(el) ? this.block.element(el) : el;
+
+		if (!node) {
+			return false;
+		}
+
+		node.replaceWith(newNode);
+
+		// @ts-ignore
+		return this.component.async.worker(() => {
+			if (newNode.parentNode) {
+				newNode.parentNode.removeChild(newNode);
+			}
+		}, {group: 'asyncComponents'});
+	}
+
+	/**
 	 * Returns an instance of a component by the specified element
 	 *
 	 * @param el
