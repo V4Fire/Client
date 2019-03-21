@@ -44,7 +44,7 @@ export interface Options extends Dictionary {
 
 export const supports = {
 	functional: false,
-	composite: false
+	composite: true
 };
 
 export const options: Options = {
@@ -166,6 +166,48 @@ export class ComponentDriver {
 			const
 				meta = components.get(tag);
 
+			const getSlots = () => {
+				const
+					res = <Dictionary>{};
+
+				if (!children || !children.length) {
+					return res;
+				}
+
+				const
+					f = <Element>children[0];
+
+				if (f.getAttribute && f.getAttribute('slot')) {
+					for (let i = 0; i < children.length; i++) {
+						const
+							slot = <Element>children[i],
+							key = slot.getAttribute('slot');
+
+						if (!key) {
+							continue;
+						}
+
+						res[key] = slot;
+					}
+
+					return res;
+				}
+
+				let
+					slot;
+
+				if (children.length === 1) {
+					slot = f;
+
+				} else {
+					slot = _.createTemplate();
+					_.appendChild(slot, Array.from(children));
+				}
+
+				res.default = slot;
+				return res;
+			};
+
 			if (meta) {
 				const
 					data = <VNodeData>getComponentDataFromVnode(meta.componentName, <any>{data: opts});
@@ -182,51 +224,7 @@ export class ComponentDriver {
 						on: data.on
 					},
 
-					slots: () => {
-						const
-							res = <Dictionary>{};
-
-						if (!children || !children.length) {
-							return res;
-						}
-
-						const
-							f = <Element>children[0];
-
-						if (f.getAttribute && f.getAttribute('slot')) {
-							for (let i = 0; i < children.length; i++) {
-								const
-									slot = <Element>children[i],
-									key = slot.getAttribute('slot');
-
-								if (!key) {
-									continue;
-								}
-
-								res[key] = slot;
-							}
-
-							return res;
-						}
-
-						let
-							slot;
-
-						if (children.length === 1) {
-							slot = f;
-
-						} else {
-							slot = _.createTemplate();
-
-							for (let o = Array.from(children), i = 0; i < o.length; i++) {
-								slot.appendChild(o[i]);
-							}
-						}
-
-						res.default = slot;
-						return res;
-					},
-
+					slots: getSlots,
 					scopedSlots: () => data.scopedSlots
 				});
 
@@ -234,7 +232,10 @@ export class ComponentDriver {
 					createComponent<Element>(tag, baseCtx, this);
 
 				if (node) {
-					node[_.$$.data] = opts;
+					node[_.$$.data] = node.data = opts;
+
+					node.elm = node;
+					node.context = ctx;
 
 					_.addStaticDirectives(this, opts, data.directives, node);
 					_.addDirectives(this, node, opts, data.directives);
@@ -294,7 +295,14 @@ export class ComponentDriver {
 					node = document.createElement(tag);
 			}
 
-			node[_.$$.data] = opts;
+			node[_.$$.data] = node.data = {
+				...opts,
+				slots: getSlots()
+			};
+
+			node.elm = node;
+			node.context = this;
+
 			_.addStaticDirectives(this, opts, opts.directives, node);
 			_.addDirectives(this, node, opts, opts.directives);
 
@@ -327,6 +335,18 @@ export class ComponentDriver {
 
 		return tag;
 	}
+}
+
+/**
+ * Renders the specified data
+ *
+ * @param data
+ * @param parent - parent component
+ */
+export function renderData(data: VNode, parent: ComponentInterface): Node;
+export function renderData(data: VNode[], parent: ComponentInterface): Node[];
+export function renderData(data: CanArray<VNode>, parent: ComponentInterface): CanArray<Node> {
+	return data;
 }
 
 /**

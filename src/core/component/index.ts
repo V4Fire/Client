@@ -326,7 +326,7 @@ export function component(params?: ComponentParams): Function {
 									tasks.push((vnode) => {
 										const
 											ctx = vnode.fakeContext = vnode.context,
-											hook = ctx.hook === 'beforeMount' ? 'mounted' : 'updated',
+											hook = {created: true, beforeMount: true}[ctx.hook] ? 'mounted' : 'updated',
 											hooks = ctx.meta.hooks[hook];
 
 										const fn = () => {

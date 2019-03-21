@@ -84,7 +84,7 @@ export function getComponentDataFromVnode(component: string, vnode: VNode): Comp
 		model: vData.model,
 		directives: (<VNodeDirective[]>[]).concat(vData.directives || []),
 
-		slots: {},
+		slots: {...vData.slots},
 		scopedSlots: {...vData.scopedSlots},
 
 		on: {...vData.on},
@@ -143,7 +143,7 @@ export function getComponentDataFromVnode(component: string, vnode: VNode): Comp
 		}
 	}
 
-	if (vnode.children) {
+	if (!vData.slots && vnode.children) {
 		const
 			{children} = vnode;
 

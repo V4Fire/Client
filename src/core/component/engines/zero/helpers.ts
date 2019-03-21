@@ -249,18 +249,20 @@ export function appendChild(parent: Node, node: CanArray<Node>): void {
 		return;
 	}
 
-	if (Object.isArray(node)) {
-		for (let i = 0; i < node.length; i++) {
-			const
-				el = node[i];
+	if (node) {
+		if (Object.isArray(node) || node instanceof HTMLCollection) {
+			for (let i = 0; i < node.length; i++) {
+				const
+					el = node[i];
 
-			if (el) {
-				appendChild(parent, el);
+				if (el) {
+					appendChild(parent, el);
+				}
 			}
-		}
 
-	} else if (node) {
-		parent.appendChild(node);
+		} else {
+			parent.appendChild(node);
+		}
 	}
 }
 
