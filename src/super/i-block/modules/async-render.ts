@@ -216,7 +216,7 @@ export default class AsyncRender {
 					const fn = () => {
 						newArray.push(val);
 
-						if (++j >= count || !el.done) {
+						if (++j >= count || el.done) {
 							const
 								els = <Node[]>cb(newArray, from);
 
@@ -273,8 +273,8 @@ export default class AsyncRender {
 						filter: f && f.bind(this.component, val, i)
 					});
 
-					el = o.next();
 					i++;
+					el = o.next();
 				}
 			};
 
