@@ -33,7 +33,7 @@ import {
 import { isAbstractComponent, getComponent, getBaseComponent } from 'core/component/create';
 import { createFakeCtx, execRenderObject, patchVNode } from 'core/component/create/functional';
 import { getComponentDataFromVnode, createCompositeElement } from 'core/component/create/composite';
-import { components, localComponents, rootComponents, initEvent } from 'core/component/const';
+import { components, rootComponents, initEvent } from 'core/component/const';
 
 export * from 'core/component/interface';
 export * from 'core/component/const';
@@ -402,11 +402,6 @@ export function component(params?: ComponentParams): Function {
 
 		const loadTemplate = (component) => (resolve) => {
 			const success = () => {
-				if (localComponents.has(target)) {
-					// tslint:disable-next-line:prefer-object-spread
-					component.components = Object.assign(component.components || {}, localComponents.get(target));
-				}
-
 				log(`component:load:${name}`, component);
 				resolve(component);
 			};

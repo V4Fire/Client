@@ -16,7 +16,6 @@ export const
 
 export const
 	rootComponents = Object.createDict<Promise<ComponentOptions<ComponentDriver>>>(),
-	localComponents = new WeakMap<Function, ComponentMeta>(),
 	components = new Map<Function | string, ComponentMeta>();
 
 ((initEventOnce) => {
