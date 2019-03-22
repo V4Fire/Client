@@ -15,7 +15,7 @@ import Provide from 'super/i-block/modules/provide';
 import { renderData, patchVNode, execRenderObject, RenderObject, RenderContext, VNode } from 'core/component';
 
 const
-	tplCache = Object.create(null);
+	tplCache = Object.createDict<RenderObject>();
 
 export default class VDOM {
 	/**

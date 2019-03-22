@@ -382,7 +382,7 @@ export function patchVNode(vNode: Element, ctx: ComponentInterface, renderCtx: R
 }
 
 const
-	minimalCtxCache = Object.create(null);
+	minimalCtxCache = Object.createDict();
 
 /**
  * Creates a zero component by the specified parameters and returns a tuple [node, ctx]

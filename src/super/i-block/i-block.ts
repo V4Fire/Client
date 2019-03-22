@@ -703,7 +703,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	@system({
 		merge: true,
 		replace: false,
-		init: () => Object.create(null)
+		init: () => Object.createDict()
 	})
 
 	protected tmp!: Dictionary;
@@ -714,7 +714,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	@system({
 		merge: true,
 		replace: false,
-		init: () => Object.create(null)
+		init: () => Object.createDict()
 	})
 
 	protected renderTmp!: Dictionary<VNode>;

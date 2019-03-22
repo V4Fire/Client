@@ -68,8 +68,8 @@ export function getComponentName(constr: Function): string {
 }
 
 const
-	minimalCtxCache = Object.create(null),
-	tplCache = Object.create(null);
+	minimalCtxCache = Object.createDict(),
+	tplCache = Object.createDict();
 
 /**
  * Creates a new component
