@@ -87,6 +87,7 @@ import {
 	globalEvent,
 	hook,
 
+	VNode,
 	ComponentInterface,
 	ComponentElement,
 	ComponentMeta
@@ -716,7 +717,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 		init: () => Object.create(null)
 	})
 
-	protected renderTmp!: Dictionary;
+	protected renderTmp!: Dictionary<VNode>;
 
 	/**
 	 * Temporary cache with watching
@@ -892,6 +893,18 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	})
 
 	protected readonly Symbol!: Function;
+
+	/**
+	 * Link to window.Promise
+	 */
+	@system({
+		atom: true,
+		unique: true,
+		replace: true,
+		init: () => Promise
+	})
+
+	protected readonly Promise!: Function;
 
 	/**
 	 * Link to console API
