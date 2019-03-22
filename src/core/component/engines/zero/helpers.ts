@@ -141,9 +141,9 @@ export function addAttrs(el: DirElement, attrs?: Dictionary<string>): void {
 	}
 }
 
-export function addStyles(el: DirElement, styles?: CanArray<object>): void {
+export function addStyles(el: DirElement, styles?: CanArray<string | object>): void {
 	const
-		normalizedStyles = (<object[]>[]).concat(styles || []);
+		normalizedStyles = (<Array<string | object>>[]).concat(styles || []);
 
 	if (!normalizedStyles.length) {
 		return;

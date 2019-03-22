@@ -6,6 +6,8 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+//tslint:disable:no-string-literal
+
 import symbolGenerator from 'core/symbol';
 
 import { components } from 'core/component/const';
@@ -232,10 +234,10 @@ export class ComponentDriver {
 					createComponent<Element>(tag, baseCtx, this);
 
 				if (node) {
-					node[_.$$.data] = node.data = opts;
+					node[_.$$.data] = node['data'] = opts;
 
-					node.elm = node;
-					node.context = ctx;
+					node['elm'] = node;
+					node['context'] = ctx;
 
 					_.addStaticDirectives(this, opts, data.directives, node);
 					_.addDirectives(this, node, opts, data.directives);
@@ -346,7 +348,7 @@ export class ComponentDriver {
 export function renderData(data: VNode, parent: ComponentInterface): Node;
 export function renderData(data: VNode[], parent: ComponentInterface): Node[];
 export function renderData(data: CanArray<VNode>, parent: ComponentInterface): CanArray<Node> {
-	return data;
+	return <any>data;
 }
 
 /**
@@ -354,7 +356,7 @@ export function renderData(data: CanArray<VNode>, parent: ComponentInterface): C
  * @param vnode
  */
 export function cloneVNode(vnode: VNode): VNode {
-	return (<Element>vnode).cloneNode(true);
+	return (<any>vnode).cloneNode(true);
 }
 
 /**
