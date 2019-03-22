@@ -10,7 +10,8 @@ import { GLOBAL } from 'core/const/links';
 import { ComponentInterface } from 'core/component/interface';
 
 export const
-	customWatcherRgxp = /^([!?]?)([^!?:]*):(.*)/;
+	customWatcherRgxp = /^([!?]?)([^!?:]*):(.*)/,
+	systemWatchers = new WeakMap<ComponentInterface, Dictionary<{cb: Set<Function>}>>();
 
 const watcherHooks = {
 	beforeCreate: true,
@@ -135,17 +136,63 @@ export function bindWatchers(ctx: ComponentInterface, eventCtx: ComponentInterfa
 							return;
 						}
 
-						const
-							storeKey = `${key}Store`;
+						const storeKey = `${key}Store`;
+						key = storeKey in ctx ? storeKey : key;
 
-						// @ts-ignore
-						const unwatch = ctx.$watch(storeKey in ctx ? storeKey : key, {
-							deep: el.deep,
-							immediate: el.immediate,
-							handler
-						});
+						if (meta.systemFields[key]) {
+							let
+								watchers = systemWatchers.get(ctx);
 
-						$a.worker(unwatch, group);
+							if (!watchers) {
+								watchers = {};
+								systemWatchers.set(ctx, watchers);
+							}
+
+							let
+								watcher = watchers[key];
+
+							if (!watcher) {
+								watcher = watchers[key] = {
+									cb: new Set()
+								};
+
+								const
+									cbs = watcher.cb;
+
+								let
+									store = ctx[key];
+
+								Object.defineProperty(ctx, key, {
+									enumerable: true,
+									configurable: true,
+									get: () => store,
+									set: (val) => {
+										if (val === store) {
+											return;
+										}
+
+										const old = store;
+										store = val;
+
+										for (let o = cbs.values(), el = o.next(); !el.done; el = o.next()) {
+											el.value(val, old);
+										}
+									}
+								});
+							}
+
+							watcher.cb.add(handler);
+
+						} else {
+							// @ts-ignore
+							const unwatch = ctx.$watch(key, {
+								deep: el.deep,
+								immediate: el.immediate,
+								handler
+							});
+
+							$a.worker(unwatch, group);
+						}
 					});
 
 				} else {
@@ -164,17 +211,63 @@ export function bindWatchers(ctx: ComponentInterface, eventCtx: ComponentInterfa
 						continue;
 					}
 
-					const
-						storeKey = `${key}Store`;
+					const storeKey = `${key}Store`;
+					key = storeKey in ctx ? storeKey : key;
 
-					// @ts-ignore
-					const unwatch = ctx.$watch(storeKey in ctx ? storeKey : key, {
-						deep: el.deep,
-						immediate: el.immediate,
-						handler
-					});
+					if (meta.systemFields[key]) {
+						let
+							watchers = systemWatchers.get(ctx);
 
-					$a.worker(unwatch, group);
+						if (!watchers) {
+							watchers = {};
+							systemWatchers.set(ctx, watchers);
+						}
+
+						let
+							watcher = watchers[key];
+
+						if (!watcher) {
+							watcher = watchers[key] = {
+								cb: new Set()
+							};
+
+							const
+								cbs = watcher.cb;
+
+							let
+								store = ctx[key];
+
+							Object.defineProperty(ctx, key, {
+								enumerable: true,
+								configurable: true,
+								get: () => store,
+								set: (val) => {
+									if (val === store) {
+										return;
+									}
+
+									const old = store;
+									store = val;
+
+									for (let o = cbs.values(), el = o.next(); !el.done; el = o.next()) {
+										el.value(val, old);
+									}
+								}
+							});
+						}
+
+						watcher.cb.add(handler);
+
+					} else {
+						// @ts-ignore
+						const unwatch = ctx.$watch(key, {
+							deep: el.deep,
+							immediate: el.immediate,
+							handler
+						});
+
+						$a.worker(unwatch, group);
+					}
 				}
 			}
 		};
