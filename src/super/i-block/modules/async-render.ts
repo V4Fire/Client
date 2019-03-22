@@ -81,23 +81,32 @@ export default class AsyncRender {
 	 * @param slice - elements per chunk or [start position, elements per chunk]
 	 * @param [params]
 	 */
-	of(value: unknown, slice: CanArray<number>, params: TaskOpts = {}): unknown[] {
+	iterate(value: unknown, slice: CanArray<number>, params: TaskOpts = {}): unknown[] {
 		let
-			list: unknown[];
+			list: CanPromise<unknown[]>;
 
-		if (Object.isArray(value)) {
-			list = value;
+		const setList = (value) => {
+			if (Object.isArray(value)) {
+				return value;
+			}
 
-		} else if (Object.isString(value)) {
-			list = value.split('');
+			if (Object.isString(value)) {
+				return value.split('');
+			}
 
-		} else if (Object.isNumber(value)) {
-			list = new Array(value);
+			if (Object.isNumber(value)) {
+				return new Array(value);
+			}
 
-		} else {
+			if (Object.isPromise(value)) {
+				return value.then(setList);
+			}
+
 			// @ts-ignore
-			list = value && typeof value === 'object' ? value[Symbol.iterator] ? value : Object.keys(value) : [value];
-		}
+			return value && typeof value === 'object' ? value[Symbol.iterator] ? value : Object.keys(value) : [value];
+		};
+
+		list = setList(value);
 
 		let
 			from = 0,
@@ -115,37 +124,62 @@ export default class AsyncRender {
 			f = params.filter,
 			finalArr = <unknown[]>[],
 			filteredArr = <unknown[]>[],
-			iterator = list[Symbol.iterator]();
+			isPromise = Object.isPromise(list);
 
 		let
+			iterator: Iterator<unknown>,
 			last;
 
-		for (let o = iterator, el = last = o.next(), i = 0, j = 0; !el.done; el = last = o.next(), j++) {
-			if (from) {
-				from--;
-				continue;
-			}
+		if (!isPromise) {
+			iterator = list[Symbol.iterator]();
 
-			const
-				val = el.value,
-				isPromise = Object.isPromise(val);
+			for (let o = iterator, el = last = o.next(), i = 0, j = 0; !el.done; el = last = o.next(), j++) {
+				if (from) {
+					from--;
+					continue;
+				}
 
-			if (!isPromise && (!f || f.call(this.component, val, j))) {
-				i++;
-				finalArr.push(val);
+				const
+					val = el.value,
+					isPromise = Object.isPromise(val);
 
-			} else {
-				filteredArr.push(val);
-			}
+				if (!isPromise && (!f || f.call(this.component, val, j))) {
+					i++;
+					finalArr.push(val);
 
-			if (i >= count || isPromise) {
-				break;
+				} else {
+					filteredArr.push(val);
+				}
+
+				if (i >= count || isPromise) {
+					break;
+				}
 			}
 		}
 
 		finalArr[this.asyncLabel] = (cb) => {
 			const createIterator = () => {
-				let i = 0;
+				if (isPromise) {
+					const next = () => {
+						if (Object.isPromise(list)) {
+							return {
+								done: false,
+								value: list.then((v) => {
+									list = v;
+									iterator = v[Symbol.iterator]();
+									return iterator.next().value;
+								})
+							};
+						}
+
+						return iterator.next();
+					};
+
+					return {next};
+				}
+
+				let
+					i = 0;
 
 				const next = () => {
 					if (last.done) {
@@ -170,70 +204,81 @@ export default class AsyncRender {
 				newIterator = createIterator();
 
 			let
+				i = 0,
 				j = 0,
 				newArray = <unknown[]>[];
 
-			for (let o = newIterator, el = o.next(), i = 0; !el.done; el = o.next(), i++) {
-				let
-					val = el.value;
+			const iterate = () => {
+				for (let o = newIterator, el = o.next(); !el.done;) {
+					let
+						val = el.value;
 
-				const fn = () => {
-					newArray.push(val);
+					const fn = () => {
+						newArray.push(val);
 
-					if (++j >= count || !el.done) {
-						const
-							els = <Node[]>cb(newArray, from);
-
-						j = 0;
-						newArray = [];
-
-						this.async.worker(() => {
-							for (let i = 0; i < els.length; i++) {
-								const
-									el = els[i];
-
-								if (el.parentNode) {
-									el.parentNode.removeChild(el);
-								}
-							}
-
-						}, {group: 'asyncComponents'});
-					}
-				};
-
-				if (Object.isPromise(val)) {
-					val
-						.then((resolvedVal) => {
-							val = resolvedVal;
-
-							this.createTask(fn, {
-								weight,
-								filter: f && f.bind(this.component, val, i)
-							});
-						})
-
-						.catch((err) =>
-							runHook('errorCaptured', this.meta, this, err).then((err) => err)
-						)
-
-						.then((err) => {
+						if (++j >= count || !el.done) {
 							const
-								{methods} = this.meta;
+								els = <Node[]>cb(newArray, from);
 
-							if (methods.errorCaptured) {
-								return methods.errorCaptured.fn.call(this, err);
-							}
-						})
+							j = 0;
+							newArray = [];
 
-						.catch(stderr);
+							this.async.worker(() => {
+								for (let i = 0; i < els.length; i++) {
+									const
+										el = els[i];
 
-				} else {
+									if (el.parentNode) {
+										el.parentNode.removeChild(el);
+									}
+								}
+
+							}, {group: 'asyncComponents'});
+						}
+					};
+
+					if (Object.isPromise(val)) {
+						val
+							.then((resolvedVal) => {
+								val = resolvedVal;
+
+								this.createTask(fn, {
+									weight,
+									filter: f && f.bind(this.component, val, i)
+								});
+
+								i++;
+								iterate();
+							})
+
+							.catch((err) =>
+								runHook('errorCaptured', this.meta, this.component, err).then(() => err)
+									.then((err) => {
+										const
+											{methods} = this.meta;
+
+										if (methods.errorCaptured) {
+											return methods.errorCaptured.fn.call(this, err);
+										}
+									})
+
+									.catch(stderr)
+							);
+
+						break;
+					}
+
 					this.createTask(fn, {
 						weight,
 						filter: f && f.bind(this.component, val, i)
 					});
+
+					el = o.next();
+					i++;
 				}
-			}
+			};
+
+			iterate();
 		};
 
 		return finalArr;
