@@ -172,8 +172,10 @@ export default class bCalendar<
 	/** @inheritDoc */
 	static readonly mods: ModsDecl = {
 		rounding: [
-			bCalendar.PARENT,
-			['small']
+			'none',
+			['small'],
+			'normal',
+			'big'
 		],
 
 		...iWidth.mods,
