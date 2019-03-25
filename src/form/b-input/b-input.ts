@@ -393,7 +393,7 @@ export default class bInput<
 
 					if (el === '%') {
 						sys = true;
-						break;
+						continue;
 					}
 
 					tpl += sys ? this.maskPlaceholder : el;
@@ -694,7 +694,7 @@ export default class bInput<
 	/** @override */
 	protected initValueEvents(): void {
 		super.initValueEvents();
-		this.watch('valueBufferStore', async (val = '') => {
+		this.watch('valueBuffer', async (val = '') => {
 			try {
 				const
 					input = await this.waitRef<HTMLInputElement>('input', {label: $$.valueBufferStoreModel});
