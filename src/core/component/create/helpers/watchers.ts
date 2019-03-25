@@ -36,7 +36,7 @@ export function bindWatchers(ctx: ComponentInterface, eventCtx: ComponentInterfa
 	}
 
 	const
-		isFunctional = meta.params.functional,
+		isFunctional = meta.params.functional === true,
 		isCreated = hook === 'created',
 		isMounted = hook === 'mounted';
 
