@@ -10,13 +10,14 @@ export type Value = Date[];
 export type FormValue = CanArray<Date>;
 
 export interface Day {
-	active: boolean;
-	disabled: boolean;
-	inRange: boolean;
-	rangeStart: boolean;
-	rangeEnd: boolean;
 	text: string;
+	active: boolean;
+	disabled?: boolean;
+	inRange?: boolean;
+	rangeStart?: boolean;
+	rangeEnd?: boolean;
 }
 
 export type Range = string | number | Date;
 export type Directions = 'right' | 'left';
+export type MonthSwitchDirection = 0 | 1;

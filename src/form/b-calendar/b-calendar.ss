@@ -80,13 +80,14 @@
 
 					- block items
 						< .&__items-container
-							< .&__item v-for = (el, index) in value
+							< .&__item v-for = (_, i) in value.length ? value : [null]
 								- block th
 									< .&__row
 										< .&__td.&__h v-for = el in Date.getWeekDays()
 											{{ el }}
 
 								< .&__hr
+
 								- block days
 									< transition &
 										:enter-active-class = animateMonthEnterClass |
@@ -94,7 +95,7 @@
 										v-on:after-leave = onMonthSwitchEnd
 									.
 										< .&__month-wrap v-if = !monthSwitchAnimation
-											< .&__row v-for = days in getMonthDays(index)
+											< .&__row v-for = days in getMonthDays(i)
 												< .&__td &
 													v-for = day in days |
 													:class = provide.elClasses({
@@ -111,7 +112,7 @@
 														v-if = day.text |
 														:class = provide.elClasses({day: {active: day.active, disabled: day.disabled}}) |
 														:disabled = day.disabled |
-														:-calendar = index
+														:-calendar = i
 													.
 														{{ day.text }}
 

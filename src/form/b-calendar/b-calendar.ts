@@ -30,7 +30,7 @@ import iInput, {
 
 } from 'super/i-input/i-input';
 
-import { Value, FormValue, Day, Range, Directions } from 'form/b-calendar/modules/interface';
+import { Value, FormValue, Day, Range, Directions, MonthSwitchDirection } from 'form/b-calendar/modules/interface';
 export { SizeDictionary, CloseHelperEvents, Value, FormValue, Day, Range, Directions };
 export * from 'super/i-input/i-input';
 
@@ -54,7 +54,7 @@ export default class bCalendar<
 
 	/** @override */
 	@prop({default(): FV {
-		return this.isSingleProp ? this.value[0] : this.value;
+		return this.isSingleValue ? this.value[0] : this.value;
 	}})
 
 	readonly dataType!: Function;
@@ -203,7 +203,7 @@ export default class bCalendar<
 	 * Direction of smooth switching month animation
 	 */
 	@field()
-	protected monthSwitchDirection: number = 0;
+	protected monthSwitchDirection: MonthSwitchDirection = 0;
 
 	/**
 	 * If true, then the month switch animation was started
@@ -248,7 +248,7 @@ export default class bCalendar<
 				newMonth = d[0].getMonth();
 
 			if (oldMonth !== newMonth) {
-				o.runMonthSwitching(<0 | 1>Number(newMonth > oldMonth));
+				o.runMonthSwitching(<MonthSwitchDirection>Number(newMonth > oldMonth));
 			}
 		}
 
@@ -260,12 +260,12 @@ export default class bCalendar<
 	/**
 	 * If true, then the component has a single value instead of a list
 	 */
-	protected get isSingleProp(): boolean {
-		return Object.isArray(this.valueProp);
+	protected get isSingleValue(): boolean {
+		return !Object.isArray(this.valueProp);
 	}
 
 	/**
-	 * Month enter class for switching
+	 * Month animation enter class for switching
 	 */
 	@p({cache: false})
 	protected get animateMonthEnterClass(): string {
@@ -328,7 +328,7 @@ export default class bCalendar<
 	 * (range control)
 	 */
 	@system()
-	private _nextSelectItem?: number;
+	private _nextSelectDate?: number;
 
 	/** @see iOpenToggle.open */
 	async open(): Promise<boolean> {
@@ -410,12 +410,12 @@ export default class bCalendar<
 		}
 
 		let
-			d1,
-			d2;
+			startShort,
+			endShort;
 
 		if (range) {
-			d1 = Date.create(val[0].short());
-			d2 = Date.create(val[1].short());
+			startShort = val[0].short();
+			endShort = val[1].short();
 		}
 
 		const
@@ -428,11 +428,11 @@ export default class bCalendar<
 
 			const
 				day = pointer.clone().set({day: i + 1}),
-				short = day.short();
+				dayShort = day.short();
 
-			const rangeBorders = range ? {
-				isDateStart: d1.is(short),
-				isDateEnd: d2.is(short)
+			const rangeBounds = range ? {
+				isDateStart: startShort === dayShort,
+				isDateEnd: endShort === dayShort
 			} : false;
 
 			if (!days[0].length) {
@@ -453,7 +453,7 @@ export default class bCalendar<
 				const
 					el = val[i];
 
-				if (Boolean(el && Date.create(el.short()).is(short))) {
+				if (Boolean(el && el.short() === dayShort)) {
 					active = true;
 					break;
 				}
@@ -463,8 +463,8 @@ export default class bCalendar<
 				active,
 				disabled: Boolean(min && min.isAfter(day) || max && max.isBefore(day)),
 				inRange: Boolean(range && day > val[0] && day < val[1]),
-				rangeStart: rangeBorders && rangeBorders.isDateStart,
-				rangeEnd: rangeBorders && rangeBorders.isDateEnd,
+				rangeStart: rangeBounds && rangeBounds.isDateStart,
+				rangeEnd: rangeBounds && rangeBounds.isDateEnd,
 				text: String(i + 1)
 			};
 
@@ -480,7 +480,7 @@ export default class bCalendar<
 	 * Executes the month switcher
 	 * @param dir - index for directions
 	 */
-	protected runMonthSwitching(dir: 0 | 1): void {
+	protected runMonthSwitching(dir: MonthSwitchDirection): void {
 		this.monthSwitchDirection = dir;
 		this.monthSwitchAnimation = true;
 	}
@@ -494,24 +494,21 @@ export default class bCalendar<
 	 */
 	protected setDate(date: Date, index?: number): Date[] {
 		const
-			now = index !== undefined ? index : this._nextSelectItem !== undefined ? this._nextSelectItem : 0,
+			now = index !== undefined ? index : this._nextSelectDate !== undefined ? this._nextSelectDate : 0,
 			next = Number(!now);
 
 		let
-			selectedDays = <V>(Object.isArray(this.value) ? this.value : [this.value]);
+			selectedDays = this.value;
 
 		if (selectedDays.length === 2) {
-			selectedDays[now] = date;
-
 			const
-				nowShort = selectedDays[now].short(),
-				nextShort = selectedDays[next].short();
+				c = selectedDays[now] = date;
 
-			if (nowShort !== nextShort && now === 0) {
+			if (c.short() !== selectedDays[next].short() && now === 0) {
 				selectedDays[next] = date.clone().endOfDay();
 			}
 
-			this._nextSelectItem = next;
+			this._nextSelectDate = next;
 			selectedDays = selectedDays.sort((a, b) => a.isAfter(b) ? 1 : b.isAfter(a) ? -1 : 0);
 
 		} else {
@@ -519,7 +516,7 @@ export default class bCalendar<
 		}
 
 		this.value = selectedDays;
-		this.emit('actionChange', this.isSingleProp ? this.value[0] : this.value);
+		this.emit('actionChange', this.isSingleValue ? this.value[0] : this.value);
 
 		return this.value;
 	}
@@ -544,17 +541,15 @@ export default class bCalendar<
 	 * @emits actionChange(value: V)
 	 */
 	protected async onSwitchDay(days: number, index: number = 0): Promise<void> {
-		const selectedDay = <V>(Object.isArray(this.value) ? this.value : [this.value]);
-		selectedDay[index] = selectedDay[index].add({days});
-
-		this.value = selectedDay;
-		this.emit('actionChange', this.isSingleProp ? this.value[0] : this.value);
-
 		const
-			val = this.value[index],
+			selectedDay = this.value,
+			val = selectedDay[index] = (selectedDay[index] || new Date().beginningOfDay()).add({days}),
 			pointer = this.pointer[index];
 
-		if (val.format('M:Y') !== pointer.format('M:Y')) {
+		this.value = selectedDay;
+		this.emit('actionChange', this.isSingleValue ? val : this.value);
+
+		if (val.format('M;Y') !== pointer.format('M;Y')) {
 			this.field.set(`pointerStore.${index}`, pointer.set({
 				month: val.getMonth(),
 				year: val.getFullYear()
