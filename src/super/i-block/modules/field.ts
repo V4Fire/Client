@@ -99,7 +99,7 @@ export default class Field {
 		const
 			chunks = path.split('.'),
 			// @ts-ignore
-			isField = isComponent && ctx.meta.fields[chunks[0]],
+			isField = Boolean(isComponent && ctx.meta.fields[chunks[0]]),
 			isReady = !ctx.lfc.isBeforeCreate();
 
 		let
@@ -110,9 +110,9 @@ export default class Field {
 			const
 				prop = chunks[i];
 
-			if (chunks.length === i + 1) {
+			if (i + 1 === chunks.length) {
 				path = prop;
-				continue;
+				break;
 			}
 
 			if (!ref[prop] || typeof ref[prop] !== 'object') {
@@ -131,17 +131,12 @@ export default class Field {
 			ref = <Dictionary>ref[prop];
 		}
 
-		if (path in ref) {
+		if (!isField || !isReady || path in ref && !Object.isArray(ref)) {
 			ref[path] = value;
 
 		} else {
-			if (isField && isReady) {
-				// @ts-ignore
-				ctx.$set(ref, path, value);
-
-			} else {
-				ref[path] = value;
-			}
+			// @ts-ignore
+			ctx.$set(ref, path, value);
 		}
 
 		return value;
@@ -178,9 +173,9 @@ export default class Field {
 			const
 				prop = chunks[i];
 
-			if (chunks.length === i + 1) {
+			if (i + 1 === chunks.length) {
 				path = prop;
-				continue;
+				break;
 			}
 
 			if (!ref[prop] || typeof ref[prop] !== 'object') {
