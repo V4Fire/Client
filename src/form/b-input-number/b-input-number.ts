@@ -48,18 +48,6 @@ export default class bInputNumber<
 	readonly step: number = 1;
 
 	/**
-	 * Maximum value
-	 */
-	@prop({type: Number, required: false})
-	readonly max?: number;
-
-	/**
-	 * Minimum value
-	 */
-	@prop({type: Number, required: false})
-	readonly min?: number;
-
-	/**
 	 * Returns the component value as a number
 	 */
 	get numValue(): CanUndef<number> {
@@ -79,10 +67,10 @@ export default class bInputNumber<
 		}
 
 		if (this.min != null && v < this.min) {
-			v = this.min;
+			v = Number(this.min);
 
 		} else if (this.max != null && v > this.max) {
-			v = this.max;
+			v = Number(this.max);
 		}
 
 		this.value = <V>String(v);

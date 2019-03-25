@@ -225,7 +225,7 @@ export default class bInputTime<
 			});
 
 			this.pointer = this.getNPointer(value, this.field.get('pointerStore'));
-			this.emit('actionChange', this.pointer);
+			this.emit('actionChange', this[this.blockValueField]);
 
 		} catch {}
 	}

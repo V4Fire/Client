@@ -653,7 +653,7 @@ export default class bSelect<
 
 		if (value !== this.selected || v && this.value !== this.getOptionLabel(v)) {
 			this.syncValue(value);
-			this.emit('actionChange', this.selected);
+			this.emit('actionChange', this[this.blockValueField]);
 		}
 
 		await this.close();

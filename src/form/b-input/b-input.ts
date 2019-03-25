@@ -94,14 +94,14 @@ export default class bInput<
 	/**
 	 * Input minimum value (for number and date)
 	 */
-	@prop({type: [Number, String], required: false})
-	readonly min?: number;
+	@prop({type: [Number, String, Date], required: false})
+	readonly min?: number | string | Date;
 
 	/**
 	 * Input maximum value (for number and date)
 	 */
-	@prop({type: [Number, String], required: false})
-	readonly max?: number;
+	@prop({type: [Number, String, Date], required: false})
+	readonly max?: number | string | Date;
 
 	/**
 	 * Reset button for input
@@ -586,7 +586,7 @@ export default class bInput<
 	 */
 	protected async onClear(e: MouseEvent): Promise<void> {
 		if (await this.clear()) {
-			this.emit('actionChange', this.value);
+			this.emit('actionChange', this[this.blockValueField]);
 		}
 	}
 
@@ -601,7 +601,7 @@ export default class bInput<
 			(<HTMLInputElement>e.target).value || '';
 
 		if (!this.mask && this.blockValueField === 'value') {
-			this.emit('actionChange', this.value);
+			this.emit('actionChange', this[this.blockValueField]);
 		}
 	}
 
