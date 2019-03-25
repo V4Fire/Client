@@ -37,6 +37,22 @@
 				Some text
 
 		< b-v4-component-demo
+			< b-calendar &
+				slot-scope = {ctx} |
+				:value = new Date() |
+				@statusReady = ctx.debug
+			.
+				Some text
+
+		< b-v4-component-demo
+			< b-calendar &
+				slot-scope = {ctx} |
+				:value = [new Date().beginningOfMonth(), new Date()] |
+				@statusReady = ctx.debug
+			.
+				Some text
+
+		< b-v4-component-demo
 			< b-input &
 				v-func = false |
 				slot-scope = {ctx} |
@@ -105,4 +121,4 @@
 					value: '11',
 					label: '11'
 				}
-] .
+			] .
