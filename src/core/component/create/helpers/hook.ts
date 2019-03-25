@@ -7,7 +7,8 @@
  */
 
 import log from 'core/log';
-import HookEmitter, { createSyncPromise } from 'core/component/create/helpers/event';
+import HookEmitter from 'core/component/create/helpers/event';
+import { createSyncPromise } from 'core/event';
 import { ComponentInterface, ComponentMeta } from 'core/component/interface';
 
 /**
