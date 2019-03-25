@@ -6,6 +6,8 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import symbolGenerator from 'core/symbol';
+
 // @ts-ignore
 import * as defTpls from 'core/block.ss';
 import log from 'core/log';
@@ -57,6 +59,7 @@ export {
 } from 'core/component/engines';
 
 export const
+	$$ = symbolGenerator(),
 	isSmartComponent = /-functional$/;
 
 /**
@@ -267,13 +270,15 @@ export function component(params?: ComponentParams): Function {
 
 							const
 								vData = vnode.data || {},
-								ref = vData.ref;
+								ref = vData[$$.ref] || vData.ref;
 
 							if (renderKey) {
 								ctx.renderTmp[renderKey] = cloneVNode(vnode);
 							}
 
 							if (ref && ctx !== rootCtx) {
+								vData[$$.ref] = ref;
+
 								const
 									newRef = vData.ref = `${ref}:${ctx.componentId}`;
 
