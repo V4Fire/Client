@@ -71,7 +71,9 @@ const defField = {
  */
 export function getComponentDataFromVnode(component: string, vnode: VNode): ComponentOpts {
 	const
-		vData = vnode.data || {};
+		vData = vnode.data || {},
+		// @ts-ignore
+		slots = vData.slots;
 
 	const res = <ComponentOpts>{
 		ref: vData.ref,
@@ -84,7 +86,7 @@ export function getComponentDataFromVnode(component: string, vnode: VNode): Comp
 		model: vData.model,
 		directives: (<VNodeDirective[]>[]).concat(vData.directives || []),
 
-		slots: {...vData.slots},
+		slots: {...slots},
 		scopedSlots: {...vData.scopedSlots},
 
 		on: {...vData.on},
@@ -143,7 +145,7 @@ export function getComponentDataFromVnode(component: string, vnode: VNode): Comp
 		}
 	}
 
-	if (!vData.slots && vnode.children) {
+	if (!slots && vnode.children) {
 		const
 			{children} = vnode;
 

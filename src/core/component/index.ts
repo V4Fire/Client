@@ -278,15 +278,13 @@ export function component(params?: ComponentParams): Function {
 
 							if (ref && ctx !== rootCtx) {
 								vData[$$.ref] = ref;
-
-								const
-									newRef = vData.ref = `${ref}:${ctx.componentId}`;
+								vData.ref = `${ref}:${ctx.componentId}`;
 
 								Object.defineProperty(ctx.$refs, ref, {
 									configurable: true,
 									enumerable: true,
 									// @ts-ignore
-									get: () => rootCtx.$refs[newRef]
+									get: () => rootCtx.$refs[`${ref}:${ctx.componentId}`]
 								});
 							}
 
