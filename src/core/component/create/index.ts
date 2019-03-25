@@ -426,13 +426,17 @@ export function getBaseComponent(
 			default: !skipDefault ? prop.default !== undefined ? prop.default : defWrapper : undefined
 		};
 
-		if (!isFunctional && prop.watchers.size) {
+		if (prop.watchers.size) {
 			const
 				wList = watchers[key] = watchers[key] || [];
 
 			for (let w = prop.watchers.values(), el = w.next(); !el.done; el = w.next()) {
 				const
 					watcher = el.value;
+
+				if (isFunctional && watcher.functional === false) {
+					continue;
+				}
 
 				wList.push({
 					deep: watcher.deep,

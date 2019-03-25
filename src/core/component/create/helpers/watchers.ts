@@ -29,14 +29,13 @@ const watcherHooks = {
 export function bindWatchers(ctx: ComponentInterface, eventCtx: ComponentInterface = ctx): void {
 	const
 		// @ts-ignore
-		{meta, meta: {props}, hook, $async: $a} = ctx;
+		{meta, hook, $async: $a} = ctx;
 
 	if (!watcherHooks[hook]) {
 		return;
 	}
 
 	const
-		isFunctional = meta.params.functional === true,
 		isCreated = hook === 'created',
 		isMounted = hook === 'mounted';
 
@@ -47,7 +46,7 @@ export function bindWatchers(ctx: ComponentInterface, eventCtx: ComponentInterfa
 		const
 			watchers = o[key];
 
-		if (!watchers || isFunctional && key in props) {
+		if (!watchers) {
 			continue;
 		}
 
