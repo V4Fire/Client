@@ -6,6 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import { defProp } from 'core/const/props';
 import { initEvent } from 'core/component/const';
 import { WatchOptions } from 'core/component/engines';
 
@@ -276,12 +277,7 @@ export function paramsFactory<T = unknown>(
 				accessors = meta.accessors[key] ? meta.accessors : meta.computed;
 
 			if (accessors[key]) {
-				Object.defineProperty(meta.constructor.prototype, key, {
-					writable: true,
-					configurable: true,
-					value: undefined
-				});
-
+				Object.defineProperty(meta.constructor.prototype, key, defProp);
 				delete accessors[key];
 			}
 

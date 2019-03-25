@@ -6,6 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import { defProp } from 'core/const/props';
 import { ComponentInterface, ComponentMeta } from 'core/component/interface';
 
 /**
@@ -84,12 +85,7 @@ export function addMethodsToMeta(constructor: Function, meta: ComponentMeta): vo
 				obj = meta[metaKey];
 
 			if (field[key]) {
-				Object.defineProperty(proto, key, {
-					writable: true,
-					configurable: true,
-					value: undefined
-				});
-
+				Object.defineProperty(proto, key, defProp);
 				delete field[key];
 			}
 
@@ -176,8 +172,7 @@ export function addMethodsFromMeta(meta: ComponentMeta, ctx: ComponentInterface,
 			if ('fn' in el) {
 				if (safe) {
 					Object.defineProperty(ctx, key, {
-						configurable: true,
-						writable: true,
+						...defProp,
 						value: el.fn.bind(ctx)
 					});
 

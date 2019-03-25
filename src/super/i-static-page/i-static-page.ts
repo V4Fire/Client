@@ -10,6 +10,7 @@ import symbolGenerator from 'core/symbol';
 import remoteState from 'core/component/state';
 
 import { GLOBAL } from 'core/const/links';
+import { defProp } from 'core/const/props';
 import { reset, globalEvent, ResetType, ComponentInterface } from 'core/component';
 import { setLang, lang } from 'core/i18n';
 
@@ -285,11 +286,6 @@ export default abstract class iStaticPage<
 	/** @override */
 	protected initBaseAPI(): void {
 		super.initBaseAPI();
-
-		Object.defineProperty(this, 'remoteState', {
-			writable: true,
-			configurable: true,
-			value: remoteState
-		});
+		Object.defineProperty(this, 'remoteState', {...defProp, value: remoteState});
 	}
 }

@@ -7,6 +7,7 @@
  */
 
 import Async from 'core/async';
+import { defProp } from 'core/const/props';
 import { asyncLabel } from 'core/component/const';
 
 import {
@@ -276,9 +277,7 @@ function patchRefs(ctx: ComponentInterface): void {
 
 				if (needRewrite) {
 					Object.defineProperty($refs, key, {
-						writable: true,
-						configurable: true,
-						enumerable: true,
+						...defProp,
 						value: arr
 					});
 				}
@@ -289,9 +288,7 @@ function patchRefs(ctx: ComponentInterface): void {
 
 				if (component && (<ComponentInterface>component).$el === el) {
 					Object.defineProperty($refs, key, {
-						writable: true,
-						configurable: true,
-						enumerable: true,
+						...defProp,
 						value: component
 					});
 				}

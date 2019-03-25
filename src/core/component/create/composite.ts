@@ -6,9 +6,11 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import { defProp, defReadonlyProp } from 'core/const/props';
 import { supports, VNode, VNodeDirective, ScopedSlot } from 'core/component/engines';
 import { ComponentInterface } from 'core/component/interface';
 import { components } from 'core/component/const';
+
 import {
 
 	NULL,
@@ -44,19 +46,6 @@ interface ComponentModel {
 	expression: string;
 	callback(value: unknown): unknown;
 }
-
-const defProp = {
-	configurable: true,
-	enumerable: true,
-	writable: true,
-	value: undefined
-};
-
-const defReadonlyProp = {
-	configurable: true,
-	enumerable: true,
-	value: undefined
-};
 
 const defField = {
 	...defProp,
