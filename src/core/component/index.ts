@@ -74,6 +74,13 @@ const
 	minimalCtxCache = Object.createDict(),
 	tplCache = Object.createDict();
 
+const mountHooks = {
+	beforeCreate: true,
+	beforeDataCreate: true,
+	created: true,
+	beforeMount: true
+};
+
 /**
  * Creates a new component
  *
@@ -330,7 +337,7 @@ export function component(params?: ComponentParams): Function {
 									tasks.push((vnode) => {
 										const
 											ctx = vnode.fakeContext = vnode.context,
-											hook = {created: true, beforeMount: true}[ctx.hook] ? 'mounted' : 'updated',
+											hook = mountHooks[ctx.hook] ? 'mounted' : 'updated',
 											hooks = ctx.meta.hooks[hook];
 
 										const fn = () => {

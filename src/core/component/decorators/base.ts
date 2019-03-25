@@ -154,6 +154,12 @@ export const hook = paramsFactory<ComponentHooks>(null, (hook) => ({hook}));
  */
 export const watch = paramsFactory<FieldWatcher | MethodWatchers>(null, (watch) => ({watch}));
 
+const inverseFieldMap = {
+	props: ['fields', 'systemFields'],
+	fields: ['props', 'systemFields'],
+	systemFields: ['props', 'fields']
+};
+
 /**
  * Factory for creating component property decorators
  *
@@ -281,13 +287,8 @@ export function paramsFactory<T = unknown>(
 
 			const
 				metaKey = cluster || (key in meta.props ? 'props' : 'fields'),
+				inverse = inverseFieldMap[metaKey],
 				obj = meta[metaKey];
-
-			const inverse = {
-				props: ['fields', 'systemFields'],
-				fields: ['props', 'systemFields'],
-				systemFields: ['props', 'fields']
-			}[metaKey];
 
 			if (inverse) {
 				for (let i = 0; i < inverse.length; i++) {
