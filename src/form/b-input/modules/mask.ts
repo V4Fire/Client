@@ -77,8 +77,14 @@ export function onMaskBlur<T extends bInput<any, any, any>>(component: T, e: Eve
  * @param e
  */
 export function onMaskCursorReady<T extends bInput<any, any, any>>(component: T, e: KeyboardEvent | MouseEvent): void {
-	// @ts-ignore
-	const {input} = component.$refs;
+	const
+		// @ts-ignore
+		{input} = component.$refs;
+
+	if (!input) {
+		return;
+	}
+
 	// @ts-ignore
 	component._lastMaskSelectionStartIndex = input.selectionStart;
 	// @ts-ignore
@@ -140,6 +146,10 @@ export async function onMaskBackspace<T extends bInput<any, any, any>>(component
 		c = component,
 		// @ts-ignore
 		{input} = c.$refs;
+
+	if (!input) {
+		return;
+	}
 
 	const
 		selectionStart = input.selectionStart || 0,
@@ -292,6 +302,10 @@ export function onMaskNavigate<T extends bInput<any, any, any>>(component: T, e:
 			// @ts-ignore
 			{input} = c.$refs;
 
+		if (!input) {
+			return;
+		}
+
 		const
 			selectionStart = input.selectionStart || 0,
 			selectionEnd = input.selectionEnd || 0;
@@ -387,6 +401,10 @@ export function onMaskKeyPress<T extends bInput<any, any, any>>(component: T, e:
 	const
 		// @ts-ignore
 		{input} = c.$refs;
+
+	if (!input) {
+		return;
+	}
 
 	const
 		selectionStart = input.selectionStart || 0,
