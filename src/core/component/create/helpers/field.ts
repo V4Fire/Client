@@ -31,7 +31,7 @@ export function initDataObject(
 
 	const
 		queue = new Set(),
-		skipped = Object.createDict();
+		skipped = {};
 
 	const
 		atomList = <string[]>[],

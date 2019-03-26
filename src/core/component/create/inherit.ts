@@ -272,7 +272,7 @@ export default function inheritMeta(
 
 		if (current) {
 			const
-				values = <StrictDictionary<StrictModDeclVal>>Object.createDict();
+				values = {};
 
 			for (let i = 0; i < current.length; i++) {
 				const
