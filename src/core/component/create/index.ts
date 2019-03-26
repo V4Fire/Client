@@ -100,6 +100,8 @@ export function getComponent(
 				ctx = <any>this;
 
 			ctx.$$data = {};
+			ctx.$$refs = {};
+
 			ctx.$async = new Async(this);
 			ctx.$asyncLabel = asyncLabel;
 
@@ -242,7 +244,7 @@ function callMethodFromMeta(ctx: ComponentInterface, method: string): void {
 function patchRefs(ctx: ComponentInterface): void {
 	const
 		// @ts-ignore
-		{$refs} = ctx;
+		{$refs, $$refs} = ctx;
 
 	if ($refs) {
 		for (let keys = Object.keys($refs), i = 0; i < keys.length; i++) {
@@ -292,6 +294,21 @@ function patchRefs(ctx: ComponentInterface): void {
 						value: component
 					});
 				}
+			}
+		}
+
+		for (let keys = Object.keys($$refs), i = 0; i < keys.length; i++) {
+			const
+				key = keys[i],
+				watchers = $$refs[key],
+				el = $refs[key];
+
+			if (el && watchers) {
+				for (let i = 0; i < watchers.length; i++) {
+					watchers[i](el);
+				}
+
+				delete $$refs[key];
 			}
 		}
 	}

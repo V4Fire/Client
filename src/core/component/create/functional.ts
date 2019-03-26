@@ -160,7 +160,7 @@ export function createFakeCtx<T extends Dictionary = FunctionalCtx>(
 
 		$data: data,
 		$$data: data,
-		$dataCache: {},
+		$dataCache: Object.createDict(),
 
 		$props: renderCtx.props || {},
 		$attrs: opts && opts.attrs || {},

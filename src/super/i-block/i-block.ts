@@ -1614,16 +1614,26 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	 * @param [params] - async parameters
 	 */
 	protected waitRef<T = iBlock | Element | iBlock[] | Element[]>(ref: string, params?: AsyncOpts): Promise<T> {
-		return this.async.wait(() => this.$refs[ref], params).then(() => {
-			const
-				link = <T>this.$refs[ref];
+		let
+			that = <iBlock>this;
 
-			if (link instanceof Element) {
-				return (<ComponentElement<T>>link).component || link;
+		if (this.isFlyweight || this.isFunctional) {
+			ref += `:${this.componentId}`;
+			that = this.$normalParent || that;
+		}
+
+		const
+			watchers = that.$$refs[ref] = that.$$refs[ref] || [],
+			refVal = that.$refs[ref];
+
+		return this.async.promise(() => new Promise((resolve) => {
+			if (refVal) {
+				resolve(<T>refVal);
+
+			} else {
+				watchers.push(resolve);
 			}
-
-			return link;
-		});
+		}), params);
 	}
 
 	/**

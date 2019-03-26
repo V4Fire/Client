@@ -273,6 +273,7 @@ export class ComponentInterface<
 	protected readonly $asyncLabel!: symbol;
 	protected readonly $async!: Async<ComponentInterface>;
 	protected readonly $refs!: Dictionary;
+	protected readonly $$refs!: Dictionary<Function[]>;
 	protected readonly $slots!: Dictionary<VNode>;
 	protected readonly $scopedSlots!: Dictionary<ScopedSlot>;
 	protected readonly $data!: Dictionary;
