@@ -49,7 +49,7 @@ export default class bSidebar<T extends Dictionary = Dictionary> extends iData<T
 		return iOpenToggle.onKeyClose(this, e);
 	}
 
-	/** @override */
+	/** @see iOpenToggle.onTouchClose */
 	async onTouchClose(e: MouseEvent): Promise<void> {
 		const
 			target = <Element>e.target;
