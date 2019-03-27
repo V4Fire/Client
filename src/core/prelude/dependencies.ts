@@ -7,7 +7,7 @@
  */
 
 import { EventEmitter2 as EventEmitter } from 'eventemitter2';
-import { GLOBAL } from 'core/const/links';
+import { GLOBAL } from 'core/env';
 
 /**
  * Manager of modules
