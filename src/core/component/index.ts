@@ -28,7 +28,8 @@ import {
 	RenderContext,
 	CreateElement,
 	VNode,
-	VNodeData
+	VNodeData,
+	NormalizedScopedSlot
 
 } from 'core/component/engines';
 
@@ -181,7 +182,7 @@ export function component(params?: ComponentParams): Function {
 							// tslint:disable-next-line:no-this-assignment
 							rootCtx = this,
 
-							// @ts-ignore
+							// @ts-ignore (access)
 							asyncLabel = rootCtx.$asyncLabel;
 
 						let
@@ -226,30 +227,25 @@ export function component(params?: ComponentParams): Function {
 										parent: ctx,
 										children: node.children || [],
 										props: data.props,
-
-										// @ts-ignore
-										listeners: data.on,
+										listeners: <Record<string, CanArray<Function>>>data.on,
 
 										slots: () => data.slots,
-										// @ts-ignore
-										scopedSlots: data.scopedSlots,
+										scopedSlots: <Record<string, NormalizedScopedSlot>>data.scopedSlots,
+										injections: undefined,
 
 										data: {
 											ref: data.ref,
 											refInFor: data.refInFor,
-											// @ts-ignore
-											on: data.on,
+											on: <Record<string, CanArray<Function>>>data.on,
 											attrs: data.attrs,
 											class: data.class,
 											staticClass: data.staticClass,
-											// @ts-ignore
 											style: data.style
 										}
 									};
 
-									const fakeCtx = createFakeCtx(
-										// @ts-ignore
-										createElement,
+									const fakeCtx = createFakeCtx<ComponentInterface>(
+										<CreateElement>createElement,
 										renderCtx,
 
 										minimalCtxCache[nm] = minimalCtxCache[nm] || Object.assign(Object.create(minimalCtx), {
@@ -262,8 +258,7 @@ export function component(params?: ComponentParams): Function {
 										{initProps: true}
 									);
 
-									// @ts-ignore
-									const renderObject = tplCache[nm] = tplCache[nm] || tpl.index();
+									const renderObject = tplCache[nm] = tplCache[nm] || tpl.index && tpl.index();
 									vnode = patchVNode(execRenderObject(renderObject, fakeCtx), fakeCtx, renderCtx);
 								}
 							}
@@ -290,7 +285,7 @@ export function component(params?: ComponentParams): Function {
 								Object.defineProperty(ctx.$refs, ref, {
 									configurable: true,
 									enumerable: true,
-									// @ts-ignore
+									// @ts-ignore (access)
 									get: () => rootCtx.$refs[`${ref}:${ctx.componentId}`]
 								});
 							}
@@ -322,13 +317,13 @@ export function component(params?: ComponentParams): Function {
 						};
 
 						if (rootCtx) {
-							// @ts-ignore
+							// @ts-ignore (access)
 							rootCtx.$createElement = rootCtx._c = createElement;
 
-							// @ts-ignore
+							// @ts-ignore (access)
 							const forEach = rootCtx._l;
 
-							// @ts-ignore
+							// @ts-ignore (access)
 							rootCtx._l = (obj, cb) => {
 								const
 									res = forEach(obj, cb);

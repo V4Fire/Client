@@ -7,7 +7,7 @@
  */
 
 import { defProp, defReadonlyProp } from 'core/const/props';
-import { supports, VNode, VNodeDirective, ScopedSlot } from 'core/component/engines';
+import { supports, VNode, VNodeDirective, NormalizedScopedSlot } from 'core/component/engines';
 import { ComponentInterface } from 'core/component/interface';
 import { components } from 'core/component/const';
 
@@ -31,7 +31,7 @@ interface ComponentOpts {
 	directives: VNodeDirective[];
 
 	slots: Dictionary<CanArray<VNode>>;
-	scopedSlots: Dictionary<ScopedSlot>;
+	scopedSlots: Dictionary<NormalizedScopedSlot>;
 
 	on: Dictionary<CanArray<Function>>;
 	nativeOn: Dictionary<Function>;
@@ -61,8 +61,7 @@ const defField = {
 export function getComponentDataFromVnode(component: string, vnode: VNode): ComponentOpts {
 	const
 		vData = vnode.data || {},
-		// @ts-ignore
-		slots = vData.slots;
+		slots = (<Dictionary>vData).slots;
 
 	const res = <ComponentOpts>{
 		ref: vData.ref,
@@ -71,8 +70,7 @@ export function getComponentDataFromVnode(component: string, vnode: VNode): Comp
 		attrs: {},
 		props: {},
 
-		// @ts-ignore
-		model: vData.model,
+		model: (<Dictionary>vData).model,
 		directives: (<VNodeDirective[]>[]).concat(vData.directives || []),
 
 		slots: {...slots},
@@ -95,13 +93,12 @@ export function getComponentDataFromVnode(component: string, vnode: VNode): Comp
 	}
 
 	const
-		// @ts-ignore
-		model = <ComponentModel>vData.model,
+		model = (<Dictionary>vData).model,
 		componentModel = meta.params.model;
 
 	if (model && componentModel) {
 		const
-			{value, callback} = model,
+			{value, callback} = <ComponentModel>model,
 			{prop, event} = componentModel;
 
 		if (prop && event) {

@@ -150,7 +150,7 @@ export class ComponentDriver {
 	): Node {
 		if (Object.isString(tag)) {
 			const
-				// @ts-ignore
+				// @ts-ignore (access)
 				refs = this.$refs = this.$refs || {};
 
 			let
@@ -271,7 +271,7 @@ export class ComponentDriver {
 								fn = fns[i];
 
 							if (Object.isFunction(fn)) {
-								// @ts-ignore
+								// @ts-ignore (access)
 								ctx.$on(key, fn);
 							}
 						}
@@ -369,7 +369,7 @@ export function cloneVNode(vnode: VNode): VNode {
 export function patchVNode(vNode: Element, ctx: ComponentInterface, renderCtx: RenderContext): void {
 	const
 		{data} = renderCtx,
-		// @ts-ignore
+		// @ts-ignore (access)
 		{meta} = ctx;
 
 	_.addClass(vNode, data);
@@ -397,7 +397,7 @@ export function createComponent<T>(
 	parent?: ComponentInterface
 ): [T?, ComponentInterface?] {
 	const
-		// @ts-ignore
+		// @ts-ignore (access)
 		createElement = ctx.$createElement;
 
 	if (!createElement) {
@@ -452,13 +452,12 @@ export function createComponent<T>(
 		safe: true
 	});
 
-	// @ts-ignore
+	// @ts-ignore (access)
 	meta = fakeCtx.meta;
 
-	// @ts-ignore
+	// @ts-ignore (access)
 	fakeCtx.hook = 'created';
 
-	// @ts-ignore
 	meta.params.functional = true;
 	bindWatchers(fakeCtx);
 
@@ -471,12 +470,12 @@ export function createComponent<T>(
 	const
 		node = render.call(fakeCtx, createElement);
 
-	// @ts-ignore
+	// @ts-ignore (access)
 	fakeCtx.$el = node;
 	node.component = fakeCtx;
 
 	const
-		// @ts-ignore
+		// @ts-ignore (access)
 		{$async: $a} = fakeCtx,
 		watchRoot = document.body;
 
@@ -497,7 +496,7 @@ export function createComponent<T>(
 	};
 
 	const destroy = () => {
-		// @ts-ignore
+		// @ts-ignore (access)
 		fakeCtx.$destroy();
 	};
 

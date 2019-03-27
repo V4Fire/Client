@@ -289,7 +289,7 @@ export class ComponentInterface<
 
 	protected log?(key: string, ...details: unknown[]): void;
 
-	// @ts-ignore
+	// @ts-ignore (abstract)
 	protected $mount(elementOrSelector?: Element | string, hydrating?: boolean): this;
 	protected $mount() {}
 
@@ -304,14 +304,14 @@ export class ComponentInterface<
 	protected $delete<T = unknown>(array: T[], key: number): void;
 	protected $delete() {}
 
-	// @ts-ignore
+	// @ts-ignore (abstract)
 	protected $watch<T = unknown>(
 		exprOrFn: string | ((this: this) => string),
 		cb: (this: this, n: T, o?: T) => void,
 		opts?: WatchOptions
 	): Function;
 
-	// @ts-ignore
+	// @ts-ignore (abstract)
 	protected $watch<T = unknown>(
 		exprOrFn: string | ((this: this) => string),
 		opts: BaseWatchOptionsWithHandler<T>
@@ -319,24 +319,24 @@ export class ComponentInterface<
 
 	protected $watch() {}
 
-	// @ts-ignore
+	// @ts-ignore (abstract)
 	protected $on(event: CanArray<string>, cb: Function): this;
 	protected $on() {}
 
-	// @ts-ignore
+	// @ts-ignore (abstract)
 	protected $once(event: string, cb: Function): this;
 	protected $once() {}
 
-	// @ts-ignore
+	// @ts-ignore (abstract)
 	protected $off(event?: CanArray<string>, cb?: Function): this;
 	protected $off() {}
 
-	// @ts-ignore
+	// @ts-ignore (abstract)
 	protected $emit(event: string, ...args: unknown[]): this;
 	protected $emit() {}
 
 	protected $nextTick(cb: Function | ((this: this) => void)): void;
-	// @ts-ignore
+	// @ts-ignore (abstract)
 	protected $nextTick(): Promise<void>;
 	protected $nextTick() {}
 }

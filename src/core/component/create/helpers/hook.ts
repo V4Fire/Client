@@ -26,12 +26,12 @@ export function runHook(
 	ctx: ComponentInterface,
 	...args: unknown[]
 ): Promise<void> {
-	// @ts-ignore
+	// @ts-ignore (access)
 	ctx.hook = hook;
 
-	// @ts-ignore
+	// @ts-ignore (access)
 	if (Object.isFunction(ctx.log)) {
-		// @ts-ignore
+		// @ts-ignore (access)
 		ctx.log(`hook:${hook}`, ...args);
 
 	} else {

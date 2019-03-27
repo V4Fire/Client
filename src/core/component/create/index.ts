@@ -223,7 +223,7 @@ export function getComponent(
 
 function callMethodFromMeta(ctx: ComponentInterface, method: string): void {
 	const
-		// @ts-ignore
+		// @ts-ignore (access)
 		obj = ctx.meta.methods[method];
 
 	if (obj) {
@@ -243,7 +243,7 @@ function callMethodFromMeta(ctx: ComponentInterface, method: string): void {
 
 function patchRefs(ctx: ComponentInterface): void {
 	const
-		// @ts-ignore
+		// @ts-ignore (access)
 		{$refs, $$refs} = ctx;
 
 	if ($refs) {

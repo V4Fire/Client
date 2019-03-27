@@ -14,7 +14,7 @@ export * from 'vue';
 
 //#if VueInterfaces
 export { InjectOptions } from 'vue/types/options';
-export { VNode, ScopedSlot } from 'vue/types/vnode';
+export { VNode, ScopedSlot, NormalizedScopedSlot } from 'vue/types/vnode';
 //#endif
 
 export const supports = {
@@ -48,12 +48,14 @@ export function renderData(data: CanArray<VNode>, parent: ComponentInterface): C
 	const
 		isArr = Object.isArray(data);
 
-	// @ts-ignore
 	const vue = new Vue({
-		render: (c) => isArr ? c('div', [data]) : data
+		render: (c) => isArr ? c('div', [data]) : <VNode>data
 	});
 
+	// @ts-ignore (access)
 	vue.$root = Object.create(parent.$root);
+
+	// @ts-ignore (access)
 	vue.$root.$$parent = parent;
 
 	const el = document.createElement('div');
@@ -83,7 +85,7 @@ export function patchVNode(vnode: VNode, ctx: ComponentInterface, renderCtx: Ren
 
 	const
 		{data} = renderCtx,
-		// @ts-ignore
+		// @ts-ignore (access)
 		{meta} = ctx;
 
 	if (data) {

@@ -26,7 +26,7 @@ export function initDataObject(
 	data: Dictionary = {}
 ): Dictionary {
 	const
-		// @ts-ignore
+		// @ts-ignore (access)
 		isFlyweight = ctx.$isFlyweight || ctx.meta.params.functional === true;
 
 	const
@@ -57,7 +57,7 @@ export function initDataObject(
 					data[key] = undefined;
 				}
 
-				// @ts-ignore
+				// @ts-ignore (access)
 				ctx.$activeField = key;
 
 				let
@@ -144,7 +144,7 @@ export function initDataObject(
 					data[key] = undefined;
 				}
 
-				// @ts-ignore
+				// @ts-ignore (access)
 				ctx.$activeField = key;
 				queue.delete(key);
 
@@ -229,7 +229,7 @@ export function initDataObject(
 					data[key] = undefined;
 				}
 
-				// @ts-ignore
+				// @ts-ignore (access)
 				ctx.$activeField = key;
 				queue.delete(key);
 
@@ -277,12 +277,12 @@ export function initPropsObject(
 	forceInit?: boolean
 ): Dictionary {
 	const
-		// @ts-ignore
+		// @ts-ignore (access)
 		isFlyweight = ctx.$isFlyweight || ctx.meta.params.functional === true;
 
 	for (let keys = Object.keys(fields), i = 0; i < keys.length; i++) {
 		const
-			// @ts-ignore
+			// @ts-ignore (access)
 			key = ctx.$activeField = keys[i],
 			el = fields[key];
 

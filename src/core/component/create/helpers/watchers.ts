@@ -28,7 +28,7 @@ const watcherHooks = {
  */
 export function bindWatchers(ctx: ComponentInterface, eventCtx: ComponentInterface = ctx): void {
 	const
-		// @ts-ignore
+		// @ts-ignore (access)
 		{meta, hook, $async: $a} = ctx;
 
 	if (!watcherHooks[hook]) {
@@ -95,7 +95,7 @@ export function bindWatchers(ctx: ComponentInterface, eventCtx: ComponentInterfa
 							throw new ReferenceError(`The specified method (${method}) for watching is not defined`);
 						}
 
-						// @ts-ignore
+						// @ts-ignore (access)
 						ctx.$async.setImmediate(
 							() => ctx[method](...args),
 							group
@@ -125,7 +125,7 @@ export function bindWatchers(ctx: ComponentInterface, eventCtx: ComponentInterfa
 								needDefEmitter = root === ctx && !Object.isFunction(root.on) && !Object.isFunction(root.addListener);
 
 							if (needDefEmitter) {
-								// @ts-ignore
+								// @ts-ignore (access)
 								ctx.$on(key, handler);
 
 							} else {
@@ -183,7 +183,7 @@ export function bindWatchers(ctx: ComponentInterface, eventCtx: ComponentInterfa
 							watcher.cb.add(handler);
 
 						} else {
-							// @ts-ignore
+							// @ts-ignore (access)
 							const unwatch = ctx.$watch(key, {
 								deep: el.deep,
 								immediate: el.immediate,
@@ -200,7 +200,7 @@ export function bindWatchers(ctx: ComponentInterface, eventCtx: ComponentInterfa
 							needDefEmitter = root === ctx && !Object.isFunction(root.on) && !Object.isFunction(root.addListener);
 
 						if (needDefEmitter) {
-							// @ts-ignore
+							// @ts-ignore (access)
 							ctx.$on(key, handler);
 
 						} else {
@@ -258,7 +258,7 @@ export function bindWatchers(ctx: ComponentInterface, eventCtx: ComponentInterfa
 						watcher.cb.add(handler);
 
 					} else {
-						// @ts-ignore
+						// @ts-ignore (access)
 						const unwatch = ctx.$watch(key, {
 							deep: el.deep,
 							immediate: el.immediate,

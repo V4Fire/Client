@@ -78,7 +78,7 @@ export function createSVGChildren(ctx: ComponentInterface, children: Element[]):
 			}
 
 			const
-				// @ts-ignore
+				// @ts-ignore (access)
 				refs = ctx.$refs;
 
 			if (data.ref && Object.isObject(refs)) {

@@ -72,7 +72,6 @@ extend(Node.prototype, 'getOffset', function (parent?: Element | string): Elemen
 });
 
 if (!Element.prototype.closest) {
-	// @ts-ignore
 	Element.prototype.closest = function (selector: string): Element | null {
 		if (!this) {
 			return null;

@@ -337,13 +337,12 @@ export function createFakeCtx<T extends Dictionary = FunctionalCtx>(
  * @param renderCtx - render context
  */
 export function patchVNode(vnode: VNode, ctx: ComponentInterface, renderCtx: RenderContext): VNode {
-	// @ts-ignore
+	// @ts-ignore (access)
 	vnode.fakeContext = ctx;
 
 	const
 		{data} = renderCtx,
-
-		// @ts-ignore
+		// @ts-ignore (access)
 		{meta, meta: {methods}} = ctx;
 
 	patch(
@@ -365,7 +364,7 @@ export function patchVNode(vnode: VNode, ctx: ComponentInterface, renderCtx: Ren
 					fn = fns[i];
 
 				if (Object.isFunction(fn)) {
-					// @ts-ignore
+					// @ts-ignore (access)
 					ctx.$on(key, fn);
 				}
 			}
@@ -386,14 +385,14 @@ export function patchVNode(vnode: VNode, ctx: ComponentInterface, renderCtx: Ren
 	}
 
 	const
-		// @ts-ignore
+		// @ts-ignore (access)
 		hooks = p.meta.hooks;
 
 	let
 		destroyed;
 
 	const destroy = () => {
-		// @ts-ignore
+		// @ts-ignore (access)
 		ctx.$destroy();
 		destroyed = true;
 	};
@@ -402,7 +401,7 @@ export function patchVNode(vnode: VNode, ctx: ComponentInterface, renderCtx: Ren
 	hooks.beforeDestroy.unshift({fn: destroy});
 
 	const
-		// @ts-ignore
+		// @ts-ignore (access)
 		{$async: $a} = ctx;
 
 	// tslint:disable-next-line:cyclomatic-complexity
@@ -424,7 +423,7 @@ export function patchVNode(vnode: VNode, ctx: ComponentInterface, renderCtx: Ren
 				return;
 			}
 
-			// @ts-ignore
+			// @ts-ignore (access)
 			return $a.promise(p.$nextTick(), {
 				label: $$.findElWait
 			}).then(() => mount(true), stderr);
@@ -447,7 +446,7 @@ export function patchVNode(vnode: VNode, ctx: ComponentInterface, renderCtx: Ren
 			}
 		}
 
-		// @ts-ignore
+		// @ts-ignore (access)
 		oldCtx && oldCtx.$destroy();
 
 		if (oldCtx) {
@@ -459,7 +458,7 @@ export function patchVNode(vnode: VNode, ctx: ComponentInterface, renderCtx: Ren
 			for (let keys = Object.keys(oldProps), i = 0; i < keys.length; i++) {
 				const
 					key = keys[i],
-					// @ts-ignore
+					// @ts-ignore (access)
 					linked = oldCtx.$syncLinkCache[key];
 
 				if (linked) {
@@ -476,9 +475,9 @@ export function patchVNode(vnode: VNode, ctx: ComponentInterface, renderCtx: Ren
 
 			{
 				const list = [
-					// @ts-ignore
+					// @ts-ignore (access)
 					oldCtx.meta.systemFields,
-					// @ts-ignore
+					// @ts-ignore (access)
 					oldCtx.meta.fields
 				];
 
@@ -502,7 +501,7 @@ export function patchVNode(vnode: VNode, ctx: ComponentInterface, renderCtx: Ren
 							old = oldCtx[key];
 
 						if (
-							// @ts-ignore
+							// @ts-ignore (access)
 							!ctx.$dataCache[key] &&
 							(Object.isFunction(field.unique) ? !field.unique(ctx, oldCtx) : !field.unique) &&
 							!Object.fastCompare(val, old) &&
