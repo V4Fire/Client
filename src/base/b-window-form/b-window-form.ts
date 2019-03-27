@@ -91,7 +91,7 @@ export default class bWindowForm<T extends Dictionary = Dictionary> extends bWin
 	protected formTmp: Dictionary = {};
 
 	/** @override */
-	protected readonly $refs!: {form: bForm};
+	protected readonly $refs!: {form: bForm} & bWindow['$refs'];
 
 	/**
 	 * @override
