@@ -148,7 +148,7 @@ export default abstract class iPage<T extends Dictionary = Dictionary> extends i
 				this.scrollTo(<ScrollOpts>x);
 
 			} else {
-				this.scrollTo(<number | undefined>x, y);
+				this.scrollTo(<CanUndef<number>>x, y);
 			}
 		}, {
 			single: false,
