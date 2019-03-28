@@ -49,7 +49,7 @@ export function renderData(data: CanArray<VNode>, parent: ComponentInterface): C
 		isArr = Object.isArray(data);
 
 	const vue = new Vue({
-		render: (c) => isArr ? c('div', [data]) : <VNode>data
+		render: (c) => isArr ? c('div', <VNode[]>data) : <VNode>data
 	});
 
 	// @ts-ignore (access)

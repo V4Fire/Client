@@ -353,9 +353,22 @@ export function component(params?: ComponentParams): Function {
 											obj[asyncLabel]((obj) => {
 												const
 													els = <Node[]>[],
+													nodes = <VNode[]>[],
 													parent = vnode.elm;
 
-												for (let o = renderData(<VNode[]>forEach(obj, cb), vnode.context), i = 0; i < o.length; i++) {
+												for (let o = forEach(obj, cb), i = 0; i < o.length; i++) {
+													const
+														el = o[i];
+
+													if (Object.isArray(el)) {
+														nodes.push(...<VNode[]>el);
+
+													} else {
+														nodes.push(el);
+													}
+												}
+
+												for (let o = renderData(nodes, vnode.context), i = 0; i < o.length; i++) {
 													const
 														el = o[i];
 
