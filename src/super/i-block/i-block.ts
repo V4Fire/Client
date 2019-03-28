@@ -1161,7 +1161,7 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 		this.execCbAfterCreated(() => {
 			const
 				p = params || {},
-				fork = (obj) => Object.mixin(true, undefined, obj);
+				fork = (obj) => Object.isArray(obj) || Object.isTable(obj) ? Object.mixin(true, undefined, obj) : obj;
 
 			let
 				oldVal: unknown = fork(this.getField(Object.isFunction(exprOrFn) ? exprOrFn.call(this) : exprOrFn));
