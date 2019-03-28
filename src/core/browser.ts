@@ -5,17 +5,10 @@
  * Released under the MIT license
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
+import semver, { Operations } from 'core/semver';
 
 const
 	agent = navigator.userAgent;
-
-export type Operations =
-	'>' |
-	'>=' |
-	'<' |
-	'<=' |
-	'==' |
-	'^=';
 
 /**
  * Returns a tuple (browserName, browserVersion?[]) or false from the specified pattern
@@ -52,37 +45,7 @@ export function test(platform: string, operation?: Operations, version?: string)
 		return false;
 	}
 
-	let
-		v1 = val[1],
-		v2 = version.split('.').map((el) => parseInt(String(el), 10) || 0);
-
-	v1 = [v1[0] || 0, v1[1] || 0, v1[2] || 0];
-	v2 = [v2[0] || 0, v2[1] || 0, v2[2] || 0];
-
-	const
-		gt = v1[0] > v2[0] || v1[1] > v2[1] || v1[2] > v2[2],
-		lt = v1[0] < v2[0] || v1[1] < v2[1] || v1[2] < v2[2],
-		eq = v1.join() === v2.join();
-
-	switch (operation) {
-		case '>':
-			return gt;
-
-		case '>=':
-			return gt || eq;
-
-		case '<':
-			return lt;
-
-		case '<=':
-			return lt || eq;
-
-		case '==':
-			return eq;
-
-		case '^=':
-			return v1[0] === v2[0];
-	}
+	return semver(val[1].join('.'), version, operation);
 }
 
 export const is = {
