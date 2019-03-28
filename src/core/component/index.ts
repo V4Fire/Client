@@ -16,6 +16,8 @@ import 'core/component/filters';
 import 'core/component/directives';
 
 import inheritMeta from 'core/component/create/inherit';
+
+import { runHook, patchRefs } from 'core/component/create/helpers';
 import { ComponentInterface, ComponentParams, ComponentMeta, ComponentMethod } from 'core/component/interface';
 import {
 
@@ -353,8 +355,13 @@ export function component(params?: ComponentParams): Function {
 											obj[asyncLabel]((obj) => {
 												const
 													els = <Node[]>[],
-													nodes = <VNode[]>[],
+													nodes = <VNode[]>[];
+
+												const
+													ctx = vnode.context,
 													parent = vnode.elm;
+
+												ctx.hook = 'beforeUpdate';
 
 												for (let o = forEach(obj, cb), i = 0; i < o.length; i++) {
 													const
@@ -368,7 +375,7 @@ export function component(params?: ComponentParams): Function {
 													}
 												}
 
-												for (let o = renderData(nodes, vnode.context), i = 0; i < o.length; i++) {
+												for (let o = renderData(nodes, ctx), i = 0; i < o.length; i++) {
 													const
 														el = o[i];
 
@@ -381,6 +388,10 @@ export function component(params?: ComponentParams): Function {
 														els.push(parent.appendChild(el));
 													}
 												}
+
+												runHook('beforeUpdated', ctx.meta, ctx).catch(stderr);
+												patchRefs(ctx);
+												ctx.hook = 'updated';
 
 												return els;
 											});

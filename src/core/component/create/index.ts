@@ -7,7 +7,6 @@
  */
 
 import Async from 'core/async';
-import { defProp } from 'core/const/props';
 import { asyncLabel } from 'core/component/const';
 
 import {
@@ -18,7 +17,8 @@ import {
 	initDataObject,
 	bindWatchers,
 	addMethodsToMeta,
-	getNormalParent
+	getNormalParent,
+	patchRefs
 
 } from 'core/component/create/helpers';
 
@@ -32,7 +32,6 @@ import {
 
 import {
 
-	ComponentElement,
 	ComponentInterface,
 	ComponentField,
 	ComponentProp,
@@ -237,79 +236,6 @@ function callMethodFromMeta(ctx: ComponentInterface, method: string): void {
 
 		} catch (err) {
 			stderr(err);
-		}
-	}
-}
-
-function patchRefs(ctx: ComponentInterface): void {
-	const
-		// @ts-ignore (access)
-		{$refs, $$refs} = ctx;
-
-	if ($refs) {
-		for (let keys = Object.keys($refs), i = 0; i < keys.length; i++) {
-			const
-				key = keys[i],
-				el = $refs[key];
-
-			if (!el) {
-				continue;
-			}
-
-			if (Object.isArray(el)) {
-				const
-					arr = <unknown[]>[];
-
-				let
-					needRewrite;
-
-				for (let i = 0; i < el.length; i++) {
-					const
-						val = el[i],
-						component = (<ComponentElement>val).component;
-
-					if (component && (<ComponentInterface>component).$el === val) {
-						needRewrite = true;
-						arr.push(component);
-
-					} else {
-						arr.push(val);
-					}
-				}
-
-				if (needRewrite) {
-					Object.defineProperty($refs, key, {
-						...defProp,
-						value: arr
-					});
-				}
-
-			} else {
-				const
-					component = (<ComponentElement>el).component;
-
-				if (component && (<ComponentInterface>component).$el === el) {
-					Object.defineProperty($refs, key, {
-						...defProp,
-						value: component
-					});
-				}
-			}
-		}
-
-		for (let keys = Object.keys($$refs), i = 0; i < keys.length; i++) {
-			const
-				key = keys[i],
-				watchers = $$refs[key],
-				el = $refs[key];
-
-			if (el && watchers) {
-				for (let i = 0; i < watchers.length; i++) {
-					watchers[i](el);
-				}
-
-				delete $$refs[key];
-			}
 		}
 	}
 }
