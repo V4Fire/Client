@@ -350,7 +350,8 @@ export function component(params?: ComponentParams): Function {
 												}
 											}
 
-											ctx.meta.hooks[hook] = filteredHooks;
+											ctx.meta.hooks[hook] =
+												filteredHooks;
 
 											obj[asyncLabel]((obj) => {
 												const
@@ -359,9 +360,11 @@ export function component(params?: ComponentParams): Function {
 
 												const
 													ctx = vnode.context,
-													parent = vnode.elm;
+													parent = vnode.elm,
+													hook = ctx.hook;
 
-												ctx.hook = 'beforeUpdate';
+												ctx.hook =
+													'beforeUpdate';
 
 												for (let o = forEach(obj, cb), i = 0; i < o.length; i++) {
 													const
@@ -389,9 +392,11 @@ export function component(params?: ComponentParams): Function {
 													}
 												}
 
-												runHook('beforeUpdated', ctx.meta, ctx).catch(stderr);
+												runHook('beforeUpdated', ctx.meta, ctx)
+													.catch(stderr);
+
 												patchRefs(ctx);
-												ctx.hook = 'updated';
+												ctx.hook = hook;
 
 												return els;
 											});
