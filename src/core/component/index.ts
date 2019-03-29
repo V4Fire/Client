@@ -338,24 +338,10 @@ export function component(params?: ComponentParams): Function {
 											hooks = ctx.meta.hooks[hook];
 
 										const fn = () => {
-											const
-												filteredHooks = <unknown[]>[];
-
-											for (let i = hooks.length; i--;) {
-												const
-													el = hooks[i];
-
-												if (el && el.fn !== fn) {
-													filteredHooks.push(el);
-												}
-											}
-
-											ctx.meta.hooks[hook] =
-												filteredHooks;
-
 											obj[asyncLabel]((obj) => {
 												const
 													els = <Node[]>[],
+													renderNodes = <Nullable<Node>[]>[],
 													nodes = <VNode[]>[];
 
 												const
@@ -371,16 +357,36 @@ export function component(params?: ComponentParams): Function {
 														el = o[i];
 
 													if (Object.isArray(el)) {
-														nodes.push(...<VNode[]>el);
+														for (let o = el, i = 0; i < o.length; i++) {
+															const
+																el = <VNode>o[i];
+
+															if (el.elm) {
+																el.elm[asyncLabel] = true;
+																renderNodes.push(el.elm);
+
+															} else {
+																nodes.push(el);
+																renderNodes.push(null);
+															}
+														}
+
+													} else if (el.elm) {
+														el.elm[asyncLabel] = true;
+														renderNodes.push(el.elm);
 
 													} else {
 														nodes.push(el);
+														renderNodes.push(null);
 													}
 												}
 
-												for (let o = renderData(nodes, ctx), i = 0; i < o.length; i++) {
+												const
+													renderVNodes = renderData(nodes, ctx);
+
+												for (let i = 0, j = 0; i < renderNodes.length; i++) {
 													const
-														el = o[i];
+														el = <Node>(renderNodes[i] || renderVNodes[j++]);
 
 													if (Object.isArray(el)) {
 														for (let i = 0; i < el.length; i++) {
@@ -402,7 +408,7 @@ export function component(params?: ComponentParams): Function {
 											});
 										};
 
-										hooks.push({fn});
+										hooks.push({fn, once: true});
 									});
 								}
 
