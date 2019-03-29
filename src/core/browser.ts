@@ -5,10 +5,12 @@
  * Released under the MIT license
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
+
 import semver, { Operations } from 'core/semver';
 
 const
-	agent = navigator.userAgent;
+	agent = navigator.userAgent,
+	separator = /\.|_/;
 
 /**
  * Returns a tuple (browserName, browserVersion?[]) or false from the specified pattern
@@ -19,7 +21,9 @@ export function match(pattern: RegExp | string): [string, number[] | null] | boo
 		rgxp = Object.isString(pattern) ? new RegExp(`(${pattern})(?:[ \\/-]([0-9._]*))?`, 'i') : pattern,
 		res = agent.match(rgxp);
 
-	return res ? [res[1], res[2] ? res[2].split(/\.|_/).map((el) => parseInt(String(el), 10) || 0) : null] : false;
+	return res ?
+		[res[1], res[2] ? res[2].split(separator).map((el) => parseInt(String(el), 10) || 0) : null] :
+		false;
 }
 
 /**
@@ -48,6 +52,7 @@ export function test(platform: string, operation?: Operations, version?: string)
 	return semver(val[1].join('.'), version, operation);
 }
 
+// @ts-ignore
 export const is = {
 	Chrome: match('Chrome'),
 	Firefox: match('Firefox'),
