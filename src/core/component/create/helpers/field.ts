@@ -107,7 +107,7 @@ export function initDataObject(
 			}
 
 			let
-				canInit = queue.size === 0;
+				canInit = true;
 
 			if (el.after.size) {
 				for (let o = el.after.values(), val = o.next(); !val.done; val = o.next()) {
