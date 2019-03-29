@@ -7,6 +7,7 @@
  */
 
 import symbolGenerator from 'core/symbol';
+import { getSrcSet } from 'core/html';
 
 import iProgress from 'traits/i-progress/i-progress';
 import iVisible from 'traits/i-visible/i-visible';
@@ -28,8 +29,8 @@ export default class bImage extends iMessage implements iProgress, iVisible {
 	/**
 	 * Target images srcset
 	 */
-	@prop({type: String, required: false})
-	readonly srcset?: string;
+	@prop({type: Object, required: false})
+	readonly srcset?: Dictionary<string>;
 
 	/**
 	 * Alternate text
@@ -63,7 +64,7 @@ export default class bImage extends iMessage implements iProgress, iVisible {
 			img.src = this.src;
 
 			if (this.srcset) {
-				img.srcset = this.srcset;
+				img.srcset = getSrcSet(this.srcset);
 			}
 
 			if (this.alt) {
