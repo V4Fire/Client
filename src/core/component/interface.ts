@@ -144,6 +144,7 @@ export interface Hook {
 	fn: Function;
 	name?: string;
 	functional?: boolean;
+	once?: boolean;
 	after?: Set<string>;
 }
 
