@@ -24,10 +24,6 @@ import * as helpers from 'core/helpers';
 import * as browser from 'core/browser';
 //#endif
 
-//#if runtime has core/kv-storage
-import { asyncLocal, AsyncNamespace } from 'core/kv-storage';
-//#endif
-
 //#if runtime has bRouter
 import bRouter, { CurrentPage } from 'base/b-router/b-router';
 //#endif
@@ -89,7 +85,6 @@ import {
 
 	VNode,
 	ComponentInterface,
-	ComponentElement,
 	ComponentMeta
 
 } from 'core/component';
