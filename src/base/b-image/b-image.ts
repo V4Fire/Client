@@ -20,10 +20,22 @@ export const
 @component({flyweight: true, functional: true})
 export default class bImage extends iMessage implements iProgress, iVisible {
 	/**
-	 * Target image src
+	 * Target image src (fallback if srcset provided)
 	 */
 	@prop({type: String, watch: {fn: 'initOverlay', immediate: true}})
 	readonly src!: string;
+
+	/**
+	 * Target images srcset
+	 */
+	@prop({type: String, required: false})
+	readonly srcset?: string;
+
+	/**
+	 * Alternate text
+	 */
+	@prop({type: String, required: false})
+	readonly alt?: string;
 
 	/** @inheritDoc */
 	static readonly mods: ModsDecl = {
@@ -49,6 +61,14 @@ export default class bImage extends iMessage implements iProgress, iVisible {
 
 			const img = new Image();
 			img.src = this.src;
+
+			if (this.srcset) {
+				img.srcset = this.srcset;
+			}
+
+			if (this.alt) {
+				img.alt = this.alt;
+			}
 
 			this.async
 				.promise(img.init, {label: $$.loadImage})
