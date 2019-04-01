@@ -7,6 +7,7 @@
  */
 
 import symbolGenerator from 'core/symbol';
+import iTheme from 'traits/i-theme/i-theme';
 import iVisible from 'traits/i-visible/i-visible';
 import iBlock, { component, hook, watch, ModsDecl } from 'super/i-block/i-block';
 export * from 'super/i-block/i-block';
@@ -15,13 +16,15 @@ export const
 	$$ = symbolGenerator();
 
 @component({functional: true})
-export default class bUp extends iBlock implements iVisible {
+export default class bUp extends iBlock implements iTheme, iVisible {
 	/** @inheritDoc */
 	static readonly mods: ModsDecl = {
 		hidden: [
 			...iVisible.mods.hidden,
 			['true']
-		]
+		],
+
+		...iTheme.mods
 	};
 
 	/**

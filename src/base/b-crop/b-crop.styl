@@ -6,22 +6,27 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+@import "traits/i-visible/i-visible.styl"
 @import "super/i-block/i-block.styl"
 
 $p = {
 	rSize: 0.6em
+	visibleHelpers: true
 }
 
 b-crop extends i-block
-	transform translateZ(0)
+	i-visible({helpers: $p.visibleHelpers})
+
+	position relative
 	user-select none
+	useGPU()
 
 	&__over-wrapper
 		display block
 
 	&__area
 		absolute top 0 left 0
-		z-index 10
+		zIndex(modal)
 		size 100%
 		cursor crosshair
 
@@ -40,7 +45,7 @@ b-crop extends i-block
 
 	&__progress
 		absolute top 0 left 0
-		z-index 2
+		zIndex(layer, 2)
 		size 100%
 
 	&__img
@@ -48,14 +53,14 @@ b-crop extends i-block
 
 	&__clone
 		position absolute
-		z-index 1
+		zIndex(layer, 1)
 
 		&_hidden_true
 			display none
 
 	&__select
 		position absolute
-		z-index 2
+		zIndex(layer, 2)
 		box-sizing border-box
 		cursor move
 
