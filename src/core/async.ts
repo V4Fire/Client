@@ -34,7 +34,7 @@ export interface AsyncDnDOpts<R = unknown, CTX extends object = Async> extends A
 	onDragEnd?: DnDCb<R, CTX> | DnDEventOpts<R, CTX>;
 }
 
-export type DnDCb<R = unknown, CTX extends object = Async> = (this: CTX, e: Event, el: Node) => R | Function;
+export type DnDCb<R = unknown, CTX extends object = Async> = Function | ((this: CTX, e: MouseEvent, el: Node) => R);
 export type AnimationFrameCb<R = unknown, CTX extends object = Async> = ProxyCb<number, R, CTX>;
 
 export interface DnDEventOpts<R = unknown, CTX extends object = Async> {
