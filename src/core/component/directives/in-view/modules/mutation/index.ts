@@ -187,7 +187,7 @@ export default class InView extends Super {
 	poll(): void {
 		this.pollingElements.forEach((el) => {
 			const
-				isElementIn = isInView(el.node);
+				isElementIn = isInView(el.node, el.threshold);
 
 			if (isElementIn && !el.isLeaving) {
 				this.onObservableIn(el);
