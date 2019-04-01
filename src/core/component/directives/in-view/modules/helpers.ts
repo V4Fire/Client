@@ -25,8 +25,9 @@ export function getAdaptee<T extends {acceptable: boolean}>(strategies: T[]): Ca
 
 /**
  * Returns true if an element is in view
+ *
  * @param el
- * @param threshold
+ * @param [threshold]
  */
 export function isInView(el: Element, threshold: number = 1): boolean {
 	if (!document.documentElement) {
