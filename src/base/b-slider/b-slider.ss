@@ -13,7 +13,6 @@
 - template index() extends ['i-block'].index
 	- overWrapper = false
 
-
 	- windowEvents = { &
 		'@touchstart': 'onStart',
 		'@touchmove': 'onMove',
