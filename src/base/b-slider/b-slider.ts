@@ -16,7 +16,7 @@ export * from 'super/i-block/i-block';
  * 0 - Не изменилось
  * 1 - Следующий
  */
-export type SlideDirection = number;
+export type SlideDirection = -1 | 0 | 1;
 export type Mode = 'slider' | 'scroll';
 
 export interface SlideRect extends ClientRect {
