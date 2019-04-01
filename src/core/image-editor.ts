@@ -1,5 +1,3 @@
-'use strict';
-
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -9,7 +7,25 @@
  */
 
 import { RawWorker } from 'core/worker';
-export class ImageEditorError extends Error {}
+
+export interface ResizeParams {
+	id?: string;
+	img: HTMLCanvasElement | HTMLImageElement;
+	canvas?: HTMLCanvasElement;
+	width?: number;
+	height?: number;
+	skipTest?: boolean;
+	ratio?: Array<number>;
+	minWidth?: number;
+	minHeight?: number;
+	maxWidth?: number;
+	maxHeight?: number;
+	smooth?: number;
+	onError(err: Error, id: CanUndef<string>): void
+	onComplete(canvas: HTMLCanvasElement, id: CanUndef<string>): void;
+	onInit?(id: CanUndef<string>): void;
+	onProgress?(progress: number, id: CanUndef<string>): void;
+}
 
 export default {
 	/**
@@ -25,7 +41,7 @@ export default {
 			minHeight: 200,
 			maxWidth: 7e3,
 			maxHeight: 7e3,
-			lobes: 1
+			smooth: 1
 		}
 	},
 
@@ -36,50 +52,32 @@ export default {
 	 * @param params
 	 * @param [params.id] - task id
 	 *
-	 * @param params.canvas - reference to the output image canvas
-	 * @param params.img - reference to the source image
+	 * @param params.canvas - reference to an output image canvas
+	 * @param params.img - reference to a source image
 	 *
-	 * @param [params.width=200] - maximum width (if higher, the image is scaled)
-	 * @param [params.height=200] - maximum height (if higher, the image is scaled)
-	 * @param [params.lobes=1] - smoothing
+	 * @param [params.width=200] - maximum width
+	 * @param [params.height=200] - maximum height
+	 * @param [params.smooth=1] - smoothing level
 	 *
-	 * @param [params.skipTest=false] - if true, the size limit for processing are removed
-	 * @param [params.ratio=[2,3]] - allowable ratio of width to height
-	 * @param [params.minWidth=200] - minimum image width (if lower, that throws an error)
-	 * @param [params.minHeight=200] - minimum image height (if lower, that throws an error)
-	 * @param [params.maxWidth=7e3] - maximum image width (if higher, that throws an error)
-	 * @param [params.maxHeight=7e3] - maximum image height (if higher, that throws an error)
+	 * @param [params.skipTest=false] - if true, then size limits for processing will be skipped
+	 * @param [params.ratio=[2,3]] - allowable ratio of a width to a height
+	 * @param [params.minWidth=200] - minimum image width
+	 * @param [params.minHeight=200] - minimum image height
+	 * @param [params.maxWidth=7e3] - maximum image width
+	 * @param [params.maxHeight=7e3] - maximum image height
 	 *
-	 * @param [params.onInit]
-	 * @param [params.onProgress]
 	 * @param params.onComplete
 	 * @param params.onError
+	 * @param [params.onInit]
+	 * @param [params.onProgress]
 	 */
-	resize(params: {
-		id?: string,
-		img: HTMLCanvasElement | HTMLImageElement,
-		canvas?: HTMLCanvasElement,
-		width?: number,
-		height?: number,
-		skipTest?: boolean,
-		ratio?: Array<number>,
-		minWidth?: number,
-		minHeight?: number,
-		maxWidth?: number,
-		maxHeight?: number,
-		lobes?: number,
-		init?: (id: ?string) => void,
-		progress?: (progress: number, id: ?string) => void,
-		complete(canvas: HTMLCanvasElement, id: ?string): void,
-		error(err: Error, id: ?string): void
-
-	}): Array<Worker> {
+	resize(params: ResizeParams): Array<Worker> {
 		const p = {...this.setup.resize, ...params};
 		p.canvas = p.canvas || document.createElement('canvas');
 
 		const
-			{canvas, img, id, lobes, onComplete, onError} = p,
-			workers = [];
+			{canvas, img, id, smooth, onComplete, onError} = p,
+			workers = <Worker[]>[];
 
 		let
 			{width: iWidth, height: iHeight} = img;
@@ -97,7 +95,7 @@ export default {
 				iHeight > p.ratio[1] * iWidth
 
 			) {
-				onError(new ImageEditorError('INVALID_SIZE'));
+				onError(new TypeError('Invalid image size'));
 				return workers;
 			}
 		}
@@ -122,7 +120,7 @@ export default {
 			return workers;
 		}
 
-		if ((side ? iWidth / maxWidth : iHeight / maxHeight) <= 2.5 && lobes === 1) {
+		if ((side ? iWidth / maxWidth : iHeight / maxHeight) <= 2.5 && smooth === 1) {
 			let
 				lWidth,
 				lHeight;
@@ -145,23 +143,26 @@ export default {
 		}
 
 		const
-			max = 700;
+			WORKER_NUMBER = 1,
+			MAX = 700;
 
 		let
 			pHeight,
 			pWidth;
 
 		if (side) {
-			pWidth = max;
-			pHeight = Math.round(iHeight * max / iWidth);
+			pWidth = MAX;
+			pHeight = Math.round(iHeight * MAX / iWidth);
 
 		} else {
-			pHeight = max;
-			pWidth = Math.round(iWidth * max / iHeight);
+			pHeight = MAX;
+			pWidth = Math.round(iWidth * MAX / iHeight);
 		}
 
-		let pre;
-		if ((side ? img.width > pWidth : img.height > pHeight) && lobes === 1) {
+		let
+			pre;
+
+		if ((side ? img.width > pWidth : img.height > pHeight) && smooth === 1) {
 			canvas.width = pWidth;
 			canvas.height = pHeight;
 			ctx.drawImage(img, 0, 0, pWidth, pHeight);
@@ -194,25 +195,24 @@ export default {
 			return workers;
 		}
 
-		const
-			workerCount = 1;
+		let
+			counter;
 
-		let counter;
-		function createWorker(num) {
+		const createWorker = (num) => {
 			if (counter === undefined) {
-				counter = workerCount;
+				counter = WORKER_NUMBER;
 			}
 
 			const original = ctx.getImageData(
-				Math.floor(num * iWidth / workerCount),
+				Math.floor(num * iWidth / WORKER_NUMBER),
 				0,
-				Math.floor((num + 1) * iWidth / workerCount),
+				Math.floor((num + 1) * iWidth / WORKER_NUMBER),
 				iHeight
 			);
 
 			const
-				start = Math.floor(num * width / workerCount),
-				end = Math.floor((num + 1) * width / workerCount);
+				start = Math.floor(num * width / WORKER_NUMBER),
+				end = Math.floor((num + 1) * width / WORKER_NUMBER);
 
 			const final = ctx.getImageData(
 				start,
@@ -222,11 +222,12 @@ export default {
 			);
 
 			const
-				worker = new RawWorker(require('raw!core/workers/lanczos'));
+				// @ts-ignore
+				worker = RawWorker(require('raw!core/workers/lanczos'));
 
 			worker.postMessage({
 				id,
-				lobes,
+				smooth,
 				original,
 				final
 			});
@@ -242,7 +243,7 @@ export default {
 						break;
 
 					case 'complete':
-						if (counter === workerCount) {
+						if (counter === WORKER_NUMBER) {
 							canvas.width = width;
 							canvas.height = height;
 						}
@@ -253,15 +254,13 @@ export default {
 						if (!counter) {
 							onComplete(canvas, id);
 						}
-
-						break;
 				}
 			};
 
 			return worker;
-		}
+		};
 
-		for (let i = 0; i < workerCount; i++) {
+		for (let i = 0; i < WORKER_NUMBER; i++) {
 			workers.push(createWorker(i));
 		}
 
