@@ -9,8 +9,8 @@
 // tslint:disable:no-bitwise
 
 onmessage = (e) => {
-	const {original, final, lobes, id} = e.data;
-	return new Resizer(original, final, lobes, id);
+	const {original, final, smooth, id} = e.data;
+	return new Resizer(original, final, smooth, id);
 };
 
 interface LanczosFn {
@@ -45,10 +45,10 @@ class Resizer {
 	/**
 	 * @param original - original image object
 	 * @param final - final image object
-	 * @param lobes - smoothing level
+	 * @param smooth - smoothing level
 	 * @param id - task ID
 	 */
-	constructor(original: ImageData, final: ImageData, lobes: number, id: unknown) {
+	constructor(original: ImageData, final: ImageData, smooth: number, id: unknown) {
 		postMessage({event: {type: 'init', data: {id}}}, '*');
 
 		this.id = id;
@@ -65,10 +65,10 @@ class Resizer {
 			data: typeof Uint8ClampedArray === 'undefined' ? <any>(new Uint8Array(data)) : new Uint8ClampedArray(data)
 		};
 
-		this.lanczosFn = this.createLanczosFn(lobes);
+		this.lanczosFn = this.createLanczosFn(smooth);
 		this.ratio = original.width / width;
 		this.rcpRatio = 1 / this.ratio;
-		this.range = Math.ceil((this.ratio * lobes) / 2);
+		this.range = Math.ceil((this.ratio * smooth) / 2);
 		this.cache = Object.create(null);
 		this.center = {x: 0, y: 0};
 		this.iCenter = {x: 0, y: 0};
@@ -79,11 +79,11 @@ class Resizer {
 
 	/**
 	 * Creates Lanczos function
-	 * @param lobes - smoothing level
+	 * @param smooth - smoothing level
 	 */
-	createLanczosFn(lobes: number): (x: number) => number {
+	createLanczosFn(smooth: number): (x: number) => number {
 		return (x) => {
-			if (x > lobes) {
+			if (x > smooth) {
 				return 0;
 			}
 
@@ -92,7 +92,7 @@ class Resizer {
 				return 1;
 			}
 
-			const xx = x / lobes;
+			const xx = x / smooth;
 			return Math.sin(x) * Math.sin(xx) / x / xx;
 		};
 	}
