@@ -55,6 +55,7 @@
 
 	- rootAttrs = { &
 		':class': '[...provide.blockClasses(mods), "i-block-helper", componentId]',
+		':render-group': 'renderGroupProp',
 		':-render-counter': 'renderCounter'
 	} .
 

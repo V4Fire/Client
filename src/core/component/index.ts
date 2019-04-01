@@ -338,7 +338,7 @@ export function component(params?: ComponentParams): Function {
 											hooks = ctx.meta.hooks[hook];
 
 										const fn = () => {
-											obj[asyncLabel]((obj) => {
+											obj[asyncLabel]((obj, p = {}) => {
 												const
 													els = <Node[]>[],
 													renderNodes = <Nullable<Node>[]>[],
@@ -349,17 +349,25 @@ export function component(params?: ComponentParams): Function {
 													parent = vnode.elm,
 													hook = ctx.hook;
 
-												ctx.hook =
-													'beforeUpdate';
+												ctx.hook = 'beforeUpdate';
+												ctx.renderGroup = p.renderGroup;
 
 												for (let o = forEach(obj, cb), i = 0; i < o.length; i++) {
 													const
 														el = o[i];
 
+													if (!el) {
+														continue;
+													}
+
 													if (Object.isArray(el)) {
 														for (let o = el, i = 0; i < o.length; i++) {
 															const
 																el = <VNode>o[i];
+
+															if (!el) {
+																continue;
+															}
 
 															if (el.elm) {
 																el.elm[asyncLabel] = true;
@@ -390,15 +398,18 @@ export function component(params?: ComponentParams): Function {
 
 													if (Object.isArray(el)) {
 														for (let i = 0; i < el.length; i++) {
-															els.push(parent.appendChild(el[i]));
+															if (el[i]) {
+																els.push(parent.appendChild(el[i]));
+															}
 														}
 
-													} else {
+													} else if (el) {
 														els.push(parent.appendChild(el));
 													}
 												}
 
-												runHook('beforeUpdated', ctx.meta, ctx)
+												ctx.renderGroup = undefined;
+												runHook('beforeUpdated', ctx.meta, ctx, p)
 													.catch(stderr);
 
 												patchRefs(ctx);

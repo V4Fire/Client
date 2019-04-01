@@ -13,8 +13,14 @@ import { runHook, ComponentMeta } from 'core/component';
 import { queue, restart, deferRestart } from 'core/render';
 
 export interface TaskOpts {
+	group?: string;
 	weight?: number;
 	filter?: Function;
+}
+
+export interface TaskDesc {
+	renderGroup?: string;
+	destructor?: Function;
 }
 
 export default class AsyncRender {
@@ -56,6 +62,12 @@ export default class AsyncRender {
 			this.async
 				.cancelProxy({group: 'asyncComponents'})
 				.terminateWorker({group: 'asyncComponents'});
+		}});
+
+		this.meta.hooks.beforeUpdated.push({fn: (desc: TaskDesc = {}) => {
+			if (desc.destructor) {
+				desc.destructor();
+			}
 		}});
 	}
 
@@ -206,6 +218,7 @@ export default class AsyncRender {
 			let
 				i = 0,
 				j = 0,
+				chunkI = 0,
 				newArray = <unknown[]>[];
 
 			const iterate = () => {
@@ -216,11 +229,24 @@ export default class AsyncRender {
 					const fn = () => {
 						newArray.push(val);
 
-						if (++j >= count || el.done) {
+						if (++i >= count || el.done) {
 							const
-								els = <Node[]>cb(newArray, from);
+								desc = <TaskDesc>{};
 
-							j = 0;
+							let
+								group = 'asyncComponents';
+
+							if (params.group) {
+								group = `asyncComponents:${params.group}:${chunkI++}`;
+								desc.destructor = () => this.async.terminateWorker({group});
+							}
+
+							desc.renderGroup = group;
+
+							const
+								els = <Node[]>cb(newArray, desc);
+
+							i = 0;
 							newArray = [];
 
 							this.async.worker(() => {
@@ -228,12 +254,14 @@ export default class AsyncRender {
 									const
 										el = els[i];
 
-									if (el.parentNode) {
+									if (el[this.asyncLabel]) {
+										delete el[this.asyncLabel];
+
+									} else if (el.parentNode) {
 										el.parentNode.removeChild(el);
 									}
 								}
-
-							}, {group: 'asyncComponents'});
+							}, {group});
 						}
 					};
 
@@ -244,10 +272,10 @@ export default class AsyncRender {
 
 								this.createTask(fn, {
 									weight,
-									filter: f && f.bind(this.component, val, i)
+									filter: f && f.bind(this.component, val, j)
 								});
 
-								i++;
+								j++;
 								iterate();
 							})
 
@@ -270,10 +298,10 @@ export default class AsyncRender {
 
 					this.createTask(fn, {
 						weight,
-						filter: f && f.bind(this.component, val, i)
+						filter: f && f.bind(this.component, val, j)
 					});
 
-					i++;
+					j++;
 					el = o.next();
 				}
 			};

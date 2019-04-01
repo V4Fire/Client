@@ -138,13 +138,18 @@ export default class DOM {
 	 *
 	 * @param el - element name or a link to the node
 	 * @param newNode
+	 * @param [group] - operation group
 	 */
-	replaceWith(el: string | Element, newNode: Node): Function | boolean {
+	replaceWith(el: string | Element, newNode: Node, group?: string): Function | boolean {
 		const
 			node = Object.isString(el) ? this.block.element(el) : el;
 
 		if (!node) {
 			return false;
+		}
+
+		if (!group) {
+			group = node.getAttribute('render-key') || '';
 		}
 
 		node.replaceWith(newNode);
@@ -154,7 +159,7 @@ export default class DOM {
 			if (newNode.parentNode) {
 				newNode.parentNode.removeChild(newNode);
 			}
-		}, {group: 'asyncComponents'});
+		}, {group: group || 'asyncComponents'});
 	}
 
 	/**

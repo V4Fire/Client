@@ -259,6 +259,7 @@ export class ComponentInterface<
 	readonly instance!: this;
 	readonly hook!: Hooks;
 	readonly keepAlive!: boolean;
+	readonly renderGroup?: string;
 	readonly $el!: ComponentElement<C>;
 	readonly $options!: ComponentOptions<Component>;
 	readonly $props!: Dictionary;
