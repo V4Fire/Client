@@ -33,7 +33,7 @@ export * from 'super/i-input/i-input';
 export type Value = string;
 export type FormValue = Value;
 
-export const
+const
 	$$ = symbolGenerator();
 
 @component({
