@@ -6,52 +6,72 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-onmessage = function (e: ServiceWorkerMessageEvent): void {
+// tslint:disable:no-bitwise
+
+onmessage = (e) => {
 	const {original, final, lobes, id} = e.data;
-	new Resizer(original, final, lobes, id);
+	return new Resizer(original, final, lobes, id);
 };
 
+interface LanczosFn {
+	(x: number): number;
+}
+
+interface Pixel {
+	x: number;
+	y: number;
+}
+
 class Resizer {
+	id: unknown;
+
+	originalImg: ImageData;
+	tmpImg: ImageData;
+	finalImg: ImageData;
+
+	ratio: number;
+	rcpRatio: number;
+	range: number;
+
+	lanczosFn: LanczosFn;
+	cache: Dictionary<Dictionary<number>>;
+
+	center: Pixel;
+	iCenter: Pixel;
+
+	prev: number;
+	progress: number;
+
 	/**
 	 * @param original - original image object
 	 * @param final - final image object
 	 * @param lobes - smoothing level
 	 * @param id - task ID
 	 */
-	constructor(original: ImageData, final: ImageData, lobes: number, id: any) {
-		postMessage({
-			event: {
-				type: 'init',
-				data: {id}
-			}
-		});
+	constructor(original: ImageData, final: ImageData, lobes: number, id: unknown) {
+		postMessage({event: {type: 'init', data: {id}}}, '*');
 
 		this.id = id;
-		this.original = original;
-		this.final = final;
+		this.originalImg = original;
+		this.finalImg = final;
 
 		const
-			{width, height} = final;
-
-		this.dest = {width, height};
-
-		const
+			{width, height} = final,
 			data = width * height * 3;
 
-		if (typeof Uint8ClampedArray === 'undefined') {
-			this.dest.data = new Uint8Array(data);
+		this.tmpImg = {
+			width,
+			height,
+			data: typeof Uint8ClampedArray === 'undefined' ? <any>(new Uint8Array(data)) : new Uint8ClampedArray(data)
+		};
 
-		} else {
-			this.dest.data = new Uint8ClampedArray(data);
-		}
-
-		this.lanczos = this.lanczosCreate(lobes);
+		this.lanczosFn = this.createLanczosFn(lobes);
 		this.ratio = original.width / width;
 		this.rcpRatio = 1 / this.ratio;
 		this.range = Math.ceil((this.ratio * lobes) / 2);
-		this.cacheLanc = {};
-		this.center = {};
-		this.iCenter = {};
+		this.cache = Object.create(null);
+		this.center = {x: 0, y: 0};
+		this.iCenter = {x: 0, y: 0};
 		this.progress = 0;
 		this.prev = 0;
 		this.process(-1);
@@ -61,7 +81,7 @@ class Resizer {
 	 * Creates Lanczos function
 	 * @param lobes - smoothing level
 	 */
-	lanczosCreate(lobes: number): (x: number) => number {
+	createLanczosFn(lobes: number): (x: number) => number {
 		return (x) => {
 			if (x > lobes) {
 				return 0;
@@ -78,18 +98,18 @@ class Resizer {
 	}
 
 	/**
-	 * Converts the specified column image
+	 * Starts image processing for the specified column
 	 * @param column
 	 */
-	process(column: number) {
+	process(column: number): void {
 		const
-			oData = this.original.data,
-			dData = this.dest.data;
+			oData = this.originalImg.data,
+			dData = this.tmpImg.data;
 
 		const
-			{width, height} = this.dest,
-			{width: oWidth, height: oHeight} = this.original,
-			{center, iCenter, cacheLanc} = this;
+			{width, height} = this.tmpImg,
+			{width: oWidth, height: oHeight} = this.originalImg,
+			{center, iCenter, cache} = this;
 
 		while (++column < width) {
 			this.progress = Math.round((column / width) * 100);
@@ -103,7 +123,7 @@ class Resizer {
 							id: this.id
 						}
 					}
-				});
+				}, '*');
 			}
 
 			this.prev = this.progress;
@@ -122,8 +142,9 @@ class Resizer {
 						continue;
 					}
 
-					const fX = (1000 * Math.abs(i - center.x)) << 0;
-					cacheLanc[fX] = cacheLanc[fX] || {};
+					const
+						fX = (Math.abs(i - center.x) * 1e3) << 0,
+						cacheVal = cache[fX] = cache[fX] || {};
 
 					for (let j = iCenter.y - this.range; j <= iCenter.y + this.range; j++) {
 						if (j < 0 || j >= oHeight) {
@@ -131,10 +152,10 @@ class Resizer {
 						}
 
 						const
-							fY = (1e3 * Math.abs(j - center.y)) << 0;
+							fY = (Math.abs(j - center.y) * 1e3) << 0;
 
-						if (cacheLanc[fX][fY] === undefined) {
-							cacheLanc[fX][fY] = this.lanczos(
+						if (cacheVal[fY] === undefined) {
+							cacheVal[fY] = this.lanczosFn(
 								Math.sqrt(
 									fX * this.rcpRatio * fX * this.rcpRatio +
 									fY * this.rcpRatio * fY * this.rcpRatio
@@ -143,7 +164,7 @@ class Resizer {
 						}
 
 						const
-							weight = cacheLanc[fX][fY];
+							weight = <number>cacheVal[fY];
 
 						if (weight > 0) {
 							const
@@ -166,7 +187,10 @@ class Resizer {
 			}
 		}
 
-		this.progress = Math.round((column / width) * 100);
+		this.progress = Math.round(
+			(column / width) * 1e2
+		);
+
 		postMessage({
 			event: {
 				type: 'progress',
@@ -175,7 +199,7 @@ class Resizer {
 					id: this.id
 				}
 			}
-		});
+		}, '*');
 
 		this.end();
 	}
@@ -183,15 +207,18 @@ class Resizer {
 	/**
 	 * Applies the changes to the final image
 	 */
-	end() {
+	end(): void {
 		const
-			{width, height} = this.dest;
+			{width, height} = this.tmpImg;
 
 		const
-			fData = this.final.data,
-			dData = this.dest.data;
+			fData = this.finalImg.data,
+			dData = this.tmpImg.data;
 
-		let idx, idx2;
+		let
+			idx,
+			idx2;
+
 		for (let i = 0; i < width; i++) {
 			for (let j = 0; j < height; j++) {
 				idx = (j * width + i) * 3;
@@ -207,11 +234,11 @@ class Resizer {
 				type: 'complete',
 				data: {
 					id: this.id,
-					img: this.final,
-					width: this.dest.width,
-					height: this.dest.height
+					img: this.finalImg,
+					width: this.tmpImg.width,
+					height: this.tmpImg.height
 				}
 			}
-		});
+		}, '*');
 	}
 }
