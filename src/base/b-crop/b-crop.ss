@@ -15,7 +15,7 @@
 		- super
 		- block progress
 			< .&__progress
-				< b-progress-icon
+				< @b-progress-icon
 
 		- block crop
 			< .&__area ref = area
