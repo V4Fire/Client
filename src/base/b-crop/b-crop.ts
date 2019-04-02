@@ -37,13 +37,13 @@ export default class bCrop extends iBlock implements iVisible {
 	 * Image width
 	 */
 	@prop([Number, String])
-	readonly width?: StrSize = 'auto';
+	readonly width: StrSize = 'auto';
 
 	/**
 	 * Image height
 	 */
 	@prop([Number, String])
-	readonly height?: StrSize = 'auto';
+	readonly height: StrSize = 'auto';
 
 	/**
 	 * Image alt
