@@ -473,4 +473,10 @@ export default class bCrop extends iBlock implements iVisible {
 	protected syncMoveSelectWatcher(value: boolean): void {
 		watchers.syncMoveSelectWatcher(this, value);
 	}
+
+	/** @override */
+	protected initModEvents(): void {
+		super.initModEvents();
+		iVisible.initModEvents(this);
+	}
 }
