@@ -1,5 +1,3 @@
-'use strict';
-
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -8,108 +6,109 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import Editor from 'core/imageEditor';
-import iBlock, { abstract, field, wait } from 'super/i-block/i-block';
-import { component } from 'core/component';
-import type { $$size } from 'base/browser-crop/browser-crop';
+import Editor from 'core/image-editor';
 
-const
-	$C = require('collection.js');
+import bCrop from 'base/b-crop/b-crop';
+import bProgress from 'base/b-progress/b-progress';
+import iVisible from 'traits/i-visible/i-visible';
+
+import iBlock, { component, prop, field, system, wait, hook, ModsDecl } from 'super/i-block/i-block';
+import { Size, StrSize, RotateSide, Tools, NormalizedTools } from 'base/b-image-editor/modules/interface';
+
+export * from 'base/b-image-editor/modules/interface';
+export * from 'super/i-block/i-block';
 
 @component()
-export default class bImageEditor extends iBlock {
+export default class bImageEditor extends iBlock implements iVisible {
 	/**
 	 * Initial image src
 	 */
-	srcProp: string;
+	@prop(String)
+	srcProp!: string;
 
 	/**
 	 * Image width
 	 */
-	width: ?number | string = 'auto';
+	@prop([Number, String])
+	width: StrSize = 'auto';
 
 	/**
 	 * Image height
 	 */
-	height: ?number | string = 'auto';
+	@prop([Number, String])
+	height: StrSize = 'auto';
 
 	/**
 	 * Image maximum width
 	 */
+	@prop(Number)
 	maxWidth: number = 600;
 
 	/**
 	 * Image maximum height
 	 */
+	@prop(Number)
 	maxHeight: number = 600;
 
 	/**
 	 * Image alt text
 	 */
-	alt: string;
+	@prop(String)
+	alt: string = '';
 
 	/**
-	 * Image smooth level
+	 * Image smoothing level
 	 */
+	@prop(Number)
 	smooth: number = 1;
 
 	/**
-	 * If true, then will be skipped tests for the image
+	 * If true, then size limits for processing will be skipped
 	 */
+	@prop(Number)
 	skipTest: boolean = false;
 
 	/**
 	 * Initial image tools options
 	 */
-	toolsProp: Object = {};
+	@prop(Object)
+	toolsProp: Tools = {};
 
 	/**
 	 * Link for a canvas element
 	 */
-	@abstract
-	canvas: ?HTMLCanvasElement;
+	@system(() => document.createElement('canvas'))
+	canvas!: HTMLCanvasElement;
 
 	/**
 	 * Link for a buffer canvas element
 	 */
-	@abstract
-	buffer: ?HTMLCanvasElement;
+	@system()
+	buffer!: HTMLCanvasElement;
 
 	/**
 	 * Link for a CanvasRenderingContext2D element
 	 */
-	@abstract
-	ctx: ?CanvasRenderingContext2D;
+	@system({
+		after: 'canvas',
+		init: (o: bImageEditor) => o.canvas.getContext('2d')
+	})
+
+	ctx!: CanvasRenderingContext2D;
 
 	/**
 	 * Image src
 	 */
 	@field((o) => o.sync.link('srcProp'))
-	src: string;
+	src!: string;
 
 	/**
 	 * Image tools options
 	 */
-	@field((o) => o.sync.link('toolsProp', (val) => {
-		if (Object.fastCompare(val, o.tools)) {
-			return o.tools;
-		}
+	@field((o) => o.sync.link((val) =>
+		Object.mixin(true, {crop: {}, rotate: {left: true, right: true}}, val)))
 
-		return Object.mixin(true, {crop: {}, rotate: {left: true, right: true}}, val);
-	}))
-
-	tools: Object;
-
-	/** @private */
-	@abstract
-	_n: number = 0;
-
-	/** @override */
-	get $refs(): {
-		crop: ?bCrop,
-		img: ?HTMLImageElement,
-		progress: bProgress
-	} {}
+	tools!: NormalizedTools;
 
 	/**
 	 * Link for the source image
@@ -118,17 +117,34 @@ export default class bImageEditor extends iBlock {
 		return this.tools.crop ? this.$refs.crop.img : this.$refs.img;
 	}
 
+	/** @inheritDoc */
+	static readonly mods: ModsDecl = {
+		...iVisible.mods
+	};
+
+	/** @override */
+	protected readonly $refs!: {
+		img: HTMLImageElement;
+		crop: bCrop;
+		progress: bProgress;
+	};
+
+	/** @private */
+	@system()
+	private _n: number = 0;
+
 	/**
 	 * Initialises an image
 	 *
 	 * @param [src]
 	 * @param [thumbRect]
 	 *
-	 * @emits imageProgress(progress: number, id: any)
-	 * @emits imageInit(canvas: HTMLCanvasElement, id: any)
+	 * @emits imageProgress(progress: number, id: unknown)
+	 * @emits imageInit(canvas: HTMLCanvasElement, id: unknown)
 	 * @emits imageError(err: Error)
 	 */
-	async initImage(src?: string, thumbRect?: $$size) {
+	@hook('created')
+	async initImage(src?: string, thumbRect?: Size): Promise<CanUndef<HTMLCanvasElement>> {
 		this.src = src || this.src;
 
 		if (!this.src) {
@@ -136,18 +152,19 @@ export default class bImageEditor extends iBlock {
 		}
 
 		const
-			{async: $a} = this;
+			{async: $a} = this,
+			group = {group: 'initImage'};
 
-		const
-			group = 'initImage';
-
-		$a.clearAll({group});
+		$a.clearAll(group);
 		this.setMod('progress', true);
 
-		const r = $a.promise(new Promise(async (resolve, reject) => {
-			const img = Object.assign(new Image(), {src: this.src});
+		const r = $a.promise<{canvas: HTMLCanvasElement; id: unknown}>(new Promise(async (resolve, reject) => {
+			const img = Object.assign(new Image(), {
+				src: this.src
+			});
+
 			const workers = Editor.resize({
-				img: await $a.promise(img.init, {group}),
+				img: await $a.promise(img.init, group),
 
 				onError: reject,
 				onProgress: (progress, id) => {
@@ -156,36 +173,40 @@ export default class bImageEditor extends iBlock {
 				},
 
 				onComplete: async (canvas, id) => {
-					$a.terminateAllWorkers({group});
+					$a.terminateWorker(group);
 
 					const
 						buffer = this.buffer = document.createElement('canvas');
 
 					buffer.width = canvas.width;
 					buffer.height = canvas.height;
-					buffer.getContext('2d').drawImage(canvas, 0, 0);
-
+					(<CanvasRenderingContext2D>buffer.getContext('2d')).drawImage(canvas, 0, 0);
 					this.src = canvas.toDataURL('image/png');
-					await this.nextTick({group});
-					await $a.promise(thumbRect ? this.initSelect(thumbRect) : this.img.init, {group});
+
+					await this.nextTick(group);
+					await $a.promise<unknown>(thumbRect ? this.initSelect(thumbRect) : this.img.init, group);
+
 					resolve({canvas, id});
 				},
 
 				width: this.maxWidth,
 				height: this.maxHeight,
 				canvas: this.canvas,
-				lobes: this.smooth,
+				smooth: this.smooth,
 				skipTest: this.skipTest
 			});
 
-			$C(workers).forEach((worker) => $a.worker(worker, {group}));
+			for (let i = 0; i < workers.length; i++) {
+				$a.worker(workers[i], group);
+			}
 
-		}), {group});
+		}), group);
 
 		try {
 			const {canvas, id} = await r;
 			this.setMod('progress', false);
 			this.emit('imageInit', canvas, id);
+			return canvas;
 
 		} catch (err) {
 			this.setMod('progress', false);
@@ -197,7 +218,7 @@ export default class bImageEditor extends iBlock {
 	 * Initialises the selection area
 	 * @param [params] - selection bounds and parameters
 	 */
-	async initSelect(params?: $$size) {
+	async initSelect(params?: Size): Promise<void> {
 		if (!this.tools.crop) {
 			this.tools.crop = {};
 			await this.nextTick();
@@ -210,10 +231,10 @@ export default class bImageEditor extends iBlock {
 	 * Rotates the image
 	 *
 	 * @param [side] - "left" or "right"
-	 * @emits rotate(side: string)
+	 * @emits rotate(side: RotateSide)
 	 */
 	@wait('ready')
-	async rotate(side?: string = 'left') {
+	async rotate(side: RotateSide = 'left'): Promise<void> {
 		const
 			{canvas, ctx, buffer} = this;
 
@@ -266,11 +287,11 @@ export default class bImageEditor extends iBlock {
 
 			if (_n === -1 || _n === 3) {
 				ctx.translate(0, width);
-				ctx.rotate(-90 * (Math.PI / 180));
+				ctx.rotate((Math.PI / 180) * -90);
 
 			} else {
 				ctx.translate(height, 0);
-				ctx.rotate(90 * (Math.PI / 180));
+				ctx.rotate((Math.PI / 180) * 90);
 			}
 
 		} else {
@@ -291,7 +312,7 @@ export default class bImageEditor extends iBlock {
 	/**
 	 * Returns bounds of the selected area
 	 */
-	getSelectedRect(): $$size {
+	getSelectedRect(): Size {
 		if (this.tools.crop) {
 			return this.$refs.crop.selectedRect;
 		}
@@ -322,7 +343,7 @@ export default class bImageEditor extends iBlock {
 	 * @param [mime]
 	 * @param [quality]
 	 */
-	getSelectedImageDataURL(mime?: string = 'image/png', quality?: number = 1): string {
+	getSelectedImageDataURL(mime: string = 'image/png', quality: number = 1): string {
 		if (this.tools.crop) {
 			const
 				{x, y, width, height} = this.$refs.crop.selectedRect;
@@ -333,7 +354,7 @@ export default class bImageEditor extends iBlock {
 
 			canvas.width = width;
 			canvas.height = height;
-			canvas.getContext('2d').putImageData(data, 0, 0);
+			(<CanvasRenderingContext2D>canvas.getContext('2d')).putImageData(data, 0, 0);
 
 			return canvas.toDataURL(mime, quality);
 		}
@@ -347,7 +368,7 @@ export default class bImageEditor extends iBlock {
 	 * @param [mime]
 	 * @param [quality]
 	 */
-	getSelectedImageBlob(mime?: string = 'image/png', quality?: number = 1): Promise<Blob> {
+	getSelectedImageBlob(mime: string = 'image/png', quality: number = 1): Promise<Blob | null> {
 		if (this.tools.crop) {
 			const
 				{x, y, width, height} = this.$refs.crop.selectedRect;
@@ -358,7 +379,7 @@ export default class bImageEditor extends iBlock {
 
 			canvas.width = width;
 			canvas.height = height;
-			canvas.getContext('2d').putImageData(data, 0, 0);
+			(<CanvasRenderingContext2D>canvas.getContext('2d')).putImageData(data, 0, 0);
 
 			return new Promise((resolve) => canvas.toBlob(resolve, mime, quality));
 		}
@@ -379,7 +400,7 @@ export default class bImageEditor extends iBlock {
 	 * @param [mime]
 	 * @param [quality]
 	 */
-	getImageDataURL(mime?: string = 'image/png', quality?: number = 1): string {
+	getImageDataURL(mime: string = 'image/png', quality: number = 1): string {
 		return this.canvas.toDataURL(mime, quality);
 	}
 
@@ -389,20 +410,16 @@ export default class bImageEditor extends iBlock {
 	 * @param [mime]
 	 * @param [quality]
 	 */
-	getImageBlob(mime = 'image/png', quality = 1): Promise<Blob> {
+	getImageBlob(mime: string = 'image/png', quality: number = 1): Promise<Blob | null> {
 		return new Promise((resolve) => this.canvas.toBlob(resolve, mime, quality));
 	}
 
-	/** @inheritDoc */
-	async created() {
-		this.canvas = document.createElement('canvas');
-		this.ctx = this.canvas.getContext('2d');
-
+	/** @override */
+	protected initModEvents(): void {
+		super.initModEvents();
 		this.localEvent.on('block.mod.set.progress.*', ({value}) => {
 			const {crop} = this.$refs;
 			crop && crop.setMod('parentProgress', value);
 		});
-
-		await this.initImage();
 	}
 }

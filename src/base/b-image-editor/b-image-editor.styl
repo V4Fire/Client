@@ -7,12 +7,15 @@
  */
 
 @import "super/i-block/i-block.styl"
+@import "traits/i-visible/i-visible.styl"
 
 $p = {
-
+	visibleHelpers: true
 }
 
 b-image-editor extends i-block
+	i-visible({helpers: $p.visibleHelpers})
+
 	&__root-wrapper
 		display flex
 		justify-content center
@@ -28,7 +31,7 @@ b-image-editor extends i-block
 
 	&__wrapper
 		absolute top 0 left 0
-		z-index 1
+		zIndex(layer, 1)
 		display none
 		size 100%
 
@@ -51,7 +54,7 @@ b-image-editor extends i-block
 
 	&__controls
 		absolute bottom 0 right 0
-		z-index 2
+		zIndex(layer, 2)
 		display flex
 		justify-content flex-end
 
