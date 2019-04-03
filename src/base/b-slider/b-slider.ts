@@ -11,17 +11,6 @@ import iBlock, { component, system, hook, watch, wait, prop } from 'super/i-bloc
 
 export * from 'super/i-block/i-block';
 
-/**
- * -1 - Previous
- * 0 - Not changed
- * 1 - Next
- */
-export type SlideDirection = number;
-
-export interface SlideRect extends ClientRect {
-	offsetLeft: number;
-}
-
 export const
 	$$ = symbolGenerator();
 
@@ -37,6 +26,15 @@ export const sliderModes = {
 	slider: true
 };
 
+export interface SlideRect extends ClientRect {
+	offsetLeft: number;
+}
+/**
+ * -1 - Previous
+ * 0 - Not changed
+ * 1 - Next
+ */
+export type SlideDirection = number;
 export type AlignType = keyof typeof alignTypes;
 export type Mode = keyof typeof sliderModes;
 
@@ -68,7 +66,6 @@ export default class bSlider extends iBlock {
 
 	/**
 	 * Slide alignment type
-	 *   *) none - only works for mode === 'scroll'
 	 */
 	@prop({type: String, validator: (v) => Boolean(alignTypes[v])})
 	readonly align: AlignType = 'center';
@@ -92,7 +89,7 @@ export default class bSlider extends iBlock {
 	readonly fastSwipeThreshold: number = 0.05;
 
 	/**
-	 * Время (в секундах) после которого можно засчитывать что это был быстрый свайп
+	 * Time (in milliseconds) after which we can assume that there was a quick swipe
 	 */
 	@prop({type: Number, validator: isNotInfinitePositiveNumber})
 	readonly fastSwipeDelay: number = (0.3).seconds();
@@ -133,8 +130,8 @@ export default class bSlider extends iBlock {
 	 */
 	get currentOffset(): number {
 		const
-			{slidesRects, current, align, viewRect} = this,
-			slideRect = slidesRects[current];
+			{slideRects, current, align, viewRect} = this,
+			slideRect = slideRects[current];
 
 		if (!slideRect || !viewRect) {
 			return 0;
@@ -191,7 +188,7 @@ export default class bSlider extends iBlock {
 	 * Slide positions
 	 */
 	@system()
-	protected slidesRects: SlideRect[] = [];
+	protected slideRects: SlideRect[] = [];
 
 	/**
 	 * Slider size and position
@@ -231,13 +228,13 @@ export default class bSlider extends iBlock {
 
 		this.viewRect = viewRect;
 		this.length = children.length;
-		this.slidesRects = [];
+		this.slideRects = [];
 
 		for (let i = 0; i < children.length; i++) {
 			const
 				child = <HTMLElement>children[i];
 
-			this.slidesRects[i] = Object.assign(child.getBoundingClientRect(), {
+			this.slideRects[i] = Object.assign(child.getBoundingClientRect(), {
 				offsetLeft: child.offsetLeft
 			});
 		}
@@ -249,7 +246,7 @@ export default class bSlider extends iBlock {
 	@hook('mounted')
 	@watch('?window:resize')
 	@wait('ready')
-	syncStateAsync(): CanPromise<void> {
+	syncStateDeffer(): CanPromise<void> {
 		if (!this.isSlider) {
 			return;
 		}
@@ -268,7 +265,7 @@ export default class bSlider extends iBlock {
 	}
 
 	/**
-	 * Switch to next slide
+	 * Switch to next or previous slide
 	 * @param dir - direction
 	 */
 	changeSlide(dir: SlideDirection): boolean {
@@ -385,7 +382,7 @@ export default class bSlider extends iBlock {
 		}
 
 		const {
-			slidesRects,
+			slideRects,
 			diffX,
 			viewRect,
 			threshold,
@@ -402,7 +399,7 @@ export default class bSlider extends iBlock {
 		let
 			isSwiped = false;
 
-		if (!wrapper || !slidesRects || !viewRect) {
+		if (!wrapper || !slideRects || !viewRect) {
 			return;
 		}
 

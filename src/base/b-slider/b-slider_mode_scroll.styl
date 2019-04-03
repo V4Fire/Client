@@ -7,6 +7,7 @@
  */
 
 $p = {
+	showScrollBreakpoint: 1024px
 }
 
 b-button_mode_scroll extends b-slider
@@ -20,13 +21,13 @@ b-button_mode_scroll extends b-slider
 		opacity 0
 		pointer-events none
 
-	/mode &__view-outer-wrapper
+	/mode &__outer-view-wrapper
 		overflow-x scroll
 		absolute left 0 top 0
 		size 100%
 		padding-bottom 10px
 
-		@media (min-width 1024px)
+		@media (min-width $p.showScrollBreakpoint)
 			padding-bottom 0
 
 	/mode &__view-wrapper

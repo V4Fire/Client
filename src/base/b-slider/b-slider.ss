@@ -34,6 +34,6 @@
 			< .&__view-wrapper ref = view
 				< .&__fake-view-wrapper ref = fake
 					+= self.slot()
-				< .&__view-outer-wrapper
+				< .&__outer-view-wrapper
 					< .&__view-wrapper ref = wrapper
 						+= self.slot()
