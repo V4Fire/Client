@@ -12,12 +12,11 @@ import iBlock, { component, system, hook, watch, wait, prop } from 'super/i-bloc
 export * from 'super/i-block/i-block';
 
 /**
- * -1 - To previous slide
- * 0 - Not changed
- * 1 - To next slide
+ * -1 - Предыдущий
+ * 0 - Не изменилось
+ * 1 - Следующий
  */
-export type SlideDirection = -1 | 0 | 1;
-export type Mode = 'slider' | 'scroll';
+export type SlideDirection = number;
 
 export interface SlideRect extends ClientRect {
 	offsetLeft: number;
@@ -33,7 +32,13 @@ export const alignTypes = {
 	none: true
 };
 
+export const sliderModes = {
+	scroll: true,
+	slider: true
+};
+
 export type AlignType = keyof typeof alignTypes;
+export type Mode = keyof typeof sliderModes;
 
 /**
  * Вернет true если переданное значение находится в диапазоне X > 0 && X <= 1
@@ -58,7 +63,7 @@ export default class bSlider extends iBlock {
 	 *   *) scroll - будет использоваться скролл
 	 *   *) slider - будет использоваться реализация слайдера (невозможно пропускать слайды)
 	 */
-	@prop({type: String, validator: (v) => Boolean({slider: true, scroll: true}[v])})
+	@prop({type: String, validator: (v) => Boolean(sliderModes[v])})
 	readonly mode: Mode = 'slider';
 
 	/**
@@ -100,7 +105,7 @@ export default class bSlider extends iBlock {
 	readonly swipeToleranceX: number = 10;
 
 	/**
-	 * Минимальный порог смещения по оси Y при котором будет считаться что пользовать не двигает слайдер (в px)
+	 * Минимальный порог смещения по оси Y при котором будет считаться что пользовать двигает слайдер (в px)
 	 */
 	@prop({type: Number, validator: isNotInfinitePositiveNumber})
 	readonly swipeToleranceY: number = 50;
@@ -333,7 +338,7 @@ export default class bSlider extends iBlock {
 	 * положения слайдера
 	 *
 	 * @param e
-	 * @emits swipeStart()
+	 * @emits moveStart()
 	 */
 	protected onMove(e: TouchEvent): void {
 		if (this.scrolling) {
@@ -355,7 +360,7 @@ export default class bSlider extends iBlock {
 		}
 
 		if (!tmp.swiping) {
-			this.emit('swipeStart');
+			this.emit('moveStart');
 		}
 
 		e.preventDefault();
@@ -373,8 +378,7 @@ export default class bSlider extends iBlock {
 
 	/**
 	 * Обработчик: устанавливает нужную позицию слайдеру
-	 *
-	 * @emits swipeEnd(dir: SwipeDirection, isSwiped: boolean)
+	 * @emits moveEnd(dir: SwipeDirection, isChanged: boolean)
 	 */
 	protected onRelease(): void {
 		if (this.scrolling) {

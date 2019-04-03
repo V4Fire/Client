@@ -7,7 +7,7 @@
  */
 
 import { ElementRect } from 'core/component/directives/in-view/modules/meta';
-import { GLOBAL } from 'core/const/links';
+import { GLOBAL } from 'core/env';
 
 export const hasMutationObserver = 'MutationObserver' in GLOBAL;
 

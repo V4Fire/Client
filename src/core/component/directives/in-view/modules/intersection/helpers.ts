@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { GLOBAL } from 'core/const/links';
+import { GLOBAL } from 'core/env';
 
 export const hasIntersection =
 	'IntersectionObserver' in GLOBAL &&
