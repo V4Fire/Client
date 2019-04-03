@@ -7,12 +7,18 @@
  */
 
 @import "super/i-message/i-message.styl"
+@import "traits/i-progress/i-progress.styl"
+@import "traits/i-visible/i-visible.styl"
 
 $p = {
-
+	progressHelpers: false
+	visibleHelpers: true
 }
 
 b-image extends i-message
+	i-progress({helpers: $p.progressHelpers})
+	i-visible({helpers: $p.visibleHelpers})
+
 	&__root-wrapper
 		size 100%
 

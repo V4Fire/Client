@@ -13,6 +13,7 @@
 - template index() extends ['i-data'].index
 	- rootTag = 'span'
 	- messageHelpers = true
+	- rootWrapper = true
 
 	- block body
 		- super
@@ -46,7 +47,7 @@
 		- block button(type = 'button')
 			< ${type}.&__button &
 				ref = button |
-				:class = setHint(hintPos) |
+				:class = provide.hintClasses(hintPos) |
 				:autofocus = autofocus |
 				:-hint = t(hint) |
 				@click = onClick |
@@ -56,7 +57,10 @@
 
 				< _.&__wrapper
 					- block preIcon
-						< _.&__cell.&__icon.&__pre-icon v-if = preIcon
+						< _.&__cell.&__icon.&__pre-icon v-if = $slots['pre-icon']
+							+= self.slot('pre-icon')
+
+						< _.&__cell.&__icon.&__pre-icon v-else-if = preIcon
 							< component.&__b-icon &
 								v-if = preIconComponent |
 								:instanceOf = bIcon |
@@ -65,7 +69,7 @@
 							.
 
 							< template v-else
-								+= self.gIcon(['preIcon'], {'g-icon': {}})
+								< @b-icon :value = preIcon
 
 					- block value
 						< _.&__cell.&__value
@@ -73,10 +77,13 @@
 
 					- block expand
 						< _.&__cell.&__icon.&__expand v-if = $slots.dropdown
-							+= self.gIcon('expand_more')
+							< @b-icon :value = 'expand_more'
 
 					- block icon
-						< _.&__cell.&__icon.&__post-icon v-if = icon
+						< _.&__cell.&__icon.&__post-icon v-if = $slots.icon
+							+= self.slot('icon')
+
+						< _.&__cell.&__icon.&__post-icon v-else-if = icon
 							< component.&__b-icon &
 								v-if = iconComponent |
 								:instanceOf = bIcon |
@@ -85,11 +92,11 @@
 							.
 
 							< template v-else
-								+= self.gIcon(['icon'], {'g-icon': {}})
+								< @b-icon :value = icon
 
 					- block progress
-						< _.&__cell.&__icon.&__progress v-if = dataProvider
-							< b-progress-icon v-once
+						< _.&__cell.&__icon.&__progress
+							< @b-progress-icon
 
 		< template v-if = type === 'link'
 			+= self.button('a')
@@ -101,10 +108,10 @@
 			< . &
 				v-if = $slots.dropdown && (
 					isFunctional ||
-					ifOnce('opened', m.opened !== 'false') && delete watchModsStore.opened
+					opt.ifOnce('opened', m.opened !== 'false') && delete watchModsStore.opened
 				) |
 
-				:class = getElClasses({dropdown: {pos: dropdown}})
+				:class = provide.elClasses({dropdown: {pos: dropdown}})
 			.
 				< .&__dropdown-content
 					+= self.slot('dropdown')

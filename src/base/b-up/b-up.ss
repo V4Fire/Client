@@ -11,12 +11,12 @@
 - include 'super/i-block'|b as placeholder
 
 - template index() extends ['i-block'].index
-	- overWrapper = false
+	- rootWrapper = true
 
 	- block body
 		- super
 		< .&__up
-			+= self.gIcon('arrow_drop_up')
+			< @b-icon :value = 'arrow_drop_up'
 
 		< button:a.&__a
 			{{ `Up` }}

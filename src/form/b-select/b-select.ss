@@ -12,14 +12,14 @@
 
 - template index() extends ['b-input'].index
 	- block icons
-		< _.&__cell.&__icon.&__expand @click = setMod('opened', true)
-			+= self.gIcon('expand_more')
+		< _.&__cell.&__icon.&__expand @click = open
+			< @b-icon :value = 'expand_more'
 
 	- block input
 		- super
 		< select.&__native &
 			ref = select |
-			v-if = b.is.mobile |
+			v-if = browser.is.mobile |
 			v-model = selectedStore |
 			@focus = onFocus |
 			@blur = onBlur |
@@ -32,9 +32,9 @@
 		- super
 		- block dropdown
 			< _.&__dropdown[.&_pos_bottom-left] &
-				v-if = !b.is.mobile && options.length && (
+				v-if = !browser.is.mobile && options.length && (
 					isFunctional ||
-					ifOnce('opened', m.opened !== 'false') && delete watchModsStore.opened
+					opt.ifOnce('opened', m.opened !== 'false') && delete watchModsStore.opened
 				)
 			.
 				< _.&__dropdown-content
@@ -43,12 +43,12 @@
 							v-func = isFunctional |
 							ref = scroll |
 							:fixSize = true |
-							:mods = provideMods({size: 'm'})
+							:mods = provide.mods({size: 'm'})
 						.
 							< _ &
 								v-for = el in options |
 								:key = :-value, el.value |
-								:class = getElClasses({
+								:class = provide.elClasses({
 									option: {
 										marked: el.marked,
 										selected: isSelected(el)

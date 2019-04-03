@@ -9,20 +9,18 @@
 @import "super/i-data/i-data.styl"
 
 $p = {
-	width: auto
 	zIndexPos: overall
+	visibleHelpers: true
+	widthHelpers: true
 }
 
 b-window extends i-data
+	i-visible({helpers: $p.visibleHelpers})
+	i-width({helpers: $p.widthHelpers, selector: ('&__window')})
+
 	absolute top 0 left 0
 	z-index-pos $p.zIndexPos
 	min-width 100%
-
-	&_width_full &__window
-		width 100%
-
-	&_width_auto &__window
-		width auto
 
 	&__back
 		fixed top 0 left 0

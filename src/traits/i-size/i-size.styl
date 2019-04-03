@@ -1,0 +1,22 @@
+/*!
+ * V4Fire Client Core
+ * https://github.com/V4Fire/Client
+ *
+ * Released under the MIT license
+ * https://github.com/V4Fire/Client/blob/master/LICENSE
+ */
+
+@import "global/g-def/funcs.styl"
+@import "global/g-def/consts.styl"
+
+$p = {
+	helpers: false
+	sizes: setSizes({table: SIZES, units: 'rem'}, 'global')
+}
+
+i-size
+	if $p.helpers && $p.sizes
+		&_size
+			for $key, $value in $p.sizes.table
+				&_{$key}
+					font-size unit($value, $p.sizes.units)

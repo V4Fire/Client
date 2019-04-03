@@ -7,24 +7,30 @@
  */
 
 @import "super/i-data/i-data.styl"
+@import "traits/i-visible/i-visible.styl"
 
 $p = {
-	lockHelpers: false
 	sideBarTransition: EASING_DURATION linear
 	overlayTansition: EASING_DURATION ease-in
+	visibleHelpers: true
 }
 
 b-sidebar extends i-data
+	i-visible({helpers: $p.visibleHelpers})
+
 	fixed top 0 left 0
 	z-index-pos modal
+
+	&
+	&__root-wrapper
+		size 100%
 
 	&
 	&__content-wrapper
 		transform translateX(-100%)
 
-	&
-	&__root-wrapper
-		size 100%
+	&__content-wrapper
+		display inline-block
 
 	if $p.sideBarTransition
 		transition transform 0s $p.sideBarTransition

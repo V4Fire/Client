@@ -23,6 +23,7 @@
 - async template index() extends ['i-page'].index
 	- lib = path.join(@@output, @@outputPattern({name: 'lib'}))
 	- deps = include('src/super/i-static-page/deps')
+	- globals = include('build/globals.webpack')
 
 	- title = @@appName
 	- pageData = Object.create(null)
@@ -30,7 +31,6 @@
 
 	- defineBase = false
 	- assetsRequest = true
-	- overWrapper = false
 
 	- charset = { &
 		charset: 'utf-8'
@@ -111,10 +111,11 @@
 
 				# script
 					# block initVars
+						window[#{globals.MODULE_DEPENDENCIES}] = {fileCache: {}};
+
 						var
 							READY_STATE = 0,
-							PATH = #{assets|json},
-							ModuleDependencies = {fileCache: {}};
+							PATH = #{assets|json};
 
 						try {
 							PATH = new Proxy(PATH, {
@@ -170,6 +171,7 @@
 					- block std
 						- script
 							+= self.addScriptDep('std', {defer: false, optional: true})
+							+= self.addScriptDep('vendor', {optional: true})
 
 					: defLibs = deps.scripts
 					- block defLibs
@@ -204,12 +206,11 @@
 
 					# script
 						# block initLibs
-							Vue.default = Vue;
+							if (typeof Vue !== 'undefined') {
+								Vue.default = Vue;
+							}
 
 					- block scripts
-						- script
-							+= self.addScriptDep('vendor', {optional: true})
-
 						+= self.addDependencies('scripts')
 
 						- script

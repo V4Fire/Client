@@ -1,0 +1,27 @@
+/*!
+ * V4Fire Client Core
+ * https://github.com/V4Fire/Client
+ *
+ * Released under the MIT license
+ * https://github.com/V4Fire/Client/blob/master/LICENSE
+ */
+
+$p = {
+	helpers: true
+	selector: ('')
+}
+
+i-width
+	if $p.helpers
+		$fullS = ()
+		$autoS = ()
+
+		for $s in $p.selector
+			push($fullS, '&_width_full ' + $s)
+			push($autoS, '&_width_auto ' + $s)
+
+		{join(',', $fullS)}
+			width 100%
+
+		{join(',', $autoS)}
+			width auto

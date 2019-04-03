@@ -11,6 +11,8 @@
 - include 'super/i-message'|b as placeholder
 
 - template index() extends ['i-message'].index
+	- rootWrapper = true
+
 	- block body
 		- super
 

@@ -7,21 +7,17 @@
  */
 
 @import "super/i-data/i-data.styl"
+@import "traits/i-access/i-access.styl"
+@import "traits/i-visible/i-visible.styl"
 
 $p = {
-	lockHelpers: true
-	sizeHelpers: true
-	messageHelpers: true
+	accessHelpers: false
+	visibleHelpers: false
 }
 
 i-input extends i-data
-	&_show-error_true&_valid_true &__error-box
-	&_show-info_true&_valid_false &__info-box
-	&_show-info_true&_empty_false &__info-box
-		display none
-
-	&_show-error_true&_valid_true&_empty_true &__info-box
-		display block
+	i-access({helpers: $p.accessHelpers})
+	i-visible({helpers: $p.visibleHelpers})
 
 	&__hidden-input
 		padding 0
@@ -29,3 +25,12 @@ i-input extends i-data
 		position absolute
 		z-index-pos underall
 		opacity 0
+
+	if $p.messageHelpers
+		&_show-error_true&_valid_true &__error-box
+		&_show-info_true&_valid_false &__info-box
+		&_show-info_true&_empty_false &__info-box
+			display none
+
+		&_show-error_true&_valid_true&_empty_true &__info-box
+			display block

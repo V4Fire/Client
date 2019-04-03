@@ -10,7 +10,7 @@
  * Wrapper for using web workers with WebPack
  *
  * @example
- * RawWorker(require('raw!./workers/lanczos.js'))
+ * RawWorker(require('raw!./workers/lanczos.ts'))
  *
  * @param text - worker text
  */

@@ -7,12 +7,15 @@
  */
 
 @import "super/i-data/i-data.styl"
+@import "traits/i-visible/i-visible.styl"
 
 $p = {
-
+	visibleHelpers: true
 }
 
 b-list extends i-data
+	i-visible({helpers: $p.visibleHelpers})
+
 	&__wrapper
 	&__link
 		display flex

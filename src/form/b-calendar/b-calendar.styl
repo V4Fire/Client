@@ -7,24 +7,26 @@
  */
 
 @import "super/i-input/i-input.styl"
+@import "traits/i-width/i-width.styl"
+@import "traits/i-size/i-size.styl"
 
 $p = {
+	widthHelpers: true
+	sizeHelpers: true
 	dropdownHelpers: true
-	width: 20em
+	accessHelpers: true
+	visibleHelpers: true
 }
 
 b-calendar extends i-input
+	i-width({helpers: $p.widthHelpers, selector: ('&__label-nav')})
+	i-size({helpers: $p.sizeHelpers})
+
+	position relative
 	display inline-block
-
-	&_width_full &__label-nav
-		width 100%
-
-	&_width_auto &__label-nav
-		width auto
 
 	&__label-nav
 		justify-content space-between
-		width $p.width
 		height auto
 		text-decoration none
 		cursor pointer

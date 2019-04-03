@@ -6,9 +6,6 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-// tslint:disable:max-file-line-count
-
-import $C = require('collection.js');
 import { EventEmitter2 as EventEmitter } from 'eventemitter2';
 
 import symbolGenerator from 'core/symbol';
@@ -17,10 +14,12 @@ import IO, { Socket } from 'core/socket';
 
 import { concatUrls } from 'core/url';
 import { ModelMethods, SocketEvent, ProviderParams } from 'core/data/interface';
+import { providers } from 'core/data/const';
+
 import request, {
 
 	globalOpts,
-	CreateRequestOptions,
+	CreateRequestOpts,
 	Middlewares,
 	MiddlewareParams,
 	CacheStrategy,
@@ -37,12 +36,15 @@ import request, {
 
 } from 'core/request';
 
+export * from 'core/data/const';
 export * from 'core/data/interface';
+
 export { RequestMethods, RequestError } from 'core/request';
 export {
 
 	globalOpts,
-	CreateRequestOptions,
+	Socket,
+	CreateRequestOpts,
 	Middlewares,
 	MiddlewareParams,
 	CacheStrategy,
@@ -52,7 +54,6 @@ export {
 	RequestFunctionResponse,
 	Response,
 	RequestBody
-
 };
 
 export type EncodersTable = Record<ModelMethods | 'def', Encoders> | {};
@@ -60,11 +61,11 @@ export type DecodersTable = Record<ModelMethods | 'def', Decoders> | {};
 
 const globalEvent = new EventEmitter({
 	maxListeners: 1e3,
+	newListener: false,
 	wildcard: true
 });
 
-export const
-	providers: Dictionary<typeof Provider> = Object.createDict(),
+const
 	instanceCache: Dictionary<Provider> = Object.createDict(),
 	requestCache: Dictionary<Dictionary<RequestResponseObject>> = Object.createDict(),
 	connectCache: Dictionary<Promise<Socket>> = Object.createDict();
@@ -73,13 +74,21 @@ export const
 	$$ = symbolGenerator();
 
 /**
- * Adds a data provider to the global cache
+ * Adds a data provider to the global cache with the specified namespace
  *
  * @decorator
  * @param namespace
  */
 export function provider(namespace: string): (target: Function) => void;
+
+/**
+ * Adds a data provider to the global cache
+ *
+ * @decorator
+ * @param target
+ */
 export function provider(target: Function): void;
+// tslint:disable-next-line:completed-docs
 export function provider(nmsOrFn: Function | string): Function | void {
 	if (Object.isString(nmsOrFn)) {
 		return (target) => {
@@ -270,7 +279,7 @@ export default class Provider {
 			Object.createDict();
 
 		this.async = new Async(this);
-		this.event = new EventEmitter({maxListeners: 1e3, wildcard: true});
+		this.event = new EventEmitter({maxListeners: 1e3, newListener: false});
 
 		if (Object.isBoolean(params.listenAllEvents)) {
 			this.setReadonlyParam('listenAllEvents', params.listenAllEvents);
@@ -301,7 +310,7 @@ export default class Provider {
 	 * Returns an object with authentication params
 	 * @param params - additional parameters
 	 */
-	getAuthParams(params?: CanUndef<Dictionary>): Dictionary {
+	getAuthParams(params?: Dictionary): Dictionary {
 		return {};
 	}
 
@@ -311,7 +320,7 @@ export default class Provider {
 	 * @param url - request url
 	 * @param opts - request params
 	 */
-	resolver<T = unknown>(url: string, opts: CreateRequestOptions<T>): ResolverResult {
+	resolver<T = unknown>(url: string, opts: CreateRequestOpts<T>): ResolverResult {
 		return undefined;
 	}
 
@@ -388,16 +397,22 @@ export default class Provider {
 	 */
 	bindEvents(...providers: string[]): void {
 		this.attachToSocket((socket) => {
-			$C(providers).forEach((provider) => {
-				$C(this.events).forEach((type) => {
+			for (let i = 0; i < providers.length; i++) {
+				const
+					provider = providers[i];
+
+				for (let i = 0; i < this.events.length; i++) {
+					const
+						type = this.events[i];
+
 					socket.on(type, ({instance, type, data}) => {
 						if (instance === provider) {
 							this.dropCache();
 							this.event.emit(type, data);
 						}
 					});
-				});
-			});
+				}
+			}
 		}, {label: $$.bindEvents});
 	}
 
@@ -478,8 +493,21 @@ export default class Provider {
 	 * Drops the request cache
 	 */
 	dropCache(): void {
-		const nm = this.constructor.name;
-		$C(requestCache[nm]).forEach((el) => el.dropCache());
+		const
+			nm = this.constructor.name,
+			cache = requestCache[nm];
+
+		if (cache) {
+			for (let keys = Object.keys(cache), i = 0; i < keys.length; i++) {
+				const
+					obj = cache[keys[i]];
+
+				if (obj) {
+					obj.dropCache();
+				}
+			}
+		}
+
 		requestCache[nm] = Object.createDict();
 	}
 
@@ -489,7 +517,7 @@ export default class Provider {
 	 * @param [query]
 	 * @param [opts]
 	 */
-	get<T = unknown>(query?: RequestQuery, opts?: CreateRequestOptions<T>): RequestResponse {
+	get<T = unknown>(query?: RequestQuery, opts?: CreateRequestOpts<T>): RequestResponse {
 		if (this.baseGetURL && !this.advURL) {
 			this.base(this.baseGetURL);
 		}
@@ -519,7 +547,7 @@ export default class Provider {
 	 * @param [query]
 	 * @param [opts]
 	 */
-	peek<T = unknown>(query?: RequestQuery, opts?: CreateRequestOptions<T>): RequestResponse {
+	peek<T = unknown>(query?: RequestQuery, opts?: CreateRequestOpts<T>): RequestResponse {
 		if (this.basePeekURL && !this.advURL) {
 			this.base(this.basePeekURL);
 		}
@@ -548,7 +576,7 @@ export default class Provider {
 	 * @param [body]
 	 * @param [opts]
 	 */
-	post<T = unknown>(body?: RequestBody, opts?: CreateRequestOptions<T>): RequestResponse {
+	post<T = unknown>(body?: RequestBody, opts?: CreateRequestOpts<T>): RequestResponse {
 		const
 			url = this.url(),
 			eventName = this.name(),
@@ -573,7 +601,7 @@ export default class Provider {
 	 * @param [body]
 	 * @param [opts]
 	 */
-	add<T = unknown>(body?: RequestBody, opts?: CreateRequestOptions<T>): RequestResponse {
+	add<T = unknown>(body?: RequestBody, opts?: CreateRequestOpts<T>): RequestResponse {
 		if (this.baseAddURL && !this.advURL) {
 			this.base(this.baseAddURL);
 		}
@@ -596,7 +624,7 @@ export default class Provider {
 	 * @param [body]
 	 * @param [opts]
 	 */
-	upd<T = unknown>(body?: RequestBody, opts?: CreateRequestOptions<T>): RequestResponse {
+	upd<T = unknown>(body?: RequestBody, opts?: CreateRequestOpts<T>): RequestResponse {
 		if (this.baseUpdURL && !this.advURL) {
 			this.base(this.baseUpdURL);
 		}
@@ -619,7 +647,7 @@ export default class Provider {
 	 * @param [body]
 	 * @param [opts]
 	 */
-	del<T = unknown>(body?: RequestBody, opts?: CreateRequestOptions<T>): RequestResponse {
+	del<T = unknown>(body?: RequestBody, opts?: CreateRequestOpts<T>): RequestResponse {
 		if (this.baseDelURL && !this.advURL) {
 			this.base(this.baseDelURL);
 		}
@@ -673,7 +701,12 @@ export default class Provider {
 
 		$m.set(key, {event, data});
 		$a.setTimeout(() => {
-			$C($m).remove((el) => ($e.emit(el.event, el.data), true));
+			for (let o = $m.values(), val = o.next(); !val.done; val = o.next()) {
+				const el = val.value;
+				$e.emit(el.event, el.data);
+			}
+
+			$m.clear();
 			$e.emit('drain');
 		}, 0.1.second(), {label: $$.setEventToQueue});
 	}
@@ -686,13 +719,22 @@ export default class Provider {
 			{async: $a, constructor: {name: nm}} = this;
 
 		this.attachToSocket((socket) => {
-			$C(this.events).forEach((type) => {
+			const label = {
+				label: $$.listenSocketEvents
+			};
+
+			for (let i = 0; i < this.events.length; i++) {
+				const
+					type = this.events[i];
+
 				$a.on(socket, type, ({instance, type, data}) => {
 					const
 						f = () => Object.fastClone(data),
 						key = this.getEventKey(type, data);
 
-					this.dropCache();
+					this
+						.dropCache();
+
 					if (this.listenAllEvents) {
 						this.setEventToQueue(key, type, {
 							type,
@@ -702,13 +744,12 @@ export default class Provider {
 							}
 						});
 
-					} else if (nm && (<string>nm).camelize(false) === instance) {
+					} else if (nm.camelize(false) === instance) {
 						this.setEventToQueue(key, type, f);
 					}
-				}, {
-					label: $$.listenSocketEvents
-				});
-			});
+
+				}, label);
+			}
 
 			$a.on(socket, 'alive?', () => socket.emit('alive!'), {
 				label: $$.alive
@@ -725,8 +766,8 @@ export default class Provider {
 	 */
 	protected mergeToOpts<A = unknown, B = unknown>(
 		method: ModelMethods,
-		opts: CreateRequestOptions<A>
-	): CreateRequestOptions<B> {
+		opts: CreateRequestOpts<A>
+	): CreateRequestOpts<B> {
 		opts = opts || {};
 
 		const
@@ -738,10 +779,20 @@ export default class Provider {
 			return {...a, ...b};
 		};
 
+		const
+			mappedMiddlewares = merge(middlewares, opts.middlewares);
+
+		for (let keys = Object.keys(mappedMiddlewares), i = 0; i < keys.length; i++) {
+			const
+				key = keys[i];
+
+			mappedMiddlewares[key] = mappedMiddlewares[key].bind(this);
+		}
+
 		return {
 			...opts,
 			cacheId: this.cacheId,
-			middlewares: $C(merge(middlewares, opts.middlewares)).map((fn) => fn.bind(this)),
+			middlewares: mappedMiddlewares,
 			// tslint:disable-next-line:no-string-literal
 			encoder: merge(encoders[method] || encoders['def'], opts.encoder),
 			// tslint:disable-next-line:no-string-literal

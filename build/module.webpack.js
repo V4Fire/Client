@@ -64,14 +64,16 @@ module.exports = async function ({buildId, plugins}) {
 					}
 				},
 
+				'typograf',
+				'prelude',
+
 				{
 					loader: 'monic',
 					options: inherit(monic.typescript, {
 						replacers: [
-							include('build/context.replacer'),
-							include('build/super.replacer'),
-							include('build/ts-import.replacer'),
-							include('build/typograf.replacer')
+							include('build/replacers/context'),
+							include('build/replacers/super'),
+							include('build/replacers/ts-import')
 						]
 					})
 				}
@@ -87,14 +89,16 @@ module.exports = async function ({buildId, plugins}) {
 					options: typescript.worker
 				},
 
+				'typograf',
+				'prelude',
+
 				{
 					loader: 'monic',
 					options: inherit(monic.typescript, {
 						replacers: [
-							include('build/context.replacer'),
-							include('build/super.replacer'),
-							include('build/ts-import.replacer'),
-							include('build/typograf.replacer')
+							include('build/replacers/context'),
+							include('build/replacers/super'),
+							include('build/replacers/ts-import')
 						]
 					})
 				}
@@ -104,16 +108,19 @@ module.exports = async function ({buildId, plugins}) {
 		loaders.rules.set('js', {
 			test: /\.js$/,
 			exclude: depsRgxp,
-			use: [{
-				loader: 'monic',
-				options: inherit(monic.javascript, {
-					replacers: [
-						include('build/context.replacer'),
-						include('build/super.replacer'),
-						include('build/typograf.replacer')
-					]
-				})
-			}]
+			use: [
+				'prelude',
+
+				{
+					loader: 'monic',
+					options: inherit(monic.javascript, {
+						replacers: [
+							include('build/replacers/context'),
+							include('build/replacers/super')
+						]
+					})
+				}
+			]
 		});
 
 	} else {
@@ -182,7 +189,7 @@ module.exports = async function ({buildId, plugins}) {
 					loader: 'monic',
 					options: inherit(monic.html, {
 						replacers: [
-							include('build/html-import.replacer')
+							include('build/replacers/html-import')
 						]
 					})
 				},
@@ -203,6 +210,8 @@ module.exports = async function ({buildId, plugins}) {
 	loaders.rules.set('ss', {
 		test: /\.ss$/,
 		use: [
+			'prelude',
+
 			{
 				loader: 'snakeskin',
 				options: snakeskin.client

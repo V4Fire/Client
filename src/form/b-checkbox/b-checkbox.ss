@@ -13,6 +13,10 @@
 - template index() extends ['i-input'].index
 	- rootTag = 'span'
 
+	- block attrs
+		- super
+		? attrs['@click'] = 'onClick'
+
 	- block body
 		- super
 
@@ -20,7 +24,7 @@
 			+= self.hiddenInput()
 
 		- block wrapper
-			< _.&__wrapper
+			< _.&__wrapper @click = onClick
 				- block checkbox
 					< _.&__box
 

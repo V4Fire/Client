@@ -7,4 +7,5 @@
  */
 
 package('b-notifier')
-	.extends('i-data');
+	.extends('i-data')
+	.dependencies('b-icon');

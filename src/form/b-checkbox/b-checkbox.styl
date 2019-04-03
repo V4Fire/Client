@@ -7,12 +7,19 @@
  */
 
 @import "super/i-input/i-input.styl"
+@import "traits/i-size/i-size.styl"
 
 $p = {
 	width: 1.2em
+	sizeHelpers: true
+	accessHelpers: true
+	visibleHelpers: true
 }
 
 b-checkbox extends i-input
+	i-size({helpers: $p.sizeHelpers})
+
+	position relative
 	display inline-block
 
 	&__wrapper
@@ -22,8 +29,7 @@ b-checkbox extends i-input
 
 	&__box
 		display block
-		width $p.width
-		height @width
+		size $p.width
 		cursor pointer
 
 		&:after

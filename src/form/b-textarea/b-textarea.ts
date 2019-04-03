@@ -52,7 +52,9 @@ export default class bTextarea<
 	get height(): CanPromise<number> {
 		return this.waitStatus('ready', () => {
 			const
-				{input} = this.$refs,
+				{input} = this.$refs;
+
+			const
 				s = getComputedStyle(this.$refs.input);
 
 			return input.scrollHeight -
@@ -155,7 +157,7 @@ export default class bTextarea<
 	 */
 	@hook('mounted')
 	protected async initHeight(): Promise<void> {
-		await this.putInStream(async () => {
+		await this.dom.putInStream(async () => {
 			this.minHeight = this.$refs.input.clientHeight;
 			await this.calcHeight();
 		});

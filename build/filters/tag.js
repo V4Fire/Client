@@ -10,9 +10,6 @@
 
 const
 	$C = require('collection.js'),
-	{attachClass} = include('build/filters/helpers');
-
-const
 	dasherize = require('string-dasherize');
 
 const
@@ -21,11 +18,6 @@ const
 	isV4Prop = /^(:|@|v-)/,
 	isStaticV4Prop = /^[^[]+$/,
 	commaRgxp = /\s*,\s*/;
-
-const isRef = {
-	'ref': true,
-	':ref': true
-};
 
 const isStaticLiteral = (v) => {
 	try {
@@ -63,21 +55,13 @@ module.exports = [
 	 */
 	function normalizeComponentAttrs({attrs}) {
 		$C(attrs).forEach((el, key) => {
-			if (isRef[key]) {
-				attrs['data-component-ref'] = [el];
-
-				if (!attrs[':class']) {
-					attrs[':class'] = attachClass(['componentId']);
-				}
-			}
-
 			if (!isV4Prop.test(key)) {
 				return;
 			}
 
 			el = $C(el).map((el) => {
 				if (Object.isString(el) && isLiteral.test(el) && isStaticLiteral(el)) {
-					return `memoizeLiteral(${el})`;
+					return `opt.memoizeLiteral(${el})`;
 				}
 
 				return el;

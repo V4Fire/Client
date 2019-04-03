@@ -6,8 +6,10 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import iBlock, { ComponentElement, ModsTable } from 'super/i-block/i-block';
-import { EventEmitter2 as EventEmitter } from 'eventemitter2';
+import iBlock from 'super/i-block/i-block';
+import { Event } from 'super/i-block/modules/event';
+import { ModsTable } from 'super/i-block/modules/mods';
+import { ComponentElement } from 'core/component';
 
 export type ModEventType =
 	'set' |
@@ -57,14 +59,14 @@ export default class Block {
 	/**
 	 * Current block id
 	 */
-	get blockId(): string {
+	get id(): string {
 		return this.component.componentId;
 	}
 
 	/**
 	 * Current block name
 	 */
-	get blockName(): string {
+	get name(): string {
 		return this.component.componentName;
 	}
 
@@ -78,7 +80,7 @@ export default class Block {
 	/**
 	 * Local event emitter
 	 */
-	get event(): EventEmitter {
+	protected get event(): Event {
 		// @ts-ignore
 		return this.component.localEvent;
 	}
@@ -86,12 +88,12 @@ export default class Block {
 	/**
 	 * List of applied modifiers
 	 */
-	readonly mods?: Dictionary<CanUndef<string>>;
+	protected readonly mods?: Dictionary<CanUndef<string>>;
 
 	/**
-	 * iBlock instance
+	 * Component instance
 	 */
-	readonly component: iBlock;
+	protected readonly component: iBlock;
 
 	/**
 	 * @param component - component instance
@@ -113,7 +115,7 @@ export default class Block {
 	 * @param [modValue]
 	 */
 	getFullBlockName(modName?: string, modValue?: unknown): string {
-		return this.blockName + (modName ? `_${modName.dasherize()}_${String(modValue).dasherize()}` : '');
+		return this.name + (modName ? `_${modName.dasherize()}_${String(modValue).dasherize()}` : '');
 	}
 
 	/**
@@ -125,7 +127,7 @@ export default class Block {
 	 */
 	getFullElName(elName: string, modName?: string, modValue?: unknown): string {
 		const modStr = modName ? `_${modName.dasherize()}_${String(modValue).dasherize()}` : '';
-		return `${this.blockName}__${elName.dasherize()}${modStr}`;
+		return `${this.name}__${elName.dasherize()}${modStr}`;
 	}
 
 	/**
@@ -139,7 +141,7 @@ export default class Block {
 			sel = `.${this.getFullElName(elName)}`;
 
 		let
-			res = `${sel}.${this.blockId}`;
+			res = `${sel}.${this.id}`;
 
 		if (mods) {
 			for (let keys = Object.keys(mods), i = 0; i < keys.length; i++) {

@@ -6,22 +6,20 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import $C = require('collection.js');
 import Super, {
 
 	AsyncOpts,
 	AsyncCbOpts,
 	AsyncOnOpts,
 	ClearOptsId,
-	LinkNamesList,
+	Link as SuperLink,
+	LinkNamesList as SuperLinkNamesList,
 	ProxyCb,
 	isParams
 
 } from '@v4fire/core/core/async';
 
-import { convertEnumToDict } from 'core/helpers/other';
 export * from '@v4fire/core/core/async';
-
 export interface AsyncRequestAnimationFrameOpts<T extends object = Async> extends AsyncCbOpts<T> {
 	element?: Element;
 }
@@ -36,7 +34,7 @@ export interface AsyncDnDOpts<R = unknown, CTX extends object = Async> extends A
 	onDragEnd?: DnDCb<R, CTX> | DnDEventOpts<R, CTX>;
 }
 
-export type DnDCb<R = unknown, CTX extends object = Async> = (this: CTX, e: Event, el: Node) => R | Function;
+export type DnDCb<R = unknown, CTX extends object = Async> = Function | ((this: CTX, e: MouseEvent, el: Node) => R);
 export type AnimationFrameCb<R = unknown, CTX extends object = Async> = ProxyCb<number, R, CTX>;
 
 export interface DnDEventOpts<R = unknown, CTX extends object = Async> {
@@ -45,18 +43,25 @@ export interface DnDEventOpts<R = unknown, CTX extends object = Async> {
 }
 
 export enum ClientLinkNames {
-	animationFrame
+	animationFrame,
+	animationFramePromise
 }
 
 export type ClientLink = keyof typeof ClientLinkNames;
-export type ClientLinkNamesList = LinkNamesList & Record<ClientLink, ClientLink>;
+export type Link = SuperLink | keyof typeof ClientLinkNames;
+export type LinkNamesList = SuperLinkNamesList & Record<ClientLink, ClientLink>;
 
 const
-	linkNamesDictionary = <Record<ClientLink, ClientLink>>convertEnumToDict(ClientLinkNames);
+	linkNamesDictionary = <LinkNamesList>{...Super.linkNames, ...Object.convertEnumToDict(ClientLinkNames)};
 
 export default class Async<CTX extends object = Async<any>> extends Super<CTX> {
 	/** @override */
-	static linkNames: ClientLinkNamesList = {...Super.linkNames, ...linkNamesDictionary};
+	static linkNames: LinkNamesList = linkNamesDictionary;
+
+	/** @override */
+	protected get linkNames(): LinkNamesList {
+		return (<typeof Async>this.constructor).linkNames;
+	}
 
 	/**
 	 * Wrapper for requestAnimationFrame
@@ -84,7 +89,7 @@ export default class Async<CTX extends object = Async<any>> extends Super<CTX> {
 
 		return this.setAsync({
 			...isObj ? p : undefined,
-			name: Async.linkNames.animationFrame,
+			name: this.linkNames.animationFrame,
 			obj: fn,
 			clearFn: cancelAnimationFrame,
 			wrapper: requestAnimationFrame,
@@ -107,7 +112,9 @@ export default class Async<CTX extends object = Async<any>> extends Super<CTX> {
 	 */
 	cancelAnimationFrame(params: ClearOptsId<number>): this;
 	cancelAnimationFrame(p: any): this {
-		return this.clearAsync(p, Async.linkNames.animationFrame);
+		return this
+			.clearAsync(p, this.linkNames.animationFrame)
+			.clearAsync(p, this.linkNames.animationFramePromise);
 	}
 
 	/**
@@ -124,7 +131,7 @@ export default class Async<CTX extends object = Async<any>> extends Super<CTX> {
 	 */
 	muteAnimationFrame(params: ClearOptsId<number>): this;
 	muteAnimationFrame(p: any): this {
-		return this.markAsync('muted', p, Async.linkNames.animationFrame);
+		return this.markAsync('muted', p, this.linkNames.animationFrame);
 	}
 
 	/**
@@ -141,7 +148,7 @@ export default class Async<CTX extends object = Async<any>> extends Super<CTX> {
 	 */
 	unmuteAnimationFrame(params: ClearOptsId<number>): this;
 	unmuteAnimationFrame(p: any): this {
-		return this.markAsync('!muted', p, Async.linkNames.animationFrame);
+		return this.markAsync('!muted', p, this.linkNames.animationFrame);
 	}
 
 	/**
@@ -158,7 +165,7 @@ export default class Async<CTX extends object = Async<any>> extends Super<CTX> {
 	 */
 	suspendAnimationFrame(params: ClearOptsId<number>): this;
 	suspendAnimationFrame(p: any): this {
-		return this.markAsync('paused', p, Async.linkNames.animationFrame);
+		return this.markAsync('paused', p, this.linkNames.animationFrame);
 	}
 
 	/**
@@ -175,7 +182,7 @@ export default class Async<CTX extends object = Async<any>> extends Super<CTX> {
 	 */
 	unsuspendAnimationFrame(params: ClearOptsId<number>): this;
 	unsuspendAnimationFrame(p: any): this {
-		return this.markAsync('!paused', p, Async.linkNames.animationFrame);
+		return this.markAsync('!paused', p, this.linkNames.animationFrame);
 	}
 
 	/**
@@ -241,18 +248,26 @@ export default class Async<CTX extends object = Async<any>> extends Super<CTX> {
 		}
 
 		p.group = p.group || `dnd.${Math.random()}`;
-		p.onClear = (<any[]>[]).concat(p.onClear || []);
+
+		const
+			clearHandlers = p.onClear = (<any[]>[]).concat(p.onClear || []);
 
 		function dragStartClear(...args: unknown[]): void {
-			$C(p.onClear).forEach((fn) => fn.call(this, ...args, 'dragstart'));
+			for (let i = 0; i < clearHandlers.length; i++) {
+				clearHandlers[i].call(this, ...args, 'dragstart');
+			}
 		}
 
 		function dragClear(...args: unknown[]): void {
-			$C(p.onClear).forEach((fn) => fn.call(this, ...args, 'drag'));
+			for (let i = 0; i < clearHandlers.length; i++) {
+				clearHandlers[i].call(this, ...args, 'drag');
+			}
 		}
 
 		function dragEndClear(...args: unknown[]): void {
-			$C(p.onClear).forEach((fn) => fn.call(this, ...args, 'dragend'));
+			for (let i = 0; i < clearHandlers.length; i++) {
+				clearHandlers[i].call(this, ...args, 'dragend');
+			}
 		}
 
 		const dragStartUseCapture = !p.onDragStart || Object.isFunction(p.onDragStart) ?
@@ -287,9 +302,19 @@ export default class Async<CTX extends object = Async<any>> extends Super<CTX> {
 			const
 				links: object[] = [];
 
-			$C(['mousemove', 'touchmove']).forEach((e) => {
-				links.push(that.on(document, e, drag, {...opts, onClear: dragClear}, dragUseCapture));
-			});
+			{
+				const
+					e = ['mousemove', 'touchmove'];
+
+				for (let i = 0; i < e.length; i++) {
+					const
+						link = that.on(document, e[i], drag, {...opts, onClear: dragClear}, dragUseCapture);
+
+					if (link) {
+						links.push(link);
+					}
+				}
+			}
 
 			const dragEnd = (e) => {
 				e.preventDefault();
@@ -298,12 +323,27 @@ export default class Async<CTX extends object = Async<any>> extends Super<CTX> {
 					res = (<DnDCb>((<DnDEventOpts>p.onDragEnd).handler || p.onDragEnd)).call(this, e, el);
 				}
 
-				$C(links).forEach((id) => that.off({id, group: p.group}));
+				for (let i = 0; i < links.length; i++) {
+					that.off({
+						id: links[i],
+						group: p.group
+					});
+				}
 			};
 
-			$C(['mouseup', 'touchend']).forEach((e) => {
-				links.push(that.on(document, e, dragEnd, {...opts, onClear: dragEndClear}, dragEndUseCapture));
-			});
+			{
+				const
+					e = ['mouseup', 'touchend'];
+
+				for (let i = 0; i < e.length; i++) {
+					const
+						link = that.on(document, e[i], dragEnd, {...opts, onClear: dragEndClear}, dragEndUseCapture);
+
+					if (link) {
+						links.push(link);
+					}
+				}
+			}
 		}
 
 		this.on<Event>(el, 'mousedown touchstart', dragStart, {...opts, onClear: dragStartClear}, dragStartUseCapture);

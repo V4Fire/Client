@@ -6,12 +6,12 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-// tslint:disable:max-file-line-count
-
-import $C = require('collection.js');
 import symbolGenerator from 'core/symbol';
 import keyCodes from 'core/key-codes';
+
+import iOpenToggle, { CloseHelperEvents } from 'traits/i-open-toggle/i-open-toggle';
 import bScrollInline from 'base/b-scroll/b-scroll-inline/b-scroll-inline';
+
 import bInput, {
 
 	component,
@@ -22,16 +22,21 @@ import bInput, {
 	watch,
 	mod,
 	wait,
+
 	Value,
 	ComponentConverter,
-	CloseHelperEvents,
 	ModEvent,
-	SetModEvent
+	SetModEvent,
+	ModsDecl
 
 } from 'form/b-input/b-input';
 
+export { CloseHelperEvents };
 export * from 'form/b-input/b-input';
-export type FormValue = CanUndef<string>;
+
+export type FormValue = CanUndef<
+	string
+>;
 
 export interface Option {
 	label: string;
@@ -63,9 +68,9 @@ export default class bSelect<
 	FV extends FormValue = FormValue,
 	D extends Dictionary = Dictionary
 // @ts-ignore
-> extends bInput<V, FV, D> {
+> extends bInput<V, FV, D> implements iOpenToggle {
 	/** @override */
-	@prop({default: (obj) => $C(obj).get('data') || obj || []})
+	@prop({default: (obj) => obj && obj.data || obj || []})
 	readonly componentConverter?: ComponentConverter<Option[]>;
 
 	/**
@@ -95,7 +100,7 @@ export default class bSelect<
 	/**
 	 * Selected value store
 	 */
-	@field<bSelect>((o) => o.link((val) => {
+	@field<bSelect>((o) => o.sync.link((val) => {
 		val = o.initDefaultValue(val);
 		return val !== undefined ? String(val) : undefined;
 	}))
@@ -106,7 +111,7 @@ export default class bSelect<
 	 * Select options
 	 */
 	get options(): NOption[] {
-		return (<NOption[]>this.getField('optionsStore')).slice();
+		return (<NOption[]>this.field.get('optionsStore')).slice();
 	}
 
 	/**
@@ -114,13 +119,18 @@ export default class bSelect<
 	 * @param value
 	 */
 	set options(value: NOption[]) {
-		this.setField('optionsStore', value);
+		this.field.set('optionsStore', value);
 	}
 
 	/** @override */
 	get default(): unknown {
 		return this.defaultProp !== undefined ? String(this.defaultProp) : undefined;
 	}
+
+	/** @inheritDoc */
+	static readonly mods: ModsDecl = {
+		...iOpenToggle.mods
+	};
 
 	/** @override */
 	@field()
@@ -134,7 +144,7 @@ export default class bSelect<
 			o.initComponentValues().catch(stderr);
 		},
 
-		init: (o) => o.link<Option[]>((val) => o.dataProvider ? o.optionsStore || [] : o.normalizeOptions(val))
+		init: (o) => o.sync.link<Option[]>((val) => o.dataProvider ? o.optionsStore || [] : o.normalizeOptions(val))
 	})
 
 	protected optionsStore!: NOption[];
@@ -161,7 +171,7 @@ export default class bSelect<
 	async initLoad(data?: unknown, silent?: boolean): Promise<void> {
 		try {
 			/// FIXME
-			if (this.initAfterOpen && !this.b.is.mobile) {
+			if (this.initAfterOpen && !this.browser.is.mobile) {
 				await this.async.wait(() => this.mods.opened !== 'false' || this.mods.focused === 'true');
 			}
 
@@ -182,14 +192,14 @@ export default class bSelect<
 		return false;
 	}
 
-	/** @override */
+	/** @see iOpenToggle.open */
 	@mod('focused', true)
 	@wait('ready')
 	async open(): Promise<boolean> {
 		const
 			{select} = this.$refs;
 
-		if (this.b.is.mobile) {
+		if (this.browser.is.mobile) {
 			select && select.focus();
 			this.emit('open');
 			return true;
@@ -200,7 +210,7 @@ export default class bSelect<
 				return true;
 			}
 
-			if (this.ifOnce('opened') < 2) {
+			if (this.opt.ifOnce('opened') < 2) {
 				// @ts-ignore
 				await Promise.all([this.nextTick(), this.waitRef('scroll')]);
 			}
@@ -227,9 +237,9 @@ export default class bSelect<
 		return false;
 	}
 
-	/** @override */
+	/** @see iOpenToggle.close */
 	async close(): Promise<boolean> {
-		if (await super.close()) {
+		if (await iOpenToggle.close(this)) {
 			if (this.selected) {
 				await this.onOptionSelected(this.selected);
 			}
@@ -240,10 +250,15 @@ export default class bSelect<
 		return false;
 	}
 
+	/** @see iOpenToggle.toggle */
+	toggle(): Promise<boolean> {
+		return iOpenToggle.toggle(this);
+	}
+
 	/** @override */
 	@wait('ready')
 	async focus(): Promise<boolean> {
-		if (this.b.is.mobile) {
+		if (this.browser.is.mobile) {
 			const
 				{select} = this.$refs;
 
@@ -261,7 +276,7 @@ export default class bSelect<
 	/** @override */
 	@wait('ready')
 	async blur(): Promise<boolean> {
-		if (this.b.is.mobile) {
+		if (this.browser.is.mobile) {
 			const
 				{select} = this.$refs;
 
@@ -276,279 +291,8 @@ export default class bSelect<
 		return super.blur();
 	}
 
-	/** @override */
-	protected initRemoteData(): CanUndef<NOption[]> {
-		if (!this.db) {
-			return;
-		}
-
-		const
-			val = this.convertDBToComponent<Option[]>(this.db);
-
-		if (Object.isArray(val)) {
-			return this.options = this.normalizeOptions(val);
-		}
-
-		return this.options;
-	}
-
-	/** @override */
-	protected initBaseAPI(): void {
-		super.initBaseAPI();
-		this.normalizeOptions = this.instance.normalizeOptions.bind(this);
-	}
-
-	/**
-	 * Normalizes the specified options and returns it
-	 * @param options
-	 */
-	protected normalizeOptions(options: CanUndef<Option[]>): NOption[] {
-		return $C(options).to([]).map((el) => {
-			el.label = String(el.label);
-			el.value = el.value !== undefined ? String(el.value) : el.label;
-			return el;
-		});
-	}
-
-	/**
-	 * Initializes component values
-	 */
-	@hook('beforeDataCreate')
-	protected async initComponentValues(): Promise<void> {
-		const
-			data = this.$$data,
-			labels = {},
-			values = {};
-
-		$C(data.optionsStore).forEach((el) => {
-			const
-				val = el.value;
-
-			if (el.selected && !this.selected && !this.value) {
-				if (this.mods.focused !== 'true') {
-					this.syncLinks('valueProp', this.getOptionLabel(el));
-				}
-
-				data.selected = val;
-			}
-
-			values[val] = el;
-			labels[el.label] = el;
-		});
-
-		this.labels = labels;
-		this.values = values;
-
-		const
-			{valueStore: value, selected} = data;
-
-		if (selected === undefined) {
-			if (value) {
-				const
-					option = labels[String(value)];
-
-				if (option) {
-					data.selected = option.value;
-				}
-			}
-
-		} else if (!value) {
-			const val = values[String(selected)];
-			data.valueStore = data.valueBufferStore = val ? this.getOptionLabel(val) : '';
-		}
-
-		const
-			{scroll} = this.$refs;
-
-		if (scroll) {
-			await scroll.initScroll();
-		}
-	}
-
-	/**
-	 * Synchronization for the selected field
-	 * @param selected
-	 */
-	@watch('selected')
-	@wait('ready')
-	protected async syncSelectedStoreWatcher(selected: FV): Promise<void> {
-		const
-			{block: $b} = this,
-			prevSelected = $b.element('option', {selected: true});
-
-		if (prevSelected) {
-			$b.setElMod(prevSelected, 'option', 'selected', false);
-		}
-
-		if (selected === undefined) {
-			this.value = <V>'';
-			return;
-		}
-
-		const
-			option = this.values[String(selected)];
-
-		if (!option) {
-			return;
-		}
-
-		const
-			{mobile} = this.b.is;
-
-		if (this.mods.focused !== 'true' || mobile) {
-			this.value = <V>this.getOptionLabel(option);
-		}
-
-		if (mobile) {
-			return;
-		}
-
-		try {
-			// @ts-ignore
-			const [scroll] = await Promise.all([
-				this.waitRef<bScrollInline>('scroll', {label: $$.$$selectedWait}),
-				this.nextTick({label: $$.$$selected})
-			]);
-
-			const
-				node = $b.element<HTMLElement>(`option[data-value="${option.value}"]`);
-
-			if (node) {
-				$b.setElMod(node, 'option', 'selected', true);
-
-				const
-					selTop = node.offsetTop,
-					selHeight = node.offsetHeight,
-					selOffset = selTop + selHeight;
-
-				const
-					scrollHeight = await scroll.height,
-					scrollTop = (await scroll.scrollOffset).top;
-
-				if (selOffset > scrollHeight) {
-					if (selOffset > scrollTop + scrollHeight) {
-						await scroll.setScrollOffset({top: selTop - scrollHeight + selHeight});
-
-					} else if (selOffset < scrollTop + node.offsetHeight) {
-						await scroll.setScrollOffset({top: selTop});
-					}
-
-				} else if (selOffset < scrollTop) {
-					await scroll.setScrollOffset({top: selTop});
-				}
-			}
-
-		} catch {}
-	}
-
-	/**
-	 * Returns a label of the specified option
-	 * @param option
-	 */
-	protected getOptionLabel(option: Option): string {
-		return String(option.inputLabel != null ? option.inputLabel : option.label);
-	}
-
-	/**
-	 * Synchronizes :selected and :value
-	 * @param [selected]
-	 */
-	protected syncValue(selected?: string): void {
-		if (selected) {
-			this.selected = <FV>selected;
-		}
-
-		if (!this.selected) {
-			return;
-		}
-
-		const
-			label = this.values[String(this.selected)];
-
-		if (label) {
-			this.value = <V>this.getOptionLabel(label);
-		}
-	}
-
-	/**
-	 * Returns true if the specified option is selected
-	 * @param option
-	 */
-	protected isSelected(option: NOption): boolean {
-		return this.selected || this.value ? option.value === this.selected : Boolean(option.selected);
-	}
-
-	/** @override */
-	protected initCloseHelpers(events?: CloseHelperEvents): void {
-		if (this.b.is.mobile) {
-			return;
-		}
-
-		super.initCloseHelpers(events);
-	}
-
-	/**
-	 * Handler: option select
-	 *
-	 * @param [value]
-	 * @emits actionChange(selected: FV)
-	 */
-	@watch({
-		field: '?$el:click',
-		wrapper: (o, cb) => o.delegateElement('option', (e) => cb(e.delegateTarget.dataset.value))
-	})
-
-	protected async onOptionSelected(value?: string): Promise<void> {
-		const
-			v = this.values && this.values[String(this.selected)];
-
-		if (value !== this.selected || v && this.value !== this.getOptionLabel(v)) {
-			this.syncValue(value);
-			this.emit('actionChange', this.selected);
-		}
-
-		await this.close();
-	}
-
-	/** @override */
-	protected async onEdit(e: Event): Promise<void> {
-		this.valueBufferStore =
-			(<HTMLInputElement>e.target).value || '';
-
-		this.async.setTimeout(() => {
-			const
-				rgxp = new RegExp(`^${RegExp.escape(this.value)}`, 'i');
-
-			if (
-				$C(this.labels).some((el, key) => {
-					if (rgxp.test(key)) {
-						this.selected = <FV>(<NonNullable<Option>>el).value;
-						return true;
-					}
-				})
-
-			) {
-				return this.open();
-			}
-
-			this.selected = undefined;
-			return this.close();
-
-		}, 0.2.second(), {
-			label: $$.quickSearch
-		});
-	}
-
-	/** @override */
-	protected async onBlockValueChange(newValue: V, oldValue: CanUndef<V>): Promise<void> {
-		try {
-			await this.async.wait(() => this.mods.opened !== 'true', {label: $$.onBlockValueChange});
-			super.onBlockValueChange(newValue, oldValue);
-		} catch {}
-	}
-
-	/** @override */
-	protected onOpenedChange(e: ModEvent | SetModEvent): void {
+	/** @see iOpenToggle.onOpenedChange */
+	onOpenedChange(e: ModEvent | SetModEvent): void {
 		const
 			{async: $a} = this;
 
@@ -658,11 +402,310 @@ export default class bSelect<
 		});
 	}
 
+	/** @see iOpenToggle.onKeyClose */
+	onKeyClose(e: KeyboardEvent): Promise<void> {
+		return iOpenToggle.onKeyClose(this, e);
+	}
+
+	/** @see iOpenToggle.onTouchClose */
+	onTouchClose(e: MouseEvent): Promise<void> {
+		return iOpenToggle.onTouchClose(this, e);
+	}
+
+	/** @override */
+	protected initRemoteData(): CanUndef<NOption[]> {
+		if (!this.db) {
+			return;
+		}
+
+		const
+			val = this.convertDBToComponent<Option[]>(this.db);
+
+		if (Object.isArray(val)) {
+			return this.options = this.normalizeOptions(val);
+		}
+
+		return this.options;
+	}
+
+	/** @override */
+	protected initBaseAPI(): void {
+		super.initBaseAPI();
+		this.normalizeOptions = this.instance.normalizeOptions.bind(this);
+	}
+
+	/**
+	 * Normalizes the specified options and returns it
+	 * @param options
+	 */
+	protected normalizeOptions(options?: Option[]): NOption[] {
+		const
+			res = <NOption[]>[];
+
+		if (options) {
+			for (let i = 0; i < options.length; i++) {
+				const
+					el = options[i];
+
+				res.push({
+					label: String(el.label),
+					value: el.value !== undefined ? String(el.value) : el.label
+				});
+			}
+		}
+
+		return res;
+	}
+
+	/**
+	 * Initializes component values
+	 */
+	@hook('beforeDataCreate')
+	protected async initComponentValues(): Promise<void> {
+		const
+			data = this.$$data,
+			labels = {},
+			values = {};
+
+		for (let o = <NOption[]>data.optionsStore, i = 0; i < o.length; i++) {
+			const
+				el = o[i],
+				val = el.value;
+
+			if (el.selected && !this.selected && !this.value) {
+				if (this.mods.focused !== 'true') {
+					this.sync.syncLinks('valueProp', this.getOptionLabel(el));
+				}
+
+				data.selected = val;
+			}
+
+			values[val] = el;
+			labels[el.label] = el;
+		}
+
+		this.labels = labels;
+		this.values = values;
+
+		const
+			{valueStore: value, selected} = data;
+
+		if (selected === undefined) {
+			if (value) {
+				const
+					option = labels[String(value)];
+
+				if (option) {
+					data.selected = option.value;
+				}
+			}
+
+		} else if (!value) {
+			const val = values[String(selected)];
+			data.valueStore = data.valueBufferStore = val ? this.getOptionLabel(val) : '';
+		}
+
+		const
+			{scroll} = this.$refs;
+
+		if (scroll) {
+			await scroll.initScroll();
+		}
+	}
+
+	/**
+	 * Synchronization for the selected field
+	 * @param selected
+	 */
+	@watch('selected')
+	@wait('ready')
+	protected async syncSelectedStoreWatcher(selected: FV): Promise<void> {
+		const
+			{block: $b} = this,
+			prevSelected = $b.element('option', {selected: true});
+
+		if (prevSelected) {
+			$b.setElMod(prevSelected, 'option', 'selected', false);
+		}
+
+		if (selected === undefined) {
+			this.value = <V>'';
+			return;
+		}
+
+		const
+			option = this.values[String(selected)];
+
+		if (!option) {
+			return;
+		}
+
+		const
+			{mobile} = this.browser.is;
+
+		if (this.mods.focused !== 'true' || mobile) {
+			this.value = <V>this.getOptionLabel(option);
+		}
+
+		if (mobile) {
+			return;
+		}
+
+		try {
+			// @ts-ignore
+			const [scroll] = await Promise.all([
+				this.waitRef<bScrollInline>('scroll', {label: $$.$$selectedWait}),
+				this.nextTick({label: $$.$$selected})
+			]);
+
+			const
+				node = $b.element<HTMLElement>(`option[data-value="${option.value}"]`);
+
+			if (node) {
+				$b.setElMod(node, 'option', 'selected', true);
+
+				const
+					selTop = node.offsetTop,
+					selHeight = node.offsetHeight,
+					selOffset = selTop + selHeight;
+
+				const
+					scrollHeight = await scroll.height,
+					scrollTop = (await scroll.scrollOffset).top;
+
+				if (selOffset > scrollHeight) {
+					if (selOffset > scrollTop + scrollHeight) {
+						await scroll.setScrollOffset({top: selTop - scrollHeight + selHeight});
+
+					} else if (selOffset < scrollTop + node.offsetHeight) {
+						await scroll.setScrollOffset({top: selTop});
+					}
+
+				} else if (selOffset < scrollTop) {
+					await scroll.setScrollOffset({top: selTop});
+				}
+			}
+
+		} catch {}
+	}
+
+	/**
+	 * Returns a label of the specified option
+	 * @param option
+	 */
+	protected getOptionLabel(option: Option): string {
+		return String(option.inputLabel != null ? option.inputLabel : option.label);
+	}
+
+	/**
+	 * Synchronizes :selected and :value
+	 * @param [selected]
+	 */
+	protected syncValue(selected?: string): void {
+		if (selected) {
+			this.selected = <FV>selected;
+		}
+
+		if (!this.selected) {
+			return;
+		}
+
+		const
+			label = this.values[String(this.selected)];
+
+		if (label) {
+			this.value = <V>this.getOptionLabel(label);
+		}
+	}
+
+	/**
+	 * Returns true if the specified option is selected
+	 * @param option
+	 */
+	protected isSelected(option: NOption): boolean {
+		return this.selected || this.value ? option.value === this.selected : Boolean(option.selected);
+	}
+
+	/** @see iOpenToggle.initCloseHelpers */
+	@hook('beforeDataCreate')
+	protected initCloseHelpers(events?: CloseHelperEvents): void {
+		if (this.browser.is.mobile) {
+			return;
+		}
+
+		iOpenToggle.initCloseHelpers(this, events);
+	}
+
+	/**
+	 * Handler: option select
+	 *
+	 * @param [value]
+	 * @emits actionChange(selected: FV)
+	 */
+	@watch({
+		field: '?$el:click',
+		wrapper: (o, cb) => o.dom.delegateElement('option', (e) => cb(e.delegateTarget.dataset.value))
+	})
+
+	protected async onOptionSelected(value?: string): Promise<void> {
+		const
+			v = this.values && this.values[String(this.selected)];
+
+		if (value !== this.selected || v && this.value !== this.getOptionLabel(v)) {
+			this.syncValue(value);
+			this.emit('actionChange', this[this.blockValueField]);
+		}
+
+		await this.close();
+	}
+
+	/** @override */
+	protected async onEdit(e: Event): Promise<void> {
+		this.valueBufferStore =
+			(<HTMLInputElement>e.target).value || '';
+
+		this.async.setTimeout(() => {
+			const
+				rgxp = new RegExp(`^${RegExp.escape(this.value)}`, 'i');
+
+			let
+				some = false;
+
+			for (let keys = Object.keys(this.labels), i = 0; i < keys.length; i++) {
+				const
+					key = keys[i],
+					el = this.labels[key];
+
+				if (el && rgxp.test(key)) {
+					this.selected = <FV>el.value;
+					some = true;
+					break;
+				}
+			}
+
+			if (some) {
+				return this.open();
+			}
+
+			this.selected = undefined;
+			return this.close();
+
+		}, 0.2.second(), {
+			label: $$.quickSearch
+		});
+	}
+
+	/** @override */
+	protected async onBlockValueChange(newValue: V, oldValue?: V): Promise<void> {
+		try {
+			await this.async.wait(() => this.mods.opened !== 'true', {label: $$.onBlockValueChange});
+			super.onBlockValueChange(newValue, oldValue);
+		} catch {}
+	}
+
 	/** @override */
 	protected created(): void {
-		super.created();
-
-		if (!this.b.is.mobile) {
+		if (!this.browser.is.mobile) {
 			this.on('asyncRender', async () => {
 				try {
 					await (await this.waitRef<bScrollInline>('scroll')).initScroll();
