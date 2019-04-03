@@ -6,41 +6,37 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-// tslint:disable:max-file-line-count
+import iTheme from 'traits/i-theme/i-theme';
+import iAccess from 'traits/i-access/i-access';
+import iVisible from 'traits/i-visible/i-visible';
 
-import iData, { component, prop, field, system, hook, wait, p, ModsDecl } from 'super/i-data/i-data';
+import iData, {
+
+	component,
+	prop,
+	field,
+	system,
+	wait,
+	p,
+	ModsDecl
+
+} from 'super/i-data/i-data';
+
+import {
+
+	Value,
+	FormValue,
+	Validators,
+	ValidatorMsg,
+	ValidatorParams,
+	ValidatorResult,
+	ValidationResult,
+	ValidatorsDecl
+
+} from 'super/i-input/modules/interface';
+
+export * from 'super/i-input/modules/interface';
 export * from 'super/i-data/i-data';
-
-export type ValidatorMsg = Nullable<
-	string |
-	Dictionary<string> |
-	((err: ValidatorResult) => string)
->;
-
-export interface ValidatorParams extends Dictionary {
-	msg?: ValidatorMsg;
-	showMsg?: boolean;
-}
-
-export interface ValidatorError<T = unknown> extends Dictionary {
-	name: string;
-	value?: T;
-}
-
-export type ValidatorResult<T = unknown> =
-	boolean |
-	null |
-	ValidatorError<T>;
-
-export type ValidationError<T = unknown> = [string, ValidatorError<T>];
-export type ValidationResult<T = unknown> = boolean | ValidationError<T>;
-
-export type Validators = Array<string | Dictionary<ValidatorParams> | [string, ValidatorParams]>;
-export type ValidatorsDecl<T = iInput, P = ValidatorParams> = Dictionary<(this: T, params: P) =>
-	CanPromise<boolean | unknown>>;
-
-export type Value = unknown;
-export type FormValue = Value;
 
 @component({
 	model: {
@@ -49,11 +45,11 @@ export type FormValue = Value;
 	}
 })
 
-export default class iInput<
+export default abstract class iInput<
 	V extends Value = Value,
 	FV extends FormValue = FormValue,
 	D extends Dictionary = Dictionary
-> extends iData<D> {
+> extends iData<D> implements iTheme, iVisible, iAccess {
 	/**
 	 * Initial component value
 	 */
@@ -65,13 +61,6 @@ export default class iInput<
 	 */
 	@prop({required: false})
 	readonly defaultProp?: V;
-
-	/**
-	 * If true, then the component value will be marked as UTC
-	 * (if value is date)
-	 */
-	@prop(Boolean)
-	readonly utc: boolean = false;
 
 	/**
 	 * Input id
@@ -130,12 +119,13 @@ export default class iInput<
 	/**
 	 * Previous component value
 	 */
-	@system()
+	@system({replace: false})
 	prevValue?: V;
 
 	/**
 	 * Link to the component validators
 	 */
+	@p({replace: false})
 	get blockValidators(): typeof iInput['blockValidators'] {
 		return (<typeof iInput>this.instance.constructor).blockValidators;
 	}
@@ -153,7 +143,7 @@ export default class iInput<
 	/**
 	 * Link to the form that is associated to the component
 	 */
-	@p({cache: false})
+	@p({cache: false, replace: false})
 	get connectedForm(): CanPromise<CanUndef<HTMLFormElement>> {
 		return this.waitStatus('ready', () =>
 			(this.form ? document.querySelector<HTMLFormElement>(`#${this.form}`) : this.$el.closest('form')) || undefined);
@@ -162,8 +152,9 @@ export default class iInput<
 	/**
 	 * Component value
 	 */
+	@p({replace: false})
 	get value(): V {
-		return <V>this.getField('valueStore');
+		return <V>this.field.get('valueStore');
 	}
 
 	/**
@@ -171,12 +162,13 @@ export default class iInput<
 	 * @param value
 	 */
 	set value(value: V) {
-		this.setField('valueStore', value);
+		this.field.set('valueStore', value);
 	}
 
 	/**
 	 * Component default value
 	 */
+	@p({replace: false})
 	get default(): unknown {
 		return this.defaultProp;
 	}
@@ -184,7 +176,7 @@ export default class iInput<
 	/**
 	 * Form value of the component
 	 */
-	@p({cache: false})
+	@p({cache: false, replace: false})
 	get formValue(): Promise<FV> {
 		return (async () => {
 			await this.nextTick();
@@ -226,7 +218,7 @@ export default class iInput<
 	/**
 	 * Grouped form value of the component
 	 */
-	@p({cache: false})
+	@p({cache: false, replace: false})
 	get groupFormValue(): Promise<CanArray<FV>> {
 		return (async () => {
 			if (this.name) {
@@ -241,7 +233,7 @@ export default class iInput<
 				for (let i = 0; i < list.length; i++) {
 					promises.push((async () => {
 						const
-							block = this.$<iInput>(list[i], '[class*="_form_true"]');
+							block = this.dom.getComponent<iInput>(list[i], '[class*="_form_true"]');
 
 						if (block && form === block.connectedForm) {
 							const
@@ -272,7 +264,11 @@ export default class iInput<
 		valid: [
 			'true',
 			'false'
-		]
+		],
+
+		...iTheme.mods,
+		...iAccess.mods,
+		...iVisible.mods
 	};
 
 	/**
@@ -295,7 +291,7 @@ export default class iInput<
 	/**
 	 * Component value field name
 	 */
-	@field()
+	@field({replace: false})
 	protected readonly blockValueField: string = 'value';
 
 	/** @override */
@@ -304,10 +300,27 @@ export default class iInput<
 	/**
 	 * Component value store
 	 */
-	@field<iInput>((o) => o.link((val) => o.initDefaultValue(val)))
+	@field<iInput>({
+		replace: false,
+		init: (o) => o.sync.link((val) => o.initDefaultValue(val))
+	})
+
 	protected valueStore!: unknown;
 
-	/** @override */
+	/** @see iAccess.enable */
+	@p({replace: false})
+	enable(): Promise<boolean> {
+		return iAccess.enable(this);
+	}
+
+	/** @see iAccess.disable */
+	@p({replace: false})
+	disable(): Promise<boolean> {
+		return iAccess.disable(this);
+	}
+
+	/** @see iAccess.focus */
+	@p({replace: false})
 	@wait('ready')
 	async focus(): Promise<boolean> {
 		const
@@ -321,7 +334,8 @@ export default class iInput<
 		return false;
 	}
 
-	/** @override */
+	/** @see iAccess.blur */
+	@p({replace: false})
 	@wait('ready')
 	async blur(): Promise<boolean> {
 		const
@@ -339,6 +353,7 @@ export default class iInput<
 	 * Clears value of the component
 	 * @emits clear()
 	 */
+	@p({replace: false})
 	@wait('ready')
 	async clear(): Promise<boolean> {
 		if (this[this.blockValueField]) {
@@ -357,6 +372,7 @@ export default class iInput<
 	 * Resets the component value to default
 	 * @emits reset()
 	 */
+	@p({replace: false})
 	@wait('ready')
 	async reset(): Promise<boolean> {
 		if (this[this.blockValueField] !== this.default) {
@@ -400,6 +416,7 @@ export default class iInput<
 	 * @emits validationFail(failedValidation: ValidationError<FV>)
 	 * @emits validationEnd(result: boolean, failedValidation?: ValidationError<FV>)
 	 */
+	@p({replace: false})
 	@wait('ready')
 	async validate(params?: ValidatorParams): Promise<ValidationResult<FV>> {
 		if (!this.validators.length) {
@@ -481,6 +498,7 @@ export default class iInput<
 	/**
 	 * Handler: focus
 	 */
+	@p({replace: false})
 	protected onFocus(): void {
 		this.setMod('focused', true);
 	}
@@ -488,6 +506,7 @@ export default class iInput<
 	/**
 	 * Handler: blur
 	 */
+	@p({replace: false})
 	protected onBlur(): void {
 		this.setMod('focused', false);
 	}
@@ -496,6 +515,7 @@ export default class iInput<
 	 * Handler: component value change
 	 * @emits change(value)
 	 */
+	@p({replace: false})
 	protected onBlockValueChange(newValue: V, oldValue: CanUndef<V>): void {
 		this.prevValue = oldValue;
 		if (newValue !== oldValue || newValue && typeof newValue === 'object') {
@@ -507,6 +527,7 @@ export default class iInput<
 	 * Initializes a default value (if needed) for the blockValue field
 	 * @param value - blockValue field value
 	 */
+	@p({replace: false})
 	protected initDefaultValue(value?: unknown): V {
 		const
 			i = this.instance,
@@ -524,16 +545,19 @@ export default class iInput<
 	/**
 	 * Initializes events for valueStore
 	 */
-	@hook('created')
+	@p({hook: 'created', replace: false})
 	protected initValueEvents(): void {
-		const k = this.blockValueField;
-		this.watch(k + (`${k}Store` in this ? 'Store' : ''), this.onBlockValueChange);
+		this.watch(this.blockValueField, this.onBlockValueChange);
 		this.on('actionChange', () => this.validate());
 	}
 
 	/** @override */
 	protected initModEvents(): void {
 		super.initModEvents();
+
+		iAccess.initModEvents(this);
+		iVisible.initModEvents(this);
+
 		this.localEvent.on('block.mod.*.valid.*', ({type, value}) => {
 			if (type === 'remove' && value === 'false' || type === 'set' && value === 'true') {
 				this.error = undefined;

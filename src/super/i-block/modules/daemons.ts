@@ -17,7 +17,9 @@ export interface DaemonWatchObject extends WatchOptions {
 	field: string;
 }
 
-export type DaemonWatcher = DaemonWatchObject | string;
+export type DaemonWatcher =
+	DaemonWatchObject |
+	string;
 
 export interface DaemonsAsyncOpts {
 	label?: Nullable<AsyncOpts['label']>;
@@ -136,7 +138,7 @@ export default class Daemons {
 		const
 			fn = daemon.wrappedFn || daemon.fn;
 
-		if (daemon.immediate !== false) {
+		if (daemon.immediate !== true) {
 			const asyncOptions = {
 				group: `daemons-${this.component.componentName}`,
 				label: `daemons-${name}`,

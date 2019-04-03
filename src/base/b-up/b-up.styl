@@ -7,12 +7,15 @@
  */
 
 @import "super/i-block/i-block.styl"
+@import "traits/i-visible/i-visible.styl"
 
 $p = {
-
+	visibleHelpers: true
 }
 
 b-up extends i-block
+	i-visible({helpers: $p.visibleHelpers})
+
 	display flex
 	flex-direction column
 	justify-content flex-end

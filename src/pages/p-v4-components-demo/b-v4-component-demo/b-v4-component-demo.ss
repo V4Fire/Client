@@ -11,6 +11,8 @@
 - include 'super/i-block'|b as placeholder
 
 - template index() extends ['i-block'].index
+	- rootWrapper = true
+
 	- block body
 		- block component
 			< .&__component
@@ -31,7 +33,7 @@
 						< span.&__buttons
 							< button &
 								v-for = val in mod |
-								:class = getElClasses({modValue: {selected: debugComponent.mods[key] === getModValue(val)}}) |
+								:class = provide.elClasses({modValue: {selected: debugComponent.mods[key] === getModValue(val)}}) |
 								@click = setDebugMod($event.target, key, getModValue(val))
 							.
 								{{ getModValue(val) }}

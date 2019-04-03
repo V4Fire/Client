@@ -7,14 +7,17 @@
  */
 
 @import "super/i-data/i-data.styl"
+@import "traits/i-visible/i-visible.styl"
 
 $p = {
-	lockHelpers: false
 	sideBarTransition: EASING_DURATION linear
 	overlayTansition: EASING_DURATION ease-in
+	visibleHelpers: true
 }
 
 b-sidebar extends i-data
+	i-visible({helpers: $p.visibleHelpers})
+
 	fixed top 0 left 0
 	z-index-pos modal
 

@@ -12,6 +12,7 @@
 
 - template index() extends ['i-input'].index
 	- rootTag = 'span'
+	- rootWrapper = true
 
 	- block body
 		- super
@@ -33,7 +34,7 @@
 							.
 
 							< template v-else
-								+= self.gIcon(['preIcon'], {'g-icon': {}})
+								< @b-icon :value = preIcon
 
 					- block input
 						< _.&__cell.&__input-cont
@@ -72,22 +73,22 @@
 							.
 
 							< template v-else
-								+= self.gIcon(['icon'], {'g-icon': {}})
+								< @b-icon :value = icon
 
 					- block clear
-						< _.&__cell.&__icon.&__clear v-if = resetButton && !readonly
+						< _.&__cell.&__icon.&__clear
 							< span v-e:mousedown.prevent | @click = onClear
-								< b-icon &
+								< @b-icon &
 									:value = 'clear' |
 									:hint = l('Clear')
 								.
 
 					- block validation
 						< _.&__cell.&__icon.&__valid-status v-if = m.valid != null
-							+= self.gIcon(["{true: 'done', false: 'clear'}[m.valid]"])
+							< @b-icon :value = {true: 'done', false: 'clear'}[m.valid]
 
 					- block progress
-						< _.&__cell.&__icon.&__progress v-if = dataProvider
-							< b-progress-icon v-once
+						< _.&__cell.&__icon.&__progress
+							< @b-progress-icon
 
 					- block icons

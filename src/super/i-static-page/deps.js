@@ -7,18 +7,21 @@
  */
 
 const
-	config = require('config');
+	config = require('config'),
+	runtime = config.runtime();
 
 const deps = module.exports = {
 	scripts: new Map([
-		['collection.js', ['collection.js/dist/collection.sync.min.js']],
-		['vue', [`vue/dist/vue.runtime${isProd ? '.min' : ''}.js`]],
 		['requestidlecallback', 'requestidlecallback/index.js'],
 		['eventemitter2', 'eventemitter2/lib/eventemitter2.js']
 	]),
 
 	styles: new Map()
 };
+
+if (runtime.vue) {
+	deps.scripts.set('vue', [`vue/dist/vue.runtime${isProd ? '.min' : ''}.js`]);
+}
 
 if (!config.webpack.fatHTML()) {
 	deps.scripts.set('fg-loadcss', 'fg-loadcss/src/loadCSS.js');

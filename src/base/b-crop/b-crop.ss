@@ -10,12 +10,15 @@
 
 - include 'super/i-block'|b as placeholder
 
-- template index(params) extends ['i-block'].index
+- template index() extends ['i-block'].index
+	- rootWrapper = true
+	- overWrapper = true
+
 	- block body
 		- super
 		- block progress
 			< .&__progress
-				< b-progress-icon
+				< @b-progress-icon
 
 		- block crop
 			< .&__area ref = area

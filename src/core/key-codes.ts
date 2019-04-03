@@ -6,8 +6,6 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import $C = require('collection.js');
-
 enum KeyCodes {
 	// Hacks
 	ANDROID_229 = 229,
@@ -158,7 +156,16 @@ export default {
 	 * @param keyCode
 	 */
 	getKeyNameFromKeyCode(keyCode: number): string | null {
-		return $C(this).one.search((el) => el === keyCode);
+		for (let keys = Object.keys(KeyCodes), i = 0; i < keys.length; i++) {
+			const
+				key = keys[i];
+
+			if (KeyCodes[key] === keyCode) {
+				return key;
+			}
+		}
+
+		return null;
 	},
 
 	...KeyCodes

@@ -49,8 +49,8 @@ const
 	files = $C(resources).reduce((arr, el) => arr.concat(glob.sync(path.join(el, components))), []).reverse();
 
 const
-	componentClassRgxp = /^\s*export\s+default\s+class\s+(([\s\S]*?)\s+extends\s+[\s\S]*?)\s*{/m,
 	componentRgxp = /@component\(([^@]*?)\)\n+\s*export\s+/,
+	componentClassRgxp = /^\s*export\s+default\s+(?:abstract\s+)?class\s+(([\s\S]*?)\s+extends\s+[\s\S]*?)(?:\s+implements\s+[^{]*|\s*)\{/m,
 	propsRgxp = /^(\t+)@prop\s*\([^@]+?\)+\n+\1([ \w$]+)(?:[\?!]?:\s*[ \w|&$?()\[\]{}<>'"`:.]+?)?\s*(?:=|;$)/gm;
 
 const
@@ -59,12 +59,11 @@ const
 
 $C(files).forEach((el) => {
 	const
-		literals = [],
-		file = escaper.replace(fs.readFileSync(el, {encoding: 'utf-8'}), true, literals),
+		file = escaper.replace(fs.readFileSync(el, {encoding: 'utf-8'})),
 		componentClass = componentClassRgxp.exec(file);
 
 	const
-		p = ((v) => v && new Function(`return ${escaper.paste(v[1], literals) || '{}'}`)())(componentClass && componentRgxp.exec(file));
+		p = ((v) => v && new Function(`return ${escaper.paste(v[1]) || '{}'}`)())(componentClass && componentRgxp.exec(file));
 
 	if (!p) {
 		return;
@@ -174,25 +173,12 @@ function tagFilter({name, attrs = {}}) {
 		filter({name, attrs});
 	});
 
-	let
-		isSync = attrs['v-sync'];
-
-	const
-		asyncVal = attrs['v-async'],
-		asyncBackVal = attrs['v-async-back'],
-		asyncCounter = attrs['v-async-counter'];
-
-	delete attrs['v-sync'];
-	delete attrs['v-async'];
-	delete attrs['v-async-back'];
-	delete attrs['v-async-counter'];
-
-	if (name === 'component' || validators.blockName(name)) {
+	if (name === 'component' || attrs[':instance-of'] || validators.blockName(name)) {
 		let
 			componentName;
 
 		if (attrs[':instance-of']) {
-			componentName = attrs[':instance-of'][0];
+			componentName = camelize(attrs[':instance-of'][0]);
 			delete attrs[':instance-of'];
 
 		} else {
@@ -242,20 +228,6 @@ function tagFilter({name, attrs = {}}) {
 		});
 
 		if (isFunctional || vFunc) {
-			const
-				model = attrs['v-model'];
-
-			if (component && model) {
-				const
-					modelInfo = component.model;
-
-				if (modelInfo) {
-					attrs[`:${dasherize(modelInfo.prop)}`] = model;
-					attrs[`@${modelInfo.event.dasherize()}`] = [`${model[0]}=$event`];
-					delete attrs['v-model'];
-				}
-			}
-
 			if (smart) {
 				if (vFunc) {
 					attrs[':is'] = [`'${attrs['is'][0]}' + (${vFunc[0]} ? '-functional' : '')`];
@@ -264,10 +236,6 @@ function tagFilter({name, attrs = {}}) {
 				} else {
 					attrs['is'] = [`${attrs['is'][0]}-functional`];
 				}
-			}
-
-			if (!asyncVal && !asyncBackVal) {
-				isSync = true;
 			}
 		}
 
@@ -287,26 +255,8 @@ function tagFilter({name, attrs = {}}) {
 		});
 
 		if (component && component.inheritMods !== false && !attrs[':mods-prop']) {
-			attrs[':mods-prop'] = ['provideMods()'];
+			attrs[':mods-prop'] = ['provide.mods()'];
 		}
-	}
-
-	if (!isSync && !attrs.ref && !attrs[':ref'] && (asyncVal || asyncBackVal)) {
-		const
-			uid = Math.random(),
-			selfId = asyncVal ? asyncVal[0] : asyncBackVal[0],
-			id = selfId !== true ? selfId : asyncCounter ? `'${uid}' + ${asyncCounter[0]}` : `'${uid}'`;
-
-		const
-			p = asyncBackVal ? 'Back' : '',
-			key = attrs['v-else'] ? 'v-else-if' : attrs['v-else-if'] ? 'v-else-if' : 'v-if';
-
-		attrs[key] = attachVIf(
-			(attrs[key] || []).concat(`async${p}Components[regAsync${p}Component(${id})]`),
-			asyncBackVal ? '||' : '&&'
-		);
-
-		delete attrs['v-else'];
 	}
 }
 

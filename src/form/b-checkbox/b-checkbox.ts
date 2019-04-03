@@ -7,7 +7,10 @@
  */
 
 import symbolGenerator from 'core/symbol';
+import iSize, { SizeDictionary } from 'traits/i-size/i-size';
 import iInput, { component, prop, watch, ModsDecl } from 'super/i-input/i-input';
+
+export { SizeDictionary };
 export * from 'super/i-input/i-input';
 
 export type Value = boolean;
@@ -17,6 +20,7 @@ export const
 	$$ = symbolGenerator();
 
 @component({
+	flyweight: true,
 	functional: {
 		dataProvider: undefined
 	}
@@ -26,7 +30,7 @@ export default class bCheckbox<
 	V extends Value = Value,
 	FV extends FormValue = FormValue,
 	D extends Dictionary = Dictionary
-> extends iInput<V, FV, D> {
+> extends iInput<V, FV, D> implements iSize {
 	/** @override */
 	@prop({type: Boolean, required: false})
 	readonly valueProp?: V;
@@ -52,6 +56,16 @@ export default class bCheckbox<
 		return this.defaultProp || false;
 	}
 
+	/** @see iSize.lt */
+	get lt(): SizeDictionary {
+		return iSize.lt;
+	}
+
+	/** @see iSize.gt */
+	get gt(): SizeDictionary {
+		return iSize.gt;
+	}
+
 	/** @inheritDoc */
 	static readonly mods: ModsDecl = {
 		checked: [
@@ -59,10 +73,7 @@ export default class bCheckbox<
 			'false'
 		],
 
-		theme: [
-			bCheckbox.PARENT,
-			'menu'
-		]
+		...iSize.mods
 	};
 
 	/** @override */
@@ -101,21 +112,6 @@ export default class bCheckbox<
 	 * @param e
 	 * @emits actionChange(value: V)
 	 */
-	@watch({
-		field: '?$el:click',
-		wrapper: (o, cb) => (e) => {
-			const
-				{block: $b} = o;
-
-			if (
-				e.target.closest($b.getElSelector('wrapper')) ||
-				e.target.closest($b.getElSelector('hidden-input'))
-			) {
-				return cb(e);
-			}
-		}
-	})
-
 	protected async onClick(e: Event): Promise<void> {
 		await this.focus();
 		await this.toggle();
@@ -125,7 +121,7 @@ export default class bCheckbox<
 	/** @override */
 	protected initModEvents(): void {
 		super.initModEvents();
-		this.bindModTo('checked', 'valueStore');
+		this.sync.mod('checked', 'valueStore');
 		this.localEvent.on('block.mod.*.checked.*', (e) => {
 			this.value = <V>(e.type !== 'remove' && e.value === 'true');
 			this.emit(this.value ? 'check' : 'uncheck');

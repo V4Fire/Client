@@ -13,6 +13,7 @@
 - template index() extends ['i-data'].index
 	- rootTag = 'span'
 	- messageHelpers = true
+	- rootWrapper = true
 
 	- block body
 		- super
@@ -32,13 +33,13 @@
 						.
 
 						< template v-else
-							+= self.gIcon(['preIcon'], {'g-icon': {}})
+							< @b-icon :value = preIcon
 
 				- block link
 					< a.&__cell.&__link &
 						ref = link |
 						:href = href |
-						:class = setHint(hintPos) |
+						:class = provide.hintClasses(hintPos) |
 						:-hint = t(hint) |
 						${attrs|!html}
 					.
@@ -58,8 +59,8 @@
 						.
 
 						< template v-else
-							+= self.gIcon(['icon'], {'g-icon': {}})
+							< @b-icon :value = icon
 
 				- block progress
-					< _.&__cell.&__icon.&__progress v-if = dataProvider
-						< b-progress-icon v-once
+					< _.&__cell.&__icon.&__progress
+						< @b-progress-icon

@@ -80,7 +80,7 @@ export default class bDynamicPage extends iDynamicPage {
 	/**
 	 * Component name
 	 */
-	@field((o) => o.link())
+	@field((o) => o.sync.link())
 	page?: string;
 
 	/**
@@ -125,6 +125,6 @@ export default class bDynamicPage extends iDynamicPage {
 	/** @override */
 	protected initModEvents(): void {
 		super.initModEvents();
-		this.bindModTo('hidden', 'page', (v) => !v);
+		this.sync.mod('hidden', 'page', (v) => !v);
 	}
 }

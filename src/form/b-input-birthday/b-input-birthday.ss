@@ -27,7 +27,7 @@
 						:selected = value.getMonth() |
 						:options = months |
 						:resetButton = false |
-						:mods = provideMods({width: 'full'}) |
+						:mods = provide.mods({width: 'full'}) |
 						@change = onValueUpdate |
 						@actionChange = onActionChange
 					.
@@ -38,7 +38,7 @@
 						:selected = value.getDate() |
 						:options = days |
 						:resetButton = false |
-						:mods = provideMods({width: 'full'}) |
+						:mods = provide.mods({width: 'full'}) |
 						@change = onValueUpdate |
 						@actionChange = onActionChange
 					.
@@ -49,7 +49,7 @@
 						:selected = value.getFullYear() |
 						:options = years |
 						:resetButton = false |
-						:mods = provideMods({width: 'full'}) |
+						:mods = provide.mods({width: 'full'}) |
 						@change = onValueUpdate |
 						@actionChange = onActionChange
 					.

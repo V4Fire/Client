@@ -9,7 +9,7 @@
 import iBlock, { component, prop } from 'super/i-block/i-block';
 export * from 'super/i-block/i-block';
 
-@component({functional: true, tiny: true})
+@component({functional: true, flyweight: true})
 export default class bFlagIcon extends iBlock {
 	/**
 	 * Component value
