@@ -12,9 +12,9 @@ import iBlock, { component, system, hook, watch, wait, prop } from 'super/i-bloc
 export * from 'super/i-block/i-block';
 
 /**
- * -1 - Предыдущий
- * 0 - Не изменилось
- * 1 - Следующий
+ * -1 - Previous
+ * 0 - Not changed
+ * 1 - Next
  */
 export type SlideDirection = number;
 
@@ -41,7 +41,7 @@ export type AlignType = keyof typeof alignTypes;
 export type Mode = keyof typeof sliderModes;
 
 /**
- * Вернет true если переданное значение находится в диапазоне X > 0 && X <= 1
+ * Returns true if the specified value is in the range X > 0 && X <= 1
  * @param v
  */
 export function isBetweenZeroAndOne(v: number): boolean {
@@ -49,7 +49,7 @@ export function isBetweenZeroAndOne(v: number): boolean {
 }
 
 /**
- * Вернет true если переданное значение больше 0 и конечно
+ * Returns true if the specified value is greater than 0 and is not infinite
  * @param v
  */
 export function isNotInfinitePositiveNumber(v: number): boolean {
@@ -59,35 +59,34 @@ export function isNotInfinitePositiveNumber(v: number): boolean {
 @component({functional: true})
 export default class bSlider extends iBlock {
 	/**
-	 * Режим работы слайдера
-	 *   *) scroll - будет использоваться скролл
-	 *   *) slider - будет использоваться реализация слайдера (невозможно пропускать слайды)
+	 * Slider mode
+	 *   *) scroll - scroll will be used
+	 *   *) slider - slider implementation will be used (it is impossible to skip slides)
 	 */
 	@prop({type: String, validator: (v) => Boolean(sliderModes[v])})
 	readonly mode: Mode = 'slider';
 
 	/**
-	 * Тип выравнивания слайдов
-	 *   *) none - работает только для mode === 'scroll'
+	 * Slide alignment type
+	 *   *) none - only works for mode === 'scroll'
 	 */
 	@prop({type: String, validator: (v) => Boolean(alignTypes[v])})
 	readonly align: AlignType = 'center';
 
 	/**
-	 * На сколько сдвиг по оси X соответствует движению пальца
+	 * How much does the shift along the X axis correspond to the movement of the finger
 	 */
 	@prop({type: Number, validator: isBetweenZeroAndOne})
 	readonly deltaX: number = 0.9;
 
 	/**
-	 * Минимально необходимый процент для прокрутки слайдера на другой слайд
+	 * The minimum required percentage to scroll the slider to another slide
 	 */
 	@prop({type: Number, validator: isBetweenZeroAndOne})
 	readonly threshold: number = 0.3;
 
 	/**
-	 * Минимально необходимый процент для прокрутки слайдера на другой слайд
-	 * при быстром свайпе по слайдеру
+	 * The minimum required percentage for the scroll slider to another slide in fast motion on slider
 	 */
 	@prop({type: Number, validator: isBetweenZeroAndOne})
 	readonly fastSwipeThreshold: number = 0.05;
@@ -99,38 +98,38 @@ export default class bSlider extends iBlock {
 	readonly fastSwipeDelay: number = (0.3).seconds();
 
 	/**
-	 * Минимальный порог смещения по оси X при котором будет считаться что пользовать двигает слайдер (в px)
+	 * The minimum displacement threshold along the X axis at which the slider will be considered to be used (in px)
 	 */
 	@prop({type: Number, validator: isNotInfinitePositiveNumber})
 	readonly swipeToleranceX: number = 10;
 
 	/**
-	 * Минимальный порог смещения по оси Y при котором будет считаться что пользовать двигает слайдер (в px)
+	 * The minimum Y offset threshold at which the slider will be considered to be used (in px)
 	 */
 	@prop({type: Number, validator: isNotInfinitePositiveNumber})
 	readonly swipeToleranceY: number = 50;
 
 	/**
-	 * Количество слайдов в элементе
+	 * The number of slides in the slider
 	 */
 	@system()
 	length: number = 0;
 
 	/**
-	 * Текущий слайд
+	 * Pointer to current slide
 	 */
 	@system()
 	current: number = 0;
 
 	/**
-	 * true, если mode === 'slider'
+	 * true, if mode === 'slider'
 	 */
 	get isSlider(): boolean {
 		return this.mode === 'slider';
 	}
 
 	/**
-	 * Вернет текущую прокрутку слайдера
+	 * Returns the current slider scroll
 	 */
 	get currentOffset(): number {
 		const
@@ -164,50 +163,50 @@ export default class bSlider extends iBlock {
 	};
 
 	/**
-	 * X позиция первого касания на слайдере
+	 * X position of the first touch on the slider
 	 */
 	@system()
 	protected startX: number = 0;
 
 	/**
-	 * Y позиция первого касания на слайдере
+	 * Y position of the first touch on the slider
 	 */
 	@system()
 	protected startY: number = 0;
 
 	/**
-	 * Разница между положения касания по оси X при начале слайдинг и в конце
+	 * The difference between the position of the touch on the X axis at the beginning of the slide and at the end
 	 */
 	@system()
 	protected diffX: number = 0;
 
 	/**
-	 * Пройден ли минимальный порог для начала слайдинга слайдов
+	 * Is the minimum threshold for starting slide slides passed
 	 * @see swipeTolerance
 	 */
 	@system()
 	protected isTolerancePassed: boolean = false;
 
 	/**
-	 * Позиции элементов
+	 * Slide positions
 	 */
 	@system()
 	protected slidesRects: SlideRect[] = [];
 
 	/**
-	 * Размер и позиция слайдера
+	 * Slider size and position
 	 */
 	@system()
 	protected viewRect?: ClientRect;
 
 	/**
-	 * Хранит временную метку начала касания на слайдере
+	 * Stores the timestamp of the start of the touch on the slider
 	 */
 	@system()
 	protected startTime: number = 0;
 
 	/**
-	 * Вернет true если пользователь начал прокрутку страницы
+	 * Returns true if the user has started scrolling
 	 */
 	@system()
 	protected scrolling: boolean = true;
@@ -216,7 +215,7 @@ export default class bSlider extends iBlock {
 	protected tmp: {swiping?: boolean} = {};
 
 	/**
-	 * Обновляет состояние слайдера
+	 * Updates slider state
 	 */
 	syncState(): void {
 		const
@@ -269,8 +268,8 @@ export default class bSlider extends iBlock {
 	}
 
 	/**
-	 * Переключение на следующий слайд
-	 * @param dir - направление
+	 * Switch to next slide
+	 * @param dir - direction
 	 */
 	changeSlide(dir: SlideDirection): boolean {
 		const
@@ -309,7 +308,7 @@ export default class bSlider extends iBlock {
 	}
 
 	/**
-	 * Обработчик: сохраняет позицию начального нажатия на экране
+	 * Handler: keeps the initial touch position on the screen
 	 * @param e
 	 */
 	protected onStart(e: TouchEvent): void {
@@ -334,8 +333,7 @@ export default class bSlider extends iBlock {
 	}
 
 	/**
-	 * Обработчик: отменяет скролл если пытаются просвайпить слайдер вбок, устанавливает изменение
-	 * положения слайдера
+	 * Handler: cancels the scroll if trying to scroll the slider sideways, sets the modified position of the slider
 	 *
 	 * @param e
 	 * @emits moveStart()
@@ -377,7 +375,7 @@ export default class bSlider extends iBlock {
 	}
 
 	/**
-	 * Обработчик: устанавливает нужную позицию слайдеру
+	 * Handler: sets the end position to the slider
 	 * @emits moveEnd(dir: SwipeDirection, isChanged: boolean)
 	 */
 	protected onRelease(): void {
