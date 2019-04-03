@@ -71,12 +71,10 @@ module.exports = async function ({buildId, plugins}) {
 				terserOptions: {
 					ecma: 6,
 					safari10: true,
-					compress: {
-						warnings: false,
-						ecma: 6,
-						keep_fnames: true,
-						keep_classnames: true,
-					},
+					warnings: false,
+					ecma: 6,
+					keep_fnames: true,
+					keep_classnames: true,
 
 					output: {
 						comments: false
