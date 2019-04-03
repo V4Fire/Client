@@ -21,8 +21,15 @@ export interface ObserveOptions {
 	group?: string;
 	once?: boolean;
 	timeout?: number;
-	startObserveCondition?: Function;
 	handleTransitionEnd?: boolean;
+
+	/**
+	 * How an element should be deactivated after he was seen, only if once is set to true
+	 *   *) remove - element will be removed from inView directive
+	 *   *) deactivate - element will not be removed from inView directive, he will be deactivated after was seen,
+	 *      you can activate specified element later, he will become observable again
+	 */
+	removeStrategy?: 'remove' | 'deactivate';
 
 	/**
 	 * May slowdown your app performance.
@@ -57,6 +64,7 @@ export interface DirectiveOptions extends VNodeDirective {
 	value?: ObserveOptions & {threshold?: number} | Function;
 }
 
+export type InitOptions = ObserveOptions & IntersectionObserverOptions;
 export type ObservableElementsMap = Map<HTMLElement, ObservableElement>;
 export type ObservableElementRect = ElementRect & {observable: ObservableElement};
 export type ObservableElement = Observable & ObserveOptions & IntersectionObserverOptions;

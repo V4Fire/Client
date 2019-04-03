@@ -147,8 +147,10 @@ export default abstract class AbstractInView {
 			count: true,
 			isLeaving: false,
 			isDeactivated: false,
+			removeStrategy: 'remove',
 			id: String(Math.random()),
 			group: 'inView-base',
+			threshold: 1,
 			...options
 		};
 	}

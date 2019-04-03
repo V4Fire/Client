@@ -12,9 +12,9 @@ import iBlock, { component, system, hook, watch, wait, prop } from 'super/i-bloc
 export * from 'super/i-block/i-block';
 
 /**
- * -1 - Предыдущий
- * 0 - Не изменилось
- * 1 - Следующий
+ * -1 - To previous slide
+ * 0 - Not changed
+ * 1 - To next slide
  */
 export type SlideDirection = -1 | 0 | 1;
 export type Mode = 'slider' | 'scroll';
@@ -100,7 +100,7 @@ export default class bSlider extends iBlock {
 	readonly swipeToleranceX: number = 10;
 
 	/**
-	 * Минимальный порог смещения по оси Y при котором будет считаться что пользовать двигает слайдер (в px)
+	 * Минимальный порог смещения по оси Y при котором будет считаться что пользовать не двигает слайдер (в px)
 	 */
 	@prop({type: Number, validator: isNotInfinitePositiveNumber})
 	readonly swipeToleranceY: number = 50;

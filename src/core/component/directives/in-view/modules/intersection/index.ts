@@ -74,6 +74,11 @@ export default class InView extends Super {
 		}
 
 		this.clearAllAsync(observable);
+
+		if (observable.removeStrategy === 'remove') {
+			return this.remove(el);
+		}
+
 		observable.isDeactivated = true;
 		return true;
 	}

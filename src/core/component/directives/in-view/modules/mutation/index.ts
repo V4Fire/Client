@@ -165,20 +165,30 @@ export default class InView extends Super {
 	 * @param el
 	 */
 	stopObserve(el: HTMLElement): boolean {
-		const observable = this.get(el);
+		const
+			observable = this.get(el);
+
+		let
+			res = true;
 
 		if (!observable) {
 			return false;
 		}
 
 		this.clearAllAsync(observable);
-		observable.isDeactivated = true;
+
+		if (observable.removeStrategy === 'remove') {
+			res = this.remove(el);
+
+		} else {
+			observable.isDeactivated = true;
+		}
 
 		if (!observable.polling) {
 			this.recalculateDeffer();
 		}
 
-		return true;
+		return res;
 	}
 
 	/**
