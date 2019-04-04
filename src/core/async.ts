@@ -69,7 +69,7 @@ export default class Async<CTX extends object = Async<any>> extends Super<CTX> {
 	 * @param fn - callback function
 	 * @param [element] - link for the element
 	 */
-	requestAnimationFrame<T = unknown>(fn: AnimationFrameCb<T, CTX>, element?: Element): number;
+	requestAnimationFrame<T = unknown>(fn: AnimationFrameCb<T, CTX>, element?: Element): Nullable<number>;
 
 	/**
 	 * Wrapper for requestAnimationFrame
@@ -82,8 +82,12 @@ export default class Async<CTX extends object = Async<any>> extends Super<CTX> {
 	 *   *) [group] - group name for the task
 	 *   *) [onClear] - clear handler
 	 */
-	requestAnimationFrame<T = unknown>(fn: AnimationFrameCb<T, CTX>, params: AsyncRequestAnimationFrameOpts<CTX>): number;
-	requestAnimationFrame<T>(fn: AnimationFrameCb<T, CTX>, p: any): number {
+	requestAnimationFrame<T = unknown>(
+		fn: AnimationFrameCb<T, CTX>,
+		params: AsyncRequestAnimationFrameOpts<CTX>
+	): Nullable<number>;
+
+	requestAnimationFrame<T>(fn: AnimationFrameCb<T, CTX>, p: any): Nullable<number> {
 		const
 			isObj = Object.isObject(p);
 
