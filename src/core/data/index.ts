@@ -90,6 +90,12 @@ export function provider(nmsOrFn: Function | string): Function | void {
 	providers[nmsOrFn.name] = <typeof Provider>nmsOrFn;
 }
 
+const methodsPayload = {
+	GET: 'query',
+	HEAD: 'query',
+	undefined: 'body'
+};
+
 /**
  * Base data provider
  */
@@ -502,7 +508,7 @@ export default class Provider {
 		const req = this.request(url, this.resolver, this.mergeToOpts('get', {
 			externalRequest: this.externalRequest,
 			...opts,
-			query,
+			[methodsPayload[method]]: query,
 			method
 		}));
 
@@ -531,7 +537,7 @@ export default class Provider {
 
 		const req = this.request(url, this.resolver, this.mergeToOpts('peek', {
 			...opts,
-			query,
+			[methodsPayload[method]]: query,
 			method
 		}));
 
