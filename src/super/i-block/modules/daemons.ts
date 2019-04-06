@@ -45,7 +45,7 @@ export interface DaemonSpawnedObj {
 }
 
 export interface DaemonHookParams {
-	after?: Set<string>;
+	after: CanUndef<Set<string>>;
 }
 
 export type DaemonWatcher = DaemonWatchObject | string;
