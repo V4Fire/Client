@@ -290,7 +290,7 @@ export default class Daemons {
  */
 function mergeDaemons(a: Daemon, b: Daemon): Daemon {
 	const
-		hook = mergeHooks(a, b) || [],
+		hook = mergeHooks(a, b),
 		watch = (b.watch || []).union(a.watch || []);
 
 	return {
