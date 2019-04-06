@@ -258,8 +258,7 @@ export default class Daemons {
 			this.wrapDaemonFn(daemon);
 
 			const
-				isHooksObject = Object.isObject(daemon.hook),
-				hooks = isHooksObject ? Object.keys(<DaemonHookObject>daemon.hook) : <Hooks[]>daemon.hook;
+				hooks = Object.isObject(daemon.hook) ? Object.keys(daemon.hook) : daemon.hook;
 
 			if (hooks && hooks.length) {
 				for (let i = 0; i < hooks.length; i++) {
@@ -267,7 +266,7 @@ export default class Daemons {
 						hook = hooks[i];
 
 					const params = {
-						after: isHooksObject ? new Set([...(<DaemonHookObject>daemon.hook)[hook]]) : undefined
+						after: Object.isObject(daemon.hook) ? new Set([...daemon.hook[hook]]) : undefined
 					};
 
 					this.bindToHook(hook, name, params);
