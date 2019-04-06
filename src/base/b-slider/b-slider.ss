@@ -13,7 +13,6 @@
 - template index() extends ['i-block'].index
 	- overWrapper = false
 
-
 	- windowEvents = { &
 		'@touchstart': 'onStart',
 		'@touchmove': 'onMove',
@@ -21,7 +20,6 @@
 	} .
 
 	- block body
-
 		< .&__window &
 			v-if = isSlider |
 			${windowEvents}
