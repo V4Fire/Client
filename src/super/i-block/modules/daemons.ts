@@ -17,7 +17,9 @@ export interface DaemonWatchObject extends WatchOptions {
 	field: string;
 }
 
-export type DaemonWatcher = DaemonWatchObject | string;
+export type DaemonHookObject = {
+	[P in keyof Record<Hooks, string>]?: CanArray<string>;
+};
 
 export interface DaemonsAsyncOpts {
 	label?: Nullable<AsyncOpts['label']>;
@@ -26,7 +28,7 @@ export interface DaemonsAsyncOpts {
 }
 
 export interface Daemon {
-	hook?: Hooks[];
+	hook?: Hooks[] | DaemonHookObject;
 	watch?: DaemonWatcher[];
 	wait?: Statuses;
 	immediate?: boolean;
@@ -42,6 +44,11 @@ export interface DaemonSpawnedObj {
 	asyncOptions?: DaemonsAsyncOpts;
 }
 
+export interface DaemonHookParams {
+	after?: Set<string>;
+}
+
+export type DaemonWatcher = DaemonWatchObject | string;
 export type SpawnedDaemon = DaemonSpawnedObj | Function;
 export type DaemonsDict = Dictionary<Daemon>;
 
@@ -188,14 +195,14 @@ export default class Daemons {
 	 * @param hook
 	 * @param name
 	 */
-	protected bindToHook(hook: string, name: string): void {
+	protected bindToHook(hook: string, name: string, params?: DaemonHookParams): void {
 		const
 			// @ts-ignore
 			{hooks} = this.component.meta;
 
 		hooks[hook].push({
 			fn: () => this.run(name),
-			after: undefined
+			...params
 		});
 	}
 
@@ -250,9 +257,20 @@ export default class Daemons {
 
 			this.wrapDaemonFn(daemon);
 
-			if (daemon.hook && daemon.hook.length) {
-				for (let i = 0; i < daemon.hook.length; i++) {
-					this.bindToHook(daemon.hook[i], name);
+			const
+				isHooksObject = Object.isObject(daemon.hook),
+				hooks = isHooksObject ? Object.keys(<DaemonHookObject>daemon.hook) : <Hooks[]>daemon.hook;
+
+			if (hooks && hooks.length) {
+				for (let i = 0; i < hooks.length; i++) {
+					const
+						hook = hooks[i];
+
+					const params = {
+						after: isHooksObject ? new Set([...(<DaemonHookObject>daemon.hook)[hook]]) : undefined
+					};
+
+					this.bindToHook(hook, name, params);
 				}
 			}
 
@@ -273,7 +291,7 @@ export default class Daemons {
  */
 function mergeDaemons(a: Daemon, b: Daemon): Daemon {
 	const
-		hook = (a.hook || []).union(b.hook || []),
+		hook = mergeHooks(a, b) || [],
 		watch = (b.watch || []).union(a.watch || []);
 
 	return {
@@ -281,5 +299,30 @@ function mergeDaemons(a: Daemon, b: Daemon): Daemon {
 		...a,
 		hook,
 		watch
+	};
+}
+
+/**
+ * Merge daemons hooks
+ *
+ * @param a - base daemon hooks
+ * @param b - parent daemon hooks
+ */
+function mergeHooks(a: Daemon, b: Daemon): CanUndef<DaemonHookObject | Hooks[]> {
+	const
+		{hook: aHooks} = a,
+		{hook: bHooks} = b;
+
+	if (!aHooks && !bHooks) {
+		return;
+	}
+
+	const
+		aHooksAsObject = Array.isArray(aHooks) ? aHooks.reduce((acc, a) => (acc[a] = undefined, acc), {}) : aHooks,
+		bHooksAsObject = Array.isArray(bHooks) ? bHooks.reduce((acc, a) => (acc[a] = undefined, acc), {}) : bHooks;
+
+	return {
+		...bHooksAsObject,
+		...aHooksAsObject
 	};
 }
