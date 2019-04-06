@@ -266,7 +266,7 @@ export default class Daemons {
 						hook = hooks[i];
 
 					const params = {
-						after: Object.isObject(daemon.hook) ? new Set([...daemon.hook[hook]]) : undefined
+						after: Object.isObject(daemon.hook) ? new Set(...[].concat(daemon.hook[hook])) : undefined
 					};
 
 					this.bindToHook(hook, name, params);
