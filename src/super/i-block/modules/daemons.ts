@@ -316,8 +316,10 @@ function mergeHooks(a: Daemon, b: Daemon): CanUndef<DaemonHookObject | Hooks[]> 
 		return;
 	}
 
+	const convertHooksToObject = (h) => Array.isArray(h) ? h.reduce((acc, a) => (acc[a] = undefined, acc), {}) : h;
+
 	return {
-		...Array.isArray(aHooks) ? aHooks.reduce((acc, a) => (acc[a] = undefined, acc), {}) : aHooks,
-		...Array.isArray(bHooks) ? bHooks.reduce((acc, a) => (acc[a] = undefined, acc), {}) : bHooks
+		...convertHooksToObject(bHooks),
+		...convertHooksToObject(aHooks)
 	};
 }
