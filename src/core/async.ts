@@ -222,7 +222,7 @@ export default class Async<CTX extends object = Async<any>> extends Super<CTX> {
 	 * @param el
 	 * @param [useCapture]
 	 */
-	dnd(el: Element, useCapture?: boolean): string | symbol;
+	dnd(el: Element, useCapture?: boolean): Nullable<string>;
 
 	/**
 	 * @param el
@@ -236,8 +236,8 @@ export default class Async<CTX extends object = Async<any>> extends Super<CTX> {
 	 *   *) [onDrag]
 	 *   *) [onDragEnd]
 	 */
-	dnd<T = unknown>(el: Element, params: AsyncDnDOpts<T, CTX>): string | symbol;
-	dnd<T>(el: Element, params?: boolean | AsyncDnDOpts<T, CTX>): string | symbol {
+	dnd<T = unknown>(el: Element, params: AsyncDnDOpts<T, CTX>): Nullable<string>;
+	dnd<T>(el: Element, params?: boolean | AsyncDnDOpts<T, CTX>): Nullable<string> {
 		let
 			useCapture,
 			p!: AsyncDnDOpts<CTX> & AsyncCbOpts<CTX>;
@@ -252,6 +252,10 @@ export default class Async<CTX extends object = Async<any>> extends Super<CTX> {
 		}
 
 		p.group = p.group || `dnd.${Math.random()}`;
+
+		if (this.locked) {
+			return null;
+		}
 
 		const
 			clearHandlers = p.onClear = (<any[]>[]).concat(p.onClear || []);
