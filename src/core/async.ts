@@ -210,6 +210,7 @@ export default class Async<CTX extends object = Async<any>> extends Super<CTX> {
 		return new Promise((resolve, reject) => {
 			this.requestAnimationFrame(resolve, {
 				...isObj ? p : undefined,
+				promise: true,
 				element: isObj ? p.element : p,
 				onClear: this.onPromiseClear(resolve, reject)
 			});
