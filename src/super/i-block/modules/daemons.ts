@@ -260,7 +260,7 @@ export default class Daemons {
 			const
 				hooks = Object.isObject(daemon.hook) ? Object.keys(daemon.hook) : daemon.hook;
 
-			if (hooks && hooks.length) {
+			if (hooks) {
 				for (let i = 0; i < hooks.length; i++) {
 					const
 						hook = hooks[i];
@@ -273,7 +273,7 @@ export default class Daemons {
 				}
 			}
 
-			if (daemon.watch && daemon.watch.length) {
+			if (daemon.watch) {
 				for (let i = 0; i < daemon.watch.length; i++) {
 					this.bindToWatch(daemon.watch[i], name);
 				}
