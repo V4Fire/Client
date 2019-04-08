@@ -28,7 +28,7 @@
     "postinstall": "npm run removeBadDeps"
   },
   "dependencies": {
-    "@v4fire/core": "git+https://github.com/V4Fire/Core.git#semver",
+    "@v4fire/core": "git+https://github.com/V4Fire/Core.git#v3",
     "babel-polyfill": "^6.26.0",
     "escaper": "^3.0.1",
     "eventemitter2": "^5.0.1",
