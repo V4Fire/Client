@@ -27,6 +27,12 @@ export default class bProgress extends iBlock implements iTheme, iProgress, iVis
 	readonly valueProp?: number;
 
 	/**
+	 * If true, then the component value will be reset after complete
+	 */
+	@prop(Boolean)
+	readonly resetOnComplete: boolean = false;
+
+	/**
 	 * Progress value
 	 */
 	get value(): CanUndef<number> {
@@ -40,22 +46,18 @@ export default class bProgress extends iBlock implements iTheme, iProgress, iVis
 	 * @emits complete()
 	 */
 	set value(value: CanUndef<number>) {
-		const
-			label = {label: $$.complete};
-
 		(async () => {
 			this.field.set('valueStore', value);
 
 			if (value === 100) {
 				try {
-					await this.async.sleep(0.8.second(), label);
-					this.field.set('valueStore', 0);
 					this.emit('complete');
 
-				} catch {}
+					if (this.resetOnComplete) {
+						this.field.set('valueStore', 0);
+					}
 
-			} else {
-				this.async.clearTimeout(label);
+				} catch {}
 			}
 		})();
 	}
