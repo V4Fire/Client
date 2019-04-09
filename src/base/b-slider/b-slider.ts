@@ -299,7 +299,7 @@ export default class bSlider extends iBlock {
 		super.initModEvents();
 		this.sync.mod('mode', 'mode', String);
 		this.sync.mod('align', 'align', String);
-		this.sync.mod('fake', 'useFake', String);
+		this.sync.mod('fake', 'dynamicHeight', String);
 	}
 
 	/** @override */
