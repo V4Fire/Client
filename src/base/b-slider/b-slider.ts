@@ -65,6 +65,12 @@ export default class bSlider extends iBlock {
 	readonly mode: Mode = 'slider';
 
 	/**
+	 * if true, will be used duplicate slot to calculate the dynamic height
+	 */
+	@prop(Boolean)
+	readonly useFake: boolean = true;
+
+	/**
 	 * Slide alignment type
 	 */
 	@prop({type: String, validator: (v) => Boolean(alignTypes[v])})
@@ -293,6 +299,7 @@ export default class bSlider extends iBlock {
 		super.initModEvents();
 		this.sync.mod('mode', 'mode', String);
 		this.sync.mod('align', 'align', String);
+		this.sync.mod('fake', 'fake', String);
 	}
 
 	/** @override */

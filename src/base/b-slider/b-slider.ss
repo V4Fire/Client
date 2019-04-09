@@ -28,7 +28,10 @@
 
 		< .&__window v-else
 			< .&__view-wrapper ref = view
-				< .&__fake-view-wrapper ref = fake
+				< .&__fake-view-wrapper &
+					v-if = useFake |
+					ref = fake |
+				.
 					+= self.slot()
 
 				< .&__outer-view-wrapper
