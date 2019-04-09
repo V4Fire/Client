@@ -68,7 +68,7 @@ export default class bSlider extends iBlock {
 	 * if true, will be used duplicate slot to calculate the dynamic height
 	 */
 	@prop(Boolean)
-	readonly useFake: boolean = true;
+	readonly dynamicHeight: boolean = false;
 
 	/**
 	 * Slide alignment type
