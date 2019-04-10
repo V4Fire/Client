@@ -116,7 +116,7 @@ export default class bSlider extends iBlock {
 	 * Align the first slide to the left
 	 */
 	@prop(Boolean)
-	alignFirstToStart: boolean = true;
+	readonly alignFirstToStart: boolean = true;
 
 	/**
 	 * The number of slides in the slider
