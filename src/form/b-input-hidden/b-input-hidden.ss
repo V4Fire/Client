@@ -12,11 +12,9 @@
 
 - template index() extends ['i-input'].index
 	- rootTag = 'span'
+	- overWrapper = false
 	- messageHelpers = false
 	- overWrapper = false
 
-	- block innerRoot
-		- block input
-			+= self.hiddenInput()
-
-		- block helpers
+	- block body
+		+= self.hiddenInput()

@@ -33,6 +33,7 @@
 
 	- rootTag = 'div'
 	- overWrapper = true
+	- rootWrapper = true
 	- renderCounter = true
 
 	/**
@@ -133,10 +134,9 @@
 
 				- block headHelpers
 				- block innerRoot
-					< _.&__root-wrapper
-						- if overWrapper
-							< _.&__over-wrapper
-								- block overWrapper
+					< ${rootWrapper ? '_' : '?'}.&__root-wrapper
+						< ${overWrapper ? '_' : '?'}.&__over-wrapper
+							- block overWrapper
 
 						- block body
 					- block helpers

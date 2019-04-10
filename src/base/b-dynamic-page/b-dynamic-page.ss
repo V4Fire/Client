@@ -12,8 +12,6 @@
 - include 'super/i-dynamic-page'|b as placeholder
 
 - template index() extends ['i-dynamic-page'].index
-	- overWrapper = false
-
 	- block body
 		: tree = include('build/snakeskin.webpack')
 
