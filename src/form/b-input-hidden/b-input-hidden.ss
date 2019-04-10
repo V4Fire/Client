@@ -12,7 +12,7 @@
 
 - template index() extends ['i-input'].index
 	- rootTag = 'span'
-	- overWrapper = false
+	- rootWrapper = false
 	- messageHelpers = false
 	- overWrapper = false
 
