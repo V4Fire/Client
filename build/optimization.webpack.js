@@ -72,8 +72,6 @@ module.exports = async function ({buildId, plugins}) {
 					ecma: 6,
 					safari10: true,
 					warnings: false,
-					ecma: 6,
-					keep_fnames: true,
 					keep_classnames: true,
 
 					output: {
