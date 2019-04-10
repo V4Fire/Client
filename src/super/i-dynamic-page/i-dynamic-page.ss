@@ -11,5 +11,3 @@
 - include 'super/i-page'|b as placeholder
 
 - template index() extends ['i-page'].index
-	- overWrapper = false
-	- rootWrapper = false
