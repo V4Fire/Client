@@ -52,6 +52,11 @@ export default class bWindow<T extends Dictionary = Dictionary> extends iData<T>
 		opened: [
 			bWindow.PARENT,
 			['false']
+		],
+
+		position: [
+			['fixed'],
+			'absolute'
 		]
 	};
 

@@ -19,7 +19,7 @@
 
 	- block rootAttrs
 		- super
-		? Object.assign(rootAttrs, {':style': "{top: global.pageYOffset + 'px'}"})
+		? Object.assign(rootAttrs, {':style': "m.position === 'absolute' ? {top: global.pageYOffset + 'px'} : {}"})
 
 	- block body
 		- super

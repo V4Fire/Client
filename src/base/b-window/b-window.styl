@@ -14,9 +14,16 @@ $p = {
 }
 
 b-window extends i-data
-	absolute top 0 left 0
+	top 0 left 0
 	z-index-pos $p.zIndexPos
 	min-width 100%
+
+	&_position
+		&_absolute
+			position absolute
+
+		&_fixed
+			position fixed
 
 	&_width_full &__window
 		width 100%
