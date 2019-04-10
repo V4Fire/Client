@@ -113,6 +113,12 @@ export default class bSlider extends iBlock {
 	readonly swipeToleranceY: number = 50;
 
 	/**
+	 * Align the first slide to the left
+	 */
+	@prop(Boolean)
+	alignFirstToStart: boolean = true;
+
+	/**
 	 * The number of slides in the slider
 	 */
 	@system()
@@ -143,7 +149,7 @@ export default class bSlider extends iBlock {
 			return 0;
 		}
 
-		if (current === 0) {
+		if (current === 0 && this.alignFirstToStart) {
 			return 0;
 		}
 
