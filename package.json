@@ -5,7 +5,7 @@
   "main": "src/core/index.js",
   "typings": "index.d.ts",
   "license": "MIT",
-  "version": "2.0.0-beta.207",
+  "version": "2.0.0-beta.208",
   "author": {
     "name": "kobezzza",
     "email": "kobezzza@gmail.com",
@@ -27,7 +27,7 @@
   "dependencies": {
     "@types/socket.io": "^1.4.40",
     "@types/socket.io-client": "^1.4.32",
-    "@v4fire/core": "^2.0.0-beta.54",
+    "@v4fire/core": "^2.0.0-beta.56",
     "babel-polyfill": "^6.26.0",
     "collection.js": "^6.6.27",
     "escaper": "^2.4.34",
