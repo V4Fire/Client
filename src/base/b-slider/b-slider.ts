@@ -65,6 +65,12 @@ export default class bSlider extends iBlock {
 	readonly mode: Mode = 'slider';
 
 	/**
+	 * if true, will be used duplicate slot to calculate the dynamic height
+	 */
+	@prop(Boolean)
+	readonly dynamicHeight: boolean = false;
+
+	/**
 	 * Slide alignment type
 	 */
 	@prop({type: String, validator: (v) => Boolean(alignTypes[v])})
@@ -107,6 +113,12 @@ export default class bSlider extends iBlock {
 	readonly swipeToleranceY: number = 50;
 
 	/**
+	 * Align the first slide to the left
+	 */
+	@prop(Boolean)
+	readonly alignFirstToStart: boolean = true;
+
+	/**
 	 * The number of slides in the slider
 	 */
 	@system()
@@ -137,7 +149,7 @@ export default class bSlider extends iBlock {
 			return 0;
 		}
 
-		if (current === 0) {
+		if (current === 0 && this.alignFirstToStart) {
 			return 0;
 		}
 
@@ -293,6 +305,7 @@ export default class bSlider extends iBlock {
 		super.initModEvents();
 		this.sync.mod('mode', 'mode', String);
 		this.sync.mod('align', 'align', String);
+		this.sync.mod('dynamicHeight', 'dynamicHeight', String);
 	}
 
 	/** @override */

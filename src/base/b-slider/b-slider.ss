@@ -11,8 +11,6 @@
 - include 'super/i-block'|b as placeholder
 
 - template index() extends ['i-block'].index
-	- overWrapper = false
-
 	- windowEvents = { &
 		'@touchstart': 'onStart',
 		'@touchmove': 'onMove',
@@ -30,8 +28,12 @@
 
 		< .&__window v-else
 			< .&__view-wrapper ref = view
-				< .&__fake-view-wrapper ref = fake
+				< .&__fake-view-wrapper &
+					v-if = useFake |
+					ref = fake |
+				.
 					+= self.slot()
+
 				< .&__outer-view-wrapper
 					< .&__view-wrapper ref = wrapper
 						+= self.slot()

@@ -26,19 +26,25 @@ export interface ObserveOptions {
 	/**
 	 * How an element should be deactivated after he was seen, only if once is set to true
 	 *   *) remove - element will be removed from inView directive
+	 *
 	 *   *) deactivate - element will not be removed from inView directive, he will be deactivated after was seen,
 	 *      you can activate specified element later, he will become observable again
 	 */
-	removeStrategy?: 'remove' | 'deactivate';
+	removeStrategy?: RemoveStrategy;
 
 	/**
-	 * May slowdown your app performance.
-	 * Use it carefully
+	 * Only for environments that do not support intersection observer.
+	 *
+	 * If set to true, the element will not be placed in the position map;
+	 * instead, the method of polling the positions of the elements will be used.
+	 * Every 75 milliseconds, each element being observed will be asked about its position using getBoundingClientRect
+	 *
+	 * Notice: May slowdown your app performance, use it carefully
 	 */
 	polling?: boolean;
 
 	/**
-	 * Element will become observable after function will be resolved and returns true
+	 * If defined, then an element will become observable only after the function returns true
 	 */
 	wait?(): boolean;
 }
@@ -64,6 +70,7 @@ export interface DirectiveOptions extends VNodeDirective {
 	value?: ObserveOptions & {threshold?: number} | Function;
 }
 
+export type RemoveStrategy = 'remove' | 'deactivate';
 export type InitOptions = ObserveOptions & IntersectionObserverOptions;
 export type ObservableElementsMap = Map<HTMLElement, ObservableElement>;
 export type ObservableElementRect = ElementRect & {observable: ObservableElement};

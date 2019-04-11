@@ -9,13 +9,7 @@
 import symbolGenerator from 'core/symbol';
 
 import Super from 'core/component/directives/in-view/modules/super';
-import {
-
-	ObservableElement,
-	IntersectionObserverOptions
-
-} from 'core/component/directives/in-view/modules/meta';
-
+import { ObservableElement, IntersectionObserverOptions } from 'core/component/directives/in-view/modules/meta';
 import { hasIntersection } from 'core/component/directives/in-view/modules/intersection/helpers';
 
 export const

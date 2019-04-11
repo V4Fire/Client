@@ -76,7 +76,7 @@ export default class InView extends Super {
 	protected map: Dictionary<ObservableElementRect[]> = {};
 
 	/**
-	 * Creates a mutation observer, deferred/throttled variations of functions
+	 * Initializes an observer
 	 */
 	constructor() {
 		super();
@@ -128,9 +128,7 @@ export default class InView extends Super {
 		}));
 	}
 
-	/**
-	 * @override
-	 */
+	/** @override */
 	observe(el: HTMLElement, options: IntersectionObserverOptions & ObserveOptions): ObservableElement | false {
 		const
 			observable = super.observe(el, options);

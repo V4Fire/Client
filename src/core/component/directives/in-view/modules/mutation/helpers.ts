@@ -7,9 +7,9 @@
  */
 
 import { ElementRect } from 'core/component/directives/in-view/modules/meta';
-import { GLOBAL } from 'core/env';
 
-export const hasMutationObserver = 'MutationObserver' in GLOBAL;
+// tslint:disable-next-line strict-type-predicates
+export const hasMutationObserver = typeof MutationObserver === 'function';
 
 /**
  * Returns offset top relative to root

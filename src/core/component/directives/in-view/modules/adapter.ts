@@ -31,7 +31,7 @@ export default class InViewAdapter {
 	 * True if an adapter instance has an adaptee
 	 */
 	get hasAdaptee(): boolean {
-		return this.adaptee != null;
+		return this.adaptee !== undefined;
 	}
 
 	/**
