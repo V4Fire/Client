@@ -17,9 +17,9 @@
 	/// FIXME: missing closing or opening directives in the template
 	/// - thirdPartySlots = true
 
-	- block rootAttrs
+	/*- block rootAttrs
 		- super
-		? Object.assign(rootAttrs, {':style': "{top: (m.position === 'absolute' ? global.pageYOffset + 'px' : undefined)}"})
+		? Object.assign(rootAttrs, {':style': "{top: (m.position === 'absolute' ? global.pageYOffset + 'px' : undefined)}"})*/
 
 	- block body
 		- super
