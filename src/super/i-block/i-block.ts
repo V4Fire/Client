@@ -526,6 +526,10 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 			'ready',
 			'inactive',
 			'destroyed'
+		],
+
+		theme: [
+			'default'
 		]
 	};
 
