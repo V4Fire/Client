@@ -14,7 +14,7 @@ import engine from 'core/router';
 import symbolGenerator from 'core/symbol';
 
 import { concatUrls, toQueryString } from 'core/url';
-import { Router, BasePageMeta, PageSchema, CurrentPage, HistoryCleanFilter } from 'core/router/interface';
+import { Router, BasePageMeta, PageSchema, CurrentPage, HistoryClearFilter } from 'core/router/interface';
 import iData, { component, prop, system, hook, watch, p } from 'super/i-data/i-data';
 
 export * from 'super/i-data/i-data';
@@ -254,18 +254,18 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 	}
 
 	/**
-	 * Cleans the history session: if specified filter, then all matched transitions will be cleared
+	 * Clears the history session: if specified filter, then all matched transitions will be cleared
 	 * @param [filter]
 	 */
-	clean(filter?: HistoryCleanFilter): Promise<void> {
-		return this.engine.clean(filter);
+	clear(filter?: HistoryClearFilter): Promise<void> {
+		return this.engine.clear(filter);
 	}
 
 	/**
-	 * Cleans temporary history transitions
+	 * Clears temporary history transitions
 	 */
-	cleanTmp(): Promise<void> {
-		return this.engine.cleanTmp();
+	clearTmp(): Promise<void> {
+		return this.engine.clearTmp();
 	}
 
 	/**
@@ -554,7 +554,7 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 			return {};
 		};
 
-		const getPlainOpts = (obj) => {
+		const getPlainOpts = (obj, filter?) => {
 			const
 				res = {};
 
@@ -562,6 +562,10 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 				for (const key in obj) {
 					const
 						el = obj[key];
+
+					if (filter && !filter(el, key)) {
+						continue;
+					}
 
 					if (!Object.isFunction(el)) {
 						res[key] = el;
@@ -572,11 +576,8 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 			return res;
 		};
 
-		const getPlainWatchOpts = (obj) => {
-			const res = <Dictionary>getPlainOpts(obj);
-			delete res.meta;
-			return res;
-		};
+		const getPlainWatchOpts = (obj) =>
+			getPlainOpts(obj, (el, key) => key !== 'meta' && key[0] !== '_');
 
 		let
 			info;
@@ -746,6 +747,10 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 						const
 							key = keys[i],
 							el = v[key];
+
+						if (key[0] === '_') {
+							continue;
+						}
 
 						if (!Object.isFunction(el)) {
 							res[key] = el;

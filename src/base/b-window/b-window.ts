@@ -59,7 +59,12 @@ export default class bWindow<T extends Dictionary = Dictionary> extends iData<T>
 		...iTheme.mods,
 		...iVisible.mods,
 		...iWidth.mods,
-		...iOpenToggle.mods
+		...iOpenToggle.mods,
+
+		position: [
+			['fixed'],
+			'absolute'
+		]
 	};
 
 	protected readonly $refs!: {
