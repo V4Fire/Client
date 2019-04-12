@@ -16,6 +16,7 @@ import iData, {
 	component,
 	prop,
 	hook,
+	wait,
 	ModsDecl,
 	Stage,
 	ModEvent,
@@ -61,7 +62,8 @@ export default class bWindow<T extends Dictionary = Dictionary> extends iData<T>
 
 		position: [
 			['fixed'],
-			'absolute'
+			'absolute',
+			'custom'
 		]
 	};
 
@@ -204,6 +206,22 @@ export default class bWindow<T extends Dictionary = Dictionary> extends iData<T>
 	@hook('mounted')
 	protected initDocumentPlacement(): void {
 		document.body.insertAdjacentElement('beforeend', this.$el);
+		this.initRootStyles();
+	}
+
+	/**
+	 * Attaches dynamic window styles to the root node
+	 */
+	@wait('loading')
+	protected initRootStyles(): CanPromise<void> {
+		const
+			el = <HTMLElement>this.$el;
+
+		if (this.mods.position === 'absolute') {
+			Object.assign(el.style, {
+				top: pageYOffset.px
+			});
+		}
 	}
 
 	/** @override */
