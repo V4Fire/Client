@@ -84,8 +84,8 @@ export default function createRouter(ctx: bRouter): Router {
 				syncMethod = method;
 
 			if (info) {
-				if (!info.id) {
-					info.id = Math.random().toString().slice(2);
+				if (!info._id) {
+					info._id = Math.random().toString().slice(2);
 				}
 
 				if (method !== 'replaceState') {
@@ -95,8 +95,8 @@ export default function createRouter(ctx: bRouter): Router {
 					historyInit = true;
 
 					if (historyLog.length && !Object.fastCompare(
-						Object.reject(historyLog[historyLog.length - 1].info, 'id'),
-						Object.reject(info, 'id')
+						Object.reject(historyLog[historyLog.length - 1].info, '_id'),
+						Object.reject(info, '_id')
 					)) {
 						syncMethod = 'pushState';
 					}
@@ -326,11 +326,11 @@ export default function createRouter(ctx: bRouter): Router {
 		truncateHistoryLog();
 
 		const
-			{id} = history.state || {id: undefined};
+			{_id} = history.state || {_id: undefined};
 
-		if (id) {
+		if (_id) {
 			for (let i = 0; i < historyLog.length; i++) {
-				if (historyLog[i].info.id === id) {
+				if (historyLog[i].info._id === _id) {
 					historyPos = i;
 					saveHistoryPos();
 					break;

@@ -28,7 +28,7 @@ export interface PageOpts<
 	P extends Dictionary = Dictionary,
 	Q extends Dictionary = Dictionary,
 	M extends Dictionary = Dictionary
-> extends CurrentPage<P, Q, M> {
+	> extends CurrentPage<P, Q, M> {
 	toPath(params?: Dictionary): string;
 }
 
@@ -517,7 +517,7 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 			return {};
 		};
 
-		const getPlainOpts = (obj) => {
+		const getPlainOpts = (obj, filter?) => {
 			const
 				res = {};
 
@@ -525,6 +525,10 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 				for (const key in obj) {
 					const
 						el = obj[key];
+
+					if (filter && !filter(el, key)) {
+						continue;
+					}
 
 					if (!Object.isFunction(el)) {
 						res[key] = el;
@@ -535,11 +539,8 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 			return res;
 		};
 
-		const getPlainWatchOpts = (obj) => {
-			const res = <Dictionary>getPlainOpts(obj);
-			delete res.meta;
-			return res;
-		};
+		const getPlainWatchOpts = (obj) =>
+			getPlainOpts(obj, (el, key) => key !== 'meta' && key[0] !== '_');
 
 		let
 			info;
@@ -708,6 +709,10 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 						const
 							key = keys[i],
 							el = v[key];
+
+						if (key[0] === '_') {
+							continue;
+						}
 
 						if (!Object.isFunction(el)) {
 							res[key] = el;
