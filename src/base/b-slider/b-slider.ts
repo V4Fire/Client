@@ -310,7 +310,7 @@ export default class bSlider extends iBlock {
 			{length, current} = this,
 			{wrapper} = this.$refs;
 
-		if (current === num) {
+		if (current === num || !wrapper) {
 			return false;
 		}
 
