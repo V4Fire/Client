@@ -300,6 +300,36 @@ export default class bSlider extends iBlock {
 		return false;
 	}
 
+	/**
+	 * Switch to specified slide
+	 * @param num
+	 * @param [animate] - animate transition
+	 */
+	slideTo(num: number, animate: boolean = false): boolean {
+		const
+			{length, current} = this,
+			{wrapper} = this.$refs;
+
+		if (current === num) {
+			return false;
+		}
+
+		if (length - 1 > num) {
+			this.current = num;
+
+			if (!animate) {
+				this.setMod('swipe', true);
+			}
+
+			this.syncState();
+			wrapper.style.setProperty('--offset', `${this.currentOffset}px`);
+
+			return true;
+		}
+
+		return false;
+	}
+
 	/** @override */
 	protected initModEvents(): void {
 		super.initModEvents();
