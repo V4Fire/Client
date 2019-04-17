@@ -314,7 +314,7 @@ export default class bSlider extends iBlock {
 			return false;
 		}
 
-		if (length - 1 > num) {
+		if (length - 1 >= num) {
 			this.current = num;
 
 			if (!animate) {
