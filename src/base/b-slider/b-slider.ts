@@ -305,7 +305,7 @@ export default class bSlider extends iBlock {
 	 * @param num
 	 * @param [animate] - animate transition
 	 */
-	slideTo(num: number, animate: boolean = false): boolean {
+	async slideTo(num: number, animate: boolean = false): Promise<boolean> {
 		const
 			{length, current} = this,
 			{wrapper} = this.$refs;
@@ -318,7 +318,7 @@ export default class bSlider extends iBlock {
 			this.current = num;
 
 			if (!animate) {
-				this.setMod('swipe', true);
+				await this.setMod('swipe', true);
 			}
 
 			this.syncState();
