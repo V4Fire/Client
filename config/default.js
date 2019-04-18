@@ -99,7 +99,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 			if (args.length) {
 				args = args.map((el) => el.replace(/^\.?/, ''));
 
-				if (pathVal) {
+				if (pathVal && !/^(\w+:)?\/\//.test(args[0])) {
 					return concatUrls(pathVal, ...args);
 				}
 
