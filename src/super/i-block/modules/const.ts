@@ -12,8 +12,8 @@
 export enum statuses {
 	destroyed = -1,
 	inactive = 0,
-	loading = 1,
-	beforeReady = 2,
-	ready = 3,
-	unloaded = 0
+	unloaded = 1,
+	loading = 2,
+	beforeReady = 3,
+	ready = 4
 }

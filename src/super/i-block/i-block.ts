@@ -1502,7 +1502,7 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 
 			setWatcher();
 
-		} else if (statuses[this.componentStatus] >= 1) {
+		} else if (statuses[this.componentStatus] >= 2) {
 			setWatcher();
 		}
 	}
@@ -1732,7 +1732,7 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 				const
 					el = $c[i];
 
-				if (el.remoteProvider && statuses[el.componentStatus] >= 1) {
+				if (el.remoteProvider && statuses[el.componentStatus]) {
 					providers.add(el);
 				}
 			}
