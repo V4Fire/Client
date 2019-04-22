@@ -1746,12 +1746,13 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 			this.componentStatus = 'beforeReady';
 
 			this.execCbAfterBlockReady(async () => {
+				this.componentStatus = 'ready';
+
 				if (this.beforeReadyListeners > 1) {
 					await this.nextTick();
 					this.beforeReadyListeners = 0;
 				}
 
-				this.componentStatus = 'ready';
 				this.emit('initLoad', get(), silent);
 			});
 		};
