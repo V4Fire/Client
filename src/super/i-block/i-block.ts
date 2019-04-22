@@ -967,7 +967,7 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 					return;
 				}
 
-				return $a.on($e, event, fn, params, ...args);
+				return $a.on($e, event, fn, params, ...args) || undefined;
 			},
 
 			once: (event, fn, params, ...args) => {
@@ -975,7 +975,7 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 					return;
 				}
 
-				return $a.once($e, event, fn, params, ...args);
+				return $a.once($e, event, fn, params, ...args) || undefined;
 			},
 
 			promisifyOnce: (event, params, ...args) => {
