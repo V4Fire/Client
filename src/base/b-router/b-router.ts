@@ -691,7 +691,7 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 			}
 
 			if (info.meta.external) {
-				location.replace(info.toPath(info.params) || '/');
+				location.href = info.toPath(info.params) || '/';
 				return;
 			}
 
