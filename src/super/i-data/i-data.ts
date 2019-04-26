@@ -152,7 +152,7 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 					return;
 				}
 
-				return $a.on($d.event, event, fn, params, ...args);
+				return $a.on($d.event, event, fn, params, ...args) || undefined;
 			},
 
 			once: (event, fn, params, ...args) => {
@@ -160,7 +160,7 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 					return;
 				}
 
-				return $a.once($d.event, event, fn, params, ...args);
+				return $a.once($d.event, event, fn, params, ...args) || undefined;
 			},
 
 			promisifyOnce: (event, params, ...args) => {
