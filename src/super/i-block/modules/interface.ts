@@ -156,5 +156,5 @@ export interface Event<CTX extends object = Async> {
 	off(params: ClearOptsId<object>): void;
 }
 
-export type ConverterCallType = 'component' | 'remote';
+export type ConverterCallType = 'component' | 'remote' | 'remoteCheck';
 export type Stage = string | number;
