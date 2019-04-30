@@ -651,7 +651,7 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 		if (meta.paramsFromQuery !== false) {
 			const
 				paramsFromRoot = meta.paramsFromRoot !== false,
-				rootState = r.syncRouterState(undefined, 'remote');
+				rootState = r.syncRouterState(undefined, 'remoteCheck');
 
 			for (let o = meta.params, i = 0; i < o.length; i++) {
 				const
