@@ -194,6 +194,7 @@ export default class Daemons {
 	 *
 	 * @param hook
 	 * @param name
+	 * @param [params]
 	 */
 	protected bindToHook(hook: string, name: string, params?: DaemonHookParams): void {
 		const
