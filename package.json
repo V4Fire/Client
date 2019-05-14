@@ -5,7 +5,7 @@
   "main": "src/core/index.js",
   "typings": "index.d.ts",
   "license": "MIT",
-  "version": "2.0.0-beta.219",
+  "version": "2.0.0-beta.220",
   "author": {
     "name": "kobezzza",
     "email": "kobezzza@gmail.com",
@@ -27,9 +27,9 @@
   "dependencies": {
     "@types/socket.io": "^1.4.40",
     "@types/socket.io-client": "^1.4.32",
-    "@v4fire/core": "^2.0.0-beta.56",
+    "@v4fire/core": "^2.0.0-beta.57",
     "babel-polyfill": "^6.26.0",
-    "collection.js": "^6.6.27",
+    "collection.js": "^6.7.3",
     "escaper": "^2.4.34",
     "eventemitter2": "^5.0.1",
     "fg-loadcss": "^2.1.0",
@@ -117,6 +117,6 @@
   "devDependencies": {
     "babel-eslint": "^10.0.1",
     "eslint": "^5.16.0",
-    "tslint": "^5.15.0"
+    "tslint": "^5.16.0"
   }
 }
