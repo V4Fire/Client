@@ -6,7 +6,6 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import iTheme from 'traits/i-theme/i-theme';
 import iVisible from 'traits/i-visible/i-visible';
 import iWidth from 'traits/i-width/i-width';
 import iOpenToggle from 'traits/i-open-toggle/i-open-toggle';
@@ -17,6 +16,7 @@ import iData, {
 	component,
 	prop,
 	hook,
+	wait,
 	ModsDecl,
 	Stage,
 	ModEvent,
@@ -34,7 +34,7 @@ export interface StageTitles<T = unknown> extends Dictionary<TitleValue<T>> {
 
 @component()
 export default class bWindow<T extends Dictionary = Dictionary> extends iData<T>
-	implements iTheme, iVisible, iWidth, iOpenToggle {
+	implements iVisible, iWidth, iOpenToggle {
 
 	/**
 	 * Initial window title
@@ -56,10 +56,15 @@ export default class bWindow<T extends Dictionary = Dictionary> extends iData<T>
 
 	/** @inheritDoc */
 	static readonly mods: ModsDecl = {
-		...iTheme.mods,
 		...iVisible.mods,
 		...iWidth.mods,
-		...iOpenToggle.mods
+		...iOpenToggle.mods,
+
+		position: [
+			['fixed'],
+			'absolute',
+			'custom'
+		]
 	};
 
 	protected readonly $refs!: {
@@ -201,6 +206,22 @@ export default class bWindow<T extends Dictionary = Dictionary> extends iData<T>
 	@hook('mounted')
 	protected initDocumentPlacement(): void {
 		document.body.insertAdjacentElement('beforeend', this.$el);
+		this.initRootStyles();
+	}
+
+	/**
+	 * Attaches dynamic window styles to the root node
+	 */
+	@wait('loading')
+	protected initRootStyles(): CanPromise<void> {
+		const
+			el = <HTMLElement>this.$el;
+
+		if (this.mods.position === 'absolute') {
+			Object.assign(el.style, {
+				top: pageYOffset.px
+			});
+		}
 	}
 
 	/** @override */

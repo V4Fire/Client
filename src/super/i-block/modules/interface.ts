@@ -13,10 +13,10 @@ import { AsyncOpts } from 'core/async';
 export type Statuses =
 	'destroyed' |
 	'inactive' |
+	'unloaded' |
 	'loading' |
 	'beforeReady' |
-	'ready' |
-	'unloaded';
+	'ready';
 
 export interface WaitStatusOpts extends AsyncOpts {
 	defer?: boolean;

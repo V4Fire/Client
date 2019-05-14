@@ -18,8 +18,9 @@ b-window extends i-data
 	i-visible({helpers: $p.visibleHelpers})
 	i-width({helpers: $p.widthHelpers, selector: ('&__window')})
 
-	absolute top 0 left 0
-	z-index-pos $p.zIndexPos
+	top 0
+	left 0
+	zIndex($p.zIndexPos)
 	min-width 100%
 
 	&__back
@@ -28,9 +29,11 @@ b-window extends i-data
 
 	&__wrapper
 		position relative
-		z-index-pos layer 1
+		zIndex(layer, 1)
+
 		display flex
 		justify-content center
+
 		size 100% 100vh
 
 	&__window
@@ -43,3 +46,10 @@ b-window extends i-data
 
 	&__control
 		display inline-block
+
+	&_position
+		&_absolute
+			position absolute
+
+		&_fixed
+			position fixed

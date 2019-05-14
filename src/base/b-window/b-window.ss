@@ -12,9 +12,9 @@
 - include '**/*.window.ss'|b
 
 - template index() extends ['i-data'].index
-	- block rootAttrs
+	/*- block rootAttrs
 		- super
-		? Object.assign(rootAttrs, {':style': "{top: global.pageYOffset + 'px'}"})
+		? Object.assign(rootAttrs, {':style': "{top: global.pageYOffset + 'px'}"})*/
 
 	- block body
 		- super

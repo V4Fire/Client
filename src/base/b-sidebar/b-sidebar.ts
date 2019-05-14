@@ -6,7 +6,6 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import iTheme from 'traits/i-theme/i-theme';
 import iVisible from 'traits/i-visible/i-visible';
 import iOpenToggle, { CloseHelperEvents } from 'traits/i-open-toggle/i-open-toggle';
 
@@ -15,11 +14,10 @@ export * from 'super/i-data/i-data';
 
 @component()
 export default class bSidebar<T extends Dictionary = Dictionary> extends iData<T>
-	implements iTheme, iVisible, iOpenToggle {
+	implements iVisible, iOpenToggle {
 
 	/** @inheritDoc */
 	static readonly mods: ModsDecl = {
-		...iTheme.mods,
 		...iOpenToggle.mods,
 		...iVisible.mods
 	};

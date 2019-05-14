@@ -526,6 +526,10 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 			'ready',
 			'inactive',
 			'destroyed'
+		],
+
+		theme: [
+			'default'
 		]
 	};
 
@@ -1239,7 +1243,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 				const
 					el = $c[i];
 
-				if (el.remoteProvider && statuses[el.componentStatus] >= 1) {
+				if (el.remoteProvider && statuses[el.componentStatus]) {
 					providers.add(el);
 				}
 			}
@@ -1253,15 +1257,15 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 			this.componentStatus = 'beforeReady';
 
 			this.lfc.execCbAfterComponentReady(() => {
+				this.componentStatus = 'ready';
+
 				if (this.beforeReadyListeners > 1) {
 					this.nextTick().then(() => {
 						this.beforeReadyListeners = 0;
-						this.componentStatus = 'ready';
 						this.emit('initLoad', get(), silent);
 					});
 
 				} else {
-					this.componentStatus = 'ready';
 					this.emit('initLoad', get(), silent);
 				}
 			});

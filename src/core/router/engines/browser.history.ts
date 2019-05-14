@@ -13,7 +13,7 @@ import { session } from 'core/kv-storage';
 
 import { fromQueryString, toQueryString } from 'core/url';
 import { EventEmitter2 as EventEmitter } from 'eventemitter2';
-import { Router, CurrentPage, PageInfo, HistoryCleanFilter } from 'core/router/interface';
+import { Router, CurrentPage, PageInfo, HistoryClearFilter } from 'core/router/interface';
 
 export const
 	$$ = symbolGenerator();
@@ -93,8 +93,8 @@ export default function createRouter(component: bRouter): Router {
 				return;
 			}
 
-			if (!info.id) {
-				info.id = Math.random().toString().slice(2);
+			if (!info._id) {
+				info._id = Math.random().toString().slice(2);
 			}
 
 			if (method !== 'replaceState') {
@@ -104,8 +104,8 @@ export default function createRouter(component: bRouter): Router {
 				historyInit = true;
 
 				if (historyLog.length && !Object.fastCompare(
-					Object.reject(historyLog[historyLog.length - 1].info, 'id'),
-					Object.reject(info, 'id')
+					Object.reject(historyLog[historyLog.length - 1].info, '_id'),
+					Object.reject(info, '_id')
 				)) {
 					syncMethod = 'pushState';
 				}
@@ -238,7 +238,7 @@ export default function createRouter(component: bRouter): Router {
 			history.back();
 		},
 
-		async clean(fn?: HistoryCleanFilter): Promise<void> {
+		async clear(fn?: HistoryClearFilter): Promise<void> {
 			$a.muteEventListener(popstate);
 			truncateHistoryLog();
 
@@ -324,8 +324,8 @@ export default function createRouter(component: bRouter): Router {
 			}
 		},
 
-		cleanTmp(): Promise<void> {
-			return this.clean((el) =>
+		clearTmp(): Promise<void> {
+			return this.clear((el) =>
 				el.params && el.params.tmp || el.query && el.query.tmp || el.meta && el.meta.tmp);
 		}
 	});
@@ -334,11 +334,11 @@ export default function createRouter(component: bRouter): Router {
 		truncateHistoryLog();
 
 		const
-			{id} = history.state || {id: undefined};
+			{_id} = history.state || {_id: undefined};
 
-		if (id) {
+		if (_id) {
 			for (let i = 0; i < historyLog.length; i++) {
-				if (historyLog[i].info.id === id) {
+				if (historyLog[i].info._id === _id) {
 					historyPos = i;
 					saveHistoryPos();
 					break;
