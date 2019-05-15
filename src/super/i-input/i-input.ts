@@ -6,7 +6,6 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import iTheme from 'traits/i-theme/i-theme';
 import iAccess from 'traits/i-access/i-access';
 import iVisible from 'traits/i-visible/i-visible';
 
@@ -49,7 +48,7 @@ export default abstract class iInput<
 	V extends Value = Value,
 	FV extends FormValue = FormValue,
 	D extends Dictionary = Dictionary
-> extends iData<D> implements iTheme, iVisible, iAccess {
+> extends iData<D> implements iVisible, iAccess {
 	/**
 	 * Initial component value
 	 */
@@ -266,7 +265,6 @@ export default abstract class iInput<
 			'false'
 		],
 
-		...iTheme.mods,
 		...iAccess.mods,
 		...iVisible.mods
 	};

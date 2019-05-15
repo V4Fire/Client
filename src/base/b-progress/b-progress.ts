@@ -8,7 +8,6 @@
 
 import symbolGenerator from 'core/symbol';
 
-import iTheme from 'traits/i-theme/i-theme';
 import iProgress from 'traits/i-progress/i-progress';
 import iVisible from 'traits/i-visible/i-visible';
 
@@ -19,7 +18,7 @@ export const
 	$$ = symbolGenerator();
 
 @component()
-export default class bProgress extends iBlock implements iTheme, iProgress, iVisible {
+export default class bProgress extends iBlock implements iProgress, iVisible {
 	/**
 	 * Initial progress value store
 	 */
@@ -64,7 +63,6 @@ export default class bProgress extends iBlock implements iTheme, iProgress, iVis
 
 	/** @inheritDoc */
 	static readonly mods: ModsDecl = {
-		...iTheme.mods,
 		...iProgress.mods,
 		...iVisible.mods
 	};

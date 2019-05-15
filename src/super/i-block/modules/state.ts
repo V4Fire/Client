@@ -20,7 +20,8 @@ import { Hooks } from 'core/component';
 
 export type ConverterCallType =
 	'component' |
-	'remote';
+	'remote' |
+	'remoteCheck';
 
 const
 	$$ = symbolGenerator();

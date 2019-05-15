@@ -194,6 +194,10 @@ export default class InView extends Super {
 	 */
 	poll(): void {
 		this.pollingElements.forEach((el) => {
+			if (el.isDeactivated) {
+				return;
+			}
+
 			const
 				isElementIn = isInView(el.node, el.threshold);
 

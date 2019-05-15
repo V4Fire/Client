@@ -100,7 +100,7 @@ b-calendar extends i-input
 			&:before
 				position absolute
 				right 100%
-				z-index-pos underall
+				zIndex(underall)
 				display block
 				height 100%
 				content ""
@@ -120,8 +120,7 @@ b-calendar extends i-input
 		justify-content center
 
 	&__day
-		width 100%
-		height @width
+		size 100%
 		text-decoration none
 		user-select none
 		text-align center

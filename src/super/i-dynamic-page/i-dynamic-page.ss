@@ -11,9 +11,3 @@
 - include 'super/i-page'|b as placeholder
 
 - template index() extends ['i-page'].index
-	- block innerRoot
-		< .&__root-wrapper
-			- block body
-
-		- block helpers
-		- block providers

@@ -6,7 +6,6 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import iTheme from 'traits/i-theme/i-theme';
 import iAccess from 'traits/i-access/i-access';
 import iVisible from 'traits/i-visible/i-visible';
 import iSize, { SizeDictionary } from 'traits/i-size/i-size';
@@ -23,7 +22,7 @@ export * from 'super/i-data/i-data';
 })
 
 export default class bLink<T extends Dictionary = Dictionary> extends iData<T>
-	implements iTheme, iAccess, iIcon, iVisible, iSize {
+	implements iAccess, iIcon, iVisible, iSize {
 
 	/**
 	 * Link href
@@ -84,7 +83,6 @@ export default class bLink<T extends Dictionary = Dictionary> extends iData<T>
 			'false'
 		],
 
-		...iTheme.mods,
 		...iAccess.mods,
 		...iVisible.mods,
 		...iSize.mods

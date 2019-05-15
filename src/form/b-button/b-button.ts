@@ -12,7 +12,6 @@ import 'core/data';
 import bForm from 'form/b-form/b-form';
 //#endif
 
-import iTheme from 'traits/i-theme/i-theme';
 import iAccess from 'traits/i-access/i-access';
 import iVisible from 'traits/i-visible/i-visible';
 import iWidth from 'traits/i-width/i-width';
@@ -54,7 +53,7 @@ export type ButtonType<T extends string = any> =
 })
 
 export default class bButton<T extends Dictionary = Dictionary> extends iData<T>
-	implements iTheme, iAccess, iOpenToggle, iIcon, iVisible, iWidth, iSize {
+	implements iAccess, iOpenToggle, iIcon, iVisible, iWidth, iSize {
 
 	/** @override */
 	readonly dataProvider: string = 'Provider';
@@ -160,7 +159,6 @@ export default class bButton<T extends Dictionary = Dictionary> extends iData<T>
 			['false']
 		],
 
-		...iTheme.mods,
 		...iAccess.mods,
 		...iOpenToggle.mods,
 		...iVisible.mods,
