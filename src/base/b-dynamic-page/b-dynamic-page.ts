@@ -7,7 +7,7 @@
  */
 
 import iBlock from 'super/i-block/i-block';
-import iDynamicPage, { component, prop, field, watch } from 'super/i-dynamic-page/i-dynamic-page';
+import iDynamicPage, { component, prop, field, watch, Statuses } from 'super/i-dynamic-page/i-dynamic-page';
 import { EventEmitterLike } from 'core/async';
 export * from 'super/i-data/i-data';
 
@@ -91,7 +91,21 @@ export default class bDynamicPage extends iDynamicPage {
 	}
 
 	/** @override */
+	protected readonly componentStatusStore: Statuses = 'ready';
+
+	/** @override */
 	protected readonly $refs!: {component?: iDynamicPage};
+
+	/** @override */
+	async initLoad(data?: unknown, silent?: boolean): Promise<void> {
+		return undefined;
+	}
+
+	/** @override */
+	async reload(): Promise<void> {
+		const {component} = this.$refs;
+		return component && component.reload();
+	}
 
 	/**
 	 * Synchronization for the emitter prop
