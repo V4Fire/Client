@@ -6,4 +6,4 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-export { default as default } from 'core/prelude/dependencies';
+export { default } from 'core/prelude/dependencies';
