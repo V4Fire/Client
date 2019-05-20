@@ -45,7 +45,7 @@ export default class Storage {
 	constructor(component: iBlock) {
 		this.component = component;
 
-		//#if runtime has core/has kv-storage
+		//#if runtime has core/kv-storage
 		this.engine = asyncLocal.namespace(component.componentName);
 		//#endif
 	}
