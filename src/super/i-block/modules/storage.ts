@@ -10,7 +10,7 @@ import Async from 'core/async';
 import iBlock from 'super/i-block/i-block';
 
 //#if runtime has core/kv-storage
-import { asyncLocal, AsyncNamespace, ClearFilter } from 'core/kv-storage';
+import { asyncLocal, AsyncNamespace } from 'core/kv-storage';
 //#endif
 
 export default class Storage {
