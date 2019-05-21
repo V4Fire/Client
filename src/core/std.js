@@ -13,7 +13,7 @@ var global = new Function('return this')();
 if (typeof global['setImmediate'] !== 'function') {
 	global['setImmediate'] = function (fn) {
 		return setTimeout(fn, 0);
-	}
+	};
 
 	global['cleatImmediate'] = clearTimeout;
 }
