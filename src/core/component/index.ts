@@ -287,8 +287,11 @@ export function component(params?: ComponentParams): Function {
 								Object.defineProperty(ctx.$refs, ref, {
 									configurable: true,
 									enumerable: true,
-									// @ts-ignore (access)
-									get: () => rootCtx.$refs[`${ref}:${ctx.componentId}`]
+									get: () => {
+										// @ts-ignore (access)
+										const r = rootCtx.$refs;
+										return r[`${ref}:${ctx._componentId}`] || r[`${ref}:${ctx.componentId}`];
+									}
 								});
 							}
 

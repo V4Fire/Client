@@ -452,10 +452,12 @@ export function patchVNode(vnode: VNode, ctx: ComponentInterface, renderCtx: Ren
 			}
 		}
 
-		// @ts-ignore (access)
-		oldCtx && oldCtx.$destroy();
-
 		if (oldCtx) {
+			oldCtx._componentId = ctx.componentId;
+
+			// @ts-ignore (access)
+			oldCtx.$destroy();
+
 			const
 				props = ctx.$props,
 				oldProps = oldCtx.$props,
