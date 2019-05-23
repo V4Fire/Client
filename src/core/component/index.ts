@@ -333,7 +333,7 @@ export function component(params?: ComponentParams): Function {
 								const
 									res = forEach(obj, cb);
 
-								if (obj[asyncLabel]) {
+								if (obj && obj[asyncLabel]) {
 									tasks.push((vnode) => {
 										const
 											ctx = vnode.fakeContext = vnode.context,
