@@ -288,9 +288,16 @@ export function component(params?: ComponentParams): Function {
 									configurable: true,
 									enumerable: true,
 									get: () => {
-										// @ts-ignore (access)
-										const r = rootCtx.$refs;
-										return r[`${ref}:${ctx._componentId}`] || r[`${ref}:${ctx.componentId}`];
+										const
+											// @ts-ignore (access)
+											r = rootCtx.$refs,
+											l = r[`${ref}:${ctx._componentId}`] || r[`${ref}:${ctx.componentId}`];
+
+										if (l) {
+											return l;
+										}
+
+										return vnode && (vnode.fakeContext || vnode.elm);
 									}
 								});
 							}
