@@ -11,6 +11,16 @@ import { EventEmitter2 } from 'eventemitter2';
 import { GLOBAL } from 'core/const/links';
 
 /**
+ * For support Content Security Policy in global variable can be declarated GLOBAL_NONCE variable
+ * @param elm
+ */
+const addNonceAttribute = (elm: HTMLElement) => {
+	if (typeof GLOBAL_NONCE === 'string' || typeof GLOBAL.GLOBAL_NONCE === 'string') {
+		elm.setAttribute('nonce', GLOBAL_NONCE || GLOBAL.GLOBAL_NONCE);
+	}
+};
+
+/**
  * Manager of modules
  */
 // tslint:disable-next-line:prefer-object-spread
@@ -51,6 +61,9 @@ GLOBAL.ModuleDependencies = Object.assign(GLOBAL.ModuleDependencies || {}, {
 			const script = document.createElement('script');
 			script.src = URL.createObjectURL(blob);
 			script.async = false;
+
+			addNonceAttribute(script);
+
 			head.appendChild(script);
 		};
 
@@ -92,6 +105,8 @@ GLOBAL.ModuleDependencies = Object.assign(GLOBAL.ModuleDependencies || {}, {
 				tpl.src = <string>PATH[tplURL];
 				tpl.async = false;
 
+				addNonceAttribute(tpl);
+
 				const
 					script = document.createElement('script');
 
@@ -101,6 +116,8 @@ GLOBAL.ModuleDependencies = Object.assign(GLOBAL.ModuleDependencies || {}, {
 
 				script.src = <string>PATH[el];
 				script.async = false;
+
+				addNonceAttribute(script);
 
 				style.push(() => {
 					const
@@ -156,6 +173,9 @@ GLOBAL.ModuleDependencies = Object.assign(GLOBAL.ModuleDependencies || {}, {
 		}
 
 		script.src = <string>PATH[`${module}.dependencies`];
+
+		addNonceAttribute(script);
+
 		return new Promise((resolve) => {
 			this.event.once(`dependencies.${module}`, resolve);
 			head.appendChild(script);
