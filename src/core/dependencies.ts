@@ -94,6 +94,8 @@ GLOBAL.ModuleDependencies = Object.assign(GLOBAL.ModuleDependencies || {}, {
 				link.href = <string>PATH[cssURL];
 				link.rel = 'stylesheet';
 
+				addNonceAttribute(link);
+
 				const
 					tpl = document.createElement('script'),
 					tplURL = `${el}_tpl`;
