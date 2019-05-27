@@ -12,10 +12,27 @@ import iBlock from 'super/i-block/i-block';
 import { runHook, ComponentMeta } from 'core/component';
 import { queue, restart, deferRestart } from 'core/render';
 
-export interface TaskOpts {
+export interface TaskI<D = unknown> {
+	list: Iterator<D>;
+	i: number;
+	total: number;
+	chunk?: number;
+}
+
+export interface TaskFilter<EL = unknown, I extends number = number, D = unknown> {
+	(): boolean;
+	(el: EL, i: I, task: TaskI<D>): boolean;
+}
+
+export interface TaskDestructor {
+	(el: Node);
+}
+
+export interface TaskOpts<EL = unknown, I extends number = number, D = unknown> {
 	group?: string;
 	weight?: number;
-	filter?: Function;
+	filter?: TaskFilter<EL, I, D>;
+	destructor?: TaskDestructor;
 }
 
 export interface TaskDesc {
@@ -140,12 +157,16 @@ export default class AsyncRender {
 
 		let
 			iterator: Iterator<unknown>,
-			last;
+			lastSyncEl;
+
+		let
+			syncI = 0,
+			syncTotal = 0;
 
 		if (!isPromise) {
 			iterator = list[Symbol.iterator]();
 
-			for (let o = iterator, el = last = o.next(), i = 0, j = 0; !el.done; el = last = o.next(), j++) {
+			for (let o = iterator, el = lastSyncEl = o.next(); !el.done; el = lastSyncEl = o.next(), syncI++) {
 				if (from) {
 					from--;
 					continue;
@@ -155,15 +176,15 @@ export default class AsyncRender {
 					val = el.value,
 					isPromise = Object.isPromise(val);
 
-				if (!isPromise && (!f || f.call(this.component, val, j))) {
-					i++;
+				if (!isPromise && (!f || f.call(this.component, val, syncI, {list, i: syncI, total: syncTotal}))) {
+					syncTotal++;
 					finalArr.push(val);
 
 				} else {
 					filteredArr.push(val);
 				}
 
-				if (i >= count || isPromise) {
+				if (syncTotal >= count || isPromise) {
 					break;
 				}
 			}
@@ -194,8 +215,8 @@ export default class AsyncRender {
 					i = 0;
 
 				const next = () => {
-					if (last.done) {
-						return last;
+					if (lastSyncEl.done) {
+						return lastSyncEl;
 					}
 
 					if (i < filteredArr.length) {
@@ -217,8 +238,11 @@ export default class AsyncRender {
 
 			let
 				i = 0,
-				j = 0,
-				chunkI = 0,
+				total = syncTotal,
+				chunkTotal = 0,
+				chunkI = 0;
+
+			let
 				newArray = <unknown[]>[];
 
 			const iterate = () => {
@@ -229,7 +253,10 @@ export default class AsyncRender {
 					const fn = () => {
 						newArray.push(val);
 
-						if (++i >= count || el.done) {
+						total++;
+						chunkTotal++;
+
+						if (chunkTotal >= count || el.done) {
 							const
 								desc = <TaskDesc>{};
 
@@ -237,7 +264,7 @@ export default class AsyncRender {
 								group = 'asyncComponents';
 
 							if (params.group) {
-								group = `asyncComponents:${params.group}:${chunkI++}`;
+								group = `asyncComponents:${params.group}:${chunkI}`;
 								desc.destructor = () => this.async.terminateWorker({group});
 							}
 
@@ -246,7 +273,8 @@ export default class AsyncRender {
 							const
 								els = <Node[]>cb(newArray, desc);
 
-							i = 0;
+							chunkI++;
+							chunkTotal = 0;
 							newArray = [];
 
 							this.async.worker(() => {
@@ -258,6 +286,10 @@ export default class AsyncRender {
 										delete el[this.asyncLabel];
 
 									} else if (el.parentNode) {
+										if (params.destructor) {
+											params.destructor(el);
+										}
+
 										el.parentNode.removeChild(el);
 									}
 								}
@@ -272,10 +304,21 @@ export default class AsyncRender {
 
 								this.createTask(fn, {
 									weight,
-									filter: f && f.bind(this.component, val, j)
+									filter: f && f.bind(this.component, val, i, {
+										list,
+										i: syncI + i + 1,
+
+										get chunk(): number {
+											return chunkI;
+										},
+
+										get total(): number {
+											return total;
+										}
+									})
 								});
 
-								j++;
+								i++;
 								iterate();
 							})
 
@@ -298,10 +341,21 @@ export default class AsyncRender {
 
 					this.createTask(fn, {
 						weight,
-						filter: f && f.bind(this.component, val, j)
+						filter: f && f.bind(this.component, val, i, {
+							list,
+							i: syncI + i + 1,
+
+							get chunk(): number {
+								return chunkI;
+							},
+
+							get total(): number {
+								return total;
+							}
+						})
 					});
 
-					j++;
+					i++;
 					el = o.next();
 				}
 			};

@@ -77,11 +77,17 @@ const
 	minimalCtxCache = Object.createDict(),
 	tplCache = Object.createDict();
 
-const mountHooks = {
+const beforeMountHooks = {
 	beforeCreate: true,
 	beforeDataCreate: true,
 	created: true,
 	beforeMount: true
+};
+
+const mountedHooks = {
+	mounted: true,
+	updated: true,
+	activated: true
 };
 
 /**
@@ -332,8 +338,39 @@ export function component(params?: ComponentParams): Function {
 							// @ts-ignore (access)
 							rootCtx.$createElement = rootCtx._c = createElement;
 
+							const
+								// @ts-ignore (access)
+								forEach = rootCtx._l;
+
 							// @ts-ignore (access)
-							const forEach = rootCtx._l;
+							rootCtx._u = (fns, res) => {
+								res = res || {};
+
+								for (let i = 0; i < fns.length; i++) {
+									if (Array.isArray(fns[i])) {
+										// @ts-ignore (access)
+										rootCtx._u(fns[i], res);
+
+									} else {
+										res[fns[i].key] = function (): VNode[] {
+											const
+												children = fns[i].fn.apply(this, arguments);
+
+											if (tasks.length) {
+												for (let i = 0; i < tasks.length; i++) {
+													tasks[i](children);
+												}
+
+												tasks = [];
+											}
+
+											return children;
+										};
+									}
+								}
+
+								return res;
+							};
 
 							// @ts-ignore (access)
 							rootCtx._l = (obj, cb) => {
@@ -343,9 +380,18 @@ export function component(params?: ComponentParams): Function {
 								if (obj && obj[asyncLabel]) {
 									tasks.push((vnode) => {
 										const
-											ctx = vnode.fakeContext = vnode.context,
-											hook = mountHooks[ctx.hook] ? 'mounted' : 'updated',
-											hooks = ctx.meta.hooks[hook];
+											isTemplateParent = Object.isArray(vnode);
+
+										if (isTemplateParent && !vnode.length) {
+											return;
+										}
+
+										const
+											ctx = (isTemplateParent ? vnode[0] : vnode).context;
+
+										if (!isTemplateParent) {
+											vnode.fakeContext = ctx;
+										}
 
 										const fn = () => {
 											obj[asyncLabel]((obj, p = {}) => {
@@ -355,9 +401,8 @@ export function component(params?: ComponentParams): Function {
 													nodes = <VNode[]>[];
 
 												const
-													ctx = vnode.context,
-													parent = vnode.elm,
-													hook = ctx.hook;
+													parent = (isTemplateParent ? vnode[0].elm.parentNode : vnode.elm),
+													baseHook = ctx.hook;
 
 												ctx.hook = 'beforeUpdate';
 												ctx.renderGroup = p.renderGroup;
@@ -423,13 +468,19 @@ export function component(params?: ComponentParams): Function {
 													.catch(stderr);
 
 												patchRefs(ctx);
-												ctx.hook = hook;
+												ctx.hook = baseHook;
 
 												return els;
 											});
 										};
 
-										hooks.push({fn, once: true});
+										if (mountedHooks[ctx.hook]) {
+											ctx.nextTick(fn);
+
+										} else {
+											const hooks = ctx.meta.hooks[beforeMountHooks[ctx.hook] ? 'mounted' : 'updated'];
+											hooks.push({fn, once: true});
+										}
 									});
 								}
 
