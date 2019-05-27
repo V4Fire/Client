@@ -7,6 +7,7 @@
  */
 
 import iBlock from 'super/i-block/i-block';
+import { getFieldRealInfo } from 'core/component';
 
 export interface FieldGetter<R = unknown, D = unknown> {
 	(key: string, data: NonNullable<D>): R;
@@ -59,9 +60,22 @@ export default class Field {
 		}
 
 		const
-			chunks = path.split('.'),
-			// @ts-ignore
-			isField = isComponent && ctx.meta.fields[chunks[0]];
+			chunks = path.split('.');
+
+		let
+			isField = isComponent;
+
+		if (isComponent) {
+			const
+				nm = chunks[0],
+				info = getFieldRealInfo(ctx, nm);
+
+			if (!(nm in ctx)) {
+				chunks[0] = info.name;
+			}
+
+			isField = info.type === 'field';
+		}
 
 		let
 			// @ts-ignore
@@ -98,9 +112,22 @@ export default class Field {
 
 		const
 			chunks = path.split('.'),
-			// @ts-ignore
-			isField = Boolean(isComponent && ctx.meta.fields[chunks[0]]),
 			isReady = !ctx.lfc.isBeforeCreate();
+
+		let
+			isField = isComponent;
+
+		if (isComponent) {
+			const
+				nm = chunks[0],
+				info = getFieldRealInfo(ctx, nm);
+
+			if (!(nm in ctx)) {
+				chunks[0] = info.name;
+			}
+
+			isField = info.type === 'field';
+		}
 
 		let
 			// @ts-ignore
@@ -160,9 +187,18 @@ export default class Field {
 
 		const
 			chunks = path.split('.'),
-			// @ts-ignore
-			isField = isComponent && ctx.meta.fields[chunks[0]],
 			isReady = !ctx.lfc.isBeforeCreate();
+
+		let
+			isField = isComponent;
+
+		if (isComponent) {
+			const
+				info = getFieldRealInfo(ctx, chunks[0]);
+
+			chunks[0] = info.name;
+			isField = info.type === 'field';
+		}
 
 		let
 			test = true,

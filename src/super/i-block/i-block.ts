@@ -82,6 +82,7 @@ import {
 
 	globalEvent,
 	hook,
+	getFieldRealInfo,
 
 	VNode,
 	ComponentInterface,
@@ -990,12 +991,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 			};
 
 			if (Object.isString(exprOrFn)) {
-				const
-					storeKey = `${exprOrFn}Store`;
-
-				if (storeKey in this) {
-					exprOrFn = storeKey;
-				}
+				exprOrFn = getFieldRealInfo(this, exprOrFn).name;
 			}
 
 			const

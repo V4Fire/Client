@@ -199,9 +199,10 @@ export default abstract class iData<T extends Dictionary = Dictionary> extends i
 					this.lfc.execCbAtTheRightTime(() => this.db = db, label);
 
 				} else {
-					this.get(<RequestQuery>p[0], p[1]).then((data) => {
+					return this.get(<RequestQuery>p[0], p[1]).then((data) => {
 						const db = this.convertDataToDB<T>(data);
 						this.lfc.execCbAtTheRightTime(() => this.db = db, label);
+						return super.initLoad(() => this.db, silent);
 					}, stderr);
 				}
 

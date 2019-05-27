@@ -119,8 +119,14 @@ export function createFakeCtx<T extends Dictionary = FunctionalCtx>(
 		$options;
 
 	if (p && p.$options) {
-		const {filters, directives, components} = p.$options;
-		$options = {filters: {...filters}, directives: {...directives}, components: {...components}};
+		const
+			{filters, directives, components} = p.$options;
+
+		$options = {
+			filters: Object.create(filters),
+			directives: Object.create(directives),
+			components: Object.create(components)
+		};
 
 	} else {
 		$options = {filters: {}, directives: {}, components: {}};
@@ -446,10 +452,12 @@ export function patchVNode(vnode: VNode, ctx: ComponentInterface, renderCtx: Ren
 			}
 		}
 
-		// @ts-ignore (access)
-		oldCtx && oldCtx.$destroy();
-
 		if (oldCtx) {
+			oldCtx._componentId = ctx.componentId;
+
+			// @ts-ignore (access)
+			oldCtx.$destroy();
+
 			const
 				props = ctx.$props,
 				oldProps = oldCtx.$props,

@@ -10,7 +10,7 @@ import Async from 'core/async';
 import iBlock from 'super/i-block/i-block';
 
 //#if runtime has core/kv-storage
-import { asyncLocal, AsyncNamespace, ClearFilter } from 'core/kv-storage';
+import { asyncLocal, AsyncNamespace } from 'core/kv-storage';
 //#endif
 
 export default class Storage {
@@ -45,7 +45,7 @@ export default class Storage {
 	constructor(component: iBlock) {
 		this.component = component;
 
-		//#if runtime has core/has kv-storage
+		//#if runtime has core/kv-storage
 		this.engine = asyncLocal.namespace(component.componentName);
 		//#endif
 	}

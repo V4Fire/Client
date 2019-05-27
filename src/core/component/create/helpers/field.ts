@@ -9,6 +9,55 @@
 import { ComponentInterface, PropOptions, ComponentField, SystemField } from 'core/component/interface';
 import { defaultWrapper, NULL } from 'core/component/create/helpers/const';
 
+export interface FieldRealInfo {
+	name: string;
+	type: 'prop' | 'field' | 'system';
+}
+
+/**
+ * Returns an object with real component field info
+ *
+ * @param component
+ * @param name
+ */
+export function getFieldRealInfo(component: ComponentInterface, name: string): FieldRealInfo {
+	const
+		// @ts-ignore (access)
+		meta = component.meta,
+		variants = [`${name}Store`, name, `${name}Prop`];
+
+	for (let i = 0; i < variants.length; i++) {
+		const
+			name = variants[i];
+
+		if (meta.fields[name]) {
+			return {
+				name,
+				type: 'field'
+			};
+		}
+
+		if (meta.props[name]) {
+			return {
+				name,
+				type: 'prop'
+			};
+		}
+
+		if (meta.systemFields[name]) {
+			return {
+				name,
+				type: 'system'
+			};
+		}
+	}
+
+	return {
+		name,
+		type: 'system'
+	};
+}
+
 /**
  * Initializes the specified fields to a data object and returns it
  * (very critical for loading time)

@@ -7,7 +7,7 @@
  */
 
 import { GLOBAL } from 'core/env';
-import { ComponentInterface } from 'core/component/interface';
+import { getFieldRealInfo, ComponentInterface } from 'core/component';
 
 export const
 	customWatcherRgxp = /^([!?]?)([^!?:]*):(.*)/,
@@ -135,10 +135,10 @@ export function bindWatchers(ctx: ComponentInterface, eventCtx: ComponentInterfa
 							return;
 						}
 
-						const storeKey = `${key}Store`;
-						key = storeKey in ctx ? storeKey : key;
+						const info = getFieldRealInfo(ctx, key);
+						key = info.name;
 
-						if (meta.systemFields[key]) {
+						if (info.type === 'system') {
 							let
 								watchers = systemWatchers.get(ctx);
 
@@ -210,10 +210,10 @@ export function bindWatchers(ctx: ComponentInterface, eventCtx: ComponentInterfa
 						continue;
 					}
 
-					const storeKey = `${key}Store`;
-					key = storeKey in ctx ? storeKey : key;
+					const info = getFieldRealInfo(ctx, key);
+					key = info.name;
 
-					if (meta.systemFields[key]) {
+					if (info.type === 'system') {
 						let
 							watchers = systemWatchers.get(ctx);
 

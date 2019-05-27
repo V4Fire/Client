@@ -37,8 +37,8 @@
 					:-id = values[el.value]
 				.
 					- block preIcon
-						< span.&__cell.&__link-icon.&__link-pre-icon v-if = $slots['pre-icon']
-							+= self.slot('pre-icon')
+						< span.&__cell.&__link-icon.&__link-pre-icon v-if = $slots.preIcon
+							+= self.slot('preIcon')
 
 						< span.&__cell.&__link-icon.&__link-pre-icon v-else-if = el.preIcon
 							< component.&__b-icon &

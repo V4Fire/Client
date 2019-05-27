@@ -86,7 +86,7 @@ export default class VDOM {
 			renderCtx;
 
 		if (ctx && Object.isArray(ctx)) {
-			instanceCtx = ctx[0] || this;
+			instanceCtx = ctx[0] || this.component;
 			renderCtx = ctx[1];
 
 			if (instanceCtx !== instanceCtx.provide.component) {
@@ -96,7 +96,7 @@ export default class VDOM {
 			}
 
 		} else {
-			instanceCtx = this;
+			instanceCtx = this.component;
 			renderCtx = ctx;
 		}
 
