@@ -21,6 +21,7 @@ const
 	fs = require('fs'),
 	path = require('upath'),
 	glob = require('glob'),
+	addNonce = require('./add-nonce').addNonce,
 	isPathInside = require('is-path-inside');
 
 const
@@ -37,6 +38,9 @@ const
 	ssExtRgxp = /\.e?ss$/;
 
 Snakeskin.importFilters({
+	addNonce(str) {
+		return addNonce(str);
+	},
 	/**
 	 * Applies Typograf to the specified string and returns it
 	 *

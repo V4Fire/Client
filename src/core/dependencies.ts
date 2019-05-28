@@ -15,8 +15,8 @@ import { GLOBAL } from 'core/const/links';
  * @param elm
  */
 const addNonceAttribute = (elm: HTMLElement) => {
-	if (typeof GLOBAL_NONCE === 'string' || typeof GLOBAL.GLOBAL_NONCE === 'string') {
-		elm.setAttribute('nonce', GLOBAL_NONCE || GLOBAL.GLOBAL_NONCE);
+	if (typeof GLOBAL_NONCE === 'string') {
+		elm.setAttribute('nonce', GLOBAL_NONCE);
 	}
 };
 

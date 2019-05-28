@@ -105,7 +105,7 @@
 
 	- else
 		: putIn tpl
-			document.write('<script src="' + PATH['{name}'] + '" {(p.defer ? \'defer="defer"\' : '')}><' + '/script>');
+			document.write({("'<script src=\"' + PATH['" + name + "'] + '\" " + (p.defer ? 'defer="defer"' : '') +  "><' + '/script>'")|addNonce});
 
 		- if p.optional
 			# op
@@ -141,7 +141,7 @@
 
 	- else
 		: putIn tpl
-			document.write('<link rel="stylesheet" href="' + PATH['{rname}'] + '">');
+			document.write({("'<link rel=\"stylesheet\" href=\"' + PATH['" + rname + "'] + '\">'")|addNonce});
 
 		- if p.optional
 			# op
@@ -166,12 +166,12 @@
 					+= self.addStyleDep(el)
 
 		- else
-			- script
+			< b-script
 				- forEach list => el
 					+= self.addStyleDep(el)
 
 	- if !type || type === 'scripts'
-		- script
+		< b-script
 			- forEach list => el
 				: tpl = el + '_tpl'
 

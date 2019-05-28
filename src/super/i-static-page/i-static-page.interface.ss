@@ -105,7 +105,7 @@
 							+= favicons.replace(rgxp, '')
 
 							- script
-								document.write('<link {manifest[1]} href="{manifest[2]}?from=' + location.href + '">');
+								document.write({"'<link " + manifest[1] + " href=\"" + manifest[2] + "?from=' + location.href + '\">'"|addNonce});
 
 					+= injectFavicons()
 
