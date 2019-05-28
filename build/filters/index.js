@@ -21,7 +21,6 @@ const
 	fs = require('fs'),
 	path = require('upath'),
 	glob = require('glob'),
-	addNonce = require('./add-nonce').addNonce,
 	isPathInside = require('is-path-inside');
 
 const
@@ -33,14 +32,26 @@ const
 	resourcesRgxp = $C(dependencies).map((el) => new RegExp(`^${RegExp.escape(el)}`));
 
 const
+	tagNonceRgxp = /^(['"])<(link|script)([^>]*)>/,
 	tagRgxp = /<[^>]+>/,
 	elRgxp = new RegExp(`\\b${validators.baseBlockName}__[a-z0-9][a-z0-9-_]*\\b`),
 	ssExtRgxp = /\.e?ss$/;
 
 Snakeskin.importFilters({
+	/**
+	 * Add runtime nonce attribute if GLOBAL_NONCE was defined
+	 *
+	 * @param {string} tag
+	 * @returns string
+	 */
 	addNonce(str) {
-		return addNonce(str);
+		if (tagNonceRgxp.test(tag)) {
+			return tag.replace(tagNonceRgxp, `$1<$2$3$1 + (typeof GLOBAL_NONCE === 'string' ? ' nonce="' + GLOBAL_NONCE + '"') + $1>`);
+		}
+
+		return tag;
 	},
+
 	/**
 	 * Applies Typograf to the specified string and returns it
 	 *
