@@ -42,9 +42,9 @@ Snakeskin.importFilters({
 	 * Add runtime nonce attribute if GLOBAL_NONCE was defined
 	 *
 	 * @param {string} tag
-	 * @returns string
+	 * @returns {string}
 	 */
-	addNonce(str) {
+	addNonce(tag) {
 		if (tagNonceRgxp.test(tag)) {
 			return tag.replace(tagNonceRgxp, `$1<$2$3$1 + (typeof GLOBAL_NONCE === 'string' ? ' nonce="' + GLOBAL_NONCE + '"') + $1>`);
 		}

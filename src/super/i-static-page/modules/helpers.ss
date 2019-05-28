@@ -14,7 +14,7 @@
 - import fs from 'fs-extra-promise'
 
 /**
- * Generate script declaration with defer and nonce attributes
+ * Generates a script declaration with defer and nonce attributes
  *
  * @param {string|false} src
  * @param {boolean} [deffer]
