@@ -27,14 +27,18 @@ const inactiveStatuses = {
  */
 export function activate<T extends iBlock>(component: T, force?: boolean): void {
 	const
-		c = component;
+		c = component,
+		beforeCreate = c.lfc.isBeforeCreate();
 
 	const
 		// @ts-ignore (access)
 		{state: $s, rootEvent: $e} = c;
 
 	if (!c.isActivated || force) {
-		$s.initFromRouter();
+		if (beforeCreate) {
+			$s.initFromRouter();
+		}
+
 		c.lfc.execCbAfterComponentCreated(() => $e.on('onTransition', async (route, type) => {
 			try {
 				if (type === 'hard') {
@@ -61,7 +65,7 @@ export function activate<T extends iBlock>(component: T, force?: boolean): void 
 		}));
 	}
 
-	if (c.lfc.isBeforeCreate()) {
+	if (beforeCreate) {
 		return;
 	}
 
@@ -209,6 +213,8 @@ export function onActivated<T extends iBlock>(component: T): void {
 	}
 
 	c.componentStatus = 'ready';
+	// @ts-ignore (access)
+	c.state.initFromRouter();
 	c.isActivated = true;
 }
 
