@@ -61,7 +61,6 @@ GLOBAL.ModuleDependencies = Object.assign(GLOBAL.ModuleDependencies || {}, {
 			const script = document.createElement('script');
 			script.src = URL.createObjectURL(blob);
 			script.async = false;
-
 			addNonceAttribute(script);
 
 			head.appendChild(script);
@@ -93,7 +92,6 @@ GLOBAL.ModuleDependencies = Object.assign(GLOBAL.ModuleDependencies || {}, {
 
 				link.href = <string>PATH[cssURL];
 				link.rel = 'stylesheet';
-
 				addNonceAttribute(link);
 
 				const
@@ -106,7 +104,6 @@ GLOBAL.ModuleDependencies = Object.assign(GLOBAL.ModuleDependencies || {}, {
 
 				tpl.src = <string>PATH[tplURL];
 				tpl.async = false;
-
 				addNonceAttribute(tpl);
 
 				const
@@ -118,7 +115,6 @@ GLOBAL.ModuleDependencies = Object.assign(GLOBAL.ModuleDependencies || {}, {
 
 				script.src = <string>PATH[el];
 				script.async = false;
-
 				addNonceAttribute(script);
 
 				style.push(() => {
