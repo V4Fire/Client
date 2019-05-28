@@ -10,6 +10,18 @@ import { EventEmitter2 as EventEmitter } from 'eventemitter2';
 import { GLOBAL } from 'core/env';
 
 /**
+ * Adds an attribute "nonce" to the specified element if defined "GLOBAL_NONCE" variable
+ * (support Content Security Policy)
+ *
+ * @param el
+ */
+function addNonceAttribute(el: Element): void {
+	if (typeof GLOBAL_NONCE === 'string') {
+		el.setAttribute('nonce', GLOBAL_NONCE);
+	}
+}
+
+/**
  * Manager of modules
  */
 // tslint:disable-next-line:prefer-object-spread
@@ -47,9 +59,13 @@ export default GLOBAL[MODULE_DEPENDENCIES] = Object.assign(GLOBAL[MODULE_DEPENDE
 				{type: 'application/javascript'}
 			);
 
-			const script = document.createElement('script');
+			const
+				script = document.createElement('script');
+
 			script.src = URL.createObjectURL(blob);
 			script.async = false;
+			addNonceAttribute(script);
+
 			head.appendChild(script);
 		};
 
@@ -82,6 +98,7 @@ export default GLOBAL[MODULE_DEPENDENCIES] = Object.assign(GLOBAL[MODULE_DEPENDE
 
 				link.href = <string>PATH[cssURL];
 				link.rel = 'stylesheet';
+				addNonceAttribute(link);
 
 				const
 					tpl = document.createElement('script'),
@@ -93,6 +110,7 @@ export default GLOBAL[MODULE_DEPENDENCIES] = Object.assign(GLOBAL[MODULE_DEPENDE
 
 				tpl.src = <string>PATH[tplURL];
 				tpl.async = false;
+				addNonceAttribute(tpl);
 
 				const
 					script = document.createElement('script');
@@ -103,6 +121,7 @@ export default GLOBAL[MODULE_DEPENDENCIES] = Object.assign(GLOBAL[MODULE_DEPENDE
 
 				script.src = <string>PATH[el];
 				script.async = false;
+				addNonceAttribute(script);
 
 				style.push(() => {
 					const
@@ -163,6 +182,8 @@ export default GLOBAL[MODULE_DEPENDENCIES] = Object.assign(GLOBAL[MODULE_DEPENDE
 		}
 
 		script.src = <string>PATH[`${module}.dependencies`];
+		addNonceAttribute(script);
+
 		return new Promise((resolve) => {
 			this.event.once(`dependencies.${module}`, resolve);
 			head.appendChild(script);

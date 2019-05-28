@@ -33,10 +33,27 @@ const
 
 const
 	tagRgxp = /<[^>]+>/,
+	tagNonceRgxp = /^(['"])<(link|script)([^>]*)>/;
+
+const
 	elRgxp = new RegExp(`\\b${validators.baseBlockName}__[a-z0-9][a-z0-9-_]*\\b`),
 	ssExtRgxp = /\.e?ss$/;
 
 Snakeskin.importFilters({
+	/**
+	 * Adds a runtime nonce attribute if GLOBAL_NONCE was defined
+	 *
+	 * @param {string} tag
+	 * @returns {string}
+	 */
+	addNonce(tag) {
+		if (tagNonceRgxp.test(tag)) {
+			return tag.replace(tagNonceRgxp, `$1<$2$3$1 + (typeof GLOBAL_NONCE === 'string' ? ' nonce="' + GLOBAL_NONCE + '"' : '') + $1>`);
+		}
+
+		return tag;
+	},
+
 	/**
 	 * Applies Typograf to the specified string and returns it
 	 *
@@ -148,4 +165,8 @@ Snakeskin.importFilters({
 
 Snakeskin.setFilterParams('b', {
 	bind: [(o) => JSON.stringify(o.environment.filename)]
+});
+
+Snakeskin.setFilterParams('addNonce', {
+	'!html': true
 });
