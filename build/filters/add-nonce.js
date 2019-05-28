@@ -11,6 +11,12 @@
 const
 	tagReg = /^(['"])<(link|script)([^>]*)>/;
 
+/**
+ * Add runtime nonce attribute if GLOBAL_NONCE was defined
+ *
+ * @param {string} tag
+ * @returns string
+ */
 exports.addNonce = function (tag) {
 	if (tagReg.test(tag)) {
 		return tag.replace(tagReg, `$1<$2$3$1 + (typeof GLOBAL_NONCE === 'string' ? ' nonce="' + GLOBAL_NONCE + '"') + $1>`);
