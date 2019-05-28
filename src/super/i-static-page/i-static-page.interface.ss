@@ -20,7 +20,7 @@
 /**
  * Base page template
  */
-- async template index(@params) extends ['i-page'].index
+- async template index(@params = {}) extends ['i-page'].index
 	- lib = path.join(@@output, @@outputPattern({name: 'lib'}))
 	- deps = include('src/super/i-static-page/deps')
 
