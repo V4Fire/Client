@@ -11,7 +11,7 @@ import { EventEmitter2 } from 'eventemitter2';
 import { GLOBAL } from 'core/const/links';
 
 /**
- * For support Content Security Policy in global variable can be declarated GLOBAL_NONCE variable
+ * Add attribute "nonce" in runtime if defined "GLOBAL_NONCE" variable (support Content Security Policy)
  * @param elm
  */
 const addNonceAttribute = (elm: HTMLElement) => {
