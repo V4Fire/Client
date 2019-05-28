@@ -13,6 +13,8 @@
 - import config from 'config'
 - import fs from 'fs-extra-promise'
 
+- block index->jsScript(src)
+		- script js src={src}
 /**
  * Injects the specified file to the template
  * @param {string} src
@@ -166,12 +168,12 @@
 					+= self.addStyleDep(el)
 
 		- else
-			< b-script
+			# script
 				- forEach list => el
 					+= self.addStyleDep(el)
 
 	- if !type || type === 'scripts'
-		< b-script
+		# script
 			- forEach list => el
 				: tpl = el + '_tpl'
 
