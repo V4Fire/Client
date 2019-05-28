@@ -14,6 +14,18 @@
 - import fs from 'fs-extra-promise'
 
 /**
+ * Generates a script declaration with defer and nonce attributes
+ *
+ * @param {string|false} src
+ * @param {boolean} [deffer]
+ * @param {string|false} [nonce]
+ * @param {string} [body]
+ */
+- block index->jsScript(src = false, deffer = false, nonce = false, body = '')
+		# script js ${src ? 'src="' + src + '"' : ''} | ${deffer ? 'defer' : ''} | ${nonce ? 'nonce="' + nonce + '"' : ''}
+			#{body}
+
+/**
  * Injects the specified file to the template
  * @param {string} src
  */
@@ -105,7 +117,7 @@
 
 	- else
 		: putIn tpl
-			document.write('<script src="' + PATH['{name}'] + '" {(p.defer ? \'defer="defer"\' : '')}><' + '/script>');
+			document.write({("'<script src=\"' + PATH['" + name + "'] + '\" " + (p.defer ? 'defer="defer"' : '') +  "><' + '/script>'")|addNonce});
 
 		- if p.optional
 			# op
@@ -141,7 +153,7 @@
 
 	- else
 		: putIn tpl
-			document.write('<link rel="stylesheet" href="' + PATH['{rname}'] + '">');
+			document.write({("'<link rel=\"stylesheet\" href=\"' + PATH['" + rname + "'] + '\">'")|addNonce});
 
 		- if p.optional
 			# op
@@ -166,12 +178,12 @@
 					+= self.addStyleDep(el)
 
 		- else
-			- script
+			+= self.jsScript(false, false, @nonce)
 				- forEach list => el
 					+= self.addStyleDep(el)
 
 	- if !type || type === 'scripts'
-		- script
+		+= self.jsScript(false, false, @nonce)
 			- forEach list => el
 				: tpl = el + '_tpl'
 

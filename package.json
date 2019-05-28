@@ -36,7 +36,7 @@
     "http-status": "^1.3.2",
     "ion-sound": "^3.0.7",
     "path-to-regexp": "^2.4.0",
-    "raven-js": "^3.27.0",
+    "raven-js": "^3.27.1",
     "requestidlecallback": "^0.3.0",
     "snakeskin": "^7.5.1",
     "socket.io": "^2.2.0",
