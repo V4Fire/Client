@@ -20,7 +20,7 @@
 /**
  * Base page template
  */
-- async template index() extends ['i-page'].index
+- async template index(@params) extends ['i-page'].index
 	- lib = path.join(@@output, @@outputPattern({name: 'lib'}))
 	- deps = include('src/super/i-static-page/deps')
 
@@ -104,12 +104,12 @@
 
 							+= favicons.replace(rgxp, '')
 
-							+= self.jsScript()
+							+= self.jsScript(false, false, @nonce)
 								document.write({"'<link " + manifest[1] + " href=\"" + manifest[2] + "?from=' + location.href + '\">'"|addNonce});
 
 					+= injectFavicons()
 
-				+= self.jsScript()
+				+= self.jsScript(false, false, @nonce)
 					# block initVars
 						var
 							READY_STATE = 0,
@@ -132,7 +132,7 @@
 
 				- if !@@fatHTML && assetsRequest
 					- block assets
-						+= self.jsScript(@@publicPath(@@assetsJS))
+						+= self.jsScript(@@publicPath(@@assetsJS), false, @nonce)
 
 				- block head
 					: defStyles = deps.styles
@@ -168,7 +168,7 @@
 						+= self.addDependencies('styles')
 
 					- block std
-						+= self.jsScript()
+						+= self.jsScript(false, false, @nonce)
 							+= self.addScriptDep('std', {defer: false, optional: true})
 
 					: defLibs = deps.scripts
@@ -188,34 +188,34 @@
 							- if isFolder
 								- block loadFolders
 									? url = @@publicPath(url)
-									+= self.jsScript("PATH['" + basename + "'] = '" + url + "'")
+									+= self.jsScript("PATH['" + basename + "'] = '" + url + "'", false, @nonce)
 
 							- else
 								- block loadDefLibs
 									- if @@fatHTML
-										+= self.jsScript()
+										+= self.jsScript(false, false, @nonce)
 											requireMonic({url})
 
 									- else
 										? url = @@publicPath(url)
-										+= self.jsScript(url, !notDefer)
+										+= self.jsScript(url, !notDefer, @nonce)
 
 							- return res + getTplResult()
 
-					+= self.jsScript()
+					+= self.jsScript(false, false, @nonce)
 						# block initLibs
 							Vue.default = Vue;
 
 					- block scripts
-						+= self.jsScript()
+						+= self.jsScript(false, false, @nonce)
 							+= self.addScriptDep('vendor', {optional: true})
 
 						+= self.addDependencies('scripts')
 
-						+= self.jsScript()
+						+= self.jsScript(false, false, @nonce)
 							+= self.addScriptDep('webpack.runtime')
 
-					+= self.jsScript()
+					+= self.jsScript(false, false, @nonce)
 						# block depsReady
 							READY_STATE++;
 

@@ -13,8 +13,10 @@
 - import config from 'config'
 - import fs from 'fs-extra-promise'
 
-- block index->jsScript(src, deffer)
-		- script js src={src} | ${deffer ? 'defer' : ''}
+- block index->jsScript(src = false, deffer = false, nonce = '', body = '')
+		# script js ${src ? 'src="' + src + '"' : ''} | ${deffer ? 'defer' : ''} | ${nonce ? 'nonce="' + nonce + '"' : ''}
+			#{body}
+
 /**
  * Injects the specified file to the template
  * @param {string} src
@@ -168,12 +170,12 @@
 					+= self.addStyleDep(el)
 
 		- else
-			+= self.jsScript()
+			+= self.jsScript(false, false, @nonce)
 				- forEach list => el
 					+= self.addStyleDep(el)
 
 	- if !type || type === 'scripts'
-		+= self.jsScript()
+		+= self.jsScript(false, false, @nonce)
 			- forEach list => el
 				: tpl = el + '_tpl'
 

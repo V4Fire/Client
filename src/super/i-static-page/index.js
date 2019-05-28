@@ -8,7 +8,4 @@
 
 package('i-static-page')
 	.extends('i-page')
-	.dependencies(
-		'g-def',
-		'b-script'
-	);
+	.dependencies('g-def');
