@@ -104,12 +104,12 @@
 
 							+= favicons.replace(rgxp, '')
 
-							- script
+							+= self.jsScript()
 								document.write({"'<link " + manifest[1] + " href=\"" + manifest[2] + "?from=' + location.href + '\">'"|addNonce});
 
 					+= injectFavicons()
 
-				# script
+				+= self.jsScript()
 					# block initVars
 						var
 							READY_STATE = 0,
@@ -132,7 +132,7 @@
 
 				- if !@@fatHTML && assetsRequest
 					- block assets
-						- script js src = ${@@publicPath(@@assetsJS)}
+						+= self.jsScript(@@publicPath(@@assetsJS))
 
 				- block head
 					: defStyles = deps.styles
@@ -168,7 +168,7 @@
 						+= self.addDependencies('styles')
 
 					- block std
-						- script
+						+= self.jsScript()
 							+= self.addScriptDep('std', {defer: false, optional: true})
 
 					: defLibs = deps.scripts
@@ -188,34 +188,34 @@
 							- if isFolder
 								- block loadFolders
 									? url = @@publicPath(url)
-									- script :: PATH['{basename}'] = '{url}';
+									+= self.jsScript("PATH['" + basename + "'] = '" + url + "'")
 
 							- else
 								- block loadDefLibs
 									- if @@fatHTML
-										- script
+										+= self.jsScript()
 											requireMonic({url})
 
 									- else
 										? url = @@publicPath(url)
-										- script js src = ${url} | ${notDefer ? '' : 'defer'}
+										+= self.jsScript(url, !notDefer)
 
 							- return res + getTplResult()
 
-					# script
+					+= self.jsScript()
 						# block initLibs
 							Vue.default = Vue;
 
 					- block scripts
-						- script
+						+= self.jsScript()
 							+= self.addScriptDep('vendor', {optional: true})
 
 						+= self.addDependencies('scripts')
 
-						- script
+						+= self.jsScript()
 							+= self.addScriptDep('webpack.runtime')
 
-					# script
+					+= self.jsScript()
 						# block depsReady
 							READY_STATE++;
 
