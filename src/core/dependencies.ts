@@ -175,7 +175,6 @@ GLOBAL.ModuleDependencies = Object.assign(GLOBAL.ModuleDependencies || {}, {
 		}
 
 		script.src = <string>PATH[`${module}.dependencies`];
-
 		addNonceAttribute(script);
 
 		return new Promise((resolve) => {
