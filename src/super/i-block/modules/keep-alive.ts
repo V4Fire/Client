@@ -30,12 +30,12 @@ export function activate<T extends iBlock>(component: T, force?: boolean): void 
 		c = component;
 
 	const
-		// @ts-ignore
-		{state: $s} = c;
+		// @ts-ignore (access)
+		{state: $s, rootEvent: $e} = c;
 
 	if (!c.isActivated || force) {
 		$s.initFromRouter();
-		c.lfc.execCbAfterComponentCreated(() => c.on('onTransition', async (route, type) => {
+		c.lfc.execCbAfterComponentCreated(() => $e.on('onTransition', async (route, type) => {
 			try {
 				if (type === 'hard') {
 					if (route !== c.r.route) {
