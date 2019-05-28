@@ -13,7 +13,15 @@
 - import config from 'config'
 - import fs from 'fs-extra-promise'
 
-- block index->jsScript(src = false, deffer = false, nonce = '', body = '')
+/**
+ * Generate script declaration with defer and nonce attributes
+ *
+ * @param {string|false} src
+ * @param {boolean} deffer
+ * @param {string|false} nonce
+ * @param {string} [body]
+ */
+- block index->jsScript(src = false, deffer = false, nonce = false, body = '')
 		# script js ${src ? 'src="' + src + '"' : ''} | ${deffer ? 'defer' : ''} | ${nonce ? 'nonce="' + nonce + '"' : ''}
 			#{body}
 
