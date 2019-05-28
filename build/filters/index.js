@@ -39,7 +39,7 @@ const
 
 Snakeskin.importFilters({
 	/**
-	 * Add runtime nonce attribute if GLOBAL_NONCE was defined
+	 * Adds runtime nonce attribute if GLOBAL_NONCE was defined
 	 *
 	 * @param {string} tag
 	 * @returns {string}
