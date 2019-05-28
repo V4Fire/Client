@@ -46,7 +46,7 @@ Snakeskin.importFilters({
 	 */
 	addNonce(tag) {
 		if (tagNonceRgxp.test(tag)) {
-			return tag.replace(tagNonceRgxp, `$1<$2$3$1 + (typeof GLOBAL_NONCE === 'string' ? ' nonce="' + GLOBAL_NONCE + '"') + $1>`);
+			return tag.replace(tagNonceRgxp, `$1<$2$3$1 + (typeof GLOBAL_NONCE === 'string' ? ' nonce="' + GLOBAL_NONCE + '"' : '') + $1>`);
 		}
 
 		return tag;
@@ -163,4 +163,8 @@ Snakeskin.importFilters({
 
 Snakeskin.setFilterParams('b', {
 	bind: [(o) => JSON.stringify(o.environment.filename)]
+});
+
+Snakeskin.setFilterParams('addNonce', {
+	'!html': true
 });
