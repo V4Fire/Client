@@ -195,7 +195,7 @@ export default class Block {
 	 * @param [reason]
 	 */
 	setMod(name: string, value: unknown, reason: ModEventReason = 'setMod'): boolean {
-		if (value === undefined) {
+		if (value == null) {
 			return false;
 		}
 
@@ -259,7 +259,7 @@ export default class Block {
 	 */
 	removeMod(name: string, value?: unknown, reason: ModEventReason = 'removeMod'): boolean {
 		name = name.camelize(false);
-		value = value !== undefined ? String(value).dasherize() : undefined;
+		value = value != null ? String(value).dasherize() : undefined;
 
 		const
 			{mods, node} = this,
@@ -333,7 +333,7 @@ export default class Block {
 		value: unknown,
 		reason: ModEventReason = 'setMod'
 	): boolean {
-		if (!link || value === undefined) {
+		if (!link || value == null) {
 			return false;
 		}
 
@@ -384,7 +384,7 @@ export default class Block {
 
 		elName = elName.camelize(false);
 		modName = modName.camelize(false);
-		value = value !== undefined ? String(value).dasherize() : undefined;
+		value = value != null ? String(value).dasherize() : undefined;
 
 		const
 			current = this.getElMod(link, elName, modName);

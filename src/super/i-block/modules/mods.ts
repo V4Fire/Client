@@ -102,7 +102,7 @@ export function initMods<T extends iBlock>(component: T): ModsNTable {
 		// @ts-ignore
 		declMods = component.meta.component.mods,
 		attrMods = <string[][]>[],
-		modVal = (val) => val != null ? String(val) : val;
+		modVal = (val) => val != null ? String(val) : undefined;
 
 	// @ts-ignore
 	for (let attrs = component.$attrs, keys = Object.keys(attrs), i = 0; i < keys.length; i++) {
@@ -121,26 +121,47 @@ export function initMods<T extends iBlock>(component: T): ModsNTable {
 		}
 	}
 
-	function link(val: ModsTable): ModsNTable {
+	function link(propMods: ModsTable): ModsNTable {
 		const
 			// tslint:disable-next-line:prefer-object-spread
-			mods = Object.assign(component.mods || {...declMods}, val);
+			mods = component.mods || {...declMods};
 
-		const
-			{experiments} = component.$root.remoteState;
+		if (propMods) {
+			for (let keys = Object.keys(propMods), i = 0; i < keys.length; i++) {
+				const
+					key = keys[i],
+					val = propMods[key];
+
+				if (val != null || mods[key] == null) {
+					mods[key] = modVal(val);
+				}
+			}
+		}
 
 		for (let i = 0; i < attrMods.length; i++) {
 			const [key, val] = attrMods[i];
 			mods[key] = val;
 		}
 
+		const
+			{experiments} = component.$root.remoteState;
+
 		if (Object.isArray(experiments)) {
 			for (let i = 0; i < experiments.length; i++) {
 				const
-					el = (<ExperimentsSet>experiments)[i];
+					el = (<ExperimentsSet>experiments)[i],
+					experimentMods = el.meta && el.meta.mods;
 
-				if (el.meta && el.meta.mods) {
-					Object.assign(mods, el.meta.mods);
+				if (experimentMods) {
+					for (let keys = Object.keys(experimentMods), i = 0; i < keys.length; i++) {
+						const
+							key = keys[i],
+							val = experimentMods[key];
+
+						if (val != null || mods[key] == null) {
+							mods[key] = modVal(val);
+						}
+					}
 				}
 			}
 		}
