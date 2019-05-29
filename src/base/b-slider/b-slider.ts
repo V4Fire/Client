@@ -71,6 +71,12 @@ export default class bSlider extends iBlock {
 	readonly dynamicHeight: boolean = false;
 
 	/**
+	 * if true, after last slide will slide to first and before first slide will be last
+	 */
+	@prop(Boolean)
+	readonly circular: boolean = false;
+
+	/**
 	 * Slide alignment type
 	 */
 	@prop({type: String, validator: (v) => Boolean(alignTypes[v])})
@@ -281,10 +287,13 @@ export default class bSlider extends iBlock {
 	 * @param dir - direction
 	 */
 	changeSlide(dir: SlideDirection): boolean {
-		const
-			{current, length, $refs} = this;
+		let
+			current = this.current;
 
-		if (dir < 0 && current > 0 || dir > 0 && current < length - 1) {
+		const
+			{length, $refs} = this;
+
+		if (dir < 0 && current > 0 || dir > 0 && current < length - 1 || this.circular) {
 			const
 				{wrapper} = $refs;
 
@@ -292,7 +301,16 @@ export default class bSlider extends iBlock {
 				return false;
 			}
 
-			this.current += dir;
+			current += dir;
+
+			if (dir < 0 && current < 0) {
+				current = length - 1;
+			} else if (dir > 0 && current > length - 1) {
+				current = 0;
+			}
+
+			this.current = current;
+
 			wrapper.style.setProperty('--offset', `${this.currentOffset}px`);
 			return true;
 		}
