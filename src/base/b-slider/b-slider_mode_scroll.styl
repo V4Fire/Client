@@ -7,7 +7,8 @@
  */
 
 $p = {
-	showScrollBreakpoint: basis(128)
+	showScrollBreakpoint: 1024px
+	scrollPadding: 20px
 }
 
 b-slider_mode_scroll extends b-slider
@@ -24,9 +25,11 @@ b-slider_mode_scroll extends b-slider
 	/mode &__outer-view-wrapper
 		-webkit-overflow-scrolling touch
 		absolute left 0 top 0
-		size 100%
+
+		width 100%
+		height "calc(100% + %s)" % $p.scrollPadding
 		overflow-x scroll
-		padding-bottom 10px
+		padding-bottom $p.scrollPadding
 
 		@media (min-width $p.showScrollBreakpoint)
 			padding-bottom 0
