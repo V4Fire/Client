@@ -38,7 +38,7 @@ export default class Lfc {
 	 */
 	protected get async(): Async {
 		// @ts-ignore
-		return this.component.$async;
+		return this.component.async;
 	}
 
 	/**

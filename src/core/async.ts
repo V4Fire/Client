@@ -104,6 +104,8 @@ export default class Async<CTX extends object = Async<any>> extends Super<CTX> {
 
 	/**
 	 * Wrapper for cancelAnimationFrame
+	 *
+	 * @alias
 	 * @param [id] - operation id (if not defined will be get all handlers)
 	 */
 	cancelAnimationFrame(id?: number): this;
@@ -116,6 +118,23 @@ export default class Async<CTX extends object = Async<any>> extends Super<CTX> {
 	 */
 	cancelAnimationFrame(params: ClearOptsId<number>): this;
 	cancelAnimationFrame(p: any): this {
+		return this.clearAnimationFrame(p);
+	}
+
+	/**
+	 * Wrapper for cancelAnimationFrame
+	 * @param [id] - operation id (if not defined will be get all handlers)
+	 */
+	clearAnimationFrame(id?: number): this;
+
+	/**
+	 * @param params - parameters for the operation:
+	 *   *) [id] - operation id
+	 *   *) [label] - label for the task
+	 *   *) [group] - group name for the task
+	 */
+	clearAnimationFrame(params: ClearOptsId<number>): this;
+	clearAnimationFrame(p: any): this {
 		return this
 			.clearAsync(p, this.linkNames.animationFrame)
 			.clearAsync(p, this.linkNames.animationFramePromise);
