@@ -968,7 +968,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 		this.lfc.execCbAfterComponentCreated(() => {
 			const
 				p = params || {},
-				fork = (obj) => Object.isArray(obj) || Object.isTable(obj) ? Object.mixin(true, undefined, obj) : obj;
+				fork = (obj) => Object.isArray(obj) || Object.isSimpleObject(obj) ? Object.mixin(true, undefined, obj) : obj;
 
 			let
 				oldVal: unknown = fork(this.field.get(Object.isFunction(exprOrFn) ? exprOrFn.call(this) : exprOrFn));
@@ -1231,7 +1231,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 
 		const
 			{$children: $c, async: $a} = this,
-			providers = new Set();
+			providers = new Set<iBlock>();
 
 		if ($c) {
 			for (let i = 0; i < $c.length; i++) {

@@ -10,4 +10,4 @@ import iPage, { component } from 'super/i-page/i-page';
 export * from 'super/i-page/i-page';
 
 @component()
-export default abstract class iDynamicPage<T extends Dictionary = Dictionary> extends iPage<T> {}
+export default abstract class iDynamicPage<T extends object = Dictionary> extends iPage<T> {}

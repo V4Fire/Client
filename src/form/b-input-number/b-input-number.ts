@@ -19,7 +19,7 @@ export const
 export default class bInputNumber<
 	V extends Value = Value,
 	FV extends FormValue = FormValue,
-	D extends Dictionary = Dictionary
+	D extends object = Dictionary
 // @ts-ignore
 > extends bInput<V, FV, D> {
 	/** @override */

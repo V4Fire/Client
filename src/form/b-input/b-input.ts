@@ -45,7 +45,7 @@ const
 export default class bInput<
 	V extends Value = Value,
 	FV extends FormValue = FormValue,
-	D extends Dictionary = Dictionary
+	D extends object = Dictionary
 > extends iInput<V, FV, D> implements iWidth, iSize, iIcon {
 	/** @override */
 	@prop({type: String, required: false})

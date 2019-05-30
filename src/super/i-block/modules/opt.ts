@@ -63,7 +63,7 @@ export default class Opt {
 	 */
 	memoizeLiteral<T>(
 		literal: T
-	): T extends (infer V)[] ? ReadonlyArray<V> : T extends Dictionary ? Readonly<T> : T {
+	): T extends (infer V)[] ? ReadonlyArray<V> : T extends object ? Readonly<T> : T {
 		if (Object.isArray(literal) || Object.isObject(literal)) {
 			if (Object.isFrozen(literal)) {
 				return <any>literal;

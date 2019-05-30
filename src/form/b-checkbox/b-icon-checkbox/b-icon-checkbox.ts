@@ -14,7 +14,7 @@ export * from 'form/b-checkbox/b-checkbox';
 export default class bIconCheckbox<
 	V extends boolean = boolean,
 	FV extends boolean = boolean,
-	D extends Dictionary = Dictionary
+	D extends object = Dictionary
 > extends bCheckbox<V, FV, D> implements iIcon {
 	/**
 	 * Icon component

@@ -10,7 +10,7 @@ import semver, { Operations } from 'core/semver';
 
 const
 	agent = navigator.userAgent,
-	separator = /\.|_/;
+	separator = /[._]/;
 
 /**
  * Returns a tuple (browserName, browserVersion?[]) or false from the specified pattern

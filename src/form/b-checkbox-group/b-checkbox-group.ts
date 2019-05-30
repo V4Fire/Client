@@ -42,7 +42,7 @@ export interface Option extends Dictionary {
 export default class bCheckboxGroup<
 	V extends Value = Value,
 	FV extends FormValue = FormValue,
-	D extends Dictionary = Dictionary
+	D extends object = Dictionary
 > extends iInput<V, FV, D> implements iWidth {
 	/** @override */
 	@prop({

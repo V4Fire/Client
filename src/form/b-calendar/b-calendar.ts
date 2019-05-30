@@ -41,7 +41,7 @@ export const
 export default class bCalendar<
 	V extends Value = Value,
 	FV extends FormValue = FormValue,
-	D extends Dictionary = Dictionary
+	D extends object = Dictionary
 > extends iInput<V, FV, D> implements iWidth, iSize, iIcon, iOpenToggle {
 	/** @override */
 	@prop({type: [Array, Date], required: false})

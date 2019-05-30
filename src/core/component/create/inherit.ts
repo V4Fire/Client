@@ -178,7 +178,7 @@ export default function inheritMeta(
 				}
 
 				const
-					after = new Set(),
+					after = new Set<string>(),
 					watchers = new Map();
 
 				if (parent.watchers) {
@@ -211,7 +211,7 @@ export default function inheritMeta(
 
 			for (let keys = Object.keys(parentObj), i = 0; i < keys.length; i++) {
 				const key = keys[i];
-				(<Dictionary>o[key]) = {...parentObj[key]};
+				o[key] = {...<any>parentObj[key]};
 			}
 		}
 	}

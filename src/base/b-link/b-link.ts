@@ -21,7 +21,7 @@ export * from 'super/i-data/i-data';
 	}
 })
 
-export default class bLink<T extends Dictionary = Dictionary> extends iData<T>
+export default class bLink<T extends object = Dictionary> extends iData<T>
 	implements iAccess, iIcon, iVisible, iSize {
 
 	/**

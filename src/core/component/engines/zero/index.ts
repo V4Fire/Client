@@ -156,7 +156,7 @@ export class ComponentDriver {
 			let
 				opts: VNodeData;
 
-			if (Object.isObject(attrs)) {
+			if (Object.isSimpleObject(attrs)) {
 				children = (<Node[]>[]).concat(children || []);
 				opts = <VNodeData>attrs;
 

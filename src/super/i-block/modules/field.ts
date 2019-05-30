@@ -39,15 +39,19 @@ export default class Field {
 	 * @param [obj]
 	 * @param [getter] - field getter
 	 */
-	get<T = unknown>(path: string, obj?: Dictionary, getter?: FieldGetter): CanUndef<T>;
+	get<T = unknown>(path: string, obj?: object, getter?: FieldGetter): CanUndef<T>;
 	get<T = unknown>(
 		path: string,
-		obj: Dictionary | FieldGetter = this.component,
+		obj: object | FieldGetter = this.component,
 		getter?: FieldGetter
 	): CanUndef<T> {
 		if (!getter && Object.isFunction(obj)) {
 			getter = <FieldGetter>obj;
 			obj = this;
+		}
+
+		if (!obj) {
+			return;
 		}
 
 		let
@@ -100,12 +104,16 @@ export default class Field {
 	 * @param value
 	 * @param [obj]
 	 */
-	set<T = unknown>(path: string, value: T, obj: Dictionary = this.component): T {
+	set<T = unknown>(path: string, value: T, obj: object = this.component): T {
+		if (!obj) {
+			return value;
+		}
+
 		let
 			ctx = this.component,
 			isComponent = false;
 
-		if (obj.instance instanceof iBlock) {
+		if ((<Dictionary>obj).instance instanceof iBlock) {
 			ctx = <iBlock>obj;
 			isComponent = true;
 		}
@@ -175,12 +183,16 @@ export default class Field {
 	 * @param path - path to the property (bla.baz.foo)
 	 * @param [obj]
 	 */
-	delete(path: string, obj: Dictionary = this.component): boolean {
+	delete(path: string, obj: object = this.component): boolean {
+		if (!obj) {
+			return false;
+		}
+
 		let
 			ctx = this.component,
 			isComponent = false;
 
-		if (obj.instance instanceof iBlock) {
+		if ((<Dictionary>obj).instance instanceof iBlock) {
 			ctx = <iBlock>obj;
 			isComponent = true;
 		}

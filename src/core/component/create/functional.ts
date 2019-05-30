@@ -90,7 +90,7 @@ const parentMountMap = {
  * @param [initProps] - if true, then component prop values will be force initialize
  * @param [safe] - if true, then will be using safe access to properties
  */
-export function createFakeCtx<T extends Dictionary = FunctionalCtx>(
+export function createFakeCtx<T extends object = FunctionalCtx>(
 	createElement: CreateElement,
 	renderCtx: RenderContext,
 	baseCtx: FunctionalCtx,
