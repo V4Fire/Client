@@ -30,8 +30,8 @@ b-calendar
 	&__label-nav
 		padding 0.2em
 		border 1px solid $p.borderColor
-		background $p.inputBackgroundColor
 		color $p.labelNavColor
+		background $p.inputBackgroundColor
 		transition 0.2s ease-in border-color
 
 		&_buttons_false
@@ -62,8 +62,8 @@ b-calendar
 		font-weight 400
 
 	&__calendar-icon
-		color darken($p.borderColor, 20%)
 		margin-right 0.5em
+		color darken($p.borderColor, 20%)
 
 	&__nav &__value
 		min-width 8em
@@ -79,14 +79,14 @@ b-calendar
 
 		&_once_true
 			margin 0
-			font-size 0.8em
 			margin-left 1.5em
+			font-size 0.8em
 
 	&__dropdown &__dropdown-content
 		padding 0
 
 	&__month-wrap
-		animation-duration .2s
+		animation-duration 0.2s
 
 	&__hr
 		height 0.1em
@@ -99,8 +99,8 @@ b-calendar
 			padding-bottom 1em
 
 	&__td
-		margin 0.3em
 		size 2.2em
+		margin 0.3em
 
 	&__cell
 		&_range-start_false&_range-end_false&_in-range_true
@@ -110,16 +110,16 @@ b-calendar
 				background $p.dayHoverBackgroundColor
 
 		&_in-range_true
-			background $p.dayHoverBackgroundColor
 			border-radius 0
+			background $p.dayHoverBackgroundColor
 
 		&_range-start_true
-			background $p.dayHoverBackgroundColor
 			border-radius 100% 0 0 100%
+			background $p.dayHoverBackgroundColor
 
 		&_range-end_true
-			background $p.dayHoverBackgroundColor
 			border-radius 0 100% 100% 0
+			background $p.dayHoverBackgroundColor
 
 		&_range-start_true&_range-end_true
 			border-radius 100%
@@ -139,8 +139,8 @@ b-calendar
 			background darken($p.dayHoverBackgroundColor, 5%)
 
 		&_active_true
-			background $p.activeValueColor
 			color $p.activeDayColor
+			background $p.activeValueColor
 
 		&_disabled_true
 			opacity 0.5

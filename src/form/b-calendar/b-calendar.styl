@@ -78,8 +78,8 @@ b-calendar extends i-input
 		display flex
 
 	&__label-year
-		user-select none
 		cursor default
+		user-select none
 
 	&__items-container
 		display flex
@@ -98,12 +98,12 @@ b-calendar extends i-input
 		&_range-start_false&_range-end_false&_in-range_true
 		&_range-end_true
 			&:before
-				position absolute
-				right 100%
+				absolute right 100%
 				zIndex(underall)
+
+				content ""
 				display block
 				height 100%
-				content ""
 
 		&_touch_false
 			pointer-events none
@@ -116,14 +116,14 @@ b-calendar extends i-input
 
 	&__h
 	&__day
-		align-items center
 		justify-content center
+		align-items center
 
 	&__day
 		size 100%
+		text-align center
 		text-decoration none
 		user-select none
-		text-align center
 
 		&_disabled_true
 		&_active_true
@@ -131,8 +131,8 @@ b-calendar extends i-input
 
 	&__time-block
 		display flex
-		align-items center
 		justify-content center
+		align-items center
 
 	&__time-label
 		line-height 1

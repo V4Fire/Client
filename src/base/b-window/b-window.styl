@@ -18,9 +18,10 @@ b-window extends i-data
 	i-visible({helpers: $p.visibleHelpers})
 	i-width({helpers: $p.widthHelpers, selector: ('&__window')})
 
+	zIndex($p.zIndexPos)
 	top 0
 	left 0
-	zIndex($p.zIndexPos)
+
 	min-width 100%
 
 	&__back
@@ -37,9 +38,9 @@ b-window extends i-data
 		size 100% 100vh
 
 	&__window
+		align-self center
 		width $p.width
 		max-width 100%
-		align-self center
 
 	&__title
 		display block

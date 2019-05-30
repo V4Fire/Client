@@ -18,8 +18,8 @@ b-crop extends i-block
 	i-visible({helpers: $p.visibleHelpers})
 
 	position relative
-	user-select none
 	useGPU()
+	user-select none
 
 	&__over-wrapper
 		display block
@@ -61,6 +61,7 @@ b-crop extends i-block
 	&__select
 		position absolute
 		zIndex(layer, 2)
+
 		box-sizing border-box
 		cursor move
 
@@ -72,8 +73,7 @@ b-crop extends i-block
 
 	&__r
 		position absolute
-		width $p.rSize
-		height @width
+		size $p.rSize width
 
 		&_hor-align_left
 			left -(@width / 2)
