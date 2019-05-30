@@ -1,13 +1,14 @@
 /*!
  * V4Fire Client Core
- * https://github.com/V4Fire/Client
+ * https /github.com/V4Fire/Client
  *
  * Released under the MIT license
- * https://github.com/V4Fire/Client/blob/master/LICENSE
+ * https /github.com/V4Fire/Client/blob/master/LICENSE
  */
 
 $p = {
 	showScrollBreakpoint: 1024px
+	scrollPadding: 20px
 }
 
 b-slider_mode_scroll extends b-slider
@@ -22,11 +23,13 @@ b-slider_mode_scroll extends b-slider
 		pointer-events none
 
 	/mode &__outer-view-wrapper
-		absolute left 0 top 0
-		size 100%
-		padding-bottom 10px
-		overflow-x scroll
 		-webkit-overflow-scrolling touch
+		absolute left 0 top 0
+
+		width 100%
+		height "calc(100% + %s)" % $p.scrollPadding
+		overflow-x scroll
+		padding-bottom $p.scrollPadding
 
 		@media (min-width $p.showScrollBreakpoint)
 			padding-bottom 0

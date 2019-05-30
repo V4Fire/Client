@@ -29,7 +29,7 @@
 		< .&__window v-else
 			< .&__view-wrapper ref = view
 				< .&__fake-view-wrapper &
-					v-if = useFake |
+					v-if = dynamicHeight |
 					ref = fake |
 				.
 					+= self.slot()
