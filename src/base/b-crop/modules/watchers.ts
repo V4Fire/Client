@@ -191,6 +191,7 @@ export function syncSelectByClickWatcher<T extends bCrop>(component: T, value: b
 /**
  * Synchronization for the resizeSelect field
  *
+ * @param component
  * @param value
  * @emits resizeStart()
  * @emits resize(rect: Size)

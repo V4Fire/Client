@@ -20,7 +20,7 @@ export interface Sound {
 	preload?: boolean;
 }
 
-export interface Message<T extends Dictionary = Dictionary> extends Dictionary {
+export interface Message<T extends object = Dictionary> extends Dictionary {
 	instance: string;
 	type: string;
 	data: T;
@@ -152,7 +152,7 @@ export default class bNotifier<T extends Message = Message> extends iData<T> {
 					tag: data.instance,
 					body: r.body(data),
 					icon: '/assets/favicons/favicon.ico',
-					...Object.reject(rule, /^(on|body$)/)
+					...<Dictionary>Object.reject(rule, /^(on|body$)/)
 				}),
 
 				handlers

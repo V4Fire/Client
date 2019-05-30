@@ -20,8 +20,8 @@
 		- block wrapper
 			< _.&__wrapper @click = onClick
 				- block preIcon
-					< _.&__cell.&__icon.&__pre-icon v-if = $slots['pre-icon']
-						+= self.slot('pre-icon')
+					< _.&__cell.&__icon.&__pre-icon v-if = $slots.preIcon
+						+= self.slot('preIcon')
 
 					< _.&__cell.&__icon.&__pre-icon v-else-if = preIcon
 						< component.&__b-icon &

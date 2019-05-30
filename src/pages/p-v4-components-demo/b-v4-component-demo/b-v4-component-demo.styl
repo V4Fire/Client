@@ -30,16 +30,17 @@ b-v4-component-demo extends i-block
 		flex-grow 1
 
 		max-height $p.maxHeight
+		overflow auto
+
 		margin-left 20px
 		padding-left @margin-left
 
 		border-left 1px dotted #CCC
-		overflow auto
 
 	&__mod
-		white-space nowrap
 		font-size 14px
 		font-weight bold
+		white-space nowrap
 
 	&__mod + &__mod
 		margin-top 10px
@@ -61,5 +62,5 @@ b-v4-component-demo extends i-block
 		font-weight bold
 
 	&__parents
-		font-weight normal
 		font-size 16px
+		font-weight normal

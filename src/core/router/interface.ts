@@ -9,7 +9,7 @@
 import { Key, RegExpOptions, ParseOptions } from 'path-to-regexp';
 import { EventEmitter2 as EventEmitter } from 'eventemitter2';
 
-export type BasePageMeta<M extends Dictionary = Dictionary> = M & {
+export type BasePageMeta<M extends object = Dictionary> = M & {
 	page?: string;
 	path?: string;
 	pathOpts?: RegExpOptions & ParseOptions;
@@ -25,21 +25,21 @@ export type BasePageMeta<M extends Dictionary = Dictionary> = M & {
 	};
 };
 
-export type PageSchema<M extends Dictionary = Dictionary> = Dictionary<
+export type PageSchema<M extends object = Dictionary> = Dictionary<
 	string |
 	BasePageMeta<M>
 >;
 
-export type PageMeta<M extends Dictionary = Dictionary> = BasePageMeta<M> & {
+export type PageMeta<M extends object = Dictionary> = BasePageMeta<M> & {
 	page: string;
 	index: boolean;
 	params: Key[];
 };
 
 export interface CurrentPage<
-	P extends Dictionary = Dictionary,
-	Q extends Dictionary = Dictionary,
-	M extends Dictionary = Dictionary
+	P extends object = Dictionary,
+	Q extends object = Dictionary,
+	M extends object = Dictionary
 > extends Dictionary {
 	url?: string;
 	page: string;
@@ -63,9 +63,9 @@ export interface HistoryClearFilter {
 }
 
 export interface Router<
-	P extends Dictionary = Dictionary,
-	Q extends Dictionary = Dictionary,
-	M extends Dictionary = Dictionary
+	P extends object = Dictionary,
+	Q extends object = Dictionary,
+	M extends object = Dictionary
 > extends EventEmitter {
 	readonly page?: CanUndef<CurrentPage<P, Q, M>>;
 	readonly history: PageInfo[];

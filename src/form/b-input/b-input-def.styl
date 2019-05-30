@@ -40,20 +40,20 @@ b-input
 		margin-right 1em
 
 	&__input-cont
-		margin-left 0.4em
 		margin-right 0.3em
+		margin-left 0.4em
 
 	&__input
 		padding 0.7em 0
-		color $p.color
 		font-weight 400
+		color $p.color
 
 		&:-webkit-autofill
 			-webkit-box-shadow 0 0 0 100em $p.backgroundColor inset !important
 
 		&::placeholder
-			color lighten($p.color, 50%)
 			opacity 1
+			color lighten($p.color, 50%)
 
 		&:focus::placeholder
 			opacity 0.5

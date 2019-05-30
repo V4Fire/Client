@@ -29,7 +29,7 @@ export const selectCache = new Cache<'months' | 'days' | 'years', ReadonlyArray<
 export default class bInputBirthday<
 	V extends Value = Value,
 	FV extends FormValue = FormValue,
-	D extends Dictionary = Dictionary
+	D extends object = Dictionary
 > extends iInput<V, FV, D> implements iWidth {
 	/** @override */
 	@prop({type: Date, required: false})

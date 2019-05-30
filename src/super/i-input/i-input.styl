@@ -20,11 +20,12 @@ i-input extends i-data
 	i-visible({helpers: $p.visibleHelpers})
 
 	&__hidden-input
-		padding 0
-		width 0
 		position absolute
 		zIndex(underall)
+
+		width 0
 		opacity 0
+		padding 0
 
 	if $p.messageHelpers
 		&_show-error_true&_valid_true &__error-box

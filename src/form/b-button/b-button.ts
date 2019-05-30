@@ -52,7 +52,7 @@ export type ButtonType<T extends string = any> =
 	}
 })
 
-export default class bButton<T extends Dictionary = Dictionary> extends iData<T>
+export default class bButton<T extends object = Dictionary> extends iData<T>
 	implements iAccess, iOpenToggle, iIcon, iVisible, iWidth, iSize {
 
 	/** @override */
@@ -156,7 +156,7 @@ export default class bButton<T extends Dictionary = Dictionary> extends iData<T>
 
 		upper: [
 			'true',
-			['false']
+			'false'
 		],
 
 		...iAccess.mods,

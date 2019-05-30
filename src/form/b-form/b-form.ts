@@ -47,7 +47,7 @@ export const
 	}
 })
 
-export default class bForm<T extends Dictionary = Dictionary> extends iData<T> {
+export default class bForm<T extends object = Dictionary> extends iData<T> {
 	/** @override */
 	readonly dataProvider: string = 'Provider';
 

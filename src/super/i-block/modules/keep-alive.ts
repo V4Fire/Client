@@ -27,15 +27,19 @@ const inactiveStatuses = {
  */
 export function activate<T extends iBlock>(component: T, force?: boolean): void {
 	const
-		c = component;
+		c = component,
+		beforeCreate = c.lfc.isBeforeCreate();
 
 	const
-		// @ts-ignore
-		{state: $s} = c;
+		// @ts-ignore (access)
+		{state: $s, rootEvent: $e} = c;
 
 	if (!c.isActivated || force) {
-		$s.initFromRouter();
-		c.lfc.execCbAfterComponentCreated(() => c.on('onTransition', async (route, type) => {
+		if (beforeCreate) {
+			$s.initFromRouter();
+		}
+
+		c.lfc.execCbAfterComponentCreated(() => $e.on('onTransition', async (route, type) => {
 			try {
 				if (type === 'hard') {
 					if (route !== c.r.route) {
@@ -61,12 +65,12 @@ export function activate<T extends iBlock>(component: T, force?: boolean): void 
 		}));
 	}
 
-	if (c.lfc.isBeforeCreate()) {
+	if (beforeCreate) {
 		return;
 	}
 
 	const
-		els = new Set();
+		els = new Set<iBlock>();
 
 	const exec = (ctx: iBlock = c) => {
 		els.add(ctx);
@@ -92,7 +96,7 @@ export function activate<T extends iBlock>(component: T, force?: boolean): void 
 
 		for (let i = 0; i < domEls.length; i++) {
 			const
-				el = (<ComponentElement>domEls[i]).component;
+				el = <iBlock>(<ComponentElement>domEls[i]).component;
 
 			if (el) {
 				els.add(el);
@@ -105,6 +109,7 @@ export function activate<T extends iBlock>(component: T, force?: boolean): void 
 			ctx = el.value;
 
 		if (!ctx.isActivated) {
+			// @ts-ignore (access)
 			runHook('activated', ctx.meta, ctx).then(() => ctx.activated(), stderr);
 		}
 	}
@@ -123,7 +128,7 @@ export function deactivate<T extends iBlock>(component: T): void {
 	}
 
 	const
-		els = new Set();
+		els = new Set<iBlock>();
 
 	const exec = (ctx: iBlock = c) => {
 		els.add(ctx);
@@ -149,7 +154,7 @@ export function deactivate<T extends iBlock>(component: T): void {
 
 		for (let i = 0; i < domEls.length; i++) {
 			const
-				el = (<ComponentElement>domEls[i]).component;
+				el = <iBlock>(<ComponentElement>domEls[i]).component;
 
 			if (el) {
 				els.add(el);
@@ -162,6 +167,7 @@ export function deactivate<T extends iBlock>(component: T): void {
 			ctx = el.value;
 
 		if (ctx.isActivated) {
+			// @ts-ignore (access)
 			runHook('deactivated', ctx.meta, ctx).then(() => ctx.deactivated(), stderr);
 		}
 	}
@@ -209,6 +215,8 @@ export function onActivated<T extends iBlock>(component: T): void {
 	}
 
 	c.componentStatus = 'ready';
+	// @ts-ignore (access)
+	c.state.initFromRouter();
 	c.isActivated = true;
 }
 

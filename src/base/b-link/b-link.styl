@@ -22,8 +22,9 @@ $p = {
 
 b-link extends i-data
 	i-access({helpers: $p.accessHelpers})
-	i-visible({helpers: $p.visibleHelpers})
 	i-size({helpers: $p.sizeHelpers})
+	i-visible({helpers: $p.visibleHelpers})
+
 	display inline-block
 
 	&__root-wrapper
@@ -40,14 +41,14 @@ b-link extends i-data
 		border-bottom 0
 
 	&__link
+		text-decoration none
 		border 1px solid transparent
 		border-bottom-color currentColor
 		color currentColor
-		text-decoration none
 
 		&:focus
-			outline 0
 			border-style dotted
+			outline 0
 
 		&:hover
 			color $p.hoverColor

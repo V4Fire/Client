@@ -79,3 +79,5 @@ interface Number {
 	vmin: string;
 	vmax: string;
 }
+
+declare const GLOBAL_NONCE: unknown;

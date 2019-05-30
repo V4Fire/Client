@@ -12,12 +12,6 @@ import { statuses } from 'super/i-block/modules/const';
 import { Hooks, ComponentMeta } from 'core/component';
 import { Statuses } from 'super/i-block/modules/interface';
 
-const beforeHooks = {
-	beforeRuntime: true,
-	beforeCreate: true,
-	beforeDataCreate: true
-};
-
 export default class Lfc {
 	/**
 	 * Current component hook
@@ -44,7 +38,7 @@ export default class Lfc {
 	 */
 	protected get async(): Async {
 		// @ts-ignore
-		return this.component.$async;
+		return this.component.async;
 	}
 
 	/**
@@ -67,6 +61,12 @@ export default class Lfc {
 	 * @param [skip] - name of a skipped hook
 	 */
 	isBeforeCreate(...skip: Hooks[]): boolean {
+		const beforeHooks = {
+			beforeRuntime: true,
+			beforeCreate: true,
+			beforeDataCreate: true
+		};
+
 		for (let i = 0; i < skip.length; i++) {
 			beforeHooks[skip[i]] = false;
 		}

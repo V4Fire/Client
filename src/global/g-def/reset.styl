@@ -16,8 +16,8 @@ reset-forms()
 	// styling of `select`, unless a `border` property is set.
 	button, input, optgroup, select, textarea
 		margin 0 // Fix margins in FF 4+, Safari, and Chrome.
-		color inherit // Correct color not being inherited.
 		font inherit // Correct font properties not being inherited.
+		color inherit // Correct color not being inherited.
 
 	button // Fix `overflow` set to `hidden` in IE 8/9/10/11.
 		overflow visible
@@ -27,29 +27,25 @@ reset-forms()
 
 	// Fix WebKit bug in Android 4.0, inability to style clickable `input` in
 	// iOS and improve usability and consistency of cursor style.
-	button, html input[type='button'], input[type='reset'], input[type='submit']
+	button, html input[type="button"], input[type="reset"], input[type="submit"]
 		cursor pointer
-		-webkit-appearance button
 
 	// Reset default cursor for disabled elements.
 	button[disabled], html input[disabled]
 		cursor default
 
 	// Fix the cursor style for Chrome's increment/decrement buttons.
-	input[type='number']::-webkit-inner-spin-button,
-	input[type='number']::-webkit-outer-spin-button
+	input[type="number"]::-webkit-inner-spin-button,
+	input[type="number"]::-webkit-outer-spin-button
 		height auto
 
 	// Consistent appearance and box-sizing in Safari and Chrome.
-	input[type='search']
-		-webkit-appearance textfield
-		-moz-box-sizing content-box
-		-webkit-box-sizing content-box
+	input[type="search"]
 		box-sizing content-box
 
 	// No inner padding and search cancel button in Safari and Chrome on OS X.
-	input[type='search']::-webkit-search-cancel-button,
-	input[type='search']::-webkit-search-decoration
+	input[type="search"]::-webkit-search-cancel-button,
+	input[type="search"]::-webkit-search-decoration
 		-webkit-appearance none
 
 	legend // Hack to correct `color` not being inherited in IE 8/9/10/11.
@@ -63,23 +59,23 @@ reset-forms()
  * Generates rules for input css reset
  */
 reset-input()
-	reset-box-model()
-
 	display inline-block
 	box-sizing border-box
 
+	font-weight normal
+	reset-box-model()
+
 	vertical-align middle
+
+	font-family BASE_FONT
+	line-height 1
 	text-align left
 	text-decoration none
 	text-indent 0
 
-	white-space normal
-	font-weight normal
-	font-family BASE_FONT
-	line-height 1
-
 	border-spacing 0
 	background-color transparent
+	white-space normal
 
 	&:focus
 		outline 0
@@ -109,8 +105,8 @@ a, .a
 		border 0
 
 html
-	font-family BASE_FONT
 	box-sizing border-box
+	font-family BASE_FONT
 
 *, *:before, *:after
 	box-sizing inherit
@@ -119,5 +115,5 @@ reset-html5()
 reset-forms()
 
 .a
-	reset-input()
 	cursor pointer
+	reset-input()

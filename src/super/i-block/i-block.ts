@@ -34,8 +34,6 @@ import iStaticPage from 'super/i-static-page/i-static-page';
 
 import 'super/i-block/directives';
 
-import { statuses } from 'super/i-block/modules/const';
-
 import Cache from 'super/i-block/modules/cache';
 import Opt from 'super/i-block/modules/opt';
 import Lazy from 'super/i-block/modules/lazy';
@@ -57,6 +55,7 @@ import State, { ConverterCallType } from 'super/i-block/modules/state';
 import Storage from 'super/i-block/modules/storage';
 import Sync, { AsyncWatchOpts } from 'super/i-block/modules/sync';
 
+import { statuses } from 'super/i-block/modules/const';
 import { eventFactory, Event, RemoteEvent } from 'super/i-block/modules/event';
 import { initGlobalEvents, initModEvents, initRemoteWatchers } from 'super/i-block/modules/listeners';
 import { activate, deactivate, onActivated, onDeactivated } from 'super/i-block/modules/keep-alive';
@@ -82,6 +81,7 @@ import {
 
 	globalEvent,
 	hook,
+	getFieldRealInfo,
 
 	VNode,
 	ComponentInterface,
@@ -103,16 +103,19 @@ import {
 
 export * from 'core/component';
 export * from 'super/i-block/modules/interface';
-export * from 'super/i-block/modules/daemons';
+export * from 'super/i-block/modules/const';
+
 export * from 'super/i-block/modules/block';
+export * from 'super/i-block/modules/field';
+export * from 'super/i-block/modules/state';
+
+export * from 'super/i-block/modules/daemons';
+export * from 'super/i-block/modules/event';
+
+export * from 'super/i-block/modules/sync';
+export * from 'super/i-block/modules/async-render';
 
 export {
-
-	statuses,
-	eventFactory,
-
-	AsyncWatchOpts,
-	ConverterCallType,
 
 	Cache,
 	Classes,
@@ -120,10 +123,7 @@ export {
 	ModVal,
 	ModsDecl,
 	ModsTable,
-	ModsNTable,
-
-	Event,
-	RemoteEvent
+	ModsNTable
 
 };
 
@@ -968,7 +968,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 		this.lfc.execCbAfterComponentCreated(() => {
 			const
 				p = params || {},
-				fork = (obj) => Object.isArray(obj) || Object.isTable(obj) ? Object.mixin(true, undefined, obj) : obj;
+				fork = (obj) => Object.isArray(obj) || Object.isSimpleObject(obj) ? Object.mixin(true, undefined, obj) : obj;
 
 			let
 				oldVal: unknown = fork(this.field.get(Object.isFunction(exprOrFn) ? exprOrFn.call(this) : exprOrFn));
@@ -990,12 +990,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 			};
 
 			if (Object.isString(exprOrFn)) {
-				const
-					storeKey = `${exprOrFn}Store`;
-
-				if (storeKey in this) {
-					exprOrFn = storeKey;
-				}
+				exprOrFn = getFieldRealInfo(this, exprOrFn).name;
 			}
 
 			const
@@ -1236,7 +1231,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 
 		const
 			{$children: $c, async: $a} = this,
-			providers = new Set();
+			providers = new Set<iBlock>();
 
 		if ($c) {
 			for (let i = 0; i < $c.length; i++) {

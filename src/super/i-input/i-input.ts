@@ -47,7 +47,7 @@ export * from 'super/i-data/i-data';
 export default abstract class iInput<
 	V extends Value = Value,
 	FV extends FormValue = FormValue,
-	D extends Dictionary = Dictionary
+	D extends object = Dictionary
 > extends iData<D> implements iVisible, iAccess {
 	/**
 	 * Initial component value

@@ -12,19 +12,10 @@ import Lfc from 'super/i-block/modules/lfc';
 import Field from 'super/i-block/modules/field';
 
 import { statuses } from 'super/i-block/modules/const';
-import { WatchOptions, ComponentMeta } from 'core/component';
+import { SyncLinkCache, WatchOptions, ComponentMeta } from 'core/component';
 
 export type AsyncWatchOpts =
 	WatchOptions & AsyncOpts;
-
-export interface SyncLink<T = unknown> {
-	path: string;
-	sync(value?: T): void;
-}
-
-export type SyncLinkCache<T = unknown> = Dictionary<
-	Dictionary<SyncLink<T>>
->;
 
 export interface LinkWrapper<V = unknown, R = unknown> {
 	(value: V, oldValue?: V): R;
