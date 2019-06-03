@@ -8,7 +8,6 @@
 
 import symbolGenerator from 'core/symbol';
 import iBlock, { component, system, hook, watch, wait, prop, p } from 'super/i-block/i-block';
-
 export * from 'super/i-block/i-block';
 
 export const
@@ -29,12 +28,13 @@ export const sliderModes = {
 export interface SlideRect extends ClientRect {
 	offsetLeft: number;
 }
+
 /**
  * -1 - Previous
- * 0 - Not changed
- * 1 - Next
+ * 0  - Not changed
+ * 1  - Next
  */
-export type SlideDirection = number;
+export type SlideDirection = -1 | 0 | 1;
 export type AlignType = keyof typeof alignTypes;
 export type Mode = keyof typeof sliderModes;
 
@@ -47,7 +47,7 @@ export function isBetweenZeroAndOne(v: number): boolean {
 }
 
 /**
- * Returns true if the specified value is greater than 0 and is not infinite
+ * Returns true if the specified value is greater than 0 and isn't infinite
  * @param v
  */
 export function isNotInfinitePositiveNumber(v: number): boolean {
@@ -58,20 +58,20 @@ export function isNotInfinitePositiveNumber(v: number): boolean {
 export default class bSlider extends iBlock {
 	/**
 	 * Slider mode
-	 *   *) scroll - scroll will be used
-	 *   *) slider - slider implementation will be used (it is impossible to skip slides)
+	 *   *) scroll - scroll implementation
+	 *   *) slider - slider implementation (impossible to skip slides)
 	 */
 	@prop({type: String, validator: (v) => Boolean(sliderModes[v])})
 	readonly mode: Mode = 'slider';
 
 	/**
-	 * If true, will be used duplicate slot to calculate the dynamic height
+	 * If true, will be used a duplicate slot to calculate the dynamic height
 	 */
 	@prop(Boolean)
 	readonly dynamicHeight: boolean = false;
 
 	/**
-	 * If true, after last slide will slide to first and before first slide will be last
+	 * If true, after the last slide will slide to the first
 	 */
 	@prop(Boolean)
 	readonly circular: boolean = false;
@@ -83,19 +83,19 @@ export default class bSlider extends iBlock {
 	readonly align: AlignType = 'center';
 
 	/**
-	 * How much does the shift along the X axis correspond to the movement of the finger
+	 * How much does the shift along the X axis correspond to a finger movement
 	 */
 	@prop({type: Number, validator: isBetweenZeroAndOne})
 	readonly deltaX: number = 0.9;
 
 	/**
-	 * The minimum required percentage to scroll the slider to another slide
+	 * The minimum required percentage to scroll the slider to an another slide
 	 */
 	@prop({type: Number, validator: isBetweenZeroAndOne})
 	readonly threshold: number = 0.3;
 
 	/**
-	 * The minimum required percentage for the scroll slider to another slide in fast motion on slider
+	 * The minimum required percentage for the scroll slider to an another slide in fast motion on the slider
 	 */
 	@prop({type: Number, validator: isBetweenZeroAndOne})
 	readonly fastSwipeThreshold: number = 0.05;
@@ -137,7 +137,7 @@ export default class bSlider extends iBlock {
 	current: number = 0;
 
 	/**
-	 * true, if mode === 'slider'
+	 * True, if mode is slider
 	 */
 	get isSlider(): boolean {
 		return this.mode === 'slider';
@@ -163,17 +163,19 @@ export default class bSlider extends iBlock {
 		switch (align) {
 			case 'center':
 				return slideRect.offsetLeft - (viewRect.width - slideRect.width) / 2;
+
 			case 'start':
 				return  slideRect.offsetLeft;
+
 			case 'end':
 				return slideRect.offsetLeft + slideRect.width;
-			default:
-				return 0;
 		}
+
+		return 0;
 	}
 
 	/** @override */
-	protected $refs!: {
+	protected readonly $refs!: {
 		view?: HTMLElement;
 		wrapper?: HTMLElement;
 	};
@@ -191,7 +193,7 @@ export default class bSlider extends iBlock {
 	protected startY: number = 0;
 
 	/**
-	 * The difference between the position of the touch on the X axis at the beginning of the slide and at the end
+	 * The difference between a touch position on X axis at the beginning of the slide and at the end
 	 */
 	@system()
 	protected diffX: number = 0;
@@ -210,28 +212,31 @@ export default class bSlider extends iBlock {
 	protected slideRects: SlideRect[] = [];
 
 	/**
-	 * Slider size and position
+	 * Slider viewport rectangle
 	 */
 	@system()
 	protected viewRect?: ClientRect;
 
 	/**
-	 * Stores the timestamp of the start of the touch on the slider
+	 * Timestamp of a start touch on the slider
 	 */
 	@system()
 	protected startTime: number = 0;
 
 	/**
-	 * Returns true if the user has started scrolling
+	 * True, if the user has started scrolling
 	 */
 	@system()
 	protected scrolling: boolean = true;
 
-	/** @override */
-	protected tmp: {swiping?: boolean} = {};
+	/**
+	 * True, if the user has started swiping
+	 */
+	@system()
+	protected swiping: boolean = true;
 
 	/**
-	 * Updates slider state
+	 * Synchronizes the slider state
 	 */
 	syncState(): void {
 		const
@@ -242,10 +247,9 @@ export default class bSlider extends iBlock {
 		}
 
 		const
-			{children} = wrapper,
-			viewRect = view.getBoundingClientRect();
+			{children} = wrapper;
 
-		this.viewRect = viewRect;
+		this.viewRect = view.getBoundingClientRect();
 		this.length = children.length;
 		this.slideRects = [];
 
@@ -260,12 +264,13 @@ export default class bSlider extends iBlock {
 	}
 
 	/**
-	 * @see syncState
+	 * Synchronizes the slider state
+	 * (deferred version)
 	 */
 	@hook('mounted')
 	@watch('?window:resize')
 	@wait('ready')
-	syncStateDeffer(): CanPromise<void> {
+	async syncStateDefer(): Promise<void> {
 		if (!this.isSlider) {
 			return;
 		}
@@ -277,17 +282,51 @@ export default class bSlider extends iBlock {
 			return;
 		}
 
-		this.async.setTimeout(async ()  => {
+		try {
+			await this.async.sleep(50, {label: $$.syncStateAsync, join: true});
+
 			this.syncState();
 			wrapper.style.setProperty('--offset', `${this.currentOffset}px`);
-		}, 50, {label: $$.syncStateAsync, join: true});
+
+		} catch {}
 	}
 
 	/**
-	 * Switch to next or previous slide
+	 * Switches to the specified slide
+	 *
+	 * @param index - slide index
+	 * @param [animate] - animate transition
+	 */
+	async slideTo(index: number, animate: boolean = false): Promise<boolean> {
+		const
+			{length, current} = this,
+			{wrapper} = this.$refs;
+
+		if (current === index || !wrapper) {
+			return false;
+		}
+
+		if (length - 1 >= index) {
+			this.current = index;
+
+			if (!animate) {
+				await this.setMod('swipe', true);
+			}
+
+			this.syncState();
+			wrapper.style.setProperty('--offset', `${this.currentOffset}px`);
+
+			return true;
+		}
+
+		return false;
+	}
+
+	/**
+	 * Moves to the next or the previous slide
 	 * @param dir - direction
 	 */
-	changeSlide(dir: SlideDirection): boolean {
+	moveSlide(dir: SlideDirection): boolean {
 		let
 			current = this.current;
 
@@ -312,38 +351,7 @@ export default class bSlider extends iBlock {
 			}
 
 			this.current = current;
-
 			wrapper.style.setProperty('--offset', `${this.currentOffset}px`);
-			return true;
-		}
-
-		return false;
-	}
-
-	/**
-	 * Switch to specified slide
-	 * @param num
-	 * @param [animate] - animate transition
-	 */
-	async slideTo(num: number, animate: boolean = false): Promise<boolean> {
-		const
-			{length, current} = this,
-			{wrapper} = this.$refs;
-
-		if (current === num || !wrapper) {
-			return false;
-		}
-
-		if (length - 1 >= num) {
-			this.current = num;
-
-			if (!animate) {
-				await this.setMod('swipe', true);
-			}
-
-			this.syncState();
-			wrapper.style.setProperty('--offset', `${this.currentOffset}px`);
-
 			return true;
 		}
 
@@ -358,17 +366,25 @@ export default class bSlider extends iBlock {
 		this.sync.mod('dynamicHeight', 'dynamicHeight', String);
 	}
 
-	/** @override */
-	protected initGlobalEvents(): void {
-		super.initGlobalEvents();
+	/**
+	 * Initializes the slider mode
+	 */
+	@watch({field: 'mode', immediate: true})
+	protected initMode(): void {
+		const label = {
+			label: $$.setScrolling
+		};
 
 		if (this.isSlider) {
-			this.async.on(document, 'scroll', () => this.scrolling = true, {label: $$.setScrolling});
+			this.async.on(document, 'scroll', () => this.scrolling = true, label);
+
+		} else {
+			this.async.off(label);
 		}
 	}
 
 	/**
-	 * Handler: keeps the initial touch position on the screen
+	 * Handler: keeps an initial touch position on the screen
 	 * @param e
 	 */
 	protected onStart(e: TouchEvent): void {
@@ -393,10 +409,10 @@ export default class bSlider extends iBlock {
 	}
 
 	/**
-	 * Handler: cancels the scroll if trying to scroll the slider sideways, sets the modified position of the slider
+	 * Handler: cancels a scroll if trying to scroll the slider sideways, sets the modified position of the slider
 	 *
 	 * @param e
-	 * @emits moveStart()
+	 * @emits swipeStart()
 	 */
 	protected onMove(e: TouchEvent): void {
 		if (this.scrolling) {
@@ -404,39 +420,38 @@ export default class bSlider extends iBlock {
 		}
 
 		const
-			{startX, startY, tmp} = this,
+			{startX, startY} = this,
 			{wrapper} = this.$refs;
 
 		const
 			touch = e.touches[0],
-			isTolerancePassed = this.isTolerancePassed ||
-				Math.abs(startX - touch.clientX) > this.swipeToleranceX && Math.abs(startY - touch.clientY) < this.swipeToleranceY,
 			diffX = startX - touch.clientX;
+
+		const isTolerancePassed =
+			this.isTolerancePassed ||
+			Math.abs(startX - touch.clientX) > this.swipeToleranceX && Math.abs(startY - touch.clientY) < this.swipeToleranceY;
 
 		if (!wrapper || !isTolerancePassed) {
 			return;
 		}
 
-		if (!tmp.swiping) {
-			this.emit('moveStart');
+		if (!this.swiping) {
+			this.emit('swipeStart');
 		}
 
 		e.preventDefault();
 		e.stopPropagation();
 
-		tmp.swiping = true;
+		this.swiping = true;
 		this.isTolerancePassed = true;
 		this.diffX = diffX;
 
-		const
-			transform = this.diffX * this.deltaX;
-
-		wrapper.style.setProperty('--transform', `${transform}px`);
+		wrapper.style.setProperty('--transform', `${this.diffX * this.deltaX}px`);
 	}
 
 	/**
 	 * Handler: sets the end position to the slider
-	 * @emits moveEnd(dir: SwipeDirection, isChanged: boolean)
+	 * @emits swipeEnd(dir: SwipeDirection, isChanged: boolean)
 	 */
 	protected onRelease(): void {
 		if (this.scrolling) {
@@ -451,13 +466,12 @@ export default class bSlider extends iBlock {
 			threshold,
 			startTime,
 			fastSwipeDelay,
-			fastSwipeThreshold,
-			tmp
+			fastSwipeThreshold
 		} = this;
 
 		const
 			{wrapper} = this.$refs,
-			dir: SlideDirection = Math.sign(diffX);
+			dir = <SlideDirection>Math.sign(diffX);
 
 		let
 			isSwiped = false;
@@ -473,14 +487,15 @@ export default class bSlider extends iBlock {
 			isThresholdPassed = passedValue > threshold;
 
 		if (isThresholdPassed || isFastSwiped) {
-			isSwiped = this.changeSlide(dir);
+			isSwiped = this.moveSlide(dir);
 		}
 
 		this.diffX = 0;
 		wrapper.style.setProperty('--transform', '0px');
 		this.removeMod('swipe', true);
+
 		this.emit('swipeEnd', dir, isSwiped);
 		this.isTolerancePassed = false;
-		tmp.swiping = false;
+		this.swiping = false;
 	}
 }

@@ -26,8 +26,7 @@ b-slider_mode_scroll extends b-slider
 		-webkit-overflow-scrolling touch
 		absolute left 0 top 0
 
-		width 100%
-		height "calc(100% + %s)" % $p.scrollPadding
+		size 100% ("calc(100% + %s)" % $p.scrollPadding)
 		overflow-x scroll
 		padding-bottom $p.scrollPadding
 
