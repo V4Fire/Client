@@ -565,7 +565,7 @@ export default abstract class iData<T extends object = Dictionary> extends iMess
 				throw new Error(`Provider "${value}" is not defined`);
 			}
 
-			this.dp = new ProviderConstructor(value, this.dataProviderParams);
+			this.dp = new ProviderConstructor(this.dataProviderParams);
 			this.initDataListeners();
 
 		} else {
@@ -606,7 +606,7 @@ export default abstract class iData<T extends object = Dictionary> extends iMess
 				throw new Error(`Provider "${providerNm}" is not defined`);
 			}
 
-			this.dp = new ProviderConstructor(providerNm, value);
+			this.dp = new ProviderConstructor(value);
 			this.initDataListeners();
 		}
 	}
