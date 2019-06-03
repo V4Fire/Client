@@ -78,7 +78,7 @@ export default class InView extends Super {
 	}
 
 	/**
-	 * Saves an observable to elements store. Initializes observer
+	 * Initializes an observer
 	 *
 	 * @param el
 	 * @param observable
