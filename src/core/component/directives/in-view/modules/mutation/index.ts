@@ -9,7 +9,6 @@
 import { AsyncOpts } from 'core/async';
 import symbolGenerator from 'core/symbol';
 
-import Super from 'core/component/directives/in-view/modules/super';
 import {
 
 	ObservableElement,
@@ -30,6 +29,7 @@ import {
 
 } from 'core/component/directives/in-view/modules/mutation/helpers';
 
+import Super from 'core/component/directives/in-view/modules/super';
 import { isInView } from 'core/component/directives/in-view/modules/helpers';
 
 export const
@@ -39,7 +39,7 @@ export type AdapteeType = 'mutation';
 
 export default class InView extends Super {
 	/**
-	 * Returns true if the current adaptee can be used
+	 * True if the current adaptee can be used
 	 */
 	static readonly acceptable: boolean = hasMutationObserver;
 
@@ -256,7 +256,7 @@ export default class InView extends Super {
 	}
 
 	/**
-	 * Recalculates all of the elements
+	 * Recalculates all elements
 	 */
 	recalculate(): void {
 		this.createMap();

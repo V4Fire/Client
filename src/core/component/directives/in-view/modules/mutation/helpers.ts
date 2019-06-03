@@ -94,7 +94,7 @@ interface RootRect {
 }
 
 /**
- * Returns true if an element is in view
+ * Returns true if the specified element is in view
  *
  * @param elRect
  * @param rootRect

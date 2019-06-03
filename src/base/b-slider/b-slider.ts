@@ -137,7 +137,7 @@ export default class bSlider extends iBlock {
 	current: number = 0;
 
 	/**
-	 * True, if mode is slider
+	 * True if mode is slider
 	 */
 	get isSlider(): boolean {
 		return this.mode === 'slider';
@@ -224,13 +224,13 @@ export default class bSlider extends iBlock {
 	protected startTime: number = 0;
 
 	/**
-	 * True, if the user has started scrolling
+	 * True if the user has started scrolling
 	 */
 	@system()
 	protected scrolling: boolean = true;
 
 	/**
-	 * True, if the user has started swiping
+	 * True if the user has started swiping
 	 */
 	@system()
 	protected swiping: boolean = true;

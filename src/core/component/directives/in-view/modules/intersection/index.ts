@@ -19,7 +19,7 @@ export type AdapteeType = 'observer';
 
 export default class InView extends Super {
 	/**
-	 * Returns true if the current adaptee can be used
+	 * True if the current adaptee can be used
 	 */
 	static readonly acceptable: boolean = hasIntersection;
 

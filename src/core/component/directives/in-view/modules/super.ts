@@ -40,7 +40,7 @@ export default abstract class AbstractInView {
 	/**
 	 * Initializes inView
 	 */
-	constructor() {
+	protected constructor() {
 		const
 			POP_AWAITING_INTERVAL = 75;
 
