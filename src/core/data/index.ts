@@ -270,8 +270,9 @@ export default class Provider {
 	/**
 	 * @param [params] - additional parameters
 	 */
-	constructor(nm: string, params: ProviderParams = {}) {
+	constructor(params: ProviderParams = {}) {
 		const
+			nm = this.constructor.name,
 			key = this.cacheId = `${nm}:${JSON.stringify(params)}`,
 			cacheVal = instanceCache[key];
 
