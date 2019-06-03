@@ -165,7 +165,7 @@ export default class bSlider extends iBlock {
 				return slideRect.offsetLeft - (viewRect.width - slideRect.width) / 2;
 
 			case 'start':
-				return  slideRect.offsetLeft;
+				return slideRect.offsetLeft;
 
 			case 'end':
 				return slideRect.offsetLeft + slideRect.width;
