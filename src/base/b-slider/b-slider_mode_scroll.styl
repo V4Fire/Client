@@ -1,0 +1,42 @@
+/*!
+ * V4Fire Client Core
+ * https /github.com/V4Fire/Client
+ *
+ * Released under the MIT license
+ * https /github.com/V4Fire/Client/blob/master/LICENSE
+ */
+
+$p = {
+	showScrollBreakpoint: 1024px
+	scrollPadding: 20px
+}
+
+b-slider_mode_scroll extends b-slider
+	/mode &__view
+		position relative
+
+	/mode &__fake-view-wrapper
+		position relative
+		display flex
+		width 100%
+		opacity 0
+		pointer-events none
+
+	/mode &__outer-view-wrapper
+		-webkit-overflow-scrolling touch
+		absolute left 0 top 0
+
+		width 100%
+		height "calc(100% + %s)" % $p.scrollPadding
+		overflow-x scroll
+		padding-bottom $p.scrollPadding
+
+		@media (min-width $p.showScrollBreakpoint)
+			padding-bottom 0
+
+	/mode &__view-wrapper
+		display flex
+		width 100%
+
+	/mode&_dynamic-height_false &__outer-view-wrapper
+		position relative

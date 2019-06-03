@@ -1,0 +1,29 @@
+/*!
+ * V4Fire Client Core
+ * https://github.com/V4Fire/Client
+ *
+ * Released under the MIT license
+ * https://github.com/V4Fire/Client/blob/master/LICENSE
+ */
+
+$p = {
+
+}
+
+b-slider_mode_slider extends b-slider
+	/mode &__view-wrapper
+		--offset 0px
+		--transform 0px
+
+		display flex
+		size 100%
+
+		transition transform 0.3s
+		transform translate3d(calc(0px - var(--offset) - var(--transform)), 0, 0)
+
+		@media (prefers-reduced-motion: reduce)
+			transition none
+			transform translate3d(calc(0px - var(--offset)), 0, 0)
+
+	/mode&_swipe_true &__view-wrapper
+		transition none
