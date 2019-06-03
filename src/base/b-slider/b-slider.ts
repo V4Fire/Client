@@ -7,7 +7,7 @@
  */
 
 import symbolGenerator from 'core/symbol';
-import iBlock, { component, system, hook, watch, wait, prop } from 'super/i-block/i-block';
+import iBlock, { component, system, hook, watch, wait, prop, p } from 'super/i-block/i-block';
 
 export * from 'super/i-block/i-block';
 
@@ -54,7 +54,7 @@ export function isNotInfinitePositiveNumber(v: number): boolean {
 	return v > 0 && Number.isFinite(v);
 }
 
-@component({functional: true})
+@component({functional: {}})
 export default class bSlider extends iBlock {
 	/**
 	 * Slider mode
@@ -65,13 +65,13 @@ export default class bSlider extends iBlock {
 	readonly mode: Mode = 'slider';
 
 	/**
-	 * if true, will be used duplicate slot to calculate the dynamic height
+	 * If true, will be used duplicate slot to calculate the dynamic height
 	 */
 	@prop(Boolean)
 	readonly dynamicHeight: boolean = false;
 
 	/**
-	 * if true, after last slide will slide to first and before first slide will be last
+	 * If true, after last slide will slide to first and before first slide will be last
 	 */
 	@prop(Boolean)
 	readonly circular: boolean = false;
@@ -146,6 +146,7 @@ export default class bSlider extends iBlock {
 	/**
 	 * Returns the current slider scroll
 	 */
+	@p({cache: false})
 	get currentOffset(): number {
 		const
 			{slideRects, current, align, viewRect} = this,
@@ -305,6 +306,7 @@ export default class bSlider extends iBlock {
 
 			if (dir < 0 && current < 0) {
 				current = length - 1;
+
 			} else if (dir > 0 && current > length - 1) {
 				current = 0;
 			}
