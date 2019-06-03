@@ -39,4 +39,3 @@ export interface NormalizedTools extends Tools {
 export type RotateSide =
 	'left' |
 	'right';
-

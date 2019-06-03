@@ -110,19 +110,17 @@ export default class Provide {
 		}
 
 		const
-			map = modsCache[key] = {...baseMods};
+			map = modsCache[key] = {...baseMods},
+			modVal = (val) => val != null ? String(val) : undefined;
 
 		if (mods) {
-			const
-				keys = Object.keys(mods);
-
-			for (let i = 0; i < keys.length; i++) {
+			for (let keys = Object.keys(mods), i = 0; i < keys.length; i++) {
 				const
 					key = keys[i],
 					mod = key.dasherize();
 
 				let
-					el = <Dictionary>mods[key];
+					el = mods[key];
 
 				if (!Object.isObject(el)) {
 					el = {default: el};
@@ -130,10 +128,10 @@ export default class Provide {
 
 				// tslint:disable-next-line:prefer-conditional-expression
 				if (!(key in mods) || el[key] === undefined) {
-					map[mod] = el[Object.keys(el)[0]];
+					map[mod] = modVal(el[Object.keys(el)[0]]);
 
 				} else {
-					map[mod] = el[key];
+					map[mod] = modVal(el[key]);
 				}
 			}
 		}

@@ -31,7 +31,7 @@ export interface DataList<T> {
 	total: number;
 }
 
-export default abstract class iDataList<T extends Dictionary = Dictionary> extends iData<DataList<T>> {
+export default abstract class iDataList<T extends object = Dictionary> extends iData<DataList<T>> {
 	/**
 	 * Converts the specified remote data to the specified component format and returns it
 	 *

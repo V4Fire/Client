@@ -13,7 +13,7 @@ import iData, { component, hook, ModsDecl, ModEvent, SetModEvent } from 'super/i
 export * from 'super/i-data/i-data';
 
 @component()
-export default class bSidebar<T extends Dictionary = Dictionary> extends iData<T>
+export default class bSidebar<T extends object = Dictionary> extends iData<T>
 	implements iVisible, iOpenToggle {
 
 	/** @inheritDoc */

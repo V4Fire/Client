@@ -21,9 +21,9 @@ export * from 'super/i-data/i-data';
 export * from 'core/router/interface';
 
 export interface PageOpts<
-	P extends Dictionary = Dictionary,
-	Q extends Dictionary = Dictionary,
-	M extends Dictionary = Dictionary
+	P extends object = Dictionary,
+	Q extends object = Dictionary,
+	M extends object = Dictionary
 > extends CurrentPage<P, Q, M> {
 	toPath(params?: Dictionary): string;
 }
@@ -65,7 +65,7 @@ export const
 	$$ = symbolGenerator();
 
 @component()
-export default class bRouter<T extends Dictionary = Dictionary> extends iData<T> {
+export default class bRouter<T extends object = Dictionary> extends iData<T> {
 	/* @override */
 	public async!: Async<this>;
 
@@ -455,7 +455,7 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 						const
 							el = o[i];
 
-						if (Object.isObject(el)) {
+						if (Object.isSimpleObject(el)) {
 							t.params[el.name] = params[++j];
 						}
 					}

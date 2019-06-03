@@ -47,12 +47,12 @@ export enum ClientLinkNames {
 	animationFramePromise
 }
 
-export type ClientLink = keyof typeof ClientLinkNames;
-export type Link = SuperLink | keyof typeof ClientLinkNames;
-export type LinkNamesList = SuperLinkNamesList & Record<ClientLink, ClientLink>;
-
 const
-	linkNamesDictionary = <LinkNamesList>{...Super.linkNames, ...Object.convertEnumToDict(ClientLinkNames)};
+	linkNamesDictionary = {...Super.linkNames, ...Object.convertEnumToDict(ClientLinkNames)};
+
+export type ClientLink = keyof typeof ClientLinkNames;
+export type Link = SuperLink | ClientLink;
+export type LinkNamesList = typeof linkNamesDictionary;
 
 export default class Async<CTX extends object = Async<any>> extends Super<CTX> {
 	/** @override */

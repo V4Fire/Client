@@ -315,7 +315,7 @@ export default class Provider {
 	 * Returns an object with authentication params
 	 * @param params - additional parameters
 	 */
-	getAuthParams(params?: Dictionary): Dictionary {
+	async getAuthParams(params?: Dictionary): Promise<Dictionary> {
 		return {};
 	}
 
@@ -363,7 +363,7 @@ export default class Provider {
 					onClear
 				});
 
-				socket.once('connect', () => {
+				socket.once('connect', async () => {
 					socket
 						.once('authenticated', () => {
 							resolve(socket);
@@ -376,7 +376,7 @@ export default class Provider {
 							$e.emit(`${url}Reject`, err);
 						})
 
-						.emit('authentication', this.getAuthParams(params));
+						.emit('authentication', await this.getAuthParams(params));
 				});
 			});
 		}

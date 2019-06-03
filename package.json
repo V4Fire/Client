@@ -5,7 +5,7 @@
   "main": "src/core/index.js",
   "typings": "index.d.ts",
   "license": "MIT",
-  "version": "3.0.0-beta.22",
+  "version": "3.0.0-beta.24",
   "author": {
     "name": "kobezzza",
     "email": "kobezzza@gmail.com",
@@ -26,7 +26,7 @@
     "test": "echo \"Error: no test specified\" && exit 0"
   },
   "dependencies": {
-    "@v4fire/core": "^3.0.0-beta.14",
+    "@v4fire/core": "^3.0.0-beta.20",
     "babel-polyfill": "^6.26.0",
     "escaper": "^3.0.2",
     "eventemitter2": "^5.0.1",
@@ -110,12 +110,14 @@
     "urlconcat": "0.0.12",
     "vue-template-compiler": "^2.6.10",
     "vue-template-es2015-compiler": "^1.9.1",
-    "webpack": "^4.31.0",
+    "webpack": "^4.32.2",
     "webpack-cli": "^3.3.2"
   },
   "devDependencies": {
     "babel-eslint": "^10.0.1",
     "eslint": "^5.16.0",
-    "tslint": "^5.16.0"
+    "stlint": "^1.0.48",
+    "stlint-v4fire": "^1.0.18",
+    "tslint": "^5.17.0"
   }
 }

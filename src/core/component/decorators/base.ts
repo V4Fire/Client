@@ -234,7 +234,7 @@ export function paramsFactory<T = unknown>(
 						const
 							el = h[i];
 
-						if (Object.isObject(el)) {
+						if (Object.isSimpleObject(el)) {
 							const
 								key = Object.keys(el)[0],
 								val = el[key];

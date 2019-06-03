@@ -39,10 +39,10 @@ export const
 
 @component()
 export default abstract class iStaticPage<
-	P extends Dictionary = Dictionary,
-	Q extends Dictionary = Dictionary,
-	M extends Dictionary = Dictionary,
-	D extends Dictionary = Dictionary
+	P extends object = Dictionary,
+	Q extends object = Dictionary,
+	M extends object = Dictionary,
+	D extends object = Dictionary
 > extends iPage<D> {
 	/**
 	 * Link to i18n function

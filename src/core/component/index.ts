@@ -203,7 +203,7 @@ export function component(params?: ComponentParams): Function {
 								ctx = this || rootCtx;
 
 							const
-								attrOpts = Object.isObject(opts) && opts.attrs || {},
+								attrOpts = Object.isSimpleObject(opts) && opts.attrs || {},
 								tagName = attrOpts['v4-composite'] || tag,
 								renderKey = attrOpts['render-key'] != null ?
 									`${tagName}:${attrOpts['global-name']}:${attrOpts['render-key']}` : '';
@@ -579,7 +579,12 @@ export function component(params?: ComponentParams): Function {
 			rootComponents[name] = new Promise(obj);
 
 		} else {
-			ComponentDriver.component(name, obj);
+			const
+				c = ComponentDriver.component(name, obj);
+
+			if (Object.isPromise(c)) {
+				c.catch(stderr);
+			}
 		}
 
 		if (!Object.isBoolean(p.functional)) {

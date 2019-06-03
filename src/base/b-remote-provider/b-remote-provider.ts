@@ -14,7 +14,7 @@ export const
 	$$ = symbolGenerator();
 
 @component()
-export default class bRemoteProvider<T extends Dictionary = Dictionary> extends iData<T> {
+export default class bRemoteProvider<T extends object = Dictionary> extends iData<T> {
 	/** @override */
 	readonly remoteProvider: boolean = true;
 

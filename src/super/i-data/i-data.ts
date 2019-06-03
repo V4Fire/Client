@@ -61,7 +61,7 @@ export const
 	$$ = symbolGenerator();
 
 @component({functional: null})
-export default abstract class iData<T extends Dictionary = Dictionary> extends iMessage implements iProgress {
+export default abstract class iData<T extends object = Dictionary> extends iMessage implements iProgress {
 	/**
 	 * Data provider name
 	 */
@@ -328,7 +328,7 @@ export default abstract class iData<T extends Dictionary = Dictionary> extends i
 			args = arguments.length > 0 ? [data, params] : this.getDefaultRequestParams('peek');
 
 		if (args) {
-			return this.createRequest('peek', ...args);
+			return this.createRequest('peek', ...<any>args);
 		}
 
 		return Promise.resolve(undefined);
@@ -345,7 +345,7 @@ export default abstract class iData<T extends Dictionary = Dictionary> extends i
 			args = arguments.length > 0 ? [data, params] : this.getDefaultRequestParams('get');
 
 		if (args) {
-			return this.createRequest('get', ...args);
+			return this.createRequest('get', ...<any>args);
 		}
 
 		return Promise.resolve(undefined);
@@ -362,7 +362,7 @@ export default abstract class iData<T extends Dictionary = Dictionary> extends i
 			args = arguments.length > 0 ? [data, params] : this.getDefaultRequestParams('post');
 
 		if (args) {
-			return this.createRequest('post', ...args);
+			return this.createRequest('post', ...<any>args);
 		}
 
 		return Promise.resolve(undefined);
@@ -379,7 +379,7 @@ export default abstract class iData<T extends Dictionary = Dictionary> extends i
 			args = arguments.length > 0 ? [data, params] : this.getDefaultRequestParams('add');
 
 		if (args) {
-			return this.createRequest('add', ...args);
+			return this.createRequest('add', ...<any>args);
 		}
 
 		return Promise.resolve(undefined);
@@ -396,7 +396,7 @@ export default abstract class iData<T extends Dictionary = Dictionary> extends i
 			args = arguments.length > 0 ? [data, params] : this.getDefaultRequestParams('upd');
 
 		if (args) {
-			return this.createRequest('upd', ...args);
+			return this.createRequest('upd', ...<any>args);
 		}
 
 		return Promise.resolve(undefined);
@@ -413,7 +413,7 @@ export default abstract class iData<T extends Dictionary = Dictionary> extends i
 			args = arguments.length > 0 ? [data, params] : this.getDefaultRequestParams('del');
 
 		if (args) {
-			return this.createRequest('del', ...args);
+			return this.createRequest('del', ...<any>args);
 		}
 
 		return Promise.resolve(undefined);

@@ -17,7 +17,6 @@ import {
 	RequestQuery,
 	RequestBody,
 	RequestResponseObject,
-	RequestError,
 	ModelMethods,
 	CreateRequestOpts as BaseCreateRequestOpts
 

@@ -43,16 +43,16 @@ b-input extends i-input
 		width 100%
 
 	&__input
-		margin 0
 		width 100%
+		overflow hidden
+		margin 0
+
+		font-family BASE_FONT
+		font-size 1em
+		text-overflow ellipsis
 
 		border none
 		background transparent
-		overflow hidden
-
-		font-size 1em
-		font-family BASE_FONT
-		text-overflow ellipsis
 
 		&::-ms-clear
 			display none
