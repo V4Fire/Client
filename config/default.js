@@ -194,7 +194,8 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 			'core/kv-storage': true,
 			'core/helpers': true,
 			'core/browser': true,
-			'core/analytics': true
+			'core/analytics': true,
+			'directives/in-view': true
 		};
 	},
 

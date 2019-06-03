@@ -6,4 +6,6 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+//#if runtime has directives/in-view
 import 'core/component/directives/in-view';
+//#endif
