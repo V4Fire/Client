@@ -92,7 +92,8 @@ export function provider(target: Function): void;
 export function provider(nmsOrFn: Function | string): Function | void {
 	if (Object.isString(nmsOrFn)) {
 		return (target) => {
-			providers[`${nmsOrFn}.${target.name}`] = target;
+			const nms = target[$$.namespace] = `${nmsOrFn}.${target.name}`;
+			providers[nms] = target;
 		};
 	}
 
@@ -272,7 +273,7 @@ export default class Provider {
 	 */
 	constructor(params: ProviderParams = {}) {
 		const
-			nm = this.constructor.name,
+			nm = this.constructor[$$.namespace],
 			key = this.cacheId = `${nm}:${JSON.stringify(params)}`,
 			cacheVal = instanceCache[key];
 
