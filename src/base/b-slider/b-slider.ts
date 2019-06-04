@@ -236,6 +236,15 @@ export default class bSlider extends iBlock {
 	protected swiping: boolean = true;
 
 	/**
+	 * Observers store
+	 */
+	@system()
+	protected observers: {
+		mutation?: MutationObserver;
+		resize?: ResizeObserver;
+	} = {};
+
+	/**
 	 * Synchronizes the slider state
 	 */
 	syncState(): void {
@@ -268,7 +277,7 @@ export default class bSlider extends iBlock {
 	 * (deferred version)
 	 */
 	@hook('mounted')
-	@watch('?window:resize')
+	@watch(['?window:resize', '?:updateState'])
 	@wait('ready')
 	async syncStateDefer(): Promise<void> {
 		if (!this.isSlider) {
@@ -380,6 +389,38 @@ export default class bSlider extends iBlock {
 
 		} else {
 			this.async.off(label);
+		}
+	}
+
+	/**
+	 * Initializes observers
+	 * @emits updateState
+	 */
+	@hook('mounted')
+	protected initObservers(): void {
+		const
+			{async: $a} = this;
+
+		if (!this.observers) {
+			this.observers = {};
+		}
+
+		const
+			{observers, $refs} = this,
+			{wrapper} = $refs;
+
+		if (!observers.mutation && wrapper) {
+			observers.mutation = new MutationObserver(() => {
+				this.emit('updateState');
+			});
+
+			observers.mutation.observe(wrapper, {
+				childList: true
+			});
+
+			$a.worker(observers.mutation, {
+				label: $$.mutationObserver
+			});
 		}
 	}
 
