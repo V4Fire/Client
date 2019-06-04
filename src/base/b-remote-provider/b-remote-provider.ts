@@ -86,13 +86,13 @@ export default class bRemoteProvider<T extends object = Dictionary> extends iDat
 		}
 
 		if (needUpdate) {
-			p.lfc.execCbAtTheRightTime(() => {
+			p.lfc.execCbAtTheRightTime(this.async.proxy(() => {
 				action && action();
 				this.emit('change', value);
 
 			}, {
 				label: $$.syncDBWatcher
-			});
+			}));
 		}
 	}
 
