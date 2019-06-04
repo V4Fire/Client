@@ -203,7 +203,11 @@ export default abstract class iData<T extends object = Dictionary> extends iMess
 						const db = this.convertDataToDB<T>(data);
 						this.lfc.execCbAtTheRightTime(() => this.db = db, label);
 						return super.initLoad(() => this.db, silent);
-					}, stderr);
+
+					}, (err) => {
+						stderr(err);
+						return super.initLoad(() => this.db, silent);
+					});
 				}
 
 			} else if (this.db) {
