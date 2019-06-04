@@ -679,7 +679,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	/**
 	 * Component initialize status store for non watch statuses
 	 */
-	@system({replace: false})
+	@system({unique: true})
 	protected shadowComponentStatusStore?: Statuses;
 
 	/**
