@@ -47,6 +47,13 @@ interface Event {
 	delegateTarget?: Element;
 }
 
+declare class ResizeObserver {
+	constructor(cb: Function)
+	disconnect(el: Element): void;
+	observe(el: Element): void;
+	unobserve(el: Element): void;
+}
+
 declare let ModuleDependencies: {
 	cache: Dictionary;
 	event: {on: Function; once: Function; off: Function};
