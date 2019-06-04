@@ -7,14 +7,24 @@
  */
 
 @import "super/i-data/i-data.styl"
+@import "traits/i-access/i-access.styl"
+@import "traits/i-visible/i-visible.styl"
+@import "traits/i-size/i-size.styl"
 
 $p = {
-	lockHelpers: true
+	accessHelpers: true
+	visibleHelpers: true
+	widthHelpers: true
 	sizeHelpers: true
 	messageHelpers: true
+	progressHelpers: true
 }
 
 b-link extends i-data
+	i-access({helpers: $p.accessHelpers})
+	i-size({helpers: $p.sizeHelpers})
+	i-visible({helpers: $p.visibleHelpers})
+
 	display inline-block
 
 	&__root-wrapper
@@ -31,14 +41,14 @@ b-link extends i-data
 		border-bottom 0
 
 	&__link
+		text-decoration none
 		border 1px solid transparent
 		border-bottom-color currentColor
 		color currentColor
-		text-decoration none
 
 		&:focus
-			outline 0
 			border-style dotted
+			outline 0
 
 		&:hover
 			color $p.hoverColor

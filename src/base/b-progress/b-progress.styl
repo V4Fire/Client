@@ -7,22 +7,26 @@
  */
 
 @import "super/i-block/i-block.styl"
+@import "traits/i-visible/i-visible.styl"
 
 $p = {
 	width: 10em
 	height: 0.5em
 	pointWidth: 1px
+	visibleHelpers: true
 }
 
 b-progress extends i-block
-	&_progress_true &__progress
-		display block
-		size $p.width $p.height
+	i-visible({helpers: $p.visibleHelpers})
 
 	&__line
 	&__point
 		height 100%
 
 	&__point
-		float right
 		width $p.pointWidth
+		float right
+
+	&_progress_true &__progress
+		display block
+		size $p.width $p.height

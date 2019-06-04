@@ -12,6 +12,3 @@
 
 - template index() extends ['i-data'].index
 	- rootTag = 'span'
-	- rootWrapper = false
-	- messageHelpers = false
-	- overWrapper = false

@@ -11,6 +11,8 @@
 - include 'super/i-input'|b as placeholder
 
 - template index() extends ['i-input'].index
+	- rootWrapper = true
+
 	- block body
 		- super
 
@@ -29,7 +31,7 @@
 							':autofocus': 'el.autofocus',
 							':value': 'isChecked(el)',
 							':changeable': 'isChangeable(el)',
-							':mods': 'provideMods({form: false})'
+							':mods': 'provide.mods({form: false})'
 						} .
 
 						< template v-if = $scopedSlots.default

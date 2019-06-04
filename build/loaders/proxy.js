@@ -14,7 +14,9 @@ const
 
 /**
  * WebPack loader for using proxies in old browsers
+ *
  * @param {string} str
+ * @returns {string}
  */
 module.exports = function (str) {
 	if (!$C(this.query.modules).some((src) => isPathInside(this.context, src))) {

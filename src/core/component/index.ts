@@ -6,258 +6,63 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import symbolGenerator from 'core/symbol';
+
 // @ts-ignore
 import * as defTpls from 'core/block.ss';
-
 import log from 'core/log';
-import { EventEmitter2 as EventEmitter, Listener } from 'eventemitter2';
-
-import {
-
-	ComponentDriver,
-	PropOptions,
-	WatchOptions,
-	ComputedOptions,
-	ComponentOptions,
-	InjectOptions,
-	FunctionalComponentOptions,
-	RenderContext,
-	CreateElement,
-	VNode
-
-} from 'core/component/engines';
 
 import 'core/component/filters';
 import 'core/component/directives';
 
-import inheritMeta, { PARENT } from 'core/component/inherit';
-import ComponentInterface from 'core/component/interface';
+import inheritMeta from 'core/component/create/inherit';
 
-import { getComponent, getBaseComponent } from 'core/component/component';
-import { convertRender, createFakeCtx, patchVNode } from 'core/component/functional';
+import { runHook, patchRefs } from 'core/component/create/helpers';
+import { ComponentInterface, ComponentParams, ComponentMeta, ComponentMethod } from 'core/component/interface';
+import {
 
-export * from 'core/component/decorators';
-export * from 'core/component/functional';
-export * from 'core/component/engines';
-export { ComponentDriver as default } from 'core/component/engines';
+	supports,
+	minimalCtx,
+	renderData,
+	cloneVNode,
 
-export { PARENT } from 'core/component/inherit';
-export { runHook, customWatcherRgxp } from 'core/component/component';
-export { default as ComponentInterface, ComponentElement } from 'core/component/interface';
+	ComponentDriver,
+	RenderContext,
+	CreateElement,
+	VNode,
+	VNodeData,
+	NormalizedScopedSlot
+
+} from 'core/component/engines';
+
+import { isAbstractComponent, getComponent, getBaseComponent } from 'core/component/create';
+import { createFakeCtx, execRenderObject, patchVNode } from 'core/component/create/functional';
+import { getComponentDataFromVnode, createCompositeElement } from 'core/component/create/composite';
+import { components, rootComponents, initEvent } from 'core/component/const';
+
+export * from 'core/component/interface';
+export * from 'core/component/const';
+export * from 'core/component/create/functional';
+export * from 'core/component/create/composite';
+
+export { PARENT } from 'core/component/create/inherit';
+export { customWatcherRgxp, runHook, getFieldRealInfo } from 'core/component/create/helpers';
 export { default as globalEvent, reset, ResetType } from 'core/component/event';
+export { prop, field, system, p, hook, watch, paramsFactory } from 'core/component/decorators';
+export {
+
+	renderData,
+	ComponentDriver as default,
+	WatchOptions,
+
+	VNode,
+	VNodeDirective,
+	CreateElement
+
+} from 'core/component/engines';
 
 export const
-	initEvent = new EventEmitter({maxListeners: 1e3}),
-	rootComponents = Object.createDict<Promise<ComponentOptions<ComponentDriver>>>(),
-	localComponents = new WeakMap(),
-	components = new WeakMap();
-
-((initEventOnce) => {
-	initEvent.once = function (event: CanArray<string>, listener: Listener): EventEmitter {
-		const
-			events = (<string[]>[]).concat(event);
-
-		for (let i = 0; i < events.length; i++) {
-			const
-				el = events[i];
-
-			if (el === 'constructor') {
-				initEventOnce(el, (obj) => {
-					listener(obj);
-
-					if (!Object.isBoolean(obj.meta.params.functional)) {
-						initEventOnce(el, listener);
-					}
-				});
-
-			} else {
-				initEventOnce(el, listener);
-			}
-		}
-
-		return this;
-	};
-})(initEvent.once.bind(initEvent));
-
-export interface ComponentParams {
-	name?: string;
-	root?: boolean;
-	tpl?: boolean;
-	functional?: boolean | Dictionary;
-	tiny?: boolean;
-	model?: {prop?: string; event?: string};
-	parent?: ComponentDriver;
-	provide?: Dictionary | (() => Dictionary);
-	inject?: InjectOptions;
-	inheritAttrs?: boolean;
-	inheritMods?: boolean;
-	defaultProps?: boolean;
-}
-
-export interface WatchHandler<CTX extends ComponentInterface = ComponentInterface, A = unknown, B = A> {
-	(a: A, b: B): unknown;
-	(...args: A[]): unknown;
-	(ctx: CTX, a: A, b: B): unknown;
-	(ctx: CTX, ...args: A[]): unknown;
-}
-
-export interface FieldWatcher<
-	CTX extends ComponentInterface = ComponentInterface,
-	A = unknown,
-	B = A
-> extends WatchOptions {
-	fn: WatchHandler<CTX, A, B>;
-	provideArgs?: boolean;
-}
-
-export interface ComponentProp extends PropOptions {
-	watchers: Map<string | Function, FieldWatcher>;
-	forceDefault?: boolean;
-	default?: unknown;
-	meta: Dictionary;
-}
-
-export interface InitFieldFn<T extends ComponentInterface = ComponentInterface> {
-	(ctx: T, data: Dictionary): unknown;
-}
-
-export interface MergeFieldFn<T extends ComponentInterface = ComponentInterface> {
-	(ctx: T, oldCtx: T, field: string, link: CanUndef<string>): unknown;
-}
-
-export interface UniqueFieldFn<T extends ComponentInterface = ComponentInterface> {
-	(ctx: T, oldCtx: T): unknown;
-}
-
-export interface SystemField<T extends ComponentInterface = ComponentInterface> {
-	atom?: boolean;
-	default?: unknown;
-	unique?: boolean | UniqueFieldFn<T>;
-	after: Set<string>;
-	init?: InitFieldFn<T>;
-	merge?: InitFieldFn<T>;
-	meta: Dictionary;
-}
-
-export interface ComponentField<T extends ComponentInterface = ComponentInterface> extends SystemField<T> {
-	watchers: Map<string | Function, FieldWatcher>;
-}
-
-export interface SystemField<T extends ComponentInterface = ComponentInterface> {
-	default?: unknown;
-	init?: InitFieldFn<T>;
-}
-
-export interface WatchWrapper<CTX extends ComponentInterface = ComponentInterface, A = unknown, B = A> {
-	(ctx: CTX, handler: WatchHandler<CTX, A, B>): CanPromise<WatchHandler<CTX, A, B> | Function>;
-}
-
-export interface WatchOptionsWithHandler<
-	CTX extends ComponentInterface = ComponentInterface,
-	A = unknown,
-	B = A
-> extends WatchOptions {
-	group?: string;
-	single?: boolean;
-	options?: AddEventListenerOptions;
-	method?: string;
-	args?: CanArray<unknown>;
-	provideArgs?: boolean;
-	wrapper?: WatchWrapper<CTX, A, B>;
-	handler: string | WatchHandler<CTX, A, B>;
-}
-
-export interface MethodWatcher<
-	CTX extends ComponentInterface = ComponentInterface,
-	A = unknown,
-	B = A
-> extends WatchOptions {
-	field?: string;
-	group?: string;
-	single?: boolean;
-	options?: AddEventListenerOptions;
-	args?: CanArray<unknown>;
-	provideArgs?: boolean;
-	wrapper?: WatchWrapper<CTX, A, B>;
-}
-
-export type Hooks =
-	'beforeRuntime' |
-	'beforeCreate' |
-	'beforeDataCreate' |
-	'created' |
-	'beforeMount' |
-	'mounted' |
-	'beforeUpdate' |
-	'updated' |
-	'activated' |
-	'deactivated' |
-	'beforeDestroy' |
-	'destroyed' |
-	'errorCaptured';
-
-export interface ComponentMethod {
-	fn: Function;
-	watchers: Dictionary<MethodWatcher>;
-	hooks: {[hook in Hooks]?: {
-		name: string;
-		hook: string;
-		after: Set<string>;
-	}};
-}
-
-export type ModVal = string | boolean | number;
-export type StrictModDeclVal = CanArray<ModVal>;
-export type ModDeclVal = StrictModDeclVal | typeof PARENT;
-
-export interface ModsDecl {
-	[name: string]: Array<ModDeclVal> | void;
-}
-
-export interface FunctionalCtx {
-	componentName: string;
-	meta: ComponentMeta;
-	instance: Dictionary;
-	$options: Dictionary;
-}
-
-export interface ComponentMeta {
-	name: string;
-	componentName: string;
-
-	parentMeta?: ComponentMeta;
-	constructor: Function;
-	params: ComponentParams;
-
-	props: Dictionary<ComponentProp>;
-	fields: Dictionary<ComponentField>;
-	systemFields: Dictionary<ComponentField>;
-	mods: ModsDecl;
-
-	computed: Dictionary<ComputedOptions<unknown>>;
-	accessors: Dictionary<ComputedOptions<unknown>>;
-	methods: Dictionary<ComponentMethod>;
-	watchers: Dictionary<WatchOptionsWithHandler[]>;
-
-	hooks: {[hook in Hooks]: Array<{
-		fn: Function;
-		name?: string;
-		after?: Set<string>;
-	}>};
-
-	component: {
-		name: string;
-		mods: Dictionary<string>;
-		props: Dictionary<PropOptions>;
-		methods: Dictionary<Function>;
-		computed: Dictionary<ComputedOptions<unknown>>;
-		render: ComponentOptions<ComponentDriver>['render'] | FunctionalComponentOptions['render'];
-		ctx?: FunctionalCtx;
-	}
-}
-
-export const
-	isAbstractComponent = /^[iv]-/,
+	$$ = symbolGenerator(),
 	isSmartComponent = /-functional$/;
 
 /**
@@ -267,6 +72,23 @@ export const
 export function getComponentName(constr: Function): string {
 	return constr.name.dasherize();
 }
+
+const
+	minimalCtxCache = Object.createDict(),
+	tplCache = Object.createDict();
+
+const beforeMountHooks = {
+	beforeCreate: true,
+	beforeDataCreate: true,
+	created: true,
+	beforeMount: true
+};
+
+const mountedHooks = {
+	mounted: true,
+	updated: true,
+	activated: true
+};
 
 /**
  * Creates a new component
@@ -280,7 +102,7 @@ export function getComponentName(constr: Function): string {
  *        *) if true, then the component will be created as functional
  *        *) if a table with parameters, then the component will be created as smart component
  *
- *   *) [tiny] - if true, then the functional component will be created without advanced component shim
+ *   *) [flyweight] - if true, then the component can be used as flyweight (within a composite virtual tree)
  *   *) [parent] - link to a parent component
  *
  *   // Component driver options (by default Vue):
@@ -300,7 +122,6 @@ export function component(params?: ComponentParams): Function {
 		let p: ComponentParams = parentMeta ? {...params} : {
 			root: false,
 			tpl: true,
-			functional: false,
 			inheritAttrs: true,
 			...params
 		};
@@ -321,6 +142,7 @@ export function component(params?: ComponentParams): Function {
 
 			parentMeta,
 			constructor: target,
+			instance: {},
 			params: p,
 
 			props: {},
@@ -339,9 +161,12 @@ export function component(params?: ComponentParams): Function {
 				beforeDataCreate: [],
 				created: [],
 				beforeMount: [],
+				beforeMounted: [],
 				mounted: [],
 				beforeUpdate: [],
+				beforeUpdated: [],
 				updated: [],
+				beforeActivated: [],
 				activated: [],
 				deactivated: [],
 				beforeDestroy: [],
@@ -355,20 +180,318 @@ export function component(params?: ComponentParams): Function {
 				props: {},
 				methods: {},
 				computed: {},
-				render(el: CreateElement, baseCtx: RenderContext): VNode {
+				staticRenderFns: [],
+				render(this: ComponentInterface, nativeCreate: CreateElement, baseCtx: RenderContext): VNode {
 					const
-						{methods: {render: r}, component: {ctx}} = meta;
+						{methods: {render: r}} = meta;
 
 					if (r) {
-						if (p.functional === true && ctx) {
-							const fakeCtx = createFakeCtx(el, baseCtx, ctx);
-							return patchVNode(r.fn.call(fakeCtx, el, baseCtx), fakeCtx, baseCtx);
+						const
+							// tslint:disable-next-line:no-this-assignment
+							rootCtx = this,
+
+							// @ts-ignore (access)
+							asyncLabel = rootCtx.$asyncLabel;
+
+						let
+							tasks = <Function[]>[];
+
+						const createElement = function (tag: string, opts?: VNodeData, children?: VNode[]): VNode {
+							'use strict';
+
+							const
+								ctx = this || rootCtx;
+
+							const
+								attrOpts = Object.isSimpleObject(opts) && opts.attrs || {},
+								tagName = attrOpts['v4-composite'] || tag,
+								renderKey = attrOpts['render-key'] != null ?
+									`${tagName}:${attrOpts['global-name']}:${attrOpts['render-key']}` : '';
+
+							let
+								vnode = ctx.renderTmp[renderKey],
+								needEl = Boolean(attrOpts['v4-composite']);
+
+							if (!vnode) {
+								const
+									component = components.get(tag);
+
+								if (supports.functional && component && component.params.functional === true) {
+									needEl = true;
+
+									const
+										nm = component.componentName,
+										tpl = TPLS[nm];
+
+									if (!tpl) {
+										return nativeCreate('span');
+									}
+
+									const
+										node = nativeCreate('span', {...opts, tag: undefined}, children),
+										data = getComponentDataFromVnode(nm, node);
+
+									const renderCtx: RenderContext = {
+										parent: ctx,
+										children: node.children || [],
+										props: data.props,
+										listeners: <Record<string, CanArray<Function>>>data.on,
+
+										slots: () => data.slots,
+										scopedSlots: <Record<string, NormalizedScopedSlot>>data.scopedSlots,
+										injections: undefined,
+
+										data: {
+											ref: data.ref,
+											refInFor: data.refInFor,
+											on: <Record<string, CanArray<Function>>>data.on,
+											attrs: data.attrs,
+											class: data.class,
+											staticClass: data.staticClass,
+											style: data.style
+										}
+									};
+
+									const fakeCtx = createFakeCtx<ComponentInterface>(
+										<CreateElement>createElement,
+										renderCtx,
+
+										minimalCtxCache[nm] = minimalCtxCache[nm] || Object.assign(Object.create(minimalCtx), {
+											meta: component,
+											instance: component.instance,
+											componentName: component.componentName,
+											$options: {}
+										}),
+
+										{initProps: true}
+									);
+
+									const renderObject = tplCache[nm] = tplCache[nm] || tpl.index && tpl.index();
+									vnode = patchVNode(execRenderObject(renderObject, fakeCtx), fakeCtx, renderCtx);
+								}
+							}
+
+							if (!vnode) {
+								vnode = createCompositeElement(
+									nativeCreate.apply(ctx, arguments),
+									ctx
+								);
+							}
+
+							const
+								vData = vnode.data || {},
+								ref = vData[$$.ref] || vData.ref;
+
+							if (renderKey) {
+								ctx.renderTmp[renderKey] = cloneVNode(vnode);
+							}
+
+							if (ref && ctx !== rootCtx) {
+								vData[$$.ref] = ref;
+								vData.ref = `${ref}:${ctx.componentId}`;
+
+								Object.defineProperty(ctx.$refs, ref, {
+									configurable: true,
+									enumerable: true,
+									get: () => {
+										const
+											// @ts-ignore (access)
+											r = rootCtx.$refs,
+											l = r[`${ref}:${ctx._componentId}`] || r[`${ref}:${ctx.componentId}`];
+
+										if (l) {
+											return l;
+										}
+
+										return vnode && (vnode.fakeContext || vnode.elm);
+									}
+								});
+							}
+
+							if (needEl && vnode.fakeContext) {
+								Object.defineProperty(vnode.fakeContext, '$el', {
+									enumerable: true,
+									configurable: true,
+
+									set(): void {
+										return undefined;
+									},
+
+									get(): CanUndef<Node> {
+										return vnode.elm;
+									}
+								});
+							}
+
+							if (tasks.length) {
+								for (let i = 0; i < tasks.length; i++) {
+									tasks[i](vnode);
+								}
+
+								tasks = [];
+							}
+
+							return vnode;
+						};
+
+						if (rootCtx) {
+							// @ts-ignore (access)
+							rootCtx.$createElement = rootCtx._c = createElement;
+
+							const
+								// @ts-ignore (access)
+								forEach = rootCtx._l;
+
+							// @ts-ignore (access)
+							rootCtx._u = (fns, res) => {
+								res = res || {};
+
+								for (let i = 0; i < fns.length; i++) {
+									if (Array.isArray(fns[i])) {
+										// @ts-ignore (access)
+										rootCtx._u(fns[i], res);
+
+									} else {
+										res[fns[i].key] = function (): VNode[] {
+											const
+												children = fns[i].fn.apply(this, arguments);
+
+											if (tasks.length) {
+												for (let i = 0; i < tasks.length; i++) {
+													tasks[i](children);
+												}
+
+												tasks = [];
+											}
+
+											return children;
+										};
+									}
+								}
+
+								return res;
+							};
+
+							// @ts-ignore (access)
+							rootCtx._l = (obj, cb) => {
+								const
+									res = forEach(obj, cb);
+
+								if (obj && obj[asyncLabel]) {
+									tasks.push((vnode) => {
+										const
+											isTemplateParent = Object.isArray(vnode);
+
+										if (isTemplateParent && !vnode.length) {
+											return;
+										}
+
+										const
+											ctx = (isTemplateParent ? vnode[0] : vnode).context;
+
+										if (!isTemplateParent) {
+											vnode.fakeContext = ctx;
+										}
+
+										const fn = () => {
+											obj[asyncLabel]((obj, p = {}) => {
+												const
+													els = <Node[]>[],
+													renderNodes = <Nullable<Node>[]>[],
+													nodes = <VNode[]>[];
+
+												const
+													parent = (isTemplateParent ? vnode[0].elm.parentNode : vnode.elm),
+													baseHook = ctx.hook;
+
+												ctx.hook = 'beforeUpdate';
+												ctx.renderGroup = p.renderGroup;
+
+												for (let o = forEach(obj, cb), i = 0; i < o.length; i++) {
+													const
+														el = o[i];
+
+													if (!el) {
+														continue;
+													}
+
+													if (Object.isArray(el)) {
+														for (let o = el, i = 0; i < o.length; i++) {
+															const
+																el = <VNode>o[i];
+
+															if (!el) {
+																continue;
+															}
+
+															if (el.elm) {
+																el.elm[asyncLabel] = true;
+																renderNodes.push(el.elm);
+
+															} else {
+																nodes.push(el);
+																renderNodes.push(null);
+															}
+														}
+
+													} else if (el.elm) {
+														el.elm[asyncLabel] = true;
+														renderNodes.push(el.elm);
+
+													} else {
+														nodes.push(el);
+														renderNodes.push(null);
+													}
+												}
+
+												const
+													renderVNodes = renderData(nodes, ctx);
+
+												for (let i = 0, j = 0; i < renderNodes.length; i++) {
+													const
+														el = <Node>(renderNodes[i] || renderVNodes[j++]);
+
+													if (Object.isArray(el)) {
+														for (let i = 0; i < el.length; i++) {
+															if (el[i]) {
+																els.push(parent.appendChild(el[i]));
+															}
+														}
+
+													} else if (el) {
+														els.push(parent.appendChild(el));
+													}
+												}
+
+												ctx.renderGroup = undefined;
+												runHook('beforeUpdated', ctx.meta, ctx, p)
+													.catch(stderr);
+
+												patchRefs(ctx);
+												ctx.hook = baseHook;
+
+												return els;
+											});
+										};
+
+										if (mountedHooks[ctx.hook]) {
+											ctx.nextTick(fn);
+
+										} else {
+											const hooks = ctx.meta.hooks[beforeMountHooks[ctx.hook] ? 'mounted' : 'updated'];
+											hooks.push({fn, once: true});
+										}
+									});
+								}
+
+								return res;
+							};
 						}
 
-						return r.fn.call(this, el);
+						return r.fn.call(rootCtx, createElement, baseCtx);
 					}
 
-					return el('span');
+					return nativeCreate('span');
 				}
 			}
 		};
@@ -381,6 +504,7 @@ export function component(params?: ComponentParams): Function {
 			components.set(target, meta);
 		}
 
+		components.set(name, meta);
 		initEvent.emit('constructor', {meta, parentMeta});
 
 		if (isAbstractComponent.test(name)) {
@@ -390,39 +514,27 @@ export function component(params?: ComponentParams): Function {
 
 		const loadTemplate = (component) => (resolve) => {
 			const success = () => {
-				if (localComponents.has(target)) {
-					// tslint:disable-next-line:prefer-object-spread
-					component.components = Object.assign(component.components || {}, localComponents.get(target));
-				}
-
 				log(`component:load:${name}`, component);
 				resolve(component);
 			};
 
+			const
+				{methods, methods: {render: r}} = meta;
+
 			const addRenderAndResolve = (tpls) => {
 				const
-					fns = tpls.index();
+					fns = tplCache[name] = tplCache[name] || tpls.index(),
+					renderObj = <ComponentMethod>{wrapper: true, watchers: {}, hooks: {}};
 
-				if (p.functional === true) {
-					const
-						{ctx} = meta.component;
+				renderObj.fn = fns.render;
+				component.staticRenderFns = meta.component.staticRenderFns = fns.staticRenderFns || [];
 
-					if (ctx) {
-						component.render = convertRender(fns, ctx);
-					}
-
-				} else {
-					Object.assign(component, fns);
-				}
-
+				methods.render = renderObj;
 				success();
 			};
 
-			const
-				r = meta.component.methods.render;
-
 			if (p.tpl === false) {
-				if (r) {
+				if (r && !r.wrapper) {
 					success();
 
 				} else {
@@ -430,12 +542,15 @@ export function component(params?: ComponentParams): Function {
 				}
 
 			} else {
+				let
+					i = 0;
+
 				const f = () => {
 					const
 						fns = TPLS[meta.componentName];
 
 					if (fns) {
-						if (r) {
+						if (r && !r.wrapper) {
 							success();
 
 						} else {
@@ -443,7 +558,13 @@ export function component(params?: ComponentParams): Function {
 						}
 
 					} else {
-						setImmediate(f);
+						if (i < 15) {
+							i++;
+							setImmediate(f);
+
+						} else {
+							setTimeout(f, 100);
+						}
 					}
 				};
 
@@ -458,7 +579,12 @@ export function component(params?: ComponentParams): Function {
 			rootComponents[name] = new Promise(obj);
 
 		} else {
-			ComponentDriver.component(name, obj);
+			const
+				c = ComponentDriver.component(name, obj);
+
+			if (Object.isPromise(c)) {
+				c.catch(stderr);
+			}
 		}
 
 		if (!Object.isBoolean(p.functional)) {

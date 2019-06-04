@@ -19,6 +19,8 @@ const
 	buildEvent = new EventEmitter({maxListeners: build.MAX_PROCESS});
 
 async function buildFactory(entry, buildId) {
+	await include('build/preload.webpack');
+
 	const
 		plugins = await include('build/plugins.webpack')({buildId}),
 		optimization = await include('build/optimization.webpack')({buildId, plugins}),

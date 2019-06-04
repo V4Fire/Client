@@ -19,9 +19,11 @@ export default class Cache<K extends string = string, V = unknown> {
 	 * @param [namespaces] - predefined namespaces
 	 */
 	constructor(namespaces?: string[]) {
-		$C(namespaces).forEach((el) => {
-			this.dict[el] = Object.createDict();
-		});
+		if (namespaces) {
+			for (let i = 0; i < namespaces.length; i++) {
+				this.dict[namespaces[i]] = Object.createDict();
+			}
+		}
 	}
 
 	/**

@@ -10,65 +10,13 @@
 @import "global/g-def/consts.styl"
 
 $p = {
-	lockHelpers: false
-	sizeHelpers: false
-
-	onActive: {
-		transform: translate(1px, 1px)
-	}
-
-	sizes: setSizes({table: SIZES, units: 'rem'}, 'global')
+	overWrapper: false
 }
 
 i-block
-	position relative
-	box-sizing border-box
-
-	&__root-wrapper
-		position @position
-		box-sizing @box-sizing
-
-	if $p.sizeHelpers
-		&_size
-			for $key, $value in $p.sizes.table
-				&_{$key}
-					font-size unit($value, $p.sizes.units)
-
-	&_width
-		&_full
-			width 100%
-
-		&_auto
-			width auto
-
-	&_hidden_true
-		display none !important
-
-	if $p.lockHelpers
-		&_disabled_true
-		&_progress_true
-			pointer-events none
-
-		&_disabled_true &__over-wrapper
-		&_progress_true &__over-wrapper
-			display block
-
-		&_disabled_true &__root-wrapper
-		&_progress_true &__root-wrapper
-			cursor default
-
-	&_progress_true &__progress
-		display block
-
-	&__root-wrapper
-		display block
-
-	&__over-wrapper
-		absolute top 0 left 0
-		z-index-pos layer 2
-
-		display none
-		size 100%
-
-	&__progress
-		display none
+	if $p.overWrapper
+		&__over-wrapper
+			absolute top 0 left 0
+			zIndex(layer, 2)
+			display none
+			size 100%

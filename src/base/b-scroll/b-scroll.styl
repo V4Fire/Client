@@ -7,13 +7,18 @@
  */
 
 @import "super/i-block/i-block.styl"
+@import "traits/i-visible/i-visible.styl"
 
 $p = {
+	visibleHelpers: true
 	backgroundColor: inherit
 	scrollerSize: 6px
 }
 
 b-scroll extends i-block
+	i-visible({helpers: $p.visibleHelpers})
+
+	position relative
 	display block
 	height 100%
 	background inherit
@@ -38,11 +43,11 @@ b-scroll extends i-block
 		useGPU()
 
 	&__area
-		overflow auto
+		-webkit-overflow-scrolling touch
 		box-sizing border-box
 		max-width 100%
 		max-height @max-width
-		-webkit-overflow-scrolling touch
+		overflow auto
 
 		&::-webkit-scrollbar
 			visibility hidden
@@ -67,14 +72,13 @@ b-scroll extends i-block
 		width 100%
 
 	&__scroll-x
-		width inherit
-		height $p.scrollerSize
+		size inherit $p.scrollerSize
 
 	&__scroller-x
 		top 50%
-		margin-top -($p.scrollerSize / 2)
-		min-width 1em
 		height $p.scrollerSize
+		min-width 1em
+		margin-top -($p.scrollerSize / 2)
 
 	&__scroll-wrapper-y
 		absolute top 0 right 0
@@ -84,6 +88,6 @@ b-scroll extends i-block
 
 	&__scroller-y
 		left 50%
-		margin-left -($p.scrollerSize / 2)
-		min-height 1em
 		width $p.scrollerSize
+		min-height 1em
+		margin-left -($p.scrollerSize / 2)

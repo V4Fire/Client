@@ -6,8 +6,6 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import $C = require('collection.js');
-
 /**
  * Returns a cookie value by the specified name
  */
@@ -64,16 +62,22 @@ export function set(name: string, value: string, opts: CookieOptions): string {
 		opts.expires = (<Date>v).toUTCString();
 	}
 
-	document.cookie = $C(opts).to(`${name}=${encodeURIComponent(value)}`).reduce((cookie, val, key) => {
+	let
+		cookie = `${name}=${encodeURIComponent(value)}`;
+
+	for (let keys = Object.keys(opts), i = 0; i < keys.length; i++) {
+		const
+			key = keys[i],
+			val = opts[key];
+
 		cookie += `; ${key}`;
 
 		if (val !== true) {
 			cookie += `=${val}`;
 		}
+	}
 
-		return cookie;
-	});
-
+	document.cookie = cookie;
 	return value;
 }
 

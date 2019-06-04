@@ -11,8 +11,12 @@ import state from 'core/component/state';
 import { EventEmitter2 as EventEmitter } from 'eventemitter2';
 
 export const
-	event = new EventEmitter({maxListeners: 100});
+	event = new EventEmitter({maxListeners: 1e3, newListener: false});
 
+/**
+ * Saves the specified ABT options
+ * @param options
+ */
 export default async function saveABT(options: unknown): Promise<void> {
 	const
 		config = adapter(options);

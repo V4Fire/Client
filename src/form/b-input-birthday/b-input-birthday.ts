@@ -6,9 +6,9 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import $C = require('collection.js');
+import iWidth from 'traits/i-width/i-width';
 import bSelect, { Option } from 'form/b-select/b-select';
-import iInput, { component, prop, p, Cache } from 'super/i-input/i-input';
+import iInput, { component, prop, p, Cache, ModsDecl } from 'super/i-input/i-input';
 export * from 'super/i-input/i-input';
 
 export type Value = Date;
@@ -29,8 +29,8 @@ export const selectCache = new Cache<'months' | 'days' | 'years', ReadonlyArray<
 export default class bInputBirthday<
 	V extends Value = Value,
 	FV extends FormValue = FormValue,
-	D extends Dictionary = Dictionary
-> extends iInput<V, FV, D> {
+	D extends object = Dictionary
+> extends iInput<V, FV, D> implements iWidth {
 	/** @override */
 	@prop({type: Date, required: false})
 	readonly valueProp?: V;
@@ -42,12 +42,12 @@ export default class bInputBirthday<
 	/** @override */
 	@p({cache: false})
 	get value(): V {
-		return Object.fastClone(<NonNullable<V>>this.getField('valueProp'));
+		return Object.fastClone(<NonNullable<V>>this.field.get('valueProp'));
 	}
 
 	/** @override */
 	set value(value: V) {
-		this.setField('valueProp', value);
+		this.field.set('valueProp', value);
 	}
 
 	/** @override */
@@ -152,6 +152,11 @@ export default class bInputBirthday<
 		});
 	}
 
+	/** @inheritDoc */
+	static readonly mods: ModsDecl = {
+		...iWidth.mods
+	};
+
 	/** @override */
 	protected readonly $refs!: {
 		input: HTMLInputElement;
@@ -174,7 +179,17 @@ export default class bInputBirthday<
 			} catch {}
 		}
 
-		if ($C(res).some((el) => el)) {
+		let
+			some = false;
+
+		for (let i = 0; i < res.length; i++) {
+			if (res[i]) {
+				some = true;
+				break;
+			}
+		}
+
+		if (some) {
 			this.emit('clear');
 			return true;
 		}
@@ -193,7 +208,17 @@ export default class bInputBirthday<
 			} catch {}
 		}
 
-		if ($C(res).some((el) => el)) {
+		let
+			some = false;
+
+		for (let i = 0; i < res.length; i++) {
+			if (res[i]) {
+				some = true;
+				break;
+			}
+		}
+
+		if (some) {
 			this.emit('reset');
 			return true;
 		}
@@ -217,7 +242,7 @@ export default class bInputBirthday<
 		}
 
 		d.set({
-			day: day.selected,
+			day: day.selected ? Number(day.selected) : 0,
 			hours: 0,
 			minutes: 0,
 			seconds: 0,

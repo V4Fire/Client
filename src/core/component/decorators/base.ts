@@ -6,24 +6,25 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import { defProp } from 'core/const/props';
+import { initEvent } from 'core/component/const';
+import { WatchOptions } from 'core/component/engines';
+
 import {
 
 	PropOptions,
-	WatchOptions,
-
-	Hooks,
-	initEvent,
-	InitFieldFn,
-
-	MergeFieldFn,
-	UniqueFieldFn,
 	ComponentInterface,
 	ComponentMeta,
+	Hooks,
+
+	InitFieldFn,
+	MergeFieldFn,
+	UniqueFieldFn,
 
 	MethodWatcher,
 	WatchHandler
 
-} from 'core/component';
+} from 'core/component/interface';
 
 export interface FieldWatcherObject<
 	CTX extends ComponentInterface = ComponentInterface,
@@ -45,12 +46,17 @@ export interface ComponentProp<
 	A = unknown,
 	B = A
 > extends PropOptions {
-	watch?: FieldWatcher<CTX, A, B>;
 	forceDefault?: boolean;
+	watch?: FieldWatcher<CTX, A, B>;
 	meta?: Dictionary;
 }
 
-export interface ComponentAccessor {
+export interface FunctionalOpts {
+	replace?: boolean;
+	functional?: boolean;
+}
+
+export interface ComponentAccessor extends FunctionalOpts {
 	cache: boolean;
 }
 
@@ -58,15 +64,15 @@ export interface ComponentAccessor {
  * Marks a class property as a component initial property
  * @decorator
  */
-export const prop = paramsFactory<Function | ObjectConstructor | ComponentProp>('props', (p) => {
-	if (Object.isFunction(p)) {
+export const prop = paramsFactory<CanArray<Function> | ObjectConstructor | ComponentProp>('props', (p) => {
+	if (Object.isFunction(p) || Object.isArray(p)) {
 		return {type: p};
 	}
 
 	return p;
 });
 
-export interface SystemField<CTX extends ComponentInterface = ComponentInterface> {
+export interface SystemField<CTX extends ComponentInterface = ComponentInterface> extends FunctionalOpts {
 	atom?: boolean;
 	default?: unknown;
 	unique?: boolean | UniqueFieldFn<CTX>;
@@ -108,8 +114,18 @@ export const system = paramsFactory<InitFieldFn | SystemField>('systemFields', (
 	return p;
 });
 
-export type HookParams = {[hook in Hooks]?: CanArray<string>};
-export type ComponentHooks = Hooks | Hooks[] | HookParams | HookParams[];
+export type HookParams = {
+	[hook in Hooks]?: FunctionalOpts & {
+		after?: CanArray<string>;
+	}
+};
+
+export type ComponentHooks =
+	Hooks |
+	Hooks[] |
+	HookParams |
+	HookParams[];
+
 export type MethodWatchers<CTX extends ComponentInterface = ComponentInterface, A = unknown, B = A> =
 	string |
 	MethodWatcher<CTX, A, B> |
@@ -139,6 +155,12 @@ export const hook = paramsFactory<ComponentHooks>(null, (hook) => ({hook}));
  */
 export const watch = paramsFactory<FieldWatcher | MethodWatchers>(null, (watch) => ({watch}));
 
+const inverseFieldMap = {
+	props: ['fields', 'systemFields'],
+	fields: ['props', 'systemFields'],
+	systemFields: ['props', 'fields']
+};
+
 /**
  * Factory for creating component property decorators
  *
@@ -151,6 +173,21 @@ export function paramsFactory<T = unknown>(
 ): (params?: T) => Function {
 	return (params: Dictionary<any> = {}) => (target, key, desc) => {
 		initEvent.once('constructor', ({meta}: {meta: ComponentMeta}) => {
+			const wrapOpts = (opts) => {
+				const
+					p = meta.params;
+
+				if (opts.replace === undefined && p.flyweight) {
+					opts.replace = false;
+				}
+
+				if (opts.functional === undefined && p.functional === null) {
+					opts.functional = false;
+				}
+
+				return opts;
+			};
+
 			let
 				p = params;
 
@@ -169,7 +206,7 @@ export function paramsFactory<T = unknown>(
 
 				const
 					obj = meta[metaKey],
-					el = <Dictionary<any>>obj[key] || {};
+					el = obj[key] || {src: meta.componentName};
 
 				if (metaKey === 'methods') {
 					const
@@ -182,10 +219,10 @@ export function paramsFactory<T = unknown>(
 							el = w[i];
 
 						if (Object.isObject(el)) {
-							watchers[String((<Dictionary>el).field)] = {...p.watchParams, ...el};
+							watchers[String((<Dictionary>el).field)] = wrapOpts({...p.watchParams, ...el});
 
 						} else {
-							watchers[el] = {field: el, ...p.watchParams};
+							watchers[el] = wrapOpts({field: el, ...p.watchParams});
 						}
 					}
 
@@ -197,31 +234,36 @@ export function paramsFactory<T = unknown>(
 						const
 							el = h[i];
 
-						if (Object.isObject(el)) {
+						if (Object.isSimpleObject(el)) {
 							const
-								key = Object.keys(el)[0];
+								key = Object.keys(el)[0],
+								val = el[key];
 
-							hooks[key] = {
+							hooks[key] = wrapOpts({
+								...val,
 								name,
 								hook: key,
-								after: new Set([].concat(el[key] || []))
-							};
+								after: new Set(val.after || [])
+							});
 
 						} else {
-							hooks[el] = {name, hook: el};
+							hooks[el] = wrapOpts({name, hook: el});
 						}
 					}
 
-					obj[key] = {...el, ...p, watchers, hooks};
+					obj[key] = wrapOpts({...el, ...p, watchers, hooks});
 					return;
 				}
 
-				if (metaKey === 'accessors' ? key in meta.computed : !('cache' in p) && key in meta.accessors) {
-					obj.accessors = meta.computed[key];
+				const hasCache = 'cache' in p;
+				delete p.cache;
+
+				if (metaKey === 'accessors' ? key in meta.computed : !hasCache && key in meta.accessors) {
+					obj.accessors = wrapOpts({...meta.computed[key], ...p});
 					delete meta.computed[key];
 
 				} else {
-					obj[key] = {};
+					obj[key] = wrapOpts({...el, ...p});
 				}
 
 				return;
@@ -235,24 +277,14 @@ export function paramsFactory<T = unknown>(
 				accessors = meta.accessors[key] ? meta.accessors : meta.computed;
 
 			if (accessors[key]) {
-				Object.defineProperty(meta.constructor.prototype, key, {
-					writable: true,
-					configurable: true,
-					value: undefined
-				});
-
+				Object.defineProperty(meta.constructor.prototype, key, defProp);
 				delete accessors[key];
 			}
 
 			const
 				metaKey = cluster || (key in meta.props ? 'props' : 'fields'),
+				inverse = inverseFieldMap[metaKey],
 				obj = meta[metaKey];
-
-			const inverse = {
-				props: ['fields', 'systemFields'],
-				fields: ['props', 'systemFields'],
-				systemFields: ['props', 'fields']
-			}[metaKey];
 
 			if (inverse) {
 				for (let i = 0; i < inverse.length; i++) {
@@ -272,7 +304,7 @@ export function paramsFactory<T = unknown>(
 			}
 
 			const
-				el = obj[key] || {},
+				el = obj[key] || {src: meta.componentName},
 				watchers = el.watchers || new Map(),
 				after = el.after || new Set();
 
@@ -285,14 +317,14 @@ export function paramsFactory<T = unknown>(
 					el = o[i];
 
 				if (Object.isObject(el)) {
-					watchers.set((<Dictionary>el).fn, {...el});
+					watchers.set((<Dictionary>el).fn, wrapOpts({...el}));
 
 				} else {
-					watchers.set(el, {fn: el});
+					watchers.set(el, wrapOpts({fn: el}));
 				}
 			}
 
-			obj[key] = {
+			obj[key] = wrapOpts({
 				...el,
 				...p,
 
@@ -303,7 +335,7 @@ export function paramsFactory<T = unknown>(
 					...el.meta,
 					...p.meta
 				}
-			};
+			});
 		});
 	};
 }

@@ -6,9 +6,12 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import iData, { component, prop, field, system, watch, hook, p, Statuses } from 'super/i-data/i-data';
 import symbolGenerator from 'core/symbol';
 import { WrappedFunction } from 'core/async';
+
+import iVisible from 'traits/i-visible/i-visible';
+
+import iData, { component, prop, field, system, watch, hook, p, Statuses, ModsDecl } from 'super/i-data/i-data';
 export * from 'super/i-data/i-data';
 
 export type TitleValue<T = unknown> = string | ((ctx: T) => string);
@@ -29,7 +32,7 @@ const
 	$$ = symbolGenerator();
 
 @component({inheritMods: false})
-export default class iPage<T extends Dictionary = Dictionary> extends iData<T> {
+export default abstract class iPage<T extends object = Dictionary> extends iData<T> implements iVisible {
 	/** @override */
 	readonly needReInit: boolean = true;
 
@@ -69,6 +72,11 @@ export default class iPage<T extends Dictionary = Dictionary> extends iData<T> {
 		return this.scrollToProxyFn();
 	}
 
+	/** @inheritDoc */
+	static readonly mods: ModsDecl = {
+		...iVisible.mods
+	};
+
 	/** @override */
 	@field()
 	protected componentStatusStore!: Statuses;
@@ -76,7 +84,7 @@ export default class iPage<T extends Dictionary = Dictionary> extends iData<T> {
 	/**
 	 * Page title store
 	 */
-	@system((o) => o.link((v) => Object.isFunction(v) ? v(o) : v))
+	@system((o) => o.sync.link((v) => Object.isFunction(v) ? v(o) : v))
 	protected pageTitleStore!: string;
 
 	/**
@@ -138,7 +146,7 @@ export default class iPage<T extends Dictionary = Dictionary> extends iData<T> {
 				this.scrollTo(<ScrollOpts>x);
 
 			} else {
-				this.scrollTo(<number | undefined>x, y);
+				this.scrollTo(<CanUndef<number>>x, y);
 			}
 		}, {
 			single: false,
@@ -180,6 +188,12 @@ export default class iPage<T extends Dictionary = Dictionary> extends iData<T> {
 		if (!this.syncStageTitles() && this.pageTitleStore) {
 			this.pageTitle = this.pageTitleStore;
 		}
+	}
+
+	/** @override */
+	protected initModEvents(): void {
+		super.initModEvents();
+		iVisible.initModEvents(this);
 	}
 
 	/** @override */

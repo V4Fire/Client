@@ -9,6 +9,8 @@
 import symbolGenerator from 'core/symbol';
 import remoteState from 'core/component/state';
 
+import { GLOBAL } from 'core/env';
+import { defProp } from 'core/const/props';
 import { reset, globalEvent, ResetType, ComponentInterface } from 'core/component';
 import { setLang, lang } from 'core/i18n';
 
@@ -16,12 +18,16 @@ import { SetEvent } from 'core/session';
 import { StatusEvent } from 'core/net';
 
 import iBlock from 'super/i-block/i-block';
-import bRouter, { CurrentPage } from 'base/b-router/b-router';
 import iPage, { component, field, system, watch, Event } from 'super/i-page/i-page';
+
+//#if runtime has bRouter
+import bRouter, { CurrentPage } from 'base/b-router/b-router';
+//#endif
 
 export * from 'super/i-data/i-data';
 export { globalEvent, ResetType, CurrentPage };
 
+export type RemoteState = typeof remoteState;
 export type RootMods = Dictionary<{
 	mod: string;
 	value: string;
@@ -32,17 +38,17 @@ export const
 	$$ = symbolGenerator();
 
 @component()
-export default class iStaticPage<
-	P extends Dictionary = Dictionary,
-	Q extends Dictionary = Dictionary,
-	M extends Dictionary = Dictionary,
-	D extends Dictionary = Dictionary
+export default abstract class iStaticPage<
+	P extends object = Dictionary,
+	Q extends object = Dictionary,
+	M extends object = Dictionary,
+	D extends object = Dictionary
 > extends iPage<D> {
 	/**
 	 * Link to i18n function
 	 */
 	@system()
-	readonly i18n: typeof i18n = i18n;
+	readonly i18n: typeof i18n = GLOBAL.i18n;
 
 	/** @override */
 	@system(() => globalEvent)
@@ -51,19 +57,27 @@ export default class iStaticPage<
 	/**
 	 * Authorization status
 	 */
-	@field((o) => o.remoteState.isAuth)
+	@field({
+		after: 'remoteState',
+		init: (o) => o.sync.link('remoteState', (state: RemoteState) => state.isAuth)
+	})
+
 	isAuth!: boolean;
 
 	/**
 	 * Online status
 	 */
-	@field((o) => o.remoteState.isOnline)
+	@field({
+		after: 'remoteState',
+		init: (o) => o.sync.link('remoteState', (state: RemoteState) => state.isOnline)
+	})
+
 	isOnline!: boolean;
 
 	/**
 	 * Last online date
 	 */
-	@system((o) => o.remoteState.lastOnlineDate)
+	@system((o) => o.sync.link('remoteState', (state: RemoteState) => state.lastOnlineDate))
 	lastOnlineDate?: Date;
 
 	/** @override */
@@ -76,7 +90,7 @@ export default class iStaticPage<
 
 	/** @override */
 	get route(): CanUndef<CurrentPage<P, Q, M>> {
-		return this.getField('routeStore');
+		return this.field.get('routeStore');
 	}
 
 	/**
@@ -84,13 +98,13 @@ export default class iStaticPage<
 	 * @emits setRoute(value: CanUndef<CurrentPage<P, Q, M>>)
 	 */
 	set route(value: CanUndef<CurrentPage<P, Q, M>>) {
-		this.setField('routeStore', value);
+		this.field.set('routeStore', value);
 		this.emit('setRoute', value);
 	}
 
 	/** @override */
 	get pageTitle(): string {
-		return <NonNullable<string>>this.getField('pageTitleStore');
+		return <NonNullable<string>>this.field.get('pageTitleStore');
 	}
 
 	/** @override */
@@ -102,14 +116,14 @@ export default class iStaticPage<
 	 * System language
 	 */
 	get lang(): string {
-		return <NonNullable<string>>this.getField('langStore');
+		return <NonNullable<string>>this.field.get('langStore');
 	}
 
 	/**
 	 * Sets a new system language
 	 */
 	set lang(value: string) {
-		this.setField('langStore', value);
+		this.field.set('langStore', value);
 		setLang(value);
 	}
 
@@ -173,7 +187,7 @@ export default class iStaticPage<
 
 		const
 			c = (component.globalName || component.componentName).dasherize(),
-			mod = this.getFullBlockName(c, name, value).replace(/_/g, '-');
+			mod = this.provide.fullBlockName(c, name, value).replace(/_/g, '-');
 
 		name = `${c}_${name.camelize(false)}`;
 		value = String(value).dasherize();
@@ -272,6 +286,6 @@ export default class iStaticPage<
 	/** @override */
 	protected initBaseAPI(): void {
 		super.initBaseAPI();
-		this.remoteState = remoteState;
+		Object.defineProperty(this, 'remoteState', {...defProp, value: remoteState});
 	}
 }

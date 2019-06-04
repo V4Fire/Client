@@ -10,7 +10,9 @@
 
 - include 'super/i-block'|b as placeholder
 
-- template index(params) extends ['i-block'].index
+- template index() extends ['i-block'].index
+	- rootWrapper = true
+
 	- block body
 		- super
 		- block editor

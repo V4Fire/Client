@@ -54,7 +54,6 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		},
 
 		externals: {
-			'collection.js': '$C',
 			'eventemitter2': 'EventEmitter2',
 			'localforage': 'localforage',
 			'sugar': 'Sugar',
@@ -99,7 +98,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 			if (args.length) {
 				args = args.map((el) => el.replace(/^\.?/, ''));
 
-				if (pathVal) {
+				if (pathVal && !/^(\w+:)?\/\//.test(args[0])) {
 					return concatUrls(pathVal, ...args);
 				}
 
@@ -188,11 +187,38 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		return {};
 	},
 
+	runtime() {
+		return {
+			'vue': true,
+			'noGlobals': false,
+			'core/kv-storage': true,
+			'core/helpers': true,
+			'core/browser': true,
+			'core/analytics': true,
+			'directives/in-view': true
+		};
+	},
+
 	monic() {
+		const
+			runtime = this.runtime();
+
 		return {
 			stylus: {
 				flags: {
 					'+:*': true
+				}
+			},
+
+			typescript: {
+				flags: {
+					runtime
+				}
+			},
+
+			javascript: {
+				flags: {
+					runtime
 				}
 			}
 		};

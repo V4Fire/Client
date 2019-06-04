@@ -32,9 +32,8 @@
 		- return $C(exports).get(nms)
 
 	- rootTag = 'div'
-	- overWrapper = true
-	- rootWrapper = true
-	- renderCounter = true
+	- rootWrapper = false
+	- overWrapper = false
 
 	/**
 	 * Applies Typograf to the specified content
@@ -55,7 +54,8 @@
 			rootAttrs[':class'] = value
 
 	- rootAttrs = { &
-		':class': '[getBlockClasses(mods), "i-block-helper", componentId]',
+		':class': '[...provide.blockClasses(mods), "i-block-helper", componentId]',
+		':render-group': 'renderGroupProp',
 		':-render-counter': 'renderCounter'
 	} .
 
@@ -79,7 +79,7 @@
 				 * @param {Object=} [attrs]
 				 */
 				- block index->gIcon(iconId, classes = {}, attrs = {})
-					< svg[.g-icon] :class = getElClasses(${classes|json}) | ${attrs}
+					< svg[.g-icon] :class = provide.elClasses(${classes|json}) | ${attrs}
 						- if Object.isArray(iconId)
 							< use :xlink:href = getIconLink(${iconId})
 

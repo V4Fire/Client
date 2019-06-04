@@ -6,65 +6,62 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-// tslint:disable:max-file-line-count
-
-import $C = require('collection.js');
-
-import statusCodes from 'core/status-codes';
 import symbolGenerator from 'core/symbol';
+import statusCodes from 'core/status-codes';
+import iProgress from 'traits/i-progress/i-progress';
+import { providers } from 'core/data/const';
 
-import { Socket } from 'core/socket';
 import Async, { AsyncOpts, AsyncCbOpts } from 'core/async';
+import iMessage, {
 
-import iMessage, { component, prop, field, system, watch, wait, RemoteEvent } from 'super/i-message/i-message';
+	component,
+	prop,
+	field,
+	system,
+	watch,
+	wait,
+	eventFactory,
+	RemoteEvent,
+	ModsDecl
+
+} from 'super/i-message/i-message';
+
+import {
+
+	RequestParams,
+	RequestFilter,
+	DefaultRequest,
+	CreateRequestOpts,
+	ComponentConverter,
+	SocketEvent
+
+} from 'super/i-data/modules/interface';
+
+//#if runtime has core/data
+
 import Provider, {
 
-	providers,
+	Socket,
 	RequestQuery,
 	RequestBody,
 	RequestResponseObject,
 	RequestError,
 	Response,
 	ModelMethods,
-	CreateRequestOptions as BaseCreateRequestOptions
+	ProviderParams
 
 } from 'core/data';
 
+//#endif
+
+export * from 'super/i-data/modules/interface';
 export * from 'super/i-message/i-message';
-export { ModelMethods, RequestQuery, RequestBody, RequestResponseObject, RequestError } from 'core/data';
-
-export interface RequestFilterOpts<T = unknown> {
-	isEmpty: boolean;
-	method: ModelMethods;
-	params: CreateRequestOptions<T>;
-}
-
-export type RequestFilter<T = unknown> =
-	((data: RequestQuery | RequestBody, opts: RequestFilterOpts<T>) => boolean) |
-	boolean;
-
-export type DefaultRequest<T = unknown> = [RequestQuery | RequestBody, CreateRequestOptions<T>];
-export type Request<T = unknown> = RequestQuery | RequestBody | DefaultRequest<T>;
-export type RequestParams<T = unknown> = StrictDictionary<Request<T>>;
-
-export interface SocketEvent<T extends object = Async> extends RemoteEvent<T> {
-	connection: Promise<Socket | void>;
-}
-
-export interface CreateRequestOptions<T = unknown> extends BaseCreateRequestOptions<T>, AsyncOpts {
-	showProgress?: boolean;
-	hideProgress?: boolean;
-}
-
-export interface ComponentConverter<T = unknown> {
-	(value: unknown): T;
-}
 
 export const
 	$$ = symbolGenerator();
 
-@component()
-export default class iData<T extends Dictionary = Dictionary> extends iMessage {
+@component({functional: null})
+export default abstract class iData<T extends object = Dictionary> extends iMessage implements iProgress {
 	/**
 	 * Data provider name
 	 */
@@ -75,7 +72,7 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 	 * Parameters for a data provider instance
 	 */
 	@prop(Object)
-	readonly dataProviderParams: Dictionary = {};
+	readonly dataProviderParams: ProviderParams = {};
 
 	/**
 	 * Initial request parameters
@@ -112,7 +109,7 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 	 * Component data
 	 */
 	get db(): CanUndef<T> {
-		return this.getField('dbStore');
+		return this.field.get('dbStore');
 	}
 
 	/**
@@ -130,7 +127,7 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 			label: $$.db
 		});
 
-		this.setField('dbStore', value);
+		this.field.set('dbStore', value);
 		this.initRemoteData();
 
 		this.watch('dbStore', this.initRemoteData, {
@@ -139,47 +136,23 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 		});
 	}
 
+	/** @inheritDoc */
+	static readonly mods: ModsDecl = {
+		...iProgress.mods
+	};
+
 	/**
-	 * Event emitter object for working with a data provider
+	 * Data provider event emitter
 	 */
-	get dataEvent(): RemoteEvent<this> {
-		const
-			{async: $a, dp: $d} = this;
+	@system({
+		atom: true,
+		after: 'async',
+		unique: true,
+		// @ts-ignore
+		init: (o, d) => eventFactory(<Async>d.async, () => o.dp && o.dp.event, true)
+	})
 
-		return {
-			on: (event, fn, params, ...args) => {
-				if (!$d) {
-					return;
-				}
-
-				return $a.on($d.event, event, fn, params, ...args);
-			},
-
-			once: (event, fn, params, ...args) => {
-				if (!$d) {
-					return;
-				}
-
-				return $a.once($d.event, event, fn, params, ...args);
-			},
-
-			promisifyOnce: (event, params, ...args) => {
-				if (!$d) {
-					return;
-				}
-
-				return $a.promisifyOnce($d.event, event, params, ...args);
-			},
-
-			off: (...args) => {
-				if (!$d) {
-					return;
-				}
-
-				$a.off(...args);
-			}
-		};
-	}
+	protected readonly dataEvent!: RemoteEvent<this>;
 
 	/**
 	 * Request parameters
@@ -201,7 +174,7 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 
 	/** @override */
 	@wait({label: $$.initLoad, defer: true})
-	async initLoad(data?: unknown, silent?: boolean): Promise<void> {
+	initLoad(data?: unknown, silent?: boolean): CanPromise<void> {
 		const
 			important = this.componentStatus === 'unloaded';
 
@@ -221,16 +194,24 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 			if (p) {
 				Object.assign(p[1], {...label, important, join: false});
 
-				try {
-					const db = this.convertDataToDB<T>(data || await this.get(<RequestQuery>p[0], p[1]));
-					this.execCbAtTheRightTime(() => this.db = db, label);
+				if (data) {
+					const db = this.convertDataToDB<T>(data);
+					this.lfc.execCbAtTheRightTime(() => this.db = db, label);
 
-				} catch (err) {
-					stderr(err);
+				} else {
+					return this.get(<RequestQuery>p[0], p[1]).then((data) => {
+						const db = this.convertDataToDB<T>(data);
+						this.lfc.execCbAtTheRightTime(() => this.db = db, label);
+						return super.initLoad(() => this.db, silent);
+
+					}, (err) => {
+						stderr(err);
+						return super.initLoad(() => this.db, silent);
+					});
 				}
 
 			} else if (this.db) {
-				this.execCbAtTheRightTime(() => this.db = undefined, label);
+				this.lfc.execCbAtTheRightTime(() => this.db = undefined, label);
 			}
 		}
 
@@ -249,12 +230,12 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 	}
 
 	/** override */
-	async reload(): Promise<void> {
+	reload(): Promise<void> {
 		if (!this.$root.isOnline && !this.needOfflineReInit) {
-			return;
+			return Promise.resolve();
 		}
 
-		await super.reload();
+		return super.reload();
 	}
 
 	/**
@@ -302,7 +283,7 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 	connect(params?: Dictionary): SocketEvent<this> {
 		const
 			{async: $a, dp: $d} = this,
-			connection = (async () => $d && $d.connect(params))();
+			connection = Promise.resolve($d && $d.connect(params));
 
 		return {
 			connection,
@@ -311,7 +292,7 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 					return;
 				}
 
-				return (async () => $a.on(<Socket>(await connection), event, fnOrParams, ...args))();
+				return connection.then((connection) => $a.on(<Socket>connection, event, fnOrParams, ...args));
 			},
 
 			once: (event, fnOrParams, ...args) => {
@@ -319,15 +300,15 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 					return;
 				}
 
-				return (async () => $a.once(<Socket>(await connection), event, fnOrParams, ...args))();
+				return connection.then((connection) => $a.once(<Socket>connection, event, fnOrParams, ...args));
 			},
 
 			promisifyOnce: (event, params, ...args) => {
 				if (!$d) {
-					return;
+					return Promise.resolve();
 				}
 
-				return (async () => $a.promisifyOnce(<Socket>(await connection), event, params, ...args))();
+				return connection.then((connection) => $a.promisifyOnce(<Socket>connection, event, params, ...args));
 			},
 
 			off: (...args) => {
@@ -346,12 +327,12 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 	 * @param [data]
 	 * @param [params]
 	 */
-	peek(data?: RequestQuery, params?: CreateRequestOptions<T>): Promise<CanUndef<T>> {
+	peek(data?: RequestQuery, params?: CreateRequestOpts<T>): Promise<CanUndef<T>> {
 		const
 			args = arguments.length > 0 ? [data, params] : this.getDefaultRequestParams('peek');
 
 		if (args) {
-			return this.createRequest('peek', ...args);
+			return this.createRequest('peek', ...<any>args);
 		}
 
 		return Promise.resolve(undefined);
@@ -363,12 +344,12 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 	 * @param [data]
 	 * @param [params]
 	 */
-	get(data?: RequestQuery, params?: CreateRequestOptions<T>): Promise<CanUndef<T>> {
+	get(data?: RequestQuery, params?: CreateRequestOpts<T>): Promise<CanUndef<T>> {
 		const
 			args = arguments.length > 0 ? [data, params] : this.getDefaultRequestParams('get');
 
 		if (args) {
-			return this.createRequest('get', ...args);
+			return this.createRequest('get', ...<any>args);
 		}
 
 		return Promise.resolve(undefined);
@@ -380,12 +361,12 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 	 * @param data
 	 * @param [params]
 	 */
-	post<T = unknown>(data?: RequestBody, params?: CreateRequestOptions<T>): Promise<CanUndef<T>> {
+	post<T = unknown>(data?: RequestBody, params?: CreateRequestOpts<T>): Promise<CanUndef<T>> {
 		const
 			args = arguments.length > 0 ? [data, params] : this.getDefaultRequestParams('post');
 
 		if (args) {
-			return this.createRequest('post', ...args);
+			return this.createRequest('post', ...<any>args);
 		}
 
 		return Promise.resolve(undefined);
@@ -397,12 +378,12 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 	 * @param data
 	 * @param [params]
 	 */
-	add<T = unknown>(data?: RequestBody, params?: CreateRequestOptions<T>): Promise<CanUndef<T>> {
+	add<T = unknown>(data?: RequestBody, params?: CreateRequestOpts<T>): Promise<CanUndef<T>> {
 		const
 			args = arguments.length > 0 ? [data, params] : this.getDefaultRequestParams('add');
 
 		if (args) {
-			return this.createRequest('add', ...args);
+			return this.createRequest('add', ...<any>args);
 		}
 
 		return Promise.resolve(undefined);
@@ -414,12 +395,12 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 	 * @param [data]
 	 * @param [params]
 	 */
-	upd<T = unknown>(data?: RequestBody, params?: CreateRequestOptions<T>): Promise<CanUndef<T>> {
+	upd<T = unknown>(data?: RequestBody, params?: CreateRequestOpts<T>): Promise<CanUndef<T>> {
 		const
 			args = arguments.length > 0 ? [data, params] : this.getDefaultRequestParams('upd');
 
 		if (args) {
-			return this.createRequest('upd', ...args);
+			return this.createRequest('upd', ...<any>args);
 		}
 
 		return Promise.resolve(undefined);
@@ -431,12 +412,12 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 	 * @param [data]
 	 * @param [params]
 	 */
-	del<T = unknown>(data?: RequestBody, params?: CreateRequestOptions<T>): Promise<CanUndef<T>> {
+	del<T = unknown>(data?: RequestBody, params?: CreateRequestOpts<T>): Promise<CanUndef<T>> {
 		const
 			args = arguments.length > 0 ? [data, params] : this.getDefaultRequestParams('del');
 
 		if (args) {
-			return this.createRequest('del', ...args);
+			return this.createRequest('del', ...<any>args);
 		}
 
 		return Promise.resolve(undefined);
@@ -445,7 +426,7 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 	/**
 	 * Drops a request cache
 	 */
-	dropCache(): void {
+	dropRequestCache(): void {
 		if (!this.dp) {
 			return;
 		}
@@ -501,7 +482,7 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 	 * Initializes data event listeners
 	 */
 	@wait('ready')
-	protected async initDataListeners(): Promise<void> {
+	protected initDataListeners(): void {
 		const
 			{dataEvent: $e} = this,
 			group = {group: 'dataProviderSync'};
@@ -539,16 +520,16 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 	 */
 	@watch({field: 'request', deep: true})
 	@watch({field: 'requestParams', deep: true})
-	protected async syncRequestParamsWatcher<T = unknown>(
+	protected syncRequestParamsWatcher<T = unknown>(
 		value?: RequestParams<T>,
 		oldValue?: RequestParams<T>
 	): Promise<void> {
 		if (!value) {
-			return;
+			return Promise.resolve();
 		}
 
 		const
-			tasks = <Promise<void>[]>[];
+			tasks = <CanPromise<void>[]>[];
 
 		for (let o = Object.keys(value), i = 0; i < o.length; i++) {
 			const
@@ -571,7 +552,7 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 			}
 		}
 
-		await Promise.all(tasks);
+		return Promise.all(tasks).then(() => undefined);
 	}
 
 	/**
@@ -579,17 +560,17 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 	 * @param value
 	 */
 	@watch({field: 'dataProvider', immediate: true})
-	protected async syncDataProviderWatcher(value: CanUndef<string>): Promise<void> {
+	protected syncDataProviderWatcher(value?: string): void {
 		if (value) {
 			const
-				Provider = providers[value];
+				ProviderConstructor = <typeof Provider>providers[value];
 
-			if (!Provider) {
+			if (!ProviderConstructor) {
 				throw new Error(`Provider "${value}" is not defined`);
 			}
 
-			this.dp = new Provider(this.dataProviderParams);
-			await this.initDataListeners();
+			this.dp = new ProviderConstructor(this.dataProviderParams);
+			this.initDataListeners();
 
 		} else {
 			this.dp = undefined;
@@ -617,20 +598,20 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 	 * @param [oldValue]
 	 */
 	@watch('p')
-	protected async syncDataProviderParamsWatcher(value: Dictionary, oldValue: Dictionary): Promise<void> {
+	protected syncDataProviderParamsWatcher(value: Dictionary, oldValue: Dictionary): void {
 		const
 			providerNm = this.dataProvider;
 
 		if (providerNm) {
 			const
-				Provider = providers[providerNm];
+				ProviderConstructor = <typeof Provider>providers[providerNm];
 
-			if (!Provider) {
+			if (!ProviderConstructor) {
 				throw new Error(`Provider "${providerNm}" is not defined`);
 			}
 
-			this.dp = new Provider(value);
-			await this.initDataListeners();
+			this.dp = new ProviderConstructor(value);
+			this.initDataListeners();
 		}
 	}
 
@@ -672,7 +653,7 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 
 		const
 			f = this.requestFilter,
-			isEmpty = !$C(res[0]).length();
+			isEmpty = !Object.size(res[0]);
 
 		const info = {
 			isEmpty,
@@ -742,16 +723,16 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 	protected createRequest<T = unknown>(
 		method: ModelMethods,
 		data?: RequestBody,
-		params?: CreateRequestOptions<T>
+		params?: CreateRequestOpts<T>
 	): Promise<CanUndef<T>> {
 		if (!this.dp) {
 			return Promise.resolve(undefined);
 		}
 
 		const
-			p = <CreateRequestOptions<T>>(params || {}),
+			p = <CreateRequestOpts<T>>(params || {}),
 			asyncFields = ['join', 'label', 'group'],
-			reqParams = <CreateRequestOptions<T>>(Object.reject(p, asyncFields)),
+			reqParams = <CreateRequestOpts<T>>(Object.reject(p, asyncFields)),
 			asyncParams = <AsyncOpts>(Object.select(p, asyncFields));
 
 		const
@@ -765,7 +746,7 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 
 			const then = () => {
 				if (is(p.hideProgress)) {
-					this.execCbAtTheRightTime(() => this.setMod('progress', false));
+					this.lfc.execCbAtTheRightTime(() => this.setMod('progress', false));
 				}
 			};
 
@@ -832,7 +813,7 @@ export default class iData<T extends Dictionary = Dictionary> extends iMessage {
 	 * Handler: dataProvider.refresh
 	 * @param data
 	 */
-	protected async onRefreshData(data: T): Promise<void> {
-		await this.reload();
+	protected onRefreshData(data: T): Promise<void> {
+		return this.reload();
 	}
 }

@@ -9,16 +9,16 @@
 @import "super/i-input/i-input.styl"
 
 $p =  {
-	width: auto
 	elWidth: 100%
 	elHorMargin: 0
 	elVertMargin: 0
 	elMargin: 0
+	widthHelpers: true
+	visibleHelpers: true
 }
 
 b-checkbox-group extends i-input
-	&__root-wrapper
-		width $p.width
+	i-width({helpers: $p.widthHelpers, selector: ('&__root-wrapper')})
 
 	&__list
 		display flex
@@ -26,7 +26,7 @@ b-checkbox-group extends i-input
 
 	&__el
 		width ($p.elWidth != auto ? "calc(%s - %s)" % ($p.elWidth ($p.elMargin && $p.elMargin * 2) || $p.elHorMargin || 0px) : $p.elWidth)
-		margin: $p.elMargin
+		margin $p.elMargin
 
 		if !$p.elMargin
 			&:nth-child(odd)
@@ -34,7 +34,7 @@ b-checkbox-group extends i-input
 				margin-bottom ($p.elVertMargin / 2)
 
 			&:nth-child(even)
-				margin-left ($p.elHorMargin / 2)
 				margin-top ($p.elVertMargin / 2)
+				margin-left ($p.elHorMargin / 2)
 
 

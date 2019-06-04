@@ -9,8 +9,34 @@
 /// <reference types="@v4fire/core"/>
 
 declare let READY_STATE: number;
+declare const MODULE_DEPENDENCIES: string;
 declare const PATH: Dictionary<CanUndef<string>>;
 declare const TPLS: Dictionary<Dictionary<Function>>;
+
+interface Blob {
+	mozSlice(start?: number, end?: number, type?: string): Blob;
+	webkitSlice(start?: number, end?: number, type?: string): Blob;
+}
+
+interface BlobBuilder {
+	append(data: unknown, endings?: BlobPropertyBag['endings']): void;
+	getBlob(type?: BlobPropertyBag['type']): Blob;
+}
+
+interface BlobBuilderConstructor {
+	prototype: BlobBuilder;
+	new(): BlobBuilder;
+}
+
+interface Window {
+	Blob: typeof Blob;
+	BlobBuilder?: BlobBuilderConstructor;
+	WebKitBlobBuilder?: BlobBuilderConstructor;
+	MozBlobBuilder?: BlobBuilderConstructor;
+	MSBlobBuilder?: BlobBuilderConstructor;
+	DataView: typeof DataView;
+	webkitURL?: typeof URL;
+}
 
 interface HTMLImageElement {
 	readonly init: Promise<this>;
@@ -21,6 +47,13 @@ interface Event {
 	delegateTarget?: Element;
 }
 
+declare class ResizeObserver {
+	constructor(cb: Function)
+	disconnect(el: Element): void;
+	observe(el: Element): void;
+	unobserve(el: Element): void;
+}
+
 declare let ModuleDependencies: {
 	cache: Dictionary;
 	event: {on: Function; once: Function; off: Function};
@@ -28,13 +61,18 @@ declare let ModuleDependencies: {
 	get(module: string): Promise<string[]>;
 };
 
+interface ElementPosition {
+	top: number;
+	left: number;
+}
+
 interface Element {
-	getPosition(): {top: number; left: number};
+	getPosition(): ElementPosition;
 	getIndex(): number | null;
 }
 
 interface Node {
-	getOffset(parent?: Element | string): {top: number; left: number};
+	getOffset(parent?: Element | string): ElementPosition;
 }
 
 interface Number {
@@ -48,3 +86,5 @@ interface Number {
 	vmin: string;
 	vmax: string;
 }
+
+declare const GLOBAL_NONCE: unknown;

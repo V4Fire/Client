@@ -6,12 +6,25 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import bWindow, { component, field, prop, wait, RequestParams, RequestFilter, Stage } from 'base/b-window/b-window';
 import bForm from 'form/b-form/b-form';
+import bWindow, {
+
+	component,
+	field,
+	prop,
+	wait,
+
+	RequestParams,
+	RequestFilter,
+	Stage,
+	ModelMethods
+
+} from 'base/b-window/b-window';
+
 export * from 'base/b-window/b-window';
 
 @component()
-export default class bWindowForm<T extends Dictionary = Dictionary> extends bWindow<T> {
+export default class bWindowForm<T extends object = Dictionary> extends bWindow<T> {
 	/** @override */
 	@prop({default: (body, isEmpty) => this.stage !== 'remove' && !isEmpty})
 	readonly requestFilter: RequestFilter = false;
@@ -32,18 +45,18 @@ export default class bWindowForm<T extends Dictionary = Dictionary> extends bWin
 	 * Method name
 	 */
 	@prop({type: String, required: false})
-	readonly method?: string;
+	readonly method?: ModelMethods;
 
 	/**
 	 * Requested id
 	 */
-	@field((o) => o.link())
+	@field((o) => o.sync.link())
 	id?: string;
 
 	/**
-	 * Method name
+	 * Model method name
 	 */
-	get methodName(): CanUndef<string> {
+	get methodName(): CanUndef<ModelMethods> {
 		let m = this.method;
 
 		if (!m) {
@@ -68,7 +81,7 @@ export default class bWindowForm<T extends Dictionary = Dictionary> extends bWin
 	}
 
 	/** @override */
-	@field((o) => o.createWatchObject('get', {immediate: true}, [['_id', 'id']]))
+	@field((o) => o.sync.object('get', {immediate: true}, ['id']))
 	protected readonly requestParams!: RequestParams;
 
 	/**
@@ -78,21 +91,14 @@ export default class bWindowForm<T extends Dictionary = Dictionary> extends bWin
 	protected formTmp: Dictionary = {};
 
 	/** @override */
-	protected readonly $refs!: {form: bForm};
+	protected readonly $refs!: {form: bForm} & bWindow['$refs'];
 
 	/**
 	 * @override
 	 * @param [stage] - window stage
 	 */
 	async open(stage?: Stage): Promise<boolean> {
-		if (await this.setMod('hidden', false)) {
-			this.stage = stage || this.id ? 'edit' : 'new';
-			await this.nextTick();
-			this.emit('open');
-			return true;
-		}
-
-		return false;
+		return super.open(stage || this.id ? 'edit' : 'new');
 	}
 
 	/** @override */

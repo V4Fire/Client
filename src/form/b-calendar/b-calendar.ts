@@ -6,28 +6,33 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-// tslint:disable:max-file-line-count
-
-import $C = require('collection.js');
 import symbolGenerator from 'core/symbol';
 import bInputTime from 'form/b-input-time/b-input-time';
-import iInput, { component, prop, field, system, watch, p, ModsDecl } from 'super/i-input/i-input';
+
+import iWidth from 'traits/i-width/i-width';
+import iSize, { SizeDictionary } from 'traits/i-size/i-size';
+import iIcon from 'traits/i-icon/i-icon';
+import iOpenToggle, { CloseHelperEvents } from 'traits/i-open-toggle/i-open-toggle';
+
+import iInput, {
+
+	component,
+	prop,
+	field,
+	system,
+	watch,
+	hook,
+	p,
+
+	ModsDecl,
+	ModEvent,
+	SetModEvent
+
+} from 'super/i-input/i-input';
+
+import { Value, FormValue, Day, Range, Directions, MonthSwitchDirection } from 'form/b-calendar/modules/interface';
+export { SizeDictionary, CloseHelperEvents, Value, FormValue, Day, Range, Directions };
 export * from 'super/i-input/i-input';
-
-export type Value = Date[];
-export type FormValue = CanArray<Date>;
-
-export interface Day {
-	active: boolean;
-	disabled: boolean;
-	inRange: boolean;
-	rangeStart: boolean;
-	rangeEnd: boolean;
-	text: string;
-}
-
-export type Range = string | number | Date;
-export type Directions = 'right' | 'left';
 
 export const
 	$$ = symbolGenerator();
@@ -36,8 +41,8 @@ export const
 export default class bCalendar<
 	V extends Value = Value,
 	FV extends FormValue = FormValue,
-	D extends Dictionary = Dictionary
-> extends iInput<V, FV, D> {
+	D extends object = Dictionary
+> extends iInput<V, FV, D> implements iWidth, iSize, iIcon, iOpenToggle {
 	/** @override */
 	@prop({type: [Array, Date], required: false})
 	// @ts-ignore
@@ -49,7 +54,7 @@ export default class bCalendar<
 
 	/** @override */
 	@prop({default(): FV {
-		return this.stringInput ? this.value[0] : this.value;
+		return this.isSingleValue ? this.value[0] : this.value;
 	}})
 
 	readonly dataType!: Function;
@@ -75,27 +80,32 @@ export default class bCalendar<
 	/** @override */
 	@p({cache: false})
 	get value(): V {
-		return Object.fastClone(<V>this.getField('valueStore'));
+		return Object.fastClone(<V>this.field.get('valueStore'));
 	}
 
 	/** @override */
 	set value(value: V) {
 		const
-			{min, max} = this,
-			store = <V>this.getField('valueStore');
+			{min, max} = this;
 
-		$C(value).forEach((v, i) => {
-			if (min && min.isAfter(v)) {
-				v = min.clone();
+		const
+			store = <V>this.field.get('valueStore');
 
-			} else if (max && max.isBefore(v)) {
-				v = max.clone();
+		for (let i = 0; i < value.length; i++) {
+			let
+				el = value[i];
+
+			if (min && min.isAfter(el)) {
+				el = min.clone();
+
+			} else if (max && max.isBefore(el)) {
+				el = max.clone();
 			}
 
-			if (!store[i] || (<number>Math.abs(store[i].valueOf() - v.valueOf())).seconds() >= this.timeMargin) {
-				this.setField(`valueStore.${i}`, v);
+			if (!store[i] || (<number>Math.abs(store[i].valueOf() - el.valueOf())).seconds() >= this.timeMargin) {
+				this.field.set(`valueStore.${i}`, el);
 			}
-		});
+		}
 	}
 
 	/** @override */
@@ -107,7 +117,7 @@ export default class bCalendar<
 	 * Date pointer
 	 */
 	get pointer(): Date[] {
-		return Object.fastClone(<Date[]>this.getField('pointerStore'));
+		return Object.fastClone(<Date[]>this.field.get('pointerStore'));
 	}
 
 	/**
@@ -115,7 +125,7 @@ export default class bCalendar<
 	 * @param value
 	 */
 	set pointer(value: Date[]) {
-		this.setField('pointerStore', value);
+		this.field.set('pointerStore', value);
 	}
 
 	/**
@@ -135,31 +145,42 @@ export default class bCalendar<
 	}
 
 	/**
-	 * If true, then the component has a datepicker range
+	 * If true, then the component has a day range
 	 */
-	get dayRange(): boolean {
+	get hasDayRange(): boolean {
 		return this.value.length > 1;
 	}
 
 	/**
 	 * If true, then the component has a time range
 	 */
-	get timeRange(): boolean {
+	get hasTimeRange(): boolean {
 		const v = this.value;
-		return this.dayRange && v[0].short() === v[1].short();
+		return this.hasDayRange && v[0].short() === v[1].short();
+	}
+
+	/** @see iSize.lt */
+	get lt(): SizeDictionary {
+		return iSize.lt;
+	}
+
+	/** @see iSize.gt */
+	get gt(): SizeDictionary {
+		return iSize.gt;
 	}
 
 	/** @inheritDoc */
 	static readonly mods: ModsDecl = {
 		rounding: [
-			bCalendar.PARENT,
-			['small']
+			'none',
+			['small'],
+			'normal',
+			'big'
 		],
 
-		opened: [
-			bCalendar.PARENT,
-			['false']
-		]
+		...iWidth.mods,
+		...iSize.mods,
+		...iOpenToggle.mods
 	};
 
 	/**
@@ -175,38 +196,43 @@ export default class bCalendar<
 	protected position: string = 'bottom';
 
 	/**
-	 * Direction of smooth switching month animation
-	 */
-	@field()
-	protected monthSwitchDirection: number = 0;
-
-	/**
-	 * Flag for start month switch animation
-	 */
-	@field()
-	protected monthSwitchAnimation: boolean = false;
-
-	/**
 	 * Available animation directions
 	 */
 	@field()
 	protected directions: Directions[] = ['right', 'left'];
 
+	/**
+	 * Direction of smooth switching month animation
+	 */
+	@field()
+	protected monthSwitchDirection: MonthSwitchDirection = 0;
+
+	/**
+	 * If true, then the month switch animation was started
+	 */
+	@field()
+	protected monthSwitchAnimation: boolean = false;
+
 	/** @override */
-	@field<bCalendar>((o) => o.link<V>((val) =>
-		Object.isArray(val) ? val : (<any[]>[]).concat(o.initDefaultValue(val) || [])))
+	@field<bCalendar>((o) => o.sync.link<V>((val) => {
+		if (Object.isArray(val)) {
+			return <V>val;
+		}
+
+		return <V>(<any[]>[]).concat(o.initDefaultValue(val) || []);
+	}))
 
 	protected valueStore!: V;
 
 	/**
 	 * Date pointer store
 	 */
-	@field<bCalendar>((o) => o.link<CanArray<Date>>('valueProp', (val = new Date()) => {
+	@field<bCalendar>((o) => o.sync.link<CanArray<Date>>('valueProp', (val = new Date()) => {
 		const
 			prop = Object.isArray(val) ? val : [val];
 
 		const d = prop.map((v: Date, index) =>
-			index > 0 ? prop[index - 1].clone().addMonths(1) : v.clone().beginningOfMonth().set({
+			index > 0 ? prop[index - 1].clone().add({month: 1}) : v.clone().beginningOfMonth().set({
 				hour: v.getHours(),
 				minute: v.getMinutes(),
 				second: v.getSeconds(),
@@ -214,7 +240,7 @@ export default class bCalendar<
 			})
 		);
 
-		if (o.pointerStore && d.isEqual(o.pointerStore)) {
+		if (o.pointerStore && Object.fastCompare(d, o.pointerStore)) {
 			return o.pointerStore;
 		}
 
@@ -224,7 +250,7 @@ export default class bCalendar<
 				newMonth = d[0].getMonth();
 
 			if (oldMonth !== newMonth) {
-				o.runMonthSwitching(<0 | 1>Number(newMonth > oldMonth));
+				o.runMonthSwitching(<MonthSwitchDirection>Number(newMonth > oldMonth));
 			}
 		}
 
@@ -233,20 +259,19 @@ export default class bCalendar<
 
 	protected pointerStore!: Date[];
 
-	/** @override */
-	protected readonly $refs!: {
-		input: HTMLInputElement;
-		dropdown?: HTMLElement;
-	};
+	/**
+	 * If true, then the component has a single value instead of a list
+	 */
+	protected get isSingleValue(): boolean {
+		return !Object.isArray(this.valueProp);
+	}
 
 	/**
-	 * If true, then
-	 *
-	 * Flag for setting a date parameter as Date
-	 * (by default data type is Array)
+	 * Month animation enter class for switching
 	 */
-	protected get stringInput(): boolean {
-		return Object.isArray(this.valueProp);
+	@p({cache: false})
+	protected get animateMonthEnterClass(): string {
+		return `animated fadeIn${this.directions[Number(!this.monthSwitchDirection)].capitalize()}`;
 	}
 
 	/**
@@ -254,18 +279,14 @@ export default class bCalendar<
 	 */
 	@p({cache: false})
 	protected get dropdownTitle(): string {
-		const title = $C(this.pointer).reduce(
-			(str, item, i) => str + (i > 0 ? ' - ' : '') + this.t(item.format('{Month}', 'en')), '');
+		let
+			title = '';
 
-		return title.capitalize();
-	}
+		for (let o = this.pointer, i = 0; i < o.length; i++) {
+			title += (i > 0 ? ' - ' : '') + o[i].format('M:long');
+		}
 
-	/**
-	 * Month enter class for switching
-	 */
-	@p({cache: false})
-	protected get animateMonthEnterClass(): string {
-		return `animated fadeIn${this.directions[Number(!this.monthSwitchDirection)].capitalize()}`;
+		return title;
 	}
 
 	/**
@@ -274,35 +295,47 @@ export default class bCalendar<
 	protected get labelText(): string {
 		const
 			val = this.value,
-			date = '{dd}.{MM}.{yyyy}';
+			date = 'd;M;Y;';
 
-		let res;
-		if (this.timeRange) {
-			const from = $C(val)
-				.to('')
-				.reduce((str, v, ind) => str + (ind > 0 && t` to ` || '') + v.format('{HH}:{mm}'));
+		let
+			label = '';
 
-			res = t`${val[0].format(date)} from ${from}`;
+		if (this.hasTimeRange) {
+			let
+				from = '';
+
+			for (let i = 0; i < val.length; i++) {
+				from += (i > 0 && t` to ` || '') + val[i].format('h;m');
+			}
+
+			label = t`${val[0].format(date)} from ${from}`;
 
 		} else {
-			res = $C(val)
-				.to('')
-				.reduce((str, v, ind) => str + (ind > 0 && ' - ' || '') + v.format(date));
+			for (let i = 0; i < val.length; i++) {
+				label += (i > 0 && ' - ' || '') + val[i].format(date);
+			}
 		}
 
-		return res.capitalize();
+		return label;
 	}
 
+	/** @override */
+	protected readonly $refs!: {
+		input: HTMLInputElement;
+		dropdown?: HTMLElement;
+	};
+
 	/**
-	 * Index for next date selecting (range control)
+	 * Index for next date selecting
+	 * (range control)
 	 */
 	@system()
-	private nextSelectItem?: number;
+	private _nextSelectDate?: number;
 
-	/** @override */
+	/** @see iOpenToggle.open */
 	async open(): Promise<boolean> {
 		const
-			res = await super.open();
+			res = await iOpenToggle.open(this);
 
 		if (res) {
 			try {
@@ -324,16 +357,41 @@ export default class bCalendar<
 		return res;
 	}
 
-	/** @override */
+	/** @see iOpenToggle.close */
 	async close(): Promise<boolean> {
 		const
-			res = await super.close();
+			res = await iOpenToggle.close(this);
 
 		if (res) {
 			this.shown = false;
 		}
 
 		return res;
+	}
+
+	/** @see iOpenToggle.toggle */
+	toggle(): Promise<boolean> {
+		return iOpenToggle.toggle(this);
+	}
+
+	/** @see iIcon.getIconLink */
+	getIconLink(iconId: string): string {
+		return iIcon.getIconLink(iconId);
+	}
+
+	/** @see iOpenToggle.onOpenedChange */
+	onOpenedChange(e: ModEvent | SetModEvent): void {
+		// ...
+	}
+
+	/** @see iOpenToggle.onKeyClose */
+	onKeyClose(e: KeyboardEvent): Promise<void> {
+		return iOpenToggle.onKeyClose(this, e);
+	}
+
+	/** @see iOpenToggle.onTouchClose */
+	onTouchClose(e: MouseEvent): Promise<void> {
+		return iOpenToggle.onTouchClose(this, e);
 	}
 
 	/**
@@ -346,6 +404,7 @@ export default class bCalendar<
 
 		const
 			val = this.value,
+			range = this.hasDayRange,
 			pointer = this.pointer[valueIndex];
 
 		if (!pointer) {
@@ -353,70 +412,83 @@ export default class bCalendar<
 		}
 
 		let
-			d1,
-			d2;
+			startShort,
+			endShort;
 
-		if (this.dayRange) {
-			d1 = Date.create(val[0].short());
-			d2 = Date.create(val[1].short());
+		if (range) {
+			startShort = val[0].short();
+			endShort = val[1].short();
 		}
 
-		return $C(new Array(pointer.daysInMonth())).to([] as Day[][]).reduce((arr, el, i) => {
-			if (!arr.length) {
-				arr.push([]);
+		const
+			days = <Day[][]>[];
+
+		for (let o = new Array(pointer.daysInMonth()), i = 0; i < o.length; i++) {
+			if (!days.length) {
+				days.push([]);
 			}
 
 			const
-				day = pointer.clone().set({date: i + 1}),
-				short = day.short();
+				day = pointer.clone().set({day: i + 1}),
+				dayShort = day.short();
 
-			const rangeBorders = this.dayRange ? {
-				isDateStart: d1.is(short),
-				isDateEnd: d2.is(short)
+			const rangeBounds = range ? {
+				isDateStart: startShort === dayShort,
+				isDateEnd: endShort === dayShort
 			} : false;
 
-			if (!arr[0].length) {
-				arr[0] = arr[0].concat(new Array((day.getDay() || 7) - 1).fill({
+			if (!days[0].length) {
+				days[0] = days[0].concat(new Array((day.getDay() || 7) - 1).fill({
 					active: false,
 					text: ''
 				}));
 
-				if (arr[0].length === 7) {
-					arr.push([]);
+				if (days[0].length === 7) {
+					days.push([]);
 				}
 			}
 
-			const
-				active = $C(this.value).some((v) => Boolean(v && Date.create(v.short()).is(short)));
+			let
+				active = false;
+
+			for (let i = 0; i < val.length; i++) {
+				const
+					el = val[i];
+
+				if (Boolean(el && el.short() === dayShort)) {
+					active = true;
+					break;
+				}
+			}
 
 			const obj = {
 				active,
 				disabled: Boolean(min && min.isAfter(day) || max && max.isBefore(day)),
-				inRange: Boolean(this.dayRange && day > this.value[0] && day < this.value[1]),
-				rangeStart: rangeBorders && rangeBorders.isDateStart,
-				rangeEnd: rangeBorders && rangeBorders.isDateEnd,
+				inRange: Boolean(range && day > val[0] && day < val[1]),
+				rangeStart: rangeBounds && rangeBounds.isDateStart,
+				rangeEnd: rangeBounds && rangeBounds.isDateEnd,
 				text: String(i + 1)
 			};
 
-			if (arr[arr.length - 1].push(obj) % 7 === 0) {
-				arr.push([]);
+			if (days[days.length - 1].push(obj) % 7 === 0) {
+				days.push([]);
 			}
+		}
 
-			return arr;
-		});
+		return days;
 	}
 
 	/**
 	 * Executes the month switcher
 	 * @param dir - index for directions
 	 */
-	protected runMonthSwitching(dir: 0 | 1): void {
+	protected runMonthSwitching(dir: MonthSwitchDirection): void {
 		this.monthSwitchDirection = dir;
 		this.monthSwitchAnimation = true;
 	}
 
 	/**
-	 * Sets simple/multiple date(s) to calendar
+	 * Sets simple/multiple date(s) to the calendar
 	 *
 	 * @param date - new date value
 	 * @param index - selected item index
@@ -424,24 +496,21 @@ export default class bCalendar<
 	 */
 	protected setDate(date: Date, index?: number): Date[] {
 		const
-			now = index !== undefined ? index : this.nextSelectItem !== undefined ? this.nextSelectItem : 0,
+			now = index !== undefined ? index : this._nextSelectDate !== undefined ? this._nextSelectDate : 0,
 			next = Number(!now);
 
 		let
-			selectedDays = <V>(Object.isArray(this.value) ? this.value : [this.value]);
+			selectedDays = this.value;
 
 		if (selectedDays.length === 2) {
-			selectedDays[now] = date;
-
 			const
-				nowShort = selectedDays[now].short(),
-				nextShort = selectedDays[next].short();
+				c = selectedDays[now] = date;
 
-			if (nowShort !== nextShort && now === 0) {
+			if (c.short() !== selectedDays[next].short() && now === 0) {
 				selectedDays[next] = date.clone().endOfDay();
 			}
 
-			this.nextSelectItem = next;
+			this._nextSelectDate = next;
 			selectedDays = selectedDays.sort((a, b) => a.isAfter(b) ? 1 : b.isAfter(a) ? -1 : 0);
 
 		} else {
@@ -449,9 +518,21 @@ export default class bCalendar<
 		}
 
 		this.value = selectedDays;
-		this.emit('actionChange', this.stringInput ? this.value[0] : this.value);
+		this.emit('actionChange', this.isSingleValue ? this.value[0] : this.value);
 
 		return this.value;
+	}
+
+	/** @see iOpenToggle.initCloseHelpers */
+	@hook('beforeDataCreate')
+	protected initCloseHelpers(events?: CloseHelperEvents): void {
+		iOpenToggle.initCloseHelpers(this, events);
+	}
+
+	/** @override */
+	protected initModEvents(): void {
+		super.initModEvents();
+		iOpenToggle.initModEvents(this);
 	}
 
 	/**
@@ -462,18 +543,16 @@ export default class bCalendar<
 	 * @emits actionChange(value: V)
 	 */
 	protected async onSwitchDay(days: number, index: number = 0): Promise<void> {
-		const selectedDay = <V>(Object.isArray(this.value) ? this.value : [this.value]);
-		selectedDay[index] = selectedDay[index].addDays(days);
-
-		this.value = selectedDay;
-		this.emit('actionChange', this.stringInput ? this.value[0] : this.value);
-
 		const
-			val = this.value[index],
+			selectedDay = this.value,
+			val = selectedDay[index] = (selectedDay[index] || new Date().beginningOfDay()).add({days}),
 			pointer = this.pointer[index];
 
-		if (val.format('{MM}:{yyyy}') !== pointer.format('{MM}:{yyyy}')) {
-			this.setField(`pointerStore.${index}`, pointer.set({
+		this.value = selectedDay;
+		this.emit('actionChange', this.isSingleValue ? val : this.value);
+
+		if (val.format('M;Y') !== pointer.format('M;Y')) {
+			this.field.set(`pointerStore.${index}`, pointer.set({
 				month: val.getMonth(),
 				year: val.getFullYear()
 			}));
@@ -487,9 +566,9 @@ export default class bCalendar<
 	 * @param months - number of switching months
 	 */
 	protected async onSwitchMonth(months: number): Promise<void> {
-		$C(this.pointer).forEach((el, i) => {
-			this.setField(`pointerStore.${i}`, el.addMonths(months));
-		});
+		for (let o = this.pointer, i = 0; i < o.length; i++) {
+			this.field.set(`pointerStore.${i}`, o[i].add({months}));
+		}
 
 		this.runMonthSwitching(months < 0 ? 0 : 1);
 		await this.open();
@@ -501,14 +580,18 @@ export default class bCalendar<
 	 * @param e
 	 * @emits actionChange(value: V)
 	 */
-	@watch({field: '?$el:click', wrapper: (o, cb) => o.delegateElement('day', cb)})
+	@watch({
+		field: '?$el:click',
+		wrapper: (o, cb) => o.dom.delegateElement('day', cb)
+	})
+
 	protected onDaySelect(e: Event): void {
 		const
 			target = <HTMLElement>e.delegateTarget,
 			calendar = Number(target.dataset.calendar);
 
 		if (this.block.getElMod(target, 'day', 'active') !== 'true' || this.value.length > 1) {
-			this.setDate(this.pointer[calendar].clone().set({date: Number(target.textContent)}));
+			this.setDate(this.pointer[calendar].clone().set({day: Number(target.textContent)}));
 		}
 	}
 

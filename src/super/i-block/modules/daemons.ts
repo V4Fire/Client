@@ -143,7 +143,7 @@ export default class Daemons {
 		const
 			fn = daemon.wrappedFn || daemon.fn;
 
-		if (daemon.immediate !== false) {
+		if (daemon.immediate !== true) {
 			const asyncOptions = {
 				group: `daemons-${this.component.componentName}`,
 				label: `daemons-${name}`,
@@ -194,6 +194,7 @@ export default class Daemons {
 	 *
 	 * @param hook
 	 * @param name
+	 * @param [params]
 	 */
 	protected bindToHook(hook: string, name: string, params?: DaemonHookParams): void {
 		const
@@ -218,7 +219,7 @@ export default class Daemons {
 			{watchers} = this.component.meta;
 
 		const
-			watchName = Object.isObject(watch) ? watch.field : watch,
+			watchName = Object.isSimpleObject(watch) ? watch.field : watch,
 			watchParams = Object.isObject(watch) ? Object.reject(watch, 'field') : {};
 
 		const watchDaemon = {
@@ -266,7 +267,7 @@ export default class Daemons {
 						hook = hooks[i];
 
 					const params = {
-						after: Object.isObject(daemon.hook) ? new Set(...[].concat(daemon.hook[hook])) : undefined
+						after: Object.isObject(daemon.hook) ? new Set<string>(...[].concat(daemon.hook[hook])) : undefined
 					};
 
 					this.bindToHook(hook, name, params);

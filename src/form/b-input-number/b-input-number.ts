@@ -19,7 +19,7 @@ export const
 export default class bInputNumber<
 	V extends Value = Value,
 	FV extends FormValue = FormValue,
-	D extends Dictionary = Dictionary
+	D extends object = Dictionary
 // @ts-ignore
 > extends bInput<V, FV, D> {
 	/** @override */
@@ -48,29 +48,17 @@ export default class bInputNumber<
 	readonly step: number = 1;
 
 	/**
-	 * Maximum value
-	 */
-	@prop({type: Number, required: false})
-	readonly max?: number;
-
-	/**
-	 * Minimum value
-	 */
-	@prop({type: Number, required: false})
-	readonly min?: number;
-
-	/**
 	 * Returns the component value as a number
 	 */
 	get numValue(): CanUndef<number> {
-		return this.convertValue(this.getField('valueStore'));
+		return this.convertValue(this.field.get('valueStore'));
 	}
 
 	/**
 	 * Sets a value to the component
 	 * @param [value]
 	 */
-	setValue(value: CanUndef<string | number>): CanUndef<number> {
+	setValue(value?: string | number): CanUndef<number> {
 		let
 			v = this.convertValue(value);
 
@@ -79,10 +67,10 @@ export default class bInputNumber<
 		}
 
 		if (this.min != null && v < this.min) {
-			v = this.min;
+			v = Number(this.min);
 
 		} else if (this.max != null && v > this.max) {
-			v = this.max;
+			v = Number(this.max);
 		}
 
 		this.value = <V>String(v);

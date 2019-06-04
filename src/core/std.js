@@ -8,86 +8,97 @@
 
 /* eslint-disable prefer-arrow-callback,no-var */
 
+var
+	global = new Function('return this')();
+
+if (typeof global['setImmediate'] !== 'function') {
+	(function () {
+		if (typeof Promise !== 'function') {
+			global['setImmediate'] = function (fn) {
+				return setTimeout(fn, 0);
+			};
+
+			global['clearImmediate'] = clearTimeout;
+			return;
+		}
+
+		var
+			i = 0,
+			resolved = 0;
+
+		var
+			map = {},
+			queue = new Array(16);
+
+		var
+			fired = false,
+			promise = Promise.resolve();
+
+		function getRandomInt(min, max) {
+			return Math.floor(Math.random() * (max - min + 1)) + min;
+		}
+
+		function call() {
+			var
+				track = queue;
+
+			i = 0;
+			queue = new Array(16);
+			fired = false;
+
+			for (var j = 0; j < track.length; j++) {
+				var
+					fn = track[j];
+
+				if (fn) {
+					fn();
+				}
+			}
+
+			if (resolved++ % 10 === 0) {
+				promise = Promise.resolve();
+			}
+
+			track = null;
+		}
+
+		global['setImmediate'] = function (fn) {
+			var
+				id,
+				pos = i++;
+
+			queue[pos] = function () {
+				delete map[id];
+				fn();
+			};
+
+			if (!fired) {
+				fired = true;
+				promise = promise.then(call);
+			}
+
+			while (map[id = getRandomInt(0, 10e3)]) {
+				// empty
+			}
+
+			map[id] = {queue, pos};
+			return id;
+		};
+
+		global['clearImmediate'] = function (id) {
+			var
+				obj = map[id];
+
+			if (obj) {
+				obj.queue[obj.pos] = null;
+				delete map[id];
+			}
+		};
+	})();
+}
+
 exports.loadToPrototype = loadToPrototype;
 exports.loadToConstructor = loadToConstructor;
-
-require('core-js/modules/web.immediate');
-require('sugar/locales/ru');
-
-loadToConstructor([
-	[
-		Object,
-		['toQueryString', require('sugar/object/toQueryString')],
-		['fromQueryString', require('sugar/object/fromQueryString')],
-		['isEqual', require('sugar/object/isEqual')],
-		['isObject', require('sugar/object/isObject')],
-		['reject', require('sugar/object/reject')],
-		['select', require('sugar/object/select')]
-	],
-
-	[
-		RegExp,
-		['escape', require('sugar/regexp/escape')]
-	],
-
-	[
-		Number,
-		['range', require('sugar/number/range')],
-		['setOption', require('sugar/number/setOption')]
-	],
-
-	[
-		Date,
-		['create', require('sugar/date/create')],
-		['range', require('sugar/date/range')],
-		['setOption', require('sugar/date/setOption')]
-	],
-
-	[
-		Range,
-		require('sugar/range').Range
-	]
-]);
-
-loadToPrototype([
-	[
-		String,
-		['dasherize', require('sugar/string/dasherize')],
-		['camelize', require('sugar/string/camelize')]
-	],
-
-	[
-		Number,
-		['second', require('sugar/number/second')],
-		['seconds', require('sugar/number/seconds')],
-		['minute', require('sugar/number/minute')],
-		['minutes', require('sugar/number/minutes')],
-		['hour', require('sugar/number/hour')],
-		['hours', require('sugar/number/hours')],
-		['day', require('sugar/number/day')],
-		['days', require('sugar/number/days')],
-		['floor', require('sugar/number/floor')],
-		['format', require('sugar/number/format')]
-	],
-
-	[
-		Function,
-		['once', require('sugar/function/once')],
-		['memoize', require('sugar/function/memoize')],
-		['debounce', require('sugar/function/debounce')],
-		['throttle', require('sugar/function/throttle')]
-	],
-
-	[
-		Array,
-		['union', require('sugar/array/union')]
-	],
-
-	[
-		Date,
-		require('sugar/date').Date
-	]
-]);
 
 function loadToConstructor(list) {
 	list.forEach(function (obj) {

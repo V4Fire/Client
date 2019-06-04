@@ -14,7 +14,7 @@ export const
 	$$ = symbolGenerator();
 
 @component()
-export default class bRemoteProvider<T extends Dictionary = Dictionary> extends iData<T> {
+export default class bRemoteProvider<T extends object = Dictionary> extends iData<T> {
 	/** @override */
 	readonly remoteProvider: boolean = true;
 
@@ -25,7 +25,7 @@ export default class bRemoteProvider<T extends Dictionary = Dictionary> extends 
 	 * Field for setting to a component parent
 	 */
 	@prop({type: String, required: false})
-	readonly field?: string;
+	readonly fieldProp?: string;
 
 	/** @override */
 	set db(value: CanUndef<T>) {
@@ -65,7 +65,7 @@ export default class bRemoteProvider<T extends Dictionary = Dictionary> extends 
 		}
 
 		const
-			f = this.field;
+			f = this.fieldProp;
 
 		let
 			needUpdate = !f,
@@ -73,26 +73,26 @@ export default class bRemoteProvider<T extends Dictionary = Dictionary> extends 
 
 		if (f) {
 			const
-				field = p.getField(f);
+				field = p.field.get(f);
 
 			if (Object.isFunction(field)) {
 				action = () => field.call(p, value);
 				needUpdate = true;
 
 			} else if (!Object.fastCompare(value, field)) {
-				action = () => p.setField(f, value);
+				action = () => p.field.set(f, value);
 				needUpdate = true;
 			}
 		}
 
 		if (needUpdate) {
-			p.execCbAtTheRightTime(() => {
+			p.lfc.execCbAtTheRightTime(this.async.proxy(() => {
 				action && action();
 				this.emit('change', value);
 
 			}, {
 				label: $$.syncDBWatcher
-			});
+			}));
 		}
 	}
 

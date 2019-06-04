@@ -11,7 +11,6 @@
 - include 'super/i-data'|b as placeholder
 
 - template index() extends ['i-data'].index
-	- overWrapper = false
 	- listTag = 'ul'
 	- listElTag = 'li'
 
@@ -25,7 +24,7 @@
 		- block list(value)
 			< ${listElTag}.&__el v-for = el in ${value}
 				< a &
-					:class = setHint(el.hintPos).concat(getElClasses({link: {
+					:class = provide.hintClasses(el.hintPos).concat(provide.elClasses({link: {
 						id: values[el.value],
 						active: isActive(el),
 						theme: el.theme,
@@ -38,8 +37,8 @@
 					:-id = values[el.value]
 				.
 					- block preIcon
-						< span.&__cell.&__link-icon.&__link-pre-icon v-if = $slots['pre-icon']
-							+= self.slot('pre-icon')
+						< span.&__cell.&__link-icon.&__link-pre-icon v-if = $slots.preIcon
+							+= self.slot('preIcon')
 
 						< span.&__cell.&__link-icon.&__link-pre-icon v-else-if = el.preIcon
 							< component.&__b-icon &
@@ -51,7 +50,7 @@
 							.
 
 							< template v-else
-								+= self.gIcon(['el.preIcon'], {'g-icon': {}})
+								< @b-icon :value = el.preIcon
 
 					- block text
 						< span.&__cell.&__link-text v-if = !hideLabels
@@ -75,11 +74,11 @@
 							.
 
 							< template v-else
-								+= self.gIcon(['el.icon'], {'g-icon': {}})
+								< @b-icon :value = el.icon
 
 					- block progress
-						< span.&__cell.&__link-icon.&__link-progress v-if = dataProvider
-							< b-progress-icon v-once
+						< span.&__cell.&__link-icon.&__link-progress
+							< @b-progress-icon
 
 	- block body
 		- super

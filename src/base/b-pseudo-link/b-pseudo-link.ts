@@ -6,6 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import 'core/data';
 import bLink, { component, prop, ModelMethods, RequestFilter } from 'base/b-link/b-link';
 export * from 'base/b-link/b-link';
 

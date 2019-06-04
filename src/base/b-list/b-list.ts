@@ -7,29 +7,18 @@
  */
 
 import symbolGenerator from 'core/symbol';
-import iData, { component, prop, field, system, hook, watch, p } from 'super/i-data/i-data';
+
+import iVisible from 'traits/i-visible/i-visible';
+import iIcon from 'traits/i-icon/i-icon';
+
+import iData, { component, prop, field, system, hook, watch, p, ModsDecl } from 'super/i-data/i-data';
+import { Option } from 'base/b-list/modules/interface';
+
 export * from 'super/i-data/i-data';
+export * from 'base/b-list/modules/interface';
 
 export const
 	$$ = symbolGenerator();
-
-export interface Option {
-	label: string;
-	value?: unknown;
-	href?: string;
-	info?: string;
-	theme?: string;
-	active?: boolean;
-	hidden?: boolean;
-	progress?: boolean;
-	hint?: string;
-	preIcon?: string;
-	preIconHint?: string;
-	preIconComponent?: string;
-	icon?: string;
-	iconHint?: string;
-	iconComponent?: string;
-}
 
 @component({
 	functional: {
@@ -42,7 +31,8 @@ export interface Option {
 	}
 })
 
-export default class bList<T extends Dictionary = Dictionary> extends iData<T> {
+export default class bList<T extends object = Dictionary> extends iData<T> implements iIcon, iVisible {
+
 	/**
 	 * Initial component value
 	 */
@@ -93,7 +83,7 @@ export default class bList<T extends Dictionary = Dictionary> extends iData<T> {
 			o.initComponentValues();
 		},
 
-		init: (o) => o.link<Option[]>((val) => o.dataProvider ? o.value || [] : o.normalizeOptions(val))
+		init: (o) => o.sync.link<Option[]>((val) => o.dataProvider ? o.value || [] : o.normalizeOptions(val))
 	})
 
 	value!: Option[];
@@ -103,9 +93,14 @@ export default class bList<T extends Dictionary = Dictionary> extends iData<T> {
 	 */
 	@p({cache: false})
 	get active(): unknown {
-		const v = this.getField('activeStore');
+		const v = this.field.get('activeStore');
 		return this.multiple ? Object.keys(<object>v) : v;
 	}
+
+	/** @inheritDoc */
+	static readonly mods: ModsDecl = {
+		...iVisible.mods
+	};
 
 	/**
 	 * Temporary index table
@@ -125,7 +120,7 @@ export default class bList<T extends Dictionary = Dictionary> extends iData<T> {
 	 * @emits change(active: unknown)
 	 * @emits immediateChange(active: unknown)
 	 */
-	@system<bList>((o) => o.link((val) => {
+	@system<bList>((o) => o.sync.link((val) => {
 		const
 			beforeDataCreate = o.hook === 'beforeDataCreate';
 
@@ -179,6 +174,11 @@ export default class bList<T extends Dictionary = Dictionary> extends iData<T> {
 		});
 	}
 
+	/** @see iIcon.getIconLink */
+	getIconLink(iconId: string): string {
+		return iIcon.getIconLink(iconId);
+	}
+
 	/**
 	 * Toggles the specified value
 	 *
@@ -187,7 +187,7 @@ export default class bList<T extends Dictionary = Dictionary> extends iData<T> {
 	 */
 	toggleActive(value: unknown): boolean {
 		const
-			active = this.getField('activeStore');
+			active = this.field.get('activeStore');
 
 		if (this.multiple) {
 			if (String(value) in <Dictionary>active) {
@@ -213,20 +213,20 @@ export default class bList<T extends Dictionary = Dictionary> extends iData<T> {
 	 */
 	setActive(value: unknown): boolean {
 		const
-			active = this.getField('activeStore');
+			active = this.field.get('activeStore');
 
 		if (this.multiple) {
 			if (String(value) in <Dictionary>active) {
 				return false;
 			}
 
-			this.setField(`activeStore.${value}`, true);
+			this.field.set(`activeStore.${value}`, true);
 
 		} else if (active === value) {
 			return false;
 
 		} else {
-			this.setField('activeStore', value);
+			this.field.set('activeStore', value);
 		}
 
 		const
@@ -264,7 +264,7 @@ export default class bList<T extends Dictionary = Dictionary> extends iData<T> {
 	 */
 	removeActive(value: unknown): boolean {
 		const
-			active = this.getField('activeStore'),
+			active = this.field.get('activeStore'),
 			cantCancel = !this.cancelable;
 
 		if (this.multiple) {
@@ -272,13 +272,13 @@ export default class bList<T extends Dictionary = Dictionary> extends iData<T> {
 				return false;
 			}
 
-			this.deleteField(`activeField.${value}`);
+			this.field.delete(`activeField.${value}`);
 
 		} else if (active !== value || cantCancel) {
 			return false;
 
 		} else {
-			this.setField('activeStore', undefined);
+			this.field.set('activeStore', undefined);
 		}
 
 		const
@@ -331,7 +331,7 @@ export default class bList<T extends Dictionary = Dictionary> extends iData<T> {
 	 * @param option
 	 */
 	protected isActive(option: Option): boolean {
-		const active = this.getField('activeStore');
+		const active = this.field.get('activeStore');
 		return this.multiple ? String(option.value) in <Dictionary>active : option.value === active;
 	}
 
@@ -340,7 +340,17 @@ export default class bList<T extends Dictionary = Dictionary> extends iData<T> {
 	 * @param options
 	 */
 	protected normalizeOptions(options: CanUndef<Option[]>): Option[] {
-		return $C(options).map((el) => {
+		const
+			res = <Option[]>[];
+
+		if (!options) {
+			return res;
+		}
+
+		for (let i = 0; i < options.length; i++) {
+			const
+				el = options[i];
+
 			if (el.value === undefined) {
 				el.value = el.href;
 			}
@@ -349,8 +359,10 @@ export default class bList<T extends Dictionary = Dictionary> extends iData<T> {
 				el.href = this.autoHref && el.value !== undefined ? `#${el.value}` : 'javascript:void(0)';
 			}
 
-			return el;
-		});
+			res.push(el);
+		}
+
+		return res;
 	}
 
 	/**
@@ -361,22 +373,29 @@ export default class bList<T extends Dictionary = Dictionary> extends iData<T> {
 		const
 			values = {},
 			indexes = {},
-			active = this.getField('activeStore');
+			active = this.field.get('activeStore');
 
-		$C(this.$$data.value).forEach((el, i) => {
+		for (let o = <Option[]>this.$$data.value || [], i = 0; i < o.length; i++) {
 			const
+				el = o[i],
 				val = el.value;
 
-			if (el.active && (this.multiple ? !(val in <Dictionary>active) : active === undefined)) {
+			if (el.active && (this.multiple ? !(<string>val in <Dictionary>active) : active === undefined)) {
 				this.setActive(val);
 			}
 
-			values[val] = i;
+			values[<string>val] = i;
 			indexes[i] = val;
-		});
+		}
 
 		this.values = values;
 		this.indexes = indexes;
+	}
+
+	/** @override */
+	protected initModEvents(): void {
+		super.initModEvents();
+		iVisible.initModEvents(this);
 	}
 
 	/** @override */
@@ -400,7 +419,11 @@ export default class bList<T extends Dictionary = Dictionary> extends iData<T> {
 	 * @param e
 	 * @emits actionChange(active: unknown)
 	 */
-	@watch({field: '?$el:click', wrapper: (o, cb) => o.delegateElement('link', cb)})
+	@watch({
+		field: '?$el:click',
+		wrapper: (o, cb) => o.dom.delegateElement('link', cb)
+	})
+
 	protected onActive(e: Event): void {
 		const
 			target = <Element>e.delegateTarget,

@@ -18,7 +18,8 @@ const
 
 const
 	{webpack, src: {clientOutput}} = require('config'),
-	{assetsJSON, assetsJS} = include('build/build.webpack');
+	{assetsJSON, assetsJS} = include('build/build.webpack'),
+	{MODULE_DEPENDENCIES} = include('build/globals.webpack');
 
 /**
  * WebPack plugin for .dependencies.js files and assets.js
@@ -35,7 +36,7 @@ module.exports = function ({graph}) {
 
 				$C(graph.dependencies).forEach((el, key) => {
 					const
-						content = `ModuleDependencies.add("${key}", ${JSON.stringify([...el])});`,
+						content = `window[${MODULE_DEPENDENCIES}].add("${key}", ${JSON.stringify([...el])});`,
 						name = `${key}.dependencies`;
 
 					const src = webpack.output({
@@ -61,22 +62,20 @@ module.exports = function ({graph}) {
 					assets = {};
 
 				try {
-					fd = fs.openSync(assetsJSON, 'r+');
+					fd = fs.openSync(assetsJSON, 'r');
 
-				} catch (_) {
-					fd = fs.openSync(assetsJSON, 'w+');
-				}
+					try {
+						assets = JSON.parse(fs.readFileSync(fd, 'utf-8'));
 
-				const
-					file = fs.readFileSync(fd, 'utf-8');
+					} catch (_) {}
 
-				try {
-					assets = JSON.parse(file);
+					fs.closeSync(fd);
 
 				} catch (_) {}
 
 				Object.assign(assets, manifest);
 
+				fd = fs.openSync(assetsJSON, 'w');
 				fs.writeFileSync(fd, JSON.stringify(assets));
 				fs.closeSync(fd);
 

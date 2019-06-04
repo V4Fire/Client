@@ -13,14 +13,15 @@
 - template index() extends ['i-data'].index
 	- rootTag = 'span'
 	- messageHelpers = true
+	- rootWrapper = true
 
 	- block body
 		- super
 		- block wrapper
 			< _.&__wrapper @click = onClick
 				- block preIcon
-					< _.&__cell.&__icon.&__pre-icon v-if = $slots['pre-icon']
-						+= self.slot('pre-icon')
+					< _.&__cell.&__icon.&__pre-icon v-if = $slots.preIcon
+						+= self.slot('preIcon')
 
 					< _.&__cell.&__icon.&__pre-icon v-else-if = preIcon
 						< component.&__b-icon &
@@ -32,13 +33,13 @@
 						.
 
 						< template v-else
-							+= self.gIcon(['preIcon'], {'g-icon': {}})
+							< @b-icon :value = preIcon
 
 				- block link
 					< a.&__cell.&__link &
 						ref = link |
 						:href = href |
-						:class = setHint(hintPos) |
+						:class = provide.hintClasses(hintPos) |
 						:-hint = t(hint) |
 						${attrs|!html}
 					.
@@ -58,8 +59,8 @@
 						.
 
 						< template v-else
-							+= self.gIcon(['icon'], {'g-icon': {}})
+							< @b-icon :value = icon
 
 				- block progress
-					< _.&__cell.&__icon.&__progress v-if = dataProvider
-						< b-progress-icon v-once
+					< _.&__cell.&__icon.&__progress
+						< @b-progress-icon

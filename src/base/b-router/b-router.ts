@@ -6,28 +6,24 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-// tslint:disable:max-file-line-count
-
-import $C = require('collection.js');
 import Async from 'core/async';
-
 import path = require('path-to-regexp');
 import { RegExpOptions } from 'path-to-regexp';
 
-import engine from 'base/b-router/drivers';
+import engine from 'core/router';
 import symbolGenerator from 'core/symbol';
 
-import { concatUrls } from 'core/url';
-import { Router, BasePageMeta, PageSchema, CurrentPage, HistoryCleanFilter } from 'base/b-router/drivers/interface';
+import { concatUrls, toQueryString } from 'core/url';
+import { Router, BasePageMeta, PageSchema, CurrentPage, HistoryClearFilter } from 'core/router/interface';
 import iData, { component, prop, system, hook, watch, p } from 'super/i-data/i-data';
 
 export * from 'super/i-data/i-data';
-export * from 'base/b-router/drivers/interface';
+export * from 'core/router/interface';
 
 export interface PageOpts<
-	P extends Dictionary = Dictionary,
-	Q extends Dictionary = Dictionary,
-	M extends Dictionary = Dictionary
+	P extends object = Dictionary,
+	Q extends object = Dictionary,
+	M extends object = Dictionary
 > extends CurrentPage<P, Q, M> {
 	toPath(params?: Dictionary): string;
 }
@@ -60,11 +56,16 @@ export type Pages = Dictionary<Page>;
 export type PageSchemaDict = Dictionary<PageSchema>;
 export type SetPage = 'push' | 'replace' | 'event';
 
+export interface RouteParams {
+	params?: Dictionary;
+	query?: Dictionary;
+}
+
 export const
 	$$ = symbolGenerator();
 
 @component()
-export default class bRouter<T extends Dictionary = Dictionary> extends iData<T> {
+export default class bRouter<T extends object = Dictionary> extends iData<T> {
 	/* @override */
 	public async!: Async<this>;
 
@@ -120,7 +121,7 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 	/**
 	 * Engine for remote router
 	 */
-	@system((o) => o.link<(v: unknown) => Router>((v) => v(o)))
+	@system((o) => o.sync.link<(v: unknown) => Router>((v) => <any>v(o)))
 	protected engine!: Router;
 
 	/**
@@ -134,7 +135,7 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 	 */
 	@system<bRouter>({
 		after: 'engine',
-		init: (o) => o.link((v) => {
+		init: (o) => o.sync.link((v) => {
 			const
 				base = o.basePath,
 				routes = <PageSchemaDict>(v || o.engine.routes || {}),
@@ -198,7 +199,7 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 	 */
 	@p({cache: false})
 	get page(): CanUndef<CurrentPage> {
-		return this.getField('pageStore');
+		return this.field.get('pageStore');
 	}
 
 	/**
@@ -253,18 +254,54 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 	}
 
 	/**
-	 * Cleans the history session: if specified filter, then all matched transitions will be cleared
+	 * Clears the history session: if specified filter, then all matched transitions will be cleared
 	 * @param [filter]
 	 */
-	clean(filter?: HistoryCleanFilter): Promise<void> {
-		return this.engine.clean(filter);
+	clear(filter?: HistoryClearFilter): Promise<void> {
+		return this.engine.clear(filter);
 	}
 
 	/**
-	 * Cleans temporary history transitions
+	 * Clears temporary history transitions
 	 */
-	cleanTmp(): Promise<void> {
-		return this.engine.cleanTmp();
+	clearTmp(): Promise<void> {
+		return this.engine.clearTmp();
+	}
+
+	/**
+	 * Returns a full route path string by the specified parameters
+	 *
+	 * @param path - base path
+	 * @param [opts] - route options
+	 */
+	getRoutePath(path: string, opts: RouteParams = {}): CanUndef<string> {
+		const
+			r = this.router;
+
+		if (!r) {
+			return;
+		}
+
+		const
+			route = r.getPageOpts(path);
+
+		if (!route) {
+			return;
+		}
+
+		let
+			res = route.toPath(opts.params);
+
+		if (opts.query) {
+			const
+				q = toQueryString(opts.query, false);
+
+			if (q) {
+				res += `?${q}`;
+			}
+		}
+
+		return res.replace(/[#?]\s*$/, '');
 	}
 
 	/**
@@ -418,7 +455,7 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 						const
 							el = o[i];
 
-						if (Object.isObject(el)) {
+						if (Object.isSimpleObject(el)) {
 							t.params[el.name] = params[++j];
 						}
 					}
@@ -454,11 +491,11 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 			isEmptyOpts = !opts;
 
 		if (opts) {
-			opts = Object.mixin(true, {}, opts);
+			opts = Object.mixin<Dictionary>(true, {}, opts);
 			isEmptyOpts = true;
 
 			for (let keys = Object.keys(opts), i = 0; i < keys.length; i++) {
-				if ($C(opts[keys[i]]).length()) {
+				if (Object.size(opts[keys[i]])) {
 					isEmptyOpts = false;
 					break;
 				}
@@ -503,7 +540,7 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 			}
 		}
 
-		if (!page && isEmptyOpts && !this.isBeforeCreate()) {
+		if (!page && isEmptyOpts && !this.lfc.isBeforeCreate()) {
 			return;
 		}
 
@@ -517,7 +554,7 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 			return {};
 		};
 
-		const getPlainOpts = (obj) => {
+		const getPlainOpts = (obj, filter?) => {
 			const
 				res = {};
 
@@ -525,6 +562,10 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 				for (const key in obj) {
 					const
 						el = obj[key];
+
+					if (filter && !filter(el, key)) {
+						continue;
+					}
 
 					if (!Object.isFunction(el)) {
 						res[key] = el;
@@ -535,11 +576,8 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 			return res;
 		};
 
-		const getPlainWatchOpts = (obj) => {
-			const res = <Dictionary>getPlainOpts(obj);
-			delete res.meta;
-			return res;
-		};
+		const getPlainWatchOpts = (obj) =>
+			getPlainOpts(obj, (el, key) => key !== 'meta' && key[0] !== '_');
 
 		let
 			info;
@@ -570,9 +608,10 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 		// Attach scroll position
 		if (currentPage && method !== 'replace') {
 			const
-				modCurrentPage = Object.mixin(true, undefined, currentPage, scroll);
+				modCurrentPage = Object.mixin<CurrentPage>(true, undefined, currentPage, scroll);
 
 			if (!Object.fastCompare(currentPage, modCurrentPage)) {
+				// @ts-ignore
 				await engine.replace(currentPage.url || currentPage.page, modCurrentPage);
 			}
 		}
@@ -590,7 +629,7 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 		}
 
 		const
-			current = this.getField<CurrentPage>('pageStore');
+			current = this.field.get<CurrentPage>('pageStore');
 
 		{
 			const normalize = (val) => Object.mixin(true, val && rejectSystemOpts(val), {
@@ -612,7 +651,7 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 		if (meta.paramsFromQuery !== false) {
 			const
 				paramsFromRoot = meta.paramsFromRoot !== false,
-				rootState = r.convertStateToRouter(undefined, 'remote');
+				rootState = r.syncRouterState(undefined, 'remoteCheck');
 
 			for (let o = meta.params, i = 0; i < o.length; i++) {
 				const
@@ -672,7 +711,7 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 		};
 
 		if (!Object.fastCompare(getPlainWatchOpts(current), getPlainWatchOpts(store))) {
-			this.setField('pageStore', store);
+			this.field.set('pageStore', store);
 
 			const
 				plainInfo = getPlainOpts(info);
@@ -690,7 +729,7 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 			}
 
 			if (info.meta.external) {
-				location.replace(info.toPath(info.params) || '/');
+				location.href = info.toPath(info.params) || '/';
 				return;
 			}
 
@@ -708,6 +747,10 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 						const
 							key = keys[i],
 							el = v[key];
+
+						if (key[0] === '_') {
+							continue;
+						}
 
 						if (!Object.isFunction(el)) {
 							res[key] = el;
@@ -798,7 +841,11 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 	 * Handler: link trigger
 	 * @param e
 	 */
-	@watch({field: 'document:click', wrapper: (o, cb) => o.delegate('[href]', cb)})
+	@watch({
+		field: 'document:click',
+		wrapper: (o, cb) => o.dom.delegate('[href]', cb)
+	})
+
 	protected async onLink(e: MouseEvent): Promise<void> {
 		const
 			a = <HTMLElement>e.delegateTarget,
@@ -850,12 +897,10 @@ export default class bRouter<T extends Dictionary = Dictionary> extends iData<T>
 	}
 
 	/**
-	 * @override
 	 * @emits $root.initRouter(router: bRouter)
 	 */
 	protected created(): void {
-		super.created();
-		this.setField('routerStore', this, this.$root);
+		this.field.set('routerStore', this, this.$root);
 		this.r.emit('initRouter', this);
 	}
 }

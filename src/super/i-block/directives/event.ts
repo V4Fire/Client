@@ -6,9 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import $C = require('collection.js');
 import KeyCodes from 'core/key-codes';
-
 import iBlock from 'super/i-block/i-block';
 import Component, { VNode, VNodeDirective, ComponentElement } from 'core/component';
 
@@ -32,7 +30,7 @@ function bind(
 	}
 
 	const
-		m = <VNodeDirective['modifiers']>(p.modifiers || {}),
+		m = <NonNullable<VNodeDirective['modifiers']>>(p.modifiers || {}),
 		// @ts-ignore
 		obj = vNode.context.async,
 		raw = <string>(<any>p).rawName;
@@ -40,10 +38,13 @@ function bind(
 	const
 		isObj = Object.isObject(p.value),
 		group = isObj && p.value.group || `v-e:${p.arg}`,
-		handler = isObj ? p.value.fn : p.value;
+		handler = isObj ? p.value.fn : p.value,
+		cacheList = cache.get(oldVNode);
 
-	if (oldVNode && cache.has(oldVNode)) {
-		$C(cache.get(oldVNode)).forEach((group) => obj.off({group}));
+	if (oldVNode && cacheList) {
+		for (let i = 0; i < cacheList.length; i++) {
+			cacheList[i].off({group});
+		}
 	}
 
 	cache.set(
@@ -66,9 +67,12 @@ function bind(
 			res = keyValRgxp.exec(raw);
 
 		if (res && res[1]) {
-			$C(res[1].split(commaRgxp)).forEach((key) => {
-				keys[key] = true;
-			});
+			const
+				list = res[1].split(commaRgxp);
+
+			for (let i = 0; i < list.length; i++) {
+				keys[list[i]] = true;
+			}
 		}
 	}
 
@@ -99,8 +103,17 @@ function bind(
 			e.stopImmediatePropagation();
 		}
 
-		const args = arguments;
-		$C([].concat(handler) as Function[]).forEach((fn) => fn && fn.apply(this, args));
+		const
+			handlers = (<Function[]>[]).concat(handler);
+
+		for (let i = 0; i < handlers.length; i++) {
+			const
+				fn = handlers[i];
+
+			if (Object.isFunction(fn)) {
+				fn.apply(this, arguments);
+			}
+		}
 	}
 }
 

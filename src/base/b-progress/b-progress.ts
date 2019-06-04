@@ -7,6 +7,10 @@
  */
 
 import symbolGenerator from 'core/symbol';
+
+import iProgress from 'traits/i-progress/i-progress';
+import iVisible from 'traits/i-visible/i-visible';
+
 import iBlock, { component, prop, field, ModsDecl } from 'super/i-block/i-block';
 export * from 'super/i-block/i-block';
 
@@ -14,7 +18,7 @@ export const
 	$$ = symbolGenerator();
 
 @component()
-export default class bProgress extends iBlock {
+export default class bProgress extends iBlock implements iProgress, iVisible {
 	/**
 	 * Initial progress value store
 	 */
@@ -31,7 +35,7 @@ export default class bProgress extends iBlock {
 	 * Progress value
 	 */
 	get value(): CanUndef<number> {
-		return this.getField('valueStore');
+		return this.field.get('valueStore');
 	}
 
 	/**
@@ -42,14 +46,14 @@ export default class bProgress extends iBlock {
 	 */
 	set value(value: CanUndef<number>) {
 		(async () => {
-			this.setField('valueStore', value);
+			this.field.set('valueStore', value);
 
 			if (value === 100) {
 				try {
 					this.emit('complete');
 
 					if (this.resetOnComplete) {
-						this.setField('valueStore', 0);
+						this.field.set('valueStore', 0);
 					}
 
 				} catch {}
@@ -59,20 +63,20 @@ export default class bProgress extends iBlock {
 
 	/** @inheritDoc */
 	static readonly mods: ModsDecl = {
-		progress: [
-			bProgress.PARENT
-		]
+		...iProgress.mods,
+		...iVisible.mods
 	};
 
 	/**
 	 * Progress value store
 	 */
-	@field((o) => o.link())
+	@field((o) => o.sync.link())
 	protected valueStore?: number;
 
 	/** @override */
 	protected initModEvents(): void {
 		super.initModEvents();
-		this.bindModTo('progress', 'valueStore', Object.isNumber);
+		iVisible.initModEvents(this);
+		this.sync.mod('progress', 'valueStore', Object.isNumber);
 	}
 }

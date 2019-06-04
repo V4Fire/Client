@@ -7,20 +7,21 @@
  */
 
 @import "super/i-input/i-input.styl"
+@import "traits/i-width/i-width.styl"
+@import "traits/i-size/i-size.styl"
 
 $p = {
-	width: 15em
+	widthHelpers: true
+	sizeHelpers: true
+	progressHelpers: true
+	accessHelpers: true
+	visibleHelpers: true
 }
 
 b-input extends i-input
+	i-width({helpers: $p.widthHelpers})
+	i-size({helpers: $p.sizeHelpers})
 	display inline-block
-	width $p.width
-
-	&_focused_true
-		z-index-pos layer 1
-
-	&_progress_true
-		pointer-events auto
 
 	&__root-wrapper
 	&__super-wrapper
@@ -42,16 +43,16 @@ b-input extends i-input
 		width 100%
 
 	&__input
-		margin 0
 		width 100%
-
-		border 0
-		background transparent
 		overflow hidden
+		margin 0
 
-		font-size 1em
 		font-family BASE_FONT
+		font-size 1em
 		text-overflow ellipsis
+
+		border none
+		background transparent
 
 		&::-ms-clear
 			display none
@@ -79,6 +80,12 @@ b-input extends i-input
 	&__valid-status
 	&__progress
 		pointer-events none
+
+	&_progress_true
+		pointer-events auto
+
+	&_focused_true
+		zIndex(layer, 1)
 
 	&_focused_true &__valid-status
 		display none
