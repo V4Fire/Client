@@ -394,20 +394,12 @@ export default class bSlider extends iBlock {
 
 	/**
 	 * Initializes observers
-	 * @emits updateState
+	 * @emits updateState()
 	 */
 	@hook('mounted')
 	protected initObservers(): void {
 		const
-			{async: $a} = this;
-
-		if (!this.observers) {
-			this.observers = {};
-		}
-
-		const
-			{observers, $refs} = this,
-			{wrapper} = $refs;
+			{observers, $refs: {wrapper}} = this;
 
 		if (!observers.mutation && wrapper) {
 			observers.mutation = new MutationObserver(() => {
@@ -418,7 +410,7 @@ export default class bSlider extends iBlock {
 				childList: true
 			});
 
-			$a.worker(observers.mutation, {
+			this.async.worker(observers.mutation, {
 				label: $$.mutationObserver
 			});
 		}
