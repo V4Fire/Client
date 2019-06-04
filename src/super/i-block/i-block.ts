@@ -1038,17 +1038,17 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 		while (obj) {
 			if (obj.selfDispatching) {
 				obj.$emit(event, this, ...args);
-				obj.$emit(`on-${event}`, this, ...args);
+				obj.$emit(`on-${event}`, ...args);
 				obj.log(`event:${event}`, this, ...args);
 
 			} else {
 				obj.$emit(`${nm}::${event}`, this, ...args);
-				obj.$emit(`${nm}::on-${event}`, this, ...args);
+				obj.$emit(`${nm}::on-${event}`, ...args);
 				obj.log(`event:${nm}::${event}`, this, ...args);
 
 				if (globalNm) {
 					obj.$emit(`${globalNm}::${event}`, this, ...args);
-					obj.$emit(`${globalNm}::on-${event}`, this, ...args);
+					obj.$emit(`${globalNm}::on-${event}`, ...args);
 					obj.log(`event:${globalNm}::${event}`, this, ...args);
 				}
 			}
