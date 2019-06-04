@@ -562,8 +562,27 @@ export function patchVNode(vnode: VNode, ctx: ComponentInterface, renderCtx: Ren
 		}
 
 		$a.setImmediate(mount, {
-			label: $$.mount
+			label: $$.mount,
+			// @ts-ignore (access)
+			onClear: () => ctx.$destroy()
 		});
+
+		for (let o = (<string[]>[]).concat(mountHooks, parentHook || []), i = 0; i < o.length; i++) {
+			const
+				hook = o[i],
+				filteredHooks = <unknown[]>[];
+
+			for (let list = hooks[hook], j = 0; j < list.length; j++) {
+				const
+					el = list[j];
+
+				if (el.fn[$$.self] !== ctx) {
+					filteredHooks.push(el);
+				}
+			}
+
+			hooks[hook] = filteredHooks;
+		}
 	};
 
 	deferMount[$$.self] = ctx;
