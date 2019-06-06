@@ -131,8 +131,42 @@ export function component(params?: ComponentParams): Function {
 
 		if (target.mods) {
 			for (let o = target.mods, keys = Object.keys(o), i = 0; i < keys.length; i++) {
-				const key = keys[i];
-				mods[key.camelize(false)] = o[key];
+				const
+					key = keys[i],
+					modVal = o[key],
+					res = <unknown[]>[];
+
+				if (modVal) {
+					const
+						cache = new Map();
+
+					let
+						active;
+
+					for (let i = 0; i < modVal.length; i++) {
+						const
+							val = modVal[i];
+
+						if (Object.isArray(val)) {
+							if (active !== undefined) {
+								cache.set(active, active);
+							}
+
+							active = String(val[0]);
+							cache.set(active, [active]);
+
+						} else {
+							const v = String(val);
+							cache.set(v, v);
+						}
+					}
+
+					for (let o = cache.values(), el = o.next(); !el.done; el = o.next()) {
+						res.push(el.value);
+					}
+				}
+
+				mods[key.camelize(false)] = res;
 			}
 		}
 
