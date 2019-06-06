@@ -81,7 +81,7 @@ if (typeof global['setImmediate'] !== 'function') {
 				// empty
 			}
 
-			map[id] = {queue, pos};
+			map[id] = {queue: queue, pos: pos};
 			return id;
 		};
 
