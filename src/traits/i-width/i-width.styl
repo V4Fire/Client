@@ -8,7 +8,7 @@
 
 $p = {
 	helpers: true
-	selector: ('')
+	selector: ("")
 }
 
 i-width
@@ -17,11 +17,11 @@ i-width
 		$autoS = ()
 
 		for $s in $p.selector
-			push($fullS, '&_width_full ' + $s)
-			push($autoS, '&_width_auto ' + $s)
+			push($fullS, "&_width_full " + $s)
+			push($autoS, "&_width_auto " + $s)
 
-		{join(',', $fullS)}
+		{join(",", $fullS)}
 			width 100%
 
-		{join(',', $autoS)}
+		{join(",", $autoS)}
 			width auto
