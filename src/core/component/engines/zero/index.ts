@@ -527,11 +527,11 @@ export function createComponent<T>(
 						el = o[j];
 
 					if (is(el)) {
-						$a.setImmediate(() => {
+						$a.setTimeout(() => {
 							if (!document.body.contains(el)) {
 								destroy();
 							}
-						}, {
+						}, 0, {
 							label: $$.removeFromDOM
 						});
 
