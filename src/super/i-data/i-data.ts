@@ -537,7 +537,7 @@ export default abstract class iData<T extends object = Dictionary> extends iMess
 				val = value[key],
 				oldVal = oldValue && oldValue[key];
 
-			if (val && oldVal && val.toSource() === oldVal.toSource()) {
+			if (val && oldVal && Object.fastCompare(val, oldVal)) {
 				continue;
 			}
 
