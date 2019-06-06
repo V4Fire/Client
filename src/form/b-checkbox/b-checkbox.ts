@@ -68,12 +68,12 @@ export default class bCheckbox<
 
 	/** @inheritDoc */
 	static readonly mods: ModsDecl = {
+		...iSize.mods,
+
 		checked: [
 			'true',
 			'false'
-		],
-
-		...iSize.mods
+		]
 	};
 
 	/** @override */

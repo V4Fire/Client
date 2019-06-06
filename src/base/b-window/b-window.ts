@@ -58,7 +58,11 @@ export default class bWindow<T extends object = Dictionary> extends iData<T>
 	static readonly mods: ModsDecl = {
 		...iVisible.mods,
 		...iWidth.mods,
-		...iOpenToggle.mods,
+
+		opened: [
+			...iOpenToggle.mods.opened,
+			['false']
+		],
 
 		position: [
 			['fixed'],

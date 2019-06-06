@@ -175,12 +175,12 @@ export default class bCrop extends iBlock implements iVisible {
 
 	/** @inheritDoc */
 	static readonly mods: ModsDecl = {
+		...iVisible.mods,
+
 		parentProgress: [
 			'true',
 			['false']
-		],
-
-		...iVisible.mods
+		]
 	};
 
 	/** @override */

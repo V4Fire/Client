@@ -255,6 +255,9 @@ export default abstract class iInput<
 
 	/** @inheritDoc */
 	static readonly mods: ModsDecl = {
+		...iAccess.mods,
+		...iVisible.mods,
+
 		form: [
 			['true'],
 			'false'
@@ -263,10 +266,7 @@ export default abstract class iInput<
 		valid: [
 			'true',
 			'false'
-		],
-
-		...iAccess.mods,
-		...iVisible.mods
+		]
 	};
 
 	/**

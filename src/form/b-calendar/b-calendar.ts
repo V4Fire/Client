@@ -171,16 +171,20 @@ export default class bCalendar<
 
 	/** @inheritDoc */
 	static readonly mods: ModsDecl = {
+		...iWidth.mods,
+		...iSize.mods,
+
+		opened: [
+			...iOpenToggle.mods.opened,
+			['false']
+		],
+
 		rounding: [
 			'none',
 			['small'],
 			'normal',
 			'big'
-		],
-
-		...iWidth.mods,
-		...iSize.mods,
-		...iOpenToggle.mods
+		]
 	};
 
 	/**
@@ -391,6 +395,7 @@ export default class bCalendar<
 
 	/** @see iOpenToggle.onTouchClose */
 	onTouchClose(e: MouseEvent): Promise<void> {
+		console.log(11);
 		return iOpenToggle.onTouchClose(this, e);
 	}
 
@@ -532,7 +537,7 @@ export default class bCalendar<
 	/** @override */
 	protected initModEvents(): void {
 		super.initModEvents();
-		iOpenToggle.initModEvents(this);
+		//iOpenToggle.initModEvents(this);
 	}
 
 	/**
