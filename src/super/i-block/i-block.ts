@@ -861,12 +861,23 @@ export default class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 				$a = <Async>d.async,
 				$e = new EventEmitter({maxListeners: 100, wildcard: true});
 
+			const group = (params) => {
+				const
+					group = params ? params.group : '';
+
+				if (!Object.isString(group) || /:!suspend(?:\b|$)/.test(group)) {
+					return params;
+				}
+
+				return {...params, group: `${group}:suspend`};
+			};
+
 			return {
 				emit: (event, ...args) => $e.emit(event, ...args),
-				on: (event, fn, params, ...args) => $a.on($e, event, fn, params, ...args),
-				once: (event, fn, params, ...args) => $a.once($e, event, fn, params, ...args),
-				promisifyOnce: (event, params, ...args) => $a.promisifyOnce($e, event, params, ...args),
-				off: (...args) => $a.off(...args)
+				on: (event, fn, params, ...args) => $a.on($e, event, fn, group(params), ...args),
+				once: (event, fn, params, ...args) => $a.once($e, event, fn, group(params), ...args),
+				promisifyOnce: (event, params, ...args) => $a.promisifyOnce($e, event, group(params), ...args),
+				off: (params) => $a.off(params && params.group ? group(params) : params)
 			};
 		}
 	})
