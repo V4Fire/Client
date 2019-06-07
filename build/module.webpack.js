@@ -9,7 +9,6 @@
  */
 
 const
-	$C = require('collection.js'),
 	config = require('config'),
 	MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
@@ -130,7 +129,6 @@ module.exports = async function ({buildId, plugins}) {
 		}));
 
 		const
-			autoprefixer = config.autoprefixer(),
 			postcss = config.postcss();
 
 		loaders.rules.set('styl', {
@@ -143,12 +141,12 @@ module.exports = async function ({buildId, plugins}) {
 					options: Object.reject(config.css(), ['minimize'])
 				},
 
-				isProd || $C(postcss).length() || $C(autoprefixer).length() ? {
+				{
 					loader: 'postcss',
 					options: inherit(postcss, {
-						plugins: [require('autoprefixer')(autoprefixer)]
+						plugins: [require('autoprefixer')()]
 					})
-				} : [],
+				},
 
 				{
 					loader: 'stylus',

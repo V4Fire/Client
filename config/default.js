@@ -179,10 +179,6 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		return {};
 	},
 
-	autoprefixer() {
-		return {};
-	},
-
 	uglify() {
 		return {};
 	},
