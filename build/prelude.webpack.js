@@ -52,7 +52,13 @@ if (config.runtime().noGlobals) {
 
 			if (target === 'GLOBAL') {
 				regExps.add(`\\bGLOBAL\\.${method}\\b`);
+				regExps.add(`\\(\\(${method}\\)\\)`);
 				regExps.add(`(?<=[^.]|^)\\b${method}\\b\\s*(?=${method.length > 3 ? '\\(|`' : '`'})`);
+
+				if (method.length > 3) {
+					regExps.add(`(?<=\\.\\s*(?:catch|then)\\s*\\()${method}(?=\\s*\\))`);
+					regExps.add(`(?<=\\.\\s*then\\s*\\([\\s\\S]+?}\\s*,\\s*)${method}(?=\\s*\\))`);
+				}
 
 				const meta = {
 					global: true,
@@ -60,6 +66,7 @@ if (config.runtime().noGlobals) {
 				};
 
 				tokens.set(method, meta);
+				tokens.set(`((${method}))`, meta);
 				tokens.set(`GLOBAL.${method}`, meta);
 
 				continue;
