@@ -781,7 +781,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 			maxListeners: 1e3,
 			newListener: false,
 			wildcard: true
-		}))
+		}), {suspend: true})
 	})
 
 	protected readonly localEvent!: Event<this>;
