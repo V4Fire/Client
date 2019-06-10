@@ -128,9 +128,6 @@ module.exports = async function ({buildId, plugins}) {
 			chunkFilename: '[id].css'
 		}));
 
-		const
-			postcss = config.postcss();
-
 		loaders.rules.set('styl', {
 			test: /\.styl$/,
 			use: [].concat(
@@ -143,8 +140,8 @@ module.exports = async function ({buildId, plugins}) {
 
 				{
 					loader: 'postcss',
-					options: inherit(postcss, {
-						plugins: [require('autoprefixer')()]
+					options: inherit(config.postcss(), {
+						plugins: [require('autoprefixer')(config.autoprefixer())]
 					})
 				},
 
