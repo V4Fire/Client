@@ -395,7 +395,6 @@ export default class bCalendar<
 
 	/** @see iOpenToggle.onTouchClose */
 	onTouchClose(e: MouseEvent): Promise<void> {
-		console.log(11);
 		return iOpenToggle.onTouchClose(this, e);
 	}
 
