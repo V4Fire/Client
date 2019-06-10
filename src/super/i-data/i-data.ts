@@ -767,7 +767,7 @@ export default abstract class iData<T extends object = Dictionary> extends iMess
 	 * @param retry - retry function
 	 */
 	protected onRequestError<T = unknown>(err: Error | RequestError, retry: () => Promise<CanUndef<T>>): void {
-		this.emit('error', err, retry);
+		this.emitError('error', err, retry);
 	}
 
 	/**
