@@ -95,7 +95,7 @@ export default abstract class iInput<
 	 * Component value type factory
 	 */
 	@prop(Function)
-	readonly dataType: Function = Any;
+	readonly dataType: Function = ((Any));
 
 	/**
 	 * Form value converter

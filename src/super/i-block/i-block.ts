@@ -1775,5 +1775,5 @@ export abstract class iBlockDecorator extends iBlock {
 }
 
 function defaultI18n(): string {
-	return (this.$root.i18n || GLOBAL.i18n).apply(this.$root, arguments);
+	return (this.$root.i18n || ((i18n))).apply(this.$root, arguments);
 }

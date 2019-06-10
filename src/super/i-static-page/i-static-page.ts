@@ -48,7 +48,7 @@ export default abstract class iStaticPage<
 	 * Link to i18n function
 	 */
 	@system()
-	readonly i18n: typeof i18n = GLOBAL.i18n;
+	readonly i18n: typeof i18n = ((i18n));
 
 	/** @override */
 	@system(() => globalEvent)
