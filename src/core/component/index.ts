@@ -427,7 +427,7 @@ export function component(params?: ComponentParams): Function {
 											vnode.fakeContext = ctx;
 										}
 
-										const fn = () => {
+										const fn = () => ctx.$async.setTimeout(() => {
 											obj[asyncLabel]((obj, p = {}) => {
 												const
 													els = <Node[]>[],
@@ -506,7 +506,7 @@ export function component(params?: ComponentParams): Function {
 
 												return els;
 											});
-										};
+										}, 0, {group: 'asyncComponents'});
 
 										if (mountedHooks[ctx.hook]) {
 											ctx.nextTick(fn);

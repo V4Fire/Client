@@ -76,9 +76,14 @@ export default class AsyncRender {
 	constructor(component: iBlock) {
 		this.component = component;
 		this.meta.hooks.beforeUpdate.push({fn: () => {
-			this.async
-				.cancelProxy({group: 'asyncComponents'})
-				.terminateWorker({group: 'asyncComponents'});
+			const group = {
+				group: 'asyncComponents'
+			};
+
+			this.async.clearAll(group);
+
+			// @ts-ignore (access)
+			this.component.$async.clearAll(group);
 		}});
 
 		this.meta.hooks.beforeUpdated.push({fn: (desc: TaskDesc = {}) => {
