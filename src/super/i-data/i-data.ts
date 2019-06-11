@@ -52,6 +52,19 @@ import Provider, {
 
 } from 'core/data';
 
+export {
+
+	Socket,
+	RequestQuery,
+	RequestBody,
+	RequestResponseObject,
+	RequestError,
+	Response,
+	ModelMethods,
+	ProviderParams
+
+} from 'core/data';
+
 //#endif
 
 export * from 'super/i-data/modules/interface';
