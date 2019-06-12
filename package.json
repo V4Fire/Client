@@ -5,7 +5,7 @@
   "main": "src/core/index.js",
   "typings": "index.d.ts",
   "license": "MIT",
-  "version": "3.0.0-beta.40",
+  "version": "3.0.0-beta.41",
   "author": {
     "name": "kobezzza",
     "email": "kobezzza@gmail.com",
@@ -48,7 +48,7 @@
     "@types/socket.io-client": "^1.4.32",
     "@types/webpack": "^4.4.32",
     "autoprefixer": "^9.6.0",
-    "browserslist": "^4.6.1",
+    "browserslist": "^4.6.2",
     "camelize": "^1.0.0",
     "collection.js": "^6.7.9",
     "config": "^1.31.0",
@@ -67,7 +67,7 @@
     "gulp-favicons": "^2.3.1",
     "gulp-gzip": "^1.4.2",
     "gulp-htmlmin": "^5.0.1",
-    "gulp-image": "^5.0.0",
+    "gulp-image": "^5.1.0",
     "gulp-load-plugins": "^1.6.0",
     "gulp-plumber": "^1.2.1",
     "gulp-run": "^1.7.1",
@@ -112,7 +112,7 @@
     "vue-template-compiler": "^2.6.10",
     "vue-template-es2015-compiler": "^1.9.1",
     "webpack": "^4.33.0",
-    "webpack-cli": "^3.3.3"
+    "webpack-cli": "^3.3.4"
   },
   "devDependencies": {
     "babel-eslint": "^10.0.1",
