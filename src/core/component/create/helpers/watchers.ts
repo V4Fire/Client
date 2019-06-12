@@ -129,7 +129,7 @@ export function bindWatchers(ctx: ComponentInterface, eventCtx: ComponentInterfa
 								ctx.$on(key, handler);
 
 							} else {
-								$a.on(root, key, handler, eventParams, ...<unknown[]>el.args);
+								$a.on(root, key, handler, eventParams, ...(el.args || []));
 							}
 
 							return;
@@ -204,7 +204,7 @@ export function bindWatchers(ctx: ComponentInterface, eventCtx: ComponentInterfa
 							ctx.$on(key, handler);
 
 						} else {
-							$a.on(root, key, handler, eventParams, ...<unknown[]>el.args);
+							$a.on(root, key, handler, eventParams, ...(el.args || []));
 						}
 
 						continue;
