@@ -14,7 +14,7 @@ export const
 	systemWatchers = new WeakMap<ComponentInterface, Dictionary<{cb: Set<Function>}>>();
 
 const watcherHooks = {
-	beforeCreate: true,
+	beforeDataCreate: true,
 	created: true,
 	mounted: true
 };
@@ -73,23 +73,23 @@ export function bindWatchers(ctx: ComponentInterface, eventCtx: ComponentInterfa
 
 			for (let i = 0; i < watchers.length; i++) {
 				const
-					el = watchers[i],
-					handlerIsStr = Object.isString(el.handler);
+					watchObj = watchers[i],
+					handlerIsStr = Object.isString(watchObj.handler);
 
 				const label = `[[WATCHER:${key}:${
-					el.method != null ? el.method : handlerIsStr ? el.handler : (<Function>el.handler).name
+					watchObj.method != null ? watchObj.method : handlerIsStr ? watchObj.handler : (<Function>watchObj.handler).name
 				}]]`;
 
 				const
-					group = {group: el.group || 'watchers', label},
-					eventParams = {...group, options: el.options, single: el.single};
+					group = {group: watchObj.group || 'watchers', label},
+					eventParams = {...group, options: watchObj.options, single: watchObj.single};
 
 				let handler = (...args) => {
-					args = el.provideArgs === false ? [] : args;
+					args = watchObj.provideArgs === false ? [] : args;
 
-					if (Object.isString(el.handler)) {
+					if (Object.isString(watchObj.handler)) {
 						const
-							method = <string>el.handler;
+							method = <string>watchObj.handler;
 
 						if (!Object.isFunction(ctx[method])) {
 							throw new ReferenceError(`The specified method (${method}) for watching is not defined`);
@@ -103,9 +103,9 @@ export function bindWatchers(ctx: ComponentInterface, eventCtx: ComponentInterfa
 
 					} else {
 						const
-							fn = <Function>el.handler;
+							fn = <Function>watchObj.handler;
 
-						if (el.method) {
+						if (watchObj.method) {
 							fn.call(ctx, ...args);
 
 						} else {
@@ -114,8 +114,8 @@ export function bindWatchers(ctx: ComponentInterface, eventCtx: ComponentInterfa
 					}
 				};
 
-				if (el.wrapper) {
-					handler = <typeof handler>el.wrapper(ctx, handler);
+				if (watchObj.wrapper) {
+					handler = <typeof handler>watchObj.wrapper(ctx, handler);
 				}
 
 				if (handler instanceof Promise) {
@@ -129,7 +129,7 @@ export function bindWatchers(ctx: ComponentInterface, eventCtx: ComponentInterfa
 								ctx.$on(key, handler);
 
 							} else {
-								$a.on(root, key, handler, eventParams, ...(el.args || []));
+								$a.on(root, key, handler, eventParams, ...(watchObj.args || []));
 							}
 
 							return;
@@ -148,7 +148,8 @@ export function bindWatchers(ctx: ComponentInterface, eventCtx: ComponentInterfa
 							}
 
 							let
-								watcher = watchers[key];
+								watcher = watchers[key],
+								store = ctx[key];
 
 							if (!watcher) {
 								watcher = watchers[key] = {
@@ -157,9 +158,6 @@ export function bindWatchers(ctx: ComponentInterface, eventCtx: ComponentInterfa
 
 								const
 									cbs = watcher.cb;
-
-								let
-									store = ctx[key];
 
 								Object.defineProperty(ctx, key, {
 									enumerable: true,
@@ -181,12 +179,13 @@ export function bindWatchers(ctx: ComponentInterface, eventCtx: ComponentInterfa
 							}
 
 							watcher.cb.add(handler);
+							watchObj.immediate && handler(store);
 
 						} else {
 							// @ts-ignore (access)
 							const unwatch = ctx.$watch(key, {
-								deep: el.deep,
-								immediate: el.immediate,
+								deep: watchObj.deep,
+								immediate: watchObj.immediate,
 								handler
 							});
 
@@ -204,7 +203,7 @@ export function bindWatchers(ctx: ComponentInterface, eventCtx: ComponentInterfa
 							ctx.$on(key, handler);
 
 						} else {
-							$a.on(root, key, handler, eventParams, ...(el.args || []));
+							$a.on(root, key, handler, eventParams, ...(watchObj.args || []));
 						}
 
 						continue;
@@ -223,7 +222,8 @@ export function bindWatchers(ctx: ComponentInterface, eventCtx: ComponentInterfa
 						}
 
 						let
-							watcher = watchers[key];
+							watcher = watchers[key],
+							store = ctx[key];
 
 						if (!watcher) {
 							watcher = watchers[key] = {
@@ -232,9 +232,6 @@ export function bindWatchers(ctx: ComponentInterface, eventCtx: ComponentInterfa
 
 							const
 								cbs = watcher.cb;
-
-							let
-								store = ctx[key];
 
 							Object.defineProperty(ctx, key, {
 								enumerable: true,
@@ -256,12 +253,13 @@ export function bindWatchers(ctx: ComponentInterface, eventCtx: ComponentInterfa
 						}
 
 						watcher.cb.add(handler);
+						watchObj.immediate && handler(store);
 
 					} else {
 						// @ts-ignore (access)
 						const unwatch = ctx.$watch(key, {
-							deep: el.deep,
-							immediate: el.immediate,
+							deep: watchObj.deep,
+							immediate: watchObj.immediate,
 							handler
 						});
 

@@ -304,9 +304,9 @@ export function createFakeCtx<T extends object = FunctionalCtx>(
 		}
 	}, stderr);
 
-	bindWatchers(<any>fakeCtx);
 	initDataObject(meta.fields, fakeCtx, instance, data);
 	runHook('beforeDataCreate', meta, fakeCtx).catch(stderr);
+	bindWatchers(fakeCtx);
 
 	for (let keys = Object.keys(data), i = 0; i < keys.length; i++) {
 		const

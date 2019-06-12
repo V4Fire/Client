@@ -454,12 +454,10 @@ export function createComponent<T>(
 
 	// @ts-ignore (access)
 	meta = fakeCtx.meta;
+	meta.params.functional = true;
 
 	// @ts-ignore (access)
 	fakeCtx.hook = 'created';
-
-	meta.params.functional = true;
-	bindWatchers(fakeCtx);
 
 	runHook('created', meta, fakeCtx).then(() => {
 		if (methods.created) {
