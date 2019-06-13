@@ -66,9 +66,9 @@ module.exports = async function ({buildId, plugins}) {
 		options.minimizer = [
 			/* eslint-disable camelcase */
 
-			new TerserPlugin(inherit(config.uglify(), {
+			new TerserPlugin({
 				parallel: true,
-				terserOptions: {
+				terserOptions: inherit(config.uglify(), {
 					ecma: 6,
 					safari10: true,
 					warnings: false,
@@ -83,8 +83,8 @@ module.exports = async function ({buildId, plugins}) {
 					mangle: {
 						safari10: true
 					}
-				}
-			}))
+				})
+			})
 			/* eslint-enable camelcase */
 		];
 	}
