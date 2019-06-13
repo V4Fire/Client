@@ -109,7 +109,14 @@ export default abstract class iStaticPage<
 
 	/** @override */
 	set pageTitle(value: string) {
-		document.title = value;
+		if (value == null) {
+			return;
+		}
+
+		const div = document.createElement('div');
+		div.innerHTML = value;
+
+		document.title = div.textContent || '';
 	}
 
 	/**
