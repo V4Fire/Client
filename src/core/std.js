@@ -6,16 +6,95 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-/* eslint-disable prefer-arrow-callback,no-var */
+/* eslint-disable prefer-arrow-callback,no-var,object-shorthand */
 
-var global = new Function('return this')();
+var
+	global = new Function('return this')();
 
 if (typeof global['setImmediate'] !== 'function') {
-	global['setImmediate'] = function (fn) {
-		return setTimeout(fn, 0);
-	}
+	(function () {
+		if (typeof Promise !== 'function') {
+			global['setImmediate'] = function (fn) {
+				return setTimeout(fn, 0);
+			};
 
-	global['cleatImmediate'] = clearTimeout;
+			global['clearImmediate'] = clearTimeout;
+			return;
+		}
+
+		var
+			i = 0,
+			resolved = 0;
+
+		var
+			map = {},
+			queue = new Array(16);
+
+		var
+			fired = false,
+			promise = Promise.resolve();
+
+		function getRandomInt(min, max) {
+			return Math.floor(Math.random() * (max - min + 1)) + min;
+		}
+
+		function call() {
+			var
+				track = queue;
+
+			i = 0;
+			queue = new Array(16);
+			fired = false;
+
+			for (var j = 0; j < track.length; j++) {
+				var
+					fn = track[j];
+
+				if (fn) {
+					fn();
+				}
+			}
+
+			if (resolved++ % 10 === 0) {
+				promise = Promise.resolve();
+			}
+
+			track = null;
+		}
+
+		global['setImmediate'] = function (fn) {
+			var
+				id,
+				pos = i++;
+
+			queue[pos] = function () {
+				delete map[id];
+				fn();
+			};
+
+			if (!fired) {
+				fired = true;
+				promise = promise.then(call);
+			}
+
+			while (map[id = getRandomInt(0, 10e3)]) {
+				// empty
+			}
+
+			map[id] = {queue: queue, pos: pos};
+			return id;
+		};
+
+		global['clearImmediate'] = function (id) {
+			var
+				obj = map[id];
+
+			if (obj) {
+				obj.queue[obj.pos] = null;
+				delete map[id];
+			}
+		};
+	})();
 }
 
 exports.loadToPrototype = loadToPrototype;

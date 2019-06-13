@@ -1,0 +1,29 @@
+/*!
+ * V4Fire Client Core
+ * https://github.com/V4Fire/Client
+ *
+ * Released under the MIT license
+ * https://github.com/V4Fire/Client/blob/master/LICENSE
+ */
+
+@import "super/i-block/i-block.styl"
+
+$p = {
+
+}
+
+b-slider extends i-block
+	&__root-wrapper
+		size 100%
+
+	&__window
+		position relative
+		display flex
+		size 100%
+		overflow hidden
+
+	&__view
+		display flex
+		size 100%
+		overflow hidden
+		useGPU()

@@ -34,8 +34,6 @@ import iStaticPage from 'super/i-static-page/i-static-page';
 
 import 'super/i-block/directives';
 
-import { statuses } from 'super/i-block/modules/const';
-
 import Cache from 'super/i-block/modules/cache';
 import Opt from 'super/i-block/modules/opt';
 import Lazy from 'super/i-block/modules/lazy';
@@ -57,6 +55,7 @@ import State, { ConverterCallType } from 'super/i-block/modules/state';
 import Storage from 'super/i-block/modules/storage';
 import Sync, { AsyncWatchOpts } from 'super/i-block/modules/sync';
 
+import { statuses } from 'super/i-block/modules/const';
 import { eventFactory, Event, RemoteEvent } from 'super/i-block/modules/event';
 import { initGlobalEvents, initModEvents, initRemoteWatchers } from 'super/i-block/modules/listeners';
 import { activate, deactivate, onActivated, onDeactivated } from 'super/i-block/modules/keep-alive';
@@ -82,6 +81,7 @@ import {
 
 	globalEvent,
 	hook,
+	getFieldRealInfo,
 
 	VNode,
 	ComponentInterface,
@@ -103,16 +103,19 @@ import {
 
 export * from 'core/component';
 export * from 'super/i-block/modules/interface';
-export * from 'super/i-block/modules/daemons';
+export * from 'super/i-block/modules/const';
+
 export * from 'super/i-block/modules/block';
+export * from 'super/i-block/modules/field';
+export * from 'super/i-block/modules/state';
+
+export * from 'super/i-block/modules/daemons';
+export * from 'super/i-block/modules/event';
+
+export * from 'super/i-block/modules/sync';
+export * from 'super/i-block/modules/async-render';
 
 export {
-
-	statuses,
-	eventFactory,
-
-	AsyncWatchOpts,
-	ConverterCallType,
 
 	Cache,
 	Classes,
@@ -120,10 +123,7 @@ export {
 	ModVal,
 	ModsDecl,
 	ModsTable,
-	ModsNTable,
-
-	Event,
-	RemoteEvent
+	ModsNTable
 
 };
 
@@ -142,6 +142,11 @@ export {
 	removeElMod
 
 } from 'super/i-block/modules/decorators';
+
+export interface ComponentEventDecl {
+	event: string;
+	type?: 'error';
+}
 
 export const
 	$$ = symbolGenerator(),
@@ -526,6 +531,10 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 			'ready',
 			'inactive',
 			'destroyed'
+		],
+
+		theme: [
+			'default'
 		]
 	};
 
@@ -675,7 +684,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	/**
 	 * Component initialize status store for non watch statuses
 	 */
-	@system({replace: false})
+	@system({unique: true})
 	protected shadowComponentStatusStore?: Statuses;
 
 	/**
@@ -777,7 +786,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 			maxListeners: 1e3,
 			newListener: false,
 			wildcard: true
-		}))
+		}), {suspend: true})
 	})
 
 	protected readonly localEvent!: Event<this>;
@@ -944,7 +953,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	protected readonly global!: Window;
 
 	/**
-	 * Wrapper for $watch
+	 * Sets a watcher to an event or a field
 	 *
 	 * @see Async.worker
 	 * @param exprOrFn
@@ -964,7 +973,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 		this.lfc.execCbAfterComponentCreated(() => {
 			const
 				p = params || {},
-				fork = (obj) => Object.isArray(obj) || Object.isTable(obj) ? Object.mixin(true, undefined, obj) : obj;
+				fork = (obj) => Object.isArray(obj) || Object.isSimpleObject(obj) ? Object.mixin(true, undefined, obj) : obj;
 
 			let
 				oldVal: unknown = fork(this.field.get(Object.isFunction(exprOrFn) ? exprOrFn.call(this) : exprOrFn));
@@ -986,12 +995,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 			};
 
 			if (Object.isString(exprOrFn)) {
-				const
-					storeKey = `${exprOrFn}Store`;
-
-				if (storeKey in this) {
-					exprOrFn = storeKey;
-				}
+				exprOrFn = getFieldRealInfo(this, exprOrFn).name;
 			}
 
 			const
@@ -1005,18 +1009,48 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	}
 
 	/**
-	 * Wrapper for $emit
+	 * Emits a component event
 	 *
 	 * @param event
 	 * @param args
 	 */
 	@p({replace: false})
-	emit(event: string, ...args: unknown[]): void {
-		event = event.dasherize();
-		this.$emit(event, this, ...args);
-		this.$emit(`on-${event}`, ...args);
-		this.dispatching && this.dispatch(event, ...args);
-		this.log(`event:${event}`, this, ...args);
+	emit(event: string | ComponentEventDecl, ...args: unknown[]): void {
+		const
+			decl = Object.isString(event) ? {event} : event,
+			eventNm = decl.event = decl.event.dasherize();
+
+		this.$emit(eventNm, this, ...args);
+		this.$emit(`on-${eventNm}`, ...args);
+		this.dispatching && this.dispatch(decl, ...args);
+
+		const
+			logArgs = args.slice();
+
+		if (decl.type === 'error') {
+			for (let i = 0; i < logArgs.length; i++) {
+				const
+					el = logArgs[i];
+
+				if (Object.isFunction(el)) {
+					logArgs[i] = () => el;
+				}
+			}
+		}
+
+		this.log(`event:${eventNm}`, this, ...logArgs);
+	}
+
+	/**
+	 * Emits a component error event
+	 * (all functions from args will be wrapped for logging)
+	 *
+	 * @param event
+	 * @param args
+	 */
+	@p({replace: false})
+	emitError(event: string, ...args: unknown[]): void {
+		this.emit({event, type: 'error'}, ...args);
 	}
 
 	/**
@@ -1026,8 +1060,10 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	 * @param args
 	 */
 	@p({replace: false})
-	dispatch(event: string, ...args: unknown[]): void {
-		event = event.dasherize();
+	dispatch(event: string | ComponentEventDecl, ...args: unknown[]): void {
+		const
+			decl = Object.isString(event) ? {event} : event,
+			eventNm = decl.event = decl.event.dasherize();
 
 		let
 			obj = this.$parent;
@@ -1036,21 +1072,35 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 			nm = this.componentName,
 			globalNm = (this.globalName || '').dasherize();
 
+		const
+			logArgs = args.slice();
+
+		if (decl.type === 'error') {
+			for (let i = 0; i < logArgs.length; i++) {
+				const
+					el = logArgs[i];
+
+				if (Object.isFunction(el)) {
+					logArgs[i] = () => el;
+				}
+			}
+		}
+
 		while (obj) {
 			if (obj.selfDispatching) {
-				obj.$emit(event, this, ...args);
-				obj.$emit(`on-${event}`, this, ...args);
-				obj.log(`event:${event}`, this, ...args);
+				obj.$emit(eventNm, this, ...args);
+				obj.$emit(`on-${eventNm}`, ...args);
+				obj.log(`event:${eventNm}`, this, ...logArgs);
 
 			} else {
-				obj.$emit(`${nm}::${event}`, this, ...args);
-				obj.$emit(`${nm}::on-${event}`, this, ...args);
-				obj.log(`event:${nm}::${event}`, this, ...args);
+				obj.$emit(`${nm}::${eventNm}`, this, ...args);
+				obj.$emit(`${nm}::on-${eventNm}`, ...args);
+				obj.log(`event:${nm}::${eventNm}`, this, ...logArgs);
 
 				if (globalNm) {
-					obj.$emit(`${globalNm}::${event}`, this, ...args);
-					obj.$emit(`${globalNm}::on-${event}`, this, ...args);
-					obj.log(`event:${globalNm}::${event}`, this, ...args);
+					obj.$emit(`${globalNm}::${eventNm}`, this, ...args);
+					obj.$emit(`${globalNm}::on-${eventNm}`, ...args);
+					obj.log(`event:${globalNm}::${eventNm}`, this, ...logArgs);
 				}
 			}
 
@@ -1063,7 +1113,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	}
 
 	/**
-	 * Wrapper for $on
+	 * Attaches an event listener to the specified component event
 	 *
 	 * @see Async.on
 	 * @param event
@@ -1083,7 +1133,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	}
 
 	/**
-	 * Wrapper for $once
+	 * Attaches a single event listener to the specified component event
 	 *
 	 * @see Async.on
 	 * @param event
@@ -1103,7 +1153,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	}
 
 	/**
-	 * Wrapper for promisify $once
+	 * Attaches a single event listener to the specified component event and returns a promise
 	 *
 	 * @see Async.on
 	 * @param event
@@ -1116,7 +1166,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	}
 
 	/**
-	 * Wrapper for $off
+	 * Detaches the specified event listeners
 	 *
 	 * @param [event]
 	 * @param [cb]
@@ -1179,7 +1229,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	}
 
 	/**
-	 * Wrapper for $nextTick
+	 * Executes the specified function on a next render tick
 	 *
 	 * @see Async.proxy
 	 * @param cb
@@ -1205,7 +1255,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	}
 
 	/**
-	 * Wrapper for $forceUpdate
+	 * Forces the component rerender
 	 */
 	@wait({defer: true, label: $$.forceUpdate})
 	forceUpdate(): Promise<void> {
@@ -1232,14 +1282,14 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 
 		const
 			{$children: $c, async: $a} = this,
-			providers = new Set();
+			providers = new Set<iBlock>();
 
 		if ($c) {
 			for (let i = 0; i < $c.length; i++) {
 				const
 					el = $c[i];
 
-				if (el.remoteProvider && statuses[el.componentStatus] >= 1) {
+				if (el.remoteProvider && statuses[el.componentStatus]) {
 					providers.add(el);
 				}
 			}
@@ -1253,15 +1303,15 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 			this.componentStatus = 'beforeReady';
 
 			this.lfc.execCbAfterComponentReady(() => {
+				this.componentStatus = 'ready';
+
 				if (this.beforeReadyListeners > 1) {
 					this.nextTick().then(() => {
 						this.beforeReadyListeners = 0;
-						this.componentStatus = 'ready';
 						this.emit('initLoad', get(), silent);
 					});
 
 				} else {
-					this.componentStatus = 'ready';
 					this.emit('initLoad', get(), silent);
 				}
 			});
@@ -1776,5 +1826,5 @@ export abstract class iBlockDecorator extends iBlock {
 }
 
 function defaultI18n(): string {
-	return (this.$root.i18n || GLOBAL.i18n).apply(this.$root, arguments);
+	return (this.$root.i18n || ((i18n))).apply(this.$root, arguments);
 }

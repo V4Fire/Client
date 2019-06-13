@@ -66,7 +66,7 @@ let
 export default class bSelect<
 	V extends Value = Value,
 	FV extends FormValue = FormValue,
-	D extends Dictionary = Dictionary
+	D extends object = Dictionary
 // @ts-ignore
 > extends bInput<V, FV, D> implements iOpenToggle {
 	/** @override */
@@ -129,7 +129,10 @@ export default class bSelect<
 
 	/** @inheritDoc */
 	static readonly mods: ModsDecl = {
-		...iOpenToggle.mods
+		opened: [
+			...iOpenToggle.mods.opened,
+			['false']
+		]
 	};
 
 	/** @override */

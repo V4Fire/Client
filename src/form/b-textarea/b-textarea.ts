@@ -37,7 +37,7 @@ export const
 export default class bTextarea<
 	V extends Value = Value,
 	FV extends FormValue = FormValue,
-	D extends Dictionary = Dictionary
+	D extends object = Dictionary
 > extends bInput<V, FV, D> {
 	/**
 	 * Row count for extending

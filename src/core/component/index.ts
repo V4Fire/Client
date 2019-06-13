@@ -46,7 +46,7 @@ export * from 'core/component/create/functional';
 export * from 'core/component/create/composite';
 
 export { PARENT } from 'core/component/create/inherit';
-export { customWatcherRgxp, runHook } from 'core/component/create/helpers';
+export { customWatcherRgxp, runHook, getFieldRealInfo } from 'core/component/create/helpers';
 export { default as globalEvent, reset, ResetType } from 'core/component/event';
 export { prop, field, system, p, hook, watch, paramsFactory } from 'core/component/decorators';
 export {
@@ -77,11 +77,17 @@ const
 	minimalCtxCache = Object.createDict(),
 	tplCache = Object.createDict();
 
-const mountHooks = {
+const beforeMountHooks = {
 	beforeCreate: true,
 	beforeDataCreate: true,
 	created: true,
 	beforeMount: true
+};
+
+const mountedHooks = {
+	mounted: true,
+	updated: true,
+	activated: true
 };
 
 /**
@@ -125,8 +131,42 @@ export function component(params?: ComponentParams): Function {
 
 		if (target.mods) {
 			for (let o = target.mods, keys = Object.keys(o), i = 0; i < keys.length; i++) {
-				const key = keys[i];
-				mods[key.camelize(false)] = o[key];
+				const
+					key = keys[i],
+					modVal = o[key],
+					res = <unknown[]>[];
+
+				if (modVal) {
+					const
+						cache = new Map();
+
+					let
+						active;
+
+					for (let i = 0; i < modVal.length; i++) {
+						const
+							val = modVal[i];
+
+						if (Object.isArray(val)) {
+							if (active !== undefined) {
+								cache.set(active, active);
+							}
+
+							active = String(val[0]);
+							cache.set(active, [active]);
+
+						} else {
+							const v = String(val);
+							cache.set(v, v);
+						}
+					}
+
+					for (let o = cache.values(), el = o.next(); !el.done; el = o.next()) {
+						res.push(el.value);
+					}
+				}
+
+				mods[key.camelize(false)] = res;
 			}
 		}
 
@@ -197,7 +237,7 @@ export function component(params?: ComponentParams): Function {
 								ctx = this || rootCtx;
 
 							const
-								attrOpts = Object.isObject(opts) && opts.attrs || {},
+								attrOpts = Object.isSimpleObject(opts) && opts.attrs || {},
 								tagName = attrOpts['v4-composite'] || tag,
 								renderKey = attrOpts['render-key'] != null ?
 									`${tagName}:${attrOpts['global-name']}:${attrOpts['render-key']}` : '';
@@ -287,8 +327,18 @@ export function component(params?: ComponentParams): Function {
 								Object.defineProperty(ctx.$refs, ref, {
 									configurable: true,
 									enumerable: true,
-									// @ts-ignore (access)
-									get: () => rootCtx.$refs[`${ref}:${ctx.componentId}`]
+									get: () => {
+										const
+											// @ts-ignore (access)
+											r = rootCtx.$refs,
+											l = r[`${ref}:${ctx._componentId}`] || r[`${ref}:${ctx.componentId}`];
+
+										if (l) {
+											return l;
+										}
+
+										return vnode && (vnode.fakeContext || vnode.elm);
+									}
 								});
 							}
 
@@ -322,22 +372,62 @@ export function component(params?: ComponentParams): Function {
 							// @ts-ignore (access)
 							rootCtx.$createElement = rootCtx._c = createElement;
 
+							const
+								// @ts-ignore (access)
+								forEach = rootCtx._l;
+
 							// @ts-ignore (access)
-							const forEach = rootCtx._l;
+							rootCtx._u = (fns, res) => {
+								res = res || {};
+
+								for (let i = 0; i < fns.length; i++) {
+									if (Array.isArray(fns[i])) {
+										// @ts-ignore (access)
+										rootCtx._u(fns[i], res);
+
+									} else {
+										res[fns[i].key] = function (): VNode[] {
+											const
+												children = fns[i].fn.apply(this, arguments);
+
+											if (tasks.length) {
+												for (let i = 0; i < tasks.length; i++) {
+													tasks[i](children);
+												}
+
+												tasks = [];
+											}
+
+											return children;
+										};
+									}
+								}
+
+								return res;
+							};
 
 							// @ts-ignore (access)
 							rootCtx._l = (obj, cb) => {
 								const
 									res = forEach(obj, cb);
 
-								if (obj[asyncLabel]) {
+								if (obj && obj[asyncLabel]) {
 									tasks.push((vnode) => {
 										const
-											ctx = vnode.fakeContext = vnode.context,
-											hook = mountHooks[ctx.hook] ? 'mounted' : 'updated',
-											hooks = ctx.meta.hooks[hook];
+											isTemplateParent = Object.isArray(vnode);
 
-										const fn = () => {
+										if (isTemplateParent && !vnode.length) {
+											return;
+										}
+
+										const
+											ctx = (isTemplateParent ? vnode[0] : vnode).context;
+
+										if (!isTemplateParent) {
+											vnode.fakeContext = ctx;
+										}
+
+										const fn = () => ctx.$async.setTimeout(() => {
 											obj[asyncLabel]((obj, p = {}) => {
 												const
 													els = <Node[]>[],
@@ -345,9 +435,8 @@ export function component(params?: ComponentParams): Function {
 													nodes = <VNode[]>[];
 
 												const
-													ctx = vnode.context,
-													parent = vnode.elm,
-													hook = ctx.hook;
+													parent = (isTemplateParent ? vnode[0].elm.parentNode : vnode.elm),
+													baseHook = ctx.hook;
 
 												ctx.hook = 'beforeUpdate';
 												ctx.renderGroup = p.renderGroup;
@@ -413,13 +502,19 @@ export function component(params?: ComponentParams): Function {
 													.catch(stderr);
 
 												patchRefs(ctx);
-												ctx.hook = hook;
+												ctx.hook = baseHook;
 
 												return els;
 											});
-										};
+										}, 0, {group: 'asyncComponents'});
 
-										hooks.push({fn, once: true});
+										if (mountedHooks[ctx.hook]) {
+											ctx.nextTick(fn);
+
+										} else {
+											const hooks = ctx.meta.hooks[beforeMountHooks[ctx.hook] ? 'mounted' : 'updated'];
+											hooks.push({fn, once: true});
+										}
 									});
 								}
 
@@ -518,7 +613,12 @@ export function component(params?: ComponentParams): Function {
 			rootComponents[name] = new Promise(obj);
 
 		} else {
-			ComponentDriver.component(name, obj);
+			const
+				c = ComponentDriver.component(name, obj);
+
+			if (Object.isPromise(c)) {
+				c.catch(stderr);
+			}
 		}
 
 		if (!Object.isBoolean(p.functional)) {

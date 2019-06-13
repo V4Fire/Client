@@ -40,8 +40,7 @@ const
 	glob = require('glob');
 
 const
-	{validators, resolve} = require('@pzlr/build-core'),
-	{attachVIf} = include('build/filters/helpers');
+	{validators, resolve} = require('@pzlr/build-core');
 
 const
 	resources = [resolve.blockSync(), ...resolve.dependencies],
@@ -50,8 +49,8 @@ const
 
 const
 	componentRgxp = /@component\(([^@]*?)\)\n+\s*export\s+/,
-	componentClassRgxp = /^\s*export\s+default\s+(?:abstract\s+)?class\s+(([\s\S]*?)\s+extends\s+[\s\S]*?)(?:\s+implements\s+[^{]*|\s*)\{/m,
-	propsRgxp = /^(\t+)@prop\s*\([^@]+?\)+\n+\1([ \w$]+)(?:[\?!]?:\s*[ \w|&$?()\[\]{}<>'"`:.]+?)?\s*(?:=|;$)/gm;
+	componentClassRgxp = /^\s*export\s+default\s+(?:abstract\s+)?class\s+(([\s\S]*?)\s+extends\s+[\s\S]*?)(?:\s+implements\s+[^{]*|\s*){/m,
+	propsRgxp = /^(\t+)@prop\s*\([^@]+?\)+\n+\1([ \w$]+)(?:[?!]?:\s*[ \w|&$?()[\]{}<>'"`:.]+?)?\s*(?:=|;$)/gm;
 
 const
 	genericRgxp = /<.*|\s.*/g,

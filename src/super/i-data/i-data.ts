@@ -52,6 +52,19 @@ import Provider, {
 
 } from 'core/data';
 
+export {
+
+	Socket,
+	RequestQuery,
+	RequestBody,
+	RequestResponseObject,
+	RequestError,
+	Response,
+	ModelMethods,
+	ProviderParams
+
+} from 'core/data';
+
 //#endif
 
 export * from 'super/i-data/modules/interface';
@@ -61,7 +74,7 @@ export const
 	$$ = symbolGenerator();
 
 @component({functional: null})
-export default abstract class iData<T extends Dictionary = Dictionary> extends iMessage implements iProgress {
+export default abstract class iData<T extends object = Dictionary> extends iMessage implements iProgress {
 	/**
 	 * Data provider name
 	 */
@@ -199,10 +212,15 @@ export default abstract class iData<T extends Dictionary = Dictionary> extends i
 					this.lfc.execCbAtTheRightTime(() => this.db = db, label);
 
 				} else {
-					this.get(<RequestQuery>p[0], p[1]).then((data) => {
+					return this.get(<RequestQuery>p[0], p[1]).then((data) => {
 						const db = this.convertDataToDB<T>(data);
 						this.lfc.execCbAtTheRightTime(() => this.db = db, label);
-					}, stderr);
+						return super.initLoad(() => this.db, silent);
+
+					}, (err) => {
+						stderr(err);
+						return super.initLoad(() => this.db, silent);
+					});
 				}
 
 			} else if (this.db) {
@@ -327,7 +345,7 @@ export default abstract class iData<T extends Dictionary = Dictionary> extends i
 			args = arguments.length > 0 ? [data, params] : this.getDefaultRequestParams('peek');
 
 		if (args) {
-			return this.createRequest('peek', ...args);
+			return this.createRequest('peek', ...<any>args);
 		}
 
 		return Promise.resolve(undefined);
@@ -344,7 +362,7 @@ export default abstract class iData<T extends Dictionary = Dictionary> extends i
 			args = arguments.length > 0 ? [data, params] : this.getDefaultRequestParams('get');
 
 		if (args) {
-			return this.createRequest('get', ...args);
+			return this.createRequest('get', ...<any>args);
 		}
 
 		return Promise.resolve(undefined);
@@ -361,7 +379,7 @@ export default abstract class iData<T extends Dictionary = Dictionary> extends i
 			args = arguments.length > 0 ? [data, params] : this.getDefaultRequestParams('post');
 
 		if (args) {
-			return this.createRequest('post', ...args);
+			return this.createRequest('post', ...<any>args);
 		}
 
 		return Promise.resolve(undefined);
@@ -378,7 +396,7 @@ export default abstract class iData<T extends Dictionary = Dictionary> extends i
 			args = arguments.length > 0 ? [data, params] : this.getDefaultRequestParams('add');
 
 		if (args) {
-			return this.createRequest('add', ...args);
+			return this.createRequest('add', ...<any>args);
 		}
 
 		return Promise.resolve(undefined);
@@ -395,7 +413,7 @@ export default abstract class iData<T extends Dictionary = Dictionary> extends i
 			args = arguments.length > 0 ? [data, params] : this.getDefaultRequestParams('upd');
 
 		if (args) {
-			return this.createRequest('upd', ...args);
+			return this.createRequest('upd', ...<any>args);
 		}
 
 		return Promise.resolve(undefined);
@@ -412,7 +430,7 @@ export default abstract class iData<T extends Dictionary = Dictionary> extends i
 			args = arguments.length > 0 ? [data, params] : this.getDefaultRequestParams('del');
 
 		if (args) {
-			return this.createRequest('del', ...args);
+			return this.createRequest('del', ...<any>args);
 		}
 
 		return Promise.resolve(undefined);
@@ -532,7 +550,7 @@ export default abstract class iData<T extends Dictionary = Dictionary> extends i
 				val = value[key],
 				oldVal = oldValue && oldValue[key];
 
-			if (val && oldVal && val.toSource() === oldVal.toSource()) {
+			if (val && oldVal && Object.fastCompare(val, oldVal)) {
 				continue;
 			}
 
@@ -762,7 +780,7 @@ export default abstract class iData<T extends Dictionary = Dictionary> extends i
 	 * @param retry - retry function
 	 */
 	protected onRequestError<T = unknown>(err: Error | RequestError, retry: () => Promise<CanUndef<T>>): void {
-		this.emit('error', err, retry);
+		this.emitError('error', err, retry);
 	}
 
 	/**

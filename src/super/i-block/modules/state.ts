@@ -20,7 +20,8 @@ import { Hooks } from 'core/component';
 
 export type ConverterCallType =
 	'component' |
-	'remote';
+	'remote' |
+	'remoteCheck';
 
 const
 	$$ = symbolGenerator();
@@ -88,7 +89,7 @@ export default class State {
 	 */
 	protected get async(): Async {
 		// @ts-ignore
-		return this.component.$async;
+		return this.component.async;
 	}
 
 	/**

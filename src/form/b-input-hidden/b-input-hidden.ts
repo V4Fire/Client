@@ -18,7 +18,7 @@ export * from  'super/i-input/i-input';
 export default class bInputHidden<
 	V extends Value = Value,
 	FV extends FormValue = FormValue,
-	D extends Dictionary = Dictionary
+	D extends object = Dictionary
 > extends iInput<V, FV, D> {
 	/** @override */
 	protected readonly $refs!: {input: HTMLInputElement};

@@ -98,7 +98,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 			if (args.length) {
 				args = args.map((el) => el.replace(/^\.?/, ''));
 
-				if (pathVal) {
+				if (pathVal && !/^(\w+:)?\/\//.test(args[0])) {
 					return concatUrls(pathVal, ...args);
 				}
 
@@ -180,7 +180,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	},
 
 	autoprefixer() {
-		return {};
+		return {remove: false};
 	},
 
 	uglify() {
@@ -194,7 +194,8 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 			'core/kv-storage': true,
 			'core/helpers': true,
 			'core/browser': true,
-			'core/analytics': true
+			'core/analytics': true,
+			'directives/in-view': true
 		};
 	},
 

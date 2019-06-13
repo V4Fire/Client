@@ -9,7 +9,6 @@
 import symbolGenerator from 'core/symbol';
 import { WrappedFunction } from 'core/async';
 
-import iTheme from 'traits/i-theme/i-theme';
 import iVisible from 'traits/i-visible/i-visible';
 
 import iData, { component, prop, field, system, watch, hook, p, Statuses, ModsDecl } from 'super/i-data/i-data';
@@ -33,7 +32,7 @@ const
 	$$ = symbolGenerator();
 
 @component({inheritMods: false})
-export default abstract class iPage<T extends Dictionary = Dictionary> extends iData<T> implements iTheme, iVisible {
+export default abstract class iPage<T extends object = Dictionary> extends iData<T> implements iVisible {
 	/** @override */
 	readonly needReInit: boolean = true;
 
@@ -75,7 +74,6 @@ export default abstract class iPage<T extends Dictionary = Dictionary> extends i
 
 	/** @inheritDoc */
 	static readonly mods: ModsDecl = {
-		...iTheme.mods,
 		...iVisible.mods
 	};
 

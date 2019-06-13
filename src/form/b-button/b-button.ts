@@ -12,7 +12,6 @@ import 'core/data';
 import bForm from 'form/b-form/b-form';
 //#endif
 
-import iTheme from 'traits/i-theme/i-theme';
 import iAccess from 'traits/i-access/i-access';
 import iVisible from 'traits/i-visible/i-visible';
 import iWidth from 'traits/i-width/i-width';
@@ -53,8 +52,8 @@ export type ButtonType<T extends string = any> =
 	}
 })
 
-export default class bButton<T extends Dictionary = Dictionary> extends iData<T>
-	implements iTheme, iAccess, iOpenToggle, iIcon, iVisible, iWidth, iSize {
+export default class bButton<T extends object = Dictionary> extends iData<T>
+	implements iAccess, iOpenToggle, iIcon, iVisible, iWidth, iSize {
 
 	/** @override */
 	readonly dataProvider: string = 'Provider';
@@ -148,6 +147,16 @@ export default class bButton<T extends Dictionary = Dictionary> extends iData<T>
 
 	/** @inheritDoc */
 	static readonly mods: ModsDecl = {
+		...iAccess.mods,
+		...iVisible.mods,
+		...iWidth.mods,
+		...iSize.mods,
+
+		opened: [
+			...iOpenToggle.mods.opened,
+			['false']
+		],
+
 		rounding: [
 			'none',
 			['small'],
@@ -157,15 +166,8 @@ export default class bButton<T extends Dictionary = Dictionary> extends iData<T>
 
 		upper: [
 			'true',
-			['false']
-		],
-
-		...iTheme.mods,
-		...iAccess.mods,
-		...iOpenToggle.mods,
-		...iVisible.mods,
-		...iWidth.mods,
-		...iSize.mods
+			'false'
+		]
 	};
 
 	/** @override */

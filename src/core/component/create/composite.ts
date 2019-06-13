@@ -187,10 +187,14 @@ export function createCompositeElement(vnode: VNode, ctx: ComponentInterface): V
 	const fakeCtx = Object.assign(Object.create(ctx), {
 		meta,
 		hook: 'beforeDataCreate',
-		componentStatusStore: 'unloaded',
 		instance: meta.instance,
 		componentName: meta.componentName,
 		$isFlyweight: true
+	});
+
+	Object.defineProperty(fakeCtx, 'componentStatusStore', {
+		...defProp,
+		value: 'unloaded'
 	});
 
 	addEventAPI(fakeCtx);
@@ -257,7 +261,8 @@ export function createCompositeElement(vnode: VNode, ctx: ComponentInterface): V
 	newVData.ref = vData.ref;
 	newVData.refInFor = vData.refInFor;
 
-	newVData.on = vData.nativeOn;
+	// tslint:disable-next-line:prefer-object-spread
+	newVData.on = Object.assign(newVData.on || {}, vData.nativeOn);
 	newVData.staticClass = (<string[]>[]).concat(newVData.staticClass || [], vData.staticClass).join(' ');
 	newVData.class = (<string[]>[]).concat(newVData.class || [], vData.class);
 

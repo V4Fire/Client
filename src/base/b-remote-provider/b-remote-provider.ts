@@ -14,7 +14,7 @@ export const
 	$$ = symbolGenerator();
 
 @component()
-export default class bRemoteProvider<T extends Dictionary = Dictionary> extends iData<T> {
+export default class bRemoteProvider<T extends object = Dictionary> extends iData<T> {
 	/** @override */
 	readonly remoteProvider: boolean = true;
 
@@ -47,7 +47,7 @@ export default class bRemoteProvider<T extends Dictionary = Dictionary> extends 
 			return super.onRequestError(err, retry);
 		}
 
-		this.emit('error', err, retry);
+		this.emitError('error', err, retry);
 	}
 
 	/**
@@ -86,13 +86,13 @@ export default class bRemoteProvider<T extends Dictionary = Dictionary> extends 
 		}
 
 		if (needUpdate) {
-			p.lfc.execCbAtTheRightTime(() => {
+			p.lfc.execCbAtTheRightTime(this.async.proxy(() => {
 				action && action();
 				this.emit('change', value);
 
 			}, {
 				label: $$.syncDBWatcher
-			});
+			}));
 		}
 	}
 

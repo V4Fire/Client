@@ -25,7 +25,7 @@ $p = {
 b-button extends i-data
 	i-access({helpers: $p.accessHelpers})
 	i-visible({helpers: $p.visibleHelpers})
-	i-width({helpers: $p.widthHelpers, selector: ('&__button' '&__value')})
+	i-width({helpers: $p.widthHelpers, selector: ("" "&__button" "&__value")})
 	i-size({helpers: $p.sizeHelpers})
 
 	display inline-block
@@ -39,15 +39,16 @@ b-button extends i-data
 	&__wrapper
 		display flex
 		box-sizing border-box
-		min-height 100%
 		width 100%
+		min-height 100%
 
 	&__button
-		border none
-		font-size 1em
 		font-family BASE_FONT
-		text-transform inherit
+		font-size 1em
 		text-align center
+		text-transform inherit
+
+		border none
 		cursor pointer
 
 		&:focus
@@ -57,8 +58,8 @@ b-button extends i-data
 			{$p.onActive}
 
 	&__wrapper
-		align-items center
 		justify-content center
+		align-items center
 
 	&__cell
 	&_progress_true &__progress

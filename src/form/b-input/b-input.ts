@@ -45,7 +45,7 @@ const
 export default class bInput<
 	V extends Value = Value,
 	FV extends FormValue = FormValue,
-	D extends Dictionary = Dictionary
+	D extends object = Dictionary
 > extends iInput<V, FV, D> implements iWidth, iSize, iIcon {
 	/** @override */
 	@prop({type: String, required: false})
@@ -219,6 +219,9 @@ export default class bInput<
 
 	/** @inheritDoc */
 	static readonly mods: ModsDecl = {
+		...iWidth.mods,
+		...iSize.mods,
+
 		rounding: [
 			'none',
 			'small',
@@ -229,10 +232,7 @@ export default class bInput<
 		empty: [
 			'true',
 			'false'
-		],
-
-		...iWidth.mods,
-		...iSize.mods
+		]
 	};
 
 	/** @override */

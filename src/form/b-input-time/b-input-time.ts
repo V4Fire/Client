@@ -23,7 +23,7 @@ export const
 export default class bInputTime<
 	V extends Value = Value,
 	FV extends FormValue = FormValue,
-	D extends Dictionary = Dictionary
+	D extends object = Dictionary
 > extends bInput<V, FV, D> {
 	/** @override */
 	readonly placeholder: string = '__:__';

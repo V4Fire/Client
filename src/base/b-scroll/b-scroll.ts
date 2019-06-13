@@ -9,9 +9,7 @@
 import Range from 'core/range';
 import symbolGenerator from 'core/symbol';
 
-import iTheme from 'traits/i-theme/i-theme';
 import iVisible from 'traits/i-visible/i-visible';
-
 import iBlock, { component, prop, system, p, wait, watch, ModsDecl } from 'super/i-block/i-block';
 import {
 
@@ -32,7 +30,7 @@ export const
 	$$ = symbolGenerator();
 
 @component({functional: {}})
-export default class bScroll extends iBlock implements iTheme, iVisible {
+export default class bScroll extends iBlock implements iVisible {
 	/**
 	 * If true, then the content size will be extended with scroll bars
 	 * ('width' or 'height' for extending one of sides)
@@ -94,17 +92,16 @@ export default class bScroll extends iBlock implements iTheme, iVisible {
 
 	/** @inheritDoc */
 	static readonly mods: ModsDecl = {
+		...iVisible.mods,
+
 		theme: [
-			...iTheme.mods.theme,
 			'light'
 		],
 
 		scroll: [
 			'true',
 			['false']
-		],
-
-		...iVisible.mods
+		]
 	};
 
 	/**

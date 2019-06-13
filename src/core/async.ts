@@ -47,12 +47,12 @@ export enum ClientLinkNames {
 	animationFramePromise
 }
 
-export type ClientLink = keyof typeof ClientLinkNames;
-export type Link = SuperLink | keyof typeof ClientLinkNames;
-export type LinkNamesList = SuperLinkNamesList & Record<ClientLink, ClientLink>;
-
 const
-	linkNamesDictionary = <LinkNamesList>{...Super.linkNames, ...Object.convertEnumToDict(ClientLinkNames)};
+	linkNamesDictionary = {...Super.linkNames, ...Object.convertEnumToDict(ClientLinkNames)};
+
+export type ClientLink = keyof typeof ClientLinkNames;
+export type Link = SuperLink | ClientLink;
+export type LinkNamesList = typeof linkNamesDictionary;
 
 export default class Async<CTX extends object = Async<any>> extends Super<CTX> {
 	/** @override */
@@ -69,7 +69,7 @@ export default class Async<CTX extends object = Async<any>> extends Super<CTX> {
 	 * @param fn - callback function
 	 * @param [element] - link for the element
 	 */
-	requestAnimationFrame<T = unknown>(fn: AnimationFrameCb<T, CTX>, element?: Element): number;
+	requestAnimationFrame<T = unknown>(fn: AnimationFrameCb<T, CTX>, element?: Element): Nullable<number>;
 
 	/**
 	 * Wrapper for requestAnimationFrame
@@ -82,8 +82,12 @@ export default class Async<CTX extends object = Async<any>> extends Super<CTX> {
 	 *   *) [group] - group name for the task
 	 *   *) [onClear] - clear handler
 	 */
-	requestAnimationFrame<T = unknown>(fn: AnimationFrameCb<T, CTX>, params: AsyncRequestAnimationFrameOpts<CTX>): number;
-	requestAnimationFrame<T>(fn: AnimationFrameCb<T, CTX>, p: any): number {
+	requestAnimationFrame<T = unknown>(
+		fn: AnimationFrameCb<T, CTX>,
+		params: AsyncRequestAnimationFrameOpts<CTX>
+	): Nullable<number>;
+
+	requestAnimationFrame<T>(fn: AnimationFrameCb<T, CTX>, p: any): Nullable<number> {
 		const
 			isObj = Object.isObject(p);
 
@@ -100,6 +104,8 @@ export default class Async<CTX extends object = Async<any>> extends Super<CTX> {
 
 	/**
 	 * Wrapper for cancelAnimationFrame
+	 *
+	 * @alias
 	 * @param [id] - operation id (if not defined will be get all handlers)
 	 */
 	cancelAnimationFrame(id?: number): this;
@@ -112,6 +118,23 @@ export default class Async<CTX extends object = Async<any>> extends Super<CTX> {
 	 */
 	cancelAnimationFrame(params: ClearOptsId<number>): this;
 	cancelAnimationFrame(p: any): this {
+		return this.clearAnimationFrame(p);
+	}
+
+	/**
+	 * Wrapper for cancelAnimationFrame
+	 * @param [id] - operation id (if not defined will be get all handlers)
+	 */
+	clearAnimationFrame(id?: number): this;
+
+	/**
+	 * @param params - parameters for the operation:
+	 *   *) [id] - operation id
+	 *   *) [label] - label for the task
+	 *   *) [group] - group name for the task
+	 */
+	clearAnimationFrame(params: ClearOptsId<number>): this;
+	clearAnimationFrame(p: any): this {
 		return this
 			.clearAsync(p, this.linkNames.animationFrame)
 			.clearAsync(p, this.linkNames.animationFramePromise);
@@ -206,6 +229,7 @@ export default class Async<CTX extends object = Async<any>> extends Super<CTX> {
 		return new Promise((resolve, reject) => {
 			this.requestAnimationFrame(resolve, {
 				...isObj ? p : undefined,
+				promise: true,
 				element: isObj ? p.element : p,
 				onClear: this.onPromiseClear(resolve, reject)
 			});
@@ -218,7 +242,7 @@ export default class Async<CTX extends object = Async<any>> extends Super<CTX> {
 	 * @param el
 	 * @param [useCapture]
 	 */
-	dnd(el: Element, useCapture?: boolean): string | symbol;
+	dnd(el: Element, useCapture?: boolean): Nullable<string>;
 
 	/**
 	 * @param el
@@ -232,8 +256,8 @@ export default class Async<CTX extends object = Async<any>> extends Super<CTX> {
 	 *   *) [onDrag]
 	 *   *) [onDragEnd]
 	 */
-	dnd<T = unknown>(el: Element, params: AsyncDnDOpts<T, CTX>): string | symbol;
-	dnd<T>(el: Element, params?: boolean | AsyncDnDOpts<T, CTX>): string | symbol {
+	dnd<T = unknown>(el: Element, params: AsyncDnDOpts<T, CTX>): Nullable<string>;
+	dnd<T>(el: Element, params?: boolean | AsyncDnDOpts<T, CTX>): Nullable<string> {
 		let
 			useCapture,
 			p!: AsyncDnDOpts<CTX> & AsyncCbOpts<CTX>;
@@ -248,6 +272,10 @@ export default class Async<CTX extends object = Async<any>> extends Super<CTX> {
 		}
 
 		p.group = p.group || `dnd.${Math.random()}`;
+
+		if (this.locked) {
+			return null;
+		}
 
 		const
 			clearHandlers = p.onClear = (<any[]>[]).concat(p.onClear || []);

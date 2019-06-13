@@ -7,6 +7,8 @@
  */
 
 @import "super/i-data/i-data.styl"
+@import "traits/i-visible/i-visible.styl"
+@import "traits/i-width/i-width.styl"
 
 $p = {
 	zIndexPos: overall
@@ -16,10 +18,12 @@ $p = {
 
 b-window extends i-data
 	i-visible({helpers: $p.visibleHelpers})
-	i-width({helpers: $p.widthHelpers, selector: ('&__window')})
+	i-width({helpers: $p.widthHelpers, selector: ("&__window")})
 
-	absolute top 0 left 0
-	z-index-pos $p.zIndexPos
+	zIndex($p.zIndexPos)
+	top 0
+	left 0
+
 	min-width 100%
 
 	&__back
@@ -28,18 +32,27 @@ b-window extends i-data
 
 	&__wrapper
 		position relative
-		z-index-pos layer 1
+		zIndex(layer, 1)
+
 		display flex
 		justify-content center
+
 		size 100% 100vh
 
 	&__window
+		align-self center
 		width $p.width
 		max-width 100%
-		align-self center
 
 	&__title
 		display block
 
 	&__control
 		display inline-block
+
+	&_position
+		&_absolute
+			position absolute
+
+		&_fixed
+			position fixed

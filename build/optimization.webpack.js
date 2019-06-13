@@ -69,11 +69,10 @@ module.exports = async function ({buildId, plugins}) {
 			new TerserPlugin({
 				parallel: true,
 				terserOptions: inherit(config.uglify(), {
-					ecma: 6,
 					safari10: true,
 					warnings: false,
 					ecma: 6,
-					keep_fnames: true,
+					keep_fnames: config.es() !== 'ES5' ? false : true,
 					keep_classnames: true,
 
 					output: {

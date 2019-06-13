@@ -8,7 +8,7 @@
 
 import symbolGenerator from 'core/symbol';
 import iSize, { SizeDictionary } from 'traits/i-size/i-size';
-import iInput, { component, prop, watch, ModsDecl } from 'super/i-input/i-input';
+import iInput, { component, prop, ModsDecl } from 'super/i-input/i-input';
 
 export { SizeDictionary };
 export * from 'super/i-input/i-input';
@@ -29,7 +29,7 @@ export const
 export default class bCheckbox<
 	V extends Value = Value,
 	FV extends FormValue = FormValue,
-	D extends Dictionary = Dictionary
+	D extends object = Dictionary
 > extends iInput<V, FV, D> implements iSize {
 	/** @override */
 	@prop({type: Boolean, required: false})
@@ -68,12 +68,12 @@ export default class bCheckbox<
 
 	/** @inheritDoc */
 	static readonly mods: ModsDecl = {
+		...iSize.mods,
+
 		checked: [
 			'true',
 			'false'
-		],
-
-		...iSize.mods
+		]
 	};
 
 	/** @override */

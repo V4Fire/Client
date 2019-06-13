@@ -24,7 +24,7 @@ import bWindow, {
 export * from 'base/b-window/b-window';
 
 @component()
-export default class bWindowForm<T extends Dictionary = Dictionary> extends bWindow<T> {
+export default class bWindowForm<T extends object = Dictionary> extends bWindow<T> {
 	/** @override */
 	@prop({default: (body, isEmpty) => this.stage !== 'remove' && !isEmpty})
 	readonly requestFilter: RequestFilter = false;

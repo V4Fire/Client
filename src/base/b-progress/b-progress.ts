@@ -8,7 +8,6 @@
 
 import symbolGenerator from 'core/symbol';
 
-import iTheme from 'traits/i-theme/i-theme';
 import iProgress from 'traits/i-progress/i-progress';
 import iVisible from 'traits/i-visible/i-visible';
 
@@ -19,12 +18,18 @@ export const
 	$$ = symbolGenerator();
 
 @component()
-export default class bProgress extends iBlock implements iTheme, iProgress, iVisible {
+export default class bProgress extends iBlock implements iProgress, iVisible {
 	/**
 	 * Initial progress value store
 	 */
 	@prop({type: Number, required: false})
 	readonly valueProp?: number;
+
+	/**
+	 * If true, then the component value will be reset after complete
+	 */
+	@prop(Boolean)
+	readonly resetOnComplete: boolean = false;
 
 	/**
 	 * Progress value
@@ -40,29 +45,24 @@ export default class bProgress extends iBlock implements iTheme, iProgress, iVis
 	 * @emits complete()
 	 */
 	set value(value: CanUndef<number>) {
-		const
-			label = {label: $$.complete};
-
 		(async () => {
 			this.field.set('valueStore', value);
 
 			if (value === 100) {
 				try {
-					await this.async.sleep(0.8.second(), label);
-					this.field.set('valueStore', 0);
 					this.emit('complete');
 
-				} catch {}
+					if (this.resetOnComplete) {
+						this.field.set('valueStore', 0);
+					}
 
-			} else {
-				this.async.clearTimeout(label);
+				} catch {}
 			}
 		})();
 	}
 
 	/** @inheritDoc */
 	static readonly mods: ModsDecl = {
-		...iTheme.mods,
 		...iProgress.mods,
 		...iVisible.mods
 	};

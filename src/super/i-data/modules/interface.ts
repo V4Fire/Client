@@ -16,20 +16,8 @@ import {
 	Socket,
 	RequestQuery,
 	RequestBody,
-	RequestResponseObject,
-	RequestError,
 	ModelMethods,
 	CreateRequestOpts as BaseCreateRequestOpts
-
-} from 'core/data';
-
-export {
-
-	ModelMethods,
-	RequestQuery,
-	RequestBody,
-	RequestResponseObject,
-	RequestError
 
 } from 'core/data';
 

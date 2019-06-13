@@ -32,15 +32,16 @@ b-checkbox extends i-input
 		size $p.width
 		cursor pointer
 
-		&:after
-			content ""
+		&::after
 			position absolute
+
+			content ""
 			display none
 
-	&_checked_true &__box:after
-		display block
-		left ($p.width / 2.5)em
+	&_checked_true &__box::after
 		top ($p.width / 6)em
-		width ($p.width / 6)em
-		height ($p.width / 2)em
+		left ($p.width / 2.5)em
+
+		display block
+		size ($p.width / 6)em ($p.width / 2)em
 		transform rotate(45deg)

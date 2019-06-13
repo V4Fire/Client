@@ -92,12 +92,18 @@ export function provider(target: Function): void;
 export function provider(nmsOrFn: Function | string): Function | void {
 	if (Object.isString(nmsOrFn)) {
 		return (target) => {
-			providers[`${nmsOrFn}.${target.name}`] = target;
+			const nms = target[$$.namespace] = `${nmsOrFn}.${target.name}`;
+			providers[nms] = target;
 		};
 	}
 
 	providers[nmsOrFn.name] = <typeof Provider>nmsOrFn;
 }
+
+const queryMethods = {
+	GET: true,
+	HEAD: true
+};
 
 /**
  * Base data provider
@@ -267,7 +273,7 @@ export default class Provider {
 	 */
 	constructor(params: ProviderParams = {}) {
 		const
-			nm = this.constructor.name,
+			nm = this.constructor[$$.namespace],
 			key = this.cacheId = `${nm}:${JSON.stringify(params)}`,
 			cacheVal = instanceCache[key];
 
@@ -310,7 +316,7 @@ export default class Provider {
 	 * Returns an object with authentication params
 	 * @param params - additional parameters
 	 */
-	getAuthParams(params?: Dictionary): Dictionary {
+	async getAuthParams(params?: Dictionary): Promise<Dictionary> {
 		return {};
 	}
 
@@ -358,7 +364,7 @@ export default class Provider {
 					onClear
 				});
 
-				socket.once('connect', () => {
+				socket.once('connect', async () => {
 					socket
 						.once('authenticated', () => {
 							resolve(socket);
@@ -371,7 +377,7 @@ export default class Provider {
 							$e.emit(`${url}Reject`, err);
 						})
 
-						.emit('authentication', this.getAuthParams(params));
+						.emit('authentication', await this.getAuthParams(params));
 				});
 			});
 		}
@@ -530,7 +536,7 @@ export default class Provider {
 		const req = this.request(url, this.resolver, this.mergeToOpts('get', {
 			externalRequest: this.externalRequest,
 			...opts,
-			query,
+			[queryMethods[method] ? 'query' : 'body']: query,
 			method
 		}));
 
@@ -559,7 +565,7 @@ export default class Provider {
 
 		const req = this.request(url, this.resolver, this.mergeToOpts('peek', {
 			...opts,
-			query,
+			[queryMethods[method] ? 'query' : 'body']: query,
 			method
 		}));
 

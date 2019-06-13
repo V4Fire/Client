@@ -6,7 +6,6 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import iTheme from 'traits/i-theme/i-theme';
 import iAccess from 'traits/i-access/i-access';
 import iVisible from 'traits/i-visible/i-visible';
 import iSize, { SizeDictionary } from 'traits/i-size/i-size';
@@ -22,8 +21,8 @@ export * from 'super/i-data/i-data';
 	}
 })
 
-export default class bLink<T extends Dictionary = Dictionary> extends iData<T>
-	implements iTheme, iAccess, iIcon, iVisible, iSize {
+export default class bLink<T extends object = Dictionary> extends iData<T>
+	implements iAccess, iIcon, iVisible, iSize {
 
 	/**
 	 * Link href
@@ -79,15 +78,14 @@ export default class bLink<T extends Dictionary = Dictionary> extends iData<T>
 
 	/** @inheritDoc */
 	static readonly mods: ModsDecl = {
-		underline: [
-			['true'],
-			'false'
-		],
-
-		...iTheme.mods,
 		...iAccess.mods,
 		...iVisible.mods,
-		...iSize.mods
+		...iSize.mods,
+
+		underline: [
+			'true',
+			'false'
+		]
 	};
 
 	/** @override */

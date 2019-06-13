@@ -8,7 +8,6 @@
 
 import symbolGenerator from 'core/symbol';
 
-import iTheme from 'traits/i-theme/i-theme';
 import iVisible from 'traits/i-visible/i-visible';
 import iIcon from 'traits/i-icon/i-icon';
 
@@ -32,8 +31,7 @@ export const
 	}
 })
 
-export default class bList<T extends Dictionary = Dictionary> extends iData<T>
-	implements iTheme, iIcon, iVisible {
+export default class bList<T extends object = Dictionary> extends iData<T> implements iIcon, iVisible {
 
 	/**
 	 * Initial component value
@@ -101,7 +99,6 @@ export default class bList<T extends Dictionary = Dictionary> extends iData<T>
 
 	/** @inheritDoc */
 	static readonly mods: ModsDecl = {
-		...iTheme.mods,
 		...iVisible.mods
 	};
 

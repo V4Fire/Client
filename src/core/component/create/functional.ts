@@ -90,7 +90,7 @@ const parentMountMap = {
  * @param [initProps] - if true, then component prop values will be force initialize
  * @param [safe] - if true, then will be using safe access to properties
  */
-export function createFakeCtx<T extends Dictionary = FunctionalCtx>(
+export function createFakeCtx<T extends object = FunctionalCtx>(
 	createElement: CreateElement,
 	renderCtx: RenderContext,
 	baseCtx: FunctionalCtx,
@@ -119,8 +119,14 @@ export function createFakeCtx<T extends Dictionary = FunctionalCtx>(
 		$options;
 
 	if (p && p.$options) {
-		const {filters, directives, components} = p.$options;
-		$options = {filters: {...filters}, directives: {...directives}, components: {...components}};
+		const
+			{filters, directives, components} = p.$options;
+
+		$options = {
+			filters: Object.create(filters),
+			directives: Object.create(directives),
+			components: Object.create(components)
+		};
 
 	} else {
 		$options = {filters: {}, directives: {}, components: {}};
@@ -298,9 +304,9 @@ export function createFakeCtx<T extends Dictionary = FunctionalCtx>(
 		}
 	}, stderr);
 
-	bindWatchers(<any>fakeCtx);
 	initDataObject(meta.fields, fakeCtx, instance, data);
 	runHook('beforeDataCreate', meta, fakeCtx).catch(stderr);
+	bindWatchers(fakeCtx);
 
 	for (let keys = Object.keys(data), i = 0; i < keys.length; i++) {
 		const
@@ -446,10 +452,12 @@ export function patchVNode(vnode: VNode, ctx: ComponentInterface, renderCtx: Ren
 			}
 		}
 
-		// @ts-ignore (access)
-		oldCtx && oldCtx.$destroy();
-
 		if (oldCtx) {
+			oldCtx._componentId = ctx.componentId;
+
+			// @ts-ignore (access)
+			oldCtx.$destroy();
+
 			const
 				props = ctx.$props,
 				oldProps = oldCtx.$props,
@@ -554,8 +562,27 @@ export function patchVNode(vnode: VNode, ctx: ComponentInterface, renderCtx: Ren
 		}
 
 		$a.setImmediate(mount, {
-			label: $$.mount
+			label: $$.mount,
+			// @ts-ignore (access)
+			onClear: () => ctx.$destroy()
 		});
+
+		for (let o = (<string[]>[]).concat(mountHooks, parentHook || []), i = 0; i < o.length; i++) {
+			const
+				hook = o[i],
+				filteredHooks = <unknown[]>[];
+
+			for (let list = hooks[hook], j = 0; j < list.length; j++) {
+				const
+					el = list[j];
+
+				if (el.fn[$$.self] !== ctx) {
+					filteredHooks.push(el);
+				}
+			}
+
+			hooks[hook] = filteredHooks;
+		}
 	};
 
 	deferMount[$$.self] = ctx;

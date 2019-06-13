@@ -6,7 +6,6 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import iTheme from 'traits/i-theme/i-theme';
 import iAccess from 'traits/i-access/i-access';
 import iVisible from 'traits/i-visible/i-visible';
 
@@ -48,8 +47,8 @@ export * from 'super/i-data/i-data';
 export default abstract class iInput<
 	V extends Value = Value,
 	FV extends FormValue = FormValue,
-	D extends Dictionary = Dictionary
-> extends iData<D> implements iTheme, iVisible, iAccess {
+	D extends object = Dictionary
+> extends iData<D> implements iVisible, iAccess {
 	/**
 	 * Initial component value
 	 */
@@ -96,7 +95,7 @@ export default abstract class iInput<
 	 * Component value type factory
 	 */
 	@prop(Function)
-	readonly dataType: Function = Any;
+	readonly dataType: Function = ((Any));
 
 	/**
 	 * Form value converter
@@ -256,6 +255,9 @@ export default abstract class iInput<
 
 	/** @inheritDoc */
 	static readonly mods: ModsDecl = {
+		...iAccess.mods,
+		...iVisible.mods,
+
 		form: [
 			['true'],
 			'false'
@@ -264,11 +266,7 @@ export default abstract class iInput<
 		valid: [
 			'true',
 			'false'
-		],
-
-		...iTheme.mods,
-		...iAccess.mods,
-		...iVisible.mods
+		]
 	};
 
 	/**

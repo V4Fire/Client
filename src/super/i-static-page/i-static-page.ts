@@ -39,16 +39,16 @@ export const
 
 @component()
 export default abstract class iStaticPage<
-	P extends Dictionary = Dictionary,
-	Q extends Dictionary = Dictionary,
-	M extends Dictionary = Dictionary,
-	D extends Dictionary = Dictionary
+	P extends object = Dictionary,
+	Q extends object = Dictionary,
+	M extends object = Dictionary,
+	D extends object = Dictionary
 > extends iPage<D> {
 	/**
 	 * Link to i18n function
 	 */
 	@system()
-	readonly i18n: typeof i18n = GLOBAL.i18n;
+	readonly i18n: typeof i18n = ((i18n));
 
 	/** @override */
 	@system(() => globalEvent)
@@ -109,7 +109,14 @@ export default abstract class iStaticPage<
 
 	/** @override */
 	set pageTitle(value: string) {
-		document.title = value;
+		if (value == null) {
+			return;
+		}
+
+		const div = document.createElement('div');
+		div.innerHTML = value;
+
+		document.title = div.textContent || '';
 	}
 
 	/**

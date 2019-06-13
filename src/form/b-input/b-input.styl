@@ -21,6 +21,7 @@ $p = {
 b-input extends i-input
 	i-width({helpers: $p.widthHelpers})
 	i-size({helpers: $p.sizeHelpers})
+
 	display inline-block
 
 	&__root-wrapper
@@ -43,16 +44,16 @@ b-input extends i-input
 		width 100%
 
 	&__input
-		margin 0
 		width 100%
+		overflow hidden
+		margin 0
+
+		font-family BASE_FONT
+		font-size 1em
+		text-overflow ellipsis
 
 		border none
 		background transparent
-		overflow hidden
-
-		font-size 1em
-		font-family BASE_FONT
-		text-overflow ellipsis
 
 		&::-ms-clear
 			display none
@@ -85,7 +86,7 @@ b-input extends i-input
 		pointer-events auto
 
 	&_focused_true
-		z-index-pos layer 1
+		zIndex(layer, 1)
 
 	&_focused_true &__valid-status
 		display none
