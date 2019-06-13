@@ -63,6 +63,9 @@ module.exports = async function ({buildId, plugins}) {
 	}
 
 	if (isProd) {
+		const
+			es = config.es();
+
 		options.minimizer = [
 			/* eslint-disable camelcase */
 
@@ -71,8 +74,8 @@ module.exports = async function ({buildId, plugins}) {
 				terserOptions: inherit(config.uglify(), {
 					safari10: true,
 					warnings: false,
-					ecma: 6,
-					keep_fnames: config.es() !== 'ES5' ? false : true,
+					ecma: es,
+					keep_fnames: es < 6,
 					keep_classnames: true,
 
 					output: {
