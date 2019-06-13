@@ -158,7 +158,7 @@ export default function createRouter(component: bRouter): Router {
 				return;
 			}
 
-			if (Object.isArray(ModuleDependencies.get(info.page))) {
+			if (info.meta && info.meta.remote === false || Object.isArray(ModuleDependencies.get(info.page))) {
 				resolve();
 				return;
 			}
