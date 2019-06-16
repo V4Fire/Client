@@ -78,14 +78,14 @@ export default class bLink<T extends object = Dictionary> extends iData<T>
 
 	/** @inheritDoc */
 	static readonly mods: ModsDecl = {
-		underline: [
-			['true'],
-			'false'
-		],
-
 		...iAccess.mods,
 		...iVisible.mods,
-		...iSize.mods
+		...iSize.mods,
+
+		underline: [
+			'true',
+			'false'
+		]
 	};
 
 	/** @override */

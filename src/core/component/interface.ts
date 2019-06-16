@@ -101,7 +101,7 @@ export interface WatchOptionsWithHandler<
 	functional?: boolean;
 	options?: AddEventListenerOptions;
 	method?: string;
-	args?: CanArray<unknown>;
+	args?: unknown[];
 	provideArgs?: boolean;
 	wrapper?: WatchWrapper<CTX, A, B>;
 	handler: string | WatchHandler<CTX, A, B>;

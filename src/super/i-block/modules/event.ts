@@ -81,23 +81,55 @@ export interface Event<CTX extends object = Async> extends BaseEvent<object, CTX
 	emit(event: string, ...args: unknown[]): boolean;
 }
 
+export interface EventFactoryParams {
+	suspend?: boolean;
+	remote?: boolean;
+}
+
+export interface RemoteEventFactoryParams extends EventFactoryParams {
+	remote: true;
+}
+
+const
+	unsuspendRgxp = /:!suspend(?:\b|$)/;
+
 /**
  * Returns wrapped event emitter
  *
  * @param $a - async object
  * @param emitter
+ * @param params - emitter parameters
  */
-export function eventFactory($a: Async, emitter: EventEmitterLikeP): Event;
+export function eventFactory($a: Async, emitter: EventEmitterLikeP, params?: false | EventFactoryParams): Event;
 
 /**
  * @param $a - async object
  * @param emitter
- * @param remote - if true, then the return type will be RemoteEvent
+ * @param params - emitter parameters or if true, then the return type will be RemoteEvent
  */
 // tslint:disable-next-line:completed-docs
-export function eventFactory($a: Async, emitter: EventEmitterLikeP, remote: true): RemoteEvent;
+export function eventFactory(
+	$a: Async,
+	emitter: EventEmitterLikeP,
+	params: true | RemoteEventFactoryParams
+): RemoteEvent;
+
 // tslint:disable-next-line:completed-docs
-export function eventFactory($a: Async, emitter: EventEmitterLikeP, remote?: boolean): Event {
+export function eventFactory($a: Async, emitter: EventEmitterLikeP, params?: boolean | EventFactoryParams): Event {
+	const
+		p = Object.isObject(params) ? params : {remote: Boolean(params)};
+
+	const group = (p) => {
+		const
+			group = p ? p.group : '';
+
+		if (!Object.isString(group) || unsuspendRgxp.test(group)) {
+			return p;
+		}
+
+		return {...p, group: `${group}:suspend`};
+	};
+
 	const wrappedEmitter = {
 		on: (event, fn, params, ...args) => {
 			let
@@ -109,6 +141,10 @@ export function eventFactory($a: Async, emitter: EventEmitterLikeP, remote?: boo
 
 			if (!e) {
 				return;
+			}
+
+			if (p.suspend) {
+				params = group(params);
 			}
 
 			return $a.on(e, event, fn, params, ...args);
@@ -126,6 +162,10 @@ export function eventFactory($a: Async, emitter: EventEmitterLikeP, remote?: boo
 				return;
 			}
 
+			if (p.suspend) {
+				params = group(params);
+			}
+
 			return $a.once(e, event, fn, params, ...args);
 		},
 
@@ -141,15 +181,19 @@ export function eventFactory($a: Async, emitter: EventEmitterLikeP, remote?: boo
 				return Promise.resolve();
 			}
 
+			if (p.suspend) {
+				params = group(params);
+			}
+
 			return $a.promisifyOnce(e, event, params, ...args);
 		},
 
-		off: (...args) => {
-			$a.off(...args);
+		off: (params) => {
+			$a.off(group(params));
 		}
 	};
 
-	if (!remote) {
+	if (!p.remote) {
 		(<Event>wrappedEmitter).emit = (event, ...args) => {
 			let
 				e = emitter;

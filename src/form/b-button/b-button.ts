@@ -147,6 +147,16 @@ export default class bButton<T extends object = Dictionary> extends iData<T>
 
 	/** @inheritDoc */
 	static readonly mods: ModsDecl = {
+		...iAccess.mods,
+		...iVisible.mods,
+		...iWidth.mods,
+		...iSize.mods,
+
+		opened: [
+			...iOpenToggle.mods.opened,
+			['false']
+		],
+
 		rounding: [
 			'none',
 			['small'],
@@ -157,13 +167,7 @@ export default class bButton<T extends object = Dictionary> extends iData<T>
 		upper: [
 			'true',
 			'false'
-		],
-
-		...iAccess.mods,
-		...iOpenToggle.mods,
-		...iVisible.mods,
-		...iWidth.mods,
-		...iSize.mods
+		]
 	};
 
 	/** @override */

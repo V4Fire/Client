@@ -219,6 +219,9 @@ export default class bInput<
 
 	/** @inheritDoc */
 	static readonly mods: ModsDecl = {
+		...iWidth.mods,
+		...iSize.mods,
+
 		rounding: [
 			'none',
 			'small',
@@ -229,10 +232,7 @@ export default class bInput<
 		empty: [
 			'true',
 			'false'
-		],
-
-		...iWidth.mods,
-		...iSize.mods
+		]
 	};
 
 	/** @override */

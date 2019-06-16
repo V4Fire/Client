@@ -18,8 +18,12 @@ export default class bSidebar<T extends object = Dictionary> extends iData<T>
 
 	/** @inheritDoc */
 	static readonly mods: ModsDecl = {
-		...iOpenToggle.mods,
-		...iVisible.mods
+		...iVisible.mods,
+
+		opened: [
+			...iOpenToggle.mods.opened,
+			['false']
+		]
 	};
 
 	/** @see iOpenToggle.open */

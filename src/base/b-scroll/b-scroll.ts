@@ -92,6 +92,8 @@ export default class bScroll extends iBlock implements iVisible {
 
 	/** @inheritDoc */
 	static readonly mods: ModsDecl = {
+		...iVisible.mods,
+
 		theme: [
 			'light'
 		],
@@ -99,9 +101,7 @@ export default class bScroll extends iBlock implements iVisible {
 		scroll: [
 			'true',
 			['false']
-		],
-
-		...iVisible.mods
+		]
 	};
 
 	/**

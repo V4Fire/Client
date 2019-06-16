@@ -210,7 +210,7 @@ export default class bImageEditor extends iBlock implements iVisible {
 
 		} catch (err) {
 			this.setMod('progress', false);
-			this.emit('imageError', err);
+			this.emitError('imageError', err);
 		}
 	}
 

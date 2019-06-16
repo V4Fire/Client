@@ -51,7 +51,7 @@ export default abstract class iOpen {
 		$e.on('block.mod.set.opened.false', () => $e.off(helpersGroup), modsGroup);
 
 		const onOpened = () => {
-			$a.setImmediate(() => {
+			$a.setTimeout(() => {
 				const opts = {
 					...helpersGroup,
 					options: {passive: false}
@@ -73,7 +73,7 @@ export default abstract class iOpen {
 					}, opts);
 
 				} catch {}
-			}, helpersGroup);
+			}, 0, helpersGroup);
 		};
 
 		$e.on('block.mod.set.opened.true', onOpened, modsGroup);

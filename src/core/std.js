@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-/* eslint-disable prefer-arrow-callback,no-var */
+/* eslint-disable prefer-arrow-callback,no-var,object-shorthand */
 
 var
 	global = new Function('return this')();
@@ -81,7 +81,7 @@ if (typeof global['setImmediate'] !== 'function') {
 				// empty
 			}
 
-			map[id] = {queue, pos};
+			map[id] = {queue: queue, pos: pos};
 			return id;
 		};
 

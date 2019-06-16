@@ -95,7 +95,7 @@ export default abstract class iInput<
 	 * Component value type factory
 	 */
 	@prop(Function)
-	readonly dataType: Function = Any;
+	readonly dataType: Function = ((Any));
 
 	/**
 	 * Form value converter
@@ -255,6 +255,9 @@ export default abstract class iInput<
 
 	/** @inheritDoc */
 	static readonly mods: ModsDecl = {
+		...iAccess.mods,
+		...iVisible.mods,
+
 		form: [
 			['true'],
 			'false'
@@ -263,10 +266,7 @@ export default abstract class iInput<
 		valid: [
 			'true',
 			'false'
-		],
-
-		...iAccess.mods,
-		...iVisible.mods
+		]
 	};
 
 	/**

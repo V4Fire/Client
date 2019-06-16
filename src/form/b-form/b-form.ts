@@ -111,12 +111,12 @@ export default class bForm<T extends object = Dictionary> extends iData<T> {
 
 	/** @inheritDoc */
 	static readonly mods: ModsDecl = {
+		...iVisible.mods,
+
 		valid: [
 			'true',
 			'false'
-		],
-
-		...iVisible.mods
+		]
 	};
 
 	/** @override */

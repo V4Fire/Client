@@ -129,7 +129,10 @@ export default class bSelect<
 
 	/** @inheritDoc */
 	static readonly mods: ModsDecl = {
-		...iOpenToggle.mods
+		opened: [
+			...iOpenToggle.mods.opened,
+			['false']
+		]
 	};
 
 	/** @override */

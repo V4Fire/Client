@@ -14,7 +14,6 @@
 $p = {
 	accessHelpers: true
 	visibleHelpers: true
-	widthHelpers: true
 	sizeHelpers: true
 	messageHelpers: true
 	progressHelpers: true
@@ -37,13 +36,9 @@ b-link extends i-data
 		align-items center
 		cursor pointer
 
-	&_underline_false &__link
-		border-bottom 0
-
 	&__link
 		text-decoration none
 		border 1px solid transparent
-		border-bottom-color currentColor
 		color currentColor
 
 		&:focus
@@ -59,3 +54,6 @@ b-link extends i-data
 	&__g-icon
 		display inline-block
 		size 100%
+
+	&_underline_true &__link
+		border-bottom-color currentColor

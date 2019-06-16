@@ -124,6 +124,6 @@ export default class bImage extends iMessage implements iProgress, iVisible {
 	protected onImageError(err: Error): void {
 		this.setMod('progress', false);
 		this.setMod('showError', true);
-		this.emit('loadError', err);
+		this.emitError('loadError', err);
 	}
 }

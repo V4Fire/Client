@@ -52,6 +52,19 @@ import Provider, {
 
 } from 'core/data';
 
+export {
+
+	Socket,
+	RequestQuery,
+	RequestBody,
+	RequestResponseObject,
+	RequestError,
+	Response,
+	ModelMethods,
+	ProviderParams
+
+} from 'core/data';
+
 //#endif
 
 export * from 'super/i-data/modules/interface';
@@ -537,7 +550,7 @@ export default abstract class iData<T extends object = Dictionary> extends iMess
 				val = value[key],
 				oldVal = oldValue && oldValue[key];
 
-			if (val && oldVal && val.toSource() === oldVal.toSource()) {
+			if (val && oldVal && Object.fastCompare(val, oldVal)) {
 				continue;
 			}
 
@@ -767,7 +780,7 @@ export default abstract class iData<T extends object = Dictionary> extends iMess
 	 * @param retry - retry function
 	 */
 	protected onRequestError<T = unknown>(err: Error | RequestError, retry: () => Promise<CanUndef<T>>): void {
-		this.emit('error', err, retry);
+		this.emitError('error', err, retry);
 	}
 
 	/**

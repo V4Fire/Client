@@ -143,6 +143,11 @@ export {
 
 } from 'super/i-block/modules/decorators';
 
+export interface ComponentEventDecl {
+	event: string;
+	type?: 'error';
+}
+
 export const
 	$$ = symbolGenerator(),
 	modsCache = Object.createDict<ModsNTable>();
@@ -781,7 +786,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 			maxListeners: 1e3,
 			newListener: false,
 			wildcard: true
-		}))
+		}), {suspend: true})
 	})
 
 	protected readonly localEvent!: Event<this>;
@@ -948,7 +953,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	protected readonly global!: Window;
 
 	/**
-	 * Wrapper for $watch
+	 * Sets a watcher to an event or a field
 	 *
 	 * @see Async.worker
 	 * @param exprOrFn
@@ -1004,18 +1009,48 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	}
 
 	/**
-	 * Wrapper for $emit
+	 * Emits a component event
 	 *
 	 * @param event
 	 * @param args
 	 */
 	@p({replace: false})
-	emit(event: string, ...args: unknown[]): void {
-		event = event.dasherize();
-		this.$emit(event, this, ...args);
-		this.$emit(`on-${event}`, ...args);
-		this.dispatching && this.dispatch(event, ...args);
-		this.log(`event:${event}`, this, ...args);
+	emit(event: string | ComponentEventDecl, ...args: unknown[]): void {
+		const
+			decl = Object.isString(event) ? {event} : event,
+			eventNm = decl.event = decl.event.dasherize();
+
+		this.$emit(eventNm, this, ...args);
+		this.$emit(`on-${eventNm}`, ...args);
+		this.dispatching && this.dispatch(decl, ...args);
+
+		const
+			logArgs = args.slice();
+
+		if (decl.type === 'error') {
+			for (let i = 0; i < logArgs.length; i++) {
+				const
+					el = logArgs[i];
+
+				if (Object.isFunction(el)) {
+					logArgs[i] = () => el;
+				}
+			}
+		}
+
+		this.log(`event:${eventNm}`, this, ...logArgs);
+	}
+
+	/**
+	 * Emits a component error event
+	 * (all functions from args will be wrapped for logging)
+	 *
+	 * @param event
+	 * @param args
+	 */
+	@p({replace: false})
+	emitError(event: string, ...args: unknown[]): void {
+		this.emit({event, type: 'error'}, ...args);
 	}
 
 	/**
@@ -1025,8 +1060,10 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	 * @param args
 	 */
 	@p({replace: false})
-	dispatch(event: string, ...args: unknown[]): void {
-		event = event.dasherize();
+	dispatch(event: string | ComponentEventDecl, ...args: unknown[]): void {
+		const
+			decl = Object.isString(event) ? {event} : event,
+			eventNm = decl.event = decl.event.dasherize();
 
 		let
 			obj = this.$parent;
@@ -1035,21 +1072,35 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 			nm = this.componentName,
 			globalNm = (this.globalName || '').dasherize();
 
+		const
+			logArgs = args.slice();
+
+		if (decl.type === 'error') {
+			for (let i = 0; i < logArgs.length; i++) {
+				const
+					el = logArgs[i];
+
+				if (Object.isFunction(el)) {
+					logArgs[i] = () => el;
+				}
+			}
+		}
+
 		while (obj) {
 			if (obj.selfDispatching) {
-				obj.$emit(event, this, ...args);
-				obj.$emit(`on-${event}`, ...args);
-				obj.log(`event:${event}`, this, ...args);
+				obj.$emit(eventNm, this, ...args);
+				obj.$emit(`on-${eventNm}`, ...args);
+				obj.log(`event:${eventNm}`, this, ...logArgs);
 
 			} else {
-				obj.$emit(`${nm}::${event}`, this, ...args);
-				obj.$emit(`${nm}::on-${event}`, ...args);
-				obj.log(`event:${nm}::${event}`, this, ...args);
+				obj.$emit(`${nm}::${eventNm}`, this, ...args);
+				obj.$emit(`${nm}::on-${eventNm}`, ...args);
+				obj.log(`event:${nm}::${eventNm}`, this, ...logArgs);
 
 				if (globalNm) {
-					obj.$emit(`${globalNm}::${event}`, this, ...args);
-					obj.$emit(`${globalNm}::on-${event}`, ...args);
-					obj.log(`event:${globalNm}::${event}`, this, ...args);
+					obj.$emit(`${globalNm}::${eventNm}`, this, ...args);
+					obj.$emit(`${globalNm}::on-${eventNm}`, ...args);
+					obj.log(`event:${globalNm}::${eventNm}`, this, ...logArgs);
 				}
 			}
 
@@ -1062,7 +1113,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	}
 
 	/**
-	 * Wrapper for $on
+	 * Attaches an event listener to the specified component event
 	 *
 	 * @see Async.on
 	 * @param event
@@ -1082,7 +1133,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	}
 
 	/**
-	 * Wrapper for $once
+	 * Attaches a single event listener to the specified component event
 	 *
 	 * @see Async.on
 	 * @param event
@@ -1102,7 +1153,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	}
 
 	/**
-	 * Wrapper for promisify $once
+	 * Attaches a single event listener to the specified component event and returns a promise
 	 *
 	 * @see Async.on
 	 * @param event
@@ -1115,7 +1166,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	}
 
 	/**
-	 * Wrapper for $off
+	 * Detaches the specified event listeners
 	 *
 	 * @param [event]
 	 * @param [cb]
@@ -1178,7 +1229,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	}
 
 	/**
-	 * Wrapper for $nextTick
+	 * Executes the specified function on a next render tick
 	 *
 	 * @see Async.proxy
 	 * @param cb
@@ -1204,7 +1255,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	}
 
 	/**
-	 * Wrapper for $forceUpdate
+	 * Forces the component rerender
 	 */
 	@wait({defer: true, label: $$.forceUpdate})
 	forceUpdate(): Promise<void> {
@@ -1775,5 +1826,5 @@ export abstract class iBlockDecorator extends iBlock {
 }
 
 function defaultI18n(): string {
-	return (this.$root.i18n || GLOBAL.i18n).apply(this.$root, arguments);
+	return (this.$root.i18n || ((i18n))).apply(this.$root, arguments);
 }

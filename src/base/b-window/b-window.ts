@@ -8,7 +8,7 @@
 
 import iVisible from 'traits/i-visible/i-visible';
 import iWidth from 'traits/i-width/i-width';
-import iOpenToggle from 'traits/i-open-toggle/i-open-toggle';
+import iOpenToggle, { CloseHelperEvents } from 'traits/i-open-toggle/i-open-toggle';
 
 import iData, {
 
@@ -58,7 +58,11 @@ export default class bWindow<T extends object = Dictionary> extends iData<T>
 	static readonly mods: ModsDecl = {
 		...iVisible.mods,
 		...iWidth.mods,
-		...iOpenToggle.mods,
+
+		opened: [
+			...iOpenToggle.mods.opened,
+			['false']
+		],
 
 		position: [
 			['fixed'],
@@ -222,6 +226,12 @@ export default class bWindow<T extends object = Dictionary> extends iData<T>
 				top: pageYOffset.px
 			});
 		}
+	}
+
+	/** @see iOpenToggle.initCloseHelpers */
+	@hook('beforeDataCreate')
+	protected initCloseHelpers(events?: CloseHelperEvents): void {
+		iOpenToggle.initCloseHelpers(this, events);
 	}
 
 	/** @override */

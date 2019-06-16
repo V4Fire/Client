@@ -47,7 +47,7 @@ export default class bRemoteProvider<T extends object = Dictionary> extends iDat
 			return super.onRequestError(err, retry);
 		}
 
-		this.emit('error', err, retry);
+		this.emitError('error', err, retry);
 	}
 
 	/**

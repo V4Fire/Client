@@ -89,6 +89,7 @@ export function getComponent(
 
 			initDataObject(meta.fields, ctx, instance, data);
 			runHook('beforeDataCreate', ctx.meta, ctx).catch(stderr);
+			bindWatchers(ctx);
 
 			ctx.$$data = this;
 			return data;
@@ -141,7 +142,6 @@ export function getComponent(
 
 			runHook('beforeCreate', meta, ctx).catch(stderr);
 			callMethodFromMeta(ctx, 'beforeCreate');
-			bindWatchers(ctx);
 		},
 
 		created(): void {
