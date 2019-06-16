@@ -63,15 +63,19 @@ module.exports = async function ({buildId, plugins}) {
 	}
 
 	if (isProd) {
+		const
+			es = config.es();
+
 		options.minimizer = [
 			/* eslint-disable camelcase */
 
-			new TerserPlugin(inherit(config.uglify(), {
+			new TerserPlugin({
 				parallel: true,
-				terserOptions: {
-					ecma: 6,
+				terserOptions: inherit(config.uglify(), {
 					safari10: true,
 					warnings: false,
+					ecma: es,
+					keep_fnames: es < 6,
 					keep_classnames: true,
 
 					output: {
@@ -81,8 +85,8 @@ module.exports = async function ({buildId, plugins}) {
 					mangle: {
 						safari10: true
 					}
-				}
-			}))
+				})
+			})
 			/* eslint-enable camelcase */
 		];
 	}
