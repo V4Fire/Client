@@ -141,12 +141,13 @@ export default abstract class iData<T extends object = Dictionary> extends iMess
 		});
 
 		this.field.set('dbStore', value);
-		this.initRemoteData();
 
-		this.watch('dbStore', this.initRemoteData, {
-			deep: true,
-			label: $$.db
-		});
+		if (this.initRemoteData() !== undefined) {
+			this.watch('dbStore', this.initRemoteData, {
+				deep: true,
+				label: $$.db
+			});
+		}
 	}
 
 	/** @inheritDoc */
