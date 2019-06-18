@@ -156,35 +156,71 @@ export default class Block {
 	/**
 	 * Returns block child elements by the specified request
 	 *
+	 * @param ctx - context node
 	 * @param elName
 	 * @param [mods]
 	 */
-	elements<E extends Element = Element>(elName: string, mods?: ModsTable): NodeListOf<E> {
-		const
-			{node} = this;
+	elements<E extends Element = Element>(ctx: Element, elName: string, mods?: ModsTable): NodeListOf<E>;
 
-		if (!node) {
+	/**
+	 * @param elName
+	 * @param [mods]
+	 */
+	elements<E extends Element = Element>(elName: string, mods?: ModsTable): NodeListOf<E>;
+	elements<E extends Element = Element>(
+		ctx: Element | string,
+		elName?: string | ModsTable,
+		mods?: ModsTable
+	): NodeListOf<E> {
+		if (Object.isString(ctx)) {
+			mods = <ModsTable>elName;
+			elName = ctx;
+			ctx = <Element>this.node;
+
+		} else {
+			ctx = ctx || this.node;
+		}
+
+		if (!ctx) {
 			return document.createElement('div').querySelectorAll('loopback');
 		}
 
-		return node.querySelectorAll(this.getElSelector(elName, mods));
+		return ctx.querySelectorAll(this.getElSelector(<string>elName, mods));
 	}
 
 	/**
 	 * Returns a child element by the specified request
 	 *
+	 * @param ctx - context node
 	 * @param elName
 	 * @param [mods]
 	 */
-	element<E extends Element = Element>(elName: string, mods?: ModsTable): CanUndef<E> {
-		const
-			{node} = this;
+	element<E extends Element = Element>(ctx: Element, elName: string, mods?: ModsTable): CanUndef<E>;
 
-		if (!node) {
+	/**
+	 * @param elName
+	 * @param [mods]
+	 */
+	element<E extends Element = Element>(elName: string, mods?: ModsTable): CanUndef<E>;
+	element<E extends Element = Element>(
+		ctx: Element | string,
+		elName?: string | ModsTable,
+		mods?: ModsTable
+	): CanUndef<E> {
+		if (Object.isString(ctx)) {
+			mods = <ModsTable>elName;
+			elName = ctx;
+			ctx = <Element>this.node;
+
+		} else {
+			ctx = ctx || this.node;
+		}
+
+		if (!ctx) {
 			return undefined;
 		}
 
-		return node.querySelector<E>(this.getElSelector(elName, mods)) || undefined;
+		return ctx.querySelector<E>(this.getElSelector(<string>elName, mods)) || undefined;
 	}
 
 	/**
