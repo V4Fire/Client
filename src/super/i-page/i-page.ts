@@ -36,6 +36,9 @@ export default abstract class iPage<T extends object = Dictionary> extends iData
 	/** @override */
 	readonly needReInit: boolean = true;
 
+	/** @override */
+	readonly syncRouterStoreOnInit: boolean = true;
+
 	/**
 	 * Initial page title
 	 */
