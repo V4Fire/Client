@@ -12,20 +12,19 @@ const
 	stylus = require('stylus');
 
 const
-	DEFAULT_UNITS = 'rem',
-	CHECKER = /(^x*)([s|l]$)|(^m$)/g,
-	GLOBAL = {
-		sizes: {
-			table: {},
-			units: DEFAULT_UNITS
-		}
-	};
+	defUnit = 'rem',
+	sizeRgxp = /(^x*)([s|l]$)|(^m$)/g;
+
+const GLOBAL_SIZES = {
+	table: {},
+	units: defUnit
+};
 
 /**
- * Throws an error for sizes depends on a type
+ * Throws an error for sizes depending on a type
  *
  * @param {string} type - error type
- * @param {string[]} args - comments list for the output string
+ * @param {!Array<string>} args - comments list for the output string
  */
 function throwError(type, ...args) {
 	switch (type) {
@@ -41,7 +40,7 @@ function throwError(type, ...args) {
 }
 
 /**
- * Attempt to parse object node to the javascript object
+ * Tries to parse Stylus node to a JS object and returns it
  *
  * @param {!Object} obj
  * @returns {!Object}
@@ -89,17 +88,17 @@ function parseObject(obj) {
 }
 
 /**
- * Validates values and keys, returns sorted size keys by ascending
+ * Normalizes the specified size dictionary and returns a sorted list of keys
  *
  * @param {!Object} values
- * @returns {string[]}
+ * @returns {!Array<string>}
  */
-function checkAndSortSizeKeys(values) {
+function normalizeSizeDict(values) {
 	return Object.keys(values).sort((a, b) => {
 		const
 			replacer = (str, p1, p2, p3) => p3 ? 0 : (p1.length || 0.5) * {s: -1, l: 1}[p2],
-			keyA = Number(a.replace(CHECKER, replacer)),
-			keyB = Number(b.replace(CHECKER, replacer));
+			keyA = Number(a.replace(sizeRgxp, replacer)),
+			keyB = Number(b.replace(sizeRgxp, replacer));
 
 		if (keyA > keyB) {
 			if (values[a] < values[b]) {
@@ -122,11 +121,10 @@ function checkAndSortSizeKeys(values) {
 
 module.exports = function (style) {
 	/**
-	 * Extends (or replace if replace flag equals true)
-	 * table of presented sizes, or set new size table and size units
+	 * Extends (or replaces) the global table of presented sizes
 	 *
-	 * @param {!Object} obj - sizes dictionary
-	 * @param {boolean} [replace] - flag for replacing the global table
+	 * @param {!Object} obj - custom sizes dictionary
+	 * @param {boolean} [replace] - if true, then the global table will be replaced
 	 * @returns {!Object}
 	 */
 	style.define('extendSizes', (obj, replace) => {
@@ -141,44 +139,44 @@ module.exports = function (style) {
 			throwError('structure');
 		}
 
-		if (!Object.keys(GLOBAL.sizes.table).length || replace) {
-			checkAndSortSizeKeys(dict.table);
-			GLOBAL.sizes.table = dict.table[0];
+		if (!Object.keys(GLOBAL_SIZES.table).length || replace) {
+			normalizeSizeDict(dict.table);
+			GLOBAL_SIZES.table = dict.table[0];
 
 		} else {
-			const merged = {...GLOBAL.sizes.table, ...dict.table[0]};
-			checkAndSortSizeKeys(merged);
-			GLOBAL.sizes.table = merged;
+			const merged = {...GLOBAL_SIZES.table, ...dict.table[0]};
+			normalizeSizeDict(merged);
+			GLOBAL_SIZES.table = merged;
 		}
 
 		if (dict.units) {
-			GLOBAL.sizes.units = dict.units;
+			GLOBAL_SIZES.units = dict.units;
 		}
 
-		return stylus.utils.coerce(GLOBAL.sizes, true);
+		return stylus.utils.coerce(GLOBAL_SIZES, true);
 	});
 
 	/**
-	 * Returns sizes dictionary without changes at the GLOBAL
+	 * Returns a normalized sizes dictionary
 	 *
-	 * @param {Object} obj - sizes dictionary
-	 * @param {boolean=} [extendGlobal] - flag for extending the global table
-	 * @returns {Object}
+	 * @param {!Object} obj - custom sizes dictionary
+	 * @param {boolean=} [withGlobal] - if true, then the global table will be mixed to the result
+	 * @returns {!Object}
 	 */
-	style.define('getSizes', (obj, extendGlobal) => {
+	style.define('getSizes', (obj, withGlobal) => {
 		const
 			dict = parseObject(obj);
 
-		if (extendGlobal) {
-			extendGlobal = extendGlobal.toBoolean().isTrue;
+		if (withGlobal) {
+			withGlobal = withGlobal.toBoolean().isTrue;
 		}
 
 		if (!dict || !dict.table) {
 			throwError('structure');
 		}
 
-		if (!extendGlobal) {
-			checkAndSortSizeKeys(dict.table);
+		if (!withGlobal) {
+			normalizeSizeDict(dict.table);
 
 			if (!dict.units) {
 				throwError('structure');
@@ -187,14 +185,12 @@ module.exports = function (style) {
 			return stylus.utils.coerce(dict, true);
 		}
 
-		const
-			merged = {...GLOBAL.sizes.table, ...dict.table};
-
-		checkAndSortSizeKeys(merged);
+		const merged = {...GLOBAL_SIZES.table, ...dict.table};
+		normalizeSizeDict(merged);
 
 		return stylus.utils.coerce({
 			table: merged,
-			units: dict.units || GLOBAL.sizes.units
+			units: dict.units || GLOBAL_SIZES.units
 		}, true);
 	});
 };

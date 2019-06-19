@@ -19,7 +19,7 @@ const
  * Returns an empty WebPack config
  *
  * @param {(number|string)} buildId - build id
- * @returns {Object}
+ * @returns {!Object}
  */
 module.exports = function ({buildId}) {
 	return {
