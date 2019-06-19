@@ -14,11 +14,9 @@ const
 const
 	DEFAULT_UNITS = 'rem',
 	CHECKER = /(^x*)([s|l]$)|(^m$)/g,
-	GLOBAL = {
-		sizes: {
-			table: {},
-			units: DEFAULT_UNITS
-		}
+	GLOBAL_SIZES = {
+		table: {},
+		units: DEFAULT_UNITS
 	};
 
 /**
@@ -141,21 +139,21 @@ module.exports = function (style) {
 			throwError('structure');
 		}
 
-		if (!Object.keys(GLOBAL.sizes.table).length || replace) {
+		if (!Object.keys(GLOBAL_SIZES.table).length || replace) {
 			checkAndSortSizeKeys(dict.table);
-			GLOBAL.sizes.table = dict.table[0];
+			GLOBAL_SIZES.table = dict.table[0];
 
 		} else {
-			const merged = {...GLOBAL.sizes.table, ...dict.table[0]};
+			const merged = {...GLOBAL_SIZES.table, ...dict.table[0]};
 			checkAndSortSizeKeys(merged);
-			GLOBAL.sizes.table = merged;
+			GLOBAL_SIZES.table = merged;
 		}
 
 		if (dict.units) {
-			GLOBAL.sizes.units = dict.units;
+			GLOBAL_SIZES.units = dict.units;
 		}
 
-		return stylus.utils.coerce(GLOBAL.sizes, true);
+		return stylus.utils.coerce(GLOBAL_SIZES, true);
 	});
 
 	/**
@@ -188,13 +186,13 @@ module.exports = function (style) {
 		}
 
 		const
-			merged = {...GLOBAL.sizes.table, ...dict.table};
+			merged = {...GLOBAL_SIZES.table, ...dict.table};
 
 		checkAndSortSizeKeys(merged);
 
 		return stylus.utils.coerce({
 			table: merged,
-			units: dict.units || GLOBAL.sizes.units
+			units: dict.units || GLOBAL_SIZES.units
 		}, true);
 	});
 };

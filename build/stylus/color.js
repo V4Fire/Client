@@ -13,10 +13,12 @@ const
 	stylus = require('stylus'),
 	pzlr = require('@pzlr/build-core');
 
-const GLOBAL = {
-	kits: {},
-	space: {}
-};
+const
+	GLOBAL_COLORS = {
+		kits: {},
+		space: {}
+	},
+	PROJECT_NAME = pzlr.config.projectName;
 
 /**
  * Saves HEXs to the global space with its kit names
@@ -26,7 +28,7 @@ const GLOBAL = {
  */
 function saveToSpace(colors, name) {
 	$C(colors).forEach((el) => {
-		GLOBAL.space[el] = name;
+		GLOBAL_COLORS.space[el] = name;
 	});
 }
 
@@ -41,8 +43,8 @@ function checkInGlobalSpace(hex) {
 	const
 		color = hex.raw || hex.string || hex.name;
 
-	if (GLOBAL.space[color]) {
-		throw new Error(`Identical HEX '${hex}' was found at the kit with name '${GLOBAL.space[color]}'`);
+	if (GLOBAL_COLORS.space[color]) {
+		throw new Error(`Identical HEX '${hex}' was found at the kit with name '${GLOBAL_COLORS.space[color]}'`);
 	}
 
 	return hex;
@@ -68,31 +70,33 @@ function kitFromNodes(nodes, name) {
  * Saves subset of colors to a global color sets variable
  *
  * @param {!Object} kit - subset
- * @param {string} [nm] - name of a subset
+ * @param {string} nm - name of a subset
+ * @param {boolean} [theme] - is subset a theme
  */
-function saveColorsKit(kit, nm) {
-	const reduce = (s) => $C(s).reduce((res, el, name) => {
+function saveColorsKit(kit, nm, theme) {
+	const reduce = (s, r = {}) => $C(s).reduce((res, el, name) => {
 		if (el.nodes) {
-			res[name] = [].concat([[]], kitFromNodes(el.nodes, name));
+			if (theme) {
+				if (res[name]) {
+					res[name][0] = kitFromNodes(el.nodes, name);
+
+				} else {
+					res[name] = [].concat([kitFromNodes(el.nodes, name)]);
+				}
+
+			} else {
+				res[name] = [].concat([[]], kitFromNodes(el.nodes, name));
+			}
 		}
 
 		return res;
-	}, {});
+	}, r);
 
-	if (nm) {
-		GLOBAL.kits[nm] = reduce(kit);
+	if (nm === PROJECT_NAME) {
+		GLOBAL_COLORS.kits = reduce(kit, GLOBAL_COLORS.kits);
 
 	} else {
-		const
-			res = reduce(kit);
-
-		$C(GLOBAL.kits).forEach((el, key) => {
-			if (Array.isArray(el[0]) && res[key]) {
-				res[key][0] = el[0];
-			}
-		});
-
-		GLOBAL.kits = res;
+		GLOBAL_COLORS.kits[nm] = reduce(kit, GLOBAL_COLORS.kits[nm]);
 	}
 }
 
@@ -114,55 +118,18 @@ function pickColor(str, meta = {}) {
 
 module.exports = function (style) {
 	/**
-	 * Sets the child colors kit with kits of parent projects
+	 * Registers a kit with specified name
 	 *
-	 * @param {!Object} parent - parent kit
-	 * @param {!Object} children - child kit
-	 */
-	style.define('inheritColors', (parent, children) => {
-		parent = parent.vals;
-		children = children.vals;
-		saveColorsKit(children);
-
-		$C(pzlr.config.dependencies).forEach((el, i) => {
-			if (i === 0) {
-				saveColorsKit(parent, el);
-
-			} else if (parent[el]) {
-				saveColorsKit(parent[el], el);
-			}
-		});
-	});
-
-	/**
-	 * Sets a color theme kit for proto or global colors
-	 *
-	 * @param {!Object} kit - themed kit
-	 * @param {!Object} proto - proto name
-	 */
-	style.define('setReservedColorKits', (kit, proto) => {
-		$C(kit.vals).forEach((el, key) => {
-			const
-				base = proto ? GLOBAL.kits[proto.val] : GLOBAL.kits;
-
-			if (!base) {
-				throw new Error(`Field with name ${proto} not found`);
-			}
-
-			if (!base[key]) {
-				base[key] = [[]];
-			}
-
-			base[key][0] = kitFromNodes(el.nodes, key);
-		});
-	});
-
-	/**
-	 * Sets a global colors kit
 	 * @param {!Object} kit
+	 * @param {string} name
+	 * @param {boolean=} theme
 	 */
-	style.define('setGlobalColors', (kit) => {
-		saveColorsKit(kit);
+	style.define('registerColors', (kit, name, theme = false) => {
+		if (!name || !kit) {
+			throw new Error('Can\'t register colors kit');
+		}
+
+		saveColorsKit(kit.vals, name.val, theme && theme.val);
 	});
 
 	/**
@@ -188,7 +155,7 @@ module.exports = function (style) {
 			meta = {hue, num, reserved, base};
 
 		let
-			col = GLOBAL.kits[hue],
+			col = GLOBAL_COLORS.kits[hue],
 			res;
 
 		if (!base) {
@@ -197,14 +164,17 @@ module.exports = function (style) {
 			}
 
 			$C(dependencies).some((el) => {
-				col = GLOBAL.kits[el];
+				col = GLOBAL_COLORS.kits[el];
 
 				if (col) {
-					if (reserved && col[hue][0][num - 1]) {
-						res = col[hue][0][num - 1];
+					const
+						val = $C(col).get(`${hue}.0.${num - 1}`);
+
+					if (reserved && val) {
+						res = val;
 						return true;
 
-					} else if (!reserved && col[hue][num]) {
+					} else if (!reserved && $C(col).get(`${hue}.${num}`)) {
 						res = col[hue][num];
 						return true;
 					}
@@ -213,7 +183,7 @@ module.exports = function (style) {
 
 		} else {
 			const
-				kit = GLOBAL.kits[base];
+				kit = GLOBAL_COLORS.kits[base];
 
 			if (kit && reserved) {
 				res = kit[hue][0][num - 1];
