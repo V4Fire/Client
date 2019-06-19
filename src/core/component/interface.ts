@@ -313,13 +313,20 @@ export class ComponentInterface<
 		opts?: WatchOptions
 	): Function;
 
-	// @ts-ignore (abstract)
 	protected $watch<T = unknown>(
 		exprOrFn: string | ((this: this) => string),
 		opts: BaseWatchOptionsWithHandler<T>
 	): Function;
 
 	protected $watch() {}
+
+	// @ts-ignore (abstract)
+	protected $$watch?<T = unknown>(
+		exprOrFn: string | ((this: this) => string),
+		opts: BaseWatchOptionsWithHandler<T>
+	): Function;
+
+	protected $$watch() {}
 
 	// @ts-ignore (abstract)
 	protected $on(event: CanArray<string>, cb: Function): this;

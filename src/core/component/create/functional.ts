@@ -262,17 +262,18 @@ export function createFakeCtx<T extends object = FunctionalCtx>(
 				opts = <any>cbOrOpts;
 			}
 
-			const
-				expr = Object.isFunction(exprOrFn) ? exprOrFn.call(this) : exprOrFn;
-
-			cb = cb.bind(this);
-			$w.on(expr, cb);
-
-			if (opts && opts.immediate) {
-				$w.emit(expr, this.field.get(expr));
+			if (Object.isFunction(exprOrFn)) {
+				return () => { /* */ };
 			}
 
-			return () => $w.off(expr, cb);
+			cb = cb.bind(this);
+			$w.on(exprOrFn, cb);
+
+			if (opts && opts.immediate) {
+				$w.emit(exprOrFn, Object.get(this, exprOrFn));
+			}
+
+			return () => $w.off(exprOrFn, cb);
 		},
 
 		$set(obj: object, key: string, value: any): any {
