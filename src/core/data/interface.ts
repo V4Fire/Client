@@ -23,4 +23,5 @@ export type SocketEvent<T = unknown> = (() => Dictionary<T>) | {
 export interface ProviderParams {
 	listenAllEvents?: boolean;
 	externalRequest?: boolean;
+	socket?: boolean;
 }
