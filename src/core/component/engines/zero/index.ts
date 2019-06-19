@@ -13,7 +13,7 @@ import symbolGenerator from 'core/symbol';
 import { components } from 'core/component/const';
 import { ComponentInterface } from 'core/component/interface';
 import { getComponentDataFromVnode } from 'core/component/create/composite';
-import { runHook, bindWatchers } from 'core/component/create/helpers';
+import { runHook } from 'core/component/create/helpers';
 import { createFakeCtx } from 'core/component/create/functional';
 
 import config from 'core/component/engines/zero/config';
