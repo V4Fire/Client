@@ -34,6 +34,12 @@ export interface PageOptsProp {
 	query?: Dictionary;
 }
 
+export const pageOptsKeys = [
+	'meta',
+	'params',
+	'query'
+];
+
 export interface PagePropObj extends PageOptsProp {
 	page: string;
 }
@@ -491,7 +497,6 @@ export default class bRouter<T extends object = Dictionary> extends iData<T> {
 			isEmptyOpts = !opts;
 
 		if (opts) {
-			opts = Object.mixin<Dictionary>(true, {}, opts);
 			isEmptyOpts = true;
 
 			for (let keys = Object.keys(opts), i = 0; i < keys.length; i++) {
@@ -502,6 +507,10 @@ export default class bRouter<T extends object = Dictionary> extends iData<T> {
 			}
 
 			if (!isEmptyOpts) {
+				opts = Object.mixin<Dictionary>(true, {}, Object.select(opts, pageOptsKeys), {
+					query: Object.reject(opts, pageOptsKeys)
+				});
+
 				const normalizeOpts = (obj, key?, data?) => {
 					if (!obj) {
 						return;
