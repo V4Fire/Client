@@ -403,8 +403,8 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	 * Link to the root router
 	 */
 	@p({cache: false})
-	get router(): CanUndef<bRouter> {
-		return this.field.get('routerStore', this.$root);
+	get router(): bRouter {
+		return <bRouter>this.field.get('routerStore', this.$root);
 	}
 
 	/**
