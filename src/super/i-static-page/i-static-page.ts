@@ -89,6 +89,7 @@ export default abstract class iStaticPage<
 	remoteState!: Dictionary;
 
 	/** @override */
+	// @ts-ignore
 	get route(): CanUndef<CurrentPage<P, Q, M>> {
 		return this.field.get('routeStore');
 	}
@@ -97,6 +98,7 @@ export default abstract class iStaticPage<
 	 * @override
 	 * @emits setRoute(value: CanUndef<CurrentPage<P, Q, M>>)
 	 */
+	// @ts-ignore
 	set route(value: CanUndef<CurrentPage<P, Q, M>>) {
 		this.field.set('routeStore', value);
 		this.emit('setRoute', value);
