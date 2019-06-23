@@ -64,7 +64,8 @@ module.exports = async function ({buildId, plugins}) {
 
 	if (isProd) {
 		const
-			es = config.es();
+			es = config.es(),
+			keepFNames = Boolean({ES5: true, ES3: true}[es]);
 
 		options.minimizer = [
 			/* eslint-disable camelcase */
@@ -75,7 +76,7 @@ module.exports = async function ({buildId, plugins}) {
 					safari10: true,
 					warnings: false,
 					ecma: es,
-					keep_fnames: es < 6,
+					keep_fnames: keepFNames,
 					keep_classnames: true,
 
 					output: {
