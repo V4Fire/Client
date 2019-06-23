@@ -8,7 +8,7 @@
 
 import config from 'config';
 import symbolGenerator from 'core/symbol';
-import ion = require('ion-sound');
+import ion from 'ion-sound';
 
 import { concatUrls } from 'core/url';
 import iData, { component, prop, watch, hook } from 'super/i-data/i-data';
