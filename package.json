@@ -72,7 +72,6 @@
     "gulp-load-plugins": "^1.6.0",
     "gulp-plumber": "^1.2.1",
     "gulp-run": "^1.7.1",
-    "gulp-uglify": "^3.0.2",
     "hard-source-webpack-plugin": "^0.13.1",
     "hash-files": "^1.1.1",
     "hasha": "^5.0.0",
