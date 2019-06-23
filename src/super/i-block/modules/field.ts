@@ -67,23 +67,26 @@ export default class Field {
 			chunks = path.split('.');
 
 		let
-			isField = isComponent;
+			isField = isComponent,
+			res = obj;
 
 		if (isComponent) {
 			const
 				nm = chunks[0],
 				info = getFieldRealInfo(ctx, nm);
 
-			if (!(nm in ctx)) {
-				chunks[0] = info.name;
+			isField =
+				info.type === 'field';
+
+			if (isField) {
+				// @ts-ignore (access)
+				res = ctx.$$data;
 			}
 
-			isField = info.type === 'field';
+			if (isField && ctx.lfc.isBeforeCreate() || !(nm in res)) {
+				chunks[0] = info.name;
+			}
 		}
-
-		let
-			// @ts-ignore
-			res = isField ? ctx.$$data : obj;
 
 		for (let i = 0; i < chunks.length; i++) {
 			if (res == null) {
@@ -123,23 +126,26 @@ export default class Field {
 			isReady = !ctx.lfc.isBeforeCreate();
 
 		let
-			isField = isComponent;
+			isField = isComponent,
+			ref = obj;
 
 		if (isComponent) {
 			const
 				nm = chunks[0],
 				info = getFieldRealInfo(ctx, nm);
 
-			if (!(nm in ctx)) {
-				chunks[0] = info.name;
+			isField =
+				info.type === 'field';
+
+			if (isField) {
+				// @ts-ignore (access)
+				ref = ctx.$$data;
 			}
 
-			isField = info.type === 'field';
+			if (isField && !isReady || !(nm in ref)) {
+				chunks[0] = info.name;
+			}
 		}
-
-		let
-			// @ts-ignore
-			ref = isField ? ctx.$$data : obj;
 
 		for (let i = 0; i < chunks.length; i++) {
 			const
@@ -155,7 +161,7 @@ export default class Field {
 					val = isNaN(Number(chunks[i + 1])) ? {} : [];
 
 				if (isField && isReady) {
-					// @ts-ignore
+					// @ts-ignore (access)
 					ctx.$set(ref, prop, val);
 
 				} else {
@@ -170,7 +176,7 @@ export default class Field {
 			ref[path] = value;
 
 		} else {
-			// @ts-ignore
+			// @ts-ignore (access)
 			ctx.$set(ref, path, value);
 		}
 
@@ -214,7 +220,7 @@ export default class Field {
 
 		let
 			test = true,
-			// @ts-ignore
+			// @ts-ignore (access)
 			ref = isField ? ctx.$$data : obj;
 
 		for (let i = 0; i < chunks.length; i++) {
@@ -236,7 +242,7 @@ export default class Field {
 
 		if (test) {
 			if (isField && isReady) {
-				// @ts-ignore
+				// @ts-ignore (access)
 				ctx.$delete(ref, path);
 
 			} else {

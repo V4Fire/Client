@@ -8,6 +8,7 @@
 
 import 'core/init/state';
 import 'core/init/abt';
+
 import semaphore from 'core/init/semaphore';
 import { whenDomLoaded } from 'core/event';
 

@@ -191,6 +191,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		return {
 			'vue': true,
 			'noGlobals': false,
+			'socket': false,
 			'core/kv-storage': true,
 			'core/helpers': true,
 			'core/browser': true,

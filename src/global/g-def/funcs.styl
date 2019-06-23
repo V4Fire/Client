@@ -77,32 +77,10 @@ c($hue, $num = null, $reserved = false, $base = false)
 	getGlobalColor($hue, $num, $reserved, $base)
 
 /**
- * Generates rules for colorized styles
- *
- * @param {Tuple} [$set] - set of colors
- * @param {Tuple} [$styles] - list of styles
- * @param {string=} [$selector] - additional selector
- * @param {string=} [$key] - color key
- * @param {Function=} [$cb] - callback function
- */
-setColorMods($set, $styles = null, $selector = "", $key = "backgroundColor", $cb = null)
-	for $s in $set
-		$color = $set[$s][$key]
-
-		if $cb
-			$cb($s, $color)
-
-		else if $styles
-			&_{dasherize($s)}{$selector},
-			&_{$s}{$selector}
-				for $style in $styles
-					{$style}: $color
-
-/**
  * CSS hack for IE10-11
  */
 ie10-11()
-	@media all and (-ms-high-contrast: none), (-ms-high-contrast: active)
+	@media all and (-ms-high-contrast none), (-ms-high-contrast active)
 		{block}
 
 /**

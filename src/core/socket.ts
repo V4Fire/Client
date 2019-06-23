@@ -17,14 +17,12 @@ export type Socket = SocketIOClient.Socket;
  * @param [namespace] - connection namespace
  */
 export default function socket(namespace: string = ''): CanUndef<Socket> {
-	let socket;
+	//#if runtime has socket
 
-	try {
-		// @ts-ignore
+	const
 		socket = require('socket.io-client');
-	} catch {}
 
-	if (socket && config.api) {
+	if (config.api) {
 		const url = new URL(config.api);
 		return socket.connect((url.pathname = namespace).toString(), {
 			allowUpgrades: false,
@@ -33,4 +31,6 @@ export default function socket(namespace: string = ''): CanUndef<Socket> {
 			pingInterval: PING
 		});
 	}
+
+	//#endif
 }

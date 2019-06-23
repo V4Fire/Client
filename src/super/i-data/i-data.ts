@@ -7,11 +7,14 @@
  */
 
 import symbolGenerator from 'core/symbol';
-import statusCodes from 'core/status-codes';
+
 import iProgress from 'traits/i-progress/i-progress';
+import Async, { AsyncOpts, AsyncCbOpts } from 'core/async';
+
+import statusCodes from 'core/status-codes';
+import RequestError from 'core/request/error';
 import { providers } from 'core/data/const';
 
-import Async, { AsyncOpts, AsyncCbOpts } from 'core/async';
 import iMessage, {
 
 	component,
@@ -45,7 +48,6 @@ import Provider, {
 	RequestQuery,
 	RequestBody,
 	RequestResponseObject,
-	RequestError,
 	Response,
 	ModelMethods,
 	ProviderParams
@@ -55,10 +57,10 @@ import Provider, {
 export {
 
 	Socket,
+	RequestError,
 	RequestQuery,
 	RequestBody,
 	RequestResponseObject,
-	RequestError,
 	Response,
 	ModelMethods,
 	ProviderParams
@@ -141,12 +143,13 @@ export default abstract class iData<T extends object = Dictionary> extends iMess
 		});
 
 		this.field.set('dbStore', value);
-		this.initRemoteData();
 
-		this.watch('dbStore', this.initRemoteData, {
-			deep: true,
-			label: $$.db
-		});
+		if (this.initRemoteData() !== undefined) {
+			this.watch('dbStore', this.initRemoteData, {
+				deep: true,
+				label: $$.db
+			});
+		}
 	}
 
 	/** @inheritDoc */

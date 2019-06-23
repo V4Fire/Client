@@ -82,12 +82,15 @@ import {
 	globalEvent,
 	hook,
 	getFieldRealInfo,
+	cloneWatchValue,
 
 	VNode,
 	ComponentInterface,
 	ComponentMeta
 
 } from 'core/component';
+
+import { WatchOptionsWithHandler as BaseWatchOptionsWithHandler } from 'core/component/engines';
 
 import {
 
@@ -400,15 +403,15 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	 * Link to the root router
 	 */
 	@p({cache: false})
-	get router(): CanUndef<bRouter | any> {
-		return this.field.get('routerStore', this.$root);
+	get router(): bRouter {
+		return <bRouter>this.field.get('routerStore', this.$root);
 	}
 
 	/**
 	 * Link to the root route object
 	 */
 	@p({cache: false})
-	get route(): CanUndef<CurrentPage | any> {
+	get route(): CanUndef<CurrentPage> {
 		return this.field.get('route', this.$root);
 	}
 
@@ -736,6 +739,17 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	protected watchTmp: Dictionary = {};
 
 	/**
+	 * Cache for watch values
+	 */
+	@system({
+		merge: true,
+		replace: false,
+		init: () => Object.createDict()
+	})
+
+	protected watchCache!: Dictionary;
+
+	/**
 	 * Link to the current component
 	 */
 	@system({
@@ -972,38 +986,16 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 
 		this.lfc.execCbAfterComponentCreated(() => {
 			const
-				p = params || {},
-				fork = (obj) => Object.isArray(obj) || Object.isSimpleObject(obj) ? Object.mixin(true, undefined, obj) : obj;
+				p = params || {};
 
-			let
-				oldVal: unknown = fork(this.field.get(Object.isFunction(exprOrFn) ? exprOrFn.call(this) : exprOrFn));
-
-			const watchParams = {
-				handler(val: unknown, defOldVal: unknown): unknown {
-					if (val !== defOldVal) {
-						oldVal = defOldVal;
-						return cb.call(this, val, defOldVal);
-					}
-
-					const res = cb.call(this, val, oldVal);
-					oldVal = fork(val);
-					return res;
-				},
-
+			const watcher = this.$$watch(exprOrFn, {
+				handler: cb,
 				deep: p.deep,
 				immediate: p.immediate
-			};
-
-			if (Object.isString(exprOrFn)) {
-				exprOrFn = getFieldRealInfo(this, exprOrFn).name;
-			}
-
-			const
-				watcher = this.$watch(exprOrFn, watchParams);
+			});
 
 			if (p.group || p.label || p.join) {
 				this.async.worker(watcher, {group: p.group, label: p.label, join: p.join});
-				return;
 			}
 		});
 	}
@@ -1589,6 +1581,56 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 				this
 			);
 		}
+	}
+
+	/**
+	 * Internal $watch wrapper
+	 *
+	 * @param exprOrFn
+	 * @param opts
+	 */
+	@p({replace: false})
+	protected $$watch<T = unknown>(
+		exprOrFn: string | ((this: this) => string),
+		opts: BaseWatchOptionsWithHandler<T>
+	): Function {
+		const
+			{watchCache} = this;
+
+		let
+			oldVal,
+			needCache;
+
+		if (Object.isString(exprOrFn)) {
+			needCache = true;
+			exprOrFn = getFieldRealInfo(this, exprOrFn).name;
+			oldVal = watchCache[exprOrFn] = exprOrFn in watchCache ?
+				watchCache[exprOrFn] : cloneWatchValue(this.field.get(exprOrFn));
+		}
+
+		return this.$watch(exprOrFn, {
+			handler(val: unknown, defOldVal: unknown): unknown {
+				if (val !== defOldVal) {
+					if (needCache) {
+						oldVal = defOldVal;
+					}
+
+					return opts.handler.call(this, val, defOldVal);
+				}
+
+				const
+					res = opts.handler.call(this, val, oldVal);
+
+				if (needCache) {
+					oldVal = watchCache[<string>exprOrFn] = cloneWatchValue(val);
+				}
+
+				return res;
+			},
+
+			deep: opts.deep,
+			immediate: opts.immediate
+		});
 	}
 
 	/**

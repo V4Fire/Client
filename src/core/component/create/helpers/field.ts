@@ -11,7 +11,7 @@ import { defaultWrapper, NULL } from 'core/component/create/helpers/const';
 
 export interface FieldRealInfo {
 	name: string;
-	type: 'prop' | 'field' | 'system';
+	type: 'prop' | 'field' | 'system' | 'computed' | 'accessor';
 }
 
 /**
@@ -54,7 +54,7 @@ export function getFieldRealInfo(component: ComponentInterface, name: string): F
 
 	return {
 		name,
-		type: 'system'
+		type: meta.computed[name] ? 'computed' : meta.accessors[name] ? 'accessor' : 'system'
 	};
 }
 

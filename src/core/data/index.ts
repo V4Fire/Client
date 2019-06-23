@@ -295,18 +295,20 @@ export default class Provider {
 			this.setReadonlyParam('externalRequest', params.externalRequest);
 		}
 
-		const
-			c = this.connect();
+		if (params.socket || this.socketURL) {
+			const
+				c = this.connect();
 
-		if (c) {
-			c.then(
-				() => {
-					this.listenSocketEvents();
-					this.providers.length && this.bindEvents(...this.providers);
-				},
+			if (c) {
+				c.then(
+					() => {
+						this.listenSocketEvents();
+						this.providers.length && this.bindEvents(...this.providers);
+					},
 
-				stderr
-			);
+					stderr
+				);
+			}
 		}
 
 		instanceCache[key] = this;

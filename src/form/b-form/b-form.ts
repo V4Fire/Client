@@ -10,11 +10,11 @@ import 'core/data';
 import symbolGenerator from 'core/symbol';
 
 import iVisible from 'traits/i-visible/i-visible';
-import bInputHidden from 'form/b-input-hidden/b-input-hidden';
-import bButton from 'form/b-button/b-button';
-
-//#if runtime has iInput
 import iInput, { ValidationError as InputValidationError } from 'super/i-input/i-input';
+import bInputHidden from 'form/b-input-hidden/b-input-hidden';
+
+//#if runtime has bButton
+import bButton from 'form/b-button/b-button';
 //#endif
 
 import iData, {

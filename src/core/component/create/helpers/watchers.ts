@@ -7,7 +7,7 @@
  */
 
 import { GLOBAL } from 'core/env';
-import { getFieldRealInfo, ComponentInterface } from 'core/component';
+import { getFieldRealInfo, ComponentInterface, WatchOptions } from 'core/component';
 
 export const
 	customWatcherRgxp = /^([!?]?)([^!?:]*):(.*)/,
@@ -20,6 +20,34 @@ const watcherHooks = {
 };
 
 /**
+ * Clones the specified watcher value
+ *
+ * @param value
+ * @param [params]
+ */
+export function cloneWatchValue<T>(value: T, params: WatchOptions = {}): T {
+	if (!Object.isFrozen(value)) {
+		if (Object.isArray(value)) {
+			if (params.deep) {
+				return Object.mixin(true, [], value);
+			}
+
+			return <any>value.slice();
+		}
+
+		if (Object.isSimpleObject(value)) {
+			if (params.deep) {
+				return Object.mixin(true, {}, value);
+			}
+
+			return {...value};
+		}
+	}
+
+	return value;
+}
+
+/**
  * Binds watchers to the specified component
  * (very critical for loading time)
  *
@@ -29,7 +57,10 @@ const watcherHooks = {
 export function bindWatchers(ctx: ComponentInterface, eventCtx: ComponentInterface = ctx): void {
 	const
 		// @ts-ignore (access)
-		{meta, hook, $async: $a} = ctx;
+		{meta, hook, $async: $a} = ctx,
+
+		// @ts-ignore (access)
+		$watch = ctx.$$watch || ctx.$watch;
 
 	if (!watcherHooks[hook]) {
 		return;
@@ -182,8 +213,7 @@ export function bindWatchers(ctx: ComponentInterface, eventCtx: ComponentInterfa
 							watchObj.immediate && handler(store);
 
 						} else {
-							// @ts-ignore (access)
-							const unwatch = ctx.$watch(key, {
+							const unwatch = $watch.call(ctx, key, {
 								deep: watchObj.deep,
 								immediate: watchObj.immediate,
 								handler
@@ -256,8 +286,7 @@ export function bindWatchers(ctx: ComponentInterface, eventCtx: ComponentInterfa
 						watchObj.immediate && handler(store);
 
 					} else {
-						// @ts-ignore (access)
-						const unwatch = ctx.$watch(key, {
+						const unwatch = $watch.call(ctx, key, {
 							deep: watchObj.deep,
 							immediate: watchObj.immediate,
 							handler

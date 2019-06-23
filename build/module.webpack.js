@@ -156,7 +156,8 @@ module.exports = async function ({buildId, plugins}) {
 					loader: 'monic',
 					options: inherit(monic.stylus, {
 						replacers: [
-							require('@pzlr/stylus-inheritance')({resolveImports: true})
+							require('@pzlr/stylus-inheritance')({resolveImports: true}),
+							include('build/replacers/project-name')
 						]
 					})
 				}
