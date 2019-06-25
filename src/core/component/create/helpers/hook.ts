@@ -59,7 +59,7 @@ export function runHook(
 			const
 				res = args.length ? hook.fn.apply(ctx, args) : hook.fn.call(ctx);
 
-			if (Object.isPromise(res)) {
+			if (res instanceof Promise) {
 				return res.then(() => nm ? event.emit(nm) : undefined);
 			}
 
@@ -77,7 +77,7 @@ export function runHook(
 	const
 		tasks = event.drain();
 
-	if (Object.isPromise(tasks)) {
+	if (tasks instanceof Promise) {
 		return tasks;
 	}
 

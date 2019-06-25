@@ -230,7 +230,7 @@ function callMethodFromMeta(ctx: ComponentInterface, method: string): void {
 			const
 				res = obj.fn.call(ctx);
 
-			if (Object.isPromise(res)) {
+			if (res instanceof Promise) {
 				res.catch(stderr);
 			}
 
