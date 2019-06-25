@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import * as lang from 'core/i18n';
+import * as locale from 'core/i18n';
 import * as net from 'core/net';
 import * as session from 'core/session';
 
@@ -18,7 +18,7 @@ export default (async () => {
 		tasks = <Promise<unknown>[]>[];
 
 	tasks.push(
-		lang.isInitialized,
+		locale.isInitialized,
 
 		net.isOnline().then((v) => {
 			state.isOnline = v.status;

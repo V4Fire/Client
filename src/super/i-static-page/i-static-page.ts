@@ -9,10 +9,9 @@
 import symbolGenerator from 'core/symbol';
 import remoteState from 'core/component/state';
 
-import { GLOBAL } from 'core/env';
 import { defProp } from 'core/const/props';
 import { reset, globalEvent, ResetType, ComponentInterface } from 'core/component';
-import { setLang, lang } from 'core/i18n';
+import { setLocale, locale } from 'core/i18n';
 
 import { SetEvent } from 'core/session';
 import { StatusEvent } from 'core/net';
@@ -21,8 +20,11 @@ import iBlock from 'super/i-block/i-block';
 import iPage, { component, field, system, watch, Event } from 'super/i-page/i-page';
 
 //#if runtime has bRouter
-import bRouter, { CurrentPage } from 'base/b-router/b-router';
+import bRouter from 'base/b-router/b-router';
 //#endif
+
+// tslint:disable-next-line:no-duplicate-imports
+import { CurrentPage } from 'base/b-router/b-router';
 
 export * from 'super/i-data/i-data';
 export { globalEvent, ResetType, CurrentPage };
@@ -122,18 +124,18 @@ export default abstract class iStaticPage<
 	}
 
 	/**
-	 * System language
+	 * System locale
 	 */
-	get lang(): string {
-		return <NonNullable<string>>this.field.get('langStore');
+	get locale(): string {
+		return <NonNullable<string>>this.field.get('localeStore');
 	}
 
 	/**
-	 * Sets a new system language
+	 * Sets a new system locale
 	 */
-	set lang(value: string) {
-		this.field.set('langStore', value);
-		setLang(value);
+	set locale(value: string) {
+		this.field.set('localeStore', value);
+		setLocale(value);
 	}
 
 	/**
@@ -149,10 +151,10 @@ export default abstract class iStaticPage<
 	protected routerStore?: bRouter;
 
 	/**
-	 * System language store
+	 * System locale store
 	 */
 	@field()
-	protected langStore: string = lang;
+	protected localeStore: string = locale;
 
 	/**
 	 * Cache of root modifiers
@@ -259,17 +261,17 @@ export default abstract class iStaticPage<
 	}
 
 	/**
-	 * Synchronization for the langStore field
-	 * @param lang
+	 * Synchronization for the localeStore field
+	 * @param locale
 	 */
-	@watch('langStore')
-	@watch('globalEvent:i18n.setLang')
-	protected syncLangWatcher(lang: string): void {
-		if (this.lang === lang) {
+	@watch('localeStore')
+	@watch('globalEvent:i18n.setLocale')
+	protected syncLocaleWatcher(locale: string): void {
+		if (this.locale === locale) {
 			return;
 		}
 
-		this.lang = lang;
+		this.locale = locale;
 		this.$forceUpdate();
 	}
 

@@ -42,8 +42,8 @@ session.event.on('clear', (...args) => {
 	emitter.emit('session.clear', ...args);
 });
 
-i18n.event.on('setLang', (...args) => {
-	emitter.emit('i18n.setLang', ...args);
+i18n.event.on('setLocale', (...args) => {
+	emitter.emit('i18n.setLocale', ...args);
 });
 
 export default emitter;

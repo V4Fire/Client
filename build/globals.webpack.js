@@ -16,7 +16,7 @@ const
 
 module.exports = {
 	IS_PROD,
-	LANG: s(LANG),
+	LOCALE: s(LOCALE),
 	API_URL: s(API_URL),
 	APP_NAME: s(APP_NAME),
 	PUBLIC_PATH: s(config.webpack.publicPath()),

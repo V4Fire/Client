@@ -299,7 +299,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 
 	typograf() {
 		return {
-			locale: this.lang
+			locale: this.locale
 		};
 	},
 });
