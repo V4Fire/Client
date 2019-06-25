@@ -149,7 +149,7 @@ export function bindWatchers(ctx: ComponentInterface, eventCtx: ComponentInterfa
 					handler = <typeof handler>watchObj.wrapper(ctx, handler);
 				}
 
-				if (handler instanceof Promise) {
+				if (Object.isPromise(handler)) {
 					$a.promise<typeof handler>(<any>handler, group).then((handler) => {
 						if (customWatcher) {
 							const

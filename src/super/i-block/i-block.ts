@@ -1348,7 +1348,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 		const
 			res = this.initLoad(undefined, true);
 
-		if (res instanceof Promise) {
+		if (Object.isPromise(res)) {
 			return res;
 		}
 

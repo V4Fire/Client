@@ -445,7 +445,7 @@ export default abstract class iInput<
 				Object.assign(isObject ? el[key] : isArray && el[1] || {}, params)
 			);
 
-			if (validation instanceof Promise) {
+			if (Object.isPromise(validation)) {
 				this.removeMod('valid');
 				this.setMod('progress', true);
 			}

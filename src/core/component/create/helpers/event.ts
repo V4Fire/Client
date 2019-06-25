@@ -71,7 +71,7 @@ export default class EventEmitter {
 					const
 						task = el.cb();
 
-					if (task instanceof Promise) {
+					if (Object.isPromise(task)) {
 						tasks.push(task);
 					}
 				}
@@ -97,7 +97,7 @@ export default class EventEmitter {
 			const
 				task = queue[i]();
 
-			if (task instanceof Promise) {
+			if (Object.isPromise(task)) {
 				tasks.push(task);
 			}
 		}
