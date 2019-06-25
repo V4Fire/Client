@@ -202,7 +202,8 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 
 	monic() {
 		const
-			runtime = this.runtime();
+			runtime = this.runtime(),
+			es = this.es();
 
 		return {
 			stylus: {
@@ -213,13 +214,15 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 
 			typescript: {
 				flags: {
-					runtime
+					runtime,
+					es
 				}
 			},
 
 			javascript: {
 				flags: {
-					runtime
+					runtime,
+					es
 				}
 			}
 		};

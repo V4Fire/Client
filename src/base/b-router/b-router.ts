@@ -7,8 +7,7 @@
  */
 
 import Async from 'core/async';
-import path = require('path-to-regexp');
-import { RegExpOptions } from 'path-to-regexp';
+import path, { RegExpOptions } from 'path-to-regexp';
 
 import engine from 'core/router';
 import symbolGenerator from 'core/symbol';

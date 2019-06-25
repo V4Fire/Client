@@ -10,7 +10,7 @@
 
 const
 	config = require('config'),
-	UglifyJsPlugin = require('uglifyjs-webpack-plugin'),
+	TerserPlugin = require('terser-webpack-plugin'),
 	OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 
 const
@@ -63,24 +63,31 @@ module.exports = async function ({buildId, plugins}) {
 	}
 
 	if (isProd) {
+		const
+			es = config.es(),
+			keepFNames = Boolean({ES5: true, ES3: true}[es]);
+
 		options.minimizer = [
 			/* eslint-disable camelcase */
 
-			new UglifyJsPlugin({
+			new TerserPlugin({
 				parallel: true,
-				uglifyOptions: inherit(config.uglify(), {
-					compress: {
-						keep_fnames: true
-					},
+				terserOptions: inherit(config.uglify(), {
+					safari10: true,
+					warnings: false,
+					ecma: es,
+					keep_fnames: keepFNames,
+					keep_classnames: true,
 
 					output: {
 						comments: false
 					},
 
-					mangle: false
+					mangle: {
+						safari10: true
+					}
 				})
 			})
-
 			/* eslint-enable camelcase */
 		];
 	}

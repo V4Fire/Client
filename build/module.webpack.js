@@ -46,6 +46,18 @@ module.exports = async function ({buildId, plugins}) {
 		graph = await build,
 		loaders = {rules: new Map()};
 
+	if (buildId === build.STD) {
+		loaders.rules.set('js', {
+			test: /\.js$/,
+			use: [
+				{
+					loader: 'monic',
+					options: inherit(monic.javascript)
+				}
+			]
+		});
+	}
+
 	if (buildId === build.RUNTIME) {
 		loaders.rules.set('ts', {
 			test: /^(?:(?!\/workers\/).)*(?:\.d)?\.ts$/,
