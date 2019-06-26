@@ -12,7 +12,17 @@ import Opt from 'super/i-block/modules/opt';
 import Field from 'super/i-block/modules/field';
 import Provide from 'super/i-block/modules/provide';
 
-import { renderData, patchVNode, execRenderObject, RenderObject, RenderContext, VNode } from 'core/component';
+import {
+
+	renderData,
+	patchVNode,
+	execRenderObject,
+	RenderObject,
+	RenderContext,
+	VNode,
+	ScopedSlot
+
+} from 'core/component';
 
 const
 	tplCache = Object.createDict<RenderObject>();
@@ -176,5 +186,19 @@ export default class VDOM {
 		};
 
 		return search(vnode);
+	}
+
+	/**
+	 * Returns a slot by name if it's present
+	 *
+	 * @param name
+	 * @param ctx
+	 */
+	getSlot<T extends iBlock>(
+		name: string,
+		// @ts-ignore
+		ctx: T = this.component
+	): CanUndef<VNode | ScopedSlot> {
+		return Object.get(ctx, `$slots.${name}`) || Object.get(ctx, `$scopedSlots.${name}`);
 	}
 }
