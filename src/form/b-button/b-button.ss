@@ -57,7 +57,7 @@
 
 				< _.&__wrapper
 					- block preIcon
-						< _.&__cell.&__icon.&__pre-icon v-if = vnode.getSlot('preIcon')
+						< _.&__cell.&__icon.&__pre-icon v-if = vdom.getSlot('preIcon')
 							+= self.slot('preIcon')
 
 						< _.&__cell.&__icon.&__pre-icon v-else-if = preIcon
@@ -76,11 +76,11 @@
 							+= self.slot()
 
 					- block expand
-						< _.&__cell.&__icon.&__expand v-if = vnode.getSlot('dropdown')
+						< _.&__cell.&__icon.&__expand v-if = vdom.getSlot('dropdown')
 							< @b-icon :value = 'expand_more'
 
 					- block icon
-						< _.&__cell.&__icon.&__post-icon v-if = vnode.getSlot('icon')
+						< _.&__cell.&__icon.&__post-icon v-if = vdom.getSlot('icon')
 							+= self.slot('icon')
 
 						< _.&__cell.&__icon.&__post-icon v-else-if = icon
@@ -106,7 +106,7 @@
 
 		- block dropdown
 			< . &
-				v-if = vnode.getSlot('dropdown') && (
+				v-if = vdom.getSlot('dropdown') && (
 					isFunctional ||
 					opt.ifOnce('opened', m.opened !== 'false') && delete watchModsStore.opened
 				) |

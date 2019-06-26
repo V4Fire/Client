@@ -17,7 +17,7 @@
 				{{ label }}
 
 		- block icon
-			< .&__cell.&__icon v-if = vnode.getSlot('icon')
+			< .&__cell.&__icon v-if = vdom.getSlot('icon')
 				+= self.slot('icon')
 
 			< .&__cell.&__icon v-else

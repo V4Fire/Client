@@ -37,7 +37,7 @@
 					:-id = values[el.value]
 				.
 					- block preIcon
-						< span.&__cell.&__link-icon.&__link-pre-icon v-if = vnode.getSlot('preIcon')
+						< span.&__cell.&__link-icon.&__link-pre-icon v-if = vdom.getSlot('preIcon')
 							+= self.slot('preIcon')
 
 						< span.&__cell.&__link-icon.&__link-pre-icon v-else-if = el.preIcon
@@ -61,7 +61,7 @@
 							{{ field.get('db.' + el.info) }}
 
 					- block icon
-						< span.&__cell.&__link-icon.&__link-post-icon v-if = vnode.getSlot('icon')
+						< span.&__cell.&__link-icon.&__link-post-icon v-if = vdom.getSlot('icon')
 							+= self.slot('icon')
 
 						< span.&__cell.&__link-icon.&__link-post-icon v-else-if = el.icon
