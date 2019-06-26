@@ -196,7 +196,8 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 			'core/helpers': true,
 			'core/browser': true,
 			'core/analytics': true,
-			'directives/in-view': true
+			'directives/in-view': true,
+			'bInput/mask': false
 		};
 	},
 
