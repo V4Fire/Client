@@ -189,7 +189,7 @@ export default class VDOM {
 	}
 
 	/**
-	 * Returns a slot by name if it's present
+	 * Returns a slot by the specified name
 	 *
 	 * @param name
 	 * @param ctx
