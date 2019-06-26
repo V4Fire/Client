@@ -105,41 +105,41 @@ export function bindWatchers(ctx: ComponentInterface, eventCtx: ComponentInterfa
 			for (let i = 0; i < watchers.length; i++) {
 				const
 					watchObj = watchers[i],
-					handlerIsStr = Object.isString(watchObj.handler);
+					rawHandler = watchObj.handler;
 
 				const label = `[[WATCHER:${key}:${
-					watchObj.method != null ? watchObj.method : handlerIsStr ? watchObj.handler : (<Function>watchObj.handler).name
+					watchObj.method != null ? watchObj.method : Object.isString(watchObj.handler) ?
+						watchObj.handler : (<Function>watchObj.handler).name
 				}]]`;
 
 				const
 					group = {group: watchObj.group || 'watchers', label},
-					eventParams = {...group, options: watchObj.options, single: watchObj.single},
-					fn = watchObj.handler;
+					eventParams = {...group, options: watchObj.options, single: watchObj.single};
 
 				let
 					handler;
 
-				if (customWatcher || !Object.isFunction(fn) || fn.length > 1) {
+				if (customWatcher || !Object.isFunction(rawHandler) || rawHandler.length > 1) {
 					handler = (a, b, ...args) => {
 						args = watchObj.provideArgs === false ? [] : [a, b].concat(args);
 
-						if (Object.isString(fn)) {
-							if (!Object.isFunction(ctx[fn])) {
-								throw new ReferenceError(`The specified method (${fn}) for watching is not defined`);
+						if (Object.isString(rawHandler)) {
+							if (!Object.isFunction(ctx[rawHandler])) {
+								throw new ReferenceError(`The specified method (${rawHandler}) for watching is not defined`);
 							}
 
 							// @ts-ignore (access)
 							ctx.$async.setImmediate(
-								() => ctx[fn](...args),
+								() => ctx[rawHandler](...args),
 								group
 							);
 
 						} else {
 							if (watchObj.method) {
-								fn.call(ctx, ...args);
+								rawHandler.call(ctx, ...args);
 
 							} else {
-								fn(ctx, ...args);
+								rawHandler(ctx, ...args);
 							}
 						}
 					};
@@ -151,23 +151,23 @@ export function bindWatchers(ctx: ComponentInterface, eventCtx: ComponentInterfa
 							oldVal = arguments[1],
 							args = watchObj.provideArgs === false ? [] : [val, oldVal];
 
-						if (Object.isString(fn)) {
-							if (!Object.isFunction(ctx[fn])) {
-								throw new ReferenceError(`The specified method (${fn}) for watching is not defined`);
+						if (Object.isString(rawHandler)) {
+							if (!Object.isFunction(ctx[rawHandler])) {
+								throw new ReferenceError(`The specified method (${rawHandler}) for watching is not defined`);
 							}
 
 							// @ts-ignore (access)
 							ctx.$async.setImmediate(
-								() => ctx[fn](...args),
+								() => ctx[rawHandler](...args),
 								group
 							);
 
 						} else {
 							if (watchObj.method) {
-								fn.call(ctx, ...args);
+								rawHandler.call(ctx, ...args);
 
 							} else {
-								fn(ctx, ...args);
+								rawHandler(ctx, ...args);
 							}
 						}
 					};
