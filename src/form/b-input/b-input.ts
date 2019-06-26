@@ -25,7 +25,10 @@ import iInput, {
 } from 'super/i-input/i-input';
 
 import BlockValidators from 'form/b-input/modules/validators';
+
+//#if runtime has bInput/mask
 import * as mask from 'form/b-input/modules/mask';
+//#endif
 
 export { SizeDictionary };
 export * from 'super/i-input/i-input';

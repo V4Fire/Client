@@ -6,7 +6,6 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import keyCodes from 'core/key-codes';
 import iBlock, { ModsDecl, ModEvent, SetModEvent } from 'super/i-block/i-block';
 
 export interface CloseHelperEvents {
@@ -104,7 +103,7 @@ export default abstract class iOpen {
 	 * @param e
 	 */
 	static async onKeyClose<T extends iBlock>(component: T & iOpen, e: KeyboardEvent): Promise<void> {
-		if (e.keyCode === keyCodes.ESC) {
+		if (e.key === 'Escape') {
 			await component.close();
 		}
 	}

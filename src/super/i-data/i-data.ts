@@ -11,7 +11,6 @@ import symbolGenerator from 'core/symbol';
 import iProgress from 'traits/i-progress/i-progress';
 import Async, { AsyncOpts, AsyncCbOpts } from 'core/async';
 
-import statusCodes from 'core/status-codes';
 import RequestError from 'core/request/error';
 import { providers } from 'core/data/const';
 
@@ -582,6 +581,10 @@ export default abstract class iData<T extends object = Dictionary> extends iMess
 				ProviderConstructor = <typeof Provider>providers[value];
 
 			if (!ProviderConstructor) {
+				if (value === 'Provider') {
+					return;
+				}
+
 				throw new Error(`Provider "${value}" is not defined`);
 			}
 
@@ -623,6 +626,10 @@ export default abstract class iData<T extends object = Dictionary> extends iMess
 				ProviderConstructor = <typeof Provider>providers[providerNm];
 
 			if (!ProviderConstructor) {
+				if (providerNm === 'Provider') {
+					return;
+				}
+
 				throw new Error(`Provider "${providerNm}" is not defined`);
 			}
 
@@ -708,11 +715,11 @@ export default abstract class iData<T extends object = Dictionary> extends iMess
 
 			case 'invalidStatus':
 				switch ((<NonNullable<Response>>err.details.response).status) {
-					case statusCodes.FORBIDDEN:
+					case 403:
 						msg = t`You don't have permission for this operation`;
 						break;
 
-					case statusCodes.NOT_FOUND:
+					case 404:
 						msg = t`The requested resource wasn't found`;
 						break;
 

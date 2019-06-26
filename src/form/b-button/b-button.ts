@@ -6,7 +6,9 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+//#if runtime has core/data
 import 'core/data';
+//#endif
 
 //#if runtime has bForm
 import bForm from 'form/b-form/b-form';

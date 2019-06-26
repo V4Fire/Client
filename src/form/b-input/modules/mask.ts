@@ -8,7 +8,6 @@
 
 import symbolGenerator from 'core/symbol';
 import bInput from 'form/b-input/b-input';
-import keyCodes from 'core/key-codes';
 
 export const
 	$$ = symbolGenerator();
@@ -132,11 +131,11 @@ export async function onMaskInput<T extends bInput<any, any, any>>(component: T)
  */
 export async function onMaskBackspace<T extends bInput<any, any, any>>(component: T, e: KeyboardEvent): Promise<void> {
 	const codes = {
-		[keyCodes.BACKSPACE]: true,
-		[keyCodes.DELETE]: true
+		Backspace: true,
+		Delete: true
 	};
 
-	if (!codes[e.keyCode]) {
+	if (!codes[e.key]) {
 		return;
 	}
 
@@ -171,7 +170,7 @@ export async function onMaskBackspace<T extends bInput<any, any, any>>(component
 		res = c.valueBuffer,
 		pos = 0;
 
-	if (e.keyCode === keyCodes.DELETE) {
+	if (e.key === 'Delete') {
 		let
 			start = selectionStart,
 			end = selectionEnd;
@@ -282,9 +281,9 @@ export function onMaskNavigate<T extends bInput<any, any, any>>(component: T, e:
 	const
 		c = component,
 		keyboardEvent = e instanceof KeyboardEvent,
-		leftKey = (<KeyboardEvent>e).keyCode === keyCodes.LEFT;
+		leftKey = (<KeyboardEvent>e).key === 'ArrowLeft';
 
-	if (keyboardEvent ? !leftKey && (<KeyboardEvent>e).keyCode !== keyCodes.RIGHT : (<MouseEvent>e).button !== 0) {
+	if (keyboardEvent ? !leftKey && (<KeyboardEvent>e).key !== 'ArrowRight' : (<MouseEvent>e).button !== 0) {
 		return;
 	}
 
@@ -385,14 +384,14 @@ export function onMaskKeyPress<T extends bInput<any, any, any>>(component: T, e:
 		c = component;
 
 	const blacklist = {
-		[keyCodes.TAB]: true
+		Tab: true
 	};
 
 	const
 		// @ts-ignore
 		{valueBuffer, _mask} = c;
 
-	if (e.altKey || e.shiftKey || e.ctrlKey || e.metaKey || blacklist[e.keyCode] || !valueBuffer || !_mask) {
+	if (e.altKey || e.shiftKey || e.ctrlKey || e.metaKey || blacklist[e.key] || !valueBuffer || !_mask) {
 		return;
 	}
 

@@ -92,7 +92,7 @@
 									< transition &
 										:enter-active-class = animateMonthEnterClass |
 										:duration = {enter: 200, leave: 0} |
-										v-on:after-leave = onMonthSwitchEnd
+										@afterLeave = onMonthSwitchEnd
 									.
 										< .&__month-wrap v-if = !monthSwitchAnimation
 											< .&__row v-for = days in getMonthDays(i)

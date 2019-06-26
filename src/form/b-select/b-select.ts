@@ -7,7 +7,6 @@
  */
 
 import symbolGenerator from 'core/symbol';
-import keyCodes from 'core/key-codes';
 
 import iOpenToggle, { CloseHelperEvents } from 'traits/i-open-toggle/i-open-toggle';
 import bScrollInline from 'base/b-scroll/b-scroll-inline/b-scroll-inline';
@@ -325,7 +324,7 @@ export default class bSelect<
 		openedSelect = this;
 
 		$a.on(document, 'keydown', async (e) => {
-			if (!{[keyCodes.UP]: true, [keyCodes.DOWN]: true, [keyCodes.ENTER]: true}[e.keyCode]) {
+			if (!{ArrowUp: true, ArrowDown: true, Enter: true}[e.key]) {
 				return;
 			}
 
@@ -339,15 +338,15 @@ export default class bSelect<
 				return $b.element('option', {selected: true});
 			}
 
-			switch (e.keyCode) {
-				case keyCodes.ENTER:
+			switch (e.key) {
+				case 'Enter':
 					if (selected) {
 						await this.onOptionSelected();
 					}
 
 					break;
 
-				case keyCodes.UP:
+				case 'ArrowUp':
 					if (this.selected) {
 						if (selected) {
 							if (selected.previousElementSibling) {
@@ -361,7 +360,7 @@ export default class bSelect<
 
 					break;
 
-				case keyCodes.DOWN: {
+				case 'ArrowDown': {
 					const
 						that = this;
 

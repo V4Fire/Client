@@ -6,7 +6,6 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import statusCodes from 'core/status-codes';
 import Provider, { provider, Middlewares, RequestResponse, RequestFunctionResponse, Response } from 'core/data';
 import * as s from 'core/session';
 export * from 'core/data';
@@ -100,7 +99,7 @@ export default class Session extends Provider {
 				const
 					r = () => this.updateRequest(url, <string>event, <RequestFunctionResponse>factory);
 
-				if (response.status === statusCodes.UNAUTHORIZED) {
+				if (response.status === 401) {
 					if (!await s.match(auth, csrf)) {
 						return r();
 					}

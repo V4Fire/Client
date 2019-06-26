@@ -18,13 +18,11 @@ import { StatusEvent } from 'core/net';
 
 import iBlock from 'super/i-block/i-block';
 import iPage, { component, field, system, watch, Event } from 'super/i-page/i-page';
+import { CurrentPage } from 'core/router/interface';
 
 //#if runtime has bRouter
 import bRouter from 'base/b-router/b-router';
 //#endif
-
-// tslint:disable-next-line:no-duplicate-imports
-import { CurrentPage } from 'base/b-router/b-router';
 
 export * from 'super/i-data/i-data';
 export { globalEvent, ResetType, CurrentPage };

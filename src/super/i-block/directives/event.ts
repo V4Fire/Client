@@ -6,7 +6,6 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import KeyCodes from 'core/key-codes';
 import iBlock from 'super/i-block/i-block';
 import Component, { VNode, VNodeDirective, ComponentElement } from 'core/component';
 
@@ -65,27 +64,26 @@ function bind(
 	if (m.key) {
 		const
 			res = keyValRgxp.exec(raw);
-
 		if (res && res[1]) {
 			const
 				list = res[1].split(commaRgxp);
 
 			for (let i = 0; i < list.length; i++) {
-				keys[list[i]] = true;
+				keys[list[i].toLowerCase()] = true;
 			}
 		}
 	}
 
 	function fn(e: KeyboardEvent): void {
 		const
-			key = m.key && KeyCodes.getKeyNameFromKeyCode(e.keyCode);
+			key = m.key && e.key;
 
 		if (
 			m.alt && !e.altKey ||
 			m.shift && !e.shiftKey ||
 			m.ctrl && !e.ctrlKey ||
 			m.meta && !e.metaKey ||
-			key && !keys[key.toUpperCase()]
+			key && !keys[key.toLowerCase()]
 
 		) {
 			return;
