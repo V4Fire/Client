@@ -38,7 +38,7 @@
 
 					< template v-else
 						+= self.slot()
-							< h1.&__title v-if = title || $slots.title
+							< h1.&__title v-if = title || vnode.getSlot('title')
 								+= self.slot('title')
 									- block title
 										{{ title }}

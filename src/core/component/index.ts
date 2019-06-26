@@ -58,7 +58,8 @@ export {
 
 	VNode,
 	VNodeDirective,
-	CreateElement
+	CreateElement,
+	ScopedSlot
 
 } from 'core/component/engines';
 

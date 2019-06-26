@@ -20,7 +20,7 @@
 			- block wrapper
 				< _.&__wrapper
 					- block preIcon
-						< _.&__cell.&__icon.&__pre-icon v-if = $slots.preIcon
+						< _.&__cell.&__icon.&__pre-icon v-if = vnode.getSlot('preIcon')
 							+= self.slot('preIcon')
 
 						< _.&__cell.&__icon.&__pre-icon v-else-if = preIcon
@@ -59,7 +59,7 @@
 							.
 
 					- block icon
-						< _.&__cell.&__icon.&__post-icon v-if = $slots.icon
+						< _.&__cell.&__icon.&__post-icon v-if = vnode.getSlot('icon')
 							+= self.slot('icon')
 
 						< _.&__cell.&__icon.&__post-icon v-else-if = icon
