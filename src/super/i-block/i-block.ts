@@ -1595,36 +1595,35 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 		opts: BaseWatchOptionsWithHandler<T>
 	): Function {
 		const
-			{watchCache} = this;
+			{watchCache} = this,
+			{handler} = opts;
 
 		let
 			oldVal,
 			needCache;
 
 		if (Object.isString(exprOrFn)) {
-			needCache = true;
+			needCache = handler.length > 1;
 			exprOrFn = getFieldRealInfo(this, exprOrFn).name;
-			oldVal = watchCache[exprOrFn] = exprOrFn in watchCache ?
-				watchCache[exprOrFn] : cloneWatchValue(this.field.get(exprOrFn));
+
+			if (needCache) {
+				oldVal = watchCache[exprOrFn] = exprOrFn in watchCache ?
+					watchCache[exprOrFn] : cloneWatchValue(this.field.get(exprOrFn));
+			}
 		}
 
 		return this.$watch(exprOrFn, {
 			handler(val: unknown, defOldVal: unknown): unknown {
-				if (val !== defOldVal) {
+				if (!needCache || val !== defOldVal) {
 					if (needCache) {
 						oldVal = defOldVal;
 					}
 
-					return opts.handler.call(this, val, defOldVal);
+					return handler.call(this, val, defOldVal);
 				}
 
-				const
-					res = opts.handler.call(this, val, oldVal);
-
-				if (needCache) {
-					oldVal = watchCache[<string>exprOrFn] = cloneWatchValue(val);
-				}
-
+				const res = handler.call(this, val, oldVal);
+				oldVal = watchCache[<string>exprOrFn] = cloneWatchValue(val);
 				return res;
 			},
 

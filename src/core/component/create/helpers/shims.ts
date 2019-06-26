@@ -6,7 +6,6 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { defProp } from 'core/const/props';
 import { EventEmitter2 as EventEmitter } from 'eventemitter2';
 import { ComponentElement, ComponentInterface } from 'core/component/interface';
 
@@ -89,7 +88,9 @@ export function patchRefs(ctx: ComponentInterface): void {
 
 				if (needRewrite) {
 					Object.defineProperty($refs, key, {
-						...defProp,
+						configurable: true,
+						enumerable: true,
+						writable: true,
 						value: arr
 					});
 				}
@@ -100,7 +101,9 @@ export function patchRefs(ctx: ComponentInterface): void {
 
 				if (component && (<ComponentInterface>component).$el === el) {
 					Object.defineProperty($refs, key, {
-						...defProp,
+						configurable: true,
+						enumerable: true,
+						writable: true,
 						value: component
 					});
 				}

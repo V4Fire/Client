@@ -194,8 +194,9 @@ export default class State {
 							$a.on(this.localEvent, `block.mod.*.${p[1]}.*`, sync, storeWatchers);
 
 						} else {
-							c.watch(key, (val, oldVal) => {
-								if (!Object.fastCompare(val, oldVal)) {
+							// tslint:disable-next-line:only-arrow-functions
+							c.watch(key, function (val: unknown): void {
+								if (!Object.fastCompare(val, arguments[1])) {
 									sync();
 								}
 							}, storeWatchers);
@@ -341,8 +342,9 @@ export default class State {
 						$a.on(this.localEvent, `block.mod.*.${p[1]}.*`, sync, routerWatchers);
 
 					} else {
-						this.component.watch(key, (val, oldVal) => {
-							if (!Object.fastCompare(val, oldVal)) {
+						// tslint:disable-next-line:only-arrow-functions
+						c.watch(key, function (val: unknown): void {
+							if (!Object.fastCompare(val, arguments[1])) {
 								sync();
 							}
 						}, routerWatchers);

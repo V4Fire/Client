@@ -177,13 +177,31 @@ export default class Sync {
 			};
 
 			if (!component.isFlyweight && (!meta.props[field] || !component.isFunctional)) {
-				component.watch(field, async (val, oldVal) => {
-					if (Object.fastCompare(val, oldVal) || Object.fastCompare(val, this.field.get(path))) {
-						return;
-					}
+				if (wrapper && wrapper.length > 1) {
+					component.watch(field, (val, oldVal) => {
+						if (Object.fastCompare(val, oldVal) || Object.fastCompare(val, this.field.get(path))) {
+							return;
+						}
 
-					sync(val, oldVal);
-				}, params);
+						sync(val, oldVal);
+					}, params);
+
+				} else {
+					const
+						that = this;
+
+					// tslint:disable-next-line:only-arrow-functions
+					component.watch(field, function (val?: unknown): void {
+						const
+							oldVal = arguments[1];
+
+						if (Object.fastCompare(val, oldVal) || Object.fastCompare(val, that.field.get(path))) {
+							return;
+						}
+
+						sync(val, oldVal);
+					}, params);
+				}
 			}
 
 			// tslint:disable-next-line:prefer-object-spread
@@ -289,20 +307,38 @@ export default class Sync {
 			return val;
 		};
 
-		const attachWatcher = (field, path, getVal) => {
+		const attachWatcher = (field, path, getVal, clone?) => {
 			Object.set(linksCache, path, true);
 
 			const
 				sync = (val?, oldVal?) => setField(path, getVal(val, oldVal));
 
 			if (!component.isFlyweight && (!meta.props[field] || !component.isFunctional)) {
-				component.watch(field, (val, oldVal) => {
-					if (Object.fastCompare(val, oldVal) || Object.fastCompare(val, this.field.get(path))) {
-						return;
-					}
+				if (clone) {
+					component.watch(field, (val, oldVal) => {
+						if (Object.fastCompare(val, oldVal) || Object.fastCompare(val, this.field.get(path))) {
+							return;
+						}
 
-					sync(val, oldVal);
-				}, <AsyncWatchOpts>params);
+						sync(val, oldVal);
+					}, <AsyncWatchOpts>params);
+
+				} else {
+					const
+						that = this;
+
+					// tslint:disable-next-line:only-arrow-functions
+					component.watch(field, function (val?: unknown): void {
+						const
+							oldVal = arguments[1];
+
+						if (Object.fastCompare(val, oldVal) || Object.fastCompare(val, that.field.get(path))) {
+							return;
+						}
+
+						sync(val, oldVal);
+					}, <AsyncWatchOpts>params);
+				}
 			}
 
 			// tslint:disable-next-line:prefer-object-spread
@@ -348,7 +384,7 @@ export default class Sync {
 						return wrapper ? wrapper.call(this, val, oldVal) : val;
 					};
 
-					attachWatcher(field, l, getVal);
+					attachWatcher(field, l, getVal, wrapper && wrapper.length > 1);
 					cursor[el[0]] = getVal();
 				}
 

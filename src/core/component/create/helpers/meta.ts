@@ -172,7 +172,9 @@ export function addMethodsFromMeta(meta: ComponentMeta, ctx: ComponentInterface,
 			if ('fn' in el) {
 				if (safe) {
 					Object.defineProperty(ctx, key, {
-						...defProp,
+						configurable: true,
+						enumerable: true,
+						writable: true,
 						value: el.fn.bind(ctx)
 					});
 

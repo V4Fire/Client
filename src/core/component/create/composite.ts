@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { defProp, defReadonlyProp } from 'core/const/props';
+import { defProp } from 'core/const/props';
 import { supports, VNode, VNodeDirective, NormalizedScopedSlot } from 'core/component/engines';
 import { ComponentInterface } from 'core/component/interface';
 import { components } from 'core/component/const';
@@ -193,21 +193,56 @@ export function createCompositeElement(vnode: VNode, ctx: ComponentInterface): V
 	});
 
 	Object.defineProperty(fakeCtx, 'componentStatusStore', {
-		...defProp,
+		configurable: true,
+		enumerable: true,
+		writable: true,
 		value: 'unloaded'
 	});
 
 	addEventAPI(fakeCtx);
 
-	Object.defineProperty(fakeCtx, '$refs', {...defReadonlyProp, value: {}});
-	Object.defineProperty(fakeCtx, '$props', {...defReadonlyProp, value: {}});
-	Object.defineProperty(fakeCtx, '$attrs', {...defReadonlyProp, value: vData.attrs});
+	Object.defineProperty(fakeCtx, '$refs', {
+		configurable: true,
+		enumerable: true,
+		value: {}
+	});
 
-	Object.defineProperty(fakeCtx, '$data', {...defReadonlyProp, value: {}});
-	Object.defineProperty(fakeCtx, '$$data', {...defProp, value: fakeCtx.$data});
+	Object.defineProperty(fakeCtx, '$props', {
+		configurable: true,
+		enumerable: true,
+		value: {}
+	});
 
-	Object.defineProperty(fakeCtx, '$slots', {...defReadonlyProp, value: vData.slots});
-	Object.defineProperty(fakeCtx, '$scopedSlots', {...defReadonlyProp, value: vData.scopedSlots});
+	Object.defineProperty(fakeCtx, '$attrs', {
+		configurable: true,
+		enumerable: true,
+		value: vData.attrs
+	});
+
+	Object.defineProperty(fakeCtx, '$data', {
+		configurable: true,
+		enumerable: true,
+		value: {}
+	});
+
+	Object.defineProperty(fakeCtx, '$$data', {
+		configurable: true,
+		enumerable: true,
+		writable: true,
+		value: fakeCtx.$data
+	});
+
+	Object.defineProperty(fakeCtx, '$slots', {
+		configurable: true,
+		enumerable: true,
+		value: vData.slots
+	});
+
+	Object.defineProperty(fakeCtx, '$scopedSlots', {
+		configurable: true,
+		enumerable: true,
+		value: vData.scopedSlots
+	});
 
 	Object.defineProperty(fakeCtx, '$parent', {value: ctx});
 	Object.defineProperty(fakeCtx, '$normalParent', {value: getNormalParent(fakeCtx)});
@@ -218,7 +253,12 @@ export function createCompositeElement(vnode: VNode, ctx: ComponentInterface): V
 			key = keys[i],
 			value = o[key];
 
-		Object.defineProperty(fakeCtx, key, value !== undefined ? {...defProp, value} : defProp);
+		Object.defineProperty(fakeCtx, key, value !== undefined ? {
+			configurable: true,
+			enumerable: true,
+			writable: true, value
+		} : defProp);
+
 		fakeCtx.$props[key] = value;
 	}
 

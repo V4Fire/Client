@@ -14,6 +14,10 @@ export interface FieldRealInfo {
 	type: 'prop' | 'field' | 'system' | 'computed' | 'accessor';
 }
 
+const
+	propRgxp = /Prop$/,
+	storeRgxp = /Store$/;
+
 /**
  * Returns an object with real component field info
  *
@@ -23,38 +27,80 @@ export interface FieldRealInfo {
 export function getFieldRealInfo(component: ComponentInterface, name: string): FieldRealInfo {
 	const
 		// @ts-ignore (access)
-		meta = component.meta,
-		variants = [`${name}Store`, name, `${name}Prop`];
+		{props, fields, systemFields, computed, accessors} = component.meta;
 
-	for (let i = 0; i < variants.length; i++) {
-		const
-			name = variants[i];
+	if (propRgxp.test(name)) {
+		return {
+			name,
+			type: 'prop'
+		};
+	}
 
-		if (meta.fields[name]) {
+	if (storeRgxp.test(name)) {
+		if (fields[name]) {
 			return {
 				name,
 				type: 'field'
 			};
 		}
 
-		if (meta.props[name]) {
-			return {
-				name,
-				type: 'prop'
-			};
-		}
+		return {
+			name,
+			type: 'system'
+		};
+	}
 
-		if (meta.systemFields[name]) {
-			return {
-				name,
-				type: 'system'
-			};
-		}
+	if (fields[name]) {
+		return {
+			name,
+			type: 'field'
+		};
+	}
+
+	if (props[name]) {
+		return {
+			name,
+			type: 'prop'
+		};
+	}
+
+	if (systemFields[name]) {
+		return {
+			name,
+			type: 'system'
+		};
+	}
+
+	const
+		storeName = `${name}Store`;
+
+	if (fields[storeName]) {
+		return {
+			name: storeName,
+			type: 'field'
+		};
+	}
+
+	if (systemFields[storeName]) {
+		return {
+			name: storeName,
+			type: 'system'
+		};
+	}
+
+	const
+		propName = `${name}Prop`;
+
+	if (props[propName]) {
+		return {
+			name: propName,
+			type: 'prop'
+		};
 	}
 
 	return {
 		name,
-		type: meta.computed[name] ? 'computed' : meta.accessors[name] ? 'accessor' : 'system'
+		type: computed[name] ? 'computed' : accessors[name] ? 'accessor' : 'system'
 	};
 }
 
