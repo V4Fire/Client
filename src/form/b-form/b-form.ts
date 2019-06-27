@@ -334,6 +334,10 @@ export default class bForm<T extends object = Dictionary> extends iData<T> {
 					if (val instanceof Blob || val instanceof File || val instanceof FileList) {
 						isMultipart = true;
 					}
+
+					if (el.name) {
+						body[el.name] = val;
+					}
 				})());
 			}
 
