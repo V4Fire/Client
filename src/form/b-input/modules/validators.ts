@@ -243,7 +243,7 @@ export default <ValidatorsDecl<bInput, unknown>>{
 		}
 
 		if (Object.isDate(max) && !max.isAfter(value)) {
-			return error('MAX', min, t`Date must be no more than ${max}`);
+			return error('MAX', max, t`Date must be no more than ${max}`);
 		}
 
 		return true;
