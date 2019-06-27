@@ -236,7 +236,7 @@ export default <ValidatorsDecl<bInput, unknown>>{
 		}
 
 		min = min != null ? Date.create(min) : min;
-		max = max != null ? Date.create(max) : max;
+		max = max != null ? Date.create(max) : min;
 
 		if (Object.isDate(min) && !min.isBefore(value)) {
 			return error('MIN', min, t`Date must be at least ${min}`);
