@@ -6,6 +6,17 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+export interface CookieOptions {
+	path?: string;
+	domain?: string;
+	expires?: Date | string | number;
+	secure?: boolean;
+}
+
+export interface RemoveOptions extends CookieOptions {
+	expires?: never;
+}
+
 /**
  * Returns a cookie value by the specified name
  */
@@ -20,17 +31,6 @@ export function get(name: string): CanUndef<string> {
  */
 export function has(name: string): boolean {
 	return get(name) !== undefined;
-}
-
-export interface CookieOptions {
-	path?: string;
-	domain?: string;
-	expires?: Date | string | number;
-	secure?: boolean;
-}
-
-export interface RemoveOptions extends CookieOptions {
-	expires?: never;
 }
 
 /**
