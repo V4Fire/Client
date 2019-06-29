@@ -210,44 +210,50 @@ export function paramsFactory<T = unknown>(
 
 				if (metaKey === 'methods') {
 					const
-						name = key,
-						w = <any[]>[].concat(p.watch || []),
+						name = key;
+
+					let
+						watchers,
+						hooks;
+
+					if (p.watch) {
 						watchers = el.watchers || {};
 
-					for (let i = 0; i < w.length; i++) {
-						const
-							el = w[i];
+						for (let o = <any[]>[].concat(p.watch), i = 0; i < o.length; i++) {
+							const
+								el = o[i];
 
-						if (Object.isObject(el)) {
-							watchers[String((<Dictionary>el).field)] = wrapOpts({...p.watchParams, ...el});
+							if (Object.isObject(el)) {
+								watchers[String((<Dictionary>el).field)] = wrapOpts({...p.watchParams, ...el});
 
-						} else {
-							watchers[el] = wrapOpts({field: el, ...p.watchParams});
+							} else {
+								watchers[el] = wrapOpts({field: el, ...p.watchParams});
+							}
 						}
 					}
 
-					const
-						h = <any[]>[].concat(p.hook || []),
+					if (p.hook) {
 						hooks = el.hooks || {};
 
-					for (let i = 0; i < h.length; i++) {
-						const
-							el = h[i];
-
-						if (Object.isSimpleObject(el)) {
+						for (let o = <any[]>[].concat(p.hook), i = 0; i < o.length; i++) {
 							const
-								key = Object.keys(el)[0],
-								val = el[key];
+								el = o[i];
 
-							hooks[key] = wrapOpts({
-								...val,
-								name,
-								hook: key,
-								after: new Set(val.after || [])
-							});
+							if (Object.isSimpleObject(el)) {
+								const
+									key = Object.keys(el)[0],
+									val = el[key];
 
-						} else {
-							hooks[el] = wrapOpts({name, hook: el});
+								hooks[key] = wrapOpts({
+									...val,
+									name,
+									hook: key,
+									after: val.after ? new Set([].concat(val.after)) : undefined
+								});
+
+							} else {
+								hooks[el] = wrapOpts({name, hook: el});
+							}
 						}
 					}
 
@@ -304,23 +310,29 @@ export function paramsFactory<T = unknown>(
 			}
 
 			const
-				el = obj[key] || {src: meta.componentName},
-				watchers = el.watchers || new Map(),
-				after = el.after || new Set();
+				el = obj[key] || {src: meta.componentName};
 
-			for (let o = <any[]>[].concat(p.after || []), i = 0; i < o.length; i++) {
-				after.add(o[i]);
+			let
+				watchers,
+				after;
+
+			if (p.after) {
+				after = new Set([].concat(p.after));
 			}
 
-			for (let o = <any[]>[].concat(p.watch || []), i = 0; i < o.length; i++) {
-				const
-					el = o[i];
+			if (p.watch) {
+				for (let o = <any[]>[].concat(p.watch), i = 0; i < o.length; i++) {
+					watchers = el.watchers || new Map();
 
-				if (Object.isObject(el)) {
-					watchers.set((<Dictionary>el).fn, wrapOpts({...el}));
+					const
+						val = o[i];
 
-				} else {
-					watchers.set(el, wrapOpts({fn: el}));
+					if (Object.isObject(val)) {
+						watchers.set((<Dictionary>val).fn, wrapOpts({...val}));
+
+					} else {
+						watchers.set(val, wrapOpts({fn: val}));
+					}
 				}
 			}
 

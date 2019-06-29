@@ -146,7 +146,7 @@ export function initDataObject(
 		}
 
 		if (el.atom || !el.init && (el.default !== undefined || key in instance)) {
-			if (el.after.size) {
+			if (el.after && el.after.size) {
 				atomList.push(key);
 
 			} else {
@@ -206,7 +206,7 @@ export function initDataObject(
 			let
 				canInit = true;
 
-			if (el.after.size) {
+			if (el.after && el.after.size) {
 				for (let o = el.after.values(), val = o.next(); !val.done; val = o.next()) {
 					const
 						waitFieldKey = val.value,
@@ -295,7 +295,7 @@ export function initDataObject(
 			let
 				canInit = true;
 
-			if (el.after.size) {
+			if (el.after && el.after.size) {
 				for (let o = el.after.values(), val = o.next(); !val.done; val = o.next()) {
 					const
 						waitFieldKey = val.value,

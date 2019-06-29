@@ -281,46 +281,50 @@ export function getBaseComponent(
 		component.methods[nm] =
 			method.fn;
 
-		for (let o = method.watchers, keys = Object.keys(o), i = 0; i < keys.length; i++) {
-			const
-				key = keys[i],
-				watcher = <NonNullable<WatchOptionsWithHandler>>o[key],
-				wList = watchers[key] = watchers[key] || [];
+		if (method.watchers) {
+			for (let o = method.watchers, keys = Object.keys(o), i = 0; i < keys.length; i++) {
+				const
+					key = keys[i],
+					watcher = <NonNullable<WatchOptionsWithHandler>>o[key],
+					wList = watchers[key] = watchers[key] || [];
 
-			if (isFunctional && watcher.functional === false) {
-				continue;
+				if (isFunctional && watcher.functional === false) {
+					continue;
+				}
+
+				wList.push({
+					method: nm,
+					group: watcher.group,
+					single: watcher.single,
+					options: watcher.options,
+					args: (<unknown[]>[]).concat(watcher.args || []),
+					provideArgs: watcher.provideArgs,
+					deep: watcher.deep,
+					immediate: watcher.immediate,
+					wrapper: watcher.wrapper,
+					handler: <any>method.fn
+				});
 			}
-
-			wList.push({
-				method: nm,
-				group: watcher.group,
-				single: watcher.single,
-				options: watcher.options,
-				args: (<unknown[]>[]).concat(watcher.args || []),
-				provideArgs: watcher.provideArgs,
-				deep: watcher.deep,
-				immediate: watcher.immediate,
-				wrapper: watcher.wrapper,
-				handler: <any>method.fn
-			});
 		}
 
 		// Hooks
 
-		for (let o = method.hooks, keys = Object.keys(o), i = 0; i < keys.length; i++) {
-			const
-				key = keys[i],
-				watcher = o[key];
+		if (method.hooks) {
+			for (let o = method.hooks, keys = Object.keys(o), i = 0; i < keys.length; i++) {
+				const
+					key = keys[i],
+					watcher = o[key];
 
-			if (isFunctional && watcher.functional === false) {
-				continue;
+				if (isFunctional && watcher.functional === false) {
+					continue;
+				}
+
+				hooks[key].push({
+					name: watcher.name,
+					fn: method.fn,
+					after: watcher.after
+				});
 			}
-
-			hooks[key].push({
-				name: watcher.name,
-				fn: method.fn,
-				after: watcher.after
-			});
 		}
 	}
 
@@ -366,7 +370,7 @@ export function getBaseComponent(
 			default: !skipDefault ? prop.default !== undefined ? prop.default : defWrapper : undefined
 		};
 
-		if (prop.watchers.size) {
+		if (prop.watchers && prop.watchers.size) {
 			const
 				wList = watchers[key] = watchers[key] || [];
 
@@ -393,21 +397,23 @@ export function getBaseComponent(
 			key = keys[i],
 			field = <NonNullable<ComponentField>>o[key];
 
-		for (let w = field.watchers.values(), el = w.next(); !el.done; el = w.next()) {
-			const
-				watcher = el.value,
-				wList = watchers[key] = watchers[key] || [];
+		if (field.watchers) {
+			for (let w = field.watchers.values(), el = w.next(); !el.done; el = w.next()) {
+				const
+					watcher = el.value,
+					wList = watchers[key] = watchers[key] || [];
 
-			if (isFunctional && watcher.functional === false) {
-				continue;
+				if (isFunctional && watcher.functional === false) {
+					continue;
+				}
+
+				wList.push({
+					deep: watcher.deep,
+					immediate: watcher.immediate,
+					provideArgs: watcher.provideArgs,
+					handler: watcher.fn
+				});
 			}
-
-			wList.push({
-				deep: watcher.deep,
-				immediate: watcher.immediate,
-				provideArgs: watcher.provideArgs,
-				handler: watcher.fn
-			});
 		}
 	}
 

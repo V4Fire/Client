@@ -77,14 +77,14 @@ export interface SystemField<CTX extends ComponentInterface = ComponentInterface
 	unique?: boolean | UniqueFieldFn<CTX>;
 	replace?: boolean;
 	functional?: boolean;
-	after: Set<string>;
+	after?: Set<string>;
 	init?: InitFieldFn<CTX>;
 	merge?: MergeFieldFn<CTX> | boolean;
 	meta: Dictionary;
 }
 
 export interface ComponentField<CTX extends ComponentInterface = ComponentInterface> extends SystemField<CTX> {
-	watchers: Map<string | Function, FieldWatcher>;
+	watchers?: Map<string | Function, FieldWatcher>;
 }
 
 export interface WatchWrapper<CTX extends ComponentInterface = ComponentInterface, A = unknown, B = A> {
@@ -154,8 +154,8 @@ export interface ComponentMethod {
 	wrapper?: boolean;
 	replace?: boolean;
 	functional?: boolean;
-	watchers: Dictionary<MethodWatcher>;
-	hooks: {[hook in Hooks]?: {
+	watchers?: Dictionary<MethodWatcher>;
+	hooks?: {[hook in Hooks]?: {
 		name: string;
 		hook: string;
 		after: Set<string>;

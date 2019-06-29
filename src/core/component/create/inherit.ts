@@ -177,19 +177,23 @@ export default function inheritMeta(
 					continue;
 				}
 
-				const
-					after = new Set<string>(),
-					watchers = new Map();
+				let
+					after,
+					watchers;
 
 				if (parent.watchers) {
 					for (let w = parent.watchers.values(), el = w.next(); !el.done; el = w.next()) {
 						const val = el.value;
+						watchers = watchers || new Map();
 						watchers.set(val.fn, {...el.value});
 					}
 				}
 
-				if ('after' in parent) {
+				// @ts-ignore
+				if (parent.after) {
+					// @ts-ignore
 					for (let a = parent.after.values(), el = a.next(); !el.done; el = a.next()) {
+						after = after || new Set();
 						after.add(el.value);
 					}
 				}
@@ -252,7 +256,7 @@ export default function inheritMeta(
 
 				hooks[key] = {
 					...el,
-					after: new Set(el.after)
+					after: el.after && el.after.size ? new Set(el.after) : undefined
 				};
 			}
 		}
