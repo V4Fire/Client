@@ -15,17 +15,34 @@ import { customWatcherRgxp, MethodWatcher } from 'core/component';
 const
 	$$ = symbolGenerator();
 
+let
+	baseSyncRouterState,
+	baseInitLoad;
+
 /**
  * Initializes global event listeners for the specified component
  * @param component
  */
 export function initGlobalEvents(component: iBlock): void {
+	// @ts-ignore (access)
+	baseSyncRouterState = baseSyncRouterState || iBlock.prototype.syncRouterState;
+
+	// @ts-ignore (access)
+	baseInitLoad = baseInitLoad || iBlock.prototype.initLoad;
+
 	const
 		c = component;
 
 	const
 		// @ts-ignore
-		{globalEvent: $e, state: $s} = c;
+		{globalName, globalEvent: $e, state: $s} = c,
+		// @ts-ignore (access)
+		needRouter = c.instance.syncRouterState !== baseSyncRouterState,
+		needReset = !baseInitLoad || globalName || needRouter;
+
+	if (!needReset) {
+		return;
+	}
 
 	const waitNextTick = (fn) => async () => {
 		try {
@@ -39,25 +56,39 @@ export function initGlobalEvents(component: iBlock): void {
 
 	$e.on('reset.load', waitNextTick(c.initLoad));
 	$e.on('reset.load.silence', waitNextTick(c.reload));
-	$e.on('reset.router', $s.resetRouter);
-	$e.on('reset.storage', $s.resetStorage);
+
+	if (needRouter) {
+		$e.on('reset.router', $s.resetRouter);
+	}
+
+	if (globalName) {
+		$e.on('reset.storage', $s.resetStorage);
+	}
 
 	$e.on('reset', waitNextTick(async () => {
 		c.componentStatus = 'loading';
 
-		await Promise.all([
-			$s.resetRouter(),
-			$s.resetStorage()
-		]);
+		if (needRouter || globalName) {
+			await Promise.all(
+				(<Promise<unknown>[]>[]).concat(
+					needRouter ? $s.resetRouter() : [],
+					globalName ? $s.resetStorage() : []
+				)
+			);
+		}
 
 		await c.initLoad();
 	}));
 
 	$e.on('reset.silence', waitNextTick(async () => {
-		await Promise.all([
-			$s.resetRouter(),
-			$s.resetStorage()
-		]);
+		if (needRouter || globalName) {
+			await Promise.all(
+				(<Promise<unknown>[]>[]).concat(
+					needRouter ? $s.resetRouter() : [],
+					globalName ? $s.resetStorage() : []
+				)
+			);
+		}
 
 		await c.reload();
 	}));

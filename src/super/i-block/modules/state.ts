@@ -26,6 +26,9 @@ export type ConverterCallType =
 const
 	$$ = symbolGenerator();
 
+let
+	baseSyncRouterState;
+
 export default class State {
 	/**
 	 * Current component hook
@@ -90,6 +93,17 @@ export default class State {
 	protected get async(): Async {
 		// @ts-ignore
 		return this.component.async;
+	}
+
+	/**
+	 * Component class instance
+	 */
+	protected get instance(): iBlock {
+		// @ts-ignore (access)
+		baseSyncRouterState = baseSyncRouterState || iBlock.prototype.syncRouterState;
+
+		// @ts-ignore
+		return this.component.instance;
 	}
 
 	/**
@@ -218,6 +232,10 @@ export default class State {
 	 * Resets a component storage state
 	 */
 	async resetStorage(): Promise<boolean> {
+		if (!this.globalName) {
+			return false;
+		}
+
 		const
 			c = this.component,
 			// @ts-ignore
@@ -238,6 +256,11 @@ export default class State {
 	 * @param [data] - advanced data
 	 */
 	async saveToRouter(data?: Dictionary): Promise<boolean> {
+		// @ts-ignore (access)
+		if (baseSyncRouterState === this.instance.syncRouterState) {
+			return false;
+		}
+
 		const
 			c = this.component;
 
@@ -266,6 +289,11 @@ export default class State {
 	 * Initializes a component state from a router
 	 */
 	initFromRouter(): void {
+		// @ts-ignore (access)
+		if (baseSyncRouterState === this.instance.syncRouterState) {
+			return;
+		}
+
 		const
 			c = this.component,
 			routerWatchers = {group: 'routerWatchers'};
@@ -364,6 +392,11 @@ export default class State {
 	 * Resets a component router state
 	 */
 	async resetRouter(): Promise<boolean> {
+		// @ts-ignore (access)
+		if (baseSyncRouterState === this.instance.syncRouterState) {
+			return false;
+		}
+
 		const
 			c = this.component,
 			// @ts-ignore
