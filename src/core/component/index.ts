@@ -139,10 +139,8 @@ export function component(params?: ComponentParams): Function {
 					res = <unknown[]>[];
 
 				if (modVal) {
-					const
-						cache = new Map();
-
 					let
+						cache,
 						active;
 
 					for (let i = 0; i < modVal.length; i++) {
@@ -150,6 +148,8 @@ export function component(params?: ComponentParams): Function {
 							val = modVal[i];
 
 						if (Object.isArray(val)) {
+							cache = cache || new Map();
+
 							if (active !== undefined) {
 								cache.set(active, active);
 							}
@@ -158,6 +158,7 @@ export function component(params?: ComponentParams): Function {
 							cache.set(active, [active]);
 
 						} else {
+							cache = cache || new Map();
 							const v = String(val);
 							cache.set(v, v);
 						}
