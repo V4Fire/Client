@@ -52,6 +52,10 @@ export interface SetElementModEvent extends ElementModEvent {
 	prev: CanUndef<string>;
 }
 
+const
+	modRgxpCache = Object.createDict<RegExp>(),
+	elRxp = /_+/;
+
 /**
  * Base class for BEM like develop
  */
@@ -333,13 +337,13 @@ export default class Block {
 	 */
 	getMod(mod: string, strict?: boolean): CanUndef<string> {
 		const
-			{mods, node} = this;
+			{mods, node, component: c} = this;
 
 		if (mods && !strict) {
 			return mods[mod.camelize(false)];
 		}
 
-		if (!node) {
+		if (!node || !c.isFlyweight && !c.isFunctional) {
 			return undefined;
 		}
 
@@ -347,7 +351,8 @@ export default class Block {
 			MOD_VALUE = 2;
 
 		const
-			rgxp = new RegExp(`(?:^| )(${this.getFullBlockName(mod, '')}[^_ ]*)`),
+			pattern = `(?:^| )(${this.getFullBlockName(mod, '')}[^_ ]*)`,
+			rgxp = modRgxpCache[pattern] = modRgxpCache[pattern] || new RegExp(pattern),
 			el = rgxp.exec(node.className);
 
 		return el ? el[1].split('_')[MOD_VALUE] : undefined;
@@ -461,9 +466,10 @@ export default class Block {
 			MOD_VALUE = 3;
 
 		const
-			rgxp = new RegExp(`(?:^| )(${this.getFullElName(elName, modName, '')}[^_ ]*)`),
+			pattern = `(?:^| )(${this.getFullElName(elName, modName, '')}[^_ ]*)`,
+			rgxp = modRgxpCache[pattern] = pattern[pattern] || new RegExp(pattern),
 			el = rgxp.exec(link.className);
 
-		return el ? el[1].split(/_+/)[MOD_VALUE] : undefined;
+		return el ? el[1].split(elRxp)[MOD_VALUE] : undefined;
 	}
 }
