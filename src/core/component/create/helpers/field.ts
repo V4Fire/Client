@@ -104,6 +104,9 @@ export function getFieldRealInfo(component: ComponentInterface, name: string): F
 	};
 }
 
+const
+	fieldQueue = new Set();
+
 /**
  * Initializes the specified fields to a data object and returns it
  * (very critical for loading time)
@@ -125,7 +128,6 @@ export function initDataObject(
 		isFlyweight = ctx.$isFlyweight || ctx.meta.params.functional === true;
 
 	const
-		queue = new Set(),
 		skipped = {};
 
 	const
@@ -223,7 +225,7 @@ export function initDataObject(
 					}
 
 					if (!(waitFieldKey in data) || data[waitFieldKey] === NULL) {
-						queue.add(key);
+						fieldQueue.add(key);
 						canInit = false;
 						break;
 					}
@@ -241,7 +243,7 @@ export function initDataObject(
 
 				// @ts-ignore (access)
 				ctx.$activeField = key;
-				queue.delete(key);
+				fieldQueue.delete(key);
 
 				let
 					val;
@@ -262,7 +264,7 @@ export function initDataObject(
 			}
 		}
 
-		if (!queue.size) {
+		if (!fieldQueue.size) {
 			break;
 		}
 	}
@@ -308,7 +310,7 @@ export function initDataObject(
 					}
 
 					if (!(waitFieldKey in data) || data[waitFieldKey] === NULL) {
-						queue.add(key);
+						fieldQueue.add(key);
 						canInit = false;
 						break;
 					}
@@ -326,7 +328,7 @@ export function initDataObject(
 
 				// @ts-ignore (access)
 				ctx.$activeField = key;
-				queue.delete(key);
+				fieldQueue.delete(key);
 
 				let
 					val;
@@ -347,7 +349,7 @@ export function initDataObject(
 			}
 		}
 
-		if (!queue.size) {
+		if (!fieldQueue.size) {
 			break;
 		}
 	}
