@@ -14,7 +14,6 @@ const
 	$$ = symbolGenerator();
 
 let
-	baseSyncRouterState,
 	baseInitLoad;
 
 /**
@@ -25,24 +24,20 @@ let
  */
 export function initGlobalEvents(component: iBlock, resetListener?: boolean): void {
 	// @ts-ignore (access)
-	baseSyncRouterState = baseSyncRouterState || iBlock.prototype.syncRouterState;
-
-	// @ts-ignore (access)
 	baseInitLoad = baseInitLoad || iBlock.prototype.initLoad;
 
 	const
-		c = component,
-		instance = c.instance;
+		c = component;
 
 	const
 		// @ts-ignore
 		{globalName, globalEvent: $e, state: $s} = c,
 
 		// @ts-ignore (access)
-		needRouter = instance.syncRouterState !== baseSyncRouterState;
+		needRouter = c.state.isNeedRouterSync;
 
 	resetListener = Boolean(
-		(resetListener != null ? resetListener : baseInitLoad !== instance.initLoad) ||
+		(resetListener != null ? resetListener : baseInitLoad !== c.instance.initLoad) ||
 		globalName ||
 		needRouter
 	);
