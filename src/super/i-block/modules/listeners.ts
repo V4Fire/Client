@@ -21,9 +21,11 @@ let
 
 /**
  * Initializes global event listeners for the specified component
+ *
  * @param component
+ * @param [resetListener]
  */
-export function initGlobalEvents(component: iBlock): void {
+export function initGlobalEvents(component: iBlock, resetListener?: boolean): void {
 	// @ts-ignore (access)
 	baseSyncRouterState = baseSyncRouterState || iBlock.prototype.syncRouterState;
 
@@ -31,16 +33,23 @@ export function initGlobalEvents(component: iBlock): void {
 	baseInitLoad = baseInitLoad || iBlock.prototype.initLoad;
 
 	const
-		c = component;
+		c = component,
+		instance = c.instance;
 
 	const
 		// @ts-ignore
 		{globalName, globalEvent: $e, state: $s} = c,
-		// @ts-ignore (access)
-		needRouter = c.instance.syncRouterState !== baseSyncRouterState,
-		needReset = !baseInitLoad || globalName || needRouter;
 
-	if (!needReset) {
+		// @ts-ignore (access)
+		needRouter = instance.syncRouterState !== baseSyncRouterState;
+
+	resetListener = Boolean(
+		(resetListener != null ? resetListener : baseInitLoad !== instance.initLoad) ||
+		globalName ||
+		needRouter
+	);
+
+	if (!resetListener) {
 		return;
 	}
 

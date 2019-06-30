@@ -493,6 +493,11 @@ export default abstract class iData<T extends object = Dictionary> extends iMess
 		return undefined;
 	}
 
+	/** @override */
+	protected initGlobalEvents(resetListener?: boolean): void {
+		super.initGlobalEvents(resetListener != null ? resetListener : Boolean(this.dataProvider));
+	}
+
 	/**
 	 * Initializes data event listeners
 	 */

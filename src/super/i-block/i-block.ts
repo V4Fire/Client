@@ -1780,10 +1780,11 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 
 	/**
 	 * Initializes global event listeners
+	 * @param [resetListener]
 	 */
 	@hook({created: {functional: false}})
-	protected initGlobalEvents(): void {
-		initGlobalEvents(this);
+	protected initGlobalEvents(resetListener?: boolean): void {
+		initGlobalEvents(this, resetListener);
 	}
 
 	/**
