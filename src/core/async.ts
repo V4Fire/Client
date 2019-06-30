@@ -13,7 +13,6 @@ import Super, {
 	AsyncOnOpts,
 	ClearOptsId,
 	Link as SuperLink,
-	LinkNamesList as SuperLinkNamesList,
 	ProxyCb,
 	isParams
 
