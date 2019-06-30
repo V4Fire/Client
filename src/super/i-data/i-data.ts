@@ -596,7 +596,7 @@ export default abstract class iData<T extends object = Dictionary> extends iMess
 			this.dp = new ProviderConstructor(this.dataProviderParams);
 			this.initDataListeners();
 
-		} else {
+		} else if (this.dp) {
 			this.dp = undefined;
 			this.dataEvent.off({group: 'dataProviderSync'});
 		}
