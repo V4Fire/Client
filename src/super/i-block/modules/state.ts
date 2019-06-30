@@ -40,7 +40,7 @@ export default class State {
 	/**
 	 * True, if needed synchronization with a router
 	 */
-	get isNeedRouterSync(): boolean {
+	get needRouterSync(): boolean {
 		// @ts-ignore (access)
 		return baseSyncRouterState !== this.instance.syncRouterState;
 	}
@@ -264,7 +264,7 @@ export default class State {
 	 * @param [data] - advanced data
 	 */
 	async saveToRouter(data?: Dictionary): Promise<boolean> {
-		if (!this.isNeedRouterSync) {
+		if (!this.needRouterSync) {
 			return false;
 		}
 
@@ -296,7 +296,7 @@ export default class State {
 	 * Initializes a component state from a router
 	 */
 	initFromRouter(): void {
-		if (!this.isNeedRouterSync) {
+		if (!this.needRouterSync) {
 			return;
 		}
 
@@ -398,7 +398,7 @@ export default class State {
 	 * Resets a component router state
 	 */
 	async resetRouter(): Promise<boolean> {
-		if (!this.isNeedRouterSync) {
+		if (!this.needRouterSync) {
 			return false;
 		}
 

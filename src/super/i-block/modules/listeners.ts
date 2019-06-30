@@ -31,12 +31,12 @@ export function initGlobalEvents(component: iBlock, resetListener?: boolean): vo
 
 	const
 		// @ts-ignore
-		{globalName, globalEvent: $e, state: $s, state: {isNeedRouterSync}} = c;
+		{globalName, globalEvent: $e, state: $s, state: {needRouterSync}} = c;
 
 	resetListener = Boolean(
 		(resetListener != null ? resetListener : baseInitLoad !== c.instance.initLoad) ||
 		globalName ||
-		isNeedRouterSync
+		needRouterSync
 	);
 
 	if (!resetListener) {
@@ -56,7 +56,7 @@ export function initGlobalEvents(component: iBlock, resetListener?: boolean): vo
 	$e.on('reset.load', waitNextTick(c.initLoad));
 	$e.on('reset.load.silence', waitNextTick(c.reload));
 
-	if (isNeedRouterSync) {
+	if (needRouterSync) {
 		$e.on('reset.router', $s.resetRouter);
 	}
 
@@ -67,10 +67,10 @@ export function initGlobalEvents(component: iBlock, resetListener?: boolean): vo
 	$e.on('reset', waitNextTick(async () => {
 		c.componentStatus = 'loading';
 
-		if (isNeedRouterSync || globalName) {
+		if (needRouterSync || globalName) {
 			await Promise.all(
 				(<Promise<unknown>[]>[]).concat(
-					isNeedRouterSync ? $s.resetRouter() : [],
+					needRouterSync ? $s.resetRouter() : [],
 					globalName ? $s.resetStorage() : []
 				)
 			);
@@ -80,10 +80,10 @@ export function initGlobalEvents(component: iBlock, resetListener?: boolean): vo
 	}));
 
 	$e.on('reset.silence', waitNextTick(async () => {
-		if (isNeedRouterSync || globalName) {
+		if (needRouterSync || globalName) {
 			await Promise.all(
 				(<Promise<unknown>[]>[]).concat(
-					isNeedRouterSync ? $s.resetRouter() : [],
+					needRouterSync ? $s.resetRouter() : [],
 					globalName ? $s.resetStorage() : []
 				)
 			);
