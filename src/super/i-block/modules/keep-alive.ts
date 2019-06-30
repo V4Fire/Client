@@ -39,7 +39,7 @@ export function activate<T extends iBlock>(component: T, force?: boolean): void 
 			$s.initFromRouter();
 		}
 
-		if ($s.isNeedRouterSync) {
+		if ($s.needRouterSync) {
 			c.lfc.execCbAfterComponentCreated(() => $e.on('onTransition', async (route, type) => {
 				try {
 					if (type === 'hard') {
