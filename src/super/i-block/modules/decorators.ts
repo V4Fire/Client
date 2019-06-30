@@ -348,7 +348,7 @@ export function wait<CTX extends ComponentInterface = ComponentInterface>(
 			}
 
 			if (!init) {
-				res = $a.promisifyOnce(ctx.localEvent, `component.status.${statuses[<number>status]}`, p)
+				res = $a.promisifyOnce(ctx, `status-${statuses[<number>status]}`, p)
 					.then(() => handler.apply(this, args));
 			}
 

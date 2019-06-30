@@ -8,7 +8,7 @@
 
 import iBlock from 'super/i-block/i-block';
 import { Event } from 'super/i-block/modules/event';
-import { ModsTable } from 'super/i-block/modules/mods';
+import { ModsTable, ModsNTable } from 'super/i-block/modules/mods';
 import { ComponentElement } from 'core/component';
 
 export type ModEventType =
@@ -243,7 +243,7 @@ export default class Block {
 		value = String(value).dasherize();
 
 		const
-			{mods, node} = this;
+			{mods, node, component: c} = this;
 
 		const
 			initSetMod = reason === 'initSetMod',
@@ -283,7 +283,17 @@ export default class Block {
 				reason
 			};
 
+			const watchModsStore = <NonNullable<ModsNTable>>c.field.get('watchModsStore');
+			c.mods[name] = <string>value;
+
+			if (name in watchModsStore && watchModsStore[name] !== value) {
+				delete watchModsStore[name];
+				c.field.set(`watchModsStore.${name}`, value);
+			}
+
 			this.event.emit(`block.mod.set.${name}.${value}`, event);
+			c.emit(`mod-set-${name}-${value}`, event);
+
 			return true;
 		}
 
@@ -302,7 +312,7 @@ export default class Block {
 		value = value != null ? String(value).dasherize() : undefined;
 
 		const
-			{mods, node} = this,
+			{mods, node, component: c} = this,
 			current = this.getMod(name, reason === 'initSetMod');
 
 		if (current !== undefined && (value === undefined || current === value)) {
@@ -322,7 +332,22 @@ export default class Block {
 				reason
 			};
 
-			this.event.emit(`block.mod.remove.${name}.${current}`, event);
+			if (reason === 'removeMod') {
+				const watchModsStore = <NonNullable<ModsNTable>>c.field.get('watchModsStore');
+				c.mods[name] = undefined;
+
+				if (name in watchModsStore && watchModsStore[name]) {
+					delete watchModsStore[name];
+					c.field.set(`watchModsStore.${name}`, undefined);
+				}
+
+				this.event.emit(`block.mod.remove.${name}.${current}`, event);
+				c.emit(`mod-remove-${name}-${current}`, event);
+
+			} else {
+				this.event.emit(`block.mod.remove.${name}.${current}`, event);
+			}
+
 			return true;
 		}
 

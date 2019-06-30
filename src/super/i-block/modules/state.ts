@@ -38,6 +38,14 @@ export default class State {
 	}
 
 	/**
+	 * True, if needed synchronization with a router
+	 */
+	get isNeedRouterSync(): boolean {
+		// @ts-ignore (access)
+		return baseSyncRouterState !== this.instance.syncRouterState;
+	}
+
+	/**
 	 * Component instance
 	 */
 	protected readonly component: iBlock;
@@ -256,8 +264,7 @@ export default class State {
 	 * @param [data] - advanced data
 	 */
 	async saveToRouter(data?: Dictionary): Promise<boolean> {
-		// @ts-ignore (access)
-		if (baseSyncRouterState === this.instance.syncRouterState) {
+		if (!this.isNeedRouterSync) {
 			return false;
 		}
 
@@ -289,8 +296,7 @@ export default class State {
 	 * Initializes a component state from a router
 	 */
 	initFromRouter(): void {
-		// @ts-ignore (access)
-		if (baseSyncRouterState === this.instance.syncRouterState) {
+		if (!this.isNeedRouterSync) {
 			return;
 		}
 
@@ -392,8 +398,7 @@ export default class State {
 	 * Resets a component router state
 	 */
 	async resetRouter(): Promise<boolean> {
-		// @ts-ignore (access)
-		if (baseSyncRouterState === this.instance.syncRouterState) {
+		if (!this.isNeedRouterSync) {
 			return false;
 		}
 

@@ -57,7 +57,7 @@ import Sync, { AsyncWatchOpts } from 'super/i-block/modules/sync';
 
 import { statuses } from 'super/i-block/modules/const';
 import { eventFactory, Event, RemoteEvent } from 'super/i-block/modules/event';
-import { initGlobalEvents, initModEvents, initRemoteWatchers } from 'super/i-block/modules/listeners';
+import { initGlobalEvents, initRemoteWatchers } from 'super/i-block/modules/listeners';
 import { activate, deactivate, onActivated, onDeactivated } from 'super/i-block/modules/keep-alive';
 import { Statuses, WaitStatusOpts, Stage, ParentMessage, ComponentStatuses } from 'super/i-block/modules/interface';
 
@@ -313,7 +313,6 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 		}
 
 		this.setMod('status', value);
-		this.localEvent.emit(`component.status.${value}`, value);
 		this.emit(`status-${value}`, value);
 	}
 
@@ -1775,7 +1774,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 		}
 
 		this.block = new Block(this);
-		this.localEvent.emit('block.ready');
+		this.onBlockReady();
 	}
 
 	/**
@@ -1792,7 +1791,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	 */
 	@hook('beforeCreate')
 	protected initModEvents(): void {
-		initModEvents(this);
+		return undefined;
 	}
 
 	/**
@@ -1801,6 +1800,13 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	@hook({beforeDataCreate: {functional: false}})
 	protected initRemoteWatchers(): void {
 		initRemoteWatchers(this);
+	}
+
+	/**
+	 * Handler: block instance initialized
+	 */
+	protected onBlockReady(): void {
+		return undefined;
 	}
 
 	/**

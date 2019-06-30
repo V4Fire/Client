@@ -39,30 +39,32 @@ export function activate<T extends iBlock>(component: T, force?: boolean): void 
 			$s.initFromRouter();
 		}
 
-		c.lfc.execCbAfterComponentCreated(() => $e.on('onTransition', async (route, type) => {
-			try {
-				if (type === 'hard') {
-					if (route !== c.r.route) {
-						await c.promisifyOnce('setRoute', {
-							label: $$.activateAfterTransition
-						});
+		if ($s.isNeedRouterSync) {
+			c.lfc.execCbAfterComponentCreated(() => $e.on('onTransition', async (route, type) => {
+				try {
+					if (type === 'hard') {
+						if (route !== c.r.route) {
+							await c.promisifyOnce('setRoute', {
+								label: $$.activateAfterTransition
+							});
 
-					} else {
-						await c.nextTick({label: $$.activateAfterHardChange});
+						} else {
+							await c.nextTick({label: $$.activateAfterHardChange});
+						}
 					}
+
+					if (!inactiveStatuses[c.componentStatus]) {
+						$s.initFromRouter();
+					}
+
+				} catch (err) {
+					stderr(err);
 				}
 
-				if (!inactiveStatuses[c.componentStatus]) {
-					$s.initFromRouter();
-				}
-
-			} catch (err) {
-				stderr(err);
-			}
-
-		}, {
-			label: $$.activate
-		}));
+			}, {
+				label: $$.activate
+			}));
+		}
 	}
 
 	if (beforeCreate) {

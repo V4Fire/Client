@@ -123,7 +123,7 @@ export default class Lfc {
 
 		return this.async.promise(new Promise<T>((r) => {
 			// @ts-ignore
-			this.component.localEvent.once('block.ready', () => r(cb.call(this)));
+			this.component.onBlockReady = () => r(cb.call(this));
 		}), params).catch(stderr);
 	}
 
