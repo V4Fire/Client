@@ -125,9 +125,9 @@ export default class State {
 	 * Gets values from the specified object and saves it to the component state
 	 * @param [obj]
 	 */
-	set(obj?: Dictionary): void {
+	set(obj?: Dictionary): boolean {
 		if (!obj) {
-			return;
+			return true;
 		}
 
 		for (let keys = Object.keys(obj), i = 0; i < keys.length; i++) {
@@ -143,15 +143,17 @@ export default class State {
 				this.field.set(key, el);
 			}
 		}
+
+		return false;
 	}
 
 	/**
 	 * Saves a component state to a storage
 	 * @param [data] - advanced data
 	 */
-	async saveToStorage(data?: Dictionary): Promise<void> {
+	async saveToStorage(data?: Dictionary): Promise<boolean> {
 		if (!this.globalName) {
-			return;
+			return false;
 		}
 
 		const
@@ -165,14 +167,16 @@ export default class State {
 		await this.storage.set(data, '[[STORE]]');
 		// @ts-ignore
 		c.log('state:save:storage', this, data);
+
+		return true;
 	}
 
 	/**
 	 * Initializes a component state from a storage
 	 */
-	async initFromStorage(): Promise<void> {
+	async initFromStorage(): Promise<boolean> {
 		if (!this.globalName) {
-			return;
+			return false;
 		}
 
 		const
@@ -229,6 +233,8 @@ export default class State {
 				// @ts-ignore
 				c.log('state:init:storage', this, stateFields);
 			});
+
+			return true;
 
 		}, {
 			group: 'loadStore',
@@ -295,9 +301,9 @@ export default class State {
 	/**
 	 * Initializes a component state from a router
 	 */
-	initFromRouter(): void {
+	initFromRouter(): boolean {
 		if (!this.needRouterSync) {
-			return;
+			return false;
 		}
 
 		const
@@ -392,6 +398,8 @@ export default class State {
 		}, {
 			label: $$.initFromRouter
 		});
+
+		return true;
 	}
 
 	/**
