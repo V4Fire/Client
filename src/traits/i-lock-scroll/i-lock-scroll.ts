@@ -1,3 +1,11 @@
+/*!
+ * V4Fire Client Core
+ * https://github.com/V4Fire/Client
+ *
+ * Released under the MIT license
+ * https://github.com/V4Fire/Client/blob/master/LICENSE
+ */
+
 import iBlock from 'super/i-block/i-block';
 import { is } from 'core/browser';
 import symbolGenerator from 'core/symbol';
@@ -18,13 +26,10 @@ export default abstract class iLockScroll {
 			{async: $a, r} = component,
 			group = 'lock-scroll';
 
-		let
-			initialY = 0;
-
 		if (is.iOS) {
 			if (allowed) {
 				$a.on(allowed, 'touchstart', (e: TouchEvent) => {
-					initialY = e.targetTouches[0].clientY;
+					component[$$.initialY] = e.targetTouches[0].clientY;
 				}, {group, label: $$.touchstart});
 
 				$a.on(allowed, 'touchmove', (e: TouchEvent) => {
@@ -35,7 +40,7 @@ export default abstract class iLockScroll {
 					} = allowed;
 
 					const
-						clientY = e.targetTouches[0].clientY - initialY,
+						clientY = e.targetTouches[0].clientY - component[$$.initialY],
 						isOnTop = clientY > 0 && scrollTop  === 0,
 						isOnBottom = clientY < 0 && scrollTop + clientHeight + 1 >= scrollHeight;
 
@@ -45,12 +50,17 @@ export default abstract class iLockScroll {
 
 					e.stopPropagation();
 
-				}, {group, label: $$.touchmove})
+				}, {
+					group,
+					label: $$.touchmove,
+					options: {passive: false}
+				});
 			}
 
 			$a.on(document, 'touchmove', (e) => e.cancelable && e.preventDefault(), {
 				group,
-				label: $$.preventTouchMove, options: {passive: false}
+				label: $$.preventTouchMove,
+				options: {passive: false}
 			});
 
 		} else if (is.Android) {
@@ -84,8 +94,14 @@ export default abstract class iLockScroll {
 			// @ts-ignore
 			{async: $a, r} = component;
 
-		r.removeRootMod('lockScroll', true, r);
-		$a.off({label: $$.lockScroll});
+		r.removeRootMod('lockScrollMobile', true, r);
+		r.removeRootMod('lockScrollDesktop', true, r);
+
+		if (is.Android) {
+			window.scrollTo(0, component[$$.scrollTop]);
+		}
+
+		$a.off({group: 'lock-scroll'});
 	}
 
 	/**
@@ -102,8 +118,8 @@ export default abstract class iLockScroll {
 		});
 
 		$e.on('component.status.destroyed', () => {
-			r.removeRootMod('lockScroll', true, r);
-			$a.clearAll({label: $$.lockScroll});
+			iLockScroll.unlock(component);
+			$a.clearAll({group: 'lock-scroll'});
 		});
 	}
 
