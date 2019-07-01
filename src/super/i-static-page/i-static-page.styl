@@ -14,10 +14,14 @@ $p = {
 
 i-static-page extends i-page
 	&-lock-scroll-mobile-true
-		position fixed
 		size 100%
 		overflow hidden
 
-	&-lock-scroll-desktop-true
+	&-lock-scroll-mobile-true body
+		position fixed
+		width 100%
 		overflow hidden
+
+	&-lock-scroll-desktop-true body
 		box-sizing border-box
+		overflow hidden

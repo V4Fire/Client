@@ -44,7 +44,7 @@ export default abstract class iLockScroll {
 						isOnTop = clientY > 0 && scrollTop  === 0,
 						isOnBottom = clientY < 0 && scrollTop + clientHeight + 1 >= scrollHeight;
 
-					if (isOnTop || isOnBottom && e.cancelable) {
+					if ((isOnTop || isOnBottom) && e.cancelable) {
 						return e.preventDefault();
 					}
 
@@ -80,7 +80,9 @@ export default abstract class iLockScroll {
 				{body} = document,
 				scrollBarWidth = window.innerWidth - body.clientWidth;
 
+			component[$$.paddingRight] = body.style.paddingRight;
 			body.style.paddingRight = `${scrollBarWidth}px`;
+
 			r.setRootMod('lockScrollDesktop', true, r);
 		}
 	}
@@ -92,7 +94,8 @@ export default abstract class iLockScroll {
 	static unlock<T extends iBlock>(component: T): void {
 		const
 			// @ts-ignore
-			{async: $a, r} = component;
+			{async: $a, r} = component,
+			{body} = document;
 
 		r.removeRootMod('lockScrollMobile', true, r);
 		r.removeRootMod('lockScrollDesktop', true, r);
@@ -101,6 +104,7 @@ export default abstract class iLockScroll {
 			window.scrollTo(0, component[$$.scrollTop]);
 		}
 
+		body.style.paddingRight = component[$$.paddingRight] || '';
 		$a.off({group: 'lock-scroll'});
 	}
 
