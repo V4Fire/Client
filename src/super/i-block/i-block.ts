@@ -54,6 +54,7 @@ import Provide, { classesCache, Classes } from 'super/i-block/modules/provide';
 import State, { ConverterCallType } from 'super/i-block/modules/state';
 import Storage from 'super/i-block/modules/storage';
 import Sync, { AsyncWatchOpts } from 'super/i-block/modules/sync';
+import Animate from 'super/i-block/modules/animate';
 
 import { statuses } from 'super/i-block/modules/const';
 import { eventFactory, Event, RemoteEvent } from 'super/i-block/modules/event';
@@ -614,6 +615,17 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	})
 
 	protected readonly analytics!: Analytics;
+
+	/**
+	 * Animation API
+	 */
+	@system({
+		unique: true,
+		replace: true,
+		init: (ctx: iBlock) => new Animate(ctx)
+	})
+
+	protected animate!: Animate;
 
 	/**
 	 * API for lazy operations
