@@ -10,35 +10,69 @@ export default abstract class iLockScroll {
 	 * Запрещает прокрутку документа
 	 *
 	 * @param component
-	 * @param allowed
+	 * @param [allowed]
 	 */
-	static lock<T extends iBlock>(component: T, allowed: HTMLElement): void {
+	static lock<T extends iBlock>(component: T, allowed?: HTMLElement): void {
 		const
 			// @ts-ignore
-			{async: $a, r} = component;
+			{async: $a, r} = component,
+			group = 'lock-scroll';
 
-		let isContain = false;
+		let
+			initialY = 0;
 
-		if (is.mobile) {
-			$a.on(document, 'touchmove', (e) => {
-				const
-					{target} = e;
+		if (is.iOS) {
+			if (allowed) {
+				$a.on(allowed, 'touchstart', (e: TouchEvent) => {
+					initialY = e.targetTouches[0].clientY;
+				}, {group, label: $$.touchstart});
 
-				if (target && allowed &&
-					target !== allowed &&
-					(isContain || allowed.contains(target))
-				) {
-					isContain = true;
-					e.preventDefault();
-				}
+				$a.on(allowed, 'touchmove', (e: TouchEvent) => {
+					const {
+						scrollTop,
+						scrollHeight,
+						clientHeight
+					} = allowed;
 
-			}, {
-				label: $$.lockScroll,
-				options: {passive: false}
+					const
+						clientY = e.targetTouches[0].clientY - initialY,
+						isOnTop = clientY > 0 && scrollTop  === 0,
+						isOnBottom = clientY < 0 && scrollTop + clientHeight + 1 >= scrollHeight;
+
+					if (isOnTop || isOnBottom && e.cancelable) {
+						return e.preventDefault();
+					}
+
+					e.stopPropagation();
+
+				}, {group, label: $$.touchmove})
+			}
+
+			$a.on(document, 'touchmove', (e) => e.cancelable && e.preventDefault(), {
+				group,
+				label: $$.preventTouchMove, options: {passive: false}
 			});
-		}
 
-		r.setRootMod('lockScroll', true, r);
+		} else if (is.Android) {
+			const
+				html = document.documentElement,
+				body = document.body;
+
+			const
+				scrollTop = html.scrollTop || body.scrollTop;
+
+			component[$$.scrollTop] = scrollTop;
+			body.style.top = `-${scrollTop}px`;
+			r.setRootMod('lockScrollMobile', true, r);
+
+		} else {
+			const
+				{body} = document,
+				scrollBarWidth = window.innerWidth - body.clientWidth;
+
+			body.style.paddingRight = `${scrollBarWidth}px`;
+			r.setRootMod('lockScrollDesktop', true, r);
+		}
 	}
 
 	/**

@@ -13,5 +13,11 @@ $p = {
 }
 
 i-static-page extends i-page
-	&-lock-scroll-true
+	&-lock-scroll-mobile-true
+		position fixed
+		size 100%
 		overflow hidden
+
+	&-lock-scroll-desktop-true
+		overflow hidden
+		box-sizing border-box
