@@ -45,9 +45,9 @@ export default abstract class iOpen {
 			helpersGroup = {group: 'closeHelpers'},
 			modsGroup = {group: 'closeHelpers:mods'};
 
-		$e.off({group: /closeHelpers/});
+		$a.off({group: /closeHelpers/});
 		$e.on('block.mod.*.opened.*', component.onOpenedChange, modsGroup);
-		$e.on('block.mod.set.opened.false', () => $e.off(helpersGroup), modsGroup);
+		$e.on('block.mod.set.opened.false', () => $a.off(helpersGroup), modsGroup);
 
 		const onOpened = () => {
 			$a.setTimeout(() => {
