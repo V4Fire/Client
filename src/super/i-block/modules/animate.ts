@@ -79,12 +79,12 @@ export default class Animate {
 			...asyncOpts
 		};
 
-		el = el instanceof HTMLElement ? el : $b.getElSelector()
+		el = el instanceof HTMLElement ? el : <HTMLElement>$b.element(el) || this.$el;
 
 		const
 			{async: $a} = this;
 
-		if (!el && !props.transition) {
+		if (!el || (!el.style.transition && !props.transition)) {
 			return $a.promise(new Promise((r) => r(this.animate)), asyncOpts);
 		}
 
