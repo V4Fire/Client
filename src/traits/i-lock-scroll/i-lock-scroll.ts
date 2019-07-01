@@ -63,11 +63,12 @@ export default abstract class iLockScroll {
 			// @ts-ignore
 			{localEvent: $e, async: $a, r} = component;
 
-		$e.on('block.mod.set.opened.false', component.unlock);
-		$e.on('block.mod.set.opened.true', component.lock);
+		$e.on('block.mod.set.opened.*', (e) => {
+			component[e.value === 'true' ? 'lock' : 'unlock']();
+		});
 
 		$e.on('component.status.destroyed', () => {
-			r.removeRootMod('lockScroll', true);
+			r.removeRootMod('lockScroll', true, r);
 			$a.clearAll({label: $$.lockScroll});
 		});
 	}
