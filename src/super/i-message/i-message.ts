@@ -125,7 +125,7 @@ export default class iMessage extends iBlock {
 
 		$e.off({group: /closeHelpers/});
 		$e.on('block.mod.*.opened.*', this.onOpenedChange, modsGroup);
-		$e.on('block.mod.set.opened.false', () => $e.off(helpersGroup), modsGroup);
+		$e.on('block.mod.set.opened.false', () => $a.off(helpersGroup), modsGroup);
 
 		const onOpened = () => {
 			$a.setImmediate(() => {
