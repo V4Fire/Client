@@ -7,6 +7,7 @@
  */
 
 import iBlock from 'super/i-block/i-block';
+import Block from 'super/i-block/modules/block';
 import Async, { AsyncOpts } from 'core/async';
 
 /**
@@ -30,6 +31,22 @@ export default class Animate {
 	}
 
 	/**
+	 * Link to component block module
+	 */
+	protected get block(): Block {
+		// @ts-ignore
+		return this.component.block;
+	}
+
+	/**
+	 * Link to component root element
+	 */
+	protected get $el(): HTMLElement {
+		// @ts-ignore
+		return this.component.$el;
+	}
+
+	/**
 	 * Component instance
 	 */
 	protected readonly component: iBlock;
@@ -43,13 +60,26 @@ export default class Animate {
 
 	/**
 	 * Start an animation
+	 *
+	 * @param props
+	 * @param [el] - reference to element or element name
+	 * @param [asyncOpts]
 	 */
-	run(el: HTMLElement, props: Dictionary<string | number>, asyncOpts: AsyncOpts = {}): Promise<Animate> {
+	run(
+		props: Dictionary<string | number>,
+		el: HTMLElement | string = this.$el,
+		asyncOpts: AsyncOpts = {}
+	): Promise<Animate> {
+		const
+			{block: $b} = this;
+
 		asyncOpts = {
 			group: '[[ANIMATE]]',
 			label: String(Math.random()),
 			...asyncOpts
 		};
+
+		el = el instanceof HTMLElement ? el : $b.getElSelector()
 
 		const
 			{async: $a} = this;
