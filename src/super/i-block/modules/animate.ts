@@ -44,7 +44,7 @@ export default class Animate {
 	/**
 	 * Start an animation
 	 */
-	start(el: HTMLElement, props: Dictionary<string | number>, asyncOpts: AsyncOpts = {}): Promise<Animate> {
+	run(el: HTMLElement, props: Dictionary<string | number>, asyncOpts: AsyncOpts = {}): Promise<Animate> {
 		asyncOpts = {
 			group: '[[ANIMATE]]',
 			label: String(Math.random()),
