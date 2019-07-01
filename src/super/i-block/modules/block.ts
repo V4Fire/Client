@@ -283,16 +283,21 @@ export default class Block {
 				reason
 			};
 
-			const watchModsStore = <NonNullable<ModsNTable>>c.field.get('watchModsStore');
-			c.mods[name] = <string>value;
+			if (c.field) {
+				const watchModsStore = <NonNullable<ModsNTable>>c.field.get('watchModsStore');
+				c.mods[name] = <string>value;
 
-			if (name in watchModsStore && watchModsStore[name] !== value) {
-				delete watchModsStore[name];
-				c.field.set(`watchModsStore.${name}`, value);
+				if (name in watchModsStore && watchModsStore[name] !== value) {
+					delete watchModsStore[name];
+					c.field.set(`watchModsStore.${name}`, value);
+				}
+
+				this.event.emit(`block.mod.set.${name}.${value}`, event);
+				c.emit(`mod-set-${name}-${value}`, event);
+
+			} else {
+				this.event.emit(`block.mod.set.${name}.${value}`, event);
 			}
-
-			this.event.emit(`block.mod.set.${name}.${value}`, event);
-			c.emit(`mod-set-${name}-${value}`, event);
 
 			return true;
 		}
@@ -332,7 +337,7 @@ export default class Block {
 				reason
 			};
 
-			if (reason === 'removeMod') {
+			if (reason === 'removeMod' && c.field) {
 				const watchModsStore = <NonNullable<ModsNTable>>c.field.get('watchModsStore');
 				c.mods[name] = undefined;
 
