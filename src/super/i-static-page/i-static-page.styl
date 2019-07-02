@@ -7,21 +7,11 @@
  */
 
 @import "super/i-page/i-page.styl"
+@import "traits/i-lock-scroll/i-lock-scroll.styl"
 
 $p = {
-
+	lockHelpers: true
 }
 
 i-static-page extends i-page
-	&-lock-scroll-mobile-true
-		size 100%
-		overflow hidden
-
-	&-lock-scroll-mobile-true body
-		position fixed
-		width 100%
-		overflow hidden
-
-	&-lock-scroll-desktop-true body
-		box-sizing border-box
-		overflow hidden
+	i-lock-scroll({helpers: $p.lockHelpers})

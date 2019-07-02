@@ -15,7 +15,7 @@ export const
 
 export default abstract class iLockScroll {
 	/**
-	 * Запрещает прокрутку документа
+	 * Locks document scroll
 	 *
 	 * @param component
 	 * @param [allowed]
@@ -88,7 +88,7 @@ export default abstract class iLockScroll {
 	}
 
 	/**
-	 * Разрешает прокрутку документа
+	 * Unlocks document scroll
 	 * @param component
 	 */
 	static unlock<T extends iBlock>(component: T): void {
@@ -109,7 +109,7 @@ export default abstract class iLockScroll {
 	}
 
 	/**
-	 * Инициализирует модификаторы и обработчики событий
+	 * Initializes modifiers event listeners
 	 * @param component
 	 */
 	static initModEvents<T extends iBlock>(component: T & iLockScroll): void {
@@ -132,12 +132,12 @@ export default abstract class iLockScroll {
 	}
 
 	/**
-	 * Lock component scroll
+	 * Locks document scroll
 	 */
 	abstract lock(): void;
 
 	/**
-	 * Unlock component scroll
+	 * Unlocks document scroll
 	 */
 	abstract unlock(): void;
 }
