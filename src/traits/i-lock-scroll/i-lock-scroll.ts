@@ -123,6 +123,10 @@ export default abstract class iLockScroll {
 
 		$e.on('component.status.destroyed', () => {
 			iLockScroll.unlock(component);
+
+			delete component[$$.paddingRight];
+			delete component[$$.scrollTop];
+
 			$a.clearAll({group: 'lock-scroll'});
 		});
 	}
