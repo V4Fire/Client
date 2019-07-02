@@ -58,13 +58,17 @@ export interface PasswordValidatorResult extends ValidatorError<string | number 
 }
 
 export default <ValidatorsDecl<bInput, unknown>>{
-	async required({msg, showMsg = true}: ValidatorParams): Promise<ValidatorResult<boolean>> {
+	async required({msg, showMsg = true}: ValidatorParams): Promise<ValidatorResult<string>> {
 		if (!await this.formValue) {
+			const err = <ValidatorError<string>>{
+				name
+			};
+
 			if (showMsg) {
-				this.error = this.getValidatorMsg(false, msg, t`Required field`);
+				this.error = err.msg = this.getValidatorMsg(err, msg, t`Required field`);
 			}
 
-			return false;
+			return err;
 		}
 
 		return true;
@@ -114,7 +118,7 @@ export default <ValidatorsDecl<bInput, unknown>>{
 			};
 
 			if (showMsg) {
-				this.error = this.getValidatorMsg(err, msg, defMsg);
+				this.error = err.msg = this.getValidatorMsg(err, msg, defMsg);
 			}
 
 			return <ValidatorResult<NumberValidatorResult>>err;
@@ -205,7 +209,7 @@ export default <ValidatorsDecl<bInput, unknown>>{
 			};
 
 			if (showMsg) {
-				this.error = this.getValidatorMsg(err, msg, defMsg);
+				this.error = err.msg = this.getValidatorMsg(err, msg, defMsg);
 			}
 
 			return <ValidatorResult<DateValidatorResult>>err;
@@ -281,7 +285,7 @@ export default <ValidatorsDecl<bInput, unknown>>{
 			};
 
 			if (showMsg) {
-				this.error = this.getValidatorMsg(err, msg, defMsg);
+				this.error = err.msg = this.getValidatorMsg(err, msg, defMsg);
 			}
 
 			return <ValidatorResult<PatternValidatorResult>>err;
@@ -304,16 +308,21 @@ export default <ValidatorsDecl<bInput, unknown>>{
 		return true;
 	},
 
-	async email({msg, showMsg = true}: ValidatorParams): Promise<ValidatorResult<boolean>> {
+	async email({msg, showMsg = true}: ValidatorParams): Promise<ValidatorResult<string>> {
 		const
 			value = (await this.formValue).trim();
 
 		if (value && !/@/.test(value)) {
+			const err = <ValidatorError<string>>{
+				name,
+				value
+			};
+
 			if (showMsg) {
-				this.error = this.getValidatorMsg(false, msg, t`Invalid email format`);
+				this.error = err.msg = this.getValidatorMsg(err, msg, t`Invalid email format`);
 			}
 
-			return false;
+			return err;
 		}
 
 		return true;
@@ -343,7 +352,7 @@ export default <ValidatorsDecl<bInput, unknown>>{
 			};
 
 			if (showMsg) {
-				this.error = this.getValidatorMsg(err, msg, defMsg);
+				this.error = err.msg = this.getValidatorMsg(err, msg, defMsg);
 			}
 
 			return <ValidatorResult<PasswordValidatorResult>>err;
