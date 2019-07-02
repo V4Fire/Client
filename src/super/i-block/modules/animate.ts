@@ -84,7 +84,7 @@ export default class Animate {
 		const
 			{async: $a} = this;
 
-		if (!el || (!el.style.transition && !props.transition)) {
+		if (!el || (!el.style.transition && !props.transition && !props.time)) {
 			return $a.promise(new Promise((r) => r(this.animate)), asyncOpts);
 		}
 
