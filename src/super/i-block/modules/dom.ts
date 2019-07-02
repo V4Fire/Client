@@ -216,8 +216,8 @@ export default class DOM {
 			component: comp || {
 				$el,
 				componentName,
-				localEvent: {emit(): void { /* loopback */ }},
-				isFlyweight: true
+				isFlyweight: true,
+				localEvent: {emit(): void { /* loopback */ }}
 			}
 		});
 	}
