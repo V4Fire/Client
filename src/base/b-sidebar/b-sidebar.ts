@@ -17,6 +17,12 @@ export * from 'super/i-data/i-data';
 export default class bSidebar<T extends object = Dictionary> extends iData<T>
 	implements iVisible, iOpenToggle, iLockPageScroll {
 
+	/**
+	 * If true, then will be blocked the scrolling of the document when component is opened
+	 */
+	@prop(Boolean)
+	readonly lockPageScroll: boolean = false;
+
 	/** @inheritDoc */
 	static readonly mods: ModsDecl = {
 		...iVisible.mods,
@@ -26,12 +32,6 @@ export default class bSidebar<T extends object = Dictionary> extends iData<T>
 			['false']
 		]
 	};
-
-	/**
-	 * If true then will block the scrolling of the document when opening
-	 */
-	@prop(Boolean)
-	readonly lockPageScroll: boolean = false;
 
 	/** @see iLockPageScroll.lock */
 	lock(): void {

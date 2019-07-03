@@ -6,14 +6,14 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import iBlock from 'super/i-block/i-block';
 import { is } from 'core/browser';
 import symbolGenerator from 'core/symbol';
+import iBlock from 'super/i-block/i-block';
 
 export const
 	$$ = symbolGenerator();
 
-export default abstract class iLockScroll {
+export default abstract class iLockPageScroll {
 	/**
 	 * Locks document scroll
 	 *
@@ -24,7 +24,7 @@ export default abstract class iLockScroll {
 		const
 			// @ts-ignore
 			{async: $a, r} = component,
-			group = 'lock-scroll';
+			group = 'pageScrollLock';
 
 		if (is.iOS) {
 			if (allowed) {
@@ -105,29 +105,29 @@ export default abstract class iLockScroll {
 		}
 
 		body.style.paddingRight = component[$$.paddingRight] || '';
-		$a.off({group: 'lock-scroll'});
+		$a.off({group: 'pageScrollLock'});
 	}
 
 	/**
 	 * Initializes modifiers event listeners
 	 * @param component
 	 */
-	static initModEvents<T extends iBlock>(component: T & iLockScroll): void {
+	static initModEvents<T extends iBlock>(component: T & iLockPageScroll): void {
 		const
 			// @ts-ignore
-			{localEvent: $e, async: $a, r} = component;
+			{localEvent: $e, async: $a} = component;
 
 		$e.on('block.mod.set.opened.*', (e) => {
 			component[e.value === 'true' ? 'lock' : 'unlock']();
 		});
 
 		$e.on('component.status.destroyed', () => {
-			iLockScroll.unlock(component);
+			component.unlock();
 
 			delete component[$$.paddingRight];
 			delete component[$$.scrollTop];
 
-			$a.clearAll({group: 'lock-scroll'});
+			$a.clearAll({group: 'pageScrollLock'});
 		});
 	}
 
