@@ -130,14 +130,12 @@ export default class bCheckboxGroup<
 				value = await ctx.formValue;
 
 			if (Object.isArray(value) ? !value.length : value == null) {
-				if (showMsg) {
-					const
-						els = await ctx.elements;
+				const
+					els = await ctx.elements;
 
-					if (els.length) {
-						els[0].error = this.getValidatorMsg(false, msg, t`Required field`);
-						els[0].setMod('valid', false);
-					}
+				if (els.length) {
+					els[0].setValidationMsg(this.getValidatorMsg(false, msg, t`Required field`), showMsg);
+					els[0].setMod('valid', false);
 				}
 
 				return false;

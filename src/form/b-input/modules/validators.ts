@@ -60,10 +60,7 @@ export interface PasswordValidatorResult extends ValidatorError<string | number 
 export default <ValidatorsDecl<bInput, unknown>>{
 	async required({msg, showMsg = true}: ValidatorParams): Promise<ValidatorResult<boolean>> {
 		if (!await this.formValue) {
-			if (showMsg) {
-				this.error = this.getValidatorMsg(false, msg, t`Required field`);
-			}
-
+			this.setValidationMsg(this.getValidatorMsg(false, msg, t`Required field`), showMsg);
 			return false;
 		}
 
@@ -113,10 +110,7 @@ export default <ValidatorsDecl<bInput, unknown>>{
 				value: val
 			};
 
-			if (showMsg) {
-				this.error = this.getValidatorMsg(err, msg, defMsg);
-			}
-
+			this.setValidationMsg(this.getValidatorMsg(err, msg, defMsg), showMsg);
 			return <ValidatorResult<NumberValidatorResult>>err;
 		};
 
@@ -204,10 +198,7 @@ export default <ValidatorsDecl<bInput, unknown>>{
 				value: val
 			};
 
-			if (showMsg) {
-				this.error = this.getValidatorMsg(err, msg, defMsg);
-			}
-
+			this.setValidationMsg(this.getValidatorMsg(err, msg, defMsg), showMsg);
 			return <ValidatorResult<DateValidatorResult>>err;
 		};
 
@@ -280,10 +271,7 @@ export default <ValidatorsDecl<bInput, unknown>>{
 				value: val
 			};
 
-			if (showMsg) {
-				this.error = this.getValidatorMsg(err, msg, defMsg);
-			}
-
+			this.setValidationMsg(this.getValidatorMsg(err, msg, defMsg), showMsg);
 			return <ValidatorResult<PatternValidatorResult>>err;
 		};
 
@@ -309,10 +297,7 @@ export default <ValidatorsDecl<bInput, unknown>>{
 			value = (await this.formValue).trim();
 
 		if (value && !/@/.test(value)) {
-			if (showMsg) {
-				this.error = this.getValidatorMsg(false, msg, t`Invalid email format`);
-			}
-
+			this.setValidationMsg(this.getValidatorMsg(false, msg, t`Invalid email format`), showMsg);
 			return false;
 		}
 
@@ -342,10 +327,7 @@ export default <ValidatorsDecl<bInput, unknown>>{
 				value: val
 			};
 
-			if (showMsg) {
-				this.error = this.getValidatorMsg(err, msg, defMsg);
-			}
-
+			this.setValidationMsg(this.getValidatorMsg(err, msg, defMsg), showMsg);
 			return <ValidatorResult<PasswordValidatorResult>>err;
 		};
 

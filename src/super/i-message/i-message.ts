@@ -95,7 +95,20 @@ export default abstract class iMessage extends iBlock {
 	 */
 	protected initModEvents(): void {
 		super.initModEvents();
-		this.sync.mod('showInfo', 'infoMsg');
-		this.sync.mod('showError', 'errorMsg');
+
+		const
+			init = {};
+
+		const createMsgHandler = (type) => (val) => {
+			if (!init[type] && String(this.modsProp[type]) === 'false') {
+				return false;
+			}
+
+			init[type] = true;
+			return Boolean(val);
+		};
+
+		this.sync.mod('showInfo', 'infoMsg', createMsgHandler('showInfo'));
+		this.sync.mod('showError', 'errorMsg', createMsgHandler('showError'));
 	}
 }
