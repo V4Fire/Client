@@ -147,7 +147,7 @@ export default class Animate {
 			return this.getLoopback(asyncOpts);
 		}
 
-		if (!node.style.transition && !props.transition && !props.time) {
+		if (!node.style.transition && !props.transition && !props.duration) {
 			return this.getLoopback(asyncOpts);
 		}
 
