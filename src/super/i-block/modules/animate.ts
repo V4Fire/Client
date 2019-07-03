@@ -248,7 +248,7 @@ export default class Animate {
 	protected awaiter(el: HTMLElement, props: Properties, asyncOpts: AsyncOpts = {}): Promise<Animate> {
 		const
 			{async: $a} = this,
-			keys = Object.reject(props, nonAnimatedProperties);
+			keys = Object.keys(Object.reject(props, nonAnimatedProperties));
 
 		return $a.promise<Animate>(new Promise<Animate>((r) => {
 			let
@@ -278,6 +278,7 @@ export default class Animate {
 	 */
 	protected setStyles(el: HTMLElement, props: Properties): void {
 		const
+			{async: $a} = this,
 			{duration: baseDuration, delay: baseDelay} = props,
 			resultStyles: StyleDictionary = {};
 
@@ -301,11 +302,13 @@ export default class Animate {
 				continue;
 			}
 
-			transitionString = `${transitionString}${i > 0 ? ',' : ''}${propName} ${delay}s ${duration}s`;
+			transitionString = `${transitionString}${i > 0 ? ',' : ''}${propName} ${duration}s ${delay}s`;
 			resultStyles[propName] = value;
 		}
 
-		resultStyles.transition = transitionString;
-		Object.assign(el.style, resultStyles);
+		el.style.transition = transitionString;
+
+		// tslint:disable-next-line: prefer-object-spread
+		$a.requestAnimationFrame(() => Object.assign(el.style, resultStyles));
 	}
 }
