@@ -11,7 +11,7 @@ import Block from 'super/i-block/modules/block';
 import Async, { AsyncOpts } from 'core/async';
 
 export type StyleValue = string | number;
-export type StyleDictionary = Dictionary<StyleValue>
+export type StyleDictionary = Dictionary<StyleValue>;
 export type PropertyValue = StyleValue | [StyleValue, number] | [StyleValue, number, number];
 
 export interface Properties extends Dictionary<PropertyValue> {
@@ -24,7 +24,7 @@ export const nonAnimatedProperties = {
 	display: true,
 	duration: true,
 	pointerEvents: true
-}
+};
 
 export type NonAnimatedProperties = typeof nonAnimatedProperties;
 
@@ -65,6 +65,28 @@ export default class Animate {
 	}
 
 	/**
+	 * Base styles for hide element
+	 */
+	protected get hideStyles(): StyleDictionary {
+		return {
+			visibility: 'hidden',
+			pointerEvents: 'none',
+			display: 'none'
+		};
+	}
+
+	/**
+	 * Base styles for show element
+	 */
+	protected get visibleStyles(): StyleDictionary {
+		return {
+			visibility: 'visible',
+			pointerEvents: 'auto',
+			display: ''
+		};
+	}
+
+	/**
 	 * Component instance
 	 */
 	protected readonly component: iBlock;
@@ -79,13 +101,13 @@ export default class Animate {
 	/**
 	 * Start an animation
 	 *
+	 * @param el - reference to element or element name
 	 * @param props
-	 *   *) time - transition duration in ms
-	 * @param [el] - reference to element or element name
+	 *   *) duration - transition duration in ms
 	 * @param [asyncOpts]
-	 * 
+	 *
 	 * @example Run animation
-	 * animate.run({
+	 * animate.run('root-wrapper', {
 	 * 	opacity: [1, (2).seconds()],
 	 * 	width: '100px',
 	 * 	height: '400px',
@@ -95,58 +117,138 @@ export default class Animate {
 	 * 	// opacity will be animating for 2 seconds
 	 * 	// other properties will be animating for 4 seconds
 	 * })
-	 * 
+	 *
 	 * @example Cancel animation
-	 * const a = animate.run({opacity: 1, duration: (2).seconds()});
+	 * const a = animate.run('root-wrapper', {opacity: 1, duration: (2).seconds()});
 	 * a.cancel();
-	 * 
+	 *
 	 * @example Delay some props
-	 * animate.run({
+	 * animate.run('root-wrapper', {
 	 * 	opacity: [1, undefined, (2).seconds()],
 	 * 	duration: (1).second()
 	 * })
-	 * 
-	 * animate.run({
+	 *
+	 * animate.run('root-wrapper', {
 	 * 	opacity: [1, (1).second(), (2).seconds()]
 	 * })
-	 * 
-	 * animate.run({
+	 *
+	 * animate.run('root-wrapper', {
 	 * 	opacity: [1, (1).second()],
 	 * 	delay: (1).second()
 	 * })
 	 */
-	run(props: Properties, el: HTMLElement | string = this.$el, asyncOpts: AsyncOpts = {}): Promise<Animate> {
-		asyncOpts = {
+	run(el: HTMLElement | string, props: Properties, asyncOpts: AsyncOpts = {}): Promise<Animate> {
+		asyncOpts = this.getAsyncOpts(asyncOpts);
+
+		const
+			node = this.getEl(el);
+
+		if (!this.isHTMLElement(node)) {
+			return this.getLoopback(asyncOpts);
+		}
+
+		if (!node.style.transition && !props.transition && !props.time) {
+			return this.getLoopback(asyncOpts);
+		}
+
+		this.setStyles(node, props);
+		return this.awaiter(node, props, asyncOpts);
+	}
+
+	/**
+	 * Shows an element
+	 *
+	 * @param el
+	 * @param [asyncOpts]
+	 */
+	visible(el: HTMLElement | string, styles: StyleDictionary = {}, asyncOpts: AsyncOpts = {}): Promise<Animate> {
+		const
+			{async: $a} = this,
+			node = this.getEl(el);
+
+		if (!this.isHTMLElement(node)) {
+			return this.getLoopback(asyncOpts);
+		}
+
+		return $a.promise<Animate>(new Promise((res, rej) => {
+			Object.assign(node.style, this.visibleStyles, styles);
+
+			$a.requestAnimationFrame(() => {
+				res(this.animate);
+			});
+
+		})).catch((err) => {
+			stderr(err);
+			return this.animate;
+		});
+	}
+
+	/**
+	 * Hides an element
+	 *
+	 * @param el
+	 * @param [asyncOpts]
+	 */
+	hide(el: HTMLElement | string, styles: StyleDictionary = {}, asyncOpts: AsyncOpts = {}): Promise<Animate> {
+		const
+			{async: $a} = this,
+			node = this.getEl(el);
+
+		if (!this.isHTMLElement(node)) {
+			return this.getLoopback(asyncOpts);
+		}
+
+		return $a.promise<Animate>(new Promise((res, rej) => {
+			Object.assign(node.style, this.hideStyles, styles);
+			res(this.animate);
+		}), asyncOpts).catch((err) => {
+			stderr(err);
+			return this.animate;
+		});
+	}
+
+	/**
+	 * Returns default async options merged with custom options
+	 * @param asyncOpts
+	 */
+	protected getAsyncOpts(asyncOpts: AsyncOpts = {}): AsyncOpts {
+		return {
 			group: '[[ANIMATE]]',
 			label: String(Math.random()),
 			...asyncOpts
 		};
+	}
 
-		const
-			{async: $a, block: $b} = this,
-			loopback = $a.promise<Animate>(new Promise((r) => r(this.animate)), asyncOpts);
+	/**
+	 * Returns a DOM element by specified element name
+	 * @param el
+	 */
+	protected getEl(el: HTMLElement | string): CanUndef<HTMLElement> {
+		return el instanceof HTMLElement ? el : this.block.element(el);
+	}
 
-		el = el instanceof HTMLElement ? el : <HTMLElement>$b.element(el);
+	/**
+	 * Creates a new loopback promise
+	 */
+	protected getLoopback(asyncOpts: AsyncOpts = {}): Promise<Animate> {
+		return this.async.promise<Animate>(new Promise((r) => r(this.animate)), this.getAsyncOpts(asyncOpts));
+	}
 
-		if (!(el instanceof HTMLElement)) {
-			return loopback;
-		}
-
-		if (!el.style.transition && !props.transition && !props.time) {
-			return loopback;
-		}
-
-		// Object.assign(el.style, keys);
-		this.setStyles(el, props);
-		return this.awaiter(el, props);
+	/**
+	 * True if an element are instance of HTMLElement
+	 * @param el
+	 */
+	protected isHTMLElement(el: unknown): el is HTMLElement {
+		return el instanceof HTMLElement;
 	}
 
 	/**
 	 * Generates a promise which waiting for all transitions ends
 	 */
-	protected awaiter(el: HTMLElement, props: Properties): Promise<Animate> {
+	protected awaiter(el: HTMLElement, props: Properties, asyncOpts: AsyncOpts = {}): Promise<Animate> {
 		const
-			{async: $a} = this;
+			{async: $a} = this,
+			keys = Object.reject(props, nonAnimatedProperties);
 
 		return $a.promise<Animate>(new Promise<Animate>((r, rej) => {
 			let
@@ -159,11 +261,11 @@ export default class Animate {
 
 				animateCounter++;
 
-				if (animateCounter === props.length) {
+				if (animateCounter === keys.length) {
 					r(this.animate);
 				}
 
-			}, this.async);
+			}, this.getAsyncOpts(asyncOpts));
 
 		}).catch((err) => {
 			stderr(err);
@@ -172,7 +274,7 @@ export default class Animate {
 	}
 
 	/**
-	 * Generates a styles object
+	 * Sets a specified styles to an element
 	 */
 	protected setStyles(el: HTMLElement, props: Properties): void {
 		const
