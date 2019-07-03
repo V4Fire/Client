@@ -7,9 +7,11 @@
  */
 
 @import "super/i-page/i-page.styl"
+@import "traits/i-lock-page-scroll/i-lock-spage-croll.styl"
 
 $p = {
-
+	lockPageHelpers: true
 }
 
 i-static-page extends i-page
+	i-lock-page-scroll({helpers: $p.lockPageHelpers})
