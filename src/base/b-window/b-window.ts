@@ -8,7 +8,7 @@
 
 import iVisible from 'traits/i-visible/i-visible';
 import iWidth from 'traits/i-width/i-width';
-import iLockScroll from 'traits/i-lock-scroll/i-lock-scroll';
+import iLockPageScroll from 'traits/i-lock-page-scroll/i-lock-page-scroll';
 import iOpenToggle, { CloseHelperEvents } from 'traits/i-open-toggle/i-open-toggle';
 
 import iData, {
@@ -35,7 +35,7 @@ export interface StageTitles<T = unknown> extends Dictionary<TitleValue<T>> {
 
 @component()
 export default class bWindow<T extends object = Dictionary> extends iData<T>
-	implements iVisible, iWidth, iOpenToggle, iLockScroll {
+	implements iVisible, iWidth, iOpenToggle, iLockPageScroll {
 
 	/**
 	 * Initial window title
@@ -180,14 +180,14 @@ export default class bWindow<T extends object = Dictionary> extends iData<T>
 		return false;
 	}
 
-	/** @see iLockScroll.lock */
+	/** @see iLockPageScroll.lock */
 	lock(): void {
-		iLockScroll.lock(this, this.$refs.window);
+		iLockPageScroll.lock(this, this.$refs.window);
 	}
 
-	/** @see iLockScroll.unlock */
+	/** @see iLockPageScroll.unlock */
 	unlock(): void {
-		iLockScroll.unlock(this);
+		iLockPageScroll.unlock(this);
 	}
 
 	/** @see iOpenToggle.onOpenedChange */
@@ -250,7 +250,7 @@ export default class bWindow<T extends object = Dictionary> extends iData<T>
 		super.initModEvents();
 		iOpenToggle.initModEvents(this);
 		iVisible.initModEvents(this);
-		iLockScroll.initModEvents(this);
+		iLockPageScroll.initModEvents(this);
 	}
 
 	/**

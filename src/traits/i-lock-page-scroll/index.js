@@ -6,4 +6,4 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-package('i-lock-scroll');
+package('i-lock-page-scroll');

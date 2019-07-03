@@ -8,13 +8,14 @@
 
 import iVisible from 'traits/i-visible/i-visible';
 import iOpenToggle, { CloseHelperEvents } from 'traits/i-open-toggle/i-open-toggle';
+import iLockPageScroll from 'traits/i-lock-page-scroll/i-lock-page-scroll';
 
-import iData, { component, hook, ModsDecl, ModEvent, SetModEvent } from 'super/i-data/i-data';
+import iData, { component, hook, prop, ModsDecl, ModEvent, SetModEvent } from 'super/i-data/i-data';
 export * from 'super/i-data/i-data';
 
 @component()
 export default class bSidebar<T extends object = Dictionary> extends iData<T>
-	implements iVisible, iOpenToggle {
+	implements iVisible, iOpenToggle, iLockPageScroll {
 
 	/** @inheritDoc */
 	static readonly mods: ModsDecl = {
@@ -25,6 +26,22 @@ export default class bSidebar<T extends object = Dictionary> extends iData<T>
 			['false']
 		]
 	};
+
+	/**
+	 * If true then will block the scrolling of the document when opening
+	 */
+	@prop(Boolean)
+	readonly lockPageScroll: boolean = false;
+
+	/** @see iLockPageScroll.lock */
+	lock(): void {
+		iLockPageScroll.lock(this, <HTMLElement>this.$el);
+	}
+
+	/** @see iLockPageScroll.unlock */
+	unlock(): void {
+		iLockPageScroll.unlock(this);
+	}
 
 	/** @see iOpenToggle.open */
 	open(): Promise<boolean> {
@@ -84,5 +101,6 @@ export default class bSidebar<T extends object = Dictionary> extends iData<T>
 		super.initModEvents();
 		iOpenToggle.initModEvents(this);
 		iVisible.initModEvents(this);
+		this.lockPageScroll && iLockPageScroll.initModEvents(this);
 	}
 }
