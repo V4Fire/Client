@@ -1,0 +1,26 @@
+/*!
+ * V4Fire Client Core
+ * https://github.com/V4Fire/Client
+ *
+ * Released under the MIT license
+ * https://github.com/V4Fire/Client/blob/master/LICENSE
+ */
+
+$p = {
+	helpers: true
+}
+
+i-lock-scroll
+	if $p.helpers
+		&-lock-scroll-mobile-true
+			size 100%
+			overflow hidden
+
+		&-lock-scroll-mobile-true body
+			position fixed
+			width 100%
+			overflow hidden
+
+		&-lock-scroll-desktop-true body
+			box-sizing border-box
+			overflow hidden
