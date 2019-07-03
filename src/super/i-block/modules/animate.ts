@@ -170,7 +170,7 @@ export default class Animate {
 			return this.getLoopback(asyncOpts);
 		}
 
-		return $a.promise<Animate>(new Promise((res, rej) => {
+		return $a.promise<Animate>(new Promise((res) => {
 			Object.assign(node.style, this.visibleStyles, styles);
 
 			$a.requestAnimationFrame(() => {
@@ -198,7 +198,7 @@ export default class Animate {
 			return this.getLoopback(asyncOpts);
 		}
 
-		return $a.promise<Animate>(new Promise((res, rej) => {
+		return $a.promise<Animate>(new Promise((res) => {
 			Object.assign(node.style, this.hideStyles, styles);
 			res(this.animate);
 		}), asyncOpts).catch((err) => {
@@ -250,7 +250,7 @@ export default class Animate {
 			{async: $a} = this,
 			keys = Object.reject(props, nonAnimatedProperties);
 
-		return $a.promise<Animate>(new Promise<Animate>((r, rej) => {
+		return $a.promise<Animate>(new Promise<Animate>((r) => {
 			let
 				animateCounter = 0;
 
