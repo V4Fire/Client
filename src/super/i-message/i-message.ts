@@ -100,7 +100,7 @@ export default abstract class iMessage extends iBlock {
 			init = {};
 
 		const createMsgHandler = (type) => (val) => {
-			if (!init[type] && String(this.modsProp[type]) === 'false') {
+			if (!init[type] && this.modsProp && String(this.modsProp[type]) === 'false') {
 				return false;
 			}
 
