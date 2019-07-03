@@ -10,34 +10,28 @@ import iBlock from 'super/i-block/i-block';
 import Block from 'super/i-block/modules/block';
 import Async, { AsyncOpts } from 'core/async';
 
-export type PropertyValue = string | number | number[];
+export type StyleValue = string | number;
+export type StyleDictionary = Dictionary<StyleValue>
+export type PropertyValue = StyleValue | [StyleValue, number] | [StyleValue, number, number];
 
 export interface Properties extends Dictionary<PropertyValue> {
-	time?: number;
+	duration?: number;
+	delay?: number;
 }
 
-export type NonAnimatedProperties =
-	'time' |
-	'transition' |
-	'display' |
-	'pointerEvents';
+export const nonAnimatedProperties = {
+	transition: true,
+	display: true,
+	duration: true,
+	pointerEvents: true
+}
 
-export type AnimatedProperties = Omit<Dictionary<PropertyValue>, NonAnimatedProperties>;
+export type NonAnimatedProperties = typeof nonAnimatedProperties;
 
 /**
  * Base class from Animation API
  */
 export default class Animate {
-	/**
-	 * Properties that cannot be animated
-	 */
-	static nonAnimatedProps: NonAnimatedProperties[] = [
-		'transition',
-		'display',
-		'time',
-		'pointerEvents'
-	];
-
 	/**
 	 * Link to component async module
 	 */
@@ -89,6 +83,37 @@ export default class Animate {
 	 *   *) time - transition duration in ms
 	 * @param [el] - reference to element or element name
 	 * @param [asyncOpts]
+	 * 
+	 * @example Run animation
+	 * animate.run({
+	 * 	opacity: [1, (2).seconds()],
+	 * 	width: '100px',
+	 * 	height: '400px',
+	 * 	duration: (4).seconds()
+	 * }).then((a: Animate) => {
+	 * 	// Will be resolved after all transitions ended
+	 * 	// opacity will be animating for 2 seconds
+	 * 	// other properties will be animating for 4 seconds
+	 * })
+	 * 
+	 * @example Cancel animation
+	 * const a = animate.run({opacity: 1, duration: (2).seconds()});
+	 * a.cancel();
+	 * 
+	 * @example Delay some props
+	 * animate.run({
+	 * 	opacity: [1, undefined, (2).seconds()],
+	 * 	duration: (1).second()
+	 * })
+	 * 
+	 * animate.run({
+	 * 	opacity: [1, (1).second(), (2).seconds()]
+	 * })
+	 * 
+	 * animate.run({
+	 * 	opacity: [1, (1).second()],
+	 * 	delay: (1).second()
+	 * })
 	 */
 	run(props: Properties, el: HTMLElement | string = this.$el, asyncOpts: AsyncOpts = {}): Promise<Animate> {
 		asyncOpts = {
@@ -111,33 +136,74 @@ export default class Animate {
 			return loopback;
 		}
 
-		const
-			rejected = Object.reject(props, Animate.nonAnimatedProps.concat('time')),
-			keys = Object.keys(rejected),
-			baseTime = props.time && props.time / 1000;
-
-		Object.assign(el.style, rejected);
+		// Object.assign(el.style, keys);
+		this.setStyles(el, props);
+		return this.awaiter(el, props);
 	}
 
 	/**
-	 * Generates a promise which waiting for all transition end
+	 * Generates a promise which waiting for all transitions ends
 	 */
-	protected awaiter(el: HTMLElement, props: string[]): Promise<Animate> {
+	protected awaiter(el: HTMLElement, props: Properties): Promise<Animate> {
 		const
 			{async: $a} = this;
 
-		let
-			animatedFields = 0;
+		return $a.promise<Animate>(new Promise<Animate>((r, rej) => {
+			let
+				animateCounter = 0;
 
-		return $a.promise<Animate>(new Promise((r, rej) => {
-			$a.on(<HTMLElement>el, 'transitionend', (e) => {
-				animatedFields++;
+			$a.on(<HTMLElement>el, 'transitionend', (e: TransitionEvent) => {
+				if (!e.target || e.target !== el || !props[e.propertyName]) {
+					return;
+				}
 
-				if (animatedFields === props.length) {
+				animateCounter++;
+
+				if (animateCounter === props.length) {
 					r(this.animate);
 				}
 
 			}, this.async);
+
+		}).catch((err) => {
+			stderr(err);
+			return this.animate;
 		}));
+	}
+
+	/**
+	 * Generates a styles object
+	 */
+	protected setStyles(el: HTMLElement, props: Properties): void {
+		const
+			{duration: baseDuration, delay: baseDelay} = props,
+			resultStyles: StyleDictionary = {};
+
+		props = Object.reject(props, {duration: true, transition: true});
+
+		let
+			transitionString = '';
+
+		for (let keys = Object.keys(props), i = 0; i < keys.length; i++) {
+			const
+				prop = keys[i],
+				v = props[prop];
+
+			const
+				[value, a, b] = Object.isArray(v) ? v : [v, baseDuration, baseDelay],
+				duration = a ? a / 1000 : 0,
+				delay = b ? b / 1000 : 0,
+				propName = prop.dasherize();
+
+			if (!value || !duration) {
+				continue;
+			}
+
+			transitionString = `${transitionString}${i > 0 ? ',' : ''}${propName} ${delay}s ${duration}s`;
+			resultStyles[propName] = value;
+		}
+
+		resultStyles.transition = transitionString;
+		Object.assign(el.style, resultStyles);
 	}
 }
