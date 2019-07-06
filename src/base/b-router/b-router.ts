@@ -499,9 +499,7 @@ export default class bRouter<T extends object = Dictionary> extends iData<T> {
 			}
 
 			if (!isEmptyOpts) {
-				opts = Object.mixin<Dictionary>(true, {}, Object.select(opts, pageOptsKeys), {
-					query: Object.reject(opts, pageOptsKeys)
-				});
+				opts = Object.mixin<Dictionary>(true, {}, Object.select(opts, pageOptsKeys));
 
 				const normalizeOpts = (obj, key?, data?) => {
 					if (!obj) {
