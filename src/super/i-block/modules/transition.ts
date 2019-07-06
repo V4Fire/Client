@@ -204,14 +204,17 @@ export class TransitionController implements AbstractTransitionController {
 	 */
 	protected getTransition(label: Label): CanUndef<Transition> {
 		const
-			{store} = this,
-			quota = store[label];
+			quota = this.store[label];
 
 		if (quota) {
 			return quota.transition;
 		}
 	}
 
+	/**
+	 * Returns a transition context
+	 * @param label
+	 */
 	protected getTransitionCtx(label: Label): CanUndef<TransitionCtx> {
 		return this.store[label];
 	}
