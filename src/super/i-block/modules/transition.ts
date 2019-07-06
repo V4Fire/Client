@@ -25,6 +25,10 @@ export const nonAnimatedProperties = {
 export const
 	$$ = symbolGenerator();
 
+export const
+	CONTROLLER_GROUP = '[[TRANSITION_CONTROLLER]]',
+	TRANSITION_GROUP = '[[TRANSITION]]';
+
 export enum TRANSITION_STATES {
 	initial = 0,
 	run = 1,
@@ -220,6 +224,15 @@ export class TransitionController implements AbstractTransitionController {
 	}
 
 	/**
+	 * Returns link to component async module
+	 * @param ctx
+	 */
+	protected getAsync(ctx: iBlock): Async {
+		// @ts-ignore
+		return ctx.async;
+	}
+
+	/**
 	 * True, if transition exists
 	 * @param label
 	 */
@@ -234,6 +247,15 @@ export class TransitionController implements AbstractTransitionController {
 	 * @param label
 	 */
 	protected buildContext(ctx: iBlock, label: Label): TransitionCtx {
+		const
+			$a = this.getAsync(ctx),
+			group = {group: CONTROLLER_GROUP};
+
+		$a.worker(() => {
+			this.kill(label);
+			delete this.store[label];
+		}, group);
+
 		return {
 			ctx,
 			label,
