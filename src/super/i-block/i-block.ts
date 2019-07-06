@@ -54,7 +54,7 @@ import Provide, { classesCache, Classes } from 'super/i-block/modules/provide';
 import State, { ConverterCallType } from 'super/i-block/modules/state';
 import Storage from 'super/i-block/modules/storage';
 import Sync, { AsyncWatchOpts } from 'super/i-block/modules/sync';
-import Transition from 'super/i-block/modules/transition';
+import { transitionFabric, TransitionFabric } from 'super/i-block/modules/transition';
 
 import { statuses } from 'super/i-block/modules/const';
 import { eventFactory, Event, RemoteEvent } from 'super/i-block/modules/event';
@@ -622,7 +622,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	@system({
 		unique: true,
 		replace: true,
-		init: (ctx: iBlock) => new Transition(ctx)
+		init: (ctx: iBlock) => (label: symbol) => transitionFabric.create(ctx, label)
 	})
 
 	protected transition!: Transition;

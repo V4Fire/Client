@@ -19,12 +19,18 @@ export type PropertyValue = StyleValue | [StyleValue, number] | [StyleValue, num
 export const nonAnimatedProperties = {
 	transition: true,
 	display: true,
-	duration: true,
 	pointerEvents: true
 };
 
 export const
 	$$ = symbolGenerator();
+
+export enum TRANSITION_STATES {
+	initial = 0,
+	run = 1,
+	start = 2,
+	end = 3
+}
 
 export interface Properties extends Dictionary<PropertyValue> {
 	duration?: number;
@@ -36,14 +42,23 @@ export interface TransitionOptions {
 	delay?: string;
 }
 
+export interface TransitionData {
+	props: StyleDictionary;
+	state: TRANSITION_STATES;
+	direction: TransitionDirection;
+	duration?: number;
+	opts?: TransitionOptions;
+}
+
+export type TransitionDirection = 'forward' | 'revers';
 export type Target = HTMLElement | string;
-export type AsyncLabel = AsyncOpts['label'];
+export type AsyncLabel = string | symbol;
 export type NonAnimatedProperties = typeof nonAnimatedProperties;
 
 /**
  * Base class from Animation API
  */
-export default class Transition {
+export class Transition {
 	/**
 	 * Link to component async module
 	 */
@@ -114,13 +129,6 @@ export default class Transition {
 	 */
 	constructor(component: iBlock) {
 		this.component = component;
-	}
-
-	/**
-	 * @param label
-	 */
-	create(label: AsyncLabel): Transition {
-
 	}
 
 	/**
@@ -255,15 +263,57 @@ export default class Transition {
 	}
 }
 
-/*
-	this.animate($$.label)
-		.visible('root-wrapper', {opacity: 1}?, 800?, 500?) -> instanceof Animate; (creates a new Promise, puts it in stack)
-		.run('overlay', {opacity: 1, transform: 'translate3d(0, 0, 0)'}, 800, 0?) -> instanceof Animate; (
-			create a new Promise, pop last from stack, subscribe to end, run on last promise is done
-		)
+export class TransitionFabric {
+	/**
+	 * Store for a transitions
+	 */
+	protected store: Dictionary<Transition> = {};
 
-	this.animate.reverse($$.label) -> Promise; (reverse a stack?)
-	this.animate.cancel($$.label, {gracefully: boolean}) -> Promise; ()
-	this.animate.remove($$.label) -> boolean;
-	this.animate.stop($$.label); -> boolean; // How to implement with transition?
+	/**
+	 * Creates a new transition instance
+	 */
+	create(ctx: iBlock, label: any): Transition {
+		const
+			{store} = this,
+			value = store[label];
+
+		if (value) {
+			return value;
+		}
+
+		this.getAsync(ctx).worker(() => {
+			delete store[label];
+		});
+
+		return new Transition(ctx, label);
+	}
+
+	/**
+	 * Returns a component async link
+	 * @param ctx
+	 */
+	protected getAsync(ctx: iBlock): Async {
+		// @ts-ignore
+		return ctx.async;
+	}
+}
+
+export const transitionFabric = new TransitionFabric();
+
+/*
+
+	1. Нужно чекать переданные шаги, если переданные props совпадают с текущими, не ждать их transitionend
+
+	this.transition.create($$.label) -> instanceof Transition;
+		.visible('root-wrapper', {opacity: 1}?, 800?, 500?)
+			-> instanceof Transition; (creates a new Promise, puts it in stack)
+		.run('overlay', {opacity: 1, transform: 'translate3d(0, 0, 0)'}, 800, 0?)
+			-> instanceof Transition; (
+				create a new Promise, pop last from stack, subscribe to end, run on last promise is done
+			)
+
+	this.transition.reverse($$.label) -> Promise; (reverse a stack?)
+	this.transition.cancel($$.label, {gracefully: boolean}) -> Promise; ()
+	this.transition.remove($$.label) -> boolean;
+	this.transition.stop($$.label); -> boolean; // freeze all props to current value (using getComputedStyle), should?
 */
