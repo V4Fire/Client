@@ -54,7 +54,7 @@ import Provide, { classesCache, Classes } from 'super/i-block/modules/provide';
 import State, { ConverterCallType } from 'super/i-block/modules/state';
 import Storage from 'super/i-block/modules/storage';
 import Sync, { AsyncWatchOpts } from 'super/i-block/modules/sync';
-import { transitionFabric, TransitionFabric } from 'super/i-block/modules/transition';
+import TransitionController, { AbstractTransitionController, Transition } from 'super/i-block/modules/transition';
 
 import { statuses } from 'super/i-block/modules/const';
 import { eventFactory, Event, RemoteEvent } from 'super/i-block/modules/event';
@@ -622,10 +622,34 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	@system({
 		unique: true,
 		replace: true,
-		init: (ctx: iBlock) => (label: symbol) => transitionFabric.create(ctx, label)
+		init: (ctx: iBlock) => ({
+			create(label: symbol): Transition {
+				return TransitionController.create(ctx, label);
+			},
+
+			reverse(label: symbol): CanUndef<Transition> {
+				return TransitionController.reverse(label);
+			},
+
+			cancel(label: symbol): void {
+				return TransitionController.kill(label);
+			},
+
+			stop(label: symbol): void {
+				return TransitionController.stop(label);
+			},
+
+			cancelAll(): void {
+				return TransitionController.killAll();
+			},
+
+			stopAll(): void {
+				return TransitionController.stopAll();
+			}
+		})
 	})
 
-	protected transition!: Transition;
+	protected transition!: AbstractTransitionController;
 
 	/**
 	 * API for lazy operations
