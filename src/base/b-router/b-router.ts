@@ -9,6 +9,7 @@
 import Async from 'core/async';
 import path, { RegExpOptions } from 'path-to-regexp';
 
+import globalRoutes from 'routes';
 import engine from 'core/router';
 import symbolGenerator from 'core/symbol';
 
@@ -143,7 +144,7 @@ export default class bRouter<T extends object = Dictionary> extends iData<T> {
 		init: (o) => o.sync.link((v) => {
 			const
 				base = o.basePath,
-				routes = <PageSchemaDict>(v || o.engine.routes || {}),
+				routes = <PageSchemaDict>(v || o.engine.routes || globalRoutes),
 				pages = {};
 
 			for (let keys = Object.keys(routes), i = 0; i < keys.length; i++) {
