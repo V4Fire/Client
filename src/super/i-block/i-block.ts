@@ -623,8 +623,12 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 		unique: true,
 		replace: true,
 		init: (ctx: iBlock) => ({
-			create(label: symbol): Transition {
-				return TransitionController.create(ctx, label);
+			parallel(label: symbol): Transition {
+				return TransitionController.parallel(ctx, label);
+			},
+
+			sequence(label: symbol): Transition {
+				return TransitionController.sequence(ctx, label);
 			},
 
 			reverse(label: symbol): CanUndef<Transition> {

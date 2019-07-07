@@ -14,7 +14,6 @@ import Async, { AsyncOpts } from 'core/async';
 
 export type StyleValue = string | number;
 export type StyleDictionary = Dictionary<StyleValue>;
-export type PropertyValue = StyleValue | [StyleValue, number] | [StyleValue, number, number];
 
 export const nonAnimatedProperties = {
 	transition: true,
@@ -34,16 +33,6 @@ export enum TRANSITION_STATES {
 	run = 1,
 	start = 2,
 	end = 3
-}
-
-export interface Properties extends Dictionary<PropertyValue> {
-	duration?: number;
-	delay?: number;
-}
-
-export interface TransitionOptions {
-	timingFn?: string;
-	delay?: string;
 }
 
 export interface TransitionCtx {
@@ -70,7 +59,8 @@ export type NonAnimatedProperties = typeof nonAnimatedProperties;
 export type Label = any;
 
 export abstract class AbstractTransitionController {
-	abstract create(ctx: iBlock, label: Label): Transition;
+	abstract sequence(ctx: iBlock, label: Label): Transition;
+	abstract parallel(ctx: iBlock, label: Label): Transition;
 	abstract reverse(label: Label): CanUndef<Transition>;
 
 	abstract stop(label: Label): void;
@@ -118,6 +108,13 @@ export class Transition {
 	}
 
 	/**
+	 * True, if transition finished
+	 */
+	get isFinished(): boolean {
+		return !this.current;
+	}
+
+	/**
 	 * @param ctx
 	 * @param label
 	 */
@@ -137,6 +134,34 @@ export class Transition {
 	run(el: Target, props: StyleDictionary, duration: number, delay?: number): Transition {
 		return this;
 	}
+
+	/**
+	 * Makes element visible
+	 */
+	visible(el: Target, props?: StyleDictionary, duration?: number, delay?: number): Transition {
+		return this;
+	}
+
+	/**
+	 * Makes element hidden
+	 */
+	hidden(el: Target, props?: StyleDictionary, duration?: number, delay?: number): Transition {
+		return this;
+	}
+
+	/**
+	 * Revers a transition
+	 */
+	reverse(): Transition {
+		return this;
+	}
+
+	/**
+	 * Kills a transition
+	 */
+	kill(): void {
+		//..
+	}
 }
 
 export class TransitionController implements AbstractTransitionController {
@@ -146,12 +171,25 @@ export class TransitionController implements AbstractTransitionController {
 	protected store: Dictionary<TransitionCtx> = {};
 
 	/**
-	 * Creates a new transition timeline
+	 * Creates a new parallel transition timeline
 	 */
-	create(ctx: iBlock, label: Label): Transition {
-		if (this.hasTransition(label)) {
-			this.kill(label);
-		}
+	parallel(ctx: iBlock, label: Label): Transition {
+		this.kill(label);
+
+		const
+			{store} = this,
+			transitionCtx = store[label] = this.buildContext(ctx, label);
+
+		return transitionCtx.transition;
+	}
+
+	/**
+	 * Creates a new transition sequence
+	 * @param ctx
+	 * @param label
+	 */
+	sequence(ctx: iBlock, label: Label): Transition {
+		this.kill(label);
 
 		const
 			{store} = this,
@@ -167,8 +205,11 @@ export class TransitionController implements AbstractTransitionController {
 	 * @param label
 	 */
 	reverse(label: Label): CanUndef<Transition> {
-		if (this.hasTransition(label)) {
-			return this.getTransition(label);
+		const
+			transition = this.getTransition(label);
+
+		if (transition) {
+			return transition;
 		}
 	}
 
@@ -188,15 +229,21 @@ export class TransitionController implements AbstractTransitionController {
 	}
 
 	/**
-	 * Cancel a transition
+	 * Removes a transition
 	 * @param label
 	 */
 	kill(label: Label): void {
-		//..
+		const
+			transition = this.getTransition(label);
+
+		if (transition) {
+			transition.kill();
+			delete this.store[label];
+		}
 	}
 
 	/**
-	 * Stops all transitions
+	 * Removes all transitions
 	 */
 	killAll(): void {
 		//..
@@ -233,14 +280,6 @@ export class TransitionController implements AbstractTransitionController {
 	}
 
 	/**
-	 * True, if transition exists
-	 * @param label
-	 */
-	protected hasTransition(label: Label): boolean {
-		return Boolean(this.getTransitionCtx(label));
-	}
-
-	/**
 	 * Builds a new transition context
 	 *
 	 * @param ctx
@@ -252,7 +291,7 @@ export class TransitionController implements AbstractTransitionController {
 			group = {group: CONTROLLER_GROUP};
 
 		$a.worker(() => {
-			this.kill(label);
+			// should kill transition?
 			delete this.store[label];
 		}, group);
 
