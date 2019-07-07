@@ -14,6 +14,7 @@ import Async, { AsyncOpts } from 'core/async';
 
 export type StyleValue = string | number;
 export type StyleDictionary = Dictionary<StyleValue>;
+export type TransitionMode = 'sequence' | 'parallel';
 
 export const nonAnimatedProperties = {
 	transition: true,
@@ -45,6 +46,7 @@ export interface TransitionInfo {
 	state: TRANSITION_STATES;
 	direction: TransitionDirection;
 	props: StyleDictionary;
+	mode: TransitionMode;
 	duration?: number;
 	delay?: number;
 }
@@ -82,9 +84,19 @@ export class Transition {
 	protected component: iBlock;
 
 	/**
+	 * Transition mode
+	 */
+	protected mode: TransitionMode;
+
+	/**
 	 * Stack of transitions
 	 */
 	protected stack: TransitionInfo[] = [];
+
+	/**
+	 * List of subscribers
+	 */
+	protected subscribers: Function[] = [];
 
 	/**
 	 * Current transition (in progress)
@@ -118,9 +130,10 @@ export class Transition {
 	 * @param ctx
 	 * @param label
 	 */
-	constructor(component: iBlock, label: Label) {
+	constructor(component: iBlock, label: Label, mode: TransitionMode) {
 		this.component = component;
 		this.label = label;
+		this.mode = mode;
 	}
 
 	/**
@@ -162,6 +175,19 @@ export class Transition {
 	kill(): void {
 		//..
 	}
+
+	/**
+	 * @param resolve
+	 * @param reject
+	 */
+	then(resolve: Function): Transition {
+		if (this.isFinished) {
+			Promise.resolve().then(() => resolve(this));
+		}
+
+		this.subscribers.push(resolve);
+		return this;
+	}
 }
 
 export class TransitionController {
@@ -178,7 +204,7 @@ export class TransitionController {
 
 		const
 			{store} = this,
-			transitionCtx = store[label] = this.buildContext(ctx, label);
+			transitionCtx = store[label] = this.buildContext(ctx, label, 'parallel');
 
 		return transitionCtx.transition;
 	}
@@ -193,7 +219,7 @@ export class TransitionController {
 
 		const
 			{store} = this,
-			transitionCtx = store[label] = this.buildContext(ctx, label);
+			transitionCtx = store[label] = this.buildContext(ctx, label, 'sequence');
 
 		return transitionCtx.transition;
 	}
@@ -285,7 +311,7 @@ export class TransitionController {
 	 * @param ctx
 	 * @param label
 	 */
-	protected buildContext(ctx: iBlock, label: Label): TransitionCtx {
+	protected buildContext(ctx: iBlock, label: Label, mode: TransitionMode): TransitionCtx {
 		const
 			$a = this.getAsync(ctx),
 			group = {group: CONTROLLER_GROUP};
@@ -298,7 +324,7 @@ export class TransitionController {
 		return {
 			ctx,
 			label,
-			transition: new Transition(ctx, label)
+			transition: new Transition(ctx, label, mode)
 		};
 	}
 }
