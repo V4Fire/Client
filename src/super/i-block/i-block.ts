@@ -54,7 +54,7 @@ import Provide, { classesCache, Classes } from 'super/i-block/modules/provide';
 import State, { ConverterCallType } from 'super/i-block/modules/state';
 import Storage from 'super/i-block/modules/storage';
 import Sync, { AsyncWatchOpts } from 'super/i-block/modules/sync';
-import TransitionController, { AbstractTransitionController, Transition } from 'super/i-block/modules/transition';
+import TransitionController, { Controller, Transition } from 'super/i-block/modules/transition';
 
 import { statuses } from 'super/i-block/modules/const';
 import { eventFactory, Event, RemoteEvent } from 'super/i-block/modules/event';
@@ -653,7 +653,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 		})
 	})
 
-	protected transition!: AbstractTransitionController;
+	protected transition!: Controller;
 
 	/**
 	 * API for lazy operations

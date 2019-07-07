@@ -58,16 +58,16 @@ export type NonAnimatedProperties = typeof nonAnimatedProperties;
  */
 export type Label = any;
 
-export abstract class AbstractTransitionController {
-	abstract sequence(label: Label): Transition;
-	abstract parallel(label: Label): Transition;
-	abstract reverse(label: Label): CanUndef<Transition>;
+export interface Controller {
+	sequence(label: Label): Transition;
+	parallel(label: Label): Transition;
+	reverse(label: Label): CanUndef<Transition>;
 
-	abstract stop(label: Label): void;
-	abstract stopAll(): void;
+	stop(label: Label): void;
+	stopAll(): void;
 
-	abstract kill(label: Label): void;
-	abstract killAll(): void;
+	kill(label: Label): void;
+	killAll(): void;
 }
 
 export class Transition {
