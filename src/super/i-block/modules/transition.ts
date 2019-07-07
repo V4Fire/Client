@@ -177,6 +177,13 @@ export class Transition {
 	}
 
 	/**
+	 * True, if transition is complete
+	 */
+	isFulfilled(): boolean {
+		return true;
+	}
+
+	/**
 	 * @param resolve
 	 * @param reject
 	 */
