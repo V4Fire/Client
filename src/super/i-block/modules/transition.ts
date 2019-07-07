@@ -59,8 +59,8 @@ export type NonAnimatedProperties = typeof nonAnimatedProperties;
 export type Label = any;
 
 export abstract class AbstractTransitionController {
-	abstract sequence(ctx: iBlock, label: Label): Transition;
-	abstract parallel(ctx: iBlock, label: Label): Transition;
+	abstract sequence(label: Label): Transition;
+	abstract parallel(label: Label): Transition;
 	abstract reverse(label: Label): CanUndef<Transition>;
 
 	abstract stop(label: Label): void;
@@ -164,7 +164,7 @@ export class Transition {
 	}
 }
 
-export class TransitionController implements AbstractTransitionController {
+export class TransitionController {
 	/**
 	 * Stores a transition links
 	 */
