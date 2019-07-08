@@ -642,7 +642,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 				return TransitionController.reverse(label);
 			},
 
-			cancel(label: symbol): void {
+			kill(label: symbol): void {
 				return TransitionController.kill(label);
 			},
 
@@ -650,7 +650,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 				return TransitionController.stop(label);
 			},
 
-			cancelAll(): void {
+			killAll(): void {
 				return TransitionController.killAll();
 			},
 
