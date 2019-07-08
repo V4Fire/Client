@@ -32,8 +32,7 @@ export const
 export enum TRANSITION_STATES {
 	initial = 0,
 	run = 1,
-	start = 2,
-	end = 3
+	end = 2
 }
 
 export interface TransitionCtx {
@@ -44,9 +43,16 @@ export interface TransitionCtx {
 
 export interface TransitionInfo {
 	state: TRANSITION_STATES;
-	direction: TransitionDirection;
 	props: StyleDictionary;
-	mode: TransitionMode;
+	node: HTMLElement;
+	promise: Promise<Transition>;
+	duration?: number;
+	delay?: number;
+}
+
+export interface TransitionParams {
+	node: HTMLElement;
+	props: StyleDictionary;
 	duration?: number;
 	delay?: number;
 }
@@ -89,6 +95,11 @@ export class Transition {
 	protected mode: TransitionMode;
 
 	/**
+	 * Transition direction
+	 */
+	protected direction: TransitionDirection;
+
+	/**
 	 * Stack of transitions
 	 */
 	protected stack: TransitionInfo[] = [];
@@ -99,14 +110,14 @@ export class Transition {
 	protected subscribers: Function[] = [];
 
 	/**
-	 * Current transition (in progress)
-	 */
-	protected current: CanUndef<TransitionInfo>;
-
-	/**
 	 * State of transition
 	 */
 	protected state: TRANSITION_STATES;
+
+	/**
+	 * Link to current transition
+	 */
+	protected current: CanUndef<TransitionInfo>;
 
 	/**
 	 * Link to component async module
@@ -128,18 +139,41 @@ export class Transition {
 	 * True, if transition finished
 	 */
 	get isFinished(): boolean {
-		return !this.current;
+		return this.stack.every((info) => info.state === TRANSITION_STATES.end);
+	}
+
+	/**
+	 * Property for visible elements
+	 */
+	get visibleProps(): StyleDictionary {
+		return {
+			visibility: 'visible',
+			pointerEvents: 'auto'
+		};
+	}
+
+	/**
+	 * Property for hidden elements
+	 */
+	get hiddenProps(): StyleDictionary {
+		return {
+			visibility: 'hidden',
+			pointerEvents: 'none'
+		};
 	}
 
 	/**
 	 * @param ctx
 	 * @param label
+	 * @param mode
 	 */
 	constructor(component: iBlock, label: Label, mode: TransitionMode) {
+		this.state = TRANSITION_STATES.initial;
 		this.component = component;
+		this.direction = 'forward';
 		this.label = label;
 		this.mode = mode;
-		this.state = TRANSITION_STATES.initial;
+
 	}
 
 	/**
@@ -157,14 +191,37 @@ export class Transition {
 	/**
 	 * Makes element visible
 	 */
-	visible(el: Target, props?: StyleDictionary, duration?: number, delay?: number): Transition {
+	visible(el: Target, props?: StyleDictionary): Transition {
+		props = {
+			...this.visibleProps,
+			...props
+		};
+
+		const
+			{async: $a} = this,
+			node = this.getNode(el);
+
+		if (!node) {
+			return this;
+		}
+
+		const resolver = (resolve, reject) => {
+			Object.assign(node.style, props);
+
+			$a.requestAnimationFrame(() => {
+				resolve(this);
+
+			}, {group: TRANSITION_GROUP});
+		};
+
+		this.append({node, props}, resolver);
 		return this;
 	}
 
 	/**
 	 * Makes element hidden
 	 */
-	hidden(el: Target, props?: StyleDictionary, duration?: number, delay?: number): Transition {
+	hidden(el: Target, props?: StyleDictionary): Transition {
 		return this;
 	}
 
@@ -196,10 +253,70 @@ export class Transition {
 	then(resolve: Function): Transition {
 		if (this.isFinished) {
 			Promise.resolve().then(() => resolve(this));
+			return this;
 		}
+
+		// Возможно стоит биндить каждый then к определенной transition
 
 		this.subscribers.push(resolve);
 		return this;
+	}
+
+	/**
+	 * Creates a transition info object
+	 *
+	 * @param node
+	 * @param [props]
+	 * @param [duration]
+	 * @param [delay]
+	 */
+	protected createInfo(
+		params: TransitionParams,
+		executor: (resolve: Function, reject: Function) => unknown
+	): TransitionInfo {
+		const
+			$a = this.async;
+
+		return {
+			...params,
+			state: TRANSITION_STATES.initial,
+			promise: $a.promise(new Promise<Transition>(executor))
+		};
+	}
+
+	/**
+	 * Appends transition into stack
+	 * @param info
+	 */
+	protected append(info: TransitionParams, executor: (resolve: Function, reject: Function) => unknown): TransitionInfo {
+		if (!this.stack.length) {
+			this.state = TRANSITION_STATES.run;
+		}
+
+		const transition = this.createInfo(info, executor);
+		this.stack.push(transition);
+
+		return transition;
+	}
+
+	/**
+	 * Returns a DOM node by selector
+	 */
+	protected getNode(node: HTMLElement | string): CanUndef<HTMLElement> {
+		return node instanceof HTMLElement ? node : this.block.element(node);
+	}
+
+	/**
+	 * ..
+	 */
+	protected next(): CanUndef<TransitionInfo> {
+		const {stack} = this;
+
+		for (let i = 0; i < stack.length; i++) {
+			if (stack[i].state === TRANSITION_STATES.initial) {
+				return stack[i];
+			}
+		}
 	}
 }
 
