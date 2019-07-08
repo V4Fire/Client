@@ -10,7 +10,7 @@
 
 import symbolGenerator from 'core/symbol';
 
-import Async, { AsyncOpts,  ClearOptsId, WrappedFunction, ProxyCb } from 'core/async';
+import Async, { AsyncOpts, ClearOptsId, WrappedFunction, ProxyCb } from 'core/async';
 import log, { LogMessageOpts } from 'core/log';
 
 import { GLOBAL } from 'core/env';
