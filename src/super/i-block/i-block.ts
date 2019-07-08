@@ -63,9 +63,9 @@ import { Statuses, WaitStatusOpts, Stage, ParentMessage, ComponentStatuses } fro
 
 import TransitionController, {
 
-	Controller,
 	Transition,
-	TransitionReverseOptions
+	TransitionReverseOptions,
+	AbstractTransitionController
 
 } from 'super/i-block/modules/transition';
 
@@ -660,7 +660,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 		})
 	})
 
-	protected transition!: Controller;
+	protected transition!: AbstractTransitionController;
 
 	/**
 	 * API for lazy operations

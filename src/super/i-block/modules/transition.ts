@@ -72,7 +72,7 @@ export type NonAnimatedProperties = typeof nonAnimatedProperties;
  */
 export type Label = any;
 
-export interface Controller {
+export interface AbstractTransitionController {
 	sequence(label: Label): Transition;
 	parallel(label: Label): Transition;
 	reverse(label: Label): CanUndef<Transition>;
@@ -310,7 +310,7 @@ export class Transition {
 				return;
 			}
 
-			next.promise = $a.promise(new Promise(next.resolver));
+			next.promise = $a.promise(new Promise(next.resolver)).catch(stderr);
 			next.promise.then(this.play);
 
 		} else {
@@ -325,7 +325,7 @@ export class Transition {
 					continue;
 				}
 
-				transition.promise = $a.promise(new Promise(transition.resolver));
+				transition.promise = $a.promise(new Promise(transition.resolver)).catch(stderr);
 			}
 		}
 	}
