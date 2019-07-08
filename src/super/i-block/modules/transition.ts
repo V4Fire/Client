@@ -10,7 +10,7 @@ import iBlock from 'super/i-block/i-block';
 import Block from 'super/i-block/modules/block';
 
 import symbolGenerator from 'core/symbol';
-import Async, { AsyncOpts } from 'core/async';
+import Async from 'core/async';
 
 export type StyleValue = string | number;
 export type StyleDictionary = Dictionary<StyleValue>;
@@ -45,9 +45,10 @@ export interface TransitionInfo {
 	state: TRANSITION_STATES;
 	props: StyleDictionary;
 	node: HTMLElement;
-	promise: Promise<Transition>;
 	duration?: number;
 	delay?: number;
+	promise?: Promise<unknown>;
+	resolver(res: Function, rej: Function): unknown;
 }
 
 export interface TransitionParams {
@@ -55,6 +56,11 @@ export interface TransitionParams {
 	props: StyleDictionary;
 	duration?: number;
 	delay?: number;
+}
+
+export interface TransitionReverseOptions {
+	onDone?: boolean;
+	then?: boolean;
 }
 
 export type TransitionDirection = 'forward' | 'revers';
@@ -120,6 +126,11 @@ export class Transition {
 	protected current: CanUndef<TransitionInfo>;
 
 	/**
+	 * Resolver
+	 */
+	protected resolver: CanUndef<Function>;
+
+	/**
 	 * Link to component async module
 	 */
 	protected get async(): Async {
@@ -136,10 +147,27 @@ export class Transition {
 	}
 
 	/**
-	 * True, if transition finished
+	 * True, if transitions finished
 	 */
-	get isFinished(): boolean {
+	get isFulfilled(): boolean {
 		return this.stack.every((info) => info.state === TRANSITION_STATES.end);
+	}
+
+	/**
+	 * Next transition
+	 */
+	get next(): CanUndef<TransitionInfo> {
+		const
+			{stack} = this;
+
+		for (let i = 0; i < stack.length; i++) {
+			const
+				transition = stack[i];
+
+			if (transition.state === TRANSITION_STATES.initial) {
+				return transition;
+			}
+		}
 	}
 
 	/**
@@ -173,7 +201,6 @@ export class Transition {
 		this.direction = 'forward';
 		this.label = label;
 		this.mode = mode;
-
 	}
 
 	/**
@@ -209,7 +236,7 @@ export class Transition {
 			Object.assign(node.style, props);
 
 			$a.requestAnimationFrame(() => {
-				resolve(this);
+				resolve();
 
 			}, {group: TRANSITION_GROUP});
 		};
@@ -222,6 +249,13 @@ export class Transition {
 	 * Makes element hidden
 	 */
 	hidden(el: Target, props?: StyleDictionary): Transition {
+		return this;
+	}
+
+	/**
+	 * Repeats transition specified times
+	 */
+	repeat(el: Target, props: StyleDictionary, duration: number, delay?: number, repeat?: number): Transition {
 		return this;
 	}
 
@@ -240,48 +274,60 @@ export class Transition {
 	}
 
 	/**
-	 * True, if transition is complete
-	 */
-	isFulfilled(): boolean {
-		return this.state === TRANSITION_STATES.end;
-	}
-
-	/**
 	 * @param resolve
 	 * @param reject
 	 */
 	then(resolve: Function): Transition {
-		if (this.isFinished) {
+		if (this.isFulfilled) {
 			Promise.resolve().then(() => resolve(this));
 			return this;
 		}
 
 		// Возможно стоит биндить каждый then к определенной transition
+		// Точно стоит
 
 		this.subscribers.push(resolve);
 		return this;
 	}
 
 	/**
-	 * Creates a transition info object
-	 *
-	 * @param node
-	 * @param [props]
-	 * @param [duration]
-	 * @param [delay]
+	 * Initializes an animation
 	 */
-	protected createInfo(
-		params: TransitionParams,
-		executor: (resolve: Function, reject: Function) => unknown
-	): TransitionInfo {
-		const
-			$a = this.async;
+	protected play(): void {
+		if (this.isFulfilled && this.resolver) {
+			this.resolver();
+			return;
+		}
 
-		return {
-			...params,
-			state: TRANSITION_STATES.initial,
-			promise: $a.promise(new Promise<Transition>(executor))
-		};
+		const
+			{async: $a, mode} = this;
+
+		if (mode === 'sequence') {
+			const
+				{next} = this;
+
+			if (!next) {
+				return;
+			}
+
+			next.promise = $a.promise(new Promise(next.resolver));
+			next.promise.then(this.play);
+
+		} else {
+			const
+				{stack} = this;
+
+			for (let i = 0; i < stack.length; i++) {
+				const
+					transition = stack[i];
+
+				if (transition.promise) {
+					continue;
+				}
+
+				transition.promise = $a.promise(new Promise(transition.resolver));
+			}
+		}
 	}
 
 	/**
@@ -293,8 +339,14 @@ export class Transition {
 			this.state = TRANSITION_STATES.run;
 		}
 
-		const transition = this.createInfo(info, executor);
+		const transition = {
+			...info,
+			state: TRANSITION_STATES.initial,
+			resolver: executor
+		};
+
 		this.stack.push(transition);
+		this.play();
 
 		return transition;
 	}
@@ -307,16 +359,10 @@ export class Transition {
 	}
 
 	/**
-	 * ..
+	 * Handler: transition is finished
 	 */
-	protected next(): CanUndef<TransitionInfo> {
-		const {stack} = this;
-
-		for (let i = 0; i < stack.length; i++) {
-			if (stack[i].state === TRANSITION_STATES.initial) {
-				return stack[i];
-			}
-		}
+	protected onDone(): void {
+		// ..
 	}
 }
 
@@ -461,3 +507,32 @@ export class TransitionController {
 
 const Controller = new TransitionController();
 export default Controller;
+
+/**
+ * Proposal:
+ *
+ * @example
+ * const
+ * 	timeline = this.transition.sequence($$.label);
+ *
+ * timeline
+ * 	.run('root-wrapper', {opacity: 1}, 800)
+ * 	.then((a) => new Promise((res, rej) => {
+ * 		return fetch(url).then((r) => r.json());
+ * 	}))
+ * 	.then((a, res) => {
+ * 		// a - instanceof transition
+ * 		// res - response from server
+ * 	})
+ * 	.run('root-wrapper', {opacity: 0}, 800)
+ * 	.done(() => alert('done'));
+ *
+ *
+ * await timeline;
+ *
+ * @example
+ * this.transition.sequence($$.label)
+ * 	.visible('root-wrapper')
+ * 	.run()
+ *
+ */

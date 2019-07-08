@@ -54,13 +54,20 @@ import Provide, { classesCache, Classes } from 'super/i-block/modules/provide';
 import State, { ConverterCallType } from 'super/i-block/modules/state';
 import Storage from 'super/i-block/modules/storage';
 import Sync, { AsyncWatchOpts } from 'super/i-block/modules/sync';
-import TransitionController, { Controller, Transition } from 'super/i-block/modules/transition';
 
 import { statuses } from 'super/i-block/modules/const';
 import { eventFactory, Event, RemoteEvent } from 'super/i-block/modules/event';
 import { initGlobalEvents, initRemoteWatchers } from 'super/i-block/modules/listeners';
 import { activate, deactivate, onActivated, onDeactivated } from 'super/i-block/modules/keep-alive';
 import { Statuses, WaitStatusOpts, Stage, ParentMessage, ComponentStatuses } from 'super/i-block/modules/interface';
+
+import TransitionController, {
+
+	Controller,
+	Transition,
+	TransitionReverseOptions
+
+} from 'super/i-block/modules/transition';
 
 import {
 
@@ -631,7 +638,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 				return TransitionController.sequence(ctx, label);
 			},
 
-			reverse(label: symbol): CanUndef<Transition> {
+			reverse(label: symbol, opts: TransitionReverseOptions): CanUndef<Transition> {
 				return TransitionController.reverse(label);
 			},
 
