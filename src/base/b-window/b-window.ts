@@ -46,7 +46,7 @@ export default class bWindow<T extends object = Dictionary> extends iData<T>
 	/**
 	 * Map of window titles ({stage: title})
 	 */
-	@prop(Object)
+	@prop({type: Object, required: false})
 	readonly stageTitles?: Dictionary<string>;
 
 	/**

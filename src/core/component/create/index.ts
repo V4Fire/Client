@@ -362,12 +362,15 @@ export function getBaseComponent(
 			}
 		}
 
+		const
+			defValue = !skipDefault ? prop.default !== undefined ? prop.default : defWrapper : undefined;
+
 		component.props[key] = {
 			type: prop.type,
-			required: prop.required,
+			required: prop.required !== false && defValue === undefined,
 			validator: prop.validator,
 			functional: prop.functional,
-			default: !skipDefault ? prop.default !== undefined ? prop.default : defWrapper : undefined
+			default: defValue
 		};
 
 		if (prop.watchers && prop.watchers.size) {

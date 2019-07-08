@@ -438,7 +438,7 @@ export function component(params?: ComponentParams): Function {
 													nodes = <VNode[]>[];
 
 												const
-													parent = (isTemplateParent ? vnode[0].elm.parentNode : vnode.elm),
+													parent = isTemplateParent ? vnode[0].elm.parentNode : vnode.elm,
 													baseHook = ctx.hook;
 
 												ctx.hook = 'beforeUpdate';
