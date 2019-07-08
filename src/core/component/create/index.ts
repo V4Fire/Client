@@ -367,7 +367,7 @@ export function getBaseComponent(
 
 		component.props[key] = {
 			type: prop.type,
-			required: prop.required !== false && defValue === undefined,
+			required: prop.required !== false && defaultProps && defValue === undefined,
 			validator: prop.validator,
 			functional: prop.functional,
 			default: defValue
