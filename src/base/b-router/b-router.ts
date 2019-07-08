@@ -86,6 +86,7 @@ export default class bRouter<T extends object = Dictionary> extends iData<T> {
 	 */
 	@prop<bRouter>({
 		type: [String, Object],
+		required: false,
 		watch: (o) => {
 			o.initComponentValues().catch(stderr);
 		}
