@@ -104,6 +104,11 @@ export class Transition {
 	protected current: CanUndef<TransitionInfo>;
 
 	/**
+	 * State of transition
+	 */
+	protected state: TRANSITION_STATES;
+
+	/**
 	 * Link to component async module
 	 */
 	protected get async(): Async {
@@ -134,6 +139,7 @@ export class Transition {
 		this.component = component;
 		this.label = label;
 		this.mode = mode;
+		this.state = TRANSITION_STATES.initial;
 	}
 
 	/**
@@ -180,7 +186,7 @@ export class Transition {
 	 * True, if transition is complete
 	 */
 	isFulfilled(): boolean {
-		return true;
+		return this.state === TRANSITION_STATES.end;
 	}
 
 	/**
