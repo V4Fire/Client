@@ -23,7 +23,7 @@
 			v-model = selectedStore |
 			@focus = onFocus |
 			@blur = onBlur |
-			@change = onOptionSelected($event.target.dataset.value)
+			@change = onOptionSelected($event.target.value)
 		.
 			< option v-for = el in options | :key = :value, el.value
 				{{ el.label }}
