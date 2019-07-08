@@ -251,7 +251,21 @@ export function component(params?: ComponentParams): Function {
 
 							if (!vnode) {
 								const
-									component = components.get(tag);
+									component = components.get(tag),
+									attrsSpreadObj = attrOpts['v-attrs'];
+
+								if (attrsSpreadObj && Object.isObject(attrsSpreadObj)) {
+									for (let keys = Object.keys(attrsSpreadObj), i = 0; i < keys.length; i++) {
+										const
+											key = keys[i];
+
+										if (!attrOpts[key]) {
+											attrOpts[key] = attrsSpreadObj[key];
+										}
+									}
+
+									delete attrOpts['v-attrs'];
+								}
 
 								if (supports.functional && component && component.params.functional === true) {
 									needEl = true;
