@@ -276,8 +276,7 @@ export default class bSlider extends iBlock {
 	 * Synchronizes the slider state
 	 * (deferred version)
 	 */
-	@hook('mounted')
-	@watch(['?window:resize', '?:updateState'])
+	@watch(['?window:resize', ':updateState'])
 	@wait('ready')
 	async syncStateDefer(): Promise<void> {
 		if (!this.isSlider) {
