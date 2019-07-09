@@ -134,7 +134,7 @@ const
 	directiveRgxp = /(v-(.*?))(?::(.*?))?(\..*)?$/;
 
 /**
- * Parses v-attrs attribute from the specified vnode data
+ * Parses v-attrs attribute from the specified vnode data and applies it
  *
  * @param data
  * @param [isComponent]
