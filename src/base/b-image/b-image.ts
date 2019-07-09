@@ -23,8 +23,12 @@ export default class bImage extends iMessage implements iProgress, iVisible {
 	/**
 	 * Target image src (fallback if srcset provided)
 	 */
-	@prop({type: String, watch: {fn: 'initOverlay', immediate: true}})
-	readonly src!: string;
+	@prop({
+		type: String,
+		watch: {fn: 'initOverlay', immediate: true}
+	})
+
+	readonly src: string = '';
 
 	/**
 	 * Target images srcset
