@@ -54,7 +54,7 @@ export function isNotInfinitePositiveNumber(v: number): boolean {
 	return v > 0 && Number.isFinite(v);
 }
 
-@component({functional: {}})
+@component()
 export default class bSlider extends iBlock {
 	/**
 	 * Slider mode
@@ -276,8 +276,7 @@ export default class bSlider extends iBlock {
 	 * Synchronizes the slider state
 	 * (deferred version)
 	 */
-	@hook('mounted')
-	@watch(['?window:resize', '?:updateState'])
+	@watch(['?window:resize', ':updateState'])
 	@wait('ready')
 	async syncStateDefer(): Promise<void> {
 		if (!this.isSlider) {

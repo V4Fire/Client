@@ -20,6 +20,7 @@ export default abstract class iOpenToggle extends iOpen {
 
 	/**
 	 * Toggles the component
+	 * @param args
 	 */
-	abstract toggle(): Promise<boolean>;
+	abstract toggle(...args: unknown[]): Promise<boolean>;
 }

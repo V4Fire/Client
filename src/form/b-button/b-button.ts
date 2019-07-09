@@ -102,7 +102,7 @@ export default class bButton<T extends object = Dictionary> extends iData<T>
 	/**
 	 * Component for .preIcon
 	 */
-	@prop(String)
+	@prop({type: String, required: false})
 	readonly preIconComponent?: string;
 
 	/**
@@ -114,7 +114,7 @@ export default class bButton<T extends object = Dictionary> extends iData<T>
 	/**
 	 * Component for .icon
 	 */
-	@prop(String)
+	@prop({type: String, required: false})
 	readonly iconComponent?: string;
 
 	/**

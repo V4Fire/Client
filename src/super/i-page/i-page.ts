@@ -48,7 +48,7 @@ export default abstract class iPage<T extends object = Dictionary> extends iData
 	/**
 	 * Map of page titles ({stage: title})
 	 */
-	@prop(Object)
+	@prop({type: Object, required: false})
 	readonly stagePageTitles?: StageTitles;
 
 	/**

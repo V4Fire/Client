@@ -88,6 +88,13 @@ export default abstract class iStaticPage<
 
 	remoteState!: Dictionary;
 
+	/**
+	 * Active page component
+	 */
+	get activePage(): CanUndef<string> {
+		return this.route && this.field.get('route.meta.page');
+	}
+
 	/** @override */
 	// @ts-ignore
 	get route(): CanUndef<CurrentPage<P, Q, M>> {
