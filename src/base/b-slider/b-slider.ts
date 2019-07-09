@@ -54,7 +54,7 @@ export function isNotInfinitePositiveNumber(v: number): boolean {
 	return v > 0 && Number.isFinite(v);
 }
 
-@component({functional: {}})
+@component()
 export default class bSlider extends iBlock {
 	/**
 	 * Slider mode
