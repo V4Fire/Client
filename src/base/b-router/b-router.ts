@@ -222,7 +222,7 @@ export default class bRouter<T extends object = Dictionary> extends iData<T> {
 	 * @param page
 	 * @param [opts] - additional transition options
 	 */
-	async push(page: Nullable<string>, opts?: PageOptsProp & Dictionary): Promise<void> {
+	async push(page: Nullable<string>, opts?: PageOptsProp): Promise<void> {
 		await this.setPage(page, opts, 'push');
 	}
 
@@ -232,7 +232,7 @@ export default class bRouter<T extends object = Dictionary> extends iData<T> {
 	 * @param page
 	 * @param [opts] - additional transition options
 	 */
-	async replace(page: Nullable<string>, opts?: PageOptsProp & Dictionary): Promise<void> {
+	async replace(page: Nullable<string>, opts?: PageOptsProp): Promise<void> {
 		await this.setPage(page, opts, 'replace');
 	}
 
@@ -481,7 +481,7 @@ export default class bRouter<T extends object = Dictionary> extends iData<T> {
 	 */
 	async setPage(
 		page: Nullable<string>,
-		opts?: PageOptsProp & Dictionary,
+		opts?: PageOptsProp,
 		method: SetPage = 'push'
 	): Promise<CanUndef<CurrentPage>> {
 		const
