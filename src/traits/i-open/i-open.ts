@@ -139,13 +139,15 @@ export default abstract class iOpen {
 
 	/**
 	 * Opens the component
+	 * @param {...unknown} args
 	 */
-	abstract open(): Promise<boolean>;
+	abstract open(...args: unknown[]): Promise<boolean>;
 
 	/**
 	 * Closes the component
+	 * @param {...unknown} args
 	 */
-	abstract close(): Promise<boolean>;
+	abstract close(...args: unknown[]): Promise<boolean>;
 
 	/**
 	 * Handler: opened modifier change

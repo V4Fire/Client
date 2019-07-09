@@ -101,21 +101,25 @@ export default abstract class iAccess {
 
 	/**
 	 * Disables the component
+	 * @param {...unknown} args
 	 */
-	abstract async disable(): Promise<boolean>;
+	abstract async disable(...args: unknown[]): Promise<boolean>;
 
 	/**
 	 * Enables the component
+	 * @param {...unknown} args
 	 */
-	abstract async enable(): Promise<boolean>;
+	abstract async enable(...args: unknown[]): Promise<boolean>;
 
 	/**
 	 * Sets focus for the component
+	 * @param {...unknown} args
 	 */
-	abstract async focus(): Promise<boolean> ;
+	abstract async focus(...args: unknown[]): Promise<boolean> ;
 
 	/**
 	 * Unsets focus for the component
+	 * @param {...unknown} args
 	 */
-	abstract async blur(): Promise<boolean>;
+	abstract async blur(...args: unknown[]): Promise<boolean>;
 }
