@@ -247,6 +247,7 @@ export default class bSlider extends iBlock {
 	/**
 	 * Synchronizes the slider state
 	 */
+	@hook('mounted')
 	syncState(): void {
 		const
 			{view, wrapper} = this.$refs;
