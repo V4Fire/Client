@@ -9,6 +9,7 @@
 import Async from 'core/async';
 import path, { RegExpOptions } from 'path-to-regexp';
 
+import globalRoutes from 'routes';
 import engine from 'core/router';
 import symbolGenerator from 'core/symbol';
 
@@ -85,6 +86,7 @@ export default class bRouter<T extends object = Dictionary> extends iData<T> {
 	 */
 	@prop<bRouter>({
 		type: [String, Object],
+		required: false,
 		watch: (o) => {
 			o.initComponentValues().catch(stderr);
 		}
@@ -143,7 +145,7 @@ export default class bRouter<T extends object = Dictionary> extends iData<T> {
 		init: (o) => o.sync.link((v) => {
 			const
 				base = o.basePath,
-				routes = <PageSchemaDict>(v || o.engine.routes || {}),
+				routes = <PageSchemaDict>(v || o.engine.routes || globalRoutes),
 				pages = {};
 
 			for (let keys = Object.keys(routes), i = 0; i < keys.length; i++) {
@@ -220,7 +222,7 @@ export default class bRouter<T extends object = Dictionary> extends iData<T> {
 	 * @param page
 	 * @param [opts] - additional transition options
 	 */
-	async push(page: Nullable<string>, opts?: PageOptsProp & Dictionary): Promise<void> {
+	async push(page: Nullable<string>, opts?: PageOptsProp): Promise<void> {
 		await this.setPage(page, opts, 'push');
 	}
 
@@ -230,7 +232,7 @@ export default class bRouter<T extends object = Dictionary> extends iData<T> {
 	 * @param page
 	 * @param [opts] - additional transition options
 	 */
-	async replace(page: Nullable<string>, opts?: PageOptsProp & Dictionary): Promise<void> {
+	async replace(page: Nullable<string>, opts?: PageOptsProp): Promise<void> {
 		await this.setPage(page, opts, 'replace');
 	}
 
@@ -479,7 +481,7 @@ export default class bRouter<T extends object = Dictionary> extends iData<T> {
 	 */
 	async setPage(
 		page: Nullable<string>,
-		opts?: PageOptsProp & Dictionary,
+		opts?: PageOptsProp,
 		method: SetPage = 'push'
 	): Promise<CanUndef<CurrentPage>> {
 		const
@@ -499,9 +501,7 @@ export default class bRouter<T extends object = Dictionary> extends iData<T> {
 			}
 
 			if (!isEmptyOpts) {
-				opts = Object.mixin<Dictionary>(true, {}, Object.select(opts, pageOptsKeys), {
-					query: Object.reject(opts, pageOptsKeys)
-				});
+				opts = Object.mixin<Dictionary>(true, {}, Object.select(opts, pageOptsKeys));
 
 				const normalizeOpts = (obj, key?, data?) => {
 					if (!obj) {

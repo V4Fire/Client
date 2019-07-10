@@ -20,7 +20,7 @@ const
 
 const
 	{webpack: wp} = config,
-	{buildCache, stdCache} = include('build/build.webpack');
+	{buildCache} = include('build/build.webpack');
 
 /**
  * Returns a list of webpack plugins
@@ -30,7 +30,6 @@ const
  */
 module.exports = async function ({buildId}) {
 	const
-		isSTD = buildId === build.STD,
 		graph = await build;
 
 	const plugins = new Map([
@@ -67,7 +66,7 @@ module.exports = async function ({buildId}) {
 
 		plugins.set('buildCache', new HardSourceWebpackPlugin({
 			environmentHash: {files: ['package-lock.json', 'yarn.lock']},
-			cacheDirectory: path.join(isSTD ? stdCache : buildCache, String(buildId), wp.cacheDir()),
+			cacheDirectory: path.join(buildCache, String(buildId), wp.cacheDir()),
 			configHash: () => require('node-object-hash')().hash({
 				webpack: global.WEBPACK_CONFIG,
 				config: expandConfig({}, config)

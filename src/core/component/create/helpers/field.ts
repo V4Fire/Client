@@ -375,7 +375,10 @@ export function initPropsObject(
 ): Dictionary {
 	const
 		// @ts-ignore (access)
-		isFlyweight = ctx.$isFlyweight || ctx.meta.params.functional === true;
+		{meta, meta: {component: {props}}} = ctx,
+
+		// @ts-ignore (access)
+		isFlyweight = ctx.$isFlyweight || meta.params.functional === true;
 
 	for (let keys = Object.keys(fields), i = 0; i < keys.length; i++) {
 		const
@@ -392,6 +395,15 @@ export function initPropsObject(
 
 		if (val === undefined) {
 			val = el.default !== undefined ? el.default : Object.fastClone(instance[key]);
+		}
+
+		if (val === undefined) {
+			const
+				obj = props[key];
+
+			if (obj && obj.required) {
+				throw new TypeError(`Missing required prop: "${key}" (component: "${ctx.componentName}")`);
+			}
 		}
 
 		if (Object.isFunction(val)) {

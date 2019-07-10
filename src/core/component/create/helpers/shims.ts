@@ -8,6 +8,7 @@
 
 import { EventEmitter2 as EventEmitter } from 'eventemitter2';
 import { ComponentElement, ComponentInterface } from 'core/component/interface';
+import { VNodeData } from 'core/component/engines';
 
 /**
  * Adds the component event API to the specified component
@@ -126,5 +127,134 @@ export function patchRefs(ctx: ComponentInterface): void {
 				}
 			}
 		}
+	}
+}
+
+const
+	directiveRgxp = /(v-(.*?))(?::(.*?))?(\..*)?$/;
+
+/**
+ * Parses v-attrs attribute from the specified vnode data and applies it
+ *
+ * @param data
+ * @param [isComponent]
+ */
+export function parseVAttrs(data: VNodeData, isComponent?: boolean): void {
+	const
+		attrs = data.attrs = data.attrs || {},
+		attrsSpreadObj = attrs['v-attrs'];
+
+	if (attrsSpreadObj && Object.isSimpleObject(attrsSpreadObj)) {
+		const
+			eventOpts = data.on = data.on || {},
+			nativeEventOpts = data.nativeOn = data.nativeOn || {},
+			directiveOpts = data.directives = data.directives || [];
+
+		for (let keys = Object.keys(attrsSpreadObj), i = 0; i < keys.length; i++) {
+			const
+				key = keys[i];
+
+			let
+				val = attrsSpreadObj[key];
+
+			if (key[0] === '@') {
+				let
+					event = key.slice(1);
+
+				if (isComponent) {
+					const
+						eventChunks = event.split('.'),
+						flags = <Dictionary>{};
+
+					for (let i = 1; i < eventChunks.length; i++) {
+						flags[eventChunks[i]] = true;
+					}
+
+					event = eventChunks[0];
+
+					if (flags.native) {
+						if (flags.right) {
+							event = 'contextmenu';
+						}
+
+						if (flags.capture) {
+							event = `!${event}`;
+						}
+
+						if (flags.once) {
+							event = `~${event}`;
+						}
+
+						if (flags.passive) {
+							event = `&${event}`;
+						}
+
+						if (flags.self || flags.prevent || flags.stop) {
+							const
+								originalFn = val;
+
+							val = (e: Event | MouseEvent) => {
+								if (flags.prevent) {
+									e.preventDefault();
+								}
+
+								if (flags.self && e.target !== e.currentTarget) {
+									return null;
+								}
+
+								if (flags.stop) {
+									e.stopPropagation();
+								}
+
+								return originalFn(e);
+							};
+						}
+
+						if (!nativeEventOpts[event]) {
+							nativeEventOpts[event] = val;
+						}
+
+					} else if (!eventOpts[event]) {
+						eventOpts[event] = val;
+					}
+
+				} else if (!eventOpts[event]) {
+					eventOpts[event] = val;
+				}
+
+			} else if (key.slice(0, 2) === 'v-') {
+				const
+					[, rawName, name, arg, rawModifiers] = directiveRgxp.exec(key);
+
+				let
+					modifiers;
+
+				if (rawModifiers) {
+					modifiers = {};
+
+					for (let o = rawModifiers.split('.'), i = 0; i < o.length; i++) {
+						modifiers[o[i]] = true;
+					}
+				}
+
+				const
+					dir = <Dictionary>{name, rawName, value: val};
+
+				if (arg) {
+					dir.arg = arg;
+				}
+
+				if (modifiers) {
+					dir.modifiers = modifiers;
+				}
+
+				directiveOpts.push(<any>dir);
+
+			} else if (!attrs[key]) {
+				attrs[key] = val;
+			}
+		}
+
+		delete attrs['v-attrs'];
 	}
 }

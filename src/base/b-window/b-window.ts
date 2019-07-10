@@ -8,6 +8,7 @@
 
 import iVisible from 'traits/i-visible/i-visible';
 import iWidth from 'traits/i-width/i-width';
+import iLockPageScroll from 'traits/i-lock-page-scroll/i-lock-page-scroll';
 import iOpenToggle, { CloseHelperEvents } from 'traits/i-open-toggle/i-open-toggle';
 
 import iData, {
@@ -34,7 +35,7 @@ export interface StageTitles<T = unknown> extends Dictionary<TitleValue<T>> {
 
 @component()
 export default class bWindow<T extends object = Dictionary> extends iData<T>
-	implements iVisible, iWidth, iOpenToggle {
+	implements iVisible, iWidth, iOpenToggle, iLockPageScroll {
 
 	/**
 	 * Initial window title
@@ -45,7 +46,7 @@ export default class bWindow<T extends object = Dictionary> extends iData<T>
 	/**
 	 * Map of window titles ({stage: title})
 	 */
-	@prop(Object)
+	@prop({type: Object, required: false})
 	readonly stageTitles?: Dictionary<string>;
 
 	/**
@@ -96,41 +97,6 @@ export default class bWindow<T extends object = Dictionary> extends iData<T>
 		this.errorMsg = value;
 	}
 
-	/** @see iOpenToggle.toggle */
-	toggle(): Promise<boolean> {
-		return iOpenToggle.toggle(this);
-	}
-
-	/**
-	 * @see iOpenToggle.open
-	 * @param [stage] - window stage
-	 */
-	async open(stage?: Stage): Promise<boolean> {
-		if (await iOpenToggle.open(this)) {
-			if (stage) {
-				this.stage = stage;
-			}
-
-			this.setRootMod('hidden', false);
-			await this.nextTick();
-			this.emit('open');
-			return true;
-		}
-
-		return false;
-	}
-
-	/** @see iOpenToggle.close */
-	async close(): Promise<boolean> {
-		if (await iOpenToggle.close(this)) {
-			this.setRootMod('hidden', true);
-			this.emit('close');
-			return true;
-		}
-
-		return false;
-	}
-
 	/**
 	 * Slot name
 	 */
@@ -177,6 +143,51 @@ export default class bWindow<T extends object = Dictionary> extends iData<T>
 	 */
 	set title(value: string) {
 		this.field.set('titleStore', value);
+	}
+
+	/** @see iOpenToggle.toggle */
+	toggle(): Promise<boolean> {
+		return iOpenToggle.toggle(this);
+	}
+
+	/**
+	 * @see iOpenToggle.open
+	 * @param [stage] - window stage
+	 */
+	async open(stage?: Stage): Promise<boolean> {
+		if (await iOpenToggle.open(this)) {
+			if (stage) {
+				this.stage = stage;
+			}
+
+			this.setRootMod('hidden', false);
+			await this.nextTick();
+			this.emit('open');
+			return true;
+		}
+
+		return false;
+	}
+
+	/** @see iOpenToggle.close */
+	async close(): Promise<boolean> {
+		if (await iOpenToggle.close(this)) {
+			this.setRootMod('hidden', true);
+			this.emit('close');
+			return true;
+		}
+
+		return false;
+	}
+
+	/** @see iLockPageScroll.lock */
+	lock(): void {
+		iLockPageScroll.lock(this, this.$refs.window);
+	}
+
+	/** @see iLockPageScroll.unlock */
+	unlock(): void {
+		iLockPageScroll.unlock(this);
 	}
 
 	/** @see iOpenToggle.onOpenedChange */
@@ -239,6 +250,7 @@ export default class bWindow<T extends object = Dictionary> extends iData<T>
 		super.initModEvents();
 		iOpenToggle.initModEvents(this);
 		iVisible.initModEvents(this);
+		iLockPageScroll.initModEvents(this);
 	}
 
 	/**

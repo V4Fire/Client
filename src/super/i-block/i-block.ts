@@ -410,8 +410,8 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	 * Link to the root route object
 	 */
 	@p({cache: false})
-	get route(): CanUndef<CurrentPage> {
-		return this.field.get('route', this.$root);
+	get route(): CurrentPage {
+		return <CurrentPage>this.field.get('route', this.$root);
 	}
 
 	/**

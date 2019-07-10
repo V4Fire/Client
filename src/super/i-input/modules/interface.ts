@@ -29,9 +29,13 @@ export type ValidatorResult<T = unknown> =
 	null |
 	ValidatorError<T>;
 
-export type ValidationError<T = unknown> = [string, ValidatorError<T>];
-export type ValidationResult<T = unknown> = boolean | ValidationError<T>;
+export interface ValidationError<T = unknown> {
+	validator: string;
+	error: ValidatorError<T>;
+	msg?: string;
+}
 
+export type ValidationResult<T = unknown> = boolean | ValidationError<T>;
 export type Validators = Array<string | Dictionary<ValidatorParams> | [string, ValidatorParams]>;
 export type ValidatorsDecl<T = iInput, P = ValidatorParams> = Dictionary<(this: T, params: P) =>
 	CanPromise<boolean | unknown>>;

@@ -121,7 +121,7 @@ export default class bInput<
 	/**
 	 * Component for .preIcon
 	 */
-	@prop(String)
+	@prop({type: String, required: false})
 	readonly preIconComponent?: string;
 
 	/**
@@ -145,7 +145,7 @@ export default class bInput<
 	/**
 	 * Component for .icon
 	 */
-	@prop(String)
+	@prop({type: String, required: false})
 	readonly iconComponent?: string;
 
 	/**

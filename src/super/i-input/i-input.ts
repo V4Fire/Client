@@ -275,10 +275,7 @@ export default abstract class iInput<
 	static blockValidators: ValidatorsDecl = {
 		async required({msg, showMsg = true}: ValidatorParams): Promise<ValidatorResult<boolean>> {
 			if (await this.formValue == null) {
-				if (showMsg) {
-					this.error = this.getValidatorMsg(false, msg, t`Required field`);
-				}
-
+				this.setValidationMsg(this.getValidatorMsg(false, msg, t`Required field`), showMsg);
 				return false;
 			}
 
@@ -304,6 +301,12 @@ export default abstract class iInput<
 	})
 
 	protected valueStore!: unknown;
+
+	/**
+	 * Internal validation error message
+	 */
+	@system()
+	private validationMsg?: string;
 
 	/** @see iAccess.enable */
 	@p({replace: false})
@@ -386,7 +389,7 @@ export default abstract class iInput<
 	}
 
 	/**
-	 * Sets a validator error message to the component
+	 * Returns a validator error message from the specified arguments
 	 *
 	 * @param err - error details
 	 * @param msg - error message / error table / error function
@@ -402,6 +405,20 @@ export default abstract class iInput<
 		}
 
 		return msg || defMsg;
+	}
+
+	/**
+	 * Sets a validator error message to the component
+	 *
+	 * @param msg
+	 * @param [showMsg] - if true, then the message will be provided to .error
+	 */
+	setValidationMsg(msg: string, showMsg: boolean = false): void {
+		this.validationMsg = msg;
+
+		if (showMsg) {
+			this.error = msg;
+		}
 	}
 
 	/**
@@ -453,7 +470,12 @@ export default abstract class iInput<
 			valid = await validation;
 
 			if (valid !== true) {
-				failedValidation = [key, valid];
+				failedValidation = {
+					validator: key,
+					error: valid,
+					msg: this.validationMsg
+				};
+
 				break;
 			}
 		}
@@ -474,7 +496,9 @@ export default abstract class iInput<
 			this.emit('validationFail', failedValidation);
 		}
 
+		this.validationMsg = undefined;
 		this.emit('validationEnd', valid === true, failedValidation);
+
 		return valid || failedValidation;
 	}
 

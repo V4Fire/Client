@@ -265,7 +265,7 @@ export function paramsFactory<T = unknown>(
 				delete p.cache;
 
 				if (metaKey === 'accessors' ? key in meta.computed : !hasCache && key in meta.accessors) {
-					obj.accessors = wrapOpts({...meta.computed[key], ...p});
+					obj[key] = wrapOpts({...meta.computed[key], ...p});
 					delete meta.computed[key];
 
 				} else {

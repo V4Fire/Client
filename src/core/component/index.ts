@@ -18,7 +18,7 @@ import 'core/component/directives';
 import inheritMeta from 'core/component/create/inherit';
 
 import { GLOBAL } from 'core/env';
-import { runHook, patchRefs } from 'core/component/create/helpers';
+import { runHook, patchRefs, parseVAttrs } from 'core/component/create/helpers';
 import { ComponentInterface, ComponentParams, ComponentMeta, ComponentMethod } from 'core/component/interface';
 import {
 
@@ -239,8 +239,18 @@ export function component(params?: ComponentParams): Function {
 							const
 								ctx = this || rootCtx;
 
+							let
+								attrOpts;
+
+							// tslint:disable-next-line:prefer-conditional-expression
+							if (opts && Object.isSimpleObject(opts)) {
+								attrOpts = opts.attrs = opts.attrs || {};
+
+							} else {
+								attrOpts = {};
+							}
+
 							const
-								attrOpts = Object.isSimpleObject(opts) && opts.attrs || {},
 								tagName = attrOpts['v4-composite'] || tag,
 								renderKey = attrOpts['render-key'] != null ?
 									`${tagName}:${attrOpts['global-name']}:${attrOpts['render-key']}` : '';
@@ -252,6 +262,10 @@ export function component(params?: ComponentParams): Function {
 							if (!vnode) {
 								const
 									component = components.get(tag);
+
+								if (opts) {
+									parseVAttrs(opts, Boolean(component));
+								}
 
 								if (supports.functional && component && component.params.functional === true) {
 									needEl = true;
@@ -285,7 +299,8 @@ export function component(params?: ComponentParams): Function {
 											attrs: data.attrs,
 											class: data.class,
 											staticClass: data.staticClass,
-											style: data.style
+											style: data.style,
+											directives: data.directives
 										}
 									};
 
@@ -438,7 +453,7 @@ export function component(params?: ComponentParams): Function {
 													nodes = <VNode[]>[];
 
 												const
-													parent = (isTemplateParent ? vnode[0].elm.parentNode : vnode.elm),
+													parent = isTemplateParent ? vnode[0].elm.parentNode : vnode.elm,
 													baseHook = ctx.hook;
 
 												ctx.hook = 'beforeUpdate';
