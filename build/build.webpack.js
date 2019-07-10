@@ -51,11 +51,6 @@ exports.dllManifest = path.join(src.clientOutput(), webpack.dllOutput({name: 'dl
  */
 exports.buildCache = path.join(src.cwd(), 'app-cache');
 
-/**
- * STD build cache folder
- */
-exports.stdCache = path.join(src.cwd(), 'app-std-cache');
-
 // Some helpers
 
 exports.hash = hash;
