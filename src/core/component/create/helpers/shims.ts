@@ -144,10 +144,41 @@ export function parseVAttrs(data: VNodeData, isComponent?: boolean): void {
 		attrs = data.attrs = data.attrs || {},
 		attrsSpreadObj = attrs['v-attrs'];
 
-	if (attrsSpreadObj && Object.isSimpleObject(attrsSpreadObj)) {
+	if (Object.isObject(attrsSpreadObj)) {
 		const
-			eventOpts = data.on = data.on || {},
-			nativeEventOpts = data.nativeOn = data.nativeOn || {},
+			slots = attrsSpreadObj.slots,
+			slotOpts: Dictionary = data.scopedSlots || {};
+
+		if (Object.isObject(slots)) {
+			for (let keys = Object.keys(slots), i = 0; i < keys.length; i++) {
+				const
+					key = keys[i];
+
+				let nm = `@${key}`;
+				nm = slotOpts[nm] ? nm : '@';
+
+				if (slotOpts[nm]) {
+					const
+						fn = slotOpts[nm];
+
+					slotOpts[key] = (obj) => {
+						obj.parent = slots[key];
+						return (<Function>fn)(obj);
+					};
+
+					if (nm === '@') {
+						delete slotOpts[nm];
+					}
+				}
+			}
+
+			delete slotOpts['@'];
+			delete attrsSpreadObj.slots;
+		}
+
+		const
+			eventOpts: Dictionary = data.on = data.on || {},
+			nativeEventOpts: Dictionary = data.nativeOn = data.nativeOn || {},
 			directiveOpts = data.directives = data.directives || [];
 
 		for (let keys = Object.keys(attrsSpreadObj), i = 0; i < keys.length; i++) {
@@ -206,7 +237,7 @@ export function parseVAttrs(data: VNodeData, isComponent?: boolean): void {
 									e.stopPropagation();
 								}
 
-								return originalFn(e);
+								return (<Function>originalFn)(e);
 							};
 						}
 
