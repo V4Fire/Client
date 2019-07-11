@@ -162,7 +162,7 @@ export function parseVAttrs(data: VNodeData, isComponent?: boolean): void {
 						fn = slotOpts[nm];
 
 					slotOpts[key] = (obj) => {
-						obj.parent = slots[key];
+						obj.slotContent = slots[key];
 						return (<Function>fn)(obj);
 					};
 
