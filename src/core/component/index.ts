@@ -399,12 +399,19 @@ export function component(params?: ComponentParams): Function {
 								res = res || {};
 
 								for (let i = 0; i < fns.length; i++) {
-									if (Array.isArray(fns[i])) {
+									const
+										el = fns[i];
+
+									if (!el) {
+										continue;
+									}
+
+									if (Array.isArray(el)) {
 										// @ts-ignore (access)
-										rootCtx._u(fns[i], res);
+										rootCtx._u(el, res);
 
 									} else {
-										res[fns[i].key] = function (): VNode[] {
+										res[el.key] = function (): VNode[] {
 											const
 												children = fns[i].fn.apply(this, arguments);
 
