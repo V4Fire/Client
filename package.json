@@ -100,7 +100,7 @@
     "svg-sprite-loader": "^4.1.6",
     "svg-url-loader": "^3.0.0",
     "svgo": "^1.2.2",
-    "svgo-loader": "^3.0.0",
+    "svgo-loader": "^2.2.1",
     "svgo-sync": "^0.5.1",
     "ts-loader": "^6.0.4",
     "typograf": "^6.8.2",
