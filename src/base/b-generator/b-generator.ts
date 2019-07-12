@@ -19,7 +19,7 @@ export interface Document {
 }
 
 @component({flyweight: true, functional: true})
-export default class bGenerate extends iBlock {
+export default class bGenerator extends iBlock {
 	/**
 	 * List of content
 	 */

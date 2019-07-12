@@ -6,10 +6,5 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-@import "super/i-block/i-block.styl"
-
-$p = {
-
-}
-
-b-generate extends i-block
+package('b-generator')
+	.extends('i-block');
