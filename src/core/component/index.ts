@@ -65,7 +65,8 @@ export {
 
 export const
 	$$ = symbolGenerator(),
-	isSmartComponent = /-functional$/;
+	isSmartComponent = /-functional$/,
+	isSimpleComponent = /^[bpg]-[a-z]/;
 
 /**
  * Returns a component name
@@ -237,7 +238,8 @@ export function component(params?: ComponentParams): Function {
 							'use strict';
 
 							const
-								ctx = this || rootCtx;
+								ctx = this || rootCtx,
+								component = isSimpleComponent.test(tag) && components.get(tag);
 
 							let
 								attrOpts;
@@ -245,6 +247,7 @@ export function component(params?: ComponentParams): Function {
 							// tslint:disable-next-line:prefer-conditional-expression
 							if (opts && Object.isSimpleObject(opts)) {
 								attrOpts = opts.attrs = opts.attrs || {};
+								parseVAttrs(attrOpts, Boolean(component));
 
 							} else {
 								attrOpts = {};
@@ -259,68 +262,59 @@ export function component(params?: ComponentParams): Function {
 								vnode = ctx.renderTmp[renderKey],
 								needEl = Boolean(attrOpts['v4-composite']);
 
-							if (!vnode) {
+							if (!vnode && component && supports.functional && component.params.functional === true) {
+								needEl = true;
+
 								const
-									component = components.get(tag);
+									nm = component.componentName,
+									tpl = TPLS[nm];
 
-								if (opts) {
-									parseVAttrs(opts, Boolean(component));
+								if (!tpl) {
+									return nativeCreate('span');
 								}
 
-								if (supports.functional && component && component.params.functional === true) {
-									needEl = true;
+								const
+									node = nativeCreate('span', {...opts, tag: undefined}, children),
+									data = getComponentDataFromVnode(nm, node);
 
-									const
-										nm = component.componentName,
-										tpl = TPLS[nm];
+								const renderCtx: RenderContext = {
+									parent: ctx,
+									children: node.children || [],
+									props: data.props,
+									listeners: <Record<string, CanArray<Function>>>data.on,
 
-									if (!tpl) {
-										return nativeCreate('span');
+									slots: () => data.slots,
+									scopedSlots: <Record<string, NormalizedScopedSlot>>data.scopedSlots,
+									injections: undefined,
+
+									data: {
+										ref: data.ref,
+										refInFor: data.refInFor,
+										on: <Record<string, CanArray<Function>>>data.on,
+										attrs: data.attrs,
+										class: data.class,
+										staticClass: data.staticClass,
+										style: data.style,
+										directives: data.directives
 									}
+								};
 
-									const
-										node = nativeCreate('span', {...opts, tag: undefined}, children),
-										data = getComponentDataFromVnode(nm, node);
+								const fakeCtx = createFakeCtx<ComponentInterface>(
+									<CreateElement>createElement,
+									renderCtx,
 
-									const renderCtx: RenderContext = {
-										parent: ctx,
-										children: node.children || [],
-										props: data.props,
-										listeners: <Record<string, CanArray<Function>>>data.on,
+									minimalCtxCache[nm] = minimalCtxCache[nm] || Object.assign(Object.create(minimalCtx), {
+										meta: component,
+										instance: component.instance,
+										componentName: component.componentName,
+										$options: {}
+									}),
 
-										slots: () => data.slots,
-										scopedSlots: <Record<string, NormalizedScopedSlot>>data.scopedSlots,
-										injections: undefined,
+									{initProps: true}
+								);
 
-										data: {
-											ref: data.ref,
-											refInFor: data.refInFor,
-											on: <Record<string, CanArray<Function>>>data.on,
-											attrs: data.attrs,
-											class: data.class,
-											staticClass: data.staticClass,
-											style: data.style,
-											directives: data.directives
-										}
-									};
-
-									const fakeCtx = createFakeCtx<ComponentInterface>(
-										<CreateElement>createElement,
-										renderCtx,
-
-										minimalCtxCache[nm] = minimalCtxCache[nm] || Object.assign(Object.create(minimalCtx), {
-											meta: component,
-											instance: component.instance,
-											componentName: component.componentName,
-											$options: {}
-										}),
-
-										{initProps: true}
-									);
-
-									const renderObject = tplCache[nm] = tplCache[nm] || tpl.index && tpl.index();
-									vnode = patchVNode(execRenderObject(renderObject, fakeCtx), fakeCtx, renderCtx);
-								}
+								const renderObject = tplCache[nm] = tplCache[nm] || tpl.index && tpl.index();
+								vnode = patchVNode(execRenderObject(renderObject, fakeCtx), fakeCtx, renderCtx);
 							}
 
 							if (!vnode) {
