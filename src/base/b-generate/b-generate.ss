@@ -14,9 +14,11 @@
 	- block body
 		< template v-for = el in content
 			< component :is = el.component | :v-attrs = el.attrs
-				< template #@ = {slotContent}
-					< template v-if = Object.isArray(slotContent) || Object.isObject(slotContent)
-						< @b-generate :content = [].concat(slotContent)
+				- block slots
+					< template #@ = {slotContent}
+						- block defaultSlot
+							< template v-if = Object.isArray(slotContent) || Object.isObject(slotContent)
+								< @b-generate :content = [].concat(slotContent)
 
-					< template v-else
-						{{ slotContent }}
+							< template v-else
+								{{ slotContent }}
