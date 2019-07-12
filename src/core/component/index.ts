@@ -247,7 +247,7 @@ export function component(params?: ComponentParams): Function {
 							// tslint:disable-next-line:prefer-conditional-expression
 							if (opts && Object.isSimpleObject(opts)) {
 								attrOpts = opts.attrs = opts.attrs || {};
-								parseVAttrs(attrOpts, Boolean(component));
+								parseVAttrs(opts, Boolean(component));
 
 							} else {
 								attrOpts = {};

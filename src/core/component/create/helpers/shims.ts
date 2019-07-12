@@ -142,40 +142,40 @@ const
 export function parseVAttrs(data: VNodeData, isComponent?: boolean): void {
 	const
 		attrs = data.attrs = data.attrs || {},
-		attrsSpreadObj = attrs['v-attrs'];
+		attrsSpreadObj = attrs['v-attrs'],
+		slotsSpreadObj = attrs['v-slots'];
 
-	if (Object.isObject(attrsSpreadObj)) {
+	if (Object.isObject(slotsSpreadObj)) {
 		const
-			slots = attrsSpreadObj.slots,
 			slotOpts: Dictionary = data.scopedSlots || {};
 
-		if (Object.isObject(slots)) {
-			for (let keys = Object.keys(slots), i = 0; i < keys.length; i++) {
+		for (let keys = Object.keys(slotsSpreadObj), i = 0; i < keys.length; i++) {
+			const
+				key = keys[i];
+
+			let nm = `@${key}`;
+			nm = slotOpts[nm] ? nm : '@';
+
+			if (slotOpts[nm]) {
 				const
-					key = keys[i];
+					fn = slotOpts[nm];
 
-				let nm = `@${key}`;
-				nm = slotOpts[nm] ? nm : '@';
+				slotOpts[key] = (obj) => {
+					obj.slotContent = slotsSpreadObj[key];
+					return (<Function>fn)(obj);
+				};
 
-				if (slotOpts[nm]) {
-					const
-						fn = slotOpts[nm];
-
-					slotOpts[key] = (obj) => {
-						obj.slotContent = slots[key];
-						return (<Function>fn)(obj);
-					};
-
-					if (nm === '@') {
-						delete slotOpts[nm];
-					}
+				if (nm === '@') {
+					delete slotOpts[nm];
 				}
 			}
-
-			delete slotOpts['@'];
-			delete attrsSpreadObj.slots;
 		}
 
+		delete slotOpts['@'];
+		delete attrs['v-slots'];
+	}
+
+	if (Object.isObject(attrsSpreadObj)) {
 		const
 			eventOpts: Dictionary = data.on = data.on || {},
 			nativeEventOpts: Dictionary = data.nativeOn = data.nativeOn || {},
