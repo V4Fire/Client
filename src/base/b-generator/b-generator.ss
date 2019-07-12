@@ -13,7 +13,7 @@
 - template index() extends ['i-block'].index
 	- block body
 		< template v-for = el in content
-			< component :is = el.component | :v-attrs = el.attrs
+			< component :is = el.component | :v-attrs = el.attrs | :v-slots = el.slots
 				- block slots
 					< template #@ = {slotContent}
 						- block defaultSlot

@@ -10,12 +10,17 @@ import iBlock, { component, prop } from 'super/i-block/i-block';
 export * from 'super/i-block/i-block';
 
 export interface Attrs extends Dictionary {
-	slots: Dictionary<string | CanArray<Document>>;
+
+}
+
+export interface Slots extends Dictionary<string | CanArray<Document>> {
+
 }
 
 export interface Document {
 	component: string;
-	attrs: Attrs;
+	attrs?: Attrs;
+	slots?: Slots;
 }
 
 @component({flyweight: true, functional: true})
