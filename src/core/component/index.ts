@@ -65,8 +65,7 @@ export {
 
 export const
 	$$ = symbolGenerator(),
-	isSmartComponent = /-functional$/,
-	isSimpleComponent = /^[bpg]-[a-z]/;
+	isSmartComponent = /-functional$/;
 
 /**
  * Returns a component name
@@ -239,7 +238,7 @@ export function component(params?: ComponentParams): Function {
 
 							const
 								ctx = this || rootCtx,
-								component = isSimpleComponent.test(tag) && components.get(tag);
+								component = components.get(tag);
 
 							let
 								attrOpts;
