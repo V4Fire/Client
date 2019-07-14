@@ -15,8 +15,9 @@ import Async from 'core/async';
 export type StyleValue = string | number;
 export type StyleDictionary = Dictionary<StyleValue>;
 export type TransitionMode = 'sequence' | 'parallel';
+export type VisibilityMode = 'visible' | 'hidden';
 
-export const nonAnimatedProperties = {
+export const NON_ANIMATED_PROPERTIES = {
 	transition: true,
 	display: true,
 	pointerEvents: true
@@ -69,7 +70,7 @@ export interface TransitionCreateParams {
 
 export type TransitionDirection = 'forward' | 'revers';
 export type Target = HTMLElement | string;
-export type NonAnimatedProperties = typeof nonAnimatedProperties;
+export type NonAnimatedProperties = typeof NON_ANIMATED_PROPERTIES;
 
 /**
  * @see https://github.com/microsoft/TypeScript/issues/1863
@@ -222,18 +223,6 @@ export class Transition {
 	 * @param [delay] - delay before transition start in seconds
 	 */
 	run(el: Target, props: StyleDictionary, duration: number, delay?: number): Transition {
-		return this;
-	}
-
-	/**
-	 * Makes element visible
-	 */
-	visible(el: Target, props?: StyleDictionary): Transition {
-		props = {
-			...this.visibleProps,
-			...props
-		};
-
 		const
 			{async: $a} = this,
 			node = this.getNode(el);
@@ -242,13 +231,39 @@ export class Transition {
 			return this;
 		}
 
-		const resolver = (resolve, reject) => {
-			Object.assign(node.style, props);
+		const
+			nonAnimatedProperties = Object.select(props, NON_ANIMATED_PROPERTIES),
+			animatedProperties = Object.reject(props, NON_ANIMATED_PROPERTIES),
 
-			$a.requestAnimationFrame(() => {
+			uniqId = Math.random(),
+			keys = Object.keys(animatedProperties);
+
+		const resolver = (resolve) => {
+			let doneCounter = 0;
+			Object.assign(node.style, nonAnimatedProperties);
+
+			new Promise((res, rej) => {
+				$a.requestAnimationFrame(res, {group: TRANSITION_GROUP});
+
+			}).then(() => {
+				$a.on(node, 'transitionend', (e: TransitionEvent) => {
+					if (e.target !== node || !animatedProperties[e.propertyName]) {
+						return;
+					}
+
+					if (doneCounter++ === keys.length) {
+						$a.off({label: uniqId, group: TRANSITION_GROUP});
+						resolve();
+					}
+
+				}, {label: uniqId, group: TRANSITION_GROUP});
+
+			}).catch((err) => {
+				stderr(err);
 				resolve();
 
-			}, {group: TRANSITION_GROUP});
+			});
+
 		};
 
 		this.append({node, props}, resolver);
@@ -256,14 +271,33 @@ export class Transition {
 	}
 
 	/**
-	 * Makes element hidden
+	 * Makes an element visible
+	 *
+	 * @param el
+	 * @param [props]
+	 */
+	visible(el: Target, props?: StyleDictionary): Transition {
+		return this.toggleVisibility(el, 'visible', props);
+	}
+
+	/**
+	 * Makes an element hidden
+	 *
+	 * @param el
+	 * @param [props]
 	 */
 	hidden(el: Target, props?: StyleDictionary): Transition {
-		return this;
+		return this.toggleVisibility(el, 'hidden', props);
 	}
 
 	/**
 	 * Repeats transition specified times
+	 *
+	 * @param el
+	 * @param props
+	 * @param duration
+	 * @param [delay]
+	 * @param [repeat]
 	 */
 	repeat(el: Target, props: StyleDictionary, duration: number, delay?: number, repeat?: number): Transition {
 		return this;
@@ -284,6 +318,20 @@ export class Transition {
 	}
 
 	/**
+	 * Creates a sequence
+	 */
+	sequence(): void {
+		//...
+	}
+
+	/**
+	 * Creates a parallel
+	 */
+	parallel(): void {
+		//...
+	}
+
+	/**
 	 * @param resolve
 	 * @param reject
 	 */
@@ -297,6 +345,40 @@ export class Transition {
 		// Точно стоит
 
 		this.subscribers.push(resolve);
+		return this;
+	}
+
+	/**
+	 * Change elements visibility
+	 *
+	 * @param el
+	 * @param mode
+	 * @param [props]
+	 */
+	protected toggleVisibility(el: Target, mode: VisibilityMode, props?: StyleDictionary): Transition {
+		props = {
+			...(mode === 'visible' ? this.visibleProps : this.hiddenProps),
+			...props
+		};
+
+		const
+			{async: $a} = this,
+			node = this.getNode(el);
+
+		if (!node) {
+			return this;
+		}
+
+		const resolver = (resolve) => {
+			Object.assign(node.style, props);
+
+			$a.requestAnimationFrame(() => {
+				resolve();
+
+			}, {group: TRANSITION_GROUP});
+		};
+
+		this.append({node, props}, resolver);
 		return this;
 	}
 
@@ -363,9 +445,18 @@ export class Transition {
 
 	/**
 	 * Returns a DOM node by selector
+	 * @param node
 	 */
 	protected getNode(node: HTMLElement | string): CanUndef<HTMLElement> {
 		return node instanceof HTMLElement ? node : this.block.element(node);
+	}
+
+	/**
+	 * Generates a will-change and transform for element
+	 * @param [props]
+	 */
+	protected generateGPU(props?: StyleDictionary): StyleDictionary {
+		return {};
 	}
 
 	/**
@@ -463,9 +554,9 @@ export class TransitionController {
 
 	/**
 	 * Returns a transition
-	 * @param transition
+	 * @param label
 	 */
-	protected getTransition(label: Label): CanUndef<Transition> {
+	getTransition(label: Label): CanUndef<Transition> {
 		const
 			quota = this.store[label];
 
@@ -550,4 +641,26 @@ export default Controller;
  * 	.visible('root-wrapper')
  * 	.run()
  *
+ */
+
+/**
+ * @example
+ * timeline.parallel($$.label)
+ * 	.run('root-wrapper', {opacity: 1}, 800)
+ * 	.run('root-wrapper', {opacity: 1}, 400)
+ * 	.then((a) => {...})
+ *
+ * timeline.parallel($$.label)
+ * 	.run('root-wrapper1', {opacity: 1}, 800)
+ * 	.run('root-wrapper2', {opacity: 1}, 400)
+ * 	.run('root-wrapper2', {opacity: [1, 400]}, 900) // Если не в один чанк значит
+ * 	// будет значение установлено после выполнение первого чанка (то есть работать как sequence like)
+ * 	.sequence((a) => {
+ * 		return a.run('root-wrapper3', {height: '120px'}, 800)
+ * 			.run('root-wrapper3', {height: '100px', 400});
+ * 	})
+ * 	.run()
+ *
+ * timeline.sequence($$.label)
+ * 	.run('root-wrapper', {opacity:})
  */
