@@ -76,7 +76,8 @@ export default class Provide {
 			componentName = undefined;
 		}
 
-		return Block.prototype.getFullBlockName.call({name: componentName || this.componentName}, modName, modValue);
+		componentName = componentName || this.componentName;
+		return Block.prototype.getFullBlockName.call({name: componentName}, modName, modValue);
 	}
 
 	/**
@@ -100,9 +101,10 @@ export default class Provide {
 			modValue = modName;
 			modName = elName;
 			elName = componentName;
-			componentName = this.componentName;
+			componentName = '';
 		}
 
+		componentName = componentName || this.componentName;
 		return Block.prototype.getFullElName.call({name: componentName}, elName, modName, modValue);
 	}
 
@@ -167,8 +169,10 @@ export default class Provide {
 	classes(componentName: string | Classes, classes?: Classes): Readonly<Dictionary<string>> {
 		if (!Object.isString(componentName)) {
 			classes = componentName;
-			componentName = this.componentName;
+			componentName = '';
 		}
+
+		componentName = componentName || this.componentName;
 
 		const
 			key = JSON.stringify(classes),
@@ -234,6 +238,8 @@ export default class Provide {
 			componentName = <CanUndef<string>>componentName;
 		}
 
+		componentName = componentName || this.componentName;
+
 		const
 			key = JSON.stringify(mods) + componentName,
 			cache = classesCache.create('blocks', this.componentName);
@@ -280,7 +286,6 @@ export default class Provide {
 
 		if (arguments.length === 1) {
 			id = this.component.componentId;
-			componentName = this.componentName;
 			els = <Dictionary<ModsTable>>componentNameOrCtx;
 
 		} else {
@@ -292,6 +297,8 @@ export default class Provide {
 				componentName = (<iBlock>componentNameOrCtx).componentName;
 			}
 		}
+
+		componentName = componentName || this.componentName;
 
 		if (!els) {
 			return Object.freeze([]);
