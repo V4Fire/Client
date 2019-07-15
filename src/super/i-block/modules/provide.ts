@@ -58,12 +58,25 @@ export default class Provide {
 	/**
 	 * Returns a full name of the specified component block
 	 *
+	 * @param [modName]
+	 * @param [modValue]
+	 */
+	fullBlockName(modName?: string, modValue?: unknown): string;
+
+	/**
 	 * @param [componentName]
 	 * @param [modName]
 	 * @param [modValue]
 	 */
-	fullBlockName(componentName: string = this.componentName, modName?: string, modValue?: unknown): string {
-		return Block.prototype.getFullBlockName.call({name: componentName}, modName, modValue);
+	fullBlockName(componentName?: string, modName?: string, modValue?: unknown): string;
+	fullBlockName(componentName?: string, modName?: string | unknown, modValue?: unknown): string {
+		if (arguments.length === 2) {
+			modValue = modName;
+			modName = componentName;
+			componentName = undefined;
+		}
+
+		return Block.prototype.getFullBlockName.call({name: componentName || this.componentName}, modName, modValue);
 	}
 
 	/**
