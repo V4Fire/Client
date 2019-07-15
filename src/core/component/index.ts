@@ -120,7 +120,8 @@ export function component(params?: ComponentParams): Function {
 		const
 			name = params && params.name || getComponentName(target),
 			parent = Object.getPrototypeOf(target),
-			parentMeta = components.get(parent);
+			parentMeta = components.get(parent),
+			isAbstract = isAbstractComponent.test(name);
 
 		let p: ComponentParams = parentMeta ? {...params} : {
 			root: false,
@@ -131,7 +132,14 @@ export function component(params?: ComponentParams): Function {
 
 		initEvent.emit('bindConstructor', name);
 
-		const regComponent = () => {
+		if (!name || p.root || isAbstract) {
+			regComponent();
+
+		} else {
+			regCache[name] = regComponent;
+		}
+
+		function regComponent(): void {
 			const
 				mods = {};
 
@@ -241,30 +249,35 @@ export function component(params?: ComponentParams): Function {
 								'use strict';
 
 								const
-									ctx = this || rootCtx,
-									component = components.get(tag);
-
-								let
-									attrOpts;
-
-								// tslint:disable-next-line:prefer-conditional-expression
-								if (opts && Object.isSimpleObject(opts)) {
-									attrOpts = opts.attrs = opts.attrs || {};
-									parseVAttrs(opts, Boolean(component));
-
-								} else {
-									attrOpts = {};
-								}
+									ctx = this || rootCtx;
 
 								const
-									tagName = attrOpts['v4-composite'] || tag,
-									regComponent = regCache[tagName],
-									renderKey = attrOpts['render-key'] != null ?
-										`${tagName}:${attrOpts['global-name']}:${attrOpts['render-key']}` : '';
+									hasOpts = Object.isSimpleObject(opts),
+									attrOpts = <Dictionary>(hasOpts ? (<Dictionary>opts).attrs = (<Dictionary>opts).attrs || {} : {});
+
+								const
+									tagName = <string>(attrOpts['v4-composite'] || tag),
+									regComponent = regCache[tagName];
+
+								let
+									component;
 
 								if (regComponent) {
 									regComponent();
+									component = components.get(tag);
+									delete regCache[tagName];
+
+								} else {
+									component = components.get(tag);
 								}
+
+								// tslint:disable-next-line:prefer-conditional-expression
+								if (hasOpts) {
+									parseVAttrs(<Dictionary>opts, Boolean(component));
+								}
+
+								const renderKey =
+									attrOpts['render-key'] != null ? `${tagName}:${attrOpts['global-name']}:${attrOpts['render-key']}` : '';
 
 								let
 									vnode = ctx.renderTmp[renderKey],
@@ -566,9 +579,9 @@ export function component(params?: ComponentParams): Function {
 			}
 
 			components.set(name, meta);
-			initEvent.emit(name, {meta, parentMeta});
+			initEvent.emit(`constructor.${name}`, {meta, parentMeta});
 
-			if (isAbstractComponent.test(name)) {
+			if (isAbstract) {
 				getBaseComponent(target, meta);
 				return;
 			}
@@ -657,13 +670,6 @@ export function component(params?: ComponentParams): Function {
 					functional: true
 				})(target);
 			}
-		};
-
-		if (!name || p.root || isAbstractComponent.test(name)) {
-			regComponent();
-
-		} else {
-			regCache[name] = regComponent;
 		}
 	};
 }

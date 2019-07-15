@@ -27,7 +27,7 @@ export const
 			const
 				el = events[i];
 
-			if (el === 'constructor') {
+			if (el.split('.')[0] === 'constructor') {
 				initEventOnce(el, (obj) => {
 					listener(obj);
 
