@@ -123,14 +123,15 @@ export function component(params?: ComponentParams): Function {
 
 		const
 			parent = Object.getPrototypeOf(target),
-			parentParams = componentParams.get(parent);
+			parentParams = parent && componentParams.get(parent);
 
-		let p: ComponentParams = parentParams ? {root: parentParams.root, ...params} : {
+		let p: ComponentParams = parentParams ? {root: parentParams.root, ...params, name} : {
 			root: false,
 			tpl: true,
 			inheritAttrs: true,
 			functional: false,
-			...params
+			...params,
+			name
 		};
 
 		if (parentParams) {
@@ -171,9 +172,9 @@ export function component(params?: ComponentParams): Function {
 		}
 
 		function regComponent(): void {
-			if (parent) {
+			if (parentParams) {
 				const
-					parentName = getComponentName(parent),
+					parentName = <string>parentParams.name,
 					regComponent = regCache[parentName];
 
 				if (regComponent) {
