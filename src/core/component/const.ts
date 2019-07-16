@@ -8,13 +8,14 @@
 
 import { EventEmitter2 as EventEmitter, Listener } from 'eventemitter2';
 import { ComponentOptions, ComponentDriver } from 'core/component/engines';
-import { ComponentMeta } from 'core/component/interface';
+import { ComponentMeta, ComponentParams } from 'core/component/interface';
 
 export const
 	initEvent = new EventEmitter({maxListeners: 1e3, newListener: false}),
 	asyncLabel = Symbol('Component async label');
 
 export const
+	componentParams = new Map<Function | string, ComponentParams>(),
 	rootComponents = Object.createDict<Promise<ComponentOptions<ComponentDriver>>>(),
 	components = new Map<Function | string, ComponentMeta>();
 
@@ -25,19 +26,18 @@ export const
 
 		for (let i = 0; i < events.length; i++) {
 			const
-				el = events[i];
+				el = events[i],
+				chunks = el.split('.');
 
-			if (el.split('.')[0] === 'constructor') {
-				initEventOnce(el, (obj) => {
-					listener(obj);
+			if (chunks[0] === 'constructor') {
+				initEventOnce(el, listener);
 
-					const
-						func = obj.meta.params.functional;
+				const
+					p = componentParams.get(chunks[1]);
 
-					if (func && typeof func === 'object') {
-						initEventOnce(el, listener);
-					}
-				});
+				if (p && Object.isObject(p.functional)) {
+					initEventOnce(`${el}-functional`, listener);
+				}
 
 			} else {
 				initEventOnce(el, listener);

@@ -126,8 +126,8 @@ export function bindModTo<V = unknown, R = unknown, CTX extends ComponentInterfa
 	opts?: WatchOptions
 ): Function {
 	return (target, key) => {
-		initEvent.once('bindConstructor', (name) => {
-			initEvent.once(`constructor.${name}`, ({meta}) => {
+		initEvent.once('bindConstructor', (componentName) => {
+			initEvent.once(`constructor.${componentName}`, ({meta}) => {
 				meta.hooks.created.push({
 					fn(this: DecoratorCtx<CTX & iBlockDecorator>): void {
 						getComponentCtx(this).sync.mod(key, param, converter, opts);
@@ -154,8 +154,8 @@ export function mod<CTX extends ComponentInterface = ComponentInterface>(
 	method: EventType = 'on'
 ): Function {
 	return (target, key, descriptor) => {
-		initEvent.once('bindConstructor', (name) => {
-			initEvent.once(`constructor.${name}`, ({meta}) => {
+		initEvent.once('bindConstructor', (componentName) => {
+			initEvent.once(`constructor.${componentName}`, ({meta}) => {
 				meta.hooks.beforeCreate.push({
 					fn(this: DecoratorCtx<CTX & iBlockDecorator>): void {
 						const c = getComponentCtx(this);
@@ -181,8 +181,8 @@ export function removeMod<CTX extends ComponentInterface = ComponentInterface>(
 	method: EventType = 'on'
 ): Function {
 	return (target, key, descriptor) => {
-		initEvent.once('bindConstructor', (name) => {
-			initEvent.once(`constructor.${name}`, ({meta}) => {
+		initEvent.once('bindConstructor', (componentName) => {
+			initEvent.once(`constructor.${componentName}`, ({meta}) => {
 				meta.hooks.beforeCreate.push({
 					fn(this: DecoratorCtx<CTX & iBlockDecorator>): void {
 						const c = getComponentCtx(this);
@@ -210,8 +210,8 @@ export function elMod<CTX extends ComponentInterface = ComponentInterface>(
 	method: EventType = 'on'
 ): Function {
 	return (target, key, descriptor) => {
-		initEvent.once('bindConstructor', (name) => {
-			initEvent.once(`constructor.${name}`, ({meta}) => {
+		initEvent.once('bindConstructor', (componentName) => {
+			initEvent.once(`constructor.${componentName}`, ({meta}) => {
 				meta.hooks.beforeCreate.push({
 					fn(this: DecoratorCtx<CTX & iBlockDecorator>): void {
 						const c = getComponentCtx(this);
@@ -239,8 +239,8 @@ export function removeElMod<CTX extends ComponentInterface = ComponentInterface>
 	method: EventType = 'on'
 ): Function {
 	return (target, key, descriptor) => {
-		initEvent.once('bindConstructor', (name) => {
-			initEvent.once(`constructor.${name}`, ({meta}) => {
+		initEvent.once('bindConstructor', (componentName) => {
+			initEvent.once(`constructor.${componentName}`, ({meta}) => {
 				meta.hooks.beforeCreate.push({
 					fn(this: DecoratorCtx<CTX & iBlockDecorator>): void {
 						const c = getComponentCtx(this);

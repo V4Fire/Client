@@ -39,7 +39,7 @@ import {
 import { isAbstractComponent, getComponent, getBaseComponent } from 'core/component/create';
 import { createFakeCtx, execRenderObject, patchVNode } from 'core/component/create/functional';
 import { getComponentDataFromVnode, createCompositeElement } from 'core/component/create/composite';
-import { components, rootComponents, initEvent } from 'core/component/const';
+import { components, rootComponents, componentParams, initEvent } from 'core/component/const';
 
 export * from 'core/component/interface';
 export * from 'core/component/const';
@@ -119,16 +119,39 @@ export function component(params?: ComponentParams): Function {
 	return (target) => {
 		const
 			name = params && params.name || getComponentName(target),
-			parent = Object.getPrototypeOf(target),
-			parentMeta = components.get(parent),
 			isAbstract = isAbstractComponent.test(name);
 
-		let p: ComponentParams = parentMeta ? {...params} : {
+		const
+			parent = Object.getPrototypeOf(target),
+			parentParams = componentParams.get(parent);
+
+		let p: ComponentParams = parentParams ? {root: parentParams.root, ...params} : {
 			root: false,
 			tpl: true,
 			inheritAttrs: true,
+			functional: false,
 			...params
 		};
+
+		if (parentParams) {
+			let
+				functional;
+
+			// tslint:disable-next-line:prefer-conditional-expression
+			if (Object.isObject(p.functional) && Object.isObject(parentParams.functional)) {
+				functional = {...parentParams.functional, ...p.functional};
+
+			} else {
+				functional = p.functional !== undefined ? p.functional : parentParams.functional || false;
+			}
+
+			p.functional = functional;
+		}
+
+		if (!componentParams.has(target)) {
+			componentParams.set(target, p);
+			componentParams.set(name, p);
+		}
 
 		initEvent.emit('bindConstructor', name);
 
@@ -139,8 +162,28 @@ export function component(params?: ComponentParams): Function {
 			regCache[name] = regComponent;
 		}
 
+		if (Object.isObject(p.functional)) {
+			component({
+				...params,
+				name: `${name}-functional`,
+				functional: true
+			})(target);
+		}
+
 		function regComponent(): void {
+			if (parent) {
+				const
+					parentName = getComponentName(parent),
+					regComponent = regCache[parentName];
+
+				if (regComponent) {
+					regComponent();
+					delete regCache[parentName];
+				}
+			}
+
 			const
+				parentMeta = components.get(parent),
 				mods = {};
 
 			if (target.mods) {
@@ -287,8 +330,8 @@ export function component(params?: ComponentParams): Function {
 									needEl = true;
 
 									const
-										nm = component.componentName,
-										tpl = TPLS[nm];
+										{componentName} = component,
+										tpl = TPLS[componentName];
 
 									if (!tpl) {
 										return nativeCreate('span');
@@ -296,7 +339,7 @@ export function component(params?: ComponentParams): Function {
 
 									const
 										node = nativeCreate('span', {...opts, tag: undefined}, children),
-										data = getComponentDataFromVnode(nm, node);
+										data = getComponentDataFromVnode(component, node);
 
 									const renderCtx: RenderContext = {
 										parent: ctx,
@@ -324,17 +367,20 @@ export function component(params?: ComponentParams): Function {
 										<CreateElement>createElement,
 										renderCtx,
 
-										minimalCtxCache[nm] = minimalCtxCache[nm] || Object.assign(Object.create(minimalCtx), {
+										minimalCtxCache[componentName] = minimalCtxCache[componentName] || Object.assign(Object.create(minimalCtx), {
+											componentName,
 											meta: component,
 											instance: component.instance,
-											componentName: component.componentName,
 											$options: {}
 										}),
 
 										{initProps: true}
 									);
 
-									const renderObject = tplCache[nm] = tplCache[nm] || tpl.index && tpl.index();
+									const renderObject = tplCache[componentName] =
+										tplCache[componentName] ||
+										tpl.index && tpl.index();
+
 									vnode = patchVNode(execRenderObject(renderObject, fakeCtx), fakeCtx, renderCtx);
 								}
 
@@ -661,14 +707,6 @@ export function component(params?: ComponentParams): Function {
 				if (Object.isPromise(c)) {
 					c.catch(stderr);
 				}
-			}
-
-			if (!Object.isBoolean(p.functional)) {
-				component({
-					...params,
-					name: `${name}-functional`,
-					functional: true
-				})(target);
 			}
 		}
 	};

@@ -124,21 +124,6 @@ export default function inheritMeta(
 		inject = p.inject || params.inject;
 	}
 
-	/////////////////////////
-	// Functional inheritance
-	/////////////////////////
-
-	let
-		functional;
-
-	// tslint:disable-next-line:prefer-conditional-expression
-	if (Object.isObject(p.functional) && Object.isObject(params.functional)) {
-		functional = {...params.functional, ...p.functional};
-
-	} else {
-		functional = p.functional !== undefined ? p.functional : params.functional || false;
-	}
-
 	///////////////////////////////////
 	// Component parameters inheritance
 	///////////////////////////////////
@@ -148,7 +133,6 @@ export default function inheritMeta(
 		...p,
 		name: p.name,
 		model: (p.model || params.model) && {...params.model, ...p.model},
-		functional,
 		provide,
 		inject
 	};

@@ -172,8 +172,8 @@ export function paramsFactory<T = unknown>(
 	transformer?: (params: any, cluster: string) => Dictionary<any>
 ): (params?: T) => Function {
 	return (params: Dictionary<any> = {}) => (target, key, desc) => {
-		initEvent.once('bindConstructor', (name) => {
-			initEvent.once(`constructor.${name}`, reg);
+		initEvent.once('bindConstructor', (componentName) => {
+			initEvent.once(`constructor.${componentName}`, reg);
 		});
 
 		function reg({meta}: {meta: ComponentMeta}): void {
