@@ -281,6 +281,15 @@ export function parseVAttrs(data: VNodeData, isComponent?: boolean): void {
 
 				directiveOpts.push(<any>dir);
 
+			} else if (key === 'staticClass') {
+				data.staticClass = (<string[]>[]).concat(data.staticClass || [], <string>val).join(' ');
+
+			} else if (key === 'class') {
+				data.class = (<unknown[]>[]).concat(data.class || [], val);
+
+			} else if (key === 'style') {
+				data.style = (<unknown[]>[]).concat(data.style || [], val);
+
 			} else if (!attrs[key]) {
 				attrs[key] = val;
 			}

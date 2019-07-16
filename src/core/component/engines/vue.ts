@@ -101,10 +101,6 @@ export function patchVNode(vnode: VNode, ctx: ComponentInterface, renderCtx: Ren
 			vData.class = [].concat(vData.class, data.class);
 		}
 
-		if (data.class) {
-			vData.class = [].concat(vData.class, data.class);
-		}
-
 		if (data.style) {
 			vData.style = (<unknown[]>[]).concat(vData.style || [], data.style);
 		}

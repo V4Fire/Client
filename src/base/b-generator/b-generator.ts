@@ -17,8 +17,8 @@ export interface Slots extends Dictionary<string | CanArray<Document>> {
 
 }
 
-export interface Document {
-	component: string;
+export interface Document extends Dictionary {
+	component?: string;
 	attrs?: Attrs;
 	slots?: Slots;
 }

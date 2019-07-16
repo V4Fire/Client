@@ -12,13 +12,15 @@
 
 - template index() extends ['i-block'].index
 	- block body
-		< template v-for = el in content
-			< component :is = el.component | :v-attrs = el.attrs | :v-slots = el.slots
-				- block slots
-					< template #@ = {slotContent}
-						- block defaultSlot
-							< template v-if = Object.isArray(slotContent) || Object.isObject(slotContent)
-								< @b-generator :content = [].concat(slotContent)
+		+= self.slot()
+			< template v-for = el in content
+				< template v-if = el.component
+					< component :is = el.component | :v-attrs = el.attrs | :v-slots = el.slots
+						- block slots
+							< template #@ = {slotContent}
+								- block defaultSlot
+									< template v-if = Object.isArray(slotContent) || Object.isObject(slotContent)
+										< @b-generator :content = [].concat(slotContent)
 
-							< template v-else
-								{{ slotContent }}
+									< template v-else
+										{{ slotContent }}

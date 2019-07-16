@@ -58,11 +58,25 @@ export default class Provide {
 	/**
 	 * Returns a full name of the specified component block
 	 *
+	 * @param [modName]
+	 * @param [modValue]
+	 */
+	fullBlockName(modName?: string, modValue?: unknown): string;
+
+	/**
 	 * @param [componentName]
 	 * @param [modName]
 	 * @param [modValue]
 	 */
-	fullBlockName(componentName: string = this.componentName, modName?: string, modValue?: unknown): string {
+	fullBlockName(componentName?: string, modName?: string, modValue?: unknown): string;
+	fullBlockName(componentName?: string, modName?: string | unknown, modValue?: unknown): string {
+		if (arguments.length === 2) {
+			modValue = modName;
+			modName = componentName;
+			componentName = undefined;
+		}
+
+		componentName = componentName || this.componentName;
 		return Block.prototype.getFullBlockName.call({name: componentName}, modName, modValue);
 	}
 
@@ -87,9 +101,10 @@ export default class Provide {
 			modValue = modName;
 			modName = elName;
 			elName = componentName;
-			componentName = this.componentName;
+			componentName = '';
 		}
 
+		componentName = componentName || this.componentName;
 		return Block.prototype.getFullElName.call({name: componentName}, elName, modName, modValue);
 	}
 
@@ -154,8 +169,10 @@ export default class Provide {
 	classes(componentName: string | Classes, classes?: Classes): Readonly<Dictionary<string>> {
 		if (!Object.isString(componentName)) {
 			classes = componentName;
-			componentName = this.componentName;
+			componentName = '';
 		}
+
+		componentName = componentName || this.componentName;
 
 		const
 			key = JSON.stringify(classes),
@@ -221,6 +238,8 @@ export default class Provide {
 			componentName = <CanUndef<string>>componentName;
 		}
 
+		componentName = componentName || this.componentName;
+
 		const
 			key = JSON.stringify(mods) + componentName,
 			cache = classesCache.create('blocks', this.componentName);
@@ -267,7 +286,6 @@ export default class Provide {
 
 		if (arguments.length === 1) {
 			id = this.component.componentId;
-			componentName = this.componentName;
 			els = <Dictionary<ModsTable>>componentNameOrCtx;
 
 		} else {
@@ -279,6 +297,8 @@ export default class Provide {
 				componentName = (<iBlock>componentNameOrCtx).componentName;
 			}
 		}
+
+		componentName = componentName || this.componentName;
 
 		if (!els) {
 			return Object.freeze([]);
