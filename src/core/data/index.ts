@@ -662,7 +662,7 @@ export default class Provider {
 
 		const
 			url = this.url(),
-			eventName = this.name() || 'upd',
+			eventName = this.name() || 'del',
 			method = this.method() || this.delMethod;
 
 		return this.updateRequest(url, eventName, this.request(url, this.resolver, this.mergeToOpts('del', {
