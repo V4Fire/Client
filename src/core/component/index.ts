@@ -76,7 +76,7 @@ export function getComponentName(constr: Function): string {
 }
 
 const
-	regCache = Object.createDict<Function>(),
+	regCache = Object.createDict<Function[]>(),
 	minimalCtxCache = Object.createDict(),
 	tplCache = Object.createDict();
 
@@ -160,7 +160,8 @@ export function component(params?: ComponentParams): Function {
 			regComponent();
 
 		} else {
-			regCache[name] = regComponent;
+			const a = regCache[name] = regCache[name] || [];
+			a.push(regComponent);
 		}
 
 		if (Object.isObject(p.functional)) {
@@ -172,14 +173,38 @@ export function component(params?: ComponentParams): Function {
 		}
 
 		function regComponent(): void {
-			if (parentParams) {
-				const
-					parentName = <string>parentParams.name,
-					regComponent = regCache[parentName];
+			const
+				componentName = name.replace(isSmartComponent, '');
 
-				if (regComponent) {
-					regComponent();
-					delete regCache[parentName];
+			// Initialize parent component if needed
+
+			let
+				parentName = parentParams && parentParams.name;
+
+			if (parentName && regCache[parentName]) {
+				let
+					parentComponent = parent;
+
+				while (parentName === componentName) {
+					parentComponent = Object.getPrototypeOf(parentComponent);
+
+					if (parentComponent) {
+						const p = componentParams.get(parentComponent);
+						parentName = p && p.name;
+					}
+				}
+
+				if (parentName) {
+					const
+						regParentComponent = regCache[parentName];
+
+					if (regParentComponent) {
+						for (let i = 0; i < regParentComponent.length; i++) {
+							regParentComponent[i]();
+						}
+
+						delete regCache[parentName];
+					}
 				}
 			}
 
@@ -231,7 +256,7 @@ export function component(params?: ComponentParams): Function {
 
 			const meta: ComponentMeta = {
 				name,
-				componentName: name.replace(isSmartComponent, ''),
+				componentName,
 
 				parentMeta,
 				constructor: target,
@@ -307,9 +332,12 @@ export function component(params?: ComponentParams): Function {
 									component;
 
 								if (regComponent) {
-									regComponent();
-									component = components.get(tag);
+									for (let i = 0; i < regComponent.length; i++) {
+										regComponent[i]();
+									}
+
 									delete regCache[tagName];
+									component = components.get(tag);
 
 								} else {
 									component = components.get(tag);
