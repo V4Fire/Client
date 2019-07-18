@@ -12,8 +12,12 @@ import Block from 'super/i-block/modules/block';
 import symbolGenerator from 'core/symbol';
 import Async from 'core/async';
 
-export type StyleValue = string | number;
+export type StyleValuePrimitive = string | number;
+export type StyleValueAsFn = (...args: any[]) => StyleValuePrimitive;
+export type StyleValuesAsPromise = Promise<StyleValuePrimitive>;
+export type StyleValue = StyleValuePrimitive | StyleValueAsFn | StyleValuesAsPromise;
 export type StyleDictionary = Dictionary<StyleValue>;
+
 export type TransitionMode = 'sequence' | 'parallel';
 export type VisibilityMode = 'visible' | 'hidden';
 
@@ -24,16 +28,20 @@ export const NON_ANIMATED_PROPERTIES = {
 };
 
 export const
-	$$ = symbolGenerator();
-
-export const
+	$$ = symbolGenerator(),
 	CONTROLLER_GROUP = '[[TRANSITION_CONTROLLER]]',
 	TRANSITION_GROUP = '[[TRANSITION]]';
+
+let DUMMY: HTMLElement;
 
 export enum TRANSITION_STATES {
 	initial = 0,
 	run = 1,
 	end = 2
+}
+
+export interface GPUParams {
+	overrideTransform?: boolean;
 }
 
 export interface TransitionCtx {
@@ -46,6 +54,7 @@ export interface TransitionInfo {
 	state: TRANSITION_STATES;
 	props: StyleDictionary;
 	node: HTMLElement;
+	initialProps: Dictionary;
 	duration?: number;
 	delay?: number;
 	promise?: Promise<unknown>;
@@ -90,6 +99,18 @@ export interface AbstractTransitionController {
 }
 
 export class Transition {
+
+	/**
+	 * Returns a dummy HTMLElement
+	 */
+	static get dummy(): HTMLElement {
+		if (!DUMMY) {
+			DUMMY = document.createElement('div');
+		}
+
+		return DUMMY;
+	}
+
 	/**
 	 * Transition label
 	 */
@@ -246,6 +267,7 @@ export class Transition {
 				$a.requestAnimationFrame(res, {group: TRANSITION_GROUP});
 
 			}).then(() => {
+				// Сравнить значения с текущими значениями элемента через dummy
 				$a.on(node, 'transitionend', (e: TransitionEvent) => {
 					if (e.target !== node || !animatedProperties[e.propertyName]) {
 						return;
@@ -426,15 +448,16 @@ export class Transition {
 	 * Appends transition into stack
 	 * @param info
 	 */
-	protected append(info: TransitionParams, executor: (resolve: Function, reject: Function) => unknown): TransitionInfo {
+	protected append(info: TransitionParams, resolver: (resolve: Function, reject: Function) => unknown): TransitionInfo {
 		if (!this.stack.length) {
 			this.state = TRANSITION_STATES.run;
 		}
 
-		const transition = {
+		const transition: TransitionInfo = {
 			...info,
+			resolver,
 			state: TRANSITION_STATES.initial,
-			resolver: executor
+			initialProps: Object.select(info.node.style, info.props)
 		};
 
 		this.stack.push(transition);
@@ -452,10 +475,12 @@ export class Transition {
 	}
 
 	/**
-	 * Generates a will-change and transform for element
-	 * @param [props]
+	 * Generates a will-change and transform properties
+	 *
+	 * @param props
+	 * @param [params]
 	 */
-	protected generateGPU(props?: StyleDictionary): StyleDictionary {
+	protected generateGPU(props: StyleDictionary, params?: GPUParams): StyleDictionary {
 		return {};
 	}
 
@@ -512,7 +537,7 @@ export class TransitionController {
 			transition = this.getTransition(label);
 
 		if (transition) {
-			return transition;
+			return transition.reverse();
 		}
 	}
 
@@ -661,6 +686,35 @@ export default Controller;
  * 	})
  * 	.run()
  *
- * timeline.sequence($$.label)
- * 	.run('root-wrapper', {opacity:})
+ * timeline.parallel($$.label)
+ * 	.run('root-wrapper1', {opacity: 1}, 800)
+ * 	.run('root-wrapper2', {opacity: 1}, 400)
+ * 	.run('root-wrapper2', {opacity: [1, 400]}, 900) // Если не в один чанк значит
+ * 	// будет значение установлено после выполнение первого чанка (то есть работать как sequence like)
+ * 	.sequence((a) => {
+ * 		return a.run('root-wrapper3', {height: '120px'}, 800)
+ * 			.run('root-wrapper3', {height: '100px', 400});
+ * 	})
+ * 	.then((a) => {
+ * 		console.log('sequence is done')
+ * 		return a;
+ * 	})
+ * 	.run()
+ *
+ *  timeline.sequence($$.label)
+ * 	.run('root-wrapper1', {opacity: () => 1}, 800)
+ * 	.run('root-wrapper2', {opacity: 1}, 400)
+ * 	.run('root-wrapper2', {opacity: [() => 0, 400]}, 900)
+ * 	.run('root-wrapper2', {opacity: [() => 1, () => 200, 400]}, 900)
+ * 	.run('root-wrapper2', {opacity: [() => 1, () => new Promise((res) => {setTimeout(() => res(200), 200)})]}, 900)
+ * 	.sequence((a) => {
+ * 		return a.run('root-wrapper3', {height: '120px'}, 800)
+ * 			.run('root-wrapper3', {height: '100px', 400});
+ * 	})
+ * 	.then((a) => {
+ * 		console.log('sequence is done')
+ * 		return a;
+ * 	})
+ * 	.run()
+ *
  */
