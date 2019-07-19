@@ -20,8 +20,8 @@ export type BasePageMeta<M extends object = Dictionary> = M & {
 	paramsFromQuery?: boolean;
 	autoScroll?: boolean;
 	scroll?: {
-		x: number;
-		y: number;
+		x?: number;
+		y?: number;
 	};
 };
 
