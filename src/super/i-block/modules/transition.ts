@@ -20,6 +20,7 @@ export type StyleDictionary = Dictionary<StyleValue>;
 
 export type TransitionMode = 'sequence' | 'parallel';
 export type VisibilityMode = 'visible' | 'hidden';
+export type TransitionMethod = 'run' | 'visible' | 'hidden';
 
 export const NON_ANIMATED_PROPERTIES = {
 	transition: true,
@@ -55,6 +56,9 @@ export interface TransitionInfo {
 	props: StyleDictionary;
 	node: HTMLElement;
 	initialProps: Dictionary;
+	// mode: TransitionMode;
+	// parent: Transition;
+	// method: TransitionMethod;
 	duration?: number;
 	delay?: number;
 	promise?: Promise<unknown>;
@@ -77,6 +81,7 @@ export interface TransitionCreateParams {
 	useGPU?: boolean;
 }
 
+export type TransitionStack = Array<TransitionInfo | Transition>;
 export type TransitionDirection = 'forward' | 'revers';
 export type Target = HTMLElement | string;
 export type NonAnimatedProperties = typeof NON_ANIMATED_PROPERTIES;
@@ -112,6 +117,47 @@ export class Transition {
 	}
 
 	/**
+	 * True, if transitions finished
+	 */
+	get isFulfilled(): boolean {
+		return this.stack.every((info: Transition | TransitionInfo) => {
+			if (info instanceof Transition) {
+				return info.isFulfilled;
+			}
+
+			return info.state === TRANSITION_STATES.end;
+		});
+	}
+
+	/**
+	 * Next transition
+	 */
+	get next(): CanUndef<TransitionInfo> {
+		//..
+		return;
+	}
+
+	/**
+	 * Property for visible elements
+	 */
+	get visibleProps(): StyleDictionary {
+		return {
+			visibility: 'visible',
+			pointerEvents: 'auto'
+		};
+	}
+
+	/**
+	 * Property for hidden elements
+	 */
+	get hiddenProps(): StyleDictionary {
+		return {
+			visibility: 'hidden',
+			pointerEvents: 'none'
+		};
+	}
+
+	/**
 	 * Transition label
 	 */
 	protected label: Label;
@@ -139,7 +185,7 @@ export class Transition {
 	/**
 	 * Stack of transitions
 	 */
-	protected stack: TransitionInfo[] = [];
+	protected stack: TransitionStack = [];
 
 	/**
 	 * List of subscribers
@@ -178,53 +224,17 @@ export class Transition {
 	}
 
 	/**
-	 * True, if transitions finished
+	 * Last transition from stack
 	 */
-	get isFulfilled(): boolean {
-		return this.stack.every((info) => info.state === TRANSITION_STATES.end);
+	protected get last(): Transition | TransitionInfo {
+		return this.stack[this.stack.length - 1];
 	}
 
 	/**
-	 * Next transition
-	 */
-	get next(): CanUndef<TransitionInfo> {
-		const
-			{stack} = this;
-
-		for (let i = 0; i < stack.length; i++) {
-			const
-				transition = stack[i];
-
-			if (transition.state === TRANSITION_STATES.initial) {
-				return transition;
-			}
-		}
-	}
-
-	/**
-	 * Property for visible elements
-	 */
-	get visibleProps(): StyleDictionary {
-		return {
-			visibility: 'visible',
-			pointerEvents: 'auto'
-		};
-	}
-
-	/**
-	 * Property for hidden elements
-	 */
-	get hiddenProps(): StyleDictionary {
-		return {
-			visibility: 'hidden',
-			pointerEvents: 'none'
-		};
-	}
-
-	/**
-	 * @param ctx
+	 * @param component
 	 * @param label
 	 * @param mode
+	 * @param params
 	 */
 	constructor(component: iBlock, label: Label, mode: TransitionMode, params: TransitionCreateParams = {}) {
 		this.state = TRANSITION_STATES.initial;
@@ -264,10 +274,12 @@ export class Transition {
 			Object.assign(node.style, nonAnimatedProperties);
 
 			new Promise((res, rej) => {
-				$a.requestAnimationFrame(res, {group: TRANSITION_GROUP});
+				$a.requestAnimationFrame(() => {
+					// Сравнить значения с текущими значениями элемента через dummy
+					res();
+				}, {group: TRANSITION_GROUP});
 
 			}).then(() => {
-				// Сравнить значения с текущими значениями элемента через dummy
 				$a.on(node, 'transitionend', (e: TransitionEvent) => {
 					if (e.target !== node || !animatedProperties[e.propertyName]) {
 						return;
@@ -340,17 +352,25 @@ export class Transition {
 	}
 
 	/**
-	 * Creates a sequence
+	 * Creates a new sequence timeline
+	 *
+	 * @param createFn
+	 * @returns Transition – current transition timeline
 	 */
-	sequence(): void {
-		//...
+	sequence(createFn: (ctx: Transition) => Transition): Transition {
+		this.create(createFn, 'sequence');
+		return this;
 	}
 
 	/**
 	 * Creates a parallel
+	 *
+	 * @param createFn
+	 * @returns Transition – current transition timeline
 	 */
-	parallel(): void {
-		//...
+	parallel(createFn: (ctx: Transition) => Transition): Transition {
+		this.create(createFn, 'parallel');
+		return this;
 	}
 
 	/**
@@ -363,11 +383,29 @@ export class Transition {
 			return this;
 		}
 
+		const
+			transition = this.last;
+
 		// Возможно стоит биндить каждый then к определенной transition
 		// Точно стоит
 
 		this.subscribers.push(resolve);
 		return this;
+	}
+
+	/**
+	 * Creates a new transition timeline in current timeline
+	 *
+	 * @param createFn
+	 * @param mode
+	 */
+	protected create(createFn: (ctx: Transition) => unknown, mode: TransitionMode): Transition {
+		const
+			transition = new Transition(this.component, this.label, mode);
+
+		this.stack.push(transition);
+		createFn(transition);
+		return transition;
 	}
 
 	/**
@@ -417,30 +455,30 @@ export class Transition {
 			{async: $a, mode} = this;
 
 		if (mode === 'sequence') {
-			const
-				{next} = this;
+			// const
+			// 	{next} = this;
 
-			if (!next) {
-				return;
-			}
+			// if (!next) {
+			// 	return;
+			// }
 
-			next.promise = $a.promise(new Promise(next.resolver)).catch(stderr);
-			next.promise.then(this.play);
+			// next.promise = $a.promise(new Promise(next.resolver)).catch(stderr);
+			// next.promise.then(this.play);
 
 		} else {
-			const
-				{stack} = this;
+			// const
+			// 	{stack} = this;
 
-			for (let i = 0; i < stack.length; i++) {
-				const
-					transition = stack[i];
+			// for (let i = 0; i < stack.length; i++) {
+			// 	const
+			// 		transition = stack[i];
 
-				if (transition.promise) {
-					continue;
-				}
+			// 	if (transition.promise) {
+			// 		continue;
+			// 	}
 
-				transition.promise = $a.promise(new Promise(transition.resolver)).catch(stderr);
-			}
+			// 	transition.promise = $a.promise(new Promise(transition.resolver)).catch(stderr);
+			// }
 		}
 	}
 
@@ -480,8 +518,18 @@ export class Transition {
 	 * @param props
 	 * @param [params]
 	 */
-	protected generateGPU(props: StyleDictionary, params?: GPUParams): StyleDictionary {
-		return {};
+	protected generateGPU(props: StyleDictionary, params: GPUParams = {}): StyleDictionary {
+		const
+			animateProps = Object.reject(props, NON_ANIMATED_PROPERTIES),
+			keys = Object.keys(animateProps),
+			styles: StyleDictionary = {};
+
+		if (params.overrideTransform) {
+			styles.transform = 'transform3d(0, 0, 0)';
+		}
+
+		styles.willChange = keys.reduce((acc, prop) => `${acc}${acc === '' ? '' : ','}${prop}`, '');
+		return styles;
 	}
 
 	/**
@@ -640,81 +688,41 @@ const Controller = new TransitionController();
 export default Controller;
 
 /**
- * Proposal:
- *
+ * PROPOSAL V2
  * @example
- * const
- * 	timeline = this.transition.sequence($$.label);
+ * this.transition($$.label, {reusable: true, inherit: true})
+ * 	.step(this.$el, {setVisible: true})
+ * 	.step('overlay', {opacity: 1}, {duration: 600})
+ * 	.step(['content-wrapper', 'buttons'], {transform}, {mode: 'parallel'});
  *
- * timeline
- * 	.run('root-wrapper', {opacity: 1}, 800)
- * 	.then((a) => new Promise((res, rej) => {
- * 		return fetch(url).then((r) => r.json());
- * 	}))
- * 	.then((a, res) => {
- * 		// a - instanceof transition
- * 		// res - response from server
+ *
+ *
+ * // Сложный чейнинг (последовательно + параллельно)
+ * this.transition($$.label, {inherit: true})
+ * 	.step('overlay', {opacity: 1, setVisible: true}, {duration: 600})
+ * 	.step(['content-wrapper', 'buttons'], [{
+ * 		transform: 0,
+ * 	}, {
+ * 		transform: ['30px', 0, 0],
+ * 		duration: 200
+ * 	}], {
+ * 		mode: 'parallel'
  * 	})
- * 	.run('root-wrapper', {opacity: 0}, 800)
- * 	.done(() => alert('done'));
  *
- *
- * await timeline;
- *
- * @example
- * this.transition.sequence($$.label)
- * 	.visible('root-wrapper')
- * 	.run()
- *
- */
-
-/**
- * @example
- * timeline.parallel($$.label)
- * 	.run('root-wrapper', {opacity: 1}, 800)
- * 	.run('root-wrapper', {opacity: 1}, 400)
- * 	.then((a) => {...})
- *
- * timeline.parallel($$.label)
- * 	.run('root-wrapper1', {opacity: 1}, 800)
- * 	.run('root-wrapper2', {opacity: 1}, 400)
- * 	.run('root-wrapper2', {opacity: [1, 400]}, 900) // Если не в один чанк значит
- * 	// будет значение установлено после выполнение первого чанка (то есть работать как sequence like)
- * 	.sequence((a) => {
- * 		return a.run('root-wrapper3', {height: '120px'}, 800)
- * 			.run('root-wrapper3', {height: '100px', 400});
+ * this.transition($$.label)
+ * 	.step('el', {
+ * 		translate: [270, 0, 0]
+ * 	}, {
+ * 		duration: 200,
+ * 		each: true,
+ * 		delay: (i) => ({self: (i + 1) * 100, start: 500})
  * 	})
- * 	.run()
- *
- * timeline.parallel($$.label)
- * 	.run('root-wrapper1', {opacity: 1}, 800)
- * 	.run('root-wrapper2', {opacity: 1}, 400)
- * 	.run('root-wrapper2', {opacity: [1, 400]}, 900) // Если не в один чанк значит
- * 	// будет значение установлено после выполнение первого чанка (то есть работать как sequence like)
- * 	.sequence((a) => {
- * 		return a.run('root-wrapper3', {height: '120px'}, 800)
- * 			.run('root-wrapper3', {height: '100px', 400});
+ * 	.step('test', {
+ * 		translate: [300, 0, 0],
+ * 		duration: 200,
+ * 		offset: -600
+ * 	}, {
+ * 		duration: 500,
+ * 		offset: -200
  * 	})
- * 	.then((a) => {
- * 		console.log('sequence is done')
- * 		return a;
- * 	})
- * 	.run()
- *
- *  timeline.sequence($$.label)
- * 	.run('root-wrapper1', {opacity: () => 1}, 800)
- * 	.run('root-wrapper2', {opacity: 1}, 400)
- * 	.run('root-wrapper2', {opacity: [() => 0, 400]}, 900)
- * 	.run('root-wrapper2', {opacity: [() => 1, () => 200, 400]}, 900)
- * 	.run('root-wrapper2', {opacity: [() => 1, () => new Promise((res) => {setTimeout(() => res(200), 200)})]}, 900)
- * 	.sequence((a) => {
- * 		return a.run('root-wrapper3', {height: '120px'}, 800)
- * 			.run('root-wrapper3', {height: '100px', 400});
- * 	})
- * 	.then((a) => {
- * 		console.log('sequence is done')
- * 		return a;
- * 	})
- * 	.run()
- *
  */
