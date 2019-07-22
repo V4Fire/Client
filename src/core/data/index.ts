@@ -8,6 +8,7 @@
 
 import { EventEmitter2 as EventEmitter } from 'eventemitter2';
 
+import Then from 'core/then';
 import symbolGenerator from 'core/symbol';
 import Async, { AsyncCbOpts } from 'core/async';
 import IO, { Socket } from 'core/socket';
@@ -211,11 +212,6 @@ export default class Provider {
 	tmpMethod: CanUndef<RequestMethods>;
 
 	/**
-	 * List of additional data providers for the get request
-	 */
-	extraProviders?: ExtraProviders;
-
-	/**
 	 * Cache id
 	 */
 	readonly cacheId: string;
@@ -224,6 +220,11 @@ export default class Provider {
 	 * External request mode
 	 */
 	readonly externalRequest: boolean = false;
+
+	/**
+	 * List of additional data providers for the get request
+	 */
+	readonly extraProviders?: ExtraProviders;
 
 	/**
 	 * List of socket events
@@ -298,6 +299,10 @@ export default class Provider {
 
 		if (Object.isBoolean(params.externalRequest)) {
 			this.setReadonlyParam('externalRequest', params.externalRequest);
+		}
+
+		if (Object.isBoolean(params.extraProviders)) {
+			this.setReadonlyParam('extraProviders', params.extraProviders);
 		}
 
 		if (params.socket || this.socketURL) {
@@ -536,6 +541,7 @@ export default class Provider {
 		}
 
 		const
+			nm = this.constructor[$$.namespace],
 			url = this.url(),
 			eventName = this.name(),
 			method = this.method() || this.getMethod;
@@ -547,11 +553,65 @@ export default class Provider {
 			method
 		}));
 
-		if (eventName) {
-			return this.updateRequest(url, eventName, req);
+		const
+			res = eventName ? this.updateRequest(url, eventName, req) : this.updateRequest(url, req),
+			extraProviders = Object.isFunction(this.extraProviders) ? this.extraProviders() : this.extraProviders;
+
+		if (extraProviders) {
+			const
+				composition = {},
+				tasks = <Then[]>[];
+
+			for (let i = 0; i < extraProviders.length; i++) {
+				const
+					name = extraProviders[i],
+					ProviderConstructor = <typeof Provider>providers[name];
+
+				if (!ProviderConstructor) {
+					throw new Error(`Provider "${name}" is not defined`);
+				}
+
+				const
+					dp = new ProviderConstructor();
+
+				tasks.push(
+					dp.get(query, opts).then(({data}) => Object.set(composition, name, data))
+				);
+			}
+
+			res.then(
+				(res) => Promise.all(tasks).then(() => {
+					Object.set(composition, nm, res.data);
+
+					composition.valueOf = () => {
+						const
+							clone = {};
+
+						for (let keys = Object.keys(composition), i = 0; i < keys.length; i++) {
+							const
+								key = keys[i],
+								data = composition[key];
+
+							clone[key] = data && data.valueOf();
+						}
+
+						return clone;
+					};
+
+					res.data = Object.freeze(composition);
+				}),
+
+				null,
+
+				() => {
+					for (let i = 0; i < tasks.length; i++) {
+						tasks[i].abort();
+					}
+				}
+			);
 		}
 
-		return this.updateRequest(url, req);
+		return res;
 	}
 
 	/**
