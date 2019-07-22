@@ -69,7 +69,7 @@ export default class Sync {
 	/**
 	 * Link to the component $activeField
 	 */
-	protected get activeField(): string {
+	protected get activeField(): CanUndef<string> {
 		// @ts-ignore
 		return this.component.$activeField;
 	}
@@ -146,7 +146,13 @@ export default class Sync {
 		wrapper?: LinkWrapper<D>
 	): CanUndef<R> {
 		const
-			path = this.activeField,
+			path = this.activeField;
+
+		if (path === undefined) {
+			throw new Error('Method "sync.link" can\'t be used outside from a property decorator');
+		}
+
+		const
 			cache = this.syncLinkCache;
 
 		if (!field || !Object.isString(field)) {
@@ -161,10 +167,10 @@ export default class Sync {
 		}
 
 		const
-			{meta, component} = this;
+			{meta, component, linksCache} = this;
 
-		if (!(path in this.linksCache)) {
-			this.linksCache[path] = {};
+		if (!linksCache[path]) {
+			linksCache[path] = {};
 
 			const sync = (val?, oldVal?) => {
 				val = val !== undefined ? val : this.field.get(<string>field);
@@ -261,6 +267,13 @@ export default class Sync {
 		params: AsyncWatchOpts | SyncObjectFields<T>,
 		fields?: SyncObjectFields<T>
 	): Dictionary {
+		const
+			head = this.activeField;
+
+		if (head === undefined) {
+			throw new Error('Method "sync.object" can\'t be used outside from a property decorator');
+		}
+
 		if (Object.isArray(params)) {
 			fields = <SyncObjectFields<T>>params;
 			params = {};
@@ -270,8 +283,7 @@ export default class Sync {
 			{meta, component, syncLinkCache, linksCache} = this;
 
 		const
-			hooks = meta.hooks.beforeDataCreate,
-			head = this.activeField;
+			hooks = meta.hooks.beforeDataCreate;
 
 		// tslint:disable-next-line:prefer-conditional-expression
 		if (path) {

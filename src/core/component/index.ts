@@ -47,9 +47,18 @@ export * from 'core/component/create/functional';
 export * from 'core/component/create/composite';
 
 export { PARENT } from 'core/component/create/inherit';
-export { customWatcherRgxp, runHook, getFieldRealInfo, cloneWatchValue } from 'core/component/create/helpers';
 export { default as globalEvent, reset, ResetType } from 'core/component/event';
 export { prop, field, system, p, hook, watch, paramsFactory } from 'core/component/decorators';
+export {
+
+	customWatcherRgxp,
+	runHook,
+	getFieldRealInfo,
+	cloneWatchValue,
+	bindWatchers
+
+} from 'core/component/create/helpers';
+
 export {
 
 	renderData,
