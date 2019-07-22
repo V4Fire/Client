@@ -658,12 +658,15 @@ export default abstract class iData<T extends object = Dictionary> extends iMess
 	 * @param method
 	 */
 	protected getDefaultRequestParams<T = unknown>(method: string): DefaultRequest<T> | false {
+		const
+			{field} = this;
+
 		const [customData, customOpts] = (<unknown[]>[]).concat(
-			this.request && this.request[method] || []
+			field.get(`request.${method}`) || []
 		);
 
 		const
-			p = this.requestParams && this.requestParams[method],
+			p = field.get(`requestParams.${method}`),
 			isGet = /^get(:|$)/.test(method);
 
 		let
@@ -690,7 +693,7 @@ export default abstract class iData<T extends object = Dictionary> extends iMess
 		res[1] = Object.mixin({deep: true}, undefined, res[1], customOpts);
 
 		const
-			f = this.requestFilter,
+			f = field.get('requestFilter'),
 			isEmpty = !Object.size(res[0]);
 
 		const info = {
