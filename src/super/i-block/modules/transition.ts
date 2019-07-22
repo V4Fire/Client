@@ -82,12 +82,6 @@ export interface TransitionParams {
 	visible?: CanUndef<boolean>;
 }
 
-export interface TransitionStep {
-	stack: TransitionInfo[];
-	mode: TransitionMode;
-	state: TRANSITION_STATES;
-}
-
 export type StyleDictionaryAndParams = TransitionParams & StyleDictionary;
 export type TransitionStack = TransitionInfo[];
 export type TransitionDirection = 'forward' | 'backwards';
@@ -130,7 +124,7 @@ export class Transition {
 	 * True, if transitions finished
 	 */
 	get isFulfilled(): boolean {
-		return this.steps.every((info: TransitionStep) => info.state === TRANSITION_STATES.end);
+		return this.steps.every((info) => info.isFulfilled);
 	}
 
 	/**
@@ -336,8 +330,8 @@ export class Transition {
 	/**
 	 * Returns a last step from transition stack
 	 */
-	protected getLast(): CanUndef<TransitionInfo> {
-		return this.stack[this.stack.length - 1];
+	protected getLast(): CanUndef<TransitionStep> {
+		return this.steps[this.steps.length - 1];
 	}
 
 	/**
@@ -348,161 +342,27 @@ export class Transition {
 	 */
 	protected generateGPU(props: StyleDictionary): StyleDictionary {
 		const
-			animateProps = Object.reject(props, NON_ANIMATED_PROPERTIES),
-			keys = Object.keys(animateProps),
-			styles: StyleDictionary = {};
-
-		styles.willChange = keys.reduce((acc, prop) => `${acc}${acc === '' ? '' : ','}${prop}`, '');
-		return styles;
-	}
-}
-
-export class TransitionController {
-	/**
-	 * Stores a transition links
-	 */
-	protected store: Dictionary<TransitionCtx> = {};
-
-	/**
-	 * Creates a new parallel transition timeline
-	 */
-	parallel(ctx: iBlock, label: Label, params: TransitionCreateParams = {}): Transition {
-		this.kill(label);
-
-		const
-			{store} = this,
-			transitionCtx = store[label] = this.buildContext(ctx, label, 'parallel', params);
-
-		return transitionCtx.transition;
-	}
-
-	/**
-	 * Creates a new transition sequence
-	 * @param ctx
-	 * @param label
-	 */
-	sequence(ctx: iBlock, label: Label, params: TransitionCreateParams = {}): Transition {
-		this.kill(label);
-
-		const
-			{store} = this,
-			transitionCtx = store[label] = this.buildContext(ctx, label, 'sequence', params);
-
-		return transitionCtx.transition;
-	}
-
-	/**
-	 * Reverse a transition
-	 *
-	 * @param ctx
-	 * @param label
-	 */
-	reverse(label: Label): CanUndef<Transition> {
-		const
-			transition = this.getTransition(label);
-
-		if (transition) {
-			return transition.reverse();
-		}
-	}
-
-	/**
-	 * Stops a transition
-	 * @param label
-	 */
-	stop(label: Label): void {
-		//..
-	}
-
-	/**
-	 * Stops all transitions
-	 */
-	stopAll(): void {
-		//..
-	}
-
-	/**
-	 * Removes a transition
-	 * @param label
-	 */
-	kill(label: Label): void {
-		const
-			transition = this.getTransition(label);
-
-		if (transition) {
-			transition.kill();
-			delete this.store[label];
-		}
-	}
-
-	/**
-	 * Removes all transitions
-	 */
-	killAll(): void {
-		//..
-	}
-
-	/**
-	 * Returns a transition
-	 * @param label
-	 */
-	getTransition(label: Label): CanUndef<Transition> {
-		const
-			quota = this.store[label];
-
-		if (quota) {
-			return quota.transition;
-		}
-	}
-
-	/**
-	 * Returns a transition context
-	 * @param label
-	 */
-	protected getTransitionCtx(label: Label): CanUndef<TransitionCtx> {
-		return this.store[label];
-	}
-
-	/**
-	 * Returns link to component async module
-	 * @param ctx
-	 */
-	protected getAsync(ctx: iBlock): Async {
-		// @ts-ignore
-		return ctx.async;
-	}
-
-	/**
-	 * Builds a new transition context
-	 *
-	 * @param ctx
-	 * @param label
-	 */
-	protected buildContext(
-		ctx: iBlock,
-		label: Label,
-		mode: TransitionMode,
-		params: TransitionCreateParams
-	): TransitionCtx {
-		const
-			$a = this.getAsync(ctx),
-			group = {group: CONTROLLER_GROUP};
-
-		$a.worker(() => {
-			// should kill transition?
-			delete this.store[label];
-		}, group);
+			keys = Object.keys(Object.reject(props, NON_ANIMATED_PROPERTIES));
 
 		return {
-			ctx,
-			label,
-			transition: new Transition(ctx, label, mode, params)
+			willChange: keys.reduce((acc, prop) => `${acc}${acc === '' ? '' : ','}${prop}`, '')
 		};
 	}
 }
 
-const Controller = new TransitionController();
-export default Controller;
+export class TransitionStep {
+	/**
+	 * Transition stack
+	 */
+	protected stack: TransitionInfo[] = [];
+
+	/**
+	 * True, if all transitions ended
+	 */
+	get isFulfilled(): boolean {
+		return this.stack.every((info) => info.state === TRANSITION_STATES.end);
+	}
+}
 
 /**
  * PROPOSAL V2
