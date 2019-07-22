@@ -124,13 +124,6 @@ export default abstract class iData<T extends object = Dictionary> extends iMess
 	readonly needOfflineReInit: boolean = false;
 
 	/**
-	 * List of additional data providers for the get request
-	 */
-	get extraProviders(): CanUndef<ExtraProviders> {
-		return undefined;
-	}
-
-	/**
 	 * Component data
 	 */
 	get db(): CanUndef<T> {
@@ -198,6 +191,13 @@ export default abstract class iData<T extends object = Dictionary> extends iMess
 	@system()
 	protected dp?: Provider;
 
+	/**
+	 * Returns list of additional data providers for the get request
+	 */
+	extraProviders(): CanUndef<ExtraProviders> {
+		return undefined;
+	}
+
 	/** @override */
 	initLoad(data?: unknown, silent?: boolean): CanPromise<void> {
 		const load = () => {
@@ -245,6 +245,7 @@ export default abstract class iData<T extends object = Dictionary> extends iMess
 		};
 
 		if (this.lfc.isBeforeCreate()) {
+			this.syncDataProviderWatcher(this.dataProvider);
 			return load();
 		}
 
@@ -599,7 +600,7 @@ export default abstract class iData<T extends object = Dictionary> extends iMess
 	 * Synchronization for the dataProvider property
 	 * @param value
 	 */
-	@watch({field: 'dataProvider', immediate: true})
+	@watch('dataProvider')
 	protected syncDataProviderWatcher(value?: string): void {
 		if (value) {
 			const
@@ -613,23 +614,11 @@ export default abstract class iData<T extends object = Dictionary> extends iMess
 				throw new Error(`Provider "${value}" is not defined`);
 			}
 
-			const
-				extra = this.extraProviders;
+			this.dp = new ProviderConstructor({
+				extraProviders: this.extraProviders,
+				...this.dataProviderParams
+			});
 
-			let
-				p = this.dataProviderParams;
-
-			if (extra) {
-				// tslint:disable-next-line:prefer-conditional-expression
-				if (Object.isFunction(extra) || Object.isFunction(p && p.extraProviders)) {
-					p = {...p, extraProviders: extra || p && p.extraProviders};
-
-				} else {
-					p = {...p, extraProviders: {...p && p.extraProviders, ...extra}};
-				}
-			}
-
-			this.dp = new ProviderConstructor(p);
 			this.initDataListeners();
 
 		} else if (this.dp) {
@@ -657,25 +646,10 @@ export default abstract class iData<T extends object = Dictionary> extends iMess
 	 * @param value
 	 * @param [oldValue]
 	 */
-	@watch('p')
+	@watch('dataProviderParams')
 	protected syncDataProviderParamsWatcher(value: Dictionary, oldValue: Dictionary): void {
-		const
-			providerNm = this.dataProvider;
-
-		if (providerNm) {
-			const
-				ProviderConstructor = <typeof Provider>providers[providerNm];
-
-			if (!ProviderConstructor) {
-				if (providerNm === 'Provider') {
-					return;
-				}
-
-				throw new Error(`Provider "${providerNm}" is not defined`);
-			}
-
-			this.dp = new ProviderConstructor(value);
-			this.initDataListeners();
+		if (this.dataProvider) {
+			this.syncDataProviderWatcher(this.dataProvider);
 		}
 	}
 

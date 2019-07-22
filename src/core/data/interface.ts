@@ -23,7 +23,7 @@ export type SocketEvent<T = unknown> = (() => Dictionary<T>) | {
 };
 
 export interface ProviderParams {
-	extraProviders?: ExtraProviders;
+	extraProviders?: FunctionalExtraProviders;
 	listenAllEvents?: boolean;
 	externalRequest?: boolean;
 	socket?: boolean;
@@ -35,4 +35,5 @@ export interface ExtraProvider {
 	providerParams?: ProviderParams;
 }
 
-export type ExtraProviders = Dictionary<Nullable<ExtraProvider>> | (() => Dictionary<Nullable<ExtraProvider>>);
+export type ExtraProviders = Dictionary<Nullable<ExtraProvider>>;
+export type FunctionalExtraProviders = ExtraProviders | (() => CanUndef<ExtraProviders>);

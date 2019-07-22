@@ -14,7 +14,7 @@ import Async, { AsyncCbOpts } from 'core/async';
 import IO, { Socket } from 'core/socket';
 
 import { concatUrls } from 'core/url';
-import { ModelMethods, SocketEvent, ProviderParams, ExtraProviders } from 'core/data/interface';
+import { ModelMethods, SocketEvent, ProviderParams, FunctionalExtraProviders } from 'core/data/interface';
 import { providers } from 'core/data/const';
 
 import request, {
@@ -224,7 +224,7 @@ export default class Provider {
 	/**
 	 * List of additional data providers for the get request
 	 */
-	readonly extraProviders?: ExtraProviders;
+	readonly extraProviders?: FunctionalExtraProviders;
 
 	/**
 	 * List of socket events
