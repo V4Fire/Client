@@ -576,7 +576,7 @@ export default class Provider {
 					dp = new ProviderConstructor(el.providerParams);
 
 				tasks.push(
-					dp.get(el.query, el.requestOpts).then(({data}) => Object.set(composition, key, data))
+					dp.get(el.query || query, el.requestOpts).then(({data}) => Object.set(composition, key, data))
 				);
 			}
 
