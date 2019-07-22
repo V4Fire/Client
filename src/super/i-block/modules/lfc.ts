@@ -24,7 +24,7 @@ export default class Lfc {
 	 * Component status
 	 */
 	get status(): Statuses {
-		// @ts-ignore
+		// @ts-ignore (access)
 		return this.component.componentStatus;
 	}
 
@@ -37,7 +37,7 @@ export default class Lfc {
 	 * Async instance
 	 */
 	protected get async(): Async {
-		// @ts-ignore
+		// @ts-ignore (access)
 		return this.component.async;
 	}
 
@@ -45,7 +45,7 @@ export default class Lfc {
 	 * Component meta object
 	 */
 	protected get meta(): ComponentMeta {
-		// @ts-ignore
+		// @ts-ignore (access)
 		return this.component.meta;
 	}
 
@@ -92,7 +92,7 @@ export default class Lfc {
 			return cb.call(this);
 		}
 
-		// @ts-ignore
+		// @ts-ignore (access)
 		this.component.beforeReadyListeners++;
 
 		const
@@ -112,7 +112,7 @@ export default class Lfc {
 	 * @param [params] - async parameters
 	 */
 	execCbAfterComponentReady<T = unknown>(cb: (this: this) => T, params?: AsyncOpts): CanPromise<CanVoid<T>> {
-		// @ts-ignore
+		// @ts-ignore (access)
 		if (this.component.block) {
 			if (statuses[this.status] >= 0) {
 				return cb.call(this);
@@ -122,8 +122,8 @@ export default class Lfc {
 		}
 
 		return this.async.promise(new Promise<T>((r) => {
-			// @ts-ignore
-			this.component.onBlockReady = () => r(cb.call(this));
+			// @ts-ignore (access)
+			this.component.blockReadyListeners.push(() => r(cb.call(this)));
 		}), params).catch(stderr);
 	}
 

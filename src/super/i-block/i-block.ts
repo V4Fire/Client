@@ -156,9 +156,6 @@ export const
 	$$ = symbolGenerator(),
 	modsCache = Object.createDict<ModsNTable>();
 
-const
-	isCustomWatcher = /:/;
-
 @component()
 export default abstract class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	/**
@@ -798,6 +795,12 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	})
 
 	protected daemons!: Daemons;
+
+	/**
+	 * List of block ready listeners
+	 */
+	@system()
+	protected blockReadyListeners: Function[] = [];
 
 	/**
 	 * Local event emitter
@@ -1788,7 +1791,10 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 		}
 
 		this.block = new Block(this);
-		this.onBlockReady();
+
+		for (let i = 0; i < this.blockReadyListeners.length; i++) {
+			this.blockReadyListeners[i]();
+		}
 	}
 
 	/**
@@ -1826,13 +1832,6 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 		}
 
 		this.parentEvent.on('onCallChild', this.onCallChild);
-	}
-
-	/**
-	 * Handler: block instance initialized
-	 */
-	protected onBlockReady(): void {
-		return undefined;
 	}
 
 	/**
