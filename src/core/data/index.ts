@@ -301,7 +301,7 @@ export default class Provider {
 			this.setReadonlyParam('externalRequest', params.externalRequest);
 		}
 
-		if (Object.isBoolean(params.extraProviders)) {
+		if (params.extraProviders) {
 			this.setReadonlyParam('extraProviders', params.extraProviders);
 		}
 
@@ -562,24 +562,25 @@ export default class Provider {
 				composition = {},
 				tasks = <Then[]>[];
 
-			for (let i = 0; i < extraProviders.length; i++) {
+			for (let keys = Object.keys(extraProviders), i = 0; i < keys.length; i++) {
 				const
-					name = extraProviders[i],
-					ProviderConstructor = <typeof Provider>providers[name];
+					key = keys[i],
+					el = extraProviders[key] || {},
+					ProviderConstructor = <typeof Provider>providers[key];
 
 				if (!ProviderConstructor) {
-					throw new Error(`Provider "${name}" is not defined`);
+					throw new Error(`Provider "${key}" is not defined`);
 				}
 
 				const
-					dp = new ProviderConstructor();
+					dp = new ProviderConstructor(el.providerParams);
 
 				tasks.push(
-					dp.get(query, opts).then(({data}) => Object.set(composition, name, data))
+					dp.get(el.query, el.requestOpts).then(({data}) => Object.set(composition, key, data))
 				);
 			}
 
-			res.then(
+			return res.then(
 				(res) => Promise.all(tasks).then(() => {
 					Object.set(composition, nm, res.data);
 
@@ -599,6 +600,7 @@ export default class Provider {
 					};
 
 					res.data = Object.freeze(composition);
+					return res;
 				}),
 
 				null,
