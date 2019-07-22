@@ -144,6 +144,7 @@ export default class InView extends Super {
 
 				observable.isLeaving = false;
 				$a.clearAll(asyncOptions);
+
 			} else if (entry.intersectionRatio >= observable.threshold && !observable.isDeactivated)
 
 				if (observable.onEnter) {
