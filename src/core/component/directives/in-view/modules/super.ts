@@ -103,7 +103,6 @@ export default abstract class AbstractInView {
 			observable.callback(observable);
 		}
 
-
 		if (observable.once) {
 			this.stopObserve(observable.node);
 		}
