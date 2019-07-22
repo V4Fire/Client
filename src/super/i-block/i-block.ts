@@ -83,6 +83,7 @@ import {
 	hook,
 	getFieldRealInfo,
 	cloneWatchValue,
+	bindWatchers,
 
 	VNode,
 	ComponentInterface,
@@ -154,6 +155,9 @@ export interface ComponentEventDecl {
 export const
 	$$ = symbolGenerator(),
 	modsCache = Object.createDict<ModsNTable>();
+
+const
+	isCustomWatcher = /:/;
 
 @component()
 export default abstract class iBlock extends ComponentInterface<iBlock, iStaticPage> {
@@ -986,6 +990,15 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 		this.lfc.execCbAfterComponentCreated(() => {
 			const
 				p = params || {};
+
+			if (Object.isString(exprOrFn)) {
+				bindWatchers(this, {[exprOrFn]: [{
+					handler: (ctx, ...args: unknown[]) => cb.call(this, ...args),
+					...params
+				}]});
+
+				return;
+			}
 
 			const watcher = this.$$watch(exprOrFn, {
 				handler: cb,

@@ -7,7 +7,7 @@
  */
 
 import { GLOBAL } from 'core/env';
-import { getFieldRealInfo, ComponentInterface, WatchOptions } from 'core/component';
+import { getFieldRealInfo, ComponentInterface, WatchOptions, WatchOptionsWithHandler } from 'core/component';
 
 export const
 	customWatcherRgxp = /^([!?]?)([^!?:]*):(.*)/,
@@ -52,9 +52,14 @@ export function cloneWatchValue<T>(value: T, params: WatchOptions = {}): T {
  * (very critical for loading time)
  *
  * @param ctx - component context
+ * @param [watchers] - dictionary with watchers
  * @param [eventCtx] - event component context
  */
-export function bindWatchers(ctx: ComponentInterface, eventCtx: ComponentInterface = ctx): void {
+export function bindWatchers(
+	ctx: ComponentInterface,
+	watchers?: Dictionary<WatchOptionsWithHandler[]>,
+	eventCtx: ComponentInterface = ctx
+): void {
 	const
 		// @ts-ignore (access)
 		{meta, hook, $async: $a} = ctx,
@@ -70,7 +75,7 @@ export function bindWatchers(ctx: ComponentInterface, eventCtx: ComponentInterfa
 		isCreated = hook === 'created',
 		isMounted = hook === 'mounted';
 
-	for (let o = meta.watchers, keys = Object.keys(o), i = 0; i < keys.length; i++) {
+	for (let o = watchers || meta.watchers, keys = Object.keys(o), i = 0; i < keys.length; i++) {
 		let
 			key = keys[i];
 
@@ -128,8 +133,7 @@ export function bindWatchers(ctx: ComponentInterface, eventCtx: ComponentInterfa
 								throw new ReferenceError(`The specified method (${rawHandler}) for watching is not defined`);
 							}
 
-							// @ts-ignore (access)
-							ctx.$async.setImmediate(
+							$a.setImmediate(
 								() => ctx[rawHandler](...args),
 								group
 							);
@@ -156,8 +160,7 @@ export function bindWatchers(ctx: ComponentInterface, eventCtx: ComponentInterfa
 								throw new ReferenceError(`The specified method (${rawHandler}) for watching is not defined`);
 							}
 
-							// @ts-ignore (access)
-							ctx.$async.setImmediate(
+							$a.setImmediate(
 								() => ctx[rawHandler](...args),
 								group
 							);
