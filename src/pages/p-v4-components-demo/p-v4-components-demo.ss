@@ -14,7 +14,7 @@
 	- block body
 		: defAttrs = { &
 			':info': "'Some info text'",
-			':error': "'Some info text'",
+			':error': "'Some error text'",
 			':mods': '{showInfo: false, showError: false}'
 		} .
 
