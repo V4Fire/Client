@@ -355,12 +355,12 @@ export function bindWatchers(
 			}
 		};
 
-		if (isBeforeCreate && onCreated) {
+		if (onCreated && isBeforeCreate) {
 			hooks.created.unshift({fn: exec});
 			continue;
 		}
 
-		if (onMounted && !ctx.$el) {
+		if (onMounted && (isBeforeCreate || !ctx.$el)) {
 			hooks[isDeactivated ? 'activated' : 'mounted'].unshift({fn: exec});
 			continue;
 		}
