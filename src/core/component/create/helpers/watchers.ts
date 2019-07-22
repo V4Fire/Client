@@ -19,10 +19,10 @@ export const
 	customWatcherRgxp = /^([!?]?)([^!?:]*):(.*)/,
 	systemWatchers = new WeakMap<ComponentInterface, Dictionary<{cb: Set<Function>}>>();
 
-const watcherHooks = {
-	beforeDataCreate: true,
-	created: true,
-	mounted: true
+const beforeHooks = {
+	beforeRuntime: true,
+	beforeCreate: true,
+	beforeDataCreate: true
 };
 
 /**
@@ -75,15 +75,10 @@ export function bindWatchers(
 		// @ts-ignore (access)
 		$a = async || ctx.$async;
 
-	if (!watcherHooks[hook]) {
-		return;
-	}
-
 	const
 		// @ts-ignore (access)
 		customAsync = $a !== ctx.$async,
-		isCreated = hook === 'created',
-		isMounted = hook === 'mounted';
+		isBeforeCreate = beforeHooks[hook];
 
 	for (let o = watchers || meta.watchers, keys = Object.keys(o), i = 0; i < keys.length; i++) {
 		let
@@ -359,7 +354,7 @@ export function bindWatchers(
 			}
 		};
 
-		if (!onCreated && !isCreated || !onMounted && !isMounted) {
+		if (isBeforeCreate && (onCreated || onMounted)) {
 			meta.hooks[onMounted ? 'mounted' : 'created'].unshift({fn: exec});
 			continue;
 		}

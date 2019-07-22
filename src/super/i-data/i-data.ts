@@ -200,6 +200,16 @@ export default abstract class iData<T extends object = Dictionary> extends iMess
 
 	/** @override */
 	initLoad(data?: unknown, silent?: boolean): CanPromise<void> {
+		if (this.isFunctional) {
+			return super.initLoad(() => {
+				if (data) {
+					this.db = this.convertDataToDB<T>(data);
+				}
+
+				return this.db;
+			}, silent);
+		}
+
 		const load = () => {
 			const
 				important = this.componentStatus === 'unloaded';

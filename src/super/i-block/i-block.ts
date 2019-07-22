@@ -156,6 +156,9 @@ export const
 	$$ = symbolGenerator(),
 	modsCache = Object.createDict<ModsNTable>();
 
+const
+	isCustomWatcher = /:/;
+
 @component()
 export default abstract class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	/**
@@ -997,24 +1000,24 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 			return;
 		}
 
+		const
+			p = params || {};
+
+		if (Object.isString(exprOrFn) && isCustomWatcher.test(exprOrFn)) {
+			bindWatchers(this, {
+				async: <Async<any>>this.async,
+				watchers: {
+					[exprOrFn]: [{
+						handler: (ctx, ...args: unknown[]) => cb.call(this, ...args),
+						...p
+					}]
+				}
+			});
+
+			return;
+		}
+
 		this.lfc.execCbAfterComponentCreated(() => {
-			const
-				p = params || {};
-
-			if (Object.isString(exprOrFn)) {
-				bindWatchers(this, {
-					async: <Async<any>>this.async,
-					watchers: {
-						[exprOrFn]: [{
-							handler: (ctx, ...args: unknown[]) => cb.call(this, ...args),
-							...params
-						}]
-					}
-				});
-
-				return;
-			}
-
 			const watcher = this.$$watch(exprOrFn, {
 				handler: cb,
 				deep: p.deep,
