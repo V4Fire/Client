@@ -209,6 +209,12 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	readonly needReInit: boolean = false;
 
 	/**
+	 * If true, then the component will be listen a parent component for proxy events
+	 */
+	@prop(Boolean)
+	readonly proxyCall: boolean = false;
+
+	/**
 	 * Initial component modifiers
 	 */
 	@prop(Object)
@@ -340,6 +346,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 			return;
 		}
 
+		this.async.clearAll({group: `stage.${oldValue}`});
 		this.field.set('stageStore', value);
 		this.emit('stageChange', value, oldValue);
 	}
@@ -1763,17 +1770,6 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	}
 
 	/**
-	 * Synchronization for the stageStore field
-	 *
-	 * @param value
-	 * @param [oldValue]
-	 */
-	@watch({field: '!:onStageChange', functional: false})
-	protected syncStageWatcher(value?: Stage, oldValue?: Stage): void {
-		this.async.clearAll({group: `stage.${oldValue}`});
-	}
-
-	/**
 	 * Initializes component instance
 	 */
 	@hook('mounted')
@@ -1821,6 +1817,18 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	}
 
 	/**
+	 * Initializes callChild event listener
+	 */
+	@watch({field: 'proxyCall', immediate: true})
+	protected initCallChildListener(value: boolean): void {
+		if (!value) {
+			return;
+		}
+
+		this.parentEvent.on('onCallChild', this.onCallChild);
+	}
+
+	/**
 	 * Handler: block instance initialized
 	 */
 	protected onBlockReady(): void {
@@ -1831,7 +1839,6 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	 * Handler: parent call child event
 	 * @param e
 	 */
-	@watch({field: 'parentEvent:onCallChild', functional: false})
 	protected onCallChild(e: ParentMessage): void {
 		if (
 			e.check[0] !== 'instanceOf' && e.check[1] === this[e.check[0]] ||
