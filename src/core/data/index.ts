@@ -13,7 +13,7 @@ import Async, { AsyncCbOpts } from 'core/async';
 import IO, { Socket } from 'core/socket';
 
 import { concatUrls } from 'core/url';
-import { ModelMethods, SocketEvent, ProviderParams } from 'core/data/interface';
+import { ModelMethods, SocketEvent, ProviderParams, ExtraProviders } from 'core/data/interface';
 import { providers } from 'core/data/const';
 
 import request, {
@@ -209,6 +209,11 @@ export default class Provider {
 	 * Temporary request method
 	 */
 	tmpMethod: CanUndef<RequestMethods>;
+
+	/**
+	 * List of additional data providers for the get request
+	 */
+	extraProviders?: ExtraProviders;
 
 	/**
 	 * Cache id

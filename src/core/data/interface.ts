@@ -25,3 +25,5 @@ export interface ProviderParams {
 	externalRequest?: boolean;
 	socket?: boolean;
 }
+
+export type ExtraProviders = string[] | (() => string[]);
