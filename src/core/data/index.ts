@@ -541,8 +541,8 @@ export default class Provider {
 		}
 
 		const
-			nm = this.constructor[$$.namespace],
 			url = this.url(),
+			nm = this.constructor[$$.namespace],
 			eventName = this.name(),
 			method = this.method() || this.getMethod;
 

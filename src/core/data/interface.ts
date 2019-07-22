@@ -35,4 +35,4 @@ export interface ExtraProvider {
 	providerParams?: ProviderParams;
 }
 
-export type ExtraProviders = Dictionary<Nullable<ExtraProvider>>;
+export type ExtraProviders = Dictionary<Nullable<ExtraProvider>> | (() => Dictionary<Nullable<ExtraProvider>>);

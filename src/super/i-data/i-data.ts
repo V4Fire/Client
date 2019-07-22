@@ -49,7 +49,9 @@ import Provider, {
 	RequestResponseObject,
 	Response,
 	ModelMethods,
-	ProviderParams
+	ProviderParams,
+	ExtraProvider,
+	ExtraProviders
 
 } from 'core/data';
 
@@ -62,7 +64,9 @@ export {
 	RequestResponseObject,
 	Response,
 	ModelMethods,
-	ProviderParams
+	ProviderParams,
+	ExtraProvider,
+	ExtraProviders
 
 } from 'core/data';
 
@@ -86,7 +90,7 @@ export default abstract class iData<T extends object = Dictionary> extends iMess
 	 * Initial parameters for a data provider instance
 	 */
 	@prop(Object)
-	readonly dataProviderParamsProp: ProviderParams = {};
+	readonly dataProviderParams: ProviderParams = {};
 
 	/**
 	 * Initial request parameters
@@ -120,10 +124,10 @@ export default abstract class iData<T extends object = Dictionary> extends iMess
 	readonly needOfflineReInit: boolean = false;
 
 	/**
-	 * Parameters for a data provider instance
+	 * List of additional data providers for the get request
 	 */
-	get dataProviderParams(): ProviderParams {
-		return this.dataProviderParamsProp;
+	get extraProviders(): CanUndef<ExtraProviders> {
+		return undefined;
 	}
 
 	/**
@@ -600,7 +604,23 @@ export default abstract class iData<T extends object = Dictionary> extends iMess
 				throw new Error(`Provider "${value}" is not defined`);
 			}
 
-			this.dp = new ProviderConstructor(this.dataProviderParams);
+			const
+				extra = this.extraProviders;
+
+			let
+				p = this.dataProviderParams;
+
+			if (extra) {
+				// tslint:disable-next-line:prefer-conditional-expression
+				if (Object.isFunction(extra) || Object.isFunction(p && p.extraProviders)) {
+					p = {...p, extraProviders: extra || p && p.extraProviders};
+
+				} else {
+					p = {...p, extraProviders: {...p && p.extraProviders, ...extra}};
+				}
+			}
+
+			this.dp = new ProviderConstructor(p);
 			this.initDataListeners();
 
 		} else if (this.dp) {
