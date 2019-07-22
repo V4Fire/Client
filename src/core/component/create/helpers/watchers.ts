@@ -67,7 +67,7 @@ export function bindWatchers(
 ): void {
 	const
 		// @ts-ignore (access)
-		{meta, hook} = ctx,
+		{meta, hook, meta: {hooks}} = ctx,
 
 		// @ts-ignore (access)
 		$watch = ctx.$$watch || ctx.$watch,
@@ -78,6 +78,7 @@ export function bindWatchers(
 	const
 		// @ts-ignore (access)
 		customAsync = $a !== ctx.$async,
+		isDeactivated = hook === 'deactivated',
 		isBeforeCreate = beforeHooks[hook];
 
 	for (let o = watchers || meta.watchers, keys = Object.keys(o), i = 0; i < keys.length; i++) {
@@ -354,8 +355,13 @@ export function bindWatchers(
 			}
 		};
 
-		if (isBeforeCreate && (onCreated || onMounted)) {
-			meta.hooks[onMounted ? 'mounted' : 'created'].unshift({fn: exec});
+		if (isBeforeCreate && onCreated) {
+			hooks.created.unshift({fn: exec});
+			continue;
+		}
+
+		if (onMounted && !ctx.$el) {
+			hooks[isDeactivated ? 'activated' : 'mounted'].unshift({fn: exec});
 			continue;
 		}
 
