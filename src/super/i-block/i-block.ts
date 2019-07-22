@@ -304,7 +304,9 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 
 	/**
 	 * Sets a new component initialize status
+	 *
 	 * @param value
+	 * @emits status${$value}(value: Statuses)
 	 */
 	set componentStatus(value: Statuses) {
 		const
@@ -322,8 +324,10 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 			this.field.set('componentStatusStore', value);
 		}
 
-		this.setMod('status', value);
-		this.emit(`status-${value}`, value);
+		if (!this.isFlyweight) {
+			this.setMod('status', value);
+			this.emit(`status-${value}`, value);
+		}
 	}
 
 	/**
