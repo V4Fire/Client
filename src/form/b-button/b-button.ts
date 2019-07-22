@@ -25,7 +25,6 @@ import iData, {
 
 	component,
 	prop,
-	hook,
 	p,
 
 	ModsDecl,
@@ -231,8 +230,7 @@ export default class bButton<T extends object = Dictionary> extends iData<T>
 	}
 
 	/** @see iOpenToggle.initCloseHelpers */
-	@hook('beforeDataCreate')
-	@p({replace: false})
+	@p({hook: 'beforeDataCreate', replace: false})
 	protected initCloseHelpers(events?: CloseHelperEvents): void {
 		iOpenToggle.initCloseHelpers(this, events);
 	}
