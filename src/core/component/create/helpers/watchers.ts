@@ -6,8 +6,15 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import Async from 'core/async';
 import { GLOBAL } from 'core/env';
 import { getFieldRealInfo, ComponentInterface, WatchOptions, WatchOptionsWithHandler } from 'core/component';
+
+export interface BindWatchersParams<A extends object = ComponentInterface> {
+	async?: Async<A>;
+	watchers?: Dictionary<WatchOptionsWithHandler[]>;
+	eventCtx?: ComponentInterface;
+}
 
 export const
 	customWatcherRgxp = /^([!?]?)([^!?:]*):(.*)/,
@@ -54,24 +61,26 @@ export function cloneWatchValue<T>(value: T, params: WatchOptions = {}): T {
  * @param ctx - component context
  * @param [watchers] - dictionary with watchers
  * @param [eventCtx] - event component context
+ * @param [async] - async instance
  */
-export function bindWatchers(
-	ctx: ComponentInterface,
-	watchers?: Dictionary<WatchOptionsWithHandler[]>,
-	eventCtx: ComponentInterface = ctx
-): void {
+export function bindWatchers(ctx: ComponentInterface, {watchers, eventCtx, async}: BindWatchersParams = {}): void {
 	const
 		// @ts-ignore (access)
-		{meta, hook, $async: $a} = ctx,
+		{meta, hook} = ctx,
 
 		// @ts-ignore (access)
-		$watch = ctx.$$watch || ctx.$watch;
+		$watch = ctx.$$watch || ctx.$watch,
+
+		// @ts-ignore (access)
+		$a = async || ctx.$async;
 
 	if (!watcherHooks[hook]) {
 		return;
 	}
 
 	const
+		// @ts-ignore (access)
+		customAsync = $a !== ctx.$async,
 		isCreated = hook === 'created',
 		isMounted = hook === 'mounted';
 
@@ -112,13 +121,23 @@ export function bindWatchers(
 					watchObj = watchers[i],
 					rawHandler = watchObj.handler;
 
-				const label = `[[WATCHER:${key}:${
-					watchObj.method != null ? watchObj.method : Object.isString(watchObj.handler) ?
-						watchObj.handler : (<Function>watchObj.handler).name
-				}]]`;
+				const group = {
+					label: watchObj.label,
+					group: watchObj.group,
+					join: watchObj.join
+				};
+
+				if (!customAsync) {
+					const defLabel = `[[WATCHER:${key}:${
+						watchObj.method != null ? watchObj.method : Object.isString(watchObj.handler) ?
+							watchObj.handler : (<Function>watchObj.handler).name
+					}]]`;
+
+					group.label = group.label || defLabel;
+					group.group = group.group || 'watchers';
+				}
 
 				const
-					group = {group: watchObj.group || 'watchers', label},
 					eventParams = {...group, options: watchObj.options, single: watchObj.single};
 
 				let
@@ -133,10 +152,15 @@ export function bindWatchers(
 								throw new ReferenceError(`The specified method (${rawHandler}) for watching is not defined`);
 							}
 
-							$a.setImmediate(
-								() => ctx[rawHandler](...args),
-								group
-							);
+							if (group.label) {
+								$a.setImmediate(
+									() => ctx[rawHandler](...args),
+									group
+								);
+
+							} else {
+								ctx[rawHandler](...args);
+							}
 
 						} else {
 							if (watchObj.method) {
@@ -160,10 +184,15 @@ export function bindWatchers(
 								throw new ReferenceError(`The specified method (${rawHandler}) for watching is not defined`);
 							}
 
-							$a.setImmediate(
-								() => ctx[rawHandler](...args),
-								group
-							);
+							if (group.label) {
+								$a.setImmediate(
+									() => ctx[rawHandler](...args),
+									group
+								);
+
+							} else {
+								ctx[rawHandler](...args);
+							}
 
 						} else {
 							if (watchObj.method) {

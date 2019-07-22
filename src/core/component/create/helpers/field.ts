@@ -173,6 +173,9 @@ export function initDataObject(
 				} else {
 					data[key] = val;
 				}
+
+				// @ts-ignore (access)
+				ctx.$activeField = undefined;
 			}
 
 		} else {
@@ -261,6 +264,9 @@ export function initDataObject(
 				} else {
 					data[key] = val;
 				}
+
+				// @ts-ignore (access)
+				ctx.$activeField = undefined;
 			}
 		}
 
@@ -346,6 +352,9 @@ export function initDataObject(
 				} else {
 					data[key] = val;
 				}
+
+				// @ts-ignore (access)
+				ctx.$activeField = undefined;
 			}
 		}
 
@@ -382,13 +391,15 @@ export function initPropsObject(
 
 	for (let keys = Object.keys(fields), i = 0; i < keys.length; i++) {
 		const
-			// @ts-ignore (access)
-			key = ctx.$activeField = keys[i],
+			key = keys[i],
 			el = fields[key];
 
 		if (!el || isFlyweight && el.functional === false) {
 			continue;
 		}
+
+		// @ts-ignore (access)
+		ctx.$activeField = key;
 
 		let
 			val = ctx[key];
@@ -416,5 +427,7 @@ export function initPropsObject(
 		}
 	}
 
+	// @ts-ignore (access)
+	ctx.$activeField = undefined;
 	return data;
 }

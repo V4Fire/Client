@@ -992,10 +992,15 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 				p = params || {};
 
 			if (Object.isString(exprOrFn)) {
-				bindWatchers(this, {[exprOrFn]: [{
-					handler: (ctx, ...args: unknown[]) => cb.call(this, ...args),
-					...params
-				}]});
+				bindWatchers(this, {
+					async: <Async<any>>this.async,
+					watchers: {
+						[exprOrFn]: [{
+							handler: (ctx, ...args: unknown[]) => cb.call(this, ...args),
+							...params
+						}]
+					}
+				});
 
 				return;
 			}
