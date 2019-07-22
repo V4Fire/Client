@@ -13,7 +13,6 @@ import { getFieldRealInfo, ComponentInterface, WatchOptions, WatchOptionsWithHan
 export interface BindWatchersParams<A extends object = ComponentInterface> {
 	async?: Async<A>;
 	watchers?: Dictionary<WatchOptionsWithHandler[]>;
-	eventCtx?: ComponentInterface;
 }
 
 export const
@@ -60,10 +59,12 @@ export function cloneWatchValue<T>(value: T, params: WatchOptions = {}): T {
  *
  * @param ctx - component context
  * @param [watchers] - dictionary with watchers
- * @param [eventCtx] - event component context
  * @param [async] - async instance
  */
-export function bindWatchers(ctx: ComponentInterface, {watchers, eventCtx, async}: BindWatchersParams = {}): void {
+export function bindWatchers(
+	ctx: ComponentInterface,
+	{watchers, async}: BindWatchersParams = {}
+): void {
 	const
 		// @ts-ignore (access)
 		{meta, hook} = ctx,
@@ -112,7 +113,7 @@ export function bindWatchers(ctx: ComponentInterface, {watchers, eventCtx, async
 		const exec = () => {
 			if (customWatcher) {
 				const l = customWatcher[2];
-				root = l ? Object.get(eventCtx, l) || Object.get(GLOBAL, l) || ctx : ctx;
+				root = l ? Object.get(ctx, l) || Object.get(GLOBAL, l) || ctx : ctx;
 				key = l ? customWatcher[3].toString() : customWatcher[3].dasherize();
 			}
 
