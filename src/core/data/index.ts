@@ -560,7 +560,8 @@ export default class Provider {
 		if (extraProviders) {
 			const
 				composition = {},
-				tasks = <Then[]>[];
+				tasks = <Then[]>[],
+				cloneTasks = <Function[]>[];
 
 			for (let keys = Object.keys(extraProviders), i = 0; i < keys.length; i++) {
 				const
@@ -576,24 +577,27 @@ export default class Provider {
 					dp = new ProviderConstructor(el.providerParams);
 
 				tasks.push(
-					dp.get(el.query || query, el.requestOpts).then(({data}) => Object.set(composition, key, data))
+					dp.get(el.query || query, el.requestOpts).then(({data}) => {
+						cloneTasks.push((composition) => Object.set(composition, key, data && (<object>data).valueOf()));
+						return Object.set(composition, key, data);
+					})
 				);
 			}
 
 			return res.then(
 				(res) => Promise.all(tasks).then(() => {
-					Object.set(composition, nm, res.data);
+					const
+						data = res.data;
+
+					cloneTasks.push((composition) => Object.set(composition, nm, data && (<object>data).valueOf()));
+					Object.set(composition, nm, data);
 
 					composition.valueOf = () => {
 						const
 							clone = {};
 
-						for (let keys = Object.keys(composition), i = 0; i < keys.length; i++) {
-							const
-								key = keys[i],
-								data = composition[key];
-
-							clone[key] = data && data.valueOf();
+						for (let i = 0; i < cloneTasks.length; i++) {
+							cloneTasks[i](clone);
 						}
 
 						return clone;
