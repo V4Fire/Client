@@ -173,8 +173,11 @@ export default class bSelect<
 	initLoad(data?: unknown, silent?: boolean): CanPromise<void> {
 		/// FIXME
 		if (this.initAfterOpen && !this.browser.is.mobile) {
+			const
+				{mods} = this;
+
 			return this.async
-				.wait(() => this.mods.opened !== 'false' || this.mods.focused === 'true')
+				.wait(() => mods.opened !== 'false' || mods.focused === 'true')
 				.then(() => super.initLoad(data, silent));
 		}
 
