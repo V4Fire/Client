@@ -485,7 +485,7 @@ export default abstract class iData<T extends object = Dictionary> extends iMess
 	/**
 	 * Executes the specified function with a socket connection
 	 *
-	 * @see {Provider.attachToSocket}
+	 * @see Provider.attachToSocket
 	 * @param fn
 	 * @param [params]
 	 */
