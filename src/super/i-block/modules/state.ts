@@ -38,7 +38,7 @@ export default class State {
 	}
 
 	/**
-	 * True, if needed synchronization with a router
+	 * True if needed synchronization with a router
 	 */
 	get needRouterSync(): boolean {
 		// @ts-ignore (access)
