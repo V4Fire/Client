@@ -59,7 +59,7 @@ import { statuses } from 'super/i-block/modules/const';
 import { eventFactory, Event, RemoteEvent } from 'super/i-block/modules/event';
 import { initGlobalEvents, initRemoteWatchers } from 'super/i-block/modules/listeners';
 import { activate, deactivate, onActivated, onDeactivated } from 'super/i-block/modules/keep-alive';
-import { Statuses, WaitStatusOpts, Stage, ParentMessage } from 'super/i-block/modules/interface';
+import { Statuses, WaitStatusOpts, Stage, ParentMessage, ComponentStatuses } from 'super/i-block/modules/interface';
 
 import {
 
@@ -159,12 +159,6 @@ export const
 const
 	isCustomWatcher = /:/,
 	readyStatuses = {beforeReady: true, ready: true};
-
-const shadowComponentStatuses = {
-	inactive: true,
-	destroyed: true,
-	unloaded: true
-};
 
 @component()
 export default abstract class iBlock extends ComponentInterface<iBlock, iStaticPage> {
@@ -323,7 +317,10 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 			return;
 		}
 
-		if (shadowComponentStatuses[value] || value === 'ready' && old === 'beforeReady') {
+		const
+			isShadowStatus = (<typeof iBlock>this.instance.constructor).shadowComponentStatuses[value];
+
+		if (isShadowStatus || value === 'ready' && old === 'beforeReady') {
 			this.shadowComponentStatusStore = value;
 
 		} else {
@@ -533,6 +530,15 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	 * Parent link
 	 */
 	static readonly PARENT: object = PARENT;
+
+	/**
+	 * Component shadow statuses
+	 */
+	static readonly shadowComponentStatuses: ComponentStatuses = {
+		inactive: true,
+		destroyed: true,
+		unloaded: true
+	};
 
 	/**
 	 * Component modifiers

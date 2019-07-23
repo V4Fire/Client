@@ -337,8 +337,7 @@ export function wait<CTX extends ComponentInterface = ComponentInterface>(
 
 		const exec = (ctx) => {
 			const
-				// @ts-ignore
-				componentStatus = <number>statuses[component.field.get('componentStatusStore', ctx)];
+				componentStatus = statuses[component.componentStatus];
 
 			let
 				res,
