@@ -11,7 +11,7 @@ import { WrappedFunction } from 'core/async';
 
 import iVisible from 'traits/i-visible/i-visible';
 
-import iData, { component, prop, field, system, watch, hook, p, Statuses, ModsDecl } from 'super/i-data/i-data';
+import iData, { component, prop, system, watch, hook, p, ModsDecl } from 'super/i-data/i-data';
 export * from 'super/i-data/i-data';
 
 export type TitleValue<T = unknown> = string | ((ctx: T) => string);
