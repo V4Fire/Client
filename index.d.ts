@@ -50,16 +50,4 @@ interface Node {
 	getOffset(parent?: Element | string): ElementPosition;
 }
 
-interface Number {
-	em: string;
-	ex: string;
-	px: string;
-	per: string;
-	rem: string;
-	vh: string;
-	vw: string;
-	vmin: string;
-	vmax: string;
-}
-
 declare const GLOBAL_NONCE: unknown;
