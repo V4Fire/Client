@@ -157,7 +157,8 @@ export const
 	modsCache = Object.createDict<ModsNTable>();
 
 const
-	isCustomWatcher = /:/;
+	isCustomWatcher = /:/,
+	readyStatuses = {beforeReady: true, ready: true};
 
 @component()
 export default abstract class iBlock extends ComponentInterface<iBlock, iStaticPage> {
@@ -432,9 +433,9 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	/**
 	 * True if the current component is ready (componentStatus == ready)
 	 */
-	@p({replace: false})
+	@p({cache: false, replace: false})
 	get isReady(): boolean {
-		return this.componentStatus === 'ready';
+		return Boolean(readyStatuses[this.componentStatus]);
 	}
 
 	/**
@@ -695,7 +696,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	/**
 	 * Component initialize status store
 	 */
-	@system({unique: true})
+	@field({unique: true})
 	protected componentStatusStore: Statuses = 'unloaded';
 
 	/**

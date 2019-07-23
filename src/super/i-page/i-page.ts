@@ -80,10 +80,6 @@ export default abstract class iPage<T extends object = Dictionary> extends iData
 		...iVisible.mods
 	};
 
-	/** @override */
-	@field()
-	protected componentStatusStore!: Statuses;
-
 	/**
 	 * Page title store
 	 */
