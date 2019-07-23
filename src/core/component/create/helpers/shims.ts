@@ -201,7 +201,7 @@ export function parseVAttrs(data: VNodeData, isComponent?: boolean): void {
 						flags[eventChunks[i]] = true;
 					}
 
-					event = eventChunks[0];
+					event = eventChunks[0].dasherize();
 
 					if (flags.native) {
 						if (flags.right) {
