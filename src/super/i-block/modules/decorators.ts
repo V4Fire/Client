@@ -358,8 +358,10 @@ export function wait<CTX extends ComponentInterface = ComponentInterface>(
 			}
 
 			if (!init) {
-				res = $a.promisifyOnce(ctx, `status-${statuses[<number>status]}`, p)
-					.then(() => handler.apply(this, args));
+				res = $a.promisifyOnce(ctx, `status-${statuses[<number>status]}`, {
+					...p,
+					handler: () => handler.apply(this, args)
+				});
 			}
 
 			if (isDecorator && Object.isPromise(res)) {
