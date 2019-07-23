@@ -132,6 +132,7 @@ export default abstract class iData<T extends object = Dictionary> extends iMess
 
 	/**
 	 * Sets new component data
+	 * @emits dbChange(value: CanUndef<T>)
 	 */
 	set db(value: CanUndef<T>) {
 		if (value === this.db) {
@@ -146,6 +147,7 @@ export default abstract class iData<T extends object = Dictionary> extends iMess
 		});
 
 		this.field.set('dbStore', value);
+		this.emit('dbChange', value);
 
 		if (this.initRemoteData() !== undefined) {
 			this.watch('dbStore', this.initRemoteData, {
