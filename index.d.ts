@@ -50,4 +50,14 @@ interface Node {
 	getOffset(parent?: Element | string): ElementPosition;
 }
 
+interface IntersectionObserverInit  {
+	delay?: number;
+	trackVisibility?: boolean;
+}
+
+interface IntersectionObserver {
+	delay?: number;
+	trackVisibility?: boolean;
+}
+
 declare const GLOBAL_NONCE: unknown;

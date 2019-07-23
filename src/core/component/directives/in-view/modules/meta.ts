@@ -62,6 +62,8 @@ export interface ElementRect {
 
 export interface IntersectionObserverOptions {
 	threshold: number;
+	delay: number;
+	trackVisibility: boolean;
 }
 
 export interface DirectiveOptions extends VNodeDirective {

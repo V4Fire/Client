@@ -9,7 +9,7 @@
 import symbolGenerator from 'core/symbol';
 
 import { ObservableElement, IntersectionObserverOptions } from 'core/component/directives/in-view/modules/meta';
-import { hasIntersection } from 'core/component/directives/in-view/modules/intersection/helpers';
+import { hasIntersection, supportsDelay } from 'core/component/directives/in-view/modules/intersection/helpers';
 
 import Super from 'core/component/directives/in-view/modules/super';
 
@@ -34,6 +34,11 @@ export default class InView extends Super {
 	 * Contains IntersectionObserver instances
 	 */
 	protected readonly observers: Dictionary<IntersectionObserver> = {};
+
+	/**
+	 * True, if IntersectionObserver supports delay property
+	 */
+	protected readonly supportsDelay: boolean = supportsDelay();
 
 	/**
 	 * Removes an element from observable elements
@@ -100,9 +105,11 @@ export default class InView extends Super {
 	 *
 	 * @param intersectionObserverOptions
 	 *   *) threshold
+	 *   *) delay
+	 *   *) trackVisibility
 	 */
-	protected getHash({threshold}: IntersectionObserverOptions): string {
-		return String(threshold);
+	protected getHash({threshold, delay, trackVisibility}: IntersectionObserverOptions): string {
+		return `${threshold.toFixed(2)}${Math.floor(delay)}${trackVisibility}`;
 	}
 
 	/**
@@ -131,7 +138,7 @@ export default class InView extends Super {
 			}
 
 			const
-				{async: $a} = this;
+				{async: $a, supportsDelay} = this;
 
 			const asyncOptions = {
 				group: 'inView',
@@ -144,16 +151,22 @@ export default class InView extends Super {
 					observable.onLeave(observable);
 				}
 
+				if (!supportsDelay) {
+					$a.clearAll(asyncOptions);
+				}
+
 				observable.isLeaving = false;
-				$a.clearAll(asyncOptions);
 
 			} else if (entry.intersectionRatio >= observable.threshold && !observable.isDeactivated) {
 				if (observable.onEnter) {
 					observable.onEnter(observable);
 				}
 
+				if (!supportsDelay) {
+					$a.setTimeout(() => this.call(observable), observable.timeout || 0, asyncOptions);
+				}
+
 				observable.isLeaving = true;
-				$a.setTimeout(() => this.call(observable), observable.timeout || 0, asyncOptions);
 			}
 		}
 	}
