@@ -138,10 +138,19 @@ export default class InView extends Super {
 			};
 
 			if (observable.isLeaving) {
+				if (observable.onLeave) {
+					observable.onLeave(observable);
+				}
+
 				observable.isLeaving = false;
 				$a.clearAll(asyncOptions);
 
-			} else if (entry.intersectionRatio >= observable.threshold && !observable.isDeactivated) {
+			} else if (entry.intersectionRatio >= observable.threshold && !observable.isDeactivated)
+
+				if (observable.onEnter) {
+					observable.onEnter(observable);
+				}
+
 				observable.isLeaving = true;
 				$a.setTimeout(() => this.call(observable), observable.timeout || 0, asyncOptions);
 			}

@@ -16,7 +16,9 @@ export interface Observable {
 }
 
 export interface ObserveOptions {
-	callback: Function;
+	callback?: Function;
+	onEnter?: Function;
+	onLeave?: Function;
 	count?: Function | boolean;
 	group?: string;
 	once?: boolean;
