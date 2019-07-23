@@ -38,7 +38,6 @@ export default class Lazy {
 	 * @param [params] - async parameters
 	 */
 	createLazyFn(fn: Function, params?: AsyncOpts): Function {
-		return (...args) =>
-			this.async.setTimeout(() => fn.call(this, ...args), 0.2.second(), params);
+		return (...args) => this.async.setImmediate(() => fn.call(this, ...args), params);
 	}
 }
