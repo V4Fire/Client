@@ -68,7 +68,7 @@ export default class State {
 	 * API for a component storage
 	 */
 	protected get storage(): Storage {
-		// @ts-ignore
+		// @ts-ignore (access)
 		return this.component.storage;
 	}
 
@@ -76,7 +76,7 @@ export default class State {
 	 * API for lazy operations
 	 */
 	protected get lazy(): Lazy {
-		// @ts-ignore
+		// @ts-ignore (access)
 		return this.component.lazy;
 	}
 
@@ -91,7 +91,7 @@ export default class State {
 	 * Local event emitter
 	 */
 	protected get localEvent(): Event {
-		// @ts-ignore
+		// @ts-ignore (access)
 		return this.component.localEvent;
 	}
 
@@ -99,7 +99,7 @@ export default class State {
 	 * Async instance
 	 */
 	protected get async(): Async {
-		// @ts-ignore
+		// @ts-ignore (access)
 		return this.component.async;
 	}
 
@@ -110,7 +110,7 @@ export default class State {
 		// @ts-ignore (access)
 		baseSyncRouterState = baseSyncRouterState || iBlock.prototype.syncRouterState;
 
-		// @ts-ignore
+		// @ts-ignore (access)
 		return this.component.instance;
 	}
 
@@ -159,13 +159,13 @@ export default class State {
 		const
 			c = this.component;
 
-		// @ts-ignore
+		// @ts-ignore (access)
 		data = c.syncStorageState(data, 'remote');
-		// @ts-ignore
+		// @ts-ignore (access)
 		this.set(c.syncStorageState(data));
 
 		await this.storage.set(data, '[[STORE]]');
-		// @ts-ignore
+		// @ts-ignore (access)
 		c.log('state:save:storage', this, data);
 
 		return true;
@@ -199,7 +199,7 @@ export default class State {
 
 			this.lfc.execCbAtTheRightTime(() => {
 				const
-					// @ts-ignore
+					// @ts-ignore (access)
 					stateFields = c.syncStorageState(data);
 
 				this.set(
@@ -230,7 +230,7 @@ export default class State {
 					}
 				}
 
-				// @ts-ignore
+				// @ts-ignore (access)
 				c.log('state:init:storage', this, stateFields);
 			});
 
@@ -252,7 +252,7 @@ export default class State {
 
 		const
 			c = this.component,
-			// @ts-ignore
+			// @ts-ignore (access)
 			stateFields = c.convertStateToStorageReset();
 
 		this.set(
@@ -260,7 +260,7 @@ export default class State {
 		);
 
 		await this.saveToStorage();
-		// @ts-ignore
+		// @ts-ignore (access)
 		c.log('state:reset:storage', this, stateFields);
 		return true;
 	}
@@ -277,9 +277,9 @@ export default class State {
 		const
 			c = this.component;
 
-		// @ts-ignore
+		// @ts-ignore (access)
 		data = c.syncRouterState(data, 'remote');
-		// @ts-ignore
+		// @ts-ignore (access)
 		this.set(c.syncRouterState(data));
 
 		const
@@ -293,7 +293,7 @@ export default class State {
 			query: data
 		});
 
-		// @ts-ignore
+		// @ts-ignore (access)
 		c.log('state:save:router', this, data);
 		return true;
 	}
@@ -334,7 +334,7 @@ export default class State {
 
 			const
 				route = r.route || {},
-				// @ts-ignore
+				// @ts-ignore (access)
 				stateFields = c.syncRouterState(Object.assign(Object.create(route), route.params, route.query));
 
 			this.set(
@@ -343,7 +343,7 @@ export default class State {
 
 			if (c.syncRouterStoreOnInit) {
 				const
-					// @ts-ignore
+					// @ts-ignore (access)
 					routerState = c.syncRouterState(stateFields, 'remote');
 
 				if (Object.keys(routerState).length) {
@@ -392,7 +392,7 @@ export default class State {
 				}
 			}
 
-			// @ts-ignore
+			// @ts-ignore (access)
 			c.log('state:init:router', this, stateFields);
 
 		}, {
@@ -412,7 +412,7 @@ export default class State {
 
 		const
 			c = this.component,
-			// @ts-ignore
+			// @ts-ignore (access)
 			stateFields = c.convertStateToRouterReset();
 
 		this.set(
@@ -427,7 +427,7 @@ export default class State {
 		}
 
 		await r.push(null);
-		// @ts-ignore
+		// @ts-ignore (access)
 		c.log('state:reset:router', this, stateFields);
 		return true;
 	}

@@ -25,7 +25,7 @@ export default class Opt {
 	 * Cache of ifOnce
 	 */
 	protected get ifOnceStore(): Dictionary {
-		// @ts-ignore
+		// @ts-ignore (access)
 		return this.component.ifOnceStore;
 	}
 

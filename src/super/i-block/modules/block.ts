@@ -85,7 +85,7 @@ export default class Block {
 	 * Local event emitter
 	 */
 	protected get event(): Event {
-		// @ts-ignore
+		// @ts-ignore (access)
 		return this.component.localEvent;
 	}
 

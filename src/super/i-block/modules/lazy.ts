@@ -19,7 +19,7 @@ export default class Lazy {
 	 * Async instance
 	 */
 	protected get async(): Async {
-		// @ts-ignore
+		// @ts-ignore (access)
 		return this.component.async;
 	}
 

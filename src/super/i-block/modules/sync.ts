@@ -48,7 +48,7 @@ export default class Sync {
 	 * Component meta object
 	 */
 	protected get meta(): ComponentMeta {
-		// @ts-ignore
+		// @ts-ignore (access)
 		return this.component.meta;
 	}
 
@@ -70,7 +70,7 @@ export default class Sync {
 	 * Link to the component $activeField
 	 */
 	protected get activeField(): CanUndef<string> {
-		// @ts-ignore
+		// @ts-ignore (access)
 		return this.component.$activeField;
 	}
 
@@ -78,7 +78,7 @@ export default class Sync {
 	 * Cache for prop/field synchronize functions
 	 */
 	protected get syncLinkCache(): SyncLinkCache {
-		// @ts-ignore
+		// @ts-ignore (access)
 		return this.component.$syncLinkCache;
 	}
 
@@ -87,7 +87,7 @@ export default class Sync {
 	 * @param value
 	 */
 	protected set syncLinkCache(value: SyncLinkCache) {
-		// @ts-ignore
+		// @ts-ignore (access)
 		this.component.$syncLinkCache = value;
 	}
 

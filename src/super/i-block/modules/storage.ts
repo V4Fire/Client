@@ -35,7 +35,7 @@ export default class Storage {
 	 * Async instance
 	 */
 	protected get async(): Async {
-		// @ts-ignore
+		// @ts-ignore (access)
 		return this.component.async;
 	}
 
@@ -68,7 +68,7 @@ export default class Storage {
 
 				if (engine) {
 					const res = await engine.get<T>(id, ...args);
-					// @ts-ignore
+					// @ts-ignore (access)
 					this.component.log('storage:load', () => Object.fastClone(res));
 					return res;
 				}
@@ -100,7 +100,7 @@ export default class Storage {
 
 				if (engine) {
 					await engine.set(id, value, ...args);
-					// @ts-ignore
+					// @ts-ignore (access)
 					this.component.log('storage:save', () => Object.fastClone(value));
 				}
 
@@ -132,7 +132,7 @@ export default class Storage {
 
 				if (engine) {
 					await engine.remove(id, ...args);
-					// @ts-ignore
+					// @ts-ignore (access)
 					this.component.log('storage:remove', id);
 				}
 

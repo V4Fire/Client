@@ -188,7 +188,7 @@ export function onActivated<T extends iBlock>(component: T): void {
 	const
 		c = component,
 
-		// @ts-ignore
+		// @ts-ignore (access)
 		{async: $a} = c;
 
 	if (c.isActivated) {
@@ -237,7 +237,7 @@ const nonMuteAsync = {
  */
 export function onDeactivated<T extends iBlock>(component: T): void {
 	const
-		// @ts-ignore
+		// @ts-ignore (access)
 		{async: $a} = component;
 
 	for (let keys = Object.keys(asyncNames), i = 0; i < keys.length; i++) {
