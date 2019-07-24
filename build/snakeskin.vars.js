@@ -11,7 +11,7 @@
 const
 	$C = require('collection.js'),
 	Snakeskin = require('snakeskin'),
-	path = require('path');
+	path = require('upath');
 
 module.exports = {
 	saveTplDir(dirName, ...names) {

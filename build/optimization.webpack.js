@@ -17,9 +17,13 @@ const
 	{inherit, depsRgxpStr} = include('build/build.webpack'),
 	{RUNTIME} = include('build/entities.webpack');
 
-const
-	excludeCustomNodeModules = new RegExp(`(?:^|/)node_modules/(?:${depsRgxpStr})(?:/|$)|^(?:(?!(?:^|/)node_modules/).)*$`),
-	excludeNotCustomNodeModules = new RegExp(`^(?:(?!(?:^|/)node_modules/).)*/?node_modules/(?:(?!${depsRgxpStr}).)*$`);
+const includeCustomNodeModules = new RegExp(
+	`(?:^|[\\\\/])node_modules[\\/](?:${depsRgxpStr})(?:[\\\\/]|$)|^(?:(?!(?:^|[\\\\/])node_modules[\\\\/]).)*$`
+);
+
+const includeNotCustomNodeModules = new RegExp(
+	`^(?:(?!(?:^|[\\\\/])node_modules[\\\\/]).)*[\\\\/]?node_modules[\\\\/](?:(?!${depsRgxpStr}).)*$`
+);
 
 /**
  * Returns a list of webpack optimizations
@@ -46,17 +50,17 @@ module.exports = async function ({buildId, plugins}) {
 					minChunks: 2,
 					enforce: true,
 					reuseExistingChunk: true,
-					test: excludeCustomNodeModules
+					test: includeCustomNodeModules
 				},
 
 				vendor: {
 					name: 'vendor.js',
 					chunks: 'all',
 					priority: 1,
-					minChunks: 2,
+					minChunks: 1,
 					enforce: true,
 					reuseExistingChunk: true,
-					test: excludeNotCustomNodeModules
+					test: includeNotCustomNodeModules
 				}
 			}
 		};

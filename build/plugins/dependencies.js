@@ -13,7 +13,7 @@ const
 
 const
 	fs = require('fs'),
-	path = require('path'),
+	path = require('upath'),
 	hash = include('build/hash');
 
 const

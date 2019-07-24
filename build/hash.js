@@ -27,7 +27,7 @@ module.exports = function (value, length = webpack.hashLength) {
 	}
 
 	const
-		path = require('path'),
+		path = require('upath'),
 		hasha = require('hasha'),
 		hashFiles = require('hash-files');
 
