@@ -42,7 +42,7 @@ export default class InViewAdapter {
 	}
 
 	/**
-	 * Checks an adaptee type for the 'mutation' value
+	 * Returns true if an adaptee type is 'mutation'
 	 * @param adaptee
 	 */
 	isMutation(adaptee: Observers): adaptee is MutationObserverStrategy {
@@ -50,7 +50,7 @@ export default class InViewAdapter {
 	}
 
 	/**
-	 * Checks an adaptee type for the 'observer' value
+	 * Returns true if an adaptee type is 'observer'
 	 * @param adaptee
 	 */
 	isIntersection(adaptee: Observers): adaptee is IntersectionObserverStrategy {
@@ -58,21 +58,21 @@ export default class InViewAdapter {
 	}
 
 	/**
-	 * Starts observe an element
+	 * Starts observing the specified element
 	 *
 	 * @param el
-	 * @param options
+	 * @param opts
 	 */
-	observe(el: HTMLElement, options: InitOptions): ObservableElement | false {
+	observe(el: HTMLElement, opts: InitOptions): ObservableElement | false {
 		if (!this.adaptee) {
 			return false;
 		}
 
-		return this.adaptee.observe(el, this.normalizeOptions(options));
+		return this.adaptee.observe(el, this.normalizeOptions(opts));
 	}
 
 	/**
-	 * Activates deactivated elements by specified group
+	 * Activates deactivated elements by the specified group
 	 * @param [group]
 	 */
 	activate(group?: string): void {
@@ -84,7 +84,7 @@ export default class InViewAdapter {
 	}
 
 	/**
-	 * Deactivates elements by specified group
+	 * Deactivates elements by the specified group
 	 * @param [group]
 	 */
 	deactivate(group?: string): void {
@@ -108,7 +108,7 @@ export default class InViewAdapter {
 	}
 
 	/**
-	 * Stops observe an element
+	 * Stops observing the specified element
 	 * @param el
 	 */
 	stopObserve(el: HTMLElement): boolean {
@@ -120,7 +120,7 @@ export default class InViewAdapter {
 	}
 
 	/**
-	 * Checks is elements in view
+	 * Checks if elements is in view
 	 */
 	check(): void {
 		if (!this.adaptee || this.isIntersection(this.adaptee)) {
@@ -131,7 +131,7 @@ export default class InViewAdapter {
 	}
 
 	/**
-	 * Recalculates elements position map
+	 * Recalculates the elements position map
 	 * @param deffer
 	 */
 	recalculate(deffer: boolean): void {
@@ -171,16 +171,18 @@ export default class InViewAdapter {
 	}
 
 	/**
-	 * Normalize directive options
-	 * @param options
+	 * Normalizes the specified directive options
+	 * @param opts
 	 */
-	protected normalizeOptions(options: InitOptions): InitOptions {
+	protected normalizeOptions(opts: InitOptions): InitOptions {
 		// tslint:disable: deprecation
-		if (options.timeout) {
-			options.delay = options.timeout;
+
+		if (opts.timeout) {
+			opts.delay = opts.timeout;
 		}
+
 		// tslint:enable: deprecation
 
-		return options;
+		return opts;
 	}
 }

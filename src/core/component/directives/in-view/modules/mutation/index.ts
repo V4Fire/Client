@@ -129,9 +129,9 @@ export default class InView extends Super {
 	}
 
 	/** @override */
-	observe(el: HTMLElement, options: IntersectionObserverOptions & ObserveOptions): ObservableElement | false {
+	observe(el: HTMLElement, opts: IntersectionObserverOptions & ObserveOptions): ObservableElement | false {
 		const
-			observable = super.observe(el, options);
+			observable = super.observe(el, opts);
 
 		if (!observable) {
 			return false;
@@ -159,7 +159,7 @@ export default class InView extends Super {
 	}
 
 	/**
-	 * Stops observes an element
+	 * Stops observing the specified element
 	 * @param el
 	 */
 	stopObserve(el: HTMLElement): boolean {

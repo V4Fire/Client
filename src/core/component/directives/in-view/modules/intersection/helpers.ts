@@ -13,7 +13,8 @@ export const hasIntersection =
 	typeof IntersectionObserverEntry === 'function' &&
 	'intersectionRatio' in IntersectionObserverEntry.prototype;
 
-let isSupportsDelay;
+let
+	isSupportsDelay;
 
 /**
  * Detects delay feature support

@@ -23,7 +23,7 @@ export interface ObserveOptions {
 	handleTransitionEnd?: boolean;
 
 	/**
-	 * Should count view of element
+	 * Should count view of an element
 	 */
 	count?: (() => boolean) | boolean;
 
@@ -44,20 +44,21 @@ export interface ObserveOptions {
 	timeout?: number;
 
 	/**
-	 * How an element should be deactivated after he was seen, only if once is set to true
+	 * How an element should be deactivated after he was seen (only if once is set to true)
+	 *
 	 *   *) remove - element will be removed from inView directive
 	 *
-	 *   *) deactivate - element will not be removed from inView directive, he will be deactivated after was seen,
-	 *      you can activate specified element later, he will become observable again
+	 *   *) deactivate - element will not be removed from inView directive: he will be deactivated after was seen
+	 *      (you can activate the specified element later, and he will become observable again)
 	 */
 	removeStrategy?: RemoveStrategy;
 
 	/**
-	 * Only for environments that do not support intersection observer.
+	 * Only for environments that doesn't support intersection observer.
 	 *
-	 * If set to true, the element will not be placed in the position map;
+	 * If true, the element will not be placed in the position map;
 	 * instead, the method of polling the positions of the elements will be used.
-	 * Every 75 milliseconds, each element being observed will be asked about its position using getBoundingClientRect
+	 * Every 75 milliseconds each observable elements will be asked about its position using getBoundingClientRect
 	 *
 	 * Notice: May slowdown your app performance, use it carefully
 	 */
@@ -83,9 +84,9 @@ export interface IntersectionObserverOptions {
 	delay?: number;
 
 	/**
-	 * Notice: Visibility is much more expensive to compute than intersection. For that reason,
+	 * Notice: Compute of visibility is more expensive than intersection. For that reason,
 	 * Intersection Observer v2 is not intended to be used broadly in the way that Intersection Observer v1 is.
-	 * Intersection Observer v2 is focused on combatting fraud and should be used only when
+	 * Intersection Observer v2 is focused on combating fraud and should be used only when
 	 * Intersection Observer v1 functionality is truly insufficient.
 	 */
 	trackVisibility?: boolean;

@@ -24,7 +24,7 @@ export function getAdaptee<T extends {acceptable: boolean}>(strategies: T[]): Ca
 }
 
 /**
- * Returns true if an element is in view
+ * Returns true if the specified element is in view
  *
  * @param el
  * @param [threshold]

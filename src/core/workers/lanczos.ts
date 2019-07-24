@@ -98,7 +98,7 @@ class Resizer {
 	}
 
 	/**
-	 * Starts image processing for the specified column
+	 * Starts an image processing for the specified column
 	 * @param column
 	 */
 	process(column: number): void {

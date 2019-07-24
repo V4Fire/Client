@@ -18,7 +18,7 @@ export default class bV4ComponentDemo extends iBlock {
 	protected debugComponent?: iBlock;
 
 	/**
-	 * Starts debugs the specified component
+	 * Starts debugging the specified component
 	 * @param component
 	 */
 	debug(component: iBlock): void {

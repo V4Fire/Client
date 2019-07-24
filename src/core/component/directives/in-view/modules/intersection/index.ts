@@ -36,7 +36,7 @@ export default class InView extends Super {
 	protected readonly observers: Dictionary<IntersectionObserver> = {};
 
 	/**
-	 * True, if IntersectionObserver supports delay property
+	 * True if IntersectionObserver is supports delay property
 	 */
 	protected readonly supportsDelay: boolean = supportsDelay();
 
@@ -63,7 +63,7 @@ export default class InView extends Super {
 	}
 
 	/**
-	 * Stops observe an element
+	 * Stops observing the specified element
 	 * @param el
 	 */
 	stopObserve(el: HTMLElement): boolean {
