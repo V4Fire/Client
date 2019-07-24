@@ -69,7 +69,7 @@ export default class InViewAdapter {
 			return false;
 		}
 
-		return this.adaptee.observe(el, options);
+		return this.adaptee.observe(el, this.normalizeOptions(options));
 	}
 
 	/**
@@ -169,5 +169,21 @@ export default class InViewAdapter {
 		}
 
 		return this.adaptee.get(el);
+	}
+
+	/**
+	 * Normalize directive options
+	 * @param options
+	 */
+	protected normalizeOptions(
+		options: IntersectionObserverOptions & ObserveOptions
+	): IntersectionObserverOptions & ObserveOptions {
+		// tslint:disable: deprecation
+		if (options.timeout) {
+			options.delay = options.timeout;
+		}
+		// tslint:enable: deprecation
+
+		return options;
 	}
 }

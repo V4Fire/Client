@@ -16,14 +16,31 @@ export interface Observable {
 }
 
 export interface ObserveOptions {
-	callback?: Function;
 	onEnter?: Function;
 	onLeave?: Function;
-	count?: Function | boolean;
 	group?: string;
 	once?: boolean;
-	timeout?: number;
 	handleTransitionEnd?: boolean;
+
+	/**
+	 * Should count view of element
+	 */
+	count?: (() => boolean) | boolean;
+
+	/**
+	 * Callback that will be executed after the delay
+	 */
+	callback?: Function;
+
+	/**
+	 * Delay before callback execution
+	 */
+	delay?: number;
+
+	/**
+	 * @deprecated use delay param instead, timeout will be removed in next major release
+	 */
+	timeout?: number;
 
 	/**
 	 * How an element should be deactivated after he was seen, only if once is set to true
@@ -62,8 +79,8 @@ export interface ElementRect {
 
 export interface IntersectionObserverOptions {
 	threshold: number;
-	delay: number;
-	trackVisibility: boolean;
+	delay?: number;
+	trackVisibility?: boolean;
 }
 
 export interface DirectiveOptions extends VNodeDirective {
