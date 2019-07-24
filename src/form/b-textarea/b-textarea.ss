@@ -13,8 +13,8 @@
 - template index() extends ['b-input'].index
 	- block wrapper
 		< b-scroll-inline.&__scroll &
-			v-func = isFunctional |
 			ref = scroll |
+			v-func = isFunctional |
 			:mods = provide.mods({
 				theme: 'light',
 				width: 'full',
