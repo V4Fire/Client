@@ -16,14 +16,32 @@ export interface Observable {
 }
 
 export interface ObserveOptions {
-	callback?: Function;
 	onEnter?: Function;
 	onLeave?: Function;
-	count?: Function | boolean;
 	group?: string;
 	once?: boolean;
-	timeout?: number;
 	handleTransitionEnd?: boolean;
+
+	/**
+	 * Should count view of element
+	 */
+	count?: (() => boolean) | boolean;
+
+	/**
+	 * Callback that will be executed after the delay
+	 */
+	callback?: Function;
+
+	/**
+	 * Delay before callback execution
+	 * @see https://w3c.github.io/IntersectionObserver/v2/#dom-intersectionobserver-delay
+	 */
+	delay?: number;
+
+	/**
+	 * @deprecated use delay param instead, timeout will be removed after beta ends
+	 */
+	timeout?: number;
 
 	/**
 	 * How an element should be deactivated after he was seen, only if once is set to true
@@ -62,6 +80,15 @@ export interface ElementRect {
 
 export interface IntersectionObserverOptions {
 	threshold: number;
+	delay?: number;
+
+	/**
+	 * Notice: Visibility is much more expensive to compute than intersection. For that reason,
+	 * Intersection Observer v2 is not intended to be used broadly in the way that Intersection Observer v1 is.
+	 * Intersection Observer v2 is focused on combatting fraud and should be used only when
+	 * Intersection Observer v1 functionality is truly insufficient.
+	 */
+	trackVisibility?: boolean;
 }
 
 export interface DirectiveOptions extends VNodeDirective {

@@ -320,44 +320,6 @@ export default class InView extends Super {
 		return observable;
 	}
 
-	/**
-	 * Handler: element becomes visible on viewport
-	 * @param observable
-	 */
-	protected onObservableIn(observable: ObservableElement): void {
-		const asyncOptions = {
-			group: 'inView',
-			label: observable.id,
-			join: true
-		};
-
-		if (observable.onLeave) {
-			observable.onLeave(observable);
-		}
-
-		observable.isLeaving = true;
-		this.async.setTimeout(() => this.call(observable), observable.timeout || 0, asyncOptions);
-	}
-
-	/**
-	 * Handler: element leaves viewport
-	 * @param observable
-	 */
-	protected onObservableOut(observable: ObservableElement): void {
-		const asyncOptions = {
-			group: 'inView',
-			label: observable.id,
-			join: true
-		};
-
-		if (observable.onEnter) {
-			observable.onEnter(observable);
-		}
-
-		observable.isLeaving = false;
-		this.async.clearAll(asyncOptions);
-	}
-
 	/** @override */
 	protected getElMap(el: HTMLElement): Map<HTMLElement, ObservableElement> {
 		if (this.awaitingElements.has(el)) {
@@ -378,5 +340,43 @@ export default class InView extends Super {
 		});
 
 		super.clearAllAsync(el);
+	}
+
+	/**
+	 * Handler: element becomes visible on viewport
+	 * @param observable
+	 */
+	protected onObservableIn(observable: ObservableElement): void {
+		const asyncOptions = {
+			group: 'inView',
+			label: observable.id,
+			join: true
+		};
+
+		if (Object.isFunction(observable.onLeave)) {
+			observable.onLeave(observable);
+		}
+
+		observable.isLeaving = true;
+		this.async.setTimeout(() => this.call(observable), observable.delay || 0, asyncOptions);
+	}
+
+	/**
+	 * Handler: element leaves viewport
+	 * @param observable
+	 */
+	protected onObservableOut(observable: ObservableElement): void {
+		const asyncOptions = {
+			group: 'inView',
+			label: observable.id,
+			join: true
+		};
+
+		if (Object.isFunction(observable.onEnter)) {
+			observable.onEnter(observable);
+		}
+
+		observable.isLeaving = false;
+		this.async.clearAll(asyncOptions);
 	}
 }
