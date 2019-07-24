@@ -20,7 +20,7 @@ const
 const
 	path = require('upath'),
 	build = include('build/entities.webpack'),
-	depsRgxp = new RegExp(`(?:^|/)node_modules/(?:(?!${depsRgxpStr}).)*?(?:/|$)`);
+	depsRgxp = new RegExp(`(?:^|[\\/])node_modules[\\/](?:(?!${depsRgxpStr}).)*?(?:[\\/]|$)`);
 
 const
 	snakeskin = config.snakeskin(),
@@ -48,7 +48,7 @@ module.exports = async function ({buildId, plugins}) {
 
 	if (buildId === build.RUNTIME) {
 		loaders.rules.set('ts', {
-			test: /^(?:(?!\/workers\/).)*(?:\.d)?\.ts$/,
+			test: /^(?:(?![\\/]workers[\\/]).)*(?:\.d)?\.ts$/,
 			exclude: depsRgxp,
 			use: [
 				{
@@ -80,7 +80,7 @@ module.exports = async function ({buildId, plugins}) {
 		});
 
 		loaders.rules.set('ts.workers', {
-			test: /\/workers\/.*?(?:\.d)?\.ts$/,
+			test: /[\\/]workers[\\/].*?(?:\.d)?\.ts$/,
 			exclude: depsRgxp,
 			use: [
 				{

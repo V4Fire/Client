@@ -210,6 +210,9 @@
 							}
 
 					- block scripts
+						+= self.jsScript(false, false, @nonce)
+							+= self.addScriptDep('vendor', {optional: true})
+
 						+= self.addDependencies('scripts')
 
 						+= self.jsScript(false, false, @nonce)

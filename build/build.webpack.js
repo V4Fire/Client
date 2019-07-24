@@ -19,7 +19,10 @@ const
 /**
  * String with project dependencies for using with regular expressions
  */
-exports.depsRgxpStr = dependencies.map((el) => RegExp.escape(el || el.src)).join('|');
+exports.depsRgxpStr = dependencies.map((el) => {
+	const src = Object.isString(el) ? el : el.src;
+	return src.split(/[\\/]/).map(RegExp.escape).join('[\\\\/]');
+}).join('|');
 
 /**
  * Output pattern
