@@ -11,8 +11,7 @@ import IntersectionObserverStrategy from 'core/component/directives/in-view/modu
 
 import {
 
-	IntersectionObserverOptions,
-	ObserveOptions,
+	InitOptions,
 	ObservableElement
 
 } from 'core/component/directives/in-view/modules/meta';
@@ -64,7 +63,7 @@ export default class InViewAdapter {
 	 * @param el
 	 * @param options
 	 */
-	observe(el: HTMLElement, options: IntersectionObserverOptions & ObserveOptions): ObservableElement | false {
+	observe(el: HTMLElement, options: InitOptions): ObservableElement | false {
 		if (!this.adaptee) {
 			return false;
 		}
@@ -175,9 +174,7 @@ export default class InViewAdapter {
 	 * Normalize directive options
 	 * @param options
 	 */
-	protected normalizeOptions(
-		options: IntersectionObserverOptions & ObserveOptions
-	): IntersectionObserverOptions & ObserveOptions {
+	protected normalizeOptions(options: InitOptions): InitOptions {
 		// tslint:disable: deprecation
 		if (options.timeout) {
 			options.delay = options.timeout;
