@@ -164,7 +164,10 @@ export default class InView extends Super {
 			observable.onEnter(observable);
 		}
 
-		if (!supportsDelay) {
+		if (supportsDelay) {
+			this.call(observable);
+
+		} else {
 			$a.setTimeout(() => this.call(observable), observable.delay || 0, asyncOptions);
 		}
 
