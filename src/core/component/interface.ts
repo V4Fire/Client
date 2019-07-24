@@ -96,6 +96,8 @@ export interface WatchOptionsWithHandler<
 	A = unknown,
 	B = A
 > extends WatchOptions {
+	join?: boolean | 'replace';
+	label?: string | symbol;
 	group?: string;
 	single?: boolean;
 	functional?: boolean;
@@ -285,7 +287,7 @@ export class ComponentInterface<
 	protected readonly $vnode!: VNode;
 	protected readonly $attrs!: Dictionary<string>;
 	protected readonly $listeners!: Dictionary<Function | Function[]>;
-	protected readonly $activeField!: string;
+	protected readonly $activeField?: string;
 	protected readonly $syncLinkCache!: SyncLinkCache;
 	protected $createElement!: CreateElement;
 

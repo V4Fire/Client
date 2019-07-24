@@ -97,14 +97,8 @@ export default abstract class iStaticPage<
 
 	/** @override */
 	// @ts-ignore
-	get route(): CurrentPage<P, Q, M> {
-		return this.field.get('routeStore') || <CurrentPage<P, Q, M>>{
-			page: '',
-			index: false,
-			params: {},
-			query: {},
-			meta: {type: 'loopback'}
-		};
+	get route(): CanUndef<CurrentPage<P, Q, M>> {
+		return this.field.get('routeStore');
 	}
 
 	/**
@@ -112,7 +106,7 @@ export default abstract class iStaticPage<
 	 * @emits setRoute(value: CanUndef<CurrentPage<P, Q, M>>)
 	 */
 	// @ts-ignore
-	set route(value: CurrentPage<P, Q, M>) {
+	set route(value: CanUndef<CurrentPage<P, Q, M>>) {
 		this.field.set('routeStore', value);
 		this.emit('setRoute', value);
 	}

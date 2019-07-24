@@ -6,6 +6,8 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import { RequestQuery, CreateRequestOpts } from 'core/request/interface';
+
 export type ModelMethods =
 	'peek' |
 	'get' |
@@ -21,7 +23,17 @@ export type SocketEvent<T = unknown> = (() => Dictionary<T>) | {
 };
 
 export interface ProviderParams {
+	extraProviders?: FunctionalExtraProviders;
 	listenAllEvents?: boolean;
 	externalRequest?: boolean;
 	socket?: boolean;
 }
+
+export interface ExtraProvider {
+	query?: RequestQuery;
+	requestOpts?: CreateRequestOpts;
+	providerParams?: ProviderParams;
+}
+
+export type ExtraProviders = Dictionary<Nullable<ExtraProvider>>;
+export type FunctionalExtraProviders = ExtraProviders | (() => CanUndef<ExtraProviders>);

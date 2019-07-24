@@ -30,7 +30,7 @@ export function initGlobalEvents(component: iBlock, resetListener?: boolean): vo
 		c = component;
 
 	const
-		// @ts-ignore
+		// @ts-ignore (access)
 		{globalName, globalEvent: $e, state: $s, state: {needRouterSync}} = c;
 
 	resetListener = Boolean(
@@ -100,7 +100,7 @@ export function initGlobalEvents(component: iBlock, resetListener?: boolean): vo
 export function initRemoteWatchers(component: iBlock): void {
 	const
 		c = component,
-		// @ts-ignore
+		// @ts-ignore (access)
 		w = c.meta.watchers,
 		o = c.watchProp;
 

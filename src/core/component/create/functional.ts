@@ -173,6 +173,7 @@ export function createFakeCtx<T extends object = FunctionalCtx>(
 
 		$listeners: renderCtx.listeners || opts && opts.on || {},
 		$refs: {},
+		$destroyedHooks: {},
 
 		$slots: {
 			default: children && children.length ? children : undefined,
@@ -195,12 +196,22 @@ export function createFakeCtx<T extends object = FunctionalCtx>(
 
 			if (parent) {
 				const
-					hooks = parent.meta.hooks;
+					{hooks} = parent.meta,
+					{$destroyedHooks} = this;
 
 				for (let o = destroyCheckHooks, i = 0; i < o.length; i++) {
 					const
-						hook = o[i],
+						hook = o[i];
+
+					if ($destroyedHooks[hook]) {
+						continue;
+					}
+
+					const
 						filteredHooks = <unknown[]>[];
+
+					let
+						hasChanges = false;
 
 					for (let list = hooks[hook], j = 0; j < list.length; j++) {
 						const
@@ -208,10 +219,17 @@ export function createFakeCtx<T extends object = FunctionalCtx>(
 
 						if (el.fn[$$.self] !== fakeCtx) {
 							filteredHooks.push(el);
+
+						} else {
+							hasChanges = true;
 						}
 					}
 
-					hooks[hook] = filteredHooks;
+					if (hasChanges) {
+						hooks[hook] = filteredHooks;
+					}
+
+					$destroyedHooks[hook] = true;
 				}
 			}
 
@@ -568,10 +586,23 @@ export function patchVNode(vnode: VNode, ctx: ComponentInterface, renderCtx: Ren
 			onClear: () => ctx.$destroy()
 		});
 
+		const
+			// @ts-ignore (access)
+			{$destroyedHooks} = ctx;
+
 		for (let o = (<string[]>[]).concat(mountHooks, parentHook || []), i = 0; i < o.length; i++) {
 			const
-				hook = o[i],
+				hook = o[i];
+
+			if ($destroyedHooks[hook]) {
+				continue;
+			}
+
+			const
 				filteredHooks = <unknown[]>[];
+
+			let
+				hasChanges = false;
 
 			for (let list = hooks[hook], j = 0; j < list.length; j++) {
 				const
@@ -579,10 +610,17 @@ export function patchVNode(vnode: VNode, ctx: ComponentInterface, renderCtx: Ren
 
 				if (el.fn[$$.self] !== ctx) {
 					filteredHooks.push(el);
+
+				} else {
+					hasChanges = true;
 				}
 			}
 
-			hooks[hook] = filteredHooks;
+			if (hasChanges) {
+				hooks[hook] = filteredHooks;
+			}
+
+			$destroyedHooks[hook] = true;
 		}
 	};
 

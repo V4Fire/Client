@@ -19,7 +19,7 @@ import Super, {
 } from '@v4fire/core/core/async';
 
 export * from '@v4fire/core/core/async';
-export interface AsyncRequestAnimationFrameOpts<T extends object = Async> extends AsyncCbOpts<T> {
+export interface AsyncRequestAnimationFrameOpts<CTX extends object = Async> extends AsyncCbOpts<CTX> {
 	element?: Element;
 }
 

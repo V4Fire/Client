@@ -34,7 +34,7 @@ export function mergeMods<T extends iBlock>(
 	}
 
 	const
-		// @ts-ignore
+		// @ts-ignore (access)
 		cache = component.$syncLinkCache[link];
 
 	if (!cache) {
@@ -78,7 +78,7 @@ export function mergeMods<T extends iBlock>(
 		const
 			key = keys[i];
 
-		// @ts-ignore
+		// @ts-ignore (access)
 		if (component.sync.syncModCache[key]) {
 			delete mods[key];
 		}
@@ -99,12 +99,12 @@ export function mergeMods<T extends iBlock>(
  */
 export function initMods<T extends iBlock>(component: T): ModsNTable {
 	const
-		// @ts-ignore
+		// @ts-ignore (access)
 		declMods = component.meta.component.mods,
 		attrMods = <string[][]>[],
 		modVal = (val) => val != null ? String(val) : undefined;
 
-	// @ts-ignore
+	// @ts-ignore (access)
 	for (let attrs = component.$attrs, keys = Object.keys(attrs), i = 0; i < keys.length; i++) {
 		const
 			key = keys[i];

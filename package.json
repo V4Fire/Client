@@ -5,7 +5,7 @@
   "main": "src/core/index.js",
   "typings": "index.d.ts",
   "license": "MIT",
-  "version": "3.0.0-beta.84",
+  "version": "3.0.0-beta.99",
   "author": {
     "name": "kobezzza",
     "email": "kobezzza@gmail.com",
@@ -26,7 +26,7 @@
     "test": "echo \"Error: no test specified\" && exit 0"
   },
   "dependencies": {
-    "@v4fire/core": "^3.0.0-beta.49",
+    "@v4fire/core": "^3.0.0-beta.52",
     "babel-polyfill": "^6.26.0",
     "escaper": "^3.0.2",
     "eventemitter2": "^5.0.1",
@@ -100,7 +100,7 @@
     "svg-sprite-loader": "^4.1.6",
     "svg-url-loader": "^3.0.0",
     "svgo": "^1.2.2",
-    "svgo-loader": "^3.0.0",
+    "svgo-loader": "^2.2.1",
     "svgo-sync": "^0.5.1",
     "ts-loader": "^6.0.4",
     "typograf": "^6.8.2",
@@ -115,7 +115,7 @@
   },
   "devDependencies": {
     "babel-eslint": "^10.0.2",
-    "eslint": "^6.0.1",
+    "eslint": "^6.1.0",
     "stlint": "^1.0.53",
     "stlint-v4fire": "^1.0.20",
     "tslint": "^5.18.0"

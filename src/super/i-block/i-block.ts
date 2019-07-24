@@ -83,6 +83,7 @@ import {
 	hook,
 	getFieldRealInfo,
 	cloneWatchValue,
+	bindWatchers,
 
 	VNode,
 	ComponentInterface,
@@ -155,6 +156,10 @@ export const
 	$$ = symbolGenerator(),
 	modsCache = Object.createDict<ModsNTable>();
 
+const
+	isCustomWatcher = /:/,
+	readyStatuses = {beforeReady: true, ready: true};
+
 @component()
 export default abstract class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	/**
@@ -203,6 +208,12 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	 */
 	@prop(Boolean)
 	readonly needReInit: boolean = false;
+
+	/**
+	 * If true, then the component will be listen a parent component for proxy events
+	 */
+	@prop(Boolean)
+	readonly proxyCall: boolean = false;
 
 	/**
 	 * Initial component modifiers
@@ -294,7 +305,9 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 
 	/**
 	 * Sets a new component initialize status
+	 *
 	 * @param value
+	 * @emits status${$value}(value: Statuses)
 	 */
 	set componentStatus(value: Statuses) {
 		const
@@ -304,7 +317,10 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 			return;
 		}
 
-		if ((<typeof iBlock>this.instance.constructor).shadowComponentStatuses[value]) {
+		const
+			isShadowStatus = (<typeof iBlock>this.instance.constructor).shadowComponentStatuses[value];
+
+		if (isShadowStatus || value === 'ready' && old === 'beforeReady') {
 			this.shadowComponentStatusStore = value;
 
 		} else {
@@ -312,8 +328,10 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 			this.field.set('componentStatusStore', value);
 		}
 
-		this.setMod('status', value);
-		this.emit(`status-${value}`, value);
+		if (!this.isFlyweight) {
+			this.setMod('status', value);
+			this.emit(`status-${value}`, value);
+		}
 	}
 
 	/**
@@ -336,6 +354,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 			return;
 		}
 
+		this.async.clearAll({group: `stage.${oldValue}`});
 		this.field.set('stageStore', value);
 		this.emit('stageChange', value, oldValue);
 	}
@@ -410,16 +429,16 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	 * Link to the root route object
 	 */
 	@p({cache: false})
-	get route(): CurrentPage {
-		return <CurrentPage>this.field.get('route', this.$root);
+	get route(): CanUndef<CurrentPage> {
+		return this.field.get('route', this.$root);
 	}
 
 	/**
 	 * True if the current component is ready (componentStatus == ready)
 	 */
-	@p({replace: false})
+	@p({cache: false, replace: false})
 	get isReady(): boolean {
-		return this.componentStatus === 'ready';
+		return Boolean(readyStatuses[this.componentStatus]);
 	}
 
 	/**
@@ -516,7 +535,6 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	 * Component shadow statuses
 	 */
 	static readonly shadowComponentStatuses: ComponentStatuses = {
-		beforeReady: true,
 		inactive: true,
 		destroyed: true,
 		unloaded: true
@@ -680,7 +698,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	/**
 	 * Component initialize status store
 	 */
-	@system({unique: true})
+	@field({unique: true})
 	protected componentStatusStore: Statuses = 'unloaded';
 
 	/**
@@ -787,6 +805,12 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	})
 
 	protected daemons!: Daemons;
+
+	/**
+	 * List of block ready listeners
+	 */
+	@system()
+	protected blockReadyListeners: Function[] = [];
 
 	/**
 	 * Local event emitter
@@ -983,10 +1007,24 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 			return;
 		}
 
-		this.lfc.execCbAfterComponentCreated(() => {
-			const
-				p = params || {};
+		const
+			p = params || {};
 
+		if (Object.isString(exprOrFn) && isCustomWatcher.test(exprOrFn)) {
+			bindWatchers(this, {
+				async: <Async<any>>this.async,
+				watchers: {
+					[exprOrFn]: [{
+						handler: (ctx, ...args: unknown[]) => cb.call(this, ...args),
+						...p
+					}]
+				}
+			});
+
+			return;
+		}
+
+		this.lfc.execCbAfterComponentCreated(() => {
 			const watcher = this.$$watch(exprOrFn, {
 				handler: cb,
 				deep: p.deep,
@@ -1745,17 +1783,6 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	}
 
 	/**
-	 * Synchronization for the stageStore field
-	 *
-	 * @param value
-	 * @param [oldValue]
-	 */
-	@watch({field: '!:onStageChange', functional: false})
-	protected syncStageWatcher(value?: Stage, oldValue?: Stage): void {
-		this.async.clearAll({group: `stage.${oldValue}`});
-	}
-
-	/**
 	 * Initializes component instance
 	 */
 	@hook('mounted')
@@ -1774,7 +1801,10 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 		}
 
 		this.block = new Block(this);
-		this.onBlockReady();
+
+		for (let i = 0; i < this.blockReadyListeners.length; i++) {
+			this.blockReadyListeners[i]();
+		}
 	}
 
 	/**
@@ -1803,17 +1833,21 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	}
 
 	/**
-	 * Handler: block instance initialized
+	 * Initializes callChild event listener
 	 */
-	protected onBlockReady(): void {
-		return undefined;
+	@watch({field: 'proxyCall', immediate: true})
+	protected initCallChildListener(value: boolean): void {
+		if (!value) {
+			return;
+		}
+
+		this.parentEvent.on('onCallChild', this.onCallChild);
 	}
 
 	/**
 	 * Handler: parent call child event
 	 * @param e
 	 */
-	@watch({field: 'parentEvent:onCallChild', functional: false})
 	protected onCallChild(e: ParentMessage): void {
 		if (
 			e.check[0] !== 'instanceOf' && e.check[1] === this[e.check[0]] ||

@@ -33,6 +33,7 @@ ComponentDriver.directive('in-view', {
 		}
 
 		if (!InView.hasAdaptee) {
+			// @ts-ignore
 			InView.setInstance(new Adaptee());
 		}
 

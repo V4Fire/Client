@@ -26,7 +26,7 @@ export default class DOM {
 	 * Block instance
 	 */
 	protected get block(): Block {
-		// @ts-ignore
+		// @ts-ignore (access)
 		return this.component.block;
 	}
 
@@ -154,7 +154,7 @@ export default class DOM {
 
 		node.replaceWith(newNode);
 
-		// @ts-ignore
+		// @ts-ignore (access)
 		return this.component.async.worker(() => {
 			if (newNode.parentNode) {
 				newNode.parentNode.removeChild(newNode);

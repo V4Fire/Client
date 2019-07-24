@@ -8,14 +8,16 @@
 
 import symbolGenerator from 'core/symbol';
 
-import Super from 'core/component/directives/in-view/modules/super';
 import { ObservableElement, IntersectionObserverOptions } from 'core/component/directives/in-view/modules/meta';
 import { hasIntersection } from 'core/component/directives/in-view/modules/intersection/helpers';
 
+import Super from 'core/component/directives/in-view/modules/super';
+
+export type AdapteeType =
+	'observer';
+
 export const
 	$$ = symbolGenerator();
-
-export type AdapteeType = 'observer';
 
 export default class InView extends Super {
 	/**
@@ -56,7 +58,7 @@ export default class InView extends Super {
 	}
 
 	/**
-	 * Stop observe an element
+	 * Stops observe an element
 	 * @param el
 	 */
 	stopObserve(el: HTMLElement): boolean {
@@ -138,10 +140,18 @@ export default class InView extends Super {
 			};
 
 			if (observable.isLeaving) {
+				if (observable.onLeave) {
+					observable.onLeave(observable);
+				}
+
 				observable.isLeaving = false;
 				$a.clearAll(asyncOptions);
 
 			} else if (entry.intersectionRatio >= observable.threshold && !observable.isDeactivated) {
+				if (observable.onEnter) {
+					observable.onEnter(observable);
+				}
+
 				observable.isLeaving = true;
 				$a.setTimeout(() => this.call(observable), observable.timeout || 0, asyncOptions);
 			}

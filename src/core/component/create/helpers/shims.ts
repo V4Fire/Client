@@ -142,12 +142,43 @@ const
 export function parseVAttrs(data: VNodeData, isComponent?: boolean): void {
 	const
 		attrs = data.attrs = data.attrs || {},
-		attrsSpreadObj = attrs['v-attrs'];
+		attrsSpreadObj = attrs['v-attrs'],
+		slotsSpreadObj = attrs['v-slots'];
 
-	if (attrsSpreadObj && Object.isSimpleObject(attrsSpreadObj)) {
+	if (Object.isObject(slotsSpreadObj)) {
 		const
-			eventOpts = data.on = data.on || {},
-			nativeEventOpts = data.nativeOn = data.nativeOn || {},
+			slotOpts: Dictionary = data.scopedSlots || {};
+
+		for (let keys = Object.keys(slotsSpreadObj), i = 0; i < keys.length; i++) {
+			const
+				key = keys[i];
+
+			let nm = `@${key}`;
+			nm = slotOpts[nm] ? nm : '@';
+
+			if (slotOpts[nm]) {
+				const
+					fn = slotOpts[nm];
+
+				slotOpts[key] = (obj) => {
+					obj.slotContent = slotsSpreadObj[key];
+					return (<Function>fn)(obj);
+				};
+
+				if (nm === '@') {
+					delete slotOpts[nm];
+				}
+			}
+		}
+
+		delete slotOpts['@'];
+		delete attrs['v-slots'];
+	}
+
+	if (Object.isObject(attrsSpreadObj)) {
+		const
+			eventOpts: Dictionary = data.on = data.on || {},
+			nativeEventOpts: Dictionary = data.nativeOn = data.nativeOn || {},
 			directiveOpts = data.directives = data.directives || [];
 
 		for (let keys = Object.keys(attrsSpreadObj), i = 0; i < keys.length; i++) {
@@ -170,7 +201,7 @@ export function parseVAttrs(data: VNodeData, isComponent?: boolean): void {
 						flags[eventChunks[i]] = true;
 					}
 
-					event = eventChunks[0];
+					event = eventChunks[0].dasherize();
 
 					if (flags.native) {
 						if (flags.right) {
@@ -206,7 +237,7 @@ export function parseVAttrs(data: VNodeData, isComponent?: boolean): void {
 									e.stopPropagation();
 								}
 
-								return originalFn(e);
+								return (<Function>originalFn)(e);
 							};
 						}
 
@@ -249,6 +280,15 @@ export function parseVAttrs(data: VNodeData, isComponent?: boolean): void {
 				}
 
 				directiveOpts.push(<any>dir);
+
+			} else if (key === 'staticClass') {
+				data.staticClass = (<string[]>[]).concat(data.staticClass || [], <string>val).join(' ');
+
+			} else if (key === 'class') {
+				data.class = (<unknown[]>[]).concat(data.class || [], val);
+
+			} else if (key === 'style') {
+				data.style = (<unknown[]>[]).concat(data.style || [], val);
 
 			} else if (!attrs[key]) {
 				attrs[key] = val;

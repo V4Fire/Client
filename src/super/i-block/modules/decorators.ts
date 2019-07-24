@@ -126,11 +126,13 @@ export function bindModTo<V = unknown, R = unknown, CTX extends ComponentInterfa
 	opts?: WatchOptions
 ): Function {
 	return (target, key) => {
-		initEvent.once('constructor', ({meta}) => {
-			meta.hooks.created.push({
-				fn(this: DecoratorCtx<CTX & iBlockDecorator>): void {
-					getComponentCtx(this).sync.mod(key, param, converter, opts);
-				}
+		initEvent.once('bindConstructor', (componentName) => {
+			initEvent.once(`constructor.${componentName}`, ({meta}) => {
+				meta.hooks.created.push({
+					fn(this: DecoratorCtx<CTX & iBlockDecorator>): void {
+						getComponentCtx(this).sync.mod(key, param, converter, opts);
+					}
+				});
 			});
 		});
 	};
@@ -152,12 +154,14 @@ export function mod<CTX extends ComponentInterface = ComponentInterface>(
 	method: EventType = 'on'
 ): Function {
 	return (target, key, descriptor) => {
-		initEvent.once('constructor', ({meta}) => {
-			meta.hooks.beforeCreate.push({
-				fn(this: DecoratorCtx<CTX & iBlockDecorator>): void {
-					const c = getComponentCtx(this);
-					c.localEvent[method](`block.mod.set.${name}.${value}`, descriptor.value.bind(c));
-				}
+		initEvent.once('bindConstructor', (componentName) => {
+			initEvent.once(`constructor.${componentName}`, ({meta}) => {
+				meta.hooks.beforeCreate.push({
+					fn(this: DecoratorCtx<CTX & iBlockDecorator>): void {
+						const c = getComponentCtx(this);
+						c.localEvent[method](`block.mod.set.${name}.${value}`, descriptor.value.bind(c));
+					}
+				});
 			});
 		});
 	};
@@ -177,12 +181,14 @@ export function removeMod<CTX extends ComponentInterface = ComponentInterface>(
 	method: EventType = 'on'
 ): Function {
 	return (target, key, descriptor) => {
-		initEvent.once('constructor', ({meta}) => {
-			meta.hooks.beforeCreate.push({
-				fn(this: DecoratorCtx<CTX & iBlockDecorator>): void {
-					const c = getComponentCtx(this);
-					c.localEvent[method](`block.mod.remove.${name}.${value}`, descriptor.value.bind(c));
-				}
+		initEvent.once('bindConstructor', (componentName) => {
+			initEvent.once(`constructor.${componentName}`, ({meta}) => {
+				meta.hooks.beforeCreate.push({
+					fn(this: DecoratorCtx<CTX & iBlockDecorator>): void {
+						const c = getComponentCtx(this);
+						c.localEvent[method](`block.mod.remove.${name}.${value}`, descriptor.value.bind(c));
+					}
+				});
 			});
 		});
 	};
@@ -204,12 +210,14 @@ export function elMod<CTX extends ComponentInterface = ComponentInterface>(
 	method: EventType = 'on'
 ): Function {
 	return (target, key, descriptor) => {
-		initEvent.once('constructor', ({meta}) => {
-			meta.hooks.beforeCreate.push({
-				fn(this: DecoratorCtx<CTX & iBlockDecorator>): void {
-					const c = getComponentCtx(this);
-					c.localEvent[method](`el.mod.set.${elName}.${modName}.${value}`, descriptor.value.bind(c));
-				}
+		initEvent.once('bindConstructor', (componentName) => {
+			initEvent.once(`constructor.${componentName}`, ({meta}) => {
+				meta.hooks.beforeCreate.push({
+					fn(this: DecoratorCtx<CTX & iBlockDecorator>): void {
+						const c = getComponentCtx(this);
+						c.localEvent[method](`el.mod.set.${elName}.${modName}.${value}`, descriptor.value.bind(c));
+					}
+				});
 			});
 		});
 	};
@@ -231,12 +239,14 @@ export function removeElMod<CTX extends ComponentInterface = ComponentInterface>
 	method: EventType = 'on'
 ): Function {
 	return (target, key, descriptor) => {
-		initEvent.once('constructor', ({meta}) => {
-			meta.hooks.beforeCreate.push({
-				fn(this: DecoratorCtx<CTX & iBlockDecorator>): void {
-					const c = getComponentCtx(this);
-					c.localEvent[method](`el.mod.remove.${elName}.${modName}.${value}`, descriptor.value.bind(c));
-				}
+		initEvent.once('bindConstructor', (componentName) => {
+			initEvent.once(`constructor.${componentName}`, ({meta}) => {
+				meta.hooks.beforeCreate.push({
+					fn(this: DecoratorCtx<CTX & iBlockDecorator>): void {
+						const c = getComponentCtx(this);
+						c.localEvent[method](`el.mod.remove.${elName}.${modName}.${value}`, descriptor.value.bind(c));
+					}
+				});
 			});
 		});
 	};
@@ -327,8 +337,7 @@ export function wait<CTX extends ComponentInterface = ComponentInterface>(
 
 		const exec = (ctx) => {
 			const
-				// @ts-ignore
-				componentStatus = <number>statuses[component.field.get('componentStatusStore', ctx)];
+				componentStatus = statuses[component.componentStatus];
 
 			let
 				res,
@@ -348,8 +357,10 @@ export function wait<CTX extends ComponentInterface = ComponentInterface>(
 			}
 
 			if (!init) {
-				res = $a.promisifyOnce(ctx, `status-${statuses[<number>status]}`, p)
-					.then(() => handler.apply(this, args));
+				res = $a.promisifyOnce(ctx, `status-${statuses[<number>status]}`, {
+					...p,
+					handler: () => handler.apply(this, args)
+				});
 			}
 
 			if (isDecorator && Object.isPromise(res)) {

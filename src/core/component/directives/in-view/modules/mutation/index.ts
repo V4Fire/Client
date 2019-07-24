@@ -331,6 +331,10 @@ export default class InView extends Super {
 			join: true
 		};
 
+		if (observable.onLeave) {
+			observable.onLeave(observable);
+		}
+
 		observable.isLeaving = true;
 		this.async.setTimeout(() => this.call(observable), observable.timeout || 0, asyncOptions);
 	}
@@ -345,6 +349,10 @@ export default class InView extends Super {
 			label: observable.id,
 			join: true
 		};
+
+		if (observable.onEnter) {
+			observable.onEnter(observable);
+		}
 
 		observable.isLeaving = false;
 		this.async.clearAll(asyncOptions);

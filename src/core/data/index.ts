@@ -8,12 +8,13 @@
 
 import { EventEmitter2 as EventEmitter } from 'eventemitter2';
 
+import Then from 'core/then';
 import symbolGenerator from 'core/symbol';
 import Async, { AsyncCbOpts } from 'core/async';
 import IO, { Socket } from 'core/socket';
 
 import { concatUrls } from 'core/url';
-import { ModelMethods, SocketEvent, ProviderParams } from 'core/data/interface';
+import { ModelMethods, SocketEvent, ProviderParams, FunctionalExtraProviders } from 'core/data/interface';
 import { providers } from 'core/data/const';
 
 import request, {
@@ -221,6 +222,11 @@ export default class Provider {
 	readonly externalRequest: boolean = false;
 
 	/**
+	 * List of additional data providers for the get request
+	 */
+	readonly extraProviders?: FunctionalExtraProviders;
+
+	/**
 	 * List of socket events
 	 */
 	readonly events: string[] = ['add', 'upd', 'del', 'refresh'];
@@ -293,6 +299,10 @@ export default class Provider {
 
 		if (Object.isBoolean(params.externalRequest)) {
 			this.setReadonlyParam('externalRequest', params.externalRequest);
+		}
+
+		if (params.extraProviders) {
+			this.setReadonlyParam('extraProviders', params.extraProviders);
 		}
 
 		if (params.socket || this.socketURL) {
@@ -532,6 +542,7 @@ export default class Provider {
 
 		const
 			url = this.url(),
+			nm = this.constructor[$$.namespace],
 			eventName = this.name(),
 			method = this.method() || this.getMethod;
 
@@ -542,11 +553,71 @@ export default class Provider {
 			method
 		}));
 
-		if (eventName) {
-			return this.updateRequest(url, eventName, req);
+		const
+			res = eventName ? this.updateRequest(url, eventName, req) : this.updateRequest(url, req),
+			extraProviders = Object.isFunction(this.extraProviders) ? this.extraProviders() : this.extraProviders;
+
+		if (extraProviders) {
+			const
+				composition = {},
+				tasks = <Then[]>[],
+				cloneTasks = <Function[]>[];
+
+			for (let keys = Object.keys(extraProviders), i = 0; i < keys.length; i++) {
+				const
+					key = keys[i],
+					el = extraProviders[key] || {},
+					ProviderConstructor = <typeof Provider>providers[key];
+
+				if (!ProviderConstructor) {
+					throw new Error(`Provider "${key}" is not defined`);
+				}
+
+				const
+					dp = new ProviderConstructor(el.providerParams);
+
+				tasks.push(
+					dp.get(el.query || query, el.requestOpts).then(({data}) => {
+						cloneTasks.push((composition) => Object.set(composition, key, data && (<object>data).valueOf()));
+						return Object.set(composition, key, data);
+					})
+				);
+			}
+
+			return res.then(
+				(res) => Promise.all(tasks).then(() => {
+					const
+						data = res.data;
+
+					cloneTasks.push((composition) => Object.set(composition, nm, data && (<object>data).valueOf()));
+					Object.set(composition, nm, data);
+
+					composition.valueOf = () => {
+						const
+							clone = {};
+
+						for (let i = 0; i < cloneTasks.length; i++) {
+							cloneTasks[i](clone);
+						}
+
+						return clone;
+					};
+
+					res.data = Object.freeze(composition);
+					return res;
+				}),
+
+				null,
+
+				() => {
+					for (let i = 0; i < tasks.length; i++) {
+						tasks[i].abort();
+					}
+				}
+			);
 		}
 
-		return this.updateRequest(url, req);
+		return res;
 	}
 
 	/**
@@ -662,7 +733,7 @@ export default class Provider {
 
 		const
 			url = this.url(),
-			eventName = this.name() || 'upd',
+			eventName = this.name() || 'del',
 			method = this.method() || this.delMethod;
 
 		return this.updateRequest(url, eventName, this.request(url, this.resolver, this.mergeToOpts('del', {
