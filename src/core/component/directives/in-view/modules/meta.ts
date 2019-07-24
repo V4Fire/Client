@@ -34,6 +34,7 @@ export interface ObserveOptions {
 
 	/**
 	 * Delay before callback execution
+	 * @see https://w3c.github.io/IntersectionObserver/v2/#dom-intersectionobserver-delay
 	 */
 	delay?: number;
 
