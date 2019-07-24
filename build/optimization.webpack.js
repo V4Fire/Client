@@ -17,7 +17,7 @@ const
 	{inherit, depsRgxpStr} = include('build/build.webpack'),
 	{RUNTIME} = include('build/entities.webpack');
 
-const includeCustomNodeModules = new RegExp(
+const excludeCustomNodeModules = new RegExp(
 	`(?:^|[\\\\/])node_modules[\\/](?:${depsRgxpStr})(?:[\\\\/]|$)|^(?:(?!(?:^|[\\\\/])node_modules[\\\\/]).)*$`
 );
 
@@ -50,7 +50,7 @@ module.exports = async function ({buildId, plugins}) {
 					minChunks: 2,
 					enforce: true,
 					reuseExistingChunk: true,
-					test: includeCustomNodeModules
+					test: excludeCustomNodeModules
 				},
 
 				vendor: {
