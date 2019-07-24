@@ -39,7 +39,7 @@ export interface ObserveOptions {
 	delay?: number;
 
 	/**
-	 * @deprecated use delay param instead, timeout will be removed in next major release
+	 * @deprecated use delay param instead, timeout will be removed after beta ends
 	 */
 	timeout?: number;
 
