@@ -170,15 +170,18 @@ export default class bSelect<
 	};
 
 	/** @override */
-	async initLoad(data?: unknown, silent?: boolean): Promise<void> {
-		try {
-			/// FIXME
-			if (this.initAfterOpen && !this.browser.is.mobile) {
-				await this.async.wait(() => this.mods.opened !== 'false' || this.mods.focused === 'true');
-			}
+	initLoad(data?: unknown, silent?: boolean): CanPromise<void> {
+		/// FIXME
+		if (this.initAfterOpen && !this.browser.is.mobile) {
+			const
+				{mods} = this;
 
-			return super.initLoad(data, silent);
-		} catch {}
+			return this.async
+				.wait(() => mods.opened !== 'false' || mods.focused === 'true')
+				.then(() => super.initLoad(data, silent));
+		}
+
+		return super.initLoad(data, silent);
 	}
 
 	/** @override */

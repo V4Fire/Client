@@ -45,7 +45,7 @@ export default class AsyncRender {
 	 * Component async label
 	 */
 	get asyncLabel(): symbol {
-		// @ts-ignore
+		// @ts-ignore (access)
 		return this.component.$asyncLabel;
 	}
 
@@ -58,7 +58,7 @@ export default class AsyncRender {
 	 * Async instance
 	 */
 	protected get async(): Async {
-		// @ts-ignore
+		// @ts-ignore (access)
 		return this.component.async;
 	}
 
@@ -66,7 +66,7 @@ export default class AsyncRender {
 	 * Component meta object
 	 */
 	protected get meta(): ComponentMeta {
-		// @ts-ignore
+		// @ts-ignore (access)
 		return this.component.meta;
 	}
 
@@ -136,7 +136,6 @@ export default class AsyncRender {
 				return value.then(setList);
 			}
 
-			// @ts-ignore
 			return value && typeof value === 'object' ? value[Symbol.iterator] ? value : Object.keys(value) : [value];
 		};
 

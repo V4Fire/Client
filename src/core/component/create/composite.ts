@@ -8,7 +8,7 @@
 
 import { defProp } from 'core/const/props';
 import { supports, VNode, VNodeDirective, NormalizedScopedSlot } from 'core/component/engines';
-import { ComponentInterface } from 'core/component/interface';
+import { ComponentInterface, ComponentMeta } from 'core/component/interface';
 import { components } from 'core/component/const';
 
 import {
@@ -55,10 +55,10 @@ const defField = {
 /**
  * Returns a component virtual data object from the specified vnode
  *
- * @param component - component name
+ * @param component - component name or a meta object
  * @param vnode
  */
-export function getComponentDataFromVnode(component: string, vnode: VNode): ComponentOpts {
+export function getComponentDataFromVnode(component: string | ComponentMeta, vnode: VNode): ComponentOpts {
 	const
 		vData = vnode.data || {},
 		slots = (<Dictionary>vData).slots;
@@ -85,7 +85,7 @@ export function getComponentDataFromVnode(component: string, vnode: VNode): Comp
 	};
 
 	const
-		meta = components.get(component);
+		meta = Object.isString(component) ? components.get(component) : component;
 
 	if (!meta) {
 		res.attrs = vData.attrs || res.attrs;

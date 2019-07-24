@@ -132,13 +132,15 @@ export default class Daemons {
 	run<T = unknown>(name: string, ...args: unknown[]): CanUndef<T> {
 		const
 			ctx = this.component,
-			// @ts-ignore
-			{async: $a} = ctx,
 			daemon = this.get(name);
 
 		if (!daemon) {
 			return;
 		}
+
+		const
+			// @ts-ignore
+			{async: $a} = ctx;
 
 		const
 			fn = daemon.wrappedFn || daemon.fn;
@@ -198,7 +200,7 @@ export default class Daemons {
 	 */
 	protected bindToHook(hook: string, name: string, params?: DaemonHookParams): void {
 		const
-			// @ts-ignore
+			// @ts-ignore (access)
 			{hooks} = this.component.meta;
 
 		hooks[hook].push({
@@ -215,7 +217,7 @@ export default class Daemons {
 	 */
 	protected bindToWatch(watch: DaemonWatcher, name: string): void {
 		const
-			// @ts-ignore
+			// @ts-ignore (access)
 			{watchers} = this.component.meta;
 
 		const

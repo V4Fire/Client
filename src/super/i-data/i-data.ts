@@ -49,7 +49,9 @@ import Provider, {
 	RequestResponseObject,
 	Response,
 	ModelMethods,
-	ProviderParams
+	ProviderParams,
+	ExtraProvider,
+	ExtraProviders
 
 } from 'core/data';
 
@@ -62,7 +64,9 @@ export {
 	RequestResponseObject,
 	Response,
 	ModelMethods,
-	ProviderParams
+	ProviderParams,
+	ExtraProvider,
+	ExtraProviders
 
 } from 'core/data';
 
@@ -83,7 +87,7 @@ export default abstract class iData<T extends object = Dictionary> extends iMess
 	readonly dataProvider?: string;
 
 	/**
-	 * Parameters for a data provider instance
+	 * Initial parameters for a data provider instance
 	 */
 	@prop(Object)
 	readonly dataProviderParams: ProviderParams = {};
@@ -128,6 +132,7 @@ export default abstract class iData<T extends object = Dictionary> extends iMess
 
 	/**
 	 * Sets new component data
+	 * @emits dbChange(value: CanUndef<T>)
 	 */
 	set db(value: CanUndef<T>) {
 		if (value === this.db) {
@@ -142,6 +147,7 @@ export default abstract class iData<T extends object = Dictionary> extends iMess
 		});
 
 		this.field.set('dbStore', value);
+		this.emit('dbChange', value);
 
 		if (this.initRemoteData() !== undefined) {
 			this.watch('dbStore', this.initRemoteData, {
@@ -187,50 +193,77 @@ export default abstract class iData<T extends object = Dictionary> extends iMess
 	@system()
 	protected dp?: Provider;
 
+	/**
+	 * Returns list of additional data providers for the get request
+	 */
+	extraProviders(): CanUndef<ExtraProviders> {
+		return undefined;
+	}
+
 	/** @override */
-	@wait({label: $$.initLoad, defer: true})
 	initLoad(data?: unknown, silent?: boolean): CanPromise<void> {
-		const
-			important = this.componentStatus === 'unloaded';
-
-		if (!silent) {
-			this.componentStatus = 'loading';
-		}
-
-		if (data || this.dp && this.dp.baseURL) {
-			const
-				p = this.getDefaultRequestParams<T>('get');
-
-			const label = {
-				join: true,
-				label: $$.initLoad
-			};
-
-			if (p) {
-				Object.assign(p[1], {...label, important, join: false});
-
+		if (this.isFunctional) {
+			return super.initLoad(() => {
 				if (data) {
-					const db = this.convertDataToDB<T>(data);
-					this.lfc.execCbAtTheRightTime(() => this.db = db, label);
-
-				} else {
-					return this.get(<RequestQuery>p[0], p[1]).then((data) => {
-						const db = this.convertDataToDB<T>(data);
-						this.lfc.execCbAtTheRightTime(() => this.db = db, label);
-						return super.initLoad(() => this.db, silent);
-
-					}, (err) => {
-						stderr(err);
-						return super.initLoad(() => this.db, silent);
-					});
+					this.db = this.convertDataToDB<T>(data);
 				}
 
-			} else if (this.db) {
-				this.lfc.execCbAtTheRightTime(() => this.db = undefined, label);
-			}
+				return this.db;
+			}, silent);
 		}
 
-		return super.initLoad(() => this.db, silent);
+		const load = () => {
+			const
+				important = this.componentStatus === 'unloaded';
+
+			if (!silent) {
+				this.componentStatus = 'loading';
+			}
+
+			if (data || this.dp && this.dp.baseURL) {
+				const
+					p = this.getDefaultRequestParams<T>('get');
+
+				const label = {
+					join: true,
+					label: $$.initLoad
+				};
+
+				if (p) {
+					Object.assign(p[1], {...label, important, join: false});
+
+					if (data) {
+						const db = this.convertDataToDB<T>(data);
+						this.lfc.execCbAtTheRightTime(() => this.db = db, label);
+
+					} else {
+						return this.get(<RequestQuery>p[0], p[1]).then((data) => {
+							const db = this.convertDataToDB<T>(data);
+							this.lfc.execCbAtTheRightTime(() => this.db = db, label);
+							return super.initLoad(() => this.db, silent);
+
+						}, (err) => {
+							stderr(err);
+							return super.initLoad(() => this.db, silent);
+						});
+					}
+
+				} else if (this.db) {
+					this.lfc.execCbAtTheRightTime(() => this.db = undefined, label);
+				}
+			}
+
+			return super.initLoad(() => this.db, silent);
+		};
+
+		if (this.lfc.isBeforeCreate()) {
+			this.syncDataProviderWatcher(this.dataProvider);
+			return load();
+		}
+
+		this.async.setImmediate(load, {
+			label: $$.initLoad
+		});
 	}
 
 	/**
@@ -452,7 +485,7 @@ export default abstract class iData<T extends object = Dictionary> extends iMess
 	/**
 	 * Executes the specified function with a socket connection
 	 *
-	 * @see {Provider.attachToSocket}
+	 * @see Provider.attachToSocket
 	 * @param fn
 	 * @param [params]
 	 */
@@ -579,7 +612,7 @@ export default abstract class iData<T extends object = Dictionary> extends iMess
 	 * Synchronization for the dataProvider property
 	 * @param value
 	 */
-	@watch({field: 'dataProvider', immediate: true})
+	@watch('dataProvider')
 	protected syncDataProviderWatcher(value?: string): void {
 		if (value) {
 			const
@@ -593,7 +626,11 @@ export default abstract class iData<T extends object = Dictionary> extends iMess
 				throw new Error(`Provider "${value}" is not defined`);
 			}
 
-			this.dp = new ProviderConstructor(this.dataProviderParams);
+			this.dp = new ProviderConstructor({
+				extraProviders: this.extraProviders,
+				...this.dataProviderParams
+			});
+
 			this.initDataListeners();
 
 		} else if (this.dp) {
@@ -621,25 +658,10 @@ export default abstract class iData<T extends object = Dictionary> extends iMess
 	 * @param value
 	 * @param [oldValue]
 	 */
-	@watch('p')
+	@watch('dataProviderParams')
 	protected syncDataProviderParamsWatcher(value: Dictionary, oldValue: Dictionary): void {
-		const
-			providerNm = this.dataProvider;
-
-		if (providerNm) {
-			const
-				ProviderConstructor = <typeof Provider>providers[providerNm];
-
-			if (!ProviderConstructor) {
-				if (providerNm === 'Provider') {
-					return;
-				}
-
-				throw new Error(`Provider "${providerNm}" is not defined`);
-			}
-
-			this.dp = new ProviderConstructor(value);
-			this.initDataListeners();
+		if (this.dataProvider) {
+			this.syncDataProviderWatcher(this.dataProvider);
 		}
 	}
 
@@ -648,12 +670,15 @@ export default abstract class iData<T extends object = Dictionary> extends iMess
 	 * @param method
 	 */
 	protected getDefaultRequestParams<T = unknown>(method: string): DefaultRequest<T> | false {
+		const
+			{field} = this;
+
 		const [customData, customOpts] = (<unknown[]>[]).concat(
-			this.request && this.request[method] || []
+			field.get(`request.${method}`) || []
 		);
 
 		const
-			p = this.requestParams && this.requestParams[method],
+			p = field.get(`requestParams.${method}`),
 			isGet = /^get(:|$)/.test(method);
 
 		let
@@ -680,7 +705,7 @@ export default abstract class iData<T extends object = Dictionary> extends iMess
 		res[1] = Object.mixin({deep: true}, undefined, res[1], customOpts);
 
 		const
-			f = this.requestFilter,
+			f = field.get('requestFilter'),
 			isEmpty = !Object.size(res[0]);
 
 		const info = {

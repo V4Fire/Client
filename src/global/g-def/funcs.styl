@@ -50,7 +50,8 @@ img($img)
  */
 generateImgClasses()
 	for $img, $obj in $IMG
-		{join(",", $obj.selectors)}
+		$sel = join(",", $obj.selectors)
+		{$sel}
 			for $prop in $obj.props
 				add-property($prop, "url(%s)" % $img)
 

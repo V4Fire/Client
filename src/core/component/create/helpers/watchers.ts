@@ -6,17 +6,23 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import Async from 'core/async';
 import { GLOBAL } from 'core/env';
-import { getFieldRealInfo, ComponentInterface, WatchOptions } from 'core/component';
+import { getFieldRealInfo, ComponentInterface, WatchOptions, WatchOptionsWithHandler } from 'core/component';
+
+export interface BindWatchersParams<A extends object = ComponentInterface> {
+	async?: Async<A>;
+	watchers?: Dictionary<WatchOptionsWithHandler[]>;
+}
 
 export const
 	customWatcherRgxp = /^([!?]?)([^!?:]*):(.*)/,
 	systemWatchers = new WeakMap<ComponentInterface, Dictionary<{cb: Set<Function>}>>();
 
-const watcherHooks = {
-	beforeDataCreate: true,
-	created: true,
-	mounted: true
+const beforeHooks = {
+	beforeRuntime: true,
+	beforeCreate: true,
+	beforeDataCreate: true
 };
 
 /**
@@ -52,25 +58,30 @@ export function cloneWatchValue<T>(value: T, params: WatchOptions = {}): T {
  * (very critical for loading time)
  *
  * @param ctx - component context
- * @param [eventCtx] - event component context
+ * @param [watchers] - dictionary with watchers
+ * @param [async] - async instance
  */
-export function bindWatchers(ctx: ComponentInterface, eventCtx: ComponentInterface = ctx): void {
+export function bindWatchers(
+	ctx: ComponentInterface,
+	{watchers, async}: BindWatchersParams = {}
+): void {
 	const
 		// @ts-ignore (access)
-		{meta, hook, $async: $a} = ctx,
+		{meta, hook, meta: {hooks}} = ctx,
 
 		// @ts-ignore (access)
-		$watch = ctx.$$watch || ctx.$watch;
+		$watch = ctx.$$watch || ctx.$watch,
 
-	if (!watcherHooks[hook]) {
-		return;
-	}
+		// @ts-ignore (access)
+		$a = async || ctx.$async;
 
 	const
-		isCreated = hook === 'created',
-		isMounted = hook === 'mounted';
+		// @ts-ignore (access)
+		customAsync = $a !== ctx.$async,
+		isDeactivated = hook === 'deactivated',
+		isBeforeCreate = beforeHooks[hook];
 
-	for (let o = meta.watchers, keys = Object.keys(o), i = 0; i < keys.length; i++) {
+	for (let o = watchers || meta.watchers, keys = Object.keys(o), i = 0; i < keys.length; i++) {
 		let
 			key = keys[i];
 
@@ -98,7 +109,7 @@ export function bindWatchers(ctx: ComponentInterface, eventCtx: ComponentInterfa
 		const exec = () => {
 			if (customWatcher) {
 				const l = customWatcher[2];
-				root = l ? Object.get(eventCtx, l) || Object.get(GLOBAL, l) || ctx : ctx;
+				root = l ? Object.get(ctx, l) || Object.get(GLOBAL, l) || ctx : ctx;
 				key = l ? customWatcher[3].toString() : customWatcher[3].dasherize();
 			}
 
@@ -107,13 +118,23 @@ export function bindWatchers(ctx: ComponentInterface, eventCtx: ComponentInterfa
 					watchObj = watchers[i],
 					rawHandler = watchObj.handler;
 
-				const label = `[[WATCHER:${key}:${
-					watchObj.method != null ? watchObj.method : Object.isString(watchObj.handler) ?
-						watchObj.handler : (<Function>watchObj.handler).name
-				}]]`;
+				const group = {
+					label: watchObj.label,
+					group: watchObj.group,
+					join: watchObj.join
+				};
+
+				if (!customAsync) {
+					const defLabel = `[[WATCHER:${key}:${
+						watchObj.method != null ? watchObj.method : Object.isString(watchObj.handler) ?
+							watchObj.handler : (<Function>watchObj.handler).name
+					}]]`;
+
+					group.label = group.label || defLabel;
+					group.group = group.group || 'watchers';
+				}
 
 				const
-					group = {group: watchObj.group || 'watchers', label},
 					eventParams = {...group, options: watchObj.options, single: watchObj.single};
 
 				let
@@ -128,11 +149,15 @@ export function bindWatchers(ctx: ComponentInterface, eventCtx: ComponentInterfa
 								throw new ReferenceError(`The specified method (${rawHandler}) for watching is not defined`);
 							}
 
-							// @ts-ignore (access)
-							ctx.$async.setImmediate(
-								() => ctx[rawHandler](...args),
-								group
-							);
+							if (group.label) {
+								$a.setImmediate(
+									() => ctx[rawHandler](...args),
+									group
+								);
+
+							} else {
+								ctx[rawHandler](...args);
+							}
 
 						} else {
 							if (watchObj.method) {
@@ -156,11 +181,15 @@ export function bindWatchers(ctx: ComponentInterface, eventCtx: ComponentInterfa
 								throw new ReferenceError(`The specified method (${rawHandler}) for watching is not defined`);
 							}
 
-							// @ts-ignore (access)
-							ctx.$async.setImmediate(
-								() => ctx[rawHandler](...args),
-								group
-							);
+							if (group.label) {
+								$a.setImmediate(
+									() => ctx[rawHandler](...args),
+									group
+								);
+
+							} else {
+								ctx[rawHandler](...args);
+							}
 
 						} else {
 							if (watchObj.method) {
@@ -326,8 +355,13 @@ export function bindWatchers(ctx: ComponentInterface, eventCtx: ComponentInterfa
 			}
 		};
 
-		if (!onCreated && !isCreated || !onMounted && !isMounted) {
-			meta.hooks[onMounted ? 'mounted' : 'created'].unshift({fn: exec});
+		if (onCreated && isBeforeCreate) {
+			hooks.created.unshift({fn: exec});
+			continue;
+		}
+
+		if (onMounted && (isBeforeCreate || !ctx.$el)) {
+			hooks[isDeactivated ? 'activated' : 'mounted'].unshift({fn: exec});
 			continue;
 		}
 
