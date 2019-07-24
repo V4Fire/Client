@@ -86,7 +86,7 @@ export interface IntersectionObserverOptions {
 	/**
 	 * Notice: Compute of visibility is more expensive than intersection. For that reason,
 	 * Intersection Observer v2 is not intended to be used broadly in the way that Intersection Observer v1 is.
-	 * Intersection Observer v2 is focused on combating fraud and should be used only when
+	 * Intersection Observer v2 is focused on combatting fraud and should be used only when
 	 * Intersection Observer v1 functionality is truly insufficient.
 	 */
 	trackVisibility?: boolean;
