@@ -43,7 +43,6 @@ ComponentDriver.directive('in-view', {
 			};
 		}
 
-		debugger;
 		if (modifiers && modifiers.once) {
 			value.once = modifiers.once;
 		}

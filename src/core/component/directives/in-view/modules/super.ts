@@ -13,8 +13,6 @@ import {
 
 	ObservableElement,
 	ObservableElementsMap,
-	IntersectionObserverOptions,
-	ObserveOptions,
 	InitOptions
 
 } from 'core/component/directives/in-view/modules/meta';
