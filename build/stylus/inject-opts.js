@@ -9,6 +9,9 @@ let DS = {};
 
 if (config.designSystem) {
 	DS = require(config.designSystem);
+
+} else {
+	console.log('[stylus] Design system package is not specified');
 }
 
 function prepareData(data) {
@@ -32,5 +35,8 @@ module.exports = function (style) {
 	 * @param component
 	 * @param file
 	 */
-	style.define('pInjection', ({string}) => DS[string] && stylus.utils.coerce(DS[string], true) || {});
+	style.define(
+		'pInjection',
+		({string}) => DS.components && DS.components[string] && stylus.utils.coerce(DS.components[string], true) || {}
+	);
 };
