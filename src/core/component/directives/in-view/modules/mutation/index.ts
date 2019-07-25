@@ -199,12 +199,13 @@ export default class InView extends Super {
 			}
 
 			const
-				isElementIn = isInView(el.node, el.threshold, el.root);
+				root = Object.isFunction(el.root) ? el.root() : el.root,
+				isElementIn = isInView(el.node, el.threshold, root);
 
 			if (isElementIn && !el.isLeaving) {
 				this.onObservableIn(el);
 
-			} else if (!isElementIn) {
+			} else if (!isElementIn && el.isLeaving) {
 				this.onObservableOut(el);
 			}
 		});

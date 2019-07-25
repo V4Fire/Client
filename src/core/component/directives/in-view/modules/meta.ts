@@ -83,6 +83,7 @@ export interface ElementRect {
 export interface IntersectionObserverOptions {
 	threshold: number;
 	delay?: number;
+	root?: Nullable<Element>;
 
 	/**
 	 * Notice: Compute of visibility is more expensive than intersection. For that reason,
@@ -105,4 +106,4 @@ export type RemoveStrategy = 'remove' | 'deactivate';
 export type InitOptions = ObserveOptions & IntersectionObserverOptions;
 export type ObservableElementsMap = Map<HTMLElement, ObservableElement>;
 export type ObservableElementRect = ElementRect & {observable: ObservableElement};
-export type ObservableElement = Observable & ObserveOptions & IntersectionObserverOptions;
+export type ObservableElement = Observable & InitOptions;

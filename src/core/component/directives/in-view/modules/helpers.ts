@@ -44,12 +44,22 @@ export function isInView(el: Element, threshold: number = 1, scrollRoot?: Elemen
 		height
 	} = el.getBoundingClientRect();
 
+	scrollRoot = scrollRoot || document.documentElement;
+
+	const
+		scrollRect = scrollRoot.getBoundingClientRect();
+
 	const intersection = {
 		top: bottom,
-		right: document.documentElement.clientWidth - left,
-		bottom: document.documentElement.clientHeight - top,
+		right: scrollRect.width - Math.abs(left),
+		bottom: scrollRect.height - Math.abs(top),
 		left: right
 	};
+
+	if (scrollRoot) {
+		intersection.right -= scrollRoot.scrollLeft;
+		intersection.top -= scrollRoot.scrollTop;
+	}
 
 	const elementThreshold = {
 		x: threshold * width,
