@@ -200,9 +200,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 
 			'core/kv-storage': true,
 			'core/session': false,
-
 			'core/net': false,
-			'core/net/favicon': false,
 
 			'range/extended': false,
 			'helpers/string/pluralize': false,
