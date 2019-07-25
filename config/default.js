@@ -54,10 +54,8 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		},
 
 		externals: {
-			'eventemitter2': 'EventEmitter2',
-			'localforage': 'localforage',
-			'sugar': 'Sugar',
 			'vue': 'Vue',
+			'eventemitter2': 'EventEmitter2',
 			'ion-sound': 'ion',
 			'socket.io-client': 'io',
 			'setimmediate': 'setImmediate'
