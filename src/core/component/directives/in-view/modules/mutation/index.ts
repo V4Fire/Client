@@ -353,8 +353,8 @@ export default class InView extends Super {
 			join: true
 		};
 
-		if (Object.isFunction(observable.onLeave)) {
-			observable.onLeave(observable);
+		if (Object.isFunction(observable.onEnter)) {
+			observable.onEnter(observable);
 		}
 
 		observable.isLeaving = true;
@@ -372,8 +372,8 @@ export default class InView extends Super {
 			join: true
 		};
 
-		if (Object.isFunction(observable.onEnter)) {
-			observable.onEnter(observable);
+		if (Object.isFunction(observable.onLeave)) {
+			observable.onLeave(observable);
 		}
 
 		observable.isLeaving = false;
