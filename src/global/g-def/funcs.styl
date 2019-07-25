@@ -69,14 +69,14 @@ execFontPattern($type = "")
 /**
  * Finds value in the object by the specified path
  *
- * @param $obj {object}
  * @param $path {string}
+ * @param $obj {object}
  */
-getField($obj, $path)
+getField($path, $obj)
 	$fields = split(".", $path)
 
 	if (length($fields) > 1 && type($obj[$fields[0]]) == "object")
-		return findField($obj[$fields[0]], join(".", slice($fields, 1, length($fields))))
+		return getField(join(".", slice($fields, 1, length($fields))), $obj[$fields[0]])
 
 	else if length($fields) == 1
 		return $obj[$fields[0]]
