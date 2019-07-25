@@ -115,11 +115,17 @@ export default class InView extends Super {
 	/**
 	 * Creates a new IntersectionObserver instance
 	 *
-	 * @param initOptions
+	 * @param o
 	 * @param hash
 	 */
-	protected createObserver(initOptions: IntersectionObserverOptions, hash: string): IntersectionObserver {
-		return this.observers[hash] = new IntersectionObserver(this.onIntersects.bind(this), initOptions);
+	protected createObserver(o: IntersectionObserverOptions, hash: string): IntersectionObserver {
+		const
+			root = Object.isFunction(o.root) ? o.root() : o.root;
+
+		return this.observers[hash] = new IntersectionObserver(this.onIntersects.bind(this), {
+			...o,
+			root
+		});
 	}
 
 	/**

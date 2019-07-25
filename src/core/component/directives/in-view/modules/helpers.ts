@@ -28,8 +28,9 @@ export function getAdaptee<T extends {acceptable: boolean}>(strategies: T[]): Ca
  *
  * @param el
  * @param [threshold]
+ * @param [scrollRoot]
  */
-export function isInView(el: Element, threshold: number = 1): boolean {
+export function isInView(el: Element, threshold: number = 1, scrollRoot?: Element): boolean {
 	if (!document.documentElement) {
 		return false;
 	}
@@ -43,12 +44,21 @@ export function isInView(el: Element, threshold: number = 1): boolean {
 		height
 	} = el.getBoundingClientRect();
 
+	const
+		root = scrollRoot || document.documentElement,
+		rootRect = root.getBoundingClientRect();
+
 	const intersection = {
 		top: bottom,
-		right: document.documentElement.clientWidth - left,
-		bottom: document.documentElement.clientHeight - top,
+		right: rootRect.width - Math.abs(left),
+		bottom: rootRect.height - Math.abs(top),
 		left: right
 	};
+
+	if (scrollRoot) {
+		intersection.right -= scrollRoot.scrollLeft;
+		intersection.top -= scrollRoot.scrollTop;
+	}
 
 	const elementThreshold = {
 		x: threshold * width,
