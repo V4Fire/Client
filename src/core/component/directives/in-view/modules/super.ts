@@ -13,8 +13,7 @@ import {
 
 	ObservableElement,
 	ObservableElementsMap,
-	IntersectionObserverOptions,
-	ObserveOptions
+	InitOptions
 
 } from 'core/component/directives/in-view/modules/meta';
 
@@ -114,7 +113,7 @@ export default abstract class AbstractInView {
 	 * @param el
 	 * @param opts
 	 */
-	observe(el: HTMLElement, opts: IntersectionObserverOptions & ObserveOptions): ObservableElement | false {
+	observe(el: HTMLElement, opts: InitOptions): ObservableElement | false {
 		if (this.get(el)) {
 			return false;
 		}
@@ -146,7 +145,7 @@ export default abstract class AbstractInView {
 	 * @param el
 	 * @param opts
 	 */
-	protected createObservable(el: HTMLElement, opts: IntersectionObserverOptions & ObserveOptions): ObservableElement {
+	protected createObservable(el: HTMLElement, opts: InitOptions): ObservableElement {
 		return {
 			node: el,
 			count: true,
