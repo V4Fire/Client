@@ -20,11 +20,13 @@ function prepareData(data) {
 			prepareData(d);
 
 		} else {
-			if (/^#\d+/g.test(d)) {
-				data[val] = new stylus.Parser(d).peek().val;
-
-			} else if (/^[a-z-_]+\(.*\)$/.test(d)) {
+			if (/^[a-z-_]+\(.*\)$/.test(d)) {
+				// Built-in function
 				data[val] = new stylus.Parser(d).function();
+
+			} else if (/^#(?=[0-9a-fA-F]*$)(?:.{3,4}|.{6}|.{8})$/.test(d)) {
+				// HEX value
+				data[val] = new stylus.Parser(d).peek().val;
 			}
 		}
 	});
