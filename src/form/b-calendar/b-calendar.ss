@@ -130,7 +130,6 @@
 								< b-input-time &
 									:pointer = value[0] |
 									:max = 'now' |
-									:mods = {theme: 'light'} |
 									:-index = 0 |
 									@actionChange = onTimeChange
 								.
@@ -141,6 +140,5 @@
 								< b-input-time &
 									:pointer = value[1] |
 									:-index = 1 |
-									:mods = {theme: 'light'} |
 									@actionChange = onTimeChange
 								.

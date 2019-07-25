@@ -6,8 +6,11 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import 'core/data';
 import symbolGenerator from 'core/symbol';
+
+//#if runtime has core/data
+import 'core/data';
+//#endif
 
 import iVisible from 'traits/i-visible/i-visible';
 import iInput, { ValidationError as InputValidationError } from 'super/i-input/i-input';

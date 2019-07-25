@@ -19,8 +19,7 @@
 		< b-button &
 			:type = 'submit' |
 			:form = getConnectedId('form') |
-			:preIcon = 'save' |
-			:mods = provide.mods({theme: 'light', rounding: 'small', size: gt[m.size]})
+			:preIcon = 'save'
 		.
 			{{ stage === 'new' ? `Add` : `Save` }}
 

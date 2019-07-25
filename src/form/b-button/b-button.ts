@@ -134,18 +134,6 @@ export default class bButton<T extends object = Dictionary> extends iData<T>
 	@prop(String)
 	readonly dropdown: string = 'bottom';
 
-	/** @see iSize.lt */
-	@p({replace: false})
-	get lt(): SizeDictionary {
-		return iSize.lt;
-	}
-
-	/** @see iSize.gt */
-	@p({replace: false})
-	get gt(): SizeDictionary {
-		return iSize.gt;
-	}
-
 	/** @inheritDoc */
 	static readonly mods: ModsDecl = {
 		...iAccess.mods,

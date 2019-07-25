@@ -8,7 +8,10 @@
 
 import * as locale from 'core/i18n';
 import * as net from 'core/net';
+
+//#if runtime has core/session
 import * as session from 'core/session';
+//#endif
 
 import state from 'core/component/state';
 import semaphore from 'core/init/semaphore';
@@ -25,7 +28,9 @@ export default (async () => {
 			state.lastOnlineDate = v.lastOnline;
 		}),
 
+		//#if runtime has core/session
 		session.isExists().then((v) => state.isAuth = v)
+		//#endif
 	);
 
 	for (let i = 0; i < tasks.length; i++) {

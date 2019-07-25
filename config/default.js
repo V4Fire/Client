@@ -190,16 +190,30 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	runtime() {
 		return {
 			'vue': true,
-			'noGlobals': false,
 			'socket': false,
-			'core/kv-storage': true,
+			'noGlobals': false,
+			'svgSprite': true,
+
 			'core/helpers': true,
 			'core/browser': true,
+			'core/kv-storage': true,
 			'core/analytics': true,
-			'directives/in-view': false,
+			'core/session': true,
+			'core/net': false,
+			'core/net/favicon': false,
+
+			'prelude/dependencies': true,
+			'component/async-render': true,
+			'component/daemons': true,
+
+			'directives/event': true,
+			'directives/in-view': true,
+
+			'iData': true,
+			'bRouter': true,
+			'iInput/validators': false,
 			'bInput/mask': false,
-			'core/net': true,
-			'core/net/favicon': true
+			'bInput/validators': false
 		};
 	},
 

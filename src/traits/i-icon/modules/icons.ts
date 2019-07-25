@@ -30,6 +30,7 @@ function icons(id?: string): Sprite {
 	throw new Error(`Cannot find module "${id}"`);
 }
 
+//#if runtime has svgSprite
 // @context: ['@sprite', 'sprite' in flags ? flags.sprite : '@super']
 
 let
@@ -58,6 +59,7 @@ Object.forEach(ctx.keys(), (el: string) => {
 
 iconsList.push(ctx);
 // @endcontext
+//#endif
 
 function normalize(key: string): string {
 	return key.replace(/\.\//, '').replace(/\.svg$/, '');

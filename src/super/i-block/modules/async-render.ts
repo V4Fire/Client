@@ -9,8 +9,10 @@
 import Async from 'core/async';
 import iBlock from 'super/i-block/i-block';
 
+//#if runtime has component/async-render
 import { runHook, ComponentMeta } from 'core/component';
 import { queue, restart, deferRestart } from 'core/render';
+//#endif
 
 export interface TaskI<D = unknown> {
 	list: Iterator<D>;
@@ -41,6 +43,8 @@ export interface TaskDesc {
 }
 
 export default class AsyncRender {
+	//#if runtime has component/async-render
+
 	/**
 	 * Component async label
 	 */
@@ -396,4 +400,6 @@ export default class AsyncRender {
 
 		queue.add(task);
 	}
+
+	//#endif
 }

@@ -21,60 +21,7 @@ export type SizeDictionary = Dictionary<
 	Size
 >;
 
-export interface SizeTo {
-	gt: Dictionary<Size>;
-	lt: Dictionary<Size>;
-}
-
-const sizeTo = <SizeTo>{
-	gt: {
-		xxl: 'xxl',
-		xl: 'xxl',
-		l: 'xl',
-		m: 'l',
-		undefined: 'l',
-		s: 'm',
-		xs: 's',
-		xxs: 'xs'
-	},
-
-	lt: {
-		xxl: 'xl',
-		xl: 'l',
-		l: 'm',
-		m: 's',
-		undefined: 's',
-		s: 'xs',
-		xs: 'xxs',
-		xxs: 'xxs'
-	}
-};
-
 export default abstract class iSize {
-	/**
-	 * Link to sizeTo.gt
-	 */
-	static get gt(): SizeDictionary {
-		return sizeTo.gt;
-	}
-
-	/**
-	 * Link to sizeTo.lt
-	 */
-	static get lt(): SizeDictionary {
-		return sizeTo.lt;
-	}
-
-	/**
-	 * Alias for sizeTo.gt
-	 */
-	abstract gt: SizeDictionary;
-
-	/**
-	 * Alias for sizeTo.lt
-	 */
-	abstract lt: SizeDictionary;
-
 	/**
 	 * Size modifiers
 	 */
