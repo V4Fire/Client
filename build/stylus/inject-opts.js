@@ -16,12 +16,16 @@ if (config.designSystem) {
 
 function prepareData(data) {
 	$C(data).forEach((d, val) => {
-		if (/^#\d+/g.test(d)) {
-			data[val] = new stylus.Parser(d).peek().val;
-		}
-
-		if (Object.isObject(d)) {
+		if (Object.isObject(d) || Object.isArray(d)) {
 			prepareData(d);
+
+		} else {
+			if (/^#\d+/g.test(d)) {
+				data[val] = new stylus.Parser(d).peek().val;
+
+			} else if (/^[a-z-_]+\(.*\)$/.test(d)) {
+				data[val] = new stylus.Parser(d).function();
+			}
 		}
 	});
 }
