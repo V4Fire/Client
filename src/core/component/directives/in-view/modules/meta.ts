@@ -21,7 +21,7 @@ export interface ObserveOptions {
 	group?: string;
 	once?: boolean;
 	handleTransitionEnd?: boolean;
-	root?: HTMLElement;
+	root?: (() => HTMLElement) | HTMLElement;
 
 	/**
 	 * Should count view of an element
@@ -83,7 +83,7 @@ export interface ElementRect {
 export interface IntersectionObserverOptions {
 	threshold: number;
 	delay?: number;
-	root?: Nullable<Element>;
+	root?: (() => HTMLElement) | HTMLElement;
 
 	/**
 	 * Notice: Compute of visibility is more expensive than intersection. For that reason,
