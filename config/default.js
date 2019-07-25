@@ -195,36 +195,36 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 			'core/helpers': true,
 			'core/browser': true,
 
-			'core/analytics': false,
-			'core/log': false,
+			'core/analytics': true,
+			'core/log': true,
 
 			'core/kv-storage': true,
-			'core/session': false,
+			'core/session': true,
 			'core/net': false,
 
 			'range/extended': false,
-			'helpers/string/pluralize': false,
+			'helpers/string/pluralize': true,
 
 			'prelude/dependencies': true,
 			'prelude/object/has': false,
 			'prelude/object/getPrototypeChain': false,
 
 			'prelude/date/modify': true,
-			'prelude/date/relative': false,
+			'prelude/date/relative': true,
 			'prelude/date/format': true,
 			'prelude/date/create': true,
 
-			'prelude/number/rounding': false,
-			'prelude/number/format': false,
+			'prelude/number/rounding': true,
+			'prelude/number/format': true,
 
-			'prelude/string/underscore': false,
-			'prelude/string/capitalize': false,
+			'prelude/string/underscore': true,
+			'prelude/string/capitalize': true,
 
-			'prelude/function/debounce': false,
-			'prelude/function/throttle': false,
+			'prelude/function/debounce': true,
+			'prelude/function/throttle': true,
 
 			'component/async-render': true,
-			'component/daemons': false,
+			'component/daemons': true,
 
 			'directives/event': true,
 			'directives/in-view': false,
