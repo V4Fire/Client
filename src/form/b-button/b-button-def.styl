@@ -46,7 +46,7 @@ b-button
 	if ($p.colorBrightnessOnAction)
 		&_disabled_true &__button
 		&_progress_true &__button
-			color lighten($p.color, $p.colorBrightnessOnAction)
+			background-color lighten($p.backgroundColor, $p.colorBrightnessOnAction)
 
 	&__cell + &__cell
 		margin-left $p.offsetBetweenCells
