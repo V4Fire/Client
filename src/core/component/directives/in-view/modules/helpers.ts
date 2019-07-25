@@ -28,8 +28,9 @@ export function getAdaptee<T extends {acceptable: boolean}>(strategies: T[]): Ca
  *
  * @param el
  * @param [threshold]
+ * @param [scrollRoot]
  */
-export function isInView(el: Element, threshold: number = 1): boolean {
+export function isInView(el: Element, threshold: number = 1, scrollRoot?: Element): boolean {
 	if (!document.documentElement) {
 		return false;
 	}

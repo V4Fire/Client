@@ -21,6 +21,7 @@ export interface ObserveOptions {
 	group?: string;
 	once?: boolean;
 	handleTransitionEnd?: boolean;
+	root?: HTMLElement;
 
 	/**
 	 * Should count view of an element
