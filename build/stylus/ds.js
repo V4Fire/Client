@@ -38,11 +38,22 @@ module.exports = function (style) {
 	/**
 	 * Injects additional options to a block options dict ($p)
 	 *
-	 * @param component
-	 * @param file
+	 * @param {string} string - component name
+	 * @returns {!Object}
 	 */
 	style.define(
 		'pInjection',
 		({string}) => DS.components && DS.components[string] && stylus.utils.coerce(DS.components[string], true) || {}
+	);
+
+	/**
+	 * Returns part of the DS
+	 *
+	 * @param {string} string - DS field name
+	 * @returns {!Object}
+	 */
+	style.define(
+		'getDSOptions',
+		({string}) => DS[string] && stylus.utils.coerce(DS[string], true) || {}
 	);
 };

@@ -13,7 +13,7 @@ const
 	size = include('build/stylus/size'),
 	color = include('build/stylus/color'),
 	string = include('build/stylus/string'),
-	injectOpts = include('build/stylus/inject-opts');
+	ds = include('build/stylus/ds');
 
 module.exports = [
 	require('nib')(),
@@ -30,7 +30,7 @@ module.exports = [
 		});
 	},
 
-	injectOpts,
+	ds,
 	size,
 	string,
 	color
