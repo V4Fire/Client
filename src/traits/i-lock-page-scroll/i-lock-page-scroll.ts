@@ -114,14 +114,14 @@ export default abstract class iLockPageScroll {
 	 */
 	static initModEvents<T extends iBlock>(component: T & iLockPageScroll): void {
 		const
-			// @ts-ignore
+			// @ts-ignore (access)
 			{localEvent: $e, async: $a} = component;
 
 		$e.on('block.mod.set.opened.*', (e) => {
 			component[e.value === 'true' ? 'lock' : 'unlock']();
 		});
 
-		$e.on('component.status.destroyed', () => {
+		component.on('statusDestroyed', () => {
 			component.unlock();
 
 			delete component[$$.paddingRight];
