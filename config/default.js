@@ -188,6 +188,8 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	runtime() {
 		return {
 			'vue': true,
+			'zero': false,
+
 			'socket': false,
 			'noGlobals': false,
 			'svgSprite': true,
