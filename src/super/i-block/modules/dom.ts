@@ -68,7 +68,7 @@ export default class DOM {
 	 * @param handler
 	 */
 	delegateElement(name: string, handler: Function): CanPromise<Function> {
-		const res = this.component.lfc.execCbAfterComponentReady(() =>
+		const res = this.component.lfc.execCbAfterBlockReady(() =>
 			this.delegate(this.block.getElSelector(name), handler)
 		);
 
