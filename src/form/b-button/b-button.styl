@@ -69,7 +69,9 @@ b-button extends i-data
 
 	&__value
 		justify-content center
-		width $p.width
+
+		if ($p.width)
+			width $p.width
 
 	&__dropdown &__dropdown-content
 		padding 0
