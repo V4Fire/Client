@@ -7,46 +7,59 @@
  */
 
 $p = {
-	color: #FFF
-	backgroundColor: #6153B9
-	shadow: 0 0 0.45em alpha(#222, 0.5)
-	roundings: (none 0) (small 0.5em) (normal 1em) (big 2em)
+	color: c(#FFF)
+	shadow: 0 0 0.45em alpha(c(#222), 0.5)
 	buttonPadding: 0.5em 1em
 	buttonFontWeight: bold
 	offsetBetweenCells: 0.3em
 	colorBrightnessOnAction: 20%
 	messageHelpers: true
+	defaultExterior: primary
 }
 
 b-button
-	for $el in $p.roundings
-		&_rounding_{$el[0]} &__button
-			border-radius $el[1]
+	for $key, $val in getDSOptions(rounding)
+		&_rounding_{$key} &__button
+			border-radius unit($val, px)
 
-	&__button
-		padding $p.buttonPadding
-		background $p.backgroundColor
-		color $p.color
-		font-weight $p.buttonFontWeight
+	getBgFor($name)
+		getField("exterior." + $name + ".backgroundColor", $p)
 
-		&:focus
-			box-shadow $p.shadow
+	generateExterior($k)
+		$bg = getBgFor($k)
 
-		if ($p.colorBrightnessOnAction)
-			&:hover
-				background lighten($p.backgroundColor, $p.colorBrightnessOnAction)
+		&__button
+			padding $p.buttonPadding
+			background $bg
+			color $p.color
+			font-weight $p.buttonFontWeight
 
-			&:active
-				background darken($p.backgroundColor, $p.colorBrightnessOnAction)
+			&:focus
+				box-shadow $p.shadow
+
+			if ($p.colorBrightnessOnAction && $bg)
+				&:hover
+					background lighten($bg, $p.colorBrightnessOnAction)
+
+		if ($p.colorBrightnessOnAction && $bg)
+			&_disabled_true &__button
+			&_progress_true &__button
+				background-color lighten($bg, $p.colorBrightnessOnAction)
+
+	if (getField("exterior", $p))
+		generateExterior($p.defaultExterior)
+
+		for $key, $val in getField("exterior", $p)
+			&_exterior_{$key}
+				& ^[0]
+					generateExterior($key)
 
 	@supports (-ms-accelerator true)
 		&__button
 			border-width 0.1em
 
-	if ($p.colorBrightnessOnAction)
-		&_disabled_true &__button
-		&_progress_true &__button
-			color lighten($p.color, $p.colorBrightnessOnAction)
+	&__button
+		transition color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out
 
 	&__cell + &__cell
 		margin-left $p.offsetBetweenCells
