@@ -199,12 +199,13 @@ export default class InView extends Super {
 			}
 
 			const
-				isElementIn = isInView(el.node, el.threshold);
+				root = Object.isFunction(el.root) ? el.root() : el.root,
+				isElementIn = isInView(el.node, el.threshold, root);
 
 			if (isElementIn && !el.isLeaving) {
 				this.onObservableIn(el);
 
-			} else if (!isElementIn) {
+			} else if (!isElementIn && el.isLeaving) {
 				this.onObservableOut(el);
 			}
 		});
@@ -353,8 +354,8 @@ export default class InView extends Super {
 			join: true
 		};
 
-		if (Object.isFunction(observable.onLeave)) {
-			observable.onLeave(observable);
+		if (Object.isFunction(observable.onEnter)) {
+			observable.onEnter(observable);
 		}
 
 		observable.isLeaving = true;
@@ -372,8 +373,8 @@ export default class InView extends Super {
 			join: true
 		};
 
-		if (Object.isFunction(observable.onEnter)) {
-			observable.onEnter(observable);
+		if (Object.isFunction(observable.onLeave)) {
+			observable.onLeave(observable);
 		}
 
 		observable.isLeaving = false;
