@@ -7,8 +7,8 @@
  */
 
 $p = {
-	color: #FFF
-	shadow: 0 0 0.45em alpha(#222, 0.5)
+	color: c(#FFF)
+	shadow: 0 0 0.45em alpha(c(#222), 0.5)
 	buttonPadding: 0.5em 1em
 	buttonFontWeight: bold
 	offsetBetweenCells: 0.3em
@@ -23,7 +23,7 @@ b-button
 			border-radius unit($val, px)
 
 	getBgFor($name)
-		return getField("exterior." + $name + ".backgroundColor", $p)
+		getField("exterior." + $name + ".backgroundColor", $p)
 
 	generateExterior($k)
 		$bg = getBgFor($k)
