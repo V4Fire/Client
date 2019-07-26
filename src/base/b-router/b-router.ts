@@ -114,12 +114,6 @@ export default class bRouter<T extends object = Dictionary> extends iData<T> {
 	readonly engineProp!: () => Router;
 
 	/**
-	 * If true, then will be shown page load status on transitions
-	 */
-	@prop(Boolean)
-	readonly showStatus: boolean = false;
-
-	/**
 	 * Page load status
 	 */
 	@system()

@@ -53,6 +53,8 @@ export type SpawnedDaemon = DaemonSpawnedObj | Function;
 export type DaemonsDict = Dictionary<Daemon>;
 
 export default class Daemons {
+	//#if runtime has component/daemons
+
 	/**
 	 * Inherits base daemons from parent and returns a new object
 	 *
@@ -283,6 +285,8 @@ export default class Daemons {
 			}
 		}
 	}
+
+	//#endif
 }
 
 /**

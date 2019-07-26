@@ -14,6 +14,8 @@ import { asyncLocal, factory, AsyncNamespace } from 'core/kv-storage';
 //#endif
 
 export default class Storage {
+	//#if runtime has core/kv-storage
+
 	/**
 	 * Component unique name
 	 */
@@ -144,4 +146,6 @@ export default class Storage {
 			join: 'replace'
 		});
 	}
+
+	//#endif
 }

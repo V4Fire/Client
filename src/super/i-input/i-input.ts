@@ -273,6 +273,8 @@ export default abstract class iInput<
 	 * Component validators
 	 */
 	static blockValidators: ValidatorsDecl = {
+		//#if runtime has iInput/validators
+
 		async required({msg, showMsg = true}: ValidatorParams): Promise<ValidatorResult<boolean>> {
 			if (await this.formValue == null) {
 				this.setValidationMsg(this.getValidatorMsg(false, msg, t`Required field`), showMsg);
@@ -281,6 +283,8 @@ export default abstract class iInput<
 
 			return true;
 		}
+
+		//#endif
 	};
 
 	/**
@@ -434,6 +438,8 @@ export default abstract class iInput<
 	@p({replace: false})
 	@wait('ready')
 	async validate(params?: ValidatorParams): Promise<ValidationResult<FV>> {
+		//#if runtime has iInput/validators
+
 		if (!this.validators.length) {
 			this.removeMod('valid');
 			return true;
@@ -500,6 +506,10 @@ export default abstract class iInput<
 		this.emit('validationEnd', valid === true, failedValidation);
 
 		return valid || failedValidation;
+
+		//#endif
+
+		return true;
 	}
 
 	/** @override */

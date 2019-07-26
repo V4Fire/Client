@@ -73,10 +73,10 @@ export default class DOM {
 		);
 
 		if (Object.isPromise(res)) {
-			return res.then((fn) => fn || Any);
+			return res.then((fn) => fn || ((Any)));
 		}
 
-		return res || Any;
+		return res || ((Any));
 	}
 
 	/**

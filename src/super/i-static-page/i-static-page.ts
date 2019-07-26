@@ -13,8 +13,8 @@ import { defProp } from 'core/const/props';
 import { reset, globalEvent, ResetType, ComponentInterface } from 'core/component';
 import { setLocale, locale } from 'core/i18n';
 
-import { SetEvent } from 'core/session';
-import { StatusEvent } from 'core/net';
+import { Session } from 'core/session/interface';
+import { NetStatus } from 'core/net/interface';
 
 import iBlock from 'super/i-block/i-block';
 import iPage, { component, field, system, watch, Event } from 'super/i-page/i-page';
@@ -285,7 +285,7 @@ export default abstract class iStaticPage<
 	 * @param [e]
 	 */
 	@watch('globalEvent:session.*')
-	protected syncAuthWatcher(e?: SetEvent): void {
+	protected syncAuthWatcher(e?: Session): void {
 		this.isAuth = Boolean(e && e.auth);
 	}
 
@@ -294,7 +294,7 @@ export default abstract class iStaticPage<
 	 * @param e
 	 */
 	@watch('globalEvent:net.status')
-	protected syncOnlineWatcher(e: StatusEvent): void {
+	protected syncOnlineWatcher(e: NetStatus): void {
 		this.isOnline = e.status;
 		this.lastOnlineDate = e.lastOnline;
 	}

@@ -80,6 +80,8 @@ export const
 
 @component({functional: null})
 export default abstract class iData<T extends object = Dictionary> extends iMessage implements iProgress {
+	//#if runtime has iData
+
 	/**
 	 * Data provider name
 	 */
@@ -869,4 +871,6 @@ export default abstract class iData<T extends object = Dictionary> extends iMess
 	protected onRefreshData(data: T): Promise<void> {
 		return this.reload();
 	}
+
+	//#endif
 }

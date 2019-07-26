@@ -16,30 +16,50 @@ export interface Observable {
 }
 
 export interface ObserveOptions {
-	callback?: Function;
 	onEnter?: Function;
 	onLeave?: Function;
-	count?: Function | boolean;
 	group?: string;
 	once?: boolean;
-	timeout?: number;
 	handleTransitionEnd?: boolean;
+	root?: (() => HTMLElement) | HTMLElement;
 
 	/**
-	 * How an element should be deactivated after he was seen, only if once is set to true
+	 * Should count view of an element
+	 */
+	count?: (() => boolean) | boolean;
+
+	/**
+	 * Callback that will be executed after the delay
+	 */
+	callback?: Function;
+
+	/**
+	 * Delay before callback execution
+	 * @see https://w3c.github.io/IntersectionObserver/v2/#dom-intersectionobserver-delay
+	 */
+	delay?: number;
+
+	/**
+	 * @deprecated use delay param instead, timeout will be removed after beta ends
+	 */
+	timeout?: number;
+
+	/**
+	 * How an element should be deactivated after he was seen (only if once is set to true)
+	 *
 	 *   *) remove - element will be removed from inView directive
 	 *
-	 *   *) deactivate - element will not be removed from inView directive, he will be deactivated after was seen,
-	 *      you can activate specified element later, he will become observable again
+	 *   *) deactivate - element will not be removed from inView directive: he will be deactivated after was seen
+	 *      (you can activate the specified element later, and he will become observable again)
 	 */
 	removeStrategy?: RemoveStrategy;
 
 	/**
-	 * Only for environments that do not support intersection observer.
+	 * Only for environments that doesn't support intersection observer.
 	 *
-	 * If set to true, the element will not be placed in the position map;
+	 * If true, the element will not be placed in the position map;
 	 * instead, the method of polling the positions of the elements will be used.
-	 * Every 75 milliseconds, each element being observed will be asked about its position using getBoundingClientRect
+	 * Every 75 milliseconds each observable elements will be asked about its position using getBoundingClientRect
 	 *
 	 * Notice: May slowdown your app performance, use it carefully
 	 */
@@ -62,6 +82,16 @@ export interface ElementRect {
 
 export interface IntersectionObserverOptions {
 	threshold: number;
+	delay?: number;
+	root?: (() => HTMLElement) | HTMLElement;
+
+	/**
+	 * Notice: Compute of visibility is more expensive than intersection. For that reason,
+	 * Intersection Observer v2 is not intended to be used broadly in the way that Intersection Observer v1 is.
+	 * Intersection Observer v2 is focused on combatting fraud and should be used only when
+	 * Intersection Observer v1 functionality is truly insufficient.
+	 */
+	trackVisibility?: boolean;
 }
 
 export interface DirectiveOptions extends VNodeDirective {
@@ -76,4 +106,4 @@ export type RemoveStrategy = 'remove' | 'deactivate';
 export type InitOptions = ObserveOptions & IntersectionObserverOptions;
 export type ObservableElementsMap = Map<HTMLElement, ObservableElement>;
 export type ObservableElementRect = ElementRect & {observable: ObservableElement};
-export type ObservableElement = Observable & ObserveOptions & IntersectionObserverOptions;
+export type ObservableElement = Observable & InitOptions;

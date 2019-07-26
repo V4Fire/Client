@@ -12,10 +12,6 @@
 - include '**/*.window.ss'|b
 
 - template index() extends ['i-data'].index
-	/*- block rootAttrs
-		- super
-		? Object.assign(rootAttrs, {':style': "{top: global.pageYOffset + 'px'}"})*/
-
 	- block body
 		- super
 		- block window
@@ -50,8 +46,5 @@
 							< .&__controls
 								+= self.slot('control')
 									- block controls
-										< b-button &
-											:mods = provide.mods({theme: 'dark', size: gt[m.size]}) |
-											@click = close
-										.
+										< b-button @click = close
 											{{ `Close` }}
