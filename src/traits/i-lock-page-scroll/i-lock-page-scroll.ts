@@ -26,6 +26,10 @@ export default abstract class iLockPageScroll {
 			{async: $a, r} = component,
 			group = 'pageScrollLock';
 
+		if (r[$$.isLocked]) {
+			return;
+		}
+
 		if (is.iOS) {
 			if (allowed) {
 				$a.on(allowed, 'touchstart', (e: TouchEvent) => {
@@ -85,6 +89,8 @@ export default abstract class iLockPageScroll {
 
 			r.setRootMod('lockScrollDesktop', true, r);
 		}
+
+		r[$$.isLocked] = true;
 	}
 
 	/**
@@ -97,8 +103,13 @@ export default abstract class iLockPageScroll {
 			{async: $a, r} = component,
 			{body} = document;
 
+		if (!r[$$.isLocked]) {
+			return;
+		}
+
 		r.removeRootMod('lockScrollMobile', true, r);
 		r.removeRootMod('lockScrollDesktop', true, r);
+		r[$$.isLocked] = false;
 
 		if (is.Android) {
 			window.scrollTo(0, component[$$.scrollTop]);
