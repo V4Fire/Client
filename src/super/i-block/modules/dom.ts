@@ -68,15 +68,15 @@ export default class DOM {
 	 * @param handler
 	 */
 	delegateElement(name: string, handler: Function): CanPromise<Function> {
-		const res = this.component.lfc.execCbAfterComponentReady(() =>
+		const res = this.component.lfc.execCbAfterBlockReady(() =>
 			this.delegate(this.block.getElSelector(name), handler)
 		);
 
 		if (Object.isPromise(res)) {
-			return res.then((fn) => fn || Any);
+			return res.then((fn) => fn || ((Any)));
 		}
 
-		return res || Any;
+		return res || ((Any));
 	}
 
 	/**

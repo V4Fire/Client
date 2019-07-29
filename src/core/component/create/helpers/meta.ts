@@ -54,6 +54,21 @@ export function addMethodsToMeta(constructor: Function, meta: ComponentMeta): vo
 		proto = constructor.prototype,
 		ownProps = Object.getOwnPropertyNames(proto);
 
+	const {
+
+		componentName: src,
+		params,
+		methods,
+		accessors,
+		props,
+		fields,
+		systemFields
+
+	} = meta;
+
+	const
+		replace = !params.flyweight;
+
 	for (let i = 0; i < ownProps.length; i++) {
 		const
 			key = ownProps[i];
@@ -63,8 +78,6 @@ export function addMethodsToMeta(constructor: Function, meta: ComponentMeta): vo
 		}
 
 		const
-			src = meta.componentName,
-			replace = !meta.params.flyweight,
 			desc = <PropertyDescriptor>Object.getOwnPropertyDescriptor(proto, key);
 
 		if ('value' in desc) {
@@ -76,12 +89,12 @@ export function addMethodsToMeta(constructor: Function, meta: ComponentMeta): vo
 			}
 
 			// tslint:disable-next-line:prefer-object-spread
-			meta.methods[key] = Object.assign(meta.methods[key] || {replace, watchers: {}, hooks: {}}, {src, fn});
+			methods[key] = Object.assign(methods[key] || {replace, watchers: {}, hooks: {}}, {src, fn});
 
 		} else {
 			const
-				field = meta.props[key] ? meta.props : meta.fields[key] ? meta.fields : meta.systemFields,
-				metaKey = key in meta.accessors ? 'accessors' : 'computed',
+				field = props[key] ? props : fields[key] ? fields : systemFields,
+				metaKey = key in accessors ? 'accessors' : 'computed',
 				obj = meta[metaKey];
 
 			if (field[key]) {

@@ -106,12 +106,12 @@ export default class Lfc {
 	}
 
 	/**
-	 * Executes the specified callback after block.ready event and returns the result
+	 * Executes the specified callback after block ready event and returns the result
 	 *
 	 * @param cb
 	 * @param [params] - async parameters
 	 */
-	execCbAfterComponentReady<T = unknown>(cb: (this: this) => T, params?: AsyncOpts): CanPromise<CanVoid<T>> {
+	execCbAfterBlockReady<T = unknown>(cb: (this: this) => T, params?: AsyncOpts): CanPromise<CanVoid<T>> {
 		// @ts-ignore (access)
 		if (this.component.block) {
 			if (statuses[this.status] >= 0) {

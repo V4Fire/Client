@@ -188,30 +188,55 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	runtime() {
 		return {
 			'vue': true,
+			'zero': false,
+
 			'socket': false,
 			'noGlobals': false,
 			'svgSprite': true,
 
 			'core/helpers': true,
 			'core/browser': true,
-			'core/kv-storage': true,
+
 			'core/analytics': true,
+			'core/log': true,
+
+			'core/kv-storage': true,
 			'core/session': true,
 			'core/net': false,
-			'core/net/favicon': false,
+
+			'range/extended': false,
+			'helpers/string/pluralize': true,
 
 			'prelude/dependencies': true,
+			'prelude/object/has': false,
+			'prelude/object/getPrototypeChain': false,
+
+			'prelude/date/modify': true,
+			'prelude/date/relative': true,
+			'prelude/date/format': true,
+			'prelude/date/create': true,
+
+			'prelude/number/rounding': true,
+			'prelude/number/format': true,
+
+			'prelude/string/underscore': true,
+			'prelude/string/capitalize': true,
+
+			'prelude/function/debounce': true,
+			'prelude/function/throttle': true,
+
 			'component/async-render': true,
 			'component/daemons': true,
 
 			'directives/event': true,
-			'directives/in-view': true,
+			'directives/in-view': false,
 
 			'iData': true,
 			'bRouter': true,
-			'iInput/validators': false,
-			'bInput/mask': false,
-			'bInput/validators': false
+
+			'iInput/validators': true,
+			'bInput/mask': true,
+			'bInput/validators': true
 		};
 	},
 

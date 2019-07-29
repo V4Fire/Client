@@ -55,6 +55,11 @@ export function isInView(el: Element, threshold: number = 1, scrollRoot?: Elemen
 		left: right
 	};
 
+	if (scrollRoot) {
+		intersection.right -= scrollRoot.scrollLeft;
+		intersection.top -= scrollRoot.scrollTop;
+	}
+
 	const elementThreshold = {
 		x: threshold * width,
 		y: threshold * height

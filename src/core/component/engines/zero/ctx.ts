@@ -25,7 +25,7 @@ export default {
 	_e: (v) => document.createComment(v === undefined ? '' : v),
 
 	_f(id: string): Function {
-		return resolveAsset(this.$options, 'filters', id, true) || Any;
+		return resolveAsset(this.$options, 'filters', id, true) || ((Any));
 	},
 
 	_n: (v) => {
