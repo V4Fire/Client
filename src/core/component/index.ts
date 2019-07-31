@@ -335,7 +335,7 @@ export function component(params?: ComponentParams): Function {
 									composite = attrOpts['v4-composite'];
 
 								if (tag === 'v-render') {
-									return attrOpts && <VNode>attrOpts.from || nativeCreate('div');
+									return attrOpts && <VNode>attrOpts.from || nativeCreate('span');
 								}
 
 								let

@@ -112,7 +112,7 @@ export default class VDOM {
 
 		if (!renderObj) {
 			// @ts-ignore (access)
-			return this.component.$createElement('div');
+			return this.component.$createElement('span');
 		}
 
 		let
