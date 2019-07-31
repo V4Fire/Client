@@ -15,14 +15,14 @@
  * Base block template
  */
 - template index()
-	- blockName = ''
+	- componentName = ''
 
 	/**
 	 * Returns the block name
 	 * @param {string=} [name] - custom template name
 	 */
 	- block name(name = TPL_NAME)
-		- return (blockName || /\['(.*?)'\]/.exec(name)[1] || '').dasherize()
+		- return (componentName || /\['(.*?)'\]/.exec(name)[1] || '').dasherize()
 
 	/**
 	 * Returns link to a template by the specified link
