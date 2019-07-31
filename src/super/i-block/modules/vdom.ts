@@ -52,11 +52,24 @@ export default class VDOM {
 
 	/**
 	 * Returns a render object by the specified path
-	 * @param path - template path (bExample | bExample.foo ...)
+	 * @param path - template path (index | bExample.index ...)
 	 */
 	getRenderObject(path: string): CanUndef<RenderObject> {
-		const chunks = path.split('.');
-		chunks[0] = chunks[0].dasherize();
+		const
+			chunks = path.split('.');
+
+		if (path.slice(-1) === '/') {
+			const l = chunks.length - 1;
+			chunks[l] = chunks[l].slice(0, -1);
+			chunks.push('index');
+		}
+
+		if (chunks.length === 1) {
+			chunks.unshift(this.component.componentName);
+
+		} else {
+			chunks[0] = chunks[0].dasherize();
+		}
 
 		const
 			key = chunks.join('.'),
@@ -74,7 +87,7 @@ export default class VDOM {
 		}
 
 		const
-			fn = chunks.length === 1 ? tpl.index : Object.get(tpl, chunks.slice(1));
+			fn = Object.get(tpl, chunks.slice(1));
 
 		if (Object.isFunction(fn)) {
 			return tplCache[key] = fn();
@@ -84,13 +97,21 @@ export default class VDOM {
 	/**
 	 * Executes the specified render object
 	 *
-	 * @param renderObj
+	 * @param objOrPath - render object or a template path
 	 * @param [ctx] - render context
 	 */
 	execRenderObject(
-		renderObj: RenderObject,
+		objOrPath: CanUndef<RenderObject> | string,
 		ctx?: RenderContext | [Dictionary] | [Dictionary, RenderContext]
 	): VNode {
+		const
+			renderObj = Object.isString(objOrPath) ? this.getRenderObject(objOrPath) : objOrPath;
+
+		if (!renderObj) {
+			// @ts-ignore (access)
+			return this.component.$createElement('div');
+		}
+
 		let
 			instanceCtx,
 			renderCtx;
