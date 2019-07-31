@@ -24,6 +24,9 @@ import {
 
 } from 'core/component';
 
+export type RenderFn =
+	(params?: Dictionary) => VNode;
+
 const
 	tplCache = Object.createDict<RenderObject>();
 
@@ -95,15 +98,15 @@ export default class VDOM {
 	}
 
 	/**
-	 * Executes the specified render object
+	 * Returns a function that executes the specified render object
 	 *
 	 * @param objOrPath - render object or a template path
 	 * @param [ctx] - render context
 	 */
-	execRenderObject(
+	bindRenderObject(
 		objOrPath: CanUndef<RenderObject> | string,
 		ctx?: RenderContext | [Dictionary] | [Dictionary, RenderContext]
-	): VNode {
+	): RenderFn {
 		const
 			renderObj = Object.isString(objOrPath) ? this.getRenderObject(objOrPath) : objOrPath;
 
@@ -131,14 +134,51 @@ export default class VDOM {
 			renderCtx = ctx;
 		}
 
-		const
-			vnode = execRenderObject(renderObj, instanceCtx);
+		return (p) => {
+			if (p) {
+				instanceCtx = Object.create(instanceCtx);
 
-		if (renderCtx) {
-			return patchVNode(vnode, instanceCtx, renderCtx);
-		}
+				for (let keys = Object.keys(p), i = 0; i < keys.length; i++) {
+					const
+						key = keys[i],
+						value = p[key];
 
-		return vnode;
+					if (key in instanceCtx) {
+						Object.defineProperty(instanceCtx, key, {
+							configurable: true,
+							enumerable: true,
+							writable: true,
+							value
+						});
+
+					} else {
+						instanceCtx[key] = value;
+					}
+				}
+			}
+
+			const
+				vnode = execRenderObject(renderObj, instanceCtx);
+
+			if (renderCtx) {
+				return patchVNode(vnode, instanceCtx, renderCtx);
+			}
+
+			return vnode;
+		};
+	}
+
+	/**
+	 * Executes the specified render object
+	 *
+	 * @param objOrPath - render object or a template path
+	 * @param [ctx] - render context
+	 */
+	execRenderObject(
+		objOrPath: CanUndef<RenderObject> | string,
+		ctx?: RenderContext | [Dictionary] | [Dictionary, RenderContext]
+	): VNode {
+		return this.bindRenderObject(objOrPath, ctx)();
 	}
 
 	/**
