@@ -172,6 +172,8 @@ export function createCompositeElement(vnode: VNode, ctx: ComponentInterface): V
 		return vnode;
 	}
 
+	vnode.tag = 'span';
+
 	const
 		meta = components.get(composite);
 

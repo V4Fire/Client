@@ -331,10 +331,21 @@ export function component(params?: ComponentParams): Function {
 
 								const
 									hasOpts = Object.isSimpleObject(opts),
-									attrOpts = <Dictionary>(hasOpts ? (<Dictionary>opts).attrs = (<Dictionary>opts).attrs || {} : {});
+									attrOpts = <Dictionary>(hasOpts ? (<Dictionary>opts).attrs = (<Dictionary>opts).attrs || {} : {}),
+									composite = attrOpts['v4-composite'];
+
+								if (tag === 'v-render') {
+									return attrOpts && <VNode>attrOpts.from || nativeCreate('div');
+								}
+
+								let
+									tagName = tag;
+
+								if (composite) {
+									attrOpts['v4-composite'] = tagName = tagName === 'span' ? <string>composite : tagName.dasherize();
+								}
 
 								const
-									tagName = <string>(attrOpts['v4-composite'] || tag),
 									regComponent = regCache[tagName];
 
 								let
@@ -362,7 +373,7 @@ export function component(params?: ComponentParams): Function {
 
 								let
 									vnode = ctx.renderTmp[renderKey],
-									needEl = Boolean(attrOpts['v4-composite']);
+									needEl = Boolean(composite);
 
 								if (!vnode && component && supports.functional && component.params.functional === true) {
 									needEl = true;
