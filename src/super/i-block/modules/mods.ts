@@ -109,7 +109,7 @@ export function initMods<T extends iBlock>(component: T): ModsNTable {
 		const
 			key = keys[i];
 
-		if (declMods[key]) {
+		if (key in declMods) {
 			const attrVal = attrs[key];
 			component.watch(`$attrs.${key}`, (val) => component.setMod(key, modVal(val)));
 
