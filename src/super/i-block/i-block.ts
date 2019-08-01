@@ -180,12 +180,6 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	readonly renderKey?: string;
 
 	/**
-	 * Component render group name
-	 */
-	@prop({required: false})
-	readonly renderGroupProp?: string;
-
-	/**
 	 * Component unique name
 	 */
 	@prop({type: String, required: false})
