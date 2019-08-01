@@ -23,12 +23,12 @@
 	 */
 	- block name(name)
 		? name = name || componentName || TPL_NAME
-		: nmsRgxp = /\['(.*?)'\]/
+		: nmsRgxp = /\['(.*?)'\]\.index/
 
 		- if nmsRgxp.test(name)
 			? name = nmsRgxp.exec(name)[1]
 
-		- return name.dasherize()
+		- return name.split('.').slice(-1)[0].dasherize()
 
 	/**
 	 * Returns a link to a template by the specified path
@@ -61,8 +61,8 @@
 			rootAttrs[':class'] = value
 
 	- rootAttrs = { &
-		':class': '[...provide.blockClasses(mods), "i-block-helper", componentId]',
-		':render-group': 'renderGroupProp',
+		':class': '[...provide.blockClasses("' + self.name() + '", mods), "i-block-helper", componentId]',
+		':-render-group': 'renderGroup',
 		':-render-counter': 'renderCounter'
 	} .
 
