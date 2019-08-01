@@ -547,9 +547,8 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 			'destroyed'
 		],
 
-		theme: [
-			'default'
-		]
+		theme: ['default'],
+		exterior: []
 	};
 
 	/**
