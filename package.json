@@ -5,7 +5,7 @@
   "main": "src/core/index.js",
   "typings": "index.d.ts",
   "license": "MIT",
-  "version": "3.0.0-beta.115",
+  "version": "3.0.0-beta.116",
   "author": {
     "name": "kobezzza",
     "email": "kobezzza@gmail.com",
@@ -41,8 +41,8 @@
     "vue": "^2.6.10"
   },
   "optionalDependencies": {
-    "@pzlr/build-core": "^2.8.16",
-    "@pzlr/stylus-inheritance": "^3.0.5",
+    "@pzlr/build-core": "^2.8.17",
+    "@pzlr/stylus-inheritance": "^3.0.6",
     "@types/fs-extra-promise": "^1.0.8",
     "@types/glob": "^7.1.1",
     "@types/socket.io": "^2.1.2",
@@ -78,7 +78,7 @@
     "html-loader": "^0.5.5",
     "image-webpack-loader": "^5.0.0",
     "is-path-inside": "^3.0.1",
-    "merge2": "^1.2.3",
+    "merge2": "^1.2.4",
     "mini-css-extract-plugin": "^0.8.0",
     "monic": "^2.6.0",
     "monic-loader": "^3.0.1",
@@ -110,7 +110,7 @@
     "urlconcat": "0.0.12",
     "vue-template-compiler": "^2.6.10",
     "vue-template-es2015-compiler": "^1.9.1",
-    "webpack": "^4.37.0",
+    "webpack": "^4.38.0",
     "webpack-cli": "^3.3.6"
   },
   "devDependencies": {
