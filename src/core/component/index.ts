@@ -254,8 +254,10 @@ export function component(params?: ComponentParams): Function {
 							}
 						}
 
-						for (let o = cache.values(), el = o.next(); !el.done; el = o.next()) {
-							res.push(el.value);
+						if (cache) {
+							for (let o = cache.values(), el = o.next(); !el.done; el = o.next()) {
+								res.push(el.value);
+							}
 						}
 					}
 
