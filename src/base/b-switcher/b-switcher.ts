@@ -261,6 +261,7 @@ export default class bSwitcher extends iBlock {
 		}, {label: $$.initMutation});
 
 		this.nodesLength = content.children.length;
+
 		check();
 		this.createMutationObserver();
 	}
@@ -291,7 +292,7 @@ export default class bSwitcher extends iBlock {
 
 			for (let i = 0; i < nodes.length; i++) {
 				const
-					el = content.children[i],
+					el = nodes[i],
 					component = (<any>el).component as CanUndef<iBlock>;
 
 				if (component) {
@@ -300,11 +301,17 @@ export default class bSwitcher extends iBlock {
 			}
 		};
 
-		register();
+		const defferRegister = () => {
+			this.async.setTimeout(() => {
+				register();
+			}, 50, {label: $$.register, join: true});
+		};
+
+		defferRegister();
 		this.createMutationObserver();
 
 		this.on('contentMutation', () => {
-			register();
+			defferRegister();
 		}, {label: $$.initReady});
 	}
 
