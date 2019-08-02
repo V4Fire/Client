@@ -1,0 +1,23 @@
+@import "@super/super/i-block/i-block.styl"
+
+$p = {
+
+}
+
+b-switcher extends i-block
+	&__content
+		size 0
+		overflow hidden
+		visibility hidden
+
+	&__placeholder
+		size auto
+		visibility visible
+
+	&_hidden_true &__placeholder
+		visibility hidden
+
+	&_hidden_true &__content
+		size auto
+		overflow auto
+		visibility visible
