@@ -1,6 +1,14 @@
+/*!
+ * V4Fire Client Core
+ * https://github.com/V4Fire/Client
+ *
+ * Released under the MIT license
+ * https://github.com/V4Fire/Client/blob/master/LICENSE
+ */
+
 import symbolGenerator from 'core/symbol';
 
-import iBlock, { component, prop, hook, watch, system, p } from 'super/i-block/i-block';
+import iBlock, { component, prop, hook, system, p } from 'super/i-block/i-block';
 
 export * from 'super/i-block/i-block';
 
