@@ -8,7 +8,7 @@
 
 import symbolGenerator from 'core/symbol';
 
-import iBlock, { component, prop, hook, system, p } from 'super/i-block/i-block';
+import iBlock, { component, prop, hook, system, p, ModsDecl } from 'super/i-block/i-block';
 
 export * from 'super/i-block/i-block';
 
@@ -45,6 +45,12 @@ export default class bSwitcher extends iBlock {
 	readonly resolve?: ResolveMethod | ResolveMethod[];
 
 	/**
+	 * If true then after resolve state change will not be switched
+	 */
+	@prop(Boolean)
+	readonly resolveOnce: Boolean = false;
+
+	/**
 	 * Keys for semaphore strategy
 	 */
 	@prop({
@@ -53,6 +59,14 @@ export default class bSwitcher extends iBlock {
 	})
 
 	readonly semaphoreKeys?: Dictionary;
+
+	/** @inheritDoc */
+	static readonly mods: ModsDecl = {
+		animation: [
+			['none'],
+			'fade'
+		]
+	};
 
 	/**
 	 * Mutable duplicate of semaphoreStore
@@ -272,7 +286,7 @@ export default class bSwitcher extends iBlock {
 	@hook('mounted')
 	protected initReady(): void {
 		const
-			{semaphoreReadyMap} = this;
+			{semaphoreReadyMap, async: $a} = this;
 
 		const subscribe = (c: iBlock) => {
 			if (semaphoreReadyMap.has(c)) {
@@ -280,9 +294,9 @@ export default class bSwitcher extends iBlock {
 			}
 
 			semaphoreReadyMap.set(c, c.isReady);
-			c.on('statusReady', () => semaphoreReadyMap.set(c, true));
-			c.on('statusLoading unloaded', () => semaphoreReadyMap.set(c, false));
-			c.on('statusDestroyed', () => semaphoreReadyMap.delete(c));
+			$a.on(c, 'statusReady', () => semaphoreReadyMap.set(c, true), {label: $$.ready});
+			$a.on(c, 'statusLoading statusUnloaded', () => semaphoreReadyMap.set(c, false), {label: $$.loading});
+			$a.on(c, 'statusDestroyed', () => semaphoreReadyMap.delete(c), {label: $$.destroy});
 		};
 
 		const register = () => {
@@ -361,7 +375,11 @@ export default class bSwitcher extends iBlock {
 	@hook('mounted')
 	protected updateReadiness(): boolean {
 		const
-			{isManual, resolve} = this;
+			{isManual, resolve, resolveOnce} = this;
+
+		if (resolveOnce && this.isReadyToSwitch) {
+			return true;
+		}
 
 		// tslint:disable-next-line: prefer-conditional-expression
 		if (isManual) {

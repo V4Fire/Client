@@ -1,0 +1,75 @@
+/*!
+ * V4Fire Client Core
+ * https://github.com/V4Fire/Client
+ *
+ * Released under the MIT license
+ * https://github.com/V4Fire/Client/blob/master/LICENSE
+ */
+
+@import "super/i-block/i-block.styl"
+
+$p = {
+	rowItemMargin: '0 0 0 0'
+	columnItemMargin: '0 0 0 0'
+
+	itemSize 100%
+	itemBg: #CCC
+	itemMargin: '0 0 0 0'
+	itemBorderRadius: 3px
+
+	rectSize: 200px
+
+	circleSize: 50px
+	circleBorderRadius: 50%
+
+	animationGradient: linear-gradient(to right, alpha(#FFF, 0) 46%, alpha(#FFF, 0.35) 50%, alpha(#FFF, 0) 54%) 50% 50%
+
+	animation_xl: 1200px
+	animation_l: 600px
+	animation_m: 300px
+	animation_s: 100px
+}
+
+b-skeleton extends i-block
+	&__item
+		size $p.itemSize
+		background-color $p.itemBg
+		border-radius $p.itemBorderRadius
+
+	&__item_shape_rect
+		size $p.rectSize
+
+	&__column
+		display flex
+		flex-direction column
+
+	&__row
+		display flex
+
+	&__column &__item
+	&__row &__item
+		flex-shrink 0
+
+	&__column &__item
+		margin $p.columnItemMargin
+
+	&__row &__item
+		margin $p.rowItemMargin
+
+	&_shape_circle
+		size $p.circleSize
+		border-radius $p.circleBorderRadius
+
+	for $size in ('s' 'm' 'l' 'xl')
+		$keyframe = 'skeleton_' + $size
+		$v = $p['animation_' + $size]
+
+		&_item_animation_{$size}
+			animation-name $keyframe
+		
+		@keyframes {$keyframe}
+			0%
+				transform translate(-$v, 0)
+
+			100%
+				transform translate($v, 0)
