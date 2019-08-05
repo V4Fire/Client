@@ -25,7 +25,7 @@
  * @property {string} shape
  */
 
- /**
+/**
  * Generates a skeleton rect
  * @param {SkeletonParams.p} [p]
  * @param {SkeletonParams.style} [style]
@@ -56,14 +56,13 @@
 
 /**
  * @typedef MultipleParams
- * @param {number} [l] - Number of elements to be generated
- * @param {SkeletonPart.shape} [shape] - Shape of generated elements
- * @param {SkeletonParams.p} [p]
- * @param {SkeletonParams.style} [style]
+ * @property {number} [l] - Number of elements to be generated
+ * @property {SkeletonPart.shape} [shape] - Shape of generated elements
+ * @property {SkeletonParams.p} [p]
+ * @property {SkeletonParams.style} [style]
  */
 
- /**
- *
+/**
  * Generates a specified number of skeletons
  * @param {MultipleParams.l} [l]
  * @param {MultipleParams.shape} [shape]
@@ -76,18 +75,22 @@
 
 /**
  * Generates a skeleton column
+ * @param content
  * @param {SkeletonParams.style} [style]
+ * @param {string} [wrapperClass]
  */
 - block index->column(content, style = {}, wrapperClass = 'column-default')
 	? wrapperClass = wrapperClass || 'column-default'
 
 	< ?.${self.name()}
-		< .&__${wrapperClass}.&__column
+		< .&__${wrapperClass}.&__column :style = style
 			{content}
 
 /**
  * Generates a skeleton row
+ * @param content
  * @param {SkeletonParams.style} [style]
+ * @param {string} [wrapperClass]
  */
 - block index->row(content, style = {}, wrapperClass = 'row-default')
 	? wrapperClass = wrapperClass || 'row-default'
@@ -98,10 +101,11 @@
 
 /**
  * Generates a skeleton
- * @param {SkeletonPart[] | SkeletonPart} map
+ * @param {string} block
+ * @param {...*} args
  */
 - @@ignore
-- template index(block, params) extends ['i-block'].index
+- template index(block, args) extends ['i-block'].index
 	- block body
 		< ?.${self.name()}
 			+= self[block](params)
