@@ -9,21 +9,18 @@
 @import "super/i-block/i-block.styl"
 
 $p = {
-	rowItemMargin: "0 0 0 0"
-	columnItemMargin: "0 0 0 0"
-
 	itemSize: 100%
-	itemBg: #CCC
-	itemMargin: "0 0 0 0"
-	itemBorderRadius: 3px
+	itemBg: #E8E8E8
+	itemMargin: 0 0 0 0
+	itemBorderRadius: 16px
 
 	rectSize: 200px
 
 	circleSize: 50px
 	circleBorderRadius: 50%
 
-	animationGradient: linear-gradient(to right, alpha(#FFF, 0) 46%, alpha(#FFF, 0.35) 50%, alpha(#FFF, 0) 54%) 50% 50%
-
+	animationGradient: linear-gradient(to right, alpha(#FFF, 0) 46%, alpha(#FFF, 0.25) 50%, alpha(#FFF, 0) 54%) 50% 50%
+	animationDuration: 1.5s
 	animation_xl: 1200px
 	animation_l: 600px
 	animation_m: 300px
@@ -32,9 +29,23 @@ $p = {
 
 b-skeleton extends i-block
 	&__item
+		position relative
 		size $p.itemSize
 		border-radius $p.itemBorderRadius
 		background-color $p.itemBg
+		overflow hidden
+
+		&:before
+			absolute left 50% top 0 bottom 0 right 0
+
+			content ""
+			width 500%
+			margin-left -250%
+
+			background $p.animationGradient
+			animation-duration $p.animationDuration
+			animation-iteration-count infinite
+			animation-timing-function linear
 
 	&__item_shape_rect
 		size $p.rectSize
@@ -45,31 +56,27 @@ b-skeleton extends i-block
 
 	&__row
 		display flex
+		width 100%
+		overflow hidden
 
 	&__column &__item
 	&__row &__item
 		flex-shrink 0
-
-	&__column &__item
-		margin $p.columnItemMargin
-
-	&__row &__item
-		margin $p.rowItemMargin
 
 	&_shape_circle
 		size $p.circleSize
 		border-radius $p.circleBorderRadius
 
 	for $s in ("s" "m" "l" "xl")
-		$keyframe = "skeleton_" + $s
-		$v = $p["animation_" + $s]
+		$keyframe = skeleton_ + $s
+		$v = $p[animation_ + $s]
 
-		&__item_animation_{$s}
+		&__item_animation_{$s}:before
 			animation-name $keyframe
 		
 		@keyframes {$keyframe}
 			0%
-				transform translate(-$v, 0)
+				transform translate(-($v), 0)
 
 			100%
 				transform translate($v, 0)

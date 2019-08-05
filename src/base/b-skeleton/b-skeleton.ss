@@ -31,14 +31,14 @@
  * @param {SkeletonParams.style} [style]
  */
 - block index->rect(p = {}, style = {})
-	? Object.assign({ &
+	? p = Object.assign({ &
 		animation: 's',
 		class: 'default',
 		size: 's'
 	}, p) .
 
 	< ?.${self.name()}
-		< .&__item[.&_shape_rect.&_animation_${p.animation}&_size_${p.size}.&__${p.class}] :style = style
+		< .&__${p.class}.&__item[.&_shape_rect.&_animation_${p.animation}.&_size_${p.size}] :style = style
 
 /**
  * Generates a skeleton circle
@@ -46,13 +46,13 @@
  * @param {SkeletonParams.style} [style]
  */
 - block index->circle(p = {}, style = {})
-	? Object.assign({ &
+	? p = Object.assign({ &
 		animation: 's',
 		size: 's'
 	}, p) .
 
 	< ?.${self.name()}
-		< .&__item[.&_shape_circle.&_animation_${p.animation}&_size_${p.size}.&__${p.class}] :style = style
+		< .&__${p.class}.&__item[.&_shape_circle.&_animation_${p.animation}.&_size_${p.size}] :style = style
 
 /**
  * @typedef MultipleParams
@@ -78,22 +78,22 @@
  * Generates a skeleton column
  * @param {SkeletonParams.style} [style]
  */
-- block index->column(style = {}, wrapperClass = 'column-default', content)
+- block index->column(content, style = {}, wrapperClass = 'column-default')
 	? wrapperClass = wrapperClass || 'column-default'
 
 	< ?.${self.name()}
-		< .&__column[.&__${wrapperClass}]
+		< .&__${wrapperClass}.&__column
 			{content}
 
 /**
  * Generates a skeleton row
  * @param {SkeletonParams.style} [style]
  */
-- block index->row(style = {}, wrapperClass = 'row-default', content)
+- block index->row(content, style = {}, wrapperClass = 'row-default')
 	? wrapperClass = wrapperClass || 'row-default'
 
 	< ?.${self.name()}
-		< .&__column[.&__${wrapperClass}] :style = style
+		< .&__${wrapperClass}.&__row :style = style
 			{content}
 
 /**
@@ -104,5 +104,4 @@
 - template index(block, params) extends ['i-block'].index
 	- block body
 		< ?.${self.name()}
-			- forIn map => sk
-				+= self[block](params)
+			+= self[block](params)

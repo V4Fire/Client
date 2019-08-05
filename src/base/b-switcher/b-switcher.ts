@@ -31,7 +31,7 @@ export function validateResolve(v: ResolveMethod | ResolveMethod[]): boolean {
 	return (<ResolveMethod[]>[]).concat(v).every((a) => Boolean(resolveMethods[a]));
 }
 
-@component({functional: true})
+@component()
 export default class bSwitcher extends iBlock {
 	/**
 	 * Resolve strategy of skeleton
@@ -341,11 +341,6 @@ export default class bSwitcher extends iBlock {
 	 * @emits contentMutation()
 	 */
 	protected createMutationObserver(): void {
-		if (this.mutationObserver) {
-			this.mutationObserver.disconnect();
-			this.async.clearWorker({label: $$.mutationObserver});
-		}
-
 		const
 			{$refs: {content}} = this;
 
