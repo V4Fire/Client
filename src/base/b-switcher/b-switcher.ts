@@ -24,7 +24,7 @@ export const resolveMethods = {
 export type ResolveMethod = keyof typeof resolveMethods;
 
 /**
- * Validates a resolve prop
+ * Validates a "resolve" prop
  * @param v
  */
 export function validateResolve(v: ResolveMethod | ResolveMethod[]): boolean {
@@ -34,7 +34,7 @@ export function validateResolve(v: ResolveMethod | ResolveMethod[]): boolean {
 @component()
 export default class bSwitcher extends iBlock {
 	/**
-	 * Resolve strategy of skeleton
+	 * Resolve strategy
 	 */
 	@prop({
 		required: false,
@@ -45,7 +45,7 @@ export default class bSwitcher extends iBlock {
 	readonly resolve?: ResolveMethod | ResolveMethod[];
 
 	/**
-	 * If true then after resolve state change will not be switched
+	 * If true, then the content will not be hidden after the state change
 	 */
 	@prop(Boolean)
 	readonly resolveOnce: Boolean = false;
@@ -69,13 +69,13 @@ export default class bSwitcher extends iBlock {
 	};
 
 	/**
-	 * Mutable duplicate of semaphoreStore
+	 * @see semaphoreKeys
 	 */
 	@system()
 	protected semaphoreStore?: Dictionary;
 
 	/**
-	 * Map of component readiness
+	 * Component ready map inside content block
 	 */
 	@system({
 		init: (v: bSwitcher) => createCallbackMap(v.updateReadiness)
@@ -90,7 +90,7 @@ export default class bSwitcher extends iBlock {
 	protected mutationObserver: CanUndef<MutationObserver>;
 
 	/**
-	 * Number of DOM Nodes in content slot
+	 * Number of DOM nodes in content block
 	 */
 	@system()
 	protected nodesLength: number = 0;
@@ -102,7 +102,7 @@ export default class bSwitcher extends iBlock {
 	protected isReadyToSwitchStore: boolean = false;
 
 	/**
-	 * True if switcher able to show content
+	 * True if possible to display content
 	 */
 	@p({cache: false})
 	protected get isReadyToSwitch(): boolean {
@@ -110,8 +110,6 @@ export default class bSwitcher extends iBlock {
 	}
 
 	/**
-	 * Sets isReadyToSwitch state
-	 *
 	 * @param v
 	 * @emits change(isHidden: boolean)
 	 */
@@ -135,7 +133,7 @@ export default class bSwitcher extends iBlock {
 	protected isHidden: boolean = false;
 
 	/**
-	 * True is mutation awaiter is resolved
+	 * True if the mutation strategy is resolved
 	 */
 	@system()
 	protected isMutationReady: boolean = false;
@@ -155,7 +153,7 @@ export default class bSwitcher extends iBlock {
 	}
 
 	/**
-	 * True if all child components in content slot are ready
+	 * True if all child components in content block is ready
 	 */
 	protected get isComponentsReady(): boolean {
 		if (!this.semaphoreReadyMap.size) {
@@ -174,7 +172,7 @@ export default class bSwitcher extends iBlock {
 	}
 
 	/**
-	 * True if there is no resolver
+	 * True if the component does not have a resolver
 	 */
 	protected get isManual(): boolean {
 		return !this.resolve || !this.resolve.length;
@@ -186,7 +184,7 @@ export default class bSwitcher extends iBlock {
 	};
 
 	/**
-	 * Hides a placeholder, shows a content
+	 * Hides a placeholder, displays a content
 	 */
 	hide(): boolean {
 		if (this.isHidden) {
@@ -199,7 +197,7 @@ export default class bSwitcher extends iBlock {
 	}
 
 	/**
-	 * Hides a content, shows a placeholder
+	 * Hides a content, displays a placeholder
 	 */
 	show(): boolean {
 		if (!this.isHidden) {
@@ -212,7 +210,7 @@ export default class bSwitcher extends iBlock {
 	}
 
 	/**
-	 * Sets a readiness of prop
+	 * Sets a readiness of semaphore key
 	 *
 	 * @param isReady
 	 * @param prop
@@ -232,7 +230,7 @@ export default class bSwitcher extends iBlock {
 	}
 
 	/**
-	 * Initializes specified resolve strategy
+	 * Initializes resolve strategies
 	 */
 	@hook('mounted')
 	protected initResolveStrategy(): void {
@@ -281,7 +279,7 @@ export default class bSwitcher extends iBlock {
 	}
 
 	/**
-	 * Initializes a ready watching strategy
+	 * Initializes a component readiness wait strategy
 	 */
 	@hook('mounted')
 	protected initReady(): void {
@@ -365,7 +363,7 @@ export default class bSwitcher extends iBlock {
 	}
 
 	/**
-	 * Returns true if all awaiters are resolved
+	 * Returns true if all strategies are resolved
 	 */
 	@hook('mounted')
 	protected updateReadiness(): boolean {
@@ -389,7 +387,7 @@ export default class bSwitcher extends iBlock {
 }
 
 /**
- * Creates a map which will trigger specified callback on every action
+ * Creates a map which will trigger specified callback on every method call
  * @param cb
  */
 function createCallbackMap<K, V>(cb: Function): Map<K, V> {
