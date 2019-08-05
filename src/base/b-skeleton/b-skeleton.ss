@@ -25,21 +25,7 @@
  * @property {string} shape
  */
 
-/**
- * Generates a skeleton
- * @param {SkeletonPart[] | SkeletonPart} map
- */
-- @@ignore
-- template index(map = []) extends ['i-block'].index
-	? map = [].concat(map)
-
-	- block body
-		< ?.${self.name()}
-			- for i in map
-				? sk = map[i]
-				+= self[sk.shape](sk.p, sk.style)
-
-/**
+ /**
  * Generates a skeleton rect
  * @param {SkeletonParams.p} [p]
  * @param {SkeletonParams.style} [style]
@@ -84,7 +70,7 @@
  * @param {MultipleParams.p} [p]
  * @param {MultipleParams.style} [style]
  */
-- block multiple(l = 2, shape = 'rect', p = {}, style = {})
+- block index->multiple(l = 2, shape = 'rect', p = {}, style = {})
 	- for var i = 0; i < l; i++
 		+= self[shape](p, style)
 
@@ -92,20 +78,31 @@
  * Generates a skeleton column
  * @param {SkeletonParams.style} [style]
  */
-- block index->column(style = {}, class = 'column-default', content)
-	? class = class || 'column-default'
+- block index->column(style = {}, wrapperClass = 'column-default', content)
+	? wrapperClass = wrapperClass || 'column-default'
 
 	< ?.${self.name()}
-		< .&__column[.&__${p.class}]
+		< .&__column[.&__${wrapperClass}]
 			{content}
 
 /**
  * Generates a skeleton row
  * @param {SkeletonParams.style} [style]
  */
-- block index->row(style = {}, class = 'row-default', content)
-	? class = class || 'row-default'
+- block index->row(style = {}, wrapperClass = 'row-default', content)
+	? wrapperClass = wrapperClass || 'row-default'
 
 	< ?.${self.name()}
-		< .&__column[.&__${p.wrapperClass}] :style = style
+		< .&__column[.&__${wrapperClass}] :style = style
 			{content}
+
+/**
+ * Generates a skeleton
+ * @param {SkeletonPart[] | SkeletonPart} map
+ */
+- @@ignore
+- template index(block, params) extends ['i-block'].index
+	- block body
+		< ?.${self.name()}
+			- forIn map => sk
+				+= self[block](params)

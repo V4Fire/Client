@@ -14,8 +14,8 @@ $p = {
 
 b-switcher extends i-block
 	position relative
-	overflow hidden
 	width 100%
+	overflow hidden
 
 	&__content
 		absolute left 0 top 0
@@ -50,12 +50,12 @@ b-switcher extends i-block
 			opacity 0
 
 	&_animation_fade&_hidden_true ^[0]
-			&__placeholder
-				absolute left 0 top 0
-				size 100%
-				visibility hidden
-				opacity 0
+		&__placeholder
+			absolute left 0 top 0
+			size 100%
+			visibility hidden
+			opacity 0
 
-			&__content
-				visibility visible
-				opacity 1
+		&__content
+			visibility visible
+			opacity 1
