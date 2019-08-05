@@ -90,33 +90,22 @@
 
 /**
  * Generates a skeleton column
- * @param {MultipleParams.l} [l]
- * @param {MultipleParams.shape} [shape]
- * @param {MultipleParams.p} [p]
- *   *) [p.wrapperClass]
- * @param {MultipleParams.style} [style]
+ * @param {SkeletonParams.style} [style]
  */
-- block index->column(l = 2, shape = 'rect', p = {}, style = {})
-	? Object.assign({ &
-		wrapperClass: 'column-default'
-	}, p) .
+- block index->column(style = {}, class = 'column-default', content)
+	? class = class || 'column-default'
 
 	< ?.${self.name()}
-		< .&__column[.&__${p.wrapperClass}]
-			+= self.multiple(l, shape, p, style)
+		< .&__column[.&__${p.class}]
+			{content}
 
 /**
  * Generates a skeleton row
- * @param {MultipleParams.l} [l]
- * @param {MultipleParams.shape} [shape]
- * @param {MultipleParams.p} [p]
- * @param {MultipleParams.style} [style]
+ * @param {SkeletonParams.style} [style]
  */
-- block index->row(l = 2, shape = 'rect', p = {}, style = {})
-	? Object.assign({ &
-		wrapperClass: 'row-default'
-	}, p) .
+- block index->row(style = {}, class = 'row-default', content)
+	? class = class || 'row-default'
 
 	< ?.${self.name()}
-		< .&__column[.&__${p.wrapperClass}]
-			+= self.multiple(l, shape, p, style)
+		< .&__column[.&__${p.wrapperClass}] :style = style
+			{content}
