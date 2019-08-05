@@ -108,4 +108,4 @@
 - template index(block, args) extends ['i-block'].index
 	- block body
 		< ?.${self.name()}
-			+= self[block](params)
+			+= self[block](args)
