@@ -141,6 +141,7 @@ export default class bSwitcher extends iBlock {
 	/**
 	 * True if all semaphore keys are resolved
 	 */
+	@p({cache: false})
 	protected get isSemaphoreReady(): boolean {
 		const
 			{semaphoreStore} = this;
@@ -155,6 +156,7 @@ export default class bSwitcher extends iBlock {
 	/**
 	 * True if all child components in content block is ready
 	 */
+	@p({cache: false})
 	protected get isComponentsReady(): boolean {
 		if (!this.semaphoreReadyMap.size) {
 			return false;
