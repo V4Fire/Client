@@ -179,7 +179,7 @@ export default class bCrop extends iBlock implements iVisible {
 
 		parentProgress: [
 			'true',
-			['false']
+			'false'
 		]
 	};
 
