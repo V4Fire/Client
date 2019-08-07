@@ -281,7 +281,7 @@ export default class bSwitcher extends iBlock {
 	}
 
 	/**
-	 * Initializes a ready watching strategy
+	 * Initializes a components ready watching strategy
 	 */
 	@hook('mounted')
 	protected initReady(): void {
