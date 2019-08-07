@@ -8,8 +8,9 @@
 
 import symbolGenerator from 'core/symbol';
 
-import iVisible from 'traits/i-visible/i-visible';
 import iIcon from 'traits/i-icon/i-icon';
+import iVisible from 'traits/i-visible/i-visible';
+import iWidth from 'traits/i-width/i-width';
 
 import iData, { component, prop, field, system, hook, watch, p, ModsDecl } from 'super/i-data/i-data';
 import { Option } from 'base/b-list/modules/interface';
@@ -31,7 +32,7 @@ export const
 	}
 })
 
-export default class bList<T extends object = Dictionary> extends iData<T> implements iIcon, iVisible {
+export default class bList<T extends object = Dictionary> extends iData<T> implements iIcon, iVisible, iWidth {
 	/**
 	 * Initial component value
 	 */
@@ -98,7 +99,8 @@ export default class bList<T extends object = Dictionary> extends iData<T> imple
 
 	/** @inheritDoc */
 	static readonly mods: ModsDecl = {
-		...iVisible.mods
+		...iVisible.mods,
+		...iWidth.mods
 	};
 
 	/**
