@@ -42,7 +42,7 @@ module.exports = function (style) {
 	 * @returns {!Object}
 	 */
 	style.define(
-		'pInjection',
+		'injector',
 		({string}) => DS.components && DS.components[string] && stylus.utils.coerce(DS.components[string], true) || {}
 	);
 
