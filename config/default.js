@@ -234,9 +234,9 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 			'iData': true,
 			'bRouter': true,
 
-			'iInput/validators': false,
-			'bInput/mask': false,
-			'bInput/validators': false
+			'iInput/validators': true,
+			'bInput/mask': true,
+			'bInput/validators': true
 		};
 	},
 

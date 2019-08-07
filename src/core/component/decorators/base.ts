@@ -217,11 +217,11 @@ export function paramsFactory<T = unknown>(
 						name = key;
 
 					let
-						watchers,
-						hooks;
+						watchers = el.watchers,
+						hooks = el.hooks;
 
 					if (p.watch) {
-						watchers = el.watchers || {};
+						watchers = watchers || {};
 
 						for (let o = <any[]>[].concat(p.watch), i = 0; i < o.length; i++) {
 							const
@@ -237,7 +237,7 @@ export function paramsFactory<T = unknown>(
 					}
 
 					if (p.hook) {
-						hooks = el.hooks || {};
+						hooks = hooks || {};
 
 						for (let o = <any[]>[].concat(p.hook), i = 0; i < o.length; i++) {
 							const
@@ -317,8 +317,8 @@ export function paramsFactory<T = unknown>(
 				el = obj[key] || {src: meta.componentName};
 
 			let
-				watchers,
-				after;
+				watchers = el.watchers,
+				after = el.after;
 
 			if (p.after) {
 				after = new Set([].concat(p.after));
@@ -326,7 +326,7 @@ export function paramsFactory<T = unknown>(
 
 			if (p.watch) {
 				for (let o = <any[]>[].concat(p.watch), i = 0; i < o.length; i++) {
-					watchers = el.watchers || new Map();
+					watchers = watchers || new Map();
 
 					const
 						val = o[i];

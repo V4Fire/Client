@@ -55,7 +55,6 @@ export function addMethodsToMeta(constructor: Function, meta: ComponentMeta): vo
 		ownProps = Object.getOwnPropertyNames(proto);
 
 	const {
-
 		componentName: src,
 		params,
 		methods,
@@ -63,7 +62,6 @@ export function addMethodsToMeta(constructor: Function, meta: ComponentMeta): vo
 		props,
 		fields,
 		systemFields
-
 	} = meta;
 
 	const

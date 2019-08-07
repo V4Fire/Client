@@ -67,22 +67,21 @@ execFontPattern($type = "")
 		unquote(replace("%t", "", BASE_FONT_PATTERN))
 
 /**
- * Finds value in the object by the specified path
+ * Returns a value from an object by the specified path
  *
- * @param $path {string}
- * @param $obj {object}
+ * @param {object} $obj
+ * @param {string} $path
  */
-getField($path, $obj)
+getField($obj, $path)
 	$fields = split(".", $path)
 
 	if (length($fields) > 1 && type($obj[$fields[0]]) == "object")
 		return getField(join(".", slice($fields, 1, length($fields))), $obj[$fields[0]])
 
-	else if length($fields) == 1
+	if length($fields) == 1
 		return $obj[$fields[0]]
 
-	else
-		return null
+	return null
 
 /**
  * Returns a color from global kits

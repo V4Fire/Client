@@ -24,6 +24,9 @@ import {
 
 } from 'core/component';
 
+export type RenderFn =
+	(params?: Dictionary) => VNode;
+
 const
 	tplCache = Object.createDict<RenderObject>();
 
@@ -52,11 +55,24 @@ export default class VDOM {
 
 	/**
 	 * Returns a render object by the specified path
-	 * @param path - template path (bExample | bExample.foo ...)
+	 * @param path - template path (index | bExample.index ...)
 	 */
 	getRenderObject(path: string): CanUndef<RenderObject> {
-		const chunks = path.split('.');
-		chunks[0] = chunks[0].dasherize();
+		const
+			chunks = path.split('.');
+
+		if (path.slice(-1) === '/') {
+			const l = chunks.length - 1;
+			chunks[l] = chunks[l].slice(0, -1);
+			chunks.push('index');
+		}
+
+		if (chunks.length === 1) {
+			chunks.unshift(this.component.componentName);
+
+		} else {
+			chunks[0] = chunks[0].dasherize();
+		}
 
 		const
 			key = chunks.join('.'),
@@ -74,7 +90,7 @@ export default class VDOM {
 		}
 
 		const
-			fn = chunks.length === 1 ? tpl.index : Object.get(tpl, chunks.slice(1));
+			fn = Object.get(tpl, chunks.slice(1));
 
 		if (Object.isFunction(fn)) {
 			return tplCache[key] = fn();
@@ -82,15 +98,23 @@ export default class VDOM {
 	}
 
 	/**
-	 * Executes the specified render object
+	 * Returns a function that executes the specified render object
 	 *
-	 * @param renderObj
+	 * @param objOrPath - render object or a template path
 	 * @param [ctx] - render context
 	 */
-	execRenderObject(
-		renderObj: RenderObject,
+	bindRenderObject(
+		objOrPath: CanUndef<RenderObject> | string,
 		ctx?: RenderContext | [Dictionary] | [Dictionary, RenderContext]
-	): VNode {
+	): RenderFn {
+		const
+			renderObj = Object.isString(objOrPath) ? this.getRenderObject(objOrPath) : objOrPath;
+
+		if (!renderObj) {
+			// @ts-ignore (access)
+			return () => this.component.$createElement('span');
+		}
+
 		let
 			instanceCtx,
 			renderCtx;
@@ -110,14 +134,51 @@ export default class VDOM {
 			renderCtx = ctx;
 		}
 
-		const
-			vnode = execRenderObject(renderObj, instanceCtx);
+		return (p) => {
+			if (p) {
+				instanceCtx = Object.create(instanceCtx);
 
-		if (renderCtx) {
-			return patchVNode(vnode, instanceCtx, renderCtx);
-		}
+				for (let keys = Object.keys(p), i = 0; i < keys.length; i++) {
+					const
+						key = keys[i],
+						value = p[key];
 
-		return vnode;
+					if (key in instanceCtx) {
+						Object.defineProperty(instanceCtx, key, {
+							configurable: true,
+							enumerable: true,
+							writable: true,
+							value
+						});
+
+					} else {
+						instanceCtx[key] = value;
+					}
+				}
+			}
+
+			const
+				vnode = execRenderObject(renderObj, instanceCtx);
+
+			if (renderCtx) {
+				return patchVNode(vnode, instanceCtx, renderCtx);
+			}
+
+			return vnode;
+		};
+	}
+
+	/**
+	 * Executes the specified render object
+	 *
+	 * @param objOrPath - render object or a template path
+	 * @param [ctx] - render context
+	 */
+	execRenderObject(
+		objOrPath: CanUndef<RenderObject> | string,
+		ctx?: RenderContext | [Dictionary] | [Dictionary, RenderContext]
+	): VNode {
+		return this.bindRenderObject(objOrPath, ctx)();
 	}
 
 	/**

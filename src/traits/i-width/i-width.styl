@@ -15,13 +15,18 @@ i-width
 	if $p.helpers
 		$fullS = ()
 		$autoS = ()
+		$inheritS = ()
 
 		for $s in $p.selector
 			push($fullS, "&_width_full " + $s)
 			push($autoS, "&_width_auto " + $s)
+			push($inheritS, "&_width_inherit " + $s)
 
 		{join(",", $fullS)}
 			width 100%
 
 		{join(",", $autoS)}
 			width auto
+
+		{join(",", $inheritS)}
+			width inherit

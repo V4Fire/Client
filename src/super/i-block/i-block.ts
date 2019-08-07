@@ -180,12 +180,6 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	readonly renderKey?: string;
 
 	/**
-	 * Component render group name
-	 */
-	@prop({required: false})
-	readonly renderGroupProp?: string;
-
-	/**
 	 * Component unique name
 	 */
 	@prop({type: String, required: false})
@@ -553,9 +547,8 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 			'destroyed'
 		],
 
-		theme: [
-			'default'
-		]
+		theme: [],
+		exterior: []
 	};
 
 	/**
@@ -809,7 +802,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	/**
 	 * List of block ready listeners
 	 */
-	@system()
+	@system({unique: true})
 	protected blockReadyListeners: Function[] = [];
 
 	/**
@@ -1331,7 +1324,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 			this.lfc.execCbAtTheRightTime(() => this.emit('dbReady', get(), silent));
 			this.componentStatus = 'beforeReady';
 
-			this.lfc.execCbAfterComponentReady(() => {
+			this.lfc.execCbAfterBlockReady(() => {
 				this.componentStatus = 'ready';
 
 				if (this.beforeReadyListeners > 1) {
@@ -1424,7 +1417,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 				return res;
 			}
 
-			return this.lfc.execCbAfterComponentReady(() => this.block.setMod(nodeOrName, name)) || false;
+			return this.lfc.execCbAfterBlockReady(() => this.block.setMod(nodeOrName, name)) || false;
 		}
 
 		return Block.prototype.setMod.call(
@@ -1466,7 +1459,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 				return res;
 			}
 
-			return this.lfc.execCbAfterComponentReady(() => this.block.removeMod(nodeOrName, name)) || false;
+			return this.lfc.execCbAfterBlockReady(() => this.block.removeMod(nodeOrName, name)) || false;
 		}
 
 		return Block.prototype.removeMod.call(
@@ -1747,6 +1740,8 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 		for (let i = 0; i < this.blockReadyListeners.length; i++) {
 			this.blockReadyListeners[i]();
 		}
+
+		this.blockReadyListeners = [];
 	}
 
 	/**

@@ -14,9 +14,9 @@ export default abstract class iWidth {
 	 */
 	static readonly mods: ModsDecl = {
 		width: [
-			'normal',
 			'full',
-			'auto'
+			'auto',
+			'inherit'
 		]
 	};
 }

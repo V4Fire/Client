@@ -50,7 +50,7 @@ interface Node {
 	getOffset(parent?: Element | string): ElementPosition;
 }
 
-interface IntersectionObserverInit  {
+interface IntersectionObserverInit {
 	delay?: number;
 	trackVisibility?: boolean;
 }

@@ -18,7 +18,7 @@
 		- super
 
 		/**
-		 * Generates list block
+		 * Generates a list block
 		 * @param {!Array<Option>} value - array of values
 		 */
 		- block list(value)

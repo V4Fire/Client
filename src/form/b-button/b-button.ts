@@ -148,7 +148,7 @@ export default class bButton<T extends object = Dictionary> extends iData<T>
 
 		rounding: [
 			'none',
-			['small'],
+			'small',
 			'normal',
 			'big'
 		],
