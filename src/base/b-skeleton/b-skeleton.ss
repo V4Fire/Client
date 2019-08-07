@@ -13,10 +13,10 @@
 
 /**
  * @typedef SkeletonParams
- * @property {Dictionary} [p] - Skeleton parametrs
- *   *) [p.animation] - The size of the animation (the distance the "firefly" runs) also affects the speed of the "firefly"
- *   *) [p.size] - Shape size
- *   *) [p.class] - Additional shape class
+ * @property {Dictionary} [p] - skeleton parametrs
+ *   *) [p.animation] - the size of the animation (the distance the "firefly" runs) also affects the speed of the "firefly"
+ *   *) [p.size] - shape size
+ *   *) [p.class] - additional shape class
  * @property {string} [style]
  */
 
@@ -58,8 +58,8 @@
 
 /**
  * @typedef MultipleParams
- * @property {number} [l] - Number of elements to be generated
- * @property {SkeletonPart.shape} [shape] - Shape of generated elements
+ * @property {number} [l] - number of elements to be generated
+ * @property {SkeletonPart.shape} [shape] - shape of generated elements
  * @property {SkeletonParams.p} [p]
  * @property {SkeletonParams.style} [style]
  */
