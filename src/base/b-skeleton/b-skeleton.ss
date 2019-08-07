@@ -16,7 +16,7 @@
  * @property {Dictionary} [p] - skeleton parametrs
  *   *) [p.animation] - the size of the animation (the distance the "firefly" runs) also affects the speed of the "firefly"
  *   *) [p.size] - shape size
- *   *) [p.class] - additional shape class
+ *   *) [p.class] - additional class for shape
  * @property {string} [style]
  */
 
