@@ -23,7 +23,7 @@ b-button
 			border-radius unit($val, px)
 
 	getBgFor($name)
-		getField("exterior." + $name + ".backgroundColor", $p)
+		getField($p, "exterior." + $name + ".backgroundColor")
 
 	generateExterior($k)
 		$bg = getBgFor($k)
@@ -46,10 +46,10 @@ b-button
 			&_progress_true &__button
 				background-color lighten($bg, $p.colorBrightnessOnAction)
 
-	if (getField("exterior", $p))
+	if (getField($p, "exterior"))
 		generateExterior($p.defaultExterior)
 
-		for $key, $val in getField("exterior", $p)
+		for $key, $val in getField($p, "exterior")
 			&_exterior_{$key}
 				& ^[0]
 					generateExterior($key)
