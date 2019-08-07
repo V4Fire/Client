@@ -342,6 +342,8 @@ export default class Provider {
 		return undefined;
 	}
 
+	//#if runtime has socket
+
 	/**
 	 * Connects to a socket server
 	 *
@@ -433,6 +435,8 @@ export default class Provider {
 			}
 		}, {label: $$.bindEvents});
 	}
+
+	//#endif
 
 	/**
 	 * Returns a custom event name for the operation
@@ -790,6 +794,8 @@ export default class Provider {
 		}, 0.1.second(), {label: $$.setEventToQueue});
 	}
 
+	//#if runtime has socket
+
 	/**
 	 * Attaches event listeners for the specified socket connection
 	 */
@@ -836,6 +842,8 @@ export default class Provider {
 
 		}, {label: $$.listenSocketEvents});
 	}
+
+	//#endif
 
 	/**
 	 * Merge options from class fields to the specified options object and returns new options

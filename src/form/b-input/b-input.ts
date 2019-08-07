@@ -179,16 +179,6 @@ export default class bInput<
 	@prop({type: String, watch: {fn: 'updateMask', immediate: true}})
 	readonly maskPlaceholder: string = '_';
 
-	/** @see iSize.lt */
-	get lt(): SizeDictionary {
-		return iSize.lt;
-	}
-
-	/** @see iSize.gt */
-	get gt(): SizeDictionary {
-		return iSize.gt;
-	}
-
 	/** @override */
 	get value(): V {
 		return <NonNullable<V>>this.field.get('valueStore');

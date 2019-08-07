@@ -159,16 +159,6 @@ export default class bCalendar<
 		return this.hasDayRange && v[0].short() === v[1].short();
 	}
 
-	/** @see iSize.lt */
-	get lt(): SizeDictionary {
-		return iSize.lt;
-	}
-
-	/** @see iSize.gt */
-	get gt(): SizeDictionary {
-		return iSize.gt;
-	}
-
 	/** @inheritDoc */
 	static readonly mods: ModsDecl = {
 		...iWidth.mods,

@@ -13,8 +13,7 @@ import {
 
 	ObservableElement,
 	ObservableElementsMap,
-	IntersectionObserverOptions,
-	ObserveOptions
+	InitOptions
 
 } from 'core/component/directives/in-view/modules/meta';
 
@@ -59,7 +58,7 @@ export default abstract class AbstractInView {
 	}
 
 	/**
-	 * Activates or deactivates elements by specified group
+	 * Activates or deactivates elements by the specified group
 	 *
 	 * @param isDeactivated
 	 * @param [group]
@@ -109,18 +108,18 @@ export default abstract class AbstractInView {
 	}
 
 	/**
-	 * Start observe elements
+	 * Starts observing of elements
 	 *
 	 * @param el
-	 * @param options
+	 * @param opts
 	 */
-	observe(el: HTMLElement, options: IntersectionObserverOptions & ObserveOptions): ObservableElement | false {
+	observe(el: HTMLElement, opts: InitOptions): ObservableElement | false {
 		if (this.get(el)) {
 			return false;
 		}
 
 		const
-			observable = this.createObservable(el, options);
+			observable = this.createObservable(el, opts);
 
 		if (observable.wait) {
 			this.awaitingElements.set(el, observable);
@@ -133,7 +132,7 @@ export default abstract class AbstractInView {
 	}
 
 	/**
-	 * Stop observe an element
+	 * Stops observing the specified element
 	 * @param el
 	 */
 	stopObserve(el: HTMLElement): boolean {
@@ -142,8 +141,11 @@ export default abstract class AbstractInView {
 
 	/**
 	 * Creates a new observable element
+	 *
+	 * @param el
+	 * @param opts
 	 */
-	protected createObservable(el: HTMLElement, options: IntersectionObserverOptions & ObserveOptions): ObservableElement {
+	protected createObservable(el: HTMLElement, opts: InitOptions): ObservableElement {
 		return {
 			node: el,
 			count: true,
@@ -153,7 +155,7 @@ export default abstract class AbstractInView {
 			id: String(Math.random()),
 			group: 'inView-base',
 			threshold: 1,
-			...options
+			...opts
 		};
 	}
 
@@ -196,7 +198,7 @@ export default abstract class AbstractInView {
 	}
 
 	/**
-	 * Removes all async operations from element
+	 * Removes all async operations from the specified element
 	 * @param el
 	 */
 	protected clearAllAsync(el: ObservableElement): void {
@@ -210,7 +212,7 @@ export default abstract class AbstractInView {
 	}
 
 	/**
-	 * Initializes observe
+	 * Initializes observing for the specified element
 	 *
 	 * @param el
 	 * @param observable

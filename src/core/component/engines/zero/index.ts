@@ -103,7 +103,7 @@ export class ComponentDriver {
 	 * @param [definition]
 	 */
 	static filter(id: string, definition?: Function): Function {
-		return options.filters[id] = definition || Any;
+		return options.filters[id] = definition || ((Any));
 	}
 
 	/**

@@ -58,6 +58,8 @@ export interface PasswordValidatorResult extends ValidatorError<string | number 
 }
 
 export default <ValidatorsDecl<bInput, unknown>>{
+	//#if runtime has bInput/validators
+
 	async required({msg, showMsg = true}: ValidatorParams): Promise<ValidatorResult<boolean>> {
 		if (!await this.formValue) {
 			this.setValidationMsg(this.getValidatorMsg(false, msg, t`Required field`), showMsg);
@@ -391,4 +393,6 @@ export default <ValidatorsDecl<bInput, unknown>>{
 
 		return true;
 	}
+
+	//#endif
 };

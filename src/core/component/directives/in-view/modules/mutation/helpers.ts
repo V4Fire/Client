@@ -12,7 +12,7 @@ import { ElementRect } from 'core/component/directives/in-view/modules/meta';
 export const hasMutationObserver = typeof MutationObserver === 'function';
 
 /**
- * Returns offset top relative to root
+ * Returns a top offset relative to the root
  *
  * @param root
  * @param el
@@ -22,7 +22,7 @@ export function getOffsetTop({scrollTop}: RootRect, {top}: DOMRect | ClientRect)
 }
 
 /**
- * Returns offset left relative to the root
+ * Returns a left offset relative to the root
  *
  * @param root
  * @param el
@@ -40,7 +40,7 @@ export function isElementVisible(rect: {width: number; height: number}): boolean
 }
 
 /**
- * Returns an element rect position relative to the root
+ * Returns an element geometry relative to the root
  *
  * @param root
  * @param el
@@ -64,14 +64,14 @@ export function getElementRect(root: RootRect, el: Element): ElementRect {
 }
 
 /**
- * Returns a page root
+ * Returns the page root
  */
 export function getRoot(): Element {
 	return document.documentElement || document.scrollingElement || document.body;
 }
 
 /**
- * Returns a root element rect
+ * Returns the root element geometry
  */
 export function getRootRect(): RootRect {
 	const

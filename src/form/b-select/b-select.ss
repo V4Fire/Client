@@ -40,8 +40,8 @@
 				< _.&__dropdown-content
 					< _.&__dropdown-content-wrapper
 						< b-scroll-inline.&__scroll &
-							v-func = isFunctional |
 							ref = scroll |
+							v-func = isFunctional |
 							:fixSize = true |
 							:mods = provide.mods({size: 'm'})
 						.

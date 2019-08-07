@@ -1393,64 +1393,6 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	}
 
 	/**
-	 * Returns true if the block has all modifiers from specified
-	 *
-	 * @param mods - list of modifiers (['name', ['name', 'value']])
-	 * @param [value] - value of modifiers
-	 */
-	@p({replace: false})
-	ifEveryMods(mods: Array<CanArray<string>>, value?: unknown): boolean {
-		for (let i = 0; i < mods.length; i++) {
-			const
-				el = mods[i];
-
-			if (Object.isArray(el)) {
-				if (this.mods[el[0]] === String(el[1])) {
-					continue;
-				}
-
-				return false;
-			}
-
-			if (this.mods[el] === String(value)) {
-				continue;
-			}
-
-			return false;
-		}
-
-		return true;
-	}
-
-	/**
-	 * Returns true if the block has at least one modifier from specified
-	 *
-	 * @param mods - list of modifiers (['name', ['name', 'value']])
-	 * @param [value] - value of modifiers
-	 */
-	@p({replace: false})
-	ifSomeMod(mods: Array<CanArray<string>>, value?: unknown): boolean {
-		for (let i = 0; i < mods.length; i++) {
-			const
-				el = mods[i];
-
-			if (Object.isArray(el)) {
-				if (this.mods[el[0]] === String(el[1])) {
-					return true;
-				}
-
-				continue;
-			}
-
-			if (this.mods[el] === String(value)) {
-				return true;
-			}
-		}
-
-		return false;
-	}
-
-	/**
 	 * Sets a component modifier
 	 *
 	 * @param node

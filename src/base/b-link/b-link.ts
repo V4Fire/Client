@@ -66,16 +66,6 @@ export default class bLink<T extends object = Dictionary> extends iData<T>
 	@prop({type: String, required: false})
 	hintPos?: string;
 
-	/** @see iSize.lt */
-	get lt(): SizeDictionary {
-		return iSize.lt;
-	}
-
-	/** @see iSize.gt */
-	get gt(): SizeDictionary {
-		return iSize.gt;
-	}
-
 	/** @inheritDoc */
 	static readonly mods: ModsDecl = {
 		...iAccess.mods,

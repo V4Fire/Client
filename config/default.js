@@ -54,10 +54,8 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		},
 
 		externals: {
-			'eventemitter2': 'EventEmitter2',
-			'localforage': 'localforage',
-			'sugar': 'Sugar',
 			'vue': 'Vue',
+			'eventemitter2': 'EventEmitter2',
 			'ion-sound': 'ion',
 			'socket.io-client': 'io',
 			'setimmediate': 'setImmediate'
@@ -190,14 +188,55 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	runtime() {
 		return {
 			'vue': true,
-			'noGlobals': false,
+			'zero': false,
+
 			'socket': false,
-			'core/kv-storage': true,
+			'noGlobals': false,
+			'svgSprite': true,
+
 			'core/helpers': true,
 			'core/browser': true,
+
 			'core/analytics': true,
-			'directives/in-view': true,
-			'bInput/mask': false
+			'core/log': true,
+
+			'core/kv-storage': true,
+			'core/session': true,
+			'core/net': false,
+
+			'range/extended': false,
+			'helpers/string/pluralize': true,
+
+			'prelude/dependencies': true,
+			'prelude/object/has': false,
+			'prelude/object/getPrototypeChain': false,
+
+			'prelude/date/modify': true,
+			'prelude/date/relative': true,
+			'prelude/date/format': true,
+			'prelude/date/create': true,
+
+			'prelude/number/rounding': true,
+			'prelude/number/format': true,
+
+			'prelude/string/underscore': true,
+			'prelude/string/capitalize': true,
+
+			'prelude/function/debounce': true,
+			'prelude/function/throttle': true,
+
+			'component/async-render': true,
+			'component/daemons': true,
+
+			'directives/event': true,
+			'directives/in-view': false,
+
+			'iData': true,
+			'bRouter': true,
+
+			'iInput/validators': false,
+			'bInput/mask': false,
+			'bInput/validators': false
 		};
 	},
 

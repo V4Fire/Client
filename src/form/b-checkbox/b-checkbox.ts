@@ -56,16 +56,6 @@ export default class bCheckbox<
 		return this.defaultProp || false;
 	}
 
-	/** @see iSize.lt */
-	get lt(): SizeDictionary {
-		return iSize.lt;
-	}
-
-	/** @see iSize.gt */
-	get gt(): SizeDictionary {
-		return iSize.gt;
-	}
-
 	/** @inheritDoc */
 	static readonly mods: ModsDecl = {
 		...iSize.mods,

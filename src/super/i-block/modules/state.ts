@@ -152,6 +152,8 @@ export default class State {
 	 * @param [data] - advanced data
 	 */
 	async saveToStorage(data?: Dictionary): Promise<boolean> {
+		//#if runtime has core/kv-storage
+
 		if (!this.globalName) {
 			return false;
 		}
@@ -169,12 +171,16 @@ export default class State {
 		c.log('state:save:storage', this, data);
 
 		return true;
+
+		//#endif
 	}
 
 	/**
 	 * Initializes a component state from a storage
 	 */
 	async initFromStorage(): Promise<boolean> {
+		//#if runtime has core/kv-storage
+
 		if (!this.globalName) {
 			return false;
 		}
@@ -240,12 +246,16 @@ export default class State {
 			group: 'loadStore',
 			join: true
 		});
+
+		//#endif
 	}
 
 	/**
 	 * Resets a component storage state
 	 */
 	async resetStorage(): Promise<boolean> {
+		//#if runtime has core/kv-storage
+
 		if (!this.globalName) {
 			return false;
 		}
@@ -263,6 +273,8 @@ export default class State {
 		// @ts-ignore (access)
 		c.log('state:reset:storage', this, stateFields);
 		return true;
+
+		//#endif
 	}
 
 	/**
@@ -270,6 +282,8 @@ export default class State {
 	 * @param [data] - advanced data
 	 */
 	async saveToRouter(data?: Dictionary): Promise<boolean> {
+		//#if runtime has bRouter
+
 		if (!this.needRouterSync) {
 			return false;
 		}
@@ -296,12 +310,16 @@ export default class State {
 		// @ts-ignore (access)
 		c.log('state:save:router', this, data);
 		return true;
+
+		//#endif
 	}
 
 	/**
 	 * Initializes a component state from a router
 	 */
 	initFromRouter(): boolean {
+		//#if runtime has bRouter
+
 		if (!this.needRouterSync) {
 			return false;
 		}
@@ -400,12 +418,16 @@ export default class State {
 		});
 
 		return true;
+
+		//#endif
 	}
 
 	/**
 	 * Resets a component router state
 	 */
 	async resetRouter(): Promise<boolean> {
+		//#if runtime has bRouter
+
 		if (!this.needRouterSync) {
 			return false;
 		}
@@ -430,5 +452,7 @@ export default class State {
 		// @ts-ignore (access)
 		c.log('state:reset:router', this, stateFields);
 		return true;
+
+		//#endif
 	}
 }
