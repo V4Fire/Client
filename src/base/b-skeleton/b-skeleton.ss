@@ -13,10 +13,10 @@
 
 /**
  * @typedef SkeletonParams
- * @property {Dictionary} [p]
- *   *) [p.animation]
- *   *) [p.size]
- *   *) [p.class]
+ * @property {Dictionary} [p] - Skeleton parametrs
+ *   *) [p.animation] - The size of the animation (the distance the "firefly" runs) also affects the speed of the "firefly"
+ *   *) [p.size] - Shape size
+ *   *) [p.class] - Additional shape class
  * @property {string} [style]
  */
 
@@ -27,13 +27,14 @@
 
 /**
  * Generates a skeleton rect
+ *
  * @param {SkeletonParams.p} [p]
  * @param {SkeletonParams.style} [style]
  */
 - block index->rect(p = {}, style = {})
 	? p = Object.assign({ &
-		animation: 's',
 		class: 'default',
+		animation: 's',
 		size: 's'
 	}, p) .
 
@@ -42,6 +43,7 @@
 
 /**
  * Generates a skeleton circle
+ *
  * @param {SkeletonParams.p} [p]
  * @param {SkeletonParams.style} [style]
  */
@@ -64,6 +66,7 @@
 
 /**
  * Generates a specified number of skeletons
+ *
  * @param {MultipleParams.l} [l]
  * @param {MultipleParams.shape} [shape]
  * @param {MultipleParams.p} [p]
@@ -75,6 +78,7 @@
 
 /**
  * Generates a skeleton column
+ *
  * @param content
  * @param {SkeletonParams.style} [style]
  * @param {string} [wrapperClass]
@@ -88,6 +92,7 @@
 
 /**
  * Generates a skeleton row
+ *
  * @param content
  * @param {SkeletonParams.style} [style]
  * @param {string} [wrapperClass]
@@ -101,6 +106,7 @@
 
 /**
  * Generates a skeleton
+ *
  * @param {string} block
  * @param {...*} args
  */
