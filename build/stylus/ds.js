@@ -28,6 +28,10 @@ function prepareData(data) {
 				// HEX value
 				data[val] = new stylus.Parser(d).peek().val;
 			}
+
+			if (d === 'none') {
+				data[val] = new stylus.Parser(d).peek().val;
+			}
 		}
 	});
 }
