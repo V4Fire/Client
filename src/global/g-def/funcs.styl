@@ -76,7 +76,7 @@ getField($obj, $path)
 	$fields = split(".", $path)
 
 	if (length($fields) > 1 && type($obj[$fields[0]]) == "object")
-		return getField(join(".", slice($fields, 1, length($fields))), $obj[$fields[0]])
+		return getField($obj[$fields[0]], join(".", slice($fields, 1, length($fields))))
 
 	if length($fields) == 1
 		return $obj[$fields[0]]
