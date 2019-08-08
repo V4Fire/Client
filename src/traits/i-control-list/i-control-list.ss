@@ -13,7 +13,7 @@
  *
  * @param {!Object} params - additional parameters:
  *   *) [from] - data store
- *   *) [componentName] - name of the parent component (by default will used link from $parent)
+ *   *) [component] - name of the parent component (by default will used link from $parent)
  *   *) [elClasses] - class or classes for control elements
  *
  * @param {string=} [content] - slot content
