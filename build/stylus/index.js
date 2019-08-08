@@ -13,6 +13,7 @@ const
 	size = include('build/stylus/size'),
 	color = include('build/stylus/color'),
 	string = include('build/stylus/string'),
+	blendModes = include('build/stylus/blend-modes'),
 	ds = include('build/stylus/ds');
 
 module.exports = [
@@ -32,6 +33,7 @@ module.exports = [
 
 	ds,
 	size,
+	color,
 	string,
-	color
+	blendModes
 ];
