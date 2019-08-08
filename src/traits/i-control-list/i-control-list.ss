@@ -14,35 +14,49 @@
  * @param {!Object} params - additional parameters:
  *   *) [from] - data store
  *   *) [component] - name of the parent component (by default will used link from $parent)
- *   *) [elClasses] - class or classes for control elements
+ *   *) [elClasses] - classes for control elements
+ *   *) [wrapperClasses] - classes for control wrappers
  *
  * @param {string=} [content] - slot content
  */
 - @@ignore
 - template index(@params, content)
-	: classes = {}
+	: &
+		wrapperClasses = {},
+		elClasses = {}
+	.
+
+	- if Object.isString(@wrapperClasses)
+		? wrapperClasses[@wrapperClasses] = {}
+
+	- else if (Object.isObject(@wrapperClasses))
+		? Object.assign(wrapperClasses, @wrapperClasses)
 
 	- if Object.isString(@elClasses)
-		? classes[@elClasses] = {}
+		? elClasses[@elClasses] = {}
 
 	- else if (Object.isObject(@elClasses))
-		? Object.assign(classes, @elClasses)
+		? Object.assign(elClasses, @elClasses)
 
 	: &
 		componentName = @component ? (@component|json) : 'false',
-		classesJSON = (classes|json)
+		elClassesJSON = (elClasses|json),
+		wrapperClassesJSON = (wrapperClasses|json)
 	.
 
-	< component &
+	< ${@wrapperClasses ? 'span' : 'template'} &
 		v-for = el in ${@from} |
-		:is = el.component || 'b-button' |
-		:instanceOf = bButton |
-		:class = ${componentName} ? provide.elClasses(${componentName}, ${classesJSON}) : provide.elClasses(${classesJSON}) |
-		:v-attrs = el.attrs |
-		@[getControlEvent(el)] = callControlAction(el, ...arguments)
+		:class = ${componentName} ? provide.elClasses(${componentName}, ${wrapperClassesJSON}) : provide.elClasses(${wrapperClassesJSON}) |
 	.
-		- if content
-			+= content
+		< component &
+			:is = el.component || 'b-button' |
+			:instanceOf = bButton |
+			:class = ${componentName} ? provide.elClasses(${componentName}, ${elClassesJSON}) : provide.elClasses(${elClassesJSON}) |
+			:v-attrs = el.attrs |
+			@[getControlEvent(el)] = callControlAction(el, ...arguments)
+		.
+			- if content
+				+= content
 
-		- else
-			{{ el.text }}
+			- else
+				{{ el.text }}
