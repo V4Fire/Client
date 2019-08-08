@@ -48,11 +48,11 @@ module.exports = function (style) {
 	/**
 	 * Converts string to lowercase
 	 *
-	 * @param {string} src
+	 * @param {string} str
 	 * @returns {string}
 	 */
 	style.define('toLowerCase',
-		(src) => src.string.toLowerCase());
+		(str) => str.string.toLowerCase());
 
 	/**
 	 * Converts plain svg text to dataURI
