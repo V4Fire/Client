@@ -14,7 +14,7 @@
  * @param {!Object} params - additional parameters:
  *   *) [from] - data store
  *   *) [componentName] - name of the parent component (by default will used link from $parent)
- *   *) [class] - class or classes for control elements
+ *   *) [elClasses] - class or classes for control elements
  *
  * @param {string=} [content] - slot content
  */
@@ -22,11 +22,11 @@
 - template index(@params, content)
 	: classes = {}
 
-	- if Object.isString(@class)
-		? classes[@class] = {}
+	- if Object.isString(@elClasses)
+		? classes[@elClasses] = {}
 
-	- else if (Object.isObject(@class))
-		? Object.assign(classes, @class)
+	- else if (Object.isObject(@elClasses))
+		? Object.assign(classes, @elClasses)
 
 	: &
 		componentName = @component ? (@component|json) : 'false',
@@ -38,7 +38,8 @@
 		:is = el.component || 'b-button' |
 		:instanceOf = bButton |
 		:class = ${componentName} ? provide.elClasses(${componentName}, ${classesJSON}) : provide.elClasses(${classesJSON}) |
-		:v-attrs = el.attrs
+		:v-attrs = el.attrs |
+		@[getControlEvent(el)] = callControlAction(el, ...arguments)
 	.
 		- if content
 			+= content
