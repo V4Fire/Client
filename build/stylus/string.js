@@ -46,6 +46,14 @@ module.exports = function (style) {
 	});
 
 	/**
+	 * Converts string to lowercase
+	 * @param {string} src
+	 */
+	style.define('toLowerCase', (src) => {
+		return src.toLowerCase();
+	});
+
+	/**
 	 * Converts plain svg text to dataURI
 	 *
 	 * @param {?} str - source string

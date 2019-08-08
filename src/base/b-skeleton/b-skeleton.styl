@@ -22,6 +22,7 @@ $p = {
 	animation: true
 	animationGradient: linear-gradient(to right, alpha(#FFF, 0) 46%, alpha(#FFF, 0.25) 50%, alpha(#FFF, 0) 54%) 50% 50%
 	animationDuration: 1.5s
+	animationDistanceXXL: 2000px
 	animationDistanceXL: 1200px
 	animationDistanceL: 600px
 	animationDistanceM: 300px
@@ -71,11 +72,11 @@ b-skeleton extends i-block
 		border-radius $p.circleBorderRadius
 
 	if $p.animation
-		for $s in ("S" "M" "L" "XL")
+		for $s in ("S" "M" "L" "XL" "XXL")
 			$keyframe = skeleton_ + $s
 			$v = $p[animationDistance + $s]
 
-			&__item_animation_{$s}:before
+			&__item_animation_{toLowerCase($s)}:before
 				animation-name $keyframe
 			
 			@keyframes {$keyframe}
