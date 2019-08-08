@@ -7,9 +7,8 @@
  */
 
 import symbolGenerator from 'core/symbol';
-
-import iBlock, { component, prop, hook, system, p, ModsDecl } from 'super/i-block/i-block';
-
+import { ComponentElement } from 'core/component/interface';
+import iBlock, { component, prop, hook, watch, system, p, ModsDecl } from 'super/i-block/i-block';
 export * from 'super/i-block/i-block';
 
 export const
@@ -27,7 +26,7 @@ export type ResolveMethod = keyof typeof resolveMethods;
  * Validates a "resolve" prop
  * @param v
  */
-export function validateResolve(v: ResolveMethod | ResolveMethod[]): boolean {
+export function validateResolve(v: CanArray<ResolveMethod>): boolean {
 	return (<ResolveMethod[]>[]).concat(v).every((a) => Boolean(resolveMethods[a]));
 }
 
@@ -37,15 +36,15 @@ export default class bSwitcher extends iBlock {
 	 * Resolve strategy
 	 */
 	@prop({
-		required: false,
 		type: [String, Array],
+		required: false,
 		validator: validateResolve
 	})
 
-	readonly resolve?: ResolveMethod | ResolveMethod[];
+	readonly resolve?: CanArray<ResolveMethod>;
 
 	/**
-	 * If true, then the content will not be hidden after the state change
+	 * If true, then the content won't be hidden after the state change
 	 */
 	@prop(Boolean)
 	readonly resolveOnce: Boolean = false;
@@ -53,12 +52,8 @@ export default class bSwitcher extends iBlock {
 	/**
 	 * Keys for semaphore strategy
 	 */
-	@prop({
-		required: false,
-		type: Object
-	})
-
-	readonly semaphoreKeys?: Dictionary;
+	@prop({type: Object, required: false})
+	readonly semaphoreKeysProp?: Dictionary;
 
 	/** @inheritDoc */
 	static readonly mods: ModsDecl = {
@@ -71,26 +66,23 @@ export default class bSwitcher extends iBlock {
 	/**
 	 * @see semaphoreKeys
 	 */
-	@system()
-	protected semaphoreStore?: Dictionary;
+	@system((o: bSwitcher) => o.sync.link('semaphoreKeysProp'))
+	protected semaphoreKeys?: Dictionary;
 
 	/**
-	 * Component ready map inside content block
+	 * Map for ready components
 	 */
-	@system({
-		init: (v: bSwitcher) => createCallbackMap(v.updateReadiness)
-	})
-
+	@system((o: bSwitcher) => createCallbackMap(o.updateReadiness))
 	protected semaphoreReadyMap!: Map<iBlock, boolean>;
 
 	/**
-	 * Mutation observer
+	 * Mutation observer instance
 	 */
 	@system()
 	protected mutationObserver: CanUndef<MutationObserver>;
 
 	/**
-	 * Number of DOM nodes in content block
+	 * Number of DOM nodes within the content block
 	 */
 	@system()
 	protected nodesLength: number = 0;
@@ -102,35 +94,10 @@ export default class bSwitcher extends iBlock {
 	protected isReadyToSwitchStore: boolean = false;
 
 	/**
-	 * True if possible to display content
-	 */
-	@p({cache: false})
-	protected get isReadyToSwitch(): boolean {
-		return this.isReadyToSwitchStore;
-	}
-
-	/**
-	 * @param v
-	 * @emits change(isHidden: boolean)
-	 */
-	protected set isReadyToSwitch(v: boolean) {
-		if (this.isReadyToSwitch === v) {
-			return;
-		}
-
-		this.emit('change', v);
-		this.isReadyToSwitchStore = v;
-
-		if (!this.isManual) {
-			this[v ? 'hide' : 'show']();
-		}
-	}
-
-	/**
 	 * True if placeholder is hidden
 	 */
 	@system()
-	protected isHidden: boolean = false;
+	protected isPlaceholderHidden: boolean = false;
 
 	/**
 	 * True if the mutation strategy is resolved
@@ -139,18 +106,43 @@ export default class bSwitcher extends iBlock {
 	protected isMutationReady: boolean = false;
 
 	/**
+	 * True if possible to display content
+	 */
+	@p({cache: false})
+	protected get isReadyToSwitch(): boolean {
+		return this.isReadyToSwitchStore;
+	}
+
+	/**
+	 * @param value
+	 * @emits change(isHidden: boolean)
+	 */
+	protected set isReadyToSwitch(value: boolean) {
+		if (this.isReadyToSwitch === value) {
+			return;
+		}
+
+		this.emit('change', value);
+		this.isReadyToSwitchStore = value;
+
+		if (!this.isManual) {
+			this[value ? 'hide' : 'show']();
+		}
+	}
+
+	/**
 	 * True if all semaphore keys are resolved
 	 */
 	@p({cache: false})
 	protected get isSemaphoreReady(): boolean {
 		const
-			{semaphoreStore} = this;
+			{semaphoreKeys} = this;
 
-		if (!semaphoreStore) {
+		if (!semaphoreKeys) {
 			return true;
 		}
 
-		return Object.keys(semaphoreStore).every((k) => Boolean(semaphoreStore[k]));
+		return Object.keys(semaphoreKeys).every((k) => Boolean(semaphoreKeys[k]));
 	}
 
 	/**
@@ -162,7 +154,8 @@ export default class bSwitcher extends iBlock {
 			return false;
 		}
 
-		let isSomeoneNotReady = false;
+		let
+			isSomeoneNotReady = false;
 
 		this.semaphoreReadyMap.forEach((v) => {
 			if (!v) {
@@ -189,11 +182,11 @@ export default class bSwitcher extends iBlock {
 	 * Hides a placeholder, displays a content
 	 */
 	hide(): boolean {
-		if (this.isHidden) {
+		if (this.isPlaceholderHidden) {
 			return false;
 		}
 
-		this.isHidden = true;
+		this.isPlaceholderHidden = true;
 		this.setMod('hidden', true);
 		return true;
 	}
@@ -202,39 +195,40 @@ export default class bSwitcher extends iBlock {
 	 * Hides a content, displays a placeholder
 	 */
 	show(): boolean {
-		if (!this.isHidden) {
+		if (!this.isPlaceholderHidden) {
 			return false;
 		}
 
-		this.isHidden = false;
+		this.isPlaceholderHidden = false;
 		this.removeMod('hidden', true);
 		return true;
 	}
 
 	/**
-	 * Sets a readiness of semaphore key
+	 * Sets a readiness of the specified semaphore key
 	 *
-	 * @param isReady
 	 * @param prop
+	 * @param value
 	 */
-	semaphore(prop: string | number | symbol, v: boolean): boolean {
+	setSemaphoreKeyState(prop: string | number | symbol, value: boolean): boolean {
 		const
-			{semaphoreKeys, semaphoreStore} = this;
+			{semaphoreKeys} = this;
 
-		if (!semaphoreKeys || !semaphoreStore || !(prop in semaphoreKeys)) {
+		if (!semaphoreKeys || !semaphoreKeys || !(prop in semaphoreKeys)) {
 			return false;
 		}
 
 		// @ts-ignore (symbol)
-		semaphoreStore[prop] = v;
+		semaphoreKeys[prop] = value;
 		this.updateReadiness();
 		return true;
 	}
 
 	/**
-	 * Initializes resolve strategies
+	 * Initializes a resolve strategy
 	 */
 	@hook('mounted')
+	@watch('resolve')
 	protected initResolveStrategy(): void {
 		const
 			{resolve} = this;
@@ -269,14 +263,10 @@ export default class bSwitcher extends iBlock {
 			this.updateReadiness();
 		};
 
-		this.on('contentMutation', () => {
-			check();
-
-		}, {label: $$.initMutation});
-
 		this.nodesLength = content.children.length;
 
 		check();
+		this.on('contentMutation', () => check, {label: $$.initMutation});
 		this.createMutationObserver();
 	}
 
@@ -307,7 +297,7 @@ export default class bSwitcher extends iBlock {
 			for (let i = 0; i < nodes.length; i++) {
 				const
 					el = nodes[i],
-					component = (<any>el).component as CanUndef<iBlock>;
+					component = (<ComponentElement>el).component as CanUndef<iBlock>;
 
 				if (component) {
 					subscribe(component);
@@ -330,13 +320,6 @@ export default class bSwitcher extends iBlock {
 	}
 
 	/**
-	 * Initializes a semaphore strategy
-	 */
-	protected initSemaphore(): void {
-		this.semaphoreStore = {...this.semaphoreKeys};
-	}
-
-	/**
 	 * Creates a mutation observer
 	 * @emits contentMutation()
 	 */
@@ -346,10 +329,7 @@ export default class bSwitcher extends iBlock {
 
 		this.mutationObserver = new MutationObserver((rec) => {
 			for (let i = 0; i < rec.length; i++) {
-				const
-					r = rec[i];
-
-				this.nodesLength += r.addedNodes.length - r.removedNodes.length;
+				this.nodesLength += rec[i].addedNodes.length - rec[i].removedNodes.length;
 			}
 
 			this.emit('contentMutation');

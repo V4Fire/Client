@@ -19,33 +19,36 @@ $p = {
 	circleSize: 50px
 	circleBorderRadius: 50%
 
+	animation: true
 	animationGradient: linear-gradient(to right, alpha(#FFF, 0) 46%, alpha(#FFF, 0.25) 50%, alpha(#FFF, 0) 54%) 50% 50%
 	animationDuration: 1.5s
-	animation_xl: 1200px
-	animation_l: 600px
-	animation_m: 300px
-	animation_s: 100px
+	animationDistanceXL: 1200px
+	animationDistanceL: 600px
+	animationDistanceM: 300px
+	animationDistanceS: 100px
 }
 
 b-skeleton extends i-block
 	&__item
 		position relative
 		size $p.itemSize
+		overflow hidden
 		border-radius $p.itemBorderRadius
 		background-color $p.itemBg
-		overflow hidden
 
-		&:before
-			absolute left 50% top 0 bottom 0 right 0
+		if $p.animation
+			&:before
+				content ""
 
-			content ""
-			width 500%
-			margin-left -250%
+				absolute left 50% top 0 bottom 0 right 0
 
-			background $p.animationGradient
-			animation-duration $p.animationDuration
-			animation-iteration-count infinite
-			animation-timing-function linear
+				width 500%
+				margin-left -250%
+
+				background $p.animationGradient
+				animation-duration $p.animationDuration
+				animation-iteration-count infinite
+				animation-timing-function linear
 
 	&__item_shape_rect
 		size $p.rectSize
@@ -67,16 +70,17 @@ b-skeleton extends i-block
 		size $p.circleSize
 		border-radius $p.circleBorderRadius
 
-	for $s in ("s" "m" "l" "xl")
-		$keyframe = skeleton_ + $s
-		$v = $p[animation_ + $s]
+	if $p.animation
+		for $s in ("S" "M" "L" "XL")
+			$keyframe = skeleton_ + $s
+			$v = $p[animationDistance + $s]
 
-		&__item_animation_{$s}:before
-			animation-name $keyframe
-		
-		@keyframes {$keyframe}
-			0%
-				transform translate(-($v), 0)
+			&__item_animation_{$s}:before
+				animation-name $keyframe
+			
+			@keyframes {$keyframe}
+				0%
+					transform translate(-($v), 0)
 
-			100%
-				transform translate($v, 0)
+				100%
+					transform translate($v, 0)

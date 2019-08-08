@@ -117,7 +117,7 @@
     "babel-eslint": "^10.0.2",
     "eslint": "^6.1.0",
     "stlint": "^1.0.53",
-    "stlint-v4fire": "^1.0.20",
+    "stlint-v4fire": "^1.0.28",
     "tslint": "^5.18.0"
   }
 }
