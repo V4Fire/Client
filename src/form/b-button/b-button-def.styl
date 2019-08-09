@@ -7,13 +7,8 @@
  */
 
 $p = {
-	color: c(#FFF)
-	shadow: 0 0 0.45em alpha(c(#222), 0.5)
-	buttonPadding: 0.5em 1em
-	buttonFontWeight: bold
-	offsetBetweenCells: 0.3em
-	colorBrightnessOnAction: 20%
 	messageHelpers: true
+	sizeHelpres: false
 	defaultExterior: primary
 }
 
@@ -22,34 +17,60 @@ b-button
 		&_rounding_{$key} &__button
 			border-radius unit($val, px)
 
-	getBgFor($name)
-		getField($p, "exterior." + $name + ".backgroundColor")
+	if getField($p, "mods.size")
+		&_size
+			for $key, $value in getField($p, "mods.size")
+				&_{$key}
+					& ^[0]
+						&__value
+							padding unit(getField($value, horOffset), px) unit(getField($value, vertOffset), px)
+
+						&__button
+							text-options(getField($value, textStyle))
+							line-height 1
+
+	getExteriorStyle($name, $prop)
+		getField($p, "exterior." + $name + "." + $prop)
 
 	generateExterior($k)
-		$bg = getBgFor($k)
+		$extBg = getExteriorStyle($k, backgroundColor)
+		$extColor = getExteriorStyle($k, color)
 
 		&__button
-			padding $p.buttonPadding
-			background $bg
-			color $p.color
-			font-weight $p.buttonFontWeight
+			if $extBg
+				background $extBg
 
-			&:focus
-				box-shadow $p.shadow
+			if $extColor
+				color $extColor
 
-			if ($p.colorBrightnessOnAction && $bg)
-				&:hover
-					background lighten($bg, $p.colorBrightnessOnAction)
+			for $key in (hover focus active disabled)
+				if getField($p, "mods." + $key)
+					&:{$key}
+						path($value)
+							"mods." + $key + "." + $value
 
-		if ($p.colorBrightnessOnAction && $bg)
-			&_disabled_true &__button
-			&_progress_true &__button
-				background-color lighten($bg, $p.colorBrightnessOnAction)
+						$color = getField($p, path(color))
+						$bg = getField($p, path(backgroundColor))
+						$blendMode = getField($p, path(blendMode))
+						$opacity = getField($p, path(opacity))
+						$boxShadow = getField($p, path(boxShadow))
 
-	if (getField($p, "exterior"))
+						if $boxShadow
+							box-shadow $boxShadow
+
+						if $color
+							color $color
+
+						if $bg and $bg != none and $blendMode and $extBg and $extBg != none
+							background blend($bg, $extBg, $blendMode)
+
+						else if $bg
+							background $bg
+
+	if getField($p, "exterior")
 		generateExterior($p.defaultExterior)
 
-		for $key, $val in getField($p, "exterior")
+		for $key, $val in getField($p, exterior)
 			&_exterior_{$key}
 				& ^[0]
 					generateExterior($key)
@@ -61,5 +82,9 @@ b-button
 	&__button
 		transition color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out
 
-	&__cell + &__cell
-		margin-left $p.offsetBetweenCells
+	for $key in (post-icon pre-icon)
+		$params = getField($p, "mods." + camelize($key))
+
+		if $params
+			&__{$key}
+				margin-{$key == "pre-icon" ? right : left} unit(getField($params, offset), px)
