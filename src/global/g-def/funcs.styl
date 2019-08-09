@@ -45,10 +45,10 @@ img($img)
 
 	return
 
-/**
- * Generates images classes
- */
-generateImgClasses()
+		/**
+		 * Generates images classes
+		 */
+		generateImgClasses()
 	for $img, $obj in $IMG
 		$sel = join(",", $obj.selectors)
 		{$sel}
@@ -65,23 +65,6 @@ execFontPattern($type = "")
 
 	else
 		unquote(replace("%t", "", BASE_FONT_PATTERN))
-
-/**
- * Returns a value from an object by the specified path
- *
- * @param {object} $obj
- * @param {string} $path
- */
-getField($obj, $path)
-	$fields = split(".", $path)
-
-	if (length($fields) > 1 && type($obj[$fields[0]]) == "object")
-		return getField($obj[$fields[0]], join(".", slice($fields, 1, length($fields))))
-
-	if length($fields) == 1
-		return $obj[$fields[0]]
-
-	return null
 
 /**
  * Returns a color from global kits
@@ -205,3 +188,22 @@ stretch-layer($position, $zIndexPos = "modal")
 	bottom 0
 	right 0
 	zIndex($zIndexPos)
+
+/**
+ * Generates text style rules
+ * from the Design System styles
+ *
+ * @param {string} $path - path to a text style
+ */
+text-options($path)
+	$op = getDSOptions("text." + $path)
+
+	if $op
+		font-size unit(getField($op, fontSize), px)
+		font-family getField($op, fontFamily)
+		font-weight getField($op, fontWeight)
+
+		line-height unquote(getField($op, lineHeight))
+		letter-spacing getField($op, letterSpacing)
+
+		color getField($op, color)

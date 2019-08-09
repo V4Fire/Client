@@ -85,14 +85,14 @@ module.exports = function (style) {
 	 */
 	style.define('blend', (foreground, background, mode = 'normal') => {
 		if (!foreground.rgba || !background.rgba) {
-			throw new Error('Colors didn\'t specified');
+			throw new Error('Colors aren\'t specified');
 		}
 
 		const
 			m = mode.string.camelize(false);
 
 		if (!blendModes[m]) {
-			throw new Error(`Blend function for mode ${m} didn't registered`);
+			throw new Error(`Blend function for mode ${m} is not registered`);
 		}
 
 		if (Object.isFunction(blendModes[m])) {

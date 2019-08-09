@@ -51,13 +51,19 @@ module.exports = function (style) {
 	);
 
 	/**
-	 * Returns part of the DS
+	 * Returns part of the Design System
+	 * by the specified path
 	 *
-	 * @param {string} string - DS field name
+	 * @param {string} string - field path
 	 * @returns {!Object}
 	 */
 	style.define(
 		'getDSOptions',
-		({string}) => DS[string] && stylus.utils.coerce(DS[string], true) || {}
+		({string}) => {
+			const
+				value = string ? $C(DS).get(string) || {} : DS;
+
+			return stylus.utils.coerce(value, true);
+		}
 	);
 };
