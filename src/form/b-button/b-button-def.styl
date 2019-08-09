@@ -23,7 +23,16 @@ b-button
 				&_{$key}
 					& ^[0]
 						&__value
-							padding unit(getField($value, horOffset), px) unit(getField($value, vertOffset), px)
+							$horOffset = getField($value, horOffset)
+							$vertOffset = getField($value, vertOffset)
+
+							if ($vertOffset)
+								padding-left unit($vertOffset, px)
+								padding-right @padding-left
+
+							if ($horOffset)
+								padding-top unit($horOffset, px)
+								padding-bottom @padding-top
 
 						&__button
 							text-options(getField($value, textStyle))
@@ -36,44 +45,52 @@ b-button
 		$extBg = getExteriorStyle($k, backgroundColor)
 		$extColor = getExteriorStyle($k, color)
 
-		&__button
+		generate($kk)
+			path($v)
+				"mods." + $kk + "." + $v
+
+			getValue($prop)
+				getExteriorStyle($k, path($prop)) || getField($p, path($prop))
+
+			$color = getValue(color)
+			$bg = getValue(backgroundColor)
+			$blendMode = getValue(blendMode)
+			$boxShadow = getValue(boxShadow)
+
+			if $boxShadow
+				box-shadow $boxShadow
+
+			if $color
+				color $color
+
+			if $bg and $bg != none and $blendMode and $extBg and $extBg != none
+				background blend($bg, $extBg, $blendMode)
+
+			else if $bg
+				background $bg
+
+		&^[0]_disabled_true
+			& ^[0]__button
+				generate(disabled)
+
+		& ^[0]__button
 			if $extBg
 				background $extBg
 
 			if $extColor
 				color $extColor
 
-			for $key in (hover focus active disabled)
+			for $key in (hover focus active)
 				if getField($p, "mods." + $key)
 					&:{$key}
-						path($value)
-							"mods." + $key + "." + $value
+						generate($key)
 
-						$color = getField($p, path(color))
-						$bg = getField($p, path(backgroundColor))
-						$blendMode = getField($p, path(blendMode))
-						$opacity = getField($p, path(opacity))
-						$boxShadow = getField($p, path(boxShadow))
-
-						if $boxShadow
-							box-shadow $boxShadow
-
-						if $color
-							color $color
-
-						if $bg and $bg != none and $blendMode and $extBg and $extBg != none
-							background blend($bg, $extBg, $blendMode)
-
-						else if $bg
-							background $bg
-
-	if getField($p, "exterior")
+	if getField($p, exterior)
 		generateExterior($p.defaultExterior)
 
 		for $key, $val in getField($p, exterior)
 			&_exterior_{$key}
-				& ^[0]
-					generateExterior($key)
+				generateExterior($key)
 
 	@supports (-ms-accelerator true)
 		&__button
