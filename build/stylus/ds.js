@@ -51,7 +51,7 @@ module.exports = function (style) {
 	);
 
 	/**
-	 * Returns part of the Design System
+	 * Returns part of the Design System or whole DS object
 	 * by the specified path
 	 *
 	 * @param {string} string - field path
