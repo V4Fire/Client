@@ -88,6 +88,16 @@ export default class bSwitcher extends iBlock {
 	protected nodesLength: number = 0;
 
 	/**
+	 * Selector of content node
+	 */
+	@system()
+	protected contentNodeMarker: string = '[data-switch-content]';
+
+	@system((o) => o.sync.link('resolve', (v: CanArray<ResolveMethod>) =>
+		(<ResolveMethod[]>[]).concat(v).reduce((acc, a) => (acc[a] = false, acc), {})))
+	protected isStrategyReady!: Record<ResolveMethod, boolean>;
+
+	/**
 	 * Store for isReadyToSwitch
 	 */
 	@system()
@@ -173,6 +183,16 @@ export default class bSwitcher extends iBlock {
 		return !this.resolve || !this.resolve.length;
 	}
 
+	/**
+	 * Link to content node
+	 */
+	protected get contentNode(): HTMLElement {
+		const
+			{$refs: {content}} = this;
+
+		return content.querySelector(this.contentNodeMarker) || content;
+	}
+
 	/** @override */
 	protected $refs!: {
 		content: HTMLElement;
@@ -181,7 +201,7 @@ export default class bSwitcher extends iBlock {
 	/**
 	 * Hides a placeholder, displays a content
 	 */
-	hide(): boolean {
+	hidePlaceholder(): boolean {
 		if (this.isPlaceholderHidden) {
 			return false;
 		}
@@ -194,7 +214,7 @@ export default class bSwitcher extends iBlock {
 	/**
 	 * Hides a content, displays a placeholder
 	 */
-	show(): boolean {
+	showPlaceholder(): boolean {
 		if (!this.isPlaceholderHidden) {
 			return false;
 		}
@@ -214,7 +234,7 @@ export default class bSwitcher extends iBlock {
 		const
 			{semaphoreKeys} = this;
 
-		if (!semaphoreKeys || !semaphoreKeys || !(prop in semaphoreKeys)) {
+		if (!semaphoreKeys || !(prop in semaphoreKeys)) {
 			return false;
 		}
 
@@ -225,107 +245,12 @@ export default class bSwitcher extends iBlock {
 	}
 
 	/**
-	 * Initializes a resolve strategy
-	 */
-	@hook('mounted')
-	@watch('resolve')
-	protected initResolveStrategy(): void {
-		const
-			{resolve} = this;
-
-		if (!resolve) {
-			return;
-		}
-
-		(<ResolveMethod[]>[]).concat(resolve).forEach((r) => {
-			const
-				initializer = this[`init${r.capitalize()}`];
-
-			if (Object.isFunction(initializer)) {
-				initializer();
-			}
-		});
-
-	}
-
-	/**
-	 * Initializes a mutation observer strategy
-	 */
-	protected initMutation(): void {
-		const
-			{$refs: {content}} = this;
-
-		const check = () => {
-			const
-				{nodesLength} = this;
-
-			this.isMutationReady = nodesLength > 0;
-			this.updateReadiness();
-		};
-
-		this.nodesLength = content.children.length;
-
-		check();
-		this.on('contentMutation', () => check, {label: $$.initMutation});
-		this.createMutationObserver();
-	}
-
-	/**
-	 * Initializes a component readiness wait strategy
-	 */
-	@hook('mounted')
-	protected initReady(): void {
-		const
-			{semaphoreReadyMap, async: $a} = this;
-
-		const subscribe = (c: iBlock) => {
-			if (semaphoreReadyMap.has(c)) {
-				return;
-			}
-
-			semaphoreReadyMap.set(c, c.isReady);
-			$a.on(c, 'statusReady', () => semaphoreReadyMap.set(c, true), {label: $$.ready});
-			$a.on(c, 'statusLoading statusUnloaded', () => semaphoreReadyMap.set(c, false), {label: $$.loading});
-			$a.on(c, 'statusDestroyed', () => semaphoreReadyMap.delete(c), {label: $$.destroy});
-		};
-
-		const register = () => {
-			const
-				{$refs: {content}} = this,
-				nodes = content.querySelectorAll(':scope > .i-block-helper');
-
-			for (let i = 0; i < nodes.length; i++) {
-				const
-					el = nodes[i],
-					component = (<ComponentElement>el).component as CanUndef<iBlock>;
-
-				if (component) {
-					subscribe(component);
-				}
-			}
-		};
-
-		const defferRegister = () => {
-			this.async.setTimeout(() => {
-				register();
-			}, 50, {label: $$.register, join: true});
-		};
-
-		defferRegister();
-		this.createMutationObserver();
-
-		this.on('contentMutation', () => {
-			defferRegister();
-		}, {label: $$.initReady});
-	}
-
-	/**
 	 * Creates a mutation observer
 	 * @emits contentMutation()
 	 */
 	protected createMutationObserver(): void {
 		const
-			{$refs: {content}} = this;
+			{contentNode} = this;
 
 		this.mutationObserver = new MutationObserver((rec) => {
 			for (let i = 0; i < rec.length; i++) {
@@ -335,7 +260,7 @@ export default class bSwitcher extends iBlock {
 			this.emit('contentMutation');
 		});
 
-		this.mutationObserver.observe(content, {
+		this.mutationObserver.observe(contentNode, {
 			childList: true
 		});
 
@@ -365,6 +290,95 @@ export default class bSwitcher extends iBlock {
 		}
 
 		return this.isReadyToSwitch;
+	}
+
+	/**
+	 * Initializes a resolve strategies
+	 */
+	@hook('mounted')
+	@watch('resolve')
+	protected initResolvers(): void {
+		const
+			{resolve} = this;
+
+		if (!resolve) {
+			return;
+		}
+
+		(<ResolveMethod[]>[]).concat(resolve).forEach((r) => {
+			const
+				initializer = this[`init${r.capitalize()}`];
+
+			if (Object.isFunction(initializer)) {
+				initializer();
+			}
+		});
+
+	}
+
+	/**
+	 * Initializes a mutation observer strategy
+	 */
+	protected initMutation(): void {
+		const
+			{$refs: {content}} = this;
+
+		const defferCheck = this.lazy.createLazyFn(() => {
+			const
+				{nodesLength} = this;
+
+			this.isMutationReady = nodesLength > 0;
+			this.updateReadiness();
+		}, {label: $$.defferCheck});
+
+		this.nodesLength = content.children.length;
+
+		defferCheck();
+		this.on('contentMutation', defferCheck, {label: $$.initMutation});
+		this.createMutationObserver();
+	}
+
+	/**
+	 * Initializes a component readiness wait strategy
+	 */
+	@hook('mounted')
+	protected initReady(): void {
+		const
+			{semaphoreReadyMap, async: $a} = this;
+
+		const subscribe = (c: iBlock) => {
+			if (semaphoreReadyMap.has(c)) {
+				return;
+			}
+
+			semaphoreReadyMap.set(c, c.isReady);
+			$a.on(c, 'statusReady', () => semaphoreReadyMap.set(c, true), {label: $$.ready});
+			$a.on(c, 'statusLoading statusUnloaded', () => semaphoreReadyMap.set(c, false), {label: $$.loading});
+			$a.on(c, 'statusDestroyed', () => semaphoreReadyMap.delete(c), {label: $$.destroy});
+		};
+
+		const register = () => {
+			const
+				{contentNode} = this,
+				nodes = contentNode.querySelectorAll(':scope > .i-block-helper');
+
+			for (let i = 0; i < nodes.length; i++) {
+				const
+					el = nodes[i],
+					component = (<ComponentElement>el).component as CanUndef<iBlock>;
+
+				if (component) {
+					subscribe(component);
+				}
+			}
+		};
+
+		const
+			defferRegister = this.lazy.createLazyFn(register, {label: $$.register});
+
+		defferRegister();
+		this.createMutationObserver();
+		this.on('contentMutation', defferRegister, {label: $$.initReady});
 	}
 }
 
