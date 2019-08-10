@@ -48,7 +48,7 @@ module.exports = function (style) {
 	/**
 	 * Converts string to lowercase
 	 *
-	 * @param {string} str
+	 * @param {?} str
 	 * @returns {string}
 	 */
 	style.define('toLowerCase',

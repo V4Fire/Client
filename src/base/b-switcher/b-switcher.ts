@@ -20,14 +20,22 @@ export const resolveMethods = {
 	components: true
 };
 
+export interface IsTable {
+	readyToSwitchStore: boolean;
+	placeholderHidden: boolean;
+	mutationReady: boolean;
+	manual(): boolean;
+}
+
+export type IsStrategyReadyMap = Record<ResolveMethod, () => boolean>;
 export type ResolveMethod = keyof typeof resolveMethods;
 
 /**
  * Validates a "resolve" prop
- * @param v
+ * @param value
  */
-export function validateResolve(v: CanArray<ResolveMethod>): boolean {
-	return (<ResolveMethod[]>[]).concat(v).every((a) => Boolean(resolveMethods[a]));
+export function validateResolve(value: ResolveMethod[]): boolean {
+	return value.every((a) => Boolean(resolveMethods[a]));
 }
 
 @component()
@@ -36,12 +44,12 @@ export default class bSwitcher extends iBlock {
 	 * Resolve strategy
 	 */
 	@prop({
-		type: [String, Array],
+		type: Array,
 		required: false,
 		validator: validateResolve
 	})
 
-	readonly resolve?: CanArray<ResolveMethod>;
+	readonly resolve?: ResolveMethod[];
 
 	/**
 	 * If true, then the content won't be hidden after the state change
@@ -72,7 +80,7 @@ export default class bSwitcher extends iBlock {
 	/**
 	 * Map for ready components
 	 */
-	@system((o: bSwitcher) => createCallbackMap(o.updateReadiness))
+	@system((o: bSwitcher) => createCallbackMap(o.setSwitchReadiness))
 	protected semaphoreReadyMap!: Map<iBlock, boolean>;
 
 	/**
@@ -93,34 +101,43 @@ export default class bSwitcher extends iBlock {
 	@system()
 	protected contentNodeMarker: string = '[data-switch-content]';
 
-	@system((o) => o.sync.link('resolve', (v: CanArray<ResolveMethod>) =>
-		(<ResolveMethod[]>[]).concat(v).reduce((acc, a) => (acc[a] = false, acc), {})))
-	protected isStrategyReady!: Record<ResolveMethod, boolean>;
+	/**
+	 * Strategies readiness map
+	 */
+	@system((o: bSwitcher): IsStrategyReadyMap => ({
+		mutation: () => o.is.mutationReady,
+
+		semaphore: () => {
+			const keys = o.semaphoreKeys;
+			return keys ? Object.keys(keys).every((k) => Boolean(keys[k])) : true;
+		},
+
+		components: () => {
+			const map = o.semaphoreReadyMap;
+			return map.size ? [...map].every((c) => c[1]) : false;
+		}
+	}))
+
+	protected isStrategyReady!: IsStrategyReadyMap;
 
 	/**
-	 * Store for isReadyToSwitch
+	 * Is table
 	 */
-	@system()
-	protected isReadyToSwitchStore: boolean = false;
+	@system((o: bSwitcher): IsTable => ({
+		readyToSwitchStore: false,
+		placeholderHidden: false,
+		mutationReady: false,
+		manual: () =>  !o.resolve || !o.resolve.length
+	}))
 
-	/**
-	 * True if placeholder is hidden
-	 */
-	@system()
-	protected isPlaceholderHidden: boolean = false;
-
-	/**
-	 * True if the mutation strategy is resolved
-	 */
-	@system()
-	protected isMutationReady: boolean = false;
+	protected is!: IsTable;
 
 	/**
 	 * True if possible to display content
 	 */
 	@p({cache: false})
 	protected get isReadyToSwitch(): boolean {
-		return this.isReadyToSwitchStore;
+		return this.is.readyToSwitchStore;
 	}
 
 	/**
@@ -133,54 +150,11 @@ export default class bSwitcher extends iBlock {
 		}
 
 		this.emit('change', value);
-		this.isReadyToSwitchStore = value;
+		this.is.readyToSwitchStore = value;
 
-		if (!this.isManual) {
-			this[value ? 'hide' : 'show']();
+		if (!this.is.manual()) {
+			this[value ? 'hidePlaceholder' : 'showPlaceholder']();
 		}
-	}
-
-	/**
-	 * True if all semaphore keys are resolved
-	 */
-	@p({cache: false})
-	protected get isSemaphoreReady(): boolean {
-		const
-			{semaphoreKeys} = this;
-
-		if (!semaphoreKeys) {
-			return true;
-		}
-
-		return Object.keys(semaphoreKeys).every((k) => Boolean(semaphoreKeys[k]));
-	}
-
-	/**
-	 * True if all child components in content block is ready
-	 */
-	@p({cache: false})
-	protected get isComponentsReady(): boolean {
-		if (!this.semaphoreReadyMap.size) {
-			return false;
-		}
-
-		let
-			isSomeoneNotReady = false;
-
-		this.semaphoreReadyMap.forEach((v) => {
-			if (!v) {
-				isSomeoneNotReady = true;
-			}
-		});
-
-		return !isSomeoneNotReady;
-	}
-
-	/**
-	 * True if the component does not have a resolver
-	 */
-	protected get isManual(): boolean {
-		return !this.resolve || !this.resolve.length;
 	}
 
 	/**
@@ -188,7 +162,7 @@ export default class bSwitcher extends iBlock {
 	 */
 	protected get contentNode(): HTMLElement {
 		const
-			{$refs: {content}} = this;
+			{content} = this.$refs;
 
 		return content.querySelector(this.contentNodeMarker) || content;
 	}
@@ -202,11 +176,11 @@ export default class bSwitcher extends iBlock {
 	 * Hides a placeholder, displays a content
 	 */
 	hidePlaceholder(): boolean {
-		if (this.isPlaceholderHidden) {
+		if (this.is.placeholderHidden) {
 			return false;
 		}
 
-		this.isPlaceholderHidden = true;
+		this.is.placeholderHidden = true;
 		this.setMod('hidden', true);
 		return true;
 	}
@@ -215,11 +189,11 @@ export default class bSwitcher extends iBlock {
 	 * Hides a content, displays a placeholder
 	 */
 	showPlaceholder(): boolean {
-		if (!this.isPlaceholderHidden) {
+		if (!this.is.placeholderHidden) {
 			return false;
 		}
 
-		this.isPlaceholderHidden = false;
+		this.is.placeholderHidden = false;
 		this.removeMod('hidden', true);
 		return true;
 	}
@@ -240,56 +214,23 @@ export default class bSwitcher extends iBlock {
 
 		// @ts-ignore (symbol)
 		semaphoreKeys[prop] = value;
-		this.updateReadiness();
+		this.setSwitchReadiness();
 		return true;
 	}
 
 	/**
-	 * Creates a mutation observer
-	 * @emits contentMutation()
-	 */
-	protected createMutationObserver(): void {
-		const
-			{contentNode} = this;
-
-		this.mutationObserver = new MutationObserver((rec) => {
-			for (let i = 0; i < rec.length; i++) {
-				this.nodesLength += rec[i].addedNodes.length - rec[i].removedNodes.length;
-			}
-
-			this.emit('contentMutation');
-		});
-
-		this.mutationObserver.observe(contentNode, {
-			childList: true
-		});
-
-		this.async.worker(this.mutationObserver, {
-			label: $$.mutationObserver
-		});
-	}
-
-	/**
-	 * Returns true if all strategies are resolved
+	 * Sets readiness for switching
 	 */
 	@hook('mounted')
-	protected updateReadiness(): boolean {
+	protected setSwitchReadiness(): void {
 		const
-			{isManual, resolve, resolveOnce} = this;
+			{is, resolve, resolveOnce} = this;
 
 		if (resolveOnce && this.isReadyToSwitch) {
-			return true;
+			return;
 		}
 
-		// tslint:disable-next-line: prefer-conditional-expression
-		if (isManual) {
-			this.isReadyToSwitch = true;
-
-		} else {
-			this.isReadyToSwitch = (<ResolveMethod[]>[]).concat(resolve || []).every((r) => this[`is${r.capitalize()}Ready`]);
-		}
-
-		return this.isReadyToSwitch;
+		this.isReadyToSwitch = is.manual() || (<ResolveMethod[]>resolve).every((r) => this.isStrategyReady[r]());
 	}
 
 	/**
@@ -305,9 +246,9 @@ export default class bSwitcher extends iBlock {
 			return;
 		}
 
-		(<ResolveMethod[]>[]).concat(resolve).forEach((r) => {
+		resolve.forEach((r) => {
 			const
-				initializer = this[`init${r.capitalize()}`];
+				initializer = this[`init${r.capitalize()}Strategy`];
 
 			if (Object.isFunction(initializer)) {
 				initializer();
@@ -319,19 +260,19 @@ export default class bSwitcher extends iBlock {
 	/**
 	 * Initializes a mutation observer strategy
 	 */
-	protected initMutation(): void {
+	protected initMutationStrategy(): void {
 		const
-			{$refs: {content}} = this;
+			{contentNode} = this;
 
 		const defferCheck = this.lazy.createLazyFn(() => {
 			const
 				{nodesLength} = this;
 
-			this.isMutationReady = nodesLength > 0;
-			this.updateReadiness();
+			this.is.mutationReady = nodesLength > 0;
+			this.setSwitchReadiness();
 		}, {label: $$.defferCheck});
 
-		this.nodesLength = content.children.length;
+		this.nodesLength = contentNode.children.length;
 
 		defferCheck();
 		this.on('contentMutation', defferCheck, {label: $$.initMutation});
@@ -341,8 +282,7 @@ export default class bSwitcher extends iBlock {
 	/**
 	 * Initializes a component readiness wait strategy
 	 */
-	@hook('mounted')
-	protected initReady(): void {
+	protected initComponentsStrategy(): void {
 		const
 			{semaphoreReadyMap, async: $a} = this;
 
@@ -379,6 +319,28 @@ export default class bSwitcher extends iBlock {
 		defferRegister();
 		this.createMutationObserver();
 		this.on('contentMutation', defferRegister, {label: $$.initReady});
+	}
+
+	/**
+	 * Creates a mutation observer
+	 * @emits contentMutation()
+	 */
+	protected createMutationObserver(): void {
+		const
+			{contentNode} = this;
+
+		this.mutationObserver = new MutationObserver((rec) => {
+			this.nodesLength += rec.reduce((acc, {addedNodes: add, removedNodes: rem}) => acc + add.length - rem.length, 0);
+			this.emit('contentMutation');
+		});
+
+		this.mutationObserver.observe(contentNode, {
+			childList: true
+		});
+
+		this.async.worker(this.mutationObserver, {
+			label: $$.mutationObserver
+		});
 	}
 }
 
