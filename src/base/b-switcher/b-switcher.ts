@@ -7,8 +7,11 @@
  */
 
 import symbolGenerator from 'core/symbol';
+import { wrapStructure } from 'core/helpers/wrapper';
 import { ComponentElement } from 'core/component/interface';
+
 import iBlock, { component, prop, hook, watch, system, p, ModsDecl } from 'super/i-block/i-block';
+
 export * from 'super/i-block/i-block';
 
 export const
@@ -85,7 +88,7 @@ export default class bSwitcher extends iBlock {
 	/**
 	 * Map for ready components
 	 */
-	@system((o: bSwitcher) => createCallbackMap(() => o.setSwitchReadiness()))
+	@system((o: bSwitcher) => wrapStructure(new Map(), () => o.setSwitchReadiness()))
 	protected semaphoreReadyMap!: Map<iBlock, boolean>;
 
 	/**
@@ -375,41 +378,4 @@ export default class bSwitcher extends iBlock {
 			label: $$.mutationObserver
 		});
 	}
-}
-
-/**
- * Creates a map which will trigger specified callback on every method call
- * @param cb
- */
-function createCallbackMap<K, V>(cb: Function): Map<K, V> {
-	const
-		map = new Map<K, V>(),
-		mapSet = map.set,
-		mapDelete = map.delete,
-		mapClear = map.clear;
-
-	map.set = function (k: K, v: V): Map<K, V> {
-		const
-			r = mapSet.call(this, k, v),
-			args = [k, v, 'set'];
-
-		cb(...args);
-		return r;
-	};
-
-	map.delete = function (k: K): boolean {
-		const
-			r = mapDelete.call(this, k),
-			args = [k, 'delete'];
-
-		cb(...args);
-		return r;
-	};
-
-	map.clear = function (): void {
-		mapClear.call(this);
-		cb('clear');
-	};
-
-	return map;
 }
