@@ -27,6 +27,11 @@ export interface IsTable {
 	manual(): boolean;
 }
 
+export interface FilteredMutations {
+	added: HTMLElement[];
+	removed: HTMLElement[];
+}
+
 export type IsStrategyReadyMap = Record<ResolveMethod, () => boolean>;
 export type ResolveMethod = keyof typeof resolveMethods;
 
@@ -74,13 +79,13 @@ export default class bSwitcher extends iBlock {
 	/**
 	 * @see semaphoreKeys
 	 */
-	@system((o: bSwitcher) => o.sync.link('semaphoreKeysProp'))
+	@system((o: bSwitcher) => o.sync.link('semaphoreKeysProp', (v) => ({...v})))
 	protected semaphoreKeys?: Dictionary;
 
 	/**
 	 * Map for ready components
 	 */
-	@system((o: bSwitcher) => createCallbackMap(o.setSwitchReadiness))
+	@system((o: bSwitcher) => createCallbackMap(() => o.setSwitchReadiness()))
 	protected semaphoreReadyMap!: Map<iBlock, boolean>;
 
 	/**
@@ -99,7 +104,13 @@ export default class bSwitcher extends iBlock {
 	 * Selector of content node
 	 */
 	@system()
-	protected contentNodeMarker: string = '[data-switch-content]';
+	protected contentNodeMarker: string = '[data-switcher-content]';
+
+	/**
+	 * Store of content node
+	 */
+	@system()
+	protected contentNodeStore: Nullable<HTMLElement> = null;
 
 	/**
 	 * Strategies readiness map
@@ -160,11 +171,12 @@ export default class bSwitcher extends iBlock {
 	/**
 	 * Link to content node
 	 */
+	@p({cache: false})
 	protected get contentNode(): HTMLElement {
 		const
-			{content} = this.$refs;
+			{$refs: {content}, contentNodeStore} = this;
 
-		return content.querySelector(this.contentNodeMarker) || content;
+		return contentNodeStore || content.querySelector(this.contentNodeMarker) || content;
 	}
 
 	/** @override */
@@ -270,7 +282,7 @@ export default class bSwitcher extends iBlock {
 
 			this.is.mutationReady = nodesLength > 0;
 			this.setSwitchReadiness();
-		}, {label: $$.defferCheck});
+		}, {label: $$.defferCheck, join: true});
 
 		this.nodesLength = contentNode.children.length;
 
@@ -329,13 +341,34 @@ export default class bSwitcher extends iBlock {
 		const
 			{contentNode} = this;
 
+		const nodesFilter = (rec: MutationRecord[]): FilteredMutations => {
+			let
+				added = [],
+				removed = [];
+
+			for (let i = 0; i < rec.length; i++) {
+				const r = rec[i];
+				added = added.concat([].slice.call(r.addedNodes));
+				removed = removed.concat([].slice.call(r.removedNodes));
+			}
+
+			const filter = (n) => n instanceof HTMLElement;
+
+			return {
+				added: added.filter(filter),
+				removed: removed.filter(filter)
+			};
+		};
+
 		this.mutationObserver = new MutationObserver((rec) => {
-			this.nodesLength += rec.reduce((acc, {addedNodes: add, removedNodes: rem}) => acc + add.length - rem.length, 0);
+			const v = nodesFilter(rec);
+			this.nodesLength += v.added.length - v.removed.length;
 			this.emit('contentMutation');
 		});
 
 		this.mutationObserver.observe(contentNode, {
-			childList: true
+			childList: true,
+			characterData: false
 		});
 
 		this.async.worker(this.mutationObserver, {
