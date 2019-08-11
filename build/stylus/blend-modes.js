@@ -9,10 +9,7 @@
  */
 
 const
-	stylus = require('stylus');
-
-const
-	{rgba, rgb, red, green, blue, alpha} = stylus.functions;
+	{ utils, functions, nodes } = require('stylus');
 
 const blendModes = {
 	/**
@@ -23,7 +20,7 @@ const blendModes = {
 	 * @returns {Object}
 	 */
 	colorBurn(f, b) {
-		const getColor = ({val: f}, {val: b}) => {
+		const getColor = (f, b) => {
 			const
 				tmp = 255 - ((255 - b) * 255) / f;
 
@@ -37,15 +34,15 @@ const blendModes = {
 				f = tmp;
 			}
 
-			return new stylus.nodes.Unit(f);
+			return f;
 		};
 
 		const
-			redColor = getColor(red(f), red(b)),
-			greenColor = getColor(green(f), green(b)),
-			blueColor = getColor(blue(f), blue(b));
+			red = getColor(f.r, b.r),
+			green = getColor(f.g, b.g),
+			blue = getColor(f.b, b.b);
 
-		return blendModes.normal(rgba(redColor, greenColor, blueColor, alpha(f)), b);
+		return blendModes.normal(new nodes.RGBA(red, green, blue, f.a), b);
 	},
 
 	/**
@@ -57,18 +54,11 @@ const blendModes = {
 	 */
 	normal(f, b) {
 		const
-			opacity = alpha(f),
-			backOpacity = alpha(b);
+			red = f.r * f.a + b.r * b.a * (1 - f.a),
+			green = f.g * f.a + b.g * b.a * (1 - f.a),
+			blue = f.b * f.a + b.b * b.a * (1 - f.a);
 
-		const
-			unit = (value) => new stylus.nodes.Unit(value);
-
-		const
-			redColor = unit(red(f) * opacity + red(b) * backOpacity * (1 - opacity)),
-			greenColor = unit(green(f) * opacity + green(b) * backOpacity * (1 - opacity)),
-			blueColor = unit(blue(f) * opacity + blue(b) * backOpacity * (1 - opacity));
-
-		return rgb(redColor, greenColor, blueColor);
+		return new nodes.RGBA(red, green, blue, 1);
 	}
 };
 
@@ -84,9 +74,12 @@ module.exports = function (style) {
 	 * @see https://en.wikipedia.org/wiki/Blend_modes
 	 */
 	style.define('blend', (foreground, background, mode = 'normal') => {
-		if (!foreground.rgba || !background.rgba) {
-			throw new Error('Colors aren\'t specified');
-		}
+		utils.assertColor(foreground);
+		foreground = foreground.rgba;
+
+		background = background || new nodes.RGBA(255, 255, 255, 1);
+		utils.assertColor(background);
+		background = background.rgba;
 
 		const
 			m = mode.string.camelize(false);
