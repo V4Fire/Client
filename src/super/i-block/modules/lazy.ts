@@ -33,11 +33,23 @@ export default class Lazy {
 	/**
 	 * Creates a new function from the specified that executes deferredly
 	 *
-	 * @see Async.setTimeout
+	 * @see Async.setImmediate
 	 * @param fn
 	 * @param [params] - async parameters
 	 */
 	createLazyFn(fn: Function, params?: AsyncOpts): Function {
 		return (...args) => this.async.setImmediate(() => fn.call(this, ...args), params);
+	}
+
+	/**
+	 * Creates a function that accumulates all calls and executes once after a specified time
+	 *
+	 * @see Async.setTimeout
+	 * @param fn
+	 * @param [delay]
+	 * @param [params]
+	 */
+	createDefferFn(fn: Function, delay: number = 50, params?: AsyncOpts): Function {
+		return (...args) => this.async.setTimeout(() => fn.call(this, ...args), delay, {join: true, ...params});
 	}
 }
