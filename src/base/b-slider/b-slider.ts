@@ -339,7 +339,9 @@ export default class bSlider extends iData {
 
 	/**
 	 * Moves to the next or the previous slide
+	 *
 	 * @param dir - direction
+	 * @emits change(current: number)
 	 */
 	moveSlide(dir: SlideDirection): boolean {
 		let
@@ -363,6 +365,10 @@ export default class bSlider extends iData {
 
 			} else if (dir > 0 && current > length - 1) {
 				current = 0;
+			}
+
+			if (this.current !== current) {
+				this.emit('change', current);
 			}
 
 			this.current = current;
