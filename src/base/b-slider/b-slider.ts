@@ -139,6 +139,7 @@ export default class bSlider extends iData {
 	/**
 	 * Pointer to current slide
 	 */
+	@p({cache: false})
 	get current(): number {
 		return this.currentStore;
 	}
