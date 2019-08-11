@@ -7,8 +7,8 @@
  */
 
 import symbolGenerator from 'core/symbol';
-import iBlock, { component, system, hook, watch, wait, prop, p } from 'super/i-block/i-block';
-export * from 'super/i-block/i-block';
+import iData, { component, system, hook, watch, wait, prop, p } from 'super/i-data/i-data';
+export * from 'super/i-data/i-data';
 
 export const
 	$$ = symbolGenerator();
@@ -55,7 +55,7 @@ export function isNotInfinitePositiveNumber(v: number): boolean {
 }
 
 @component()
-export default class bSlider extends iBlock {
+export default class bSlider extends iData {
 	/**
 	 * Slider mode
 	 *   *) scroll - scroll implementation
@@ -123,6 +123,12 @@ export default class bSlider extends iBlock {
 	 */
 	@prop(Boolean)
 	readonly alignFirstToStart: boolean = true;
+
+	/**
+	 * Option component
+	 */
+	@prop({type: String, required: false})
+	readonly option?: string;
 
 	/**
 	 * The number of slides in the slider
