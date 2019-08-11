@@ -139,8 +139,22 @@ export default class bSlider extends iData {
 	/**
 	 * Pointer to current slide
 	 */
-	@system()
-	current: number = 0;
+	get current(): number {
+		return this.currentStore;
+	}
+
+	/**
+	 * Sets a pointer of current slide
+	 * @emits change(v: number)
+	 */
+	set current(v: number) {
+		if (v === this.current) {
+			return;
+		}
+
+		this.currentStore = v;
+		this.emit('change', v);
+	}
 
 	/**
 	 * True if mode is slider
@@ -179,6 +193,12 @@ export default class bSlider extends iData {
 
 		return 0;
 	}
+
+	/**
+	 * @see current
+	 */
+	@system()
+	protected currentStore: number = 0;
 
 	/** @override */
 	protected readonly $refs!: {
@@ -339,9 +359,7 @@ export default class bSlider extends iData {
 
 	/**
 	 * Moves to the next or the previous slide
-	 *
 	 * @param dir - direction
-	 * @emits change(current: number)
 	 */
 	moveSlide(dir: SlideDirection): boolean {
 		let
@@ -365,10 +383,6 @@ export default class bSlider extends iData {
 
 			} else if (dir > 0 && current > length - 1) {
 				current = 0;
-			}
-
-			if (this.current !== current) {
-				this.emit('change', current);
 			}
 
 			this.current = current;
