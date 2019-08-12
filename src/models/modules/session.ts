@@ -39,6 +39,8 @@ export default class Session extends Provider {
 
 	/** @override */
 	static readonly middlewares: Middlewares = {
+		...Provider.middlewares,
+
 		// tslint:disable-next-line:typedef
 		async addSession(this: Session, {opts}) {
 			if (opts.api) {
