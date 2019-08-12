@@ -193,15 +193,19 @@ stretch-layer($position, $zIndexPos = "modal")
  * Generates text style rules
  * from the Design System styles
  *
- * @param {string} $path - path to a text style
+ * @param {string} $name - text style name
  */
-text-options($path)
-	$op = getDSOptions("text." + $path)
+text-options($name)
+	$obj = getDSOptions("text." + $name + ".style")
 
-	if $op
-		font-size unit(getField($op, fontSize), px)
-		font-family getField($op, fontFamily)
-		font-weight getField($op, fontWeight)
+	if $obj
+		interpolate-properties($obj)
 
-		line-height unquote(getField($op, lineHeight))
-		letter-spacing getField($op, letterSpacing)
+/**
+ * Generates rules from object properties
+ * @param {Object} $options
+ */
+interpolate-properties($options)
+	for $key, $val in $options
+		$value = type($val) == "string" ? unquote($val) : $val
+		{dasherize($key)} $value
