@@ -16,6 +16,8 @@ import iMessage, { component, prop, wait, hook, ModsDecl } from 'super/i-message
 
 export * from 'super/i-message/i-message';
 
+export type SizeType = 'cover' | 'contain';
+
 export const
 	$$ = symbolGenerator();
 
@@ -50,10 +52,10 @@ export default class bImage extends iMessage implements iProgress, iVisible {
 	readonly alt?: string;
 
 	/**
-	 * Background size type - `contain ? 'contain' : 'cover'`
+	 * Background size type
 	 */
-	@prop({type: Boolean, required: false})
-	readonly contain?: Boolean;
+	@prop({type: String})
+	readonly sizeType: SizeType = 'cover';
 
 	/**
 	 * Image position
@@ -64,8 +66,8 @@ export default class bImage extends iMessage implements iProgress, iVisible {
 	/**
 	 * Image aspect ratio
 	 */
-	@prop({type: [String, Number], required: false})
-	readonly ratio?: string | number;
+	@prop({type: Number, required: false})
+	readonly ratio?: number;
 
 	/** @inheritDoc */
 	static readonly mods: ModsDecl = {
@@ -180,7 +182,7 @@ export default class bImage extends iMessage implements iProgress, iVisible {
 	 */
 	protected getPadding(img: HTMLImageElement): string {
 		return this.ratio !== undefined ?
-			`${(1 / Number(this.ratio)) * 100}%` :
+			`${(1 / this.ratio) * 100}%` :
 			`${(1 / bImage.computeRatio(img)) * 100}%`;
 	}
 
