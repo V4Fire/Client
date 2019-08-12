@@ -18,9 +18,9 @@
 	} .
 
 	- block body
-		- var content
+		: content
 
-		- putIn content
+		: putIn content
 			+= self.slot('before')
 
 			< template v-if = $scopedSlots.default
@@ -30,7 +30,7 @@
 				< template v-for = el in db
 					< component.&__component &
 						:is = option |
-						:v-attrs = typeof optionProps === 'function' ? optionProps(el) : optionProps
+						:v-attrs = Object.isFunction(optionProps) ? optionProps(el) : optionProps
 					.
 
 			+= self.slot('after')

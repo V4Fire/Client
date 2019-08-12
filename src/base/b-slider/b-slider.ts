@@ -143,7 +143,7 @@ export default class bSlider extends iData {
 	length: number = 0;
 
 	/**
-	 * Pointer to current slide
+	 * Pointer to the current slide
 	 */
 	@p({cache: false})
 	get current(): number {
@@ -151,7 +151,7 @@ export default class bSlider extends iData {
 	}
 
 	/**
-	 * Sets a pointer of current slide
+	 * Sets a pointer of the current slide
 	 * @emits change(v: number)
 	 */
 	set current(v: number) {
