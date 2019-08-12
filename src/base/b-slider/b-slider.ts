@@ -152,15 +152,15 @@ export default class bSlider extends iData {
 
 	/**
 	 * Sets a pointer of the current slide
-	 * @emits change(v: number)
+	 * @emits change(current: number)
 	 */
-	set current(v: number) {
-		if (v === this.current) {
+	set current(value: number) {
+		if (value === this.current) {
 			return;
 		}
 
-		this.currentStore = v;
-		this.emit('change', v);
+		this.currentStore = value;
+		this.emit('change', value);
 	}
 
 	/**
