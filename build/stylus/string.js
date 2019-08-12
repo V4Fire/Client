@@ -55,6 +55,15 @@ module.exports = function (style) {
 		(str) => str.string.toLowerCase());
 
 	/**
+	 * Converts string to uppercase
+	 *
+	 * @param {?} str
+	 * @returns {string}
+	 */
+	style.define('toUpperCase',
+		(str) => str.string.toUpperCase());
+
+	/**
 	 * Converts plain svg text to dataURI
 	 *
 	 * @param {?} str - source string

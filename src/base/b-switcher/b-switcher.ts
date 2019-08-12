@@ -7,7 +7,7 @@
  */
 
 import symbolGenerator from 'core/symbol';
-import { wrapStructure } from 'core/helpers/wrapper';
+import { wrapStructure } from 'core/component/wrapper';
 import { ComponentElement } from 'core/component/interface';
 
 import iBlock, { component, prop, hook, watch, system, p, ModsDecl } from 'super/i-block/i-block';
