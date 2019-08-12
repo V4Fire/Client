@@ -9,6 +9,7 @@
 import { defProp } from 'core/const/props';
 import { supports, VNode, VNodeDirective, NormalizedScopedSlot } from 'core/component/engines';
 import { ComponentInterface, ComponentMeta } from 'core/component/interface';
+import { execRenderObject } from 'core/component/create/functional';
 import { components } from 'core/component/const';
 
 import {
@@ -172,6 +173,8 @@ export function createCompositeElement(vnode: VNode, ctx: ComponentInterface): V
 		return vnode;
 	}
 
+	vnode.tag = 'span';
+
 	const
 		meta = components.get(composite);
 
@@ -290,7 +293,7 @@ export function createCompositeElement(vnode: VNode, ctx: ComponentInterface): V
 	fakeCtx.componentStatus = 'ready';
 
 	const
-		newVNode = fakeCtx.vdom.execRenderObject(tpl.index(), [fakeCtx]),
+		newVNode = execRenderObject(tpl.index(), fakeCtx),
 		newVData = newVNode.data = newVNode.data || {};
 
 	for (let o = vData.on, keys = Object.keys(o), i = 0; i < keys.length; i++) {
@@ -307,6 +310,8 @@ export function createCompositeElement(vnode: VNode, ctx: ComponentInterface): V
 	newVData.class = (<string[]>[]).concat(newVData.class || [], vData.class);
 
 	newVData.directives = vData.directives;
+
+	// @ts-ignore
 	newVNode.fakeContext = fakeCtx;
 
 	return newVNode;

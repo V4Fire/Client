@@ -6,16 +6,4 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-@import "base/b-link/b-link.styl"
-
-$p = {
-
-}
-
-b-pseudo-link extends b-link
-	&__link
-	&__pseudo-link
-		border-bottom-style dotted
-
-		&:empty
-			border none
+package('i-round');

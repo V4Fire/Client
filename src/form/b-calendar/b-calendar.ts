@@ -10,6 +10,7 @@ import symbolGenerator from 'core/symbol';
 import bInputTime from 'form/b-input-time/b-input-time';
 
 import iWidth from 'traits/i-width/i-width';
+import iRound from 'traits/i-round/i-round';
 import iSize, { SizeDictionary } from 'traits/i-size/i-size';
 import iIcon from 'traits/i-icon/i-icon';
 import iOpenToggle, { CloseHelperEvents } from 'traits/i-open-toggle/i-open-toggle';
@@ -42,7 +43,7 @@ export default class bCalendar<
 	V extends Value = Value,
 	FV extends FormValue = FormValue,
 	D extends object = Dictionary
-> extends iInput<V, FV, D> implements iWidth, iSize, iIcon, iOpenToggle {
+> extends iInput<V, FV, D> implements iWidth, iRound, iSize, iIcon, iOpenToggle {
 	/** @override */
 	@prop({type: [Array, Date], required: false})
 	// @ts-ignore
@@ -163,17 +164,11 @@ export default class bCalendar<
 	static readonly mods: ModsDecl = {
 		...iWidth.mods,
 		...iSize.mods,
+		...iRound.mods,
 
 		opened: [
 			...iOpenToggle.mods.opened,
 			['false']
-		],
-
-		rounding: [
-			'none',
-			['small'],
-			'normal',
-			'big'
 		]
 	};
 

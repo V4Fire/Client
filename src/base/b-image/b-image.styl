@@ -19,9 +19,9 @@ b-image extends i-message
 	i-progress({helpers: $p.progressHelpers})
 	i-visible({helpers: $p.visibleHelpers})
 
-	&__root-wrapper
-		position relative
-		size 100%
+	size 100%
+	position relative
+	overflow hidden
 
 	&__overlay
 	&__broken
@@ -41,9 +41,7 @@ b-image extends i-message
 
 	&__img
 		width 100%
-
-		img
-			max-width 100%
+		background-repeat no-repeat
 
 	&_show-error_true &__broken
 		display block

@@ -149,7 +149,7 @@ export default class DOM {
 		}
 
 		if (!group) {
-			group = node.getAttribute('render-key') || '';
+			group = node.getAttribute('data-render-group') || '';
 		}
 
 		node.replaceWith(newNode);

@@ -9,7 +9,7 @@
 import Async, { AsyncOpts } from 'core/async';
 import iBlock from 'super/i-block/i-block';
 
-export interface Params extends AsyncOpts {
+export interface LazyParams extends AsyncOpts {
 	delay?: number;
 }
 
@@ -42,7 +42,7 @@ export default class Lazy {
 	 * @param fn
 	 * @param [params]
 	 */
-	createLazyFn(fn: Function, params: Params = {}): Function {
+	createLazyFn(fn: Function, params: LazyParams = {}): Function {
 		const
 			{async: $a} = this,
 			{delay} = params;

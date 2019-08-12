@@ -8,15 +8,16 @@
 
 import { ModsDecl } from 'super/i-block/i-block';
 
-export default abstract class iWidth {
+export default abstract class iRound {
 	/**
-	 * Width modifiers
+	 * Rounding modifiers
 	 */
 	static readonly mods: ModsDecl = {
-		width: [
-			'full',
-			'auto',
-			'inherit'
+		rounding: [
+			'none',
+			'small',
+			'normal',
+			'big'
 		]
 	};
 }

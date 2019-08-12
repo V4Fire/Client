@@ -8,19 +8,19 @@
 
 @import "super/i-data/i-data.styl"
 @import "traits/i-visible/i-visible.styl"
+@import "traits/i-width/i-width.styl"
 
 $p = {
 	visibleHelpers: true
+	widthHelpers: true
 }
 
 b-list extends i-data
 	i-visible({helpers: $p.visibleHelpers})
+	i-width({helpers: $p.widthHelpers})
 
 	&__wrapper
 	&__link
-		display flex
-		align-items center
-
 	&__cell
 		display flex
 
@@ -37,7 +37,3 @@ b-list extends i-data
 
 	&__link-progress
 		display none
-
-	&__g-icon
-		display inline-block
-		size 100%

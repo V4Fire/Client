@@ -120,7 +120,7 @@ export default function inheritMeta(
 			inject[key] = Object.assign(inject[key] || {}, {from: key});
 		}
 
-	} else  {
+	} else {
 		inject = p.inject || params.inject;
 	}
 

@@ -99,7 +99,7 @@ export default class bTextarea<
 	static readonly mods: ModsDecl = {
 		collapsed: [
 			'true',
-			['false']
+			'false'
 		]
 	};
 
