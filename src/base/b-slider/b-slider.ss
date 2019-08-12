@@ -27,10 +27,10 @@
 				+= self.slot()
 
 			< template v-else-if = option
-				< template v-for = c in db
+				< template v-for = el in db
 					< component &
 						:is = option |
-						:v-attrs = optionAttrs
+						:v-attrs = typeof optionProps === 'function' ? optionProps(el) : optionProps
 					.
 
 			+= self.slot('after')

@@ -133,8 +133,8 @@ export default class bSlider extends iData {
 	/**
 	 * Option component attrs
 	 */
-	@prop(Object)
-	readonly optionAttrs: Dictionary = {};
+	@prop({type: [Object, Function]})
+	readonly optionProps: (() => Dictionary) | Dictionary = {};
 
 	/**
 	 * The number of slides in the slider
