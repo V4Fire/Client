@@ -9,7 +9,7 @@
  */
 
 const
-	{ utils, functions, nodes } = require('stylus');
+	{ utils, nodes } = require('stylus');
 
 const blendModes = {
 	/**
