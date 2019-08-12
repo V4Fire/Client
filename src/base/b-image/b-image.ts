@@ -13,6 +13,7 @@ import iProgress from 'traits/i-progress/i-progress';
 import iVisible from 'traits/i-visible/i-visible';
 
 import iMessage, { component, prop, wait, hook, ModsDecl } from 'super/i-message/i-message';
+
 export * from 'super/i-message/i-message';
 
 export const
@@ -112,15 +113,18 @@ export default class bImage extends iMessage implements iProgress, iVisible {
 			.then(() => this.onImageLoaded(img), this.onImageError);
 	}
 
+	/**
+	 * Calculation of the aspect ratio of the image
+	 * @param img
+	 */
 	protected static computeRatio(img: HTMLImageElement): number {
 		const
 			{naturalHeight, naturalWidth} = img;
 
 		if (naturalHeight || naturalWidth) {
-			return naturalHeight === 0
-				? 1
-				: naturalWidth / naturalHeight;
+			return naturalHeight === 0 ? 1 : naturalWidth / naturalHeight;
 		}
+
 		return 1;
 	}
 
@@ -160,18 +164,24 @@ export default class bImage extends iMessage implements iProgress, iVisible {
 		this.setMod('progress', false);
 		this.setMod('showError', false);
 
-		imgRef.style['backgroundImage'] = typeof img === 'string' ? img : `url("${img.currentSrc}")`;
-		imgRef.style['backgroundSize'] = this.contain ? 'contain' : 'cover';
-		imgRef.style['backgroundPosition'] = this.position;
-		imgRef.style['paddingBottom'] = typeof img === 'string' ? <string>tempPad : this.getPadding(img);
+		Object.assign(imgRef.style, {
+			'backgroundImage': Object.isString(img) ? img : `url("${img.currentSrc}")`,
+			'backgroundSize': this.contain ? 'contain' : 'cover',
+			'backgroundPosition': this.position,
+			'paddingBottom': Object.isString(img) ? <string>tempPad : this.getPadding(img),
+		});
 
 		this.emit('load');
 	}
 
+	/**
+	 * Padding calculation for emulation aspect ratio
+	 * @param img
+	 */
 	protected getPadding(img: HTMLImageElement): string {
-		return this.ratio !== void 0
-			? (1 / <number>this.ratio) * 100 + '%'
-			: (1 / bImage.computeRatio(img)) * 100 + '%';
+		return this.ratio !== undefined ?
+			`${(1 / <number>this.ratio) * 100}%` :
+			`${(1 / bImage.computeRatio(img)) * 100}%`;
 	}
 
 	/**
@@ -183,7 +193,7 @@ export default class bImage extends iMessage implements iProgress, iVisible {
 	protected onImageError(err: Error): void {
 		this.setMod('progress', false);
 		this.setMod('showError', true);
-		
+
 		this.emitError('loadError', err);
 	}
 }
