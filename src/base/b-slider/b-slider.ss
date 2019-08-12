@@ -30,7 +30,7 @@
 				< template v-for = c in db
 					< component &
 						:is = option |
-						:p = c
+						:v-attrs = optionAttrs
 					.
 
 			+= self.slot('after')
