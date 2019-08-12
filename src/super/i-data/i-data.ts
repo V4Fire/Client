@@ -614,7 +614,7 @@ export default abstract class iData<T extends object = Dictionary> extends iMess
 	 * Synchronization for the dataProvider property
 	 * @param value
 	 */
-	@watch('dataProvider')
+	@watch({field: 'dataProvider', immediate: true})
 	protected syncDataProviderWatcher(value?: string): void {
 		if (value) {
 			const
