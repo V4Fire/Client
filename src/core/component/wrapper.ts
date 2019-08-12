@@ -6,10 +6,11 @@
  * https://github.com/V4Fire/Core/blob/master/LICENSE
  */
 
-export type Instance = WeakMap<object, unknown> |
+export type Instance<K = unknown, V = unknown> =
+	WeakMap<object, V> |
 	WeakSet<object> |
-	Map<unknown, unknown> |
-	Set<unknown>;
+	Map<K, V> |
+	Set<K>;
 
 export interface Params {
 	/**
@@ -23,10 +24,17 @@ export interface Params {
 	ignore?: string[];
 
 	/**
-	 * If true, then a callback will be called using setImmediate
+	 * If false, then a callback will be called using setImmediate
 	 */
-	deffer?: boolean;
+	immediate?: boolean;
 }
+
+export const shimTable = {
+	weakMap: {is: Object.isWeakMap, methods: ['set', 'delete']},
+	weakSet: {is: Object.isWeakSet, methods: ['add', 'delete']},
+	map: {is: Object.isMap, methods: ['set', 'delete', 'clear']},
+	set: {is: Object.isSet, methods: ['add', 'delete', 'clear']}
+};
 
 /**
  * Creates a specified data structure which will call a specified callback on every mutation
@@ -36,12 +44,12 @@ export interface Params {
  * @param [params]
  *
  * @example
- * wrapStructure(new Map(), () => console.log(123));
- * const s = wrapStructure(new Set(), () => console.log(123));
+ * bindMutationHook(new Map(), () => console.log(123));
+ * const s = bindMutationHook(new Set(), () => console.log(123));
  * s.add(1);
  * // 123
  */
-export function wrapStructure<T extends Instance>(
+export function bindMutationHook<T extends Instance = Instance<unknown, unknown>>(
 	instance: T,
 	cb: Function,
 	params: Params = {}
@@ -49,31 +57,25 @@ export function wrapStructure<T extends Instance>(
 	const {
 		ignore,
 		info,
-		deffer
-	} = {deffer: true, ...params};
+		immediate
+	} = {immediate: false, ...params};
 
-	let immediateId;
+	let
+		timerId;
 
 	const wrappedCb = (...args) => {
-		if (!immediateId && deffer) {
-			immediateId = setImmediate(() => {
+		if (!timerId && !immediate) {
+			timerId = setImmediate(() => {
 				cb(...args);
-				immediateId = undefined;
+				timerId = undefined;
 			});
 
-		} else if (!deffer) {
+		} else if (immediate) {
 			cb(...args);
 		}
 	};
 
-	const shimTable = {
-		weakMap: {is: Object.isWeakMap, methods: ['set', 'delete']},
-		weakSet: {is: Object.isWeakSet, methods: ['add', 'delete']},
-		map: {is: Object.isMap, methods: ['set', 'delete', 'clear']},
-		set: {is: Object.isSet, methods: ['add', 'delete', 'clear']}
-	};
-
-	const shim = (ctx: unknown, method: Function, name: string, ...args: unknown[]) => {
+	const shim = (ctx, method, name, ...args) => {
 		const
 			a = info ? args.concat(name, instance) : [],
 			res = method.call(ctx, ...args);
