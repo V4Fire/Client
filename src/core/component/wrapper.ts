@@ -14,12 +14,12 @@ export type Instance<K = unknown, V = unknown> =
 
 export interface Params {
 	/**
-	 * Should provide additional parameters, such as which method called the callback
+	 * If true, will provide additional parameters to a callback, such as which method called the callback
 	 */
 	info?: boolean;
 
 	/**
-	 * Don't call a callback to the list of specified methods
+	 * Black list of methods to ignore
 	 */
 	ignore?: string[];
 
