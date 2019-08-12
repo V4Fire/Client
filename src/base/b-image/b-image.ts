@@ -168,7 +168,7 @@ export default class bImage extends iMessage implements iProgress, iVisible {
 
 		Object.assign(imgRef.style, {
 			'backgroundImage': Object.isString(img) ? img : `url("${img.currentSrc}")`,
-			'backgroundSize': this.contain ? 'contain' : 'cover',
+			'backgroundSize': this.sizeType,
 			'backgroundPosition': this.position,
 			'paddingBottom': Object.isString(img) ? <string>tempPad : this.getPadding(img),
 		});
