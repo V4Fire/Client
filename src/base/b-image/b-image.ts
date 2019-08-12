@@ -14,7 +14,9 @@ import iVisible from 'traits/i-visible/i-visible';
 import iMessage, { component, prop, wait, hook, ModsDecl } from 'super/i-message/i-message';
 export * from 'super/i-message/i-message';
 
-export type SizeType = 'cover' | 'contain';
+export type SizeType =
+	'cover' |
+	'contain';
 
 export const
 	$$ = symbolGenerator();
@@ -129,7 +131,7 @@ export default class bImage extends iMessage implements iProgress, iVisible {
 	}
 
 	/**
-	 * Saves image content within a cache and destroy it
+	 * Saves image content within a cache and destroys it
 	 */
 	@hook('beforeDestroy')
 	protected destroyImage(): void {
@@ -138,7 +140,7 @@ export default class bImage extends iMessage implements iProgress, iVisible {
 
 		if (img.style['background-image']) {
 			this.tmp[this.src] = img.style['background-image'];
-			this.tmp[`${this.src}-padding`] = img.style['paddingBottom'];
+			this.tmp[`${this.src}-padding`] = img.style.paddingBottom;
 		}
 
 		img['background-image'] = '';
@@ -159,16 +161,16 @@ export default class bImage extends iMessage implements iProgress, iVisible {
 	protected onImageLoaded(img: HTMLImageElement | string): void {
 		const
 			{img: imgRef} = this.$refs,
-			tempPad = <CanUndef<string>>this.tmp[`${this.src}-padding`];
+			tmpPadding = this.tmp[`${this.src}-padding`];
 
 		this.setMod('progress', false);
 		this.setMod('showError', false);
 
 		Object.assign(imgRef.style, {
-			'backgroundImage': Object.isString(img) ? img : `url("${img.currentSrc}")`,
-			'backgroundSize': this.sizeType,
-			'backgroundPosition': this.position,
-			'paddingBottom': Object.isString(img) ? <string>tempPad : this.getPadding(img),
+			backgroundImage: Object.isString(img) ? img : `url("${img.currentSrc}")`,
+			backgroundSize: this.sizeType,
+			backgroundPosition: this.position,
+			paddingBottom: Object.isString(img) ? String(tmpPadding) : this.getPadding(img)
 		});
 
 		this.emit('load');
@@ -181,7 +183,7 @@ export default class bImage extends iMessage implements iProgress, iVisible {
 	protected getPadding(img: HTMLImageElement): string {
 		return this.ratio !== undefined ?
 			`${(1 / this.ratio) * 100}%` :
-			`${(1 / bImage.computeRatio(img)) * 100}%`;
+			`${(1 / this.computeRatio(img)) * 100}%`;
 	}
 
 	/**
@@ -193,7 +195,6 @@ export default class bImage extends iMessage implements iProgress, iVisible {
 	protected onImageError(err: Error): void {
 		this.setMod('progress', false);
 		this.setMod('showError', true);
-
 		this.emitError('loadError', err);
 	}
 }
