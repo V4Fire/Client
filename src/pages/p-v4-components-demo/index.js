@@ -15,5 +15,6 @@ package('p-v4-components-demo')
 		'b-button',
 		'b-checkbox',
 		'b-file-button',
-		'b-calendar'
+		'b-calendar',
+		'b-image'
 	);
