@@ -177,7 +177,7 @@ export default class bImage extends iMessage implements iProgress, iVisible {
 	}
 
 	/**
-	 * Padding calculation for emulation aspect ratio
+	 * Calculates the padding for emulating aspect ratio
 	 * @param img
 	 */
 	protected getPadding(img: HTMLImageElement): string {
