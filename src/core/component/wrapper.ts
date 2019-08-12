@@ -19,7 +19,6 @@ export interface Params {
 
 	/**
 	 * Don't call a callback to the list of specified methods
-	 *   *) works only without proxy
 	 */
 	ignore?: string[];
 
@@ -33,8 +32,6 @@ export interface Params {
  * Creates a specified data structure which will call a specified callback on every mutation
  *
  * @param instance
- *    *) If instance is a dictionary, then a proxy will be used to track changes
- *
  * @param cb
  * @param [params]
  *
