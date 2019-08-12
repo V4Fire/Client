@@ -49,7 +49,7 @@ export const shimTable = {
  * s.add(1);
  * // 123
  */
-export function bindMutationHook<T extends Instance = Instance<unknown, unknown>>(
+export function bindMutationHooks<T extends Instance = Instance<unknown, unknown>>(
 	instance: T,
 	cb: Function,
 	params: Params = {}
