@@ -12,7 +12,7 @@ export type Instance<K = unknown, V = unknown> =
 	Map<K, V> |
 	Set<K>;
 
-export interface Params {
+export interface BindMutationHookParams {
 	/**
 	 * If true, will provide additional parameters to a callback, such as which method called the callback
 	 */
@@ -52,7 +52,7 @@ export const shimTable = {
 export function bindMutationHooks<T extends Instance = Instance<unknown, unknown>>(
 	instance: T,
 	cb: Function,
-	params: Params = {}
+	params: BindMutationHookParams = {}
 ): T {
 	const {
 		ignore,
