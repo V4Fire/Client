@@ -203,6 +203,7 @@ export default abstract class iData<T extends object = Dictionary> extends iMess
 	}
 
 	/** @override */
+	@wait({label: $$.initLoad, defer: true})
 	initLoad(data?: unknown, silent?: boolean): CanPromise<void> {
 		if (this.isFunctional) {
 			return super.initLoad(() => {
