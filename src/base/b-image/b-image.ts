@@ -37,10 +37,34 @@ export default class bImage extends iMessage implements iProgress, iVisible {
 	readonly srcset?: Dictionary<string>;
 
 	/**
+	 * Target sizes HTML attribute
+	 */
+	@prop({type: String, required: false})
+	readonly sizes?: string;
+
+	/**
 	 * Alternate text
 	 */
 	@prop({type: String, required: false})
 	readonly alt?: string;
+
+	/**
+	 * Background size type - `contain ? 'contain' : 'cover'`
+	 */
+	@prop({type: Boolean, required: false})
+	readonly contain?: Boolean;
+
+	/**
+	 * Image position
+	 */
+	@prop({type: String})
+	readonly position: string = '50% 50%';
+
+	/**
+	 * Image aspect ratio
+	 */
+	@prop({type: [String, Number], required: false})
+	readonly ratio?: string | number;
 
 	/** @inheritDoc */
 	static readonly mods: ModsDecl = {
@@ -61,28 +85,43 @@ export default class bImage extends iMessage implements iProgress, iVisible {
 		const
 			tempSrc = <CanUndef<string>>this.tmp[this.src];
 
-		if (!tempSrc) {
-			this.setMod('progress', true);
-
-			const img = new Image();
-			img.src = this.src;
-
-			if (this.srcset) {
-				img.srcset = getSrcSet(this.srcset);
-			}
-
-			if (this.alt) {
-				img.alt = this.alt;
-			}
-
-			this.async
-				.promise(img.init, {label: $$.loadImage})
-				.then(() => this.onImageLoaded(img), this.onImageError);
-
+		if (tempSrc) {
+			this.onImageLoaded(tempSrc);
 			return;
 		}
 
-		this.$refs.img.innerHTML = tempSrc;
+		this.setMod('progress', true);
+
+		const img = new Image();
+		img.src = this.src;
+
+		if (this.srcset) {
+			img.srcset = getSrcSet(this.srcset);
+		}
+
+		if (this.sizes) {
+			img.sizes = this.sizes;
+		}
+
+		if (this.alt) {
+			img.alt = this.alt;
+		}
+
+		this.async
+			.promise(img.init, {label: $$.loadImage})
+			.then(() => this.onImageLoaded(img), this.onImageError);
+	}
+
+	protected static computeRatio(img: HTMLImageElement): number {
+		const
+			{naturalHeight, naturalWidth} = img;
+
+		if (naturalHeight || naturalWidth) {
+			return naturalHeight === 0
+				? 1
+				: naturalWidth / naturalHeight;
+		}
+		return 1;
 	}
 
 	/**
@@ -93,11 +132,12 @@ export default class bImage extends iMessage implements iProgress, iVisible {
 		const
 			{img} = this.$refs;
 
-		if (img.innerHTML) {
-			this.tmp[this.src] = img.innerHTML;
+		if (img.style['background-image']) {
+			this.tmp[this.src] = img.style['background-image'];
+			this.tmp[`${this.src}-padding`] = img.style['paddingBottom'];
 		}
 
-		img.innerHTML = '';
+		img['background-image'] = '';
 	}
 
 	/** @override */
@@ -112,11 +152,26 @@ export default class bImage extends iMessage implements iProgress, iVisible {
 	 * @param img
 	 * @emits load
 	 */
-	protected onImageLoaded(img: HTMLImageElement): void {
+	protected onImageLoaded(img: HTMLImageElement | string): void {
+		const
+			{img: imgRef} = this.$refs,
+			tempPad = <CanUndef<string>>this.tmp[`${this.src}-padding`];
+
 		this.setMod('progress', false);
 		this.setMod('showError', false);
-		this.$refs.img.insertAdjacentElement('afterbegin', img);
+
+		imgRef.style['backgroundImage'] = typeof img === 'string' ? img : `url("${img.currentSrc}")`;
+		imgRef.style['backgroundSize'] = this.contain ? 'contain' : 'cover';
+		imgRef.style['backgroundPosition'] = this.position;
+		imgRef.style['paddingBottom'] = typeof img === 'string' ? <string>tempPad : this.getPadding(img);
+
 		this.emit('load');
+	}
+
+	protected getPadding(img: HTMLImageElement): string {
+		return this.ratio !== void 0
+			? (1 / <number>this.ratio) * 100 + '%'
+			: (1 / bImage.computeRatio(img)) * 100 + '%';
 	}
 
 	/**
@@ -128,6 +183,7 @@ export default class bImage extends iMessage implements iProgress, iVisible {
 	protected onImageError(err: Error): void {
 		this.setMod('progress', false);
 		this.setMod('showError', true);
+		
 		this.emitError('loadError', err);
 	}
 }
