@@ -114,7 +114,7 @@ export default class bImage extends iMessage implements iProgress, iVisible {
 	}
 
 	/**
-	 * Calculation of the aspect ratio of the image
+	 * Calculates image aspect ratio
 	 * @param img
 	 */
 	protected static computeRatio(img: HTMLImageElement): number {
