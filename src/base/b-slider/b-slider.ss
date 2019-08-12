@@ -18,8 +18,6 @@
 	} .
 
 	- block body
-		: content
-
 		: putIn content
 			+= self.slot('before')
 
