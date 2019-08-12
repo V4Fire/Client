@@ -180,7 +180,7 @@ export default class bImage extends iMessage implements iProgress, iVisible {
 	 */
 	protected getPadding(img: HTMLImageElement): string {
 		return this.ratio !== undefined ?
-			`${(1 / <number>this.ratio) * 100}%` :
+			`${(1 / Number(this.ratio)) * 100}%` :
 			`${(1 / bImage.computeRatio(img)) * 100}%`;
 	}
 
