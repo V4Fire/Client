@@ -10,7 +10,7 @@
 
 const
 	$C = require('collection.js'),
-	{ functions } = require('stylus');
+	{functions} = require('stylus');
 
 function getField(obj, path) {
 	const

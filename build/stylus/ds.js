@@ -34,19 +34,20 @@ function prepareData(data) {
 
 			if (Object.isString(d)) {
 				const
-					reg = /(\d+)(?=(px|rem|em|%))/,
+					reg = /(\d+(?:\.\d+)?)(?=(px|em|rem|%))/,
 					unit = d.match(reg);
 
 				if (unit) {
 					// Value with unit
-					data[val] = new stylus.nodes.Unit(unit[1], unit[2]);
+					data[val] = new stylus.nodes.Unit(parseFloat(unit[1]), unit[2]);
 					return;
 				}
+
+				data[val] = new stylus.nodes.String(d);
+				return;
 			}
 
-			if (d === 'none') {
-				data[val] = new stylus.Parser(d).peek().val;
-			}
+			data[val] = new stylus.nodes.Unit(d);
 		}
 	});
 }
@@ -66,14 +67,14 @@ module.exports = function (style) {
 	);
 
 	/**
-	 * Returns part of the Design System or whole DS object
-	 * by the specified path
+	 * Returns part of the Design System
+	 * by the specified path or whole DS object
 	 *
 	 * @param {string} string - field path
 	 * @returns {!Object}
 	 */
 	style.define(
 		'getDSOptions',
-		({string}) => string ? $C(DS).get(string) || {} : DS
+		({string}) => string ? stylus.utils.coerce($C(DS).get(string), true) || {} : DS
 	);
 };

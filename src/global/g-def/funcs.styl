@@ -206,6 +206,5 @@ text-options($name)
  * @param {Object} $options
  */
 interpolate-properties($options)
-	for $key, $val in $options
-		$value = type($val) == "string" ? unquote($val) : $val
+	for $key, $value in $options
 		{dasherize($key)} $value
