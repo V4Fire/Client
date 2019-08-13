@@ -228,32 +228,33 @@ export default abstract class iData<T extends object = Dictionary> extends iMess
 		}
 
 		if (data || this.dp && this.dp.baseURL) {
-			const
-				p = this.getDefaultRequestParams<T>('get');
+			if (data) {
+				const db = this.convertDataToDB<T>(data);
+				this.lfc.execCbAtTheRightTime(() => this.db = db, label);
 
-			if (p) {
-				Object.assign(p[1], {
-					...label,
-					important: this.componentStatus === 'unloaded'
-				});
+			} else if (this.getDefaultRequestParams('get')) {
+				return this.async
+					.nextTick(label)
+					.then(() => {
+						const
+							p = this.getDefaultRequestParams<T>('get');
 
-				if (data) {
-					const db = this.convertDataToDB<T>(data);
-					this.lfc.execCbAtTheRightTime(() => this.db = db, label);
-
-				} else {
-					return this.async
-						.nextTick(label)
-						.then(() => this.get(<RequestQuery>p[0], p[1]))
-						.then((data) => {
-							this.lfc.execCbAtTheRightTime(() => this.db = this.convertDataToDB<T>(data), label);
-							return super.initLoad(() => this.db, silent);
-
-						}, (err) => {
-							stderr(err);
-							return super.initLoad(() => this.db, silent);
+						Object.assign(p[1], {
+							...label,
+							important: this.componentStatus === 'unloaded'
 						});
-				}
+
+						return this.get(<RequestQuery>p[0], p[1]);
+					})
+
+					.then((data) => {
+						this.lfc.execCbAtTheRightTime(() => this.db = this.convertDataToDB<T>(data), label);
+						return super.initLoad(() => this.db, silent);
+
+					}, (err) => {
+						stderr(err);
+						return super.initLoad(() => this.db, silent);
+					});
 
 			} else if (this.db) {
 				this.lfc.execCbAtTheRightTime(() => this.db = undefined, label);
