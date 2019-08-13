@@ -7,7 +7,7 @@
  */
 
 import symbolGenerator from 'core/symbol';
-import { wrapStructure } from 'core/component/wrapper';
+import { observeMap } from 'core/component/helpers/observable';
 import { ComponentElement } from 'core/component/interface';
 
 import iBlock, { component, prop, hook, watch, system, p, ModsDecl } from 'super/i-block/i-block';
@@ -88,7 +88,7 @@ export default class bSwitcher extends iBlock {
 	/**
 	 * Map for ready components
 	 */
-	@system((o: bSwitcher) => wrapStructure(new Map(), () => o.setSwitchReadiness()))
+	@system((o: bSwitcher) => observeMap(new Map(), () => o.setSwitchReadiness()))
 	protected semaphoreReadyMap!: Map<iBlock, boolean>;
 
 	/**
