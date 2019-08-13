@@ -56,7 +56,7 @@ export default class bImage extends iMessage implements iProgress, iVisible {
 	 * Background size type
 	 */
 	@prop({type: String})
-	readonly sizeType: SizeType = 'cover';
+	readonly sizeType: SizeType = 'contain';
 
 	/**
 	 * Image position
