@@ -1,0 +1,61 @@
+/*!
+ * V4Fire Client Core
+ * https://github.com/V4Fire/Client
+ *
+ * Released under the MIT license
+ * https://github.com/V4Fire/Client/blob/master/LICENSE
+ */
+
+@import "super/i-block/i-block.styl"
+
+$p = {
+	fadeTransitionTime: 0.6s
+}
+
+b-switcher extends i-block
+	position relative
+	width 100%
+	overflow hidden
+
+	&__content
+		absolute left 0 top 0
+		visibility hidden
+
+	&__placeholder
+		size auto
+		visibility visible
+
+	&_hidden_true &__placeholder
+		visibility hidden
+
+		*
+			animation-play-state paused
+
+	&_hidden_true &__content
+		position relative
+		size auto
+		overflow auto
+		visibility visible
+
+	&_animation_fade ^[0]
+		&__placeholder
+		&__content
+			transition opacity $p.fadeTransitionTime, visibility $p.fadeTransitionTime
+			useGPU()
+
+		&__placeholder
+			opacity 1
+
+		&__content
+			opacity 0
+
+	&_animation_fade&_hidden_true ^[0]
+		&__placeholder
+			absolute left 0 top 0
+			size 100%
+			visibility hidden
+			opacity 0
+
+		&__content
+			visibility visible
+			opacity 1
