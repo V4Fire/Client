@@ -6,13 +6,11 @@
  * https://github.com/V4Fire/Core/blob/master/LICENSE
  */
 
-export type Instance<K = unknown, V = unknown> =
-	WeakMap<object, V> |
-	WeakSet<object> |
-	Map<K, V> |
-	Set<K>;
+export type ObservableSet<V> = Set<V> | WeakSet<object>;
+export type observableMap<K, V> = Map<K, V> | WeakMap<object, V>;
+export type ObservableInstance<K = unknown, V = unknown> = ObservableSet<V> | observableMap<K, V>;
 
-export interface BindMutationHookParams {
+export interface ObservableParams {
 	/**
 	 * If true, will provide additional parameters to a callback, such as which method called the callback
 	 */
@@ -37,7 +35,7 @@ export const shimTable = {
 };
 
 /**
- * Creates a specified data structure which will call a specified callback on every mutation
+ * Wraps a map data structure which will call a specified callback on every mutation
  *
  * @param instance
  * @param cb
@@ -49,10 +47,46 @@ export const shimTable = {
  * s.add(1);
  * // 123
  */
-export function bindMutationHooks<T extends Instance = Instance<unknown, unknown>>(
+export function observeMap<T extends observableMap<unknown, unknown> = observableMap<unknown, unknown>>(
 	instance: T,
 	cb: Function,
-	params: BindMutationHookParams = {}
+	params?: ObservableParams
+): T {
+	return bindMutationHooks(instance, cb, params);
+}
+
+/**
+ * Wraps a set data structure which will call a specified callback on every mutation
+ *
+ * @param instance
+ * @param cb
+ * @param [params]
+ *
+ * @example
+ * bindMutationHook(new Map(), () => console.log(123));
+ * const s = bindMutationHook(new Set(), () => console.log(123));
+ * s.add(1);
+ * // 123
+ */
+export function observeSet<T extends ObservableSet<unknown> = ObservableSet<unknown>>(
+	instance: T,
+	cb: Function,
+	params?: ObservableParams
+): T {
+	return bindMutationHooks(instance, cb, params);
+}
+
+/**
+ * Wraps a specified data structure which will call a specified callback on every mutation
+ *
+ * @param instance
+ * @param cb
+ * @param [params]
+ */
+function bindMutationHooks<T extends ObservableInstance = ObservableInstance<unknown, unknown>>(
+	instance: T,
+	cb: Function,
+	params: ObservableParams = {}
 ): T {
 	const {
 		ignore,
