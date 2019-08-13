@@ -23,7 +23,7 @@
   ],
   "scripts": {
     "build": "npx gulp build:tsconfig && npx webpack",
-    "build:file": "npx gulp build:tsconfig && npx webpack --public-path ''",
+    "build:file": "npx gulp build:tsconfig && npx webpack --public-path",
     "test": "echo \"Error: no test specified\" && exit 0"
   },
   "dependencies": {
