@@ -26,7 +26,7 @@
 
 			< template v-else-if = option
 				< template v-for = el in db
-					< component.&__component &
+					< component.&__option &
 						:is = option |
 						:v-attrs = Object.isFunction(optionProps) ? optionProps(el) : optionProps
 					.

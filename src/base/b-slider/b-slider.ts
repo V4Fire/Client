@@ -37,6 +37,7 @@ export interface SlideRect extends ClientRect {
 export type SlideDirection = -1 | 0 | 1;
 export type AlignType = keyof typeof alignTypes;
 export type Mode = keyof typeof sliderModes;
+export type OptionProps = ((el: unknown) => Dictionary) | Dictionary;
 
 /**
  * Returns true if the specified value is in the range X > 0 && X <= 1
@@ -134,7 +135,7 @@ export default class bSlider extends iData {
 	 * Option component props
 	 */
 	@prop({type: [Object, Function]})
-	readonly optionProps: (() => Dictionary) | Dictionary = {};
+	readonly optionProps: OptionProps = {};
 
 	/**
 	 * The number of slides in the slider
