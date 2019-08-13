@@ -204,8 +204,9 @@ export default abstract class iData<T extends object = Dictionary> extends iMess
 
 	/** @override */
 	initLoad(data?: unknown, silent?: boolean): CanPromise<void> {
-		const label = {
-			label: $$.initLoad
+		const label = <AsyncOpts>{
+			label: $$.initLoad,
+			join: 'replace'
 		};
 
 		if (this.isFunctional) {
@@ -245,8 +246,7 @@ export default abstract class iData<T extends object = Dictionary> extends iMess
 						.nextTick(label)
 						.then(() => this.get(<RequestQuery>p[0], p[1]))
 						.then((data) => {
-							const db = this.convertDataToDB<T>(data);
-							this.lfc.execCbAtTheRightTime(() => this.db = db, label);
+							this.lfc.execCbAtTheRightTime(() => this.db = this.convertDataToDB<T>(data), label);
 							return super.initLoad(() => this.db, silent);
 
 						}, (err) => {
