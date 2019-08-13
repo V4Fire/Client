@@ -56,7 +56,7 @@ export function isNotInfinitePositiveNumber(v: number): boolean {
 }
 
 @component()
-export default class bSlider extends iData {
+export default class bSlider<T extends object = Dictionary> extends iData<T> {
 	/**
 	 * Slider mode
 	 *   *) scroll - scroll implementation
