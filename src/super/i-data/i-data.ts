@@ -258,8 +258,11 @@ export default abstract class iData<T extends object = Dictionary> extends iMess
 			return super.initLoad(() => this.db, silent);
 		};
 
-		if (this.lfc.isBeforeCreate()) {
+		if (this.dataProvider && !this.dp) {
 			this.syncDataProviderWatcher(this.dataProvider);
+		}
+
+		if (this.lfc.isBeforeCreate()) {
 			return load();
 		}
 
