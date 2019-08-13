@@ -23,10 +23,25 @@ function prepareData(data) {
 			if (/^[a-z-_]+\(.*\)$/.test(d)) {
 				// Built-in function
 				data[val] = new stylus.Parser(d).function();
+				return;
+			}
 
-			} else if (/^#(?=[0-9a-fA-F]*$)(?:.{3,4}|.{6}|.{8})$/.test(d)) {
+			if (/^#(?=[0-9a-fA-F]*$)(?:.{3,4}|.{6}|.{8})$/.test(d)) {
 				// HEX value
 				data[val] = new stylus.Parser(d).peek().val;
+				return;
+			}
+
+			if (Object.isString(d)) {
+				const
+					reg = /(\d+)(?=(px|rem|em|%))/,
+					unit = d.match(reg);
+
+				if (unit) {
+					// Value with unit
+					data[val] = new stylus.nodes.Unit(unit[1], unit[2]);
+					return;
+				}
 			}
 
 			if (d === 'none') {
@@ -59,11 +74,6 @@ module.exports = function (style) {
 	 */
 	style.define(
 		'getDSOptions',
-		({string}) => {
-			const
-				value = string ? $C(DS).get(string) || {} : DS;
-
-			return stylus.utils.coerce(value, true);
-		}
+		({string}) => string ? $C(DS).get(string) || {} : DS
 	);
 };

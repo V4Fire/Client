@@ -10,14 +10,14 @@
 
 const
 	$C = require('collection.js'),
-	{ functions, nodes } = require('stylus');
+	{ functions } = require('stylus');
 
 function getField(obj, path) {
 	const
 		[field, ...chunks] = path.split('.');
 
 	let
-		value = $C(obj).get(`vals.${field}`);
+		value = $C(obj).get(field) || $C(obj).get(`vals.${field}`);
 
 	if (!value) {
 		const
@@ -38,19 +38,7 @@ function getField(obj, path) {
 	}
 
 	if (value) {
-		if (chunks.length === 0) {
-			if (functions.type(value) === 'string') {
-				const
-					reg = /(\d+)(?=(px|rem|em|%))/,
-					result = value.val.match(reg);
-
-				return result ? new nodes.Unit(result[1], result[2]) : value;
-			}
-
-			return value;
-		}
-
-		return getField(value, chunks.join('.'));
+		return chunks.length === 0 ? value : getField(value, chunks.join('.'));
 	}
 }
 
@@ -61,7 +49,5 @@ module.exports = function (style) {
 	 * @param {object} obj
 	 * @param {string} string
 	 */
-	style.define('getField', (obj, {string}) => {
-		return getField(obj, string);
-	});
+	style.define('getField', (obj, {string}) => getField(obj, string));
 };
