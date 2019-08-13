@@ -204,6 +204,11 @@ export default abstract class iData<T extends object = Dictionary> extends iMess
 
 	/** @override */
 	initLoad(data?: unknown, silent?: boolean): CanPromise<void> {
+		const label = <AsyncOpts>{
+			label: $$.initLoad,
+			join: 'replace'
+		};
+
 		if (this.isFunctional) {
 			return super.initLoad(() => {
 				if (data) {
@@ -214,58 +219,49 @@ export default abstract class iData<T extends object = Dictionary> extends iMess
 			}, silent);
 		}
 
-		const load = () => {
-			const
-				important = this.componentStatus === 'unloaded';
-
-			if (!silent) {
-				this.componentStatus = 'loading';
-			}
-
-			if (data || this.dp && this.dp.baseURL) {
-				const
-					p = this.getDefaultRequestParams<T>('get');
-
-				const label = {
-					join: true,
-					label: $$.initLoad
-				};
-
-				if (p) {
-					Object.assign(p[1], {...label, important, join: false});
-
-					if (data) {
-						const db = this.convertDataToDB<T>(data);
-						this.lfc.execCbAtTheRightTime(() => this.db = db, label);
-
-					} else {
-						return this.get(<RequestQuery>p[0], p[1]).then((data) => {
-							const db = this.convertDataToDB<T>(data);
-							this.lfc.execCbAtTheRightTime(() => this.db = db, label);
-							return super.initLoad(() => this.db, silent);
-
-						}, (err) => {
-							stderr(err);
-							return super.initLoad(() => this.db, silent);
-						});
-					}
-
-				} else if (this.db) {
-					this.lfc.execCbAtTheRightTime(() => this.db = undefined, label);
-				}
-			}
-
-			return super.initLoad(() => this.db, silent);
-		};
-
-		if (this.lfc.isBeforeCreate()) {
+		if (this.dataProvider && !this.dp) {
 			this.syncDataProviderWatcher(this.dataProvider);
-			return load();
 		}
 
-		this.async.setImmediate(load, {
-			label: $$.initLoad
-		});
+		if (!silent) {
+			this.componentStatus = 'loading';
+		}
+
+		if (data || this.dp && this.dp.baseURL) {
+			if (data) {
+				const db = this.convertDataToDB<T>(data);
+				this.lfc.execCbAtTheRightTime(() => this.db = db, label);
+
+			} else if (this.getDefaultRequestParams('get')) {
+				return this.async
+					.nextTick(label)
+					.then(() => {
+						const
+							p = this.getDefaultRequestParams<T>('get');
+
+						Object.assign(p[1], {
+							...label,
+							important: this.componentStatus === 'unloaded'
+						});
+
+						return this.get(<RequestQuery>p[0], p[1]);
+					})
+
+					.then((data) => {
+						this.lfc.execCbAtTheRightTime(() => this.db = this.convertDataToDB<T>(data), label);
+						return super.initLoad(() => this.db, silent);
+
+					}, (err) => {
+						stderr(err);
+						return super.initLoad(() => this.db, silent);
+					});
+
+			} else if (this.db) {
+				this.lfc.execCbAtTheRightTime(() => this.db = undefined, label);
+			}
+		}
+
+		return super.initLoad(() => this.db, silent);
 	}
 
 	/**
