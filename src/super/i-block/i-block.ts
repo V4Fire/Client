@@ -1365,7 +1365,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 				done();
 			};
 
-			return $a.promise(init, {join: true, label: $$.initLoad}).catch(stderr);
+			return $a.promise(init, {join: 'replace', label: $$.initLoad}).catch(stderr);
 		}
 
 		done();
