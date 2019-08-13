@@ -12,7 +12,7 @@ export type ObservableInstance<K = unknown, V = unknown> = ObservableSet<V> | ob
 
 export interface ObservableParams {
 	/**
-	 * If true, will provide additional parameters to a callback, such as which method called the callback
+	 * If true, then will be provided additional parameters to the callback, such as which method called the callback
 	 */
 	info?: boolean;
 
@@ -22,7 +22,7 @@ export interface ObservableParams {
 	ignore?: string[];
 
 	/**
-	 * If false, then a callback will be called using setImmediate
+	 * If true, then the callback will be called immediately after a mutation
 	 */
 	immediate?: boolean;
 }
@@ -35,56 +35,52 @@ export const shimTable = {
 };
 
 /**
- * Wraps a map data structure which will call a specified callback on every mutation
+ * Wraps the specified Map object with mutation hooks
  *
- * @param instance
- * @param cb
+ * @param obj
+ * @param cb - callback which will be called on every mutation hook
  * @param [params]
  *
  * @example
- * bindMutationHook(new Map(), () => console.log(123));
- * const s = bindMutationHook(new Set(), () => console.log(123));
- * s.add(1);
- * // 123
+ * const s = observeMap(new Map(), () => console.log(123));
+ * s.set(1); // 123
  */
 export function observeMap<T extends observableMap<unknown, unknown> = observableMap<unknown, unknown>>(
-	instance: T,
+	obj: T,
 	cb: Function,
 	params?: ObservableParams
 ): T {
-	return bindMutationHooks(instance, cb, params);
+	return bindMutationHooks(obj, cb, params);
 }
 
 /**
- * Wraps a set data structure which will call a specified callback on every mutation
+ * Wraps the specified Set object with mutation hooks
  *
- * @param instance
- * @param cb
+ * @param obj
+ * @param cb - callback which will be called on every mutation hook
  * @param [params]
  *
  * @example
- * bindMutationHook(new Map(), () => console.log(123));
- * const s = bindMutationHook(new Set(), () => console.log(123));
- * s.add(1);
- * // 123
+ * const s = observeSet(new Set(), () => console.log(123));
+ * s.add(1); // 123
  */
 export function observeSet<T extends ObservableSet<unknown> = ObservableSet<unknown>>(
-	instance: T,
+	obj: T,
 	cb: Function,
 	params?: ObservableParams
 ): T {
-	return bindMutationHooks(instance, cb, params);
+	return bindMutationHooks(obj, cb, params);
 }
 
 /**
- * Wraps a specified data structure which will call a specified callback on every mutation
+ * Wraps the specified object object with mutation hooks
  *
- * @param instance
- * @param cb
+ * @param obj
+ * @param cb - callback which will be called on every mutation hook
  * @param [params]
  */
-function bindMutationHooks<T extends ObservableInstance = ObservableInstance<unknown, unknown>>(
-	instance: T,
+export function bindMutationHooks<T extends ObservableInstance = ObservableInstance<unknown, unknown>>(
+	obj: T,
 	cb: Function,
 	params: ObservableParams = {}
 ): T {
@@ -111,7 +107,7 @@ function bindMutationHooks<T extends ObservableInstance = ObservableInstance<unk
 
 	const shim = (ctx, method, name, ...args) => {
 		const
-			a = info ? args.concat(name, instance) : [],
+			a = info ? args.concat(name, obj) : [],
 			res = method.call(ctx, ...args);
 
 		wrappedCb(...a);
@@ -123,20 +119,20 @@ function bindMutationHooks<T extends ObservableInstance = ObservableInstance<unk
 			k = keys[i],
 			{is, methods} = shimTable[k];
 
-		if (!is(instance)) {
+		if (!is(obj)) {
 			continue;
 		}
 
 		for (let j = 0; j < methods.length; j++) {
 			const
 				method = methods[j],
-				fn = instance[method];
+				fn = obj[method];
 
 			if (ignore && ignore.includes(method)) {
 				continue;
 			}
 
-			instance[method] = function (...args: unknown[]): unknown {
+			obj[method] = function (...args: unknown[]): unknown {
 				return shim(this, fn, method, ...args);
 			};
 		}
@@ -144,5 +140,5 @@ function bindMutationHooks<T extends ObservableInstance = ObservableInstance<unk
 		break;
 	}
 
-	return instance;
+	return obj;
 }
