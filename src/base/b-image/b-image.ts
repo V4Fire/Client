@@ -12,6 +12,7 @@ import { getSrcSet } from 'core/html';
 import iProgress from 'traits/i-progress/i-progress';
 import iVisible from 'traits/i-visible/i-visible';
 import iMessage, { component, prop, wait, hook, ModsDecl } from 'super/i-message/i-message';
+
 export * from 'super/i-message/i-message';
 
 export type SizeType =
@@ -167,11 +168,14 @@ export default class bImage extends iMessage implements iProgress, iVisible {
 		this.setMod('showError', false);
 
 		Object.assign(imgRef.style, {
-			backgroundImage: Object.isString(img) ? img : `url("${img.currentSrc}")`,
-			backgroundSize: this.sizeType,
-			backgroundPosition: this.position,
-			paddingBottom: Object.isString(img) ? String(tmpPadding) : this.getPadding(img)
-		});
+				backgroundImage: Object.isString(img) ? img : `url("${img.currentSrc}")`,
+				backgroundSize: this.sizeType,
+				backgroundPosition: this.position
+			},
+			this.ratio ?
+				{paddingBottom: Object.isString(img) ? String(tmpPadding) : this.getPadding(img)} :
+				{height: '100%'}
+		);
 
 		this.emit('load');
 	}
