@@ -15,7 +15,7 @@ $p = {
 b-button
 	for $key, $val in getDSOptions(rounding)
 		&_rounding_{$key} &__button
-			border-radius unit($val, px)
+			border-radius $val
 
 	if getField($p, "mods.size")
 		&_size
@@ -27,11 +27,11 @@ b-button
 							$vertOffset = getField($value, vertOffset)
 
 							if ($vertOffset)
-								padding-left unit($vertOffset, px)
+								padding-left $vertOffset
 								padding-right @padding-left
 
 							if ($horOffset)
-								padding-top unit($horOffset, px)
+								padding-top $horOffset
 								padding-bottom @padding-top
 
 						&__button
@@ -104,4 +104,4 @@ b-button
 
 		if $params
 			&__{$key}
-				margin-{$key == "pre-icon" ? right : left} unit(getField($params, offset), px)
+				margin-{$key == "pre-icon" ? right : left} getField($params, offset)

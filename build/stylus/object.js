@@ -10,7 +10,7 @@
 
 const
 	$C = require('collection.js'),
-	stylus = require('stylus');
+	{ functions, nodes } = require('stylus');
 
 function getField(obj, path) {
 	const
@@ -27,7 +27,7 @@ function getField(obj, path) {
 			if (nodes.length === 1 && isNaN(parseInt(field))) {
 				const
 					res = nodes[0],
-					isExpr = stylus.functions.type(res) === 'expression';
+					isExpr = functions.type(res) === 'expression';
 
 				value = $C(res).get(`${isExpr ? 'nodes' : 'vals'}.${field}`);
 
@@ -38,7 +38,19 @@ function getField(obj, path) {
 	}
 
 	if (value) {
-		return chunks.length === 0 ? value : getField(value, chunks.join('.'));
+		if (chunks.length === 0) {
+			if (functions.type(value) === 'string') {
+				const
+					reg = /(\d+)(?=(px|rem|em|%))/,
+					result = value.val.match(reg);
+
+				return result ? new nodes.Unit(result[1], result[2]) : value;
+			}
+
+			return value;
+		}
+
+		return getField(value, chunks.join('.'));
 	}
 }
 
