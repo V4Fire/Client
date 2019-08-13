@@ -7,7 +7,7 @@
  */
 
 import symbolGenerator from 'core/symbol';
-import iData, { component, system, hook, watch, wait, prop, p } from 'super/i-data/i-data';
+import iData, { component, prop, field, system, hook, watch, wait, p } from 'super/i-data/i-data';
 export * from 'super/i-data/i-data';
 
 export const
@@ -124,6 +124,18 @@ export default class bSlider<T extends object = Dictionary> extends iData<T> {
 	 */
 	@prop(Boolean)
 	readonly alignFirstToStart: boolean = true;
+
+	/**
+	 * Initial component options
+	 */
+	@prop({type: Object, required: false})
+	readonly optionsProp?: unknown[];
+
+	/**
+	 * Component options
+	 */
+	@field((o) => o.sync.link())
+	options?: unknown[];
 
 	/**
 	 * Option component
@@ -402,11 +414,19 @@ export default class bSlider<T extends object = Dictionary> extends iData<T> {
 	}
 
 	/** @override */
-	protected initModEvents(): void {
-		super.initModEvents();
-		this.sync.mod('mode', 'mode', String);
-		this.sync.mod('align', 'align', String);
-		this.sync.mod('dynamicHeight', 'dynamicHeight', String);
+	protected initRemoteData(): CanUndef<unknown[]> {
+		if (!this.db) {
+			return;
+		}
+
+		const
+			val = this.convertDBToComponent(this.db);
+
+		if (Object.isArray(val)) {
+			return this.options = val;
+		}
+
+		return this.options;
 	}
 
 	/**
@@ -448,6 +468,14 @@ export default class bSlider<T extends object = Dictionary> extends iData<T> {
 				label: $$.mutationObserver
 			});
 		}
+	}
+
+	/** @override */
+	protected initModEvents(): void {
+		super.initModEvents();
+		this.sync.mod('mode', 'mode', String);
+		this.sync.mod('align', 'align', String);
+		this.sync.mod('dynamicHeight', 'dynamicHeight', String);
 	}
 
 	/**
