@@ -139,12 +139,12 @@ export default class bImage extends iMessage implements iProgress, iVisible {
 		const
 			{img} = this.$refs;
 
-		if (img.style['background-image']) {
-			this.tmp[this.src] = img.style['background-image'];
+		if (img.style.backgroundImage) {
+			this.tmp[this.src] = img.style.backgroundImage;
 			this.tmp[`${this.src}-padding`] = img.style.paddingBottom;
 		}
 
-		img['background-image'] = '';
+		img.style.backgroundImage = '';
 	}
 
 	/** @override */
