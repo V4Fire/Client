@@ -7,8 +7,8 @@
  */
 
 import symbolGenerator from 'core/symbol';
-import iBlock, { component, system, hook, watch, wait, prop, p } from 'super/i-block/i-block';
-export * from 'super/i-block/i-block';
+import iData, { component, system, hook, watch, wait, prop, p } from 'super/i-data/i-data';
+export * from 'super/i-data/i-data';
 
 export const
 	$$ = symbolGenerator();
@@ -37,6 +37,7 @@ export interface SlideRect extends ClientRect {
 export type SlideDirection = -1 | 0 | 1;
 export type AlignType = keyof typeof alignTypes;
 export type Mode = keyof typeof sliderModes;
+export type OptionProps = ((el: unknown) => Dictionary) | Dictionary;
 
 /**
  * Returns true if the specified value is in the range X > 0 && X <= 1
@@ -55,7 +56,7 @@ export function isNotInfinitePositiveNumber(v: number): boolean {
 }
 
 @component()
-export default class bSlider extends iBlock {
+export default class bSlider extends iData {
 	/**
 	 * Slider mode
 	 *   *) scroll - scroll implementation
@@ -125,16 +126,43 @@ export default class bSlider extends iBlock {
 	readonly alignFirstToStart: boolean = true;
 
 	/**
+	 * Option component
+	 */
+	@prop({type: String, required: false})
+	readonly option?: string;
+
+	/**
+	 * Option component props
+	 */
+	@prop({type: [Object, Function]})
+	readonly optionProps: OptionProps = {};
+
+	/**
 	 * The number of slides in the slider
 	 */
 	@system()
 	length: number = 0;
 
 	/**
-	 * Pointer to current slide
+	 * Pointer to the current slide
 	 */
-	@system()
-	current: number = 0;
+	@p({cache: false})
+	get current(): number {
+		return this.currentStore;
+	}
+
+	/**
+	 * Sets a pointer of the current slide
+	 * @emits change(current: number)
+	 */
+	set current(value: number) {
+		if (value === this.current) {
+			return;
+		}
+
+		this.currentStore = value;
+		this.emit('change', value);
+	}
 
 	/**
 	 * True if mode is slider
@@ -173,6 +201,12 @@ export default class bSlider extends iBlock {
 
 		return 0;
 	}
+
+	/**
+	 * @see current
+	 */
+	@system()
+	protected currentStore: number = 0;
 
 	/** @override */
 	protected readonly $refs!: {
