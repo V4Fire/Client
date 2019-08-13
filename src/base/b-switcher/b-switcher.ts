@@ -7,21 +7,12 @@
  */
 
 import symbolGenerator from 'core/symbol';
+
 import { observeMap } from 'core/component/helpers/observable';
 import { ComponentElement } from 'core/component/interface';
 
 import iBlock, { component, prop, hook, watch, system, p, ModsDecl } from 'super/i-block/i-block';
-
 export * from 'super/i-block/i-block';
-
-export const
-	$$ = symbolGenerator();
-
-export const resolveMethods = {
-	semaphore: true,
-	mutation: true,
-	components: true
-};
 
 export interface IsTable {
 	readyToSwitchStore: boolean;
@@ -37,6 +28,15 @@ export interface FilteredMutations {
 
 export type IsStrategyReadyMap = Record<ResolveMethod, () => boolean>;
 export type ResolveMethod = keyof typeof resolveMethods;
+
+export const
+	$$ = symbolGenerator();
+
+export const resolveMethods = {
+	semaphore: true,
+	mutation: true,
+	components: true
+};
 
 /**
  * Validates a "resolve" prop
@@ -60,13 +60,13 @@ export default class bSwitcher extends iBlock {
 	readonly resolve?: ResolveMethod[];
 
 	/**
-	 * If true, then the content won't be hidden after the state change
+	 * If true, then a content won't be hidden after the state change
 	 */
 	@prop(Boolean)
 	readonly resolveOnce: Boolean = false;
 
 	/**
-	 * Keys for semaphore strategy
+	 * Keys for a semaphore strategy
 	 */
 	@prop({type: Object, required: false})
 	readonly semaphoreKeysProp?: Dictionary;
@@ -82,7 +82,7 @@ export default class bSwitcher extends iBlock {
 	/**
 	 * @see semaphoreKeys
 	 */
-	@system((o: bSwitcher) => o.sync.link('semaphoreKeysProp', (v) => ({...v})))
+	@system((o) => o.sync.link('semaphoreKeysProp', (v) => ({...v})))
 	protected semaphoreKeys?: Dictionary;
 
 	/**
@@ -98,19 +98,19 @@ export default class bSwitcher extends iBlock {
 	protected mutationObserver: CanUndef<MutationObserver>;
 
 	/**
-	 * Number of DOM nodes within the content block
+	 * Number of DOM nodes within a content block
 	 */
 	@system()
 	protected nodesLength: number = 0;
 
 	/**
-	 * Selector of content node
+	 * Selector of a content node
 	 */
 	@system()
 	protected contentNodeMarker: string = '[data-switcher-content]';
 
 	/**
-	 * Store of content node
+	 * Store of a content node
 	 */
 	@system()
 	protected contentNodeStore: Nullable<HTMLElement> = null;
@@ -147,7 +147,7 @@ export default class bSwitcher extends iBlock {
 	protected is!: IsTable;
 
 	/**
-	 * True if possible to display content
+	 * True if possible to display a content block
 	 */
 	@p({cache: false})
 	protected get isReadyToSwitch(): boolean {
@@ -172,13 +172,11 @@ export default class bSwitcher extends iBlock {
 	}
 
 	/**
-	 * Link to content node
+	 * Link to a content node
 	 */
 	@p({cache: false})
 	protected get contentNode(): HTMLElement {
-		const
-			{$refs: {content}, contentNodeStore} = this;
-
+		const {$refs: {content}, contentNodeStore} = this;
 		return contentNodeStore || content.querySelector(this.contentNodeMarker) || content;
 	}
 
@@ -249,7 +247,7 @@ export default class bSwitcher extends iBlock {
 	}
 
 	/**
-	 * Initializes a resolve strategies
+	 * Initializes resolve strategies
 	 */
 	@hook('mounted')
 	@watch('resolve')
@@ -269,7 +267,6 @@ export default class bSwitcher extends iBlock {
 				initializer();
 			}
 		});
-
 	}
 
 	/**
@@ -280,10 +277,7 @@ export default class bSwitcher extends iBlock {
 			{contentNode} = this;
 
 		const defferCheck = this.lazy.createLazyFn(() => {
-			const
-				{nodesLength} = this;
-
-			this.is.mutationReady = nodesLength > 0;
+			this.is.mutationReady = this.nodesLength > 0;
 			this.setSwitchReadiness();
 		}, {label: $$.defferCheck, join: true});
 
@@ -355,7 +349,8 @@ export default class bSwitcher extends iBlock {
 				removed = removed.concat([].slice.call(r.removedNodes));
 			}
 
-			const filter = (n) => n instanceof HTMLElement;
+			const
+				filter = (n) => n instanceof HTMLElement;
 
 			return {
 				added: added.filter(filter),

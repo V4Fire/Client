@@ -9,14 +9,15 @@
 - namespace [%fileName%]
 
 - include 'super/i-block'|b as placeholder
-- include 'base/b-skeleton/modules/*.ss'|b
+- include 'base/b-skeleton/modules/**/*.ss'|b
 
 /**
  * @typedef SkeletonParams
- * @property {Dictionary} [p] - skeleton parametrs
- *   *) [p.animation] - the size of the animation (the distance the "firefly" runs) also affects the speed of the "firefly"
- *   *) [p.size] - shape size
- *   *) [p.class] - additional class for shape
+ * @property {Dictionary} [p] - skeleton parameters:
+ *   *) [animation] - size of an animation (the distance of the firefly, also affects the firefly speed)
+ *   *) [size] - shape size
+ *   *) [class] - additional class for a shape
+
  * @property {string} [style]
  */
 
@@ -26,7 +27,7 @@
  */
 
 /**
- * Generates a skeleton rect
+ * Generates a skeleton rectangle
  *
  * @param {SkeletonParams.p} [p]
  * @param {SkeletonParams.style} [style]
@@ -65,7 +66,7 @@
  */
 
 /**
- * Generates a specified number of skeletons
+ * Generates the specified number of skeletons
  *
  * @param {MultipleParams.l} [l]
  * @param {MultipleParams.shape} [shape]
