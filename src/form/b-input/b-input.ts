@@ -10,7 +10,7 @@ import symbolGenerator from 'core/symbol';
 
 import iWidth from 'traits/i-width/i-width';
 import iRound from 'traits/i-round/i-round';
-import iSize, { SizeDictionary } from 'traits/i-size/i-size';
+import iSize from 'traits/i-size/i-size';
 import iIcon from 'traits/i-icon/i-icon';
 
 import iInput, {
@@ -31,7 +31,6 @@ import BlockValidators from 'form/b-input/modules/validators';
 import * as mask from 'form/b-input/modules/mask';
 //#endif
 
-export { SizeDictionary };
 export * from 'super/i-input/i-input';
 
 export type Value = string;

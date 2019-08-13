@@ -6,6 +6,8 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+//#set runtime.core/data
+
 import { EventEmitter2 as EventEmitter } from 'eventemitter2';
 
 import Then from 'core/then';

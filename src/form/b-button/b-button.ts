@@ -18,7 +18,7 @@ import iAccess from 'traits/i-access/i-access';
 import iVisible from 'traits/i-visible/i-visible';
 import iWidth from 'traits/i-width/i-width';
 import iRound from 'traits/i-round/i-round';
-import iSize, { SizeDictionary } from 'traits/i-size/i-size';
+import iSize from 'traits/i-size/i-size';
 import iOpenToggle, { CloseHelperEvents } from 'traits/i-open-toggle/i-open-toggle';
 import iIcon from 'traits/i-icon/i-icon';
 
@@ -36,8 +36,8 @@ import iData, {
 
 } from 'super/i-data/i-data';
 
-export { SizeDictionary, CloseHelperEvents };
 export * from 'super/i-data/i-data';
+export * from 'traits/i-open-toggle/i-open-toggle';
 
 export type ButtonType<T extends string = any> =
 	'submit' |

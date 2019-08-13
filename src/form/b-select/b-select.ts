@@ -30,8 +30,8 @@ import bInput, {
 
 } from 'form/b-input/b-input';
 
-export { CloseHelperEvents };
 export * from 'form/b-input/b-input';
+export * from 'traits/i-open-toggle/i-open-toggle';
 
 export type FormValue = CanUndef<
 	string

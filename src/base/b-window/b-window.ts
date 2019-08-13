@@ -21,12 +21,13 @@ import iData, {
 	ModsDecl,
 	Stage,
 	ModEvent,
-	SetModEvent
+	SetModEvent,
+	RequestError
 
 } from 'super/i-data/i-data';
 
-import { RequestError } from 'core/data';
 export * from 'super/i-data/i-data';
+export * from 'traits/i-open-toggle/i-open-toggle';
 
 export type TitleValue<T = unknown> = string | ((ctx: T) => string);
 export interface StageTitles<T = unknown> extends Dictionary<TitleValue<T>> {

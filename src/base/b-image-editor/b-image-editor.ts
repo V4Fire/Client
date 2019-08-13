@@ -15,8 +15,8 @@ import iVisible from 'traits/i-visible/i-visible';
 import iBlock, { component, prop, field, system, wait, hook, ModsDecl } from 'super/i-block/i-block';
 import { Size, StrSize, RotateSide, Tools, NormalizedTools } from 'base/b-image-editor/modules/interface';
 
-export * from 'base/b-image-editor/modules/interface';
 export * from 'super/i-block/i-block';
+export * from 'base/b-image-editor/modules/interface';
 
 @component()
 export default class bImageEditor extends iBlock implements iVisible {

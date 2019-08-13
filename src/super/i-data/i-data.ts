@@ -14,31 +14,6 @@ import Async, { AsyncOpts, AsyncCbOpts } from 'core/async';
 import RequestError from 'core/request/error';
 import { providers } from 'core/data/const';
 
-import iMessage, {
-
-	component,
-	prop,
-	field,
-	system,
-	watch,
-	wait,
-	eventFactory,
-	RemoteEvent,
-	ModsDecl
-
-} from 'super/i-message/i-message';
-
-import {
-
-	RequestParams,
-	RequestFilter,
-	DefaultRequest,
-	CreateRequestOpts,
-	ComponentConverter,
-	SocketEvent
-
-} from 'super/i-data/modules/interface';
-
 //#if runtime has core/data
 
 import Provider, {
@@ -72,8 +47,33 @@ export {
 
 //#endif
 
-export * from 'super/i-data/modules/interface';
+import iMessage, {
+
+	component,
+	prop,
+	field,
+	system,
+	watch,
+	wait,
+	eventFactory,
+	RemoteEvent,
+	ModsDecl
+
+} from 'super/i-message/i-message';
+
+import {
+
+	RequestParams,
+	RequestFilter,
+	DefaultRequest,
+	CreateRequestOpts,
+	ComponentConverter,
+	SocketEvent
+
+} from 'super/i-data/modules/interface';
+
 export * from 'super/i-message/i-message';
+export * from 'super/i-data/modules/interface';
 
 export const
 	$$ = symbolGenerator();
