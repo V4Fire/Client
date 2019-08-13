@@ -167,11 +167,13 @@ export default class bImage extends iMessage implements iProgress, iVisible {
 		this.setMod('progress', false);
 		this.setMod('showError', false);
 
-		Object.assign(imgRef.style, {
+		Object.assign(imgRef.style,
+			{
 				backgroundImage: Object.isString(img) ? img : `url("${img.currentSrc}")`,
 				backgroundSize: this.sizeType,
 				backgroundPosition: this.position
 			},
+
 			this.ratio ?
 				{paddingBottom: Object.isString(img) ? String(tmpPadding) : this.getPadding(img)} :
 				{height: '100%'}
