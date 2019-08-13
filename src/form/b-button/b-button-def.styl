@@ -73,6 +73,10 @@ b-button
 			& ^[0]__button
 				generate(disabled)
 
+		&^[0]_focused_true
+			& ^[0]__button
+				generate(focus)
+
 		& ^[0]__button
 			if $extBg
 				background $extBg
