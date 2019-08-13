@@ -24,6 +24,8 @@
   "scripts": {
     "build": "npx gulp build:tsconfig && npx webpack",
     "build:file": "npx gulp build:tsconfig && npx webpack --public-path",
+    "dev": "npx gulp build:tsconfig && npx webpack --watch",
+    "dev:file": "npx gulp build:tsconfig && npx webpack --watch --public-path",
     "test": "echo \"Error: no test specified\" && exit 0"
   },
   "dependencies": {
