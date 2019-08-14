@@ -58,8 +58,8 @@ export default abstract class iStaticPage<
 	/**
 	 * Remote data dictionary
 	 */
-	@system()
-	readonly dataStore: DataStore = new DataStore();
+	@system(() => new DataStore())
+	readonly dataStore!: DataStore;
 
 	/**
 	 * Authorization status

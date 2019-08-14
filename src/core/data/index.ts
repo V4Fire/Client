@@ -6,6 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+// tslint:disable: max-file-line-count
 //#set runtime.core/data
 
 import { EventEmitter2 as EventEmitter } from 'eventemitter2';
@@ -63,7 +64,7 @@ export type EncodersTable = Record<ModelMethods | 'def', Encoders> | {};
 export type DecodersTable = Record<ModelMethods | 'def', Decoders> | {};
 
 export interface ProviderSelectParams {
-	from?: string;
+	from?: string | number;
 	where?: Dictionary | Dictionary[];
 }
 
@@ -967,8 +968,69 @@ export default class Provider {
 
 /**
  * Find element by specified params
+ *
+ * @param value
  * @param params
  */
 export function select<T extends unknown = unknown>(value: unknown, params: ProviderSelectParams): CanUndef<T> {
-	return value as T;
+	const
+		{where, from} = params;
+
+	let
+		target = value,
+		res;
+
+	if ((Object.isObject(target) || Object.isArray(target)) && from != null) {
+		target = Object.get(target, String(from));
+	}
+
+	const isMatch = (obj, match) => {
+		if (!obj) {
+			return false;
+		}
+
+		if (!match || obj === match) {
+			return true;
+		}
+
+		if (!Object.isObject(match) && !Object.isArray(match)) {
+			return false;
+		}
+
+		let res;
+
+		Object.forEach<string, string>(match, (v, k) => {
+			if (Object.isObject(obj) && !(k in obj)) {
+				return;
+			}
+
+			if (v !== obj[k]) {
+				return;
+			}
+
+			res = true;
+		});
+
+		return res;
+	};
+
+	if (where) {
+		const
+			whereArray = (<ProviderSelectParams['where'][]>[]).concat(where);
+
+		for (let i = 0; i < whereArray.length; i++) {
+			const
+				w = whereArray[i];
+
+			if (Object.isObject(target) && isMatch(target, w)) {
+				break;
+			}
+
+			if (Object.isArray(target) && target.some((a) => (isMatch(a, w) ? (res = a, true) : false))) {
+				break;
+			}
+		}
+	}
+
+	return res;
 }
