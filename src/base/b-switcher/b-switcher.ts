@@ -27,7 +27,6 @@ export interface FilteredMutations {
 }
 
 export type IsStrategyReadyMap = Record<ResolveMethod, () => boolean>;
-export type ResolveMethod = keyof typeof resolveMethods;
 
 export const
 	$$ = symbolGenerator();
@@ -37,6 +36,8 @@ export const resolveMethods = {
 	mutation: true,
 	components: true
 };
+
+export type ResolveMethod = keyof typeof resolveMethods;
 
 /**
  * Validates a "resolve" prop
