@@ -199,14 +199,15 @@ text-options($name)
 	$obj = getDSOptions("text." + $name + ".style")
 
 	if $obj
-		interpolate-properties($obj)
+		interpolate-props($obj)
 
 /**
  * Generates rules from object properties
  * @param {Object} $options
  */
-interpolate-properties($options)
-	for $key, $value in $options
+interpolate-props($options)
+	for $key, $val in $options
+		$value = type($val) == "string" ? convert($val) : $val
 		{dasherize($key)} $value
 
 /**
