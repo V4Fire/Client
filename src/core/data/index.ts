@@ -249,6 +249,12 @@ export default class Provider {
 	readonly event!: EventEmitter;
 
 	/**
+	 * Global event emitter object
+	 * (for all data providers)
+	 */
+	readonly globalEvent: EventEmitter = globalEvent;
+
+	/**
 	 * Alias for the request function
 	 */
 	get request(): typeof request {
@@ -256,10 +262,11 @@ export default class Provider {
 	}
 
 	/**
-	 * Global event emitter object
-	 * (for all data providers)
+	 * Name of the provider
 	 */
-	readonly globalEvent: EventEmitter = globalEvent;
+	get providerName(): string {
+		return this.constructor[$$.namespace];
+	}
 
 	/**
 	 * Map for data events
@@ -281,7 +288,7 @@ export default class Provider {
 	 */
 	constructor(params: ProviderParams = {}) {
 		const
-			nm = this.constructor[$$.namespace],
+			nm = this.providerName,
 			key = this.cacheId = `${nm}:${JSON.stringify(params)}`,
 			cacheVal = instanceCache[key];
 
@@ -548,7 +555,7 @@ export default class Provider {
 
 		const
 			url = this.url(),
-			nm = this.constructor[$$.namespace],
+			nm = this.providerName,
 			eventName = this.name(),
 			method = this.method() || this.getMethod;
 
@@ -928,7 +935,7 @@ export default class Provider {
 			req.then((res) => {
 				const
 					{ctx} = res,
-					cache = requestCache[this.constructor.name];
+					cache = requestCache[this.providerName];
 
 				if (ctx.canCache && cache) {
 					cache[res.cacheKey] = res;
