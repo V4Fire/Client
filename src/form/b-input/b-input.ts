@@ -682,6 +682,7 @@ export default class bInput<
 	protected initModEvents(): void {
 		super.initModEvents();
 		this.sync.mod('empty', 'valueBufferStore', (v) => !v);
+		this.sync.mod('readonly', 'readonly', (v) => v);
 	}
 
 	/** @override */
