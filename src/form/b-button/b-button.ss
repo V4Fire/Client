@@ -51,6 +51,8 @@
 				:autofocus = autofocus |
 				:-hint = t(hint) |
 				@click = onClick |
+				@focus = focus |
+				@blur = blur |
 				${self.buttonAttrs(type)} |
 				${attrs|!html}
 			.
