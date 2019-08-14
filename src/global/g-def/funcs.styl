@@ -208,3 +208,10 @@ text-options($name)
 interpolate-properties($options)
 	for $key, $value in $options
 		{dasherize($key)} $value
+
+/**
+ * Generates path from the specified sequence
+ * @param {string[]}
+ */
+p($arr)
+	join(".", $arr)
