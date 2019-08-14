@@ -7,85 +7,115 @@
  */
 
 $p = {
-	color: #000
-	backgroundColor: #FFF
-	shadowColor: alpha(#222, 0.5)
-	validColor: #7FB425
-	invalidColor: #D44D24
 	messageHelpers: true
+	sizeHelpers: false
 }
 
 b-input
-	background $p.backgroundColor
+	generate($kk)
+		$mod = getField($p, path(mods $kk))
+		$textStyle = getField($mod, textStyle)
 
-	&_disabled_true
-		background darken($p.backgroundColor, 10%)
+		if $textStyle
+			for $key, $val in getDSOptions(path(text $textStyle style))
+				$mod[$key] = $val
 
-	for $el in (none 0) (small 0.18em) (normal 0.3em) (big 0.8em)
-		&_rounding_{$el[0]},
-		&_rounding_{$el[0]} &__root-wrapper,
-		&_rounding_{$el[0]} &__super-wrapper
-			border-radius $el[1]
+		if $mod
+			interpolate-props($mod)
+
+	for $key, $val in getDSOptions(rounding)
+		&_rounding_{$key}
+		&_rounding_{$key} &__root-wrapper
+		&_rounding_{$key} &__super-wrapper
+			border-radius $val
 
 	&__root-wrapper
-		border 1px solid darken($p.backgroundColor, 15%)
-		transition 0.2s ease-in border-color
+		$back = getField($p, "block.background")
+		interpolate-props($back)
 
 	&_focused_true &__root-wrapper
-		border 1px solid darken($p.backgroundColor, 35%)
+		generate(focus)
 
-	&_disabled_true &__root-wrapper
-		opacity 0.5
+	$sizes = getField($p, "mods.size")
+	if $sizes
+		&_size
+			for $key, $value in $sizes
+				&_{$key}
+					& ^[0]
+					&__input-cont
+						$horOffset = getField($value, horOffset)
+						$vertOffset = getField($value, vertOffset)
 
-	&__cell
-		margin-right 1em
+						if $vertOffset
+							padding-left $vertOffset
+							padding-right @padding-left
 
-	&__input-cont
-		margin-right 0.3em
-		margin-left 0.4em
+						if $horOffset
+							padding-top $horOffset
+							padding-bottom @padding-top
+
+					&__input
+						text-options(getField($value, textStyle))
+						line-height 1
+
+						&::placeholder
+							text-options(getField($value, placeholderStyle))
+							line-height 1
+							color getField($value, placeholderColor)
+
+	&_valid
+		create-status-options($obj)
+			text-options(getField($obj, textStyle))
+
+			$color = getField($obj, color)
+
+			if $color
+				color $color
+
+		for $key, $obj in getField($p, path(mods valid))
+			&_{$key}
+				for $fieldName, $value in $obj
+					if $fieldName == "style"
+						& ^[0]__root-wrapper
+							interpolate-props($value)
+
+					if $fieldName == "focus"
+						&^[0]_{$fieldName + "ed"}_true ^[0]__root-wrapper
+							interpolate-props($value)
+
+					if $fieldName == "info"
+						& ^[0]__info-box
+							create-status-options($valud)
+
+							$offset = getField($value, offset)
+							if $offset
+								for $key, $val in $offset
+									margin-{$key} $val
+
+					if $fieldName == "icon"
+						& ^[0]__icon
+							create-status-options($value)
+
+							svg
+								width getField($value, width)
+								height getField($value, height)
+
+							$right = getField($value, "offset.right")
+							if $right
+								margin-right $right
 
 	&__input
-		padding 0.7em 0
-		font-weight 400
-		color $p.color
-
 		&:-webkit-autofill
 			-webkit-box-shadow 0 0 0 100em $p.backgroundColor inset !important
 
-		&::placeholder
-			opacity 1
-			color lighten($p.color, 50%)
+	$readonly = getField($p, path(mods readonly))
+	if $readonly
+		&_readonly_true
+			cursor default
+			interpolate-props($readonly)
 
-		&:focus::placeholder
-			opacity 0.5
-
-		&:valid
-		&:invalid
-			box-shadow none
-
-	&_disabled_true &__input
-	&_disabled_true &__icon
-		color darken($p.color, 20%)
-
-	&__icon
-		color lighten($p.color, 10%)
-		text-shadow none
-
-		span
-			font-size 0.8em
-
-		&:hover
-			color lighten($p.color, 20%)
+		&__input:read-only::placeholder
+			color getField($readonly, color)
 
 	&__progress span
 		font-size 0.8em
-
-	&_valid_true &__valid-status
-		color $p.validColor
-
-	&_valid_false &__input
-	&_valid_false &__valid-status
-		color $p.invalidColor
-
-	&__pre-icon
-		margin-left 0.5em
