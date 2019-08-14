@@ -39,18 +39,18 @@ b-button
 							line-height 1
 
 	getExteriorStyle($name, $prop)
-		getField($p, p(exterior $name $prop))
+		getField($p, path(exterior $name $prop))
 
 	generateExterior($k)
 		$extBg = getExteriorStyle($k, backgroundColor)
 		$extColor = getExteriorStyle($k, color)
 
 		generate($kk)
-			path($v)
-				p(mods $kk $v)
+			path-to-mod($v)
+				path(mods $kk $v)
 
 			getValue($prop)
-				getExteriorStyle($k, path($prop)) || getField($p, path($prop))
+				getExteriorStyle($k, path-to-mod($prop)) || getField($p, path-to-mod($prop))
 
 			$color = getValue(color)
 			$bg = getValue(backgroundColor)
@@ -85,7 +85,7 @@ b-button
 				color $extColor
 
 			for $key in (hover focus active)
-				if getField($p, p(mods $key))
+				if getField($p, path(mods $key))
 					&:{$key}
 						generate($key)
 
@@ -104,7 +104,7 @@ b-button
 		transition color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out
 
 	for $key in (post-icon pre-icon)
-		$params = getField($p, p(mods camelize($key)))
+		$params = getField($p, path(mods camelize($key)))
 
 		if $params
 			&__{$key}
