@@ -34,7 +34,7 @@ function prepareData(data) {
 
 			if (Object.isString(d)) {
 				const
-					reg = /(\d+(?:\.\d+)?)(?=(px|em|rem|%))/,
+					reg = /(\d+(?:\.\d+)?)(?=(px|em|rem|%)$)/,
 					unit = d.match(reg);
 
 				if (unit) {
