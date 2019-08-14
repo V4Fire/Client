@@ -42,26 +42,26 @@ b-input
 			for $key, $value in $sizes
 				&_{$key}
 					& ^[0]
-					&__input-cont
-						$horOffset = getField($value, horOffset)
-						$vertOffset = getField($value, vertOffset)
+						&__input-cont
+							$horOffset = getField($value, horOffset)
+							$vertOffset = getField($value, vertOffset)
 
-						if $vertOffset
-							padding-left $vertOffset
-							padding-right @padding-left
+							if $vertOffset
+								padding-left $vertOffset
+								padding-right @padding-left
 
-						if $horOffset
-							padding-top $horOffset
-							padding-bottom @padding-top
+							if $horOffset
+								padding-top $horOffset
+								padding-bottom @padding-top
 
-					&__input
-						text-options(getField($value, textStyle))
-						line-height 1
-
-						&::placeholder
-							text-options(getField($value, placeholderStyle))
+						&__input
+							text-options(getField($value, textStyle))
 							line-height 1
-							color getField($value, placeholderColor)
+
+							&::placeholder
+								text-options(getField($value, placeholderStyle))
+								line-height 1
+								color getField($value, placeholderColor)
 
 	&_valid
 		create-status-options($obj)
