@@ -62,6 +62,11 @@ export {
 export type EncodersTable = Record<ModelMethods | 'def', Encoders> | {};
 export type DecodersTable = Record<ModelMethods | 'def', Decoders> | {};
 
+export interface ProviderSelectParams {
+	from?: string;
+	where?: Dictionary | Dictionary[];
+}
+
 const globalEvent = new EventEmitter({
 	maxListeners: 1e3,
 	newListener: false,
@@ -100,6 +105,7 @@ export function provider(nmsOrFn: Function | string): Function | void {
 		};
 	}
 
+	// tslint:disable-next-line: no-use-before-declare
 	providers[nmsOrFn.name] = <typeof Provider>nmsOrFn;
 }
 
@@ -113,6 +119,20 @@ const queryMethods = {
  */
 @provider
 export default class Provider {
+
+	/**
+	 * Alias for the request function
+	 */
+	get request(): typeof request {
+		return (<typeof Provider>this.constructor).request;
+	}
+
+	/**
+	 * Name of the provider
+	 */
+	get providerName(): string {
+		return this.constructor[$$.namespace];
+	}
 	/**
 	 * Request Function
 	 */
@@ -132,6 +152,16 @@ export default class Provider {
 	 * Data decoders
 	 */
 	static readonly decoders: DecodersTable = {};
+
+	/**
+	 * Selects data by specified params
+	 *
+	 * @param value
+	 * @param params
+	 */
+	static select<T extends unknown = unknown>(value: unknown, params: any): CanUndef<T> {
+		return select(value, params);
+	}
 
 	/**
 	 * HTTP method for .get()
@@ -253,20 +283,6 @@ export default class Provider {
 	 * (for all data providers)
 	 */
 	readonly globalEvent: EventEmitter = globalEvent;
-
-	/**
-	 * Alias for the request function
-	 */
-	get request(): typeof request {
-		return (<typeof Provider>this.constructor).request;
-	}
-
-	/**
-	 * Name of the provider
-	 */
-	get providerName(): string {
-		return this.constructor[$$.namespace];
-	}
 
 	/**
 	 * Map for data events
@@ -947,4 +963,12 @@ export default class Provider {
 
 		return req;
 	}
+}
+
+/**
+ * Find element by specified params
+ * @param params
+ */
+export function select<T extends unknown = unknown>(value: unknown, params: ProviderSelectParams): CanUndef<T> {
+	return value as T;
 }

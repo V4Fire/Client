@@ -17,6 +17,7 @@ import { Session } from 'core/session/interface';
 import { NetStatus } from 'core/net/interface';
 
 import iBlock from 'super/i-block/i-block';
+import DataStore from 'super/i-static-page/modules/data-store';
 import iPage, { component, field, system, watch, Event } from 'super/i-page/i-page';
 import { CurrentPage } from 'core/router/interface';
 
@@ -53,6 +54,12 @@ export default abstract class iStaticPage<
 	/** @override */
 	@system(() => globalEvent)
 	readonly globalEvent!: Event<this>;
+
+	/**
+	 * Remote data dictionary
+	 */
+	@system()
+	readonly dataStore: DataStore = new DataStore();
 
 	/**
 	 * Authorization status

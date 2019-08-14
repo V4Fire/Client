@@ -72,6 +72,8 @@ import {
 
 } from 'super/i-data/modules/interface';
 
+import DataStore from 'super/i-static-page/modules/data-store';
+
 export * from 'super/i-message/i-message';
 export * from 'super/i-data/modules/interface';
 
@@ -664,6 +666,22 @@ export default abstract class iData<T extends object = Dictionary> extends iMess
 	}
 
 	/**
+	 * Accumulates all loaded data in root
+	 *
+	 * @param data
+	 * @param [key]
+	 */
+	protected accumulate(data: unknown, key?: string): void {
+		key = key || this.dataProvider;
+
+		if (!key) {
+			return;
+		}
+
+		this.r.dataStore.set(key, data);
+	}
+
+	/**
 	 * Returns default request parameters for the specified method or false
 	 * @param method
 	 */
@@ -807,7 +825,13 @@ export default abstract class iData<T extends object = Dictionary> extends iMess
 			});
 		}
 
-		return req.then((res) => res.data || undefined);
+		return req.then((res) => {
+			const
+				v = res.data || undefined;
+
+			this.accumulate(v);
+			return v;
+		});
 	}
 
 	/**
