@@ -28,8 +28,10 @@
 						id: values[el.value],
 						active: isActive(el),
 						theme: el.theme,
+						exterior: el.exterior,
 						hidden: el.hidden,
-						progress: el.progress
+						progress: el.progress,
+						...el.classes
 					}})) |
 
 					:href = el.href |
