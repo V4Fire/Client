@@ -206,9 +206,10 @@ text-options($name)
  * @param {Object} $options
  */
 interpolate-props($options)
-	for $key, $val in $options
-		$value = type($val) == "string" ? convert($val) : $val
-		{dasherize($key)} $value
+	if type($options) == "object"
+		for $key, $val in $options
+			$value = type($val) == "string" ? convert($val) : $val
+			{dasherize($key)} $value
 
 /**
  * Generates path from the specified sequence
