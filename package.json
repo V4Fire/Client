@@ -5,7 +5,7 @@
   "main": "src/core/index.js",
   "typings": "index.d.ts",
   "license": "MIT",
-  "version": "3.0.0-beta.134",
+  "version": "3.0.0-beta.135",
   "author": {
     "name": "kobezzza",
     "email": "kobezzza@gmail.com",
@@ -22,10 +22,10 @@
     "V4Fire"
   ],
   "scripts": {
-    "build": "npx gulp build:tsconfig && npx webpack",
-    "build:file": "npx gulp build:tsconfig && npx webpack --public-path",
-    "dev": "npx gulp build:tsconfig && npx webpack --watch",
-    "dev:file": "npx gulp build:tsconfig && npx webpack --watch --public-path",
+    "build": "gulp build:tsconfig && webpack",
+    "build:file": "gulp build:tsconfig && webpack --public-path",
+    "dev": "gulp build:tsconfig && webpack --watch",
+    "dev:file": "gulp build:tsconfig && webpack --watch --public-path",
     "test": "echo \"Error: no test specified\" && exit 0"
   },
   "dependencies": {
