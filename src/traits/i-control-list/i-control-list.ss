@@ -46,7 +46,7 @@
 
 	< ${@wrapperClasses ? 'span' : 'template'} &
 		v-for = el in ${@from} |
-		:class = ${componentName} ? provide.elClasses(${componentName}, ${wrapperClassesJSON}) : provide.elClasses(${wrapperClassesJSON}) |
+		:class = ${componentName} ? provide.elClasses(${componentName}, ${wrapperClassesJSON}) : provide.elClasses(${wrapperClassesJSON})
 	.
 		< component &
 			:is = el.component || 'b-button' |
