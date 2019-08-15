@@ -305,17 +305,14 @@ export default class Provider {
 	 */
 	constructor(params: ProviderParams = {}) {
 		const
-			nm = this.providerName,
-			key = this.cacheId = `${nm}:${JSON.stringify(params)}`,
-			cacheVal = instanceCache[key];
+			id = this.cacheId = `${this.providerName}:${JSON.stringify(params)}`,
+			cacheVal = instanceCache[id];
 
 		if (cacheVal) {
 			return cacheVal;
 		}
 
-		requestCache[nm] =
-			Object.createDict();
-
+		requestCache[id] = Object.createDict();
 		this.async = new Async(this);
 		this.event = new EventEmitter({maxListeners: 1e3, newListener: false});
 
@@ -347,7 +344,7 @@ export default class Provider {
 			}
 		}
 
-		instanceCache[key] = this;
+		instanceCache[id] = this;
 	}
 
 	/**
@@ -542,8 +539,7 @@ export default class Provider {
 	 */
 	dropCache(): void {
 		const
-			nm = this.constructor.name,
-			cache = requestCache[nm];
+			cache = requestCache[this.cacheId];
 
 		if (cache) {
 			for (let keys = Object.keys(cache), i = 0; i < keys.length; i++) {
@@ -556,7 +552,7 @@ export default class Provider {
 			}
 		}
 
-		requestCache[nm] = Object.createDict();
+		requestCache[this.cacheId] = Object.createDict();
 	}
 
 	/**
@@ -952,7 +948,7 @@ export default class Provider {
 			req.then((res) => {
 				const
 					{ctx} = res,
-					cache = requestCache[this.providerName];
+					cache = requestCache[this.cacheId];
 
 				if (ctx.canCache && cache) {
 					cache[res.cacheKey] = res;
