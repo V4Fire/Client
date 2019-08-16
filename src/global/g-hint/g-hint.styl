@@ -9,7 +9,9 @@
 @import "global/g-hint/g-hint.interface.styl"
 
 .g-hint
+	// @stlint-disable
 	extends($gHint, {
 		hintData: data-hint,
 		showSelector: "&[data-hint]:hover",
 	})
+	// @stlint-enable

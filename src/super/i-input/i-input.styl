@@ -16,8 +16,10 @@ $p = {
 }
 
 i-input extends i-data
+	// @stlint-disable
 	i-access({helpers: $p.accessHelpers})
 	i-visible({helpers: $p.visibleHelpers})
+	// @stlint-enable
 
 	&__hidden-input
 		position absolute

@@ -16,7 +16,9 @@ $p = {
 }
 
 b-sidebar extends i-data
+	// @stlint-disable
 	i-visible({helpers: $p.visibleHelpers})
+	// @stlint-enable
 
 	fixed top 0 left 0
 	zIndex(modal)
