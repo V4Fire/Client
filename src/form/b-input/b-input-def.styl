@@ -12,6 +12,12 @@ $p = {
 }
 
 b-input
+	color-from-obj($obj)
+		$color = getField($obj, color)
+
+		if $color
+			color $color
+
 	generate($kk)
 		$mod = getField($p, path(mods $kk))
 		$textStyle = getField($mod, textStyle)
@@ -64,14 +70,6 @@ b-input
 								color getField($value, placeholderColor)
 
 	&_valid
-		create-status-options($obj)
-			text-options(getField($obj, textStyle))
-
-			$color = getField($obj, color)
-
-			if $color
-				color $color
-
 		for $key, $obj in getField($p, path(mods valid))
 			&_{$key}
 				for $fieldName, $value in $obj
@@ -85,7 +83,8 @@ b-input
 
 					if $fieldName == "info"
 						& ^[0]__info-box
-							create-status-options($valud)
+							text-options(getField($value, textStyle))
+							color-from-obj($value)
 
 							$offset = getField($value, offset)
 							if $offset
@@ -94,7 +93,7 @@ b-input
 
 					if $fieldName == "icon"
 						& ^[0]__icon
-							create-status-options($value)
+							color-from-obj($value)
 
 							svg
 								width getField($value, width)
@@ -115,7 +114,7 @@ b-input
 			interpolate-props($readonly)
 
 		&__input:read-only::placeholder
-			color getField($readonly, color)
+			color-from-obj($readonly)
 
 	&__progress span
 		font-size 0.8em

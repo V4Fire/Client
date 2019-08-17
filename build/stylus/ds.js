@@ -77,4 +77,34 @@ module.exports = function (style) {
 		'getDSOptions',
 		({string}) => string ? stylus.utils.coerce($C(DS).get(string), true) || {} : DS
 	);
+
+	/**
+	 * Returns color(s) from the Design System
+	 * by the specified name and identifier (optional)
+	 *
+	 * @param {!Object} hueInput
+	 * @param {!Object} [hueNum]
+	 * @returns {!Object|Array}
+	 */
+	style.define(
+		'getDSColor',
+		(hueInput, hueId) => {
+			const
+				hue = hueInput.string || hueInput.name;
+
+			let
+				id;
+
+			if (hueId) {
+				id = hueId.string || hueId.val;
+
+				if (Object.isNumber(id)) {
+					id = id - 1;
+				}
+			}
+
+
+			return hue ? $C(DS).get(`colors.${hue}${id !== undefined ? `.${id}` : ''}`) : undefined;
+		}
+	);
 };

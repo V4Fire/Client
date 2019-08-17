@@ -67,15 +67,19 @@ execFontPattern($type = "")
 		unquote(replace("%t", "", BASE_FONT_PATTERN))
 
 /**
- * Returns a color from global kits
+ * Returns a color from the global kits
+ * or from the Design System
  *
- * @param {RGBA} $hue
- * @param {number} [$num]
+ * @param {string} $kit
+ * @param {number|string} [$id]
  * @param {boolean=} [$reserved]
  * @param {boolean=} [$base]
  */
-c($hue, $num = null, $reserved = false, $base = false)
-	getGlobalColor($hue, $num, $reserved, $base)
+c($kit, $id, $reserved = false, $base = false)
+	if getDSOptions("colors")
+		return getDSColor($kit, $id)
+
+	getGlobalColor($kit, $id || null, $reserved, $base)
 
 /**
  * CSS hack for IE10-11
