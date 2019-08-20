@@ -16,7 +16,7 @@ import Async, { AsyncCbOpts } from 'core/async';
 import IO, { Socket } from 'core/socket';
 
 import { concatUrls } from 'core/url';
-import { ModelMethods, SocketEvent, ProviderParams, FunctionalExtraProviders } from 'core/data/interface';
+import { ModelMethods, SocketEvent, ProviderParams, FunctionalExtraProviders, Mocks } from 'core/data/interface';
 import { providers } from 'core/data/const';
 
 import request, {
@@ -48,8 +48,11 @@ export {
 	globalOpts,
 	Socket,
 	CreateRequestOpts,
+
+	Mocks,
 	Middlewares,
 	MiddlewareParams,
+
 	CacheStrategy,
 	RequestQuery,
 	RequestResponse,
@@ -57,6 +60,7 @@ export {
 	RequestFunctionResponse,
 	Response,
 	RequestBody
+
 };
 
 export type EncodersTable = Record<ModelMethods | 'def', Encoders> | {};
@@ -121,7 +125,95 @@ export default class Provider {
 	/**
 	 * Request middlewares
 	 */
-	static readonly middlewares: Middlewares = {};
+	static readonly middlewares: Middlewares = {
+		/**
+		 * Adds mock data from .mocks
+		 */
+		mock({opts, ctx}: MiddlewareParams): CanUndef<Function> {
+			if (!this.mocks) {
+				return;
+			}
+
+			const
+				requests = this.mocks[<string>opts.method];
+
+			if (!requests) {
+				return;
+			}
+
+			const requestKeys = [
+				'query',
+				'body',
+				'headers'
+			];
+
+			let
+				currentRequest;
+
+			for (let i = 0; i < requests.length; i++) {
+				const
+					request = requests[i];
+
+				if (!request) {
+					continue;
+				}
+
+				requestKeys: for (let keys = requestKeys, i = 0; i < keys.length; i++) {
+					const
+						key = keys[i];
+
+					if (!(key in request)) {
+						currentRequest = request;
+						continue;
+					}
+
+					const
+						val = request[key],
+						baseVal = opts[key];
+
+					if (Object.isObject(val)) {
+						for (let keys = Object.keys(val), i = 0; i < keys.length; i++) {
+							const
+								key = keys[i];
+
+							if (!Object.fastCompare(val[key], baseVal && baseVal[key])) {
+								currentRequest = undefined;
+								break requestKeys;
+							}
+						}
+
+						currentRequest = request;
+						continue;
+					}
+
+					if (Object.fastCompare(baseVal, val)) {
+						currentRequest = request;
+						continue;
+					}
+
+					currentRequest = undefined;
+				}
+
+				if (currentRequest) {
+					break;
+				}
+			}
+
+			if (!currentRequest) {
+				return;
+			}
+
+			return () => Then.resolve(currentRequest.response, ctx.parent)
+				.then((res) => new Response(res, {
+					status: currentRequest.status || 200,
+					responseType: currentRequest.responseType || opts.responseType,
+					okStatuses: opts.okStatuses,
+					decoder: currentRequest.decoders === false ? undefined : ctx.decoders
+				}))
+
+				.then(ctx.wrapAsResponse);
+		}
+	};
 
 	/**
 	 * Data encoders
@@ -132,6 +224,11 @@ export default class Provider {
 	 * Data decoders
 	 */
 	static readonly decoders: DecodersTable = {};
+
+	/**
+	 * Request mock objects
+	 */
+	mocks?: Mocks;
 
 	/**
 	 * HTTP method for .get()
