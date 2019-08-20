@@ -6,7 +6,29 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { RequestQuery, CreateRequestOpts } from 'core/request/interface';
+import {
+
+	RequestMethods,
+	RequestQuery,
+	RequestBody,
+	ResponseType,
+	CreateRequestOpts
+
+} from 'core/request/interface';
+
+export interface Mock {
+	status?: number;
+	query?: RequestQuery;
+	body?: RequestBody;
+	headers?: Dictionary<CanArray<unknown>>;
+	decoders?: boolean;
+	response: ResponseType;
+}
+
+export type Mocks = Record<
+	RequestMethods,
+	Mock[]
+>;
 
 export type ModelMethods =
 	'peek' |
