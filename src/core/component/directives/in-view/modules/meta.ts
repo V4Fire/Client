@@ -42,7 +42,7 @@ export interface ObserveOptions {
 	delay?: number;
 
 	/**
-	 * Time that the element must be in viewport for the callback to be called
+	 * Time that the element must be in viewport for the callback to be executed
 	 */
 	timeout?: number;
 
