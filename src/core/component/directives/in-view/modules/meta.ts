@@ -35,12 +35,14 @@ export interface ObserveOptions {
 
 	/**
 	 * Delay before callback execution
+	 *   *) works only with IntersectionObserver strategy
+	 *
 	 * @see https://w3c.github.io/IntersectionObserver/v2/#dom-intersectionobserver-delay
 	 */
 	delay?: number;
 
 	/**
-	 * @deprecated use delay param instead, timeout will be removed after beta ends
+	 * Time that the element must be in viewport for the callback to be called
 	 */
 	timeout?: number;
 

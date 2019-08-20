@@ -9,7 +9,7 @@
 import symbolGenerator from 'core/symbol';
 
 import { ObservableElement, IntersectionObserverOptions } from 'core/component/directives/in-view/modules/meta';
-import { hasIntersection, supportsDelay } from 'core/component/directives/in-view/modules/intersection/helpers';
+import { hasIntersection } from 'core/component/directives/in-view/modules/intersection/helpers';
 
 import Super from 'core/component/directives/in-view/modules/super';
 
@@ -34,11 +34,6 @@ export default class InView extends Super {
 	 * Contains IntersectionObserver instances
 	 */
 	protected readonly observers: Dictionary<IntersectionObserver> = {};
-
-	/**
-	 * True if IntersectionObserver is supports delay property
-	 */
-	protected readonly supportsDelay: boolean = supportsDelay();
 
 	/**
 	 * Removes an element from observable elements
@@ -158,7 +153,7 @@ export default class InView extends Super {
 	 */
 	protected onObservableIn(observable: ObservableElement): void {
 		const
-			{async: $a, supportsDelay} = this;
+			{async: $a} = this;
 
 		const asyncOptions = {
 			group: 'inView',
@@ -170,13 +165,7 @@ export default class InView extends Super {
 			observable.onEnter(observable);
 		}
 
-		if (supportsDelay) {
-			this.call(observable);
-
-		} else {
-			$a.setTimeout(() => this.call(observable), observable.delay || 0, asyncOptions);
-		}
-
+		$a.setTimeout(() => this.call(observable), observable.timeout || 0, asyncOptions);
 		observable.isLeaving = true;
 	}
 
@@ -186,7 +175,7 @@ export default class InView extends Super {
 	 */
 	protected onObservableOut(observable: ObservableElement): void {
 		const
-			{async: $a, supportsDelay} = this;
+			{async: $a} = this;
 
 		const asyncOptions = {
 			group: 'inView',
@@ -198,10 +187,7 @@ export default class InView extends Super {
 			observable.onLeave(observable);
 		}
 
-		if (!supportsDelay) {
-			$a.clearAll(asyncOptions);
-		}
-
+		$a.clearAll(asyncOptions);
 		observable.isLeaving = false;
 	}
 }
