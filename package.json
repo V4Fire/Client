@@ -5,7 +5,7 @@
   "main": "src/core/index.js",
   "typings": "index.d.ts",
   "license": "MIT",
-  "version": "3.0.0-beta.138",
+  "version": "3.0.0-beta.139",
   "author": {
     "name": "kobezzza",
     "email": "kobezzza@gmail.com",
@@ -29,7 +29,7 @@
     "test": "echo \"Error: no test specified\" && exit 0"
   },
   "dependencies": {
-    "@v4fire/core": "^3.0.0-beta.63",
+    "@v4fire/core": "^3.0.0-beta.64",
     "escaper": "^3.0.3",
     "eventemitter2": "^5.0.1",
     "fg-loadcss": "^2.1.0",
@@ -47,7 +47,7 @@
     "@types/glob": "^7.1.1",
     "@types/socket.io": "^2.1.2",
     "@types/socket.io-client": "^1.4.32",
-    "@types/webpack": "^4.32.1",
+    "@types/webpack": "^4.39.0",
     "autoprefixer": "^9.6.1",
     "browserslist": "^4.6.6",
     "camelize": "^1.0.0",
@@ -59,7 +59,7 @@
     "delay": "^4.3.0",
     "extract-loader": "^3.1.0",
     "fast-css-loader": "^1.0.2",
-    "file-loader": "^4.1.0",
+    "file-loader": "^4.2.0",
     "fs-extra-promise": "^1.0.1",
     "glob": "^7.1.4",
     "glob-promise": "^3.4.0",
@@ -69,7 +69,7 @@
     "gulp-gzip": "^1.4.2",
     "gulp-htmlmin": "^5.0.1",
     "gulp-image": "^5.1.0",
-    "gulp-load-plugins": "^2.0.0",
+    "gulp-load-plugins": "^2.0.1",
     "gulp-plumber": "^1.2.1",
     "gulp-run": "^1.7.1",
     "hard-source-webpack-plugin": "^0.13.1",
@@ -110,8 +110,8 @@
     "urlconcat": "0.0.12",
     "vue-template-compiler": "^2.6.10",
     "vue-template-es2015-compiler": "^1.9.1",
-    "webpack": "^4.39.1",
-    "webpack-cli": "^3.3.6"
+    "webpack": "^4.39.2",
+    "webpack-cli": "^3.3.7"
   },
   "devDependencies": {
     "babel-eslint": "^10.0.2",
