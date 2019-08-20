@@ -12,3 +12,21 @@ export const hasIntersection =
 	// tslint:disable-next-line strict-type-predicates
 	typeof IntersectionObserverEntry === 'function' &&
 	'intersectionRatio' in IntersectionObserverEntry.prototype;
+
+let
+	isSupportsDelay;
+
+/**
+ * Detects delay feature support
+ */
+export function supportsDelay(): boolean {
+	if (typeof isSupportsDelay !== 'undefined') {
+		return isSupportsDelay;
+	}
+
+	const o = new IntersectionObserver(() => {
+		//...
+	}, {delay: 1});
+
+	return isSupportsDelay = o.delay !== undefined;
+}
