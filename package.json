@@ -5,7 +5,7 @@
   "main": "src/core/index.js",
   "typings": "index.d.ts",
   "license": "MIT",
-  "version": "3.0.0-beta.136",
+  "version": "3.0.0-beta.137",
   "author": {
     "name": "kobezzza",
     "email": "kobezzza@gmail.com",
@@ -29,7 +29,7 @@
     "test": "echo \"Error: no test specified\" && exit 0"
   },
   "dependencies": {
-    "@v4fire/core": "^3.0.0-beta.62",
+    "@v4fire/core": "^3.0.0-beta.63",
     "escaper": "^3.0.3",
     "eventemitter2": "^5.0.1",
     "fg-loadcss": "^2.1.0",
@@ -115,9 +115,9 @@
   },
   "devDependencies": {
     "babel-eslint": "^10.0.2",
-    "eslint": "^6.1.0",
+    "eslint": "^6.2.1",
     "stlint": "^1.0.57",
-    "stlint-v4fire": "^1.0.28",
+    "stlint-v4fire": "^1.0.29",
     "tslint": "^5.18.0"
   }
 }
