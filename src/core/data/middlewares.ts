@@ -12,17 +12,22 @@ import { Response, MiddlewareParams } from 'core/request';
 
 /**
  * Middleware: attaches mock data from .mocks
- *
- * @param opts
- * @param ctx
+ * @param params
  */
-export function attachMock(this: Provider, {opts, ctx}: MiddlewareParams): CanUndef<Function> {
+export async function attachMock(this: Provider, params: MiddlewareParams): Promise<CanUndef<Function>> {
 	if (!this.mocks) {
 		return;
 	}
 
 	const
-		requests = this.mocks[<string>opts.method];
+		{opts, ctx} = params;
+
+	let
+		requests = await this.mocks[<string>opts.method];
+
+	if (requests.default) {
+		requests = requests.default;
+	}
 
 	if (!requests) {
 		return;
@@ -88,6 +93,14 @@ export function attachMock(this: Provider, {opts, ctx}: MiddlewareParams): CanUn
 
 	if (!currentRequest) {
 		return;
+	}
+
+	if (Object.isFunction(currentRequest)) {
+		currentRequest = currentRequest.call(this, params);
+	}
+
+	if (Object.isPromise(currentRequest)) {
+		currentRequest = await currentRequest;
 	}
 
 	return () => Then.resolve(currentRequest.response, ctx.parent)

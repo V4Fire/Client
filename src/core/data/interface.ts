@@ -12,7 +12,8 @@ import {
 	RequestQuery,
 	RequestBody,
 	ResponseType,
-	CreateRequestOpts
+	CreateRequestOpts,
+	MiddlewareParams
 
 } from 'core/request/interface';
 
@@ -22,13 +23,13 @@ export interface Mock {
 	body?: RequestBody;
 	headers?: Dictionary<CanArray<unknown>>;
 	decoders?: boolean;
-	response: ResponseType;
+	response: CanPromise<ResponseType> | ((params: MiddlewareParams) => CanPromise<ResponseType>);
 }
 
-export type Mocks = Record<
+export type Mocks = CanPromise<Record<
 	RequestMethods,
 	Mock[]
->;
+>>;
 
 export type ModelMethods =
 	'peek' |
