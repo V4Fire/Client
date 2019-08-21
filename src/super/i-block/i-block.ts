@@ -1581,7 +1581,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 			const
 				info = getFieldInfo(exprOrFn, this);
 
-			exprOrFn = info.path;
+			exprOrFn = info.fullPath;
 			needCache = handler.length > 1;
 
 			if (needCache) {

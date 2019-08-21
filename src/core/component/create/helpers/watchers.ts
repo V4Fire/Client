@@ -224,8 +224,8 @@ export function bindWatchers(
 							return;
 						}
 
-						const info = getFieldInfo(key, ctx);
-						key = info.path;
+						const
+							info = getFieldInfo(key, ctx);
 
 						if (info.type === 'system') {
 							key = info.name;
@@ -282,7 +282,7 @@ export function bindWatchers(
 							watchObj.immediate && handler(store);
 
 						} else {
-							const unwatch = $watch.call(ctx, key, {
+							const unwatch = $watch.call(ctx, info.fullPath, {
 								deep: watchObj.deep,
 								immediate: watchObj.immediate,
 								handler
@@ -308,8 +308,8 @@ export function bindWatchers(
 						continue;
 					}
 
-					const info = getFieldInfo(key, ctx);
-					key = info.path;
+					const
+						info = getFieldInfo(key, ctx);
 
 					if (info.type === 'system') {
 						key = info.name;
@@ -366,7 +366,7 @@ export function bindWatchers(
 						watchObj.immediate && handler(store);
 
 					} else {
-						const unwatch = $watch.call(ctx, key, {
+						const unwatch = $watch.call(ctx, info.fullPath, {
 							deep: watchObj.deep,
 							immediate: watchObj.immediate,
 							handler

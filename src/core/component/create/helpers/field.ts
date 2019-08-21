@@ -11,6 +11,7 @@ import { defaultWrapper, NULL } from 'core/component/create/helpers/const';
 
 export interface FieldInfo {
 	path: string;
+	fullPath: string;
 	name: string;
 	ctx: ComponentInterface;
 	type: 'prop' | 'field' | 'system' | 'computed' | 'accessor';
@@ -30,13 +31,13 @@ const
 export function getFieldInfo(path: string, ctx: ComponentInterface): FieldInfo {
 	let
 		name = path,
-		chunks;
+		fullPath = path,
+		chunks,
+		rootI;
 
 	if (hasSeparator.test(path)) {
 		chunks = path.split('.');
-
-		let
-			rootI = 0;
+		rootI = 0;
 
 		let
 			obj = ctx;
@@ -54,9 +55,8 @@ export function getFieldInfo(path: string, ctx: ComponentInterface): FieldInfo {
 			}
 		}
 
-		chunks = chunks.slice(rootI);
-		path = chunks.join('.');
-		name = chunks[0];
+		path = chunks.slice(rootI).join('.');
+		name = chunks[rootI];
 	}
 
 	const
@@ -66,6 +66,7 @@ export function getFieldInfo(path: string, ctx: ComponentInterface): FieldInfo {
 	if (propRgxp.test(name)) {
 		return {
 			path,
+			fullPath,
 			name,
 			ctx,
 			type: 'prop'
@@ -76,6 +77,7 @@ export function getFieldInfo(path: string, ctx: ComponentInterface): FieldInfo {
 		if (fields[name]) {
 			return {
 				path,
+				fullPath,
 				name,
 				ctx,
 				type: 'field'
@@ -84,6 +86,7 @@ export function getFieldInfo(path: string, ctx: ComponentInterface): FieldInfo {
 
 		return {
 			path,
+			fullPath,
 			name,
 			ctx,
 			type: 'system'
@@ -93,6 +96,7 @@ export function getFieldInfo(path: string, ctx: ComponentInterface): FieldInfo {
 	if (fields[name]) {
 		return {
 			path,
+			fullPath,
 			name,
 			ctx,
 			type: 'field'
@@ -102,6 +106,7 @@ export function getFieldInfo(path: string, ctx: ComponentInterface): FieldInfo {
 	if (props[name]) {
 		return {
 			path,
+			fullPath,
 			name,
 			ctx,
 			type: 'prop'
@@ -111,6 +116,7 @@ export function getFieldInfo(path: string, ctx: ComponentInterface): FieldInfo {
 	if (systemFields[name]) {
 		return {
 			path,
+			fullPath,
 			name,
 			ctx,
 			type: 'system'
@@ -122,12 +128,14 @@ export function getFieldInfo(path: string, ctx: ComponentInterface): FieldInfo {
 
 	if (fields[storeName]) {
 		if (chunks) {
-			chunks[0] = storeName;
-			path = chunks.join('.');
+			chunks[rootI] = storeName;
+			path = chunks.slice(chunks).join('.');
+			fullPath = chunks.join('.');
 		}
 
 		return {
 			path,
+			fullPath,
 			name,
 			ctx,
 			type: 'field'
@@ -136,12 +144,14 @@ export function getFieldInfo(path: string, ctx: ComponentInterface): FieldInfo {
 
 	if (systemFields[storeName]) {
 		if (chunks) {
-			chunks[0] = storeName;
-			path = chunks.join('.');
+			chunks[rootI] = storeName;
+			path = chunks.slice(chunks).join('.');
+			fullPath = chunks.join('.');
 		}
 
 		return {
 			path,
+			fullPath,
 			name,
 			ctx,
 			type: 'system'
@@ -153,12 +163,14 @@ export function getFieldInfo(path: string, ctx: ComponentInterface): FieldInfo {
 
 	if (props[propName]) {
 		if (chunks) {
-			chunks[0] = propName;
-			path = chunks.join('.');
+			chunks[rootI] = propName;
+			path = chunks.slice(chunks).join('.');
+			fullPath = chunks.join('.');
 		}
 
 		return {
 			path,
+			fullPath,
 			name,
 			ctx,
 			type: 'prop'
@@ -167,6 +179,7 @@ export function getFieldInfo(path: string, ctx: ComponentInterface): FieldInfo {
 
 	return {
 		path,
+		fullPath,
 		name,
 		ctx,
 		type: computed[name] ? 'computed' : accessors[name] ? 'accessor' : 'system'
