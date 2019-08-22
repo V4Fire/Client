@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-beta.143 (2019-08-22)
+
+#### :bug: Bug Fix
+
+* Fixed `bImage` with broken images
+
 ## v3.0.0-beta.142 (2019-08-21)
 
 #### :bug: Bug Fix
