@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-beta.144 (2019-08-22)
+
+#### :nail_care: Internal
+
+* Improved `core/data/middlewares/attachMock`
+
 ## v3.0.0-beta.143 (2019-08-22)
 
 #### :bug: Bug Fix
