@@ -19,13 +19,13 @@
 	- block body
 		- super
 
-		- block broken
-			< .&__broken
-				+= self.slot('broken')
-
 		- block overlay
 			< .&__overlay
 				+= self.slot('overlay')
+
+		- block broken
+			< .&__broken
+				+= self.slot('broken')
 
 		- block image
 			< .&__img ref = img
