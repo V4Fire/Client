@@ -9,10 +9,14 @@
 @import "global/g-def/funcs.styl"
 @import "global/g-def/consts.styl"
 
+// @stlint-disable
+
 $p = {
 	helpers: false
 	sizes: setSizes({table: SIZES, units: "rem"}, "global")
 }
+
+// @stlint-enable
 
 i-size
 	if $p.helpers && $p.sizes

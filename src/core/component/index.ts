@@ -53,7 +53,7 @@ export {
 
 	customWatcherRgxp,
 	runHook,
-	getFieldRealInfo,
+	getFieldInfo,
 	cloneWatchValue,
 	bindWatchers
 

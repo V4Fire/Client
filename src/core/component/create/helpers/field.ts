@@ -9,29 +9,66 @@
 import { ComponentInterface, PropOptions, ComponentField, SystemField } from 'core/component/interface';
 import { defaultWrapper, NULL } from 'core/component/create/helpers/const';
 
-export interface FieldRealInfo {
+export interface FieldInfo {
+	path: string;
+	fullPath: string;
 	name: string;
+	ctx: ComponentInterface;
 	type: 'prop' | 'field' | 'system' | 'computed' | 'accessor';
 }
 
 const
 	propRgxp = /Prop$/,
-	storeRgxp = /Store$/;
+	storeRgxp = /Store$/,
+	hasSeparator = /\./;
 
 /**
- * Returns an object with real component field info
+ * Returns an object with component field info by the specified path
  *
- * @param component
- * @param name
+ * @param path
+ * @param ctx
  */
-export function getFieldRealInfo(component: ComponentInterface, name: string): FieldRealInfo {
+export function getFieldInfo(path: string, ctx: ComponentInterface): FieldInfo {
+	let
+		name = path,
+		fullPath = path,
+		chunks,
+		rootI;
+
+	if (hasSeparator.test(path)) {
+		chunks = path.split('.');
+		rootI = 0;
+
+		let
+			obj = ctx;
+
+		for (let i = 0; i < chunks.length; i++) {
+			if (!obj) {
+				break;
+			}
+
+			obj = obj[chunks[i]];
+
+			if (obj && obj.instance instanceof ComponentInterface) {
+				ctx = obj;
+				rootI = i === chunks.length - 1 ? i : i + 1;
+			}
+		}
+
+		path = chunks.slice(rootI).join('.');
+		name = chunks[rootI];
+	}
+
 	const
 		// @ts-ignore (access)
-		{props, fields, systemFields, computed, accessors} = component.meta;
+		{props, fields, systemFields, computed, accessors} = ctx.meta;
 
 	if (propRgxp.test(name)) {
 		return {
+			path,
+			fullPath,
 			name,
+			ctx,
 			type: 'prop'
 		};
 	}
@@ -39,34 +76,49 @@ export function getFieldRealInfo(component: ComponentInterface, name: string): F
 	if (storeRgxp.test(name)) {
 		if (fields[name]) {
 			return {
+				path,
+				fullPath,
 				name,
+				ctx,
 				type: 'field'
 			};
 		}
 
 		return {
+			path,
+			fullPath,
 			name,
+			ctx,
 			type: 'system'
 		};
 	}
 
 	if (fields[name]) {
 		return {
+			path,
+			fullPath,
 			name,
+			ctx,
 			type: 'field'
 		};
 	}
 
 	if (props[name]) {
 		return {
+			path,
+			fullPath,
 			name,
+			ctx,
 			type: 'prop'
 		};
 	}
 
 	if (systemFields[name]) {
 		return {
+			path,
+			fullPath,
 			name,
+			ctx,
 			type: 'system'
 		};
 	}
@@ -75,15 +127,33 @@ export function getFieldRealInfo(component: ComponentInterface, name: string): F
 		storeName = `${name}Store`;
 
 	if (fields[storeName]) {
+		if (chunks) {
+			chunks[rootI] = storeName;
+			path = chunks.slice(chunks).join('.');
+			fullPath = chunks.join('.');
+		}
+
 		return {
-			name: storeName,
+			path,
+			fullPath,
+			name,
+			ctx,
 			type: 'field'
 		};
 	}
 
 	if (systemFields[storeName]) {
+		if (chunks) {
+			chunks[rootI] = storeName;
+			path = chunks.slice(chunks).join('.');
+			fullPath = chunks.join('.');
+		}
+
 		return {
-			name: storeName,
+			path,
+			fullPath,
+			name,
+			ctx,
 			type: 'system'
 		};
 	}
@@ -92,14 +162,26 @@ export function getFieldRealInfo(component: ComponentInterface, name: string): F
 		propName = `${name}Prop`;
 
 	if (props[propName]) {
+		if (chunks) {
+			chunks[rootI] = propName;
+			path = chunks.slice(chunks).join('.');
+			fullPath = chunks.join('.');
+		}
+
 		return {
-			name: propName,
+			path,
+			fullPath,
+			name,
+			ctx,
 			type: 'prop'
 		};
 	}
 
 	return {
+		path,
+		fullPath,
 		name,
+		ctx,
 		type: computed[name] ? 'computed' : accessors[name] ? 'accessor' : 'system'
 	};
 }

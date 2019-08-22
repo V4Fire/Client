@@ -16,16 +16,20 @@ $p = {
 }
 
 b-image extends i-message
+	// @stlint-disable
 	i-progress({helpers: $p.progressHelpers})
 	i-visible({helpers: $p.visibleHelpers})
+	// @stlint-enable
 
-	size 100%
 	position relative
+	size 100%
 	overflow hidden
 
 	&__overlay
-	&__broken
 		position absolute
+
+	&__overlay
+	&__broken
 		size 100%
 		pointer-events none
 

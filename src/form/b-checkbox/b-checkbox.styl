@@ -17,7 +17,9 @@ $p = {
 }
 
 b-checkbox extends i-input
+	// @stlint-disable
 	i-size({helpers: $p.sizeHelpers})
+	// @stlint-enable
 
 	position relative
 	display inline-block
@@ -33,9 +35,8 @@ b-checkbox extends i-input
 		cursor pointer
 
 		&::after
-			position absolute
-
 			content ""
+			position absolute
 			display none
 
 	&_checked_true &__box::after

@@ -14,7 +14,9 @@ $p = {
 }
 
 b-up extends i-block
+	// @stlint-disable
 	i-visible({helpers: $p.visibleHelpers})
+	// @stlint-enable
 
 	fixed bottom 0 left 0
 	zIndex(modal)
@@ -24,6 +26,7 @@ b-up extends i-block
 	justify-content flex-end
 
 	height 100%
+
 	cursor pointer
 
 	&__root-wrapper

@@ -7,7 +7,7 @@
  */
 
 import iBlock from 'super/i-block/i-block';
-import { getFieldRealInfo } from 'core/component';
+import { getFieldInfo } from 'core/component';
 
 export interface FieldGetter<R = unknown, D = unknown> {
 	(key: string, data: NonNullable<D>): R;
@@ -63,29 +63,31 @@ export default class Field {
 			isComponent = true;
 		}
 
-		const
-			chunks = path.split('.');
-
 		let
 			isField = isComponent,
-			res = obj;
+			res = obj,
+			chunks;
 
 		if (isComponent) {
 			const
-				nm = chunks[0],
-				info = getFieldRealInfo(ctx, nm);
+				info = getFieldInfo(path, ctx);
 
-			isField =
-				info.type === 'field';
+			// @ts-ignore
+			ctx = info.ctx;
+			isField = info.type === 'field';
+			chunks = info.path.split('.');
 
 			if (isField) {
 				// @ts-ignore (access)
 				res = ctx.$$data;
 			}
 
-			if (isField && ctx.lfc.isBeforeCreate() || !(nm in res)) {
+			if (isField && ctx.lfc.isBeforeCreate() || !(chunks[0] in res)) {
 				chunks[0] = info.name;
 			}
+
+		} else {
+			chunks = path.split('.');
 		}
 
 		for (let i = 0; i < chunks.length; i++) {
@@ -122,29 +124,33 @@ export default class Field {
 		}
 
 		const
-			chunks = path.split('.'),
 			isReady = !ctx.lfc.isBeforeCreate();
 
 		let
 			isField = isComponent,
-			ref = obj;
+			ref = obj,
+			chunks;
 
 		if (isComponent) {
 			const
-				nm = chunks[0],
-				info = getFieldRealInfo(ctx, nm);
+				info = getFieldInfo(path, ctx);
 
-			isField =
-				info.type === 'field';
+			// @ts-ignore
+			ctx = info.ctx;
+			isField = info.type === 'field';
+			chunks = info.path.split('.');
 
 			if (isField) {
 				// @ts-ignore (access)
 				ref = ctx.$$data;
 			}
 
-			if (isField && !isReady || !(nm in ref)) {
+			if (isField && !isReady || !(chunks[0] in ref)) {
 				chunks[0] = info.name;
 			}
+
+		} else {
+			chunks = path.split('.');
 		}
 
 		for (let i = 0; i < chunks.length; i++) {
@@ -204,18 +210,24 @@ export default class Field {
 		}
 
 		const
-			chunks = path.split('.'),
 			isReady = !ctx.lfc.isBeforeCreate();
 
 		let
-			isField = isComponent;
+			isField = isComponent,
+			chunks;
 
 		if (isComponent) {
 			const
-				info = getFieldRealInfo(ctx, chunks[0]);
+				info = getFieldInfo(path, ctx);
 
-			chunks[0] = info.name;
+			// @ts-ignore
+			ctx = info.ctx;
 			isField = info.type === 'field';
+			chunks = info.path.split('.');
+			chunks[0] = info.name;
+
+		} else {
+			chunks = path.split('.');
 		}
 
 		let

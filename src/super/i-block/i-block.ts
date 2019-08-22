@@ -81,7 +81,7 @@ import {
 
 	globalEvent,
 	hook,
-	getFieldRealInfo,
+	getFieldInfo,
 	cloneWatchValue,
 	bindWatchers,
 
@@ -1003,7 +1003,10 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 		const
 			p = params || {};
 
-		if (Object.isString(exprOrFn) && isCustomWatcher.test(exprOrFn)) {
+		if (Object.isString(exprOrFn) && (
+			isCustomWatcher.test(exprOrFn) ||
+			getFieldInfo(exprOrFn, this).type === 'system')
+		) {
 			bindWatchers(this, {
 				async: <Async<any>>this.async,
 				watchers: {
@@ -1567,18 +1570,24 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 		opts: BaseWatchOptionsWithHandler<T>
 	): Function {
 		const
-			{watchCache} = this,
 			{handler} = opts;
 
 		let
 			oldVal,
+			watchCache,
 			needCache;
 
 		if (Object.isString(exprOrFn)) {
+			const
+				info = getFieldInfo(exprOrFn, this);
+
+			exprOrFn = info.fullPath;
 			needCache = handler.length > 1;
-			exprOrFn = getFieldRealInfo(this, exprOrFn).name;
 
 			if (needCache) {
+				// @ts-ignore (access)
+				watchCache = info.ctx.watchCache;
+
 				oldVal = watchCache[exprOrFn] = exprOrFn in watchCache ?
 					watchCache[exprOrFn] : cloneWatchValue(this.field.get(exprOrFn));
 			}

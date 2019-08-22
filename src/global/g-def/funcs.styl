@@ -31,6 +31,8 @@ img($img)
 		background-image: background-image
 	}
 
+	// @stlint-disable
+
 	if !$IMG[$img]
 		$IMG[$img] = {
 			selectors: ()
@@ -39,6 +41,8 @@ img($img)
 
 	$obj = $IMG[$img]
 	$props = $obj.props
+
+	// @stlint-enable
 
 	push($obj.selectors, selector())
 	$props[$keys[$prop]] = true

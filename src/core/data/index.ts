@@ -17,8 +17,9 @@ import Async, { AsyncCbOpts } from 'core/async';
 import IO, { Socket } from 'core/socket';
 
 import { concatUrls } from 'core/url';
-import { ModelMethods, SocketEvent, ProviderParams, FunctionalExtraProviders } from 'core/data/interface';
+import { ModelMethods, SocketEvent, ProviderParams, FunctionalExtraProviders, Mocks } from 'core/data/interface';
 import { providers } from 'core/data/const';
+import { attachMock } from 'core/data/middlewares';
 
 import request, {
 
@@ -42,6 +43,7 @@ import request, {
 
 export * from 'core/data/const';
 export * from 'core/data/interface';
+export * from 'core/data/middlewares';
 
 export { RequestMethods, RequestError } from 'core/request';
 export {
@@ -49,8 +51,11 @@ export {
 	globalOpts,
 	Socket,
 	CreateRequestOpts,
+
+	Mocks,
 	Middlewares,
 	MiddlewareParams,
+
 	CacheStrategy,
 	RequestQuery,
 	RequestResponse,
@@ -58,6 +63,7 @@ export {
 	RequestFunctionResponse,
 	Response,
 	RequestBody
+
 };
 
 export type EncodersTable = Record<ModelMethods | 'def', Encoders> | {};
@@ -142,7 +148,9 @@ export default class Provider {
 	/**
 	 * Request middlewares
 	 */
-	static readonly middlewares: Middlewares = {};
+	static readonly middlewares: Middlewares = {
+		attachMock
+	};
 
 	/**
 	 * Data encoders
@@ -163,6 +171,11 @@ export default class Provider {
 	static select<T extends unknown = unknown>(value: unknown, params: any): CanUndef<T> {
 		return select(value, params);
 	}
+
+	/*
+	 * Request mock objects
+	 */
+	mocks?: Mocks;
 
 	/**
 	 * HTTP method for .get()

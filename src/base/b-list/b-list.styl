@@ -16,8 +16,10 @@ $p = {
 }
 
 b-list extends i-data
+	// @stlint-disable
 	i-visible({helpers: $p.visibleHelpers})
 	i-width({helpers: $p.widthHelpers})
+	// @stlint-enable
 
 	&__wrapper
 	&__link
