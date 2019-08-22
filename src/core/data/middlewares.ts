@@ -91,8 +91,8 @@ export async function attachMock(this: Provider, params: MiddlewareParams): Prom
 		}
 	}
 
-	if (!currentRequest) {
-		return;
+	if (Object.isPromise(currentRequest)) {
+		currentRequest = await currentRequest;
 	}
 
 	if (Object.isFunction(currentRequest)) {
@@ -101,6 +101,10 @@ export async function attachMock(this: Provider, params: MiddlewareParams): Prom
 
 	if (Object.isPromise(currentRequest)) {
 		currentRequest = await currentRequest;
+	}
+
+	if (!currentRequest) {
+		return;
 	}
 
 	return () => Then.resolve(currentRequest.response, ctx.parent)

@@ -17,19 +17,23 @@ import {
 
 } from 'core/request/interface';
 
+export type MockResponseType =
+	ResponseType |
+	object;
+
 export interface Mock {
 	status?: number;
 	query?: RequestQuery;
 	body?: RequestBody;
 	headers?: Dictionary<CanArray<unknown>>;
 	decoders?: boolean;
-	response: CanPromise<ResponseType> | ((params: MiddlewareParams) => CanPromise<ResponseType>);
+	response: CanPromise<MockResponseType> | ((params: MiddlewareParams) => CanPromise<MockResponseType>);
 }
 
-export type Mocks = CanPromise<Record<
-	RequestMethods,
-	Mock[]
->>;
+export type Mocks = CanPromise<
+	{[key in RequestMethods]?: Mock[]} |
+	{default: {[key in RequestMethods]?: Mock[]}}
+>;
 
 export type ModelMethods =
 	'peek' |
