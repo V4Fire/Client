@@ -990,25 +990,25 @@ export function select<T extends unknown = unknown>(value: unknown, params: Prov
 		res;
 
 	if ((Object.isObject(target) || Object.isArray(target)) && from != null) {
-		target = Object.get(target, String(from));
+		res = target = Object.get(target, String(from));
 	}
 
-	const isMatch = (obj, match) => {
+	const getMatch = (obj, where) => {
 		if (!obj) {
 			return false;
 		}
 
-		if (!match || obj === match) {
-			return true;
+		if (!where || obj === where) {
+			return obj;
 		}
 
-		if (!Object.isObject(match) && !Object.isArray(match)) {
+		if (!Object.isObject(where) && !Object.isArray(where)) {
 			return false;
 		}
 
 		let res;
 
-		Object.forEach<string, string>(match, (v, k) => {
+		Object.forEach<string, string>(where, (v, k) => {
 			if (Object.isObject(obj) && !(k in obj)) {
 				return;
 			}
@@ -1017,7 +1017,7 @@ export function select<T extends unknown = unknown>(value: unknown, params: Prov
 				return;
 			}
 
-			res = true;
+			res = obj;
 		});
 
 		return res;
@@ -1031,11 +1031,17 @@ export function select<T extends unknown = unknown>(value: unknown, params: Prov
 			const
 				w = whereArray[i];
 
-			if (Object.isObject(target) && isMatch(target, w)) {
-				break;
+			if (Object.isObject(target)) {
+				const
+					match = getMatch(target, w);
+
+				if (match) {
+					res = match;
+					break;
+				}
 			}
 
-			if (Object.isArray(target) && target.some((a) => (isMatch(a, w) ? (res = a, true) : false))) {
+			if (Object.isArray(target) && target.some((a) => (getMatch(a, w) ? (res = a, true) : false))) {
 				break;
 			}
 		}
