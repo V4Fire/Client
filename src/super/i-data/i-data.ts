@@ -25,7 +25,6 @@ import Provider, {
 	Response,
 	ModelMethods,
 	ProviderParams,
-	ExtraProvider,
 	ExtraProviders
 
 } from 'core/data';
@@ -71,8 +70,6 @@ import {
 	SocketEvent
 
 } from 'super/i-data/modules/interface';
-
-import ProviderDataStore from 'super/i-static-page/modules/provider-data-store';
 
 export * from 'super/i-message/i-message';
 export * from 'super/i-data/modules/interface';

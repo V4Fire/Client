@@ -7,7 +7,8 @@
  */
 
 import symbolGenerator from 'core/symbol';
-import Provider, { ProviderSelectParams, select, providers } from 'core/data';
+import Provider, { providers } from 'core/data';
+import select, { SelectParams } from 'core/select';
 
 export const
 	$$ = symbolGenerator();
@@ -59,7 +60,7 @@ export class ProviderDataItem<T extends unknown = unknown> {
 			return provider.select(value, params);
 		}
 
-		return select(value, params as ProviderSelectParams);
+		return select(value, params as SelectParams);
 	}
 }
 

@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-export interface ProviderSelectParams {
+export interface SelectParams {
 	from?: string | number;
 	where?: Dictionary | Dictionary[];
 }
@@ -17,7 +17,7 @@ export interface ProviderSelectParams {
  * @param value
  * @param params
  */
-export default function select<T extends unknown = unknown>(value: unknown, params: ProviderSelectParams): CanUndef<T> {
+export default function select<T extends unknown = unknown>(value: unknown, params: SelectParams): CanUndef<T> {
 	const
 		{where, from} = params;
 
@@ -61,7 +61,7 @@ export default function select<T extends unknown = unknown>(value: unknown, para
 
 	if (where) {
 		const
-			whereArray = (<ProviderSelectParams['where'][]>[]).concat(where);
+			whereArray = (<SelectParams['where'][]>[]).concat(where);
 
 		for (let i = 0; i < whereArray.length; i++) {
 			const
