@@ -15,7 +15,7 @@ export const
 export type Label = string | number | symbol;
 export type ProviderOrUnknown = string | unknown;
 
-export class DataStoreItem<T extends unknown = unknown> {
+export class ProviderDataItem<T extends unknown = unknown> {
 	/**
 	 * Item key
 	 */
@@ -63,27 +63,27 @@ export class DataStoreItem<T extends unknown = unknown> {
 	}
 }
 
-export default class DataStore {
+export default class ProviderDataStore {
 	/**
 	 * Providers store
 	 */
-	protected store: Dictionary<DataStoreItem<ProviderOrUnknown>> = {};
+	protected store: Dictionary<ProviderDataItem<ProviderOrUnknown>> = {};
 
 	/**
 	 * Dummy of DataStoreItem
 	 */
-	protected dummy: DataStoreItem<undefined>;
+	protected dummy: ProviderDataItem<undefined>;
 
 	constructor() {
-		this.dummy = new DataStoreItem($$.empty, undefined);
+		this.dummy = new ProviderDataItem($$.empty, undefined);
 	}
 
 	/**
 	 * Returns a specified provider saved data
 	 * @param name
 	 */
-	get<T>(name: string): DataStoreItem<T> {
-		return <DataStoreItem<T>>this.store[name] || this.dummy;
+	get<T>(name: string): ProviderDataItem<T> {
+		return <ProviderDataItem<T>>this.store[name] || this.dummy;
 	}
 
 	/**
@@ -91,7 +91,7 @@ export default class DataStore {
 	 * @param key
 	 */
 	set(key: string, value: unknown): void {
-		this.store[key] = new DataStoreItem(key, value);
+		this.store[key] = new ProviderDataItem(key, value);
 	}
 
 	/**

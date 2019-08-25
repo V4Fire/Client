@@ -72,7 +72,7 @@ import {
 
 } from 'super/i-data/modules/interface';
 
-import DataStore from 'super/i-static-page/modules/data-store';
+import ProviderDataStore from 'super/i-static-page/modules/provider-data-store';
 
 export * from 'super/i-message/i-message';
 export * from 'super/i-data/modules/interface';
