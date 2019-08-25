@@ -671,7 +671,7 @@ export default abstract class iData<T extends object = Dictionary> extends iMess
 	 * @param data
 	 * @param [key]
 	 */
-	protected saveToDataStore(data: unknown, key?: string): void {
+	protected saveProvidedData(data: unknown, key?: string): void {
 		key = key || this.dataProvider;
 
 		if (!key) {
@@ -829,7 +829,7 @@ export default abstract class iData<T extends object = Dictionary> extends iMess
 			const
 				v = res.data || undefined;
 
-			this.saveToDataStore(v);
+			this.saveProvidedData(v, this.dataProvider);
 			return v;
 		});
 	}

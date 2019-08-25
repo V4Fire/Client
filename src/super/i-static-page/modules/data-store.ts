@@ -22,12 +22,12 @@ export class DataStoreItem<T extends unknown = unknown> {
 	protected key: string;
 
 	/**
-	 * Item value;
+	 * Item value
 	 */
 	protected value: CanUndef<T>;
 
 	/**
-	 * Link to provider
+	 * Link to data provider
 	 */
 	protected get provider(): CanUndef<typeof Provider> {
 		return providers[this.key] as typeof Provider;

@@ -976,7 +976,7 @@ export default class Provider {
 }
 
 /**
- * Find element by specified params
+ * Finds an element by specified params
  *
  * @param value
  * @param params
