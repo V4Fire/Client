@@ -14,7 +14,7 @@ import Then from 'core/then';
 import symbolGenerator from 'core/symbol';
 import Async, { AsyncCbOpts } from 'core/async';
 import IO, { Socket } from 'core/socket';
-import select from 'core/select';
+import select, {SelectParams} from 'core/select';
 
 import { concatUrls } from 'core/url';
 import { ModelMethods, SocketEvent, ProviderParams, FunctionalExtraProviders, Mocks } from 'core/data/interface';
@@ -149,7 +149,7 @@ export default class Provider {
 	 * @param value
 	 * @param params
 	 */
-	static select<T extends unknown = unknown>(value: unknown, params: any): CanUndef<T> {
+	static select<T extends unknown = unknown>(value: unknown, params: SelectParams): CanUndef<T> {
 		return select(value, params);
 	}
 
