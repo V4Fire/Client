@@ -126,20 +126,6 @@ const queryMethods = {
  */
 @provider
 export default class Provider {
-
-	/**
-	 * Alias for the request function
-	 */
-	get request(): typeof request {
-		return (<typeof Provider>this.constructor).request;
-	}
-
-	/**
-	 * Name of the provider
-	 */
-	get providerName(): string {
-		return this.constructor[$$.namespace];
-	}
 	/**
 	 * Request Function
 	 */
@@ -297,6 +283,20 @@ export default class Provider {
 	 * (for all data providers)
 	 */
 	readonly globalEvent: EventEmitter = globalEvent;
+
+	/**
+	 * Alias for the request function
+	 */
+	get request(): typeof request {
+		return (<typeof Provider>this.constructor).request;
+	}
+
+	/**
+	 * Name of the provider
+	 */
+	get providerName(): string {
+		return this.constructor[$$.namespace];
+	}
 
 	/**
 	 * Map for data events

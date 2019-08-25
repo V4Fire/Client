@@ -666,12 +666,12 @@ export default abstract class iData<T extends object = Dictionary> extends iMess
 	}
 
 	/**
-	 * Accumulates all loaded data in root
+	 * Saves specified data in root data store
 	 *
 	 * @param data
 	 * @param [key]
 	 */
-	protected accumulate(data: unknown, key?: string): void {
+	protected saveToDataStore(data: unknown, key?: string): void {
 		key = key || this.dataProvider;
 
 		if (!key) {
@@ -829,7 +829,7 @@ export default abstract class iData<T extends object = Dictionary> extends iMess
 			const
 				v = res.data || undefined;
 
-			this.accumulate(v);
+			this.saveToDataStore(v);
 			return v;
 		});
 	}
