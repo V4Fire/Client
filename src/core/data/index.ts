@@ -14,7 +14,7 @@ import Then from 'core/then';
 import symbolGenerator from 'core/symbol';
 import Async, { AsyncCbOpts } from 'core/async';
 import IO, { Socket } from 'core/socket';
-import select, {SelectParams} from 'core/select';
+import select, { SelectParams } from 'core/select';
 
 import { concatUrls } from 'core/url';
 import { ModelMethods, SocketEvent, ProviderParams, FunctionalExtraProviders, Mocks } from 'core/data/interface';
@@ -144,7 +144,7 @@ export default class Provider {
 	static readonly decoders: DecodersTable = {};
 
 	/**
-	 * Selects data by specified params
+	 * Selects a data by specified params
 	 *
 	 * @param value
 	 * @param params
