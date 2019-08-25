@@ -6,7 +6,6 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-// tslint:disable: max-file-line-count
 //#set runtime.core/data
 
 import { EventEmitter2 as EventEmitter } from 'eventemitter2';
@@ -15,6 +14,7 @@ import Then from 'core/then';
 import symbolGenerator from 'core/symbol';
 import Async, { AsyncCbOpts } from 'core/async';
 import IO, { Socket } from 'core/socket';
+import Select from 'core/select';
 
 import { concatUrls } from 'core/url';
 import { ModelMethods, SocketEvent, ProviderParams, FunctionalExtraProviders, Mocks } from 'core/data/interface';
@@ -68,11 +68,6 @@ export {
 
 export type EncodersTable = Record<ModelMethods | 'def', Encoders> | {};
 export type DecodersTable = Record<ModelMethods | 'def', Decoders> | {};
-
-export interface ProviderSelectParams {
-	from?: string | number;
-	where?: Dictionary | Dictionary[];
-}
 
 const globalEvent = new EventEmitter({
 	maxListeners: 1e3,
@@ -155,7 +150,7 @@ export default class Provider {
 	 * @param params
 	 */
 	static select<T extends unknown = unknown>(value: unknown, params: any): CanUndef<T> {
-		return select(value, params);
+		return Select(value, params);
 	}
 
 	/*
@@ -973,79 +968,4 @@ export default class Provider {
 
 		return req;
 	}
-}
-
-/**
- * Finds an element by specified params
- *
- * @param value
- * @param params
- */
-export function select<T extends unknown = unknown>(value: unknown, params: ProviderSelectParams): CanUndef<T> {
-	const
-		{where, from} = params;
-
-	let
-		target = value,
-		res;
-
-	if ((Object.isObject(target) || Object.isArray(target)) && from != null) {
-		res = target = Object.get(target, String(from));
-	}
-
-	const getMatch = (obj, where) => {
-		if (!obj) {
-			return false;
-		}
-
-		if (!where || obj === where) {
-			return obj;
-		}
-
-		if (!Object.isObject(where) && !Object.isArray(where)) {
-			return false;
-		}
-
-		let res;
-
-		Object.forEach<string, string>(where, (v, k) => {
-			if (Object.isObject(obj) && !(k in obj)) {
-				return;
-			}
-
-			if (v !== obj[k]) {
-				return;
-			}
-
-			res = obj;
-		});
-
-		return res;
-	};
-
-	if (where) {
-		const
-			whereArray = (<ProviderSelectParams['where'][]>[]).concat(where);
-
-		for (let i = 0; i < whereArray.length; i++) {
-			const
-				w = whereArray[i];
-
-			if (Object.isObject(target)) {
-				const
-					match = getMatch(target, w);
-
-				if (match) {
-					res = match;
-					break;
-				}
-			}
-
-			if (Object.isArray(target) && target.some((a) => (getMatch(a, w) ? (res = a, true) : false))) {
-				break;
-			}
-		}
-	}
-
-	return res;
 }
