@@ -8,9 +8,9 @@
 
 - namespace [%fileName%]
 
-- include 'super/i-block'|b as placeholder
+- include 'super/i-data'|b as placeholder
 
-- template index() extends ['i-block'].index
+- template index() extends ['i-data'].index
 	- windowEvents = { &
 		'@touchstart': 'onStart',
 		'@touchmove': 'onMove',
@@ -18,13 +18,28 @@
 	} .
 
 	- block body
+		: putIn content
+			+= self.slot('before')
+
+			< template v-if = $scopedSlots.default
+				+= self.slot()
+
+			< template v-else-if = option
+				< template v-for = el in options
+					< component.&__option &
+						:is = option |
+						:v-attrs = Object.isFunction(optionProps) ? optionProps(el) : optionProps
+					.
+
+			+= self.slot('after')
+
 		< .&__window &
 			v-if = isSlider |
 			${windowEvents}
 		.
 			< .&__view ref = view
 				< .&__view-wrapper ref = wrapper
-					+= self.slot()
+					+= content
 
 		< .&__window v-else
 			< .&__view-wrapper ref = view
@@ -32,8 +47,8 @@
 					v-if = dynamicHeight |
 					ref = fake |
 				.
-					+= self.slot()
+					+= content
 
 				< .&__outer-view-wrapper
 					< .&__view-wrapper ref = wrapper
-						+= self.slot()
+						+= content

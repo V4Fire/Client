@@ -11,7 +11,9 @@ import iOpenToggle, { CloseHelperEvents } from 'traits/i-open-toggle/i-open-togg
 import iLockPageScroll from 'traits/i-lock-page-scroll/i-lock-page-scroll';
 
 import iData, { component, hook, prop, ModsDecl, ModEvent, SetModEvent } from 'super/i-data/i-data';
+
 export * from 'super/i-data/i-data';
+export * from 'traits/i-open-toggle/i-open-toggle';
 
 @component()
 export default class bSidebar<T extends object = Dictionary> extends iData<T>

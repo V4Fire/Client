@@ -11,18 +11,21 @@
 - include 'super/i-message'|b as placeholder
 
 - template index() extends ['i-message'].index
-	- rootWrapper = true
+	- rootWrapper = false
+
+	- block rootAttrs
+		? Object.assign(rootAttrs, {role: 'img', ':aria-label': 'alt'})
 
 	- block body
 		- super
 
-		- block broken
-			< .&__broken
-				+= self.slot('broken')
-
 		- block overlay
 			< .&__overlay
 				+= self.slot('overlay')
+
+		- block broken
+			< .&__broken
+				+= self.slot('broken')
 
 		- block image
 			< .&__img ref = img

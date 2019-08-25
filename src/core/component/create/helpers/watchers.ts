@@ -8,7 +8,7 @@
 
 import Async from 'core/async';
 import { GLOBAL } from 'core/env';
-import { getFieldRealInfo, ComponentInterface, WatchOptions, WatchOptionsWithHandler } from 'core/component';
+import { getFieldInfo, ComponentInterface, WatchOptions, WatchOptionsWithHandler } from 'core/component';
 
 export interface BindWatchersParams<A extends object = ComponentInterface> {
 	async?: Async<A>;
@@ -73,7 +73,8 @@ export function bindWatchers(
 		$watch = ctx.$$watch || ctx.$watch,
 
 		// @ts-ignore (access)
-		$a = async || ctx.$async;
+		selfAsync = ctx.$async,
+		$a = async || selfAsync;
 
 	const
 		// @ts-ignore (access)
@@ -223,21 +224,26 @@ export function bindWatchers(
 							return;
 						}
 
-						const info = getFieldRealInfo(ctx, key);
-						key = info.name;
+						const
+							info = getFieldInfo(key, ctx);
 
 						if (info.type === 'system') {
+							key = info.name;
+
+							const
+								fieldCtx = info.ctx;
+
 							let
-								watchers = systemWatchers.get(ctx);
+								watchers = systemWatchers.get(fieldCtx);
 
 							if (!watchers) {
 								watchers = {};
-								systemWatchers.set(ctx, watchers);
+								systemWatchers.set(fieldCtx, watchers);
 							}
 
 							let
 								watcher = watchers[key],
-								store = ctx[key];
+								store = fieldCtx[key];
 
 							if (!watcher) {
 								watcher = watchers[key] = {
@@ -247,7 +253,7 @@ export function bindWatchers(
 								const
 									cbs = watcher.cb;
 
-								Object.defineProperty(ctx, key, {
+								Object.defineProperty(fieldCtx, key, {
 									enumerable: true,
 									configurable: true,
 									get: () => store,
@@ -266,11 +272,17 @@ export function bindWatchers(
 								});
 							}
 
+							handler = selfAsync.proxy(handler, {
+								...group,
+								single: false,
+								onClear: () => watcher && watcher.cb.delete(handler)
+							});
+
 							watcher.cb.add(handler);
 							watchObj.immediate && handler(store);
 
 						} else {
-							const unwatch = $watch.call(ctx, key, {
+							const unwatch = $watch.call(ctx, info.fullPath, {
 								deep: watchObj.deep,
 								immediate: watchObj.immediate,
 								handler
@@ -296,21 +308,26 @@ export function bindWatchers(
 						continue;
 					}
 
-					const info = getFieldRealInfo(ctx, key);
-					key = info.name;
+					const
+						info = getFieldInfo(key, ctx);
 
 					if (info.type === 'system') {
+						key = info.name;
+
+						const
+							fieldCtx = info.ctx;
+
 						let
-							watchers = systemWatchers.get(ctx);
+							watchers = systemWatchers.get(fieldCtx);
 
 						if (!watchers) {
 							watchers = {};
-							systemWatchers.set(ctx, watchers);
+							systemWatchers.set(fieldCtx, watchers);
 						}
 
 						let
 							watcher = watchers[key],
-							store = ctx[key];
+							store = fieldCtx[key];
 
 						if (!watcher) {
 							watcher = watchers[key] = {
@@ -320,7 +337,7 @@ export function bindWatchers(
 							const
 								cbs = watcher.cb;
 
-							Object.defineProperty(ctx, key, {
+							Object.defineProperty(fieldCtx, key, {
 								enumerable: true,
 								configurable: true,
 								get: () => store,
@@ -339,11 +356,17 @@ export function bindWatchers(
 							});
 						}
 
+						handler = selfAsync.proxy(handler, {
+							...group,
+							single: false,
+							onClear: () => watcher && watcher.cb.delete(handler)
+						});
+
 						watcher.cb.add(handler);
 						watchObj.immediate && handler(store);
 
 					} else {
-						const unwatch = $watch.call(ctx, key, {
+						const unwatch = $watch.call(ctx, info.fullPath, {
 							deep: watchObj.deep,
 							immediate: watchObj.immediate,
 							handler

@@ -21,6 +21,8 @@ $p = {
 
 i-message
 	if $p.messageHelpers
+		// @stlint-disable
+
 		g-hint({
 			arrow: "&::before, &::after",
 			wrapper: "&__message-box",
@@ -34,7 +36,11 @@ i-message
 			rounding: $p.messageRounding
 		})
 
+		// @stlint-enable
+
 	if $p.dropdownHelpers
+		// @stlint-disable
+
 		g-hint({
 			arrow: "&::before, &::after",
 			wrapper: "&__dropdown",
@@ -47,6 +53,8 @@ i-message
 			shadow: 0.1em 0.1em 0.5em $p.hintShadowColor,
 			rounding: 0
 		})
+
+		// @stlint-enable
 
 		&__dropdown::before
 			border-bottom-color alpha($p.hintShadowColor, 0.3)

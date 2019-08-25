@@ -6,8 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import iData, { CreateRequestOpts } from 'super/i-data/i-data';
-import { RequestQuery } from 'core/data';
+import iData, { CreateRequestOpts, RequestQuery } from 'super/i-data/i-data';
 export * from 'super/i-data/i-data';
 
 export interface Add {

@@ -80,3 +80,15 @@
 				@statusReady = ctx.debug |
 				${defAttrs}
 			.
+
+		< b-v4-component-demo
+			< b-image &
+				:src = 'https://avatars.mds.yandex.net/get-pdb/1789050/30714d83-1b23-4a48-990a-cadb3ea19a71/s1200' |
+				:ratio = 16/9 |
+				:sizeType = 'cover' |
+				:style = {width: '200px'} |
+				slot-scope = {ctx} |
+				@statusReady = ctx.debug |
+				${defAttrs}
+			.
+

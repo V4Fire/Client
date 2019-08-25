@@ -9,7 +9,8 @@
 import symbolGenerator from 'core/symbol';
 
 import iWidth from 'traits/i-width/i-width';
-import iSize, { SizeDictionary } from 'traits/i-size/i-size';
+import iRound from 'traits/i-round/i-round';
+import iSize from 'traits/i-size/i-size';
 import iIcon from 'traits/i-icon/i-icon';
 
 import iInput, {
@@ -30,7 +31,6 @@ import BlockValidators from 'form/b-input/modules/validators';
 import * as mask from 'form/b-input/modules/mask';
 //#endif
 
-export { SizeDictionary };
 export * from 'super/i-input/i-input';
 
 export type Value = string;
@@ -49,7 +49,7 @@ export default class bInput<
 	V extends Value = Value,
 	FV extends FormValue = FormValue,
 	D extends object = Dictionary
-> extends iInput<V, FV, D> implements iWidth, iSize, iIcon {
+> extends iInput<V, FV, D> implements iWidth, iRound, iSize, iIcon {
 	/** @override */
 	@prop({type: String, required: false})
 	readonly valueProp?: V;
@@ -214,13 +214,7 @@ export default class bInput<
 	static readonly mods: ModsDecl = {
 		...iWidth.mods,
 		...iSize.mods,
-
-		rounding: [
-			'none',
-			'small',
-			'normal',
-			'big'
-		],
+		...iRound.mods,
 
 		empty: [
 			'true',

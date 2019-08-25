@@ -53,7 +53,7 @@ export {
 
 	customWatcherRgxp,
 	runHook,
-	getFieldRealInfo,
+	getFieldInfo,
 	cloneWatchValue,
 	bindWatchers
 
@@ -194,7 +194,7 @@ export function component(params?: ComponentParams): Function {
 				let
 					parentComponent = parent;
 
-				while (parentName === componentName) {
+				while (parentName === name) {
 					parentComponent = Object.getPrototypeOf(parentComponent);
 
 					if (parentComponent) {

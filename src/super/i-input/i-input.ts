@@ -34,8 +34,8 @@ import {
 
 } from 'super/i-input/modules/interface';
 
-export * from 'super/i-input/modules/interface';
 export * from 'super/i-data/i-data';
+export * from 'super/i-input/modules/interface';
 
 @component({
 	model: {

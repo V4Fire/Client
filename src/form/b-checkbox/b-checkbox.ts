@@ -7,10 +7,9 @@
  */
 
 import symbolGenerator from 'core/symbol';
-import iSize, { SizeDictionary } from 'traits/i-size/i-size';
-import iInput, { component, prop, ModsDecl } from 'super/i-input/i-input';
+import iSize from 'traits/i-size/i-size';
 
-export { SizeDictionary };
+import iInput, { component, prop, ModsDecl } from 'super/i-input/i-input';
 export * from 'super/i-input/i-input';
 
 export type Value = boolean;

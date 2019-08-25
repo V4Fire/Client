@@ -1,2 +1,2 @@
 package('b-slider')
-	.extends('i-block');
+	.extends('i-data');

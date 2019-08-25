@@ -17,8 +17,10 @@ $p = {
 }
 
 b-window extends i-data
+	// @stlint-disable
 	i-visible({helpers: $p.visibleHelpers})
 	i-width({helpers: $p.widthHelpers, selector: ("&__window")})
+	// @stlint-enable
 
 	zIndex($p.zIndexPos)
 	top 0

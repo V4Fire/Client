@@ -45,7 +45,7 @@
  * Creates a component by the specified parameters
  *
  * @param {string} component
- * @param {Object=} [params] - additional parameters ({async, asyncBack, ref, if, elseIf, else, show, props, events, mods, attrs})
+ * @param {Object=} [params] - additional parameters ({ref, if, elseIf, else, show, props, events, mods, attrs})
  * @param {string=} [content] - slot content
  */
 - block index->createComponent(component, params = {}, content)
@@ -78,7 +78,7 @@
 	- if p.ref
 		? p.attrs.ref = p.ref
 
-	- forEach ['if', 'elseIf', 'else', 'show', 'async', 'asyncBack', 'model'] => el
+	- forEach ['if', 'elseIf', 'else', 'show', 'model'] => el
 		- if p[el]
 			? p.attrs['v-' + String.dasherize(el)] = p[el]
 

@@ -8,13 +8,18 @@
 
 @import "super/i-data/i-data.styl"
 @import "traits/i-visible/i-visible.styl"
+@import "traits/i-width/i-width.styl"
 
 $p = {
 	visibleHelpers: true
+	widthHelpers: true
 }
 
 b-list extends i-data
+	// @stlint-disable
 	i-visible({helpers: $p.visibleHelpers})
+	i-width({helpers: $p.widthHelpers})
+	// @stlint-enable
 
 	&__wrapper
 	&__link

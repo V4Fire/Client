@@ -6,7 +6,34 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { RequestQuery, CreateRequestOpts } from 'core/request/interface';
+import {
+
+	RequestMethods,
+	RequestQuery,
+	RequestBody,
+	ResponseType,
+	CreateRequestOpts,
+	MiddlewareParams
+
+} from 'core/request/interface';
+
+export type MockResponseType =
+	ResponseType |
+	object;
+
+export interface Mock {
+	status?: number;
+	query?: RequestQuery;
+	body?: RequestBody;
+	headers?: Dictionary<CanArray<unknown>>;
+	decoders?: boolean;
+	response: CanPromise<MockResponseType> | ((params: MiddlewareParams) => CanPromise<MockResponseType>);
+}
+
+export type Mocks = CanPromise<
+	{[key in RequestMethods]?: Mock[]} |
+	{default: {[key in RequestMethods]?: Mock[]}}
+>;
 
 export type ModelMethods =
 	'peek' |

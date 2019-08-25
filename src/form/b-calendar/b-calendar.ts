@@ -10,7 +10,8 @@ import symbolGenerator from 'core/symbol';
 import bInputTime from 'form/b-input-time/b-input-time';
 
 import iWidth from 'traits/i-width/i-width';
-import iSize, { SizeDictionary } from 'traits/i-size/i-size';
+import iRound from 'traits/i-round/i-round';
+import iSize from 'traits/i-size/i-size';
 import iIcon from 'traits/i-icon/i-icon';
 import iOpenToggle, { CloseHelperEvents } from 'traits/i-open-toggle/i-open-toggle';
 
@@ -30,9 +31,22 @@ import iInput, {
 
 } from 'super/i-input/i-input';
 
-import { Value, FormValue, Day, Range, Directions, MonthSwitchDirection } from 'form/b-calendar/modules/interface';
-export { SizeDictionary, CloseHelperEvents, Value, FormValue, Day, Range, Directions };
+import {
+
+	Value,
+	FormValue,
+	Day,
+	Range,
+	Directions,
+	MonthSwitchDirection
+
+} from 'form/b-calendar/modules/interface';
+
 export * from 'super/i-input/i-input';
+export * from 'traits/i-open-toggle/i-open-toggle';
+export * from 'form/b-calendar/modules/interface';
+
+export { Value, FormValue };
 
 export const
 	$$ = symbolGenerator();
@@ -42,7 +56,7 @@ export default class bCalendar<
 	V extends Value = Value,
 	FV extends FormValue = FormValue,
 	D extends object = Dictionary
-> extends iInput<V, FV, D> implements iWidth, iSize, iIcon, iOpenToggle {
+> extends iInput<V, FV, D> implements iWidth, iRound, iSize, iIcon, iOpenToggle {
 	/** @override */
 	@prop({type: [Array, Date], required: false})
 	// @ts-ignore
@@ -163,17 +177,11 @@ export default class bCalendar<
 	static readonly mods: ModsDecl = {
 		...iWidth.mods,
 		...iSize.mods,
+		...iRound.mods,
 
 		opened: [
 			...iOpenToggle.mods.opened,
 			['false']
-		],
-
-		rounding: [
-			'none',
-			['small'],
-			'normal',
-			'big'
 		]
 	};
 

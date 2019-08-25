@@ -6,6 +6,8 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+//#set runtime.core/data
+
 import { EventEmitter2 as EventEmitter } from 'eventemitter2';
 
 import Then from 'core/then';
@@ -14,8 +16,9 @@ import Async, { AsyncCbOpts } from 'core/async';
 import IO, { Socket } from 'core/socket';
 
 import { concatUrls } from 'core/url';
-import { ModelMethods, SocketEvent, ProviderParams, FunctionalExtraProviders } from 'core/data/interface';
+import { ModelMethods, SocketEvent, ProviderParams, FunctionalExtraProviders, Mocks } from 'core/data/interface';
 import { providers } from 'core/data/const';
+import { attachMock } from 'core/data/middlewares';
 
 import request, {
 
@@ -39,6 +42,7 @@ import request, {
 
 export * from 'core/data/const';
 export * from 'core/data/interface';
+export * from 'core/data/middlewares';
 
 export { RequestMethods, RequestError } from 'core/request';
 export {
@@ -46,8 +50,11 @@ export {
 	globalOpts,
 	Socket,
 	CreateRequestOpts,
+
+	Mocks,
 	Middlewares,
 	MiddlewareParams,
+
 	CacheStrategy,
 	RequestQuery,
 	RequestResponse,
@@ -55,6 +62,7 @@ export {
 	RequestFunctionResponse,
 	Response,
 	RequestBody
+
 };
 
 export type EncodersTable = Record<ModelMethods | 'def', Encoders> | {};
@@ -119,7 +127,9 @@ export default class Provider {
 	/**
 	 * Request middlewares
 	 */
-	static readonly middlewares: Middlewares = {};
+	static readonly middlewares: Middlewares = {
+		attachMock
+	};
 
 	/**
 	 * Data encoders
@@ -130,6 +140,11 @@ export default class Provider {
 	 * Data decoders
 	 */
 	static readonly decoders: DecodersTable = {};
+
+	/**
+	 * Request mock objects
+	 */
+	mocks?: Mocks;
 
 	/**
 	 * HTTP method for .get()
@@ -247,6 +262,12 @@ export default class Provider {
 	readonly event!: EventEmitter;
 
 	/**
+	 * Global event emitter object
+	 * (for all data providers)
+	 */
+	readonly globalEvent: EventEmitter = globalEvent;
+
+	/**
 	 * Alias for the request function
 	 */
 	get request(): typeof request {
@@ -254,10 +275,11 @@ export default class Provider {
 	}
 
 	/**
-	 * Global event emitter object
-	 * (for all data providers)
+	 * Name of the provider
 	 */
-	readonly globalEvent: EventEmitter = globalEvent;
+	get providerName(): string {
+		return this.constructor[$$.namespace];
+	}
 
 	/**
 	 * Map for data events
@@ -279,17 +301,14 @@ export default class Provider {
 	 */
 	constructor(params: ProviderParams = {}) {
 		const
-			nm = this.constructor[$$.namespace],
-			key = this.cacheId = `${nm}:${JSON.stringify(params)}`,
-			cacheVal = instanceCache[key];
+			id = this.cacheId = `${this.providerName}:${JSON.stringify(params)}`,
+			cacheVal = instanceCache[id];
 
 		if (cacheVal) {
 			return cacheVal;
 		}
 
-		requestCache[nm] =
-			Object.createDict();
-
+		requestCache[id] = Object.createDict();
 		this.async = new Async(this);
 		this.event = new EventEmitter({maxListeners: 1e3, newListener: false});
 
@@ -321,7 +340,7 @@ export default class Provider {
 			}
 		}
 
-		instanceCache[key] = this;
+		instanceCache[id] = this;
 	}
 
 	/**
@@ -516,8 +535,7 @@ export default class Provider {
 	 */
 	dropCache(): void {
 		const
-			nm = this.constructor.name,
-			cache = requestCache[nm];
+			cache = requestCache[this.cacheId];
 
 		if (cache) {
 			for (let keys = Object.keys(cache), i = 0; i < keys.length; i++) {
@@ -530,7 +548,7 @@ export default class Provider {
 			}
 		}
 
-		requestCache[nm] = Object.createDict();
+		requestCache[this.cacheId] = Object.createDict();
 	}
 
 	/**
@@ -546,7 +564,7 @@ export default class Provider {
 
 		const
 			url = this.url(),
-			nm = this.constructor[$$.namespace],
+			nm = this.providerName,
 			eventName = this.name(),
 			method = this.method() || this.getMethod;
 
@@ -926,7 +944,7 @@ export default class Provider {
 			req.then((res) => {
 				const
 					{ctx} = res,
-					cache = requestCache[this.constructor.name];
+					cache = requestCache[this.cacheId];
 
 				if (ctx.canCache && cache) {
 					cache[res.cacheKey] = res;
