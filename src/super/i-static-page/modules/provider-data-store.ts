@@ -48,7 +48,7 @@ export class ProviderDataItem<T extends unknown = unknown> {
 	 * Proxy to provider call
 	 * @param params
 	 */
-	select<V extends unknown = unknown>(params: unknown): CanUndef<V> {
+	select<V extends unknown = unknown>(params: SelectParams): CanUndef<V> {
 		const
 			{provider, value} = this;
 
@@ -89,7 +89,9 @@ export default class ProviderDataStore {
 
 	/**
 	 * Sets a specified value to store
+	 *
 	 * @param key
+	 * @param value
 	 */
 	set(key: string, value: unknown): void {
 		this.store[key] = new ProviderDataItem(key, value);
