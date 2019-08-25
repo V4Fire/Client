@@ -153,7 +153,7 @@ export default class Provider {
 		return select(value, params);
 	}
 
-	/*
+	/**
 	 * Request mock objects
 	 */
 	mocks?: Mocks;
