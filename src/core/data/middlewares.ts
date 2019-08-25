@@ -7,20 +7,49 @@
  */
 
 import Then from 'core/then';
+import * as env from 'core/env';
+
 import Provider from 'core/data';
 import { Response, MiddlewareParams } from 'core/request';
+
+interface MockOptions {
+	patterns: RegExp[];
+}
+
+let
+	options: MockOptions;
+
+const setConfig = (opts) => {
+	options = {
+		patterns: [],
+		...opts
+	};
+
+	options.patterns = (options.patterns || []).map((el) => Object.isRegExp(el) ? el : new RegExp(el));
+};
+
+const optionsInitializer = env.get('mock').then(setConfig, setConfig);
+env.event.on('set.mock', setConfig);
+env.event.on('remove.mock', setConfig);
 
 /**
  * Middleware: attaches mock data from .mocks
  * @param params
  */
 export async function attachMock(this: Provider, params: MiddlewareParams): Promise<CanUndef<Function>> {
-	if (!this.mocks) {
-		return;
+	if (!options) {
+		await optionsInitializer;
 	}
 
 	const
 		{opts, ctx} = params;
+
+	const
+		id = opts.cacheId;
+
+	if (!this.mocks || !Object.isString(id) || options.patterns.every((rgxp) => !rgxp.test(id))) {
+		return;
+	}
 
 	let
 		requests = await this.mocks[<string>opts.method];
@@ -103,7 +132,7 @@ export async function attachMock(this: Provider, params: MiddlewareParams): Prom
 		currentRequest = await currentRequest;
 	}
 
-	if (!currentRequest) {
+	if (!currentRequest === undefined) {
 		return;
 	}
 
