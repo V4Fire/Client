@@ -5,7 +5,11 @@ const
 const
 	{config} = require('@pzlr/build-core');
 
-let DS = {};
+let
+	DS = {};
+
+const
+	cssVars = {};
 
 if (config.designSystem) {
 	DS = require(config.designSystem);
@@ -14,12 +18,39 @@ if (config.designSystem) {
 	console.log('[stylus] Design system package is not specified');
 }
 
-function prepareData(data) {
+/**
+ * Sets var into cssVars dictionary by the specified path
+ * @param path
+ */
+function setVar(path) {
+	$C(cssVars).set(stylus.utils.parseString(`var(--${path.split('.').join('-')})`), path);
+}
+
+/**
+ * Return path with dot delimiter between prefix and suffix
+ *
+ * @param prefix
+ * @param suffix
+ * @return {string}
+ */
+function genPath(prefix, suffix) {
+	return `${prefix ? `${prefix}.${suffix}` : suffix}`;
+}
+
+/**
+ * Converts object props values to values in Stylus types
+ *
+ * @param data
+ * @param [path]
+ */
+function prepareData(data, path) {
 	$C(data).forEach((d, val) => {
 		if (Object.isObject(d) || Object.isArray(d)) {
-			prepareData(d);
+			prepareData(d, genPath(path, val));
 
 		} else {
+			setVar(genPath(path, val));
+
 			if (/^[a-z-_]+\(.*\)$/.test(d)) {
 				// Built-in function
 				data[val] = new stylus.Parser(d).function();
@@ -63,7 +94,20 @@ module.exports = function (style) {
 	 */
 	style.define(
 		'injector',
-		({string}) => DS.components && DS.components[string] && stylus.utils.coerce(DS.components[string], true) || {}
+		({string}) => {
+			const
+				__vars__ = $C(cssVars).get(`components.${string}`),
+				value = $C(DS).get(`components.${string}`);
+
+			if (value) {
+				return stylus.utils.coerce({
+					...value,
+					__vars__
+				}, true);
+			}
+
+			return {};
+		}
 	);
 
 	/**
