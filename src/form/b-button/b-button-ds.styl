@@ -13,99 +13,114 @@ $p = {
 }
 
 b-button
-	for $key, $val in getDSOptions(rounding)
-		&_rounding_{$key} &__button
-			border-radius $val
+	createStyles($obj)
+		&^[0]
+			for $key, $val in getDSOptions(rounding)
+				&_rounding_{$key} ^[0]__button
+					border-radius $val
 
-	if getField($p, "mods.size")
-		&_size
-			for $key, $value in getField($p, "mods.size")
-				&_{$key}
-					& ^[0]
-						&__value
-							$horOffset = getField($value, horOffset)
-							$vertOffset = getField($value, vertOffset)
+			if getField($obj, "mods.size")
+				&_size
+					for $key, $value in getField($obj, "mods.size")
+						&_{$key}
+							& ^[0]
+								&__value
+									$horOffset = getField($value, horOffset)
+									$vertOffset = getField($value, vertOffset)
 
-							if $vertOffset
-								padding-left $vertOffset
-								padding-right @padding-left
+									if $vertOffset
+										padding-left $vertOffset
+										padding-right @padding-left
 
-							if $horOffset
-								padding-top $horOffset
-								padding-bottom @padding-top
+									if $horOffset
+										padding-top $horOffset
+										padding-bottom @padding-top
 
-						&__button
-							text-options(getField($value, textStyle))
-							line-height 1
+								&__button
+									text-options(getField($value, textStyle))
+									line-height 1
 
-	getExteriorStyle($name, $prop)
-		getField($p, path(exterior $name $prop))
+			getExteriorStyle($name, $prop)
+				getField($obj, path(exterior $name $prop))
 
-	generateExterior($k)
-		$extBg = getExteriorStyle($k, backgroundColor)
-		$extColor = getExteriorStyle($k, color)
+			generateExterior($k)
+				$extBg = getExteriorStyle($k, backgroundColor)
+				$extColor = getExteriorStyle($k, color)
 
-		generate($kk)
-			path-to-mod($v)
-				path(mods $kk $v)
+				generate($kk)
+					path-to-mod($v)
+						path(mods $kk $v)
 
-			getValue($prop)
-				getExteriorStyle($k, path-to-mod($prop)) || getField($p, path-to-mod($prop))
+					getValue($prop)
+						getExteriorStyle($k, path-to-mod($prop)) || getField($obj, path-to-mod($prop))
 
-			$color = getValue(color)
-			$bg = getValue(backgroundColor)
-			$blendMode = getValue(blendMode)
-			$boxShadow = getValue(boxShadow)
+					$color = getValue(color)
+					$bg = getValue(backgroundColor)
+					$blendMode = getValue(blendMode)
+					$boxShadow = getValue(boxShadow)
 
-			if $boxShadow
-				box-shadow $boxShadow
+					if $boxShadow
+						box-shadow $boxShadow
 
-			if $color
-				color $color
+					if $color
+						color $color
 
-			if $bg and $bg != none and $blendMode and $extBg and $extBg != none
-				background blend($bg, $extBg, $blendMode)
+					if $blendMode and $bg is a "color" and $extBg is a "color"
+						background blend($bg, $extBg, $blendMode)
 
-			else if $bg
-				background $bg
+					else if $bg
+						background $bg
 
-		&^[0]_disabled_true
-			& ^[0]__button
-				generate(disabled)
+				&^[0]_disabled_true
+					& ^[0]__button
+						generate(disabled)
 
-		&^[0]_focused_true
-			& ^[0]__button
-				generate(focus)
+				&^[0]_focused_true
+					& ^[0]__button
+						generate(focus)
 
-		& ^[0]__button
-			if $extBg
-				background $extBg
+				& ^[0]__button
+					if $extBg
+						background $extBg
 
-			if $extColor
-				color $extColor
+					if $extColor
+						color $extColor
 
-			for $key in (hover focus active)
-				if getField($p, path(mods $key))
-					&:{$key}
-						generate($key)
+					for $key in (hover focus active)
+						if getField($obj, path(mods $key))
+							&:{$key}
+								generate($key)
 
-	if getField($p, exterior)
-		generateExterior($p.defaultExterior)
+			if getField($obj, exterior)
+				generateExterior($obj.defaultExterior)
 
-		for $key, $val in getField($p, exterior)
-			&_exterior_{$key}
-				generateExterior($key)
+				for $key, $val in getField($obj, exterior)
+					&_exterior_{$key}
+						generateExterior($key)
 
-	@supports (-ms-accelerator true)
-		&__button
-			border-width 0.1em
+			@supports (-ms-accelerator true)
+				&__button
+					border-width 0.1em
 
-	&__button
-		transition color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out
+			&__button
+				transition color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out
 
-	for $key in (post-icon pre-icon)
-		$params = getField($p, path(mods camelize($key)))
+			for $key in (post-icon pre-icon)
+				$params = getField($obj, path(mods camelize($key)))
 
-		if $params
-			&__{$key}
-				margin-{$key == "pre-icon" ? right : left} getField($params, offset)
+				if $params
+					&__{$key}
+						margin-{$key == "pre-icon" ? right : left} getField($params, offset)
+
+	//#if ds-vars
+	createStyles($p.__vars__)
+	//#endif
+
+	//#unless ds-vars
+	createStyles($p)
+	//#endunless
+
+	//#if ds-diff
+	&_diff_true
+		createStyles($p.__vars__)
+	//#endif
