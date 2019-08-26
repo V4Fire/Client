@@ -112,15 +112,15 @@ b-button
 					&__{$key}
 						margin-{$key == "pre-icon" ? right : left} getField($params, offset)
 
-	//#if ds-vars
+	//#if runtime has ds-vars
 	createStyles($p.__vars__)
 	//#endif
 
-	//#unless ds-vars
+	//#unless runtime has ds-vars
 	createStyles($p)
 	//#endunless
 
-	//#if ds-diff
+	//#if runtime has ds-diff
 	&_diff_true
 		createStyles($p.__vars__)
 	//#endif
