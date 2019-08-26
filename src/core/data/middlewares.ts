@@ -9,7 +9,7 @@
 import Then from 'core/then';
 import * as env from 'core/env';
 
-import Provider from 'core/data';
+import Provider, { RequestError } from 'core/data';
 import { Response, MiddlewareParams } from 'core/request';
 
 interface MockOptions {
@@ -142,12 +142,20 @@ export async function attachMock(this: Provider, params: MiddlewareParams): Prom
 	}
 
 	return () => Then.resolve(response, ctx.parent)
-		.then((res) => new Response(res, {
-			status: customResponse.status || currentRequest.status || 200,
-			responseType: currentRequest.responseType || opts.responseType,
-			okStatuses: opts.okStatuses,
-			decoder: currentRequest.decoders === false ? undefined : ctx.decoders
-		}))
+		.then((data) => {
+			const response = new Response(data, {
+				status: customResponse.status || currentRequest.status || 200,
+				responseType: currentRequest.responseType || opts.responseType,
+				okStatuses: opts.okStatuses,
+				decoder: currentRequest.decoders === false ? undefined : ctx.decoders
+			});
+
+			if (!response.ok) {
+				throw new RequestError('invalidStatus', {response});
+			}
+
+			return response;
+		})
 
 		.then(ctx.wrapAsResponse);
 }
