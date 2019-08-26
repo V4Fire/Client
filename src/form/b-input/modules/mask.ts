@@ -417,7 +417,7 @@ export function onMaskKeyPress<T extends bInput<any, any, any>>(component: T, e:
 		insert = true,
 		n = selectionEnd - selectionStart + 1,
 		start = selectionStart,
-		inputVal = String.fromCharCode(e.charCode);
+		inputVal = e.key;
 
 	while (n--) {
 		const
@@ -460,4 +460,9 @@ export function onMaskKeyPress<T extends bInput<any, any, any>>(component: T, e:
 
 	// @ts-ignore
 	c.onRawDataChange(c.value);
+
+	if (c.isMaskInfinite && selectionEnd + 1 === mask.length) {
+		c.updateMask(c.maskPlaceholder, true);
+		input.setSelectionRange(start + 1, start + 1);
+	}
 }

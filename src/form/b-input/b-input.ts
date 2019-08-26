@@ -179,6 +179,24 @@ export default class bInput<
 	@prop({type: String, watch: {fn: 'updateMask', immediate: true}})
 	readonly maskPlaceholder: string = '_';
 
+	/**
+	 * Number of mask repetitions
+	 */
+	@prop({type: Number, required: false})
+	readonly repeat?: number;
+
+	/**
+	 * Number of mask repetitions
+	 */
+	@prop({type: String, required: false})
+	readonly delimiter: string = ' ';
+
+	/**
+	 * Number of mask repetitions
+	 */
+	@prop({type: Boolean, required: false})
+	readonly isMaskInfinite?: boolean;
+
 	/** @override */
 	get value(): V {
 		return <NonNullable<V>>this.field.get('valueStore');
@@ -341,15 +359,22 @@ export default class bInput<
 	 * Updates the mask value
 	 */
 	@wait('ready', {label: $$.updateMask})
-	async updateMask(): Promise<void> {
+	async updateMask(_, inc?: boolean): Promise<void> {
 		const
-			{async: $a} = this,
+			{async: $a, delimiter, isMaskInfinite} = this,
 			{input} = this.$refs;
 
 		const
 			group = {group: 'mask'};
 
+		let
+			{repeat = isMaskInfinite ? 10 : undefined} = this;
+		if (inc && repeat) {
+			repeat *= 2;
+		}
+
 		if (this.mask) {
+			$a.clearAll({group: 'mask'});
 			$a.on(input, 'mousedown keydown', this.onMaskNavigate, group);
 			$a.on(input, 'mousedown keydown', this.onMaskValueReady, group);
 			$a.on(input, 'mouseup keyup', this.onMaskValueReady, {
@@ -374,7 +399,7 @@ export default class bInput<
 				sys = false;
 
 			if (this.mask) {
-				for (let o = this.mask, i = 0; i < o.length; i++) {
+				for (let o = this.mask, i = 0, j = 0; i < o.length && (repeat && j < repeat || !repeat); i++) {
 					const
 						el = o[i];
 
@@ -391,6 +416,16 @@ export default class bInput<
 
 					} else {
 						value.push(el);
+					}
+
+					if (i === o.length - 1 && repeat) {
+						i = -1;
+						j++;
+
+						if (repeat && j < repeat) {
+							tpl += delimiter;
+							value.push(delimiter);
+						}
 					}
 				}
 			}
