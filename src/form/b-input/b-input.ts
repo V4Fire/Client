@@ -176,26 +176,20 @@ export default class bInput<
 	/**
 	 * Mask placeholder
 	 */
-	@prop({type: String, watch: {fn: 'updateMask', immediate: true}})
+	@prop({type: String, watch: {fn: (o) => o.updateMask(), immediate: true}})
 	readonly maskPlaceholder: string = '_';
 
 	/**
 	 * Number of mask repetitions
 	 */
-	@prop({type: Number, required: false})
-	readonly repeat?: number;
+	@prop({type: [Number, Boolean], required: false})
+	readonly maskRepeat: number | boolean = false;
 
 	/**
-	 * Number of mask repetitions
+	 * Delimiter for mask value
 	 */
 	@prop({type: String, required: false})
-	readonly delimiter: string = ' ';
-
-	/**
-	 * Number of mask repetitions
-	 */
-	@prop({type: Boolean, required: false})
-	readonly isMaskInfinite?: boolean;
+	readonly maskDelimiter: string = ' ';
 
 	/** @override */
 	get value(): V {
@@ -359,18 +353,21 @@ export default class bInput<
 	 * Updates the mask value
 	 */
 	@wait('ready', {label: $$.updateMask})
-	async updateMask(_, inc?: boolean): Promise<void> {
+	async updateMask(inc?: boolean): Promise<void> {
 		const
-			{async: $a, delimiter, isMaskInfinite} = this,
+			{async: $a, maskDelimiter} = this,
 			{input} = this.$refs;
 
 		const
 			group = {group: 'mask'};
 
-		let
-			{repeat = isMaskInfinite ? 10 : undefined} = this;
-		if (inc && repeat) {
-			repeat *= 2;
+		let {maskRepeat} = this;
+
+		if (maskRepeat === true) {
+			maskRepeat = 10;
+		}
+		if (inc && maskRepeat) {
+			maskRepeat *= 2;
 		}
 
 		if (this.mask) {
@@ -399,7 +396,7 @@ export default class bInput<
 				sys = false;
 
 			if (this.mask) {
-				for (let o = this.mask, i = 0, j = 0; i < o.length && (repeat && j < repeat || !repeat); i++) {
+				for (let o = this.mask, i = 0, j = 0; i < o.length && (maskRepeat && j < maskRepeat || !maskRepeat); i++) {
 					const
 						el = o[i];
 
@@ -418,13 +415,13 @@ export default class bInput<
 						value.push(el);
 					}
 
-					if (i === o.length - 1 && repeat) {
+					if (i === o.length - 1 && maskRepeat) {
 						i = -1;
 						j++;
 
-						if (repeat && j < repeat) {
-							tpl += delimiter;
-							value.push(delimiter);
+						if (maskRepeat && j < maskRepeat) {
+							tpl += maskDelimiter;
+							value.push(maskDelimiter);
 						}
 					}
 				}
