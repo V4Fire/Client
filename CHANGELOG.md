@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-beta.146 (2019-08-26)
+
+#### :bug: Bug Fix
+
+* Fixed `core/data/middlewares/attachMock` with ES dynamic import
+
 ## v3.0.0-beta.145 (2019-08-23)
 
 #### :rocket: New Feature

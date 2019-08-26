@@ -52,11 +52,18 @@ export async function attachMock(this: Provider, params: MiddlewareParams): Prom
 	}
 
 	let
-		requests = await this.mocks[<string>opts.method];
+		mocks = await this.mocks;
 
-	if (requests.default) {
-		requests = requests.default;
+	if (!mocks) {
+		return;
 	}
+
+	if ('default' in mocks) {
+		mocks = mocks.default;
+	}
+
+	const
+		requests = mocks[String(opts.method)];
 
 	if (!requests) {
 		return;
@@ -132,7 +139,7 @@ export async function attachMock(this: Provider, params: MiddlewareParams): Prom
 		currentRequest = await currentRequest;
 	}
 
-	if (!currentRequest === undefined) {
+	if (currentRequest === undefined) {
 		return;
 	}
 
