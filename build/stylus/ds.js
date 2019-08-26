@@ -115,11 +115,18 @@ module.exports = function (style) {
 	 * by the specified path or whole DS object
 	 *
 	 * @param {string} string - field path
+	 * @param {boolean} [vars=false] - if true, method will return css vars for the specified path
 	 * @returns {!Object}
 	 */
 	style.define(
 		'getDSOptions',
-		({string}) => string ? stylus.utils.coerce($C(DS).get(string), true) || {} : DS
+		({string}, vars = false) => {
+			if (vars && vars.val) {
+				return string ? stylus.utils.coerce($C(cssVars).get(string), true) : {};
+			}
+
+			return string ? stylus.utils.coerce($C(DS).get(string), true) || {} : DS;
+		}
 	);
 
 	/**
