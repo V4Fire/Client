@@ -176,20 +176,30 @@ export default class bInput<
 	/**
 	 * Mask placeholder
 	 */
-	@prop({type: String, watch: {fn: (o) => o.updateMask(), immediate: true}})
+	@prop({type: String, watch: {fn: 'updateMask', immediate: true, provideArgs: false}})
 	readonly maskPlaceholder: string = '_';
 
 	/**
 	 * Number of mask repetitions
 	 */
 	@prop({type: [Number, Boolean], required: false})
-	readonly maskRepeat: number | boolean = false;
+	readonly maskRepeatProp?: number | boolean;
 
 	/**
 	 * Delimiter for mask value
 	 */
 	@prop({type: String, required: false})
 	readonly maskDelimiter: string = ' ';
+
+	@system((o) => o.sync.link((v) => v === true ? 42 : v || 1))
+	maskRepeat: number = 1;
+
+	/**
+	 * Should mask be repeated infinitely
+	 */
+	get maskInfinite(): boolean {
+		return this.maskRepeatProp === true;
+	}
 
 	/** @override */
 	get value(): V {
@@ -351,6 +361,7 @@ export default class bInput<
 
 	/**
 	 * Updates the mask value
+	 * @param [inc] if true, maskRepeat will be increased
 	 */
 	@wait('ready', {label: $$.updateMask})
 	async updateMask(inc?: boolean): Promise<void> {
@@ -361,13 +372,8 @@ export default class bInput<
 		const
 			group = {group: 'mask'};
 
-		let {maskRepeat} = this;
-
-		if (maskRepeat === true) {
-			maskRepeat = 10;
-		}
-		if (inc && maskRepeat) {
-			maskRepeat *= 2;
+		if (inc) {
+			this.maskRepeat *= 2;
 		}
 
 		if (this.mask) {
@@ -396,7 +402,7 @@ export default class bInput<
 				sys = false;
 
 			if (this.mask) {
-				for (let o = this.mask, i = 0, j = 0; i < o.length && (maskRepeat && j < maskRepeat || !maskRepeat); i++) {
+				for (let o = this.mask, i = 0, j = 0; i < o.length && j < this.maskRepeat; i++) {
 					const
 						el = o[i];
 
@@ -415,11 +421,11 @@ export default class bInput<
 						value.push(el);
 					}
 
-					if (i === o.length - 1 && maskRepeat) {
+					if (i === o.length - 1) {
 						i = -1;
 						j++;
 
-						if (maskRepeat && j < maskRepeat) {
+						if (j < this.maskRepeat) {
 							tpl += maskDelimiter;
 							value.push(maskDelimiter);
 						}
