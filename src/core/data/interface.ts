@@ -21,13 +21,25 @@ export type MockResponseType =
 	ResponseType |
 	object;
 
+export interface MockCustomResponse {
+	status?: number;
+}
+
+export interface MockResponseFunction {
+	(params: MiddlewareParams, response: MockCustomResponse): CanPromise<MockResponseType>;
+}
+
+export type MockResponse =
+	CanPromise<MockResponseType> |
+	MockResponseFunction;
+
 export interface Mock {
 	status?: number;
 	query?: RequestQuery;
 	body?: RequestBody;
 	headers?: Dictionary<CanArray<unknown>>;
 	decoders?: boolean;
-	response: CanPromise<MockResponseType> | ((params: MiddlewareParams) => CanPromise<MockResponseType>);
+	response: MockResponse;
 }
 
 export type Mocks = CanPromise<

@@ -127,25 +127,23 @@ export async function attachMock(this: Provider, params: MiddlewareParams): Prom
 		}
 	}
 
-	if (Object.isPromise(currentRequest)) {
-		currentRequest = await currentRequest;
-	}
-
-	if (Object.isFunction(currentRequest)) {
-		currentRequest = currentRequest.call(this, params);
-	}
-
-	if (Object.isPromise(currentRequest)) {
-		currentRequest = await currentRequest;
-	}
-
 	if (currentRequest === undefined) {
 		return;
 	}
 
-	return () => Then.resolve(currentRequest.response, ctx.parent)
+	const
+		customResponse = {status: undefined};
+
+	let
+		{response} = currentRequest;
+
+	if (Object.isFunction(response)) {
+		response = response.call(this, params, customResponse);
+	}
+
+	return () => Then.resolve(response, ctx.parent)
 		.then((res) => new Response(res, {
-			status: currentRequest.status || 200,
+			status: customResponse.status || currentRequest.status || 200,
 			responseType: currentRequest.responseType || opts.responseType,
 			okStatuses: opts.okStatuses,
 			decoder: currentRequest.decoders === false ? undefined : ctx.decoders

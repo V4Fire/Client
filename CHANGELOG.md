@@ -17,6 +17,10 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 * Fixed `core/data/middlewares/attachMock` with ES dynamic import
 
+#### :nail_care Polish
+
+* Improved API of mocks
+
 ## v3.0.0-beta.145 (2019-08-23)
 
 #### :rocket: New Feature
