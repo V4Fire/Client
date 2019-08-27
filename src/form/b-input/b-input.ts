@@ -192,12 +192,6 @@ export default class bInput<
 	readonly maskDelimiter: string = ' ';
 
 	/**
-	 * Number of mask repetitions
-	 */
-	@system((o) => o.sync.link((v) => v === true ? 42 : v || 1))
-	maskRepeat: number = 1;
-
-	/**
 	 * Should mask be repeated infinitely
 	 */
 	get isMaskInfinite(): boolean {
@@ -295,6 +289,12 @@ export default class bInput<
 	protected skipBuffer: boolean = false;
 
 	/**
+	 * Number of mask repetitions
+	 */
+	@system((o) => o.sync.link((v) => v === true ? 42 : v || 1))
+	protected maskRepeat: number = 1;
+
+	/**
 	 * Temporary last selection start index
 	 */
 	@system()
@@ -362,22 +362,14 @@ export default class bInput<
 		return false;
 	}
 
-	/**
-	 * Updates the mask value
-	 * @param [inc] - if true, value of maskRepeat will be increased twice
-	 */
 	@wait('ready', {label: $$.updateMask})
-	async updateMask(inc?: boolean): Promise<void> {
+	async updateMask(): Promise<void> {
 		const
 			{async: $a, maskDelimiter} = this,
 			{input} = this.$refs;
 
 		const
 			group = {group: 'mask'};
-
-		if (inc) {
-			this.maskRepeat *= 2;
-		}
 
 		if (this.mask) {
 			$a.clearAll({group: 'mask'});
