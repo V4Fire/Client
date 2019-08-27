@@ -106,6 +106,7 @@ export function provider(nmsOrFn: Function | string): Function | void {
 		};
 	}
 
+	nmsOrFn[$$.namespace] = nmsOrFn.name;
 	providers[nmsOrFn.name] = <typeof Provider>nmsOrFn;
 }
 
