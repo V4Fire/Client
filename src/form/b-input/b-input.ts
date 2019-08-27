@@ -180,24 +180,27 @@ export default class bInput<
 	readonly maskPlaceholder: string = '_';
 
 	/**
-	 * Number of mask repetitions
+	 * Initial number of mask repetitions
 	 */
 	@prop({type: [Number, Boolean], required: false})
 	readonly maskRepeatProp?: number | boolean;
 
 	/**
-	 * Delimiter for mask value
+	 * Delimiter for a mask value
 	 */
 	@prop({type: String, required: false})
 	readonly maskDelimiter: string = ' ';
 
+	/**
+	 * Number of mask repetitions
+	 */
 	@system((o) => o.sync.link((v) => v === true ? 42 : v || 1))
 	maskRepeat: number = 1;
 
 	/**
 	 * Should mask be repeated infinitely
 	 */
-	get maskInfinite(): boolean {
+	get isMaskInfinite(): boolean {
 		return this.maskRepeatProp === true;
 	}
 
@@ -361,7 +364,7 @@ export default class bInput<
 
 	/**
 	 * Updates the mask value
-	 * @param [inc] if true, maskRepeat will be increased
+	 * @param [inc] - if true, value of maskRepeat will be increased twice
 	 */
 	@wait('ready', {label: $$.updateMask})
 	async updateMask(inc?: boolean): Promise<void> {
