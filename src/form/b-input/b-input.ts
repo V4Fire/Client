@@ -176,8 +176,27 @@ export default class bInput<
 	/**
 	 * Mask placeholder
 	 */
-	@prop({type: String, watch: {fn: 'updateMask', immediate: true}})
+	@prop({type: String, watch: {fn: 'updateMask', immediate: true, provideArgs: false}})
 	readonly maskPlaceholder: string = '_';
+
+	/**
+	 * Initial number of mask repetitions
+	 */
+	@prop({type: [Number, Boolean], required: false})
+	readonly maskRepeatProp?: number | boolean;
+
+	/**
+	 * Delimiter for a mask value
+	 */
+	@prop({type: String, required: false})
+	readonly maskDelimiter: string = ' ';
+
+	/**
+	 * Should mask be repeated infinitely
+	 */
+	get isMaskInfinite(): boolean {
+		return this.maskRepeatProp === true;
+	}
 
 	/** @override */
 	get value(): V {
@@ -270,6 +289,12 @@ export default class bInput<
 	protected skipBuffer: boolean = false;
 
 	/**
+	 * Number of mask repetitions
+	 */
+	@system((o) => o.sync.link((v) => v === true ? 42 : v || 1))
+	protected maskRepeat: number = 1;
+
+	/**
 	 * Temporary last selection start index
 	 */
 	@system()
@@ -337,19 +362,17 @@ export default class bInput<
 		return false;
 	}
 
-	/**
-	 * Updates the mask value
-	 */
 	@wait('ready', {label: $$.updateMask})
 	async updateMask(): Promise<void> {
 		const
-			{async: $a} = this,
+			{async: $a, maskDelimiter} = this,
 			{input} = this.$refs;
 
 		const
 			group = {group: 'mask'};
 
 		if (this.mask) {
+			$a.clearAll({group: 'mask'});
 			$a.on(input, 'mousedown keydown', this.onMaskNavigate, group);
 			$a.on(input, 'mousedown keydown', this.onMaskValueReady, group);
 			$a.on(input, 'mouseup keyup', this.onMaskValueReady, {
@@ -374,7 +397,7 @@ export default class bInput<
 				sys = false;
 
 			if (this.mask) {
-				for (let o = this.mask, i = 0; i < o.length; i++) {
+				for (let o = this.mask, i = 0, j = 0; i < o.length && j < this.maskRepeat; i++) {
 					const
 						el = o[i];
 
@@ -391,6 +414,16 @@ export default class bInput<
 
 					} else {
 						value.push(el);
+					}
+
+					if (i === o.length - 1) {
+						i = -1;
+						j++;
+
+						if (j < this.maskRepeat) {
+							tpl += maskDelimiter;
+							value.push(maskDelimiter);
+						}
 					}
 				}
 			}
