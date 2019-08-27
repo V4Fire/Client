@@ -362,17 +362,19 @@ export default class bInput<
 		return false;
 	}
 
+	/**
+	 * Updates the mask value
+	 */
 	@wait('ready', {label: $$.updateMask})
 	async updateMask(): Promise<void> {
 		const
 			{async: $a, maskDelimiter} = this,
 			{input} = this.$refs;
 
-		const
-			group = {group: 'mask'};
+		const group = {group: 'mask'};
+		$a.off(group);
 
 		if (this.mask) {
-			$a.clearAll({group: 'mask'});
 			$a.on(input, 'mousedown keydown', this.onMaskNavigate, group);
 			$a.on(input, 'mousedown keydown', this.onMaskValueReady, group);
 			$a.on(input, 'mouseup keyup', this.onMaskValueReady, {
@@ -434,7 +436,6 @@ export default class bInput<
 			await this.applyMaskToValue(this.value, {updateBuffer: true});
 
 		} else {
-			$a.off(group);
 			this._mask = undefined;
 		}
 	}
