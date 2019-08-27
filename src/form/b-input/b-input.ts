@@ -186,7 +186,7 @@ export default class bInput<
 	readonly maskRepeatProp?: number | boolean;
 
 	/**
-	 * Delimiter for a mask value
+	 * Delimiter for a mask value (if the mask is repeated)
 	 */
 	@prop({type: String, required: false})
 	readonly maskDelimiter: string = ' ';
@@ -292,7 +292,7 @@ export default class bInput<
 	 * Number of mask repetitions
 	 */
 	@system((o) => o.sync.link((v) => v === true ? 42 : v || 1))
-	protected maskRepeat: number = 1;
+	protected maskRepeat!: number;
 
 	/**
 	 * Temporary last selection start index
