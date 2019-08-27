@@ -204,7 +204,7 @@ stretch-layer($position, $zIndexPos = "modal")
  * @param {string} $name - text style name
  */
 text-options($name)
-	$obj = getDSOptions("text." + $name + ".style")
+	$obj = getDSOptions("text." + $name)
 
 	if $obj
 		interpolate-props($obj)
