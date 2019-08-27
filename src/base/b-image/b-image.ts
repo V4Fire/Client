@@ -118,10 +118,10 @@ export default class bImage extends iMessage implements iProgress, iVisible {
 	}
 
 	/**
-	 * Calculates image aspect ratio
+	 * Calculates the specified image aspect ratio
 	 * @param img
 	 */
-	protected computeRatio(img?: HTMLImageElement): number {
+	protected computeRatio(img: CanUndef<HTMLImageElement>): number {
 		const
 			{naturalHeight = 0, naturalWidth = 0} = img || {};
 
@@ -173,8 +173,10 @@ export default class bImage extends iMessage implements iProgress, iVisible {
 		if (!tmpPadding) {
 			if (this.ratio) {
 				tmpPadding = `${(1 / this.ratio) * 100}%`;
+
 			} else if (!Object.isString(img)) {
 				tmpPadding = `${(1 / this.computeRatio(img)) * 100}%`;
+
 			} else {
 				tmpPadding = '';
 			}
