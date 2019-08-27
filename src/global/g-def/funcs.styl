@@ -213,11 +213,11 @@ text-options($name)
  * Generates rules from object properties
  * @param {Object} $options
  */
-interpolate-props($options)
+interpolate-props($options, $dash = true)
 	if type($options) == "object"
 		for $key, $val in $options
 			$value = type($val) == "string" ? convert($val) : $val
-			{dasherize($key)} $value
+			{$dash ? dasherize($key): $key} $value
 
 /**
  * Generates path from the specified sequence

@@ -9,7 +9,9 @@ let
 	DS = {};
 
 const
-	cssVars = {};
+	cssVars = {
+		__map__: new Map()
+	};
 
 if (config.designSystem) {
 	DS = require(config.designSystem);
@@ -23,7 +25,11 @@ if (config.designSystem) {
  * @param path
  */
 function setVar(path) {
-	$C(cssVars).set(stylus.utils.parseString(`var(--${path.split('.').join('-')})`), path);
+	const
+		variable = `--${path.split('.').join('-')}`;
+
+	$C(cssVars).set(stylus.utils.parseString(`var(${variable})`), path);
+	cssVars.__map__.set(path, [variable, $C(DS).get(path)]);
 }
 
 /**
@@ -109,6 +115,27 @@ module.exports = function (style) {
 			return {};
 		}
 	);
+
+	/**
+	 * Returns Design System css variables with its values
+	 * @returns {!Object}
+	 */
+	style.define('getFlatDSVars', () => {
+		const
+			obj = {};
+
+		// eslint-disable-next-line no-unused-vars
+		for (const val of cssVars.__map__.values()) {
+			const
+				[key, value] = val;
+
+			if (value || Object.isNumber(value)) {
+				obj[key] = stylus.utils.parseString(value);
+			}
+		}
+
+		return stylus.utils.coerce(obj, true);
+	});
 
 	/**
 	 * Returns part of the Design System

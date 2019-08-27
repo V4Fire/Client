@@ -10,3 +10,8 @@
 @import "global/g-def/consts.styl"
 @import "global/g-def/animations.styl"
 @import "global/g-def/reset.styl"
+
+//#if runtime has ds-vars
+:root
+	interpolate-props(getFlatDSVars(), false)
+//#endif

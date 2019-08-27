@@ -9,7 +9,6 @@
 $p = {
 	messageHelpers: true
 	sizeHelpers: false
-	defaultExterior: primary
 }
 
 b-button
@@ -92,8 +91,6 @@ b-button
 								generate($key)
 
 			if getField($obj, exterior)
-				generateExterior($obj.defaultExterior)
-
 				for $key, $val in getField($obj, exterior)
 					&_exterior_{$key}
 						generateExterior($key)
