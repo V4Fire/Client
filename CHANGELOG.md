@@ -11,6 +11,13 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-beta.148 (2019-08-27)
+
+#### :bug: Bug Fix
+
+* Fixed `bImage` logic
+* Fixed `.providerName` without a namespace
+
 ## v3.0.0-beta.147 (2019-08-27)
 
 #### :boom: Breaking Change

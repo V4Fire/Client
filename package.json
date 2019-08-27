@@ -5,7 +5,7 @@
   "main": "src/core/index.js",
   "typings": "index.d.ts",
   "license": "MIT",
-  "version": "3.0.0-beta.147",
+  "version": "3.0.0-beta.148",
   "author": {
     "name": "kobezzza",
     "email": "kobezzza@gmail.com",
@@ -29,7 +29,7 @@
     "test": "echo \"Error: no test specified\" && exit 0"
   },
   "dependencies": {
-    "@v4fire/core": "^3.0.0-beta.65",
+    "@v4fire/core": "^3.0.0-beta.66",
     "escaper": "^3.0.3",
     "eventemitter2": "^5.0.1",
     "fg-loadcss": "^2.1.0",
@@ -47,15 +47,15 @@
     "@types/glob": "^7.1.1",
     "@types/socket.io": "^2.1.2",
     "@types/socket.io-client": "^1.4.32",
-    "@types/webpack": "^4.39.0",
+    "@types/webpack": "^4.39.1",
     "autoprefixer": "^9.6.1",
     "browserslist": "^4.6.6",
     "camelize": "^1.0.0",
     "collection.js": "^6.7.10",
     "config": "^1.31.0",
-    "copy-dir": "^1.1.0",
+    "copy-dir": "^1.2.0",
     "cssnano": "^4.1.10",
-    "del": "^5.0.0",
+    "del": "^5.1.0",
     "delay": "^4.3.0",
     "extract-loader": "^3.1.0",
     "fast-css-loader": "^1.0.2",
@@ -93,7 +93,7 @@
     "snakeskin-loader": "^8.0.1",
     "ss2vue": "^1.1.0",
     "string-dasherize": "^1.0.0",
-    "stylus": "^0.54.5",
+    "stylus": "^0.54.7",
     "stylus-loader": "^3.0.2",
     "svg-fill-loader": "0.0.8",
     "svg-sprite-loader": "^4.1.6",
@@ -110,14 +110,14 @@
     "urlconcat": "0.0.12",
     "vue-template-compiler": "^2.6.10",
     "vue-template-es2015-compiler": "^1.9.1",
-    "webpack": "^4.39.2",
+    "webpack": "^4.39.3",
     "webpack-cli": "^3.3.7"
   },
   "devDependencies": {
     "babel-eslint": "^10.0.3",
     "eslint": "^6.2.2",
     "stlint": "^1.0.58",
-    "stlint-v4fire": "^1.0.29",
+    "stlint-v4fire": "^1.0.30",
     "tslint": "^5.19.0"
   }
 }
