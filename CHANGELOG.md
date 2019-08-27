@@ -17,6 +17,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 * Fixed `bImage` logic
 * Fixed `.providerName` without a namespace
+* Fixed prop modifiers
 
 ## v3.0.0-beta.147 (2019-08-27)
 
