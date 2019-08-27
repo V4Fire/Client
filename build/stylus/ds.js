@@ -181,7 +181,6 @@ module.exports = function (style) {
 				}
 			}
 
-
 			return hue ? $C(DS).get(`colors.${hue}${id !== undefined ? `.${id}` : ''}`) : undefined;
 		}
 	);
