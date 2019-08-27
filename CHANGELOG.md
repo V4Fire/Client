@@ -11,6 +11,16 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-beta.147 (2019-08-27)
+
+#### :boom: Breaking Change
+
+* Renamed `bGenerator` to `bComponentRenderer`
+
+#### :rocket: New Feature
+
+* Added API for loop masks with `bInput`
+
 ## v3.0.0-beta.146 (2019-08-26)
 
 #### :bug: Bug Fix
