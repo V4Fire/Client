@@ -17,6 +17,12 @@ export type Classes = Dictionary<
 	true
 >;
 
+export type Styles = Dictionary<
+	string |
+	Array<string> |
+	Dictionary<string>
+>;
+
 export type ClassesCacheNms =
 	'base' |
 	'blocks' |

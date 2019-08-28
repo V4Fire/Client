@@ -50,7 +50,7 @@ import AsyncRender from 'super/i-block/modules/async-render';
 import Block from 'super/i-block/modules/block';
 import Field from 'super/i-block/modules/field';
 
-import Provide, { classesCache, Classes } from 'super/i-block/modules/provide';
+import Provide, { classesCache, Classes, Styles } from 'super/i-block/modules/provide';
 import State, { ConverterCallType } from 'super/i-block/modules/state';
 import Storage from 'super/i-block/modules/storage';
 import Sync, { AsyncWatchOpts } from 'super/i-block/modules/sync';
@@ -269,6 +269,12 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	 */
 	@prop(Object)
 	readonly classes: Classes = {};
+
+	/**
+	 * Additional styles for component elements
+	 */
+	@prop(Object)
+	readonly styles: Styles = {};
 
 	/**
 	 * Advanced component parameters
