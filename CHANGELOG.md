@@ -11,6 +11,16 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-beta.149 (2019-08-28)
+
+#### :rocket: New Feature
+
+* Added `styles` prop to `iBlock` 
+
+#### :bug: Bug Fix
+
+* Fixed `$root` reference with `@system` fields
+
 ## v3.0.0-beta.148 (2019-08-27)
 
 #### :bug: Bug Fix
