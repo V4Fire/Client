@@ -55,8 +55,8 @@ function prepareData(data, path) {
 			prepareData(d, genPath(path, val));
 
 		} else if (Object.isArray(d)) {
+			prepareData(d, genPath(path, val));
 			d = stylus.utils.coerceArray(d, true);
-			setVar(genPath(path, val));
 
 		} else {
 			setVar(genPath(path, val));
