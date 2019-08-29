@@ -39,16 +39,16 @@ b-image extends i-message
 	&__broken
 		display none
 
-	&_disabled_true &__overlay
-	&_progress_true &__overlay
+	&_disabled_true > &__overlay
+	&_progress_true > &__overlay
 		opacity 1
 
 	&__img
 		width 100%
 		background-repeat no-repeat
 
-	&_show-error_true &__broken
+	&_show-error_true > &__broken
 		display block
 
-	&_show-error_true &__img
+	&_show-error_true > &__img
 		display none
