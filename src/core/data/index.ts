@@ -302,7 +302,7 @@ export default class Provider {
 	 */
 	constructor(params: ProviderParams = {}) {
 		const
-			paramsForCache = <Dictionary>params,
+			paramsForCache = <Dictionary>{...params},
 			extra = params.extraProviders;
 
 		if (extra) {
