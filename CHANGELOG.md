@@ -11,6 +11,13 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-beta.150 (2019-08-29)
+
+#### :bug: Bug Fix
+
+* Fixed `@watch` with getters
+* Fixed invalid cache key with extra providers
+
 ## v3.0.0-beta.149 (2019-08-28)
 
 #### :rocket: New Feature
