@@ -302,7 +302,16 @@ export default class Provider {
 	 */
 	constructor(params: ProviderParams = {}) {
 		const
-			id = this.cacheId = `${this.providerName}:${JSON.stringify(params)}`,
+			paramsForCache = <Dictionary>params,
+			extra = params.extraProviders;
+
+		if (extra) {
+			const tmp = Object.isFunction(extra) ? extra() : extra;
+			paramsForCache.extraProviders = tmp ? Object.keys(tmp) : [];
+		}
+
+		const
+			id = this.cacheId = `${this.providerName}:${JSON.stringify(paramsForCache)}`,
 			cacheVal = instanceCache[id];
 
 		if (cacheVal) {
@@ -321,8 +330,8 @@ export default class Provider {
 			this.setReadonlyParam('externalRequest', params.externalRequest);
 		}
 
-		if (params.extraProviders) {
-			this.setReadonlyParam('extraProviders', params.extraProviders);
+		if (extra) {
+			this.setReadonlyParam('extraProviders', extra);
 		}
 
 		if (params.socket || this.socketURL) {
