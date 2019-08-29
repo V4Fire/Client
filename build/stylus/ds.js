@@ -51,8 +51,12 @@ function genPath(prefix, suffix) {
  */
 function prepareData(data, path) {
 	$C(data).forEach((d, val) => {
-		if (Object.isObject(d) || Object.isArray(d)) {
+		if (Object.isObject(d)) {
 			prepareData(d, genPath(path, val));
+
+		} else if (Object.isArray(d)) {
+			d = stylus.utils.coerceArray(d, true);
+			setVar(genPath(path, val));
 
 		} else {
 			setVar(genPath(path, val));
@@ -142,7 +146,7 @@ module.exports = function (style) {
 	 * by the specified path or whole DS object
 	 *
 	 * @param {string} string - field path
-	 * @param {boolean} [vars=false] - if true, method will return css vars for the specified path
+	 * @param {boolean=} [vars] - if true, method will return css vars for the specified path
 	 * @returns {!Object}
 	 */
 	style.define(
