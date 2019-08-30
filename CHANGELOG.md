@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-beta.152 (2019-08-30)
+
+#### :bug: Bug Fix
+
+* [Fixed `bImage`](https://github.com/V4Fire/Client/pull/113): image should be in a fixed height container
+
 ## v3.0.0-beta.151 (2019-08-30)
 
 #### :bug: Bug Fix
