@@ -16,5 +16,6 @@ package('p-v4-components-demo')
 		'b-checkbox',
 		'b-file-button',
 		'b-calendar',
-		'b-image'
+		'b-image',
+		'b-circular-progress'
 	);
