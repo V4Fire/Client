@@ -10,6 +10,10 @@
 
 $p = {
 	visibleHelpers: true
+	barSize: 36px
+	textSize: 24px
+	trackColor: c(grey, 5)
+	barColor: c(green, 1)
 }
 
 b-circular-progress extends i-block
@@ -25,7 +29,7 @@ b-circular-progress extends i-block
 
 	size 1em
 
-	font-size 36px
+	font-size barSize
 	line-height 1
 
 	&__svg
@@ -33,14 +37,14 @@ b-circular-progress extends i-block
 		transform rotate3d(0, 0, 1, -90deg)
 
 	&__track
-		color c(grey, 5)
+		color trackColor
 
 	&__circle
-		color c(green, 1)
+		color barColor
 
 	&__text
 		absolute top 0 bottom 0 left 0 right 0
 		display flex
 		justify-content center
 		align-items center
-		font-size 24px
+		font-size textSize
