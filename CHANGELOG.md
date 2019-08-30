@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-beta.151 (2019-08-30)
+
+#### :bug: Bug Fix
+
+* Fixed `provide.classes` with more than one element from a node
+
 ## v3.0.0-beta.150 (2019-08-29)
 
 #### :bug: Bug Fix
