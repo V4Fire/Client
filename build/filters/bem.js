@@ -31,11 +31,14 @@ module.exports = [
 			classes = attrs[':class'] = attrs[':class'] || [],
 			styles = attrs[':style'] = attrs[':style'] || [];
 
-		if (!$C(classes).includes('componentId')) {
-			attrs[':class'] = wrapAttrArray(classes.concat('componentId', `classes && classes['${elName}']`));
-		}
+		const newClasses = classes.concat(
+			$C(classes).includes('componentId') ? [] : 'componentId',
+			`classes && classes['${elName}']`
+		);
 
+		attrs[':class'] = wrapAttrArray(newClasses);
 		attrs[':style'] = wrapAttrArray(styles.concat(`styles && styles['${elName}']`));
+
 		return block + value;
 	}
 ];
