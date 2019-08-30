@@ -174,7 +174,7 @@ export default class bImage extends iMessage implements iProgress, iVisible {
 			if (this.ratio) {
 				tmpPadding = `${(1 / this.ratio) * 100}%`;
 
-			} else if (!Object.isString(img)) {
+			} else if (!Object.isString(img) && this.ratio !== 0) {
 				tmpPadding = `${(1 / this.computeRatio(img)) * 100}%`;
 
 			} else {
