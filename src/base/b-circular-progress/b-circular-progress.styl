@@ -1,0 +1,46 @@
+/*!
+ * V4Fire Client Core
+ * https://github.com/V4Fire/Client
+ *
+ * Released under the MIT license
+ * https://github.com/V4Fire/Client/blob/master/LICENSE
+ */
+@import "super/i-block/i-block.styl"
+@import "traits/i-visible/i-visible.styl"
+
+$p = {
+	visibleHelpers: true
+}
+
+b-circular-progress extends i-block
+
+	// @stlint-disable
+	i-visible({helpers: $p.visibleHelpers})
+	// @stlint-enable
+
+	position relative
+
+	display inline-block
+	vertical-align middle
+
+	size 1em
+
+	font-size 36px
+	line-height 1
+
+	&__svg
+		size 100%
+		transform rotate3d(0, 0, 1, -90deg)
+
+	&__track
+		color c(grey, 5)
+
+	&__circle
+		color c(green, 1)
+
+	&__text
+		absolute top 0 bottom 0 left 0 right 0
+		display flex
+		justify-content center
+		align-items center
+		font-size 24px
