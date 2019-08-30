@@ -30,14 +30,10 @@ b-input extends i-input
 	&__super-wrapper
 	&__wrapper
 		display flex
-		box-sizing border-box
 		width 100%
 
 	&__super-wrapper
 		cursor text
-
-	&__wrapper
-		align-items center
 
 	&__cell
 		flex auto
@@ -50,14 +46,14 @@ b-input extends i-input
 		overflow hidden
 		margin 0
 
-		font-family BASE_FONT
-		font-size 1em
 		text-overflow ellipsis
 
-		border none
+		border 0
 		background transparent
 
+		// @stlint-disable
 		&::-ms-clear
+		// @stlint-enable
 			display none
 
 		&:focus

@@ -10,7 +10,9 @@
 @import "traits/i-visible/i-visible.styl"
 
 $p = {
+	minImgSize: 10em
 	visibleHelpers: true
+	controlsPosition: bottom 0 right 0
 }
 
 b-image-editor extends i-block
@@ -20,15 +22,13 @@ b-image-editor extends i-block
 
 	&__root-wrapper
 		display flex
-		justify-content center
-		align-items center
 
 	&__super-wrapper
 		position relative
 		display inline-block
 
 	&__img
-		min-width 10em
+		min-width $p.minImgSize
 		min-height @min-width
 
 	&__wrapper
@@ -37,28 +37,19 @@ b-image-editor extends i-block
 		display none
 		size 100%
 
-	&__info-cell
-		align-self center
-
 	&__progress
 		display inline-block
+
+	&__controls
+		absolute $p.controlsPosition
+		zIndex(layer, 2)
+		display flex
+
+	&__control
+		cursor pointer
 
 	&_progress_true &__super-wrapper
 		display block
 
-	&_progress_true &__wrapper
-		display flex
-		flex-direction column
-		justify-content center
-
 	&_progress_true &__wrapper + &__controls
 		display none
-
-	&__controls
-		absolute bottom 0 right 0
-		zIndex(layer, 2)
-		display flex
-		justify-content flex-end
-
-	&__control
-		cursor pointer

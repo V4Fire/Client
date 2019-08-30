@@ -8,11 +8,11 @@
 
 $p = {
 	width: 1.2em
-	backgroundColor: #FFF
+	bgColor: #FFF
 	borderColor: #CCC
 	borderActiveColor: #006358
-	checkedBackgroundColor: #006358
-	checkedIconBackgroundColor: #FFF
+	checkedBgColor: #006358
+	checkedIconBgColor: #FFF
 	messageHelpers: true
 }
 
@@ -20,8 +20,11 @@ b-checkbox
 	&__label
 		margin-left 0.2em
 
+	&__wrapper
+		align-items center
+
 	&__wrapper:hover &__box
-		background darken($p.backgroundColor, 5%)
+		background-color darken($p.bgColor, 5%)
 
 	&_focused_true &__box
 		border 1px dotted $p.borderActiveColor
@@ -31,16 +34,22 @@ b-checkbox
 
 	&__box
 		border 1px solid $p.borderColor
-		background $p.backgroundColor
+		background-color $p.bgColor
 		transition 0.1s ease-in background-color
 
 	&_checked_true &__wrapper:hover &__box
-		background $p.checkedBackgroundColor
+		background-color $p.checkedBgColor
 
 	&_checked_true &__box
-		background $p.checkedBackgroundColor
+		background-color $p.checkedBgColor
 		border-color $p.borderActiveColor
 
 		&::after
-			border solid $p.checkedIconBackgroundColor
+			top ($p.width / 6)em
+			left ($p.width / 2.5)em
+
+			size ($p.width / 6)em ($p.width / 2)em
+
+			border solid $p.checkedIconBgColor
 			border-width 0 2px 2px 0
+			transform rotate(45deg)

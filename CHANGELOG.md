@@ -11,6 +11,41 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-beta.153 (2019-08-30)
+
+#### :house: Internal
+
+* Review `*.styl` files
+
+## v3.0.0-beta.152 (2019-08-30)
+
+#### :bug: Bug Fix
+
+* [Fixed `bImage`](https://github.com/V4Fire/Client/pull/113): image should be in a fixed height container
+
+## v3.0.0-beta.151 (2019-08-30)
+
+#### :bug: Bug Fix
+
+* Fixed `provide.classes` with more than one element from a node
+
+## v3.0.0-beta.150 (2019-08-29)
+
+#### :bug: Bug Fix
+
+* Fixed `@watch` with getters
+* Fixed invalid cache key with extra providers
+
+## v3.0.0-beta.149 (2019-08-28)
+
+#### :rocket: New Feature
+
+* Added `styles` prop to `iBlock` 
+
+#### :bug: Bug Fix
+
+* Fixed `$root` reference with `@system` fields
+
 ## v3.0.0-beta.148 (2019-08-27)
 
 #### :bug: Bug Fix

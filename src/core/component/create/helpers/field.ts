@@ -127,10 +127,15 @@ export function getFieldInfo(path: string, ctx: ComponentInterface): FieldInfo {
 		storeName = `${name}Store`;
 
 	if (fields[storeName]) {
+		name = storeName;
+
 		if (chunks) {
 			chunks[rootI] = storeName;
 			path = chunks.slice(chunks).join('.');
 			fullPath = chunks.join('.');
+
+		} else {
+			path = fullPath = storeName;
 		}
 
 		return {
@@ -143,10 +148,15 @@ export function getFieldInfo(path: string, ctx: ComponentInterface): FieldInfo {
 	}
 
 	if (systemFields[storeName]) {
+		name = storeName;
+
 		if (chunks) {
 			chunks[rootI] = storeName;
 			path = chunks.slice(chunks).join('.');
 			fullPath = chunks.join('.');
+
+		} else {
+			path = fullPath = storeName;
 		}
 
 		return {
@@ -162,16 +172,21 @@ export function getFieldInfo(path: string, ctx: ComponentInterface): FieldInfo {
 		propName = `${name}Prop`;
 
 	if (props[propName]) {
+		name = propName;
+
 		if (chunks) {
 			chunks[rootI] = propName;
 			path = chunks.slice(chunks).join('.');
 			fullPath = chunks.join('.');
+
+		} else {
+			path = fullPath = storeName;
 		}
 
 		return {
 			path,
 			fullPath,
-			name,
+			name: propName,
 			ctx,
 			type: 'prop'
 		};

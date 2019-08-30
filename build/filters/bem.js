@@ -10,7 +10,7 @@
 
 const
 	$C = require('collection.js'),
-	{attachClass} = include('build/filters/helpers');
+	{wrapAttrArray} = include('build/filters/helpers');
 
 const
 	elSeparatorRgxp = /^_+/;
@@ -27,11 +27,17 @@ module.exports = [
 	 */
 	function bem2Component(block, attrs, rootTag, value) {
 		const
-			tmp = attrs[':class'] = attrs[':class'] || [];
+			elName = value.replace(elSeparatorRgxp, ''),
+			classes = attrs[':class'] = attrs[':class'] || [],
+			styles = attrs[':style'] = attrs[':style'] || [];
 
-		if (!$C(tmp).includes('componentId')) {
-			attrs[':class'] = attachClass(tmp.concat('componentId', `classes && classes['${value.replace(elSeparatorRgxp, '')}']`));
-		}
+		const newClasses = classes.concat(
+			$C(classes).includes('componentId') ? [] : 'componentId',
+			`classes && classes['${elName}']`
+		);
+
+		attrs[':class'] = wrapAttrArray(newClasses);
+		attrs[':style'] = wrapAttrArray(styles.concat(`styles && styles['${elName}']`));
 
 		return block + value;
 	}
