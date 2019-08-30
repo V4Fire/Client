@@ -24,22 +24,28 @@ $p = {
 b-calendar
 	color lighten($p.color, 20%)
 
-	for $el in (none 0) (small 0.5em) (normal 1em) (big 2em)
-		&_rounding_{$el[0]} &__label-nav
-			border-radius $el[1]
-
 	&__label-nav
 		padding 0.2em
+
+		text-decoration none
+
 		border 1px solid $p.borderColor
 		color $p.labelNavColor
 		background $p.inputBackgroundColor
 		transition 0.2s ease-in border-color
 
 		&_buttons_false
+			justify-content center
 			height 3em
 
-	&_opened_true &__label-nav
-		border 1px solid $p.labelNavColor
+	&__label-nav
+	&__nav
+	&__cell
+		align-items center
+
+	&__nav
+	&__cell
+		justify-content center
 
 	&__nav
 		padding 1em 0
@@ -61,6 +67,7 @@ b-calendar
 
 	&__value
 		font-weight 400
+		text-align center
 
 	&__calendar-icon
 		margin-right 0.5em
@@ -104,6 +111,8 @@ b-calendar
 		margin 0.3em
 
 	&__cell
+		vertical-align top
+
 		&_range-start_false&_range-end_false&_in-range_true
 		&_range-end_true
 			&:before
@@ -125,7 +134,14 @@ b-calendar
 		&_range-start_true&_range-end_true
 			border-radius 100%
 
+	&__h
 	&__day
+		justify-content center
+		align-items center
+
+	&__day
+		text-align center
+		text-decoration none
 		border 1px dotted transparent
 		border-radius 100%
 		color $p.color
@@ -145,3 +161,14 @@ b-calendar
 
 		&_disabled_true
 			opacity 0.5
+
+	&__time-block
+		justify-content center
+		align-items center
+
+	for $el in (none 0) (small 0.5em) (normal 1em) (big 2em)
+		&_rounding_{$el[0]} &__label-nav
+			border-radius $el[1]
+
+	&_opened_true &__label-nav
+		border 1px solid $p.labelNavColor

@@ -27,7 +27,9 @@ b-checkbox-group extends i-input
 		flex-wrap wrap
 
 	&__el
+		// @stlint-disable
 		width ($p.elWidth != auto ? "calc(%s - %s)" % ($p.elWidth ($p.elMargin && $p.elMargin * 2) || $p.elHorMargin || 0px) : $p.elWidth)
+		// @stlint-enable
 		margin $p.elMargin
 
 		if !$p.elMargin
@@ -38,5 +40,3 @@ b-checkbox-group extends i-input
 			&:nth-child(even)
 				margin-top ($p.elVertMargin / 2)
 				margin-left ($p.elHorMargin / 2)
-
-

@@ -14,6 +14,10 @@ $p = {
 }
 
 b-image-editor
+	&__root-wrapper
+		justify-content center
+		align-items center
+
 	&__wrapper
 		background $p.wrapperBackgroundColor
 
@@ -23,6 +27,7 @@ b-image-editor
 	&__controls
 		$padding = 0.4em
 		absolute bottom ($padding / 2) right 0
+		justify-content flex-end
 		padding 0.2em $padding
 		color $p.color
 
@@ -35,3 +40,11 @@ b-image-editor
 
 		&:active
 			color lighten($p.hoverColor, 20%)
+
+	&__info-cell
+		align-self center
+
+	&_progress_true &__wrapper
+		display flex
+		flex-direction column
+		justify-content center

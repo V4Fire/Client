@@ -9,7 +9,7 @@
 @import "super/i-block/i-block.styl"
 
 $p = {
-	size: 1em
+	size: 1rem
 }
 
 b-icon extends i-block
@@ -19,7 +19,9 @@ b-icon extends i-block
 
 	&__svg
 		display block
-		size $p.size
+
+		if $p.size
+			size $p.size
 
 	if $p.color
 		color $p.color

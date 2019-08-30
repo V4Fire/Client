@@ -30,11 +30,7 @@ b-calendar extends i-input
 	&__label-nav
 		justify-content space-between
 		height auto
-		text-decoration none
 		cursor pointer
-
-		&_buttons_false
-			justify-content center
 
 		&:active
 			{$p.onActive}
@@ -53,21 +49,10 @@ b-calendar extends i-input
 		flex-direction column
 		width 100%
 
-	&__label-nav
-	&__nav
-	&__cell
-		align-items center
-		box-sizing border-box
-
-	&__nav
-	&__cell
-		justify-content center
-
 	&__nav
 		justify-content space-between
 
 	&__value
-		text-align center
 		user-select none
 
 	&__dropdown_immediately-shown_false
@@ -95,7 +80,6 @@ b-calendar extends i-input
 
 	&__cell
 		position relative
-		vertical-align top
 
 		&_range-start_false&_range-end_false&_in-range_true
 		&_range-end_true
@@ -117,15 +101,8 @@ b-calendar extends i-input
 	&__h
 		display inline-flex
 
-	&__h
-	&__day
-		justify-content center
-		align-items center
-
 	&__day
 		size 100%
-		text-align center
-		text-decoration none
 		user-select none
 
 		&_disabled_true
@@ -134,8 +111,6 @@ b-calendar extends i-input
 
 	&__time-block
 		display flex
-		justify-content center
-		align-items center
 
 	&__time-label
 		line-height 1

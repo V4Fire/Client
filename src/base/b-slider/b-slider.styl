@@ -13,17 +13,14 @@ $p = {
 }
 
 b-slider extends i-block
-	&__root-wrapper
-		size 100%
-
 	&__window
-		position relative
-		display flex
-		size 100%
-		overflow hidden
-
 	&__view
 		display flex
 		size 100%
 		overflow hidden
+
+	&__window
+		position relative
+
+	&__view
 		useGPU()

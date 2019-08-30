@@ -11,11 +11,12 @@
 $p = {
 	messageColor: #FEFEFE
 	messageBorderColor: #616161
-	messageBackgroundColor: #616161
+	messageBgColor: #616161
 	messageShadowColor: alpha(#111, 0.4)
 	messageRounding: 0.3rem
+
 	hintColor: #000
-	hintBackgroundColor: #FFF
+	hintBgColor: #FFF
 	hintShadowColor: alpha(#000, 0.2)
 }
 
@@ -31,7 +32,7 @@ i-message
 			fontSize: 0.85rem,
 			horArrowSize: 0.8em,
 			color: $p.messageColor,
-			backgroundColor: $p.messageBackgroundColor,
+			bgColor: $p.messageBgColor,
 			shadow: 0.1em 0.1em 0.5em $p.messageShadowColor,
 			rounding: $p.messageRounding
 		})
@@ -49,7 +50,7 @@ i-message
 			fontSize: 1em,
 			vertArrowSize: 1.2em,
 			color: $p.hintColor,
-			backgroundColor: $p.hintBackgroundColor,
+			bgColor: $p.hintBgColor,
 			shadow: 0.1em 0.1em 0.5em $p.hintShadowColor,
 			rounding: 0
 		})

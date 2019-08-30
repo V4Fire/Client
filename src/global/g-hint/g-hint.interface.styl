@@ -9,17 +9,21 @@
 $p = {
 	hintData: false
 	showSelector: false
+	zIndexPos: overall
+
 	wrapper: "&"
 	arrow: "&::before"
 	content: "&::after"
-	vertArrowSize: 0.7rem
+
 	horArrowSize: 0.4rem
+	vertArrowSize: 0.7rem
+
 	fontSize: 0.8rem
 	rounding: 0.3rem
-	backgroundColor: #616161
-	shadow: 0 0 0.2rem alpha(#111, 0.4)
+
 	color: #FEFEFE
-	zIndexPos: overall
+	bgColor: #616161
+	shadow: 0 0 0.2rem alpha(#111, 0.4)
 }
 
 g-hint
@@ -35,16 +39,29 @@ g-hint
 			position absolute
 			display none
 			text-shadow none
-			font normal $p.fontSize BASE_FONT
+
+			if $p.fontSize
+				font-size $p.fontSize
 
 		{$p.content}
 			zIndex($p.zIndexPos)
-			padding ($p.fontSize / 1.8)
-			border-radius $p.rounding
-			background $p.backgroundColor
-			box-shadow $p.shadow
 			text-transform none
-			color $p.color
+			border-radius $p.rounding
+
+			if $p.contentPadding
+				padding $p.contentPadding
+
+			else
+				padding ($p.fontSize / 1.8)
+
+			if $p.bgColor
+				background-color $p.bgColor
+
+			if $p.shadow
+				box-shadow $p.shadow
+
+			if $p.color
+				color $p.color
 
 			if $p.hintData
 				content attr($p.hintData)
@@ -72,7 +89,7 @@ g-hint
 
 		{$p.arrow}
 			top "calc(-%s - %s)" % ($p.vertArrowSize 1px)
-			border-top-color $p.backgroundColor
+			border-top-color $p.bgColor
 
 	{$p.wrapper}_pos_bottom,
 	{$p.wrapper}_pos_bottom-left,
@@ -82,7 +99,7 @@ g-hint
 
 		{$p.arrow}
 			bottom "calc(-%s - %s)" % ($p.vertArrowSize 1px)
-			border-bottom-color $p.backgroundColor
+			border-bottom-color $p.bgColor
 
 	{$p.wrapper}_pos_top,
 	{$p.wrapper}_pos_bottom
@@ -135,7 +152,9 @@ g-hint
 
 		{$p.arrow}
 			left "calc(100% - %s)" % ($p.horArrowSize / 1.1)
-			border-right-color $p.backgroundColor
+
+			if $p.bgColor
+				border-right-color $p.bgColor
 
 	{$p.wrapper}_pos_left,
 	{$p.wrapper}_pos_left-top,
@@ -145,7 +164,9 @@ g-hint
 
 		{$p.arrow}
 			right "calc(100% - %s)" % ($p.horArrowSize / 1.1)
-			border-left-color $p.backgroundColor
+
+			if $p.bgColor
+				border-left-color $p.bgColor
 
 	{$p.wrapper}_pos_left-top,
 	{$p.wrapper}_pos_right-top
