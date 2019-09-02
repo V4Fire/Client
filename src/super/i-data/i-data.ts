@@ -638,19 +638,6 @@ export default abstract class iData<T extends object = Dictionary> extends iMess
 	}
 
 	/**
-	 * Synchronization for the p property
-	 *
-	 * @param value
-	 * @param [oldValue]
-	 */
-	@watch('p')
-	protected syncAdvParamsWatcher(value: Dictionary, oldValue: Dictionary): void {
-		if (!Object.fastCompare(value, oldValue)) {
-			this.initRemoteData();
-		}
-	}
-
-	/**
 	 * Synchronization for the dataProviderParams property
 	 *
 	 * @param value
