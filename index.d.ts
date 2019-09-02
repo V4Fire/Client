@@ -10,6 +10,7 @@
 
 declare let READY_STATE: number;
 declare const MODULE_DEPENDENCIES: string;
+declare const BLOCK_NAMES: CanUndef<string[]>;
 declare const PATH: Dictionary<CanUndef<string>>;
 declare const TPLS: Dictionary<Dictionary<Function>>;
 
