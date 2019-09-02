@@ -118,9 +118,13 @@ export default class Provide {
 	 * Returns an object with base component modifiers
 	 * @param mods - additional modifiers ({modifier: {currentValue: value}} || {modifier: value})
 	 */
-	mods(mods?: Dictionary<ModVal | Dictionary<ModVal>>): Readonly<ModsNTable> {
+	mods(mods?: Dictionary<ModVal | Dictionary<ModVal>>): CanUndef<Readonly<ModsNTable>> {
 		const
 			{baseMods} = this.component;
+
+		if (!baseMods && !mods) {
+			return;
+		}
 
 		const
 			key = JSON.stringify(baseMods) + JSON.stringify(mods),

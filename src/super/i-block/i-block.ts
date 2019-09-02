@@ -447,14 +447,18 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	 * Base component modifiers
 	 */
 	@p({replace: false})
-	get baseMods(): Readonly<ModsNTable> {
+	get baseMods(): CanUndef<Readonly<ModsNTable>> {
 		const
 			m = this.mods;
 
-		return Object.freeze({
-			theme: m.theme,
-			size: m.size
-		});
+		let
+			res;
+
+		if (m.theme) {
+			res = {theme: m.theme};
+		}
+
+		return res && Object.freeze(res);
 	}
 
 	/**
