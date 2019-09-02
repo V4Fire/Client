@@ -153,21 +153,25 @@ export default class Sync {
 		}
 
 		const
-			cache = this.syncLinkCache;
+			{meta, component, linksCache, syncLinkCache: cache} = this;
+
+		let
+			isProp;
 
 		if (!field || !Object.isString(field)) {
 			wrapper = <LinkWrapper<D>>params;
 			params = <AsyncWatchOpts>field;
 			field = `${path.replace(storeRgxp, '')}Prop`;
+			isProp = true;
+
+		} else {
+			isProp = Boolean(meta.props[field]);
 		}
 
 		if (params && Object.isFunction(params)) {
 			wrapper = params;
 			params = undefined;
 		}
-
-		const
-			{meta, component, linksCache} = this;
 
 		if (!linksCache[path]) {
 			linksCache[path] = {};
@@ -218,7 +222,7 @@ export default class Sync {
 				}
 			});
 
-			if (this.lfc.isBeforeCreate('beforeDataCreate')) {
+			if (isProp ? !this.component.$props : this.lfc.isBeforeCreate('beforeDataCreate')) {
 				const
 					name = '[[SYNC]]',
 					hooks = meta.hooks.beforeDataCreate;
@@ -500,7 +504,7 @@ export default class Sync {
 			}, params);
 		};
 
-		if (this.lfc.isBeforeCreate()) {
+		if (this.meta.props[field] ? !this.component.$props : this.lfc.isBeforeCreate()) {
 			const sync = this.syncModCache[mod] = () => {
 				const
 					v = fn.call(this, this.field.get(field));
