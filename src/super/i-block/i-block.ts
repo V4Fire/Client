@@ -87,7 +87,8 @@ import {
 
 	VNode,
 	ComponentInterface,
-	ComponentMeta
+	ComponentMeta,
+	FieldInfo
 
 } from 'core/component';
 
@@ -1009,11 +1010,23 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 		const
 			p = params || {};
 
+		let
+			info;
+
 		if (Object.isString(exprOrFn) && (
 			isCustomWatcher.test(exprOrFn) ||
-			getFieldInfo(exprOrFn, this).type === 'system')
+			(info = getFieldInfo(exprOrFn, this)).type === 'system')
 		) {
+			if (info && info.type === 'prop' && (
+				// @ts-ignore (access)
+				info.ctx.meta.params.root ||
+				!(info.name in (info.ctx.$options.propsData || {}))
+			)) {
+				return;
+			}
+
 			bindWatchers(this, {
+				info,
 				async: <Async<any>>this.async,
 				watchers: {
 					[exprOrFn]: [{
@@ -1023,6 +1036,14 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 				}
 			});
 
+			return;
+		}
+
+		if (info && info.type === 'prop' && (
+			// @ts-ignore (access)
+			info.ctx.meta.params.root ||
+			!(info.name in (info.ctx.$options.propsData || {}))
+		)) {
 			return;
 		}
 
@@ -1573,7 +1594,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	@p({replace: false})
 	protected $$watch<T = unknown>(
 		exprOrFn: string | ((this: this) => string),
-		opts: BaseWatchOptionsWithHandler<T>
+		opts: BaseWatchOptionsWithHandler<T> & {fieldInfo?: FieldInfo}
 	): Function {
 		const
 			{handler} = opts;
@@ -1585,7 +1606,15 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 
 		if (Object.isString(exprOrFn)) {
 			const
-				info = getFieldInfo(exprOrFn, this);
+				info = opts.fieldInfo || getFieldInfo(exprOrFn, this);
+
+			if (info && info.type === 'prop' && (
+				// @ts-ignore (access)
+				info.ctx.meta.params.root ||
+				!(info.name in (info.ctx.$options.propsData || {}))
+			)) {
+				return () => undefined;
+			}
 
 			exprOrFn = info.fullPath;
 			needCache = handler.length > 1;

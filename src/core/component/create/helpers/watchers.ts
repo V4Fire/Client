@@ -8,11 +8,12 @@
 
 import Async from 'core/async';
 import { GLOBAL } from 'core/env';
-import { getFieldInfo, ComponentInterface, WatchOptions, WatchOptionsWithHandler } from 'core/component';
+import { getFieldInfo, ComponentInterface, WatchOptions, WatchOptionsWithHandler, FieldInfo } from 'core/component';
 
 export interface BindWatchersParams<A extends object = ComponentInterface> {
 	async?: Async<A>;
 	watchers?: Dictionary<WatchOptionsWithHandler[]>;
+	info?: FieldInfo;
 }
 
 export const
@@ -60,10 +61,11 @@ export function cloneWatchValue<T>(value: T, params: WatchOptions = {}): T {
  * @param ctx - component context
  * @param [watchers] - dictionary with watchers
  * @param [async] - async instance
+ * @param [info] - field info object (from cache)
  */
 export function bindWatchers(
 	ctx: ComponentInterface,
-	{watchers, async}: BindWatchersParams = {}
+	{watchers, async, info}: BindWatchersParams = {}
 ): void {
 	const
 		// @ts-ignore (access)
@@ -225,13 +227,11 @@ export function bindWatchers(
 						}
 
 						const
-							info = getFieldInfo(key, ctx);
+							fieldInfo = info || getFieldInfo(key, ctx),
+							fieldCtx = fieldInfo.ctx;
 
-						if (info.type === 'system') {
-							key = info.name;
-
-							const
-								fieldCtx = info.ctx;
+						if (fieldInfo.type === 'system') {
+							key = fieldInfo.name;
 
 							let
 								watchers = systemWatchers.get(fieldCtx);
@@ -281,11 +281,17 @@ export function bindWatchers(
 							watcher.cb.add(handler);
 							watchObj.immediate && handler(store);
 
-						} else {
-							const unwatch = $watch.call(ctx, info.fullPath, {
+						} else if (
+							fieldInfo.type !== 'prop' ||
+							// @ts-ignore (access)
+							!fieldCtx.meta.params.root &&
+							(fieldInfo.name in (fieldCtx.$options.propsData || {}))
+						) {
+							const unwatch = $watch.call(ctx, fieldInfo.fullPath, {
 								deep: watchObj.deep,
 								immediate: watchObj.immediate,
-								handler
+								handler,
+								fieldInfo
 							});
 
 							$a.worker(unwatch, group);
@@ -309,13 +315,11 @@ export function bindWatchers(
 					}
 
 					const
-						info = getFieldInfo(key, ctx);
+						fieldInfo = info || getFieldInfo(key, ctx),
+						fieldCtx = fieldInfo.ctx;
 
-					if (info.type === 'system') {
-						key = info.name;
-
-						const
-							fieldCtx = info.ctx;
+					if (fieldInfo.type === 'system') {
+						key = fieldInfo.name;
 
 						let
 							watchers = systemWatchers.get(fieldCtx);
@@ -365,11 +369,17 @@ export function bindWatchers(
 						watcher.cb.add(handler);
 						watchObj.immediate && handler(store);
 
-					} else {
-						const unwatch = $watch.call(ctx, info.fullPath, {
+					} else if (
+						fieldInfo.type !== 'prop' ||
+						// @ts-ignore (access)
+						!fieldCtx.meta.params.root &&
+						(fieldInfo.name in (fieldCtx.$options.propsData || {}))
+					) {
+						const unwatch = $watch.call(ctx, fieldInfo.fullPath, {
 							deep: watchObj.deep,
 							immediate: watchObj.immediate,
-							handler
+							handler,
+							fieldInfo
 						});
 
 						$a.worker(unwatch, group);
