@@ -33,7 +33,7 @@ export type SyncObjectField<T = unknown> =
 
 export type SyncObjectFields<T = unknown> = Array<
 	SyncObjectField<T>
->;
+	>;
 
 const
 	storeRgxp = /Store$/;
@@ -153,7 +153,7 @@ export default class Sync {
 		}
 
 		const
-			{meta, component, linksCache, syncLinkCache: cache} = this;
+			{meta, component, linksCache, syncLinkCache: cache, component: {$options: {propsData}}} = this;
 
 		let
 			isProp;
@@ -186,7 +186,12 @@ export default class Sync {
 				return res;
 			};
 
-			if (!component.isFlyweight && (!meta.props[field] || !component.isFunctional)) {
+			if (
+				!component.isFlyweight && (component.isFunctional ?
+					!isProp :
+					!isProp || !propsData || field in propsData
+				)
+			) {
 				if (wrapper && wrapper.length > 1) {
 					component.watch(field, (val, oldVal) => {
 						if (Object.fastCompare(val, oldVal) || Object.fastCompare(val, this.field.get(path))) {
@@ -222,7 +227,7 @@ export default class Sync {
 				}
 			});
 
-			if (isProp ? !this.component.$props : this.lfc.isBeforeCreate('beforeDataCreate')) {
+			if (isProp ? component.hook === 'beforeRuntime' : this.lfc.isBeforeCreate('beforeDataCreate')) {
 				const
 					name = '[[SYNC]]',
 					hooks = meta.hooks.beforeDataCreate;
@@ -284,7 +289,7 @@ export default class Sync {
 		}
 
 		const
-			{meta, component, syncLinkCache, linksCache} = this;
+			{meta, component, syncLinkCache, linksCache, component: {$options: {propsData}}} = this;
 
 		const
 			hooks = meta.hooks.beforeDataCreate;
@@ -327,9 +332,13 @@ export default class Sync {
 			Object.set(linksCache, path, true);
 
 			const
-				sync = (val?, oldVal?) => setField(path, getVal(val, oldVal));
+				sync = (val?, oldVal?) => setField(path, getVal(val, oldVal)),
+				isProp = meta.props[field];
 
-			if (!component.isFlyweight && (!meta.props[field] || !component.isFunctional)) {
+			if (!component.isFlyweight && (component.isFunctional ?
+					!isProp :
+					!isProp || !propsData || field in propsData
+			)) {
 				if (clone) {
 					component.watch(field, (val, oldVal) => {
 						if (Object.fastCompare(val, oldVal) || Object.fastCompare(val, this.field.get(path))) {
@@ -365,7 +374,7 @@ export default class Sync {
 				}
 			});
 
-			if (this.lfc.isBeforeCreate('beforeDataCreate')) {
+			if (isProp ? component.hook === 'beforeRuntime' : this.lfc.isBeforeCreate('beforeDataCreate')) {
 				hooks.push({fn: sync});
 			}
 		};
@@ -504,7 +513,7 @@ export default class Sync {
 			}, params);
 		};
 
-		if (this.meta.props[field] ? !this.component.$props : this.lfc.isBeforeCreate()) {
+		if (this.meta.props[field] ? component.hook === 'beforeRuntime' : this.lfc.isBeforeCreate()) {
 			const sync = this.syncModCache[mod] = () => {
 				const
 					v = fn.call(this, this.field.get(field));
