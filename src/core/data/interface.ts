@@ -8,6 +8,7 @@
 
 import {
 
+	Decoders,
 	RequestMethods,
 	RequestQuery,
 	RequestBody,
@@ -25,6 +26,7 @@ export type MockResponseType =
 export interface MockCustomResponse {
 	status?: number;
 	responseType?: ResponseTypes;
+	decoders?: Decoders;
 }
 
 export interface MockResponseFunction {

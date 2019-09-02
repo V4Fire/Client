@@ -131,8 +131,11 @@ export async function attachMock(this: Provider, params: MiddlewareParams): Prom
 		return;
 	}
 
-	const
-		customResponse = {status: undefined, responseType: undefined};
+	const customResponse = {
+		status: undefined,
+		responseType: undefined,
+		decoders: undefined
+	};
 
 	let
 		{response} = currentRequest;
@@ -147,7 +150,7 @@ export async function attachMock(this: Provider, params: MiddlewareParams): Prom
 				status: customResponse.status || currentRequest.status || 200,
 				responseType: customResponse.responseType || currentRequest.responseType || opts.responseType,
 				okStatuses: opts.okStatuses,
-				decoder: currentRequest.decoders === false ? undefined : ctx.decoders
+				decoder: currentRequest.decoders === false ? undefined : customResponse.decoders || ctx.decoders
 			});
 
 			if (!response.ok) {
