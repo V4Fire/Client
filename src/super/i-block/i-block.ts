@@ -267,14 +267,14 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	/**
 	 * Additional classes for component elements
 	 */
-	@prop(Object)
-	readonly classes: Classes = {};
+	@prop({type: Object, required: false})
+	readonly classes?: Classes;
 
 	/**
 	 * Additional styles for component elements
 	 */
-	@prop(Object)
-	readonly styles: Styles = {};
+	@prop({type: Object, required: false})
+	readonly styles?: Styles;
 
 	/**
 	 * Advanced component parameters
