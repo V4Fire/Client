@@ -12,6 +12,7 @@ import {
 	RequestQuery,
 	RequestBody,
 	ResponseType,
+	ResponseTypes,
 	CreateRequestOpts,
 	MiddlewareParams
 
@@ -23,6 +24,7 @@ export type MockResponseType =
 
 export interface MockCustomResponse {
 	status?: number;
+	responseType?: ResponseTypes;
 }
 
 export interface MockResponseFunction {
