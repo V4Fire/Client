@@ -281,7 +281,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	 * Advanced component parameters
 	 */
 	@prop(Object)
-	readonly pProp: Dictionary = {};
+	readonly p: Dictionary = {};
 
 	/**
 	 * Link to i18n function
@@ -395,21 +395,6 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	})
 
 	isActivated!: boolean;
-
-	/**
-	 * Returns the internal advanced parameters store value
-	 */
-	@p({replace: false})
-	get p(): Dictionary {
-		return <NonNullable<Dictionary>>this.field.get('pStore');
-	}
-
-	/**
-	 * Sets the internal advanced parameters store value
-	 */
-	set p(value: Dictionary) {
-		this.field.set('pStore', value);
-	}
 
 	/**
 	 * Link to $root
@@ -661,16 +646,6 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	 */
 	@field({functional: false})
 	protected renderCounter: number = 0;
-
-	/**
-	 * Advanced component parameters internal storage
-	 */
-	@field({
-		replace: false,
-		init: (o) => o.sync.link()
-	})
-
-	protected pStore: Dictionary = {};
 
 	/**
 	 * Component stage store
