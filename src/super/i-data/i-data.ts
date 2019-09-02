@@ -91,8 +91,8 @@ export default abstract class iData<T extends object = Dictionary> extends iMess
 	/**
 	 * Initial parameters for a data provider instance
 	 */
-	@prop(Object)
-	readonly dataProviderParams: ProviderParams = {};
+	@prop({type: Object, required: false})
+	readonly dataProviderParams?: ProviderParams;
 
 	/**
 	 * Initial request parameters

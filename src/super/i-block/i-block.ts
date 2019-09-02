@@ -213,14 +213,14 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	/**
 	 * Initial component modifiers
 	 */
-	@prop(Object)
-	readonly modsProp: ModsTable = {};
+	@prop({type: Object, required: false})
+	readonly modsProp?: ModsTable;
 
 	/**
 	 * Remote watchers table
 	 */
-	@prop(Object)
-	readonly watchProp: Dictionary<MethodWatchers> = {};
+	@prop({type: Object, required: false})
+	readonly watchProp?: Dictionary<MethodWatchers>;
 
 	/**
 	 * Initial component stage
@@ -280,8 +280,8 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	/**
 	 * Advanced component parameters
 	 */
-	@prop(Object)
-	readonly p: Dictionary = {};
+	@prop({type: Object, required: false})
+	readonly p?: Dictionary;
 
 	/**
 	 * Link to i18n function
