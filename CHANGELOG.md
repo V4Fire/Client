@@ -11,6 +11,13 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-beta.154 (2019-09-02)
+
+#### :rocket: New Feature
+
+* Added `MockCustomResponse.responseType`
+* Added `MockCustomResponse.decoders`
+
 ## v3.0.0-beta.153 (2019-08-30)
 
 #### :house: Internal

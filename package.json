@@ -5,7 +5,7 @@
   "main": "src/core/index.js",
   "typings": "index.d.ts",
   "license": "MIT",
-  "version": "3.0.0-beta.153",
+  "version": "3.0.0-beta.154",
   "author": {
     "name": "kobezzza",
     "email": "kobezzza@gmail.com",
@@ -34,7 +34,7 @@
     "eventemitter2": "^5.0.1",
     "fg-loadcss": "^2.1.0",
     "ion-sound": "^3.0.7",
-    "path-to-regexp": "^3.0.0",
+    "path-to-regexp": "^3.1.0",
     "requestidlecallback": "^0.3.0",
     "snakeskin": "^7.5.1",
     "socket.io": "^2.2.0",
@@ -115,7 +115,7 @@
   },
   "devDependencies": {
     "babel-eslint": "^10.0.3",
-    "eslint": "^6.2.2",
+    "eslint": "^6.3.0",
     "stlint": "^1.0.58",
     "stlint-v4fire": "^1.0.30",
     "tslint": "^5.19.0"
