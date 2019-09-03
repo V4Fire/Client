@@ -248,6 +248,7 @@ module.exports = (async () => {
 
 	const res = {
 		entry,
+		blockMap,
 		processes,
 		dependencies: $C(graph.dependencies).map((el, key) => [...el, key])
 	};

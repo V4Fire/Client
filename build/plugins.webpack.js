@@ -33,7 +33,7 @@ module.exports = async function ({buildId}) {
 		graph = await build;
 
 	const plugins = new Map([
-		['globals', new webpack.DefinePlugin(include('build/globals.webpack'))],
+		['globals', new webpack.DefinePlugin(await $C(include('build/globals.webpack')).async.map())],
 		['dependencies', include('build/plugins/dependencies')({graph})]
 	]);
 
