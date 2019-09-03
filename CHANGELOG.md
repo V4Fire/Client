@@ -11,6 +11,13 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-beta.155 (2019-09-03)
+
+#### :house: Internal
+
+* Refactoring and optimizations
+* Default `bIcon` size is set to `1em`
+
 ## v3.0.0-beta.154 (2019-09-02)
 
 #### :rocket: New Feature
