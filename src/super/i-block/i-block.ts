@@ -1001,6 +1001,10 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 				info.ctx.meta.params.root ||
 				!(info.name in (info.ctx.$options.propsData || {}))
 			)) {
+				if (p.immediate) {
+					cb.call(this, this.field.get(exprOrFn));
+				}
+
 				return;
 			}
 
@@ -1023,6 +1027,10 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 			info.ctx.meta.params.root ||
 			!(info.name in (info.ctx.$options.propsData || {}))
 		)) {
+			if (p.immediate) {
+				cb.call(this, this.field.get(<string>exprOrFn));
+			}
+
 			return;
 		}
 
@@ -1585,13 +1593,18 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 
 		if (Object.isString(exprOrFn)) {
 			const
-				info = opts.fieldInfo || getFieldInfo(exprOrFn, this);
+				info = opts.fieldInfo || getFieldInfo(exprOrFn, this),
+				val = this.field.get(exprOrFn);
 
 			if (info && info.type === 'prop' && (
 				// @ts-ignore (access)
 				info.ctx.meta.params.root ||
 				!(info.name in (info.ctx.$options.propsData || {}))
 			)) {
+				if (opts.immediate) {
+					handler.call(this, val);
+				}
+
 				return () => undefined;
 			}
 
@@ -1603,7 +1616,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 				watchCache = info.ctx.watchCache;
 
 				oldVal = watchCache[exprOrFn] = exprOrFn in watchCache ?
-					watchCache[exprOrFn] : cloneWatchValue(this.field.get(exprOrFn));
+					watchCache[exprOrFn] : cloneWatchValue(val);
 			}
 		}
 

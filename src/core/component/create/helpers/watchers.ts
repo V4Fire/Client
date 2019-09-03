@@ -282,6 +282,7 @@ export function bindWatchers(
 							watchObj.immediate && handler(store);
 
 						} else if (
+							watchObj.immediate ||
 							fieldInfo.type !== 'prop' ||
 							// @ts-ignore (access)
 							!fieldCtx.meta.params.root &&
@@ -370,6 +371,7 @@ export function bindWatchers(
 						watchObj.immediate && handler(store);
 
 					} else if (
+						watchObj.immediate ||
 						fieldInfo.type !== 'prop' ||
 						// @ts-ignore (access)
 						!fieldCtx.meta.params.root &&
