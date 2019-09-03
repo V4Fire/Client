@@ -227,7 +227,7 @@ export default class Sync {
 				}
 			});
 
-			if (isProp ? component.hook === 'beforeRuntime' : this.lfc.isBeforeCreate('beforeDataCreate')) {
+			if (this.lfc.isBeforeCreate('beforeDataCreate')) {
 				const
 					name = '[[SYNC]]',
 					hooks = meta.hooks.beforeDataCreate;
@@ -374,7 +374,7 @@ export default class Sync {
 				}
 			});
 
-			if (isProp ? component.hook === 'beforeRuntime' : this.lfc.isBeforeCreate('beforeDataCreate')) {
+			if (this.lfc.isBeforeCreate('beforeDataCreate')) {
 				hooks.push({fn: sync});
 			}
 		};
@@ -513,7 +513,7 @@ export default class Sync {
 			}, params);
 		};
 
-		if (this.meta.props[field] ? component.hook === 'beforeRuntime' : this.lfc.isBeforeCreate()) {
+		if (this.lfc.isBeforeCreate()) {
 			const sync = this.syncModCache[mod] = () => {
 				const
 					v = fn.call(this, this.field.get(field));
