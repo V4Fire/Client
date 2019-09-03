@@ -13,6 +13,10 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 ## v3.0.0-beta.155 (2019-09-03)
 
+#### :rocket: New Feature
+
+* [Provided block names to the config](https://github.com/V4Fire/Client/pull/115)
+
 #### :house: Internal
 
 * Refactoring and optimizations
