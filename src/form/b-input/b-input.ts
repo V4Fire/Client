@@ -165,7 +165,7 @@ export default class bInput<
 	 * (for using with .mask)
 	 */
 	@prop(Object)
-	readonly regs: Dictionary<RegExp> = {};
+	readonly regExps: Dictionary<RegExp> = {};
 
 	/**
 	 * Input mask value
@@ -411,7 +411,7 @@ export default class bInput<
 					tpl += sys ? this.maskPlaceholder : el;
 
 					if (sys) {
-						value.push(this.regs[el] || new RegExp(`\\${el}`));
+						value.push(this.regExps[el] || new RegExp(`\\${el}`));
 						sys = false;
 
 					} else {
