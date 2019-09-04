@@ -28,12 +28,7 @@ module.exports = {
 		NODE_ENV: s(process.env.NODE_ENV)
 	},
 
-	BLOCK_NAMES: runtime.blockNames ? include('build/entities.webpack').then(({blockMap}) => {
-		if (Object.isMap(blockMap)) {
-			const
-				blockNames = Array.from(blockMap.keys()).filter((el) => /^b-/.test(el));
-
-			return s(blockNames);
-		}
-	}) : undefined
+	BLOCK_NAMES: runtime.blockNames ?
+		include('build/entities.webpack').then(({blockNames}) => blockNames.filter((el) => /^b-/.test(el))) :
+		undefined
 };
