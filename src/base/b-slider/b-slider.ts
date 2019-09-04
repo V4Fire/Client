@@ -128,7 +128,7 @@ export default class bSlider<T extends object = Dictionary> extends iData<T> {
 	/**
 	 * Initial component options
 	 */
-	@prop({type: Object, required: false})
+	@prop({type: Array, required: false})
 	readonly optionsProp?: unknown[];
 
 	/**
