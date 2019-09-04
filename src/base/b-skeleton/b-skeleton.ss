@@ -40,7 +40,7 @@
 	}, p) .
 
 	< ?.${self.name()}
-		< .&__${p.class}.&__item[.&_shape_rect.&_animation_${p.animation}.&_size_${p.size}] :style = style
+		< .&__${p.class}.&__item[.&_shape_rect.&_animation_${p.animation}.&_size_${p.size}] :style = style | :marker = true
 
 /**
  * Generates a skeleton circle
@@ -55,7 +55,7 @@
 	}, p) .
 
 	< ?.${self.name()}
-		< .&__${p.class}.&__item[.&_shape_circle.&_animation_${p.animation}.&_size_${p.size}] :style = style
+		< .&__${p.class}.&__item[.&_shape_circle.&_animation_${p.animation}.&_size_${p.size}] :style = style | :marker = true
 
 /**
  * @typedef MultipleParams
