@@ -523,6 +523,19 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	readonly sync!: Sync;
 
 	/**
+	 * API for async render
+	 */
+	@system({
+		atom: true,
+		unique: true,
+		replace: true,
+		functional: false,
+		init: (ctx: iBlock) => new AsyncRender(ctx)
+	})
+
+	readonly asyncRender!: AsyncRender;
+
+	/**
 	 * Parent link
 	 */
 	static readonly PARENT: object = PARENT;
@@ -603,19 +616,6 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	})
 
 	protected readonly vdom!: VDOM;
-
-	/**
-	 * API for async render
-	 */
-	@system({
-		atom: true,
-		unique: true,
-		replace: true,
-		functional: false,
-		init: (ctx: iBlock) => new AsyncRender(ctx)
-	})
-
-	protected readonly asyncRender!: AsyncRender;
 
 	/**
 	 * API for analytics
