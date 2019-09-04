@@ -37,7 +37,7 @@ export interface SlideRect extends ClientRect {
 export type SlideDirection = -1 | 0 | 1;
 export type AlignType = keyof typeof alignTypes;
 export type Mode = keyof typeof sliderModes;
-export type OptionProps = ((el: unknown) => Dictionary) | Dictionary;
+export type OptionProps = ((el: unknown, i: number) => Dictionary) | Dictionary;
 
 /**
  * Returns true if the specified value is in the range X > 0 && X <= 1

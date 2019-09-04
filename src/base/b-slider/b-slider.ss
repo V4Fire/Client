@@ -22,10 +22,10 @@
 			+= self.slot('before')
 
 			< template v-if = option
-				< template v-for = el in options
+				< template v-for = (el, i) in options
 					< component.&__option &
 						:is = option |
-						:v-attrs = Object.isFunction(optionProps) ? optionProps(el) : optionProps
+						:v-attrs = Object.isFunction(optionProps) ? optionProps(el, i) : optionProps
 					.
 
 			< template v-else
