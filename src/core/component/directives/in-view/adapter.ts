@@ -6,15 +6,15 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import MutationObserverStrategy from 'core/component/directives/in-view/modules/mutation';
-import IntersectionObserverStrategy from 'core/component/directives/in-view/modules/intersection';
+import MutationObserverStrategy from 'core/component/directives/in-view/mutation';
+import IntersectionObserverStrategy from 'core/component/directives/in-view/intersection';
 
 import {
 
 	InitOptions,
 	ObservableElement
 
-} from 'core/component/directives/in-view/modules/interface';
+} from 'core/component/directives/in-view/interface';
 
 export type Observers =
 	IntersectionObserverStrategy |
