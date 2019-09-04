@@ -21,15 +21,15 @@
 		: putIn content
 			+= self.slot('before')
 
-			< template v-if = $scopedSlots.default
-				+= self.slot()
-
-			< template v-else-if = option
+			< template v-if = option
 				< template v-for = el in options
 					< component.&__option &
 						:is = option |
 						:v-attrs = Object.isFunction(optionProps) ? optionProps(el) : optionProps
 					.
+
+			< template v-else
+				+= self.slot()
 
 			+= self.slot('after')
 
