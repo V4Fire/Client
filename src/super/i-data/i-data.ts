@@ -204,6 +204,10 @@ export default abstract class iData<T extends object = Dictionary> extends iMess
 
 	/** @override */
 	initLoad(data?: unknown, silent?: boolean): CanPromise<void> {
+		if (!this.isActivated) {
+			return;
+		}
+
 		const label = <AsyncOpts>{
 			label: $$.initLoad,
 			join: 'replace'

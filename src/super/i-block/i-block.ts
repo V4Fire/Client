@@ -397,6 +397,12 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	isActivated!: boolean;
 
 	/**
+	 * True, if the component was initialized at least once
+	 */
+	@system()
+	isInitializedOnce: boolean = false;
+
+	/**
 	 * Link to $root
 	 */
 	get r(): iStaticPage | any {
@@ -1313,6 +1319,10 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	 */
 	@hook('beforeDataCreate')
 	initLoad(data?: unknown | ((this: this) => unknown), silent?: boolean): CanPromise<void> {
+		if (!this.isActivated) {
+			return;
+		}
+
 		this.beforeReadyListeners = 0;
 
 		if (!silent) {
@@ -1342,6 +1352,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 			this.componentStatus = 'beforeReady';
 
 			this.lfc.execCbAfterBlockReady(() => {
+				this.isInitializedOnce = true;
 				this.componentStatus = 'ready';
 
 				if (this.beforeReadyListeners > 1) {

@@ -196,7 +196,10 @@ export function onActivated<T extends iBlock>(component: T): void {
 	}
 
 	$a.unmuteAll().unsuspendAll();
-	c.componentStatus = 'beforeReady';
+
+	if (c.isInitializedOnce && !readyEvents[c.componentStatus]) {
+		c.componentStatus = 'beforeReady';
+	}
 
 	if (c.needReInit) {
 		$a.setImmediate(() => {
@@ -212,11 +215,10 @@ export function onActivated<T extends iBlock>(component: T): void {
 		});
 	}
 
-	if (!readyEvents[c.componentStatus]) {
-		c.componentStatus = 'beforeReady';
+	if (c.isInitializedOnce) {
+		c.componentStatus = 'ready';
 	}
 
-	c.componentStatus = 'ready';
 	// @ts-ignore (access)
 	c.state.initFromRouter();
 	c.isActivated = true;
