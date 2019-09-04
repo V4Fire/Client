@@ -14,7 +14,7 @@ import {
 	InitOptions,
 	ObservableElement
 
-} from 'core/component/directives/in-view/modules/meta';
+} from 'core/component/directives/in-view/modules/interface';
 
 export type Observers =
 	IntersectionObserverStrategy |

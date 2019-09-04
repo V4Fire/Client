@@ -13,9 +13,9 @@ import { ComponentDriver } from 'core/component/engines';
 
 import MutationObserverStrategy from 'core/component/directives/in-view/modules/mutation';
 import IntersectionObserverStrategy from 'core/component/directives/in-view/modules/intersection';
-import { DirectiveOptions } from 'core/component/directives/in-view/modules/meta';
+import { DirectiveOptions } from 'core/component/directives/in-view/modules/interface';
 
-export * from 'core/component/directives/in-view/modules/meta';
+export * from 'core/component/directives/in-view/modules/interface';
 export * from 'core/component/directives/in-view/modules/helpers';
 
 const Adaptee = getAdaptee([

@@ -17,7 +17,7 @@ import {
 	ObservableElementsMap,
 	IntersectionObserverOptions
 
-} from 'core/component/directives/in-view/modules/meta';
+} from 'core/component/directives/in-view/modules/interface';
 
 import {
 
