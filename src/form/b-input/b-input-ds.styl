@@ -60,6 +60,7 @@ b-input
 						&_{$key}
 							& ^[0]
 								&__input-cont
+									line-height 1
 									$horOffset = getField($value, horOffset)
 									$vertOffset = getField($value, vertOffset)
 
@@ -130,15 +131,4 @@ b-input
 			& ^[0]__progress span
 				font-size 0.8em
 
-	//#if runtime has ds-vars
-	createStyles($p.__vars__)
-	//#endif
-
-	//#unless runtime has ds-vars
-	createStyles($p)
-	//#endunless
-
-	//#if runtime has ds-diff
-	&_diff_true
-		createStyles($p.__vars__)
-	//#endif
+	generateRules($p, createStyles)

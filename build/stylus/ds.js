@@ -29,6 +29,8 @@ function setVar(path) {
 		variable = `--${path.split('.').join('-')}`;
 
 	$C(cssVars).set(stylus.utils.parseString(`var(${variable})`), path);
+	$C(cssVars).set(stylus.utils.parseString(`var(${variable}-diff)`), `diff.${path}`);
+
 	cssVars.__map__.set(path, [variable, $C(DS).get(path)]);
 }
 
@@ -106,13 +108,17 @@ module.exports = function (style) {
 		'injector',
 		({string}) => {
 			const
-				__vars__ = $C(cssVars).get(`components.${string}`),
 				value = $C(DS).get(`components.${string}`);
 
 			if (value) {
+				const
+					__vars__ = $C(cssVars).get(`components.${string}`),
+					__diffVars__ = $C(cssVars).get(`diff.components.${string}`);
+
 				return stylus.utils.coerce({
 					...value,
-					__vars__
+					__vars__,
+					__diffVars__
 				}, true);
 			}
 

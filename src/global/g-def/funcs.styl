@@ -225,3 +225,23 @@ interpolate-props($options, $dash = true)
  */
 path($arr)
 	join(".", $arr)
+
+/**
+ * Generates necessary rules for specified component options and factory
+ *
+ * @param $p
+ * @param $fn
+ */
+generateRules($p, $fn)
+	//#if runtime has ds-vars
+	$fn($p.__vars__)
+	//#endif
+
+	//#unless runtime has ds-vars
+	$fn($p)
+	//#endunless
+
+	//#if runtime has ds-diff
+	&_diff_true
+		$fn($p.__diffVars__)
+	//#endif
