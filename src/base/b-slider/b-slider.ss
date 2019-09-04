@@ -1,3 +1,5 @@
+- namespace [%fileName%]
+
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -5,8 +7,6 @@
  * Released under the MIT license
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
-
-- namespace [%fileName%]
 
 - include 'super/i-data'|b as placeholder
 
@@ -22,7 +22,10 @@
 			+= self.slot('before')
 
 			< template v-if = option
-				< template v-for = (el, i) in options
+				< template &
+					v-for = (el, i) in optionsIterator ? optionsIterator(options, self) : options |
+					:key = optionKey
+				.
 					< component.&__option &
 						:is = option |
 						:v-attrs = Object.isFunction(optionProps) ? optionProps(el, i) : optionProps
