@@ -49,6 +49,7 @@
 				ref = button |
 				:class = provide.hintClasses(hintPos) |
 				:autofocus = autofocus |
+				:marker = true |
 				:-hint = t(hint) |
 				@click = onClick |
 				@focus = focus |

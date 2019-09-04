@@ -14,7 +14,7 @@
 	- rootWrapper = false
 
 	- block rootAttrs
-		? Object.assign(rootAttrs, {role: 'img', ':aria-label': 'alt'})
+		? Object.assign(rootAttrs, {role: 'img', ':aria-label': 'alt', marker: true})
 
 	- block body
 		- super
