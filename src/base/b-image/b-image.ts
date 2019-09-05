@@ -23,7 +23,7 @@ export type SizeType =
 export const
 	$$ = symbolGenerator();
 
-@component({flyweight: true, functional: true})
+@component({functional: {}})
 export default class bImage extends iMessage implements iProgress, iVisible {
 	/**
 	 * Target image src (fallback if srcset provided)

@@ -10,6 +10,19 @@ import symbolGenerator from 'core/symbol';
 import iData, { component, prop, field, system, hook, watch, wait, p } from 'super/i-data/i-data';
 export * from 'super/i-data/i-data';
 
+export interface SlideRect extends ClientRect {
+	offsetLeft: number;
+}
+
+/**
+ * -1 - Previous
+ * 0  - Not changed
+ * 1  - Next
+ */
+export type SlideDirection = -1 | 0 | 1;
+export type OptionProps = ((el: unknown, i: number) => Dictionary) | Dictionary;
+export type OptionsIterator<T = bSlider> = (options: unknown[], ctx: T) => unknown[];
+
 export const
 	$$ = symbolGenerator();
 
@@ -25,19 +38,8 @@ export const sliderModes = {
 	slider: true
 };
 
-export interface SlideRect extends ClientRect {
-	offsetLeft: number;
-}
-
-/**
- * -1 - Previous
- * 0  - Not changed
- * 1  - Next
- */
-export type SlideDirection = -1 | 0 | 1;
 export type AlignType = keyof typeof alignTypes;
 export type Mode = keyof typeof sliderModes;
-export type OptionProps = ((el: unknown) => Dictionary) | Dictionary;
 
 /**
  * Returns true if the specified value is in the range X > 0 && X <= 1
@@ -128,20 +130,32 @@ export default class bSlider<T extends object = Dictionary> extends iData<T> {
 	/**
 	 * Initial component options
 	 */
-	@prop({type: Object, required: false})
-	readonly optionsProp?: unknown[];
+	@prop(Array)
+	readonly optionsProp?: unknown[] = [];
+
+	/**
+	 * Factory for an options iterator
+	 */
+	@prop(Function)
+	optionsIterator?: OptionsIterator;
 
 	/**
 	 * Component options
 	 */
 	@field((o) => o.sync.link())
-	options?: unknown[];
+	options!: unknown[];
 
 	/**
 	 * Option component
 	 */
 	@prop({type: String, required: false})
 	readonly option?: string;
+
+	/**
+	 * Option unique key (for v-for)
+	 */
+	@prop({type: String, required: false})
+	readonly optionKey?: string;
 
 	/**
 	 * Option component props

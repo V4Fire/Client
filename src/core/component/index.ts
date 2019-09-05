@@ -55,7 +55,8 @@ export {
 	runHook,
 	getFieldInfo,
 	cloneWatchValue,
-	bindWatchers
+	bindWatchers,
+	FieldInfo
 
 } from 'core/component/create/helpers';
 
