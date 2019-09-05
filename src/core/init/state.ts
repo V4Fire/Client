@@ -20,13 +20,14 @@ export default (async () => {
 	const
 		tasks = <Promise<unknown>[]>[];
 
+	state.isOnline = true;
+	net.isOnline().then((v) => {
+		state.isOnline = v.status;
+		state.lastOnlineDate = v.lastOnline;
+	});
+
 	tasks.push(
 		locale.isInitialized,
-
-		net.isOnline().then((v) => {
-			state.isOnline = v.status;
-			state.lastOnlineDate = v.lastOnline;
-		}),
 
 		//#if runtime has core/session
 		session.isExists().then((v) => state.isAuth = v)

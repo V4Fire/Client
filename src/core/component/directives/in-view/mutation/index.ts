@@ -17,7 +17,7 @@ import {
 	ObservableElementsMap,
 	IntersectionObserverOptions
 
-} from 'core/component/directives/in-view/modules/meta';
+} from 'core/component/directives/in-view/interface';
 
 import {
 
@@ -27,10 +27,10 @@ import {
 	isElementInView,
 	isElementVisible
 
-} from 'core/component/directives/in-view/modules/mutation/helpers';
+} from 'core/component/directives/in-view/mutation/helpers';
 
-import Super from 'core/component/directives/in-view/modules/super';
-import { isInView } from 'core/component/directives/in-view/modules/helpers';
+import Super from 'core/component/directives/in-view/super';
+import { isInView } from 'core/component/directives/in-view/helpers';
 
 export const
 	$$ = symbolGenerator();

@@ -91,8 +91,8 @@ export default abstract class iData<T extends object = Dictionary> extends iMess
 	/**
 	 * Initial parameters for a data provider instance
 	 */
-	@prop(Object)
-	readonly dataProviderParams: ProviderParams = {};
+	@prop({type: Object, required: false})
+	readonly dataProviderParams?: ProviderParams;
 
 	/**
 	 * Initial request parameters
@@ -204,6 +204,10 @@ export default abstract class iData<T extends object = Dictionary> extends iMess
 
 	/** @override */
 	initLoad(data?: unknown, silent?: boolean): CanPromise<void> {
+		if (!this.isActivated) {
+			return;
+		}
+
 		const label = <AsyncOpts>{
 			label: $$.initLoad,
 			join: 'replace'
@@ -634,19 +638,6 @@ export default abstract class iData<T extends object = Dictionary> extends iMess
 		} else if (this.dp) {
 			this.dp = undefined;
 			this.dataEvent.off({group: 'dataProviderSync'});
-		}
-	}
-
-	/**
-	 * Synchronization for the p property
-	 *
-	 * @param value
-	 * @param [oldValue]
-	 */
-	@watch('p')
-	protected syncAdvParamsWatcher(value: Dictionary, oldValue: Dictionary): void {
-		if (!Object.fastCompare(value, oldValue)) {
-			this.initRemoteData();
 		}
 	}
 

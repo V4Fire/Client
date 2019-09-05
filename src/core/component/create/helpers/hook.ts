@@ -38,7 +38,10 @@ export function runHook(
 		log(`component:hook:${meta.componentName}:${hook}`, ...args, ctx);
 	}
 
-	if (!meta.hooks[hook].length) {
+	const
+		hooks = meta.hooks[hook];
+
+	if (!hooks.length) {
 		return createSyncPromise();
 	}
 
@@ -46,7 +49,7 @@ export function runHook(
 		event = new HookEmitter(),
 		filteredHooks = <Hook[]>[];
 
-	for (let hooks = meta.hooks[hook], i = 0; i < hooks.length; i++) {
+	for (let i = 0; i < hooks.length; i++) {
 		const
 			hook = hooks[i],
 			nm = hook.name;

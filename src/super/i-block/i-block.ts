@@ -87,7 +87,8 @@ import {
 
 	VNode,
 	ComponentInterface,
-	ComponentMeta
+	ComponentMeta,
+	FieldInfo
 
 } from 'core/component';
 
@@ -212,14 +213,14 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	/**
 	 * Initial component modifiers
 	 */
-	@prop(Object)
-	readonly modsProp: ModsTable = {};
+	@prop({type: Object, required: false})
+	readonly modsProp?: ModsTable;
 
 	/**
 	 * Remote watchers table
 	 */
-	@prop(Object)
-	readonly watchProp: Dictionary<MethodWatchers> = {};
+	@prop({type: Object, required: false})
+	readonly watchProp?: Dictionary<MethodWatchers>;
 
 	/**
 	 * Initial component stage
@@ -267,20 +268,20 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	/**
 	 * Additional classes for component elements
 	 */
-	@prop(Object)
-	readonly classes: Classes = {};
+	@prop({type: Object, required: false})
+	readonly classes?: Classes;
 
 	/**
 	 * Additional styles for component elements
 	 */
-	@prop(Object)
-	readonly styles: Styles = {};
+	@prop({type: Object, required: false})
+	readonly styles?: Styles;
 
 	/**
 	 * Advanced component parameters
 	 */
-	@prop(Object)
-	readonly pProp: Dictionary = {};
+	@prop({type: Object, required: false})
+	readonly p?: Dictionary;
 
 	/**
 	 * Link to i18n function
@@ -396,19 +397,10 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	isActivated!: boolean;
 
 	/**
-	 * Returns the internal advanced parameters store value
+	 * True, if the component was initialized at least once
 	 */
-	@p({replace: false})
-	get p(): Dictionary {
-		return <NonNullable<Dictionary>>this.field.get('pStore');
-	}
-
-	/**
-	 * Sets the internal advanced parameters store value
-	 */
-	set p(value: Dictionary) {
-		this.field.set('pStore', value);
-	}
+	@system()
+	isInitializedOnce: boolean = false;
 
 	/**
 	 * Link to $root
@@ -461,14 +453,18 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	 * Base component modifiers
 	 */
 	@p({replace: false})
-	get baseMods(): Readonly<ModsNTable> {
+	get baseMods(): CanUndef<Readonly<ModsNTable>> {
 		const
 			m = this.mods;
 
-		return Object.freeze({
-			theme: m.theme,
-			size: m.size
-		});
+		let
+			res;
+
+		if (m.theme) {
+			res = {theme: m.theme};
+		}
+
+		return res && Object.freeze(res);
 	}
 
 	/**
@@ -525,6 +521,19 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	})
 
 	readonly sync!: Sync;
+
+	/**
+	 * API for async render
+	 */
+	@system({
+		atom: true,
+		unique: true,
+		replace: true,
+		functional: false,
+		init: (ctx: iBlock) => new AsyncRender(ctx)
+	})
+
+	readonly asyncRender!: AsyncRender;
 
 	/**
 	 * Parent link
@@ -609,19 +618,6 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	protected readonly vdom!: VDOM;
 
 	/**
-	 * API for async render
-	 */
-	@system({
-		atom: true,
-		unique: true,
-		replace: true,
-		functional: false,
-		init: (ctx: iBlock) => new AsyncRender(ctx)
-	})
-
-	protected readonly asyncRender!: AsyncRender;
-
-	/**
 	 * API for analytics
 	 */
 	@system({
@@ -660,16 +656,6 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	 */
 	@field({functional: false})
 	protected renderCounter: number = 0;
-
-	/**
-	 * Advanced component parameters internal storage
-	 */
-	@field({
-		replace: false,
-		init: (o) => o.sync.link()
-	})
-
-	protected pStore: Dictionary = {};
 
 	/**
 	 * Component stage store
@@ -1009,11 +995,27 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 		const
 			p = params || {};
 
+		let
+			info;
+
 		if (Object.isString(exprOrFn) && (
 			isCustomWatcher.test(exprOrFn) ||
-			getFieldInfo(exprOrFn, this).type === 'system')
+			(info = getFieldInfo(exprOrFn, this)).type === 'system')
 		) {
+			if (info && info.type === 'prop' && (
+				// @ts-ignore (access)
+				info.ctx.meta.params.root ||
+				!(info.name in (info.ctx.$options.propsData || {}))
+			)) {
+				if (p.immediate) {
+					cb.call(this, this.field.get(exprOrFn));
+				}
+
+				return;
+			}
+
 			bindWatchers(this, {
+				info,
 				async: <Async<any>>this.async,
 				watchers: {
 					[exprOrFn]: [{
@@ -1022,6 +1024,18 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 					}]
 				}
 			});
+
+			return;
+		}
+
+		if (info && info.type === 'prop' && (
+			// @ts-ignore (access)
+			info.ctx.meta.params.root ||
+			!(info.name in (info.ctx.$options.propsData || {}))
+		)) {
+			if (p.immediate) {
+				cb.call(this, this.field.get(<string>exprOrFn));
+			}
 
 			return;
 		}
@@ -1305,6 +1319,10 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	 */
 	@hook('beforeDataCreate')
 	initLoad(data?: unknown | ((this: this) => unknown), silent?: boolean): CanPromise<void> {
+		if (!this.isActivated) {
+			return;
+		}
+
 		this.beforeReadyListeners = 0;
 
 		if (!silent) {
@@ -1334,6 +1352,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 			this.componentStatus = 'beforeReady';
 
 			this.lfc.execCbAfterBlockReady(() => {
+				this.isInitializedOnce = true;
 				this.componentStatus = 'ready';
 
 				if (this.beforeReadyListeners > 1) {
@@ -1573,7 +1592,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	@p({replace: false})
 	protected $$watch<T = unknown>(
 		exprOrFn: string | ((this: this) => string),
-		opts: BaseWatchOptionsWithHandler<T>
+		opts: BaseWatchOptionsWithHandler<T> & {fieldInfo?: FieldInfo}
 	): Function {
 		const
 			{handler} = opts;
@@ -1585,7 +1604,20 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 
 		if (Object.isString(exprOrFn)) {
 			const
-				info = getFieldInfo(exprOrFn, this);
+				info = opts.fieldInfo || getFieldInfo(exprOrFn, this),
+				val = this.field.get(exprOrFn);
+
+			if (info && info.type === 'prop' && (
+				// @ts-ignore (access)
+				info.ctx.meta.params.root ||
+				!(info.name in (info.ctx.$options.propsData || {}))
+			)) {
+				if (opts.immediate) {
+					handler.call(this, val);
+				}
+
+				return () => undefined;
+			}
 
 			exprOrFn = info.fullPath;
 			needCache = handler.length > 1;
@@ -1595,7 +1627,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 				watchCache = info.ctx.watchCache;
 
 				oldVal = watchCache[exprOrFn] = exprOrFn in watchCache ?
-					watchCache[exprOrFn] : cloneWatchValue(this.field.get(exprOrFn));
+					watchCache[exprOrFn] : cloneWatchValue(val);
 			}
 		}
 

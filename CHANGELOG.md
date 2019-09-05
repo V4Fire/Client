@@ -11,6 +11,38 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-beta.156 (2019-09-03)
+
+#### :rocket: New Feature
+
+* Added `optionKey` prop to `bSlider` 
+* Added `optionsIterator` prop to `bSlider` 
+* Provided an option index to a prop function `bSlider`
+* Added support for non defined values with `asyncRender.iterate` 
+* Marked `asyncRender` as public `iBlock`
+* Added `isInitializedOnce` parameter `iBlock`
+
+#### :bug: Bug Fix
+
+* Fixed `bSlider` with options prop
+* If component is not activated, than it won't be initialized
+* Online check should not block the render
+
+#### :house: Internal
+
+* Refactoring and optimizations
+
+## v3.0.0-beta.155 (2019-09-03)
+
+#### :rocket: New Feature
+
+* [Provided block names to the config](https://github.com/V4Fire/Client/pull/115)
+
+#### :house: Internal
+
+* Refactoring and optimizations
+* Default `bIcon` size is set to `1em`
+
 ## v3.0.0-beta.154 (2019-09-02)
 
 #### :rocket: New Feature

@@ -8,10 +8,10 @@
 
 import symbolGenerator from 'core/symbol';
 
-import { ObservableElement, IntersectionObserverOptions } from 'core/component/directives/in-view/modules/meta';
-import { hasIntersection, supportsDelay } from 'core/component/directives/in-view/modules/intersection/helpers';
+import { ObservableElement, IntersectionObserverOptions } from 'core/component/directives/in-view/interface';
+import { hasIntersection, supportsDelay } from 'core/component/directives/in-view/intersection/helpers';
 
-import Super from 'core/component/directives/in-view/modules/super';
+import Super from 'core/component/directives/in-view/super';
 
 export type AdapteeType =
 	'observer';
