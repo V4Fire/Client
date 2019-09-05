@@ -33,7 +33,12 @@
 						< span.&__buttons
 							< button &
 								v-for = val in mod |
-								:class = provide.elClasses({modValue: {selected: debugComponent.mods[key] === getModValue(val)}}) |
+								:class = provide.elClasses({
+									modValue: {
+										selected: debugComponent.mods[key] === getModValue(val),
+										highlighted: field.get(['highlighting', key, val].join('.'))
+									}
+								}) |
 								@click = setDebugMod($event.target, key, getModValue(val))
 							.
 								{{ getModValue(val) }}
