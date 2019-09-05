@@ -189,6 +189,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		return {
 			'vue': true,
 			'zero': false,
+
 			'ds-diff': false,
 			'ds-vars': false,
 
