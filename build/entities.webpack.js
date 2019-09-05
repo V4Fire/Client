@@ -37,7 +37,7 @@ MAX_PROCESS += MAX_PROCESS <= I ? 1 : 0;
 
 /**
  * Tree of dependencies
- * @type {Promise<{entry, processes, dependencies}>}
+ * @type {Promise<{entry, processes, dependencies, blockMap}>}
  */
 module.exports = (async () => {
 	const
@@ -61,7 +61,15 @@ module.exports = (async () => {
 				f();
 			});
 
-			return fs.readJSONSync(cacheFile);
+			return fs.readJSONSync(cacheFile, {
+				reviver(k, v) {
+					if (Object.isObject(v) && v.type === 'Map') {
+						return new Map(v.value);
+					}
+
+					return v;
+				}
+			});
 		}
 
 	} else {
@@ -246,10 +254,18 @@ module.exports = (async () => {
 	$C(processes)
 		.remove((obj, i) => i >= I.length && !$C(obj).length());
 
+	blockMap.toJSON = function () {
+		return {
+			type: 'Map',
+			value: Array.from(blockMap.entries())
+		};
+	};
+
 	const res = {
 		entry,
 		blockMap,
 		processes,
+		blockMap,
 		dependencies: $C(graph.dependencies).map((el, key) => [...el, key])
 	};
 
