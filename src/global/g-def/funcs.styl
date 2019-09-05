@@ -244,4 +244,7 @@ generateRules($p, $fn)
 	//#if runtime has ds-diff
 	&_diff_true
 		$fn($p.__diffVars__)
+
+	&_diff_false
+		$fn($p.__vars__)
 	//#endif
