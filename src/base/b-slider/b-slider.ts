@@ -162,6 +162,14 @@ export default class bSlider<T extends object = Dictionary> extends iData<T> {
 	}
 
 	/**
+	 * Number of DOM nodes within a content block
+	 */
+	get contentLength(): number {
+		const l = this.content;
+		return l ? l.children.length : 0;
+	}
+
+	/**
 	 * Pointer to the current slide
 	 */
 	@p({cache: false})
@@ -220,9 +228,7 @@ export default class bSlider<T extends object = Dictionary> extends iData<T> {
 		return 0;
 	}
 
-	/**
-	 * @see current
-	 */
+	/** @see current */
 	@system()
 	protected currentStore: number = 0;
 
