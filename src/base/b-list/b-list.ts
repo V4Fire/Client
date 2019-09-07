@@ -161,12 +161,12 @@ export default class bList<T extends object = Dictionary> extends iData<T> imple
 	 */
 	@p({cache: true})
 	protected get activeElement(): CanPromise<CanUndef<HTMLAnchorElement>> {
-		return this.waitStatus<CanUndef<HTMLAnchorElement>>('ready', () => {
+		return this.waitStatus('ready', () => {
 			const
 				val = String(this.active);
 
 			if (val in this.values) {
-				return this.block.element('link', {
+				return this.block.element<HTMLAnchorElement>('link', {
 					id: this.values[val]
 				});
 			}
