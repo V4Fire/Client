@@ -1844,9 +1844,11 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	/**
 	 * Component activated hook
 	 * (for keep-alive)
+	 *
+	 * @param [force]
 	 */
-	protected activated(): void {
-		onActivated(this);
+	protected activated(force?: boolean): void {
+		onActivated(this, force);
 	}
 
 	/**
