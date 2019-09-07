@@ -20,8 +20,8 @@ export interface SlideRect extends ClientRect {
  * 1  - Next
  */
 export type SlideDirection = -1 | 0 | 1;
-export type SlideProps = ((el: unknown, i: number) => Dictionary) | Dictionary;
-export type SlidesIterator<T = bSlider> = (slides: unknown[], ctx: T) => unknown[];
+export type OptionProps = ((el: unknown, i: number) => Dictionary) | Dictionary;
+export type OptionsIterator<T = bSlider> = (options: unknown[], ctx: T) => unknown[];
 
 export const
 	$$ = symbolGenerator();
@@ -112,40 +112,40 @@ export default class bSlider<T extends object = Dictionary> extends iData<T> {
 	readonly alignFirstToStart: boolean = true;
 
 	/**
-	 * Initial component slides
+	 * Initial component options
 	 */
 	@prop(Array)
-	readonly slidesProp?: unknown[] = [];
+	readonly optionsProp?: unknown[] = [];
 
 	/**
-	 * Factory for an slides iterator
+	 * Factory for an options iterator
 	 */
 	@prop(Function)
-	slidesIterator?: SlidesIterator;
+	optionsIterator?: OptionsIterator;
 
 	/**
-	 * Component slides
+	 * Component options
 	 */
 	@field((o) => o.sync.link())
-	slides!: unknown[];
+	options!: unknown[];
 
 	/**
-	 * Slide component
+	 * Option component
 	 */
 	@prop({type: String, required: false})
-	readonly slide?: string;
+	readonly option?: string;
 
 	/**
-	 * Slide unique key (for v-for)
+	 * Option unique key (for v-for)
 	 */
 	@prop({type: String, required: false})
-	readonly slideKey?: string;
+	readonly optionKey?: string;
 
 	/**
-	 * Slide component props
+	 * Option component props
 	 */
 	@prop({type: [Object, Function]})
-	readonly slideProps: SlideProps = {};
+	readonly optionProps: OptionProps = {};
 
 	/**
 	 * The number of slides in the slider
@@ -432,10 +432,10 @@ export default class bSlider<T extends object = Dictionary> extends iData<T> {
 			val = this.convertDBToComponent(this.db);
 
 		if (Object.isArray(val)) {
-			return this.slides = val;
+			return this.options = val;
 		}
 
-		return this.slides;
+		return this.options;
 	}
 
 	/**

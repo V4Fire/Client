@@ -21,14 +21,14 @@
 		: putIn content
 			+= self.slot('before')
 
-			< template v-if = slide
+			< template v-if = option
 				< template &
-					v-for = (el, i) in slidesIterator ? slidesIterator(slides, self) : slides |
-					:key = slideKey
+					v-for = (el, i) in optionsIterator ? optionsIterator(options, self) : options |
+					:key = optionKey
 				.
-					< component.&__slide &
-						:is = slide |
-						:v-attrs = Object.isFunction(slideProps) ? slideProps(el, i) : slideProps
+					< component.&__option &
+						:is = option |
+						:v-attrs = Object.isFunction(optionProps) ? optionProps(el, i) : optionProps
 					.
 
 			< template v-else
