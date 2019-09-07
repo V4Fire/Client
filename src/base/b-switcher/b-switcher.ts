@@ -176,7 +176,7 @@ export default class bSwitcher extends iBlock {
 	 * Link to a content node
 	 */
 	@p({cache: false})
-	protected get contentNode(): HTMLElement {
+	protected get content(): HTMLElement {
 		const {$refs: {content}, contentNodeStore} = this;
 		return contentNodeStore || content.querySelector(this.contentNodeMarker) || content;
 	}
@@ -275,14 +275,14 @@ export default class bSwitcher extends iBlock {
 	 */
 	protected initMutationStrategy(): void {
 		const
-			{contentNode} = this;
+			{content} = this;
 
 		const defferCheck = this.lazy.createLazyFn(() => {
 			this.is.mutationReady = this.nodesLength > 0;
 			this.setSwitchReadiness();
 		}, {label: $$.defferCheck, join: true});
 
-		this.nodesLength = contentNode.children.length;
+		this.nodesLength = content.children.length;
 
 		defferCheck();
 		this.on('contentMutation', defferCheck, {label: $$.initMutation});
@@ -309,8 +309,8 @@ export default class bSwitcher extends iBlock {
 
 		const register = () => {
 			const
-				{contentNode} = this,
-				nodes = contentNode.querySelectorAll(':scope > .i-block-helper');
+				{content} = this,
+				nodes = content.querySelectorAll(':scope > .i-block-helper');
 
 			for (let i = 0; i < nodes.length; i++) {
 				const
@@ -337,7 +337,7 @@ export default class bSwitcher extends iBlock {
 	 */
 	protected createMutationObserver(): void {
 		const
-			{contentNode} = this;
+			{content} = this;
 
 		const nodesFilter = (rec: MutationRecord[]): FilteredMutations => {
 			let
@@ -365,7 +365,7 @@ export default class bSwitcher extends iBlock {
 			this.emit('contentMutation');
 		});
 
-		this.mutationObserver.observe(contentNode, {
+		this.mutationObserver.observe(content, {
 			childList: true,
 			characterData: false
 		});
