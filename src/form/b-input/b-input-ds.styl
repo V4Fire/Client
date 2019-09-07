@@ -51,7 +51,7 @@ b-input
 				interpolate-props($back)
 
 			&_focused_true ^[0]__root-wrapper
-				generate(focus)
+				generate("focused.true")
 
 			$sizes = getField($o, "mods.size")
 			if $sizes
@@ -89,7 +89,7 @@ b-input
 								& ^[0]__root-wrapper
 									interpolate-props($value)
 
-							if $fieldName == "focus"
+							if $fieldName == "focused"
 								&^[0]_{$fieldName + "ed"}_true ^[0]__root-wrapper
 									interpolate-props($value)
 
@@ -119,7 +119,7 @@ b-input
 				&:-webkit-autofill
 					-webkit-box-shadow 0 0 0 100em $o.backgroundColor inset !important
 
-			$readonly = getField($o, path(mods readonly))
+			$readonly = getField($o, path(mods readonly true))
 			if $readonly
 				&_readonly_true
 					cursor default

@@ -73,13 +73,10 @@ b-button
 					else if $bg
 						background $bg
 
-				&^[0]_disabled_true
-					& ^[0]__button
-						generate(disabled)
-
-				&^[0]_focused_true
-					& ^[0]__button
-						generate(focus)
+				for $key in (disabled focused)
+					&^[0]_{$key}_true
+						& ^[0]__button
+							generate(path($key true))
 
 				& ^[0]__button
 					if $extBg
@@ -88,8 +85,8 @@ b-button
 					if $extColor
 						color $extColor
 
-					for $key in (hover focus active)
-						if getField($obj, path(mods $key))
+					for $key in (hover active)
+						if getField($obj, path(mods $key true))
 							&:{$key}
 								generate($key)
 
@@ -106,7 +103,7 @@ b-button
 				transition color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out
 
 			for $key in (post-icon pre-icon)
-				$params = getField($obj, path(mods camelize($key)))
+				$params = getField($obj, path(mods camelize($key) true))
 
 				if $params
 					& ^[0]__{$key}
