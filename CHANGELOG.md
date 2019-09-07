@@ -11,6 +11,17 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-beta.159 (2019-09-07)
+
+#### :rocket: New Feature
+
+* Added `content` and `contentLength` getters within `bSlider`
+* Added `content` and `contentLength` getters within `bSwitcher`
+
+#### :house: Internal
+
+* Updated dependencies: @v4fire/core@3.0.0-beta.67
+
 ## v3.0.0-beta.158 (2019-09-07)
 
 #### :house: Internal
