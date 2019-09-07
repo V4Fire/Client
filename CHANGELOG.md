@@ -11,6 +11,18 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-beta.162 (2019-09-07)
+
+#### :bug: Bug Fix
+
+* Removed V2 legacy code from `b-window`, `b-checkbox-group`
+
+#### :nail_care: Polish
+
+* Improved prop normalizing with `v-attrs`
+* Improved component activation logic
+* Refactoring
+
 ## v3.0.0-beta.161 (2019-09-07)
 
 #### :rocket: New Feature
