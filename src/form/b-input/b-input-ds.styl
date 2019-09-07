@@ -121,7 +121,8 @@ b-input
 
 			$readonly = getField($o, path(mods readonly true))
 			if $readonly
-				&_readonly_true
+				&_readonly_true ^[0]__root-wrapper
+					pointer-events none
 					cursor default
 					interpolate-props($readonly)
 
