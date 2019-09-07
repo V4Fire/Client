@@ -75,7 +75,8 @@ export {
 
 export const
 	$$ = symbolGenerator(),
-	isSmartComponent = /-functional$/;
+	isSmartComponent = /-functional$/,
+	dsComponentsMods = DS_COMPONENTS_MODS;
 
 /**
  * Returns a component name
@@ -220,50 +221,57 @@ export function component(params?: ComponentParams): Function {
 
 			const
 				parentMeta = components.get(parent),
-				mods = {};
+				mods = {},
+				modsStore = {};
 
 			if (target.mods) {
-				for (let o = target.mods, keys = Object.keys(o), i = 0; i < keys.length; i++) {
-					const
-						key = keys[i],
-						modVal = o[key],
-						res = <unknown[]>[];
+				Object.assign(modsStore, target.mods);
+			}
 
-					if (modVal) {
-						let
-							cache,
-							active;
+			if (dsComponentsMods && dsComponentsMods[componentName]) {
+				Object.assign(modsStore, dsComponentsMods[componentName]);
+			}
 
-						for (let i = 0; i < modVal.length; i++) {
-							const
-								val = modVal[i];
+			for (let o = modsStore, keys = Object.keys(o), i = 0; i < keys.length; i++) {
+				const
+					key = keys[i],
+					modVal = o[key],
+					res = <unknown[]>[];
 
-							if (Object.isArray(val)) {
-								cache = cache || new Map();
+				if (modVal) {
+					let
+						cache,
+						active;
 
-								if (active !== undefined) {
-									cache.set(active, active);
-								}
+					for (let i = 0; i < modVal.length; i++) {
+						const
+							val = modVal[i];
 
-								active = String(val[0]);
-								cache.set(active, [active]);
+						if (Object.isArray(val)) {
+							cache = cache || new Map();
 
-							} else {
-								cache = cache || new Map();
-								const v = String(val);
-								cache.set(v, v);
+							if (active !== undefined) {
+								cache.set(active, active);
 							}
-						}
 
-						if (cache) {
-							for (let o = cache.values(), el = o.next(); !el.done; el = o.next()) {
-								res.push(el.value);
-							}
+							active = String(val[0]);
+							cache.set(active, [active]);
+
+						} else {
+							cache = cache || new Map();
+							const v = String(val);
+							cache.set(v, v);
 						}
 					}
 
-					mods[key.camelize(false)] = res;
+					if (cache) {
+						for (let o = cache.values(), el = o.next(); !el.done; el = o.next()) {
+							res.push(el.value);
+						}
+					}
 				}
+
+				mods[key.camelize(false)] = res;
 			}
 
 			const meta: ComponentMeta = {

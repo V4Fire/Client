@@ -11,7 +11,8 @@
 /* eslint-disable quote-props */
 
 const
-	config = require('config');
+	config = require('config'),
+	{config: pzlr} = require('@pzlr/build-core');
 
 const
 	runtime = config.runtime(),
@@ -35,5 +36,46 @@ module.exports = {
 			const blockNames = Array.from(blockMap.keys()).filter((el) => /^b-/.test(el));
 			return s(blockNames);
 		}
-	}) : undefined
+	}) : undefined,
+
+	DS_COMPONENTS_MODS: pzlr.designSystem ? calcComponentsMods() : undefined,
+	DS: runtime.passDesignSystem && pzlr.designSystem ? s(require(pzlr.designSystem)) : undefined
 };
+
+/**
+ * Returns mods values, grouped by component name,
+ * from the Design System package
+ *
+ * @returns {!Object}
+ */
+function calcComponentsMods() {
+	const
+		{components} = require(pzlr.designSystem);
+
+	if (Object.isObject(components)) {
+		return s(Object.keys(components).reduce((res, componentName) => {
+			const
+				comp = components[componentName],
+				mods = {};
+
+			if (comp.mods) {
+				Object.assign(mods, comp.mods);
+			}
+
+			if (comp.exterior) {
+				Object.assign(mods, {exterior: comp.exterior});
+			}
+
+			if (comp.mods || comp.exterior) {
+				const
+					r = res[componentName.dasherize()] = {};
+
+				Object.forEach(mods, (m, modName) => {
+					r[modName] = Object.keys(m);
+				});
+			}
+
+			return res;
+		}, {}));
+	}
+}

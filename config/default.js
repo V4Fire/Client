@@ -197,6 +197,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 			'noGlobals': false,
 			'svgSprite': true,
 			'blockNames': false,
+			'passDesignSystem': false,
 
 			'core/helpers': true,
 			'core/browser': true,
