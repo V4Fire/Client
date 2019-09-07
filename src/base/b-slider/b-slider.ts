@@ -41,22 +41,6 @@ export const sliderModes = {
 export type AlignType = keyof typeof alignTypes;
 export type Mode = keyof typeof sliderModes;
 
-/**
- * Returns true if the specified value is in the range X > 0 && X <= 1
- * @param v
- */
-export function isBetweenZeroAndOne(v: number): boolean {
-	return v > 0 && v <= 1;
-}
-
-/**
- * Returns true if the specified value is greater than 0 and isn't infinite
- * @param v
- */
-export function isNotInfinitePositiveNumber(v: number): boolean {
-	return v > 0 && Number.isFinite(v);
-}
-
 @component()
 export default class bSlider<T extends object = Dictionary> extends iData<T> {
 	/**
@@ -64,7 +48,7 @@ export default class bSlider<T extends object = Dictionary> extends iData<T> {
 	 *   *) scroll - scroll implementation
 	 *   *) slider - slider implementation (impossible to skip slides)
 	 */
-	@prop({type: String, validator: (v) => Boolean(sliderModes[v])})
+	@prop({type: String, validator: (v) => sliderModes.hasOwnProperty(v)})
 	readonly mode: Mode = 'slider';
 
 	/**
@@ -82,43 +66,43 @@ export default class bSlider<T extends object = Dictionary> extends iData<T> {
 	/**
 	 * Slide alignment type
 	 */
-	@prop({type: String, validator: (v) => Boolean(alignTypes[v])})
+	@prop({type: String, validator: (v) => alignTypes.hasOwnProperty(v)})
 	readonly align: AlignType = 'center';
 
 	/**
 	 * How much does the shift along the X axis correspond to a finger movement
 	 */
-	@prop({type: Number, validator: isBetweenZeroAndOne})
+	@prop({type: Number, validator: (v: number) => v.isPositiveBetweenZeroAndOne()})
 	readonly deltaX: number = 0.9;
 
 	/**
 	 * The minimum required percentage to scroll the slider to an another slide
 	 */
-	@prop({type: Number, validator: isBetweenZeroAndOne})
+	@prop({type: Number, validator: (v: number) => v.isPositiveBetweenZeroAndOne()})
 	readonly threshold: number = 0.3;
 
 	/**
 	 * The minimum required percentage for the scroll slider to an another slide in fast motion on the slider
 	 */
-	@prop({type: Number, validator: isBetweenZeroAndOne})
+	@prop({type: Number, validator: (v: number) => v.isPositiveBetweenZeroAndOne()})
 	readonly fastSwipeThreshold: number = 0.05;
 
 	/**
 	 * Time (in milliseconds) after which we can assume that there was a quick swipe
 	 */
-	@prop({type: Number, validator: isNotInfinitePositiveNumber})
+	@prop({type: Number, validator: (v: number) => v.isNatural()})
 	readonly fastSwipeDelay: number = (0.3).seconds();
 
 	/**
 	 * The minimum displacement threshold along the X axis at which the slider will be considered to be used (in px)
 	 */
-	@prop({type: Number, validator: isNotInfinitePositiveNumber})
+	@prop({type: Number, validator: (v: number) => v.isNatural()})
 	readonly swipeToleranceX: number = 10;
 
 	/**
 	 * The minimum Y offset threshold at which the slider will be considered to be used (in px)
 	 */
-	@prop({type: Number, validator: isNotInfinitePositiveNumber})
+	@prop({type: Number, validator: (v: number) => v.isNatural()})
 	readonly swipeToleranceY: number = 50;
 
 	/**
