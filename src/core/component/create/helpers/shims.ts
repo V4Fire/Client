@@ -145,6 +145,9 @@ export function parseVAttrs(data: VNodeData, component?: ComponentMeta): void {
 		attrsSpreadObj = attrs['v-attrs'],
 		slotsSpreadObj = attrs['v-slots'];
 
+	delete attrs['v-attrs'];
+	delete attrs['v-slots'];
+
 	if (Object.isObject(slotsSpreadObj)) {
 		const
 			slotOpts: Dictionary = data.scopedSlots || {};
@@ -172,7 +175,6 @@ export function parseVAttrs(data: VNodeData, component?: ComponentMeta): void {
 		}
 
 		delete slotOpts['@'];
-		delete attrs['v-slots'];
 	}
 
 	if (Object.isObject(attrsSpreadObj)) {
@@ -303,7 +305,5 @@ export function parseVAttrs(data: VNodeData, component?: ComponentMeta): void {
 				attrs[key] = val;
 			}
 		}
-
-		delete attrs['v-attrs'];
 	}
 }
