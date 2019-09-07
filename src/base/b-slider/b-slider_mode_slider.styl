@@ -11,7 +11,7 @@ $p = {
 }
 
 b-slider_mode_slider extends b-slider
-	/mode &__view-wrapper
+	/mode &__view-content
 		--offset 0px
 		--transform 0px
 
@@ -25,5 +25,5 @@ b-slider_mode_slider extends b-slider
 			transition none
 			transform translate3d(calc(0px - var(--offset)), 0, 0)
 
-	/mode&_swipe_true &__view-wrapper
+	/mode&_swipe_true &__view-content
 		transition none

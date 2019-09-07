@@ -237,7 +237,7 @@ export default class bSlider<T extends object = Dictionary> extends iData<T> {
 	/** @override */
 	protected readonly $refs!: {
 		view?: HTMLElement;
-		wrapper?: HTMLElement;
+		content?: HTMLElement;
 	};
 
 	/**
@@ -310,14 +310,14 @@ export default class bSlider<T extends object = Dictionary> extends iData<T> {
 	@hook('mounted')
 	syncState(): void {
 		const
-			{view, wrapper} = this.$refs;
+			{view, content} = this.$refs;
 
-		if (!view || !wrapper || !this.isSlider) {
+		if (!view || !content || !this.isSlider) {
 			return;
 		}
 
 		const
-			{children} = wrapper;
+			{children} = content;
 
 		this.viewRect = view.getBoundingClientRect();
 		this.length = children.length;
@@ -345,9 +345,9 @@ export default class bSlider<T extends object = Dictionary> extends iData<T> {
 		}
 
 		const
-			{wrapper} = this.$refs;
+			{content} = this.$refs;
 
-		if (!wrapper) {
+		if (!content) {
 			return;
 		}
 
@@ -355,7 +355,7 @@ export default class bSlider<T extends object = Dictionary> extends iData<T> {
 			await this.async.sleep(50, {label: $$.syncStateAsync, join: true});
 
 			this.syncState();
-			wrapper.style.setProperty('--offset', `${this.currentOffset}px`);
+			content.style.setProperty('--offset', `${this.currentOffset}px`);
 
 		} catch {}
 	}
@@ -369,9 +369,9 @@ export default class bSlider<T extends object = Dictionary> extends iData<T> {
 	async slideTo(index: number, animate: boolean = false): Promise<boolean> {
 		const
 			{length, current} = this,
-			{wrapper} = this.$refs;
+			{content} = this.$refs;
 
-		if (current === index || !wrapper) {
+		if (current === index || !content) {
 			return false;
 		}
 
@@ -383,7 +383,7 @@ export default class bSlider<T extends object = Dictionary> extends iData<T> {
 			}
 
 			this.syncState();
-			wrapper.style.setProperty('--offset', `${this.currentOffset}px`);
+			content.style.setProperty('--offset', `${this.currentOffset}px`);
 
 			return true;
 		}
@@ -400,13 +400,10 @@ export default class bSlider<T extends object = Dictionary> extends iData<T> {
 			current = this.current;
 
 		const
-			{length, $refs} = this;
+			{length, $refs: {content}} = this;
 
 		if (dir < 0 && current > 0 || dir > 0 && current < length - 1 || this.circular) {
-			const
-				{wrapper} = $refs;
-
-			if (!wrapper) {
+			if (!content) {
 				return false;
 			}
 
@@ -420,7 +417,7 @@ export default class bSlider<T extends object = Dictionary> extends iData<T> {
 			}
 
 			this.current = current;
-			wrapper.style.setProperty('--offset', `${this.currentOffset}px`);
+			content.style.setProperty('--offset', `${this.currentOffset}px`);
 			return true;
 		}
 
@@ -467,14 +464,14 @@ export default class bSlider<T extends object = Dictionary> extends iData<T> {
 	@hook('mounted')
 	protected initObservers(): void {
 		const
-			{observers, $refs: {wrapper}} = this;
+			{observers, $refs: {content}} = this;
 
-		if (!observers.mutation && wrapper) {
+		if (!observers.mutation && content) {
 			observers.mutation = new MutationObserver(() => {
 				this.emit('updateState');
 			});
 
-			observers.mutation.observe(wrapper, {
+			observers.mutation.observe(content, {
 				childList: true
 			});
 
@@ -502,9 +499,9 @@ export default class bSlider<T extends object = Dictionary> extends iData<T> {
 		const
 			touch = e.touches[0],
 			{clientX, clientY} = touch,
-			{wrapper} = this.$refs;
+			{content} = this.$refs;
 
-		if (!wrapper) {
+		if (!content) {
 			return;
 		}
 
@@ -530,7 +527,7 @@ export default class bSlider<T extends object = Dictionary> extends iData<T> {
 
 		const
 			{startX, startY} = this,
-			{wrapper} = this.$refs;
+			{content} = this.$refs;
 
 		const
 			touch = e.touches[0],
@@ -540,7 +537,7 @@ export default class bSlider<T extends object = Dictionary> extends iData<T> {
 			this.isTolerancePassed ||
 			Math.abs(startX - touch.clientX) > this.swipeToleranceX && Math.abs(startY - touch.clientY) < this.swipeToleranceY;
 
-		if (!wrapper || !isTolerancePassed) {
+		if (!content || !isTolerancePassed) {
 			return;
 		}
 
@@ -555,7 +552,7 @@ export default class bSlider<T extends object = Dictionary> extends iData<T> {
 		this.isTolerancePassed = true;
 		this.diffX = diffX;
 
-		wrapper.style.setProperty('--transform', `${this.diffX * this.deltaX}px`);
+		content.style.setProperty('--transform', `${this.diffX * this.deltaX}px`);
 	}
 
 	/**
@@ -579,13 +576,13 @@ export default class bSlider<T extends object = Dictionary> extends iData<T> {
 		} = this;
 
 		const
-			{wrapper} = this.$refs,
+			{content} = this.$refs,
 			dir = <SlideDirection>Math.sign(diffX);
 
 		let
 			isSwiped = false;
 
-		if (!wrapper || !slideRects || !viewRect) {
+		if (!content || !slideRects || !viewRect) {
 			return;
 		}
 
@@ -600,7 +597,7 @@ export default class bSlider<T extends object = Dictionary> extends iData<T> {
 		}
 
 		this.diffX = 0;
-		wrapper.style.setProperty('--transform', '0px');
+		content.style.setProperty('--transform', '0px');
 		this.removeMod('swipe', true);
 
 		this.emit('swipeEnd', dir, isSwiped);
