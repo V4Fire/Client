@@ -37,7 +37,7 @@
 								:class = provide.elClasses({
 									modValue: {
 										selected: debugComponent.mods[key] === getModValue(val),
-										highlighted: field.get(['highlighting', key, val].join('.'))
+										highlighted: field.get(['highlighting', key, val].join('.')) || false
 									}
 								}) |
 								@click = setDebugMod($event.target, key, getModValue(val))
@@ -50,7 +50,7 @@
 									:id = dom.getId(key) |
 									:checked = debugComponent.mods[key] === getModValue(mod[0]) |
 									:class = provide.elClasses({
-										highlighted: field.get(['highlighting', key, mod[0]].join('.'))
+										highlighted: field.get(['highlighting', key, mod[0]].join('.')) || false
 									}) |
 									@click = setDebugMod($event.target, key, $event.target.checked)
 								.
