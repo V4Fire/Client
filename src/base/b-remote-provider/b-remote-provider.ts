@@ -35,10 +35,6 @@ export default class bRemoteProvider<T extends object = Dictionary> extends iDat
 	}
 
 	/** @override */
-	@system()
-	protected dbStore?: CanUndef<T>;
-
-	/** @override */
 	protected onRequestError<T = unknown>(err: Error | RequestError, retry: () => Promise<CanUndef<T>>): void {
 		const
 			l = this.$listeners;
