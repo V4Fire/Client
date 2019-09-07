@@ -72,6 +72,26 @@ export default class bSwitcher extends iBlock {
 	@prop({type: Object, required: false})
 	readonly semaphoreKeysProp?: Dictionary;
 
+	/** @see semaphoreKeys */
+	@system((o) => o.sync.link('semaphoreKeysProp', (v) => ({...v})))
+	semaphoreKeys?: Dictionary;
+
+	/**
+	 * Link to a content node
+	 */
+	@p({cache: false})
+	get content(): HTMLElement {
+		const {$refs: {content}, contentNodeStore} = this;
+		return contentNodeStore || content.querySelector(this.contentNodeMarker) || content;
+	}
+
+	/**
+	 * Number of DOM nodes within a content block
+	 */
+	get contentLength(): number {
+		return this.contentLengthStore;
+	}
+
 	/** @inheritDoc */
 	static readonly mods: ModsDecl = {
 		animation: [
@@ -79,12 +99,6 @@ export default class bSwitcher extends iBlock {
 			'fade'
 		]
 	};
-
-	/**
-	 * @see semaphoreKeys
-	 */
-	@system((o) => o.sync.link('semaphoreKeysProp', (v) => ({...v})))
-	protected semaphoreKeys?: Dictionary;
 
 	/**
 	 * Map for ready components
@@ -102,7 +116,7 @@ export default class bSwitcher extends iBlock {
 	 * Number of DOM nodes within a content block
 	 */
 	@system()
-	protected nodesLength: number = 0;
+	protected contentLengthStore: number = 0;
 
 	/**
 	 * Selector of a content node
@@ -170,15 +184,6 @@ export default class bSwitcher extends iBlock {
 		if (!this.is.manual()) {
 			this[value ? 'hidePlaceholder' : 'showPlaceholder']();
 		}
-	}
-
-	/**
-	 * Link to a content node
-	 */
-	@p({cache: false})
-	protected get content(): HTMLElement {
-		const {$refs: {content}, contentNodeStore} = this;
-		return contentNodeStore || content.querySelector(this.contentNodeMarker) || content;
 	}
 
 	/** @override */
@@ -278,11 +283,11 @@ export default class bSwitcher extends iBlock {
 			{content} = this;
 
 		const defferCheck = this.lazy.createLazyFn(() => {
-			this.is.mutationReady = this.nodesLength > 0;
+			this.is.mutationReady = this.contentLengthStore > 0;
 			this.setSwitchReadiness();
 		}, {label: $$.defferCheck, join: true});
 
-		this.nodesLength = content.children.length;
+		this.contentLengthStore = content.children.length;
 
 		defferCheck();
 		this.on('contentMutation', defferCheck, {label: $$.initMutation});
@@ -361,7 +366,7 @@ export default class bSwitcher extends iBlock {
 
 		this.mutationObserver = new MutationObserver((rec) => {
 			const v = nodesFilter(rec);
-			this.nodesLength += v.added.length - v.removed.length;
+			this.contentLengthStore += v.added.length - v.removed.length;
 			this.emit('contentMutation');
 		});
 
