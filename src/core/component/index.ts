@@ -368,7 +368,7 @@ export function component(params?: ComponentParams): Function {
 
 								// tslint:disable-next-line:prefer-conditional-expression
 								if (hasOpts) {
-									parseVAttrs(<Dictionary>opts, Boolean(component));
+									parseVAttrs(<Dictionary>opts, component);
 								}
 
 								const renderKey =

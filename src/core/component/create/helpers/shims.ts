@@ -7,7 +7,7 @@
  */
 
 import { EventEmitter2 as EventEmitter } from 'eventemitter2';
-import { ComponentElement, ComponentInterface } from 'core/component/interface';
+import { ComponentElement, ComponentInterface, ComponentMeta } from 'core/component/interface';
 import { VNodeData } from 'core/component/engines';
 
 /**
@@ -137,9 +137,9 @@ const
  * Parses v-attrs attribute from the specified vnode data and applies it
  *
  * @param data
- * @param [isComponent]
+ * @param [component]
  */
-export function parseVAttrs(data: VNodeData, isComponent?: boolean): void {
+export function parseVAttrs(data: VNodeData, component?: ComponentMeta): void {
 	const
 		attrs = data.attrs = data.attrs || {},
 		attrsSpreadObj = attrs['v-attrs'],
@@ -182,8 +182,17 @@ export function parseVAttrs(data: VNodeData, isComponent?: boolean): void {
 			directiveOpts = data.directives = data.directives || [];
 
 		for (let keys = Object.keys(attrsSpreadObj), i = 0; i < keys.length; i++) {
-			const
+			let
 				key = keys[i];
+
+			if (component) {
+				const
+					propKey = `${key}Prop`;
+
+				if (!component.props[key] && component.props[propKey]) {
+					key = propKey;
+				}
+			}
 
 			let
 				val = attrsSpreadObj[key];
@@ -192,7 +201,7 @@ export function parseVAttrs(data: VNodeData, isComponent?: boolean): void {
 				let
 					event = key.slice(1);
 
-				if (isComponent) {
+				if (component) {
 					const
 						eventChunks = event.split('.'),
 						flags = <Dictionary>{};
