@@ -265,7 +265,6 @@ module.exports = (async () => {
 		entry,
 		blockMap,
 		processes,
-		blockMap,
 		dependencies: $C(graph.dependencies).map((el, key) => [...el, key])
 	};
 

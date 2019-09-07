@@ -41,17 +41,17 @@
 			${windowEvents}
 		.
 			< .&__view ref = view
-				< .&__view-wrapper ref = wrapper
+				< .&__view-content ref = content
 					+= content
 
 		< .&__window v-else
-			< .&__view-wrapper ref = view
-				< .&__fake-view-wrapper &
+			< .&__view-content ref = view
+				< .&__fake-view-content &
 					v-if = dynamicHeight |
 					ref = fake |
 				.
 					+= content
 
 				< .&__outer-view-wrapper
-					< .&__view-wrapper ref = wrapper
+					< .&__view-content ref = content
 						+= content

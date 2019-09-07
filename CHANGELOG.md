@@ -11,6 +11,26 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-beta.158 (2019-09-07)
+
+#### :house: Internal
+
+* Reviewed internal API `bSlider`
+
+## v3.0.0-beta.157 (2019-09-07)
+
+#### :rocket: New Feature
+
+* Added support for `height` prop (stylus) within `b-slider`
+
+#### :bug: Bug Fix
+
+* [Fixed `blockMap` cache within webpack build](https://github.com/V4Fire/Client/pull/117)
+
+#### :house: Internal
+
+* Updated dependencies: browserslist@4.7.0, image-webpack-loader@6.0.0 
+
 ## v3.0.0-beta.156 (2019-09-03)
 
 #### :rocket: New Feature

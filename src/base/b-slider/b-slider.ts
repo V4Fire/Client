@@ -41,22 +41,6 @@ export const sliderModes = {
 export type AlignType = keyof typeof alignTypes;
 export type Mode = keyof typeof sliderModes;
 
-/**
- * Returns true if the specified value is in the range X > 0 && X <= 1
- * @param v
- */
-export function isBetweenZeroAndOne(v: number): boolean {
-	return v > 0 && v <= 1;
-}
-
-/**
- * Returns true if the specified value is greater than 0 and isn't infinite
- * @param v
- */
-export function isNotInfinitePositiveNumber(v: number): boolean {
-	return v > 0 && Number.isFinite(v);
-}
-
 @component()
 export default class bSlider<T extends object = Dictionary> extends iData<T> {
 	/**
@@ -64,7 +48,7 @@ export default class bSlider<T extends object = Dictionary> extends iData<T> {
 	 *   *) scroll - scroll implementation
 	 *   *) slider - slider implementation (impossible to skip slides)
 	 */
-	@prop({type: String, validator: (v) => Boolean(sliderModes[v])})
+	@prop({type: String, validator: (v) => sliderModes.hasOwnProperty(v)})
 	readonly mode: Mode = 'slider';
 
 	/**
@@ -82,43 +66,43 @@ export default class bSlider<T extends object = Dictionary> extends iData<T> {
 	/**
 	 * Slide alignment type
 	 */
-	@prop({type: String, validator: (v) => Boolean(alignTypes[v])})
+	@prop({type: String, validator: (v) => alignTypes.hasOwnProperty(v)})
 	readonly align: AlignType = 'center';
 
 	/**
 	 * How much does the shift along the X axis correspond to a finger movement
 	 */
-	@prop({type: Number, validator: isBetweenZeroAndOne})
+	@prop({type: Number, validator: (v: number) => v.isPositiveBetweenZeroAndOne()})
 	readonly deltaX: number = 0.9;
 
 	/**
 	 * The minimum required percentage to scroll the slider to an another slide
 	 */
-	@prop({type: Number, validator: isBetweenZeroAndOne})
+	@prop({type: Number, validator: (v: number) => v.isPositiveBetweenZeroAndOne()})
 	readonly threshold: number = 0.3;
 
 	/**
 	 * The minimum required percentage for the scroll slider to an another slide in fast motion on the slider
 	 */
-	@prop({type: Number, validator: isBetweenZeroAndOne})
+	@prop({type: Number, validator: (v: number) => v.isPositiveBetweenZeroAndOne()})
 	readonly fastSwipeThreshold: number = 0.05;
 
 	/**
 	 * Time (in milliseconds) after which we can assume that there was a quick swipe
 	 */
-	@prop({type: Number, validator: isNotInfinitePositiveNumber})
+	@prop({type: Number, validator: (v: number) => v.isNatural()})
 	readonly fastSwipeDelay: number = (0.3).seconds();
 
 	/**
 	 * The minimum displacement threshold along the X axis at which the slider will be considered to be used (in px)
 	 */
-	@prop({type: Number, validator: isNotInfinitePositiveNumber})
+	@prop({type: Number, validator: (v: number) => v.isNatural()})
 	readonly swipeToleranceX: number = 10;
 
 	/**
 	 * The minimum Y offset threshold at which the slider will be considered to be used (in px)
 	 */
-	@prop({type: Number, validator: isNotInfinitePositiveNumber})
+	@prop({type: Number, validator: (v: number) => v.isNatural()})
 	readonly swipeToleranceY: number = 50;
 
 	/**
@@ -237,7 +221,7 @@ export default class bSlider<T extends object = Dictionary> extends iData<T> {
 	/** @override */
 	protected readonly $refs!: {
 		view?: HTMLElement;
-		wrapper?: HTMLElement;
+		content?: HTMLElement;
 	};
 
 	/**
@@ -310,14 +294,14 @@ export default class bSlider<T extends object = Dictionary> extends iData<T> {
 	@hook('mounted')
 	syncState(): void {
 		const
-			{view, wrapper} = this.$refs;
+			{view, content} = this.$refs;
 
-		if (!view || !wrapper || !this.isSlider) {
+		if (!view || !content || !this.isSlider) {
 			return;
 		}
 
 		const
-			{children} = wrapper;
+			{children} = content;
 
 		this.viewRect = view.getBoundingClientRect();
 		this.length = children.length;
@@ -345,9 +329,9 @@ export default class bSlider<T extends object = Dictionary> extends iData<T> {
 		}
 
 		const
-			{wrapper} = this.$refs;
+			{content} = this.$refs;
 
-		if (!wrapper) {
+		if (!content) {
 			return;
 		}
 
@@ -355,7 +339,7 @@ export default class bSlider<T extends object = Dictionary> extends iData<T> {
 			await this.async.sleep(50, {label: $$.syncStateAsync, join: true});
 
 			this.syncState();
-			wrapper.style.setProperty('--offset', `${this.currentOffset}px`);
+			content.style.setProperty('--offset', `${this.currentOffset}px`);
 
 		} catch {}
 	}
@@ -369,9 +353,9 @@ export default class bSlider<T extends object = Dictionary> extends iData<T> {
 	async slideTo(index: number, animate: boolean = false): Promise<boolean> {
 		const
 			{length, current} = this,
-			{wrapper} = this.$refs;
+			{content} = this.$refs;
 
-		if (current === index || !wrapper) {
+		if (current === index || !content) {
 			return false;
 		}
 
@@ -383,7 +367,7 @@ export default class bSlider<T extends object = Dictionary> extends iData<T> {
 			}
 
 			this.syncState();
-			wrapper.style.setProperty('--offset', `${this.currentOffset}px`);
+			content.style.setProperty('--offset', `${this.currentOffset}px`);
 
 			return true;
 		}
@@ -400,13 +384,10 @@ export default class bSlider<T extends object = Dictionary> extends iData<T> {
 			current = this.current;
 
 		const
-			{length, $refs} = this;
+			{length, $refs: {content}} = this;
 
 		if (dir < 0 && current > 0 || dir > 0 && current < length - 1 || this.circular) {
-			const
-				{wrapper} = $refs;
-
-			if (!wrapper) {
+			if (!content) {
 				return false;
 			}
 
@@ -420,7 +401,7 @@ export default class bSlider<T extends object = Dictionary> extends iData<T> {
 			}
 
 			this.current = current;
-			wrapper.style.setProperty('--offset', `${this.currentOffset}px`);
+			content.style.setProperty('--offset', `${this.currentOffset}px`);
 			return true;
 		}
 
@@ -467,14 +448,14 @@ export default class bSlider<T extends object = Dictionary> extends iData<T> {
 	@hook('mounted')
 	protected initObservers(): void {
 		const
-			{observers, $refs: {wrapper}} = this;
+			{observers, $refs: {content}} = this;
 
-		if (!observers.mutation && wrapper) {
+		if (!observers.mutation && content) {
 			observers.mutation = new MutationObserver(() => {
 				this.emit('updateState');
 			});
 
-			observers.mutation.observe(wrapper, {
+			observers.mutation.observe(content, {
 				childList: true
 			});
 
@@ -502,9 +483,9 @@ export default class bSlider<T extends object = Dictionary> extends iData<T> {
 		const
 			touch = e.touches[0],
 			{clientX, clientY} = touch,
-			{wrapper} = this.$refs;
+			{content} = this.$refs;
 
-		if (!wrapper) {
+		if (!content) {
 			return;
 		}
 
@@ -530,7 +511,7 @@ export default class bSlider<T extends object = Dictionary> extends iData<T> {
 
 		const
 			{startX, startY} = this,
-			{wrapper} = this.$refs;
+			{content} = this.$refs;
 
 		const
 			touch = e.touches[0],
@@ -540,7 +521,7 @@ export default class bSlider<T extends object = Dictionary> extends iData<T> {
 			this.isTolerancePassed ||
 			Math.abs(startX - touch.clientX) > this.swipeToleranceX && Math.abs(startY - touch.clientY) < this.swipeToleranceY;
 
-		if (!wrapper || !isTolerancePassed) {
+		if (!content || !isTolerancePassed) {
 			return;
 		}
 
@@ -555,7 +536,7 @@ export default class bSlider<T extends object = Dictionary> extends iData<T> {
 		this.isTolerancePassed = true;
 		this.diffX = diffX;
 
-		wrapper.style.setProperty('--transform', `${this.diffX * this.deltaX}px`);
+		content.style.setProperty('--transform', `${this.diffX * this.deltaX}px`);
 	}
 
 	/**
@@ -579,13 +560,13 @@ export default class bSlider<T extends object = Dictionary> extends iData<T> {
 		} = this;
 
 		const
-			{wrapper} = this.$refs,
+			{content} = this.$refs,
 			dir = <SlideDirection>Math.sign(diffX);
 
 		let
 			isSwiped = false;
 
-		if (!wrapper || !slideRects || !viewRect) {
+		if (!content || !slideRects || !viewRect) {
 			return;
 		}
 
@@ -600,7 +581,7 @@ export default class bSlider<T extends object = Dictionary> extends iData<T> {
 		}
 
 		this.diffX = 0;
-		wrapper.style.setProperty('--transform', '0px');
+		content.style.setProperty('--transform', '0px');
 		this.removeMod('swipe', true);
 
 		this.emit('swipeEnd', dir, isSwiped);
