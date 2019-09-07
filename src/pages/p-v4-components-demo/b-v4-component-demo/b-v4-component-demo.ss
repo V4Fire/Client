@@ -47,7 +47,7 @@
 							< template v-else
 								< input &
 									:type = 'checkbox' |
-									:id = dom.getId('fileForm') |
+									:id = dom.getId(key) |
 									:checked = debugComponent.mods[key] === getModValue(mod[0]) |
 									:class = provide.elClasses({
 										highlighted: field.get(['highlighting', key, mod[0]].join('.'))
@@ -55,5 +55,5 @@
 									@click = setDebugMod($event.target, key, $event.target.checked)
 								.
 
-								< label :for = dom.getId('fileForm')
+								< label :for = dom.getId(key)
 									{{ mod[0] }}
