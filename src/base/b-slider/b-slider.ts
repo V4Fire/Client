@@ -164,6 +164,7 @@ export default class bSlider<T extends object = Dictionary> extends iData<T> {
 	/**
 	 * Number of DOM nodes within a content block
 	 */
+	@p({cache: false})
 	get contentLength(): number {
 		const l = this.content;
 		return l ? l.children.length : 0;

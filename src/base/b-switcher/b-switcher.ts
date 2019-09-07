@@ -88,6 +88,7 @@ export default class bSwitcher extends iBlock {
 	/**
 	 * Number of DOM nodes within a content block
 	 */
+	@p({cache: false})
 	get contentLength(): number {
 		return this.contentLengthStore;
 	}
