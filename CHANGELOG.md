@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-beta.160 (2019-09-07)
+
+#### :bug: Bug Fix
+
+* Hotfix: contentLength marked as non-cache `bSlider`, `bSwitcher`
+
 ## v3.0.0-beta.159 (2019-09-07)
 
 #### :rocket: New Feature
