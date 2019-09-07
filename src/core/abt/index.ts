@@ -15,11 +15,11 @@ export const
 
 /**
  * Saves the specified ABT options
- * @param options
+ * @param opts
  */
-export default async function saveABT(options: unknown): Promise<void> {
+export default async function saveABT(opts: unknown): Promise<void> {
 	const
-		config = adapter(options);
+		config = adapter(opts);
 
 	if (Object.isPromise(config)) {
 		await config.catch(stderr);
