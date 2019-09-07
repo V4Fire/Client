@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-beta.158 (2019-09-07)
+
+#### :house: Internal
+
+* Reviewed internal API `bSlider`
+
 ## v3.0.0-beta.157 (2019-09-07)
 
 #### :rocket: New Feature
