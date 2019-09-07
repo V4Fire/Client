@@ -42,19 +42,19 @@ b-button
 									text-options(getField($value, textStyle))
 									line-height 1
 
-			getExteriorStyle($name, $prop)
+			extStyle($name, $prop)
 				getField($obj, path(exterior $name $prop))
 
-			generateExterior($k)
-				$extBg = getExteriorStyle($k, backgroundColor)
-				$extColor = getExteriorStyle($k, color)
+			createExterior($k)
+				$extBg = extStyle($k, backgroundColor)
+				$extColor = extStyle($k, color)
 
 				generate($kk)
 					path-to-mod($v)
 						path(mods $kk $v)
 
 					getValue($prop)
-						getExteriorStyle($k, path-to-mod($prop)) || getField($obj, path-to-mod($prop))
+						extStyle($k, path-to-mod($prop)) || getField($obj, path-to-mod($prop))
 
 					$color = getValue(color)
 					$bg = getValue(backgroundColor)
@@ -86,14 +86,13 @@ b-button
 						color $extColor
 
 					for $key in (hover active)
-						if getField($obj, path(mods $key true))
-							&:{$key}
-								generate($key)
+						&:{$key}
+							generate(path($key true))
 
 			if getField($obj, exterior)
 				for $key, $val in getField($obj, exterior)
 					&_exterior_{$key}
-						generateExterior($key)
+						createExterior($key)
 
 			@supports (-ms-accelerator true)
 				& ^[0]__button
