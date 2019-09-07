@@ -154,6 +154,14 @@ export default class bSlider<T extends object = Dictionary> extends iData<T> {
 	length: number = 0;
 
 	/**
+	 * Link to a content node
+	 */
+	@p({cache: false})
+	get content(): CanUndef<HTMLElement> {
+		return this.$refs.content;
+	}
+
+	/**
 	 * Pointer to the current slide
 	 */
 	@p({cache: false})
@@ -329,7 +337,7 @@ export default class bSlider<T extends object = Dictionary> extends iData<T> {
 		}
 
 		const
-			{content} = this.$refs;
+			{content} = this;
 
 		if (!content) {
 			return;
@@ -352,8 +360,7 @@ export default class bSlider<T extends object = Dictionary> extends iData<T> {
 	 */
 	async slideTo(index: number, animate: boolean = false): Promise<boolean> {
 		const
-			{length, current} = this,
-			{content} = this.$refs;
+			{length, current, content} = this;
 
 		if (current === index || !content) {
 			return false;
@@ -384,7 +391,7 @@ export default class bSlider<T extends object = Dictionary> extends iData<T> {
 			current = this.current;
 
 		const
-			{length, $refs: {content}} = this;
+			{length, content} = this;
 
 		if (dir < 0 && current > 0 || dir > 0 && current < length - 1 || this.circular) {
 			if (!content) {
@@ -448,7 +455,7 @@ export default class bSlider<T extends object = Dictionary> extends iData<T> {
 	@hook('mounted')
 	protected initObservers(): void {
 		const
-			{observers, $refs: {content}} = this;
+			{observers, content} = this;
 
 		if (!observers.mutation && content) {
 			observers.mutation = new MutationObserver(() => {
@@ -483,7 +490,7 @@ export default class bSlider<T extends object = Dictionary> extends iData<T> {
 		const
 			touch = e.touches[0],
 			{clientX, clientY} = touch,
-			{content} = this.$refs;
+			{content} = this;
 
 		if (!content) {
 			return;
@@ -510,8 +517,7 @@ export default class bSlider<T extends object = Dictionary> extends iData<T> {
 		}
 
 		const
-			{startX, startY} = this,
-			{content} = this.$refs;
+			{startX, startY, content} = this;
 
 		const
 			touch = e.touches[0],
@@ -560,7 +566,7 @@ export default class bSlider<T extends object = Dictionary> extends iData<T> {
 		} = this;
 
 		const
-			{content} = this.$refs,
+			{content} = this,
 			dir = <SlideDirection>Math.sign(diffX);
 
 		let
