@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-beta.161 (2019-09-07)
+
+#### :rocket: New Feature
+
+* Added slot support for `bRemoteProvider`
+
 ## v3.0.0-beta.160 (2019-09-07)
 
 #### :bug: Bug Fix
