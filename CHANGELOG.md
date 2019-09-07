@@ -20,6 +20,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### :bug: Bug Fix
 
 * Removed V2 legacy code from `b-window`, `b-checkbox-group`
+* Fixed `asyncRender` with nested template tags
 
 #### :nail_care: Polish
 

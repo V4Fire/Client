@@ -554,12 +554,30 @@ export function component(params?: ComponentParams): Function {
 											const
 												isTemplateParent = Object.isArray(vnode);
 
-											if (isTemplateParent && !vnode.length) {
-												return;
+											if (isTemplateParent) {
+												while (Object.isArray(vnode)) {
+													let
+														newVNode = vnode[0];
+
+													for (let i = 0; i < vnode.length; i++) {
+														const
+															el = vnode[i];
+
+														if (!Object.isArray(el) && (<VNode>el).context) {
+															newVNode = el;
+														}
+													}
+
+													vnode = newVNode;
+												}
+
+												if (!vnode) {
+													return;
+												}
 											}
 
 											const
-												ctx = (isTemplateParent ? vnode[0] : vnode).context;
+												ctx = vnode.context;
 
 											if (!isTemplateParent) {
 												vnode.fakeContext = ctx;
@@ -573,7 +591,7 @@ export function component(params?: ComponentParams): Function {
 														nodes = <VNode[]>[];
 
 													const
-														parent = isTemplateParent ? vnode[0].elm.parentNode : vnode.elm,
+														parent = isTemplateParent ? vnode.elm.parentNode : vnode.elm,
 														baseHook = ctx.hook;
 
 													ctx.hook = 'beforeUpdate';
