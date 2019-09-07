@@ -11,7 +11,7 @@ import symbolGenerator from 'core/symbol';
 import { observeMap } from 'core/component/helpers/observable';
 import { ComponentElement } from 'core/component/interface';
 
-import iBlock, { component, prop, hook, watch, system, p, ModsDecl } from 'super/i-block/i-block';
+import iBlock, { component, prop, system, hook, watch, wait, p, ModsDecl } from 'super/i-block/i-block';
 export * from 'super/i-block/i-block';
 
 export interface IsTable {
@@ -44,7 +44,7 @@ export type ResolveMethod = keyof typeof resolveMethods;
  * @param value
  */
 export function validateResolve(value: ResolveMethod[]): boolean {
-	return value.every((a) => Boolean(resolveMethods[a]));
+	return value.every((v) => resolveMethods.hasOwnProperty(v));
 }
 
 @component()
@@ -80,9 +80,11 @@ export default class bSwitcher extends iBlock {
 	 * Link to a content node
 	 */
 	@p({cache: false})
-	get content(): HTMLElement {
-		const {$refs: {content}, contentNodeStore} = this;
-		return contentNodeStore || content.querySelector(this.contentNodeMarker) || content;
+	get content(): CanPromise<HTMLElement> {
+		return this.waitStatus('loading', () => {
+			const {$refs: {content}, contentNodeStore} = this;
+			return contentNodeStore || content.querySelector<HTMLElement>(this.contentNodeMarker) || content;
+		});
 	}
 
 	/**
@@ -279,16 +281,18 @@ export default class bSwitcher extends iBlock {
 	/**
 	 * Initializes a mutation observer strategy
 	 */
-	protected initMutationStrategy(): void {
+	@wait('loading')
+	protected initMutationStrategy(): CanPromise<void> {
 		const
-			{content} = this;
+			content = <HTMLElement>this.content;
 
 		const defferCheck = this.lazy.createLazyFn(() => {
 			this.is.mutationReady = this.contentLengthStore > 0;
 			this.setSwitchReadiness();
 		}, {label: $$.defferCheck, join: true});
 
-		this.contentLengthStore = content.children.length;
+		this.contentLengthStore =
+			content.children.length;
 
 		defferCheck();
 		this.on('contentMutation', defferCheck, {label: $$.initMutation});
@@ -298,7 +302,8 @@ export default class bSwitcher extends iBlock {
 	/**
 	 * Initializes a component readiness wait strategy
 	 */
-	protected initComponentsStrategy(): void {
+	@wait('loading')
+	protected initComponentsStrategy(): CanPromise<void> {
 		const
 			{semaphoreReadyMap, async: $a} = this;
 
@@ -315,7 +320,7 @@ export default class bSwitcher extends iBlock {
 
 		const register = () => {
 			const
-				{content} = this,
+				content = <HTMLElement>this.content,
 				nodes = content.querySelectorAll(':scope > .i-block-helper');
 
 			for (let i = 0; i < nodes.length; i++) {
@@ -341,9 +346,10 @@ export default class bSwitcher extends iBlock {
 	 * Creates a mutation observer
 	 * @emits contentMutation()
 	 */
-	protected createMutationObserver(): void {
+	@wait('loading')
+	protected createMutationObserver(): CanPromise<void> {
 		const
-			{content} = this;
+			content = <HTMLElement>this.content;
 
 		const nodesFilter = (rec: MutationRecord[]): FilteredMutations => {
 			let

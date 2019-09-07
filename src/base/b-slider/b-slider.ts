@@ -307,7 +307,8 @@ export default class bSlider<T extends object = Dictionary> extends iData<T> {
 	 * Synchronizes the slider state
 	 */
 	@hook('mounted')
-	syncState(): void {
+	@wait('loading')
+	syncState(): CanPromise<void> {
 		const
 			{view, content} = this.$refs;
 
