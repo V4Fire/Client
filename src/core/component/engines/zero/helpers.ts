@@ -197,7 +197,7 @@ export function addClass(el: Element, opts: VNodeData): void {
 	const className = (<string[]>[]).concat(
 		el.getAttribute('class') || '',
 		opts.staticClass || '',
-		...Object.isArray(opts.class) ? opts.class : [opts.class]
+		...Object.isArray(opts.class) ? <string[]>opts.class : [<string>opts.class]
 	).join(' ').trim();
 
 	if (className) {
