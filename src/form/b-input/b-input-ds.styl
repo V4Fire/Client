@@ -117,7 +117,7 @@ b-input
 
 			& ^[0]__input
 				&:-webkit-autofill
-					-webkit-box-shadow 0 0 0 100em $o.backgroundColor inset !important
+					-webkit-box-shadow 0 0 0 100em getField($o, backgroundColor) inset !important
 
 			$readonly = getField($o, path(mods readonly true))
 			if $readonly
