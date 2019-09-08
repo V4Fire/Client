@@ -130,7 +130,7 @@ export default class bList<T extends object = Dictionary> extends iData<T> imple
 		}
 
 		let
-			res;
+			newVal;
 
 		if (o.multiple) {
 			const
@@ -140,18 +140,20 @@ export default class bList<T extends object = Dictionary> extends iData<T> imple
 				return o.activeStore;
 			}
 
-			res = objVal;
+			newVal = objVal;
 
 		} else {
-			res = val;
+			newVal = val;
 		}
 
-		if (!beforeDataCreate) {
-			o.emit('change', res);
+		if (beforeDataCreate) {
+			o.emit('immediateChange', newVal);
+
+		} else {
+			o.setActive(newVal);
 		}
 
-		o.emit('immediateChange', res);
-		return res;
+		return newVal;
 	}))
 
 	protected activeStore!: unknown;
