@@ -536,6 +536,17 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	readonly asyncRender!: AsyncRender;
 
 	/**
+	 * API for component VDOM operations
+	 */
+	@system({
+		atom: true,
+		unique: true,
+		init: (ctx: iBlock) => new VDOM(ctx)
+	})
+
+	readonly vdom!: VDOM;
+
+	/**
 	 * Parent link
 	 */
 	static readonly PARENT: object = PARENT;
@@ -605,17 +616,6 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	})
 
 	protected readonly dom!: DOM;
-
-	/**
-	 * API for component VDOM operations
-	 */
-	@system({
-		atom: true,
-		unique: true,
-		init: (ctx: iBlock) => new VDOM(ctx)
-	})
-
-	protected readonly vdom!: VDOM;
 
 	/**
 	 * API for analytics
