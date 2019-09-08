@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-beta.165 (2019-09-07)
+
+#### :bug: Bug Fix
+
+* Fixed `activeProp` watching
+
 ## v3.0.0-beta.164 (2019-09-07)
 
 #### :house: Internal
