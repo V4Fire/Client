@@ -228,8 +228,6 @@ export function paramsFactory<T = unknown>(
 								el = o[i];
 
 							if (Object.isObject(el)) {
-								console.log(wrapOpts({...p.watchParams, ...el}));
-
 								watchers[String((<Dictionary>el).field)] = wrapOpts({...p.watchParams, ...el});
 
 							} else {
