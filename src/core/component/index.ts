@@ -19,7 +19,15 @@ import inheritMeta from 'core/component/create/inherit';
 
 import { GLOBAL } from 'core/env';
 import { runHook, patchRefs, parseVAttrs } from 'core/component/create/helpers';
-import { ComponentInterface, ComponentParams, ComponentMeta, ComponentMethod } from 'core/component/interface';
+import {
+
+	ComponentInterface,
+	ComponentParams,
+	ComponentMeta,
+	ComponentMethod
+
+} from 'core/component/interface';
+
 import {
 
 	supports,
@@ -64,7 +72,9 @@ export {
 
 	renderData,
 	ComponentDriver as default,
+
 	WatchOptions,
+	WatchOptionsWithHandler,
 
 	VNode,
 	VNodeDirective,

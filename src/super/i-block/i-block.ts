@@ -85,14 +85,14 @@ import {
 	cloneWatchValue,
 	bindWatchers,
 
-	VNode,
-	ComponentInterface,
+	FieldInfo,
 	ComponentMeta,
-	FieldInfo
+	ComponentInterface,
+
+	VNode,
+	WatchOptionsWithHandler
 
 } from 'core/component';
-
-import { WatchOptionsWithHandler as BaseWatchOptionsWithHandler } from 'core/component/engines';
 
 import {
 
@@ -1592,7 +1592,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	@p({replace: false})
 	protected $$watch<T = unknown>(
 		exprOrFn: string | ((this: this) => string),
-		opts: BaseWatchOptionsWithHandler<T> & {fieldInfo?: FieldInfo}
+		opts: WatchOptionsWithHandler<T> & {fieldInfo?: FieldInfo}
 	): Function {
 		const
 			{handler} = opts;
