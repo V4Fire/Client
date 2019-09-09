@@ -11,19 +11,25 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v3.0.0-beta.165 (2019-09-07)
+## v3.0.0-beta.166 (2019-09-09)
+
+#### :bug: Bug Fix
+
+* Fixed prop normalizing
+
+## v3.0.0-beta.165 (2019-09-08)
 
 #### :bug: Bug Fix
 
 * Fixed `activeProp` watching
 
-## v3.0.0-beta.164 (2019-09-07)
+## v3.0.0-beta.164 (2019-09-08)
 
 #### :house: Internal
 
 * `vdom` marked as public `iBlock`
 
-## v3.0.0-beta.163 (2019-09-07)
+## v3.0.0-beta.163 (2019-09-08)
 
 #### :boom: Breaking Change
 
