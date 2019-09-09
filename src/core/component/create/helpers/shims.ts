@@ -185,7 +185,8 @@ export function parseVAttrs(data: VNodeData, component?: ComponentMeta): void {
 
 		for (let keys = Object.keys(attrsSpreadObj), i = 0; i < keys.length; i++) {
 			let
-				key = keys[i];
+				key = keys[i],
+				val = attrsSpreadObj[key];
 
 			if (component) {
 				const
@@ -195,9 +196,6 @@ export function parseVAttrs(data: VNodeData, component?: ComponentMeta): void {
 					key = propKey;
 				}
 			}
-
-			let
-				val = attrsSpreadObj[key];
 
 			if (key[0] === '@') {
 				let
