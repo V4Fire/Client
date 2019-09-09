@@ -27,8 +27,8 @@ export interface Analytics {
 
 export interface ControlAction {
 	method: string | Function;
-	params?: unknown[];
-	useDefParams?: boolean;
+	args?: unknown[];
+	defArgs?: boolean;
 }
 
 export interface Control {
@@ -80,8 +80,8 @@ export default abstract class iControlList {
 			}
 
 			const args = (<unknown[]>[]).concat(
-				action.useDefParams ? [control, e] : [],
-				action.params || []
+				action.defArgs ? [control, e] : [],
+				action.args || []
 			);
 
 			const
