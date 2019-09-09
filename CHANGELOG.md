@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-beta.167 (2019-09-09)
+
+#### :house: Internal
+
+* Added default value for `opts` within `traits/i-control-list/iControlList`
+
 ## v3.0.0-beta.166 (2019-09-09)
 
 #### :bug: Bug Fix
