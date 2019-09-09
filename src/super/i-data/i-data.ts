@@ -844,7 +844,7 @@ export default abstract class iData<T extends object = Dictionary> extends iMess
 	 */
 	protected onDelData(data: unknown): void {
 		if (data != null) {
-			this.db = undefined;
+			this.db = this.convertDataToDB(data);
 
 		} else {
 			this.reload().catch(stderr);
