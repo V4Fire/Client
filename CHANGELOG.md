@@ -11,6 +11,13 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-beta.168 (2019-09-09)
+
+#### :boom: Breaking Change
+
+* Renamed `ControlAction.params` -> `args`
+* Renamed `ControlAction.useDefParams` -> `defArgs`
+
 ## v3.0.0-beta.167 (2019-09-09)
 
 #### :house: Internal
