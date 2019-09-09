@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-beta.170 (2019-09-09)
+
+#### :bug: Bug Fix
+
+* Marked `optionsIterator` as optional
+
 ## v3.0.0-beta.169 (2019-09-09)
 
 #### :boom: Breaking Change
