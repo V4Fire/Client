@@ -120,7 +120,7 @@ export default class bSlider<T extends object = Dictionary> extends iData<T> {
 	/**
 	 * Factory for an options iterator
 	 */
-	@prop(Function)
+	@prop({type: Function, required: false})
 	optionsIterator?: OptionsIterator;
 
 	/**
