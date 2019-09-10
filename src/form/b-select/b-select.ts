@@ -43,6 +43,9 @@ export interface Option {
 	value?: unknown;
 	selected?: boolean;
 	marked?: boolean;
+	exterior?: string;
+	classes?: Dictionary<string>;
+	attrs?: Dictionary;
 }
 
 export interface NOption extends Option {
