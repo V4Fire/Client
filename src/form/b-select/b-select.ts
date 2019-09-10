@@ -71,10 +71,6 @@ export default class bSelect<
 	D extends object = Dictionary
 // @ts-ignore
 > extends bInput<V, FV, D> implements iOpenToggle {
-	/** @override */
-	@prop({default: (obj) => obj && obj.data || obj || []})
-	readonly componentConverter?: ComponentConverter<Option[]>;
-
 	/**
 	 * Initial select options
 	 */
