@@ -94,6 +94,12 @@ export default class bSelect<
 	readonly option?: string;
 
 	/**
+	 * Exterior of bScroll component
+	 */
+	@prop({type: String, required: false})
+	readonly scrollExterior?: string;
+
+	/**
 	 * If true, then .initLoad will be executed after .mods.opened === 'true'
 	 */
 	@prop(Boolean)

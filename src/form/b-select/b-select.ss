@@ -42,7 +42,8 @@
 						< b-scroll-inline.&__scroll &
 							ref = scroll |
 							v-func = isFunctional |
-							:fixSize = true
+							:fixSize = true |
+							:exterior = scrollExterior
 						.
 							< _ &
 								v-for = el in options |

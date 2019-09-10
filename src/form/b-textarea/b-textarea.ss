@@ -15,11 +15,8 @@
 		< b-scroll-inline.&__scroll &
 			ref = scroll |
 			v-func = isFunctional |
-			:mods = provide.mods({
-				theme: 'light',
-				width: 'full',
-				size: 'm'
-			})
+			:width = 'full' |
+			:exterior = scrollExterior
 		.
 
 			< textarea.&__input &
