@@ -7,16 +7,16 @@
  */
 
 export interface Option {
-	label: string;
+	label?: string;
 	value?: unknown;
 	href?: string;
 	info?: string;
-	theme?: string;
-	exterior?: string;
-	classes?: Dictionary<string>;
 	active?: boolean;
 	hidden?: boolean;
 	progress?: boolean;
+	theme?: string;
+	exterior?: string;
+	classes?: Dictionary<string>;
 	hint?: string;
 	preIcon?: string;
 	preIconHint?: string;
@@ -24,4 +24,5 @@ export interface Option {
 	icon?: string;
 	iconHint?: string;
 	iconComponent?: string;
+	attrs?: Dictionary;
 }
