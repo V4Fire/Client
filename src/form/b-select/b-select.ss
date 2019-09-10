@@ -65,6 +65,7 @@
 										:p = el |
 										:exterior = el.exterior |
 										:classes = el.classes |
+										:mods = el.mods |
 										:v-attrs = el.attrs
 									.
 

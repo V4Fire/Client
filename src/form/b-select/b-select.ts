@@ -23,34 +23,19 @@ import bInput, {
 	wait,
 
 	Value,
-	ComponentConverter,
 	ModEvent,
 	SetModEvent,
 	ModsDecl
 
 } from 'form/b-input/b-input';
 
+import { FormValue, Option, NOption } from 'form/b-select/modules/interface';
+
 export * from 'form/b-input/b-input';
 export * from 'traits/i-open-toggle/i-open-toggle';
+export * from 'form/b-select/modules/interface';
 
-export type FormValue = CanUndef<
-	string
->;
-
-export interface Option {
-	label: string;
-	inputLabel?: string;
-	value?: unknown;
-	selected?: boolean;
-	marked?: boolean;
-	exterior?: string;
-	classes?: Dictionary<string>;
-	attrs?: Dictionary;
-}
-
-export interface NOption extends Option {
-	value: string;
-}
+export { FormValue };
 
 export const
 	$$ = symbolGenerator();
