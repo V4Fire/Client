@@ -11,6 +11,17 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-beta.172 (2019-09-10)
+
+#### :rocket: New Feature
+
+* Added `scrollExterior` prop to `bSelect`, `bTextarea`
+* Improved `Option` parameters from `bSelect`, `bCheckboxGroup`, `bList`
+
+#### :house: Internal
+
+* Refactoring `bList`, `bScroll`, `bSelect`, `bTextarea`, `bCheckboxGroup`
+
 ## v3.0.0-beta.171 (2019-09-10)
 
 #### :bug: Bug Fix
