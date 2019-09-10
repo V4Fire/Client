@@ -24,7 +24,7 @@
 				< .&__el v-for = el in options | :key = el.id || el.name
 					- block checkbox
 						: defAttrs = { &
-							':id': 'getConnectedId(el.id)',
+							':id': 'dom.getId(el.id)',
 							':name': 'el.name',
 							':label': 'el.label',
 							':form': 'form',

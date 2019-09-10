@@ -27,8 +27,8 @@ export interface Analytics {
 
 export interface ControlAction {
 	method: string | Function;
-	params?: unknown[];
-	useDefParams?: boolean;
+	args?: unknown[];
+	defArgs?: boolean;
 }
 
 export interface Control {
@@ -44,13 +44,13 @@ export default abstract class iControlList {
 	 * Calls an event handler for the specified control
 	 *
 	 * @param component
-	 * @param opts - control options
+	 * @param [opts] - control options
 	 * @param [control] - control instance
 	 * @param [e] - event object
 	 */
 	static callControlAction<R = unknown, C extends iBlock = iBlock>(
 		component: C,
-		opts: Control,
+		opts: Control = {},
 		control?: ControlInstance,
 		e?: Event
 	): CanPromise<CanUndef<R>> {
@@ -80,8 +80,8 @@ export default abstract class iControlList {
 			}
 
 			const args = (<unknown[]>[]).concat(
-				action.useDefParams ? [control, e] : [],
-				action.params || []
+				action.defArgs ? [control, e] : [],
+				action.args || []
 			);
 
 			const
@@ -108,12 +108,12 @@ export default abstract class iControlList {
 	/**
 	 * Calls an event handler for the specified control
 	 *
-	 * @param opts
-	 * @param control
-	 * @param e
+	 * @param [opts]
+	 * @param [control]
+	 * @param [e]
 	 */
 	abstract callControlAction<R = unknown>(
-		opts: Control,
+		opts?: Control,
 		control?: ControlInstance,
 		e?: Event
 	): CanPromise<CanUndef<R>>;

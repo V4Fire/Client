@@ -13,6 +13,9 @@ $p = {
 }
 
 b-slider extends i-block
+	if $p.height
+		height $p.height
+
 	&__window
 	&__view
 		display flex

@@ -85,14 +85,14 @@ import {
 	cloneWatchValue,
 	bindWatchers,
 
-	VNode,
-	ComponentInterface,
+	FieldInfo,
 	ComponentMeta,
-	FieldInfo
+	ComponentInterface,
+
+	VNode,
+	WatchOptionsWithHandler
 
 } from 'core/component';
-
-import { WatchOptionsWithHandler as BaseWatchOptionsWithHandler } from 'core/component/engines';
 
 import {
 
@@ -397,6 +397,12 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	isActivated!: boolean;
 
 	/**
+	 * True, if the component was initialized at least once
+	 */
+	@system()
+	isInitializedOnce: boolean = false;
+
+	/**
 	 * Link to $root
 	 */
 	get r(): iStaticPage | any {
@@ -517,6 +523,30 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	readonly sync!: Sync;
 
 	/**
+	 * API for async render
+	 */
+	@system({
+		atom: true,
+		unique: true,
+		replace: true,
+		functional: false,
+		init: (ctx: iBlock) => new AsyncRender(ctx)
+	})
+
+	readonly asyncRender!: AsyncRender;
+
+	/**
+	 * API for component VDOM operations
+	 */
+	@system({
+		atom: true,
+		unique: true,
+		init: (ctx: iBlock) => new VDOM(ctx)
+	})
+
+	readonly vdom!: VDOM;
+
+	/**
 	 * Parent link
 	 */
 	static readonly PARENT: object = PARENT;
@@ -586,30 +616,6 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	})
 
 	protected readonly dom!: DOM;
-
-	/**
-	 * API for component VDOM operations
-	 */
-	@system({
-		atom: true,
-		unique: true,
-		init: (ctx: iBlock) => new VDOM(ctx)
-	})
-
-	protected readonly vdom!: VDOM;
-
-	/**
-	 * API for async render
-	 */
-	@system({
-		atom: true,
-		unique: true,
-		replace: true,
-		functional: false,
-		init: (ctx: iBlock) => new AsyncRender(ctx)
-	})
-
-	protected readonly asyncRender!: AsyncRender;
 
 	/**
 	 * API for analytics
@@ -1313,6 +1319,10 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	 */
 	@hook('beforeDataCreate')
 	initLoad(data?: unknown | ((this: this) => unknown), silent?: boolean): CanPromise<void> {
+		if (!this.isActivated) {
+			return;
+		}
+
 		this.beforeReadyListeners = 0;
 
 		if (!silent) {
@@ -1342,6 +1352,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 			this.componentStatus = 'beforeReady';
 
 			this.lfc.execCbAfterBlockReady(() => {
+				this.isInitializedOnce = true;
 				this.componentStatus = 'ready';
 
 				if (this.beforeReadyListeners > 1) {
@@ -1581,7 +1592,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	@p({replace: false})
 	protected $$watch<T = unknown>(
 		exprOrFn: string | ((this: this) => string),
-		opts: BaseWatchOptionsWithHandler<T> & {fieldInfo?: FieldInfo}
+		opts: WatchOptionsWithHandler<T> & {fieldInfo?: FieldInfo}
 	): Function {
 		const
 			{handler} = opts;
@@ -1833,9 +1844,11 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	/**
 	 * Component activated hook
 	 * (for keep-alive)
+	 *
+	 * @param [force]
 	 */
-	protected activated(): void {
-		onActivated(this);
+	protected activated(force?: boolean): void {
+		onActivated(this, force);
 	}
 
 	/**

@@ -6,17 +6,17 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import InViewAdapter from 'core/component/directives/in-view/modules/adapter';
+import InViewAdapter from 'core/component/directives/in-view/adapter';
 
-import { getAdaptee } from 'core/component/directives/in-view/modules/helpers';
+import { getAdaptee } from 'core/component/directives/in-view/helpers';
 import { ComponentDriver } from 'core/component/engines';
 
-import MutationObserverStrategy from 'core/component/directives/in-view/modules/mutation';
-import IntersectionObserverStrategy from 'core/component/directives/in-view/modules/intersection';
-import { DirectiveOptions } from 'core/component/directives/in-view/modules/meta';
+import MutationObserverStrategy from 'core/component/directives/in-view/mutation';
+import IntersectionObserverStrategy from 'core/component/directives/in-view/intersection';
+import { DirectiveOptions } from 'core/component/directives/in-view/interface';
 
-export * from 'core/component/directives/in-view/modules/meta';
-export * from 'core/component/directives/in-view/modules/helpers';
+export * from 'core/component/directives/in-view/interface';
+export * from 'core/component/directives/in-view/helpers';
 
 const Adaptee = getAdaptee([
 	IntersectionObserverStrategy,

@@ -11,6 +11,142 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-beta.171 (2019-09-10)
+
+#### :bug: Bug Fix
+
+* Marked `Option.classes` as optional `bList`
+
+## v3.0.0-beta.170 (2019-09-09)
+
+#### :bug: Bug Fix
+
+* Marked `optionsIterator` as optional `bSlider`
+
+## v3.0.0-beta.169 (2019-09-09)
+
+#### :boom: Breaking Change
+
+* Fixed default `del` handler `iData`
+
+## v3.0.0-beta.168 (2019-09-09)
+
+#### :boom: Breaking Change
+
+* Renamed `ControlAction.params` -> `args`
+* Renamed `ControlAction.useDefParams` -> `defArgs`
+
+## v3.0.0-beta.167 (2019-09-09)
+
+#### :house: Internal
+
+* Added default value for `opts` within `traits/i-control-list/iControlList`
+
+## v3.0.0-beta.166 (2019-09-09)
+
+#### :bug: Bug Fix
+
+* Fixed prop normalizing
+
+## v3.0.0-beta.165 (2019-09-08)
+
+#### :bug: Bug Fix
+
+* Fixed `activeProp` watching
+
+## v3.0.0-beta.164 (2019-09-08)
+
+#### :house: Internal
+
+* `vdom` marked as public `iBlock`
+
+## v3.0.0-beta.163 (2019-09-08)
+
+#### :boom: Breaking Change
+
+* Renamed `core/component/interface/watchOptionsWithHander` -> `watchObject`
+
+## v3.0.0-beta.162 (2019-09-07)
+
+#### :rocket: New Feature
+
+* Added `content` getter for `bRemoteProvider`
+
+#### :bug: Bug Fix
+
+* Removed V2 legacy code from `b-window`, `b-checkbox-group`
+* Fixed `asyncRender` with nested template tags
+
+#### :nail_care: Polish
+
+* Improved prop normalizing with `v-attrs`
+* Improved component activation logic
+* Refactoring
+
+## v3.0.0-beta.161 (2019-09-07)
+
+#### :rocket: New Feature
+
+* Added slot support for `bRemoteProvider`
+
+## v3.0.0-beta.160 (2019-09-07)
+
+#### :bug: Bug Fix
+
+* Hotfix: contentLength marked as non-cache `bSlider`, `bSwitcher`
+
+## v3.0.0-beta.159 (2019-09-07)
+
+#### :rocket: New Feature
+
+* Added `content` and `contentLength` getters within `bSlider`
+* Added `content` and `contentLength` getters within `bSwitcher`
+
+#### :house: Internal
+
+* Updated dependencies: @v4fire/core@3.0.0-beta.67
+
+## v3.0.0-beta.158 (2019-09-07)
+
+#### :house: Internal
+
+* Reviewed internal API `bSlider`
+
+## v3.0.0-beta.157 (2019-09-07)
+
+#### :rocket: New Feature
+
+* Added support for `height` prop (stylus) within `b-slider`
+
+#### :bug: Bug Fix
+
+* [Fixed `blockMap` cache within webpack build](https://github.com/V4Fire/Client/pull/117)
+
+#### :house: Internal
+
+* Updated dependencies: browserslist@4.7.0, image-webpack-loader@6.0.0 
+
+## v3.0.0-beta.156 (2019-09-03)
+
+#### :rocket: New Feature
+
+* Added `optionKey` prop to `bSlider` 
+* Added `optionsIterator` prop to `bSlider` 
+* Provided an option index to a prop function `bSlider`
+* Added support for non defined values with `asyncRender.iterate` 
+* Marked `asyncRender` as public `iBlock`
+* Added `isInitializedOnce` parameter `iBlock`
+
+#### :bug: Bug Fix
+
+* Fixed `bSlider` with options prop
+* If component is not activated, than it won't be initialized
+* Online check should not block the render
+
+#### :house: Internal
+
+* Refactoring and optimizations
+
 ## v3.0.0-beta.155 (2019-09-03)
 
 #### :rocket: New Feature

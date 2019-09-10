@@ -13,7 +13,7 @@ export interface Option {
 	info?: string;
 	theme?: string;
 	exterior?: string;
-	classes: Dictionary<string>;
+	classes?: Dictionary<string>;
 	active?: boolean;
 	hidden?: boolean;
 	progress?: boolean;

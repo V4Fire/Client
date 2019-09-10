@@ -196,8 +196,8 @@ export default abstract class iPage<T extends object = Dictionary> extends iData
 	}
 
 	/** @override */
-	protected activated(): void {
-		super.activated();
+	protected activated(force?: boolean): void {
+		super.activated(force);
 		this.initTitle();
 	}
 

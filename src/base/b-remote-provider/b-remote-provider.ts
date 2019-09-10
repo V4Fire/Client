@@ -7,7 +7,7 @@
  */
 
 import symbolGenerator from 'core/symbol';
-import iData, { component, prop, system, RequestError } from 'super/i-data/i-data';
+import iData, { component, prop, RequestError } from 'super/i-data/i-data';
 export * from 'super/i-data/i-data';
 
 export const
@@ -27,16 +27,19 @@ export default class bRemoteProvider<T extends object = Dictionary> extends iDat
 	@prop({type: String, required: false})
 	readonly fieldProp?: string;
 
+	/**
+	 * Link to the component content nodes
+	 */
+	get content(): CanPromise<HTMLCollection> {
+		return this.waitStatus('loading', () => this.$el.children);
+	}
+
 	/** @override */
 	set db(value: CanUndef<T>) {
 		// tslint:disable-next-line:no-string-literal
 		super['dbSetter'](value);
 		this.syncDBWatcher(value);
 	}
-
-	/** @override */
-	@system()
-	protected dbStore?: CanUndef<T>;
 
 	/** @override */
 	protected onRequestError<T = unknown>(err: Error | RequestError, retry: () => Promise<CanUndef<T>>): void {

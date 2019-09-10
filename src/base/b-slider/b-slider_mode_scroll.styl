@@ -8,14 +8,14 @@
 
 $p = {
 	showScrollBreakpoint: 1024px
-	scrollPadding: 20px
+	scrollBarHeight: 20px
 }
 
 b-slider_mode_scroll extends b-slider
 	/mode &__view
 		position relative
 
-	/mode &__fake-view-wrapper
+	/mode &__fake-view-content
 		position relative
 		display flex
 		width 100%
@@ -26,14 +26,15 @@ b-slider_mode_scroll extends b-slider
 		-webkit-overflow-scrolling touch
 		absolute left 0 top 0
 
-		size 100% ("calc(100% + %s)" % $p.scrollPadding)
+		size 100% ("calc(100% + %s)" % $p.scrollBarHeight)
 		overflow-x scroll
-		padding-bottom $p.scrollPadding
+		overflow-y hidden
+		padding-bottom $p.scrollBarHeight
 
 		@media (min-width $p.showScrollBreakpoint)
 			padding-bottom 0
 
-	/mode &__view-wrapper
+	/mode &__view-content
 		white-space nowrap
 		width 100%
 

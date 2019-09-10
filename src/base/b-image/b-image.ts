@@ -136,7 +136,8 @@ export default class bImage extends iMessage implements iProgress, iVisible {
 	 * Saves image content within a cache and destroys it
 	 */
 	@hook('beforeDestroy')
-	protected destroyImage(): void {
+	@wait('loading')
+	protected destroyImage(): CanPromise<void> {
 		const
 			{img} = this.$refs;
 

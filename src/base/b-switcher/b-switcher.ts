@@ -11,7 +11,7 @@ import symbolGenerator from 'core/symbol';
 import { observeMap } from 'core/component/helpers/observable';
 import { ComponentElement } from 'core/component/interface';
 
-import iBlock, { component, prop, hook, watch, system, p, ModsDecl } from 'super/i-block/i-block';
+import iBlock, { component, prop, system, hook, watch, wait, p, ModsDecl } from 'super/i-block/i-block';
 export * from 'super/i-block/i-block';
 
 export interface IsTable {
@@ -44,7 +44,7 @@ export type ResolveMethod = keyof typeof resolveMethods;
  * @param value
  */
 export function validateResolve(value: ResolveMethod[]): boolean {
-	return value.every((a) => Boolean(resolveMethods[a]));
+	return value.every((v) => resolveMethods.hasOwnProperty(v));
 }
 
 @component()
@@ -72,6 +72,29 @@ export default class bSwitcher extends iBlock {
 	@prop({type: Object, required: false})
 	readonly semaphoreKeysProp?: Dictionary;
 
+	/** @see semaphoreKeys */
+	@system((o) => o.sync.link('semaphoreKeysProp', (v) => ({...v})))
+	semaphoreKeys?: Dictionary;
+
+	/**
+	 * Link to a content node
+	 */
+	@p({cache: false})
+	get content(): CanPromise<HTMLElement> {
+		return this.waitStatus('loading', () => {
+			const {$refs: {content}, contentNodeStore} = this;
+			return contentNodeStore || content.querySelector<HTMLElement>(this.contentNodeMarker) || content;
+		});
+	}
+
+	/**
+	 * Number of DOM nodes within a content block
+	 */
+	@p({cache: false})
+	get contentLength(): number {
+		return this.contentLengthStore;
+	}
+
 	/** @inheritDoc */
 	static readonly mods: ModsDecl = {
 		animation: [
@@ -79,12 +102,6 @@ export default class bSwitcher extends iBlock {
 			'fade'
 		]
 	};
-
-	/**
-	 * @see semaphoreKeys
-	 */
-	@system((o) => o.sync.link('semaphoreKeysProp', (v) => ({...v})))
-	protected semaphoreKeys?: Dictionary;
 
 	/**
 	 * Map for ready components
@@ -102,7 +119,7 @@ export default class bSwitcher extends iBlock {
 	 * Number of DOM nodes within a content block
 	 */
 	@system()
-	protected nodesLength: number = 0;
+	protected contentLengthStore: number = 0;
 
 	/**
 	 * Selector of a content node
@@ -170,15 +187,6 @@ export default class bSwitcher extends iBlock {
 		if (!this.is.manual()) {
 			this[value ? 'hidePlaceholder' : 'showPlaceholder']();
 		}
-	}
-
-	/**
-	 * Link to a content node
-	 */
-	@p({cache: false})
-	protected get contentNode(): HTMLElement {
-		const {$refs: {content}, contentNodeStore} = this;
-		return contentNodeStore || content.querySelector(this.contentNodeMarker) || content;
 	}
 
 	/** @override */
@@ -273,16 +281,18 @@ export default class bSwitcher extends iBlock {
 	/**
 	 * Initializes a mutation observer strategy
 	 */
-	protected initMutationStrategy(): void {
+	@wait('loading')
+	protected initMutationStrategy(): CanPromise<void> {
 		const
-			{contentNode} = this;
+			content = <HTMLElement>this.content;
 
 		const defferCheck = this.lazy.createLazyFn(() => {
-			this.is.mutationReady = this.nodesLength > 0;
+			this.is.mutationReady = this.contentLengthStore > 0;
 			this.setSwitchReadiness();
 		}, {label: $$.defferCheck, join: true});
 
-		this.nodesLength = contentNode.children.length;
+		this.contentLengthStore =
+			content.children.length;
 
 		defferCheck();
 		this.on('contentMutation', defferCheck, {label: $$.initMutation});
@@ -292,7 +302,8 @@ export default class bSwitcher extends iBlock {
 	/**
 	 * Initializes a component readiness wait strategy
 	 */
-	protected initComponentsStrategy(): void {
+	@wait('loading')
+	protected initComponentsStrategy(): CanPromise<void> {
 		const
 			{semaphoreReadyMap, async: $a} = this;
 
@@ -309,8 +320,8 @@ export default class bSwitcher extends iBlock {
 
 		const register = () => {
 			const
-				{contentNode} = this,
-				nodes = contentNode.querySelectorAll(':scope > .i-block-helper');
+				content = <HTMLElement>this.content,
+				nodes = content.querySelectorAll(':scope > .i-block-helper');
 
 			for (let i = 0; i < nodes.length; i++) {
 				const
@@ -335,9 +346,10 @@ export default class bSwitcher extends iBlock {
 	 * Creates a mutation observer
 	 * @emits contentMutation()
 	 */
-	protected createMutationObserver(): void {
+	@wait('loading')
+	protected createMutationObserver(): CanPromise<void> {
 		const
-			{contentNode} = this;
+			content = <HTMLElement>this.content;
 
 		const nodesFilter = (rec: MutationRecord[]): FilteredMutations => {
 			let
@@ -361,11 +373,11 @@ export default class bSwitcher extends iBlock {
 
 		this.mutationObserver = new MutationObserver((rec) => {
 			const v = nodesFilter(rec);
-			this.nodesLength += v.added.length - v.removed.length;
+			this.contentLengthStore += v.added.length - v.removed.length;
 			this.emit('contentMutation');
 		});
 
-		this.mutationObserver.observe(contentNode, {
+		this.mutationObserver.observe(content, {
 			childList: true,
 			characterData: false
 		});

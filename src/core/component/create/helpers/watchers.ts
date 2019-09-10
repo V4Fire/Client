@@ -8,11 +8,11 @@
 
 import Async from 'core/async';
 import { GLOBAL } from 'core/env';
-import { getFieldInfo, ComponentInterface, WatchOptions, WatchOptionsWithHandler, FieldInfo } from 'core/component';
+import { getFieldInfo, ComponentInterface, WatchOptions, WatchObject, FieldInfo } from 'core/component';
 
 export interface BindWatchersParams<A extends object = ComponentInterface> {
 	async?: Async<A>;
-	watchers?: Dictionary<WatchOptionsWithHandler[]>;
+	watchers?: Dictionary<WatchObject[]>;
 	info?: FieldInfo;
 }
 

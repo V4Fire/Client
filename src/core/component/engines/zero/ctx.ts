@@ -230,13 +230,13 @@ export default {
 const
 	hasOwnProperty = Object.prototype.hasOwnProperty;
 
-function resolveAsset(options: Dictionary<any>, type: string, id: string, warnMissing: boolean): CanUndef<Function> {
+function resolveAsset(opts: Dictionary<any>, type: string, id: string, warnMissing: boolean): CanUndef<Function> {
 	if (Object.isString(id)) {
 		return;
 	}
 
 	const
-		assets = options[type];
+		assets = opts[type];
 
 	if (!assets) {
 		return;
@@ -264,7 +264,7 @@ function resolveAsset(options: Dictionary<any>, type: string, id: string, warnMi
 		res = assets[id] || assets[camelizedId] || assets[PascalCaseId];
 
 	if (warnMissing && !res) {
-		warn(`Failed to resolve ${type.slice(0, -1)}: ${id}`, options);
+		warn(`Failed to resolve ${type.slice(0, -1)}: ${id}`, opts);
 	}
 
 	return res;
