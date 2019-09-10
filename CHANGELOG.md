@@ -11,11 +11,17 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-beta.171 (2019-09-10)
+
+#### :bug: Bug Fix
+
+* Marked `Option.classes` as optional `bList`
+
 ## v3.0.0-beta.170 (2019-09-09)
 
 #### :bug: Bug Fix
 
-* Marked `optionsIterator` as optional
+* Marked `optionsIterator` as optional `bSlider`
 
 ## v3.0.0-beta.169 (2019-09-09)
 
