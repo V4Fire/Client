@@ -15,23 +15,19 @@ import iInput, {
 	prop,
 	field,
 	p,
+
 	ValidatorsDecl,
 	ValidatorParams,
-	ComponentConverter,
 	ModsDecl
 
 } from 'super/i-input/i-input';
 
-export * from 'super/i-input/i-input';
-export type Value = CanUndef<CanArray<string>>;
-export type FormValue = Value;
+import { Value, FormValue, Option } from 'form/b-checkbox-group/modules/interface';
 
-export interface Option extends Dictionary {
-	id: string;
-	name: string;
-	label: string;
-	autofocus?: boolean;
-}
+export * from 'super/i-input/i-input';
+export * from 'form/b-checkbox-group/modules/interface';
+
+export { Value, FormValue };
 
 @component({
 	functional: {
@@ -44,14 +40,6 @@ export default class bCheckboxGroup<
 	FV extends FormValue = FormValue,
 	D extends object = Dictionary
 > extends iInput<V, FV, D> implements iWidth {
-	/** @override */
-	@prop({
-		type: Array,
-		default: (obj) => obj && obj.data || obj || []
-	})
-
-	readonly componentConverter!: ComponentConverter<Option[]>;
-
 	/**
 	 * Checkbox selection method
 	 */
@@ -68,7 +56,7 @@ export default class bCheckboxGroup<
 	 * Checkbox component
 	 */
 	@prop(String)
-	readonly option: string = 'browser-checkbox';
+	readonly option: string = 'b-checkbox';
 
 	/**
 	 * Checkboxes store
@@ -253,6 +241,21 @@ export default class bCheckboxGroup<
 	protected isChangeable(el: Option): boolean {
 		const v = this.field.get('valueStore');
 		return this.multiple || v && v !== el.name;
+	}
+
+	/**
+	 * Returns an object of props from the specified option
+	 * @param option
+	 */
+	protected getOptionProps(option: Option): Dictionary {
+		return {
+			...option,
+			id: option.id && this.dom.getId(option.id),
+			form: this.form,
+			value: this.isChecked(option),
+			changeable: this.isChangeable(option),
+			mods: {...option.mods, form: false}
+		};
 	}
 
 	/**
