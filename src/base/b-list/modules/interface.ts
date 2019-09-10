@@ -14,7 +14,6 @@ export interface Option {
 	active?: boolean;
 	hidden?: boolean;
 	progress?: boolean;
-	theme?: string;
 	exterior?: string;
 	classes?: Dictionary<string>;
 	hint?: string;

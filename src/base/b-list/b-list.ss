@@ -27,7 +27,6 @@
 					:class = provide.hintClasses(el.hintPos).concat(provide.elClasses({link: {
 						id: values[el.value],
 						active: isActive(el),
-						theme: el.theme,
 						exterior: el.exterior,
 						hidden: el.hidden,
 						progress: el.progress,
