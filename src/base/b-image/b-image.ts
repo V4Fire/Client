@@ -13,7 +13,6 @@ import iProgress from 'traits/i-progress/i-progress';
 import iVisible from 'traits/i-visible/i-visible';
 
 import iMessage, { component, prop, wait, hook, ModsDecl } from 'super/i-message/i-message';
-
 export * from 'super/i-message/i-message';
 
 export type SizeType =
