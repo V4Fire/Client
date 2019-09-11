@@ -17,6 +17,10 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 * [Added global store for data providers](https://github.com/V4Fire/Client/pull/109)
 
+#### :boom: Breaking Change
+
+* Removed `bProgress`
+
 ## v3.0.0-beta.172 (2019-09-10)
 
 #### :rocket: New Feature
