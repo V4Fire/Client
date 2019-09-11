@@ -666,7 +666,7 @@ export default abstract class iData<T extends object = Dictionary> extends iMess
 			return;
 		}
 
-		this.r.dataStore.set(key, data);
+		this.r.providerDataStore.set(key, data);
 	}
 
 	/**
