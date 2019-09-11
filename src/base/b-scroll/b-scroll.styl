@@ -11,7 +11,7 @@
 
 $p = {
 	visibleHelpers: true
-	backgroundColor: inherit
+	bgColor: inherit
 	scrollerSize: 6px
 }
 
@@ -46,7 +46,6 @@ b-scroll extends i-block
 
 	&__area
 		-webkit-overflow-scrolling touch
-		box-sizing border-box
 		max-width 100%
 		max-height @max-width
 		overflow auto
@@ -62,7 +61,7 @@ b-scroll extends i-block
 
 	&__scroll
 		display inline-block
-		background $p.backgroundColor
+		background-color $p.bgColor
 
 	&__scroller
 		position absolute

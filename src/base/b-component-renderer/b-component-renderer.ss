@@ -20,7 +20,7 @@
 							< template #@ = {slotContent}
 								- block defaultSlot
 									< template v-if = Object.isArray(slotContent) || Object.isObject(slotContent)
-										< @b-generator :content = [].concat(slotContent)
+										< @b-component-renderer :content = [].concat(slotContent)
 
 									< template v-else
 										{{ slotContent }}

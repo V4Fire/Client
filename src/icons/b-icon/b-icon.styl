@@ -19,7 +19,9 @@ b-icon extends i-block
 
 	&__svg
 		display block
-		size $p.size
+
+		if $p.size
+			size $p.size
 
 	if $p.color
 		color $p.color

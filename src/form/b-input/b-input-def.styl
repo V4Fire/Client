@@ -8,7 +8,7 @@
 
 $p = {
 	color: #000
-	backgroundColor: #FFF
+	bgColor: #FFF
 	shadowColor: alpha(#222, 0.5)
 	validColor: #7FB425
 	invalidColor: #D44D24
@@ -16,26 +16,14 @@ $p = {
 }
 
 b-input
-	background $p.backgroundColor
-
-	&_disabled_true
-		background darken($p.backgroundColor, 10%)
-
-	for $el in (none 0) (small 0.18em) (normal 0.3em) (big 0.8em)
-		&_rounding_{$el[0]},
-		&_rounding_{$el[0]} &__root-wrapper,
-		&_rounding_{$el[0]} &__super-wrapper
-			border-radius $el[1]
+	background-color $p.bgColor
 
 	&__root-wrapper
-		border 1px solid darken($p.backgroundColor, 15%)
+		border 1px solid darken($p.bgColor, 15%)
 		transition 0.2s ease-in border-color
 
-	&_focused_true &__root-wrapper
-		border 1px solid darken($p.backgroundColor, 35%)
-
-	&_disabled_true &__root-wrapper
-		opacity 0.5
+	&__wrapper
+		align-items center
 
 	&__cell
 		margin-right 1em
@@ -46,11 +34,16 @@ b-input
 
 	&__input
 		padding 0.7em 0
+
+		font-family BASE_FONT
+		font-size 1em
 		font-weight 400
 		color $p.color
 
+		// @stlint-disable
 		&:-webkit-autofill
-			-webkit-box-shadow 0 0 0 100em $p.backgroundColor inset !important
+		// @stlint-enable
+			-webkit-box-shadow 0 0 0 100em $p.bgColor inset !important
 
 		&::placeholder
 			opacity 1
@@ -62,10 +55,6 @@ b-input
 		&:valid
 		&:invalid
 			box-shadow none
-
-	&_disabled_true &__input
-	&_disabled_true &__icon
-		color darken($p.color, 20%)
 
 	&__icon
 		color lighten($p.color, 10%)
@@ -80,12 +69,31 @@ b-input
 	&__progress span
 		font-size 0.8em
 
+	&__pre-icon
+		margin-left 0.5em
+
+	&_disabled_true
+		background darken($p.bgColor, 10%)
+
+	&_focused_true &__root-wrapper
+		border 1px solid darken($p.bgColor, 35%)
+
+	&_disabled_true &__root-wrapper
+		opacity 0.5
+
+	&_disabled_true &__input
+	&_disabled_true &__icon
+		color darken($p.color, 20%)
+
+	for $el in (none 0) (small 0.18em) (normal 0.3em) (big 0.8em)
+		&_rounding_{$el[0]},
+		&_rounding_{$el[0]} &__root-wrapper,
+		&_rounding_{$el[0]} &__super-wrapper
+			border-radius $el[1]
+
 	&_valid_true &__valid-status
 		color $p.validColor
 
 	&_valid_false &__input
 	&_valid_false &__valid-status
 		color $p.invalidColor
-
-	&__pre-icon
-		margin-left 0.5em

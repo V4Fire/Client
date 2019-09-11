@@ -43,7 +43,7 @@
 							ref = scroll |
 							v-func = isFunctional |
 							:fixSize = true |
-							:mods = provide.mods({size: 'm'})
+							:exterior = scrollExterior
 						.
 							< _ &
 								v-for = el in options |
@@ -56,11 +56,18 @@
 								})
 							.
 
-								< template v-if = $scopedSlots.default
-									< slot :el = el | ${slotAttrs|!html}
+								< template v-if = vdom.getSlot('default')
+									+= self.slot('default', {':option': 'el'})
 
 								< template v-else-if = option
-									< component :is = option | :p = el
+									< component &
+										:is = option |
+										:p = el |
+										:exterior = el.exterior |
+										:classes = el.classes |
+										:mods = el.mods |
+										:v-attrs = el.attrs
+									.
 
 								< template v-else
 									{{ t(el.label) }}

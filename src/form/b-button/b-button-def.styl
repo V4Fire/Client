@@ -8,7 +8,7 @@
 
 $p = {
 	color: #FFF
-	backgroundColor: #6153B9
+	bgColor: #6153B9
 	shadow: 0 0 0.45em alpha(#222, 0.5)
 	roundings: (none 0) (small 0.5em) (normal 1em) (big 2em)
 	buttonPadding: 0.5em 1em
@@ -19,34 +19,46 @@ $p = {
 }
 
 b-button
-	for $el in $p.roundings
-		&_rounding_{$el[0]} &__button
-			border-radius $el[1]
-
 	&__button
 		padding $p.buttonPadding
-		background $p.backgroundColor
-		color $p.color
+
+		font-family BASE_FONT
+		font-size 1em
 		font-weight $p.buttonFontWeight
+		text-align center
+
+		background-color $p.bgColor
+		color $p.color
 
 		&:focus
 			box-shadow $p.shadow
 
 		if ($p.colorBrightnessOnAction)
 			&:hover
-				background lighten($p.backgroundColor, $p.colorBrightnessOnAction)
+				background-color lighten($p.bgColor, $p.colorBrightnessOnAction)
 
 			&:active
-				background darken($p.backgroundColor, $p.colorBrightnessOnAction)
+				background-color darken($p.bgColor, $p.colorBrightnessOnAction)
 
 	@supports (-ms-accelerator true)
 		&__button
 			border-width 0.1em
 
+	&__wrapper
+		justify-content center
+		align-items center
+
+	&__value
+		justify-content center
+
+	&__cell + &__cell
+		margin-left $p.offsetBetweenCells
+
+	for $el in $p.roundings
+		&_rounding_{$el[0]} &__button
+			border-radius $el[1]
+
 	if ($p.colorBrightnessOnAction)
 		&_disabled_true &__button
 		&_progress_true &__button
 			color lighten($p.color, $p.colorBrightnessOnAction)
-
-	&__cell + &__cell
-		margin-left $p.offsetBetweenCells

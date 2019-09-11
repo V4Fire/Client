@@ -21,8 +21,9 @@ import {
 
 	PropOptions as BasePropOptions,
 	ComputedOptions,
+
 	WatchOptions,
-	WatchOptionsWithHandler as BaseWatchOptionsWithHandler,
+	WatchOptionsWithHandler,
 
 	CreateElement,
 	VNode,
@@ -91,7 +92,7 @@ export interface WatchWrapper<CTX extends ComponentInterface = ComponentInterfac
 	(ctx: CTX, handler: WatchHandler<CTX, A, B>): CanPromise<WatchHandler<CTX, A, B> | Function>;
 }
 
-export interface WatchOptionsWithHandler<
+export interface WatchObject<
 	CTX extends ComponentInterface = ComponentInterface,
 	A = unknown,
 	B = A
@@ -221,7 +222,7 @@ export interface ComponentMeta {
 	computed: Dictionary<ComponentAccessor>;
 	accessors: Dictionary<ComponentAccessor>;
 	methods: Dictionary<ComponentMethod>;
-	watchers: Dictionary<WatchOptionsWithHandler[]>;
+	watchers: Dictionary<WatchObject[]>;
 	hooks: {[H in Hooks]: Hook[]};
 
 	component: {
@@ -317,7 +318,7 @@ export class ComponentInterface<
 
 	protected $watch<T = unknown>(
 		exprOrFn: string | ((this: this) => string),
-		opts: BaseWatchOptionsWithHandler<T>
+		opts: WatchOptionsWithHandler<T>
 	): Function;
 
 	protected $watch() {}
@@ -325,7 +326,7 @@ export class ComponentInterface<
 	// @ts-ignore (abstract)
 	protected $$watch?<T = unknown>(
 		exprOrFn: string | ((this: this) => string),
-		opts: BaseWatchOptionsWithHandler<T>
+		opts: WatchOptionsWithHandler<T>
 	): Function;
 
 	protected $$watch() {}

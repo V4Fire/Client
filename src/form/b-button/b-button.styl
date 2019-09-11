@@ -39,17 +39,12 @@ b-button extends i-data
 	&__button
 	&__wrapper
 		display flex
-		box-sizing border-box
 		width 100%
 		min-height 100%
 
 	&__button
-		font-family BASE_FONT
-		font-size 1em
-		text-align center
 		text-transform inherit
-
-		border none
+		border 0
 		cursor pointer
 
 		&:focus
@@ -57,10 +52,6 @@ b-button extends i-data
 
 		&:active
 			{$p.onActive}
-
-	&__wrapper
-		justify-content center
-		align-items center
 
 	&__cell
 	&_progress_true &__progress
@@ -70,8 +61,8 @@ b-button extends i-data
 		display none
 
 	&__value
-		justify-content center
-		width $p.width
+		if $p.width
+			width $p.width
 
 	&__dropdown &__dropdown-content
 		padding 0

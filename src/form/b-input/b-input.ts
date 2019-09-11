@@ -165,7 +165,7 @@ export default class bInput<
 	 * (for using with .mask)
 	 */
 	@prop(Object)
-	readonly regs: Dictionary<RegExp> = {};
+	readonly regExps: Dictionary<RegExp> = {};
 
 	/**
 	 * Input mask value
@@ -176,8 +176,27 @@ export default class bInput<
 	/**
 	 * Mask placeholder
 	 */
-	@prop({type: String, watch: {fn: 'updateMask', immediate: true}})
+	@prop({type: String, watch: {fn: 'updateMask', immediate: true, provideArgs: false}})
 	readonly maskPlaceholder: string = '_';
+
+	/**
+	 * Initial number of mask repetitions
+	 */
+	@prop({type: [Number, Boolean], required: false})
+	readonly maskRepeatProp?: number | boolean;
+
+	/**
+	 * Delimiter for a mask value (if the mask is repeated)
+	 */
+	@prop({type: String, required: false})
+	readonly maskDelimiter: string = ' ';
+
+	/**
+	 * Should mask be repeated infinitely
+	 */
+	get isMaskInfinite(): boolean {
+		return this.maskRepeatProp === true;
+	}
 
 	/** @override */
 	get value(): V {
@@ -270,6 +289,12 @@ export default class bInput<
 	protected skipBuffer: boolean = false;
 
 	/**
+	 * Number of mask repetitions
+	 */
+	@system((o) => o.sync.link((v) => v === true ? 42 : v || 1))
+	protected maskRepeat!: number;
+
+	/**
 	 * Temporary last selection start index
 	 */
 	@system()
@@ -343,11 +368,11 @@ export default class bInput<
 	@wait('ready', {label: $$.updateMask})
 	async updateMask(): Promise<void> {
 		const
-			{async: $a} = this,
+			{async: $a, maskDelimiter} = this,
 			{input} = this.$refs;
 
-		const
-			group = {group: 'mask'};
+		const group = {group: 'mask'};
+		$a.off(group);
 
 		if (this.mask) {
 			$a.on(input, 'mousedown keydown', this.onMaskNavigate, group);
@@ -374,7 +399,7 @@ export default class bInput<
 				sys = false;
 
 			if (this.mask) {
-				for (let o = this.mask, i = 0; i < o.length; i++) {
+				for (let o = this.mask, i = 0, j = 0; i < o.length && j < this.maskRepeat; i++) {
 					const
 						el = o[i];
 
@@ -386,11 +411,21 @@ export default class bInput<
 					tpl += sys ? this.maskPlaceholder : el;
 
 					if (sys) {
-						value.push(this.regs[el] || new RegExp(`\\${el}`));
+						value.push(this.regExps[el] || new RegExp(`\\${el}`));
 						sys = false;
 
 					} else {
 						value.push(el);
+					}
+
+					if (i === o.length - 1) {
+						i = -1;
+						j++;
+
+						if (j < this.maskRepeat) {
+							tpl += maskDelimiter;
+							value.push(maskDelimiter);
+						}
 					}
 				}
 			}
@@ -401,7 +436,6 @@ export default class bInput<
 			await this.applyMaskToValue(this.value, {updateBuffer: true});
 
 		} else {
-			$a.off(group);
 			this._mask = undefined;
 		}
 	}

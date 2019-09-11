@@ -13,6 +13,7 @@ import iProgress from 'traits/i-progress/i-progress';
 import iVisible from 'traits/i-visible/i-visible';
 
 import iMessage, { component, prop, wait, hook, ModsDecl } from 'super/i-message/i-message';
+
 export * from 'super/i-message/i-message';
 
 export type SizeType =
@@ -22,7 +23,7 @@ export type SizeType =
 export const
 	$$ = symbolGenerator();
 
-@component({flyweight: true, functional: true})
+@component({functional: {}})
 export default class bImage extends iMessage implements iProgress, iVisible {
 	/**
 	 * Target image src (fallback if srcset provided)
@@ -117,12 +118,12 @@ export default class bImage extends iMessage implements iProgress, iVisible {
 	}
 
 	/**
-	 * Calculates image aspect ratio
+	 * Calculates the specified image aspect ratio
 	 * @param img
 	 */
-	protected computeRatio(img: HTMLImageElement): number {
+	protected computeRatio(img: CanUndef<HTMLImageElement>): number {
 		const
-			{naturalHeight, naturalWidth} = img;
+			{naturalHeight = 0, naturalWidth = 0} = img || {};
 
 		if (naturalHeight || naturalWidth) {
 			return naturalHeight === 0 ? 1 : naturalWidth / naturalHeight;
@@ -135,7 +136,8 @@ export default class bImage extends iMessage implements iProgress, iVisible {
 	 * Saves image content within a cache and destroys it
 	 */
 	@hook('beforeDestroy')
-	protected destroyImage(): void {
+	@wait('loading')
+	protected destroyImage(): CanPromise<void> {
 		const
 			{img} = this.$refs;
 
@@ -161,11 +163,25 @@ export default class bImage extends iMessage implements iProgress, iVisible {
 	 */
 	protected onImageLoaded(img: HTMLImageElement | string): void {
 		const
-			{img: imgRef} = this.$refs,
+			{img: imgRef} = this.$refs;
+
+		let
 			tmpPadding = this.tmp[`${this.src}-padding`];
 
 		this.setMod('progress', false);
 		this.setMod('showError', false);
+
+		if (!tmpPadding) {
+			if (this.ratio) {
+				tmpPadding = `${(1 / this.ratio) * 100}%`;
+
+			} else if (!Object.isString(img) && this.ratio !== 0) {
+				tmpPadding = `${(1 / this.computeRatio(img)) * 100}%`;
+
+			} else {
+				tmpPadding = '';
+			}
+		}
 
 		Object.assign(imgRef.style,
 			{
@@ -174,22 +190,12 @@ export default class bImage extends iMessage implements iProgress, iVisible {
 				backgroundPosition: this.position
 			},
 
-			this.ratio ?
-				{paddingBottom: Object.isString(img) ? String(tmpPadding) : this.getPadding(img)} :
+			tmpPadding ?
+				{paddingBottom: tmpPadding} :
 				{height: '100%'}
 		);
 
 		this.emit('load');
-	}
-
-	/**
-	 * Calculates the padding for emulating aspect ratio
-	 * @param img
-	 */
-	protected getPadding(img: HTMLImageElement): string {
-		return this.ratio !== undefined ?
-			`${(1 / this.ratio) * 100}%` :
-			`${(1 / this.computeRatio(img)) * 100}%`;
 	}
 
 	/**

@@ -9,24 +9,24 @@
 $p = {
 	color: #4B494B
 	titleColor: #FFF
-	backgroundColor: #FFF
-	titleBackgroundColor: #00786B
-	backBackgroundColor: alpha(#000, 0.4)
+	bgColor: #FFF
+	titleBgColor: #00786B
+	backBgColor: alpha(#000, 0.4)
 }
 
 b-window
 	&__back
-		background $p.backBackgroundColor
+		background $p.backBgColor
 
 	&__window
 		color $p.color
-		background $p.backgroundColor
+		background-color $p.bgColor
 
 	&__title
 		padding 1em 10em 1em 1em
 		font-size 1.8rem
 		color $p.titleColor
-		background $p.titleBackgroundColor
+		background $p.titleBgColor
 
 	&__controls
 		padding 1em

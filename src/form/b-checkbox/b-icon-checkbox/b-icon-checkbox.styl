@@ -7,24 +7,24 @@
  */
 
 @import "super/i-input/i-input.styl"
+@import "traits/i-width/i-width.styl"
+@import "traits/i-size/i-size.styl"
 
 $p = {
 	width: auto
 }
 
 b-icon-checkbox extends i-input
+	// @stlint-disable
+	i-width({helpers: $p.widthHelpers, selector: ("&__wrapper")})
+	i-size({helpers: $p.sizeHelpers, selector: ("&__wrapper")})
+	// @stlint-enable
+
 	display block
-
-	&_width_full &__wrapper
-		width 100%
-
-	&_width_auto &__wrapper
-		width auto
 
 	&__wrapper
 		display flex
 		align-items center
-		box-sizing border-box
 		width $p.width
 		color currentColor
 		text-decoration none

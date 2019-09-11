@@ -7,7 +7,9 @@
  */
 
 import iIcon from 'traits/i-icon/i-icon';
-import bCheckbox, { component, prop } from 'form/b-checkbox/b-checkbox';
+import iWidth from 'traits/i-width/i-width';
+
+import bCheckbox, { component, prop, ModsDecl } from 'form/b-checkbox/b-checkbox';
 export * from 'form/b-checkbox/b-checkbox';
 
 @component()
@@ -15,12 +17,17 @@ export default class bIconCheckbox<
 	V extends boolean = boolean,
 	FV extends boolean = boolean,
 	D extends object = Dictionary
-> extends bCheckbox<V, FV, D> implements iIcon {
+> extends bCheckbox<V, FV, D> implements iIcon, iWidth {
 	/**
 	 * Icon component
 	 */
 	@prop({type: String, required: false})
 	readonly icon?: string;
+
+	/** @inheritDoc */
+	static readonly mods: ModsDecl = {
+		...iWidth.mods
+	};
 
 	/** @see iIcon.getIconLink */
 	getIconLink(iconId: string): string {

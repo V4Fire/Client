@@ -120,6 +120,10 @@ export default class AsyncRender {
 	 * @param [params]
 	 */
 	iterate(value: unknown, slice: CanArray<number>, params: TaskOpts = {}): unknown[] {
+		if (!value) {
+			return [];
+		}
+
 		let
 			list: CanPromise<unknown[]>;
 

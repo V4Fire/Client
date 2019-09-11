@@ -23,32 +23,19 @@
 			< .&__list
 				< .&__el v-for = el in options | :key = el.id || el.name
 					- block checkbox
-						: defAttrs = { &
-							':id': 'getConnectedId(el.id)',
-							':name': 'el.name',
-							':label': 'el.label',
-							':form': 'form',
-							':autofocus': 'el.autofocus',
-							':value': 'isChecked(el)',
-							':changeable': 'isChangeable(el)',
-							':mods': 'provide.mods({form: false})'
-						} .
-
-						< template v-if = $scopedSlots.default
-							< slot &
-								:el = el |
-								:onChange = onChange |
-								:onActionChange = onActionChange |
-								${defAttrs|!html} |
-								${slotAttrs|!html}
-							.
+						< template v-if = vdom.getSlot('default')
+							+= self.slot('default', { &
+								':option': 'getOptionProps(el)',
+								':onChange': 'onChange',
+								':onActionChange': 'onActionChange',
+							}) .
 
 						< template v-else
 							< component.&__checkbox &
 								:instanceOf = bCheckbox |
 								:is = option |
 								:p = el |
+								:v-attrs = getOptionProps(el) |
 								@change = onChange |
-								@actionChange = onActionChange |
-								${defAttrs|!html}
+								@actionChange = onActionChange
 							.

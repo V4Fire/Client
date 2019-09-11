@@ -12,17 +12,17 @@ export interface SelectParams {
 }
 
 /**
- * Finds an element by specified params
+ * Finds an element from an object by the specified params
  *
- * @param value
+ * @param obj
  * @param params
  */
-export default function select<T extends unknown = unknown>(value: unknown, params: SelectParams): CanUndef<T> {
+export function select<T = unknown>(obj: unknown, params: SelectParams): CanUndef<T> {
 	const
 		{where, from} = params;
 
 	let
-		target = value,
+		target = obj,
 		res;
 
 	if ((Object.isObject(target) || Object.isArray(target)) && from != null) {
@@ -42,7 +42,8 @@ export default function select<T extends unknown = unknown>(value: unknown, para
 			return false;
 		}
 
-		let res;
+		let
+			res;
 
 		Object.forEach<string, string>(where, (v, k) => {
 			if (Object.isObject(obj) && !(k in obj)) {

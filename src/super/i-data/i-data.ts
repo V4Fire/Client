@@ -90,8 +90,8 @@ export default abstract class iData<T extends object = Dictionary> extends iMess
 	/**
 	 * Initial parameters for a data provider instance
 	 */
-	@prop(Object)
-	readonly dataProviderParams: ProviderParams = {};
+	@prop({type: Object, required: false})
+	readonly dataProviderParams?: ProviderParams;
 
 	/**
 	 * Initial request parameters
@@ -203,6 +203,10 @@ export default abstract class iData<T extends object = Dictionary> extends iMess
 
 	/** @override */
 	initLoad(data?: unknown, silent?: boolean): CanPromise<void> {
+		if (!this.isActivated) {
+			return;
+		}
+
 		const label = <AsyncOpts>{
 			label: $$.initLoad,
 			join: 'replace'
@@ -637,19 +641,6 @@ export default abstract class iData<T extends object = Dictionary> extends iMess
 	}
 
 	/**
-	 * Synchronization for the p property
-	 *
-	 * @param value
-	 * @param [oldValue]
-	 */
-	@watch('p')
-	protected syncAdvParamsWatcher(value: Dictionary, oldValue: Dictionary): void {
-		if (!Object.fastCompare(value, oldValue)) {
-			this.initRemoteData();
-		}
-	}
-
-	/**
 	 * Synchronization for the dataProviderParams property
 	 *
 	 * @param value
@@ -663,13 +654,13 @@ export default abstract class iData<T extends object = Dictionary> extends iMess
 	}
 
 	/**
-	 * Saves specified data in root data store
+	 * Saves the specified data in the root data store
 	 *
 	 * @param data
 	 * @param [key]
 	 */
-	protected saveProvidedData(data: unknown, key?: string): void {
-		key = key || this.dataProvider;
+	protected saveDataToRootStore(data: unknown, key?: string): void {
+		key = key || this.globalName;
 
 		if (!key) {
 			return;
@@ -823,10 +814,8 @@ export default abstract class iData<T extends object = Dictionary> extends iMess
 		}
 
 		return req.then((res) => {
-			const
-				v = res.data || undefined;
-
-			this.saveProvidedData(v, this.dataProvider);
+			const v = res.data || undefined;
+			this.saveDataToRootStore(v);
 			return v;
 		});
 	}
@@ -874,7 +863,7 @@ export default abstract class iData<T extends object = Dictionary> extends iMess
 	 */
 	protected onDelData(data: unknown): void {
 		if (data != null) {
-			this.db = undefined;
+			this.db = this.convertDataToDB(data);
 
 		} else {
 			this.reload().catch(stderr);

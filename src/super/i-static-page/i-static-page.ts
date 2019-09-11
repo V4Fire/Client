@@ -17,9 +17,12 @@ import { Session } from 'core/session/interface';
 import { NetStatus } from 'core/net/interface';
 
 import iBlock from 'super/i-block/i-block';
-import ProvidedDataStore from 'super/i-static-page/modules/provider-data-store';
 import iPage, { component, field, system, watch, Event } from 'super/i-page/i-page';
 import { CurrentPage } from 'core/router/interface';
+
+//#if runtime has core/data
+import ProvidedDataStore from 'super/i-static-page/modules/provider-data-store';
+//#endif
 
 //#if runtime has bRouter
 import bRouter from 'base/b-router/b-router';
@@ -58,7 +61,7 @@ export default abstract class iStaticPage<
 	/**
 	 * Remote data store
 	 */
-	@system(() => new ProvidedDataStore())
+	@system(() => typeof ProvidedDataStore === 'function' && new ProvidedDataStore())
 	readonly providerDataStore!: ProvidedDataStore;
 
 	/**

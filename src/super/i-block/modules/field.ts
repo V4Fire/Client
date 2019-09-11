@@ -75,12 +75,10 @@ export default class Field {
 			// @ts-ignore
 			ctx = info.ctx;
 			isField = info.type === 'field';
-			chunks = info.path.split('.');
 
-			if (isField) {
-				// @ts-ignore (access)
-				res = ctx.$$data;
-			}
+			// @ts-ignore (access)
+			res = isField ? ctx.$$data : ctx;
+			chunks = info.path.split('.');
 
 			if (isField && ctx.lfc.isBeforeCreate() || !(chunks[0] in res)) {
 				chunks[0] = info.name;
@@ -138,12 +136,10 @@ export default class Field {
 			// @ts-ignore
 			ctx = info.ctx;
 			isField = info.type === 'field';
-			chunks = info.path.split('.');
 
-			if (isField) {
-				// @ts-ignore (access)
-				ref = ctx.$$data;
-			}
+			// @ts-ignore (access)
+			ref = isField ? ctx.$$data : ctx;
+			chunks = info.path.split('.');
 
 			if (isField && !isReady || !(chunks[0] in ref)) {
 				chunks[0] = info.name;
@@ -214,6 +210,7 @@ export default class Field {
 
 		let
 			isField = isComponent,
+			ref = obj,
 			chunks;
 
 		if (isComponent) {
@@ -223,6 +220,9 @@ export default class Field {
 			// @ts-ignore
 			ctx = info.ctx;
 			isField = info.type === 'field';
+
+			// @ts-ignore (access)
+			ref = isField ? ctx.$$data : ctx;
 			chunks = info.path.split('.');
 			chunks[0] = info.name;
 
@@ -231,9 +231,7 @@ export default class Field {
 		}
 
 		let
-			test = true,
-			// @ts-ignore (access)
-			ref = isField ? ctx.$$data : obj;
+			test = true;
 
 		for (let i = 0; i < chunks.length; i++) {
 			const

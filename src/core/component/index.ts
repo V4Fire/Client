@@ -19,7 +19,15 @@ import inheritMeta from 'core/component/create/inherit';
 
 import { GLOBAL } from 'core/env';
 import { runHook, patchRefs, parseVAttrs } from 'core/component/create/helpers';
-import { ComponentInterface, ComponentParams, ComponentMeta, ComponentMethod } from 'core/component/interface';
+import {
+
+	ComponentInterface,
+	ComponentParams,
+	ComponentMeta,
+	ComponentMethod
+
+} from 'core/component/interface';
+
 import {
 
 	supports,
@@ -55,7 +63,8 @@ export {
 	runHook,
 	getFieldInfo,
 	cloneWatchValue,
-	bindWatchers
+	bindWatchers,
+	FieldInfo
 
 } from 'core/component/create/helpers';
 
@@ -63,7 +72,9 @@ export {
 
 	renderData,
 	ComponentDriver as default,
+
 	WatchOptions,
+	WatchOptionsWithHandler,
 
 	VNode,
 	VNodeDirective,
@@ -367,7 +378,7 @@ export function component(params?: ComponentParams): Function {
 
 								// tslint:disable-next-line:prefer-conditional-expression
 								if (hasOpts) {
-									parseVAttrs(<Dictionary>opts, Boolean(component));
+									parseVAttrs(<Dictionary>opts, component);
 								}
 
 								const renderKey =
@@ -553,12 +564,30 @@ export function component(params?: ComponentParams): Function {
 											const
 												isTemplateParent = Object.isArray(vnode);
 
-											if (isTemplateParent && !vnode.length) {
-												return;
+											if (isTemplateParent) {
+												while (Object.isArray(vnode)) {
+													let
+														newVNode = vnode[0];
+
+													for (let i = 0; i < vnode.length; i++) {
+														const
+															el = vnode[i];
+
+														if (!Object.isArray(el) && (<VNode>el).context) {
+															newVNode = el;
+														}
+													}
+
+													vnode = newVNode;
+												}
+
+												if (!vnode) {
+													return;
+												}
 											}
 
 											const
-												ctx = (isTemplateParent ? vnode[0] : vnode).context;
+												ctx = vnode.context;
 
 											if (!isTemplateParent) {
 												vnode.fakeContext = ctx;
@@ -572,7 +601,7 @@ export function component(params?: ComponentParams): Function {
 														nodes = <VNode[]>[];
 
 													const
-														parent = isTemplateParent ? vnode[0].elm.parentNode : vnode.elm,
+														parent = isTemplateParent ? vnode.elm.parentNode : vnode.elm,
 														baseHook = ctx.hook;
 
 													ctx.hook = 'beforeUpdate';

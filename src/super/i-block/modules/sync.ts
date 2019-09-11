@@ -33,7 +33,7 @@ export type SyncObjectField<T = unknown> =
 
 export type SyncObjectFields<T = unknown> = Array<
 	SyncObjectField<T>
->;
+	>;
 
 const
 	storeRgxp = /Store$/;
@@ -153,21 +153,25 @@ export default class Sync {
 		}
 
 		const
-			cache = this.syncLinkCache;
+			{meta, component, linksCache, syncLinkCache: cache, component: {$options: {propsData}}} = this;
+
+		let
+			isProp;
 
 		if (!field || !Object.isString(field)) {
 			wrapper = <LinkWrapper<D>>params;
 			params = <AsyncWatchOpts>field;
 			field = `${path.replace(storeRgxp, '')}Prop`;
+			isProp = true;
+
+		} else {
+			isProp = Boolean(meta.props[field]);
 		}
 
 		if (params && Object.isFunction(params)) {
 			wrapper = params;
 			params = undefined;
 		}
-
-		const
-			{meta, component, linksCache} = this;
 
 		if (!linksCache[path]) {
 			linksCache[path] = {};
@@ -182,7 +186,12 @@ export default class Sync {
 				return res;
 			};
 
-			if (!component.isFlyweight && (!meta.props[field] || !component.isFunctional)) {
+			if (
+				!component.isFlyweight && (component.isFunctional ?
+					!isProp :
+					!isProp || !propsData || field in propsData
+				)
+			) {
 				if (wrapper && wrapper.length > 1) {
 					component.watch(field, (val, oldVal) => {
 						if (Object.fastCompare(val, oldVal) || Object.fastCompare(val, this.field.get(path))) {
@@ -280,7 +289,7 @@ export default class Sync {
 		}
 
 		const
-			{meta, component, syncLinkCache, linksCache} = this;
+			{meta, component, syncLinkCache, linksCache, component: {$options: {propsData}}} = this;
 
 		const
 			hooks = meta.hooks.beforeDataCreate;
@@ -323,9 +332,13 @@ export default class Sync {
 			Object.set(linksCache, path, true);
 
 			const
-				sync = (val?, oldVal?) => setField(path, getVal(val, oldVal));
+				sync = (val?, oldVal?) => setField(path, getVal(val, oldVal)),
+				isProp = meta.props[field];
 
-			if (!component.isFlyweight && (!meta.props[field] || !component.isFunctional)) {
+			if (!component.isFlyweight && (component.isFunctional ?
+					!isProp :
+					!isProp || !propsData || field in propsData
+			)) {
 				if (clone) {
 					component.watch(field, (val, oldVal) => {
 						if (Object.fastCompare(val, oldVal) || Object.fastCompare(val, this.field.get(path))) {

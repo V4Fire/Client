@@ -185,7 +185,7 @@ export default class VDOM {
 	 * Returns a link to the closest parent component for the current
 	 * @param component - component name or a link to the component constructor
 	 */
-	closest<T extends iBlock = iBlock>(component: string | ClassConstructor<T>): CanUndef<T> {
+	closest<T extends iBlock = iBlock>(component: string | ClassConstructor<T> | Function): CanUndef<T> {
 		const
 			nm = Object.isString(component) ? component.dasherize() : undefined;
 

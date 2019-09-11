@@ -6,22 +6,24 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import { ModsTable } from 'form/b-input/b-input';
+
+export type FormValue = CanUndef<
+	string
+>;
+
 export interface Option {
-	label?: string;
+	label: string;
+	inputLabel?: string;
 	value?: unknown;
-	href?: string;
-	info?: string;
-	active?: boolean;
-	hidden?: boolean;
-	progress?: boolean;
+	selected?: boolean;
+	marked?: boolean;
 	exterior?: string;
 	classes?: Dictionary<string>;
-	hint?: string;
-	preIcon?: string;
-	preIconHint?: string;
-	preIconComponent?: string;
-	icon?: string;
-	iconHint?: string;
-	iconComponent?: string;
+	mods?: ModsTable;
 	attrs?: Dictionary;
+}
+
+export interface NOption extends Option {
+	value: string;
 }

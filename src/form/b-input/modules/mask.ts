@@ -27,7 +27,7 @@ export async function onMaskFocus<T extends bInput<any, any, any>>(component: T,
 	}
 
 	const
-		// @ts-ignore
+		// @ts-ignore (access)
 		m = c._mask;
 
 	if (!m) {
@@ -44,7 +44,7 @@ export async function onMaskFocus<T extends bInput<any, any, any>>(component: T,
 		}
 	}
 
-	// @ts-ignore
+	// @ts-ignore (access)
 	c.$refs.input.setSelectionRange(pos, pos);
 }
 
@@ -56,14 +56,14 @@ export async function onMaskFocus<T extends bInput<any, any, any>>(component: T,
  */
 export function onMaskBlur<T extends bInput<any, any, any>>(component: T, e: Event): void {
 	const
-		// @ts-ignore
+		// @ts-ignore (access)
 		m = component._mask;
 
 	if (!m) {
 		return;
 	}
 
-	// @ts-ignore
+	// @ts-ignore (access)
 	if (component.valueBuffer === m.tpl) {
 		component.value = '';
 	}
@@ -77,16 +77,16 @@ export function onMaskBlur<T extends bInput<any, any, any>>(component: T, e: Eve
  */
 export function onMaskCursorReady<T extends bInput<any, any, any>>(component: T, e: KeyboardEvent | MouseEvent): void {
 	const
-		// @ts-ignore
+		// @ts-ignore (access)
 		{input} = component.$refs;
 
 	if (!input) {
 		return;
 	}
 
-	// @ts-ignore
+	// @ts-ignore (access)
 	component._lastMaskSelectionStartIndex = input.selectionStart;
-	// @ts-ignore
+	// @ts-ignore (access)
 	component._lastMaskSelectionEndIndex = input.selectionEnd;
 }
 
@@ -97,7 +97,7 @@ export function onMaskCursorReady<T extends bInput<any, any, any>>(component: T,
  * @param e
  */
 export function onMaskValueReady<T extends bInput<any, any, any>>(component: T, e: KeyboardEvent | MouseEvent): void {
-	// @ts-ignore
+	// @ts-ignore (access)
 	component._maskBuffer = component.valueBuffer;
 }
 
@@ -112,13 +112,13 @@ export async function onMaskInput<T extends bInput<any, any, any>>(component: T)
 		c = component;
 
 	await c.applyMaskToValue(undefined, {
-		// @ts-ignore
+		// @ts-ignore (access)
 		start: c._lastMaskSelectionStartIndex,
-		// @ts-ignore
+		// @ts-ignore (access)
 		end: c._lastMaskSelectionEndIndex
 	});
 
-	// @ts-ignore
+	// @ts-ignore (access)
 	c.onRawDataChange(c.value);
 }
 
@@ -143,7 +143,7 @@ export async function onMaskBackspace<T extends bInput<any, any, any>>(component
 
 	const
 		c = component,
-		// @ts-ignore
+		// @ts-ignore (access)
 		{input} = c.$refs;
 
 	if (!input) {
@@ -156,7 +156,7 @@ export async function onMaskBackspace<T extends bInput<any, any, any>>(component
 		selectionFalse = selectionStart === selectionEnd;
 
 	const
-		// @ts-ignore
+		// @ts-ignore (access)
 		m = c._mask,
 		mask = m && m.value,
 		ph = c.maskPlaceholder;
@@ -166,7 +166,7 @@ export async function onMaskBackspace<T extends bInput<any, any, any>>(component
 	}
 
 	let
-		// @ts-ignore
+		// @ts-ignore (access)
 		res = c.valueBuffer,
 		pos = 0;
 
@@ -203,7 +203,7 @@ export async function onMaskBackspace<T extends bInput<any, any, any>>(component
 			await c.applyMaskToValue(res, {cursor: selectionStart, maskBuffer: ''});
 
 		} else {
-			// @ts-ignore
+			// @ts-ignore (access)
 			c.skipBuffer = true;
 			c.value = '';
 			await c.applyMaskToValue('', {updateBuffer: true});
@@ -253,7 +253,7 @@ export async function onMaskBackspace<T extends bInput<any, any, any>>(component
 	}
 
 	if (res === m.tpl) {
-		// @ts-ignore
+		// @ts-ignore (access)
 		c.skipBuffer = true;
 		c.value = '';
 		await c.applyMaskToValue('', {updateBuffer: true});
@@ -263,7 +263,7 @@ export async function onMaskBackspace<T extends bInput<any, any, any>>(component
 		input.setSelectionRange(start, start);
 	}
 
-	// @ts-ignore
+	// @ts-ignore (access)
 	c.onRawDataChange(c.value);
 }
 
@@ -289,7 +289,7 @@ export function onMaskNavigate<T extends bInput<any, any, any>>(component: T, e:
 
 	const event = () => {
 		const
-			// @ts-ignore
+			// @ts-ignore (access)
 			m = c._mask;
 
 		if (!m) {
@@ -298,7 +298,7 @@ export function onMaskNavigate<T extends bInput<any, any, any>>(component: T, e:
 
 		const
 			mask = m.value,
-			// @ts-ignore
+			// @ts-ignore (access)
 			{input} = c.$refs;
 
 		if (!input) {
@@ -367,7 +367,7 @@ export function onMaskNavigate<T extends bInput<any, any, any>>(component: T, e:
 		keyboardEvent && event();
 
 	} else {
-		// @ts-ignore
+		// @ts-ignore (access)
 		c.async.setImmediate(event, {label: $$.setCursor});
 	}
 }
@@ -388,7 +388,7 @@ export function onMaskKeyPress<T extends bInput<any, any, any>>(component: T, e:
 	};
 
 	const
-		// @ts-ignore
+		// @ts-ignore (access)
 		{valueBuffer, _mask} = c;
 
 	if (e.altKey || e.shiftKey || e.ctrlKey || e.metaKey || blacklist[e.key] || !valueBuffer || !_mask) {
@@ -398,7 +398,7 @@ export function onMaskKeyPress<T extends bInput<any, any, any>>(component: T, e:
 	e.preventDefault();
 
 	const
-		// @ts-ignore
+		// @ts-ignore (access)
 		{input} = c.$refs;
 
 	if (!input) {
@@ -417,7 +417,7 @@ export function onMaskKeyPress<T extends bInput<any, any, any>>(component: T, e:
 		insert = true,
 		n = selectionEnd - selectionStart + 1,
 		start = selectionStart,
-		inputVal = String.fromCharCode(e.charCode);
+		inputVal = e.key;
 
 	while (n--) {
 		const
@@ -458,6 +458,13 @@ export function onMaskKeyPress<T extends bInput<any, any, any>>(component: T, e:
 	c.value = input.value = res.join('');
 	input.setSelectionRange(start, start);
 
-	// @ts-ignore
+	// @ts-ignore (access)
 	c.onRawDataChange(c.value);
+
+	if (c.isMaskInfinite && selectionEnd + 1 === mask.length) {
+		// @ts-ignore (access)
+		c.maskRepeat *= 2;
+		c.updateMask().catch(stderr);
+		input.setSelectionRange(start + 1, start + 1);
+	}
 }

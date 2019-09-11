@@ -112,7 +112,7 @@ export function activate<T extends iBlock>(component: T, force?: boolean): void 
 
 		if (!ctx.isActivated) {
 			// @ts-ignore (access)
-			runHook('activated', ctx.meta, ctx).then(() => ctx.activated(), stderr);
+			runHook('activated', ctx.meta, ctx).then(() => ctx.activated(true), stderr);
 		}
 	}
 }
@@ -182,9 +182,11 @@ const readyEvents = {
 
 /**
  * Handler: component activated hook
+ *
  * @param component
+ * @param [force]
  */
-export function onActivated<T extends iBlock>(component: T): void {
+export function onActivated<T extends iBlock>(component: T, force?: boolean): void {
 	const
 		c = component,
 
@@ -196,9 +198,12 @@ export function onActivated<T extends iBlock>(component: T): void {
 	}
 
 	$a.unmuteAll().unsuspendAll();
-	c.componentStatus = 'beforeReady';
 
-	if (c.needReInit) {
+	if (c.isInitializedOnce && !readyEvents[c.componentStatus]) {
+		c.componentStatus = 'beforeReady';
+	}
+
+	if (!c.isInitializedOnce && force || c.needReInit) {
 		$a.setImmediate(() => {
 			const
 				v = c.reload();
@@ -212,11 +217,10 @@ export function onActivated<T extends iBlock>(component: T): void {
 		});
 	}
 
-	if (!readyEvents[c.componentStatus]) {
-		c.componentStatus = 'beforeReady';
+	if (c.isInitializedOnce) {
+		c.componentStatus = 'ready';
 	}
 
-	c.componentStatus = 'ready';
 	// @ts-ignore (access)
 	c.state.initFromRouter();
 	c.isActivated = true;

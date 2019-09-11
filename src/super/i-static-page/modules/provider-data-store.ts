@@ -8,7 +8,7 @@
 
 import symbolGenerator from 'core/symbol';
 import Provider, { providers } from 'core/data';
-import select, { SelectParams } from 'core/select';
+import { select, SelectParams } from 'core/object';
 
 export const
 	$$ = symbolGenerator();
@@ -28,7 +28,7 @@ export class ProviderDataItem<T extends unknown = unknown> {
 	protected value: CanUndef<T>;
 
 	/**
-	 * Link to data provider
+	 * Link to a data provider
 	 */
 	protected get provider(): CanUndef<typeof Provider> {
 		return providers[this.key] as typeof Provider;
@@ -45,15 +45,15 @@ export class ProviderDataItem<T extends unknown = unknown> {
 	}
 
 	/**
-	 * Proxy to provider call
+	 * Proxy for provider.select
 	 * @param params
 	 */
-	select<V extends unknown = unknown>(params: SelectParams): CanUndef<V> {
+	select<T = unknown>(params: SelectParams): CanUndef<T> {
 		const
 			{provider, value} = this;
 
 		if (!value) {
-			return undefined;
+			return;
 		}
 
 		if (provider && Object.isFunction(provider.select)) {
@@ -73,22 +73,22 @@ export default class ProviderDataStore {
 	/**
 	 * Dummy of DataStoreItem
 	 */
-	protected dummy: ProviderDataItem<undefined>;
+	protected loopbackItem: ProviderDataItem<undefined>;
 
 	constructor() {
-		this.dummy = new ProviderDataItem($$.empty, undefined);
+		this.loopbackItem = new ProviderDataItem($$.empty, undefined);
 	}
 
 	/**
-	 * Returns a specified provider saved data
-	 * @param name
+	 * Returns a value from the store by the specified key
+	 * @param key
 	 */
-	get<T>(name: string): ProviderDataItem<T> {
-		return <ProviderDataItem<T>>this.store[name] || this.dummy;
+	get<T>(key: string): ProviderDataItem<T> {
+		return <ProviderDataItem<T>>this.store[key] || this.loopbackItem;
 	}
 
 	/**
-	 * Sets a specified value to store
+	 * Saves a value to the store by the specified key
 	 *
 	 * @param key
 	 * @param value
@@ -98,19 +98,19 @@ export default class ProviderDataStore {
 	}
 
 	/**
-	 * True if specified keys exists in store
+	 * Returns true if the specified key exists in the store
 	 * @param key
 	 */
-	exists(key: string): boolean {
+	has(key: string): boolean {
 		// tslint:disable-next-line: strict-type-predicates
 		return this.store[key] != null;
 	}
 
 	/**
-	 * Delete a specified key from storage
+	 * Removes a value from the store by the specified key
 	 * @param key
 	 */
-	remove(key: string): boolean {
-		return delete this.store[key];
+	remove(key: string): void {
+		delete this.store[key];
 	}
 }

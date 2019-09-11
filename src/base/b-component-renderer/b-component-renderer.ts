@@ -24,7 +24,7 @@ export interface Document extends Dictionary {
 }
 
 @component({flyweight: true, functional: true})
-export default class bGenerator extends iBlock {
+export default class bComponentRenderer extends iBlock {
 	/**
 	 * List of content
 	 */

@@ -14,7 +14,7 @@ import Then from 'core/then';
 import symbolGenerator from 'core/symbol';
 import Async, { AsyncCbOpts } from 'core/async';
 import IO, { Socket } from 'core/socket';
-import select, { SelectParams } from 'core/select';
+import { select, SelectParams } from 'core/object';
 
 import { concatUrls } from 'core/url';
 import { ModelMethods, SocketEvent, ProviderParams, FunctionalExtraProviders, Mocks } from 'core/data/interface';
@@ -107,7 +107,7 @@ export function provider(nmsOrFn: Function | string): Function | void {
 		};
 	}
 
-	// tslint:disable-next-line: no-use-before-declare
+	nmsOrFn[$$.namespace] = nmsOrFn.name;
 	providers[nmsOrFn.name] = <typeof Provider>nmsOrFn;
 }
 
@@ -144,13 +144,13 @@ export default class Provider {
 	static readonly decoders: DecodersTable = {};
 
 	/**
-	 * Selects a data by specified params
+	 * Finds an element from an object by the specified params
 	 *
-	 * @param value
+	 * @param obj
 	 * @param params
 	 */
-	static select<T extends unknown = unknown>(value: unknown, params: SelectParams): CanUndef<T> {
-		return select(value, params);
+	static select<T = unknown>(obj: unknown, params: SelectParams): CanUndef<T> {
+		return select(obj, params);
 	}
 
 	/**
@@ -313,7 +313,16 @@ export default class Provider {
 	 */
 	constructor(params: ProviderParams = {}) {
 		const
-			id = this.cacheId = `${this.providerName}:${JSON.stringify(params)}`,
+			paramsForCache = <Dictionary>{...params},
+			extra = params.extraProviders;
+
+		if (extra) {
+			const tmp = Object.isFunction(extra) ? extra() : extra;
+			paramsForCache.extraProviders = tmp ? Object.keys(tmp) : [];
+		}
+
+		const
+			id = this.cacheId = `${this.providerName}:${JSON.stringify(paramsForCache)}`,
 			cacheVal = instanceCache[id];
 
 		if (cacheVal) {
@@ -332,8 +341,8 @@ export default class Provider {
 			this.setReadonlyParam('externalRequest', params.externalRequest);
 		}
 
-		if (params.extraProviders) {
-			this.setReadonlyParam('extraProviders', params.extraProviders);
+		if (extra) {
+			this.setReadonlyParam('extraProviders', extra);
 		}
 
 		if (params.socket || this.socketURL) {

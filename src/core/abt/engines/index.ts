@@ -10,8 +10,8 @@ import { ExperimentsSet } from 'core/abt/interface';
 
 /**
  * Provides a set of abt options
- * @param options - experiments options
+ * @param opts - experiments options
  */
-export default function abtAdapter(options: unknown): ExperimentsSet {
+export default function abtAdapter(opts: unknown): ExperimentsSet {
 	return [];
 }

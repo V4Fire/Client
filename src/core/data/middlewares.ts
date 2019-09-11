@@ -9,7 +9,7 @@
 import Then from 'core/then';
 import * as env from 'core/env';
 
-import Provider from 'core/data';
+import Provider, { RequestError } from 'core/data';
 import { Response, MiddlewareParams } from 'core/request';
 
 interface MockOptions {
@@ -17,15 +17,15 @@ interface MockOptions {
 }
 
 let
-	options: MockOptions;
+	mockOpts: MockOptions;
 
 const setConfig = (opts) => {
-	options = {
+	mockOpts = {
 		patterns: [],
 		...opts
 	};
 
-	options.patterns = (options.patterns || []).map((el) => Object.isRegExp(el) ? el : new RegExp(el));
+	mockOpts.patterns = (mockOpts.patterns || []).map((el) => Object.isRegExp(el) ? el : new RegExp(el));
 };
 
 const optionsInitializer = env.get('mock').then(setConfig, setConfig);
@@ -37,7 +37,7 @@ env.event.on('remove.mock', setConfig);
  * @param params
  */
 export async function attachMock(this: Provider, params: MiddlewareParams): Promise<CanUndef<Function>> {
-	if (!options) {
+	if (!mockOpts) {
 		await optionsInitializer;
 	}
 
@@ -47,16 +47,23 @@ export async function attachMock(this: Provider, params: MiddlewareParams): Prom
 	const
 		id = opts.cacheId;
 
-	if (!this.mocks || !Object.isString(id) || options.patterns.every((rgxp) => !rgxp.test(id))) {
+	if (!this.mocks || !Object.isString(id) || mockOpts.patterns.every((rgxp) => !rgxp.test(id))) {
 		return;
 	}
 
 	let
-		requests = await this.mocks[<string>opts.method];
+		mocks = await this.mocks;
 
-	if (requests.default) {
-		requests = requests.default;
+	if (!mocks) {
+		return;
 	}
+
+	if ('default' in mocks) {
+		mocks = mocks.default;
+	}
+
+	const
+		requests = mocks[String(opts.method)];
 
 	if (!requests) {
 		return;
@@ -120,29 +127,38 @@ export async function attachMock(this: Provider, params: MiddlewareParams): Prom
 		}
 	}
 
-	if (Object.isPromise(currentRequest)) {
-		currentRequest = await currentRequest;
-	}
-
-	if (Object.isFunction(currentRequest)) {
-		currentRequest = currentRequest.call(this, params);
-	}
-
-	if (Object.isPromise(currentRequest)) {
-		currentRequest = await currentRequest;
-	}
-
-	if (!currentRequest === undefined) {
+	if (currentRequest === undefined) {
 		return;
 	}
 
-	return () => Then.resolve(currentRequest.response, ctx.parent)
-		.then((res) => new Response(res, {
-			status: currentRequest.status || 200,
-			responseType: currentRequest.responseType || opts.responseType,
-			okStatuses: opts.okStatuses,
-			decoder: currentRequest.decoders === false ? undefined : ctx.decoders
-		}))
+	const customResponse = {
+		status: undefined,
+		responseType: undefined,
+		decoders: undefined
+	};
+
+	let
+		{response} = currentRequest;
+
+	if (Object.isFunction(response)) {
+		response = response.call(this, params, customResponse);
+	}
+
+	return () => Then.resolve(response, ctx.parent)
+		.then((data) => {
+			const response = new Response(data, {
+				status: customResponse.status || currentRequest.status || 200,
+				responseType: customResponse.responseType || currentRequest.responseType || opts.responseType,
+				okStatuses: opts.okStatuses,
+				decoder: currentRequest.decoders === false ? undefined : customResponse.decoders || ctx.decoders
+			});
+
+			if (!response.ok) {
+				throw new RequestError('invalidStatus', {response});
+			}
+
+			return response;
+		})
 
 		.then(ctx.wrapAsResponse);
 }

@@ -9,7 +9,8 @@
 @import "super/i-block/i-block.styl"
 
 $p = {
-	size: 0.8em
+	size: 1rem
+	animation: rotate 1.1s infinite linear
 }
 
 b-progress-icon extends i-block
@@ -19,12 +20,20 @@ b-progress-icon extends i-block
 	&__loader
 	&__i
 		display block
-		size $p.size
-		border ($p.size / 4) solid transparent
+
+		if $p.size
+			size $p.size
+			border ($p.size / 4) solid transparent
+
+		else
+			border-style solid
+			border-color transparent
+
 		border-radius 50%
 
 	&__i
 		absolute top 0 left 0
-		border-color transparent
 		transform translateZ(0)
-		animation rotate 1.1s infinite linear
+
+		if $p.animation
+			animation $p.animation

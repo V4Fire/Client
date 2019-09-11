@@ -1,3 +1,5 @@
+- namespace [%fileName%]
+
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -5,8 +7,6 @@
  * Released under the MIT license
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
-
-- namespace [%fileName%]
 
 - include 'super/i-data'|b as placeholder
 
@@ -21,15 +21,18 @@
 		: putIn content
 			+= self.slot('before')
 
-			< template v-if = $scopedSlots.default
-				+= self.slot()
-
-			< template v-else-if = option
-				< template v-for = el in options
+			< template v-if = option
+				< template &
+					v-for = (el, i) in optionsIterator ? optionsIterator(options, self) : options |
+					:key = optionKey
+				.
 					< component.&__option &
 						:is = option |
-						:v-attrs = Object.isFunction(optionProps) ? optionProps(el) : optionProps
+						:v-attrs = Object.isFunction(optionProps) ? optionProps(el, i) : optionProps
 					.
+
+			< template v-else
+				+= self.slot()
 
 			+= self.slot('after')
 
@@ -38,17 +41,17 @@
 			${windowEvents}
 		.
 			< .&__view ref = view
-				< .&__view-wrapper ref = wrapper
+				< .&__view-content ref = content
 					+= content
 
 		< .&__window v-else
-			< .&__view-wrapper ref = view
-				< .&__fake-view-wrapper &
+			< .&__view-content ref = view
+				< .&__fake-view-content &
 					v-if = dynamicHeight |
 					ref = fake |
 				.
 					+= content
 
 				< .&__outer-view-wrapper
-					< .&__view-wrapper ref = wrapper
+					< .&__view-content ref = content
 						+= content

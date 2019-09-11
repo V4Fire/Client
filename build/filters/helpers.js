@@ -19,7 +19,7 @@ exports.attachVIf = function (arr, op) {
 	return arr;
 };
 
-exports.attachClass = function (arr) {
+exports.wrapAttrArray = function (arr) {
 	const
 		join = arr.join;
 
