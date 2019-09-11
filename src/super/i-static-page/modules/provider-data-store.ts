@@ -102,7 +102,6 @@ export default class ProviderDataStore {
 	 * @param key
 	 */
 	has(key: string): boolean {
-		// tslint:disable-next-line: strict-type-predicates
 		return this.store[key] != null;
 	}
 
