@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-beta.173 (2019-09-11)
+
+#### :rocket: New Feature
+
+* [Added global store for data providers](https://github.com/V4Fire/Client/pull/109)
+
 ## v3.0.0-beta.172 (2019-09-10)
 
 #### :rocket: New Feature
