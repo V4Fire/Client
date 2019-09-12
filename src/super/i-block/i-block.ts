@@ -908,35 +908,10 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	@system({
 		atom: true,
 		unique: true,
-		replace: true,
-		init: () => GLOBAL.l
+		replace: true
 	})
 
-	protected readonly l!: typeof l;
-
-	/**
-	 * Link to window.Symbol
-	 */
-	@system({
-		atom: true,
-		unique: true,
-		replace: true,
-		init: () => Symbol
-	})
-
-	protected readonly Symbol!: Function;
-
-	/**
-	 * Link to window.Promise
-	 */
-	@system({
-		atom: true,
-		unique: true,
-		replace: true,
-		init: () => Promise
-	})
-
-	protected readonly Promise!: Function;
+	protected readonly l: typeof l = GLOBAL.l;
 
 	/**
 	 * Link to console API
@@ -969,7 +944,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 		atom: true,
 		unique: true,
 		replace: true,
-		init: () => window
+		init: () => GLOBAL
 	})
 
 	protected readonly global!: Window;
