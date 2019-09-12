@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-beta.174 (2019-09-12)
+
+#### :bug: Bug Fix
+
+* Fixed `ProvidedDataStore` initializing `iStaticPage`
+
 ## v3.0.0-beta.173 (2019-09-11)
 
 #### :rocket: New Feature
