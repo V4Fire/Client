@@ -7,8 +7,12 @@
  */
 
 import symbolGenerator from 'core/symbol';
-import Provider, { providers } from 'core/data';
+import { providers } from 'core/data/const';
 import { select, SelectParams } from 'core/object';
+
+//#if runtime has core/data
+import Provider from 'core/data';
+//#endif
 
 export const
 	$$ = symbolGenerator();
