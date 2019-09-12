@@ -455,14 +455,14 @@ export function component(params?: ComponentParams): Function {
 								}
 
 								const
-									vData = vnode.data || {},
-									ref = vData[$$.ref] || vData.ref;
+									vData = vnode.data,
+									ref = vData && (vData[$$.ref] || vData.ref);
 
 								if (renderKey) {
 									ctx.renderTmp[renderKey] = cloneVNode(vnode);
 								}
 
-								if (ref && ctx !== rootCtx) {
+								if (vData && ref && ctx !== rootCtx) {
 									vData[$$.ref] = ref;
 									vData.ref = `${ref}:${ctx.componentId}`;
 
