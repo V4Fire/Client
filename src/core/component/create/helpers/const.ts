@@ -8,4 +8,5 @@
 
 export const
 	NULL = {},
+	metaPointers = Object.createDict<Dictionary<boolean>>(),
 	defaultWrapper = Symbol('default wrapper');

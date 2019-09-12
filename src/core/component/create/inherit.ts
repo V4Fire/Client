@@ -9,6 +9,7 @@
 // tslint:disable:cyclomatic-complexity
 
 import { ComponentMeta, ComponentParams, StrictModDeclVal } from 'core/component/interface';
+import { metaPointers } from 'core/component/create/helpers/const';
 export const PARENT = {};
 
 /**
@@ -35,6 +36,9 @@ export default function inheritMeta(
 		accessors,
 		methods
 	} = parentMeta;
+
+	const
+		metaPointer = metaPointers[meta.componentName];
 
 	let
 		provide,
@@ -161,6 +165,11 @@ export default function inheritMeta(
 					continue;
 				}
 
+				if (!metaPointer || !metaPointer[key]) {
+					o[key] = parent;
+					continue;
+				}
+
 				let
 					after,
 					watchers;
@@ -198,8 +207,16 @@ export default function inheritMeta(
 				[o, parentObj] = list[i];
 
 			for (let keys = Object.keys(parentObj), i = 0; i < keys.length; i++) {
-				const key = keys[i];
-				o[key] = {...<any>parentObj[key]};
+				const
+					key = keys[i],
+					el = parentObj[key];
+
+				if (!metaPointer || !metaPointer[key]) {
+					o[key] = el;
+					continue;
+				}
+
+				o[key] = {...<any>el};
 			}
 		}
 	}
@@ -210,6 +227,11 @@ export default function inheritMeta(
 			parent = methods[key];
 
 		if (!parent) {
+			continue;
+		}
+
+		if (!metaPointer || !metaPointer[key]) {
+			o[key] = {...parent};
 			continue;
 		}
 
