@@ -207,16 +207,8 @@ export default function inheritMeta(
 				[o, parentObj] = list[i];
 
 			for (let keys = Object.keys(parentObj), i = 0; i < keys.length; i++) {
-				const
-					key = keys[i],
-					el = parentObj[key];
-
-				if (!metaPointer || !metaPointer[key]) {
-					o[key] = el;
-					continue;
-				}
-
-				o[key] = {...<any>el};
+				const key = keys[i];
+				o[key] = {...<any>parentObj[key]};
 			}
 		}
 	}
