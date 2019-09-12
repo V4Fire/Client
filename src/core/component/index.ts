@@ -417,6 +417,7 @@ export function component(params?: ComponentParams): Function {
 											ref: data.ref,
 											refInFor: data.refInFor,
 											on: <Record<string, CanArray<Function>>>data.on,
+											nativeOn: <Record<string, CanArray<Function>>>data.nativeOn,
 											attrs: data.attrs,
 											class: data.class,
 											staticClass: data.staticClass,
