@@ -343,9 +343,9 @@ export function component(params?: ComponentParams): Function {
 									ctx = this || rootCtx;
 
 								const
-									hasOpts = Object.isSimpleObject(opts),
-									attrOpts = <Dictionary>(hasOpts ? (<Dictionary>opts).attrs = (<Dictionary>opts).attrs || {} : {}),
-									composite = attrOpts['v4-composite'];
+									hasOpts = Object.isObject(opts),
+									attrOpts = <CanUndef<Dictionary>>(hasOpts ? (<Dictionary>opts).attrs : undefined),
+									composite = attrOpts && attrOpts['v4-composite'];
 
 								if (tag === 'v-render') {
 									return attrOpts && <VNode>attrOpts.from || nativeCreate('span');
@@ -354,7 +354,7 @@ export function component(params?: ComponentParams): Function {
 								let
 									tagName = tag;
 
-								if (composite) {
+								if (composite && attrOpts) {
 									attrOpts['v4-composite'] = tagName = tagName === 'span' ? <string>composite : tagName.dasherize();
 								}
 
@@ -381,8 +381,8 @@ export function component(params?: ComponentParams): Function {
 									parseVAttrs(<Dictionary>opts, component);
 								}
 
-								const renderKey =
-									attrOpts['render-key'] != null ? `${tagName}:${attrOpts['global-name']}:${attrOpts['render-key']}` : '';
+								const renderKey = attrOpts && attrOpts['render-key'] != null ?
+									`${tagName}:${attrOpts['global-name']}:${attrOpts['render-key']}` : '';
 
 								let
 									vnode = ctx.renderTmp[renderKey],
