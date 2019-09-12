@@ -232,7 +232,7 @@ export function initDataObject(
 		fieldList = <string[]>[];
 
 	// Sorting atoms
-	for (let keys = Object.keys(fields), i = 0; i < keys.length; i++) {
+	for (let keys = Object.keys(fields).sort(), i = 0; i < keys.length; i++) {
 		const
 			key = keys[i],
 			el = <NonNullable<SystemField>>fields[key];
@@ -243,10 +243,30 @@ export function initDataObject(
 		}
 
 		if (el.atom || !el.init && (el.default !== undefined || key in instance)) {
-			if (el.after && el.after.size) {
-				atomList.push(key);
+			let
+				canInit = true;
 
-			} else {
+			const
+				{after} = el;
+
+			if (after && after.size) {
+				for (let o = after.values(), val = o.next(); !val.done; val = o.next()) {
+					const
+						waitFieldKey = val.value;
+
+					if (skipped[waitFieldKey]) {
+						continue;
+					}
+
+					if (!(waitFieldKey in data) || data[waitFieldKey] === NULL) {
+						atomList.push(key);
+						canInit = false;
+						break;
+					}
+				}
+			}
+
+			if (canInit) {
 				if (data[key] === NULL) {
 					data[key] = undefined;
 				}
@@ -280,7 +300,7 @@ export function initDataObject(
 		}
 	}
 
-	while (true) {
+	while (atomList.length) {
 		for (let i = 0; i < atomList.length; i++) {
 			const
 				key = atomList[i];
@@ -303,11 +323,14 @@ export function initDataObject(
 				continue;
 			}
 
+			const
+				{after} = el;
+
 			let
 				canInit = true;
 
-			if (el.after && el.after.size) {
-				for (let o = el.after.values(), val = o.next(); !val.done; val = o.next()) {
+			if (after && after.size) {
+				for (let o = after.values(), val = o.next(); !val.done; val = o.next()) {
 					const
 						waitFieldKey = val.value,
 						waitField = fields[waitFieldKey];
@@ -372,7 +395,7 @@ export function initDataObject(
 		}
 	}
 
-	while (true) {
+	while (fieldList.length) {
 		for (let i = 0; i < fieldList.length; i++) {
 			const
 				key = fieldList[i];
@@ -395,11 +418,14 @@ export function initDataObject(
 				continue;
 			}
 
+			const
+				{after} = el;
+
 			let
 				canInit = true;
 
-			if (el.after && el.after.size) {
-				for (let o = el.after.values(), val = o.next(); !val.done; val = o.next()) {
+			if (after && after.size) {
+				for (let o = after.values(), val = o.next(); !val.done; val = o.next()) {
 					const
 						waitFieldKey = val.value,
 						waitField = fields[waitFieldKey];
