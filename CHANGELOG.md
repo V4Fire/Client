@@ -11,6 +11,23 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-beta.175 (2019-09-12)
+
+#### :rocket: New Feature
+
+* Added `engine` parameter to the config
+* Added `runtime.engine` parameter to the config
+
+#### :bug: Bug Fix
+
+* Fixed native events with functional components
+* Fixed attr props normalizing
+* Fixed styles with undefined `component/engine/zero`
+
+#### :nail_care: Polish
+
+* Optimized component initializing
+
 ## v3.0.0-beta.174 (2019-09-12)
 
 #### :bug: Bug Fix
