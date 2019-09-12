@@ -141,7 +141,7 @@ export function addAttrs(el: DirElement, attrs?: Dictionary<string>): void {
 	}
 }
 
-export function addStyles(el: DirElement, styles?: CanArray<string | object>): void {
+export function addStyles(el: DirElement, styles?: CanArray<Nullable<string | object>>): void {
 	const
 		normalizedStyles = (<Array<string | object>>[]).concat(styles || []);
 
@@ -157,6 +157,10 @@ export function addStyles(el: DirElement, styles?: CanArray<string | object>): v
 	for (let i = 0; i < normalizedStyles.length; i++) {
 		const
 			styles = normalizedStyles[i];
+
+		if (!styles) {
+			continue;
+		}
 
 		if (Object.isString(styles)) {
 			strStyles.push(styles);
