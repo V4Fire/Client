@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-beta.176 (2019-09-12)
+
+#### :bug: Bug Fix
+
+* Fixed accessors inheritance
+
 ## v3.0.0-beta.175 (2019-09-12)
 
 #### :rocket: New Feature
