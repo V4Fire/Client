@@ -12,7 +12,10 @@ const
 	stylus = require('stylus'),
 	size = include('build/stylus/size'),
 	color = include('build/stylus/color'),
-	string = include('build/stylus/string');
+	string = include('build/stylus/string'),
+	object = include('build/stylus/object'),
+	blendModes = include('build/stylus/blend-modes'),
+	ds = include('build/stylus/ds');
 
 module.exports = [
 	require('nib')(),
@@ -29,7 +32,10 @@ module.exports = [
 		});
 	},
 
+	ds,
 	size,
+	color,
 	string,
-	color
+	object,
+	blendModes
 ];

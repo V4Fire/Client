@@ -14,6 +14,9 @@ declare const BLOCK_NAMES: CanUndef<string[]>;
 declare const PATH: Dictionary<CanUndef<string>>;
 declare const TPLS: Dictionary<Dictionary<Function>>;
 
+declare const DS: CanUndef<Dictionary>;
+declare const DS_COMPONENTS_MODS: CanUndef<string[]>;
+
 interface HTMLImageElement {
 	readonly init: Promise<this>;
 	onInit(onSuccess: () => void, onFail?: (err?: Error) => void): void;

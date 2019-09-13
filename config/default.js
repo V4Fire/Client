@@ -202,10 +202,14 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		return {
 			'engine': this.engine(),
 
+			'ds-diff': false,
+			'ds-vars': false,
+
 			'socket': false,
 			'noGlobals': false,
 			'svgSprite': true,
 			'blockNames': false,
+			'passDesignSystem': false,
 
 			'core/helpers': true,
 			'core/browser': true,
@@ -261,6 +265,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		return {
 			stylus: {
 				flags: {
+					runtime,
 					'+:*': true
 				}
 			},
