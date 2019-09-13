@@ -127,6 +127,8 @@ export function getComponent(
 
 				if (el) {
 					Object.defineProperty(ctx, keys[i], {
+						configurable: true,
+						enumerable: true,
 						get: el.get,
 						set: el.set
 					});

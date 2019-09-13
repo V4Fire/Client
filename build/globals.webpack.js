@@ -36,10 +36,10 @@ module.exports = {
 			const blockNames = Array.from(blockMap.keys()).filter((el) => /^b-/.test(el));
 			return s(blockNames);
 		}
-	}) : undefined,
+	}) : null,
 
-	DS_COMPONENTS_MODS: pzlr.designSystem ? calcComponentsMods() : undefined,
-	DS: runtime.passDesignSystem && pzlr.designSystem ? s(require(pzlr.designSystem)) : undefined
+	DS_COMPONENTS_MODS: pzlr.designSystem ? calcComponentsMods() : null,
+	DS: runtime.passDesignSystem && pzlr.designSystem ? s(require(pzlr.designSystem)) : null
 };
 
 /**

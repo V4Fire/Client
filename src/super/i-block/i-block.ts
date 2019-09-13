@@ -33,6 +33,7 @@ import iStaticPage from 'super/i-static-page/i-static-page';
 //#endif
 
 import 'super/i-block/directives';
+import * as presets from 'presets';
 
 import Cache from 'super/i-block/modules/cache';
 import Opt from 'super/i-block/modules/opt';
@@ -875,6 +876,18 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	})
 
 	protected readonly browser!: typeof browser;
+
+	/**
+	 * Presets table
+	 */
+	@system({
+		atom: true,
+		unique: true,
+		replace: true,
+		init: () => presets
+	})
+
+	protected readonly preset!: typeof presets;
 
 	/**
 	 * Some helpers

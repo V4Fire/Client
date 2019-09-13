@@ -332,6 +332,9 @@ export function createFakeCtx<T extends object = FunctionalCtx>(
 			key = keys[i];
 
 		Object.defineProperty(fakeCtx, key, {
+			enumerable: true,
+			configurable: true,
+
 			get(): any {
 				return data[key];
 			},
