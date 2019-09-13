@@ -11,7 +11,13 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v3.0.0-beta.177 (2019-09-12)
+## v3.0.0-beta.178 (2019-09-13)
+
+#### :bug: Bug Fix
+
+* Fixed providing of WebPack globals
+
+## v3.0.0-beta.177 (2019-09-13)
 
 #### :rocket: New Feature
 
