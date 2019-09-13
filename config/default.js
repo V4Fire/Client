@@ -185,10 +185,22 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		return {};
 	},
 
+	engine() {
+		return o('engine', {
+			env: true,
+			default: 'vue',
+			validate(v) {
+				return Boolean({
+					vue: true,
+					zero: true
+				}[v]);
+			}
+		});
+	},
+
 	runtime() {
 		return {
-			'vue': true,
-			'zero': false,
+			'engine': this.engine(),
 
 			'ds-diff': false,
 			'ds-vars': false,

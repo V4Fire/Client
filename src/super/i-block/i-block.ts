@@ -85,14 +85,14 @@ import {
 	cloneWatchValue,
 	bindWatchers,
 
-	VNode,
-	ComponentInterface,
+	FieldInfo,
 	ComponentMeta,
-	FieldInfo
+	ComponentInterface,
+
+	VNode,
+	WatchOptionsWithHandler
 
 } from 'core/component';
-
-import { WatchOptionsWithHandler as BaseWatchOptionsWithHandler } from 'core/component/engines';
 
 import {
 
@@ -536,6 +536,17 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	readonly asyncRender!: AsyncRender;
 
 	/**
+	 * API for component VDOM operations
+	 */
+	@system({
+		atom: true,
+		unique: true,
+		init: (ctx: iBlock) => new VDOM(ctx)
+	})
+
+	readonly vdom!: VDOM;
+
+	/**
 	 * Parent link
 	 */
 	static readonly PARENT: object = PARENT;
@@ -610,17 +621,6 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	})
 
 	protected readonly dom!: DOM;
-
-	/**
-	 * API for component VDOM operations
-	 */
-	@system({
-		atom: true,
-		unique: true,
-		init: (ctx: iBlock) => new VDOM(ctx)
-	})
-
-	protected readonly vdom!: VDOM;
 
 	/**
 	 * API for analytics
@@ -913,35 +913,10 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	@system({
 		atom: true,
 		unique: true,
-		replace: true,
-		init: () => GLOBAL.l
+		replace: true
 	})
 
-	protected readonly l!: typeof l;
-
-	/**
-	 * Link to window.Symbol
-	 */
-	@system({
-		atom: true,
-		unique: true,
-		replace: true,
-		init: () => Symbol
-	})
-
-	protected readonly Symbol!: Function;
-
-	/**
-	 * Link to window.Promise
-	 */
-	@system({
-		atom: true,
-		unique: true,
-		replace: true,
-		init: () => Promise
-	})
-
-	protected readonly Promise!: Function;
+	protected readonly l: typeof l = GLOBAL.l;
 
 	/**
 	 * Link to console API
@@ -974,7 +949,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 		atom: true,
 		unique: true,
 		replace: true,
-		init: () => window
+		init: () => GLOBAL
 	})
 
 	protected readonly global!: Window;
@@ -1597,7 +1572,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	@p({replace: false})
 	protected $$watch<T = unknown>(
 		exprOrFn: string | ((this: this) => string),
-		opts: BaseWatchOptionsWithHandler<T> & {fieldInfo?: FieldInfo}
+		opts: WatchOptionsWithHandler<T> & {fieldInfo?: FieldInfo}
 	): Function {
 		const
 			{handler} = opts;
@@ -1849,9 +1824,11 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	/**
 	 * Component activated hook
 	 * (for keep-alive)
+	 *
+	 * @param [force]
 	 */
-	protected activated(): void {
-		onActivated(this);
+	protected activated(force?: boolean): void {
+		onActivated(this, force);
 	}
 
 	/**

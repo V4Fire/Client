@@ -23,31 +23,19 @@ import bInput, {
 	wait,
 
 	Value,
-	ComponentConverter,
 	ModEvent,
 	SetModEvent,
 	ModsDecl
 
 } from 'form/b-input/b-input';
 
+import { FormValue, Option, NOption } from 'form/b-select/modules/interface';
+
 export * from 'form/b-input/b-input';
 export * from 'traits/i-open-toggle/i-open-toggle';
+export * from 'form/b-select/modules/interface';
 
-export type FormValue = CanUndef<
-	string
->;
-
-export interface Option {
-	label: string;
-	inputLabel?: string;
-	value?: unknown;
-	selected?: boolean;
-	marked?: boolean;
-}
-
-export interface NOption extends Option {
-	value: string;
-}
+export { FormValue };
 
 export const
 	$$ = symbolGenerator();
@@ -68,10 +56,6 @@ export default class bSelect<
 	D extends object = Dictionary
 // @ts-ignore
 > extends bInput<V, FV, D> implements iOpenToggle {
-	/** @override */
-	@prop({default: (obj) => obj && obj.data || obj || []})
-	readonly componentConverter?: ComponentConverter<Option[]>;
-
 	/**
 	 * Initial select options
 	 */
@@ -89,6 +73,12 @@ export default class bSelect<
 	 */
 	@prop({type: String, required: false})
 	readonly option?: string;
+
+	/**
+	 * Exterior of bScroll component
+	 */
+	@prop({type: String, required: false})
+	readonly scrollExterior?: string;
 
 	/**
 	 * If true, then .initLoad will be executed after .mods.opened === 'true'

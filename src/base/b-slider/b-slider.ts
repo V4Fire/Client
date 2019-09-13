@@ -120,7 +120,7 @@ export default class bSlider<T extends object = Dictionary> extends iData<T> {
 	/**
 	 * Factory for an options iterator
 	 */
-	@prop(Function)
+	@prop({type: Function, required: false})
 	optionsIterator?: OptionsIterator;
 
 	/**
@@ -152,6 +152,23 @@ export default class bSlider<T extends object = Dictionary> extends iData<T> {
 	 */
 	@system()
 	length: number = 0;
+
+	/**
+	 * Link to a content node
+	 */
+	@p({cache: false})
+	get content(): CanUndef<HTMLElement> {
+		return this.$refs.content;
+	}
+
+	/**
+	 * Number of DOM nodes within a content block
+	 */
+	@p({cache: false})
+	get contentLength(): number {
+		const l = this.content;
+		return l ? l.children.length : 0;
+	}
 
 	/**
 	 * Pointer to the current slide
@@ -212,9 +229,7 @@ export default class bSlider<T extends object = Dictionary> extends iData<T> {
 		return 0;
 	}
 
-	/**
-	 * @see current
-	 */
+	/** @see current */
 	@system()
 	protected currentStore: number = 0;
 
@@ -292,7 +307,8 @@ export default class bSlider<T extends object = Dictionary> extends iData<T> {
 	 * Synchronizes the slider state
 	 */
 	@hook('mounted')
-	syncState(): void {
+	@wait('loading')
+	syncState(): CanPromise<void> {
 		const
 			{view, content} = this.$refs;
 
@@ -329,7 +345,7 @@ export default class bSlider<T extends object = Dictionary> extends iData<T> {
 		}
 
 		const
-			{content} = this.$refs;
+			{content} = this;
 
 		if (!content) {
 			return;
@@ -352,8 +368,7 @@ export default class bSlider<T extends object = Dictionary> extends iData<T> {
 	 */
 	async slideTo(index: number, animate: boolean = false): Promise<boolean> {
 		const
-			{length, current} = this,
-			{content} = this.$refs;
+			{length, current, content} = this;
 
 		if (current === index || !content) {
 			return false;
@@ -384,7 +399,7 @@ export default class bSlider<T extends object = Dictionary> extends iData<T> {
 			current = this.current;
 
 		const
-			{length, $refs: {content}} = this;
+			{length, content} = this;
 
 		if (dir < 0 && current > 0 || dir > 0 && current < length - 1 || this.circular) {
 			if (!content) {
@@ -448,7 +463,7 @@ export default class bSlider<T extends object = Dictionary> extends iData<T> {
 	@hook('mounted')
 	protected initObservers(): void {
 		const
-			{observers, $refs: {content}} = this;
+			{observers, content} = this;
 
 		if (!observers.mutation && content) {
 			observers.mutation = new MutationObserver(() => {
@@ -483,7 +498,7 @@ export default class bSlider<T extends object = Dictionary> extends iData<T> {
 		const
 			touch = e.touches[0],
 			{clientX, clientY} = touch,
-			{content} = this.$refs;
+			{content} = this;
 
 		if (!content) {
 			return;
@@ -510,8 +525,7 @@ export default class bSlider<T extends object = Dictionary> extends iData<T> {
 		}
 
 		const
-			{startX, startY} = this,
-			{content} = this.$refs;
+			{startX, startY, content} = this;
 
 		const
 			touch = e.touches[0],
@@ -560,7 +574,7 @@ export default class bSlider<T extends object = Dictionary> extends iData<T> {
 		} = this;
 
 		const
-			{content} = this.$refs,
+			{content} = this,
 			dir = <SlideDirection>Math.sign(diffX);
 
 		let

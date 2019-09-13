@@ -185,7 +185,8 @@ export default class bWindow<T extends object = Dictionary> extends iData<T>
 	}
 
 	/** @see iLockPageScroll.lock */
-	lock(): void {
+	@wait('loading')
+	lock(): CanPromise<void> {
 		iLockPageScroll.lock(this, this.$refs.window);
 	}
 

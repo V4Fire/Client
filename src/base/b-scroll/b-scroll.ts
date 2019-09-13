@@ -94,8 +94,9 @@ export default class bScroll extends iBlock implements iVisible {
 	static readonly mods: ModsDecl = {
 		...iVisible.mods,
 
-		theme: [
-			'light'
+		exterior: [
+			bScroll.PARENT,
+			['light']
 		],
 
 		scroll: [

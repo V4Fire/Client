@@ -7,7 +7,7 @@
  */
 
 import { EventEmitter2 as EventEmitter } from 'eventemitter2';
-import { ComponentElement, ComponentInterface } from 'core/component/interface';
+import { ComponentElement, ComponentInterface, ComponentMeta } from 'core/component/interface';
 import { VNodeData } from 'core/component/engines';
 
 /**
@@ -137,13 +137,16 @@ const
  * Parses v-attrs attribute from the specified vnode data and applies it
  *
  * @param data
- * @param [isComponent]
+ * @param [component]
  */
-export function parseVAttrs(data: VNodeData, isComponent?: boolean): void {
+export function parseVAttrs(data: VNodeData, component?: ComponentMeta): void {
 	const
 		attrs = data.attrs = data.attrs || {},
 		attrsSpreadObj = attrs['v-attrs'],
 		slotsSpreadObj = attrs['v-slots'];
+
+	delete attrs['v-attrs'];
+	delete attrs['v-slots'];
 
 	if (Object.isObject(slotsSpreadObj)) {
 		const
@@ -172,7 +175,6 @@ export function parseVAttrs(data: VNodeData, isComponent?: boolean): void {
 		}
 
 		delete slotOpts['@'];
-		delete attrs['v-slots'];
 	}
 
 	if (Object.isObject(attrsSpreadObj)) {
@@ -182,17 +184,24 @@ export function parseVAttrs(data: VNodeData, isComponent?: boolean): void {
 			directiveOpts = data.directives = data.directives || [];
 
 		for (let keys = Object.keys(attrsSpreadObj), i = 0; i < keys.length; i++) {
-			const
-				key = keys[i];
-
 			let
+				key = keys[i],
 				val = attrsSpreadObj[key];
+
+			if (component) {
+				const
+					propKey = `${key}Prop`;
+
+				if (!component.props[key] && component.props[propKey]) {
+					key = propKey;
+				}
+			}
 
 			if (key[0] === '@') {
 				let
 					event = key.slice(1);
 
-				if (isComponent) {
+				if (component) {
 					const
 						eventChunks = event.split('.'),
 						flags = <Dictionary>{};
@@ -294,7 +303,5 @@ export function parseVAttrs(data: VNodeData, isComponent?: boolean): void {
 				attrs[key] = val;
 			}
 		}
-
-		delete attrs['v-attrs'];
 	}
 }

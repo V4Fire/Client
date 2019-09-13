@@ -111,6 +111,7 @@ export function patchVNode(vnode: VNode, ctx: ComponentInterface, renderCtx: Ren
 		}
 
 		vData.directives = data.directives;
+		vData.on = data.nativeOn;
 
 		// Reference to the element
 

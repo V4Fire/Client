@@ -27,7 +27,6 @@
 					:class = provide.hintClasses(el.hintPos).concat(provide.elClasses({link: {
 						id: values[el.value],
 						active: isActive(el),
-						theme: el.theme,
 						exterior: el.exterior,
 						hidden: el.hidden,
 						progress: el.progress,
@@ -36,7 +35,8 @@
 
 					:href = el.href |
 					:-hint = el.hint |
-					:-id = values[el.value]
+					:-id = values[el.value] |
+					:v-attrs = el.attrs
 				.
 					- block preIcon
 						< span.&__cell.&__link-icon.&__link-pre-icon v-if = vdom.getSlot('preIcon')
@@ -59,8 +59,8 @@
 							{{ t(el.label) }}
 
 					- block info
-						< span.&__cell.&__link-info v-if = db && el.info && field.get('db.' + el.info)
-							{{ field.get('db.' + el.info) }}
+						< span.&__cell.&__link-info v-if = vdom.getSlot('info')
+							+= self.slot('info', {':option': 'el'})
 
 					- block icon
 						< span.&__cell.&__link-icon.&__link-post-icon v-if = vdom.getSlot('icon')

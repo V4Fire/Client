@@ -7,6 +7,7 @@
  */
 
 import { defProp } from 'core/const/props';
+import { metaPointers } from 'core/component/create/helpers/const';
 import { initEvent } from 'core/component/const';
 import { WatchOptions } from 'core/component/engines';
 
@@ -173,6 +174,10 @@ export function paramsFactory<T = unknown>(
 ): (params?: T) => Function {
 	return (params: Dictionary<any> = {}) => (target, key, desc) => {
 		initEvent.once('bindConstructor', (componentName) => {
+			const
+				link = metaPointers[componentName] = metaPointers[componentName] || Object.createDict();
+
+			link[key] = true;
 			initEvent.once(`constructor.${componentName}`, reg);
 		});
 

@@ -19,7 +19,15 @@ import inheritMeta from 'core/component/create/inherit';
 
 import { GLOBAL } from 'core/env';
 import { runHook, patchRefs, parseVAttrs } from 'core/component/create/helpers';
-import { ComponentInterface, ComponentParams, ComponentMeta, ComponentMethod } from 'core/component/interface';
+import {
+
+	ComponentInterface,
+	ComponentParams,
+	ComponentMeta,
+	ComponentMethod
+
+} from 'core/component/interface';
+
 import {
 
 	supports,
@@ -64,7 +72,9 @@ export {
 
 	renderData,
 	ComponentDriver as default,
+
 	WatchOptions,
+	WatchOptionsWithHandler,
 
 	VNode,
 	VNodeDirective,
@@ -341,9 +351,9 @@ export function component(params?: ComponentParams): Function {
 									ctx = this || rootCtx;
 
 								const
-									hasOpts = Object.isSimpleObject(opts),
-									attrOpts = <Dictionary>(hasOpts ? (<Dictionary>opts).attrs = (<Dictionary>opts).attrs || {} : {}),
-									composite = attrOpts['v4-composite'];
+									hasOpts = Object.isObject(opts),
+									attrOpts = <CanUndef<Dictionary>>(hasOpts ? (<Dictionary>opts).attrs : undefined),
+									composite = attrOpts && attrOpts['v4-composite'];
 
 								if (tag === 'v-render') {
 									return attrOpts && <VNode>attrOpts.from || nativeCreate('span');
@@ -352,7 +362,7 @@ export function component(params?: ComponentParams): Function {
 								let
 									tagName = tag;
 
-								if (composite) {
+								if (composite && attrOpts) {
 									attrOpts['v4-composite'] = tagName = tagName === 'span' ? <string>composite : tagName.dasherize();
 								}
 
@@ -376,11 +386,11 @@ export function component(params?: ComponentParams): Function {
 
 								// tslint:disable-next-line:prefer-conditional-expression
 								if (hasOpts) {
-									parseVAttrs(<Dictionary>opts, Boolean(component));
+									parseVAttrs(<Dictionary>opts, component);
 								}
 
-								const renderKey =
-									attrOpts['render-key'] != null ? `${tagName}:${attrOpts['global-name']}:${attrOpts['render-key']}` : '';
+								const renderKey = attrOpts && attrOpts['render-key'] != null ?
+									`${tagName}:${attrOpts['global-name']}:${attrOpts['render-key']}` : '';
 
 								let
 									vnode = ctx.renderTmp[renderKey],
@@ -415,6 +425,7 @@ export function component(params?: ComponentParams): Function {
 											ref: data.ref,
 											refInFor: data.refInFor,
 											on: <Record<string, CanArray<Function>>>data.on,
+											nativeOn: <Record<string, CanArray<Function>>>data.nativeOn,
 											attrs: data.attrs,
 											class: data.class,
 											staticClass: data.staticClass,
@@ -452,14 +463,14 @@ export function component(params?: ComponentParams): Function {
 								}
 
 								const
-									vData = vnode.data || {},
-									ref = vData[$$.ref] || vData.ref;
+									vData = vnode.data,
+									ref = vData && (vData[$$.ref] || vData.ref);
 
 								if (renderKey) {
 									ctx.renderTmp[renderKey] = cloneVNode(vnode);
 								}
 
-								if (ref && ctx !== rootCtx) {
+								if (vData && ref && ctx !== rootCtx) {
 									vData[$$.ref] = ref;
 									vData.ref = `${ref}:${ctx.componentId}`;
 
@@ -562,12 +573,30 @@ export function component(params?: ComponentParams): Function {
 											const
 												isTemplateParent = Object.isArray(vnode);
 
-											if (isTemplateParent && !vnode.length) {
-												return;
+											if (isTemplateParent) {
+												while (Object.isArray(vnode)) {
+													let
+														newVNode = vnode[0];
+
+													for (let i = 0; i < vnode.length; i++) {
+														const
+															el = vnode[i];
+
+														if (!Object.isArray(el) && (<VNode>el).context) {
+															newVNode = el;
+														}
+													}
+
+													vnode = newVNode;
+												}
+
+												if (!vnode) {
+													return;
+												}
 											}
 
 											const
-												ctx = (isTemplateParent ? vnode[0] : vnode).context;
+												ctx = vnode.context;
 
 											if (!isTemplateParent) {
 												vnode.fakeContext = ctx;
@@ -581,7 +610,7 @@ export function component(params?: ComponentParams): Function {
 														nodes = <VNode[]>[];
 
 													const
-														parent = isTemplateParent ? vnode[0].elm.parentNode : vnode.elm,
+														parent = isTemplateParent ? vnode.elm.parentNode : vnode.elm,
 														baseHook = ctx.hook;
 
 													ctx.hook = 'beforeUpdate';

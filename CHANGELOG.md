@@ -11,6 +11,151 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-beta.176 (2019-09-12)
+
+#### :bug: Bug Fix
+
+* Fixed accessors inheritance
+
+## v3.0.0-beta.175 (2019-09-12)
+
+#### :rocket: New Feature
+
+* Added `engine` parameter to the config
+* Added `runtime.engine` parameter to the config
+
+#### :bug: Bug Fix
+
+* Fixed native events with functional components
+* Fixed attr props normalizing
+* Fixed styles with undefined `component/engine/zero`
+
+#### :nail_care: Polish
+
+* Optimized component initializing
+
+## v3.0.0-beta.174 (2019-09-12)
+
+#### :bug: Bug Fix
+
+* Fixed `ProvidedDataStore` initializing `iStaticPage`
+
+## v3.0.0-beta.173 (2019-09-11)
+
+#### :rocket: New Feature
+
+* [Added global store for data providers](https://github.com/V4Fire/Client/pull/109)
+
+#### :boom: Breaking Change
+
+* Removed `bProgress`
+
+## v3.0.0-beta.172 (2019-09-10)
+
+#### :rocket: New Feature
+
+* Added `scrollExterior` prop to `bSelect`, `bTextarea`
+* Improved `Option` parameters from `bSelect`, `bCheckboxGroup`, `bList`
+
+#### :house: Internal
+
+* Refactoring `bList`, `bScroll`, `bSelect`, `bTextarea`, `bCheckboxGroup`
+
+## v3.0.0-beta.171 (2019-09-10)
+
+#### :bug: Bug Fix
+
+* Marked `Option.classes` as optional `bList`
+
+## v3.0.0-beta.170 (2019-09-09)
+
+#### :bug: Bug Fix
+
+* Marked `optionsIterator` as optional `bSlider`
+
+## v3.0.0-beta.169 (2019-09-09)
+
+#### :boom: Breaking Change
+
+* Fixed default `del` handler `iData`
+
+## v3.0.0-beta.168 (2019-09-09)
+
+#### :boom: Breaking Change
+
+* Renamed `ControlAction.params` -> `args`
+* Renamed `ControlAction.useDefParams` -> `defArgs`
+
+## v3.0.0-beta.167 (2019-09-09)
+
+#### :house: Internal
+
+* Added default value for `opts` within `traits/i-control-list/iControlList`
+
+## v3.0.0-beta.166 (2019-09-09)
+
+#### :bug: Bug Fix
+
+* Fixed prop normalizing
+
+## v3.0.0-beta.165 (2019-09-08)
+
+#### :bug: Bug Fix
+
+* Fixed `activeProp` watching
+
+## v3.0.0-beta.164 (2019-09-08)
+
+#### :house: Internal
+
+* `vdom` marked as public `iBlock`
+
+## v3.0.0-beta.163 (2019-09-08)
+
+#### :boom: Breaking Change
+
+* Renamed `core/component/interface/watchOptionsWithHander` -> `watchObject`
+
+## v3.0.0-beta.162 (2019-09-07)
+
+#### :rocket: New Feature
+
+* Added `content` getter for `bRemoteProvider`
+
+#### :bug: Bug Fix
+
+* Removed V2 legacy code from `b-window`, `b-checkbox-group`
+* Fixed `asyncRender` with nested template tags
+
+#### :nail_care: Polish
+
+* Improved prop normalizing with `v-attrs`
+* Improved component activation logic
+* Refactoring
+
+## v3.0.0-beta.161 (2019-09-07)
+
+#### :rocket: New Feature
+
+* Added slot support for `bRemoteProvider`
+
+## v3.0.0-beta.160 (2019-09-07)
+
+#### :bug: Bug Fix
+
+* Hotfix: contentLength marked as non-cache `bSlider`, `bSwitcher`
+
+## v3.0.0-beta.159 (2019-09-07)
+
+#### :rocket: New Feature
+
+* Added `content` and `contentLength` getters within `bSlider`
+* Added `content` and `contentLength` getters within `bSwitcher`
+
+#### :house: Internal
+
+* Updated dependencies: @v4fire/core@3.0.0-beta.67
+
 ## v3.0.0-beta.158 (2019-09-07)
 
 #### :house: Internal

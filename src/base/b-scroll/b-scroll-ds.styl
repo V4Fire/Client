@@ -23,3 +23,15 @@ b-scroll
 		width $p.scrollerSize
 		min-height 1em
 		margin-left -($p.scrollerSize / 2)
+
+	&_exterior_light
+		& ^[0]__scroller
+			background alpha($p.scrollerBackgroundColor, 0)
+			transition background 0.4s
+
+		& ^[0]__scroll-wrapper:hover &__scroller
+		& ^[0]__scroller_scroll_true
+			background $p.scrollerBackgroundColor
+
+			&:hover
+				background lighten($p.scrollerBackgroundColor, 10%)
