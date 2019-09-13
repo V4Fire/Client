@@ -1,3 +1,13 @@
+'use strict';
+
+/*!
+ * V4Fire Client Core
+ * https://github.com/V4Fire/Client
+ *
+ * Released under the MIT license
+ * https://github.com/V4Fire/Client/blob/master/LICENSE
+ */
+
 const
 	$C = require('collection.js'),
 	stylus = require('stylus');
@@ -8,10 +18,9 @@ const
 let
 	DS = {};
 
-const
-	cssVars = {
-		__map__: new Map()
-	};
+const cssVars = {
+	__map__: new Map()
+};
 
 if (config.designSystem) {
 	DS = require(config.designSystem);
@@ -21,8 +30,8 @@ if (config.designSystem) {
 }
 
 /**
- * Sets var into cssVars dictionary by the specified path
- * @param path
+ * Sets a variable into cssVars dictionary by the specified path
+ * @param {string} path
  */
 function setVar(path) {
 	const
@@ -35,21 +44,21 @@ function setVar(path) {
 }
 
 /**
- * Return path with dot delimiter between prefix and suffix
+ * Returns path with a dot delimiter between prefix and suffix
  *
- * @param prefix
- * @param suffix
- * @return {string}
+ * @param {string} prefix
+ * @param {string} suffix
+ * @returns {string}
  */
 function genPath(prefix, suffix) {
 	return `${prefix ? `${prefix}.${suffix}` : suffix}`;
 }
 
 /**
- * Converts object props values to values in Stylus types
+ * Converts object prop values to Stylus values
  *
- * @param data
- * @param [path]
+ * @param {Object} data
+ * @param {string=} [path]
  */
 function prepareData(data, path) {
 	$C(data).forEach((d, val) => {
@@ -99,7 +108,7 @@ prepareData(DS);
 
 module.exports = function (style) {
 	/**
-	 * Injects additional options to a block options dict ($p)
+	 * Injects additional options to component options ($p)
 	 *
 	 * @param {string} string - component name
 	 * @returns {!Object}
@@ -127,7 +136,7 @@ module.exports = function (style) {
 	);
 
 	/**
-	 * Returns Design System css variables with its values
+	 * Returns Design System css variables with values
 	 * @returns {!Object}
 	 */
 	style.define('getFlatDSVars', () => {
@@ -148,11 +157,10 @@ module.exports = function (style) {
 	});
 
 	/**
-	 * Returns part of the Design System
-	 * by the specified path or whole DS object
+	 * Returns a part of the Design System by the specified path or whole DS object
 	 *
 	 * @param {string} string - field path
-	 * @param {boolean=} [vars] - if true, method will return css vars for the specified path
+	 * @param {boolean=} [vars] - if true, the method will return css variables from the specified path
 	 * @returns {!Object}
 	 */
 	style.define(
@@ -167,12 +175,11 @@ module.exports = function (style) {
 	);
 
 	/**
-	 * Returns color(s) from the Design System
-	 * by the specified name and identifier (optional)
+	 * Returns color(s) from the Design System by the specified name and identifier (optional)
 	 *
 	 * @param {!Object} hueInput
 	 * @param {!Object} [hueNum]
-	 * @returns {!Object|Array}
+	 * @returns {(!Object|!Array)}
 	 */
 	style.define(
 		'getDSColor',

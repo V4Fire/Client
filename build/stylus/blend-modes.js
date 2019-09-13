@@ -9,15 +9,15 @@
  */
 
 const
-	{ utils, nodes } = require('stylus');
+	{utils, nodes} = require('stylus');
 
 const blendModes = {
 	/**
-	 * Color burn blend mode
+	 * Blend mode: color burn
 	 *
 	 * @param f {!Object} - foreground color
 	 * @param b {!Object} - background color
-	 * @returns {Object}
+	 * @returns {!Object}
 	 */
 	colorBurn(f, b) {
 		const getColor = (f, b) => {
@@ -50,7 +50,7 @@ const blendModes = {
 	 *
 	 * @param {!Object} f - foreground color
 	 * @param {!Object} b - background color
-	 * @returns {Object}
+	 * @returns {!Object}
 	 */
 	normal(f, b) {
 		const

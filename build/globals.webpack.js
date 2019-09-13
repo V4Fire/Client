@@ -43,9 +43,7 @@ module.exports = {
 };
 
 /**
- * Returns mods values, grouped by component name,
- * from the Design System package
- *
+ * Returns modifier values grouped by a component name from a Design System package
  * @returns {!Object}
  */
 function calcComponentsMods() {
