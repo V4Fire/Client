@@ -11,6 +11,21 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-beta.177 (2019-09-12)
+
+#### :rocket: New Feature
+
+* Added `preset` field `iBlock`
+* Merged [Design System branch](https://github.com/V4Fire/Client/pull/88/)
+
+#### :nail_care: Polish
+
+* Optimized component initializing
+
+#### :house: Internal
+
+* Updated dependencies: terser-webpack-plugin@2.0.1, node-object-hash@2.0.0, webpack@4.40.1, ts-loader@6.1.0
+
 ## v3.0.0-beta.176 (2019-09-12)
 
 #### :bug: Bug Fix
