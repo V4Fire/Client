@@ -6,7 +6,9 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+console.time('Initializing');
 import { Option } from 'form/b-select/b-select';
+
 import iStaticPage, { component } from 'super/i-static-page/i-static-page';
 export * from 'super/i-static-page/i-static-page';
 
@@ -32,5 +34,6 @@ export default class pV4ComponentsDemo extends iStaticPage {
 
 	protected mounted(): void {
 		console.timeEnd('Render');
+		console.timeEnd('Initializing');
 	}
 }
