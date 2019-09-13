@@ -36,44 +36,63 @@ module.exports = {
 			const blockNames = Array.from(blockMap.keys()).filter((el) => /^b-/.test(el));
 			return s(blockNames);
 		}
-	}) : null,
+	}) : undefined,
 
 	DS_COMPONENTS_MODS: pzlr.designSystem ? calcComponentsMods() : null,
-	DS: runtime.passDesignSystem && pzlr.designSystem ? s(require(pzlr.designSystem)) : null
+	DS: runtime.passDesignSystem && pzlr.designSystem ? (() => {
+		try {
+			return s(require(pzlr.designSystem));
+
+		} catch {
+			console.log('Cannot find the design system package by the specified name on globals DS including');
+			return null;
+		}
+	})() : null
 };
 
 /**
  * Returns modifier values grouped by a component name from a Design System package
- * @returns {!Object}
+ * @returns {Object}
  */
 function calcComponentsMods() {
-	const
-		{components} = require(pzlr.designSystem);
+	try {
+		const
+			{components} = require(pzlr.designSystem);
 
-	if (Object.isObject(components)) {
-		return s(Object.keys(components).reduce((res, componentName) => {
-			const
-				comp = components[componentName],
-				mods = {};
-
-			if (comp.mods) {
-				Object.assign(mods, comp.mods);
-			}
-
-			if (comp.exterior) {
-				Object.assign(mods, {exterior: comp.exterior});
-			}
-
-			if (comp.mods || comp.exterior) {
+		if (Object.isObject(components)) {
+			return s(Object.keys(components).reduce((res, componentName) => {
 				const
-					r = res[componentName.dasherize()] = {};
+					comp = components[componentName],
+					mods = {};
 
-				Object.forEach(mods, (m, modName) => {
-					r[modName] = Object.keys(m);
-				});
-			}
+				if (comp.mods) {
+					Object.assign(mods, comp.mods);
+				}
 
-			return res;
-		}, {}));
+				if (comp.exterior) {
+					Object.assign(mods, {exterior: comp.exterior});
+				}
+
+				if (comp.mods || comp.exterior) {
+					const
+						r = res[componentName.dasherize()] = {};
+
+					Object.forEach(mods, (m, modName) => {
+						r[modName] = Object.keys(m);
+					});
+				}
+
+				return res;
+			}, {}));
+
+		}
+
+		console.log('Cannot find components at the design system package');
+		return null;
+
+	} catch {
+		console.log('Cannot find a design system package by the specified name on component mods calculating');
+
+		return null;
 	}
 }
