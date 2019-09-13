@@ -208,6 +208,10 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 			'socket': false,
 			'noGlobals': false,
 			'svgSprite': true,
+
+			'ds-diff': false,
+			'ds-vars': false,
+
 			'blockNames': false,
 			'passDesignSystem': false,
 

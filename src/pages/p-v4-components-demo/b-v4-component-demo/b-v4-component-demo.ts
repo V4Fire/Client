@@ -12,7 +12,7 @@ export * from 'super/i-block/i-block';
 @component()
 export default class bV4ComponentDemo extends iBlock {
 	/**
-	 * Dictionary with names of props, mods for highlighting
+	 * Dictionary with prop names and modifiers for highlighting
 	 */
 	@prop({type: Object, required: false})
 	readonly highlighting?: Dictionary;

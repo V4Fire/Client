@@ -137,8 +137,8 @@ module.exports = function (style) {
 	 *
 	 * @param {!Object} hueInput - color
 	 * @param {!Object} numInput - color position in a kit
-	 * @param {(!Object|boolean)} [reservedInput=false] - is value in reserved kit
-	 * @param {(!Object|boolean)} [baseInput=false] - proto field name
+	 * @param {(!Object|boolean)} [reservedInput=false] - is value in the reserved kit
+	 * @param {(!Object|boolean)} [baseInput=false] - prototype field name
 	 * @returns {string}
 	 */
 	style.define('getGlobalColor', (hueInput, numInput, reservedInput = false, baseInput = false) => {
