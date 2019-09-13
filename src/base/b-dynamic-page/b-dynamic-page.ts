@@ -7,8 +7,9 @@
  */
 
 import iBlock from 'super/i-block/i-block';
-import iDynamicPage, { component, prop, field, watch, Statuses } from 'super/i-dynamic-page/i-dynamic-page';
 import { EventEmitterLike } from 'core/async';
+
+import iDynamicPage, { component, prop, field, watch, Statuses } from 'super/i-dynamic-page/i-dynamic-page';
 export * from 'super/i-data/i-data';
 
 export type KeepAlive =

@@ -17,15 +17,15 @@ interface MockOptions {
 }
 
 let
-	options: MockOptions;
+	mockOpts: MockOptions;
 
 const setConfig = (opts) => {
-	options = {
+	mockOpts = {
 		patterns: [],
 		...opts
 	};
 
-	options.patterns = (options.patterns || []).map((el) => Object.isRegExp(el) ? el : new RegExp(el));
+	mockOpts.patterns = (mockOpts.patterns || []).map((el) => Object.isRegExp(el) ? el : new RegExp(el));
 };
 
 const optionsInitializer = env.get('mock').then(setConfig, setConfig);
@@ -37,7 +37,7 @@ env.event.on('remove.mock', setConfig);
  * @param params
  */
 export async function attachMock(this: Provider, params: MiddlewareParams): Promise<CanUndef<Function>> {
-	if (!options) {
+	if (!mockOpts) {
 		await optionsInitializer;
 	}
 
@@ -47,7 +47,7 @@ export async function attachMock(this: Provider, params: MiddlewareParams): Prom
 	const
 		id = opts.cacheId;
 
-	if (!this.mocks || !Object.isString(id) || options.patterns.every((rgxp) => !rgxp.test(id))) {
+	if (!this.mocks || !Object.isString(id) || mockOpts.patterns.every((rgxp) => !rgxp.test(id))) {
 		return;
 	}
 

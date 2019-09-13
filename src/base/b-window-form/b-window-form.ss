@@ -18,7 +18,7 @@
 	- block controls
 		< b-button &
 			:type = 'submit' |
-			:form = getConnectedId('form') |
+			:form = dom.getId('form') |
 			:preIcon = 'save'
 		.
 			{{ stage === 'new' ? `Add` : `Save` }}
@@ -28,7 +28,7 @@
 	- block content
 		< b-form &
 			ref = form |
-			:id = getConnectedId('form') |
+			:id = dom.getId('form') |
 			:dataProvider = dataProvider |
 			:method = methodName |
 			@submitSuccess = close |

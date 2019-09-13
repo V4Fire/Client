@@ -9,7 +9,6 @@
 import Editor from 'core/image-editor';
 
 import bCrop from 'base/b-crop/b-crop';
-import bProgress from 'base/b-progress/b-progress';
 import iVisible from 'traits/i-visible/i-visible';
 
 import iBlock, { component, prop, field, system, wait, hook, ModsDecl } from 'super/i-block/i-block';
@@ -126,7 +125,6 @@ export default class bImageEditor extends iBlock implements iVisible {
 	protected readonly $refs!: {
 		img: HTMLImageElement;
 		crop: bCrop;
-		progress: bProgress;
 	};
 
 	/** @private */
@@ -168,7 +166,7 @@ export default class bImageEditor extends iBlock implements iVisible {
 
 				onError: reject,
 				onProgress: (progress, id) => {
-					this.$refs.progress.value = progress;
+					//this.$refs.progress.value = progress;
 					this.emit('imageProgress', progress, id);
 				},
 

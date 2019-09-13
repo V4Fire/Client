@@ -33,10 +33,10 @@ import {
 import {
 
 	ComponentInterface,
-	ComponentField,
 	ComponentProp,
+	ComponentField,
 	ComponentMeta,
-	WatchOptionsWithHandler
+	WatchObject
 
 } from 'core/component/interface';
 
@@ -285,7 +285,7 @@ export function getBaseComponent(
 			for (let o = method.watchers, keys = Object.keys(o), i = 0; i < keys.length; i++) {
 				const
 					key = keys[i],
-					watcher = <NonNullable<WatchOptionsWithHandler>>o[key],
+					watcher = <NonNullable<WatchObject>>o[key],
 					wList = watchers[key] = watchers[key] || [];
 
 				if (isFunctional && watcher.functional === false) {

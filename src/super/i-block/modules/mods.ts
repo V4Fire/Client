@@ -107,17 +107,18 @@ export function initMods<T extends iBlock>(component: T): ModsNTable {
 	// @ts-ignore (access)
 	for (let attrs = component.$attrs, keys = Object.keys(attrs), i = 0; i < keys.length; i++) {
 		const
-			key = keys[i];
+			key = keys[i],
+			modKey = key.camelize(false);
 
-		if (key in declMods) {
+		if (modKey in declMods) {
 			const attrVal = attrs[key];
-			component.watch(`$attrs.${key}`, (val: Dictionary = {}) => component.setMod(key, modVal(val[key])));
+			component.watch(`$attrs.${key}`, (val: Dictionary = {}) => component.setMod(modKey, modVal(val[key])));
 
 			if (attrVal == null) {
 				continue;
 			}
 
-			attrMods.push([key, attrVal]);
+			attrMods.push([modKey, attrVal]);
 		}
 	}
 

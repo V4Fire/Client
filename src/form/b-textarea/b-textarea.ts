@@ -40,6 +40,12 @@ export default class bTextarea<
 	D extends object = Dictionary
 > extends bInput<V, FV, D> {
 	/**
+	 * Exterior of bScroll component
+	 */
+	@prop({type: String, required: false})
+	readonly scrollExterior?: string;
+
+	/**
 	 * Row count for extending
 	 */
 	@prop(Number)

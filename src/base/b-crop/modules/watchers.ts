@@ -60,7 +60,7 @@ export function syncFreeSelectWatcher<T extends bCrop>(component: T, value: bool
 			pageX = e.pageX;
 			pageY = e.pageY;
 
-			$b.setElMod(select, 'select', 'hidden', true);
+			$b.setElMod(select, 'object.ts', 'hidden', true);
 			c.emit('selectStart', {pageX, pageY});
 		},
 
@@ -69,7 +69,7 @@ export function syncFreeSelectWatcher<T extends bCrop>(component: T, value: bool
 				return false;
 			}
 
-			$b.removeElMod(select, 'select', 'hidden');
+			$b.removeElMod(select, 'object.ts', 'hidden');
 
 			const
 				{left, top} = clone.getPosition();
@@ -108,11 +108,11 @@ export function syncFreeSelectWatcher<T extends bCrop>(component: T, value: bool
 			}
 
 			r.dispatchEvent(trigger);
-			c.emit('select', {x, y, width, height});
+			c.emit('object.ts', {x, y, width, height});
 		},
 
 		onDragEnd: () => {
-			$b.removeElMod(select, 'select', 'hidden');
+			$b.removeElMod(select, 'object.ts', 'hidden');
 
 			if (!init) {
 				return false;
@@ -160,7 +160,7 @@ export function syncSelectByClickWatcher<T extends bCrop>(component: T, value: b
 		if (e.target === area) {
 			// @ts-ignore (access)
 			c._areaDown = true;
-			$b.setElMod(select, 'select', 'hidden', true);
+			$b.setElMod(select, 'object.ts', 'hidden', true);
 		}
 	}, {...group, options: {capture: true}});
 
@@ -182,7 +182,7 @@ export function syncSelectByClickWatcher<T extends bCrop>(component: T, value: b
 			x = e.pageX - left - width / 2,
 			y = e.pageY - top - height / 2;
 
-		$b.removeElMod(select, 'select', 'hidden');
+		$b.removeElMod(select, 'object.ts', 'hidden');
 		c.setFixSize({x, y, width, height});
 		c.emit('selectByClick', {x, y, width, height});
 	}, group);

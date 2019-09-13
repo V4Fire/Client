@@ -19,7 +19,7 @@ const deps = module.exports = {
 	styles: new Map()
 };
 
-if (runtime.vue) {
+if (runtime.engine === 'vue') {
 	deps.scripts.set('vue', [`vue/dist/vue.runtime${isProd ? '.min' : ''}.js`]);
 }
 
