@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-beta.179 (2019-09-13)
+
+#### :house: Internal
+
+* Updated design system
+
 ## v3.0.0-beta.178 (2019-09-13)
 
 #### :bug: Bug Fix
