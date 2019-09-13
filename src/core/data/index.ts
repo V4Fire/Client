@@ -791,6 +791,7 @@ export default class Provider {
 	 */
 	protected setReadonlyParam(key: string, val: unknown): void {
 		Object.defineProperty(this, key, {
+			configurable: true,
 			get: () => val,
 			set: (v) => v
 		});
