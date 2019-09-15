@@ -5,7 +5,7 @@
   "main": "src/core/index.js",
   "typings": "index.d.ts",
   "license": "MIT",
-  "version": "3.0.0-beta.179",
+  "version": "3.0.0-beta.180",
   "author": {
     "name": "kobezzza",
     "email": "kobezzza@gmail.com",
@@ -116,7 +116,7 @@
   },
   "devDependencies": {
     "babel-eslint": "^10.0.3",
-    "eslint": "^6.3.0",
+    "eslint": "^6.4.0",
     "stlint": "^1.0.58",
     "stlint-v4fire": "^1.0.30",
     "tslint": "^5.20.0"
