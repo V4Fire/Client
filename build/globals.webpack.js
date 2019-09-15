@@ -38,13 +38,13 @@ module.exports = {
 		}
 	}) : null,
 
-	DS_COMPONENTS_MODS: pzlr.designSystem ? calcComponentsMods() : null,
+	DS_COMPONENTS_MODS: pzlr.designSystem ? getComponentsMods() : null,
 	DS: runtime.passDesignSystem && pzlr.designSystem ? (() => {
 		try {
 			return s(require(pzlr.designSystem));
 
 		} catch {
-			console.log('Cannot find the design system package by the specified name on globals DS including');
+			console.log(`Can't find "${pzlr.designSystem}" design system package`);
 			return null;
 		}
 	})() : null
@@ -54,7 +54,7 @@ module.exports = {
  * Returns modifier values grouped by a component name from a Design System package
  * @returns {Object}
  */
-function calcComponentsMods() {
+function getComponentsMods() {
 	try {
 		const
 			{components} = require(pzlr.designSystem);
@@ -84,15 +84,13 @@ function calcComponentsMods() {
 
 				return res;
 			}, {}));
-
 		}
 
-		console.log('Cannot find components at the design system package');
+		console.log('Cannot find components within the design system package');
 		return null;
 
 	} catch {
-		console.log('Cannot find a design system package by the specified name on component mods calculating');
-
+		console.log(`Can't find "${pzlr.designSystem}" design system package`);
 		return null;
 	}
 }

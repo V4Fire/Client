@@ -27,7 +27,7 @@ if (config.designSystem) {
 		DS = require(config.designSystem);
 
 	} catch {
-		console.log('[stylus] Cannot find the specified design system package');
+		console.log(`[stylus] Can't find "${config.designSystem}" design system package`);
 	}
 
 } else {
