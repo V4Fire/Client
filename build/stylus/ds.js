@@ -23,7 +23,12 @@ const cssVars = {
 };
 
 if (config.designSystem) {
-	DS = require(config.designSystem);
+	try {
+		DS = require(config.designSystem);
+
+	} catch {
+		console.log('[stylus] Cannot find the specified design system package');
+	}
 
 } else {
 	console.log('[stylus] Design system package is not specified');
