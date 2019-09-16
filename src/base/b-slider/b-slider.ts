@@ -331,6 +331,9 @@ export default class bSlider<T extends object = Dictionary> extends iData<T> {
 				offsetLeft: child.offsetLeft
 			});
 		}
+
+		this.setMod('swipe', true);
+		content.style.setProperty('--offset', `${this.currentOffset}px`);
 	}
 
 	/**
