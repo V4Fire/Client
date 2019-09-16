@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-beta.182 (2019-09-16)
+
+#### :bug: Bug Fix
+
+* [Fixed `bSlider` alignment](https://github.com/V4Fire/Client/pull/122)
+
 ## v3.0.0-beta.181 (2019-09-16)
 
 #### :house: Internal
