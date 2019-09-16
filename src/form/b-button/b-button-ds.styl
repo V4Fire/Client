@@ -34,7 +34,7 @@ b-button
 											padding-{$key} $val
 
 								&__button
-									text-options(getField($value, textStyle))
+									t(getField($value, textStyle))
 
 			extStyle($name, $prop)
 				getField($obj, path(exterior $name $prop))

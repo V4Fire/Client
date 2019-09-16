@@ -67,10 +67,10 @@ b-input
 											padding-{$key} $val
 
 								&__input
-									text-options(getField($value, textStyle))
+									t(getField($value, textStyle))
 
 									&::placeholder
-										text-options(getField($value, placeholderStyle))
+										t(getField($value, placeholderStyle))
 										color getField($value, placeholderColor)
 
 			&_valid
@@ -87,7 +87,7 @@ b-input
 
 							if $fieldName == "info"
 								& ^[0]__info-box
-									text-options(getField($value, textStyle))
+									t(getField($value, textStyle))
 									color-from-obj($value)
 
 									$offset = getField($value, offset)
