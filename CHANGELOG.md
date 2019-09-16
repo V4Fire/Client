@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-beta.181 (2019-09-16)
+
+#### :house: Internal
+
+* Design System: [API refactoring](https://github.com/V4Fire/Client/pull/121)
+
 ## v3.0.0-beta.180 (2019-09-15)
 
 #### :house: Internal
