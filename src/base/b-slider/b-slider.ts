@@ -304,64 +304,6 @@ export default class bSlider<T extends object = Dictionary> extends iData<T> {
 	} = {};
 
 	/**
-	 * Synchronizes the slider state
-	 */
-	@hook('mounted')
-	@wait('loading')
-	protected syncState(): CanPromise<void> {
-		const
-			{view, content} = this.$refs;
-
-		if (!view || !content || !this.isSlider) {
-			return;
-		}
-
-		const
-			{children} = content;
-
-		this.viewRect = view.getBoundingClientRect();
-		this.length = children.length;
-		this.slideRects = [];
-
-		for (let i = 0; i < children.length; i++) {
-			const
-				child = <HTMLElement>children[i];
-
-			this.slideRects[i] = Object.assign(child.getBoundingClientRect(), {
-				offsetLeft: child.offsetLeft
-			});
-		}
-
-		this.setMod('swipe', true);
-		content.style.setProperty('--offset', `${this.currentOffset}px`);
-	}
-
-	/**
-	 * Synchronizes the slider state
-	 * (deferred version)
-	 */
-	@watch(['?window:resize', ':updateState'])
-	@wait('ready')
-	protected async syncStateDefer(): Promise<void> {
-		if (!this.isSlider) {
-			return;
-		}
-
-		const
-			{content} = this;
-
-		if (!content) {
-			return;
-		}
-
-		try {
-			await this.async.sleep(50, {label: $$.syncStateAsync, join: true});
-			this.syncState();
-
-		} catch {}
-	}
-
-	/**
 	 * Switches to the specified slide
 	 *
 	 * @param index - slide index
@@ -422,6 +364,64 @@ export default class bSlider<T extends object = Dictionary> extends iData<T> {
 		}
 
 		return false;
+	}
+
+	/**
+	 * Synchronizes the slider state
+	 */
+	@hook('mounted')
+	@wait('loading')
+	protected syncState(): CanPromise<void> {
+		const
+			{view, content} = this.$refs;
+
+		if (!view || !content || !this.isSlider) {
+			return;
+		}
+
+		const
+			{children} = content;
+
+		this.viewRect = view.getBoundingClientRect();
+		this.length = children.length;
+		this.slideRects = [];
+
+		for (let i = 0; i < children.length; i++) {
+			const
+				child = <HTMLElement>children[i];
+
+			this.slideRects[i] = Object.assign(child.getBoundingClientRect(), {
+				offsetLeft: child.offsetLeft
+			});
+		}
+
+		this.setMod('swipe', true);
+		content.style.setProperty('--offset', `${this.currentOffset}px`);
+	}
+
+	/**
+	 * Synchronizes the slider state
+	 * (deferred version)
+	 */
+	@watch(['?window:resize', ':updateState'])
+	@wait('ready')
+	protected async syncStateDefer(): Promise<void> {
+		if (!this.isSlider) {
+			return;
+		}
+
+		const
+			{content} = this;
+
+		if (!content) {
+			return;
+		}
+
+		try {
+			await this.async.sleep(50, {label: $$.syncStateAsync, join: true});
+			this.syncState();
+
+		} catch {}
 	}
 
 	/** @override */
