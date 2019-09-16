@@ -29,7 +29,7 @@ module.exports = [
 		const
 			elName = value.replace(elSeparatorRgxp, ''),
 			classes = attrs[':class'] = attrs[':class'] || [],
-			styles = attrs[':style'] = attrs[':style'] || [];
+			styles = attrs[':style'];
 
 		const newClasses = classes.concat(
 			$C(classes).includes('componentId') ? [] : 'componentId',
@@ -37,7 +37,10 @@ module.exports = [
 		);
 
 		attrs[':class'] = wrapAttrArray(newClasses);
-		attrs[':style'] = wrapAttrArray(styles.concat(`styles && styles['${elName}']`));
+
+		if (!styles || !styles.length) {
+			attrs[':style'] = [`styles && styles['${elName}']`];
+		}
 
 		return block + value;
 	}
