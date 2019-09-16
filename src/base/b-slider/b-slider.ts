@@ -418,7 +418,7 @@ export default class bSlider<T extends object = Dictionary> extends iData<T> {
 		}
 
 		try {
-			await this.async.sleep(50, {label: $$.syncStateAsync, join: true});
+			await this.async.sleep(50, {label: $$.syncStateDefer, join: true});
 			this.syncState();
 
 		} catch {}
