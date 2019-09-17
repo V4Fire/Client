@@ -15,11 +15,15 @@ export const
 
 /**
  * Saves the specified ABT options
- * @param options
+ * @param opts
  */
-export default async function saveABT(options: unknown): Promise<void> {
-	const
-		config = await adapter(options);
+export default async function saveABT(opts: unknown): Promise<void> {
+	let
+		config = adapter(opts);
+
+	if (Object.isPromise(config)) {
+		config = await config;
+	}
 
 	if (Object.isArray(config)) {
 		if (!Object.fastCompare(state.experiments, config)) {
