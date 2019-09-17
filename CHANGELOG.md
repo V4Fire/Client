@@ -13,8 +13,15 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 ## v3.0.0-beta.183 (2019-09-17)
 
+#### :rocket: New Feature
+
+* Added `brokenImg` and `overlayImg` props for `bImage`
+
 #### :bug: Bug Fix
 
+* Fixed `:style` providing
+* Fixed `Sync.object` with null values
+* Fixed router synchronizing with null values `bRouter`, `State`
 * [Fixed `saveABT` didn't save the value received from the adapter if the adapter was an asynchronous function](https://github.com/V4Fire/Client/pull/123)
 
 ## v3.0.0-beta.182 (2019-09-16)
