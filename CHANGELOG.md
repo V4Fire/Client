@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-beta.183 (2019-09-17)
+
+#### :bug: Bug Fix
+
+* [Fixed `saveABT` didn't save the value received from the adapter if the adapter was an asynchronous function](https://github.com/V4Fire/Client/pull/123)
+
 ## v3.0.0-beta.182 (2019-09-16)
 
 #### :bug: Bug Fix
