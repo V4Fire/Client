@@ -22,7 +22,7 @@ export default async function saveABT(opts: unknown): Promise<void> {
 		config = adapter(opts);
 
 	if (Object.isPromise(config)) {
-		config = await config;
+		config = await config.catch(stderr) || [];
 	}
 
 	if (Object.isArray(config)) {
