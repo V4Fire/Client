@@ -70,6 +70,18 @@ export default class bImage extends iMessage implements iProgress, iVisible {
 	@prop({type: Number, required: false})
 	readonly ratio?: number;
 
+	/**
+	 * Parameters for a overlay image
+	 */
+	@prop({type: [String, Object], required: false})
+	readonly overlayImg?: string | Dictionary;
+
+	/**
+	 * Parameters for a broken image
+	 */
+	@prop({type: [String, Object], required: false})
+	readonly brokenImg?: string | Dictionary;
+
 	/** @inheritDoc */
 	static readonly mods: ModsDecl = {
 		...iProgress.mods,
