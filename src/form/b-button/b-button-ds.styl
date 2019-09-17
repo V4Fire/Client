@@ -34,43 +34,24 @@ b-button
 											padding-{$key} $val
 
 								&__button
-									t(getField($value, textStyle))
+									text-options(getField($value, textStyle))
+									line-height getField($value, lineHeight)
 
-			extStyle($name, $prop)
-				getField($obj, path(exterior $name $prop))
+			extStyle($name, $path)
+				getField($obj, path(exterior $name $path))
 
 			createExterior($k)
 				$extBase = extStyle($k, "base")
 				$extBg = extStyle($k, "base.backgroundColor")
 
-				generate($kk)
-					path-to-mod($v)
-						path(mods $kk $v)
-
-					getValue($prop)
-						extStyle($k, path-to-mod($prop)) || getField($obj, path-to-mod($prop))
-
-					$color = getValue(color)
-					$bg = getValue(backgroundColor)
-					$blendMode = getValue(blendMode)
-					$boxShadow = getValue(boxShadow)
-
-					if $boxShadow
-						box-shadow $boxShadow
-
-					if $color
-						color $color
-
-					if $blendMode and $bg is a "color" and $extBg is a "color"
-						background blend($bg, $extBg, $blendMode)
-
-					else if $bg
-						background $bg
+				createMod($kk)
+					$mod = extStyle($k, path(mods $kk)) || getField($obj, path(mods $kk))
+					interpolate-props($mod)
 
 				for $key in (disabled focused)
 					&^[0]_{$key}_true
 						& ^[0]__button
-							generate(path($key true))
+							createMod(path($key true))
 
 				& ^[0]__button
 					if $extBase
@@ -78,7 +59,7 @@ b-button
 
 					for $key in (hover active)
 						&:{$key}
-							generate(path($key true))
+							createMod(path($key true))
 
 			if getField($obj, exterior)
 				for $key, $val in getField($obj, exterior)
