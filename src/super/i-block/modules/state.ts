@@ -374,7 +374,7 @@ export default class State {
 							p = route.params,
 							q = route.query;
 
-						if ((!p || p[key] == null) && (!q || q[key] == null)) {
+						if ((!p || p[key] === undefined) && (!q || q[key] === undefined)) {
 							modState = modState || {};
 							modState[key] = routerState[key];
 						}

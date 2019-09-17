@@ -12,6 +12,6 @@ import { ExperimentsSet } from 'core/abt/interface';
  * Provides a set of abt options
  * @param opts - experiments options
  */
-export default function abtAdapter(opts: unknown): ExperimentsSet {
+export default function abtAdapter(opts: unknown): CanPromise<ExperimentsSet> {
 	return [];
 }
