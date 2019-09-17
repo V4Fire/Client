@@ -8,6 +8,8 @@
 
 import adapter from 'core/abt/engines';
 import state from 'core/component/state';
+
+import { ExperimentsSet } from 'core/abt/interface';
 import { EventEmitter2 as EventEmitter } from 'eventemitter2';
 
 export const
@@ -19,10 +21,10 @@ export const
  */
 export default async function saveABT(opts: unknown): Promise<void> {
 	let
-		config = adapter(opts);
+		config = <CanPromise<ExperimentsSet | void>>adapter(opts);
 
 	if (Object.isPromise(config)) {
-		config = await config.catch(stderr) || [];
+		config = await config.catch(stderr);
 	}
 
 	if (Object.isArray(config)) {
