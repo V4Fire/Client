@@ -64,6 +64,23 @@ module.exports = function (style) {
 		(str) => str.string.toUpperCase());
 
 	/**
+	 * Replaces string by the specified regular expression
+	 *
+	 * @param {string} str
+	 * @param {string} replacer
+	 * @param {string} replacement
+	 * @param {string} [flags]
+	 * @returns {string}
+	 */
+	style.define('replaceByRegExp',
+		(
+			{string: str},
+			{string: replacer},
+			{string: replacement},
+			{string: flags} = {flags: undefined}
+		) => str.replace(new RegExp(replacer, flags), replacement));
+
+	/**
 	 * Converts plain svg text to dataURI
 	 *
 	 * @param {?} str - source string
