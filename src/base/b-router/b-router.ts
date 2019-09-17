@@ -418,7 +418,7 @@ export default class bRouter<T extends object = Dictionary> extends iData<T> {
 								key = keys[i],
 								el = initParams[key];
 
-							if (el != null) {
+							if (el !== undefined) {
 								p[key] = String(el);
 							}
 						}
@@ -654,8 +654,8 @@ export default class bRouter<T extends object = Dictionary> extends iData<T> {
 					nm = key.name,
 					val = query[nm];
 
-				if (params[nm] == null) {
-					if (val != null && new RegExp(key.pattern).test(val)) {
+				if (params[nm] === undefined) {
+					if (val !== undefined && new RegExp(key.pattern).test(val)) {
 						params[nm] = val;
 						delete query[nm];
 
@@ -678,7 +678,7 @@ export default class bRouter<T extends object = Dictionary> extends iData<T> {
 						key = keys[i],
 						rootVal = rootState[key];
 
-					if (query[key] == null) {
+					if (query[key] === undefined) {
 						const
 							field = rootField[key] || rootSystemFields[key];
 
