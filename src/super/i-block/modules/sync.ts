@@ -405,7 +405,7 @@ export default class Sync {
 
 				if (!Object.get(linksCache, l)) {
 					const getVal = (val?, oldVal?) => {
-						val = val || this.field.get(field);
+						val = val !== undefined ? val : this.field.get(field);
 						return wrapper ? wrapper.call(this, val, oldVal) : val;
 					};
 
@@ -418,7 +418,7 @@ export default class Sync {
 					l = [path, el].join('.');
 
 				if (!Object.get(linksCache, l)) {
-					const getVal = (val?) => val || this.field.get(el);
+					const getVal = (val?) => val !== undefined ? val : this.field.get(el);
 					attachWatcher(el, l, getVal);
 					cursor[el] = getVal();
 				}
