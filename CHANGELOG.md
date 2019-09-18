@@ -11,6 +11,26 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-beta.184 (2019-09-18)
+
+#### :boom: Breaking Change
+
+* Removed `bUp` component
+* Removed `iRound` trait
+* Removed legacy sizes API
+
+#### :rocket: New Feature
+
+* Added `replaceByRegExp` to `build/stylus/string` API
+
+#### :bug: Bug Fix
+
+* Fixed modifiers inheritance
+
+#### :house: Internal
+
+* Review DS API
+
 ## v3.0.0-beta.183 (2019-09-17)
 
 #### :rocket: New Feature
