@@ -209,8 +209,29 @@ t($name)
 		interpolate-props($obj)
 
 /**
+ * Returns a border-radius rule for the specified name and pos
+ *
+ * @param {string} $name - border-radius name
+ * @param {string} [$pos] - %s tokens-styled string for mixed border-radius
+ *
+ * @example
+ * r(big, '$s 0 $s') -> border-radius 16px 0 16px
+ */
+r($name, $pos = null)
+	$val = getDSOptions("rounding." + $name)
+
+	if $val
+		if $pos
+			border-radius convert(replace("%s", s("%s", $val), $pos))
+
+		else
+			border-radius $val
+
+/**
  * Generates rules from object properties
+ *
  * @param {Object} $options
+ * @param {boolean=} $dash
  */
 interpolate-props($options, $dash = true)
 	if type($options) == "object"
