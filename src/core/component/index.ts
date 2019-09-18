@@ -239,7 +239,12 @@ export function component(params?: ComponentParams): Function {
 			}
 
 			if (dsComponentsMods && dsComponentsMods[componentName]) {
-				Object.assign(modsStore, dsComponentsMods[componentName]);
+				for (let o = dsComponentsMods[componentName], keys = Object.keys(o), i = 0; i < keys.length; i++) {
+					const
+						key = keys[i];
+
+					modsStore[key] = modsStore[key] ? modsStore[key].concat(o[key]) : o[key];
+				}
 			}
 
 			for (let o = modsStore, keys = Object.keys(o), i = 0; i < keys.length; i++) {
