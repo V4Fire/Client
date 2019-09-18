@@ -66,12 +66,11 @@ module.exports = function (style) {
 	/**
 	 * Returns a color, mixed with the specified mode
 	 *
+	 * @see https://en.wikipedia.org/wiki/Blend_modes
 	 * @param {!Object} foreground
 	 * @param {!Object} background
 	 * @param {string=} [mode=normal]
-	 *
 	 * @returns {!Object}
-	 * @see https://en.wikipedia.org/wiki/Blend_modes
 	 */
 	style.define('blend', (foreground, background, mode = 'normal') => {
 		utils.assertColor(foreground);
