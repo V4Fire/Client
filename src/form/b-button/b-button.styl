@@ -10,13 +10,11 @@
 @import "traits/i-access/i-access.styl"
 @import "traits/i-visible/i-visible.styl"
 @import "traits/i-width/i-width.styl"
-@import "traits/i-size/i-size.styl"
 
 $p = {
 	accessHelpers: true
 	visibleHelpers: true
 	widthHelpers: true
-	sizeHelpers: true
 	dropdownHelpers: true
 	progressHelpers: true
 }
@@ -26,7 +24,6 @@ b-button extends i-data
 	i-access({helpers: $p.accessHelpers})
 	i-visible({helpers: $p.visibleHelpers})
 	i-width({helpers: $p.widthHelpers, selector: ("" "&__button" "&__value")})
-	i-size({helpers: $p.sizeHelpers})
 	// @stlint-enable
 
 	display inline-block
