@@ -274,11 +274,11 @@ export default function inheritMeta(
 
 		if (current) {
 			const
-				values = {};
+				values = Object.createDict<StrictModDeclVal>();
 
-			for (let i = 0; i < current.length; i++) {
+			for (let o = current.slice(), i = 0; i < o.length; i++) {
 				const
-					el = current[i];
+					el = o[i];
 
 				if (el !== PARENT) {
 					if (!(el in values) || Object.isArray(el)) {
@@ -291,7 +291,10 @@ export default function inheritMeta(
 				let
 					hasDefault = false;
 
-				for (let i = 0; i < current.length; i++) {
+				for (let i = 0; i < o.length; i++) {
+					const
+						el = o[i];
+
 					if (Object.isArray(el)) {
 						hasDefault = true;
 						break;
@@ -322,7 +325,12 @@ export default function inheritMeta(
 				valuesList = <StrictModDeclVal[]>[];
 
 			for (let keys = Object.keys(values), i = 0; i < keys.length; i++) {
-				valuesList.push(values[keys[i]]);
+				const
+					el = values[keys[i]];
+
+				if (el !== undefined) {
+					valuesList.push(el);
+				}
 			}
 
 			o[key] = valuesList;

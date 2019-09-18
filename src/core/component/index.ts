@@ -238,8 +238,18 @@ export function component(params?: ComponentParams): Function {
 				Object.assign(modsStore, target.mods);
 			}
 
-			if (dsComponentsMods && dsComponentsMods[componentName]) {
-				Object.assign(modsStore, dsComponentsMods[componentName]);
+			const
+				dsMods = dsComponentsMods && dsComponentsMods[componentName];
+
+			if (dsMods) {
+				for (let keys = Object.keys(dsMods), i = 0; i < keys.length; i++) {
+					const
+						key = keys[i],
+						el = dsMods[key],
+						store = modsStore[key];
+
+					modsStore[key] = store ? store.concat(el) : el;
+				}
 			}
 
 			for (let o = modsStore, keys = Object.keys(o), i = 0; i < keys.length; i++) {
@@ -269,8 +279,13 @@ export function component(params?: ComponentParams): Function {
 
 						} else {
 							cache = cache || new Map();
-							const v = String(val);
-							cache.set(v, v);
+
+							const
+								v = Object.isObject(val) ? val : String(val);
+
+							if (!cache.has(v)) {
+								cache.set(v, v);
+							}
 						}
 					}
 
