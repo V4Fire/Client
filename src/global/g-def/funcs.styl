@@ -209,10 +209,10 @@ t($name)
 		interpolate-props($obj)
 
 /**
- * Returns a border-radius rule for the specified name and pos
+ * Returns a border-radius rule for the specified name and position
  *
- * @param {string} $name - border-radius name
- * @param {string} [$pos] - %s tokens-styled string for mixed border-radius
+ * @param {string} $name - border-radius DS name
+ * @param {string} [$pos] - %s tokens-styled string for multiple border-radius values
  *
  * @example
  * r(big, '$s 0 $s') -> border-radius 16px 0 16px
@@ -230,14 +230,14 @@ r($name, $pos = null)
 /**
  * Generates rules from object properties
  *
- * @param {Object} $options
- * @param {boolean=} $dash
+ * @param {Object} $opts
+ * @param {boolean=} $normalize
  */
-interpolate-props($options, $dash = true)
-	if type($options) == "object"
-		for $key, $val in $options
+interpolate-props($opts, $normalize = true)
+	if type($opts) == "object"
+		for $key, $val in $opts
 			$value = type($val) == "string" ? convert($val) : $val
-			{$dash ? dasherize($key): $key} $value
+			{$normalize ? dasherize($key): $key} $value
 
 /**
  * Generates path from the specified sequence
