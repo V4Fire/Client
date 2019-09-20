@@ -17,7 +17,6 @@ import bForm from 'form/b-form/b-form';
 import iAccess from 'traits/i-access/i-access';
 import iVisible from 'traits/i-visible/i-visible';
 import iWidth from 'traits/i-width/i-width';
-import iRound from 'traits/i-round/i-round';
 import iSize from 'traits/i-size/i-size';
 import iOpenToggle, { CloseHelperEvents } from 'traits/i-open-toggle/i-open-toggle';
 import iIcon from 'traits/i-icon/i-icon';
@@ -55,7 +54,7 @@ export type ButtonType<T extends string = any> =
 })
 
 export default class bButton<T extends object = Dictionary> extends iData<T>
-	implements iAccess, iOpenToggle, iIcon, iVisible, iWidth, iRound, iSize {
+	implements iAccess, iOpenToggle, iIcon, iVisible, iWidth, iSize {
 
 	/** @override */
 	readonly dataProvider: string = 'Provider';
@@ -141,7 +140,6 @@ export default class bButton<T extends object = Dictionary> extends iData<T>
 		...iVisible.mods,
 		...iWidth.mods,
 		...iSize.mods,
-		...iRound.mods,
 
 		opened: [
 			...iOpenToggle.mods.opened,

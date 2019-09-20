@@ -56,4 +56,4 @@
 								.
 
 								< label :for = dom.getId(key)
-									{{ mod[0] }}
+									{{ mod[0].toString() }}

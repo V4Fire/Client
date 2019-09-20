@@ -8,11 +8,9 @@
 
 @import "super/i-input/i-input.styl"
 @import "traits/i-width/i-width.styl"
-@import "traits/i-size/i-size.styl"
 
 $p = {
 	widthHelpers: true
-	sizeHelpers: true
 	dropdownHelpers: true
 	accessHelpers: true
 	visibleHelpers: true
@@ -21,7 +19,6 @@ $p = {
 b-calendar extends i-input
 	// @stlint-disable
 	i-width({helpers: $p.widthHelpers, selector: ("&__label-nav")})
-	i-size({helpers: $p.sizeHelpers})
 	// @stlint-enable
 
 	position relative

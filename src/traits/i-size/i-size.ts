@@ -27,12 +27,9 @@ export default abstract class iSize {
 	 */
 	static readonly mods: ModsDecl = {
 		size: [
-			'xxs',
-			'xs',
 			's',
 			['m'],
-			'xl',
-			'xxl'
+			'l'
 		]
 	};
 }
