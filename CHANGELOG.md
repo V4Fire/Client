@@ -16,6 +16,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### :bug: Bug Fix
 
 * Fixed `$refs` patching for functional components
+* Fixed unsafe methods `bSidebar`
 
 #### :house: Internal
 
