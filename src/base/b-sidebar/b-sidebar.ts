@@ -10,7 +10,7 @@ import iVisible from 'traits/i-visible/i-visible';
 import iOpenToggle, { CloseHelperEvents } from 'traits/i-open-toggle/i-open-toggle';
 import iLockPageScroll from 'traits/i-lock-page-scroll/i-lock-page-scroll';
 
-import iData, { component, hook, prop, ModsDecl, ModEvent, SetModEvent } from 'super/i-data/i-data';
+import iData, { component, hook, prop, wait, ModsDecl, ModEvent, SetModEvent } from 'super/i-data/i-data';
 
 export * from 'super/i-data/i-data';
 export * from 'traits/i-open-toggle/i-open-toggle';
@@ -36,7 +36,8 @@ export default class bSidebar<T extends object = Dictionary> extends iData<T>
 	};
 
 	/** @see iLockPageScroll.lock */
-	lock(): void {
+	@wait('loading')
+	lock(): CanPromise<void> {
 		iLockPageScroll.lock(this, <HTMLElement>this.$el);
 	}
 
