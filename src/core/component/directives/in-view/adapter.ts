@@ -16,7 +16,7 @@ import {
 
 } from 'core/component/directives/in-view/interface';
 
-export type Observers =
+export type ObserveStrategy =
 	IntersectionObserverStrategy |
 	MutationObserverStrategy;
 
@@ -24,7 +24,7 @@ export default class InViewAdapter {
 	/**
 	 * Observer adaptee
 	 */
-	protected adaptee?: Observers;
+	protected adaptee?: ObserveStrategy;
 
 	/**
 	 * True if an adapter instance has an adaptee
@@ -37,7 +37,7 @@ export default class InViewAdapter {
 	 * Sets an adaptee
 	 * @param instance
 	 */
-	setInstance(instance: Observers): void {
+	setInstance(instance: ObserveStrategy): void {
 		this.adaptee = instance;
 	}
 
@@ -45,7 +45,7 @@ export default class InViewAdapter {
 	 * Returns true if an adaptee type is 'mutation'
 	 * @param adaptee
 	 */
-	isMutation(adaptee: Observers): adaptee is MutationObserverStrategy {
+	isMutation(adaptee: ObserveStrategy): adaptee is MutationObserverStrategy {
 		return adaptee.type === 'mutation';
 	}
 
@@ -53,7 +53,7 @@ export default class InViewAdapter {
 	 * Returns true if an adaptee type is 'observer'
 	 * @param adaptee
 	 */
-	isIntersection(adaptee: Observers): adaptee is IntersectionObserverStrategy {
+	isIntersection(adaptee: ObserveStrategy): adaptee is IntersectionObserverStrategy {
 		return adaptee.type === 'observer';
 	}
 
