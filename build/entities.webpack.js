@@ -90,6 +90,7 @@ module.exports = (async () => {
 	if (build.entries) {
 		entriesFilter = $C(build.entries).reduce((map, el) => (map[el] = true, map), {});
 		entriesFilter.index = true;
+		entriesFilter.std = true;
 	}
 
 	const
