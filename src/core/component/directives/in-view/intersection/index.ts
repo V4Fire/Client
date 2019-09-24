@@ -36,6 +36,11 @@ export default class InView extends Super {
 	protected readonly observers: Dictionary<IntersectionObserver> = {};
 
 	/**
+	 * Contains a id for root elements
+	 */
+	protected readonly rootMap: Map<HTMLElement, number> = new Map();
+
+	/**
 	 * Initializes an observer
 	 * @param observable
 	 */
@@ -46,6 +51,7 @@ export default class InView extends Super {
 
 		observer.observe(observable.node);
 		this.putInMap(this.elements, observable);
+
 		return observable;
 	}
 
@@ -66,11 +72,21 @@ export default class InView extends Super {
 	 *
 	 * @param intersectionObserverOptions
 	 *   *) threshold
-	 *   *) delay
 	 *   *) trackVisibility
+	 *   *) root
 	 */
-	protected getHash({threshold, trackVisibility}: IntersectionObserverOptions): string {
-		return `${threshold.toFixed(2)}${Boolean(trackVisibility)}`;
+	protected getHash({threshold, trackVisibility, root}: IntersectionObserverOptions): string {
+		root = Object.isFunction(root) ? root() : root;
+
+		let
+			id = root && this.rootMap.get(root) || '';
+
+		if (!id && root) {
+			id = Math.random();
+			this.rootMap.set(root, id);
+		}
+
+		return `${threshold.toFixed(2)}${Boolean(trackVisibility)}${id}`;
 	}
 
 	/**

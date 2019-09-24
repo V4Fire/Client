@@ -122,7 +122,7 @@ export default abstract class AbstractInView {
 	}
 
 	/**
-	 * Starts observing of elements
+	 * Starts observe an element
 	 * @param el
 	 * @param opts
 	 */

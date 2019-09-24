@@ -246,8 +246,8 @@ export default class InView extends Super {
 			map: Dictionary<ObservableElementRect[]> = {},
 			rootRect = getRootRect();
 
-		this.elements.forEach((map) => {
-			map.forEach((el) => {
+		this.elements.forEach((thresholdMap) => {
+			thresholdMap.forEach((el) => {
 				if (el.isDeactivated) {
 					return;
 				}
