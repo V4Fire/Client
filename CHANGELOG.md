@@ -20,7 +20,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 ### :rocket: New Feature
 
-* Added multiply options support for `in-view` directive
+* [Added multiply options support for `in-view` directive](https://github.com/V4Fire/Client/pull/129)
 
 ## v3.0.0-beta.186 (2019-09-21)
 
