@@ -5,7 +5,7 @@
   "main": "src/core/index.js",
   "typings": "index.d.ts",
   "license": "MIT",
-  "version": "3.0.0-beta.185",
+  "version": "3.0.0-beta.186",
   "author": {
     "name": "kobezzza",
     "email": "kobezzza@gmail.com",
@@ -29,7 +29,7 @@
     "test": "echo \"Error: no test specified\" && exit 0"
   },
   "dependencies": {
-    "@v4fire/core": "^3.0.0-beta.67",
+    "@v4fire/core": "^3.0.0-beta.68",
     "escaper": "^3.0.3",
     "eventemitter2": "^5.0.1",
     "fg-loadcss": "^2.1.0",
@@ -37,7 +37,7 @@
     "path-to-regexp": "^3.1.0",
     "requestidlecallback": "^0.3.0",
     "snakeskin": "^7.5.1",
-    "socket.io": "^2.2.0",
+    "socket.io": "^2.3.0",
     "vue": "^2.6.10"
   },
   "optionalDependencies": {

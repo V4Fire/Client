@@ -11,6 +11,17 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-beta.186 (2019-09-21)
+
+#### :bug: Bug Fix
+
+* Fixed `$refs` patching for functional components
+* Fixed unsafe methods `bSidebar`
+
+#### :house: Internal
+
+* Added preventing for `-webkit-tap-highlight-color` with `bButton`, `bInput`
+
 ## v3.0.0-beta.185 (2019-09-18)
 
 #### :rocket: New Feature
