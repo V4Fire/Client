@@ -335,7 +335,13 @@ export default class InView extends Super {
 		}
 
 		observable.isLeaving = true;
-		this.async.setTimeout(() => this.call(observable), observable.delay || 0, asyncOptions);
+
+		if (observable.delay) {
+			this.async.setTimeout(() => this.call(observable), observable.delay, asyncOptions);
+
+		} else {
+			this.call(observable);
+		}
 	}
 
 	/**

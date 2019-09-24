@@ -60,6 +60,8 @@ export default class InViewAdapter {
 
 	/**
 	 * Starts observing the specified elements
+	 *
+	 * @param el
 	 * @param params
 	 */
 	observe(el: HTMLElement, params: CanArray<InitOptions>): false | void {
