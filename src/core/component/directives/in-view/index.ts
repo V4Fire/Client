@@ -47,10 +47,10 @@ ComponentDriver.directive('in-view', {
 			value.once = modifiers.once;
 		}
 
-		InView.observe(el, {
+		InView.observe({el, opts: {
 			threshold: 1,
 			...value
-		});
+		}});
 	},
 
 	unbind(el: HTMLElement): void {

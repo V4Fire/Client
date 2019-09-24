@@ -12,10 +12,9 @@ import symbolGenerator from 'core/symbol';
 import {
 
 	ObservableElement,
-	ObserveOptions,
+	InitObserveOptions,
 	ObservableElementRect,
-	ObservableElementsMap,
-	IntersectionObserverOptions
+	ObservableElementsThresholdMap
 
 } from 'core/component/directives/in-view/interface';
 
@@ -68,7 +67,7 @@ export default class InView extends Super {
 	/**
 	 * Map contains an elements that needs to be poll
 	 */
-	protected readonly pollingElements: ObservableElementsMap = new Map();
+	protected readonly pollingElements: ObservableElementsThresholdMap = new Map();
 
 	/**
 	 * Contains an element position map
@@ -129,9 +128,9 @@ export default class InView extends Super {
 	}
 
 	/** @override */
-	observe(el: HTMLElement, opts: IntersectionObserverOptions & ObserveOptions): ObservableElement | false {
+	observe({el, opts}: InitObserveOptions): ObservableElement | false {
 		const
-			observable = super.observe(el, opts);
+			observable = super.observe({el, opts});
 
 		if (!observable) {
 			return false;
@@ -164,25 +163,9 @@ export default class InView extends Super {
 	 */
 	stopObserve(el: HTMLElement): boolean {
 		const
-			observable = this.get(el);
+			res = super.stopObserve(el);
 
-		let
-			res = true;
-
-		if (!observable) {
-			return false;
-		}
-
-		this.clearAllAsync(observable);
-
-		if (observable.removeStrategy === 'remove') {
-			res = this.remove(el);
-
-		} else {
-			observable.isDeactivated = true;
-		}
-
-		if (!observable.polling) {
+		if (!this.pollingElements.has(el)) {
 			this.recalculateDeffer();
 		}
 
@@ -193,21 +176,23 @@ export default class InView extends Super {
 	 * Polls elements
 	 */
 	poll(): void {
-		this.pollingElements.forEach((el) => {
-			if (el.isDeactivated) {
-				return;
-			}
+		this.pollingElements.forEach((map) => {
+			map.forEach((el) => {
+				if (el.isDeactivated) {
+					return;
+				}
 
-			const
-				root = Object.isFunction(el.root) ? el.root() : el.root,
-				isElementIn = isInView(el.node, el.threshold, root);
+				const
+					root = Object.isFunction(el.root) ? el.root() : el.root,
+					isElementIn = isInView(el.node, el.threshold, root);
 
-			if (isElementIn && !el.isLeaving) {
-				this.onObservableIn(el);
+				if (isElementIn && !el.isLeaving) {
+					this.onObservableIn(el);
 
-			} else if (!isElementIn && el.isLeaving) {
-				this.onObservableOut(el);
-			}
+				} else if (!isElementIn && el.isLeaving) {
+					this.onObservableOut(el);
+				}
+			});
 		});
 	}
 
@@ -272,31 +257,33 @@ export default class InView extends Super {
 			map: Dictionary<ObservableElementRect[]> = {},
 			rootRect = getRootRect();
 
-		this.elements.forEach((el) => {
-			if (el.isDeactivated) {
-				return;
-			}
+		this.elements.forEach((map) => {
+			map.forEach((el) => {
+				if (el.isDeactivated) {
+					return;
+				}
 
-			const
-				rect = getElementRect(rootRect, el.node);
+				const
+					rect = getElementRect(rootRect, el.node);
 
-			let listNum = Math.ceil(rect.top / 100);
-			listNum = listNum === 0 ? 0 : listNum - 1;
+				let listNum = Math.ceil(rect.top / 100);
+				listNum = listNum === 0 ? 0 : listNum - 1;
 
-			if (!isElementVisible(rect)) {
-				this.clearAllAsync(el);
-				return;
-			}
+				if (!isElementVisible(rect)) {
+					this.clearAllAsync(el);
+					return;
+				}
 
-			const tile = map[listNum] = map[listNum] || [];
-			tile.push({...rect, observable: el});
+				const tile = map[listNum] = map[listNum] || [];
+				tile.push({...rect, observable: el});
+			});
 		});
 
 		this.map = map;
 	}
 
 	/** @override */
-	protected maps(): ObservableElementsMap {
+	protected maps(): ObservableElementsThresholdMap {
 		return new Map([
 			...super.maps(),
 			...this.pollingElements
@@ -305,29 +292,29 @@ export default class InView extends Super {
 
 	/**
 	 * Initializes an observer
-	 *
-	 * @param el
 	 * @param observable
 	 */
-	protected initObserve(el: HTMLElement, observable: ObservableElement): ObservableElement {
+	protected initObserve(observable: ObservableElement): ObservableElement {
 		if (!observable.polling) {
-			this.elements.set(el, observable);
+			this.putInMap(this.elements, observable);
 			this.recalculateDeffer();
 
 		} else {
-			this.pollingElements.set(el, observable);
+			this.putInMap(this.pollingElements, observable);
 		}
 
 		return observable;
 	}
 
 	/** @override */
-	protected getElMap(el: HTMLElement): Map<HTMLElement, ObservableElement> {
-		if (this.awaitingElements.has(el)) {
-			return this.awaitingElements;
+	protected getElMap(el: HTMLElement): ObservableElementsThresholdMap {
+		const res = super.getElMap(el);
+
+		if (res) {
+			return res;
 		}
 
-		return this.elements.has(el) ? this.elements : this.pollingElements;
+		return this.pollingElements;
 	}
 
 	/** @override */

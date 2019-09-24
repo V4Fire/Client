@@ -41,63 +41,29 @@ export default class InView extends Super {
 	protected readonly supportsDelay: boolean = supportsDelay();
 
 	/**
-	 * Removes an element from observable elements
-	 * @param el
-	 */
-	remove(el: HTMLElement): boolean {
-		const
-			observable = this.get(el);
-
-		if (!observable) {
-			return false;
-		}
-
-		const
-			observer = this.observers[this.getHash(observable)];
-
-		if (observer) {
-			observer.unobserve(el);
-		}
-
-		return this.getElMap(el).delete(el);
-	}
-
-	/**
-	 * Stops observing the specified element
-	 * @param el
-	 */
-	stopObserve(el: HTMLElement): boolean {
-		const
-			observable = this.get(el);
-
-		if (!observable) {
-			return false;
-		}
-
-		this.clearAllAsync(observable);
-
-		if (observable.removeStrategy === 'remove') {
-			return this.remove(el);
-		}
-
-		observable.isDeactivated = true;
-		return true;
-	}
-
-	/**
 	 * Initializes an observer
-	 *
-	 * @param el
 	 * @param observable
 	 */
-	protected initObserve(el: HTMLElement, observable: ObservableElement): ObservableElement {
+	protected initObserve(observable: ObservableElement): ObservableElement {
 		const
 			hash = this.getHash(observable),
 			observer = this.observers[hash] || this.createObserver(observable, hash);
 
-		observer.observe(el);
-		this.elements.set(el, observable);
+		observer.observe(observable.node);
+		this.putInMap(this.elements, observable);
 		return observable;
+	}
+
+	/** @override */
+	protected unobserve(observable: ObservableElement): boolean {
+		const observer = this.observers[this.getHash(observable)];
+
+		if (observer) {
+			observer.unobserve(observable.node);
+			return true;
+		}
+
+		return false;
 	}
 
 	/**
@@ -122,7 +88,7 @@ export default class InView extends Super {
 		const
 			root = Object.isFunction(opts.root) ? opts.root() : opts.root;
 
-		return this.observers[hash] = new IntersectionObserver(this.onIntersects.bind(this), {
+		return this.observers[hash] = new IntersectionObserver(this.onIntersects.bind(this, opts.threshold), {
 			...opts,
 			root
 		});
@@ -130,14 +96,16 @@ export default class InView extends Super {
 
 	/**
 	 * Handler: entering or leaving viewport
+	 *
+	 * @param threshold
 	 * @param entries
 	 */
-	protected onIntersects(entries: IntersectionObserverEntry[]): void {
+	protected onIntersects(threshold: number, entries: IntersectionObserverEntry[]): void {
 		for (let i = 0; i < entries.length; i++) {
 			const
 				entry = entries[i],
 				el = <HTMLElement>entry.target,
-				observable = this.get(el);
+				observable = this.getEl(el, threshold);
 
 			if (!observable) {
 				return;

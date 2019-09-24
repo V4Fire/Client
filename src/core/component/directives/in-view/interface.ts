@@ -102,8 +102,15 @@ export interface DirectiveOptions extends VNodeDirective {
 	value?: ObserveOptions & {threshold?: number} | Function;
 }
 
+export interface InitObserveOptions {
+	el: HTMLElement;
+	opts: InitOptions;
+}
+
 export type RemoveStrategy = 'remove' | 'deactivate';
 export type InitOptions = ObserveOptions & IntersectionObserverOptions;
 export type ObservableElementsMap = Map<HTMLElement, ObservableElement>;
+export type ObservableThresholdMap = Map<number, ObservableElement>;
+export type ObservableElementsThresholdMap = Map<HTMLElement, ObservableThresholdMap>;
 export type ObservableElementRect = ElementRect & {observable: ObservableElement};
 export type ObservableElement = Observable & InitOptions;

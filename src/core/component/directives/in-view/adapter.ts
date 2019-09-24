@@ -12,7 +12,9 @@ import IntersectionObserverStrategy from 'core/component/directives/in-view/inte
 import {
 
 	InitOptions,
-	ObservableElement
+	InitObserveOptions,
+	ObservableElement,
+	ObservableThresholdMap
 
 } from 'core/component/directives/in-view/interface';
 
@@ -58,17 +60,24 @@ export default class InViewAdapter {
 	}
 
 	/**
-	 * Starts observing the specified element
-	 *
-	 * @param el
-	 * @param opts
+	 * Starts observing the specified elements
+	 * @param params
 	 */
-	observe(el: HTMLElement, opts: InitOptions): ObservableElement | false {
+	observe(params: CanArray<InitObserveOptions>): false | void {
 		if (!this.adaptee) {
 			return false;
 		}
 
-		return this.adaptee.observe(el, this.normalizeOptions(opts));
+		params = (<InitObserveOptions[]>[]).concat(params);
+
+		for (let i = 0; i < params.length; i++) {
+			const {el, opts} = params[i];
+
+			this.adaptee.observe({
+				el,
+				opts: this.normalizeOptions(opts)
+			});
+		}
 	}
 
 	/**
@@ -159,15 +168,26 @@ export default class InViewAdapter {
 	}
 
 	/**
-	 * Returns an observable element
+	 * Returns a threshold map of specified element
 	 * @param el
 	 */
-	get(el: HTMLElement): CanUndef<ObservableElement> {
+	getThresholdMap(el: HTMLElement): CanUndef<ObservableThresholdMap> {
 		if (!this.adaptee) {
 			return;
 		}
 
-		return this.adaptee.get(el);
+		return this.adaptee.getThresholdMap(el);
+	}
+
+	/**
+	 * Returns an observable element
+	 *
+	 * @param el
+	 * @param threshold
+	 */
+	get(el: HTMLElement, threshold: number): CanUndef<ObservableElement> {
+		const map = this.getThresholdMap(el);
+		return map && map.get(threshold);
 	}
 
 	/**
