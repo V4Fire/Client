@@ -59,7 +59,7 @@ export default class InViewAdapter {
 	}
 
 	/**
-	 * Starts observing the specified elements
+	 * Starts observing the specified element
 	 *
 	 * @param el
 	 * @param params
