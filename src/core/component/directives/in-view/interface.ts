@@ -99,12 +99,7 @@ export interface DirectiveOptions extends VNodeDirective {
 		[key: string]: boolean;
 	};
 
-	value?: ObserveOptions & {threshold?: number} | Function;
-}
-
-export interface InitObserveOptions {
-	el: HTMLElement;
-	opts: InitOptions;
+	value?: CanArray<InitOptions> | Function;
 }
 
 export type RemoveStrategy = 'remove' | 'deactivate';

@@ -12,7 +12,6 @@ import IntersectionObserverStrategy from 'core/component/directives/in-view/inte
 import {
 
 	InitOptions,
-	InitObserveOptions,
 	ObservableElement,
 	ObservableThresholdMap
 
@@ -63,20 +62,15 @@ export default class InViewAdapter {
 	 * Starts observing the specified elements
 	 * @param params
 	 */
-	observe(params: CanArray<InitObserveOptions>): false | void {
+	observe(el: HTMLElement, params: CanArray<InitOptions>): false | void {
 		if (!this.adaptee) {
 			return false;
 		}
 
-		params = (<InitObserveOptions[]>[]).concat(params);
+		params = (<InitOptions[]>[]).concat(params);
 
 		for (let i = 0; i < params.length; i++) {
-			const {el, opts} = params[i];
-
-			this.adaptee.observe({
-				el,
-				opts: this.normalizeOptions(opts)
-			});
+			this.adaptee.observe(el, params[i]);
 		}
 	}
 
@@ -186,8 +180,11 @@ export default class InViewAdapter {
 	 * @param threshold
 	 */
 	get(el: HTMLElement, threshold: number): CanUndef<ObservableElement> {
-		const map = this.getThresholdMap(el);
-		return map && map.get(threshold);
+		if (!this.adaptee) {
+			return;
+		}
+
+		return this.adaptee.getEl(el, threshold);
 	}
 
 	/**

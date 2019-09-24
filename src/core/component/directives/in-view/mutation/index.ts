@@ -12,9 +12,9 @@ import symbolGenerator from 'core/symbol';
 import {
 
 	ObservableElement,
-	InitObserveOptions,
 	ObservableElementRect,
-	ObservableElementsThresholdMap
+	ObservableElementsThresholdMap,
+	InitOptions
 
 } from 'core/component/directives/in-view/interface';
 
@@ -128,9 +128,9 @@ export default class InView extends Super {
 	}
 
 	/** @override */
-	observe({el, opts}: InitObserveOptions): ObservableElement | false {
+	observe(el: HTMLElement, opts: InitOptions): ObservableElement | false {
 		const
-			observable = super.observe({el, opts});
+			observable = super.observe(el, opts);
 
 		if (!observable) {
 			return false;

@@ -12,8 +12,6 @@ import symbolGenerator from 'core/symbol';
 import {
 
 	ObservableElement,
-	InitObserveOptions,
-	ObservableElementsMap,
 	ObservableElementsThresholdMap,
 	InitOptions,
 	ObservableThresholdMap
@@ -125,9 +123,10 @@ export default abstract class AbstractInView {
 
 	/**
 	 * Starts observing of elements
-	 * @param params
+	 * @param el
+	 * @param opts
 	 */
-	observe({el, opts}: InitObserveOptions): ObservableElement | false {
+	observe(el: HTMLElement, opts: InitOptions): ObservableElement | false {
 		if (this.getEl(el, opts.threshold)) {
 			return false;
 		}
