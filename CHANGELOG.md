@@ -16,7 +16,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### :boom: Breaking Change
 
 * Removed `once` modifier from `in-view` directive
-* Remove `timeout` property from `in-view` directive options
+* Removed `timeout` property from `in-view` directive options
 
 ### :rocket: New Feature
 
