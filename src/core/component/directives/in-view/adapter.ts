@@ -192,14 +192,6 @@ export default class InViewAdapter {
 	 * @param opts
 	 */
 	protected normalizeOptions(opts: InitOptions): InitOptions {
-		// tslint:disable: deprecation
-
-		if (opts.timeout) {
-			opts.delay = opts.timeout;
-		}
-
-		// tslint:enable: deprecation
-
 		return opts;
 	}
 }

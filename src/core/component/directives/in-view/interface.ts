@@ -40,11 +40,6 @@ export interface ObserveOptions {
 	delay?: number;
 
 	/**
-	 * @deprecated use delay param instead, timeout will be removed after beta ends
-	 */
-	timeout?: number;
-
-	/**
 	 * How an element should be deactivated after he was seen (only if once is set to true)
 	 *
 	 *   *) remove - element will be removed from inView directive
