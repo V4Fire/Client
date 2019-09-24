@@ -11,9 +11,9 @@ import symbolGenerator from 'core/symbol';
 
 import {
 
+	InitOptions,
 	ObservableElement,
 	ObservableElementsThresholdMap,
-	InitOptions,
 	ObservableThresholdMap
 
 } from 'core/component/directives/in-view/interface';

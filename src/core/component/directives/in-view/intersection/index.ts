@@ -9,7 +9,7 @@
 import symbolGenerator from 'core/symbol';
 
 import { ObservableElement, IntersectionObserverOptions } from 'core/component/directives/in-view/interface';
-import { hasIntersection, supportsDelay } from 'core/component/directives/in-view/intersection/helpers';
+import { hasIntersection } from 'core/component/directives/in-view/intersection/helpers';
 
 import Super from 'core/component/directives/in-view/super';
 
@@ -34,11 +34,6 @@ export default class InView extends Super {
 	 * Contains IntersectionObserver instances
 	 */
 	protected readonly observers: Dictionary<IntersectionObserver> = {};
-
-	/**
-	 * True if IntersectionObserver is supports delay property
-	 */
-	protected readonly supportsDelay: boolean = supportsDelay();
 
 	/**
 	 * Initializes an observer
@@ -74,8 +69,8 @@ export default class InView extends Super {
 	 *   *) delay
 	 *   *) trackVisibility
 	 */
-	protected getHash({threshold, delay, trackVisibility}: IntersectionObserverOptions): string {
-		return `${threshold.toFixed(2)}${Math.floor(delay || 0)}${Boolean(trackVisibility)}`;
+	protected getHash({threshold, trackVisibility}: IntersectionObserverOptions): string {
+		return `${threshold.toFixed(2)}${Boolean(trackVisibility)}`;
 	}
 
 	/**
@@ -86,12 +81,11 @@ export default class InView extends Super {
 	 */
 	protected createObserver(opts: IntersectionObserverOptions, hash: string): IntersectionObserver {
 		const
-			root = Object.isFunction(opts.root) ? opts.root() : opts.root;
+			root = Object.isFunction(opts.root) ? opts.root() : opts.root,
+			observerOpts = {...opts, root};
 
-		return this.observers[hash] = new IntersectionObserver(this.onIntersects.bind(this, opts.threshold), {
-			...opts,
-			root
-		});
+		delete observerOpts.delay;
+		return this.observers[hash] = new IntersectionObserver(this.onIntersects.bind(this, opts.threshold), observerOpts);
 	}
 
 	/**
@@ -126,7 +120,7 @@ export default class InView extends Super {
 	 */
 	protected onObservableIn(observable: ObservableElement): void {
 		const
-			{async: $a, supportsDelay} = this;
+			{async: $a} = this;
 
 		const asyncOptions = {
 			group: 'inView',
@@ -138,13 +132,7 @@ export default class InView extends Super {
 			observable.onEnter(observable);
 		}
 
-		if (supportsDelay) {
-			this.call(observable);
-
-		} else {
-			$a.setTimeout(() => this.call(observable), observable.delay || 0, asyncOptions);
-		}
-
+		$a.setTimeout(() => this.call(observable), observable.delay || 0, asyncOptions);
 		observable.isLeaving = true;
 	}
 
@@ -154,7 +142,7 @@ export default class InView extends Super {
 	 */
 	protected onObservableOut(observable: ObservableElement): void {
 		const
-			{async: $a, supportsDelay} = this;
+			{async: $a} = this;
 
 		const asyncOptions = {
 			group: 'inView',
@@ -166,10 +154,7 @@ export default class InView extends Super {
 			observable.onLeave(observable);
 		}
 
-		if (!supportsDelay) {
-			$a.clearAll(asyncOptions);
-		}
-
+		$a.clearAll(asyncOptions);
 		observable.isLeaving = false;
 	}
 }
