@@ -164,7 +164,7 @@ export default class InViewAdapter {
 	}
 
 	/**
-	 * Returns a threshold map of specified element
+	 * Returns a threshold map of the specified element
 	 * @param el
 	 */
 	getThresholdMap(el: HTMLElement): CanUndef<ObservableThresholdMap> {
