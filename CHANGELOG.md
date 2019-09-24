@@ -11,6 +11,17 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-beta.187 (2019-09-24)
+
+#### :boom: Breaking Change
+
+* Removed `once` modifier from `in-view` directive
+* Removed `timeout` property from `in-view` directive options
+
+### :rocket: New Feature
+
+* [Added multiply options support for `in-view` directive](https://github.com/V4Fire/Client/pull/129)
+
 ## v3.0.0-beta.186 (2019-09-21)
 
 #### :bug: Bug Fix
