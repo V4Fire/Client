@@ -117,7 +117,7 @@ export default abstract class AbstractInView {
 		}
 
 		if (observable.once) {
-			this.stopObserve(observable.node);
+			this.stopObserve(observable.node, observable.threshold);
 		}
 	}
 
@@ -146,7 +146,9 @@ export default abstract class AbstractInView {
 
 	/**
 	 * Stops observing the specified element
+	 *
 	 * @param el
+	 * @param threshold
 	 */
 	stopObserve(el: HTMLElement, threshold?: number): boolean {
 		const

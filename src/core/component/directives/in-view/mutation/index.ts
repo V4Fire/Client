@@ -149,21 +149,10 @@ export default class InView extends Super {
 		return observable;
 	}
 
-	/**
-	 * Removes an element from observable elements
-	 * @param el
-	 */
-	remove(el: HTMLElement): boolean {
-		return this.getElMap(el).delete(el);
-	}
-
-	/**
-	 * Stops observing the specified element
-	 * @param el
-	 */
-	stopObserve(el: HTMLElement): boolean {
+	/** @override */
+	stopObserve(el: HTMLElement, threshold?: number): boolean {
 		const
-			res = super.stopObserve(el);
+			res = super.stopObserve(el, threshold);
 
 		if (!this.pollingElements.has(el)) {
 			this.recalculateDeffer();
