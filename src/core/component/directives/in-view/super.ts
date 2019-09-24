@@ -249,7 +249,7 @@ export default abstract class AbstractInView {
 	}
 
 	/**
-	 * Puts an observable element in specified map
+	 * Puts an observable element in the specified map
 	 *
 	 * @param map
 	 * @param observable
