@@ -11,6 +11,13 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-beta.188 (2019-09-25)
+
+#### :bug: Bug Fix
+
+* Fixed `iStaticPage.setPageTitle`
+* Fixed collision of events with `functional` and `composite` components
+
 ## v3.0.0-beta.187 (2019-09-24)
 
 #### :boom: Breaking Change
