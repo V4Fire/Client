@@ -129,10 +129,16 @@ export default abstract class iStaticPage<
 			return;
 		}
 
-		const div = document.createElement('div');
-		div.innerHTML = value;
+		const
+			div = Object.assign(document.createElement('div'), {innerHTML: value}),
+			title = div.textContent || '';
 
-		document.title = div.textContent || '';
+		// Fix strange Chrome bug
+		// tslint:disable-next-line:no-irregular-whitespace
+		document.title = `${title} `;
+		document.title = title;
+
+		this.field.set('pageTitleStore', document.title);
 	}
 
 	/**
