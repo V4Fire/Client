@@ -111,7 +111,16 @@ export function patchVNode(vnode: VNode, ctx: ComponentInterface, renderCtx: Ren
 		}
 
 		vData.directives = data.directives;
-		vData.on = data.nativeOn;
+
+		const
+			on = vData.on = vData.on || {};
+
+		if (data.nativeOn) {
+			for (let o = data.nativeOn, keys = Object.keys(o), i = 0; i < keys.length; i++) {
+				const key = keys[i];
+				on[key] = (<Function[]>[]).concat(on[key] || [], o[key] || []);
+			}
+		}
 
 		// Reference to the element
 
