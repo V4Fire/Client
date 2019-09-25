@@ -138,7 +138,7 @@ export default abstract class iStaticPage<
 		document.title = `${title} `;
 		document.title = title;
 
-		this.field.set('pageTitleStore', document.title);
+		this.field.set('pageTitleStore', title);
 	}
 
 	/**
