@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-beta.189 (2019-09-26)
+
+#### :house: Internal
+
+* [b-slider `optionKey` property is now able to be a function](https://github.com/V4Fire/Client/pull/131)
+
 ## v3.0.0-beta.188 (2019-09-25)
 
 #### :bug: Bug Fix
