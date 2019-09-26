@@ -17,6 +17,10 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 * [Removed function as a value support for `in-view` directive](https://github.com/V4Fire/Client/pull/130)
 
+#### :bug: Bug Fix
+
+* Fixed `watchParams` type `core/component/decorators/base`
+
 #### :house: Internal
 
 * [Added `in-view` directive value validator](https://github.com/V4Fire/Client/pull/130)
