@@ -20,6 +20,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### :house: Internal
 
 * [Added `in-view` directive value validator](https://github.com/V4Fire/Client/pull/130)
+* [b-slider `optionKey` property is now able to be a function](https://github.com/V4Fire/Client/pull/131)
 
 ## v3.0.0-beta.188 (2019-09-25)
 

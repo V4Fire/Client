@@ -138,8 +138,8 @@ export default class bSlider<T extends object = Dictionary> extends iData<T> {
 	/**
 	 * Option unique key (for v-for)
 	 */
-	@prop({type: String, required: false})
-	readonly optionKey?: string;
+	@prop({type: [String, Function], required: false})
+	readonly optionKey?: string | ((el: unknown, i: number) => string);
 
 	/**
 	 * Option component props
@@ -364,6 +364,18 @@ export default class bSlider<T extends object = Dictionary> extends iData<T> {
 		}
 
 		return false;
+	}
+
+	/**
+	 * Generates or returns an option key for v-for
+	 *
+	 * @param el
+	 * @param i
+	 */
+	protected getOptionKey(el: unknown, i: number): CanUndef<string> {
+		return Object.isFunction(this.optionKey) ?
+			this.optionKey(el, i) :
+			this.optionKey;
 	}
 
 	/**
