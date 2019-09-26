@@ -94,7 +94,7 @@ export interface DirectiveOptions extends VNodeDirective {
 		[key: string]: boolean;
 	};
 
-	value?: CanArray<InitOptions> | Function;
+	value?: CanArray<InitOptions>;
 }
 
 export type RemoveStrategy = 'remove' | 'deactivate';

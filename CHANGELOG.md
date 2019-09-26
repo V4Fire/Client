@@ -11,6 +11,16 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-beta.189 (2019-09-26)
+
+#### :boom: Breaking Change
+
+* [Removed function as value support for `in-view` directive](https://github.com/V4Fire/Client/pull/130)
+
+#### :house: Internal
+
+* [Added `in-view` directive value validator](https://github.com/V4Fire/Client/pull/130)
+
 ## v3.0.0-beta.188 (2019-09-25)
 
 #### :bug: Bug Fix
