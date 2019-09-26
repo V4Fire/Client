@@ -15,7 +15,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :boom: Breaking Change
 
-* [Removed function as value support for `in-view` directive](https://github.com/V4Fire/Client/pull/130)
+* [Removed function as a value support for `in-view` directive](https://github.com/V4Fire/Client/pull/130)
 
 #### :house: Internal
 
