@@ -367,7 +367,7 @@ export default class bSlider<T extends object = Dictionary> extends iData<T> {
 	}
 
 	/**
-	 * Generates or returns an option key
+	 * Generates or returns an option key for v-for
 	 *
 	 * @param el
 	 * @param i
