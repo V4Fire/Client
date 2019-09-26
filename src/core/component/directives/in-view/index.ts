@@ -37,12 +37,6 @@ ComponentDriver.directive('in-view', {
 			InView.setInstance(new Adaptee());
 		}
 
-		if (Object.isFunction(value)) {
-			value = <InitOptions>{
-				callback: value
-			};
-		}
-
 		InView.observe(el, <CanArray<InitOptions>>value);
 	},
 

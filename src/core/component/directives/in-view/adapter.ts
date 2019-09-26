@@ -17,6 +17,8 @@ import {
 
 } from 'core/component/directives/in-view/interface';
 
+import { valueValidator } from 'core/component/directives/in-view/helpers';
+
 export type ObserveStrategy =
 	IntersectionObserverStrategy |
 	MutationObserverStrategy;
@@ -72,7 +74,9 @@ export default class InViewAdapter {
 		params = (<InitOptions[]>[]).concat(params);
 
 		for (let i = 0; i < params.length; i++) {
-			this.adaptee.observe(el, params[i]);
+			if (valueValidator(params[i])) {
+				this.adaptee.observe(el, params[i]);
+			}
 		}
 	}
 
