@@ -7,49 +7,50 @@
  */
 
 $p = {
-	width: 1.2em
-	bgColor: #FFF
-	borderColor: #CCC
-	borderActiveColor: #006358
-	checkedBgColor: #006358
-	checkedIconBgColor: #FFF
 	messageHelpers: true
 }
 
 b-checkbox
-	&__label
-		margin-left 0.2em
+	&__box
+		flex-row center
 
 	&__wrapper
 		align-items center
 
-	&__wrapper:hover &__box
-		background-color darken($p.bgColor, 5%)
+	&__check
+		position absolute
+		display none
 
-	&_focused_true &__box
-		border 1px dotted $p.borderActiveColor
+	createStyles($o)
+		if getField($o, "block.label")
+			&__label
+				interpolate-props(getField($o, "block.label"))
 
-	&_disabled_true &__wrapper
-		opacity 0.5
+		if getField($o, "block.textStyle")
+			&__label
+				text-options(getField($o, "block.textStyle"))
 
-	&__box
-		border 1px solid $p.borderColor
-		background-color $p.bgColor
-		transition 0.1s ease-in background-color
+		for $key in (disabled focused checked)
+			$box = getField($o, path(mods $key true checkbox))
+			$label = getField($o, path(mods $key true label))
 
-	&_checked_true &__wrapper:hover &__box
-		background-color $p.checkedBgColor
+			for $v in (box $box) (label $label)
+				if $v[1]
+					&^[0]_{$key}_true &__{$v[0]}
+						interpolate-props($v[1])
 
-	&_checked_true &__box
-		background-color $p.checkedBgColor
-		border-color $p.borderActiveColor
+		if getField($o, "block.checkbox")
+			&__box
+				interpolate-props(getField($o, "block.checkbox"))
 
-		&::after
-			top ($p.width / 6)em
-			left ($p.width / 2.5)em
+		$checked = getField($o, "mods.checked.true.check")
 
-			size ($p.width / 6)em ($p.width / 2)em
+		if $checked
+			&_checked_true &__check
+				display block
+				interpolate-props($checked)
 
-			border solid $p.checkedIconBgColor
-			border-width 0 2px 2px 0
-			transform rotate(45deg)
+				svg
+					size 100%
+
+	generateRules($p, createStyles)

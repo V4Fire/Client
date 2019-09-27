@@ -27,7 +27,7 @@ b-button
 						&_{$key}
 							& ^[0]
 								&__value
-									$offset = getField($value, "offset")
+									$offset = getField($value, offset)
 
 									if $offset
 										for $key, $val in $offset
@@ -41,7 +41,7 @@ b-button
 				getField($obj, path(exterior $name $path))
 
 			createExterior($k)
-				$extBase = extStyle($k, "base")
+				$extBase = extStyle($k, base)
 				$extBg = extStyle($k, "base.backgroundColor")
 
 				createMod($kk)
