@@ -305,10 +305,19 @@ export function createCompositeElement(vnode: VNode, ctx: ComponentInterface): V
 	newVData.refInFor = vData.refInFor;
 
 	// tslint:disable-next-line:prefer-object-spread
-	newVData.on = Object.assign(newVData.on || {}, vData.nativeOn);
+
+	const
+		on = newVData.on = newVData.on || {};
+
+	if (vData.nativeOn) {
+		for (let o = vData.nativeOn, keys = Object.keys(o), i = 0; i < keys.length; i++) {
+			const key = keys[i];
+			on[key] = (<Function[]>[]).concat(on[key] || [], o[key] || []);
+		}
+	}
+
 	newVData.staticClass = (<string[]>[]).concat(newVData.staticClass || [], vData.staticClass).join(' ');
 	newVData.class = (<string[]>[]).concat(newVData.class || [], vData.class);
-
 	newVData.directives = vData.directives;
 
 	// @ts-ignore

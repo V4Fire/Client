@@ -134,7 +134,7 @@ export type MethodWatchers<CTX extends ComponentInterface = ComponentInterface, 
 
 export interface ComponentMethod<CTX extends ComponentInterface = ComponentInterface, A = unknown, B = A> {
 	watch?: MethodWatchers<CTX, A, B>;
-	watchParams?: WatchOptions;
+	watchParams?: MethodWatcher<CTX, A, B>;
 	hook?: ComponentHooks;
 }
 

@@ -40,11 +40,6 @@ export interface ObserveOptions {
 	delay?: number;
 
 	/**
-	 * @deprecated use delay param instead, timeout will be removed after beta ends
-	 */
-	timeout?: number;
-
-	/**
 	 * How an element should be deactivated after he was seen (only if once is set to true)
 	 *
 	 *   *) remove - element will be removed from inView directive
@@ -99,11 +94,13 @@ export interface DirectiveOptions extends VNodeDirective {
 		[key: string]: boolean;
 	};
 
-	value?: ObserveOptions & {threshold?: number} | Function;
+	value?: CanArray<InitOptions>;
 }
 
 export type RemoveStrategy = 'remove' | 'deactivate';
 export type InitOptions = ObserveOptions & IntersectionObserverOptions;
 export type ObservableElementsMap = Map<HTMLElement, ObservableElement>;
+export type ObservableThresholdMap = Map<number, ObservableElement>;
+export type ObservableElementsThresholdMap = Map<HTMLElement, ObservableThresholdMap>;
 export type ObservableElementRect = ElementRect & {observable: ObservableElement};
 export type ObservableElement = Observable & InitOptions;

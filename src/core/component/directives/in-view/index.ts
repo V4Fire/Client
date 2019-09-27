@@ -13,7 +13,7 @@ import { ComponentDriver } from 'core/component/engines';
 
 import MutationObserverStrategy from 'core/component/directives/in-view/mutation';
 import IntersectionObserverStrategy from 'core/component/directives/in-view/intersection';
-import { DirectiveOptions } from 'core/component/directives/in-view/interface';
+import { DirectiveOptions, InitOptions } from 'core/component/directives/in-view/interface';
 
 export * from 'core/component/directives/in-view/interface';
 export * from 'core/component/directives/in-view/helpers';
@@ -27,7 +27,7 @@ export let
 	InView: InViewAdapter = new InViewAdapter();
 
 ComponentDriver.directive('in-view', {
-	inserted(el: HTMLElement, {value, modifiers}: DirectiveOptions): void {
+	inserted(el: HTMLElement, {value}: DirectiveOptions): void {
 		if (!Adaptee || !value) {
 			return;
 		}
@@ -37,20 +37,7 @@ ComponentDriver.directive('in-view', {
 			InView.setInstance(new Adaptee());
 		}
 
-		if (Object.isFunction(value)) {
-			value = {
-				callback: value
-			};
-		}
-
-		if (modifiers && modifiers.once) {
-			value.once = modifiers.once;
-		}
-
-		InView.observe(el, {
-			threshold: 1,
-			...value
-		});
+		InView.observe(el, <CanArray<InitOptions>>value);
 	},
 
 	unbind(el: HTMLElement): void {

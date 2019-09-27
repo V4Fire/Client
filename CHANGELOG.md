@@ -11,6 +11,39 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-beta.189 (2019-09-26)
+
+#### :boom: Breaking Change
+
+* [Removed function as a value support for `in-view` directive](https://github.com/V4Fire/Client/pull/130)
+
+#### :bug: Bug Fix
+
+* Fixed `watchParams` type `core/component/decorators/base`
+
+#### :house: Internal
+
+* [Added `in-view` directive value validator](https://github.com/V4Fire/Client/pull/130)
+* [b-slider `optionKey` property is now able to be a function](https://github.com/V4Fire/Client/pull/131)
+
+## v3.0.0-beta.188 (2019-09-25)
+
+#### :bug: Bug Fix
+
+* Fixed `iStaticPage.setPageTitle`
+* Fixed collision of events with `functional` and `composite` components
+
+## v3.0.0-beta.187 (2019-09-24)
+
+#### :boom: Breaking Change
+
+* Removed `once` modifier from `in-view` directive
+* Removed `timeout` property from `in-view` directive options
+
+### :rocket: New Feature
+
+* [Added multiply options support for `in-view` directive](https://github.com/V4Fire/Client/pull/129)
+
 ## v3.0.0-beta.186 (2019-09-21)
 
 #### :bug: Bug Fix
