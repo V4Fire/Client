@@ -11,6 +11,21 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-beta.190 (2019-09-27)
+
+#### :boom: Breaking Change
+
+* [Renamed `b-switcher` component to `b-content-switcher`](https://github.com/V4Fire/Client/pull/132/files)
+
+### :rocket: New Feature
+
+* [Added `resolveStrategy` property to `b-content-switcher`](https://github.com/V4Fire/Client/pull/132/files)
+* [Added `syncState` event to `b-slider`](https://github.com/V4Fire/Client/pull/132/files)
+
+#### :bug: Bug Fix
+
+* [Fixed `b-skeleton` params providing to blocks](https://github.com/V4Fire/Client/pull/132/files)
+
 ## v3.0.0-beta.189 (2019-09-26)
 
 #### :boom: Breaking Change
