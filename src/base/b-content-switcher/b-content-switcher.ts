@@ -68,8 +68,8 @@ export default class bContentSwitcher extends iBlock {
 
 	/**
 	 * Resolve strategy
-	 *   *) if "every", then the content will be shown when all of the resolve methods returns true
-	 *   *) if "some", then the content will be shown when at least one of the resolve methods returns true
+	 *   *) if "every", then a content will be shown when all of the resolve methods returns true
+	 *   *) if "some", then a content will be shown when at least one of the resolve methods returns true
 	 */
 	@prop({
 		type: String,

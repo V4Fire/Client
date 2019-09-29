@@ -412,8 +412,7 @@ export default class bSlider<T extends object = Dictionary> extends iData<T> {
 	}
 
 	/**
-	 * Synchronizes the slider state
-	 * (deferred version)
+	 * Synchronizes the slider state (deferred version)
 	 * @emits syncState()
 	 */
 	@watch(['?window:resize', ':updateState'])
