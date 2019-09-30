@@ -37,7 +37,13 @@ export const resolveMethods = {
 	components: true
 };
 
+export const resolveStrategy = {
+	every: true,
+	some: true
+};
+
 export type ResolveMethod = keyof typeof resolveMethods;
+export type ResolveStrategy = keyof typeof resolveStrategy;
 
 /**
  * Validates a "resolve" prop
@@ -48,9 +54,9 @@ export function validateResolve(value: ResolveMethod[]): boolean {
 }
 
 @component()
-export default class bSwitcher extends iBlock {
+export default class bContentSwitcher extends iBlock {
 	/**
-	 * Resolve strategy
+	 * Resolve methods
 	 */
 	@prop({
 		type: Array,
@@ -59,6 +65,19 @@ export default class bSwitcher extends iBlock {
 	})
 
 	readonly resolve?: ResolveMethod[];
+
+	/**
+	 * Resolve strategy
+	 *   *) if "every", then a content will be shown when all of the resolve methods returns true
+	 *   *) if "some", then a content will be shown when at least one of the resolve methods returns true
+	 */
+	@prop({
+		type: String,
+		required: false,
+		validator: (v: string) => resolveStrategy.hasOwnProperty(v)
+	})
+
+	readonly resolveStrategy: ResolveStrategy = 'every';
 
 	/**
 	 * If true, then a content won't be hidden after the state change
@@ -106,7 +125,7 @@ export default class bSwitcher extends iBlock {
 	/**
 	 * Map for ready components
 	 */
-	@system((o: bSwitcher) => observeMap(new Map(), () => o.setSwitchReadiness()))
+	@system((o: bContentSwitcher) => observeMap(new Map(), () => o.setSwitchReadiness()))
 	protected semaphoreReadyMap!: Map<iBlock, boolean>;
 
 	/**
@@ -136,7 +155,7 @@ export default class bSwitcher extends iBlock {
 	/**
 	 * Strategies readiness map
 	 */
-	@system((o: bSwitcher): IsStrategyReadyMap => ({
+	@system((o: bContentSwitcher): IsStrategyReadyMap => ({
 		mutation: () => o.is.mutationReady,
 
 		semaphore: () => {
@@ -155,7 +174,7 @@ export default class bSwitcher extends iBlock {
 	/**
 	 * Is table
 	 */
-	@system((o: bSwitcher): IsTable => ({
+	@system((o: bContentSwitcher): IsTable => ({
 		readyToSwitchStore: false,
 		placeholderHidden: false,
 		mutationReady: false,
@@ -246,13 +265,13 @@ export default class bSwitcher extends iBlock {
 	@hook('mounted')
 	protected setSwitchReadiness(): void {
 		const
-			{is, resolve, resolveOnce} = this;
+			{is, resolve, resolveOnce, resolveStrategy} = this;
 
 		if (resolveOnce && this.isReadyToSwitch) {
 			return;
 		}
 
-		this.isReadyToSwitch = is.manual() || (<ResolveMethod[]>resolve).every((r) => this.isStrategyReady[r]());
+		this.isReadyToSwitch = is.manual() || (<ResolveMethod[]>resolve)[resolveStrategy]((r) => this.isStrategyReady[r]());
 	}
 
 	/**

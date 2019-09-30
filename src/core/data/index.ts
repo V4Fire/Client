@@ -14,6 +14,7 @@ import Then from 'core/then';
 import symbolGenerator from 'core/symbol';
 import Async, { AsyncCbOpts } from 'core/async';
 import IO, { Socket } from 'core/socket';
+import { select, SelectParams } from 'core/object';
 
 import { concatUrls } from 'core/url';
 import { ModelMethods, SocketEvent, ProviderParams, FunctionalExtraProviders, Mocks } from 'core/data/interface';
@@ -141,6 +142,16 @@ export default class Provider {
 	 * Data decoders
 	 */
 	static readonly decoders: DecodersTable = {};
+
+	/**
+	 * Finds an element from an object by the specified params
+	 *
+	 * @param obj
+	 * @param params
+	 */
+	static select<T = unknown>(obj: unknown, params: SelectParams): CanUndef<T> {
+		return select(obj, params);
+	}
 
 	/**
 	 * Request mock objects
@@ -780,6 +791,7 @@ export default class Provider {
 	 */
 	protected setReadonlyParam(key: string, val: unknown): void {
 		Object.defineProperty(this, key, {
+			configurable: true,
 			get: () => val,
 			set: (v) => v
 		});

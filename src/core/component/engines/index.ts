@@ -6,11 +6,11 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-//#unless runtime has zero
+//#if runtime.engine = vue
 export * from 'core/component/engines/vue';
-//#endunless
+//#endif
 
-//#if runtime has zero
+//#if runtime.engine = zero
 // @ts-ignore
 export * from 'core/component/engines/zero';
 //#endif

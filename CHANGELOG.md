@@ -11,6 +11,203 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-beta.190 (2019-09-29)
+
+#### :boom: Breaking Change
+
+* [Renamed `b-switcher` component to `b-content-switcher`](https://github.com/V4Fire/Client/pull/132/files)
+
+### :rocket: New Feature
+
+* [Added `resolveStrategy` property to `b-content-switcher`](https://github.com/V4Fire/Client/pull/132/files)
+* [Added `syncState` event to `b-slider`](https://github.com/V4Fire/Client/pull/132/files)
+
+#### :bug: Bug Fix
+
+* [Fixed `b-skeleton` params providing to blocks](https://github.com/V4Fire/Client/pull/132/files)
+
+#### :house: Internal
+
+* Updated dependencies: webpack@4.41.0, terser-webpack-plugin@2.1.2, ts-loader@6.2.0, merge2@1.3.0, hasha@5.1.0
+
+## v3.0.0-beta.189 (2019-09-26)
+
+#### :boom: Breaking Change
+
+* [Removed function as a value support for `in-view` directive](https://github.com/V4Fire/Client/pull/130)
+
+#### :bug: Bug Fix
+
+* Fixed `watchParams` type `core/component/decorators/base`
+
+#### :house: Internal
+
+* [Added `in-view` directive value validator](https://github.com/V4Fire/Client/pull/130)
+* [b-slider `optionKey` property is now able to be a function](https://github.com/V4Fire/Client/pull/131)
+
+## v3.0.0-beta.188 (2019-09-25)
+
+#### :bug: Bug Fix
+
+* Fixed `iStaticPage.setPageTitle`
+* Fixed collision of events with `functional` and `composite` components
+
+## v3.0.0-beta.187 (2019-09-24)
+
+#### :boom: Breaking Change
+
+* Removed `once` modifier from `in-view` directive
+* Removed `timeout` property from `in-view` directive options
+
+### :rocket: New Feature
+
+* [Added multiply options support for `in-view` directive](https://github.com/V4Fire/Client/pull/129)
+
+## v3.0.0-beta.186 (2019-09-21)
+
+#### :bug: Bug Fix
+
+* Fixed `$refs` patching for functional components
+* Fixed unsafe methods `bSidebar`
+
+#### :house: Internal
+
+* Added preventing for `-webkit-tap-highlight-color` with `bButton`, `bInput`
+
+## v3.0.0-beta.185 (2019-09-18)
+
+#### :rocket: New Feature
+
+* Added `r` function to global Stylus functions
+
+## v3.0.0-beta.184 (2019-09-18)
+
+#### :boom: Breaking Change
+
+* Removed `bUp` component
+* Removed `iRound` trait
+* Removed legacy sizes API
+
+#### :rocket: New Feature
+
+* Added `replaceByRegExp` to `build/stylus/string` API
+
+#### :bug: Bug Fix
+
+* Fixed modifiers inheritance
+
+#### :house: Internal
+
+* Review DS API
+
+## v3.0.0-beta.183 (2019-09-17)
+
+#### :rocket: New Feature
+
+* Added `brokenImg` and `overlayImg` props for `bImage`
+
+#### :bug: Bug Fix
+
+* Fixed `:style` providing
+* Fixed `Sync.object` with null values
+* Fixed router synchronizing with null values `bRouter`, `State`
+* [Fixed `saveABT` didn't save the value received from the adapter if the adapter was an asynchronous function](https://github.com/V4Fire/Client/pull/123)
+
+## v3.0.0-beta.182 (2019-09-16)
+
+#### :bug: Bug Fix
+
+* [Fixed `bSlider` alignment](https://github.com/V4Fire/Client/pull/122)
+
+## v3.0.0-beta.181 (2019-09-16)
+
+#### :house: Internal
+
+* Design System: [API refactoring](https://github.com/V4Fire/Client/pull/121)
+
+## v3.0.0-beta.180 (2019-09-15)
+
+#### :house: Internal
+
+* Design System: improved error handling
+
+## v3.0.0-beta.179 (2019-09-13)
+
+#### :house: Internal
+
+* Updated design system
+
+## v3.0.0-beta.178 (2019-09-13)
+
+#### :bug: Bug Fix
+
+* Fixed providing of WebPack globals
+
+## v3.0.0-beta.177 (2019-09-13)
+
+#### :rocket: New Feature
+
+* Added `preset` field `iBlock`
+* Merged [Design System branch](https://github.com/V4Fire/Client/pull/88/)
+
+#### :nail_care: Polish
+
+* Optimized component initializing
+
+#### :house: Internal
+
+* Updated dependencies: terser-webpack-plugin@2.0.1, node-object-hash@2.0.0, webpack@4.40.1, ts-loader@6.1.0
+
+## v3.0.0-beta.176 (2019-09-12)
+
+#### :bug: Bug Fix
+
+* Fixed accessors inheritance
+
+## v3.0.0-beta.175 (2019-09-12)
+
+#### :rocket: New Feature
+
+* Added `engine` parameter to the config
+* Added `runtime.engine` parameter to the config
+
+#### :bug: Bug Fix
+
+* Fixed native events with functional components
+* Fixed attr props normalizing
+* Fixed styles with undefined `component/engine/zero`
+
+#### :nail_care: Polish
+
+* Optimized component initializing
+
+## v3.0.0-beta.174 (2019-09-12)
+
+#### :bug: Bug Fix
+
+* Fixed `ProvidedDataStore` initializing `iStaticPage`
+
+## v3.0.0-beta.173 (2019-09-11)
+
+#### :rocket: New Feature
+
+* [Added global store for data providers](https://github.com/V4Fire/Client/pull/109)
+
+#### :boom: Breaking Change
+
+* Removed `bProgress`
+
+## v3.0.0-beta.172 (2019-09-10)
+
+#### :rocket: New Feature
+
+* Added `scrollExterior` prop to `bSelect`, `bTextarea`
+* Improved `Option` parameters from `bSelect`, `bCheckboxGroup`, `bList`
+
+#### :house: Internal
+
+* Refactoring `bList`, `bScroll`, `bSelect`, `bTextarea`, `bCheckboxGroup`
+
 ## v3.0.0-beta.171 (2019-09-10)
 
 #### :bug: Bug Fix

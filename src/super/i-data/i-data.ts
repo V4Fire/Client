@@ -25,7 +25,6 @@ import Provider, {
 	Response,
 	ModelMethods,
 	ProviderParams,
-	ExtraProvider,
 	ExtraProviders
 
 } from 'core/data';
@@ -655,6 +654,22 @@ export default abstract class iData<T extends object = Dictionary> extends iMess
 	}
 
 	/**
+	 * Saves the specified data in the root data store
+	 *
+	 * @param data
+	 * @param [key]
+	 */
+	protected saveDataToRootStore(data: unknown, key?: string): void {
+		key = key || this.globalName;
+
+		if (!key) {
+			return;
+		}
+
+		this.r.providerDataStore.set(key, data);
+	}
+
+	/**
 	 * Returns default request parameters for the specified method or false
 	 * @param method
 	 */
@@ -798,7 +813,11 @@ export default abstract class iData<T extends object = Dictionary> extends iMess
 			});
 		}
 
-		return req.then((res) => res.data || undefined);
+		return req.then((res) => {
+			const v = res.data || undefined;
+			this.saveDataToRootStore(v);
+			return v;
+		});
 	}
 
 	/**

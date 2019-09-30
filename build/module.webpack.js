@@ -72,7 +72,8 @@ module.exports = async function ({buildId, plugins}) {
 						replacers: [
 							include('build/replacers/context'),
 							include('build/replacers/super'),
-							include('build/replacers/ts-import')
+							include('build/replacers/ts-import'),
+							include('build/replacers/tests')
 						]
 					})
 				}

@@ -112,7 +112,7 @@
  * @param {...*} args
  */
 - @@ignore
-- template index(block, args) extends ['i-block'].index
+- template index(block) extends ['i-block'].index
 	- block body
 		< ?.${self.name()}
-			+= self[block](args)
+			+= self[block].apply(self, [].slice.call(arguments, 1))

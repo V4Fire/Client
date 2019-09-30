@@ -70,6 +70,12 @@ export default class bSlider<T extends object = Dictionary> extends iData<T> {
 	readonly align: AlignType = 'center';
 
 	/**
+	 * Align the first slide to the left
+	 */
+	@prop(Boolean)
+	readonly alignFirstToStart: boolean = true;
+
+	/**
 	 * How much does the shift along the X axis correspond to a finger movement
 	 */
 	@prop({type: Number, validator: (v: number) => v.isPositiveBetweenZeroAndOne()})
@@ -106,12 +112,6 @@ export default class bSlider<T extends object = Dictionary> extends iData<T> {
 	readonly swipeToleranceY: number = 50;
 
 	/**
-	 * Align the first slide to the left
-	 */
-	@prop(Boolean)
-	readonly alignFirstToStart: boolean = true;
-
-	/**
 	 * Initial component options
 	 */
 	@prop(Array)
@@ -138,8 +138,8 @@ export default class bSlider<T extends object = Dictionary> extends iData<T> {
 	/**
 	 * Option unique key (for v-for)
 	 */
-	@prop({type: String, required: false})
-	readonly optionKey?: string;
+	@prop({type: [String, Function], required: false})
+	readonly optionKey?: string | ((el: unknown, i: number) => string);
 
 	/**
 	 * Option component props
@@ -304,63 +304,6 @@ export default class bSlider<T extends object = Dictionary> extends iData<T> {
 	} = {};
 
 	/**
-	 * Synchronizes the slider state
-	 */
-	@hook('mounted')
-	@wait('loading')
-	syncState(): CanPromise<void> {
-		const
-			{view, content} = this.$refs;
-
-		if (!view || !content || !this.isSlider) {
-			return;
-		}
-
-		const
-			{children} = content;
-
-		this.viewRect = view.getBoundingClientRect();
-		this.length = children.length;
-		this.slideRects = [];
-
-		for (let i = 0; i < children.length; i++) {
-			const
-				child = <HTMLElement>children[i];
-
-			this.slideRects[i] = Object.assign(child.getBoundingClientRect(), {
-				offsetLeft: child.offsetLeft
-			});
-		}
-	}
-
-	/**
-	 * Synchronizes the slider state
-	 * (deferred version)
-	 */
-	@watch(['?window:resize', ':updateState'])
-	@wait('ready')
-	async syncStateDefer(): Promise<void> {
-		if (!this.isSlider) {
-			return;
-		}
-
-		const
-			{content} = this;
-
-		if (!content) {
-			return;
-		}
-
-		try {
-			await this.async.sleep(50, {label: $$.syncStateAsync, join: true});
-
-			this.syncState();
-			content.style.setProperty('--offset', `${this.currentOffset}px`);
-
-		} catch {}
-	}
-
-	/**
 	 * Switches to the specified slide
 	 *
 	 * @param index - slide index
@@ -421,6 +364,77 @@ export default class bSlider<T extends object = Dictionary> extends iData<T> {
 		}
 
 		return false;
+	}
+
+	/**
+	 * Generates or returns an option key for v-for
+	 *
+	 * @param el
+	 * @param i
+	 */
+	protected getOptionKey(el: unknown, i: number): CanUndef<string> {
+		return Object.isFunction(this.optionKey) ?
+			this.optionKey(el, i) :
+			this.optionKey;
+	}
+
+	/**
+	 * Synchronizes the slider state
+	 */
+	@hook('mounted')
+	@wait('loading')
+	protected syncState(): CanPromise<void> {
+		const
+			{view, content} = this.$refs;
+
+		if (!view || !content || !this.isSlider) {
+			return;
+		}
+
+		const
+			{children} = content;
+
+		this.viewRect = view.getBoundingClientRect();
+		this.length = children.length;
+		this.slideRects = [];
+
+		for (let i = 0; i < children.length; i++) {
+			const
+				child = <HTMLElement>children[i];
+
+			this.slideRects[i] = Object.assign(child.getBoundingClientRect(), {
+				offsetLeft: child.offsetLeft
+			});
+		}
+
+		this.setMod('swipe', true);
+		content.style.setProperty('--offset', `${this.currentOffset}px`);
+	}
+
+	/**
+	 * Synchronizes the slider state (deferred version)
+	 * @emits syncState()
+	 */
+	@watch(['?window:resize', ':updateState'])
+	@wait('ready')
+	protected async syncStateDefer(): Promise<void> {
+		if (!this.isSlider) {
+			return;
+		}
+
+		const
+			{content} = this;
+
+		if (!content) {
+			return;
+		}
+
+		try {
+			await this.async.sleep(50, {label: $$.syncStateDefer, join: true});
+			this.syncState();
+			this.emit('syncState');
+
+		} catch {}
 	}
 
 	/** @override */

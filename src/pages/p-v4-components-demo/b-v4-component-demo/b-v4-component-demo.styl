@@ -52,6 +52,20 @@ b-v4-component-demo extends i-block
 			color #FFF
 			background-color #008000
 
+		&_highlighted_true
+			position relative
+
+			&:after
+				content ""
+
+				absolute top -2px right -2px
+
+				display block
+				size 8px
+
+				border-radius 100%
+				background-color #FF9300
+
 	&__mod-value + &__mod-value
 		margin-left 5px
 

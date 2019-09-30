@@ -47,8 +47,6 @@
 				.
 
 				< .&__wrapper
-					< .&__info-cell.&__progress
-						< b-progress ref = progress
 
 				< .&__controls
 					< .&__control v-if = tools.rotate.left | @click = rotate('left')

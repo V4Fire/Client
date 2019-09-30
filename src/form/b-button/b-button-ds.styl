@@ -1,0 +1,84 @@
+/*!
+ * V4Fire Client Core
+ * https://github.com/V4Fire/Client
+ *
+ * Released under the MIT license
+ * https://github.com/V4Fire/Client/blob/master/LICENSE
+ */
+
+$p = {
+	messageHelpers: true
+	sizeHelpers: false
+}
+
+b-button
+	&__cell
+		align-self center
+
+	createStyles($obj)
+		&^[0]
+			for $key, $val in getDSOptions(rounding)
+				&_rounding_{$key} ^[0]__button
+					border-radius $val
+
+			if getField($obj, "mods.size")
+				&_size
+					for $key, $value in getField($obj, "mods.size")
+						&_{$key}
+							& ^[0]
+								&__value
+									$offset = getField($value, "offset")
+
+									if $offset
+										for $key, $val in $offset
+											padding-{$key} $val
+
+								&__button
+									text-options(getField($value, textStyle))
+									line-height getField($value, lineHeight)
+
+			extStyle($name, $path)
+				getField($obj, path(exterior $name $path))
+
+			createExterior($k)
+				$extBase = extStyle($k, "base")
+				$extBg = extStyle($k, "base.backgroundColor")
+
+				createMod($kk)
+					$mod = extStyle($k, path(mods $kk)) || getField($obj, path(mods $kk))
+					interpolate-props($mod)
+
+				for $key in (disabled focused)
+					&^[0]_{$key}_true
+						& ^[0]__button
+							createMod(path($key true))
+
+				& ^[0]__button
+					if $extBase
+						interpolate-props($extBase)
+
+					for $key in (hover active)
+						&:{$key}
+							createMod(path($key true))
+
+			if getField($obj, exterior)
+				for $key, $val in getField($obj, exterior)
+					&_exterior_{$key}
+						createExterior($key)
+
+			@supports (-ms-accelerator true)
+				& ^[0]__button
+					border-width 0.1em
+
+			& ^[0]__button
+				transition color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out
+				white-space nowrap
+
+			for $key in (post-icon pre-icon)
+				$params = getField($obj, path(mods camelize($key) true))
+
+				if $params
+					& ^[0]__{$key}
+						margin-{$key == "pre-icon" ? right : left} getField($params, offset)
+
+	generateRules($p, createStyles)

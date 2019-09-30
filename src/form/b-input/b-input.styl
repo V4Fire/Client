@@ -8,11 +8,9 @@
 
 @import "super/i-input/i-input.styl"
 @import "traits/i-width/i-width.styl"
-@import "traits/i-size/i-size.styl"
 
 $p = {
 	widthHelpers: true
-	sizeHelpers: true
 	progressHelpers: true
 	accessHelpers: true
 	visibleHelpers: true
@@ -21,7 +19,6 @@ $p = {
 b-input extends i-input
 	// @stlint-disable
 	i-width({helpers: $p.widthHelpers})
-	i-size({helpers: $p.sizeHelpers})
 	// @stlint-enable
 
 	display inline-block
@@ -55,6 +52,9 @@ b-input extends i-input
 		&::-ms-clear
 		// @stlint-enable
 			display none
+
+		&:focus
+			-webkit-tap-highlight-color transparent
 
 		&:focus
 		&:valid

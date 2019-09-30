@@ -13,7 +13,6 @@ import iProgress from 'traits/i-progress/i-progress';
 import iVisible from 'traits/i-visible/i-visible';
 
 import iMessage, { component, prop, wait, hook, ModsDecl } from 'super/i-message/i-message';
-
 export * from 'super/i-message/i-message';
 
 export type SizeType =
@@ -70,6 +69,18 @@ export default class bImage extends iMessage implements iProgress, iVisible {
 	 */
 	@prop({type: Number, required: false})
 	readonly ratio?: number;
+
+	/**
+	 * Parameters for a overlay image
+	 */
+	@prop({type: [String, Object], required: false})
+	readonly overlayImg?: string | Dictionary;
+
+	/**
+	 * Parameters for a broken image
+	 */
+	@prop({type: [String, Object], required: false})
+	readonly brokenImg?: string | Dictionary;
 
 	/** @inheritDoc */
 	static readonly mods: ModsDecl = {

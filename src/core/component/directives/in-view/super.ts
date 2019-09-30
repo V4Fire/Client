@@ -11,9 +11,10 @@ import symbolGenerator from 'core/symbol';
 
 import {
 
+	InitOptions,
 	ObservableElement,
-	ObservableElementsMap,
-	InitOptions
+	ObservableElementsThresholdMap,
+	ObservableThresholdMap
 
 } from 'core/component/directives/in-view/interface';
 
@@ -24,12 +25,12 @@ export default abstract class AbstractInView {
 	/**
 	 * Contains observable elements
 	 */
-	protected readonly elements: ObservableElementsMap = new Map();
+	protected readonly elements: ObservableElementsThresholdMap = new Map();
 
 	/**
 	 * Queue of elements that wait to become observable
 	 */
-	protected readonly awaitingElements: ObservableElementsMap = new Map();
+	protected readonly awaitingElements: ObservableElementsThresholdMap = new Map();
 
 	/**
 	 * Async instance
@@ -64,20 +65,33 @@ export default abstract class AbstractInView {
 	 * @param [group]
 	 */
 	setGroupState(isDeactivated: boolean, group?: string): void {
-		this.maps().forEach((el) => {
-			if (!group || el.group !== group) {
-				return;
-			}
+		this.maps().forEach((map) => {
+			map.forEach((el) => {
+				if (!group || el.group !== group) {
+					return;
+				}
 
-			el.isDeactivated = isDeactivated;
+				el.isDeactivated = isDeactivated;
+			});
 		});
 	}
 
 	/**
 	 * Returns an observable element parameters
 	 * @param el
+	 * @param threshold
 	 */
-	get(el: HTMLElement): CanUndef<ObservableElement> {
+	getEl(el: HTMLElement, threshold: number): CanUndef<ObservableElement> {
+		const map = this.getThresholdMap(el);
+		return map && map.get(threshold);
+	}
+
+	/**
+	 * Returns a threshold map of element
+	 *
+	 * @param el
+	 */
+	getThresholdMap(el: HTMLElement): CanUndef<ObservableThresholdMap> {
 		return this.getElMap(el).get(el);
 	}
 
@@ -103,18 +117,17 @@ export default abstract class AbstractInView {
 		}
 
 		if (observable.once) {
-			this.stopObserve(observable.node);
+			this.stopObserve(observable.node, observable.threshold);
 		}
 	}
 
 	/**
-	 * Starts observing of elements
-	 *
+	 * Starts observe an element
 	 * @param el
 	 * @param opts
 	 */
 	observe(el: HTMLElement, opts: InitOptions): ObservableElement | false {
-		if (this.get(el)) {
+		if (this.getEl(el, opts.threshold)) {
 			return false;
 		}
 
@@ -122,10 +135,10 @@ export default abstract class AbstractInView {
 			observable = this.createObservable(el, opts);
 
 		if (observable.wait) {
-			this.awaitingElements.set(el, observable);
+			this.putInMap(this.awaitingElements, observable);
 
 		} else {
-			this.initObserve(el, observable);
+			this.initObserve(observable);
 		}
 
 		return observable;
@@ -133,9 +146,77 @@ export default abstract class AbstractInView {
 
 	/**
 	 * Stops observing the specified element
+	 *
 	 * @param el
+	 * @param threshold
 	 */
-	stopObserve(el: HTMLElement): boolean {
+	stopObserve(el: HTMLElement, threshold?: number): boolean {
+		const
+			thresholdMap = this.getThresholdMap(el);
+
+		const stopObserve = (o) => {
+			this.clearAllAsync(o);
+
+			if (o.removeStrategy === 'remove') {
+				return this.remove(el, threshold);
+			}
+
+			o.isDeactivated = true;
+			return true;
+		};
+
+		if (thresholdMap && threshold === undefined) {
+			thresholdMap.forEach((observable) => {
+				stopObserve(observable);
+			});
+
+			return true;
+		}
+
+		if (thresholdMap && threshold !== undefined) {
+			const
+				observable = thresholdMap.get(threshold);
+
+			if (!observable) {
+				return false;
+			}
+
+			return stopObserve(observable);
+		}
+
+		return false;
+	}
+
+	/**
+	 * Removes an element from observable elements
+	 * @param el
+	 * @param [threshold]
+	 */
+	remove(el: HTMLElement, threshold?: number): boolean {
+		const
+			map = this.getElMap(el),
+			thresholdMap = this.getThresholdMap(el);
+
+		if (thresholdMap && threshold === undefined) {
+			thresholdMap.forEach((observable) => {
+				this.unobserve(observable);
+			});
+
+			return map.delete(el);
+		}
+
+		if (thresholdMap && threshold !== undefined) {
+			const
+				observable = thresholdMap.get(threshold);
+
+			if (!observable) {
+				return false;
+			}
+
+			this.unobserve(observable);
+			return thresholdMap.delete(threshold);
+		}
+
 		return false;
 	}
 
@@ -160,9 +241,41 @@ export default abstract class AbstractInView {
 	}
 
 	/**
+	 * Creates a threshold map
+	 * @param observable
+	 */
+	protected createThresholdMap(observable: ObservableElement): ObservableThresholdMap {
+		return new Map([[observable.threshold, observable]]);
+	}
+
+	/**
+	 * Puts an observable element in the specified map
+	 *
+	 * @param map
+	 * @param observable
+	 */
+	protected putInMap(
+		map: ObservableElementsThresholdMap,
+		observable: ObservableElement
+	): boolean {
+		const
+			thresholdMap = map.get(observable.node);
+
+		if (thresholdMap && !thresholdMap.has(observable.threshold)) {
+			return Boolean(thresholdMap.set(observable.threshold, observable));
+		}
+
+		if (!thresholdMap) {
+			return Boolean(map.set(observable.node, this.createThresholdMap(observable)));
+		}
+
+		return false;
+	}
+
+	/**
 	 * All maps combined into one
 	 */
-	protected maps(): ObservableElementsMap {
+	protected maps(): ObservableElementsThresholdMap {
 		return new Map([
 			...this.elements,
 			...this.awaitingElements
@@ -173,7 +286,7 @@ export default abstract class AbstractInView {
 	 * Returns a map which contains an element
 	 * @param el
 	 */
-	protected getElMap(el: HTMLElement): Map<HTMLElement, ObservableElement> {
+	protected getElMap(el: HTMLElement): ObservableElementsThresholdMap {
 		return this.elements.has(el) ? this.elements : this.awaitingElements;
 	}
 
@@ -184,16 +297,23 @@ export default abstract class AbstractInView {
 		const
 			{awaitingElements} = this;
 
-		awaitingElements.forEach((observable, el) => {
-			const
-				isResolved = Boolean(observable.wait && observable.wait());
+		awaitingElements.forEach((map, node) => {
+			map.forEach((observable, threshold) => {
+				const
+					isResolved = Boolean(observable.wait && observable.wait());
 
-			if (!isResolved) {
-				return;
+				if (!isResolved) {
+					return;
+				}
+
+				this.initObserve(observable);
+				map.delete(threshold);
+			});
+
+			if (map.size === 0) {
+				awaitingElements.delete(node);
 			}
 
-			this.initObserve(el, observable);
-			awaitingElements.delete(el);
 		});
 	}
 
@@ -214,10 +334,17 @@ export default abstract class AbstractInView {
 	/**
 	 * Initializes observing for the specified element
 	 *
-	 * @param el
 	 * @param observable
 	 */
-	protected initObserve(el: HTMLElement, observable: ObservableElement): CanUndef<ObservableElement> {
+	protected initObserve(observable: ObservableElement): CanUndef<ObservableElement> {
 		return undefined;
+	}
+
+	/**
+	 * Removes element from observer data
+	 * @param observable
+	 */
+	protected unobserve(observable: ObservableElement): boolean {
+		return false;
 	}
 }

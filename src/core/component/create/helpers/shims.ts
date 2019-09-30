@@ -75,16 +75,22 @@ export function patchRefs(ctx: ComponentInterface): void {
 
 				for (let i = 0; i < el.length; i++) {
 					const
-						val = el[i],
-						component = (<ComponentElement>val).component;
+						listEl = el[i];
 
-					if (component && (<ComponentInterface>component).$el === val) {
-						needRewrite = true;
-						arr.push(component);
+					let
+						component;
+
+					if (listEl instanceof Node) {
+						component = (<ComponentElement>listEl).component;
+						needRewrite = Boolean(component) && component.$el === listEl;
 
 					} else {
-						arr.push(val);
+						const {$el} = <ComponentInterface>listEl;
+						component = $el.component;
+						needRewrite = listEl !== component;
 					}
+
+					arr.push(needRewrite ? component : listEl);
 				}
 
 				if (needRewrite) {
@@ -97,10 +103,21 @@ export function patchRefs(ctx: ComponentInterface): void {
 				}
 
 			} else {
-				const
-					component = (<ComponentElement>el).component;
+				let
+					component,
+					needRewrite = false;
 
-				if (component && (<ComponentInterface>component).$el === el) {
+				if (el instanceof Node) {
+					component = (<ComponentElement>el).component;
+					needRewrite = Boolean(component) && component.$el === el;
+
+				} else {
+					const {$el} = <ComponentInterface>el;
+					component = $el.component;
+					needRewrite = el !== component;
+				}
+
+				if (needRewrite) {
 					Object.defineProperty($refs, key, {
 						configurable: true,
 						enumerable: true,

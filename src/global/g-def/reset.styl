@@ -16,11 +16,13 @@ reset-forms()
 	// styling of `select`, unless a `border` property is set.
 	button, input, optgroup, select, textarea
 		margin 0 // Fix margins in FF 4+, Safari, and Chrome.
+		padding 0
 		font inherit // Correct font properties not being inherited.
 		color inherit // Correct color not being inherited.
 
 	button // Fix `overflow` set to `hidden` in IE 8/9/10/11.
 		overflow visible
+		background none
 
 	button, select // Consistent text-transform across browsers.
 		text-transform none
@@ -82,6 +84,7 @@ reset-input()
 	white-space normal
 
 	&:focus
+		-webkit-tap-highlight-color transparent
 		outline 0
 
 html, body, div, span, applet, object, iframe,

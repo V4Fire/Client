@@ -12,11 +12,14 @@ import IntersectionObserverStrategy from 'core/component/directives/in-view/inte
 import {
 
 	InitOptions,
-	ObservableElement
+	ObservableElement,
+	ObservableThresholdMap
 
 } from 'core/component/directives/in-view/interface';
 
-export type Observers =
+import { valueValidator } from 'core/component/directives/in-view/helpers';
+
+export type ObserveStrategy =
 	IntersectionObserverStrategy |
 	MutationObserverStrategy;
 
@@ -24,7 +27,7 @@ export default class InViewAdapter {
 	/**
 	 * Observer adaptee
 	 */
-	protected adaptee?: Observers;
+	protected adaptee?: ObserveStrategy;
 
 	/**
 	 * True if an adapter instance has an adaptee
@@ -37,7 +40,7 @@ export default class InViewAdapter {
 	 * Sets an adaptee
 	 * @param instance
 	 */
-	setInstance(instance: Observers): void {
+	setInstance(instance: ObserveStrategy): void {
 		this.adaptee = instance;
 	}
 
@@ -45,7 +48,7 @@ export default class InViewAdapter {
 	 * Returns true if an adaptee type is 'mutation'
 	 * @param adaptee
 	 */
-	isMutation(adaptee: Observers): adaptee is MutationObserverStrategy {
+	isMutation(adaptee: ObserveStrategy): adaptee is MutationObserverStrategy {
 		return adaptee.type === 'mutation';
 	}
 
@@ -53,7 +56,7 @@ export default class InViewAdapter {
 	 * Returns true if an adaptee type is 'observer'
 	 * @param adaptee
 	 */
-	isIntersection(adaptee: Observers): adaptee is IntersectionObserverStrategy {
+	isIntersection(adaptee: ObserveStrategy): adaptee is IntersectionObserverStrategy {
 		return adaptee.type === 'observer';
 	}
 
@@ -61,14 +64,20 @@ export default class InViewAdapter {
 	 * Starts observing the specified element
 	 *
 	 * @param el
-	 * @param opts
+	 * @param params
 	 */
-	observe(el: HTMLElement, opts: InitOptions): ObservableElement | false {
+	observe(el: HTMLElement, params: CanArray<InitOptions>): false | void {
 		if (!this.adaptee) {
 			return false;
 		}
 
-		return this.adaptee.observe(el, this.normalizeOptions(opts));
+		params = (<InitOptions[]>[]).concat(params);
+
+		for (let i = 0; i < params.length; i++) {
+			if (valueValidator(params[i])) {
+				this.adaptee.observe(el, params[i]);
+			}
+		}
 	}
 
 	/**
@@ -159,15 +168,29 @@ export default class InViewAdapter {
 	}
 
 	/**
-	 * Returns an observable element
+	 * Returns a threshold map of the specified element
 	 * @param el
 	 */
-	get(el: HTMLElement): CanUndef<ObservableElement> {
+	getThresholdMap(el: HTMLElement): CanUndef<ObservableThresholdMap> {
 		if (!this.adaptee) {
 			return;
 		}
 
-		return this.adaptee.get(el);
+		return this.adaptee.getThresholdMap(el);
+	}
+
+	/**
+	 * Returns an observable element
+	 *
+	 * @param el
+	 * @param threshold
+	 */
+	get(el: HTMLElement, threshold: number): CanUndef<ObservableElement> {
+		if (!this.adaptee) {
+			return;
+		}
+
+		return this.adaptee.getEl(el, threshold);
 	}
 
 	/**
@@ -175,14 +198,6 @@ export default class InViewAdapter {
 	 * @param opts
 	 */
 	protected normalizeOptions(opts: InitOptions): InitOptions {
-		// tslint:disable: deprecation
-
-		if (opts.timeout) {
-			opts.delay = opts.timeout;
-		}
-
-		// tslint:enable: deprecation
-
 		return opts;
 	}
 }

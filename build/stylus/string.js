@@ -15,7 +15,7 @@ const
 
 module.exports = function (style) {
 	/**
-	 * Converts string to dataURI
+	 * Converts the specified string to dataURI
 	 *
 	 * @param {?} mime - mime type
 	 * @param {?} str - source string
@@ -46,7 +46,7 @@ module.exports = function (style) {
 	});
 
 	/**
-	 * Converts string to lowercase
+	 * Converts the specified string to lowercase
 	 *
 	 * @param {?} str
 	 * @returns {string}
@@ -55,7 +55,7 @@ module.exports = function (style) {
 		(str) => str.string.toLowerCase());
 
 	/**
-	 * Converts string to uppercase
+	 * Converts the specified string to uppercase
 	 *
 	 * @param {?} str
 	 * @returns {string}
@@ -64,7 +64,24 @@ module.exports = function (style) {
 		(str) => str.string.toUpperCase());
 
 	/**
-	 * Converts plain svg text to dataURI
+	 * Replaces the specified string by a regular expression
+	 *
+	 * @param {string} str
+	 * @param {string} replacer
+	 * @param {string} replacement
+	 * @param {string} [flags]
+	 * @returns {string}
+	 */
+	style.define('replaceByRegExp',
+		(
+			{string: str},
+			{string: replacer},
+			{string: replacement},
+			{string: flags} = {flags: undefined}
+		) => str.replace(new RegExp(replacer, flags), replacement));
+
+	/**
+	 * Converts the specified plain svg text to dataURI
 	 *
 	 * @param {?} str - source string
 	 * @returns {string}

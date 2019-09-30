@@ -71,32 +71,19 @@ execFontPattern($type = "")
 		unquote(replace("%t", "", BASE_FONT_PATTERN))
 
 /**
- * Returns a value from an object by the specified path
+ * Returns a color from the global kits
+ * or from the Design System
  *
- * @param {object} $obj
- * @param {string} $path
- */
-getField($obj, $path)
-	$fields = split(".", $path)
-
-	if (length($fields) > 1 && type($obj[$fields[0]]) == "object")
-		return getField($obj[$fields[0]], join(".", slice($fields, 1, length($fields))))
-
-	if length($fields) == 1
-		return $obj[$fields[0]]
-
-	return null
-
-/**
- * Returns a color from global kits
- *
- * @param {RGBA} $hue
- * @param {number} [$num]
+ * @param {string} $kit
+ * @param {number|string} [$id]
  * @param {boolean=} [$reserved]
  * @param {boolean=} [$base]
  */
-c($hue, $num = null, $reserved = false, $base = false)
-	getGlobalColor($hue, $num, $reserved, $base)
+c($kit, $id = null, $reserved = false, $base = false)
+	if getDSOptions("colors")
+		return getDSColor($kit, $id)
+
+	getGlobalColor($kit, $id || null, $reserved, $base)
 
 /**
  * CSS hack for IE10-11
@@ -209,3 +196,75 @@ stretch-layer($position, $zIndexPos = "modal")
 	bottom 0
 	right 0
 	zIndex($zIndexPos)
+
+/**
+ * Generates text style rules from the Design System styles
+ * @param {string} $name - text style name
+ */
+t($name)
+	$name = replaceByRegExp($name, "[ \/]", "-", "g")
+	$obj = getDSOptions("text." + $name)
+
+	if $obj
+		interpolate-props($obj)
+
+/**
+ * Returns a border-radius rule for the specified name and position
+ *
+ * @param {string} $name - border-radius DS name
+ * @param {string} [$pos] - %s tokens-styled string for multiple border-radius values
+ *
+ * @example
+ * r(big, '$s 0 $s') -> border-radius 16px 0 16px
+ */
+r($name, $pos = null)
+	$val = getDSOptions("rounding." + $name)
+
+	if $val
+		if $pos
+			border-radius convert(replace("%s", s("%s", $val), $pos))
+
+		else
+			border-radius $val
+
+/**
+ * Generates rules from object properties
+ *
+ * @param {Object} $opts
+ * @param {boolean=} $normalize
+ */
+interpolate-props($opts, $normalize = true)
+	if type($opts) == "object"
+		for $key, $val in $opts
+			$value = type($val) == "string" ? convert($val) : $val
+			{$normalize ? dasherize($key): $key} $value
+
+/**
+ * Generates path from the specified sequence
+ * @param {string[]} $arr
+ */
+path($arr)
+	join(".", $arr)
+
+/**
+ * Generates necessary rules for specified component options and factory
+ *
+ * @param $p
+ * @param $fn
+ */
+generateRules($p, $fn)
+	//#if runtime has ds-vars
+	$fn($p.__vars__)
+	//#endif
+
+	//#unless runtime has ds-vars
+	$fn($p)
+	//#endunless
+
+	//#if runtime has ds-diff
+	&_diff_true
+		$fn($p.__diffVars__)
+
+	&_diff_false
+		$fn($p.__vars__)
+	//#endif

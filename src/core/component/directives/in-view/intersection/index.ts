@@ -9,7 +9,7 @@
 import symbolGenerator from 'core/symbol';
 
 import { ObservableElement, IntersectionObserverOptions } from 'core/component/directives/in-view/interface';
-import { hasIntersection, supportsDelay } from 'core/component/directives/in-view/intersection/helpers';
+import { hasIntersection } from 'core/component/directives/in-view/intersection/helpers';
 
 import Super from 'core/component/directives/in-view/super';
 
@@ -36,68 +36,35 @@ export default class InView extends Super {
 	protected readonly observers: Dictionary<IntersectionObserver> = {};
 
 	/**
-	 * True if IntersectionObserver is supports delay property
+	 * Contains a id for root elements
 	 */
-	protected readonly supportsDelay: boolean = supportsDelay();
-
-	/**
-	 * Removes an element from observable elements
-	 * @param el
-	 */
-	remove(el: HTMLElement): boolean {
-		const
-			observable = this.get(el);
-
-		if (!observable) {
-			return false;
-		}
-
-		const
-			observer = this.observers[this.getHash(observable)];
-
-		if (observer) {
-			observer.unobserve(el);
-		}
-
-		return this.getElMap(el).delete(el);
-	}
-
-	/**
-	 * Stops observing the specified element
-	 * @param el
-	 */
-	stopObserve(el: HTMLElement): boolean {
-		const
-			observable = this.get(el);
-
-		if (!observable) {
-			return false;
-		}
-
-		this.clearAllAsync(observable);
-
-		if (observable.removeStrategy === 'remove') {
-			return this.remove(el);
-		}
-
-		observable.isDeactivated = true;
-		return true;
-	}
+	protected readonly rootMap: Map<HTMLElement, number> = new Map();
 
 	/**
 	 * Initializes an observer
-	 *
-	 * @param el
 	 * @param observable
 	 */
-	protected initObserve(el: HTMLElement, observable: ObservableElement): ObservableElement {
+	protected initObserve(observable: ObservableElement): ObservableElement {
 		const
 			hash = this.getHash(observable),
 			observer = this.observers[hash] || this.createObserver(observable, hash);
 
-		observer.observe(el);
-		this.elements.set(el, observable);
+		observer.observe(observable.node);
+		this.putInMap(this.elements, observable);
+
 		return observable;
+	}
+
+	/** @override */
+	protected unobserve(observable: ObservableElement): boolean {
+		const observer = this.observers[this.getHash(observable)];
+
+		if (observer) {
+			observer.unobserve(observable.node);
+			return true;
+		}
+
+		return false;
 	}
 
 	/**
@@ -105,11 +72,21 @@ export default class InView extends Super {
 	 *
 	 * @param intersectionObserverOptions
 	 *   *) threshold
-	 *   *) delay
 	 *   *) trackVisibility
+	 *   *) root
 	 */
-	protected getHash({threshold, delay, trackVisibility}: IntersectionObserverOptions): string {
-		return `${threshold.toFixed(2)}${Math.floor(delay || 0)}${Boolean(trackVisibility)}`;
+	protected getHash({threshold, trackVisibility, root}: IntersectionObserverOptions): string {
+		root = Object.isFunction(root) ? root() : root;
+
+		let
+			id = root && this.rootMap.get(root) || '';
+
+		if (!id && root) {
+			id = Math.random();
+			this.rootMap.set(root, id);
+		}
+
+		return `${threshold.toFixed(2)}${Boolean(trackVisibility)}${id}`;
 	}
 
 	/**
@@ -120,24 +97,25 @@ export default class InView extends Super {
 	 */
 	protected createObserver(opts: IntersectionObserverOptions, hash: string): IntersectionObserver {
 		const
-			root = Object.isFunction(opts.root) ? opts.root() : opts.root;
+			root = Object.isFunction(opts.root) ? opts.root() : opts.root,
+			observerOpts = {...opts, root};
 
-		return this.observers[hash] = new IntersectionObserver(this.onIntersects.bind(this), {
-			...opts,
-			root
-		});
+		delete observerOpts.delay;
+		return this.observers[hash] = new IntersectionObserver(this.onIntersects.bind(this, opts.threshold), observerOpts);
 	}
 
 	/**
 	 * Handler: entering or leaving viewport
+	 *
+	 * @param threshold
 	 * @param entries
 	 */
-	protected onIntersects(entries: IntersectionObserverEntry[]): void {
+	protected onIntersects(threshold: number, entries: IntersectionObserverEntry[]): void {
 		for (let i = 0; i < entries.length; i++) {
 			const
 				entry = entries[i],
 				el = <HTMLElement>entry.target,
-				observable = this.get(el);
+				observable = this.getEl(el, threshold);
 
 			if (!observable) {
 				return;
@@ -158,7 +136,7 @@ export default class InView extends Super {
 	 */
 	protected onObservableIn(observable: ObservableElement): void {
 		const
-			{async: $a, supportsDelay} = this;
+			{async: $a} = this;
 
 		const asyncOptions = {
 			group: 'inView',
@@ -170,11 +148,11 @@ export default class InView extends Super {
 			observable.onEnter(observable);
 		}
 
-		if (supportsDelay) {
-			this.call(observable);
+		if (observable.delay) {
+			$a.setTimeout(() => this.call(observable), observable.delay, asyncOptions);
 
 		} else {
-			$a.setTimeout(() => this.call(observable), observable.delay || 0, asyncOptions);
+			this.call(observable);
 		}
 
 		observable.isLeaving = true;
@@ -186,7 +164,7 @@ export default class InView extends Super {
 	 */
 	protected onObservableOut(observable: ObservableElement): void {
 		const
-			{async: $a, supportsDelay} = this;
+			{async: $a} = this;
 
 		const asyncOptions = {
 			group: 'inView',
@@ -198,10 +176,7 @@ export default class InView extends Super {
 			observable.onLeave(observable);
 		}
 
-		if (!supportsDelay) {
-			$a.clearAll(asyncOptions);
-		}
-
+		$a.clearAll(asyncOptions);
 		observable.isLeaving = false;
 	}
 }

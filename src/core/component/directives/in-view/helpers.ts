@@ -6,6 +6,8 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import { InitOptions } from 'core/component/directives/in-view/interface';
+
 /**
  * Returns a first adaptee which is acceptable
  * @param strategies
@@ -21,6 +23,14 @@ export function getAdaptee<T extends {acceptable: boolean}>(strategies: T[]): Ca
 	}
 
 	return undefined;
+}
+
+/**
+ * Validates the specified value
+ * @param value
+ */
+export function valueValidator(value: InitOptions): boolean {
+	return  Boolean(value && (value.callback || value.onEnter || value.onLeave));
 }
 
 /**

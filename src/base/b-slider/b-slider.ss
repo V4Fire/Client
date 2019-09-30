@@ -24,11 +24,11 @@
 			< template v-if = option
 				< template &
 					v-for = (el, i) in optionsIterator ? optionsIterator(options, self) : options |
-					:key = optionKey
+					:key = getOptionKey(el, i)
 				.
 					< component.&__option &
 						:is = option |
-						:v-attrs = Object.isFunction(optionProps) ? optionProps(el, i) : optionProps
+						:v-attrs = Object.isFunction(optionProps) ? optionProps(el, i, getOptionKey(el, i)) : optionProps
 					.
 
 			< template v-else

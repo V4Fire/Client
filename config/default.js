@@ -158,7 +158,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	imageOpts() {
 		return {
 			svgo: {
-
+				removeUnknownsAndDefaults: false
 			}
 		};
 	},
@@ -185,15 +185,32 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		return {};
 	},
 
+	engine() {
+		return o('engine', {
+			env: true,
+			default: 'vue',
+			validate(v) {
+				return Boolean({
+					vue: true,
+					zero: true
+				}[v]);
+			}
+		});
+	},
+
 	runtime() {
 		return {
-			'vue': true,
-			'zero': false,
+			'engine': this.engine(),
 
 			'socket': false,
 			'noGlobals': false,
 			'svgSprite': true,
+
+			'ds-diff': false,
+			'ds-vars': false,
+
 			'blockNames': false,
+			'passDesignSystem': false,
 
 			'core/helpers': true,
 			'core/browser': true,
@@ -249,6 +266,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		return {
 			stylus: {
 				flags: {
+					runtime,
 					'+:*': true
 				}
 			},

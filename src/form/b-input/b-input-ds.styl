@@ -1,0 +1,127 @@
+/*!
+ * V4Fire Client Core
+ * https://github.com/V4Fire/Client
+ *
+ * Released under the MIT license
+ * https://github.com/V4Fire/Client/blob/master/LICENSE
+ */
+
+$p = {
+	messageHelpers: true
+	sizeHelpers: false
+}
+
+b-input
+	&__super-wrapper
+		cursor text
+
+	&__wrapper
+		align-items center
+
+	&__clear
+		margin-right 4px
+
+	createStyles($o)
+		&^[0]
+			color-from-obj($obj)
+				$color = getField($obj, color)
+
+				if $color
+					color $color
+
+			generate($kk)
+				$mod = getField($o, path(mods $kk))
+				$textStyle = getField($mod, textStyle)
+
+				if $textStyle
+					for $key, $val in getDSOptions(path(text $textStyle style))
+						$mod[$key] = $val
+
+				if $mod
+					interpolate-props($mod)
+
+			for $key, $val in getDSOptions(rounding)
+				&_rounding_{$key}
+				&_rounding_{$key} ^[0]__root-wrapper
+				&_rounding_{$key} ^[0]__super-wrapper
+					border-radius $val
+
+			& ^[0]__root-wrapper
+				$back = getField($o, "block")
+				interpolate-props($back)
+
+			&_focused_true ^[0]__root-wrapper
+				generate("focused.true")
+
+			$sizes = getField($o, "mods.size")
+			if $sizes
+				&_size
+					for $key, $value in $sizes
+						&_{$key}
+							& ^[0]
+								&__input-cont
+									$offset = getField($value, offset)
+
+									if $offset
+										for $key, $val in $offset
+											padding-{$key} $val
+
+								&__input
+									t(getField($value, textStyle))
+
+									&::placeholder
+										t(getField($value, placeholderStyle))
+										color getField($value, placeholderColor)
+
+			&_valid
+				for $key, $obj in getField($o, path(mods valid))
+					&_{$key}
+						for $fieldName, $value in $obj
+							if $fieldName == "style"
+								& ^[0]__root-wrapper
+									interpolate-props($value)
+
+							if $fieldName == "focused"
+								&^[0]_{$fieldName + "ed"}_true ^[0]__root-wrapper
+									interpolate-props($value)
+
+							if $fieldName == "info"
+								& ^[0]__info-box
+									t(getField($value, textStyle))
+									color-from-obj($value)
+
+									$offset = getField($value, offset)
+									if $offset
+										for $key, $val in $offset
+											margin-{$key} $val
+
+							if $fieldName == "icon"
+								& ^[0]__icon
+									color-from-obj($value)
+
+									svg
+										width getField($value, width)
+										height getField($value, height)
+
+									$right = getField($value, "offset.right")
+									if $right
+										margin-right $right
+
+			& ^[0]__input
+				&:-webkit-autofill
+					-webkit-box-shadow 0 0 0 100em getField($o, backgroundColor) inset !important
+
+			$readonly = getField($o, path(mods readonly true))
+			if $readonly
+				&_readonly_true ^[0]__root-wrapper
+					pointer-events none
+					cursor default
+					interpolate-props($readonly)
+
+				& ^[0]__input:read-only::placeholder
+					color-from-obj($readonly)
+
+			& ^[0]__progress span
+				font-size 0.8em
+
+	generateRules($p, createStyles)

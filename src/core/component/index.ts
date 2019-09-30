@@ -85,7 +85,8 @@ export {
 
 export const
 	$$ = symbolGenerator(),
-	isSmartComponent = /-functional$/;
+	isSmartComponent = /-functional$/,
+	dsComponentsMods = DS_COMPONENTS_MODS;
 
 /**
  * Returns a component name
@@ -230,50 +231,72 @@ export function component(params?: ComponentParams): Function {
 
 			const
 				parentMeta = components.get(parent),
-				mods = {};
+				mods = {},
+				modsStore = {};
 
 			if (target.mods) {
-				for (let o = target.mods, keys = Object.keys(o), i = 0; i < keys.length; i++) {
+				Object.assign(modsStore, target.mods);
+			}
+
+			const
+				dsMods = dsComponentsMods && dsComponentsMods[componentName];
+
+			if (dsMods) {
+				for (let keys = Object.keys(dsMods), i = 0; i < keys.length; i++) {
 					const
 						key = keys[i],
-						modVal = o[key],
-						res = <unknown[]>[];
+						el = dsMods[key],
+						store = modsStore[key];
 
-					if (modVal) {
-						let
-							cache,
-							active;
+					modsStore[key] = store ? store.concat(el) : el;
+				}
+			}
 
-						for (let i = 0; i < modVal.length; i++) {
-							const
-								val = modVal[i];
+			for (let o = modsStore, keys = Object.keys(o), i = 0; i < keys.length; i++) {
+				const
+					key = keys[i],
+					modVal = o[key],
+					res = <unknown[]>[];
 
-							if (Object.isArray(val)) {
-								cache = cache || new Map();
+				if (modVal) {
+					let
+						cache,
+						active;
 
-								if (active !== undefined) {
-									cache.set(active, active);
-								}
+					for (let i = 0; i < modVal.length; i++) {
+						const
+							val = modVal[i];
 
-								active = String(val[0]);
-								cache.set(active, [active]);
+						if (Object.isArray(val)) {
+							cache = cache || new Map();
 
-							} else {
-								cache = cache || new Map();
-								const v = String(val);
-								cache.set(v, v);
+							if (active !== undefined) {
+								cache.set(active, active);
 							}
-						}
 
-						if (cache) {
-							for (let o = cache.values(), el = o.next(); !el.done; el = o.next()) {
-								res.push(el.value);
+							active = String(val[0]);
+							cache.set(active, [active]);
+
+						} else {
+							cache = cache || new Map();
+
+							const
+								v = Object.isObject(val) ? val : String(val);
+
+							if (!cache.has(v)) {
+								cache.set(v, v);
 							}
 						}
 					}
 
-					mods[key.camelize(false)] = res;
+					if (cache) {
+						for (let o = cache.values(), el = o.next(); !el.done; el = o.next()) {
+							res.push(el.value);
+						}
+					}
 				}
+
+				mods[key.camelize(false)] = res;
 			}
 
 			const meta: ComponentMeta = {
@@ -343,9 +366,9 @@ export function component(params?: ComponentParams): Function {
 									ctx = this || rootCtx;
 
 								const
-									hasOpts = Object.isSimpleObject(opts),
-									attrOpts = <Dictionary>(hasOpts ? (<Dictionary>opts).attrs = (<Dictionary>opts).attrs || {} : {}),
-									composite = attrOpts['v4-composite'];
+									hasOpts = Object.isObject(opts),
+									attrOpts = <CanUndef<Dictionary>>(hasOpts ? (<Dictionary>opts).attrs : undefined),
+									composite = attrOpts && attrOpts['v4-composite'];
 
 								if (tag === 'v-render') {
 									return attrOpts && <VNode>attrOpts.from || nativeCreate('span');
@@ -354,7 +377,7 @@ export function component(params?: ComponentParams): Function {
 								let
 									tagName = tag;
 
-								if (composite) {
+								if (composite && attrOpts) {
 									attrOpts['v4-composite'] = tagName = tagName === 'span' ? <string>composite : tagName.dasherize();
 								}
 
@@ -381,8 +404,8 @@ export function component(params?: ComponentParams): Function {
 									parseVAttrs(<Dictionary>opts, component);
 								}
 
-								const renderKey =
-									attrOpts['render-key'] != null ? `${tagName}:${attrOpts['global-name']}:${attrOpts['render-key']}` : '';
+								const renderKey = attrOpts && attrOpts['render-key'] != null ?
+									`${tagName}:${attrOpts['global-name']}:${attrOpts['render-key']}` : '';
 
 								let
 									vnode = ctx.renderTmp[renderKey],
@@ -417,6 +440,7 @@ export function component(params?: ComponentParams): Function {
 											ref: data.ref,
 											refInFor: data.refInFor,
 											on: <Record<string, CanArray<Function>>>data.on,
+											nativeOn: <Record<string, CanArray<Function>>>data.nativeOn,
 											attrs: data.attrs,
 											class: data.class,
 											staticClass: data.staticClass,
@@ -454,14 +478,14 @@ export function component(params?: ComponentParams): Function {
 								}
 
 								const
-									vData = vnode.data || {},
-									ref = vData[$$.ref] || vData.ref;
+									vData = vnode.data,
+									ref = vData && (vData[$$.ref] || vData.ref);
 
 								if (renderKey) {
 									ctx.renderTmp[renderKey] = cloneVNode(vnode);
 								}
 
-								if (ref && ctx !== rootCtx) {
+								if (vData && ref && ctx !== rootCtx) {
 									vData[$$.ref] = ref;
 									vData.ref = `${ref}:${ctx.componentId}`;
 
