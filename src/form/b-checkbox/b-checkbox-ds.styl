@@ -11,7 +11,7 @@ $p = {
 }
 
 b-checkbox
-	&__box
+	&__checkbox
 		flex-row center
 
 	&__wrapper
@@ -22,35 +22,49 @@ b-checkbox
 		display none
 
 	createStyles($o)
-		if getField($o, "block.label")
-			&__label
-				interpolate-props(getField($o, "block.label"))
+		plainStyles($o)
+			if getField($o, "block.textStyle")
+				& ^[0]__label
+					text-options(getField($o, "block.textStyle"))
 
-		if getField($o, "block.textStyle")
-			&__label
-				text-options(getField($o, "block.textStyle"))
+			for $key in (disabled focused checked)
+				$mod = getField($o, path(mods $key true))
 
-		for $key in (disabled focused checked)
-			$box = getField($o, path(mods $key true checkbox))
-			$label = getField($o, path(mods $key true label))
+				for $k, $v in $mod
+					&^[0]_{$key}_true ^[0]__{$k}
+						interpolate-props($v)
 
-			for $v in (box $box) (label $label)
-				if $v[1]
-					&^[0]_{$key}_true &__{$v[0]}
-						interpolate-props($v[1])
+			if getField($o, block)
+				for $key in getField($o, block)
+					& ^[0]__{$key}
+						interpolate-props(getField($o, path(block $key)))
 
-		if getField($o, "block.checkbox")
-			&__box
-				interpolate-props(getField($o, "block.checkbox"))
+			& ^[0]__check
+				display none
 
-		$checked = getField($o, "mods.checked.true.check")
+			$checked = getField($o, "mods.checked.true")
 
-		if $checked
-			&_checked_true &__check
-				display block
-				interpolate-props($checked)
+			if $checked
+				&^[0]_checked_true ^[0]__check
+					display block
 
-				svg
-					size 100%
+					svg
+						size 100%
+
+		plainStyles($o)
+
+		$switch = getField($o, "exterior.switch")
+
+		if $switch
+			&_exterior_switch
+				plainStyles($switch)
+
+				& ^[0]__check
+					display block
+					transition transform 0.3s ease-in
+
+				& ^[0]__checkbox
+					flex-row flex-start
+					transition background-color 0.3s ease-in, border-color 0.3s ease-in
 
 	generateRules($p, createStyles)
