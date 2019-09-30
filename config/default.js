@@ -158,7 +158,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	imageOpts() {
 		return {
 			svgo: {
-
+				removeUnknownsAndDefaults: false
 			}
 		};
 	},
@@ -201,9 +201,6 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	runtime() {
 		return {
 			'engine': this.engine(),
-
-			'ds-diff': false,
-			'ds-vars': false,
 
 			'socket': false,
 			'noGlobals': false,
