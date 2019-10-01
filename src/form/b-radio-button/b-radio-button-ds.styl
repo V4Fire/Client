@@ -23,6 +23,9 @@ b-radio-button
 					&^[0]_{$key}_true ^[0]__{$k}
 						interpolate-props($v)
 
+						if $k == "check"
+							background-color @color
+
 			if getField($o, block)
 				for $key in getField($o, block)
 					& ^[0]__{$key}
