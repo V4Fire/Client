@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-beta.192 (2019-10-01)
+
+#### :bug: Bug Fix
+
+* Fixed `skeletonMarker` default value
+
 ## v3.0.0-beta.191 (2019-10-01)
 
 #### :rocket: New Feature

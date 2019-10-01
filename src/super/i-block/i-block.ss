@@ -41,7 +41,7 @@
 	- rootTag = 'div'
 	- rootWrapper = false
 	- overWrapper = false
-	- skeletonMarker = true
+	- skeletonMarker = false
 
 	/**
 	 * Applies Typograf to the specified content
