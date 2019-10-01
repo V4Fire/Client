@@ -22,7 +22,7 @@ b-checkbox
 		display none
 
 	createStyles($o)
-		plainStyles($o)
+		plain($o)
 			if getField($o, "block.textStyle")
 				& ^[0]__label
 					text-options(getField($o, "block.textStyle"))
@@ -51,13 +51,13 @@ b-checkbox
 					svg
 						size 100%
 
-		plainStyles($o)
+		plain($o)
 
 		$switch = getField($o, "exterior.switch")
 
 		if $switch
 			&_exterior_switch
-				plainStyles($switch)
+				plain($switch)
 
 				& ^[0]__check
 					display block
