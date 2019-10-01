@@ -28,7 +28,7 @@ export interface ScrollOpts extends ScrollOptions {
 	y?: number;
 }
 
-const
+export const
 	$$ = symbolGenerator();
 
 @component({inheritMods: false})
