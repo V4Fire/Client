@@ -20,16 +20,6 @@ export default class bIcon extends iBlock implements iIcon, iSize {
 	@prop({type: String, required: false})
 	readonly value?: string;
 
-	/** @override */
-	static readonly mods: ModsDecl = {
-		...iSize.mods,
-
-		size: [
-			['auto'],
-			'full'
-		]
-	};
-
 	/**
 	 * Icon prefix
 	 */
@@ -47,6 +37,16 @@ export default class bIcon extends iBlock implements iIcon, iSize {
 	 */
 	@prop(String)
 	readonly hintPos: string = 'bottom';
+
+	/** @override */
+	static readonly mods: ModsDecl = {
+		...iSize.mods,
+
+		size: [
+			['auto'],
+			'full'
+		]
+	};
 
 	/** @see iIcon.getIconLink */
 	getIconLink(iconId: string): string {
