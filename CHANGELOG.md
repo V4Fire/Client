@@ -11,6 +11,16 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-beta.191 (2019-10-01)
+
+#### :rocket: New Feature
+
+* Added `skeletonMarker` flag to `iBlock` 
+
+#### :house: Internal
+
+* Refactoring
+
 ## v3.0.0-beta.190 (2019-09-29)
 
 #### :boom: Breaking Change
