@@ -12,6 +12,7 @@
 
 - template index() extends ['i-input'].index
 	- rootWrapper = true
+	- skeletonMarker = false
 
 	- block body
 		- super

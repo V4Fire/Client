@@ -12,6 +12,7 @@
 
 - template index() extends ['i-data'].index
 	- messageHelpers = true
+	- skeletonMarker = true
 
 	- block headHelpers
 		- super
