@@ -20,12 +20,18 @@ b-icon extends i-block
 	&__svg
 		display block
 
-		if $p.size
+	&_size_full
+		&
+		& ^[0]__svg
+			size 100%
+
+	if $p.size
+		&_size_auto
 			size $p.size
 
 	if $p.color
 		color $p.color
-		fill $p.color
+		fill @color
 
 	else
 		color currentColor

@@ -32,6 +32,7 @@
 
 							< @b-icon.&__check &
 								v-else |
+								:size = 'full' |
 								:value = 'check'
 							.
 

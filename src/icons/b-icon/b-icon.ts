@@ -7,7 +7,7 @@
  */
 
 import iIcon from 'traits/i-icon/i-icon';
-import iBlock, { component, prop } from 'super/i-block/i-block';
+import iBlock, { component, prop, ModsDecl } from 'super/i-block/i-block';
 export * from 'super/i-block/i-block';
 
 @component({functional: true, flyweight: true})
@@ -17,6 +17,14 @@ export default class bIcon extends iBlock implements iIcon {
 	 */
 	@prop({type: String, required: false})
 	readonly value?: string;
+
+	/** @override */
+	static readonly mods: ModsDecl = {
+		size: [
+			['auto'],
+			'full'
+		]
+	};
 
 	/**
 	 * Icon prefix

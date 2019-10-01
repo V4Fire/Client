@@ -18,6 +18,7 @@ b-checkbox
 		align-items center
 
 	&__check
+		position absolute
 		display none
 
 	createStyles($o)
@@ -46,9 +47,6 @@ b-checkbox
 			if $checked
 				&^[0]_checked_true ^[0]__check
 					display block
-
-					svg
-						size 100%
 
 		plain($o)
 
