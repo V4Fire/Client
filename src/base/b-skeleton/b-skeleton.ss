@@ -41,7 +41,7 @@
 
 	< ?.${self.name()}
 		< .&__${p.class}.&__item[.&_shape_rect.&_animation_${p.animation}.&_size_${p.size}] &
-			:v-attrs = attrs |
+			:v-attrs = ${attrs|json} |
 			-skeleton-marker = true
 		.
 
@@ -59,7 +59,7 @@
 
 	< ?.${self.name()}
 		< .&__${p.class}.&__item[.&_shape_circle.&_animation_${p.animation}.&_size_${p.size}] &
-			:v-attrs = attrs |
+			:v-attrs = ${attrs|json} |
 			-skeleton-marker = true
 		.
 
@@ -94,7 +94,7 @@
 	? wrapperClass = wrapperClass || 'column-default'
 
 	< ?.${self.name()}
-		< .&__${wrapperClass}.&__column :v-attrs = attrs
+		< .&__${wrapperClass}.&__column :v-attrs = ${attrs|json}
 			{content}
 
 /**
@@ -108,7 +108,7 @@
 	? wrapperClass = wrapperClass || 'row-default'
 
 	< ?.${self.name()}
-		< .&__${wrapperClass}.&__row :v-attrs = attrs
+		< .&__${wrapperClass}.&__row :v-attrs = ${attrs|json}
 			{content}
 
 /**
