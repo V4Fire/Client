@@ -28,6 +28,7 @@
 	- title = @@appName
 	- pageData = Object.create(null)
 	- assets = Object.create(null)
+	- nonce = @nonce
 
 	- defineBase = false
 	- assetsRequest = true
@@ -113,6 +114,9 @@
 					# block initVars
 						window[#{globals.MODULE_DEPENDENCIES}] = {fileCache: {}};
 
+						# if nonce
+							var GLOBAL_NONCE = #{nonce|json};
+
 						var
 							READY_STATE = 0,
 							PATH = #{assets|json};
@@ -147,7 +151,7 @@
 						+= $C(styles).to('').reduce()
 							() => res, src
 								: p = Object.isString(url) ? {src: src} : src
-								? src = self.loadToLib.apply(self, [].concat(p.package === false ? [] : @@lib, p.src))
+								? src = self.loadToLib.apply(self, [].concat(p.asset ? @@assets : @@lib, p.src))
 
 								- if @@fatHTML || p.inline
 									- style
@@ -189,7 +193,7 @@
 								.
 
 								: basename = path.basename(p.src)
-								? src = self.loadToLib.apply(self, [].concat(p.package === false ? [] : @@lib, p.src))
+								? src = self.loadToLib.apply(self, [].concat(p.asset ? @@assets : @@lib, p.src))
 
 								- if isFolder
 									? src = @@publicPath(src)

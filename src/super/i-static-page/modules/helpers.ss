@@ -28,6 +28,9 @@
 - block index->jsScript(attrs = {}, body = '')
 		: normalizedAttrs = {}
 
+		- if nonce
+			? normalizedAttrs.nonce = nonce
+
 		- forEach attrs => el, key
 			- switch key
 				> 'defer'
@@ -48,7 +51,7 @@
 				- default
 					? normalizedAttrs[key] = el
 
-		< script type = text/javascript | ${normalizedAttrs}
+		- script js ${normalizedAttrs}
 			{body}
 
 /**
@@ -143,7 +146,7 @@
 
 	- else
 		: putIn tpl
-			document.write({("'<script src=\"' + PATH['" + name + "'] + '\" " + (p.defer ? 'defer="defer"' : '') +  "><' + '/script>'")|addNonce});
+			document.write({("'<script src=\"' + PATH['" + name + "'] + '\" " + (p.defer ? 'defer' : '') +  "><' + '/script>'")|addNonce});
 
 		- if p.optional
 			# op
