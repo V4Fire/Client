@@ -40,7 +40,10 @@
 	}, p) .
 
 	< ?.${self.name()}
-		< .&__${p.class}.&__item[.&_shape_rect.&_animation_${p.animation}.&_size_${p.size}] :style = style
+		< .&__${p.class}.&__item[.&_shape_rect.&_animation_${p.animation}.&_size_${p.size}] &
+			:style = style |
+			-skeleton-marker = true
+		.
 
 /**
  * Generates a skeleton circle
@@ -55,7 +58,10 @@
 	}, p) .
 
 	< ?.${self.name()}
-		< .&__${p.class}.&__item[.&_shape_circle.&_animation_${p.animation}.&_size_${p.size}] :style = style
+		< .&__${p.class}.&__item[.&_shape_circle.&_animation_${p.animation}.&_size_${p.size}] &
+			:style = style |
+			-skeleton-marker = true
+		.
 
 /**
  * @typedef MultipleParams
@@ -112,7 +118,7 @@
  * @param {...*} args
  */
 - @@ignore
-- template index(block, args) extends ['i-block'].index
+- template index(block) extends ['i-block'].index
 	- block body
 		< ?.${self.name()}
-			+= self[block](args)
+			+= self[block].apply(self, [].slice.call(arguments, 1))

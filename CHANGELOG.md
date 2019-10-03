@@ -11,6 +11,41 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-beta.192 (2019-10-01)
+
+#### :bug: Bug Fix
+
+* Fixed `skeletonMarker` default value
+
+## v3.0.0-beta.191 (2019-10-01)
+
+#### :rocket: New Feature
+
+* Added `skeletonMarker` flag to `iBlock` 
+
+#### :house: Internal
+
+* Refactoring
+
+## v3.0.0-beta.190 (2019-09-29)
+
+#### :boom: Breaking Change
+
+* [Renamed `b-switcher` component to `b-content-switcher`](https://github.com/V4Fire/Client/pull/132/files)
+
+### :rocket: New Feature
+
+* [Added `resolveStrategy` property to `b-content-switcher`](https://github.com/V4Fire/Client/pull/132/files)
+* [Added `syncState` event to `b-slider`](https://github.com/V4Fire/Client/pull/132/files)
+
+#### :bug: Bug Fix
+
+* [Fixed `b-skeleton` params providing to blocks](https://github.com/V4Fire/Client/pull/132/files)
+
+#### :house: Internal
+
+* Updated dependencies: webpack@4.41.0, terser-webpack-plugin@2.1.2, ts-loader@6.2.0, merge2@1.3.0, hasha@5.1.0
+
 ## v3.0.0-beta.189 (2019-09-26)
 
 #### :boom: Breaking Change

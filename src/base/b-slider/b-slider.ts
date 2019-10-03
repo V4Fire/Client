@@ -412,8 +412,8 @@ export default class bSlider<T extends object = Dictionary> extends iData<T> {
 	}
 
 	/**
-	 * Synchronizes the slider state
-	 * (deferred version)
+	 * Synchronizes the slider state (deferred version)
+	 * @emits syncState()
 	 */
 	@watch(['?window:resize', ':updateState'])
 	@wait('ready')
@@ -432,6 +432,7 @@ export default class bSlider<T extends object = Dictionary> extends iData<T> {
 		try {
 			await this.async.sleep(50, {label: $$.syncStateDefer, join: true});
 			this.syncState();
+			this.emit('syncState');
 
 		} catch {}
 	}

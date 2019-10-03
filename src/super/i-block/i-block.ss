@@ -41,6 +41,7 @@
 	- rootTag = 'div'
 	- rootWrapper = false
 	- overWrapper = false
+	- skeletonMarker = false
 
 	/**
 	 * Applies Typograf to the specified content
@@ -65,6 +66,9 @@
 		':-render-group': 'renderGroup',
 		':-render-counter': 'renderCounter'
 	} .
+
+	- if skeletonMarker
+		? rootAttrs['data-skeleton-marker'] = 'true'
 
 	- block rootAttrs
 
