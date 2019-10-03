@@ -17,8 +17,8 @@
  *   *) [animation] - size of an animation (the distance of the firefly, also affects the firefly speed)
  *   *) [size] - shape size
  *   *) [class] - additional class for a shape
-
- * @property {string} [style]
+ *
+ * @property {Dictionary} [attrs]
  */
 
 /**
@@ -30,9 +30,9 @@
  * Generates a skeleton rectangle
  *
  * @param {SkeletonParams.p} [p]
- * @param {SkeletonParams.style} [style]
+ * @param {SkeletonParams.attrs} [attrs]
  */
-- block index->rect(p = {}, style = {})
+- block index->rect(p = {}, attrs = {})
 	? p = Object.assign({ &
 		class: 'default',
 		animation: 's',
@@ -41,7 +41,7 @@
 
 	< ?.${self.name()}
 		< .&__${p.class}.&__item[.&_shape_rect.&_animation_${p.animation}.&_size_${p.size}] &
-			:style = style |
+			:v-attrs = attrs |
 			-skeleton-marker = true
 		.
 
@@ -49,9 +49,9 @@
  * Generates a skeleton circle
  *
  * @param {SkeletonParams.p} [p]
- * @param {SkeletonParams.style} [style]
+ * @param {SkeletonParams.attrs} [attrs]
  */
-- block index->circle(p = {}, style = {})
+- block index->circle(p = {}, attrs = {})
 	? p = Object.assign({ &
 		animation: 's',
 		size: 's'
@@ -59,7 +59,7 @@
 
 	< ?.${self.name()}
 		< .&__${p.class}.&__item[.&_shape_circle.&_animation_${p.animation}.&_size_${p.size}] &
-			:style = style |
+			:v-attrs = attrs |
 			-skeleton-marker = true
 		.
 
@@ -68,7 +68,7 @@
  * @property {number} [l] - number of elements to be generated
  * @property {SkeletonPart.shape} [shape] - shape of generated elements
  * @property {SkeletonParams.p} [p]
- * @property {SkeletonParams.style} [style]
+ * @property {SkeletonParams.attrs} [attrs]
  */
 
 /**
@@ -77,38 +77,38 @@
  * @param {MultipleParams.l} [l]
  * @param {MultipleParams.shape} [shape]
  * @param {MultipleParams.p} [p]
- * @param {MultipleParams.style} [style]
+ * @param {MultipleParams.attrs} [attrs]
  */
-- block index->multiple(l = 2, shape = 'rect', p = {}, style = {})
+- block index->multiple(l = 2, shape = 'rect', p = {}, attrs = {})
 	- for var i = 0; i < l; i++
-		+= self[shape](p, style)
+		+= self[shape](p, attrs)
 
 /**
  * Generates a skeleton column
  *
  * @param content
- * @param {SkeletonParams.style} [style]
+ * @param {SkeletonParams.attrs} [attrs]
  * @param {string} [wrapperClass]
  */
-- block index->column(content, style = {}, wrapperClass = 'column-default')
+- block index->column(content, attrs = {}, wrapperClass = 'column-default')
 	? wrapperClass = wrapperClass || 'column-default'
 
 	< ?.${self.name()}
-		< .&__${wrapperClass}.&__column :style = style
+		< .&__${wrapperClass}.&__column :v-attrs = attrs
 			{content}
 
 /**
  * Generates a skeleton row
  *
  * @param content
- * @param {SkeletonParams.style} [style]
+ * @param {SkeletonParams.attrs} [attrs]
  * @param {string} [wrapperClass]
  */
-- block index->row(content, style = {}, wrapperClass = 'row-default')
+- block index->row(content, attrs = {}, wrapperClass = 'row-default')
 	? wrapperClass = wrapperClass || 'row-default'
 
 	< ?.${self.name()}
-		< .&__${wrapperClass}.&__row :style = style
+		< .&__${wrapperClass}.&__row :v-attrs = attrs
 			{content}
 
 /**
@@ -119,6 +119,6 @@
  */
 - @@ignore
 - template index(block) extends ['i-block'].index
-	- block body
+	- block root
 		< ?.${self.name()}
 			+= self[block].apply(self, [].slice.call(arguments, 1))
