@@ -21,6 +21,10 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 * [Added `attrs` argument for `b-skeleton`](https://github.com/V4Fire/Client/pull/134)
 
+#### :bug: Bug Fix
+
+* [Fixed `b-skeleton` has an additional wrapper](https://github.com/V4Fire/Client/pull/134)
+
 ## v3.0.0-beta.192 (2019-10-01)
 
 #### :bug: Bug Fix
