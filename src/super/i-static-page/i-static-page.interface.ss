@@ -104,12 +104,12 @@
 
 							+= favicons.replace(rgxp, '')
 
-							+= self.jsScript(false, false, @nonce)
+							+= self.jsScript({})
 								document.write({"'<link " + manifest[1] + " href=\"" + manifest[2] + "?from=' + location.href + '\">'"|addNonce});
 
 					+= injectFavicons()
 
-				+= self.jsScript(false, false, @nonce)
+				+= self.jsScript({})
 					# block initVars
 						window[#{globals.MODULE_DEPENDENCIES}] = {fileCache: {}};
 
@@ -133,93 +133,98 @@
 
 				- if !@@fatHTML && assetsRequest
 					- block assets
-						+= self.jsScript(@@publicPath(@@assetsJS), false, @nonce)
+						+= self.jsScript({src: @@publicPath(@@assetsJS)})
 
 				- block head
 					: defStyles = deps.styles
 					- block defStyles
 
-					+= $C(defStyles).to('').reduce()
-						() => res, url
-							: notDefer = Array.isArray(url)
-							? url = self.loadToLib(notDefer ? url[0] : url)
+					/**
+					 * Loads the specified styles
+					 * @param {style}
+					 */
+					- block loadStyles(styles) => defStyles
+						+= $C(styles).to('').reduce()
+							() => res, src
+								: p = Object.isString(url) ? {src: src} : src
+								? src = self.loadToLib.apply(self, [].concat(p.package === false ? [] : @@lib, p.src))
 
-							- block loadDefStyles
-								- if @@fatHTML
+								- if @@fatHTML || p.inline
 									- style
-										requireMonic({url})
+										requireMonic({src})
 
 								- else
-									? url = @@publicPath(url)
+									: src = @@publicPath(src)
 
-									- if notDefer
-										- link css href = ${url}
-
-									- else
+									- if p.defer
 										< link &
 											rel = preload |
-											href = ${url} |
+											href = ${src} |
 											as = style |
 											onload = this.rel='stylesheet'
 										.
 
-							- return res + getTplResult()
+									- else
+										- link css href = ${src}
+
+								- return res + getTplResult()
 
 					- block styles
 						+= self.addDependencies('styles')
 
 					- block std
-						+= self.jsScript(false, false, @nonce)
+						+= self.jsScript({})
 							+= self.addScriptDep('std', {defer: false, optional: true})
 
 					: defLibs = deps.scripts
 					- block defLibs
 
-					+= $C(defLibs).to('').reduce()
-						() => res, url
-							: &
-								isFolder = Object.isString(url) && /\/$/.test(url),
-								notDefer = Array.isArray(url)
-							.
+					- block loadLibs(libs) => defLibs
+						+= $C(libs).to('').reduce()
+							() => res, src
+								: &
+									isStr = Object.isString(src),
+									isFolder = isStr && /\/$/.test(src),
+									p = isStr ? {src: src} : src
+								.
 
-							? url = notDefer ? url[0] : url
-							: basename = path.basename(url)
-							? url = self.loadToLib(url)
+								: basename = path.basename(p.src)
+								? src = self.loadToLib.apply(self, [].concat(p.package === false ? [] : @@lib, p.src))
 
-							- if isFolder
-								- block loadFolders
-									? url = @@publicPath(url)
-									+= self.jsScript("PATH['" + basename + "'] = '" + url + "'", false, @nonce)
+								- if isFolder
+									? src = @@publicPath(src)
 
-							- else
-								- block loadDefLibs
-									- if @@fatHTML
-										+= self.jsScript(false, false, @nonce)
-											requireMonic({url})
+									+= self.jsScript({})
+										PATH['{basename}'] = '{src}';
+
+								- else
+									- if @@fatHTML || p.inline
+										+= self.jsScript({})
+											requireMonic({src})
 
 									- else
-										? url = @@publicPath(url)
-										+= self.jsScript(url, !notDefer, @nonce)
+										? src = @@publicPath(src)
+										+= self.jsScript(Object.assign({}, p, {src: src}))
 
-							- return res + getTplResult()
+								- return res + getTplResult()
 
-					+= self.jsScript(false, false, @nonce)
-						# block initLibs
-							if (typeof Vue !== 'undefined') {
-								Vue.default = Vue;
-							}
+						+= self.jsScript({})
+							# block initLibs
+								if (typeof Vue !== 'undefined') {
+									Vue.default = Vue;
+								}
 
-					- block scripts
-						+= self.jsScript(false, false, @nonce)
-							+= self.addScriptDep('vendor', {optional: true})
+						- block scripts
+							+= self.jsScript({})
+								+= self.addScriptDep('vendor', {optional: true})
 
-						+= self.addDependencies('scripts')
+							+= self.addDependencies('scripts')
 
-						+= self.jsScript(false, false, @nonce)
-							+= self.addScriptDep('webpack.runtime')
+							+= self.jsScript({})
+								+= self.addScriptDep('webpack.runtime')
 
-					+= self.jsScript(false, false, @nonce)
-						# block depsReady
+					+= self.jsScript({})
+						- block depsReady
 							READY_STATE++;
 
 			: pageName = self.name()

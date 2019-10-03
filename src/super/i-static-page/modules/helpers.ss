@@ -14,16 +14,42 @@
 - import fs from 'fs-extra-promise'
 
 /**
- * Generates a script declaration with defer and nonce attributes
+ * Generates a script tag with the specified attributes and body
  *
- * @param {string|false} src
- * @param {boolean} [deffer]
- * @param {string|false} [nonce]
- * @param {string} [body]
+ * @param {Object=} [attrs] - tag attributes:
+ *   *) [src] - script src
+ *   *) [defer] - defer attribute
+ *   *) [async] - async attribute
+ *   *) [module] - module attribute
+ *   *) [nonce] - nonce attribute
+ *
+ * @param {string=} [body]
  */
-- block index->jsScript(src = false, deffer = false, nonce = false, body = '')
-		# script js ${src ? 'src="' + src + '"' : ''} | ${deffer ? 'defer' : ''} | ${nonce ? 'nonce="' + nonce + '"' : ''}
-			#{body}
+- block index->jsScript(attrs = {}, body = '')
+		: normalizedAttrs = {}
+
+		- forEach attrs => el, key
+			- switch key
+				> 'defer'
+					- if el
+						? normalizedAttrs.defer = TRUE
+
+				> 'async'
+					- if el
+						? normalizedAttrs.async = TRUE
+
+				> 'module'
+					- if el
+						? normalizedAttrs.module = TRUE
+
+					- else el === false
+						? normalizedAttrs.nomodule = TRUE
+
+				- default
+					? normalizedAttrs[key] = el
+
+		< script type = text/javascript | ${normalizedAttrs}
+			{body}
 
 /**
  * Injects the specified file to the template
@@ -53,7 +79,7 @@
 	: genHash = include('build/hash')
 
 	: &
-		src = path.join.apply(path, [@@lib].concat(args)),
+		src = path.join.apply(path, args),
 		basename = path.basename(src)
 	.
 
@@ -178,12 +204,12 @@
 					+= self.addStyleDep(el)
 
 		- else
-			+= self.jsScript(false, false, @nonce)
+			+= self.jsScript({})
 				- forEach list => el
 					+= self.addStyleDep(el)
 
 	- if !type || type === 'scripts'
-		+= self.jsScript(false, false, @nonce)
+		+= self.jsScript({})
 			- forEach list => el
 				: tpl = el + '_tpl'
 
