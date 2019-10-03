@@ -11,6 +11,16 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-beta.193 (2019-10-04)
+
+#### :boom: Breaking Change
+
+* Removed `style` argument from `b-skeleton`
+
+#### :rocket: New Feature
+
+* Added `attrs` argument for `b-skeleton`
+
 ## v3.0.0-beta.192 (2019-10-01)
 
 #### :bug: Bug Fix
