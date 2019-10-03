@@ -68,11 +68,15 @@
 
 /**
  * Joins the specified paths and load a file/catalog by the final path to a library folder
+ *
+ * @params {!Object} opts - additional options:
+ *   *) [relative=true]
+ *
  * @param {...string} url
  */
-- block index->loadToLib()
+- block index->loadToLib(@params)
 	: &
-		args = [].slice.call(arguments),
+		args = [].slice.call(arguments, 1),
 		lastChunk = args[args.length - 1]
 	.
 
@@ -107,7 +111,7 @@
 		? newSrc = path.join(lib, hash + basename)
 
 	: cache = isFile ? filesCache : foldersCache
-	? ref = @@fatHTML ? newSrc : path.relative(@@output, newSrc)
+	? ref = @relative ? newSrc : path.relative(@@output, newSrc)
 	? cache[basename] = fs.existsSync(newSrc) && ref
 
 	- if !cache[basename]
@@ -130,11 +134,12 @@
  * @param {Object=} [opts] - additional options:
  *   *) [defer]
  *   *) [optional]
+ *   *) [inline]
  */
 - block index->addScriptDep(name, opts)
 	: p = Object.assign({defer: true}, opts)
 
-	- if @@fatHTML
+	- if @@fatHTML || p.inline
 		- if assets[name]
 			: url = path.join(@@output, assets[name])
 
@@ -163,6 +168,7 @@
  * @param {string} name - dependence name
  * @param {Object=} [opts] - additional options
  *   *) [optional]
+ *   *) [inline]
  */
 - block index->addStyleDep(name, opts)
 	: &
@@ -170,7 +176,7 @@
 		p = Object.assign({}, opts)
 	.
 
-	- if @@fatHTML
+	- if @@fatHTML || p.inline
 		- if assets[rname]
 			: url = path.join(@@output, assets[rname])
 

@@ -151,7 +151,7 @@
 						+= $C(styles).to('').reduce()
 							() => res, src
 								: p = Object.isString(url) ? {src: src} : src
-								? src = self.loadToLib.apply(self, [].concat(p.asset ? @@assets : @@lib, p.src))
+								? src = self.loadToLib.apply(self, [{relative: @@fatHTML || p.inline}].concat(p.asset ? @@assets : @@lib, p.src))
 
 								- if @@fatHTML || p.inline
 									- style
@@ -193,7 +193,7 @@
 								.
 
 								: basename = path.basename(p.src)
-								? src = self.loadToLib.apply(self, [].concat(p.asset ? @@assets : @@lib, p.src))
+								? src = self.loadToLib.apply(self, [{relative: @@fatHTML || p.inline}].concat(p.asset ? @@assets : @@lib, p.src))
 
 								- if isFolder
 									? src = @@publicPath(src)
