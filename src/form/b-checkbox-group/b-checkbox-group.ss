@@ -25,7 +25,7 @@
 				< .&__el v-for = el in options | :key = el.id || el.name
 					- block checkbox
 						< template v-if = vdom.getSlot('default')
-							+= self.slot('default', {':optionProps': 'getOptionProps(el)'})
+							+= self.slot('default', {':option': 'getOptionProps(el)'})
 
 						< template v-else
 							< component.&__checkbox &
