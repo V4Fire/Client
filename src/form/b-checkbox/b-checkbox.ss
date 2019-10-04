@@ -28,13 +28,23 @@
 				- block checkbox
 					< _.&__checkbox
 						- block check
-							< .&__check v-if = m.exterior === 'switch'
+							+= self.slot('check')
+								< .&__check v-if = m.exterior === 'switch'
 
-							< @b-icon.&__check &
-								v-else |
-								:size = 'full' |
-								:value = 'check'
-							.
+								< template v-else
+									< component.&__check &
+										v-if = checkIconComponent |
+										:instanceOf = bIcon |
+										:is = checkIconComponent |
+										:size = 'full' |
+										:value = checkIcon
+									.
+
+									< template v-else
+										< @b-icon.&__check &
+											:size = 'full' |
+											:value = checkIcon
+										.
 
 					- block label
 						< span.&__label v-if = label
