@@ -267,11 +267,13 @@ export default class bCheckboxGroup<
 	protected getOptionProps(option: Option): Dictionary {
 		return {
 			...option,
-			id: option.id && this.dom.getId(option.id),
-			form: this.form,
-			value: this.isChecked(option),
-			changeable: this.isChangeable(option),
-			mods: {...option.mods, form: false}
+			'id': option.id && this.dom.getId(option.id),
+			'form': this.form,
+			'value': this.isChecked(option),
+			'changeable': this.isChangeable(option),
+			'mods': {...option.mods, form: false},
+			'@change': this.onChange,
+			'@actionChange': this.onActionChange
 		};
 	}
 

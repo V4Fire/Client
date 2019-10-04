@@ -25,18 +25,12 @@
 				< .&__el v-for = el in options | :key = el.id || el.name
 					- block checkbox
 						< template v-if = vdom.getSlot('default')
-							+= self.slot('default', { &
-								':option': 'getOptionProps(el)',
-								':onChange': 'onChange',
-								':onActionChange': 'onActionChange',
-							}) .
+							+= self.slot('default', {':optionProps': 'getOptionProps(el)'})
 
 						< template v-else
 							< component.&__checkbox &
 								:instanceOf = bCheckbox |
 								:is = option |
 								:p = el |
-								:v-attrs = getOptionProps(el) |
-								@change = onChange |
-								@actionChange = onActionChange
+								:v-attrs = getOptionProps(el)
 							.
