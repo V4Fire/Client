@@ -11,7 +11,7 @@ import remoteState from 'core/component/state';
 
 import { defProp } from 'core/const/props';
 import { reset, globalEvent, ResetType, ComponentInterface } from 'core/component';
-import { setLocale, locale } from 'core/i18n';
+import { setLocale, data as localeData } from 'core/i18n';
 
 import { Session } from 'core/session/interface';
 import { NetStatus } from 'core/net/interface';
@@ -172,7 +172,7 @@ export default abstract class iStaticPage<
 	 * System locale store
 	 */
 	@field()
-	protected localeStore: string = locale;
+	protected localeStore: string = localeData.locale;
 
 	/**
 	 * Cache of root modifiers
