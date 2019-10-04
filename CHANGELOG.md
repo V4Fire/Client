@@ -11,6 +11,21 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-beta.193 (2019-10-04)
+
+#### :boom: Breaking Change
+
+* New API for `i-static-page/modules/helpers/loadToLib`
+* New API for `i-static-page/deps.js`
+
+#### :rocket: New Feature
+
+* Added support for TS within a STD entry point
+
+#### :bug: Bug Fix
+
+* Fixed dependency loader `i-static-page/i-static-page.ss`
+
 ## v3.0.0-beta.192 (2019-10-01)
 
 #### :bug: Bug Fix
