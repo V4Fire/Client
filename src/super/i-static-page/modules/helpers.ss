@@ -26,33 +26,76 @@
  * @param {string=} [body]
  */
 - block index->jsScript(attrs = {}, body = '')
-		: normalizedAttrs = {}
+		: p = {}
 
 		- if nonce
-			? normalizedAttrs.nonce = nonce
+			? p.nonce = nonce
 
 		- forEach attrs => el, key
 			- switch key
 				> 'defer'
 					- if el
-						? normalizedAttrs.defer = TRUE
+						? p.defer = TRUE
 
 				> 'async'
 					- if el
-						? normalizedAttrs.async = TRUE
+						? p.async = TRUE
 
 				> 'module'
 					- if el
-						? normalizedAttrs.module = TRUE
+						? p.module = TRUE
 
 					- else el === false
-						? normalizedAttrs.nomodule = TRUE
+						? p.nomodule = TRUE
 
 				- default
-					? normalizedAttrs[key] = el
+					? p[key] = el
 
-		- script js ${normalizedAttrs}
+		- script js ${p}
 			{body}
+
+/**
+ * Generates a link tag with the specified attributes and body
+ *
+ * @param {Object=} [attrs] - tag attributes:
+ *   *) [href] - script src
+ *   *) [defer] - defer attribute
+ *   *) [nonce] - nonce attribute
+ *
+ * @param {string=} [body]
+ */
+- block index->cssLink(attrs = {}, body = '')
+		: &
+			p = {},
+			defer = false
+		.
+
+		- if nonce
+			? p.nonce = nonce
+
+		- forEach attrs => el, key
+			- switch key
+				> 'defer'
+					- if el
+						? defer = TRUE
+
+				- default
+					? p[key] = el
+
+		- if body
+			- style css ${p}
+				{body}
+
+		- else if defer
+			< link &
+				rel = preload |
+				as = style |
+				onload = this.rel='stylesheet' |
+				${p}
+			.
+
+		- else
+			- link css ${p}
 
 /**
  * Injects the specified file to the template
