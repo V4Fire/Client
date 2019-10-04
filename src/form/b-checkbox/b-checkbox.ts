@@ -81,7 +81,7 @@ export default class bCheckbox<
 	protected readonly $refs!: {input: HTMLInputElement};
 
 	/**
-	 * Checks the box
+	 * Checks the checkbox
 	 */
 	async check(): Promise<boolean> {
 		if (!this.changeable) {
@@ -92,7 +92,7 @@ export default class bCheckbox<
 	}
 
 	/**
-	 * Unchecks the box
+	 * Unchecks the checkbox
 	 */
 	async uncheck(): Promise<boolean> {
 		if (!this.changeable) {
@@ -102,7 +102,9 @@ export default class bCheckbox<
 		return this.setMod('checked', false);
 	}
 
-	/** @override */
+	/**
+	 * Toggles the checkbox
+	 */
 	toggle(): Promise<boolean> {
 		return this.mods.checked === 'true' ? this.uncheck() : this.check();
 	}
