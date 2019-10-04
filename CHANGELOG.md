@@ -17,6 +17,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 * New API for `i-static-page/modules/helpers/loadToLib`
 * New API for `i-static-page/deps.js`
+* Removed redundant span tag within `b-icon/b-icon.ss`
 * [Added `attrs` argument instead of `style` for `b-skeleton`](https://github.com/V4Fire/Client/pull/134)
 
 #### :rocket: New Feature
