@@ -11,7 +11,6 @@
 - include 'super/i-page'|b
 - include 'super/i-static-page/modules/**/*.ss'|b
 
-- import $C from 'collection.js'
 - import fs from 'fs-extra-promise'
 - import glob from 'glob'
 - import path from 'upath'
@@ -53,7 +52,7 @@
 				? assets[key + '$style'] = nm + '$style.css'
 
 			- for var key in assets
-				- while !await fs.existsAsync(path.join(@@output, assets[key]))
+				- while !fs.existsSync(path.join(@@output, assets[key]))
 					? await delay(200)
 
 			? assets['std'] = @@outputPattern({name: 'std'}) + '.js'
@@ -143,74 +142,74 @@
 					: defStyles = deps.styles
 					- block defStyles
 
-					/**
-					 * Loads the specified styles
-					 * @param {style}
-					 */
-					- block loadStyles(styles) => defStyles
-						+= $C(styles).to('').reduce()
-							() => res, src
-								: p = Object.isString(url) ? {src: src} : src
-								? src = self.loadToLib.apply(self, [{relative: @@fatHTML || p.inline}].concat(p.asset ? @@assets : @@lib, p.src))
+					- block loadStyles
+						- for var o = defStyles.values(), el = o.next(); !el.done; el = o.next()
+							: &
+								src = el.value,
+								p = Object.isString(src) ? {src: src} : src
+							.
 
-								- if @@fatHTML || p.inline
-									- style
-										requireMonic({src})
+							? src = self.loadToLib.apply(self, [{relative: @@fatHTML || p.inline}] &
+								.concat(!p.source || p.source === 'lib' ? @@lib : p.source === 'src' ? @@src : @@output, p.src))
+							.
 
-								- else
-									: src = @@publicPath(src)
+							? p = Object.reject(p, ['href', 'source'])
 
-									- if p.defer
-										< link &
-											rel = preload |
-											href = ${src} |
-											as = style |
-											onload = this.rel='stylesheet'
-										.
+							- if @@fatHTML || p.inline
+								- while !fs.existsSync(src)
+									? await delay(200)
 
-									- else
-										- link css href = ${src}
+								+= self.cssLink(p)
+									requireMonic({src})
 
-								- return res + getTplResult()
+							- else
+								? src = @@publicPath(src)
+								+= self.cssLink(Object.assign({defer: true}, p, {href: src}))
 
 					- block styles
 						+= self.addDependencies('styles')
 
 					- block std
 						+= self.jsScript({})
-							+= self.addScriptDep('std', {defer: false, optional: true})
+							+= self.addScriptDep('std', {optional: true})
 
 					: defLibs = deps.scripts
 					- block defLibs
 
-					- block loadLibs(libs) => defLibs
-						+= $C(libs).to('').reduce()
-							() => res, src
-								: &
-									isStr = Object.isString(src),
-									isFolder = isStr && /\/$/.test(src),
-									p = isStr ? {src: src} : src
-								.
+					- block loadLibs
+						- for var o = defLibs.values(), el = o.next(); !el.done; el = o.next()
+							: &
+								src = el.value,
+								isStr = Object.isString(src),
+								isFolder = isStr && /\/$/.test(src),
+								p = isStr ? {src: src} : src
+							.
 
-								: basename = path.basename(p.src)
-								? src = self.loadToLib.apply(self, [{relative: @@fatHTML || p.inline}].concat(p.asset ? @@assets : @@lib, p.src))
+							: basename = path.basename(p.src)
 
-								- if isFolder
-									? src = @@publicPath(src)
+							? src = self.loadToLib.apply(self, [{relative: @@fatHTML || p.inline}] &
+								.concat(!p.source || p.source === 'lib' ? @@lib : p.source === 'src' ? @@src : @@output, p.src))
+							.
 
-									+= self.jsScript({})
-										PATH['{basename}'] = '{src}';
+							? p = Object.reject(p, ['src', 'source'])
+
+							- if isFolder
+								? src = @@publicPath(src)
+
+								+= self.jsScript({})
+									PATH['{basename}'] = '{src}';
+
+							- else
+								- if @@fatHTML || p.inline
+									- while !fs.existsSync(src)
+										? await delay(200)
+
+									+= self.jsScript(p)
+										requireMonic({src})
 
 								- else
-									- if @@fatHTML || p.inline
-										+= self.jsScript({})
-											requireMonic({src})
-
-									- else
-										? src = @@publicPath(src)
-										+= self.jsScript(Object.assign({}, p, {src: src}))
-
-								- return res + getTplResult()
+									? src = @@publicPath(src)
+									+= self.jsScript(Object.assign({defer: true}, p, {src: src}))
 
 						+= self.jsScript({})
 							# block initLibs
