@@ -34,7 +34,6 @@
 						< template v-else
 							< component.&__checkbox &
 								:instanceOf = bCheckbox |
-								:-name = el.name |
 								:is = option |
 								:p = el |
 								:v-attrs = getOptionProps(el) |

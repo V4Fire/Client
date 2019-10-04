@@ -14,6 +14,7 @@ import iInput, {
 	component,
 	prop,
 	field,
+	wait,
 	p,
 
 	ValidatorsDecl,
@@ -73,8 +74,26 @@ export default class bCheckboxGroup<
 
 	/** @override */
 	get value(): V {
-		const v = this.field.get('valueStore');
-		return <V>(Object.isObject(v) ? Object.keys(v) : v);
+		const
+			v = this.field.get('valueStore');
+
+		if (Object.isObject(v)) {
+			const
+				res = <string[]>[];
+
+			for (let keys = Object.keys(v), i = 0; i < keys.length; i++) {
+				const
+					key = keys[i];
+
+				if (v[key]) {
+					res.push(key);
+				}
+			}
+
+			return <V>res;
+		}
+
+		return <V>v;
 	}
 
 	/** @override */
@@ -141,7 +160,8 @@ export default class bCheckboxGroup<
 	 * @param name - checkbox name
 	 * @param value - checkbox value
 	 */
-	setValue(name: string, value: boolean): CanUndef<boolean> {
+	@wait('ready')
+	setValue(name: string, value: boolean): CanPromise<CanUndef<boolean>> {
 		if (!this.multiple) {
 			// If not current value checkbox only unchecked -> Do nothing
 			if (!value && name !== String(this.value)) {
@@ -150,19 +170,17 @@ export default class bCheckboxGroup<
 
 			// Uncheck other values
 			if (value && this.value) {
-				const
-					element = this.dom.getComponent(`[data-name="${this.value}"]`);
-
-				if (element) {
-					element.setMod('checked', false);
+				for (let o = <ReadonlyArray<bCheckbox>>this.elements, i = 0; i < o.length; i++) {
+					o[i].setMod('checked', false);
 				}
 			}
 
 			this.field.set('valueStore', value ? name : undefined);
-			return value;
+
+		} else {
+			this.field.set(`valueStore.${name}`, value);
 		}
 
-		this.field.set(`valueStore.${name}`, value);
 		return value;
 	}
 
