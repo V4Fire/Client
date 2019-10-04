@@ -12,7 +12,7 @@ const
 
 const deps = module.exports = {
 	/**
-	 * @type {Map<(string|{src: string, asset?: boolean, inline?: boolean, defer?: boolean, async?: boolean, module?: boolean})>}
+	 * @type {Map<(string|{src: string, source?: ('lib'|'src'|'output'), inline?: boolean, defer?: boolean, async?: boolean, module?: boolean})>}
 	 */
 	scripts: new Map([
 		['requestidlecallback', 'requestidlecallback/index.js'],
@@ -20,7 +20,7 @@ const deps = module.exports = {
 	]),
 
 	/**
-	 * @type {Map<(string|{src: string, asset?: boolean, inline?: boolean, defer?: boolean})>}
+	 * @type {Map<(string|{src: string, source?: ('lib'|'src'|'output'), inline?: boolean, defer?: boolean})>}
 	 */
 	styles: new Map()
 };
@@ -32,7 +32,7 @@ if (runtime.engine === 'vue') {
 	});
 }
 
-if (!config.webpack.fatHTML()) {
+if (!config.webpack.fatHTML() && deps.styles.size) {
 	deps.scripts.set('fg-loadcss', 'fg-loadcss/src/loadCSS.js');
 	deps.scripts.set('fg-loadcss-preload', 'fg-loadcss/src/cssrelpreload.js');
 }
