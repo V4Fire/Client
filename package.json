@@ -116,7 +116,7 @@
   },
   "devDependencies": {
     "babel-eslint": "^10.0.3",
-    "eslint": "^6.5.0",
+    "eslint": "^6.5.1",
     "stlint": "^1.0.58",
     "stlint-v4fire": "^1.0.30",
     "tslint": "^5.20.0"

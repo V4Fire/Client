@@ -15,10 +15,17 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :boom: Breaking Change
 
+* New API for `i-static-page/modules/helpers/loadToLib`
+* New API for `i-static-page/deps.js`
 * [Added `attrs` argument instead of `style` for `b-skeleton`](https://github.com/V4Fire/Client/pull/134)
+
+#### :rocket: New Feature
+
+* Added support for TS within a STD entry point
 
 #### :bug: Bug Fix
 
+* Fixed dependency loader `i-static-page/i-static-page.ss`
 * [Fixed `b-skeleton` has an additional wrapper](https://github.com/V4Fire/Client/pull/134)
 
 ## v3.0.0-beta.192 (2019-10-01)

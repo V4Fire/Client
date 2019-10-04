@@ -46,7 +46,7 @@ module.exports = async function ({buildId, plugins}) {
 		graph = await build,
 		loaders = {rules: new Map()};
 
-	if (buildId === build.RUNTIME) {
+	if (buildId === build.STD || buildId === build.RUNTIME) {
 		loaders.rules.set('ts', {
 			test: /^(?:(?![\\/]workers[\\/]).)*(?:\.d)?\.ts$/,
 			exclude: depsRgxp,
