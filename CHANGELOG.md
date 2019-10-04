@@ -18,16 +18,23 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 * New API for `i-static-page/modules/helpers/loadToLib`
 * New API for `i-static-page/deps.js`
 * Removed redundant span tag within `b-icon/b-icon.ss`
+* Rewrite `bCheckboxGroup` API
 * [Added `attrs` argument instead of `style` for `b-skeleton`](https://github.com/V4Fire/Client/pull/134)
 
 #### :rocket: New Feature
 
 * Added support for TS within a STD entry point
+* Added `checkIcon` and `checkIconComponent` to `bCheckbox`
 
 #### :bug: Bug Fix
 
 * Fixed dependency loader `i-static-page/i-static-page.ss`
 * [Fixed `b-skeleton` has an additional wrapper](https://github.com/V4Fire/Client/pull/134)
+* Fixed icons within `bCheckbox`
+
+#### :house: Internal
+
+* Review `bCheckbox`
 
 ## v3.0.0-beta.192 (2019-10-01)
 
