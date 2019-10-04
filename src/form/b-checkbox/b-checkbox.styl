@@ -9,7 +9,6 @@
 @import "super/i-input/i-input.styl"
 
 $p = {
-	width: 1.2em
 	accessHelpers: true
 	visibleHelpers: true
 }
@@ -22,15 +21,9 @@ b-checkbox extends i-input
 		display flex
 		cursor pointer
 
-	&__box
+	&__checkbox
 		display block
-		size $p.width
 		cursor pointer
 
-		&::after
-			content ""
-			position absolute
-			display none
-
-	&_checked_true &__box::after
-		display block
+	&__label
+		user-select none

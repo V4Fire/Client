@@ -71,6 +71,17 @@ export default class bCheckboxGroup<
 
 	options!: Option[];
 
+	/** @override */
+	get value(): V {
+		const v = this.field.get('valueStore');
+		return <V>(Object.isObject(v) ? Object.keys(v) : v);
+	}
+
+	/** @override */
+	set value(value: V) {
+		this.field.set('valueStore', value && Object.isArray(value) ? Object.fromArray(value) : value);
+	}
+
 	/**
 	 * Array of child checkboxes
 	 */
@@ -86,22 +97,6 @@ export default class bCheckboxGroup<
 
 			return Object.freeze(els);
 		});
-	}
-
-	/** @override */
-	get value(): V {
-		const v = this.field.get('valueStore');
-		return <V>(Object.isObject(v) ? Object.keys(v) : v);
-	}
-
-	/** @override */
-	set value(value: V) {
-		this.field.set('valueStore', value && Object.isArray(value) ? Object.fromArray(value) : value);
-	}
-
-	/** @override */
-	get default(): unknown {
-		return (<unknown[]>[]).concat(this.defaultProp !== undefined ? this.defaultProp : []);
 	}
 
 	/** @inheritDoc */
@@ -148,22 +143,26 @@ export default class bCheckboxGroup<
 	 */
 	setValue(name: string, value: boolean): CanUndef<boolean> {
 		if (!this.multiple) {
-			this.field.set('valueStore', value ? name : undefined);
-			return;
-		}
-
-		if (Object.isArray(value)) {
-			if (value[1]) {
-				this.field.set(`valueStore.${value[0]}`, true);
-
-			} else {
-				this.field.delete(`valueStore.${value[0]}`);
+			// If not current value checkbox only unchecked -> Do nothing
+			if (!value && name !== String(this.value)) {
+				return;
 			}
 
-		} else {
-			this.field.set(`valueStore.${value}`, true);
+			// Uncheck other values
+			if (value && this.value) {
+				const
+					element = this.dom.getComponent(`[data-name="${this.value}"]`);
+
+				if (element) {
+					element.setMod('checked', false);
+				}
+			}
+
+			this.field.set('valueStore', value ? name : undefined);
+			return value;
 		}
 
+		this.field.set(`valueStore.${name}`, value);
 		return value;
 	}
 
@@ -279,7 +278,6 @@ export default class bCheckboxGroup<
 	 */
 	protected onActionChange(el: bCheckbox, value: boolean): void {
 		if (el.name) {
-			this.setValue(el.name, value);
 			this.emit('actionChange', this.value);
 		}
 	}

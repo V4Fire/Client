@@ -1,3 +1,5 @@
+- namespace [%fileName%]
+
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -6,6 +8,8 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-package('b-checkbox-group')
-	.extends('i-input')
-	.dependencies('b-checkbox', 'b-radio-button');
+- include 'form/b-checkbox'|b as placeholder
+
+- template index() extends ['b-checkbox'].index
+	- block check
+		< .&__check

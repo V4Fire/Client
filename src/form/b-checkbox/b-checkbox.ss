@@ -26,7 +26,15 @@
 		- block wrapper
 			< _.&__wrapper @click = onClick
 				- block checkbox
-					< _.&__box
+					< _.&__checkbox
+						- block check
+							< .&__check v-if = m.exterior === 'switch'
+
+							< @b-icon.&__check &
+								v-else |
+								:size = 'full' |
+								:value = 'check'
+							.
 
 					- block label
 						< span.&__label v-if = label
