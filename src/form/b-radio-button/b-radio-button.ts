@@ -6,25 +6,15 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import bCheckbox, { component } from 'form/b-checkbox/b-checkbox';
+import bCheckbox, { component, Value, FormValue } from 'form/b-checkbox/b-checkbox';
 export * from 'super/i-input/i-input';
 
-export type Value = boolean;
-export type FormValue = Value;
-
-@component({
-	flyweight: true,
-	functional: {
-		dataProvider: undefined
-	}
-})
-
+@component({flyweight: true})
 export default class bRadioButton<
 	V extends Value = Value,
 	FV extends FormValue = FormValue,
 	D extends object = Dictionary
-	> extends bCheckbox<V, FV, D> {
-
+> extends bCheckbox<V, FV, D> {
 	/** @override */
 	protected async onClick(e: Event): Promise<void> {
 		if (this.mods.checked === 'true') {
