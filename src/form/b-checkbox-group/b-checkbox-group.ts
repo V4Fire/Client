@@ -163,15 +163,21 @@ export default class bCheckboxGroup<
 	@wait('ready')
 	setValue(name: string, value: boolean): CanPromise<CanUndef<boolean>> {
 		if (!this.multiple) {
+			const
+				oldValue = String(this.value);
+
 			// If not current value checkbox only unchecked -> Do nothing
-			if (!value && name !== String(this.value)) {
+			if (!value && name !== oldValue) {
 				return;
 			}
 
 			// Uncheck other values
-			if (value && this.value) {
+			if (value && oldValue) {
 				for (let o = <ReadonlyArray<bCheckbox>>this.elements, i = 0; i < o.length; i++) {
-					o[i].setMod('checked', false);
+					if (o[i].name === oldValue) {
+						o[i].setMod('checked', false);
+						break;
+					}
 				}
 			}
 
@@ -271,6 +277,7 @@ export default class bCheckboxGroup<
 			'form': this.form,
 			'value': this.isChecked(option),
 			'changeable': this.isChangeable(option),
+			'class': this.provide.elClasses({checkbox: {}}),
 			'mods': {...option.mods, form: false},
 			'@change': this.onChange,
 			'@actionChange': this.onActionChange
