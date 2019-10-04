@@ -36,6 +36,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 * Review `bCheckbox`
 * Moved to new locale API
+* Updated dependencies: @v4fire/3.0.0-beta.70, url-loader@2.2.0
 
 ## v3.0.0-beta.192 (2019-10-01)
 

@@ -29,7 +29,7 @@
     "test": "echo \"Error: no test specified\" && exit 0"
   },
   "dependencies": {
-    "@v4fire/core": "^3.0.0-beta.69",
+    "@v4fire/core": "^3.0.0-beta.70",
     "escaper": "^3.0.3",
     "eventemitter2": "^5.0.1",
     "fg-loadcss": "^2.1.0",
@@ -107,7 +107,7 @@
     "typograf": "^6.8.2",
     "uniconf": "^2.1.1",
     "upath": "^1.2.0",
-    "url-loader": "^2.1.0",
+    "url-loader": "^2.2.0",
     "urlconcat": "0.0.12",
     "vue-template-compiler": "^2.6.10",
     "vue-template-es2015-compiler": "^1.9.1",
