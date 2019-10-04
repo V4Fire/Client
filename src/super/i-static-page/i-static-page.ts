@@ -171,8 +171,8 @@ export default abstract class iStaticPage<
 	/**
 	 * System locale store
 	 */
-	@field()
-	protected localeStore: string = locale;
+	@field(() => locale.value)
+	protected localeStore!: string;
 
 	/**
 	 * Cache of root modifiers

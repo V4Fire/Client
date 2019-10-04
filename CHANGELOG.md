@@ -35,6 +35,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### :house: Internal
 
 * Review `bCheckbox`
+* Moved to new locale API
 
 ## v3.0.0-beta.192 (2019-10-01)
 
