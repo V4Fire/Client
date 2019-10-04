@@ -15,11 +15,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :boom: Breaking Change
 
-* [Removed `style` argument from `b-skeleton`](https://github.com/V4Fire/Client/pull/134)
-
-#### :rocket: New Feature
-
-* [Added `attrs` argument for `b-skeleton`](https://github.com/V4Fire/Client/pull/134)
+* [Added `attrs` argument instead of `style` for `b-skeleton`](https://github.com/V4Fire/Client/pull/134)
 
 #### :bug: Bug Fix
 
