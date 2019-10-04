@@ -320,7 +320,9 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 
 					rel: src.rel,
 					root: src.cwd(),
+					src: src.src(),
 					lib: src.lib(),
+
 					assets: src.assets(),
 					assetsJS: webpack.assetsJS(),
 					favicons: this.favicons().path,
