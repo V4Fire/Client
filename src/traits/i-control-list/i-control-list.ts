@@ -8,13 +8,6 @@
 
 import iBlock from 'super/i-block/i-block';
 
-//#if runtime has bButton
-import bButton from 'form/b-button/b-button';
-//#endif
-
-export type ControlInstance =
-	bButton;
-
 export type Style =
 	string |
 	Dictionary<string> |
@@ -25,16 +18,21 @@ export interface Analytics {
 	details?: Dictionary;
 }
 
-export interface ControlAction {
+export interface ControlActionObject {
 	method: string | Function;
 	args?: unknown[];
 	defArgs?: boolean;
 }
 
+export type ControlAction =
+	string |
+	Function |
+	ControlActionObject;
+
 export interface Control {
 	text?: string;
-	component?: 'b-button' | 'b-file-button';
-	action?: string | Function | ControlAction;
+	component?: 'b-button' | 'b-file-button' | string;
+	action?: ControlAction;
 	analytics?: Analytics;
 	attrs?: Dictionary;
 }
@@ -48,10 +46,10 @@ export default abstract class iControlList {
 	 * @param [control] - control instance
 	 * @param [e] - event object
 	 */
-	static callControlAction<R = unknown, C extends iBlock = iBlock>(
-		component: C,
+	static callControlAction<R = unknown, C extends iBlock = iBlock, CTX extends iBlock = iBlock>(
+		component: CTX,
 		opts: Control = {},
-		control?: ControlInstance,
+		control?: C,
 		e?: Event
 	): CanPromise<CanUndef<R>> {
 		const
@@ -112,9 +110,9 @@ export default abstract class iControlList {
 	 * @param [control]
 	 * @param [e]
 	 */
-	abstract callControlAction<R = unknown>(
+	abstract callControlAction<R = unknown, C extends iBlock = iBlock>(
 		opts?: Control,
-		control?: ControlInstance,
+		control?: C,
 		e?: Event
 	): CanPromise<CanUndef<R>>;
 
