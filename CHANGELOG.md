@@ -11,6 +11,14 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-beta.194 (2019-10-07)
+
+#### :boom: Breaking Change
+
+* Renamed `pagePropObj` -> `pagePropObject` within `bRouter`
+* Renamed `DaemonSpawnedObj` -> `SpawnedDaemonObject` within `i-block/modules/daemons`
+* Review `iControlList` interfaces
+
 ## v3.0.0-beta.193 (2019-10-04)
 
 #### :boom: Breaking Change
