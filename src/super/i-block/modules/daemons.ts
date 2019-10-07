@@ -37,7 +37,7 @@ export interface Daemon {
 	fn: Function;
 }
 
-export interface DaemonSpawnedObj {
+export interface SpawnedDaemonObject {
 	fn: Function;
 	wait?: Statuses;
 	immediate?: boolean;
@@ -49,7 +49,7 @@ export interface DaemonHookParams {
 }
 
 export type DaemonWatcher = DaemonWatchObject | string;
-export type SpawnedDaemon = DaemonSpawnedObj | Function;
+export type SpawnedDaemon = SpawnedDaemonObject | Function;
 export type DaemonsDict = Dictionary<Daemon>;
 
 export default class Daemons {
