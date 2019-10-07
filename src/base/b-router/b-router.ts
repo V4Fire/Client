@@ -40,13 +40,13 @@ export const pageOptsKeys = [
 	'query'
 ];
 
-export interface PagePropObj extends PageOptsProp {
+export interface PagePropObject extends PageOptsProp {
 	page: string;
 }
 
 export type PageProp =
 	string |
-	PagePropObj;
+	PagePropObject;
 
 export interface Page {
 	page: string;
