@@ -262,11 +262,11 @@ export function bindWatchers(
 											return;
 										}
 
-										const old = store;
+										const oldVal = store;
 										store = val;
 
 										for (let o = cbs.values(), el = o.next(); !el.done; el = o.next()) {
-											el.value(val, old);
+											el.value(val, oldVal);
 										}
 									}
 								});
@@ -351,11 +351,11 @@ export function bindWatchers(
 										return;
 									}
 
-									const old = store;
+									const oldVal = store;
 									store = val;
 
 									for (let o = cbs.values(), el = o.next(); !el.done; el = o.next()) {
-										el.value(val, old);
+										el.value(val, oldVal);
 									}
 								}
 							});
