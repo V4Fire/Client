@@ -11,6 +11,24 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-beta.195 (2019-10-08)
+
+#### :boom: Breaking Change
+
+* Renamed `Analytics` -> `ControlAnalytics` within `traits/i-control-list`
+
+#### :rocket: New Feature
+
+* Added `attrsMap` to `traits/i-control-list/ControlActionObject`
+
+#### :bug: Bug Fix
+
+* [Fixed DS functions naming](https://github.com/V4Fire/Client/pull/136)
+
+#### :nail_care: Polish
+
+* Review `iControlList` interfaces
+
 ## v3.0.0-beta.194 (2019-10-07)
 
 #### :boom: Breaking Change
