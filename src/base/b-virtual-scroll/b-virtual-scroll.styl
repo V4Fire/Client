@@ -5,4 +5,25 @@ $p = {
 }
 
 b-virtual-scroll extends i-data
-	//
+	position relative
+
+	&__container
+		width 100%
+
+	&__tombstone-el
+	&__option-el
+		contain paint
+		position absolute !important
+		top 0
+		left 0
+
+		width 50%
+
+		opacity 1
+		useGPU()
+
+		will-change transform
+		transition opacity 0.15s
+
+	&__el_hidden_true
+		opacity 0

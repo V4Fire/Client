@@ -4,8 +4,7 @@
 
 - template index() extends ['i-data'].index
 	- block body
-		< .&__list ref = list
-			< .&__container ref = container
+		< .&__container ref = container
 
-			< .&__tombstone ref = tombstone
-				+= self.slot('tombstone')
+		< .&__tombstone ref = tombstone
+			+= self.slot('tombstone')
