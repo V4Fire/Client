@@ -14,7 +14,7 @@ b-radio-button
 	createStyles($o)
 		if getField($o, "block.textStyle")
 			& ^[0]__label
-				text-options(getField($o, "block.textStyle"))
+				t(getField($o, "block.textStyle"))
 
 			for $key in (disabled focused checked)
 				$mod = getField($o, path(mods $key true))
