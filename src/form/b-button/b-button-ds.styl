@@ -80,5 +80,6 @@ b-button
 				if $params
 					& ^[0]__{$key}
 						margin-{$key == "pre-icon" ? right : left} getField($params, offset)
+						font-size getField($params, iconSize)
 
 	generateRules($p, createStyles)
