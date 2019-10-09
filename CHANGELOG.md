@@ -11,6 +11,16 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-beta.197 (2019-10-09)
+
+#### :bug: Bug Fix
+
+* Fixed prop regexp `core/component/create/helpers/field`
+
+#### :house: Internal
+
+* Updated dependencies: @v4fire/3.0.0-beta.77
+
 ## v3.0.0-beta.196 (2019-10-08)
 
 #### :bug: Bug Fix
