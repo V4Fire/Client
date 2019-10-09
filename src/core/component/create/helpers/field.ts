@@ -18,7 +18,7 @@ export interface FieldInfo {
 }
 
 const
-	propRgxp = /Prop$/,
+	propRgxp = /Prop$|^\$(?:attrs|props)/,
 	storeRgxp = /Store$/,
 	hasSeparator = /\./;
 
