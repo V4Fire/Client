@@ -146,12 +146,15 @@
 						- for var o = defStyles.values(), el = o.next(); !el.done; el = o.next()
 							: &
 								src = el.value,
-								p = Object.isString(src) ? {src: src} : src
+								p = Object.isString(src) ? {src: src} : src,
+								cwd = !p.source || p.source === 'lib' ? @@lib : p.source === 'src' ? @@src : @@output
 							.
 
-							? src = self.loadToLib.apply(self, [{relative: @@fatHTML || p.inline}] &
-								.concat(!p.source || p.source === 'lib' ? @@lib : p.source === 'src' ? @@src : @@output, p.src))
-							.
+							- if p.source === 'output'
+								? src = path.join(cwd, p.src)
+
+							- else
+								? src = self.loadToLib.apply(self, [{relative: @@fatHTML || p.inline}].concat(cwd, p.src))
 
 							? p = Object.reject(p, ['href', 'source'])
 
@@ -185,11 +188,16 @@
 								p = isStr ? {src: src} : src
 							.
 
-							: basename = path.basename(p.src)
-
-							? src = self.loadToLib.apply(self, [{relative: @@fatHTML || p.inline}] &
-								.concat(!p.source || p.source === 'lib' ? @@lib : p.source === 'src' ? @@src : @@output, p.src))
+							: &
+								basename = path.basename(p.src),
+								cwd = !p.source || p.source === 'lib' ? @@lib : p.source === 'src' ? @@src : @@output
 							.
+
+							- if p.source === 'output'
+								? src = path.join(cwd, p.src)
+
+							- else
+								? src = self.loadToLib.apply(self, [{relative: @@fatHTML || p.inline}].concat(cwd, p.src))
 
 							? p = Object.reject(p, ['src', 'source'])
 
