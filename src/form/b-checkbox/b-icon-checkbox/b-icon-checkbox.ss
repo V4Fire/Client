@@ -18,7 +18,7 @@
 
 		- block icon
 			< .&__cell.&__icon v-if = vdom.getSlot('icon')
-				+= self.slot('icon')
+				+= self.slot('icon', {':icon': 'icon'})
 
 			< .&__cell.&__icon v-else
 				< component &
