@@ -35,16 +35,22 @@ b-button
 									&__value
 										for $v in (top bottom)
 											if getField($offset, $v)
-												padding-{$v} getField($offset, $v)
+												$padding = {}
+												$padding[join("-", padding $v)] = getField($offset, $v)
+
+												interpolate-props($padding)
 
 									&__wrapper
 										for $v in (left right)
 											if getField($offset, $v)
-												padding-{$v} getField($offset, $v)
+												$padding = {}
+												$padding[join("-", padding $v)] = getField($offset, $v)
+
+												interpolate-props($padding)
 
 								&__button
 									t(getField($value, textStyle))
-									line-height getField($value, lineHeight)
+									interpolate-props({lineHeight: getField($value, lineHeight)})
 
 			extStyle($name, $path)
 				getField($obj, path(exterior $name $path))
@@ -83,8 +89,10 @@ b-button
 				$params = getField($obj, path(mods camelize($key) true))
 
 				if $params
+					$opts = {fontSize: getField($params, iconSize)}
+					$opts[join("-", margin $key == "pre-icon" ? right : left)] = getField($params, offset)
+
 					& ^[0]__{$key}
-						margin-{$key == "pre-icon" ? right : left} getField($params, offset)
-						font-size getField($params, iconSize)
+						interpolate-props($opts)
 
 	generateRules($p, createStyles)
