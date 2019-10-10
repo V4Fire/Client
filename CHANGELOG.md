@@ -11,6 +11,17 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-beta.198 (2019-10-10)
+
+#### :rocket: New Feature
+
+* Provided extra parameters to component slots
+* Added `label` slot within `bCheckbox`
+
+#### :bug: Bug Fix
+
+* Fixed inlining for source `output` `super/i-static-page/i-static-page.interface.ss`
+
 ## v3.0.0-beta.197 (2019-10-09)
 
 #### :bug: Bug Fix
