@@ -1,8 +1,16 @@
+/*!
+ * V4Fire Client Core
+ * https://github.com/V4Fire/Client
+ *
+ * Released under the MIT license
+ * https://github.com/V4Fire/Client/blob/master/LICENSE
+ */
+
 import Async from 'core/async';
 import symbolGenerator from 'core/symbol';
 import Range from 'core/range';
 
-import bVirtualScroll from 'base/b-virtual-scroll/b-virtual-scroll';
+import bVirtualScroll, { RemoteData } from 'base/b-virtual-scroll/b-virtual-scroll';
 import ComponentRender from 'base/b-virtual-scroll/modules/component-render';
 
 export const
@@ -32,6 +40,11 @@ export interface ElementPosition {
 	y: number;
 }
 
+export interface Size {
+	width: number;
+	height: number;
+}
+
 export default class ScrollRender {
 	/**
 	 * Link to component
@@ -54,9 +67,24 @@ export default class ScrollRender {
 	protected scrollPosition: number = 0;
 
 	/**
+	 * Maximum value of scroll
+	 */
+	protected scrollEnd: number = 0;
+
+	/**
 	 * Current position
 	 */
 	protected currentPosition: number = 0;
+
+	/**
+	 * Total amount of elements being loaded
+	 */
+	protected totalLoaded: number = 0;
+
+	/**
+	 * Last calculated height
+	 */
+	protected lastHeight: number = 0;
 
 	/**
 	 * Maximum elements
@@ -74,14 +102,6 @@ export default class ScrollRender {
 	protected page: number = 1;
 
 	/**
-	 * Size of tombstone
-	 */
-	protected tombstoneSize: {
-		width: number;
-		height: number;
-	} = {width: 0, height: 0};
-
-	/**
 	 * Range of rendered items
 	 */
 	protected range: Range<number>;
@@ -92,17 +112,14 @@ export default class ScrollRender {
 	protected currentAnchor: AnchoredItem = {index: 0, offset: 0};
 
 	/**
-	 * List of elements position
+	 * Size of tombstone
 	 */
-	protected positionList: Dictionary<Dictionary<number>> = {};
+	protected tombstoneSize: Size = {width: 0, height: 0};
 
 	/**
 	 * Window size
 	 */
-	protected windowSize: {
-		width: number;
-		height: number;
-	} = {width: 0, height: 0};
+	protected windowSize: Size = {width: 0, height: 0};
 
 	/**
 	 * Class for tombstones
@@ -115,7 +132,7 @@ export default class ScrollRender {
 	 * Hidden modifier
 	 */
 	protected get hiddenClass(): string {
-		return `${this.component.componentName}__el_hidden_true`;
+		return `${this.component.componentName}__el_display_none`;
 	}
 
 	/**
@@ -146,14 +163,7 @@ export default class ScrollRender {
 	 * Name of scroll prop
 	 */
 	protected get scrollProp(): string {
-		return this.component.scrollDirection === 'x' ? 'scrollLeft' : 'scrollTop';
-	}
-
-	/**
-	 * Name of padding prop1
-	 */
-	protected get paddingProp(): string {
-		return this.component.scrollDirection === 'x' ? 'paddingLeft' : 'paddingTop';
+		return 'scrollTop';
 	}
 
 	/**
@@ -171,72 +181,107 @@ export default class ScrollRender {
 		this.component = ctx;
 		this.range = new Range(0, this.component.realElementsSize);
 
-		if (ctx.options && ctx.options.length) {
-			this.registerData(ctx.options);
+		this.calculateSizes();
+		this.updateRange();
+	}
+
+	/**
+	 * Initializes a data draw process
+	 */
+	initDraw(): void {
+		const
+			{component} = this;
+
+		if (component.options && component.options.length) {
+			this.registerData(component.options);
 		}
 
-		this.calculateSizes();
+		if (component.optionsProp && !component.dataProvider) {
+			this.max = component.options.length;
+		}
 
-		this.async.on(document, 'scroll', () => this.async.setTimeout(() => {
-			this.onScroll();
-		}, 50, {label: $$.onScrollDelay}), {label: $$.scroll});
+		if (component.dataProvider && component.db) {
+			this.max = component.db.total || Infinity;
+		}
 
-		this.async.on(window, 'resize orientationchange', async () => {
-			await this.async.sleep(50, {label: $$.resizeSleep, join: false}).catch(stderr);
-			this.calculateSizes();
+		this.initEvents();
+	}
 
-		}, {
-			label: $$.resize,
-			join: false
-		});
+	/**
+	 * Reinitializes a scroll render
+	 */
+	reInit(): Promise<void> {
+		const
+			{component} = this,
+			group = {group: 'scroll-render'};
+
+		this.scrollEnd = 0;
+		this.scrollPosition = 0;
+		this.totalLoaded = 0;
+		this.lastHeight = 0;
+		this.page = 0;
+
+		this.items = [];
+		this.lastRegisterData = [];
+
+		this.max = Infinity;
+		this.range = new Range(0, component.realElementsSize);
+
+		this.currentAnchor = {index: 0, offset: 0};
+		this.windowSize = {width: 0, height: 0};
+		this.tombstoneSize = {...this.windowSize};
+
+		this.async.clearAll({group: 'render-scroll'});
+
+		return this.async.promise(new Promise((res, rej) => {
+			this.async.requestAnimationFrame(() => {
+				this.unused.forEach((node) => node.remove());
+				this.unused = [];
+
+				res();
+
+			}, {label: $$.reInitRaf, group: 'render-scroll'});
+		}), {label: $$.reInit, group: 'render-scroll'});
 	}
 
 	/**
 	 * Register a specified array of options
 	 * @param data
-	 * @param [forceUpdate]
 	 */
-	registerData(data: unknown[], forceUpdate: boolean = true): void {
-		this.items = this.items.concat(data.map(this.createItem));
-		forceUpdate && this.updateRange();
-	}
-
-	/**
-	 * Sets a position of item to position list
-	 *
-	 * @param row
-	 * @param column
-	 * @param value
-	 */
-	protected setItemPosition(row: number, column: number, value: number): void {
-		(<Dictionary<number>>this.getItemPosition(row))[column] = value;
-	}
-
-	/**
-	 * Gets a position of item from position list
-	 *
-	 * @param row
-	 * @param [column]
-	 */
-	protected getItemPosition(row: number, column?: number): Dictionary<number> | CanUndef<number> {
+	registerData(data: unknown[]): void {
 		const
-			{component} = this;
+			{items} = this;
 
-		if (!this.positionList[row]) {
-			const data = {};
+		this.lastRegisterData = data;
 
-			for (let i = 0; i < component.columns; i++) {
-				data[i] = this.currentPosition;
+		for (let i = 0; i < data.length; i++) {
+			if (items.length <= this.totalLoaded) {
+				items.push(this.createItem(undefined));
 			}
 
-			this.positionList[row] = data;
+			if (this.totalLoaded <= this.max) {
+				items[this.totalLoaded++].data = data[i];
+			}
 		}
+	}
 
-		if (column === undefined) {
-			return <Dictionary<number>>this.positionList[row];
-		}
+	/**
+	 * Initializes events
+	 */
+	protected initEvents(): void {
+		this.async.on(document, 'scroll', this.onScroll.bind(this), {
+			label: $$.scroll,
+			group: 'render-scroll'
+		});
 
-		return (<Dictionary<number>>this.positionList[row])[column];
+		this.async.on(window, 'resize orientationchange', async () => {
+			await this.async.sleep(50, {label: $$.resizeSleep, join: false}).catch(stderr);
+			this.calculateSizes();
+		}, {
+			label: $$.resize,
+			group: 'render-scroll',
+			join: false
+		});
 	}
 
 	/**
@@ -244,7 +289,7 @@ export default class ScrollRender {
 	 */
 	protected updateRange(): void {
 		const
-			{scrollRoot, scrollProp, scrollPosition, range: currentRange, component, currentAnchor} = this,
+			{scrollRoot, scrollProp, scrollPosition, range, component, currentAnchor} = this,
 			scrollValue = scrollRoot[scrollProp],
 			diff = scrollValue - scrollPosition;
 
@@ -258,15 +303,19 @@ export default class ScrollRender {
 		this.scrollPosition = scrollValue;
 
 		const
-			lastItem = this.findAnchoredItem(this.$refs.container.offsetHeight); // Здесь будет 0
+			lastItem = this.findAnchoredItem();
 
 		if (diff < 0) {
-			currentRange.start = Math.max(0, currentAnchor.index - component.realElementsSize);
-			currentRange.end = lastItem.index + component.oppositeElementsSize;
+			range.start = Math.max(0, currentAnchor.index - component.realElementsSize);
+			range.end = lastItem.index + component.oppositeElementsSize;
 
 		} else {
-			currentRange.start = Math.max(0, currentAnchor.index - component.oppositeElementsSize);
-			currentRange.end = lastItem.index + component.realElementsSize;
+			if (component.mods.progress === 'true') {
+				return;
+			}
+
+			range.start = Math.max(0, currentAnchor.index - component.oppositeElementsSize);
+			range.end = lastItem.index + component.realElementsSize;
 		}
 
 		this.draw();
@@ -276,24 +325,33 @@ export default class ScrollRender {
 	 * Draws a content into container
 	 */
 	protected draw(): void {
+		const
+			{async: $a} = this;
+
 		this.clearNodes();
 
 		const
 			animations = this.renderItems();
 
-		this.async.requestAnimationFrame(() => {
-			this.cacheItemsHeight();
+		$a.requestAnimationFrame(() => {
 			this.clearUnused();
-		});
+			this.cacheItemsHeight();
+			this.setCurrentPosition();
+		}, {group: 'render-scroll'});
 
-		this.setCurrentPosition();
-
-		this.async.requestAnimationFrame(() => {
-			this.setItemsTransform(animations);
+		$a.requestAnimationFrame(() => {
 			this.setTombstoneTransform(animations);
-		});
+			this.setItemsTransform(animations);
+			this.setScrollRunner();
 
-		this.async.setTimeout(() => this.hideTombstones(animations), 300);
+			if (this.component.containerHeight) {
+				this.setContainerHeight();
+			}
+
+		}, {group: 'render-scroll'});
+
+		$a.setTimeout(() => $a.requestAnimationFrame(() => this.hideTombstones(animations), {group: 'render-scroll'}), 300);
+
 		this.request();
 	}
 
@@ -309,7 +367,7 @@ export default class ScrollRender {
 		}
 
 		const
-			itemsToRichBottom = component.options.length - currentAnchor.index,
+			itemsToRichBottom = this.totalLoaded - currentAnchor.index,
 			currentSlice = items.slice(range.start, range.end);
 
 		if (itemsToRichBottom <= 0 && !items.length) {
@@ -318,21 +376,28 @@ export default class ScrollRender {
 
 		// @ts-ignore (access)
 		component.requestRemoteData({
+			currentRange: this.range,
 			currentPage: this.page,
 			nextPage: this.page + 1,
-			currentRange: this.range,
 			lastLoaded: this.lastRegisterData,
+
 			currentSlice,
 			itemsToRichBottom,
 			items
 		})
-			.then((data: CanUndef<unknown[]>) => {
-				if (!data || !data.length) {
+			.then((v: CanUndef<RemoteData>) => {
+				if (!v) {
 					return;
 				}
 
+				const
+					{data, total} = v;
+
 				this.page++;
+				this.max = total || Infinity;
+
 				this.registerData(data);
+				this.updateRange();
 			});
 	}
 
@@ -341,20 +406,20 @@ export default class ScrollRender {
 	 */
 	protected renderItems(): Dictionary<[HTMLElement, number]> {
 		const
-			{max, component, range: currentRange, scrollPosition, items, $refs} = this;
+			{max, component, range, scrollPosition, items, $refs} = this;
 
 		const
 			nodes: HTMLElement[] = [],
 			animations = {},
-			last = Math.floor((currentRange.end + component.realElementsSize) / component.columns) * component.columns;
+			last = Math.floor((range.end + component.realElementsSize) / component.columns) * component.columns;
 
 		if (last > max) {
-			currentRange.end = max;
+			range.end = max;
 		}
 
-		const r = (item) => {
+		const r = (item, i) => {
 			const
-				res = item.data ? this.componentRender.render(item.data, item) : this.componentRender.getTombstone();
+				res = item.data ? this.componentRender.render(item.data, item, i) : this.componentRender.getTombstone();
 
 			if (!res) {
 				return;
@@ -362,10 +427,10 @@ export default class ScrollRender {
 
 			item.top = -1;
 			item.node = res;
-			nodes.push(res);
+			nodes.push(item.node);
 		};
 
-		for (let i = currentRange.start; i < currentRange.end; i++) {
+		for (let i = range.start; i < range.end; i++) {
 
 			while (items.length <= i) {
 				items.push(this.createItem(undefined));
@@ -388,12 +453,7 @@ export default class ScrollRender {
 				}
 			}
 
-			if (component.waterflow) {
-				this.isLayoutInView(i) && r(item);
-
-			} else {
-				r(item);
-			}
+			r(item, i);
 		}
 
 		nodes.forEach((n) => $refs.container.appendChild(n));
@@ -401,12 +461,43 @@ export default class ScrollRender {
 	}
 
 	/**
+	 * Sets a height to container
+	 */
+	protected setContainerHeight(): void {
+		const
+			{$refs, scrollEnd, currentPosition, component} = this;
+
+		const
+			val =  Math.max(scrollEnd, currentPosition + component.scrollRunnerMin);
+
+		if (val === this.lastHeight) {
+			return;
+		}
+
+		this.lastHeight = val;
+		$refs.container.style.height = this.lastHeight.px;
+	}
+
+	/**
+	 * Sets a position of scrollRunner
+	 */
+	protected setScrollRunner(): void {
+		const
+			{scrollEnd, component, currentPosition, $refs} = this;
+
+		this.scrollEnd = Math.max(scrollEnd, currentPosition + component.scrollRunnerMin);
+		$refs.scrollRunner.style.transform = `translate3d(0, ${this.scrollEnd.px}, 0)`;
+		$refs.container.scrollTop = this.scrollPosition;
+	}
+
+	/**
 	 * Sets a position for items
+	 * @param animations
 	 */
 	protected setItemsTransform(animations: Dictionary<[HTMLElement, number]>): void {
 		const
 			{range, component, items, tombstoneSize} = this,
-			{columns, waterflow} = component;
+			{columns} = component;
 
 		for (let i = range.start; i < range.end; i++) {
 			const
@@ -418,9 +509,8 @@ export default class ScrollRender {
 			}
 
 			const
-				row = waterflow ? Math.floor(i / columns) : 0,
 				x = (i % columns) * (item.width || tombstoneSize.width),
-				y = waterflow ? <CanUndef<number>>this.getItemPosition(row, i % columns) || 0 : this.currentPosition;
+				y = this.currentPosition;
 
 			const
 				translate = `translate3d(${x.px}, ${y.px}, 0)`;
@@ -441,10 +531,6 @@ export default class ScrollRender {
 
 			if ((i + 1) % columns === 0) {
 				this.currentPosition += height;
-			}
-
-			if (waterflow) {
-				this.setItemPosition(row + 1, i % columns, y + height);
 			}
 		}
 	}
@@ -467,7 +553,7 @@ export default class ScrollRender {
 			}
 
 			const
-				x = (Number(i) % columns) * item[i].width,
+				x = (Number(i) % columns) * item.width,
 				y = (scrollPosition + (animation[1] || 0)) * columns;
 
 			item.node.style.transform = `translate3d(${x.px}, ${y.px}, 0)`;
@@ -487,8 +573,8 @@ export default class ScrollRender {
 			this.scrollPosition += items[i].height || tombstoneSize.height;
 		}
 
-		this.currentPosition = this.scrollPosition;
 		this.scrollPosition += currentAnchor.offset;
+		this.currentPosition = this.scrollPosition - currentAnchor.offset;
 
 		let i = currentAnchor.index;
 
@@ -505,11 +591,11 @@ export default class ScrollRender {
 
 	/**
 	 * Clears unused nodes
-	 * @param full - if true, clear all nodes
+	 * @param [full] - if true, clear all nodes
 	 */
-	protected clearNodes(full: boolean = false): void {
+	protected clearNodes(): void {
 		const
-			{range: currentRange, items, component} = this;
+			{range, items} = this;
 
 		const clear = (item) => {
 			item.data ? this.clearItem(item) : this.clearTombstone(item);
@@ -520,19 +606,12 @@ export default class ScrollRender {
 			const
 				item = items[i];
 
-			if (component.waterflow) {
-				if (item.node && (full || !this.isLayoutInView(i))) {
-					clear(item);
-				}
-
-			} else {
-				if (i === currentRange.start) {
-					i = currentRange.end - 1;
-					continue;
-				}
-
-				clear(item);
+			if (i === range.start) {
+				i = range.end - 1;
+				continue;
 			}
+
+			clear(item);
 		}
 	}
 
@@ -541,17 +620,14 @@ export default class ScrollRender {
 	 * @param item
 	 */
 	protected clearItem(item: RenderItem): void {
-		const
-			{component, $refs: {container}} = this;
-
-		if (component.cacheNode && item.node) {
-			container.removeChild(item.node);
+		if (!item.node) {
 			return;
 		}
 
-		if (item.node) {
-			this.unused.push(item.node);
-		}
+		const
+			{$refs: {container}} = this;
+
+		container.removeChild(item.node);
 	}
 
 	/**
@@ -566,9 +642,6 @@ export default class ScrollRender {
 		if (this.hasTombstoneClass(item.node)) {
 			this.hideNode(item.node);
 			this.componentRender.saveTombstone(item.node);
-
-		} else {
-			this.unused.push(item.node);
 		}
 	}
 
@@ -616,35 +689,10 @@ export default class ScrollRender {
 	}
 
 	/**
-	 * Is the specified element in view
-	 * @param i
-	 */
-	protected isLayoutInView(i: number): boolean {
-		const
-			{component: {columns}, windowSize, scrollPosition} = this;
-
-		const
-			top = this.getItemPosition(Math.floor(i / columns), i % columns);
-
-		if (!top) {
-			return true;
-		}
-
-		if (!Object.isNumber(top)) {
-			return false;
-		}
-
-		const
-			index = top - scrollPosition;
-
-		return index > -windowSize.height * 0.5 && index < windowSize.height;
-	}
-
-	/**
 	 * Find anchored item
-	 * @param diff
+	 * @param [diff]
 	 */
-	protected findAnchoredItem(diff: number): AnchoredItem {
+	protected findAnchoredItem(diff: number = 0): AnchoredItem {
 		const
 			{max, currentAnchor, items, tombstoneSize, component: {columns}} = this;
 
@@ -740,7 +788,7 @@ export default class ScrollRender {
 				width: tombstone.offsetWidth
 			};
 
-			$refs.container.removeChild(tombstone);
+			$refs.tombstone.appendChild(tombstone);
 		}
 
 		for (let i = 0; i < items.length; i++) {

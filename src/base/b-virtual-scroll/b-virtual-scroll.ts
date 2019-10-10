@@ -1,11 +1,20 @@
+/*!
+ * V4Fire Client Core
+ * https://github.com/V4Fire/Client
+ *
+ * Released under the MIT license
+ * https://github.com/V4Fire/Client/blob/master/LICENSE
+ */
+
 import Range from 'core/range';
+import symbolGenerator from 'core/symbol';
 
 import ComponentRender from 'base/b-virtual-scroll/modules/component-render';
 import ScrollRender, { RenderItem } from 'base/b-virtual-scroll/modules/scroll-render';
 
-import iData, { RequestParams, component, prop, field, wait, system, hook } from 'super/i-data/i-data';
+import iData, { RequestParams, ModsDecl, component, prop, field, wait, system, hook, watch } from 'super/i-data/i-data';
 
-export type OptionProps = ((el: unknown, i: number) => Dictionary) | Dictionary;
+export type OptionProps = ((el: unknown, i: number) => Dictionary);
 export type OptionsIterator<T = bVirtualScroll> = (options: unknown[], ctx: T) => unknown[];
 
 export type RequestQuery<T extends unknown = unknown> = (params: LoadMoreParams<T>) => Dictionary;
@@ -21,17 +30,18 @@ export interface LoadMoreParams<T extends unknown = unknown> {
 	lastLoaded: Array<T>;
 }
 
-export const scrollAxis = {
-	x: true,
-	y: true
-};
+export interface RemoteData {
+	data: unknown[];
+	total?: number;
+}
 
-export type ScrollAxis = keyof typeof scrollAxis;
+export const
+	$$ = symbolGenerator();
 
 export * from 'super/i-block/i-block';
 
 @component()
-export default class bVirtualScroll extends iData<unknown[]> {
+export default class bVirtualScroll extends iData<RemoteData> {
 	/**
 	 * Initial component options
 	 */
@@ -41,7 +51,7 @@ export default class bVirtualScroll extends iData<unknown[]> {
 	/**
 	 * Component options
 	 */
-	@system()
+	@system((o) => o.sync.link())
 	options!: unknown[];
 
 	/**
@@ -59,8 +69,14 @@ export default class bVirtualScroll extends iData<unknown[]> {
 	/**
 	 * Option component props
 	 */
-	@prop([Object, Function])
-	readonly optionProps: OptionProps = {};
+	@prop({type: Function, required: false})
+	readonly optionProps?: OptionProps;
+
+	/**
+	 * Height of option component
+	 */
+	@prop({type: Number, required: false})
+	readonly optionHeight?: number;
 
 	/**
 	 * Number of columns
@@ -93,22 +109,47 @@ export default class bVirtualScroll extends iData<unknown[]> {
 	readonly tombstoneSize: number = 10;
 
 	/**
+	 * Count of tombstones for first render
+	 */
+	@prop(Number)
+	readonly firstRenderTombstoneCount: number = 10;
+
+	/**
+	 * The number of pixels of additional length to allow scrolling to
+	 */
+	@prop(Number)
+	readonly scrollRunnerMin: number = 0;
+
+	/**
 	 * If true, created nodes will be cached
 	 */
 	@prop(Boolean)
 	readonly cacheNode: boolean = true;
 
 	/**
-	 * Use waterflow render mode
+	 * If true, user will be able to scroll until content end
 	 */
 	@prop(Boolean)
-	readonly waterflow: boolean = false;
+	readonly drawMaxBased: boolean = false;
 
 	/**
-	 * Scroll direction
+	 * If true, heights will be recalculates on every draw
+	 * NOTICE: May slowdown your app performance
 	 */
-	@prop({type: String, validator: (v) => scrollAxis.hasOwnProperty(v)})
-	readonly scrollDirection: ScrollAxis = 'y';
+	@prop(Boolean)
+	readonly recalculateHeights: boolean = false;
+
+	/**
+	 * If true, will update container height on every range update
+	 */
+	@prop(Boolean)
+	readonly containerHeight: boolean = true;
+
+	/**
+	 * If true, will bind click event to element
+	 */
+	@prop(Boolean)
+	readonly bindClickEvent: boolean = true;
 
 	/**
 	 * Function which returns a scroll root
@@ -121,6 +162,14 @@ export default class bVirtualScroll extends iData<unknown[]> {
 	 */
 	@prop({type: Function, required: false})
 	readonly requestQuery?: RequestQuery;
+
+	/** @inheritDoc */
+	static readonly mods: ModsDecl = {
+		containerHeight: [
+			['true'],
+			'false'
+		]
+	};
 
 	/** @override */
 	@field((o: bVirtualScroll) => ({get: o.requestQuery ? o.requestQuery({
@@ -151,7 +200,7 @@ export default class bVirtualScroll extends iData<unknown[]> {
 	protected $refs!: {
 		container: HTMLElement;
 		tombstone: HTMLElement;
-		list: HTMLElement;
+		scrollRunner: HTMLElement;
 	};
 
 	/**
@@ -189,14 +238,21 @@ export default class bVirtualScroll extends iData<unknown[]> {
 		return;
 	}
 
+	/** @override */
+	protected initModEvents(): void {
+		super.initModEvents();
+		this.sync.mod('containerHeight', 'containerHeight', String);
+	}
+
 	/**
 	 * Initializes content renderer
 	 */
 	@hook('mounted')
-	@wait('ready')
 	protected initRender(): CanPromise<void> {
 		this.componentRender = new ComponentRender(this);
 		this.scrollRender = new ScrollRender(this);
+
+		return this.waitStatus('ready', this.scrollRender.initDraw.bind(this.scrollRender), {label: $$.initDraw});
 	}
 
 	/** @override */
@@ -208,10 +264,10 @@ export default class bVirtualScroll extends iData<unknown[]> {
 		}
 
 		const
-			val = this.convertDBToComponent(this.db);
+			val = this.convertDBToComponent<RemoteData>(this.db);
 
-		if (Object.isArray(val)) {
-			return this.options = val;
+		if (this.field.get('data.length', val)) {
+			return this.options = val.data;
 		}
 
 		return this.options;
@@ -226,7 +282,7 @@ export default class bVirtualScroll extends iData<unknown[]> {
 	 * @emits responseEmpty() - no response or empty array as response
 	 * @emits loaded(data: unknown[], query: Dictionary, params: LoadMoreParams)
 	 */
-	protected async requestRemoteData(params: LoadMoreParams): Promise<CanUndef<unknown[]>> {
+	protected async requestRemoteData(params: LoadMoreParams): Promise<CanUndef<RemoteData>> {
 		const
 			shouldRequest = Object.isFunction(this.shouldRequestMore) && this.shouldRequestMore(params);
 
@@ -253,16 +309,15 @@ export default class bVirtualScroll extends iData<unknown[]> {
 		}
 
 		const
-			converted = this.convertDataToDB(data);
+			converted = this.convertDataToDB<CanUndef<RemoteData>>(data);
 
-		if (!Object.isArray(converted) || !converted.length) {
+		if (!this.field.get('data.length', converted)) {
 			this.emit('responseEmpty');
 			return;
 		}
 
 		this.options = this.options.concat(converted);
 		this.emit('loaded', data, ...args);
-
 		return converted;
 	}
 
@@ -276,18 +331,6 @@ export default class bVirtualScroll extends iData<unknown[]> {
 		return Object.isFunction(this.optionKey) ?
 			this.optionKey(el, i) :
 			this.optionKey;
-	}
-
-	/**
-	 * Handler: element click
-	 *
-	 * @param el
-	 * @param i
-	 *
-	 * @emits elClick(el: unknown, i: number)
-	 */
-	protected onElClick(el: unknown, i: number): void {
-		this.emit('elClick', el, i);
 	}
 }
 

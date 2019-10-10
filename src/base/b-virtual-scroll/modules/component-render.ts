@@ -1,4 +1,19 @@
+/*!
+ * V4Fire Client Core
+ * https://github.com/V4Fire/Client
+ *
+ * Released under the MIT license
+ * https://github.com/V4Fire/Client/blob/master/LICENSE
+ */
+
+import Async from 'core/async';
+import symbolGenerator from 'core/symbol';
+
+import { VNodeData } from 'core/component/engines';
 import bVirtualScroll from 'base/b-virtual-scroll/b-virtual-scroll';
+
+export const
+	$$ = symbolGenerator();
 
 export interface RecycleComponent<T extends unknown = unknown> {
 	node: HTMLElement;
@@ -26,6 +41,14 @@ export default class ComponentRender {
 	 * Link to tombstone DOM element
 	 */
 	protected tombstoneToClone: CanUndef<HTMLElement>;
+
+	/**
+	 * Link to async module
+	 */
+	protected get async(): Async<bVirtualScroll> {
+		// @ts-ignore (access)
+		return this.component.async;
+	}
 
 	/**
 	 * Link to component create element method
@@ -96,10 +119,10 @@ export default class ComponentRender {
 	 * Renders a new VNode
 	 *
 	 * @param data - component data
-	 * @param el
 	 * @param item
+	 * @param i - position in list
 	 */
-	render(data: unknown, item: RecycleComponent): CanUndef<HTMLElement> {
+	render(data: unknown, item: RecycleComponent, i: number): CanUndef<HTMLElement> {
 		const
 			{cacheNode} = this.component,
 			id = this.getOptionKey(data);
@@ -112,7 +135,7 @@ export default class ComponentRender {
 				return node;
 
 			} else {
-				return (item.node = this.createComponent(data));
+				return (item.node = this.createComponent(data, i));
 			}
 		}
 
@@ -128,10 +151,11 @@ export default class ComponentRender {
 			tombstone = this.tombstones.pop();
 
 		if (tombstone) {
-			tombstone.classList.remove(`${component.componentName}__tombstone_hidden_true`);
+			tombstone.classList.remove(`${component.componentName}__el_display_none`);
 
 			tombstone.style.transform = 'translate3d(0, 0, 0)';
 			tombstone.style.transition = '';
+			tombstone.style.opacity = String(1);
 
 			return tombstone;
 		}
@@ -147,51 +171,71 @@ export default class ComponentRender {
 	}
 
 	/**
+	 * Reinitializes component render
+	 */
+	reInit(): Promise<void> {
+		return this.async.promise<void>(new Promise((res, rej) => {
+			const
+				{nodesCache} = this;
+
+			this.async.requestAnimationFrame(() => {
+				Object.keys(nodesCache).forEach((key) => {
+					const el = nodesCache[key];
+					el && el.remove();
+				});
+
+				this.nodesCache = {};
+				this.tombstoneToClone = <HTMLElement>this.$refs.tombstone.children[0];
+				res();
+
+			}, {label: $$.reInitRaf});
+
+		}), {label: $$.reInit});
+	}
+
+	/**
+	 * Drops all render cache
+	 */
+	dropCache(): Promise<void> {
+		this.tombstones = [];
+		return this.reInit();
+	}
+
+	/**
 	 * Creates a tombstone
 	 * @param [el]
 	 */
 	protected createTombstone(el?: HTMLElement): HTMLElement {
 		const
 			{component} = this,
-			tombstone = el || this.clonedTombstone;
+			tombstone = <HTMLElement>(el || this.clonedTombstone);
 
 		tombstone.classList.add(`${component.componentName}__tombstone-el`);
 		return tombstone;
 	}
 
 	/**
-	 * Creates a new Recycle item
-	 *
-	 * @param data - Item data
-	 * @param el
-	 * @param [active]
-	 */
-	protected createRecycleComponent(data: unknown, el: HTMLElement, active: boolean = true): RecycleComponent {
-		const
-			id = this.getOptionKey(data);
-
-		const item = {
-			node: this.createComponent(data),
-			data,
-			id
-		};
-
-		return item;
-	}
-
-	/**
 	 * Creates a component by specified params
 	 *
 	 * @param data
-	 * @param el
+	 * @param i - position in list
 	 */
-	protected createComponent(data: unknown): HTMLElement {
+	protected createComponent(data: unknown, i: number): HTMLElement {
 		const
+			{component} = this,
 			id = this.getOptionKey(data);
 
-		const renderOpts = {
+		const props = component.optionProps ? component.optionProps(data, i) : {};
+
+		const renderOpts: VNodeData = {
 			props: {
-				data
+				dispatching: true,
+				...props
+			},
+
+			style: {
+				width: `${(100 / component.columns)}%`,
+				height: component.optionHeight ? component.optionHeight.px : ''
 			},
 
 			staticClass: `${this.component.componentName}__option-el`
