@@ -47,5 +47,6 @@
 										.
 
 					- block label
-						< span.&__label v-if = label
-							{{ t(label) }}
+						< span.&__label v-if = label || vdom.getSlot('label')
+							+= self.slot('label', {':label': 'label'})
+								{{ t(label) }}

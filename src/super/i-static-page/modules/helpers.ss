@@ -26,13 +26,19 @@
  * @param {string=} [body]
  */
 - block index->jsScript(attrs = {}, body = '')
-		: p = {}
+		: &
+			p = {},
+			inline = false
+		.
 
 		- if nonce
 			? p.nonce = nonce
 
 		- forEach attrs => el, key
 			- switch key
+				> 'inline'
+					? inline = el
+
 				> 'defer'
 					- if el
 						? p.defer = TRUE
@@ -67,7 +73,8 @@
 - block index->cssLink(attrs = {}, body = '')
 		: &
 			p = {},
-			defer = false
+			defer = false,
+			inline = false
 		.
 
 		- if nonce
@@ -75,6 +82,9 @@
 
 		- forEach attrs => el, key
 			- switch key
+				> 'inline'
+					? inline = el
+
 				> 'defer'
 					- if el
 						? defer = TRUE

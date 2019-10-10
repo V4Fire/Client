@@ -40,7 +40,7 @@
 				.
 					- block preIcon
 						< span.&__cell.&__link-icon.&__link-pre-icon v-if = vdom.getSlot('preIcon')
-							+= self.slot('preIcon')
+							+= self.slot('preIcon', {':icon': 'preIcon'})
 
 						< span.&__cell.&__link-icon.&__link-pre-icon v-else-if = el.preIcon
 							< component.&__b-icon &
@@ -64,7 +64,7 @@
 
 					- block icon
 						< span.&__cell.&__link-icon.&__link-post-icon v-if = vdom.getSlot('icon')
-							+= self.slot('icon')
+							+= self.slot('icon', {':icon': 'icon'})
 
 						< span.&__cell.&__link-icon.&__link-post-icon v-else-if = el.icon
 							< component.&__b-icon &
