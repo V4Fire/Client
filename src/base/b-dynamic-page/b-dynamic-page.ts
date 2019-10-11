@@ -9,7 +9,18 @@
 import iBlock from 'super/i-block/i-block';
 import { EventEmitterLike } from 'core/async';
 
-import iDynamicPage, { component, prop, field, watch, Statuses } from 'super/i-dynamic-page/i-dynamic-page';
+import iDynamicPage, {
+
+	component,
+	prop,
+	field,
+	watch,
+
+	Statuses,
+	InitLoadParams
+
+} from 'super/i-dynamic-page/i-dynamic-page';
+
 export * from 'super/i-data/i-data';
 
 export type KeepAlive =
@@ -98,14 +109,14 @@ export default class bDynamicPage extends iDynamicPage {
 	protected readonly $refs!: {component?: iDynamicPage};
 
 	/** @override */
-	async initLoad(data?: unknown, silent?: boolean): Promise<void> {
+	async initLoad(data?: unknown, params?: InitLoadParams): Promise<void> {
 		return undefined;
 	}
 
 	/** @override */
-	async reload(): Promise<void> {
+	async reload(params?: InitLoadParams): Promise<void> {
 		const {component} = this.$refs;
-		return component && component.reload();
+		return component && component.reload(params);
 	}
 
 	/**

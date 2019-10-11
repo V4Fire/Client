@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-beta.201 (2019-10-11)
+
+#### :boom: Breaking Change
+
+* Added `InitLoadParams` instead `silent` parameter for `initLoad`
+
 ## v3.0.0-beta.200 (2019-10-11)
 
 #### :bug: Bug Fix
