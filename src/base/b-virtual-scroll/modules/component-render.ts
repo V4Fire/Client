@@ -367,9 +367,13 @@ export default class ComponentRender {
 			{component} = this,
 			id = this.getOptionKey(data);
 
-		const props = component.optionProps ? component.optionProps(data, i) : {};
+		const
+			props = component.optionProps && component.optionProps(data, i) || {},
+			attrs = component.optionAttrs && component.optionAttrs(data, i) || {};
 
 		const renderOpts: VNodeData = {
+			...attrs,
+
 			props: {
 				dispatching: true,
 				...props
@@ -377,10 +381,11 @@ export default class ComponentRender {
 
 			style: {
 				width: `${(100 / component.columns)}%`,
-				height: component.optionHeight ? component.optionHeight.px : ''
+				height: component.optionHeight ? component.optionHeight.px : '',
+				...<Dictionary>attrs.style
 			},
 
-			staticClass: `${this.component.componentName}__option-el`
+			staticClass: [`${this.component.componentName}__option-el`].concat(attrs.staticClass || '').join(' ')
 		};
 
 		const node = <HTMLElement>this.component.vdom.render(this.$createElement(this.component.option, renderOpts));

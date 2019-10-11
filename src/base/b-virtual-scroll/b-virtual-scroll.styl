@@ -13,9 +13,8 @@ $p = {
 }
 
 b-virtual-scroll extends i-data
-	position relative
-
 	&__container
+		position relative
 		box-sizing border-box
 		width 100%
 
@@ -32,9 +31,6 @@ b-virtual-scroll extends i-data
 		position absolute !important
 		useGPU()
 		will-change transform
-
-	&__tombstone-el
-		transition $p.transitionTime
 
 	&__el_display_none
 		display none !important

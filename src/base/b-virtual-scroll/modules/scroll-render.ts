@@ -370,7 +370,7 @@ export default class ScrollRender {
 
 		}, {group: 'render-scroll'});
 
-		$a.setTimeout(() => $a.requestAnimationFrame(() => this.hideTombstones(animations), {group: 'render-scroll'}), 300);
+		$a.setTimeout(() => $a.requestAnimationFrame(() => this.hideTombstones(animations), {group: 'render-scroll'}), 400);
 
 		this.request();
 	}
@@ -534,7 +534,7 @@ export default class ScrollRender {
 
 		for (let i = range.start; i < range.end; i++) {
 			const
-				[node] = animations[i] || [],
+				[node] = animations[i] || [undefined],
 				item = items[i];
 
 			if (!item) {
@@ -590,6 +590,7 @@ export default class ScrollRender {
 				y = (scrollPosition + (animation[1] || 0)) * columns;
 
 			item.node.style.transform = `translate3d(${x.px}, ${y.px}, 0)`;
+			item.node.style.transition = 'opacity 0.4s';
 		}
 	}
 
@@ -820,6 +821,13 @@ export default class ScrollRender {
 			if (item.data && item.node && (drop || !item.height)) {
 				item.height = item.node.offsetHeight / component.columns;
 				item.width = item.node.offsetWidth;
+
+				const
+					style = window.getComputedStyle(item.node);
+
+				item.height = ['top', 'bottom']
+					.map((side) => parseInt(style[`margin-${side}`], 10))
+					.reduce((total, side) => total + side, item.height);
 			}
 		}
 	}
@@ -849,7 +857,7 @@ export default class ScrollRender {
 		}
 
 		this.windowSize = {
-			width: window.innerWidth,
+			width: $refs.container.offsetWidth,
 			height: window.innerHeight
 		};
 	}

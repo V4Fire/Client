@@ -8,6 +8,7 @@
 
 import Range from 'core/range';
 import symbolGenerator from 'core/symbol';
+import { VNodeData } from 'core/component/engines';
 
 import ComponentRender from 'base/b-virtual-scroll/modules/component-render';
 import ScrollRender, { RenderItem, getRequestParams } from 'base/b-virtual-scroll/modules/scroll-render';
@@ -58,6 +59,12 @@ export default class bVirtualScroll extends iData<RemoteData> {
 	options!: unknown[];
 
 	/**
+	 * Option attrs
+	 */
+	@prop({type: Function, required: false})
+	readonly optionAttrs?: (el: unknown, i: number) => VNodeData;
+
+	/**
 	 * Option unique key (for v-for)
 	 */
 	@prop({type: [String, Function]})
@@ -103,7 +110,7 @@ export default class bVirtualScroll extends iData<RemoteData> {
 	 * Number of cached VNodes
 	 */
 	@prop({type: Number, validator: isNatural})
-	readonly cacheSize: number = 400;
+	readonly cacheSize: number = 200;
 
 	/**
 	 * Number of components will be destroyed on cache drop
@@ -148,23 +155,10 @@ export default class bVirtualScroll extends iData<RemoteData> {
 	readonly drawMaxBased: boolean = false;
 
 	/**
-	 * If true, heights will be recalculates on every draw
-	 * NOTICE: May slowdown your app performance
-	 */
-	@prop(Boolean)
-	readonly recalculateHeights: boolean = false;
-
-	/**
 	 * If true, will update container height on every range update
 	 */
 	@prop(Boolean)
 	readonly containerSize: boolean = true;
-
-	/**
-	 * If true, will bind click event to element
-	 */
-	@prop(Boolean)
-	readonly bindClickEvent: boolean = true;
 
 	/**
 	 * Function which returns a scroll root
@@ -240,35 +234,14 @@ export default class bVirtualScroll extends iData<RemoteData> {
 	@prop({type: Function})
 	readonly isRequestsDone: RequestCheckFn = (v) => !v.isLastEmpty;
 
-	/**
-	 * Scrolls to specified element
-	 * @param index
-	 */
-	@wait('ready')
-	async scrollToEl(index: number): Promise<void> {
-		return;
-	}
-
-	/**
-	 * Scrolls to specified position
-	 * @param value
-	 */
-	@wait('ready')
-	async scrollTo(value: number): Promise<void> {
-		return;
-	}
 
 	/** @override */
-	reload(): Promise<void> {
-		return super.reload()
-			.then(() => this.componentRender.reInit())
-			.then(() => this.scrollRender.reInit())
-			.then(() => this.scrollRender.initDraw());
-		// const
-		// 	load = super.reload(),
-		// 	reInit = this.componentRender.reInit().then(() => this.scrollRender.reInit());
+	async reload(): Promise<void> {
+		const
+			load = super.reload(),
+			reInit = this.componentRender.reInit().then(() => this.scrollRender.reInit());
 
-		// return Promise.all([load, reInit]).then(() => this.scrollRender.initDraw());
+		return Promise.all([load, reInit]).then(() => this.scrollRender.initDraw());
 	}
 
 	/** @override */
@@ -284,8 +257,6 @@ export default class bVirtualScroll extends iData<RemoteData> {
 	protected initRender(): CanPromise<void> {
 		this.componentRender = new ComponentRender(this);
 		this.scrollRender = new ScrollRender(this);
-
-		return this.waitStatus('ready', this.scrollRender.initDraw.bind(this.scrollRender), {label: $$.initDraw});
 	}
 
 	/** @override */
