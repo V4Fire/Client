@@ -9,7 +9,7 @@
 @import "super/i-data/i-data.styl"
 
 $p = {
-	transitionTime: 0.15s
+
 }
 
 b-virtual-scroll extends i-data
@@ -17,10 +17,6 @@ b-virtual-scroll extends i-data
 		position relative
 		box-sizing border-box
 		width 100%
-
-	&_container-size_true &__container
-		contain paint
-		will-change height
 
 	&__tombstone
 		display none
@@ -41,3 +37,7 @@ b-virtual-scroll extends i-data
 	&_hidden_true
 		display none !important
 		animation-play-state paused
+
+	&_container-size_true &__container
+		contain paint
+		will-change height
