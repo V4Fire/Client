@@ -164,7 +164,7 @@
 		? newSrc = path.join(lib, hash + basename)
 
 	: cache = isFile ? filesCache : foldersCache
-	? ref = @relative ? newSrc : path.relative(@@output, newSrc)
+	? ref = @relative ? path.relative(@@output, newSrc) : newSrc
 	? cache[basename] = fs.existsSync(newSrc) && ref
 
 	- if !cache[basename]

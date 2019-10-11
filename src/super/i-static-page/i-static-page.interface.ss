@@ -151,10 +151,10 @@
 							.
 
 							- if p.source === 'output'
-								? src = path.join(cwd, p.src)
+								? src = path.relative(@@output, path.join(cwd, p.src))
 
 							- else
-								? src = self.loadToLib.apply(self, [{relative: @@fatHTML || p.inline}].concat(cwd, p.src))
+								? src = self.loadToLib.apply(self, [{relative: !@@fatHTML && !p.inline}].concat(cwd, p.src))
 
 							? p = Object.reject(p, ['href', 'source'])
 
@@ -194,10 +194,10 @@
 							.
 
 							- if p.source === 'output'
-								? src = path.join(cwd, p.src)
+								? src = path.relative(@@output, path.join(cwd, p.src))
 
 							- else
-								? src = self.loadToLib.apply(self, [{relative: @@fatHTML || p.inline}].concat(cwd, p.src))
+								? src = self.loadToLib.apply(self, [{relative: !@@fatHTML && !p.inline}].concat(cwd, p.src))
 
 							? p = Object.reject(p, ['src', 'source'])
 
