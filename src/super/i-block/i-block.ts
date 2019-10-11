@@ -1345,7 +1345,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 				if (el.remoteProvider && statuses[st]) {
 					if (st === 'ready') {
 						if (params.recursive) {
-							el.reload(params).catch(stderr);
+							el.reload({silent: params.silent === true, ...params}).catch(stderr);
 
 						} else {
 							continue;
