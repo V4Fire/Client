@@ -183,7 +183,6 @@ export default class ComponentRender {
 			tombstone.classList.remove(`${component.componentName}__el_display_none`);
 
 			tombstone.style.transform = 'translate3d(0, 0, 0)';
-			tombstone.style.transition = '';
 			tombstone.style.opacity = String(1);
 
 			return tombstone;

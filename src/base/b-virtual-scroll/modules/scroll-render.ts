@@ -144,13 +144,6 @@ export default class ScrollRender {
 	}
 
 	/**
-	 * Hidden modifier
-	 */
-	protected get hiddenClass(): string {
-		return `${this.component.componentName}__el_display_none`;
-	}
-
-	/**
 	 * Async instance
 	 */
 	protected get async(): Async<bVirtualScroll> {
@@ -700,7 +693,7 @@ export default class ScrollRender {
 	 * @param node
 	 */
 	protected hideNode(node: HTMLElement): void {
-		node.classList.add(this.hiddenClass);
+		this.component.setMod(node, 'hidden', 'true');
 	}
 
 	/**

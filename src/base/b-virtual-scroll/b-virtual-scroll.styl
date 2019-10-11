@@ -32,12 +32,12 @@ b-virtual-scroll extends i-data
 		useGPU()
 		will-change transform
 
-	&__el_display_none
-		display none !important
-		animation-play-state paused
-
 	&__scroll-runner
 		absolute left 0 top 0
 		size 1px
 		transition transform 0.2s
 		useGPU()
+
+	&_hidden_true
+		display none !important
+		animation-play-state paused
