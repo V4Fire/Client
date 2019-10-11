@@ -11,6 +11,16 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-beta.200 (2019-10-11)
+
+#### :bug: Bug Fix
+
+* Fixed output inlining `super/i-static-page/i-static-page.interface.ss`
+
+#### :house: Internal
+
+* Updated dependencies: @v4fire/3.0.0-beta.80
+
 ## v3.0.0-beta.199 (2019-10-11)
 
 #### :bug: Bug Fix
