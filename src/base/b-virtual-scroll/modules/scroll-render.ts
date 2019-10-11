@@ -62,17 +62,17 @@ export default class ScrollRender {
 	scrollDirection: number = 0;
 
 	/**
-	 * Maximum elements
+	 * Maximum amount of elements
 	 */
 	max: number = Infinity;
 
 	/**
-	 * True if last request returns empty value or empty array
+	 * True if the last request returned an empty array or undefined
 	 */
 	isLastEmpty: boolean = false;
 
 	/**
-	 * True if there is no need to request more data
+	 * True if it is considered that all data is uploaded
 	 */
 	isRequestsDone: boolean = false;
 
@@ -97,7 +97,7 @@ export default class ScrollRender {
 	range: Range<number>;
 
 	/**
-	 * Link to component
+	 * Link to the component
 	 */
 	protected component: bVirtualScroll;
 
@@ -117,9 +117,9 @@ export default class ScrollRender {
 	protected currentPosition: number = 0;
 
 	/**
-	 * Last calculated height
+	 * Last calculated container size
 	 */
-	protected lastHeight: number = 0;
+	protected lastContainerSize: number = 0;
 
 	/**
 	 * Unused elements
@@ -151,7 +151,7 @@ export default class ScrollRender {
 	}
 
 	/**
-	 * Link to async module
+	 * Async instance
 	 */
 	protected get async(): Async<bVirtualScroll> {
 		// @ts-ignore (access)
@@ -159,7 +159,7 @@ export default class ScrollRender {
 	}
 
 	/**
-	 * Link to recycle module
+	 * Link to the recycle module
 	 */
 	protected get componentRender(): ComponentRender {
 		// @ts-ignore (access)
@@ -167,7 +167,7 @@ export default class ScrollRender {
 	}
 
 	/**
-	 * Link to scroll root
+	 * Link to the scroll root
 	 */
 	protected get scrollRoot(): HTMLElement {
 		// @ts-ignore (access)
@@ -182,7 +182,7 @@ export default class ScrollRender {
 	}
 
 	/**
-	 * Link to component refs
+	 * Link to the component refs
 	 */
 	protected get $refs(): bVirtualScroll['$refs'] {
 		// @ts-ignore (access)
@@ -201,9 +201,9 @@ export default class ScrollRender {
 	}
 
 	/**
-	 * Initializes a data draw process
+	 * Initializes data rendering
 	 */
-	initDraw(): void {
+	initRendering(): void {
 		const
 			{component} = this;
 
@@ -220,11 +220,11 @@ export default class ScrollRender {
 		}
 
 		this.initEvents();
-		this.draw();
+		this.render();
 	}
 
 	/**
-	 * Reinitializes a scroll render
+	 * Re-initializes a scroll render
 	 */
 	reInit(): Promise<void> {
 		const
@@ -234,7 +234,7 @@ export default class ScrollRender {
 		this.scrollEnd = 0;
 		this.scrollPosition = 0;
 		this.totalLoaded = 0;
-		this.lastHeight = 0;
+		this.lastContainerSize = 0;
 		this.page = 1;
 		this.isRequestsDone = false;
 
@@ -263,7 +263,7 @@ export default class ScrollRender {
 	}
 
 	/**
-	 * Register a specified array of options
+	 * Registers the specified array of options
 	 * @param data
 	 */
 	registerData(data: unknown[]): void {
@@ -303,7 +303,7 @@ export default class ScrollRender {
 	}
 
 	/**
-	 * Updates current elements range
+	 * Updates the current elements range
 	 */
 	protected updateRange(): void {
 		const
@@ -338,13 +338,13 @@ export default class ScrollRender {
 			range.end = lastItem.index + component.realElementsSize;
 		}
 
-		this.draw();
+		this.render();
 	}
 
 	/**
-	 * Draws a content into container
+	 * Renders the content
 	 */
-	protected draw(): void {
+	protected render(): void {
 		const
 			{async: $a, component} = this;
 
@@ -435,7 +435,7 @@ export default class ScrollRender {
 	}
 
 	/**
-	 * Renders an items
+	 * Renders items
 	 */
 	protected renderItems(): Dictionary<[HTMLElement, number]> {
 		const
@@ -494,7 +494,7 @@ export default class ScrollRender {
 	}
 
 	/**
-	 * Sets a height to container
+	 * Sets a height to the container
 	 */
 	protected setContainerHeight(): void {
 		const
@@ -503,16 +503,16 @@ export default class ScrollRender {
 		const
 			val =  Math.max(scrollEnd, currentPosition + component.scrollRunnerMin);
 
-		if (val === this.lastHeight) {
+		if (val === this.lastContainerSize) {
 			return;
 		}
 
-		this.lastHeight = val;
-		$refs.container.style.height = this.lastHeight.px;
+		this.lastContainerSize = val;
+		$refs.container.style.height = this.lastContainerSize.px;
 	}
 
 	/**
-	 * Sets a position of scrollRunner
+	 * Sets a position of the scroll runner
 	 */
 	protected setScrollRunner(): void {
 		const
@@ -570,6 +570,7 @@ export default class ScrollRender {
 
 	/**
 	 * Sets a tombstone transform
+	 * @param animations
 	 */
 	protected setTombstoneTransform(animations: Dictionary<[HTMLElement, number]>): void {
 		const
@@ -590,7 +591,6 @@ export default class ScrollRender {
 				y = (scrollPosition + (animation[1] || 0)) * columns;
 
 			item.node.style.transform = `translate3d(${x.px}, ${y.px}, 0)`;
-			item.node.style.transition = 'opacity 0.4s';
 		}
 	}
 
@@ -625,7 +625,6 @@ export default class ScrollRender {
 
 	/**
 	 * Clears unused nodes
-	 * @param [full] - if true, clear all nodes
 	 */
 	protected clearNodes(): void {
 		const
@@ -705,7 +704,7 @@ export default class ScrollRender {
 	}
 
 	/**
-	 * Hides a specified tombstones
+	 * Hides the specified tombstones
 	 */
 	protected hideTombstones(animations: Dictionary<[HTMLElement, number]>): void {
 		for (const i in animations) {
@@ -742,8 +741,7 @@ export default class ScrollRender {
 	}
 
 	/**
-	 * Find anchored item
-	 * @param [diff]
+	 * Finds an anchored item
 	 */
 	protected findAnchoredItem(diff: number = 0): AnchoredItem {
 		const
@@ -803,10 +801,9 @@ export default class ScrollRender {
 	}
 
 	/**
-	 * Cache item height
-	 * @param [drop] - If true, will force drop cache
+	 * Caches items height
 	 */
-	protected cacheItemsHeight(drop: boolean = false): void {
+	protected cacheItemsHeight(): void {
 		const
 			{range, items, component} = this;
 
@@ -818,7 +815,7 @@ export default class ScrollRender {
 				continue;
 			}
 
-			if (item.data && item.node && (drop || !item.height)) {
+			if (item.data && item.node && !item.height) {
 				item.height = item.node.offsetHeight / component.columns;
 				item.width = item.node.offsetWidth;
 
@@ -833,7 +830,7 @@ export default class ScrollRender {
 	}
 
 	/**
-	 * Handler: window resize
+	 * Calculates size of window and items
 	 */
 	protected calculateSizes(): void {
 		const
@@ -884,7 +881,6 @@ export default class ScrollRender {
  * @param [ctx]
  * @param [merge]
  */
-// this: ScrollRender hack for accessing to protected members
 export function getRequestParams(ctx?: ScrollRender, merge?: Dictionary): RequestMoreParams {
 	const base = {
 		currentPage: 0,

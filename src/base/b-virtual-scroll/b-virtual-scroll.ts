@@ -83,58 +83,52 @@ export default class bVirtualScroll extends iData<RemoteData> {
 	readonly optionProps?: OptionProps;
 
 	/**
-	 * Height of option component
+	 * Height of option
 	 */
 	@prop({type: Number, required: false})
 	readonly optionHeight?: number;
 
 	/**
-	 * Number of columns
+	 * Amount of columns
 	 */
 	@prop({type: Number, validator: isNatural})
 	readonly columns: number = 1;
 
 	/**
-	 * Number of real DOM elements
+	 * Amount of nodes at the current time
 	 */
 	@prop({type: Number, validator: isNatural})
 	readonly realElementsSize: number = 20;
 
 	/**
-	 * Number of elements should be rendered in opposite side direction
+	 * Amount of nodes at the current time that are drawn in the opposite direction from the scroll
 	 */
 	@prop({type: Number, validator: isNatural})
 	readonly oppositeElementsSize: number = 10;
 
 	/**
-	 * Number of cached VNodes
+	 * Cache size
 	 */
 	@prop({type: Number, validator: isNatural})
 	readonly cacheSize: number = 400;
 
 	/**
-	 * Number of components will be destroyed on cache drop
+	 * The number of items to be removed from the cache
 	 */
 	@prop({type: Number, validator: isNatural})
 	readonly dropCacheSize: number = 50;
 
 	/**
-	 * ...
+	 * The number of elements from the current range that cannot be removed from the cache
 	 */
 	@prop({type: Number, validator: isNatural})
 	readonly dropCacheSafeZone: number = 10;
 
 	/**
-	 * Count of tombstone elements
+	 * Number of tombstones
 	 */
 	@prop(Number)
 	readonly tombstoneSize: number = 10;
-
-	/**
-	 * Count of tombstones for first render
-	 */
-	@prop(Number)
-	readonly firstRenderTombstoneCount: number = 10;
 
 	/**
 	 * The number of pixels of additional length to allow scrolling to
@@ -143,31 +137,31 @@ export default class bVirtualScroll extends iData<RemoteData> {
 	readonly scrollRunnerMin: number = 0;
 
 	/**
-	 * If true, created nodes will be cached
+	 * If true, then created nodes will be cached
 	 */
 	@prop(Boolean)
 	readonly cacheNode: boolean = true;
 
 	/**
-	 * If true, user will be able to scroll until content end
+	 * If true, then the user will be able to scroll the content, regardless of the loading status of the previous page
 	 */
 	@prop(Boolean)
 	readonly drawMaxBased: boolean = false;
 
 	/**
-	 * If true, will update container height on every range update
+	 * If true, then the height of the container will be updated for every change in range
 	 */
 	@prop(Boolean)
 	readonly containerSize: boolean = true;
 
 	/**
-	 * Function which returns a scroll root
+	 * Function that returns a scroll root
 	 */
 	@prop({type: Function, required: false})
 	readonly scrollingElement?: Function;
 
 	/**
-	 * Function which should return a request queries
+	 * Function that returns request parameters
 	 */
 	@prop({type: Function, required: false})
 	readonly requestQuery?: RequestQuery;
@@ -199,7 +193,7 @@ export default class bVirtualScroll extends iData<RemoteData> {
 	protected componentRender!: ComponentRender;
 
 	/**
-	 * Scroll module
+	 * Scroll render module
 	 */
 	@system()
 	protected scrollRender!: ScrollRender;
@@ -223,17 +217,16 @@ export default class bVirtualScroll extends iData<RemoteData> {
 	}
 
 	/**
-	 * If function returns true, will be loaded more data
+	 * If, when calling a function, it returns true, then the component will be able to request additional data
 	 */
 	@prop({type: Function})
 	readonly shouldRequest: RequestCheckFn = (v) => v.itemsToRichBottom <= 10 && !v.isLastEmpty;
 
 	/**
-	 * If function returns true, will be loaded more data
+	 * If, when calling a function, it returns true, then the component will stop request data
 	 */
 	@prop({type: Function})
 	readonly isRequestsDone: RequestCheckFn = (v) => !v.isLastEmpty;
-
 
 	/** @override */
 	async reload(): Promise<void> {
@@ -241,7 +234,7 @@ export default class bVirtualScroll extends iData<RemoteData> {
 			load = super.reload(),
 			reInit = this.componentRender.reInit().then(() => this.scrollRender.reInit());
 
-		return Promise.all([load, reInit]).then(() => this.scrollRender.initDraw());
+		return Promise.all([load, reInit]).then(() => this.scrollRender.initRendering());
 	}
 
 	/** @override */
@@ -251,7 +244,7 @@ export default class bVirtualScroll extends iData<RemoteData> {
 	}
 
 	/**
-	 * Initializes content renderer
+	 * Initializes the content renderer
 	 */
 	@hook('mounted')
 	protected initRender(): CanPromise<void> {

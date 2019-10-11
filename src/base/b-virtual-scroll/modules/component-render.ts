@@ -30,17 +30,12 @@ export default class ComponentRender {
 	protected component: bVirtualScroll;
 
 	/**
-	 * ...
+	 * If true, the cache flushing process is not currently running
 	 */
-	protected canDropCache: boolean = false;
+	protected dropCacheIsProcess: boolean = false;
 
 	/**
-	 * Last dropped cache
-	 */
-	protected lastDroppedIndex: number = 0;
-
-	/**
-	 * Rendered elements store
+	 * Rendered items cache
 	 */
 	protected nodesCache: Dictionary<HTMLElement> = {};
 
@@ -50,12 +45,12 @@ export default class ComponentRender {
 	protected tombstones: HTMLElement[] = [];
 
 	/**
-	 * Link to tombstone DOM element
+	 * Link to the tombstone node
 	 */
 	protected tombstoneToClone: CanUndef<HTMLElement>;
 
 	/**
-	 * Return a scroll render module
+	 * Link to the scroll render module
 	 */
 	protected get scrollRender(): ScrollRender {
 		// @ts-ignore (access)
@@ -63,7 +58,7 @@ export default class ComponentRender {
 	}
 
 	/**
-	 * Link to async module
+	 * Async instance
 	 */
 	protected get async(): Async<bVirtualScroll> {
 		// @ts-ignore (access)
@@ -71,7 +66,7 @@ export default class ComponentRender {
 	}
 
 	/**
-	 * Link to component create element method
+	 * Link to the component create element method
 	 */
 	protected get $createElement(): bVirtualScroll['$createElement'] {
 		// @ts-ignore (acccess)
@@ -86,7 +81,7 @@ export default class ComponentRender {
 	}
 
 	/**
-	 * Link to component refs
+	 * Link to the component refs
 	 */
 	protected get $refs(): bVirtualScroll['$refs'] {
 		// @ts-ignore (access)
@@ -104,7 +99,7 @@ export default class ComponentRender {
 			{async: $a} = this;
 
 		$a.on(document, 'scroll', () => {
-			if (this.canDropCache) {
+			if (this.dropCacheIsProcess) {
 				$a.requestIdleCallback(this.dropCache.bind(this), {
 					label: $$.dropCacheIdle,
 					join: true
@@ -115,7 +110,7 @@ export default class ComponentRender {
 	}
 
 	/**
-	 * Returns a VNode
+	 * Returns a node from cache by the specified key
 	 * @param key
 	 */
 	getElement(key: string): CanUndef<HTMLElement> {
@@ -123,7 +118,7 @@ export default class ComponentRender {
 	}
 
 	/**
-	 * Save a specified VNode
+	 * Saves the specified node
 	 *
 	 * @param key
 	 * @param node
@@ -137,7 +132,7 @@ export default class ComponentRender {
 			keys = Object.keys(nodesCache);
 
 		if (keys.length > cacheSize) {
-			this.canDropCache = true;
+			this.dropCacheIsProcess = true;
 		}
 
 		return node;
@@ -150,7 +145,7 @@ export default class ComponentRender {
 	}
 
 	/**
-	 * Renders a new VNode
+	 * Renders a new node
 	 *
 	 * @param data - component data
 	 * @param item
@@ -205,7 +200,7 @@ export default class ComponentRender {
 	}
 
 	/**
-	 * Reinitializes component render
+	 * Re-initializes the component render
 	 */
 	reInit(): Promise<void> {
 		return this.async.promise<void>(new Promise((res) => {
@@ -246,7 +241,7 @@ export default class ComponentRender {
 	protected dropCache(): void {
 		const
 			{scrollRender} = this,
-			{cacheSize, dropCacheSize, dropCacheSafeZone} = this.component,
+			{dropCacheSize, dropCacheSafeZone} = this.component,
 			{items, scrollDirection, range} = scrollRender;
 
 		const
@@ -254,7 +249,7 @@ export default class ComponentRender {
 			untilStart = range.start;
 
 		if (scrollDirection === 0) {
-			this.canDropCache = true;
+			this.dropCacheIsProcess = true;
 			return;
 		}
 
@@ -340,24 +335,23 @@ export default class ComponentRender {
 		};
 
 		dropRange();
-		this.canDropCache = false;
+		this.dropCacheIsProcess = false;
 	}
 
 	/**
 	 * Creates a tombstone
-	 * @param [el]
 	 */
-	protected createTombstone(el?: HTMLElement): HTMLElement {
+	protected createTombstone(): HTMLElement {
 		const
 			{component} = this,
-			tombstone = <HTMLElement>(el || this.clonedTombstone);
+			tombstone = <HTMLElement>(this.clonedTombstone);
 
 		tombstone.classList.add(`${component.componentName}__tombstone-el`);
 		return tombstone;
 	}
 
 	/**
-	 * Creates a component by specified params
+	 * Creates a component by the specified params
 	 *
 	 * @param data
 	 * @param i - position in list
