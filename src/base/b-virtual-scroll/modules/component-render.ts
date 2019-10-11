@@ -10,6 +10,8 @@ import Async from 'core/async';
 import symbolGenerator from 'core/symbol';
 
 import { VNodeData } from 'core/component/engines';
+
+import ScrollRender, { RenderItem } from 'base/b-virtual-scroll/modules/scroll-render';
 import bVirtualScroll from 'base/b-virtual-scroll/b-virtual-scroll';
 
 export const
@@ -28,6 +30,16 @@ export default class ComponentRender {
 	protected component: bVirtualScroll;
 
 	/**
+	 * ...
+	 */
+	protected canDropCache: boolean = false;
+
+	/**
+	 * Last dropped cache
+	 */
+	protected lastDroppedIndex: number = 0;
+
+	/**
 	 * Rendered elements store
 	 */
 	protected nodesCache: Dictionary<HTMLElement> = {};
@@ -41,6 +53,14 @@ export default class ComponentRender {
 	 * Link to tombstone DOM element
 	 */
 	protected tombstoneToClone: CanUndef<HTMLElement>;
+
+	/**
+	 * Return a scroll render module
+	 */
+	protected get scrollRender(): ScrollRender {
+		// @ts-ignore (access)
+		return this.component.scrollRender;
+	}
 
 	/**
 	 * Link to async module
@@ -79,6 +99,19 @@ export default class ComponentRender {
 	constructor(ctx: bVirtualScroll) {
 		this.component = ctx;
 		this.tombstoneToClone = <HTMLElement>this.$refs.tombstone.children[0];
+
+		const
+			{async: $a} = this;
+
+		$a.on(document, 'scroll', () => {
+			if (this.canDropCache) {
+				$a.requestIdleCallback(this.dropCache.bind(this), {
+					label: $$.dropCacheIdle,
+					join: true
+				});
+
+			}
+		}, {label: $$.componentRenderScroll});
 	}
 
 	/**
@@ -99,11 +132,12 @@ export default class ComponentRender {
 		this.nodesCache[key] = node;
 
 		const
+			{nodesCache, scrollRender} = this,
 			{cacheSize} = this.component,
-			length = Object.keys(this.nodesCache).length;
+			keys = Object.keys(nodesCache);
 
-		if (length > cacheSize) {
-			// this.dropCache(); // TODO: Дропнуть кэш
+		if (keys.length > cacheSize) {
+			this.canDropCache = true;
 		}
 
 		return node;
@@ -174,19 +208,10 @@ export default class ComponentRender {
 	 * Reinitializes component render
 	 */
 	reInit(): Promise<void> {
-		return this.async.promise<void>(new Promise((res, rej) => {
-			const
-				{nodesCache} = this;
-
+		return this.async.promise<void>(new Promise((res) => {
 			this.async.requestAnimationFrame(() => {
-				Object.keys(nodesCache).forEach((key) => {
-					const el = nodesCache[key];
-					el && el.remove();
-				});
-
-				this.nodesCache = {};
 				this.tombstoneToClone = <HTMLElement>this.$refs.tombstone.children[0];
-				res();
+				this.destroy().then(res);
 
 			}, {label: $$.reInitRaf});
 
@@ -194,11 +219,128 @@ export default class ComponentRender {
 	}
 
 	/**
-	 * Drops all render cache
+	 * Module destructor
 	 */
-	dropCache(): Promise<void> {
-		this.tombstones = [];
-		return this.reInit();
+	destroy(): Promise<void> {
+		return this.async.promise<void>(new Promise((res) => {
+			this.async.requestAnimationFrame(() => {
+				const
+					{nodesCache} = this;
+
+				Object.keys(nodesCache).forEach((key) => {
+					const el = nodesCache[key];
+					el && el.remove();
+				});
+
+				this.tombstones = [];
+				this.nodesCache = {};
+				res();
+
+			}, {label: $$.destroyRaf});
+		}), {label: $$.destroy});
+	}
+
+	/**
+	 * Drops cached nodes
+	 */
+	protected dropCache(): void {
+		const
+			{scrollRender} = this,
+			{cacheSize, dropCacheSize, dropCacheSafeZone} = this.component,
+			{items, scrollDirection, range} = scrollRender;
+
+		const
+			untilEnd = items.length - range.end,
+			untilStart = range.start;
+
+		if (scrollDirection === 0) {
+			this.canDropCache = true;
+			return;
+		}
+
+		const drop = (item) => {
+			if (!item.data) {
+				return;
+			}
+
+			const
+				id = this.getOptionKey(item.data),
+				el = this.nodesCache[id];
+
+			item.node = undefined;
+			el && el.remove();
+			delete this.nodesCache[id];
+		};
+
+		const isDropped = (item: RenderItem) => {
+			if (!item.data) {
+				return false;
+			}
+
+			const
+				key = this.getOptionKey(item.data);
+
+			return !Boolean(this.nodesCache[key]);
+		};
+
+		const dropRange = () => {
+			const
+				isScrollTop = scrollDirection < 0;
+
+			const
+				safeCleanRange = dropCacheSize + dropCacheSafeZone,
+				canDrop = isScrollTop ? untilEnd - safeCleanRange > 0 : untilStart > safeCleanRange;
+
+			if (!canDrop) {
+				return;
+			}
+
+			if (isScrollTop) {
+				let i = items.length;
+
+				while (i >= range.end + safeCleanRange) {
+					const
+						index = i - dropCacheSize;
+
+					if (isDropped(items[index])) {
+						i = index;
+						continue;
+					}
+
+					for (let j = index; j < index + dropCacheSize; j++) {
+						drop(items[j]);
+					}
+
+					break;
+				}
+
+			} else {
+				let
+					i = 0;
+
+				const
+					max = range.start - safeCleanRange;
+
+				while (max >= i) {
+					const
+						index = i + dropCacheSize;
+
+					if (isDropped(items[index])) {
+						i = index;
+						continue;
+					}
+
+					for (let j = index; j > i; j--) {
+						drop(items[j]);
+					}
+
+					break;
+				}
+			}
+		};
+
+		dropRange();
+		this.canDropCache = false;
 	}
 
 	/**

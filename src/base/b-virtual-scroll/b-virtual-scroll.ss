@@ -5,7 +5,7 @@
  * Released under the MIT license
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
- 
+
 - namespace [%fileName%]
 
 - include 'super/i-data'|b as placeholder

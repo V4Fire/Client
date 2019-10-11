@@ -10,7 +10,7 @@ import Async from 'core/async';
 import symbolGenerator from 'core/symbol';
 import Range from 'core/range';
 
-import bVirtualScroll, { RemoteData } from 'base/b-virtual-scroll/b-virtual-scroll';
+import bVirtualScroll, { RemoteData, RequestMoreParams } from 'base/b-virtual-scroll/b-virtual-scroll';
 import ComponentRender from 'base/b-virtual-scroll/modules/component-render';
 
 export const
@@ -47,19 +47,59 @@ export interface Size {
 
 export default class ScrollRender {
 	/**
-	 * Link to component
+	 * Total amount of elements being loaded
 	 */
-	protected component: bVirtualScroll;
+	totalLoaded: number = 0;
 
 	/**
-	 * Unused elements
+	 * Current page
 	 */
-	protected unused: HTMLElement[] = [];
+	page: number = 1;
+
+	/**
+	 * Scroll direction
+	 */
+	scrollDirection: number = 0;
+
+	/**
+	 * Maximum elements
+	 */
+	max: number = Infinity;
+
+	/**
+	 * True if last request returns empty value or empty array
+	 */
+	isLastEmpty: boolean = false;
+
+	/**
+	 * True if there is no need to request more data
+	 */
+	isRequestsDone: boolean = false;
 
 	/**
 	 * Data for render
 	 */
-	protected items: RenderItem[] = [];
+	items: RenderItem[] = [];
+
+	/**
+	 * Last loaded data
+	 */
+	lastRegisterData: unknown[] = [];
+
+	/**
+	 * Anchor element
+	 */
+	currentAnchor: AnchoredItem = {index: 0, offset: 0};
+
+	/**
+	 * Range of rendered items
+	 */
+	range: Range<number>;
+
+	/**
+	 * Link to component
+	 */
+	protected component: bVirtualScroll;
 
 	/**
 	 * Current scroll position
@@ -77,39 +117,14 @@ export default class ScrollRender {
 	protected currentPosition: number = 0;
 
 	/**
-	 * Total amount of elements being loaded
-	 */
-	protected totalLoaded: number = 0;
-
-	/**
 	 * Last calculated height
 	 */
 	protected lastHeight: number = 0;
 
 	/**
-	 * Maximum elements
+	 * Unused elements
 	 */
-	protected max: number = Infinity;
-
-	/**
-	 * Last loaded data
-	 */
-	protected lastRegisterData: unknown[] = [];
-
-	/**
-	 * Current page
-	 */
-	protected page: number = 1;
-
-	/**
-	 * Range of rendered items
-	 */
-	protected range: Range<number>;
-
-	/**
-	 * Anchor element
-	 */
-	protected currentAnchor: AnchoredItem = {index: 0, offset: 0};
+	protected unused: HTMLElement[] = [];
 
 	/**
 	 * Size of tombstone
@@ -205,6 +220,7 @@ export default class ScrollRender {
 		}
 
 		this.initEvents();
+		this.draw();
 	}
 
 	/**
@@ -219,7 +235,8 @@ export default class ScrollRender {
 		this.scrollPosition = 0;
 		this.totalLoaded = 0;
 		this.lastHeight = 0;
-		this.page = 0;
+		this.page = 1;
+		this.isRequestsDone = false;
 
 		this.items = [];
 		this.lastRegisterData = [];
@@ -231,17 +248,18 @@ export default class ScrollRender {
 		this.windowSize = {width: 0, height: 0};
 		this.tombstoneSize = {...this.windowSize};
 
-		this.async.clearAll({group: 'render-scroll'});
+		this.async.clearAll(group);
 
 		return this.async.promise(new Promise((res, rej) => {
 			this.async.requestAnimationFrame(() => {
 				this.unused.forEach((node) => node.remove());
 				this.unused = [];
 
+				this.calculateSizes();
 				res();
 
-			}, {label: $$.reInitRaf, group: 'render-scroll'});
-		}), {label: $$.reInit, group: 'render-scroll'});
+			}, {label: $$.reInitRaf, ...group});
+		}), {label: $$.reInit, ...group});
 	}
 
 	/**
@@ -293,6 +311,8 @@ export default class ScrollRender {
 			scrollValue = scrollRoot[scrollProp],
 			diff = scrollValue - scrollPosition;
 
+		this.scrollDirection = Math.sign(diff);
+
 		if (scrollValue === 0) {
 			Object.assign(currentAnchor, {index: 0, offset: 0});
 
@@ -326,7 +346,7 @@ export default class ScrollRender {
 	 */
 	protected draw(): void {
 		const
-			{async: $a} = this;
+			{async: $a, component} = this;
 
 		this.clearNodes();
 
@@ -344,7 +364,7 @@ export default class ScrollRender {
 			this.setItemsTransform(animations);
 			this.setScrollRunner();
 
-			if (this.component.containerHeight) {
+			if (component.containerSize) {
 				this.setContainerHeight();
 			}
 
@@ -358,35 +378,43 @@ export default class ScrollRender {
 	/**
 	 * Requests an additional data
 	 */
-	protected request(): void {
+	protected request(): Promise<void> {
 		const
-			{component, items, range, currentAnchor} = this;
+			{component, items, currentAnchor} = this,
+			resolved = Promise.resolve();
 
-		if (!component.dataProvider || component.mods.progress === 'true') {
-			return;
+		const
+			shouldRequest = Object.isFunction(component.shouldRequest) && component.shouldRequest(getRequestParams(this)),
+			hideTombstones = () => this.isRequestsDone && this.removeTombstones();
+
+		if (this.isRequestsDone) {
+			hideTombstones();
+			return resolved;
+		}
+
+		if (!shouldRequest || !component.dataProvider || component.mods.progress === 'true') {
+			return resolved;
 		}
 
 		const
-			itemsToRichBottom = this.totalLoaded - currentAnchor.index,
-			currentSlice = items.slice(range.start, range.end);
+			itemsToRichBottom = this.totalLoaded - currentAnchor.index;
 
-		if (itemsToRichBottom <= 0 && !items.length) {
-			return;
+		if (itemsToRichBottom <= 0 || !items.length) {
+			return resolved;
 		}
+
+		const
+			params = getRequestParams(this);
 
 		// @ts-ignore (access)
-		component.requestRemoteData({
-			currentRange: this.range,
-			currentPage: this.page,
-			nextPage: this.page + 1,
-			lastLoaded: this.lastRegisterData,
-
-			currentSlice,
-			itemsToRichBottom,
-			items
-		})
+		return component.requestRemoteData(params)
 			.then((v: CanUndef<RemoteData>) => {
-				if (!v) {
+
+				if (!v || !v.data || v.data.length === 0) {
+					this.isLastEmpty = true;
+					this.isRequestsDone = component.isRequestsDone(getRequestParams(this));
+					hideTombstones();
+
 					return;
 				}
 
@@ -395,10 +423,15 @@ export default class ScrollRender {
 
 				this.page++;
 				this.max = total || Infinity;
+				this.isLastEmpty = false;
+
+				this.isRequestsDone = component.isRequestsDone(getRequestParams(this));
+				hideTombstones();
 
 				this.registerData(data);
 				this.updateRange();
-			});
+
+			}).catch(stderr);
 	}
 
 	/**
@@ -671,7 +704,7 @@ export default class ScrollRender {
 	}
 
 	/**
-	 * Hides a tombstones
+	 * Hides a specified tombstones
 	 */
 	protected hideTombstones(animations: Dictionary<[HTMLElement, number]>): void {
 		for (const i in animations) {
@@ -685,6 +718,25 @@ export default class ScrollRender {
 
 			this.hideNode(node);
 			this.componentRender.saveTombstone(node);
+		}
+	}
+
+	/**
+	 * Hides all tombstones
+	 */
+	protected removeTombstones(): void {
+		const
+			{items} = this;
+
+		for (let i = 0; i < items.length; i++) {
+			const
+				item = items[i];
+
+			if (!item.node || !this.hasTombstoneClass(item.node) || item.data) {
+				continue;
+			}
+
+			this.hideNode(item.node);
 		}
 	}
 
@@ -816,4 +868,44 @@ export default class ScrollRender {
 		this.calculateSizes();
 		this.updateRange();
 	}
+}
+
+/**
+ * Returns a request params
+ *
+ * @param [ctx]
+ * @param [merge]
+ */
+// this: ScrollRender hack for accessing to protected members
+export function getRequestParams(ctx?: ScrollRender, merge?: Dictionary): RequestMoreParams {
+	const base = {
+		currentPage: 0,
+		currentRange: new Range(0, 0),
+		items: [],
+		lastLoaded: [],
+		currentSlice: [],
+		isLastEmpty: false,
+		itemsToRichBottom: 0
+	};
+
+	const params = ctx ? {
+		currentRange: ctx.range,
+		currentPage: ctx.page,
+		lastLoaded: ctx.lastRegisterData,
+		isLastEmpty: ctx.isLastEmpty,
+
+		currentSlice: ctx.items.slice(ctx.range.start, ctx.range.end),
+		itemsToRichBottom: ctx.totalLoaded - ctx.currentAnchor.index,
+		items: ctx.items
+	} : base;
+
+	const merged = {
+		...params,
+		...merge
+	};
+
+	// tslint:disable-next-line: prefer-object-spread
+	return Object.assign(merged, {
+		nextPage: merged.currentPage + 1
+	});
 }

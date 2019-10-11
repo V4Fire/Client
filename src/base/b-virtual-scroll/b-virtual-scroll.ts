@@ -10,23 +10,26 @@ import Range from 'core/range';
 import symbolGenerator from 'core/symbol';
 
 import ComponentRender from 'base/b-virtual-scroll/modules/component-render';
-import ScrollRender, { RenderItem } from 'base/b-virtual-scroll/modules/scroll-render';
+import ScrollRender, { RenderItem, getRequestParams } from 'base/b-virtual-scroll/modules/scroll-render';
 
-import iData, { RequestParams, ModsDecl, component, prop, field, wait, system, hook, watch } from 'super/i-data/i-data';
+import iData, { RequestParams, ModsDecl, component, prop, wait, system, hook } from 'super/i-data/i-data';
 
 export type OptionProps = ((el: unknown, i: number) => Dictionary);
 export type OptionsIterator<T = bVirtualScroll> = (options: unknown[], ctx: T) => unknown[];
 
-export type RequestQuery<T extends unknown = unknown> = (params: LoadMoreParams<T>) => Dictionary;
-export type ShouldRequestMore<T extends unknown = unknown> = (params: LoadMoreParams<T>) => boolean;
+export type RequestQuery<T extends unknown = unknown> = (params: RequestMoreParams<T>) => Dictionary;
+export type RequestCheckFn<T extends unknown = unknown> = (params: RequestMoreParams<T>) => boolean;
 
-export interface LoadMoreParams<T extends unknown = unknown> {
+export interface RequestMoreParams<T extends unknown = unknown> {
 	currentSlice: RenderItem<T>[];
 	currentPage: number;
+	currentRange: Range<number>;
+
 	nextPage: number;
 	itemsToRichBottom: number;
-	currentRange: Range<number>;
 	items: RenderItem<T>[];
+
+	isLastEmpty: boolean;
 	lastLoaded: Array<T>;
 }
 
@@ -103,6 +106,18 @@ export default class bVirtualScroll extends iData<RemoteData> {
 	readonly cacheSize: number = 200;
 
 	/**
+	 * Number of components will be destroyed on cache drop
+	 */
+	@prop({type: Number, validator: isNatural})
+	readonly dropCacheSize: number = 50;
+
+	/**
+	 * ...
+	 */
+	@prop({type: Number, validator: isNatural})
+	readonly dropCacheSafeZone: number = 10;
+
+	/**
 	 * Count of tombstone elements
 	 */
 	@prop(Number)
@@ -143,7 +158,7 @@ export default class bVirtualScroll extends iData<RemoteData> {
 	 * If true, will update container height on every range update
 	 */
 	@prop(Boolean)
-	readonly containerHeight: boolean = true;
+	readonly containerSize: boolean = true;
 
 	/**
 	 * If true, will bind click event to element
@@ -172,17 +187,16 @@ export default class bVirtualScroll extends iData<RemoteData> {
 	};
 
 	/** @override */
-	@field((o: bVirtualScroll) => ({get: o.requestQuery ? o.requestQuery({
-		currentPage: 0,
-		currentRange: new Range(0, 0),
-		items: [],
-		nextPage: 1,
-		lastLoaded: [],
-		currentSlice: [],
-		itemsToRichBottom: 0
-	}) : {}}))
+	protected get requestParams(): RequestParams {
+		return {
+			get: this.requestQuery ? this.requestQuery(getRequestParams()) : {}
+		};
+	}
 
-	protected readonly requestParams!: RequestParams;
+	/** @override */
+	protected set requestParams(v: RequestParams) {
+		// ...
+	}
 
 	/**
 	 * Component render module
@@ -215,10 +229,16 @@ export default class bVirtualScroll extends iData<RemoteData> {
 	}
 
 	/**
-	 * Function which should return true if there is no need to request more data
+	 * If function returns true, will be loaded more data
 	 */
 	@prop({type: Function})
-	readonly shouldRequestMore: ShouldRequestMore = (v) => v.itemsToRichBottom <= 10;
+	readonly shouldRequest: RequestCheckFn = (v) => v.itemsToRichBottom <= 10 && !v.isLastEmpty;
+
+	/**
+	 * If function returns true, will be loaded more data
+	 */
+	@prop({type: Function})
+	readonly isRequestsDone: RequestCheckFn = (v) => !v.isLastEmpty;
 
 	/**
 	 * Scrolls to specified element
@@ -239,9 +259,22 @@ export default class bVirtualScroll extends iData<RemoteData> {
 	}
 
 	/** @override */
+	reload(): Promise<void> {
+		return super.reload()
+			.then(() => this.componentRender.reInit())
+			.then(() => this.scrollRender.reInit())
+			.then(() => this.scrollRender.initDraw());
+		// const
+		// 	load = super.reload(),
+		// 	reInit = this.componentRender.reInit().then(() => this.scrollRender.reInit());
+
+		// return Promise.all([load, reInit]).then(() => this.scrollRender.initDraw());
+	}
+
+	/** @override */
 	protected initModEvents(): void {
 		super.initModEvents();
-		this.sync.mod('containerHeight', 'containerHeight', String);
+		this.sync.mod('containerSize', 'containerSize', String);
 	}
 
 	/**
@@ -282,14 +315,7 @@ export default class bVirtualScroll extends iData<RemoteData> {
 	 * @emits responseEmpty() - no response or empty array as response
 	 * @emits loaded(data: unknown[], query: Dictionary, params: LoadMoreParams)
 	 */
-	protected async requestRemoteData(params: LoadMoreParams): Promise<CanUndef<RemoteData>> {
-		const
-			shouldRequest = Object.isFunction(this.shouldRequestMore) && this.shouldRequestMore(params);
-
-		if (!shouldRequest) {
-			return;
-		}
-
+	protected async requestRemoteData(params: RequestMoreParams): Promise<CanUndef<RemoteData>> {
 		const query = {
 			...this.request,
 			...Object.isFunction(this.requestQuery) && this.requestQuery(params) || {}
@@ -331,6 +357,14 @@ export default class bVirtualScroll extends iData<RemoteData> {
 		return Object.isFunction(this.optionKey) ?
 			this.optionKey(el, i) :
 			this.optionKey;
+	}
+
+	/**
+	 * Handler: component destroy
+	 */
+	@hook('beforeDestroy')
+	protected onDestroy(): void {
+		this.componentRender.destroy();
 	}
 }
 
