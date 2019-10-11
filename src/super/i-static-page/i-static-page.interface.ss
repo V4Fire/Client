@@ -151,7 +151,8 @@
 							.
 
 							- if p.source === 'output'
-								? src = path.relative(@@output, path.join(cwd, p.src))
+								? src = path.join(cwd, p.src)
+								? src = p.inline ? src : path.relative(@@output, src)
 
 							- else
 								? src = self.loadToLib.apply(self, [{relative: !@@fatHTML && !p.inline}].concat(cwd, p.src))
@@ -194,7 +195,8 @@
 							.
 
 							- if p.source === 'output'
-								? src = path.relative(@@output, path.join(cwd, p.src))
+								? src = path.join(cwd, p.src)
+								? src = p.inline ? src : path.relative(@@output, src)
 
 							- else
 								? src = self.loadToLib.apply(self, [{relative: !@@fatHTML && !p.inline}].concat(cwd, p.src))
