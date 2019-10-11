@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-beta.199 (2019-10-11)
+
+#### :rocket: New Feature
+
+* [Added `b-virtual-scroll` component](https://github.com/V4Fire/Client/pull/137/files)
+
 ## v3.0.0-beta.198 (2019-10-10)
 
 #### :rocket: New Feature
