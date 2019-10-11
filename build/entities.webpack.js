@@ -32,7 +32,7 @@ const
 	RCPU = require('os').cpus().length,
 	IN_PROCESS = ['js', 'css', 'html'].length;
 
-let MAX_PROCESS = RCPU * IN_PROCESS;
+let MAX_PROCESS = RCPU > IN_PROCESS ? RCPU : IN_PROCESS;
 MAX_PROCESS += MAX_PROCESS <= I ? 1 : 0;
 
 /**

@@ -7,25 +7,14 @@
  */
 
 $p = {
-	messageHelpers: true
+
 }
 
-b-checkbox
-	&__checkbox
-		flex-row center
-
-	&__wrapper
-		align-items center
-
-	&__check
-		position absolute
-		display none
-
+b-radio-button
 	createStyles($o)
-		plain($o)
-			if getField($o, "block.textStyle")
-				& ^[0]__label
-					t(getField($o, "block.textStyle"))
+		if getField($o, "block.textStyle")
+			& ^[0]__label
+				t(getField($o, "block.textStyle"))
 
 			for $key in (disabled focused checked)
 				$mod = getField($o, path(mods $key true))
@@ -33,6 +22,9 @@ b-checkbox
 				for $k, $v in $mod
 					&^[0]_{$key}_true ^[0]__{$k}
 						interpolate-props($v)
+
+						if $k == "check"
+							background-color @color
 
 			if getField($o, block)
 				for $key in getField($o, block)
@@ -47,21 +39,5 @@ b-checkbox
 			if $checked
 				&^[0]_checked_true ^[0]__check
 					display block
-
-		plain($o)
-
-		$switch = getField($o, "exterior.switch")
-
-		if $switch
-			&_exterior_switch
-				plain($switch)
-
-				& ^[0]__check
-					display block
-					transition transform 0.3s ease-in
-
-				& ^[0]__checkbox
-					flex-row flex-start
-					transition background-color 0.3s ease-in, border-color 0.3s ease-in
 
 	generateRules($p, createStyles)

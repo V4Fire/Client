@@ -7,11 +7,13 @@
  */
 
 import iIcon from 'traits/i-icon/i-icon';
-import iBlock, { component, prop } from 'super/i-block/i-block';
+import iSize from 'traits/i-size/i-size';
+
+import iBlock, { component, prop, ModsDecl } from 'super/i-block/i-block';
 export * from 'super/i-block/i-block';
 
 @component({functional: true, flyweight: true})
-export default class bIcon extends iBlock implements iIcon {
+export default class bIcon extends iBlock implements iIcon, iSize {
 	/**
 	 * Component value
 	 */
@@ -35,6 +37,16 @@ export default class bIcon extends iBlock implements iIcon {
 	 */
 	@prop(String)
 	readonly hintPos: string = 'bottom';
+
+	/** @override */
+	static readonly mods: ModsDecl = {
+		...iSize.mods,
+
+		size: [
+			['auto'],
+			'full'
+		]
+	};
 
 	/** @see iIcon.getIconLink */
 	getIconLink(iconId: string): string {

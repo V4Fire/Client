@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import * as locale from 'core/i18n';
+import { locale } from 'core/i18n';
 import * as net from 'core/net';
 
 //#if runtime has core/session

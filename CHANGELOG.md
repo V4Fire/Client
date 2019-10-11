@@ -11,6 +11,87 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-beta.198 (2019-10-10)
+
+#### :rocket: New Feature
+
+* Provided extra parameters to component slots
+* Added `label` slot within `bCheckbox`
+
+#### :bug: Bug Fix
+
+* Fixed inlining for source `output` `super/i-static-page/i-static-page.interface.ss`
+
+## v3.0.0-beta.197 (2019-10-09)
+
+#### :bug: Bug Fix
+
+* Fixed prop regexp `core/component/create/helpers/field`
+
+#### :house: Internal
+
+* Updated dependencies: @v4fire/3.0.0-beta.77
+
+## v3.0.0-beta.196 (2019-10-08)
+
+#### :bug: Bug Fix
+
+* Fixed composite components ref links
+* Fixed state sync methods
+
+## v3.0.0-beta.195 (2019-10-08)
+
+#### :boom: Breaking Change
+
+* Renamed `Analytics` -> `ControlAnalytics` within `traits/i-control-list`
+
+#### :rocket: New Feature
+
+* Added `attrsMap` to `traits/i-control-list/ControlActionObject`
+
+#### :bug: Bug Fix
+
+* [Fixed DS functions naming](https://github.com/V4Fire/Client/pull/136)
+
+#### :nail_care: Polish
+
+* Review `iControlList` interfaces
+
+## v3.0.0-beta.194 (2019-10-07)
+
+#### :boom: Breaking Change
+
+* Renamed `pagePropObj` -> `pagePropObject` within `bRouter`
+* Renamed `DaemonSpawnedObj` -> `SpawnedDaemonObject` within `i-block/modules/daemons`
+* Review `iControlList` interfaces
+
+## v3.0.0-beta.193 (2019-10-04)
+
+#### :boom: Breaking Change
+
+* New API for `i-static-page/modules/helpers/loadToLib`
+* New API for `i-static-page/deps.js`
+* Removed redundant span tag within `b-icon/b-icon.ss`
+* Rewrite `bCheckboxGroup` API
+* [Added `attrs` argument instead of `style` for `b-skeleton`](https://github.com/V4Fire/Client/pull/134)
+
+#### :rocket: New Feature
+
+* Added support for TS within a STD entry point
+* Added `checkIcon` and `checkIconComponent` to `bCheckbox`
+
+#### :bug: Bug Fix
+
+* Fixed dependency loader `i-static-page/i-static-page.ss`
+* [Fixed `b-skeleton` has an additional wrapper](https://github.com/V4Fire/Client/pull/134)
+* Fixed icons within `bCheckbox`
+
+#### :house: Internal
+
+* Review `bCheckbox`
+* Moved to new locale API
+* Updated dependencies: @v4fire/3.0.0-beta.70, url-loader@2.2.0
+
 ## v3.0.0-beta.192 (2019-10-01)
 
 #### :bug: Bug Fix

@@ -26,8 +26,27 @@
 		- block wrapper
 			< _.&__wrapper @click = onClick
 				- block checkbox
-					< _.&__box
+					< _.&__checkbox
+						- block check
+							+= self.slot('check')
+								< .&__check v-if = m.exterior === 'switch'
+
+								< template v-else
+									< component.&__check &
+										v-if = checkIconComponent |
+										:instanceOf = bIcon |
+										:is = checkIconComponent |
+										:size = 'full' |
+										:value = checkIcon
+									.
+
+									< template v-else
+										< @b-icon.&__check &
+											:size = 'full' |
+											:value = checkIcon
+										.
 
 					- block label
-						< span.&__label v-if = label
-							{{ t(label) }}
+						< span.&__label v-if = label || vdom.getSlot('label')
+							+= self.slot('label', {':label': 'label'})
+								{{ t(label) }}

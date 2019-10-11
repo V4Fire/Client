@@ -473,6 +473,7 @@ export function component(params?: ComponentParams): Function {
 								if (!vnode) {
 									vnode = createCompositeElement(
 										nativeCreate.apply(ctx, arguments),
+										<CreateElement>createElement,
 										ctx
 									);
 								}

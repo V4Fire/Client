@@ -14,6 +14,7 @@ import iInput, {
 	component,
 	prop,
 	field,
+	wait,
 	p,
 
 	ValidatorsDecl,
@@ -71,6 +72,35 @@ export default class bCheckboxGroup<
 
 	options!: Option[];
 
+	/** @override */
+	get value(): V {
+		const
+			v = this.field.get('valueStore');
+
+		if (Object.isObject(v)) {
+			const
+				res = <string[]>[];
+
+			for (let keys = Object.keys(v), i = 0; i < keys.length; i++) {
+				const
+					key = keys[i];
+
+				if (v[key]) {
+					res.push(key);
+				}
+			}
+
+			return <V>res;
+		}
+
+		return <V>v;
+	}
+
+	/** @override */
+	set value(value: V) {
+		this.field.set('valueStore', value && Object.isArray(value) ? Object.fromArray(value) : value);
+	}
+
 	/**
 	 * Array of child checkboxes
 	 */
@@ -86,22 +116,6 @@ export default class bCheckboxGroup<
 
 			return Object.freeze(els);
 		});
-	}
-
-	/** @override */
-	get value(): V {
-		const v = this.field.get('valueStore');
-		return <V>(Object.isObject(v) ? Object.keys(v) : v);
-	}
-
-	/** @override */
-	set value(value: V) {
-		this.field.set('valueStore', value && Object.isArray(value) ? Object.fromArray(value) : value);
-	}
-
-	/** @override */
-	get default(): unknown {
-		return (<unknown[]>[]).concat(this.defaultProp !== undefined ? this.defaultProp : []);
 	}
 
 	/** @inheritDoc */
@@ -146,22 +160,31 @@ export default class bCheckboxGroup<
 	 * @param name - checkbox name
 	 * @param value - checkbox value
 	 */
-	setValue(name: string, value: boolean): CanUndef<boolean> {
+	@wait('ready')
+	setValue(name: string, value: boolean): CanPromise<CanUndef<boolean>> {
 		if (!this.multiple) {
-			this.field.set('valueStore', value ? name : undefined);
-			return;
-		}
+			const
+				oldValue = String(this.value);
 
-		if (Object.isArray(value)) {
-			if (value[1]) {
-				this.field.set(`valueStore.${value[0]}`, true);
-
-			} else {
-				this.field.delete(`valueStore.${value[0]}`);
+			// If not current value checkbox only unchecked -> Do nothing
+			if (!value && name !== oldValue) {
+				return;
 			}
 
+			// Uncheck other values
+			if (value && oldValue) {
+				for (let o = <ReadonlyArray<bCheckbox>>this.elements, i = 0; i < o.length; i++) {
+					if (o[i].name === oldValue) {
+						o[i].setMod('checked', false);
+						break;
+					}
+				}
+			}
+
+			this.field.set('valueStore', value ? name : undefined);
+
 		} else {
-			this.field.set(`valueStore.${value}`, true);
+			this.field.set(`valueStore.${name}`, value);
 		}
 
 		return value;
@@ -250,11 +273,14 @@ export default class bCheckboxGroup<
 	protected getOptionProps(option: Option): Dictionary {
 		return {
 			...option,
-			id: option.id && this.dom.getId(option.id),
-			form: this.form,
-			value: this.isChecked(option),
-			changeable: this.isChangeable(option),
-			mods: {...option.mods, form: false}
+			'id': option.id && this.dom.getId(option.id),
+			'form': this.form,
+			'value': this.isChecked(option),
+			'changeable': this.isChangeable(option),
+			'class': this.provide.elClasses({checkbox: {}}),
+			'mods': {...option.mods, form: false},
+			'@change': this.onChange,
+			'@actionChange': this.onActionChange
 		};
 	}
 
@@ -279,7 +305,6 @@ export default class bCheckboxGroup<
 	 */
 	protected onActionChange(el: bCheckbox, value: boolean): void {
 		if (el.name) {
-			this.setValue(el.name, value);
 			this.emit('actionChange', this.value);
 		}
 	}

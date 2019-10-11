@@ -231,7 +231,10 @@ export default class State {
 								if (!Object.fastCompare(val, arguments[1])) {
 									sync();
 								}
-							}, storeWatchers);
+							}, {
+								...storeWatchers,
+								deep: true
+							});
 						}
 					}
 				}
@@ -405,7 +408,10 @@ export default class State {
 							if (!Object.fastCompare(val, arguments[1])) {
 								sync();
 							}
-						}, routerWatchers);
+						}, {
+							...routerWatchers,
+							deep: true
+						});
 					}
 				}
 			}

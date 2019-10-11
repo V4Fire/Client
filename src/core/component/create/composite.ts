@@ -7,7 +7,7 @@
  */
 
 import { defProp } from 'core/const/props';
-import { supports, VNode, VNodeDirective, NormalizedScopedSlot } from 'core/component/engines';
+import { supports, CreateElement, VNode, VNodeDirective, NormalizedScopedSlot } from 'core/component/engines';
 import { ComponentInterface, ComponentMeta } from 'core/component/interface';
 import { execRenderObject } from 'core/component/create/functional';
 import { components } from 'core/component/const';
@@ -59,7 +59,10 @@ const defField = {
  * @param component - component name or a meta object
  * @param vnode
  */
-export function getComponentDataFromVnode(component: string | ComponentMeta, vnode: VNode): ComponentOpts {
+export function getComponentDataFromVnode(
+	component: string | ComponentMeta,
+	vnode: VNode
+): ComponentOpts {
 	const
 		vData = vnode.data || {},
 		slots = (<Dictionary>vData).slots;
@@ -163,9 +166,14 @@ export function getComponentDataFromVnode(component: string | ComponentMeta, vno
  * Builds a composite virtual tree
  *
  * @param vnode
- * @param ctx - component context
+ * @param createElement - create element function
+ * @param parentCtx - parent component context
  */
-export function createCompositeElement(vnode: VNode, ctx: ComponentInterface): VNode {
+export function createCompositeElement(
+	vnode: VNode,
+	createElement: CreateElement,
+	parentCtx: ComponentInterface
+): VNode {
 	const
 		composite = vnode.data && vnode.data.attrs && vnode.data.attrs['v4-composite'];
 
@@ -187,7 +195,7 @@ export function createCompositeElement(vnode: VNode, ctx: ComponentInterface): V
 		proto = meta.constructor.prototype,
 		tpl = TPLS[composite] || proto.render;
 
-	const fakeCtx = Object.assign(Object.create(ctx), {
+	const fakeCtx = Object.assign(Object.create(parentCtx), {
 		meta,
 		hook: 'beforeDataCreate',
 		instance: meta.instance,
@@ -195,14 +203,15 @@ export function createCompositeElement(vnode: VNode, ctx: ComponentInterface): V
 		$isFlyweight: true
 	});
 
+	fakeCtx.$createElement = createElement.bind(fakeCtx);
+	addEventAPI(fakeCtx);
+
 	Object.defineProperty(fakeCtx, 'componentStatusStore', {
 		configurable: true,
 		enumerable: true,
 		writable: true,
 		value: 'unloaded'
 	});
-
-	addEventAPI(fakeCtx);
 
 	Object.defineProperty(fakeCtx, '$refs', {
 		configurable: true,
@@ -247,7 +256,7 @@ export function createCompositeElement(vnode: VNode, ctx: ComponentInterface): V
 		value: vData.scopedSlots
 	});
 
-	Object.defineProperty(fakeCtx, '$parent', {value: ctx});
+	Object.defineProperty(fakeCtx, '$parent', {value: parentCtx});
 	Object.defineProperty(fakeCtx, '$normalParent', {value: getNormalParent(fakeCtx)});
 	Object.defineProperty(fakeCtx, '$children', {value: vnode.children});
 

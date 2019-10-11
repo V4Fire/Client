@@ -11,7 +11,6 @@
 - include 'super/i-page'|b
 - include 'super/i-static-page/modules/**/*.ss'|b
 
-- import $C from 'collection.js'
 - import fs from 'fs-extra-promise'
 - import glob from 'glob'
 - import path from 'upath'
@@ -28,6 +27,7 @@
 	- title = @@appName
 	- pageData = Object.create(null)
 	- assets = Object.create(null)
+	- nonce = @nonce
 
 	- defineBase = false
 	- assetsRequest = true
@@ -52,7 +52,7 @@
 				? assets[key + '$style'] = nm + '$style.css'
 
 			- for var key in assets
-				- while !await fs.existsAsync(path.join(@@output, assets[key]))
+				- while !fs.existsSync(path.join(@@output, assets[key]))
 					? await delay(200)
 
 			? assets['std'] = @@outputPattern({name: 'std'}) + '.js'
@@ -104,14 +104,17 @@
 
 							+= favicons.replace(rgxp, '')
 
-							+= self.jsScript(false, false, @nonce)
+							+= self.jsScript({})
 								document.write({"'<link " + manifest[1] + " href=\"" + manifest[2] + "?from=' + location.href + '\">'"|addNonce});
 
 					+= injectFavicons()
 
-				+= self.jsScript(false, false, @nonce)
+				+= self.jsScript({})
 					# block initVars
 						window[#{globals.MODULE_DEPENDENCIES}] = {fileCache: {}};
+
+						# if nonce
+							var GLOBAL_NONCE = #{nonce|json};
 
 						var
 							READY_STATE = 0,
@@ -133,93 +136,106 @@
 
 				- if !@@fatHTML && assetsRequest
 					- block assets
-						+= self.jsScript(@@publicPath(@@assetsJS), false, @nonce)
+						+= self.jsScript({src: @@publicPath(@@assetsJS)})
 
 				- block head
 					: defStyles = deps.styles
 					- block defStyles
 
-					+= $C(defStyles).to('').reduce()
-						() => res, url
-							: notDefer = Array.isArray(url)
-							? url = self.loadToLib(notDefer ? url[0] : url)
+					- block loadStyles
+						- for var o = defStyles.values(), el = o.next(); !el.done; el = o.next()
+							: &
+								src = el.value,
+								p = Object.isString(src) ? {src: src} : src,
+								cwd = !p.source || p.source === 'lib' ? @@lib : p.source === 'src' ? @@src : @@output
+							.
 
-							- block loadDefStyles
-								- if @@fatHTML
-									- style
-										requireMonic({url})
+							- if p.source === 'output'
+								? src = path.join(cwd, p.src)
 
-								- else
-									? url = @@publicPath(url)
+							- else
+								? src = self.loadToLib.apply(self, [{relative: @@fatHTML || p.inline}].concat(cwd, p.src))
 
-									- if notDefer
-										- link css href = ${url}
+							? p = Object.reject(p, ['href', 'source'])
 
-									- else
-										< link &
-											rel = preload |
-											href = ${url} |
-											as = style |
-											onload = this.rel='stylesheet'
-										.
+							- if @@fatHTML || p.inline
+								- while !fs.existsSync(src)
+									? await delay(200)
 
-							- return res + getTplResult()
+								+= self.cssLink(p)
+									requireMonic({src})
+
+							- else
+								? src = @@publicPath(src)
+								+= self.cssLink(Object.assign({defer: true}, p, {href: src}))
 
 					- block styles
 						+= self.addDependencies('styles')
 
 					- block std
-						+= self.jsScript(false, false, @nonce)
-							+= self.addScriptDep('std', {defer: false, optional: true})
+						+= self.jsScript({})
+							+= self.addScriptDep('std', {optional: true})
 
 					: defLibs = deps.scripts
 					- block defLibs
 
-					+= $C(defLibs).to('').reduce()
-						() => res, url
+					- block loadLibs
+						- for var o = defLibs.values(), el = o.next(); !el.done; el = o.next()
 							: &
-								isFolder = Object.isString(url) && /\/$/.test(url),
-								notDefer = Array.isArray(url)
+								src = el.value,
+								isStr = Object.isString(src),
+								isFolder = isStr && /\/$/.test(src),
+								p = isStr ? {src: src} : src
 							.
 
-							? url = notDefer ? url[0] : url
-							: basename = path.basename(url)
-							? url = self.loadToLib(url)
+							: &
+								basename = path.basename(p.src),
+								cwd = !p.source || p.source === 'lib' ? @@lib : p.source === 'src' ? @@src : @@output
+							.
 
-							- if isFolder
-								- block loadFolders
-									? url = @@publicPath(url)
-									+= self.jsScript("PATH['" + basename + "'] = '" + url + "'", false, @nonce)
+							- if p.source === 'output'
+								? src = path.join(cwd, p.src)
 
 							- else
-								- block loadDefLibs
-									- if @@fatHTML
-										+= self.jsScript(false, false, @nonce)
-											requireMonic({url})
+								? src = self.loadToLib.apply(self, [{relative: @@fatHTML || p.inline}].concat(cwd, p.src))
 
-									- else
-										? url = @@publicPath(url)
-										+= self.jsScript(url, !notDefer, @nonce)
+							? p = Object.reject(p, ['src', 'source'])
 
-							- return res + getTplResult()
+							- if isFolder
+								? src = @@publicPath(src)
 
-					+= self.jsScript(false, false, @nonce)
-						# block initLibs
-							if (typeof Vue !== 'undefined') {
-								Vue.default = Vue;
-							}
+								+= self.jsScript({})
+									PATH['{basename}'] = '{src}';
 
-					- block scripts
-						+= self.jsScript(false, false, @nonce)
-							+= self.addScriptDep('vendor', {optional: true})
+							- else
+								- if @@fatHTML || p.inline
+									- while !fs.existsSync(src)
+										? await delay(200)
 
-						+= self.addDependencies('scripts')
+									+= self.jsScript(p)
+										requireMonic({src})
 
-						+= self.jsScript(false, false, @nonce)
-							+= self.addScriptDep('webpack.runtime')
+								- else
+									? src = @@publicPath(src)
+									+= self.jsScript(Object.assign({defer: true}, p, {src: src}))
 
-					+= self.jsScript(false, false, @nonce)
-						# block depsReady
+						+= self.jsScript({})
+							# block initLibs
+								if (typeof Vue !== 'undefined') {
+									Vue.default = Vue;
+								}
+
+						- block scripts
+							+= self.jsScript({})
+								+= self.addScriptDep('vendor', {optional: true})
+
+							+= self.addDependencies('scripts')
+
+							+= self.jsScript({})
+								+= self.addScriptDep('webpack.runtime')
+
+					+= self.jsScript({})
+						- block depsReady
 							READY_STATE++;
 
 			: pageName = self.name()

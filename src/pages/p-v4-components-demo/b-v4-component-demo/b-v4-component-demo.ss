@@ -52,7 +52,7 @@
 									:class = provide.elClasses({
 										highlighted: field.get(['highlighting', key, mod[0]].join('.')) || false
 									}) |
-									@click = setDebugMod($event.target, key, $event.target.checked)
+									@click = setDebugMod($event.target, key, $event.target.checked && getModValue(mod[0]))
 								.
 
 								< label :for = dom.getId(key)

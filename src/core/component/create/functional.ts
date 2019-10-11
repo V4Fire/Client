@@ -85,7 +85,7 @@ const parentMountMap = {
  * Generates a fake context for a function component
  *
  * @param createElement - create element function
- * @param renderCtx - render context
+ * @param renderCtx - render context from vnode
  * @param baseCtx - base component context (methods, accessors, etc.)
  * @param [initProps] - if true, then component prop values will be force initialize
  * @param [safe] - if true, then will be using safe access to properties
