@@ -103,7 +103,7 @@ export default class bVirtualScroll extends iData<RemoteData> {
 	 * Number of cached VNodes
 	 */
 	@prop({type: Number, validator: isNatural})
-	readonly cacheSize: number = 200;
+	readonly cacheSize: number = 400;
 
 	/**
 	 * Number of components will be destroyed on cache drop
@@ -195,7 +195,7 @@ export default class bVirtualScroll extends iData<RemoteData> {
 
 	/** @override */
 	protected set requestParams(v: RequestParams) {
-		// ...
+		return;
 	}
 
 	/**
