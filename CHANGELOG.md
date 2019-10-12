@@ -11,11 +11,19 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v3.0.0-beta.201 (2019-10-11)
+## v3.0.0-beta.201 (2019-10-12)
 
 #### :boom: Breaking Change
 
 * Added `InitLoadParams` instead `silent` parameter for `initLoad`
+
+#### :rocket: New Feature
+
+* Added `bIconButton`
+
+#### :house: Internal
+
+* [Updated DS styles](https://github.com/V4Fire/Client/pull/138)
 
 ## v3.0.0-beta.200 (2019-10-11)
 
