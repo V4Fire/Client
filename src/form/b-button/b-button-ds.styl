@@ -15,6 +15,9 @@ b-button
 	&__cell
 		align-self center
 
+	&_width_full &__value
+		text-align center
+
 	createStyles($obj)
 		&^[0]
 			for $key, $val in getDSOptions(rounding)
@@ -26,16 +29,28 @@ b-button
 					for $key, $value in getField($obj, "mods.size")
 						&_{$key}
 							& ^[0]
-								&__value
-									$offset = getField($value, offset)
+								$offset = getField($value, offset)
 
-									if $offset
-										for $key, $val in $offset
-											padding-{$key} $val
+								if $offset
+									&__value
+										for $v in (top bottom)
+											if getField($offset, $v)
+												$padding = {}
+												$padding[join("-", padding $v)] = getField($offset, $v)
+
+												interpolate-props($padding)
+
+									&__wrapper
+										for $v in (left right)
+											if getField($offset, $v)
+												$padding = {}
+												$padding[join("-", padding $v)] = getField($offset, $v)
+
+												interpolate-props($padding)
 
 								&__button
 									t(getField($value, textStyle))
-									line-height getField($value, lineHeight)
+									interpolate-props({lineHeight: getField($value, lineHeight)})
 
 			extStyle($name, $path)
 				getField($obj, path(exterior $name $path))
@@ -66,10 +81,6 @@ b-button
 					&_exterior_{$key}
 						createExterior($key)
 
-			@supports (-ms-accelerator true)
-				& ^[0]__button
-					border-width 0.1em
-
 			& ^[0]__button
 				transition color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out
 				white-space nowrap
@@ -78,7 +89,10 @@ b-button
 				$params = getField($obj, path(mods camelize($key) true))
 
 				if $params
+					$opts = {fontSize: getField($params, iconSize)}
+					$opts[join("-", margin $key == "pre-icon" ? right : left)] = getField($params, offset)
+
 					& ^[0]__{$key}
-						margin-{$key == "pre-icon" ? right : left} getField($params, offset)
+						interpolate-props($opts)
 
 	generateRules($p, createStyles)

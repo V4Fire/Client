@@ -42,8 +42,8 @@ function setVar(path) {
 	const
 		variable = `--${path.split('.').join('-')}`;
 
-	$C(cssVars).set(stylus.utils.parseString(`var(${variable})`), path);
-	$C(cssVars).set(stylus.utils.parseString(`var(${variable}-diff)`), `diff.${path}`);
+	$C(cssVars).set(`var(${variable})`, path);
+	$C(cssVars).set(`var(${variable}-diff)`, `diff.${path}`);
 
 	cssVars.__map__.set(path, [variable, $C(DS).get(path)]);
 }
