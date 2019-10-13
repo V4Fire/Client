@@ -16,6 +16,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### :boom: Breaking Change
 
 * Added `InitLoadParams` instead `silent` parameter for `initLoad`
+* `renderKey` attribute will be set as `data-render-key` for dom nodes
 
 #### :rocket: New Feature
 
