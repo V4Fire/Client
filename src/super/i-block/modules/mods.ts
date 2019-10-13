@@ -118,6 +118,7 @@ export function initMods<T extends iBlock>(component: T): ModsNTable {
 				continue;
 			}
 
+			delete attrs[key];
 			attrMods.push([modKey, attrVal]);
 		}
 	}
