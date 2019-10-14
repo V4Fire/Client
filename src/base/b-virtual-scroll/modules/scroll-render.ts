@@ -118,7 +118,7 @@ export default class ScrollRender {
 	 */
 	protected get tombstoneClass(): string {
 		// @ts-ignore (access)
-		return this.component.block.getElSelector('tombstone-el');
+		return this.component.block.getFullElName('tombstone-el');
 	}
 
 	/**
