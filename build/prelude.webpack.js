@@ -50,8 +50,8 @@ if (config.runtime().noGlobals) {
 				method = decl[2],
 				link = `[Symbol.for('[[V4_PROP_TRAP:${method}]]')]`;
 
-			if (target === 'GLOBAL') {
-				regExps.add(`\\bGLOBAL\\.${method}\\b`);
+			if (target === 'GLOBAL' || target === 'globalThis') {
+				regExps.add(`\\b(?:GLOBAL|globalThis)\\.${method}\\b`);
 				regExps.add(`\\(\\(${method}\\)\\)`);
 				regExps.add(`(?<=[^.]|^)\\b${method}\\b\\s*(?=${method.length > 3 ? '\\(|`' : '`'})`);
 
@@ -68,6 +68,7 @@ if (config.runtime().noGlobals) {
 				tokens.set(method, meta);
 				tokens.set(`((${method}))`, meta);
 				tokens.set(`GLOBAL.${method}`, meta);
+				tokens.set(`globalThis.${method}`, meta);
 
 				continue;
 			}
