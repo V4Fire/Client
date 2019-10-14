@@ -7,13 +7,12 @@
  */
 
 import Async from 'core/async';
-import symbolGenerator from 'core/symbol';
 import Range from 'core/range';
+import symbolGenerator from 'core/symbol';
 
 import bVirtualScroll from 'base/b-virtual-scroll/b-virtual-scroll';
-import { RemoteData, RequestMoreParams, AnchoredItem, RenderItem, Size } from 'base/b-virtual-scroll/modules/interface';
-
 import ComponentRender from 'base/b-virtual-scroll/modules/component-render';
+import { RemoteData, RequestMoreParams, AnchoredItem, RenderItem, Size } from 'base/b-virtual-scroll/modules/interface';
 
 export const
 	$$ = symbolGenerator();
@@ -97,7 +96,7 @@ export default class ScrollRender {
 	/**
 	 * Last calculated container size
 	 */
-	protected lastContainerSize: number = 0;
+	protected cachedContainerSize: number = 0;
 
 	/**
 	 * Unused elements
@@ -118,7 +117,8 @@ export default class ScrollRender {
 	 * Class for tombstones
 	 */
 	protected get tombstoneClass(): string {
-		return `${this.component.componentName}__tombstone-el`;
+		// @ts-ignore (access)
+		return this.component.block.getElSelector('tombstone-el');
 	}
 
 	/**
@@ -207,12 +207,13 @@ export default class ScrollRender {
 		this.scrollEnd = 0;
 		this.scrollPosition = 0;
 		this.totalLoaded = 0;
-		this.lastContainerSize = 0;
+		this.cachedContainerSize = 0;
 		this.page = 1;
 		this.isRequestsDone = false;
 
 		this.items = [];
 		this.lastRegisterData = [];
+		this.loadedData = [];
 
 		this.max = Infinity;
 		this.range = new Range(0, component.realElementsSize);
@@ -331,17 +332,17 @@ export default class ScrollRender {
 			this.setCurrentPosition();
 
 			const
-				animations = this.renderItems();
+				positions = this.renderItems();
 
-			this.setTombstoneTransform(animations);
-			this.setItemsTransform(animations);
+			this.setTombstoneTransform(positions);
+			this.setItemsTransform(positions);
 			this.setScrollRunner();
 
 			if (component.containerSize) {
 				this.setContainerHeight();
 			}
 
-			this.hideTombstones(animations);
+			this.hideTombstones(positions);
 		}, {group: 'render-scroll'});
 
 		this.request();
@@ -468,12 +469,12 @@ export default class ScrollRender {
 		const
 			val =  Math.max(scrollEnd, currentPosition + component.scrollRunnerMin);
 
-		if (val === this.lastContainerSize) {
+		if (val === this.cachedContainerSize) {
 			return;
 		}
 
-		this.lastContainerSize = val;
-		$refs.container.style.height = this.lastContainerSize.px;
+		this.cachedContainerSize = val;
+		$refs.container.style.height = this.cachedContainerSize.px;
 	}
 
 	/**
@@ -495,16 +496,16 @@ export default class ScrollRender {
 
 	/**
 	 * Sets a position for items
-	 * @param animations
+	 * @param positions
 	 */
-	protected setItemsTransform(animations: Dictionary<[HTMLElement, number]>): void {
+	protected setItemsTransform(positions: Dictionary<[HTMLElement, number]>): void {
 		const
 			{range, component, items, tombstoneSize} = this,
 			{columns} = component;
 
 		for (let i = range.start; i < range.end; i++) {
 			const
-				[node] = animations[i] || [undefined],
+				[node] = positions[i] || [undefined],
 				item = items[i];
 
 			if (!item) {
@@ -538,16 +539,16 @@ export default class ScrollRender {
 
 	/**
 	 * Sets a tombstone transform
-	 * @param animations
+	 * @param positions
 	 */
-	protected setTombstoneTransform(animations: Dictionary<[HTMLElement, number]>): void {
+	protected setTombstoneTransform(positions: Dictionary<[HTMLElement, number]>): void {
 		const
 			{component, items, scrollPosition} = this,
 			{columns} = component;
 
-		for (const i in animations) {
+		for (const i in positions) {
 			const
-				animation = animations[i],
+				animation = positions[i],
 				item = items[i];
 
 			if (!item || !animation) {
@@ -677,12 +678,12 @@ export default class ScrollRender {
 
 	/**
 	 * Hides the specified tombstones
-	 * @param animations
+	 * @param positions
 	 */
-	protected hideTombstones(animations: Dictionary<[HTMLElement, number]>): void {
-		for (const i in animations) {
+	protected hideTombstones(positions: Dictionary<[HTMLElement, number]>): void {
+		for (const i in positions) {
 			const
-				animation = animations[i],
+				animation = positions[i],
 				node = animation && animation[0];
 
 			if (!node) {

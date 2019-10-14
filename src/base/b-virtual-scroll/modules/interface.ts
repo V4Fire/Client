@@ -1,3 +1,11 @@
+/*!
+ * V4Fire Client Core
+ * https://github.com/V4Fire/Client
+ *
+ * Released under the MIT license
+ * https://github.com/V4Fire/Client/blob/master/LICENSE
+ */
+
 import Range from 'core/range';
 
 import bVirtualScroll from 'base/b-virtual-scroll/b-virtual-scroll';
@@ -7,7 +15,7 @@ export type OptionProps = (el: unknown, i: number) => Dictionary;
 export type RequestQuery<T extends unknown = unknown> = (params: RequestMoreParams<T>) => Dictionary;
 export type RequestCheckFn<T extends unknown = unknown> = (params: RequestMoreParams<T>) => boolean;
 
-export type RenderFn = (params: RenderParams) => HTMLElement;
+export type RecycleFn = (params: RenderParams) => HTMLElement;
 
 export interface RenderParams<T extends unknown = unknown, CTX extends unknown = unknown> {
 	node: HTMLElement;

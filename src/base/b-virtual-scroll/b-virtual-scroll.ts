@@ -12,7 +12,7 @@ import { VNodeData } from 'core/component/engines';
 import {
 
 	RemoteData,
-	RenderFn as RecycleFn,
+	RecycleFn,
 	OptionProps,
 	RequestQuery,
 	RequestCheckFn,
@@ -25,8 +25,8 @@ import {
 import ComponentRender from 'base/b-virtual-scroll/modules/component-render';
 import ScrollRender, { getRequestParams } from 'base/b-virtual-scroll/modules/scroll-render';
 
-import iData, { RequestParams, ModsDecl, component, prop, system, hook } from 'super/i-data/i-data';
 import iBlock from 'super/i-block/i-block';
+import iData, { RequestParams, ModsDecl, component, prop, system, hook } from 'super/i-data/i-data';
 
 export const
 	$$ = symbolGenerator();
@@ -203,7 +203,7 @@ export default class bVirtualScroll extends iData<RemoteData> {
 
 	/**
 	 * If true, then created nodes will be reused
-	 *   *) It is not recommended to use this feature if you have not defined your render function
+	 *   *) Works only with recycleFn defined
 	 */
 	@prop(Boolean)
 	readonly recycle: boolean = true;
@@ -234,9 +234,14 @@ export default class bVirtualScroll extends iData<RemoteData> {
 
 	/** @inheritDoc */
 	static readonly mods: ModsDecl = {
-		containerHeight: [
+		containerSize: [
 			['true'],
 			'false'
+		],
+
+		requestsDone: [
+			'true',
+			['false']
 		]
 	};
 
@@ -285,13 +290,13 @@ export default class bVirtualScroll extends iData<RemoteData> {
 	/**
 	 * If, when calling a function, it returns true, then the component will be able to request additional data
 	 */
-	@prop({type: Function})
+	@prop(Function)
 	readonly shouldRequest: RequestCheckFn = (v) => v.itemsToRichBottom <= 10 && !v.isLastEmpty;
 
 	/**
 	 * If, when calling a function, it returns true, then the component will stop request data
 	 */
-	@prop({type: Function})
+	@prop(Function)
 	readonly isRequestsDone: RequestCheckFn = (v) => !v.isLastEmpty;
 
 	/** @override */
@@ -301,12 +306,6 @@ export default class bVirtualScroll extends iData<RemoteData> {
 			reInit = this.componentRender.reInit().then(() => this.scrollRender.reInit());
 
 		return Promise.all([load, reInit]).then(() => this.scrollRender.initRendering());
-	}
-
-	/** @override */
-	protected initModEvents(): void {
-		super.initModEvents();
-		this.sync.mod('containerSize', 'containerSize', String);
 	}
 
 	/**

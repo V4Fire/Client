@@ -208,6 +208,7 @@ export default class ComponentRender {
 
 	/**
 	 * Saves the specified tombstone in cache
+	 * @param node
 	 */
 	cacheTombstone(node: HTMLElement): void {
 		this.recycleTombstones.push(node);
