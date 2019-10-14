@@ -21,8 +21,10 @@
  */
 - async template index(@params = {}) extends ['i-page'].index
 	- lib = path.join(@@output, @@outputPattern({name: 'lib'}))
+
 	- deps = include('src/super/i-static-page/deps')
 	- globals = include('build/globals.webpack')
+	- build = include('build/build.webpack')
 
 	- title = @@appName
 	- pageData = Object.create(null)
@@ -150,18 +152,27 @@
 								cwd = !p.source || p.source === 'lib' ? @@lib : p.source === 'src' ? @@src : @@output
 							.
 
+							? src = p.src
+
 							- if p.source === 'output'
-								? src = path.join(cwd, p.src)
+								- while !assets[src]
+									- while !fs.existsSync(build.assetsJSON)
+										? await delay(500)
+
+									? await delay(500)
+									? Object.assign(assets, fs.readJSONSync(path.join(build.assetsJSON)))
+
+								? src = path.join(cwd, src)
 								? src = p.inline ? src : path.relative(@@output, src)
 
 							- else
-								? src = self.loadToLib.apply(self, [{relative: !@@fatHTML && !p.inline}].concat(cwd, p.src))
+								? src = self.loadToLib.apply(self, [{relative: !@@fatHTML && !p.inline}].concat(cwd, src))
 
 							? p = Object.reject(p, ['href', 'source'])
 
 							- if @@fatHTML || p.inline
 								- while !fs.existsSync(src)
-									? await delay(200)
+									? await delay(500)
 
 								+= self.cssLink(p)
 									requireMonic({src})
@@ -194,12 +205,21 @@
 								cwd = !p.source || p.source === 'lib' ? @@lib : p.source === 'src' ? @@src : @@output
 							.
 
+							? src = p.src
+
 							- if p.source === 'output'
-								? src = path.join(cwd, p.src)
+								- while !assets[src]
+									- while !fs.existsSync(build.assetsJSON)
+										? await delay(500)
+
+									? await delay(500)
+									? Object.assign(assets, fs.readJSONSync(path.join(build.assetsJSON)))
+
+								? src = path.join(cwd, assets[src])
 								? src = p.inline ? src : path.relative(@@output, src)
 
 							- else
-								? src = self.loadToLib.apply(self, [{relative: !@@fatHTML && !p.inline}].concat(cwd, p.src))
+								? src = self.loadToLib.apply(self, [{relative: !@@fatHTML && !p.inline}].concat(cwd, src))
 
 							? p = Object.reject(p, ['src', 'source'])
 
@@ -212,7 +232,7 @@
 							- else
 								- if @@fatHTML || p.inline
 									- while !fs.existsSync(src)
-										? await delay(200)
+										? await delay(500)
 
 									+= self.jsScript(p)
 										requireMonic({src})
