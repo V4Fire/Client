@@ -407,6 +407,12 @@ export function component(params?: ComponentParams): Function {
 								const renderKey = attrOpts && attrOpts['render-key'] != null ?
 									`${tagName}:${attrOpts['global-name']}:${attrOpts['render-key']}` : '';
 
+								if (renderKey && !component) {
+									const a = <Dictionary>attrOpts;
+									a['data-render-key'] = renderKey;
+									delete a['render-key'];
+								}
+
 								let
 									vnode = ctx.renderTmp[renderKey],
 									needEl = Boolean(composite);

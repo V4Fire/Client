@@ -35,3 +35,13 @@ export interface ParentMessage<T extends iBlock = iBlock> {
 
 export type Stage = string | number;
 export type ComponentStatuses = Partial<Record<keyof typeof statuses, boolean>>;
+
+export interface ComponentEventDecl {
+	event: string;
+	type?: 'error';
+}
+
+export interface InitLoadParams {
+	silent?: boolean;
+	recursive?: boolean;
+}

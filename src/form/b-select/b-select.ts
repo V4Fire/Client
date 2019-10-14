@@ -25,7 +25,8 @@ import bInput, {
 	Value,
 	ModEvent,
 	SetModEvent,
-	ModsDecl
+	ModsDecl,
+	InitLoadParams
 
 } from 'form/b-input/b-input';
 
@@ -160,7 +161,7 @@ export default class bSelect<
 	};
 
 	/** @override */
-	initLoad(data?: unknown, silent?: boolean): CanPromise<void> {
+	initLoad(data?: unknown, params?: InitLoadParams): CanPromise<void> {
 		/// FIXME
 		if (this.initAfterOpen && !this.browser.is.mobile) {
 			const
@@ -168,10 +169,10 @@ export default class bSelect<
 
 			return this.async
 				.wait(() => mods.opened !== 'false' || mods.focused === 'true')
-				.then(() => super.initLoad(data, silent));
+				.then(() => super.initLoad(data, params));
 		}
 
-		return super.initLoad(data, silent);
+		return super.initLoad(data, params);
 	}
 
 	/** @override */

@@ -55,8 +55,10 @@ import iMessage, {
 	watch,
 	wait,
 	eventFactory,
+
 	RemoteEvent,
-	ModsDecl
+	ModsDecl,
+	InitLoadParams
 
 } from 'super/i-message/i-message';
 
@@ -202,7 +204,7 @@ export default abstract class iData<T extends object = Dictionary> extends iMess
 	}
 
 	/** @override */
-	initLoad(data?: unknown, silent?: boolean): CanPromise<void> {
+	initLoad(data?: unknown, params: InitLoadParams = {}): CanPromise<void> {
 		if (!this.isActivated) {
 			return;
 		}
@@ -219,14 +221,14 @@ export default abstract class iData<T extends object = Dictionary> extends iMess
 				}
 
 				return this.db;
-			}, silent);
+			}, params);
 		}
 
 		if (this.dataProvider && !this.dp) {
 			this.syncDataProviderWatcher(this.dataProvider);
 		}
 
-		if (!silent) {
+		if (!params.silent) {
 			this.componentStatus = 'loading';
 		}
 
@@ -252,11 +254,11 @@ export default abstract class iData<T extends object = Dictionary> extends iMess
 
 					.then((data) => {
 						this.lfc.execCbAtTheRightTime(() => this.db = this.convertDataToDB<T>(data), label);
-						return super.initLoad(() => this.db, silent);
+						return super.initLoad(() => this.db, params);
 
 					}, (err) => {
 						stderr(err);
-						return super.initLoad(() => this.db, silent);
+						return super.initLoad(() => this.db, params);
 					});
 
 			} else if (this.db) {
@@ -264,7 +266,7 @@ export default abstract class iData<T extends object = Dictionary> extends iMess
 			}
 		}
 
-		return super.initLoad(() => this.db, silent);
+		return super.initLoad(() => this.db, params);
 	}
 
 	/**
@@ -272,19 +274,21 @@ export default abstract class iData<T extends object = Dictionary> extends iMess
 	 *
 	 * @see iBlock.initLoad
 	 * @param data
-	 * @param silent
+	 * @param [params] - additional parameters:
+	 *   *) [silent] - silent mode
+	 *   *) [recursive] - recursive loading of all remote providers
 	 */
-	initBaseLoad(data?: unknown | ((this: this) => unknown), silent?: boolean): CanPromise<void> {
-		return super.initLoad(data, silent);
+	initBaseLoad(data?: unknown | ((this: this) => unknown), params: InitLoadParams = {}): CanPromise<void> {
+		return super.initLoad(data, params);
 	}
 
 	/** override */
-	reload(): Promise<void> {
+	reload(params?: InitLoadParams): Promise<void> {
 		if (!this.$root.isOnline && !this.needOfflineReInit) {
 			return Promise.resolve();
 		}
 
-		return super.reload();
+		return super.reload(params);
 	}
 
 	/**

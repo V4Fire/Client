@@ -11,11 +11,46 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v3.0.0-beta.199 (2019-10-11)
+## v3.0.0-beta.202 (2019-10-x)
 
 #### :rocket: New Feature
 
 * [Added `b-virtual-scroll` component](https://github.com/V4Fire/Client/pull/137/files)
+
+## v3.0.0-beta.201 (2019-10-13)
+
+#### :boom: Breaking Change
+
+* Added `InitLoadParams` instead `silent` parameter for `initLoad`
+* `renderKey` attribute will be set as `data-render-key` for dom nodes
+
+#### :rocket: New Feature
+
+* Added `bIconButton`
+
+#### :bug: Bug Fix
+
+* Fixed modifiers watching
+
+#### :house: Internal
+
+* [Updated DS styles](https://github.com/V4Fire/Client/pull/138)
+
+## v3.0.0-beta.200 (2019-10-11)
+
+#### :bug: Bug Fix
+
+* Fixed output inlining `super/i-static-page/i-static-page.interface.ss`
+
+#### :house: Internal
+
+* Updated dependencies: @v4fire/3.0.0-beta.80
+
+## v3.0.0-beta.199 (2019-10-11)
+
+#### :bug: Bug Fix
+
+* Fixed output links `super/i-static-page/i-static-page.interface.ss`
 
 ## v3.0.0-beta.198 (2019-10-10)
 

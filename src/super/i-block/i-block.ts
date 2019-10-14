@@ -60,7 +60,17 @@ import { statuses } from 'super/i-block/modules/const';
 import { eventFactory, Event, RemoteEvent } from 'super/i-block/modules/event';
 import { initGlobalEvents, initRemoteWatchers } from 'super/i-block/modules/listeners';
 import { activate, deactivate, onActivated, onDeactivated } from 'super/i-block/modules/keep-alive';
-import { Statuses, WaitStatusOpts, Stage, ParentMessage, ComponentStatuses } from 'super/i-block/modules/interface';
+import {
+
+	Statuses,
+	WaitStatusOpts,
+	Stage,
+	ParentMessage,
+	ComponentStatuses,
+	ComponentEventDecl,
+	InitLoadParams
+
+} from 'super/i-block/modules/interface';
 
 import {
 
@@ -148,11 +158,6 @@ export {
 	removeElMod
 
 } from 'super/i-block/modules/decorators';
-
-export interface ComponentEventDecl {
-	event: string;
-	type?: 'error';
-}
 
 export const
 	$$ = symbolGenerator(),
@@ -1305,20 +1310,25 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	 * Loads component data
 	 *
 	 * @param [data] - data object (for events)
-	 * @param [silent] - silent mode
+	 * @param [params] - additional parameters:
+	 *   *) [silent] - silent mode
+	 *   *) [recursive] - recursive loading of all remote providers
 	 *
-	 * @emits initLoad(data: CanUndef<unknown>, silent: boolean)
-	 * @emits dbReady(data: CanUndef<unknown>, silent: boolean)
+	 * @emits initLoad(data: CanUndef<unknown>, params: CanUndef<InitLoadParams>)
+	 * @emits dbReady(data: CanUndef<unknown>, params: CanUndef<InitLoadParams>)
 	 */
 	@hook('beforeDataCreate')
-	initLoad(data?: unknown | ((this: this) => unknown), silent?: boolean): CanPromise<void> {
+	initLoad(
+		data?: unknown | ((this: this) => unknown),
+		params: InitLoadParams = {}
+	): CanPromise<void> {
 		if (!this.isActivated) {
 			return;
 		}
 
 		this.beforeReadyListeners = 0;
 
-		if (!silent) {
+		if (!params.silent) {
 			this.componentStatus = 'loading';
 		}
 
@@ -1329,9 +1339,19 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 		if ($c) {
 			for (let i = 0; i < $c.length; i++) {
 				const
-					el = $c[i];
+					el = $c[i],
+					st = <string>el.componentStatus;
 
-				if (el.remoteProvider && statuses[el.componentStatus]) {
+				if (el.remoteProvider && statuses[st]) {
+					if (st === 'ready') {
+						if (params.recursive) {
+							el.reload({silent: params.silent === true, ...params}).catch(stderr);
+
+						} else {
+							continue;
+						}
+					}
+
 					providers.add(el);
 				}
 			}
@@ -1341,7 +1361,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 			const
 				get = () => Object.isFunction(data) ? data.call(this) : data;
 
-			this.lfc.execCbAtTheRightTime(() => this.emit('dbReady', get(), silent));
+			this.lfc.execCbAtTheRightTime(() => this.emit('dbReady', get(), params));
 			this.componentStatus = 'beforeReady';
 
 			this.lfc.execCbAfterBlockReady(() => {
@@ -1351,11 +1371,11 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 				if (this.beforeReadyListeners > 1) {
 					this.nextTick().then(() => {
 						this.beforeReadyListeners = 0;
-						this.emit('initLoad', get(), silent);
+						this.emit('initLoad', get(), params);
 					});
 
 				} else {
-					this.emit('initLoad', get(), silent);
+					this.emit('initLoad', get(), params);
 				}
 			});
 		};
@@ -1394,10 +1414,14 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 
 	/**
 	 * Reloads component data
+	 *
+	 * @param [params] - additional parameters:
+	 *   *) [silent] - silent mode
+	 *   *) [recursive] - recursive loading of all remote providers
 	 */
-	reload(): Promise<void> {
+	reload(params?: InitLoadParams): Promise<void> {
 		const
-			res = this.initLoad(undefined, true);
+			res = this.initLoad(undefined, {silent: true, ...params});
 
 		if (Object.isPromise(res)) {
 			return res;

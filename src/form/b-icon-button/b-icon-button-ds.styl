@@ -1,0 +1,25 @@
+/*!
+ * V4Fire Client Core
+ * https://github.com/V4Fire/Client
+ *
+ * Released under the MIT license
+ * https://github.com/V4Fire/Client/blob/master/LICENSE
+ */
+
+$p = {
+
+}
+
+b-icon-button
+	&__icon > *
+		size 100%
+
+	createStyles($obj)
+		&^[0]
+			if getField($obj, "mods.size")
+				&_size
+					for $key, $value in getField($obj, "mods.size")
+						&_{$key} ^[0]__icon
+							interpolate-props($value)
+
+	generateRules($p, createStyles)
