@@ -8,13 +8,12 @@
 
 import Async from 'core/async';
 import symbolGenerator from 'core/symbol';
-import { VNodeData } from 'core/component/engines';
 
 import iBlock from 'super/i-block/i-block';
 import ScrollRender from 'base/b-virtual-scroll/modules/scroll-render';
 import bVirtualScroll from 'base/b-virtual-scroll/b-virtual-scroll';
 
-import { RecycleComponent, RenderItem, RenderParams } from 'base/b-virtual-scroll/modules/interface';
+import { RecycleComponent, RenderItem, RecycleParams } from 'base/b-virtual-scroll/modules/interface';
 
 export const
 	$$ = symbolGenerator();
@@ -61,6 +60,13 @@ export default class ComponentRender {
 	protected optionCtx: CanUndef<iBlock>;
 
 	/**
+	 * Number of columns
+	 */
+	protected get columns(): number {
+		return this.component.axis === 'y' ? this.component.columns : 1;
+	}
+
+	/**
 	 * Link to the scroll render module
 	 */
 	protected get scrollRender(): ScrollRender {
@@ -85,25 +91,41 @@ export default class ComponentRender {
 	}
 
 	/**
+	 * Link to the component refs
+	 */
+	protected get $refs(): bVirtualScroll['$refs'] {
+		// @ts-ignore (access)
+		return this.component.$refs;
+	}
+
+	/**
 	 * Cloned tombstone
 	 */
-	protected get clonedTombstone(): CanUndef<HTMLElement> {
+	get clonedTombstone(): CanUndef<HTMLElement> {
 		return this.tombstoneToClone && this.tombstoneToClone.cloneNode(true) as HTMLElement;
 	}
 
 	/**
 	 * Cloned element
 	 */
-	protected get clonedElement(): CanUndef<HTMLElement> {
+	get clonedElement(): CanUndef<HTMLElement> {
 		return this.elementToClone && this.elementToClone.cloneNode(true) as HTMLElement;
 	}
 
 	/**
-	 * Link to the component refs
+	 * Class for tombstones
 	 */
-	protected get $refs(): bVirtualScroll['$refs'] {
+	get tombstoneClass(): string {
 		// @ts-ignore (access)
-		return this.component.$refs;
+		return this.component.block.getFullElName('tombstone-el');
+	}
+
+	/**
+	 * Class for option
+	 */
+	get optionClass(): string {
+		// @ts-ignore (access)
+		return this.component.block.getFullElName('option-el');
 	}
 
 	/**
@@ -367,10 +389,9 @@ export default class ComponentRender {
 	 */
 	protected createTombstone(): HTMLElement {
 		const
-			{component} = this,
 			tombstone = <HTMLElement>(this.clonedTombstone);
 
-		tombstone.classList.add(`${component.componentName}__tombstone-el`);
+		tombstone.classList.add(this.tombstoneClass);
 		return tombstone;
 	}
 
@@ -382,7 +403,7 @@ export default class ComponentRender {
 	 */
 	protected createComponent(data: unknown, i: number): HTMLElement {
 		const
-			{component, recycleNodes} = this,
+			{component, columns, recycleNodes} = this,
 			id = this.getOptionKey(data),
 			node = recycleNodes.pop() || this.clonedElement;
 
@@ -395,24 +416,20 @@ export default class ComponentRender {
 				props = component.optionProps && component.optionProps(data, i) || {},
 				attrs = component.optionAttrs && component.optionAttrs(data, i) || {};
 
-			const renderOpts: VNodeData = {
-				...attrs,
-
-				props: {
-					dispatching: true,
-					...props
-				},
-
-				style: {
-					width: `${(100 / component.columns)}%`,
-					height: component.optionHeight ? component.optionHeight.px : '',
-					...<Dictionary>attrs.style
-				},
-
-				staticClass: [`${this.component.componentName}__option-el`].concat(attrs.staticClass || '').join(' ')
-			};
-
-			let res = <HTMLElement>this.component.vdom.render(this.$createElement(this.component.option, renderOpts));
+			let res = <HTMLElement>this.component.vdom.render(this.$createElement(this.component.option, {
+				staticClass: this.optionClass,
+				attrs: {
+					'v-attrs': {
+						...attrs,
+						...props,
+						style: {
+							width: `${(100 / columns)}%`,
+							height: component.optionHeight ? component.optionHeight.px : '',
+							...<Dictionary>attrs.style
+						}
+					}
+				}
+			}));
 
 			if (component.recycleFn && !this.elementToClone) {
 				this.elementToClone = res;
@@ -431,7 +448,7 @@ export default class ComponentRender {
 	/**
 	 * Returns a render params
 	 */
-	protected getRenderFnParams(node: HTMLElement, data: unknown, i: number): RenderParams {
+	protected getRenderFnParams(node: HTMLElement, data: unknown, i: number): RecycleParams {
 		return {
 			optionCtx: this.optionCtx,
 			ctx: this.component,

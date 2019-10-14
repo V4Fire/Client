@@ -18,7 +18,8 @@ import {
 	RequestCheckFn,
 	RequestMoreParams,
 	SchemeRenderNode,
-	RenderParams
+	RecycleParams,
+	Axis
 
 } from 'base/b-virtual-scroll/modules/interface';
 
@@ -31,6 +32,11 @@ import iData, { InitLoadParams, RequestParams, ModsDecl, component, prop, system
 export const
 	$$ = symbolGenerator();
 
+export const axis = {
+	x: true,
+	y: true
+};
+
 export * from 'super/i-block/i-block';
 
 @component()
@@ -42,7 +48,7 @@ export default class bVirtualScroll extends iData<RemoteData> {
 	static renderScheme(
 		node: HTMLElement,
 		renderObj: SchemeRenderNode[],
-		renderParams: RenderParams<any, iBlock>
+		renderParams: RecycleParams<any, iBlock>
 	): HTMLElement {
 
 		const
@@ -190,6 +196,12 @@ export default class bVirtualScroll extends iData<RemoteData> {
 	readonly scrollRunnerMin: number = 0;
 
 	/**
+	 * Scroll axis
+	 */
+	@prop({type: String, validator: (v: string) => axis.hasOwnProperty(v)})
+	readonly axis: Axis = 'y';
+
+	/**
 	 * If true, then created nodes will be cached
 	 */
 	@prop(Boolean)
@@ -242,6 +254,11 @@ export default class bVirtualScroll extends iData<RemoteData> {
 		requestsDone: [
 			'true',
 			['false']
+		],
+
+		axis: [
+			['y'],
+			'x'
 		]
 	};
 
@@ -284,7 +301,16 @@ export default class bVirtualScroll extends iData<RemoteData> {
 			return this.scrollingElement();
 		}
 
-		return document.documentElement || document.scrollingElement || document.body;
+		return this.axis === 'y' ?
+			document.documentElement || document.scrollingElement || document.body :
+			<HTMLElement>this.$el;
+	}
+
+	/**
+	 * Link to scroll event emitter
+	 */
+	protected get scrollEmitter(): Document | HTMLElement {
+		return this.axis === 'y' ? document : <HTMLElement>this.$el;
 	}
 
 	/**
@@ -300,12 +326,19 @@ export default class bVirtualScroll extends iData<RemoteData> {
 	readonly isRequestsDone: RequestCheckFn = (v) => !v.isLastEmpty;
 
 	/** @override */
-	async reload(params?: InitLoadParams | undefined): Promise<void> {
+	async reload(params?: InitLoadParams): Promise<void> {
 		const
 			load = super.reload(params),
 			reInit = this.componentRender.reInit().then(() => this.scrollRender.reInit());
 
 		return Promise.all([load, reInit]).then(() => this.scrollRender.initRendering());
+	}
+
+	/** @override */
+	protected initModEvents(): void {
+		super.initModEvents();
+		this.sync.mod('containerSize', 'containerSize', String);
+		this.sync.mod('axis', 'axis', String);
 	}
 
 	/**

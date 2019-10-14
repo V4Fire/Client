@@ -8,16 +8,17 @@
 
 import Range from 'core/range';
 
-import bVirtualScroll from 'base/b-virtual-scroll/b-virtual-scroll';
+import bVirtualScroll, { axis } from 'base/b-virtual-scroll/b-virtual-scroll';
 
 export type OptionProps = (el: unknown, i: number) => Dictionary;
+export type Axis = keyof typeof axis;
 
 export type RequestQuery<T extends unknown = unknown> = (params: RequestMoreParams<T>) => Dictionary;
 export type RequestCheckFn<T extends unknown = unknown> = (params: RequestMoreParams<T>) => boolean;
 
-export type RecycleFn = (params: RenderParams) => HTMLElement;
+export type RecycleFn = (params: RecycleParams) => HTMLElement;
 
-export interface RenderParams<T extends unknown = unknown, CTX extends unknown = unknown> {
+export interface RecycleParams<T extends unknown = unknown, CTX extends unknown = unknown> {
 	node: HTMLElement;
 	data: T;
 	i: number;
