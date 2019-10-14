@@ -17,7 +17,6 @@ import 'core/component/directives';
 
 import inheritMeta from 'core/component/create/inherit';
 
-import { GLOBAL } from 'core/env';
 import { runHook, patchRefs, parseVAttrs } from 'core/component/create/helpers';
 import {
 
@@ -793,7 +792,7 @@ export function component(params?: ComponentParams): Function {
 								i++;
 
 								// tslint:disable-next-line:no-string-literal
-								GLOBAL['setImmediate'](f);
+								globalThis['setImmediate'](f);
 
 							} else {
 								setTimeout(f, 100);

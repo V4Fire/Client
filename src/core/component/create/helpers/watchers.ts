@@ -7,7 +7,6 @@
  */
 
 import Async from 'core/async';
-import { GLOBAL } from 'core/env';
 import { getFieldInfo, ComponentInterface, WatchOptions, WatchObject, FieldInfo } from 'core/component';
 
 export interface BindWatchersParams<A extends object = ComponentInterface> {
@@ -112,7 +111,7 @@ export function bindWatchers(
 		const exec = () => {
 			if (customWatcher) {
 				const l = customWatcher[2];
-				root = l ? Object.get(ctx, l) || Object.get(GLOBAL, l) || ctx : ctx;
+				root = l ? Object.get(ctx, l) || Object.get(globalThis, l) || ctx : ctx;
 				key = l ? customWatcher[3].toString() : customWatcher[3].dasherize();
 			}
 
