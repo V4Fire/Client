@@ -26,7 +26,7 @@ import ComponentRender from 'base/b-virtual-scroll/modules/component-render';
 import ScrollRender, { getRequestParams } from 'base/b-virtual-scroll/modules/scroll-render';
 
 import iBlock from 'super/i-block/i-block';
-import iData, { RequestParams, ModsDecl, component, prop, system, hook } from 'super/i-data/i-data';
+import iData, { InitLoadParams, RequestParams, ModsDecl, component, prop, system, hook } from 'super/i-data/i-data';
 
 export const
 	$$ = symbolGenerator();
@@ -300,9 +300,9 @@ export default class bVirtualScroll extends iData<RemoteData> {
 	readonly isRequestsDone: RequestCheckFn = (v) => !v.isLastEmpty;
 
 	/** @override */
-	async reload(): Promise<void> {
+	async reload(params?: InitLoadParams | undefined): Promise<void> {
 		const
-			load = super.reload(),
+			load = super.reload(params),
 			reInit = this.componentRender.reInit().then(() => this.scrollRender.reInit());
 
 		return Promise.all([load, reInit]).then(() => this.scrollRender.initRendering());
