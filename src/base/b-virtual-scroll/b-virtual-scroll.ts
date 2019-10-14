@@ -206,7 +206,7 @@ export default class bVirtualScroll extends iData<RemoteData> {
 	 *   *) Works only with recycleFn defined
 	 */
 	@prop(Boolean)
-	readonly recycle: boolean = true;
+	readonly recycle: boolean = false;
 
 	/**
 	 * If true, then the user will be able to scroll the content, regardless of the loading status of the previous page
