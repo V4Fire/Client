@@ -11,6 +11,17 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-beta.202 (2019-10-14)
+
+#### :bug: Bug Fix
+
+* Fixed `source: 'output'` with production mode `super/i-static-page/i-static-page.interface.ss`
+
+#### :house: Internal
+
+* `GLOBAL` -> `globalThis`
+* Updated dependencies: @v4fire/3.0.0-beta.81
+
 ## v3.0.0-beta.201 (2019-10-13)
 
 #### :boom: Breaking Change
@@ -34,7 +45,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :bug: Bug Fix
 
-* Fixed output inlining `super/i-static-page/i-static-page.interface.ss`
+* Fixed `source: 'output'` inlining `super/i-static-page/i-static-page.interface.ss`
 
 #### :house: Internal
 
@@ -44,7 +55,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :bug: Bug Fix
 
-* Fixed output links `super/i-static-page/i-static-page.interface.ss`
+* Fixed `source: 'output'` links `super/i-static-page/i-static-page.interface.ss`
 
 ## v3.0.0-beta.198 (2019-10-10)
 
