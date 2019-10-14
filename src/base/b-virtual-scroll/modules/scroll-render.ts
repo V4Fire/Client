@@ -343,6 +343,7 @@ export default class ScrollRender {
 			}
 
 			this.hideTombstones(positions);
+
 		}, {group: 'render-scroll'});
 
 		this.request();
