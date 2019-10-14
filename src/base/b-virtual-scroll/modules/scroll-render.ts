@@ -10,40 +10,13 @@ import Async from 'core/async';
 import symbolGenerator from 'core/symbol';
 import Range from 'core/range';
 
-import bVirtualScroll, { RemoteData, RequestMoreParams } from 'base/b-virtual-scroll/b-virtual-scroll';
+import bVirtualScroll from 'base/b-virtual-scroll/b-virtual-scroll';
+import { RemoteData, RequestMoreParams, AnchoredItem, RenderItem, Size } from 'base/b-virtual-scroll/modules/interface';
+
 import ComponentRender from 'base/b-virtual-scroll/modules/component-render';
 
 export const
 	$$ = symbolGenerator();
-
-export interface RenderItem<T extends unknown = unknown> {
-	data: T;
-	node: CanUndef<HTMLElement>;
-	width: number;
-	height: number;
-	top: number;
-}
-
-export interface RenderedNode {
-	width: number;
-	height: number;
-	node: HTMLElement;
-}
-
-export interface AnchoredItem {
-	index: number;
-	offset: number;
-}
-
-export interface ElementPosition {
-	x: number;
-	y: number;
-}
-
-export interface Size {
-	width: number;
-	height: number;
-}
 
 export default class ScrollRender {
 	/**
@@ -80,6 +53,11 @@ export default class ScrollRender {
 	 * Data for render
 	 */
 	items: RenderItem[] = [];
+
+	/**
+	 * All loaded data
+	 */
+	loadedData: unknown[] = [];
 
 	/**
 	 * Last loaded data
@@ -210,8 +188,10 @@ export default class ScrollRender {
 
 		if (component.dataProvider && component.db) {
 			this.max = component.db.total || Infinity;
+			this.loadedData = component.db.data || [];
 		}
 
+		this.checksRequestDone(getRequestParams(this));
 		this.initEvents();
 		this.render();
 	}
@@ -300,7 +280,7 @@ export default class ScrollRender {
 	 */
 	protected updateRange(): void {
 		const
-			{scrollRoot, scrollProp, scrollPosition, range, component, currentAnchor} = this,
+			{scrollRoot, scrollProp, scrollPosition, range, component, currentAnchor, max, loadedData} = this,
 			scrollValue = scrollRoot[scrollProp],
 			diff = scrollValue - scrollPosition;
 
@@ -323,7 +303,10 @@ export default class ScrollRender {
 			range.end = lastItem.index + component.oppositeElementsSize;
 
 		} else {
-			if (component.mods.progress === 'true') {
+			const
+				shouldRenderMore = component.mods.progress === 'true' && max === Infinity && lastItem.index > loadedData.length;
+
+			if (shouldRenderMore) {
 				return;
 			}
 
@@ -341,18 +324,15 @@ export default class ScrollRender {
 		const
 			{async: $a, component} = this;
 
-		this.clearNodes();
-
-		const
-			animations = this.renderItems();
-
 		$a.requestAnimationFrame(() => {
+			this.clearNodes();
 			this.clearUnused();
 			this.cacheItemsHeight();
 			this.setCurrentPosition();
-		}, {group: 'render-scroll'});
 
-		$a.requestAnimationFrame(() => {
+			const
+				animations = this.renderItems();
+
 			this.setTombstoneTransform(animations);
 			this.setItemsTransform(animations);
 			this.setScrollRunner();
@@ -361,9 +341,8 @@ export default class ScrollRender {
 				this.setContainerHeight();
 			}
 
+			this.hideTombstones(animations);
 		}, {group: 'render-scroll'});
-
-		$a.setTimeout(() => $a.requestAnimationFrame(() => this.hideTombstones(animations), {group: 'render-scroll'}), 400);
 
 		this.request();
 	}
@@ -377,11 +356,9 @@ export default class ScrollRender {
 			resolved = Promise.resolve();
 
 		const
-			shouldRequest = Object.isFunction(component.shouldRequest) && component.shouldRequest(getRequestParams(this)),
-			hideTombstones = () => this.isRequestsDone && this.removeTombstones();
+			shouldRequest = Object.isFunction(component.shouldRequest) && component.shouldRequest(getRequestParams(this));
 
 		if (this.isRequestsDone) {
-			hideTombstones();
 			return resolved;
 		}
 
@@ -402,26 +379,22 @@ export default class ScrollRender {
 		// @ts-ignore (access)
 		return component.requestRemoteData(params)
 			.then((v: CanUndef<RemoteData>) => {
-
-				if (!v || !v.data || v.data.length === 0) {
+				if (!component.field.get('data.length', v)) {
 					this.isLastEmpty = true;
-					this.isRequestsDone = component.isRequestsDone(getRequestParams(this));
-					hideTombstones();
-
+					this.checksRequestDone(getRequestParams(this, {lastLoaded: []}));
 					return;
 				}
 
 				const
-					{data, total} = v;
+					{data, total} = <RemoteData>v;
 
 				this.page++;
 				this.max = total || Infinity;
 				this.isLastEmpty = false;
-
-				this.isRequestsDone = component.isRequestsDone(getRequestParams(this));
-				hideTombstones();
+				this.loadedData = this.loadedData.concat(data);
 
 				this.registerData(data);
+				this.checksRequestDone(getRequestParams(this));
 				this.updateRange();
 
 			}).catch(stderr);
@@ -456,12 +429,11 @@ export default class ScrollRender {
 			nodes.push(item.node);
 		};
 
+		while (items.length <= range.end) {
+			items.push(this.createItem(undefined));
+		}
+
 		for (let i = range.start; i < range.end; i++) {
-
-			while (items.length <= i) {
-				items.push(this.createItem(undefined));
-			}
-
 			const
 				item = items[i];
 
@@ -511,6 +483,11 @@ export default class ScrollRender {
 		const
 			{scrollEnd, component, currentPosition, $refs} = this;
 
+		// Проверять направление скролла и treshold
+		if (this.scrollEnd > currentPosition + component.scrollRunnerMin) {
+			return;
+		}
+
 		this.scrollEnd = Math.max(scrollEnd, currentPosition + component.scrollRunnerMin);
 		$refs.scrollRunner.style.transform = `translate3d(0, ${this.scrollEnd.px}, 0)`;
 		$refs.container.scrollTop = this.scrollPosition;
@@ -536,9 +513,7 @@ export default class ScrollRender {
 
 			const
 				x = (i % columns) * (item.width || tombstoneSize.width),
-				y = this.currentPosition;
-
-			const
+				y = this.currentPosition,
 				translate = `translate3d(${x.px}, ${y.px}, 0)`;
 
 			if (node) {
@@ -555,7 +530,7 @@ export default class ScrollRender {
 			const
 				height = (item.height || tombstoneSize.height) * columns;
 
-			if ((i + 1) % columns === 0) {
+			if ((i + 1) % columns === 0 || i + 1 === range.end) {
 				this.currentPosition += height;
 			}
 		}
@@ -653,6 +628,10 @@ export default class ScrollRender {
 		const
 			{$refs: {container}} = this;
 
+		if (this.component.recycle && !this.component.cacheNode) {
+			this.componentRender.recycleNode(item.node);
+		}
+
 		container.removeChild(item.node);
 	}
 
@@ -667,7 +646,7 @@ export default class ScrollRender {
 
 		if (this.hasTombstoneClass(item.node)) {
 			this.hideNode(item.node);
-			this.componentRender.saveTombstone(item.node);
+			this.componentRender.cacheTombstone(item.node);
 		}
 	}
 
@@ -698,6 +677,7 @@ export default class ScrollRender {
 
 	/**
 	 * Hides the specified tombstones
+	 * @param animations
 	 */
 	protected hideTombstones(animations: Dictionary<[HTMLElement, number]>): void {
 		for (const i in animations) {
@@ -710,31 +690,13 @@ export default class ScrollRender {
 			}
 
 			this.hideNode(node);
-			this.componentRender.saveTombstone(node);
-		}
-	}
-
-	/**
-	 * Hides all tombstones
-	 */
-	protected removeTombstones(): void {
-		const
-			{items} = this;
-
-		for (let i = 0; i < items.length; i++) {
-			const
-				item = items[i];
-
-			if (!item.node || !this.hasTombstoneClass(item.node) || item.data) {
-				continue;
-			}
-
-			this.hideNode(item.node);
+			this.componentRender.cacheTombstone(node);
 		}
 	}
 
 	/**
 	 * Finds an anchored item
+	 * @param [diff]
 	 */
 	protected findAnchoredItem(diff: number = 0): AnchoredItem {
 		const
@@ -850,6 +812,23 @@ export default class ScrollRender {
 			width: $refs.container.offsetWidth,
 			height: window.innerHeight
 		};
+	}
+
+	/**
+	 * Checks are all requests complete
+	 * @param params
+	 */
+	protected checksRequestDone(params: RequestMoreParams): void {
+		this.isRequestsDone = this.component.isRequestsDone(params);
+
+		if (this.isRequestsDone) {
+			this.max = this.items.length;
+			this.component.setMod('requestsDone', true);
+			this.updateRange();
+
+		} else {
+			this.component.removeMod('requestsDone', true);
+		}
 	}
 
 	/**

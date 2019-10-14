@@ -6,38 +6,27 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import Range from 'core/range';
 import symbolGenerator from 'core/symbol';
 import { VNodeData } from 'core/component/engines';
 
+import {
+
+	RemoteData,
+	RenderFn as RecycleFn,
+	OptionProps,
+	RequestQuery,
+	RequestCheckFn,
+	RequestMoreParams,
+	SchemeRenderNode,
+	RenderParams
+
+} from 'base/b-virtual-scroll/modules/interface';
+
 import ComponentRender from 'base/b-virtual-scroll/modules/component-render';
-import ScrollRender, { RenderItem, getRequestParams } from 'base/b-virtual-scroll/modules/scroll-render';
+import ScrollRender, { getRequestParams } from 'base/b-virtual-scroll/modules/scroll-render';
 
-import iData, { RequestParams, ModsDecl, component, prop, wait, system, hook } from 'super/i-data/i-data';
-
-export type OptionProps = ((el: unknown, i: number) => Dictionary);
-export type OptionsIterator<T = bVirtualScroll> = (options: unknown[], ctx: T) => unknown[];
-
-export type RequestQuery<T extends unknown = unknown> = (params: RequestMoreParams<T>) => Dictionary;
-export type RequestCheckFn<T extends unknown = unknown> = (params: RequestMoreParams<T>) => boolean;
-
-export interface RequestMoreParams<T extends unknown = unknown> {
-	currentSlice: RenderItem<T>[];
-	currentPage: number;
-	currentRange: Range<number>;
-
-	nextPage: number;
-	itemsToRichBottom: number;
-	items: RenderItem<T>[];
-
-	isLastEmpty: boolean;
-	lastLoaded: Array<T>;
-}
-
-export interface RemoteData {
-	data: unknown[];
-	total?: number;
-}
+import iData, { RequestParams, ModsDecl, component, prop, system, hook } from 'super/i-data/i-data';
+import iBlock from 'super/i-block/i-block';
 
 export const
 	$$ = symbolGenerator();
@@ -46,6 +35,70 @@ export * from 'super/i-block/i-block';
 
 @component()
 export default class bVirtualScroll extends iData<RemoteData> {
+	/**
+	 * Renders the specified node by params
+	 * @param renderObj
+	 */
+	static renderScheme(
+		node: HTMLElement,
+		renderObj: SchemeRenderNode[],
+		renderParams: RenderParams<any, iBlock>
+	): HTMLElement {
+
+		const
+			{optionCtx} = renderParams,
+			isImage = (el): el is HTMLImageElement => el.tagName === 'IMG';
+
+		for (let i = 0; i < renderObj.length; i++) {
+			const
+				obj = renderObj[i],
+				{val = '', if: vIf, style} = obj;
+
+			const el = <CanUndef<HTMLElement>>(Object.isString(obj.node) && optionCtx ?
+				// @ts-ignore (access)
+				node.querySelector(`.${optionCtx.block.getFullElName(obj.node)}`) :
+				obj.node
+			);
+
+			if (!el) {
+				continue;
+			}
+
+			if ('if' in obj && !vIf) {
+				el.style.display = 'none';
+				continue;
+
+			} else {
+				el.style.display = '';
+			}
+
+			if (isImage(el)) {
+				el.src = '';
+				el.src = val;
+
+			} else {
+				if (obj.method === 'replace' || !obj.method) {
+					const
+						target = el.childNodes[0];
+
+					if (target) {
+						el.replaceChild(document.createTextNode(val), target);
+
+					} else {
+						el.appendChild(document.createTextNode(val));
+					}
+
+				} else {
+					el.innerHTML = val;
+				}
+			}
+
+			Object.assign(el.style, style);
+		}
+
+		return node;
+	}
+
 	/**
 	 * Initial component options
 	 */
@@ -68,7 +121,7 @@ export default class bVirtualScroll extends iData<RemoteData> {
 	 * Option unique key (for v-for)
 	 */
 	@prop({type: [String, Function]})
-	readonly optionKey!: string | ((el: unknown, i: number) => string);
+	readonly optionKey!: (el: unknown, i: number) => string | number;
 
 	/**
 	 * Option component
@@ -110,7 +163,7 @@ export default class bVirtualScroll extends iData<RemoteData> {
 	 * Cache size
 	 */
 	@prop({type: Number, validator: isNatural})
-	readonly cacheSize: number = 400;
+	readonly cacheSize: number = 200;
 
 	/**
 	 * The number of items to be removed from the cache
@@ -143,16 +196,23 @@ export default class bVirtualScroll extends iData<RemoteData> {
 	readonly cacheNode: boolean = true;
 
 	/**
-	 * If true, then the user will be able to scroll the content, regardless of the loading status of the previous page
-	 */
-	@prop(Boolean)
-	readonly drawMaxBased: boolean = false;
-
-	/**
 	 * If true, then the height of the container will be updated for every change in range
 	 */
 	@prop(Boolean)
 	readonly containerSize: boolean = true;
+
+	/**
+	 * If true, then created nodes will be reused
+	 *   *) It is not recommended to use this feature if you have not defined your render function
+	 */
+	@prop(Boolean)
+	readonly recycle: boolean = true;
+
+	/**
+	 * If true, then the user will be able to scroll the content, regardless of the loading status of the previous page
+	 */
+	@prop(Boolean)
+	readonly drawMaxBased: boolean = false;
 
 	/**
 	 * Function that returns a scroll root
@@ -165,6 +225,12 @@ export default class bVirtualScroll extends iData<RemoteData> {
 	 */
 	@prop({type: Function, required: false})
 	readonly requestQuery?: RequestQuery;
+
+	/**
+	 * Create component function
+	 */
+	@prop({type: Function, required: false})
+	readonly recycleFn?: RecycleFn;
 
 	/** @inheritDoc */
 	static readonly mods: ModsDecl = {
@@ -317,7 +383,7 @@ export default class bVirtualScroll extends iData<RemoteData> {
 	 * @param el
 	 * @param i
 	 */
-	protected getOptionKey(el: unknown, i: number): CanUndef<string> {
+	protected getOptionKey(el: unknown, i: number): CanUndef<string | number> {
 		return Object.isFunction(this.optionKey) ?
 			this.optionKey(el, i) :
 			this.optionKey;

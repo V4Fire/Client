@@ -8,20 +8,16 @@
 
 import Async from 'core/async';
 import symbolGenerator from 'core/symbol';
-
 import { VNodeData } from 'core/component/engines';
 
-import ScrollRender, { RenderItem } from 'base/b-virtual-scroll/modules/scroll-render';
+import iBlock from 'super/i-block/i-block';
+import ScrollRender from 'base/b-virtual-scroll/modules/scroll-render';
 import bVirtualScroll from 'base/b-virtual-scroll/b-virtual-scroll';
+
+import { RecycleComponent, RenderItem, RenderParams } from 'base/b-virtual-scroll/modules/interface';
 
 export const
 	$$ = symbolGenerator();
-
-export interface RecycleComponent<T extends unknown = unknown> {
-	node: HTMLElement;
-	id: string;
-	data: T;
-}
 
 export default class ComponentRender {
 	/**
@@ -32,7 +28,7 @@ export default class ComponentRender {
 	/**
 	 * If true, the cache flushing process is not currently running
 	 */
-	protected dropCacheIsProcess: boolean = false;
+	protected canDropCache: boolean = false;
 
 	/**
 	 * Rendered items cache
@@ -42,12 +38,27 @@ export default class ComponentRender {
 	/**
 	 * Tombstones elements
 	 */
-	protected tombstones: HTMLElement[] = [];
+	protected recycleTombstones: HTMLElement[] = [];
+
+	/**
+	 * Recycle elements
+	 */
+	protected recycleNodes: HTMLElement[] = [];
 
 	/**
 	 * Link to the tombstone node
 	 */
 	protected tombstoneToClone: CanUndef<HTMLElement>;
+
+	/**
+	 * Link to the element
+	 */
+	protected elementToClone: CanUndef<HTMLElement>;
+
+	/**
+	 * Option context
+	 */
+	protected optionCtx: CanUndef<iBlock>;
 
 	/**
 	 * Link to the scroll render module
@@ -81,6 +92,13 @@ export default class ComponentRender {
 	}
 
 	/**
+	 * Cloned element
+	 */
+	protected get clonedElement(): CanUndef<HTMLElement> {
+		return this.elementToClone && this.elementToClone.cloneNode(true) as HTMLElement;
+	}
+
+	/**
 	 * Link to the component refs
 	 */
 	protected get $refs(): bVirtualScroll['$refs'] {
@@ -94,19 +112,6 @@ export default class ComponentRender {
 	constructor(ctx: bVirtualScroll) {
 		this.component = ctx;
 		this.tombstoneToClone = <HTMLElement>this.$refs.tombstone.children[0];
-
-		const
-			{async: $a} = this;
-
-		$a.on(document, 'scroll', () => {
-			if (this.dropCacheIsProcess) {
-				$a.requestIdleCallback(this.dropCache.bind(this), {
-					label: $$.dropCacheIdle,
-					join: true
-				});
-
-			}
-		}, {label: $$.componentRenderScroll});
 	}
 
 	/**
@@ -123,19 +128,27 @@ export default class ComponentRender {
 	 * @param key
 	 * @param node
 	 */
-	saveElement(key: string, node: HTMLElement): HTMLElement {
+	cacheNode(key: string, node: HTMLElement): HTMLElement {
 		this.nodesCache[key] = node;
 
 		const
-			{nodesCache, scrollRender} = this,
+			{nodesCache} = this,
 			{cacheSize} = this.component,
 			keys = Object.keys(nodesCache);
 
 		if (keys.length > cacheSize) {
-			this.dropCacheIsProcess = true;
+			this.canDropCache = true;
 		}
 
 		return node;
+	}
+
+	/**
+	 * Saves an element for recycle later
+	 * @param node
+	 */
+	recycleNode(node: HTMLElement): void {
+		this.recycleNodes.push(node);
 	}
 
 	/** @see bVirtualScroll.getOptionKey */
@@ -156,6 +169,8 @@ export default class ComponentRender {
 			{cacheNode} = this.component,
 			id = this.getOptionKey(data);
 
+		const create = () => item.node = this.createComponent(data, i);
+
 		if (cacheNode) {
 			const node = id && this.getElement(id);
 
@@ -164,11 +179,11 @@ export default class ComponentRender {
 				return node;
 
 			} else {
-				return (item.node = this.createComponent(data, i));
+				return create();
 			}
 		}
 
-		return;
+		return create();
 	}
 
 	/**
@@ -177,10 +192,10 @@ export default class ComponentRender {
 	getTombstone(): HTMLElement {
 		const
 			{component} = this,
-			tombstone = this.tombstones.pop();
+			tombstone = this.recycleTombstones.pop();
 
 		if (tombstone) {
-			tombstone.classList.remove(`${component.componentName}__el_display_none`);
+			component.removeMod(tombstone, 'hidden', true);
 
 			tombstone.style.transform = 'translate3d(0, 0, 0)';
 			tombstone.style.opacity = String(1);
@@ -194,8 +209,8 @@ export default class ComponentRender {
 	/**
 	 * Saves the specified tombstone in cache
 	 */
-	saveTombstone(node: HTMLElement): void {
-		this.tombstones.push(node);
+	cacheTombstone(node: HTMLElement): void {
+		this.recycleTombstones.push(node);
 	}
 
 	/**
@@ -226,7 +241,9 @@ export default class ComponentRender {
 					el && el.remove();
 				});
 
-				this.tombstones = [];
+				this.recycleTombstones = [];
+				this.recycleTombstones = [];
+				this.elementToClone = undefined;
 				this.nodesCache = {};
 				res();
 
@@ -237,7 +254,11 @@ export default class ComponentRender {
 	/**
 	 * Drops cached nodes
 	 */
-	protected dropCache(): void {
+	dropCache(): void {
+		if (!this.component.cacheNode) {
+			return;
+		}
+
 		const
 			{scrollRender} = this,
 			{dropCacheSize, dropCacheSafeZone} = this.component,
@@ -248,7 +269,6 @@ export default class ComponentRender {
 			untilStart = range.start;
 
 		if (scrollDirection === 0) {
-			this.dropCacheIsProcess = true;
 			return;
 		}
 
@@ -259,10 +279,14 @@ export default class ComponentRender {
 
 			const
 				id = this.getOptionKey(item.data),
-				el = this.nodesCache[id];
+				node = this.getElement(id);
 
+			if (!node) {
+				return;
+			}
+
+			this.recycleNode(node);
 			item.node = undefined;
-			el && el.remove();
 			delete this.nodesCache[id];
 		};
 
@@ -334,7 +358,7 @@ export default class ComponentRender {
 		};
 
 		dropRange();
-		this.dropCacheIsProcess = false;
+		this.canDropCache = false;
 	}
 
 	/**
@@ -357,31 +381,62 @@ export default class ComponentRender {
 	 */
 	protected createComponent(data: unknown, i: number): HTMLElement {
 		const
-			{component} = this,
-			id = this.getOptionKey(data);
+			{component, recycleNodes} = this,
+			id = this.getOptionKey(data),
+			node = recycleNodes.pop() || this.clonedElement;
 
-		const
-			props = component.optionProps && component.optionProps(data, i) || {},
-			attrs = component.optionAttrs && component.optionAttrs(data, i) || {};
+		if (node && component.recycleFn) {
+			const res = component.recycleFn(this.getRenderFnParams(node, data, i));
+			return this.cacheNode(id, res);
 
-		const renderOpts: VNodeData = {
-			...attrs,
+		} else {
+			const
+				props = component.optionProps && component.optionProps(data, i) || {},
+				attrs = component.optionAttrs && component.optionAttrs(data, i) || {};
 
-			props: {
-				dispatching: true,
-				...props
-			},
+			const renderOpts: VNodeData = {
+				...attrs,
 
-			style: {
-				width: `${(100 / component.columns)}%`,
-				height: component.optionHeight ? component.optionHeight.px : '',
-				...<Dictionary>attrs.style
-			},
+				props: {
+					dispatching: true,
+					...props
+				},
 
-			staticClass: [`${this.component.componentName}__option-el`].concat(attrs.staticClass || '').join(' ')
+				style: {
+					width: `${(100 / component.columns)}%`,
+					height: component.optionHeight ? component.optionHeight.px : '',
+					...<Dictionary>attrs.style
+				},
+
+				staticClass: [`${this.component.componentName}__option-el`].concat(attrs.staticClass || '').join(' ')
+			};
+
+			let res = <HTMLElement>this.component.vdom.render(this.$createElement(this.component.option, renderOpts));
+
+			if (component.recycleFn && !this.elementToClone) {
+				this.elementToClone = res;
+				res = component.recycleFn(this.getRenderFnParams(res, data, i));
+			}
+
+			if (!this.optionCtx) {
+				// @ts-ignore (access)
+				this.optionCtx = res.component;
+			}
+
+			return this.cacheNode(id, res);
+		}
+	}
+
+	/**
+	 * Returns a render params
+	 */
+	protected getRenderFnParams(node: HTMLElement, data: unknown, i: number): RenderParams {
+		return {
+			optionCtx: this.optionCtx,
+			ctx: this.component,
+			node,
+			data,
+			i
 		};
-
-		const node = <HTMLElement>this.component.vdom.render(this.$createElement(this.component.option, renderOpts));
-		return this.saveElement(id, node);
 	}
 }
