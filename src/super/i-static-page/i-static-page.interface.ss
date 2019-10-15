@@ -162,7 +162,7 @@
 									? await delay(500)
 									? Object.assign(assets, fs.readJSONSync(path.join(build.assetsJSON)))
 
-								? src = path.join(cwd, src)
+								? src = path.join(cwd, assets[src].path)
 								? src = p.inline ? src : path.relative(@@output, src)
 
 							- else
@@ -215,7 +215,7 @@
 									? await delay(500)
 									? Object.assign(assets, fs.readJSONSync(path.join(build.assetsJSON)))
 
-								? src = path.join(cwd, assets[src])
+								? src = path.join(cwd, assets[src].path)
 								? src = p.inline ? src : path.relative(@@output, src)
 
 							- else
