@@ -72,22 +72,28 @@ export default abstract class iLockPageScroll {
 				html = document.documentElement,
 				body = document.body;
 
-			const
-				scrollTop = html.scrollTop || body.scrollTop;
+			$a.requestAnimationFrame(() => {
+				const
+					scrollTop = html.scrollTop || body.scrollTop;
 
-			component[$$.scrollTop] = scrollTop;
-			body.style.top = `-${scrollTop}px`;
-			r.setRootMod('lockScrollMobile', true, r);
+				component[$$.scrollTop] = scrollTop;
+				body.style.top = `-${scrollTop}px`;
+				r.setRootMod('lockScrollMobile', true, r);
+
+			}, {label: $$.lockScroll});
 
 		} else {
-			const
-				{body} = document,
-				scrollBarWidth = window.innerWidth - body.clientWidth;
+			$a.requestAnimationFrame(() => {
+				const
+					{body} = document,
+					scrollBarWidth = window.innerWidth - body.clientWidth;
 
-			component[$$.paddingRight] = body.style.paddingRight;
-			body.style.paddingRight = `${scrollBarWidth}px`;
+				component[$$.paddingRight] = body.style.paddingRight;
+				body.style.paddingRight = `${scrollBarWidth}px`;
 
-			r.setRootMod('lockScrollDesktop', true, r);
+				r.setRootMod('lockScrollDesktop', true, r);
+
+			}, {label: $$.lockScroll});
 		}
 
 		r[$$.isLocked] = true;
@@ -107,15 +113,19 @@ export default abstract class iLockPageScroll {
 			return;
 		}
 
-		r.removeRootMod('lockScrollMobile', true, r);
-		r.removeRootMod('lockScrollDesktop', true, r);
-		r[$$.isLocked] = false;
+		$a.requestAnimationFrame(() => {
+			r.removeRootMod('lockScrollMobile', true, r);
+			r.removeRootMod('lockScrollDesktop', true, r);
+			r[$$.isLocked] = false;
 
-		if (is.Android) {
-			window.scrollTo(0, component[$$.scrollTop]);
-		}
+			if (is.Android) {
+				window.scrollTo(0, component[$$.scrollTop]);
+			}
 
-		body.style.paddingRight = component[$$.paddingRight] || '';
+			body.style.paddingRight = component[$$.paddingRight] || '';
+
+		}, {label: $$.unlockScroll});
+
 		$a.off({group: 'pageScrollLock'});
 	}
 

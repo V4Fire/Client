@@ -151,12 +151,6 @@ export default class bVirtualScroll extends iData<RemoteData> {
 	readonly recycle: boolean = false;
 
 	/**
-	 * If true, then the user will be able to scroll the content, regardless of the loading status of the previous page
-	 */
-	@prop(Boolean)
-	readonly drawMaxBased: boolean = false;
-
-	/**
 	 * Function that returns a scroll root
 	 */
 	@prop({type: Function, required: false})
