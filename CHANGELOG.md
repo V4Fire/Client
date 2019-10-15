@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-beta.204 (2019-10-15)
+
+#### :bug: Bug Fix
+
+* Fixed inlining with `fatHTML`
+
 ## v3.0.0-beta.203 (2019-10-15)
 
 #### :bug: Bug Fix
