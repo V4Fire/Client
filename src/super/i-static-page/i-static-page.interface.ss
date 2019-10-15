@@ -126,7 +126,8 @@
 							PATH = new Proxy(PATH, {
 								get: function (target, prop) {
 									if (target.hasOwnProperty(prop)) {
-										return target[prop];
+										var v = target[prop];
+										return typeof v === 'string' ? v : v.publicPath || v.path;
 									}
 
 									console.log(target);
@@ -166,7 +167,8 @@
 									? await delay(500)
 									? Object.assign(assets, fs.readJSONSync(path.join(build.assetsJSON)))
 
-								? src = path.join(cwd, assets[src].path)
+								? src = assets[src]
+								? src = path.join(cwd, Object.isObject(src) ? src.path : src)
 								? src = inline ? src : path.relative(@@output, src)
 
 							- else
@@ -220,7 +222,8 @@
 									? await delay(500)
 									? Object.assign(assets, fs.readJSONSync(path.join(build.assetsJSON)))
 
-								? src = path.join(cwd, assets[src].path)
+								? src = assets[src]
+								? src = path.join(cwd, Object.isObject(src) ? src.path : src)
 								? src = inline ? src : path.relative(@@output, src)
 
 							- else
