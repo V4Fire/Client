@@ -16,28 +16,28 @@ b-radio-button
 			& ^[0]__label
 				t(getField($o, "block.textStyle"))
 
-			for $key in (disabled focused checked)
-				$mod = getField($o, path(mods $key true))
+		for $key in (disabled focused checked)
+			$mod = getField($o, path(mods $key true))
 
-				for $k, $v in $mod
-					&^[0]_{$key}_true ^[0]__{$k}
-						interpolate-props($v)
+			for $k, $v in $mod
+				&^[0]_{$key}_true ^[0]__{$k}
+					interpolate-props($v)
 
-						if $k == "check"
-							background-color @color
+					if $k == "check"
+						background-color @color
 
-			if getField($o, block)
-				for $key in getField($o, block)
-					& ^[0]__{$key}
-						interpolate-props(getField($o, path(block $key)))
+		if getField($o, block)
+			for $key in getField($o, block)
+				& ^[0]__{$key}
+					interpolate-props(getField($o, path(block $key)))
 
-			& ^[0]__check
-				display none
+		& ^[0]__check
+			display none
 
-			$checked = getField($o, "mods.checked.true")
+		$checked = getField($o, "mods.checked.true")
 
-			if $checked
-				&^[0]_checked_true ^[0]__check
-					display block
+		if $checked
+			&^[0]_checked_true ^[0]__check
+				display block
 
 	generateRules($p, createStyles)
