@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-beta.203 (2019-10-15)
+
+#### :bug: Bug Fix
+
+* Fixed `publicPath` providing from `assets.json`
+
 ## v3.0.0-beta.202 (2019-10-14)
 
 #### :bug: Bug Fix
