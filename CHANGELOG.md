@@ -17,6 +17,10 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 * [Added `b-virtual-scroll` component](https://github.com/V4Fire/Client/pull/137/files)
 
+### :house: Internal
+
+* [Update `iLockPageScroll` trait – `scrollableNode` now is `component.$el` by default](https://github.com/V4Fire/Client/pull/137/files)
+
 ## v3.0.0-beta.201 (2019-10-13)
 
 #### :boom: Breaking Change

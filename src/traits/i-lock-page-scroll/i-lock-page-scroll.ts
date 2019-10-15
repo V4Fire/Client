@@ -18,9 +18,9 @@ export default abstract class iLockPageScroll {
 	 * Locks document scroll
 	 *
 	 * @param component
-	 * @param [allowed]
+	 * @param [scrollableNode] - the node inside which is allowed to scroll
 	 */
-	static lock<T extends iBlock>(component: T, allowed?: HTMLElement): void {
+	static lock<T extends iBlock>(component: T, scrollableNode: Element = <Element>component.$el): void {
 		const
 			// @ts-ignore
 			{async: $a, r} = component,
@@ -31,17 +31,17 @@ export default abstract class iLockPageScroll {
 		}
 
 		if (is.iOS) {
-			if (allowed) {
-				$a.on(allowed, 'touchstart', (e: TouchEvent) => {
+			if (scrollableNode) {
+				$a.on(scrollableNode, 'touchstart', (e: TouchEvent) => {
 					component[$$.initialY] = e.targetTouches[0].clientY;
 				}, {group, label: $$.touchstart});
 
-				$a.on(allowed, 'touchmove', (e: TouchEvent) => {
+				$a.on(scrollableNode, 'touchmove', (e: TouchEvent) => {
 					const {
 						scrollTop,
 						scrollHeight,
 						clientHeight
-					} = allowed;
+					} = scrollableNode;
 
 					const
 						clientY = e.targetTouches[0].clientY - component[$$.initialY],

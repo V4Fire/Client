@@ -42,70 +42,6 @@ export * from 'super/i-block/i-block';
 @component()
 export default class bVirtualScroll extends iData<RemoteData> {
 	/**
-	 * Renders the specified node by params
-	 * @param renderObj
-	 */
-	static renderScheme(
-		node: HTMLElement,
-		renderObj: SchemeRenderNode[],
-		renderParams: RecycleParams<any, iBlock>
-	): HTMLElement {
-
-		const
-			{optionCtx} = renderParams,
-			isImage = (el): el is HTMLImageElement => el.tagName === 'IMG';
-
-		for (let i = 0; i < renderObj.length; i++) {
-			const
-				obj = renderObj[i],
-				{val = '', if: vIf, style} = obj;
-
-			const el = <CanUndef<HTMLElement>>(Object.isString(obj.node) && optionCtx ?
-				// @ts-ignore (access)
-				node.querySelector(`.${optionCtx.block.getFullElName(obj.node)}`) :
-				obj.node
-			);
-
-			if (!el) {
-				continue;
-			}
-
-			if ('if' in obj && !vIf) {
-				el.style.display = 'none';
-				continue;
-
-			} else {
-				el.style.display = '';
-			}
-
-			if (isImage(el)) {
-				el.src = '';
-				el.src = val;
-
-			} else {
-				if (obj.method === 'replace' || !obj.method) {
-					const
-						target = el.childNodes[0];
-
-					if (target) {
-						el.replaceChild(document.createTextNode(val), target);
-
-					} else {
-						el.appendChild(document.createTextNode(val));
-					}
-
-				} else {
-					el.innerHTML = val;
-				}
-			}
-
-			Object.assign(el.style, style);
-		}
-
-		return node;
-	}
-
-	/**
 	 * Initial component options
 	 */
 	@prop(Array)
@@ -116,12 +52,6 @@ export default class bVirtualScroll extends iData<RemoteData> {
 	 */
 	@system((o) => o.sync.link())
 	options!: unknown[];
-
-	/**
-	 * Option attrs
-	 */
-	@prop({type: Function, required: false})
-	readonly optionAttrs?: (el: unknown, i: number) => VNodeData;
 
 	/**
 	 * Option unique key (for v-for)
