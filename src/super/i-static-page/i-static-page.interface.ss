@@ -148,7 +148,11 @@
 						- for var o = defStyles.values(), el = o.next(); !el.done; el = o.next()
 							: &
 								src = el.value,
-								p = Object.isString(src) ? {src: src} : src,
+								p = Object.isString(src) ? {src: src} : src
+							.
+
+							: &
+								inline = @@fatHTML || p.inline,
 								cwd = !p.source || p.source === 'lib' ? @@lib : p.source === 'src' ? @@src : @@output
 							.
 
@@ -163,14 +167,14 @@
 									? Object.assign(assets, fs.readJSONSync(path.join(build.assetsJSON)))
 
 								? src = path.join(cwd, assets[src].path)
-								? src = p.inline ? src : path.relative(@@output, src)
+								? src = inline ? src : path.relative(@@output, src)
 
 							- else
-								? src = self.loadToLib.apply(self, [{relative: !@@fatHTML && !p.inline}].concat(cwd, src))
+								? src = self.loadToLib.apply(self, [{relative: !inline}].concat(cwd, src))
 
 							? p = Object.reject(p, ['href', 'source'])
 
-							- if @@fatHTML || p.inline
+							- if inline
 								- while !fs.existsSync(src)
 									? await delay(500)
 
@@ -202,6 +206,7 @@
 
 							: &
 								basename = path.basename(p.src),
+								inline = @@fatHTML || p.inline,
 								cwd = !p.source || p.source === 'lib' ? @@lib : p.source === 'src' ? @@src : @@output
 							.
 
@@ -216,10 +221,10 @@
 									? Object.assign(assets, fs.readJSONSync(path.join(build.assetsJSON)))
 
 								? src = path.join(cwd, assets[src].path)
-								? src = p.inline ? src : path.relative(@@output, src)
+								? src = inline ? src : path.relative(@@output, src)
 
 							- else
-								? src = self.loadToLib.apply(self, [{relative: !@@fatHTML && !p.inline}].concat(cwd, src))
+								? src = self.loadToLib.apply(self, [{relative: !inline}].concat(cwd, src))
 
 							? p = Object.reject(p, ['src', 'source'])
 
@@ -230,7 +235,7 @@
 									PATH['{basename}'] = '{src}';
 
 							- else
-								- if @@fatHTML || p.inline
+								- if inline
 									- while !fs.existsSync(src)
 										? await delay(500)
 
