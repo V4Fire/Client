@@ -167,7 +167,7 @@ export default abstract class iLockPageScroll {
 		component.on('statusDestroyed', () => {
 			component.unlock()
 				.then(asyncClear)
-				.catch((...args) => (stderr(...args), asyncClear));
+				.catch((err) => (stderr(err), asyncClear()));
 
 			delete component[$$.paddingRight];
 			delete component[$$.scrollTop];
