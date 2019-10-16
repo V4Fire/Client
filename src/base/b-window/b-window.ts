@@ -186,13 +186,13 @@ export default class bWindow<T extends object = Dictionary> extends iData<T>
 
 	/** @see iLockPageScroll.lock */
 	@wait('loading')
-	lock(): CanPromise<void> {
-		iLockPageScroll.lock(this, this.$refs.window);
+	lock(): Promise<void> {
+		return iLockPageScroll.lock(this, this.$refs.window);
 	}
 
 	/** @see iLockPageScroll.unlock */
-	unlock(): void {
-		iLockPageScroll.unlock(this);
+	unlock(): Promise<void> {
+		return iLockPageScroll.unlock(this);
 	}
 
 	/** @see iOpenToggle.onOpenedChange */

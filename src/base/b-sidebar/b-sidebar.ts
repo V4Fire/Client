@@ -37,13 +37,13 @@ export default class bSidebar<T extends object = Dictionary> extends iData<T>
 
 	/** @see iLockPageScroll.lock */
 	@wait('loading')
-	lock(): CanPromise<void> {
-		iLockPageScroll.lock(this, <HTMLElement>this.$el);
+	lock(): Promise<void> {
+		return iLockPageScroll.lock(this);
 	}
 
 	/** @see iLockPageScroll.unlock */
-	unlock(): void {
-		iLockPageScroll.unlock(this);
+	unlock(): Promise<void> {
+		return iLockPageScroll.unlock(this);
 	}
 
 	/** @see iOpenToggle.open */
