@@ -29,8 +29,7 @@ export default abstract class iLockPageScroll {
 		const
 			resolved = Promise.resolve();
 
-		let
-			promise;
+		let promise;
 
 		if (r[$$.isLocked]) {
 			return resolved;
