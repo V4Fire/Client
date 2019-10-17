@@ -163,6 +163,35 @@ export default class DOM {
 	}
 
 	/**
+	 * Appends child to the specfied parent
+	 *
+	 * @param parent - element name or a link to the node
+	 * @param newNode
+	 * @param [group] - operation group
+	 */
+	appendChild(parent: string | Element, newNode: Node, group?: string): Function | boolean {
+		const
+			parentNode = Object.isString(parent) ? this.block.element(parent) : parent;
+
+		if (!parentNode) {
+			return false;
+		}
+
+		if (!group) {
+			group = parentNode.getAttribute('data-render-group') || '';
+		}
+
+		parentNode.appendChild(newNode);
+
+		// @ts-ignore (access)
+		return this.component.async.worker(() => {
+			if (parentNode.contains(newNode)) {
+				parentNode.removeChild(newNode);
+			}
+		}, {group: group || 'asyncComponents'});
+	}
+
+	/**
 	 * Returns an instance of a component by the specified element
 	 *
 	 * @param el
