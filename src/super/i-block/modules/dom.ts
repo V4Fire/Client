@@ -140,7 +140,7 @@ export default class DOM {
 	 * @param newNode
 	 * @param [group] - operation group
 	 */
-	replaceWith(el: string | Element, newNode: Node, group?: string): Function | boolean {
+	replaceWith(el: string | Element, newNode: Node, group?: string): Function | false {
 		const
 			node = Object.isString(el) ? this.block.element(el) : el;
 
@@ -163,13 +163,13 @@ export default class DOM {
 	}
 
 	/**
-	 * Appends child to the specfied parent
+	 * Appends child to the specified parent
 	 *
-	 * @param parent - element name or a link to the node
+	 * @param parent - element name or a link to the parent node
 	 * @param newNode
 	 * @param [group] - operation group
 	 */
-	appendChild(parent: string | Element, newNode: Node, group?: string): Function | boolean {
+	appendChild(parent: string | Element, node: Element, group?: string): Function | false {
 		const
 			parentNode = Object.isString(parent) ? this.block.element(parent) : parent;
 
@@ -181,13 +181,12 @@ export default class DOM {
 			group = parentNode.getAttribute('data-render-group') || '';
 		}
 
-		parentNode.appendChild(newNode);
+		parentNode.appendChild(node);
 
 		// @ts-ignore (access)
 		return this.component.async.worker(() => {
-			if (parentNode.contains(newNode)) {
-				parentNode.removeChild(newNode);
-			}
+			node.remove();
+
 		}, {group: group || 'asyncComponents'});
 	}
 
