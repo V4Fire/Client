@@ -10,8 +10,8 @@ import 'core/init/state';
 import 'core/init/abt';
 
 import semaphore from 'core/init/semaphore';
-import { whenDomLoaded } from 'core/event';
+import { afterDOMLoaded } from 'core/event';
 
-export default whenDomLoaded(() => {
+export default afterDOMLoaded(() => {
 	semaphore('domReady');
 });

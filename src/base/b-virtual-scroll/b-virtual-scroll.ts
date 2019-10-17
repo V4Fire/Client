@@ -7,7 +7,6 @@
  */
 
 import symbolGenerator from 'core/symbol';
-import { VNodeData } from 'core/component/engines';
 
 import {
 
@@ -17,8 +16,6 @@ import {
 	RequestQuery,
 	RequestCheckFn,
 	RequestMoreParams,
-	SchemeRenderNode,
-	RecycleParams,
 	Axis
 
 } from 'base/b-virtual-scroll/modules/interface';
@@ -26,8 +23,7 @@ import {
 import ComponentRender from 'base/b-virtual-scroll/modules/component-render';
 import ScrollRender, { getRequestParams } from 'base/b-virtual-scroll/modules/scroll-render';
 
-import iBlock from 'super/i-block/i-block';
-import iData, { InitLoadParams, RequestParams, ModsDecl, component, prop, system, hook } from 'super/i-data/i-data';
+import iData, { InitLoadParams, RequestParams, ModsDecl, field, component, prop, system, hook, wait } from 'super/i-data/i-data';
 
 export const
 	$$ = symbolGenerator();
@@ -42,6 +38,12 @@ export * from 'super/i-block/i-block';
 @component()
 export default class bVirtualScroll extends iData<RemoteData> {
 	/**
+	 * Option component
+	 */
+	@prop({type: String})
+	readonly option!: string;
+
+	/**
 	 * Initial component options
 	 */
 	@prop(Array)
@@ -50,7 +52,7 @@ export default class bVirtualScroll extends iData<RemoteData> {
 	/**
 	 * Component options
 	 */
-	@system((o) => o.sync.link())
+	@field((o) => o.sync.link())
 	options!: unknown[];
 
 	/**
@@ -58,12 +60,6 @@ export default class bVirtualScroll extends iData<RemoteData> {
 	 */
 	@prop({type: [String, Function]})
 	readonly optionKey!: (el: unknown, i: number) => string | number;
-
-	/**
-	 * Option component
-	 */
-	@prop({type: String})
-	readonly option!: string;
 
 	/**
 	 * Option component props
@@ -96,13 +92,13 @@ export default class bVirtualScroll extends iData<RemoteData> {
 	readonly oppositeElementsSize: number = 10;
 
 	/**
-	 * Cache size
+	 * The number of components that could be cached
 	 */
 	@prop({type: Number, validator: isNatural})
-	readonly cacheSize: number = 200;
+	readonly cacheSize: number = 400;
 
 	/**
-	 * The number of items to be removed from the cache
+	 * The number of items that will be removed from the cache when it is full
 	 */
 	@prop({type: Number, validator: isNatural})
 	readonly dropCacheSize: number = 50;
@@ -199,16 +195,16 @@ export default class bVirtualScroll extends iData<RemoteData> {
 	}
 
 	/**
-	 * Component render module
-	 */
-	@system()
-	protected componentRender!: ComponentRender;
-
-	/**
 	 * Scroll render module
 	 */
-	@system()
+	@system((o: bVirtualScroll) => new ScrollRender(o))
 	protected scrollRender!: ScrollRender;
+
+	/**
+	 * Component render module
+	 */
+	@system((o: bVirtualScroll) => new ComponentRender(o))
+	protected componentRender!: ComponentRender;
 
 	/** @override */
 	protected $refs!: {
@@ -234,7 +230,7 @@ export default class bVirtualScroll extends iData<RemoteData> {
 	 * Link to scroll event emitter
 	 */
 	protected get scrollEmitter(): Document | HTMLElement {
-		return this.axis === 'y' ? document : <HTMLElement>this.$el;
+		return this.axis === 'y' ? document : this.scrollRoot;
 	}
 
 	/**
@@ -253,11 +249,10 @@ export default class bVirtualScroll extends iData<RemoteData> {
 	async reload(params?: InitLoadParams): Promise<void> {
 		const
 			load = super.reload(params),
-			reInit = this.componentRender.reInit().then(() => this.scrollRender.reInit());
+			reInit = this.componentRender.reInit().then(() => this.scrollRender.reset());
 
-		return Promise.all([load, reInit]).then(() => this.scrollRender.initRendering());
+		return Promise.all([load, reInit]).then(() => this.scrollRender.initRender());
 	}
-
 	/** @override */
 	protected initModEvents(): void {
 		super.initModEvents();
@@ -265,19 +260,8 @@ export default class bVirtualScroll extends iData<RemoteData> {
 		this.sync.mod('axis', 'axis', String);
 	}
 
-	/**
-	 * Initializes the content renderer
-	 */
-	@hook('mounted')
-	protected initRender(): CanPromise<void> {
-		this.componentRender = new ComponentRender(this);
-		this.scrollRender = new ScrollRender(this);
-	}
-
 	/** @override */
 	protected initRemoteData(): CanUndef<unknown[]> {
-		this.options = this.optionsProp || [];
-
 		if (!this.db) {
 			return;
 		}
@@ -294,43 +278,32 @@ export default class bVirtualScroll extends iData<RemoteData> {
 
 	/**
 	 * Requests an additional data
-	 *
 	 * @param params
-	 *
-	 * @emits startLoad(query: Dictionary, params: LoadMoreParams)
-	 * @emits responseEmpty() - no response or empty array as response
-	 * @emits loaded(data: unknown[], query: Dictionary, params: LoadMoreParams)
 	 */
-	protected async requestRemoteData(params: RequestMoreParams): Promise<CanUndef<RemoteData>> {
+	protected loadEntities(params: RequestMoreParams): Promise<CanUndef<RemoteData>> {
 		const query = {
 			...this.request,
 			...Object.isFunction(this.requestQuery) && this.requestQuery(params) || {}
 		};
 
-		const
-			args = [query, params];
+		return this.get(query)
+			.then((data) => {
+				if (!data) {
+					return;
+				}
 
-		this.emit('startLoad', ...args);
+				const
+					converted = this.convertDataToDB<CanUndef<RemoteData>>(data);
 
-		const
-			data = await this.get(query).catch(stderr);
+				if (!this.field.get('data.length', converted)) {
+					return;
+				}
 
-		if (!data) {
-			this.emit('responseEmpty');
-			return;
-		}
+				this.options = this.options.concat(converted);
+				return converted;
+			})
 
-		const
-			converted = this.convertDataToDB<CanUndef<RemoteData>>(data);
-
-		if (!this.field.get('data.length', converted)) {
-			this.emit('responseEmpty');
-			return;
-		}
-
-		this.options = this.options.concat(converted);
-		this.emit('loaded', data, ...args);
-		return converted;
+			.catch((err) => (stderr(err), undefined));
 	}
 
 	/**
@@ -343,14 +316,6 @@ export default class bVirtualScroll extends iData<RemoteData> {
 		return Object.isFunction(this.optionKey) ?
 			this.optionKey(el, i) :
 			this.optionKey;
-	}
-
-	/**
-	 * Handler: component destroy
-	 */
-	@hook('beforeDestroy')
-	protected onDestroy(): void {
-		this.componentRender.destroy();
 	}
 }
 

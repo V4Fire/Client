@@ -223,7 +223,6 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 			'core/net': false,
 
 			'range/extended': false,
-			'helpers/string/pluralize': true,
 
 			'prelude/dependencies': true,
 			'prelude/object/has': false,

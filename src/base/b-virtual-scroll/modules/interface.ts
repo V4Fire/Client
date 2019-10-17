@@ -18,20 +18,14 @@ export type RequestCheckFn<T extends unknown = unknown> = (params: RequestMorePa
 
 export type RecycleFn = (params: RecycleParams) => HTMLElement;
 
+export type RenderList = [RenderItem, number][];
+
 export interface RecycleParams<T extends unknown = unknown, CTX extends unknown = unknown> {
 	node: HTMLElement;
 	data: T;
 	i: number;
 	ctx: bVirtualScroll;
 	optionCtx?: CTX;
-}
-
-export interface SchemeRenderNode {
-	node?: Nullable<string | HTMLElement>;
-	val?: string;
-	if?: boolean;
-	style?: Dictionary;
-	method?: 'replace' | 'innerHTML';
 }
 
 export interface RequestMoreParams<T extends unknown = unknown> {
@@ -61,6 +55,7 @@ export interface RecycleComponent<T extends unknown = unknown> {
 export interface RenderItem<T extends unknown = unknown> {
 	data: T;
 	node: CanUndef<HTMLElement>;
+	destructor: CanUndef<Function>;
 	width: number;
 	height: number;
 	top: number;

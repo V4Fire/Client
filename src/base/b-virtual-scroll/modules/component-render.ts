@@ -13,12 +13,17 @@ import iBlock from 'super/i-block/i-block';
 import ScrollRender from 'base/b-virtual-scroll/modules/scroll-render';
 import bVirtualScroll from 'base/b-virtual-scroll/b-virtual-scroll';
 
-import { RecycleComponent, RenderItem, RecycleParams } from 'base/b-virtual-scroll/modules/interface';
+import { RenderItem, RecycleParams, RenderList } from 'base/b-virtual-scroll/modules/interface';
 
 export const
 	$$ = symbolGenerator();
 
 export default class ComponentRender {
+	/**
+	 * Async group
+	 */
+	readonly asyncGroup: string = 'component-render';
+
 	/**
 	 * Link to component
 	 */
@@ -85,15 +90,15 @@ export default class ComponentRender {
 	/**
 	 * Link to the component create element method
 	 */
-	protected get $createElement(): bVirtualScroll['$createElement'] {
-		// @ts-ignore (acccess)
+	protected get createElement(): bVirtualScroll['$createElement'] {
+		// @ts-ignore (access)
 		return this.component.$createElement.bind(this.component);
 	}
 
 	/**
 	 * Link to the component refs
 	 */
-	protected get $refs(): bVirtualScroll['$refs'] {
+	protected get refs(): bVirtualScroll['$refs'] {
 		// @ts-ignore (access)
 		return this.component.$refs;
 	}
@@ -133,7 +138,14 @@ export default class ComponentRender {
 	 */
 	constructor(ctx: bVirtualScroll) {
 		this.component = ctx;
-		this.tombstoneToClone = <HTMLElement>this.$refs.tombstone.children[0];
+
+		// @ts-ignore (access)
+		ctx.meta.hooks.mounted.push({
+			name: 'initComponentRender',
+			fn: () => {
+				this.tombstoneToClone = <HTMLElement>this.refs.tombstone.children[0];
+			}
+		});
 	}
 
 	/**
@@ -151,6 +163,10 @@ export default class ComponentRender {
 	 * @param node
 	 */
 	cacheNode(key: string, node: HTMLElement): HTMLElement {
+		if (!this.component.cacheNode) {
+			return node;
+		}
+
 		this.nodesCache[key] = node;
 
 		const
@@ -181,31 +197,65 @@ export default class ComponentRender {
 
 	/**
 	 * Renders a new node
-	 *
-	 * @param data - component data
-	 * @param item
-	 * @param i - position in list
+	 * @param list
 	 */
-	render(data: unknown, item: RecycleComponent, i: number): CanUndef<HTMLElement> {
+	render(list: RenderList): HTMLElement[] {
 		const
-			{cacheNode} = this.component,
-			id = this.getOptionKey(data);
+			{cacheNode} = this.component;
 
-		const create = () => item.node = this.createComponent(data, i);
+		const
+			indexesToAssign: number[] = [],
+			needRender: [RenderItem, number][] = [],
+			res: HTMLElement[] = [];
 
-		if (cacheNode) {
-			const node = id && this.getElement(id);
+		for (let i = 0; i < list.length; i++) {
+			const
+				[item, index] = list[i];
 
-			if (node) {
-				item.node = node;
-				return node;
+			if (!item.data) {
+				item.node = res[i] = this.getTombstone();
+				continue;
+			}
 
-			} else {
-				return create();
+			const
+				id = this.getOptionKey(item.data);
+
+			if (cacheNode) {
+				const
+					node = id && this.getElement(id);
+
+				if (node) {
+					res[i] = node;
+					item.node = node;
+					continue;
+				}
+			}
+
+			needRender.push([item, index]);
+			indexesToAssign.push(i);
+		}
+
+		if (needRender.length) {
+			const
+				nodes = this.createComponents(needRender);
+
+			for (let i = 0; i < nodes.length; i++) {
+				const
+					index = indexesToAssign[i];
+
+				res[index] = nodes[i];
+
+				if (list[index]) {
+					const
+						[item] = list[index],
+						id = this.getOptionKey(item.data);
+
+					this.cacheNode(id, item.node = nodes[i]);
+				}
 			}
 		}
 
-		return create();
+		return res;
 	}
 
 	/**
@@ -218,10 +268,6 @@ export default class ComponentRender {
 
 		if (tombstone) {
 			component.removeMod(tombstone, 'hidden', true);
-
-			tombstone.style.transform = 'translate3d(0, 0, 0)';
-			tombstone.style.opacity = String(1);
-
 			return tombstone;
 		}
 
@@ -232,7 +278,7 @@ export default class ComponentRender {
 	 * Saves the specified tombstone in cache
 	 * @param node
 	 */
-	cacheTombstone(node: HTMLElement): void {
+	recycleTombstone(node: HTMLElement): void {
 		this.recycleTombstones.push(node);
 	}
 
@@ -242,12 +288,12 @@ export default class ComponentRender {
 	reInit(): Promise<void> {
 		return this.async.promise<void>(new Promise((res) => {
 			this.async.requestAnimationFrame(() => {
-				this.tombstoneToClone = <HTMLElement>this.$refs.tombstone.children[0];
+				this.tombstoneToClone = <HTMLElement>this.refs.tombstone.children[0];
 				this.destroy().then(res);
 
-			}, {label: $$.reInitRaf});
+			}, {label: $$.reInitRaf, group: this.asyncGroup});
 
-		}), {label: $$.reInit});
+		}), {label: $$.reInit, group: this.asyncGroup});
 	}
 
 	/**
@@ -270,8 +316,8 @@ export default class ComponentRender {
 				this.nodesCache = {};
 				res();
 
-			}, {label: $$.destroyRaf});
-		}), {label: $$.destroy});
+			}, {label: $$.destroyRaf, group: this.asyncGroup});
+		}), {label: $$.destroy, group: this.asyncGroup});
 	}
 
 	/**
@@ -397,52 +443,65 @@ export default class ComponentRender {
 
 	/**
 	 * Creates a component by the specified params
-	 *
-	 * @param data
-	 * @param i - position in list
+	 * @param list - List of elements that should be rendered
 	 */
-	protected createComponent(data: unknown, i: number): HTMLElement {
-		const
-			{component, columns, recycleNodes} = this,
-			id = this.getOptionKey(data),
-			node = recycleNodes.pop() || this.clonedElement;
+	protected createComponents(list: RenderList): HTMLElement[] {
+		let
+			res: HTMLElement[] = [];
 
-		if (node && component.recycleFn) {
-			const res = component.recycleFn(this.getRenderFnParams(node, data, i));
-			return this.cacheNode(id, res);
+		const
+			{component: c, columns, recycleNodes} = this;
+
+		const render = (children: Dictionary[]) =>
+			c.vdom.render(children.map((el) => this.createElement(c.option, el))) as HTMLElement[];
+
+		const createChildren = (props) => ({
+			attrs: {
+				'v-attrs': {
+					...props,
+					class: [this.optionClass].concat(props.class || []),
+					style: {
+						width: `${(100 / columns)}%`,
+						height: c.optionHeight ? c.optionHeight.px : '',
+						...props.style
+					}
+				}
+			}
+		});
+
+		if (c.recycleFn) {
+			for (let i = 0; i < list.length; i++) {
+				const
+					[item, index] = list[i];
+
+				let
+					node = recycleNodes.pop() || this.clonedElement;
+
+				if (!node) {
+					const r = render([createChildren(c.optionProps && c.optionProps(item.data, index) || {})])[0];
+					this.elementToClone = r;
+					node = <HTMLElement>this.clonedElement;
+				}
+
+				res.push(c.recycleFn(this.getRenderFnParams(node, item.data, index)));
+			}
 
 		} else {
 			const
-				props = component.optionProps && component.optionProps(data, i) || {},
-				attrs = component.optionAttrs && component.optionAttrs(data, i) || {};
+				children: Dictionary[] = [];
 
-			let res = <HTMLElement>this.component.vdom.render(this.$createElement(this.component.option, {
-				staticClass: this.optionClass,
-				attrs: {
-					'v-attrs': {
-						...attrs,
-						...props,
-						style: {
-							width: `${(100 / columns)}%`,
-							height: component.optionHeight ? component.optionHeight.px : '',
-							...<Dictionary>attrs.style
-						}
-					}
-				}
-			}));
+			for (let i = 0; i < list.length; i++) {
+				const
+					[item, index] = list[i],
+					props = c.optionProps && c.optionProps(item.data, index) || {};
 
-			if (component.recycleFn && !this.elementToClone) {
-				this.elementToClone = res;
-				res = component.recycleFn(this.getRenderFnParams(res, data, i));
+				children.push(createChildren(props));
 			}
 
-			if (!this.optionCtx) {
-				// @ts-ignore (access)
-				this.optionCtx = res.component;
-			}
-
-			return this.cacheNode(id, res);
+			res = render(children);
 		}
+
+		return res;
 	}
 
 	/**

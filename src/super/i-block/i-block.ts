@@ -13,7 +13,6 @@ import symbolGenerator from 'core/symbol';
 import Async, { AsyncOpts, ClearOptsId, WrappedFunction, ProxyCb } from 'core/async';
 import log, { LogMessageOpts } from 'core/log';
 
-import { GLOBAL } from 'core/env';
 import { EventEmitter2 as EventEmitter } from 'eventemitter2';
 
 //#if runtime has core/helpers
@@ -934,7 +933,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 		replace: true
 	})
 
-	protected readonly l: typeof l = GLOBAL.l;
+	protected readonly l: typeof l = globalThis.l;
 
 	/**
 	 * Link to console API
@@ -967,7 +966,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 		atom: true,
 		unique: true,
 		replace: true,
-		init: () => GLOBAL
+		init: () => globalThis
 	})
 
 	protected readonly global!: Window;
