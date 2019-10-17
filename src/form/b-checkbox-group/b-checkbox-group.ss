@@ -22,15 +22,10 @@
 
 		- block list
 			< .&__list
-				< .&__el v-for = el in options | :key = el.id || el.name
-					- block checkbox
-						< template v-if = vdom.getSlot('default')
-							+= self.slot('default', {':option': 'getOptionProps(el)'})
-
-						< template v-else
-							< component.&__checkbox &
-								:instanceOf = bCheckbox |
-								:is = option |
-								:p = el |
-								:v-attrs = getOptionProps(el)
-							.
+				< b-matryoshkas.&__checkbox &
+					:options = options |
+					:option = option |
+					:childAttrsFn = getOptionProps
+				.
+					< template slot-scope = o | v-if = vdom.getSlot('default')
+						+= self.slot('default', {':option': 'o.option'})

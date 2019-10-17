@@ -67,6 +67,7 @@ export default class bCheckboxGroup<
 			return o.options || [];
 		}
 
+		val = o.initDefaultOptions(val);
 		return val;
 	}))
 
@@ -120,7 +121,8 @@ export default class bCheckboxGroup<
 
 	/** @inheritDoc */
 	static readonly mods: ModsDecl = {
-		...iWidth.mods
+		...iWidth.mods,
+		tree: ['true']
 	};
 
 	/** @override */
@@ -267,6 +269,69 @@ export default class bCheckboxGroup<
 	}
 
 	/**
+	 * Initializes options (if needed) for the tree-styled options field
+	 * @param [opts]
+	 */
+	@p({replace: false})
+	protected initDefaultOptions(opts?: unknown): Option[] {
+		let o;
+
+		if (this.mods.tree && Array.isArray(opts)) {
+			o = {};
+
+			const
+				obj = Object.fromArray(opts, {nameConverter: ({id}) => id, valueConverter: (item) => item});
+
+			for (let j = 0; j < opts.length; j++) {
+				const
+					item = opts[j];
+
+				if (!item.parent) {
+					o[item.id] = item;
+
+				} else {
+					const
+						pid = item.parent,
+						parent = o[pid];
+
+					if (parent) {
+						if (parent.children) {
+							parent.children.push(item);
+
+						} else {
+							Object.assign(parent, {children: [item]});
+						}
+
+					} else {
+						const
+							pp = <Option>obj[pid];
+
+						if (pp.level === 1) {
+							if (!o[pid]) {
+								o[pid] = pp;
+								o[pid].children = [item];
+
+							} else {
+								o[pid].children.push(item);
+							}
+
+						} else if (pp.children) {
+							(<Option[]>pp.children).push(item);
+
+						} else {
+							pp.children = [item];
+						}
+					}
+				}
+			}
+
+			return <Option[]>Object.keys(o).map((el) => o[el]);
+		}
+
+		return <Option[]>opts;
+	}
+
+	/**
 	 * Returns an object of props from the specified option
 	 * @param option
 	 */
@@ -293,6 +358,23 @@ export default class bCheckboxGroup<
 	protected onChange(el: bCheckbox, value: boolean): void {
 		if (el.name) {
 			this.setValue(el.name, value);
+
+			if (Object.isObject(this.value) && this.value[el.name].parent) {
+				this.visitParent(this.value[el.name].id, value);
+			}
+		}
+	}
+
+	protected visitParent(parentId: string, checkedChild: boolean): void {
+		if (Object.isObject(this.value)) {
+			const item = this.value[parentId];
+			item.checked = checkedChild ? item.checked++ : item.checked--;
+
+			const
+				itemElement = this.$refs[`option-${item.p.id}`];
+
+			itemElement.setMod('checked', !item.checked ? false : item.childrenCount === item.checked);
+			itemElement.setMod('half-checked', !item.checked ? false : item.childrenCount !== item.checked);
 		}
 	}
 

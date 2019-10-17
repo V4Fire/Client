@@ -18,4 +18,7 @@ export interface Option extends Dictionary {
 	exterior?: string;
 	classes?: Dictionary<string>;
 	mods?: ModsTable;
+
+	level?: number;
+	parent?: string;
 }

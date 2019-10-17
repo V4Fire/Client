@@ -6,6 +6,4 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-package('b-checkbox-group')
-	.extends('i-input')
-	.dependencies('b-checkbox', 'b-radio-button', 'b-matryoshkas');
+package('i-matryoshka');
