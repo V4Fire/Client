@@ -11,6 +11,10 @@
 var
 	global = new Function('return this')();
 
+if (typeof globalThis === 'undefined') {
+	global.globalThis = global;
+}
+
 if (typeof global['setImmediate'] !== 'function') {
 	(function () {
 		if (typeof Promise !== 'function') {
