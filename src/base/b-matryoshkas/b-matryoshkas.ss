@@ -27,11 +27,12 @@
 						:v-attrs = getOptionProps(el)
 					.
 
-			< template v-if = field.get('children.length', el)
-				< b-matryoshkas &
-					:options = el.children |
-					:option = option |
-					:childAttrsFn = childAttrsFn
-				.
-					< template slot-scope = o | v-if = vdom.getSlot('default')
-						+= self.slot('default', {':option': 'o.option'})
+			- block children
+				< template v-if = field.get('children.length', el)
+					< b-matryoshkas.&__child &
+						:options = el.children |
+						:option = option |
+						:childAttrsFn = childAttrsFn
+					.
+						< template slot-scope = o | v-if = vdom.getSlot('default')
+							+= self.slot('default', {':option': 'o.option'})

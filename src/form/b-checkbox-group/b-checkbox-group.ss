@@ -22,7 +22,7 @@
 
 		- block list
 			< .&__list
-				< b-matryoshkas.&__checkbox &
+				< b-matryoshkas &
 					:options = options |
 					:option = option |
 					:childAttrsFn = getOptionProps

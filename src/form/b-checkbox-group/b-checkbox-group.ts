@@ -60,6 +60,18 @@ export default class bCheckboxGroup<
 	readonly option: string = 'b-checkbox';
 
 	/**
+	 * Parent field name for tree-like component
+	 */
+	@prop(String)
+	readonly parentFrom: string = 'parent';
+
+	/**
+	 * Level field name for tree-like component
+	 */
+	@prop(String)
+	readonly levelFrom: string = 'level';
+
+	/**
 	 * Checkboxes store
 	 */
 	@field<bCheckboxGroup>((o) => o.sync.link((val) => {
@@ -280,18 +292,20 @@ export default class bCheckboxGroup<
 			o = {};
 
 			const
+				l = this.levelFrom,
+				p = this.parentFrom,
 				obj = Object.fromArray(opts, {nameConverter: ({id}) => id, valueConverter: (item) => item});
 
 			for (let j = 0; j < opts.length; j++) {
 				const
 					item = opts[j];
 
-				if (!item.parent) {
+				if (!item[p]) {
 					o[item.id] = item;
 
 				} else {
 					const
-						pid = item.parent,
+						pid = item[p],
 						parent = o[pid];
 
 					if (parent) {
@@ -306,7 +320,7 @@ export default class bCheckboxGroup<
 						const
 							pp = <Option>obj[pid];
 
-						if (pp.level === 1) {
+						if (pp[l] === 1) {
 							if (!o[pid]) {
 								o[pid] = pp;
 								o[pid].children = [item];
