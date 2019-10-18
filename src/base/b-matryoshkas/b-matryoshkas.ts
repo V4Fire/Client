@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import iBlock, { component, prop } from 'super/i-input/i-input';
+import iBlock, { component, prop, ModsDecl } from 'super/i-block/i-block';
 
 export interface Doll extends Dictionary {
 	children: Doll[];
@@ -30,16 +30,29 @@ export default class bMatryoshkas<T> extends iBlock {
 	 * Props data for every option
 	 */
 	@prop(Function)
-	readonly childAttrsFn!: Function;
+	readonly getOptionProps!: Function;
+
+	/** @inheritDoc */
+	static readonly mods: ModsDecl = {
+		folded: [
+			['false'],
+			'true'
+		]
+	};
 
 	/**
-	 * Returns an object of props from the specified option
-	 * @param option
+	 * Props data for the fold control
 	 */
-	protected getOptionProps(option: Doll): Dictionary {
+	protected getFoldingProps(): Dictionary {
 		return {
-			...option,
-			...this.childAttrsFn(option)
+			'@onClick': this.onFoldingClick
 		};
+	}
+
+	/**
+	 * Handler: on fold control click
+	 */
+	protected onFoldingClick(): void {
+		this.setMod('folded', this.mods.folded === 'false');
 	}
 }

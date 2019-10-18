@@ -350,8 +350,19 @@ export default class bCheckboxGroup<
 	 * @param option
 	 */
 	protected getOptionProps(option: Option): Dictionary {
+		let
+			additional;
+
+		if (this.mods.tree) {
+			additional = {
+				level: option[this.levelFrom],
+				parent: option[this.parentFrom]
+			};
+		}
+
 		return {
 			...option,
+			...additional,
 			'id': option.id && this.dom.getId(option.id),
 			'form': this.form,
 			'value': this.isChecked(option),

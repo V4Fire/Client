@@ -25,7 +25,7 @@
 				< b-matryoshkas &
 					:options = options |
 					:option = option |
-					:childAttrsFn = getOptionProps
+					:getOptionProps = getOptionProps
 				.
 					< template slot-scope = o | v-if = vdom.getSlot('default')
 						+= self.slot('default', {':option': 'o.option'})

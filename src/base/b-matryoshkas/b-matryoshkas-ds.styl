@@ -1,0 +1,41 @@
+/*!
+ * V4Fire Client Core
+ * https://github.com/V4Fire/Client
+ *
+ * Released under the MIT license
+ * https://github.com/V4Fire/Client/blob/master/LICENSE
+ */
+
+$p = {
+
+}
+
+b-matryoshkas
+	&__children
+		margin-top 4px
+		margin-left 24px
+
+	&__matryoshka
+		display flex
+		align-items center
+
+	&__matryoshka ~ &__matryoshka
+		margin-top 4px
+
+	&__fold
+		&:before
+			content "-"
+			display inline-block
+			width 8px
+
+			line-height 0
+			text-align center
+
+	&__left-side
+		margin-right 8px
+
+	&_folded_true &__fold:before
+		content "+"
+
+	&_folded_true &__children
+		display none
