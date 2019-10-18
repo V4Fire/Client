@@ -26,25 +26,13 @@
 							.
 
 				- block doll
-					< template v-if = vdom.getSlot('default')
-						+= self.slot('default', {':option': 'getOptionProps(el)'})
-
-					< template v-else
-						< component &
-							:ref = 'matryoshka-' + el.id |
-							:instanceOf = bCheckbox |
-							:is = option |
-							:p = el |
-							:key = el.id || el.name |
-							:v-attrs = getOptionProps(el)
-						.
+					+= self.slot('default', {':option': 'getOptionProps(el)'})
 
 			- block children
 				< .&__children v-if = field.get('children.length', el)
 					< b-matryoshkas.&__child &
 						:options = el.children |
-						:option = option |
 						:getOptionProps = getOptionProps
 					.
-						< template slot-scope = o | v-if = vdom.getSlot('default')
+						< template slot-scope = o
 							+= self.slot('default', {':option': 'o.option'})

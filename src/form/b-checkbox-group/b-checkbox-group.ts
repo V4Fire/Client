@@ -390,6 +390,12 @@ export default class bCheckboxGroup<
 		}
 	}
 
+	/**
+	 * Visits parent item by ref and switch its mods
+	 *
+	 * @param parentId
+	 * @param checkedChild
+	 */
 	protected visitParent(parentId: string, checkedChild: boolean): void {
 		if (Object.isObject(this.value)) {
 			const item = this.value[parentId];

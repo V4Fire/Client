@@ -24,8 +24,18 @@
 			< .&__list
 				< b-matryoshkas &
 					:options = options |
-					:option = option |
 					:getOptionProps = getOptionProps
 				.
-					< template slot-scope = o | v-if = vdom.getSlot('default')
-						+= self.slot('default', {':option': 'o.option'})
+					< template slot-scope = o
+						< template v-if = vdom.getSlot('default')
+							+= self.slot('default', {':option': 'o.option'})
+
+						< component &
+							v-else |
+							:ref = 'matryoshka-' + o.option.id |
+							:instanceOf = bCheckbox |
+							:is = option |
+							:p = o.option |
+							:key = o.option.id || o.option.name |
+							:v-attrs = getOptionProps(o.option)
+						.

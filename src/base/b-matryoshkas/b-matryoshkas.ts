@@ -21,13 +21,7 @@ export default class bMatryoshkas<T> extends iBlock {
 	readonly options!: Doll[];
 
 	/**
-	 * Component name
-	 */
-	@prop(String)
-	readonly option: string = 'b-checkbox';
-
-	/**
-	 * Props data for every option
+	 * Props data for an every option
 	 */
 	@prop(Function)
 	readonly getOptionProps!: Function;
