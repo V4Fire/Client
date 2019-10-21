@@ -10,7 +10,7 @@ import Range from 'core/range';
 
 import bVirtualScroll, { axis } from 'base/b-virtual-scroll/b-virtual-scroll';
 
-export type OptionProps = (el: unknown, i: number) => Dictionary;
+export type OptionProps = (el: OptionEl, i: number) => Dictionary;
 export type Axis = keyof typeof axis;
 
 export type RequestQuery<T extends unknown = unknown> = (params: RequestMoreParams<T>) => Dictionary;
@@ -27,6 +27,12 @@ export interface RecycleParams<T extends unknown = unknown, CTX extends unknown 
 	i: number;
 	ctx: bVirtualScroll;
 	optionCtx?: CTX;
+}
+
+export interface OptionEl {
+	current: unknown;
+	prev: CanUndef<unknown>;
+	next: CanUndef<unknown>;
 }
 
 export interface RequestMoreParams<T extends unknown = unknown> {

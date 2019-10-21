@@ -504,7 +504,7 @@ export default class ScrollRender {
 		}
 
 		const
-			nodes = componentRender.render(itemsToRender);
+			nodes = componentRender.render(itemsToRender, items);
 
 		for (let i = 0; i < itemsToRender.length; i++) {
 			const
