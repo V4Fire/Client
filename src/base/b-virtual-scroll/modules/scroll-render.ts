@@ -20,7 +20,8 @@ import {
 	AnchoredItem,
 	RenderItem,
 	Size,
-	ScrollRenderState
+	ScrollRenderState,
+	RenderedItems
 
 } from 'base/b-virtual-scroll/modules/interface';
 
@@ -220,8 +221,11 @@ export default class ScrollRender {
 			after: new Set(['initComponentRender']),
 			fn: () => {
 				this.range = new Range(0, ctx.realElementsSize);
-				this.calculateSizes();
-				this.updateRange();
+
+				this.async.requestAnimationFrame(() => {
+					this.calculateSizes();
+					this.updateRange();
+				});
 
 				this.state = ScrollRenderState.waitRender;
 
@@ -385,9 +389,10 @@ export default class ScrollRender {
 	protected render(): void {
 		const
 			{async: $a, component} = this,
-			positions = this.renderItems();
+			{nodes, positions, items} = this.renderItems();
 
 		$a.requestAnimationFrame(() => {
+			this.appendNodes(nodes, items);
 			this.clearNodes();
 			this.cacheItemsSize();
 			this.updateCurrentPosition();
@@ -460,7 +465,7 @@ export default class ScrollRender {
 	/**
 	 * Renders items
 	 */
-	protected renderItems(): Dictionary<[HTMLElement, number]> {
+	protected renderItems(): RenderedItems {
 		const
 			{max, component, columns, range, scrollPosition, items, componentRender, refs} = this;
 
@@ -506,15 +511,31 @@ export default class ScrollRender {
 		const
 			nodes = componentRender.render(itemsToRender, items);
 
-		for (let i = 0; i < itemsToRender.length; i++) {
+		return {
+			positions,
+			nodes,
+			items: itemsToRender
+		};
+	}
+
+	/**
+	 * Appends the specified nodes to the document, and bind nodes to items
+	 * @param nodes
+	 * @param items
+	 */
+	protected appendNodes(nodes: HTMLElement[], items: [RenderItem, number][]): void {
+		const
+			fragment = document.createDocumentFragment();
+
+		for (let i = 0; i < items.length; i++) {
 			const
-				[item] = itemsToRender[i];
+				[item] = items[i];
 
 			item.node = nodes[i];
-			item.destructor = this.dom.appendChild(refs.container, item.node, 'scroll-render-elements') || undefined;
+			item.destructor = this.dom.appendChild(fragment, item.node, 'scroll-render-elements') || undefined;
 		}
 
-		return positions;
+		this.dom.appendChild(this.refs.container, fragment, 'scroll-render-elements');
 	}
 
 	/**

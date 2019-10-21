@@ -94,3 +94,9 @@ export enum ScrollRenderState {
 	waitRender,
 	render
 }
+
+export interface RenderedItems {
+	positions: Dictionary<[HTMLElement, number]>;
+	nodes: HTMLElement[];
+	items: [RenderItem, number][];
+}
