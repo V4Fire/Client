@@ -285,7 +285,7 @@ export default class ComponentRender {
 	/**
 	 * Re-initializes the component render
 	 */
-	reInit(): Promise<void> {
+	reset(): Promise<void> {
 		return this.async.promise<void>(new Promise((res) => {
 			this.async.requestAnimationFrame(() => {
 				this.tombstoneToClone = <HTMLElement>this.refs.tombstone.children[0];
@@ -478,7 +478,7 @@ export default class ComponentRender {
 					node = recycleNodes.pop() || this.clonedElement;
 
 				if (!node) {
-					const r = render([createChildren(c.optionProps && c.optionProps(item.data, index) || {})])[0];
+					const r = render([createChildren(c.optionProps(item.data, index))])[0];
 					this.elementToClone = r;
 					node = <HTMLElement>this.clonedElement;
 				}
@@ -493,7 +493,7 @@ export default class ComponentRender {
 			for (let i = 0; i < list.length; i++) {
 				const
 					[item, index] = list[i],
-					props = c.optionProps && c.optionProps(item.data, index) || {};
+					props = c.optionProps(item.data, index);
 
 				children.push(createChildren(props));
 			}

@@ -14,16 +14,27 @@ import {
 	RecycleFn,
 	OptionProps,
 	RequestQuery,
-	RequestCheckFn,
+	RequestFn,
 	RequestMoreParams,
+	ShouldUpdateFn,
+	ScrollRenderState,
 	Axis
 
 } from 'base/b-virtual-scroll/modules/interface';
 
+import {
+
+	defaultOptionProps,
+	defaultShouldRequest,
+	defaultShouldContinueRequest,
+	isNatural
+
+} from 'base/b-virtual-scroll/modules/helpers';
+
 import ComponentRender from 'base/b-virtual-scroll/modules/component-render';
 import ScrollRender, { getRequestParams } from 'base/b-virtual-scroll/modules/scroll-render';
 
-import iData, { InitLoadParams, RequestParams, ModsDecl, field, component, prop, system, hook, wait } from 'super/i-data/i-data';
+import iData, { InitLoadParams, RequestParams, ModsDecl, field, component, prop, system } from 'super/i-data/i-data';
 
 export const
 	$$ = symbolGenerator();
@@ -40,13 +51,13 @@ export default class bVirtualScroll extends iData<RemoteData> {
 	/**
 	 * Option component
 	 */
-	@prop({type: String})
+	@prop({type: String, watch: 'onUpdate'})
 	readonly option!: string;
 
 	/**
 	 * Initial component options
 	 */
-	@prop(Array)
+	@prop({type: Array, watch: 'onUpdate'})
 	readonly optionsProp?: unknown[] = [];
 
 	/**
@@ -56,107 +67,119 @@ export default class bVirtualScroll extends iData<RemoteData> {
 	options!: unknown[];
 
 	/**
-	 * Option unique key (for v-for)
-	 */
-	@prop({type: [String, Function]})
-	readonly optionKey!: (el: unknown, i: number) => string | number;
-
-	/**
 	 * Option component props
 	 */
-	@prop({type: Function, required: false})
-	readonly optionProps?: OptionProps;
+	@prop({type: Function, watch: 'onUpdate'})
+	readonly optionProps: OptionProps = defaultOptionProps;
+
+	/**
+	 * Option unique key (for v-for)
+	 */
+	@prop({type: Function, watch: 'onUpdate'})
+	readonly optionKey!: (el: unknown, i: number) => string | number;
 
 	/**
 	 * Height of option
 	 */
-	@prop({type: Number, required: false})
+	@prop({type: Number, watch: 'onUpdate', required: false})
 	readonly optionHeight?: number;
 
 	/**
 	 * Amount of columns
 	 */
-	@prop({type: Number, validator: isNatural})
+	@prop({type: Number, watch: 'onUpdate', validator: isNatural})
 	readonly columns: number = 1;
 
 	/**
 	 * Amount of nodes at the current time
 	 */
-	@prop({type: Number, validator: isNatural})
+	@prop({type: Number,  watch: 'onUpdate', validator: isNatural})
 	readonly realElementsSize: number = 20;
 
 	/**
 	 * Amount of nodes at the current time that are drawn in the opposite direction from the scroll
 	 */
-	@prop({type: Number, validator: isNatural})
+	@prop({type: Number, watch: 'onUpdate', validator: isNatural})
 	readonly oppositeElementsSize: number = 10;
 
 	/**
 	 * The number of components that could be cached
 	 */
-	@prop({type: Number, validator: isNatural})
+	@prop({type: Number, watch: 'onUpdate', validator: isNatural})
 	readonly cacheSize: number = 400;
 
 	/**
 	 * The number of items that will be removed from the cache when it is full
 	 */
-	@prop({type: Number, validator: isNatural})
+	@prop({type: Number, watch: 'onUpdate', validator: isNatural})
 	readonly dropCacheSize: number = 50;
 
 	/**
 	 * The number of elements from the current range that cannot be removed from the cache
 	 */
-	@prop({type: Number, validator: isNatural})
+	@prop({type: Number, watch: 'onUpdate', validator: isNatural})
 	readonly dropCacheSafeZone: number = 10;
 
 	/**
 	 * Number of tombstones
 	 */
-	@prop(Number)
+	@prop({type: Number, watch: 'onUpdate'})
 	readonly tombstoneSize: number = 10;
 
 	/**
 	 * The number of pixels of additional length to allow scrolling to
 	 */
-	@prop(Number)
+	@prop({type: Number, watch: 'onUpdate'})
 	readonly scrollRunnerMin: number = 0;
 
 	/**
 	 * Scroll axis
 	 */
-	@prop({type: String, validator: (v: string) => axis.hasOwnProperty(v)})
+	@prop({type: String, watch: 'onUpdate', validator: (v: string) => axis.hasOwnProperty(v)})
 	readonly axis: Axis = 'y';
 
 	/**
 	 * If true, then created nodes will be cached
 	 */
-	@prop(Boolean)
+	@prop({type: Boolean, watch: 'onUpdate'})
 	readonly cacheNode: boolean = true;
 
 	/**
 	 * If true, then the height of the container will be updated for every change in range
 	 */
-	@prop(Boolean)
+	@prop({type: Boolean, watch: 'onUpdate'})
 	readonly containerSize: boolean = true;
 
 	/**
 	 * If true, then created nodes will be reused
 	 *   *) Works only with recycleFn defined
 	 */
-	@prop(Boolean)
+	@prop({type: Boolean, watch: 'onUpdate'})
 	readonly recycle: boolean = false;
 
 	/**
 	 * Function that returns a scroll root
 	 */
-	@prop({type: Function, required: false})
+	@prop({type: Function, watch: 'onUpdate', required: false})
 	readonly scrollingElement?: Function;
 
 	/**
 	 * Function that returns request parameters
 	 */
-	@prop({type: Function, required: false})
+	@prop({type: Function, watch: 'reload', required: false})
 	readonly requestQuery?: RequestQuery;
+
+	/**
+	 * If, when calling a function, it returns true, then the component will be able to request additional data
+	 */
+	@prop({type: Function, watch: 'reload'})
+	readonly shouldMakeRequest: RequestFn = defaultShouldRequest;
+
+	/**
+	 * If, when calling a function, it returns true, then the component will stop request data
+	 */
+	@prop({type: Function, watch: 'reload'})
+	readonly shouldContinueRequest: RequestFn = defaultShouldContinueRequest;
 
 	/**
 	 * Create component function
@@ -230,29 +253,43 @@ export default class bVirtualScroll extends iData<RemoteData> {
 	 * Link to scroll event emitter
 	 */
 	protected get scrollEmitter(): Document | HTMLElement {
+		if (this.scrollingElement) {
+			return this.scrollingElement();
+		}
+
 		return this.axis === 'y' ? document : this.scrollRoot;
 	}
 
-	/**
-	 * If, when calling a function, it returns true, then the component will be able to request additional data
-	 */
-	@prop(Function)
-	readonly shouldRequest: RequestCheckFn = (v) => v.itemsToRichBottom <= 10 && !v.isLastEmpty;
-
-	/**
-	 * If, when calling a function, it returns true, then the component will stop request data
-	 */
-	@prop(Function)
-	readonly isRequestsDone: RequestCheckFn = (v) => !v.isLastEmpty;
-
 	/** @override */
-	async reload(params?: InitLoadParams): Promise<void> {
-		const
-			load = super.reload(params),
-			reInit = this.componentRender.reInit().then(() => this.scrollRender.reset());
+	reload(params?: InitLoadParams): Promise<void> {
+		this.componentStatus = 'loading';
 
-		return Promise.all([load, reInit]).then(() => this.scrollRender.initRender());
+		return this.async.promise(Promise.all([
+				super.reload(params),
+				this.reInit(true, true)
+			]).then(() => undefined),
+
+		{label: $$.reload, join: true});
 	}
+
+	/**
+	 * Re-initializes component
+	 * @param waitReady
+	 */
+	reInit(waitReady: boolean, hard: boolean = false): Promise<void> {
+		const wrappedRender = () => {
+			const asyncOpts = {label: 'initScrollRender', group: 'scroll-render'};
+			return this.waitStatus('ready', () => this.scrollRender.initRender(), asyncOpts);
+		};
+
+		return this.componentRender.reset()
+			.then(() => this.scrollRender.reset(hard))
+			.then(waitReady ?
+				wrappedRender :
+				() => this.scrollRender.initRender()
+			);
+	}
+
 	/** @override */
 	protected initModEvents(): void {
 		super.initModEvents();
@@ -307,7 +344,7 @@ export default class bVirtualScroll extends iData<RemoteData> {
 	}
 
 	/**
-	 * Generates or returns an option key for v-for
+	 * Returns an option key
 	 *
 	 * @param el
 	 * @param i
@@ -317,8 +354,18 @@ export default class bVirtualScroll extends iData<RemoteData> {
 			this.optionKey(el, i) :
 			this.optionKey;
 	}
-}
 
-function isNatural(v: number): boolean {
-	return v.isNatural();
+	/**
+	 * Handler: props was updated
+	 */
+	protected onUpdate(): void {
+		const
+			{scrollRender: {state}} = this;
+
+		if (state !== ScrollRenderState.render || this.componentStatus !== 'ready') {
+			return;
+		}
+
+		this.reInit(true);
+	}
 }

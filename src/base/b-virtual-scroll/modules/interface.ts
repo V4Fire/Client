@@ -14,7 +14,8 @@ export type OptionProps = (el: unknown, i: number) => Dictionary;
 export type Axis = keyof typeof axis;
 
 export type RequestQuery<T extends unknown = unknown> = (params: RequestMoreParams<T>) => Dictionary;
-export type RequestCheckFn<T extends unknown = unknown> = (params: RequestMoreParams<T>) => boolean;
+export type RequestFn<T extends unknown = unknown> = (params: RequestMoreParams<T>) => boolean;
+export type ShouldUpdateFn = (ctx: bVirtualScroll) => boolean;
 
 export type RecycleFn = (params: RecycleParams) => HTMLElement;
 
@@ -80,4 +81,10 @@ export interface ElementPosition {
 export interface Size {
 	width: number;
 	height: number;
+}
+
+export enum ScrollRenderState {
+	notInitialized,
+	waitRender,
+	render
 }
