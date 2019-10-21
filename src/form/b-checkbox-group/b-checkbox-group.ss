@@ -32,7 +32,7 @@
 
 						< component &
 							v-else |
-							:ref = 'matryoshka-' + o.option.id |
+							:ref = 'option-' + o.option.id |
 							:instanceOf = bCheckbox |
 							:is = option |
 							:p = o.option |
