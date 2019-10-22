@@ -200,14 +200,11 @@ export default class bCheckboxGroup<
 	/**
 	 * Sets a checkbox value to the group
 	 *
-	 * @param el - checkbox item
+	 * @param name - checkbox name
 	 * @param value - checkbox value
 	 */
 	@wait('ready')
-	setValue(el: bCheckbox, value: boolean): CanPromise<CanUndef<boolean>> {
-		const
-			{name, id} = el;
-
+	setValue(name: string, value: boolean): CanPromise<CanUndef<boolean>> {
 		if (!this.multiple) {
 			const
 				oldValue = String(this.value);
