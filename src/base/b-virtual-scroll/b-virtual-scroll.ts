@@ -16,7 +16,6 @@ import {
 	RequestQuery,
 	RequestFn,
 	RequestMoreParams,
-	ShouldUpdateFn,
 	ScrollRenderState,
 	Axis
 
@@ -176,7 +175,7 @@ export default class bVirtualScroll extends iData<RemoteData> {
 	readonly shouldMakeRequest: RequestFn = defaultShouldRequest;
 
 	/**
-	 * If, when calling a function, it returns true, then the component will stop request data
+	 * If, when calling a function, it returns false, then the component will stop request data
 	 */
 	@prop({type: Function, watch: 'reload'})
 	readonly shouldContinueRequest: RequestFn = defaultShouldContinueRequest;
@@ -297,7 +296,10 @@ export default class bVirtualScroll extends iData<RemoteData> {
 		this.sync.mod('axis', 'axis', String);
 	}
 
-	/** @override */
+	/**
+	 * @override
+	 * @emits empty()
+	 */
 	protected initRemoteData(): CanUndef<unknown[]> {
 		if (!this.db) {
 			return;
@@ -308,6 +310,9 @@ export default class bVirtualScroll extends iData<RemoteData> {
 
 		if (this.field.get('data.length', val)) {
 			return this.options = val.data;
+
+		} else {
+			this.emit('empty');
 		}
 
 		return this.options;

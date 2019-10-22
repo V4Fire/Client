@@ -894,7 +894,7 @@ export default class ScrollRender {
 	 * @param params
 	 */
 	protected checksRequestDone(params: RequestMoreParams): void {
-		this.isRequestsDone = this.component.shouldContinueRequest(params);
+		this.isRequestsDone = !this.component.shouldContinueRequest(params);
 
 		if (this.isRequestsDone) {
 			this.max = this.items.length;

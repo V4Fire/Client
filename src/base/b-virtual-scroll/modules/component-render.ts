@@ -143,7 +143,7 @@ export default class ComponentRender {
 		ctx.meta.hooks.mounted.push({
 			name: 'initComponentRender',
 			fn: () => {
-				this.tombstoneToClone = <HTMLElement>this.refs.tombstone.children[0];
+				this.tombstoneToClone = this.getRealTombstone();
 			}
 		});
 	}
@@ -289,7 +289,7 @@ export default class ComponentRender {
 	reset(): Promise<void> {
 		return this.async.promise<void>(new Promise((res) => {
 			this.async.requestAnimationFrame(() => {
-				this.tombstoneToClone = <HTMLElement>this.refs.tombstone.children[0];
+				this.tombstoneToClone = this.getRealTombstone();
 				this.destroy().then(res);
 
 			}, {label: $$.reInitRaf, group: this.asyncGroup});
@@ -435,9 +435,15 @@ export default class ComponentRender {
 	 * Creates a tombstone
 	 */
 	protected createTombstone(): HTMLElement {
-		const
-			tombstone = <HTMLElement>(this.clonedTombstone);
+		const tombstone = <HTMLElement>(this.clonedTombstone);
+		return tombstone;
+	}
 
+	/**
+	 * Returns a real (not cloned) tombstone element
+	 */
+	protected getRealTombstone(): HTMLElement {
+		const tombstone = this.refs.tombstone;
 		tombstone.classList.add(this.tombstoneClass);
 		return tombstone;
 	}
