@@ -456,7 +456,7 @@ export default class bCheckboxGroup<
 	 */
 	protected onChange(el: bCheckbox, value: boolean): void {
 		if (!el.silence && el.name) {
-			this.setValue(el, value);
+			this.setValue(el.name, value);
 
 			if (el.id) {
 				const
