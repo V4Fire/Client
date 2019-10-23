@@ -83,7 +83,13 @@ export default class bContentSwitcher extends iBlock {
 	 * If true, then a content won't be hidden after the state change
 	 */
 	@prop(Boolean)
-	readonly resolveOnce: Boolean = false;
+	readonly resolveOnce: boolean = false;
+
+	/**
+	 * If true, then a placeholder will be hidden at start
+	 */
+	@prop(Boolean)
+	readonly placeholderHidden: boolean = false;
 
 	/**
 	 * Keys for a semaphore strategy
@@ -272,6 +278,21 @@ export default class bContentSwitcher extends iBlock {
 		}
 
 		this.isReadyToSwitch = is.manual() || (<ResolveMethod[]>resolve)[resolveStrategy]((r) => this.isStrategyReady[r]());
+	}
+
+	/**
+	 * Initializes base placeholder state
+	 */
+	@hook('created')
+	protected initPlaceholderState(): void {
+		const
+			{is, placeholderHidden} = this;
+
+		is.placeholderHidden = placeholderHidden;
+
+		if (placeholderHidden) {
+			this.setMod('hidden', true);
+		}
 	}
 
 	/**

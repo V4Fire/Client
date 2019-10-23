@@ -16,6 +16,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### :boom: Breaking Change
 
 * [Changed `iLockPageScroll` trait methods signature](https://github.com/V4Fire/Client/pull/137/files)
+* [Added `placeholderHidden` prop to `b-content-switcher`](https://github.com/V4Fire/Client/pull/137/files)
 
 #### :rocket: New Feature
 
