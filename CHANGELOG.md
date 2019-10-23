@@ -15,16 +15,12 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :boom: Breaking Change
 
-* [Changed `iLockPageScroll` trait method signatures](https://github.com/V4Fire/Client/pull/137/files)
+* [Changed `iLockPageScroll` trait methods signature](https://github.com/V4Fire/Client/pull/137/files)
 
 #### :rocket: New Feature
 
 * [Added `b-virtual-scroll` component](https://github.com/V4Fire/Client/pull/137/files)
 * [Added `appendChild` method to DOM module](https://github.com/V4Fire/Client/pull/137/files)
-
-### :house: Internal
-
-* [Update `iLockPageScroll` trait – `scrollableNode` now is `component.$el` by default](https://github.com/V4Fire/Client/pull/137/files)
 
 ## v3.0.0-beta.205 (2019-10-15)
 

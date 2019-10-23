@@ -20,7 +20,7 @@ export default abstract class iLockPageScroll {
 	 * @param component
 	 * @param [scrollableNode] - the node inside which is allowed to scroll
 	 */
-	static lock<T extends iBlock>(component: T, scrollableNode: Element = <Element>component.$el): Promise<void> {
+	static lock<T extends iBlock>(component: T, scrollableNode: Element): Promise<void> {
 		const
 			// @ts-ignore
 			{async: $a, r} = component,
