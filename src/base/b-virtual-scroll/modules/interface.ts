@@ -10,11 +10,12 @@ import Range from 'core/range';
 
 import bVirtualScroll, { axis } from 'base/b-virtual-scroll/b-virtual-scroll';
 
-export type OptionProps = (el: unknown, i: number) => Dictionary;
+export type OptionProps = (el: OptionEl, i: number) => Dictionary;
 export type Axis = keyof typeof axis;
 
 export type RequestQuery<T extends unknown = unknown> = (params: RequestMoreParams<T>) => Dictionary;
-export type RequestCheckFn<T extends unknown = unknown> = (params: RequestMoreParams<T>) => boolean;
+export type RequestFn<T extends unknown = unknown> = (params: RequestMoreParams<T>) => boolean;
+export type ShouldUpdateFn = (ctx: bVirtualScroll) => boolean;
 
 export type RecycleFn = (params: RecycleParams) => HTMLElement;
 
@@ -26,6 +27,12 @@ export interface RecycleParams<T extends unknown = unknown, CTX extends unknown 
 	i: number;
 	ctx: bVirtualScroll;
 	optionCtx?: CTX;
+}
+
+export interface OptionEl {
+	current: unknown;
+	prev: CanUndef<unknown>;
+	next: CanUndef<unknown>;
 }
 
 export interface RequestMoreParams<T extends unknown = unknown> {
@@ -80,4 +87,16 @@ export interface ElementPosition {
 export interface Size {
 	width: number;
 	height: number;
+}
+
+export enum ScrollRenderState {
+	notInitialized,
+	waitRender,
+	render
+}
+
+export interface RenderedItems {
+	positions: Dictionary<[HTMLElement, number]>;
+	nodes: HTMLElement[];
+	items: [RenderItem, number][];
 }

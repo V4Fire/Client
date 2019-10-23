@@ -13,6 +13,8 @@ $p = {
 }
 
 b-virtual-scroll extends i-data
+	width 100%
+
 	&__container
 		position relative
 		box-sizing border-box
@@ -42,3 +44,6 @@ b-virtual-scroll extends i-data
 
 	&_axis_x
 		overflow scroll
+
+	&_requests-done_true &__tombstone-el
+		display none

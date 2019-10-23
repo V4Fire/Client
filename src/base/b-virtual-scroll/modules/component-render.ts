@@ -143,7 +143,7 @@ export default class ComponentRender {
 		ctx.meta.hooks.mounted.push({
 			name: 'initComponentRender',
 			fn: () => {
-				this.tombstoneToClone = <HTMLElement>this.refs.tombstone.children[0];
+				this.tombstoneToClone = this.getRealTombstone();
 			}
 		});
 	}
@@ -198,8 +198,9 @@ export default class ComponentRender {
 	/**
 	 * Renders a new node
 	 * @param list
+	 * @param items
 	 */
-	render(list: RenderList): HTMLElement[] {
+	render(list: RenderList, items: RenderItem[]): HTMLElement[] {
 		const
 			{cacheNode} = this.component;
 
@@ -237,7 +238,7 @@ export default class ComponentRender {
 
 		if (needRender.length) {
 			const
-				nodes = this.createComponents(needRender);
+				nodes = this.createComponents(needRender, items);
 
 			for (let i = 0; i < nodes.length; i++) {
 				const
@@ -285,10 +286,10 @@ export default class ComponentRender {
 	/**
 	 * Re-initializes the component render
 	 */
-	reInit(): Promise<void> {
+	reset(): Promise<void> {
 		return this.async.promise<void>(new Promise((res) => {
 			this.async.requestAnimationFrame(() => {
-				this.tombstoneToClone = <HTMLElement>this.refs.tombstone.children[0];
+				this.tombstoneToClone = this.getRealTombstone();
 				this.destroy().then(res);
 
 			}, {label: $$.reInitRaf, group: this.asyncGroup});
@@ -434,9 +435,15 @@ export default class ComponentRender {
 	 * Creates a tombstone
 	 */
 	protected createTombstone(): HTMLElement {
-		const
-			tombstone = <HTMLElement>(this.clonedTombstone);
+		const tombstone = <HTMLElement>(this.clonedTombstone);
+		return tombstone;
+	}
 
+	/**
+	 * Returns a real (not cloned) tombstone element
+	 */
+	protected getRealTombstone(): HTMLElement {
+		const tombstone = this.refs.tombstone;
 		tombstone.classList.add(this.tombstoneClass);
 		return tombstone;
 	}
@@ -444,8 +451,9 @@ export default class ComponentRender {
 	/**
 	 * Creates a component by the specified params
 	 * @param list - List of elements that should be rendered
+	 * @param items
 	 */
-	protected createComponents(list: RenderList): HTMLElement[] {
+	protected createComponents(list: RenderList, items: RenderItem[]): HTMLElement[] {
 		let
 			res: HTMLElement[] = [];
 
@@ -469,6 +477,12 @@ export default class ComponentRender {
 			}
 		});
 
+		const getOptionEl = (data, i: number) => ({
+			current: data,
+			prev: items[i - 1] && items[i - 1].data,
+			next: items[i + 1] && items[i + 1].data
+		});
+
 		if (c.recycleFn) {
 			for (let i = 0; i < list.length; i++) {
 				const
@@ -478,12 +492,12 @@ export default class ComponentRender {
 					node = recycleNodes.pop() || this.clonedElement;
 
 				if (!node) {
-					const r = render([createChildren(c.optionProps && c.optionProps(item.data, index) || {})])[0];
+					const r = render([createChildren(c.optionProps(getOptionEl(item.data, index), index))])[0];
 					this.elementToClone = r;
 					node = <HTMLElement>this.clonedElement;
 				}
 
-				res.push(c.recycleFn(this.getRenderFnParams(node, item.data, index)));
+				res.push(c.recycleFn(this.getRenderFnParams(node, getOptionEl(item.data, index), index)));
 			}
 
 		} else {
@@ -493,7 +507,7 @@ export default class ComponentRender {
 			for (let i = 0; i < list.length; i++) {
 				const
 					[item, index] = list[i],
-					props = c.optionProps && c.optionProps(item.data, index) || {};
+					props = c.optionProps(getOptionEl(item.data, index), index);
 
 				children.push(createChildren(props));
 			}
