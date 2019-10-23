@@ -261,6 +261,10 @@ export default class ScrollRender {
 			this.loadedData = component.db.data || [];
 		}
 
+		if (!component.options || !component.options.length) {
+			return;
+		}
+
 		this.checksRequestDone(getRequestParams(this));
 		this.initEvents();
 		this.render();
