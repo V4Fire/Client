@@ -392,10 +392,10 @@ export default class ScrollRender {
 	 */
 	protected render(): void {
 		const
-			{async: $a, component} = this,
-			{nodes, positions, items} = this.renderItems();
+			{async: $a, component} = this;
 
 		$a.requestAnimationFrame(() => {
+			const {nodes, positions, items} = this.renderItems();
 			this.appendNodes(nodes, items);
 			this.clearNodes();
 			this.cacheItemsSize();
@@ -404,7 +404,7 @@ export default class ScrollRender {
 			this.setItemsPosition(positions);
 			this.updateScrollRunnerPosition();
 
-			if (component.containerSize) {
+			if (component.containerSize && !this.isRequestsDone) {
 				this.updateContainerSize();
 			}
 
@@ -433,9 +433,9 @@ export default class ScrollRender {
 		}
 
 		const
-			itemsToRichBottom = this.totalLoaded - currentAnchor.index;
+			itemsToReachBottom = this.totalLoaded - currentAnchor.index;
 
-		if (itemsToRichBottom <= 0 || !items.length) {
+		if (itemsToReachBottom <= 0 || !items.length) {
 			return resolved;
 		}
 
@@ -903,11 +903,21 @@ export default class ScrollRender {
 		if (this.isRequestsDone) {
 			this.max = this.items.length;
 			this.component.setMod('requestsDone', true);
+
 			this.updateRange();
+			this.async.requestAnimationFrame(this.fixHeight.bind(this));
 
 		} else {
 			this.component.removeMod('requestsDone', true);
 		}
+	}
+
+	/**
+	 * Fix container height then all data is loaded
+	 */
+	protected fixHeight(): void {
+		const height = this.items.reduce((acc, item) => acc + (item.data && item.height || 0), 0);
+		this.refs.container.style.height = height.px;
 	}
 
 	/**
@@ -940,7 +950,7 @@ export function getRequestParams(ctx?: ScrollRender, merge?: Dictionary): Reques
 		lastLoaded: [],
 		currentSlice: [],
 		isLastEmpty: false,
-		itemsToRichBottom: 0
+		itemsToReachBottom: 0
 	};
 
 	const params = ctx ? {
@@ -950,7 +960,7 @@ export function getRequestParams(ctx?: ScrollRender, merge?: Dictionary): Reques
 		isLastEmpty: ctx.isLastEmpty,
 
 		currentSlice: ctx.items.slice(ctx.range.start, ctx.range.end),
-		itemsToRichBottom: ctx.totalLoaded - ctx.currentAnchor.index,
+		itemsToReachBottom: ctx.totalLoaded - ctx.currentAnchor.index,
 		items: ctx.items
 	} : base;
 

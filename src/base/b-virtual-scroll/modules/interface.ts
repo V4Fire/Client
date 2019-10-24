@@ -41,7 +41,7 @@ export interface RequestMoreParams<T extends unknown = unknown> {
 	currentRange: Range<number>;
 
 	nextPage: number;
-	itemsToRichBottom: number;
+	itemsToReachBottom: number;
 	items: RenderItem<T>[];
 
 	isLastEmpty: boolean;
