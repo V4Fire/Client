@@ -29,6 +29,7 @@ b-slider_mode_scroll extends b-slider
 		size 100% ("calc(100% + %s)" % $p.scrollBarHeight)
 		overflow-x scroll
 		overflow-y hidden
+		padding-bottom $p.scrollBarHeight
 
 		@media (min-width $p.showScrollBreakpoint)
 			padding-bottom 0
