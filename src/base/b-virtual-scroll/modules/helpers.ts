@@ -21,7 +21,7 @@ export function defaultOptionProps(): Dictionary {
  * @param v
  */
 export function defaultShouldRequest(v: RequestMoreParams): boolean {
-	return v.itemsToRichBottom <= 10 && !v.isLastEmpty;
+	return v.itemsToReachBottom <= 10 && !v.isLastEmpty;
 }
 
 /**
