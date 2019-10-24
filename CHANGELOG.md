@@ -17,6 +17,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 * [Changed `iLockPageScroll` trait methods signature](https://github.com/V4Fire/Client/pull/137)
 * [Changed `before` and `after` slots position in `b-slider`](https://github.com/V4Fire/Client/pull/137)
+* [Changed `saveDataToRootStore` key generation](https://github.com/V4Fire/Client/pull/137)
 
 #### :rocket: New Feature
 
