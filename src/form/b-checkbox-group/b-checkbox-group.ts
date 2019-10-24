@@ -459,7 +459,10 @@ export default class bCheckboxGroup<
 					}
 
 					if (item.parent) {
-						this.visitParent(item.parent, value);
+						const
+							nc = this.nestedCounters[item.id];
+
+						this.visitParent(item.parent, value, nc ? nc[1] + 1 : 1);
 					}
 				}
 
@@ -498,41 +501,42 @@ export default class bCheckboxGroup<
 	/**
 	 * Visits parent item by ref and switch its mods
 	 *
-	 * @param parentId
-	 * @param checkedChild
+	 * @param id
+	 * @param value
 	 * @param [count]
 	 */
-	protected visitParent(parentId: string, checkedChild: boolean, count: number = 1): void {
+	protected visitParent(id: string, value: boolean, count: number = 1): void {
 		const
-			pItem = <NestedOption>this.optionsMap[parentId];
+			pItem = <NestedOption>this.optionsMap[id];
 
 		if (Object.isObject(this.valueStore) && pItem) {
 			const
-				counters = <Counters>this.nestedCounters[parentId],
+				counters = <Counters>this.nestedCounters[id],
 				itemElement = this.$refs[`option-${pItem.id}`];
 
 			if (counters) {
 				const
 					[pc] = counters;
 
-				(<Counters>this.nestedCounters[parentId])[0] = checkedChild ? pc + count : pc - count;
+				(<Counters>this.nestedCounters[id])[0] = value ? pc + count : pc - count;
 			}
 
 			if (counters[0] === counters[1]) {
 				itemElement.check().catch(stderr);
-
-			} else if (itemElement.value && counters[0] < counters[1]) {
-				itemElement.uncheck().catch(stderr);
-			}
-
-			itemElement.setMod('half-checked', counters[0] !== counters[1]);
-
-			if (counters && counters[0] === counters[1]) {
 				count += 1;
+
+			} else if (itemElement.value) {
+				itemElement.uncheck().catch(stderr);
+
+				if (!value) {
+					count += 1;
+				}
 			}
+
+			itemElement.setMod('half-checked', counters[0] > 0 && counters[0] < counters[1]);
 
 			if (pItem.parent) {
-				this.visitParent(pItem.parent, checkedChild, count);
+				this.visitParent(pItem.parent, value, count);
 			}
 		}
 	}
