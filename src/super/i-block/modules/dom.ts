@@ -169,7 +169,7 @@ export default class DOM {
 	 * @param newNode
 	 * @param [group] - operation group
 	 */
-	appendChild(parent: string | Element, node: Element, group?: string): Function | false {
+	appendChild(parent: string | Element | DocumentFragment, node: Element, group?: string): Function | false {
 		const
 			parentNode = Object.isString(parent) ? this.block.element(parent) : parent;
 
@@ -177,8 +177,8 @@ export default class DOM {
 			return false;
 		}
 
-		if (!group) {
-			group = parentNode.getAttribute('data-render-group') || '';
+		if (!group && !(parent instanceof DocumentFragment)) {
+			group = (<Element>parentNode).getAttribute('data-render-group') || '';
 		}
 
 		parentNode.appendChild(node);

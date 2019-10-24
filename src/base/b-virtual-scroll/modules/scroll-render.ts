@@ -539,7 +539,7 @@ export default class ScrollRender {
 			item.destructor = this.dom.appendChild(fragment, item.node, 'scroll-render-elements') || undefined;
 		}
 
-		this.dom.appendChild(this.refs.container, fragment, 'scroll-render-elements');
+		this.refs.container.appendChild(fragment);
 	}
 
 	/**
