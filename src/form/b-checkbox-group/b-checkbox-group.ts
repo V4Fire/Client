@@ -61,16 +61,10 @@ export default class bCheckboxGroup<
 	readonly option: string = 'b-checkbox';
 
 	/**
-	 * Parent field name for tree-like component
+	 * Function to convert names
 	 */
-	@prop(String)
-	readonly parentFrom: string = 'parent';
-
-	/**
-	 * Level field name for tree-like component
-	 */
-	@prop(String)
-	readonly levelFrom: string = 'level';
+	@prop({type: Function, required: false})
+	readonly fieldsConverter?: (el: Option) => Option;
 
 	/**
 	 * Checkboxes store
@@ -176,20 +170,16 @@ export default class bCheckboxGroup<
 		atom: true,
 		init: (o) => o.sync.link(
 		'optionsProp',
-		(val: NestedOption[]) => {
-			const
-				map = {};
-
-			for (let i = 0; i < val.length; i++) {
-				map[val[i].id] = val[i];
-				o.initCounters(val[i].parent, map);
+		() => {
+			if (o.mods.tree === 'true') {
+				return {};
 			}
 
-			return map;
+			return;
 		})
 	})
 
-	protected optionsMap!: Dictionary<Option>;
+	protected optionsMap!: CanUndef<Dictionary<NestedOption>>;
 
 	/**
 	 * Counters for partly checked checkboxes
@@ -198,7 +188,7 @@ export default class bCheckboxGroup<
 	protected nestedCounters: Dictionary<Counters> = {};
 
 	/**
-	 * True, if tree structure is in progress of the recalculating
+	 * True, if the tree structure is in progress of the recalculating
 	 */
 	@system()
 	protected reflow: boolean = false;
@@ -303,7 +293,7 @@ export default class bCheckboxGroup<
 	 * @param pid - parent identifier
 	 * @param map - options key - value
 	 */
-	protected initCounters(pid: string | undefined, map: Dictionary<NestedOption>): void {
+	protected initCounters(pid: CanUndef<string>, map: Dictionary<NestedOption>): void {
 		if (pid && map[pid]) {
 			if (!this.nestedCounters[pid]) {
 				this.nestedCounters[pid] = [0, 0];
@@ -341,27 +331,32 @@ export default class bCheckboxGroup<
 	 * @param [opts]
 	 */
 	@p({replace: false})
-	protected initDefaultOptions(opts?: unknown): Option[] {
+	protected initDefaultOptions(opts?: unknown): NestedOption[] | unknown {
 		let o;
+
+		const
+			converter = this.fieldsConverter;
 
 		if (this.mods.tree === 'true' && Array.isArray(opts)) {
 			o = {};
 
-			const
-				l = this.levelFrom,
-				p = this.parentFrom,
-				obj = <Dictionary<NestedOption>>this.field.get('optionsMap');
-
 			for (let j = 0; j < opts.length; j++) {
+				if (converter) {
+					opts[j] = converter(opts[j]);
+				}
+
+				this.field.set(`optionsMap.${opts[j].id}`, opts[j]);
+				this.initCounters(opts[j].parent, <Dictionary<NestedOption>>this.field.get('optionsMap'));
+
 				const
 					item = opts[j];
 
-				if (!item[p]) {
+				if (!item.parent) {
 					o[item.id] = item;
 
 				} else {
 					const
-						pid = item[p],
+						pid = item.parent,
 						parent = o[pid];
 
 					if (parent) {
@@ -374,9 +369,9 @@ export default class bCheckboxGroup<
 
 					} else {
 						const
-							pp = <NestedOption>obj[pid];
+							pp = <Option>this.field.get(`optionsMap.${pid}`);
 
-						if (pp[l] === 1) {
+						if (pp.level === 1) {
 							if (!o[pid]) {
 								o[pid] = pp;
 								o[pid].children = [item];
@@ -395,10 +390,14 @@ export default class bCheckboxGroup<
 				}
 			}
 
-			return <NestedOption[]>Object.keys(o).map((el) => o[el]);
+			return Object.keys(o).map((el) => o[el]);
 		}
 
-		return <NestedOption[]>opts;
+		if (Array.isArray(opts) && converter) {
+			return opts.map(converter);
+		}
+
+		return opts;
 	}
 
 	/**
@@ -406,20 +405,8 @@ export default class bCheckboxGroup<
 	 * @param option
 	 */
 	protected getOptionProps(option: Option): Dictionary {
-		let
-			additional;
-
-		if (this.mods.tree === 'true') {
-			additional = {
-				level: option[this.levelFrom],
-				parent: option[this.parentFrom]
-			};
-		}
-
 		return {
 			...option,
-			...additional,
-			'id': option.id,
 			'form': this.form,
 			'value': this.isChecked(option),
 			'changeable': this.isChangeable(option),
@@ -445,7 +432,7 @@ export default class bCheckboxGroup<
 			return;
 		}
 
-		if (!this.reflow && el.id && Object.isObject(this.valueStore)) {
+		if (!this.reflow && el.id && Object.isObject(this.valueStore) && this.optionsMap) {
 			const
 				item = <NestedOption>this.optionsMap[el.id];
 
@@ -454,15 +441,16 @@ export default class bCheckboxGroup<
 			el.setMod('half-checked', false);
 			new Promise((resolve) => {
 				if (item) {
-					if (item.children) {
-						this.visitChild(item, value);
-					}
-
 					if (item.parent) {
 						const
-							nc = this.nestedCounters[item.id];
+							nc = this.nestedCounters[item.id],
+							count = value ? nc ? nc[1] - nc[0] + 1 : 1 : nc && nc[0] + 1 || 1;
 
-						this.visitParent(item.parent, value, nc ? nc[1] + 1 : 1);
+						this.visitParent(item.parent, value, count);
+					}
+
+					if (item.children) {
+						this.visitChild(item, value);
 					}
 				}
 
@@ -507,7 +495,7 @@ export default class bCheckboxGroup<
 	 */
 	protected visitParent(id: string, value: boolean, count: number = 1): void {
 		const
-			pItem = <NestedOption>this.optionsMap[id];
+			pItem = this.optionsMap && this.optionsMap[id];
 
 		if (Object.isObject(this.valueStore) && pItem) {
 			const
