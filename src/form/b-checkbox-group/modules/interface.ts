@@ -18,16 +18,10 @@ export interface Option extends Dictionary {
 	exterior?: string;
 	classes?: Dictionary<string>;
 	mods?: ModsTable;
+
+	level?: number;
+	parent?: string;
+	children?: Option[];
 }
 
 export type Counters = [number, number];
-
-export interface NestedOption extends Option {
-	id: string;
-	level: number;
-	parent?: string;
-}
-
-interface TreeStyledCheckbox extends NestedOption {
-	children?: TreeStyledCheckbox[];
-}
