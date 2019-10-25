@@ -6,10 +6,11 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import iBlock, { component, prop, ModsDecl } from 'super/i-block/i-block';
+import iBlock, { component, prop } from 'super/i-block/i-block';
 
 export interface Doll extends Dictionary {
 	children: Doll[];
+	folded?: boolean;
 }
 
 @component({flyweight: true})
@@ -26,27 +27,26 @@ export default class bMatryoshkas<T> extends iBlock {
 	@prop(Function)
 	readonly getOptionProps!: Function;
 
-	/** @inheritDoc */
-	static readonly mods: ModsDecl = {
-		folded: [
-			['false'],
-			'true'
-		]
-	};
-
 	/**
 	 * Props data for the fold control
 	 */
-	protected getFoldingProps(): Dictionary {
+	protected getFoldingProps(el: Doll): Dictionary {
 		return {
-			'@onClick': this.onFoldingClick
+			'@onClick': this.onFoldingClick.bind(this, el)
 		};
 	}
 
 	/**
 	 * Handler: on fold control click
+	 * @param el
 	 */
-	protected onFoldingClick(): void {
-		this.setMod('folded', this.mods.folded === 'false');
+	protected onFoldingClick(el: Doll): void {
+		const
+			[target] = <[HTMLElement]>this.$refs[`matryoshka-${el.id}`],
+			folded = this.block.getElMod(target, 'matryoshka', 'folded') || 'false',
+			newVal = folded === 'false';
+
+		el.folded = newVal;
+		this.block.setElMod(target, 'matryoshka', 'folded', newVal);
 	}
 }

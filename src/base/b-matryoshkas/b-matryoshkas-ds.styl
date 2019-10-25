@@ -15,10 +15,6 @@ b-matryoshkas
 		margin-top 4px
 		margin-left 24px
 
-	&__matryoshka
-		display flex
-		align-items center
-
 	&__matryoshka ~ &__matryoshka
 		margin-top 4px
 
@@ -30,12 +26,16 @@ b-matryoshkas
 			line-height 0
 			text-align center
 
-	&_folded_true &__fold:before
+	&__matryoshka_folded_true &__fold:before
 		content "+"
 
 	&__left-side
 		width 8px
 		margin-right 8px
 
-	&_folded_true &__children
+	&__matryoshka_folded_true > &__children
 		display none
+
+	&__doll-container
+		display flex
+		align-items center

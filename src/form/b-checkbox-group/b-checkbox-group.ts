@@ -61,6 +61,12 @@ export default class bCheckboxGroup<
 	readonly option: string = 'b-checkbox';
 
 	/**
+	 * Fold all nested items
+	 */
+	@prop(Boolean)
+	readonly folded: boolean = false;
+
+	/**
 	 * Function to convert names
 	 */
 	@prop({type: Function, required: false})
@@ -406,7 +412,8 @@ export default class bCheckboxGroup<
 	 */
 	protected getOptionProps(option: Option): Dictionary {
 		return {
-			...option,
+			...Object.select(option, ['id', 'parent', 'level', 'label', 'name']),
+			'folded': this.folded,
 			'form': this.form,
 			'value': this.isChecked(option),
 			'changeable': this.isChangeable(option),
@@ -438,7 +445,10 @@ export default class bCheckboxGroup<
 
 			this.reflow = true;
 
-			el.setMod('half-checked', false);
+			if (el.mods.halfChecked === 'true') {
+				el.setMod('half-checked', false);
+			}
+
 			new Promise((resolve) => {
 				if (item) {
 					if (item.parent) {
@@ -482,6 +492,7 @@ export default class bCheckboxGroup<
 				itemElement = this.$refs[`option-${ch[i].id}`],
 				method = `${value ? '' : 'un'}check`;
 
+			itemElement.setMod('half-checked', value);
 			itemElement[method]();
 		}
 	}

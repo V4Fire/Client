@@ -13,26 +13,34 @@
 - template index() extends ['i-block'].index
 	- block body
 		< template v-for = el in options
-			< . :class = provide.elClasses({matryoshka: {level: el.level}})
-				< .&__left-side
-					- block fold
-						< template v-if = Boolean(field.get('children.length', el))
-							< template v-if = vdom.getSlot('fold')
-								+= self.slot('fold', {':option': 'getFoldingProps()'})
+			< . &
+				:ref = 'matryoshka-' + el.id |
 
-							< .&__fold &
-								v-else |
-								@click = onFoldingClick
-							.
+				:class = provide.elClasses({matryoshka: {
+					level: el.level,
+					folded: getOptionProps(el).folded
+				}})
+			.
+				< .&__doll-container
+					< .&__left-side
+						- block fold
+							< template v-if = Boolean(field.get('children.length', el))
+								< template v-if = vdom.getSlot('fold')
+									+= self.slot('fold', {':option': 'getFoldingProps(el)'})
 
-				- block doll
-					+= self.slot('default', {':option': 'getOptionProps(el)'})
+								< .&__fold &
+									v-else |
+									@click = onFoldingClick(el)
+								.
 
-			- block children
-				< .&__children v-if = field.get('children.length', el)
-					< b-matryoshkas.&__child &
-						:options = el.children |
-						:getOptionProps = getOptionProps
-					.
-						< template slot-scope = o
-							+= self.slot('default', {':option': 'o.option'})
+					- block doll
+						+= self.slot('default', {':option': 'getOptionProps(el)'})
+
+				- block children
+					< .&__children v-if = field.get('children.length', el)
+						< b-matryoshkas.&__child &
+							:options = el.children |
+							:getOptionProps = getOptionProps
+						.
+							< template slot-scope = o
+								+= self.slot('default', {':option': 'o.option'})
