@@ -64,7 +64,7 @@ export default class bCheckboxGroup<
 	 * Fold all nested items
 	 */
 	@prop(Boolean)
-	readonly folded: boolean = false;
+	readonly folded: boolean = true;
 
 	/**
 	 * Function to convert names
@@ -192,6 +192,12 @@ export default class bCheckboxGroup<
 	 */
 	@system()
 	protected nestedCounters: Dictionary<Counters> = {};
+
+	/**
+	 * Storage of not displayed checked checkboxes
+	 */
+	@system({init: (o) => o.$attrs.tree === 'true' ? {} : undefined})
+	protected nonShownStore?: Dictionary<Option>;
 
 	/**
 	 * True, if the tree structure is in progress of the recalculating
@@ -412,8 +418,7 @@ export default class bCheckboxGroup<
 	 */
 	protected getOptionProps(option: Option): Dictionary {
 		return {
-			...Object.select(option, ['id', 'parent', 'level', 'label', 'name']),
-			'folded': this.folded,
+			...Object.select(option, ['id', 'label', 'name']),
 			'form': this.form,
 			'value': this.isChecked(option),
 			'changeable': this.isChangeable(option),

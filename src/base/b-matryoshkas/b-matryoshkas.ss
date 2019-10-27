@@ -18,11 +18,11 @@
 
 				:class = provide.elClasses({matryoshka: {
 					level: el.level,
-					folded: getOptionProps(el).folded
+					folded
 				}})
 			.
-				< .&__doll-container
-					< .&__left-side
+				< .&__doll-box
+					< .&__marker
 						- block fold
 							< template v-if = Boolean(field.get('children.length', el))
 								< template v-if = vdom.getSlot('fold')
@@ -38,9 +38,14 @@
 
 				- block children
 					< .&__children v-if = field.get('children.length', el)
-						< b-matryoshkas.&__child &
-							:options = el.children |
-							:getOptionProps = getOptionProps
-						.
-							< template slot-scope = o
-								+= self.slot('default', {':option': 'o.option'})
+						< template v-for = e in asyncRender.iterate([el], 1, { &
+							filter: () => listFilter(el.id)
+						}) .
+
+							< b-matryoshkas.&__child &
+								:options = e.children |
+								:getOptionProps = getOptionProps |
+								:v-attrs = getNestedDollProps()
+							.
+								< template slot-scope = o
+									+= self.slot('default', {':option': 'o.option'})

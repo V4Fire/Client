@@ -10,7 +10,6 @@ import iBlock, { component, prop } from 'super/i-block/i-block';
 
 export interface Doll extends Dictionary {
 	children: Doll[];
-	folded?: boolean;
 }
 
 @component({flyweight: true})
@@ -28,7 +27,13 @@ export default class bMatryoshkas<T> extends iBlock {
 	readonly getOptionProps!: Function;
 
 	/**
-	 * Props data for the fold control
+	 * Fold all nested items
+	 */
+	@prop(Boolean)
+	readonly folded: boolean = false;
+
+	/**
+	 * Returns props data for the fold control
 	 */
 	protected getFoldingProps(el: Doll): Dictionary {
 		return {
@@ -37,16 +42,55 @@ export default class bMatryoshkas<T> extends iBlock {
 	}
 
 	/**
+	 * Returns a props data for recursive calling
+	 */
+	protected getNestedDollProps(): Dictionary {
+		const opts = {
+			folded: this.folded
+		};
+
+		if (this.$listeners.fold) {
+			opts['@fold'] = this.$listeners.fold;
+		}
+
+		return opts;
+	}
+
+	/**
+	 * Returns folded mod for the specified doll id
+	 * @param id
+	 */
+	protected isFoldedMod(id: string): boolean {
+		const
+			target = <[HTMLElement]>this.$refs[`matryoshka-${id}`];
+
+		if (!target) {
+			return true;
+		}
+
+		return (this.block.getElMod(target[0], 'matryoshka', 'folded') || 'false') === 'false';
+	}
+
+	/**
+	 * Recursively render filter
+	 * @param id
+	 */
+	protected listFilter(id: string): boolean {
+		return !this.isFoldedMod(id);
+	}
+
+	/**
 	 * Handler: on fold control click
+	 *
 	 * @param el
+	 * @emits fold(target: HTMLElement, el: Doll, value: boolean)
 	 */
 	protected onFoldingClick(el: Doll): void {
 		const
 			[target] = <[HTMLElement]>this.$refs[`matryoshka-${el.id}`],
-			folded = this.block.getElMod(target, 'matryoshka', 'folded') || 'false',
-			newVal = folded === 'false';
+			newVal = this.isFoldedMod(<string>el.id);
 
-		el.folded = newVal;
 		this.block.setElMod(target, 'matryoshka', 'folded', newVal);
+		this.emit('fold', target, el, newVal);
 	}
 }

@@ -24,7 +24,8 @@
 			< .&__list
 				< b-matryoshkas &
 					:options = options |
-					:getOptionProps = getOptionProps
+					:getOptionProps = getOptionProps |
+					:folded = folded
 				.
 					< template slot-scope = o
 						< template v-if = vdom.getSlot('default')

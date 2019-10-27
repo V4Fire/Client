@@ -12,9 +12,9 @@ $p = {
 
 b-matryoshkas
 	&__children
-		margin-top 4px
 		margin-left 24px
 
+	&__children
 	&__matryoshka ~ &__matryoshka
 		margin-top 4px
 
@@ -25,17 +25,18 @@ b-matryoshkas
 
 			line-height 0
 			text-align center
+			cursor pointer
 
 	&__matryoshka_folded_true &__fold:before
 		content "+"
 
-	&__left-side
+	&__marker
 		width 8px
 		margin-right 8px
 
 	&__matryoshka_folded_true > &__children
 		display none
 
-	&__doll-container
+	&__doll-box
 		display flex
 		align-items center
