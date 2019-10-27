@@ -27,6 +27,12 @@ export default class bMatryoshkas<T> extends iBlock {
 	readonly getOptionProps!: Function;
 
 	/**
+	 * Chunks count for the async render
+	 */
+	@prop(Number)
+	readonly renderChunks: number = 5;
+
+	/**
 	 * Fold all nested items
 	 */
 	@prop(Boolean)

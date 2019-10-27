@@ -12,7 +12,7 @@
 
 - template index() extends ['i-block'].index
 	- block body
-		< template v-for = el in options
+		< template v-for = el in asyncRender.iterate(options, renderChunks)
 			< . &
 				:ref = 'matryoshka-' + el.id |
 
