@@ -119,7 +119,7 @@ export default class AsyncRender {
 	 * @param slice - elements per chunk or [start position, elements per chunk]
 	 * @param [params]
 	 */
-	iterate(value: unknown, slice: CanArray<number>, params: TaskOpts = {}): unknown[] {
+	iterate(value: unknown, slice: number | [number, number], params: TaskOpts = {}): unknown[] {
 		if (!value) {
 			return [];
 		}
@@ -227,7 +227,7 @@ export default class AsyncRender {
 					i = 0;
 
 				const next = () => {
-					if (lastSyncEl.done) {
+					if (!filteredArr.length && lastSyncEl.done) {
 						return lastSyncEl;
 					}
 
