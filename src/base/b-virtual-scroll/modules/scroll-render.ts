@@ -350,6 +350,10 @@ export default class ScrollRender {
 			group: this.asyncGroup,
 			join: false
 		});
+
+		if (this.component.handleFontsReady) {
+			document.fonts.ready.then(this.onResize);
+		}
 	}
 
 	/**
@@ -931,6 +935,10 @@ export default class ScrollRender {
 	 * Handler: window resize
 	 */
 	protected onResize(): void {
+		if (this.state === ScrollRenderState.notInitialized) {
+			return;
+		}
+
 		this.calculateSizes();
 		this.updateRange();
 	}

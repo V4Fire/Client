@@ -64,4 +64,10 @@ interface IntersectionObserver {
 	trackVisibility?: boolean;
 }
 
+interface Document {
+	fonts: {
+		ready: Promise<void>
+	}
+}
+
 declare const GLOBAL_NONCE: unknown;
