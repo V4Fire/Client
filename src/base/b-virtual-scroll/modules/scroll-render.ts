@@ -909,7 +909,7 @@ export default class ScrollRender {
 			this.component.setMod('requestsDone', true);
 
 			this.updateRange();
-			this.async.requestAnimationFrame(this.fixHeight.bind(this));
+			this.async.requestAnimationFrame(this.fixSize.bind(this));
 
 		} else {
 			this.component.removeMod('requestsDone', true);
@@ -919,9 +919,9 @@ export default class ScrollRender {
 	/**
 	 * Fix container height then all data is loaded
 	 */
-	protected fixHeight(): void {
-		const height = this.items.reduce((acc, item) => acc + (item.data && item.height || 0), 0);
-		this.refs.container.style.height = height.px;
+	protected fixSize(): void {
+		const size = this.items.reduce((acc, item) => acc + (item.data && item.height || 0), 0);
+		this.refs.container.style[this.sizeProp] = size.px;
 	}
 
 	/**
