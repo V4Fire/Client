@@ -443,7 +443,7 @@ export default class ComponentRender {
 	 * Returns a real (not cloned) tombstone element
 	 */
 	protected getRealTombstone(): HTMLElement {
-		const tombstone = this.refs.tombstone;
+		const tombstone = <HTMLElement>this.refs.tombstone.children[0];
 		tombstone.classList.add(this.tombstoneClass);
 		return tombstone;
 	}
