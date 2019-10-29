@@ -352,7 +352,7 @@ export default class ScrollRender {
 		});
 
 		if (this.component.handleFontsReady) {
-			document.fonts.ready.then(this.onResize);
+			document.fonts.ready.then(this.onResize.bind(this));
 		}
 	}
 
