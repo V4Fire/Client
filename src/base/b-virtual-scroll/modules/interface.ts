@@ -29,10 +29,10 @@ export interface RecycleParams<T extends unknown = unknown, CTX extends unknown 
 	optionCtx?: CTX;
 }
 
-export interface OptionEl {
-	current: unknown;
-	prev: CanUndef<unknown>;
-	next: CanUndef<unknown>;
+export interface OptionEl<T extends unknown = unknown> {
+	current: T;
+	prev: CanUndef<T>;
+	next: CanUndef<T>;
 }
 
 export interface RequestMoreParams<T extends unknown = unknown> {
