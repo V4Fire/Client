@@ -25,6 +25,8 @@ import {
 
 } from 'base/b-virtual-scroll/modules/interface';
 
+import { getHeightWithMargin } from 'base/b-virtual-scroll/modules/helpers';
+
 export const
 	$$ = symbolGenerator();
 
@@ -221,11 +223,8 @@ export default class ScrollRender {
 			after: new Set(['initComponentRender']),
 			fn: () => {
 				this.range = new Range(0, ctx.realElementsSize);
-
-				this.async.requestAnimationFrame(() => {
-					this.calculateSizes();
-					this.updateRange();
-				});
+				this.calculateSizes();
+				this.updateRange();
 
 				this.state = ScrollRenderState.waitRender;
 
@@ -341,7 +340,7 @@ export default class ScrollRender {
 			group: this.asyncGroup
 		});
 
-		this.async.on(globalThis, 'resize orientationchange', async () => {
+		this.async.on(globalThis, 'resize', async () => {
 			await this.async.sleep(50, {label: $$.resizeSleep, join: false}).catch(stderr);
 			this.onResize();
 
@@ -350,6 +349,10 @@ export default class ScrollRender {
 			group: this.asyncGroup,
 			join: false
 		});
+
+		if (this.component.handleFontsReady) {
+			document.fonts.ready.then(this.onResize.bind(this));
+		}
 	}
 
 	/**
@@ -850,15 +853,8 @@ export default class ScrollRender {
 			}
 
 			if (item.data && item.node && (!item.height)) {
-				item.height = item.node.offsetHeight / columns;
 				item.width = item.node.offsetWidth;
-
-				const
-					style = window.getComputedStyle(item.node);
-
-				item.height = ['top', 'bottom']
-					.map((side) => parseInt(style[`margin-${side}`], 10))
-					.reduce((total, side) => total + side, item.height);
+				item.height = getHeightWithMargin(item.node) / columns;
 			}
 		}
 	}
@@ -875,7 +871,7 @@ export default class ScrollRender {
 			refs.container.appendChild(tombstone);
 
 			this.tombstoneSize = {
-				height: tombstone.offsetHeight / columns,
+				height: getHeightWithMargin(tombstone) / columns,
 				width: tombstone.offsetWidth
 			};
 
@@ -905,7 +901,7 @@ export default class ScrollRender {
 			this.component.setMod('requestsDone', true);
 
 			this.updateRange();
-			this.async.requestAnimationFrame(this.fixHeight.bind(this));
+			this.async.requestAnimationFrame(this.fixSize.bind(this));
 
 		} else {
 			this.component.removeMod('requestsDone', true);
@@ -915,9 +911,9 @@ export default class ScrollRender {
 	/**
 	 * Fix container height then all data is loaded
 	 */
-	protected fixHeight(): void {
-		const height = this.items.reduce((acc, item) => acc + (item.data && item.height || 0), 0);
-		this.refs.container.style.height = height.px;
+	protected fixSize(): void {
+		const size = this.items.reduce((acc, item) => acc + (item.data && item.height || 0), 0);
+		this.refs.container.style[this.sizeProp] = size.px;
 	}
 
 	/**
@@ -933,6 +929,7 @@ export default class ScrollRender {
 	protected onResize(): void {
 		this.calculateSizes();
 		this.updateRange();
+		this.async.requestAnimationFrame(this.fixSize.bind(this));
 	}
 }
 

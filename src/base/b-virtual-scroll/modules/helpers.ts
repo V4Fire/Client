@@ -44,3 +44,18 @@ export function defaultShouldUpdate(ctx: bVirtualScroll): boolean {
 export function isNatural(v: number): boolean {
 	return v.isNatural();
 }
+
+/**
+ * Height of node with margins
+ * @param node
+ */
+export function getHeightWithMargin(node: HTMLElement): number {
+	const
+		style = window.getComputedStyle(node);
+
+	const t = ['top', 'bottom']
+		.map((side) => parseInt(style[`margin-${side}`], 10))
+		.reduce((total, side) => total + side, node.offsetHeight);
+
+	return t;
+}
