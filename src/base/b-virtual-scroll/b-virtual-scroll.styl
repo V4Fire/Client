@@ -33,6 +33,11 @@ b-virtual-scroll extends i-data
 		transition transform 0.2s
 		useGPU()
 
+	&__trigger
+		absolute left 0 top 0
+		size 1px
+		opacity 0
+
 	&_hidden_true
 	&_requests-done_true &__tombstone-el
 		display none !important

@@ -13,6 +13,14 @@
 - template index() extends ['i-data'].index
 	- block body
 		< .&__container ref = container
+			< .&__trigger &
+				v-in-view = {
+					delay: 0,
+					onEnter: onIntersectChange,
+					onLeave: onIntersectChange
+				}
+			.
+
 			< .&__scroll-runner ref = scrollRunner
 				&nbsp;
 

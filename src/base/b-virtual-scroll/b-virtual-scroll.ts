@@ -369,7 +369,7 @@ export default class bVirtualScroll extends iData<RemoteData> {
 	/**
 	 * Handler: props was updated
 	 */
-	protected onUpdate(): void {
+	protected async onUpdate(): Promise<void> {
 		const
 			{scrollRender: {state}} = this;
 
@@ -377,6 +377,14 @@ export default class bVirtualScroll extends iData<RemoteData> {
 			return;
 		}
 
-		this.reInit(true);
+		await this.async.sleep(20, {label: $$.onUpdate, join: false}).catch(stderr);
+		this.reInit(true).catch(stderr);
+	}
+
+	/**
+	 * Handler: element enters/leaves viewport
+	 */
+	protected onIntersectChange(): void {
+		this.scrollRender.updateOffset();
 	}
 }

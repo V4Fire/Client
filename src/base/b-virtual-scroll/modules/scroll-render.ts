@@ -137,6 +137,11 @@ export default class ScrollRender {
 	protected windowSize: Size = {width: 0, height: 0};
 
 	/**
+	 * Element top offset
+	 */
+	protected offsetTop: number = 0;
+
+	/**
 	 * Async instance
 	 */
 	protected get async(): Async<bVirtualScroll> {
@@ -223,6 +228,8 @@ export default class ScrollRender {
 			after: new Set(['initComponentRender']),
 			fn: () => {
 				this.range = new Range(0, ctx.realElementsSize);
+
+				this.updateOffset();
 				this.calculateSizes();
 				this.updateRange();
 
@@ -302,12 +309,31 @@ export default class ScrollRender {
 		return $a.promise(new Promise((res) => {
 			$a.requestAnimationFrame(() => {
 				this.state = ScrollRenderState.waitRender;
+
+				this.updateOffset();
 				this.calculateSizes();
 				hard && this.updateRange();
+
 				res();
 
 			}, {label: $$.reInitRaf, group: this.asyncGroup});
 		}), {label: $$.reInit, group: this.asyncGroup});
+	}
+
+	/**
+	 * Initializes offset top of component
+	 */
+	updateOffset(): void {
+		const
+			{component} = this,
+			{$el} = component;
+
+		if (!$el) {
+			return;
+		}
+
+		const {top} = $el.getPosition();
+		this.offsetTop = top;
 	}
 
 	/**
@@ -360,8 +386,8 @@ export default class ScrollRender {
 	 */
 	protected updateRange(): void {
 		const
-			{scrollRoot, scrollProp, scrollPosition, range, component, currentAnchor} = this,
-			scrollValue = scrollRoot[scrollProp],
+			{scrollRoot, scrollProp, scrollPosition, range, component, offsetTop, currentAnchor} = this,
+			scrollValue = scrollRoot[scrollProp] - offsetTop,
 			diff = scrollValue - scrollPosition;
 
 		this.scrollDirection = Math.sign(diff);
@@ -474,7 +500,7 @@ export default class ScrollRender {
 	 */
 	protected renderItems(): RenderedItems {
 		const
-			{max, component, columns, range, scrollPosition, items, componentRender, refs} = this;
+			{max, component, columns, range, scrollPosition, items, componentRender} = this;
 
 		const
 			itemsToRender: [RenderItem, number][] = [],
