@@ -799,13 +799,13 @@ export default class ScrollRender {
 	 */
 	protected findAnchoredItem(diff: number = 0): AnchoredItem {
 		const
-			{max, currentAnchor, items, tombstoneSize, columns, sizeProp} = this;
+			{max, currentAnchor, items, tombstoneSize, columns, sizeProp, offsetTop} = this;
 
 		if (diff === 0) {
 			return currentAnchor;
 		}
 
-		diff += currentAnchor.offset;
+		diff += currentAnchor.offset - offsetTop;
 
 		let
 			{index: i} = currentAnchor,
