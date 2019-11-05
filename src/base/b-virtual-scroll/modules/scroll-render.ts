@@ -375,10 +375,6 @@ export default class ScrollRender {
 			group: this.asyncGroup,
 			join: false
 		});
-
-		if (this.component.handleFontsReady) {
-			document.fonts.ready.then(this.onResize.bind(this));
-		}
 	}
 
 	/**
@@ -692,13 +688,13 @@ export default class ScrollRender {
 		this.scrollPosition = 0;
 
 		const
-			{currentAnchor, items, range, tombstoneSize, sizeProp} = this;
+			{currentAnchor, items, range, tombstoneSize, sizeProp, offsetTop} = this;
 
 		for (let i = 0; i < currentAnchor.index; i++) {
 			this.scrollPosition += items[i][sizeProp] || tombstoneSize[sizeProp];
 		}
 
-		this.scrollPosition += currentAnchor.offset;
+		this.scrollPosition += currentAnchor.offset - offsetTop;
 		this.currentPosition = this.scrollPosition - currentAnchor.offset;
 
 		let i = currentAnchor.index;

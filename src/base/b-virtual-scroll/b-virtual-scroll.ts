@@ -138,12 +138,6 @@ export default class bVirtualScroll extends iData<RemoteData> {
 	readonly axis: Axis = 'y';
 
 	/**
-	 * If true, then the resize will be called on fonts ready
-	 */
-	@prop(Boolean)
-	readonly handleFontsReady: boolean = false;
-
-	/**
 	 * If true, then created nodes will be cached
 	 */
 	@prop({type: Boolean, watch: 'onUpdate'})
