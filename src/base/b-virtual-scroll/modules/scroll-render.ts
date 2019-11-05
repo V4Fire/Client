@@ -227,7 +227,7 @@ export default class ScrollRender {
 		ctx.meta.hooks.mounted.push({
 			after: new Set(['initComponentRender']),
 			fn: () => {
-				this.range = new Range(0, ctx.realElementsSize);
+				this.range = new Range(0, ctx.realElementsCount);
 
 				this.updateOffset();
 				this.calculateSizes();
@@ -301,7 +301,7 @@ export default class ScrollRender {
 
 		this.max = Infinity;
 		this.state = ScrollRenderState.notInitialized;
-		this.range = new Range(0, this.component.realElementsSize);
+		this.range = new Range(0, this.component.realElementsCount);
 
 		$a.clearAll({group: this.asyncGroup});
 		$a.clearAll({group: 'scroll-render-elements'});
@@ -401,12 +401,12 @@ export default class ScrollRender {
 			lastItem = this.findAnchoredItem();
 
 		if (diff < 0) {
-			range.start = Math.max(0, currentAnchor.index - component.realElementsSize);
-			range.end = lastItem.index + component.oppositeElementsSize;
+			range.start = Math.max(0, currentAnchor.index - component.realElementsCount);
+			range.end = lastItem.index + component.oppositeElementsCount;
 
 		} else {
-			range.start = Math.max(0, currentAnchor.index - component.oppositeElementsSize);
-			range.end = lastItem.index + component.realElementsSize;
+			range.start = Math.max(0, currentAnchor.index - component.oppositeElementsCount);
+			range.end = lastItem.index + component.realElementsCount;
 		}
 
 		this.render();
@@ -501,7 +501,7 @@ export default class ScrollRender {
 		const
 			itemsToRender: [RenderItem, number][] = [],
 			positions = {},
-			last = Math.floor((range.end + component.realElementsSize) / columns) * columns;
+			last = Math.floor((range.end + component.realElementsCount) / columns) * columns;
 
 		if (last > max) {
 			range.end = max;
@@ -575,7 +575,7 @@ export default class ScrollRender {
 			{refs, scrollEnd, currentPosition, sizeProp, component} = this;
 
 		const
-			val =  Math.max(scrollEnd, currentPosition + component.scrollRunnerMin);
+			val =  Math.max(scrollEnd, currentPosition + component.scrollRunnerOffset);
 
 		if (val === this.cachedContainerSize) {
 			return;
@@ -592,11 +592,11 @@ export default class ScrollRender {
 		const
 			{scrollEnd, component, currentPosition, scrollProp, refs} = this;
 
-		if (this.scrollEnd > currentPosition + component.scrollRunnerMin) {
+		if (this.scrollEnd > currentPosition + component.scrollRunnerOffset) {
 			return;
 		}
 
-		this.scrollEnd = Math.max(scrollEnd, currentPosition + component.scrollRunnerMin);
+		this.scrollEnd = Math.max(scrollEnd, currentPosition + component.scrollRunnerOffset);
 		refs.scrollRunner.style.transform = `translate3d(0, ${this.scrollEnd.px}, 0)`;
 		refs.container[scrollProp] = this.scrollPosition;
 	}
@@ -742,10 +742,6 @@ export default class ScrollRender {
 	protected clearItem(item: RenderItem): void {
 		if (!item.node) {
 			return;
-		}
-
-		if (this.component.recycle && !this.component.cacheNode) {
-			this.componentRender.recycleNode(item.node);
 		}
 
 		if (!item.destructor) {

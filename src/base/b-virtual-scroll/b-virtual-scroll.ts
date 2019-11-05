@@ -11,7 +11,6 @@ import symbolGenerator from 'core/symbol';
 import {
 
 	RemoteData,
-	RecycleFn,
 	OptionProps,
 	RequestQuery,
 	RequestFn,
@@ -78,28 +77,10 @@ export default class bVirtualScroll extends iData<RemoteData> {
 	readonly optionKey!: (el: unknown, i: number) => string | number;
 
 	/**
-	 * Height of option
-	 */
-	@prop({type: Number, watch: 'onUpdate', required: false})
-	readonly optionHeight?: number;
-
-	/**
 	 * Amount of columns
 	 */
 	@prop({type: Number, watch: 'onUpdate', validator: isNatural})
 	readonly columns: number = 1;
-
-	/**
-	 * Amount of nodes at the current time
-	 */
-	@prop({type: Number,  watch: 'onUpdate', validator: isNatural})
-	readonly realElementsSize: number = 20;
-
-	/**
-	 * Amount of nodes at the current time that are drawn in the opposite direction from the scroll
-	 */
-	@prop({type: Number, watch: 'onUpdate', validator: isNatural})
-	readonly oppositeElementsSize: number = 10;
 
 	/**
 	 * The number of components that could be cached
@@ -120,16 +101,28 @@ export default class bVirtualScroll extends iData<RemoteData> {
 	readonly dropCacheSafeZone: number = 10;
 
 	/**
+	 * Amount of nodes at the current time
+	 */
+	@prop({type: Number,  watch: 'onUpdate', validator: isNatural})
+	readonly realElementsCount: number = 20;
+
+	/**
+	 * Amount of nodes at the current time that are drawn in the opposite direction from the scroll
+	 */
+	@prop({type: Number, watch: 'onUpdate', validator: isNatural})
+	readonly oppositeElementsCount: number = 10;
+
+	/**
 	 * Number of tombstones
 	 */
 	@prop({type: Number, watch: 'onUpdate'})
-	readonly tombstoneSize: number = 10;
+	readonly tombstoneCount: number = 10;
 
 	/**
 	 * The number of pixels of additional length to allow scrolling to
 	 */
 	@prop({type: Number, watch: 'onUpdate'})
-	readonly scrollRunnerMin: number = 0;
+	readonly scrollRunnerOffset: number = 0;
 
 	/**
 	 * Scroll axis
@@ -150,13 +143,6 @@ export default class bVirtualScroll extends iData<RemoteData> {
 	readonly containerSize: boolean = true;
 
 	/**
-	 * If true, then created nodes will be reused
-	 *   *) Works only with recycleFn defined
-	 */
-	@prop({type: Boolean, watch: 'onUpdate'})
-	readonly recycle: boolean = false;
-
-	/**
 	 * Function that returns a scroll root
 	 */
 	@prop({type: Function, watch: 'onUpdate', required: false})
@@ -167,6 +153,10 @@ export default class bVirtualScroll extends iData<RemoteData> {
 	 */
 	@prop({type: Function, watch: 'reload', required: false})
 	readonly requestQuery?: RequestQuery;
+
+	/** @override */
+	@prop({type: [Object, Array], watch: 'reload', required: false})
+	readonly request?: iData['request'];
 
 	/**
 	 * If, when calling a function, it returns true, then the component will be able to request additional data
@@ -179,12 +169,6 @@ export default class bVirtualScroll extends iData<RemoteData> {
 	 */
 	@prop({type: Function, watch: 'reload'})
 	readonly shouldContinueRequest: RequestFn = defaultShouldContinueRequest;
-
-	/**
-	 * Create component function
-	 */
-	@prop({type: Function, required: false})
-	readonly recycleFn?: RecycleFn;
 
 	/** @inheritDoc */
 	static readonly mods: ModsDecl = {
@@ -206,8 +190,13 @@ export default class bVirtualScroll extends iData<RemoteData> {
 
 	/** @override */
 	protected get requestParams(): RequestParams {
+		const params = this.requestQuery ? this.requestQuery(getRequestParams()) : {};
+
 		return {
-			get: this.requestQuery ? this.requestQuery(getRequestParams()) : {}
+			get: {
+				...params,
+				...this.request
+			}
 		};
 	}
 
@@ -294,6 +283,11 @@ export default class bVirtualScroll extends iData<RemoteData> {
 		super.initModEvents();
 		this.sync.mod('containerSize', 'containerSize', String);
 		this.sync.mod('axis', 'axis', String);
+	}
+
+	/** @override */
+	protected syncRequestParamsWatcher(): Promise<void> {
+		return Promise.resolve();
 	}
 
 	/**

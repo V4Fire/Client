@@ -7,7 +7,6 @@
  */
 
 import { RequestMoreParams } from 'base/b-virtual-scroll/modules/interface';
-import bVirtualScroll from 'base/b-virtual-scroll/b-virtual-scroll';
 
 /**
  * Default value for `optionProps` prop
@@ -30,14 +29,6 @@ export function defaultShouldRequest(v: RequestMoreParams): boolean {
  */
 export function defaultShouldContinueRequest(v: RequestMoreParams): boolean {
 	return !v.isLastEmpty;
-}
-
-/**
- * Default value for `shouldUpdate` prop
- * @param ctx
- */
-export function defaultShouldUpdate(ctx: bVirtualScroll): boolean {
-	return false;
 }
 
 // tslint:disable-next-line: completed-docs

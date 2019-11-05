@@ -15,19 +15,8 @@ export type Axis = keyof typeof axis;
 
 export type RequestQuery<T extends unknown = unknown> = (params: RequestMoreParams<T>) => Dictionary;
 export type RequestFn<T extends unknown = unknown> = (params: RequestMoreParams<T>) => boolean;
-export type ShouldUpdateFn = (ctx: bVirtualScroll) => boolean;
-
-export type RecycleFn = (params: RecycleParams) => HTMLElement;
 
 export type RenderList = [RenderItem, number][];
-
-export interface RecycleParams<T extends unknown = unknown, CTX extends unknown = unknown> {
-	node: HTMLElement;
-	data: T;
-	i: number;
-	ctx: bVirtualScroll;
-	optionCtx?: CTX;
-}
 
 export interface OptionEl<T extends unknown = unknown> {
 	current: T;

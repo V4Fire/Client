@@ -13,7 +13,7 @@ import iBlock from 'super/i-block/i-block';
 import ScrollRender from 'base/b-virtual-scroll/modules/scroll-render';
 import bVirtualScroll from 'base/b-virtual-scroll/b-virtual-scroll';
 
-import { RenderItem, RecycleParams, RenderList } from 'base/b-virtual-scroll/modules/interface';
+import { RenderItem, RenderList } from 'base/b-virtual-scroll/modules/interface';
 
 export const
 	$$ = symbolGenerator();
@@ -43,11 +43,6 @@ export default class ComponentRender {
 	 * Tombstones elements
 	 */
 	protected recycleTombstones: HTMLElement[] = [];
-
-	/**
-	 * Recycle elements
-	 */
-	protected recycleNodes: HTMLElement[] = [];
 
 	/**
 	 * Link to the tombstone node
@@ -181,14 +176,6 @@ export default class ComponentRender {
 		return node;
 	}
 
-	/**
-	 * Saves an element for recycle later
-	 * @param node
-	 */
-	recycleNode(node: HTMLElement): void {
-		this.recycleNodes.push(node);
-	}
-
 	/** @see bVirtualScroll.getOptionKey */
 	getOptionKey(data: unknown): string {
 		// @ts-ignore (access)
@@ -312,7 +299,6 @@ export default class ComponentRender {
 				});
 
 				this.recycleTombstones = [];
-				this.recycleTombstones = [];
 				this.elementToClone = undefined;
 				this.nodesCache = {};
 				res();
@@ -355,7 +341,6 @@ export default class ComponentRender {
 				return;
 			}
 
-			this.recycleNode(node);
 			item.node = undefined;
 			delete this.nodesCache[id];
 		};
@@ -454,11 +439,8 @@ export default class ComponentRender {
 	 * @param items
 	 */
 	protected createComponents(list: RenderList, items: RenderItem[]): HTMLElement[] {
-		let
-			res: HTMLElement[] = [];
-
 		const
-			{component: c, columns, recycleNodes} = this;
+			{component: c, columns} = this;
 
 		const render = (children: Dictionary[]) =>
 			c.vdom.render(children.map((el) => this.createElement(c.option, el))) as HTMLElement[];
@@ -470,7 +452,6 @@ export default class ComponentRender {
 					class: [this.optionClass].concat(props.class || []),
 					style: {
 						width: `${(100 / columns)}%`,
-						height: c.optionHeight ? c.optionHeight.px : '',
 						...props.style
 					}
 				}
@@ -483,51 +464,17 @@ export default class ComponentRender {
 			next: items[i + 1] && items[i + 1].data
 		});
 
-		if (c.recycleFn) {
-			for (let i = 0; i < list.length; i++) {
-				const
-					[item, index] = list[i];
+		const
+			children: Dictionary[] = [];
 
-				let
-					node = recycleNodes.pop() || this.clonedElement;
-
-				if (!node) {
-					const r = render([createChildren(c.optionProps(getOptionEl(item.data, index), index))])[0];
-					this.elementToClone = r;
-					node = <HTMLElement>this.clonedElement;
-				}
-
-				res.push(c.recycleFn(this.getRenderFnParams(node, getOptionEl(item.data, index), index)));
-			}
-
-		} else {
+		for (let i = 0; i < list.length; i++) {
 			const
-				children: Dictionary[] = [];
+				[item, index] = list[i],
+				props = c.optionProps(getOptionEl(item.data, index), index);
 
-			for (let i = 0; i < list.length; i++) {
-				const
-					[item, index] = list[i],
-					props = c.optionProps(getOptionEl(item.data, index), index);
-
-				children.push(createChildren(props));
-			}
-
-			res = render(children);
+			children.push(createChildren(props));
 		}
 
-		return res;
-	}
-
-	/**
-	 * Returns a render params
-	 */
-	protected getRenderFnParams(node: HTMLElement, data: unknown, i: number): RecycleParams {
-		return {
-			optionCtx: this.optionCtx,
-			ctx: this.component,
-			node,
-			data,
-			i
-		};
+		return render(children);
 	}
 }
