@@ -382,8 +382,8 @@ export default class ScrollRender {
 	 */
 	protected updateRange(): void {
 		const
-			{scrollRoot, scrollProp, scrollPosition, range, component, offsetTop, currentAnchor} = this,
-			scrollValue = scrollRoot[scrollProp] - offsetTop,
+			{scrollRoot, scrollProp, scrollPosition, range, component, currentAnchor} = this,
+			scrollValue = scrollRoot[scrollProp],
 			diff = scrollValue - scrollPosition;
 
 		this.scrollDirection = Math.sign(diff);
@@ -688,13 +688,13 @@ export default class ScrollRender {
 		this.scrollPosition = 0;
 
 		const
-			{currentAnchor, items, range, tombstoneSize, sizeProp, offsetTop} = this;
+			{currentAnchor, items, range, tombstoneSize, sizeProp} = this;
 
 		for (let i = 0; i < currentAnchor.index; i++) {
 			this.scrollPosition += items[i][sizeProp] || tombstoneSize[sizeProp];
 		}
 
-		this.scrollPosition += currentAnchor.offset - offsetTop;
+		this.scrollPosition += currentAnchor.offset;
 		this.currentPosition = this.scrollPosition - currentAnchor.offset;
 
 		let i = currentAnchor.index;
