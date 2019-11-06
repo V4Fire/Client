@@ -11,6 +11,16 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-beta.206 (2019-11-06)
+
+#### :bug: Bug Fix
+
+* Fixed session providing `models/modules/session`
+
+#### :house: Internal
+
+* Updated dependencies: @v4fire/core@3.0.0-beta.86
+
 ## v3.0.0-beta.205 (2019-10-15)
 
 #### :bug: Bug Fix
