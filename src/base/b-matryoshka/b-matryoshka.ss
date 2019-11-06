@@ -12,10 +12,13 @@
 
 - template index() extends ['i-block'].index
 	- block body
-		< template v-for = el in asyncRender.iterate(options, renderChunks)
+		< template v-for = el in asyncRender.iterate(options, renderChunks, { &
+			filter: (item) => {
+				return item.parent ? listFilter(item.parent) : true
+			}
+		}) .
 			< . &
-				:ref = 'matryoshka-' + el.id |
-
+				:-id = 'matryoshka-' + el.id |
 				:class = provide.elClasses({matryoshka: {
 					level: el.level,
 					folded
@@ -26,7 +29,7 @@
 						- block fold
 							< template v-if = Boolean(field.get('children.length', el))
 								< template v-if = vdom.getSlot('fold')
-									+= self.slot('fold', {':option': 'getFoldingProps(el)'})
+									+= self.slot('fold', {':params': 'getFoldingProps(el)'})
 
 								< .&__fold &
 									v-else |
@@ -38,14 +41,10 @@
 
 				- block children
 					< .&__children v-if = field.get('children.length', el)
-						< template v-for = e in asyncRender.iterate([el], 1, { &
-							filter: () => listFilter(el.id)
-						}) .
-
-							< b-matryoshkas.&__child &
-								:options = e.children |
-								:getOptionProps = getOptionProps |
-								:v-attrs = getNestedDollProps()
-							.
-								< template slot-scope = o
-									+= self.slot('default', {':option': 'o.option'})
+						< @b-matryoshka.&__child &
+							:options = el.children |
+							:getOptionProps = getOptionProps |
+							:v-attrs = getNestedDollProps()
+						.
+							< template slot-scope = o
+								+= self.slot('default', {':option': 'o.option'})

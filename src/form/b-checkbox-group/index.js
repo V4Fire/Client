@@ -8,4 +8,4 @@
 
 package('b-checkbox-group')
 	.extends('i-input')
-	.dependencies('b-checkbox', 'b-radio-button', 'b-matryoshkas');
+	.dependencies('b-checkbox', 'b-radio-button', 'b-matryoshka');

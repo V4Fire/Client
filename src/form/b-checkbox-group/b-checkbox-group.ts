@@ -61,7 +61,7 @@ export default class bCheckboxGroup<
 	readonly option: string = 'b-checkbox';
 
 	/**
-	 * Fold all nested items
+	 * Fold by default for all nested items
 	 */
 	@prop(Boolean)
 	readonly folded: boolean = true;
@@ -203,7 +203,7 @@ export default class bCheckboxGroup<
 	 * True, if the tree structure is in progress of the recalculating
 	 */
 	@system()
-	protected reflow: boolean = false;
+	protected reformat: boolean = false;
 
 	/**
 	 * Sets a checkbox value to the group
@@ -444,11 +444,11 @@ export default class bCheckboxGroup<
 			return;
 		}
 
-		if (!this.reflow && el.id && Object.isObject(this.valueStore) && this.optionsMap) {
+		if (!this.reformat && el.id && Object.isObject(this.valueStore) && this.optionsMap) {
 			const
 				item = <Option>this.optionsMap[el.id];
 
-			this.reflow = true;
+			this.reformat = true;
 
 			if (el.mods.halfChecked === 'true') {
 				el.setMod('half-checked', false);
@@ -470,7 +470,7 @@ export default class bCheckboxGroup<
 				}
 
 				resolve();
-			}).then(() => this.reflow = false);
+			}).then(() => this.reformat = false);
 		}
 	}
 
@@ -497,8 +497,10 @@ export default class bCheckboxGroup<
 				itemElement = this.$refs[`option-${ch[i].id}`],
 				method = `${value ? '' : 'un'}check`;
 
-			itemElement.setMod('half-checked', value);
-			itemElement[method]();
+			if (itemElement) {
+				itemElement.setMod('half-checked', value);
+				itemElement[method]();
+			}
 		}
 	}
 

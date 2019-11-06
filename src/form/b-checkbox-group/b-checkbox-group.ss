@@ -22,7 +22,7 @@
 
 		- block list
 			< .&__list
-				< b-matryoshkas &
+				< b-matryoshka &
 					:options = options |
 					:getOptionProps = getOptionProps |
 					:folded = folded
@@ -34,9 +34,10 @@
 						< component &
 							v-else |
 							:ref = 'option-' + o.option.id |
+							:renderKey = o.option.id |
+							:value = o.option.value |
 							:instanceOf = bCheckbox |
 							:is = option |
 							:p = o.option |
-							:key = o.option.id || o.option.name |
 							:v-attrs = getOptionProps(o.option)
 						.

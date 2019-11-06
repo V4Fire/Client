@@ -6,14 +6,15 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import iBlock, { component, prop } from 'super/i-block/i-block';
+import iBlock, { component, prop, field } from 'super/i-block/i-block';
 
 export interface Doll extends Dictionary {
 	children: Doll[];
+	level?: number;
 }
 
 @component({flyweight: true})
-export default class bMatryoshkas<T> extends iBlock {
+export default class bMatryoshka extends iBlock {
 	/**
 	 * Array for recursively calling
 	 */
@@ -39,6 +40,25 @@ export default class bMatryoshkas<T> extends iBlock {
 	readonly folded: boolean = false;
 
 	/**
+	 * Prop for passing the first level recursive component
+	 */
+	@prop({type: Object, required: false})
+	readonly firstLevelDollProp?: bMatryoshka;
+
+	/**
+	 * Link to the first component
+	 */
+	@field({init: (o) => o.sync.link((val) => {
+		if (!val) {
+			return o;
+		}
+
+		return val;
+	})})
+
+	protected firstLevelDoll!: bMatryoshka;
+
+	/**
 	 * Returns props data for the fold control
 	 */
 	protected getFoldingProps(el: Doll): Dictionary {
@@ -52,7 +72,8 @@ export default class bMatryoshkas<T> extends iBlock {
 	 */
 	protected getNestedDollProps(): Dictionary {
 		const opts = {
-			folded: this.folded
+			folded: this.folded,
+			firstLevelDollProp: this.firstLevelDoll
 		};
 
 		if (this.$listeners.fold) {
@@ -66,15 +87,15 @@ export default class bMatryoshkas<T> extends iBlock {
 	 * Returns folded mod for the specified doll id
 	 * @param id
 	 */
-	protected isFoldedMod(id: string): boolean {
+	protected getFoldedMod(id: string): CanUndef<string> {
 		const
-			target = <[HTMLElement]>this.$refs[`matryoshka-${id}`];
+			target = this.$parent && this.$parent.$el.querySelector(`[data-id=matryoshka-${id}]`);
 
 		if (!target) {
-			return true;
+			return;
 		}
 
-		return (this.block.getElMod(target[0], 'matryoshka', 'folded') || 'false') === 'false';
+		return this.firstLevelDoll.block.getElMod(target, 'matryoshka', 'folded');
 	}
 
 	/**
@@ -82,7 +103,11 @@ export default class bMatryoshkas<T> extends iBlock {
 	 * @param id
 	 */
 	protected listFilter(id: string): boolean {
-		return !this.isFoldedMod(id);
+		if (this.firstLevelDoll.hook !== 'mounted') {
+			return false;
+		}
+
+		return this.getFoldedMod(id) === 'false';
 	}
 
 	/**
@@ -93,10 +118,12 @@ export default class bMatryoshkas<T> extends iBlock {
 	 */
 	protected onFoldingClick(el: Doll): void {
 		const
-			[target] = <[HTMLElement]>this.$refs[`matryoshka-${el.id}`],
-			newVal = this.isFoldedMod(<string>el.id);
+			target = this.$parent && <HTMLElement>(this.$parent.$el.querySelector(`[data-id=matryoshka-${el.id}]`)),
+			newVal = this.getFoldedMod(<string>el.id) === 'false';
 
-		this.block.setElMod(target, 'matryoshka', 'folded', newVal);
-		this.emit('fold', target, el, newVal);
+		if (target) {
+			this.firstLevelDoll.block.setElMod(target, 'matryoshka', 'folded', newVal);
+			this.emit('fold', target, el, newVal);
+		}
 	}
 }
