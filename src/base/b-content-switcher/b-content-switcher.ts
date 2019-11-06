@@ -92,7 +92,7 @@ export default class bContentSwitcher extends iBlock {
 	readonly semaphoreKeysProp?: Dictionary;
 
 	/** @see semaphoreKeys */
-	@system((o) => o.sync.link('semaphoreKeysProp', (v) => ({...v})))
+	@system((o) => o.sync.link('semaphoreKeysProp', (v: Dictionary) => ({...v})))
 	semaphoreKeys?: Dictionary;
 
 	/**

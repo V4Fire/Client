@@ -378,7 +378,7 @@ export default class Provider {
 	 * @param url - request url
 	 * @param opts - request params
 	 */
-	resolver<T = unknown>(url: string, opts: CreateRequestOpts<T>): ResolverResult {
+	resolver<T = unknown>(url: string, opts: MiddlewareParams<T>): ResolverResult {
 		return undefined;
 	}
 
