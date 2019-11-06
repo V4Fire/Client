@@ -55,10 +55,14 @@ export default class Session extends Provider {
 		const
 			session = await s.get();
 
-		return {
-			[this.authHeader]: session.auth && this.authPrfx + session.auth,
-			[this.csrfHeader]: session.csrf
-		};
+		if (Object.isString(session.auth)) {
+			return {
+				[this.authHeader]: session.auth && this.authPrfx + session.auth,
+				[this.csrfHeader]: session.csrf
+			};
+		}
+
+		return {};
 	}
 
 	/** @override */
