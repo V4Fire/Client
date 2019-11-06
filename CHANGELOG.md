@@ -11,7 +11,7 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v3.0.0-beta.206 (2019-10-x)
+## v3.0.0-beta.207 (2019-11-x)
 
 #### :boom: Breaking Change
 
@@ -24,6 +24,16 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 * [Added `b-virtual-scroll` component](https://github.com/V4Fire/Client/pull/137)
 * [Added `appendChild` method to the DOM module](https://github.com/V4Fire/Client/pull/137)
 * [Added `placeholderHidden` prop to `b-content-switcher`](https://github.com/V4Fire/Client/pull/137)
+
+## v3.0.0-beta.206 (2019-11-06)
+
+#### :bug: Bug Fix
+
+* Fixed session providing `models/modules/session`
+
+#### :house: Internal
+
+* Updated dependencies: @v4fire/core@3.0.0-beta.86, webpack@4.41.2, autoprefixer@9.7.1, eslint@6.6.0
 
 ## v3.0.0-beta.205 (2019-10-15)
 
