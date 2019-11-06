@@ -67,7 +67,7 @@ export default class bCheckboxGroup<
 	readonly folded: boolean = true;
 
 	/**
-	 * Function to convert names
+	 * Function to convert field names
 	 */
 	@prop({type: Function, required: false})
 	readonly fieldsConverter?: (el: Option) => Option;
