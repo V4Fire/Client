@@ -19,7 +19,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :house: Internal
 
-* Updated dependencies: @v4fire/core@3.0.0-beta.86
+* Updated dependencies: @v4fire/core@3.0.0-beta.86, webpack@4.41.2, autoprefixer@9.7.1, eslint@6.6.0
 
 ## v3.0.0-beta.205 (2019-10-15)
 
