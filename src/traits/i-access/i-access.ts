@@ -59,7 +59,7 @@ export default abstract class iAccess {
 
 		$e.on('block.mod.*.disabled.*', (e: ModEvent) => {
 			if (e.value === 'false' || e.type === 'remove') {
-				$a.off({group: 'blockOnDisable'});
+				$a.off({group: 'componentOnDisable'});
 
 				if (e.type !== 'remove' || e.reason === 'removeMod') {
 					component.emit('enable');
@@ -74,7 +74,7 @@ export default abstract class iAccess {
 				};
 
 				$a.on(component.$el, 'click mousedown touchstart keydown input change scroll', handler, {
-					group: 'blockOnDisable',
+					group: 'componentOnDisable',
 					options: {
 						capture: true
 					}

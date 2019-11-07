@@ -13,7 +13,7 @@
 - template index() extends ['i-data'].index
 	- block body
 		- super
-		< .&__tooltip v-if = showTooltip && permission !== 'granted' && blockStatus === 'ready'
+		< .&__tooltip v-if = showTooltip && permission !== 'granted' && isReady
 			{{ title + ` needs your permission to` }}
 
 			< a:void.&__enable @click = requestPermissions()

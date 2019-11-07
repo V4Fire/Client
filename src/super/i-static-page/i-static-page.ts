@@ -216,7 +216,7 @@ export default abstract class iStaticPage<
 
 		const
 			c = (component.globalName || component.componentName).dasherize(),
-			mod = this.provide.fullBlockName(c, name, value).replace(/_/g, '-');
+			mod = this.provide.fullComponentName(c, name, value).replace(/_/g, '-');
 
 		name = `${c}_${name.camelize(false)}`;
 		value = String(value).dasherize();

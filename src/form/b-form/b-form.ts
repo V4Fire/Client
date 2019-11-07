@@ -174,7 +174,7 @@ export default class bForm<T extends object = Dictionary> extends iData<T> {
 	}
 
 	/**
-	 * Clears child form blocks
+	 * Clears child form components
 	 * @emits clear()
 	 */
 	async clear(): Promise<boolean> {
@@ -198,7 +198,7 @@ export default class bForm<T extends object = Dictionary> extends iData<T> {
 	}
 
 	/**
-	 * Resets child form blocks to default
+	 * Resets child form components to default
 	 * @emits reset()
 	 */
 	async reset(): Promise<boolean> {
@@ -222,7 +222,7 @@ export default class bForm<T extends object = Dictionary> extends iData<T> {
 	}
 
 	/**
-	 * Validates child form blocks and returns an array of valid elements or false
+	 * Validates child form components and returns their or false
 	 *
 	 * @param [focusOnFail] - if true, then will be set focus to an invalid element
 	 * @emits validationStart()

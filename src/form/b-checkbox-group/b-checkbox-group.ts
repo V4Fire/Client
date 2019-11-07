@@ -124,14 +124,16 @@ export default class bCheckboxGroup<
 	};
 
 	/** @override */
-	static blockValidators: ValidatorsDecl = {
-		...iInput.blockValidators,
+	static validators: ValidatorsDecl = {
+		...iInput.validators,
+
+		//#if runtime has iInput/validators
 		async required({msg, showMsg = true}: ValidatorParams): Promise<boolean> {
 			const
 				ctx: bCheckboxGroup = <any>this,
 				value = await ctx.formValue;
 
-			if (Object.isArray(value) ? !value.length : value == null) {
+			if (Object.isArray(value) ? !value.length : !value) {
 				const
 					els = await ctx.elements;
 
@@ -145,6 +147,7 @@ export default class bCheckboxGroup<
 
 			return true;
 		}
+		//#endif
 	};
 
 	/** @override */

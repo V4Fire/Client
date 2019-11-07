@@ -124,11 +124,11 @@ export default abstract class iInput<
 	prevValue?: V;
 
 	/**
-	 * Link to the component validators
+	 * Link to the component validators map
 	 */
 	@p({replace: false})
-	get blockValidators(): typeof iInput['blockValidators'] {
-		return (<typeof iInput>this.instance.constructor).blockValidators;
+	get validatorsMap(): typeof iInput['validators'] {
+		return (<typeof iInput>this.instance.constructor).validators;
 	}
 
 	/** @override */
@@ -184,7 +184,7 @@ export default abstract class iInput<
 
 			const
 				test = (<Array<V | Function | RegExp>>[]).concat(this.disallow || []),
-				value = await this[this.blockValueField];
+				value = await this[this.valueKey];
 
 			const match = (el) => {
 				if (Object.isFunction(el)) {
@@ -274,7 +274,7 @@ export default abstract class iInput<
 	/**
 	 * Component validators
 	 */
-	static blockValidators: ValidatorsDecl = {
+	static validators: ValidatorsDecl = {
 		//#if runtime has iInput/validators
 
 		async required({msg, showMsg = true}: ValidatorParams): Promise<ValidatorResult<boolean>> {
@@ -290,10 +290,10 @@ export default abstract class iInput<
 	};
 
 	/**
-	 * Component value field name
+	 * Component value key name
 	 */
 	@field({replace: false})
-	protected readonly blockValueField: string = 'value';
+	protected readonly valueKey: string = 'value';
 
 	/** @override */
 	protected readonly $refs!: {input?: HTMLInputElement};
@@ -363,8 +363,8 @@ export default abstract class iInput<
 	@p({replace: false})
 	@wait('ready')
 	async clear(): Promise<boolean> {
-		if (this[this.blockValueField]) {
-			this[this.blockValueField] = undefined;
+		if (this[this.valueKey]) {
+			this[this.valueKey] = undefined;
 			this.async.clearAll({group: 'validation'});
 			await this.nextTick();
 			this.removeMod('valid');
@@ -382,8 +382,8 @@ export default abstract class iInput<
 	@p({replace: false})
 	@wait('ready')
 	async reset(): Promise<boolean> {
-		if (this[this.blockValueField] !== this.default) {
-			this[this.blockValueField] = this.default;
+		if (this[this.valueKey] !== this.default) {
+			this[this.valueKey] = this.default;
 			this.async.clearAll({group: 'validation'});
 			await this.nextTick();
 			this.removeMod('valid');
@@ -458,7 +458,7 @@ export default abstract class iInput<
 				isArray = Object.isArray(el),
 				isObject = !isArray && Object.isObject(el),
 				key = <string>(isObject ? Object.keys(el)[0] : isArray ? el[0] : el),
-				validator = this.blockValidators[key];
+				validator = this.validatorsMap[key];
 
 			if (!validator) {
 				throw new Error(`Validator "${key}" is not defined`);
@@ -526,7 +526,7 @@ export default abstract class iInput<
 			return;
 		}
 
-		return this[this.blockValueField] = this.convertDBToComponent(this.db);
+		return this[this.valueKey] = this.convertDBToComponent(this.db);
 	}
 
 	/**
@@ -550,22 +550,22 @@ export default abstract class iInput<
 	 * @emits change(value)
 	 */
 	@p({replace: false})
-	protected onBlockValueChange(newValue: V, oldValue: CanUndef<V>): void {
+	protected onValueChange(newValue: V, oldValue: CanUndef<V>): void {
 		this.prevValue = oldValue;
 		if (newValue !== oldValue || newValue && typeof newValue === 'object') {
-			this.emit('change', this[this.blockValueField]);
+			this.emit('change', this[this.valueKey]);
 		}
 	}
 
 	/**
-	 * Initializes a default value (if needed) for the blockValue field
-	 * @param value - blockValue field value
+	 * Initializes a default value (if needed) for the valueKey field
+	 * @param value - valueKey field value
 	 */
 	@p({replace: false})
 	protected initDefaultValue(value?: unknown): V {
 		const
 			i = this.instance,
-			k = i.blockValueField,
+			k = i.valueKey,
 			f = this.$activeField;
 
 		if (value !== undefined || f !== k && f !== `${k}Store`) {
@@ -581,7 +581,7 @@ export default abstract class iInput<
 	 */
 	@p({hook: 'created', replace: false})
 	protected initValueEvents(): void {
-		this.watch(this.blockValueField, this.onBlockValueChange);
+		this.watch(this.valueKey, this.onValueChange);
 		this.on('actionChange', () => this.validate());
 	}
 

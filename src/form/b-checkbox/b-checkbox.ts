@@ -9,7 +9,19 @@
 import symbolGenerator from 'core/symbol';
 import iSize from 'traits/i-size/i-size';
 
-import iInput, { component, prop, ModsDecl, ModEvent } from 'super/i-input/i-input';
+import iInput, {
+
+	component,
+	prop,
+
+	ModsDecl,
+	ModEvent,
+	ValidatorsDecl,
+	ValidatorParams,
+	ValidatorResult
+
+} from 'super/i-input/i-input';
+
 export * from 'super/i-input/i-input';
 
 export type Value = boolean;
@@ -75,6 +87,22 @@ export default class bCheckbox<
 			'true',
 			'false'
 		]
+	};
+
+	/** @override */
+	static validators: ValidatorsDecl = {
+		//#if runtime has iInput/validators
+
+		async required({msg, showMsg = true}: ValidatorParams): Promise<ValidatorResult<boolean>> {
+			if (!await this.formValue) {
+				this.setValidationMsg(this.getValidatorMsg(false, msg, t`Required field`), showMsg);
+				return false;
+			}
+
+			return true;
+		}
+
+		//#endif
 	};
 
 	/** @override */

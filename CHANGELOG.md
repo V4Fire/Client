@@ -11,6 +11,17 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-beta.208 (2019-11-07)
+
+#### :boom: Breaking Change
+
+* Renamed `static blockValidators` -> `validators` (`iBlock`)
+* Renamed `blockValidators` -> `validatorsMap` (`iBlock`)
+* Renamed `blockClasses` -> `componentClasses` (`iBlock/modules/provide`)
+* Renamed `fullBlockName` -> `fullComponentName` (`iBlock/modules/provide`)
+* Renamed `data-init-block` -> `data-root-component` (`iStaticPage`)
+* Renamed `data-block-params` -> `data-root-component-params` (`iStaticPage`)
+
 ## v3.0.0-beta.207 (2019-11-07)
 
 #### :rocket: New Feature
