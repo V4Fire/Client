@@ -12,7 +12,7 @@
 
 - template index() extends ['i-block'].index
 	- block body
-		< template v-for = el in firstLevelDoll.asyncRender.iterate(options, renderChunks, { &
+		< template v-for = el in firstLevel.asyncRender.iterate(options, firstLevel.renderChunks, { &
 			filter: (item) => item.parent ? listFilter(item.parent) : true
 		}) .
 			< . &
@@ -39,7 +39,7 @@
 
 				- block children
 					< .&__children v-if = field.get('children.length', el)
-						< @b-matryoshka.&__child &
+						< b-matryoshka.&__child &
 							:options = el.children |
 							:getOptionProps = getOptionProps |
 							:v-attrs = getNestedDollProps()

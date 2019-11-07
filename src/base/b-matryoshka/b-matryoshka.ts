@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import iBlock, { component, prop, field } from 'super/i-block/i-block';
+import iBlock, { component, prop } from 'super/i-block/i-block';
 
 export interface Doll extends Dictionary {
 	children: Doll[];
@@ -40,23 +40,11 @@ export default class bMatryoshka extends iBlock {
 	readonly folded: boolean = false;
 
 	/**
-	 * Prop for passing the first level recursive component
+	 * Link to the first level component
 	 */
-	@prop({type: Object, required: false})
-	readonly firstLevelDollProp?: bMatryoshka;
-
-	/**
-	 * Link to the first component
-	 */
-	@field({init: (o) => o.sync.link((val) => {
-		if (!val) {
-			return o;
-		}
-
-		return val;
-	})})
-
-	protected firstLevelDoll!: bMatryoshka;
+	protected get firstLevel(): bMatryoshka {
+		return this.isFlyweight ? <bMatryoshka>this.$normalParent : this;
+	}
 
 	/**
 	 * Returns props data for the fold control
@@ -72,8 +60,7 @@ export default class bMatryoshka extends iBlock {
 	 */
 	protected getNestedDollProps(): Dictionary {
 		const opts = {
-			folded: this.folded,
-			firstLevelDollProp: this.firstLevelDoll
+			folded: this.folded
 		};
 
 		if (this.$listeners.fold) {
@@ -95,7 +82,7 @@ export default class bMatryoshka extends iBlock {
 			return;
 		}
 
-		return this.firstLevelDoll.block.getElMod(target, 'matryoshka', 'folded');
+		return this.firstLevel.block.getElMod(target, 'matryoshka', 'folded');
 	}
 
 	/**
@@ -103,7 +90,7 @@ export default class bMatryoshka extends iBlock {
 	 * @param id
 	 */
 	protected listFilter(id: string): boolean {
-		if (this.firstLevelDoll.hook !== 'mounted') {
+		if (this.firstLevel.hook !== 'mounted') {
 			return false;
 		}
 
@@ -118,11 +105,13 @@ export default class bMatryoshka extends iBlock {
 	 */
 	protected onFoldingClick(el: Doll): void {
 		const
-			target = this.$parent && <HTMLElement>(this.$parent.$el.querySelector(`[data-id=matryoshka-${el.id}]`)),
+			target = this.$parent && <HTMLElement>(this.$parent.$el.querySelector(`[data-id=matryoshka-${el.id}]`));
+
+		const
 			newVal = this.getFoldedMod(<string>el.id) === 'false';
 
 		if (target) {
-			this.firstLevelDoll.block.setElMod(target, 'matryoshka', 'folded', newVal);
+			this.firstLevel.block.setElMod(target, 'matryoshka', 'folded', newVal);
 			this.emit('fold', target, el, newVal);
 		}
 	}
