@@ -16,6 +16,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### :rocket: New Feature
 
 * Added an array form for converter parameters (`base/b-dynamic-page`, ``)
+* Added `beforeImg` and `afterImg` props for `bImage`
 
 ## v3.0.0-beta.206 (2019-11-06)
 
