@@ -194,12 +194,6 @@ export default class bCheckboxGroup<
 	protected nestedCounters: Dictionary<Counters> = {};
 
 	/**
-	 * Storage of not displayed checked checkboxes
-	 */
-	@system({init: (o) => o.$attrs.tree === 'true' ? {} : undefined})
-	protected nonShownStore?: Dictionary<Option>;
-
-	/**
 	 * True, if the tree structure is in progress of the recalculating
 	 */
 	@system()
