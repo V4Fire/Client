@@ -9,7 +9,7 @@
 import symbolGenerator from 'core/symbol';
 import iSize from 'traits/i-size/i-size';
 
-import iInput, { component, prop, ModsDecl } from 'super/i-input/i-input';
+import iInput, { component, prop, ModsDecl, ModEvent } from 'super/i-input/i-input';
 export * from 'super/i-input/i-input';
 
 export type Value = boolean;
@@ -125,7 +125,11 @@ export default class bCheckbox<
 	protected initModEvents(): void {
 		super.initModEvents();
 		this.sync.mod('checked', 'valueStore');
-		this.localEvent.on('block.mod.*.checked.*', (e) => {
+		this.localEvent.on('block.mod.*.checked.*', (e: ModEvent) => {
+			if (e.type === 'remove' && e.reason !== 'removeMod') {
+				return;
+			}
+
 			this.value = <V>(e.type !== 'remove' && e.value === 'true');
 			this.emit(this.value ? 'check' : 'uncheck');
 		});
