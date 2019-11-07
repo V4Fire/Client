@@ -27,10 +27,13 @@ import iData, {
 	prop,
 	wait,
 	p,
-	ModsDecl,
+
 	ModelMethods,
 	CreateRequestOpts,
-	RequestFilter
+	RequestFilter,
+
+	ModsDecl,
+	ModEvent
 
 } from 'super/i-data/i-data';
 
@@ -433,7 +436,7 @@ export default class bForm<T extends object = Dictionary> extends iData<T> {
 		super.initModEvents();
 		iVisible.initModEvents(this);
 
-		this.localEvent.on('block.mod.*.valid.*', ({type, value}) => {
+		this.localEvent.on('block.mod.*.valid.*', ({type, value}: ModEvent) => {
 			if (type === 'remove' && value === 'false' || type === 'set' && value === 'true') {
 				this.error = undefined;
 			}

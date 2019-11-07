@@ -17,7 +17,9 @@ import iData, {
 	system,
 	wait,
 	p,
-	ModsDecl
+
+	ModsDecl,
+	ModEvent
 
 } from 'super/i-data/i-data';
 
@@ -590,7 +592,7 @@ export default abstract class iInput<
 		iAccess.initModEvents(this);
 		iVisible.initModEvents(this);
 
-		this.localEvent.on('block.mod.*.valid.*', ({type, value}) => {
+		this.localEvent.on('block.mod.*.valid.*', ({type, value}: ModEvent) => {
 			if (type === 'remove' && value === 'false' || type === 'set' && value === 'true') {
 				this.error = undefined;
 			}
