@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-beta.207 (2019-11-07)
+
+#### :rocket: New Feature
+
+* Added an array form for converter parameters (`base/b-dynamic-page`, ``)
+
 ## v3.0.0-beta.206 (2019-11-06)
 
 #### :bug: Bug Fix

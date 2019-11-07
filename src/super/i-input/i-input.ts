@@ -100,8 +100,8 @@ export default abstract class iInput<
 	/**
 	 * Form value converter
 	 */
-	@prop({type: Function, required: false})
-	readonly formConverter?: Function;
+	@prop({type: [Function, Array], required: false})
+	readonly formConverter?: CanArray<Function>;
 
 	/**
 	 * If false, then the component value won't be cached by a form
