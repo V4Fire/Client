@@ -12,7 +12,7 @@
 
 - template index() extends ['i-block'].index
 	- block body
-		< template v-for = el in firstLevel.asyncRender.iterate(options, firstLevel.renderChunks, { &
+		< template v-for = el in top.asyncRender.iterate(options, top.renderChunks, { &
 			filter: (item) => item.parent ? listFilter(item.parent) : true
 		}) .
 			< . &

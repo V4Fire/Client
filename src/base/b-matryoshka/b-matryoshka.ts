@@ -40,9 +40,9 @@ export default class bMatryoshka extends iBlock {
 	readonly folded: boolean = false;
 
 	/**
-	 * Link to the first level component
+	 * Link to the top level component
 	 */
-	protected get firstLevel(): bMatryoshka {
+	protected get top(): bMatryoshka {
 		return this.isFlyweight ? <bMatryoshka>this.$normalParent : this;
 	}
 
@@ -82,7 +82,7 @@ export default class bMatryoshka extends iBlock {
 			return;
 		}
 
-		return this.firstLevel.block.getElMod(target, 'matryoshka', 'folded');
+		return this.top.block.getElMod(target, 'matryoshka', 'folded');
 	}
 
 	/**
@@ -90,7 +90,7 @@ export default class bMatryoshka extends iBlock {
 	 * @param id
 	 */
 	protected listFilter(id: string): boolean {
-		if (this.firstLevel.hook !== 'mounted') {
+		if (this.top.hook !== 'mounted') {
 			return false;
 		}
 
@@ -111,7 +111,7 @@ export default class bMatryoshka extends iBlock {
 			newVal = this.getFoldedMod(<string>el.id) === 'false';
 
 		if (target) {
-			this.firstLevel.block.setElMod(target, 'matryoshka', 'folded', newVal);
+			this.top.block.setElMod(target, 'matryoshka', 'folded', newVal);
 			this.emit('fold', target, el, newVal);
 		}
 	}
