@@ -149,7 +149,11 @@ export default class bCheckbox<
 		this.emit('actionChange', this.mods.checked === 'true');
 	}
 
-	/** @override */
+	/**
+	 * @override
+	 * @emits check()
+	 * @emits uncheck()
+	 */
 	protected initModEvents(): void {
 		super.initModEvents();
 		this.sync.mod('checked', 'valueStore');
