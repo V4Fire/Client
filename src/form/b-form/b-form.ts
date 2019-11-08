@@ -73,9 +73,9 @@ export default class bForm<T extends object = Dictionary> extends iData<T> {
 	readonly name?: string;
 
 	/**
-	 * Form action
+	 * Form action URL or an action function
 	 */
-	@prop({type: String, required: false})
+	@prop({type: [String, Function], required: false})
 	readonly action?: string;
 
 	/**
@@ -83,12 +83,6 @@ export default class bForm<T extends object = Dictionary> extends iData<T> {
 	 */
 	@prop(String)
 	readonly method: ModelMethods = 'add';
-
-	/**
-	 * Form delegate function
-	 */
-	@prop({type: Function, required: false})
-	readonly delegateAction?: Function;
 
 	/**
 	 * Form request parameters
@@ -377,8 +371,8 @@ export default class bForm<T extends object = Dictionary> extends iData<T> {
 			this.emit('submitStart', body, this.params, this.method);
 
 			try {
-				if (this.delegateAction) {
-					res = await this.delegateAction(this, body, this.params, els);
+				if (Object.isFunction(this.action)) {
+					res = await this.action(this, body, this.params, els);
 
 				} else {
 					if (this.action) {

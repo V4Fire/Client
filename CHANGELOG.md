@@ -23,11 +23,13 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 * Renamed `data-block-params` -> `data-root-component-params` (`iStaticPage`)
 * Removed `bCheckboxGroup`
 * Removed `bCheckboxIcon`
+* Moved `bForm.delegateAction` to `bForm.action` as a function
 * Removed `@bindModTo` decorator
 
 #### :bug: Bug Fix
 
 * Fixed arguments providing for `sync.mod`
+* Fixed `bCheckbox` and `bRadioButton` native support 
 
 ## v3.0.0-beta.207 (2019-11-07)
 
