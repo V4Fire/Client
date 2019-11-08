@@ -72,8 +72,6 @@ export default abstract class iLockPageScroll {
 				options: {passive: false}
 			});
 
-			return resolved;
-
 		} else if (is.Android) {
 			const
 				html = document.documentElement,
@@ -110,7 +108,7 @@ export default abstract class iLockPageScroll {
 		}
 
 		r[$$.isLocked] = true;
-		return promise;
+		return promise || resolved;
 	}
 
 	/**
