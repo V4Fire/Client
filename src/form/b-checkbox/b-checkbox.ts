@@ -57,7 +57,7 @@ export default class bCheckbox<
 	readonly label?: string;
 
 	/**
-	 * True if the checkbox can be accessed
+	 * True if the checkbox can be unchecked directly
 	 */
 	@prop(Boolean)
 	readonly changeable: boolean = true;
@@ -112,10 +112,6 @@ export default class bCheckbox<
 	 * Checks the checkbox
 	 */
 	async check(): Promise<boolean> {
-		if (!this.changeable) {
-			return false;
-		}
-
 		return this.setMod('checked', true);
 	}
 
@@ -123,10 +119,6 @@ export default class bCheckbox<
 	 * Unchecks the checkbox
 	 */
 	async uncheck(): Promise<boolean> {
-		if (!this.changeable) {
-			return false;
-		}
-
 		return this.setMod('checked', false);
 	}
 
@@ -145,8 +137,10 @@ export default class bCheckbox<
 	 */
 	protected async onClick(e: Event): Promise<void> {
 		await this.focus();
-		await this.toggle();
-		this.emit('actionChange', this.mods.checked === 'true');
+
+		if ((!this.value || this.changeable) && await this.toggle()) {
+			this.emit('actionChange', this.mods.checked === 'true');
+		}
 	}
 
 	/**
@@ -162,7 +156,7 @@ export default class bCheckbox<
 				return;
 			}
 
-			this.value = <V>(e.type !== 'remove' && e.value === 'true');
+			this.value = this.$refs.input.checked = <V>(e.type !== 'remove' && e.value === 'true');
 			this.emit(this.value ? 'check' : 'uncheck');
 		});
 	}

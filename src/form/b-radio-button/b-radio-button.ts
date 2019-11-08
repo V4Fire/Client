@@ -17,10 +17,22 @@ export default class bRadioButton<
 > extends bCheckbox<V, FV, D> {
 	/** @override */
 	protected async onClick(e: Event): Promise<void> {
-		if (this.mods.checked === 'true') {
-			return;
-		}
+		await this.focus();
 
-		return super.onClick(e);
+		if (await this.check()) {
+			const
+				ctx = <any>this;
+
+			for (let els = this.groupElements, i = 0; i < els.length; i++) {
+				const
+					el = els[i];
+
+				if (el !== ctx && this.isComponent(el, bRadioButton)) {
+					el.uncheck().catch(stderr);
+				}
+			}
+
+			this.emit('actionChange', true);
+		}
 	}
 }
