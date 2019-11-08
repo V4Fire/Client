@@ -25,6 +25,10 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 * Removed `bCheckboxIcon`
 * Removed `@bindModTo` decorator
 
+#### :bug: Bug Fix
+
+* Fixed arguments providing for `sync.mod`
+
 ## v3.0.0-beta.207 (2019-11-07)
 
 #### :rocket: New Feature
