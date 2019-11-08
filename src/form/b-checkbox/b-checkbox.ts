@@ -13,6 +13,7 @@ import iInput, {
 
 	component,
 	prop,
+	p,
 
 	ModsDecl,
 	ModEvent,
@@ -24,7 +25,7 @@ import iInput, {
 
 export * from 'super/i-input/i-input';
 
-export type Value = boolean;
+export type Value = CanUndef<string | boolean>;
 export type FormValue = Value;
 
 export const
@@ -42,10 +43,6 @@ export default class bCheckbox<
 	FV extends FormValue = FormValue,
 	D extends object = Dictionary
 > extends iInput<V, FV, D> implements iSize {
-	/** @override */
-	@prop({type: Boolean, required: false})
-	readonly valueProp?: V;
-
 	/** @override */
 	@prop({type: Boolean, required: false})
 	readonly defaultProp?: V;
@@ -77,6 +74,17 @@ export default class bCheckbox<
 	/** @override */
 	get default(): unknown {
 		return this.defaultProp || false;
+	}
+
+	/** @override */
+	@p({replace: false})
+	get value(): V {
+		if (this.mods.checked === 'true') {
+			// tslint:disable-next-line:no-string-literal
+			return super['valueGetter'].call(this);
+		}
+
+		return <V>undefined;
 	}
 
 	/** @inheritDoc */
@@ -150,13 +158,12 @@ export default class bCheckbox<
 	 */
 	protected initModEvents(): void {
 		super.initModEvents();
-		this.sync.mod('checked', 'valueStore');
 		this.localEvent.on('block.mod.*.checked.*', (e: ModEvent) => {
 			if (e.type === 'remove' && e.reason !== 'removeMod') {
 				return;
 			}
 
-			this.value = this.$refs.input.checked = <V>(e.type !== 'remove' && e.value === 'true');
+			this.$refs.input.checked = (e.type !== 'remove' && e.value === 'true');
 			this.emit(this.value ? 'check' : 'uncheck');
 		});
 	}

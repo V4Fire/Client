@@ -16,6 +16,7 @@
 
 	- hiddenInputTag = 'input'
 	- hiddenInputType = "'hidden'"
+	- hiddenInputModel = 'valueStore'
 
 	- block headHelpers
 		- super
@@ -26,7 +27,7 @@
 		- block hiddenInput()
 			< ${hiddenInputTag}.&__hidden-input &
 				ref = input |
-				v-model = valueStore |
+				v-model = ${hiddenInputModel} |
 				autocomplete = off |
 				:id = id |
 				:type = ${hiddenInputType} |
