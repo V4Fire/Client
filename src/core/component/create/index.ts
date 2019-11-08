@@ -14,6 +14,7 @@ import {
 	defaultWrapper,
 	runHook,
 	createMeta,
+	isTypeCanBeFunc,
 	initDataObject,
 	bindWatchers,
 	addMethodsToMeta,
@@ -350,15 +351,13 @@ export function getBaseComponent(
 		let
 			def,
 			defWrapper,
-			isFunc,
 			skipDefault = true;
 
 		if (defaultProps || prop.forceDefault) {
 			skipDefault = false;
 			def = defWrapper = instance[key];
-			isFunc = hasPropCanFunc(prop.type);
 
-			if (def && typeof def === 'object' && (!isFunc || !Object.isFunction(def))) {
+			if (def && typeof def === 'object' && (!isTypeCanBeFunc(prop.type) || !Object.isFunction(def))) {
 				defWrapper = () => Object.fastClone(def);
 				defWrapper[defaultWrapper] = true;
 			}
@@ -449,22 +448,4 @@ export function getBaseComponent(
 	}
 
 	return {mods, component, instance};
-}
-
-function hasPropCanFunc(type: CanUndef<CanArray<Function>>): boolean {
-	if (!type) {
-		return false;
-	}
-
-	if (Object.isArray(type)) {
-		for (let i = 0; i < type.length; i++) {
-			if (type[i] === Function) {
-				return true;
-			}
-		}
-
-		return false;
-	}
-
-	return type === Function;
 }

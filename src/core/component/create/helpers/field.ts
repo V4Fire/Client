@@ -542,7 +542,7 @@ export function initPropsObject(
 
 		if (Object.isFunction(val)) {
 			if (forceInit || !val[defaultWrapper]) {
-				data[key] = el.type === Function ? val.bind(ctx) : val.call(ctx);
+				data[key] = isTypeCanBeFunc(el.type) ? val.bind(ctx) : val.call(ctx);
 			}
 
 		} else if (forceInit) {
@@ -553,4 +553,26 @@ export function initPropsObject(
 	// @ts-ignore (access)
 	ctx.$activeField = undefined;
 	return data;
+}
+
+/**
+ * Returns true if the specified type can be a function
+ * @param type
+ */
+export function isTypeCanBeFunc(type: CanUndef<CanArray<Function>>): boolean {
+	if (!type) {
+		return false;
+	}
+
+	if (Object.isArray(type)) {
+		for (let i = 0; i < type.length; i++) {
+			if (type[i] === Function) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	return type === Function;
 }
