@@ -22,6 +22,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 * Renamed `data-init-block` -> `data-root-component` (`iStaticPage`)
 * Renamed `data-block-params` -> `data-root-component-params` (`iStaticPage`)
 * Removed `bCheckboxGroup`
+* Removed `bCheckboxIcon`
 
 ## v3.0.0-beta.207 (2019-11-07)
 
