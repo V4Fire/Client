@@ -15,7 +15,7 @@
 	- skeletonMarker = true
 
 	- hiddenInputTag = 'input'
-	- hiddenInputType = 'hidden'
+	- hiddenInputType = "'hidden'"
 
 	- block headHelpers
 		- super
@@ -27,9 +27,9 @@
 			< ${hiddenInputTag}.&__hidden-input &
 				ref = input |
 				v-model = valueStore |
-				type = ${hiddenInputType} |
 				autocomplete = off |
 				:id = id |
+				:type = ${hiddenInputType} |
 				:name = name |
 				:form = form |
 				:autofocus = autofocus |
