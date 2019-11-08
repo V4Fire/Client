@@ -11,7 +11,7 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v3.0.0-beta.207 (2019-11-x)
+## v3.0.0-beta.208 (2019-11-x)
 
 #### :boom: Breaking Change
 
@@ -24,6 +24,18 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 * [Added `b-virtual-scroll` component](https://github.com/V4Fire/Client/pull/137)
 * [Added `appendChild` method to the DOM module](https://github.com/V4Fire/Client/pull/137)
 * [Added `placeholderHidden` prop to `b-content-switcher`](https://github.com/V4Fire/Client/pull/137)
+
+## v3.0.0-beta.207 (2019-11-07)
+
+#### :rocket: New Feature
+
+* Added an array form for converter parameters (`base/b-dynamic-page`, ``)
+* Added `beforeImg` and `afterImg` props for `bImage`
+
+#### :bug: Bug Fix
+
+* Fixed default modifier handlers
+* Fixed `bCheckbox` native support
 
 ## v3.0.0-beta.206 (2019-11-06)
 

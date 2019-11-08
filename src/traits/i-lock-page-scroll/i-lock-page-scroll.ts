@@ -8,7 +8,7 @@
 
 import { is } from 'core/browser';
 import symbolGenerator from 'core/symbol';
-import iBlock from 'super/i-block/i-block';
+import iBlock, { ModEvent } from 'super/i-block/i-block';
 
 export const
 	$$ = symbolGenerator();
@@ -160,8 +160,12 @@ export default abstract class iLockPageScroll {
 			$a.clearAll({label: $$.unlockPromise});
 		};
 
-		$e.on('block.mod.set.opened.*', (e) => {
-			component[e.value === 'true' ? 'lock' : 'unlock']();
+		$e.on('block.mod.*.opened.*', (e: ModEvent) => {
+			if (e.type === 'remove' && e.reason !== 'removeMod') {
+				return;
+			}
+
+			component[e.value === 'false' || e.type === 'remove' ? 'unlock' : 'lock']();
 		});
 
 		component.on('statusDestroyed', () => {

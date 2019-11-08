@@ -91,7 +91,11 @@ export default abstract class iOpen {
 			// @ts-ignore
 			{localEvent: $e} = component;
 
-		$e.on('block.mod.*.opened.*', (e) => {
+		$e.on('block.mod.*.opened.*', (e: ModEvent) => {
+			if (e.type === 'remove' && e.reason !== 'removeMod') {
+				return;
+			}
+
 			component.emit(e.value === 'false' || e.type === 'remove' ? 'close' : 'open');
 		});
 	}

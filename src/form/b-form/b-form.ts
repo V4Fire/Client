@@ -27,10 +27,13 @@ import iData, {
 	prop,
 	wait,
 	p,
-	ModsDecl,
+
 	ModelMethods,
 	CreateRequestOpts,
-	RequestFilter
+	RequestFilter,
+
+	ModsDecl,
+	ModEvent
 
 } from 'super/i-data/i-data';
 
@@ -331,15 +334,19 @@ export default class bForm<T extends object = Dictionary> extends iData<T> {
 					el = els[i];
 
 				tasks.push((async () => {
-					let val = await el.groupFormValue;
-					val = el.formConverter ? await el.formConverter(val) : val;
+					let
+						v = await el.groupFormValue;
 
-					if (val instanceof Blob || val instanceof File || val instanceof FileList) {
+					if (el.formConverter) {
+						v = (<Function[]>[]).concat(el.formConverter).reduce((res, fn) => fn.call(this, res), v);
+					}
+
+					if (v instanceof Blob || v instanceof File || v instanceof FileList) {
 						isMultipart = true;
 					}
 
 					if (el.name) {
-						body[el.name] = val;
+						body[el.name] = v;
 					}
 				})());
 			}
@@ -429,7 +436,7 @@ export default class bForm<T extends object = Dictionary> extends iData<T> {
 		super.initModEvents();
 		iVisible.initModEvents(this);
 
-		this.localEvent.on('block.mod.*.valid.*', ({type, value}) => {
+		this.localEvent.on('block.mod.*.valid.*', ({type, value}: ModEvent) => {
 			if (type === 'remove' && value === 'false' || type === 'set' && value === 'true') {
 				this.error = undefined;
 			}
