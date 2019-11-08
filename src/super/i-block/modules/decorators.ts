@@ -98,9 +98,6 @@ export const watch = watchDecorator as <CTX extends ComponentInterface = Compone
 	params?: FieldWatcher<CTX, A, B> | MethodWatchers<CTX, A, B>
 ) => Function;
 
-export type BindModCb<V = unknown, R = unknown, CTX extends ComponentInterface = ComponentInterface> =
-	((value: V, ctx: CTX) => R) | Function;
-
 export type DecoratorCtx<CTX> = {component: CTX} | CTX;
 
 /**
@@ -110,32 +107,6 @@ export type DecoratorCtx<CTX> = {component: CTX} | CTX;
 export function getComponentCtx<CTX>(val: DecoratorCtx<CTX>): CTX {
 	// @ts-ignore
 	return val.component || val;
-}
-
-/**
- * Binds a modifier to the specified parameter
- *
- * @decorator
- * @param param
- * @param [converter] - converter function
- * @param [opts] - watch options
- */
-export function bindModTo<V = unknown, R = unknown, CTX extends ComponentInterface = ComponentInterface>(
-	param: string,
-	converter: BindModCb | WatchOptions = Boolean,
-	opts?: WatchOptions
-): Function {
-	return (target, key) => {
-		initEvent.once('bindConstructor', (componentName) => {
-			initEvent.once(`constructor.${componentName}`, ({meta}) => {
-				meta.hooks.created.push({
-					fn(this: DecoratorCtx<CTX & iBlockDecorator>): void {
-						getComponentCtx(this).sync.mod(key, param, converter, opts);
-					}
-				});
-			});
-		});
-	};
 }
 
 type EventType = 'on' | 'once';
