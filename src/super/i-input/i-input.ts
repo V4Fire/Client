@@ -222,37 +222,54 @@ export default abstract class iInput<
 	@p({cache: false, replace: false})
 	get groupFormValue(): Promise<CanArray<FV>> {
 		return (async () => {
-			if (this.name) {
-				const
-					form = this.connectedForm,
-					list = document.getElementsByName(this.name) || [];
+			const
+				list = this.groupElements;
 
-				const
-					els = <FV[]>[],
-					promises = <Promise<void>[]>[];
+			const
+				els = <FV[]>[],
+				promises = <Promise<void>[]>[];
 
-				for (let i = 0; i < list.length; i++) {
-					promises.push((async () => {
-						const
-							block = this.dom.getComponent<iInput>(list[i], '[class*="_form_true"]');
+			for (let i = 0; i < list.length; i++) {
+				promises.push((async () => {
+					const
+						v = await list[i].formValue;
 
-						if (block && form === block.connectedForm) {
-							const
-								v = await block.formValue;
-
-							if (v !== undefined) {
-								els.push(<FV>v);
-							}
-						}
-					})());
-				}
-
-				await Promise.all(promises);
-				return els.length > 1 ? els : els[0];
+					if (v !== undefined) {
+						els.push(<FV>v);
+					}
+				})());
 			}
 
-			return this.formValue;
+			return els.length > 1 ? els : els[0];
 		})();
+	}
+
+	/**
+	 * List of elements from the current form group
+	 */
+	@p({cache: false, replace: false})
+	get groupElements(): ReadonlyArray<iInput> {
+		if (this.name) {
+			const
+				form = this.connectedForm,
+				list = document.getElementsByName(this.name) || [];
+
+			const
+				els = <iInput[]>[];
+
+			for (let i = 0; i < list.length; i++) {
+				const
+					component = this.dom.getComponent<iInput>(list[i], '[class*="_form_true"]');
+
+				if (component && form === component.connectedForm) {
+					els.push(component);
+				}
+			}
+
+			return Object.freeze(els);
+		}
+
+		return Object.freeze([<iInput<any, any, any>>this]);
 	}
 
 	/** @inheritDoc */
