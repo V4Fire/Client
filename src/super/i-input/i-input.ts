@@ -227,10 +227,10 @@ export default abstract class iInput<
 
 			const
 				els = <FV[]>[],
-				promises = <Promise<void>[]>[];
+				tasks = <Promise<void>[]>[];
 
 			for (let i = 0; i < list.length; i++) {
-				promises.push((async () => {
+				tasks.push((async () => {
 					const
 						v = await list[i].formValue;
 
@@ -240,6 +240,7 @@ export default abstract class iInput<
 				})());
 			}
 
+			await Promise.all(tasks);
 			return els.length > 1 ? els : els[0];
 		})();
 	}
