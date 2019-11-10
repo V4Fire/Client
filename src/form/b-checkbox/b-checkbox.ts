@@ -81,7 +81,8 @@ export default class bCheckbox<
 	get value(): V {
 		if (this.mods.checked === 'true') {
 			// tslint:disable-next-line:no-string-literal
-			return super['valueGetter'].call(this);
+			const v = super['valueGetter'].call(this);
+			return v == null ? true : v;
 		}
 
 		return <V>undefined;
@@ -158,6 +159,18 @@ export default class bCheckbox<
 	 */
 	protected initModEvents(): void {
 		super.initModEvents();
+
+		this.sync.mod('checked', 'value', (v) => {
+			const
+				mod = this.mods.checked;
+
+			if (mod === undefined) {
+				return v === true;
+			}
+
+			return mod;
+		});
+
 		this.localEvent.on('block.mod.*.checked.*', (e: ModEvent) => {
 			if (e.type === 'remove' && e.reason !== 'removeMod') {
 				return;

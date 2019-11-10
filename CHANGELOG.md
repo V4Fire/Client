@@ -15,6 +15,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :boom: Breaking Change
 
+* Moved `bForm.delegateAction` to `bForm.action` as a function
 * Renamed `static blockValidators` -> `validators` (`iBlock`)
 * Renamed `blockValidators` -> `validatorsMap` (`iBlock`)
 * Renamed `blockClasses` -> `componentClasses` (`iBlock/modules/provide`)
@@ -24,7 +25,6 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 * Removed `bCheckboxGroup`
 * Removed `bCheckboxIcon`
 * Removed `bFlagIcon`
-* Moved `bForm.delegateAction` to `bForm.action` as a function
 * Removed `@bindModTo` decorator
 
 #### :bug: Bug Fix
