@@ -133,12 +133,14 @@ export default abstract class iInput<
 
 	/** @override */
 	get error(): CanUndef<string> {
-		return this.errorMsg && this.errorMsg.replace(/\.$/, '');
+		// tslint:disable-next-line:no-string-literal
+		return (super['errorGetter']).replace(/\.$/, '');
 	}
 
 	/** @override */
 	set error(value: CanUndef<string>) {
-		this.errorMsg = value;
+		// tslint:disable-next-line:no-string-literal
+		super['errorSetter'](value);
 	}
 
 	/**

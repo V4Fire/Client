@@ -88,6 +88,12 @@ export default class bCheckbox<
 		return <V>undefined;
 	}
 
+	/** @override */
+	set value(value: V) {
+		// tslint:disable-next-line:no-string-literal
+		super['valueSetter'](value);
+	}
+
 	/** @inheritDoc */
 	static readonly mods: ModsDecl = {
 		...iSize.mods,

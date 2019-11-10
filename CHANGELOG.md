@@ -32,6 +32,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 * Fixed arguments providing for `sync.mod`
 * Fixed `bCheckbox` and `bRadioButton` native support
+* Fixed validator messages with functional components
 * Fixed props with multiple types
 
 ## v3.0.0-beta.207 (2019-11-07)
