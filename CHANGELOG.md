@@ -15,6 +15,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :boom: Breaking Change
 
+* New `bForm` submit API
 * Moved `bForm.delegateAction` to `bForm.action` as a function
 * Renamed `static blockValidators` -> `validators` (`iBlock`)
 * Renamed `blockValidators` -> `validatorsMap` (`iBlock`)
