@@ -165,64 +165,6 @@ export function removeMod<CTX extends ComponentInterface = ComponentInterface>(
 	};
 }
 
-/**
- * Decorates a method as an element modifier handler
- *
- * @decorator
- * @param elName
- * @param modName
- * @param [value]
- * @param [method]
- */
-export function elMod<CTX extends ComponentInterface = ComponentInterface>(
-	elName: string,
-	modName: string,
-	value: ModVal = '*',
-	method: EventType = 'on'
-): Function {
-	return (target, key, descriptor) => {
-		initEvent.once('bindConstructor', (componentName) => {
-			initEvent.once(`constructor.${componentName}`, ({meta}) => {
-				meta.hooks.beforeCreate.push({
-					fn(this: DecoratorCtx<CTX & iBlockDecorator>): void {
-						const c = getComponentCtx(this);
-						c.localEvent[method](`el.mod.set.${elName}.${modName}.${value}`, descriptor.value.bind(c));
-					}
-				});
-			});
-		});
-	};
-}
-
-/**
- * Decorates a method as an element remove modifier handler
- *
- * @decorator
- * @param elName
- * @param modName
- * @param [value]
- * @param [method]
- */
-export function removeElMod<CTX extends ComponentInterface = ComponentInterface>(
-	elName: string,
-	modName: string,
-	value: ModVal = '*',
-	method: EventType = 'on'
-): Function {
-	return (target, key, descriptor) => {
-		initEvent.once('bindConstructor', (componentName) => {
-			initEvent.once(`constructor.${componentName}`, ({meta}) => {
-				meta.hooks.beforeCreate.push({
-					fn(this: DecoratorCtx<CTX & iBlockDecorator>): void {
-						const c = getComponentCtx(this);
-						c.localEvent[method](`el.mod.remove.${elName}.${modName}.${value}`, descriptor.value.bind(c));
-					}
-				});
-			});
-		});
-	};
-}
-
 export interface WaitOpts extends AsyncOpts {
 	fn?: Function;
 	defer?: boolean | number;

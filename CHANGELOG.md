@@ -28,7 +28,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 * Removed `bWindowForm`
 * Removed `bNotifier`
 * Removed `bFlagIcon`
-* Removed `@bindModTo` decorator
+* Removed `@bindModTo`, `@elMod`, `@removeElMod` decorators
 
 #### :bug: Bug Fix
 
