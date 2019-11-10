@@ -25,6 +25,8 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 * Renamed `data-block-params` -> `data-root-component-params` (`iStaticPage`)
 * Removed `bCheckboxGroup`
 * Removed `bCheckboxIcon`
+* Removed `bWindowForm`
+* Removed `bNotifier`
 * Removed `bFlagIcon`
 * Removed `@bindModTo` decorator
 
