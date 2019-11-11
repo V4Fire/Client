@@ -14,6 +14,9 @@
 	- messageHelpers = true
 	- skeletonMarker = true
 
+	- hiddenInputTag = 'input'
+	- hiddenInputType = 'hidden'
+
 	- block headHelpers
 		- super
 
@@ -21,10 +24,10 @@
 		 * Generates a private input field
 		 */
 		- block hiddenInput()
-			< input.&__hidden-input &
+			< ${hiddenInputTag}.&__hidden-input &
 				ref = input |
 				v-model = valueStore |
-				type = hidden |
+				type = ${hiddenInputType} |
 				autocomplete = off |
 				:id = id |
 				:name = name |

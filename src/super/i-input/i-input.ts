@@ -17,7 +17,9 @@ import iData, {
 	system,
 	wait,
 	p,
-	ModsDecl
+
+	ModsDecl,
+	ModEvent
 
 } from 'super/i-data/i-data';
 
@@ -100,8 +102,8 @@ export default abstract class iInput<
 	/**
 	 * Form value converter
 	 */
-	@prop({type: Function, required: false})
-	readonly formConverter?: Function;
+	@prop({type: [Function, Array], required: false})
+	readonly formConverter?: CanArray<Function>;
 
 	/**
 	 * If false, then the component value won't be cached by a form
@@ -590,7 +592,7 @@ export default abstract class iInput<
 		iAccess.initModEvents(this);
 		iVisible.initModEvents(this);
 
-		this.localEvent.on('block.mod.*.valid.*', ({type, value}) => {
+		this.localEvent.on('block.mod.*.valid.*', ({type, value}: ModEvent) => {
 			if (type === 'remove' && value === 'false' || type === 'set' && value === 'true') {
 				this.error = undefined;
 			}

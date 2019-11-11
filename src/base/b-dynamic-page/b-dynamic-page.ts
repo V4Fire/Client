@@ -82,12 +82,12 @@ export default class bDynamicPage extends iDynamicPage {
 	 * Event value converter
 	 */
 	@prop({
-		type: Function,
+		type: [Function, Array],
 		default: (e) => e && (e.component || e.page),
 		forceDefault: true
 	})
 
-	readonly eventConverter!: Function;
+	readonly eventConverter!: CanArray<Function>;
 
 	/**
 	 * Component name
@@ -137,11 +137,15 @@ export default class bDynamicPage extends iDynamicPage {
 					e = component;
 				}
 
-				const
-					v = this.eventConverter ? this.eventConverter(e, this.page) : e;
+				let
+					v = e;
+
+				if (this.eventConverter) {
+					v = (<Function[]>[]).concat(this.eventConverter).reduce((res, fn) => fn.call(this, res, this.page), v);
+				}
 
 				if (v == null || Object.isString(v)) {
-					this.page = v;
+					this.page = <string>v;
 				}
 
 			}, group);
