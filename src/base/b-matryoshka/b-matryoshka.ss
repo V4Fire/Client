@@ -16,9 +16,9 @@
 			filter: (item) => item.parent ? listFilter(item.parent) : true
 		}) .
 			< . &
-				:-id = 'matryoshka-' + el.id |
+				:-id = top.dom.getId(el.id) |
 				:class = provide.elClasses({matryoshka: {
-					level: el.level,
+					level,
 					folded
 				}})
 			.
@@ -41,7 +41,6 @@
 					< .&__children v-if = field.get('children.length', el)
 						< b-matryoshka.&__child &
 							:options = el.children |
-							:getOptionProps = getOptionProps |
 							:v-attrs = getNestedDollProps()
 						.
 							< template slot-scope = o

@@ -9,8 +9,8 @@
 import iBlock, { component, prop } from 'super/i-block/i-block';
 
 export interface Doll extends Dictionary {
+	id: string;
 	children: Doll[];
-	level?: number;
 }
 
 @component({flyweight: true})
@@ -22,12 +22,6 @@ export default class bMatryoshka extends iBlock {
 	readonly options!: Doll[];
 
 	/**
-	 * Props data for an every option
-	 */
-	@prop(Function)
-	readonly getOptionProps!: Function;
-
-	/**
 	 * Chunks count for the async render
 	 */
 	@prop(Number)
@@ -37,7 +31,13 @@ export default class bMatryoshka extends iBlock {
 	 * Fold all nested items
 	 */
 	@prop(Boolean)
-	readonly folded: boolean = false;
+	readonly folded: boolean = true;
+
+	/**
+	 * Component level
+	 */
+	@prop(Number)
+	readonly level: number = 0;
 
 	/**
 	 * Link to the top level component
@@ -56,11 +56,20 @@ export default class bMatryoshka extends iBlock {
 	}
 
 	/**
+	 * Returns a props data for an iterated option
+	 * @param el
+	 */
+	protected getOptionProps(el: Doll): Dictionary {
+		return Object.reject(el, 'children');
+	}
+
+	/**
 	 * Returns a props data for recursive calling
 	 */
 	protected getNestedDollProps(): Dictionary {
 		const opts = {
-			folded: this.folded
+			folded: this.folded,
+			level: this.level + 1
 		};
 
 		if (this.$listeners.fold) {
@@ -76,7 +85,7 @@ export default class bMatryoshka extends iBlock {
 	 */
 	protected getFoldedMod(id: string): CanUndef<string> {
 		const
-			target = this.$parent && this.$parent.$el.querySelector(`[data-id=matryoshka-${id}]`);
+			target = this.searchDollElement(id);
 
 		if (!target) {
 			return;
@@ -98,6 +107,17 @@ export default class bMatryoshka extends iBlock {
 	}
 
 	/**
+	 * Search HTML element for the specified identifier
+	 * @param id
+	 */
+	protected searchDollElement(id: string): CanUndef<HTMLElement> {
+		const
+			dataId = this.top.dom.getId(<string>id);
+
+		return this.$parent?.$el?.querySelector(`[data-id=${dataId}]`);
+	}
+
+	/**
 	 * Handler: on fold control click
 	 *
 	 * @param el
@@ -105,7 +125,7 @@ export default class bMatryoshka extends iBlock {
 	 */
 	protected onFoldingClick(el: Doll): void {
 		const
-			target = this.$parent && <HTMLElement>(this.$parent.$el.querySelector(`[data-id=matryoshka-${el.id}]`));
+			target = this.searchDollElement(el.id);
 
 		const
 			newVal = this.getFoldedMod(<string>el.id) === 'false';
