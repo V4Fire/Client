@@ -5,7 +5,7 @@
   "main": "src/core/index.js",
   "typings": "index.d.ts",
   "license": "MIT",
-  "version": "3.0.0-beta.207",
+  "version": "3.0.0-beta.208",
   "author": {
     "name": "kobezzza",
     "email": "kobezzza@gmail.com",
@@ -33,7 +33,6 @@
     "escaper": "^3.0.3",
     "eventemitter2": "^5.0.1",
     "fg-loadcss": "^2.1.0",
-    "ion-sound": "^3.0.7",
     "path-to-regexp": "^3.1.0",
     "requestidlecallback": "^0.3.0",
     "snakeskin": "^7.5.1",

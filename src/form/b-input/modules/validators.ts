@@ -58,7 +58,7 @@ export interface PasswordValidatorResult extends ValidatorError<string | number 
 }
 
 export default <ValidatorsDecl<bInput, unknown>>{
-	//#if runtime has bInput/validators
+	//#if runtime has iInput/validators
 
 	async required({msg, showMsg = true}: ValidatorParams): Promise<ValidatorResult<boolean>> {
 		if (!await this.formValue) {
@@ -68,6 +68,9 @@ export default <ValidatorsDecl<bInput, unknown>>{
 
 		return true;
 	},
+
+	//#endif
+	//#if runtime has bInput/validators
 
 	async number({
 		msg,

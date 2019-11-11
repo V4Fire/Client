@@ -12,7 +12,9 @@
 
 - template index() extends ['i-input'].index
 	- rootTag = 'span'
-	- hiddenInputType = 'checkbox'
+
+	- hiddenInputType = "'checkbox'"
+	- hiddenInputModel = undefined
 
 	- block attrs
 		- super

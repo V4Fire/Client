@@ -271,8 +271,8 @@
 			: pageName = self.name()
 
 			- block pageData
-				? rootAttrs['data-init-block'] = pageName
-				? rootAttrs['data-block-params'] = ({data: pageData}|json)
+				? rootAttrs['data-root-component'] = pageName
+				? rootAttrs['data-root-component-params'] = ({data: pageData}|json)
 
 			< body
 				< ${rootTag}.i-static-page.${pageName} ${rootAttrs|!html}

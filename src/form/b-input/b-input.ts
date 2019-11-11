@@ -24,7 +24,7 @@ import iInput, {
 
 } from 'super/i-input/i-input';
 
-import BlockValidators from 'form/b-input/modules/validators';
+import Validators from 'form/b-input/modules/validators';
 
 //#if runtime has bInput/mask
 import * as mask from 'form/b-input/modules/mask';
@@ -240,9 +240,9 @@ export default class bInput<
 	};
 
 	/** @override */
-	static blockValidators: ValidatorsDecl = {
-		...<any>iInput.blockValidators,
-		...BlockValidators
+	static validators: ValidatorsDecl = {
+		...<any>iInput.validators,
+		...Validators
 	};
 
 	/** @override */
@@ -605,7 +605,7 @@ export default class bInput<
 	 */
 	protected async onClear(e: MouseEvent): Promise<void> {
 		if (await this.clear()) {
-			this.emit('actionChange', this[this.blockValueField]);
+			this.emit('actionChange', this[this.valueKey]);
 		}
 	}
 
@@ -619,8 +619,8 @@ export default class bInput<
 		this.valueBufferStore =
 			(<HTMLInputElement>e.target).value || '';
 
-		if (!this.mask && this.blockValueField === 'value') {
-			this.emit('actionChange', this[this.blockValueField]);
+		if (!this.mask && this.valueKey === 'value') {
+			this.emit('actionChange', this[this.valueKey]);
 		}
 	}
 
@@ -631,7 +631,7 @@ export default class bInput<
 	 * @emits actionChange(value: V)
 	 */
 	protected onRawDataChange(value: V): void {
-		if (this.blockValueField === 'value') {
+		if (this.valueKey === 'value') {
 			this.emit('actionChange', value);
 		}
 	}
