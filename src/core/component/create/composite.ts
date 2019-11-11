@@ -77,7 +77,7 @@ export function getComponentDataFromVnode(
 		model: (<Dictionary>vData).model,
 		directives: (<VNodeDirective[]>[]).concat(vData.directives || []),
 
-		slots: {...slots},
+		slots: {...<Dictionary>slots},
 		scopedSlots: {...vData.scopedSlots},
 
 		on: {...vData.on},

@@ -59,8 +59,11 @@ export default abstract class iAccess {
 
 		$e.on('block.mod.*.disabled.*', (e: ModEvent) => {
 			if (e.value === 'false' || e.type === 'remove') {
-				$a.off({group: 'blockOnDisable'});
-				component.emit('enable');
+				$a.off({group: 'disableHelpers'});
+
+				if (e.type !== 'remove' || e.reason === 'removeMod') {
+					component.emit('enable');
+				}
 
 			} else {
 				component.emit('disable');
@@ -71,7 +74,7 @@ export default abstract class iAccess {
 				};
 
 				$a.on(component.$el, 'click mousedown touchstart keydown input change scroll', handler, {
-					group: 'blockOnDisable',
+					group: 'disableHelpers',
 					options: {
 						capture: true
 					}
@@ -80,6 +83,10 @@ export default abstract class iAccess {
 		});
 
 		$e.on('block.mod.*.focused.*', (e: ModEvent) => {
+			if (e.type === 'remove' && e.reason !== 'removeMod') {
+				return;
+			}
+
 			component.emit(e.value === 'false' || e.type === 'remove' ? 'blur' : 'focus');
 		});
 	}

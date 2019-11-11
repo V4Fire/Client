@@ -96,7 +96,7 @@ export default class bInputTime<
 	}
 
 	/** @override */
-	protected readonly blockValueField: string = 'pointer';
+	protected readonly valueKey: string = 'pointer';
 
 	/** @override */
 	@field<bInputTime>({
@@ -225,7 +225,7 @@ export default class bInputTime<
 			});
 
 			this.pointer = this.getNPointer(value, this.field.get('pointerStore'));
-			this.emit('actionChange', this[this.blockValueField]);
+			this.emit('actionChange', this[this.valueKey]);
 
 		} catch {}
 	}

@@ -17,7 +17,6 @@ import 'core/component/directives';
 
 import inheritMeta from 'core/component/create/inherit';
 
-import { GLOBAL } from 'core/env';
 import { runHook, patchRefs, parseVAttrs } from 'core/component/create/helpers';
 import {
 
@@ -407,6 +406,12 @@ export function component(params?: ComponentParams): Function {
 								const renderKey = attrOpts && attrOpts['render-key'] != null ?
 									`${tagName}:${attrOpts['global-name']}:${attrOpts['render-key']}` : '';
 
+								if (renderKey && !component) {
+									const a = <Dictionary>attrOpts;
+									a['data-render-key'] = renderKey;
+									delete a['render-key'];
+								}
+
 								let
 									vnode = ctx.renderTmp[renderKey],
 									needEl = Boolean(composite);
@@ -787,7 +792,7 @@ export function component(params?: ComponentParams): Function {
 								i++;
 
 								// tslint:disable-next-line:no-string-literal
-								GLOBAL['setImmediate'](f);
+								globalThis['setImmediate'](f);
 
 							} else {
 								setTimeout(f, 100);

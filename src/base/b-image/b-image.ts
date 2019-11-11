@@ -55,13 +55,13 @@ export default class bImage extends iMessage implements iProgress, iVisible {
 	/**
 	 * Background size type
 	 */
-	@prop({type: String})
+	@prop(String)
 	readonly sizeType: SizeType = 'contain';
 
 	/**
 	 * Image position
 	 */
-	@prop({type: String})
+	@prop(String)
 	readonly position: string = '50% 50%';
 
 	/**
@@ -69,6 +69,18 @@ export default class bImage extends iMessage implements iProgress, iVisible {
 	 */
 	@prop({type: Number, required: false})
 	readonly ratio?: number;
+
+	/**
+	 * Style (backgroundImage) before the image background
+	 */
+	@prop({type: [String, Array], required: false})
+	readonly beforeImg?: CanArray<string>;
+
+	/**
+	 * Style (backgroundImage) after the image background
+	 */
+	@prop({type: [String, Array], required: false})
+	readonly afterImg?: CanArray<string>;
 
 	/**
 	 * Parameters for a overlay image
@@ -194,9 +206,12 @@ export default class bImage extends iMessage implements iProgress, iVisible {
 			}
 		}
 
+		const
+			cssImg = Object.isString(img) ? img : `url("${img.currentSrc}")`;
+
 		Object.assign(imgRef.style,
 			{
-				backgroundImage: Object.isString(img) ? img : `url("${img.currentSrc}")`,
+				backgroundImage: (<string[]>[]).concat(this.beforeImg || [], cssImg, this.afterImg || []).join(','),
 				backgroundSize: this.sizeType,
 				backgroundPosition: this.position
 			},

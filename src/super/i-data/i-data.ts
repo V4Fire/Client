@@ -111,14 +111,14 @@ export default abstract class iData<T extends object = Dictionary> extends iMess
 	/**
 	 * Remote data converter
 	 */
-	@prop({type: Function, watch: 'reload', required: false})
-	readonly dbConverter?: ComponentConverter<any>;
+	@prop({type: [Function, Array], watch: 'reload', required: false})
+	readonly dbConverter?: CanArray<ComponentConverter<any>>;
 
 	/**
 	 * Converter from .db to the component format
 	 */
-	@prop({type: Function, watch: 'initRemoteData', required: false})
-	readonly componentConverter?: ComponentConverter<any>;
+	@prop({type: [Function, Array], watch: 'initRemoteData', required: false})
+	readonly componentConverter?: CanArray<ComponentConverter<any>>;
 
 	/**
 	 * If true, then the component will be reinitialized after an activated hook in offline mode
@@ -509,9 +509,15 @@ export default abstract class iData<T extends object = Dictionary> extends iMess
 	protected convertDataToDB<O>(data: unknown): O;
 	protected convertDataToDB(data: unknown): T;
 	protected convertDataToDB<O>(data: unknown): O | T {
-		return this.dbConverter ? this.dbConverter(
-			Object.isArray(data) || Object.isObject(data) ? data.valueOf() : data
-		) : data;
+		let
+			v = data;
+
+		if (this.dbConverter) {
+			v = (<Function[]>[]).concat(this.dbConverter)
+				.reduce((res, fn) => fn.call(this, res), Object.isArray(v) || Object.isObject(v) ? v.valueOf() : v);
+		}
+
+		return <O | T>v;
 	}
 
 	/**
@@ -519,9 +525,15 @@ export default abstract class iData<T extends object = Dictionary> extends iMess
 	 * @param data
 	 */
 	protected convertDBToComponent<O = unknown>(data: unknown): O | T {
-		return this.componentConverter ? this.componentConverter(
-			Object.isArray(data) || Object.isObject(data) ? data.valueOf() : data
-		) : data;
+		let
+			v = data;
+
+		if (this.componentConverter) {
+			v = (<Function[]>[]).concat(this.componentConverter)
+				.reduce((res, fn) => fn.call(this, res), Object.isArray(v) || Object.isObject(v) ? v.valueOf() : v);
+		}
+
+		return <O | T>v;
 	}
 
 	/**

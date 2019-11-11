@@ -12,14 +12,14 @@ import { onEverythingReady } from 'core/event';
 
 export default onEverythingReady(async () => {
 	const
-		node = document.querySelector<HTMLElement>('[data-init-block]');
+		node = document.querySelector<HTMLElement>('[data-root-component]');
 
 	if (!node) {
 		throw new Error('Root node is not defined');
 	}
 
 	const
-		name = <string>node.dataset.initBlock,
+		name = <string>node.getAttribute('data-root-component'),
 		component = await rootComponents[name];
 
 	if (!component) {
@@ -28,7 +28,7 @@ export default onEverythingReady(async () => {
 
 	const
 		data = <Function>component.data,
-		params = JSON.parse(<string>node.dataset.blockParams);
+		params = JSON.parse(<string>node.getAttribute('data-root-component-params'));
 
 	component.data = function (): Dictionary {
 		return Object.assign(data.call(this), params.data);

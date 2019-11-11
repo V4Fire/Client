@@ -7,7 +7,6 @@
  */
 
 import extend from 'core/prelude/extend';
-import { GLOBAL } from 'core/env';
 
 /**
  * Executes the specified functions after the source image load
@@ -21,7 +20,7 @@ extend(HTMLImageElement.prototype, 'onInit', function (
 	onFail?: (err?: Error) => void
 ): void {
 	// tslint:disable-next-line:no-string-literal
-	GLOBAL['setImmediate'](() => {
+	globalThis['setImmediate'](() => {
 		if (this.complete) {
 			if (this.height || this.width) {
 				onSuccess.call(this);

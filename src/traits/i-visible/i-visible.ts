@@ -23,6 +23,10 @@ export default abstract class iVisible {
 			{localEvent: $e} = component;
 
 		$e.on('block.mod.*.hidden.*', (e: ModEvent) => {
+			if (e.type === 'remove' && e.reason !== 'removeMod') {
+				return;
+			}
+
 			component.emit(e.value === 'false' || e.type === 'remove' ? 'show' : 'hide');
 		});
 	}

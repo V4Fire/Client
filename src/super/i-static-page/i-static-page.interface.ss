@@ -21,8 +21,10 @@
  */
 - async template index(@params = {}) extends ['i-page'].index
 	- lib = path.join(@@output, @@outputPattern({name: 'lib'}))
+
 	- deps = include('src/super/i-static-page/deps')
 	- globals = include('build/globals.webpack')
+	- build = include('build/build.webpack')
 
 	- title = @@appName
 	- pageData = Object.create(null)
@@ -124,7 +126,8 @@
 							PATH = new Proxy(PATH, {
 								get: function (target, prop) {
 									if (target.hasOwnProperty(prop)) {
-										return target[prop];
+										var v = target[prop];
+										return typeof v === 'string' ? v : v.publicPath || v.path;
 									}
 
 									console.log(target);
@@ -146,22 +149,36 @@
 						- for var o = defStyles.values(), el = o.next(); !el.done; el = o.next()
 							: &
 								src = el.value,
-								p = Object.isString(src) ? {src: src} : src,
+								p = Object.isString(src) ? {src: src} : src
+							.
+
+							: &
+								inline = @@fatHTML || p.inline,
 								cwd = !p.source || p.source === 'lib' ? @@lib : p.source === 'src' ? @@src : @@output
 							.
 
+							? src = p.src
+
 							- if p.source === 'output'
-								? src = path.join(cwd, p.src)
-								? src = p.inline ? src : path.relative(@@output, src)
+								- while !assets[src]
+									- while !fs.existsSync(build.assetsJSON)
+										? await delay(500)
+
+									? await delay(500)
+									? Object.assign(assets, fs.readJSONSync(path.join(build.assetsJSON)))
+
+								? src = assets[src]
+								? src = path.join(cwd, Object.isObject(src) ? src.path : src)
+								? src = inline ? src : path.relative(@@output, src)
 
 							- else
-								? src = self.loadToLib.apply(self, [{relative: !@@fatHTML && !p.inline}].concat(cwd, p.src))
+								? src = self.loadToLib.apply(self, [{relative: !inline}].concat(cwd, src))
 
 							? p = Object.reject(p, ['href', 'source'])
 
-							- if @@fatHTML || p.inline
+							- if inline
 								- while !fs.existsSync(src)
-									? await delay(200)
+									? await delay(500)
 
 								+= self.cssLink(p)
 									requireMonic({src})
@@ -191,15 +208,26 @@
 
 							: &
 								basename = path.basename(p.src),
+								inline = @@fatHTML || p.inline,
 								cwd = !p.source || p.source === 'lib' ? @@lib : p.source === 'src' ? @@src : @@output
 							.
 
+							? src = p.src
+
 							- if p.source === 'output'
-								? src = path.join(cwd, p.src)
-								? src = p.inline ? src : path.relative(@@output, src)
+								- while !assets[src]
+									- while !fs.existsSync(build.assetsJSON)
+										? await delay(500)
+
+									? await delay(500)
+									? Object.assign(assets, fs.readJSONSync(path.join(build.assetsJSON)))
+
+								? src = assets[src]
+								? src = path.join(cwd, Object.isObject(src) ? src.path : src)
+								? src = inline ? src : path.relative(@@output, src)
 
 							- else
-								? src = self.loadToLib.apply(self, [{relative: !@@fatHTML && !p.inline}].concat(cwd, p.src))
+								? src = self.loadToLib.apply(self, [{relative: !inline}].concat(cwd, src))
 
 							? p = Object.reject(p, ['src', 'source'])
 
@@ -210,9 +238,9 @@
 									PATH['{basename}'] = '{src}';
 
 							- else
-								- if @@fatHTML || p.inline
+								- if inline
 									- while !fs.existsSync(src)
-										? await delay(200)
+										? await delay(500)
 
 									+= self.jsScript(p)
 										requireMonic({src})
@@ -243,8 +271,8 @@
 			: pageName = self.name()
 
 			- block pageData
-				? rootAttrs['data-init-block'] = pageName
-				? rootAttrs['data-block-params'] = ({data: pageData}|json)
+				? rootAttrs['data-root-component'] = pageName
+				? rootAttrs['data-root-component-params'] = ({data: pageData}|json)
 
 			< body
 				< ${rootTag}.i-static-page.${pageName} ${rootAttrs|!html}

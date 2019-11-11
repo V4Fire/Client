@@ -56,7 +56,6 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		externals: {
 			'vue': 'Vue',
 			'eventemitter2': 'EventEmitter2',
-			'ion-sound': 'ion',
 			'socket.io-client': 'io',
 			'setimmediate': 'setImmediate'
 		},
@@ -223,7 +222,6 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 			'core/net': false,
 
 			'range/extended': false,
-			'helpers/string/pluralize': true,
 
 			'prelude/dependencies': true,
 			'prelude/object/has': false,

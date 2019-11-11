@@ -9,11 +9,28 @@
 import symbolGenerator from 'core/symbol';
 import iSize from 'traits/i-size/i-size';
 
-import iInput, { component, prop, ModsDecl } from 'super/i-input/i-input';
+import iInput, {
+
+	component,
+	prop,
+	p,
+
+	ModsDecl,
+	ModEvent,
+
+	ValidatorsDecl,
+	ValidatorParams,
+	ValidatorResult,
+
+	ComponentElement
+
+} from 'super/i-input/i-input';
+
 export * from 'super/i-input/i-input';
 
-export type Value = boolean;
+export type Value = CanUndef<string | boolean>;
 export type FormValue = Value;
+export type CheckType = true | 'indeterminate';
 
 export const
 	$$ = symbolGenerator();
@@ -32,11 +49,11 @@ export default class bCheckbox<
 > extends iInput<V, FV, D> implements iSize {
 	/** @override */
 	@prop({type: Boolean, required: false})
-	readonly valueProp?: V;
+	readonly defaultProp?: V;
 
 	/** @override */
 	@prop({type: Boolean, required: false})
-	readonly defaultProp?: V;
+	readonly parentId?: string;
 
 	/**
 	 * Checkbox label
@@ -45,7 +62,7 @@ export default class bCheckbox<
 	readonly label?: string;
 
 	/**
-	 * True if the checkbox can be accessed
+	 * True if the checkbox can be unchecked directly
 	 */
 	@prop(Boolean)
 	readonly changeable: boolean = true;
@@ -67,6 +84,24 @@ export default class bCheckbox<
 		return this.defaultProp || false;
 	}
 
+	/** @override */
+	@p({replace: false})
+	get value(): V {
+		if (this.mods.checked === 'true') {
+			// tslint:disable-next-line:no-string-literal
+			const v = super['valueGetter'].call(this);
+			return v == null ? true : v;
+		}
+
+		return <V>undefined;
+	}
+
+	/** @override */
+	set value(value: V) {
+		// tslint:disable-next-line:no-string-literal
+		super['valueSetter'](value);
+	}
+
 	/** @inheritDoc */
 	static readonly mods: ModsDecl = {
 		...iSize.mods,
@@ -78,8 +113,25 @@ export default class bCheckbox<
 
 		checked: [
 			'true',
-			'false'
+			'false',
+			'indeterminate'
 		]
+	};
+
+	/** @override */
+	static validators: ValidatorsDecl = {
+		//#if runtime has iInput/validators
+
+		async required({msg, showMsg = true}: ValidatorParams): Promise<ValidatorResult<boolean>> {
+			if (!await this.formValue) {
+				this.setValidationMsg(this.getValidatorMsg(false, msg, t`Required field`), showMsg);
+				return false;
+			}
+
+			return true;
+		}
+
+		//#endif
 	};
 
 	/** @override */
@@ -88,22 +140,14 @@ export default class bCheckbox<
 	/**
 	 * Checks the checkbox
 	 */
-	async check(): Promise<boolean> {
-		if (!this.changeable) {
-			return false;
-		}
-
-		return this.setMod('checked', true);
+	async check(value?: CheckType): Promise<boolean> {
+		return this.setMod('checked', value || true);
 	}
 
 	/**
 	 * Unchecks the checkbox
 	 */
 	async uncheck(): Promise<boolean> {
-		if (!this.changeable) {
-			return false;
-		}
-
 		return this.setMod('checked', false);
 	}
 
@@ -114,6 +158,20 @@ export default class bCheckbox<
 		return this.mods.checked === 'true' ? this.uncheck() : this.check();
 	}
 
+	/** @override */
+	protected initBaseAPI(): void {
+		super.initBaseAPI();
+		this.onValueChange = this.instance.onValueChange.bind(this);
+		this.onCheckedChange = this.instance.onCheckedChange.bind(this);
+	}
+
+	/** @override */
+	protected initModEvents(): void {
+		super.initModEvents();
+		this.sync.mod('checked', 'value', this.onValueChange);
+		this.localEvent.on('block.mod.*.checked.*', this.onCheckedChange);
+	}
+
 	/**
 	 * Handler: checkbox trigger
 	 *
@@ -122,17 +180,90 @@ export default class bCheckbox<
 	 */
 	protected async onClick(e: Event): Promise<void> {
 		await this.focus();
-		await this.toggle();
-		this.emit('actionChange', this.mods.checked === 'true');
+
+		if ((!this.value || this.changeable) && await this.toggle()) {
+			this.emit('actionChange', this.mods.checked === 'true');
+		}
 	}
 
-	/** @override */
-	protected initModEvents(): void {
-		super.initModEvents();
-		this.sync.mod('checked', 'valueStore');
-		this.localEvent.on('block.mod.*.checked.*', (e) => {
-			this.value = <V>(e.type !== 'remove' && e.value === 'true');
-			this.emit(this.value ? 'check' : 'uncheck');
-		});
+	/**
+	 * Handler: checkbox change
+	 *
+	 * @param e
+	 * @emits check(type: CheckType)
+	 * @emits uncheck()
+	 */
+	protected async onCheckedChange(e: ModEvent): Promise<void> {
+		if (e.type === 'remove' && e.reason !== 'removeMod') {
+			return;
+		}
+
+		const
+			{input} = this.$refs;
+
+		const
+			setMod = e.type !== 'remove',
+			checked = setMod && e.value === 'true',
+			unchecked = !setMod || e.value === 'false';
+
+		input.checked = checked;
+		input.indeterminate = setMod && e.value === 'indeterminate';
+
+		if (unchecked) {
+			this.emit('uncheck');
+
+		} else {
+			this.emit('check', e.value);
+		}
+
+		if (this.id) {
+			const
+				els = document.querySelectorAll(`.${this.id}`);
+
+			for (let i = 0; i < els.length; i++) {
+				const
+					el = (<ComponentElement>els[i]).component;
+
+				if (this.isComponent(el, bCheckbox)) {
+					if (checked) {
+						el.check(<CheckType>e.value).catch(stderr);
+
+					} else if (unchecked) {
+						el.uncheck().catch(stderr);
+					}
+				}
+			}
+		}
+
+		if (this.parentId) {
+			const parent = (<ComponentElement>document.getElementById(this.parentId)
+				?.closest('.i-block-helper'))
+				?.component;
+
+			if (this.isComponent(parent, bCheckbox)) {
+				const
+					els = await this.groupElements;
+
+				parent.check(
+					els.length &&
+					els.every((el) => el.value !== undefined) || 'indeterminate'
+				).catch(stderr);
+			}
+		}
+	}
+
+	/**
+	 * Handler: value change
+	 * @param value
+	 */
+	protected onValueChange(value: Value): boolean | string {
+		const
+			mod = this.mods.checked;
+
+		if (mod === undefined) {
+			return value === true;
+		}
+
+		return mod;
 	}
 }

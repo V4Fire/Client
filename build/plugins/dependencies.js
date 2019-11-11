@@ -44,7 +44,11 @@ module.exports = function ({graph}) {
 						hash: hash(content)
 					});
 
-					manifest[name] = webpack.publicPath(src);
+					manifest[name] = {
+						path: src,
+						publicPath: webpack.publicPath(src)
+					};
+
 					fs.writeFileSync(path.join(clientOutput(), src), content);
 				});
 
@@ -53,7 +57,10 @@ module.exports = function ({graph}) {
 						file = $C(files).one.filter((src) => path.extname(src)).get();
 
 					if (file) {
-						manifest[path.basename(name, path.extname(name))] = webpack.publicPath(file);
+						manifest[path.basename(name, path.extname(name))] = {
+							path: file,
+							publicPath: webpack.publicPath(file)
+						};
 					}
 				});
 
@@ -79,7 +86,7 @@ module.exports = function ({graph}) {
 				fs.writeFileSync(fd, JSON.stringify(assets));
 				fs.closeSync(fd);
 
-				fs.writeFileSync(assetsJS, $C(assets).to('').map((el, key) => `PATH['${key}'] = '${el}';\n`));
+				fs.writeFileSync(assetsJS, $C(assets).to('').map((el, key) => `PATH['${key}'] = '${el.publicPath}';\n`));
 			});
 		}
 	};

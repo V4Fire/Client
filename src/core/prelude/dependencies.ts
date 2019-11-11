@@ -7,7 +7,6 @@
  */
 
 import { EventEmitter2 as EventEmitter } from 'eventemitter2';
-import { GLOBAL } from 'core/env';
 
 /**
  * Adds an attribute "nonce" to the specified element if defined "GLOBAL_NONCE" variable
@@ -25,7 +24,7 @@ function addNonceAttribute(el: Element): void {
  * Manager of modules
  */
 // tslint:disable-next-line:prefer-object-spread
-export default GLOBAL[MODULE_DEPENDENCIES] = Object.assign(GLOBAL[MODULE_DEPENDENCIES] || {}, {
+export default globalThis[MODULE_DEPENDENCIES] = Object.assign(globalThis[MODULE_DEPENDENCIES] || {}, {
 	/**
 	 * Cache for modules
 	 */

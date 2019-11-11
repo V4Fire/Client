@@ -17,7 +17,9 @@ import iData, {
 	system,
 	wait,
 	p,
-	ModsDecl
+
+	ModsDecl,
+	ModEvent
 
 } from 'super/i-data/i-data';
 
@@ -100,8 +102,8 @@ export default abstract class iInput<
 	/**
 	 * Form value converter
 	 */
-	@prop({type: Function, required: false})
-	readonly formConverter?: Function;
+	@prop({type: [Function, Array], required: false})
+	readonly formConverter?: CanArray<Function>;
 
 	/**
 	 * If false, then the component value won't be cached by a form
@@ -122,21 +124,23 @@ export default abstract class iInput<
 	prevValue?: V;
 
 	/**
-	 * Link to the component validators
+	 * Link to the component validators map
 	 */
 	@p({replace: false})
-	get blockValidators(): typeof iInput['blockValidators'] {
-		return (<typeof iInput>this.instance.constructor).blockValidators;
+	get validatorsMap(): typeof iInput['validators'] {
+		return (<typeof iInput>this.instance.constructor).validators;
 	}
 
 	/** @override */
 	get error(): CanUndef<string> {
-		return this.errorMsg && this.errorMsg.replace(/\.$/, '');
+		// tslint:disable-next-line:no-string-literal
+		return (super['errorGetter']).replace(/\.$/, '');
 	}
 
 	/** @override */
 	set error(value: CanUndef<string>) {
-		this.errorMsg = value;
+		// tslint:disable-next-line:no-string-literal
+		super['errorSetter'](value);
 	}
 
 	/**
@@ -182,7 +186,7 @@ export default abstract class iInput<
 
 			const
 				test = (<Array<V | Function | RegExp>>[]).concat(this.disallow || []),
-				value = await this[this.blockValueField];
+				value = await this[this.valueKey];
 
 			const match = (el) => {
 				if (Object.isFunction(el)) {
@@ -220,37 +224,60 @@ export default abstract class iInput<
 	@p({cache: false, replace: false})
 	get groupFormValue(): Promise<CanArray<FV>> {
 		return (async () => {
-			if (this.name) {
-				const
-					form = this.connectedForm,
-					list = document.getElementsByName(this.name) || [];
+			const
+				list = await this.groupElements;
 
-				const
-					els = <FV[]>[],
-					promises = <Promise<void>[]>[];
+			const
+				els = <FV[]>[],
+				tasks = <Promise<void>[]>[];
 
-				for (let i = 0; i < list.length; i++) {
-					promises.push((async () => {
-						const
-							block = this.dom.getComponent<iInput>(list[i], '[class*="_form_true"]');
+			for (let i = 0; i < list.length; i++) {
+				tasks.push((async () => {
+					const
+						v = await list[i].formValue;
 
-						if (block && form === block.connectedForm) {
-							const
-								v = await block.formValue;
-
-							if (v !== undefined) {
-								els.push(<FV>v);
-							}
-						}
-					})());
-				}
-
-				await Promise.all(promises);
-				return els.length > 1 ? els : els[0];
+					if (v !== undefined) {
+						els.push(<FV>v);
+					}
+				})());
 			}
 
-			return this.formValue;
+			await Promise.all(tasks);
+			return els.length > 1 ? els : els[0];
 		})();
+	}
+
+	/**
+	 * List of elements from the current form group
+	 */
+	@p({cache: false, replace: false})
+	get groupElements(): CanPromise<ReadonlyArray<iInput>> {
+		const
+			nm = this.name;
+
+		if (nm) {
+			return this.waitStatus('ready', () => {
+				const
+					form = this.connectedForm,
+					list = document.getElementsByName(nm) || [];
+
+				const
+					els = <iInput[]>[];
+
+				for (let i = 0; i < list.length; i++) {
+					const
+						component = this.dom.getComponent<iInput>(list[i], '[class*="_form_true"]');
+
+					if (component && form === component.connectedForm) {
+						els.push(component);
+					}
+				}
+
+				return Object.freeze(els);
+			});
+		}
+
+		return Object.freeze([<iInput<any, any, any>>this]);
 	}
 
 	/** @inheritDoc */
@@ -272,7 +299,7 @@ export default abstract class iInput<
 	/**
 	 * Component validators
 	 */
-	static blockValidators: ValidatorsDecl = {
+	static validators: ValidatorsDecl = {
 		//#if runtime has iInput/validators
 
 		async required({msg, showMsg = true}: ValidatorParams): Promise<ValidatorResult<boolean>> {
@@ -288,10 +315,10 @@ export default abstract class iInput<
 	};
 
 	/**
-	 * Component value field name
+	 * Component value key name
 	 */
 	@field({replace: false})
-	protected readonly blockValueField: string = 'value';
+	protected readonly valueKey: string = 'value';
 
 	/** @override */
 	protected readonly $refs!: {input?: HTMLInputElement};
@@ -361,8 +388,8 @@ export default abstract class iInput<
 	@p({replace: false})
 	@wait('ready')
 	async clear(): Promise<boolean> {
-		if (this[this.blockValueField]) {
-			this[this.blockValueField] = undefined;
+		if (this[this.valueKey]) {
+			this[this.valueKey] = undefined;
 			this.async.clearAll({group: 'validation'});
 			await this.nextTick();
 			this.removeMod('valid');
@@ -380,8 +407,8 @@ export default abstract class iInput<
 	@p({replace: false})
 	@wait('ready')
 	async reset(): Promise<boolean> {
-		if (this[this.blockValueField] !== this.default) {
-			this[this.blockValueField] = this.default;
+		if (this[this.valueKey] !== this.default) {
+			this[this.valueKey] = this.default;
 			this.async.clearAll({group: 'validation'});
 			await this.nextTick();
 			this.removeMod('valid');
@@ -456,7 +483,7 @@ export default abstract class iInput<
 				isArray = Object.isArray(el),
 				isObject = !isArray && Object.isObject(el),
 				key = <string>(isObject ? Object.keys(el)[0] : isArray ? el[0] : el),
-				validator = this.blockValidators[key];
+				validator = this.validatorsMap[key];
 
 			if (!validator) {
 				throw new Error(`Validator "${key}" is not defined`);
@@ -524,7 +551,7 @@ export default abstract class iInput<
 			return;
 		}
 
-		return this[this.blockValueField] = this.convertDBToComponent(this.db);
+		return this[this.valueKey] = this.convertDBToComponent(this.db);
 	}
 
 	/**
@@ -548,22 +575,22 @@ export default abstract class iInput<
 	 * @emits change(value)
 	 */
 	@p({replace: false})
-	protected onBlockValueChange(newValue: V, oldValue: CanUndef<V>): void {
+	protected onValueChange(newValue: V, oldValue: CanUndef<V>): void {
 		this.prevValue = oldValue;
 		if (newValue !== oldValue || newValue && typeof newValue === 'object') {
-			this.emit('change', this[this.blockValueField]);
+			this.emit('change', this[this.valueKey]);
 		}
 	}
 
 	/**
-	 * Initializes a default value (if needed) for the blockValue field
-	 * @param value - blockValue field value
+	 * Initializes a default value (if needed) for the valueKey field
+	 * @param value - valueKey field value
 	 */
 	@p({replace: false})
 	protected initDefaultValue(value?: unknown): V {
 		const
 			i = this.instance,
-			k = i.blockValueField,
+			k = i.valueKey,
 			f = this.$activeField;
 
 		if (value !== undefined || f !== k && f !== `${k}Store`) {
@@ -579,7 +606,7 @@ export default abstract class iInput<
 	 */
 	@p({hook: 'created', replace: false})
 	protected initValueEvents(): void {
-		this.watch(this.blockValueField, this.onBlockValueChange);
+		this.watch(this.valueKey, this.onValueChange);
 		this.on('actionChange', () => this.validate());
 	}
 
@@ -590,7 +617,7 @@ export default abstract class iInput<
 		iAccess.initModEvents(this);
 		iVisible.initModEvents(this);
 
-		this.localEvent.on('block.mod.*.valid.*', ({type, value}) => {
+		this.localEvent.on('block.mod.*.valid.*', ({type, value}: ModEvent) => {
 			if (type === 'remove' && value === 'false' || type === 'set' && value === 'true') {
 				this.error = undefined;
 			}

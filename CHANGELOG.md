@@ -11,15 +11,104 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v3.0.0-beta.201 (2019-10-12)
+## v3.0.0-beta.209 (2019-11-11)
+
+#### :rocket: New Feature
+
+* Added `indeterminate` modifier `bCheckbox`
+* Added `parentId` prop `bCheckbox`
+
+## v3.0.0-beta.208 (2019-11-11)
+
+#### :boom: Breaking Change
+
+* New `bForm` submit API
+* Moved `bForm.delegateAction` to `bForm.action` as a function
+* Renamed `static blockValidators` -> `validators` (`iBlock`)
+* Renamed `blockValidators` -> `validatorsMap` (`iBlock`)
+* Renamed `blockClasses` -> `componentClasses` (`iBlock/modules/provide`)
+* Renamed `fullBlockName` -> `fullComponentName` (`iBlock/modules/provide`)
+* Renamed `data-init-block` -> `data-root-component` (`iStaticPage`)
+* Renamed `data-block-params` -> `data-root-component-params` (`iStaticPage`)
+* Removed `bCheckboxGroup`
+* Removed `bCheckboxIcon`
+* Removed `bWindowForm`
+* Removed `bNotifier`
+* Removed `bFlagIcon`
+* Removed `@bindModTo`, `@elMod`, `@removeElMod` decorators
+
+#### :bug: Bug Fix
+
+* Fixed arguments providing for `sync.mod`
+* Fixed `bCheckbox` and `bRadioButton` native support
+* Fixed validator messages with functional components
+* Fixed props with multiple types
+
+## v3.0.0-beta.207 (2019-11-07)
+
+#### :rocket: New Feature
+
+* Added an array form for converter parameters (`base/b-dynamic-page`, ``)
+* Added `beforeImg` and `afterImg` props for `bImage`
+
+#### :bug: Bug Fix
+
+* Fixed default modifier handlers
+* Fixed `bCheckbox` native support
+
+## v3.0.0-beta.206 (2019-11-06)
+
+#### :bug: Bug Fix
+
+* Fixed session providing `models/modules/session`
+
+#### :house: Internal
+
+* Updated dependencies: @v4fire/core@3.0.0-beta.86, webpack@4.41.2, autoprefixer@9.7.1, eslint@6.6.0
+
+## v3.0.0-beta.205 (2019-10-15)
+
+#### :bug: Bug Fix
+
+* Fixed inlining with `fatHTML`
+
+## v3.0.0-beta.204 (2019-10-15)
+
+#### :bug: Bug Fix
+
+* Fixed inlining with `fatHTML`
+
+## v3.0.0-beta.203 (2019-10-15)
+
+#### :bug: Bug Fix
+
+* Fixed `publicPath` providing from `assets.json`
+
+## v3.0.0-beta.202 (2019-10-14)
+
+#### :bug: Bug Fix
+
+* Fixed `source: 'output'` with production mode `super/i-static-page/i-static-page.interface.ss`
+
+#### :house: Internal
+
+* `GLOBAL` -> `globalThis`
+* Updated dependencies: @v4fire/3.0.0-beta.81
+
+## v3.0.0-beta.201 (2019-10-13)
 
 #### :boom: Breaking Change
 
 * Added `InitLoadParams` instead `silent` parameter for `initLoad`
+* `renderKey` attribute will be set as `data-render-key` for dom nodes
 
 #### :rocket: New Feature
 
 * Added `bIconButton`
+
+#### :bug: Bug Fix
+
+* Fixed modifiers watching
 
 #### :house: Internal
 
@@ -29,7 +118,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :bug: Bug Fix
 
-* Fixed output inlining `super/i-static-page/i-static-page.interface.ss`
+* Fixed `source: 'output'` inlining `super/i-static-page/i-static-page.interface.ss`
 
 #### :house: Internal
 
@@ -39,7 +128,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :bug: Bug Fix
 
-* Fixed output links `super/i-static-page/i-static-page.interface.ss`
+* Fixed `source: 'output'` links `super/i-static-page/i-static-page.interface.ss`
 
 ## v3.0.0-beta.198 (2019-10-10)
 

@@ -127,7 +127,7 @@ export default class bSelect<
 
 	/** @override */
 	@field()
-	protected readonly blockValueField: string = 'selected';
+	protected readonly valueKey: string = 'selected';
 
 	/**
 	 * Select options store
@@ -649,7 +649,7 @@ export default class bSelect<
 
 		if (value !== this.selected || v && this.value !== this.getOptionLabel(v)) {
 			this.syncValue(value);
-			this.emit('actionChange', this[this.blockValueField]);
+			this.emit('actionChange', this[this.valueKey]);
 		}
 
 		await this.close();
@@ -692,10 +692,10 @@ export default class bSelect<
 	}
 
 	/** @override */
-	protected async onBlockValueChange(newValue: V, oldValue?: V): Promise<void> {
+	protected async onValueChange(newValue: V, oldValue?: V): Promise<void> {
 		try {
-			await this.async.wait(() => this.mods.opened !== 'true', {label: $$.onBlockValueChange});
-			super.onBlockValueChange(newValue, oldValue);
+			await this.async.wait(() => this.mods.opened !== 'true', {label: $$.onValueChange});
+			super.onValueChange(newValue, oldValue);
 		} catch {}
 	}
 
