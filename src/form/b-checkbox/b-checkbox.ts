@@ -154,6 +154,13 @@ export default class bCheckbox<
 	}
 
 	/** @override */
+	protected initBaseAPI(): void {
+		super.initBaseAPI();
+		this.onValueChange = this.instance.onValueChange.bind(this);
+		this.onCheckedChange = this.instance.onCheckedChange.bind(this);
+	}
+
+	/** @override */
 	protected initModEvents(): void {
 		super.initModEvents();
 		this.sync.mod('checked', 'value', this.onValueChange);
