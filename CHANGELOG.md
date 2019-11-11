@@ -25,6 +25,10 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 * [Added `appendChild` method to the DOM module](https://github.com/V4Fire/Client/pull/137)
 * [Added `placeholderHidden` prop to `b-content-switcher`](https://github.com/V4Fire/Client/pull/137)
 
+#### :bug: Bug Fix
+
+* [Fixed `b-content-switcher` `components` resolver not being resolved with multiply components in `content` slot](https://github.com/V4Fire/Client/pull/137)
+
 ## v3.0.0-beta.206 (2019-11-06)
 
 #### :bug: Bug Fix
