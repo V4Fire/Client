@@ -151,9 +151,7 @@ export {
 	watch,
 	wait,
 	mod,
-	removeMod,
-	elMod,
-	removeElMod
+	removeMod
 
 } from 'super/i-block/modules/decorators';
 
