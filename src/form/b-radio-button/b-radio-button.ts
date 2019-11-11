@@ -52,7 +52,7 @@ export default class bRadioButton<
 			const
 				ctx = <any>this;
 
-			for (let els = this.groupElements, i = 0; i < els.length; i++) {
+			for (let els = await this.groupElements, i = 0; i < els.length; i++) {
 				const
 					el = els[i];
 
