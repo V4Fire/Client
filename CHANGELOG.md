@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-beta.211 (2019-11-12)
+
+#### :rocket: New Feature
+
+* Added `messageHelpers` prop `iMessage`
+
 ## v3.0.0-beta.210 (2019-11-12)
 
 #### :bug: Bug Fix

@@ -24,6 +24,12 @@ export default abstract class iMessage extends iBlock {
 	readonly errorProp?: string;
 
 	/**
+	 * If true, then will be generated a markup for default messages
+	 */
+	@prop({type: String, required: false})
+	readonly messageHelpers?: boolean;
+
+	/**
 	 * Information message store
 	 */
 	@system({
