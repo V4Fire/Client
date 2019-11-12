@@ -14,8 +14,7 @@
 	- block helpers
 		- super
 		- block message
-			- messageHelpers = false
-			- if messageHelpers
+			< template v-if = messageHelpers
 				- forEach ['error', 'info'] => el
 					< _.&__message-box[.&_pos_right-top].&__${el}-box
 						< _.&__message-content

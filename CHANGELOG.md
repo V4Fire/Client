@@ -11,6 +11,35 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-beta.213 (2019-11-12)
+
+#### :bug: Bug Fix
+
+* Fixed invalid cache key with extra providers `core/data`
+
+## v3.0.0-beta.212 (2019-11-12)
+
+#### :boom: Breaking Change
+
+* Renamed `requestOpts` to `request` within extra providers `core/data`
+
+#### :rocket: New Feature
+
+* Added `provider` and `as` parameters for extra providers `core/data`
+
+## v3.0.0-beta.211 (2019-11-12)
+
+#### :rocket: New Feature
+
+* Added `messageHelpers` prop `iMessage`
+
+## v3.0.0-beta.210 (2019-11-12)
+
+#### :bug: Bug Fix
+
+* Fixed nested checkbox groups
+* Fixed invalid cache key with extra providers `core/data`
+
 ## v3.0.0-beta.209 (2019-11-11)
 
 #### :rocket: New Feature
