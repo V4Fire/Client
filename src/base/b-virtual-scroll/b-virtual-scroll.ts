@@ -32,7 +32,7 @@ import {
 import ComponentRender from 'base/b-virtual-scroll/modules/component-render';
 import ScrollRender, { getRequestParams } from 'base/b-virtual-scroll/modules/scroll-render';
 
-import iData, { InitLoadParams, RequestParams, ModsDecl, field, component, prop, system } from 'super/i-data/i-data';
+import iData, { InitLoadParams, RequestParams, ModsDecl, field, component, prop, p, system } from 'super/i-data/i-data';
 
 export const
 	$$ = symbolGenerator();
@@ -227,6 +227,7 @@ export default class bVirtualScroll extends iData<RemoteData> {
 	/**
 	 * Link to scroll root
 	 */
+	@p({cache: false})
 	protected get scrollRoot(): HTMLElement {
 		if (this.scrollingElement) {
 			return this.scrollingElement();
