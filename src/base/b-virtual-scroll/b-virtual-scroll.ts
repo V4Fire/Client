@@ -232,9 +232,13 @@ export default class bVirtualScroll extends iData<RemoteData> {
 			return this.scrollingElement();
 		}
 
-		return this.axis === 'y' ?
-			document.documentElement || document.scrollingElement || document.body :
-			<HTMLElement>this.$el;
+		if (this.axis === 'x') {
+			return <HTMLElement>this.$el;
+		}
+
+		return document.documentElement.scrollTop ?
+			document.documentElement :
+			document.body;
 	}
 
 	/**
