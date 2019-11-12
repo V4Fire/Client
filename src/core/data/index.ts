@@ -323,6 +323,9 @@ export default class Provider {
 
 			if (extraValKeys && extraValKeys.length) {
 				paramsForCache.extraProviders = extraValKeys;
+
+			} else {
+				delete paramsForCache.extraProviders;
 			}
 		}
 

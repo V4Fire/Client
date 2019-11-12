@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-beta.213 (2019-11-12)
+
+#### :bug: Bug Fix
+
+* Fixed invalid cache key with extra providers `core/data`
+
 ## v3.0.0-beta.212 (2019-11-12)
 
 #### :boom: Breaking Change
