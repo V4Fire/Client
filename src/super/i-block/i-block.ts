@@ -150,11 +150,8 @@ export {
 	system,
 	watch,
 	wait,
-	bindModTo,
 	mod,
-	removeMod,
-	elMod,
-	removeElMod
+	removeMod
 
 } from 'super/i-block/modules/decorators';
 
@@ -1729,7 +1726,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	 * @param obj
 	 * @param [constructor] - component constructor
 	 */
-	protected isComponent<T extends iBlock>(obj: unknown, constructor?: {new(): T}): obj is T {
+	protected isComponent<T extends iBlock>(obj: unknown, constructor?: {new(): T} | Function): obj is T {
 		return Boolean(obj && (<Dictionary>obj).instance instanceof (constructor || iBlock));
 	}
 

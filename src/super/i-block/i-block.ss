@@ -62,7 +62,7 @@
 			rootAttrs[':class'] = value
 
 	- rootAttrs = { &
-		':class': '[...provide.blockClasses("' + self.name() + '", mods), "i-block-helper", componentId]',
+		':class': '[...provide.componentClasses("' + self.name() + '", mods), "i-block-helper", componentId]',
 		':-render-group': 'renderGroup',
 		':-render-counter': 'renderCounter'
 	} .

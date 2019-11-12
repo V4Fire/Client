@@ -11,7 +11,7 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v3.0.0-beta.208 (2019-11-x)
+## v3.0.0-beta.209 (2019-11-x)
 
 #### :boom: Breaking Change
 
@@ -24,6 +24,37 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 * [Added `b-virtual-scroll` component](https://github.com/V4Fire/Client/pull/137)
 * [Added `appendChild` method to the DOM module](https://github.com/V4Fire/Client/pull/137)
 * [Added `placeholderHidden` prop to `b-content-switcher`](https://github.com/V4Fire/Client/pull/137)
+
+#### :bug: Bug Fix
+
+* [Fixed `b-content-switcher` `components` resolver not being resolved with multiply components in `content` slot](https://github.com/V4Fire/Client/pull/137)
+* [Fixed `b-content-switcher` not beign hidden with `animation` set to `none`](https://github.com/V4Fire/Client/pull/137)
+
+## v3.0.0-beta.208 (2019-11-11)
+
+#### :boom: Breaking Change
+
+* New `bForm` submit API
+* Moved `bForm.delegateAction` to `bForm.action` as a function
+* Renamed `static blockValidators` -> `validators` (`iBlock`)
+* Renamed `blockValidators` -> `validatorsMap` (`iBlock`)
+* Renamed `blockClasses` -> `componentClasses` (`iBlock/modules/provide`)
+* Renamed `fullBlockName` -> `fullComponentName` (`iBlock/modules/provide`)
+* Renamed `data-init-block` -> `data-root-component` (`iStaticPage`)
+* Renamed `data-block-params` -> `data-root-component-params` (`iStaticPage`)
+* Removed `bCheckboxGroup`
+* Removed `bCheckboxIcon`
+* Removed `bWindowForm`
+* Removed `bNotifier`
+* Removed `bFlagIcon`
+* Removed `@bindModTo`, `@elMod`, `@removeElMod` decorators
+
+#### :bug: Bug Fix
+
+* Fixed arguments providing for `sync.mod`
+* Fixed `bCheckbox` and `bRadioButton` native support
+* Fixed validator messages with functional components
+* Fixed props with multiple types
 
 ## v3.0.0-beta.207 (2019-11-07)
 

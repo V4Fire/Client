@@ -25,7 +25,7 @@ export type Styles = Dictionary<
 
 export type ClassesCacheNms =
 	'base' |
-	'blocks' |
+	'components' |
 	'els';
 
 export type ClassesCacheValue =
@@ -37,7 +37,7 @@ export const
 
 export const classesCache = new Cache<ClassesCacheNms, ClassesCacheValue>([
 	'base',
-	'blocks',
+	'components',
 	'els'
 ]);
 
@@ -62,20 +62,20 @@ export default class Provide {
 	}
 
 	/**
-	 * Returns a full name of the specified component block
+	 * Returns a full name of the specified component
 	 *
 	 * @param [modName]
 	 * @param [modValue]
 	 */
-	fullBlockName(modName?: string, modValue?: unknown): string;
+	fullComponentName(modName?: string, modValue?: unknown): string;
 
 	/**
 	 * @param [componentName]
 	 * @param [modName]
 	 * @param [modValue]
 	 */
-	fullBlockName(componentName?: string, modName?: string, modValue?: unknown): string;
-	fullBlockName(componentName?: string, modName?: string | unknown, modValue?: unknown): string {
+	fullComponentName(componentName?: string, modName?: string, modValue?: unknown): string;
+	fullComponentName(componentName?: string, modName?: string | unknown, modValue?: unknown): string {
 		if (arguments.length === 2) {
 			modValue = modName;
 			modName = componentName;
@@ -232,13 +232,13 @@ export default class Provide {
 	 * @param [componentName] - name of the source component
 	 * @param mods - map of modifiers
 	 */
-	blockClasses(componentName: CanUndef<string>, mods: ModsTable): ReadonlyArray<string>;
+	componentClasses(componentName: CanUndef<string>, mods: ModsTable): ReadonlyArray<string>;
 
 	/**
 	 * @param mods - map of modifiers
 	 */
-	blockClasses(mods: ModsTable): ReadonlyArray<string>;
-	blockClasses(componentName?: string | ModsTable, mods?: ModsTable): ReadonlyArray<string> {
+	componentClasses(mods: ModsTable): ReadonlyArray<string>;
+	componentClasses(componentName?: string | ModsTable, mods?: ModsTable): ReadonlyArray<string> {
 		if (arguments.length === 1) {
 			mods = <ModsTable>componentName;
 			componentName = undefined;
@@ -252,14 +252,14 @@ export default class Provide {
 
 		const
 			key = JSON.stringify(mods) + componentName,
-			cache = classesCache.create('blocks', this.componentName);
+			cache = classesCache.create('components', this.componentName);
 
 		if (cache[key]) {
 			return <ReadonlyArray<string>>cache[key];
 		}
 
 		const
-			classes = cache[key] = [this.fullBlockName(componentName)];
+			classes = cache[key] = [this.fullComponentName(componentName)];
 
 		for (let keys = Object.keys(mods), i = 0; i < keys.length; i++) {
 			const
@@ -267,7 +267,7 @@ export default class Provide {
 				val = mods[key];
 
 			if (val !== undefined) {
-				classes.push(this.fullBlockName(componentName, key, val));
+				classes.push(this.fullComponentName(componentName, key, val));
 			}
 		}
 
@@ -357,6 +357,6 @@ export default class Provide {
 	 * @param [pos] - hint position
 	 */
 	hintClasses(pos: string = 'bottom'): ReadonlyArray<string> {
-		return this.blockClasses('g-hint', {pos});
+		return this.componentClasses('g-hint', {pos});
 	}
 }

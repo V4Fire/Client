@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import iBlock, { component, prop, field, p, ModsDecl } from 'super/i-block/i-block';
+import iBlock, { component, prop, system, p, ModsDecl } from 'super/i-block/i-block';
 export * from 'super/i-block/i-block';
 
 @component()
@@ -26,7 +26,7 @@ export default abstract class iMessage extends iBlock {
 	/**
 	 * Information message store
 	 */
-	@field({
+	@system({
 		replace: false,
 		init: (o) => o.sync.link('infoProp')
 	})
@@ -36,7 +36,7 @@ export default abstract class iMessage extends iBlock {
 	/**
 	 * Error message store
 	 */
-	@field({
+	@system({
 		replace: false,
 		init: (o) => o.sync.link('errorProp')
 	})
@@ -70,6 +70,15 @@ export default abstract class iMessage extends iBlock {
 	 */
 	set info(value: CanUndef<string>) {
 		this.infoMsg = value;
+
+		this.waitStatus('ready', () => {
+			const
+				box = this.block.element('info-box');
+
+			if (box && box.children[0]) {
+				box.children[0].innerHTML = this.infoMsg || '';
+			}
+		});
 	}
 
 	/**
@@ -86,6 +95,15 @@ export default abstract class iMessage extends iBlock {
 	 */
 	set error(value: CanUndef<string>) {
 		this.errorMsg = value;
+
+		this.waitStatus('ready', () => {
+			const
+				box = this.block.element('error-box');
+
+			if (box && box.children[0]) {
+				box.children[0].innerHTML = this.errorMsg || '';
+			}
+		});
 	}
 
 	/**

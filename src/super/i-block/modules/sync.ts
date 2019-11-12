@@ -21,9 +21,6 @@ export interface LinkWrapper<V = unknown, R = unknown> {
 	(value: V, oldValue?: V): R;
 }
 
-export type BindModCb<V = unknown, R = unknown> =
-	((value: V) => R) | Function;
-
 export type SyncObjectField<T = unknown> =
 	string |
 	[string] |
@@ -486,7 +483,7 @@ export default class Sync {
 	mod<D = unknown, R = unknown>(
 		mod: string,
 		field: string,
-		converter: BindModCb<D, R> | AsyncWatchOpts = (v) => v != null ? Boolean(v) : undefined,
+		converter: LinkWrapper<D, R> | Function | AsyncWatchOpts = (v) => v != null ? Boolean(v) : undefined,
 		params?: AsyncWatchOpts
 	): void {
 		mod = mod.camelize(false);
@@ -503,14 +500,21 @@ export default class Sync {
 			fn = <Function>converter;
 
 		const setWatcher = () => {
-			component.watch(field, (val) => {
-				val = fn.call(this, val);
+			const wrapper = (val, ...args) => {
+				val = fn.call(this, val, ...args);
 
 				if (val !== undefined) {
 					this.component.setMod(mod, val);
 				}
+			};
 
-			}, params);
+			if (fn.length > 1) {
+				// tslint:disable-next-line:no-unnecessary-callback-wrapper
+				component.watch(field, (val, oldVal) => wrapper(val, oldVal), params);
+
+			} else {
+				component.watch(field, wrapper, params);
+			}
 		};
 
 		if (this.lfc.isBeforeCreate()) {

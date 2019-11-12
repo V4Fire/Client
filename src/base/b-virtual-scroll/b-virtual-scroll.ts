@@ -155,7 +155,7 @@ export default class bVirtualScroll extends iData<RemoteData> {
 	readonly requestQuery?: RequestQuery;
 
 	/** @override */
-	@prop({type: [Object, Array], watch: 'reload', required: false})
+	@prop({type: [Object, Array], required: false})
 	readonly request?: iData['request'];
 
 	/**
@@ -291,7 +291,7 @@ export default class bVirtualScroll extends iData<RemoteData> {
 
 	/** @override */
 	protected syncRequestParamsWatcher(): Promise<void> {
-		return Promise.resolve();
+		return this.reload().catch(stderr);
 	}
 
 	/**
