@@ -213,7 +213,7 @@ export default class bCheckbox<
 
 		if (this.id) {
 			const
-				els = document.querySelectorAll(`.${this.id}`);
+				els = document.querySelectorAll(`.i-block-helper[data-parent-id="${this.id}"]`);
 
 			for (let i = 0; i < els.length; i++) {
 				const
@@ -239,10 +239,12 @@ export default class bCheckbox<
 				const
 					els = await this.groupElements;
 
-				parent.check(
-					els.length &&
-					els.every((el) => el.value !== undefined) || 'indeterminate'
-				).catch(stderr);
+				if (els.every((el) => !el.mods.checked || el.mods.checked === 'false')) {
+					parent.uncheck().catch(stderr);
+
+				} else {
+					parent.check(els.every((el) => el.mods.checked === 'true') || 'indeterminate').catch(stderr);
+				}
 			}
 		}
 	}

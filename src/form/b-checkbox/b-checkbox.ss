@@ -18,7 +18,7 @@
 
 	- block rootAttrs
 		- super
-		? self.appendToRootClasses('parentId')
+		? rootAttrs[':-parent-id'] = 'parentId'
 
 	- block attrs
 		- super
