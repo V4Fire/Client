@@ -9,6 +9,7 @@
 import Async from 'core/async';
 import Range from 'core/range';
 import symbolGenerator from 'core/symbol';
+import { is } from 'core/browser';
 
 import bVirtualScroll from 'base/b-virtual-scroll/b-virtual-scroll';
 import ComponentRender from 'base/b-virtual-scroll/modules/component-render';
@@ -419,7 +420,7 @@ export default class ScrollRender {
 		const
 			{async: $a, component} = this;
 
-		$a.requestAnimationFrame(() => {
+		const r = () => {
 			const {nodes, positions, items} = this.renderItems();
 			this.appendNodes(nodes, items);
 			this.clearNodes();
@@ -434,8 +435,14 @@ export default class ScrollRender {
 			}
 
 			this.hideTombstones(positions);
+		};
 
-		}, {group: 'scroll-render'});
+		if (Boolean(is.iOS)) {
+			r();
+
+		} else {
+			$a.requestAnimationFrame(r.bind(this), {group: 'scroll-render'});
+		}
 
 		this.request();
 	}
