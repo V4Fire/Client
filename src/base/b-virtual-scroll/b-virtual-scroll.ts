@@ -283,6 +283,13 @@ export default class bVirtualScroll extends iData<RemoteData> {
 			);
 	}
 
+	/**
+	 * Retries last request
+	 */
+	retry(): void {
+		return this.scrollRender.retryRequest();
+	}
+
 	/** @override */
 	protected initModEvents(): void {
 		super.initModEvents();

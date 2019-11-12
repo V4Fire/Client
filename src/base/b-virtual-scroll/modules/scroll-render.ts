@@ -6,6 +6,8 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+// tslint:disable: max-file-line-count
+
 import Async from 'core/async';
 import Range from 'core/range';
 import symbolGenerator from 'core/symbol';
@@ -338,6 +340,16 @@ export default class ScrollRender {
 	}
 
 	/**
+	 * Retries last request
+	 */
+	retryRequest(): void {
+		this.isRequestsDone = false;
+		this.isLastEmpty = false;
+		this.component.removeMod('requestsDone', true);
+		this.updateRange();
+	}
+
+	/**
 	 * Registers the specified array of options
 	 * @param data
 	 */
@@ -452,7 +464,7 @@ export default class ScrollRender {
 	 */
 	protected request(): Promise<void> {
 		const
-			{component, items, currentAnchor} = this,
+			{component} = this,
 			resolved = Promise.resolve(),
 			shouldRequest = component.shouldMakeRequest(getRequestParams(this));
 
@@ -461,13 +473,6 @@ export default class ScrollRender {
 		}
 
 		if (!shouldRequest || !component.dataProvider || component.mods.progress === 'true') {
-			return resolved;
-		}
-
-		const
-			itemsToReachBottom = this.totalLoaded - currentAnchor.index;
-
-		if (itemsToReachBottom <= 0 || !items.length) {
 			return resolved;
 		}
 
