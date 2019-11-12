@@ -614,20 +614,26 @@ export default class Provider {
 			for (let keys = Object.keys(extraProviders), i = 0; i < keys.length; i++) {
 				const
 					key = keys[i],
-					el = extraProviders[key] || {},
-					ProviderConstructor = <typeof Provider>providers[key];
+					el = extraProviders[key] || {};
+
+				const
+					nm = el.provider || key,
+					as = el.as || key;
+
+				const
+					ProviderConstructor = <typeof Provider>providers[nm];
 
 				if (!ProviderConstructor) {
-					throw new Error(`Provider "${key}" is not defined`);
+					throw new Error(`Provider "${nm}" is not defined`);
 				}
 
 				const
 					dp = new ProviderConstructor(el.providerParams);
 
 				tasks.push(
-					dp.get(el.query || query, el.requestOpts).then(({data}) => {
-						cloneTasks.push((composition) => Object.set(composition, key, data && (<object>data).valueOf()));
-						return Object.set(composition, key, data);
+					dp.get(el.query || query, el.request).then(({data}) => {
+						cloneTasks.push((composition) => Object.set(composition, as, data && (<object>data).valueOf()));
+						return Object.set(composition, as, data);
 					})
 				);
 			}

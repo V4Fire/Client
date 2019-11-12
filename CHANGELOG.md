@@ -11,6 +11,16 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-beta.212 (2019-11-12)
+
+#### :boom: Breaking Change
+
+* Renamed `requestOpts` to `request` within extra providers `core/data`
+
+#### :rocket: New Feature
+
+* Added `provider` and `as` parameters for extra providers `core/data`
+
 ## v3.0.0-beta.211 (2019-11-12)
 
 #### :rocket: New Feature
