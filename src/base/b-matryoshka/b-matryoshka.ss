@@ -39,7 +39,7 @@
 
 				- block children
 					< .&__children v-if = field.get('children.length', el)
-						< b-matryoshka.&__child &
+						< @b-matryoshka.&__child &
 							:options = el.children |
 							:v-attrs = getNestedDollProps()
 						.

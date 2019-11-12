@@ -125,9 +125,7 @@ export default class bMatryoshka extends iBlock {
 	 */
 	protected onFoldingClick(el: Doll): void {
 		const
-			target = this.searchDollElement(el.id);
-
-		const
+			target = this.searchDollElement(el.id),
 			newVal = this.getFoldedMod(<string>el.id) === 'false';
 
 		if (target) {
