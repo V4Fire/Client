@@ -318,10 +318,11 @@ export default class Provider {
 
 		if (extra) {
 			const
-				extraVal = Object.isFunction(extra) ? extra() : extra;
+				extraVal = Object.isFunction(extra) ? extra() : extra,
+				extraValKeys = extraVal && Object.keys(extraVal);
 
-			if (extraVal) {
-				paramsForCache.extraProviders = Object.keys(extraVal);
+			if (extraValKeys && extraValKeys.length) {
+				paramsForCache.extraProviders = extraValKeys;
 			}
 		}
 
