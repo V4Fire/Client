@@ -15,6 +15,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :bug: Bug Fix
 
+* Fixed nested checkbox groups
 * Fixed invalid cache key with extra providers `core/data`
 
 ## v3.0.0-beta.209 (2019-11-11)
