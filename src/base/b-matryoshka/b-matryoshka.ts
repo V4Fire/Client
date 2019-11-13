@@ -100,13 +100,8 @@ export default class bMatryoshka extends iBlock {
 	 * Recursively render filter
 	 * @param el
 	 */
-	protected renderFilter(el: Doll): CanPromise<boolean> {
-		const filter = async (id) => {
-			await this.nextTick();
-			return this.getFoldedMod(id) === 'false';
-		};
-
-		return el.parentId ? filter(el.parentId) : true;
+	protected renderFilter(el: Doll): boolean {
+		return el.parentId ? this.getFoldedMod(el.parentId) === 'false' : true;
 	}
 
 	/**
