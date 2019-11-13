@@ -52,7 +52,7 @@ export default class bCheckbox<
 	readonly defaultProp?: V;
 
 	/** @override */
-	@prop({type: Boolean, required: false})
+	@prop({type: String, required: false})
 	readonly parentId?: string;
 
 	/**
