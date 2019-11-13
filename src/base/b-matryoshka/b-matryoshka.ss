@@ -13,7 +13,7 @@
 - template index() extends ['i-block'].index
 	- block body
 		< template v-for = el in top.asyncRender.iterate(options, top.renderChunks, { &
-			filter: (item) => item.parentId ? listFilter(item.parentId) : true
+			filter: renderFilter
 		}) .
 			< . &
 				:-id = top.dom.getId(el.id) |
