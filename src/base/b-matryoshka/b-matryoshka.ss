@@ -31,7 +31,7 @@
 
 								< .&__fold &
 									v-else |
-									@click = onFoldingClick(el)
+									:v-attrs = getFoldingProps(el)
 								.
 
 					- block doll

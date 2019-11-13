@@ -52,7 +52,7 @@ export default class bMatryoshka extends iBlock {
 	 */
 	protected getFoldingProps(el: Doll): Dictionary {
 		return {
-			'@onClick': this.onFoldingClick.bind(this, el)
+			'@click': this.onFoldingClick.bind(this, el)
 		};
 	}
 
