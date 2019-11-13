@@ -98,14 +98,18 @@ export default class bMatryoshka extends iBlock {
 
 	/**
 	 * Recursively render filter
-	 * @param id
+	 * @param el
 	 */
-	protected listFilter(id: string): boolean {
-		if (this.top.hook !== 'mounted') {
-			return false;
-		}
+	protected renderFilter(el: Doll): boolean {
+		const filter = (id) => {
+			if (this.top.hook !== 'mounted') {
+				return false;
+			}
 
-		return this.getFoldedMod(id) === 'false';
+			return this.getFoldedMod(id) === 'false';
+		};
+
+		return el.parentId ? filter(el.parentId) : true;
 	}
 
 	/**
