@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-beta.215 (2019-11-13)
+
+#### :bug: Bug Fix
+
+* Fixed async render with recursion `core/component`
+
 ## v3.0.0-beta.214 (2019-11-13)
 
 #### :bug: Bug Fix

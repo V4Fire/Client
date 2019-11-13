@@ -708,7 +708,7 @@ export function component(params?: ComponentParams): Function {
 												ctx.nextTick(fn);
 
 											} else {
-												const hooks = ctx.meta.hooks[beforeMountHooks[ctx.hook] ? 'mounted' : 'updated'];
+												const hooks = ctx.meta.hooks[beforeMountHooks[ctx.hook] ? 'mounted' : 'beforeUpdated'];
 												hooks.push({fn, once: true});
 											}
 										});
