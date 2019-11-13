@@ -18,17 +18,6 @@
 			':mods': '{showInfo: false, showError: false}'
 		} .
 
-		< b-checkbox-group &
-			:tree = true |
-			:options = [
-				{id: '112', label: 'Первый уровень 112', name: 'Радиокнопка 1', level: 1},
-				{id: '232', label: 'Второй уровень 232', name: 'Радиокнопка 123', level: 2, parent: '112'},
-				{id: '78', label: 'Второй уровень имя 2 - 78', name: 'Радиокнопка 1234',  level: 2, parent: '112'},
-				{id: '3421', label: 'Третий уровень - 3421', name: 'Радиокнопка 1235',  level: 3, parent: '232'},
-				{id: '3423', label: 'Четвёрый уровень - 3423', name: 'Радиокнопка 12356',  level: 4, parent: '3421'}
-			]
-		.
-
 		< b-v4-component-demo
 			< b-file-button &
 				v-func = false |
