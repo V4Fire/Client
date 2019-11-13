@@ -13,7 +13,7 @@
 - template index() extends ['i-block'].index
 	- block body
 		< template v-for = el in top.asyncRender.iterate(options, top.renderChunks, { &
-			filter: (item) => item.parent ? listFilter(item.parent) : true
+			filter: (item) => item.parentId ? listFilter(item.parentId) : true
 		}) .
 			< . &
 				:-id = top.dom.getId(el.id) |
@@ -31,7 +31,7 @@
 
 								< .&__fold &
 									v-else |
-									@click = onFoldingClick(el)
+									:v-attrs = getFoldingProps(el)
 								.
 
 					- block doll

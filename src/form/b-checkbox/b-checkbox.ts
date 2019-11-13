@@ -106,11 +106,6 @@ export default class bCheckbox<
 	static readonly mods: ModsDecl = {
 		...iSize.mods,
 
-		halfChecked: [
-			'true',
-			'false'
-		],
-
 		checked: [
 			'true',
 			'false',
