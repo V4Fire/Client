@@ -16,7 +16,7 @@ export interface Doll extends Dictionary {
 @component({flyweight: true})
 export default class bMatryoshka extends iBlock {
 	/**
-	 * Array for recursively calling
+	 * Data for recursively calling
 	 */
 	@prop(Array)
 	readonly options!: Doll[];
@@ -112,7 +112,7 @@ export default class bMatryoshka extends iBlock {
 	 */
 	protected searchDollElement(id: string): CanUndef<HTMLElement> {
 		const
-			dataId = this.top.dom.getId(<string>id);
+			dataId = this.top.dom.getId(id);
 
 		return this.$parent?.$el?.querySelector(`[data-id=${dataId}]`);
 	}
