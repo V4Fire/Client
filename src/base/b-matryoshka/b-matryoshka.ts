@@ -100,12 +100,9 @@ export default class bMatryoshka extends iBlock {
 	 * Recursively render filter
 	 * @param el
 	 */
-	protected renderFilter(el: Doll): boolean {
-		const filter = (id) => {
-			if (this.top.hook !== 'mounted') {
-				return false;
-			}
-
+	protected renderFilter(el: Doll): CanPromise<boolean> {
+		const filter = async (id) => {
+			await this.nextTick();
 			return this.getFoldedMod(id) === 'false';
 		};
 
