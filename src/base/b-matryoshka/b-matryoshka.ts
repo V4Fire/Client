@@ -16,25 +16,25 @@ export interface Doll extends Dictionary {
 @component({flyweight: true})
 export default class bMatryoshka extends iBlock {
 	/**
-	 * Data for recursively calling
+	 * Component options
 	 */
 	@prop(Array)
 	readonly options!: Doll[];
 
 	/**
-	 * Chunks count for the async render
+	 * Number of chunks for the async render
 	 */
 	@prop(Number)
 	readonly renderChunks: number = 5;
 
 	/**
-	 * Fold all nested items
+	 * If true, then all nested elements will be folded by default
 	 */
 	@prop(Boolean)
 	readonly folded: boolean = true;
 
 	/**
-	 * Component level
+	 * Component level (internal parameter)
 	 */
 	@prop(Number)
 	readonly level: number = 0;
@@ -42,12 +42,13 @@ export default class bMatryoshka extends iBlock {
 	/**
 	 * Link to the top level component
 	 */
-	protected get top(): bMatryoshka {
-		return this.isFlyweight ? <bMatryoshka>this.$normalParent : this;
+	protected get top(): this {
+		return this.isFlyweight && <this>this.$normalParent || this;
 	}
 
 	/**
-	 * Returns props data for the fold control
+	 * Returns props data for the specified fold element
+	 * @param el
 	 */
 	protected getFoldingProps(el: Doll): Dictionary {
 		return {
@@ -56,7 +57,7 @@ export default class bMatryoshka extends iBlock {
 	}
 
 	/**
-	 * Returns a props data for an iterated option
+	 * Returns props data for the specified iterated element
 	 * @param el
 	 */
 	protected getOptionProps(el: Doll): Dictionary {
@@ -64,7 +65,7 @@ export default class bMatryoshka extends iBlock {
 	}
 
 	/**
-	 * Returns a props data for recursive calling
+	 * Returns props data for recursive calling
 	 */
 	protected getNestedDollProps(): Dictionary {
 		const opts = {
@@ -80,7 +81,7 @@ export default class bMatryoshka extends iBlock {
 	}
 
 	/**
-	 * Returns folded mod for the specified doll id
+	 * Returns a folded modifier for the specified doll identifier
 	 * @param id
 	 */
 	protected getFoldedMod(id: string): CanUndef<string> {
@@ -107,18 +108,16 @@ export default class bMatryoshka extends iBlock {
 	}
 
 	/**
-	 * Search HTML element for the specified identifier
+	 * Searches HTML element with the specified identifier
 	 * @param id
 	 */
 	protected searchDollElement(id: string): CanUndef<HTMLElement> {
-		const
-			dataId = this.top.dom.getId(id);
-
-		return this.$parent?.$el?.querySelector(`[data-id=${dataId}]`);
+		const dataId = this.top.dom.getId(id);
+		return this.$parent?.$el?.querySelector<HTMLElement>(`[data-id=${dataId}]`) || undefined;
 	}
 
 	/**
-	 * Handler: on fold control click
+	 * Handler: fold element click
 	 *
 	 * @param el
 	 * @emits fold(target: HTMLElement, el: Doll, value: boolean)
