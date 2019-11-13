@@ -10,7 +10,8 @@ import iBlock, { component, prop } from 'super/i-block/i-block';
 
 export interface Doll extends Dictionary {
 	id: string;
-	children: Doll[];
+	parentId?: string;
+	children?: Doll[];
 }
 
 @component({flyweight: true})
