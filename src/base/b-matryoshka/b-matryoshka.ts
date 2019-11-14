@@ -6,7 +6,8 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import iBlock, { component, prop } from 'super/i-block/i-block';
+import iData, { component, prop, field } from 'super/i-data/i-data';
+export * from 'super/i-data/i-data';
 
 export interface Doll extends Dictionary {
 	id: string;
@@ -15,12 +16,12 @@ export interface Doll extends Dictionary {
 }
 
 @component({flyweight: true})
-export default class bMatryoshka extends iBlock {
+export default class bMatryoshka<T extends object = Dictionary> extends iData<T> {
 	/**
-	 * Component options
+	 * Initial component options
 	 */
 	@prop(Array)
-	readonly options!: Doll[];
+	readonly optionsProp?: Doll[] = [];
 
 	/**
 	 * Number of chunks for the async render
@@ -41,10 +42,32 @@ export default class bMatryoshka extends iBlock {
 	readonly level: number = 0;
 
 	/**
+	 * Component options
+	 */
+	@field((o) => o.sync.link())
+	options!: Doll[];
+
+	/**
 	 * Link to the top level component
 	 */
 	protected get top(): this {
 		return this.isFlyweight && <this>this.$normalParent || this;
+	}
+
+	/** @override */
+	protected initRemoteData(): CanUndef<Doll[]> {
+		if (!this.db) {
+			return;
+		}
+
+		const
+			val = this.convertDBToComponent<Doll[]>(this.db);
+
+		if (Object.isArray(val)) {
+			return this.options = val;
+		}
+
+		return this.options;
 	}
 
 	/**

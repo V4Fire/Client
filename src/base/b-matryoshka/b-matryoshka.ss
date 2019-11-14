@@ -8,9 +8,9 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-- include 'super/i-block'|b as placeholder
+- include 'super/i-data'|b as placeholder
 
-- template index() extends ['i-block'].index
+- template index() extends ['i-data'].index
 	- block body
 		< template v-for = el in top.asyncRender.iterate(options, top.renderChunks, { &
 			filter: renderFilter

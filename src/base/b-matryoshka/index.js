@@ -1,2 +1,2 @@
 package('b-matryoshka')
-	.extends('i-block');
+	.extends('i-data');
