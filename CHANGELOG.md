@@ -11,6 +11,17 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-beta.216 (2019-11-15)
+
+#### :rocket: New Feature
+
+* Added `bMatryoshka`
+
+#### :house: Internal
+
+* Fixed `OptionProps` type `bSlider`
+* Updated dependencies: @v4fire/core@3.0.0-beta.90, path-to-regexp@3.2.0, gulp-csso@4.1.0, terser-webpack-plugin@2.2.1, typograf@6.10.0
+
 ## v3.0.0-beta.215 (2019-11-13)
 
 #### :bug: Bug Fix
