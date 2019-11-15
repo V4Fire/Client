@@ -35,7 +35,14 @@
 								.
 
 					- block doll
-						+= self.slot('default', {':option': 'getOptionProps(el)'})
+						< template v-if = option
+							< component.&__option &
+								:is = option |
+								:v-attrs = getOptionProps(el, i)
+							.
+
+						< template v-else
+							+= self.slot('default', {':option': 'getOptionProps(el, i)'})
 
 				- block children
 					< .&__children v-if = field.get('children.length', el)

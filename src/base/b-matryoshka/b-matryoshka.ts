@@ -9,6 +9,7 @@
 import iData, { component, prop, field } from 'super/i-data/i-data';
 export * from 'super/i-data/i-data';
 
+export type OptionProps = ((el: unknown, i: number, k: CanUndef<string>) => Dictionary) | Dictionary;
 export interface Doll extends Dictionary {
 	id: string;
 	parentId?: string;
@@ -20,8 +21,26 @@ export default class bMatryoshka<T extends object = Dictionary> extends iData<T>
 	/**
 	 * Initial component options
 	 */
-	@prop(Array)
-	readonly optionsProp?: Doll[] = [];
+	@prop({type: Array, required: false})
+	readonly optionsProp?: Doll[];
+
+	/**
+	 * Option component
+	 */
+	@prop({type: String, required: false})
+	readonly option?: string;
+
+	/**
+	 * Option unique key (for v-for)
+	 */
+	@prop({type: [String, Function], required: false})
+	readonly optionKey?: string | ((el: unknown, i: number) => string);
+
+	/**
+	 * Option component props
+	 */
+	@prop({type: [Object, Function], required: false})
+	readonly optionProps?: OptionProps;
 
 	/**
 	 * Number of chunks for the async render
@@ -81,11 +100,33 @@ export default class bMatryoshka<T extends object = Dictionary> extends iData<T>
 	}
 
 	/**
-	 * Returns props data for the specified iterated element
+	 * Generates or returns an option key for v-for
+	 *
 	 * @param el
+	 * @param i
 	 */
-	protected getOptionProps(el: Doll): Dictionary {
-		return Object.reject(el, 'children');
+	protected getOptionKey(el: unknown, i: number): CanUndef<string> {
+		return Object.isFunction(this.optionKey) ?
+			this.optionKey(el, i) :
+			this.optionKey;
+	}
+
+	/**
+	 * Returns props data for the specified iterated element
+	 *
+	 * @param el
+	 * @param i
+	 */
+	protected getOptionProps(el: Doll, i: number): Dictionary {
+		const
+			op = this.optionProps,
+			item = Object.reject(el, 'children');
+
+		if (!op) {
+			return item;
+		}
+
+		return Object.isFunction(op) ? op(item, i, this.getOptionKey(item, i)) : op;
 	}
 
 	/**
