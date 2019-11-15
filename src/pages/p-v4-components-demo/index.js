@@ -10,6 +10,7 @@ package('p-v4-components-demo')
 	.extends('i-static-page')
 	.dependencies(
 		'b-v4-component-demo',
+		'b-matryoshka',
 		'b-input',
 		'b-select',
 		'b-button',
