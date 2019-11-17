@@ -14,7 +14,6 @@ import {
 	OptionProps,
 	RequestQuery,
 	RequestFn,
-	RequestMoreParams,
 	ScrollRenderState,
 	Axis
 
@@ -30,9 +29,10 @@ import {
 } from 'base/b-virtual-scroll/modules/helpers';
 
 import ComponentRender from 'base/b-virtual-scroll/modules/component-render';
-import ScrollRender, { getRequestParams } from 'base/b-virtual-scroll/modules/scroll-render';
+import ScrollRender from 'base/b-virtual-scroll/modules/scroll-render';
+import ScrollRequest, { getRequestParams } from 'base/b-virtual-scroll/modules/scroll-request';
 
-import iData, { InitLoadParams, RequestParams, ModsDecl, field, component, prop, p, system } from 'super/i-data/i-data';
+import iData, { InitLoadParams, RequestParams, ModsDecl, field, component, hook, prop, p, system } from 'super/i-data/i-data';
 
 export const
 	$$ = symbolGenerator();
@@ -212,6 +212,12 @@ export default class bVirtualScroll extends iData<RemoteData> {
 	protected scrollRender!: ScrollRender;
 
 	/**
+	 * Scroll request module
+	 */
+	@system((o: bVirtualScroll) => new ScrollRequest(o))
+	protected scrollRequest!: ScrollRequest;
+
+	/**
 	 * Component render module
 	 */
 	@system((o: bVirtualScroll) => new ComponentRender(o))
@@ -287,7 +293,7 @@ export default class bVirtualScroll extends iData<RemoteData> {
 	 * Retries last request
 	 */
 	retry(): void {
-		return this.scrollRender.retryRequest();
+		return this.scrollRequest.retry();
 	}
 
 	/** @override */

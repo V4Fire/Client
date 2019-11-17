@@ -13,11 +13,10 @@ import { is } from 'core/browser';
 
 import bVirtualScroll from 'base/b-virtual-scroll/b-virtual-scroll';
 import ComponentRender from 'base/b-virtual-scroll/modules/component-render';
+import ScrollRequest, { getRequestParams } from 'base/b-virtual-scroll/modules/scroll-request';
 
 import {
 
-	RemoteData,
-	RequestMoreParams,
 	AnchoredItem,
 	RenderItem,
 	Size,
@@ -36,16 +35,6 @@ export default class ScrollRender {
 	 * Current state of scroll render
 	 */
 	state: ScrollRenderState = ScrollRenderState.notInitialized;
-
-	/**
-	 * Total amount of elements being loaded
-	 */
-	totalLoaded: number = 0;
-
-	/**
-	 * Current page
-	 */
-	page: number = 1;
 
 	/**
 	 * Scroll direction
@@ -73,11 +62,6 @@ export default class ScrollRender {
 	items: RenderItem[] = [];
 
 	/**
-	 * All loaded data
-	 */
-	loadedData: unknown[] = [];
-
-	/**
 	 * Last loaded data
 	 */
 	lastRegisterData: unknown[] = [];
@@ -98,7 +82,7 @@ export default class ScrollRender {
 	readonly asyncGroup: string = 'scroll-render';
 
 	/**
-	 * Link to the component
+	 * Component instance
 	 */
 	protected component: bVirtualScroll;
 
@@ -159,11 +143,19 @@ export default class ScrollRender {
 	}
 
 	/**
-	 * Link to the recycle module
+	 * Link to the component render module
 	 */
 	protected get componentRender(): ComponentRender {
 		// @ts-ignore (access)
 		return this.component.componentRender;
+	}
+
+	/**
+	 * Link to the request module
+	 */
+	protected get scrollRequest(): ScrollRequest {
+		// @ts-ignore (access)
+		return this.component.scrollRequest;
 	}
 
 	/**
@@ -265,14 +257,14 @@ export default class ScrollRender {
 
 		if (component.dataProvider && component.db) {
 			this.max = component.db.total || Infinity;
-			this.loadedData = component.db.data || [];
+			this.scrollRequest.loadedData = component.db.data || [];
 		}
 
 		if (!component.options || !component.options.length) {
 			return;
 		}
 
-		this.checksRequestDone(getRequestParams(this));
+		this.scrollRequest.checksRequestDone(getRequestParams(this.scrollRequest, this));
 		this.initEvents();
 		this.render();
 
@@ -289,20 +281,19 @@ export default class ScrollRender {
 
 		this.scrollEnd = 0;
 		this.scrollPosition = 0;
-		this.totalLoaded = 0;
 		this.cachedContainerSize = 0;
-		this.page = 1;
 
 		this.currentAnchor = {index: 0, offset: 0};
 		this.windowSize = {width: 0, height: 0};
 		this.tombstoneSize = {...this.windowSize};
 		this.lastRegisterData = [];
-		this.loadedData = [];
 		this.items = [];
 
 		this.max = Infinity;
 		this.state = ScrollRenderState.notInitialized;
 		this.range = new Range(0, this.component.realElementsCount);
+
+		this.scrollRequest.reset();
 
 		$a.clearAll({group: this.asyncGroup});
 		$a.clearAll({group: 'scroll-render-elements'});
@@ -322,66 +313,9 @@ export default class ScrollRender {
 	}
 
 	/**
-	 * Initializes offset top of component
-	 */
-	updateOffset(): void {
-		const
-			{component} = this,
-			{$el} = component;
-
-		if (!$el) {
-			return;
-		}
-
-		const {top} = $el.getPosition();
-		this.offsetTop = top;
-	}
-
-	/**
-	 * Registers the specified array of options
-	 * @param data
-	 */
-	protected registerData(data: unknown[]): void {
-		const
-			{items} = this;
-
-		this.lastRegisterData = data;
-
-		for (let i = 0; i < data.length; i++) {
-			if (items.length <= this.totalLoaded) {
-				items.push(this.createItem(undefined));
-			}
-
-			if (this.totalLoaded <= this.max) {
-				items[this.totalLoaded++].data = data[i];
-			}
-		}
-	}
-
-	/**
-	 * Initializes events
-	 */
-	protected initEvents(): void {
-		this.async.on(this.scrollEmitter, 'scroll', this.onScroll.bind(this), {
-			label: $$.scroll,
-			group: this.asyncGroup
-		});
-
-		this.async.on(globalThis, 'resize', async () => {
-			await this.async.sleep(50, {label: $$.resizeSleep, join: false}).catch(stderr);
-			this.onResize();
-
-		}, {
-			label: $$.resize,
-			group: this.asyncGroup,
-			join: false
-		});
-	}
-
-	/**
 	 * Updates the current elements range
 	 */
-	protected updateRange(): void {
+	updateRange(): void {
 		const
 			{scrollRoot, scrollProp, scrollPosition, range, component, currentAnchor} = this,
 			scrollValue = scrollRoot[scrollProp],
@@ -411,6 +345,72 @@ export default class ScrollRender {
 		}
 
 		this.render();
+	}
+
+	/**
+	 * Initializes offset top of component
+	 */
+	updateOffset(): void {
+		const
+			{component} = this,
+			{$el} = component;
+
+		if (!$el) {
+			return;
+		}
+
+		const {top} = $el.getPosition();
+		this.offsetTop = top;
+	}
+
+	/**
+	 * Adds additional data to render
+	 */
+	add(data: unknown[]): void {
+		this.registerData(data);
+		this.scrollRequest.checksRequestDone(getRequestParams(this.scrollRequest, this));
+		this.updateRange();
+	}
+
+	/**
+	 * Registers the specified array of options
+	 * @param data
+	 */
+	protected registerData(data: unknown[]): void {
+		const
+			{items, scrollRequest: request} = this;
+
+		this.lastRegisterData = data;
+
+		for (let i = 0; i < data.length; i++) {
+			if (items.length <= this.scrollRequest.totalLoaded) {
+				items.push(this.createItem(undefined));
+			}
+
+			if (request.totalLoaded <= this.max) {
+				items[request.totalLoaded++].data = data[i];
+			}
+		}
+	}
+
+	/**
+	 * Initializes events
+	 */
+	protected initEvents(): void {
+		this.async.on(this.scrollEmitter, 'scroll', this.onScroll.bind(this), {
+			label: $$.scroll,
+			group: this.asyncGroup
+		});
+
+		this.async.on(globalThis, 'resize', async () => {
+			await this.async.sleep(50, {label: $$.resizeSleep, join: false}).catch(stderr);
+			this.onResize();
+
+		}, {
+			label: $$.resize,
+			group: this.asyncGroup,
+			join: false
+		});
 	}
 
 	/**
@@ -444,7 +444,7 @@ export default class ScrollRender {
 			$a.requestAnimationFrame(r.bind(this), {group: 'scroll-render'});
 		}
 
-		this.request();
+		this.scrollRequest.try();
 	}
 
 	/**
@@ -864,29 +864,10 @@ export default class ScrollRender {
 	}
 
 	/**
-	 * Checks are all requests complete
-	 * @param params
-	 */
-	protected checksRequestDone(params: RequestMoreParams): void {
-		this.isRequestsDone = !this.component.shouldContinueRequest(params);
-
-		if (this.isRequestsDone) {
-			this.max = this.items.length;
-			this.component.setMod('requestsDone', true);
-
-			this.updateRange();
-			this.async.requestAnimationFrame(this.fixSize.bind(this));
-
-		} else {
-			this.component.removeMod('requestsDone', true);
-		}
-	}
-
-	/**
 	 * Fix container height then all data is loaded
 	 */
 	protected fixSize(): void {
-		const size = this.items.reduce((acc, item) => acc + (item.data && item.height || 0), 0);
+		const size = this.items.reduce<number>((acc, item) => acc + (item.data && item.height || 0), 0);
 		this.refs.container.style[this.sizeProp] = size.px;
 	}
 
@@ -905,43 +886,14 @@ export default class ScrollRender {
 		this.updateRange();
 		this.async.requestAnimationFrame(this.fixSize.bind(this));
 	}
-}
 
-/**
- * Returns a request params
- *
- * @param [ctx]
- * @param [merge]
- */
-export function getRequestParams(ctx?: ScrollRender, merge?: Dictionary): RequestMoreParams {
-	const base = {
-		currentPage: 0,
-		currentRange: new Range(0, 0),
-		items: [],
-		lastLoaded: [],
-		currentSlice: [],
-		isLastEmpty: false,
-		itemsToReachBottom: 0
-	};
-
-	const params = ctx ? {
-		currentRange: ctx.range,
-		currentPage: ctx.page,
-		lastLoaded: ctx.lastRegisterData,
-		isLastEmpty: ctx.isLastEmpty,
-
-		currentSlice: ctx.items.slice(ctx.range.start, ctx.range.end),
-		itemsToReachBottom: ctx.totalLoaded - ctx.currentAnchor.index,
-		items: ctx.items
-	} : base;
-
-	const merged = {
-		...params,
-		...merge
-	};
-
-	// tslint:disable-next-line: prefer-object-spread
-	return Object.assign(merged, {
-		nextPage: merged.currentPage + 1
-	});
+	/**
+	 * Handler: all requests are done
+	 */
+	protected onRequestsDone(): void {
+		this.max = this.items.length;
+		this.component.setMod('requestsDone', true);
+		this.updateRange();
+		this.async.requestAnimationFrame(this.fixSize.bind(this));
+	}
 }

@@ -25,7 +25,7 @@ export default class ComponentRender {
 	readonly asyncGroup: string = 'component-render';
 
 	/**
-	 * Link to component
+	 * Component instance
 	 */
 	protected component: bVirtualScroll;
 
