@@ -16,6 +16,10 @@
 	- hiddenInputType = "'checkbox'"
 	- hiddenInputModel = undefined
 
+	- block rootAttrs
+		- super
+		? rootAttrs[':-parent-id'] = 'parentId'
+
 	- block attrs
 		- super
 		? attrs['@click'] = 'onClick'

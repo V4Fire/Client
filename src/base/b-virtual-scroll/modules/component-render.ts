@@ -55,11 +55,6 @@ export default class ComponentRender {
 	protected elementToClone: CanUndef<HTMLElement>;
 
 	/**
-	 * Option context
-	 */
-	protected optionCtx: CanUndef<iBlock>;
-
-	/**
 	 * Number of columns
 	 */
 	protected get columns(): number {

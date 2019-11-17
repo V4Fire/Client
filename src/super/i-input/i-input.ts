@@ -225,7 +225,7 @@ export default abstract class iInput<
 	get groupFormValue(): Promise<CanArray<FV>> {
 		return (async () => {
 			const
-				list = this.groupElements;
+				list = await this.groupElements;
 
 			const
 				els = <FV[]>[],
@@ -251,25 +251,30 @@ export default abstract class iInput<
 	 * List of elements from the current form group
 	 */
 	@p({cache: false, replace: false})
-	get groupElements(): ReadonlyArray<iInput> {
-		if (this.name) {
-			const
-				form = this.connectedForm,
-				list = document.getElementsByName(this.name) || [];
+	get groupElements(): CanPromise<ReadonlyArray<iInput>> {
+		const
+			nm = this.name;
 
-			const
-				els = <iInput[]>[];
-
-			for (let i = 0; i < list.length; i++) {
+		if (nm) {
+			return this.waitStatus('ready', () => {
 				const
-					component = this.dom.getComponent<iInput>(list[i], '[class*="_form_true"]');
+					form = this.connectedForm,
+					list = document.getElementsByName(nm) || [];
 
-				if (component && form === component.connectedForm) {
-					els.push(component);
+				const
+					els = <iInput[]>[];
+
+				for (let i = 0; i < list.length; i++) {
+					const
+						component = this.dom.getComponent<iInput>(list[i], '[class*="_form_true"]');
+
+					if (component && form === component.connectedForm) {
+						els.push(component);
+					}
 				}
-			}
 
-			return Object.freeze(els);
+				return Object.freeze(els);
+			});
 		}
 
 		return Object.freeze([<iInput<any, any, any>>this]);

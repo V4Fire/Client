@@ -325,36 +325,6 @@ export default class bVirtualScroll extends iData<RemoteData> {
 	}
 
 	/**
-	 * Requests an additional data
-	 * @param params
-	 */
-	protected loadEntities(params: RequestMoreParams): Promise<CanUndef<RemoteData>> {
-		const query = {
-			...this.request,
-			...Object.isFunction(this.requestQuery) && this.requestQuery(params) || {}
-		};
-
-		return this.get(query)
-			.then((data) => {
-				if (!data) {
-					return;
-				}
-
-				const
-					converted = this.convertDataToDB<CanUndef<RemoteData>>(data);
-
-				if (!this.field.get('data.length', converted)) {
-					return;
-				}
-
-				this.options = this.options.concat(converted);
-				return converted;
-			})
-
-			.catch((err) => (stderr(err), undefined));
-	}
-
-	/**
 	 * Returns an option key
 	 *
 	 * @param el

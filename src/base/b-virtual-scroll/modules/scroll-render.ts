@@ -6,8 +6,6 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-// tslint:disable: max-file-line-count
-
 import Async from 'core/async';
 import Range from 'core/range';
 import symbolGenerator from 'core/symbol';
@@ -340,16 +338,6 @@ export default class ScrollRender {
 	}
 
 	/**
-	 * Retries last request
-	 */
-	retryRequest(): void {
-		this.isRequestsDone = false;
-		this.isLastEmpty = false;
-		this.component.removeMod('requestsDone', true);
-		this.updateRange();
-	}
-
-	/**
 	 * Registers the specified array of options
 	 * @param data
 	 */
@@ -457,50 +445,6 @@ export default class ScrollRender {
 		}
 
 		this.request();
-	}
-
-	/**
-	 * Requests an additional data
-	 */
-	protected request(): Promise<void> {
-		const
-			{component} = this,
-			resolved = Promise.resolve(),
-			shouldRequest = component.shouldMakeRequest(getRequestParams(this));
-
-		if (this.isRequestsDone) {
-			return resolved;
-		}
-
-		if (!shouldRequest || !component.dataProvider || component.mods.progress === 'true') {
-			return resolved;
-		}
-
-		const
-			params = getRequestParams(this);
-
-		// @ts-ignore (access)
-		return component.loadEntities(params)
-			.then((v: CanUndef<RemoteData>) => {
-				if (!component.field.get('data.length', v)) {
-					this.isLastEmpty = true;
-					this.checksRequestDone(getRequestParams(this, {lastLoaded: []}));
-					return;
-				}
-
-				const
-					{data, total} = <RemoteData>v;
-
-				this.page++;
-				this.max = total || Infinity;
-				this.isLastEmpty = false;
-				this.loadedData = this.loadedData.concat(data);
-
-				this.registerData(data);
-				this.checksRequestDone(getRequestParams(this));
-				this.updateRange();
-
-			}).catch(stderr);
 	}
 
 	/**

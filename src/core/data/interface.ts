@@ -73,9 +73,11 @@ export interface ProviderParams {
 }
 
 export interface ExtraProvider {
-	query?: RequestQuery;
-	requestOpts?: CreateRequestOpts;
+	provider?: string;
 	providerParams?: ProviderParams;
+	query?: RequestQuery;
+	request?: CreateRequestOpts;
+	as?: string;
 }
 
 export type ExtraProviders = Dictionary<Nullable<ExtraProvider>>;

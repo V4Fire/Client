@@ -570,7 +570,9 @@ export function patchVNode(vnode: VNode, ctx: ComponentInterface, renderCtx: Ren
 			}
 		}
 
-		el[$$.component] = ctx;
+		el.component =
+			el[$$.component] = ctx;
+
 		runHook('mounted', meta, ctx).then(() => {
 			if (methods.mounted) {
 				return methods.mounted.fn.call(ctx);

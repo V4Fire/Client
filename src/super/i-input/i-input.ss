@@ -11,7 +11,6 @@
 - include 'super/i-data'|b as placeholder
 
 - template index() extends ['i-data'].index
-	- messageHelpers = true
 	- skeletonMarker = true
 
 	- hiddenInputTag = 'input'

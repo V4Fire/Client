@@ -17,9 +17,12 @@ import iInput, {
 
 	ModsDecl,
 	ModEvent,
+
 	ValidatorsDecl,
 	ValidatorParams,
-	ValidatorResult
+	ValidatorResult,
+
+	ComponentElement
 
 } from 'super/i-input/i-input';
 
@@ -27,6 +30,7 @@ export * from 'super/i-input/i-input';
 
 export type Value = CanUndef<string | boolean>;
 export type FormValue = Value;
+export type CheckType = true | 'indeterminate';
 
 export const
 	$$ = symbolGenerator();
@@ -46,6 +50,10 @@ export default class bCheckbox<
 	/** @override */
 	@prop({type: Boolean, required: false})
 	readonly defaultProp?: V;
+
+	/** @override */
+	@prop({type: String, required: false})
+	readonly parentId?: string;
 
 	/**
 	 * Checkbox label
@@ -100,7 +108,8 @@ export default class bCheckbox<
 
 		checked: [
 			'true',
-			'false'
+			'false',
+			'indeterminate'
 		]
 	};
 
@@ -126,8 +135,8 @@ export default class bCheckbox<
 	/**
 	 * Checks the checkbox
 	 */
-	async check(): Promise<boolean> {
-		return this.setMod('checked', true);
+	async check(value?: CheckType): Promise<boolean> {
+		return this.setMod('checked', value || true);
 	}
 
 	/**
@@ -142,6 +151,20 @@ export default class bCheckbox<
 	 */
 	toggle(): Promise<boolean> {
 		return this.mods.checked === 'true' ? this.uncheck() : this.check();
+	}
+
+	/** @override */
+	protected initBaseAPI(): void {
+		super.initBaseAPI();
+		this.onValueChange = this.instance.onValueChange.bind(this);
+		this.onCheckedChange = this.instance.onCheckedChange.bind(this);
+	}
+
+	/** @override */
+	protected initModEvents(): void {
+		super.initModEvents();
+		this.sync.mod('checked', 'value', this.onValueChange);
+		this.localEvent.on('block.mod.*.checked.*', this.onCheckedChange);
 	}
 
 	/**
@@ -159,31 +182,85 @@ export default class bCheckbox<
 	}
 
 	/**
-	 * @override
-	 * @emits check()
+	 * Handler: checkbox change
+	 *
+	 * @param e
+	 * @emits check(type: CheckType)
 	 * @emits uncheck()
 	 */
-	protected initModEvents(): void {
-		super.initModEvents();
+	protected async onCheckedChange(e: ModEvent): Promise<void> {
+		if (e.type === 'remove' && e.reason !== 'removeMod') {
+			return;
+		}
 
-		this.sync.mod('checked', 'value', (v) => {
+		const
+			{input} = this.$refs;
+
+		const
+			setMod = e.type !== 'remove',
+			checked = setMod && e.value === 'true',
+			unchecked = !setMod || e.value === 'false';
+
+		input.checked = checked;
+		input.indeterminate = setMod && e.value === 'indeterminate';
+
+		if (unchecked) {
+			this.emit('uncheck');
+
+		} else {
+			this.emit('check', e.value);
+		}
+
+		if (this.id) {
 			const
-				mod = this.mods.checked;
+				els = document.querySelectorAll(`.i-block-helper[data-parent-id="${this.id}"]`);
 
-			if (mod === undefined) {
-				return v === true;
+			for (let i = 0; i < els.length; i++) {
+				const
+					el = (<ComponentElement>els[i]).component;
+
+				if (this.isComponent(el, bCheckbox)) {
+					if (checked) {
+						el.check(<CheckType>e.value).catch(stderr);
+
+					} else if (unchecked) {
+						el.uncheck().catch(stderr);
+					}
+				}
 			}
+		}
 
-			return mod;
-		});
+		if (this.parentId) {
+			const parent = (<ComponentElement>document.getElementById(this.parentId)
+				?.closest('.i-block-helper'))
+				?.component;
 
-		this.localEvent.on('block.mod.*.checked.*', (e: ModEvent) => {
-			if (e.type === 'remove' && e.reason !== 'removeMod') {
-				return;
+			if (this.isComponent(parent, bCheckbox)) {
+				const
+					els = await this.groupElements;
+
+				if (els.every((el) => !el.mods.checked || el.mods.checked === 'false')) {
+					parent.uncheck().catch(stderr);
+
+				} else {
+					parent.check(els.every((el) => el.mods.checked === 'true') || 'indeterminate').catch(stderr);
+				}
 			}
+		}
+	}
 
-			this.$refs.input.checked = (e.type !== 'remove' && e.value === 'true');
-			this.emit(this.value ? 'check' : 'uncheck');
-		});
+	/**
+	 * Handler: value change
+	 * @param value
+	 */
+	protected onValueChange(value: Value): boolean | string {
+		const
+			mod = this.mods.checked;
+
+		if (mod === undefined) {
+			return value === true;
+		}
+
+		return mod;
 	}
 }

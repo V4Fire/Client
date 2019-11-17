@@ -11,7 +11,7 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v3.0.0-beta.209 (2019-11-x)
+## v3.0.0-beta.217 (2019-11-x)
 
 #### :boom: Breaking Change
 
@@ -29,6 +29,67 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 * [Fixed `b-content-switcher` `components` resolver not being resolved with multiply components in `content` slot](https://github.com/V4Fire/Client/pull/137)
 * [Fixed `b-content-switcher` not beign hidden with `animation` set to `none`](https://github.com/V4Fire/Client/pull/137)
+
+## v3.0.0-beta.216 (2019-11-15)
+
+#### :rocket: New Feature
+
+* Added `bMatryoshka`
+
+#### :house: Internal
+
+* Fixed `OptionProps` type `bSlider`
+* Updated dependencies: @v4fire/core@3.0.0-beta.90, path-to-regexp@3.2.0, gulp-csso@4.1.0, terser-webpack-plugin@2.2.1, typograf@6.10.0
+
+## v3.0.0-beta.215 (2019-11-13)
+
+#### :bug: Bug Fix
+
+* Fixed async render with recursion `core/component`
+
+## v3.0.0-beta.214 (2019-11-13)
+
+#### :bug: Bug Fix
+
+* Fixed async render with a filter `super/i-block/modules/async-render`
+* Fixed async render with functional components `core/component/functional`
+* Fixed `parentId` type `bCheckbox`
+
+## v3.0.0-beta.213 (2019-11-12)
+
+#### :bug: Bug Fix
+
+* Fixed invalid cache key with extra providers `core/data`
+
+## v3.0.0-beta.212 (2019-11-12)
+
+#### :boom: Breaking Change
+
+* Renamed `requestOpts` to `request` within extra providers `core/data`
+
+#### :rocket: New Feature
+
+* Added `provider` and `as` parameters for extra providers `core/data`
+
+## v3.0.0-beta.211 (2019-11-12)
+
+#### :rocket: New Feature
+
+* Added `messageHelpers` prop `iMessage`
+
+## v3.0.0-beta.210 (2019-11-12)
+
+#### :bug: Bug Fix
+
+* Fixed nested checkbox groups
+* Fixed invalid cache key with extra providers `core/data`
+
+## v3.0.0-beta.209 (2019-11-11)
+
+#### :rocket: New Feature
+
+* Added `indeterminate` modifier `bCheckbox`
+* Added `parentId` prop `bCheckbox`
 
 ## v3.0.0-beta.208 (2019-11-11)
 
