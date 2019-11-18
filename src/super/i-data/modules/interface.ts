@@ -49,3 +49,11 @@ export interface CreateRequestOpts<T = unknown> extends BaseCreateRequestOpts<T>
 export interface ComponentConverter<T = unknown> {
 	(value: unknown): T;
 }
+
+export interface CheckDBEqualityFn<T = unknown> {
+	(value: CanUndef<T>, oldValue: CanUndef<T>): boolean;
+}
+
+export type CheckDBEquality<T = unknown> =
+	boolean |
+	CheckDBEqualityFn<T>;
