@@ -29,9 +29,13 @@ export interface RequestFilterOpts<T = unknown> {
 	params: CreateRequestOpts<T>;
 }
 
+export interface RequestFilterFn<T = unknown> {
+	(data: RequestQuery | RequestBody, opts: RequestFilterOpts<T>): boolean;
+}
+
 export type RequestFilter<T = unknown> =
-	((data: RequestQuery | RequestBody, opts: RequestFilterOpts<T>) => boolean) |
-	boolean;
+	boolean |
+	RequestFilterFn<T>;
 
 export type DefaultRequest<T = unknown> = [RequestQuery | RequestBody, CreateRequestOpts<T>];
 export type Request<T = unknown> = RequestQuery | RequestBody | DefaultRequest<T>;
