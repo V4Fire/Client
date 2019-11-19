@@ -28,13 +28,13 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### :bug: Bug Fix
 
 * [Fixed `b-content-switcher` `components` resolver not being resolved with multiply components in `content` slot](https://github.com/V4Fire/Client/pull/137)
-* [Fixed `b-content-switcher` not beign hidden with `animation` set to `none`](https://github.com/V4Fire/Client/pull/137)
+* [Fixed `b-content-switcher` not being hidden with `animation` set to `none`](https://github.com/V4Fire/Client/pull/137)
 
 ## v3.0.0-beta.216 (2019-11-15)
 
 #### :rocket: New Feature
 
-* Added `bMatryoshka`
+* [Added `bMatryoshka` component](https://github.com/V4Fire/Client/pull/139)
 
 #### :house: Internal
 
