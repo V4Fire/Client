@@ -6,38 +6,13 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { RequestMoreParams } from 'base/b-virtual-scroll/modules/interface';
-
-/**
- * Default value for `optionProps` prop
- */
-export function defaultOptionProps(): Dictionary {
-	return {};
-}
-
-/**
- * Default value for `shouldRequest` prop
- * @param v
- */
-export function defaultShouldRequest(v: RequestMoreParams): boolean {
-	return v.itemsToReachBottom <= 10 && !v.isLastEmpty;
-}
-
-/**
- * Default value for `isRequestsDone` prop
- * @param v
- */
-export function defaultShouldContinueRequest(v: RequestMoreParams): boolean {
-	return !v.isLastEmpty;
-}
-
 // tslint:disable-next-line: completed-docs
 export function isNatural(v: number): boolean {
 	return v.isNatural();
 }
 
 /**
- * Height of node with margins
+ * Returns height of the node with margins
  * @param node
  */
 export function getHeightWithMargin(node: HTMLElement): number {

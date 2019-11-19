@@ -19,20 +19,12 @@ import {
 
 } from 'base/b-virtual-scroll/modules/interface';
 
-import {
-
-	defaultOptionProps,
-	defaultShouldRequest,
-	defaultShouldContinueRequest,
-	isNatural
-
-} from 'base/b-virtual-scroll/modules/helpers';
-
 import ComponentRender from 'base/b-virtual-scroll/modules/component-render';
 import ScrollRender from 'base/b-virtual-scroll/modules/scroll-render';
 import ScrollRequest, { getRequestParams } from 'base/b-virtual-scroll/modules/scroll-request';
+import { isNatural } from 'base/b-virtual-scroll/modules/helpers';
 
-import iData, { InitLoadParams, RequestParams, ModsDecl, field, component, hook, prop, p, system } from 'super/i-data/i-data';
+import iData, { InitLoadParams, RequestParams, ModsDecl, field, component, prop, p, system } from 'super/i-data/i-data';
 
 export const
 	$$ = symbolGenerator();
@@ -67,8 +59,8 @@ export default class bVirtualScroll extends iData<RemoteData> {
 	/**
 	 * Option component props
 	 */
-	@prop({type: Function, watch: 'onUpdate'})
-	readonly optionProps: OptionProps = defaultOptionProps;
+	@prop({type: Function, watch: 'onUpdate', default: () => ({})})
+	readonly optionProps!: OptionProps;
 
 	/**
 	 * Option unique key (for v-for)
@@ -161,14 +153,14 @@ export default class bVirtualScroll extends iData<RemoteData> {
 	/**
 	 * If, when calling a function, it returns true, then the component will be able to request additional data
 	 */
-	@prop({type: Function, watch: 'reload'})
-	readonly shouldMakeRequest: RequestFn = defaultShouldRequest;
+	@prop({type: Function, watch: 'reload', default: (v) => v.itemsToReachBottom <= 10 && !v.isLastEmpty})
+	readonly shouldMakeRequest!: RequestFn;
 
 	/**
 	 * If, when calling a function, it returns false, then the component will stop request data
 	 */
-	@prop({type: Function, watch: 'reload'})
-	readonly shouldContinueRequest: RequestFn = defaultShouldContinueRequest;
+	@prop({type: Function, watch: 'reload', default: (v) => !v.isLastEmpty})
+	readonly shouldContinueRequest!: RequestFn;
 
 	/** @inheritDoc */
 	static readonly mods: ModsDecl = {
@@ -190,11 +182,9 @@ export default class bVirtualScroll extends iData<RemoteData> {
 
 	/** @override */
 	protected get requestParams(): RequestParams {
-		const params = this.requestQuery ? this.requestQuery(getRequestParams()) : {};
-
 		return {
 			get: {
-				...params,
+				...this.requestQuery?.(getRequestParams()),
 				...this.request
 			}
 		};
@@ -347,13 +337,14 @@ export default class bVirtualScroll extends iData<RemoteData> {
 	 */
 	protected async onUpdate(): Promise<void> {
 		const
-			{scrollRender: {state}} = this;
+			{scrollRender: {state}} = this,
+			FRAME_TIME = 16;
 
 		if (state !== ScrollRenderState.render || this.componentStatus !== 'ready') {
 			return;
 		}
 
-		await this.async.sleep(20, {label: $$.onUpdate, join: false}).catch(stderr);
+		await this.async.sleep(FRAME_TIME, {label: $$.onUpdate, join: false}).catch(stderr);
 		this.reInit(true).catch(stderr);
 	}
 

@@ -7,8 +7,7 @@
  */
 
 import Range from 'core/range';
-
-import bVirtualScroll, { axis } from 'base/b-virtual-scroll/b-virtual-scroll';
+import { axis } from 'base/b-virtual-scroll/b-virtual-scroll';
 
 export type OptionProps = (el: OptionEl, i: number) => Dictionary;
 export type Axis = keyof typeof axis;

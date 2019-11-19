@@ -79,7 +79,7 @@ export default class Request {
 	}
 
 	/**
-	 * Requests an additional data
+	 * Trying to request additional data
 	 */
 	try(): Promise<void> {
 		const
@@ -178,12 +178,12 @@ export default class Request {
 /**
  * Returns a request params
  *
- * @param [requestCtx]
+ * @param [scrollRequestCtx]
  * @param [scrollRenderCtx]
  * @param [merge]
  */
 export function getRequestParams(
-	requestCtx?: Request,
+	scrollRequestCtx?: Request,
 	scrollRenderCtx?: ScrollRender,
 	merge?: Dictionary
 ): RequestMoreParams {
@@ -197,14 +197,14 @@ export function getRequestParams(
 		itemsToReachBottom: 0
 	};
 
-	const params = requestCtx && scrollRenderCtx ? {
+	const params = scrollRequestCtx && scrollRenderCtx ? {
 		currentRange: scrollRenderCtx.range,
-		currentPage: requestCtx.page,
+		currentPage: scrollRequestCtx.page,
 		lastLoaded: scrollRenderCtx.lastRegisterData,
-		isLastEmpty: requestCtx.isLastEmpty,
+		isLastEmpty: scrollRequestCtx.isLastEmpty,
 
 		currentSlice: scrollRenderCtx.items.slice(scrollRenderCtx.range.start, scrollRenderCtx.range.end),
-		itemsToReachBottom: requestCtx.totalLoaded - scrollRenderCtx.currentAnchor.index,
+		itemsToReachBottom: scrollRequestCtx.totalLoaded - scrollRenderCtx.currentAnchor.index,
 		items: scrollRenderCtx.items
 	} : base;
 

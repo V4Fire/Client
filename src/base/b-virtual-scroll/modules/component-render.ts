@@ -9,7 +9,6 @@
 import Async from 'core/async';
 import symbolGenerator from 'core/symbol';
 
-import iBlock from 'super/i-block/i-block';
 import ScrollRender from 'base/b-virtual-scroll/modules/scroll-render';
 import bVirtualScroll from 'base/b-virtual-scroll/b-virtual-scroll';
 
@@ -30,7 +29,7 @@ export default class ComponentRender {
 	protected component: bVirtualScroll;
 
 	/**
-	 * If true, the cache flushing process is not currently running
+	 * If false, the cache flushing process is not currently running
 	 */
 	protected canDropCache: boolean = false;
 
@@ -78,7 +77,7 @@ export default class ComponentRender {
 	}
 
 	/**
-	 * Link to the component create element method
+	 * Link to the component `$createElement` method
 	 */
 	protected get createElement(): bVirtualScroll['$createElement'] {
 		// @ts-ignore (access)
@@ -86,7 +85,7 @@ export default class ComponentRender {
 	}
 
 	/**
-	 * Link to the component refs
+	 * Link to the component `$refs`
 	 */
 	protected get refs(): bVirtualScroll['$refs'] {
 		// @ts-ignore (access)
@@ -98,13 +97,6 @@ export default class ComponentRender {
 	 */
 	get clonedTombstone(): CanUndef<HTMLElement> {
 		return this.tombstoneToClone && this.tombstoneToClone.cloneNode(true) as HTMLElement;
-	}
-
-	/**
-	 * Cloned element
-	 */
-	get clonedElement(): CanUndef<HTMLElement> {
-		return this.elementToClone && this.elementToClone.cloneNode(true) as HTMLElement;
 	}
 
 	/**
@@ -179,6 +171,7 @@ export default class ComponentRender {
 
 	/**
 	 * Renders a new node
+	 *
 	 * @param list
 	 * @param items
 	 */
@@ -430,6 +423,7 @@ export default class ComponentRender {
 
 	/**
 	 * Creates a component by the specified params
+	 *
 	 * @param list - List of elements that should be rendered
 	 * @param items
 	 */
