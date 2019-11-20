@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-beta.218
+
+#### :boom: Breaking Change
+
+* Removed `bInput/pattern`
+
 ## v3.0.0-beta.217 (2019-11-18)
 
 #### :rocket: New Feature

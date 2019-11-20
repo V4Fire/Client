@@ -76,12 +76,6 @@ export default class bInput<
 	readonly placeholder?: string;
 
 	/**
-	 * Input pattern
-	 */
-	@prop({type: String, required: false})
-	readonly pattern?: string;
-
-	/**
 	 * Readonly flag
 	 */
 	@prop({type: Boolean, required: false})

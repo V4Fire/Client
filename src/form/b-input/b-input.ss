@@ -45,7 +45,6 @@
 								:form = form |
 								:type = type |
 								:placeholder = placeholder && t(placeholder) |
-								:pattern = pattern |
 								:autocomplete = autocomplete |
 								:autofocus = autofocus |
 								:maxlength = maxlength |
