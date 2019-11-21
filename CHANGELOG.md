@@ -20,7 +20,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :rocket: New Feature
 
-* Added `bList/modules/interface/Option/iconHintPos`
+* Added `bList/modules/interface/Option/preIconHintPos|iconHintPos`
 * Added `valueChange` event `bList`
 * Improved icon props for `bButton`, `bInput`, `bList`
 
