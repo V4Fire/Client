@@ -87,8 +87,16 @@
 							.
 
 					- block progress
-						< span.&__cell.&__link-icon.&__link-progress
-							< @b-progress-icon
+						< span.&__cell.&__link-icon.&__link-progress v-if = el.progressIcon != null
+							< template v-if = vdom.getSlot('progressIcon')
+								+= self.slot('progressIcon', {':icon': 'el.progressIcon'})
+
+							< component &
+								v-else-if = progressIcon |
+								:is = progressIcon
+							.
+
+							< @b-progress-icon v-else
 
 	- block body
 		- super

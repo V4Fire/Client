@@ -24,5 +24,6 @@ export interface Option {
 	iconHint?: string;
 	iconComponent?: string;
 	iconHintPos?: string;
+	progressIcon?: string;
 	attrs?: Dictionary;
 }

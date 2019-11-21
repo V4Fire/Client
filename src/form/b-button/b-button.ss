@@ -78,7 +78,6 @@
 
 					- block expand
 						< _.&__cell.&__icon.&__expand v-if = vdom.getSlot('dropdown')
-							< @b-icon :value = 'expand_more'
 
 					- block icon
 						< _.&__cell.&__icon.&__post-icon v-if = vdom.getSlot('icon')
@@ -95,8 +94,16 @@
 							< @b-icon v-else | :value = icon
 
 					- block progress
-						< _.&__cell.&__icon.&__progress
-							< @b-progress-icon
+						< _.&__cell.&__icon.&__progress v-if = progressIcon != null
+							< template v-if = vdom.getSlot('progressIcon')
+								+= self.slot('progressIcon', {':icon': 'progressIcon'})
+
+							< component &
+								v-else-if = progressIcon |
+								:is = progressIcon
+							.
+
+							< @b-progress-icon v-else
 
 		< template v-if = type === 'link'
 			+= self.button('a')

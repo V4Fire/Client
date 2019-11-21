@@ -117,11 +117,19 @@
 								.
 
 					- block validation
-						< _.&__cell.&__icon.&__valid-status v-if = m.valid != null
+						< _.&__cell.&__icon.&__valid-status
 							< @b-icon :value = {true: 'done', false: 'clear'}[m.valid]
 
 					- block progress
-						< _.&__cell.&__icon.&__progress
-							< @b-progress-icon
+						< _.&__cell.&__icon.&__progress v-if = progressIcon != null
+							< template v-if = vdom.getSlot('progressIcon')
+								+= self.slot('progressIcon', {':icon': 'progressIcon'})
+
+							< component &
+								v-else-if = progressIcon |
+								:is = progressIcon
+							.
+
+							< @b-progress-icon v-else
 
 					- block icons
