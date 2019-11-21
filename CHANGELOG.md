@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-beta.219
+
+#### :boom: Breaking Change
+
+* Removed legacy assets
+
 ## v3.0.0-beta.218 (2019-11-21)
 
 #### :boom: Breaking Change
