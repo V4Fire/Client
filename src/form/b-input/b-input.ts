@@ -100,10 +100,28 @@ export default class bInput<
 	readonly max?: number | string | Date;
 
 	/**
-	 * Reset button for input
+	 * Icon for clearing the component
 	 */
-	@prop(Boolean)
-	readonly resetButton: boolean = true;
+	@prop(String)
+	readonly clearIcon: string = 'clear';
+
+	/**
+	 * Component for .clearIcon
+	 */
+	@prop({type: String, required: false})
+	readonly clearIconComponent?: string;
+
+	/**
+	 * Component for .clearIcon
+	 */
+	@prop({type: String, required: false})
+	readonly clearIconHint?: string;
+
+	/**
+	 * Tooltip position for .clearIcon
+	 */
+	@prop({type: String, required: false})
+	readonly clearIconHintPos?: string;
 
 	/**
 	 * Icon before input
@@ -118,13 +136,13 @@ export default class bInput<
 	readonly preIconComponent?: string;
 
 	/**
-	 * Tooltip text for the preIcon
+	 * Tooltip text for .preIcon
 	 */
 	@prop({type: String, required: false})
 	readonly preIconHint?: string;
 
 	/**
-	 * Tooltip position for the preIcon
+	 * Tooltip position for .preIcon
 	 */
 	@prop({type: String, required: false})
 	readonly preIconHintPos?: string;
@@ -142,13 +160,13 @@ export default class bInput<
 	readonly iconComponent?: string;
 
 	/**
-	 * Tooltip text for the icon
+	 * Tooltip text for .icon
 	 */
 	@prop({type: String, required: false})
 	readonly iconHint?: string;
 
 	/**
-	 * Tooltip position for the icon
+	 * Tooltip position for .icon
 	 */
 	@prop({type: String, required: false})
 	readonly iconHintPos?: string;

@@ -21,11 +21,15 @@
 				< _.&__wrapper
 					- block preIcon
 						< _.&__cell.&__icon.&__pre-icon v-if = vdom.getSlot('preIcon')
-							+= self.slot('preIcon', {':icon': 'preIcon'})
+							+= self.slot('preIcon', { &
+								':icon': 'preIcon',
+								':hint': 'preIconHint',
+								':hintPos': 'preIconHintPos'
+							}) .
 
 						< _.&__cell.&__icon.&__pre-icon v-else-if = preIcon
-							< component.&__b-icon &
-								v-if = preIconComponent || preIconHint |
+							< component &
+								v-if = preIconComponent |
 								:instanceOf = bIcon |
 								:is = preIconComponent |
 								:value = preIcon |
@@ -33,8 +37,12 @@
 								:hintPos = preIconHintPos
 							.
 
-							< template v-else
-								< @b-icon :value = preIcon
+							< @b-icon &
+								v-else |
+								:value = preIcon |
+								:hint = preIconHint |
+								:hintPos = preIconHintPos
+							.
 
 					- block input
 						< _.&__cell.&__input-cont
@@ -59,11 +67,15 @@
 
 					- block icon
 						< _.&__cell.&__icon.&__post-icon v-if = vdom.getSlot('icon')
-							+= self.slot('icon', {':icon': 'icon'})
+							+= self.slot('icon', { &
+								':icon': 'icon',
+								':hint': 'iconHint',
+								':hintPos': 'iconHintPos'
+							}) .
 
 						< _.&__cell.&__icon.&__post-icon v-else-if = icon
-							< component.&__b-icon &
-								v-if = iconComponent || iconHint |
+							< component &
+								v-if = iconComponent |
 								:instanceOf = bIcon |
 								:is = iconComponent |
 								:value = icon |
@@ -71,15 +83,37 @@
 								:hintPos = iconHintPos
 							.
 
-							< template v-else
-								< @b-icon :value = icon
+							< @b-icon &
+								v-else |
+								:value = icon |
+								:hint = iconHint |
+								:hintPos = iconHintPos
+							.
 
 					- block clear
-						< _.&__cell.&__icon.&__clear
+						< _.&__cell.&__icon.&__clear v-if = clearIcon || vdom.getSlot('clearIcon')
 							< span v-e:mousedown.prevent | @click = onClear
+								< template v-if = vdom.getSlot('clearIcon')
+									+= self.slot('icon', { &
+										':icon': 'clearIcon',
+										':hint': 'clearIconHint',
+										':hintPos': 'clearIconHintPos'
+									}) .
+
+								< component &
+									v-else-if = iconComponent |
+									:instanceOf = bIcon |
+									:is = iconComponent |
+									:value = clearIcon |
+									:hint = clearIconHint |
+									:hintPos = clearIconHintPos
+								.
+
 								< @b-icon &
-									:value = 'clear' |
-									:hint = l('Clear')
+									v-else |
+									:value = clearIcon |
+									:hint = clearIconHint |
+									:hintPos = clearIconHintPos
 								.
 
 					- block validation
