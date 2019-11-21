@@ -63,7 +63,7 @@
 							+= self.slot('preIcon', {':icon': 'preIcon'})
 
 						< _.&__cell.&__icon.&__pre-icon v-else-if = preIcon
-							< component.&__b-icon &
+							< component &
 								v-if = preIconComponent |
 								:instanceOf = bIcon |
 								:is = preIconComponent |
@@ -86,7 +86,7 @@
 							+= self.slot('icon', {':icon': 'icon'})
 
 						< _.&__cell.&__icon.&__post-icon v-else-if = icon
-							< component.&__b-icon &
+							< component &
 								v-if = iconComponent |
 								:instanceOf = bIcon |
 								:is = iconComponent |

@@ -20,7 +20,7 @@
 			+= self.slot('default', {':icon': 'icon'})
 
 		< _.&__cell.&__icon
-			< component.&__b-icon &
+			< component &
 				v-if = iconComponent |
 				:instanceOf = bIcon |
 				:is = iconComponent |
