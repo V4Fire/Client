@@ -101,9 +101,9 @@
 									}) .
 
 								< component &
-									v-else-if = iconComponent |
+									v-else-if = clearIconComponent |
 									:instanceOf = bIcon |
-									:is = iconComponent |
+									:is = clearIconComponent |
 									:value = clearIcon |
 									:hint = clearIconHint |
 									:hintPos = clearIconHintPos
