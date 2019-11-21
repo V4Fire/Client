@@ -71,7 +71,7 @@ export default class bCheckbox<
 	 * Icon for checkbox
 	 */
 	@prop({type: String, required: false})
-	readonly checkIcon: string = 'check';
+	readonly checkIcon?: string;
 
 	/**
 	 * Component for .checkIcon

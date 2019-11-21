@@ -30,10 +30,7 @@
 		- block range(pos) => 'left'
 			< _.&__cell.&__icon.&__range v-if = controllersPos === '${pos}' || controllersPos === 'both'
 				< span.&__arrow.&__up v-e:mousedown,touchstart.prevent | @click = onInc(1)
-					< @b-icon :value = 'arrow_drop_up'
-
 				< span.&__arrow.&__up v-e:mousedown,touchstart.prevent | @click = onInc(-1)
-					< @b-icon :value = 'arrow_drop_down'
 
 	- block icons
 		+= self.range('right')

@@ -102,8 +102,8 @@ export default class bInput<
 	/**
 	 * Icon for clearing the component
 	 */
-	@prop(String)
-	readonly clearIcon: string = 'clear';
+	@prop({type: String, required: false})
+	readonly clearIcon?: string;
 
 	/**
 	 * Component for .clearIcon
