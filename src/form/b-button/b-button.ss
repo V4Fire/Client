@@ -70,8 +70,7 @@
 								:value = preIcon
 							.
 
-							< template v-else
-								< @b-icon :value = preIcon
+							< @b-icon v-else | :value = preIcon
 
 					- block value
 						< _.&__cell.&__value
@@ -93,8 +92,7 @@
 								:value = icon
 							.
 
-							< template v-else
-								< @b-icon :value = icon
+							< @b-icon v-else | :value = icon
 
 					- block progress
 						< _.&__cell.&__icon.&__progress

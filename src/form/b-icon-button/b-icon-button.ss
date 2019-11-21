@@ -27,5 +27,4 @@
 				:value = icon
 			.
 
-			< template v-else
-				< @b-icon :value = icon
+			< @b-icon v-else | :value = icon

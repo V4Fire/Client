@@ -51,8 +51,7 @@
 								:hint = el.preIconHint
 							.
 
-							< template v-else
-								< @b-icon :value = el.preIcon
+							< @b-icon v-else | :value = el.preIcon
 
 					- block text
 						< span.&__cell.&__link-text v-if = !hideLabels
@@ -80,12 +79,12 @@
 								:hintPos = el.iconHintPos
 							.
 
-							< template v-else
-								< @b-icon &
-									:value = el.icon |
-									:hint = getElHint(el) |
-									:hintPos = el.iconHintPos
-								.
+							< @b-icon &
+								v-else |
+								:value = el.icon |
+								:hint = getElHint(el) |
+								:hintPos = el.iconHintPos
+							.
 
 					- block progress
 						< span.&__cell.&__link-icon.&__link-progress

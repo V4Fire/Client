@@ -59,15 +59,15 @@
 								< template v-if = vdom.getSlot('default')
 									+= self.slot('default', {':option': 'el'})
 
-								< template v-else-if = option
-									< component &
-										:is = option |
-										:p = el |
-										:exterior = el.exterior |
-										:classes = el.classes |
-										:mods = el.mods |
-										:v-attrs = el.attrs
-									.
+								< component &
+									v-else-if = option |
+									:is = option |
+									:p = el |
+									:exterior = el.exterior |
+									:classes = el.classes |
+									:mods = el.mods |
+									:v-attrs = el.attrs
+								.
 
 								< template v-else
 									{{ t(el.label) }}

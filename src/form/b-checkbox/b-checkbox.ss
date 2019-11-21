@@ -38,20 +38,19 @@
 							+= self.slot('check')
 								< .&__check v-if = m.exterior === 'switch'
 
-								< template v-else
-									< component.&__check &
-										v-if = checkIconComponent |
-										:instanceOf = bIcon |
-										:is = checkIconComponent |
-										:size = 'full' |
-										:value = checkIcon
-									.
+								< component.&__check &
+									v-else-if = checkIconComponent |
+									:instanceOf = bIcon |
+									:is = checkIconComponent |
+									:size = 'full' |
+									:value = checkIcon
+								.
 
-									< template v-else
-										< @b-icon.&__check &
-											:size = 'full' |
-											:value = checkIcon
-										.
+								< @b-icon.&__check &
+									v-else |
+									:size = 'full' |
+									:value = checkIcon
+								.
 
 					- block label
 						< span.&__label v-if = label || vdom.getSlot('label')
