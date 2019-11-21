@@ -172,6 +172,12 @@ export default class bInput<
 	readonly iconHintPos?: string;
 
 	/**
+	 * Component for a progress icon
+	 */
+	@prop({type: String, required: false})
+	readonly progressIcon?: string;
+
+	/**
 	 * RegExp map
 	 * (for using with .mask)
 	 */
