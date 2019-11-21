@@ -43,7 +43,7 @@
 							+= self.slot('preIcon', {':icon': 'preIcon'})
 
 						< span.&__cell.&__link-icon.&__link-pre-icon v-else-if = el.preIcon
-							< component.&__b-icon &
+							< component &
 								v-if = el.preIconComponent || el.preIconHint |
 								:instanceOf = bIcon |
 								:is = el.preIconComponent || 'b-icon' |
@@ -67,12 +67,13 @@
 							+= self.slot('icon', {':icon': 'icon'})
 
 						< span.&__cell.&__link-icon.&__link-post-icon v-else-if = el.icon
-							< component.&__b-icon &
-								v-if = el.iconComponent || el.iconHint || hideLabels |
+							< component &
+								v-if = el.iconComponent |
 								:instanceOf = bIcon |
 								:is = el.iconComponent || 'b-icon' |
 								:value = el.icon |
-								:hint = el.iconHint || (hideLabels ? t(el.label) : undefined)
+								:hint = el.iconHint || t(el.label) |
+								:hintPos = el.iconHintPos
 							.
 
 							< template v-else

@@ -370,6 +370,7 @@ export default class bList<T extends object = Dictionary> extends iData<T> imple
 
 	/**
 	 * Initializes component values
+	 * @emits valueChange(value: Option[])
 	 */
 	@hook('beforeDataCreate')
 	protected initComponentValues(): void {
@@ -393,6 +394,7 @@ export default class bList<T extends object = Dictionary> extends iData<T> imple
 
 		this.values = values;
 		this.indexes = indexes;
+		this.emit('valueChange', this.value);
 	}
 
 	/** @override */

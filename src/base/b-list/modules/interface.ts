@@ -23,5 +23,6 @@ export interface Option {
 	icon?: string;
 	iconHint?: string;
 	iconComponent?: string;
+	iconHintPos?: string;
 	attrs?: Dictionary;
 }
