@@ -40,18 +40,29 @@
 				.
 					- block preIcon
 						< span.&__cell.&__link-icon.&__link-pre-icon v-if = vdom.getSlot('preIcon')
-							+= self.slot('preIcon', {':icon': 'preIcon'})
+							+= self.slot('preIcon', { &
+								':icon': 'el.preIcon',
+								':hint': 'el.preIconHint',
+								':hintPos': 'el.preIconHintPos'
+							}) .
 
 						< span.&__cell.&__link-icon.&__link-pre-icon v-else-if = el.preIcon
 							< component &
-								v-if = el.preIconComponent || el.preIconHint |
+								v-if = el.preIconComponent |
 								:instanceOf = bIcon |
-								:is = el.preIconComponent || 'b-icon' |
+								:is = el.preIconComponent |
 								:value = el.preIcon |
-								:hint = el.preIconHint
+								:hint = el.preIconHint |
+								:hintPos = el.preIconHintPos
 							.
 
-							< @b-icon v-else | :value = el.preIcon
+							< @b-icon &
+								v-else |
+								:value = el.preIcon
+								:value = el.preIcon |
+								:hint = el.preIconHint |
+								:hintPos = el.preIconHintPos
+							.
 
 					- block text
 						< span.&__cell.&__link-text v-if = !hideLabels
@@ -73,7 +84,7 @@
 							< component &
 								v-if = el.iconComponent |
 								:instanceOf = bIcon |
-								:is = el.iconComponent || 'b-icon' |
+								:is = el.iconComponent |
 								:value = el.icon |
 								:hint = getElHint(el) |
 								:hintPos = el.iconHintPos
