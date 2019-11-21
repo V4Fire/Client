@@ -64,7 +64,11 @@
 
 					- block icon
 						< span.&__cell.&__link-icon.&__link-post-icon v-if = vdom.getSlot('icon')
-							+= self.slot('icon', {':icon': 'icon'})
+							+= self.slot('icon', { &
+								':icon': 'el.icon',
+								':hint': 'getElHint(el)',
+								':hintPos': 'el.iconHintPos'
+							}) .
 
 						< span.&__cell.&__link-icon.&__link-post-icon v-else-if = el.icon
 							< component &
@@ -72,12 +76,16 @@
 								:instanceOf = bIcon |
 								:is = el.iconComponent || 'b-icon' |
 								:value = el.icon |
-								:hint = el.iconHint || t(el.label) |
+								:hint = getElHint(el) |
 								:hintPos = el.iconHintPos
 							.
 
 							< template v-else
-								< @b-icon :value = el.icon
+								< @b-icon &
+									:value = el.icon |
+									:hint = getElHint(el) |
+									:hintPos = el.iconHintPos
+								.
 
 					- block progress
 						< span.&__cell.&__link-icon.&__link-progress

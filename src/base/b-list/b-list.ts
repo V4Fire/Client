@@ -397,6 +397,14 @@ export default class bList<T extends object = Dictionary> extends iData<T> imple
 		this.emit('valueChange', this.value);
 	}
 
+	/**
+	 * Returns a hint message for the specified element
+	 * @param el
+	 */
+	protected getElHint(el: Option): string {
+		return el.iconHint != null ? el.iconHint : this.hideLabels ? t(el.label) : '';
+	}
+
 	/** @override */
 	protected initModEvents(): void {
 		super.initModEvents();
