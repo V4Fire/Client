@@ -11,11 +11,22 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v3.0.0-beta.218
+## v3.0.0-beta.218 (2019-11-21)
 
 #### :boom: Breaking Change
 
 * Removed `bInput/pattern`
+* Removed hardcoded `bIcon` components and icon styles `bButton`, `bInput`, `bSelect`, `bInputTime`, `bCalendar`
+
+#### :rocket: New Feature
+
+* Added `bList/modules/interface/Option/iconHintPos`
+* Added `valueChange` event `bList`
+* Improved icon props for `bButton`, `bInput`, `bList`
+
+#### :house: Internal
+
+* Review `bList`, `bImage`, `bButton`, `bInput`, `bSelect`, `bCalendar`, `bMatryoshka`
 
 ## v3.0.0-beta.217 (2019-11-18)
 
