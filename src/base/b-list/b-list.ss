@@ -58,7 +58,6 @@
 
 							< @b-icon &
 								v-else |
-								:value = el.preIcon
 								:value = el.preIcon |
 								:hint = el.preIconHint |
 								:hintPos = el.preIconHintPos
