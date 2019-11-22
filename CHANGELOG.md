@@ -11,11 +11,17 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v3.0.0-beta.219
+## v3.0.0-beta.219 (2019-11-22)
 
 #### :boom: Breaking Change
 
 * Removed legacy assets
+* Removed `checkIcon` and `checkIconComponent` from `bCheckbox`
+* Removed `clearIcon` and `clearIconComponent` from `bInput`
+
+#### :house: Internal
+
+* Updated dependencies: file-loader@4.3.0, url-loader@2.3.0
 
 ## v3.0.0-beta.218 (2019-11-21)
 
