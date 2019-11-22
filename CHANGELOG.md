@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-beta.220
+
+#### :boom: Breaking Change
+
+* Removed legacy `inject` and `provide` support for components
+
 ## v3.0.0-beta.219 (2019-11-22)
 
 #### :boom: Breaking Change

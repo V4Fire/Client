@@ -40,94 +40,6 @@ export default function inheritMeta(
 	const
 		metaPointer = metaPointers[meta.componentName];
 
-	let
-		provide,
-		inject;
-
-	///////////////////////
-	// Provider inheritance
-	///////////////////////
-
-	// tslint:disable-next-line:prefer-conditional-expression
-	if (Object.isObject(p.provide) && Object.isObject(params.provide)) {
-		provide = {...params.provide, ...p.provide};
-
-	} else {
-		provide = p.provide || params.provide;
-	}
-
-	/////////////////////
-	// Inject inheritance
-	/////////////////////
-
-	const
-		pIIsObj = Object.isObject(params.inject),
-		pIIsArr = !pIIsObj && Object.isArray(params.inject),
-		cIIsObj = Object.isObject(p.inject),
-		cIIsArr = !cIIsObj && Object.isArray(p.inject);
-
-	if (pIIsArr && cIIsArr) {
-		inject = (<string[]>p.inject).union(<string[]>p.inject);
-
-	} else if (pIIsObj && cIIsObj) {
-		inject = {};
-
-		for (let o = <object>params.inject, keys = Object.keys(o), i = 0; i < keys.length; i++) {
-			const
-				key = keys[i],
-				el = o[key];
-
-			inject[key] = Object.isObject(el) ? {...el} : {from: el};
-		}
-
-		for (let o = <object>p.inject, keys = Object.keys(o), i = 0; i < keys.length; i++) {
-			const
-				key = keys[i],
-				el = o[key];
-
-			// tslint:disable-next-line:prefer-object-spread
-			inject[key] = Object.assign(inject[key] || {}, Object.isObject(el) ? el : {from: el});
-		}
-
-	} else if (pIIsArr && cIIsObj) {
-		inject = {};
-
-		for (let o = <string[]>params.inject, i = 0; i < o.length; i++) {
-			const key = o[i];
-			inject[key] = {[key]: {from: key}};
-		}
-
-		for (let o = <object>p.inject, keys = Object.keys(o), i = 0; i < keys.length; i++) {
-			const
-				key = keys[i],
-				el = o[key];
-
-			// tslint:disable-next-line:prefer-object-spread
-			inject[key] = Object.assign(inject[key] || {}, Object.isObject(el) ? el : {from: el});
-		}
-
-	} else if (pIIsObj && cIIsArr) {
-		inject = {};
-
-		for (let o = <object>params.inject, keys = Object.keys(o), i = 0; i < keys.length; i++) {
-			const
-				key = keys[i],
-				el = o[key];
-
-			inject[key] = Object.isObject(el) ? {...el} : {from: el};
-		}
-
-		for (let o = <string[]>p.inject, i = 0; i < o.length; i++) {
-			const key = o[i];
-
-			// tslint:disable-next-line:prefer-object-spread
-			inject[key] = Object.assign(inject[key] || {}, {from: key});
-		}
-
-	} else {
-		inject = p.inject || params.inject;
-	}
-
 	///////////////////////////////////
 	// Component parameters inheritance
 	///////////////////////////////////
@@ -136,9 +48,7 @@ export default function inheritMeta(
 		...params,
 		...p,
 		name: p.name,
-		model: (p.model || params.model) && {...params.model, ...p.model},
-		provide,
-		inject
+		model: (p.model || params.model) && {...params.model, ...p.model}
 	};
 
 	///////////////////////////

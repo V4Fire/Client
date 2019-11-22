@@ -75,8 +75,6 @@ export function getComponent(
 
 		parent: p.parent,
 		inheritAttrs: p.inheritAttrs,
-		provide: p.provide,
-		inject: p.inject,
 
 		model: m && {
 			prop: m.prop,

@@ -25,7 +25,6 @@ import Vue, { ComponentOptions, DirectiveOptions, DirectiveFunction, RenderConte
 import { VNode, VNodeData as BaseVNodeData } from 'vue/types/vnode';
 
 export * from 'vue';
-export { InjectOptions } from 'vue/types/options';
 export { VNode, ScopedSlot } from 'vue/types/vnode';
 //#endif
 
