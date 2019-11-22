@@ -36,21 +36,7 @@
 					< _.&__checkbox
 						- block check
 							+= self.slot('check')
-								< .&__check v-if = m.exterior === 'switch'
-
-								< component.&__check &
-									v-else-if = checkIconComponent |
-									:instanceOf = bIcon |
-									:is = checkIconComponent |
-									:size = 'full' |
-									:value = checkIcon
-								.
-
-								< @b-icon.&__check &
-									v-else |
-									:size = 'full' |
-									:value = checkIcon
-								.
+								< .&__check
 
 					- block label
 						< span.&__label v-if = label || vdom.getSlot('label')
