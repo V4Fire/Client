@@ -100,30 +100,6 @@ export default class bInput<
 	readonly max?: number | string | Date;
 
 	/**
-	 * Icon for clearing the component
-	 */
-	@prop({type: String, required: false})
-	readonly clearIcon?: string;
-
-	/**
-	 * Component for .clearIcon
-	 */
-	@prop({type: String, required: false})
-	readonly clearIconComponent?: string;
-
-	/**
-	 * Component for .clearIcon
-	 */
-	@prop({type: String, required: false})
-	readonly clearIconHint?: string;
-
-	/**
-	 * Tooltip position for .clearIcon
-	 */
-	@prop({type: String, required: false})
-	readonly clearIconHintPos?: string;
-
-	/**
 	 * Icon before input
 	 */
 	@prop({type: String, required: false})

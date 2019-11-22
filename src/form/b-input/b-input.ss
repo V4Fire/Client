@@ -91,30 +91,7 @@
 							.
 
 					- block clear
-						< _.&__cell.&__icon.&__clear v-if = clearIcon || vdom.getSlot('clearIcon')
-							< span v-e:mousedown.prevent | @click = onClear
-								< template v-if = vdom.getSlot('clearIcon')
-									+= self.slot('icon', { &
-										':icon': 'clearIcon',
-										':hint': 'clearIconHint',
-										':hintPos': 'clearIconHintPos'
-									}) .
-
-								< component &
-									v-else-if = clearIconComponent |
-									:instanceOf = bIcon |
-									:is = clearIconComponent |
-									:value = clearIcon |
-									:hint = clearIconHint |
-									:hintPos = clearIconHintPos
-								.
-
-								< @b-icon &
-									v-else |
-									:value = clearIcon |
-									:hint = clearIconHint |
-									:hintPos = clearIconHintPos
-								.
+						< _.&__cell.&__icon.&__clear @mousedown.prevent | @click = onClear
 
 					- block progress
 						< _.&__cell.&__icon.&__progress v-if = progressIcon != null
