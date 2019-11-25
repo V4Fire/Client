@@ -17,6 +17,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 * Removed legacy `inject` and `provide` support for components
 * Static libraries now will be saved by a key name, instead of a file basename
+* Removed `bInputNumber`
 
 #### :rocket: New Feature
 
