@@ -167,8 +167,11 @@ export default class Sync {
 
 		if (params && Object.isFunction(params)) {
 			wrapper = params;
-			params = undefined;
+			params = {};
 		}
+
+		params = params || {};
+		params.immediate = params.immediate !== false;
 
 		if (!linksCache[path]) {
 			linksCache[path] = {};
@@ -284,6 +287,9 @@ export default class Sync {
 			fields = <SyncObjectFields<T>>params;
 			params = {};
 		}
+
+		params = params || {};
+		params.immediate = params.immediate !== false;
 
 		const
 			{meta, component, syncLinkCache, linksCache, component: {$options: {propsData}}} = this;

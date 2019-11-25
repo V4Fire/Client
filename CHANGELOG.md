@@ -25,6 +25,10 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 * Added `load` parameter for `super/i-static-page/deps`
 * Added `attrs` prop for `bInput`
 
+#### :bug: Bug Fix
+
+* Fixed `sync.link/object` with computed properties
+
 ## v3.0.0-beta.219 (2019-11-22)
 
 #### :boom: Breaking Change
