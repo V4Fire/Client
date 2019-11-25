@@ -100,6 +100,12 @@ export default class bInput<
 	readonly max?: number | string | Date;
 
 	/**
+	 * Additional input attributes
+	 */
+	@prop({type: Object, required: false})
+	readonly attrs?: Dictionary;
+
+	/**
 	 * Icon before input
 	 */
 	@prop({type: String, required: false})

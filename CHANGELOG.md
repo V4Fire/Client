@@ -22,6 +22,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### :rocket: New Feature
 
 * Added `load` parameter for `super/i-static-page/deps`
+* Added `attrs` prop for `bInput`
 
 ## v3.0.0-beta.219 (2019-11-22)
 
