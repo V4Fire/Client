@@ -188,7 +188,8 @@
 							- if isFolder
 								- block loadFolders
 									? url = @@publicPath(url)
-									+= self.jsScript("PATH['" + basename + "'] = '" + url + "'", false, @nonce)
+									+= self.jsScript(false, false, @nonce)
+										PATH['{basename}'] = '{url}';
 
 							- else
 								- block loadDefLibs
@@ -198,7 +199,10 @@
 
 									- else
 										? url = @@publicPath(url)
-										+= self.jsScript(url, !notDefer, @nonce)
+										: js = path.extname(url) === '.js'
+
+										+= self.jsScript(js && url, js ? !notDefer : false, @nonce)
+											PATH['{basename}'] = '{url}';
 
 							- return res + getTplResult()
 
