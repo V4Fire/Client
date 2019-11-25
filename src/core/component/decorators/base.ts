@@ -7,24 +7,59 @@
  */
 
 import { defProp } from 'core/const/props';
-import { initEvent } from 'core/component/const';
 import { metaPointers } from 'core/component/create/helpers/const';
-import { ComponentMeta, InitFieldFn } from 'core/component/interface';
+import { initEvent } from 'core/component/const';
+import { WatchOptions } from 'core/component/engines';
 
 import {
 
-	ComponentProp,
-	ComponentField,
-	SystemField,
-	ComponentMethod,
-	ComponentAccessor,
-	ComponentHooks,
-	FieldWatcher,
-	MethodWatchers
+	PropOptions,
+	ComponentInterface,
+	ComponentMeta,
+	Hooks,
 
-} from 'core/component/decorators/props/interface';
+	InitFieldFn,
+	MergeFieldFn,
+	UniqueFieldFn,
 
-export * from 'core/component/decorators/props/interface';
+	MethodWatcher,
+	WatchHandler
+
+} from 'core/component/interface';
+
+export interface FieldWatcherObject<
+	CTX extends ComponentInterface = ComponentInterface,
+	A = unknown,
+	B = A
+> extends WatchOptions {
+	fn: string | WatchHandler<CTX, A, B>;
+	provideArgs?: boolean;
+}
+
+export type FieldWatcher<CTX extends ComponentInterface = ComponentInterface, A = unknown, B = A> =
+	string |
+	FieldWatcherObject<CTX, A, B> |
+	WatchHandler<CTX, A, B> |
+	Array<string | FieldWatcherObject<CTX, A, B> | WatchHandler<CTX, A, B>>;
+
+export interface ComponentProp<
+	CTX extends ComponentInterface = ComponentInterface,
+	A = unknown,
+	B = A
+> extends PropOptions {
+	forceDefault?: boolean;
+	watch?: FieldWatcher<CTX, A, B>;
+	meta?: Dictionary;
+}
+
+export interface FunctionalOpts {
+	replace?: boolean;
+	functional?: boolean;
+}
+
+export interface ComponentAccessor extends FunctionalOpts {
+	cache: boolean;
+}
 
 /**
  * Marks a class property as a component initial property
@@ -37,6 +72,24 @@ export const prop = paramsFactory<CanArray<Function> | ObjectConstructor | Compo
 
 	return p;
 });
+
+export interface SystemField<CTX extends ComponentInterface = ComponentInterface> extends FunctionalOpts {
+	atom?: boolean;
+	default?: unknown;
+	unique?: boolean | UniqueFieldFn<CTX>;
+	after?: CanArray<string>;
+	init?: InitFieldFn<CTX>;
+	merge?: MergeFieldFn<CTX> | boolean;
+	meta?: Dictionary;
+}
+
+export interface ComponentField<
+	CTX extends ComponentInterface = ComponentInterface,
+	A = unknown,
+	B = A
+> extends SystemField<CTX> {
+	watch?: FieldWatcher<CTX, A, B>;
+}
 
 /**
  * Marks a class property as a component data property
@@ -61,6 +114,29 @@ export const system = paramsFactory<InitFieldFn | SystemField>('systemFields', (
 
 	return p;
 });
+
+export type HookParams = {
+	[hook in Hooks]?: FunctionalOpts & {
+		after?: CanArray<string>;
+	}
+};
+
+export type ComponentHooks =
+	Hooks |
+	Hooks[] |
+	HookParams |
+	HookParams[];
+
+export type MethodWatchers<CTX extends ComponentInterface = ComponentInterface, A = unknown, B = A> =
+	string |
+	MethodWatcher<CTX, A, B> |
+	Array<string | MethodWatcher<CTX, A, B>>;
+
+export interface ComponentMethod<CTX extends ComponentInterface = ComponentInterface, A = unknown, B = A> {
+	watch?: MethodWatchers<CTX, A, B>;
+	watchParams?: MethodWatcher<CTX, A, B>;
+	hook?: ComponentHooks;
+}
 
 /**
  * Universal decorator of component properties
