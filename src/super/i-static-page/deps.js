@@ -12,7 +12,15 @@ const
 
 const deps = module.exports = {
 	/**
-	 * @type {Map<(string|{src: string, source?: ('lib'|'src'|'output'), inline?: boolean, defer?: boolean, async?: boolean, module?: boolean})>}
+	 * @type {Map<(string|{
+	 *   src: string,
+	 *   source?: ('lib'|'src'|'output'),
+	 *   inline?: boolean,
+	 *   defer?: boolean,
+	 *   async?: boolean,
+	 *   module?: boolean,
+	 *   load?: boolean
+	 * })>}
 	 */
 	scripts: new Map([
 		['requestidlecallback', 'requestidlecallback/index.js'],
@@ -20,7 +28,12 @@ const deps = module.exports = {
 	]),
 
 	/**
-	 * @type {Map<(string|{src: string, source?: ('lib'|'src'|'output'), inline?: boolean, defer?: boolean})>}
+	 * @type {Map<(string|{
+	 *   src: string,
+	 *   source?: ('lib'|'src'|'output'),
+	 *   inline?: boolean,
+	 *   defer?: boolean
+	 * })>}
 	 */
 	styles: new Map()
 };

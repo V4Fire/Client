@@ -146,9 +146,10 @@
 					- block defStyles
 
 					- block loadStyles
-						- for var o = defStyles.values(), el = o.next(); !el.done; el = o.next()
+						- for var o = defStyles.entries(), el = o.next(); !el.done; el = o.next()
 							: &
-								src = el.value,
+								key = el.value[0],
+								src = el.value[1],
 								p = Object.isString(src) ? {src: src} : src
 							.
 
@@ -172,7 +173,7 @@
 								? src = inline ? src : path.relative(@@output, src)
 
 							- else
-								? src = self.loadToLib.apply(self, [{relative: !inline}].concat(cwd, src))
+								? src = self.loadToLib.apply(self, [{name: key, relative: !inline}].concat(cwd, src))
 
 							? p = Object.reject(p, ['href', 'source'])
 
@@ -198,12 +199,16 @@
 					- block defLibs
 
 					- block loadLibs
-						- for var o = defLibs.values(), el = o.next(); !el.done; el = o.next()
+						- for var o = defLibs.entries(), el = o.next(); !el.done; el = o.next()
 							: &
-								src = el.value,
-								isStr = Object.isString(src),
-								isFolder = isStr && /\/$/.test(src),
-								p = isStr ? {src: src} : src
+								key = el.value[0],
+								src = el.value[1],
+								isStr = Object.isString(src)
+							.
+
+							: &
+								p = isStr ? {src: src} : src,
+								needLoad = p.load !== false && !/\/$/.test(p.src)
 							.
 
 							: &
@@ -227,15 +232,15 @@
 								? src = inline ? src : path.relative(@@output, src)
 
 							- else
-								? src = self.loadToLib.apply(self, [{relative: !inline}].concat(cwd, src))
+								? src = self.loadToLib.apply(self, [{name: key, relative: !inline}].concat(cwd, src))
 
-							? p = Object.reject(p, ['src', 'source'])
+							? p = Object.reject(p, ['src', 'source', 'load'])
 
-							- if isFolder
+							- if !needLoad
 								? src = @@publicPath(src)
 
 								+= self.jsScript({})
-									PATH['{basename}'] = '{src}';
+									PATH['{key}'] = '{src}';
 
 							- else
 								- if inline

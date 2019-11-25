@@ -123,6 +123,7 @@
  * Joins the specified paths and load a file/catalog by the final path to a library folder
  *
  * @params {!Object} opts - additional options:
+ *   *) [name]
  *   *) [relative=true]
  *
  * @param {...string} url
@@ -140,7 +141,7 @@
 
 	: &
 		src = path.join.apply(path, args),
-		basename = path.basename(src)
+		name = @name ? @name + path.extname(src) : path.basename(src)
 	.
 
 	: &
@@ -154,20 +155,20 @@
 		? isFile = false
 		? src = src.replace(/\/$/, '')
 
-		- if !foldersCache[basename]
+		- if !foldersCache[name]
 			: hash = @@hashFunction ? genHash(path.join(src, '/**/*')) + '_' : ''
-			? newSrc = path.join(lib, hash + basename)
+			? newSrc = path.join(lib, hash + name)
 
-	- else if !filesCache[basename]
+	- else if !filesCache[name]
 		? file = fs.readFileSync(src)
 		: hash = @@hashFunction ? genHash(file) + '_' : ''
-		? newSrc = path.join(lib, hash + basename)
+		? newSrc = path.join(lib, hash + name)
 
 	: cache = isFile ? filesCache : foldersCache
 	? ref = @relative ? path.relative(@@output, newSrc) : newSrc
-	? cache[basename] = fs.existsSync(newSrc) && ref
+	? cache[name] = fs.existsSync(newSrc) && ref
 
-	- if !cache[basename]
+	- if !cache[name]
 		- if isFile
 			? fs.mkdirpSync(lib)
 			? fs.writeFileSync(newSrc, file.toString().replace(/\/\/# sourceMappingURL=.*/, ''))
@@ -176,9 +177,9 @@
 			? fs.mkdirpSync(newSrc)
 			? fs.copySync(src, newSrc)
 
-		? cache[basename] = ref
+		? cache[name] = ref
 
-	- return cache[basename]
+	- return cache[name]
 
 /**
  * Adds a script dependence

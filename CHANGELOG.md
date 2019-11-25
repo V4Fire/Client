@@ -16,6 +16,11 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### :boom: Breaking Change
 
 * Removed legacy `inject` and `provide` support for components
+* Static libraries now will be saved by a key name, instead of a file basename
+
+#### :rocket: New Feature
+
+* Added `load` parameter for `super/i-static-page/deps`
 
 ## v3.0.0-beta.219 (2019-11-22)
 
