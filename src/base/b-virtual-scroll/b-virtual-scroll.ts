@@ -8,6 +8,20 @@
 
 import symbolGenerator from 'core/symbol';
 
+import iData, {
+
+	component,
+	prop,
+	field,
+	system,
+	p,
+
+	InitLoadParams,
+	RequestParams,
+	ModsDecl
+
+} from 'super/i-data/i-data';
+
 import ComponentRender from 'base/b-virtual-scroll/modules/component-render';
 import ScrollRender from 'base/b-virtual-scroll/modules/scroll-render';
 import ScrollRequest from 'base/b-virtual-scroll/modules/scroll-request';
@@ -26,7 +40,6 @@ import {
 
 } from 'base/b-virtual-scroll/modules/interface';
 
-import iData, { InitLoadParams, RequestParams, ModsDecl, field, component, prop, p, system } from 'super/i-data/i-data';
 export * from 'super/i-data/i-data';
 
 export const
@@ -88,19 +101,19 @@ export default class bVirtualScroll extends iData<RemoteData> {
 	readonly dropCacheSize: number = 50;
 
 	/**
-	 * Number of elements from the current range that cannot be removed from the cache
+	 * Number of elements from the same range that cannot be removed from the cache
 	 */
 	@prop({type: Number, watch: 'onUpdate', validator: isNatural})
 	readonly dropCacheSafeZone: number = 10;
 
 	/**
-	 * Amount of nodes at the same time
+	 * Number of nodes at the same time
 	 */
 	@prop({type: Number,  watch: 'onUpdate', validator: isNatural})
 	readonly realElementsCount: number = 20;
 
 	/**
-	 * Amount of nodes at the same time that are drawn in the opposite direction from the scroll
+	 * Number of nodes at the same time that are drawn in the opposite direction from the scroll
 	 */
 	@prop({type: Number, watch: 'onUpdate', validator: isNatural})
 	readonly oppositeElementsCount: number = 10;
@@ -112,7 +125,7 @@ export default class bVirtualScroll extends iData<RemoteData> {
 	readonly tombstoneCount: number = 10;
 
 	/**
-	 * Number of pixels of additional length to allow scrolling to
+	 * Number of additional pixels length for allow scrolling
 	 */
 	@prop({type: Number, watch: 'onUpdate'})
 	readonly scrollRunnerOffset: number = 0;
@@ -130,13 +143,13 @@ export default class bVirtualScroll extends iData<RemoteData> {
 	readonly cacheNode: boolean = true;
 
 	/**
-	 * If true, then the height of the container will be updated for every change in range
+	 * If true, then the container height will be updated for every change in the range
 	 */
 	@prop({type: Boolean, watch: 'onUpdate'})
 	readonly containerSize: boolean = true;
 
 	/**
-	 * Function that returns a scroll root
+	 * Function that returns the scroll root
 	 */
 	@prop({type: Function, watch: 'onUpdate', required: false})
 	readonly scrollingElement?: Function;
@@ -197,19 +210,19 @@ export default class bVirtualScroll extends iData<RemoteData> {
 	}
 
 	/**
-	 * Scroll render module
+	 * API for scroll rendering
 	 */
 	@system((o: bVirtualScroll) => new ScrollRender(o))
 	protected scrollRender!: ScrollRender;
 
 	/**
-	 * Scroll request module
+	 * API for scroll data requests
 	 */
 	@system((o: bVirtualScroll) => new ScrollRequest(o))
 	protected scrollRequest!: ScrollRequest;
 
 	/**
-	 * Component render module
+	 * API for dynamic component rendering
 	 */
 	@system((o: bVirtualScroll) => new ComponentRender(o))
 	protected componentRender!: ComponentRender;
@@ -222,7 +235,7 @@ export default class bVirtualScroll extends iData<RemoteData> {
 	};
 
 	/**
-	 * Link to scroll root
+	 * Link to the scroll root
 	 */
 	@p({cache: false})
 	protected get scrollRoot(): HTMLElement {
@@ -240,7 +253,7 @@ export default class bVirtualScroll extends iData<RemoteData> {
 	}
 
 	/**
-	 * Link to scroll event emitter
+	 * Link to the scroll event emitter
 	 */
 	protected get scrollEmitter(): Document | HTMLElement {
 		if (this.scrollingElement) {
@@ -263,6 +276,13 @@ export default class bVirtualScroll extends iData<RemoteData> {
 	}
 
 	/**
+	 * Reloads the last request
+	 */
+	reloadLast(): void {
+		return this.scrollRequest.reloadLast();
+	}
+
+	/**
 	 * Re-initializes component
 	 * @param waitReady
 	 */
@@ -278,13 +298,6 @@ export default class bVirtualScroll extends iData<RemoteData> {
 				wrappedRender :
 				() => this.scrollRender.init()
 			);
-	}
-
-	/**
-	 * Retries the last request
-	 */
-	reloadLast (): void {
-		return this.scrollRequest.reloadLast();
 	}
 
 	/** @override */
@@ -338,7 +351,9 @@ export default class bVirtualScroll extends iData<RemoteData> {
 	 */
 	protected async onUpdate(): Promise<void> {
 		const
-			{scrollRender: {state}} = this,
+			{scrollRender: {state}} = this;
+
+		const
 			FRAME_TIME = 16;
 
 		if (state !== ScrollRenderState.render || this.componentStatus !== 'ready') {

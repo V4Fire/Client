@@ -60,7 +60,7 @@ export function getRequestParams(
 		isLastEmpty: scrollRequestCtx.isLastEmpty,
 
 		currentSlice: scrollRenderCtx.items.slice(scrollRenderCtx.range.start, scrollRenderCtx.range.end),
-		itemsToReachBottom: scrollRequestCtx.totalLoaded - scrollRenderCtx.currentAnchor.index,
+		itemsToReachBottom: scrollRequestCtx.total - scrollRenderCtx.currentAnchor.index,
 		items: scrollRenderCtx.items
 	} : base;
 

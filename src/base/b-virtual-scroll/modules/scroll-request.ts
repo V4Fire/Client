@@ -14,19 +14,14 @@ import { RemoteData, RequestMoreParams, ScrollRenderState } from 'base/b-virtual
 
 export default class Request {
 	/**
-	 * True if all requests looks is done
+	 * Current page
 	 */
-	isRequestsDone: boolean = false;
-
-	/**
-	 * True if the last request returned an empty array or undefined
-	 */
-	isLastEmpty: boolean = false;
+	page: number = 1;
 
 	/**
 	 * Total amount of elements being loaded
 	 */
-	totalLoaded: number = 0;
+	total: number = 0;
 
 	/**
 	 * All loaded data
@@ -34,9 +29,14 @@ export default class Request {
 	data: unknown[] = [];
 
 	/**
-	 * Current page
+	 * True if all requests is done
 	 */
-	page: number = 1;
+	isDone: boolean = false;
+
+	/**
+	 * True if the last request returned an empty array or undefined
+	 */
+	isLastEmpty: boolean = false;
 
 	/**
 	 * Component instance
@@ -44,7 +44,7 @@ export default class Request {
 	protected component: bVirtualScroll;
 
 	/**
-	 * API for scroll render
+	 * API for scroll request helpers
 	 */
 	protected get scrollRender(): ScrollRender {
 		// @ts-ignore (access)
@@ -62,16 +62,16 @@ export default class Request {
 	 * Resets the current state
 	 */
 	reset(): void {
-		this.totalLoaded = 0;
+		this.total = 0;
 		this.page = 1;
 		this.data = [];
 	}
 
 	/**
-	 * Retries the last request
+	 * Reloads the last request
 	 */
 	reloadLast(): void {
-		this.isRequestsDone = false;
+		this.isDone = false;
 		this.isLastEmpty = false;
 		this.component.removeMod('requestsDone', true);
 		this.scrollRender.updateRange();
@@ -89,7 +89,7 @@ export default class Request {
 			shouldRequest = component.shouldMakeRequest(getRequestParams(this, scrollRender));
 
 		const cantRequest = () =>
-			this.isRequestsDone ||
+			this.isDone ||
 			!shouldRequest ||
 			!component.dataProvider ||
 			component.mods.progress === 'true' ||
@@ -128,17 +128,15 @@ export default class Request {
 	 * @param params
 	 */
 	checksRequestDone(params: RequestMoreParams): void {
-		const
-			{scrollRender} = this;
+		const {component, scrollRender} = this;
+		this.isDone = !component.shouldContinueRequest(params);
 
-		this.isRequestsDone = !this.component.shouldContinueRequest(params);
-
-		if (this.isRequestsDone) {
+		if (this.isDone) {
 			// @ts-ignore (access)
 			scrollRender.onRequestsDone();
 
 		} else {
-			this.component.removeMod('requestsDone', true);
+			component.removeMod('requestsDone', true);
 		}
 	}
 

@@ -369,12 +369,12 @@ export default class ScrollRender {
 		this.lastRegisteredData = data;
 
 		for (let i = 0; i < data.length; i++) {
-			if (items.length <= this.scrollRequest.totalLoaded) {
+			if (items.length <= this.scrollRequest.total) {
 				items.push(this.createItem(undefined));
 			}
 
-			if (scrollRequest.totalLoaded <= this.max) {
-				items[scrollRequest.totalLoaded++].data = data[i];
+			if (scrollRequest.total <= this.max) {
+				items[scrollRequest.total++].data = data[i];
 			}
 		}
 	}
@@ -416,7 +416,7 @@ export default class ScrollRender {
 			this.setItemsPosition(positions);
 			this.updateScrollRunnerPosition();
 
-			if (component.containerSize && !this.scrollRequest.isRequestsDone) {
+			if (component.containerSize && !this.scrollRequest.isDone) {
 				this.updateContainerSize();
 			}
 
