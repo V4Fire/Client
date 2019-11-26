@@ -22,20 +22,28 @@
 		- block overlay
 			< .&__overlay
 				+= self.slot('overlay')
-					< template v-if = Object.isString(overlayImg)
-						< img.&__overlay-img :src = overlayImg
+					< img.&__overlay-img &
+						v-if = Object.isString(overlayImg) |
+						:src = overlayImg
+					.
 
-					< template v-else-if = Object.isObject(overlayImg)
-						< b-image.&__overlay-img :v-attrs = overlayImg
+					< b-image.&__overlay-img &
+						v-else-if = Object.isObject(overlayImg) |
+						:v-attrs = overlayImg
+					.
 
 		- block broken
 			< .&__broken
 				+= self.slot('broken')
-					< template v-if = Object.isString(brokenImg)
-						< img.&__broken-img :src = brokenImg
+					< img.&__broken-img &
+						v-if = Object.isString(brokenImg) |
+						:src = brokenImg
+					.
 
-					< template v-else-if = Object.isObject(brokenImg)
-						< b-image.&__broken-img :v-attrs = brokenImg
+					< b-image.&__broken-img &
+						v-else-if = Object.isObject(brokenImg) |
+						:v-attrs = brokenImg
+					.
 
 		- block image
 			< .&__img ref = img

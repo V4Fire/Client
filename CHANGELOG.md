@@ -11,7 +11,7 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v3.0.0-beta.217 (2019-11-x)
+## v3.0.0-beta.221 (2019-11-26)
 
 #### :boom: Breaking Change
 
@@ -29,6 +29,64 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 * [Fixed `b-content-switcher` `components` resolver not being resolved with multiply components in `content` slot](https://github.com/V4Fire/Client/pull/137)
 * [Fixed `b-content-switcher` not being hidden with `animation` set to `none`](https://github.com/V4Fire/Client/pull/137)
+
+## v3.0.0-beta.220 (2019-11-25)
+
+#### :boom: Breaking Change
+
+* Removed legacy `inject` and `provide` support for components
+* Static libraries now will be saved by a key name, instead of a file basename
+* Removed `bInputNumber`
+* Removed `iDataList`
+
+#### :rocket: New Feature
+
+* Added `load` parameter for `super/i-static-page/deps`
+* Added `attrs` prop for `bInput`
+
+#### :bug: Bug Fix
+
+* Fixed `sync.link/object` with computed properties
+
+## v3.0.0-beta.219 (2019-11-22)
+
+#### :boom: Breaking Change
+
+* Removed legacy assets
+* Removed `checkIcon` and `checkIconComponent` from `bCheckbox`
+* Removed `clearIcon` and `clearIconComponent` from `bInput`
+
+#### :house: Internal
+
+* Updated dependencies: file-loader@4.3.0, url-loader@2.3.0
+
+## v3.0.0-beta.218 (2019-11-21)
+
+#### :boom: Breaking Change
+
+* Removed `bInput/pattern`
+* Removed hardcoded `bIcon` components and icon styles `bButton`, `bInput`, `bSelect`, `bInputTime`, `bCalendar`
+
+#### :rocket: New Feature
+
+* Added `bList/modules/interface/Option/preIconHintPos|iconHintPos`
+* Added `valueChange` event `bList`
+* Improved icon props for `bButton`, `bInput`, `bList`
+
+#### :house: Internal
+
+* Review `bList`, `bImage`, `bButton`, `bInput`, `bSelect`, `bCalendar`, `bMatryoshka`
+
+## v3.0.0-beta.217 (2019-11-18)
+
+#### :rocket: New Feature
+
+* Added `iData/checkDBEquality`
+
+#### :house: Internal
+
+* Added `iData/modules/interface/RequestFilterFn`
+>>>>>>> v3
 
 ## v3.0.0-beta.216 (2019-11-15)
 

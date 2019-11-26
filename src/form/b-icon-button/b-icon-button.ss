@@ -19,13 +19,12 @@
 		< _.&__cell.&__icon v-if = vdom.getSlot('default')
 			+= self.slot('default', {':icon': 'icon'})
 
-		< _.&__cell.&__icon
-			< component.&__b-icon &
+		< _.&__cell.&__icon v-else
+			< component &
 				v-if = iconComponent |
 				:instanceOf = bIcon |
 				:is = iconComponent |
 				:value = icon
 			.
 
-			< template v-else
-				< @b-icon :value = icon
+			< @b-icon v-else | :value = icon

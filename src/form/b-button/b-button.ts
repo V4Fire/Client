@@ -117,6 +117,12 @@ export default class bButton<T extends object = Dictionary> extends iData<T>
 	readonly iconComponent?: string;
 
 	/**
+	 * Component for a progress icon
+	 */
+	@prop({type: String, required: false})
+	readonly progressIcon?: string;
+
+	/**
 	 * Tooltip text
 	 */
 	@prop({type: String, required: false})

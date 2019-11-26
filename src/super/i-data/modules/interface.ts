@@ -29,9 +29,13 @@ export interface RequestFilterOpts<T = unknown> {
 	params: CreateRequestOpts<T>;
 }
 
+export interface RequestFilterFn<T = unknown> {
+	(data: RequestQuery | RequestBody, opts: RequestFilterOpts<T>): boolean;
+}
+
 export type RequestFilter<T = unknown> =
-	((data: RequestQuery | RequestBody, opts: RequestFilterOpts<T>) => boolean) |
-	boolean;
+	boolean |
+	RequestFilterFn<T>;
 
 export type DefaultRequest<T = unknown> = [RequestQuery | RequestBody, CreateRequestOpts<T>];
 export type Request<T = unknown> = RequestQuery | RequestBody | DefaultRequest<T>;
@@ -49,3 +53,11 @@ export interface CreateRequestOpts<T = unknown> extends BaseCreateRequestOpts<T>
 export interface ComponentConverter<T = unknown> {
 	(value: unknown): T;
 }
+
+export interface CheckDBEqualityFn<T = unknown> {
+	(value: CanUndef<T>, oldValue: CanUndef<T>): boolean;
+}
+
+export type CheckDBEquality<T = unknown> =
+	boolean |
+	CheckDBEqualityFn<T>;

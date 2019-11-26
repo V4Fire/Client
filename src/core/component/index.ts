@@ -131,8 +131,6 @@ const mountedHooks = {
  *   // Component driver options (by default Vue):
  *
  *   *) [model] - parameters for a model option
- *   *) [provide] - parameters for a provide option
- *   *) [inject] - parameters for an inject option
  *   *) [inheritAttrs] - parameters for an inheritAttrs option
  */
 export function component(params?: ComponentParams): Function {

@@ -68,29 +68,16 @@ b-input extends i-input
 		visibility hidden
 		cursor pointer
 
-	&_focused_true&_empty_false &__clear
-		display block
-		visibility visible
-
-	&_focused_true&_empty_false &__post-icon
-	&_progress_true &__icon&__clear
-		display none
-
-	&__valid-status
 	&__progress
+	&__valid-status
 		pointer-events none
 
-	&_progress_true
-		pointer-events auto
-
-	&_focused_true
-		zIndex(layer, 1)
-
-	&_focused_true &__valid-status
+	&__valid-status
 		display none
 
 	&_show-error_true &__error-box
 		display none
 
-	&_show-error_true&_focused_true&_valid_false &__error-box
+	&_focused_true&_empty_false &__clear
 		display block
+		visibility visible

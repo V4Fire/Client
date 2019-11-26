@@ -18,10 +18,13 @@ export interface Option {
 	classes?: Dictionary<string>;
 	hint?: string;
 	preIcon?: string;
-	preIconHint?: string;
 	preIconComponent?: string;
+	preIconHint?: string;
+	preIconHintPos?: string;
 	icon?: string;
-	iconHint?: string;
 	iconComponent?: string;
+	iconHint?: string;
+	iconHintPos?: string;
+	progressIcon?: string;
 	attrs?: Dictionary;
 }

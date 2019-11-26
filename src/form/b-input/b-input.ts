@@ -76,12 +76,6 @@ export default class bInput<
 	readonly placeholder?: string;
 
 	/**
-	 * Input pattern
-	 */
-	@prop({type: String, required: false})
-	readonly pattern?: string;
-
-	/**
 	 * Readonly flag
 	 */
 	@prop({type: Boolean, required: false})
@@ -106,10 +100,10 @@ export default class bInput<
 	readonly max?: number | string | Date;
 
 	/**
-	 * Reset button for input
+	 * Additional input attributes
 	 */
-	@prop(Boolean)
-	readonly resetButton: boolean = true;
+	@prop({type: Object, required: false})
+	readonly attrs?: Dictionary;
 
 	/**
 	 * Icon before input
@@ -124,13 +118,13 @@ export default class bInput<
 	readonly preIconComponent?: string;
 
 	/**
-	 * Tooltip text for the preIcon
+	 * Tooltip text for .preIcon
 	 */
 	@prop({type: String, required: false})
 	readonly preIconHint?: string;
 
 	/**
-	 * Tooltip position for the preIcon
+	 * Tooltip position for .preIcon
 	 */
 	@prop({type: String, required: false})
 	readonly preIconHintPos?: string;
@@ -148,16 +142,22 @@ export default class bInput<
 	readonly iconComponent?: string;
 
 	/**
-	 * Tooltip text for the icon
+	 * Tooltip text for .icon
 	 */
 	@prop({type: String, required: false})
 	readonly iconHint?: string;
 
 	/**
-	 * Tooltip position for the icon
+	 * Tooltip position for .icon
 	 */
 	@prop({type: String, required: false})
 	readonly iconHintPos?: string;
+
+	/**
+	 * Component for a progress icon
+	 */
+	@prop({type: String, required: false})
+	readonly progressIcon?: string;
 
 	/**
 	 * RegExp map

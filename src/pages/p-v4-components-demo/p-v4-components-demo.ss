@@ -68,6 +68,8 @@
 				v-func = false |
 				slot-scope = {ctx} |
 				@statusReady = ctx.debug |
+				:type = 'number' |
+				:attrs = {step: 10} |
 				${defAttrs}
 			.
 				Some text

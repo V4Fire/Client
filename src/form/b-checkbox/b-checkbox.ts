@@ -67,18 +67,6 @@ export default class bCheckbox<
 	@prop(Boolean)
 	readonly changeable: boolean = true;
 
-	/**
-	 * Icon for checkbox
-	 */
-	@prop({type: String, required: false})
-	readonly checkIcon: string = 'check';
-
-	/**
-	 * Component for .checkIcon
-	 */
-	@prop({type: String, required: false})
-	readonly checkIconComponent?: string;
-
 	/** @override */
 	get default(): unknown {
 		return this.defaultProp || false;

@@ -69,6 +69,7 @@ import {
 	DefaultRequest,
 	CreateRequestOpts,
 	ComponentConverter,
+	CheckDBEquality,
 	SocketEvent
 
 } from 'super/i-data/modules/interface';
@@ -102,10 +103,10 @@ export default abstract class iData<T extends object = Dictionary> extends iMess
 	readonly request?: RequestParams;
 
 	/**
-	 * Initial request filter or if false,
-	 * then won't be request for an empty request
+	 * If false, then the initial get request wont be executed if the request data is empty.
+	 * Also can be passed as a function, that will return true if the request can be executed.
 	 */
-	@prop({type: [Function, Boolean], watch: 'reload'})
+	@prop({type: [Boolean, Function], watch: 'reload'})
 	readonly requestFilter: RequestFilter = true;
 
 	/**
@@ -113,6 +114,14 @@ export default abstract class iData<T extends object = Dictionary> extends iMess
 	 */
 	@prop({type: [Function, Array], watch: 'reload', required: false})
 	readonly dbConverter?: CanArray<ComponentConverter<any>>;
+
+	/**
+	 * If true, then all new db data will be compared with old data.
+	 * Also can be passed as a function, that will return true if data is equal.
+	 * If the data will be equal, then re-render won't be executed.
+	 */
+	@prop({type: [Boolean, Function]})
+	readonly checkDBEquality: CheckDBEquality = true;
 
 	/**
 	 * Converter from .db to the component format
@@ -515,6 +524,17 @@ export default abstract class iData<T extends object = Dictionary> extends iMess
 		if (this.dbConverter) {
 			v = (<Function[]>[]).concat(this.dbConverter)
 				.reduce((res, fn) => fn.call(this, res), Object.isArray(v) || Object.isObject(v) ? v.valueOf() : v);
+		}
+
+		const
+			{db, checkDBEquality} = this;
+
+		if (
+			Object.isFunction(checkDBEquality) ?
+				checkDBEquality.call(this, v, db) :
+				checkDBEquality && Object.fastCompare(v, db)
+		) {
+			return <O | T>db;
 		}
 
 		return <O | T>v;

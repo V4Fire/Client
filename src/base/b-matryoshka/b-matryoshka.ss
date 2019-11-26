@@ -50,5 +50,5 @@
 							:options = el.children |
 							:v-attrs = getNestedDollProps()
 						.
-							< template slot-scope = o
+							< template #default = o
 								+= self.slot('default', {':option': 'o.option'})

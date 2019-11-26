@@ -13,7 +13,6 @@ export { Vue as ComponentDriver };
 export * from 'vue';
 
 //#if VueInterfaces
-export { InjectOptions } from 'vue/types/options';
 export { VNode, ScopedSlot, NormalizedScopedSlot } from 'vue/types/vnode';
 //#endif
 
