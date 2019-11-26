@@ -86,7 +86,6 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### :house: Internal
 
 * Added `iData/modules/interface/RequestFilterFn`
->>>>>>> v3
 
 ## v3.0.0-beta.216 (2019-11-15)
 
