@@ -9,7 +9,7 @@
 import symbolGenerator from 'core/symbol';
 import bCrop from 'base/b-crop/b-crop';
 
-const
+export const
 	$$ = symbolGenerator();
 
 /**

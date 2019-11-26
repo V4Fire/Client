@@ -10,7 +10,7 @@ import symbolGenerator from 'core/symbol';
 import iBlock from 'super/i-block/i-block';
 import { customWatcherRgxp, MethodWatcher } from 'core/component';
 
-const
+export const
 	$$ = symbolGenerator();
 
 let

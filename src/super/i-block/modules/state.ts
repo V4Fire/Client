@@ -23,7 +23,7 @@ export type ConverterCallType =
 	'remote' |
 	'remoteCheck';
 
-const
+export const
 	$$ = symbolGenerator();
 
 let
