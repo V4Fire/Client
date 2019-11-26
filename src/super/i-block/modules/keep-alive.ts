@@ -203,7 +203,7 @@ export function onActivated<T extends iBlock>(component: T, force?: boolean): vo
 		c.componentStatus = 'beforeReady';
 	}
 
-	if (!c.isInitializedOnce && force || c.needReInit) {
+	if (!c.isInitializedOnce && force || c.reloadOnActivation) {
 		$a.setImmediate(() => {
 			const
 				v = c.reload();

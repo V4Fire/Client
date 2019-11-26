@@ -34,7 +34,7 @@ export const
 @component({inheritMods: false})
 export default abstract class iPage<T extends object = Dictionary> extends iData<T> implements iVisible {
 	/** @override */
-	readonly needReInit: boolean = true;
+	readonly reloadOnActivation: boolean = true;
 
 	/** @override */
 	readonly syncRouterStoreOnInit: boolean = true;

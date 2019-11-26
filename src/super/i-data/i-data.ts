@@ -130,10 +130,10 @@ export default abstract class iData<T extends object = Dictionary> extends iMess
 	readonly componentConverter?: CanArray<ComponentConverter<any>>;
 
 	/**
-	 * If true, then the component will be reinitialized after an activated hook in offline mode
+	 * If true, then the component can reload data within an offline mode
 	 */
 	@prop(Boolean)
-	readonly needOfflineReInit: boolean = false;
+	readonly offlineReload: boolean = false;
 
 	/**
 	 * Component data
@@ -293,7 +293,7 @@ export default abstract class iData<T extends object = Dictionary> extends iMess
 
 	/** override */
 	reload(params?: InitLoadParams): Promise<void> {
-		if (!this.$root.isOnline && !this.needOfflineReInit) {
+		if (!this.$root.isOnline && !this.offlineReload) {
 			return Promise.resolve();
 		}
 

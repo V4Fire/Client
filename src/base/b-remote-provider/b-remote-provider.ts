@@ -19,7 +19,7 @@ export default class bRemoteProvider<T extends object = Dictionary> extends iDat
 	readonly remoteProvider: boolean = true;
 
 	/** @override */
-	readonly needReInit: boolean = true;
+	readonly reloadOnActivation: boolean = true;
 
 	/**
 	 * Field for setting to a component parent

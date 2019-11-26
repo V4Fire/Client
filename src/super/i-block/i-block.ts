@@ -201,10 +201,10 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	readonly keepAlive: boolean = false;
 
 	/**
-	 * If true, then the component will be reinitialized after an activated hook
+	 * If true, then the component will reload data after an activated hook
 	 */
 	@prop(Boolean)
-	readonly needReInit: boolean = false;
+	readonly reloadOnActivation: boolean = false;
 
 	/**
 	 * If true, then the component will be listen a parent component for proxy events
