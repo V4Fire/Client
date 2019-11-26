@@ -16,7 +16,6 @@ import {
 	ComponentDriver as Component,
 	ComponentOptions,
 	FunctionalComponentOptions,
-	InjectOptions,
 	DirectiveOptions,
 
 	PropOptions as BasePropOptions,
@@ -194,8 +193,6 @@ export interface ComponentParams {
 	flyweight?: boolean;
 	model?: {prop?: string; event?: string};
 	parent?: Component;
-	provide?: Dictionary | (() => Dictionary);
-	inject?: InjectOptions;
 	inheritAttrs?: boolean;
 	inheritMods?: boolean;
 	defaultProps?: boolean;
