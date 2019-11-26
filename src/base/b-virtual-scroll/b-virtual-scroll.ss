@@ -26,6 +26,3 @@
 
 		< .&__tombstone ref = tombstone
 			+= self.slot('tombstone')
-
-		< template v-else-if = recycleFn
-			+= self.slot('component')
