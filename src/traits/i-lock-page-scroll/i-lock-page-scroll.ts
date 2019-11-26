@@ -26,13 +26,11 @@ export default abstract class iLockPageScroll {
 			{async: $a, r} = component,
 			group = 'pageScrollLock';
 
-		const
-			resolved = Promise.resolve();
-
-		let promise;
+		let
+			promise = Promise.resolve();
 
 		if (r[$$.isLocked]) {
-			return resolved;
+			return promise;
 		}
 
 		if (is.iOS) {
@@ -85,6 +83,7 @@ export default abstract class iLockPageScroll {
 					component[$$.scrollTop] = scrollTop;
 					body.style.top = `-${scrollTop}px`;
 					r.setRootMod('lockScrollMobile', true, r);
+
 					res();
 
 				}, {label: $$.lockScroll});
@@ -99,8 +98,8 @@ export default abstract class iLockPageScroll {
 
 					component[$$.paddingRight] = body.style.paddingRight;
 					body.style.paddingRight = `${scrollBarWidth}px`;
-
 					r.setRootMod('lockScrollDesktop', true, r);
+
 					res();
 
 				}, {label: $$.lockScroll});
@@ -108,7 +107,7 @@ export default abstract class iLockPageScroll {
 		}
 
 		r[$$.isLocked] = true;
-		return promise || resolved;
+		return promise;
 	}
 
 	/**
