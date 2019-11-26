@@ -13,7 +13,7 @@ import { is } from 'core/browser';
 
 import bVirtualScroll from 'base/b-virtual-scroll/b-virtual-scroll';
 import ComponentRender from 'base/b-virtual-scroll/modules/component-render';
-import ScrollRequest, { getRequestParams } from 'base/b-virtual-scroll/modules/scroll-request';
+import ScrollRequest from 'base/b-virtual-scroll/modules/scroll-request';
 
 import {
 
@@ -25,7 +25,7 @@ import {
 
 } from 'base/b-virtual-scroll/modules/interface';
 
-import { getHeightWithMargin } from 'base/b-virtual-scroll/modules/helpers';
+import { getHeightWithMargin, getRequestParams } from 'base/b-virtual-scroll/modules/helpers';
 
 export const
 	$$ = symbolGenerator();
@@ -42,7 +42,7 @@ export default class ScrollRender {
 	scrollDirection: number = 0;
 
 	/**
-	 * Maximum amount of elements
+	 * Maximum scroll value
 	 */
 	max: number = Infinity;
 
@@ -52,9 +52,9 @@ export default class ScrollRender {
 	items: RenderItem[] = [];
 
 	/**
-	 * Last loaded data
+	 * last piece of data that has been registered
 	 */
-	lastRegisterData: unknown[] = [];
+	lastRegisteredData: unknown[] = [];
 
 	/**
 	 * Anchor element
@@ -102,7 +102,7 @@ export default class ScrollRender {
 	protected unused: HTMLElement[] = [];
 
 	/**
-	 * Size of tombstone
+	 * Size of a tombstone
 	 */
 	protected tombstoneSize: Size = {width: 0, height: 0};
 
@@ -117,6 +117,34 @@ export default class ScrollRender {
 	protected offsetTop: number = 0;
 
 	/**
+	 * Name of a scroll property
+	 */
+	protected get scrollProp(): string {
+		return this.component.axis === 'y' ? 'scrollTop' : 'scrollLeft';
+	}
+
+	/**
+	 * Name of a size property
+	 */
+	protected get sizeProp(): string {
+		return this.component.axis === 'y' ? 'height' : 'width';
+	}
+
+	/**
+	 * Name of a position property
+	 */
+	protected get positionProp(): string {
+		return this.component.axis === 'y' ? 'top' : 'left';
+	}
+
+	/**
+	 * Number of columns
+	 */
+	protected get columns(): number {
+		return this.component.axis === 'y' ? this.component.columns : 1;
+	}
+
+	/**
 	 * Async instance
 	 */
 	protected get async(): Async<bVirtualScroll> {
@@ -125,7 +153,7 @@ export default class ScrollRender {
 	}
 
 	/**
-	 * Link to the DOM module
+	 * API for component DOM operations
 	 */
 	protected get dom(): bVirtualScroll['dom'] {
 		// @ts-ignore (access)
@@ -133,7 +161,7 @@ export default class ScrollRender {
 	}
 
 	/**
-	 * Link to the component render module
+	 * API for component render operations
 	 */
 	protected get componentRender(): ComponentRender {
 		// @ts-ignore (access)
@@ -141,7 +169,7 @@ export default class ScrollRender {
 	}
 
 	/**
-	 * Link to the request module
+	 * API for scroll request helpers
 	 */
 	protected get scrollRequest(): ScrollRequest {
 		// @ts-ignore (access)
@@ -165,34 +193,6 @@ export default class ScrollRender {
 	}
 
 	/**
-	 * Name of scroll prop
-	 */
-	protected get scrollProp(): string {
-		return this.component.axis === 'y' ? 'scrollTop' : 'scrollLeft';
-	}
-
-	/**
-	 * Name of size prop
-	 */
-	protected get sizeProp(): string {
-		return this.component.axis === 'y' ? 'height' : 'width';
-	}
-
-	/**
-	 * Name of position prop
-	 */
-	protected get positionProp(): string {
-		return this.component.axis === 'y' ? 'top' : 'left';
-	}
-
-	/**
-	 * Number of columns
-	 */
-	protected get columns(): number {
-		return this.component.axis === 'y' ? this.component.columns : 1;
-	}
-
-	/**
 	 * Link to the component refs
 	 */
 	protected get refs(): bVirtualScroll['$refs'] {
@@ -201,16 +201,16 @@ export default class ScrollRender {
 	}
 
 	/**
-	 * @param ctx
+	 * @param component
 	 */
-	constructor(ctx: bVirtualScroll) {
-		this.component = ctx;
+	constructor(component: bVirtualScroll) {
+		this.component = component;
 
 		// @ts-ignore (access)
-		ctx.meta.hooks.mounted.push({
+		component.meta.hooks.mounted.push({
 			after: new Set(['initComponentRender']),
 			fn: () => {
-				this.range = new Range(0, ctx.realElementsCount);
+				this.range = new Range(0, component.realElementsCount);
 
 				this.updateOffset();
 				this.calculateSizes();
@@ -218,8 +218,8 @@ export default class ScrollRender {
 
 				this.state = ScrollRenderState.waitRender;
 
-				ctx.waitStatus('ready', () => {
-					this.initRender();
+				component.waitStatus('ready', () => {
+					this.init();
 
 				}, {label: 'initScrollRender', group: this.asyncGroup});
 			}
@@ -229,7 +229,7 @@ export default class ScrollRender {
 	/**
 	 * Initializes rendering process
 	 */
-	initRender(): void {
+	init(): void {
 		if (this.state !== ScrollRenderState.waitRender) {
 			return;
 		}
@@ -247,7 +247,7 @@ export default class ScrollRender {
 
 		if (component.dataProvider && component.db) {
 			this.max = component.db.total || Infinity;
-			this.scrollRequest.loadedData = component.db.data || [];
+			this.scrollRequest.data = component.db.data || [];
 		}
 
 		if (!component.options || !component.options.length) {
@@ -276,7 +276,7 @@ export default class ScrollRender {
 		this.currentAnchor = {index: 0, offset: 0};
 		this.windowSize = {width: 0, height: 0};
 		this.tombstoneSize = {...this.windowSize};
-		this.lastRegisterData = [];
+		this.lastRegisteredData = [];
 		this.items = [];
 
 		this.max = Infinity;
@@ -366,7 +366,7 @@ export default class ScrollRender {
 		const
 			{items, scrollRequest} = this;
 
-		this.lastRegisterData = data;
+		this.lastRegisteredData = data;
 
 		for (let i = 0; i < data.length; i++) {
 			if (items.length <= this.scrollRequest.totalLoaded) {

@@ -8,6 +8,12 @@
 
 import symbolGenerator from 'core/symbol';
 
+import ComponentRender from 'base/b-virtual-scroll/modules/component-render';
+import ScrollRender from 'base/b-virtual-scroll/modules/scroll-render';
+import ScrollRequest from 'base/b-virtual-scroll/modules/scroll-request';
+
+import { isNatural, getRequestParams } from 'base/b-virtual-scroll/modules/helpers';
+
 import {
 
 	RemoteData,
@@ -19,22 +25,16 @@ import {
 
 } from 'base/b-virtual-scroll/modules/interface';
 
-import ComponentRender from 'base/b-virtual-scroll/modules/component-render';
-import ScrollRender from 'base/b-virtual-scroll/modules/scroll-render';
-import ScrollRequest, { getRequestParams } from 'base/b-virtual-scroll/modules/scroll-request';
-import { isNatural } from 'base/b-virtual-scroll/modules/helpers';
-
 import iData, { InitLoadParams, RequestParams, ModsDecl, field, component, prop, p, system } from 'super/i-data/i-data';
+export * from 'super/i-data/i-data';
 
 export const
 	$$ = symbolGenerator();
 
-export const axis = {
+export const axis = Object.createDict({
 	x: true,
 	y: true
-};
-
-export * from 'super/i-block/i-block';
+});
 
 @component()
 export default class bVirtualScroll extends iData<RemoteData> {
@@ -69,37 +69,37 @@ export default class bVirtualScroll extends iData<RemoteData> {
 	readonly optionKey!: (el: unknown, i: number) => string | number;
 
 	/**
-	 * Amount of columns
+	 * Number of columns
 	 */
 	@prop({type: Number, watch: 'onUpdate', validator: isNatural})
 	readonly columns: number = 1;
 
 	/**
-	 * The number of components that could be cached
+	 * Number of components that could be cached
 	 */
 	@prop({type: Number, watch: 'onUpdate', validator: isNatural})
 	readonly cacheSize: number = 400;
 
 	/**
-	 * The number of items that will be removed from the cache when it is full
+	 * Number of items that will be removed from the cache when it is full
 	 */
 	@prop({type: Number, watch: 'onUpdate', validator: isNatural})
 	readonly dropCacheSize: number = 50;
 
 	/**
-	 * The number of elements from the current range that cannot be removed from the cache
+	 * Number of elements from the current range that cannot be removed from the cache
 	 */
 	@prop({type: Number, watch: 'onUpdate', validator: isNatural})
 	readonly dropCacheSafeZone: number = 10;
 
 	/**
-	 * Amount of nodes at the current time
+	 * Amount of nodes at the same time
 	 */
 	@prop({type: Number,  watch: 'onUpdate', validator: isNatural})
 	readonly realElementsCount: number = 20;
 
 	/**
-	 * Amount of nodes at the current time that are drawn in the opposite direction from the scroll
+	 * Amount of nodes at the same time that are drawn in the opposite direction from the scroll
 	 */
 	@prop({type: Number, watch: 'onUpdate', validator: isNatural})
 	readonly oppositeElementsCount: number = 10;
@@ -111,7 +111,7 @@ export default class bVirtualScroll extends iData<RemoteData> {
 	readonly tombstoneCount: number = 10;
 
 	/**
-	 * The number of pixels of additional length to allow scrolling to
+	 * Number of pixels of additional length to allow scrolling to
 	 */
 	@prop({type: Number, watch: 'onUpdate'})
 	readonly scrollRunnerOffset: number = 0;
@@ -119,7 +119,7 @@ export default class bVirtualScroll extends iData<RemoteData> {
 	/**
 	 * Scroll axis
 	 */
-	@prop({type: String, watch: 'onUpdate', validator: (v: string) => axis.hasOwnProperty(v)})
+	@prop({type: String, watch: 'onUpdate', validator: (v: string) => axis[v]})
 	readonly axis: Axis = 'y';
 
 	/**
@@ -148,7 +148,7 @@ export default class bVirtualScroll extends iData<RemoteData> {
 
 	/** @override */
 	@prop({type: [Object, Array], required: false})
-	readonly request?: iData['request'];
+	readonly request?: RequestParams;
 
 	/**
 	 * If, when calling a function, it returns true, then the component will be able to request additional data
@@ -191,7 +191,7 @@ export default class bVirtualScroll extends iData<RemoteData> {
 	}
 
 	/** @override */
-	protected set requestParams(v: RequestParams) {
+	protected set requestParams(value: RequestParams) {
 		return;
 	}
 
@@ -268,22 +268,22 @@ export default class bVirtualScroll extends iData<RemoteData> {
 	reInit(waitReady: boolean, hard: boolean = false): Promise<void> {
 		const wrappedRender = () => {
 			const asyncOpts = {label: 'initScrollRender', group: 'scroll-render'};
-			return this.waitStatus('ready', () => this.scrollRender.initRender(), asyncOpts);
+			return this.waitStatus('ready', () => this.scrollRender.init(), asyncOpts);
 		};
 
 		return this.componentRender.reset()
 			.then(() => this.scrollRender.reset(hard))
 			.then(waitReady ?
 				wrappedRender :
-				() => this.scrollRender.initRender()
+				() => this.scrollRender.init()
 			);
 	}
 
 	/**
-	 * Retries last request
+	 * Retries the last request
 	 */
-	retry(): void {
-		return this.scrollRequest.retry();
+	reloadLast (): void {
+		return this.scrollRequest.reloadLast();
 	}
 
 	/** @override */

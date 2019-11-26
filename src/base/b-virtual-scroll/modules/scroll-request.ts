@@ -6,16 +6,15 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import Range from 'core/range';
-
 import bVirtualScroll from 'base/b-virtual-scroll/b-virtual-scroll';
 import ScrollRender from 'base/b-virtual-scroll/modules/scroll-render';
 
+import { getRequestParams } from 'base/b-virtual-scroll/modules/helpers';
 import { RemoteData, RequestMoreParams, ScrollRenderState } from 'base/b-virtual-scroll/modules/interface';
 
 export default class Request {
 	/**
-	 * True if it is considered that all data is uploaded
+	 * True if all requests looks is done
 	 */
 	isRequestsDone: boolean = false;
 
@@ -32,7 +31,7 @@ export default class Request {
 	/**
 	 * All loaded data
 	 */
-	loadedData: unknown[] = [];
+	data: unknown[] = [];
 
 	/**
 	 * Current page
@@ -45,7 +44,7 @@ export default class Request {
 	protected component: bVirtualScroll;
 
 	/**
-	 * Scroll render module
+	 * API for scroll render
 	 */
 	protected get scrollRender(): ScrollRender {
 		// @ts-ignore (access)
@@ -53,25 +52,25 @@ export default class Request {
 	}
 
 	/**
-	 * @param ctx
+	 * @param component - component instance
 	 */
-	constructor(ctx: bVirtualScroll) {
-		this.component = ctx;
+	constructor(component: bVirtualScroll) {
+		this.component = component;
 	}
 
 	/**
-	 * Resets current state
+	 * Resets the current state
 	 */
 	reset(): void {
 		this.totalLoaded = 0;
 		this.page = 1;
-		this.loadedData = [];
+		this.data = [];
 	}
 
 	/**
-	 * Retries last request
+	 * Retries the last request
 	 */
-	retry(): void {
+	reloadLast(): void {
 		this.isRequestsDone = false;
 		this.isLastEmpty = false;
 		this.component.removeMod('requestsDone', true);
@@ -79,19 +78,22 @@ export default class Request {
 	}
 
 	/**
-	 * Trying to request additional data
+	 * Tries to request additional data
 	 */
 	try(): Promise<void> {
 		const
-			{component, scrollRender} = this,
+			{component, scrollRender} = this;
+
+		const
 			resolved = Promise.resolve(),
 			shouldRequest = component.shouldMakeRequest(getRequestParams(this, scrollRender));
 
-		const cantRequest = () => this.isRequestsDone ||
-				!shouldRequest ||
-				!component.dataProvider ||
-				component.mods.progress === 'true' ||
-				scrollRender.state !== ScrollRenderState.render;
+		const cantRequest = () =>
+			this.isRequestsDone ||
+			!shouldRequest ||
+			!component.dataProvider ||
+			component.mods.progress === 'true' ||
+			scrollRender.state !== ScrollRenderState.render;
 
 		if (cantRequest()) {
 			return resolved;
@@ -113,7 +115,7 @@ export default class Request {
 
 				this.page++;
 				this.isLastEmpty = false;
-				this.loadedData = this.loadedData.concat(data);
+				this.data = this.data.concat(data);
 
 				scrollRender.max = total || Infinity;
 				scrollRender.add(data);
@@ -173,48 +175,4 @@ export default class Request {
 
 			.catch((err) => (stderr(err), undefined));
 	}
-}
-
-/**
- * Returns a request params
- *
- * @param [scrollRequestCtx]
- * @param [scrollRenderCtx]
- * @param [merge]
- */
-export function getRequestParams(
-	scrollRequestCtx?: Request,
-	scrollRenderCtx?: ScrollRender,
-	merge?: Dictionary
-): RequestMoreParams {
-	const base = {
-		currentPage: 0,
-		currentRange: new Range(0, 0),
-		items: [],
-		lastLoaded: [],
-		currentSlice: [],
-		isLastEmpty: false,
-		itemsToReachBottom: 0
-	};
-
-	const params = scrollRequestCtx && scrollRenderCtx ? {
-		currentRange: scrollRenderCtx.range,
-		currentPage: scrollRequestCtx.page,
-		lastLoaded: scrollRenderCtx.lastRegisterData,
-		isLastEmpty: scrollRequestCtx.isLastEmpty,
-
-		currentSlice: scrollRenderCtx.items.slice(scrollRenderCtx.range.start, scrollRenderCtx.range.end),
-		itemsToReachBottom: scrollRequestCtx.totalLoaded - scrollRenderCtx.currentAnchor.index,
-		items: scrollRenderCtx.items
-	} : base;
-
-	const merged = {
-		...params,
-		...merge
-	};
-
-	// tslint:disable-next-line: prefer-object-spread
-	return Object.assign(merged, {
-		nextPage: merged.currentPage + 1
-	});
 }
