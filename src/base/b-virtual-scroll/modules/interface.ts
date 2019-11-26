@@ -10,6 +10,7 @@ import Range from 'core/range';
 import { axis } from 'base/b-virtual-scroll/b-virtual-scroll';
 
 export type OptionProps = (el: OptionEl, i: number) => Dictionary;
+export type OptionKey = (el: unknown, i: number) => (string | number);
 export type Axis = keyof typeof axis;
 
 export type RequestQuery<T extends unknown = unknown> = (params: RequestMoreParams<T>) => Dictionary;

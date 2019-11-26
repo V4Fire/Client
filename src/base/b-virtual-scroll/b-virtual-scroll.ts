@@ -16,12 +16,13 @@ import { isNatural, getRequestParams } from 'base/b-virtual-scroll/modules/helpe
 
 import {
 
-	RemoteData,
 	OptionProps,
-	RequestQuery,
-	RequestFn,
+	OptionKey,
+	Axis,
 	ScrollRenderState,
-	Axis
+	RequestFn,
+	RemoteData,
+	RequestQuery
 
 } from 'base/b-virtual-scroll/modules/interface';
 
@@ -66,7 +67,7 @@ export default class bVirtualScroll extends iData<RemoteData> {
 	 * Option unique key (for v-for)
 	 */
 	@prop({type: Function, watch: 'onUpdate'})
-	readonly optionKey!: (el: unknown, i: number) => string | number;
+	readonly optionKey!: OptionKey;
 
 	/**
 	 * Number of columns
