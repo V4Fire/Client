@@ -33,7 +33,7 @@ import {
 	OptionProps,
 	OptionKey,
 	Axis,
-	ScrollRenderState,
+	ScrollRenderStatus,
 	RequestFn,
 	RemoteData,
 	RequestQuery,
@@ -288,11 +288,11 @@ export default class bVirtualScroll extends iData<RemoteData> {
 	 * Re-initializes component
 	 *
 	 * @param [waitReady] - if false, the component will be initialized immediately
-	 * @param [force] - if true, tombstones will be redraw
+	 * @param [force] - if true, all tombstones will be redraw
 	 */
 	async reInit({waitReady = true, hard = false}: ReInitParams = {}): Promise<void> {
-		await this.componentRender.reset();
-		await this.scrollRender.reset(hard);
+		await this.componentRender.reInit();
+		await this.scrollRender.reInit(hard);
 
 		if (waitReady) {
 			await this.waitStatus('ready', {
@@ -355,12 +355,12 @@ export default class bVirtualScroll extends iData<RemoteData> {
 	 */
 	protected async onUpdate(): Promise<void> {
 		const
-			{scrollRender: {state}} = this;
+			{scrollRender: {status}} = this;
 
 		const
 			FRAME_TIME = 16;
 
-		if (state !== ScrollRenderState.render || this.componentStatus !== 'ready') {
+		if (status !== ScrollRenderStatus.render || this.componentStatus !== 'ready') {
 			return;
 		}
 

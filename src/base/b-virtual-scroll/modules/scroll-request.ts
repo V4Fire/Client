@@ -10,7 +10,7 @@ import bVirtualScroll from 'base/b-virtual-scroll/b-virtual-scroll';
 import ScrollRender from 'base/b-virtual-scroll/modules/scroll-render';
 
 import { getRequestParams } from 'base/b-virtual-scroll/modules/helpers';
-import { RemoteData, RequestMoreParams, ScrollRenderState } from 'base/b-virtual-scroll/modules/interface';
+import { RemoteData, RequestMoreParams, ScrollRenderStatus } from 'base/b-virtual-scroll/modules/interface';
 
 export default class Request {
 	/**
@@ -29,7 +29,7 @@ export default class Request {
 	data: unknown[] = [];
 
 	/**
-	 * True if all requests is done
+	 * True if all requests for additional data was requested
 	 */
 	isDone: boolean = false;
 
@@ -44,7 +44,7 @@ export default class Request {
 	protected component: bVirtualScroll;
 
 	/**
-	 * API for scroll request helpers
+	 * API for scroll rendering
 	 */
 	protected get scrollRender(): ScrollRender {
 		// @ts-ignore (access)
@@ -93,7 +93,7 @@ export default class Request {
 			!shouldRequest ||
 			!component.dataProvider ||
 			component.mods.progress === 'true' ||
-			scrollRender.state !== ScrollRenderState.render;
+			scrollRender.status !== ScrollRenderStatus.render;
 
 		if (cantRequest()) {
 			return resolved;
@@ -106,7 +106,7 @@ export default class Request {
 			.then((v) => {
 				if (!component.field.get('data.length', v)) {
 					this.isLastEmpty = true;
-					this.checksRequestDone(getRequestParams(this, scrollRender, {lastLoaded: []}));
+					this.checksRequestPossibility(getRequestParams(this, scrollRender, {lastLoaded: []}));
 					return;
 				}
 
@@ -124,10 +124,10 @@ export default class Request {
 	}
 
 	/**
-	 * Checks are all requests complete
+	 * Checks possibility of another request for data
 	 * @param params
 	 */
-	checksRequestDone(params: RequestMoreParams): void {
+	checksRequestPossibility(params: RequestMoreParams): boolean {
 		const {component, scrollRender} = this;
 		this.isDone = !component.shouldContinueRequest(params);
 
@@ -138,6 +138,8 @@ export default class Request {
 		} else {
 			component.removeMod('requestsDone', true);
 		}
+
+		return !this.isDone;
 	}
 
 	/**

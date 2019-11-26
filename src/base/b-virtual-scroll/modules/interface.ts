@@ -78,7 +78,7 @@ export interface Size {
 	height: number;
 }
 
-export enum ScrollRenderState {
+export enum ScrollRenderStatus {
 	notInitialized,
 	waitRender,
 	render

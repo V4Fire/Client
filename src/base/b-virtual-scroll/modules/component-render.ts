@@ -261,7 +261,7 @@ export default class ComponentRender {
 	/**
 	 * Re-initializes the component render
 	 */
-	reset(): Promise<void> {
+	reInit(): Promise<void> {
 		return this.async.promise<void>(new Promise((res) => {
 			this.async.requestAnimationFrame(() => {
 				this.tombstoneToClone = this.getRealTombstone();
