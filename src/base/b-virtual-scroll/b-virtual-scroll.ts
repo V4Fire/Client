@@ -270,10 +270,7 @@ export default class bVirtualScroll extends iData<RemoteData> {
 
 		return this.async.promise(Promise.all([
 				super.reload(params),
-				this.reInit({
-					waitReady: true,
-					force: true
-				})
+				this.reInit({hard: true})
 
 			]).then(() => undefined),
 
@@ -289,11 +286,13 @@ export default class bVirtualScroll extends iData<RemoteData> {
 
 	/**
 	 * Re-initializes component
-	 * @param reInitParams
+	 *
+	 * @param [waitReady] - if false, the component will be initialized immediately
+	 * @param [force] - if true, tombstones will be redraw
 	 */
-	async reInit({waitReady, force = false}: ReInitParams): Promise<void> {
+	async reInit({waitReady = true, hard = false}: ReInitParams = {}): Promise<void> {
 		await this.componentRender.reset();
-		await this.scrollRender.reset(force);
+		await this.scrollRender.reset(hard);
 
 		if (waitReady) {
 			await this.waitStatus('ready', {
@@ -366,7 +365,7 @@ export default class bVirtualScroll extends iData<RemoteData> {
 		}
 
 		await this.async.sleep(FRAME_TIME, {label: $$.onUpdate, join: false}).catch(stderr);
-		this.reInit({waitReady: true}).catch(stderr);
+		this.reInit().catch(stderr);
 	}
 
 	/**

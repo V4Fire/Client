@@ -91,6 +91,6 @@ export interface RenderedItems {
 }
 
 export interface ReInitParams {
-	force?: boolean;
-	waitReady: boolean;
+	hard?: boolean;
+	waitReady?: boolean;
 }
