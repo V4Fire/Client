@@ -12,8 +12,8 @@ import { getSrcSet } from 'core/html';
 import iProgress from 'traits/i-progress/i-progress';
 import iVisible from 'traits/i-visible/i-visible';
 
-import iMessage, { component, prop, wait, hook, ModsDecl } from 'super/i-message/i-message';
-export * from 'super/i-message/i-message';
+import iBlock, { component, prop, wait, hook, ModsDecl } from 'super/i-block/i-block';
+export * from 'super/i-block/i-block';
 
 export type SizeType =
 	'cover' |
@@ -23,7 +23,7 @@ export const
 	$$ = symbolGenerator();
 
 @component({functional: {}})
-export default class bImage extends iMessage implements iProgress, iVisible {
+export default class bImage extends iBlock implements iProgress, iVisible {
 	/**
 	 * Target image src (fallback if srcset provided)
 	 */

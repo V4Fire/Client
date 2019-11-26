@@ -8,9 +8,9 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-- include 'super/i-message'|b as placeholder
+- include 'super/i-block'|b as placeholder
 
-- template index() extends ['i-message'].index
+- template index() extends ['i-block'].index
 	- skeletonMarker = true
 
 	- block rootAttrs

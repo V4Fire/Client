@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-@import "super/i-message/i-message.styl"
+@import "super/i-block/i-block.styl"
 @import "traits/i-progress/i-progress.styl"
 @import "traits/i-visible/i-visible.styl"
 
@@ -15,7 +15,7 @@ $p = {
 	visibleHelpers: true
 }
 
-b-image extends i-message
+b-image extends i-block
 	// @stlint-disable
 	i-progress({helpers: $p.progressHelpers})
 	i-visible({helpers: $p.visibleHelpers})
