@@ -696,7 +696,7 @@ export default abstract class iData<T extends object = Dictionary> extends iMess
 	 * @param [key]
 	 */
 	protected saveDataToRootStore(data: unknown, key?: string): void {
-		key = key || this.globalName;
+		key = key || this.globalName || this.dataProvider;
 
 		if (!key) {
 			return;

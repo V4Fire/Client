@@ -7,11 +7,24 @@
  */
 
 import symbolGenerator from 'core/symbol';
-
 import { observeMap } from 'core/component/helpers/observable';
-import { ComponentElement } from 'core/component/interface';
 
-import iBlock, { component, prop, system, hook, watch, wait, p, ModsDecl } from 'super/i-block/i-block';
+import iBlock, {
+
+	component,
+	prop,
+	system,
+
+	hook,
+	watch,
+	wait,
+	p,
+
+	ModsDecl,
+	ComponentElement
+
+} from 'super/i-block/i-block';
+
 export * from 'super/i-block/i-block';
 
 export interface IsTable {
@@ -31,16 +44,16 @@ export type IsStrategyReadyMap = Record<ResolveMethod, () => boolean>;
 export const
 	$$ = symbolGenerator();
 
-export const resolveMethods = {
+export const resolveMethods = Object.createDict({
 	semaphore: true,
 	mutation: true,
 	components: true
-};
+});
 
-export const resolveStrategy = {
+export const resolveStrategy = Object.createDict({
 	every: true,
 	some: true
-};
+});
 
 export type ResolveMethod = keyof typeof resolveMethods;
 export type ResolveStrategy = keyof typeof resolveStrategy;
@@ -50,7 +63,7 @@ export type ResolveStrategy = keyof typeof resolveStrategy;
  * @param value
  */
 export function validateResolve(value: ResolveMethod[]): boolean {
-	return value.every((v) => resolveMethods.hasOwnProperty(v));
+	return value.every((v) => resolveMethods[v]);
 }
 
 @component()
@@ -74,7 +87,7 @@ export default class bContentSwitcher extends iBlock {
 	@prop({
 		type: String,
 		required: false,
-		validator: (v: string) => resolveStrategy.hasOwnProperty(v)
+		validator: (v: string) => resolveStrategy[v]
 	})
 
 	readonly resolveStrategy: ResolveStrategy = 'every';
@@ -83,7 +96,13 @@ export default class bContentSwitcher extends iBlock {
 	 * If true, then a content won't be hidden after the state change
 	 */
 	@prop(Boolean)
-	readonly resolveOnce: Boolean = false;
+	readonly resolveOnce: boolean = false;
+
+	/**
+	 * If true, then a placeholder will be hidden at start
+	 */
+	@prop(Boolean)
+	readonly placeholderHidden: boolean = false;
 
 	/**
 	 * Keys for a semaphore strategy
@@ -275,6 +294,19 @@ export default class bContentSwitcher extends iBlock {
 	}
 
 	/**
+	 * Initializes base placeholder state
+	 */
+	@hook('created')
+	protected initPlaceholderState(): void {
+		const {is, placeholderHidden} = this;
+		is.placeholderHidden = placeholderHidden;
+
+		if (placeholderHidden) {
+			this.setMod('hidden', true);
+		}
+	}
+
+	/**
 	 * Initializes resolve strategies
 	 */
 	@hook('mounted')
@@ -332,9 +364,9 @@ export default class bContentSwitcher extends iBlock {
 			}
 
 			semaphoreReadyMap.set(c, c.isReady);
-			$a.on(c, 'statusReady', () => semaphoreReadyMap.set(c, true), {label: $$.ready});
-			$a.on(c, 'statusLoading statusUnloaded', () => semaphoreReadyMap.set(c, false), {label: $$.loading});
-			$a.on(c, 'statusDestroyed', () => semaphoreReadyMap.delete(c), {label: $$.destroy});
+			$a.on(c, 'statusReady', () => semaphoreReadyMap.set(c, true), {label: `ready-${c.componentId}`});
+			$a.on(c, 'statusLoading statusUnloaded', () => semaphoreReadyMap.set(c, false), {label: `loading-${c.componentId}`});
+			$a.on(c, 'statusDestroyed', () => semaphoreReadyMap.delete(c), {label: `destroy-${c.componentId}`});
 		};
 
 		const register = () => {
@@ -353,10 +385,9 @@ export default class bContentSwitcher extends iBlock {
 			}
 		};
 
-		const
-			defferRegister = this.lazy.createLazyFn(register, {label: $$.register});
-
+		const defferRegister = this.lazy.createLazyFn(register, {label: $$.register});
 		defferRegister();
+
 		this.createMutationObserver();
 		this.on('contentMutation', defferRegister, {label: $$.initReady});
 	}

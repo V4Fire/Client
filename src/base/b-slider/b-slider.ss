@@ -19,7 +19,6 @@
 
 	- block body
 		: putIn content
-			+= self.slot('before')
 
 			< template v-if = option
 				< template &
@@ -34,7 +33,7 @@
 			< template v-else
 				+= self.slot()
 
-			+= self.slot('after')
+		+= self.slot('before')
 
 		< .&__window &
 			v-if = isSlider |
@@ -55,3 +54,5 @@
 				< .&__outer-view-wrapper
 					< .&__view-content ref = content
 						+= content
+
+		+= self.slot('after')

@@ -11,6 +11,25 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-beta.221 (2019-11-26)
+
+#### :boom: Breaking Change
+
+* [Changed `iLockPageScroll` trait methods signature](https://github.com/V4Fire/Client/pull/137)
+* [Changed `before` and `after` slots position in `b-slider`](https://github.com/V4Fire/Client/pull/137)
+* [Changed `saveDataToRootStore` key generation](https://github.com/V4Fire/Client/pull/137)
+
+#### :rocket: New Feature
+
+* [Added `b-virtual-scroll` component](https://github.com/V4Fire/Client/pull/137)
+* [Added `appendChild` method to the DOM module](https://github.com/V4Fire/Client/pull/137)
+* [Added `placeholderHidden` prop to `b-content-switcher`](https://github.com/V4Fire/Client/pull/137)
+
+#### :bug: Bug Fix
+
+* [Fixed `b-content-switcher` `components` resolver not being resolved with multiply components in `content` slot](https://github.com/V4Fire/Client/pull/137)
+* [Fixed `b-content-switcher` not being hidden with `animation` set to `none`](https://github.com/V4Fire/Client/pull/137)
+
 ## v3.0.0-beta.220 (2019-11-25)
 
 #### :boom: Breaking Change
@@ -72,7 +91,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :rocket: New Feature
 
-* Added `bMatryoshka`
+* [Added `bMatryoshka` component](https://github.com/V4Fire/Client/pull/139)
 
 #### :house: Internal
 
