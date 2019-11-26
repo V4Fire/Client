@@ -143,7 +143,7 @@ export default class Request {
 	}
 
 	/**
-	 * Requests an additional data
+	 * Loads additional data
 	 * @param params
 	 */
 	protected load(params: RequestMoreParams): Promise<CanUndef<RemoteData>> {
