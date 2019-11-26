@@ -11,7 +11,7 @@ import Range from 'core/range';
 import symbolGenerator from 'core/symbol';
 import { is } from 'core/browser';
 
-import bVirtualScroll from 'base/b-virtual-scroll/b-virtual-scroll';
+import bVirtualScroll, { $$ as componentLabels } from 'base/b-virtual-scroll/b-virtual-scroll';
 import ComponentRender from 'base/b-virtual-scroll/modules/component-render';
 import ScrollRequest from 'base/b-virtual-scroll/modules/scroll-request';
 
@@ -221,7 +221,7 @@ export default class ScrollRender {
 				component.waitStatus('ready', () => {
 					this.init();
 
-				}, {label: 'initScrollRender', group: this.asyncGroup});
+				}, {label: componentLabels.initScrollRender, group: this.asyncGroup});
 			}
 		});
 	}

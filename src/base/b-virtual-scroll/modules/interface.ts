@@ -89,3 +89,8 @@ export interface RenderedItems {
 	nodes: HTMLElement[];
 	items: [RenderItem, number][];
 }
+
+export interface ReInitParams {
+	force?: boolean;
+	waitReady: boolean;
+}

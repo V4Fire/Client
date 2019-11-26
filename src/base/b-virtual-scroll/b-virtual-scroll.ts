@@ -22,7 +22,8 @@ import {
 	ScrollRenderState,
 	RequestFn,
 	RemoteData,
-	RequestQuery
+	RequestQuery,
+	ReInitParams
 
 } from 'base/b-virtual-scroll/modules/interface';
 
@@ -256,7 +257,11 @@ export default class bVirtualScroll extends iData<RemoteData> {
 
 		return this.async.promise(Promise.all([
 				super.reload(params),
-				this.reInit(true, true)
+				this.reInit({
+					waitReady: true,
+					force: true
+				})
+
 			]).then(() => undefined),
 
 		{label: $$.reload, join: true});
@@ -264,20 +269,20 @@ export default class bVirtualScroll extends iData<RemoteData> {
 
 	/**
 	 * Re-initializes component
-	 * @param waitReady
+	 * @param reInitParams
 	 */
-	reInit(waitReady: boolean, hard: boolean = false): Promise<void> {
-		const wrappedRender = () => {
-			const asyncOpts = {label: 'initScrollRender', group: 'scroll-render'};
-			return this.waitStatus('ready', () => this.scrollRender.init(), asyncOpts);
-		};
+	async reInit({waitReady, force = false}: ReInitParams): Promise<void> {
+		await this.componentRender.reset();
+		await this.scrollRender.reset(force);
 
-		return this.componentRender.reset()
-			.then(() => this.scrollRender.reset(hard))
-			.then(waitReady ?
-				wrappedRender :
-				() => this.scrollRender.init()
-			);
+		if (waitReady) {
+			await this.waitStatus('ready', {
+				label: $$.initScrollRender,
+				group: 'scroll-render'
+			});
+		}
+
+		await this.scrollRender.init();
 	}
 
 	/**
@@ -346,7 +351,7 @@ export default class bVirtualScroll extends iData<RemoteData> {
 		}
 
 		await this.async.sleep(FRAME_TIME, {label: $$.onUpdate, join: false}).catch(stderr);
-		this.reInit(true).catch(stderr);
+		this.reInit({waitReady: true}).catch(stderr);
 	}
 
 	/**
