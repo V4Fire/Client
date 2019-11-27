@@ -163,13 +163,13 @@ export default class DOM {
 	}
 
 	/**
-	 * Appends child to the specified parent
+	 * Appends a node to the specified parent
 	 *
 	 * @param parent - element name or a link to the parent node
 	 * @param newNode
 	 * @param [group] - operation group
 	 */
-	appendChild(parent: string | Element | DocumentFragment, node: Element, group?: string): Function | false {
+	appendChild(parent: string | Element | DocumentFragment, newNode: Element, group?: string): Function | false {
 		const
 			parentNode = Object.isString(parent) ? this.block.element(parent) : parent;
 
@@ -181,11 +181,11 @@ export default class DOM {
 			group = (<Element>parentNode).getAttribute('data-render-group') || '';
 		}
 
-		parentNode.appendChild(node);
+		parentNode.appendChild(newNode);
 
 		// @ts-ignore (access)
 		return this.component.async.worker(() => {
-			node.remove();
+			newNode.remove();
 
 		}, {group: group || 'asyncComponents'});
 	}
