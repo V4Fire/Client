@@ -21,10 +21,12 @@
 $IMG = {}
 
 /**
- * Saves the specified image to thew global cache
+ * Saves the specified image to the global cache
+ *
  * @param {string} $img
+ * @param {boolean=} [$isDsAsset]
  */
-img($img)
+img($img, $isDsAsset = false)
 	$prop = current-property[0]
 	$keys = {
 		background: background-image
@@ -37,6 +39,7 @@ img($img)
 		$IMG[$img] = {
 			selectors: ()
 			props: {}
+			ds: $isDsAsset
 		}
 
 	$obj = $IMG[$img]
@@ -50,14 +53,31 @@ img($img)
 	return
 
 /**
+ * Sets vector icon as a background
+ *
+ * @param {string} $name
+ * @param {string=} [$repeat]
+ * @param {string=} [$align]
+ */
+i($name, $repeat = no-repeat, $align = center)
+	background img($name, true) $repeat $align
+
+	$chunks = split("/", $name)
+
+	if length($chunks) > 1 and typeof(convert($chunks[0])) == "unit"
+		size unit(convert($chunks[0]), "px")
+
+/**
  * Generates images classes
  */
 generateImgClasses()
 	for $img, $obj in $IMG
 		$sel = join(",", $obj.selectors)
+		$value = $obj.ds ? getDSIcon($img) : $img
+
 		{$sel}
 			for $prop in $obj.props
-				add-property($prop, "url(%s)" % $img)
+				add-property($prop, "url(%s)" % $value)
 
 /**
  * Executes the default font pattern and returns a result
