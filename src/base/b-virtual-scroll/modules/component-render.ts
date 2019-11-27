@@ -122,7 +122,7 @@ export default class ComponentRender {
 		this.component = component;
 
 		// @ts-ignore (access)
-		ctx.meta.hooks.mounted.push({
+		component.meta.hooks.mounted.push({
 			name: 'initComponentRender',
 			fn: () => {
 				this.tombstoneToClone = this.getRealTombstone();
@@ -456,7 +456,7 @@ export default class ComponentRender {
 		for (let i = 0; i < list.length; i++) {
 			const
 				[item, index] = list[i],
-				props = (<Function>c.optionProps)(getOptionEl(item.data, index), index);
+				props = c.optionProps(getOptionEl(item.data, index), index);
 
 			children.push(createChildren(props));
 		}

@@ -322,7 +322,7 @@ export default class ScrollRender {
 			diff = scrollValue - scrollPosition;
 
 		this.scrollDirection = Math.sign(diff);
-		this.currentAnchor = scrollValue ? this.findAnchoredItem(diff) : {index: 0, offset: 0};
+		Object.assign(currentAnchor, scrollValue ? this.findAnchoredItem(diff) : {index: 0, offset: 0});
 		this.scrollPosition = scrollValue;
 
 		const
