@@ -11,7 +11,7 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v3.0.0-beta.221 (2019-11-26)
+## v3.0.0-beta.221 (2019-11-27)
 
 #### :boom: Breaking Change
 
@@ -20,6 +20,10 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 * [Changed `saveDataToRootStore` key generation](https://github.com/V4Fire/Client/pull/137)
 * Renamed `needReInit` to `reloadOnActivation` from `iBlock`
 * Renamed `needOfflineReInit` to `offlineReload` from `iData`
+* New API `bForm.validate`
+* Removed `iData.getDefaultErrorText`
+* Removed `bForm.onError`
+* Removed `iMessage`
 
 #### :rocket: New Feature
 
@@ -48,7 +52,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :bug: Bug Fix
 
-* Fixed `sync.link/object` with computed properties
+* Fixed `sync.link.object` with computed properties
 
 ## v3.0.0-beta.219 (2019-11-22)
 
@@ -66,7 +70,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :boom: Breaking Change
 
-* Removed `bInput/pattern`
+* Removed `bInput.pattern`
 * Removed hardcoded `bIcon` components and icon styles `bButton`, `bInput`, `bSelect`, `bInputTime`, `bCalendar`
 
 #### :rocket: New Feature
@@ -83,7 +87,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :rocket: New Feature
 
-* Added `iData/checkDBEquality`
+* Added `iData.checkDBEquality`
 
 #### :house: Internal
 
