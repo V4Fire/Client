@@ -36,10 +36,10 @@ export default class ComponentRender {
 	/**
 	 * Rendered items cache
 	 */
-	protected nodesCache: Dictionary<HTMLElement> = {};
+	protected nodesCache: Dictionary<HTMLElement> = Object.createDict();
 
 	/**
-	 * Tombstones elements
+	 * List of tombstones elements
 	 */
 	protected recycleTombstones: HTMLElement[] = [];
 
@@ -61,7 +61,7 @@ export default class ComponentRender {
 	}
 
 	/**
-	 * Link to the scroll render module
+	 * API for scroll rendering
 	 */
 	protected get scrollRender(): ScrollRender {
 		// @ts-ignore (access)
@@ -100,7 +100,7 @@ export default class ComponentRender {
 	}
 
 	/**
-	 * Class for tombstones
+	 * Classname for tombstones
 	 */
 	get tombstoneClass(): string {
 		// @ts-ignore (access)
@@ -108,7 +108,7 @@ export default class ComponentRender {
 	}
 
 	/**
-	 * Class for option
+	 * Classname for options
 	 */
 	get optionClass(): string {
 		// @ts-ignore (access)
@@ -116,10 +116,10 @@ export default class ComponentRender {
 	}
 
 	/**
-	 * @param ctx
+	 * @param component
 	 */
-	constructor(ctx: bVirtualScroll) {
-		this.component = ctx;
+	constructor(component: bVirtualScroll) {
+		this.component = component;
 
 		// @ts-ignore (access)
 		ctx.meta.hooks.mounted.push({
@@ -131,7 +131,7 @@ export default class ComponentRender {
 	}
 
 	/**
-	 * Returns a node from cache by the specified key
+	 * Returns a node from the cache by the specified key
 	 * @param key
 	 */
 	getElement(key: string): CanUndef<HTMLElement> {
@@ -139,7 +139,33 @@ export default class ComponentRender {
 	}
 
 	/**
-	 * Saves the specified node
+	 * Returns a link to the tombstone element
+	 */
+	getTombstone(): HTMLElement {
+		const
+			{component} = this;
+
+		const
+			tombstone = this.recycleTombstones.pop();
+
+		if (tombstone) {
+			component.removeMod(tombstone, 'hidden', true);
+			return tombstone;
+		}
+
+		return this.createTombstone();
+	}
+
+	/**
+	 * Saves the specified tombstone in the cache
+	 * @param node
+	 */
+	recycleTombstone(node: HTMLElement): void {
+		this.recycleTombstones.push(node);
+	}
+
+	/**
+	 * Saves a node to the cache by the specified key
 	 *
 	 * @param key
 	 * @param node
@@ -152,11 +178,9 @@ export default class ComponentRender {
 		this.nodesCache[key] = node;
 
 		const
-			{nodesCache} = this,
-			{cacheSize} = this.component,
-			keys = Object.keys(nodesCache);
+			{nodesCache, component: {cacheSize}} = this;
 
-		if (keys.length > cacheSize) {
+		if (Object.keys(nodesCache).length > cacheSize) {
 			this.canDropCache = true;
 		}
 
@@ -170,7 +194,19 @@ export default class ComponentRender {
 	}
 
 	/**
-	 * Renders a new node
+	 * Re-initializes the component render
+	 */
+	reInit(): Promise<void> {
+		return this.async.promise<void>(new Promise((res) => {
+			this.async.requestAnimationFrame(() => {
+				this.tombstoneToClone = this.getRealTombstone();
+				this.destroy().then(res);
+			}, {label: $$.reInitRaf, group: this.asyncGroup});
+		}), {label: $$.reInit, group: this.asyncGroup});
+	}
+
+	/**
+	 * Renders the specified chunk of items
 	 *
 	 * @param list
 	 * @param items
@@ -235,70 +271,9 @@ export default class ComponentRender {
 	}
 
 	/**
-	 * Returns a tombstone
+	 * Clears the cache of nodes
 	 */
-	getTombstone(): HTMLElement {
-		const
-			{component} = this,
-			tombstone = this.recycleTombstones.pop();
-
-		if (tombstone) {
-			component.removeMod(tombstone, 'hidden', true);
-			return tombstone;
-		}
-
-		return this.createTombstone();
-	}
-
-	/**
-	 * Saves the specified tombstone in cache
-	 * @param node
-	 */
-	recycleTombstone(node: HTMLElement): void {
-		this.recycleTombstones.push(node);
-	}
-
-	/**
-	 * Re-initializes the component render
-	 */
-	reInit(): Promise<void> {
-		return this.async.promise<void>(new Promise((res) => {
-			this.async.requestAnimationFrame(() => {
-				this.tombstoneToClone = this.getRealTombstone();
-				this.destroy().then(res);
-
-			}, {label: $$.reInitRaf, group: this.asyncGroup});
-
-		}), {label: $$.reInit, group: this.asyncGroup});
-	}
-
-	/**
-	 * Module destructor
-	 */
-	destroy(): Promise<void> {
-		return this.async.promise<void>(new Promise((res) => {
-			this.async.requestAnimationFrame(() => {
-				const
-					{nodesCache} = this;
-
-				Object.keys(nodesCache).forEach((key) => {
-					const el = nodesCache[key];
-					el && el.remove();
-				});
-
-				this.recycleTombstones = [];
-				this.elementToClone = undefined;
-				this.nodesCache = {};
-				res();
-
-			}, {label: $$.destroyRaf, group: this.asyncGroup});
-		}), {label: $$.destroy, group: this.asyncGroup});
-	}
-
-	/**
-	 * Drops cached nodes
-	 */
-	dropCache(): void {
+	clearCache(): void {
 		if (!this.component.cacheNode) {
 			return;
 		}
@@ -405,11 +380,33 @@ export default class ComponentRender {
 	}
 
 	/**
+	 * Module destructor
+	 */
+	destroy(): Promise<void> {
+		return this.async.promise<void>(new Promise((res) => {
+			this.async.requestAnimationFrame(() => {
+				const
+					{nodesCache} = this;
+
+				Object.keys(nodesCache).forEach((key) => {
+					const el = nodesCache[key];
+					el && el.remove();
+				});
+
+				this.recycleTombstones = [];
+				this.elementToClone = undefined;
+				this.nodesCache = Object.createDict();
+				res();
+
+			}, {label: $$.destroyRaf, group: this.asyncGroup});
+		}), {label: $$.destroy, group: this.asyncGroup});
+	}
+
+	/**
 	 * Creates a tombstone
 	 */
 	protected createTombstone(): HTMLElement {
-		const tombstone = <HTMLElement>(this.clonedTombstone);
-		return tombstone;
+		return <HTMLElement>(this.clonedTombstone);
 	}
 
 	/**
@@ -459,7 +456,7 @@ export default class ComponentRender {
 		for (let i = 0; i < list.length; i++) {
 			const
 				[item, index] = list[i],
-				props = c.optionProps(getOptionEl(item.data, index), index);
+				props = (<Function>c.optionProps)(getOptionEl(item.data, index), index);
 
 			children.push(createChildren(props));
 		}
