@@ -14,7 +14,6 @@ import 'core/data';
 
 import iVisible from 'traits/i-visible/i-visible';
 import iInput from 'super/i-input/i-input';
-import bInputHidden from 'form/b-input-hidden/b-input-hidden';
 
 //#if runtime has bButton
 import bButton from 'form/b-button/b-button';
@@ -32,12 +31,11 @@ import iData, {
 	RequestFilter,
 	CreateRequestOpts,
 
-	ModsDecl,
-	ModEvent
+	ModsDecl
 
 } from 'super/i-data/i-data';
 
-import { ActionFn, SubmitCtx } from 'form/b-form/modules/interface';
+import { ActionFn, ValidateParams } from 'form/b-form/modules/interface';
 
 export * from 'super/i-data/i-data';
 export * from 'form/b-form/modules/interface';
@@ -93,12 +91,6 @@ export default class bForm<T extends object = Dictionary> extends iData<T> {
 	 */
 	@prop(Boolean)
 	readonly cache: boolean = false;
-
-	/**
-	 * If false, then default error handler won't be used
-	 */
-	@prop(Boolean)
-	readonly errorHandler: boolean = true;
 
 	/**
 	 * Form request parameters store
@@ -218,14 +210,15 @@ export default class bForm<T extends object = Dictionary> extends iData<T> {
 	/**
 	 * Validates child form components and returns their or false
 	 *
-	 * @param [focusOnFail] - if true, then will be set focus to an invalid element
+	 * @param [params] - additional validation parameters
+	 *
 	 * @emits validationStart()
 	 * @emits validationSuccess()
 	 * @emits validationFail(failedValidation: ValidationError)
 	 * @emits validationEnd(result: boolean, failedValidation: CanUndef<ValidationError>)
 	 */
 	@wait('ready', {label: $$.validate, defer: true})
-	async validate(focusOnFail?: boolean): Promise<iInput[] | false> {
+	async validate(params: ValidateParams = {}): Promise<iInput[] | false> {
 		this.emit('validationStart');
 
 		const
@@ -254,7 +247,7 @@ export default class bForm<T extends object = Dictionary> extends iData<T> {
 					validation = canValidate && await el.validate();
 
 				if (canValidate && validation !== true) {
-					if (focusOnFail) {
+					if (params.focusOnError) {
 						try {
 							await el.focus();
 						} catch {}
@@ -312,7 +305,7 @@ export default class bForm<T extends object = Dictionary> extends iData<T> {
 		}
 
 		const
-			elsToSubmit = await this.validate(true),
+			elsToSubmit = await this.validate({focusOnError: true}),
 			submitCtx = {elements: elsToSubmit || [], form: <any>this};
 
 		let
@@ -427,7 +420,6 @@ export default class bForm<T extends object = Dictionary> extends iData<T> {
 		}
 
 		if (formErr) {
-			this.errorHandler && this.onError(formErr, submitCtx);
 			this.emit('submitFail', formErr, submitCtx);
 			throw formErr;
 		}
@@ -439,43 +431,5 @@ export default class bForm<T extends object = Dictionary> extends iData<T> {
 	protected initModEvents(): void {
 		super.initModEvents();
 		iVisible.initModEvents(this);
-
-		this.localEvent.on('block.mod.*.valid.*', ({type, value}: ModEvent) => {
-			if (type === 'remove' && value === 'false' || type === 'set' && value === 'true') {
-				this.error = undefined;
-			}
-		});
-	}
-
-	/**
-	 * Default fail handler
-	 *
-	 * @param err
-	 * @param ctx
-	 */
-	protected async onError(err: Error, ctx: SubmitCtx): Promise<void> {
-		const
-			els = ctx.elements;
-
-		if (!els) {
-			return;
-		}
-
-		let
-			firstInput;
-
-		for (let i = 0; i < els.length; i++) {
-			const el = els[i];
-			el.setMod('valid', false);
-
-			if (!firstInput && !(el.instance instanceof bInputHidden)) {
-				firstInput = el;
-			}
-		}
-
-		if (firstInput) {
-			firstInput.error = this.getDefaultErrorText(err);
-			await firstInput.focus();
-		}
 	}
 }

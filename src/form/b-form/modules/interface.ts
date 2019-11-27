@@ -15,6 +15,10 @@ export interface ValidationError<V = unknown> {
 	validator: InputValidationError<V>;
 }
 
+export interface ValidateParams {
+	focusOnError?: boolean;
+}
+
 export type SubmitBody =
 	RequestQuery |
 	RequestBody;
