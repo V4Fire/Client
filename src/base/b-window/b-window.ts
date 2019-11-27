@@ -92,15 +92,6 @@ export default class bWindow<T extends object = Dictionary> extends iData<T>
 	@field((o) => o.sync.link())
 	protected slotNameStore?: string;
 
-	/** @override */
-	set error(value: string) {
-		if (value) {
-			this.stage = 'error';
-		}
-
-		this.errorMsg = value;
-	}
-
 	/**
 	 * Slot name
 	 */
@@ -263,7 +254,7 @@ export default class bWindow<T extends object = Dictionary> extends iData<T>
 	 * @param err
 	 */
 	protected onError(err: RequestError): void {
-		this.error = this.getDefaultErrorText(err);
+		return undefined;
 	}
 
 	/** @override */

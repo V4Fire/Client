@@ -118,6 +118,24 @@ export default abstract class iInput<
 	readonly validators: Validators = [];
 
 	/**
+	 * Initial information message
+	 */
+	@prop({type: String, required: false})
+	readonly infoProp?: string;
+
+	/**
+	 * Initial error message
+	 */
+	@prop({type: String, required: false})
+	readonly errorProp?: string;
+
+	/**
+	 * If true, then will be generated a markup for default messages
+	 */
+	@prop({type: String, required: false})
+	readonly messageHelpers?: boolean;
+
+	/**
 	 * Previous component value
 	 */
 	@system({replace: false})
@@ -129,18 +147,6 @@ export default abstract class iInput<
 	@p({replace: false})
 	get validatorsMap(): typeof iInput['validators'] {
 		return (<typeof iInput>this.instance.constructor).validators;
-	}
-
-	/** @override */
-	get error(): CanUndef<string> {
-		// tslint:disable-next-line:no-string-literal
-		return (super['errorGetter']).replace(/\.$/, '');
-	}
-
-	/** @override */
-	set error(value: CanUndef<string>) {
-		// tslint:disable-next-line:no-string-literal
-		super['errorSetter'](value);
 	}
 
 	/**
@@ -280,6 +286,56 @@ export default abstract class iInput<
 		return Object.freeze([<iInput<any, any, any>>this]);
 	}
 
+	/**
+	 * Information message
+	 */
+	@p({replace: false})
+	get info(): CanUndef<string> {
+		return this.infoStore;
+	}
+
+	/**
+	 * Sets a new information message
+	 * @param value
+	 */
+	set info(value: CanUndef<string>) {
+		this.infoStore = value;
+
+		this.waitStatus('ready', () => {
+			const
+				box = this.block.element('info-box');
+
+			if (box && box.children[0]) {
+				box.children[0].innerHTML = this.infoStore || '';
+			}
+		});
+	}
+
+	/**
+	 * Error message
+	 */
+	@p({replace: false})
+	get error(): CanUndef<string> {
+		return this.errorStore;
+	}
+
+	/**
+	 * Sets a new error message
+	 * @param value
+	 */
+	set error(value: CanUndef<string>) {
+		this.errorStore = value;
+
+		this.waitStatus('ready', () => {
+			const
+				box = this.block.element('error-box');
+
+			if (box && box.children[0]) {
+				box.children[0].innerHTML = this.errorStore || '';
+			}
+		});
+	}
+
 	/** @inheritDoc */
 	static readonly mods: ModsDecl = {
 		...iAccess.mods,
@@ -291,6 +347,16 @@ export default abstract class iInput<
 		],
 
 		valid: [
+			'true',
+			'false'
+		],
+
+		showInfo: [
+			'true',
+			'false'
+		],
+
+		showError: [
 			'true',
 			'false'
 		]
@@ -319,6 +385,26 @@ export default abstract class iInput<
 	 */
 	@field({replace: false})
 	protected readonly valueKey: string = 'value';
+
+	/**
+	 * Information message store
+	 */
+	@system({
+		replace: false,
+		init: (o) => o.sync.link('infoProp')
+	})
+
+	protected infoStore?: string;
+
+	/**
+	 * Error message store
+	 */
+	@system({
+		replace: false,
+		init: (o) => o.sync.link('errorProp')
+	})
+
+	protected errorStore?: string;
 
 	/** @override */
 	protected readonly $refs!: {input?: HTMLInputElement};
@@ -622,5 +708,20 @@ export default abstract class iInput<
 				this.error = undefined;
 			}
 		});
+
+		const
+			msgInit = {};
+
+		const createMsgHandler = (type) => (val) => {
+			if (!msgInit[type] && this.modsProp && String(this.modsProp[type]) === 'false') {
+				return false;
+			}
+
+			msgInit[type] = true;
+			return Boolean(val);
+		};
+
+		this.sync.mod('showInfo', 'infoStore', createMsgHandler('showInfo'));
+		this.sync.mod('showError', 'errorStore', createMsgHandler('showError'));
 	}
 }

@@ -46,7 +46,7 @@ export {
 
 //#endif
 
-import iMessage, {
+import iBlock, {
 
 	component,
 	prop,
@@ -60,7 +60,7 @@ import iMessage, {
 	ModsDecl,
 	InitLoadParams
 
-} from 'super/i-message/i-message';
+} from 'super/i-block/i-block';
 
 import {
 
@@ -74,14 +74,14 @@ import {
 
 } from 'super/i-data/modules/interface';
 
-export * from 'super/i-message/i-message';
+export * from 'super/i-block/i-block';
 export * from 'super/i-data/modules/interface';
 
 export const
 	$$ = symbolGenerator();
 
 @component({functional: null})
-export default abstract class iData<T extends object = Dictionary> extends iMessage implements iProgress {
+export default abstract class iData<T extends object = Dictionary> extends iBlock implements iProgress {
 	//#if runtime has iData
 
 	/**
@@ -759,51 +759,6 @@ export default abstract class iData<T extends object = Dictionary> extends iMess
 		}
 
 		return res;
-	}
-
-	/**
-	 * Returns default texts for server errors
-	 * @param err
-	 */
-	protected getDefaultErrorText(err: Error | RequestError): string {
-		const
-			defMsg = t`Unknown server error`;
-
-		if (!(err instanceof RequestError)) {
-			return defMsg;
-		}
-
-		if (err.type === 'abort') {
-			return defMsg;
-		}
-
-		let msg;
-		switch (err.type) {
-			case 'timeout':
-				msg = t`The server doesn't respond, try again later`;
-				break;
-
-			case 'invalidStatus':
-				switch ((<NonNullable<Response>>err.details.response).status) {
-					case 403:
-						msg = t`You don't have permission for this operation`;
-						break;
-
-					case 404:
-						msg = t`The requested resource wasn't found`;
-						break;
-
-					default:
-						msg = defMsg;
-				}
-
-				break;
-
-			default:
-				msg = defMsg;
-		}
-
-		return msg;
 	}
 
 	/**

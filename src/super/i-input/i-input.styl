@@ -13,6 +13,7 @@
 $p = {
 	accessHelpers: false
 	visibleHelpers: false
+	messageHelpers: false
 }
 
 i-input extends i-data
@@ -37,3 +38,7 @@ i-input extends i-data
 
 		&_show-error_true&_valid_true&_empty_true &__info-box
 			display block
+
+	if $p.messageHelpers
+		&_show-error_true &__info-box
+			display none
