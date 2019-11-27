@@ -30,6 +30,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 * [Added `b-virtual-scroll` component](https://github.com/V4Fire/Client/pull/137)
 * [Added `appendChild` method to the DOM module](https://github.com/V4Fire/Client/pull/137)
 * [Added `placeholderHidden` prop to `b-content-switcher`](https://github.com/V4Fire/Client/pull/137)
+* [Added support for icons from DS](https://github.com/V4Fire/Client/pull/140)
 
 #### :bug: Bug Fix
 
