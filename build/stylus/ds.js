@@ -211,14 +211,16 @@ module.exports = function (style) {
 	);
 
 	/**
-	 * Returns icon as a css string by the specified name
-	 * @param name
+	 * Returns an icon CSS string by the specified name
+	 *
+	 * @param {string} string - icon name
+	 * @returns {!Object}
 	 */
 	style.define(
 		'getDSIcon',
-		({string: name}) => {
+		({string}) => {
 			const
-				filePath = path.join(src.cwd(), 'node_modules', config.designSystem, 'icons', `${name}.svg`);
+				filePath = path.join(src.cwd(), 'node_modules', config.designSystem, 'icons', `${string}.svg`);
 
 			const
 				svgContent = fs.readFileSync(filePath, 'utf8'),
