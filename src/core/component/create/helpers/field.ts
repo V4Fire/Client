@@ -15,6 +15,8 @@ export interface FieldInfo {
 	name: string;
 	ctx: ComponentInterface;
 	type: 'prop' | 'field' | 'system' | 'computed' | 'accessor';
+	accessorType?: 'computed' | 'accessor';
+	accessor?: string;
 }
 
 const
@@ -124,7 +126,9 @@ export function getFieldInfo(path: string, ctx: ComponentInterface): FieldInfo {
 	}
 
 	const
-		storeName = `${name}Store`;
+		storeName = `${name}Store`,
+		accessorType = computed[name] ? 'computed' : accessors[name] ? 'accessor' : undefined,
+		accessor = accessorType && name;
 
 	if (fields[storeName]) {
 		name = storeName;
@@ -143,6 +147,8 @@ export function getFieldInfo(path: string, ctx: ComponentInterface): FieldInfo {
 			fullPath,
 			name,
 			ctx,
+			accessor,
+			accessorType,
 			type: 'field'
 		};
 	}
@@ -164,6 +170,8 @@ export function getFieldInfo(path: string, ctx: ComponentInterface): FieldInfo {
 			fullPath,
 			name,
 			ctx,
+			accessor,
+			accessorType,
 			type: 'system'
 		};
 	}
@@ -188,7 +196,9 @@ export function getFieldInfo(path: string, ctx: ComponentInterface): FieldInfo {
 			fullPath,
 			name: propName,
 			ctx,
-			type: 'prop'
+			type: 'prop',
+			accessor,
+			accessorType
 		};
 	}
 
