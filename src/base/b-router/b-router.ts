@@ -326,7 +326,10 @@ export default class bRouter<T extends object = Dictionary> extends iData<T> {
 			if (pageRef in p) {
 				byId = true;
 				obj = p[pageRef];
-				break;
+
+				if (!obj || obj && !obj.redirect && !obj.alias) {
+					break;
+				}
 
 			} else {
 				if (base) {
