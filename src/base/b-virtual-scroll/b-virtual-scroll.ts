@@ -11,6 +11,8 @@ import symbolGenerator from 'core/symbol';
 import iData, {
 
 	component,
+	hook,
+	wait,
 	prop,
 	field,
 	system,
@@ -211,6 +213,18 @@ export default class bVirtualScroll extends iData<RemoteData> {
 	}
 
 	/**
+	 * Instance of resize observer
+	 */
+	@system()
+	protected resizeObserver?: ResizeObserver;
+
+	/**
+	 * Previous value of the height or width of element
+	 */
+	@system()
+	protected prevSizeValue: number = 0;
+
+	/**
 	 * API for scroll rendering
 	 */
 	@system((o: bVirtualScroll) => new ScrollRender(o))
@@ -311,6 +325,41 @@ export default class bVirtualScroll extends iData<RemoteData> {
 		this.sync.mod('axis', 'axis', String);
 	}
 
+	/**
+	 * Initializes resize observer
+	 */
+	@wait('ready')
+	@hook('mounted')
+	protected initResizeHandlers(): CanPromise<void> {
+		if (ResizeObserver) {
+			this.resizeObserver = new ResizeObserver((entries) => {
+				const {borderBoxSize: {inlineSize}} = entries[0];
+
+				if (inlineSize !== this.prevSizeValue) {
+					this.onResize();
+				}
+
+				this.prevSizeValue = inlineSize;
+			});
+
+			this.resizeObserver.observe(this.$refs.container);
+			this.async.worker(this.resizeObserver, {
+				label: $$.mutationObserver
+			});
+
+		} else {
+			this.async.on(globalThis, 'resize', async () => {
+				await this.async.sleep(50, {label: $$.resizeSleep, join: false}).catch(stderr);
+				this.onResize();
+
+			}, {
+				label: $$.resize,
+				group: this.scrollRender.asyncGroup,
+				join: false
+			});
+		}
+	}
+
 	/** @override */
 	protected syncRequestParamsWatcher(): Promise<void> {
 		return this.reload().catch(stderr);
@@ -367,6 +416,14 @@ export default class bVirtualScroll extends iData<RemoteData> {
 
 		await this.async.sleep(FRAME_TIME, {label: $$.onUpdate, join: false}).catch(stderr);
 		this.reInit().catch(stderr);
+	}
+
+	/**
+	 * Handler: container or window was resized
+	 */
+	protected onResize(): void {
+		// @ts-ignore (access)
+		this.scrollRender.onResize();
 	}
 
 	/**

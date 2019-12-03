@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-beta.223 (2019-11-27)
+
+#### :bug: Bug Fix
+
+* [Fixed `b-virtual-scroll` reloadLast method](https://github.com/V4Fire/Client/pull/142)
+
 ## v3.0.0-beta.223 (2019-11-28)
 
 #### :bug: Bug Fix
