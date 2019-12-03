@@ -65,6 +65,9 @@ export default class ScrollRequest {
 		this.total = 0;
 		this.page = 1;
 		this.data = [];
+		this.isDone = false;
+		this.isLastEmpty = false;
+		this.component.removeMod('requestsDone', true);
 	}
 
 	/**
