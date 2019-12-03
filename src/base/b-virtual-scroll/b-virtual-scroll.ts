@@ -358,10 +358,7 @@ export default class bVirtualScroll extends iData<RemoteData> {
 			this.async.worker(this.resizeObserver, {label: $$.resizeObserver});
 
 		} else {
-			this.async.on(globalThis, 'resize', () => {
-				this.onResize();
-
-			}, {
+			this.async.on(globalThis, 'resize', this.onResize.bind(this), {
 				label: $$.resize,
 				group: this.scrollRender.asyncGroup,
 				join: false
