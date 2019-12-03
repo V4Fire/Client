@@ -34,7 +34,7 @@ interface BoxSize {
 }
 
 declare class ResizeObserver {
-	constructor(fn: (entries: ResizeObserEntry[]) => any)
+	constructor(callback: (entries: ResizeObserEntry[]) => unknown)
 	disconnect(): void;
 	observe(target: Element, options?: {box: 'content-box' | 'border-box'}): void;
 	unobserve(target: Element): void;
