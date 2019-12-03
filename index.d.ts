@@ -42,8 +42,6 @@ declare class ResizeObserver {
 
 
 declare class ResizeObserEntry {
-	readonly borderBoxSize: BoxSize;
-	readonly contextBoxSize: BoxSize;
 	readonly contentRect: DOMRect;
 	readonly target: Element;
 }

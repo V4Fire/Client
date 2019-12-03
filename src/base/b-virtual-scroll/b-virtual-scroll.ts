@@ -7,6 +7,7 @@
  */
 
 import symbolGenerator from 'core/symbol';
+import { debounce } from 'core/decorators';
 
 import iData, {
 
@@ -331,25 +332,33 @@ export default class bVirtualScroll extends iData<RemoteData> {
 	@wait('ready')
 	@hook('mounted')
 	protected initResizeHandlers(): CanPromise<void> {
+		if (this.axis === 'y') {
+			return;
+		}
+
 		if (ResizeObserver) {
 			this.resizeObserver = new ResizeObserver((entries) => {
-				const {borderBoxSize: {inlineSize}} = entries[0];
+				const
+					{contentRect} = entries[0],
+					w = Math.floor(contentRect.width);
 
-				if (inlineSize !== this.prevSizeValue) {
+				if (!this.prevSizeValue) {
+					this.prevSizeValue = w;
+					return;
+				}
+
+				if (w !== this.prevSizeValue) {
 					this.onResize();
 				}
 
-				this.prevSizeValue = inlineSize;
+				this.prevSizeValue = w;
 			});
 
 			this.resizeObserver.observe(this.$refs.container);
-			this.async.worker(this.resizeObserver, {
-				label: $$.mutationObserver
-			});
+			this.async.worker(this.resizeObserver, {label: $$.resizeObserver});
 
 		} else {
-			this.async.on(globalThis, 'resize', async () => {
-				await this.async.sleep(50, {label: $$.resizeSleep, join: false}).catch(stderr);
+			this.async.on(globalThis, 'resize', () => {
 				this.onResize();
 
 			}, {
@@ -421,6 +430,7 @@ export default class bVirtualScroll extends iData<RemoteData> {
 	/**
 	 * Handler: container or window was resized
 	 */
+	@debounce(200)
 	protected onResize(): void {
 		// @ts-ignore (access)
 		this.scrollRender.onResize();
