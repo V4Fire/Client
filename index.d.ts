@@ -9,11 +9,13 @@
 /// <reference types="@v4fire/core"/>
 
 declare let READY_STATE: number;
+
+declare const GLOBAL_NONCE: unknown;
 declare const MODULE_DEPENDENCIES: string;
-declare const BLOCK_NAMES: CanUndef<string[]>;
 declare const PATH: Dictionary<CanUndef<string>>;
 declare const TPLS: Dictionary<Dictionary<Function>>;
 
+declare const BLOCK_NAMES: CanUndef<string[]>;
 declare const DS: CanUndef<Dictionary>;
 declare const DS_COMPONENTS_MODS: CanUndef<string[]>;
 
@@ -66,8 +68,6 @@ interface IntersectionObserver {
 
 interface Document {
 	fonts: {
-		ready: Promise<void>
+		ready: Promise<void>;
 	}
 }
-
-declare const GLOBAL_NONCE: unknown;

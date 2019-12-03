@@ -64,24 +64,34 @@ export default class Field {
 		}
 
 		let
-			isField = isComponent,
 			res = obj,
 			chunks;
 
 		if (isComponent) {
 			const
-				info = getFieldInfo(path, ctx);
+				info = getFieldInfo(path, ctx),
+				isReady = !ctx.lfc.isBeforeCreate();
 
 			// @ts-ignore
-			ctx = info.ctx;
-			isField = info.type === 'field';
-
-			// @ts-ignore (access)
-			res = isField ? ctx.$$data : ctx;
+			ctx = res = info.ctx;
 			chunks = info.path.split('.');
 
-			if (isField && ctx.lfc.isBeforeCreate() || !(chunks[0] in res)) {
-				chunks[0] = info.name;
+			if (info.accessor && (
+				info.accessorType === 'accessor' && this.component.hook !== 'beforeRuntime' ||
+				info.accessorType === 'computed' && isReady
+			)) {
+				chunks[0] = info.accessor;
+
+			} else {
+				const
+					isField = info.type === 'field';
+
+				// @ts-ignore (access)
+				res = isField ? ctx.$$data : ctx;
+
+				if ((isField && !isReady || !(chunks[0] in res))) {
+					chunks[0] = info.name;
+				}
 			}
 
 		} else {
@@ -131,18 +141,29 @@ export default class Field {
 
 		if (isComponent) {
 			const
-				info = getFieldInfo(path, ctx);
+				info = getFieldInfo(path, ctx),
+				isReady = !ctx.lfc.isBeforeCreate();
 
 			// @ts-ignore
-			ctx = info.ctx;
-			isField = info.type === 'field';
-
-			// @ts-ignore (access)
-			ref = isField ? ctx.$$data : ctx;
+			ctx = ref = info.ctx;
 			chunks = info.path.split('.');
 
-			if (isField && !isReady || !(chunks[0] in ref)) {
-				chunks[0] = info.name;
+			if (info.accessor && (
+				info.accessorType === 'accessor' && this.component.hook !== 'beforeRuntime' ||
+				info.accessorType === 'computed' && isReady
+			)) {
+				isField = false;
+				chunks[0] = info.accessor;
+
+			} else {
+				isField = info.type === 'field';
+
+				// @ts-ignore (access)
+				ref = isField ? ctx.$$data : ctx;
+
+				if ((isField && !isReady || !(chunks[0] in ref))) {
+					chunks[0] = info.name;
+				}
 			}
 
 		} else {

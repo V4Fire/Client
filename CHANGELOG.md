@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-beta.223 (2019-11-28)
+
+#### :bug: Bug Fix
+
+* Fixed path resolving with getters `iBlock/modules/Field`
+
 ## v3.0.0-beta.222 (2019-11-27)
 
 #### :bug: Bug Fix
