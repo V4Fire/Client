@@ -332,6 +332,7 @@ export default class bVirtualScroll extends iData<RemoteData> {
 			return this.options = val.data;
 
 		} else {
+			this.scrollRequest.checksRequestPossibility(getRequestParams(undefined, undefined, {isLastEmpty: true}));
 			this.emit('empty');
 		}
 

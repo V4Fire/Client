@@ -12,7 +12,7 @@ import ScrollRender from 'base/b-virtual-scroll/modules/scroll-render';
 import { getRequestParams } from 'base/b-virtual-scroll/modules/helpers';
 import { RemoteData, RequestMoreParams, ScrollRenderStatus } from 'base/b-virtual-scroll/modules/interface';
 
-export default class Request {
+export default class ScrollRequest {
 	/**
 	 * Current page
 	 */
