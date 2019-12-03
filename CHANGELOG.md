@@ -13,6 +13,10 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 ## v3.0.0-beta.223 (2019-11-27)
 
+#### :house: Internal
+
+* [Improved `b-virtual-scroll` resize performance](https://github.com/V4Fire/Client/pull/142)
+
 #### :bug: Bug Fix
 
 * [Fixed `b-virtual-scroll` reloadLast method](https://github.com/V4Fire/Client/pull/142)
