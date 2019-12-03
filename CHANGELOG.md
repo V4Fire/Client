@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-beta.224 (2019-12-03)
+
+#### :bug: Bug Fix
+
+* [https://github.com/V4Fire/Client/pull/143](Correctly process alias and redirect fields)
+
 ## v3.0.0-beta.223 (2019-11-28)
 
 #### :bug: Bug Fix
