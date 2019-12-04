@@ -20,6 +20,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### :bug: Bug Fix
 
 * [Fixed `b-virtual-scroll` reloadLast method](https://github.com/V4Fire/Client/pull/144)
+* [Fixed `b-virtual-scroll` options not being cleared](https://github.com/V4Fire/Client/pull/144)
 
 #### :house: Internal
 
