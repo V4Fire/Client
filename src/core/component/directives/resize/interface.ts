@@ -28,7 +28,7 @@ export interface DirectiveOptionsValue {
 	watchHeight?: boolean;
 
 	/**
-	 * Callback which will be executed when changing the width or height of the element
+	 * Callback that will be called if the width or height of an element has been changed
 	 *
 	 * @param observable
 	 * @param oldSize
