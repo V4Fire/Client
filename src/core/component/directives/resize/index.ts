@@ -16,8 +16,10 @@ let ResizeInstance: Resize;
 export { ResizeInstance as Resize };
 
 ComponentDriver.directive('resize', {
-	inserted(el: HTMLElement, {value, modifiers}: DirectiveOptions): void {
-		if (!value) {
+	inserted(el: HTMLElement, options: DirectiveOptions): void {
+		const params = buildParams(options);
+
+		if (!params || !params.callback) {
 			return;
 		}
 
@@ -25,27 +27,55 @@ ComponentDriver.directive('resize', {
 			ResizeInstance = new Resize();
 		}
 
-		const valueDict = Object.isFunction(value) ? {
-			callback: value
-		} : value;
+		ResizeInstance.observe(el, params);
+	},
 
+	update(el: HTMLElement, options: DirectiveOptions): void {
 		const
-			isNoMods = Object.keys(modifiers).length === 0;
+			oldParams = buildParams(options),
+			newParams = buildParams(options);
 
-		const params: DirectiveOptionsValue = {
-			watchWidth: isNoMods || modifiers.width,
-			watchHeight: isNoMods || modifiers.height,
-			...valueDict
-		};
-
-		if (!params.callback) {
+		if (oldParams === undefined && newParams === undefined) {
 			return;
 		}
 
-		ResizeInstance.observe(el, <DirectiveOptionsValue>params);
+		if (Object.fastCompare(oldParams, newParams)) {
+			return;
+		}
+
+		ResizeInstance.delete(el);
+
+		if (newParams) {
+			ResizeInstance.observe(el, newParams);
+		}
 	},
 
 	unbind(el: HTMLElement): void {
 		ResizeInstance.delete(el);
 	}
 });
+
+/**
+ * Returns a directive options
+ * @param options
+ */
+function buildParams({value, modifiers}: DirectiveOptions): CanUndef<DirectiveOptionsValue> {
+	if (!value) {
+		return;
+	}
+
+	const valueDict = Object.isFunction(value) ? {
+		callback: value
+	} : value ;
+
+	const
+		isNoMods = Object.keys(modifiers).length === 0;
+
+	const params: DirectiveOptionsValue = {
+		watchWidth: isNoMods || modifiers.width,
+		watchHeight: isNoMods || modifiers.height,
+		...valueDict
+	};
+
+	return params;
+}
