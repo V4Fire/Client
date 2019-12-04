@@ -35,10 +35,6 @@ ComponentDriver.directive('resize', {
 			oldParams = buildParams(options),
 			newParams = buildParams(options);
 
-		if (oldParams === undefined && newParams === undefined) {
-			return;
-		}
-
 		if (Object.fastCompare(oldParams, newParams)) {
 			return;
 		}

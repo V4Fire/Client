@@ -7,13 +7,10 @@
  */
 
 import symbolGenerator from 'core/symbol';
-import { debounce } from 'core/decorators';
 
 import iData, {
 
 	component,
-	hook,
-	wait,
 	prop,
 	field,
 	system,
@@ -212,12 +209,6 @@ export default class bVirtualScroll extends iData<RemoteData> {
 	protected set requestParams(value: RequestParams) {
 		return;
 	}
-
-	/**
-	 * Previous value of the height or width of element
-	 */
-	@system()
-	protected prevSizeValue: number = 0;
 
 	/**
 	 * API for scroll rendering

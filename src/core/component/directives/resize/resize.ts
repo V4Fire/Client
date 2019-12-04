@@ -16,7 +16,7 @@ export const
 
 export default class Resize {
 	/**
-	 * True if environment supports `ResizeObserver`
+	 * True if the environment supports `ResizeObserver` feature
 	 */
 	get hasResizeObserver(): boolean {
 		return 'ResizeObserver' in globalThis;
@@ -28,7 +28,7 @@ export default class Resize {
 	protected elementsObserverMap: Map<HTMLElement, Observable> = new Map();
 
 	/**
-	 * List of items that are awaiting calculation size
+	 * List of elements that are awaiting calculation size
 	 *   *) only for environments that do not support `ResizeObserver`
 	 */
 	protected calculateQueue: Observable[] = [];
@@ -56,7 +56,9 @@ export default class Resize {
 
 	/**
 	 * Starts observe resize on the specified element
+	 *
 	 * @param el
+	 * @param params
 	 */
 	observe(el: HTMLElement, params: DirectiveOptionsValue): boolean {
 		if (this.elementsObserverMap.has(el)) {
@@ -160,7 +162,7 @@ export default class Resize {
 	 * @param observable
 	 * @param newSize
 	 */
-	protected shouldUpdate(observable: Observable, newSize: Size): boolean {
+	protected shouldCallCallback(observable: Observable, newSize: Size): boolean {
 		const {
 			watchWidth,
 			watchHeight,
@@ -188,7 +190,7 @@ export default class Resize {
 	}
 
 	/**
-	 * Returns height and with of the specified element
+	 * Returns height and width of the specified element
 	 * @param el
 	 */
 	protected getElSize(el: HTMLElement): Size {
@@ -226,7 +228,7 @@ export default class Resize {
 			height: observable.height!
 		};
 
-		if (this.shouldUpdate(observable, newSize)) {
+		if (this.shouldCallCallback(observable, newSize)) {
 			observable.callback(observable, oldSize, newSize);
 		}
 

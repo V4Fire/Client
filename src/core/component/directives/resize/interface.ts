@@ -18,12 +18,12 @@ export interface DirectiveOptions extends VNodeDirective {
 
 export interface DirectiveOptionsValue {
 	/**
-	 * If true, when changing the width of the element, a callback will be called
+	 * If true, when changing the width of the element, a callback will be executed
 	 */
 	watchWidth?: boolean;
 
 	/**
-	 * If true, when changing the height of the element, a callback will be called
+	 * If true, when changing the height of the element, a callback will be executed
 	 */
 	watchHeight?: boolean;
 
