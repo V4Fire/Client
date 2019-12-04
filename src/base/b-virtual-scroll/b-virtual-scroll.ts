@@ -269,12 +269,12 @@ export default class bVirtualScroll extends iData<RemoteData> {
 		this.componentStatus = 'loading';
 
 		return this.async.promise(Promise.all([
-				super.reload(params),
+				super.reload(params).then(this.initRemoteData.bind(this)),
 				this.reInit({hard: true})
 
 			]).then(() => undefined),
 
-		{label: $$.reload, join: true});
+			{label: $$.reload, join: true});
 	}
 
 	/**
@@ -332,6 +332,7 @@ export default class bVirtualScroll extends iData<RemoteData> {
 			return this.options = val.data;
 
 		} else {
+			this.options = [];
 			this.scrollRequest.checksRequestPossibility(getRequestParams(undefined, undefined, {isLastEmpty: true}));
 			this.emit('empty');
 		}
