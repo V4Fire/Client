@@ -123,6 +123,8 @@ export default class Resize {
 
 			this.onElementResize(observable, newSize);
 		});
+
+		observable.observer.observe(observable.node);
 	}
 
 	/**

@@ -6,12 +6,14 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import ResizeClass from 'core/component/directives/resize/resize';
+import Resize from 'core/component/directives/resize/resize';
 
 import { ComponentDriver } from 'core/component/engines';
 import { DirectiveOptions, DirectiveOptionsValue } from 'core/component/directives/resize/interface';
 
-export let Resize: ResizeClass;
+let ResizeInstance: Resize;
+
+export { ResizeInstance as Resize };
 
 ComponentDriver.directive('resize', {
 	inserted(el: HTMLElement, {value, modifiers}: DirectiveOptions): void {
@@ -19,24 +21,27 @@ ComponentDriver.directive('resize', {
 			return;
 		}
 
-		if (!Resize) {
-			Resize = new ResizeClass();
+		if (!ResizeInstance) {
+			ResizeInstance = new Resize();
 		}
 
 		const valueDict = Object.isFunction(value) ? {
 			callback: value
 		} : value;
 
+		const
+			isNoMods = Object.keys(modifiers).length === 0;
+
 		const params: DirectiveOptionsValue = {
-			watchWidth: !modifiers || modifiers.width,
-			watchHeight: !modifiers || modifiers.height,
+			watchWidth: isNoMods || modifiers.width,
+			watchHeight: isNoMods || modifiers.height,
 			...valueDict
 		};
 
-		Resize.observe(el, <DirectiveOptionsValue>params);
+		ResizeInstance.observe(el, <DirectiveOptionsValue>params);
 	},
 
 	unbind(el: HTMLElement): void {
-		Resize.delete(el);
+		ResizeInstance.delete(el);
 	}
 });

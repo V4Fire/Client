@@ -9,7 +9,7 @@
 import { VNodeDirective } from 'core/component/engines';
 
 export interface DirectiveOptions extends VNodeDirective {
-	modifiers?: {
+	modifiers: {
 		[key: string]: boolean;
 	};
 
