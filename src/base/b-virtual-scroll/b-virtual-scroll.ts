@@ -214,12 +214,6 @@ export default class bVirtualScroll extends iData<RemoteData> {
 	}
 
 	/**
-	 * Instance of resize observer
-	 */
-	@system()
-	protected resizeObserver?: ResizeObserver;
-
-	/**
 	 * Previous value of the height or width of element
 	 */
 	@system()
@@ -326,46 +320,6 @@ export default class bVirtualScroll extends iData<RemoteData> {
 		this.sync.mod('axis', 'axis', String);
 	}
 
-	/**
-	 * Initializes resize observer
-	 */
-	@wait('ready')
-	@hook('mounted')
-	protected initResizeHandlers(): CanPromise<void> {
-		if (this.axis === 'y') {
-			return;
-		}
-
-		if (ResizeObserver) {
-			this.resizeObserver = new ResizeObserver((entries) => {
-				const
-					{contentRect} = entries[0],
-					w = Math.floor(contentRect.width);
-
-				if (!this.prevSizeValue) {
-					this.prevSizeValue = w;
-					return;
-				}
-
-				if (w !== this.prevSizeValue) {
-					this.onResize();
-				}
-
-				this.prevSizeValue = w;
-			});
-
-			this.resizeObserver.observe(this.$refs.container);
-			this.async.worker(this.resizeObserver, {label: $$.resizeObserver});
-
-		} else {
-			this.async.on(globalThis, 'resize', this.onResize.bind(this), {
-				label: $$.resize,
-				group: this.scrollRender.asyncGroup,
-				join: false
-			});
-		}
-	}
-
 	/** @override */
 	protected syncRequestParamsWatcher(): Promise<void> {
 		return this.reload().catch(stderr);
@@ -427,10 +381,12 @@ export default class bVirtualScroll extends iData<RemoteData> {
 	/**
 	 * Handler: container or window was resized
 	 */
-	@debounce(200)
 	protected onResize(): void {
-		// @ts-ignore (access)
-		this.scrollRender.onResize();
+		this.async.setTimeout(() => {
+			// @ts-ignore (access)
+			this.scrollRender.onResize();
+
+		}, 100, {label: $$.onResize});
 	}
 
 	/**

@@ -12,7 +12,12 @@
 
 - template index() extends ['i-data'].index
 	- block body
-		< .&__container ref = container
+		< .&__container &
+			v-resize.width = {
+				callback: axis === 'y' ? onResize : undefined
+			} |
+			ref = container
+		.
 			< .&__trigger &
 				v-in-view = {
 					delay: 0,

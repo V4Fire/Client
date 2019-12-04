@@ -38,6 +38,10 @@ ComponentDriver.directive('resize', {
 			...valueDict
 		};
 
+		if (!params.callback) {
+			return;
+		}
+
 		ResizeInstance.observe(el, <DirectiveOptionsValue>params);
 	},
 
