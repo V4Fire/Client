@@ -19,7 +19,7 @@ ComponentDriver.directive('resize', {
 	inserted(el: HTMLElement, options: DirectiveOptions): void {
 		const params = buildParams(options);
 
-		if (!params || !params.callback) {
+		if (!params) {
 			return;
 		}
 
@@ -63,6 +63,10 @@ function buildParams({value, modifiers}: DirectiveOptions): CanUndef<DirectiveOp
 	const valueDict = Object.isFunction(value) ? {
 		callback: value
 	} : value ;
+
+	if (!valueDict.callback) {
+		return;
+	}
 
 	const
 		isNoMods = Object.keys(modifiers).length === 0;
