@@ -105,7 +105,7 @@ export default class ScrollRequest {
 		const
 			params = getRequestParams(this, scrollRender);
 
-		return this.load(params)
+		return this.load()
 			.then((v) => {
 				if (!component.field.get('data.length', v)) {
 					this.isLastEmpty = true;
@@ -147,18 +147,13 @@ export default class ScrollRequest {
 
 	/**
 	 * Loads additional data
-	 * @param params
 	 */
-	protected load(params: RequestMoreParams): Promise<CanUndef<RemoteData>> {
+	protected load(): Promise<CanUndef<RemoteData>> {
 		const
 			{component} = this;
 
-		const query = {
-			...(<Dictionary<Dictionary>>component.request)?.get,
-			...component.requestQuery?.(params).get
-		};
-
-		return component.get(query)
+		// @ts-ignore (access)
+		return component.get(component.getDefaultRequestParams('get'))
 			.then((data) => {
 				if (!data) {
 					return;

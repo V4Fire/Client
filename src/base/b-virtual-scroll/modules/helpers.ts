@@ -11,7 +11,7 @@ import Range from 'core/range';
 import ScrollRender from 'base/b-virtual-scroll/modules/scroll-render';
 import ScrollRequest from 'base/b-virtual-scroll/modules/scroll-request';
 
-import { RequestMoreParams } from 'base/b-virtual-scroll/modules/interface';
+import { RequestMoreParams, ScrollRenderStatus } from 'base/b-virtual-scroll/modules/interface';
 
 // tslint:disable-next-line:completed-docs
 export function isNatural(v: number): boolean {
@@ -53,7 +53,7 @@ export function getRequestParams(
 		itemsToReachBottom: 0
 	};
 
-	const params = scrollRequestCtx && scrollRenderCtx ? {
+	const params = scrollRequestCtx && scrollRenderCtx && scrollRenderCtx.status !== ScrollRenderStatus.notInitialized ? {
 		currentRange: scrollRenderCtx.range,
 		currentPage: scrollRequestCtx.page,
 		lastLoaded: scrollRenderCtx.lastRegisteredData,
