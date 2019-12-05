@@ -266,15 +266,13 @@ export default class bVirtualScroll extends iData<RemoteData> {
 
 	/** @override */
 	reload(params?: InitLoadParams): Promise<void> {
-		this.componentStatus = 'loading';
-
 		return this.async.promise(Promise.all([
-				super.reload(params).then(this.initRemoteData),
+				super.reload({...params, silent: false}).then(this.initRemoteData),
 				this.reInit({hard: true})
 
 			]).then(() => undefined),
 
-			{label: $$.reload, join: true});
+		{label: $$.reload, join: true});
 	}
 
 	/**
