@@ -169,13 +169,13 @@ export default class bVirtualScroll extends iData<RemoteData> {
 	/**
 	 * If, when calling a function, it returns true, then the component will be able to request additional data
 	 */
-	@prop({type: Function, watch: 'reload', default: (v) => v.itemsToReachBottom <= 10 && !v.isLastEmpty})
+	@prop({type: Function, default: (v) => v.itemsToReachBottom <= 10 && !v.isLastEmpty})
 	readonly shouldMakeRequest!: RequestFn;
 
 	/**
 	 * If, when calling a function, it returns false, then the component will stop request data
 	 */
-	@prop({type: Function, watch: 'reload', default: (v) => !v.isLastEmpty})
+	@prop({type: Function, default: (v) => !v.isLastEmpty})
 	readonly shouldContinueRequest!: RequestFn;
 
 	/** @inheritDoc */
