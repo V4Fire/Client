@@ -17,6 +17,7 @@ import iData, {
 	wait,
 	p,
 
+	CheckDBEquality,
 	InitLoadParams,
 	RequestParams,
 	ModsDecl
@@ -54,6 +55,9 @@ export const axis = Object.createDict({
 
 @component()
 export default class bVirtualScroll extends iData<RemoteData> {
+	/** @override */
+	readonly checkDBEquality: CheckDBEquality = false;
+
 	/**
 	 * Option component
 	 */
@@ -197,11 +201,12 @@ export default class bVirtualScroll extends iData<RemoteData> {
 	};
 
 	/** @override */
+	@p({cache: false})
 	protected get requestParams(): RequestParams {
 		return {
 			get: {
-				...this.requestQuery?.(getRequestParams()),
-				...this.request
+				...this.requestQuery?.(getRequestParams(this.scrollRequest, this.scrollRender))?.get,
+				...(<Dictionary<Dictionary>>this.request)?.get
 			}
 		};
 	}
@@ -308,11 +313,6 @@ export default class bVirtualScroll extends iData<RemoteData> {
 		this.sync.mod('axis', 'axis', String);
 	}
 
-	/** @override */
-	protected syncRequestParamsWatcher(): Promise<void> {
-		return this.reload().catch(stderr);
-	}
-
 	/**
 	 * @override
 	 * @emits empty()
@@ -329,6 +329,8 @@ export default class bVirtualScroll extends iData<RemoteData> {
 			return this.options = val.data;
 
 		} else {
+			this.options = [];
+			this.scrollRequest.checksRequestPossibility(getRequestParams(undefined, undefined, {isLastEmpty: true}));
 			this.emit('empty');
 		}
 
@@ -360,6 +362,17 @@ export default class bVirtualScroll extends iData<RemoteData> {
 		}
 
 		return this.reInit();
+	}
+
+	/**
+	 * Handler: container or window was resized
+	 */
+	protected onResize(): void {
+		this.async.setTimeout(() => {
+			// @ts-ignore (access)
+			this.scrollRender.onResize();
+
+		}, 100, {label: $$.onResize});
 	}
 
 	/**

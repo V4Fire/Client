@@ -28,11 +28,22 @@ interface Event {
 	delegateTarget?: Element;
 }
 
+interface BoxSize {
+	readonly blockSize: number;
+	readonly inlineSize: number;
+}
+
 declare class ResizeObserver {
-	constructor(cb: Function)
-	disconnect(el: Element): void;
-	observe(el: Element): void;
-	unobserve(el: Element): void;
+	constructor(callback: (entries: ResizeObserEntry[]) => unknown)
+	disconnect(): void;
+	observe(target: Element, options?: {box: 'content-box' | 'border-box'}): void;
+	unobserve(target: Element): void;
+}
+
+
+declare class ResizeObserEntry {
+	readonly contentRect: DOMRect;
+	readonly target: Element;
 }
 
 declare let ModuleDependencies: {

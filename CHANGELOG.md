@@ -11,6 +11,17 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-beta.225 (2019-12-05)
+
+#### :rocket: New Feature
+
+* [Added `v-resize` directive](https://github.com/V4Fire/Client/pull/144)
+
+#### :bug: Bug Fix
+
+* [Fixed `b-virtual-scroll` reloadLast method](https://github.com/V4Fire/Client/pull/144)
+* [Fixed `b-virtual-scroll` reload method](https://github.com/V4Fire/Client/pull/144)
+
 ## v3.0.0-beta.224 (2019-12-03)
 
 #### :bug: Bug Fix

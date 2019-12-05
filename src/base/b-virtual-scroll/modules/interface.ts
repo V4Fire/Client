@@ -13,10 +13,11 @@ export type OptionProps = (el: OptionEl, i: number) => Dictionary;
 export type OptionKey = (el: unknown, i: number) => (string | number);
 export type Axis = keyof typeof axis;
 
-export type RequestQuery<T extends unknown = unknown> = (params: RequestMoreParams<T>) => Dictionary;
+export type RequestQuery<T extends unknown = unknown> = (params: RequestMoreParams<T>) => Dictionary<Dictionary>;
 export type RequestFn<T extends unknown = unknown> = (params: RequestMoreParams<T>) => boolean;
 
 export type RenderList = [RenderItem, number][];
+export type RequestParams = CanUndef<Record<string, Dictionary>>;
 
 export interface OptionEl<T extends unknown = unknown> {
 	current: T;

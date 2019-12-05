@@ -12,7 +12,7 @@ import ScrollRender from 'base/b-virtual-scroll/modules/scroll-render';
 import { getRequestParams } from 'base/b-virtual-scroll/modules/helpers';
 import { RemoteData, RequestMoreParams, ScrollRenderStatus } from 'base/b-virtual-scroll/modules/interface';
 
-export default class Request {
+export default class ScrollRequest {
 	/**
 	 * Current page
 	 */
@@ -65,6 +65,9 @@ export default class Request {
 		this.total = 0;
 		this.page = 1;
 		this.data = [];
+		this.isDone = false;
+		this.isLastEmpty = false;
+		this.component.removeMod('requestsDone', true);
 	}
 
 	/**
@@ -99,10 +102,7 @@ export default class Request {
 			return resolved;
 		}
 
-		const
-			params = getRequestParams(this, scrollRender);
-
-		return this.load(params)
+		return this.load()
 			.then((v) => {
 				if (!component.field.get('data.length', v)) {
 					this.isLastEmpty = true;
@@ -144,18 +144,13 @@ export default class Request {
 
 	/**
 	 * Loads additional data
-	 * @param params
 	 */
-	protected load(params: RequestMoreParams): Promise<CanUndef<RemoteData>> {
+	protected load(): Promise<CanUndef<RemoteData>> {
 		const
 			{component} = this;
 
-		const query = {
-			...component.request,
-			...component.requestQuery?.(params)
-		};
-
-		return component.get(query)
+		// @ts-ignore (access)
+		return component.get(component.getDefaultRequestParams('get'))
 			.then((data) => {
 				if (!data) {
 					return;

@@ -9,3 +9,7 @@
 //#if runtime has directives/in-view
 import 'core/component/directives/in-view';
 //#endif
+
+//#if runtime has directives/resize
+import 'core/component/directives/resize';
+//#endif

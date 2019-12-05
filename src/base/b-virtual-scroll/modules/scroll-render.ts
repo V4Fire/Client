@@ -844,16 +844,6 @@ export default class ScrollRender {
 			label: $$.scroll,
 			group: this.asyncGroup
 		});
-
-		this.async.on(globalThis, 'resize', async () => {
-			await this.async.sleep(50, {label: $$.resizeSleep, join: false}).catch(stderr);
-			this.onResize();
-
-		}, {
-			label: $$.resize,
-			group: this.asyncGroup,
-			join: false
-		});
 	}
 
 	/**

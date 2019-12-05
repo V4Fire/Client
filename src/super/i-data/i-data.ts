@@ -296,7 +296,7 @@ export default abstract class iData<T extends object = Dictionary> extends iBloc
 		return super.initLoad(data, params);
 	}
 
-	/** override */
+	/** @override */
 	reload(params?: InitLoadParams): Promise<void> {
 		if (!this.$root.isOnline && !this.offlineReload) {
 			return Promise.resolve();
