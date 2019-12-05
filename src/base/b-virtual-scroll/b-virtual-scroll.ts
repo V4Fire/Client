@@ -271,7 +271,15 @@ export default class bVirtualScroll extends iData<RemoteData> {
 			this.reInit({hard: true}).catch(stderr);
 		}
 
-		return super.initLoad(data, params);
+		const
+			res = super.initLoad(data, {...params, silent: false});
+
+		if (Object.isPromise(res)) {
+			res.then(this.initRemoteData);
+
+		} else {
+			this.initRemoteData();
+		}
 	}
 
 	/**
