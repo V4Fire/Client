@@ -269,7 +269,7 @@ export default class bVirtualScroll extends iData<RemoteData> {
 		this.componentStatus = 'loading';
 
 		return this.async.promise(Promise.all([
-				super.reload(params).then(this.initRemoteData.bind(this)),
+				super.reload(params).then(this.initRemoteData),
 				this.reInit({hard: true})
 
 			]).then(() => undefined),
