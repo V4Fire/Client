@@ -266,14 +266,12 @@ export default class bVirtualScroll extends iData<RemoteData> {
 	}
 
 	/** @override */
-	reload(params?: InitLoadParams): Promise<void> {
-		return this.async.promise(Promise.all([
-				super.reload({...params, silent: false}).then(this.initRemoteData),
-				this.reInit({hard: true})
+	initLoad(data?: unknown, params: InitLoadParams = {}): CanPromise<void> {
+		if (!this.lfc.isBeforeCreate()) {
+			this.reInit({hard: true}).catch(stderr);
+		}
 
-			]).then(() => undefined),
-
-		{label: $$.reload, join: true});
+		return super.initLoad(data, params);
 	}
 
 	/**
@@ -361,18 +359,32 @@ export default class bVirtualScroll extends iData<RemoteData> {
 	}
 
 	/**
+<<<<<<< HEAD
 	 * Synchronizes for props updates
 	 */
 	@wait({defer: true, label: $$.syncPropsWatcher})
+=======
+	 * Synchronization for the component props
+	 */
+	@wait('ready', {defer: true, label: $$.syncPropsWatcher})
+>>>>>>> 00943aa3ccaf4e8f926666b6a73b49a54b016ddc
 	protected async syncPropsWatcher(): Promise<void> {
 		const
 			{scrollRender: {status}} = this;
 
+<<<<<<< HEAD
 		if (status !== ScrollRenderStatus.render || this.componentStatus !== 'ready') {
 			return;
 		}
 
 		this.reInit().catch(stderr);
+=======
+		if (status !== ScrollRenderStatus.render) {
+			return;
+		}
+
+		return this.reInit();
+>>>>>>> 00943aa3ccaf4e8f926666b6a73b49a54b016ddc
 	}
 
 	/**
