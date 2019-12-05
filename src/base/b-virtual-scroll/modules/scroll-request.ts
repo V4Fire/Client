@@ -102,9 +102,6 @@ export default class ScrollRequest {
 			return resolved;
 		}
 
-		const
-			params = getRequestParams(this, scrollRender);
-
 		return this.load()
 			.then((v) => {
 				if (!component.field.get('data.length', v)) {
