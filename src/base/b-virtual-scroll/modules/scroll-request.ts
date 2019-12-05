@@ -154,8 +154,8 @@ export default class ScrollRequest {
 			{component} = this;
 
 		const query = {
-			...component.request,
-			...component.requestQuery?.(params)
+			...(<Dictionary<Dictionary>>component.request)?.get,
+			...component.requestQuery?.(params).get
 		};
 
 		return component.get(query)

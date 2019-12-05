@@ -204,8 +204,8 @@ export default class bVirtualScroll extends iData<RemoteData> {
 	protected get requestParams(): RequestParams {
 		return {
 			get: {
-				...this.requestQuery?.(getRequestParams()),
-				...this.request
+				...this.requestQuery?.(getRequestParams())?.get,
+				...(<Dictionary<Dictionary>>this.request)?.get
 			}
 		};
 	}
