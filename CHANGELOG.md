@@ -20,11 +20,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### :bug: Bug Fix
 
 * [Fixed `b-virtual-scroll` reloadLast method](https://github.com/V4Fire/Client/pull/144)
-* [Fixed `b-virtual-scroll` `options` not being cleared](https://github.com/V4Fire/Client/pull/144)
-
-#### :house: Internal
-
-* [Improved `b-virtual-scroll` resize performance](https://github.com/V4Fire/Client/pull/144)
+* [Fixed `b-virtual-scroll` reload method](https://github.com/V4Fire/Client/pull/144)
 
 ## v3.0.0-beta.223 (2019-11-28)
 
