@@ -14,6 +14,7 @@ import iData, {
 	prop,
 	field,
 	system,
+	wait,
 	p,
 
 	InitLoadParams,
@@ -56,13 +57,13 @@ export default class bVirtualScroll extends iData<RemoteData> {
 	/**
 	 * Option component
 	 */
-	@prop({type: String, watch: 'onUpdate'})
+	@prop({type: String, watch: 'syncPropsWatcher'})
 	readonly option!: string;
 
 	/**
 	 * Initial component options
 	 */
-	@prop({type: Array, watch: 'onUpdate'})
+	@prop({type: Array, watch: 'syncPropsWatcher'})
 	readonly optionsProp?: unknown[] = [];
 
 	/**
@@ -74,85 +75,85 @@ export default class bVirtualScroll extends iData<RemoteData> {
 	/**
 	 * Option component props
 	 */
-	@prop({type: Function, watch: 'onUpdate', default: () => ({})})
+	@prop({type: Function, watch: 'syncPropsWatcher', default: () => ({})})
 	readonly optionProps!: OptionProps;
 
 	/**
 	 * Option unique key (for v-for)
 	 */
-	@prop({type: Function, watch: 'onUpdate'})
+	@prop({type: Function, watch: 'syncPropsWatcher'})
 	readonly optionKey!: OptionKey;
 
 	/**
 	 * Number of columns
 	 */
-	@prop({type: Number, watch: 'onUpdate', validator: isNatural})
+	@prop({type: Number, watch: 'syncPropsWatcher', validator: isNatural})
 	readonly columns: number = 1;
 
 	/**
 	 * Number of components that could be cached
 	 */
-	@prop({type: Number, watch: 'onUpdate', validator: isNatural})
+	@prop({type: Number, watch: 'syncPropsWatcher', validator: isNatural})
 	readonly cacheSize: number = 400;
 
 	/**
 	 * Number of items that will be removed from the cache when it is full
 	 */
-	@prop({type: Number, watch: 'onUpdate', validator: isNatural})
+	@prop({type: Number, watch: 'syncPropsWatcher', validator: isNatural})
 	readonly dropCacheSize: number = 50;
 
 	/**
 	 * Number of elements from the same range that cannot be removed from the cache
 	 */
-	@prop({type: Number, watch: 'onUpdate', validator: isNatural})
+	@prop({type: Number, watch: 'syncPropsWatcher', validator: isNatural})
 	readonly dropCacheSafeZone: number = 10;
 
 	/**
 	 * Number of nodes at the same time
 	 */
-	@prop({type: Number,  watch: 'onUpdate', validator: isNatural})
+	@prop({type: Number,  watch: 'syncPropsWatcher', validator: isNatural})
 	readonly realElementsCount: number = 20;
 
 	/**
 	 * Number of nodes at the same time that are drawn in the opposite direction from the scroll
 	 */
-	@prop({type: Number, watch: 'onUpdate', validator: isNatural})
+	@prop({type: Number, watch: 'syncPropsWatcher', validator: isNatural})
 	readonly oppositeElementsCount: number = 10;
 
 	/**
 	 * Number of tombstones
 	 */
-	@prop({type: Number, watch: 'onUpdate'})
+	@prop({type: Number, watch: 'syncPropsWatcher'})
 	readonly tombstoneCount: number = 10;
 
 	/**
 	 * Number of additional pixels length for allow scrolling
 	 */
-	@prop({type: Number, watch: 'onUpdate'})
+	@prop({type: Number, watch: 'syncPropsWatcher'})
 	readonly scrollRunnerOffset: number = 0;
 
 	/**
 	 * Scroll axis
 	 */
-	@prop({type: String, watch: 'onUpdate', validator: (v: string) => axis[v]})
+	@prop({type: String, watch: 'syncPropsWatcher', validator: (v: string) => axis[v]})
 	readonly axis: Axis = 'y';
 
 	/**
 	 * If true, then created nodes will be cached
 	 */
-	@prop({type: Boolean, watch: 'onUpdate'})
+	@prop({type: Boolean, watch: 'syncPropsWatcher'})
 	readonly cacheNode: boolean = true;
 
 	/**
 	 * If true, then the container height will be updated for every change in the range
 	 */
-	@prop({type: Boolean, watch: 'onUpdate'})
+	@prop({type: Boolean, watch: 'syncPropsWatcher'})
 	readonly containerSize: boolean = true;
 
 	/**
 	 * Function that returns the scroll root
 	 */
-	@prop({type: Function, watch: 'onUpdate', required: false})
+	@prop({type: Function, watch: 'syncPropsWatcher', required: false})
 	readonly scrollingElement?: Function;
 
 	/**
@@ -362,18 +363,15 @@ export default class bVirtualScroll extends iData<RemoteData> {
 	/**
 	 * Handler: props was updated
 	 */
-	protected async onUpdate(): Promise<void> {
+	@wait({defer: true, label: $$.syncPropsWatcher})
+	protected async syncPropsWatcher(): Promise<void> {
 		const
 			{scrollRender: {status}} = this;
-
-		const
-			FRAME_TIME = 16;
 
 		if (status !== ScrollRenderStatus.render || this.componentStatus !== 'ready') {
 			return;
 		}
 
-		await this.async.sleep(FRAME_TIME, {label: $$.onUpdate, join: false}).catch(stderr);
 		this.reInit().catch(stderr);
 	}
 
