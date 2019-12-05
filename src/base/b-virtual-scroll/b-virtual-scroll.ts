@@ -159,7 +159,7 @@ export default class bVirtualScroll extends iData<RemoteData> {
 	/**
 	 * Function that returns request parameters
 	 */
-	@prop({type: Function, watch: 'reload', required: false})
+	@prop({type: Function, required: false})
 	readonly requestQuery?: RequestQuery;
 
 	/** @override */
