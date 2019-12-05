@@ -313,7 +313,16 @@ export default class bVirtualScroll extends iData<RemoteData> {
 
 	/** @override */
 	protected syncRequestParamsWatcher(): Promise<void> {
-		return this.reload().catch(stderr);
+		return new Promise((res) => {
+			const fn = this.lazy.createLazyFn(() => {
+				this.reload()
+					.then(res)
+					.catch(stderr);
+
+			}, {label: $$.lazySyncRequest});
+
+			fn();
+		});
 	}
 
 	/**
