@@ -17,6 +17,7 @@ import iData, {
 	wait,
 	p,
 
+	CheckDBEquality,
 	InitLoadParams,
 	RequestParams,
 	ModsDecl
@@ -54,6 +55,9 @@ export const axis = Object.createDict({
 
 @component()
 export default class bVirtualScroll extends iData<RemoteData> {
+	/** @override */
+	readonly checkDBEquality: CheckDBEquality = false;
+
 	/**
 	 * Option component
 	 */
