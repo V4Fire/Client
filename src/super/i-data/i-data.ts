@@ -9,7 +9,7 @@
 import symbolGenerator from 'core/symbol';
 
 import iProgress from 'traits/i-progress/i-progress';
-import Async, { AsyncOpts, AsyncCbOpts } from 'core/async';
+import Async, { AsyncOpts } from 'core/async';
 
 import RequestError from 'core/request/error';
 import { providers } from 'core/data/const';
@@ -69,8 +69,7 @@ import {
 	DefaultRequest,
 	CreateRequestOpts,
 	ComponentConverter,
-	CheckDBEquality,
-	SocketEvent
+	CheckDBEquality
 
 } from 'super/i-data/modules/interface';
 
@@ -87,7 +86,7 @@ export default abstract class iData<T extends object = Dictionary> extends iBloc
 	/**
 	 * Data provider name
 	 */
-	@prop({type: String, watch: 'reload', required: false})
+	@prop({type: String, required: false})
 	readonly dataProvider?: string;
 
 	/**
@@ -106,13 +105,13 @@ export default abstract class iData<T extends object = Dictionary> extends iBloc
 	 * If false, then the initial get request wont be executed if the request data is empty.
 	 * Also can be passed as a function, that will return true if the request can be executed.
 	 */
-	@prop({type: [Boolean, Function], watch: 'reload'})
+	@prop({type: [Boolean, Function]})
 	readonly requestFilter: RequestFilter = true;
 
 	/**
 	 * Remote data converter
 	 */
-	@prop({type: [Function, Array], watch: 'reload', required: false})
+	@prop({type: [Function, Array], required: false})
 	readonly dbConverter?: CanArray<ComponentConverter<any>>;
 
 	/**
@@ -126,7 +125,7 @@ export default abstract class iData<T extends object = Dictionary> extends iBloc
 	/**
 	 * Converter from .db to the component format
 	 */
-	@prop({type: [Function, Array], watch: 'initRemoteData', required: false})
+	@prop({type: [Function, Array], required: false})
 	readonly componentConverter?: CanArray<ComponentConverter<any>>;
 
 	/**
@@ -206,7 +205,7 @@ export default abstract class iData<T extends object = Dictionary> extends iBloc
 	protected dp?: Provider;
 
 	/**
-	 * Returns list of additional data providers for the get request
+	 * Returns a list of additional data providers for the get request
 	 */
 	extraProviders(): CanUndef<ExtraProviders> {
 		return undefined;
@@ -218,10 +217,16 @@ export default abstract class iData<T extends object = Dictionary> extends iBloc
 			return;
 		}
 
+		const
+			{async: $a} = this;
+
 		const label = <AsyncOpts>{
 			label: $$.initLoad,
 			join: 'replace'
 		};
+
+		$a
+			.clearAll({group: 'requestSync:get'});
 
 		if (this.isFunctional) {
 			return super.initLoad(() => {
@@ -234,7 +239,7 @@ export default abstract class iData<T extends object = Dictionary> extends iBloc
 		}
 
 		if (this.dataProvider && !this.dp) {
-			this.syncDataProviderWatcher(this.dataProvider);
+			this.syncDataProviderWatcher();
 		}
 
 		if (!params.silent) {
@@ -247,7 +252,7 @@ export default abstract class iData<T extends object = Dictionary> extends iBloc
 				this.lfc.execCbAtTheRightTime(() => this.db = db, label);
 
 			} else if (this.getDefaultRequestParams('get')) {
-				return this.async
+				return $a
 					.nextTick(label)
 					.then(() => {
 						const
@@ -301,12 +306,12 @@ export default abstract class iData<T extends object = Dictionary> extends iBloc
 	}
 
 	/**
-	 * Returns full request URL
+	 * Returns the full request URL
 	 */
 	url(): CanUndef<string>;
 
 	/**
-	 * Sets advanced URL for requests
+	 * Sets an advanced URL for requests
 	 * @param [value]
 	 */
 	url(value: string): this;
@@ -327,7 +332,7 @@ export default abstract class iData<T extends object = Dictionary> extends iBloc
 	}
 
 	/**
-	 * Sets base temporary URL for requests
+	 * Sets a base temporary URL for requests
 	 * @param value
 	 */
 	base(value: string): this {
@@ -339,48 +344,14 @@ export default abstract class iData<T extends object = Dictionary> extends iBloc
 	}
 
 	/**
-	 * Returns an event emitter object for working with a socket connection
-	 * @param [params] - advanced parameters
+	 * Drops the request cache
 	 */
-	connect(params?: Dictionary): SocketEvent<this> {
-		const
-			{async: $a, dp: $d} = this,
-			connection = Promise.resolve($d && $d.connect(params));
+	dropRequestCache(): void {
+		if (!this.dp) {
+			return;
+		}
 
-		return {
-			connection,
-			on: (event, fnOrParams, ...args) => {
-				if (!$d) {
-					return;
-				}
-
-				return connection.then((connection) => $a.on(<Socket>connection, event, fnOrParams, ...args));
-			},
-
-			once: (event, fnOrParams, ...args) => {
-				if (!$d) {
-					return;
-				}
-
-				return connection.then((connection) => $a.once(<Socket>connection, event, fnOrParams, ...args));
-			},
-
-			promisifyOnce: (event, params, ...args) => {
-				if (!$d) {
-					return Promise.resolve();
-				}
-
-				return connection.then((connection) => $a.promisifyOnce(<Socket>connection, event, params, ...args));
-			},
-
-			off: (...args) => {
-				if (!$d) {
-					return;
-				}
-
-				return $a.off(...args);
-			}
-		};
+		this.dp.dropCache();
 	}
 
 	/**
@@ -486,29 +457,19 @@ export default abstract class iData<T extends object = Dictionary> extends iBloc
 	}
 
 	/**
-	 * Drops a request cache
-	 */
-	dropRequestCache(): void {
-		if (!this.dp) {
-			return;
-		}
-
-		this.dp.dropCache();
-	}
-
-	/**
-	 * Executes the specified function with a socket connection
+	 * Saves the specified data to the root data store
 	 *
-	 * @see Provider.attachToSocket
-	 * @param fn
-	 * @param [params]
+	 * @param data
+	 * @param [key]
 	 */
-	protected attachToSocket(fn: (socket: Socket) => void, params?: AsyncCbOpts<Provider>): void {
-		if (!this.dp) {
+	protected saveDataToRootStore(data: unknown, key?: string): void {
+		key = key || this.globalName || this.dataProvider;
+
+		if (!key) {
 			return;
 		}
 
-		this.dp.attachToSocket(fn, params);
+		this.r.providerDataStore.set(key, data);
 	}
 
 	/**
@@ -559,6 +520,7 @@ export default abstract class iData<T extends object = Dictionary> extends iBloc
 	/**
 	 * Initializes remote data
 	 */
+	@watch('componentConverter')
 	protected initRemoteData(): CanUndef<unknown> {
 		return undefined;
 	}
@@ -603,23 +565,26 @@ export default abstract class iData<T extends object = Dictionary> extends iBloc
 	}
 
 	/**
-	 * Synchronization for the requestParams field
+	 * Synchronization for request fields
 	 *
 	 * @param [value]
 	 * @param [oldValue]
 	 */
-	@watch({field: 'request', deep: true})
-	@watch({field: 'requestParams', deep: true})
+	@watch([
+		{field: 'request', deep: true},
+		{field: 'requestParams', deep: true}
+	])
+
 	protected syncRequestParamsWatcher<T = unknown>(
 		value?: RequestParams<T>,
 		oldValue?: RequestParams<T>
-	): Promise<void> {
+	): void {
 		if (!value) {
-			return Promise.resolve();
+			return;
 		}
 
 		const
-			tasks = <CanPromise<void>[]>[];
+			{async: $a} = this;
 
 		for (let o = Object.keys(value), i = 0; i < o.length; i++) {
 			const
@@ -632,35 +597,48 @@ export default abstract class iData<T extends object = Dictionary> extends iBloc
 			}
 
 			const
-				m = key.split(':')[0];
+				m = key.split(':')[0],
+				group = {group: `requestSync:${m}`};
+
+			$a
+				.clearAll(group);
 
 			if (m === 'get') {
-				tasks.push(this.initLoad());
+				$a.setImmediate(this.initLoad, group);
 
 			} else {
-				tasks.push(this[m](...this.getDefaultRequestParams(key)));
+				$a.setImmediate(() => this[m](...this.getDefaultRequestParams(key)), group);
 			}
 		}
-
-		return Promise.all(tasks).then(() => undefined);
 	}
 
 	/**
-	 * Synchronization for the dataProvider property
-	 * @param value
+	 * Synchronization for dataProvider properties
 	 */
-	@watch('dataProvider')
-	protected syncDataProviderWatcher(value?: string): void {
-		if (value) {
+	@watch(['dataProvider', 'dataProviderParams'])
+	protected syncDataProviderWatcher(): void {
+		const
+			provider = this.dataProvider;
+
+		if (this.dp) {
+			this.async
+				.clearAll({group: /requestSync/})
+				.clearAll({label: $$.initLoad});
+
+			this.dataEvent.off();
+			this.dp = undefined;
+		}
+
+		if (provider) {
 			const
-				ProviderConstructor = <typeof Provider>providers[value];
+				ProviderConstructor = <typeof Provider>providers[provider];
 
 			if (!ProviderConstructor) {
-				if (value === 'Provider') {
+				if (provider === 'Provider') {
 					return;
 				}
 
-				throw new Error(`Provider "${value}" is not defined`);
+				throw new Error(`Provider "${provider}" is not defined`);
 			}
 
 			this.dp = new ProviderConstructor({
@@ -669,40 +647,7 @@ export default abstract class iData<T extends object = Dictionary> extends iBloc
 			});
 
 			this.initDataListeners();
-
-		} else if (this.dp) {
-			this.dp = undefined;
-			this.dataEvent.off({group: 'dataProviderSync'});
 		}
-	}
-
-	/**
-	 * Synchronization for the dataProviderParams property
-	 *
-	 * @param value
-	 * @param [oldValue]
-	 */
-	@watch('dataProviderParams')
-	protected syncDataProviderParamsWatcher(value: Dictionary, oldValue: Dictionary): void {
-		if (this.dataProvider) {
-			this.syncDataProviderWatcher(this.dataProvider);
-		}
-	}
-
-	/**
-	 * Saves the specified data in the root data store
-	 *
-	 * @param data
-	 * @param [key]
-	 */
-	protected saveDataToRootStore(data: unknown, key?: string): void {
-		key = key || this.globalName || this.dataProvider;
-
-		if (!key) {
-			return;
-		}
-
-		this.r.providerDataStore.set(key, data);
 	}
 
 	/**

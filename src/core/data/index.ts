@@ -529,7 +529,7 @@ export default class Provider {
 	}
 
 	/**
-	 * Returns full request URL
+	 * Returns the full request URL
 	 */
 	url(): string;
 
