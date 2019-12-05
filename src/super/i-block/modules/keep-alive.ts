@@ -197,24 +197,28 @@ export function onActivated<T extends iBlock>(component: T, force?: boolean): vo
 		return;
 	}
 
-	$a.unmuteAll().unsuspendAll();
+	$a
+		.unmuteAll()
+		.unsuspendAll();
 
 	if (c.isInitializedOnce && !readyEvents[c.componentStatus]) {
 		c.componentStatus = 'beforeReady';
 	}
 
 	if (!c.isInitializedOnce && force || c.reloadOnActivation) {
-		$a.setImmediate(() => {
-			const
-				v = c.reload();
+		const
+			group = {group: 'requestSync:get'};
 
-			if (Object.isPromise(v)) {
-				v.catch(stderr);
-			}
+		$a
+			.clearAll(group)
+			.setImmediate(() => {
+				const
+					v = c.isInitializedOnce ? c.reload() : c.initLoad();
 
-		}, {
-			label: $$.activated
-		});
+				if (Object.isPromise(v)) {
+					v.catch(stderr);
+				}
+			}, group);
 	}
 
 	if (c.isInitializedOnce) {

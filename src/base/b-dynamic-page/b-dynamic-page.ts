@@ -129,7 +129,8 @@ export default class bDynamicPage extends iDynamicPage {
 			{async: $a} = this,
 			group = {group: 'emitter'};
 
-		$a.clearAll(group);
+		$a
+			.clearAll(group);
 
 		if (this.event) {
 			$a.on(this.emitter || this.$root, this.event, (component, e) => {

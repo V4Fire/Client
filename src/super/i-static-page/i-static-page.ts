@@ -18,7 +18,7 @@ import { NetStatus } from 'core/net/interface';
 
 import iBlock from 'super/i-block/i-block';
 import ProvidedDataStore from 'super/i-static-page/modules/provider-data-store';
-import iPage, { component, field, system, watch, Event } from 'super/i-page/i-page';
+import iPage, { component, field, system, watch, wait, Event } from 'super/i-page/i-page';
 import { CurrentPage } from 'core/router/interface';
 
 //#if runtime has bRouter
@@ -282,15 +282,15 @@ export default abstract class iStaticPage<
 	 * Synchronization for the localeStore field
 	 * @param locale
 	 */
-	@watch('localeStore')
-	@watch('globalEvent:i18n.setLocale')
-	protected syncLocaleWatcher(locale: string): void {
+	@watch(['localeStore', 'globalEvent:i18n.setLocale'])
+	@wait({defer: true, label: $$.syncLocaleWatcher})
+	protected async syncLocaleWatcher(locale: string): Promise<void> {
 		if (this.locale === locale) {
 			return;
 		}
 
 		this.locale = locale;
-		this.$forceUpdate();
+		this.forceUpdate().catch(stderr);
 	}
 
 	/**
