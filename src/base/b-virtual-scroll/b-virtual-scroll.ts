@@ -361,7 +361,7 @@ export default class bVirtualScroll extends iData<RemoteData> {
 	}
 
 	/**
-	 * Handler: props was updated
+	 * Synchronizes for props updates
 	 */
 	@wait({defer: true, label: $$.syncPropsWatcher})
 	protected async syncPropsWatcher(): Promise<void> {
