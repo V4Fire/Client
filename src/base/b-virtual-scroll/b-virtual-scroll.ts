@@ -359,32 +359,18 @@ export default class bVirtualScroll extends iData<RemoteData> {
 	}
 
 	/**
-<<<<<<< HEAD
-	 * Synchronizes for props updates
-	 */
-	@wait({defer: true, label: $$.syncPropsWatcher})
-=======
 	 * Synchronization for the component props
 	 */
 	@wait('ready', {defer: true, label: $$.syncPropsWatcher})
->>>>>>> 00943aa3ccaf4e8f926666b6a73b49a54b016ddc
 	protected async syncPropsWatcher(): Promise<void> {
 		const
 			{scrollRender: {status}} = this;
 
-<<<<<<< HEAD
-		if (status !== ScrollRenderStatus.render || this.componentStatus !== 'ready') {
-			return;
-		}
-
-		this.reInit().catch(stderr);
-=======
 		if (status !== ScrollRenderStatus.render) {
 			return;
 		}
 
 		return this.reInit();
->>>>>>> 00943aa3ccaf4e8f926666b6a73b49a54b016ddc
 	}
 
 	/**
