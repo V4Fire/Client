@@ -275,15 +275,7 @@ export default class bVirtualScroll extends iData<RemoteData> {
 			this.reInit({hard: true}).catch(stderr);
 		}
 
-		const
-			res = super.initLoad(data, {...params, silent: false});
-
-		if (Object.isPromise(res)) {
-			res.then(this.initRemoteData);
-
-		} else {
-			this.initRemoteData();
-		}
+		return super.initLoad(data, {...params, silent: false});
 	}
 
 	/**
@@ -318,20 +310,6 @@ export default class bVirtualScroll extends iData<RemoteData> {
 		super.initModEvents();
 		this.sync.mod('containerSize', 'containerSize', String);
 		this.sync.mod('axis', 'axis', String);
-	}
-
-	/** @override */
-	protected syncRequestParamsWatcher(): Promise<void> {
-		return new Promise((res) => {
-			const fn = this.lazy.createLazyFn(() => {
-				this.reload()
-					.then(res)
-					.catch(stderr);
-
-			}, {label: $$.lazySyncRequest});
-
-			fn();
-		});
 	}
 
 	/**
