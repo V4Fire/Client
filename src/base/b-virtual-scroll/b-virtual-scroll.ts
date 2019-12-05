@@ -14,6 +14,7 @@ import iData, {
 	prop,
 	field,
 	system,
+	wait,
 	p,
 
 	InitLoadParams,
@@ -56,13 +57,13 @@ export default class bVirtualScroll extends iData<RemoteData> {
 	/**
 	 * Option component
 	 */
-	@prop({type: String, watch: 'onUpdate'})
+	@prop({type: String, watch: 'syncPropsWatcher'})
 	readonly option!: string;
 
 	/**
 	 * Initial component options
 	 */
-	@prop({type: Array, watch: 'onUpdate'})
+	@prop({type: Array, watch: 'syncPropsWatcher'})
 	readonly optionsProp?: unknown[] = [];
 
 	/**
@@ -74,91 +75,91 @@ export default class bVirtualScroll extends iData<RemoteData> {
 	/**
 	 * Option component props
 	 */
-	@prop({type: Function, watch: 'onUpdate', default: () => ({})})
+	@prop({type: Function, watch: 'syncPropsWatcher', default: () => ({})})
 	readonly optionProps!: OptionProps;
 
 	/**
 	 * Option unique key (for v-for)
 	 */
-	@prop({type: Function, watch: 'onUpdate'})
+	@prop({type: Function, watch: 'syncPropsWatcher'})
 	readonly optionKey!: OptionKey;
 
 	/**
 	 * Number of columns
 	 */
-	@prop({type: Number, watch: 'onUpdate', validator: isNatural})
+	@prop({type: Number, watch: 'syncPropsWatcher', validator: isNatural})
 	readonly columns: number = 1;
 
 	/**
 	 * Number of components that could be cached
 	 */
-	@prop({type: Number, watch: 'onUpdate', validator: isNatural})
+	@prop({type: Number, watch: 'syncPropsWatcher', validator: isNatural})
 	readonly cacheSize: number = 400;
 
 	/**
 	 * Number of items that will be removed from the cache when it is full
 	 */
-	@prop({type: Number, watch: 'onUpdate', validator: isNatural})
+	@prop({type: Number, watch: 'syncPropsWatcher', validator: isNatural})
 	readonly dropCacheSize: number = 50;
 
 	/**
 	 * Number of elements from the same range that cannot be removed from the cache
 	 */
-	@prop({type: Number, watch: 'onUpdate', validator: isNatural})
+	@prop({type: Number, watch: 'syncPropsWatcher', validator: isNatural})
 	readonly dropCacheSafeZone: number = 10;
 
 	/**
 	 * Number of nodes at the same time
 	 */
-	@prop({type: Number,  watch: 'onUpdate', validator: isNatural})
+	@prop({type: Number,  watch: 'syncPropsWatcher', validator: isNatural})
 	readonly realElementsCount: number = 20;
 
 	/**
 	 * Number of nodes at the same time that are drawn in the opposite direction from the scroll
 	 */
-	@prop({type: Number, watch: 'onUpdate', validator: isNatural})
+	@prop({type: Number, watch: 'syncPropsWatcher', validator: isNatural})
 	readonly oppositeElementsCount: number = 10;
 
 	/**
 	 * Number of tombstones
 	 */
-	@prop({type: Number, watch: 'onUpdate'})
+	@prop({type: Number, watch: 'syncPropsWatcher'})
 	readonly tombstoneCount: number = 10;
 
 	/**
 	 * Number of additional pixels length for allow scrolling
 	 */
-	@prop({type: Number, watch: 'onUpdate'})
+	@prop({type: Number, watch: 'syncPropsWatcher'})
 	readonly scrollRunnerOffset: number = 0;
 
 	/**
 	 * Scroll axis
 	 */
-	@prop({type: String, watch: 'onUpdate', validator: (v: string) => axis[v]})
+	@prop({type: String, watch: 'syncPropsWatcher', validator: (v: string) => axis[v]})
 	readonly axis: Axis = 'y';
 
 	/**
 	 * If true, then created nodes will be cached
 	 */
-	@prop({type: Boolean, watch: 'onUpdate'})
+	@prop({type: Boolean, watch: 'syncPropsWatcher'})
 	readonly cacheNode: boolean = true;
 
 	/**
 	 * If true, then the container height will be updated for every change in the range
 	 */
-	@prop({type: Boolean, watch: 'onUpdate'})
+	@prop({type: Boolean, watch: 'syncPropsWatcher'})
 	readonly containerSize: boolean = true;
 
 	/**
 	 * Function that returns the scroll root
 	 */
-	@prop({type: Function, watch: 'onUpdate', required: false})
+	@prop({type: Function, watch: 'syncPropsWatcher', required: false})
 	readonly scrollingElement?: Function;
 
 	/**
 	 * Function that returns request parameters
 	 */
-	@prop({type: Function, watch: 'reload', required: false})
+	@prop({type: Function, required: false})
 	readonly requestQuery?: RequestQuery;
 
 	/** @override */
@@ -168,13 +169,13 @@ export default class bVirtualScroll extends iData<RemoteData> {
 	/**
 	 * If, when calling a function, it returns true, then the component will be able to request additional data
 	 */
-	@prop({type: Function, watch: 'reload', default: (v) => v.itemsToReachBottom <= 10 && !v.isLastEmpty})
+	@prop({type: Function, default: (v) => v.itemsToReachBottom <= 10 && !v.isLastEmpty})
 	readonly shouldMakeRequest!: RequestFn;
 
 	/**
 	 * If, when calling a function, it returns false, then the component will stop request data
 	 */
-	@prop({type: Function, watch: 'reload', default: (v) => !v.isLastEmpty})
+	@prop({type: Function, default: (v) => !v.isLastEmpty})
 	readonly shouldContinueRequest!: RequestFn;
 
 	/** @inheritDoc */
@@ -265,16 +266,12 @@ export default class bVirtualScroll extends iData<RemoteData> {
 	}
 
 	/** @override */
-	reload(params?: InitLoadParams): Promise<void> {
-		this.componentStatus = 'loading';
+	initLoad(data?: unknown, params: InitLoadParams = {}): CanPromise<void> {
+		if (!this.lfc.isBeforeCreate()) {
+			this.reInit({hard: true}).catch(stderr);
+		}
 
-		return this.async.promise(Promise.all([
-				super.reload(params),
-				this.reInit({hard: true})
-
-			]).then(() => undefined),
-
-		{label: $$.reload, join: true});
+		return super.initLoad(data, params);
 	}
 
 	/**
@@ -351,21 +348,18 @@ export default class bVirtualScroll extends iData<RemoteData> {
 	}
 
 	/**
-	 * Handler: props was updated
+	 * Synchronization for the component props
 	 */
-	protected async onUpdate(): Promise<void> {
+	@wait('ready', {defer: true, label: $$.syncPropsWatcher})
+	protected async syncPropsWatcher(): Promise<void> {
 		const
 			{scrollRender: {status}} = this;
 
-		const
-			FRAME_TIME = 16;
-
-		if (status !== ScrollRenderStatus.render || this.componentStatus !== 'ready') {
+		if (status !== ScrollRenderStatus.render) {
 			return;
 		}
 
-		await this.async.sleep(FRAME_TIME, {label: $$.onUpdate, join: false}).catch(stderr);
-		this.reInit().catch(stderr);
+		return this.reInit();
 	}
 
 	/**
