@@ -145,7 +145,7 @@ export default class bImage extends iBlock implements iProgress, iVisible {
 
 		this.async
 			.promise(img.init, {label: $$.loadImage})
-			.then(() => this.onImageLoaded(img), this.onImageError);
+			.then(() => this.onImageLoaded(img), this.onError);
 	}
 
 	/**
@@ -219,7 +219,7 @@ export default class bImage extends iBlock implements iProgress, iVisible {
 	 * Handler: image loaded
 	 *
 	 * @param img
-	 * @emits load()
+	 * @emits loadSuccess()
 	 */
 	protected onImageLoaded(img: HTMLImageElement | string): void {
 		const
@@ -235,18 +235,20 @@ export default class bImage extends iBlock implements iProgress, iVisible {
 			backgroundPosition: this.position
 		});
 
-		this.emit('load');
+		this.emit('loadSuccess');
 	}
 
 	/**
 	 * Handler: image load error
 	 *
 	 * @param err
-	 * @emits error()
+	 * @emits loadFail()
 	 */
-	protected onImageError(err: Error): void {
+	protected onError(err: Error): void {
 		this.setMod('progress', false);
 		this.setMod('showError', true);
-		this.emitError('error', err);
+		this.emitError('loadFail', err);
 	}
 }
+
+// < b-image @error

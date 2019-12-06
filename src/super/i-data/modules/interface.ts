@@ -41,13 +41,13 @@ export type DefaultRequest<T = unknown> = [RequestQuery | RequestBody, CreateReq
 export type Request<T = unknown> = RequestQuery | RequestBody | DefaultRequest<T>;
 export type RequestParams<T = unknown> = StrictDictionary<Request<T>>;
 
-export interface SocketEvent<T extends object = Async> extends RemoteEvent<T> {
-	connection: Promise<Socket | void>;
-}
-
 export interface CreateRequestOptions<T = unknown> extends BaseCreateRequestOptions<T>, AsyncOptions {
 	showProgress?: boolean;
 	hideProgress?: boolean;
+}
+
+export interface RetryRequestFn<T = unknown> {
+	(): Promise<CanUndef<T>>;
 }
 
 export interface ComponentConverter<T = unknown> {

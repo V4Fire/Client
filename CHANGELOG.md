@@ -11,6 +11,13 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-beta.225 (2019-12-06)
+
+#### :boom: Breaking Change
+
+* Renamed interfaces `Opts` -> `Options`
+* Renamed `iData` request error `error` -> `requestError`
+
 #### :rocket: New Feature
 
 * [Added `v-resize` directive](https://github.com/V4Fire/Client/pull/144)

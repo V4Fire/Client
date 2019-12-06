@@ -68,6 +68,7 @@ import {
 	RequestFilter,
 	DefaultRequest,
 	CreateRequestOptions,
+	RetryRequestFn,
 	ComponentConverter,
 	CheckDBEquality
 
@@ -759,12 +760,12 @@ export default abstract class iData<T extends object = Dictionary> extends iBloc
 	/**
 	 * Handler: dataProvider.error
 	 *
-	 * @emits error(err: Error)
 	 * @param err
 	 * @param retry - retry function
+	 * @emits requestError(err: Error | RequestError, retry: RetryRequestFn)
 	 */
-	protected onRequestError<T = unknown>(err: Error | RequestError, retry: () => Promise<CanUndef<T>>): void {
-		this.emitError('error', err, retry);
+	protected onRequestError<T = unknown>(err: Error | RequestError, retry: RetryRequestFn): void {
+		this.emitError('requestError', err, retry);
 	}
 
 	/**
