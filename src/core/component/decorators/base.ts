@@ -52,12 +52,12 @@ export interface ComponentProp<
 	meta?: Dictionary;
 }
 
-export interface FunctionalOpts {
+export interface FunctionalOptions {
 	replace?: boolean;
 	functional?: boolean;
 }
 
-export interface ComponentAccessor extends FunctionalOpts {
+export interface ComponentAccessor extends FunctionalOptions {
 	cache: boolean;
 }
 
@@ -73,7 +73,7 @@ export const prop = paramsFactory<CanArray<Function> | ObjectConstructor | Compo
 	return p;
 });
 
-export interface SystemField<CTX extends ComponentInterface = ComponentInterface> extends FunctionalOpts {
+export interface SystemField<CTX extends ComponentInterface = ComponentInterface> extends FunctionalOptions {
 	atom?: boolean;
 	default?: unknown;
 	unique?: boolean | UniqueFieldFn<CTX>;
@@ -116,7 +116,7 @@ export const system = paramsFactory<InitFieldFn | SystemField>('systemFields', (
 });
 
 export type HookParams = {
-	[hook in Hooks]?: FunctionalOpts & {
+	[hook in Hooks]?: FunctionalOptions & {
 		after?: CanArray<string>;
 	}
 };

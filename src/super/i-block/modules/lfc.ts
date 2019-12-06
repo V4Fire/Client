@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import Async, { AsyncOpts } from 'core/async';
+import Async, { AsyncOptions } from 'core/async';
 import iBlock from 'super/i-block/i-block';
 import { statuses } from 'super/i-block/modules/const';
 import { Hooks, ComponentMeta } from 'core/component';
@@ -81,7 +81,7 @@ export default class Lfc {
 	 * @param cb
 	 * @param [params] - async parameters
 	 */
-	execCbAtTheRightTime<T = unknown>(cb: (this: iBlock) => T, params?: AsyncOpts): CanPromise<CanVoid<T>> {
+	execCbAtTheRightTime<T = unknown>(cb: (this: iBlock) => T, params?: AsyncOptions): CanPromise<CanVoid<T>> {
 		if (this.isBeforeCreate('beforeDataCreate')) {
 			return this.async.promise(new Promise<T>((r) => {
 				this.meta.hooks.beforeDataCreate.push({fn: () => r(cb.call(this))});
@@ -111,7 +111,7 @@ export default class Lfc {
 	 * @param cb
 	 * @param [params] - async parameters
 	 */
-	execCbAfterBlockReady<T = unknown>(cb: (this: this) => T, params?: AsyncOpts): CanPromise<CanVoid<T>> {
+	execCbAfterBlockReady<T = unknown>(cb: (this: this) => T, params?: AsyncOptions): CanPromise<CanVoid<T>> {
 		// @ts-ignore (access)
 		if (this.component.block) {
 			if (statuses[this.status] >= 0) {
@@ -133,7 +133,7 @@ export default class Lfc {
 	 * @param cb
 	 * @param [params] - async parameters
 	 */
-	execCbAfterComponentCreated<T = unknown>(cb: (this: this) => T, params?: AsyncOpts): CanPromise<CanVoid<T>> {
+	execCbAfterComponentCreated<T = unknown>(cb: (this: this) => T, params?: AsyncOptions): CanPromise<CanVoid<T>> {
 		if (this.isBeforeCreate()) {
 			return this.async.promise(new Promise<T>((r) => {
 				this.meta.hooks.created.unshift({fn: () => r(cb.call(this))});

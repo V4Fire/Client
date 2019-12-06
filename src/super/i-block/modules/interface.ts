@@ -8,7 +8,7 @@
 
 import iBlock from 'super/i-block/i-block';
 import { statuses } from 'super/i-block/modules/const';
-import { AsyncOpts } from 'core/async';
+import { AsyncOptions } from 'core/async';
 
 export type Statuses =
 	'destroyed' |
@@ -18,7 +18,7 @@ export type Statuses =
 	'beforeReady' |
 	'ready';
 
-export interface WaitStatusOpts extends AsyncOpts {
+export interface WaitStatusOptions extends AsyncOptions {
 	defer?: boolean;
 }
 

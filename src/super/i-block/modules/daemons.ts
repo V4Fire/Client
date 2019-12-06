@@ -9,7 +9,7 @@
 import iBlock from 'super/i-block/i-block';
 import { wait } from 'super/i-block/modules/decorators';
 
-import { AsyncOpts } from 'core/async';
+import { AsyncOptions } from 'core/async';
 import { WatchOptions, Hooks, ComponentInterface } from 'core/component';
 import { Statuses } from 'super/i-block/modules/interface';
 
@@ -21,10 +21,10 @@ export type DaemonHookObject = {
 	[P in keyof Record<Hooks, string>]?: CanArray<string>;
 };
 
-export interface DaemonsAsyncOpts {
-	label?: Nullable<AsyncOpts['label']>;
-	group?: AsyncOpts['group'];
-	join?: AsyncOpts['join'];
+export interface DaemonsAsyncOptions {
+	label?: Nullable<AsyncOptions['label']>;
+	group?: AsyncOptions['group'];
+	join?: AsyncOptions['join'];
 }
 
 export interface Daemon {
@@ -32,7 +32,7 @@ export interface Daemon {
 	watch?: DaemonWatcher[];
 	wait?: Statuses;
 	immediate?: boolean;
-	asyncOptions?: DaemonsAsyncOpts;
+	asyncOptions?: DaemonsAsyncOptions;
 	wrappedFn?: Function;
 	fn: Function;
 }
@@ -41,7 +41,7 @@ export interface SpawnedDaemonObject {
 	fn: Function;
 	wait?: Statuses;
 	immediate?: boolean;
-	asyncOptions?: DaemonsAsyncOpts;
+	asyncOptions?: DaemonsAsyncOptions;
 }
 
 export interface DaemonHookParams {

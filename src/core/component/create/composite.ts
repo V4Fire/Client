@@ -23,7 +23,7 @@ import {
 
 } from 'core/component/create/helpers';
 
-interface ComponentOpts {
+interface ComponentOptions {
 	ref?: string;
 	refInFor?: boolean;
 
@@ -62,12 +62,12 @@ const defField = {
 export function getComponentDataFromVnode(
 	component: string | ComponentMeta,
 	vnode: VNode
-): ComponentOpts {
+): ComponentOptions {
 	const
 		vData = vnode.data || {},
 		slots = (<Dictionary>vData).slots;
 
-	const res = <ComponentOpts>{
+	const res = <ComponentOptions>{
 		ref: vData.ref,
 		refInFor: vData.refInFor,
 

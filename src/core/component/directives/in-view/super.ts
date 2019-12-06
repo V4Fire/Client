@@ -23,7 +23,7 @@ export const
 
 export default abstract class AbstractInView {
 	/**
-	 * Contains observable elements
+	 * Map of observable elements
 	 */
 	protected readonly elements: ObservableElementsThresholdMap = new Map();
 
@@ -78,6 +78,7 @@ export default abstract class AbstractInView {
 
 	/**
 	 * Returns an observable element parameters
+	 *
 	 * @param el
 	 * @param threshold
 	 */
@@ -87,8 +88,7 @@ export default abstract class AbstractInView {
 	}
 
 	/**
-	 * Returns a threshold map of element
-	 *
+	 * Returns a threshold map of the specified element
 	 * @param el
 	 */
 	getThresholdMap(el: HTMLElement): CanUndef<ObservableThresholdMap> {
@@ -122,7 +122,8 @@ export default abstract class AbstractInView {
 	}
 
 	/**
-	 * Starts observe an element
+	 * Starts to observe an element
+	 *
 	 * @param el
 	 * @param opts
 	 */
@@ -145,7 +146,7 @@ export default abstract class AbstractInView {
 	}
 
 	/**
-	 * Stops observing the specified element
+	 * Stops to observe the specified element
 	 *
 	 * @param el
 	 * @param threshold
@@ -189,6 +190,7 @@ export default abstract class AbstractInView {
 
 	/**
 	 * Removes an element from observable elements
+	 *
 	 * @param el
 	 * @param [threshold]
 	 */
@@ -234,7 +236,7 @@ export default abstract class AbstractInView {
 			isDeactivated: false,
 			removeStrategy: 'remove',
 			id: String(Math.random()),
-			group: 'inView-base',
+			group: 'inView:base',
 			threshold: 1,
 			...opts
 		};
@@ -333,7 +335,6 @@ export default abstract class AbstractInView {
 
 	/**
 	 * Initializes observing for the specified element
-	 *
 	 * @param observable
 	 */
 	protected initObserve(observable: ObservableElement): CanUndef<ObservableElement> {

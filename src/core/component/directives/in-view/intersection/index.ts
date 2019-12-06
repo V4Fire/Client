@@ -36,7 +36,7 @@ export default class InView extends Super {
 	protected readonly observers: Dictionary<IntersectionObserver> = {};
 
 	/**
-	 * Contains a id for root elements
+	 * Map of ids for root elements
 	 */
 	protected readonly rootMap: Map<HTMLElement, number> = new Map();
 
@@ -57,7 +57,8 @@ export default class InView extends Super {
 
 	/** @override */
 	protected unobserve(observable: ObservableElement): boolean {
-		const observer = this.observers[this.getHash(observable)];
+		const
+			observer = this.observers[this.getHash(observable)];
 
 		if (observer) {
 			observer.unobserve(observable.node);

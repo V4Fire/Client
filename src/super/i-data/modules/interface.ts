@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import Async, { AsyncOpts } from 'core/async';
+import Async, { AsyncOptions } from 'core/async';
 import { RemoteEvent } from 'super/i-block/i-block';
 
 //#if runtime has core/data
@@ -17,27 +17,27 @@ import {
 	RequestQuery,
 	RequestBody,
 	ModelMethods,
-	CreateRequestOpts as BaseCreateRequestOpts
+	CreateRequestOptions as BaseCreateRequestOptions
 
 } from 'core/data';
 
 //#endif
 
-export interface RequestFilterOpts<T = unknown> {
+export interface RequestFilterOptions<T = unknown> {
 	isEmpty: boolean;
 	method: ModelMethods;
-	params: CreateRequestOpts<T>;
+	params: CreateRequestOptions<T>;
 }
 
 export interface RequestFilterFn<T = unknown> {
-	(data: RequestQuery | RequestBody, opts: RequestFilterOpts<T>): boolean;
+	(data: RequestQuery | RequestBody, opts: RequestFilterOptions<T>): boolean;
 }
 
 export type RequestFilter<T = unknown> =
 	boolean |
 	RequestFilterFn<T>;
 
-export type DefaultRequest<T = unknown> = [RequestQuery | RequestBody, CreateRequestOpts<T>];
+export type DefaultRequest<T = unknown> = [RequestQuery | RequestBody, CreateRequestOptions<T>];
 export type Request<T = unknown> = RequestQuery | RequestBody | DefaultRequest<T>;
 export type RequestParams<T = unknown> = StrictDictionary<Request<T>>;
 
@@ -45,7 +45,7 @@ export interface SocketEvent<T extends object = Async> extends RemoteEvent<T> {
 	connection: Promise<Socket | void>;
 }
 
-export interface CreateRequestOpts<T = unknown> extends BaseCreateRequestOpts<T>, AsyncOpts {
+export interface CreateRequestOptions<T = unknown> extends BaseCreateRequestOptions<T>, AsyncOptions {
 	showProgress?: boolean;
 	hideProgress?: boolean;
 }

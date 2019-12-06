@@ -120,7 +120,7 @@ export default abstract class iStaticPage<
 
 	/** @override */
 	get pageTitle(): string {
-		return <NonNullable<string>>this.field.get('pageTitleStore');
+		return this.field.get<string>('pageTitleStore')!;
 	}
 
 	/** @override */
@@ -145,7 +145,7 @@ export default abstract class iStaticPage<
 	 * System locale
 	 */
 	get locale(): string {
-		return <NonNullable<string>>this.field.get('localeStore');
+		return this.field.get<string>('localeStore')!;
 	}
 
 	/**
