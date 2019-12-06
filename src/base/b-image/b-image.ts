@@ -247,10 +247,10 @@ export default class bImage extends iBlock implements iProgress, iVisible {
 	 * @param err
 	 * @emits loadFail()
 	 */
-	protected onError(err: Error | AsyncCtx): void {
+	protected onError(err: CanUndef<Error | AsyncCtx>): void {
 		this.setMod('progress', false);
 
-		if ('type' in err && err.type === 'clearAsync') {
+		if (err && 'type' in err && err.type === 'clearAsync') {
 			return;
 		}
 
