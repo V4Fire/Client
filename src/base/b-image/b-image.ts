@@ -258,5 +258,3 @@ export default class bImage extends iBlock implements iProgress, iVisible {
 		this.emitError('loadFail', err);
 	}
 }
-
-// < b-image @error
