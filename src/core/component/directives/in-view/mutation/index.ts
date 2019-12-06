@@ -65,12 +65,12 @@ export default class InView extends Super {
 	protected readonly mutationObserver: MutationObserver;
 
 	/**
-	 * Map contains an elements that needs to be poll
+	 * Map of elements that needs to be poll
 	 */
 	protected readonly pollingElements: ObservableElementsThresholdMap = new Map();
 
 	/**
-	 * Contains an element position map
+	 * Map of element positions
 	 */
 	protected map: Dictionary<ObservableElementRect[]> = {};
 

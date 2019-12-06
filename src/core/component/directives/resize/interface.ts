@@ -13,31 +13,31 @@ export interface DirectiveOptions extends VNodeDirective {
 		[key: string]: boolean;
 	};
 
-	value?: ObservableCallback | DirectiveOptionsValue;
+	value?: ObserverCb | ObserverOptions;
 }
 
-export interface DirectiveOptionsValue {
+export interface ObserverOptions {
 	/**
-	 * If true, when changing the width of the element, a callback will be executed
+	 * If true, when changing the element width, a callback will be executed
 	 */
 	watchWidth?: boolean;
 
 	/**
-	 * If true, when changing the height of the element, a callback will be executed
+	 * If true, when changing the element height, a callback will be executed
 	 */
 	watchHeight?: boolean;
 
 	/**
-	 * Callback that will be called if the width or height of an element has been changed
+	 * Callback that will be called if the element size has been changed
 	 *
 	 * @param observable
 	 * @param oldSize
 	 * @param newSize
 	 */
-	callback: ObservableCallback;
+	callback: ObserverCb;
 }
 
-export interface Observable extends DirectiveOptionsValue {
+export interface Observable extends ObserverOptions {
 	node: HTMLElement;
 	observer?: ResizeObserver;
 	width?: number;
@@ -49,4 +49,4 @@ export interface Size {
 	height: number;
 }
 
-export type ObservableCallback = (observable: Observable, oldSize: Size, newSize: Size) => unknown;
+export type ObserverCb = (observable: Observable, oldSize: Size, newSize: Size) => unknown;

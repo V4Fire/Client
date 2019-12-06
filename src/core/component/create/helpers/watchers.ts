@@ -274,7 +274,7 @@ export function bindWatchers(
 							handler = selfAsync.proxy(handler, {
 								...group,
 								single: false,
-								onClear: () => watcher && watcher.cb.delete(handler)
+								onClear: () => watcher && watcher.cb.unobserve(handler)
 							});
 
 							watcher.cb.add(handler);
@@ -363,7 +363,7 @@ export function bindWatchers(
 						handler = selfAsync.proxy(handler, {
 							...group,
 							single: false,
-							onClear: () => watcher && watcher.cb.delete(handler)
+							onClear: () => watcher && watcher.cb.unobserve(handler)
 						});
 
 						watcher.cb.add(handler);

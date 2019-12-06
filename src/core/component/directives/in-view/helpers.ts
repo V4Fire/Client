@@ -30,7 +30,7 @@ export function getAdaptee<T extends {acceptable: boolean}>(strategies: T[]): Ca
  * @param value
  */
 export function valueValidator(value: InitOptions): boolean {
-	return  Boolean(value && (value.callback || value.onEnter || value.onLeave));
+	return Boolean(value && (value.callback || value.onEnter || value.onLeave));
 }
 
 /**

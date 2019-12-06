@@ -28,10 +28,10 @@ export interface ObservableParams {
 }
 
 export const shimTable = {
-	weakMap: {is: Object.isWeakMap, methods: ['set', 'delete']},
-	weakSet: {is: Object.isWeakSet, methods: ['add', 'delete']},
-	map: {is: Object.isMap, methods: ['set', 'delete', 'clear']},
-	set: {is: Object.isSet, methods: ['add', 'delete', 'clear']}
+	weakMap: {is: Object.isWeakMap, methods: ['set', 'unobserve']},
+	weakSet: {is: Object.isWeakSet, methods: ['add', 'unobserve']},
+	map: {is: Object.isMap, methods: ['set', 'unobserve', 'clear']},
+	set: {is: Object.isSet, methods: ['add', 'unobserve', 'clear']}
 };
 
 /**

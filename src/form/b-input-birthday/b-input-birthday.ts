@@ -42,7 +42,7 @@ export default class bInputBirthday<
 	/** @override */
 	@p({cache: false})
 	get value(): V {
-		return Object.fastClone(<NonNullable<V>>this.field.get('valueProp'));
+		return Object.fastClone(this.field.get<V>('valueProp')!);
 	}
 
 	/** @override */

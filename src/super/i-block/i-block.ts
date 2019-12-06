@@ -303,7 +303,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	 */
 	@p({cache: false, replace: false})
 	get componentStatus(): Statuses {
-		return this.shadowComponentStatusStore || <NonNullable<Statuses>>this.field.get('componentStatusStore');
+		return this.shadowComponentStatusStore || this.field.get<Statuses>('componentStatusStore')!;
 	}
 
 	/**

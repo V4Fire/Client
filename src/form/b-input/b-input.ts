@@ -199,7 +199,7 @@ export default class bInput<
 
 	/** @override */
 	get value(): V {
-		return <NonNullable<V>>this.field.get('valueStore');
+		return this.field.get<V>('valueStore')!;
 	}
 
 	/** @override */
@@ -270,7 +270,7 @@ export default class bInput<
 	 * Value buffer
 	 */
 	protected get valueBuffer(): V {
-		return <NonNullable<V>>this.field.get('valueBufferStore');
+		return this.field.get<V>('valueBufferStore')!;
 	}
 
 	/**
