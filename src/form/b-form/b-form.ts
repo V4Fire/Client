@@ -268,7 +268,7 @@ export default class bForm<T extends object = Dictionary> extends iData<T> {
 			this.emit('validationSuccess');
 
 		} else {
-			this.emit('validationFail', failedValidation);
+			this.emitError('validationFail', failedValidation);
 		}
 
 		this.emit('validationEnd', valid, failedValidation);
@@ -420,7 +420,7 @@ export default class bForm<T extends object = Dictionary> extends iData<T> {
 		}
 
 		if (formErr) {
-			this.emit('submitFail', formErr, submitCtx);
+			this.emitError('submitFail', formErr, submitCtx);
 			throw formErr;
 		}
 
