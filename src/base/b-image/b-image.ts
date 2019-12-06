@@ -97,7 +97,12 @@ export default class bImage extends iBlock implements iProgress, iVisible {
 	/** @inheritDoc */
 	static readonly mods: ModsDecl = {
 		...iProgress.mods,
-		...iVisible.mods
+		...iVisible.mods,
+
+		showError: [
+			'true',
+			'false'
+		]
 	};
 
 	/** @override */
@@ -111,11 +116,11 @@ export default class bImage extends iBlock implements iProgress, iVisible {
 	@wait('ready', {label: $$.initOverlay})
 	protected initOverlay(): CanPromise<void> {
 		const
-			tempSrc = <CanUndef<string>>this.tmp[this.src];
+			tmpSrc = <CanUndef<string>>this.tmp[this.src];
 
-		if (tempSrc) {
-			this.updateHeight(tempSrc);
-			this.onImageLoaded(tempSrc);
+		if (tmpSrc) {
+			this.updateHeight(tmpSrc);
+			this.onImageLoaded(tmpSrc);
 			return;
 		}
 
@@ -166,10 +171,9 @@ export default class bImage extends iBlock implements iProgress, iVisible {
 			}
 		}
 
-		Object.assign(imgRef.style,
-			tmpPadding ?
-				{paddingBottom: tmpPadding} :
-				{height: '100%'}
+		Object.assign(imgRef.style, tmpPadding ?
+			{paddingBottom: tmpPadding} :
+			{height: '100%'}
 		);
 	}
 
@@ -215,7 +219,7 @@ export default class bImage extends iBlock implements iProgress, iVisible {
 	 * Handler: image loaded
 	 *
 	 * @param img
-	 * @emits load
+	 * @emits load()
 	 */
 	protected onImageLoaded(img: HTMLImageElement | string): void {
 		const
@@ -225,13 +229,11 @@ export default class bImage extends iBlock implements iProgress, iVisible {
 		this.setMod('progress', false);
 		this.setMod('showError', false);
 
-		Object.assign(imgRef.style,
-			{
-				backgroundImage: (<string[]>[]).concat(this.beforeImg || [], cssImg, this.afterImg || []).join(','),
-				backgroundSize: this.sizeType,
-				backgroundPosition: this.position
-			}
-		);
+		Object.assign(imgRef.style, {
+			backgroundImage: (<string[]>[]).concat(this.beforeImg || [], cssImg, this.afterImg || []).join(','),
+			backgroundSize: this.sizeType,
+			backgroundPosition: this.position
+		});
 
 		this.emit('load');
 	}
@@ -240,11 +242,11 @@ export default class bImage extends iBlock implements iProgress, iVisible {
 	 * Handler: image load error
 	 *
 	 * @param err
-	 * @emits loadError
+	 * @emits error()
 	 */
 	protected onImageError(err: Error): void {
 		this.setMod('progress', false);
 		this.setMod('showError', true);
-		this.emitError('loadError', err);
+		this.emitError('error', err);
 	}
 }
