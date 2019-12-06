@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-beta.227 (2019-12-06)
+
+#### :bug: Bug Fix
+
+* Fixed `bImage.onError` logic
+
 ## v3.0.0-beta.226 (2019-12-06)
 
 #### :bug: Bug Fix
