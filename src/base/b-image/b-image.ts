@@ -114,7 +114,6 @@ export default class bImage extends iBlock implements iProgress, iVisible {
 			tempSrc = <CanUndef<string>>this.tmp[this.src];
 
 		if (tempSrc) {
-			this.updateHeight(tempSrc);
 			this.onImageLoaded(tempSrc);
 			return;
 		}
@@ -136,41 +135,9 @@ export default class bImage extends iBlock implements iProgress, iVisible {
 			img.alt = this.alt;
 		}
 
-		this.updateHeight(img);
-
 		this.async
 			.promise(img.init, {label: $$.loadImage})
 			.then(() => this.onImageLoaded(img), this.onImageError);
-	}
-
-	/**
-	 * Sets an image's height according to its ratio
-	 * @param img
-	 */
-	protected updateHeight(img: HTMLImageElement | string): void {
-		const
-			{img: imgRef} = this.$refs;
-
-		let
-			tmpPadding = this.tmp[`${this.src}-padding`];
-
-		if (!tmpPadding) {
-			if (this.ratio) {
-				tmpPadding = `${(1 / this.ratio) * 100}%`;
-
-			} else if (!Object.isString(img) && this.ratio !== 0) {
-				tmpPadding = `${(1 / this.computeRatio(img)) * 100}%`;
-
-			} else {
-				tmpPadding = '';
-			}
-		}
-
-		Object.assign(imgRef.style,
-			tmpPadding ?
-				{paddingBottom: tmpPadding} :
-				{height: '100%'}
-		);
 	}
 
 	/**
@@ -219,18 +186,39 @@ export default class bImage extends iBlock implements iProgress, iVisible {
 	 */
 	protected onImageLoaded(img: HTMLImageElement | string): void {
 		const
-			{img: imgRef} = this.$refs,
-			cssImg = Object.isString(img) ? img : `url("${img.currentSrc}")`;
+			{img: imgRef} = this.$refs;
+
+		let
+			tmpPadding = this.tmp[`${this.src}-padding`];
 
 		this.setMod('progress', false);
 		this.setMod('showError', false);
+
+		if (!tmpPadding) {
+			if (this.ratio) {
+				tmpPadding = `${(1 / this.ratio) * 100}%`;
+
+			} else if (!Object.isString(img) && this.ratio !== 0) {
+				tmpPadding = `${(1 / this.computeRatio(img)) * 100}%`;
+
+			} else {
+				tmpPadding = '';
+			}
+		}
+
+		const
+			cssImg = Object.isString(img) ? img : `url("${img.currentSrc}")`;
 
 		Object.assign(imgRef.style,
 			{
 				backgroundImage: (<string[]>[]).concat(this.beforeImg || [], cssImg, this.afterImg || []).join(','),
 				backgroundSize: this.sizeType,
 				backgroundPosition: this.position
-			}
+			},
+
+			tmpPadding ?
+				{paddingBottom: tmpPadding} :
+				{height: '100%'}
 		);
 
 		this.emit('load');
