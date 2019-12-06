@@ -11,6 +11,14 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-beta.226 (2019-12-06)
+
+#### :bug: Bug Fix
+
+* Fixed `bImage` cache
+* Fixed `bImage.onError` logic
+* Fixed keep-alive with `activatedProp`
+
 ## v3.0.0-beta.225 (2019-12-06)
 
 #### :boom: Breaking Change
