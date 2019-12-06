@@ -366,7 +366,7 @@ export default class bContentSwitcher extends iBlock {
 			semaphoreReadyMap.set(c, c.isReady);
 			$a.on(c, 'statusReady', () => semaphoreReadyMap.set(c, true), {label: `ready-${c.componentId}`});
 			$a.on(c, 'statusLoading statusUnloaded', () => semaphoreReadyMap.set(c, false), {label: `loading-${c.componentId}`});
-			$a.on(c, 'statusDestroyed', () => semaphoreReadyMap.unobserve(c), {label: `destroy-${c.componentId}`});
+			$a.on(c, 'statusDestroyed', () => semaphoreReadyMap.delete(c), {label: `destroy-${c.componentId}`});
 		};
 
 		const register = () => {
