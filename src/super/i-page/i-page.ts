@@ -19,13 +19,14 @@ export interface StageTitles<T = unknown> extends Dictionary<TitleValue<T>> {
 	'[[DEFAULT]]': TitleValue<T>;
 }
 
-export interface ScrollToFn<T = number, N = ScrollOpts> extends WrappedFunction {
+export interface ScrollToFn<T = number, N = ScrollOptions> extends WrappedFunction {
 	(x?: T | N, y?: T): void
 }
 
-export interface ScrollOpts extends ScrollOptions {
+export interface ScrollOptions {
 	x?: number;
 	y?: number;
+	behavior?: ScrollBehavior;
 }
 
 export const
@@ -90,7 +91,7 @@ export default abstract class iPage<T extends object = Dictionary> extends iData
 	 * Scrolls a page to specified coordinates
 	 * @param p
 	 */
-	scrollTo(p: ScrollOpts): void;
+	scrollTo(p: ScrollOptions): void;
 
 	/**
 	 * @param x
@@ -99,7 +100,7 @@ export default abstract class iPage<T extends object = Dictionary> extends iData
 	scrollTo(x?: number, y?: number): void;
 
 	// tslint:disable-next-line
-	scrollTo(p?: ScrollOpts | number, y?: number): void {
+	scrollTo(p?: ScrollOptions | number, y?: number): void {
 		this.async.cancelProxy({label: $$.scrollTo});
 
 		const scroll = (p: ScrollToOptions) => {
@@ -113,7 +114,7 @@ export default abstract class iPage<T extends object = Dictionary> extends iData
 
 		if (p && Object.isObject(p)) {
 			const
-				{x, y} = <ScrollOpts>p,
+				{x, y} = <ScrollOptions>p,
 				opts = <ScrollOptions>Object.reject(p, ['x', 'y']);
 
 			scroll({left: x, top: y, ...opts});
@@ -140,9 +141,9 @@ export default abstract class iPage<T extends object = Dictionary> extends iData
 	 * Returns proxy wrapper for the scrollTo method
 	 */
 	protected scrollToProxyFn(): ScrollToFn {
-		return this.async.proxy((x?: number | ScrollOpts, y?: number) => {
+		return this.async.proxy((x?: number | ScrollOptions, y?: number) => {
 			if (x && Object.isObject(x)) {
-				this.scrollTo(<ScrollOpts>x);
+				this.scrollTo(<ScrollOptions>x);
 
 			} else {
 				this.scrollTo(<CanUndef<number>>x, y);

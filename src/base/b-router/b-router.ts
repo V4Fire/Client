@@ -20,7 +20,7 @@ import iData, { component, prop, system, hook, watch, p } from 'super/i-data/i-d
 export * from 'super/i-data/i-data';
 export * from 'core/router/interface';
 
-export interface PageOpts<
+export interface PageOptions<
 	P extends object = Dictionary,
 	Q extends object = Dictionary,
 	M extends object = Dictionary
@@ -28,7 +28,7 @@ export interface PageOpts<
 	toPath(params?: Dictionary): string;
 }
 
-export interface PageOptsProp {
+export interface PageOptionsProp {
 	meta?: BasePageMeta;
 	params?: Dictionary;
 	query?: Dictionary;
@@ -40,7 +40,7 @@ export const pageOptsKeys = [
 	'query'
 ];
 
-export interface PagePropObject extends PageOptsProp {
+export interface PagePropObject extends PageOptionsProp {
 	page: string;
 }
 
@@ -216,7 +216,7 @@ export default class bRouter<T extends object = Dictionary> extends iData<T> {
 	 * @param page
 	 * @param [opts] - additional transition options
 	 */
-	async push(page: Nullable<string>, opts?: PageOptsProp): Promise<void> {
+	async push(page: Nullable<string>, opts?: PageOptionsProp): Promise<void> {
 		await this.setPage(page, opts, 'push');
 	}
 
@@ -226,7 +226,7 @@ export default class bRouter<T extends object = Dictionary> extends iData<T> {
 	 * @param page
 	 * @param [opts] - additional transition options
 	 */
-	async replace(page: Nullable<string>, opts?: PageOptsProp): Promise<void> {
+	async replace(page: Nullable<string>, opts?: PageOptionsProp): Promise<void> {
 		await this.setPage(page, opts, 'replace');
 	}
 
@@ -302,7 +302,7 @@ export default class bRouter<T extends object = Dictionary> extends iData<T> {
 	 * Returns an information object of the specified page
 	 * @param [page]
 	 */
-	getPageOpts(page: string): CanUndef<PageOpts> {
+	getPageOpts(page: string): CanUndef<PageOptions> {
 		const
 			p = this.pages,
 			keys = Object.keys(p),
@@ -470,15 +470,15 @@ export default class bRouter<T extends object = Dictionary> extends iData<T> {
 	 * @param [opts] - additional transition options
 	 * @param [method] - engine method
 	 *
-	 * @emits beforeChange(page: Nullable<string>, params: CanUndef<PageOptsProp>, method: string)
-	 * @emits change(info: PageOpts)
-	 * @emits hardChange(info: PageOpts)
-	 * @emits softChange(info: PageOpts)
-	 * @emits $root.transition(info: PageOpts, type: string)
+	 * @emits beforeChange(page: Nullable<string>, params: CanUndef<PageOptionsProp>, method: string)
+	 * @emits change(info: PageOptions)
+	 * @emits hardChange(info: PageOptions)
+	 * @emits softChange(info: PageOptions)
+	 * @emits $root.transition(info: PageOptions, type: string)
 	 */
 	async setPage(
 		page: Nullable<string>,
-		opts?: PageOptsProp,
+		opts?: PageOptionsProp,
 		method: SetPage = 'push'
 	): Promise<CanUndef<CurrentPage>> {
 		const

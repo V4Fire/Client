@@ -9,7 +9,7 @@
 import symbolGenerator from 'core/symbol';
 
 import iProgress from 'traits/i-progress/i-progress';
-import Async, { AsyncOpts } from 'core/async';
+import Async, { AsyncOptions } from 'core/async';
 
 import RequestError from 'core/request/error';
 import { providers } from 'core/data/const';
@@ -67,7 +67,7 @@ import {
 	RequestParams,
 	RequestFilter,
 	DefaultRequest,
-	CreateRequestOpts,
+	CreateRequestOptions,
 	ComponentConverter,
 	CheckDBEquality
 
@@ -220,7 +220,7 @@ export default abstract class iData<T extends object = Dictionary> extends iBloc
 		const
 			{async: $a} = this;
 
-		const label = <AsyncOpts>{
+		const label = <AsyncOptions>{
 			label: $$.initLoad,
 			join: 'replace'
 		};
@@ -360,7 +360,7 @@ export default abstract class iData<T extends object = Dictionary> extends iBloc
 	 * @param [data]
 	 * @param [params]
 	 */
-	peek(data?: RequestQuery, params?: CreateRequestOpts<T>): Promise<CanUndef<T>> {
+	peek(data?: RequestQuery, params?: CreateRequestOptions<T>): Promise<CanUndef<T>> {
 		const
 			args = arguments.length > 0 ? [data, params] : this.getDefaultRequestParams('peek');
 
@@ -377,7 +377,7 @@ export default abstract class iData<T extends object = Dictionary> extends iBloc
 	 * @param [data]
 	 * @param [params]
 	 */
-	get(data?: RequestQuery, params?: CreateRequestOpts<T>): Promise<CanUndef<T>> {
+	get(data?: RequestQuery, params?: CreateRequestOptions<T>): Promise<CanUndef<T>> {
 		const
 			args = arguments.length > 0 ? [data, params] : this.getDefaultRequestParams('get');
 
@@ -394,7 +394,7 @@ export default abstract class iData<T extends object = Dictionary> extends iBloc
 	 * @param data
 	 * @param [params]
 	 */
-	post<T = unknown>(data?: RequestBody, params?: CreateRequestOpts<T>): Promise<CanUndef<T>> {
+	post<T = unknown>(data?: RequestBody, params?: CreateRequestOptions<T>): Promise<CanUndef<T>> {
 		const
 			args = arguments.length > 0 ? [data, params] : this.getDefaultRequestParams('post');
 
@@ -411,7 +411,7 @@ export default abstract class iData<T extends object = Dictionary> extends iBloc
 	 * @param data
 	 * @param [params]
 	 */
-	add<T = unknown>(data?: RequestBody, params?: CreateRequestOpts<T>): Promise<CanUndef<T>> {
+	add<T = unknown>(data?: RequestBody, params?: CreateRequestOptions<T>): Promise<CanUndef<T>> {
 		const
 			args = arguments.length > 0 ? [data, params] : this.getDefaultRequestParams('add');
 
@@ -428,7 +428,7 @@ export default abstract class iData<T extends object = Dictionary> extends iBloc
 	 * @param [data]
 	 * @param [params]
 	 */
-	upd<T = unknown>(data?: RequestBody, params?: CreateRequestOpts<T>): Promise<CanUndef<T>> {
+	upd<T = unknown>(data?: RequestBody, params?: CreateRequestOptions<T>): Promise<CanUndef<T>> {
 		const
 			args = arguments.length > 0 ? [data, params] : this.getDefaultRequestParams('upd');
 
@@ -445,7 +445,7 @@ export default abstract class iData<T extends object = Dictionary> extends iBloc
 	 * @param [data]
 	 * @param [params]
 	 */
-	del<T = unknown>(data?: RequestBody, params?: CreateRequestOpts<T>): Promise<CanUndef<T>> {
+	del<T = unknown>(data?: RequestBody, params?: CreateRequestOptions<T>): Promise<CanUndef<T>> {
 		const
 			args = arguments.length > 0 ? [data, params] : this.getDefaultRequestParams('del');
 
@@ -716,17 +716,17 @@ export default abstract class iData<T extends object = Dictionary> extends iBloc
 	protected createRequest<T = unknown>(
 		method: ModelMethods,
 		data?: RequestBody,
-		params?: CreateRequestOpts<T>
+		params?: CreateRequestOptions<T>
 	): Promise<CanUndef<T>> {
 		if (!this.dp) {
 			return Promise.resolve(undefined);
 		}
 
 		const
-			p = <CreateRequestOpts<T>>(params || {}),
+			p = <CreateRequestOptions<T>>(params || {}),
 			asyncFields = ['join', 'label', 'group'],
-			reqParams = <CreateRequestOpts<T>>(Object.reject(p, asyncFields)),
-			asyncParams = <AsyncOpts>(Object.select(p, asyncFields));
+			reqParams = <CreateRequestOptions<T>>(Object.reject(p, asyncFields)),
+			asyncParams = <AsyncOptions>(Object.select(p, asyncFields));
 
 		const
 			req = this.async.request<RequestResponseObject<T>>((<Function>this.dp[method])(data, reqParams), asyncParams),

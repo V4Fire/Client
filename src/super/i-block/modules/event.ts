@@ -8,9 +8,9 @@
 
 import Async, {
 
-	AsyncOnOpts,
-	AsyncOnceOpts,
-	ClearOptsId,
+	AsyncOnOptions,
+	AsyncOnceOptions,
+	ClearOptionsId,
 	ProxyCb,
 	EventEmitterLike as AsyncEventEmitterLike
 
@@ -45,7 +45,7 @@ export interface BaseEvent<L, CTX extends object> {
 	on<E = unknown, R = unknown>(
 		events: CanArray<string>,
 		handler: ProxyCb<E, R, CTX>,
-		params: AsyncOnOpts<CTX>,
+		params: AsyncOnOptions<CTX>,
 		...args: unknown[]
 	): L;
 
@@ -58,19 +58,19 @@ export interface BaseEvent<L, CTX extends object> {
 	once<E = unknown, R = unknown>(
 		events: CanArray<string>,
 		handler: ProxyCb<E, R, CTX>,
-		params: AsyncOnceOpts<CTX>,
+		params: AsyncOnceOptions<CTX>,
 		...args: unknown[]
 	): L;
 
 	promisifyOnce<T = unknown>(events: CanArray<string>, ...args: unknown[]): Promise<CanUndef<T>>;
 	promisifyOnce<T = unknown>(
 		events: CanArray<string>,
-		params: AsyncOnceOpts<CTX>,
+		params: AsyncOnceOptions<CTX>,
 		...args: unknown[]
 	): Promise<CanUndef<T>>;
 
 	off(id?: object): void;
-	off(params: ClearOptsId<object>): void;
+	off(params: ClearOptionsId<object>): void;
 }
 
 export interface RemoteEvent<CTX extends object = Async> extends BaseEvent<CanUndef<object>, CTX> {

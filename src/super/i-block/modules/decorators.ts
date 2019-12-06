@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { AsyncOpts } from 'core/async';
+import { AsyncOptions } from 'core/async';
 import { statuses } from 'super/i-block/modules/const';
 import { Statuses, iBlockDecorator } from 'super/i-block/i-block';
 import { initEvent, ModVal, InitFieldFn as BaseInitFieldFn, ComponentInterface } from 'core/component';
@@ -165,7 +165,7 @@ export function removeMod<CTX extends ComponentInterface = ComponentInterface>(
 	};
 }
 
-export interface WaitOpts extends AsyncOpts {
+export interface WaitOptions extends AsyncOptions {
 	fn?: Function;
 	defer?: boolean | number;
 }
@@ -182,7 +182,7 @@ const
  *   *) [params.fn] - callback function
  *   *) [params.defer] - if true, then the function will always return a promise
  */
-export function wait(params: WaitOpts): Function;
+export function wait(params: WaitOptions): Function;
 
 /**
  * @see Async.wait
@@ -191,17 +191,17 @@ export function wait(params: WaitOpts): Function;
  * @param [params]
  */
 // tslint:disable-next-line:completed-docs
-export function wait(status: number | string | Statuses, params?: WaitOpts | Function): Function;
+export function wait(status: number | string | Statuses, params?: WaitOptions | Function): Function;
 // tslint:disable-next-line:completed-docs
 export function wait<CTX extends ComponentInterface = ComponentInterface>(
-	status: number | string | Statuses | WaitOpts,
-	params?: WaitOpts | Function
+	status: number | string | Statuses | WaitOptions,
+	params?: WaitOptions | Function
 ): Function {
 	let
 		ctx;
 
 	if (Object.isObject(status)) {
-		params = <WaitOpts>status;
+		params = <WaitOptions>status;
 		status = 0;
 
 	} else if (Object.isString(status)) {
@@ -221,7 +221,7 @@ export function wait<CTX extends ComponentInterface = ComponentInterface>(
 		group,
 		defer,
 		fn
-	} = params && !Object.isFunction(params) ? params : <WaitOpts>{};
+	} = params && !Object.isFunction(params) ? params : <WaitOptions>{};
 
 	// tslint:enable:prefer-const
 

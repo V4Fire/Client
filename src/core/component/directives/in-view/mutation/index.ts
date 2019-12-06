@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { AsyncOpts } from 'core/async';
+import { AsyncOptions } from 'core/async';
 import symbolGenerator from 'core/symbol';
 
 import {
@@ -94,7 +94,7 @@ export default class InView extends Super {
 			join: true
 		});
 
-		const recalculateDeffer = (opts?: AsyncOpts) => $a.setTimeout(() => this.recalculate(), RECALCULATE_TIMEOUT, {
+		const recalculateDeffer = (opts?: AsyncOptions) => $a.setTimeout(() => this.recalculate(), RECALCULATE_TIMEOUT, {
 			group: 'inView',
 			label: $$.recalculate,
 			join: true,

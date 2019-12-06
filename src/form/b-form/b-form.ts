@@ -29,7 +29,7 @@ import iData, {
 
 	ModelMethods,
 	RequestFilter,
-	CreateRequestOpts,
+	CreateRequestOptions,
 
 	ModsDecl
 
@@ -84,7 +84,7 @@ export default class bForm<T extends object = Dictionary> extends iData<T> {
 	 * Form request parameters
 	 */
 	@prop(Object)
-	readonly paramsProp: CreateRequestOpts = {};
+	readonly paramsProp: CreateRequestOptions = {};
 
 	/**
 	 * If true, then form elements will be cached
@@ -97,7 +97,7 @@ export default class bForm<T extends object = Dictionary> extends iData<T> {
 	 */
 	// tslint:disable-next-line:prefer-object-spread
 	@field<bForm>((o) => o.sync.link((val) => Object.assign(o.params || {}, val)))
-	params!: CreateRequestOpts;
+	params!: CreateRequestOptions;
 
 	/** @inheritDoc */
 	static readonly mods: ModsDecl = {
