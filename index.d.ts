@@ -33,10 +33,14 @@ interface BoxSize {
 	readonly inlineSize: number;
 }
 
+interface ResizeObserverObserveOptions {
+	box: 'content-box' | 'border-box';
+}
+
 declare class ResizeObserver {
-	constructor(callback: (entries: ResizeObserverEntry[]) => unknown)
+	constructor(callback: (entries: ResizeObserverEntry[]) => unknown);
 	disconnect(): void;
-	observe(target: Element, options?: {box: 'content-box' | 'border-box'}): void;
+	observe(target: Element, opts?: ResizeObserverObserveOptions): void;
 	unobserve(target: Element): void;
 }
 
