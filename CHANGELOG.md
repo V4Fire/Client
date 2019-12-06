@@ -25,6 +25,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 * [Fixed `b-virtual-scroll` reloadLast method](https://github.com/V4Fire/Client/pull/144)
 * [Fixed `b-virtual-scroll` reload method](https://github.com/V4Fire/Client/pull/144)
+* Fixed race conditions within `iData`
 
 #### :house: Internal
 
