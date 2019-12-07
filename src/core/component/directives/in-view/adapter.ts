@@ -113,7 +113,7 @@ export default class InViewAdapter {
 			return false;
 		}
 
-		return this.adaptee.remove(el);
+		return this.adaptee.unobserve(el);
 	}
 
 	/**

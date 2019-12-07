@@ -56,7 +56,7 @@ export default class InView extends Super {
 	}
 
 	/** @override */
-	protected unobserve(observable: ObservableElement): boolean {
+	protected remove(observable: ObservableElement): boolean {
 		const observer = this.observers[this.getHash(observable)];
 
 		if (observer) {

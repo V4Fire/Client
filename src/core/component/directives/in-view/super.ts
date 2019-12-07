@@ -158,7 +158,7 @@ export default abstract class AbstractInView {
 			this.clearAllAsync(o);
 
 			if (o.removeStrategy === 'remove') {
-				return this.remove(el, threshold);
+				return this.unobserve(el, threshold);
 			}
 
 			o.isDeactivated = true;
@@ -192,14 +192,14 @@ export default abstract class AbstractInView {
 	 * @param el
 	 * @param [threshold]
 	 */
-	remove(el: HTMLElement, threshold?: number): boolean {
+	unobserve(el: HTMLElement, threshold?: number): boolean {
 		const
 			map = this.getElMap(el),
 			thresholdMap = this.getThresholdMap(el);
 
 		if (thresholdMap && threshold === undefined) {
 			thresholdMap.forEach((observable) => {
-				this.unobserve(observable);
+				this.remove(observable);
 			});
 
 			return map.delete(el);
@@ -213,7 +213,7 @@ export default abstract class AbstractInView {
 				return false;
 			}
 
-			this.unobserve(observable);
+			this.remove(observable);
 			return thresholdMap.delete(threshold);
 		}
 
@@ -344,7 +344,7 @@ export default abstract class AbstractInView {
 	 * Removes element from observer data
 	 * @param observable
 	 */
-	protected unobserve(observable: ObservableElement): boolean {
+	protected remove(observable: ObservableElement): boolean {
 		return false;
 	}
 }

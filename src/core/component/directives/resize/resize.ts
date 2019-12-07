@@ -45,10 +45,10 @@ export default class Resize {
 	}
 
 	/**
-	 * Deletes the specified element
+	 * Stops observing the specified element
 	 * @param el
 	 */
-	delete(el: HTMLElement): boolean {
+	unobserve(el: HTMLElement): boolean {
 		const observable = this.elementsObserverMap.get(el);
 		observable?.observer?.disconnect();
 		return this.elementsObserverMap.delete(el);

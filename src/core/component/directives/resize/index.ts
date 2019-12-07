@@ -39,7 +39,7 @@ ComponentDriver.directive('resize', {
 			return;
 		}
 
-		ResizeInstance.delete(el);
+		ResizeInstance.unobserve(el);
 
 		if (newParams) {
 			ResizeInstance.observe(el, newParams);
@@ -47,7 +47,7 @@ ComponentDriver.directive('resize', {
 	},
 
 	unbind(el: HTMLElement): void {
-		ResizeInstance.delete(el);
+		ResizeInstance.unobserve(el);
 	}
 });
 
