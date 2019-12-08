@@ -9,7 +9,9 @@
 import symbolGenerator from 'core/symbol';
 import iBlock from 'super/i-block/i-block';
 
-import { ObserveOptions, Observer, Observers } from 'traits/i-observe-dom/modules/interface';
+import { ObserveOptions, Observer, Observers, ChangedNodes } from 'traits/i-observe-dom/modules/interface';
+
+export * from 'traits/i-observe-dom/modules/interface';
 
 export const
 	$$ = symbolGenerator();
@@ -68,6 +70,46 @@ export default abstract class iObserveDom {
 			addedNodes: [].filter.call(r.addedNodes, filter),
 			removedNodes: [].filter.call(r.removedNodes, filter)
 		}));
+	}
+
+	/**
+	 * Returns added and removed nodes
+	 * @param records
+	 */
+	static getChangedNodes(records: MutationRecord[]): ChangedNodes {
+		const res = {
+			addedNodes: <ChangedNodes['addedNodes']>[],
+			removedNodes: <ChangedNodes['removedNodes']>[]
+		};
+
+		for (let i = 0; i < records.length; i++) {
+			const
+				record = records[i];
+
+			res.addedNodes = res.addedNodes.concat([].slice.call(record.addedNodes));
+			res.removedNodes = res.removedNodes.concat([].slice.call(record.removedNodes));
+		}
+
+		res.addedNodes = [].union(res.addedNodes);
+		res.removedNodes = [].union(res.removedNodes);
+		return res;
+	}
+
+	/**
+	 * Handler: DOM tree was changed
+	 *
+	 * @param component
+	 * @param [records]
+	 * @param [options]
+	 *
+	 * @emits DOMChange(records?: MutationRecord[], options?: ObserverOptions)
+	 */
+	static onDOMChange<T extends iBlock>(
+		component: T & iObserveDom,
+		records?: MutationRecord[],
+		options?: ObserveOptions
+	): void {
+		component.emit('DOMChange', records, options);
 	}
 
 	/**

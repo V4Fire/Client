@@ -376,7 +376,7 @@ export default class bSlider<T extends object = Dictionary> extends iData<T> imp
 
 	/** @see iObserveDom.onDOMChange */
 	onDOMChange(): void {
-		this.syncStateDefer();
+		iObserveDom.onDOMChange(this);
 	}
 
 	/**
@@ -428,6 +428,7 @@ export default class bSlider<T extends object = Dictionary> extends iData<T> imp
 	 * Synchronizes the slider state (deferred version)
 	 * @emits syncState()
 	 */
+	@watch(':DOMChange')
 	@wait('ready')
 	protected async syncStateDefer(): Promise<void> {
 		if (!this.isSlider) {

@@ -9,6 +9,8 @@
 import symbolGenerator from 'core/symbol';
 import { observeMap } from 'core/component/helpers/observable';
 
+import iObserveDom from 'traits/i-observe-dom/i-observe-dom';
+
 import iBlock, {
 
 	component,
@@ -67,7 +69,7 @@ export function validateResolve(value: ResolveMethod[]): boolean {
 }
 
 @component()
-export default class bContentSwitcher extends iBlock {
+export default class bContentSwitcher extends iBlock implements iObserveDom {
 	/**
 	 * Resolve methods
 	 */
@@ -278,6 +280,30 @@ export default class bContentSwitcher extends iBlock {
 		return true;
 	}
 
+	/** @see iObserveDom.initObservers */
+	@wait('loading')
+	initObservers(): CanPromise<void> {
+		const
+			content = <HTMLElement>this.content;
+
+		iObserveDom.observe(this, {
+			node: content,
+			childList: true,
+			characterData: true
+		});
+	}
+
+	/** @see iObserveDom.onDOMChange */
+	onDOMChange(records: MutationRecord[]): void {
+		records = iObserveDom.filterNodes(records, (node) => node instanceof HTMLElement);
+
+		const
+			changed = iObserveDom.getChangedNodes(records);
+
+		this.contentLengthStore += changed.addedNodes.length - changed.removedNodes.length;
+		iObserveDom.onDOMChange(this, records);
+	}
+
 	/**
 	 * Sets readiness for switching
 	 */
@@ -346,8 +372,8 @@ export default class bContentSwitcher extends iBlock {
 			content.children.length;
 
 		defferCheck();
-		this.on('contentMutation', defferCheck, {label: $$.initMutation});
-		this.createMutationObserver();
+		this.on('DOMChange', defferCheck, {label: $$.initMutation});
+		this.initObservers();
 	}
 
 	/**
@@ -388,52 +414,7 @@ export default class bContentSwitcher extends iBlock {
 		const defferRegister = this.lazy.createLazyFn(register, {label: $$.register});
 		defferRegister();
 
-		this.createMutationObserver();
-		this.on('contentMutation', defferRegister, {label: $$.initReady});
-	}
-
-	/**
-	 * Creates a mutation observer
-	 * @emits contentMutation()
-	 */
-	@wait('loading')
-	protected createMutationObserver(): CanPromise<void> {
-		const
-			content = <HTMLElement>this.content;
-
-		const nodesFilter = (rec: MutationRecord[]): FilteredMutations => {
-			let
-				added = [],
-				removed = [];
-
-			for (let i = 0; i < rec.length; i++) {
-				const r = rec[i];
-				added = added.concat([].slice.call(r.addedNodes));
-				removed = removed.concat([].slice.call(r.removedNodes));
-			}
-
-			const
-				filter = (n) => n instanceof HTMLElement;
-
-			return {
-				added: added.filter(filter),
-				removed: removed.filter(filter)
-			};
-		};
-
-		this.mutationObserver = new MutationObserver((rec) => {
-			const v = nodesFilter(rec);
-			this.contentLengthStore += v.added.length - v.removed.length;
-			this.emit('contentMutation');
-		});
-
-		this.mutationObserver.observe(content, {
-			childList: true,
-			characterData: false
-		});
-
-		this.async.worker(this.mutationObserver, {
-			label: $$.mutationObserver
-		});
+		this.initObservers();
+		this.on('DOMChange', defferRegister, {label: $$.initReady});
 	}
 }

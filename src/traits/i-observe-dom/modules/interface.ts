@@ -16,4 +16,9 @@ export interface Observer {
 	observer: MutationObserver;
 }
 
+export interface ChangedNodes {
+	addedNodes: Node[];
+	removedNodes: Node[];
+}
+
 export type Observers = Map<Element, Observer>;
