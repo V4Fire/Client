@@ -51,6 +51,8 @@ b-bottom-slide extends i-block
 		size 100%
 		overflow scroll
 		padding 16px
+		// Fixes render glitch in Chrome
+		useGPU()
 
 	&__content
 		width 100%
