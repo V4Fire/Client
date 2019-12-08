@@ -11,6 +11,19 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-beta.228 (2019-12-08)
+
+#### :rocket: New Feature
+
+* [Added `i-observe-dom` trait](https://github.com/V4Fire/Client/pull/146)
+
+#### :house: Internal
+
+* [`b-slider` component now implements `i-observe-dom`](https://github.com/V4Fire/Client/pull/146)
+* [`b-content-switcher` component now implements `i-observe-dom`](https://github.com/V4Fire/Client/pull/146)
+* [`b-slider` component now uses `v-resize` directive](https://github.com/V4Fire/Client/pull/146)
+* [Review observable APIs](https://github.com/V4Fire/Client/pull/146)
+
 ## v3.0.0-beta.227 (2019-12-06)
 
 #### :bug: Bug Fix
