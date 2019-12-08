@@ -6,10 +6,10 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import Async, { AsyncOpts } from 'core/async';
+import Async, { AsyncOptions } from 'core/async';
 import iBlock from 'super/i-block/i-block';
 
-export interface LazyParams extends AsyncOpts {
+export interface LazyParams extends AsyncOptions {
 	delay?: number;
 }
 

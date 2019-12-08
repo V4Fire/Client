@@ -10,8 +10,8 @@
 
 import symbolGenerator from 'core/symbol';
 
-import Async, { AsyncOpts, ClearOptsId, WrappedFunction, ProxyCb } from 'core/async';
-import log, { LogMessageOpts } from 'core/log';
+import Async, { AsyncOptions, ClearOptionsId, WrappedFunction, ProxyCb } from 'core/async';
+import log, { LogMessageOptions } from 'core/log';
 
 import { EventEmitter2 as EventEmitter } from 'eventemitter2';
 
@@ -53,7 +53,7 @@ import Field from 'super/i-block/modules/field';
 import Provide, { classesCache, Classes, Styles } from 'super/i-block/modules/provide';
 import State, { ConverterCallType } from 'super/i-block/modules/state';
 import Storage from 'super/i-block/modules/storage';
-import Sync, { AsyncWatchOpts } from 'super/i-block/modules/sync';
+import Sync, { AsyncWatchOptions } from 'super/i-block/modules/sync';
 
 import { statuses } from 'super/i-block/modules/const';
 import { eventFactory, Event, RemoteEvent } from 'super/i-block/modules/event';
@@ -62,7 +62,7 @@ import { activate, deactivate, onActivated, onDeactivated } from 'super/i-block/
 import {
 
 	Statuses,
-	WaitStatusOpts,
+	WaitStatusOptions,
 	Stage,
 	ParentMessage,
 	ComponentStatuses,
@@ -303,7 +303,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	 */
 	@p({cache: false, replace: false})
 	get componentStatus(): Statuses {
-		return this.shadowComponentStatusStore || <NonNullable<Statuses>>this.field.get('componentStatusStore');
+		return this.shadowComponentStatusStore || this.field.get<Statuses>('componentStatusStore')!;
 	}
 
 	/**
@@ -980,7 +980,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	watch<T = unknown>(
 		exprOrFn: string | ((this: this) => string),
 		cb: (this: this, n: T, o?: T) => void,
-		params?: AsyncWatchOpts
+		params?: AsyncWatchOptions
 	): void {
 		if (this.isFlyweight) {
 			return;
@@ -1160,7 +1160,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	 * @param [params] - async parameters
 	 */
 	@p({replace: false})
-	on<E = unknown, R = unknown>(event: string, cb: ProxyCb<E, R, any>, params?: AsyncOpts): void {
+	on<E = unknown, R = unknown>(event: string, cb: ProxyCb<E, R, any>, params?: AsyncOptions): void {
 		event = event.dasherize();
 
 		if (params) {
@@ -1180,7 +1180,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	 * @param [params] - async parameters
 	 */
 	@p({replace: false})
-	once<E = unknown, R = unknown>(event: string, cb: ProxyCb<E, R, any>, params?: AsyncOpts): void {
+	once<E = unknown, R = unknown>(event: string, cb: ProxyCb<E, R, any>, params?: AsyncOptions): void {
 		event = event.dasherize();
 
 		if (params) {
@@ -1199,7 +1199,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	 * @param [params] - async parameters
 	 */
 	@p({replace: false})
-	promisifyOnce<T = unknown>(event: string, params?: AsyncOpts): Promise<T> {
+	promisifyOnce<T = unknown>(event: string, params?: AsyncOptions): Promise<T> {
 		event = event.dasherize();
 		return this.async.promisifyOnce(this, event, params);
 	}
@@ -1216,10 +1216,10 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	 * @see Async.off
 	 * @param [params] - async parameters
 	 */
-	off(params: ClearOptsId<object>): void;
+	off(params: ClearOptionsId<object>): void;
 
 	@p({replace: false})
-	off(eventOrParams?: string | ClearOptsId<object>, cb?: Function): void {
+	off(eventOrParams?: string | ClearOptionsId<object>, cb?: Function): void {
 		if (!eventOrParams || Object.isString(eventOrParams)) {
 			const
 				e = eventOrParams;
@@ -1239,7 +1239,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	 * @param [params] - additional parameters:
 	 *   *) [params.defer] - if true, then the function will always return a promise
 	 */
-	waitStatus(status: Statuses, params?: WaitStatusOpts): Promise<void>;
+	waitStatus(status: Statuses, params?: WaitStatusOptions): Promise<void>;
 
 	/**
 	 * @see Async.promise
@@ -1248,13 +1248,13 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	 * @param [params] - additional parameters:
 	 *   *) [params.defer] - if true, then the function will always return a promise
 	 */
-	waitStatus<T = unknown>(status: Statuses, cb: (this: this) => T, params?: WaitStatusOpts): CanPromise<T>;
+	waitStatus<T = unknown>(status: Statuses, cb: (this: this) => T, params?: WaitStatusOptions): CanPromise<T>;
 
 	@p({replace: false})
 	waitStatus<T = unknown>(
 		status: Statuses,
-		cbOrParams?: Function | WaitStatusOpts,
-		params?: WaitStatusOpts
+		cbOrParams?: Function | WaitStatusOptions,
+		params?: WaitStatusOptions
 	): CanPromise<T> {
 		const
 			isFn = cbOrParams && Object.isFunction(cbOrParams),
@@ -1274,14 +1274,14 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	 * @param cb
 	 * @param [params] - async parameters
 	 */
-	nextTick(cb: WrappedFunction, params?: AsyncOpts): void;
+	nextTick(cb: WrappedFunction, params?: AsyncOptions): void;
 
 	/**
 	 * @see Async.promise
 	 * @param [params] - async parameters
 	 */
-	nextTick(params?: AsyncOpts): Promise<void>;
-	nextTick(cbOrParams?: WrappedFunction | AsyncOpts, params?: AsyncOpts): CanPromise<void> {
+	nextTick(params?: AsyncOptions): Promise<void>;
+	nextTick(cbOrParams?: WrappedFunction | AsyncOptions, params?: AsyncOptions): CanPromise<void> {
 		const
 			{async: $a} = this;
 
@@ -1563,7 +1563,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	 * @param [details]
 	 */
 	@p({replace: false})
-	protected log(ctxOrOpts: string | LogMessageOpts, ...details: unknown[]): void {
+	protected log(ctxOrOpts: string | LogMessageOptions, ...details: unknown[]): void {
 		let
 			context = ctxOrOpts,
 			logLevel;
@@ -1737,7 +1737,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	 * @param ref
 	 * @param [params] - async parameters
 	 */
-	protected waitRef<T = iBlock | Element | iBlock[] | Element[]>(ref: string, params?: AsyncOpts): Promise<T> {
+	protected waitRef<T = iBlock | Element | iBlock[] | Element[]>(ref: string, params?: AsyncOptions): Promise<T> {
 		let
 			that = <iBlock>this;
 

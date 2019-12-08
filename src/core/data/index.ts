@@ -12,7 +12,7 @@ import { EventEmitter2 as EventEmitter } from 'eventemitter2';
 
 import Then from 'core/then';
 import symbolGenerator from 'core/symbol';
-import Async, { AsyncCbOpts } from 'core/async';
+import Async, { AsyncCbOptions } from 'core/async';
 import IO, { Socket } from 'core/socket';
 import { select, SelectParams } from 'core/object';
 
@@ -24,7 +24,7 @@ import { attachMock } from 'core/data/middlewares';
 import request, {
 
 	globalOpts,
-	CreateRequestOpts,
+	CreateRequestOptions,
 	Middlewares,
 	MiddlewareParams,
 	CacheStrategy,
@@ -50,7 +50,7 @@ export {
 
 	globalOpts,
 	Socket,
-	CreateRequestOpts,
+	CreateRequestOptions,
 
 	Mocks,
 	Middlewares,
@@ -454,7 +454,7 @@ export default class Provider {
 	 * @param fn
 	 * @param [params]
 	 */
-	attachToSocket(fn: (socket: Socket) => void, params?: AsyncCbOpts<this>): void {
+	attachToSocket(fn: (socket: Socket) => void, params?: AsyncCbOptions<this>): void {
 		this.async.on(this.globalEvent, `${this.socketURL}Connect`, fn, params);
 		this.connection && this.connection.then(fn);
 	}
@@ -586,7 +586,7 @@ export default class Provider {
 	 * @param [query]
 	 * @param [opts]
 	 */
-	get<T = unknown>(query?: RequestQuery, opts?: CreateRequestOpts<T>): RequestResponse {
+	get<T = unknown>(query?: RequestQuery, opts?: CreateRequestOptions<T>): RequestResponse {
 		if (this.baseGetURL && !this.advURL) {
 			this.base(this.baseGetURL);
 		}
@@ -683,7 +683,7 @@ export default class Provider {
 	 * @param [query]
 	 * @param [opts]
 	 */
-	peek<T = unknown>(query?: RequestQuery, opts?: CreateRequestOpts<T>): RequestResponse {
+	peek<T = unknown>(query?: RequestQuery, opts?: CreateRequestOptions<T>): RequestResponse {
 		if (this.basePeekURL && !this.advURL) {
 			this.base(this.basePeekURL);
 		}
@@ -712,7 +712,7 @@ export default class Provider {
 	 * @param [body]
 	 * @param [opts]
 	 */
-	post<T = unknown>(body?: RequestBody, opts?: CreateRequestOpts<T>): RequestResponse {
+	post<T = unknown>(body?: RequestBody, opts?: CreateRequestOptions<T>): RequestResponse {
 		const
 			url = this.url(),
 			eventName = this.name(),
@@ -737,7 +737,7 @@ export default class Provider {
 	 * @param [body]
 	 * @param [opts]
 	 */
-	add<T = unknown>(body?: RequestBody, opts?: CreateRequestOpts<T>): RequestResponse {
+	add<T = unknown>(body?: RequestBody, opts?: CreateRequestOptions<T>): RequestResponse {
 		if (this.baseAddURL && !this.advURL) {
 			this.base(this.baseAddURL);
 		}
@@ -760,7 +760,7 @@ export default class Provider {
 	 * @param [body]
 	 * @param [opts]
 	 */
-	upd<T = unknown>(body?: RequestBody, opts?: CreateRequestOpts<T>): RequestResponse {
+	upd<T = unknown>(body?: RequestBody, opts?: CreateRequestOptions<T>): RequestResponse {
 		if (this.baseUpdURL && !this.advURL) {
 			this.base(this.baseUpdURL);
 		}
@@ -783,7 +783,7 @@ export default class Provider {
 	 * @param [body]
 	 * @param [opts]
 	 */
-	del<T = unknown>(body?: RequestBody, opts?: CreateRequestOpts<T>): RequestResponse {
+	del<T = unknown>(body?: RequestBody, opts?: CreateRequestOptions<T>): RequestResponse {
 		if (this.baseDelURL && !this.advURL) {
 			this.base(this.baseDelURL);
 		}
@@ -907,8 +907,8 @@ export default class Provider {
 	 */
 	protected mergeToOpts<A = unknown, B = unknown>(
 		method: ModelMethods,
-		opts: CreateRequestOpts<A>
-	): CreateRequestOpts<B> {
+		opts: CreateRequestOptions<A>
+	): CreateRequestOptions<B> {
 		opts = opts || {};
 
 		const

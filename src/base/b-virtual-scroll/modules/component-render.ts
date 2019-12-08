@@ -77,7 +77,7 @@ export default class ComponentRender {
 	}
 
 	/**
-	 * Link to the component `$createElement` method
+	 * Link to the component $createElement method
 	 */
 	protected get createElement(): bVirtualScroll['$createElement'] {
 		// @ts-ignore (access)
@@ -85,7 +85,7 @@ export default class ComponentRender {
 	}
 
 	/**
-	 * Link to the component `$refs`
+	 * Link to the component $refs
 	 */
 	protected get refs(): bVirtualScroll['$refs'] {
 		// @ts-ignore (access)

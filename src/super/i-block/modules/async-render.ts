@@ -30,7 +30,7 @@ export interface TaskDestructor {
 	(el: Node);
 }
 
-export interface TaskOpts<EL = unknown, I extends number = number, D = unknown> {
+export interface TaskOptions<EL = unknown, I extends number = number, D = unknown> {
 	group?: string;
 	weight?: number;
 	filter?: TaskFilter<EL, I, D>;
@@ -119,7 +119,7 @@ export default class AsyncRender {
 	 * @param slice - elements per chunk or [start position, elements per chunk]
 	 * @param [params]
 	 */
-	iterate(value: unknown, slice: number | [number, number], params: TaskOpts = {}): unknown[] {
+	iterate(value: unknown, slice: number | [number, number], params: TaskOptions = {}): unknown[] {
 		if (!value) {
 			return [];
 		}
@@ -384,7 +384,7 @@ export default class AsyncRender {
 	 * @param cb
 	 * @param [params]
 	 */
-	protected createTask(cb: (...args: unknown[]) => void, params: TaskOpts = {}): void {
+	protected createTask(cb: (...args: unknown[]) => void, params: TaskOptions = {}): void {
 		const task = {
 			weight: params.weight,
 			fn: this.async.proxy(() => {

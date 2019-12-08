@@ -8,10 +8,10 @@
 
 import Super, {
 
-	AsyncOpts,
-	AsyncCbOpts,
-	AsyncOnOpts,
-	ClearOptsId,
+	AsyncOptions,
+	AsyncCbOptions,
+	AsyncOnOptions,
+	ClearOptionsId,
 	Link as SuperLink,
 	ProxyCb,
 	isParams
@@ -19,24 +19,24 @@ import Super, {
 } from '@v4fire/core/core/async';
 
 export * from '@v4fire/core/core/async';
-export interface AsyncRequestAnimationFrameOpts<CTX extends object = Async> extends AsyncCbOpts<CTX> {
+export interface AsyncRequestAnimationFrameOptions<CTX extends object = Async> extends AsyncCbOptions<CTX> {
 	element?: Element;
 }
 
-export interface AsyncAnimationFrameOpts extends AsyncOpts {
+export interface AsyncAnimationFrameOptions extends AsyncOptions {
 	element?: Element;
 }
 
-export interface AsyncDnDOpts<R = unknown, CTX extends object = Async> extends AsyncOnOpts<CTX> {
-	onDragStart?: DnDCb<R, CTX> | DnDEventOpts<R, CTX>;
-	onDrag?: DnDCb<R, CTX> | DnDEventOpts<R, CTX>;
-	onDragEnd?: DnDCb<R, CTX> | DnDEventOpts<R, CTX>;
+export interface AsyncDnDOptions<R = unknown, CTX extends object = Async> extends AsyncOnOptions<CTX> {
+	onDragStart?: DnDCb<R, CTX> | DnDEventOptions<R, CTX>;
+	onDrag?: DnDCb<R, CTX> | DnDEventOptions<R, CTX>;
+	onDragEnd?: DnDCb<R, CTX> | DnDEventOptions<R, CTX>;
 }
 
 export type DnDCb<R = unknown, CTX extends object = Async> = Function | ((this: CTX, e: MouseEvent, el: Node) => R);
 export type AnimationFrameCb<R = unknown, CTX extends object = Async> = ProxyCb<number, R, CTX>;
 
-export interface DnDEventOpts<R = unknown, CTX extends object = Async> {
+export interface DnDEventOptions<R = unknown, CTX extends object = Async> {
 	capture?: boolean;
 	handler: DnDCb<R, CTX>;
 }
@@ -83,7 +83,7 @@ export default class Async<CTX extends object = Async<any>> extends Super<CTX> {
 	 */
 	requestAnimationFrame<T = unknown>(
 		fn: AnimationFrameCb<T, CTX>,
-		params: AsyncRequestAnimationFrameOpts<CTX>
+		params: AsyncRequestAnimationFrameOptions<CTX>
 	): Nullable<number>;
 
 	requestAnimationFrame<T>(fn: AnimationFrameCb<T, CTX>, p: any): Nullable<number> {
@@ -115,7 +115,7 @@ export default class Async<CTX extends object = Async<any>> extends Super<CTX> {
 	 *   *) [label] - label for the task
 	 *   *) [group] - group name for the task
 	 */
-	cancelAnimationFrame(params: ClearOptsId<number>): this;
+	cancelAnimationFrame(params: ClearOptionsId<number>): this;
 	cancelAnimationFrame(p: any): this {
 		return this.clearAnimationFrame(p);
 	}
@@ -132,7 +132,7 @@ export default class Async<CTX extends object = Async<any>> extends Super<CTX> {
 	 *   *) [label] - label for the task
 	 *   *) [group] - group name for the task
 	 */
-	clearAnimationFrame(params: ClearOptsId<number>): this;
+	clearAnimationFrame(params: ClearOptionsId<number>): this;
 	clearAnimationFrame(p: any): this {
 		return this
 			.clearAsync(p, this.linkNames.animationFrame)
@@ -151,7 +151,7 @@ export default class Async<CTX extends object = Async<any>> extends Super<CTX> {
 	 *   *) [label] - label for the task
 	 *   *) [group] - group name for the task
 	 */
-	muteAnimationFrame(params: ClearOptsId<number>): this;
+	muteAnimationFrame(params: ClearOptionsId<number>): this;
 	muteAnimationFrame(p: any): this {
 		return this.markAsync('muted', p, this.linkNames.animationFrame);
 	}
@@ -168,7 +168,7 @@ export default class Async<CTX extends object = Async<any>> extends Super<CTX> {
 	 *   *) [label] - label for the task
 	 *   *) [group] - group name for the task
 	 */
-	unmuteAnimationFrame(params: ClearOptsId<number>): this;
+	unmuteAnimationFrame(params: ClearOptionsId<number>): this;
 	unmuteAnimationFrame(p: any): this {
 		return this.markAsync('!muted', p, this.linkNames.animationFrame);
 	}
@@ -185,7 +185,7 @@ export default class Async<CTX extends object = Async<any>> extends Super<CTX> {
 	 *   *) [label] - label for the task
 	 *   *) [group] - group name for the task
 	 */
-	suspendAnimationFrame(params: ClearOptsId<number>): this;
+	suspendAnimationFrame(params: ClearOptionsId<number>): this;
 	suspendAnimationFrame(p: any): this {
 		return this.markAsync('paused', p, this.linkNames.animationFrame);
 	}
@@ -202,7 +202,7 @@ export default class Async<CTX extends object = Async<any>> extends Super<CTX> {
 	 *   *) [label] - label for the task
 	 *   *) [group] - group name for the task
 	 */
-	unsuspendAnimationFrame(params: ClearOptsId<number>): this;
+	unsuspendAnimationFrame(params: ClearOptionsId<number>): this;
 	unsuspendAnimationFrame(p: any): this {
 		return this.markAsync('!paused', p, this.linkNames.animationFrame);
 	}
@@ -220,7 +220,7 @@ export default class Async<CTX extends object = Async<any>> extends Super<CTX> {
 	 *   *) [label] - label for the task (previous task with the same label will be canceled)
 	 *   *) [group] - group name for the task
 	 */
-	animationFrame(params: AsyncAnimationFrameOpts): Promise<number>;
+	animationFrame(params: AsyncAnimationFrameOptions): Promise<number>;
 	animationFrame(p: any): Promise<number> {
 		const
 			isObj = Object.isObject(p);
@@ -255,13 +255,13 @@ export default class Async<CTX extends object = Async<any>> extends Super<CTX> {
 	 *   *) [onDrag]
 	 *   *) [onDragEnd]
 	 */
-	dnd<T = unknown>(el: Element, params: AsyncDnDOpts<T, CTX>): Nullable<string>;
-	dnd<T>(el: Element, params?: boolean | AsyncDnDOpts<T, CTX>): Nullable<string> {
+	dnd<T = unknown>(el: Element, params: AsyncDnDOptions<T, CTX>): Nullable<string>;
+	dnd<T>(el: Element, params?: boolean | AsyncDnDOptions<T, CTX>): Nullable<string> {
 		let
 			useCapture,
-			p!: AsyncDnDOpts<CTX> & AsyncCbOpts<CTX>;
+			p!: AsyncDnDOptions<CTX> & AsyncCbOptions<CTX>;
 
-		if (isParams<AsyncDnDOpts<T, CTX>>(params)) {
+		if (isParams<AsyncDnDOptions<T, CTX>>(params)) {
 			useCapture = params.options && params.options.capture;
 			p = <any>params;
 
@@ -315,14 +315,14 @@ export default class Async<CTX extends object = Async<any>> extends Super<CTX> {
 
 			let res;
 			if (p.onDragStart) {
-				res = (<DnDCb>((<DnDEventOpts>p.onDragStart).handler || p.onDragStart)).call(this, e, el);
+				res = (<DnDCb>((<DnDEventOptions>p.onDragStart).handler || p.onDragStart)).call(this, e, el);
 			}
 
 			const drag = (e) => {
 				e.preventDefault();
 
 				if (res !== false && p.onDrag) {
-					res = (<DnDCb>((<DnDEventOpts>p.onDrag).handler || p.onDrag)).call(this, e, el);
+					res = (<DnDCb>((<DnDEventOptions>p.onDrag).handler || p.onDrag)).call(this, e, el);
 				}
 			};
 
@@ -347,7 +347,7 @@ export default class Async<CTX extends object = Async<any>> extends Super<CTX> {
 				e.preventDefault();
 
 				if (res !== false && p.onDragEnd) {
-					res = (<DnDCb>((<DnDEventOpts>p.onDragEnd).handler || p.onDragEnd)).call(this, e, el);
+					res = (<DnDCb>((<DnDEventOptions>p.onDragEnd).handler || p.onDragEnd)).call(this, e, el);
 				}
 
 				for (let i = 0; i < links.length; i++) {

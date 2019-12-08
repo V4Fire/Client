@@ -193,7 +193,7 @@ export function onActivated<T extends iBlock>(component: T, force?: boolean): vo
 		// @ts-ignore (access)
 		{async: $a} = c;
 
-	if (c.isActivated) {
+	if (c.isActivated || !force && !c.activatedProp && !c.isInitializedOnce) {
 		return;
 	}
 

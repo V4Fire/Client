@@ -189,7 +189,7 @@ export function initMods<T extends iBlock>(component: T): ModsNTable {
 export function getWatchableMods<T extends iBlock>(component: T): Readonly<ModsNTable> {
 	const
 		o = {},
-		w = <NonNullable<ModsNTable>>component.field.get('watchModsStore'),
+		w = component.field.get<ModsNTable>('watchModsStore')!,
 		m = component.mods;
 
 	for (let keys = Object.keys(m), i = 0; i < keys.length; i++) {

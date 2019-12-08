@@ -14,7 +14,7 @@ import {
 	RequestBody,
 	ResponseType,
 	ResponseTypes,
-	CreateRequestOpts,
+	CreateRequestOptions,
 	MiddlewareParams
 
 } from 'core/request/interface';
@@ -76,7 +76,7 @@ export interface ExtraProvider {
 	provider?: string;
 	providerParams?: ProviderParams;
 	query?: RequestQuery;
-	request?: CreateRequestOpts;
+	request?: CreateRequestOptions;
 	as?: string;
 }
 

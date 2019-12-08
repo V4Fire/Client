@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { AsyncOpts } from 'core/async';
+import { AsyncOptions } from 'core/async';
 import symbolGenerator from 'core/symbol';
 
 import {
@@ -65,12 +65,12 @@ export default class InView extends Super {
 	protected readonly mutationObserver: MutationObserver;
 
 	/**
-	 * Map contains an elements that needs to be poll
+	 * Map of elements that needs to be poll
 	 */
 	protected readonly pollingElements: ObservableElementsThresholdMap = new Map();
 
 	/**
-	 * Contains an element position map
+	 * Map of element positions
 	 */
 	protected map: Dictionary<ObservableElementRect[]> = {};
 
@@ -94,7 +94,7 @@ export default class InView extends Super {
 			join: true
 		});
 
-		const recalculateDeffer = (opts?: AsyncOpts) => $a.setTimeout(() => this.recalculate(), RECALCULATE_TIMEOUT, {
+		const recalculateDeffer = (opts?: AsyncOptions) => $a.setTimeout(() => this.recalculate(), RECALCULATE_TIMEOUT, {
 			group: 'inView',
 			label: $$.recalculate,
 			join: true,

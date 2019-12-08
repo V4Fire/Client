@@ -9,17 +9,18 @@
 import Resize from 'core/component/directives/resize/resize';
 
 import { ComponentDriver } from 'core/component/engines';
-import { DirectiveOptions, DirectiveOptionsValue } from 'core/component/directives/resize/interface';
+import { DirectiveOptions, ObserverOptions } from 'core/component/directives/resize/interface';
 
 let ResizeInstance: Resize;
 
 export { ResizeInstance as Resize };
 
 ComponentDriver.directive('resize', {
-	inserted(el: HTMLElement, options: DirectiveOptions): void {
-		const params = buildParams(options);
+	inserted(el: HTMLElement, opts: DirectiveOptions): void {
+		const
+			p = getOpts(opts);
 
-		if (!params) {
+		if (!p) {
 			return;
 		}
 
@@ -27,13 +28,13 @@ ComponentDriver.directive('resize', {
 			ResizeInstance = new Resize();
 		}
 
-		ResizeInstance.observe(el, params);
+		ResizeInstance.observe(el, p);
 	},
 
-	update(el: HTMLElement, options: DirectiveOptions): void {
+	update(el: HTMLElement, opts: DirectiveOptions): void {
 		const
-			oldParams = buildParams(options),
-			newParams = buildParams(options);
+			oldParams = getOpts(opts),
+			newParams = getOpts(opts);
 
 		if (Object.fastCompare(oldParams, newParams)) {
 			return;
@@ -55,7 +56,7 @@ ComponentDriver.directive('resize', {
  * Returns a directive options
  * @param options
  */
-function buildParams({value, modifiers}: DirectiveOptions): CanUndef<DirectiveOptionsValue> {
+function getOpts({value, modifiers}: DirectiveOptions): CanUndef<ObserverOptions> {
 	if (!value) {
 		return;
 	}
@@ -71,11 +72,9 @@ function buildParams({value, modifiers}: DirectiveOptions): CanUndef<DirectiveOp
 	const
 		isNoMods = Object.keys(modifiers).length === 0;
 
-	const params: DirectiveOptionsValue = {
+	return {
 		watchWidth: isNoMods || modifiers.width,
 		watchHeight: isNoMods || modifiers.height,
 		...valueDict
 	};
-
-	return params;
 }

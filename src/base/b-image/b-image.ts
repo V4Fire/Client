@@ -7,6 +7,8 @@
  */
 
 import symbolGenerator from 'core/symbol';
+
+import { AsyncCtx } from 'core/async';
 import { getSrcSet } from 'core/html';
 
 import iProgress from 'traits/i-progress/i-progress';
@@ -97,7 +99,12 @@ export default class bImage extends iBlock implements iProgress, iVisible {
 	/** @inheritDoc */
 	static readonly mods: ModsDecl = {
 		...iProgress.mods,
-		...iVisible.mods
+		...iVisible.mods,
+
+		showError: [
+			'true',
+			'false'
+		]
 	};
 
 	/** @override */
@@ -111,10 +118,11 @@ export default class bImage extends iBlock implements iProgress, iVisible {
 	@wait('ready', {label: $$.initOverlay})
 	protected initOverlay(): CanPromise<void> {
 		const
-			tempSrc = <CanUndef<string>>this.tmp[this.src];
+			tmpSrc = <CanUndef<string>>this.tmp[this.src];
 
-		if (tempSrc) {
-			this.onImageLoaded(tempSrc);
+		if (tmpSrc) {
+			this.updateHeight(tmpSrc);
+			this.onImageLoaded(tmpSrc);
 			return;
 		}
 
@@ -135,9 +143,40 @@ export default class bImage extends iBlock implements iProgress, iVisible {
 			img.alt = this.alt;
 		}
 
+		this.updateHeight(img);
+
 		this.async
 			.promise(img.init, {label: $$.loadImage})
-			.then(() => this.onImageLoaded(img), this.onImageError);
+			.then(() => this.onImageLoaded(img), this.onError);
+	}
+
+	/**
+	 * Sets an image's height according to its ratio
+	 * @param img
+	 */
+	protected updateHeight(img: HTMLImageElement | string): void {
+		const
+			{img: imgRef} = this.$refs;
+
+		let
+			tmpPadding = this.tmp[`${this.src}-padding`];
+
+		if (!tmpPadding) {
+			if (this.ratio) {
+				tmpPadding = `${(1 / this.ratio) * 100}%`;
+
+			} else if (!Object.isString(img) && this.ratio !== 0) {
+				tmpPadding = `${(1 / this.computeRatio(img)) * 100}%`;
+
+			} else {
+				tmpPadding = '';
+			}
+		}
+
+		Object.assign(imgRef.style, tmpPadding ?
+			{paddingBottom: tmpPadding} :
+			{height: '100%'}
+		);
 	}
 
 	/**
@@ -165,7 +204,7 @@ export default class bImage extends iBlock implements iProgress, iVisible {
 			{img} = this.$refs;
 
 		if (img.style.backgroundImage) {
-			this.tmp[this.src] = img.style.backgroundImage;
+			this.tmp[this.src] = img[$$.img];
 			this.tmp[`${this.src}-padding`] = img.style.paddingBottom;
 		}
 
@@ -182,57 +221,40 @@ export default class bImage extends iBlock implements iProgress, iVisible {
 	 * Handler: image loaded
 	 *
 	 * @param img
-	 * @emits load
+	 * @emits loadSuccess()
 	 */
 	protected onImageLoaded(img: HTMLImageElement | string): void {
 		const
-			{img: imgRef} = this.$refs;
-
-		let
-			tmpPadding = this.tmp[`${this.src}-padding`];
+			{img: imgRef} = this.$refs,
+			cssImg = Object.isString(img) ? img : `url("${img.currentSrc}")`;
 
 		this.setMod('progress', false);
 		this.setMod('showError', false);
 
-		if (!tmpPadding) {
-			if (this.ratio) {
-				tmpPadding = `${(1 / this.ratio) * 100}%`;
+		imgRef[$$.img] = cssImg;
+		Object.assign(imgRef.style, {
+			backgroundImage: (<string[]>[]).concat(this.beforeImg || [], cssImg, this.afterImg || []).join(','),
+			backgroundSize: this.sizeType,
+			backgroundPosition: this.position
+		});
 
-			} else if (!Object.isString(img) && this.ratio !== 0) {
-				tmpPadding = `${(1 / this.computeRatio(img)) * 100}%`;
-
-			} else {
-				tmpPadding = '';
-			}
-		}
-
-		const
-			cssImg = Object.isString(img) ? img : `url("${img.currentSrc}")`;
-
-		Object.assign(imgRef.style,
-			{
-				backgroundImage: (<string[]>[]).concat(this.beforeImg || [], cssImg, this.afterImg || []).join(','),
-				backgroundSize: this.sizeType,
-				backgroundPosition: this.position
-			},
-
-			tmpPadding ?
-				{paddingBottom: tmpPadding} :
-				{height: '100%'}
-		);
-
-		this.emit('load');
+		this.emit('loadSuccess');
 	}
 
 	/**
 	 * Handler: image load error
 	 *
 	 * @param err
-	 * @emits loadError
+	 * @emits loadFail()
 	 */
-	protected onImageError(err: Error): void {
+	protected onError(err: CanUndef<Error | AsyncCtx>): void {
 		this.setMod('progress', false);
+
+		if (err && 'type' in err && err.type === 'clearAsync') {
+			return;
+		}
+
 		this.setMod('showError', true);
-		this.emitError('loadError', err);
+		this.emitError('loadFail', err);
 	}
 }

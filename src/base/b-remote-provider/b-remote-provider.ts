@@ -7,7 +7,7 @@
  */
 
 import symbolGenerator from 'core/symbol';
-import iData, { component, prop, RequestError } from 'super/i-data/i-data';
+import iData, { component, prop, RequestError, RetryRequestFn } from 'super/i-data/i-data';
 export * from 'super/i-data/i-data';
 
 export const
@@ -41,13 +41,16 @@ export default class bRemoteProvider<T extends object = Dictionary> extends iDat
 		this.syncDBWatcher(value);
 	}
 
-	/** @override */
-	protected onRequestError<T = unknown>(err: Error | RequestError, retry: () => Promise<CanUndef<T>>): void {
+	/**
+	 * @override
+	 * @emits error(err:Error | RequestError, retry: RetryRequestFn)
+	 */
+	protected onRequestError<T = unknown>(err: Error | RequestError, retry: RetryRequestFn): void {
 		const
 			l = this.$listeners;
 
 		if (!l.error && !l['on-error']) {
-			return super.onRequestError(err, retry);
+			return;
 		}
 
 		this.emitError('error', err, retry);

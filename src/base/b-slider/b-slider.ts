@@ -7,7 +7,6 @@
  */
 
 import symbolGenerator from 'core/symbol';
-import { Size } from 'core/component/directives/resize/interface';
 
 import iObserveDom from 'traits/i-observe-dom/i-observe-dom';
 import iData, { component, prop, field, system, hook, watch, wait, p } from 'super/i-data/i-data';

@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import Async, { AsyncOpts } from 'core/async';
+import Async, { AsyncOptions } from 'core/async';
 import iBlock from 'super/i-block/i-block';
 import Lfc from 'super/i-block/modules/lfc';
 import Field from 'super/i-block/modules/field';
@@ -14,8 +14,8 @@ import Field from 'super/i-block/modules/field';
 import { statuses } from 'super/i-block/modules/const';
 import { SyncLinkCache, WatchOptions, ComponentMeta } from 'core/component';
 
-export type AsyncWatchOpts =
-	WatchOptions & AsyncOpts;
+export type AsyncWatchOptions =
+	WatchOptions & AsyncOptions;
 
 export interface LinkWrapper<V = unknown, R = unknown> {
 	(value: V, oldValue?: V): R;
@@ -114,21 +114,21 @@ export default class Sync {
 	 * @see Async.worker
 	 * @param [paramsOrWrapper] - additional parameters or wrapper
 	 */
-	link<D = unknown, R = D>(paramsOrWrapper?: AsyncWatchOpts | LinkWrapper<D, R>): CanUndef<R>;
+	link<D = unknown, R = D>(paramsOrWrapper?: AsyncWatchOptions | LinkWrapper<D, R>): CanUndef<R>;
 
 	/**
 	 * @see Async.worker
 	 * @param params - additional parameters
 	 * @param [wrapper]
 	 */
-	link<D = unknown, R = D>(params: AsyncWatchOpts, wrapper?: LinkWrapper<D, R>): CanUndef<R>;
+	link<D = unknown, R = D>(params: AsyncWatchOptions, wrapper?: LinkWrapper<D, R>): CanUndef<R>;
 
 	/**
 	 * @see Async.worker
 	 * @param field
 	 * @param [paramsOrWrapper]
 	 */
-	link<D = unknown, R = D>(field: string, paramsOrWrapper?: AsyncWatchOpts | LinkWrapper<D, R>): CanUndef<R>;
+	link<D = unknown, R = D>(field: string, paramsOrWrapper?: AsyncWatchOptions | LinkWrapper<D, R>): CanUndef<R>;
 
 	/**
 	 * @see Async.worker
@@ -136,10 +136,10 @@ export default class Sync {
 	 * @param params
 	 * @param [wrapper]
 	 */
-	link<D = unknown, R = D>(field: string, params: AsyncWatchOpts, wrapper?: LinkWrapper<D, R>): CanUndef<R>;
+	link<D = unknown, R = D>(field: string, params: AsyncWatchOptions, wrapper?: LinkWrapper<D, R>): CanUndef<R>;
 	link<D = unknown, R = D>(
-		field?: string | AsyncWatchOpts | LinkWrapper<D>,
-		params?: AsyncWatchOpts | LinkWrapper<D>,
+		field?: string | AsyncWatchOptions | LinkWrapper<D>,
+		params?: AsyncWatchOptions | LinkWrapper<D>,
 		wrapper?: LinkWrapper<D>
 	): CanUndef<R> {
 		const
@@ -157,7 +157,7 @@ export default class Sync {
 
 		if (!field || !Object.isString(field)) {
 			wrapper = <LinkWrapper<D>>params;
-			params = <AsyncWatchOpts>field;
+			params = <AsyncWatchOptions>field;
 			field = `${path.replace(storeRgxp, '')}Prop`;
 			isProp = true;
 
@@ -267,13 +267,13 @@ export default class Sync {
 	 */
 	object<T = unknown>(
 		path: string,
-		params: AsyncWatchOpts,
+		params: AsyncWatchOptions,
 		fields: SyncObjectFields<T>
 	): Dictionary;
 
 	object<T>(
 		path: string,
-		params: AsyncWatchOpts | SyncObjectFields<T>,
+		params: AsyncWatchOptions | SyncObjectFields<T>,
 		fields?: SyncObjectFields<T>
 	): Dictionary {
 		const
@@ -349,7 +349,7 @@ export default class Sync {
 						}
 
 						sync(val, oldVal);
-					}, <AsyncWatchOpts>params);
+					}, <AsyncWatchOptions>params);
 
 				} else {
 					const
@@ -365,7 +365,7 @@ export default class Sync {
 						}
 
 						sync(val, oldVal);
-					}, <AsyncWatchOpts>params);
+					}, <AsyncWatchOptions>params);
 				}
 			}
 
@@ -489,8 +489,8 @@ export default class Sync {
 	mod<D = unknown, R = unknown>(
 		mod: string,
 		field: string,
-		converter: LinkWrapper<D, R> | Function | AsyncWatchOpts = (v) => v != null ? Boolean(v) : undefined,
-		params?: AsyncWatchOpts
+		converter: LinkWrapper<D, R> | Function | AsyncWatchOptions = (v) => v != null ? Boolean(v) : undefined,
+		params?: AsyncWatchOptions
 	): void {
 		mod = mod.camelize(false);
 

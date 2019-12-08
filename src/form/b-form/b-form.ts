@@ -29,7 +29,7 @@ import iData, {
 
 	ModelMethods,
 	RequestFilter,
-	CreateRequestOpts,
+	CreateRequestOptions,
 
 	ModsDecl
 
@@ -84,7 +84,7 @@ export default class bForm<T extends object = Dictionary> extends iData<T> {
 	 * Form request parameters
 	 */
 	@prop(Object)
-	readonly paramsProp: CreateRequestOpts = {};
+	readonly paramsProp: CreateRequestOptions = {};
 
 	/**
 	 * If true, then form elements will be cached
@@ -97,7 +97,7 @@ export default class bForm<T extends object = Dictionary> extends iData<T> {
 	 */
 	// tslint:disable-next-line:prefer-object-spread
 	@field<bForm>((o) => o.sync.link((val) => Object.assign(o.params || {}, val)))
-	params!: CreateRequestOpts;
+	params!: CreateRequestOptions;
 
 	/** @inheritDoc */
 	static readonly mods: ModsDecl = {
@@ -268,7 +268,7 @@ export default class bForm<T extends object = Dictionary> extends iData<T> {
 			this.emit('validationSuccess');
 
 		} else {
-			this.emit('validationFail', failedValidation);
+			this.emitError('validationFail', failedValidation);
 		}
 
 		this.emit('validationEnd', valid, failedValidation);
@@ -420,7 +420,7 @@ export default class bForm<T extends object = Dictionary> extends iData<T> {
 		}
 
 		if (formErr) {
-			this.emit('submitFail', formErr, submitCtx);
+			this.emitError('submitFail', formErr, submitCtx);
 			throw formErr;
 		}
 
