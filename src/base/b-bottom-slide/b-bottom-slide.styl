@@ -1,0 +1,108 @@
+/*!
+ * V4Fire Client Core
+ * https://github.com/V4Fire/Client
+ *
+ * Released under the MIT license
+ * https://github.com/V4Fire/Client/blob/master/LICENSE
+ */
+
+@import "super/i-block/i-block.styl"
+
+$p = {
+	bgColor: c(White)
+	togglerBgColor: c(SashaGrey)
+	overlayBgColor: c(Black)
+	transformTransitionDuration: 0.15s
+	transitionTimingFn: cubic-bezier(0, 0, 0.64, 1.1)
+	overlayTransitionDuration: 0.15s
+}
+
+b-bottom-slide extends i-block
+	zIndex(overall)
+
+	&__window
+		-webkit-overflow-scrolling touch
+		fixed top 100% left 0
+		zIndex(overall)
+
+		size 100%
+
+		border-top-left-radius 10px
+		border-top-right-radius 10px
+
+		background-color $p.bgColor
+		overscroll-behavior none
+
+		will-change transform
+		transition transform $p.transitionTimingFn $p.transformTransitionDuration
+		useGPU()
+
+	&__header
+		display flex
+		justify-content center
+		align-items center
+		size 100% 24px
+
+		border-radius 12px
+		background-color $p.bgColor
+
+	&__view
+		box-sizing border-box
+		size 100%
+		overflow scroll
+		padding 16px
+
+	&__content
+		width 100%
+		overflow hidden
+
+	&__overlay
+		fixed left 0 top 0
+		zIndex(overall)
+
+		size 100%
+		visibility hidden
+
+		opacity 0
+		background-color $p.overlayBgColor
+
+		will-change opacity
+		transition opacity 0.3s
+
+	&__trigger
+		size 100% 1px
+
+	&__toggler
+		size 24px 4px
+		border-radius 100px
+		background-color $p.togglerBgColor
+
+	&_hidden_true
+		visibility hidden
+		transition visibility 0.1s 0.3s
+
+	&_hidden_true &__overlay
+		visibility hidden
+		opacity 0
+		transition opacity $p.overlayTransitionDuration, visibility $p.overlayTransitionDuration
+
+	&_opened_true &__overlay
+		visibility visible
+
+	&-fullscreen-moving-true
+		pointer-events none
+
+	&-fullscreen-moving-true &__view
+		pointer-events auto
+
+	&_events_false &__overlay
+		pointer-events none
+
+	&_stick_false ^[0]
+		&__window
+		&__overlay
+			transition none
+
+	&_height-mode_content ^[0]
+		&__view
+			height auto
