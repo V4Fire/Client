@@ -283,7 +283,7 @@ export default class bContentSwitcher extends iBlock implements iObserveDom {
 		iObserveDom.observe(this, {
 			node: content,
 			childList: true,
-			characterData: true
+			characterData: false
 		});
 	}
 
