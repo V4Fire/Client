@@ -360,9 +360,9 @@ export default class bSlider<T extends object = Dictionary> extends iData<T> imp
 		return false;
 	}
 
-	/** @see iObserveDom.initObservers */
+	/** @see iObserveDom.initDOMObservers */
 	@hook('mounted')
-	initObservers(): void {
+	initDOMObservers(): void {
 		const
 			{content} = this;
 
@@ -480,7 +480,7 @@ export default class bSlider<T extends object = Dictionary> extends iData<T> imp
 
 		if (this.isSlider) {
 			this.async.on(document, 'scroll', () => this.scrolling = true, label);
-			this.initObservers();
+			this.initDOMObservers();
 
 		} else {
 			this.async.off(label);

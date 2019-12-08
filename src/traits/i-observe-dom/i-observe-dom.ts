@@ -158,7 +158,7 @@ export default abstract class iObserveDom {
 	/**
 	 * Initializes observers
 	 */
-	abstract initObservers(): void;
+	abstract initDOMObservers(): void;
 
 	/**
 	 * Handler: DOM tree was changed

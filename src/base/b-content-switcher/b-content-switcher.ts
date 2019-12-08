@@ -280,9 +280,9 @@ export default class bContentSwitcher extends iBlock implements iObserveDom {
 		return true;
 	}
 
-	/** @see iObserveDom.initObservers */
+	/** @see iObserveDom.initDOMObservers */
 	@wait('loading')
-	initObservers(): CanPromise<void> {
+	initDOMObservers(): CanPromise<void> {
 		const
 			content = <HTMLElement>this.content;
 
@@ -373,7 +373,7 @@ export default class bContentSwitcher extends iBlock implements iObserveDom {
 
 		defferCheck();
 		this.on('DOMChange', defferCheck, {label: $$.initMutation});
-		this.initObservers();
+		this.initDOMObservers();
 	}
 
 	/**
@@ -414,7 +414,7 @@ export default class bContentSwitcher extends iBlock implements iObserveDom {
 		const defferRegister = this.lazy.createLazyFn(register, {label: $$.register});
 		defferRegister();
 
-		this.initObservers();
+		this.initDOMObservers();
 		this.on('DOMChange', defferRegister, {label: $$.initReady});
 	}
 }
