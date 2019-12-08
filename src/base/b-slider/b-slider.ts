@@ -7,7 +7,11 @@
  */
 
 import symbolGenerator from 'core/symbol';
+import { Size } from 'core/component/directives/resize/interface';
+
+import iObserveDom from 'traits/i-observe-dom/i-observe-dom';
 import iData, { component, prop, field, system, hook, watch, wait, p } from 'super/i-data/i-data';
+
 export * from 'super/i-data/i-data';
 
 export interface SlideRect extends ClientRect {
@@ -42,7 +46,7 @@ export type AlignType = keyof typeof alignTypes;
 export type Mode = keyof typeof sliderModes;
 
 @component()
-export default class bSlider<T extends object = Dictionary> extends iData<T> {
+export default class bSlider<T extends object = Dictionary> extends iData<T> implements iObserveDom {
 	/**
 	 * Slider mode
 	 *   *) scroll - scroll implementation
@@ -366,6 +370,11 @@ export default class bSlider<T extends object = Dictionary> extends iData<T> {
 		return false;
 	}
 
+	/** @see iObserveDom.onDOMChange */
+	onDOMChange(): void {
+		this.syncStateDefer();
+	}
+
 	/**
 	 * Generates or returns an option key for v-for
 	 *
@@ -415,7 +424,6 @@ export default class bSlider<T extends object = Dictionary> extends iData<T> {
 	 * Synchronizes the slider state (deferred version)
 	 * @emits syncState()
 	 */
-	@watch(['?window:resize', ':updateState'])
 	@wait('ready')
 	protected async syncStateDefer(): Promise<void> {
 		if (!this.isSlider) {
@@ -472,24 +480,17 @@ export default class bSlider<T extends object = Dictionary> extends iData<T> {
 
 	/**
 	 * Initializes observers
-	 * @emits updateState()
+	 * @emits DOMContentUpdate()
 	 */
 	@hook('mounted')
 	protected initObservers(): void {
 		const
-			{observers, content} = this;
+			{content} = this;
 
-		if (!observers.mutation && content) {
-			observers.mutation = new MutationObserver(() => {
-				this.emit('updateState');
-			});
-
-			observers.mutation.observe(content, {
+		if (content) {
+			iObserveDom.observe(this, {
+				node: content,
 				childList: true
-			});
-
-			this.async.worker(observers.mutation, {
-				label: $$.mutationObserver
 			});
 		}
 	}

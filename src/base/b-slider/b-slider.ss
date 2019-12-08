@@ -39,7 +39,10 @@
 			v-if = isSlider |
 			${windowEvents}
 		.
-			< .&__view ref = view
+			< .&__view &
+				ref = view |
+				v-resize = syncStateDefer
+			.
 				< .&__view-content ref = content
 					+= content
 
@@ -47,7 +50,7 @@
 			< .&__view-content ref = view
 				< .&__fake-view-content &
 					v-if = dynamicHeight |
-					ref = fake |
+					ref = fake
 				.
 					+= content
 
