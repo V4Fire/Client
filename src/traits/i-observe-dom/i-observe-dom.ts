@@ -9,9 +9,9 @@
 import symbolGenerator from 'core/symbol';
 import iBlock from 'super/i-block/i-block';
 
-import { ObserveOptions, Observer, Observers, ChangedNodes } from 'traits/i-observe-dom/modules/interface';
+import { ObserveOptions, Observer, Observers, ChangedNodes } from 'traits/i-observe-dom/interface';
 
-export * from 'traits/i-observe-dom/modules/interface';
+export * from 'traits/i-observe-dom/interface';
 
 export const
 	$$ = symbolGenerator();
