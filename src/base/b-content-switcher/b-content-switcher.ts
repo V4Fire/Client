@@ -150,12 +150,6 @@ export default class bContentSwitcher extends iBlock implements iObserveDom {
 	protected semaphoreReadyMap!: Map<iBlock, boolean>;
 
 	/**
-	 * Mutation observer instance
-	 */
-	@system()
-	protected mutationObserver: CanUndef<MutationObserver>;
-
-	/**
 	 * Number of DOM nodes within a content block
 	 */
 	@system()
