@@ -298,15 +298,6 @@ export default class bSlider<T extends object = Dictionary> extends iData<T> imp
 	protected swiping: boolean = true;
 
 	/**
-	 * Observers store
-	 */
-	@system()
-	protected observers: {
-		mutation?: MutationObserver;
-		resize?: ResizeObserver;
-	} = {};
-
-	/**
 	 * Switches to the specified slide
 	 *
 	 * @param index - slide index
@@ -367,6 +358,20 @@ export default class bSlider<T extends object = Dictionary> extends iData<T> imp
 		}
 
 		return false;
+	}
+
+	/** @see iObserveDom.initObservers */
+	@hook('mounted')
+	initObservers(): void {
+		const
+			{content} = this;
+
+		if (content) {
+			iObserveDom.observe(this, {
+				node: content,
+				childList: true
+			});
+		}
 	}
 
 	/** @see iObserveDom.onDOMChange */
@@ -469,28 +474,16 @@ export default class bSlider<T extends object = Dictionary> extends iData<T> imp
 			label: $$.setScrolling
 		};
 
+		const
+			{content} = this.$refs;
+
 		if (this.isSlider) {
 			this.async.on(document, 'scroll', () => this.scrolling = true, label);
+			this.initObservers();
 
 		} else {
 			this.async.off(label);
-		}
-	}
-
-	/**
-	 * Initializes observers
-	 * @emits DOMContentUpdate()
-	 */
-	@hook('mounted')
-	protected initObservers(): void {
-		const
-			{content} = this;
-
-		if (content) {
-			iObserveDom.observe(this, {
-				node: content,
-				childList: true
-			});
+			content && iObserveDom.unobserve(this, content);
 		}
 	}
 

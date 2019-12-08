@@ -114,6 +114,11 @@ export default abstract class iObserveDom {
 	}
 
 	/**
+	 * Initializes observers
+	 */
+	abstract initObservers(): void;
+
+	/**
 	 * Handler: DOM tree was changed
 	 *
 	 * @param records
