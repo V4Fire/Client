@@ -298,9 +298,9 @@ export default class bContentSwitcher extends iBlock implements iObserveDom {
 		records = iObserveDom.filterNodes(records, (node) => node instanceof HTMLElement);
 
 		const
-			changed = iObserveDom.getChangedNodes(records);
+			{addedNodes, removedNodes} = iObserveDom.getChangedNodes(records);
 
-		this.contentLengthStore += changed.addedNodes.length - changed.removedNodes.length;
+		this.contentLengthStore += addedNodes.length - removedNodes.length;
 		iObserveDom.onDOMChange(this, records);
 	}
 

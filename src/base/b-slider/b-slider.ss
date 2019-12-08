@@ -41,7 +41,7 @@
 		.
 			< .&__view &
 				ref = view |
-				v-resize = isSlider ? syncStateDefer : undefined
+				v-resize.width = isSlider ? syncStateDefer : undefined
 			.
 				< .&__view-content ref = content
 					+= content

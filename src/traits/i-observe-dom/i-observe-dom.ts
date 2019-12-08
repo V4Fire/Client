@@ -18,7 +18,7 @@ export const
 
 export default abstract class iObserveDom {
 	/**
-	 * Starts observe the specified element
+	 * Starts to observe DOM changes for the specified element
 	 *
 	 * @param component
 	 * @param options
@@ -36,7 +36,7 @@ export default abstract class iObserveDom {
 	}
 
 	/**
-	 * Stops observing the specified element
+	 * Stops to observe the specified element
 	 *
 	 * @param component
 	 * @param node
@@ -73,7 +73,7 @@ export default abstract class iObserveDom {
 	}
 
 	/**
-	 * Returns added and removed nodes
+	 * Returns changed nodes
 	 * @param records
 	 */
 	static getChangedNodes(records: MutationRecord[]): ChangedNodes {
