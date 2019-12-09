@@ -7,6 +7,8 @@
  */
 
 import symbolGenerator from 'core/symbol';
+
+import { AsyncCtx } from 'core/async';
 import { getSrcSet } from 'core/html';
 
 import iProgress from 'traits/i-progress/i-progress';
@@ -202,7 +204,7 @@ export default class bImage extends iBlock implements iProgress, iVisible {
 			{img} = this.$refs;
 
 		if (img.style.backgroundImage) {
-			this.tmp[this.src] = img.style.backgroundImage;
+			this.tmp[this.src] = img[$$.img];
 			this.tmp[`${this.src}-padding`] = img.style.paddingBottom;
 		}
 
@@ -229,6 +231,7 @@ export default class bImage extends iBlock implements iProgress, iVisible {
 		this.setMod('progress', false);
 		this.setMod('showError', false);
 
+		imgRef[$$.img] = cssImg;
 		Object.assign(imgRef.style, {
 			backgroundImage: (<string[]>[]).concat(this.beforeImg || [], cssImg, this.afterImg || []).join(','),
 			backgroundSize: this.sizeType,
@@ -244,11 +247,14 @@ export default class bImage extends iBlock implements iProgress, iVisible {
 	 * @param err
 	 * @emits loadFail()
 	 */
-	protected onError(err: Error): void {
+	protected onError(err: CanUndef<Error | AsyncCtx>): void {
 		this.setMod('progress', false);
+
+		if (err && 'type' in err && err.type === 'clearAsync') {
+			return;
+		}
+
 		this.setMod('showError', true);
 		this.emitError('loadFail', err);
 	}
 }
-
-// < b-image @error
