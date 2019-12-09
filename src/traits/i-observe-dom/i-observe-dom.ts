@@ -83,11 +83,8 @@ export default abstract class iObserveDom {
 		};
 
 		for (let i = 0; i < records.length; i++) {
-			const
-				record = records[i];
-
-			res.addedNodes = res.addedNodes.concat([].slice.call(record.addedNodes));
-			res.removedNodes = res.removedNodes.concat([].slice.call(record.removedNodes));
+			res.addedNodes = res.addedNodes.concat([].slice.call(records[i].addedNodes));
+			res.removedNodes = res.removedNodes.concat([].slice.call(records[i].removedNodes));
 		}
 
 		res.addedNodes = [].union(res.addedNodes);
