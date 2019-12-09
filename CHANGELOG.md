@@ -11,7 +11,13 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v3.0.0-beta.228 (2019-12-06)
+## v3.0.0-beta.229 (2019-12-09)
+
+#### :bug: Bug Fix
+
+* Fixed `AsyncRender` destructors
+
+## v3.0.0-beta.228 (2019-12-09)
 
 #### :bug: Bug Fix
 
