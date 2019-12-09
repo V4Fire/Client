@@ -11,6 +11,13 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-beta.228 (2019-12-06)
+
+#### :bug: Bug Fix
+
+* Fixed `bCheckbox` legacy value logic
+* Fixed `bCheckbox` change events
+
 ## v3.0.0-beta.227 (2019-12-06)
 
 #### :bug: Bug Fix
