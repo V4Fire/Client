@@ -16,6 +16,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### :bug: Bug Fix
 
 * Fixed `AsyncRender` destructors
+* Marked `bRemoteProvider.content` as non-cacheable
 
 ## v3.0.0-beta.228 (2019-12-09)
 
