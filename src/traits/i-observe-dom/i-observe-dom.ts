@@ -131,9 +131,7 @@ export default abstract class iObserveDom {
 			label = iObserveDom.getObserverKey();
 
 		const observer = new MutationObserver((records) => {
-			$a.requestIdleCallback(() => {
-				component.onDOMChange(records, options);
-			}, {label});
+			component.onDOMChange(records, options);
 		});
 
 		observer.observe(node, options);
