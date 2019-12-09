@@ -11,11 +11,6 @@
 const
 	$C = require('collection.js'),
 	stylus = require('stylus'),
-	path = require('upath'),
-	fs = require('fs');
-
-const
-	{src} = require('config'),
 	{config} = require('@pzlr/build-core');
 
 let
@@ -207,26 +202,6 @@ module.exports = function (style) {
 			}
 
 			return hue ? $C(DS).get(`colors.${hue}${id !== undefined ? `.${id}` : ''}`) : undefined;
-		}
-	);
-
-	/**
-	 * Returns an icon CSS string by the specified name
-	 *
-	 * @param {string} string - icon name
-	 * @returns {!Object}
-	 */
-	style.define(
-		'getDSIcon',
-		({string}) => {
-			const
-				filePath = path.join(src.cwd(), 'node_modules', config.designSystem, 'icons', `${string}.svg`);
-
-			const
-				svgContent = fs.readFileSync(filePath, 'utf8'),
-				svgCssString = encodeURIComponent(svgContent.replace(/\n/gm, ''));
-
-			return stylus.utils.coerce(`data:image/svg+xml,${svgCssString}`);
 		}
 	);
 };
