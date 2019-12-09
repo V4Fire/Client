@@ -283,8 +283,7 @@ export default abstract class iStaticPage<
 	 * @param locale
 	 */
 	@watch(['localeStore', 'globalEvent:i18n.setLocale'])
-	@wait({defer: true, label: $$.syncLocaleWatcher})
-	protected async syncLocaleWatcher(locale: string): Promise<void> {
+	protected syncLocaleWatcher(locale: string): void {
 		if (this.locale === locale) {
 			return;
 		}

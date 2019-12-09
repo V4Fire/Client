@@ -217,7 +217,7 @@ export default class bForm<T extends object = Dictionary> extends iData<T> {
 	 * @emits validationFail(failedValidation: ValidationError)
 	 * @emits validationEnd(result: boolean, failedValidation: CanUndef<ValidationError>)
 	 */
-	@wait('ready', {label: $$.validate, defer: true})
+	@wait('ready', {defer: true, label: $$.validate})
 	async validate(params: ValidateParams = {}): Promise<iInput[] | false> {
 		this.emit('validationStart');
 
@@ -282,7 +282,7 @@ export default class bForm<T extends object = Dictionary> extends iData<T> {
 	 * @emits submitSuccess(result: T, ctx: SubmitCtx)
 	 * @emits submitFail(err: Error, ctx: SubmitCtx)
 	 */
-	@wait('ready', {label: $$.submit, defer: true})
+	@wait('ready', {defer: true, label: $$.submit})
 	async submit(): Promise<void> {
 		const
 			start = Date.now(),

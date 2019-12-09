@@ -206,7 +206,7 @@ export default class bScroll extends iBlock implements iVisible {
 	 * Calculates the scroll area and returns it size
 	 * @param [side] - scroll side
 	 */
-	@wait('ready', {label: $$.calcScroll, defer: true})
+	@wait('ready', {defer: true, label: $$.calcScroll})
 	async calcScroll(side?: ScrollSide): Promise<ScrollSize> {
 		const
 			el = <HTMLElement>this.$el,
