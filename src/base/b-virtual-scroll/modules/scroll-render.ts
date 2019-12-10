@@ -832,28 +832,29 @@ export default class ScrollRender {
 	 * Fixes the component container height
 	 */
 	protected fixSize(): void {
+		const
+			{columns, sizeProp, items} = this;
+
 		let
-			lastItemHeight = 0,
+			lastItemSize = 0,
 			totalSize = 0,
 			itemsWithData = 0;
 
-		for (let i = 0; i < this.items.length; i++) {
-			const item = this.items[i];
+		for (let i = 0; i < items.length; i++) {
+			const item = items[i];
 
 			if (item.data) {
-				totalSize += item[this.sizeProp];
-				lastItemHeight = item[this.sizeProp];
+				totalSize += item[sizeProp];
+				lastItemSize = item[sizeProp];
 				itemsWithData++;
 			}
 		}
 
-		if (itemsWithData % this.columns > 0) {
-			const
-				additionalHeight = (itemsWithData % this.columns) * lastItemHeight;
-
-			totalSize += additionalHeight;
+		if (itemsWithData % columns > 0) {
+			totalSize += ((itemsWithData - (itemsWithData % columns) + columns) - itemsWithData) * lastItemSize;
 		}
 
+		this.refs.container.style[sizeProp] = totalSize.px;
 		this.refs.container.style[this.sizeProp] = totalSize.px;
 	}
 
