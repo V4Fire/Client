@@ -855,7 +855,6 @@ export default class ScrollRender {
 		}
 
 		this.refs.container.style[sizeProp] = totalSize.px;
-		this.refs.container.style[this.sizeProp] = totalSize.px;
 	}
 
 	/**
