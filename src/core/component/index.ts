@@ -632,6 +632,10 @@ export function component(params?: ComponentParams): Function {
 														parent = isTemplateParent ? vnode.elm.parentNode : vnode.elm,
 														baseHook = ctx.hook;
 
+													if (!parent) {
+														return [];
+													}
+
 													ctx.hook = 'beforeUpdate';
 													ctx.renderGroup = p.renderGroup;
 
