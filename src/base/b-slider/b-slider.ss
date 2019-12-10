@@ -25,10 +25,14 @@
 					v-for = (el, i) in optionsIterator ? optionsIterator(options, self) : options |
 					:key = getOptionKey(el, i)
 				.
+					+= self.slot('beforeComponents')
+
 					< component.&__option &
 						:is = option |
 						:v-attrs = Object.isFunction(optionProps) ? optionProps(el, i, getOptionKey(el, i)) : optionProps
 					.
+
+					+= self.slot('afterComponents')
 
 			< template v-else
 				+= self.slot()
