@@ -11,6 +11,13 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+
+## v3.0.0-beta.230 (2019-12-10)
+
+#### :rocket: New Feature
+
+* Added `beforeComponents` and `afterComponents` slots to `b-slider` component
+
 ## v3.0.0-beta.229 (2019-12-10)
 
 #### :bug: Bug Fix
