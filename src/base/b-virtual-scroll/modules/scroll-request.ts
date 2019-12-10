@@ -153,6 +153,8 @@ export default class ScrollRequest {
 			// @ts-ignore (access)
 			params = <Dictionary>(component.getDefaultRequestParams('get') || [])[0];
 
+		Object.assign(params, component.requestQuery?.(getRequestParams(this, this.scrollRender))?.get);
+
 		return component.get(params)
 			.then((data) => {
 				if (!data) {
