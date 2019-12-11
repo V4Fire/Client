@@ -26,13 +26,13 @@ export default abstract class iObserveDOM {
 	static observe<T extends iBlock>(component: T & iObserveDOM, options: ObserveOptions): void {
 		const
 			{node} = options,
-			observers = iObserveDOM.getObserversMap(component);
+			observers = this.getObserversMap(component);
 
 		if (observers.has(node)) {
-			iObserveDOM.unobserve(component, node);
+			this.unobserve(component, node);
 		}
 
-		observers.set(node, iObserveDOM.createObserver(component, options));
+		observers.set(node, this.createObserver(component, options));
 	}
 
 	/**
@@ -45,7 +45,7 @@ export default abstract class iObserveDOM {
 		const
 			// @ts-ignore (access)
 			{async: $a} = component,
-			observers = iObserveDOM.getObserversMap(component);
+			observers = this.getObserversMap(component);
 
 		const
 			observer = observers.get(node);
@@ -128,7 +128,7 @@ export default abstract class iObserveDOM {
 			// @ts-ignore (access)
 			{async: $a} = component,
 			{node} = options,
-			label = iObserveDOM.getObserverKey();
+			label = this.getObserverKey();
 
 		const observer = new MutationObserver((records) => {
 			component.onDOMChange(records, options);
