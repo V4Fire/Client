@@ -46,22 +46,28 @@ export * from 'super/i-input/modules/interface';
 	}
 })
 
-export default abstract class iInput<
-	V extends Value = Value,
-	FV extends FormValue = FormValue,
-	D extends object = Dictionary
-> extends iData<D> implements iVisible, iAccess {
+export default abstract class iInput extends iData implements iVisible, iAccess {
+	/**
+	 * Type: component value
+	 */
+	readonly Value!: Value;
+
+	/**
+	 * Type: component form value
+	 */
+	readonly FormValue!: FormValue;
+
 	/**
 	 * Initial component value
 	 */
 	@prop({required: false})
-	readonly valueProp?: V;
+	readonly valueProp?: this['Value'];
 
 	/**
 	 * Component default value
 	 */
 	@prop({required: false})
-	readonly defaultProp?: V;
+	readonly defaultProp?: this['Value'];
 
 	/**
 	 * Input id
@@ -91,7 +97,7 @@ export default abstract class iInput<
 	 * Illegal component values
 	 */
 	@prop({required: false})
-	readonly disallow?: V | V[] | Function | RegExp;
+	readonly disallow?: this['Value'] | this['Value'][] | Function | RegExp;
 
 	/**
 	 * Component value type factory
@@ -139,7 +145,7 @@ export default abstract class iInput<
 	 * Previous component value
 	 */
 	@system({replace: false})
-	prevValue?: V;
+	prevValue?: this['Value'];
 
 	/**
 	 * Link to the component validators map
@@ -162,15 +168,15 @@ export default abstract class iInput<
 	 * Component value
 	 */
 	@p({replace: false})
-	get value(): V {
-		return <V>this.field.get('valueStore');
+	get value(): this['Value'] {
+		return this.field.get('valueStore');
 	}
 
 	/**
 	 * Sets a new component value
 	 * @param value
 	 */
-	set value(value: V) {
+	set value(value: this['Value']) {
 		this.field.set('valueStore', value);
 	}
 
@@ -186,12 +192,12 @@ export default abstract class iInput<
 	 * Form value of the component
 	 */
 	@p({cache: false, replace: false})
-	get formValue(): Promise<FV> {
+	get formValue(): Promise<this['FormValue']> {
 		return (async () => {
 			await this.nextTick();
 
 			const
-				test = (<Array<V | Function | RegExp>>[]).concat(this.disallow || []),
+				test = (<Array<this['Value'] | Function | RegExp>>[]).concat(this.disallow || []),
 				value = await this[this.valueKey];
 
 			const match = (el) => {
@@ -228,13 +234,13 @@ export default abstract class iInput<
 	 * Grouped form value of the component
 	 */
 	@p({cache: false, replace: false})
-	get groupFormValue(): Promise<CanArray<FV>> {
+	get groupFormValue(): Promise<CanArray<this['FormValue']>> {
 		return (async () => {
 			const
 				list = await this.groupElements;
 
 			const
-				els = <FV[]>[],
+				els = <this['FormValue'][]>[],
 				tasks = <Promise<void>[]>[];
 
 			for (let i = 0; i < list.length; i++) {
@@ -243,7 +249,7 @@ export default abstract class iInput<
 						v = await list[i].formValue;
 
 					if (v !== undefined) {
-						els.push(<FV>v);
+						els.push(v);
 					}
 				})());
 			}
@@ -283,7 +289,7 @@ export default abstract class iInput<
 			});
 		}
 
-		return Object.freeze([<iInput<any, any, any>>this]);
+		return Object.freeze([this]);
 	}
 
 	/**
@@ -550,7 +556,7 @@ export default abstract class iInput<
 	 */
 	@p({replace: false})
 	@wait('ready')
-	async validate(params?: ValidatorParams): Promise<ValidationResult<FV>> {
+	async validate(params?: ValidatorParams): Promise<ValidationResult<this['FormValue']>> {
 		//#if runtime has iInput/validators
 
 		if (!this.validators.length) {
@@ -661,7 +667,7 @@ export default abstract class iInput<
 	 * @emits change(value)
 	 */
 	@p({replace: false})
-	protected onValueChange(newValue: V, oldValue: CanUndef<V>): void {
+	protected onValueChange(newValue: this['Value'], oldValue: CanUndef<this['Value']>): void {
 		this.prevValue = oldValue;
 		if (newValue !== oldValue || newValue && typeof newValue === 'object') {
 			this.emit('change', this[this.valueKey]);
@@ -673,14 +679,14 @@ export default abstract class iInput<
 	 * @param value - valueKey field value
 	 */
 	@p({replace: false})
-	protected initDefaultValue(value?: unknown): V {
+	protected initDefaultValue(value?: unknown): this['Value'] {
 		const
 			i = this.instance,
 			k = i.valueKey,
 			f = this.$activeField;
 
 		if (value !== undefined || f !== k && f !== `${k}Store`) {
-			return <V>value;
+			return value;
 		}
 
 		// tslint:disable-next-line:no-string-literal

@@ -45,7 +45,7 @@ export type AlignType = keyof typeof alignTypes;
 export type Mode = keyof typeof sliderModes;
 
 @component()
-export default class bSlider<T extends object = Dictionary> extends iData<T> implements iObserveDOM {
+export default class bSlider extends iData implements iObserveDOM {
 	/**
 	 * Slider mode
 	 *   *) scroll - scroll implementation

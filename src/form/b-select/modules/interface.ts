@@ -8,10 +8,6 @@
 
 import { ModsTable } from 'form/b-input/b-input';
 
-export type FormValue = CanUndef<
-	string
->;
-
 export interface Option {
 	label: string;
 	inputLabel?: string;

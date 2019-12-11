@@ -54,7 +54,10 @@ export const axis = Object.createDict({
 });
 
 @component()
-export default class bVirtualScroll extends iData<RemoteData> {
+export default class bVirtualScroll extends iData {
+	/** @override */
+	readonly DBType!: RemoteData;
+
 	/** @override */
 	readonly checkDBEquality: CheckDBEquality = false;
 

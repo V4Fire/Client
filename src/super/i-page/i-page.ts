@@ -33,7 +33,7 @@ export const
 	$$ = symbolGenerator();
 
 @component({inheritMods: false})
-export default abstract class iPage<T extends object = Dictionary> extends iData<T> implements iVisible {
+export default abstract class iPage extends iData implements iVisible {
 	/** @override */
 	readonly reloadOnActivation: boolean = true;
 

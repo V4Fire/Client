@@ -17,8 +17,6 @@ import bInput, {
 	hook,
 	wait,
 	watch,
-	Value,
-	FormValue,
 	ModsDecl
 
 } from 'form/b-input/b-input';
@@ -34,11 +32,7 @@ export const
 	}
 })
 
-export default class bTextarea<
-	V extends Value = Value,
-	FV extends FormValue = FormValue,
-	D extends object = Dictionary
-> extends bInput<V, FV, D> {
+export default class bTextarea extends bInput {
 	/**
 	 * Exterior of bScroll component
 	 */

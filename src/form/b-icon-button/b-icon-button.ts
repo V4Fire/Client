@@ -10,4 +10,4 @@ import bButton, { component } from 'form/b-button/b-button';
 export * from 'form/b-button/b-button';
 
 @component({flyweight: true})
-export default class bIconButton<T extends object = Dictionary> extends bButton<T> {}
+export default class bIconButton extends bButton {}

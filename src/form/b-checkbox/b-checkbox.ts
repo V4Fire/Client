@@ -42,14 +42,16 @@ export const
 	}
 })
 
-export default class bCheckbox<
-	V extends Value = Value,
-	FV extends FormValue = FormValue,
-	D extends object = Dictionary
-> extends iInput<V, FV, D> implements iSize {
+export default class bCheckbox extends iInput implements iSize {
+	/** @override */
+	readonly Value!: Value;
+
+	/** @override */
+	readonly FormValue!: FormValue;
+
 	/** @override */
 	@prop({type: Boolean, required: false})
-	readonly defaultProp?: V;
+	readonly defaultProp?: this['Value'];
 
 	/** @override */
 	@prop({type: String, required: false})
@@ -74,7 +76,7 @@ export default class bCheckbox<
 
 	/** @override */
 	@p({replace: false})
-	get value(): V {
+	get value(): this['Value'] {
 		const
 			{checked} = this.mods;
 
@@ -84,17 +86,17 @@ export default class bCheckbox<
 				v = super['valueGetter'].call(this);
 
 			if (checked === undefined) {
-				return <V>(v === true || undefined);
+				return v === true || undefined;
 			}
 
 			return v == null ? true : v;
 		}
 
-		return <V>undefined;
+		return undefined;
 	}
 
 	/** @override */
-	set value(value: V) {
+	set value(value: this['Value']) {
 		// tslint:disable-next-line:no-string-literal
 		super['valueSetter'](value);
 	}
@@ -176,7 +178,7 @@ export default class bCheckbox<
 				return;
 			}
 
-			this.onValueChange(<V>(e.value === 'false' || e.type === 'remove' ? undefined : this.value), oldVal);
+			this.onValueChange(e.value === 'false' || e.type === 'remove' ? undefined : this.value, oldVal);
 			oldVal = this.value;
 		});
 	}

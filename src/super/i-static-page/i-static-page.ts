@@ -18,7 +18,7 @@ import { NetStatus } from 'core/net/interface';
 
 import iBlock from 'super/i-block/i-block';
 import ProvidedDataStore from 'super/i-static-page/modules/provider-data-store';
-import iPage, { component, field, system, watch, wait, Event } from 'super/i-page/i-page';
+import iPage, { component, field, system, watch, Event } from 'super/i-page/i-page';
 import { CurrentPage } from 'core/router/interface';
 
 //#if runtime has bRouter
@@ -39,12 +39,22 @@ export const
 	$$ = symbolGenerator();
 
 @component()
-export default abstract class iStaticPage<
-	P extends object = Dictionary,
-	Q extends object = Dictionary,
-	M extends object = Dictionary,
-	D extends object = Dictionary
-> extends iPage<D> {
+export default abstract class iStaticPage extends iPage {
+	/**
+	 * Type: page parameters
+	 */
+	readonly PageParams!: Dictionary;
+
+	/**
+	 * Type: page query
+	 */
+	readonly PageQuery!: Dictionary;
+
+	/**
+	 * Type: page meta
+	 */
+	readonly PageMeta!: Dictionary;
+
 	/**
 	 * Link to i18n function
 	 */
@@ -104,7 +114,7 @@ export default abstract class iStaticPage<
 
 	/** @override */
 	// @ts-ignore
-	get route(): CanUndef<CurrentPage<P, Q, M>> {
+	get route(): CanUndef<CurrentPage<this['PageParams'], this['PageQuery'], this['PageMeta']>> {
 		return this.field.get('routeStore');
 	}
 
@@ -113,7 +123,7 @@ export default abstract class iStaticPage<
 	 * @emits setRoute(value: CanUndef<CurrentPage<P, Q, M>>)
 	 */
 	// @ts-ignore
-	set route(value: CanUndef<CurrentPage<P, Q, M>>) {
+	set route(value: CanUndef<CurrentPage<this['PageParams'], this['PageQuery'], this['PageMeta']>>) {
 		this.field.set('routeStore', value);
 		this.emit('setRoute', value);
 	}
@@ -160,7 +170,7 @@ export default abstract class iStaticPage<
 	 * Route information object store
 	 */
 	@field()
-	protected routeStore?: CurrentPage<P, Q, M>;
+	protected routeStore?: CurrentPage<this['PageParams'], this['PageQuery'], this['PageMeta']>;
 
 	/**
 	 * Root page router instance

@@ -14,7 +14,7 @@ export const
 	$$ = symbolGenerator();
 
 @component()
-export default class bRemoteProvider<T extends object = Dictionary> extends iData<T> {
+export default class bRemoteProvider extends iData {
 	/** @override */
 	readonly remoteProvider: boolean = true;
 
@@ -36,7 +36,7 @@ export default class bRemoteProvider<T extends object = Dictionary> extends iDat
 	}
 
 	/** @override */
-	set db(value: CanUndef<T>) {
+	set db(value: CanUndef<this['DBType']>) {
 		// tslint:disable-next-line:no-string-literal
 		super['dbSetter'](value);
 		this.syncDBWatcher(value);
@@ -63,7 +63,7 @@ export default class bRemoteProvider<T extends object = Dictionary> extends iDat
 	 * @param [value]
 	 * @emits change(db: CanUndef<T>)
 	 */
-	protected syncDBWatcher(value: CanUndef<T>): void {
+	protected syncDBWatcher(value: CanUndef<this['DBType']>): void {
 		const
 			p = this.$parent;
 
