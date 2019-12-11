@@ -19,7 +19,6 @@
 
 	- block body
 		: putIn content
-
 			< template v-if = option
 				+= self.slot('beforeOptions')
 
