@@ -11,12 +11,16 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-
 ## v3.0.0-beta.230 (2019-12-10)
 
 #### :rocket: New Feature
 
 * Added `beforeOptions` and `afterOptions` slots to `b-slider` component
+
+#### :bug: Bug Fix
+
+* [Fixed `b-virtual-scroll` request params](https://github.com/V4Fire/Client/pull/149)
+* [Fixed `b-virtual-scroll` size calculation in `fixSize` method](https://github.com/V4Fire/Client/pull/149)
 
 ## v3.0.0-beta.229 (2019-12-10)
 
