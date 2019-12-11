@@ -16,7 +16,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :rocket: New Feature
 
-* Added `beforeComponents` and `afterComponents` slots to `b-slider` component
+* Added `beforeOptions` and `afterOptions` slots to `b-slider` component
 
 ## v3.0.0-beta.229 (2019-12-10)
 

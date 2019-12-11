@@ -21,7 +21,7 @@
 		: putIn content
 
 			< template v-if = option
-				+= self.slot('beforeComponents')
+				+= self.slot('beforeOptions')
 
 				< template &
 					v-for = (el, i) in optionsIterator ? optionsIterator(options, self) : options |
@@ -33,7 +33,7 @@
 						:v-attrs = Object.isFunction(optionProps) ? optionProps(el, i, getOptionKey(el, i)) : optionProps
 					.
 
-				+= self.slot('afterComponents')
+				+= self.slot('afterOptions')
 
 			< template v-else
 				+= self.slot()
