@@ -9,7 +9,7 @@
 import symbolGenerator from 'core/symbol';
 import { observeMap } from 'core/component/helpers/observable';
 
-import iObserveDom from 'traits/i-observe-dom/i-observe-dom';
+import iObserveDOM from 'traits/i-observe-dom/i-observe-dom';
 
 import iBlock, {
 
@@ -69,7 +69,7 @@ export function validateResolve(value: ResolveMethod[]): boolean {
 }
 
 @component()
-export default class bContentSwitcher extends iBlock implements iObserveDom {
+export default class bContentSwitcher extends iBlock implements iObserveDOM {
 	/**
 	 * Resolve methods
 	 */
@@ -280,7 +280,7 @@ export default class bContentSwitcher extends iBlock implements iObserveDom {
 		const
 			content = <HTMLElement>this.content;
 
-		iObserveDom.observe(this, {
+		iObserveDOM.observe(this, {
 			node: content,
 			childList: true,
 			characterData: false
@@ -289,13 +289,13 @@ export default class bContentSwitcher extends iBlock implements iObserveDom {
 
 	/** @see iObserveDom.onDOMChange */
 	onDOMChange(records: MutationRecord[]): void {
-		records = iObserveDom.filterNodes(records, (node) => node instanceof HTMLElement);
+		records = iObserveDOM.filterNodes(records, (node) => node instanceof HTMLElement);
 
 		const
-			{addedNodes, removedNodes} = iObserveDom.getChangedNodes(records);
+			{addedNodes, removedNodes} = iObserveDOM.getChangedNodes(records);
 
 		this.contentLengthStore += addedNodes.length - removedNodes.length;
-		iObserveDom.onDOMChange(this, records);
+		iObserveDOM.onDOMChange(this, records);
 	}
 
 	/**

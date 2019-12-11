@@ -16,23 +16,23 @@ export * from 'traits/i-observe-dom/interface';
 export const
 	$$ = symbolGenerator();
 
-export default abstract class iObserveDom {
+export default abstract class iObserveDOM {
 	/**
 	 * Starts to observe DOM changes for the specified element
 	 *
 	 * @param component
 	 * @param options
 	 */
-	static observe<T extends iBlock>(component: T & iObserveDom, options: ObserveOptions): void {
+	static observe<T extends iBlock>(component: T & iObserveDOM, options: ObserveOptions): void {
 		const
 			{node} = options,
-			observers = iObserveDom.getObserversMap(component);
+			observers = iObserveDOM.getObserversMap(component);
 
 		if (observers.has(node)) {
-			iObserveDom.unobserve(component, node);
+			iObserveDOM.unobserve(component, node);
 		}
 
-		observers.set(node, iObserveDom.createObserver(component, options));
+		observers.set(node, iObserveDOM.createObserver(component, options));
 	}
 
 	/**
@@ -41,11 +41,11 @@ export default abstract class iObserveDom {
 	 * @param component
 	 * @param node
 	 */
-	static unobserve<T extends iBlock>(component: T & iObserveDom, node: Element): void {
+	static unobserve<T extends iBlock>(component: T & iObserveDOM, node: Element): void {
 		const
 			// @ts-ignore (access)
 			{async: $a} = component,
-			observers = iObserveDom.getObserversMap(component);
+			observers = iObserveDOM.getObserversMap(component);
 
 		const
 			observer = observers.get(node);
@@ -102,7 +102,7 @@ export default abstract class iObserveDom {
 	 * @emits DOMChange(records?: MutationRecord[], options?: ObserverOptions)
 	 */
 	static onDOMChange<T extends iBlock>(
-		component: T & iObserveDom,
+		component: T & iObserveDOM,
 		records?: MutationRecord[],
 		options?: ObserveOptions
 	): void {
@@ -113,7 +113,7 @@ export default abstract class iObserveDom {
 	 * Returns component observers map
 	 * @param component
 	 */
-	protected static getObserversMap<T extends iBlock>(component: T & iObserveDom): Observers {
+	protected static getObserversMap<T extends iBlock>(component: T & iObserveDOM): Observers {
 		return component[$$.DOMObservers] || (component[$$.DOMObservers] = new Map());
 	}
 
@@ -123,12 +123,12 @@ export default abstract class iObserveDom {
 	 * @param component
 	 * @param options
 	 */
-	protected static createObserver<T extends iBlock>(component: T & iObserveDom, options: ObserveOptions): Observer {
+	protected static createObserver<T extends iBlock>(component: T & iObserveDOM, options: ObserveOptions): Observer {
 		const
 			// @ts-ignore (access)
 			{async: $a} = component,
 			{node} = options,
-			label = iObserveDom.getObserverKey();
+			label = iObserveDOM.getObserverKey();
 
 		const observer = new MutationObserver((records) => {
 			component.onDOMChange(records, options);

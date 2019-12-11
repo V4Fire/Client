@@ -8,7 +8,7 @@
 
 import symbolGenerator from 'core/symbol';
 
-import iObserveDom from 'traits/i-observe-dom/i-observe-dom';
+import iObserveDOM from 'traits/i-observe-dom/i-observe-dom';
 import iData, { component, prop, field, system, hook, watch, wait, p } from 'super/i-data/i-data';
 
 export * from 'super/i-data/i-data';
@@ -45,7 +45,7 @@ export type AlignType = keyof typeof alignTypes;
 export type Mode = keyof typeof sliderModes;
 
 @component()
-export default class bSlider<T extends object = Dictionary> extends iData<T> implements iObserveDom {
+export default class bSlider<T extends object = Dictionary> extends iData<T> implements iObserveDOM {
 	/**
 	 * Slider mode
 	 *   *) scroll - scroll implementation
@@ -367,7 +367,7 @@ export default class bSlider<T extends object = Dictionary> extends iData<T> imp
 			{content} = this;
 
 		if (content) {
-			iObserveDom.observe(this, {
+			iObserveDOM.observe(this, {
 				node: content,
 				childList: true
 			});
@@ -376,7 +376,7 @@ export default class bSlider<T extends object = Dictionary> extends iData<T> imp
 
 	/** @see iObserveDom.onDOMChange */
 	onDOMChange(): void {
-		iObserveDom.onDOMChange(this);
+		iObserveDOM.onDOMChange(this);
 	}
 
 	/**
@@ -484,7 +484,7 @@ export default class bSlider<T extends object = Dictionary> extends iData<T> imp
 
 		} else {
 			this.async.off(label);
-			content && iObserveDom.unobserve(this, content);
+			content && iObserveDOM.unobserve(this, content);
 		}
 	}
 
