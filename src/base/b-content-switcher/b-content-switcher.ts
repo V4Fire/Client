@@ -7,9 +7,8 @@
  */
 
 import symbolGenerator from 'core/symbol';
-import { observeMap } from 'core/component/helpers/observable';
-
 import iObserveDOM from 'traits/i-observe-dom/i-observe-dom';
+import { observeMap } from 'core/component/helpers/observable';
 
 import iBlock, {
 
@@ -113,7 +112,7 @@ export default class bContentSwitcher extends iBlock implements iObserveDOM {
 	readonly semaphoreKeysProp?: Dictionary;
 
 	/**
-	 * Selector of a content node
+	 * Selector for a content node
 	 */
 	@prop(String)
 	readonly contentNodeSelector: string = '[data-switcher-content]';
@@ -249,7 +248,7 @@ export default class bContentSwitcher extends iBlock implements iObserveDOM {
 	}
 
 	/**
-	 * Sets a readiness of the specified semaphore key
+	 * Sets readiness of the specified semaphore key
 	 *
 	 * @param prop
 	 * @param value
