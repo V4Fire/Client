@@ -42,7 +42,7 @@ export default abstract class iAccess {
 	}
 
 	/**
-	 * Initializes modifiers event listeners
+	 * Initializes modifier event listeners
 	 *
 	 * @emits enable()
 	 * @emits disable()
