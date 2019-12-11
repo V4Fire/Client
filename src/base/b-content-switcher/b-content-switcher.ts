@@ -289,10 +289,9 @@ export default class bContentSwitcher extends iBlock implements iObserveDOM {
 
 	/** @see iObserveDom.onDOMChange */
 	onDOMChange(records: MutationRecord[]): void {
-		records = iObserveDOM.filterNodes(records, (node) => node instanceof HTMLElement);
-
 		const
-			{addedNodes, removedNodes} = iObserveDOM.getChangedNodes(records);
+			filtered = iObserveDOM.filterNodes(records, (node) => node instanceof HTMLElement),
+			{addedNodes, removedNodes} = iObserveDOM.getChangedNodes(filtered);
 
 		this.contentLengthStore += addedNodes.length - removedNodes.length;
 		iObserveDOM.onDOMChange(this, records);

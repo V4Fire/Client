@@ -76,7 +76,7 @@ export default abstract class iObserveDOM {
 	 * Returns changed nodes
 	 * @param records
 	 */
-	static getChangedNodes(records: MutationRecord[]): ChangedNodes {
+	static getChangedNodes(records: MutationRecord[] | ObserverMutationRecord[]): ChangedNodes {
 		const res = {
 			addedNodes: <ChangedNodes['addedNodes']>[],
 			removedNodes: <ChangedNodes['removedNodes']>[]
