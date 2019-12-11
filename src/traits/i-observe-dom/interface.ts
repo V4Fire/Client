@@ -21,4 +21,9 @@ export interface ChangedNodes {
 	removedNodes: Node[];
 }
 
+export interface ObserverMutationRecord extends Omit<MutationRecord, 'addedNodes' | 'removedNodes'> {
+	addedNodes: Node[];
+	removedNodes: Node[];
+}
+
 export type Observers = Map<Element, Observer>;

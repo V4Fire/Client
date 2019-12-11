@@ -9,7 +9,7 @@
 import symbolGenerator from 'core/symbol';
 import iBlock from 'super/i-block/i-block';
 
-import { ObserveOptions, Observer, Observers, ChangedNodes } from 'traits/i-observe-dom/interface';
+import { ObserveOptions, Observer, Observers, ObserverMutationRecord, ChangedNodes } from 'traits/i-observe-dom/interface';
 
 export * from 'traits/i-observe-dom/interface';
 
@@ -64,11 +64,11 @@ export default abstract class iObserveDom {
 	 * @param records
 	 * @param filter
 	 */
-	static filterNodes(records: MutationRecord[], filter: (node: Node) => boolean): MutationRecord[] {
+	static filterNodes(records: MutationRecord[], filter: (node: Node) => boolean): ObserverMutationRecord[] {
 		return records.map((r) => ({
 			...r,
-			addedNodes: [].filter.call(r.addedNodes, filter),
-			removedNodes: [].filter.call(r.removedNodes, filter)
+			addedNodes: Array.from(r.addedNodes).filter(filter),
+			removedNodes: Array.from(r.removedNodes).filter(filter)
 		}));
 	}
 
@@ -83,8 +83,8 @@ export default abstract class iObserveDom {
 		};
 
 		for (let i = 0; i < records.length; i++) {
-			res.addedNodes = res.addedNodes.concat([].slice.call(records[i].addedNodes));
-			res.removedNodes = res.removedNodes.concat([].slice.call(records[i].removedNodes));
+			res.addedNodes = res.addedNodes.concat(Array.from(records[i].addedNodes));
+			res.removedNodes = res.removedNodes.concat(Array.from(records[i].removedNodes));
 		}
 
 		res.addedNodes = [].union(res.addedNodes);
