@@ -56,7 +56,7 @@ export default class bCheckbox<
 	readonly parentId?: string;
 
 	/**
-	 * Checkbox label
+	 * Checkbox label text
 	 */
 	@prop({type: String, required: false})
 	readonly label?: string;
@@ -75,9 +75,18 @@ export default class bCheckbox<
 	/** @override */
 	@p({replace: false})
 	get value(): V {
-		if (this.mods.checked === 'true') {
-			// tslint:disable-next-line:no-string-literal
-			const v = super['valueGetter'].call(this);
+		const
+			{checked} = this.mods;
+
+		if (checked === 'true' || checked === undefined) {
+			const
+				// tslint:disable-next-line:no-string-literal
+				v = super['valueGetter'].call(this);
+
+			if (checked === undefined) {
+				return <V>(v === true || undefined);
+			}
+
 			return v == null ? true : v;
 		}
 
@@ -144,15 +153,47 @@ export default class bCheckbox<
 	/** @override */
 	protected initBaseAPI(): void {
 		super.initBaseAPI();
-		this.onValueChange = this.instance.onValueChange.bind(this);
+		this.convertValueToChecked = this.instance.convertValueToChecked.bind(this);
 		this.onCheckedChange = this.instance.onCheckedChange.bind(this);
 	}
 
 	/** @override */
 	protected initModEvents(): void {
 		super.initModEvents();
-		this.sync.mod('checked', 'value', this.onValueChange);
+		this.sync.mod('checked', 'value', this.convertValueToChecked);
 		this.localEvent.on('block.mod.*.checked.*', this.onCheckedChange);
+	}
+
+	/** @override */
+	protected initValueEvents(): void {
+		this.on('actionChange', () => this.validate());
+
+		let
+			oldVal = this.value;
+
+		this.localEvent.on('block.mod.*.checked.*', (e: ModEvent) => {
+			if (e.type === 'remove' && e.reason !== 'removeMod') {
+				return;
+			}
+
+			this.onValueChange(<V>(e.value === 'false' || e.type === 'remove' ? undefined : this.value), oldVal);
+			oldVal = this.value;
+		});
+	}
+
+	/**
+	 * Returns a modifier value by the component value
+	 * @param value
+	 */
+	protected convertValueToChecked(value: Value): boolean | string {
+		const
+			{checked} = this.mods;
+
+		if (checked === undefined) {
+			return value === true;
+		}
+
+		return checked;
 	}
 
 	/**
@@ -235,20 +276,5 @@ export default class bCheckbox<
 				}
 			}
 		}
-	}
-
-	/**
-	 * Handler: value change
-	 * @param value
-	 */
-	protected onValueChange(value: Value): boolean | string {
-		const
-			mod = this.mods.checked;
-
-		if (mod === undefined) {
-			return value === true;
-		}
-
-		return mod;
 	}
 }

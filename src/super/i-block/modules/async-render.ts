@@ -258,6 +258,9 @@ export default class AsyncRender {
 				newArray = <unknown[]>[];
 
 			const iterate = () => {
+				const
+					{async: $a} = this;
+
 				for (let o = newIterator, el = o.next(); !el.done;) {
 					let
 						val = el.value;
@@ -277,7 +280,7 @@ export default class AsyncRender {
 
 							if (params.group) {
 								group = `asyncComponents:${params.group}:${chunkI}`;
-								desc.destructor = () => this.async.terminateWorker({group});
+								desc.destructor = () => $a.terminateWorker({group});
 							}
 
 							desc.renderGroup = group;
@@ -289,13 +292,11 @@ export default class AsyncRender {
 							chunkTotal = 0;
 							newArray = [];
 
-							this.async.worker(() => {
-								for (let i = 0; i < els.length; i++) {
-									const
-										el = els[i];
-
+							$a.worker(() => {
+								const destroyEl = (el) => {
 									if (el[this.asyncLabel]) {
 										delete el[this.asyncLabel];
+										$a.worker(() => destroyEl(el), {group});
 
 									} else if (el.parentNode) {
 										if (params.destructor) {
@@ -304,6 +305,10 @@ export default class AsyncRender {
 
 										el.parentNode.removeChild(el);
 									}
+								};
+
+								for (let i = 0; i < els.length; i++) {
+									destroyEl(els[i]);
 								}
 							}, {group});
 						}

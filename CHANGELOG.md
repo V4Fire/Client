@@ -11,11 +11,17 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v3.0.0-beta.228 (2019-12-08)
+## v3.0.0-beta.230 (2019-12-11)
 
 #### :rocket: New Feature
 
+* Added `beforeOptions` and `afterOptions` slots to `b-slider` component
 * [Added `i-observe-dom` trait](https://github.com/V4Fire/Client/pull/146)
+
+#### :bug: Bug Fix
+
+* [Fixed `b-virtual-scroll` request params](https://github.com/V4Fire/Client/pull/149)
+* [Fixed `b-virtual-scroll` size calculation in `fixSize` method](https://github.com/V4Fire/Client/pull/149)
 
 #### :house: Internal
 
@@ -23,6 +29,21 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 * [`b-content-switcher` component now implements `i-observe-dom`](https://github.com/V4Fire/Client/pull/146)
 * [`b-slider` component now uses `v-resize` directive](https://github.com/V4Fire/Client/pull/146)
 * [Review observable APIs](https://github.com/V4Fire/Client/pull/146)
+
+## v3.0.0-beta.229 (2019-12-10)
+
+#### :bug: Bug Fix
+
+* Fixed `AsyncRender` destructors
+* Marked `bRemoteProvider.content` as non-cacheable
+* Fixed `iData.syncRequestParamsWatcher` component status
+
+## v3.0.0-beta.228 (2019-12-09)
+
+#### :bug: Bug Fix
+
+* Fixed `bCheckbox` legacy value logic
+* Fixed `bCheckbox` change events
 
 ## v3.0.0-beta.227 (2019-12-06)
 

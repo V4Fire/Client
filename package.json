@@ -5,7 +5,7 @@
   "main": "src/core/index.js",
   "typings": "index.d.ts",
   "license": "MIT",
-  "version": "3.0.0-beta.227",
+  "version": "3.0.0-beta.229",
   "author": {
     "name": "kobezzza",
     "email": "kobezzza@gmail.com",
@@ -29,7 +29,7 @@
     "test": "echo \"Error: no test specified\" && exit 0"
   },
   "dependencies": {
-    "@v4fire/core": "^3.0.0-beta.92",
+    "@v4fire/core": "^3.0.0-beta.93",
     "escaper": "^3.0.3",
     "eventemitter2": "^5.0.1",
     "fg-loadcss": "^2.1.0",

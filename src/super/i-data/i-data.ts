@@ -605,6 +605,7 @@ export default abstract class iData<T extends object = Dictionary> extends iBloc
 				.clearAll(group);
 
 			if (m === 'get') {
+				this.componentStatus = 'loading';
 				$a.setImmediate(this.initLoad, group);
 
 			} else {
