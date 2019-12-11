@@ -122,8 +122,8 @@ export default class bContentSwitcher extends iBlock implements iObserveDOM {
 	@p({cache: false})
 	get content(): CanPromise<HTMLElement> {
 		return this.waitStatus('loading', () => {
-			const {$refs: {content}, contentNodeStore} = this;
-			return contentNodeStore || content.querySelector<HTMLElement>(this.contentNodeMarker) || content;
+			const {$refs: {content}} = this;
+			return content.querySelector<HTMLElement>(this.contentNodeMarker) || content;
 		});
 	}
 
@@ -160,12 +160,6 @@ export default class bContentSwitcher extends iBlock implements iObserveDOM {
 	 */
 	@system()
 	protected contentNodeMarker: string = '[data-switcher-content]';
-
-	/**
-	 * Store of a content node
-	 */
-	@system()
-	protected contentNodeStore: Nullable<HTMLElement> = null;
 
 	/**
 	 * Strategies readiness map
