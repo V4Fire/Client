@@ -112,6 +112,12 @@ export default class bContentSwitcher extends iBlock implements iObserveDOM {
 	@prop({type: Object, required: false})
 	readonly semaphoreKeysProp?: Dictionary;
 
+	/**
+	 * Selector of a content node
+	 */
+	@prop(String)
+	readonly contentNodeSelector: string = '[data-switcher-content]';
+
 	/** @see semaphoreKeys */
 	@system((o) => o.sync.link('semaphoreKeysProp', (v: Dictionary) => ({...v})))
 	semaphoreKeys?: Dictionary;
@@ -123,7 +129,7 @@ export default class bContentSwitcher extends iBlock implements iObserveDOM {
 	get content(): CanPromise<HTMLElement> {
 		return this.waitStatus('loading', () => {
 			const {$refs: {content}} = this;
-			return content.querySelector<HTMLElement>(this.contentNodeMarker) || content;
+			return content.querySelector<HTMLElement>(this.contentNodeSelector) || content;
 		});
 	}
 
@@ -154,12 +160,6 @@ export default class bContentSwitcher extends iBlock implements iObserveDOM {
 	 */
 	@system()
 	protected contentLengthStore: number = 0;
-
-	/**
-	 * Selector of a content node
-	 */
-	@system()
-	protected contentNodeMarker: string = '[data-switcher-content]';
 
 	/**
 	 * Strategies readiness map
