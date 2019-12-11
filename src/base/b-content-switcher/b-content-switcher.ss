@@ -12,7 +12,7 @@
 
 - template index() extends ['i-block'].index
 	- block body
-		< .&__placeholder ref = placeholder
+		< .&__placeholder
 			+= self.slot('placeholder')
 
 		< .&__content ref = content
