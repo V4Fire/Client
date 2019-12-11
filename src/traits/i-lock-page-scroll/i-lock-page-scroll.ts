@@ -15,10 +15,10 @@ export const
 
 export default abstract class iLockPageScroll {
 	/**
-	 * Locks document scroll
+	 * Locks the document scroll
 	 *
 	 * @param component
-	 * @param [scrollableNode] - the node inside which is allowed to scroll
+	 * @param [scrollableNode] - node inside which is allowed to scroll
 	 */
 	static lock<T extends iBlock>(component: T, scrollableNode: Element): Promise<void> {
 		const
@@ -35,9 +35,18 @@ export default abstract class iLockPageScroll {
 
 		if (is.iOS) {
 			if (scrollableNode) {
-				$a.on(scrollableNode, 'touchstart', (e: TouchEvent) => {
-					component[$$.initialY] = e.targetTouches[0].clientY;
-				}, {group, label: $$.touchstart});
+				$a.on(
+					scrollableNode,
+					'touchstart',
+
+					(e: TouchEvent) =>
+						component[$$.initialY] = e.targetTouches[0].clientY,
+
+					{
+						group,
+						label: $$.touchstart
+					}
+				);
 
 				$a.on(scrollableNode, 'touchmove', (e: TouchEvent) => {
 					const {
@@ -111,7 +120,7 @@ export default abstract class iLockPageScroll {
 	}
 
 	/**
-	 * Unlocks document scroll
+	 * Unlocks the document scroll
 	 * @param component
 	 */
 	static unlock<T extends iBlock>(component: T): Promise<void> {
@@ -144,7 +153,7 @@ export default abstract class iLockPageScroll {
 	}
 
 	/**
-	 * Initializes modifiers event listeners
+	 * Initializes modifier event listeners
 	 * @param component
 	 */
 	static initModEvents<T extends iBlock>(component: T & iLockPageScroll): void {
@@ -176,12 +185,12 @@ export default abstract class iLockPageScroll {
 	}
 
 	/**
-	 * Locks document scroll
+	 * Locks the document scroll
 	 */
 	abstract lock(): Promise<void>;
 
 	/**
-	 * Unlocks document scroll
+	 * Unlocks the document scroll
 	 */
 	abstract unlock(): Promise<void>;
 }

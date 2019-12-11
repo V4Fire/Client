@@ -9,7 +9,15 @@
 import symbolGenerator from 'core/symbol';
 import iBlock from 'super/i-block/i-block';
 
-import { ObserveOptions, Observer, Observers, ObserverMutationRecord, ChangedNodes } from 'traits/i-observe-dom/interface';
+import {
+
+	ObserveOptions,
+	Observer,
+	Observers,
+	ObserverMutationRecord,
+	ChangedNodes
+
+} from 'traits/i-observe-dom/interface';
 
 export * from 'traits/i-observe-dom/interface';
 
@@ -18,36 +26,34 @@ export const
 
 export default abstract class iObserveDOM {
 	/**
-	 * Starts to observe DOM changes for the specified element
+	 * Starts to observe DOM changes by the specified options
 	 *
 	 * @param component
-	 * @param options
+	 * @param opts
 	 */
-	static observe<T extends iBlock>(component: T & iObserveDOM, options: ObserveOptions): void {
+	static observe<T extends iBlock>(component: T & iObserveDOM, opts: ObserveOptions): void {
 		const
-			{node} = options,
+			{node} = opts;
+
+		const
 			observers = this.getObserversMap(component);
 
 		if (observers.has(node)) {
 			this.unobserve(component, node);
 		}
 
-		observers.set(node, this.createObserver(component, options));
+		observers.set(node, iObserveDOM.createObserver(component, opts));
 	}
 
 	/**
-	 * Stops to observe the specified element
+	 * Stops to observe DOM changes for the specified node
 	 *
 	 * @param component
 	 * @param node
 	 */
 	static unobserve<T extends iBlock>(component: T & iObserveDOM, node: Element): void {
 		const
-			// @ts-ignore (access)
-			{async: $a} = component,
-			observers = this.getObserversMap(component);
-
-		const
+			observers = this.getObserversMap(component),
 			observer = observers.get(node);
 
 		if (!observer) {
@@ -55,7 +61,9 @@ export default abstract class iObserveDOM {
 		}
 
 		observers.delete(node);
-		$a.clearAll({label: observer.key});
+
+		// @ts-ignore (access)
+		component.async.clearAll({label: observer.key});
 	}
 
 	/**
@@ -89,6 +97,7 @@ export default abstract class iObserveDOM {
 
 		res.addedNodes = [].union(res.addedNodes);
 		res.removedNodes = [].union(res.removedNodes);
+
 		return res;
 	}
 
@@ -97,20 +106,20 @@ export default abstract class iObserveDOM {
 	 *
 	 * @param component
 	 * @param [records]
-	 * @param [options]
+	 * @param [opts]
 	 *
 	 * @emits DOMChange(records?: MutationRecord[], options?: ObserverOptions)
 	 */
 	static onDOMChange<T extends iBlock>(
 		component: T & iObserveDOM,
 		records?: MutationRecord[],
-		options?: ObserveOptions
+		opts?: ObserveOptions
 	): void {
-		component.emit('DOMChange', records, options);
+		component.emit('DOMChange', records, opts);
 	}
 
 	/**
-	 * Returns component observers map
+	 * Returns a component observers map
 	 * @param component
 	 */
 	protected static getObserversMap<T extends iBlock>(component: T & iObserveDOM): Observers {
@@ -144,7 +153,7 @@ export default abstract class iObserveDOM {
 	}
 
 	/**
-	 * Returns uniq key for observer
+	 * Generates a unique key and returns it
 	 */
 	protected static getObserverKey(): string {
 		return String(Math.random());

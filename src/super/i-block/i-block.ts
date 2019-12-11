@@ -1814,7 +1814,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	}
 
 	/**
-	 * Initializes modifiers event listeners
+	 * Initializes modifier event listeners
 	 */
 	@hook('beforeCreate')
 	protected initModEvents(): void {
