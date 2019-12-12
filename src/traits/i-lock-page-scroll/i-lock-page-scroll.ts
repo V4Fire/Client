@@ -13,33 +13,45 @@ import iBlock, { ModEvent } from 'super/i-block/i-block';
 export const
 	$$ = symbolGenerator();
 
+const
+	group = 'lockHelpers';
+
 export default abstract class iLockPageScroll {
 	/**
-	 * Locks document scroll
+	 * Locks the document scroll
 	 *
 	 * @param component
-	 * @param [scrollableNode] - the node inside which is allowed to scroll
+	 * @param [scrollableNode] - node inside which is allowed to scroll
 	 */
 	static lock<T extends iBlock>(component: T, scrollableNode?: Element): Promise<void> {
 		const
-			// @ts-ignore
-			{async: $a, r} = component,
-			group = 'pageScrollLock';
+			// @ts-ignore (access)
+			{async, $root: r, $root: {async: rootAsync}} = component;
 
 		let
 			promise = Promise.resolve();
 
 		if (r[$$.isLocked]) {
+			rootAsync.clearAll({group});
 			return promise;
 		}
 
 		if (is.iOS) {
 			if (scrollableNode) {
-				$a.on(scrollableNode, 'touchstart', (e: TouchEvent) => {
-					component[$$.initialY] = e.targetTouches[0].clientY;
-				}, {group, label: $$.touchstart});
+				async.on(
+					scrollableNode,
+					'touchstart',
 
-				$a.on(scrollableNode, 'touchmove', (e: TouchEvent) => {
+					(e: TouchEvent) =>
+						component[$$.initialY] = e.targetTouches[0].clientY,
+
+					{
+						group,
+						label: $$.touchstart
+					}
+				);
+
+				async.on(scrollableNode, 'touchmove', (e: TouchEvent) => {
 					const {
 						scrollTop,
 						scrollHeight,
@@ -64,7 +76,7 @@ export default abstract class iLockPageScroll {
 				});
 			}
 
-			$a.on(document, 'touchmove', (e) => e.cancelable && e.preventDefault(), {
+			async.on(document, 'touchmove', (e) => e.cancelable && e.preventDefault(), {
 				group,
 				label: $$.preventTouchMove,
 				options: {passive: false}
@@ -75,8 +87,8 @@ export default abstract class iLockPageScroll {
 				html = document.documentElement,
 				body = document.body;
 
-			promise = $a.promise(new Promise((res) => {
-				$a.requestAnimationFrame(() => {
+			promise = async.promise(new Promise((res) => {
+				async.requestAnimationFrame(() => {
 					const
 						scrollTop = html.scrollTop || body.scrollTop;
 
@@ -86,12 +98,12 @@ export default abstract class iLockPageScroll {
 
 					res();
 
-				}, {label: $$.lockScroll});
-			}), {label: $$.lockPromise, join: true});
+				}, {group, label: $$.lock});
+			}), {group, label: $$.lock, join: true});
 
 		} else {
-			promise = $a.promise(new Promise((res) => {
-				$a.requestAnimationFrame(() => {
+			promise = async.promise(new Promise((res) => {
+				async.requestAnimationFrame(() => {
 					const
 						{body} = document,
 						scrollBarWidth = window.innerWidth - body.clientWidth;
@@ -102,8 +114,8 @@ export default abstract class iLockPageScroll {
 
 					res();
 
-				}, {label: $$.lockScroll});
-			}), {label: $$.lockPromise, join: true});
+				}, {group, label: $$.lock});
+			}), {group, label: $$.lock, join: true});
 		}
 
 		r[$$.isLocked] = true;
@@ -111,21 +123,21 @@ export default abstract class iLockPageScroll {
 	}
 
 	/**
-	 * Unlocks document scroll
+	 * Unlocks the document scroll
 	 * @param component
 	 */
 	static unlock<T extends iBlock>(component: T): Promise<void> {
 		const
-			// @ts-ignore
-			{async: $a, r} = component,
+			// @ts-ignore (access)
+			{async, $root: r, $root: {async: rootAsync}} = component,
 			{body} = document;
 
 		if (!r[$$.isLocked]) {
 			return Promise.resolve();
 		}
 
-		return $a.promise(new Promise((res) => {
-			$a.requestAnimationFrame(() => {
+		return rootAsync.promise(new Promise((res) => {
+			rootAsync.requestAnimationFrame(() => {
 				r.removeRootMod('lockScrollMobile', true, r);
 				r.removeRootMod('lockScrollDesktop', true, r);
 				r[$$.isLocked] = false;
@@ -137,25 +149,25 @@ export default abstract class iLockPageScroll {
 				body.style.paddingRight = component[$$.paddingRight] || '';
 				res();
 
-			}, {label: $$.unlockScroll, group: ':zombie:'});
+			}, {group, label: $$.unlock});
 
-			$a.off({group: 'pageScrollLock'});
-		}), {label: $$.unlockPromise, group: ':zombie:', join: true});
+			async.off({group});
+
+		}), {
+			group,
+			label: $$.unlock,
+			join: true
+		});
 	}
 
 	/**
-	 * Initializes modifiers event listeners
+	 * Initializes modifier event listeners
 	 * @param component
 	 */
 	static initModEvents<T extends iBlock>(component: T & iLockPageScroll): void {
 		const
 			// @ts-ignore (access)
-			{localEvent: $e, async: $a} = component;
-
-		const asyncClear = () => {
-			$a.clearAll({label: $$.unlockScroll});
-			$a.clearAll({label: $$.unlockPromise});
-		};
+			{$async: $a, localEvent: $e} = component;
 
 		$e.on('block.mod.*.opened.*', (e: ModEvent) => {
 			if (e.type === 'remove' && e.reason !== 'removeMod') {
@@ -165,23 +177,20 @@ export default abstract class iLockPageScroll {
 			component[e.value === 'false' || e.type === 'remove' ? 'unlock' : 'lock']();
 		});
 
-		component.on('statusDestroyed', () => {
-			component.unlock()
-				.then(asyncClear)
-				.catch((err) => (stderr(err), asyncClear()));
-
+		$a.worker(() => {
+			component.unlock().catch(stderr);
 			delete component[$$.paddingRight];
 			delete component[$$.scrollTop];
 		});
 	}
 
 	/**
-	 * Locks document scroll
+	 * Locks the document scroll
 	 */
 	abstract lock(): Promise<void>;
 
 	/**
-	 * Unlocks document scroll
+	 * Unlocks the document scroll
 	 */
-	abstract unlock(): Promise<void>;
+	abstract unlock(force?: boolean): Promise<void>;
 }
