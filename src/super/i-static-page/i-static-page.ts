@@ -18,7 +18,7 @@ import { NetStatus } from 'core/net/interface';
 
 import iBlock from 'super/i-block/i-block';
 import ProvidedDataStore from 'super/i-static-page/modules/provider-data-store';
-import iPage, { component, field, system, watch, wait, Event } from 'super/i-page/i-page';
+import iPage, { component, field, system, watch, p, Event } from 'super/i-page/i-page';
 import { CurrentPage } from 'core/router/interface';
 
 //#if runtime has bRouter
@@ -119,6 +119,7 @@ export default abstract class iStaticPage<
 	}
 
 	/** @override */
+	@p({cache: false})
 	get pageTitle(): string {
 		return this.field.get<string>('pageTitleStore')!;
 	}

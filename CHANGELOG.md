@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-beta.231 (2019-12-12)
+
+#### :bug: Bug Fix
+
+* Marked `iPage.pageTitle` and `iStaticPage.pageTitle` as non-cacheable
+
 ## v3.0.0-beta.230 (2019-12-12)
 
 #### :rocket: New Feature
