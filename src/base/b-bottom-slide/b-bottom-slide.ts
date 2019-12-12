@@ -897,4 +897,10 @@ export default class bBottomSlide extends iBlock implements iLockPageScroll, iOp
 		this.diff = 0;
 		this.currentY = 0;
 	}
+
+	/** @override */
+	protected beforeDestroy(): void {
+		super.beforeDestroy();
+		this.$el.remove();
+	}
 }
