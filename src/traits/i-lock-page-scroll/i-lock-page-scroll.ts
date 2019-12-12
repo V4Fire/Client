@@ -25,20 +25,19 @@ export default abstract class iLockPageScroll {
 	 */
 	static lock<T extends iBlock>(component: T, scrollableNode?: Element): Promise<void> {
 		const
-			// @ts-ignore (access)
-			{async, $root: r, $root: {async: rootAsync}} = component;
+			{$root: r, $root: {async: $a}} = component;
 
 		let
 			promise = Promise.resolve();
 
 		if (r[$$.isLocked]) {
-			rootAsync.clearAll({group});
+			$a.clearAll({group});
 			return promise;
 		}
 
 		if (is.iOS) {
 			if (scrollableNode) {
-				async.on(
+				$a.on(
 					scrollableNode,
 					'touchstart',
 
@@ -51,7 +50,7 @@ export default abstract class iLockPageScroll {
 					}
 				);
 
-				async.on(scrollableNode, 'touchmove', (e: TouchEvent) => {
+				$a.on(scrollableNode, 'touchmove', (e: TouchEvent) => {
 					const {
 						scrollTop,
 						scrollHeight,
@@ -76,7 +75,7 @@ export default abstract class iLockPageScroll {
 				});
 			}
 
-			async.on(document, 'touchmove', (e) => e.cancelable && e.preventDefault(), {
+			$a.on(document, 'touchmove', (e) => e.cancelable && e.preventDefault(), {
 				group,
 				label: $$.preventTouchMove,
 				options: {passive: false}
@@ -87,8 +86,8 @@ export default abstract class iLockPageScroll {
 				html = document.documentElement,
 				body = document.body;
 
-			promise = async.promise(new Promise((res) => {
-				async.requestAnimationFrame(() => {
+			promise = $a.promise(new Promise((res) => {
+				$a.requestAnimationFrame(() => {
 					const
 						scrollTop = html.scrollTop || body.scrollTop;
 
@@ -102,8 +101,8 @@ export default abstract class iLockPageScroll {
 			}), {group, label: $$.lock, join: true});
 
 		} else {
-			promise = async.promise(new Promise((res) => {
-				async.requestAnimationFrame(() => {
+			promise = $a.promise(new Promise((res) => {
+				$a.requestAnimationFrame(() => {
 					const
 						{body} = document,
 						scrollBarWidth = window.innerWidth - body.clientWidth;
@@ -129,17 +128,17 @@ export default abstract class iLockPageScroll {
 	static unlock<T extends iBlock>(component: T): Promise<void> {
 		const
 			// @ts-ignore (access)
-			{async, $root: r, $root: {async: rootAsync}} = component,
+			{$root: r, $root: {async: $a}} = component,
 			{body} = document;
 
 		if (!r[$$.isLocked]) {
 			return Promise.resolve();
 		}
 
-		return rootAsync.promise(new Promise((res) => {
-			async.off({group});
+		return $a.promise(new Promise((res) => {
+			$a.off({group});
 
-			rootAsync.requestAnimationFrame(() => {
+			$a.requestAnimationFrame(() => {
 				r.removeRootMod('lockScrollMobile', true, r);
 				r.removeRootMod('lockScrollDesktop', true, r);
 				r[$$.isLocked] = false;
