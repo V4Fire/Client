@@ -137,6 +137,8 @@ export default abstract class iLockPageScroll {
 		}
 
 		return rootAsync.promise(new Promise((res) => {
+			async.off({group});
+
 			rootAsync.requestAnimationFrame(() => {
 				r.removeRootMod('lockScrollMobile', true, r);
 				r.removeRootMod('lockScrollDesktop', true, r);
@@ -150,8 +152,6 @@ export default abstract class iLockPageScroll {
 				res();
 
 			}, {group, label: $$.unlock});
-
-			async.off({group});
 
 		}), {
 			group,
