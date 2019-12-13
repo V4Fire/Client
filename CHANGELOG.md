@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-beta.233 (2019-12-13)
+
+#### :bug: Bug Fix
+
+* Fixed `bRemoteProvider` error handling
+
 ## v3.0.0-beta.232 (2019-12-13)
 
 #### :boom: Breaking Change
