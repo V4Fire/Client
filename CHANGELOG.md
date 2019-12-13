@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-beta.232 (2019-12-13)
+
+#### :boom: Breaking Change
+
+* `dbChange` event will be fired after execution of `initRemoteData` `iData`
+
 ## v3.0.0-beta.231 (2019-12-12)
 
 #### :bug: Bug Fix
