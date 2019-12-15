@@ -6,6 +6,8 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import Async from 'core/async';
+
 import symbolGenerator from 'core/symbol';
 import { getSrcSet } from 'core/html';
 
@@ -15,6 +17,11 @@ export const
 	$$ = symbolGenerator();
 
 export default class ImageLoader {
+	/**
+	 * Async instance
+	 */
+	protected async: Async<this> = new Async();
+
 	/**
 	 * Store for urls that have already been downloaded
 	 */
@@ -63,10 +70,23 @@ export default class ImageLoader {
 			el[$$.img] = img;
 			this.load(el[$$.img], value);
 
-			const
-				url = `url('${img.currentSrc}')`;
+			const setBackgroundImage = () => {
+				const
+					url = `url('${img.currentSrc}')`;
 
-			el.style.backgroundImage = backgroundImage ? `${backgroundImage}, ${url}` : `${url}`;
+				el.style.backgroundImage = backgroundImage ? `${backgroundImage}, ${url}` : `${url}`;
+			};
+
+			if (srcset) {
+				const label = Symbol('waitCurrentSrc');
+				el[$$.label] = label;
+
+				this.async.wait(() => img.currentSrc, {label})
+					.then(setBackgroundImage, stderr);
+
+			} else {
+				setBackgroundImage();
+			}
 		}
 	}
 
@@ -76,6 +96,10 @@ export default class ImageLoader {
 	 */
 	removePending(el: HTMLElement): void {
 		this.pending.delete(el[$$.img] || el);
+
+		if (el[$$.label]) {
+			this.async.clearAll({label: el[$$.label]});
+		}
 	}
 
 	/**
