@@ -19,7 +19,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :boom: Breaking Change
 
-* [Removed `v-image` SnakeSkin directive](https://github.com/V4Fire/Client/pull/152)
+* [Removed `v-image` Snakeskin directive](https://github.com/V4Fire/Client/pull/152)
 
 ## v3.0.0-beta.233 (2019-12-13)
 
