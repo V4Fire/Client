@@ -246,6 +246,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 
 			'directives/event': true,
 			'directives/resize': false,
+			'directives/image': false,
 			'directives/in-view': false,
 
 			'iData': true,

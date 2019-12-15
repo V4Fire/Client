@@ -11,6 +11,16 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-beta.234 (2019-12-15)
+
+### :rocket: New Feature
+
+* Added `v-image` directive
+
+#### :boom: Breaking Change
+
+* Removed `v-image` SS directive
+
 ## v3.0.0-beta.233 (2019-12-13)
 
 #### :bug: Bug Fix
