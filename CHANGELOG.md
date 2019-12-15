@@ -15,11 +15,11 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 ### :rocket: New Feature
 
-* Added `v-image` directive
+* [Added `v-image` directive](https://github.com/V4Fire/Client/pull/152)
 
 #### :boom: Breaking Change
 
-* Removed `v-image` SS directive
+* [Removed `v-image` SS directive](https://github.com/V4Fire/Client/pull/152)
 
 ## v3.0.0-beta.233 (2019-12-13)
 
