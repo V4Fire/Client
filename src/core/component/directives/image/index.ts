@@ -18,7 +18,7 @@ let
 
 export { ImageLoaderInstance as ImageLoader };
 
-ComponentDriver.directive('resize', {
+ComponentDriver.directive('image', {
 	inserted(el: HTMLElement, {value}: DirectiveOptions): void {
 		if (!value) {
 			return;
