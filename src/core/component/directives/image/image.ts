@@ -25,7 +25,7 @@ export default class ImageLoader {
 	/**
 	 * Store for urls that have already been downloaded
 	 */
-	protected cache: Set<string> = new Set();
+	protected cache: Map<string, string> = new Map();
 
 	/**
 	 * Nodes that are waiting for loading
@@ -48,44 +48,49 @@ export default class ImageLoader {
 			{src, load, error} = opts;
 
 		if (!src && !srcset) {
+			el instanceof HTMLImageElement ? el.src = '' : this.setBackgroundImage(el, '');
 			return;
 		}
+
+		const
+			key = this.getCacheKey(src, srcset);
 
 		if (el instanceof HTMLImageElement) {
 			src && (el.src = src);
 			srcset && (el.srcset = srcset);
 
-			if (cache.has(el.currentSrc)) {
+			if (cache.has(key)) {
 				load && load();
 
 			} else {
-				this.attachListeners(el, load, error);
+				this.attachListeners(el, key, load, error);
 			}
 
 		} else {
 			const
-				img =  new Image(),
-				{backgroundImage} = el.style;
+				cached = cache.get(key);
+
+			if (cached) {
+				this.setBackgroundImage(el, cached);
+				load && load();
+				return;
+			}
+
+			const
+				img =  new Image();
 
 			el[$$.img] = img;
 			this.load(el[$$.img], value);
-
-			const setBackgroundImage = () => {
-				const
-					url = `url('${img.currentSrc}')`;
-
-				el.style.backgroundImage = backgroundImage ? `${backgroundImage}, ${url}` : `${url}`;
-			};
 
 			if (srcset) {
 				const label = Symbol('waitCurrentSrc');
 				el[$$.label] = label;
 
 				this.async.wait(() => img.currentSrc, {label})
-					.then(setBackgroundImage, stderr);
+					.then(() => this.setBackgroundImage(img, img.currentSrc), stderr);
 
 			} else {
-				setBackgroundImage();
+				this.setBackgroundImage(img, src!);
 			}
 		}
 	}
@@ -117,18 +122,43 @@ export default class ImageLoader {
 	}
 
 	/**
+	 * Returns a cache key for an image
+	 *
+	 * @param [src]
+	 * @param [srcset]
+	 */
+	getCacheKey(src?: string, srcset?: string): string {
+		return `${src || ''}${srcset || ''}`;
+	}
+
+	/**
+	 * Sets a background image for the specified element
+	 *
+	 * @param el
+	 * @param src
+	 */
+	setBackgroundImage(el: HTMLElement, src: string): void {
+		const
+			url = `url('${src}')`,
+			{backgroundImage} = el.style;
+
+		el.style.backgroundImage = backgroundImage ? `${backgroundImage}, ${url}` : `${url}`;
+	}
+
+	/**
 	 * Attach load/error listeners for the specified el
 	 *
 	 * @param img
+	 * @param key
 	 * @param [loadCb]
 	 * @param [errorCb]
 	 */
-	protected attachListeners(img: HTMLImageElement, loadCb?: Function, errorCb?: Function): void {
+	protected attachListeners(img: HTMLImageElement, key: string, loadCb?: Function, errorCb?: Function): void {
 		const
 			{cache, pending} = this;
 
 		img.addEventListener('load', () => {
-			cache.add(img.currentSrc);
+			cache.set(key, img.currentSrc);
 
 			if (!pending.has(img)) {
 				return;
