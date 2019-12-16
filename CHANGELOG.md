@@ -17,6 +17,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 * Removed `iBlock.forceActivation`
 * Renamed `iBlock.forceInitialActivation` to `forceActivation`
+* Renamed `iBlock.isInitializedOnce` to `isReadyOnce`
 
 #### :rocket: New Feature
 

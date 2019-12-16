@@ -506,10 +506,10 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	isActivated!: boolean;
 
 	/**
-	 * True if the component was initialized at least once
+	 * True if the component was in ready status at least once
 	 */
 	@system()
-	isInitializedOnce: boolean = false;
+	isReadyOnce: boolean = false;
 
 	/**
 	 * Link to $root
@@ -1469,7 +1469,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 			this.componentStatus = 'beforeReady';
 
 			this.lfc.execCbAfterBlockReady(() => {
-				this.isInitializedOnce = true;
+				this.isReadyOnce = true;
 				this.componentStatus = 'ready';
 
 				if (this.beforeReadyListeners > 1) {

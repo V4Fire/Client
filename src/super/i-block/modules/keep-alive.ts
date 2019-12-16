@@ -135,7 +135,7 @@ export function onActivated<T extends iBlock>(component: T, force?: boolean): vo
 		// @ts-ignore (access)
 		{async: $a} = c;
 
-	if (c.isActivated || !force && !c.activatedProp && !c.isInitializedOnce) {
+	if (c.isActivated || !force && !c.activatedProp && !c.isReadyOnce) {
 		return;
 	}
 
@@ -143,11 +143,11 @@ export function onActivated<T extends iBlock>(component: T, force?: boolean): vo
 		.unmuteAll()
 		.unsuspendAll();
 
-	if (c.isInitializedOnce && !readyStatuses[c.componentStatus]) {
+	if (c.isReadyOnce && !readyStatuses[c.componentStatus]) {
 		c.componentStatus = 'beforeReady';
 	}
 
-	if (!c.isInitializedOnce && force || c.reloadOnActivation) {
+	if (!c.isReadyOnce && force || c.reloadOnActivation) {
 		const
 			group = {group: 'requestSync:get'};
 
@@ -155,7 +155,7 @@ export function onActivated<T extends iBlock>(component: T, force?: boolean): vo
 			.clearAll(group)
 			.setImmediate(() => {
 				const
-					v = c.isInitializedOnce ? c.reload() : c.initLoad();
+					v = c.isReadyOnce ? c.reload() : c.initLoad();
 
 				if (Object.isPromise(v)) {
 					v.catch(stderr);
@@ -163,7 +163,7 @@ export function onActivated<T extends iBlock>(component: T, force?: boolean): vo
 			}, group);
 	}
 
-	if (c.isInitializedOnce) {
+	if (c.isReadyOnce) {
 		c.componentStatus = 'ready';
 	}
 
