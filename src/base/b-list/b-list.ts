@@ -81,6 +81,7 @@ export default class bList<T extends object = Dictionary> extends iData<T> imple
 	@field<bList>({
 		watch: (o) => {
 			o.initComponentValues();
+			o.emit('valueChange', o.value);
 		},
 
 		init: (o) => o.sync.link<Option[]>((val) => o.dataProvider ? o.value || [] : o.normalizeOptions(val))
@@ -394,7 +395,6 @@ export default class bList<T extends object = Dictionary> extends iData<T> imple
 
 		this.values = values;
 		this.indexes = indexes;
-		this.emit('valueChange', this.value);
 	}
 
 	/**
