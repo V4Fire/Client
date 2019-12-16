@@ -71,12 +71,12 @@ export default class ImageLoader {
 
 			const
 				img =  new Image(),
-				newVal = this.normalizeOptions(value);
+				normalized = this.normalizeOptions(value);
 
 			el[$$.img] = img;
 
 			this.load(el[$$.img], {
-				...newVal,
+				...normalized,
 				load: () => {
 					this.setBackgroundImage(el, img.currentSrc);
 					load && load();
