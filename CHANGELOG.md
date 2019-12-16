@@ -13,6 +13,11 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 ## v3.0.0-beta.234 (2019-12-16)
 
+#### :boom: Breaking Change
+
+* Removed `iBlock.forceActivation`
+* Renamed `iBlock.forceInitialActivation` to `forceActivation`
+
 #### :rocket: New Feature
 
 * [Added `i-observe-dom` trait](https://github.com/V4Fire/Client/pull/146)

@@ -9,18 +9,18 @@
 import Async from 'core/async';
 import symbolGenerator from 'core/symbol';
 import iBlock from 'super/i-block/i-block';
-import { runHook, ComponentElement } from 'core/component';
+import { runHook } from 'core/component';
 
-const
+export const
 	$$ = symbolGenerator();
 
-const inactiveStatuses = {
+const inactiveStatuses = Object.createDict({
 	destroyed: true,
 	inactive: true
-};
+});
 
 /**
- * Activates the component
+ * Activates the specified component
  *
  * @param component
  * @param [force]
@@ -49,7 +49,9 @@ export function activate<T extends iBlock>(component: T, force?: boolean): void 
 							});
 
 						} else {
-							await c.nextTick({label: $$.activateAfterHardChange});
+							await c.nextTick({
+								label: $$.activateAfterHardChange
+							});
 						}
 					}
 
@@ -72,53 +74,23 @@ export function activate<T extends iBlock>(component: T, force?: boolean): void 
 	}
 
 	const
-		els = new Set<iBlock>();
+		children = c.$children;
 
-	const exec = (ctx: iBlock = c) => {
-		els.add(ctx);
-
-		const
-			children = ctx.$children;
-
-		if (children) {
-			for (let i = 0; i < children.length; i++) {
-				exec(children[i]);
-			}
-		}
-	};
-
-	exec();
-
-	const
-		{$el} = c;
-
-	if (c.forceActivation && $el) {
-		const
-			domEls = $el.querySelectorAll('.i-block-helper');
-
-		for (let i = 0; i < domEls.length; i++) {
+	if (children) {
+		for (let i = 0; i < children.length; i++) {
 			const
-				el = <iBlock>(<ComponentElement>domEls[i]).component;
+				ctx = children[i];
 
-			if (el) {
-				els.add(el);
+			if (!ctx.isActivated) {
+				// @ts-ignore (access)
+				runHook('activated', ctx.meta, ctx).then(() => ctx.activated(true), stderr);
 			}
-		}
-	}
-
-	for (let w = els.values(), el = w.next(); !el.done; el = w.next()) {
-		const
-			ctx = el.value;
-
-		if (!ctx.isActivated) {
-			// @ts-ignore (access)
-			runHook('activated', ctx.meta, ctx).then(() => ctx.activated(true), stderr);
 		}
 	}
 }
 
 /**
- * Deactivates the component
+ * Deactivates the specified component
  * @param component
  */
 export function deactivate<T extends iBlock>(component: T): void {
@@ -130,61 +102,31 @@ export function deactivate<T extends iBlock>(component: T): void {
 	}
 
 	const
-		els = new Set<iBlock>();
+		children = c.$children;
 
-	const exec = (ctx: iBlock = c) => {
-		els.add(ctx);
-
-		const
-			children = ctx.$children;
-
-		if (children) {
-			for (let i = 0; i < children.length; i++) {
-				exec(children[i]);
-			}
-		}
-	};
-
-	exec();
-
-	const
-		{$el} = c;
-
-	if (c.forceActivation && $el) {
-		const
-			domEls = $el.querySelectorAll('.i-block-helper');
-
-		for (let i = 0; i < domEls.length; i++) {
+	if (children) {
+		for (let i = 0; i < children.length; i++) {
 			const
-				el = <iBlock>(<ComponentElement>domEls[i]).component;
+				ctx = children[i];
 
-			if (el) {
-				els.add(el);
+			if (ctx.isActivated) {
+				// @ts-ignore (access)
+				runHook('deactivated', ctx.meta, ctx).then(() => ctx.deactivated(), stderr);
 			}
-		}
-	}
-
-	for (let w = els.values(), el = w.next(); !el.done; el = w.next()) {
-		const
-			ctx = el.value;
-
-		if (ctx.isActivated) {
-			// @ts-ignore (access)
-			runHook('deactivated', ctx.meta, ctx).then(() => ctx.deactivated(), stderr);
 		}
 	}
 }
 
-const readyEvents = {
+const readyStatuses = Object.createDict({
 	beforeReady: true,
 	ready: true
-};
+});
 
 /**
  * Handler: component activated hook
  *
  * @param component
- * @param [force]
+ * @param [force] - if true, then the component will be activated forcely
  */
 export function onActivated<T extends iBlock>(component: T, force?: boolean): void {
 	const
@@ -201,7 +143,7 @@ export function onActivated<T extends iBlock>(component: T, force?: boolean): vo
 		.unmuteAll()
 		.unsuspendAll();
 
-	if (c.isInitializedOnce && !readyEvents[c.componentStatus]) {
+	if (c.isInitializedOnce && !readyStatuses[c.componentStatus]) {
 		c.componentStatus = 'beforeReady';
 	}
 
@@ -234,10 +176,10 @@ const
 	suspendRgxp = /:suspend(?:\b|$)/,
 	asyncNames = Async.linkNames;
 
-const nonMuteAsync = {
+const nonMuteAsyncLinkNames = Object.createDict({
 	[asyncNames.promise]: true,
 	[asyncNames.request]: true
-};
+});
 
 /**
  * Handler: component deactivated hook
@@ -252,7 +194,7 @@ export function onDeactivated<T extends iBlock>(component: T): void {
 		const
 			key = keys[i];
 
-		if (nonMuteAsync[key]) {
+		if (nonMuteAsyncLinkNames[key]) {
 			continue;
 		}
 
