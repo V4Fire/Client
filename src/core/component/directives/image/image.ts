@@ -16,11 +16,6 @@ export const
 
 export default class ImageLoader {
 	/**
-	 * Store for urls that have already been downloaded
-	 */
-	protected cache: Dictionary<string> = Object.createDict();
-
-	/**
 	 * Nodes that are waiting for loading
 	 */
 	protected pending: Set<HTMLElement> = new Set();
@@ -33,7 +28,6 @@ export default class ImageLoader {
 	 */
 	load(el: HTMLElement, value: DirectiveValue): void {
 		const
-			{cache} = this,
 			opts = this.normalizeOptions(value);
 
 		const
@@ -45,30 +39,13 @@ export default class ImageLoader {
 			return;
 		}
 
-		const
-			key = this.getCacheKey(src, srcset);
-
 		if (this.isImg(el)) {
 			src && (el.src = src);
 			srcset && (el.srcset = srcset);
 
-			if (cache[key]) {
-				load && load();
-
-			} else {
-				this.attachListeners(el, key, load, error);
-			}
+			this.attachListeners(el, load, error);
 
 		} else {
-			const
-				cached = cache[key];
-
-			if (cached) {
-				this.setBackgroundImage(el, cached);
-				load && load();
-				return;
-			}
-
 			const
 				img =  new Image(),
 				normalized = this.normalizeOptions(value);
@@ -108,16 +85,6 @@ export default class ImageLoader {
 	}
 
 	/**
-	 * Returns a cache key for an image
-	 *
-	 * @param [src]
-	 * @param [srcset]
-	 */
-	getCacheKey(src?: string, srcset?: string): string {
-		return `${src || ''}${srcset || ''}`;
-	}
-
-	/**
 	 * Sets a background image for the specified element
 	 *
 	 * @param el
@@ -144,16 +111,14 @@ export default class ImageLoader {
 	 *
 	 * @param img
 	 * @param key
-	 * @param [loadCb]
 	 * @param [errorCb]
 	 */
-	protected attachListeners(img: HTMLImageElement, key: string, loadCb?: Function, errorCb?: Function): void {
+	protected attachListeners(img: HTMLImageElement, loadCb?: Function, errorCb?: Function): void {
 		const
-			{cache, pending} = this;
+			{pending} = this;
 
 		img.init
 			.then(() => {
-				cache[key] = img.currentSrc;
 
 				if (!pending.has(img)) {
 					return;
