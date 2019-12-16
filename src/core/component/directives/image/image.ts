@@ -6,8 +6,6 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import Async from 'core/async';
-
 import symbolGenerator from 'core/symbol';
 import { getSrcSet } from 'core/html';
 
@@ -18,14 +16,9 @@ export const
 
 export default class ImageLoader {
 	/**
-	 * Async instance
-	 */
-	protected async: Async<this> = new Async();
-
-	/**
 	 * Store for urls that have already been downloaded
 	 */
-	protected cache: Map<string, string> = new Map();
+	protected cache: Dictionary<string> = Object.createDict();
 
 	/**
 	 * Nodes that are waiting for loading
@@ -48,18 +41,18 @@ export default class ImageLoader {
 			{src, load, error} = opts;
 
 		if (!src && !srcset) {
-			el instanceof HTMLImageElement ? el.src = '' : this.setBackgroundImage(el, '');
+			this.isImg(el) ? el.src = '' : this.setBackgroundImage(el, '');
 			return;
 		}
 
 		const
 			key = this.getCacheKey(src, srcset);
 
-		if (el instanceof HTMLImageElement) {
+		if (this.isImg(el)) {
 			src && (el.src = src);
 			srcset && (el.srcset = srcset);
 
-			if (cache.has(key)) {
+			if (cache[key]) {
 				load && load();
 
 			} else {
@@ -68,7 +61,7 @@ export default class ImageLoader {
 
 		} else {
 			const
-				cached = cache.get(key);
+				cached = cache[key];
 
 			if (cached) {
 				this.setBackgroundImage(el, cached);
@@ -77,21 +70,18 @@ export default class ImageLoader {
 			}
 
 			const
-				img =  new Image();
+				img =  new Image(),
+				newVal = this.normalizeOptions(value);
 
 			el[$$.img] = img;
-			this.load(el[$$.img], value);
 
-			if (srcset) {
-				const label = Symbol('waitCurrentSrc');
-				el[$$.label] = label;
-
-				this.async.wait(() => img.currentSrc, {label})
-					.then(() => this.setBackgroundImage(img, img.currentSrc), stderr);
-
-			} else {
-				this.setBackgroundImage(img, src!);
-			}
+			this.load(el[$$.img], {
+				...newVal,
+				load: () => {
+					this.setBackgroundImage(el, img.currentSrc);
+					load && load();
+				}
+			});
 		}
 	}
 
@@ -101,10 +91,6 @@ export default class ImageLoader {
 	 */
 	removePending(el: HTMLElement): void {
 		this.pending.delete(el[$$.img] || el);
-
-		if (el[$$.label]) {
-			this.async.clearAll({label: el[$$.label]});
-		}
 	}
 
 	/**
@@ -146,6 +132,14 @@ export default class ImageLoader {
 	}
 
 	/**
+	 * Returns true if the specified element is a HTMLImageElement
+	 * @param el
+	 */
+	protected isImg(el: HTMLElement): el is HTMLImageElement {
+		return el instanceof HTMLImageElement;
+	}
+
+	/**
 	 * Attach load/error listeners for the specified el
 	 *
 	 * @param img
@@ -157,25 +151,26 @@ export default class ImageLoader {
 		const
 			{cache, pending} = this;
 
-		img.addEventListener('load', () => {
-			cache.set(key, img.currentSrc);
+		img.init
+			.then(() => {
+				cache[key] = img.currentSrc;
 
-			if (!pending.has(img)) {
-				return;
-			}
+				if (!pending.has(img)) {
+					return;
+				}
 
-			pending.delete(img);
-			loadCb && loadCb();
-		});
+				pending.delete(img);
+				loadCb && loadCb();
+			})
 
-		img.addEventListener('error', () => {
-			if (!pending.has(img)) {
-				return;
-			}
+			.catch(() => {
+				if (!pending.has(img)) {
+					return;
+				}
 
-			pending.delete(img);
-			errorCb && errorCb();
-		});
+				pending.delete(img);
+				errorCb && errorCb();
+			});
 
 		pending.add(img);
 	}
