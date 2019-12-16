@@ -119,7 +119,6 @@ export default class ImageLoader {
 
 		img.init
 			.then(() => {
-
 				if (!pending.has(img)) {
 					return;
 				}
