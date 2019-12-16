@@ -36,7 +36,7 @@ export default class bRemoteProvider extends iData {
 	}
 
 	/** @override */
-	set db(value: CanUndef<this['DBType']>) {
+	set db(value: CanUndef<this['DB']>) {
 		// tslint:disable-next-line:no-string-literal
 		super['dbSetter'](value);
 		this.syncDBWatcher(value);
@@ -63,7 +63,7 @@ export default class bRemoteProvider extends iData {
 	 * @param [value]
 	 * @emits change(db: CanUndef<T>)
 	 */
-	protected syncDBWatcher(value: CanUndef<this['DBType']>): void {
+	protected syncDBWatcher(value: CanUndef<this['DB']>): void {
 		const
 			p = this.$parent;
 

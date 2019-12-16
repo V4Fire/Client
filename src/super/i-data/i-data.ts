@@ -85,7 +85,7 @@ export default abstract class iData extends iBlock implements iProgress {
 	/**
 	 * Type: raw provider data
 	 */
-	readonly DBType!: object;
+	readonly DB!: object;
 
 	//#if runtime has iData
 
@@ -143,15 +143,15 @@ export default abstract class iData extends iBlock implements iProgress {
 	/**
 	 * Component data
 	 */
-	get db(): CanUndef<this['DBType']> {
+	get db(): CanUndef<this['DB']> {
 		return this.field.get('dbStore');
 	}
 
 	/**
 	 * Sets new component data
-	 * @emits dbChange(value: CanUndef<this['DBType']>)
+	 * @emits dbChange(value: CanUndef<this['DB']>)
 	 */
-	set db(value: CanUndef<this['DBType']>) {
+	set db(value: CanUndef<this['DB']>) {
 		if (value === this.db) {
 			return;
 		}
@@ -203,7 +203,7 @@ export default abstract class iData extends iBlock implements iProgress {
 	 * Component data store
 	 */
 	@field()
-	protected dbStore?: CanUndef<this['DBType']>;
+	protected dbStore?: CanUndef<this['DB']>;
 
 	/**
 	 * Provider instance
@@ -238,7 +238,7 @@ export default abstract class iData extends iBlock implements iProgress {
 		if (this.isFunctional) {
 			return super.initLoad(() => {
 				if (data) {
-					this.db = this.convertDataToDB<this['DBType']>(data);
+					this.db = this.convertDataToDB<this['DB']>(data);
 				}
 
 				return this.db;
@@ -255,7 +255,7 @@ export default abstract class iData extends iBlock implements iProgress {
 
 		if (data || this.dp && this.dp.baseURL) {
 			if (data) {
-				const db = this.convertDataToDB<this['DBType']>(data);
+				const db = this.convertDataToDB<this['DB']>(data);
 				this.lfc.execCbAtTheRightTime(() => this.db = db, label);
 
 			} else if (this.getDefaultRequestParams('get')) {
@@ -263,7 +263,7 @@ export default abstract class iData extends iBlock implements iProgress {
 					.nextTick(label)
 					.then(() => {
 						const
-							p = this.getDefaultRequestParams<this['DBType']>('get');
+							p = this.getDefaultRequestParams<this['DB']>('get');
 
 						Object.assign(p[1], {
 							...label,
@@ -274,7 +274,7 @@ export default abstract class iData extends iBlock implements iProgress {
 					})
 
 					.then((data) => {
-						this.lfc.execCbAtTheRightTime(() => this.db = this.convertDataToDB<this['DBType']>(data), label);
+						this.lfc.execCbAtTheRightTime(() => this.db = this.convertDataToDB<this['DB']>(data), label);
 						return super.initLoad(() => this.db, params);
 
 					}, (err) => {
@@ -367,7 +367,7 @@ export default abstract class iData extends iBlock implements iProgress {
 	 * @param [data]
 	 * @param [params]
 	 */
-	peek(data?: RequestQuery, params?: CreateRequestOptions<this['DBType']>): Promise<CanUndef<this['DBType']>> {
+	peek(data?: RequestQuery, params?: CreateRequestOptions<this['DB']>): Promise<CanUndef<this['DB']>> {
 		const
 			args = arguments.length > 0 ? [data, params] : this.getDefaultRequestParams('peek');
 
@@ -384,7 +384,7 @@ export default abstract class iData extends iBlock implements iProgress {
 	 * @param [data]
 	 * @param [params]
 	 */
-	get(data?: RequestQuery, params?: CreateRequestOptions<this['DBType']>): Promise<CanUndef<this['DBType']>> {
+	get(data?: RequestQuery, params?: CreateRequestOptions<this['DB']>): Promise<CanUndef<this['DB']>> {
 		const
 			args = arguments.length > 0 ? [data, params] : this.getDefaultRequestParams('get');
 
@@ -484,8 +484,8 @@ export default abstract class iData extends iBlock implements iProgress {
 	 * @param data
 	 */
 	protected convertDataToDB<O>(data: unknown): O;
-	protected convertDataToDB(data: unknown): this['DBType'];
-	protected convertDataToDB<O>(data: unknown): O | this['DBType'] {
+	protected convertDataToDB(data: unknown): this['DB'];
+	protected convertDataToDB<O>(data: unknown): O | this['DB'] {
 		let
 			v = data;
 
@@ -502,17 +502,17 @@ export default abstract class iData extends iBlock implements iProgress {
 				checkDBEquality.call(this, v, db) :
 				checkDBEquality && Object.fastCompare(v, db)
 		) {
-			return <O | this['DBType']>db;
+			return <O | this['DB']>db;
 		}
 
-		return <O | this['DBType']>v;
+		return <O | this['DB']>v;
 	}
 
 	/**
 	 * Converts the specified data to the internal component format and returns it
 	 * @param data
 	 */
-	protected convertDBToComponent<O = unknown>(data: unknown): O | this['DBType'] {
+	protected convertDBToComponent<O = unknown>(data: unknown): O | this['DB'] {
 		let
 			v = data;
 
@@ -521,7 +521,7 @@ export default abstract class iData extends iBlock implements iProgress {
 				.reduce((res, fn) => fn.call(this, res), Object.isArray(v) || Object.isObject(v) ? v.valueOf() : v);
 		}
 
-		return <O | this['DBType']>v;
+		return <O | this['DB']>v;
 	}
 
 	/**
@@ -818,7 +818,7 @@ export default abstract class iData extends iBlock implements iProgress {
 	 * Handler: dataProvider.refresh
 	 * @param data
 	 */
-	protected onRefreshData(data: this['DBType']): Promise<void> {
+	protected onRefreshData(data: this['DB']): Promise<void> {
 		return this.reload();
 	}
 
