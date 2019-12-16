@@ -512,14 +512,15 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	isReadyOnce: boolean = false;
 
 	/**
-	 * Link to $root
+	 * Link to the component root.
+	 * Just a short alias for more aesthetic using.
 	 */
-	get r(): iStaticPage | any {
+	get r(): this['$root'] {
 		return this.$root;
 	}
 
 	/**
-	 * Link to the root router
+	 * Link to the application router
 	 */
 	@p({cache: false})
 	get router(): bRouter {
@@ -527,7 +528,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	}
 
 	/**
-	 * Link to the root route object
+	 * Link to the application route object
 	 */
 	@p({cache: false})
 	get route(): CanUndef<CurrentPage> {
@@ -535,7 +536,8 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	}
 
 	/**
-	 * True if the current component is ready (componentStatus == ready)
+	 * True if the current component is ready
+	 * (componentStatus == ready)
 	 */
 	@p({cache: false, replace: false})
 	get isReady(): boolean {
@@ -559,7 +561,11 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	}
 
 	/**
-	 * Base component modifiers
+	 * Base component modifiers.
+	 * That modifiers is automatically provided to child components.
+	 * For example, you have a component that uses an another component within own template,
+	 * and you passes to the outer component some theme modifier.
+	 * This modifier will recursively provided to all children components.
 	 */
 	@p({replace: false})
 	get baseMods(): CanUndef<Readonly<ModsNTable>> {
@@ -578,6 +584,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 
 	/**
 	 * Component modifiers
+	 * @see modsProp
 	 */
 	@system({
 		replace: false,
