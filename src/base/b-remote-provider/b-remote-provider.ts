@@ -51,7 +51,7 @@ export default class bRemoteProvider extends iData {
 			l = this.$listeners;
 
 		if (!l.error && !l['on-error']) {
-			return;
+			super.onRequestError(err, retry);
 		}
 
 		this.emitError('error', err, retry);

@@ -164,7 +164,6 @@ export default abstract class iData extends iBlock implements iProgress {
 		});
 
 		this.field.set('dbStore', value);
-		this.emit('dbChange', value);
 
 		if (this.initRemoteData() !== undefined) {
 			this.watch('dbStore', this.initRemoteData, {
@@ -172,6 +171,8 @@ export default abstract class iData extends iBlock implements iProgress {
 				label: $$.db
 			});
 		}
+
+		this.emit('dbChange', value);
 	}
 
 	/** @inheritDoc */

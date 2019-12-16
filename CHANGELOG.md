@@ -11,17 +11,15 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v3.0.0-beta.230 (2019-12-11)
+## v3.0.0-beta.234 (2019-12-16)
 
 #### :rocket: New Feature
 
-* Added `beforeOptions` and `afterOptions` slots to `b-slider` component
 * [Added `i-observe-dom` trait](https://github.com/V4Fire/Client/pull/146)
 
 #### :bug: Bug Fix
 
-* [Fixed `b-virtual-scroll` request params](https://github.com/V4Fire/Client/pull/149)
-* [Fixed `b-virtual-scroll` size calculation in `fixSize` method](https://github.com/V4Fire/Client/pull/149)
+* Fixed redundant link initializing `Sync`
 
 #### :house: Internal
 
@@ -29,6 +27,35 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 * [`b-content-switcher` component now implements `i-observe-dom`](https://github.com/V4Fire/Client/pull/146)
 * [`b-slider` component now uses `v-resize` directive](https://github.com/V4Fire/Client/pull/146)
 * [Review observable APIs](https://github.com/V4Fire/Client/pull/146)
+
+## v3.0.0-beta.233 (2019-12-13)
+
+#### :bug: Bug Fix
+
+* Fixed `bRemoteProvider` error handling
+
+## v3.0.0-beta.232 (2019-12-13)
+
+#### :boom: Breaking Change
+
+* `dbChange` event will be fired after execution of `initRemoteData` `iData`
+
+## v3.0.0-beta.231 (2019-12-12)
+
+#### :bug: Bug Fix
+
+* Marked `iPage.pageTitle` and `iStaticPage.pageTitle` as non-cacheable
+
+## v3.0.0-beta.230 (2019-12-12)
+
+#### :rocket: New Feature
+
+* Added `beforeOptions` and `afterOptions` slots to `b-slider` component
+
+#### :bug: Bug Fix
+
+* [Fixed `b-virtual-scroll` request params](https://github.com/V4Fire/Client/pull/149)
+* [Fixed `b-virtual-scroll` size calculation in `fixSize` method](https://github.com/V4Fire/Client/pull/149)
 
 ## v3.0.0-beta.229 (2019-12-10)
 
