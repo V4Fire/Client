@@ -292,7 +292,7 @@ export default class bSlider<T extends object = Dictionary> extends iData<T> {
 	 * True if the user has started swiping
 	 */
 	@system()
-	protected swiping: boolean = true;
+	protected swiping: boolean = false;
 
 	/**
 	 * Observers store
