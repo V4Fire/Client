@@ -11,6 +11,7 @@ import IntersectionObserverStrategy from 'core/component/directives/in-view/inte
 
 import {
 
+	InViewGroup,
 	InitOptions,
 	ObservableElement,
 	ObservableThresholdMap
@@ -84,7 +85,7 @@ export default class InViewAdapter {
 	 * Activates deactivated elements by the specified group
 	 * @param [group]
 	 */
-	activate(group?: string): void {
+	activate(group?: string | symbol): void {
 		if (!this.adaptee) {
 			return;
 		}

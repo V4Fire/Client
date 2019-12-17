@@ -11,6 +11,7 @@ import symbolGenerator from 'core/symbol';
 
 import {
 
+	InViewGroup,
 	InitOptions,
 	ObservableElement,
 	ObservableElementsThresholdMap,
@@ -64,7 +65,7 @@ export default abstract class AbstractInView {
 	 * @param isDeactivated
 	 * @param [group]
 	 */
-	setGroupState(isDeactivated: boolean, group?: string | symbol): void {
+	setGroupState(isDeactivated: boolean, group?: InViewGroup): void {
 		this.maps().forEach((map) => {
 			map.forEach((el) => {
 				if (!group || el.group !== group) {

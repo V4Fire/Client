@@ -18,7 +18,7 @@ export interface Observable {
 export interface ObserveOptions {
 	onEnter?: Function;
 	onLeave?: Function;
-	group?: string | symbol;
+	group?: InViewGroup;
 	once?: boolean;
 	handleTransitionEnd?: boolean;
 	root?: (() => HTMLElement) | HTMLElement;
@@ -97,6 +97,7 @@ export interface DirectiveOptions extends VNodeDirective {
 	value?: CanArray<InitOptions>;
 }
 
+export type InViewGroup = string | number | symbol;
 export type RemoveStrategy = 'remove' | 'deactivate';
 export type InitOptions = ObserveOptions & IntersectionObserverOptions;
 export type ObservableElementsMap = Map<HTMLElement, ObservableElement>;
