@@ -11,11 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v3.0.0-beta.234 (2019-12-16)
+## v3.0.0-beta.234 (2019-12-17)
 
 #### :bug: Bug Fix
 
-* Fixed redundant link initializing `Sync`
+* Fixed the redundant link initializing `Sync`
+* Removed the redundant tag with `v-render` and components without a template
 
 ## v3.0.0-beta.233 (2019-12-13)
 
