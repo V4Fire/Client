@@ -67,7 +67,7 @@ export default class InViewAdapter {
 	 * @param el
 	 * @param params
 	 */
-	observe(el: HTMLElement, params: CanArray<InitOptions>): false | void {
+	observe(el: Element, params: CanArray<InitOptions>): false | void {
 		if (!this.adaptee) {
 			return false;
 		}
@@ -109,7 +109,7 @@ export default class InViewAdapter {
 	 * Removes an element from observable elements
 	 * @param el
 	 */
-	remove(el: HTMLElement): boolean {
+	remove(el: Element): boolean {
 		if (!this.adaptee) {
 			return false;
 		}
@@ -121,7 +121,7 @@ export default class InViewAdapter {
 	 * Stops observing the specified element
 	 * @param el
 	 */
-	stopObserve(el: HTMLElement): boolean {
+	stopObserve(el: Element): boolean {
 		if (!this.adaptee) {
 			return false;
 		}
@@ -172,7 +172,7 @@ export default class InViewAdapter {
 	 * Returns a threshold map of the specified element
 	 * @param el
 	 */
-	getThresholdMap(el: HTMLElement): CanUndef<ObservableThresholdMap> {
+	getThresholdMap(el: Element): CanUndef<ObservableThresholdMap> {
 		if (!this.adaptee) {
 			return;
 		}
@@ -186,7 +186,7 @@ export default class InViewAdapter {
 	 * @param el
 	 * @param threshold
 	 */
-	get(el: HTMLElement, threshold: number): CanUndef<ObservableElement> {
+	get(el: Element, threshold: number): CanUndef<ObservableElement> {
 		if (!this.adaptee) {
 			return;
 		}

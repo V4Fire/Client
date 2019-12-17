@@ -38,7 +38,7 @@ export default class InView extends Super {
 	/**
 	 * Map of ids for root elements
 	 */
-	protected readonly rootMap: Map<HTMLElement, number> = new Map();
+	protected readonly rootMap: Map<Element, number> = new Map();
 
 	/**
 	 * Initializes an observer
@@ -114,7 +114,7 @@ export default class InView extends Super {
 		for (let i = 0; i < entries.length; i++) {
 			const
 				entry = entries[i],
-				el = <HTMLElement>entry.target,
+				el = <Element>entry.target,
 				observable = this.getEl(el, threshold);
 
 			if (!observable) {
