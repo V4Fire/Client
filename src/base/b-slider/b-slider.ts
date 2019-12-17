@@ -295,7 +295,7 @@ export default class bSlider extends iData implements iObserveDOM {
 	 * True if the user has started swiping
 	 */
 	@system()
-	protected swiping: boolean = true;
+	protected swiping: boolean = false;
 
 	/**
 	 * Switches to the specified slide
