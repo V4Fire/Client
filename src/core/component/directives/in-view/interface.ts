@@ -18,7 +18,7 @@ export interface Observable {
 export interface ObserveOptions {
 	onEnter?: Function;
 	onLeave?: Function;
-	group?: string;
+	group?: string | symbol;
 	once?: boolean;
 	handleTransitionEnd?: boolean;
 	root?: (() => HTMLElement) | HTMLElement;

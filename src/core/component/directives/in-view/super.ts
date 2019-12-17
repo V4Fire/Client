@@ -64,7 +64,7 @@ export default abstract class AbstractInView {
 	 * @param isDeactivated
 	 * @param [group]
 	 */
-	setGroupState(isDeactivated: boolean, group?: string): void {
+	setGroupState(isDeactivated: boolean, group?: string | symbol): void {
 		this.maps().forEach((map) => {
 			map.forEach((el) => {
 				if (!group || el.group !== group) {
