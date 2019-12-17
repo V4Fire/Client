@@ -195,7 +195,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	 *
 	 * The stage property can be used for marking states of the component.
 	 * For example, we have a component that implements a form for an image uploading,
-	 * and we have two variants of the form: upload by from a link or upload from a computer.
+	 * and we have two variants of the form: upload by a link or upload from a computer.
 	 *
 	 * We can create two stage values: 'link' and 'file' and separate the component template by two variant of a markup,
 	 * depending on the stage value.
@@ -204,7 +204,9 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	readonly stageProp?: Stage;
 
 	/**
-	 * Initial component modifiers
+	 * Initial component modifiers.
+	 * Modifiers represents the special API for binding component state properties directly with CSS classes
+	 * without needless of component re-render.
 	 */
 	@prop({type: Object, required: false})
 	readonly modsProp?: ModsTable;
