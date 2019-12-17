@@ -85,7 +85,7 @@ export default class InViewAdapter {
 	 * Activates deactivated elements by the specified group
 	 * @param [group]
 	 */
-	activate(group?: string | symbol): void {
+	activate(group?: InViewGroup): void {
 		if (!this.adaptee) {
 			return;
 		}
@@ -97,7 +97,7 @@ export default class InViewAdapter {
 	 * Deactivates elements by the specified group
 	 * @param [group]
 	 */
-	deactivate(group?: string): void {
+	deactivate(group?: InViewGroup): void {
 		if (!this.adaptee) {
 			return;
 		}
