@@ -61,18 +61,12 @@ export default class Opt {
 	 * Saves a literal to the cache and returns it
 	 * @param literal
 	 */
-	memoizeLiteral<T>(
-		literal: T
-	): T extends (infer V)[] ? ReadonlyArray<V> : T extends object ? Readonly<T> : T {
-		if (Object.isArray(literal) || Object.isObject(literal)) {
-			if (Object.isFrozen(literal)) {
-				return <any>literal;
-			}
-
-			const key = JSON.stringify(literal);
-			return literalCache[key] = literalCache[key] || Object.freeze(<any>literal);
+	memoizeLiteral<T>(literal: T): T extends (infer V)[] ? ReadonlyArray<V> : T extends object ? Readonly<T> : T {
+		if (Object.isFrozen(literal)) {
+			return <any>literal;
 		}
 
-		return <any>literal;
+		const key = Object.fastHash(literal);
+		return literalCache[key] = literalCache[key] || Object.freeze(<any>literal);
 	}
 }

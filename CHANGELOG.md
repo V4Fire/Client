@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-beta.235 (2019-12-18)
+
+#### :rocket: New Feature
+
+* `Opt.memoizeLiteral` now supports functions
+
 ## v3.0.0-beta.234 (2019-12-17)
 
 #### :bug: Bug Fix
