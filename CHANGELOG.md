@@ -11,7 +11,7 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v3.0.0-beta.234 (2019-12-15)
+## v3.0.0-beta.237 (2019-12-19)
 
 ### :rocket: New Feature
 
@@ -20,6 +20,25 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### :boom: Breaking Change
 
 * [Removed `v-image` Snakeskin directive](https://github.com/V4Fire/Client/pull/152)
+
+## v3.0.0-beta.236 (2019-12-18)
+
+#### :bug: Bug Fix
+
+* Fixed `valueChange` event `bList`
+
+## v3.0.0-beta.235 (2019-12-18)
+
+#### :rocket: New Feature
+
+* `Opt.memoizeLiteral` now supports functions
+
+## v3.0.0-beta.234 (2019-12-17)
+
+#### :bug: Bug Fix
+
+* Fixed the redundant link initializing `Sync`
+* Removed the redundant tag with `v-render` and components without a template
 
 ## v3.0.0-beta.233 (2019-12-13)
 

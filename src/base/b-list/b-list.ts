@@ -78,14 +78,7 @@ export default class bList<T extends object = Dictionary> extends iData<T> imple
 	/**
 	 * Component value
 	 */
-	@field<bList>({
-		watch: (o) => {
-			o.initComponentValues();
-		},
-
-		init: (o) => o.sync.link<Option[]>((val) => o.dataProvider ? o.value || [] : o.normalizeOptions(val))
-	})
-
+	@field<bList>((o) => o.sync.link<Option[]>((val) => o.dataProvider ? o.value || [] : o.normalizeOptions(val)))
 	value!: Option[];
 
 	/**
@@ -394,7 +387,6 @@ export default class bList<T extends object = Dictionary> extends iData<T> imple
 
 		this.values = values;
 		this.indexes = indexes;
-		this.emit('valueChange', this.value);
 	}
 
 	/**
@@ -409,6 +401,21 @@ export default class bList<T extends object = Dictionary> extends iData<T> imple
 	protected initModEvents(): void {
 		super.initModEvents();
 		iVisible.initModEvents(this);
+	}
+
+	/**
+	 * Synchronization for the value field
+	 *
+	 * @param value
+	 * @param oldValue
+	 * @emits valueChange(value: Option[])
+	 */
+	@watch('value')
+	protected syncValueWatcher(value: Option[], oldValue: Option[]): void {
+		if (!Object.fastCompare(value, oldValue)) {
+			this.initComponentValues();
+			this.emit('valueChange', value);
+		}
 	}
 
 	/** @override */
