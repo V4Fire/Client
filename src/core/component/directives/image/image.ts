@@ -56,7 +56,10 @@ export default class ImageLoader {
 				...normalized,
 				load: () => {
 					this.setBackgroundImage(el, img.currentSrc);
-					load && load();
+					load && load(el);
+				},
+				error: () => {
+					error && error(el);
 				}
 			});
 		}
@@ -124,7 +127,7 @@ export default class ImageLoader {
 				}
 
 				pending.delete(img);
-				loadCb && loadCb();
+				loadCb && loadCb(img);
 			})
 
 			.catch(() => {
@@ -133,7 +136,7 @@ export default class ImageLoader {
 				}
 
 				pending.delete(img);
-				errorCb && errorCb();
+				errorCb && errorCb(img);
 			});
 
 		pending.add(img);

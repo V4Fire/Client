@@ -19,8 +19,8 @@ export interface DirectiveOptions extends VNodeDirective {
 export interface ImageOptions {
 	src?: string;
 	srcset?: Dictionary<string> | string;
-	load?(): unknown;
-	error?(): unknown;
+	load?(el: Element): unknown;
+	error?(el: Element): unknown;
 }
 
 export type DirectiveValue = string | ImageOptions;
