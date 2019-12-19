@@ -7,8 +7,8 @@
  */
 
 import symbolGenerator from 'core/symbol';
-import { getSrcSet } from 'core/html';
 
+import { getSrcSet } from 'core/html';
 import { DirectiveValue, ImageOptions } from 'core/component/directives/image';
 
 export const
@@ -16,12 +16,12 @@ export const
 
 export default class ImageLoader {
 	/**
-	 * Nodes that are waiting for loading
+	 * Set of pending nodes
 	 */
 	protected pending: Set<HTMLElement> = new Set();
 
 	/**
-	 * Starts loading an image
+	 * Starts loading an image for the specified element
 	 *
 	 * @param el
 	 * @param value
@@ -40,24 +40,31 @@ export default class ImageLoader {
 		}
 
 		if (this.isImg(el)) {
-			src && (el.src = src);
-			srcset && (el.srcset = srcset);
+			if (src) {
+				el.src = src;
+			}
+
+			if (srcset) {
+				el.srcset = srcset;
+			}
 
 			this.attachListeners(el, load, error);
 
 		} else {
 			const
-				img =  new Image(),
+				img = new Image(),
 				normalized = this.normalizeOptions(value);
 
 			el[$$.img] = img;
 
 			this.load(el[$$.img], {
 				...normalized,
+
 				load: () => {
 					this.setBackgroundImage(el, img.currentSrc);
 					load && load(el);
 				},
+
 				error: () => {
 					error && error(el);
 				}
@@ -66,10 +73,10 @@ export default class ImageLoader {
 	}
 
 	/**
-	 * Removes specified element from pending elements
+	 * Removes an element from the set of pending elements
 	 * @param el
 	 */
-	removePending(el: HTMLElement): void {
+	removeFromPending(el: HTMLElement): void {
 		this.pending.delete(el[$$.img] || el);
 	}
 
@@ -88,21 +95,21 @@ export default class ImageLoader {
 	}
 
 	/**
-	 * Sets a background image for the specified element
+	 * Sets a background image style for the specified element
 	 *
 	 * @param el
-	 * @param src
+	 * @param imageSrc
 	 */
-	setBackgroundImage(el: HTMLElement, src: string): void {
+	setBackgroundImage(el: HTMLElement, imageSrc: string): void {
 		const
-			url = `url('${src}')`,
+			url = `url('${imageSrc}')`,
 			{backgroundImage} = el.style;
 
 		el.style.backgroundImage = backgroundImage ? `${backgroundImage}, ${url}` : `${url}`;
 	}
 
 	/**
-	 * Returns true if the specified element is a HTMLImageElement
+	 * Returns true if the specified element is an instance of HTMLImageElement
 	 * @param el
 	 */
 	protected isImg(el: HTMLElement): el is HTMLImageElement {
@@ -110,13 +117,13 @@ export default class ImageLoader {
 	}
 
 	/**
-	 * Attach load/error listeners for the specified el
+	 * Attaches load/error listeners for the specified image
 	 *
 	 * @param img
-	 * @param [loadCb]
-	 * @param [errorCb]
+	 * @param [onLoad]
+	 * @param [onError]
 	 */
-	protected attachListeners(img: HTMLImageElement, loadCb?: Function, errorCb?: Function): void {
+	protected attachListeners(img: HTMLImageElement, onLoad?: Function, onError?: Function): void {
 		const
 			{pending} = this;
 
@@ -127,7 +134,7 @@ export default class ImageLoader {
 				}
 
 				pending.delete(img);
-				loadCb && loadCb(img);
+				onLoad && onLoad(img);
 			})
 
 			.catch(() => {
@@ -136,7 +143,7 @@ export default class ImageLoader {
 				}
 
 				pending.delete(img);
-				errorCb && errorCb(img);
+				onError && onError(img);
 			});
 
 		pending.add(img);

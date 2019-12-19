@@ -13,9 +13,7 @@ import { DirectiveOptions } from 'core/component/directives/image/interface';
 
 export * from 'core/component/directives/image/interface';
 
-let
-	ImageLoaderInstance: ImageLoader;
-
+let ImageLoaderInstance: ImageLoader;
 export { ImageLoaderInstance as ImageLoader };
 
 ComponentDriver.directive('image', {
@@ -39,7 +37,7 @@ ComponentDriver.directive('image', {
 			return;
 		}
 
-		ImageLoaderInstance.removePending(el);
+		ImageLoaderInstance.removeFromPending(el);
 
 		if (value) {
 			ImageLoaderInstance.load(el, value);
@@ -47,6 +45,6 @@ ComponentDriver.directive('image', {
 	},
 
 	unbind(el: HTMLElement): void {
-		ImageLoaderInstance.removePending(el);
+		ImageLoaderInstance.removeFromPending(el);
 	}
 });
