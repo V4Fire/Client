@@ -110,7 +110,7 @@ export default class ImageLoader {
 	 * Attach load/error listeners for the specified el
 	 *
 	 * @param img
-	 * @param key
+	 * @param [loadCb]
 	 * @param [errorCb]
 	 */
 	protected attachListeners(img: HTMLImageElement, loadCb?: Function, errorCb?: Function): void {
