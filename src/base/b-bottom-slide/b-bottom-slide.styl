@@ -9,12 +9,7 @@
 @import "super/i-block/i-block.styl"
 
 $p = {
-	bgColor: c(White)
-	togglerBgColor: c(SashaGrey)
-	overlayBgColor: c(Black)
-	transformTransitionDuration: 0.15s
-	transitionTimingFn: cubic-bezier(0, 0, 0.64, 1.1)
-	overlayTransitionDuration: 0.15s
+
 }
 
 b-bottom-slide extends i-block
@@ -23,38 +18,25 @@ b-bottom-slide extends i-block
 	&__window
 		-webkit-overflow-scrolling touch
 		fixed top 100% left 0
+		overscroll-behavior none
+
+		useGPU()
 		zIndex(overall)
 
 		size 100%
 
-		border-top-left-radius 10px
-		border-top-right-radius 10px
-
-		background-color $p.bgColor
-		overscroll-behavior none
-
 		will-change transform
-		transition transform $p.transitionTimingFn $p.transformTransitionDuration
-		useGPU()
 
-	&__header
-		display flex
-		justify-content center
-		align-items center
-		size 100% 24px
-
-		border-radius 12px
-		background-color $p.bgColor
+	&__title
+		tap-highlight-color transparent
 
 	&__view
+		position relative
 		box-sizing border-box
-		size 100%
 		overflow scroll
-		padding 16px
-		// Fixes render glitch in Chrome
-		useGPU()
 
 	&__content
+		position relative
 		width 100%
 		overflow hidden
 
@@ -66,27 +48,16 @@ b-bottom-slide extends i-block
 		visibility hidden
 
 		opacity 0
-		background-color $p.overlayBgColor
-
-		will-change opacity
-		transition opacity 0.3s
 
 	&__trigger
 		size 100% 1px
 
-	&__toggler
-		size 24px 4px
-		border-radius 100px
-		background-color $p.togglerBgColor
-
 	&_hidden_true
 		visibility hidden
-		transition visibility 0.1s 0.3s
 
 	&_hidden_true &__overlay
 		visibility hidden
 		opacity 0
-		transition opacity $p.overlayTransitionDuration, visibility $p.overlayTransitionDuration
 
 	&_opened_true &__overlay
 		visibility visible
@@ -108,3 +79,12 @@ b-bottom-slide extends i-block
 	&_height-mode_content ^[0]
 		&__view
 			height auto
+
+	&__sub-pages
+		absolute top 0 left 100%
+		zIndex(overall)
+		display none
+		size 100%
+
+	&__sub-pages > *
+		size 100%

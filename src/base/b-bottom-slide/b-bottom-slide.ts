@@ -15,9 +15,11 @@ import iVisible from 'traits/i-visible/i-visible';
 import iObserveDom from 'traits/i-observe-dom/i-observe-dom';
 
 import { DirectiveOptions } from 'core/component/directives/in-view';
-
+import History from 'base/b-bottom-slide/modules/history';
 import iBlock, { ModsDecl, component, prop, field, system, hook, watch, wait, p } from 'super/i-block/i-block';
+
 export * from 'super/i-data/i-data';
+export * from 'base/b-bottom-slide/modules/history';
 
 export type HeightMode = 'content' | 'full';
 export type Direction = -1 | 0 | 1;
@@ -26,14 +28,14 @@ export const
 	$$ = symbolGenerator();
 
 /**
- * Компонент: шторка
+ * Component: bottom sheet behavior
  */
 @component()
 export default class bBottomSlide extends iBlock implements iLockPageScroll, iOpen, iVisible, iObserveDom {
 	/**
 	 * Component height Option:
-	 *   *) content – the height of the content will be the height of the content, but not more than the full value,
-	 *      in addition, the "steps" will be ignored
+	 *   *) content – the height of the instance, but not more than the full value,
+	 *      in addition, "steps" will be ignored
 	 *
 	 *   *) full – the height of the content will always be the full height of the viewport
 	 */
@@ -195,6 +197,12 @@ export default class bBottomSlide extends iBlock implements iLockPageScroll, iOp
 		this.stepStore = v;
 		this.emit('changeStep', v);
 	}
+
+	/**
+	 * Internal pages history
+	 */
+	@system((ctx) => new History(ctx))
+	protected history!: History<iBlock>;
 
 	/**
 	 * Steps of component (px)
@@ -571,8 +579,7 @@ export default class bBottomSlide extends iBlock implements iLockPageScroll, iOp
 	 */
 	@wait('ready')
 	protected setPosition(): CanPromise<void> {
-		const {$refs: {window}} = this;
-		window.style.transform = `translate3d(0, ${(-this.offset).px}, 0)`;
+		this.$refs.window.style.transform = `translate3d(0, ${(-this.offset).px}, 0)`;
 	}
 
 	/**
@@ -656,7 +663,6 @@ export default class bBottomSlide extends iBlock implements iLockPageScroll, iOp
 			lastStep = stepsInPixels[steps.length - 1],
 			penultimateStep = stepsInPixels[steps.length - 2];
 
-		// tslint:disable-next-line: strict-type-predicates
 		if (penultimateStep === undefined || penultimateStep > offset) {
 			return;
 		}
@@ -779,9 +785,9 @@ export default class bBottomSlide extends iBlock implements iLockPageScroll, iOp
 	@wait('ready')
 	protected onStepChange(): CanPromise<void> {
 		const
-			{window, view} = this.$refs;
+			{window: w, view: v} = this.$refs;
 
-		this.async.once(window, 'transitionend', () => {
+		this.async.once(w, 'transitionend', () => {
 			if (this.isFullyOpened) {
 				this.lock().catch(stderr);
 				this.removeMod('events', false);
@@ -791,7 +797,7 @@ export default class bBottomSlide extends iBlock implements iLockPageScroll, iOp
 				this.setMod('events', false);
 
 				if (this.scrollToTopOnClose) {
-					view.scrollTo(0, 0);
+					v.scrollTo(0, 0);
 				}
 			}
 		}, {label: $$.waitAnimationToFinish});
@@ -896,6 +902,33 @@ export default class bBottomSlide extends iBlock implements iLockPageScroll, iOp
 
 		this.diff = 0;
 		this.currentY = 0;
+	}
+
+	/**
+	 * Обработчик: клик по заголовку
+	 */
+	protected onTitleClick(): void {
+		this.$refs.view.scrollTo({top: 0, left: 0, behavior: 'smooth'});
+	}
+
+	/**
+	 * Handler: on back button click
+	 */
+	protected back(): void {
+		alert('yeah!');
+	}
+
+	/**
+	 * Flag for in-view directive identification
+	 */
+	protected get hasInView(): boolean {
+		//#if runtime has directives/in-view
+		return true;
+		//#endif
+
+		//#unless runtime has directives/in-view
+		return false;
+		//#endunless
 	}
 
 	/** @override */

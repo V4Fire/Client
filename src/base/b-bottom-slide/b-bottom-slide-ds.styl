@@ -1,0 +1,63 @@
+/*!
+ * V4Fire Client Core
+ * https://github.com/V4Fire/Client
+ *
+ * Released under the MIT license
+ * https://github.com/V4Fire/Client/blob/master/LICENSE
+ */
+
+$p = {
+	bgColor: white
+	togglerBgColor: grey
+
+	overlayBgColor: black
+	overlayTransitionDuration: 0.15s
+
+	transformTransitionDuration: 0.15s
+	transitionTimingFn: cubic-bezier(0, 0, 0.64, 1.1)
+}
+
+b-bottom-slide
+	&_hidden_true
+		transition visibility 0.1s 0.3s
+
+	&__window
+		background-color $p.bgColor
+		transition transform $p.transitionTimingFn $p.transformTransitionDuration
+
+	&__toggler-stripe
+		display flex
+		justify-content center
+		align-items center
+		size 100% 24px
+
+		border-radius 12px
+		background-color $p.bgColor
+
+	&__title
+		flex-row flex-start center
+		size 100% 44px
+		user-select none
+
+	&__back
+		font-size 24px
+
+	&__view
+		size 100%
+		padding 16px
+
+	&__overlay
+		background-color $p.overlayBgColor
+		will-change opacity
+		transition opacity 0.3s
+
+	&__toggler
+		size 24px 4px
+		border-radius 100px
+		background-color $p.togglerBgColor
+
+	&_hidden_true
+		transition opacity $p.overlayTransitionDuration, visibility $p.overlayTransitionDuration
+
+	&__sub-pages > *
+		background-color $p.bgColor
