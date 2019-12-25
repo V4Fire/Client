@@ -15,10 +15,14 @@ export interface HistoryItem {
 
 export default class History<T extends iBlock> {
 	/**
-	 * Open modifiers
+	 * History modifiers
 	 */
 	static readonly mods: ModsDecl = {
 		turning: [
+			'in',
+			'out'
+		],
+		history: [
 			'true'
 		]
 	};
@@ -72,7 +76,9 @@ export default class History<T extends iBlock> {
 			page = this.component.$el.querySelector(`[data-page=${stage}]`);
 
 		if (page) {
-			this.component.setMod(page, 'turning', true);
+			// @ts-ignore (access)
+			this.component.block.setElMod(page, 'page', 'turning', 'in');
+			this.component.setMod('history', true);
 			this.stackStore.push({stage, options});
 		}
 	}
@@ -81,6 +87,13 @@ export default class History<T extends iBlock> {
 	 * Navigates back through history
 	 */
 	back(): CanUndef<HistoryItem> {
-		return this.stackStore.pop();
+		const
+			page = this.stackStore.pop();
+
+		if (page && this.stackStore.length === 0) {
+			this.component.removeMod('history');
+		}
+
+		return page;
 	}
 }

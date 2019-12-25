@@ -83,8 +83,15 @@ b-bottom-slide extends i-block
 	&__sub-pages
 		absolute top 0 left 100%
 		zIndex(overall)
-		display none
-		size 100%
 
-	&__sub-pages > *
-		size 100%
+		&
+		& > *
+			size 100%
+
+	&__page_turning_in
+		transform translateX(-100%)
+
+	&__back
+		absolute top left 0
+		zIndex(overall, 1)
+		display none

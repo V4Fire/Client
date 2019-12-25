@@ -34,12 +34,17 @@ b-bottom-slide
 		border-radius 12px
 		background-color $p.bgColor
 
-	&__title
+	& [data-title]
 		flex-row flex-start center
 		size 100% 44px
 		user-select none
 
-	&__back
+	&__sub-pages [data-title]
+		padding-left 24px
+
+	&_history_true &__back
+		display block
+		size 24px
 		font-size 24px
 
 	&__view
@@ -61,3 +66,6 @@ b-bottom-slide
 
 	&__sub-pages > *
 		background-color $p.bgColor
+
+	&__page_turning_in
+		transition $p.transformTransitionDuration $p.transitionTimingFn transform
