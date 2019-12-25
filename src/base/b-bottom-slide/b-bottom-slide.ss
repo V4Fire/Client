@@ -38,7 +38,8 @@
 				< .&__trigger v-if = hasInView | v-in-view = inViewParams
 
 				< .&__content ref = content
-					+= self.slot('default', {':history': 'history'})
+					< .&__page -page = index
+						+= self.slot('default', {':history': 'history'})
 
 					< .&__back @click = back
 						🔙

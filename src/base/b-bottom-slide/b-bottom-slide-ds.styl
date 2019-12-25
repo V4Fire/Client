@@ -64,8 +64,10 @@ b-bottom-slide
 	&_hidden_true
 		transition opacity $p.overlayTransitionDuration, visibility $p.overlayTransitionDuration
 
-	&__sub-pages > *
-		background-color $p.bgColor
+	&__page_below_true
+		opacity 0.5
+		transform translateX(-10%)
 
-	&__page_turning_in
-		transition $p.transformTransitionDuration $p.transitionTimingFn transform
+	& [data-page]
+		background-color $p.bgColor
+		transition $p.transformTransitionDuration $p.transitionTimingFn transform, $p.transformTransitionDuration $p.transitionTimingFn opacity

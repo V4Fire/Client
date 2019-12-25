@@ -915,7 +915,7 @@ export default class bBottomSlide extends iBlock implements iLockPageScroll, iOp
 	 * Handler: on back button click
 	 */
 	protected back(): void {
-		alert('yeah!');
+		this.history.back();
 	}
 
 	/**

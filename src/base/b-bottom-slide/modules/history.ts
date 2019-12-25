@@ -10,7 +10,7 @@ import iBlock, { ModsDecl } from 'super/i-block/i-block';
 
 export interface HistoryItem {
 	stage: string;
-	options: CanUndef<Dictionary>
+	options: CanUndef<Dictionary>;
 }
 
 export default class History<T extends iBlock> {
@@ -39,9 +39,12 @@ export default class History<T extends iBlock> {
 
 	/**
 	 * @param component
+	 * @param [indexStage]
+	 * @param [options]
 	 */
-	constructor(component: T) {
+	constructor(component: T, indexStage: string = 'index', options?: Dictionary) {
 		this.component = component;
+		this.stackStore.push({stage: indexStage, options});
 	}
 
 	/**
@@ -73,11 +76,15 @@ export default class History<T extends iBlock> {
 	 */
 	push(stage: string, options?: Dictionary): void {
 		const
+			currentPage = this.component.$el.querySelector(`[data-page=${this.current.stage}]`),
 			page = this.component.$el.querySelector(`[data-page=${stage}]`);
 
 		if (page) {
 			// @ts-ignore (access)
 			this.component.block.setElMod(page, 'page', 'turning', 'in');
+
+			// @ts-ignore (access)
+			this.component.block.setElMod(currentPage, 'page', 'below', true);
 			this.component.setMod('history', true);
 			this.stackStore.push({stage, options});
 		}
@@ -87,13 +94,35 @@ export default class History<T extends iBlock> {
 	 * Navigates back through history
 	 */
 	back(): CanUndef<HistoryItem> {
-		const
-			page = this.stackStore.pop();
-
-		if (page && this.stackStore.length === 0) {
-			this.component.removeMod('history');
+		if (this.stackStore.length === 1) {
+			return;
 		}
 
-		return page;
+		const
+			current = this.stackStore.pop();
+
+		if (current) {
+			if (this.stackStore.length === 1) {
+				this.component.removeMod('history');
+			}
+
+			const
+				{$el} = this.component,
+				page = $el.querySelector(`[data-page=${current.stage}]`);
+
+			if (page) {
+				// @ts-ignore (access)
+				this.component.block.removeElMod(page, 'page', 'turning');
+
+				const
+					pageBelow = this.stackStore[this.stackStore.length - 1],
+					pageBelowEl = $el.querySelector(`[data-page=${pageBelow.stage}]`);
+
+				// @ts-ignore (access)
+				this.component.block.removeElMod(pageBelowEl, 'page', 'below');
+			}
+		}
+
+		return current;
 	}
 }
