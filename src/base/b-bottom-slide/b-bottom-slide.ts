@@ -169,8 +169,8 @@ export default class bBottomSlide extends iBlock implements iLockPageScroll, iOp
 		view: HTMLElement;
 		window: HTMLElement;
 		header: HTMLElement;
-		overlay?: HTMLElement;
 		content: HTMLElement;
+		overlay?: HTMLElement;
 	};
 
 	/** @see step */
@@ -905,10 +905,38 @@ export default class bBottomSlide extends iBlock implements iLockPageScroll, iOp
 	}
 
 	/**
-	 * Обработчик: клик по заголовку
+	 * Handler: click on a title
 	 */
+	@watch({
+		field: '?$el:click',
+		wrapper: (o, cb) => o.dom.delegate('[data-title]', cb)
+	})
+
 	protected onTitleClick(): void {
 		this.$refs.view.scrollTo({top: 0, left: 0, behavior: 'smooth'});
+	}
+
+	/**
+	 * Handler: on scroll page
+	 */
+	@watch({
+		field: '?$refs.view:scroll',
+		wrapper: (o, cb) => cb.throttle(0.05.seconds())
+	})
+
+	protected onViewScroll(): void {
+		const
+			{current} = this.history;
+
+		if (current?.title?.el) {
+			const
+				titleH = current.title.initBoundingRect.height,
+				{scrollTop} = this.$refs.view,
+				diff = titleH - scrollTop;
+
+			this.setMod('title-in-viewport', diff > 0);
+			this.block.setElMod(current.title.el, 'title', 'in-view', diff > 0);
+		}
 	}
 
 	/**

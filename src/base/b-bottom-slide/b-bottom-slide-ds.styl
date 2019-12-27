@@ -35,8 +35,10 @@ b-bottom-slide
 		background-color $p.bgColor
 
 	& [data-title]
-		flex-row flex-start center
+		flex-row space-between center
 		size 100% 44px
+
+		transition background-color $p.transitionTimingFn $p.transformTransitionDuration
 		user-select none
 
 	&__sub-pages [data-title]
@@ -49,7 +51,7 @@ b-bottom-slide
 
 	&__view
 		size 100%
-		padding 16px
+		padding 0 16px
 
 	&__overlay
 		background-color $p.overlayBgColor
@@ -71,3 +73,10 @@ b-bottom-slide
 	& [data-page]
 		background-color $p.bgColor
 		transition $p.transformTransitionDuration $p.transitionTimingFn transform, $p.transformTransitionDuration $p.transitionTimingFn opacity
+
+	&__title_in-view_false
+		fixed top 23px
+		background-color $p.bgColor
+
+	&_title-in-viewport_false &__content
+		padding-top 44px

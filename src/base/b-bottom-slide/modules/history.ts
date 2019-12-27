@@ -11,6 +11,10 @@ import iBlock, { ModsDecl } from 'super/i-block/i-block';
 export interface HistoryItem {
 	stage: string;
 	options: CanUndef<Dictionary>;
+	title?: {
+		el: Element | null;
+		initBoundingRect: DOMRect;
+	}
 }
 
 export default class History<T extends iBlock> {
@@ -39,18 +43,34 @@ export default class History<T extends iBlock> {
 
 	/**
 	 * @param component
-	 * @param [indexStage]
+	 * @param [stage] - initial page stage
 	 * @param [options]
 	 */
-	constructor(component: T, indexStage: string = 'index', options?: Dictionary) {
+	constructor(component: T, stage: string = 'index', options?: Dictionary) {
 		this.component = component;
-		this.stackStore.push({stage: indexStage, options});
+		this.stackStore.push({stage, options});
+
+		// @ts-ignore (access)
+		this.component.meta.hooks.mounted.push({
+			fn: () => {
+				const
+					{stage} = this.current,
+					el = this.component.$el.querySelector(`[data-page=${stage}] [data-title]`);
+
+				if (el) {
+					this.current.title = {
+						el,
+						initBoundingRect: el.getBoundingClientRect()
+					};
+				}
+			}
+		});
 	}
 
 	/**
 	 * Current stack position
 	 */
-	get current(): Readonly<HistoryItem> {
+	get current(): HistoryItem {
 		return this.stackStore[this.stackStore.length - 1];
 	}
 
@@ -86,7 +106,20 @@ export default class History<T extends iBlock> {
 			// @ts-ignore (access)
 			this.component.block.setElMod(currentPage, 'page', 'below', true);
 			this.component.setMod('history', true);
-			this.stackStore.push({stage, options});
+
+			const
+				el = this.component.$el.querySelector(`[data-page=${this.current.stage}] [data-title]`);
+
+			let title;
+
+			if (el) {
+				title = {
+					el,
+					initBoundingRect: el.getBoundingClientRect()
+				};
+			}
+
+			this.stackStore.push({stage, options, title});
 		}
 	}
 
