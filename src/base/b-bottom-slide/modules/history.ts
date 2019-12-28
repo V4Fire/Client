@@ -75,7 +75,7 @@ export default class History<T extends iBlock> {
 	}
 
 	/**
-	 * Public stack
+	 * Pages stack
 	 */
 	get stack(): ReadonlyArray<HistoryItem> {
 		return Object.freeze(this.stackStore);
@@ -89,7 +89,7 @@ export default class History<T extends iBlock> {
 	}
 
 	/**
-	 * Adds the component stage to the stack
+	 * Adds the component stage to the pages stack
 	 *
 	 * @param stage
 	 * @param [options]

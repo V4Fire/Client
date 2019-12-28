@@ -946,19 +946,6 @@ export default class bBottomSlide extends iBlock implements iLockPageScroll, iOp
 		this.history.back();
 	}
 
-	/**
-	 * Flag for in-view directive identification
-	 */
-	protected get hasInView(): boolean {
-		//#if runtime has directives/in-view
-		return true;
-		//#endif
-
-		//#unless runtime has directives/in-view
-		return false;
-		//#endunless
-	}
-
 	/** @override */
 	protected beforeDestroy(): void {
 		super.beforeDestroy();

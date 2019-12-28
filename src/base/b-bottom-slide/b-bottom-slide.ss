@@ -35,14 +35,13 @@
 				@touchmove = onMove |
 				@touchend = onRelease
 			.
-				< .&__trigger v-if = hasInView | v-in-view = inViewParams
+				< .&__trigger v-in-view = inViewParams
 
 				< .&__content ref = content
 					< .&__page -page = index
 						+= self.slot('default', {':history': 'history'})
 
 					< .&__back @click = back
-						🔙
 
 					< .&__sub-pages v-if = vdom.getSlot('pages')
 						+= self.slot('pages', {':history': 'history'})
