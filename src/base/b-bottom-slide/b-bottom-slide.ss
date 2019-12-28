@@ -20,28 +20,33 @@
 
 	- block body
 		< .&__window ref = window
-			< header.&__header &
-				ref = header |
-				@touchstart = (e) => onStart(e, true) |
-				@touchmove = onMove |
-				@touchend = onRelease
-			.
-				< .&__toggler-stripe
-					< .&__toggler
+			- block header
+				< header.&__header &
+					ref = header |
+					@touchstart = (e) => onStart(e, true) |
+					@touchmove = onMove |
+					@touchend = onRelease
+				.
+					< .&__toggler-stripe
+						< .&__toggler
 
-			< .&__view &
-				ref = view |
-				@touchstart = onStart |
-				@touchmove = onMove |
-				@touchend = onRelease
-			.
-				< .&__trigger v-in-view = inViewParams
+			- block view
+				< .&__view &
+					ref = view |
+					@touchstart = onStart |
+					@touchmove = onMove |
+					@touchend = onRelease
+				.
+					< .&__trigger v-in-view = inViewParams
 
-				< .&__content ref = content
-					< .&__page -page = index
-						+= self.slot('default', {':history': 'history'})
+					- block content
+						< .&__content ref = content
+							< .&__page -page = index
+								+= self.slot('default', {':history': 'history'})
 
-					< .&__back @click = back
+							- block back
+								< .&__back @click = back
 
-					< .&__sub-pages v-if = vdom.getSlot('pages')
-						+= self.slot('pages', {':history': 'history'})
+							- block subPages
+								< .&__sub-pages v-if = vdom.getSlot('pages')
+									+= self.slot('pages', {':history': 'history'})
