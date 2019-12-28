@@ -36,7 +36,7 @@
 					< _.&__checkbox
 						- block check
 							+= self.slot('check')
-								< .&__check
+								< _.&__check
 
 					- block label
 						< span.&__label v-if = label || vdom.getSlot('label')

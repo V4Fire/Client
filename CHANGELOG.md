@@ -11,11 +11,80 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v3.0.0-beta.228 (2019-12-08)
+## v3.0.0-beta.237 (2019-12-19)
+
+### :rocket: New Feature
+
+* [Added `v-image` directive](https://github.com/V4Fire/Client/pull/152)
+
+#### :boom: Breaking Change
+
+* [Removed `v-image` Snakeskin directive](https://github.com/V4Fire/Client/pull/152)
+
+## v3.0.0-beta.236 (2019-12-18)
+
+#### :bug: Bug Fix
+
+* Fixed `valueChange` event `bList`
+
+## v3.0.0-beta.235 (2019-12-18)
 
 #### :rocket: New Feature
 
-* [Added `b-bottom-slide` component](https://github.com/V4Fire/Client/pull/147)
+* `Opt.memoizeLiteral` now supports functions
+
+## v3.0.0-beta.234 (2019-12-17)
+
+#### :bug: Bug Fix
+
+* Fixed the redundant link initializing `Sync`
+* Removed the redundant tag with `v-render` and components without a template
+
+## v3.0.0-beta.233 (2019-12-13)
+
+#### :bug: Bug Fix
+
+* Fixed `bRemoteProvider` error handling
+
+## v3.0.0-beta.232 (2019-12-13)
+
+#### :boom: Breaking Change
+
+* `dbChange` event will be fired after execution of `initRemoteData` `iData`
+
+## v3.0.0-beta.231 (2019-12-12)
+
+#### :bug: Bug Fix
+
+* Marked `iPage.pageTitle` and `iStaticPage.pageTitle` as non-cacheable
+
+## v3.0.0-beta.230 (2019-12-12)
+
+#### :rocket: New Feature
+
+* Added `beforeOptions` and `afterOptions` slots to `b-slider` component
+
+#### :bug: Bug Fix
+
+* [Fixed `b-virtual-scroll` request params](https://github.com/V4Fire/Client/pull/149)
+* [Fixed `b-virtual-scroll` size calculation in `fixSize` method](https://github.com/V4Fire/Client/pull/149)
+* Fixed `iLockPageScroll`
+* Marked `bDynamicPage.component` as non-cacheable
+
+## v3.0.0-beta.229 (2019-12-10)
+
+#### :bug: Bug Fix
+
+* Fixed `AsyncRender` destructors
+* Marked `bRemoteProvider.content` as non-cacheable
+* Fixed `iData.syncRequestParamsWatcher` component status
+
+## v3.0.0-beta.228 (2019-12-09)
+
+#### :bug: Bug Fix
+
+* Fixed `bCheckbox` legacy value logic
+* Fixed `bCheckbox` change events
 
 ## v3.0.0-beta.227 (2019-12-06)
 

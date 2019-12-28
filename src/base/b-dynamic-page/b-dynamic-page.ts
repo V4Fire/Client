@@ -15,6 +15,7 @@ import iDynamicPage, {
 	prop,
 	field,
 	watch,
+	p,
 
 	Statuses,
 	InitLoadParams
@@ -98,6 +99,7 @@ export default class bDynamicPage extends iDynamicPage {
 	/**
 	 * Link to a page component
 	 */
+	@p({cache: false})
 	get component(): CanUndef<iDynamicPage> {
 		return this.$refs.component;
 	}

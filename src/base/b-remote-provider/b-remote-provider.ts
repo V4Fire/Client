@@ -7,7 +7,7 @@
  */
 
 import symbolGenerator from 'core/symbol';
-import iData, { component, prop, RequestError, RetryRequestFn } from 'super/i-data/i-data';
+import iData, { component, prop, p, RequestError, RetryRequestFn } from 'super/i-data/i-data';
 export * from 'super/i-data/i-data';
 
 export const
@@ -28,8 +28,9 @@ export default class bRemoteProvider<T extends object = Dictionary> extends iDat
 	readonly fieldProp?: string;
 
 	/**
-	 * Link to the component content nodes
+	 * Link to component content nodes
 	 */
+	@p({cache: false})
 	get content(): CanPromise<HTMLCollection> {
 		return this.waitStatus('loading', () => this.$el.children);
 	}
@@ -50,7 +51,7 @@ export default class bRemoteProvider<T extends object = Dictionary> extends iDat
 			l = this.$listeners;
 
 		if (!l.error && !l['on-error']) {
-			return;
+			super.onRequestError(err, retry);
 		}
 
 		this.emitError('error', err, retry);

@@ -30,7 +30,7 @@ export type SyncObjectField<T = unknown> =
 
 export type SyncObjectFields<T = unknown> = Array<
 	SyncObjectField<T>
-	>;
+>;
 
 const
 	storeRgxp = /Store$/;
@@ -149,11 +149,17 @@ export default class Sync {
 			throw new Error('Method "sync.link" can\'t be used outside from a property decorator');
 		}
 
-		const
-			{meta, component, linksCache, syncLinkCache: cache, component: {$options: {propsData}}} = this;
+		const {
+			meta,
+			component,
+			linksCache,
+			syncLinkCache: cache,
+			component: {$options: {propsData}}
+		} = this;
 
 		let
-			isProp;
+			isProp,
+			isAccessor;
 
 		if (!field || !Object.isString(field)) {
 			wrapper = <LinkWrapper<D>>params;
@@ -163,6 +169,10 @@ export default class Sync {
 
 		} else {
 			isProp = Boolean(meta.props[field]);
+
+			if (!isProp) {
+				isAccessor = Boolean(meta.accessors[field] || meta.computed[field]);
+			}
 		}
 
 		if (params && Object.isFunction(params)) {
@@ -171,7 +181,10 @@ export default class Sync {
 		}
 
 		params = params || {};
-		params.immediate = params.immediate !== false;
+
+		if (isAccessor) {
+			params.immediate = params.immediate !== false;
+		}
 
 		if (!linksCache[path]) {
 			linksCache[path] = {};
@@ -288,14 +301,14 @@ export default class Sync {
 			params = {};
 		}
 
-		params = params || {};
-		params.immediate = params.immediate !== false;
-
-		const
-			{meta, component, syncLinkCache, linksCache, component: {$options: {propsData}}} = this;
-
-		const
-			hooks = meta.hooks.beforeDataCreate;
+		const {
+			meta,
+			component,
+			syncLinkCache,
+			linksCache,
+			meta: {hooks: {beforeDataCreate: hooks}},
+			component: {$options: {propsData}}
+		} = this;
 
 		// tslint:disable-next-line:prefer-conditional-expression
 		if (path) {
@@ -338,6 +351,20 @@ export default class Sync {
 				sync = (val?, oldVal?) => setField(path, getVal(val, oldVal)),
 				isProp = meta.props[field];
 
+			let
+				isAccessor;
+
+			if (!isProp) {
+				isAccessor = Boolean(meta.accessors[field] || meta.computed[field]);
+			}
+
+			const
+				p = <AsyncWatchOptions>{...params};
+
+			if (isAccessor) {
+				p.immediate = p.immediate !== false;
+			}
+
 			if (!component.isFlyweight && (component.isFunctional ?
 					!isProp :
 					!isProp || !propsData || field in propsData
@@ -349,7 +376,7 @@ export default class Sync {
 						}
 
 						sync(val, oldVal);
-					}, <AsyncWatchOptions>params);
+					}, p);
 
 				} else {
 					const
@@ -365,7 +392,7 @@ export default class Sync {
 						}
 
 						sync(val, oldVal);
-					}, <AsyncWatchOptions>params);
+					}, p);
 				}
 			}
 

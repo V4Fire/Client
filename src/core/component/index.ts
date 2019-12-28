@@ -368,7 +368,7 @@ export function component(params?: ComponentParams): Function {
 									composite = attrOpts && attrOpts['v4-composite'];
 
 								if (tag === 'v-render') {
-									return attrOpts && <VNode>attrOpts.from || nativeCreate('span');
+									return attrOpts && <VNode>attrOpts.from || nativeCreate();
 								}
 
 								let
@@ -422,7 +422,7 @@ export function component(params?: ComponentParams): Function {
 										tpl = TPLS[componentName];
 
 									if (!tpl) {
-										return nativeCreate('span');
+										return nativeCreate();
 									}
 
 									const
@@ -632,6 +632,10 @@ export function component(params?: ComponentParams): Function {
 														parent = isTemplateParent ? vnode.elm.parentNode : vnode.elm,
 														baseHook = ctx.hook;
 
+													if (!parent) {
+														return [];
+													}
+
 													ctx.hook = 'beforeUpdate';
 													ctx.renderGroup = p.renderGroup;
 
@@ -719,7 +723,7 @@ export function component(params?: ComponentParams): Function {
 							return r.fn.call(rootCtx, createElement, baseCtx);
 						}
 
-						return nativeCreate('span');
+						return nativeCreate();
 					}
 				}
 			};

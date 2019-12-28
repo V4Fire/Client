@@ -55,6 +55,7 @@ export default abstract class iPage<T extends object = Dictionary> extends iData
 	/**
 	 * Page title
 	 */
+	@p({cache: false})
 	get pageTitle(): string {
 		return this.$root.pageTitle;
 	}

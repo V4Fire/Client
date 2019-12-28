@@ -159,7 +159,6 @@ export default abstract class iData<T extends object = Dictionary> extends iBloc
 		});
 
 		this.field.set('dbStore', value);
-		this.emit('dbChange', value);
 
 		if (this.initRemoteData() !== undefined) {
 			this.watch('dbStore', this.initRemoteData, {
@@ -167,6 +166,8 @@ export default abstract class iData<T extends object = Dictionary> extends iBloc
 				label: $$.db
 			});
 		}
+
+		this.emit('dbChange', value);
 	}
 
 	/** @inheritDoc */
@@ -605,6 +606,7 @@ export default abstract class iData<T extends object = Dictionary> extends iBloc
 				.clearAll(group);
 
 			if (m === 'get') {
+				this.componentStatus = 'loading';
 				$a.setImmediate(this.initLoad, group);
 
 			} else {

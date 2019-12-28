@@ -19,16 +19,20 @@
 
 	- block body
 		: putIn content
-
 			< template v-if = option
+				+= self.slot('beforeOptions')
+
 				< template &
 					v-for = (el, i) in optionsIterator ? optionsIterator(options, self) : options |
 					:key = getOptionKey(el, i)
 				.
+
 					< component.&__option &
 						:is = option |
 						:v-attrs = Object.isFunction(optionProps) ? optionProps(el, i, getOptionKey(el, i)) : optionProps
 					.
+
+				+= self.slot('afterOptions')
 
 			< template v-else
 				+= self.slot()

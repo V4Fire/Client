@@ -126,7 +126,7 @@ export default class bTextarea<
 	/**
 	 * Calculates the component height
 	 */
-	@wait('ready', {label: $$.calcHeight, defer: true})
+	@wait('ready', {defer: true, label: $$.calcHeight})
 	async calcHeight(): Promise<CanUndef<number>> {
 		const
 			{input, scroll} = this.$refs,
@@ -172,7 +172,7 @@ export default class bTextarea<
 	/**
 	 * Minimizes the component
 	 */
-	@wait('ready', {label: $$.minimize, defer: true})
+	@wait('ready', {defer: true, label: $$.minimize})
 	protected async minimize(): Promise<number> {
 		const
 			{input, scroll} = this.$refs;
