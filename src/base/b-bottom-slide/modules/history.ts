@@ -7,6 +7,7 @@
  */
 
 import iBlock, { ModsDecl } from 'super/i-block/i-block';
+import { delegate } from 'core/dom';
 
 export interface HistoryItem {
 	stage: string;
@@ -17,7 +18,11 @@ export interface HistoryItem {
 	}
 }
 
-export default class History<T extends iBlock> {
+export interface HistoryReady {
+	pageContainer: HTMLElement;
+}
+
+export default class History<T extends iBlock & HistoryReady> {
 	/**
 	 * History modifiers
 	 */
@@ -51,20 +56,7 @@ export default class History<T extends iBlock> {
 		this.stackStore.push({stage, options});
 
 		// @ts-ignore (access)
-		this.component.meta.hooks.mounted.push({
-			fn: () => {
-				const
-					{stage} = this.current,
-					el = this.component.$el.querySelector(`[data-page=${stage}] [data-title]`);
-
-				if (el) {
-					this.current.title = {
-						el,
-						initBoundingRect: el.getBoundingClientRect()
-					};
-				}
-			}
-		});
+		this.component.meta.hooks.mounted.push({fn: this.onMounted});
 	}
 
 	/**
@@ -157,5 +149,66 @@ export default class History<T extends iBlock> {
 		}
 
 		return current;
+	}
+
+	/**
+	 * Handler: on linked component mounted
+	 */
+	protected onMounted(): void {
+		const
+			{stage} = this.current,
+			el = this.component.$el.querySelector(`[data-page=${stage}] [data-title]`);
+
+		if (el) {
+			this.current.title = {
+				el,
+				initBoundingRect: el.getBoundingClientRect()
+			};
+		}
+
+		const
+			// @ts-ignore (access)
+			$a = this.component.async;
+
+		$a.on(
+			this.component.$el,
+			'click',
+			delegate('[data-title]', this.onTitleClick.bind(this))
+		);
+
+		$a.on(
+			this.component.pageContainer,
+			'scroll',
+			this.onViewScroll.bind(this).throttle(0.05.seconds())
+		);
+	}
+
+	/**
+	 * Handler: click on a title
+	 */
+	protected onTitleClick(): void {
+		if (this.component.pageContainer) {
+			this.component.pageContainer.scrollTo({top: 0, left: 0, behavior: 'smooth'});
+		}
+	}
+
+	/**
+	 * Handler: on scroll page
+	 */
+	protected onViewScroll(): void {
+		const
+			{current} = this;
+
+		if (current?.title?.el) {
+			const
+				titleH = current.title.initBoundingRect.height,
+				{scrollTop} = this.component.pageContainer,
+				diff = titleH - scrollTop;
+
+			this.component.setMod('title-in-viewport', diff > 0);
+
+			// @ts-ignore (access)
+			this.component.block.setElMod(current.title.el, 'title', 'in-view', diff > 0);
+		}
 	}
 }

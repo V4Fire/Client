@@ -15,7 +15,7 @@ import iVisible from 'traits/i-visible/i-visible';
 import iObserveDom from 'traits/i-observe-dom/i-observe-dom';
 
 import { DirectiveOptions } from 'core/component/directives/in-view';
-import History from 'base/b-bottom-slide/modules/history';
+import History, { HistoryReady } from 'base/b-bottom-slide/modules/history';
 import iBlock, { ModsDecl, component, prop, field, system, hook, watch, wait, p } from 'super/i-block/i-block';
 
 export * from 'super/i-data/i-data';
@@ -120,6 +120,13 @@ export default class bBottomSlide extends iBlock implements iLockPageScroll, iOp
 	}
 
 	/**
+	 * Link to the page container
+	 */
+	get pageContainer(): HTMLElement {
+		return this.$refs.view;
+	}
+
+	/**
 	 * Parameters for in-view directive
 	 */
 	get inViewParams(): DirectiveOptions['value'] {
@@ -202,7 +209,7 @@ export default class bBottomSlide extends iBlock implements iLockPageScroll, iOp
 	 * Internal pages history
 	 */
 	@system((ctx) => new History(ctx))
-	protected history!: History<iBlock>;
+	protected history!: History<bBottomSlide & HistoryReady>;
 
 	/**
 	 * Steps of component (px)
@@ -902,41 +909,6 @@ export default class bBottomSlide extends iBlock implements iLockPageScroll, iOp
 
 		this.diff = 0;
 		this.currentY = 0;
-	}
-
-	/**
-	 * Handler: click on a title
-	 */
-	@watch({
-		field: '?$el:click',
-		wrapper: (o, cb) => o.dom.delegate('[data-title]', cb)
-	})
-
-	protected onTitleClick(): void {
-		this.$refs.view.scrollTo({top: 0, left: 0, behavior: 'smooth'});
-	}
-
-	/**
-	 * Handler: on scroll page
-	 */
-	@watch({
-		field: '?$refs.view:scroll',
-		wrapper: (o, cb) => cb.throttle(0.05.seconds())
-	})
-
-	protected onViewScroll(): void {
-		const
-			{current} = this.history;
-
-		if (current?.title?.el) {
-			const
-				titleH = current.title.initBoundingRect.height,
-				{scrollTop} = this.$refs.view,
-				diff = titleH - scrollTop;
-
-			this.setMod('title-in-viewport', diff > 0);
-			this.block.setElMod(current.title.el, 'title', 'in-view', diff > 0);
-		}
 	}
 
 	/**
