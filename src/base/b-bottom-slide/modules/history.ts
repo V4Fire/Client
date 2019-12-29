@@ -56,7 +56,7 @@ export default class History<T extends iBlock & HistoryReady> {
 		this.stackStore.push({stage, options});
 
 		// @ts-ignore (access)
-		this.component.meta.hooks.mounted.push({fn: this.onMounted});
+		this.component.meta.hooks.mounted.push({fn: this.onMounted.bind(this)});
 	}
 
 	/**
@@ -166,6 +166,10 @@ export default class History<T extends iBlock & HistoryReady> {
 			};
 		}
 
+		if (!this.component.vdom.getSlot('pages')) {
+			return;
+		}
+
 		const
 			// @ts-ignore (access)
 			$a = this.component.async;
@@ -179,12 +183,12 @@ export default class History<T extends iBlock & HistoryReady> {
 		$a.on(
 			this.component.pageContainer,
 			'scroll',
-			this.onViewScroll.bind(this).throttle(0.05.seconds())
+			this.onPageScroll.bind(this).throttle(0.05.seconds())
 		);
 	}
 
 	/**
-	 * Handler: click on a title
+	 * Handler: click on a page title
 	 */
 	protected onTitleClick(): void {
 		if (this.component.pageContainer) {
@@ -194,8 +198,9 @@ export default class History<T extends iBlock & HistoryReady> {
 
 	/**
 	 * Handler: on scroll page
+	 * @emits titleInView(isVisible: boolean)
 	 */
-	protected onViewScroll(): void {
+	protected onPageScroll(): void {
 		const
 			{current} = this;
 
@@ -203,12 +208,13 @@ export default class History<T extends iBlock & HistoryReady> {
 			const
 				titleH = current.title.initBoundingRect.height,
 				{scrollTop} = this.component.pageContainer,
-				diff = titleH - scrollTop;
+				isVisible = titleH - scrollTop > 0;
 
-			this.component.setMod('title-in-viewport', diff > 0);
+			this.component.setMod('title-in-viewport', isVisible);
 
 			// @ts-ignore (access)
-			this.component.block.setElMod(current.title.el, 'title', 'in-view', diff > 0);
+			this.component.block.setElMod(current.title.el, 'title', 'in-view', isVisible);
+			this.component.emit('titleInView', isVisible);
 		}
 	}
 }
