@@ -1,0 +1,29 @@
+/*!
+ * V4Fire Client Core
+ * https://github.com/V4Fire/Client
+ *
+ * Released under the MIT license
+ * https://github.com/V4Fire/Client/blob/master/LICENSE
+ */
+
+$p = {
+
+}
+
+i-history
+	&__sub-pages
+		absolute top 0 left 100vw
+		zIndex(overall)
+
+		&
+		& > [data-page]
+			position absolute
+			size 100%
+
+	&__page_turning_in
+		transform translateX(-100vw)
+
+	&__back
+		absolute top left 0
+		zIndex(overall, 1)
+		display none

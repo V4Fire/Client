@@ -9,17 +9,18 @@
 import symbolGenerator from 'core/symbol';
 import { is } from 'core/browser';
 
+import iHistory from 'traits/i-history/i-history';
+import History from 'traits/i-history/modules/history';
+
 import iLockPageScroll from 'traits/i-lock-page-scroll/i-lock-page-scroll';
 import iOpen from 'traits/i-open/i-open';
 import iVisible from 'traits/i-visible/i-visible';
 import iObserveDom from 'traits/i-observe-dom/i-observe-dom';
 
 import { DirectiveOptions } from 'core/component/directives/in-view';
-import History, { HistoryReady } from 'base/b-bottom-slide/modules/history';
 import iBlock, { ModsDecl, component, prop, field, system, hook, watch, wait, p } from 'super/i-block/i-block';
 
 export * from 'super/i-data/i-data';
-export * from 'base/b-bottom-slide/modules/history';
 
 export type HeightMode = 'content' | 'full';
 export type Direction = -1 | 0 | 1;
@@ -31,7 +32,7 @@ export const
  * Component: bottom sheet behavior
  */
 @component()
-export default class bBottomSlide extends iBlock implements iLockPageScroll, iOpen, iVisible, iObserveDom {
+export default class bBottomSlide extends iBlock implements iLockPageScroll, iOpen, iVisible, iObserveDom, iHistory {
 	/**
 	 * Component height Option:
 	 *   *) content – the height of the instance, but not more than the full value,
@@ -119,9 +120,7 @@ export default class bBottomSlide extends iBlock implements iLockPageScroll, iOp
 		return res.concat(stepsStore).sort((a, b) => a - b);
 	}
 
-	/**
-	 * Link to the page container
-	 */
+	/** @see iHistory.pageContainer */
 	get pageContainer(): HTMLElement {
 		return this.$refs.view;
 	}
@@ -154,6 +153,10 @@ export default class bBottomSlide extends iBlock implements iLockPageScroll, iOp
 	get isClosed(): boolean {
 		return this.step === 0;
 	}
+
+	/** @see iHistory.history */
+	@system((ctx) => new History(ctx))
+	history!: History<iBlock & iHistory>;
 
 	/** @inheritDoc */
 	static readonly mods: ModsDecl = {
@@ -204,12 +207,6 @@ export default class bBottomSlide extends iBlock implements iLockPageScroll, iOp
 		this.stepStore = v;
 		this.emit('changeStep', v);
 	}
-
-	/**
-	 * Internal pages history
-	 */
-	@system((ctx) => new History(ctx))
-	protected history!: History<bBottomSlide & HistoryReady>;
 
 	/**
 	 * Steps of component (px)

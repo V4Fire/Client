@@ -7,6 +7,7 @@
  */
 
 import iBlock, { ModsDecl } from 'super/i-block/i-block';
+import iHistory from 'traits/i-history/i-history';
 import { delegate } from 'core/dom';
 
 export interface HistoryItem {
@@ -18,11 +19,7 @@ export interface HistoryItem {
 	}
 }
 
-export interface HistoryReady {
-	pageContainer: HTMLElement;
-}
-
-export default class History<T extends iBlock & HistoryReady> {
+export default class History<T extends iBlock & iHistory> {
 	/**
 	 * History modifiers
 	 */

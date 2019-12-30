@@ -7,6 +7,7 @@
  */
 
 @import "super/i-block/i-block.styl"
+@import "traits/i-history/i-history.styl"
 
 $p = {
 
@@ -14,6 +15,10 @@ $p = {
 
 b-bottom-slide extends i-block
 	zIndex(overall)
+
+	// @stlint-disable
+	i-history({})
+	// @stlint-enable
 
 	&__window
 		-webkit-overflow-scrolling touch
@@ -79,20 +84,3 @@ b-bottom-slide extends i-block
 	&_height-mode_content ^[0]
 		&__view
 			height auto
-
-	&__sub-pages
-		absolute top 0 left 100vw
-		zIndex(overall)
-
-		&
-		& > [data-page]
-			position absolute
-			size 100%
-
-	&__page_turning_in
-		transform translateX(-100vw)
-
-	&__back
-		absolute top left 0
-		zIndex(overall, 1)
-		display none
