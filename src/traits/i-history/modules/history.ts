@@ -106,6 +106,8 @@ export default class History<T extends iBlock & iHistory> {
 					el,
 					initBoundingRect: el.getBoundingClientRect()
 				};
+
+				this.scrollToPageTop();
 			}
 
 			this.stackStore.push({stage, options, title});
@@ -161,6 +163,8 @@ export default class History<T extends iBlock & iHistory> {
 				el,
 				initBoundingRect: el.getBoundingClientRect()
 			};
+
+			this.initTitleInView();
 		}
 
 		if (!this.component.vdom.getSlot('pages')) {
@@ -188,9 +192,33 @@ export default class History<T extends iBlock & iHistory> {
 	 * Handler: click on a page title
 	 */
 	protected onTitleClick(): void {
+		this.scrollToPageTop();
+	}
+
+	/**
+	 * Scrolls page container to top
+	 */
+	protected scrollToPageTop(): void {
 		if (this.component.pageContainer) {
 			this.component.pageContainer.scrollTo({top: 0, left: 0, behavior: 'smooth'});
 		}
+	}
+
+	/**
+	 * Initializes title in view modifiers
+	 */
+	protected initTitleInView(): void {
+		const
+			{current} = this,
+			titleH = current?.title?.initBoundingRect.height || 0,
+			{scrollTop} = this.component.pageContainer,
+			visible = titleH - scrollTop > 0;
+
+		this.component.setMod('title-in-viewport', visible);
+
+		// @ts-ignore (access)
+		this.component.block.setElMod(current.title.el, 'title', 'in-view', visible);
+		this.component.emit('titleInView', visible);
 	}
 
 	/**
@@ -198,20 +226,8 @@ export default class History<T extends iBlock & iHistory> {
 	 * @emits titleInView(isVisible: boolean)
 	 */
 	protected onPageScroll(): void {
-		const
-			{current} = this;
-
-		if (current?.title?.el) {
-			const
-				titleH = current.title.initBoundingRect.height,
-				{scrollTop} = this.component.pageContainer,
-				isVisible = titleH - scrollTop > 0;
-
-			this.component.setMod('title-in-viewport', isVisible);
-
-			// @ts-ignore (access)
-			this.component.block.setElMod(current.title.el, 'title', 'in-view', isVisible);
-			this.component.emit('titleInView', isVisible);
+		if (this.current?.title?.el) {
+			this.initTitleInView();
 		}
 	}
 }
