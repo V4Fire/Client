@@ -8,15 +8,21 @@
 
 import iBlock, { ModsDecl } from 'super/i-block/i-block';
 import iHistory from 'traits/i-history/i-history';
-import { delegate } from 'core/dom';
+
+export interface Content {
+	el: Element;
+}
+
+export interface Title {
+	el: Element | null;
+	initBoundingRect: CanUndef<DOMRect>;
+}
 
 export interface HistoryItem {
 	stage: string;
 	options: CanUndef<Dictionary>;
-	title?: {
-		el: Element | null;
-		initBoundingRect: DOMRect;
-	}
+	content?: Content;
+	title?: Title;
 }
 
 export default class History<T extends iBlock & iHistory> {
@@ -82,10 +88,11 @@ export default class History<T extends iBlock & iHistory> {
 	 *
 	 * @param stage
 	 * @param [options]
+	 * @emits history:transition(page: HistoryItem)
 	 */
 	push(stage: string, options?: Dictionary): void {
 		const
-			currentPage = this.component.$el.querySelector(`[data-page=${this.current.stage}]`),
+			currentPage = this.current?.content?.el,
 			page = this.component.$el.querySelector(`[data-page=${stage}]`);
 
 		if (page) {
@@ -97,25 +104,16 @@ export default class History<T extends iBlock & iHistory> {
 			this.component.setMod('history', true);
 
 			const
-				el = this.component.$el.querySelector(`[data-page=${this.current.stage}] [data-title]`);
+				els = this.initPage();
 
-			let title;
-
-			if (el) {
-				title = {
-					el,
-					initBoundingRect: el.getBoundingClientRect()
-				};
-
-				this.scrollToPageTop();
-			}
-
-			this.stackStore.push({stage, options, title});
+			this.stackStore.push({stage, options, ...els});
+			this.component.emit('history:transition', this.current);
 		}
 	}
 
 	/**
 	 * Navigates back through history
+	 * @emits history:back(page: HistoryItem)
 	 */
 	back(): CanUndef<HistoryItem> {
 		if (this.stackStore.length === 1) {
@@ -145,47 +143,69 @@ export default class History<T extends iBlock & iHistory> {
 				// @ts-ignore (access)
 				this.component.block.removeElMod(pageBelowEl, 'page', 'below');
 			}
+
+			this.component.emit('history:back', current);
 		}
 
 		return current;
 	}
 
 	/**
-	 * Handler: on linked component mounted
+	 * Initializes dom for the current page
 	 */
-	protected onMounted(): void {
+	protected initPage(): {content: Content; title: Title} | void {
 		const
+			// @ts-ignore (access)
+			$a = this.component.async,
 			{stage} = this.current,
-			el = this.component.$el.querySelector(`[data-page=${stage}] [data-title]`);
+			page = this.component.$el.querySelector(`[data-page=${stage}]`);
 
-		if (el) {
-			this.current.title = {
-				el,
-				initBoundingRect: el.getBoundingClientRect()
-			};
-
-			this.initTitleInView();
-		}
-
-		if (!this.component.vdom.getSlot('pages')) {
+		if (!page) {
 			return;
 		}
 
+		this.current.content = {
+			el: page
+		};
+
 		const
-			// @ts-ignore (access)
-			$a = this.component.async;
+			title = page.querySelector('[data-title]');
+
+		if (title) {
+			$a.on(
+				title,
+				'click',
+				this.onTitleClick.bind(this)
+			);
+		}
 
 		$a.on(
-			this.component.$el,
-			'click',
-			delegate('[data-title]', this.onTitleClick.bind(this))
-		);
-
-		$a.on(
-			this.component.pageContainer,
+			page,
 			'scroll',
 			this.onPageScroll.bind(this).throttle(0.05.seconds())
 		);
+
+		return {
+			content: {
+				el: page
+			},
+
+			title: {
+				el: title,
+				initBoundingRect: title?.getBoundingClientRect()
+			}
+		};
+	}
+
+	/**
+	 * Handler: on linked component mounted hook
+	 */
+	protected onMounted(): void {
+		const
+			els = this.initPage();
+
+		Object.assign(this.current, els);
+		this.initTitleInView();
 	}
 
 	/**
@@ -206,24 +226,24 @@ export default class History<T extends iBlock & iHistory> {
 
 	/**
 	 * Initializes title in view modifiers
+	 * @emits history:titleInView(visible: boolean)
 	 */
 	protected initTitleInView(): void {
 		const
 			{current} = this,
-			titleH = current?.title?.initBoundingRect.height || 0,
-			{scrollTop} = this.component.pageContainer,
+			titleH = current?.title?.initBoundingRect?.height || 0,
+			scrollTop = current.content?.el?.scrollTop || 0,
 			visible = titleH - scrollTop > 0;
 
 		this.component.setMod('title-in-viewport', visible);
 
 		// @ts-ignore (access)
 		this.component.block.setElMod(current.title.el, 'title', 'in-view', visible);
-		this.component.emit('titleInView', visible);
+		this.component.emit('history:titleInView', visible);
 	}
 
 	/**
-	 * Handler: on scroll page
-	 * @emits titleInView(isVisible: boolean)
+	 * Handler: on scroll inner page
 	 */
 	protected onPageScroll(): void {
 		if (this.current?.title?.el) {
