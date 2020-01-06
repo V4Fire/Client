@@ -10,6 +10,5 @@ import iBlock from 'super/i-block/i-block';
 import History from 'traits/i-history/modules/history';
 
 export default abstract class iHistory {
-	abstract get pageContainer(): HTMLElement;
-	abstract history: History<iBlock & iHistory>
+	abstract history: History<iBlock & iHistory>;
 }

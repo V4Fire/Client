@@ -120,11 +120,6 @@ export default class bBottomSlide extends iBlock implements iLockPageScroll, iOp
 		return res.concat(stepsStore).sort((a, b) => a - b);
 	}
 
-	/** @see iHistory.pageContainer */
-	get pageContainer(): HTMLElement {
-		return this.$refs.view;
-	}
-
 	/**
 	 * Parameters for in-view directive
 	 */
@@ -906,13 +901,6 @@ export default class bBottomSlide extends iBlock implements iLockPageScroll, iOp
 
 		this.diff = 0;
 		this.currentY = 0;
-	}
-
-	/**
-	 * Handler: on back button click
-	 */
-	protected back(): void {
-		this.history.back();
 	}
 
 	/** @override */

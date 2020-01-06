@@ -92,21 +92,21 @@ export default class History<T extends iBlock & iHistory> {
 	 */
 	push(stage: string, options?: Dictionary): void {
 		const
-			currentPage = this.current?.content?.el,
-			page = this.component.$el.querySelector(`[data-page=${stage}]`);
+			currentPage = this.current?.content?.el;
 
-		if (page) {
+		const
+			els = this.initPage(stage);
+
+		if (els && els.content.el) {
 			// @ts-ignore (access)
-			this.component.block.setElMod(page, 'page', 'turning', 'in');
+			this.component.block.setElMod(els.content.el, 'page', 'turning', 'in');
 
 			// @ts-ignore (access)
 			this.component.block.setElMod(currentPage, 'page', 'below', true);
 			this.component.setMod('history', true);
 
-			const
-				els = this.initPage();
-
 			this.stackStore.push({stage, options, ...els});
+			this.scrollToPageTop();
 			this.component.emit('history:transition', this.current);
 		}
 	}
@@ -129,8 +129,7 @@ export default class History<T extends iBlock & iHistory> {
 			}
 
 			const
-				{$el} = this.component,
-				page = $el.querySelector(`[data-page=${current.stage}]`);
+				page = current.content?.el;
 
 			if (page) {
 				// @ts-ignore (access)
@@ -138,7 +137,7 @@ export default class History<T extends iBlock & iHistory> {
 
 				const
 					pageBelow = this.stackStore[this.stackStore.length - 1],
-					pageBelowEl = $el.querySelector(`[data-page=${pageBelow.stage}]`);
+					pageBelowEl = pageBelow.content?.el;
 
 				// @ts-ignore (access)
 				this.component.block.removeElMod(pageBelowEl, 'page', 'below');
@@ -152,21 +151,17 @@ export default class History<T extends iBlock & iHistory> {
 
 	/**
 	 * Initializes dom for the current page
+	 * @param stage
 	 */
-	protected initPage(): {content: Content; title: Title} | void {
+	protected initPage(stage: string): {content: Content; title: Title} | void {
 		const
 			// @ts-ignore (access)
 			$a = this.component.async,
-			{stage} = this.current,
 			page = this.component.$el.querySelector(`[data-page=${stage}]`);
 
 		if (!page) {
 			return;
 		}
-
-		this.current.content = {
-			el: page
-		};
 
 		const
 			title = page.querySelector('[data-title]');
@@ -202,7 +197,7 @@ export default class History<T extends iBlock & iHistory> {
 	 */
 	protected onMounted(): void {
 		const
-			els = this.initPage();
+			els = this.initPage(this.current.stage);
 
 		Object.assign(this.current, els);
 		this.initTitleInView();
@@ -212,15 +207,23 @@ export default class History<T extends iBlock & iHistory> {
 	 * Handler: click on a page title
 	 */
 	protected onTitleClick(): void {
-		this.scrollToPageTop();
+		this.scrollToPageTop(true);
 	}
 
 	/**
 	 * Scrolls page container to top
+	 * @param animate
 	 */
-	protected scrollToPageTop(): void {
-		if (this.component.pageContainer) {
-			this.component.pageContainer.scrollTo({top: 0, left: 0, behavior: 'smooth'});
+	protected scrollToPageTop(animate: boolean = false): void {
+		if (this.current.content) {
+			const
+				options = {top: 0, left: 0};
+
+			if (animate) {
+				Object.assign(options, {behavior: 'smooth'});
+			}
+
+			this.current.content.el.scrollTo(options);
 		}
 	}
 
@@ -234,8 +237,6 @@ export default class History<T extends iBlock & iHistory> {
 			titleH = current?.title?.initBoundingRect?.height || 0,
 			scrollTop = current.content?.el?.scrollTop || 0,
 			visible = titleH - scrollTop > 0;
-
-		this.component.setMod('title-in-viewport', visible);
 
 		// @ts-ignore (access)
 		this.component.block.setElMod(current.title.el, 'title', 'in-view', visible);
