@@ -11,6 +11,28 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-beta.237 (2019-12-19)
+
+### :rocket: New Feature
+
+* [Added `v-image` directive](https://github.com/V4Fire/Client/pull/152)
+
+#### :boom: Breaking Change
+
+* [Removed `v-image` Snakeskin directive](https://github.com/V4Fire/Client/pull/152)
+
+## v3.0.0-beta.236 (2019-12-18)
+
+#### :bug: Bug Fix
+
+* Fixed `valueChange` event `bList`
+
+## v3.0.0-beta.235 (2019-12-18)
+
+#### :rocket: New Feature
+
+* `Opt.memoizeLiteral` now supports functions
+
 ## v3.0.0-beta.234 (2019-12-17)
 
 #### :boom: Breaking Change

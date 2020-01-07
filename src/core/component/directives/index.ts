@@ -13,3 +13,7 @@ import 'core/component/directives/in-view';
 //#if runtime has directives/resize
 import 'core/component/directives/resize';
 //#endif
+
+//#if runtime has directives/image
+import 'core/component/directives/image';
+//#endif
