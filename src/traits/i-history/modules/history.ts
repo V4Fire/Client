@@ -96,6 +96,9 @@ export default class History<T extends iBlock & iHistory> {
 
 		if (els && els.content.el) {
 			// @ts-ignore (access)
+			els.content.el.classList.add(this.component.block.getFullElName('page'));
+
+			// @ts-ignore (access)
 			this.component.block.setElMod(els.content.el, 'page', 'turning', 'in');
 
 			// @ts-ignore (access)
