@@ -41,9 +41,4 @@
 					< .&__trigger v-in-view = inViewParams
 
 					- block content
-						< .&__content ref = content
-							< template v-if = vdom.getSlot('pages')
-								+= self.getTpl('i-history/')({self})
-
-							< template v-else
-								+= self.slot('default')
+						+= self.getTpl('i-history/')({self})
