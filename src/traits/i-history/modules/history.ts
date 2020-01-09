@@ -30,12 +30,9 @@ export default class History<T extends iBlock & iHistory> {
 	 * History modifiers
 	 */
 	static readonly mods: ModsDecl = {
-		turning: [
-			'in',
-			'out'
-		],
-		history: [
-			'true'
+		blankHistory: [
+			'false',
+			['true']
 		]
 	};
 
@@ -47,7 +44,7 @@ export default class History<T extends iBlock & iHistory> {
 	/**
 	 * Transitions stack
 	 */
-	protected stackStore: HistoryItem[] = [];
+	protected stack: HistoryItem[] = [];
 
 	/**
 	 * @param component
@@ -56,7 +53,7 @@ export default class History<T extends iBlock & iHistory> {
 	 */
 	constructor(component: T, stage: string = 'index', options?: Dictionary) {
 		this.component = component;
-		this.stackStore.push({stage, options});
+		this.stack.push({stage, options});
 
 		// @ts-ignore (access)
 		this.component.meta.hooks.mounted.push({fn: this.onMounted.bind(this)});
@@ -66,21 +63,21 @@ export default class History<T extends iBlock & iHistory> {
 	 * Current stack position
 	 */
 	get current(): HistoryItem {
-		return this.stackStore[this.stackStore.length - 1];
+		return this.stack[this.stack.length - 1];
 	}
 
 	/**
 	 * Pages stack
 	 */
-	get stack(): ReadonlyArray<HistoryItem> {
-		return Object.freeze(this.stackStore);
+	get pagesInStack(): ReadonlyArray<HistoryItem> {
+		return Object.freeze(this.stack);
 	}
 
 	/**
 	 * Page count at the history
 	 */
 	get length(): number {
-		return this.stackStore.length;
+		return this.stack.length;
 	}
 
 	/**
@@ -103,9 +100,9 @@ export default class History<T extends iBlock & iHistory> {
 
 			// @ts-ignore (access)
 			this.component.block.setElMod(currentPage, 'page', 'below', true);
-			this.component.setMod('history', true);
+			this.component.setMod('blankHistory', false);
 
-			this.stackStore.push({stage, options, ...els});
+			this.stack.push({stage, options, ...els});
 			this.scrollToPageTop();
 			this.component.emit('history:transition', this.current);
 		}
@@ -116,16 +113,16 @@ export default class History<T extends iBlock & iHistory> {
 	 * @emits history:back(page: HistoryItem)
 	 */
 	back(): CanUndef<HistoryItem> {
-		if (this.stackStore.length === 1) {
+		if (this.stack.length === 1) {
 			return;
 		}
 
 		const
-			current = this.stackStore.pop();
+			current = this.stack.pop();
 
 		if (current) {
-			if (this.stackStore.length === 1) {
-				this.component.removeMod('history');
+			if (this.stack.length === 1) {
+				this.component.setMod('blankHistory', true);
 			}
 
 			const
@@ -136,7 +133,7 @@ export default class History<T extends iBlock & iHistory> {
 				this.component.block.removeElMod(page, 'page', 'turning');
 
 				const
-					pageBelow = this.stackStore[this.stackStore.length - 1],
+					pageBelow = this.stack[this.stack.length - 1],
 					pageBelowEl = pageBelow.content?.el;
 
 				// @ts-ignore (access)
