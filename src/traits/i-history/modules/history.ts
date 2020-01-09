@@ -190,24 +190,6 @@ export default class History<T extends iBlock & iHistory> {
 	}
 
 	/**
-	 * Handler: on linked component mounted hook
-	 */
-	protected onMounted(): void {
-		const
-			els = this.initPage(this.current.stage);
-
-		Object.assign(this.current, els);
-		this.initTitleInView();
-	}
-
-	/**
-	 * Handler: click on a page title
-	 */
-	protected onTitleClick(): void {
-		this.scrollToPageTop(true);
-	}
-
-	/**
 	 * Scrolls page container to top
 	 * @param animate
 	 */
@@ -238,6 +220,24 @@ export default class History<T extends iBlock & iHistory> {
 		// @ts-ignore (access)
 		this.component.block.setElMod(current.title.el, 'title', 'in-view', visible);
 		this.component.emit('history:titleInView', visible);
+	}
+
+	/**
+	 * Handler: on linked component mounted hook
+	 */
+	protected onMounted(): void {
+		const
+			els = this.initPage(this.current.stage);
+
+		Object.assign(this.current, els);
+		this.initTitleInView();
+	}
+
+	/**
+	 * Handler: click on a page title
+	 */
+	protected onTitleClick(): void {
+		this.scrollToPageTop(true);
 	}
 
 	/**
