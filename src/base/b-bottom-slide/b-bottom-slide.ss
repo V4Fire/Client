@@ -9,6 +9,7 @@
 - namespace [%fileName%]
 
 - include 'super/i-block'|b as placeholder
+- include 'traits/i-history'|b
 
 - template index() extends ['i-block'].index
 	- block headHelpers
@@ -41,12 +42,8 @@
 
 					- block content
 						< .&__content ref = content
-							< .&__page -page = index
-								+= self.slot('default', {':history': 'history'})
+							< template v-if = vdom.getSlot('pages')
+								+= self.getTpl('i-history/')({self})
 
-							- block back
-								< .&__back @click = back
-
-							- block subPages
-								< .&__sub-pages v-if = vdom.getSlot('pages')
-									+= self.slot('pages', {':history': 'history'})
+							< template v-else
+								+= self.slot('default')
