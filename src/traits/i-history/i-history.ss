@@ -9,7 +9,7 @@
  */
 
 - @@ignore
-- template index(@params, content)
+- template index(@params)
 	< . &
 		-page = index |
 		:class = provide.elClasses(${@self.name()}, {page: {}})

@@ -41,4 +41,5 @@
 					< .&__trigger v-in-view = inViewParams
 
 					- block content
-						+= self.getTpl('i-history/')({self})
+						< .&__content ref = content
+							+= self.getTpl('i-history/')({self})
