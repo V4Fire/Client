@@ -26,15 +26,15 @@ const Adaptee = getAdaptee([
 export let
 	InView: InViewAdapter = new InViewAdapter();
 
+if (!InView.hasAdaptee) {
+	// @ts-ignore
+	InView.setInstance(new Adaptee());
+}
+
 ComponentDriver.directive('in-view', {
 	inserted(el: HTMLElement, {value}: DirectiveOptions): void {
 		if (!Adaptee || !value) {
 			return;
-		}
-
-		if (!InView.hasAdaptee) {
-			// @ts-ignore
-			InView.setInstance(new Adaptee());
 		}
 
 		InView.observe(el, <CanArray<InitOptions>>value);
