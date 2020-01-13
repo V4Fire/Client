@@ -17,13 +17,12 @@ export default class Lazy {
 	/**
 	 * Component instance
 	 */
-	protected readonly component: iBlock;
+	protected readonly component: iBlock['unsafe'];
 
 	/**
 	 * Async instance
 	 */
-	protected get async(): Async {
-		// @ts-ignore (access)
+	protected get async(): Async<iBlock> {
 		return this.component.async;
 	}
 
@@ -31,7 +30,7 @@ export default class Lazy {
 	 * @param component - component instance
 	 */
 	constructor(component: iBlock) {
-		this.component = component;
+		this.component = component.unsafe;
 	}
 
 	/**

@@ -34,8 +34,8 @@ export function mergeMods<T extends iBlock>(
 	}
 
 	const
-		// @ts-ignore (access)
-		cache = component.$syncLinkCache[link];
+		c = component.unsafe,
+		cache = c.$syncLinkCache[link];
 
 	if (!cache) {
 		return;
@@ -71,15 +71,14 @@ export function mergeMods<T extends iBlock>(
 	};
 
 	const
-		modsProp = getFullModsProp(component),
+		modsProp = getFullModsProp(c),
 		mods = {...oldComponent.mods};
 
 	for (let keys = Object.keys(mods), i = 0; i < keys.length; i++) {
 		const
 			key = keys[i];
 
-		// @ts-ignore (access)
-		if (component.sync.syncModCache[key]) {
+		if (c.sync.syncModCache[key]) {
 			delete mods[key];
 		}
 	}
@@ -99,20 +98,21 @@ export function mergeMods<T extends iBlock>(
  */
 export function initMods<T extends iBlock>(component: T): ModsNTable {
 	const
-		// @ts-ignore (access)
-		declMods = component.meta.component.mods,
+		c = component.unsafe,
+		declMods = c.meta.component.mods;
+
+	const
 		attrMods = <string[][]>[],
 		modVal = (val) => val != null ? String(val) : undefined;
 
-	// @ts-ignore (access)
-	for (let attrs = component.$attrs, keys = Object.keys(attrs), i = 0; i < keys.length; i++) {
+	for (let attrs = c.$attrs, keys = Object.keys(attrs), i = 0; i < keys.length; i++) {
 		const
 			key = keys[i],
 			modKey = key.camelize(false);
 
 		if (modKey in declMods) {
 			const attrVal = attrs[key];
-			component.watch(`$attrs.${key}`, (val: Dictionary = {}) => component.setMod(modKey, modVal(val[key])));
+			c.watch(`$attrs.${key}`, (val: Dictionary = {}) => c.setMod(modKey, modVal(val[key])));
 
 			if (attrVal == null) {
 				continue;
@@ -125,7 +125,7 @@ export function initMods<T extends iBlock>(component: T): ModsNTable {
 	function link(propMods: ModsTable): ModsNTable {
 		const
 			// tslint:disable-next-line:prefer-object-spread
-			mods = component.mods || {...declMods};
+			mods = c.mods || {...declMods};
 
 		if (propMods) {
 			for (let keys = Object.keys(propMods), i = 0; i < keys.length; i++) {
@@ -145,7 +145,7 @@ export function initMods<T extends iBlock>(component: T): ModsNTable {
 		}
 
 		const
-			{experiments} = component.$root.remoteState;
+			{experiments} = c.$root.remoteState;
 
 		if (Object.isArray(experiments)) {
 			for (let i = 0; i < experiments.length; i++) {
@@ -173,13 +173,13 @@ export function initMods<T extends iBlock>(component: T): ModsNTable {
 				val = modVal(mods[key]);
 
 			mods[key] = val;
-			component.hook !== 'beforeDataCreate' && component.setMod(key, val);
+			c.hook !== 'beforeDataCreate' && c.setMod(key, val);
 		}
 
 		return mods;
 	}
 
-	return component.sync.link<any>(link);
+	return c.sync.link<any>(link);
 }
 
 /**

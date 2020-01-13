@@ -18,9 +18,9 @@ export const
  * @param component
  * @param e
  */
-export async function onMaskFocus<T extends bInput<any, any, any>>(component: T, e: FocusEvent): Promise<void> {
+export async function onMaskFocus<T extends bInput>(component: T, e: FocusEvent): Promise<void> {
 	const
-		c = component;
+		c = component.unsafe;
 
 	if (c.mods.empty === 'true') {
 		await c.applyMaskToValue('', {updateBuffer: true});
@@ -44,7 +44,6 @@ export async function onMaskFocus<T extends bInput<any, any, any>>(component: T,
 		}
 	}
 
-	// @ts-ignore (access)
 	c.$refs.input.setSelectionRange(pos, pos);
 }
 
@@ -54,7 +53,7 @@ export async function onMaskFocus<T extends bInput<any, any, any>>(component: T,
  * @param component
  * @param e
  */
-export function onMaskBlur<T extends bInput<any, any, any>>(component: T, e: Event): void {
+export function onMaskBlur<T extends bInput>(component: T, e: Event): void {
 	const
 		// @ts-ignore (access)
 		m = component._mask;
@@ -75,7 +74,7 @@ export function onMaskBlur<T extends bInput<any, any, any>>(component: T, e: Eve
  * @param component
  * @param e
  */
-export function onMaskCursorReady<T extends bInput<any, any, any>>(component: T, e: KeyboardEvent | MouseEvent): void {
+export function onMaskCursorReady<T extends bInput>(component: T, e: KeyboardEvent | MouseEvent): void {
 	const
 		// @ts-ignore (access)
 		{input} = component.$refs;
@@ -96,7 +95,7 @@ export function onMaskCursorReady<T extends bInput<any, any, any>>(component: T,
  * @param component
  * @param e
  */
-export function onMaskValueReady<T extends bInput<any, any, any>>(component: T, e: KeyboardEvent | MouseEvent): void {
+export function onMaskValueReady<T extends bInput>(component: T, e: KeyboardEvent | MouseEvent): void {
 	// @ts-ignore (access)
 	component._maskBuffer = component.valueBuffer;
 }
@@ -107,7 +106,7 @@ export function onMaskValueReady<T extends bInput<any, any, any>>(component: T, 
  * @param component
  * @emits actionChange(value: V)
  */
-export async function onMaskInput<T extends bInput<any, any, any>>(component: T): Promise<void> {
+export async function onMaskInput<T extends bInput>(component: T): Promise<void> {
 	const
 		c = component;
 
@@ -129,7 +128,7 @@ export async function onMaskInput<T extends bInput<any, any, any>>(component: T)
  * @param e
  * @emits actionChange(value: V)
  */
-export async function onMaskBackspace<T extends bInput<any, any, any>>(component: T, e: KeyboardEvent): Promise<void> {
+export async function onMaskBackspace<T extends bInput>(component: T, e: KeyboardEvent): Promise<void> {
 	const codes = {
 		Backspace: true,
 		Delete: true
@@ -273,7 +272,7 @@ export async function onMaskBackspace<T extends bInput<any, any, any>>(component
  * @param component
  * @param e
  */
-export function onMaskNavigate<T extends bInput<any, any, any>>(component: T, e: KeyboardEvent | MouseEvent): void {
+export function onMaskNavigate<T extends bInput>(component: T, e: KeyboardEvent | MouseEvent): void {
 	if (e.altKey || e.shiftKey || e.ctrlKey || e.metaKey) {
 		return;
 	}
@@ -379,7 +378,7 @@ export function onMaskNavigate<T extends bInput<any, any, any>>(component: T, e:
  * @param e
  * @emits actionChange(value: V)
  */
-export function onMaskKeyPress<T extends bInput<any, any, any>>(component: T, e: KeyboardEvent): void {
+export function onMaskKeyPress<T extends bInput>(component: T, e: KeyboardEvent): void {
 	const
 		c = component;
 

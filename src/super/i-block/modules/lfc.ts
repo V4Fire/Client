@@ -24,20 +24,18 @@ export default class Lfc {
 	 * Component status
 	 */
 	get status(): Statuses {
-		// @ts-ignore (access)
 		return this.component.componentStatus;
 	}
 
 	/**
 	 * Component instance
 	 */
-	protected readonly component: iBlock;
+	protected readonly component: iBlock['unsafe'];
 
 	/**
 	 * Async instance
 	 */
-	protected get async(): Async {
-		// @ts-ignore (access)
+	protected get async(): Async<iBlock> {
 		return this.component.async;
 	}
 
@@ -45,7 +43,6 @@ export default class Lfc {
 	 * Component meta object
 	 */
 	protected get meta(): ComponentMeta {
-		// @ts-ignore (access)
 		return this.component.meta;
 	}
 
@@ -53,7 +50,7 @@ export default class Lfc {
 	 * @param component - component instance
 	 */
 	constructor(component: iBlock) {
-		this.component = component;
+		this.component = component.unsafe;
 	}
 
 	/**
@@ -92,7 +89,6 @@ export default class Lfc {
 			return cb.call(this);
 		}
 
-		// @ts-ignore (access)
 		this.component.beforeReadyListeners++;
 
 		const
@@ -112,7 +108,6 @@ export default class Lfc {
 	 * @param [params] - async parameters
 	 */
 	execCbAfterBlockReady<T = unknown>(cb: (this: this) => T, params?: AsyncOptions): CanPromise<CanVoid<T>> {
-		// @ts-ignore (access)
 		if (this.component.block) {
 			if (statuses[this.status] >= 0) {
 				return cb.call(this);
@@ -122,7 +117,6 @@ export default class Lfc {
 		}
 
 		return this.async.promise(new Promise<T>((r) => {
-			// @ts-ignore (access)
 			this.component.blockReadyListeners.push(() => r(cb.call(this)));
 		}), params).catch(stderr);
 	}

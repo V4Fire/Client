@@ -19,13 +19,12 @@ export default class Opt {
 	/**
 	 * Component instance
 	 */
-	protected readonly component: iBlock;
+	protected readonly component: iBlock['unsafe'];
 
 	/**
 	 * Cache of ifOnce
 	 */
 	protected get ifOnceStore(): Dictionary {
-		// @ts-ignore (access)
 		return this.component.ifOnceStore;
 	}
 
@@ -33,7 +32,7 @@ export default class Opt {
 	 * @param component - component instance
 	 */
 	constructor(component: iBlock) {
-		this.component = component;
+		this.component = component.unsafe;
 	}
 
 	/**

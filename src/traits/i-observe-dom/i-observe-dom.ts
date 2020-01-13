@@ -61,9 +61,7 @@ export default abstract class iObserveDOM {
 		}
 
 		observers.delete(node);
-
-		// @ts-ignore (access)
-		component.async.clearAll({label: observer.key});
+		component.unsafe.async.clearAll({label: observer.key});
 	}
 
 	/**
@@ -134,9 +132,10 @@ export default abstract class iObserveDOM {
 	 */
 	protected static createObserver<T extends iBlock>(component: T & iObserveDOM, options: ObserveOptions): Observer {
 		const
-			// @ts-ignore (access)
-			{async: $a} = component,
-			{node} = options,
+			{async: $a} = component.unsafe,
+			{node} = options;
+
+		const
 			label = this.getObserverKey();
 
 		const observer = new MutationObserver((records) => {

@@ -62,7 +62,6 @@ export default abstract class iControlList {
 
 		if (analytics) {
 			const {event, details} = analytics;
-			// @ts-ignore (access)
 			component.analytics.sendEvent(event, details);
 		}
 

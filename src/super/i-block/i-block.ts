@@ -67,7 +67,8 @@ import {
 	ParentMessage,
 	ComponentStatuses,
 	ComponentEventDecl,
-	InitLoadParams
+	InitLoadParams,
+	Unsafe
 
 } from 'super/i-block/modules/interface';
 
@@ -630,6 +631,17 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	readonly provide!: Provide;
 
 	/**
+	 * API for analytics
+	 */
+	@system({
+		atom: true,
+		unique: true,
+		init: (ctx: iBlock) => new Analytics(ctx)
+	})
+
+	readonly analytics!: Analytics;
+
+	/**
 	 * API for component option providers
 	 */
 	@system({
@@ -663,6 +675,14 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	})
 
 	readonly vdom!: VDOM;
+
+	/**
+	 * API for unsafe invoking of internal properties of the component
+	 */
+	@p({cache: false})
+	get unsafe(): Unsafe<this> & this {
+		return <any>this;
+	}
 
 	/**
 	 * Parent link
@@ -739,17 +759,6 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	})
 
 	protected readonly dom!: DOM;
-
-	/**
-	 * API for analytics
-	 */
-	@system({
-		atom: true,
-		unique: true,
-		init: (ctx: iBlock) => new Analytics(ctx)
-	})
-
-	protected readonly analytics!: Analytics;
 
 	/**
 	 * API for lazy operations
@@ -910,7 +919,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	@system({
 		unique: true,
 		replace: true,
-		init: (ctx) => new Daemons(ctx)
+		init: (ctx: iBlock) => new Daemons(ctx)
 	})
 
 	protected daemons!: Daemons;
@@ -1114,9 +1123,8 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 			(info = getFieldInfo(exprOrFn, this)).type === 'system')
 		) {
 			if (info && info.type === 'prop' && (
-				// @ts-ignore (access)
-				info.ctx.meta.params.root ||
-				!(info.name in (info.ctx.$options.propsData || {}))
+				info.ctx.unsafe.meta.params.root ||
+				!(info.name in (info.ctx.unsafe.$options.propsData || {}))
 			)) {
 				if (p.immediate) {
 					cb.call(this, this.field.get(exprOrFn));
@@ -1140,9 +1148,8 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 		}
 
 		if (info && info.type === 'prop' && (
-			// @ts-ignore (access)
-			info.ctx.meta.params.root ||
-			!(info.name in (info.ctx.$options.propsData || {}))
+			info.ctx.unsafe.meta.params.root ||
+			!(info.name in (info.ctx.unsafe.$options.propsData || {}))
 		)) {
 			if (p.immediate) {
 				cb.call(this, this.field.get(<string>exprOrFn));
@@ -1738,9 +1745,8 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 				val = this.field.get(exprOrFn);
 
 			if (info && info.type === 'prop' && (
-				// @ts-ignore (access)
-				info.ctx.meta.params.root ||
-				!(info.name in (info.ctx.$options.propsData || {}))
+				(<iBlock>info.ctx).unsafe.meta.params.root ||
+				!(info.name in ((<iBlock>info.ctx).unsafe.$options.propsData || {}))
 			)) {
 				if (opts.immediate) {
 					handler.call(this, val);
@@ -1753,8 +1759,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 			needCache = handler.length > 1;
 
 			if (needCache) {
-				// @ts-ignore (access)
-				watchCache = info.ctx.watchCache;
+				watchCache = (<iBlock>info.ctx).unsafe.watchCache;
 
 				oldVal = watchCache[exprOrFn] = exprOrFn in watchCache ?
 					watchCache[exprOrFn] : cloneWatchValue(val);

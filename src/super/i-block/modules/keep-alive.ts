@@ -27,11 +27,10 @@ const inactiveStatuses = Object.createDict({
  */
 export function activate<T extends iBlock>(component: T, force?: boolean): void {
 	const
-		c = component,
+		c = component.unsafe,
 		beforeCreate = c.lfc.isBeforeCreate();
 
 	const
-		// @ts-ignore (access)
 		{state: $s, rootEvent: $e} = c;
 
 	if (!c.isActivated || force) {
@@ -79,10 +78,9 @@ export function activate<T extends iBlock>(component: T, force?: boolean): void 
 	if (children) {
 		for (let i = 0; i < children.length; i++) {
 			const
-				ctx = children[i];
+				ctx = children[i].unsafe;
 
 			if (!ctx.isActivated) {
-				// @ts-ignore (access)
 				runHook('activated', ctx.meta, ctx).then(() => ctx.activated(true), stderr);
 			}
 		}
@@ -107,10 +105,9 @@ export function deactivate<T extends iBlock>(component: T): void {
 	if (children) {
 		for (let i = 0; i < children.length; i++) {
 			const
-				ctx = children[i];
+				ctx = children[i].unsafe;
 
 			if (ctx.isActivated) {
-				// @ts-ignore (access)
 				runHook('deactivated', ctx.meta, ctx).then(() => ctx.deactivated(), stderr);
 			}
 		}
@@ -130,9 +127,7 @@ const readyStatuses = Object.createDict({
  */
 export function onActivated<T extends iBlock>(component: T, force?: boolean): void {
 	const
-		c = component,
-
-		// @ts-ignore (access)
+		c = component.unsafe,
 		{async: $a} = c;
 
 	if (c.isActivated || !force && !c.activatedProp && !c.isReadyOnce) {
@@ -167,7 +162,6 @@ export function onActivated<T extends iBlock>(component: T, force?: boolean): vo
 		c.componentStatus = 'ready';
 	}
 
-	// @ts-ignore (access)
 	c.state.initFromRouter();
 	c.isActivated = true;
 }
@@ -187,8 +181,7 @@ const nonMuteAsyncLinkNames = Object.createDict({
  */
 export function onDeactivated<T extends iBlock>(component: T): void {
 	const
-		// @ts-ignore (access)
-		{async: $a} = component;
+		{async: $a} = component.unsafe;
 
 	for (let keys = Object.keys(asyncNames), i = 0; i < keys.length; i++) {
 		const
