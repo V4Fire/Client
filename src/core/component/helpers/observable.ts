@@ -78,8 +78,9 @@ export function observeSet<T extends ObservableSet<unknown> = ObservableSet<unkn
  * @param obj
  * @param cb - callback which will be called on every mutation hook
  * @param [params]
+ * @private
  */
-export function bindMutationHooks<T extends ObservableInstance = ObservableInstance<unknown, unknown>>(
+function bindMutationHooks<T extends ObservableInstance = ObservableInstance<unknown, unknown>>(
 	obj: T,
 	cb: Function,
 	params: ObservableParams = {}

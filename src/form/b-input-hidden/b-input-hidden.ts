@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import iInput, { component, Value, FormValue } from 'super/i-input/i-input';
+import iInput, { component } from 'super/i-input/i-input';
 export * from  'super/i-input/i-input';
 
 @component({
@@ -15,11 +15,7 @@ export * from  'super/i-input/i-input';
 	}
 })
 
-export default class bInputHidden<
-	V extends Value = Value,
-	FV extends FormValue = FormValue,
-	D extends object = Dictionary
-> extends iInput<V, FV, D> {
+export default class bInputHidden extends iInput {
 	/** @override */
 	protected readonly $refs!: {input: HTMLInputElement};
 }

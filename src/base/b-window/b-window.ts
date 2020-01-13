@@ -35,9 +35,7 @@ export interface StageTitles<T = unknown> extends Dictionary<TitleValue<T>> {
 }
 
 @component()
-export default class bWindow<T extends object = Dictionary> extends iData<T>
-	implements iVisible, iWidth, iOpenToggle, iLockPageScroll {
-
+export default class bWindow extends iData implements iVisible, iWidth, iOpenToggle, iLockPageScroll {
 	/** @override */
 	readonly proxyCall: boolean = true;
 

@@ -11,6 +11,7 @@ import IntersectionObserverStrategy from 'core/component/directives/in-view/inte
 
 import {
 
+	InViewGroup,
 	InitOptions,
 	ObservableElement,
 	ObservableThresholdMap
@@ -66,7 +67,7 @@ export default class InViewAdapter {
 	 * @param el
 	 * @param params
 	 */
-	observe(el: HTMLElement, params: CanArray<InitOptions>): false | void {
+	observe(el: Element, params: CanArray<InitOptions>): false | void {
 		if (!this.adaptee) {
 			return false;
 		}
@@ -84,7 +85,7 @@ export default class InViewAdapter {
 	 * Activates deactivated elements by the specified group
 	 * @param [group]
 	 */
-	activate(group?: string): void {
+	activate(group?: InViewGroup): void {
 		if (!this.adaptee) {
 			return;
 		}
@@ -96,7 +97,7 @@ export default class InViewAdapter {
 	 * Deactivates elements by the specified group
 	 * @param [group]
 	 */
-	deactivate(group?: string): void {
+	deactivate(group?: InViewGroup): void {
 		if (!this.adaptee) {
 			return;
 		}
@@ -108,19 +109,19 @@ export default class InViewAdapter {
 	 * Removes an element from observable elements
 	 * @param el
 	 */
-	remove(el: HTMLElement): boolean {
+	remove(el: Element): boolean {
 		if (!this.adaptee) {
 			return false;
 		}
 
-		return this.adaptee.remove(el);
+		return this.adaptee.unobserve(el);
 	}
 
 	/**
 	 * Stops observing the specified element
 	 * @param el
 	 */
-	stopObserve(el: HTMLElement): boolean {
+	stopObserve(el: Element): boolean {
 		if (!this.adaptee) {
 			return false;
 		}
@@ -171,7 +172,7 @@ export default class InViewAdapter {
 	 * Returns a threshold map of the specified element
 	 * @param el
 	 */
-	getThresholdMap(el: HTMLElement): CanUndef<ObservableThresholdMap> {
+	getThresholdMap(el: Element): CanUndef<ObservableThresholdMap> {
 		if (!this.adaptee) {
 			return;
 		}
@@ -185,7 +186,7 @@ export default class InViewAdapter {
 	 * @param el
 	 * @param threshold
 	 */
-	get(el: HTMLElement, threshold: number): CanUndef<ObservableElement> {
+	get(el: Element, threshold: number): CanUndef<ObservableElement> {
 		if (!this.adaptee) {
 			return;
 		}

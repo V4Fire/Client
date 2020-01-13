@@ -128,7 +128,7 @@ export default class InView extends Super {
 	}
 
 	/** @override */
-	observe(el: HTMLElement, opts: InitOptions): ObservableElement | false {
+	observe(el: Element, opts: InitOptions): ObservableElement | false {
 		const
 			observable = super.observe(el, opts);
 
@@ -150,7 +150,7 @@ export default class InView extends Super {
 	}
 
 	/** @override */
-	stopObserve(el: HTMLElement, threshold?: number): boolean {
+	stopObserve(el: Element, threshold?: number): boolean {
 		const
 			res = super.stopObserve(el, threshold);
 
@@ -296,7 +296,7 @@ export default class InView extends Super {
 	}
 
 	/** @override */
-	protected getElMap(el: HTMLElement): ObservableElementsThresholdMap {
+	protected getElMap(el: Element): ObservableElementsThresholdMap {
 		const res = super.getElMap(el);
 
 		if (res) {

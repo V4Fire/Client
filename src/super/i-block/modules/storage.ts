@@ -31,13 +31,12 @@ export default class Storage {
 	/**
 	 * Component instance
 	 */
-	protected readonly component: iBlock;
+	protected readonly component: iBlock['unsafe'];
 
 	/**
 	 * Async instance
 	 */
-	protected get async(): Async {
-		// @ts-ignore (access)
+	protected get async(): Async<iBlock> {
 		return this.component.async;
 	}
 
@@ -46,7 +45,7 @@ export default class Storage {
 	 * @param [engine] - custom engine
 	 */
 	constructor(component: iBlock, engine?: Dictionary) {
-		this.component = component;
+		this.component = component.unsafe;
 
 		//#if runtime has core/kv-storage
 		this.engine = (engine ? factory(engine, true) : asyncLocal).namespace(component.componentName);
@@ -70,7 +69,6 @@ export default class Storage {
 
 				if (engine) {
 					const res = await engine.get<T>(id, ...args);
-					// @ts-ignore (access)
 					this.component.log('storage:load', () => Object.fastClone(res));
 					return res;
 				}
@@ -102,7 +100,6 @@ export default class Storage {
 
 				if (engine) {
 					await engine.set(id, value, ...args);
-					// @ts-ignore (access)
 					this.component.log('storage:save', () => Object.fastClone(value));
 				}
 
@@ -134,7 +131,6 @@ export default class Storage {
 
 				if (engine) {
 					await engine.remove(id, ...args);
-					// @ts-ignore (access)
 					this.component.log('storage:remove', id);
 				}
 

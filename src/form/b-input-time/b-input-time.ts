@@ -7,7 +7,7 @@
  */
 
 import symbolGenerator from 'core/symbol';
-import bInput, { component, prop, field, watch, p, Value, FormValue } from 'form/b-input/b-input';
+import bInput, { component, prop, field, watch, p } from 'form/b-input/b-input';
 export * from 'form/b-input/b-input';
 
 export const
@@ -20,11 +20,7 @@ export const
 	}
 })
 
-export default class bInputTime<
-	V extends Value = Value,
-	FV extends FormValue = FormValue,
-	D extends object = Dictionary
-> extends bInput<V, FV, D> {
+export default class bInputTime extends bInput {
 	/** @override */
 	readonly placeholder: string = '__:__';
 
@@ -101,13 +97,13 @@ export default class bInputTime<
 	/** @override */
 	@field<bInputTime>({
 		after: 'pointerStore',
-		init: (o, data) => o.sync.link<V>((val) => {
+		init: (o, data) => o.sync.link<bInputTime['Value']>((val) => {
 			const v = o.getNPointer(val, ('pointerStore' in o ? o.pointerStore : <Date>data.pointerStore));
-			return <V>o.getTimeFormat(v);
+			return o.getTimeFormat(v);
 		})
 	})
 
-	protected valueStore!: V;
+	protected valueStore!: this['Value'];
 
 	/**
 	 * Time pointer store
@@ -154,8 +150,8 @@ export default class bInputTime<
 	 * Returns a string time value by the specified date
 	 * @param [date]
 	 */
-	protected getTimeFormat(date?: Date): V {
-		return <V>(date ? date.format('h;m') : '');
+	protected getTimeFormat(date?: Date): this['Value'] {
+		return date ? date.format('h;m') : '';
 	}
 
 	/**

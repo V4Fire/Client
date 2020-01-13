@@ -20,13 +20,12 @@ export default class DOM {
 	/**
 	 * Component instance
 	 */
-	protected readonly component: iBlock;
+	protected readonly component: iBlock['unsafe'];
 
 	/**
 	 * Block instance
 	 */
 	protected get block(): Block {
-		// @ts-ignore (access)
 		return this.component.block;
 	}
 
@@ -34,7 +33,7 @@ export default class DOM {
 	 * @param component - component instance
 	 */
 	constructor(component: iBlock) {
-		this.component = component;
+		this.component = component.unsafe;
 	}
 
 	/**
@@ -153,8 +152,6 @@ export default class DOM {
 		}
 
 		node.replaceWith(newNode);
-
-		// @ts-ignore (access)
 		return this.component.async.worker(() => {
 			if (newNode.parentNode) {
 				newNode.parentNode.removeChild(newNode);
@@ -182,8 +179,6 @@ export default class DOM {
 		}
 
 		parentNode.appendChild(newNode);
-
-		// @ts-ignore (access)
 		return this.component.async.worker(() => {
 			newNode.remove();
 

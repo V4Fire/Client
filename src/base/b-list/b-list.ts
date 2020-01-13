@@ -32,7 +32,7 @@ export const
 	}
 })
 
-export default class bList<T extends object = Dictionary> extends iData<T> implements iIcon, iVisible, iWidth {
+export default class bList extends iData implements iIcon, iVisible, iWidth {
 	/**
 	 * Initial component value
 	 */

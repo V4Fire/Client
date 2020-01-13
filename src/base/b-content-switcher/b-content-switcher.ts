@@ -7,6 +7,7 @@
  */
 
 import symbolGenerator from 'core/symbol';
+import iObserveDOM from 'traits/i-observe-dom/i-observe-dom';
 import { observeMap } from 'core/component/helpers/observable';
 
 import iBlock, {
@@ -67,7 +68,7 @@ export function validateResolve(value: ResolveMethod[]): boolean {
 }
 
 @component()
-export default class bContentSwitcher extends iBlock {
+export default class bContentSwitcher extends iBlock implements iObserveDOM {
 	/**
 	 * Resolve methods
 	 */
@@ -110,6 +111,12 @@ export default class bContentSwitcher extends iBlock {
 	@prop({type: Object, required: false})
 	readonly semaphoreKeysProp?: Dictionary;
 
+	/**
+	 * Selector for a content node
+	 */
+	@prop(String)
+	readonly contentNodeSelector: string = '[data-switcher-content]';
+
 	/** @see semaphoreKeys */
 	@system((o) => o.sync.link('semaphoreKeysProp', (v: Dictionary) => ({...v})))
 	semaphoreKeys?: Dictionary;
@@ -120,8 +127,8 @@ export default class bContentSwitcher extends iBlock {
 	@p({cache: false})
 	get content(): CanPromise<HTMLElement> {
 		return this.waitStatus('loading', () => {
-			const {$refs: {content}, contentNodeStore} = this;
-			return contentNodeStore || content.querySelector<HTMLElement>(this.contentNodeMarker) || content;
+			const {$refs: {content}} = this;
+			return content.querySelector<HTMLElement>(this.contentNodeSelector) || content;
 		});
 	}
 
@@ -148,28 +155,10 @@ export default class bContentSwitcher extends iBlock {
 	protected semaphoreReadyMap!: Map<iBlock, boolean>;
 
 	/**
-	 * Mutation observer instance
-	 */
-	@system()
-	protected mutationObserver: CanUndef<MutationObserver>;
-
-	/**
 	 * Number of DOM nodes within a content block
 	 */
 	@system()
 	protected contentLengthStore: number = 0;
-
-	/**
-	 * Selector of a content node
-	 */
-	@system()
-	protected contentNodeMarker: string = '[data-switcher-content]';
-
-	/**
-	 * Store of a content node
-	 */
-	@system()
-	protected contentNodeStore: Nullable<HTMLElement> = null;
 
 	/**
 	 * Strategies readiness map
@@ -259,7 +248,7 @@ export default class bContentSwitcher extends iBlock {
 	}
 
 	/**
-	 * Sets a readiness of the specified semaphore key
+	 * Sets readiness of the specified semaphore key
 	 *
 	 * @param prop
 	 * @param value
@@ -276,6 +265,29 @@ export default class bContentSwitcher extends iBlock {
 		semaphoreKeys[prop] = value;
 		this.setSwitchReadiness();
 		return true;
+	}
+
+	/** @see iObserveDom.initDOMObservers */
+	@wait('loading')
+	initDOMObservers(): CanPromise<void> {
+		const
+			content = <HTMLElement>this.content;
+
+		iObserveDOM.observe(this, {
+			node: content,
+			childList: true,
+			characterData: false
+		});
+	}
+
+	/** @see iObserveDom.onDOMChange */
+	onDOMChange(records: MutationRecord[]): void {
+		const
+			filtered = iObserveDOM.filterNodes(records, (node) => node instanceof HTMLElement),
+			{addedNodes, removedNodes} = iObserveDOM.getChangedNodes(filtered);
+
+		this.contentLengthStore += addedNodes.length - removedNodes.length;
+		iObserveDOM.onDOMChange(this, records);
 	}
 
 	/**
@@ -346,8 +358,8 @@ export default class bContentSwitcher extends iBlock {
 			content.children.length;
 
 		defferCheck();
-		this.on('contentMutation', defferCheck, {label: $$.initMutation});
-		this.createMutationObserver();
+		this.on('DOMChange', defferCheck, {label: $$.initMutation});
+		this.initDOMObservers();
 	}
 
 	/**
@@ -388,52 +400,7 @@ export default class bContentSwitcher extends iBlock {
 		const defferRegister = this.lazy.createLazyFn(register, {label: $$.register});
 		defferRegister();
 
-		this.createMutationObserver();
-		this.on('contentMutation', defferRegister, {label: $$.initReady});
-	}
-
-	/**
-	 * Creates a mutation observer
-	 * @emits contentMutation()
-	 */
-	@wait('loading')
-	protected createMutationObserver(): CanPromise<void> {
-		const
-			content = <HTMLElement>this.content;
-
-		const nodesFilter = (rec: MutationRecord[]): FilteredMutations => {
-			let
-				added = [],
-				removed = [];
-
-			for (let i = 0; i < rec.length; i++) {
-				const r = rec[i];
-				added = added.concat([].slice.call(r.addedNodes));
-				removed = removed.concat([].slice.call(r.removedNodes));
-			}
-
-			const
-				filter = (n) => n instanceof HTMLElement;
-
-			return {
-				added: added.filter(filter),
-				removed: removed.filter(filter)
-			};
-		};
-
-		this.mutationObserver = new MutationObserver((rec) => {
-			const v = nodesFilter(rec);
-			this.contentLengthStore += v.added.length - v.removed.length;
-			this.emit('contentMutation');
-		});
-
-		this.mutationObserver.observe(content, {
-			childList: true,
-			characterData: false
-		});
-
-		this.async.worker(this.mutationObserver, {
-			label: $$.mutationObserver
-		});
+		this.initDOMObservers();
+		this.on('DOMChange', defferRegister, {label: $$.initReady});
 	}
 }

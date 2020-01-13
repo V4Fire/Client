@@ -6,14 +6,12 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import Async, { AsyncOptions } from 'core/async';
-import { RemoteEvent } from 'super/i-block/i-block';
+import { AsyncOptions } from 'core/async';
 
 //#if runtime has core/data
 
 import {
 
-	Socket,
 	RequestQuery,
 	RequestBody,
 	ModelMethods,

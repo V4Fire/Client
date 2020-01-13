@@ -33,7 +33,7 @@ import * as mask from 'form/b-input/modules/mask';
 export * from 'super/i-input/i-input';
 
 export type Value = string;
-export type FormValue = Value;
+export type FormValue = CanUndef<Value>;
 
 export const
 	$$ = symbolGenerator();
@@ -44,18 +44,20 @@ export const
 	}
 })
 
-export default class bInput<
-	V extends Value = Value,
-	FV extends FormValue = FormValue,
-	D extends object = Dictionary
-> extends iInput<V, FV, D> implements iWidth, iSize, iIcon {
+export default class bInput extends iInput implements iWidth, iSize, iIcon {
 	/** @override */
-	@prop({type: String, required: false})
-	readonly valueProp?: V;
+	readonly Value!: Value;
+
+	/** @override */
+	readonly FormValue!: FormValue;
 
 	/** @override */
 	@prop({type: String, required: false})
-	readonly defaultProp?: V;
+	readonly valueProp?: this['Value'];
+
+	/** @override */
+	@prop({type: String, required: false})
+	readonly defaultProp?: this['Value'];
 
 	/**
 	 * Input type
@@ -198,12 +200,12 @@ export default class bInput<
 	}
 
 	/** @override */
-	get value(): V {
-		return this.field.get<V>('valueStore')!;
+	get value(): this['Value'] {
+		return this.field.get<this['Value']>('valueStore')!;
 	}
 
 	/** @override */
-	set value(value: V) {
+	set value(value: this['Value']) {
 		this.field.set('valueStore', value);
 
 		if (this.skipBuffer) {
@@ -269,14 +271,14 @@ export default class bInput<
 	/**
 	 * Value buffer
 	 */
-	protected get valueBuffer(): V {
-		return this.field.get<V>('valueBufferStore')!;
+	protected get valueBuffer(): this['Value'] {
+		return this.field.get<this['Value']>('valueBufferStore')!;
 	}
 
 	/**
 	 * Sets a value to the value buffer store
 	 */
-	protected set valueBuffer(value: V) {
+	protected set valueBuffer(value: this['Value']) {
 		this.field.set('valueBufferStore', value);
 	}
 
@@ -329,7 +331,7 @@ export default class bInput<
 			await this.applyMaskToValue('', {updateBuffer: true});
 
 		} else {
-			this.valueBuffer = <V>'';
+			this.valueBuffer = '';
 
 			const
 				{input} = this.$refs;
@@ -557,7 +559,7 @@ export default class bInput<
 		}
 
 		const {input} = this.$refs;
-		this[updateBuffer ? 'valueBuffer' : 'value'] = input.value = <V>res;
+		this[updateBuffer ? 'valueBuffer' : 'value'] = input.value = res;
 
 		if (focused) {
 			pos = cursor != null ? Number(cursor) : selectionFalse ? startPos + pos + 1 : endPos;
@@ -591,7 +593,7 @@ export default class bInput<
 	 * Handler: value buffer update
 	 * @param value
 	 */
-	protected onValueBufferUpdate(value: V): void {
+	protected onValueBufferUpdate(value: this['Value']): void {
 		if (!this.mask) {
 			this.value = value;
 		}
@@ -630,7 +632,7 @@ export default class bInput<
 	 * @param value
 	 * @emits actionChange(value: V)
 	 */
-	protected onRawDataChange(value: V): void {
+	protected onRawDataChange(value: this['Value']): void {
 		if (this.valueKey === 'value') {
 			this.emit('actionChange', value);
 		}
@@ -714,13 +716,13 @@ export default class bInput<
 	/** @override */
 	protected initValueEvents(): void {
 		super.initValueEvents();
-		this.watch('valueBuffer', async (val = '') => {
+		this.watch('valueBuffer', async (val: this['Value'] = '') => {
 			try {
 				const
 					input = await this.waitRef<HTMLInputElement>('input', {label: $$.valueBufferStoreModel});
 
 				if (input.value !== val) {
-					input.value = <V>val;
+					input.value = val;
 				}
 
 			} catch {}

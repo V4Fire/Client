@@ -11,6 +11,7 @@ import symbolGenerator from 'core/symbol';
 
 import {
 
+	InViewGroup,
 	InitOptions,
 	ObservableElement,
 	ObservableElementsThresholdMap,
@@ -64,7 +65,7 @@ export default abstract class AbstractInView {
 	 * @param isDeactivated
 	 * @param [group]
 	 */
-	setGroupState(isDeactivated: boolean, group?: string): void {
+	setGroupState(isDeactivated: boolean, group?: InViewGroup): void {
 		this.maps().forEach((map) => {
 			map.forEach((el) => {
 				if (!group || el.group !== group) {
@@ -82,7 +83,7 @@ export default abstract class AbstractInView {
 	 * @param el
 	 * @param threshold
 	 */
-	getEl(el: HTMLElement, threshold: number): CanUndef<ObservableElement> {
+	getEl(el: Element, threshold: number): CanUndef<ObservableElement> {
 		const map = this.getThresholdMap(el);
 		return map && map.get(threshold);
 	}
@@ -91,7 +92,7 @@ export default abstract class AbstractInView {
 	 * Returns a threshold map of the specified element
 	 * @param el
 	 */
-	getThresholdMap(el: HTMLElement): CanUndef<ObservableThresholdMap> {
+	getThresholdMap(el: Element): CanUndef<ObservableThresholdMap> {
 		return this.getElMap(el).get(el);
 	}
 
@@ -127,7 +128,7 @@ export default abstract class AbstractInView {
 	 * @param el
 	 * @param opts
 	 */
-	observe(el: HTMLElement, opts: InitOptions): ObservableElement | false {
+	observe(el: Element, opts: InitOptions): ObservableElement | false {
 		if (this.getEl(el, opts.threshold)) {
 			return false;
 		}
@@ -151,7 +152,7 @@ export default abstract class AbstractInView {
 	 * @param el
 	 * @param threshold
 	 */
-	stopObserve(el: HTMLElement, threshold?: number): boolean {
+	stopObserve(el: Element, threshold?: number): boolean {
 		const
 			thresholdMap = this.getThresholdMap(el);
 
@@ -159,7 +160,7 @@ export default abstract class AbstractInView {
 			this.clearAllAsync(o);
 
 			if (o.removeStrategy === 'remove') {
-				return this.remove(el, threshold);
+				return this.unobserve(el, threshold);
 			}
 
 			o.isDeactivated = true;
@@ -194,14 +195,14 @@ export default abstract class AbstractInView {
 	 * @param el
 	 * @param [threshold]
 	 */
-	remove(el: HTMLElement, threshold?: number): boolean {
+	unobserve(el: Element, threshold?: number): boolean {
 		const
 			map = this.getElMap(el),
 			thresholdMap = this.getThresholdMap(el);
 
 		if (thresholdMap && threshold === undefined) {
 			thresholdMap.forEach((observable) => {
-				this.unobserve(observable);
+				this.remove(observable);
 			});
 
 			return map.delete(el);
@@ -215,7 +216,7 @@ export default abstract class AbstractInView {
 				return false;
 			}
 
-			this.unobserve(observable);
+			this.remove(observable);
 			return thresholdMap.delete(threshold);
 		}
 
@@ -228,7 +229,7 @@ export default abstract class AbstractInView {
 	 * @param el
 	 * @param opts
 	 */
-	protected createObservable(el: HTMLElement, opts: InitOptions): ObservableElement {
+	protected createObservable(el: Element, opts: InitOptions): ObservableElement {
 		return {
 			node: el,
 			count: true,
@@ -288,7 +289,7 @@ export default abstract class AbstractInView {
 	 * Returns a map which contains an element
 	 * @param el
 	 */
-	protected getElMap(el: HTMLElement): ObservableElementsThresholdMap {
+	protected getElMap(el: Element): ObservableElementsThresholdMap {
 		return this.elements.has(el) ? this.elements : this.awaitingElements;
 	}
 
@@ -345,7 +346,7 @@ export default abstract class AbstractInView {
 	 * Removes element from observer data
 	 * @param observable
 	 */
-	protected unobserve(observable: ObservableElement): boolean {
+	protected remove(observable: ObservableElement): boolean {
 		return false;
 	}
 }

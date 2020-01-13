@@ -67,7 +67,8 @@ import {
 	ParentMessage,
 	ComponentStatuses,
 	ComponentEventDecl,
-	InitLoadParams
+	InitLoadParams,
+	Unsafe
 
 } from 'super/i-block/modules/interface';
 
@@ -161,12 +162,12 @@ export const
 
 const
 	isCustomWatcher = /:/,
-	readyStatuses = {beforeReady: true, ready: true};
+	readyStatuses = Object.createDict({beforeReady: true, ready: true});
 
 @component()
 export default abstract class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	/**
-	 * Component unique id
+	 * Component unique identifier
 	 */
 	@system({
 		atom: true,
@@ -177,71 +178,66 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	readonly componentId!: string;
 
 	/**
-	 * Component render cache key
+	 * Component render cache key.
+	 * It used for hard caching of a component vnode.
 	 */
 	@prop({required: false})
 	readonly renderKey?: string;
 
 	/**
-	 * Component unique name
+	 * Component unique name.
+	 * It's used to enable synchronization component data with different storages: local, router, etc.
 	 */
 	@prop({type: String, required: false})
 	readonly globalName?: string;
 
 	/**
-	 * If true, then the current component is activated
-	 */
-	@prop(Boolean)
-	readonly activatedProp: boolean = true;
-
-	/**
-	 * If true, then if the component is functional it won't be destroyed after removal from DOM
-	 */
-	@prop(Boolean)
-	readonly keepAlive: boolean = false;
-
-	/**
-	 * If true, then the component will reload data after an activated hook
-	 */
-	@prop(Boolean)
-	readonly reloadOnActivation: boolean = false;
-
-	/**
-	 * If true, then the component will be listen a parent component for proxy events
-	 */
-	@prop(Boolean)
-	readonly proxyCall: boolean = false;
-
-	/**
-	 * Initial component modifiers
-	 */
-	@prop({type: Object, required: false})
-	readonly modsProp?: ModsTable;
-
-	/**
-	 * Remote watchers table
-	 */
-	@prop({type: Object, required: false})
-	readonly watchProp?: Dictionary<MethodWatchers>;
-
-	/**
-	 * Initial component stage
+	 * Initial component stage value.
+	 *
+	 * The stage property can be used for marking states of the component.
+	 * For example, we have a component that implements a form for an image uploading,
+	 * and we have two variants of the form: upload by a link or upload from a computer.
+	 *
+	 * We can create two stage values: 'link' and 'file' and separate the component template by two variant of a markup,
+	 * depending on the stage value.
 	 */
 	@prop({type: [String, Number], required: false})
 	readonly stageProp?: Stage;
 
 	/**
-	 * If true, then will be forcing activation hooks for all components instead of non functional components
+	 * Initial component modifiers.
+	 * Modifiers represents the special API for binding component state properties directly with CSS classes
+	 * without needless of component re-render.
+	 */
+	@prop({type: Object, required: false})
+	readonly modsProp?: ModsTable;
+
+	/**
+	 * If true, then the component won't be destroyed after removal from the DOM
+	 * (only for functional components)
+	 */
+	@prop(Boolean)
+	readonly keepAlive: boolean = false;
+
+	/**
+	 * If true, then the component will be activated.
+	 * The deactivated component won't load data from providers on initializing.
+	 */
+	@prop(Boolean)
+	readonly activatedProp: boolean = true;
+
+	/**
+	 * If true, then will be enabled forcing of activation handlers (only for functional components).
+	 * By default, functional components won't execute activation handlers: router/storage synchronization, etc.
 	 */
 	@prop(Boolean)
 	readonly forceActivation: boolean = false;
 
 	/**
-	 * If true, then will be forcing initial activation hooks
-	 * (only for functional components)
+	 * If true, then the component will try to reload data on re-activation
 	 */
 	@prop(Boolean)
-	readonly forceInitialActivation: boolean = false;
+	readonly reloadOnActivation: boolean = false;
 
 	/**
 	 * If true, then the component state will be synchronized with the router after initializing
@@ -250,56 +246,163 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	readonly syncRouterStoreOnInit: boolean = false;
 
 	/**
-	 * Dispatching mode
+	 * If true, then the component will listen the special parent event.
+	 * It's used to provide a common functionality of proxy calls from the parent.
+	 */
+	@prop(Boolean)
+	readonly proxyCall: boolean = false;
+
+	/**
+	 * Map of remote component watchers.
+	 * The usage of this mechanism is similar to the "@watch" decorator:
+	 *   *) As the map key we declare a name of the component method which we want to call
+	 *   *) As the value we use a field name or an event which we want to listen.
+	 *      Also supports an "object" override that provides additional parameters of watching.
+	 *      Notice, the fields or events will be taken from a component which content the current.
+	 *
+	 * @example
+	 * // We have two components: A and B.
+	 * // We want to declare that the component B must calls own "reload" method on an event from the A component.
+	 *
+	 * {
+	 *   // If we want to listen events, we should use the ":" syntax.
+	 *   // We also can provide a different event emitter object as "link:",
+	 *   // for instance, "document:scroll"
+	 *   reload: ':foo'
+	 * }
+	 *
+	 * @example
+	 * // We can attaches multiple watchers for one method
+	 *
+	 * {
+	 *   reload: [
+	 *     // Listens "foo" events from A
+	 *     ':foo',
+	 *
+	 *     // Watches for changing of the "A.bla" property
+	 *     'bla',
+	 *
+	 *     // Additional form
+	 *     {
+	 *       field: 'document:scroll',
+	 *       provideArgs: false
+	 *     }
+	 *   ]
+	 * }
+	 */
+	@prop({type: Object, required: false})
+	readonly watchProp?: Dictionary<MethodWatchers>;
+
+	/**
+	 * If true, then will be enabled a dispatching mode of events.
+	 * It's mean, that all component self events will bubble to the parent component:
+	 * if the parent also has this property in true, then the event will bubble to the next (from the the hierarchy)
+	 * parent component.
+	 *
+	 * All dispatching events have special prefixes to avoid collision with events from another components,
+	 * for example: bButton "click" will bubbled as "b-button::click".
+	 * Or if a component has globalName, it will additionally bubbled as `${globalName}::click`.
 	 */
 	@prop(Boolean)
 	readonly dispatching: boolean = false;
 
 	/**
-	 * If true, then all dispatching events will be emits as self component events
+	 * If true, then all bubbling events from the child components
+	 * will be emitted as component self events without any prefixes
 	 */
 	@prop(Boolean)
 	readonly selfDispatching: boolean = false;
 
 	/**
-	 * If true, then the component marked as a remote provider
+	 * If true, then the component marked as a remote provider label.
+	 * It's mean, that the parent component will wait the loading of the current.
 	 */
 	@prop(Boolean)
 	readonly remoteProvider: boolean = false;
 
 	/**
-	 * Additional classes for component elements
+	 * Additional classes for component elements.
+	 * It can be useful, if you need to attach some extra classes to internal component elements.
+	 * Be sure that you know what are you doing, because this mechanic tied on a component internal markup.
+	 *
+	 * @example
+	 * // The names of keys is tied with component elements,
+	 * // and the values contains a CSS class or a list of classes we want to add
+	 *
+	 * {
+	 *   foo: 'bla',
+	 *   bar: ['bla', 'baz']
+	 * }
 	 */
 	@prop({type: Object, required: false})
-	readonly classes?: Classes;
+	readonly classes?: Dictionary<CanArray<string>>;
 
 	/**
-	 * Additional styles for component elements
+	 * Additional styles for component elements.
+	 * It can be useful, if you need to attach some extra styles to internal component elements.
+	 * Be sure that you know what are you doing, because this mechanic tied on a component internal markup.
+	 *
+	 * @example
+	 * // The names of keys is tied with component elements,
+	 * // and the values contains a CSS style string, a style object or a list of style strings
+	 *
+	 * {
+	 *   foo: 'color: red',
+	 *   bar: {color: 'blue'},
+	 *   baz: ['color: red', 'background: green']
+	 * }
 	 */
 	@prop({type: Object, required: false})
 	readonly styles?: Styles;
 
 	/**
-	 * Advanced component parameters
+	 * Additional input component parameters.
+	 * This parameter can be useful if you need to provide some unstructured additional parameters to a component.
+	 * For instance: analytics or meta information, etc.
 	 */
 	@prop({type: Object, required: false})
 	readonly p?: Dictionary;
 
 	/**
-	 * Link to i18n function
+	 * Link to i18n function, that will be used for localization
 	 */
 	@prop(Function)
 	readonly i18n: typeof i18n = defaultI18n;
 
 	/**
-	 * Link to the remote state object
+	 * Link to the remote state object.
+	 * Remote state object is a special watchable object which provides some parameters
+	 * that can't be initialized in a component directly.
+	 * For example: information about A/B experiments, a session object, etc.
 	 */
 	get remoteState(): Dictionary {
 		return this.$root.remoteState;
 	}
 
 	/**
-	 * Component initialize status
+	 * Component initialize status.
+	 * This parameter is pretty similar to the "hook" parameter.
+	 * But, the hook indicates which status the component has relative to its MVVM instance: created, mounted, destroyed,
+	 * etc. Opposite, the componentStatus indicates logical components status:
+	 *
+	 *   *) unloaded - component just created without any initializing:
+	 *      its can intersects with some hooks like beforeCreate or created
+	 *
+	 *   *) loading - component starts to load data from own providers:
+	 *      its can intersects with some hooks like created or mounted.
+	 *      If the component was mounted with this status, you can show in UI that data is loading.
+	 *
+	 *   *) beforeReady - component was fully loaded and starts preparing to render:
+	 *      its can intersects with some hooks like created or mounted
+	 *
+	 *   *) ready - component was fully loaded and rendered:
+	 *      its can intersects with the "mounted" hook
+	 *
+	 *   *) inactive - component is frozen by keep-alive mechanism
+	 *      its can intersects with the "deactivated" hook
+	 *
+	 *   *) destroyed - component was destroyed:
+	 *      its can intersects with some hooks like beforeDestroy or destroyed
 	 */
 	@p({cache: false, replace: false})
 	get componentStatus(): Statuses {
@@ -307,7 +410,9 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	}
 
 	/**
-	 * Sets a new component initialize status
+	 * Sets a new component initialize status.
+	 * Notice, that not all statuses emit re-render of a template.
+	 * The statuses from a group: unloaded, inactive, destroyed will emit only an event without any re-renders.
 	 *
 	 * @param value
 	 * @emits status${$value}(value: Statuses)
@@ -338,7 +443,8 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	}
 
 	/**
-	 * Component stage store
+	 * Component stage value
+	 * @see stageProp
 	 */
 	@p({cache: false, replace: false})
 	get stage(): CanUndef<Stage> {
@@ -346,7 +452,10 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	}
 
 	/**
-	 * Sets a new component stage
+	 * Sets a new component stage value.
+	 * Also, by default, clears all async threads by the group `stage.${oldGroup}`.
+	 *
+	 * @see stageProp
 	 * @emits stageChange(value: CanUndef<Stage>, oldValue: CanUndef<Stage>)
 	 */
 	set stage(value: CanUndef<Stage>) {
@@ -363,7 +472,8 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	}
 
 	/**
-	 * Group name for the current stage
+	 * String group name for the current stage
+	 * (can be used with async)
 	 */
 	@p({replace: false})
 	get stageGroup(): string {
@@ -371,11 +481,11 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	}
 
 	/**
-	 * True if the current component is activated
+	 * True if the component is already activated
 	 */
 	@system((o) => {
 		o.lfc.execCbAtTheRightTime(() => {
-			if (o.isFunctional && !o.field.get('forceInitialActivation')) {
+			if (o.isFunctional && !o.field.get('forceActivation')) {
 				return;
 			}
 
@@ -399,20 +509,21 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	isActivated!: boolean;
 
 	/**
-	 * True, if the component was initialized at least once
+	 * True if the component was in ready status at least once
 	 */
 	@system()
-	isInitializedOnce: boolean = false;
+	isReadyOnce: boolean = false;
 
 	/**
-	 * Link to $root
+	 * Link to the component root.
+	 * Just a short alias for more aesthetic using.
 	 */
-	get r(): iStaticPage | any {
+	get r(): this['$root'] {
 		return this.$root;
 	}
 
 	/**
-	 * Link to the root router
+	 * Link to the application router
 	 */
 	@p({cache: false})
 	get router(): bRouter {
@@ -420,7 +531,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	}
 
 	/**
-	 * Link to the root route object
+	 * Link to the application route object
 	 */
 	@p({cache: false})
 	get route(): CanUndef<CurrentPage> {
@@ -428,7 +539,8 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	}
 
 	/**
-	 * True if the current component is ready (componentStatus == ready)
+	 * True if the current component is ready
+	 * (componentStatus == ready)
 	 */
 	@p({cache: false, replace: false})
 	get isReady(): boolean {
@@ -452,7 +564,11 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	}
 
 	/**
-	 * Base component modifiers
+	 * Base component modifiers.
+	 * That modifiers is automatically provided to child components.
+	 * For example, you have a component that uses an another component within own template,
+	 * and you passes to the outer component some theme modifier.
+	 * This modifier will recursively provided to all children components.
 	 */
 	@p({replace: false})
 	get baseMods(): CanUndef<Readonly<ModsNTable>> {
@@ -471,6 +587,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 
 	/**
 	 * Component modifiers
+	 * @see modsProp
 	 */
 	@system({
 		replace: false,
@@ -514,6 +631,17 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	readonly provide!: Provide;
 
 	/**
+	 * API for analytics
+	 */
+	@system({
+		atom: true,
+		unique: true,
+		init: (ctx: iBlock) => new Analytics(ctx)
+	})
+
+	readonly analytics!: Analytics;
+
+	/**
 	 * API for component option providers
 	 */
 	@system({
@@ -547,6 +675,14 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	})
 
 	readonly vdom!: VDOM;
+
+	/**
+	 * API for unsafe invoking of internal properties of the component
+	 */
+	@p({cache: false})
+	get unsafe(): Unsafe<this> & this {
+		return <any>this;
+	}
 
 	/**
 	 * Parent link
@@ -625,17 +761,6 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	protected readonly dom!: DOM;
 
 	/**
-	 * API for analytics
-	 */
-	@system({
-		atom: true,
-		unique: true,
-		init: (ctx: iBlock) => new Analytics(ctx)
-	})
-
-	protected readonly analytics!: Analytics;
-
-	/**
 	 * API for lazy operations
 	 */
 	@system({
@@ -666,6 +791,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 
 	/**
 	 * Component stage store
+	 * @see stageProp
 	 */
 	@field({
 		replace: false,
@@ -793,7 +919,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	@system({
 		unique: true,
 		replace: true,
-		init: (ctx) => new Daemons(ctx)
+		init: (ctx: iBlock) => new Daemons(ctx)
 	})
 
 	protected daemons!: Daemons;
@@ -997,9 +1123,8 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 			(info = getFieldInfo(exprOrFn, this)).type === 'system')
 		) {
 			if (info && info.type === 'prop' && (
-				// @ts-ignore (access)
-				info.ctx.meta.params.root ||
-				!(info.name in (info.ctx.$options.propsData || {}))
+				info.ctx.unsafe.meta.params.root ||
+				!(info.name in (info.ctx.unsafe.$options.propsData || {}))
 			)) {
 				if (p.immediate) {
 					cb.call(this, this.field.get(exprOrFn));
@@ -1023,9 +1148,8 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 		}
 
 		if (info && info.type === 'prop' && (
-			// @ts-ignore (access)
-			info.ctx.meta.params.root ||
-			!(info.name in (info.ctx.$options.propsData || {}))
+			info.ctx.unsafe.meta.params.root ||
+			!(info.name in (info.ctx.unsafe.$options.propsData || {}))
 		)) {
 			if (p.immediate) {
 				cb.call(this, this.field.get(<string>exprOrFn));
@@ -1361,7 +1485,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 			this.componentStatus = 'beforeReady';
 
 			this.lfc.execCbAfterBlockReady(() => {
-				this.isInitializedOnce = true;
+				this.isReadyOnce = true;
 				this.componentStatus = 'ready';
 
 				if (this.beforeReadyListeners > 1) {
@@ -1621,9 +1745,8 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 				val = this.field.get(exprOrFn);
 
 			if (info && info.type === 'prop' && (
-				// @ts-ignore (access)
-				info.ctx.meta.params.root ||
-				!(info.name in (info.ctx.$options.propsData || {}))
+				(<iBlock>info.ctx).unsafe.meta.params.root ||
+				!(info.name in ((<iBlock>info.ctx).unsafe.$options.propsData || {}))
 			)) {
 				if (opts.immediate) {
 					handler.call(this, val);
@@ -1636,8 +1759,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 			needCache = handler.length > 1;
 
 			if (needCache) {
-				// @ts-ignore (access)
-				watchCache = info.ctx.watchCache;
+				watchCache = (<iBlock>info.ctx).unsafe.watchCache;
 
 				oldVal = watchCache[exprOrFn] = exprOrFn in watchCache ?
 					watchCache[exprOrFn] : cloneWatchValue(val);
@@ -1814,7 +1936,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	}
 
 	/**
-	 * Initializes modifiers event listeners
+	 * Initializes modifier event listeners
 	 */
 	@hook('beforeCreate')
 	protected initModEvents(): void {

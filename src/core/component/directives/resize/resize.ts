@@ -24,7 +24,7 @@ export default class Resize {
 	/**
 	 * Map of observable elements
 	 */
-	protected elementsObserverMap: Map<HTMLElement, Observable> = new Map();
+	protected elements: Map<Element, Observable> = new Map();
 
 	/**
 	 * Queue of size calculation tasks
@@ -50,7 +50,7 @@ export default class Resize {
 	 * @param params
 	 */
 	observe(el: HTMLElement, params: ObserverOptions): boolean {
-		if (this.elementsObserverMap.has(el)) {
+		if (this.elements.has(el)) {
 			return false;
 		}
 
@@ -65,7 +65,7 @@ export default class Resize {
 			this.async.setTimeout(this.calculate.bind(this), 100, {label: $$.calculateTimeout, join: true});
 		}
 
-		this.elementsObserverMap.set(el, observable);
+		this.elements.set(el, observable);
 		return true;
 	}
 
@@ -74,20 +74,20 @@ export default class Resize {
 	 * @param el
 	 */
 	unobserve(el: HTMLElement): boolean {
-		const observable = this.elementsObserverMap.get(el);
+		const observable = this.elements.get(el);
 		observable?.observer?.disconnect();
-		return this.elementsObserverMap.delete(el);
+		return this.elements.delete(el);
 	}
 
 	/**
 	 * Clears all observers
 	 */
 	clear(): void {
-		this.elementsObserverMap.forEach(({observer}) => {
+		this.elements.forEach(({observer}) => {
 			observer && observer.disconnect();
 		});
 
-		this.elementsObserverMap.clear();
+		this.elements.clear();
 	}
 
 	/**
@@ -208,7 +208,7 @@ export default class Resize {
 
 		$a.on(window, 'resize', () => {
 			$a.requestIdleCallback(() => {
-				this.calculateQueue = Array.from(this.elementsObserverMap, (v) => v[1]);
+				this.calculateQueue = Array.from(this.elements, (v) => v[1]);
 				this.calculate();
 
 			}, {label: $$.callSubscribers, join: true});

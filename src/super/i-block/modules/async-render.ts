@@ -49,20 +49,18 @@ export default class AsyncRender {
 	 * Component async label
 	 */
 	get asyncLabel(): symbol {
-		// @ts-ignore (access)
 		return this.component.$asyncLabel;
 	}
 
 	/**
 	 * Component instance
 	 */
-	protected readonly component: iBlock;
+	protected readonly component: iBlock['unsafe'];
 
 	/**
 	 * Async instance
 	 */
-	protected get async(): Async {
-		// @ts-ignore (access)
+	protected get async(): Async<iBlock> {
 		return this.component.async;
 	}
 
@@ -70,7 +68,6 @@ export default class AsyncRender {
 	 * Component meta object
 	 */
 	protected get meta(): ComponentMeta {
-		// @ts-ignore (access)
 		return this.component.meta;
 	}
 
@@ -78,15 +75,13 @@ export default class AsyncRender {
 	 * @param component - component instance
 	 */
 	constructor(component: iBlock) {
-		this.component = component;
+		this.component = component.unsafe;
 		this.meta.hooks.beforeUpdate.push({fn: () => {
 			const group = {
 				group: 'asyncComponents'
 			};
 
 			this.async.clearAll(group);
-
-			// @ts-ignore (access)
 			this.component.$async.clearAll(group);
 		}});
 

@@ -7,7 +7,10 @@
  */
 
 import symbolGenerator from 'core/symbol';
+
+import iObserveDOM from 'traits/i-observe-dom/i-observe-dom';
 import iData, { component, prop, field, system, hook, watch, wait, p } from 'super/i-data/i-data';
+
 export * from 'super/i-data/i-data';
 
 export interface SlideRect extends ClientRect {
@@ -42,7 +45,7 @@ export type AlignType = keyof typeof alignTypes;
 export type Mode = keyof typeof sliderModes;
 
 @component()
-export default class bSlider<T extends object = Dictionary> extends iData<T> {
+export default class bSlider extends iData implements iObserveDOM {
 	/**
 	 * Slider mode
 	 *   *) scroll - scroll implementation
@@ -295,15 +298,6 @@ export default class bSlider<T extends object = Dictionary> extends iData<T> {
 	protected swiping: boolean = false;
 
 	/**
-	 * Observers store
-	 */
-	@system()
-	protected observers: {
-		mutation?: MutationObserver;
-		resize?: ResizeObserver;
-	} = {};
-
-	/**
 	 * Switches to the specified slide
 	 *
 	 * @param index - slide index
@@ -366,6 +360,25 @@ export default class bSlider<T extends object = Dictionary> extends iData<T> {
 		return false;
 	}
 
+	/** @see iObserveDom.initDOMObservers */
+	@hook('mounted')
+	initDOMObservers(): void {
+		const
+			{content} = this;
+
+		if (content) {
+			iObserveDOM.observe(this, {
+				node: content,
+				childList: true
+			});
+		}
+	}
+
+	/** @see iObserveDom.onDOMChange */
+	onDOMChange(): void {
+		iObserveDOM.onDOMChange(this);
+	}
+
 	/**
 	 * Generates or returns an option key for v-for
 	 *
@@ -415,7 +428,7 @@ export default class bSlider<T extends object = Dictionary> extends iData<T> {
 	 * Synchronizes the slider state (deferred version)
 	 * @emits syncState()
 	 */
-	@watch(['?window:resize', ':updateState'])
+	@watch(':DOMChange')
 	@wait('ready')
 	protected async syncStateDefer(): Promise<void> {
 		if (!this.isSlider) {
@@ -462,35 +475,16 @@ export default class bSlider<T extends object = Dictionary> extends iData<T> {
 			label: $$.setScrolling
 		};
 
+		const
+			{content} = this.$refs;
+
 		if (this.isSlider) {
 			this.async.on(document, 'scroll', () => this.scrolling = true, label);
+			this.initDOMObservers();
 
 		} else {
 			this.async.off(label);
-		}
-	}
-
-	/**
-	 * Initializes observers
-	 * @emits updateState()
-	 */
-	@hook('mounted')
-	protected initObservers(): void {
-		const
-			{observers, content} = this;
-
-		if (!observers.mutation && content) {
-			observers.mutation = new MutationObserver(() => {
-				this.emit('updateState');
-			});
-
-			observers.mutation.observe(content, {
-				childList: true
-			});
-
-			this.async.worker(observers.mutation, {
-				label: $$.mutationObserver
-			});
+			content && iObserveDOM.unobserve(this, content);
 		}
 	}
 

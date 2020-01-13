@@ -26,28 +26,30 @@ export const selectCache = new Cache<'months' | 'days' | 'years', ReadonlyArray<
 	}
 })
 
-export default class bInputBirthday<
-	V extends Value = Value,
-	FV extends FormValue = FormValue,
-	D extends object = Dictionary
-> extends iInput<V, FV, D> implements iWidth {
+export default class bInputBirthday extends iInput implements iWidth {
 	/** @override */
-	@prop({type: Date, required: false})
-	readonly valueProp?: V;
+	readonly Value!: Value;
+
+	/** @override */
+	readonly FormValue!: FormValue;
 
 	/** @override */
 	@prop({type: Date, required: false})
-	readonly defaultProp?: V;
+	readonly valueProp?: this['Value'];
+
+	/** @override */
+	@prop({type: Date, required: false})
+	readonly defaultProp?: this['Value'];
 
 	/** @override */
 	@p({cache: false})
-	get value(): V {
-		return Object.fastClone(this.field.get<V>('valueProp')!);
+	get value(): this['Value'] {
+		return Object.fastClone(this.field.get<this['Value']>('valueStore')!);
 	}
 
 	/** @override */
-	set value(value: V) {
-		this.field.set('valueProp', value);
+	set value(value: this['Value']) {
+		this.field.set('valueStore', value);
 	}
 
 	/** @override */
@@ -166,7 +168,7 @@ export default class bInputBirthday<
 	};
 
 	/** @override */
-	protected valueStore!: V;
+	protected valueStore!: this['Value'];
 
 	/** @override */
 	async clear(): Promise<boolean> {
@@ -250,7 +252,7 @@ export default class bInputBirthday<
 		});
 
 		if (String(d) !== String(this.value)) {
-			this.value = <V>d;
+			this.value = d;
 		}
 	}
 

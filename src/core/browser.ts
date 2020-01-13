@@ -52,7 +52,6 @@ export function test(platform: string, operation?: Operations, version?: string)
 	return semver(val[1].join('.'), version, operation);
 }
 
-// @ts-ignore
 export const is = {
 	Chrome: match('Chrome'),
 	Firefox: match('Firefox'),

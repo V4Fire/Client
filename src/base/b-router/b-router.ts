@@ -71,7 +71,7 @@ export const
 	$$ = symbolGenerator();
 
 @component()
-export default class bRouter<T extends object = Dictionary> extends iData<T> {
+export default class bRouter extends iData {
 	/* @override */
 	public async!: Async<this>;
 

@@ -9,7 +9,7 @@
 import { VNodeDirective } from 'core/component/engines';
 
 export interface Observable {
-	node: HTMLElement;
+	node: Element;
 	isLeaving: boolean;
 	isDeactivated: boolean;
 	id: string;
@@ -18,10 +18,10 @@ export interface Observable {
 export interface ObserveOptions {
 	onEnter?: Function;
 	onLeave?: Function;
-	group?: string;
+	group?: InViewGroup;
 	once?: boolean;
 	handleTransitionEnd?: boolean;
-	root?: (() => HTMLElement) | HTMLElement;
+	root?: (() => Element) | Element;
 
 	/**
 	 * Should count view of an element
@@ -78,7 +78,7 @@ export interface ElementRect {
 export interface IntersectionObserverOptions {
 	threshold: number;
 	delay?: number;
-	root?: (() => HTMLElement) | HTMLElement;
+	root?: (() => Element) | Element;
 
 	/**
 	 * Notice: Compute of visibility is more expensive than intersection. For that reason,
@@ -97,10 +97,11 @@ export interface DirectiveOptions extends VNodeDirective {
 	value?: CanArray<InitOptions>;
 }
 
+export type InViewGroup = string | number | symbol;
 export type RemoveStrategy = 'remove' | 'deactivate';
 export type InitOptions = ObserveOptions & IntersectionObserverOptions;
-export type ObservableElementsMap = Map<HTMLElement, ObservableElement>;
+export type ObservableElementsMap = Map<Element, ObservableElement>;
 export type ObservableThresholdMap = Map<number, ObservableElement>;
-export type ObservableElementsThresholdMap = Map<HTMLElement, ObservableThresholdMap>;
+export type ObservableElementsThresholdMap = Map<Element, ObservableThresholdMap>;
 export type ObservableElementRect = ElementRect & {observable: ObservableElement};
 export type ObservableElement = Observable & InitOptions;

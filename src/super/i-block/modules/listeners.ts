@@ -23,14 +23,10 @@ let
  * @param [resetListener]
  */
 export function initGlobalEvents(component: iBlock, resetListener?: boolean): void {
-	// @ts-ignore (access)
 	baseInitLoad = baseInitLoad || iBlock.prototype.initLoad;
 
 	const
-		c = component;
-
-	const
-		// @ts-ignore (access)
+		c = component.unsafe,
 		{globalName, globalEvent: $e, state: $s, state: {needRouterSync}} = c;
 
 	resetListener = Boolean(
@@ -99,8 +95,7 @@ export function initGlobalEvents(component: iBlock, resetListener?: boolean): vo
  */
 export function initRemoteWatchers(component: iBlock): void {
 	const
-		c = component,
-		// @ts-ignore (access)
+		c = component.unsafe,
 		w = c.meta.watchers,
 		o = c.watchProp;
 

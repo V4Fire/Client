@@ -37,15 +37,19 @@ const
 
 export default class Sync {
 	/**
+	 * Cache for modifiers synchronize functions
+	 */
+	readonly syncModCache!: Dictionary<Function>;
+
+	/**
 	 * Component instance
 	 */
-	protected readonly component: iBlock;
+	protected readonly component: iBlock['unsafe'];
 
 	/**
 	 * Component meta object
 	 */
 	protected get meta(): ComponentMeta {
-		// @ts-ignore (access)
 		return this.component.meta;
 	}
 
@@ -67,7 +71,6 @@ export default class Sync {
 	 * Link to the component $activeField
 	 */
 	protected get activeField(): CanUndef<string> {
-		// @ts-ignore (access)
 		return this.component.$activeField;
 	}
 
@@ -75,7 +78,6 @@ export default class Sync {
 	 * Cache for prop/field synchronize functions
 	 */
 	protected get syncLinkCache(): SyncLinkCache {
-		// @ts-ignore (access)
 		return this.component.$syncLinkCache;
 	}
 
@@ -84,7 +86,7 @@ export default class Sync {
 	 * @param value
 	 */
 	protected set syncLinkCache(value: SyncLinkCache) {
-		// @ts-ignore (access)
+		// @ts-ignore
 		this.component.$syncLinkCache = value;
 	}
 
@@ -94,15 +96,10 @@ export default class Sync {
 	protected readonly linksCache!: Dictionary<Dictionary>;
 
 	/**
-	 * Cache for modifiers synchronize functions
-	 */
-	protected readonly syncModCache!: Dictionary<Function>;
-
-	/**
 	 * @param component - component instance
 	 */
 	constructor(component: iBlock) {
-		this.component = component;
+		this.component = component.unsafe;
 		this.linksCache = {};
 		this.syncLinkCache = {};
 		this.syncModCache = {};

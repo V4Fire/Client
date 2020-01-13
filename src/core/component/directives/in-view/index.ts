@@ -27,7 +27,7 @@ export let
 	InView: InViewAdapter = new InViewAdapter();
 
 ComponentDriver.directive('in-view', {
-	inserted(el: HTMLElement, {value}: DirectiveOptions): void {
+	inserted(el: Element, {value}: DirectiveOptions): void {
 		if (!Adaptee || !value) {
 			return;
 		}
@@ -40,7 +40,7 @@ ComponentDriver.directive('in-view', {
 		InView.observe(el, <CanArray<InitOptions>>value);
 	},
 
-	unbind(el: HTMLElement): void {
+	unbind(el: Element): void {
 		InView.stopObserve(el);
 		InView.remove(el);
 	}
