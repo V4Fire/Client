@@ -146,8 +146,6 @@ export default class History<T extends iHistory> {
 			els = this.initPage(stage);
 
 		if (els && els.content.el) {
-			els.content.el.classList.add(this.block.getFullElName('page'));
-
 			this.block.setElMod(els.content.el, 'page', 'turning', 'in');
 			this.block.setElMod(currentPage, 'page', 'below', true);
 
@@ -268,6 +266,8 @@ export default class History<T extends iHistory> {
 		if (!page) {
 			return;
 		}
+
+		page.classList.add(this.block.getFullElName('page'));
 
 		const
 			title = page.querySelector('[data-title]'),

@@ -10,23 +10,10 @@
 
 - @@ignore
 - template index(@params, content)
-	< . &
-		-page = index |
-		:class = provide.elClasses(${@self.name()}, {page: {}})
-	.
-		{content}
-		+= @self.slot('default')
-
-	- block back
 		< . &
-			v-if = vdom.getSlot('pages') |
 			:class = provide.elClasses(${@self.name()}, {back: {}}) |
 			@click = () => history.back()
 		.
 
-	- block subPages
-		< . &
-			v-if = vdom.getSlot('pages') |
-			:class = provide.elClasses(${@self.name()}, {'sub-pages': {}})
-		.
-			+= @self.slot('pages')
+		+= @self.slot('default')
+			{content}
