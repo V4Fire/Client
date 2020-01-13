@@ -78,24 +78,21 @@ export default class History<T extends iHistory> {
 	 * Hooks of linked component
 	 */
 	get componentHooks(): ComponentHooks {
-		// @ts-ignore (access)
-		return this.component.meta.hooks;
+		return this.component.unsafe.meta.hooks;
 	}
 
 	/**
 	 * Linked component block
 	 */
 	get block(): Block {
-		// @ts-ignore (access)
-		return this.component.block;
+		return this.component.unsafe.block;
 	}
 
 	/**
 	 * Linked component async
 	 */
-	get async(): Async {
-		// @ts-ignore (access)
-		return this.component.async;
+	get async(): Async<T> {
+		return this.component.unsafe.async;
 	}
 
 	/**
@@ -211,8 +208,7 @@ export default class History<T extends iHistory> {
 			this.initTitleInView();
 		}
 
-		// @ts-ignore:access
-		this.component.pageTopTriggerVisibilityChange(show);
+		this.component.unsafe.pageTopTriggerVisibilityChange(show);
 	}
 
 	/**

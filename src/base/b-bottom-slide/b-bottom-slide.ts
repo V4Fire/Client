@@ -832,8 +832,6 @@ export default class bBottomSlide extends iBlock implements iLockPageScroll, iOp
 		this.currentY = clientY;
 		this.direction = Math.sign(diff) as Direction;
 
-		console.log(13212, isViewportTopReached);
-
 		if (
 			isTrigger ||
 			!isFullyOpened ||
