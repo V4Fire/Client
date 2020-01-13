@@ -31,7 +31,22 @@ export interface HistoryItem {
 	title?: Title;
 }
 
+export interface HistoryConfig {
+	pageTriggers: boolean;
+	triggerAttr: string;
+	titleThreshold: number;
+}
+
 export default class History<T extends iHistory> {
+	/**
+	 * Default configuration for any history item
+	 */
+	static defaultConfig: HistoryConfig = {
+		titleThreshold: 0.01,
+		triggerAttr: 'data-history-trigger',
+		pageTriggers: true
+	};
+
 	/**
 	 * History modifiers
 	 */
@@ -41,16 +56,6 @@ export default class History<T extends iHistory> {
 			['true']
 		]
 	};
-
-	/**
-	 * Title in view threshold value
-	 */
-	protected readonly titleThreshold: number = 0.01;
-
-	/**
-	 * Data attribute name for trigger elements
-	 */
-	protected readonly triggerAttr: string = 'data-history-trigger';
 
 	/**
 	 * Linked context
@@ -63,13 +68,23 @@ export default class History<T extends iHistory> {
 	protected stack: HistoryItem[] = [];
 
 	/**
-	 * @param component
-	 * @param [stage] - initial page stage
-	 * @param [options]
+	 * History instance configuration
 	 */
-	constructor(component: T, stage: string = 'index', options?: Dictionary) {
+	protected config: HistoryConfig;
+
+	/**
+	 * @param component
+	 * @param [initial]
+	 * @param [config]
+	 */
+	constructor(
+		component: T,
+		initial: HistoryItem = {stage: 'index', options: {}},
+		config?: HistoryConfig
+	) {
 		this.component = component;
-		this.stack.push({stage, options});
+		this.config = {...History.defaultConfig, ...config};
+		this.stack.push(initial);
 
 		this.componentHooks.mounted.push({fn: this.onMounted.bind(this)});
 	}
@@ -165,7 +180,7 @@ export default class History<T extends iHistory> {
 				page = current.content?.el;
 
 			if (current.content?.trigger) {
-				InView.stopObserve(current.content.trigger);
+				this.observeTitleTrigger(current.content.trigger, false);
 			}
 
 			if (page) {
@@ -184,9 +199,16 @@ export default class History<T extends iHistory> {
 		return current;
 	}
 
-	protected createTrigger(): HTMLElement {
+	/**
+	 * Creates a trigger element for observing
+	 */
+	protected createTrigger(): CanUndef<HTMLElement> {
+		if (!this.config.pageTriggers) {
+			return;
+		}
+
 		const t = document.createElement('div');
-		t.setAttribute(this.triggerAttr, 'true');
+		t.setAttribute(this.config.triggerAttr, 'true');
 
 		Object.assign(t.style, {
 			height: 1,
@@ -212,6 +234,29 @@ export default class History<T extends iHistory> {
 	}
 
 	/**
+	 * Controls title triggers observing
+	 *
+	 * @param trigger
+	 * @param flag
+	 */
+	protected observeTitleTrigger(trigger: HTMLElement, flag: boolean): void {
+		if (!this.config.pageTriggers) {
+			return;
+		}
+
+		if (flag) {
+			InView.observe(trigger, {
+				threshold: this.config.titleThreshold,
+				onEnter: () => this.pageTopTriggerVisibilityChange(true),
+				onLeave: () => this.pageTopTriggerVisibilityChange(false)
+			});
+
+		} else {
+			InView.stopObserve(trigger);
+		}
+	}
+
+	/**
 	 * Initializes dom for the current page
 	 * @param stage
 	 */
@@ -226,11 +271,13 @@ export default class History<T extends iHistory> {
 
 		const
 			title = page.querySelector('[data-title]'),
-			hasTrigger = page.children[0].getAttribute(this.triggerAttr),
+			hasTrigger = page.children[0].getAttribute(this.config.triggerAttr),
 			trigger = !hasTrigger ? this.createTrigger() : <HTMLElement>page.children[0];
 
 		if (title) {
-			trigger.style.height = title.clientHeight.px;
+			if (trigger) {
+				trigger.style.height = title.clientHeight.px;
+			}
 
 			$a.on(
 				title,
@@ -239,13 +286,10 @@ export default class History<T extends iHistory> {
 			);
 		}
 
-		page.insertAdjacentElement('afterbegin', trigger);
-
-		InView.observe(trigger, {
-			threshold: this.titleThreshold,
-			onEnter: () => this.pageTopTriggerVisibilityChange(true),
-			onLeave: () => this.pageTopTriggerVisibilityChange(false)
-		});
+		if (trigger) {
+			page.insertAdjacentElement('afterbegin', trigger);
+			this.observeTitleTrigger(trigger, true);
+		}
 
 		return {
 			content: {
@@ -286,7 +330,7 @@ export default class History<T extends iHistory> {
 			{current} = this,
 			titleH = current?.title?.initBoundingRect?.height || 0,
 			scrollTop = current.content?.el?.scrollTop || 0,
-			visible = titleH - scrollTop > titleH * this.titleThreshold;
+			visible = titleH - scrollTop > titleH * this.config.titleThreshold;
 
 		this.block.setElMod(current?.title?.el, 'title', 'in-view', visible);
 		this.component.emit('history:titleInView', visible);
