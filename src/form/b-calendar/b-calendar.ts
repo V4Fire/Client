@@ -51,11 +51,13 @@ export const
 	$$ = symbolGenerator();
 
 @component()
-export default class bCalendar<
-	V extends Value = Value,
-	FV extends FormValue = FormValue,
-	D extends object = Dictionary
-> extends iInput<V, FV, D> implements iWidth, iSize, iIcon, iOpenToggle {
+export default class bCalendar extends iInput implements iWidth, iSize, iIcon, iOpenToggle {
+	/** @override */
+	readonly Value!: Value;
+
+	/** @override */
+	readonly FormValue!: FormValue;
+
 	/** @override */
 	@prop({type: [Array, Date], required: false})
 	// @ts-ignore
@@ -63,10 +65,10 @@ export default class bCalendar<
 
 	/** @override */
 	@prop({type: [Array, Date], required: false})
-	readonly defaultProp?: V;
+	readonly defaultProp?: this['Value'];
 
 	/** @override */
-	@prop({default(): FV {
+	@prop({default(): bCalendar['FormValue'] {
 		return this.isSingleValue ? this.value[0] : this.value;
 	}})
 
@@ -92,17 +94,17 @@ export default class bCalendar<
 
 	/** @override */
 	@p({cache: false})
-	get value(): V {
-		return Object.fastClone(<V>this.field.get('valueStore'));
+	get value(): this['Value'] {
+		return Object.fastClone(this.field.get<this['Value']>('valueStore')!);
 	}
 
 	/** @override */
-	set value(value: V) {
+	set value(value: this['Value']) {
 		const
 			{min, max} = this;
 
 		const
-			store = <V>this.field.get('valueStore');
+			store = this.field.get<this['Value']>('valueStore')!;
 
 		for (let i = 0; i < value.length; i++) {
 			let
@@ -122,8 +124,8 @@ export default class bCalendar<
 	}
 
 	/** @override */
-	get default(): V {
-		return <V>(<any[]>[]).concat(this.defaultProp || new Date());
+	get default(): this['Value'] {
+		return (<this['Value']>[]).concat(this.defaultProp || new Date());
 	}
 
 	/**
@@ -214,15 +216,15 @@ export default class bCalendar<
 	protected monthSwitchAnimation: boolean = false;
 
 	/** @override */
-	@field<bCalendar>((o) => o.sync.link<V>((val) => {
+	@field<bCalendar>((o) => o.sync.link<bCalendar['Value']>((val) => {
 		if (Object.isArray(val)) {
-			return <V>val;
+			return val;
 		}
 
-		return <V>(<any[]>[]).concat(o.initDefaultValue(val) || []);
+		return (<bCalendar['Value']>[]).concat(o.initDefaultValue(val) || []);
 	}))
 
-	protected valueStore!: V;
+	protected valueStore!: this['Value'];
 
 	/**
 	 * Date pointer store

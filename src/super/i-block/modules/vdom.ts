@@ -34,13 +34,13 @@ export default class VDOM {
 	/**
 	 * Component instance
 	 */
-	protected readonly component: iBlock;
+	protected readonly component: iBlock['unsafe'];
 
 	/**
 	 * @param component - component instance
 	 */
 	constructor(component: iBlock) {
-		this.component = component;
+		this.component = component.unsafe;
 	}
 
 	/**
@@ -111,7 +111,6 @@ export default class VDOM {
 			renderObj = Object.isString(objOrPath) ? this.getRenderObject(objOrPath) : objOrPath;
 
 		if (!renderObj) {
-			// @ts-ignore (access)
 			return () => this.component.$createElement('span');
 		}
 

@@ -81,7 +81,12 @@ export const
 	$$ = symbolGenerator();
 
 @component({functional: null})
-export default abstract class iData<T extends object = Dictionary> extends iBlock implements iProgress {
+export default abstract class iData extends iBlock implements iProgress {
+	/**
+	 * Type: raw provider data
+	 */
+	readonly DB!: object;
+
 	//#if runtime has iData
 
 	/**
@@ -138,15 +143,15 @@ export default abstract class iData<T extends object = Dictionary> extends iBloc
 	/**
 	 * Component data
 	 */
-	get db(): CanUndef<T> {
+	get db(): CanUndef<this['DB']> {
 		return this.field.get('dbStore');
 	}
 
 	/**
 	 * Sets new component data
-	 * @emits dbChange(value: CanUndef<T>)
+	 * @emits dbChange(value: CanUndef<this['DB']>)
 	 */
-	set db(value: CanUndef<T>) {
+	set db(value: CanUndef<this['DB']>) {
 		if (value === this.db) {
 			return;
 		}
@@ -198,7 +203,7 @@ export default abstract class iData<T extends object = Dictionary> extends iBloc
 	 * Component data store
 	 */
 	@field()
-	protected dbStore?: CanUndef<T>;
+	protected dbStore?: CanUndef<this['DB']>;
 
 	/**
 	 * Provider instance
@@ -233,7 +238,7 @@ export default abstract class iData<T extends object = Dictionary> extends iBloc
 		if (this.isFunctional) {
 			return super.initLoad(() => {
 				if (data) {
-					this.db = this.convertDataToDB<T>(data);
+					this.db = this.convertDataToDB<this['DB']>(data);
 				}
 
 				return this.db;
@@ -250,7 +255,7 @@ export default abstract class iData<T extends object = Dictionary> extends iBloc
 
 		if (data || this.dp && this.dp.baseURL) {
 			if (data) {
-				const db = this.convertDataToDB<T>(data);
+				const db = this.convertDataToDB<this['DB']>(data);
 				this.lfc.execCbAtTheRightTime(() => this.db = db, label);
 
 			} else if (this.getDefaultRequestParams('get')) {
@@ -258,7 +263,7 @@ export default abstract class iData<T extends object = Dictionary> extends iBloc
 					.nextTick(label)
 					.then(() => {
 						const
-							p = this.getDefaultRequestParams<T>('get');
+							p = this.getDefaultRequestParams<this['DB']>('get');
 
 						Object.assign(p[1], {
 							...label,
@@ -269,7 +274,7 @@ export default abstract class iData<T extends object = Dictionary> extends iBloc
 					})
 
 					.then((data) => {
-						this.lfc.execCbAtTheRightTime(() => this.db = this.convertDataToDB<T>(data), label);
+						this.lfc.execCbAtTheRightTime(() => this.db = this.convertDataToDB<this['DB']>(data), label);
 						return super.initLoad(() => this.db, params);
 
 					}, (err) => {
@@ -362,7 +367,7 @@ export default abstract class iData<T extends object = Dictionary> extends iBloc
 	 * @param [data]
 	 * @param [params]
 	 */
-	peek(data?: RequestQuery, params?: CreateRequestOptions<T>): Promise<CanUndef<T>> {
+	peek(data?: RequestQuery, params?: CreateRequestOptions<this['DB']>): Promise<CanUndef<this['DB']>> {
 		const
 			args = arguments.length > 0 ? [data, params] : this.getDefaultRequestParams('peek');
 
@@ -379,7 +384,7 @@ export default abstract class iData<T extends object = Dictionary> extends iBloc
 	 * @param [data]
 	 * @param [params]
 	 */
-	get(data?: RequestQuery, params?: CreateRequestOptions<T>): Promise<CanUndef<T>> {
+	get(data?: RequestQuery, params?: CreateRequestOptions<this['DB']>): Promise<CanUndef<this['DB']>> {
 		const
 			args = arguments.length > 0 ? [data, params] : this.getDefaultRequestParams('get');
 
@@ -479,8 +484,8 @@ export default abstract class iData<T extends object = Dictionary> extends iBloc
 	 * @param data
 	 */
 	protected convertDataToDB<O>(data: unknown): O;
-	protected convertDataToDB(data: unknown): T;
-	protected convertDataToDB<O>(data: unknown): O | T {
+	protected convertDataToDB(data: unknown): this['DB'];
+	protected convertDataToDB<O>(data: unknown): O | this['DB'] {
 		let
 			v = data;
 
@@ -497,17 +502,17 @@ export default abstract class iData<T extends object = Dictionary> extends iBloc
 				checkDBEquality.call(this, v, db) :
 				checkDBEquality && Object.fastCompare(v, db)
 		) {
-			return <O | T>db;
+			return <O | this['DB']>db;
 		}
 
-		return <O | T>v;
+		return <O | this['DB']>v;
 	}
 
 	/**
 	 * Converts the specified data to the internal component format and returns it
 	 * @param data
 	 */
-	protected convertDBToComponent<O = unknown>(data: unknown): O | T {
+	protected convertDBToComponent<O = unknown>(data: unknown): O | this['DB'] {
 		let
 			v = data;
 
@@ -516,7 +521,7 @@ export default abstract class iData<T extends object = Dictionary> extends iBloc
 				.reduce((res, fn) => fn.call(this, res), Object.isArray(v) || Object.isObject(v) ? v.valueOf() : v);
 		}
 
-		return <O | T>v;
+		return <O | this['DB']>v;
 	}
 
 	/**
@@ -813,7 +818,7 @@ export default abstract class iData<T extends object = Dictionary> extends iBloc
 	 * Handler: dataProvider.refresh
 	 * @param data
 	 */
-	protected onRefreshData(data: T): Promise<void> {
+	protected onRefreshData(data: this['DB']): Promise<void> {
 		return this.reload();
 	}
 

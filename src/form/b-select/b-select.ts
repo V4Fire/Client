@@ -22,7 +22,6 @@ import bInput, {
 	mod,
 	wait,
 
-	Value,
 	ModEvent,
 	SetModEvent,
 	ModsDecl,
@@ -30,13 +29,11 @@ import bInput, {
 
 } from 'form/b-input/b-input';
 
-import { FormValue, Option, NOption } from 'form/b-select/modules/interface';
+import { Option, NOption } from 'form/b-select/modules/interface';
 
 export * from 'form/b-input/b-input';
 export * from 'traits/i-open-toggle/i-open-toggle';
 export * from 'form/b-select/modules/interface';
-
-export { FormValue };
 
 export const
 	$$ = symbolGenerator();
@@ -51,12 +48,7 @@ let
 	}
 })
 
-export default class bSelect<
-	V extends Value = Value,
-	FV extends FormValue = FormValue,
-	D extends object = Dictionary
-// @ts-ignore
-> extends bInput<V, FV, D> implements iOpenToggle {
+export default class bSelect extends bInput implements iOpenToggle {
 	/**
 	 * Initial select options
 	 */
@@ -95,7 +87,7 @@ export default class bSelect<
 		return val !== undefined ? String(val) : undefined;
 	}))
 
-	selected?: FV;
+	selected?: this['FormValue'];
 
 	/**
 	 * Select options
@@ -180,7 +172,7 @@ export default class bSelect<
 		await this.close();
 
 		if (this.value || this.selected) {
-			this.value = <V>'';
+			this.value = '';
 			await super.clear();
 			return true;
 		}
@@ -344,7 +336,7 @@ export default class bSelect<
 					if (this.selected) {
 						if (selected) {
 							if (selected.previousElementSibling) {
-								this.selected = <FV>(<HTMLElement>selected.previousElementSibling).dataset.value;
+								this.selected = (<HTMLElement>selected.previousElementSibling).dataset.value;
 								break;
 							}
 
@@ -379,7 +371,7 @@ export default class bSelect<
 								return;
 							}
 
-							that.selected = <FV>(<HTMLElement>$b.element('option')).dataset.value;
+							that.selected = $b.element<HTMLElement>('option')!.dataset.value;
 						}
 					};
 
@@ -515,7 +507,7 @@ export default class bSelect<
 	 */
 	@watch('selected')
 	@wait('ready')
-	protected async syncSelectedStoreWatcher(selected: FV): Promise<void> {
+	protected async syncSelectedStoreWatcher(selected: this['FormValue']): Promise<void> {
 		const
 			{block: $b} = this,
 			prevSelected = $b.element('option', {selected: true});
@@ -525,7 +517,7 @@ export default class bSelect<
 		}
 
 		if (selected === undefined) {
-			this.value = <V>'';
+			this.value = '';
 			return;
 		}
 
@@ -540,7 +532,7 @@ export default class bSelect<
 			{mobile} = this.browser.is;
 
 		if (this.mods.focused !== 'true' || mobile) {
-			this.value = <V>this.getOptionLabel(option);
+			this.value = this.getOptionLabel(option);
 		}
 
 		if (mobile) {
@@ -599,7 +591,7 @@ export default class bSelect<
 	 */
 	protected syncValue(selected?: string): void {
 		if (selected) {
-			this.selected = <FV>selected;
+			this.selected = selected;
 		}
 
 		if (!this.selected) {
@@ -610,7 +602,7 @@ export default class bSelect<
 			label = this.values[String(this.selected)];
 
 		if (label) {
-			this.value = <V>this.getOptionLabel(label);
+			this.value = this.getOptionLabel(label);
 		}
 	}
 
@@ -673,7 +665,7 @@ export default class bSelect<
 					el = this.labels[key];
 
 				if (el && rgxp.test(key)) {
-					this.selected = <FV>el.value;
+					this.selected = String(el.value);
 					some = true;
 					break;
 				}
@@ -692,7 +684,7 @@ export default class bSelect<
 	}
 
 	/** @override */
-	protected async onValueChange(newValue: V, oldValue?: V): Promise<void> {
+	protected async onValueChange(newValue: this['Value'], oldValue?: this['Value']): Promise<void> {
 		try {
 			await this.async.wait(() => this.mods.opened !== 'true', {label: $$.onValueChange});
 			super.onValueChange(newValue, oldValue);

@@ -52,13 +52,13 @@ export default class Provide {
 	/**
 	 * Component instance
 	 */
-	protected readonly component: iBlock;
+	protected readonly component: iBlock['unsafe'];
 
 	/**
 	 * @param component - component instance
 	 */
 	constructor(component: iBlock) {
-		this.component = component;
+		this.component = component.unsafe;
 	}
 
 	/**

@@ -7,9 +7,8 @@
  */
 
 import symbolGenerator from 'core/symbol';
+import iObserveDOM from 'traits/i-observe-dom/i-observe-dom';
 import { observeMap } from 'core/component/helpers/observable';
-
-import iObserveDom from 'traits/i-observe-dom/i-observe-dom';
 
 import iBlock, {
 
@@ -69,7 +68,7 @@ export function validateResolve(value: ResolveMethod[]): boolean {
 }
 
 @component()
-export default class bContentSwitcher extends iBlock implements iObserveDom {
+export default class bContentSwitcher extends iBlock implements iObserveDOM {
 	/**
 	 * Resolve methods
 	 */
@@ -112,6 +111,12 @@ export default class bContentSwitcher extends iBlock implements iObserveDom {
 	@prop({type: Object, required: false})
 	readonly semaphoreKeysProp?: Dictionary;
 
+	/**
+	 * Selector for a content node
+	 */
+	@prop(String)
+	readonly contentNodeSelector: string = '[data-switcher-content]';
+
 	/** @see semaphoreKeys */
 	@system((o) => o.sync.link('semaphoreKeysProp', (v: Dictionary) => ({...v})))
 	semaphoreKeys?: Dictionary;
@@ -122,8 +127,8 @@ export default class bContentSwitcher extends iBlock implements iObserveDom {
 	@p({cache: false})
 	get content(): CanPromise<HTMLElement> {
 		return this.waitStatus('loading', () => {
-			const {$refs: {content}, contentNodeStore} = this;
-			return contentNodeStore || content.querySelector<HTMLElement>(this.contentNodeMarker) || content;
+			const {$refs: {content}} = this;
+			return content.querySelector<HTMLElement>(this.contentNodeSelector) || content;
 		});
 	}
 
@@ -150,28 +155,10 @@ export default class bContentSwitcher extends iBlock implements iObserveDom {
 	protected semaphoreReadyMap!: Map<iBlock, boolean>;
 
 	/**
-	 * Mutation observer instance
-	 */
-	@system()
-	protected mutationObserver: CanUndef<MutationObserver>;
-
-	/**
 	 * Number of DOM nodes within a content block
 	 */
 	@system()
 	protected contentLengthStore: number = 0;
-
-	/**
-	 * Selector of a content node
-	 */
-	@system()
-	protected contentNodeMarker: string = '[data-switcher-content]';
-
-	/**
-	 * Store of a content node
-	 */
-	@system()
-	protected contentNodeStore: Nullable<HTMLElement> = null;
 
 	/**
 	 * Strategies readiness map
@@ -261,7 +248,7 @@ export default class bContentSwitcher extends iBlock implements iObserveDom {
 	}
 
 	/**
-	 * Sets a readiness of the specified semaphore key
+	 * Sets readiness of the specified semaphore key
 	 *
 	 * @param prop
 	 * @param value
@@ -286,22 +273,21 @@ export default class bContentSwitcher extends iBlock implements iObserveDom {
 		const
 			content = <HTMLElement>this.content;
 
-		iObserveDom.observe(this, {
+		iObserveDOM.observe(this, {
 			node: content,
 			childList: true,
-			characterData: true
+			characterData: false
 		});
 	}
 
 	/** @see iObserveDom.onDOMChange */
 	onDOMChange(records: MutationRecord[]): void {
-		records = iObserveDom.filterNodes(records, (node) => node instanceof HTMLElement);
-
 		const
-			{addedNodes, removedNodes} = iObserveDom.getChangedNodes(records);
+			filtered = iObserveDOM.filterNodes(records, (node) => node instanceof HTMLElement),
+			{addedNodes, removedNodes} = iObserveDOM.getChangedNodes(filtered);
 
 		this.contentLengthStore += addedNodes.length - removedNodes.length;
-		iObserveDom.onDOMChange(this, records);
+		iObserveDOM.onDOMChange(this, records);
 	}
 
 	/**

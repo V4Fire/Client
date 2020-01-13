@@ -11,6 +11,19 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-beta.238 (2020-01-13)
+
+#### :boom: Breaking Change
+
+* Removed `iBlock.forceActivation`
+* Renamed `iBlock.forceInitialActivation` to `forceActivation`
+* Renamed `iBlock.isInitializedOnce` to `isReadyOnce`
+
+#### :rocket: New Feature
+
+* [Added `i-observe-dom` trait](https://github.com/V4Fire/Client/pull/146)
+* Added `unsafe` property to `iBlock`
+
 ## v3.0.0-beta.237 (2019-12-19)
 
 ### :rocket: New Feature
@@ -40,6 +53,13 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 * Fixed the redundant link initializing `Sync`
 * Removed the redundant tag with `v-render` and components without a template
 
+#### :house: Internal
+
+* [`b-slider` component now implements `i-observe-dom`](https://github.com/V4Fire/Client/pull/146)
+* [`b-content-switcher` component now implements `i-observe-dom`](https://github.com/V4Fire/Client/pull/146)
+* [`b-slider` component now uses `v-resize` directive](https://github.com/V4Fire/Client/pull/146)
+* [Review observable APIs](https://github.com/V4Fire/Client/pull/146)
+
 ## v3.0.0-beta.233 (2019-12-13)
 
 #### :bug: Bug Fix
@@ -68,8 +88,6 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 * [Fixed `b-virtual-scroll` request params](https://github.com/V4Fire/Client/pull/149)
 * [Fixed `b-virtual-scroll` size calculation in `fixSize` method](https://github.com/V4Fire/Client/pull/149)
-* Fixed `iLockPageScroll`
-* Marked `bDynamicPage.component` as non-cacheable
 
 ## v3.0.0-beta.229 (2019-12-10)
 
@@ -115,7 +133,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 * [Fixed `b-virtual-scroll` reloadLast method](https://github.com/V4Fire/Client/pull/144)
 * [Fixed `b-virtual-scroll` reload method](https://github.com/V4Fire/Client/pull/144)
-* [Fixed `v-image` onImageLoaded method](https://github.com/V4Fire/Client/pull/145)
+* [Fixed `b-image` onImageLoaded method](https://github.com/V4Fire/Client/pull/145)
 * Fixed race conditions within `iData`
 
 #### :house: Internal

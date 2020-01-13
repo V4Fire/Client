@@ -53,9 +53,7 @@ export type ButtonType<T extends string = any> =
 	}
 })
 
-export default class bButton<T extends object = Dictionary> extends iData<T>
-	implements iAccess, iOpenToggle, iIcon, iVisible, iWidth, iSize {
-
+export default class bButton extends iData implements iAccess, iOpenToggle, iIcon, iVisible, iWidth, iSize {
 	/** @override */
 	readonly dataProvider: string = 'Provider';
 
@@ -248,7 +246,7 @@ export default class bButton<T extends object = Dictionary> extends iData<T>
 			// Form attribute fix for MS Edge && IE
 			} else if (this.form && this.type === 'submit') {
 				e.preventDefault();
-				const form = <bForm>this.dom.getComponent(`#${this.form}`);
+				const form = this.dom.getComponent<bForm>(`#${this.form}`);
 				form && await form.submit();
 			}
 

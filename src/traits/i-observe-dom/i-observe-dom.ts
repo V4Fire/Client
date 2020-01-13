@@ -9,45 +9,51 @@
 import symbolGenerator from 'core/symbol';
 import iBlock from 'super/i-block/i-block';
 
-import { ObserveOptions, Observer, Observers, ChangedNodes } from 'traits/i-observe-dom/interface';
+import {
+
+	ObserveOptions,
+	Observer,
+	Observers,
+	ObserverMutationRecord,
+	ChangedNodes
+
+} from 'traits/i-observe-dom/interface';
 
 export * from 'traits/i-observe-dom/interface';
 
 export const
 	$$ = symbolGenerator();
 
-export default abstract class iObserveDom {
+export default abstract class iObserveDOM {
 	/**
-	 * Starts to observe DOM changes for the specified element
+	 * Starts to observe DOM changes by the specified options
 	 *
 	 * @param component
-	 * @param options
+	 * @param opts
 	 */
-	static observe<T extends iBlock>(component: T & iObserveDom, options: ObserveOptions): void {
+	static observe<T extends iBlock>(component: T & iObserveDOM, opts: ObserveOptions): void {
 		const
-			{node} = options,
-			observers = iObserveDom.getObserversMap(component);
+			{node} = opts;
+
+		const
+			observers = this.getObserversMap(component);
 
 		if (observers.has(node)) {
-			iObserveDom.unobserve(component, node);
+			this.unobserve(component, node);
 		}
 
-		observers.set(node, iObserveDom.createObserver(component, options));
+		observers.set(node, iObserveDOM.createObserver(component, opts));
 	}
 
 	/**
-	 * Stops to observe the specified element
+	 * Stops to observe DOM changes for the specified node
 	 *
 	 * @param component
 	 * @param node
 	 */
-	static unobserve<T extends iBlock>(component: T & iObserveDom, node: Element): void {
+	static unobserve<T extends iBlock>(component: T & iObserveDOM, node: Element): void {
 		const
-			// @ts-ignore (access)
-			{async: $a} = component,
-			observers = iObserveDom.getObserversMap(component);
-
-		const
+			observers = this.getObserversMap(component),
 			observer = observers.get(node);
 
 		if (!observer) {
@@ -55,7 +61,7 @@ export default abstract class iObserveDom {
 		}
 
 		observers.delete(node);
-		$a.clearAll({label: observer.key});
+		component.unsafe.async.clearAll({label: observer.key});
 	}
 
 	/**
@@ -64,11 +70,11 @@ export default abstract class iObserveDom {
 	 * @param records
 	 * @param filter
 	 */
-	static filterNodes(records: MutationRecord[], filter: (node: Node) => boolean): MutationRecord[] {
+	static filterNodes(records: MutationRecord[], filter: (node: Node) => boolean): ObserverMutationRecord[] {
 		return records.map((r) => ({
 			...r,
-			addedNodes: [].filter.call(r.addedNodes, filter),
-			removedNodes: [].filter.call(r.removedNodes, filter)
+			addedNodes: Array.from(r.addedNodes).filter(filter),
+			removedNodes: Array.from(r.removedNodes).filter(filter)
 		}));
 	}
 
@@ -76,22 +82,20 @@ export default abstract class iObserveDom {
 	 * Returns changed nodes
 	 * @param records
 	 */
-	static getChangedNodes(records: MutationRecord[]): ChangedNodes {
+	static getChangedNodes(records: MutationRecord[] | ObserverMutationRecord[]): ChangedNodes {
 		const res = {
 			addedNodes: <ChangedNodes['addedNodes']>[],
 			removedNodes: <ChangedNodes['removedNodes']>[]
 		};
 
 		for (let i = 0; i < records.length; i++) {
-			const
-				record = records[i];
-
-			res.addedNodes = res.addedNodes.concat([].slice.call(record.addedNodes));
-			res.removedNodes = res.removedNodes.concat([].slice.call(record.removedNodes));
+			res.addedNodes = res.addedNodes.concat(Array.from(records[i].addedNodes));
+			res.removedNodes = res.removedNodes.concat(Array.from(records[i].removedNodes));
 		}
 
 		res.addedNodes = [].union(res.addedNodes);
 		res.removedNodes = [].union(res.removedNodes);
+
 		return res;
 	}
 
@@ -100,23 +104,23 @@ export default abstract class iObserveDom {
 	 *
 	 * @param component
 	 * @param [records]
-	 * @param [options]
+	 * @param [opts]
 	 *
 	 * @emits DOMChange(records?: MutationRecord[], options?: ObserverOptions)
 	 */
 	static onDOMChange<T extends iBlock>(
-		component: T & iObserveDom,
+		component: T & iObserveDOM,
 		records?: MutationRecord[],
-		options?: ObserveOptions
+		opts?: ObserveOptions
 	): void {
-		component.emit('DOMChange', records, options);
+		component.emit('DOMChange', records, opts);
 	}
 
 	/**
-	 * Returns component observers map
+	 * Returns a component observers map
 	 * @param component
 	 */
-	protected static getObserversMap<T extends iBlock>(component: T & iObserveDom): Observers {
+	protected static getObserversMap<T extends iBlock>(component: T & iObserveDOM): Observers {
 		return component[$$.DOMObservers] || (component[$$.DOMObservers] = new Map());
 	}
 
@@ -126,17 +130,16 @@ export default abstract class iObserveDom {
 	 * @param component
 	 * @param options
 	 */
-	protected static createObserver<T extends iBlock>(component: T & iObserveDom, options: ObserveOptions): Observer {
+	protected static createObserver<T extends iBlock>(component: T & iObserveDOM, options: ObserveOptions): Observer {
 		const
-			// @ts-ignore (access)
-			{async: $a} = component,
-			{node} = options,
-			label = iObserveDom.getObserverKey();
+			{async: $a} = component.unsafe,
+			{node} = options;
+
+		const
+			label = this.getObserverKey();
 
 		const observer = new MutationObserver((records) => {
-			$a.requestIdleCallback(() => {
-				component.onDOMChange(records, options);
-			}, {label});
+			component.onDOMChange(records, options);
 		});
 
 		observer.observe(node, options);
@@ -149,7 +152,7 @@ export default abstract class iObserveDom {
 	}
 
 	/**
-	 * Returns uniq key for observer
+	 * Generates a unique key and returns it
 	 */
 	protected static getObserverKey(): string {
 		return String(Math.random());

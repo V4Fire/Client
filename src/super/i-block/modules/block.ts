@@ -77,15 +77,14 @@ export default class Block {
 	/**
 	 * Link to a block node
 	 */
-	get node(): CanUndef<ComponentElement<unknown>> {
+	get node(): CanUndef<ComponentElement<iBlock>> {
 		return this.component.$el;
 	}
 
 	/**
 	 * Local event emitter
 	 */
-	protected get event(): Event {
-		// @ts-ignore (access)
+	protected get event(): Event<iBlock> {
 		return this.component.localEvent;
 	}
 
@@ -97,13 +96,13 @@ export default class Block {
 	/**
 	 * Component instance
 	 */
-	protected readonly component: iBlock;
+	protected readonly component: iBlock['unsafe'];
 
 	/**
 	 * @param component - component instance
 	 */
 	constructor(component: iBlock) {
-		this.component = component;
+		this.component = component.unsafe;
 		this.mods = Object.createDict();
 
 		for (let m = component.mods, keys = Object.keys(m), i = 0; i < keys.length; i++) {

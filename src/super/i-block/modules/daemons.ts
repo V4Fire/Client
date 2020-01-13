@@ -10,7 +10,7 @@ import iBlock from 'super/i-block/i-block';
 import { wait } from 'super/i-block/modules/decorators';
 
 import { AsyncOptions } from 'core/async';
-import { WatchOptions, Hooks, ComponentInterface } from 'core/component';
+import { WatchOptions, Hooks } from 'core/component';
 import { Statuses } from 'super/i-block/modules/interface';
 
 export interface DaemonWatchObject extends WatchOptions {
@@ -82,7 +82,7 @@ export default class Daemons {
 	/**
 	 * Component instance
 	 */
-	protected component: ComponentInterface<iBlock>;
+	protected component: iBlock['unsafe'];
 
 	/**
 	 * Returns component daemons
@@ -94,8 +94,8 @@ export default class Daemons {
 	/**
 	 * @param component
 	 */
-	constructor(component: ComponentInterface<iBlock>) {
-		this.component = component;
+	constructor(component: iBlock) {
+		this.component = component.unsafe;
 		this.init();
 	}
 
@@ -158,7 +158,7 @@ export default class Daemons {
 				delete asyncOptions.label;
 			}
 
-			$a.setImmediate(() => fn.apply(ctx, args), asyncOptions);
+			$a.setImmediate(() => fn.apply(ctx, args), <any>asyncOptions);
 
 		} else {
 			return fn.apply(ctx, args);
@@ -202,7 +202,6 @@ export default class Daemons {
 	 */
 	protected bindToHook(hook: string, name: string, params?: DaemonHookParams): void {
 		const
-			// @ts-ignore (access)
 			{hooks} = this.component.meta;
 
 		hooks[hook].push({
@@ -219,7 +218,6 @@ export default class Daemons {
 	 */
 	protected bindToWatch(watch: DaemonWatcher, name: string): void {
 		const
-			// @ts-ignore (access)
 			{watchers} = this.component.meta;
 
 		const

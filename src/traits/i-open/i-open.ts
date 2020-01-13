@@ -31,7 +31,7 @@ export default abstract class iOpen {
 	}
 
 	/**
-	 * Initializes close helpers
+	 * Initializes close helper listeners
 	 *
 	 * @param component
 	 * @param [events] - event names for helpers
@@ -79,7 +79,7 @@ export default abstract class iOpen {
 	}
 
 	/**
-	 * Initializes modifiers event listeners
+	 * Initializes modifier event listeners
 	 *
 	 * @emits open()
 	 * @emits close()

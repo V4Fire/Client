@@ -16,9 +16,7 @@ export * from 'super/i-data/i-data';
 export * from 'traits/i-open-toggle/i-open-toggle';
 
 @component()
-export default class bSidebar<T extends object = Dictionary> extends iData<T>
-	implements iVisible, iOpenToggle, iLockPageScroll {
-
+export default class bSidebar extends iData implements iVisible, iOpenToggle, iLockPageScroll {
 	/**
 	 * If true, then will be blocked the scrolling of the document when component is opened
 	 */

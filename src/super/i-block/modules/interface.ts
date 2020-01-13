@@ -6,9 +6,9 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import Async, { AsyncOptions } from 'core/async';
 import iBlock from 'super/i-block/i-block';
 import { statuses } from 'super/i-block/modules/const';
-import { AsyncOptions } from 'core/async';
 
 export type Statuses =
 	'destroyed' |
@@ -44,4 +44,63 @@ export interface ComponentEventDecl {
 export interface InitLoadParams {
 	silent?: boolean;
 	recursive?: boolean;
+}
+
+export interface Unsafe<CTX extends iBlock = iBlock> {
+	instance: CTX['instance'];
+
+	lfc: iBlock['lfc'];
+	state: iBlock['state'];
+	storage: iBlock['storage'];
+
+	opt: iBlock['opt'];
+	lazy: iBlock['lazy'];
+
+	dom: iBlock['dom'];
+	block: iBlock['block'];
+	async: Async<CTX>;
+
+	localEvent: iBlock['localEvent'];
+	parentEvent: iBlock['parentEvent'];
+	rootEvent: iBlock['rootEvent'];
+	globalEvent: iBlock['globalEvent'];
+
+	log: iBlock['log'];
+	meta: iBlock['meta'];
+	blockReadyListeners: iBlock['blockReadyListeners'];
+	beforeReadyListeners: iBlock['beforeReadyListeners'];
+
+	tmp: iBlock['tmp'];
+	watchTmp: iBlock['watchTmp'];
+	renderTmp: iBlock['renderTmp'];
+	ifOnceStore: iBlock['ifOnceStore'];
+
+	activated: iBlock['activated'];
+	deactivated: iBlock['deactivated'];
+	syncRouterState: iBlock['syncRouterState'];
+	convertStateToRouterReset: iBlock['convertStateToRouterReset'];
+	syncStorageState: iBlock['syncStorageState'];
+	convertStateToStorageReset: iBlock['convertStateToStorageReset'];
+
+	$el: iBlock['$el'];
+	$async: iBlock['$async'];
+
+	$props: iBlock['$props'];
+	$attrs: iBlock['$attrs'];
+
+	$data: iBlock['$data'];
+	$$data: iBlock['$$data'];
+	$options: iBlock['$options'];
+	$syncLinkCache: iBlock['$syncLinkCache'];
+
+	readonly $asyncLabel: symbol;
+	readonly $activeField: CanUndef<string>;
+
+	// @ts-ignore (access)
+	$refs: CTX['$refs'];
+	$root: CTX['$root'];
+
+	$set: iBlock['$set'];
+	$delete: iBlock['$delete'];
+	$createElement: iBlock['$createElement'];
 }

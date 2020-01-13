@@ -127,8 +127,7 @@ export default abstract class iLockPageScroll {
 	 */
 	static unlock<T extends iBlock>(component: T): Promise<void> {
 		const
-			// @ts-ignore (access)
-			{$root: r, $root: {async: $a}} = component,
+			{$root: r, $root: {async: $a}} = component.unsafe,
 			{body} = document;
 
 		if (!r[$$.isLocked]) {
@@ -165,8 +164,7 @@ export default abstract class iLockPageScroll {
 	 */
 	static initModEvents<T extends iBlock>(component: T & iLockPageScroll): void {
 		const
-			// @ts-ignore (access)
-			{$async: $a, localEvent: $e} = component;
+			{$async: $a, localEvent: $e} = component.unsafe;
 
 		$e.on('block.mod.*.opened.*', (e: ModEvent) => {
 			if (e.type === 'remove' && e.reason !== 'removeMod') {

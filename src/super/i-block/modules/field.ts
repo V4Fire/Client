@@ -17,13 +17,13 @@ export default class Field {
 	/**
 	 * Component instance
 	 */
-	protected readonly component: iBlock;
+	protected readonly component: iBlock['unsafe'];
 
 	/**
 	 * @param component - component instance
 	 */
 	constructor(component: iBlock) {
-		this.component = component;
+		this.component = component.unsafe;
 	}
 
 	/**
@@ -59,7 +59,7 @@ export default class Field {
 			isComponent = false;
 
 		if ((<Dictionary>obj).instance instanceof iBlock) {
-			ctx = <iBlock>obj;
+			ctx = (<iBlock>obj).unsafe;
 			isComponent = true;
 		}
 
@@ -83,10 +83,7 @@ export default class Field {
 				chunks[0] = info.accessor;
 
 			} else {
-				const
-					isField = info.type === 'field';
-
-				// @ts-ignore (access)
+				const isField = info.type === 'field';
 				res = isField ? ctx.$$data : ctx;
 
 				if ((isField && !isReady || !(chunks[0] in res))) {
@@ -127,7 +124,7 @@ export default class Field {
 			isComponent = false;
 
 		if ((<Dictionary>obj).instance instanceof iBlock) {
-			ctx = <iBlock>obj;
+			ctx = (<iBlock>obj).unsafe;
 			isComponent = true;
 		}
 
@@ -157,8 +154,6 @@ export default class Field {
 
 			} else {
 				isField = info.type === 'field';
-
-				// @ts-ignore (access)
 				ref = isField ? ctx.$$data : ctx;
 
 				if ((isField && !isReady || !(chunks[0] in ref))) {
@@ -184,7 +179,6 @@ export default class Field {
 					val = isNaN(Number(chunks[i + 1])) ? {} : [];
 
 				if (isField && isReady) {
-					// @ts-ignore (access)
 					ctx.$set(ref, prop, val);
 
 				} else {
@@ -199,7 +193,6 @@ export default class Field {
 			ref[path] = value;
 
 		} else {
-			// @ts-ignore (access)
 			ctx.$set(ref, path, value);
 		}
 
@@ -222,7 +215,7 @@ export default class Field {
 			isComponent = false;
 
 		if ((<Dictionary>obj).instance instanceof iBlock) {
-			ctx = <iBlock>obj;
+			ctx = (<iBlock>obj).unsafe;
 			isComponent = true;
 		}
 
@@ -241,8 +234,6 @@ export default class Field {
 			// @ts-ignore
 			ctx = info.ctx;
 			isField = info.type === 'field';
-
-			// @ts-ignore (access)
 			ref = isField ? ctx.$$data : ctx;
 			chunks = info.path.split('.');
 			chunks[0] = info.name;
@@ -273,7 +264,6 @@ export default class Field {
 
 		if (test) {
 			if (isField && isReady) {
-				// @ts-ignore (access)
 				ctx.$delete(ref, path);
 
 			} else {

@@ -17,7 +17,7 @@ export interface Doll extends Dictionary {
 }
 
 @component({flyweight: true})
-export default class bMatryoshka<T extends object = Dictionary> extends iData<T> {
+export default class bMatryoshka extends iData {
 	/**
 	 * Initial component options
 	 */

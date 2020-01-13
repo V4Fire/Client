@@ -9,8 +9,6 @@
 import bCheckbox, {
 
 	component,
-	Value,
-	FormValue,
 	ValidatorsDecl,
 	ValidatorParams,
 	ValidatorResult
@@ -20,11 +18,7 @@ import bCheckbox, {
 export * from 'super/i-input/i-input';
 
 @component({flyweight: true})
-export default class bRadioButton<
-	V extends Value = Value,
-	FV extends FormValue = FormValue,
-	D extends object = Dictionary
-> extends bCheckbox<V, FV, D> {
+export default class bRadioButton extends bCheckbox {
 	/** @override */
 	static validators: ValidatorsDecl = {
 		//#if runtime has iInput/validators

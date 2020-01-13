@@ -9,29 +9,28 @@
 import Async from 'core/async';
 import symbolGenerator from 'core/symbol';
 import iBlock from 'super/i-block/i-block';
-import { runHook, ComponentElement } from 'core/component';
+import { runHook } from 'core/component';
 
-const
+export const
 	$$ = symbolGenerator();
 
-const inactiveStatuses = {
+const inactiveStatuses = Object.createDict({
 	destroyed: true,
 	inactive: true
-};
+});
 
 /**
- * Activates the component
+ * Activates the specified component
  *
  * @param component
  * @param [force]
  */
 export function activate<T extends iBlock>(component: T, force?: boolean): void {
 	const
-		c = component,
+		c = component.unsafe,
 		beforeCreate = c.lfc.isBeforeCreate();
 
 	const
-		// @ts-ignore (access)
 		{state: $s, rootEvent: $e} = c;
 
 	if (!c.isActivated || force) {
@@ -49,7 +48,9 @@ export function activate<T extends iBlock>(component: T, force?: boolean): void 
 							});
 
 						} else {
-							await c.nextTick({label: $$.activateAfterHardChange});
+							await c.nextTick({
+								label: $$.activateAfterHardChange
+							});
 						}
 					}
 
@@ -72,53 +73,22 @@ export function activate<T extends iBlock>(component: T, force?: boolean): void 
 	}
 
 	const
-		els = new Set<iBlock>();
+		children = c.$children;
 
-	const exec = (ctx: iBlock = c) => {
-		els.add(ctx);
-
-		const
-			children = ctx.$children;
-
-		if (children) {
-			for (let i = 0; i < children.length; i++) {
-				exec(children[i]);
-			}
-		}
-	};
-
-	exec();
-
-	const
-		{$el} = c;
-
-	if (c.forceActivation && $el) {
-		const
-			domEls = $el.querySelectorAll('.i-block-helper');
-
-		for (let i = 0; i < domEls.length; i++) {
+	if (children) {
+		for (let i = 0; i < children.length; i++) {
 			const
-				el = <iBlock>(<ComponentElement>domEls[i]).component;
+				ctx = children[i].unsafe;
 
-			if (el) {
-				els.add(el);
+			if (!ctx.isActivated) {
+				runHook('activated', ctx.meta, ctx).then(() => ctx.activated(true), stderr);
 			}
-		}
-	}
-
-	for (let w = els.values(), el = w.next(); !el.done; el = w.next()) {
-		const
-			ctx = el.value;
-
-		if (!ctx.isActivated) {
-			// @ts-ignore (access)
-			runHook('activated', ctx.meta, ctx).then(() => ctx.activated(true), stderr);
 		}
 	}
 }
 
 /**
- * Deactivates the component
+ * Deactivates the specified component
  * @param component
  */
 export function deactivate<T extends iBlock>(component: T): void {
@@ -130,70 +100,37 @@ export function deactivate<T extends iBlock>(component: T): void {
 	}
 
 	const
-		els = new Set<iBlock>();
+		children = c.$children;
 
-	const exec = (ctx: iBlock = c) => {
-		els.add(ctx);
-
-		const
-			children = ctx.$children;
-
-		if (children) {
-			for (let i = 0; i < children.length; i++) {
-				exec(children[i]);
-			}
-		}
-	};
-
-	exec();
-
-	const
-		{$el} = c;
-
-	if (c.forceActivation && $el) {
-		const
-			domEls = $el.querySelectorAll('.i-block-helper');
-
-		for (let i = 0; i < domEls.length; i++) {
+	if (children) {
+		for (let i = 0; i < children.length; i++) {
 			const
-				el = <iBlock>(<ComponentElement>domEls[i]).component;
+				ctx = children[i].unsafe;
 
-			if (el) {
-				els.add(el);
+			if (ctx.isActivated) {
+				runHook('deactivated', ctx.meta, ctx).then(() => ctx.deactivated(), stderr);
 			}
-		}
-	}
-
-	for (let w = els.values(), el = w.next(); !el.done; el = w.next()) {
-		const
-			ctx = el.value;
-
-		if (ctx.isActivated) {
-			// @ts-ignore (access)
-			runHook('deactivated', ctx.meta, ctx).then(() => ctx.deactivated(), stderr);
 		}
 	}
 }
 
-const readyEvents = {
+const readyStatuses = Object.createDict({
 	beforeReady: true,
 	ready: true
-};
+});
 
 /**
  * Handler: component activated hook
  *
  * @param component
- * @param [force]
+ * @param [force] - if true, then the component will be activated forcely
  */
 export function onActivated<T extends iBlock>(component: T, force?: boolean): void {
 	const
-		c = component,
-
-		// @ts-ignore (access)
+		c = component.unsafe,
 		{async: $a} = c;
 
-	if (c.isActivated || !force && !c.activatedProp && !c.isInitializedOnce) {
+	if (c.isActivated || !force && !c.activatedProp && !c.isReadyOnce) {
 		return;
 	}
 
@@ -201,11 +138,11 @@ export function onActivated<T extends iBlock>(component: T, force?: boolean): vo
 		.unmuteAll()
 		.unsuspendAll();
 
-	if (c.isInitializedOnce && !readyEvents[c.componentStatus]) {
+	if (c.isReadyOnce && !readyStatuses[c.componentStatus]) {
 		c.componentStatus = 'beforeReady';
 	}
 
-	if (!c.isInitializedOnce && force || c.reloadOnActivation) {
+	if (!c.isReadyOnce && force || c.reloadOnActivation) {
 		const
 			group = {group: 'requestSync:get'};
 
@@ -213,7 +150,7 @@ export function onActivated<T extends iBlock>(component: T, force?: boolean): vo
 			.clearAll(group)
 			.setImmediate(() => {
 				const
-					v = c.isInitializedOnce ? c.reload() : c.initLoad();
+					v = c.isReadyOnce ? c.reload() : c.initLoad();
 
 				if (Object.isPromise(v)) {
 					v.catch(stderr);
@@ -221,11 +158,10 @@ export function onActivated<T extends iBlock>(component: T, force?: boolean): vo
 			}, group);
 	}
 
-	if (c.isInitializedOnce) {
+	if (c.isReadyOnce) {
 		c.componentStatus = 'ready';
 	}
 
-	// @ts-ignore (access)
 	c.state.initFromRouter();
 	c.isActivated = true;
 }
@@ -234,10 +170,10 @@ const
 	suspendRgxp = /:suspend(?:\b|$)/,
 	asyncNames = Async.linkNames;
 
-const nonMuteAsync = {
+const nonMuteAsyncLinkNames = Object.createDict({
 	[asyncNames.promise]: true,
 	[asyncNames.request]: true
-};
+});
 
 /**
  * Handler: component deactivated hook
@@ -245,14 +181,13 @@ const nonMuteAsync = {
  */
 export function onDeactivated<T extends iBlock>(component: T): void {
 	const
-		// @ts-ignore (access)
-		{async: $a} = component;
+		{async: $a} = component.unsafe;
 
 	for (let keys = Object.keys(asyncNames), i = 0; i < keys.length; i++) {
 		const
 			key = keys[i];
 
-		if (nonMuteAsync[key]) {
+		if (nonMuteAsyncLinkNames[key]) {
 			continue;
 		}
 
