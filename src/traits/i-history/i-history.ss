@@ -18,6 +18,7 @@
 
 	- block back
 		< . &
+			v-if = vdom.getSlot('pages') |
 			:class = provide.elClasses(${@self.name()}, {back: {}}) |
 			@click = () => history.back()
 		.

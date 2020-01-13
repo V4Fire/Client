@@ -9,6 +9,6 @@
 import iBlock from 'super/i-block/i-block';
 import History from 'traits/i-history/modules/history';
 
-export default abstract class iHistory {
-	abstract history: History<iBlock & iHistory>;
+export default abstract class iHistory extends iBlock {
+	abstract history: History<iHistory>;
 }

@@ -6,8 +6,10 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import iBlock, { ModsDecl } from 'super/i-block/i-block';
+import { ModsDecl, ComponentHooks } from 'super/i-block/i-block';
+import Block from 'super/i-block/modules/block';
 import iHistory from 'traits/i-history/i-history';
+import Async from 'core/async';
 
 export interface Content {
 	el: Element;
@@ -25,7 +27,7 @@ export interface HistoryItem {
 	title?: Title;
 }
 
-export default class History<T extends iBlock & iHistory> {
+export default class History<T extends iHistory> {
 	/**
 	 * History modifiers
 	 */
@@ -55,8 +57,31 @@ export default class History<T extends iBlock & iHistory> {
 		this.component = component;
 		this.stack.push({stage, options});
 
+		this.componentHooks.mounted.push({fn: this.onMounted.bind(this)});
+	}
+
+	/**
+	 * Hooks of linked component
+	 */
+	get componentHooks(): ComponentHooks {
 		// @ts-ignore (access)
-		this.component.meta.hooks.mounted.push({fn: this.onMounted.bind(this)});
+		return this.component.meta.hooks;
+	}
+
+	/**
+	 * Linked component block
+	 */
+	get block(): Block {
+		// @ts-ignore (access)
+		return this.component.block;
+	}
+
+	/**
+	 * Linked component async
+	 */
+	get async(): Async {
+		// @ts-ignore (access)
+		return this.component.async;
 	}
 
 	/**
@@ -95,14 +120,11 @@ export default class History<T extends iBlock & iHistory> {
 			els = this.initPage(stage);
 
 		if (els && els.content.el) {
-			// @ts-ignore (access)
-			els.content.el.classList.add(this.component.block.getFullElName('page'));
+			els.content.el.classList.add(this.block.getFullElName('page'));
 
-			// @ts-ignore (access)
-			this.component.block.setElMod(els.content.el, 'page', 'turning', 'in');
+			this.block.setElMod(els.content.el, 'page', 'turning', 'in');
+			this.block.setElMod(currentPage, 'page', 'below', true);
 
-			// @ts-ignore (access)
-			this.component.block.setElMod(currentPage, 'page', 'below', true);
 			this.component.setMod('blankHistory', false);
 
 			this.stack.push({stage, options, ...els});
@@ -132,15 +154,13 @@ export default class History<T extends iBlock & iHistory> {
 				page = current.content?.el;
 
 			if (page) {
-				// @ts-ignore (access)
-				this.component.block.removeElMod(page, 'page', 'turning');
+				this.block.removeElMod(page, 'page', 'turning');
 
 				const
 					pageBelow = this.stack[this.stack.length - 1],
 					pageBelowEl = pageBelow.content?.el;
 
-				// @ts-ignore (access)
-				this.component.block.removeElMod(pageBelowEl, 'page', 'below');
+				this.block.removeElMod(pageBelowEl, 'page', 'below');
 			}
 
 			this.component.emit('history:back', current);
@@ -155,8 +175,7 @@ export default class History<T extends iBlock & iHistory> {
 	 */
 	protected initPage(stage: string): {content: Content; title: Title} | void {
 		const
-			// @ts-ignore (access)
-			$a = this.component.async,
+			$a = this.async,
 			page = this.component.$el.querySelector(`[data-page=${stage}]`);
 
 		if (!page) {
@@ -194,7 +213,7 @@ export default class History<T extends iBlock & iHistory> {
 
 	/**
 	 * Scrolls page container to top
-	 * @param animate
+	 * @param [animate]
 	 */
 	protected scrollToPageTop(animate: boolean = false): void {
 		if (this.current.content) {
@@ -220,8 +239,7 @@ export default class History<T extends iBlock & iHistory> {
 			scrollTop = current.content?.el?.scrollTop || 0,
 			visible = titleH - scrollTop > 0;
 
-		// @ts-ignore (access)
-		this.component.block.setElMod(current.title.el, 'title', 'in-view', visible);
+		this.block.setElMod(current?.title?.el, 'title', 'in-view', visible);
 		this.component.emit('history:titleInView', visible);
 	}
 
