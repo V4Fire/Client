@@ -11,6 +11,19 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-beta.238 (2020-01-13)
+
+#### :boom: Breaking Change
+
+* Removed `iBlock.forceActivation`
+* Renamed `iBlock.forceInitialActivation` to `forceActivation`
+* Renamed `iBlock.isInitializedOnce` to `isReadyOnce`
+
+#### :rocket: New Feature
+
+* [Added `i-observe-dom` trait](https://github.com/V4Fire/Client/pull/146)
+* Added `unsafe` property to `iBlock`
+
 ## v3.0.0-beta.237 (2019-12-19)
 
 ### :rocket: New Feature
@@ -34,16 +47,6 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 * `Opt.memoizeLiteral` now supports functions
 
 ## v3.0.0-beta.234 (2019-12-17)
-
-#### :boom: Breaking Change
-
-* Removed `iBlock.forceActivation`
-* Renamed `iBlock.forceInitialActivation` to `forceActivation`
-* Renamed `iBlock.isInitializedOnce` to `isReadyOnce`
-
-#### :rocket: New Feature
-
-* [Added `i-observe-dom` trait](https://github.com/V4Fire/Client/pull/146)
 
 #### :bug: Bug Fix
 
