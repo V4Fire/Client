@@ -38,8 +38,6 @@
 					@touchmove = onMove |
 					@touchend = onRelease
 				.
-					< .&__trigger v-in-view = inViewParams
-
 					- block content
 						< .&__content ref = content
 							+= self.getTpl('i-history/')({self})

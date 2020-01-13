@@ -121,19 +121,6 @@ export default class bBottomSlide extends iBlock implements iLockPageScroll, iOp
 	}
 
 	/**
-	 * Parameters for in-view directive
-	 */
-	get inViewParams(): DirectiveOptions['value'] {
-		return {
-			polling: true,
-			threshold: 1,
-			root: () => this.$refs.view,
-			onEnter: () => this.isViewportTopReached = true,
-			onLeave: () => this.isViewportTopReached = false
-		};
-	}
-
-	/**
 	 * True if the content is fully open
 	 */
 	@p({cache: false})
@@ -151,7 +138,7 @@ export default class bBottomSlide extends iBlock implements iLockPageScroll, iOp
 
 	/** @see iHistory.history */
 	@system((ctx) => new History(ctx))
-	history!: History<iBlock & iHistory>;
+	readonly history!: History<iHistory>;
 
 	/** @inheritDoc */
 	static readonly mods: ModsDecl = {
@@ -365,6 +352,11 @@ export default class bBottomSlide extends iBlock implements iLockPageScroll, iOp
 	 */
 	protected get isLowEnd(): boolean {
 		return !Boolean(is.iOS);
+	}
+
+	/** @see History.onPageTriggerInViewport */
+	pageTopTriggerVisibilityChange(show: boolean): void {
+		this.isViewportTopReached = show;
 	}
 
 	/** @see iLockPageScroll.lock */
@@ -839,6 +831,8 @@ export default class bBottomSlide extends iBlock implements iLockPageScroll, iOp
 
 		this.currentY = clientY;
 		this.direction = Math.sign(diff) as Direction;
+
+		console.log(13212, isViewportTopReached);
 
 		if (
 			isTrigger ||

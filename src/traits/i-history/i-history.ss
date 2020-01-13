@@ -9,12 +9,13 @@
  */
 
 - @@ignore
-- template index(@params)
+- template index(@params, content)
 	< . &
 		-page = index |
 		:class = provide.elClasses(${@self.name()}, {page: {}})
 	.
-		+= @self.slot('default', {':history': 'history'})
+		{content}
+		+= @self.slot('default')
 
 	- block back
 		< . &
@@ -28,4 +29,4 @@
 			v-if = vdom.getSlot('pages') |
 			:class = provide.elClasses(${@self.name()}, {'sub-pages': {}})
 		.
-			+= @self.slot('pages', {':history': 'history'})
+			+= @self.slot('pages')

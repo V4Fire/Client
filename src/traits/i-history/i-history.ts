@@ -11,4 +11,5 @@ import History from 'traits/i-history/modules/history';
 
 export default abstract class iHistory extends iBlock {
 	abstract history: History<iHistory>;
+	abstract pageTopTriggerVisibilityChange(show: boolean): void;
 }

@@ -7,16 +7,20 @@
  */
 
 import { ModsDecl, ComponentHooks } from 'super/i-block/i-block';
+
 import Block from 'super/i-block/modules/block';
 import iHistory from 'traits/i-history/i-history';
+
+import { InView } from 'core/component/directives/in-view';
 import Async from 'core/async';
 
 export interface Content {
 	el: Element;
+	trigger?: HTMLElement;
 }
 
 export interface Title {
-	el: Element | null;
+	el: Nullable<Element>;
 	initBoundingRect: CanUndef<DOMRect>;
 }
 
@@ -39,7 +43,17 @@ export default class History<T extends iHistory> {
 	};
 
 	/**
-	 * Context for functions
+	 * Title in view threshold value
+	 */
+	protected readonly titleThreshold: number = 0.01;
+
+	/**
+	 * Data attribute name for trigger elements
+	 */
+	protected readonly triggerAttr: string = 'data-history-trigger';
+
+	/**
+	 * Linked context
 	 */
 	protected readonly component: T;
 
@@ -153,6 +167,10 @@ export default class History<T extends iHistory> {
 			const
 				page = current.content?.el;
 
+			if (current.content?.trigger) {
+				InView.stopObserve(current.content.trigger);
+			}
+
 			if (page) {
 				this.block.removeElMod(page, 'page', 'turning');
 
@@ -169,6 +187,34 @@ export default class History<T extends iHistory> {
 		return current;
 	}
 
+	protected createTrigger(): HTMLElement {
+		const t = document.createElement('div');
+		t.setAttribute(this.triggerAttr, 'true');
+
+		Object.assign(t.style, {
+			height: 1,
+			width: 1,
+			position: 'absolute',
+			top: 0,
+			zIndex: -1
+		});
+
+		return t;
+	}
+
+	/**
+	 * Handler: page trigger inView visibility change
+	 * @param show
+	 */
+	protected pageTopTriggerVisibilityChange(show: boolean): void {
+		if (this.current?.title?.el) {
+			this.initTitleInView();
+		}
+
+		// @ts-ignore:access
+		this.component.pageTopTriggerVisibilityChange(show);
+	}
+
 	/**
 	 * Initializes dom for the current page
 	 * @param stage
@@ -183,9 +229,13 @@ export default class History<T extends iHistory> {
 		}
 
 		const
-			title = page.querySelector('[data-title]');
+			title = page.querySelector('[data-title]'),
+			hasTrigger = page.children[0].getAttribute(this.triggerAttr),
+			trigger = !hasTrigger ? this.createTrigger() : <HTMLElement>page.children[0];
 
 		if (title) {
+			trigger.style.height = title.clientHeight.px;
+
 			$a.on(
 				title,
 				'click',
@@ -193,15 +243,18 @@ export default class History<T extends iHistory> {
 			);
 		}
 
-		$a.on(
-			page,
-			'scroll',
-			this.onPageScroll.bind(this).throttle(0.05.seconds())
-		);
+		page.insertAdjacentElement('afterbegin', trigger);
+
+		InView.observe(trigger, {
+			threshold: this.titleThreshold,
+			onEnter: () => this.pageTopTriggerVisibilityChange(true),
+			onLeave: () => this.pageTopTriggerVisibilityChange(false)
+		});
 
 		return {
 			content: {
-				el: page
+				el: page,
+				trigger
 			},
 
 			title: {
@@ -237,7 +290,7 @@ export default class History<T extends iHistory> {
 			{current} = this,
 			titleH = current?.title?.initBoundingRect?.height || 0,
 			scrollTop = current.content?.el?.scrollTop || 0,
-			visible = titleH - scrollTop > 0;
+			visible = titleH - scrollTop > titleH * this.titleThreshold;
 
 		this.block.setElMod(current?.title?.el, 'title', 'in-view', visible);
 		this.component.emit('history:titleInView', visible);
