@@ -10,10 +10,6 @@
 
 - @@ignore
 - template index(@params, content)
-		< . &
-			:class = provide.elClasses(${@self.name()}, {back: {}}) |
-			@click = () => history.back()
-		.
-
+	- block body
 		+= @self.slot('default')
 			{content}
