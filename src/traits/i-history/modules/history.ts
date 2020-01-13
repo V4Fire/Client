@@ -154,6 +154,9 @@ export default class History<T extends iHistory> {
 			this.stack.push({stage, options, ...els});
 			this.scrollToPageTop();
 			this.component.emit('history:transition', this.current);
+
+		} else {
+			throw new Error(`Page ${stage} is not defined`);
 		}
 	}
 
@@ -261,7 +264,7 @@ export default class History<T extends iHistory> {
 	protected initPage(stage: string): {content: Content; title: Title} | void {
 		const
 			$a = this.async,
-			page = this.component.$el.querySelector(`[data-page=${stage}]`);
+			page = this.block?.node?.querySelector(`[data-page=${stage}]`);
 
 		if (!page) {
 			return;
