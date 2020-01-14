@@ -125,6 +125,13 @@ export default class History<T extends iHistory> {
 			els = this.initPage(stage);
 
 		if (els?.content.el) {
+			const
+				isBelow = this.block.getElMod(els.content.el, 'page', 'below') === 'true';
+
+			if (isBelow || currentPage === els.content.el) {
+				throw new ReferenceError(`Page with the stage "${stage}" is already opened`);
+			}
+
 			this.block.setElMod(els.content.el, 'page', 'turning', 'in');
 			this.block.setElMod(currentPage, 'page', 'below', true);
 
