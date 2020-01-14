@@ -520,6 +520,15 @@ export default class bBottomSlide extends iBlock implements iLockPageScroll, iOp
 		this.contentHeight = contentHeight > maxVisiblePx ? maxVisiblePx : contentHeight;
 		this.contentMaxHeight = maxVisiblePx;
 
+		const
+			currentPage = this.history.current.content?.el;
+
+		if (currentPage) {
+			Object.assign((<HTMLElement>currentPage).style, {
+				maxHeight: maxVisiblePx.px
+			});
+		}
+
 		Object.assign(view.style, {
 			maxHeight: maxVisiblePx.px,
 			paddingBottom: header.clientHeight.px
@@ -775,7 +784,13 @@ export default class bBottomSlide extends iBlock implements iLockPageScroll, iOp
 	@p({watch: [':onHistory:initPage']})
 	protected initSubPageSize({content, title}: {content: Content; title: Title}): void {
 		if (this.heightMode === 'content' && content?.initBoundingRect) {
-			this.$refs.content.style.height = content?.initBoundingRect.height.px;
+			const
+				$c = this.$refs.content,
+				contentHeight = content?.initBoundingRect.height;
+
+			if ($c.clientHeight > contentHeight) {
+				$c.style.height = contentHeight.px;
+			}
 		}
 	}
 
