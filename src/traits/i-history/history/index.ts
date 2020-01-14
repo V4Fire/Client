@@ -202,7 +202,7 @@ export default class History<T extends iHistory> {
 	 * Unwinds the specified page to initial state
 	 * @param item
 	 */
-	unwindPage(item: HistoryItem): void {
+	protected unwindPage(item: HistoryItem): void {
 		const
 			page = item.content?.el,
 			trigger = item.content?.trigger;
