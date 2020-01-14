@@ -6,37 +6,15 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { ModsDecl, ComponentHooks } from 'super/i-block/i-block';
-
-import Block from 'super/i-block/modules/block';
-import iHistory from 'traits/i-history/i-history';
-
-import { InView } from 'core/component/directives/in-view';
 import Async from 'core/async';
+import Block from 'super/i-block/modules/block';
 
-export interface Content {
-	el: Element;
-	initBoundingRect: CanUndef<DOMRect>;
-	trigger?: HTMLElement;
-}
+import { ModsDecl, ComponentHooks } from 'super/i-block/i-block';
+import { InView } from 'core/component/directives/in-view';
+import { Content, Title, HistoryItem, HistoryConfig } from 'traits/i-history/history/interface';
 
-export interface Title {
-	el: Nullable<Element>;
-	initBoundingRect: CanUndef<DOMRect>;
-}
-
-export interface HistoryItem {
-	stage: string;
-	options: CanUndef<Dictionary>;
-	content?: Content;
-	title?: Title;
-}
-
-export interface HistoryConfig {
-	pageTriggers: boolean;
-	triggerAttr: string;
-	titleThreshold: number;
-}
+import iHistory from 'traits/i-history/i-history';
+export * from 'traits/i-history/history/interface';
 
 export default class History<T extends iHistory> {
 	/**
@@ -59,14 +37,14 @@ export default class History<T extends iHistory> {
 	};
 
 	/**
-	 * Linked context
+	 * Linked component instance
 	 */
-	protected readonly component: T;
+	protected readonly component: T['unsafe'];
 
 	/**
-	 * Transitions stack
+	 * Transitions store
 	 */
-	protected stack: HistoryItem[] = [];
+	protected store: HistoryItem[] = [];
 
 	/**
 	 * History instance configuration
@@ -83,57 +61,55 @@ export default class History<T extends iHistory> {
 		initial: HistoryItem = {stage: 'index', options: {}},
 		config?: HistoryConfig
 	) {
-		this.component = component;
+		this.component = component.unsafe;
 		this.config = {...History.defaultConfig, ...config};
-		this.stack.push(initial);
+		this.store.push(initial);
 
 		this.componentHooks.mounted.push({fn: this.onMounted.bind(this)});
 	}
 
 	/**
-	 * Hooks of linked component
+	 * Hooks of the component instance
 	 */
-	get componentHooks(): ComponentHooks {
-		return this.component.unsafe.meta.hooks;
+	protected get componentHooks(): ComponentHooks {
+		return this.component.meta.hooks;
 	}
 
 	/**
-	 * Linked component block
+	 * Block instance
 	 */
-	get block(): Block {
-		return this.component.unsafe.block;
+	protected get block(): Block {
+		return this.component.block;
 	}
 
 	/**
 	 * Linked component async
 	 */
-	get async(): Async<T> {
-		return this.component.unsafe.async;
+	get async(): Async<T['unsafe']> {
+		return this.component.async;
 	}
 
 	/**
-	 * Current stack position
+	 * Current store position
 	 */
 	get current(): HistoryItem {
-		return this.stack[this.stack.length - 1];
+		return this.store[this.store.length - 1];
+	}
+
+	/** @see [[History.prototype.store]] */
+	get stack(): ReadonlyArray<HistoryItem> {
+		return Object.freeze(this.store);
 	}
 
 	/**
-	 * Pages stack
-	 */
-	get pagesInStack(): ReadonlyArray<HistoryItem> {
-		return Object.freeze(this.stack);
-	}
-
-	/**
-	 * Page count at the history
+	 * History length
 	 */
 	get length(): number {
-		return this.stack.length;
+		return this.store.length;
 	}
 
 	/**
-	 * Adds the component stage to the pages stack
+	 * Adds a new stage to the history
 	 *
 	 * @param stage
 	 * @param [options]
@@ -146,35 +122,35 @@ export default class History<T extends iHistory> {
 		const
 			els = this.initPage(stage);
 
-		if (els && els.content.el) {
+		if (els?.content.el) {
 			this.block.setElMod(els.content.el, 'page', 'turning', 'in');
 			this.block.setElMod(currentPage, 'page', 'below', true);
 
 			this.component.setMod('blankHistory', false);
 
-			this.stack.push({stage, options, ...els});
+			this.store.push({stage, options, ...els});
 			this.scrollToTop();
 			this.component.emit('history:transition', this.current);
 
 		} else {
-			throw new Error(`Page ${stage} is not defined`);
+			throw new ReferenceError(`Page for the stage "${stage}" is not defined`);
 		}
 	}
 
 	/**
-	 * Navigates back through history
+	 * Navigates back through the history
 	 * @emits history:back(page: HistoryItem)
 	 */
 	back(): CanUndef<HistoryItem> {
-		if (this.stack.length === 1) {
+		if (this.store.length === 1) {
 			return;
 		}
 
 		const
-			current = this.stack.pop();
+			current = this.store.pop();
 
 		if (current) {
-			if (this.stack.length === 1) {
+			if (this.store.length === 1) {
 				this.component.setMod('blankHistory', true);
 			}
 
@@ -182,14 +158,14 @@ export default class History<T extends iHistory> {
 				page = current.content?.el;
 
 			if (current.content?.trigger) {
-				this.observeTitleTrigger(current.content.trigger, false);
+				this.setObserving(current.content.trigger, false);
 			}
 
 			if (page) {
 				this.block.removeElMod(page, 'page', 'turning');
 
 				const
-					pageBelow = this.stack[this.stack.length - 1],
+					pageBelow = this.store[this.store.length - 1],
 					pageBelowEl = pageBelow.content?.el;
 
 				this.block.removeElMod(pageBelowEl, 'page', 'below');
@@ -224,24 +200,12 @@ export default class History<T extends iHistory> {
 	}
 
 	/**
-	 * Handler: page trigger inView visibility change
-	 * @param show
-	 */
-	protected pageTopTriggerVisibilityChange(show: boolean): void {
-		if (this.current?.title?.el) {
-			this.initTitleInView();
-		}
-
-		this.component.unsafe.pageTopTriggerVisibilityChange(show);
-	}
-
-	/**
-	 * Controls title triggers observing
+	 * Sets observing for the specified trigger
 	 *
 	 * @param trigger
 	 * @param flag
 	 */
-	protected observeTitleTrigger(trigger: HTMLElement, flag: boolean): void {
+	protected setObserving(trigger: HTMLElement, flag: boolean): void {
 		if (!this.config.pageTriggers) {
 			return;
 		}
@@ -249,8 +213,8 @@ export default class History<T extends iHistory> {
 		if (flag) {
 			InView.observe(trigger, {
 				threshold: this.config.titleThreshold,
-				onEnter: () => this.pageTopTriggerVisibilityChange(true),
-				onLeave: () => this.pageTopTriggerVisibilityChange(false)
+				onEnter: () => this.onPageTopReached(true),
+				onLeave: () => this.onPageTopReached(false)
 			});
 
 		} else {
@@ -259,12 +223,12 @@ export default class History<T extends iHistory> {
 	}
 
 	/**
-	 * Initializes dom for the current page
+	 * Initializes layout for the specified stage
 	 *
 	 * @param stage
 	 * @emits history:initPage({content: Content, title: Title})
 	 */
-	protected initPage(stage: string): {content: Content; title: Title} | void {
+	protected initPage(stage: string): CanUndef<{content: Content; title: Title}> {
 		const
 			$a = this.async,
 			page = this.block?.node?.querySelector(`[data-page=${stage}]`);
@@ -294,7 +258,7 @@ export default class History<T extends iHistory> {
 
 		if (trigger) {
 			page.insertAdjacentElement('afterbegin', trigger);
-			this.observeTitleTrigger(trigger, true);
+			this.setObserving(trigger, true);
 		}
 
 		const response = {
@@ -315,7 +279,7 @@ export default class History<T extends iHistory> {
 	}
 
 	/**
-	 * Scrolls page container to top
+	 * Scrolls a container to the top
 	 * @param [animate]
 	 */
 	protected scrollToTop(animate: boolean = false): void {
@@ -332,12 +296,14 @@ export default class History<T extends iHistory> {
 	}
 
 	/**
-	 * Initializes title in view modifiers
+	 * Initializes title modifiers
 	 * @emits history:titleInView(visible: boolean)
 	 */
-	protected initTitleInView(): void {
+	protected initTitleModifiers(): void {
 		const
-			{current} = this,
+			{current} = this;
+
+		const
 			titleH = current?.title?.initBoundingRect?.height || 0,
 			scrollTop = current.content?.el?.scrollTop || 0,
 			visible = titleH - scrollTop > titleH * this.config.titleThreshold;
@@ -347,14 +313,26 @@ export default class History<T extends iHistory> {
 	}
 
 	/**
-	 * Handler: on linked component mounted hook
+	 * Handler: page trigger inView visibility change
+	 * @param state
+	 */
+	protected onPageTopReached(state: boolean): void {
+		if (this.current?.title?.el) {
+			this.initTitleModifiers();
+		}
+
+		this.component.onPageTopReached(state);
+	}
+
+	/**
+	 * Handler: component mounted hook
 	 */
 	protected onMounted(): void {
 		const
 			els = this.initPage(this.current.stage);
 
 		Object.assign(this.current, els);
-		this.initTitleInView();
+		this.initTitleModifiers();
 	}
 
 	/**

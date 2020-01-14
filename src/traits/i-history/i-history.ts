@@ -7,9 +7,17 @@
  */
 
 import iBlock from 'super/i-block/i-block';
-import History from 'traits/i-history/modules/history';
+import History from 'traits/i-history/history';
 
 export default abstract class iHistory extends iBlock {
+	/**
+	 * Component history
+	 */
 	abstract history: History<iHistory>;
-	abstract pageTopTriggerVisibilityChange(show: boolean): void;
+
+	/**
+	 * Handler: page top reach (true/false)
+	 * @param show
+	 */
+	abstract onPageTopReached(show: boolean): void;
 }
