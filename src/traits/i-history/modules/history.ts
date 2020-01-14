@@ -16,6 +16,7 @@ import Async from 'core/async';
 
 export interface Content {
 	el: Element;
+	initBoundingRect: CanUndef<DOMRect>;
 	trigger?: HTMLElement;
 }
 
@@ -152,7 +153,7 @@ export default class History<T extends iHistory> {
 			this.component.setMod('blankHistory', false);
 
 			this.stack.push({stage, options, ...els});
-			this.scrollToPageTop();
+			this.scrollToTop();
 			this.component.emit('history:transition', this.current);
 
 		} else {
@@ -259,7 +260,9 @@ export default class History<T extends iHistory> {
 
 	/**
 	 * Initializes dom for the current page
+	 *
 	 * @param stage
+	 * @emits history:initPage({content: Content, title: Title})
 	 */
 	protected initPage(stage: string): {content: Content; title: Title} | void {
 		const
@@ -294,9 +297,10 @@ export default class History<T extends iHistory> {
 			this.observeTitleTrigger(trigger, true);
 		}
 
-		return {
+		const response = {
 			content: {
 				el: page,
+				initBoundingRect: page.getBoundingClientRect(),
 				trigger
 			},
 
@@ -305,13 +309,16 @@ export default class History<T extends iHistory> {
 				initBoundingRect: title?.getBoundingClientRect()
 			}
 		};
+
+		this.component.emit('history:initPage', response);
+		return response;
 	}
 
 	/**
 	 * Scrolls page container to top
 	 * @param [animate]
 	 */
-	protected scrollToPageTop(animate: boolean = false): void {
+	protected scrollToTop(animate: boolean = false): void {
 		if (this.current.content) {
 			const
 				options = {top: 0, left: 0};
@@ -354,15 +361,6 @@ export default class History<T extends iHistory> {
 	 * Handler: click on a page title
 	 */
 	protected onTitleClick(): void {
-		this.scrollToPageTop(true);
-	}
-
-	/**
-	 * Handler: on scroll inner page
-	 */
-	protected onPageScroll(): void {
-		if (this.current?.title?.el) {
-			this.initTitleInView();
-		}
+		this.scrollToTop(true);
 	}
 }

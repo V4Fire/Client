@@ -10,14 +10,12 @@ import symbolGenerator from 'core/symbol';
 import { is } from 'core/browser';
 
 import iHistory from 'traits/i-history/i-history';
-import History from 'traits/i-history/modules/history';
+import History, { Content, Title } from 'traits/i-history/modules/history';
 
 import iLockPageScroll from 'traits/i-lock-page-scroll/i-lock-page-scroll';
 import iOpen from 'traits/i-open/i-open';
 import iVisible from 'traits/i-visible/i-visible';
 import iObserveDom from 'traits/i-observe-dom/i-observe-dom';
-
-import { DirectiveOptions } from 'core/component/directives/in-view';
 import iBlock, { ModsDecl, component, prop, field, system, hook, watch, wait, p } from 'super/i-block/i-block';
 
 export * from 'super/i-data/i-data';
@@ -137,7 +135,7 @@ export default class bBottomSlide extends iBlock implements iLockPageScroll, iOp
 	}
 
 	/** @see iHistory.history */
-	@system((ctx) => new History(ctx))
+	@system((ctx: iHistory) => new History(ctx))
 	readonly history!: History<iHistory>;
 
 	/** @inheritDoc */
@@ -766,6 +764,19 @@ export default class bBottomSlide extends iBlock implements iLockPageScroll, iOp
 			this.stickToStep();
 
 		} catch {}
+	}
+
+	/**
+	 * Handler: history initialized page
+	 *
+	 * @param content
+	 * @param title
+	 */
+	@p({watch: [':onHistory:initPage']})
+	protected initSubPageSize({content, title}: {content: Content; title: Title}): void {
+		if (this.heightMode === 'content' && content?.initBoundingRect) {
+			this.$refs.content.style.height = content?.initBoundingRect.height.px;
+		}
 	}
 
 	/**
