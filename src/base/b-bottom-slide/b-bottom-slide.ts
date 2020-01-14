@@ -10,7 +10,7 @@ import symbolGenerator from 'core/symbol';
 import { is } from 'core/browser';
 
 import iHistory from 'traits/i-history/i-history';
-import History, { Content, Title } from 'traits/i-history/history';
+import History from 'traits/i-history/history';
 
 import iLockPageScroll from 'traits/i-lock-page-scroll/i-lock-page-scroll';
 import iOpen from 'traits/i-open/i-open';
