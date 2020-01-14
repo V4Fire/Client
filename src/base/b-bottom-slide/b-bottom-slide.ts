@@ -788,7 +788,7 @@ export default class bBottomSlide extends iBlock implements iLockPageScroll, iOp
 				$c = this.$refs.content,
 				contentHeight = content?.initBoundingRect.height;
 
-			if ($c.clientHeight > contentHeight) {
+			if ($c.clientHeight !== contentHeight) {
 				$c.style.height = contentHeight.px;
 			}
 		}

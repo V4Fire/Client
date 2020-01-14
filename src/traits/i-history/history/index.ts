@@ -115,7 +115,7 @@ export default class History<T extends iHistory> {
 	 *
 	 * @param stage
 	 * @param [options]
-	 * @emits history:transition(page: HistoryItem)
+	 * @emits history:transition({page: HistoryItem, type: string})
 	 */
 	push(stage: string, options?: Dictionary): void {
 		const
@@ -132,7 +132,7 @@ export default class History<T extends iHistory> {
 
 			this.store.push({stage, options, ...els});
 			this.scrollToTop();
-			this.component.emit('history:transition', this.current);
+			this.component.emit('history:transition', {page: this.current, type: 'forward'});
 
 		} else {
 			throw new ReferenceError(`Page for the stage "${stage}" is not defined`);
@@ -141,7 +141,7 @@ export default class History<T extends iHistory> {
 
 	/**
 	 * Navigates back through the history
-	 * @emits history:back(page: HistoryItem)
+	 * @emits history:transition({page: HistoryItem, type: string})
 	 */
 	back(): CanUndef<HistoryItem> {
 		if (this.store.length === 1) {
@@ -173,7 +173,7 @@ export default class History<T extends iHistory> {
 				this.block.removeElMod(pageBelowEl, 'page', 'below');
 			}
 
-			this.component.emit('history:back', current);
+			this.component.emit('history:transition', {page: current, type: 'back'});
 		}
 
 		return current;
