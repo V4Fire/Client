@@ -72,6 +72,10 @@ export function activate<T extends iBlock>(component: T, force?: boolean): void 
 		return;
 	}
 
+	if (!c.isActivated) {
+		runHook('activated', c.meta, c).then(() => c.activated(true), stderr);
+	}
+
 	const
 		children = c.$children;
 
@@ -93,10 +97,14 @@ export function activate<T extends iBlock>(component: T, force?: boolean): void 
  */
 export function deactivate<T extends iBlock>(component: T): void {
 	const
-		c = component;
+		c = component.unsafe;
 
 	if (c.lfc.isBeforeCreate()) {
 		return;
+	}
+
+	if (c.isActivated) {
+		runHook('deactivated', c.meta, c).then(() => c.deactivated(), stderr);
 	}
 
 	const
