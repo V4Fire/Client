@@ -21,10 +21,10 @@ export * from 'super/i-data/i-data';
 export * from 'core/router/interface';
 
 export interface PageOptions<
-	P extends object = Dictionary,
-	Q extends object = Dictionary,
-	M extends object = Dictionary
-> extends CurrentPage<P, Q, M> {
+	PARAMS extends object = Dictionary,
+	QUERY extends object = Dictionary,
+	META extends object = Dictionary
+> extends CurrentPage<PARAMS, QUERY, META> {
 	toPath(params?: Dictionary): string;
 }
 
