@@ -405,6 +405,7 @@ export default class bBottomSlide extends iBlock implements iLockPageScroll, iOp
 			this.setMod('hidden', true);
 		}
 
+		this.history.clear();
 		this.emit('close');
 		return true;
 	}

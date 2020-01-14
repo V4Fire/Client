@@ -156,27 +156,58 @@ export default class History<T extends iHistory> {
 				this.component.setMod('blankHistory', true);
 			}
 
+			this.unwindPage(current);
+
 			const
-				page = current.content?.el;
+				pageBelow = this.store[this.store.length - 1],
+				pageBelowEl = pageBelow.content?.el;
 
-			if (current.content?.trigger) {
-				this.setObserving(current.content.trigger, false);
-			}
-
-			if (page) {
-				this.block.removeElMod(page, 'page', 'turning');
-
-				const
-					pageBelow = this.store[this.store.length - 1],
-					pageBelowEl = pageBelow.content?.el;
-
-				this.block.removeElMod(pageBelowEl, 'page', 'below');
-			}
-
+			this.block.removeElMod(pageBelowEl, 'page', 'below');
 			this.component.emit('history:transition', <Transition>{page: current, type: 'back'});
 		}
 
 		return current;
+	}
+
+	/**
+	 * Clears the history
+	 * @emits history:clear
+	 */
+	clear(): boolean {
+		if (this.store.length === 1) {
+			return false;
+		}
+
+		for (let i = this.store.length - 1; i > 0; i--) {
+			this.unwindPage(this.store[i]);
+		}
+
+		this.store.splice(1);
+		this.block.removeElMod(this.store[0]?.content?.el, 'page', 'below');
+
+		this.component.setMod('blankHistory', true);
+		this.component.emit('history:clear');
+
+		return true;
+	}
+
+	/**
+	 * Unwinds the specified page to initial state
+	 * @param item
+	 */
+	unwindPage(item: HistoryItem): void {
+		const
+			page = item.content?.el,
+			trigger = item.content?.trigger;
+
+		if (trigger) {
+			this.setObserving(trigger, false);
+		}
+
+		if (page) {
+			this.block.removeElMod(page, 'page', 'turning');
+			this.block.removeElMod(page, 'page', 'below');
+		}
 	}
 
 	/**
