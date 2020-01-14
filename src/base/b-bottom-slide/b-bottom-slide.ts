@@ -509,7 +509,19 @@ export default class bBottomSlide extends iBlock implements iLockPageScroll, iOp
 	@wait('ready')
 	protected initHeights(): CanPromise<void> {
 		const
-			{maxVisiblePercent, $refs: {header, view}} = this;
+			{maxVisiblePercent, $refs: {header, content, view}} = this;
+
+		const
+			currentPage = this.history.current.content;
+
+		if (this.heightMode === 'content' && currentPage?.initBoundingRect) {
+			const
+				contentHeight = currentPage?.initBoundingRect.height;
+
+			if (content.clientHeight !== contentHeight) {
+				content.style.height = contentHeight.px;
+			}
+		}
 
 		const
 			windowHeight = document.documentElement.clientHeight,
@@ -520,11 +532,8 @@ export default class bBottomSlide extends iBlock implements iLockPageScroll, iOp
 		this.contentHeight = contentHeight > maxVisiblePx ? maxVisiblePx : contentHeight;
 		this.contentMaxHeight = maxVisiblePx;
 
-		const
-			currentPage = this.history.current.content?.el;
-
 		if (currentPage) {
-			Object.assign((<HTMLElement>currentPage).style, {
+			Object.assign((<HTMLElement>currentPage.el).style, {
 				maxHeight: maxVisiblePx.px
 			});
 		}
@@ -773,25 +782,6 @@ export default class bBottomSlide extends iBlock implements iLockPageScroll, iOp
 			this.stickToStep();
 
 		} catch {}
-	}
-
-	/**
-	 * Handler: history initialized page
-	 *
-	 * @param content
-	 * @param title
-	 */
-	@p({watch: [':onHistory:initPage']})
-	protected initSubPageSize({content, title}: {content: Content; title: Title}): void {
-		if (this.heightMode === 'content' && content?.initBoundingRect) {
-			const
-				$c = this.$refs.content,
-				contentHeight = content?.initBoundingRect.height;
-
-			if ($c.clientHeight !== contentHeight) {
-				$c.style.height = contentHeight.px;
-			}
-		}
 	}
 
 	/**
