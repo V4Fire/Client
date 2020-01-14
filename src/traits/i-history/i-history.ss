@@ -10,6 +10,7 @@
 
 - @@ignore
 - template index(@params, content)
-	- block body
-		+= @self.slot('default')
-			{content}
+	< ?.${@self.name()}
+		< .&__history :class = [componentId]
+			+= @self.slot('default')
+				{content}

@@ -14,7 +14,9 @@ import { InView } from 'core/component/directives/in-view';
 import { Content, Title, HistoryItem, HistoryConfig } from 'traits/i-history/history/interface';
 
 import iHistory from 'traits/i-history/i-history';
+
 export * from 'traits/i-history/history/interface';
+export const INITIAL_STAGE = 'index';
 
 export default class History<T extends iHistory> {
 	/**
@@ -58,7 +60,7 @@ export default class History<T extends iHistory> {
 	 */
 	constructor(
 		component: T,
-		initial: HistoryItem = {stage: 'index', options: {}},
+		initial: HistoryItem = {stage: INITIAL_STAGE, options: {}},
 		config?: HistoryConfig
 	) {
 		this.component = component.unsafe;
@@ -227,14 +229,25 @@ export default class History<T extends iHistory> {
 	 *
 	 * @param stage
 	 * @emits history:initPage({content: Content, title: Title})
+	 * @emits history:initPageFail(stage: string)
 	 */
 	protected initPage(stage: string): CanUndef<{content: Content; title: Title}> {
 		const
-			$a = this.async,
+			$a = this.async;
+
+		let
 			page = this.block?.node?.querySelector(`[data-page=${stage}]`);
 
 		if (!page) {
-			return;
+			this.component.emit('history:initPageFail', stage);
+
+			if (stage === INITIAL_STAGE) {
+				page = <HTMLElement>this.block.element('history');
+				page.setAttribute('data-page', stage);
+
+			} else {
+				return;
+			}
 		}
 
 		page.classList.add(this.block.getFullElName('page'));
