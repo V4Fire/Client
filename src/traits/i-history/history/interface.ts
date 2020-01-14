@@ -29,3 +29,8 @@ export interface HistoryConfig {
 	triggerAttr: string;
 	titleThreshold: number;
 }
+
+export interface Transition {
+	type: 'back' | 'push';
+	page: HistoryItem;
+}

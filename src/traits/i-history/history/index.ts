@@ -11,7 +11,7 @@ import Block from 'super/i-block/modules/block';
 
 import { ModsDecl, ComponentHooks } from 'super/i-block/i-block';
 import { InView } from 'core/component/directives/in-view';
-import { Content, Title, HistoryItem, HistoryConfig } from 'traits/i-history/history/interface';
+import { Content, Title, HistoryItem, HistoryConfig, Transition } from 'traits/i-history/history/interface';
 
 import iHistory from 'traits/i-history/i-history';
 
@@ -115,7 +115,7 @@ export default class History<T extends iHistory> {
 	 *
 	 * @param stage
 	 * @param [options]
-	 * @emits history:transition({page: HistoryItem, type: string})
+	 * @emits history:transition(value: Transition)
 	 */
 	push(stage: string, options?: Dictionary): void {
 		const
@@ -132,7 +132,7 @@ export default class History<T extends iHistory> {
 
 			this.store.push({stage, options, ...els});
 			this.scrollToTop();
-			this.component.emit('history:transition', {page: this.current, type: 'forward'});
+			this.component.emit('history:transition', <Transition>{page: this.current, type: 'push'});
 
 		} else {
 			throw new ReferenceError(`Page for the stage "${stage}" is not defined`);
@@ -141,7 +141,7 @@ export default class History<T extends iHistory> {
 
 	/**
 	 * Navigates back through the history
-	 * @emits history:transition({page: HistoryItem, type: string})
+	 * @emits history:transition(value: Transition)
 	 */
 	back(): CanUndef<HistoryItem> {
 		if (this.store.length === 1) {
@@ -173,7 +173,7 @@ export default class History<T extends iHistory> {
 				this.block.removeElMod(pageBelowEl, 'page', 'below');
 			}
 
-			this.component.emit('history:transition', {page: current, type: 'back'});
+			this.component.emit('history:transition', <Transition>{page: current, type: 'back'});
 		}
 
 		return current;
