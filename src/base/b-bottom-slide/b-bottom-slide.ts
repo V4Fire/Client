@@ -763,7 +763,7 @@ export default class bBottomSlide extends iBlock implements iLockPageScroll, iOp
 	/**
 	 * Recalculates sizes and steps
 	 */
-	@p({watch: ['window:resize', ':DOMChange']})
+	@p({watch: ['window:resize', ':DOMChange', ':history:transition']})
 	@wait('ready')
 	protected async recalculate(): Promise<void> {
 		try {
