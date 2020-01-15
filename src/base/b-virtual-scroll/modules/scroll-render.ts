@@ -148,16 +148,14 @@ export default class ScrollRender {
 	 * Async instance
 	 */
 	protected get async(): Async<bVirtualScroll> {
-		// @ts-ignore (access)
-		return this.component.async;
+		return this.component.unsafe.async;
 	}
 
 	/**
 	 * API for component DOM operations
 	 */
 	protected get dom(): bVirtualScroll['dom'] {
-		// @ts-ignore (access)
-		return this.component.dom;
+		return this.component.unsafe.dom;
 	}
 
 	/**
@@ -196,8 +194,7 @@ export default class ScrollRender {
 	 * Link to the component refs
 	 */
 	protected get refs(): bVirtualScroll['$refs'] {
-		// @ts-ignore (access)
-		return this.component.$refs;
+		return this.component.unsafe.$refs;
 	}
 
 	/**
@@ -206,8 +203,7 @@ export default class ScrollRender {
 	constructor(component: bVirtualScroll) {
 		this.component = component;
 
-		// @ts-ignore (access)
-		component.meta.hooks.mounted.push({
+		component.unsafe.meta.hooks.mounted.push({
 			after: new Set(['initComponentRender']),
 			fn: () => {
 				this.range = new Range(0, component.realElementsCount);

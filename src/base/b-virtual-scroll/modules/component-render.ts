@@ -72,24 +72,21 @@ export default class ComponentRender {
 	 * Async instance
 	 */
 	protected get async(): Async<bVirtualScroll> {
-		// @ts-ignore (access)
-		return this.component.async;
+		return this.component.unsafe.async;
 	}
 
 	/**
 	 * Link to the component $createElement method
 	 */
 	protected get createElement(): bVirtualScroll['$createElement'] {
-		// @ts-ignore (access)
-		return this.component.$createElement.bind(this.component);
+		return this.component.unsafe.$createElement.bind(this.component);
 	}
 
 	/**
 	 * Link to the component $refs
 	 */
 	protected get refs(): bVirtualScroll['$refs'] {
-		// @ts-ignore (access)
-		return this.component.$refs;
+		return this.component.unsafe.$refs;
 	}
 
 	/**
@@ -103,16 +100,14 @@ export default class ComponentRender {
 	 * Classname for tombstones
 	 */
 	get tombstoneClass(): string {
-		// @ts-ignore (access)
-		return this.component.block.getFullElName('tombstone-el');
+		return this.component.unsafe.block.getFullElName('tombstone-el');
 	}
 
 	/**
 	 * Classname for options
 	 */
 	get optionClass(): string {
-		// @ts-ignore (access)
-		return this.component.block.getFullElName('option-el');
+		return this.component.unsafe.block.getFullElName('option-el');
 	}
 
 	/**
@@ -121,8 +116,7 @@ export default class ComponentRender {
 	constructor(component: bVirtualScroll) {
 		this.component = component;
 
-		// @ts-ignore (access)
-		component.meta.hooks.mounted.push({
+		component.unsafe.meta.hooks.mounted.push({
 			name: 'initComponentRender',
 			fn: () => {
 				this.tombstoneToClone = this.getRealTombstone();
