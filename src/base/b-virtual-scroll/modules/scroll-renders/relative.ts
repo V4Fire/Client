@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import Super from 'base/b-virtual-scroll/modules/renders/super';
+import Super from 'base/b-virtual-scroll/modules/scroll-renders/super';
 
 export default class RelativeRender extends Super {
 
