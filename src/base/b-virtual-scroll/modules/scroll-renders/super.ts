@@ -27,11 +27,19 @@ import {
 
 import { getHeightWithMargin, getRequestParams } from 'base/b-virtual-scroll/modules/helpers';
 
+export const
+	$$ = symbolGenerator();
+
 export default class SuperRender {
 	/**
 	 * Component instance
 	 */
-	protected component: bVirtualScroll;
+	protected readonly component: bVirtualScroll;
+
+	/**
+	 * Async group
+	 */
+	protected readonly asyncGroup: string = 'scroll-render:';
 
 	/**
 	 * Async instance
@@ -55,9 +63,48 @@ export default class SuperRender {
 	}
 
 	/**
+	 * Link to the scroll emitter
+	 */
+	protected get scrollEmitter(): HTMLElement {
+		// @ts-ignore (access)
+		return this.component.scrollEmitter;
+	}
+
+	/**
 	 * @param component
 	 */
 	constructor(component: bVirtualScroll) {
 		this.component = component;
+	}
+
+	/**
+	 * Initializes events
+	 */
+	protected initEvents(): void {
+		this.async.on(this.scrollEmitter, 'scroll', this.onScroll.bind(this), {
+			label: $$.scroll,
+			group: this.asyncGroup
+		});
+	}
+
+	/**
+	 * Handler: document being scrolled
+	 */
+	protected onScroll(): void {
+		return undefined;
+	}
+
+	/**
+	 * Handler: window resize
+	 */
+	protected onResize(): void {
+		return undefined;
+	}
+
+	/**
+	 * Handler: all requests are done
+	 */
+	protected onRequestsDone(): void {
+		return undefined;
 	}
 }
