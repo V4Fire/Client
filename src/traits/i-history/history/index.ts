@@ -99,11 +99,6 @@ export default class History<T extends iHistory> {
 		return this.store[this.store.length - 1];
 	}
 
-	/** @see [[History.prototype.store]] */
-	get stack(): ReadonlyArray<HistoryItem> {
-		return Object.freeze(this.store);
-	}
-
 	/**
 	 * History length
 	 */
