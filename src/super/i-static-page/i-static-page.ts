@@ -43,17 +43,22 @@ export default abstract class iStaticPage extends iPage {
 	/**
 	 * Type: page parameters
 	 */
-	readonly PageParams!: Dictionary;
+	readonly PageParams!: object;
 
 	/**
 	 * Type: page query
 	 */
-	readonly PageQuery!: Dictionary;
+	readonly PageQuery!: object;
 
 	/**
 	 * Type: page meta
 	 */
-	readonly PageMeta!: Dictionary;
+	readonly PageMeta!: object;
+
+	/**
+	 * Type: current page
+	 */
+	readonly CurrentPage!: CurrentPage<this['PageParams'], this['PageQuery'], this['PageMeta']>;
 
 	/**
 	 * Link to i18n function
@@ -113,17 +118,15 @@ export default abstract class iStaticPage extends iPage {
 	}
 
 	/** @override */
-	// @ts-ignore
-	get route(): CanUndef<CurrentPage<this['PageParams'], this['PageQuery'], this['PageMeta']>> {
+	get route(): CanUndef<this['CurrentPage']> {
 		return this.field.get('routeStore');
 	}
 
 	/**
 	 * @override
-	 * @emits setRoute(value: CanUndef<CurrentPage<P, Q, M>>)
+	 * @emits setRoute(value: CanUndef<this['CurrentPage']>)
 	 */
-	// @ts-ignore
-	set route(value: CanUndef<CurrentPage<this['PageParams'], this['PageQuery'], this['PageMeta']>>) {
+	set route(value: CanUndef<this['CurrentPage']>) {
 		this.field.set('routeStore', value);
 		this.emit('setRoute', value);
 	}
@@ -171,7 +174,7 @@ export default abstract class iStaticPage extends iPage {
 	 * Route information object store
 	 */
 	@field()
-	protected routeStore?: CurrentPage<this['PageParams'], this['PageQuery'], this['PageMeta']>;
+	protected routeStore?: this['CurrentPage'];
 
 	/**
 	 * Root page router instance
