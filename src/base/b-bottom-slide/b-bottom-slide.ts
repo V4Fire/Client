@@ -384,8 +384,6 @@ export default class bBottomSlide extends iBlock implements iLockPageScroll, iOp
 		}
 
 		this.step = step || 1;
-
-		Object.assign(this.$refs.content.style, {height: 'initial'});
 		this.history.initIndex();
 
 		this.emit('open');
@@ -787,6 +785,14 @@ export default class bBottomSlide extends iBlock implements iLockPageScroll, iOp
 			this.stickToStep();
 
 		} catch {}
+	}
+
+	/**
+	 * Handler: on component history cleared
+	 */
+	@p({watch: ':history:clear'})
+	protected onHistoryCleared(): void {
+		Object.assign(this.$refs.content.style, {height: 'initial'});
 	}
 
 	/**

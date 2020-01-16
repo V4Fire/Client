@@ -188,6 +188,13 @@ export default class History<T extends iHistory> {
 		this.store = [];
 		this.block.removeElMod(this.store[0]?.content?.el, 'page', 'below');
 
+		const
+			history = <HTMLElement>this.block.element('history');
+
+		if (history.hasAttribute('data-page')) {
+			history.removeAttribute('data-page');
+		}
+
 		this.component.setMod('blankHistory', true);
 		this.component.emit('history:clear');
 
@@ -237,7 +244,7 @@ export default class History<T extends iHistory> {
 
 		Object.assign(t.style, {
 			height: 1,
-			width: 1,
+			width: '100%',
 			position: 'absolute',
 			top: 0,
 			zIndex: -1
@@ -295,7 +302,9 @@ export default class History<T extends iHistory> {
 			}
 		}
 
-		page.classList.add(this.block.getFullElName('page'));
+		if (!page.classList.contains(this.block.getFullElName('page'))) {
+			page.classList.add(this.block.getFullElName('page'));
+		}
 
 		const
 			title = page.querySelector('[data-title]'),
@@ -315,7 +324,10 @@ export default class History<T extends iHistory> {
 		}
 
 		if (trigger) {
-			page.insertAdjacentElement('afterbegin', trigger);
+			if (!hasTrigger) {
+				page.insertAdjacentElement('afterbegin', trigger);
+			}
+
 			this.setObserving(trigger, true);
 		}
 
