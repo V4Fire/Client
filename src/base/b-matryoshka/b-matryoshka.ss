@@ -17,6 +17,7 @@
 		}) .
 			< .&__matryoshka &
 				:-id = top.dom.getId(el.id) |
+				:-level = level |
 				:class = provide.elClasses({matryoshka: {
 					level,
 					folded
