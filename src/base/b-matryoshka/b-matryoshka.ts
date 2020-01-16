@@ -135,7 +135,8 @@ export default class bMatryoshka extends iData {
 	protected getNestedDollProps(): Dictionary {
 		const opts = {
 			folded: this.folded,
-			level: this.level + 1
+			level: this.level + 1,
+			classes: this.classes
 		};
 
 		if (this.$listeners.fold) {
