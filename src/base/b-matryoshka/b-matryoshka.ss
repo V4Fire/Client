@@ -15,7 +15,7 @@
 		< template v-for = (el, i) in top.asyncRender.iterate(options, top.renderChunks, { &
 			filter: renderFilter
 		}) .
-			< . &
+			< .&__matryoshka &
 				:-id = top.dom.getId(el.id) |
 				:class = provide.elClasses({matryoshka: {
 					level,
