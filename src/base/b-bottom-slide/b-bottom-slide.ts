@@ -385,6 +385,9 @@ export default class bBottomSlide extends iBlock implements iLockPageScroll, iOp
 
 		this.step = step || 1;
 
+		Object.assign(this.$refs.content.style, {height: 'initial'});
+		this.history.initIndex();
+
 		this.emit('open');
 		return true;
 	}
@@ -513,14 +516,15 @@ export default class bBottomSlide extends iBlock implements iLockPageScroll, iOp
 			{maxVisiblePercent, $refs: {header, content, view}} = this;
 
 		const
-			currentPage = this.history.current.content;
+			currentPage = this.history?.current?.content;
 
 		if (this.heightMode === 'content' && currentPage?.initBoundingRect) {
-			const
-				contentHeight = currentPage?.initBoundingRect.height;
 
-			if (content.clientHeight !== contentHeight) {
-				content.style.height = contentHeight.px;
+			const
+				currentContentPageHeight = currentPage?.initBoundingRect.height;
+
+			if (content.clientHeight !== currentContentPageHeight) {
+				content.style.height = currentContentPageHeight.px;
 			}
 		}
 

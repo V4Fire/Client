@@ -55,19 +55,11 @@ export default class History<T extends iHistory> {
 
 	/**
 	 * @param component
-	 * @param [initial]
 	 * @param [config]
 	 */
-	constructor(
-		component: T,
-		initial: HistoryItem = {stage: INITIAL_STAGE, options: {}},
-		config?: HistoryConfig
-	) {
+	constructor(component: T, config?: HistoryConfig) {
 		this.component = component.unsafe;
 		this.config = {...History.defaultConfig, ...config};
-		this.store.push(initial);
-
-		this.componentHooks.mounted.push({fn: this.onMounted.bind(this)});
 	}
 
 	/**
@@ -82,6 +74,15 @@ export default class History<T extends iHistory> {
 	 */
 	protected get block(): Block {
 		return this.component.block;
+	}
+
+	/**
+	 * Initializes index page
+	 * @param [initial]
+	 */
+	initIndex(initial: HistoryItem = {stage: INITIAL_STAGE, options: {}}): void {
+		this.store.push(initial);
+		this.calculateCurrentPage();
 	}
 
 	/**
@@ -181,21 +182,32 @@ export default class History<T extends iHistory> {
 	 * @emits history:clear
 	 */
 	clear(): boolean {
-		if (this.store.length === 1) {
+		if (this.store.length === 0) {
 			return false;
 		}
 
-		for (let i = this.store.length - 1; i > 0; i--) {
+		for (let i = this.store.length - 1; i >= 0; i--) {
 			this.unwindPage(this.store[i]);
 		}
 
-		this.store.splice(1);
+		this.store = [];
 		this.block.removeElMod(this.store[0]?.content?.el, 'page', 'below');
 
 		this.component.setMod('blankHistory', true);
 		this.component.emit('history:clear');
 
 		return true;
+	}
+
+	/**
+	 * Calculates current page
+	 */
+	protected calculateCurrentPage(): void {
+		const
+			els = this.initPage(this.current.stage);
+
+		Object.assign(this.current, els);
+		this.initTitleModifiers();
 	}
 
 	/**
@@ -373,17 +385,6 @@ export default class History<T extends iHistory> {
 		}
 
 		this.component.onPageTopReached(state);
-	}
-
-	/**
-	 * Handler: component mounted hook
-	 */
-	protected onMounted(): void {
-		const
-			els = this.initPage(this.current.stage);
-
-		Object.assign(this.current, els);
-		this.initTitleModifiers();
 	}
 
 	/**
