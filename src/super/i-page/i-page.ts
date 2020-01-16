@@ -7,7 +7,7 @@
  */
 
 import symbolGenerator from 'core/symbol';
-import { WrappedFunction } from 'core/async';
+import { WrappedCb } from 'core/async';
 
 import iVisible from 'traits/i-visible/i-visible';
 
@@ -19,7 +19,7 @@ export interface StageTitles<T = unknown> extends Dictionary<TitleValue<T>> {
 	'[[DEFAULT]]': TitleValue<T>;
 }
 
-export interface ScrollToFn<T = number, N = ScrollOptions> extends WrappedFunction {
+export interface ScrollToFn<T = number, N = ScrollOptions> extends WrappedCb {
 	(x?: T | N, y?: T): void
 }
 

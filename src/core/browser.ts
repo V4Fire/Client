@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import semver, { Operations } from 'core/semver';
+import semver, { Operation } from 'core/semver';
 
 const
 	agent = navigator.userAgent,
@@ -33,7 +33,7 @@ export function match(pattern: RegExp | string): [string, number[] | null] | boo
  * @param [operation] - operation type (>, >=, etc.)
  * @param [version] - browser version
  */
-export function test(platform: string, operation?: Operations, version?: string): boolean {
+export function test(platform: string, operation?: Operation, version?: string): boolean {
 	const
 		val = is[platform];
 

@@ -29,7 +29,7 @@ import request, {
 	MiddlewareParams,
 	CacheStrategy,
 	RequestQuery,
-	RequestMethods,
+	RequestMethod,
 	RequestResponse,
 	RequestResponseObject,
 	RequestFunctionResponse,
@@ -45,7 +45,7 @@ export * from 'core/data/const';
 export * from 'core/data/interface';
 export * from 'core/data/middlewares';
 
-export { RequestMethods, RequestError } from 'core/request';
+export { RequestMethod, RequestError } from 'core/request';
 export {
 
 	globalOpts,
@@ -161,27 +161,27 @@ export default class Provider {
 	/**
 	 * HTTP method for .get()
 	 */
-	getMethod: RequestMethods = 'GET';
+	getMethod: RequestMethod = 'GET';
 
 	/**
 	 * HTTP method for .peek()
 	 */
-	peekMethod: RequestMethods = 'HEAD';
+	peekMethod: RequestMethod = 'HEAD';
 
 	/**
 	 * HTTP method for .add()
 	 */
-	addMethod: RequestMethods = 'POST';
+	addMethod: RequestMethod = 'POST';
 
 	/**
 	 * HTTP method for .upd()
 	 */
-	updMethod: RequestMethods = 'PUT';
+	updMethod: RequestMethod = 'PUT';
 
 	/**
 	 * HTTP method for .del()
 	 */
-	delMethod: RequestMethods = 'DELETE';
+	delMethod: RequestMethod = 'DELETE';
 
 	/**
 	 * Base URL for requests
@@ -236,7 +236,7 @@ export default class Provider {
 	/**
 	 * Temporary request method
 	 */
-	tmpMethod: CanUndef<RequestMethods>;
+	tmpMethod: CanUndef<RequestMethod>;
 
 	/**
 	 * Cache id
@@ -510,14 +510,14 @@ export default class Provider {
 	/**
 	 * Returns a custom request method for the operation
 	 */
-	method(): CanUndef<RequestMethods>;
+	method(): CanUndef<RequestMethod>;
 
 	/**
 	 * Sets a custom request method for the operation
 	 * @param [value]
 	 */
-	method(value: RequestMethods): Provider;
-	method(value?: RequestMethods): CanUndef<Provider | RequestMethods> {
+	method(value: RequestMethod): Provider;
+	method(value?: RequestMethod): CanUndef<Provider | RequestMethod> {
 		if (value == null) {
 			const val = this.tmpMethod;
 			this.tmpMethod = undefined;
@@ -611,7 +611,7 @@ export default class Provider {
 		if (extraProviders) {
 			const
 				composition = {},
-				tasks = <Then[]>[],
+				tasks = <Then<RequestResponseObject>[]>[],
 				cloneTasks = <Function[]>[];
 
 			for (let keys = Object.keys(extraProviders), i = 0; i < keys.length; i++) {
