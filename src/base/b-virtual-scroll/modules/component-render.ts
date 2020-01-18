@@ -165,7 +165,7 @@ export default class ComponentRender {
 	 * @param node
 	 */
 	cacheNode(key: string, node: HTMLElement): HTMLElement {
-		if (!this.component.cacheNode) {
+		if (!this.component.cacheNodes) {
 			return node;
 		}
 
@@ -207,7 +207,7 @@ export default class ComponentRender {
 	 */
 	render(list: RenderList, items: RenderItem[]): HTMLElement[] {
 		const
-			{cacheNode} = this.component;
+			{cacheNodes} = this.component;
 
 		const
 			indexesToAssign: number[] = [],
@@ -226,7 +226,7 @@ export default class ComponentRender {
 			const
 				id = this.getOptionKey(item.data);
 
-			if (cacheNode) {
+			if (cacheNodes) {
 				const
 					node = id && this.getElement(id);
 
@@ -268,7 +268,7 @@ export default class ComponentRender {
 	 * Clears the cache of nodes
 	 */
 	clearCache(): void {
-		if (!this.component.cacheNode) {
+		if (!this.component.cacheNodes) {
 			return;
 		}
 

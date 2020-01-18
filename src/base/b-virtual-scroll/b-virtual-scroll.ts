@@ -28,7 +28,7 @@ import ComponentRender from 'base/b-virtual-scroll/modules/component-render';
 import ScrollRender from 'base/b-virtual-scroll/modules/scroll-render';
 import ScrollRequest from 'base/b-virtual-scroll/modules/scroll-request';
 
-import { isNatural, getRequestParams } from 'base/b-virtual-scroll/modules/helpers';
+import { getRequestParams } from 'base/b-virtual-scroll/modules/helpers';
 
 import {
 
@@ -94,37 +94,37 @@ export default class bVirtualScroll extends iData {
 	/**
 	 * Number of columns
 	 */
-	@prop({type: Number, watch: 'syncPropsWatcher', validator: isNatural})
+	@prop({type: Number, watch: 'syncPropsWatcher', validator: Number.isNatural})
 	readonly columns: number = 1;
 
 	/**
 	 * Number of components that could be cached
 	 */
-	@prop({type: Number, watch: 'syncPropsWatcher', validator: isNatural})
+	@prop({type: Number, watch: 'syncPropsWatcher', validator: Number.isNatural})
 	readonly cacheSize: number = 400;
 
 	/**
 	 * Number of items that will be removed from the cache when it is full
 	 */
-	@prop({type: Number, watch: 'syncPropsWatcher', validator: isNatural})
+	@prop({type: Number, watch: 'syncPropsWatcher', validator: Number.isNatural})
 	readonly dropCacheSize: number = 50;
 
 	/**
 	 * Number of elements from the same range that cannot be removed from the cache
 	 */
-	@prop({type: Number, watch: 'syncPropsWatcher', validator: isNatural})
+	@prop({type: Number, watch: 'syncPropsWatcher', validator: Number.isNatural})
 	readonly dropCacheSafeZone: number = 10;
 
 	/**
 	 * Number of nodes at the same time
 	 */
-	@prop({type: Number,  watch: 'syncPropsWatcher', validator: isNatural})
+	@prop({type: Number,  watch: 'syncPropsWatcher', validator: Number.isNatural})
 	readonly realElementsCount: number = 20;
 
 	/**
 	 * Number of nodes at the same time that are drawn in the opposite direction from the scroll
 	 */
-	@prop({type: Number, watch: 'syncPropsWatcher', validator: isNatural})
+	@prop({type: Number, watch: 'syncPropsWatcher', validator: Number.isNatural})
 	readonly oppositeElementsCount: number = 10;
 
 	/**
@@ -146,10 +146,17 @@ export default class bVirtualScroll extends iData {
 	readonly axis: Axis = 'y';
 
 	/**
+	 * If true then the elements will be deleted from the DOM tree when scrolling
+	 *   *) recommended for use if you need to display a huge number of elements (prevents OOM)
+	 */
+	@prop(Boolean)
+	readonly dropNodes: boolean = true;
+
+	/**
 	 * If true, then created nodes will be cached
 	 */
 	@prop({type: Boolean, watch: 'syncPropsWatcher'})
-	readonly cacheNode: boolean = true;
+	readonly cacheNodes: boolean = true;
 
 	/**
 	 * If true, then the container height will be updated for every change in the range
@@ -364,23 +371,5 @@ export default class bVirtualScroll extends iData {
 		}
 
 		return this.reInit();
-	}
-
-	/**
-	 * Handler: container or window was resized
-	 */
-	protected onResize(): void {
-		this.async.setTimeout(() => {
-			// @ts-ignore (access)
-			this.scrollRender.onResize();
-
-		}, 100, {label: $$.onResize});
-	}
-
-	/**
-	 * Handler: element enters/leaves viewport
-	 */
-	protected onIntersectChange(): void {
-		this.scrollRender.updateOffset();
 	}
 }

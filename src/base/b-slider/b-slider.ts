@@ -81,37 +81,37 @@ export default class bSlider extends iData implements iObserveDOM {
 	/**
 	 * How much does the shift along the X axis correspond to a finger movement
 	 */
-	@prop({type: Number, validator: (v: number) => v.isPositiveBetweenZeroAndOne()})
+	@prop({type: Number, validator: Number.isPositiveBetweenZeroAndOne})
 	readonly deltaX: number = 0.9;
 
 	/**
 	 * The minimum required percentage to scroll the slider to an another slide
 	 */
-	@prop({type: Number, validator: (v: number) => v.isPositiveBetweenZeroAndOne()})
+	@prop({type: Number, validator: Number.isPositiveBetweenZeroAndOne})
 	readonly threshold: number = 0.3;
 
 	/**
 	 * The minimum required percentage for the scroll slider to an another slide in fast motion on the slider
 	 */
-	@prop({type: Number, validator: (v: number) => v.isPositiveBetweenZeroAndOne()})
+	@prop({type: Number, validator: Number.isPositiveBetweenZeroAndOne})
 	readonly fastSwipeThreshold: number = 0.05;
 
 	/**
 	 * Time (in milliseconds) after which we can assume that there was a quick swipe
 	 */
-	@prop({type: Number, validator: (v: number) => v.isNatural()})
+	@prop({type: Number, validator: Number.isNatural})
 	readonly fastSwipeDelay: number = (0.3).seconds();
 
 	/**
 	 * The minimum displacement threshold along the X axis at which the slider will be considered to be used (in px)
 	 */
-	@prop({type: Number, validator: (v: number) => v.isNatural()})
+	@prop({type: Number, validator: Number.isNatural})
 	readonly swipeToleranceX: number = 10;
 
 	/**
 	 * The minimum Y offset threshold at which the slider will be considered to be used (in px)
 	 */
-	@prop({type: Number, validator: (v: number) => v.isNatural()})
+	@prop({type: Number, validator: Number.isNatural})
 	readonly swipeToleranceY: number = 50;
 
 	/**

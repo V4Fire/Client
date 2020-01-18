@@ -14,13 +14,13 @@
 	- block body
 		< .&__container &
 			ref = container |
-			v-resize.width = () => axis === 'y' ? onResize : undefined
+			v-resize.width = () => axis === 'y' ? scrollRender.onResize : undefined
 		.
 			< .&__trigger &
 				v-in-view = {
 					delay: 0,
-					onEnter: onIntersectChange,
-					onLeave: onIntersectChange
+					onEnter: () => scrollRender.onIntersectChange(true),
+					onLeave: () => scrollRender.onIntersectChange(false)
 				}
 			.
 

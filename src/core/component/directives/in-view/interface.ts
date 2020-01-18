@@ -10,9 +10,15 @@ import { VNodeDirective } from 'core/component/engines';
 
 export interface Observable {
 	node: Element;
+	id: string;
 	isLeaving: boolean;
 	isDeactivated: boolean;
-	id: string;
+	size: Size;
+}
+
+export interface Size {
+	width: number;
+	height: number;
 }
 
 export interface ObserveOptions {
@@ -29,13 +35,7 @@ export interface ObserveOptions {
 	count?: (() => boolean) | boolean;
 
 	/**
-	 * Callback that will be executed after the delay
-	 */
-	callback?: Function;
-
-	/**
 	 * Delay before callback execution
-	 * @see https://w3c.github.io/IntersectionObserver/v2/#dom-intersectionobserver-delay
 	 */
 	delay?: number;
 
@@ -64,6 +64,11 @@ export interface ObserveOptions {
 	 * If defined, then an element will become observable only after the function returns true
 	 */
 	wait?(): boolean;
+
+	/**
+	 * Callback that will be executed after the delay
+	 */
+	callback?(observable: ObservableElement): unknown;
 }
 
 export interface ElementRect {
