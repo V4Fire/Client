@@ -11,6 +11,18 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-beta.240 (2020-01-14)
+
+#### :rocket: New Feature
+
+* Added a new associated type `iStaticPage.CurrentPage`
+
+## v3.0.0-beta.239 (2020-01-14)
+
+#### :bug: Bug Fix
+
+* Fixed component activation `super/i-block/modules/keep-alive`
+
 ## v3.0.0-beta.238 (2020-01-13)
 
 #### :boom: Breaking Change

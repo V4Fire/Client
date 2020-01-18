@@ -24,7 +24,7 @@ import * as browser from 'core/browser';
 //#endif
 
 //#if runtime has bRouter
-import bRouter, { CurrentPage } from 'base/b-router/b-router';
+import bRouter from 'base/b-router/b-router';
 //#endif
 
 //#if runtime has iStaticPage
@@ -534,7 +534,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	 * Link to the application route object
 	 */
 	@p({cache: false})
-	get route(): CanUndef<CurrentPage> {
+	get route(): CanUndef<this['$root']['CurrentPage']> {
 		return this.field.get('route', this.$root);
 	}
 

@@ -37,16 +37,16 @@ export type PageMeta<M extends object = Dictionary> = BasePageMeta<M> & {
 };
 
 export interface CurrentPage<
-	P extends object = Dictionary,
-	Q extends object = Dictionary,
-	M extends object = Dictionary
+	PARAMS extends object = Dictionary,
+	QUERY extends object = Dictionary,
+	META extends object = Dictionary
 > extends Dictionary {
 	url?: string;
 	page: string;
 	index: boolean;
-	params: P;
-	query: Q;
-	meta: PageMeta<M>;
+	params: PARAMS;
+	query: QUERY;
+	meta: PageMeta<META>;
 }
 
 export interface PageInfo extends Dictionary {
@@ -63,13 +63,13 @@ export interface HistoryClearFilter {
 }
 
 export interface Router<
-	P extends object = Dictionary,
-	Q extends object = Dictionary,
-	M extends object = Dictionary
+	PARAMS extends object = Dictionary,
+	QUERY extends object = Dictionary,
+	META extends object = Dictionary
 > extends EventEmitter {
-	readonly page?: CanUndef<CurrentPage<P, Q, M>>;
+	readonly page?: CanUndef<CurrentPage<PARAMS, QUERY, META>>;
 	readonly history: PageInfo[];
-	readonly routes?: PageSchema<M>;
+	readonly routes?: PageSchema<META>;
 	id(page: string): string;
 	push(page: string, info?: PageInfo): Promise<void>;
 	replace(page: string, info?: PageInfo): Promise<void>;
