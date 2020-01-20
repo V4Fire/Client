@@ -6,21 +6,14 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import Async from 'core/async';
+/**
+ * [[include:core/render/README.md]]
+ * @packageDocumentation
+ */
 
-export interface Task {
-	fn: Function;
-	weight?: number;
-}
-
-export const
-	COMPONENTS_PER_TICK = 10,
-	DELAY = 40;
-
-export const
-	queue = new Set<Task>(),
-	add = queue.add,
-	daemon = new Async();
+import { daemon, queue, add, COMPONENTS_PER_TICK, DELAY } from 'core/render/const';
+export * from 'core/render/const';
+export * from 'core/render/interface';
 
 let
 	inProgress = false,
@@ -38,7 +31,7 @@ queue.add = function addToQueue<T = unknown>(): T {
 };
 
 /**
- * Restarts render daemon
+ * Restarts the render daemon
  */
 export function restart(): void {
 	isStarted = inProgress = false;
@@ -46,7 +39,8 @@ export function restart(): void {
 }
 
 /**
- * Restarts render daemon (runs on the next tick)
+ * Restarts the render daemon
+ * (it runs on the next tick)
  */
 export function deferRestart(): void {
 	isStarted = inProgress = false;

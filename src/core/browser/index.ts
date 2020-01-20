@@ -6,6 +6,11 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+/**
+ * [[include:core/browser/README.md]]
+ * @packageDocumentation
+ */
+
 import semver, { Operation } from 'core/semver';
 
 const
@@ -13,7 +18,9 @@ const
 	separator = /[._]/;
 
 /**
- * Returns a tuple (browserName, browserVersion?[]) or false from the specified pattern
+ * Takes a string pattern and returns a tuple (browserName, browserVersion?[]) if the pattern
+ * is matches with navigator.userAgent, otherwise returns false
+ *
  * @param pattern
  */
 export function match(pattern: RegExp | string): [string, number[] | null] | boolean {
@@ -27,7 +34,7 @@ export function match(pattern: RegExp | string): [string, number[] | null] | boo
 }
 
 /**
- * Returns true if navigator.userAgent matches the specified parameters
+ * Returns true if navigator.userAgent matches with the specified parameters
  *
  * @param platform - browser platform
  * @param [operation] - operation type (>, >=, etc.)

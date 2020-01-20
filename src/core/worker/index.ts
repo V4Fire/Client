@@ -7,12 +7,19 @@
  */
 
 /**
+ * [[include:core/worker/README.md]]
+ * @packageDocumentation
+ */
+
+/**
  * Wrapper for using web workers with WebPack
  *
- * @example
- * RawWorker(require('raw!./workers/lanczos.ts'))
- *
  * @param text - worker text
+ *
+ * @example
+ * ```js
+ * RawWorker(require('raw!./workers/lanczos.ts'))
+ * ```
  */
 export function RawWorker(text: string): Worker {
 	return new Worker(URL.createObjectURL(new Blob([text])));

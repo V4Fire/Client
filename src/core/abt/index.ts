@@ -6,18 +6,26 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import adapter from 'core/abt/engines';
+/**
+ * [[include:core/abt/README.md]]
+ * @packageDocumentation
+ */
+
 import state from 'core/component/state';
+import adapter from 'core/abt/engines';
 
+import { emitter } from 'core/abt/const';
 import { ExperimentsSet } from 'core/abt/interface';
-import { EventEmitter2 as EventEmitter } from 'eventemitter2';
 
-export const
-	event = new EventEmitter({maxListeners: 1e3, newListener: false});
+export * from 'core/abt/const';
+export * from 'core/abt/interface';
 
 /**
  * Saves the specified ABT options
+ *
  * @param opts
+ * @emits `set(config:` [[ExperimentsSet]]`)`
+ * @emits `clear(config:` [[ExperimentsSet]]`)`
  */
 export default async function saveABT(opts: unknown): Promise<void> {
 	let
@@ -30,11 +38,11 @@ export default async function saveABT(opts: unknown): Promise<void> {
 	if (Object.isArray(config)) {
 		if (!Object.fastCompare(state.experiments, config)) {
 			state.experiments = config;
-			event.emit('set', config);
+			emitter.emit('set', config);
 		}
 
 	} else {
 		state.experiments = [];
-		event.emit('clear', config);
+		emitter.emit('clear', config);
 	}
 }

@@ -6,12 +6,15 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+/**
+ * [[include:core/init/README.md]]
+ * @packageDocumentation
+ */
+
 import 'core/init/state';
 import 'core/init/abt';
 
 import semaphore from 'core/init/semaphore';
-import { afterDOMLoaded } from 'core/event';
+import { resolveAfterDOMLoaded } from 'core/event';
 
-export default afterDOMLoaded(() => {
-	semaphore('domReady');
-});
+export default resolveAfterDOMLoaded().then(() => semaphore('domReady'));

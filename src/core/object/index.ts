@@ -6,16 +6,28 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-export interface SelectParams {
-	from?: string | number;
-	where?: Dictionary | Dictionary[];
-}
+/**
+ * [[include:core/object/README.md]]
+ * @packageDocumentation
+ */
+
+import { SelectParams } from 'core/object/interface';
+export * from 'core/object/interface';
 
 /**
  * Finds an element from an object by the specified params
  *
  * @param obj
  * @param params
+ *
+ * @example
+ * select([{test: 1}], {where: {test: 1}}) // {test: 1}
+ * select({test: 1}, {where: {test: 1}}) // {test: 1}
+ *
+ * // The array is interpreted as "or"
+ * select({test: 2}, {where: [{test: 1}, {test: 2}]}) // {test: 2}
+ * select([{test: 1}, {test: 2}], {where: {test: 2}}) // {test: 2}
+ * select({test: {t: 10}}, {where: {t: 10}, from: 'test'}) // {t: 10}
  */
 export function select<T = unknown>(obj: unknown, params: SelectParams): CanUndef<T> {
 	const
@@ -61,16 +73,13 @@ export function select<T = unknown>(obj: unknown, params: SelectParams): CanUnde
 	};
 
 	if (where) {
-		const
-			whereArray = (<SelectParams['where'][]>[]).concat(where);
-
-		for (let i = 0; i < whereArray.length; i++) {
+		for (let obj = (<SelectParams['where'][]>[]).concat(where || []), i = 0; i < obj.length; i++) {
 			const
-				w = whereArray[i];
+				where = obj[i];
 
 			if (Object.isObject(target)) {
 				const
-					match = getMatch(target, w);
+					match = getMatch(target, where);
 
 				if (match) {
 					res = match;
@@ -78,7 +87,7 @@ export function select<T = unknown>(obj: unknown, params: SelectParams): CanUnde
 				}
 			}
 
-			if (Object.isArray(target) && target.some((a) => (getMatch(a, w) ? (res = a, true) : false))) {
+			if (Object.isArray(target) && target.some((el) => (getMatch(el, where) ? (res = el, true) : false))) {
 				break;
 			}
 		}

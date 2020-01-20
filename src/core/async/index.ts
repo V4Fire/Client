@@ -61,7 +61,7 @@ export default class Async<CTX extends object = Async<any>> extends Super<CTX> {
 		fn: AnimationFrameCb<T, CTX>,
 		p?: Element | AsyncRequestAnimationFrameOptions<CTX>
 	): Nullable<number> {
-		if (Object.isDictionary(p)) {
+		if (Object.isPlainObject(p)) {
 			return this.registerTask({
 				...p,
 				name: this.namespaces.animationFrame,
@@ -190,7 +190,7 @@ export default class Async<CTX extends object = Async<any>> extends Super<CTX> {
 	animationFrame(opts: AsyncAnimationFrameOptions): SyncPromise<number>;
 	animationFrame(p?: Element | AsyncAnimationFrameOptions): SyncPromise<number> {
 		return new SyncPromise((resolve, reject) => {
-			if (Object.isDictionary(p)) {
+			if (Object.isPlainObject(p)) {
 				return this.requestAnimationFrame(resolve, {
 					...p,
 					promise: true,

@@ -6,5 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import semaphore from 'core/init/semaphore';
-export default (() => semaphore('ABTReady'))();
+export interface Task {
+	fn: Function;
+	weight?: number;
+}

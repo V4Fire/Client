@@ -6,16 +6,13 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-export interface CookieOptions {
-	path?: string;
-	domain?: string;
-	expires?: Date | string | number;
-	secure?: boolean;
-}
+/**
+ * [[include:core/browser/README.md]]
+ * @packageDocumentation
+ */
 
-export interface RemoveOptions extends CookieOptions {
-	expires?: never;
-}
+import { SetOptions, RemoveOptions } from 'core/cookies/interface';
+export * from 'core/cookies/interface';
 
 /**
  * Returns a cookie value by the specified name
@@ -40,7 +37,7 @@ export function has(name: string): boolean {
  * @param value
  * @param [opts] - additional options
  */
-export function set(name: string, value: string, opts: CookieOptions): string {
+export function set(name: string, value: string, opts: SetOptions): string {
 	opts = {path: '/', ...opts};
 
 	const
