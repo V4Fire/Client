@@ -46,7 +46,7 @@ export default class ScrollRequest {
 	/**
 	 * Component instance
 	 */
-	protected component: bVirtualScroll;
+	protected component: bVirtualScroll['unsafe'];
 
 	/**
 	 * API for scroll rendering
@@ -60,7 +60,7 @@ export default class ScrollRequest {
 	 * @param component - component instance
 	 */
 	constructor(component: bVirtualScroll) {
-		this.component = component;
+		this.component = component.unsafe;
 	}
 
 	/**
@@ -101,7 +101,6 @@ export default class ScrollRequest {
 			!component.dataProvider ||
 			component.mods.progress === 'true';
 
-		console.log(component.mods.progress);
 		if (cantRequest()) {
 			return resolved;
 		}
@@ -157,7 +156,7 @@ export default class ScrollRequest {
 			{component} = this;
 
 		// @ts-ignore (access)
-		const params = <Dictionary>(component.getDefaultRequestParams('get') || [])[0];
+		const params = <CanUndef<Dictionary>>(component.getDefaultRequestParams('get') || [])[0];
 		Object.assign(params, component.requestQuery?.(getRequestParams(this, this.scrollRender))?.get);
 
 		return component.get(params)
