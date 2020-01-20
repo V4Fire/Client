@@ -12,20 +12,9 @@
 
 - template index() extends ['i-data'].index
 	- block body
-		< .&__container &
-			ref = container |
-			v-resize.width = () => axis === 'y' ? scrollRender.onResize : undefined
-		.
-			< .&__trigger &
-				v-in-view = {
-					delay: 0,
-					onEnter: () => scrollRender.onIntersectChange(true),
-					onLeave: () => scrollRender.onIntersectChange(false)
-				}
-			.
+		< .&__wrapper v-resize.width = () => axis === 'y' ? scrollRender.onResize : undefined
+			< .&__container ref = container
+			< .&__tombstones
+				< .&__tombstone v-for = i in tombstoneCount
+					+= self.slot('tombstone')
 
-			< .&__scroll-runner ref = scrollRunner
-				&nbsp;
-
-		< .&__tombstone ref = tombstone
-			+= self.slot('tombstone')

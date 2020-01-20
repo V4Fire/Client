@@ -23,15 +23,6 @@ b-virtual-scroll extends i-data
 	&__tombstone-el
 	&__option-el
 		contain layout
-		position absolute !important
-		useGPU()
-		will-change transform
-
-	&__scroll-runner
-		absolute left 0 top 0
-		size 1px
-		transition transform 0.2s
-		useGPU()
 
 	&__trigger
 		absolute left 0 top 0
@@ -51,4 +42,7 @@ b-virtual-scroll extends i-data
 		overflow scroll
 
 	&_requests-done_true &__tombstone-el
+		display none
+
+	&_tombstones-hidden_true &__tombstone
 		display none

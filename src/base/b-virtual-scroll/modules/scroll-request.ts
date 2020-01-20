@@ -29,6 +29,11 @@ export default class ScrollRequest {
 	data: unknown[] = [];
 
 	/**
+	 * Last loaded data
+	 */
+	lastLoadedData: unknown[] = [];
+
+	/**
 	 * True if all requests for additional data was requested
 	 */
 	isDone: boolean = false;
@@ -77,7 +82,6 @@ export default class ScrollRequest {
 		this.isDone = false;
 		this.isLastEmpty = false;
 		this.component.removeMod('requestsDone', true);
-		this.scrollRender.updateRange();
 	}
 
 	/**
@@ -95,15 +99,19 @@ export default class ScrollRequest {
 			this.isDone ||
 			!shouldRequest ||
 			!component.dataProvider ||
-			component.mods.progress === 'true' ||
-			scrollRender.status !== ScrollRenderStatus.render;
+			component.mods.progress === 'true';
 
+		console.log(component.mods.progress);
 		if (cantRequest()) {
 			return resolved;
 		}
 
+		scrollRender.setTombstoneVisibility(true);
+
 		return this.load()
 			.then((v) => {
+				scrollRender.setTombstoneVisibility(false);
+
 				if (!component.field.get('data.length', v)) {
 					this.isLastEmpty = true;
 					this.checksRequestPossibility(getRequestParams(this, scrollRender, {lastLoaded: []}));
@@ -111,14 +119,13 @@ export default class ScrollRequest {
 				}
 
 				const
-					{data, total} = <RemoteData>v;
+					{data} = <RemoteData>v;
 
 				this.page++;
 				this.isLastEmpty = false;
 				this.data = this.data.concat(data);
 
-				scrollRender.max = total || Infinity;
-				scrollRender.add(data);
+				scrollRender.initItems(data);
 
 			}).catch(stderr);
 	}
@@ -156,6 +163,7 @@ export default class ScrollRequest {
 		return component.get(params)
 			.then((data) => {
 				if (!data) {
+					this.lastLoadedData = [];
 					return;
 				}
 
@@ -164,13 +172,17 @@ export default class ScrollRequest {
 					converted = component.convertDataToDB<CanUndef<RemoteData>>(data);
 
 				if (!converted?.data?.length) {
+					this.lastLoadedData = [];
 					return;
 				}
 
-				component.options = component.options.concat(converted);
 				return converted;
 			})
 
-			.catch((err) => (stderr(err), undefined));
+			.catch((err) => {
+				stderr(err);
+				this.lastLoadedData = [];
+				return undefined;
+			});
 	}
 }

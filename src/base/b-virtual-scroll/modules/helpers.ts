@@ -38,6 +38,35 @@ export function getRequestParams(
 	scrollRenderCtx?: ScrollRender,
 	merge?: Dictionary
 ): RequestMoreParams {
-	// @ts-ignore
-	return {};
+	const base: RequestMoreParams = {
+		currentPage: 0,
+		nextPage: 1,
+		renderRange: new Range(0, 0),
+		visibleRange: new Range(0, 0),
+		items: [],
+		lastLoaded: [],
+		isLastEmpty: false,
+		itemsToReachBottom: 0
+	};
+
+	const params = scrollRequestCtx && scrollRenderCtx && scrollRenderCtx.status !== ScrollRenderStatus.notInitialized ? {
+		visibleRange: scrollRenderCtx.visibleRange,
+		renderRange: scrollRenderCtx.renderRange,
+		itemsToReachBottom: scrollRenderCtx.itemsCount - scrollRenderCtx.visibleRange.end,
+		items: scrollRenderCtx.items,
+
+		currentPage: scrollRequestCtx.page,
+		lastLoaded: scrollRequestCtx.lastLoadedData,
+		isLastEmpty: scrollRequestCtx.isLastEmpty,
+	} : base;
+
+	const merged = {
+		...params,
+		...merge
+	};
+
+	// tslint:disable-next-line: prefer-object-spread
+	return Object.assign(merged, {
+		nextPage: merged.currentPage + 1
+	});
 }

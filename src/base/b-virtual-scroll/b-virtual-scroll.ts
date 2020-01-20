@@ -121,6 +121,12 @@ export default class bVirtualScroll extends iData {
 	@prop({type: Number,  watch: 'syncPropsWatcher', validator: Number.isNatural})
 	readonly realElementsCount: number = 20;
 
+	@prop({type: Number, validator: Number.isNatural})
+	readonly renderPerChunk: number = 5;
+
+	@prop({type: Number, validator: Number.isNatural})
+	readonly drawBefore: number = 2;
+
 	/**
 	 * Number of nodes at the same time that are drawn in the opposite direction from the scroll
 	 */
@@ -183,7 +189,10 @@ export default class bVirtualScroll extends iData {
 	/**
 	 * If, when calling a function, it returns true, then the component will be able to request additional data
 	 */
-	@prop({type: Function, default: (v) => v.itemsToReachBottom <= 10 && !v.isLastEmpty})
+	@prop({type: Function, default: (v) => {
+		console.log(v);
+		return v.itemsToReachBottom <= 10 && !v.isLastEmpty
+	}})
 	readonly shouldMakeRequest!: RequestFn;
 
 	/**

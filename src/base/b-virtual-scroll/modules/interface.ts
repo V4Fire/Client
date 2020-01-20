@@ -20,42 +20,99 @@ export type RenderList = [RenderItem, number][];
 export type RequestParams = CanUndef<Record<string, Dictionary>>;
 
 export interface OptionEl<T extends unknown = unknown> {
+	/**
+	 * Current componnet
+	 */
 	current: T;
+
+	/**
+	 * Previous component
+	 */
 	prev: CanUndef<T>;
+
+	/**
+	 * Next component
+	 */
 	next: CanUndef<T>;
 }
 
 export interface RequestMoreParams<T extends unknown = unknown> {
-	currentSlice: RenderItem<T>[];
+	/**
+	 * Number of last loaded page
+	 */
 	currentPage: number;
-	currentRange: Range<number>;
 
+	/**
+	 * Current render rage
+	 */
+	renderRange: Range<number>;
+
+	/**
+	 * Current visible range of elements
+	 */
+	visibleRange: Range<number>
+
+	/**
+	 * Number of chunk to be uploaded
+	 */
 	nextPage: number;
+
+	/**
+	 * Number of items that can be showed until bottom of the page will be reached
+	 */
 	itemsToReachBottom: number;
+
+	/**
+	 * Render items
+	 */
 	items: RenderItem<T>[];
 
+	/**
+	 * True if last requested data response answered with empty data
+	 */
 	isLastEmpty: boolean;
+
+	/**
+	 * Last loaded data chunk
+	 */
 	lastLoaded: Array<T>;
 }
 
 export interface RemoteData {
+	/**
+	 * Data for components rendering
+	 */
 	data: unknown[];
+
+	/**
+	 * Total number of elements
+	 */
 	total?: number;
 }
 
-export interface RecycleComponent<T extends unknown = unknown> {
-	node: HTMLElement;
-	id: string;
-	data: T;
-}
-
 export interface RenderItem<T extends unknown = unknown> {
+	/**
+	 * Component data
+	 */
 	data: T;
+
+	/**
+	 * Component DOM node
+	 */
 	node: CanUndef<HTMLElement>;
+
+	/**
+	 * Destructor of DOM node
+	 */
 	destructor: CanUndef<Function>;
+
+	/**
+	 * Index of element in DOM
+	 */
+	index: number;
+
 	width: number;
 	height: number;
-	top: number;
 }
 
 export interface RenderedNode {
