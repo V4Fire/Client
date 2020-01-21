@@ -123,6 +123,10 @@ export default class InView extends Super {
 
 			this.setObservableSize(observable, entry.boundingClientRect);
 
+			if (observable.onInit) {
+				observable.onInit(observable);
+			}
+
 			if (observable.isLeaving) {
 				this.onObservableOut(observable);
 

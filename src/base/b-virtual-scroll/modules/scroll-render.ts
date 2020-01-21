@@ -15,7 +15,7 @@ import ComponentRender from 'base/b-virtual-scroll/modules/component-render';
 import ScrollRequest from 'base/b-virtual-scroll/modules/scroll-request';
 
 import { RenderItem } from 'base/b-virtual-scroll/modules/interface';
-import { InitOptions, Observable } from 'core/component/directives/in-view/interface';
+import { InitOptions, Observable, Size } from 'core/component/directives/in-view/interface';
 
 export const
 	$$ = symbolGenerator();
@@ -251,6 +251,17 @@ export default class ScrollRender {
 	}
 
 	/**
+	 * Sets size to the specified item
+	 *
+	 * @param item
+	 * @param size
+	 */
+	protected setItemSize(item: RenderItem, size: Size): void {
+		item.width = size.width;
+		item.height = size.height;
+	}
+
+	/**
 	 * In-view init options
 	 * @param item
 	 */
@@ -327,10 +338,8 @@ export default class ScrollRender {
 			}
 		}
 
-		item.width = size.width;
-		item.height = size.height;
-
 		this.scrollRequest.try();
+		this.setItemSize(item, size);
 		this.render();
 	}
 

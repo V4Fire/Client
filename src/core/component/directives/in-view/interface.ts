@@ -22,8 +22,6 @@ export interface Size {
 }
 
 export interface ObserveOptions {
-	onEnter?: Function;
-	onLeave?: Function;
 	group?: InViewGroup;
 	once?: boolean;
 	handleTransitionEnd?: boolean;
@@ -67,8 +65,32 @@ export interface ObserveOptions {
 
 	/**
 	 * Callback that will be executed after the delay
+	 * @param observable
 	 */
 	callback?(observable: ObservableElement): unknown;
+
+	/**
+	 * Handler: element becomes observable
+	 *   *) IntersectionObserver strategy will call it once on method observe call
+	 *   *) MutationObserver strategy will will call it each time on
+	 *      1) Poll
+	 *      2) DOM Mutations
+	 *
+	 * @param observable
+	 */
+	onInit?(observable: ObservableElement): unknown;
+
+	/**
+	 * Handler: element enters viewport
+	 * @param observable
+	 */
+	onEnter?(observable: ObservableElement): unknown;
+
+	/**
+	 * Handler: element leaves viewport
+	 * @param observable
+	 */
+	onLeave?(observable: ObservableElement): unknown;
 }
 
 export interface ElementRect {
