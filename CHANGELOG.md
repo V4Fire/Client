@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-beta.241 (2020-01-22)
+
+#### :bug: Bug Fix
+
+* Fixed caching of `Provide.classes`
+
 ## v3.0.0-beta.240 (2020-01-14)
 
 #### :rocket: New Feature

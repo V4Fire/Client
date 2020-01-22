@@ -185,7 +185,7 @@ export default class Provide {
 		componentName = componentName || this.componentName;
 
 		const
-			key = JSON.stringify(classes),
+			key = JSON.stringify(classes) + componentName,
 			cache = classesCache.create('base'),
 			cacheVal = cache[key];
 
