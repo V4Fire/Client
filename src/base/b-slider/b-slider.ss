@@ -29,7 +29,10 @@
 
 					< component.&__option &
 						:is = option |
-						:v-attrs = Object.isFunction(optionProps) ? optionProps(el, i, getOptionKey(el, i)) : optionProps
+						:v-attrs = Object.isFunction(optionProps) ? optionProps(el, i, {
+							key: getOptionKey(el, i),
+							ctx: self
+						}) : optionProps
 					.
 
 				+= self.slot('afterOptions')

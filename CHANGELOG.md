@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-beta.242 (2020-01-22)
+
+#### :rocket: Breaking Change
+
+* Changed API of `bSlider/OptionProps`
+
 ## v3.0.0-beta.241 (2020-01-22)
 
 #### :bug: Bug Fix
