@@ -8,14 +8,17 @@
 
 import {
 
+	Encoders,
 	Decoders,
+
+	CreateRequestOptions,
 	RequestMethod,
 	RequestQuery,
 	RequestBody,
+	MiddlewareParams,
+
 	ResponseType,
-	ResponseTypeValue,
-	CreateRequestOptions,
-	MiddlewareParams
+	ResponseTypeValue
 
 } from 'core/request/interface';
 
@@ -51,7 +54,7 @@ export type Mocks = CanPromise<
 	{default: {[key in RequestMethod]?: Mock[]}}
 >;
 
-export type ModelMethods =
+export type ModelMethod =
 	'peek' |
 	'get' |
 	'post' |
@@ -65,7 +68,7 @@ export type SocketEvent<T = unknown> = (() => Dictionary<T>) | {
 	data: Dictionary<T>;
 };
 
-export interface ProviderParams {
+export interface ProviderOptions {
 	extraProviders?: FunctionalExtraProviders;
 	listenAllEvents?: boolean;
 	externalRequest?: boolean;
@@ -74,7 +77,7 @@ export interface ProviderParams {
 
 export interface ExtraProvider {
 	provider?: string;
-	providerParams?: ProviderParams;
+	providerParams?: ProviderOptions;
 	query?: RequestQuery;
 	request?: CreateRequestOptions;
 	as?: string;
@@ -82,3 +85,6 @@ export interface ExtraProvider {
 
 export type ExtraProviders = Dictionary<Nullable<ExtraProvider>>;
 export type FunctionalExtraProviders = ExtraProviders | (() => CanUndef<ExtraProviders>);
+
+export type EncodersMap = Record<ModelMethod | 'def', Encoders> | {};
+export type DecodersMap = Record<ModelMethod | 'def', Decoders> | {};

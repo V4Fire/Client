@@ -14,7 +14,7 @@ import {
 
 	RequestQuery,
 	RequestBody,
-	ModelMethods,
+	ModelMethod,
 	CreateRequestOptions as BaseCreateRequestOptions
 
 } from 'core/data';
@@ -23,7 +23,7 @@ import {
 
 export interface RequestFilterOptions<T = unknown> {
 	isEmpty: boolean;
-	method: ModelMethods;
+	method: ModelMethod;
 	params: CreateRequestOptions<T>;
 }
 

@@ -23,8 +23,8 @@ import Provider, {
 	RequestBody,
 	RequestResponseObject,
 	Response,
-	ModelMethods,
-	ProviderParams,
+	ModelMethod,
+	ProviderOptions,
 	ExtraProviders
 
 } from 'core/data';
@@ -37,8 +37,8 @@ export {
 	RequestBody,
 	RequestResponseObject,
 	Response,
-	ModelMethods,
-	ProviderParams,
+	ModelMethod,
+	ProviderOptions,
 	ExtraProvider,
 	ExtraProviders
 
@@ -99,7 +99,7 @@ export default abstract class iData extends iBlock implements iProgress {
 	 * Initial parameters for a data provider instance
 	 */
 	@prop({type: Object, required: false})
-	readonly dataProviderParams?: ProviderParams;
+	readonly dataProviderParams?: ProviderOptions;
 
 	/**
 	 * Initial request parameters
@@ -722,7 +722,7 @@ export default abstract class iData extends iBlock implements iProgress {
 	 * @param [params]
 	 */
 	protected createRequest<T = unknown>(
-		method: ModelMethods,
+		method: ModelMethod,
 		data?: RequestBody,
 		params?: CreateRequestOptions<T>
 	): Promise<CanUndef<T>> {

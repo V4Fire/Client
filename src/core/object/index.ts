@@ -21,6 +21,7 @@ export * from 'core/object/interface';
  * @param params
  *
  * @example
+ * ```js
  * select([{test: 1}], {where: {test: 1}}) // {test: 1}
  * select({test: 1}, {where: {test: 1}}) // {test: 1}
  *
@@ -28,6 +29,7 @@ export * from 'core/object/interface';
  * select({test: 2}, {where: [{test: 1}, {test: 2}]}) // {test: 2}
  * select([{test: 1}, {test: 2}], {where: {test: 2}}) // {test: 2}
  * select({test: {t: 10}}, {where: {t: 10}, from: 'test'}) // {t: 10}
+ * ```
  */
 export function select<T = unknown>(obj: unknown, params: SelectParams): CanUndef<T> {
 	const

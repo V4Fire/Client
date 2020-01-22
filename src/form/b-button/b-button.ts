@@ -28,7 +28,7 @@ import iData, {
 	p,
 
 	ModsDecl,
-	ModelMethods,
+	ModelMethod,
 	RequestFilter,
 	ModEvent,
 	SetModEvent
@@ -70,7 +70,7 @@ export default class bButton extends iData implements iAccess, iOpenToggle, iIco
 	 * Data provider method
 	 */
 	@prop(String)
-	readonly method: ModelMethods = 'get';
+	readonly method: ModelMethod = 'get';
 
 	/**
 	 * Button type

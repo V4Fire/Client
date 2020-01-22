@@ -17,8 +17,8 @@ import IO, { Socket } from 'core/socket';
 import { select, SelectParams } from 'core/object';
 
 import { concatUrls } from 'core/url';
-import { ModelMethods, SocketEvent, ProviderParams, FunctionalExtraProviders, Mocks } from 'core/data/interface';
-import { providers } from 'core/data/const';
+import { ModelMethod, SocketEvent, ProviderOptions, FunctionalExtraProviders, Mocks } from 'core/data/interface';
+import { providers, instanceCache, requestCache, connectCache } from 'core/data/const';
 import { attachMock } from 'core/data/middlewares';
 
 import request, {
@@ -66,19 +66,14 @@ export {
 
 };
 
-export type EncodersTable = Record<ModelMethods | 'def', Encoders> | {};
-export type DecodersTable = Record<ModelMethods | 'def', Decoders> | {};
+export type EncodersTable = Record<ModelMethod | 'def', Encoders> | {};
+export type DecodersTable = Record<ModelMethod | 'def', Decoders> | {};
 
 const globalEvent = new EventEmitter({
 	maxListeners: 1e3,
 	newListener: false,
 	wildcard: true
 });
-
-const
-	instanceCache: Dictionary<Provider> = Object.createDict(),
-	requestCache: Dictionary<Dictionary<RequestResponseObject>> = Object.createDict(),
-	connectCache: Dictionary<Promise<Socket>> = Object.createDict();
 
 export const
 	$$ = symbolGenerator();
@@ -231,7 +226,7 @@ export default class Provider {
 	/**
 	 * Temporary model event name for requests
 	 */
-	tmpEventName: CanUndef<ModelMethods>;
+	tmpEventName: CanUndef<ModelMethod>;
 
 	/**
 	 * Temporary request method
@@ -311,7 +306,7 @@ export default class Provider {
 	/**
 	 * @param [params] - additional parameters
 	 */
-	constructor(params: ProviderParams = {}) {
+	constructor(params: ProviderOptions = {}) {
 		const
 			paramsForCache = <Dictionary>{...params},
 			extra = params.extraProviders;
@@ -489,14 +484,14 @@ export default class Provider {
 	/**
 	 * Returns a custom event name for the operation
 	 */
-	name(): CanUndef<ModelMethods>;
+	name(): CanUndef<ModelMethod>;
 
 	/**
 	 * Sets a custom event name for the operation
 	 * @param [value]
 	 */
-	name(value: ModelMethods): Provider;
-	name(value?: ModelMethods): CanUndef<Provider | ModelMethods> {
+	name(value: ModelMethod): Provider;
+	name(value?: ModelMethod): CanUndef<Provider | ModelMethod> {
 		if (value == null) {
 			const val = this.tmpEventName;
 			this.tmpEventName = undefined;
@@ -906,7 +901,7 @@ export default class Provider {
 	 * @param opts
 	 */
 	protected mergeToOpts<A = unknown, B = unknown>(
-		method: ModelMethods,
+		method: ModelMethod,
 		opts: CreateRequestOptions<A>
 	): CreateRequestOptions<B> {
 		opts = opts || {};
