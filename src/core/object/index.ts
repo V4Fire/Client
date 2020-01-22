@@ -15,10 +15,10 @@ import { SelectParams } from 'core/object/interface';
 export * from 'core/object/interface';
 
 /**
- * Finds an element from an object by the specified params
+ * Finds an element from an object by the specified parameters
  *
- * @param obj
- * @param params
+ * @param obj - object for searching
+ * @param params - search parameters
  *
  * @example
  * ```js
@@ -39,7 +39,7 @@ export function select<T = unknown>(obj: unknown, params: SelectParams): CanUnde
 		target = obj,
 		res;
 
-	if ((Object.isObject(target) || Object.isArray(target)) && from != null) {
+	if ((Object.isPlainObject(target) || Object.isArray(target)) && from != null) {
 		res = target = Object.get(target, String(from));
 	}
 
@@ -52,7 +52,7 @@ export function select<T = unknown>(obj: unknown, params: SelectParams): CanUnde
 			return obj;
 		}
 
-		if (!Object.isObject(where) && !Object.isArray(where)) {
+		if (!Object.isPlainObject(where) && !Object.isArray(where)) {
 			return false;
 		}
 
@@ -60,7 +60,7 @@ export function select<T = unknown>(obj: unknown, params: SelectParams): CanUnde
 			res;
 
 		Object.forEach<string, string>(where, (v, k) => {
-			if (Object.isObject(obj) && !(k in obj)) {
+			if (Object.isPlainObject(obj) && !(k in obj)) {
 				return;
 			}
 
@@ -79,7 +79,7 @@ export function select<T = unknown>(obj: unknown, params: SelectParams): CanUnde
 			const
 				where = obj[i];
 
-			if (Object.isObject(target)) {
+			if (Object.isPlainObject(target)) {
 				const
 					match = getMatch(target, where);
 

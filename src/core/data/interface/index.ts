@@ -51,6 +51,10 @@ export default abstract class Provider {
 	 * The transport function for a request.
 	 * Basically, you can use an overload of the request API for flexibly extending.
 	 *
+	 *
+	 * @see [[request]]
+	 * @see [[CreateRequestOptions]]
+	 *
 	 * @example
 	 * ```js
 	 * import request from 'core/request';
@@ -70,6 +74,7 @@ export default abstract class Provider {
 	 * A sequence of middlewares that is provided to the request function.
 	 * An object form is easily for extending, bur you can choose any different form.
 	 *
+	 * @see [[Middlewares]]
 	 * @example
 	 * ```js
 	 * import request from 'core/request';
@@ -97,6 +102,7 @@ export default abstract class Provider {
 	 * The key of a map element is represents a name of the provider method: 'get', 'post', etc.
 	 * The value of a map element is represents a sequence of encoders for the specified provider method.
 	 *
+	 * @see [[Encoders]]
 	 * @example
 	 * ```js
 	 * class MyProvider extends Provider {
@@ -114,6 +120,7 @@ export default abstract class Provider {
 	 * The key of a map element is represents a name of the provider method: 'get', 'post', etc.
 	 * The value of a map element is represents a sequence of decoders for the specified provider method.
 	 *
+	 * @see [[Decoders]]
 	 * @example
 	 * ```js
 	 * class MyProvider extends Provider {
@@ -127,10 +134,10 @@ export default abstract class Provider {
 	static readonly decoders: DecodersMap = {};
 
 	/**
-	 * Finds an element from an object by the specified params
+	 * Finds an element from an object by the specified parameters
 	 *
-	 * @param obj
-	 * @param params
+	 * @param obj - object for searching
+	 * @param params - search parameters
 	 *
 	 * @example
 	 * ```js
@@ -148,62 +155,172 @@ export default abstract class Provider {
 	readonly providerName!: string;
 
 	/**
-	 * Request mock objects.
+	 * Map of data mocks.
+	 * This object can be used with a middleware that implements API for data mocking,
+	 * for example [[attachMock]] from `'core/data/middlewares'`.
+	 *
+	 * The key of a map element is represents a type of a request method: 'GET', 'POST', etc.
+	 * The value of a map element is represents a list of parameters for matching.
+	 *
+	 * @see [[Middlewares]]
+	 * @example
+	 * ```js
+	 * import { attachMock } from 'core/data/middlewares';
+	 *
+	 * class MyProvider extends Provider {
+	 *   mocks: {
+	 *     GET: [
+	 *       // The mock for a GET request with a query parameter that contains
+	 *       // `search=foo` parameter
+	 *       {
+	 *         status: 200,
+	 *
+	 *         // For the mock response won't be applied decoders
+	 *         // (by default, `true`)
+	 *         decoders: false,
+	 *
+	 *         query: {
+	 *           search: 'foo'
+	 *         },
+	 *
+	 *         // The response
+	 *         response: {
+	 *           data: [
+	 *             'bla',
+	 *             'baz
+	 *           ]
+	 *         }
+	 *       }
+	 *     ],
+	 *
+	 *     POST: [
+	 *       // The mock is catches all POST requests and dynamically generated responses
+	 *       {
+	 *         response(params, response) {
+	 *           if (!params.opts.query?.data) {
+	 *             response.status = 400;
+	 *             return;
+	 *           }
+	 *
+	 *           response.status = 200;
+	 *           response.responseType = 'string';
+	 *           return 'ok';
+	 *         }
+	 *       }
+	 *     ]
+	 *   },
+	 *
+	 *   middlewares: {attachMock}
+	 * }
+	 * ```
 	 */
 	mocks?: Mocks;
 
 	/**
-	 * HTTP method for .get()
+	 * HTTP method that is used for the "get" method
 	 */
 	getMethod: RequestMethod = 'GET';
 
 	/**
-	 * HTTP method for .peek()
+	 * HTTP method that is used for the "peek" method
 	 */
 	peekMethod: RequestMethod = 'HEAD';
 
 	/**
-	 * HTTP method for .add()
+	 * HTTP method that is used for the "add" method
 	 */
 	addMethod: RequestMethod = 'POST';
 
 	/**
-	 * HTTP method for .upd()
+	 * HTTP method that is used for the "upd" method
 	 */
 	updMethod: RequestMethod = 'PUT';
 
 	/**
-	 * HTTP method for .del()
+	 * HTTP method that is used for the "del" method
 	 */
 	delMethod: RequestMethod = 'DELETE';
 
 	/**
-	 * Base URL for requests
+	 * Base part of URL for a request for all request methods
+	 * (if custom methods is not specified)
+	 *
+	 * @example
+	 * ```js
+	 * class Profile extends Provider {
+	 *   baseURL: 'profile/info'
+	 * }
+	 * ```
 	 */
 	baseURL: string = '';
 
 	/**
-	 * Base URL for .get()
+	 * Base part of URL for a request using the "get" method
+	 *
+	 * @example
+	 * ```js
+	 * class Profile extends Provider {
+	 *   // For all request methods despite the "get" is used this URL
+	 *   baseURL: 'profile/info'
+	 *   baseGetURL: 'profile/info/get'
+	 * }
+	 * ```
 	 */
 	baseGetURL: string = '';
 
 	/**
-	 * Base URL for .peek()
+	 * Base part of URL for a request using the "peek" method
+	 *
+	 * @example
+	 * ```js
+	 * class Profile extends Provider {
+	 *   // For all request methods despite the "peek" is used this URL
+	 *   baseURL: 'profile/info'
+	 *   basePeekURL: 'profile/info/peek'
+	 * }
+	 * ```
 	 */
 	basePeekURL: string = '';
 
 	/**
-	 * Base URL for .add()
+	 * Base part of URL for a request using the "add" method
+	 *
+	 * @example
+	 * ```js
+	 * class Profile extends Provider {
+	 *   // baseURL request methods despite the "add" is used this URL
+	 *   basePeekURL: 'profile/info'
+	 *   baseAddURL: 'profile/info/add'
+	 * }
+	 * ```
 	 */
 	baseAddURL: string = '';
 
 	/**
-	 * Base URL for .upd()
+	 * Base part of URL for a request using the "upd" method
+	 *
+	 * @example
+	 * ```js
+	 * class Profile extends Provider {
+	 *   // baseURL request methods despite the "upd" is used this URL
+	 *   basePeekURL: 'profile/info'
+	 *   baseUpdURL: 'profile/info/upd'
+	 * }
+	 * ```
 	 */
 	baseUpdURL: string = '';
 
 	/**
-	 * Base URL for .del()
+	 * Base part of URL for a request using the "del" method
+	 *
+	 * @example
+	 * ```js
+	 * class Profile extends Provider {
+	 *   // baseURL request methods despite the "del" is used this URL
+	 *   basePeekURL: 'profile/info'
+	 *   baseDelURL: 'profile/info/del'
+	 * }
+	 * ```
 	 */
 	baseDelURL: string = '';
 
