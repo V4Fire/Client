@@ -48,7 +48,7 @@ export const
 
 export default abstract class Provider {
 	/**
-	 * The transport function for a request.
+	 * Transport function for a request.
 	 * Basically, you can use an overload of the request API for flexibly extending.
 	 *
 	 *
@@ -71,7 +71,7 @@ export default abstract class Provider {
 	static readonly request: typeof request = request;
 
 	/**
-	 * A sequence of middlewares that is provided to the request function.
+	 * Sequence of middlewares that is provided to the request function.
 	 * An object form is easily for extending, bur you can choose any different form.
 	 *
 	 * @see [[Middlewares]]
@@ -217,6 +217,12 @@ export default abstract class Provider {
 	mocks?: Mocks;
 
 	/**
+	 * Temporary request method.
+	 * If specified, the first invocation of any request method will use this method.
+	 */
+	tmpMethod: CanUndef<RequestMethod>;
+
+	/**
 	 * HTTP method that is used for the "get" method
 	 */
 	getMethod: RequestMethod = 'GET';
@@ -325,42 +331,58 @@ export default abstract class Provider {
 	baseDelURL: string = '';
 
 	/**
-	 * Advanced URL for requests
-	 */
-	advURL: string = '';
-
-	/**
-	 * Temporary URL for requests
+	 * Temporary part of URL for a request.
+	 * If specified, it replaces the base URL,
+	 * but it will be dropped after the first usage of any request method.
 	 */
 	tmpURL: string = '';
 
 	/**
-	 * Socket connection url
+	 * Advanced part of URL for a request
+	 * (it is concatenated with the base part)
+	 */
+	advURL: string = '';
+
+	/**
+	 * URL for a socket connection
 	 */
 	socketURL?: string;
 
 	/**
-	 * Temporary model event name for requests
+	 * Temporary event name of a request.
+	 * All request methods except "get", "peek" and "request" emit events by default.
+	 * But if you set this parameter, the first invocation of any request method will emit this event.
 	 */
 	tmpEventName: CanUndef<ModelMethod>;
 
 	/**
-	 * Temporary request method
-	 */
-	tmpMethod: CanUndef<RequestMethod>;
-
-	/**
-	 * Cache id
+	 * Cache identifier
 	 */
 	readonly cacheId!: string;
 
-	/**
-	 * External request mode
-	 */
+	/** @see [[CreateRequestOptions.externalRequest]] */
 	readonly externalRequest: boolean = false;
 
 	/**
-	 * List of additional data providers for the a get request
+	 * List of additional data providers for the a get request.
+	 * It can be useful if you have some providers that you want combine to one.
+	 *
+	 * @example
+	 * ```
+	 * class User extends Provider {
+	 *   baseURL: 'user/info',
+	 *
+	 *   extraProviders: {
+	 *     balance: {
+	 *       provider: 'UserBalance'
+	 *     },
+	 *
+	 *     hobby: {
+	 *       provider: 'UserHobby'
+	 *     },
+	 *   }
+	 * }
+	 * ```
 	 */
 	readonly extraProviders?: FunctionalExtraProviders;
 
