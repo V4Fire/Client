@@ -373,6 +373,7 @@ export default class bBottomSlide extends iBlock implements iLockPageScroll, iOp
 	 * @param [step]
 	 * @emits open()
 	 */
+	@wait('ready')
 	async open(step?: number): Promise<boolean> {
 		if (step !== undefined && step > this.stepsInPixels.length - 1) {
 			return false;
