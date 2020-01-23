@@ -457,7 +457,9 @@ export default class bForm extends iData {
 						v = (<Function[]>[]).concat(el.formConverter).reduce((res, fn) => fn.call(this, res), v);
 					}
 
-					result[name] = v;
+					if (v !== undefined) {
+						result[name] = v;
+					}
 				})());
 			}
 
