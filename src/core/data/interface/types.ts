@@ -65,18 +65,16 @@ export type ModelMethod =
 
 export interface DataEvent {
 	event: string;
-	data: SocketEvent;
+	data: EventData;
 }
 
-export type SocketEvent<T = unknown> = (() => Dictionary<T>) | {
-	type: string;
-	instance: string;
+export interface EventDataObject<T = unknown> extends Dictionary {
 	data: Dictionary<T>;
-};
-
-export interface SocketCb {
-	(socket: Socket): any;
 }
+
+export type EventData<T = unknown> =
+	(() => Dictionary<T>) |
+	EventDataObject<T>;
 
 export interface ProviderOptions {
 	extraProviders?: FunctionalExtraProviders;

@@ -13,8 +13,8 @@ import { EventEmitter2 as EventEmitter } from 'eventemitter2';
 import { concatUrls } from 'core/url';
 
 import Then from 'core/then';
-import Async, { AsyncCbOptions } from 'core/async';
-import { Socket } from 'core/socket';
+import Async from 'core/async';
+import IO, { Socket } from 'core/socket';
 
 import {
 
@@ -31,7 +31,7 @@ import {
 
 } from 'core/request';
 
-import { providers, requestCache, queryMethods, instanceCache, namespace } from 'core/data/const';
+import { providers, requestCache, queryMethods, instanceCache, namespace, connectCache } from 'core/data/const';
 import ParamsProvider from 'core/data/modules/params';
 
 import iProvider, {
@@ -39,8 +39,7 @@ import iProvider, {
 	ProviderOptions,
 	ModelMethod,
 	DataEvent,
-	SocketEvent,
-	SocketCb
+	EventData
 
 } from 'core/data/interface';
 
@@ -146,14 +145,7 @@ export default abstract class Provider extends ParamsProvider implements iProvid
 				c = this.connect();
 
 			if (c) {
-				c.then(
-					() => {
-						this.listenSocketEvents();
-						this.providers.length && this.bindEvents(...this.providers);
-					},
-
-					stderr
-				);
+				c.then(this.initSocketBehaviour.bind(this), stderr);
 			}
 		}
 
@@ -183,30 +175,39 @@ export default abstract class Provider extends ParamsProvider implements iProvid
 
 	/**
 	 * Connects to a socket server and returns connection
-	 *
 	 * @param [opts] - additional options for the server
-	 * @emits `${socketURL}Connect(socket:` [[Socket]]`)`
-	 * @emits `${socketURL}Reject(err: Error)`
 	 */
-	abstract async connect(opts?: object): Promise<Socket | void>;
+	async connect(opts?: Dictionary): Promise<Socket | void> {
+		await this.async.wait(() => this.socketURL);
 
-	/**
-	 * Executes the specified callback with a socket connection
-	 *
-	 * @see [[Async.prototype.on]]
-	 * @param cb
-	 * @param [opts] - options for the operation
-	 */
-	attachToSocket(cb: SocketCb, opts?: AsyncCbOptions<this>): void {
-		this.async.on(this.globalEmitter, `${this.socketURL}Connect`, cb, opts);
-		this.connection?.then(cb);
+		const
+			{socketURL: url} = this,
+			key = JSON.stringify(opts);
+
+		if (!connectCache[key]) {
+			connectCache[key] = new Promise((resolve, reject) => {
+				const
+					socket = IO(url);
+
+				if (!socket) {
+					return;
+				}
+
+				function onClear(err: unknown): void {
+					reject(err);
+					delete connectCache[key];
+				}
+
+				this.async.worker(socket, {
+					label: $$.connect,
+					join: true,
+					onClear
+				});
+
+				socket.once('connect', () => resolve(socket));
+			});
+		}
 	}
-
-	/**
-	 * Binds events to the provider from another
-	 * @param providers - provider names
-	 */
-	abstract bindEvents(...providers: string[]): void;
 
 	/** @inheritDoc */
 	name(): CanUndef<ModelMethod>;
@@ -505,7 +506,7 @@ export default abstract class Provider extends ParamsProvider implements iProvid
 	 *
 	 * @emits `drain()`
 	 */
-	protected setEventToQueue(key: string, event: string, data: SocketEvent): void {
+	protected setEventToQueue(key: string, event: string, data: EventData): void {
 		const {
 			async: $a,
 			event: $e,
@@ -626,7 +627,9 @@ export default abstract class Provider extends ParamsProvider implements iProvid
 	}
 
 	/**
-	 * Attaches event listeners to a socket connection of the provider
+	 * Initializes socket behaviour after successful connecting
 	 */
-	protected abstract listenSocketEvents(): void;
+	protected async initSocketBehaviour(): Promise<void> {
+		return undefined;
+	}
 }

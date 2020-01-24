@@ -371,21 +371,6 @@ export default abstract class Provider {
 	readonly externalRequest: boolean = false;
 
 	/**
-	 * List of socket events to listen
-	 */
-	readonly events: string[] = ['add', 'upd', 'del', 'refresh'];
-
-	/**
-	 * List of additional providers to listen
-	 */
-	readonly providers: string[] = [];
-
-	/**
-	 * If true, then the provider is listen all events from all providers
-	 */
-	readonly listenAllEvents: boolean = false;
-
-	/**
 	 * @deprecated
 	 * @see [[Provider.prototype.globalEmitter]]
 	 */
