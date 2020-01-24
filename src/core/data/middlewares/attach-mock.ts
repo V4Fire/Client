@@ -29,8 +29,8 @@ const setConfig = (opts) => {
 };
 
 const optionsInitializer = env.get('mock').then(setConfig, setConfig);
-env.event.on('set.mock', setConfig);
-env.event.on('remove.mock', setConfig);
+env.emitter.on('set.mock', setConfig);
+env.emitter.on('remove.mock', setConfig);
 
 /**
  * Middleware: attaches mock data from .mocks
@@ -45,14 +45,15 @@ export async function attachMock(this: Provider, params: MiddlewareParams): Prom
 		{opts, ctx} = params;
 
 	const
+		mocksDecl = (<typeof Provider>this.constructor).mocks || this.mocks,
 		id = opts.cacheId;
 
-	if (!this.mocks || !Object.isString(id) || mockOpts.patterns.every((rgxp) => !rgxp.test(id))) {
+	if (!mocksDecl || !Object.isString(id) || mockOpts.patterns.every((rgxp) => !rgxp.test(id))) {
 		return;
 	}
 
 	let
-		mocks = await this.mocks;
+		mocks = await mocksDecl;
 
 	if (!mocks) {
 		return;

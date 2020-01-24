@@ -6,6 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import { Socket } from 'core/socket';
 import {
 
 	Encoders,
@@ -18,7 +19,7 @@ import {
 	MiddlewareParams,
 
 	ResponseType,
-	ResponseTypeValue
+	ResponseTypeValue, GlobalOptions
 
 } from 'core/request/interface';
 
@@ -62,17 +63,31 @@ export type ModelMethod =
 	'upd' |
 	'del';
 
+export interface DataEvent {
+	event: string;
+	data: SocketEvent;
+}
+
 export type SocketEvent<T = unknown> = (() => Dictionary<T>) | {
 	type: string;
 	instance: string;
 	data: Dictionary<T>;
 };
 
+export interface SocketCb {
+	(socket: Socket): any;
+}
+
 export interface ProviderOptions {
 	extraProviders?: FunctionalExtraProviders;
 	listenAllEvents?: boolean;
 	externalRequest?: boolean;
 	socket?: boolean;
+}
+
+export interface ExtraProviderParams<T = unknown> {
+	opts: CreateRequestOptions<T>;
+	globalOpts: GlobalOptions;
 }
 
 export interface ExtraProvider {
@@ -84,7 +99,7 @@ export interface ExtraProvider {
 }
 
 export type ExtraProviders = Dictionary<Nullable<ExtraProvider>>;
-export type FunctionalExtraProviders = ExtraProviders | (() => CanUndef<ExtraProviders>);
+export type FunctionalExtraProviders = ExtraProviders | ((params: ExtraProviderParams) => CanUndef<ExtraProviders>);
 
 export type EncodersMap = Record<ModelMethod | 'def', Encoders> | {};
 export type DecodersMap = Record<ModelMethod | 'def', Decoders> | {};

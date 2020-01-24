@@ -13,6 +13,7 @@ import { RequestResponseObject } from 'core/request';
 import { EventEmitter2 as EventEmitter } from 'eventemitter2';
 
 export const
+	namespace = Symbol('Provider namespace'),
 	providers = Object.createDict();
 
 /**
@@ -28,3 +29,8 @@ export const
 	instanceCache: Dictionary<Provider> = Object.createDict(),
 	requestCache: Dictionary<Dictionary<RequestResponseObject>> = Object.createDict(),
 	connectCache: Dictionary<Promise<Socket>> = Object.createDict();
+
+export const queryMethods = Object.createDict({
+	GET: true,
+	HEAD: true
+});
