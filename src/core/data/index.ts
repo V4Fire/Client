@@ -13,7 +13,7 @@
 
 //#set runtime.core/data
 
-import iProvider from 'core/data/modules/base';
+import DefaultProvider from 'core/data/modules/base';
 
 import { provider } from 'core/data/decorators';
 import { attachMock } from 'core/data/middlewares';
@@ -53,7 +53,7 @@ export {
  * Default data provider
  */
 @provider
-export default class Provider extends iProvider {
+export default class Provider extends DefaultProvider {
 	/** @override */
 	static readonly middlewares: Middlewares = {
 		attachMock
