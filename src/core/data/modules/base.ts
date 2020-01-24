@@ -31,18 +31,10 @@ import {
 
 } from 'core/request';
 
+import iProvider, { ProviderOptions, ModelMethod, DataEvent, EventData } from 'core/data/interface';
 import { providers, requestCache, queryMethods, instanceCache, namespace, connectCache } from 'core/data/const';
+
 import ParamsProvider from 'core/data/modules/params';
-
-import iProvider, {
-
-	ProviderOptions,
-	ModelMethod,
-	DataEvent,
-	EventData
-
-} from 'core/data/interface';
-
 export * from 'core/data/modules/params';
 
 export const
