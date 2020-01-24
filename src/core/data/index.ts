@@ -20,10 +20,9 @@ import { attachMock } from 'core/data/middlewares';
 import { Middlewares } from 'core/request';
 
 export * from 'core/data/const';
-export * from 'core/data/const';
 export * from 'core/data/decorators';
-export * from 'core/data/interface';
 export * from 'core/data/middlewares';
+export * from 'core/data/interface';
 
 export { Socket } from 'core/socket';
 
