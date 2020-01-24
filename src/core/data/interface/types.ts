@@ -6,7 +6,6 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { Socket } from 'core/socket';
 import {
 
 	Encoders,
