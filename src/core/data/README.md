@@ -684,3 +684,18 @@ export default class User extends Provider {
   baseURL = 'user/:id';
 }
 ```
+
+#### Enabling data mocks for a provider
+
+By default all data mocks is disabled, but you can enable it just type to a console of a browser:
+
+```js
+// Enables mocks for the User provider
+setEnv('mock', {patterns: ['User']})
+
+// Enables mocks for all providers
+setEnv('mock', {patterns: ['.*']})
+```
+
+The values of patterns is converted to RegExp objects and applies to provider names (including namespaces).
+Config setting will be stored within a browser local storage.
