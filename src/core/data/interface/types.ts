@@ -76,8 +76,47 @@ export type EventData<T = unknown> =
 	EventDataObject<T>;
 
 export interface ProviderOptions {
+	/**
+	 * List of additional data providers for the "get" method.
+	 * It can be useful if you have some providers that you want combine to one.
+	 *
+	 * @example
+	 * ```js
+	 * class User extends Provider {
+	 *   baseURL: 'user/info',
+	 *
+	 *   extraProviders: {
+	 *     balance: {
+	 *       provider: 'UserBalance'
+	 *     },
+	 *
+	 *     hobby: {
+	 *       provider: 'UserHobby'
+	 *     },
+	 *   }
+	 * }
+	 * ```
+	 */
 	extraProviders?: FunctionalExtraProviders;
+
+	/**
+	 * If true, then all emitting events, which is emitted by the provider,
+	 * that have a similar hash wil be collapsed to one
+	 *
+	 * @default `false`
+	 */
+	collapseEvents?: boolean;
+
+	/**
+	 * @see [[CreateRequestOptions.externalRequest]]
+	 * @default `false`
+	 */
 	externalRequest?: boolean;
+
+	/**
+	 * If true, then the provider is connected to a socket server
+	 * @default `false`
+	 */
 	socket?: boolean;
 }
 

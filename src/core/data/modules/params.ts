@@ -362,6 +362,12 @@ export default abstract class Provider {
 	readonly externalRequest: boolean = false;
 
 	/**
+	 * If true, then all emitting events, which is emitted by the provider,
+	 * that have a similar hash wil be collapsed to one
+	 */
+	readonly collapseEvents: boolean = false;
+
+	/**
 	 * @deprecated
 	 * @see [[Provider.prototype.globalEmitter]]
 	 */

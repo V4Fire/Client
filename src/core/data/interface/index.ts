@@ -83,7 +83,7 @@ export default interface Provider {
 	url(): string;
 
 	/**
-	 * Sets an advanced URL part for any request (it is concatenated with the base part of URL).
+	 * Sets an extra URL part for any request (it is concatenated with the base part of URL).
 	 * This method returns a new provider object with context.
 	 *
 	 * @param [value]

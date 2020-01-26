@@ -63,7 +63,7 @@ export default abstract class Provider extends ParamsProvider implements iProvid
 	/**
 	 * Map of data events
 	 */
-	protected readonly eventMap!: Map<string, DataEvent>;
+	protected readonly eventMap!: Map<unknown, DataEvent>;
 
 	/**
 	 * API for async operations
@@ -120,12 +120,16 @@ export default abstract class Provider extends ParamsProvider implements iProvid
 		requestCache[id] =
 			Object.createDict();
 
+		if (extra) {
+			this.setReadonlyParam('extraProviders', extra);
+		}
+
 		if (Object.isBoolean(opts.externalRequest)) {
 			this.setReadonlyParam('externalRequest', opts.externalRequest);
 		}
 
-		if (extra) {
-			this.setReadonlyParam('extraProviders', extra);
+		if (Object.isBoolean(opts.collapseEvents)) {
+			this.setReadonlyParam('collapseEvents', opts.collapseEvents);
 		}
 
 		if (opts.socket || this.socketURL) {
@@ -486,8 +490,12 @@ export default abstract class Provider extends ParamsProvider implements iProvid
 	 * @param event - event name
 	 * @param data - event data
 	 */
-	protected getEventKey(event: string, data: Dictionary): string {
-		return `${event}::${Object.fastHash(data)}`;
+	protected getEventKey(event: string, data: unknown): unknown {
+		if (Object.isArray(data) || Object.isDictionary(data)) {
+			return `${event}::${Object.fastHash(data)}`;
+		}
+
+		return {};
 	}
 
 	/**
@@ -499,7 +507,7 @@ export default abstract class Provider extends ParamsProvider implements iProvid
 	 *
 	 * @emits `drain()`
 	 */
-	protected setEventToQueue(key: string, event: string, data: EventData): void {
+	protected setEventToQueue(key: unknown, event: string, data: EventData): void {
 		const {
 			async: $a,
 			event: $e,
@@ -612,7 +620,12 @@ export default abstract class Provider extends ParamsProvider implements iProvid
 					cache[res.cacheKey] = res;
 				}
 
-				this.setEventToQueue(this.getEventKey(e, res.data), e, () => res.data);
+				if (this.collapseEvents) {
+					this.setEventToQueue(this.getEventKey(e, res.data), e, () => res.data);
+
+				} else {
+					this.emitter.emit(e, () => res.data);
+				}
 			});
 		}
 
