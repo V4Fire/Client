@@ -228,6 +228,21 @@ export default abstract class Provider extends ParamsProvider implements iProvid
 	}
 
 	/** @inheritDoc */
+	base(): string;
+
+	/** @inheritDoc */
+	base(value: string): Provider;
+	base(value?: string): string | Provider {
+		if (value == null) {
+			return this.baseURL;
+		}
+
+		const obj = Object.create(this);
+		obj.baseURL = value;
+		return obj;
+	}
+
+	/** @inheritDoc */
 	url(): string;
 
 	/** @inheritDoc */
@@ -239,23 +254,6 @@ export default abstract class Provider extends ParamsProvider implements iProvid
 
 		const obj = Object.create(this);
 		obj.advURL = value;
-		return obj;
-	}
-
-	/** @inheritDoc */
-	base(): string;
-
-	/** @inheritDoc */
-	base(value: string): Provider;
-
-	/** @inheritDoc */
-	base(value?: string): string | Provider {
-		if (value == null) {
-			return this.baseURL;
-		}
-
-		const obj = Object.create(this);
-		obj.baseURL = value;
 		return obj;
 	}
 

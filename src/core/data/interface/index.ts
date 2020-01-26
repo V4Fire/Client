@@ -65,19 +65,6 @@ export default interface Provider {
 	method(value: RequestMethod): Provider;
 
 	/**
-	 * Returns a full URL of any request
-	 */
-	url(): string;
-
-	/**
-	 * Sets an advanced URL part for any request (it is concatenated with the base part of URL).
-	 * This method returns a new provider object with context.
-	 *
-	 * @param [value]
-	 */
-	url(value: string): Provider;
-
-	/**
 	 * Returns a base part of URL of any request
 	 */
 	base(): string;
@@ -89,6 +76,19 @@ export default interface Provider {
 	 * @param [value]
 	 */
 	base(value: string): Provider;
+
+	/**
+	 * Returns a full URL of any request
+	 */
+	url(): string;
+
+	/**
+	 * Sets an advanced URL part for any request (it is concatenated with the base part of URL).
+	 * This method returns a new provider object with context.
+	 *
+	 * @param [value]
+	 */
+	url(value: string): Provider;
 
 	/**
 	 * Drops the cache of requests for this provider
