@@ -23,7 +23,12 @@ export interface SlideRect extends ClientRect {
  * 1  - Next
  */
 export type SlideDirection = -1 | 0 | 1;
-export type OptionProps = ((el: unknown, i: number, key?: string) => Dictionary) | Dictionary;
+export interface OptionPropParams {
+	key?: string;
+	ctx: bSlider;
+}
+
+export type OptionProps = ((el: unknown, i: number, params: OptionPropParams) => Dictionary) | Dictionary;
 export type OptionsIterator<T = bSlider> = (options: unknown[], ctx: T) => unknown[];
 
 export const
