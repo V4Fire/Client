@@ -72,4 +72,4 @@ export function wrapAsDelegateHandler(selector: string, handler?: Function): Fun
  * @deprecated
  * @see [[wrapAsDelegateHandler]]
  */
-export const delegate = deprecate({renamedTo: 'wrapAsDelegateHandler'}, wrapAsDelegateHandler);
+export const delegate = deprecate({name: 'delegate', renamedTo: 'wrapAsDelegateHandler'}, wrapAsDelegateHandler);
