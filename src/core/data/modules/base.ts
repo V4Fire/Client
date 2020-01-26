@@ -120,10 +120,6 @@ export default abstract class Provider extends ParamsProvider implements iProvid
 		requestCache[id] =
 			Object.createDict();
 
-		if (Object.isBoolean(opts.listenAllEvents)) {
-			this.setReadonlyParam('listenAllEvents', opts.listenAllEvents);
-		}
-
 		if (Object.isBoolean(opts.externalRequest)) {
 			this.setReadonlyParam('externalRequest', opts.externalRequest);
 		}

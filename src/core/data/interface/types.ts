@@ -77,7 +77,6 @@ export type EventData<T = unknown> =
 
 export interface ProviderOptions {
 	extraProviders?: FunctionalExtraProviders;
-	listenAllEvents?: boolean;
 	externalRequest?: boolean;
 	socket?: boolean;
 }
