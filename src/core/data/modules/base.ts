@@ -202,15 +202,14 @@ export default abstract class Provider extends ParamsProvider implements iProvid
 
 	/** @inheritDoc */
 	name(value: ModelMethod): Provider;
-	name(value?: ModelMethod): CanUndef<Provider | ModelMethod> {
+	name(value?: ModelMethod): CanUndef<ModelMethod | Provider> {
 		if (value == null) {
-			const val = this.tmpEventName;
-			this.tmpEventName = undefined;
-			return val;
+			return this.eventName;
 		}
 
-		this.tmpEventName = value;
-		return this;
+		const obj = Object.create(this);
+		obj.eventName = value;
+		return obj;
 	}
 
 	/** @inheritDoc */
@@ -218,15 +217,14 @@ export default abstract class Provider extends ParamsProvider implements iProvid
 
 	//** @inheritDoc */
 	method(value: RequestMethod): Provider;
-	method(value?: RequestMethod): CanUndef<Provider | RequestMethod> {
+	method(value?: RequestMethod): CanUndef<RequestMethod | Provider> {
 		if (value == null) {
-			const val = this.tmpMethod;
-			this.tmpMethod = undefined;
-			return val;
+			return this.customMethod;
 		}
 
-		this.tmpMethod = value;
-		return this;
+		const obj = Object.create(this);
+		obj.customMethod = value;
+		return obj;
 	}
 
 	/** @inheritDoc */
@@ -234,22 +232,31 @@ export default abstract class Provider extends ParamsProvider implements iProvid
 
 	/** @inheritDoc */
 	url(value: string): Provider;
-	url(value?: string): Provider | string {
+	url(value?: string): string | Provider {
 		if (value == null) {
-			const tmp = concatUrls(this.tmpURL || this.baseURL, this.advURL);
-			this.advURL = '';
-			this.tmpURL = '';
-			return tmp;
+			return concatUrls(this.baseURL, this.advURL);
 		}
 
-		this.advURL = value;
-		return this;
+		const obj = Object.create(this);
+		obj.advURL = value;
+		return obj;
 	}
 
 	/** @inheritDoc */
-	base(value: string): Provider {
-		this.tmpURL = value;
-		return this;
+	base(): string;
+
+	/** @inheritDoc */
+	base(value: string): Provider;
+
+	/** @inheritDoc */
+	base(value?: string): string | Provider {
+		if (value == null) {
+			return this.baseURL;
+		}
+
+		const obj = Object.create(this);
+		obj.baseURL = value;
+		return obj;
 	}
 
 	/** @inheritDoc */

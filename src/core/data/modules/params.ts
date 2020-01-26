@@ -200,8 +200,7 @@ export default abstract class Provider {
 	readonly globalEmitter: EventEmitter = emitter;
 
 	/**
-	 * Base part of URL for a request for all request methods
-	 * (if custom methods is not specified)
+	 * Base part of URL for a request of all request methods
 	 *
 	 * @example
 	 * ```js
@@ -213,7 +212,88 @@ export default abstract class Provider {
 	baseURL: string = '';
 
 	/**
-	 * List of additional data providers for a get request.
+	 * Advanced part of URL for a request of all request methods
+	 * (it is concatenated with the base part)
+	 */
+	advURL: string = '';
+
+	/**
+	 * URL for a socket connection
+	 */
+	socketURL?: string;
+
+	/**
+	 * Base part of URL for a request for the "get" method
+	 *
+	 * @example
+	 * ```js
+	 * class Profile extends Provider {
+	 *   // For all request methods despite the "get" is used this URL
+	 *   baseURL: 'profile/info'
+	 *   baseGetURL: 'profile/info/get'
+	 * }
+	 * ```
+	 */
+	baseGetURL: string = '';
+
+	/**
+	 * Base part of URL for a request for the "peek" method
+	 *
+	 * @example
+	 * ```js
+	 * class Profile extends Provider {
+	 *   // For all request methods despite the "peek" is used this URL
+	 *   baseURL: 'profile/info'
+	 *   basePeekURL: 'profile/info/peek'
+	 * }
+	 * ```
+	 */
+	basePeekURL: string = '';
+
+	/**
+	 * Base part of URL for a request for the "add" method
+	 *
+	 * @example
+	 * ```js
+	 * class Profile extends Provider {
+	 *   // baseURL request methods despite the "add" is used this URL
+	 *   basePeekURL: 'profile/info'
+	 *   baseAddURL: 'profile/info/add'
+	 * }
+	 * ```
+	 */
+	baseAddURL: string = '';
+
+	/**
+	 * Base part of URL for a request for the "upd" method
+	 *
+	 * @example
+	 * ```js
+	 * class Profile extends Provider {
+	 *   // baseURL request methods despite the "upd" is used this URL
+	 *   basePeekURL: 'profile/info'
+	 *   baseUpdURL: 'profile/info/upd'
+	 * }
+	 * ```
+	 */
+	baseUpdURL: string = '';
+
+	/**
+	 * Base part of URL for a request for the "del" method
+	 *
+	 * @example
+	 * ```js
+	 * class Profile extends Provider {
+	 *   // baseURL request methods despite the "del" is used this URL
+	 *   basePeekURL: 'profile/info'
+	 *   baseDelURL: 'profile/info/del'
+	 * }
+	 * ```
+	 */
+	baseDelURL: string = '';
+
+	/**
+	 * List of additional data providers for the "get" method.
 	 * It can be useful if you have some providers that you want combine to one.
 	 *
 	 * @example
@@ -236,130 +316,41 @@ export default abstract class Provider {
 	extraProviders?: FunctionalExtraProviders;
 
 	/**
-	 * HTTP method that is used for the "get" method
+	 * Default HTTP request method for the "get" method
 	 */
 	getMethod: RequestMethod = 'GET';
 
 	/**
-	 * HTTP method that is used for the "peek" method
+	 * Default HTTP request method for the "peek" method
 	 */
 	peekMethod: RequestMethod = 'HEAD';
 
 	/**
-	 * HTTP method that is used for the "add" method
+	 * Default HTTP request method for the "add" method
 	 */
 	addMethod: RequestMethod = 'POST';
 
 	/**
-	 * HTTP method that is used for the "upd" method
+	 * Default HTTP request method for the "upd" method
 	 */
 	updMethod: RequestMethod = 'PUT';
 
 	/**
-	 * HTTP method that is used for the "del" method
+	 * Default HTTP request method for the "del" method
 	 */
 	delMethod: RequestMethod = 'DELETE';
 
 	/**
-	 * Temporary request method.
-	 * If it is specified, the first invocation of any request method will use this method.
+	 * HTTP request method for all request methods.
+	 * This parameter will override other method parameters, such as "getMethod" or "delMethod".
 	 */
-	tmpMethod: CanUndef<RequestMethod>;
+	customMethod: CanUndef<RequestMethod>;
 
 	/**
-	 * Base part of URL for a request using the "get" method
-	 *
-	 * @example
-	 * ```js
-	 * class Profile extends Provider {
-	 *   // For all request methods despite the "get" is used this URL
-	 *   baseURL: 'profile/info'
-	 *   baseGetURL: 'profile/info/get'
-	 * }
-	 * ```
+	 * Event name for requests.
+	 * Please notice that all request methods except "get", "peek" and "request" emit events by default.
 	 */
-	baseGetURL: string = '';
-
-	/**
-	 * Base part of URL for a request using the "peek" method
-	 *
-	 * @example
-	 * ```js
-	 * class Profile extends Provider {
-	 *   // For all request methods despite the "peek" is used this URL
-	 *   baseURL: 'profile/info'
-	 *   basePeekURL: 'profile/info/peek'
-	 * }
-	 * ```
-	 */
-	basePeekURL: string = '';
-
-	/**
-	 * Base part of URL for a request using the "add" method
-	 *
-	 * @example
-	 * ```js
-	 * class Profile extends Provider {
-	 *   // baseURL request methods despite the "add" is used this URL
-	 *   basePeekURL: 'profile/info'
-	 *   baseAddURL: 'profile/info/add'
-	 * }
-	 * ```
-	 */
-	baseAddURL: string = '';
-
-	/**
-	 * Base part of URL for a request using the "upd" method
-	 *
-	 * @example
-	 * ```js
-	 * class Profile extends Provider {
-	 *   // baseURL request methods despite the "upd" is used this URL
-	 *   basePeekURL: 'profile/info'
-	 *   baseUpdURL: 'profile/info/upd'
-	 * }
-	 * ```
-	 */
-	baseUpdURL: string = '';
-
-	/**
-	 * Base part of URL for a request using the "del" method
-	 *
-	 * @example
-	 * ```js
-	 * class Profile extends Provider {
-	 *   // baseURL request methods despite the "del" is used this URL
-	 *   basePeekURL: 'profile/info'
-	 *   baseDelURL: 'profile/info/del'
-	 * }
-	 * ```
-	 */
-	baseDelURL: string = '';
-
-	/**
-	 * Temporary part of URL for a request.
-	 * If specified, it replaces the base URL,
-	 * but it will be dropped after the first usage of any request method.
-	 */
-	tmpURL: string = '';
-
-	/**
-	 * Advanced part of URL for a request
-	 * (it is concatenated with the base part)
-	 */
-	advURL: string = '';
-
-	/**
-	 * URL for a socket connection
-	 */
-	socketURL?: string;
-
-	/**
-	 * Temporary event name of a request.
-	 * All request methods except "get", "peek" and "request" emit events by default.
-	 * But if you set this parameter, the first invocation of any request method will emit this event.
-	 */
-	tmpEventName: CanUndef<ModelMethod>;
+	eventName: CanUndef<ModelMethod>;
 
 	/**
 	 * @deprecated

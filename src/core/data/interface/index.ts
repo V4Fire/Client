@@ -11,7 +11,7 @@
  * @packageDocumentation
  */
 
-import { EventEmitter2 as EventEmitter } from 'eventemitter2';
+import { EventEmitterLike } from 'core/async';
 import { CreateRequestOptions, RequestQuery, RequestMethod, RequestResponse, RequestBody } from 'core/request';
 import { ModelMethod } from 'core/data/interface';
 export * from 'core/data/interface/types';
@@ -21,64 +21,70 @@ export * from 'core/data/interface/types';
  */
 export default interface Provider {
 	/**
-	 * Name of the provider
+	 * Full name of the provider including a namespace
 	 */
 	readonly providerName: string;
 
 	/**
 	 * Event emitter for broadcasting provider events
 	 */
-	readonly emitter: EventEmitter;
+	readonly emitter: EventEmitterLike;
 
 	/**
 	 * @deprecated
 	 * @see [[Provider.prototype.emitter]]
 	 */
-	readonly event: EventEmitter
+	readonly event: EventEmitterLike
 
 	/**
-	 * Releases a custom event name for a request and returns it
+	 * Returns a custom logical name of any request.
+	 * If a request have the name, then it will fires an event with the same name after successful receiving.
 	 */
 	name(): CanUndef<ModelMethod>;
 
 	/**
-	 * Sets a custom event name for a request.
-	 * It fires after the first request operation, but only once.
+	 * Sets a custom logical name for any request.
+	 * If a request have the name, then it will fires an event with the same name after successful receiving.
+	 * This method returns a new provider object with context.
 	 *
 	 * @param [value]
 	 */
 	name(value: ModelMethod): Provider;
 
 	/**
-	 * Releases a custom request method for a request and returns it
+	 * Returns a custom HTTP request method of any request
 	 */
 	method(): CanUndef<RequestMethod>;
 
 	/**
-	 * Sets a custom request method for a request.
-	 * It is used with the first request operation, but only once.
+	 * Sets a custom HTTP request method for any request.
+	 * This method returns a new provider object with context.
 	 *
 	 * @param [value]
 	 */
 	method(value: RequestMethod): Provider;
 
 	/**
-	 * Releases full URL for request and returns it:
-	 * all temporary and advanced URL parts will be dropped
+	 * Returns a full URL of any request
 	 */
 	url(): string;
 
 	/**
-	 * Sets an advanced URL part for a request.
-	 * It is concatenated with a base part of URL, but after the first request it will be dropped.
+	 * Sets an advanced URL part for any request (it is concatenated with the base part of URL).
+	 * This method returns a new provider object with context.
 	 *
 	 * @param [value]
 	 */
 	url(value: string): Provider;
 
 	/**
-	 * Sets a temporary base part of URL for a request.
-	 * It replaces the original base URL, but only for a one request.
+	 * Returns a base part of URL of any request
+	 */
+	base(): string;
+
+	/**
+	 * Sets a base part of URL for any request.
+	 * This method returns a new provider object with context.
 	 *
 	 * @param [value]
 	 */
