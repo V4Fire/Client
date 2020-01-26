@@ -428,7 +428,7 @@ export function createComponent<T>(
 			val = renderCtx[key];
 
 		if (val) {
-			if (Object.isObject(el)) {
+			if (Object.isPlainObject(el)) {
 				// tslint:disable-next-line:prefer-object-spread
 				renderCtx[key] = Object.assign(el, val);
 			}

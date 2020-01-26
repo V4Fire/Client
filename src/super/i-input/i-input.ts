@@ -523,8 +523,8 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 			return msg(err) || defMsg;
 		}
 
-		if (Object.isObject(msg)) {
-			return Object.isObject(err) && msg[err.name] || defMsg;
+		if (Object.isPlainObject(msg)) {
+			return Object.isPlainObject(err) && msg[err.name] || defMsg;
 		}
 
 		return msg || defMsg;
@@ -573,7 +573,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 		for (const el of this.validators) {
 			const
 				isArray = Object.isArray(el),
-				isObject = !isArray && Object.isObject(el),
+				isObject = !isArray && Object.isPlainObject(el),
 				key = <string>(isObject ? Object.keys(el)[0] : isArray ? el[0] : el),
 				validator = this.validatorsMap[key];
 

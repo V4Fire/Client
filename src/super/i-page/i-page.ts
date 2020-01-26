@@ -113,7 +113,7 @@ export default abstract class iPage extends iData implements iVisible {
 			}
 		};
 
-		if (p && Object.isObject(p)) {
+		if (p && Object.isPlainObject(p)) {
 			const
 				{x, y} = <ScrollOptions>p,
 				opts = <ScrollOptions>Object.reject(p, ['x', 'y']);
@@ -143,7 +143,7 @@ export default abstract class iPage extends iData implements iVisible {
 	 */
 	protected scrollToProxyFn(): ScrollToFn {
 		return this.async.proxy((x?: number | ScrollOptions, y?: number) => {
-			if (x && Object.isObject(x)) {
+			if (x && Object.isPlainObject(x)) {
 				this.scrollTo(<ScrollOptions>x);
 
 			} else {

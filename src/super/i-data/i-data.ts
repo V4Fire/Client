@@ -491,7 +491,7 @@ export default abstract class iData extends iBlock implements iProgress {
 
 		if (this.dbConverter) {
 			v = (<Function[]>[]).concat(this.dbConverter)
-				.reduce((res, fn) => fn.call(this, res), Object.isArray(v) || Object.isObject(v) ? v.valueOf() : v);
+				.reduce((res, fn) => fn.call(this, res), Object.isArray(v) || Object.isPlainObject(v) ? v.valueOf() : v);
 		}
 
 		const
@@ -518,7 +518,7 @@ export default abstract class iData extends iBlock implements iProgress {
 
 		if (this.componentConverter) {
 			v = (<Function[]>[]).concat(this.componentConverter)
-				.reduce((res, fn) => fn.call(this, res), Object.isArray(v) || Object.isObject(v) ? v.valueOf() : v);
+				.reduce((res, fn) => fn.call(this, res), Object.isArray(v) || Object.isPlainObject(v) ? v.valueOf() : v);
 		}
 
 		return <O | this['DB']>v;
@@ -685,7 +685,7 @@ export default abstract class iData extends iBlock implements iProgress {
 			res = [p, {}];
 		}
 
-		if (Object.isObject(res[0]) && Object.isObject(customData)) {
+		if (Object.isPlainObject(res[0]) && Object.isPlainObject(customData)) {
 			res[0] = Object.mixin({
 				traits: true,
 				filter: (el) => isGet ? el != null : el !== undefined

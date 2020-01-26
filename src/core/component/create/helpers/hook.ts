@@ -7,8 +7,8 @@
  */
 
 import log from 'core/log';
+import SyncPromise from 'core/promise/sync';
 import HookEmitter from 'core/component/create/helpers/event';
-import { createSyncPromise } from 'core/event';
 import { Hook, ComponentInterface, ComponentMeta } from 'core/component/interface';
 
 /**
@@ -42,7 +42,7 @@ export function runHook(
 		hooks = meta.hooks[hook];
 
 	if (!hooks.length) {
-		return createSyncPromise();
+		return SyncPromise.resolve();
 	}
 
 	const
@@ -84,5 +84,5 @@ export function runHook(
 		return tasks;
 	}
 
-	return createSyncPromise();
+	return SyncPromise.resolve();
 }

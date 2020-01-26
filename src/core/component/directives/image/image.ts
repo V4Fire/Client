@@ -31,7 +31,7 @@ export default class ImageLoader {
 			opts = this.normalizeOptions(value);
 
 		const
-			srcset = Object.isObject(opts.srcset) ? getSrcSet(opts.srcset) : opts.srcset,
+			srcset = Object.isPlainObject(opts.srcset) ? getSrcSet(opts.srcset) : opts.srcset,
 			{src, load, error} = opts;
 
 		if (!src && !srcset) {

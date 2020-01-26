@@ -232,7 +232,7 @@ export function paramsFactory<T = unknown>(
 							const
 								el = o[i];
 
-							if (Object.isObject(el)) {
+							if (Object.isPlainObject(el)) {
 								watchers[String((<Dictionary>el).field)] = wrapOpts({...p.watchParams, ...el});
 
 							} else {
@@ -336,7 +336,7 @@ export function paramsFactory<T = unknown>(
 					const
 						val = o[i];
 
-					if (Object.isObject(val)) {
+					if (Object.isPlainObject(val)) {
 						watchers.set((<Dictionary>val).fn, wrapOpts({...val}));
 
 					} else {
