@@ -127,7 +127,16 @@ The "core/data" module provides a default interface for any data providers. If y
 
 ```ts
 import { EventEmitterLike } from 'core/async';
-import { CreateRequestOptions, RequestQuery, RequestMethod, RequestResponse, RequestBody } from 'core/request';
+import {
+
+  CreateRequestOptions,
+  RequestQuery,
+  RequestMethod,
+  RequestResponse,
+  RequestBody
+
+} from 'core/request';
+
 import { ModelMethod } from 'core/data/interface';
 export * from 'core/data/interface/types';
 
@@ -174,7 +183,7 @@ Much of these methods look familiar, but also we have some new method and proper
 myProvider.name('init').get('foo');
 ```
 
-Please notice that the default V4Fire implementation of a data provider by default sends events for "upd", "add", "del" requests.
+Please notice, that the default V4Fire implementation of a data provider by default sends events for "upd", "add", "del" requests.
 These events have the same name with a methods that produce it.
 
 3. `method` — a pair of get/set methods for providing a type of a HTTP request:
@@ -323,7 +332,20 @@ export default class User extends Provider {
 
 #### Middlewares
 
-You can specify a sequence of middlewares to the provider. For example, we need to append authorization headers for all requests.
+Middleware is a simple function that is invoked before each request and can modify some request parameters, like adding/removing HTTP headers, etc.
+The function takes a request environment:
+
+```ts
+{
+  ctx: RequestContext<T>;
+  opts: CreateRequestOptions<T>;
+  globalOpts: GlobalOptions;
+}
+```
+
+You can specify a sequence of middlewares to the provider, but notice that the order of middlewares depends of a structure that you use (hash is't preserve the order, but arrays/maps do it).
+
+For example, we need to add some authorization header for every request of the provider.
 
 ```js
 import Provider, { provider } from 'core/provider';
@@ -339,3 +361,28 @@ export default class User extends Provider {
   baseURL = 'user/:id';
 }
 ```
+
+Basically, a result of a middleware function is ignoring. The exceptions are promises and functions.
+If some middleware returns a promise, it will be awaited.
+And if at least one of middlewares returns a function, than the result of invoking this function will be returned as the request result.
+It can be helpful for organizing mocks of data and other similar cases when you don't want to execute a real request.
+
+```js
+import Provider, { provider, Response } from 'core/provider';
+
+@provider
+export default class User extends Provider {
+  static middlewares = {
+    attachMocks() {
+      return () => new Response({id: 1, name: 'Andrey'}, {
+        status: 200,
+        responseType: 'object'
+      });
+    }
+  };
+
+  baseURL = 'user/:id';
+}
+```
+
+#### Encoders
