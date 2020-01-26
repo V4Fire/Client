@@ -117,7 +117,7 @@ class User {
 }
 ```
 
-Still looks fine and useful, but if we want to create more classes for other data instances we need to create some kind of superclass for avoiding "copy-paste" of code lines. Also, the super class may improve our API with adding some extra functionality, such as support for socket events, middlewares, etc. And this is exactly what "core/data" module does.
+Still looks fine and useful, but if we want to create more classes for other data instances we need to create some kind of a superclass for avoiding "copy-paste" of code lines. Also, the super class may improve our API with adding some extra functionality, such as support for socket events, middlewares, etc. And this is exactly what "core/data" module does.
 
 ## Default interface
 
@@ -326,9 +326,15 @@ import Provider, { provider } from 'core/provider';
 export default class User extends Provider {
   baseURL = 'user/:id';
   baseAddURL = 'user/add';
-  baseDeLURL = 'user/add';
+  baseDeLURL = 'user/:id/del';
 }
 ```
+
+##### URL interpolation
+
+You can specify dynamically values within a URL string. For this case just add a variable with `:` character before the name.
+The values for interpolations is taken from a query object or a request body (if it represented as simple JS object).
+After interpolation all values that is used will be dropped from a source object.
 
 #### Middlewares
 
@@ -386,3 +392,219 @@ export default class User extends Provider {
 ```
 
 #### Encoders
+
+Encoder is a subtype of a middleware function, but unlike the simple middleware the encoder must returns a value and provides it
+to another encoder or a request, which it means that a sequence of encoders are tied with an order of following.
+Encoders is using for converting data to another format before submitting it to a request.
+For example, you server demands that all request data must be represented as a protobuf value.
+
+```js
+import Provider, { provider } from 'core/provider';
+
+@provider
+export default class User extends Provider {
+  static encoders = {
+    upd: [toProtobuf]
+  };
+
+  baseURL = 'user/:id';
+}
+```
+
+Be notice, that unlike of "middlewares" parameter the encoders is separated between a provider methods, which is mean
+that you should declare encoders for all you method pipelines.
+
+The encoder function has the signature:
+
+```ts
+export interface Encoder<I = unknown, O = unknown> {
+  (data: I, params: MiddlewareParams): O;
+}
+```
+
+Where:
+
+1. `data` is your data;
+2. `params` is an environment of your request.
+
+If some encoder returns a promise, it will be awaited.
+
+#### Decoders
+
+Decoder is another subtype of a middleware function, which is pretty similar to "encoder", but unlike the encoder,
+it converts data from a server to the provider format.
+
+The decoder function has the signature:
+
+```ts
+export interface Encoder<I = unknown, O = unknown> {
+  (data: I, params: MiddlewareParams, response: Response): O;
+}
+```
+
+The first to parameters are equal to the encoder function. The last parameter contains a link to a response object.
+
+```js
+import Provider, { provider } from 'core/provider';
+
+@provider
+export default class User extends Provider {
+  static decoders = {
+    get: [fromProtobuf]
+  };
+
+  baseURL = 'user/:id';
+}
+```
+
+If some encoder returns a promise, it will be awaited.
+
+#### Custom request function
+
+For creating a request all providers are used the `core/request` module. And if you need to provide some extra parameters of request, such as "contentType", you can specify a factory for making these requests using the special overload of the request function.
+
+```js
+import request from 'core/request';
+import Provider, { provider } from 'core/provider';
+
+@provider
+export default class User extends Provider {
+  static request = request({
+    contentType: 'json',
+    cacheStrategy: 'forever',
+    cacheTTL: (10).seconds()
+  });
+
+  baseURL = 'user/:id';
+}
+```
+
+#### Custom request function
+
+For creating a request all providers are used the `core/request` module. And if you need to provide some extra parameters of request, such as "contentType", you can specify a factory for making these requests using the special overload of the request function.
+
+```js
+import request from 'core/request';
+import Provider, { provider } from 'core/provider';
+
+@provider
+export default class User extends Provider {
+  static request = request({
+    contentType: 'json',
+    cacheStrategy: 'forever',
+    cacheTTL: (10).seconds()
+  });
+
+  baseURL = 'user/:id';
+}
+```
+
+#### Interpolation of headers
+
+Headers of a request also have support for interpolation from request data, like "baseURL" have.
+
+```js
+import request from 'core/request';
+import Provider, { provider } from 'core/provider';
+
+@provider
+export default class User extends Provider {
+  static request = request({
+    header: {
+      Accept: '${accept}'
+    }
+  });
+
+  baseURL = 'user/:id';
+}
+```
+
+##### Providing an API URL
+
+You can specify a base URL for your server. It can be useful if you have different URLs for development, staging and production.
+The API URL is concatenated with base URL of a provider.
+
+```js
+import Provider, { provider } from 'core/provider';
+
+@provider
+export default class User extends Provider {
+  static request = request({
+    api: {url: 'https://google.com'}
+  });
+
+  baseURL = 'user/:id';
+}
+```
+
+The value is also can be declared as a function, which is invoking on each request.
+
+```js
+import Provider, { provider } from 'core/provider';
+
+@provider
+export default class User extends Provider {
+  static request = request({
+    api: {url: () => USE_PROD ? 'https://google.com' : 'https://dev.google.com'}
+  });
+
+  baseURL = 'user/:id';
+}
+```
+
+And finally, if you specify the default API URL within `core/config/api`, you can provides some chunks of an API URL that is applied to the base.
+
+```js
+import Provider, { provider } from 'core/provider';
+
+@provider
+export default class User extends Provider {
+  static request = request({
+    api: {
+      domain3: () => () => USE_PROD ? '' : 'dev',
+      zone: 'io'
+    }
+  });
+
+  baseURL = 'user/:id';
+}
+```
+
+### Extending a data provider from another
+
+The data provider is a simple class that implements the special interface. That's why for creating a new provider that is extending parameters from another you should create a simple subclass.
+
+```js
+import Provider, { provider } from 'core/provider';
+
+@provider
+export default class User extends Provider {
+  static request = request({
+    api: {url: 'https://google.com'}
+  });
+
+  static middlewares = {
+    addSession({opts: {headers}}) {
+      headers['Authorization'] = 'bearer myJWTToken';
+    }
+  };
+
+  baseURL = 'user/:id';
+}
+
+@provider
+class User2 extends User {
+  static request = User.request({
+    contentType: 'json'
+  });
+
+  static middlewares = {
+    ...User.middlewares,
+    addABHeader({opts: {headers}}) {
+      headers['X-AB'] = 'foo';
+    }
+  };
+}
+```
+
+### Specifying data mocks
