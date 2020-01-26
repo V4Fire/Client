@@ -578,7 +578,7 @@ The data provider is a simple class that implements the special interface. That'
 import Provider, { provider } from 'core/provider';
 
 @provider
-export default class User extends Provider {
+export class User extends Provider {
   static request = request({
     api: {url: 'https://google.com'}
   });
@@ -593,7 +593,7 @@ export default class User extends Provider {
 }
 
 @provider
-class User2 extends User {
+export class User2 extends User {
   static request = User.request({
     contentType: 'json'
   });
@@ -608,3 +608,79 @@ class User2 extends User {
 ```
 
 ### Specifying data mocks
+
+There is a standard middleware for organizing a mechanism of data mocking — "attackMock" middleware (it uses by default).
+
+```js
+import Provider, { provider } from 'core/provider';
+
+@provider
+export default class User extends Provider {
+  static mocks = {
+    PUT: [
+      {
+        body: {
+          age: 31
+        },
+
+        response: {
+          id: 1,
+          name: "Andrey",
+          age: 31
+        }
+      }
+    ],
+
+    GET: [{
+      response: {
+        id: 1,
+        name: "Andrey",
+        age: 30
+      }
+    }]
+  };
+
+  baseURL = 'user/:id';
+}
+```
+
+Please notice that root keys of mocks are represent HTTP methods, but not provider methods. Values are contain arrays of request objects for matching: the algorithm finds the most suitable option and returns it response. Also supports dynamically casting responses:
+
+```js
+import Provider, { provider } from 'core/provider';
+
+@provider
+export default class User extends Provider {
+  static mocks = {
+    GET: [{
+      response(params, response) {
+        if (!params.opts.query?.id) {
+          response.status = 400;
+          return;
+        }
+
+        response.status = 200;
+        return {
+          id: 1,
+          name: "Andrey",
+          age: 30
+        };
+       }
+    }]
+  };
+
+  baseURL = 'user/:id';
+}
+```
+
+And finally, you can use dynamic imports with mocks:
+
+```js
+import Provider, { provider } from 'core/provider';
+
+@provider
+export default class User extends Provider {
+  static mocks = import('mocks/user.json');
+  baseURL = 'user/:id';
+}
+```
