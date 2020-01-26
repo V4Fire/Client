@@ -12,7 +12,7 @@
  */
 
 import SyncPromise from 'core/promise/sync';
-import Super, { AsyncCbOptions, ClearOptionsId, isParams } from '@v4fire/core/core/async';
+import Super, { AsyncCbOptions, ClearOptionsId, isAsyncOptions } from '@v4fire/core/core/async';
 import { namespaces, NamespacesDictionary } from 'core/async/const';
 
 import {
@@ -227,7 +227,7 @@ export default class Async<CTX extends object = Async<any>> extends Super<CTX> {
 			useCapture,
 			p: AsyncDnDOptions<T, CTX> & AsyncCbOptions<CTX>;
 
-		if (isParams<AsyncDnDOptions<T, CTX>>(opts)) {
+		if (isAsyncOptions<AsyncDnDOptions<T, CTX>>(opts)) {
 			useCapture = opts.options && opts.options.capture;
 			p = opts;
 
