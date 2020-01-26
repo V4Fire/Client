@@ -486,7 +486,7 @@ export default abstract class Provider extends ParamsProvider implements iProvid
 	 * @param data - event data
 	 */
 	protected getEventKey(event: string, data: Dictionary): string {
-		return `${event}::${JSON.stringify(data)}`;
+		return `${event}::${Object.fastHash(data)}`;
 	}
 
 	/**
