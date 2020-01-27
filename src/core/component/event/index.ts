@@ -6,6 +6,11 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+/**
+ * [[include:core/component/event/README.md]]
+ * @packageDocumentation
+ */
+
 import * as net from 'core/net';
 import * as i18n from 'core/i18n';
 
@@ -16,40 +21,34 @@ import * as session from 'core/session';
 import emitter from 'core/component/event/emitter';
 import 'core/component/event/providers';
 
-export type ResetType =
-	'load' |
-	'load.silence' |
-	'router' |
-	'router.silence' |
-	'storage' |
-	'storage.silence' |
-	'silence';
+import { ResetType } from 'core/component/event/interface';
+export * from 'core/component/event/interface';
 
 /**
- * Sends a message for reset to all components
+ * Sends a message for resetting to all components of an application
  * @param [type] - reset type
  */
 export function reset(type?: ResetType): void {
 	emitter.emit(type ? `reset.${type}` : 'reset');
 }
 
-net.event.on('status', (...args) => {
+net.emitter.on('status', (...args) => {
 	emitter.emit('net.status', ...args);
 });
 
 //#if runtime has core/session
 
-session.event.on('set', (...args) => {
+session.emitter.on('set', (...args) => {
 	emitter.emit('session.set', ...args);
 });
 
-session.event.on('clear', (...args) => {
+session.emitter.on('clear', (...args) => {
 	emitter.emit('session.clear', ...args);
 });
 
 //#endif
 
-i18n.event.on('setLocale', (...args) => {
+i18n.emitter.on('setLocale', (...args) => {
 	emitter.emit('i18n.setLocale', ...args);
 });
 

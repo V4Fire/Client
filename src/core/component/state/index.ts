@@ -6,4 +6,9 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+/**
+ * [[include:core/component/state/README.md]]
+ * @packageDocumentation
+ */
+
 export default {} as Dictionary;

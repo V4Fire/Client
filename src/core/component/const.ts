@@ -10,8 +10,13 @@ import { EventEmitter2 as EventEmitter, Listener } from 'eventemitter2';
 import { ComponentOptions, ComponentDriver } from 'core/component/engines';
 import { ComponentMeta, ComponentParams } from 'core/component/interface';
 
+/**
+ * Event emitter for broadcasting component initialize events
+ */
 export const
-	initEvent = new EventEmitter({maxListeners: 1e3, newListener: false}),
+	initEmitter = new EventEmitter({maxListeners: 1e3, newListener: false});
+
+export const
 	asyncLabel = Symbol('Component async label');
 
 export const
@@ -20,7 +25,7 @@ export const
 	components = new Map<Function | string, ComponentMeta>();
 
 ((initEventOnce) => {
-	initEvent.once = function (event: CanArray<string>, listener: Listener): EventEmitter {
+	initEmitter.once = function (event: CanArray<string>, listener: Listener): EventEmitter {
 		const
 			events = (<string[]>[]).concat(event);
 
@@ -46,4 +51,4 @@ export const
 
 		return this;
 	};
-})(initEvent.once.bind(initEvent));
+})(initEmitter.once.bind(initEmitter));

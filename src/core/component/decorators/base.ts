@@ -8,7 +8,7 @@
 
 import { defProp } from 'core/const/props';
 import { metaPointers } from 'core/component/create/helpers/const';
-import { initEvent } from 'core/component/const';
+import { initEmitter } from 'core/component/const';
 import { WatchOptions } from 'core/component/engines';
 
 import {
@@ -173,12 +173,12 @@ export function paramsFactory<T = unknown>(
 	transformer?: (params: any, cluster: string) => Dictionary<any>
 ): (params?: T) => Function {
 	return (params: Dictionary<any> = {}) => (target, key, desc) => {
-		initEvent.once('bindConstructor', (componentName) => {
+		initEmitter.once('bindConstructor', (componentName) => {
 			const
 				link = metaPointers[componentName] = metaPointers[componentName] || Object.createDict();
 
 			link[key] = true;
-			initEvent.once(`constructor.${componentName}`, reg);
+			initEmitter.once(`constructor.${componentName}`, reg);
 		});
 
 		function reg({meta}: {meta: ComponentMeta}): void {

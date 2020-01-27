@@ -9,7 +9,7 @@
 import { AsyncOptions } from 'core/async';
 import { statuses } from 'super/i-block/modules/const';
 import { Statuses, iBlockDecorator } from 'super/i-block/i-block';
-import { initEvent, ModVal, InitFieldFn as BaseInitFieldFn, ComponentInterface } from 'core/component';
+import { initEmitter, ModVal, InitFieldFn as BaseInitFieldFn, ComponentInterface } from 'core/component';
 import { WatchOptions } from 'core/component/engines';
 
 import {
@@ -125,8 +125,8 @@ export function mod<CTX extends ComponentInterface = ComponentInterface>(
 	method: EventType = 'on'
 ): Function {
 	return (target, key, descriptor) => {
-		initEvent.once('bindConstructor', (componentName) => {
-			initEvent.once(`constructor.${componentName}`, ({meta}) => {
+		initEmitter.once('bindConstructor', (componentName) => {
+			initEmitter.once(`constructor.${componentName}`, ({meta}) => {
 				meta.hooks.beforeCreate.push({
 					fn(this: DecoratorCtx<CTX & iBlockDecorator>): void {
 						const c = getComponentCtx(this);
@@ -152,8 +152,8 @@ export function removeMod<CTX extends ComponentInterface = ComponentInterface>(
 	method: EventType = 'on'
 ): Function {
 	return (target, key, descriptor) => {
-		initEvent.once('bindConstructor', (componentName) => {
-			initEvent.once(`constructor.${componentName}`, ({meta}) => {
+		initEmitter.once('bindConstructor', (componentName) => {
+			initEmitter.once(`constructor.${componentName}`, ({meta}) => {
 				meta.hooks.beforeCreate.push({
 					fn(this: DecoratorCtx<CTX & iBlockDecorator>): void {
 						const c = getComponentCtx(this);

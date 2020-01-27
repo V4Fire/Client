@@ -46,7 +46,7 @@ import {
 import { isAbstractComponent, getComponent, getBaseComponent } from 'core/component/create';
 import { createFakeCtx, execRenderObject, patchVNode } from 'core/component/create/functional';
 import { getComponentDataFromVnode, createCompositeElement } from 'core/component/create/composite';
-import { components, rootComponents, componentParams, initEvent } from 'core/component/const';
+import { components, rootComponents, componentParams, initEmitter } from 'core/component/const';
 
 export * from 'core/component/interface';
 export * from 'core/component/const';
@@ -172,7 +172,7 @@ export function component(params?: ComponentParams): Function {
 			componentParams.set(name, p);
 		}
 
-		initEvent.emit('bindConstructor', name);
+		initEmitter.emit('bindConstructor', name);
 
 		if (!name || p.root || isAbstract) {
 			regComponent();
@@ -737,7 +737,7 @@ export function component(params?: ComponentParams): Function {
 			}
 
 			components.set(name, meta);
-			initEvent.emit(`constructor.${name}`, {meta, parentMeta});
+			initEmitter.emit(`constructor.${name}`, {meta, parentMeta});
 
 			if (isAbstract) {
 				getBaseComponent(target, meta);
