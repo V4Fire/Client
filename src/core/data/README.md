@@ -271,7 +271,7 @@ It can be useful for providing data providers to components as input properties:
 ### Decorating a request function
 #### Request methods
 
-The default implementation of data providers have association between HTTP request methods and the provider methods:
+The default implementation of a data provider have association between HTTP request methods and the provider methods:
 
 ```js
 {
@@ -302,7 +302,7 @@ The default implementation of data providers have association between HTTP reque
 }
 ```
 
-But you allow to rewrite it in in your subclass.
+But you allow to rewrite it in your subclass.
 
 ```js
 import Provider, { provider } from 'core/provider';
