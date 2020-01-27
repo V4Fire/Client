@@ -7,22 +7,13 @@
  */
 
 import { EventEmitter2 as EventEmitter, Listener } from 'eventemitter2';
-import { ComponentOptions, ComponentDriver } from 'core/component/engines';
-import { ComponentMeta, ComponentParams } from 'core/component/interface';
+import { componentParams } from 'core/component/const/cache';
 
 /**
  * Event emitter for broadcasting component initialize events
  */
 export const
 	initEmitter = new EventEmitter({maxListeners: 1e3, newListener: false});
-
-export const
-	asyncLabel = Symbol('Component async label');
-
-export const
-	componentParams = new Map<Function | string, ComponentParams>(),
-	rootComponents = Object.createDict<Promise<ComponentOptions<ComponentDriver>>>(),
-	components = new Map<Function | string, ComponentMeta>();
 
 ((initEventOnce) => {
 	initEmitter.once = function (event: CanArray<string>, listener: Listener): EventEmitter {

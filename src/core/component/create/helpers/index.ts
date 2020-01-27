@@ -6,7 +6,6 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-export * from 'core/component/create/helpers/const';
 export * from 'core/component/create/helpers/field';
 export * from 'core/component/create/helpers/hook';
 export * from 'core/component/create/helpers/meta';

@@ -8,9 +8,8 @@
 
 // tslint:disable:cyclomatic-complexity
 
+import { metaPointers, PARENT } from 'core/component/const';
 import { ComponentMeta, ComponentParams, StrictModDeclVal } from 'core/component/interface';
-import { metaPointers } from 'core/component/create/helpers/const';
-export const PARENT = {};
 
 /**
  * Inherits parameters to the specified meta object from an other object

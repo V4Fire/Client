@@ -7,11 +7,10 @@
  */
 
 import Async from 'core/async';
-import { asyncLabel } from 'core/component/const';
+import { asyncLabel, defaultWrapper } from 'core/component/const';
 
 import {
 
-	defaultWrapper,
 	runHook,
 	createMeta,
 	isTypeCanBeFunc,
@@ -46,6 +45,7 @@ export interface ComponentConstructor<T = unknown> {
 }
 
 export const
+	isSmartComponent = /-functional$/,
 	isAbstractComponent = /^[iv]-/;
 
 /**

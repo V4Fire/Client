@@ -7,6 +7,9 @@
  */
 
 export const
-	NULL = {},
-	metaPointers = Object.createDict<Dictionary<boolean>>(),
-	defaultWrapper = Symbol('default wrapper');
+	asyncLabel = Symbol('Component async label'),
+	defaultWrapper = Symbol('Default wrapper');
+
+export const
+	PARENT = {},
+	NULL = {};

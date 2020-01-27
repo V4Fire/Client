@@ -10,7 +10,7 @@
 // tslint:disable:typedef
 
 import Async from 'core/async';
-import { PARENT } from 'core/component/create/inherit';
+import { PARENT } from 'core/component/const';
 import {
 
 	ComponentDriver as Component,

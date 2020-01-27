@@ -7,7 +7,7 @@
  */
 
 import { ComponentInterface, PropOptions, ComponentField, SystemField } from 'core/component/interface';
-import { defaultWrapper, NULL } from 'core/component/create/helpers/const';
+import { defaultWrapper, NULL } from 'core/component/const';
 
 export interface FieldInfo {
 	path: string;

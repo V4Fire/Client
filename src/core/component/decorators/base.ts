@@ -7,8 +7,7 @@
  */
 
 import { defProp } from 'core/const/props';
-import { metaPointers } from 'core/component/create/helpers/const';
-import { initEmitter } from 'core/component/const';
+import { initEmitter, metaPointers } from 'core/component/const';
 import { WatchOptions } from 'core/component/engines';
 
 import {
