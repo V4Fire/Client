@@ -265,7 +265,6 @@ export default class AsyncRender {
 				if (isPromise) {
 					try {
 						val = await val;
-						console.log(val);
 
 					} catch (err) {
 						const
