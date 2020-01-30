@@ -98,24 +98,6 @@ export default class bVirtualScroll extends iData {
 	readonly cacheSize: number = 400;
 
 	/**
-	 * Number of items that will be removed from the cache when it is full
-	 */
-	@prop({type: Number, watch: 'syncPropsWatcher', validator: Number.isNatural})
-	readonly dropCacheSize: number = 50;
-
-	/**
-	 * Number of elements from the same range that cannot be removed from the cache
-	 */
-	@prop({type: Number, watch: 'syncPropsWatcher', validator: Number.isNatural})
-	readonly dropCacheSafeZone: number = 10;
-
-	/**
-	 * Number of nodes at the same time
-	 */
-	@prop({type: Number,  watch: 'syncPropsWatcher', validator: Number.isNatural})
-	readonly realElementsCount: number = 20;
-
-	/**
 	 * ...
 	 */
 	@prop({type: Number, validator: Number.isNatural})
@@ -126,12 +108,6 @@ export default class bVirtualScroll extends iData {
 	 */
 	@prop({type: Number, validator: Number.isNatural})
 	readonly renderPerChunk: number = 10;
-
-	/**
-	 * Number of nodes at the same time that are drawn in the opposite direction from the scroll
-	 */
-	@prop({type: Number, watch: 'syncPropsWatcher', validator: Number.isNatural})
-	readonly oppositeElementsCount: number = 10;
 
 	/**
 	 * Scroll axis
@@ -151,12 +127,6 @@ export default class bVirtualScroll extends iData {
 	 */
 	@prop({type: Boolean, watch: 'syncPropsWatcher'})
 	readonly cacheNodes: boolean = true;
-
-	/**
-	 * Function that returns the scroll root
-	 */
-	@prop({type: Function, watch: 'syncPropsWatcher', required: false})
-	readonly scrollingElement?: Function;
 
 	/**
 	 * Function that returns request parameters
@@ -237,35 +207,6 @@ export default class bVirtualScroll extends iData {
 		tombstones: HTMLElement;
 		scrollRunner: HTMLElement;
 	};
-
-	/**
-	 * Link to the scroll root
-	 */
-	@p({cache: false})
-	protected get scrollRoot(): HTMLElement {
-		if (this.scrollingElement) {
-			return this.scrollingElement();
-		}
-
-		if (this.axis === 'x') {
-			return <HTMLElement>this.$el;
-		}
-
-		return document.documentElement.scrollTop ?
-			document.documentElement :
-			document.body;
-	}
-
-	/**
-	 * Link to the scroll event emitter
-	 */
-	protected get scrollEmitter(): Document | HTMLElement {
-		if (this.scrollingElement) {
-			return this.scrollingElement();
-		}
-
-		return this.axis === 'y' ? document : this.scrollRoot;
-	}
 
 	/** @override */
 	initLoad(data?: unknown, params: InitLoadParams = {}): CanPromise<void> {
