@@ -31,7 +31,7 @@ export default class ImageLoader {
 			opts = this.normalizeOptions(value);
 
 		const
-			srcset = Object.isObject(opts.srcset) ? getSrcSet(opts.srcset) : opts.srcset,
+			srcset = Object.isDictionary(opts.srcset) ? getSrcSet(opts.srcset) : opts.srcset,
 			{src, load, error} = opts;
 
 		if (!src && !srcset) {
@@ -102,10 +102,9 @@ export default class ImageLoader {
 	 */
 	setBackgroundImage(el: HTMLElement, imageSrc: string): void {
 		const
-			url = `url('${imageSrc}')`,
-			{backgroundImage} = el.style;
+			url = `url('${imageSrc}')`;
 
-		el.style.backgroundImage = backgroundImage ? `${backgroundImage}, ${url}` : `${url}`;
+		el.style.backgroundImage = url;
 	}
 
 	/**

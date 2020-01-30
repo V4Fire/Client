@@ -8,14 +8,13 @@
 
 import Async from 'core/async';
 import symbolGenerator from 'core/symbol';
-import Range from 'core/range';
 
-import bVirtualScroll, { $$ as componentLabels } from 'base/b-virtual-scroll/b-virtual-scroll';
+import bVirtualScroll from 'base/b-virtual-scroll/b-virtual-scroll';
 import ComponentRender from 'base/b-virtual-scroll/modules/component-render';
 import ScrollRequest from 'base/b-virtual-scroll/modules/scroll-request';
 
 import { RenderItem } from 'base/b-virtual-scroll/modules/interface';
-import { InitOptions, Observable, Size } from 'core/component/directives/in-view/interface';
+import { InitOptions } from 'core/component/directives/in-view/interface';
 import { InView } from 'core/component/directives/in-view';
 
 export const
