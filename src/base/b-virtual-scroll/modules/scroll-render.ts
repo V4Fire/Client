@@ -44,11 +44,6 @@ export default class ScrollRender {
 	}
 
 	/**
-	 * Current scroll direction
-	 */
-	protected scrollDirection: 0 | 1 | -1 = 0;
-
-	/**
 	 * Component instance
 	 */
 	protected readonly component: bVirtualScroll['unsafe'];
@@ -114,7 +109,6 @@ export default class ScrollRender {
 	constructor(component: bVirtualScroll) {
 		this.component = component.unsafe;
 		this.component.meta.hooks.mounted.push({fn: () => {
-			this.onMounted();
 			this.component.waitStatus('ready', this.onReady.bind(this));
 		}});
 	}
@@ -130,7 +124,6 @@ export default class ScrollRender {
 		this.scrollRequest.reset();
 		this.async.clearAll({group: new RegExp(this.asyncGroup)});
 
-		this.onMounted();
 		this.onReady();
 	}
 
@@ -251,32 +244,6 @@ export default class ScrollRender {
 	}
 
 	/**
-	 * Initializes events
-	 */
-	protected initEvents(): void {
-		this.async.on(this.scrollEmitter, 'scroll', this.onScroll.bind(this), {
-			label: $$.scroll,
-			group: this.asyncGroup
-		});
-	}
-
-	/**
-	 * Handler: container resize
-	 */
-	protected onResize(): void {
-		this.async.setTimeout(() => {
-			// ...
-		}, 100, {label: $$.onResize});
-	}
-
-	/**
-	 * Handler: document being scrolled
-	 */
-	protected onScroll(): void {
-		// ...
-	}
-
-	/**
 	 * Handler: element becomes visible in viewport
 	 * @param index
 	 */
@@ -298,13 +265,6 @@ export default class ScrollRender {
 				this.render();
 			}
 		}
-	}
-
-	/**
-	 * Handler: component mounted hook
-	 */
-	protected onMounted(): void {
-		this.initEvents();
 	}
 
 	/**
