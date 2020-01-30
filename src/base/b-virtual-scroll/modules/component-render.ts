@@ -129,9 +129,8 @@ export default class ComponentRender {
 	/**
 	 * Renders the specified chunk of items
 	 * @param items
-	 * @param inViewOptions
 	 */
-	render(items: RenderItem[], inViewOptions: (item: RenderItem) => InitOptions): HTMLElement[] {
+	render(items: RenderItem[]): HTMLElement[] {
 		const
 			{cacheNodes} = this.component;
 
@@ -165,7 +164,7 @@ export default class ComponentRender {
 
 		if (needRender.length) {
 			const
-				nodes = this.createComponents(needRender.map(([item]) => item), inViewOptions);
+				nodes = this.createComponents(needRender.map(([item]) => item));
 
 			for (let i = 0; i < needRender.length; i++) {
 				const
@@ -187,11 +186,9 @@ export default class ComponentRender {
 
 	/**
 	 * Creates a component by the specified params
-	 *
 	 * @param items
-	 * @param inViewOptions
 	 */
-	protected createComponents(items: RenderItem[], inViewOptions: (item: RenderItem) => InitOptions): HTMLElement[] {
+	protected createComponents(items: RenderItem[]): HTMLElement[] {
 		const
 			{component: c, columns} = this;
 
@@ -202,7 +199,6 @@ export default class ComponentRender {
 			attrs: {
 				'v-attrs': {
 					...props,
-					['v-in-view']: props['v-in-view'] ? [inViewOptions(item)].concat(props['v-in-view']) : inViewOptions(item),
 					class: [this.optionClass].concat(props.class || []),
 					style: {
 						width: `${(100 / columns)}%`,

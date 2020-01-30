@@ -22,16 +22,6 @@ export const
 
 export default class ScrollRender {
 	/**
-	 * Range of rendered items
-	 */
-	renderRange: Range<number> = new Range(0, 0);
-
-	/**
-	 * Range of visible items
-	 */
-	visibleRange: Range<number> = new Range(0, 0);
-
-	/**
 	 * Render items
 	 */
 	items: RenderItem[] = [];
@@ -42,21 +32,6 @@ export default class ScrollRender {
 	get itemsCount(): number {
 		return this.items.length;
 	}
-
-	/**
-	 * Element top offset
-	 */
-	protected offsetTop: number = 0;
-
-	/**
-	 * True if an element is in viewport
-	 */
-	protected isInViewport: boolean = false;
-
-	/**
-	 * True if current range was rendered
-	 */
-	protected isCurrentRangeRendered: boolean = false;
 
 	/**
 	 * Current scroll direction
@@ -141,87 +116,27 @@ export default class ScrollRender {
 	 * Renders component content
 	 */
 	protected render(): void {
-		const
-			{renderRange} = this,
-			newRenderRange = this.calculateRenderRange();
-
-		if (this.scrollDirection !== 0 &&
-			newRenderRange.start === renderRange.start &&
-			newRenderRange.end === renderRange.end) {
-			return;
-		}
-
-		this.clearRange(newRenderRange);
-		this.appendRange(newRenderRange);
+		// ...
 	}
 
 	/**
 	 * Renders a specified items
-	 * @param range
 	 */
-	protected renderItems(range: Range<number>): HTMLElement[] {
-		const
-			items = this.items.slice(range.start, range.end),
-			nodes = this.componentRender.render(items, this.getInViewOptions.bind(this));
-
-		return nodes;
-	}
-
-	/**
-	 * Updates current range of render components
-	 */
-	protected calculateRenderRange(): Range<number> {
-		const
-			{renderRange, visibleRange, component} = this,
-			{start: oldRenderStart, end: oldRenderEnd} = renderRange,
-			newRenderRange = new Range<number>(oldRenderStart, oldRenderEnd);
-
-		if (this.scrollDirection > 0) {
-			if (visibleRange.end + component.drawBefore >= oldRenderEnd) {
-				renderRange.end = oldRenderEnd + component.renderPerChunk;
-
-				newRenderRange.start = oldRenderEnd;
-				newRenderRange.end = renderRange.end;
-			}
-
-		} else if (this.scrollDirection < 0) {
-			// Scrolls to top
-
-		} else {
-			renderRange.start = newRenderRange.start = 0;
-			renderRange.end = newRenderRange.end = component.renderPerChunk;
-		}
-
-		return newRenderRange;
+	protected renderItems(): HTMLElement[] {
+		// ...
 	}
 
 	/**
 	 * Appends new items to the container
-	 * @param range
 	 */
-	protected appendRange(range: Range<number>): void {
-		const
-			nodes = this.renderItems(range);
-
-		if (!nodes.length) {
-			return;
-		}
-
-		const
-			fragment = document.createDocumentFragment();
-
-		for (let i = 0; i < nodes.length; i++) {
-			this.dom.appendChild(fragment, nodes[i], this.asyncGroup);
-		}
-
-		this.refs.container.appendChild(fragment);
+	protected appendRange(): void {
+		// ...
 	}
 
 	/**
 	 * Clears old nodes from render range
-	 * @param range
 	 */
-	protected clearRange(range: Range<number>): void {
+	protected clearRange(): void {
 		// ...
 	}
 
@@ -237,6 +152,7 @@ export default class ScrollRender {
 			width: 0,
 			height: 0,
 			index: this.itemsCount + index,
+			mounted: false,
 			node: undefined,
 			destructor: undefined
 		};
@@ -251,26 +167,15 @@ export default class ScrollRender {
 	}
 
 	/**
-	 * Sets size to the specified item
-	 *
-	 * @param item
-	 * @param size
-	 */
-	protected setItemSize(item: RenderItem, size: Size): void {
-		item.width = size.width;
-		item.height = size.height;
-	}
-
-	/**
 	 * In-view init options
-	 * @param item
+	 * @param index
 	 */
-	protected getInViewOptions(item: RenderItem): InitOptions {
+	protected getInViewOptions(index: number): InitOptions {
 		return {
 			delay: 0,
 			threshold: Math.floor((Math.random() * (0.06 - 0.01) + 0.01) * 100) / 100,
-			onEnter: (observable) => this.onNodeVisibilityChange(observable, item, true),
-			onLeave: (observable) => this.onNodeVisibilityChange(observable, item, false)
+			onEnter: () => this.onNodeVisibilityChange(index, true),
+			onLeave: () => this.onNodeVisibilityChange(index, false)
 		};
 	}
 
@@ -303,44 +208,11 @@ export default class ScrollRender {
 	/**
 	 * Handler: element becomes visible in viewport
 	 *
-	 * @param observable
-	 * @param item
+	 * @param index
 	 * @param enter
 	 */
-	protected onNodeVisibilityChange({size}: Observable, item: RenderItem, enter: boolean): void {
-		const
-			{visibleRange} = this;
-
-		if (enter) {
-			if (item.index > visibleRange.end) {
-				visibleRange.end = item.index;
-				this.scrollDirection = 1;
-
-			} else if (item.index < visibleRange.start) {
-				visibleRange.start = item.index;
-				this.scrollDirection = -1;
-			}
-
-		} else {
-			if (visibleRange.start === item.index) {
-				if (visibleRange.end === 0) {
-					visibleRange.start = 0;
-
-				} else {
-					visibleRange.start++;
-				}
-
-				this.scrollDirection = 1;
-
-			} else if (visibleRange.end === item.index) {
-				visibleRange.end--;
-				this.scrollDirection = -1;
-			}
-		}
-
-		this.scrollRequest.try();
-		this.setItemSize(item, size);
-		this.render();
+	protected onNodeVisibilityChange(index: number, enter: boolean): void {
+		// ...
 	}
 
 	/**
