@@ -276,7 +276,7 @@ export default class bVirtualScroll extends iData {
 	/** @override */
 	initLoad(data?: unknown, params: InitLoadParams = {}): CanPromise<void> {
 		if (!this.lfc.isBeforeCreate()) {
-			this.reInit({hard: true}).catch(stderr);
+			this.reInit().catch(stderr);
 		}
 
 		return super.initLoad(data, params);
@@ -293,11 +293,10 @@ export default class bVirtualScroll extends iData {
 	 * Re-initializes component
 	 *
 	 * @param [waitReady] - if false, the component will be initialized immediately
-	 * @param [force] - if true, all tombstones will be redraw
 	 */
-	async reInit({waitReady = true, hard = false}: ReInitParams = {}): Promise<void> {
-		await this.componentRender.reInit();
-		await this.scrollRender.reInit(hard);
+	async reInit(waitReady = true): Promise<void> {
+		this.componentRender.reInit();
+		this.scrollRender.reInit();
 
 		if (waitReady) {
 			await this.waitStatus('ready', {
@@ -306,7 +305,7 @@ export default class bVirtualScroll extends iData {
 			});
 		}
 
-		await this.scrollRender.init();
+		this.scrollRender.reInit()
 	}
 
 	/** @override */
@@ -357,13 +356,6 @@ export default class bVirtualScroll extends iData {
 	 */
 	@wait('ready', {defer: true, label: $$.syncPropsWatcher})
 	protected async syncPropsWatcher(): Promise<void> {
-		const
-			{scrollRender: {status}} = this;
-
-		if (status !== ScrollRenderStatus.render) {
-			return;
-		}
-
 		return this.reInit();
 	}
 }

@@ -121,6 +121,21 @@ export default class ScrollRender {
 	}
 
 	/**
+	 * Re-initializes a rendering process
+	 */
+	reInit(): void {
+		this.lastIntersectsItem = 0;
+		this.chunk = 0;
+		this.items = [];
+
+		this.scrollRequest.reset();
+		this.async.clearAll({group: new RegExp(this.asyncGroup)});
+
+		this.onMounted();
+		this.onReady();
+	}
+
+	/**
 	 * Initializes a render items
 	 * @param data
 	 */
@@ -199,15 +214,14 @@ export default class ScrollRender {
 			{component} = this,
 			{node} = item,
 			// @ts-ignore (access)
-			label = `${this.asyncGroup}:${this.asyncInViewPrefix}${component.getOptionKey(item.data, item.index)}`
-
+			label = `${this.asyncGroup}:${this.asyncInViewPrefix}${component.getOptionKey(item.data, item.index)}`;
 
 		if (!node) {
 			return;
 		}
 
 		InView.observe(node, this.getInViewOptions(item.index));
-		node[$$.inView] = this.async.worker(() => InView.stopObserve(node), {label});
+		node[$$.inView] = this.async.worker(() => InView.stopObserve(node), {group: this.asyncGroup, label});
 	}
 
 	/**
@@ -272,7 +286,6 @@ export default class ScrollRender {
 			{component, items} = this,
 			{renderPerChunk, drawBefore} = component,
 			currentRender = this.chunk * renderPerChunk;
-
 
 		if (index + drawBefore + renderPerChunk >= items.length) {
 			this.scrollRequest.try();

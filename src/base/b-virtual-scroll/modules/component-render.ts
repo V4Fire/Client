@@ -89,6 +89,18 @@ export default class ComponentRender {
 	}
 
 	/**
+	 * Re-initializes the component render
+	 */
+	reInit(): void {
+		Object.keys(this.nodesCache).forEach((key) => {
+			const el = this.nodesCache[key];
+			el && el.remove();
+		});
+
+		this.nodesCache = Object.createDict();
+	}
+
+	/**
 	 * Returns a node from the cache by the specified key
 	 * @param key
 	 */
