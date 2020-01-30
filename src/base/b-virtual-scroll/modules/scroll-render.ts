@@ -16,6 +16,7 @@ import ScrollRequest from 'base/b-virtual-scroll/modules/scroll-request';
 
 import { RenderItem } from 'base/b-virtual-scroll/modules/interface';
 import { InitOptions, Observable, Size } from 'core/component/directives/in-view/interface';
+import { InView } from 'core/component/directives/in-view';
 
 export const
 	$$ = symbolGenerator();
@@ -25,6 +26,16 @@ export default class ScrollRender {
 	 * Render items
 	 */
 	items: RenderItem[] = [];
+
+	/**
+	 * Last column which was intersects the viewport
+	 */
+	lastIntersectsItem: number = 0;
+
+	/**
+	 * Current render chunk
+	 */
+	chunk: number = 0;
 
 	/**
 	 * Length of items
@@ -47,6 +58,11 @@ export default class ScrollRender {
 	 * Async group
 	 */
 	protected readonly asyncGroup: string = 'scroll-render:';
+
+	/**
+	 * Async in-view label prefix
+	 */
+	protected readonly asyncInViewPrefix: string = 'in-view:';
 
 	/**
 	 * API for dynamic component rendering
@@ -116,28 +132,74 @@ export default class ScrollRender {
 	 * Renders component content
 	 */
 	protected render(): void {
-		// ...
+		const
+			{component, chunk, items} = this;
+
+		const
+			renderFrom = (chunk - 1) * component.renderPerChunk,
+			renderTo = chunk * component.renderPerChunk,
+			renderItems = items.slice(renderFrom, renderTo);
+
+		if (!renderItems.length) {
+			return;
+		}
+
+		const
+			nodes = this.renderItems(renderItems);
+
+		if (!nodes) {
+			return;
+		}
+
+		const
+			fragment = document.createDocumentFragment();
+
+		for (let i = 0; i < nodes.length; i++) {
+			this.dom.appendChild(fragment, nodes[i], this.asyncGroup);
+		}
+
+		this.refs.container.appendChild(fragment);
 	}
 
 	/**
 	 * Renders a specified items
+	 * @param items
 	 */
-	protected renderItems(): HTMLElement[] {
-		// ...
+	protected renderItems(items: RenderItem[]): HTMLElement[] {
+		const
+			nodes = this.componentRender.render(items);
+
+		for (let i = 0; i < nodes.length; i++) {
+			const
+				node = nodes[i],
+				item = items[i];
+
+			if (!node[$$.inView]) {
+				this.wrapInView(item);
+			}
+		}
+
+		return nodes;
 	}
 
 	/**
-	 * Appends new items to the container
+	 * Wraps the specified node into in-view directive
+	 * @param item
 	 */
-	protected appendRange(): void {
-		// ...
-	}
+	protected wrapInView(item: RenderItem): void {
+		const
+			{component} = this,
+			{node} = item,
+			// @ts-ignore (access)
+			label = `${this.asyncGroup}:${this.asyncInViewPrefix}${component.getOptionKey(item.data, item.index)}`
 
-	/**
-	 * Clears old nodes from render range
-	 */
-	protected clearRange(): void {
-		// ...
+
+		if (!node) {
+			return;
+		}
+
+		InView.observe(node, this.getInViewOptions(item.index));
+		node[$$.inView] = this.async.worker(() => InView.stopObserve(node), {label});
 	}
 
 	/**
@@ -163,7 +225,7 @@ export default class ScrollRender {
 	 * @param show
 	 */
 	protected setTombstoneVisibility(show: boolean): void {
-		this.component[show ? 'removeMod' : 'setMod']('tombstones-hidden', true);
+		this.component[show ? 'removeMod' : 'setMod'](this.refs.tombstones, 'tombstones-hidden', true);
 	}
 
 	/**
@@ -174,8 +236,7 @@ export default class ScrollRender {
 		return {
 			delay: 0,
 			threshold: Math.floor((Math.random() * (0.06 - 0.01) + 0.01) * 100) / 100,
-			onEnter: () => this.onNodeVisibilityChange(index, true),
-			onLeave: () => this.onNodeVisibilityChange(index, false)
+			onEnter: () => this.onNodeIntersect(index)
 		};
 	}
 
@@ -207,12 +268,27 @@ export default class ScrollRender {
 
 	/**
 	 * Handler: element becomes visible in viewport
-	 *
 	 * @param index
-	 * @param enter
 	 */
-	protected onNodeVisibilityChange(index: number, enter: boolean): void {
-		// ...
+	protected onNodeIntersect(index: number): void {
+		const
+			{component, items} = this,
+			{renderPerChunk, drawBefore} = component,
+			currentRender = this.chunk * renderPerChunk;
+
+
+		if (index + drawBefore + renderPerChunk >= items.length) {
+			this.scrollRequest.try();
+		}
+
+		if (index > this.lastIntersectsItem) {
+			this.lastIntersectsItem = index;
+
+			if (currentRender - index <= drawBefore) {
+				this.chunk++;
+				this.render();
+			}
+		}
 	}
 
 	/**
@@ -228,6 +304,7 @@ export default class ScrollRender {
 	protected onReady(): void {
 		this.initItems(this.component.options);
 		this.setTombstoneVisibility(false);
+		this.chunk++;
 		this.render();
 	}
 

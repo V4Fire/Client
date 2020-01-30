@@ -20,29 +20,5 @@ b-virtual-scroll extends i-data
 		box-sizing border-box
 		width 100%
 
-	&__tombstone-el
-	&__option-el
-		contain layout
-
-	&__trigger
-		absolute left 0 top 0
-		size 1px
-		opacity 0
-
-	&_hidden_true
-	&_requests-done_true &__tombstone-el
-		display none !important
-		animation-play-state paused
-
-	&_container-size_true &__container
-		contain paint
-		will-change height
-
-	&_axis_x
-		overflow scroll
-
-	&_requests-done_true &__tombstone-el
-		display none
-
-	&_tombstones-hidden_true &__tombstone
+	&_tombstones-hidden_true
 		display none

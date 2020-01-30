@@ -93,7 +93,7 @@ export default class ScrollRequest {
 
 		const
 			resolved = Promise.resolve(),
-			shouldRequest = component.shouldMakeRequest(getRequestParams(this, scrollRender));
+			shouldRequest = true;
 
 		const cantRequest = () =>
 			this.isDone ||
@@ -125,6 +125,7 @@ export default class ScrollRequest {
 				this.data = this.data.concat(data);
 
 				scrollRender.initItems(data);
+				scrollRender.render();
 
 			}).catch(stderr);
 	}

@@ -122,6 +122,12 @@ export default class bVirtualScroll extends iData {
 	readonly realElementsCount: number = 20;
 
 	/**
+	 * ...
+	 */
+	@prop({type: Number, validator: Number.isNatural})
+	readonly drawBefore: number = 10;
+
+	/**
 	 * Render elements per chunk
 	 */
 	@prop({type: Number, validator: Number.isNatural})
@@ -171,7 +177,7 @@ export default class bVirtualScroll extends iData {
 	/**
 	 * If, when calling a function, it returns true, then the component will be able to request additional data
 	 */
-	@prop({type: Function, default: (v) => v.itemsToReachBottom <= 10 && !v.isLastEmpty)
+	@prop({type: Function, default: (v) => v.itemsToReachBottom <= 10 && !v.isLastEmpty})
 	readonly shouldMakeRequest!: RequestFn;
 
 	/**
@@ -234,7 +240,7 @@ export default class bVirtualScroll extends iData {
 	/** @override */
 	protected $refs!: {
 		container: HTMLElement;
-		tombstone: HTMLElement;
+		tombstones: HTMLElement;
 		scrollRunner: HTMLElement;
 	};
 

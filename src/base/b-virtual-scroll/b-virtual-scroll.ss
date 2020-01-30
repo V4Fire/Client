@@ -14,7 +14,7 @@
 	- block body
 		< .&__wrapper v-resize.width = () => axis === 'y' ? scrollRender.onResize : undefined
 			< .&__container ref = container
-			< .&__tombstones
-				< .&__tombstone v-for = i in tombstoneCount
+			< .&__tombstones ref = tombstones
+				< .&__tombstone v-for = i in renderPerChunk
 					+= self.slot('tombstone')
 

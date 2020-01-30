@@ -50,9 +50,6 @@ export function getRequestParams(
 	};
 
 	const params = scrollRequestCtx && scrollRenderCtx && scrollRenderCtx.status !== ScrollRenderStatus.notInitialized ? {
-		visibleRange: scrollRenderCtx.visibleRange,
-		renderRange: scrollRenderCtx.renderRange,
-		itemsToReachBottom: scrollRenderCtx.itemsCount - scrollRenderCtx.visibleRange.end,
 		items: scrollRenderCtx.items,
 
 		currentPage: scrollRequestCtx.page,
