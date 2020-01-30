@@ -92,12 +92,6 @@ export default class bVirtualScroll extends iData {
 	readonly optionKey!: OptionKey;
 
 	/**
-	 * Number of columns
-	 */
-	@prop({type: Number, watch: 'syncPropsWatcher', validator: Number.isNatural})
-	readonly columns: number = 1;
-
-	/**
 	 * Number of components that could be cached
 	 */
 	@prop({type: Number, watch: 'syncPropsWatcher', validator: Number.isNatural})

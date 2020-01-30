@@ -39,13 +39,6 @@ export default class ComponentRender {
 	protected nodesCache: Dictionary<HTMLElement> = Object.createDict();
 
 	/**
-	 * Number of columns
-	 */
-	protected get columns(): number {
-		return this.component.axis === 'y' ? this.component.columns : 1;
-	}
-
-	/**
 	 * API for scroll rendering
 	 */
 	protected get scrollRender(): ScrollRender {
@@ -201,12 +194,12 @@ export default class ComponentRender {
 	 */
 	protected createComponents(items: RenderItem[]): HTMLElement[] {
 		const
-			{component: c, columns} = this;
+			{component: c} = this;
 
 		const render = (childrens: Dictionary[]) =>
 			c.vdom.render(childrens.map((el) => this.createElement(c.option, el))) as HTMLElement[];
 
-		const createChildren = (props, item) => ({
+		const createChildren = (props) => ({
 			attrs: {
 				'v-attrs': {
 					...props,
@@ -232,7 +225,7 @@ export default class ComponentRender {
 				item = items[i],
 				props = c.optionProps(getOptionEl(item.data, item.index), item.index);
 
-			children.push(createChildren(props, item));
+			children.push(createChildren(props));
 		}
 
 		return render(children);
