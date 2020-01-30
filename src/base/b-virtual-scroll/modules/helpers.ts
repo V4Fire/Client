@@ -41,20 +41,18 @@ export function getRequestParams(
 	const base: RequestMoreParams = {
 		currentPage: 0,
 		nextPage: 1,
-		renderRange: new Range(0, 0),
-		visibleRange: new Range(0, 0),
 		items: [],
 		lastLoaded: [],
 		isLastEmpty: false,
 		itemsToReachBottom: 0
 	};
 
-	const params = scrollRequestCtx && scrollRenderCtx && scrollRenderCtx.status !== ScrollRenderStatus.notInitialized ? {
+	const params = scrollRequestCtx && scrollRenderCtx ? {
 		items: scrollRenderCtx.items,
-
 		currentPage: scrollRequestCtx.page,
 		lastLoaded: scrollRequestCtx.lastLoadedData,
 		isLastEmpty: scrollRequestCtx.isLastEmpty,
+		itemsToReachBottom: scrollRenderCtx.items.length - scrollRenderCtx.lastIntersectsItem
 	} : base;
 
 	const merged = {

@@ -93,7 +93,7 @@ export default class ScrollRequest {
 
 		const
 			resolved = Promise.resolve(),
-			shouldRequest = true;
+			shouldRequest = component.shouldMakeRequest(getRequestParams(this, scrollRender));
 
 		const cantRequest = () =>
 			this.isDone ||

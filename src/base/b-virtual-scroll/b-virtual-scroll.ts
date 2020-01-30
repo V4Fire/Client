@@ -291,10 +291,9 @@ export default class bVirtualScroll extends iData {
 
 	/**
 	 * Re-initializes component
-	 *
 	 * @param [waitReady] - if false, the component will be initialized immediately
 	 */
-	async reInit(waitReady = true): Promise<void> {
+	async reInit(waitReady: boolean = true): Promise<void> {
 		this.componentRender.reInit();
 		this.scrollRender.reInit();
 
@@ -305,7 +304,7 @@ export default class bVirtualScroll extends iData {
 			});
 		}
 
-		this.scrollRender.reInit()
+		this.scrollRender.reInit();
 	}
 
 	/** @override */

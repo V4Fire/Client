@@ -212,7 +212,6 @@ export default class ComponentRender {
 					...props,
 					class: [this.optionClass].concat(props.class || []),
 					style: {
-						width: `${(100 / columns)}%`,
 						...props.style
 					}
 				}

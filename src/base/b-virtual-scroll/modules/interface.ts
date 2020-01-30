@@ -43,16 +43,6 @@ export interface RequestMoreParams<T extends unknown = unknown> {
 	currentPage: number;
 
 	/**
-	 * Current render rage
-	 */
-	renderRange: Range<number>;
-
-	/**
-	 * Current visible range of elements
-	 */
-	visibleRange: Range<number>
-
-	/**
 	 * Number of chunk to be uploaded
 	 */
 	nextPage: number;
