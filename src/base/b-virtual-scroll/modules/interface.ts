@@ -110,9 +110,6 @@ export interface RenderItem<T extends unknown = unknown> {
 	 * Index of element in DOM
 	 */
 	index: number;
-
-	width: number;
-	height: number;
 }
 
 export interface RenderedNode {

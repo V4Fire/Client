@@ -131,7 +131,7 @@ export default class ScrollRender {
 	/**
 	 * Renders component content
 	 */
-	protected render(): void {
+	render(): void {
 		const
 			{component, chunk, items} = this;
 
@@ -159,6 +159,14 @@ export default class ScrollRender {
 		}
 
 		this.refs.container.appendChild(fragment);
+	}
+
+	/**
+	 * Hides/shows tombstones
+	 * @param show
+	 */
+	setTombstoneVisibility(show: boolean): void {
+		this.component[show ? 'removeMod' : 'setMod'](this.refs.tombstones, 'tombstones-hidden', true);
 	}
 
 	/**
@@ -211,21 +219,10 @@ export default class ScrollRender {
 	protected createRenderItem(data: unknown, index: number): RenderItem {
 		return {
 			data,
-			width: 0,
-			height: 0,
 			index: this.itemsCount + index,
-			mounted: false,
 			node: undefined,
 			destructor: undefined
 		};
-	}
-
-	/**
-	 * Hides tombstones
-	 * @param show
-	 */
-	protected setTombstoneVisibility(show: boolean): void {
-		this.component[show ? 'removeMod' : 'setMod'](this.refs.tombstones, 'tombstones-hidden', true);
 	}
 
 	/**

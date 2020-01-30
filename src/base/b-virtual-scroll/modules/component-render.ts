@@ -13,7 +13,6 @@ import ScrollRender from 'base/b-virtual-scroll/modules/scroll-render';
 import bVirtualScroll from 'base/b-virtual-scroll/b-virtual-scroll';
 
 import { RenderItem } from 'base/b-virtual-scroll/modules/interface';
-import { InitOptions } from 'core/component/directives/in-view/interface';
 
 export const
 	$$ = symbolGenerator();
