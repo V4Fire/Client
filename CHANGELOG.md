@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-beta.243 (2020-01-30)
+
+#### :bug: Bug Fix
+
+* Fixed stream support with `AsyncRender`
+
 ## v3.0.0-beta.242 (2020-01-22)
 
 #### :rocket: Breaking Change
@@ -529,7 +535,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :rocket: New Feature
 
-* Added `skeletonMarker` flag to `iBlock` 
+* Added `skeletonMarker` flag to `iBlock`
 
 #### :house: Internal
 
@@ -845,16 +851,16 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :house: Internal
 
-* Updated dependencies: browserslist@4.7.0, image-webpack-loader@6.0.0 
+* Updated dependencies: browserslist@4.7.0, image-webpack-loader@6.0.0
 
 ## v3.0.0-beta.156 (2019-09-03)
 
 #### :rocket: New Feature
 
-* Added `optionKey` prop to `bSlider` 
-* Added `optionsIterator` prop to `bSlider` 
+* Added `optionKey` prop to `bSlider`
+* Added `optionsIterator` prop to `bSlider`
 * Provided an option index to a prop function `bSlider`
-* Added support for non defined values with `asyncRender.iterate` 
+* Added support for non defined values with `asyncRender.iterate`
 * Marked `asyncRender` as public `iBlock`
 * Added `isInitializedOnce` parameter `iBlock`
 
@@ -915,7 +921,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :rocket: New Feature
 
-* Added `styles` prop to `iBlock` 
+* Added `styles` prop to `iBlock`
 
 #### :bug: Bug Fix
 
@@ -979,7 +985,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 * Added support for `.watch` with `@system` fields
 * Fixed `Field` API with links like `$root.something`, `$parent.something`, etc.
-  
+
 #### :house: Internal
 
 * Renamed `core/component/create/helpers/getRealFieldInfo` -> `getFieldInfo` and improved API
@@ -992,7 +998,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
   * Added support for async data
   * Response can be a function
   * Response can be a promise
-  
+
 #### :house: Internal
 
 * Added `CHANGELOG.md`

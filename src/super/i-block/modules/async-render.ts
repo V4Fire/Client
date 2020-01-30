@@ -197,7 +197,7 @@ export default class AsyncRender {
 			}
 		}
 
-		finalArr[this.asyncLabel] = (cb) => {
+		finalArr[this.asyncLabel] = async (cb) => {
 			const createIterator = () => {
 				if (isPromise) {
 					const next = () => {
@@ -252,127 +252,100 @@ export default class AsyncRender {
 			let
 				newArray = <unknown[]>[];
 
-			const iterate = () => {
+			const
+				{async: $a} = this;
+
+			for (let o = newIterator, el = o.next(); !el.done; el = o.next()) {
+				let
+					val = el.value;
+
 				const
-					{async: $a} = this;
+					isPromise = Object.isPromise(val);
 
-				for (let o = newIterator, el = o.next(); !el.done;) {
-					let
-						val = el.value;
+				if (isPromise) {
+					try {
+						val = await val;
+						console.log(val);
 
-					const fn = () => {
-						newArray.push(val);
+					} catch (err) {
+						const
+							{methods} = this.meta;
 
-						total++;
-						chunkTotal++;
-
-						if (chunkTotal >= count || el.done) {
-							const
-								desc = <TaskDesc>{};
-
-							let
-								group = 'asyncComponents';
-
-							if (params.group) {
-								group = `asyncComponents:${params.group}:${chunkI}`;
-								desc.destructor = () => $a.terminateWorker({group});
-							}
-
-							desc.renderGroup = group;
-
-							const
-								els = <Node[]>cb(newArray, desc);
-
-							chunkI++;
-							chunkTotal = 0;
-							newArray = [];
-
-							$a.worker(() => {
-								const destroyEl = (el) => {
-									if (el[this.asyncLabel]) {
-										delete el[this.asyncLabel];
-										$a.worker(() => destroyEl(el), {group});
-
-									} else if (el.parentNode) {
-										if (params.destructor) {
-											params.destructor(el);
-										}
-
-										el.parentNode.removeChild(el);
-									}
-								};
-
-								for (let i = 0; i < els.length; i++) {
-									destroyEl(els[i]);
-								}
-							}, {group});
+						if (methods.errorCaptured) {
+							methods.errorCaptured.fn.call(this, err);
 						}
-					};
 
-					if (Object.isPromise(val)) {
-						val
-							.then((resolvedVal) => {
-								val = resolvedVal;
-
-								this.createTask(fn, {
-									weight,
-									filter: f && f.bind(this.component, val, i, {
-										list,
-										i: syncI + i + 1,
-
-										get chunk(): number {
-											return chunkI;
-										},
-
-										get total(): number {
-											return total;
-										}
-									})
-								});
-
-								i++;
-								iterate();
-							})
-
-							.catch((err) =>
-								runHook('errorCaptured', this.meta, this.component, err).then(() => err)
-									.then((err) => {
-										const
-											{methods} = this.meta;
-
-										if (methods.errorCaptured) {
-											return methods.errorCaptured.fn.call(this, err);
-										}
-									})
-
-									.catch(stderr)
-							);
-
-						break;
+						continue;
 					}
-
-					this.createTask(fn, {
-						weight,
-						filter: f && f.bind(this.component, val, i, {
-							list,
-							i: syncI + i + 1,
-
-							get chunk(): number {
-								return chunkI;
-							},
-
-							get total(): number {
-								return total;
-							}
-						})
-					});
-
-					i++;
-					el = o.next();
 				}
-			};
 
-			iterate();
+				const task = () => {
+					newArray.push(val);
+
+					total++;
+					chunkTotal++;
+
+					if (chunkTotal >= count || el.done || isPromise) {
+						const
+							desc = <TaskDesc>{};
+
+						let
+							group = 'asyncComponents';
+
+						if (params.group) {
+							group = `asyncComponents:${params.group}:${chunkI}`;
+							desc.destructor = () => $a.terminateWorker({group});
+						}
+
+						desc.renderGroup = group;
+
+						const
+							els = <Node[]>cb(newArray, desc);
+
+						chunkI++;
+						chunkTotal = 0;
+						newArray = [];
+
+						$a.worker(() => {
+							const destroyEl = (el) => {
+								if (el[this.asyncLabel]) {
+									delete el[this.asyncLabel];
+									$a.worker(() => destroyEl(el), {group});
+
+								} else if (el.parentNode) {
+									if (params.destructor) {
+										params.destructor(el);
+									}
+
+									el.parentNode.removeChild(el);
+								}
+							};
+
+							for (let i = 0; i < els.length; i++) {
+								destroyEl(els[i]);
+							}
+						}, {group});
+					}
+				};
+
+				this.createTask(task, {
+					weight,
+					filter: f && f.bind(this.component, val, i, {
+						list,
+						i: syncI + i + 1,
+
+						get chunk(): number {
+							return chunkI;
+						},
+
+						get total(): number {
+							return total;
+						}
+					})
+				});
+
+				i++;
+			}
 		};
 
 		return finalArr;
