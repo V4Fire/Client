@@ -23,11 +23,18 @@ export function getRequestParams(
 	scrollRenderCtx?: ScrollRender,
 	merge?: Dictionary
 ): RequestMoreParams {
+	const
+		// @ts-ignore (access)
+		component = scrollRenderCtx?.component || scrollRenderCtx?.component;
+
+	const
+		lastLoadedData = scrollRequestCtx?.lastLoadedData.length ? scrollRequestCtx.lastLoadedData : component?.options;
+
 	const base: RequestMoreParams = {
 		currentPage: 0,
 		nextPage: 1,
 		items: [],
-		lastLoadedData: [],
+		lastLoadedData: lastLoadedData || [],
 		isLastEmpty: false,
 		itemsToReachBottom: 0
 	};
