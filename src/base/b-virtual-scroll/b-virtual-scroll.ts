@@ -30,6 +30,7 @@ import ScrollRender from 'base/b-virtual-scroll/modules/scroll-render';
 import ScrollRequest from 'base/b-virtual-scroll/modules/scroll-request';
 
 import { getRequestParams } from 'base/b-virtual-scroll/modules/helpers';
+
 import { Axis, RequestFn, RemoteData, RequestQuery } from 'base/b-virtual-scroll/modules/interface';
 
 export * from 'super/i-data/i-data';
