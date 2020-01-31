@@ -122,7 +122,8 @@ GLOBAL.ModuleDependencies = Object.assign(GLOBAL.ModuleDependencies || {}, {
 						links = document.getElementsByTagName('link');
 
 					if (links.length) {
-						links[links.length - 1].after(link);
+						const lastLink = links[links.length - 1];
+						(<HTMLElement>lastLink.parentElement).insertBefore(link, lastLink.nextSibling)
 
 					} else {
 						head.insertAdjacentElement('beforeend', link);
