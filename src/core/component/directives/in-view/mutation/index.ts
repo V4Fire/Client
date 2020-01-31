@@ -178,10 +178,6 @@ export default class InView extends Super {
 
 				this.setObservableSize(observable, elRect);
 
-				if (observable.onInit) {
-					observable.onInit(observable);
-				}
-
 				if (isElementIn && !observable.isLeaving) {
 					this.onObservableIn(observable);
 
@@ -266,10 +262,6 @@ export default class InView extends Super {
 				listNum = listNum === 0 ? 0 : listNum - 1;
 
 				this.setObservableSize(observable, rect);
-
-				if (observable.onInit) {
-					observable.onInit(observable);
-				}
 
 				if (!isElementVisible(rect)) {
 					this.clearAllAsync(observable);

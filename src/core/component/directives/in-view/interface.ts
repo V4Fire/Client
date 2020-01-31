@@ -70,17 +70,6 @@ export interface ObserveOptions {
 	callback?(observable: ObservableElement): unknown;
 
 	/**
-	 * Handler: element becomes observable
-	 *   *) IntersectionObserver strategy will call it once on method observe call
-	 *   *) MutationObserver strategy will will call it each time on
-	 *      1) Poll
-	 *      2) DOM Mutations
-	 *
-	 * @param observable
-	 */
-	onInit?(observable: ObservableElement): unknown;
-
-	/**
 	 * Handler: element enters viewport
 	 * @param observable
 	 */
