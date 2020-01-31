@@ -127,6 +127,7 @@ export default class ScrollRequest {
 				this.page++;
 				this.isLastEmpty = false;
 				this.data = this.data.concat(data);
+				this.lastLoadedData = data;
 
 				scrollRender.initItems(data);
 				scrollRender.render();
