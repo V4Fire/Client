@@ -8,7 +8,7 @@
 
 import symbolGenerator from 'core/symbol';
 
-import iOption from 'traits/i-option';
+import iOption from 'traits/i-option/i-option';
 
 import iData, {
 
