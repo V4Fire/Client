@@ -42,7 +42,7 @@ export function getRequestParams(
 	const params = scrollRequestCtx && scrollRenderCtx ? {
 		items: scrollRenderCtx.items,
 		currentPage: scrollRequestCtx.page,
-		lastLoadedData: scrollRequestCtx.lastLoadedData,
+		lastLoadedData: lastLoadedData || [],
 		isLastEmpty: scrollRequestCtx.isLastEmpty,
 		itemsToReachBottom: scrollRenderCtx.items.length - scrollRenderCtx.lastIntersectsItem
 	} : base;
