@@ -35,11 +35,9 @@ import {
 	OptionProps,
 	OptionKey,
 	Axis,
-	ScrollRenderStatus,
 	RequestFn,
 	RemoteData,
-	RequestQuery,
-	ReInitParams
+	RequestQuery
 
 } from 'base/b-virtual-scroll/modules/interface';
 

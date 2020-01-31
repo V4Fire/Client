@@ -6,25 +6,10 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import Range from 'core/range';
-
 import ScrollRender from 'base/b-virtual-scroll/modules/scroll-render';
 import ScrollRequest from 'base/b-virtual-scroll/modules/scroll-request';
 
-import { RequestMoreParams, ScrollRenderStatus } from 'base/b-virtual-scroll/modules/interface';
-
-/**
- * Returns a value of height with margins of the specified node
- * @param node
- */
-export function getHeightWithMargin(node: HTMLElement): number {
-	const
-		style = window.getComputedStyle(node);
-
-	return ['top', 'bottom']
-		.map((side) => parseInt(style[`margin-${side}`], 10))
-		.reduce((total, side) => total + side, node.offsetHeight);
-}
+import { RequestMoreParams } from 'base/b-virtual-scroll/modules/interface';
 
 /**
  * Returns a request params
@@ -42,7 +27,7 @@ export function getRequestParams(
 		currentPage: 0,
 		nextPage: 1,
 		items: [],
-		lastLoaded: [],
+		lastLoadedData: [],
 		isLastEmpty: false,
 		itemsToReachBottom: 0
 	};
@@ -50,7 +35,7 @@ export function getRequestParams(
 	const params = scrollRequestCtx && scrollRenderCtx ? {
 		items: scrollRenderCtx.items,
 		currentPage: scrollRequestCtx.page,
-		lastLoaded: scrollRequestCtx.lastLoadedData,
+		lastLoadedData: scrollRequestCtx.lastLoadedData,
 		isLastEmpty: scrollRequestCtx.isLastEmpty,
 		itemsToReachBottom: scrollRenderCtx.items.length - scrollRenderCtx.lastIntersectsItem
 	} : base;

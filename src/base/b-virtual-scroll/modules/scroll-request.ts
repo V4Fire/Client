@@ -10,7 +10,7 @@ import bVirtualScroll from 'base/b-virtual-scroll/b-virtual-scroll';
 import ScrollRender from 'base/b-virtual-scroll/modules/scroll-render';
 
 import { getRequestParams } from 'base/b-virtual-scroll/modules/helpers';
-import { RemoteData, RequestMoreParams, ScrollRenderStatus } from 'base/b-virtual-scroll/modules/interface';
+import { RemoteData, RequestMoreParams } from 'base/b-virtual-scroll/modules/interface';
 
 export default class ScrollRequest {
 	/**
@@ -91,9 +91,13 @@ export default class ScrollRequest {
 		const
 			{component, scrollRender} = this;
 
+		const additionParams = {
+			lastLoadedData: this.lastLoadedData.length === 0 ? component.options : this.lastLoadedData
+		};
+
 		const
 			resolved = Promise.resolve(),
-			shouldRequest = component.shouldMakeRequest(getRequestParams(this, scrollRender));
+			shouldRequest = component.shouldMakeRequest(getRequestParams(this, scrollRender, additionParams));
 
 		const cantRequest = () =>
 			this.isDone ||

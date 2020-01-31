@@ -6,7 +6,6 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import Range from 'core/range';
 import { axis } from 'base/b-virtual-scroll/b-virtual-scroll';
 
 export type OptionProps = (el: OptionEl, i: number) => Dictionary;
@@ -16,22 +15,21 @@ export type Axis = keyof typeof axis;
 export type RequestQuery<T extends unknown = unknown> = (params: RequestMoreParams<T>) => Dictionary<Dictionary>;
 export type RequestFn<T extends unknown = unknown> = (params: RequestMoreParams<T>) => boolean;
 
-export type RenderList = [RenderItem, number][];
 export type RequestParams = CanUndef<Record<string, Dictionary>>;
 
 export interface OptionEl<T extends unknown = unknown> {
 	/**
-	 * Current componnet
+	 * Current render component data
 	 */
 	current: T;
 
 	/**
-	 * Previous component
+	 * Previous render component
 	 */
 	prev: CanUndef<T>;
 
 	/**
-	 * Next component
+	 * Next render component
 	 */
 	next: CanUndef<T>;
 }
@@ -65,7 +63,7 @@ export interface RequestMoreParams<T extends unknown = unknown> {
 	/**
 	 * Last loaded data chunk
 	 */
-	lastLoaded: Array<T>;
+	lastLoadedData: Array<T>;
 }
 
 export interface RemoteData {
@@ -100,42 +98,4 @@ export interface RenderItem<T extends unknown = unknown> {
 	 * Index of element in DOM
 	 */
 	index: number;
-}
-
-export interface RenderedNode {
-	width: number;
-	height: number;
-	node: HTMLElement;
-}
-
-export interface AnchoredItem {
-	index: number;
-	offset: number;
-}
-
-export interface ElementPosition {
-	x: number;
-	y: number;
-}
-
-export interface Size {
-	width: number;
-	height: number;
-}
-
-export enum ScrollRenderStatus {
-	notInitialized,
-	waitRender,
-	render
-}
-
-export interface RenderedItems {
-	positions: Dictionary<[HTMLElement, number]>;
-	nodes: HTMLElement[];
-	items: [RenderItem, number][];
-}
-
-export interface ReInitParams {
-	hard?: boolean;
-	waitReady?: boolean;
 }
