@@ -9,6 +9,8 @@
 import symbolGenerator from 'core/symbol';
 
 import iObserveDOM from 'traits/i-observe-dom/i-observe-dom';
+import iOption from 'traits/i-option/i-option';
+
 import iData, { component, prop, field, system, hook, watch, wait, p } from 'super/i-data/i-data';
 
 export * from 'super/i-data/i-data';
@@ -23,13 +25,6 @@ export interface SlideRect extends ClientRect {
  * 1  - Next
  */
 export type SlideDirection = -1 | 0 | 1;
-export interface OptionPropParams {
-	key?: string;
-	ctx: bSlider;
-}
-
-export type OptionProps = ((el: unknown, i: number, params: OptionPropParams) => Dictionary) | Dictionary;
-export type OptionsIterator<T = bSlider> = (options: unknown[], ctx: T) => unknown[];
 
 export const
 	$$ = symbolGenerator();
@@ -50,7 +45,7 @@ export type AlignType = keyof typeof alignTypes;
 export type Mode = keyof typeof sliderModes;
 
 @component()
-export default class bSlider extends iData implements iObserveDOM {
+export default class bSlider extends iData implements iObserveDOM, iOption {
 	/**
 	 * Slider mode
 	 *   *) scroll - scroll implementation
@@ -119,41 +114,29 @@ export default class bSlider extends iData implements iObserveDOM {
 	@prop({type: Number, validator: Number.isNatural})
 	readonly swipeToleranceY: number = 50;
 
-	/**
-	 * Initial component options
-	 */
+	/** @see iOption.optionsProp */
 	@prop(Array)
-	readonly optionsProp?: unknown[] = [];
+	readonly optionsProp?: iOption['optionsProp'] = [];
 
-	/**
-	 * Factory for an options iterator
-	 */
+	/** @see iOption.optionsIterator */
 	@prop({type: Function, required: false})
-	optionsIterator?: OptionsIterator;
+	optionsIterator?: iOption['optionsIterator'];
 
-	/**
-	 * Component options
-	 */
+	/** @see iOption.options */
 	@field((o) => o.sync.link())
 	options!: unknown[];
 
-	/**
-	 * Option component
-	 */
+	/** @see iOption.option */
 	@prop({type: String, required: false})
-	readonly option?: string;
+	readonly option?: iOption['option'];
 
-	/**
-	 * Option unique key (for v-for)
-	 */
+	/** @see iOption.optionKey */
 	@prop({type: [String, Function], required: false})
-	readonly optionKey?: string | ((el: unknown, i: number) => string);
+	readonly optionKey?: iOption['optionKey'];
 
-	/**
-	 * Option component props
-	 */
+	/** @see iOption.optionProps */
 	@prop({type: [Object, Function]})
-	readonly optionProps: OptionProps = {};
+	readonly optionProps: iOption['optionProps'] = {};
 
 	/**
 	 * The number of slides in the slider
@@ -384,18 +367,10 @@ export default class bSlider extends iData implements iObserveDOM {
 		iObserveDOM.onDOMChange(this);
 	}
 
-	/**
-	 * Generates or returns an option key for v-for
-	 *
-	 * @param el
-	 * @param i
-	 */
+	/** @see iOption.getOptionKey */
 	protected getOptionKey(el: unknown, i: number): CanUndef<string> {
-		return Object.isFunction(this.optionKey) ?
-			this.optionKey(el, i) :
-			this.optionKey;
+		return iOption.getOptionKey(this, el, i);
 	}
-
 	/**
 	 * Synchronizes the slider state
 	 */

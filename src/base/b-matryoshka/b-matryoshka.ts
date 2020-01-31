@@ -6,10 +6,11 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import iOption from 'traits/i-option/i-option';
+
 import iData, { component, prop, field } from 'super/i-data/i-data';
 export * from 'super/i-data/i-data';
 
-export type OptionProps = ((el: unknown, i: number, k: CanUndef<string>) => Dictionary) | Dictionary;
 export interface Doll extends Dictionary {
 	id: string;
 	parentId?: string;
@@ -17,30 +18,26 @@ export interface Doll extends Dictionary {
 }
 
 @component({flyweight: true})
-export default class bMatryoshka extends iData {
-	/**
-	 * Initial component options
-	 */
-	@prop({type: Array, required: false})
-	readonly optionsProp?: Doll[];
+export default class bMatryoshka extends iData implements iOption {
+	/** @see iOption.optionsProp */
+	@prop(Array)
+	readonly optionsProp?: Doll[] = [];
 
-	/**
-	 * Option component
-	 */
+	/** @see iOption.options */
+	@field((o) => o.sync.link())
+	options!: Doll[];
+
+	/** @see iOption.option */
 	@prop({type: String, required: false})
-	readonly option?: string;
+	readonly option?: iOption['option'];
 
-	/**
-	 * Option unique key (for v-for)
-	 */
+	/** @see iOption.optionKey */
 	@prop({type: [String, Function], required: false})
-	readonly optionKey?: string | ((el: unknown, i: number) => string);
+	readonly optionKey?: iOption['optionKey'];
 
-	/**
-	 * Option component props
-	 */
-	@prop({type: [Object, Function], required: false})
-	readonly optionProps?: OptionProps;
+	/** @see iOption.optionProps */
+	@prop({type: [Object, Function]})
+	readonly optionProps: iOption['optionProps'] = {};
 
 	/**
 	 * Number of chunks for the async render
@@ -61,16 +58,10 @@ export default class bMatryoshka extends iData {
 	readonly level: number = 0;
 
 	/**
-	 * Component options
-	 */
-	@field((o) => o.sync.link())
-	options!: Doll[];
-
-	/**
 	 * Link to the top level component
 	 */
 	protected get top(): this {
-		return this.isFlyweight && <this>this.$normalParent || this;
+		return (this.isFlyweight && this.$normalParent || this) as this;
 	}
 
 	/** @override */
@@ -99,16 +90,9 @@ export default class bMatryoshka extends iData {
 		};
 	}
 
-	/**
-	 * Generates or returns an option key for v-for
-	 *
-	 * @param el
-	 * @param i
-	 */
+	/** @see iOption.getOptionKey */
 	protected getOptionKey(el: unknown, i: number): CanUndef<string> {
-		return Object.isFunction(this.optionKey) ?
-			this.optionKey(el, i) :
-			this.optionKey;
+		return iOption.getOptionKey(this, el, i);
 	}
 
 	/**
@@ -126,7 +110,10 @@ export default class bMatryoshka extends iData {
 			return item;
 		}
 
-		return Object.isFunction(op) ? op(item, i, this.getOptionKey(item, i)) : op;
+		return Object.isFunction(op) ? op(item, i, {
+			key: this.getOptionKey(item, i),
+			ctx: this
+		}) : op;
 	}
 
 	/**

@@ -8,6 +8,8 @@
 
 import symbolGenerator from 'core/symbol';
 
+import iOption from 'traits/i-option';
+
 import iData, {
 
 	component,
@@ -15,7 +17,6 @@ import iData, {
 	field,
 	system,
 	wait,
-	p,
 
 	CheckDBEquality,
 	InitLoadParams,
@@ -52,42 +53,32 @@ export const axis = Object.createDict({
 });
 
 @component()
-export default class bVirtualScroll extends iData {
+export default class bVirtualScroll extends iData implements iOption {
 	/** @override */
 	readonly DB!: RemoteData;
 
 	/** @override */
 	readonly checkDBEquality: CheckDBEquality = false;
 
-	/**
-	 * Option component
-	 */
-	@prop({type: String, watch: 'syncPropsWatcher'})
-	readonly option!: string;
+	/** @see iOption.optionsProp */
+	@prop(Array)
+	readonly optionsProp?: iOption['optionsProp'] = [];
 
-	/**
-	 * Initial component options
-	 */
-	@prop({type: Array, watch: 'syncPropsWatcher'})
-	readonly optionsProp?: unknown[] = [];
-
-	/**
-	 * Component options
-	 */
+	/** @see iOption.options */
 	@field((o) => o.sync.link())
 	options!: unknown[];
 
-	/**
-	 * Option component props
-	 */
-	@prop({type: Function, watch: 'syncPropsWatcher', default: () => ({})})
-	readonly optionProps!: OptionProps;
+	/** @see iOption.option */
+	@prop({type: String, required: false})
+	readonly option?: iOption['option'];
 
-	/**
-	 * Option unique key (for v-for)
-	 */
-	@prop({type: Function, watch: 'syncPropsWatcher'})
-	readonly optionKey!: OptionKey;
+	/** @see iOption.optionKey */
+	@prop({type: [String, Function], required: false})
+	readonly optionKey?: iOption['optionKey'];
+
+	/** @see iOption.optionProps */
+	@prop({type: [Object, Function]})
+	readonly optionProps: iOption['optionProps'] = {};
 
 	/**
 	 * Number of components that could be cached
@@ -268,16 +259,9 @@ export default class bVirtualScroll extends iData {
 		return this.options;
 	}
 
-	/**
-	 * Returns an option key
-	 *
-	 * @param el
-	 * @param i
-	 */
+	/** @see iOption.getOptionKey */
 	protected getOptionKey(el: unknown, i: number): CanUndef<string | number> {
-		return Object.isFunction(this.optionKey) ?
-			this.optionKey(el, i) :
-			this.optionKey;
+		return iOption.getOptionKey(this, el, i);
 	}
 
 	/**
