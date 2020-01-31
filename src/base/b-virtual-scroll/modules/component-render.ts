@@ -39,6 +39,13 @@ export default class ComponentRender {
 	protected nodesCache: Dictionary<HTMLElement> = Object.createDict();
 
 	/**
+	 * True if rendered nodes can be cached
+	 */
+	protected get canCache(): boolean {
+		return this.component.cacheNodes && this.component.dropNodes;
+	}
+
+	/**
 	 * API for scroll rendering
 	 */
 	protected get scrollRender(): ScrollRender {
@@ -136,7 +143,7 @@ export default class ComponentRender {
 	 */
 	render(items: RenderItem[]): HTMLElement[] {
 		const
-			{cacheNodes} = this.component;
+			{canCache} = this;
 
 		const
 			res: HTMLElement[] = [],
@@ -151,7 +158,7 @@ export default class ComponentRender {
 				continue;
 			}
 
-			if (cacheNodes) {
+			if (canCache) {
 				const
 					key = this.getOptionKey(item.data),
 					node = key && this.getCachedComponent(key);
@@ -177,7 +184,7 @@ export default class ComponentRender {
 					node = nodes[i],
 					key = this.getOptionKey(item.data);
 
-				if (cacheNodes) {
+				if (canCache) {
 					this.cacheNode(key, item.node = node);
 				}
 

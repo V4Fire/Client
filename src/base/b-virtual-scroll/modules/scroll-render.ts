@@ -167,7 +167,7 @@ export default class ScrollRender {
 
 		this.async.requestAnimationFrame(() => {
 			this.refs.container.appendChild(fragment);
-		});
+		}, {group: this.asyncGroup});
 	}
 
 	/**

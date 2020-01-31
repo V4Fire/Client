@@ -203,7 +203,8 @@ export default class bVirtualScroll extends iData {
 	protected $refs!: {
 		container: HTMLElement;
 		tombstones: HTMLElement;
-		scrollRunner: HTMLElement;
+		empty?: HTMLElement;
+		retry?: HTMLElement;
 	};
 
 	/** @override */
@@ -247,10 +248,7 @@ export default class bVirtualScroll extends iData {
 		this.sync.mod('axis', 'axis', String);
 	}
 
-	/**
-	 * @override
-	 * @emits empty()
-	 */
+	/** @override */
 	protected initRemoteData(): CanUndef<unknown[]> {
 		if (!this.db) {
 			return;
@@ -265,7 +263,6 @@ export default class bVirtualScroll extends iData {
 		} else {
 			this.options = [];
 			this.scrollRequest.checksRequestPossibility(getRequestParams(undefined, undefined, {isLastEmpty: true}));
-			this.emit('empty');
 		}
 
 		return this.options;
