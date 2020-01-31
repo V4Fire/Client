@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-beta.245 (2020-01-31)
+
+#### :bug: Bug Fix
+
+* Fixed loading of dynamic dependencies `core/prelude/dependencies`
+
 ## v3.0.0-beta.244 (2020-01-30)
 
 #### :house: Internal
