@@ -10,7 +10,7 @@ import { EventEmitter2 as EventEmitter, Listener } from 'eventemitter2';
 import { componentParams } from 'core/component/const/cache';
 
 /**
- * Event emitter for broadcasting component initialize events
+ * Event emitter to broadcast component initialize events
  */
 export const
 	initEmitter = new EventEmitter({maxListeners: 1e3, newListener: false});

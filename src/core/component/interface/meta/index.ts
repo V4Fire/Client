@@ -6,17 +6,33 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { ComponentParams } from 'core/component/interface/component';
-import { Hooks } from 'core/component/interface/types';
+import { WatchObject } from 'core/component/interface/watch';
+import { PropOptions, RenderFunction, ModsDecl } from 'core/component/interface/other';
+
+import {
+
+	ComponentParams,
+	ComponentProp,
+	ComponentField,
+	ComponentComputedField,
+	ComponentAccessor,
+	ComponentMethod,
+	ComponentHooks,
+	ComponentDirectiveOptions
+
+} from 'core/component/interface/meta/types';
+
+export * from 'core/component/interface/meta/types';
 
 export interface ComponentMeta {
 	name: string;
 	componentName: string;
 
-	parentMeta?: ComponentMeta;
 	constructor: Function;
 	instance: Dictionary;
+
 	params: ComponentParams;
+	parentMeta?: ComponentMeta;
 
 	props: Dictionary<ComponentProp>;
 	fields: Dictionary<ComponentField>;
@@ -27,16 +43,16 @@ export interface ComponentMeta {
 	accessors: Dictionary<ComponentAccessor>;
 	methods: Dictionary<ComponentMethod>;
 	watchers: Dictionary<WatchObject[]>;
-	hooks: {[H in Hooks]: Hook[]};
+	hooks: ComponentHooks;
 
 	component: {
 		name: string;
 		mods: Dictionary<string>;
 		props: Dictionary<PropOptions>;
 		methods: Dictionary<Function>;
-		computed: Dictionary<ComputedOptions<unknown>>;
+		computed: Dictionary<ComponentComputedField>;
 		filters?: Dictionary<Function>;
-		directives?: Dictionary<DirectiveOptions>;
+		directives?: Dictionary<ComponentDirectiveOptions>;
 		components?: Dictionary<ComponentMeta['component']>;
 		staticRenderFns: RenderFunction[];
 		render: RenderFunction;

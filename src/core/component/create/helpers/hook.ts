@@ -9,7 +9,7 @@
 import log from 'core/log';
 import SyncPromise from 'core/promise/sync';
 import HookEmitter from 'core/component/create/helpers/event';
-import { Hook, ComponentInterface, ComponentMeta } from 'core/component/interface';
+import { ComponentHook, ComponentInterface, ComponentMeta } from 'core/component/interface';
 
 /**
  * Runs a hook from the specified meta object
@@ -47,7 +47,7 @@ export function runHook(
 
 	const
 		event = new HookEmitter(),
-		filteredHooks = <Hook[]>[];
+		filteredHooks = <ComponentHook[]>[];
 
 	for (let i = 0; i < hooks.length; i++) {
 		const

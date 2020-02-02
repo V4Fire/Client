@@ -26,10 +26,13 @@ import {
 } from 'core/component/engines';
 
 import { ComponentMeta } from 'core/component/interface/meta';
-import { ComponentElement } from 'core/component/interface/component/types';
-import { Hooks, SyncLinkCache } from 'core/component/interface/types';
+import { Hook, SyncLinkCache } from 'core/component/interface/other';
 
-abstract class ComponentInterface<
+export type ComponentElement<T = unknown> = Element & {
+	component?: T;
+};
+
+export abstract class ComponentInterface<
 	C extends ComponentInterface = ComponentInterface<any, any>,
 	R extends ComponentInterface = ComponentInterface<any, any>
 > {
@@ -38,7 +41,7 @@ abstract class ComponentInterface<
 	readonly globalName?: string;
 
 	readonly instance!: this;
-	readonly hook!: Hooks;
+	readonly hook!: Hook;
 	readonly keepAlive!: boolean;
 	readonly renderGroup?: string;
 
