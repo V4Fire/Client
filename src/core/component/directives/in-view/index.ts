@@ -43,7 +43,7 @@ export function InViewFactory(): InViewAdapter {
 		InView.setInstance(new Adaptee());
 	}
 
-	return InView;
+	return inView;
 }
 
 ComponentDriver.directive('in-view', {
