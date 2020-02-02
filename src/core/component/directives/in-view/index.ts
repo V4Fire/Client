@@ -15,6 +15,7 @@ import MutationObserverStrategy from 'core/component/directives/in-view/mutation
 import IntersectionObserverStrategy from 'core/component/directives/in-view/intersection';
 import { DirectiveOptions, InitOptions } from 'core/component/directives/in-view/interface';
 
+export { default as InViewAdapter } from 'core/component/directives/in-view/adapter';
 export * from 'core/component/directives/in-view/interface';
 export * from 'core/component/directives/in-view/helpers';
 
@@ -29,6 +30,20 @@ export let
 if (!InView.hasAdaptee) {
 	// @ts-ignore
 	InView.setInstance(new Adaptee());
+}
+
+/**
+ * Creates a new in-view instance
+ */
+export function InViewFactory(): InViewAdapter {
+	const inView = new InViewAdapter();
+
+	if (!InView.hasAdaptee) {
+		// @ts-ignore
+		InView.setInstance(new Adaptee());
+	}
+
+	return InView;
 }
 
 ComponentDriver.directive('in-view', {

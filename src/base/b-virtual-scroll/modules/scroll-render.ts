@@ -15,7 +15,7 @@ import ScrollRequest from 'base/b-virtual-scroll/modules/scroll-request';
 
 import { RenderItem } from 'base/b-virtual-scroll/modules/interface';
 import { InitOptions } from 'core/component/directives/in-view/interface';
-import { InView } from 'core/component/directives/in-view';
+import { InViewAdapter, InViewFactory } from 'core/component/directives/in-view';
 
 export const
 	$$ = symbolGenerator();
@@ -57,6 +57,11 @@ export default class ScrollRender {
 	 * Async in-view label prefix
 	 */
 	protected readonly asyncInViewPrefix: string = 'in-view:';
+
+	/**
+	 * Local in-view instance
+	 */
+	protected readonly InView: InViewAdapter = InViewFactory();
 
 	/**
 	 * API for dynamic component rendering
@@ -213,8 +218,8 @@ export default class ScrollRender {
 			return;
 		}
 
-		InView.observe(node, this.getInViewOptions(item.index));
-		node[$$.inView] = this.async.worker(() => InView.stopObserve(node), {group: this.asyncGroup, label});
+		this.InView.observe(node, this.getInViewOptions(item.index));
+		node[$$.inView] = this.async.worker(() => this.InView.stopObserve(node), {group: this.asyncGroup, label});
 	}
 
 	/**
