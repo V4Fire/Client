@@ -38,9 +38,9 @@ if (!InView.hasAdaptee) {
 export function inViewFactory(): InViewAdapter {
 	const inView = new InViewAdapter();
 
-	if (!InView.hasAdaptee) {
+	if (!inView.hasAdaptee) {
 		// @ts-ignore
-		InView.setInstance(new Adaptee());
+		inView.setInstance(new Adaptee());
 	}
 
 	return inView;
