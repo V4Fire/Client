@@ -1,3 +1,3 @@
 # core/prelude/dependencies
 
-This module provides API for loading and registering dependencies.
+This module provides API to load and register application dependencies.

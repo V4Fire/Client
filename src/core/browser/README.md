@@ -1,3 +1,3 @@
 # core/browser
 
-This module provides API for determining the current browser name/version.
+This module provides API to determine the current browser name/version.

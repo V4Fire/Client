@@ -1,3 +1,3 @@
 # core/abt
 
-This module provides API for working with ABT experiments.
+This module provides API to work with ABT experiments.

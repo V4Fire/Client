@@ -12,7 +12,7 @@
  */
 
 /**
- * Wrapper for using web workers with WebPack
+ * Wrapper to use web workers with WebPack
  *
  * @param text - worker text
  *

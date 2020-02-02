@@ -1,3 +1,3 @@
 # core/worker
 
-This module provides a bunch of helper functions for working with browser workers.
+This module provides a bunch of helper functions to work with browser workers.

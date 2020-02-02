@@ -1,3 +1,3 @@
 # core/object
 
-This module provides a bunch of helper functions for working with an object.
+This module provides a bunch of helper functions to work with an object.

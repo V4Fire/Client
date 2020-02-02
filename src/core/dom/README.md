@@ -1,3 +1,3 @@
 # core/dom
 
-This module provides a bunch of helper functions for working with DOM.
+This module provides a bunch of helper functions to work with DOM objects.
