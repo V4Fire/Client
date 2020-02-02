@@ -24,14 +24,6 @@ const Adaptee = getAdaptee([
 	MutationObserverStrategy
 ]);
 
-export let
-	InView: InViewAdapter = new InViewAdapter();
-
-if (!InView.hasAdaptee) {
-	// @ts-ignore
-	InView.setInstance(new Adaptee());
-}
-
 /**
  * Creates a new in-view instance
  */
@@ -45,6 +37,9 @@ export function inViewFactory(): InViewAdapter {
 
 	return inView;
 }
+
+export let
+	InView: InViewAdapter = inViewFactory();
 
 ComponentDriver.directive('in-view', {
 	inserted(el: Element, {value}: DirectiveOptions): void {
