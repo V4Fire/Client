@@ -570,6 +570,26 @@ export default class User extends Provider {
 }
 ```
 
+### Composition of providers
+
+You can create a composition of multiple providers, which are fetching in parallel and merging to one data.
+
+```js
+import Provider, { provider } from 'core/provider';
+
+@provider
+export default class User extends Provider {
+  extraProviders = {
+    'skils': {
+      provider: 'Skills',
+
+    }
+  };
+
+  baseURL = 'user/:id';
+}
+```
+
 ### Extending a data provider from another
 
 The data provider is a simple class that implements the special interface. That's why for creating a new provider that is extending parameters from another you should create a simple subclass.

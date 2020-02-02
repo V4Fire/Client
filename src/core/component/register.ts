@@ -13,16 +13,8 @@ import * as defTpls from 'core/block.ss';
 import log from 'core/log';
 
 import inheritMeta from 'core/component/create/inherit';
-
 import { runHook, patchRefs, parseVAttrs } from 'core/component/create/helpers';
-import {
-
-	ComponentInterface,
-	ComponentParams,
-	ComponentMeta,
-	ComponentMethod
-
-} from 'core/component/interface';
+import { ComponentInterface, ComponentParams, ComponentMeta, ComponentMethod } from 'core/component/interface';
 
 import {
 

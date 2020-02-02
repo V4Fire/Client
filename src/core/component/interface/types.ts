@@ -9,24 +9,19 @@
 // tslint:disable:no-empty
 // tslint:disable:typedef
 
-import Async from 'core/async';
 import { PARENT } from 'core/component/const';
+import { ComponentInterface } from 'core/component/interface/component';
+
 import {
 
 	ComponentDriver as Component,
 	ComponentOptions,
+
 	FunctionalComponentOptions,
-	DirectiveOptions,
-
 	PropOptions as BasePropOptions,
+
 	ComputedOptions,
-
-	WatchOptions,
-	WatchOptionsWithHandler,
-
-	CreateElement,
-	VNode,
-	ScopedSlot
+	WatchOptions
 
 } from 'core/component/engines';
 
@@ -41,7 +36,7 @@ export interface FieldWatcher<
 	CTX extends ComponentInterface = ComponentInterface,
 	A = unknown,
 	B = A
-> extends WatchOptions {
+	> extends WatchOptions {
 	fn: WatchHandler<CTX, A, B>;
 	functional?: boolean;
 	provideArgs?: boolean;
@@ -49,13 +44,6 @@ export interface FieldWatcher<
 
 export interface PropOptions extends BasePropOptions {
 	functional?: boolean;
-}
-
-export interface ComponentProp extends PropOptions {
-	watchers: Map<string | Function, FieldWatcher>;
-	forceDefault?: boolean;
-	default?: unknown;
-	meta: Dictionary;
 }
 
 export interface InitFieldFn<CTX extends ComponentInterface = ComponentInterface> {
@@ -81,10 +69,6 @@ export interface SystemField<CTX extends ComponentInterface = ComponentInterface
 	init?: InitFieldFn<CTX>;
 	merge?: MergeFieldFn<CTX> | boolean;
 	meta: Dictionary;
-}
-
-export interface ComponentField<CTX extends ComponentInterface = ComponentInterface> extends SystemField<CTX> {
-	watchers?: Map<string | Function, FieldWatcher>;
 }
 
 export interface WatchWrapper<CTX extends ComponentInterface = ComponentInterface, A = unknown, B = A> {
@@ -113,7 +97,7 @@ export interface MethodWatcher<
 	CTX extends ComponentInterface = ComponentInterface,
 	A = unknown,
 	B = A
-> extends WatchOptions {
+	> extends WatchOptions {
 	field?: string;
 	group?: string;
 	single?: boolean;
@@ -150,26 +134,6 @@ export interface Hook {
 	after?: Set<string>;
 }
 
-export interface ComponentMethod {
-	fn: Function;
-	src: string;
-	wrapper?: boolean;
-	replace?: boolean;
-	functional?: boolean;
-	watchers?: Dictionary<MethodWatcher>;
-	hooks?: {[hook in Hooks]?: {
-		name: string;
-		hook: string;
-		after: Set<string>;
-	}};
-}
-
-export interface ComponentAccessor extends ComputedOptions<unknown> {
-	src: string;
-	replace?: boolean;
-	functional?: boolean;
-}
-
 export type ModVal = string | boolean | number;
 export type StrictModDeclVal = CanArray<ModVal>;
 export type ModDeclVal = StrictModDeclVal | typeof PARENT;
@@ -185,23 +149,9 @@ export interface FunctionalCtx {
 	$options: Dictionary;
 }
 
-export interface ComponentParams {
-	name?: string;
-	root?: boolean;
-	tpl?: boolean;
-	functional?: Nullable<boolean> | Dictionary;
-	flyweight?: boolean;
-	model?: {prop?: string; event?: string};
-	parent?: Component;
-	inheritAttrs?: boolean;
-	inheritMods?: boolean;
-	defaultProps?: boolean;
-}
-
 export type RenderFunction =
 	ComponentOptions<Component>['render'] |
 	FunctionalComponentOptions['render'];
-
 
 export interface SyncLink<T = unknown> {
 	path: string;
