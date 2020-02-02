@@ -96,11 +96,10 @@ export default class ScrollRender {
 	}
 
 	/**
-	 * Link to the scroll emitter
+	 * Returns a random threshold number
 	 */
-	protected get scrollEmitter(): HTMLElement {
-		// @ts-ignore (access)
-		return this.component.scrollEmitter;
+	protected get randomThreshold(): number {
+		return Math.floor((Math.random() * (0.06 - 0.01) + 0.01) * 100) / 100;
 	}
 
 	/**
@@ -240,7 +239,7 @@ export default class ScrollRender {
 	protected getInViewOptions(index: number): InitOptions {
 		return {
 			delay: 0,
-			threshold: Math.floor((Math.random() * (0.06 - 0.01) + 0.01) * 100) / 100,
+			threshold: this.randomThreshold,
 			onEnter: () => this.onNodeIntersect(index)
 		};
 	}
