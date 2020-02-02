@@ -15,7 +15,7 @@ import ScrollRequest from 'base/b-virtual-scroll/modules/scroll-request';
 
 import { RenderItem } from 'base/b-virtual-scroll/modules/interface';
 import { InitOptions } from 'core/component/directives/in-view/interface';
-import { InViewAdapter, InViewFactory } from 'core/component/directives/in-view';
+import { InViewAdapter, inViewFactory } from 'core/component/directives/in-view';
 
 export const
 	$$ = symbolGenerator();
@@ -61,7 +61,7 @@ export default class ScrollRender {
 	/**
 	 * Local in-view instance
 	 */
-	protected readonly InView: InViewAdapter = InViewFactory();
+	protected readonly InView: InViewAdapter = inViewFactory();
 
 	/**
 	 * API for dynamic component rendering

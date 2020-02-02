@@ -35,7 +35,7 @@ if (!InView.hasAdaptee) {
 /**
  * Creates a new in-view instance
  */
-export function InViewFactory(): InViewAdapter {
+export function inViewFactory(): InViewAdapter {
 	const inView = new InViewAdapter();
 
 	if (!InView.hasAdaptee) {
