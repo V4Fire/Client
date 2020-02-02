@@ -127,7 +127,8 @@ export default globalThis[MODULE_DEPENDENCIES] = Object.assign(globalThis[MODULE
 						links = document.getElementsByTagName('link');
 
 					if (links.length) {
-						links[links.length - 1].after(link);
+						const lastLink = links[links.length - 1];
+						(<HTMLElement>lastLink.parentElement).insertBefore(link, lastLink.nextSibling);
 
 					} else {
 						head.insertAdjacentElement('beforeend', link);
