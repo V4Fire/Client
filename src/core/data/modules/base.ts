@@ -8,7 +8,7 @@
 
 import symbolGenerator from 'core/symbol';
 
-import { deprecate } from 'core/meta/deprecation';
+import { deprecate } from 'core/functools';
 import { EventEmitter2 as EventEmitter } from 'eventemitter2';
 import { concatUrls } from 'core/url';
 

@@ -222,7 +222,7 @@ export default class Daemons {
 
 		const
 			watchName = Object.isSimpleObject(watch) ? watch.field : watch,
-			watchParams = Object.isObject(watch) ? Object.reject(watch, 'field') : {};
+			watchParams = Object.isPlainObject(watch) ? Object.reject(watch, 'field') : {};
 
 		const watchDaemon = {
 			handler: (...args) => this.run(name, ...args),
@@ -261,7 +261,7 @@ export default class Daemons {
 			this.wrapDaemonFn(daemon);
 
 			const
-				hooks = Object.isObject(daemon.hook) ? Object.keys(daemon.hook) : daemon.hook;
+				hooks = Object.isPlainObject(daemon.hook) ? Object.keys(daemon.hook) : daemon.hook;
 
 			if (hooks) {
 				for (let i = 0; i < hooks.length; i++) {
@@ -269,7 +269,7 @@ export default class Daemons {
 						hook = hooks[i];
 
 					const params = {
-						after: Object.isObject(daemon.hook) ? new Set<string>(...[].concat(daemon.hook[hook])) : undefined
+						after: Object.isPlainObject(daemon.hook) ? new Set<string>(...[].concat(daemon.hook[hook])) : undefined
 					};
 
 					this.bindToHook(hook, name, params);

@@ -35,7 +35,7 @@ function bind(
 		raw = <string>(<any>p).rawName;
 
 	const
-		isObj = Object.isObject(p.value),
+		isObj = Object.isPlainObject(p.value),
 		group = isObj && p.value.group || `v-e:${p.arg}`,
 		handler = isObj ? p.value.fn : p.value,
 		cacheList = cache.get(oldVNode);

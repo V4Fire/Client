@@ -19,7 +19,7 @@
 						- block slots
 							< template #@ = {slotContent}
 								- block defaultSlot
-									< template v-if = Object.isArray(slotContent) || Object.isObject(slotContent)
+									< template v-if = Object.isArray(slotContent) || Object.isPlainObject(slotContent)
 										< @b-component-renderer :content = [].concat(slotContent)
 
 									< template v-else

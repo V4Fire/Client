@@ -29,13 +29,13 @@
 	- if Object.isString(@wrapperClasses)
 		? wrapperClasses[@wrapperClasses] = {}
 
-	- else if (Object.isObject(@wrapperClasses))
+	- else if (Object.isPlainObject(@wrapperClasses))
 		? Object.assign(wrapperClasses, @wrapperClasses)
 
 	- if Object.isString(@elClasses)
 		? elClasses[@elClasses] = {}
 
-	- else if (Object.isObject(@elClasses))
+	- else if (Object.isPlainObject(@elClasses))
 		? Object.assign(elClasses, @elClasses)
 
 	: &

@@ -505,7 +505,7 @@ export default class bRouter extends iData {
 						return;
 					}
 
-					if (Object.isObject(obj)) {
+					if (Object.isPlainObject(obj)) {
 						for (let keys = Object.keys(obj), i = 0; i < keys.length; i++) {
 							const key = keys[i];
 							normalizeOpts(obj[key], key, obj);
