@@ -154,8 +154,8 @@ export default class ScrollRender {
 			{component, chunk, items} = this;
 
 		const
-			renderFrom = (chunk - 1) * component.renderPerChunk,
-			renderTo = chunk * component.renderPerChunk,
+			renderFrom = (chunk - 1) * component.chunkSize,
+			renderTo = chunk * component.chunkSize,
 			renderItems = items.slice(renderFrom, renderTo);
 
 		if (!renderItems.length) {
@@ -288,10 +288,10 @@ export default class ScrollRender {
 	protected onNodeIntersect(index: number): void {
 		const
 			{component, items} = this,
-			{renderPerChunk, renderBefore} = component,
-			currentRender = this.chunk * renderPerChunk;
+			{chunkSize, renderBefore} = component,
+			currentRender = this.chunk * chunkSize;
 
-		if (index + renderBefore + renderPerChunk >= items.length) {
+		if (index + renderBefore + chunkSize >= items.length) {
 			this.scrollRequest.try();
 		}
 
