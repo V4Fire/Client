@@ -169,7 +169,7 @@
 									? Object.assign(assets, fs.readJSONSync(path.join(build.assetsJSON)))
 
 								? src = assets[src]
-								? src = path.join(cwd, Object.isPlainObject(src) ? src.path : src)
+								? src = path.join(cwd, Object.isObject(src) ? src.path : src)
 								? src = inline ? src : path.relative(@@output, src)
 
 							- else
@@ -228,7 +228,7 @@
 									? Object.assign(assets, fs.readJSONSync(path.join(build.assetsJSON)))
 
 								? src = assets[src]
-								? src = path.join(cwd, Object.isPlainObject(src) ? src.path : src)
+								? src = path.join(cwd, Object.isObject(src) ? src.path : src)
 								? src = inline ? src : path.relative(@@output, src)
 
 							- else
