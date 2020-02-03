@@ -89,7 +89,7 @@ export default class bVirtualScroll extends iData implements iItem {
 	 * Render elements per chunk
 	 */
 	@prop({type: Number, validator: Number.isNatural})
-	readonly renderPerChunk: number = 10;
+	readonly chunkSize: number = 10;
 
 	/**
 	 * Scroll axis

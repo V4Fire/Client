@@ -19,7 +19,7 @@
 				v-if = vdom.getSlot('tombstone') |
 				ref = tombstones
 			.
-				< .&__tombstone v-for = i in renderPerChunk
+				< .&__tombstone v-for = i in (chunkSize)
 					+= self.slot('tombstone')
 
 			< .&__loader &
