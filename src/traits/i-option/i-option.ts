@@ -10,7 +10,7 @@ import iBlock from 'super/i-block/i-block';
 
 export default abstract class iOption {
 	/**
-	 * Generates or returns an option key for v-for
+	 * Generates or returns an option key
 	 *
 	 * @param el
 	 * @param i
@@ -42,14 +42,14 @@ export default abstract class iOption {
 	abstract readonly option?: string;
 
 	/**
-	 * Option unique key (for v-for)
+	 * Option unique key
 	 */
 	abstract readonly optionKey?: string | ((el: unknown, i: number) => string);
 
 	/**
 	 * Option component props
 	 */
-	abstract readonly optionProps: OptionProps = {};
+	abstract readonly optionProps: OptionProps;
 }
 
 export interface OptionPropParams<CTX> {
@@ -60,4 +60,4 @@ export interface OptionPropParams<CTX> {
 export type OptionProps<CTX = unknown> =
 	((el: unknown, i: number, params: OptionPropParams<CTX>) => Dictionary) | Dictionary;
 
-export type OptionsIterator<T = iBlock> = (options: unknown[], ctx: T) => unknown[];
+export type OptionsIterator<CTX = iBlock> = (options: unknown[], ctx: CTX) => unknown[];

@@ -27,7 +27,7 @@ export default class ScrollRender {
 	items: RenderItem[] = [];
 
 	/**
-	 * Last column which was intersects the viewport
+	 * Index of the last element that intersects the viewport
 	 */
 	lastIntersectsItem: number = 0;
 
@@ -37,7 +37,7 @@ export default class ScrollRender {
 	chunk: number = 0;
 
 	/**
-	 * Length of items
+	 * Length of render items
 	 */
 	get itemsCount(): number {
 		return this.items.length;
@@ -112,6 +112,7 @@ export default class ScrollRender {
 	 */
 	constructor(component: bVirtualScroll) {
 		this.component = component.unsafe;
+
 		this.component.meta.hooks.mounted.push({fn: () => {
 			this.setRefVisibility('tombstones', true);
 			this.component.waitStatus('ready', this.onReady.bind(this));

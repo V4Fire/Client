@@ -17,17 +17,17 @@ export type RequestParams = CanUndef<Record<string, Dictionary>>;
 
 export interface OptionEl<T extends unknown = unknown> {
 	/**
-	 * Current render component data
+	 * Current render data
 	 */
 	current: T;
 
 	/**
-	 * Previous render component
+	 * Previous render data
 	 */
 	prev: CanUndef<T>;
 
 	/**
-	 * Next render component
+	 * Next render data
 	 */
 	next: CanUndef<T>;
 }
@@ -39,7 +39,7 @@ export interface RequestMoreParams<T extends unknown = unknown> {
 	currentPage: number;
 
 	/**
-	 * Number of chunk to be uploaded
+	 * Number of page to be uploaded
 	 */
 	nextPage: number;
 
@@ -88,7 +88,7 @@ export interface RenderItem<T extends unknown = unknown> {
 	node: CanUndef<HTMLElement>;
 
 	/**
-	 * Destructor of DOM node
+	 * Destructor of the component
 	 */
 	destructor: CanUndef<Function>;
 
