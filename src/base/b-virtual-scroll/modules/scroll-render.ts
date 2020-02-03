@@ -263,6 +263,7 @@ export default class ScrollRender {
 		return {
 			delay: 0,
 			threshold: this.randomThreshold,
+			once: !this.component.dropNodes,
 			onEnter: () => this.onNodeIntersect(index)
 		};
 	}
@@ -274,17 +275,17 @@ export default class ScrollRender {
 	protected onNodeIntersect(index: number): void {
 		const
 			{component, items} = this,
-			{renderPerChunk, drawBefore} = component,
+			{renderPerChunk, renderBefore} = component,
 			currentRender = this.chunk * renderPerChunk;
 
-		if (index + drawBefore + renderPerChunk >= items.length) {
+		if (index + renderBefore + renderPerChunk >= items.length) {
 			this.scrollRequest.try();
 		}
 
 		if (index > this.lastIntersectsItem) {
 			this.lastIntersectsItem = index;
 
-			if (currentRender - index <= drawBefore) {
+			if (currentRender - index <= renderBefore) {
 				this.chunk++;
 				this.render();
 			}

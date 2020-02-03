@@ -80,10 +80,10 @@ export default class bVirtualScroll extends iData implements iOption {
 	readonly cacheSize: number = 400;
 
 	/**
-	 * ...
+	 * Number of items to the end of the list to start render the next chunk
 	 */
 	@prop({type: Number, validator: Number.isNatural})
-	readonly drawBefore: number = 10;
+	readonly renderBefore: number = 10;
 
 	/**
 	 * Render elements per chunk
@@ -102,7 +102,7 @@ export default class bVirtualScroll extends iData implements iOption {
 	 *   *) recommended for use if you need to display a huge number of elements (prevents OOM)
 	 */
 	@prop(Boolean)
-	readonly dropNodes: boolean = true;
+	readonly dropNodes: boolean = false;
 
 	/**
 	 * If true, then created nodes will be cached
