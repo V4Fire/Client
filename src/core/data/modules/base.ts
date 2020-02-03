@@ -78,7 +78,7 @@ export default abstract class Provider extends ParamsProvider implements iProvid
 	/**
 	 * @param [opts] - additional options
 	 */
-	protected constructor(opts: ProviderOptions = {}) {
+	constructor(opts: ProviderOptions = {}) {
 		super();
 
 		const
