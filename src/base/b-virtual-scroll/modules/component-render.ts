@@ -230,7 +230,10 @@ export default class ComponentRender {
 		for (let i = 0; i < items.length; i++) {
 			const
 				item = items[i],
-				props = c.optionProps(getOptionEl(item.data, item.index), item.index);
+				props = Object.isFunction(c.optionProps) ? c.optionProps(getOptionEl(item.data, item.index), item.index, {
+					ctx: c,
+					key: this.getOptionKey(item.data)
+				}) : c.optionProps;
 
 			children.push(createChildren(props));
 		}
