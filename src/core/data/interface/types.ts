@@ -15,12 +15,13 @@ import {
 	RequestMethod,
 	RequestQuery,
 	RequestBody,
-	MiddlewareParams,
 
-	ResponseType,
-	ResponseTypeValue, GlobalOptions
+	MiddlewareParams,
+	GlobalOptions
 
 } from 'core/request/interface';
+
+import { ResponseType, ResponseTypeValue } from 'core/request/response/interface';
 
 export type MockResponseType =
 	ResponseType |
