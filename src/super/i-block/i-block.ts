@@ -10,7 +10,7 @@
 
 import symbolGenerator from 'core/symbol';
 
-import Async, { AsyncOptions, ClearOptionsId, WrappedFunction, ProxyCb } from 'core/async';
+import Async, { AsyncOptions, ClearOptionsId, WrappedCb, ProxyCb } from 'core/async';
 import log, { LogMessageOptions } from 'core/log';
 
 import { EventEmitter2 as EventEmitter } from 'eventemitter2';
@@ -1398,19 +1398,19 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	 * @param cb
 	 * @param [params] - async parameters
 	 */
-	nextTick(cb: WrappedFunction, params?: AsyncOptions): void;
+	nextTick(cb: WrappedCb, params?: AsyncOptions): void;
 
 	/**
 	 * @see Async.promise
 	 * @param [params] - async parameters
 	 */
 	nextTick(params?: AsyncOptions): Promise<void>;
-	nextTick(cbOrParams?: WrappedFunction | AsyncOptions, params?: AsyncOptions): CanPromise<void> {
+	nextTick(cbOrParams?: WrappedCb | AsyncOptions, params?: AsyncOptions): CanPromise<void> {
 		const
 			{async: $a} = this;
 
 		if (cbOrParams && Object.isFunction(cbOrParams)) {
-			this.$nextTick($a.proxy(<WrappedFunction>cbOrParams, params));
+			this.$nextTick($a.proxy(<WrappedCb>cbOrParams, params));
 			return;
 		}
 
