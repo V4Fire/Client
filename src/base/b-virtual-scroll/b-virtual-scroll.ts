@@ -53,23 +53,23 @@ export default class bVirtualScroll extends iData implements iOption {
 	/** @override */
 	readonly checkDBEquality: CheckDBEquality = false;
 
-	/** @see iOption.optionsProp */
+	/** @see [[iOption.optionsProp]] */
 	@prop(Array)
 	readonly optionsProp?: iOption['optionsProp'] = [];
 
-	/** @see iOption.options */
+	/** @see [[iOption.options]] */
 	@field((o) => o.sync.link())
 	options!: unknown[];
 
-	/** @see iOption.option */
+	/** @see [[iOption.option]] */
 	@prop({type: String, required: false})
 	readonly option?: iOption['option'];
 
-	/** @see iOption.optionKey */
+	/** @see [[iOption.optionKey]] */
 	@prop({type: [String, Function], required: false})
 	readonly optionKey?: iOption['optionKey'];
 
-	/** @see iOption.optionProps */
+	/** @see [[iOption.optionProps]] */
 	@prop({type: [Object, Function]})
 	readonly optionProps: iOption['optionProps'] = {};
 

@@ -19,23 +19,23 @@ export interface Doll extends Dictionary {
 
 @component({flyweight: true})
 export default class bMatryoshka extends iData implements iOption {
-	/** @see iOption.optionsProp */
+	/** @see [[iOption.optionsProp]] */
 	@prop(Array)
 	readonly optionsProp?: Doll[] = [];
 
-	/** @see iOption.options */
+	/** @see [[iOption.options]] */
 	@field((o) => o.sync.link())
 	options!: Doll[];
 
-	/** @see iOption.option */
+	/** @see [[iOption.option]] */
 	@prop({type: String, required: false})
 	readonly option?: iOption['option'];
 
-	/** @see iOption.optionKey */
+	/** @see [[iOption.optionKey]] */
 	@prop({type: [String, Function], required: false})
 	readonly optionKey?: iOption['optionKey'];
 
-	/** @see iOption.optionProps */
+	/** @see [[iOption.optionProps]] */
 	@prop({type: [Object, Function]})
 	readonly optionProps: iOption['optionProps'] = {};
 
@@ -90,7 +90,7 @@ export default class bMatryoshka extends iData implements iOption {
 		};
 	}
 
-	/** @see iOption.getOptionKey */
+	/** @see [[iOption.getOptionKey]] */
 	protected getOptionKey(el: unknown, i: number): CanUndef<string> {
 		return iOption.getOptionKey(this, el, i);
 	}

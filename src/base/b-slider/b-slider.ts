@@ -114,27 +114,27 @@ export default class bSlider extends iData implements iObserveDOM, iOption {
 	@prop({type: Number, validator: Number.isNatural})
 	readonly swipeToleranceY: number = 50;
 
-	/** @see iOption.optionsProp */
+	/** @see [[iOption.optionsProp]] */
 	@prop(Array)
 	readonly optionsProp?: iOption['optionsProp'] = [];
 
-	/** @see iOption.optionsIterator */
+	/** @see [[iOption.optionsIterator]] */
 	@prop({type: Function, required: false})
 	optionsIterator?: iOption['optionsIterator'];
 
-	/** @see iOption.options */
+	/** @see [[iOption.options]] */
 	@field((o) => o.sync.link())
 	options!: unknown[];
 
-	/** @see iOption.option */
+	/** @see [[iOption.option]] */
 	@prop({type: String, required: false})
 	readonly option?: iOption['option'];
 
-	/** @see iOption.optionKey */
+	/** @see [[iOption.optionKey]] */
 	@prop({type: [String, Function], required: false})
 	readonly optionKey?: iOption['optionKey'];
 
-	/** @see iOption.optionProps */
+	/** @see [[iOption.optionProps]] */
 	@prop({type: [Object, Function]})
 	readonly optionProps: iOption['optionProps'] = {};
 

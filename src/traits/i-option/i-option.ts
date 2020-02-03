@@ -24,32 +24,32 @@ export default abstract class iOption {
 	/**
 	 * Initial component options
 	 */
-	readonly optionsProp?: unknown[] = [];
+	abstract readonly optionsProp?: unknown[];
 
 	/**
 	 * Component options
 	 */
-	options!: unknown[];
+	abstract options: unknown[];
 
 	/**
 	 * Factory for an options iterator
 	 */
-	readonly optionsIterator?: OptionsIterator;
+	abstract readonly optionsIterator?: OptionsIterator;
 
 	/**
 	 * Option component
 	 */
-	readonly option?: string;
+	abstract readonly option?: string;
 
 	/**
 	 * Option unique key (for v-for)
 	 */
-	readonly optionKey?: string | ((el: unknown, i: number) => string);
+	abstract readonly optionKey?: string | ((el: unknown, i: number) => string);
 
 	/**
 	 * Option component props
 	 */
-	readonly optionProps: OptionProps = {};
+	abstract readonly optionProps: OptionProps = {};
 }
 
 export interface OptionPropParams<CTX> {
