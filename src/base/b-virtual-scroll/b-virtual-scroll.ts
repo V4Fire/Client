@@ -92,6 +92,12 @@ export default class bVirtualScroll extends iData implements iItem {
 	readonly chunkSize: number = 10;
 
 	/**
+	 * Number of tombstones to render
+	 */
+	@prop({type: Number, required: false, validator: Number.isNatural})
+	readonly tombstonesSize?: number;
+
+	/**
 	 * Scroll axis
 	 */
 	@prop({type: String, watch: 'syncPropsWatcher', validator: (v: string) => axis[v]})
