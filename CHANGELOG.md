@@ -15,17 +15,17 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :rocket: New Feature
 
-* [Added `i-option` trait](https://github.com/V4Fire/Client/pull/154/files)
-* [Added `inViewFactory` for creating local `in-view` instances](https://github.com/V4Fire/Client/pull/154/files)
-* [Added `observable.size` for `in-view` observable elements](https://github.com/V4Fire/Client/pull/154/files)
+* [Added `i-option` trait](https://github.com/V4Fire/Client/pull/154)
+* [Added `inViewFactory` for creating local `in-view` instances](https://github.com/V4Fire/Client/pull/154)
+* [Added `observable.size` for `in-view` observable elements](https://github.com/V4Fire/Client/pull/154)
 
 #### :boom: Breaking Change
 
-* [Review `b-virtual-scroll` component](https://github.com/V4Fire/Client/pull/154/files)
+* [Review `b-virtual-scroll` component](https://github.com/V4Fire/Client/pull/154)
 
 #### :bug: Bug Fix
 
-* [Fixed `v-image` multiply backgrounds](https://github.com/V4Fire/Client/pull/154/files)
+* [Fixed `v-image` multiply backgrounds](https://github.com/V4Fire/Client/pull/154)
 
 ## v3.0.0-beta.245 (2020-01-31)
 
