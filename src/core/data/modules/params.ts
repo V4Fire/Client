@@ -7,7 +7,7 @@
  */
 
 import { EventEmitter2 as EventEmitter } from 'eventemitter2';
-import { deprecate } from 'core/meta/deprecation';
+import { deprecate } from 'core/functools';
 
 import request, {
 

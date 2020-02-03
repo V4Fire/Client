@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { deprecate } from 'core/meta/deprecation';
+import { deprecate } from 'core/functools';
 
 /**
  * [[include:core/dom/README.md]]
