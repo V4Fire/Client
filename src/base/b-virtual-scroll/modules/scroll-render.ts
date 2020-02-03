@@ -113,6 +113,7 @@ export default class ScrollRender {
 	constructor(component: bVirtualScroll) {
 		this.component = component.unsafe;
 		this.component.meta.hooks.mounted.push({fn: () => {
+			this.setRefVisibility('tombstones', true);
 			this.component.waitStatus('ready', this.onReady.bind(this));
 		}});
 	}
@@ -127,6 +128,11 @@ export default class ScrollRender {
 
 		this.scrollRequest.reset();
 		this.async.clearAll({group: new RegExp(this.asyncGroup)});
+
+		this.setRefVisibility('tombstones', true);
+		this.setRefVisibility('retry', false);
+		this.setRefVisibility('done', false);
+		this.setRefVisibility('empty', false);
 
 		this.onReady();
 	}
@@ -190,7 +196,7 @@ export default class ScrollRender {
 			return;
 		}
 
-		this.component[show ? 'removeMod' : 'setMod'](refEl, 'hidden', true);
+		this.component[show ? 'setMod' : 'removeMod'](refEl, 'show', true);
 	}
 
 	/**

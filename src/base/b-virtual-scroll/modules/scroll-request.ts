@@ -72,7 +72,6 @@ export default class ScrollRequest {
 		this.data = [];
 		this.isDone = false;
 		this.isLastEmpty = false;
-		this.component.removeMod('requestsDone', true);
 	}
 
 	/**
@@ -81,7 +80,9 @@ export default class ScrollRequest {
 	reloadLast(): void {
 		this.isDone = false;
 		this.isLastEmpty = false;
-		this.component.removeMod('requestsDone', true);
+
+		this.scrollRender.setRefVisibility('retry', false);
+		this.try();
 	}
 
 	/**

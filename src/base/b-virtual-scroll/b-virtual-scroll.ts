@@ -205,7 +205,6 @@ export default class bVirtualScroll extends iData implements iOption {
 	 * Reloads the last request
 	 */
 	reloadLast(): void {
-		this.scrollRender.setRefVisibility('retry', false);
 		this.scrollRequest.reloadLast();
 	}
 
