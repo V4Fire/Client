@@ -8,14 +8,14 @@
 
 import iBlock from 'super/i-block/i-block';
 
-export default abstract class iOption {
+export default abstract class iItem {
 	/**
 	 * Generates or returns an option key
 	 *
 	 * @param el
 	 * @param i
 	 */
-	static getOptionKey<T extends iBlock>(component: T & iOption, el: unknown, i: number): CanUndef<string> {
+	static getOptionKey<T extends iBlock>(component: T & iItem, el: unknown, i: number): CanUndef<string> {
 		return Object.isFunction(component.optionKey) ?
 			component.optionKey(el, i) :
 			component.optionKey;

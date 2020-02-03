@@ -9,7 +9,7 @@
 import symbolGenerator from 'core/symbol';
 
 import iObserveDOM from 'traits/i-observe-dom/i-observe-dom';
-import iOption from 'traits/i-option/i-option';
+import iItem from 'traits/i-item/i-item';
 
 import iData, { component, prop, field, system, hook, watch, wait, p } from 'super/i-data/i-data';
 
@@ -45,7 +45,7 @@ export type AlignType = keyof typeof alignTypes;
 export type Mode = keyof typeof sliderModes;
 
 @component()
-export default class bSlider extends iData implements iObserveDOM, iOption {
+export default class bSlider extends iData implements iObserveDOM, iItem {
 	/**
 	 * Slider mode
 	 *   *) scroll - scroll implementation
@@ -114,29 +114,29 @@ export default class bSlider extends iData implements iObserveDOM, iOption {
 	@prop({type: Number, validator: Number.isNatural})
 	readonly swipeToleranceY: number = 50;
 
-	/** @see [[iOption.optionsProp]] */
+	/** @see [[iItem.optionsProp]] */
 	@prop(Array)
-	readonly optionsProp?: iOption['optionsProp'] = [];
+	readonly optionsProp?: iItem['optionsProp'] = [];
 
-	/** @see [[iOption.optionsIterator]] */
+	/** @see [[iItem.optionsIterator]] */
 	@prop({type: Function, required: false})
-	optionsIterator?: iOption['optionsIterator'];
+	optionsIterator?: iItem['optionsIterator'];
 
-	/** @see [[iOption.options]] */
+	/** @see [[iItem.options]] */
 	@field((o) => o.sync.link())
 	options!: unknown[];
 
-	/** @see [[iOption.option]] */
+	/** @see [[iItem.option]] */
 	@prop({type: String, required: false})
-	readonly option?: iOption['option'];
+	readonly option?: iItem['option'];
 
-	/** @see [[iOption.optionKey]] */
+	/** @see [[iItem.optionKey]] */
 	@prop({type: [String, Function], required: false})
-	readonly optionKey?: iOption['optionKey'];
+	readonly optionKey?: iItem['optionKey'];
 
-	/** @see [[iOption.optionProps]] */
+	/** @see [[iItem.optionProps]] */
 	@prop({type: [Object, Function]})
-	readonly optionProps: iOption['optionProps'] = {};
+	readonly optionProps: iItem['optionProps'] = {};
 
 	/**
 	 * The number of slides in the slider
@@ -367,9 +367,9 @@ export default class bSlider extends iData implements iObserveDOM, iOption {
 		iObserveDOM.onDOMChange(this);
 	}
 
-	/** @see iOption.getOptionKey */
+	/** @see [[iItem.getOptionKey]] */
 	protected getOptionKey(el: unknown, i: number): CanUndef<string> {
-		return iOption.getOptionKey(this, el, i);
+		return iItem.getOptionKey(this, el, i);
 	}
 	/**
 	 * Synchronizes the slider state

@@ -8,7 +8,7 @@
 
 import symbolGenerator from 'core/symbol';
 
-import iOption from 'traits/i-option/i-option';
+import iItem from 'traits/i-item/i-item';
 
 import iData, {
 
@@ -46,32 +46,32 @@ export const axis = Object.createDict({
 });
 
 @component()
-export default class bVirtualScroll extends iData implements iOption {
+export default class bVirtualScroll extends iData implements iItem {
 	/** @override */
 	readonly DB!: RemoteData;
 
 	/** @override */
 	readonly checkDBEquality: CheckDBEquality = false;
 
-	/** @see [[iOption.optionsProp]] */
+	/** @see [[iItem.optionsProp]] */
 	@prop(Array)
-	readonly optionsProp?: iOption['optionsProp'] = [];
+	readonly optionsProp?: iItem['optionsProp'] = [];
 
-	/** @see [[iOption.options]] */
+	/** @see [[iItem.options]] */
 	@field((o) => o.sync.link())
 	options!: unknown[];
 
-	/** @see [[iOption.option]] */
+	/** @see [[iItem.option]] */
 	@prop({type: String, required: false})
-	readonly option?: iOption['option'];
+	readonly option?: iItem['option'];
 
-	/** @see [[iOption.optionKey]] */
+	/** @see [[iItem.optionKey]] */
 	@prop({type: [String, Function], required: false})
-	readonly optionKey?: iOption['optionKey'];
+	readonly optionKey?: iItem['optionKey'];
 
-	/** @see [[iOption.optionProps]] */
+	/** @see [[iItem.optionProps]] */
 	@prop({type: [Object, Function]})
-	readonly optionProps: iOption['optionProps'] = {};
+	readonly optionProps: iItem['optionProps'] = {};
 
 	/**
 	 * Number of components that could be cached
@@ -254,9 +254,9 @@ export default class bVirtualScroll extends iData implements iOption {
 		return this.options;
 	}
 
-	/** @see iOption.getOptionKey */
+	/** @see [[iItem.getOptionKey]] */
 	protected getOptionKey(el: unknown, i: number): CanUndef<string | number> {
-		return iOption.getOptionKey(this, el, i);
+		return iItem.getOptionKey(this, el, i);
 	}
 
 	/**

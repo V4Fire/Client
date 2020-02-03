@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import iOption from 'traits/i-option/i-option';
+import iItem from 'traits/i-item/i-item';
 
 import iData, { component, prop, field } from 'super/i-data/i-data';
 export * from 'super/i-data/i-data';
@@ -18,7 +18,7 @@ export interface Doll extends Dictionary {
 }
 
 @component({flyweight: true})
-export default class bMatryoshka extends iData implements iOption {
+export default class bMatryoshka extends iData implements iItem {
 	/** @see [[iOption.optionsProp]] */
 	@prop(Array)
 	readonly optionsProp?: Doll[] = [];
@@ -29,15 +29,15 @@ export default class bMatryoshka extends iData implements iOption {
 
 	/** @see [[iOption.option]] */
 	@prop({type: String, required: false})
-	readonly option?: iOption['option'];
+	readonly option?: iItem['option'];
 
 	/** @see [[iOption.optionKey]] */
 	@prop({type: [String, Function], required: false})
-	readonly optionKey?: iOption['optionKey'];
+	readonly optionKey?: iItem['optionKey'];
 
 	/** @see [[iOption.optionProps]] */
 	@prop({type: [Object, Function]})
-	readonly optionProps: iOption['optionProps'] = {};
+	readonly optionProps: iItem['optionProps'] = {};
 
 	/**
 	 * Number of chunks for the async render
@@ -92,7 +92,7 @@ export default class bMatryoshka extends iData implements iOption {
 
 	/** @see [[iOption.getOptionKey]] */
 	protected getOptionKey(el: unknown, i: number): CanUndef<string> {
-		return iOption.getOptionKey(this, el, i);
+		return iItem.getOptionKey(this, el, i);
 	}
 
 	/**
