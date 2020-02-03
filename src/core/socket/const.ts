@@ -6,5 +6,4 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import semaphore from 'core/init/semaphore';
-export default (() => semaphore('ABTReady'))();
+export const PING = (5).seconds();

@@ -6,5 +6,6 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import semaphore from 'core/init/semaphore';
-export default (() => semaphore('ABTReady'))();
+/// <reference types="socket.io-client"/>
+
+export type Socket = SocketIOClient.Socket;

@@ -7,7 +7,6 @@
  */
 
 import '@v4fire/core/core/prelude';
-import 'core/prelude/image';
 import 'core/prelude/dom';
 
 //#if runtime has prelude/dependencies

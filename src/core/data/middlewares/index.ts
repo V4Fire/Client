@@ -6,5 +6,9 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import semaphore from 'core/init/semaphore';
-export default (() => semaphore('ABTReady'))();
+/**
+ * [[include:core/data/middlewares/README.md]]
+ * @packageDocumentation
+ */
+
+export * from 'core/data/middlewares/attach-mock';

@@ -166,7 +166,7 @@ export default function createRouter(component: bRouter): Router {
 			let
 				i = 0;
 
-			ModuleDependencies.event.on(`component.${info.page}.loading`, $a.proxy(
+			ModuleDependencies.emitter.on(`component.${info.page}.loading`, $a.proxy(
 				({packages}) => {
 					component.field.set('status', (++i * 100) / packages);
 					(i === packages) && resolve();

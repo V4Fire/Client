@@ -8,14 +8,14 @@
 
 import flags from 'core/init/flags';
 import Component, { rootComponents } from 'core/component';
-import { onEverythingReady } from 'core/event';
+import { createsAsyncSemaphore } from 'core/event';
 
-export default onEverythingReady(async () => {
+export default createsAsyncSemaphore(async () => {
 	const
 		node = document.querySelector<HTMLElement>('[data-root-component]');
 
 	if (!node) {
-		throw new Error('Root node is not defined');
+		throw new ReferenceError('The root node is not defined');
 	}
 
 	const
@@ -23,7 +23,7 @@ export default onEverythingReady(async () => {
 		component = await rootComponents[name];
 
 	if (!component) {
-		throw new Error('Root component is not defined');
+		throw new ReferenceError('The root component is not defined');
 	}
 
 	const
