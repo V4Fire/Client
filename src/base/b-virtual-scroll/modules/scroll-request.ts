@@ -110,11 +110,11 @@ export default class ScrollRequest {
 			return resolved;
 		}
 
-		scrollRender.setRefVisibility('tombstones', true);
+		scrollRender.setLoadersVisibility(true);
 
 		return this.load()
 			.then((v) => {
-				scrollRender.setRefVisibility('tombstones', false);
+				scrollRender.setLoadersVisibility(false);
 
 				if (!component.field.get('data.length', v)) {
 					this.isLastEmpty = true;

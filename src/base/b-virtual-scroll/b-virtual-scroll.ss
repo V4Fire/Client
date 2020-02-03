@@ -22,6 +22,12 @@
 				< .&__tombstone v-for = i in renderPerChunk
 					+= self.slot('tombstone')
 
+			< .&__loader &
+				v-if = vdom.getSlot('loader') |
+				ref = loader
+			.
+				+= self.slot('loader')
+
 			< .&__retry &
 				v-if = vdom.getSlot('retry') |
 				ref = retry

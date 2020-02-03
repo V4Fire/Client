@@ -186,6 +186,7 @@ export default class bVirtualScroll extends iData implements iOption {
 	/** @override */
 	protected $refs!: {
 		container: HTMLElement;
+		loader?: HTMLElement;
 		tombstones?: HTMLElement;
 		empty?: HTMLElement;
 		retry?: HTMLElement;

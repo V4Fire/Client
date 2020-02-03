@@ -114,7 +114,7 @@ export default class ScrollRender {
 		this.component = component.unsafe;
 
 		this.component.meta.hooks.mounted.push({fn: () => {
-			this.setRefVisibility('tombstones', true);
+			this.setLoadersVisibility(true);
 			this.component.waitStatus('ready', this.onReady.bind(this));
 		}});
 	}
@@ -130,7 +130,7 @@ export default class ScrollRender {
 		this.scrollRequest.reset();
 		this.async.clearAll({group: new RegExp(this.asyncGroup)});
 
-		this.setRefVisibility('tombstones', true);
+		this.setLoadersVisibility(true);
 		this.setRefVisibility('retry', false);
 		this.setRefVisibility('done', false);
 		this.setRefVisibility('empty', false);
@@ -182,7 +182,9 @@ export default class ScrollRender {
 	}
 
 	/**
-	 * Hides/shows tombstones
+	 * Hides or show the specified ref
+	 *
+	 * @param ref
 	 * @param show
 	 */
 	setRefVisibility(ref: keyof bVirtualScroll['$refs'], show: boolean): void {
@@ -198,6 +200,15 @@ export default class ScrollRender {
 		}
 
 		this.component[show ? 'setMod' : 'removeMod'](refEl, 'show', true);
+	}
+
+	/**
+	 * Hides or show loader and tombstones refs
+	 * @param show
+	 */
+	setLoadersVisibility(show: boolean): void {
+		this.setRefVisibility('tombstones', show);
+		this.setRefVisibility('loader', show);
 	}
 
 	/**
@@ -297,7 +308,7 @@ export default class ScrollRender {
 	 */
 	protected onReady(): void {
 		this.initItems(this.component.options);
-		this.setRefVisibility('tombstones', false);
+		this.setLoadersVisibility(false);
 
 		this.chunk++;
 		this.render();
@@ -307,7 +318,7 @@ export default class ScrollRender {
 	 * Handler: all requests are done
 	 */
 	protected onRequestsDone(): void {
-		this.setRefVisibility('tombstones', false);
+		this.setLoadersVisibility(false);
 		this.setRefVisibility('done', true);
 	}
 }
