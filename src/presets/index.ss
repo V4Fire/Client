@@ -30,11 +30,11 @@
 	- forEach b => el, key
 		: val = p[key]
 
-		- if Object.isPlainObject(val) && Object.isPlainObject(el)
+		- if Object.isObject(val) && Object.isObject(el)
 			? Object.assign(val, el)
 
 		- else if Array.isArray(val) && Array.isArray(el)
-			? p[key] = Array.union(val, el)
+			? p[key] = val.union(el)
 
 		- else
 			? p[key] = el
@@ -58,7 +58,7 @@
 	}, params) .
 
 	- forEach p => el, cluster
-		- if Object.isPlainObject(el)
+		- if Object.isObject(el)
 			- forEach el => val, key
 				- switch cluster
 					> 'props'
