@@ -21,6 +21,8 @@ import iData, {
 	CheckDBEquality,
 	InitLoadParams,
 	RequestParams,
+	RequestError,
+	RetryRequestFn,
 	ModsDecl
 
 } from 'super/i-data/i-data';
@@ -184,9 +186,10 @@ export default class bVirtualScroll extends iData implements iOption {
 	/** @override */
 	protected $refs!: {
 		container: HTMLElement;
-		tombstones: HTMLElement;
+		tombstones?: HTMLElement;
 		empty?: HTMLElement;
 		retry?: HTMLElement;
+		done?: HTMLElement;
 	};
 
 	/** @override */
@@ -202,7 +205,8 @@ export default class bVirtualScroll extends iData implements iOption {
 	 * Reloads the last request
 	 */
 	reloadLast(): void {
-		return this.scrollRequest.reloadLast();
+		this.scrollRender.setRefVisibility('retry', false);
+		this.scrollRequest.reloadLast();
 	}
 
 	/**
@@ -261,5 +265,11 @@ export default class bVirtualScroll extends iData implements iOption {
 	@wait('ready', {defer: true, label: $$.syncPropsWatcher})
 	protected async syncPropsWatcher(): Promise<void> {
 		return this.reInit();
+	}
+
+	/** @override */
+	protected onRequestError(err: Error | RequestError, retry: RetryRequestFn): void {
+		super.onRequestError(err, retry);
+		this.scrollRender.setRefVisibility('retry', true);
 	}
 }

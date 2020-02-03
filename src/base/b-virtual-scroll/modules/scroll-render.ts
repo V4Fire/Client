@@ -178,8 +178,19 @@ export default class ScrollRender {
 	 * Hides/shows tombstones
 	 * @param show
 	 */
-	setTombstoneVisibility(show: boolean): void {
-		this.component[show ? 'removeMod' : 'setMod'](this.refs.tombstones, 'tombstones-hidden', true);
+	setRefVisibility(ref: keyof bVirtualScroll['$refs'], show: boolean): void {
+		if (!this.refs.tombstones) {
+			return;
+		}
+
+		const
+			refEl = this.refs[ref];
+
+		if (!refEl) {
+			return;
+		}
+
+		this.component[show ? 'removeMod' : 'setMod'](refEl, 'hidden', true);
 	}
 
 	/**
@@ -278,7 +289,8 @@ export default class ScrollRender {
 	 */
 	protected onReady(): void {
 		this.initItems(this.component.options);
-		this.setTombstoneVisibility(false);
+		this.setRefVisibility('tombstones', false);
+
 		this.chunk++;
 		this.render();
 	}
@@ -287,6 +299,7 @@ export default class ScrollRender {
 	 * Handler: all requests are done
 	 */
 	protected onRequestsDone(): void {
-		this.setTombstoneVisibility(false);
+		this.setRefVisibility('tombstones', false);
+		this.setRefVisibility('done', true);
 	}
 }

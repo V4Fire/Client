@@ -12,10 +12,13 @@
 
 - template index() extends ['i-data'].index
 	- block body
-		< .&__wrapper v-resize.width = () => axis === 'y' ? scrollRender.onResize : undefined
+		< .&__wrapper
 			< .&__container ref = container
 
-			< .&__tombstones ref = tombstones
+			< .&__tombstones &
+				v-if = vdom.getSlot('tombstone') |
+				ref = tombstones
+			.
 				< .&__tombstone v-for = i in renderPerChunk
 					+= self.slot('tombstone')
 
@@ -30,3 +33,9 @@
 				ref = empty
 			.
 				+= self.slot('empty')
+
+			< .&__done &
+				v-if = vdom.getSlot('done') |
+				ref = done
+			.
+				+= self.slot('done')
