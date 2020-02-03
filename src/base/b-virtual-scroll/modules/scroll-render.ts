@@ -224,6 +224,8 @@ export default class ScrollRender {
 				node = nodes[i],
 				item = items[i];
 
+			item.node = node;
+
 			if (!node[$$.inView]) {
 				this.wrapInView(item);
 			}
