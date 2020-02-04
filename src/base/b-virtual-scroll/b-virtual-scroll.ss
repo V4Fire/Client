@@ -16,32 +16,32 @@
 			< .&__container ref = container
 
 			< .&__tombstones &
-				v-if = vdom.getSlot('tombstone') |
-				ref = tombstones
+				ref = tombstones |
+				v-if = vdom.getSlot('tombstone')
 			.
 				< .&__tombstone v-for = i in (tombstonesSize || chunkSize)
 					+= self.slot('tombstone')
 
 			< .&__loader &
-				v-if = vdom.getSlot('loader') |
-				ref = loader
+				ref = loader |
+				v-if = vdom.getSlot('loader')
 			.
 				+= self.slot('loader')
 
 			< .&__retry &
-				v-if = vdom.getSlot('retry') |
-				ref = retry
+				ref = retry |
+				v-if = vdom.getSlot('retry')
 			.
 				+= self.slot('retry')
 
 			< .&__empty &
-				v-if = vdom.getSlot('empty') |
-				ref = empty
+				ref = empty |
+				v-if = vdom.getSlot('empty')
 			.
 				+= self.slot('empty')
 
 			< .&__done &
-				v-if = vdom.getSlot('done') |
-				ref = done
+				ref = done |
+				v-if = vdom.getSlot('done')
 			.
 				+= self.slot('done')

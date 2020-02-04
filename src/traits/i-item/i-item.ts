@@ -1,3 +1,4 @@
+
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -10,7 +11,7 @@ import iBlock from 'super/i-block/i-block';
 
 export default abstract class iItem {
 	/**
-	 * Generates or returns an option key
+	 * Generates or returns an item key
 	 *
 	 * @param el
 	 * @param i
@@ -22,42 +23,42 @@ export default abstract class iItem {
 	}
 
 	/**
-	 * Initial component options
+	 * Initial component items
 	 */
 	abstract readonly optionsProp?: unknown[];
 
 	/**
-	 * Component options
+	 * Component items
 	 */
 	abstract options: unknown[];
 
 	/**
-	 * Factory for an options iterator
+	 * Factory for an items iterator
 	 */
-	abstract readonly optionsIterator?: OptionsIterator;
+	abstract readonly optionsIterator?: ItemsIterator;
 
 	/**
-	 * Option component
+	 * Item component
 	 */
 	abstract readonly option?: string;
 
 	/**
-	 * Option unique key
+	 * Item unique key
 	 */
 	abstract readonly optionKey?: string | ((el: unknown, i: number) => string);
 
 	/**
-	 * Option component props
+	 * Item component props
 	 */
-	abstract readonly optionProps: OptionProps;
+	abstract readonly optionProps: ItemProps;
 }
 
-export interface OptionPropParams<CTX> {
+export interface ItemPropParams<CTX> {
 	key?: string;
 	ctx: CTX;
 }
 
-export type OptionProps<CTX = unknown> =
-	((el: unknown, i: number, params: OptionPropParams<CTX>) => Dictionary) | Dictionary;
+export type ItemProps<CTX = unknown> =
+	((el: unknown, i: number, params: ItemPropParams<CTX>) => Dictionary) | Dictionary;
 
-export type OptionsIterator<CTX = iBlock> = (options: unknown[], ctx: CTX) => unknown[];
+export type ItemsIterator<CTX = iBlock> = (options: unknown[], ctx: CTX) => unknown[];
