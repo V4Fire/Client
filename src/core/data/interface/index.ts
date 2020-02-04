@@ -26,6 +26,11 @@ export default interface Provider {
 	readonly providerName: string;
 
 	/**
+	 * Provider alias
+	 */
+	readonly alias?: string;
+
+	/**
 	 * Event emitter for broadcasting provider events
 	 */
 	readonly emitter: EventEmitterLike;
