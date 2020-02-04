@@ -122,7 +122,7 @@ export default class ScrollRequest {
 
 				if (!component.field.get('data.length', v)) {
 					this.isLastEmpty = true;
-					this.checksRequestPossibility(getRequestParams(this, scrollRender, {lastLoaded: []}));
+					this.shouldStopRequest(getRequestParams(this, scrollRender, {lastLoaded: []}));
 					return;
 				}
 
@@ -134,7 +134,7 @@ export default class ScrollRequest {
 				this.data = this.data.concat(data);
 				this.lastLoadedData = data;
 
-				this.checksRequestPossibility(getRequestParams(this, scrollRender));
+				this.shouldStopRequest(getRequestParams(this, scrollRender));
 				scrollRender.initItems(data);
 				scrollRender.render();
 
@@ -145,7 +145,7 @@ export default class ScrollRequest {
 	 * Checks possibility of another request for data
 	 * @param params
 	 */
-	checksRequestPossibility(params: RequestMoreParams): boolean {
+	shouldStopRequest(params: RequestMoreParams): boolean {
 		const {component, scrollRender} = this;
 		this.isDone = component.shouldStopRequest(params);
 

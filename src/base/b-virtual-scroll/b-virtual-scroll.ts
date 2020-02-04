@@ -232,12 +232,12 @@ export default class bVirtualScroll extends iData implements iItem {
 
 		if (this.field.get('data.length', val)) {
 			this.options = <unknown[]>val.data;
-			this.scrollRequest.checksRequestPossibility(getRequestParams(undefined, undefined, {lastLoadedData: val.data}));
+			this.scrollRequest.shouldStopRequest(getRequestParams(undefined, undefined, {lastLoadedData: val.data}));
 			return this.options;
 
 		} else {
 			this.options = [];
-			this.scrollRequest.checksRequestPossibility(getRequestParams(undefined, undefined, {isLastEmpty: true}));
+			this.scrollRequest.shouldStopRequest(getRequestParams(undefined, undefined, {isLastEmpty: true}));
 		}
 
 		return this.options;
