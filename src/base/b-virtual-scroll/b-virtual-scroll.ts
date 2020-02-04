@@ -132,28 +132,10 @@ export default class bVirtualScroll extends iData implements iItem {
 	readonly shouldMakeRequest!: RequestFn;
 
 	/**
-	 * If, when calling a function, it returns false, then the component will stop request data
+	 * If, when calling a function, it returns true, then the component will stop request data
 	 */
-	@prop({type: Function, default: (v) => !v.isLastEmpty})
-	readonly shouldContinueRequest!: RequestFn;
-
-	/** @inheritDoc */
-	static readonly mods: ModsDecl = {
-		containerSize: [
-			['true'],
-			'false'
-		],
-
-		requestsDone: [
-			'true',
-			['false']
-		],
-
-		axis: [
-			['y'],
-			'x'
-		]
-	};
+	@prop({type: Function, default: (v) => v.isLastEmpty})
+	readonly shouldStopRequest!: RequestFn;
 
 	/** @override */
 	protected get requestParams(): RequestParams {
@@ -249,7 +231,9 @@ export default class bVirtualScroll extends iData implements iItem {
 			val = this.convertDBToComponent<RemoteData>(this.db);
 
 		if (this.field.get('data.length', val)) {
-			return this.options = <unknown[]>val.data;
+			this.options = <unknown[]>val.data;
+			this.scrollRequest.checksRequestPossibility(getRequestParams(undefined, undefined, {lastLoadedData: val.data}));
+			return this.options;
 
 		} else {
 			this.options = [];

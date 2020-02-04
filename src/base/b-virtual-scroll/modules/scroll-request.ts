@@ -100,6 +100,10 @@ export default class ScrollRequest {
 			resolved = Promise.resolve(),
 			shouldRequest = component.shouldMakeRequest(getRequestParams(this, scrollRender, additionParams));
 
+		if (this.isDone) {
+			return resolved;
+		}
+
 		const cantRequest = () =>
 			this.isDone ||
 			!shouldRequest ||
@@ -130,6 +134,7 @@ export default class ScrollRequest {
 				this.data = this.data.concat(data);
 				this.lastLoadedData = data;
 
+				this.checksRequestPossibility(getRequestParams(this, scrollRender));
 				scrollRender.initItems(data);
 				scrollRender.render();
 
@@ -142,17 +147,14 @@ export default class ScrollRequest {
 	 */
 	checksRequestPossibility(params: RequestMoreParams): boolean {
 		const {component, scrollRender} = this;
-		this.isDone = !component.shouldContinueRequest(params);
+		this.isDone = component.shouldStopRequest(params);
 
 		if (this.isDone) {
 			// @ts-ignore (access)
 			scrollRender.onRequestsDone();
-
-		} else {
-			component.removeMod('requestsDone', true);
 		}
 
-		return !this.isDone;
+		return this.isDone;
 	}
 
 	/**
