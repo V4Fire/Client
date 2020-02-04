@@ -129,7 +129,7 @@ export default class Resize {
 	}
 
 	/**
-	 * Sets an initial size of observable
+	 * Sets an initial size of the specified observable
 	 *
 	 * @param observable
 	 * @param size

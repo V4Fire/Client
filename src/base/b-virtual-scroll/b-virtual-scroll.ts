@@ -32,7 +32,6 @@ import ScrollRender from 'base/b-virtual-scroll/modules/scroll-render';
 import ScrollRequest from 'base/b-virtual-scroll/modules/scroll-request';
 
 import { getRequestParams } from 'base/b-virtual-scroll/modules/helpers';
-
 import { Axis, RequestFn, RemoteData, RequestQuery } from 'base/b-virtual-scroll/modules/interface';
 
 export * from 'super/i-data/i-data';
@@ -74,7 +73,7 @@ export default class bVirtualScroll extends iData implements iItem {
 	readonly optionProps: iItem['optionProps'] = {};
 
 	/**
-	 * Number of components that could be cached
+	 * Maximum number of elements to cache
 	 */
 	@prop({type: Number, watch: 'syncPropsWatcher', validator: Number.isNatural})
 	readonly cacheSize: number = 400;
@@ -104,14 +103,14 @@ export default class bVirtualScroll extends iData implements iItem {
 	readonly axis: Axis = 'y';
 
 	/**
-	 * If true then the elements will be deleted from the DOM tree when scrolling
-	 *   *) recommended for use if you need to display a huge number of elements (prevents OOM)
+	 * If true, then elements is dropped from a DOM tree after scrolling:
+	 * this method is recommended to use if you need to display a huge number of elements and prevent an OOM error
 	 */
 	@prop(Boolean)
-	readonly dropNodes: boolean = false;
+	readonly clearNodes: boolean = false;
 
 	/**
-	 * If true, then created nodes will be cached
+	 * If true then created nodes will be cached
 	 */
 	@prop({type: Boolean, watch: 'syncPropsWatcher'})
 	readonly cacheNodes: boolean = true;

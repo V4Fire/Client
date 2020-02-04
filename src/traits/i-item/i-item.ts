@@ -9,6 +9,16 @@
 
 import iBlock from 'super/i-block/i-block';
 
+export interface ItemPropParams<CTX> {
+	key?: string;
+	ctx: CTX;
+}
+
+export type ItemProps<CTX = unknown> =
+	((el: unknown, i: number, params: ItemPropParams<CTX>) => Dictionary) | Dictionary;
+
+export type ItemsIterator<CTX = iBlock> = (options: unknown[], ctx: CTX) => unknown[];
+
 export default abstract class iItem {
 	/**
 	 * Generates or returns an item key
@@ -27,9 +37,7 @@ export default abstract class iItem {
 	 */
 	abstract readonly optionsProp?: unknown[];
 
-	/**
-	 * Component items
-	 */
+	/** @see iItem.optionProps */
 	abstract options: unknown[];
 
 	/**
@@ -52,13 +60,3 @@ export default abstract class iItem {
 	 */
 	abstract readonly optionProps: ItemProps;
 }
-
-export interface ItemPropParams<CTX> {
-	key?: string;
-	ctx: CTX;
-}
-
-export type ItemProps<CTX = unknown> =
-	((el: unknown, i: number, params: ItemPropParams<CTX>) => Dictionary) | Dictionary;
-
-export type ItemsIterator<CTX = iBlock> = (options: unknown[], ctx: CTX) => unknown[];

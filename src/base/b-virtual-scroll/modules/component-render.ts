@@ -42,7 +42,7 @@ export default class ComponentRender {
 	 * True if rendered nodes can be cached
 	 */
 	protected get canCache(): boolean {
-		return this.component.cacheNodes && this.component.dropNodes;
+		return this.component.cacheNodes && this.component.clearNodes;
 	}
 
 	/**
@@ -89,7 +89,7 @@ export default class ComponentRender {
 	}
 
 	/**
-	 * Re-initializes the component render
+	 * Re-initializes component render
 	 */
 	reInit(): void {
 		Object.keys(this.nodesCache).forEach((key) => {

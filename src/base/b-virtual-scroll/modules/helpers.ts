@@ -36,7 +36,7 @@ export function getRequestParams(
 		items: [],
 		lastLoadedData: lastLoadedData || [],
 		isLastEmpty: false,
-		itemsToReachBottom: 0
+		itemsTillBottom: 0
 	};
 
 	const params = scrollRequestCtx && scrollRenderCtx ? {
@@ -44,7 +44,7 @@ export function getRequestParams(
 		currentPage: scrollRequestCtx.page,
 		lastLoadedData: lastLoadedData || [],
 		isLastEmpty: scrollRequestCtx.isLastEmpty,
-		itemsToReachBottom: scrollRenderCtx.items.length - scrollRenderCtx.lastIntersectsItem
+		itemsTillBottom: scrollRenderCtx.items.length - scrollRenderCtx.lastIntersectsItem
 	} : base;
 
 	const merged = {

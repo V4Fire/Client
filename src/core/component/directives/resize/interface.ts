@@ -28,7 +28,7 @@ export interface ObserverOptions {
 	watchHeight?: boolean;
 
 	/**
-	 * If true, the callback will be called immediately after the installation of the directive
+	 * If true, then the callback is invoked immediately after initializing of the directive
 	 */
 	immediate?: boolean;
 
@@ -49,7 +49,7 @@ export interface Size {
 }
 
 /**
- * Callback that will be called if the element size has been changed
+ * Callback that is invoked if an element size has been changed
  *
  * @param observable
  * @param newSize

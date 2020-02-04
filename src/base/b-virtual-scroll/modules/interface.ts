@@ -34,27 +34,27 @@ export interface OptionEl<T extends unknown = unknown> {
 
 export interface RequestMoreParams<T extends unknown = unknown> {
 	/**
-	 * Number of last loaded page
+	 * Number of the last loaded page
 	 */
 	currentPage: number;
 
 	/**
-	 * Number of page to be uploaded
+	 * Number of a page to upload
 	 */
 	nextPage: number;
 
 	/**
-	 * Number of items that can be showed until bottom of the page will be reached
+	 * Number of items to show till the page bottom is reached
 	 */
-	itemsToReachBottom: number;
+	itemsTillBottom: number;
 
 	/**
-	 * Render items
+	 * Items to render
 	 */
 	items: RenderItem<T>[];
 
 	/**
-	 * True if last requested data response answered with empty data
+	 * True if the last requested data response was empty
 	 */
 	isLastEmpty: boolean;
 
@@ -66,7 +66,7 @@ export interface RequestMoreParams<T extends unknown = unknown> {
 
 export interface RemoteData {
 	/**
-	 * Data for components rendering
+	 * Data to render components
 	 */
 	data: unknown[];
 
@@ -88,12 +88,12 @@ export interface RenderItem<T extends unknown = unknown> {
 	node: CanUndef<HTMLElement>;
 
 	/**
-	 * Destructor of the component
+	 * Component destructor
 	 */
 	destructor: CanUndef<Function>;
 
 	/**
-	 * Index of element in DOM
+	 * Component position in a DOM tree
 	 */
 	index: number;
 }

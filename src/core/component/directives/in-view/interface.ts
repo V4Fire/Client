@@ -64,19 +64,19 @@ export interface ObserveOptions {
 	wait?(): boolean;
 
 	/**
-	 * Callback that will be executed after the delay
+	 * Callback that is invoked after the delay
 	 * @param observable
 	 */
 	callback?(observable: ObservableElement): unknown;
 
 	/**
-	 * Handler: element enters viewport
+	 * Handler: element enters the viewport
 	 * @param observable
 	 */
 	onEnter?(observable: ObservableElement): unknown;
 
 	/**
-	 * Handler: element leaves viewport
+	 * Handler: element leaves the viewport
 	 * @param observable
 	 */
 	onLeave?(observable: ObservableElement): unknown;

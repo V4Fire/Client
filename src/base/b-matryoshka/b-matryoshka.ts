@@ -7,7 +7,6 @@
  */
 
 import iItem from 'traits/i-item/i-item';
-
 import iData, { component, prop, field } from 'super/i-data/i-data';
 export * from 'super/i-data/i-data';
 

@@ -32,12 +32,12 @@ export default class ScrollRender {
 	lastIntersectsItem: number = 0;
 
 	/**
-	 * Current render chunk
+	 * Chunk number of the current render
 	 */
 	chunk: number = 0;
 
 	/**
-	 * Length of render items
+	 * Number of items
 	 */
 	get itemsCount(): number {
 		return this.items.length;
@@ -139,7 +139,7 @@ export default class ScrollRender {
 	}
 
 	/**
-	 * Initializes a render items
+	 * Initializes render items
 	 * @param data
 	 */
 	initItems(data: unknown[]): void {
@@ -182,7 +182,7 @@ export default class ScrollRender {
 	}
 
 	/**
-	 * Hides or show the specified ref
+	 * Hides or shows the specified ref
 	 *
 	 * @param ref
 	 * @param show
@@ -203,7 +203,7 @@ export default class ScrollRender {
 	}
 
 	/**
-	 * Hides or show loader and tombstones refs
+	 * Hides or shows refs to the loader and tombstones
 	 * @param show
 	 */
 	setLoadersVisibility(show: boolean): void {
@@ -212,7 +212,7 @@ export default class ScrollRender {
 	}
 
 	/**
-	 * Renders a specified items
+	 * Renders the specified items
 	 * @param items
 	 */
 	protected renderItems(items: RenderItem[]): HTMLElement[] {
@@ -235,7 +235,7 @@ export default class ScrollRender {
 	}
 
 	/**
-	 * Wraps the specified node into in-view directive
+	 * Wraps the specified item node with an in-view directive
 	 * @param item
 	 */
 	protected wrapInView(item: RenderItem): void {
@@ -254,10 +254,10 @@ export default class ScrollRender {
 	}
 
 	/**
-	 * Returns a render item
+	 * Returns a render item by the specified parameters
 	 *
-	 * @param data
-	 * @param index
+	 * @param data - data to render in item
+	 * @param index - index of the item
 	 */
 	protected createRenderItem(data: unknown, index: number): RenderItem {
 		return {
@@ -269,7 +269,7 @@ export default class ScrollRender {
 	}
 
 	/**
-	 * In-view init options
+	 * Returns options to initialize in-view
 	 * @param index
 	 */
 	protected getInViewOptions(index: number): InitOptions {
@@ -282,7 +282,7 @@ export default class ScrollRender {
 	}
 
 	/**
-	 * Handler: element becomes visible in viewport
+	 * Handler: element becomes visible in the viewport
 	 * @param index
 	 */
 	protected onNodeIntersect(index: number): void {
