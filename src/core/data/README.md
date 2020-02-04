@@ -660,7 +660,7 @@ interface ExtraProvider {
 
 #### Static extra providers
 
-If you don't need to dynamic providing parameters from a request you can define a static object instead of function.
+If you don't need to provide dynamic parameters to a request you can define a static object instead of function.
 
 ```js
 import Provider, { provider } from 'core/provider';
