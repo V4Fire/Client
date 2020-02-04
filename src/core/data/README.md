@@ -234,6 +234,60 @@ user.get({id: 1}).then((data) => {
 })
 ```
 
+### Constructor parameters
+
+You can provide some parameters to a provider by using a constructor.
+
+```js
+import Provider from 'core/provider';
+
+export default class User extends Provider {
+  baseURL = 'user/:id';
+}
+
+const user = new User({
+  externalRequest: true,
+  socket: true
+});
+````
+
+The entire list of parameters:
+
+```ts
+interface ProviderOptions {
+  /**
+   * List of additional data providers for the "get" method.
+   * It can be useful if you have some providers that you want combine to one.
+   */
+  extraProviders?: FunctionalExtraProviders;
+
+  /**
+   * Provider alias: it is used with extra providers
+   */
+  alias?: string;
+
+  /**
+   * If true, then all emitting events, which is emitted by the provider,
+   * that have a similar hash wil be collapsed to one
+   *
+   * @default `false`
+   */
+  collapseEvents?: boolean;
+
+  /**
+   * @see [[CreateRequestOptions.externalRequest]]
+   * @default `false`
+   */
+  externalRequest?: boolean;
+
+  /**
+   * If true, then the provider is connected to a socket server
+   * @default `false`
+   */
+  socket?: boolean;
+}
+```
+
 ### Registering a data provider as multiton
 
 You can register your data provider by a name in the global storage. For that case you should use the special decorator "provider".
@@ -552,7 +606,61 @@ export default class User extends Provider {
 
 ### Composition of providers
 
-You can create a composition of multiple providers, which are fetching in parallel and merging to one data.
+You can create a composition of multiple providers that are fetching in parallel and merging to one data. This mechanism is called "extraProviders". Mind that API work only for get request.
+
+```js
+import Provider, { provider } from 'core/provider';
+
+@provider
+export default class User extends Provider {
+  extraProviders = ({opts: {query}}) => ({
+    'skills': {
+      provider: 'Skills',
+      query: {id: query.id}
+    }
+  });
+
+  alias = 'user';
+  baseURL = 'user/:id';
+}
+
+new User().get({id: 1}).then((data) => {
+  // The main data from User provider is stored by an alias (if it's specified) or by a provider name
+  console.log(data.user);
+
+  // The extra data is stored by an alias (if it's specified) or by a key name from the declaration
+  console.log(data.skills);
+});
+```
+
+#### Extra provider
+
+The declaration object of an extra provider has a standard interface:
+
+```ts
+type ExtraProviderConstructor =
+  string |
+  Provider |
+  {new(opts?: ProviderOptions): Provider};
+
+interface ExtraProvider {
+  provider?: ExtraProviderConstructor;
+  providerOptions?: ProviderOptions;
+  query?: RequestQuery;
+  request?: CreateRequestOptions;
+  alias?: string;
+}
+```
+
+* `provider` — full name of a provider or a link to the provider or the provider constructor;
+* `providerOptions` — additional options for the provider constructor;
+* `query` — query parameters for a provider get request;
+* `request` — request parameters for the provider;
+* `alias` — alias of data: the data is stored by a key from this value in a result object.
+
+#### Static extra providers
+
+If you don't need to dynamic providing parameters from a request you can define a static object instead of function.
 
 ```js
 import Provider, { provider } from 'core/provider';
@@ -560,12 +668,12 @@ import Provider, { provider } from 'core/provider';
 @provider
 export default class User extends Provider {
   extraProviders = {
-    'skils': {
-      provider: 'Skills',
-
+    'skills': {
+      provider: 'Skills'
     }
   };
 
+  alias = 'user';
   baseURL = 'user/:id';
 }
 ```
