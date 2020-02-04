@@ -85,6 +85,32 @@ export type EventData<T = unknown> =
 
 export interface ProviderOptions {
 	/**
+	 * @see [[CreateRequestOptions.externalRequest]]
+	 * @default `false`
+	 */
+	externalRequest?: boolean;
+
+	/**
+	 * If true, then the provider is connected to a socket server
+	 * @default `false`
+	 */
+	socket?: boolean;
+
+	/**
+	 * If true, then all emitting events, which is emitted by the provider,
+	 * that have a similar hash wil be collapsed to one
+	 *
+	 * @default `false`
+	 */
+	collapseEvents?: boolean;
+
+	/**
+	 * Provider alias: it is used with extra providers
+	 * @see [[ProviderOptions.extraProviders]]
+	 */
+	alias?: string;
+
+	/**
 	 * List of additional data providers for the "get" method.
 	 * It can be useful if you have some providers that you want combine to one.
 	 *
@@ -106,31 +132,6 @@ export interface ProviderOptions {
 	 * ```
 	 */
 	extraProviders?: FunctionalExtraProviders;
-
-	/**
-	 * Provider alias: it is used with extra providers
-	 */
-	alias?: string;
-
-	/**
-	 * If true, then all emitting events, which is emitted by the provider,
-	 * that have a similar hash wil be collapsed to one
-	 *
-	 * @default `false`
-	 */
-	collapseEvents?: boolean;
-
-	/**
-	 * @see [[CreateRequestOptions.externalRequest]]
-	 * @default `false`
-	 */
-	externalRequest?: boolean;
-
-	/**
-	 * If true, then the provider is connected to a socket server
-	 * @default `false`
-	 */
-	socket?: boolean;
 }
 
 export interface ExtraProviderParams<T = unknown> {
