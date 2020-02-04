@@ -13,7 +13,7 @@
 
 import { EventEmitterLike } from 'core/async';
 import { CreateRequestOptions, RequestQuery, RequestMethod, RequestResponse, RequestBody } from 'core/request';
-import { ModelMethod } from 'core/data/interface/types';
+import { ModelMethod } from 'core/data/interface';
 export * from 'core/data/interface/types';
 
 /**
@@ -24,6 +24,11 @@ export default interface Provider {
 	 * Full name of the provider including a namespace
 	 */
 	readonly providerName: string;
+
+	/**
+	 * Provider alias
+	 */
+	readonly alias?: string;
 
 	/**
 	 * Event emitter for broadcasting provider events

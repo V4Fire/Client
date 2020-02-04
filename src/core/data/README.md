@@ -1,7 +1,7 @@
 # core/data
 
-This module provides API for creation an abstraction under data — a data provider.
-The provider grants methods for accessing and modifying data that is represented as one logical instance.
+This module provides API to create an abstraction under data — a data provider.
+The provider grants methods to access and modify data that is represented as one logical instance.
 
 For example, we need to create API for a user in our application. Let's start with a simple REST architecture:
 
@@ -57,7 +57,7 @@ request('user', {method: 'POST', body: {"name": "Andrey", "age": 30}});
 }
 ```
 
-All of these handlers is associated with one data model that represents a user. Knowing this, we can a class for this model.
+All of these handlers are associated with one data model that represents a user. Knowing this, we can create a class for this model.
 
 ```js
 import request from 'core/request';
@@ -83,7 +83,7 @@ class User {
 }
 ```
 
-This is very naive implementation, but it works. Also, we need to create some API for providing events of the provider, which allows to notificate an application if data was changed.
+This might seem naive, but it works. Also, we need to create some API to submit events of the provider that allows to notificate an application if data was changed.
 
 ```js
 import request from 'core/request';
@@ -117,11 +117,11 @@ class User {
 }
 ```
 
-Still looks fine and useful, but if we want to create more classes for other data instances we need to create some kind of a superclass for avoiding "copy-paste" of code lines. Also, the super class may improve our API with adding some extra functionality, such as support for socket events, middlewares, etc. And this is exactly what "core/data" module does.
+Still looks fine and useful, but if we want to create more classes for other data instances we need to create some kind of a superclass to avoide "copy-pasting" code lines. Also, the super class may improve our API with added extra functionality, such as support for socket events, middlewares, etc. And this is exactly what "core/data" module does.
 
 ## Default interface
 
-The "core/data" module provides a default interface for any data providers. If you class implements it, then you can use it as a data provider with any V4Fire modules. This interface is pretty similar with the upper example of a data class, but realizes more common API. Let's take a look for it.
+The "core/data" module provides a default interface for any data providers. If your class implements this interface, then you can use it as a data provider with any V4Fire modules. This interface is pretty similar to the above-mentioned example of a data class, but realizes more common API. Let's take a look at it.
 
 **core/data/interface**
 
@@ -173,34 +173,34 @@ export default interface Provider {
 }
 ```
 
-Much of these methods look familiar, but also we have some new method and properties:
+Many of these methods look familiar, but we also have some new method and properties:
 
 1. `providerName` contains a full name of the provider.
-2. `name` — a pair of get/set methods for providing "logical" meaning about a request:
+2. `name` — a pair of get/set methods to provide "logical" meaning for a request:
 
 ```js
 // Will emit "init" event, which contains the data, after successfully receiving
 myProvider.name('init').get('foo');
 ```
 
-Please notice, that the default V4Fire implementation of a data provider by default sends events for "upd", "add", "del" requests.
-These events have the same name with a methods that produce it.
+Mind that the default V4Fire implementation of a data provider by default sends events for "upd", "add", "del" requests.
+These events have the same name with methods that produce them.
 
-3. `method` — a pair of get/set methods for providing a type of a HTTP request:
+3. `method` — a pair of get/set methods to provide a type of a HTTP request:
 
 ```js
-// The request uses POST method for getting data
+// The request uses POST method to get data
 myProvider.method('POST').get('foo');
 ```
 
-4. `base` — a pair of get/set methods for providing a base URL for requests:
+4. `base` — a pair of get/set methods to provide a base URL for requests:
 
 ```js
 // The request is addressed for https://google.com/foo
 myProvider.base('https://google.com').get('foo');
 ```
 
-5. `url` — a pair of get/set methods for providing URL for requests:
+5. `url` — a pair of get/set methods to provide URL for requests:
 
 ```js
 // The request is addressed for https://google.com/foo
@@ -213,13 +213,13 @@ myProvider.base('https://google.com').url('bla/baz').get('foo');
 
 6. `dropCache` — a method that drops any request cache.
 
-7. `peek` — a request that logically is similar with checking of accessibility of API, by default it uses HEAD.
+7. `peek` — a request that logically is similar to the checking of API accessibility, it uses HEAD by default.
 
-8. `post` — a request that sends to a server some data without any logical representation, by default it uses POST.
+8. `post` — a request that sends to a server some data without any logical representation, it uses POST by default.
 
 ## Default implementation
 
-In addition to the base interface of data providers V4Fire provides an implementation, which grants some extra functionality for more flexible using.
+In addition to the base interface of data providers V4Fire provides an implementation that grants some extra functionality and more flexibility.
 
 ```js
 import Provider from 'core/provider';
@@ -232,6 +232,60 @@ const user = new User();
 user.get({id: 1}).then((data) => {
   console.log(data);
 })
+```
+
+### Constructor parameters
+
+You can provide some parameters to a provider by using a constructor.
+
+```js
+import Provider from 'core/provider';
+
+export default class User extends Provider {
+  baseURL = 'user/:id';
+}
+
+const user = new User({
+  externalRequest: true,
+  socket: true
+});
+````
+
+The entire list of parameters:
+
+```ts
+interface ProviderOptions {
+  /**
+   * List of additional data providers for the "get" method.
+   * It can be useful if you have some providers that you want combine to one.
+   */
+  extraProviders?: FunctionalExtraProviders;
+
+  /**
+   * Provider alias: it is used with extra providers
+   */
+  alias?: string;
+
+  /**
+   * If true, then all emitting events, which is emitted by the provider,
+   * that have a similar hash wil be collapsed to one
+   *
+   * @default `false`
+   */
+  collapseEvents?: boolean;
+
+  /**
+   * @see [[CreateRequestOptions.externalRequest]]
+   * @default `false`
+   */
+  externalRequest?: boolean;
+
+  /**
+   * If true, then the provider is connected to a socket server
+   * @default `false`
+   */
+  socket?: boolean;
+}
 ```
 
 ### Registering a data provider as multiton
@@ -249,7 +303,7 @@ export default class User extends Provider {
 console.log(providers['User']);
 ```
 
-The name for registering is taken from a class name of the provider. Also, you can declare a namespace that is concatenated with the name.
+The name to register is taken from a class name of the provider. Also, you can declare a namespace that is concatenated with the name.
 
 ```js
 import Provider, { provider, providers } from 'core/provider';
@@ -262,7 +316,7 @@ export default class User extends Provider {
 console.log(providers['base.User']);
 ```
 
-It can be useful for providing data providers to components as input properties:
+It can be useful to provide data providers to components as input properties:
 
 ```xml
 <my-component dataProvider="base.User"></my-component>
@@ -271,7 +325,7 @@ It can be useful for providing data providers to components as input properties:
 ### Decorating a request function
 #### Request methods
 
-The default implementation of a data provider have association between HTTP request methods and the provider methods:
+The default implementation of a data provider has association between HTTP request methods and the provider methods:
 
 ```js
 {
@@ -316,7 +370,7 @@ export default class User extends Provider {
 
 #### Base URL for requests
 
-Base URL is the start point for URLs of each request. You can provide one universal URL using `baseURL` parameter, but also,
+Base URL is the starting point for URLs of each request. You can provide one universal URL by using `baseURL` parameter, but also,
 you can specify a base URL for each particular method.
 
 ```js
@@ -333,8 +387,8 @@ export default class User extends Provider {
 ##### URL interpolation
 
 You can specify dynamically values within a URL string. For this case just add a variable with `:` character before the name.
-The values for interpolations is taken from a query object or a request body (if it represented as simple JS object).
-After interpolation all values that is used will be dropped from a source object.
+The values for interpolations are taken from a query object or a request body (if it's represented as simple JS object).
+After interpolation all values that were used will be dropped from a source object.
 
 #### Middlewares
 
@@ -349,7 +403,7 @@ The function takes a request environment:
 }
 ```
 
-You can specify a sequence of middlewares to the provider, but notice that the order of middlewares depends of a structure that you use (hash is't preserve the order, but arrays/maps do it).
+You can specify a sequence of middlewares to the provider, but notice that the order of middlewares depends on the structure that you use (hash doesn't preserve the order, but arrays/maps do it).
 
 For example, we need to add some authorization header for every request of the provider.
 
@@ -368,9 +422,9 @@ export default class User extends Provider {
 }
 ```
 
-Basically, a result of a middleware function is ignoring. The exceptions are promises and functions.
+Basically, the result of a middleware function is ignoring, with the exceptions of promises and functions.
 If some middleware returns a promise, it will be awaited.
-And if at least one of middlewares returns a function, than the result of invoking this function will be returned as the request result.
+And if at least one of middlewares returns a function, then the result of invoking this function will be returned as the request result.
 It can be helpful for organizing mocks of data and other similar cases when you don't want to execute a real request.
 
 ```js
@@ -393,9 +447,9 @@ export default class User extends Provider {
 
 #### Encoders
 
-Encoder is a subtype of a middleware function, but unlike the simple middleware the encoder must returns a value and provides it
-to another encoder or a request, which it means that a sequence of encoders are tied with an order of following.
-Encoders is using for converting data to another format before submitting it to a request.
+Encoder is a subtype of a middleware function, but unlike the simple middleware the encoder must return a value and provide it
+to another encoder or a request, which means that a sequence of encoders are tied with an order of following.
+Encoders are using to convert data to another format before submitting it to a request.
 For example, you server demands that all request data must be represented as a protobuf value.
 
 ```js
@@ -411,7 +465,7 @@ export default class User extends Provider {
 }
 ```
 
-Be notice, that unlike of "middlewares" parameter the encoders is separated between a provider methods, which is mean
+Note that unlike "middlewares" parameter the encoders are separated between provider methods, which means
 that you should declare encoders for all you method pipelines.
 
 The encoder function has the signature:
@@ -442,7 +496,7 @@ export interface Encoder<I = unknown, O = unknown> {
 }
 ```
 
-The first to parameters are equal to the encoder function. The last parameter contains a link to a response object.
+The first parameters are equal to the encoder function. The last parameter contains a link to a response object.
 
 ```js
 import Provider, { provider } from 'core/provider';
@@ -461,27 +515,7 @@ If some encoder returns a promise, it will be awaited.
 
 #### Custom request function
 
-For creating a request all providers are used the `core/request` module. And if you need to provide some extra parameters of request, such as "contentType", you can specify a factory for making these requests using the special overload of the request function.
-
-```js
-import request from 'core/request';
-import Provider, { provider } from 'core/provider';
-
-@provider
-export default class User extends Provider {
-  static request = request({
-    contentType: 'json',
-    cacheStrategy: 'forever',
-    cacheTTL: (10).seconds()
-  });
-
-  baseURL = 'user/:id';
-}
-```
-
-#### Custom request function
-
-For creating a request all providers are used the `core/request` module. And if you need to provide some extra parameters of request, such as "contentType", you can specify a factory for making these requests using the special overload of the request function.
+To create a request all providers use the `core/request` module. And if you need to provide some extra parameters of request, such as "contentType", you can specify a factory for making these requests using the special overload of the request function.
 
 ```js
 import request from 'core/request';
@@ -501,7 +535,7 @@ export default class User extends Provider {
 
 #### Interpolation of headers
 
-Headers of a request also have support for interpolation from request data, like "baseURL" have.
+Headers of a request also have support for interpolation from request data, which similar to "baseURL".
 
 ```js
 import request from 'core/request';
@@ -537,7 +571,7 @@ export default class User extends Provider {
 }
 ```
 
-The value is also can be declared as a function, which is invoking on each request.
+The value can also be declared as a function that is invoked at each request.
 
 ```js
 import Provider, { provider } from 'core/provider';
@@ -552,7 +586,7 @@ export default class User extends Provider {
 }
 ```
 
-And finally, if you specify the default API URL within `core/config/api`, you can provides some chunks of an API URL that is applied to the base.
+And finally, if you specify the default API URL within `core/config/api`, you can provide some chunks of an API URL that are applied to the base.
 
 ```js
 import Provider, { provider } from 'core/provider';
@@ -572,7 +606,61 @@ export default class User extends Provider {
 
 ### Composition of providers
 
-You can create a composition of multiple providers, which are fetching in parallel and merging to one data.
+You can create a composition of multiple providers that are fetching in parallel and merging to one data. This mechanism is called "extraProviders". Mind that API work only for get request.
+
+```js
+import Provider, { provider } from 'core/provider';
+
+@provider
+export default class User extends Provider {
+  extraProviders = ({opts: {query}}) => ({
+    'skills': {
+      provider: 'Skills',
+      query: {id: query.id}
+    }
+  });
+
+  alias = 'user';
+  baseURL = 'user/:id';
+}
+
+new User().get({id: 1}).then((data) => {
+  // The main data from User provider is stored by an alias (if it's specified) or by a provider name
+  console.log(data.user);
+
+  // The extra data is stored by an alias (if it's specified) or by a key name from the declaration
+  console.log(data.skills);
+});
+```
+
+#### Extra provider
+
+The declaration object of an extra provider has a standard interface:
+
+```ts
+type ExtraProviderConstructor =
+  string |
+  Provider |
+  {new(opts?: ProviderOptions): Provider};
+
+interface ExtraProvider {
+  provider?: ExtraProviderConstructor;
+  providerOptions?: ProviderOptions;
+  query?: RequestQuery;
+  request?: CreateRequestOptions;
+  alias?: string;
+}
+```
+
+* `provider` — full name of a provider or a link to the provider or the provider constructor;
+* `providerOptions` — additional options for the provider constructor;
+* `query` — query parameters for a provider get request;
+* `request` — request parameters for the provider;
+* `alias` — alias of data: the data is stored by a key from this value in a result object.
+
+#### Static extra providers
+
+If you don't need to dynamic providing parameters from a request you can define a static object instead of function.
 
 ```js
 import Provider, { provider } from 'core/provider';
@@ -580,19 +668,19 @@ import Provider, { provider } from 'core/provider';
 @provider
 export default class User extends Provider {
   extraProviders = {
-    'skils': {
-      provider: 'Skills',
-
+    'skills': {
+      provider: 'Skills'
     }
   };
 
+  alias = 'user';
   baseURL = 'user/:id';
 }
 ```
 
-### Extending a data provider from another
+### Extending one data provider from another provider
 
-The data provider is a simple class that implements the special interface. That's why for creating a new provider that is extending parameters from another you should create a simple subclass.
+The data provider is a simple class that implements the special interface. That's why to create a new provider that is extended parameters from another provider you should create a simple subclass.
 
 ```js
 import Provider, { provider } from 'core/provider';
@@ -629,7 +717,7 @@ export class User2 extends User {
 
 ### Specifying data mocks
 
-There is a standard middleware for organizing a mechanism of data mocking — "attackMock" middleware (it uses by default).
+There is a standard middleware to organize a mechanism of data mocking — "attackMock" middleware (it is used by default).
 
 ```js
 import Provider, { provider } from 'core/provider';
@@ -664,7 +752,7 @@ export default class User extends Provider {
 }
 ```
 
-Please notice that root keys of mocks are represent HTTP methods, but not provider methods. Values are contain arrays of request objects for matching: the algorithm finds the most suitable option and returns it response. Also supports dynamically casting responses:
+Mind that root keys of mocks are represent HTTP methods, but not provider methods. Values are contain arrays of request objects to match: the algorithm finds the most suitable option and returns it response. Also, the middleware supports dynamically casting responses:
 
 ```js
 import Provider, { provider } from 'core/provider';
@@ -693,7 +781,7 @@ export default class User extends Provider {
 }
 ```
 
-And finally, you can use dynamic imports with mocks:
+And finally, you can use dynamic importing with mocks:
 
 ```js
 import Provider, { provider } from 'core/provider';
@@ -711,11 +799,11 @@ By default all data mocks is disabled, but you can enable it just type to a cons
 
 ```js
 // Enables mocks for the User provider
-setEnv('mock', {patterns: ['User']})
+setEnv('mock', {patterns: ['User']});
 
 // Enables mocks for all providers
-setEnv('mock', {patterns: ['.*']})
+setEnv('mock', {patterns: ['.*']});
 ```
 
-The values of patterns is converted to RegExp objects and applies to provider names (including namespaces).
-Config setting will be stored within a browser local storage.
+The values of patterns are converted to RegExp objects and applied to provider names (including namespaces).
+Config settings is stored within a browser local storage.

@@ -21,7 +21,14 @@ import {
 
 } from 'core/request/interface';
 
-import { ResponseType, ResponseTypeValue } from 'core/request/response/interface';
+import {
+
+	ResponseType,
+	ResponseTypeValue
+
+} from 'core/request/response/interface';
+
+import Provider from 'core/data/interface';
 
 export type MockResponseType =
 	ResponseType |
@@ -78,6 +85,32 @@ export type EventData<T = unknown> =
 
 export interface ProviderOptions {
 	/**
+	 * @see [[CreateRequestOptions.externalRequest]]
+	 * @default `false`
+	 */
+	externalRequest?: boolean;
+
+	/**
+	 * If true, then the provider is connected to a socket server
+	 * @default `false`
+	 */
+	socket?: boolean;
+
+	/**
+	 * If true, then all emitting events, which is emitted by the provider,
+	 * that have a similar hash wil be collapsed to one
+	 *
+	 * @default `false`
+	 */
+	collapseEvents?: boolean;
+
+	/**
+	 * Provider alias: it is used with extra providers
+	 * @see [[ProviderOptions.extraProviders]]
+	 */
+	alias?: string;
+
+	/**
 	 * List of additional data providers for the "get" method.
 	 * It can be useful if you have some providers that you want combine to one.
 	 *
@@ -99,26 +132,6 @@ export interface ProviderOptions {
 	 * ```
 	 */
 	extraProviders?: FunctionalExtraProviders;
-
-	/**
-	 * If true, then all emitting events, which is emitted by the provider,
-	 * that have a similar hash wil be collapsed to one
-	 *
-	 * @default `false`
-	 */
-	collapseEvents?: boolean;
-
-	/**
-	 * @see [[CreateRequestOptions.externalRequest]]
-	 * @default `false`
-	 */
-	externalRequest?: boolean;
-
-	/**
-	 * If true, then the provider is connected to a socket server
-	 * @default `false`
-	 */
-	socket?: boolean;
 }
 
 export interface ExtraProviderParams<T = unknown> {
@@ -126,12 +139,17 @@ export interface ExtraProviderParams<T = unknown> {
 	globalOpts: GlobalOptions;
 }
 
+export type ExtraProviderConstructor =
+	string |
+	Provider |
+	{new(opts?: ProviderOptions): Provider};
+
 export interface ExtraProvider {
-	provider?: string;
-	providerParams?: ProviderOptions;
+	provider?: ExtraProviderConstructor;
+	providerOptions?: ProviderOptions;
 	query?: RequestQuery;
 	request?: CreateRequestOptions;
-	as?: string;
+	alias?: string;
 }
 
 export type ExtraProviders = Dictionary<Nullable<ExtraProvider>>;

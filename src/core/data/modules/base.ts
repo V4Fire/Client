@@ -47,7 +47,10 @@ export default abstract class Provider extends ParamsProvider implements iProvid
 	readonly cacheId!: string;
 
 	/** @inheritDoc */
-	emitter!: EventEmitter;
+	readonly alias?: string;
+
+	/** @inheritDoc */
+	readonly emitter!: EventEmitter;
 
 	/** @inheritDoc */
 	get providerName(): string {
@@ -78,7 +81,7 @@ export default abstract class Provider extends ParamsProvider implements iProvid
 	/**
 	 * @param [opts] - additional options
 	 */
-	constructor(opts: ProviderOptions = {}) {
+	protected constructor(opts: ProviderOptions = {}) {
 		super();
 
 		const
@@ -122,6 +125,10 @@ export default abstract class Provider extends ParamsProvider implements iProvid
 
 		if (extra) {
 			this.setReadonlyParam('extraProviders', extra);
+		}
+
+		if (Object.isBoolean(opts.alias)) {
+			this.setReadonlyParam('alias', opts.alias);
 		}
 
 		if (Object.isBoolean(opts.externalRequest)) {
@@ -288,7 +295,7 @@ export default abstract class Provider extends ParamsProvider implements iProvid
 
 		const
 			url = this.url(),
-			nm = this.providerName,
+			alias = this.alias || this.providerName,
 			eventName = this.name(),
 			method = this.method() || this.getMethod;
 
@@ -318,23 +325,33 @@ export default abstract class Provider extends ParamsProvider implements iProvid
 					el = extraProviders[key] || {};
 
 				const
-					nm = el.provider || key,
-					as = el.as || key;
+					providerLink = el.provider || key,
+					alias = el.alias || key;
 
-				const
-					ProviderConstructor = <Dictionary & typeof Provider>providers[nm];
+				let
+					ProviderConstructor,
+					providerInstance;
 
-				if (!ProviderConstructor) {
-					throw new Error(`Provider "${nm}" is not defined`);
+				if (Object.isString(providerLink)) {
+					ProviderConstructor = <Dictionary & typeof Provider>providers[providerLink];
+
+					if (!ProviderConstructor) {
+						throw new Error(`Provider "${providerLink}" is not defined`);
+					}
+
+					providerInstance = new ProviderConstructor(el.providerOptions);
+
+				} else if (Object.isFunction(providerLink)) {
+					providerInstance = new providerLink(el.providerOptions);
+
+				} else {
+					providerInstance = providerLink;
 				}
 
-				const
-					dp = new ProviderConstructor(el.providerParams);
-
 				tasks.push(
-					dp.get(el.query || query, el.request).then(({data}) => {
-						cloneTasks.push((composition) => Object.set(composition, as, data && (<object>data).valueOf()));
-						return Object.set(composition, as, data);
+					providerInstance.get(el.query || query, el.request).then(({data}) => {
+						cloneTasks.push((composition) => Object.set(composition, alias, data && (<object>data).valueOf()));
+						return Object.set(composition, alias, data);
 					})
 				);
 			}
@@ -344,8 +361,8 @@ export default abstract class Provider extends ParamsProvider implements iProvid
 					const
 						data = res.data;
 
-					cloneTasks.push((composition) => Object.set(composition, nm, data && (<object>data).valueOf()));
-					Object.set(composition, nm, data);
+					cloneTasks.push((composition) => Object.set(composition, alias, data && (<object>data).valueOf()));
+					Object.set(composition, alias, data);
 
 					composition.valueOf = () => {
 						const
