@@ -276,7 +276,7 @@ export default class ScrollRender {
 		return {
 			delay: 0,
 			threshold: this.randomThreshold,
-			once: !this.component.dropNodes,
+			once: !this.component.clearNodes,
 			onEnter: () => this.onNodeIntersect(index)
 		};
 	}

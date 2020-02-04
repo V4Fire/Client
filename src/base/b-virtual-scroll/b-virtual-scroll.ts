@@ -128,7 +128,7 @@ export default class bVirtualScroll extends iData implements iItem {
 	/**
 	 * If, when calling a function, it returns true, then the component will be able to request additional data
 	 */
-	@prop({type: Function, default: (v) => v.itemsToReachBottom <= 10 && !v.isLastEmpty})
+	@prop({type: Function, default: (v) => v.itemsTillBottom <= 10 && !v.isLastEmpty})
 	readonly shouldMakeRequest!: RequestFn;
 
 	/**
@@ -249,7 +249,7 @@ export default class bVirtualScroll extends iData implements iItem {
 			val = this.convertDBToComponent<RemoteData>(this.db);
 
 		if (this.field.get('data.length', val)) {
-			return this.options = val.data;
+			return this.options = <unknown[]>val.data;
 
 		} else {
 			this.options = [];
