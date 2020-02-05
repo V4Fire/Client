@@ -46,7 +46,7 @@ export default class ScrollRequest {
 	/**
 	 * Component instance
 	 */
-	protected component: bVirtualScroll['unsafe'];
+	readonly component: bVirtualScroll['unsafe'];
 
 	/**
 	 * API for scroll rendering

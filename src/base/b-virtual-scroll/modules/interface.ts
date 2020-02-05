@@ -6,6 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import iBlock from 'super/i-block/i-block';
 import { axis } from 'base/b-virtual-scroll/b-virtual-scroll';
 
 export type Axis = keyof typeof axis;

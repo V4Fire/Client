@@ -36,8 +36,8 @@ export function valueValidator(value: InitOptions): boolean {
 /**
  * Returns true if the specified element is in view
  *
- * @param elRect
- * @param [threshold]
+ * @param elRect - Element DOMRect
+ * @param [threshold] - Ratio of intersection area to total bounding box area for the observed target
  * @param [scrollRoot]
  */
 export function isInView(elRect: DOMRect, threshold: number = 1, scrollRoot?: Element): boolean {

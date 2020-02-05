@@ -37,16 +37,16 @@ export default class ScrollRender {
 	chunk: number = 0;
 
 	/**
+	 * Component instance
+	 */
+	readonly component: bVirtualScroll['unsafe'];
+
+	/**
 	 * Number of items
 	 */
 	get itemsCount(): number {
 		return this.items.length;
 	}
-
-	/**
-	 * Component instance
-	 */
-	protected readonly component: bVirtualScroll['unsafe'];
 
 	/**
 	 * Async group

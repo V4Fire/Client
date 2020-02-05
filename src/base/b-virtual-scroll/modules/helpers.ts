@@ -24,8 +24,7 @@ export function getRequestParams(
 	merge?: Dictionary
 ): RequestMoreParams {
 	const
-		// @ts-ignore (access)
-		component = scrollRenderCtx?.component || scrollRenderCtx?.component;
+		component = scrollRenderCtx?.component || scrollRequestCtx?.component;
 
 	const
 		lastLoadedData = scrollRequestCtx?.lastLoadedData.length ? scrollRequestCtx.lastLoadedData : component?.options;
