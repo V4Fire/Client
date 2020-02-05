@@ -164,12 +164,16 @@ export default class ScrollRequest {
 		const
 			{component} = this;
 
+		component.setMod('progress', true);
+
 		// @ts-ignore (access)
 		const params = <CanUndef<Dictionary>>(component.getDefaultRequestParams('get') || [])[0];
 		Object.assign(params, component.requestQuery?.(getRequestParams(this, this.scrollRender))?.get);
 
 		return component.requestEngine(params, component)
 			.then((data) => {
+				component.removeMod('progress', true);
+
 				if (!data) {
 					this.lastLoadedData = [];
 					return;
