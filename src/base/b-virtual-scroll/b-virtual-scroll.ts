@@ -22,8 +22,7 @@ import iData, {
 	InitLoadParams,
 	RequestParams,
 	RequestError,
-	RetryRequestFn,
-	ModsDecl
+	RetryRequestFn
 
 } from 'super/i-data/i-data';
 
@@ -32,7 +31,7 @@ import ScrollRender from 'base/b-virtual-scroll/modules/scroll-render';
 import ScrollRequest from 'base/b-virtual-scroll/modules/scroll-request';
 
 import { getRequestParams } from 'base/b-virtual-scroll/modules/helpers';
-import { Axis, RequestFn, RemoteData, RequestQuery } from 'base/b-virtual-scroll/modules/interface';
+import { Axis, RequestFn, RemoteData, RequestQuery, RequestEngine } from 'base/b-virtual-scroll/modules/interface';
 
 export * from 'super/i-data/i-data';
 
@@ -124,6 +123,12 @@ export default class bVirtualScroll extends iData implements iItem {
 	/** @override */
 	@prop({type: [Object, Array], required: false})
 	readonly request?: RequestParams;
+
+	/**
+	 * Engine for request remote data
+	 */
+	@prop({type: Function, default: (query, ctx) => ctx.get(query), required: false})
+	readonly requestEngine!: RequestEngine;
 
 	/**
 	 * If, when calling a function, it returns true, then the component will be able to request additional data
