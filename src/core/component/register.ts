@@ -13,6 +13,9 @@ import * as defTpls from 'core/block.ss';
 import log from 'core/log';
 
 import inheritMeta from 'core/component/create/inherit';
+
+import { getInfoFromConstructor } from 'core/component/meta/info';
+
 import { runHook, patchRefs, parseVAttrs } from 'core/component/create/helpers';
 import { ComponentInterface, ComponentParams, ComponentMeta, ComponentMethod } from 'core/component/interface';
 
@@ -32,22 +35,26 @@ import {
 
 } from 'core/component/engines';
 
-import { isAbstractComponent, getComponent, getBaseComponent } from 'core/component/create';
-import { getComponentName } from 'core/component/helpers/other';
+import {
+
+	getComponent,
+	getBaseComponent
+
+} from 'core/component/create';
+
 import { createFakeCtx, execRenderObject, patchVNode } from 'core/component/create/functional';
 import { getComponentDataFromVnode, createCompositeElement } from 'core/component/create/composite';
 import * as c from 'core/component/const';
 
 export const
 	$$ = symbolGenerator(),
-	isSmartComponent = /-functional$/,
 	dsComponentsMods = DS_COMPONENTS_MODS;
 
 /**
  * Creates a new component
  *
  * @decorator
- * @param [params] - additional parameters:
+ * @param [declParams] - additional parameters:
  *   *) [name] - component name
  *   *) [root] - if true, then the component will be registered as root
  *   *) [tpl] - if false, then will be used the default template
@@ -63,77 +70,40 @@ export const
  *   *) [model] - parameters for a model option
  *   *) [inheritAttrs] - parameters for an inheritAttrs option
  */
-export function component(params?: ComponentParams): Function {
+export function component(declParams?: ComponentParams): Function {
 	return (target) => {
-		const
-			name = params && params.name || getComponentName(target),
-			isAbstract = isAbstractComponent.test(name);
+		const i = getInfoFromConstructor(target, declParams);
+		c.initEmitter.emit('bindConstructor', i.name);
 
-		const
-			parent = Object.getPrototypeOf(target),
-			parentParams = parent && c.componentParams.get(parent);
-
-		let p: ComponentParams = parentParams ? {root: parentParams.root, ...params, name} : {
-			root: false,
-			tpl: true,
-			inheritAttrs: true,
-			functional: false,
-			...params,
-			name
-		};
-
-		if (parentParams) {
-			let
-				functional;
-
-			// tslint:disable-next-line:prefer-conditional-expression
-			if (Object.isPlainObject(p.functional) && Object.isPlainObject(parentParams.functional)) {
-				functional = {...parentParams.functional, ...p.functional};
-
-			} else {
-				functional = p.functional !== undefined ? p.functional : parentParams.functional || false;
-			}
-
-			p.functional = functional;
-		}
-
-		if (!c.componentParams.has(target)) {
-			c.componentParams.set(target, p);
-			c.componentParams.set(name, p);
-		}
-
-		c.initEmitter.emit('bindConstructor', name);
-
-		if (!name || p.root || isAbstract) {
+		if (!i.name || i.params.root || i.isAbstract) {
 			regComponent();
 
 		} else {
-			const a = c.regCache[name] = c.regCache[name] || [];
-			a.push(regComponent);
+			const initList = c.regCache[i.name] = c.regCache[i.name] || [];
+			initList.push(regComponent);
 		}
 
-		if (Object.isPlainObject(p.functional)) {
+		// If we have a smart component,
+		// then we compile 2 components in the runtime
+		if (Object.isPlainObject(i.params.functional)) {
 			component({
-				...params,
-				name: `${name}-functional`,
+				...declParams,
+				name: `${i.name}-functional`,
 				functional: true
 			})(target);
 		}
 
 		function regComponent(): void {
-			const
-				componentName = name.replace(isSmartComponent, '');
-
-			// Initialize parent component if needed
+			// Lazy initializing of parent components
 
 			let
-				parentName = parentParams && parentParams.name;
+				parentName = i.parentParams?.name;
 
 			if (parentName && c.regCache[parentName]) {
 				let
-					parentComponent = parent;
+					parentComponent = i.parent;
 
-				while (parentName === name) {
+				while (parentName === i.name) {
 					parentComponent = Object.getPrototypeOf(parentComponent);
 
 					if (parentComponent) {
@@ -157,7 +127,7 @@ export function component(params?: ComponentParams): Function {
 			}
 
 			const
-				parentMeta = c.components.get(parent),
+				parentMeta = i.parent && c.components.get(i.parent),
 				mods = {},
 				modsStore = {};
 
@@ -166,7 +136,7 @@ export function component(params?: ComponentParams): Function {
 			}
 
 			const
-				dsMods = dsComponentsMods && dsComponentsMods[componentName];
+				dsMods = dsComponentsMods?.[i.componentName];
 
 			if (dsMods) {
 				for (let keys = Object.keys(dsMods), i = 0; i < keys.length; i++) {
@@ -227,13 +197,13 @@ export function component(params?: ComponentParams): Function {
 			}
 
 			const meta: ComponentMeta = {
-				name,
-				componentName,
+				name: i.name,
+				componentName: i.componentName,
 
 				parentMeta,
 				constructor: target,
 				instance: {},
-				params: p,
+				params: i.params,
 
 				props: {},
 				fields: {},
@@ -265,7 +235,7 @@ export function component(params?: ComponentParams): Function {
 				},
 
 				component: {
-					name,
+					name: i.name,
 					mods: {},
 					props: {},
 					methods: {},
@@ -660,24 +630,24 @@ export function component(params?: ComponentParams): Function {
 			};
 
 			if (parentMeta) {
-				p = inheritMeta(meta, parentMeta);
+				i.params = inheritMeta(meta, parentMeta);
 			}
 
-			if (!p.name || !isSmartComponent.test(p.name)) {
+			if (!i.params.name || !i.isSmart) {
 				c.components.set(target, meta);
 			}
 
-			c.components.set(name, meta);
-			c.initEmitter.emit(`constructor.${name}`, {meta, parentMeta});
+			c.components.set(i.name, meta);
+			c.initEmitter.emit(`constructor.${i.name}`, {meta, parentMeta});
 
-			if (isAbstract) {
+			if (i.isAbstract) {
 				getBaseComponent(target, meta);
 				return;
 			}
 
 			const loadTemplate = (component) => (resolve) => {
 				const success = () => {
-					log(`component:load:${name}`, component);
+					log(`component:load:${i.name}`, component);
 					resolve(component);
 				};
 
@@ -686,7 +656,7 @@ export function component(params?: ComponentParams): Function {
 
 				const addRenderAndResolve = (tpls) => {
 					const
-						fns = c.tplCache[name] = c.tplCache[name] || tpls.index(),
+						fns = c.tplCache[i.name] = c.tplCache[i.name] || tpls.index(),
 						renderObj = <ComponentMethod>{wrapper: true, watchers: {}, hooks: {}};
 
 					renderObj.fn = fns.render;
@@ -696,7 +666,7 @@ export function component(params?: ComponentParams): Function {
 					success();
 				};
 
-				if (p.tpl === false) {
+				if (i.params.tpl === false) {
 					if (r && !r.wrapper) {
 						success();
 
@@ -740,12 +710,12 @@ export function component(params?: ComponentParams): Function {
 			const
 				obj = loadTemplate(getComponent(target, meta));
 
-			if (p.root) {
-				c.rootComponents[name] = new Promise(obj);
+			if (i.params.root) {
+				c.rootComponents[i.name] = new Promise(obj);
 
 			} else {
 				const
-					c = ComponentDriver.component(name, obj);
+					c = ComponentDriver.component(i.name, obj);
 
 				if (Object.isPromise(c)) {
 					c.catch(stderr);

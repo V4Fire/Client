@@ -32,6 +32,10 @@ export interface ComponentParams {
 	defaultProps?: boolean;
 }
 
+export type ComponentInfo = ComponentParams & {
+	name: string;
+};
+
 export interface ComponentProp extends PropOptions {
 	watchers: Map<string | Function, FieldWatcher>;
 	forceDefault?: boolean;
