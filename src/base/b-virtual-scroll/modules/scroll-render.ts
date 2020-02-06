@@ -195,7 +195,7 @@ export default class ScrollRender {
 			return;
 		}
 
-		this.component[show ? 'setMod' : 'removeMod'](refEl, 'show', true);
+		refEl.style.display = show ? '' : 'none';
 	}
 
 	/**

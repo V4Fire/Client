@@ -122,7 +122,7 @@ export default class ScrollRequest {
 
 				if (!component.field.get('data.length', v)) {
 					this.isLastEmpty = true;
-					this.shouldStopRequest(getRequestParams(this, scrollRender, {lastLoaded: []}));
+					this.shouldStopRequest(getRequestParams(this, scrollRender, {lastLoadedData: []}));
 					return;
 				}
 
