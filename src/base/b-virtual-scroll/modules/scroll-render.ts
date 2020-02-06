@@ -188,10 +188,6 @@ export default class ScrollRender {
 	 * @param show
 	 */
 	setRefVisibility(ref: keyof bVirtualScroll['$refs'], show: boolean): void {
-		if (!this.refs.tombstones) {
-			return;
-		}
-
 		const
 			refEl = this.refs[ref];
 

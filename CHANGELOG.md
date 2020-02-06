@@ -27,7 +27,6 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### :bug: Bug Fix
 
 * [Fixed `v-image` multiply backgrounds](https://github.com/V4Fire/Client/pull/154)
-* [Fixed missing async namespaces](https://github.com/V4Fire/Client/pull/154)
 
 ## v3.0.0-beta.245 (2020-01-31)
 
