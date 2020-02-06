@@ -7,7 +7,7 @@
  */
 
 import { ClientNamespaces } from 'core/async/interface';
-import { namespaces as superNamespaces } from 'core/async/const';
+import { namespaces as superNamespaces } from '@super/core/async/const';
 export * from 'core/async/const';
 
 export const
