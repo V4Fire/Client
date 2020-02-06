@@ -192,6 +192,9 @@ export default class ScrollRequest {
 			})
 
 			.catch((err) => {
+				component.removeMod('progress', true);
+				this.scrollRender.setRefVisibility('retry', true);
+
 				stderr(err);
 				this.lastLoadedData = [];
 				return undefined;
