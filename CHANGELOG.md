@@ -16,6 +16,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### :rocket: New Feature
 
 * [Added `i-item` trait](https://github.com/V4Fire/Client/pull/154)
+* [Added `runtime` block to `b-skeleton`](https://github.com/V4Fire/Client/pull/154)
 * [Added `inViewFactory` to create local `in-view` instances](https://github.com/V4Fire/Client/pull/154)
 * [Added `observable.size` for `in-view` observable elements](https://github.com/V4Fire/Client/pull/154)
 
@@ -26,6 +27,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### :bug: Bug Fix
 
 * [Fixed `v-image` multiply backgrounds](https://github.com/V4Fire/Client/pull/154)
+* [Fixed missing async namespaces](https://github.com/V4Fire/Client/pull/154)
 
 ## v3.0.0-beta.245 (2020-01-31)
 
