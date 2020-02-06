@@ -16,6 +16,7 @@
  * @property {Dictionary} [p] - skeleton parameters:
  *   *) [animation] - size of an animation (the distance of the firefly, also affects the firefly speed)
  *   *) [size] - shape size
+ *   *) [shape] - shape type
  *   *) [class] - additional class for a shape
  *
  * @property {Dictionary} [attrs]
@@ -96,6 +97,24 @@
 	< ?.${self.name()}
 		< .&__${wrapperClass}.&__column ${attrs}
 			{content}
+
+/**
+ * Generates a skeleton in runtime, provides specified attrs into v-attrs
+ *
+ * @param {MultipleParams.p} [p]
+ * @param {MultipleParams.attrs} [attrs]
+ */
+- block index->runtime(p = {}, attrs = {})
+	< ?.${self.name()}
+		< .&__item &
+				:class = provide.componentClasses(${self.name()|json} + '__item', {
+					shape: ${p.shape} || 'rect',
+					size: ${p.size} || 's',
+					animation: ${p.animation} || 's'
+				}).concat(${p.class} || '') |
+
+				${attrs}
+		.
 
 /**
  * Generates a skeleton row
