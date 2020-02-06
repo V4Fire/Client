@@ -170,7 +170,7 @@ export default class ScrollRequest {
 		const params = <CanUndef<Dictionary>>(component.getDefaultRequestParams('get') || [])[0];
 		Object.assign(params, component.requestQuery?.(getRequestParams(this, this.scrollRender))?.get);
 
-		return component.requestEngine(params, component)
+		return component.requestEngine(component, params)
 			.then((data) => {
 				component.removeMod('progress', true);
 

@@ -13,7 +13,7 @@ export type Axis = keyof typeof axis;
 export type RequestQuery<T extends unknown = unknown> = (params: RequestMoreParams<T>) => Dictionary<Dictionary>;
 export type RequestFn<T extends unknown = unknown> = (params: RequestMoreParams<T>) => boolean;
 export type RequestEngine<T extends unknown = unknown> =
-	(query: CanUndef<Dictionary>, ctx: bVirtualScroll) => Promise<T>;
+	(ctx: bVirtualScroll, query: CanUndef<Dictionary>) => Promise<T>;
 
 export type RequestParams = CanUndef<Record<string, Dictionary>>;
 

@@ -127,7 +127,7 @@ export default class bVirtualScroll extends iData implements iItem {
 	/**
 	 * Engine for request remote data
 	 */
-	@prop({type: Function, default: (query, ctx) => ctx.get(query), required: false})
+	@prop({type: Function, default: (ctx, query) => ctx.get(query), required: false})
 	readonly requestEngine!: RequestEngine;
 
 	/**
