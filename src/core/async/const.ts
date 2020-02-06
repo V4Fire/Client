@@ -7,8 +7,8 @@
  */
 
 import { ClientNamespaces } from 'core/async/interface';
-import { namespaces as superNamespaces } from '@super/core/async/const';
-export * from 'core/async/const';
+import { namespaces as superNamespaces } from '@v4fire/core/core/async/const';
+export * from '@v4fire/core/core/async/const';
 
 export const
 	namespaces = {...superNamespaces, ...Object.convertEnumToDict(ClientNamespaces)};
