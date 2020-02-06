@@ -113,6 +113,7 @@
 					animation: ${p.animation} || 's'
 				}).concat(${p.class} || '') |
 
+				-skeleton-marker = true |
 				${attrs}
 		.
 
