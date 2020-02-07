@@ -37,7 +37,7 @@ export default abstract class iItem {
 	 */
 	abstract readonly optionsProp?: unknown[];
 
-	/** @see iItem.prototype.optionProps */
+	/** @see iItem.optionProps */
 	abstract options: unknown[];
 
 	/**
