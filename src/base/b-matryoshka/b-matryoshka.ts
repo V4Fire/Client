@@ -35,7 +35,7 @@ export default class bMatryoshka extends iData implements iItems {
 	readonly optionKey?: iItems['optionKey'];
 
 	/** @see [[iItems.prototype.itemProps]] */
-	@prop({type: [Object, Function], default: () => ({})})
+	@prop({type: Function, default: () => ({})})
 	readonly optionProps!: iItems['optionProps'];
 
 	/**

@@ -64,7 +64,7 @@ export default class bVirtualScroll extends iData implements iItems {
 	readonly optionKey?: iItems['optionKey'];
 
 	/** @see [[iItems.prototype.itemProps]] */
-	@prop({type: [Object, Function], default: () => ({})})
+	@prop({type: Function, default: () => ({})})
 	readonly optionProps!: iItems['optionProps'];
 
 	/**
@@ -115,7 +115,7 @@ export default class bVirtualScroll extends iData implements iItems {
 	readonly request?: RequestParams;
 
 	/**
-	 * Engine to request remote data
+	 * Requests remote data chunk to render
 	 */
 	@prop({type: Function, default: (ctx, query) => ctx.get(query), required: false})
 	readonly getData!: GetData;

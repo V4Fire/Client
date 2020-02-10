@@ -135,7 +135,7 @@ export default class bSlider extends iData implements iObserveDOM, iItems {
 	readonly optionKey?: iItems['optionKey'];
 
 	/** @see [[iItems.prototype.itemProps]] */
-	@prop({type: [Object, Function], default: () => ({})})
+	@prop({type: Function, default: () => ({})})
 	readonly optionProps!: iItems['optionProps'];
 
 	/**
