@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-beta.246 (2020-02-10)
+
+#### :bug: Bug Fix
+
+* Fixed `RequestMethod` and `ResponseType` types imports in `core/data/`
+
 ## v3.0.0-beta.245 (2020-01-31)
 
 #### :bug: Bug Fix
