@@ -8,7 +8,7 @@
 
 import symbolGenerator from 'core/symbol';
 
-import iItems from 'traits/i-item/i-item';
+import iItems from 'traits/i-items/i-items';
 
 import iData, {
 

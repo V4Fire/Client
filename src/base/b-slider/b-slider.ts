@@ -9,7 +9,7 @@
 import symbolGenerator from 'core/symbol';
 
 import iObserveDOM from 'traits/i-observe-dom/i-observe-dom';
-import iItems from 'traits/i-item/i-item';
+import iItems from 'traits/i-items/i-items';
 
 import iData, { component, prop, field, system, hook, watch, wait, p } from 'super/i-data/i-data';
 

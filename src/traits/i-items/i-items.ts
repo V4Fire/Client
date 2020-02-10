@@ -9,8 +9,8 @@
 
 import iBlock from 'super/i-block/i-block';
 
-import { ItemsIterator, ItemProps } from 'traits/i-item/interface';
-export * from 'traits/i-item/interface';
+import { ItemsIterator, ItemProps } from 'traits/i-items/interface';
+export * from 'traits/i-items/interface';
 
 export default abstract class iItems {
 	/**
