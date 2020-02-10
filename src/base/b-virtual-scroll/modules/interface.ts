@@ -15,7 +15,7 @@ export interface RequestFn<T extends unknown = unknown> {
 	(params: RequestMoreParams<T>): boolean;
 }
 
-export interface RequestEngine<T extends unknown = unknown> {
+export interface GetData<T extends unknown = unknown> {
 	(ctx: bVirtualScroll, query: CanUndef<Dictionary>): Promise<T>;
 }
 
