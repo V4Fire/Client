@@ -6,14 +6,18 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import bVirtualScroll, { axis } from 'base/b-virtual-scroll/b-virtual-scroll';
+import bVirtualScroll from 'base/b-virtual-scroll/b-virtual-scroll';
 
-export type Axis = keyof typeof axis;
+export interface RequestQuery<T extends unknown = unknown> {
+	(params: RequestMoreParams<T>): Dictionary<Dictionary>;
+}
+export interface RequestFn<T extends unknown = unknown> {
+	(params: RequestMoreParams<T>): boolean;
+}
 
-export type RequestQuery<T extends unknown = unknown> = (params: RequestMoreParams<T>) => Dictionary<Dictionary>;
-export type RequestFn<T extends unknown = unknown> = (params: RequestMoreParams<T>) => boolean;
-export type RequestEngine<T extends unknown = unknown> =
-	(ctx: bVirtualScroll, query: CanUndef<Dictionary>) => Promise<T>;
+export interface RequestEngine<T extends unknown = unknown> {
+	(ctx: bVirtualScroll, query: CanUndef<Dictionary>): Promise<T>;
+}
 
 export type RequestParams = CanUndef<Record<string, Dictionary>>;
 

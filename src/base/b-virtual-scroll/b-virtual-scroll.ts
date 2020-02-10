@@ -31,17 +31,12 @@ import ScrollRender from 'base/b-virtual-scroll/modules/scroll-render';
 import ScrollRequest from 'base/b-virtual-scroll/modules/scroll-request';
 
 import { getRequestParams } from 'base/b-virtual-scroll/modules/helpers';
-import { Axis, RequestFn, RemoteData, RequestQuery, RequestEngine } from 'base/b-virtual-scroll/modules/interface';
+import { RequestFn, RemoteData, RequestQuery, RequestEngine } from 'base/b-virtual-scroll/modules/interface';
 
 export * from 'super/i-data/i-data';
 
 export const
 	$$ = symbolGenerator();
-
-export const axis = Object.createDict({
-	x: true,
-	y: true
-});
 
 @component()
 export default class bVirtualScroll extends iData implements iItem {
@@ -96,12 +91,6 @@ export default class bVirtualScroll extends iData implements iItem {
 	readonly tombstonesSize?: number;
 
 	/**
-	 * Scroll axis
-	 */
-	@prop({type: String, watch: 'syncPropsWatcher', validator: (v: string) => axis[v]})
-	readonly axis: Axis = 'y';
-
-	/**
 	 * If true, then elements is dropped from a DOM tree after scrolling:
 	 * this method is recommended to use if you need to display a huge number of elements and prevent an OOM error
 	 */
@@ -125,7 +114,7 @@ export default class bVirtualScroll extends iData implements iItem {
 	readonly request?: RequestParams;
 
 	/**
-	 * Engine for request remote data
+	 * Engine to request remote data
 	 */
 	@prop({type: Function, default: (ctx, query) => ctx.get(query), required: false})
 	readonly requestEngine!: RequestEngine;
@@ -137,7 +126,7 @@ export default class bVirtualScroll extends iData implements iItem {
 	readonly shouldMakeRequest!: RequestFn;
 
 	/**
-	 * If, when calling a function, it returns true, then the component will stop request data
+	 * When this function returns true the component will stop to request new data
 	 */
 	@prop({type: Function, default: (v) => v.isLastEmpty})
 	readonly shouldStopRequest!: RequestFn;
