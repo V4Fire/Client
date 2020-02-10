@@ -18,23 +18,23 @@ export interface Doll extends Dictionary {
 
 @component({flyweight: true})
 export default class bMatryoshka extends iData implements iItem {
-	/** @see iItem.itemsProp */
+	/** @see [[iItem.itemsProp]] */
 	@prop(Array)
 	readonly optionsProp?: Doll[] = [];
 
-	/** @see iItem.items */
+	/** @see [[iItem.items]] */
 	@field((o) => o.sync.link())
 	options!: Doll[];
 
-	/** @see iItem.item */
+	/** @see [[iItem.item]] */
 	@prop({type: String, required: false})
 	readonly option?: iItem['option'];
 
-	/** @see iItem.itemKey */
+	/** @see [[iItem.itemKey]] */
 	@prop({type: [String, Function], required: false})
 	readonly optionKey?: iItem['optionKey'];
 
-	/** @see iItem.itemProps */
+	/** @see [[iItem.itemProps]] */
 	@prop({type: [Object, Function]})
 	readonly optionProps: iItem['optionProps'] = {};
 
@@ -89,7 +89,7 @@ export default class bMatryoshka extends iData implements iItem {
 		};
 	}
 
-	/** @see iItem.getOptionKey */
+	/** @see [[iItem.getOptionKey]] */
 	protected getOptionKey(el: unknown, i: number): CanUndef<string> {
 		return iItem.getOptionKey(this, el, i);
 	}

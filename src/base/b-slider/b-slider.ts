@@ -114,27 +114,27 @@ export default class bSlider extends iData implements iObserveDOM, iItem {
 	@prop({type: Number, validator: Number.isNatural})
 	readonly swipeToleranceY: number = 50;
 
-	/** @see iItem.itemsProp */
+	/** @see [[iItem.itemsProp]] */
 	@prop(Array)
 	readonly optionsProp?: iItem['optionsProp'] = [];
 
-	/** @see iItem.itemsIterator */
+	/** @see [[iItem.itemsIterator]] */
 	@prop({type: Function, required: false})
 	optionsIterator?: iItem['optionsIterator'];
 
-	/** @see iItem.items */
+	/** @see [[iItem.items]] */
 	@field((o) => o.sync.link())
 	options!: unknown[];
 
-	/** @see iItem.item */
+	/** @see [[iItem.item]] */
 	@prop({type: String, required: false})
 	readonly option?: iItem['option'];
 
-	/** @see iItem.itemKey */
+	/** @see [[iItem.itemKey]] */
 	@prop({type: [String, Function], required: false})
 	readonly optionKey?: iItem['optionKey'];
 
-	/** @see iItem.itemProps */
+	/** @see [[iItem.itemProps]] */
 	@prop({type: [Object, Function]})
 	readonly optionProps: iItem['optionProps'] = {};
 
@@ -367,7 +367,7 @@ export default class bSlider extends iData implements iObserveDOM, iItem {
 		iObserveDOM.onDOMChange(this);
 	}
 
-	/** @see iItem.getOptionKey */
+	/** @see [[iItem.getOptionKey]] */
 	protected getOptionKey(el: unknown, i: number): CanUndef<string> {
 		return iItem.getOptionKey(this, el, i);
 	}

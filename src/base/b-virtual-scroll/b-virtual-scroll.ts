@@ -51,23 +51,23 @@ export default class bVirtualScroll extends iData implements iItem {
 	/** @override */
 	readonly checkDBEquality: CheckDBEquality = false;
 
-	/** @see iItem.itemsProp */
+	/** @see [[iItem.itemsProp]] */
 	@prop(Array)
 	readonly optionsProp?: iItem['optionsProp'] = [];
 
-	/** @see iItem.items */
+	/** @see [[iItem.items]] */
 	@field((o) => o.sync.link())
 	options!: unknown[];
 
-	/** @see iItem.item */
+	/** @see [[iItem.item]] */
 	@prop({type: String, required: false})
 	readonly option?: iItem['option'];
 
-	/** @see iItem.itemKey */
+	/** @see [[iItem.itemKey]] */
 	@prop({type: [String, Function], required: false})
 	readonly optionKey?: iItem['optionKey'];
 
-	/** @see iItem.itemProps */
+	/** @see [[iItem.itemProps]] */
 	@prop({type: [Object, Function]})
 	readonly optionProps: iItem['optionProps'] = {};
 
@@ -78,7 +78,7 @@ export default class bVirtualScroll extends iData implements iItem {
 	readonly cacheSize: number = 400;
 
 	/**
-	 * Number of items to the end of the list to start render the next chunk
+	 * Number of elements till the page bottom that should initialize a new render iteration
 	 */
 	@prop({type: Number, validator: Number.isNatural})
 	readonly renderBefore: number = 10;
@@ -248,7 +248,7 @@ export default class bVirtualScroll extends iData implements iItem {
 		return this.options;
 	}
 
-	/** @see iItem.getOptionKey */
+	/** @see [[iItem.getOptionKey]] */
 	protected getOptionKey(el: unknown, i: number): CanUndef<string | number> {
 		return iItem.getOptionKey(this, el, i);
 	}
