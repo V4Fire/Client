@@ -9,11 +9,10 @@
 import {
 
 	Decoders,
-	RequestMethods,
+	RequestMethod,
 	RequestQuery,
 	RequestBody,
 	ResponseType,
-	ResponseTypes,
 	CreateRequestOptions,
 	MiddlewareParams
 
@@ -25,7 +24,7 @@ export type MockResponseType =
 
 export interface MockCustomResponse {
 	status?: number;
-	responseType?: ResponseTypes;
+	responseType?: ResponseType;
 	decoders?: Decoders;
 }
 
@@ -47,8 +46,8 @@ export interface Mock {
 }
 
 export type Mocks = CanPromise<
-	{[key in RequestMethods]?: Mock[]} |
-	{default: {[key in RequestMethods]?: Mock[]}}
+	{[key in RequestMethod]?: Mock[]} |
+	{default: {[key in RequestMethod]?: Mock[]}}
 >;
 
 export type ModelMethods =
