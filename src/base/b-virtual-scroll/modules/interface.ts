@@ -8,7 +8,7 @@
 
 import bVirtualScroll from 'base/b-virtual-scroll/b-virtual-scroll';
 
-export interface RequestQuery<T extends unknown = unknown> {
+export interface RequestQueryFn<T extends unknown = unknown> {
 	(params: RequestMoreParams<T>): Dictionary<Dictionary>;
 }
 export interface RequestFn<T extends unknown = unknown> {
@@ -18,8 +18,6 @@ export interface RequestFn<T extends unknown = unknown> {
 export interface RequestEngine<T extends unknown = unknown> {
 	(ctx: bVirtualScroll, query: CanUndef<Dictionary>): Promise<T>;
 }
-
-export type RequestParams = CanUndef<Record<string, Dictionary>>;
 
 export interface OptionEl<T extends unknown = unknown> {
 	/**

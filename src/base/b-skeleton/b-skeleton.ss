@@ -107,14 +107,14 @@
 - block index->runtime(p = {}, attrs = {})
 	< ?.${self.name()}
 		< .&__item &
-				:class = provide.componentClasses(${self.name()|json} + '__item', {
-					shape: ${p.shape} || 'rect',
-					size: ${p.size} || 's',
-					animation: ${p.animation} || 's'
-				}).concat(${p.class} || '') |
+			:class = provide.componentClasses(${self.name()|json} + '__item', {
+				shape: ${p.shape} || 'rect',
+				size: ${p.size} || 's',
+				animation: ${p.animation} || 's'
+			}).concat(${p.class} || '') |
 
-				-skeleton-marker = true |
-				${attrs}
+			-skeleton-marker = true |
+			${attrs}
 		.
 
 /**

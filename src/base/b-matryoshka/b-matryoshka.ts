@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import iItem from 'traits/i-item/i-item';
+import iItems from 'traits/i-item/i-item';
 import iData, { component, prop, field } from 'super/i-data/i-data';
 export * from 'super/i-data/i-data';
 
@@ -17,26 +17,26 @@ export interface Doll extends Dictionary {
 }
 
 @component({flyweight: true})
-export default class bMatryoshka extends iData implements iItem {
-	/** @see [[iItem.itemsProp]] */
+export default class bMatryoshka extends iData implements iItems {
+	/** @see [[iItems.prototype.itemsProp]] */
 	@prop(Array)
 	readonly optionsProp?: Doll[] = [];
 
-	/** @see [[iItem.items]] */
+	/** @see [[iItems.prototype.items]] */
 	@field((o) => o.sync.link())
 	options!: Doll[];
 
-	/** @see [[iItem.item]] */
+	/** @see [[iItems.prototype.item]] */
 	@prop({type: String, required: false})
-	readonly option?: iItem['option'];
+	readonly option?: iItems['option'];
 
-	/** @see [[iItem.itemKey]] */
+	/** @see [[iItems.prototype.itemKey]] */
 	@prop({type: [String, Function], required: false})
-	readonly optionKey?: iItem['optionKey'];
+	readonly optionKey?: iItems['optionKey'];
 
-	/** @see [[iItem.itemProps]] */
-	@prop({type: [Object, Function]})
-	readonly optionProps: iItem['optionProps'] = {};
+	/** @see [[iItems.prototype.itemProps]] */
+	@prop({type: [Object, Function], default: () => ({})})
+	readonly optionProps!: iItems['optionProps'];
 
 	/**
 	 * Number of chunks for the async render
@@ -89,9 +89,9 @@ export default class bMatryoshka extends iData implements iItem {
 		};
 	}
 
-	/** @see [[iItem.getOptionKey]] */
+	/** @see [[iItems.getItemKey]] */
 	protected getOptionKey(el: unknown, i: number): CanUndef<string> {
-		return iItem.getOptionKey(this, el, i);
+		return iItems.getItemKey(this, el, i);
 	}
 
 	/**

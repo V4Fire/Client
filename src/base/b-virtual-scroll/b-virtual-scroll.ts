@@ -8,7 +8,7 @@
 
 import symbolGenerator from 'core/symbol';
 
-import iItem from 'traits/i-item/i-item';
+import iItems from 'traits/i-item/i-item';
 
 import iData, {
 
@@ -31,40 +31,41 @@ import ScrollRender from 'base/b-virtual-scroll/modules/scroll-render';
 import ScrollRequest from 'base/b-virtual-scroll/modules/scroll-request';
 
 import { getRequestParams } from 'base/b-virtual-scroll/modules/helpers';
-import { RequestFn, RemoteData, RequestQuery, RequestEngine } from 'base/b-virtual-scroll/modules/interface';
+import { RequestFn, RemoteData, RequestQueryFn, RequestEngine } from 'base/b-virtual-scroll/modules/interface';
 
+export { RequestFn, RemoteData, RequestQueryFn, RequestEngine };
 export * from 'super/i-data/i-data';
 
 export const
 	$$ = symbolGenerator();
 
 @component()
-export default class bVirtualScroll extends iData implements iItem {
+export default class bVirtualScroll extends iData implements iItems {
 	/** @override */
 	readonly DB!: RemoteData;
 
 	/** @override */
 	readonly checkDBEquality: CheckDBEquality = false;
 
-	/** @see [[iItem.itemsProp]] */
+	/** @see [[iItems.prototype.itemsProp]] */
 	@prop(Array)
-	readonly optionsProp?: iItem['optionsProp'] = [];
+	readonly optionsProp?: iItems['optionsProp'] = [];
 
-	/** @see [[iItem.items]] */
+	/** @see [[iItems.prototype.items]] */
 	@field((o) => o.sync.link())
 	options!: unknown[];
 
-	/** @see [[iItem.item]] */
+	/** @see [[iItems.prototype.item]] */
 	@prop({type: String, required: false})
-	readonly option?: iItem['option'];
+	readonly option?: iItems['option'];
 
-	/** @see [[iItem.itemKey]] */
+	/** @see [[iItems.prototype.itemKey]] */
 	@prop({type: [String, Function], required: false})
-	readonly optionKey?: iItem['optionKey'];
+	readonly optionKey?: iItems['optionKey'];
 
-	/** @see [[iItem.itemProps]] */
-	@prop({type: [Object, Function]})
-	readonly optionProps: iItem['optionProps'] = {};
+	/** @see [[iItems.prototype.itemProps]] */
+	@prop({type: [Object, Function], default: () => ({})})
+	readonly optionProps!: iItems['optionProps'];
 
 	/**
 	 * Maximum number of elements to cache
@@ -76,10 +77,10 @@ export default class bVirtualScroll extends iData implements iItem {
 	 * Number of elements till the page bottom that should initialize a new render iteration
 	 */
 	@prop({type: Number, validator: Number.isNatural})
-	readonly renderBefore: number = 10;
+	readonly renderGap: number = 10;
 
 	/**
-	 * Render elements per chunk
+	 * Number of elements per one render chunk
 	 */
 	@prop({type: Number, validator: Number.isNatural})
 	readonly chunkSize: number = 10;
@@ -107,7 +108,7 @@ export default class bVirtualScroll extends iData implements iItem {
 	 * Function that returns request parameters
 	 */
 	@prop({type: Function, required: false})
-	readonly requestQuery?: RequestQuery;
+	readonly requestQuery?: RequestQueryFn;
 
 	/** @override */
 	@prop({type: [Object, Array], required: false})
@@ -120,7 +121,7 @@ export default class bVirtualScroll extends iData implements iItem {
 	readonly requestEngine!: RequestEngine;
 
 	/**
-	 * If, when calling a function, it returns true, then the component will be able to request additional data
+	 * When this function returns true the component will be able to request additional data
 	 */
 	@prop({type: Function, default: (v) => v.itemsTillBottom <= 10 && !v.isLastEmpty})
 	readonly shouldMakeRequest!: RequestFn;
@@ -237,9 +238,9 @@ export default class bVirtualScroll extends iData implements iItem {
 		return this.options;
 	}
 
-	/** @see [[iItem.getOptionKey]] */
+	/** @see [[iItems.getItemKey]] */
 	protected getOptionKey(el: unknown, i: number): CanUndef<string | number> {
-		return iItem.getOptionKey(this, el, i);
+		return iItems.getItemKey(this, el, i);
 	}
 
 	/**

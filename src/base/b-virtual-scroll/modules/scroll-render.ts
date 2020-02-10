@@ -284,17 +284,17 @@ export default class ScrollRender {
 	protected onNodeIntersect(index: number): void {
 		const
 			{component, items} = this,
-			{chunkSize, renderBefore} = component,
+			{chunkSize, renderGap} = component,
 			currentRender = this.chunk * chunkSize;
 
-		if (index + renderBefore + chunkSize >= items.length) {
+		if (index + renderGap + chunkSize >= items.length) {
 			this.scrollRequest.try();
 		}
 
 		if (index > this.lastIntersectsItem) {
 			this.lastIntersectsItem = index;
 
-			if (currentRender - index <= renderBefore) {
+			if (currentRender - index <= renderGap) {
 				this.chunk++;
 				this.render();
 			}

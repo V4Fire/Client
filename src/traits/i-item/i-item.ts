@@ -9,35 +9,29 @@
 
 import iBlock from 'super/i-block/i-block';
 
-export interface ItemPropParams<CTX> {
-	key?: string;
-	ctx: CTX;
-}
+import { ItemsIterator, ItemProps } from 'traits/i-item/interface';
+export * from 'traits/i-item/interface';
 
-export type ItemProps<CTX = unknown> =
-	((el: unknown, i: number, params: ItemPropParams<CTX>) => Dictionary) | Dictionary;
-
-export type ItemsIterator<CTX = iBlock> = (options: unknown[], ctx: CTX) => unknown[];
-
-export default abstract class iItem {
+export default abstract class iItems {
 	/**
 	 * Generates or returns an item key
 	 *
+	 * @param component
 	 * @param el
 	 * @param i
 	 */
-	static getOptionKey<T extends iBlock>(component: T & iItem, el: unknown, i: number): CanUndef<string> {
+	static getItemKey<T extends iBlock>(component: T & iItems, el: unknown, i: number): CanUndef<string> {
 		return Object.isFunction(component.optionKey) ?
 			component.optionKey(el, i) :
 			component.optionKey;
 	}
 
 	/**
-	 * Initial component items
+	 * Component items
 	 */
 	abstract readonly optionsProp?: unknown[];
 
-	/** @see iItem.optionProps */
+	/** @see iItems.prototype.optionProps */
 	abstract options: unknown[];
 
 	/**
@@ -46,7 +40,7 @@ export default abstract class iItem {
 	abstract readonly optionsIterator?: ItemsIterator;
 
 	/**
-	 * Item component
+	 * Item component name
 	 */
 	abstract readonly option?: string;
 
