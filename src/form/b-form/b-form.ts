@@ -27,7 +27,7 @@ import iData, {
 	wait,
 	p,
 
-	ModelMethods,
+	ModelMethod,
 	RequestFilter,
 	CreateRequestOptions,
 
@@ -78,7 +78,7 @@ export default class bForm extends iData {
 	 * Data provider method
 	 */
 	@prop(String)
-	readonly method: ModelMethods = 'add';
+	readonly method: ModelMethod = 'add';
 
 	/**
 	 * Form request parameters

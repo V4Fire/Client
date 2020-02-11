@@ -7,158 +7,61 @@
  */
 
 import Async from 'core/async';
-import Range from 'core/range';
 import symbolGenerator from 'core/symbol';
-import { is } from 'core/browser';
 
-import bVirtualScroll, { $$ as componentLabels } from 'base/b-virtual-scroll/b-virtual-scroll';
+import bVirtualScroll from 'base/b-virtual-scroll/b-virtual-scroll';
 import ComponentRender from 'base/b-virtual-scroll/modules/component-render';
 import ScrollRequest from 'base/b-virtual-scroll/modules/scroll-request';
 
-import {
-
-	AnchoredItem,
-	RenderItem,
-	Size,
-	ScrollRenderStatus,
-	RenderedItems
-
-} from 'base/b-virtual-scroll/modules/interface';
-
-import { getHeightWithMargin, getRequestParams } from 'base/b-virtual-scroll/modules/helpers';
+import { RenderItem } from 'base/b-virtual-scroll/modules/interface';
+import { InitOptions } from 'core/component/directives/in-view/interface';
+import { InViewAdapter, inViewFactory } from 'core/component/directives/in-view';
 
 export const
 	$$ = symbolGenerator();
 
 export default class ScrollRender {
 	/**
-	 * Render status
-	 */
-	status: ScrollRenderStatus = ScrollRenderStatus.notInitialized;
-
-	/**
-	 * Scroll direction
-	 */
-	scrollDirection: number = 0;
-
-	/**
-	 * Maximum scroll value
-	 */
-	max: number = Infinity;
-
-	/**
-	 * Data for render
+	 * Render items
 	 */
 	items: RenderItem[] = [];
 
 	/**
-	 * Last data chunk that has been registered
+	 * Index of the last element that intersects the viewport
 	 */
-	lastRegisteredData: unknown[] = [];
+	lastIntersectsItem: number = 0;
 
 	/**
-	 * Anchor element
+	 * Chunk number of the current render
 	 */
-	currentAnchor: AnchoredItem = {index: 0, offset: 0};
-
-	/**
-	 * Range of rendered items
-	 */
-	range!: Range<number>;
-
-	/**
-	 * Async group
-	 */
-	readonly asyncGroup: string = 'scroll-render:';
+	chunk: number = 0;
 
 	/**
 	 * Component instance
 	 */
-	protected component: bVirtualScroll;
+	readonly component: bVirtualScroll['unsafe'];
 
 	/**
-	 * Current scroll position
+	 * Number of items
 	 */
-	protected scrollPosition: number = 0;
-
-	/**
-	 * Maximum scroll value
-	 */
-	protected maxScroll: number = 0;
-
-	/**
-	 * Current position
-	 */
-	protected currentPosition: number = 0;
-
-	/**
-	 * Last calculated container size
-	 */
-	protected cachedContainerSize: number = 0;
-
-	/**
-	 * List of unused elements
-	 */
-	protected unused: HTMLElement[] = [];
-
-	/**
-	 * Size of a tombstone
-	 */
-	protected tombstoneSize: Size = {width: 0, height: 0};
-
-	/**
-	 * Window size
-	 */
-	protected windowSize: Size = {width: 0, height: 0};
-
-	/**
-	 * Element top offset
-	 */
-	protected offsetTop: number = 0;
-
-	/**
-	 * Name of a scroll property
-	 */
-	protected get scrollProp(): string {
-		return this.component.axis === 'y' ? 'scrollTop' : 'scrollLeft';
+	get itemsCount(): number {
+		return this.items.length;
 	}
 
 	/**
-	 * Name of a size property
+	 * Async group
 	 */
-	protected get sizeProp(): string {
-		return this.component.axis === 'y' ? 'height' : 'width';
-	}
+	protected readonly asyncGroup: string = 'scroll-render:';
 
 	/**
-	 * Name of a position property
+	 * Async in-view label prefix
 	 */
-	protected get positionProp(): string {
-		return this.component.axis === 'y' ? 'top' : 'left';
-	}
+	protected readonly asyncInViewPrefix: string = 'in-view:';
 
 	/**
-	 * Number of columns
+	 * Local in-view instance
 	 */
-	protected get columns(): number {
-		return this.component.axis === 'y' ? this.component.columns : 1;
-	}
-
-	/**
-	 * Async instance
-	 */
-	protected get async(): Async<bVirtualScroll> {
-		// @ts-ignore (access)
-		return this.component.async;
-	}
-
-	/**
-	 * API for component DOM operations
-	 */
-	protected get dom(): bVirtualScroll['dom'] {
-		// @ts-ignore (access)
-		return this.component.dom;
-	}
+	protected readonly InView: InViewAdapter = inViewFactory();
 
 	/**
 	 * API for dynamic component rendering
@@ -177,719 +80,243 @@ export default class ScrollRender {
 	}
 
 	/**
-	 * Link to the scroll root
+	 * Async instance
 	 */
-	protected get scrollRoot(): HTMLElement {
-		// @ts-ignore (access)
-		return this.component.scrollRoot;
+	protected get async(): Async<bVirtualScroll> {
+		return this.component.async;
 	}
 
 	/**
-	 * Link to the scroll emitter
+	 * API for component DOM operations
 	 */
-	protected get scrollEmitter(): HTMLElement {
-		// @ts-ignore (access)
-		return this.component.scrollEmitter;
+	protected get dom(): bVirtualScroll['dom'] {
+		return this.component.dom;
 	}
 
 	/**
 	 * Link to the component refs
 	 */
 	protected get refs(): bVirtualScroll['$refs'] {
-		// @ts-ignore (access)
 		return this.component.$refs;
+	}
+
+	/**
+	 * Returns a random threshold number
+	 */
+	protected get randomThreshold(): number {
+		return Math.floor((Math.random() * (0.06 - 0.01) + 0.01) * 100) / 100;
 	}
 
 	/**
 	 * @param component
 	 */
 	constructor(component: bVirtualScroll) {
-		this.component = component;
+		this.component = component.unsafe;
 
-		// @ts-ignore (access)
-		component.meta.hooks.mounted.push({
-			after: new Set(['initComponentRender']),
-			fn: () => {
-				this.range = new Range(0, component.realElementsCount);
-
-				this.updateOffset();
-				this.calculateSizes();
-				this.updateRange();
-
-				this.status = ScrollRenderStatus.waitRender;
-
-				component.waitStatus('ready', () => this.init(), {
-					label: componentLabels.initScrollRender,
-					group: this.asyncGroup
-				});
-			}
-		});
-	}
-
-	/**
-	 * Initializes a rendering process
-	 */
-	init(): void {
-		if (this.status !== ScrollRenderStatus.waitRender) {
-			return;
-		}
-
-		const
-			{component} = this;
-
-		if (component.options && component.options.length) {
-			this.registerData(component.options);
-		}
-
-		if (component.optionsProp && !component.dataProvider) {
-			this.max = component.options.length;
-		}
-
-		if (component.dataProvider && component.db) {
-			this.max = component.db.total || Infinity;
-			this.scrollRequest.data = component.db.data || [];
-		}
-
-		if (!component.options || !component.options.length) {
-			return;
-		}
-
-		this.scrollRequest.checksRequestPossibility(getRequestParams(this.scrollRequest, this));
-		this.initEvents();
-		this.render();
-
-		this.status = ScrollRenderStatus.render;
+		this.component.meta.hooks.mounted.push({fn: () => {
+			this.setLoadersVisibility(true);
+			this.component.waitStatus('ready', this.onReady.bind(this));
+		}});
 	}
 
 	/**
 	 * Re-initializes a rendering process
-	 * @param hard - if true, all tombstones will be redraw
 	 */
-	reInit(hard: boolean): Promise<void> {
-		const
-			{async: $a} = this;
-
-		this.maxScroll = 0;
-		this.scrollPosition = 0;
-		this.cachedContainerSize = 0;
-
-		this.currentAnchor = {index: 0, offset: 0};
-		this.windowSize = {width: 0, height: 0};
-		this.tombstoneSize = {...this.windowSize};
-		this.lastRegisteredData = [];
+	reInit(): void {
+		this.lastIntersectsItem = 0;
+		this.chunk = 0;
 		this.items = [];
 
-		this.max = Infinity;
-		this.status = ScrollRenderStatus.notInitialized;
-		this.range = new Range(0, this.component.realElementsCount);
-
 		this.scrollRequest.reset();
-		$a.clearAll({group: new RegExp(this.asyncGroup)});
+		this.async.clearAll({group: new RegExp(this.asyncGroup)});
 
-		return $a.promise(new Promise((res) => {
-			$a.requestAnimationFrame(() => {
-				this.status = ScrollRenderStatus.waitRender;
+		this.setLoadersVisibility(true);
+		this.setRefVisibility('retry', false);
+		this.setRefVisibility('done', false);
+		this.setRefVisibility('empty', false);
 
-				this.updateOffset();
-				this.calculateSizes();
-				hard && this.updateRange();
-
-				res();
-
-			}, {label: $$.reInitRaf, group: this.asyncGroup});
-		}), {label: $$.reInit, group: this.asyncGroup});
+		this.onReady();
 	}
 
 	/**
-	 * Adds additional data to the render flow
+	 * Initializes render items
 	 * @param data
 	 */
-	add(data: unknown[]): void {
-		this.registerData(data);
-		this.scrollRequest.checksRequestPossibility(getRequestParams(this.scrollRequest, this));
-		this.updateRange();
-	}
-
-	/**
-	 * Updates the render range
-	 */
-	updateRange(): void {
-		const
-			{scrollRoot, scrollProp, scrollPosition, range, component, currentAnchor} = this;
-
-		const
-			scrollValue = scrollRoot[scrollProp],
-			diff = scrollValue - scrollPosition;
-
-		this.scrollDirection = Math.sign(diff);
-		Object.assign(currentAnchor, scrollValue ? this.findAnchoredItem(diff) : {index: 0, offset: 0});
-		this.scrollPosition = scrollValue;
-
-		const
-			lastItem = this.findAnchoredItem();
-
-		if (diff < 0) {
-			range.start = Math.max(0, currentAnchor.index - component.realElementsCount);
-			range.end = lastItem.index + component.oppositeElementsCount;
-
-		} else {
-			range.start = Math.max(0, currentAnchor.index - component.oppositeElementsCount);
-			range.end = lastItem.index + component.realElementsCount;
-		}
-
-		this.render();
-	}
-
-	/**
-	 * Updates top offset of the component
-	 */
-	updateOffset(): void {
-		const
-			{component: {$el}} = this;
-
-		if (!$el) {
-			return;
-		}
-
-		this.offsetTop = $el.getPosition().top;
-	}
-
-	/**
-	 * Creates a new render item
-	 * @param data
-	 */
-	protected createItem(data: unknown): RenderItem {
-		return {
-			node: undefined,
-			destructor: undefined,
-			width: 0,
-			height: 0,
-			top: 0,
-			data
-		};
-	}
-
-	/**
-	 * Registers the specified data
-	 * @param data
-	 */
-	protected registerData(data: unknown[]): void {
-		const {items, scrollRequest} = this;
-		this.lastRegisteredData = data;
-
-		for (let i = 0; i < data.length; i++) {
-			if (items.length <= this.scrollRequest.total) {
-				items.push(this.createItem(undefined));
-			}
-
-			if (scrollRequest.total <= this.max) {
-				items[scrollRequest.total++].data = data[i];
-			}
-		}
-	}
-
-	/**
-	 * True if the specified node has a tombstone class
-	 * @param node
-	 */
-	protected hasTombstoneClass(node: HTMLElement): boolean {
-		return node.classList.contains(this.componentRender.tombstoneClass);
-	}
-
-	/**
-	 * Finds an anchored item
-	 * @param [diff]
-	 */
-	protected findAnchoredItem(diff: number = 0): AnchoredItem {
-		const
-			{max, currentAnchor, items, tombstoneSize, columns, sizeProp, offsetTop} = this;
-
-		if (diff === 0) {
-			return currentAnchor;
-		}
-
-		diff += currentAnchor.offset - offsetTop;
-
-		let
-			{index: i} = currentAnchor,
-			tombstones = 0;
-
-		if (diff < 0) {
-			while (diff < 0 && i > 0 && items[i - 1][sizeProp]) {
-				diff += items[i - 1][sizeProp];
-				i--;
-			}
-
-			tombstones = Math.max(-i, Math.ceil(Math.min(diff, 0) / tombstoneSize[sizeProp]));
-
-		} else {
-			while (diff > 0 && i < items.length && items[i][sizeProp] && items[i][sizeProp] < diff) {
-				diff -= items[i][sizeProp];
-				i++;
-			}
-
-			if (i >= items.length || !items[i][sizeProp]) {
-				tombstones = Math.floor(Math.max(diff, 0) / tombstoneSize[sizeProp]);
-			}
-		}
-
-		i = Math.min(i + tombstones, max - 1);
-		diff -= tombstones * tombstoneSize[sizeProp];
-
-		return {
-			index: Math.floor(i / columns) * columns,
-			offset: diff
-		};
+	initItems(data: unknown[]): void {
+		this.items = this.items.concat(data.map(this.createRenderItem.bind(this)));
 	}
 
 	/**
 	 * Renders component content
 	 */
-	protected render(): void {
+	render(): void {
 		const
-			{async: $a, component} = this;
-
-		const r = () => {
-			const {
-				nodes,
-				positions,
-				items
-			} = this.renderItems();
-
-			this.appendNodes(nodes, items);
-			this.clearNodes();
-			this.cacheItemsSize();
-
-			this.updateCurrentPosition();
-			this.setTombstonePosition(positions);
-			this.setItemsPosition(positions);
-			this.updateScrollRunnerPosition();
-
-			if (component.containerSize && !this.scrollRequest.isDone) {
-				this.updateContainerSize();
-			}
-
-			this.hideTombstones(positions);
-		};
-
-		if (Boolean(is.iOS)) {
-			r();
-
-		} else {
-			$a.requestAnimationFrame(r.bind(this), {group: this.asyncGroup});
-		}
-
-		this.scrollRequest.try().catch(stderr);
-	}
-
-	/**
-	 * Renders component items
-	 */
-	protected renderItems(): RenderedItems {
-		const
-			{max, component, columns, range, scrollPosition, items, componentRender} = this;
+			{component, chunk, items} = this;
 
 		const
-			itemsToRender: [RenderItem, number][] = [],
-			positions = {},
-			last = Math.floor((range.end + component.realElementsCount) / columns) * columns;
+			renderFrom = (chunk - 1) * component.chunkSize,
+			renderTo = chunk * component.chunkSize,
+			renderItems = items.slice(renderFrom, renderTo);
 
-		if (last > max) {
-			range.end = max;
-		}
-
-		const r = (item, i) => {
-			item.top = -1;
-			itemsToRender.push([item, i]);
-		};
-
-		while (items.length <= range.end) {
-			items.push(this.createItem(undefined));
-		}
-
-		for (let i = range.start; i < range.end; i++) {
-			const
-				item = items[i];
-
-			if (!item) {
-				continue;
-			}
-
-			if (item.node) {
-				if (this.hasTombstoneClass(item.node) && item.data) {
-					positions[i] = [item.node, item.top - scrollPosition];
-					item.node = undefined;
-
-				} else {
-					continue;
-				}
-			}
-
-			r(item, i);
+		if (!renderItems.length) {
+			return;
 		}
 
 		const
-			nodes = componentRender.render(itemsToRender, items);
+			nodes = this.renderItems(renderItems);
 
-		return {
-			positions,
-			nodes,
-			items: itemsToRender
-		};
-	}
+		if (!nodes) {
+			return;
+		}
 
-	/**
-	 * Appends the specified nodes to the document and bind their to items
-	 *
-	 * @param nodes
-	 * @param items
-	 */
-	protected appendNodes(nodes: HTMLElement[], items: [RenderItem, number][]): void {
 		const
 			fragment = document.createDocumentFragment();
 
-		for (let i = 0; i < items.length; i++) {
-			const [item] = items[i];
-			item.node = nodes[i];
-			item.destructor = this.dom.appendChild(fragment, item.node, `${this.asyncGroup}:elements`) || undefined;
+		for (let i = 0; i < nodes.length; i++) {
+			this.dom.appendChild(fragment, nodes[i], this.asyncGroup);
 		}
 
-		this.refs.container.appendChild(fragment);
+		this.async.requestAnimationFrame(() => {
+			this.refs.container.appendChild(fragment);
+		}, {group: this.asyncGroup});
 	}
 
 	/**
-	 * Sets the specified positions for component items
-	 * @param positions
+	 * Hides or shows the specified ref
+	 *
+	 * @param ref
+	 * @param show
 	 */
-	protected setItemsPosition(positions: Dictionary<[HTMLElement, number]>): void {
+	setRefVisibility(ref: keyof bVirtualScroll['$refs'], show: boolean): void {
 		const
-			{range, sizeProp, items, component, tombstoneSize, columns} = this;
+			refEl = this.refs[ref];
 
-		for (let i = range.start; i < range.end; i++) {
-			const
-				[node] = positions[i] || [undefined],
-				item = items[i];
-
-			if (!item) {
-				continue;
-			}
-
-			const
-				x = (i % columns) * (item.width || tombstoneSize.width),
-				y = this.currentPosition;
-
-			const position = {
-				x: component.axis === 'y' ? x : y,
-				y: component.axis === 'y' ? y : x
-			};
-
-			const
-				translate = `translate3d(${position.x.px}, ${position.y.px}, 0)`;
-
-			if (node) {
-				node.style.transform = translate;
-			}
-
-			if (item.node && this.currentPosition !== item.top) {
-				item.node.style.transform = translate;
-			}
-
-			item.top = y;
-
-			const size = {
-				height: (item.height || tombstoneSize.height) * columns,
-				width: (item.width || tombstoneSize.width)
-			};
-
-			if ((i + 1) % columns === 0 || i + 1 === range.end) {
-				this.currentPosition += size[sizeProp];
-			}
-		}
-	}
-
-	/**
-	 * Sets the specified positions for item tombstones
-	 * @param positions
-	 */
-	protected setTombstonePosition(positions: Dictionary<[HTMLElement, number]>): void {
-		const
-			{component, items, columns, scrollPosition} = this;
-
-		for (const i in positions) {
-			const
-				position = positions[i],
-				item = items[i];
-
-			if (!item || !position) {
-				continue;
-			}
-
-			const
-				x = (Number(i) % columns) * item.width,
-				y = (scrollPosition + (position[1] || 0)) * columns;
-
-			const coords = {
-				x: component.axis === 'y' ? x : y,
-				y: component.axis === 'y' ? y : x
-			};
-
-			item.node.style.transform = `translate3d(${coords.x.px}, ${coords.y.px}, 0)`;
-		}
-	}
-
-	/**
-	 * Updates component position
-	 */
-	protected updateCurrentPosition(): void {
-		this.scrollPosition = 0;
-
-		const
-			{currentAnchor, items, range, tombstoneSize, sizeProp} = this;
-
-		for (let i = 0; i < currentAnchor.index; i++) {
-			this.scrollPosition += items[i][sizeProp] || tombstoneSize[sizeProp];
-		}
-
-		this.scrollPosition += currentAnchor.offset;
-		this.currentPosition = this.scrollPosition - currentAnchor.offset;
-
-		let
-			i = currentAnchor.index;
-
-		while (i > range.start) {
-			this.currentPosition -= items[i - 1][sizeProp] || tombstoneSize[sizeProp];
-			i--;
-		}
-
-		while (i < range.start) {
-			this.currentPosition += items[i][sizeProp] || tombstoneSize[sizeProp];
-			i++;
-		}
-	}
-
-	/**
-	 * Updates the scroll runner position
-	 */
-	protected updateScrollRunnerPosition(): void {
-		const
-			{maxScroll, component, currentPosition, scrollProp, refs} = this;
-
-		if (this.maxScroll > currentPosition + component.scrollRunnerOffset) {
+		if (!refEl) {
 			return;
 		}
 
-		this.maxScroll = Math.max(maxScroll, currentPosition + component.scrollRunnerOffset);
-		refs.scrollRunner.style.transform = `translate3d(0, ${this.maxScroll.px}, 0)`;
-		refs.container[scrollProp] = this.scrollPosition;
+		refEl.style.display = show ? '' : 'none';
 	}
 
 	/**
-	 * Updates the component container size
+	 * Hides or shows refs to the loader and tombstones
+	 * @param show
 	 */
-	protected updateContainerSize(): void {
-		const
-			{refs, maxScroll, currentPosition, sizeProp, component} = this;
-
-		const
-			val =  Math.max(maxScroll, currentPosition + component.scrollRunnerOffset);
-
-		if (val === this.cachedContainerSize) {
-			return;
-		}
-
-		this.cachedContainerSize = val;
-		refs.container.style[sizeProp] = this.cachedContainerSize.px;
+	setLoadersVisibility(show: boolean): void {
+		this.setRefVisibility('tombstones', show);
+		this.setRefVisibility('loader', show);
 	}
 
 	/**
-	 * Clears unused nodes
+	 * Renders the specified items
+	 * @param items
 	 */
-	protected clearNodes(): void {
+	protected renderItems(items: RenderItem[]): HTMLElement[] {
 		const
-			{range, items} = this;
+			nodes = this.componentRender.render(items);
 
-		const clear = (item) => {
-			item.data ? this.destroyItem(item) : this.destroyTombstone(item);
-			item.node = undefined;
-		};
-
-		for (let i = 0; i < items.length; i++) {
+		for (let i = 0; i < nodes.length; i++) {
 			const
+				node = nodes[i],
 				item = items[i];
 
-			if (i === range.start) {
-				i = range.end - 1;
-				continue;
-			}
+			item.node = node;
 
-			clear(item);
+			if (!node[$$.inView]) {
+				this.wrapInView(item);
+			}
 		}
+
+		return nodes;
 	}
 
 	/**
-	 * Destroys the specified item
+	 * Wraps the specified item node with an in-view directive
 	 * @param item
 	 */
-	protected destroyItem(item: RenderItem): void {
-		if (!item.node) {
-			return;
-		}
-
-		if (!item.destructor) {
-			return;
-		}
-
-		item.destructor();
-	}
-
-	/**
-	 * Destroys the specified tombstone
-	 * @param item
-	 */
-	protected destroyTombstone(item: RenderItem): void {
-		if (!item.node) {
-			return;
-		}
-
-		if (this.hasTombstoneClass(item.node)) {
-			this.component.setMod(item.node, 'hidden', 'true');
-			this.componentRender.recycleTombstone(item.node);
-		}
-	}
-
-	/**
-	 * Hides the specified tombstones
-	 * @param positions
-	 */
-	protected hideTombstones(positions: Dictionary<[HTMLElement, number]>): void {
-		for (const i in positions) {
-			const
-				animation = positions[i],
-				node = animation && animation[0];
-
-			if (!node) {
-				continue;
-			}
-
-			this.component.setMod(node, 'hidden', 'true');
-			this.componentRender.recycleTombstone(node);
-		}
-	}
-
-	/**
-	 * Calculates geometry of the window and component items
-	 */
-	protected calculateSizes(): void {
+	protected wrapInView(item: RenderItem): void {
 		const
-			{refs, items, columns} = this,
-			tombstone = <CanUndef<HTMLElement>>refs.tombstone.children[0];
+			{component} = this,
+			{node} = item,
+			// @ts-ignore (access)
+			label = `${this.asyncGroup}:${this.asyncInViewPrefix}${component.getOptionKey(item.data, item.index)}`;
 
-		if (tombstone) {
-			refs.container.appendChild(<Node>tombstone);
-
-			this.tombstoneSize = {
-				height: getHeightWithMargin(tombstone) / columns,
-				width: tombstone.offsetWidth
-			};
-
-			refs.tombstone.appendChild(<Node>tombstone);
+		if (!node) {
+			return;
 		}
 
-		for (let i = 0; i < items.length; i++) {
-			items[i].top = -1;
-			items[i].height = items[i].width = 0;
-		}
+		this.InView.observe(node, this.getInViewOptions(item.index));
+		node[$$.inView] = this.async.worker(() => this.InView.stopObserve(node), {group: this.asyncGroup, label});
+	}
 
-		this.windowSize = {
-			width: refs.container.offsetWidth,
-			height: window.innerHeight
+	/**
+	 * Returns a render item by the specified parameters
+	 *
+	 * @param data - data to render in item
+	 * @param index - index of the item
+	 */
+	protected createRenderItem(data: unknown, index: number): RenderItem {
+		return {
+			data,
+			index: this.itemsCount + index,
+			node: undefined,
+			destructor: undefined
 		};
 	}
 
 	/**
-	 * Caches component items geometry
+	 * Returns options to initialize in-view
+	 * @param index
 	 */
-	protected cacheItemsSize(): void {
+	protected getInViewOptions(index: number): InitOptions {
+		return {
+			delay: 0,
+			threshold: this.randomThreshold,
+			once: !this.component.clearNodes,
+			onEnter: () => this.onNodeIntersect(index)
+		};
+	}
+
+	/**
+	 * Handler: element becomes visible in the viewport
+	 * @param index
+	 */
+	protected onNodeIntersect(index: number): void {
 		const
-			{range, items, columns} = this;
+			{component, items} = this,
+			{chunkSize, renderGap} = component,
+			currentRender = this.chunk * chunkSize;
 
-		for (let i = range.start; i < range.end; i++) {
-			const
-				item = items[i];
-
-			if (!item) {
-				continue;
-			}
-
-			if (item.data && item.node && (!item.height)) {
-				item.width = item.node.offsetWidth;
-				item.height = getHeightWithMargin(item.node) / columns;
-			}
-		}
-	}
-
-	/**
-	 * Fixes the component container height
-	 */
-	protected fixSize(): void {
-		const
-			{columns, sizeProp, items} = this;
-
-		let
-			lastItemSize = 0,
-			totalSize = 0,
-			itemsWithData = 0;
-
-		for (let i = 0; i < items.length; i++) {
-			const item = items[i];
-
-			if (item.data) {
-				totalSize += item[sizeProp];
-				lastItemSize = item[sizeProp];
-				itemsWithData++;
-			}
+		if (index + renderGap + chunkSize >= items.length) {
+			this.scrollRequest.try();
 		}
 
-		if (itemsWithData % columns > 0) {
-			totalSize += ((itemsWithData - (itemsWithData % columns) + columns) - itemsWithData) * lastItemSize;
+		if (index > this.lastIntersectsItem) {
+			this.lastIntersectsItem = index;
+
+			if (currentRender - index <= renderGap) {
+				this.chunk++;
+				this.render();
+			}
 		}
-
-		this.refs.container.style[sizeProp] = totalSize.px;
 	}
 
 	/**
-	 * Initializes events
+	 * Handler: component ready
 	 */
-	protected initEvents(): void {
-		this.async.on(this.scrollEmitter, 'scroll', this.onScroll.bind(this), {
-			label: $$.scroll,
-			group: this.asyncGroup
-		});
-	}
+	protected onReady(): void {
+		this.initItems(this.component.options);
+		this.setLoadersVisibility(false);
 
-	/**
-	 * Handler: document being scrolled
-	 */
-	protected onScroll(): void {
-		this.updateRange();
-	}
-
-	/**
-	 * Handler: window resize
-	 */
-	protected onResize(): void {
-		this.calculateSizes();
-		this.updateRange();
-		this.async.requestAnimationFrame(this.fixSize.bind(this));
+		this.chunk++;
+		this.render();
 	}
 
 	/**
 	 * Handler: all requests are done
 	 */
 	protected onRequestsDone(): void {
-		this.max = this.items.length;
-		this.component.setMod('requestsDone', true);
-		this.updateRange();
-		this.async.requestAnimationFrame(this.fixSize.bind(this));
+		this.setLoadersVisibility(false);
+		this.setRefVisibility('done', true);
 	}
 }

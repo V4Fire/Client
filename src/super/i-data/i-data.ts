@@ -23,8 +23,8 @@ import Provider, {
 	RequestBody,
 	RequestResponseObject,
 	Response,
-	ModelMethods,
-	ProviderParams,
+	ModelMethod,
+	ProviderOptions,
 	ExtraProviders
 
 } from 'core/data';
@@ -37,8 +37,8 @@ export {
 	RequestBody,
 	RequestResponseObject,
 	Response,
-	ModelMethods,
-	ProviderParams,
+	ModelMethod,
+	ProviderOptions,
 	ExtraProvider,
 	ExtraProviders
 
@@ -99,7 +99,7 @@ export default abstract class iData extends iBlock implements iProgress {
 	 * Initial parameters for a data provider instance
 	 */
 	@prop({type: Object, required: false})
-	readonly dataProviderParams?: ProviderParams;
+	readonly dataProviderOptions?: ProviderOptions;
 
 	/**
 	 * Initial request parameters
@@ -491,7 +491,7 @@ export default abstract class iData extends iBlock implements iProgress {
 
 		if (this.dbConverter) {
 			v = (<Function[]>[]).concat(this.dbConverter)
-				.reduce((res, fn) => fn.call(this, res), Object.isArray(v) || Object.isObject(v) ? v.valueOf() : v);
+				.reduce((res, fn) => fn.call(this, res), Object.isArray(v) || Object.isPlainObject(v) ? v.valueOf() : v);
 		}
 
 		const
@@ -518,7 +518,7 @@ export default abstract class iData extends iBlock implements iProgress {
 
 		if (this.componentConverter) {
 			v = (<Function[]>[]).concat(this.componentConverter)
-				.reduce((res, fn) => fn.call(this, res), Object.isArray(v) || Object.isObject(v) ? v.valueOf() : v);
+				.reduce((res, fn) => fn.call(this, res), Object.isArray(v) || Object.isPlainObject(v) ? v.valueOf() : v);
 		}
 
 		return <O | this['DB']>v;
@@ -623,7 +623,7 @@ export default abstract class iData extends iBlock implements iProgress {
 	/**
 	 * Synchronization for dataProvider properties
 	 */
-	@watch(['dataProvider', 'dataProviderParams'])
+	@watch(['dataProvider', 'dataProviderOptions'])
 	protected syncDataProviderWatcher(): void {
 		const
 			provider = this.dataProvider;
@@ -651,7 +651,7 @@ export default abstract class iData extends iBlock implements iProgress {
 
 			this.dp = new ProviderConstructor({
 				extraProviders: this.extraProviders,
-				...this.dataProviderParams
+				...this.dataProviderOptions
 			});
 
 			this.initDataListeners();
@@ -685,7 +685,7 @@ export default abstract class iData extends iBlock implements iProgress {
 			res = [p, {}];
 		}
 
-		if (Object.isObject(res[0]) && Object.isObject(customData)) {
+		if (Object.isPlainObject(res[0]) && Object.isPlainObject(customData)) {
 			res[0] = Object.mixin({
 				traits: true,
 				filter: (el) => isGet ? el != null : el !== undefined
@@ -722,7 +722,7 @@ export default abstract class iData extends iBlock implements iProgress {
 	 * @param [params]
 	 */
 	protected createRequest<T = unknown>(
-		method: ModelMethods,
+		method: ModelMethod,
 		data?: RequestBody,
 		params?: CreateRequestOptions<T>
 	): Promise<CanUndef<T>> {

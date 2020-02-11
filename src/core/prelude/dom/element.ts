@@ -70,21 +70,3 @@ extend(Node.prototype, 'getOffset', function (parent?: Element | string): Elemen
 
 	return res;
 });
-
-if (!Element.prototype.closest) {
-	Element.prototype.closest = function (selector: string): Element | null {
-		if (!this) {
-			return null;
-		}
-
-		if (this.matches(selector)) {
-			return this;
-		}
-
-		if (!this.parentElement) {
-			return null;
-		}
-
-		return this.parentElement.closest(selector);
-	};
-}

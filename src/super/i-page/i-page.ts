@@ -7,7 +7,7 @@
  */
 
 import symbolGenerator from 'core/symbol';
-import { WrappedFunction } from 'core/async';
+import { WrappedCb } from 'core/async';
 
 import iVisible from 'traits/i-visible/i-visible';
 
@@ -19,7 +19,7 @@ export interface StageTitles<T = unknown> extends Dictionary<TitleValue<T>> {
 	'[[DEFAULT]]': TitleValue<T>;
 }
 
-export interface ScrollToFn<T = number, N = ScrollOptions> extends WrappedFunction {
+export interface ScrollToFn<T = number, N = ScrollOptions> extends WrappedCb {
 	(x?: T | N, y?: T): void
 }
 
@@ -113,7 +113,7 @@ export default abstract class iPage extends iData implements iVisible {
 			}
 		};
 
-		if (p && Object.isObject(p)) {
+		if (p && Object.isPlainObject(p)) {
 			const
 				{x, y} = <ScrollOptions>p,
 				opts = <ScrollOptions>Object.reject(p, ['x', 'y']);
@@ -143,7 +143,7 @@ export default abstract class iPage extends iData implements iVisible {
 	 */
 	protected scrollToProxyFn(): ScrollToFn {
 		return this.async.proxy((x?: number | ScrollOptions, y?: number) => {
-			if (x && Object.isObject(x)) {
+			if (x && Object.isPlainObject(x)) {
 				this.scrollTo(<ScrollOptions>x);
 
 			} else {

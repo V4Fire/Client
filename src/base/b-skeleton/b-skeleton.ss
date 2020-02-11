@@ -13,12 +13,13 @@
 
 /**
  * @typedef SkeletonParams
- * @property {Dictionary} [p] - skeleton parameters:
+ * @property {Dictionary=} [p] - skeleton parameters:
  *   *) [animation] - size of an animation (the distance of the firefly, also affects the firefly speed)
  *   *) [size] - shape size
+ *   *) [shape] - shape type
  *   *) [class] - additional class for a shape
  *
- * @property {Dictionary} [attrs]
+ * @property {Dictionary=} [attrs]
  */
 
 /**
@@ -29,8 +30,8 @@
 /**
  * Generates a skeleton rectangle
  *
- * @param {SkeletonParams.p} [p]
- * @param {SkeletonParams.attrs} [attrs]
+ * @param {SkeletonParams.p=} [p]
+ * @param {SkeletonParams.attrs=} [attrs]
  */
 - block index->rect(p = {}, attrs = {})
 	? p = Object.assign({ &
@@ -48,8 +49,8 @@
 /**
  * Generates a skeleton circle
  *
- * @param {SkeletonParams.p} [p]
- * @param {SkeletonParams.attrs} [attrs]
+ * @param {SkeletonParams.p=} [p]
+ * @param {SkeletonParams.attrs=} [attrs]
  */
 - block index->circle(p = {}, attrs = {})
 	? p = Object.assign({ &
@@ -65,19 +66,19 @@
 
 /**
  * @typedef MultipleParams
- * @property {number} [l] - number of elements to be generated
- * @property {SkeletonPart.shape} [shape] - shape of generated elements
- * @property {SkeletonParams.p} [p]
- * @property {SkeletonParams.attrs} [attrs]
+ * @property {number=} [l] - number of elements to be generated
+ * @property {SkeletonPart.shape=} [shape] - shape of generated elements
+ * @property {SkeletonParams.p=} [p]
+ * @property {SkeletonParams.attrs=} [attrs]
  */
 
 /**
  * Generates the specified number of skeletons
  *
- * @param {MultipleParams.l} [l]
- * @param {MultipleParams.shape} [shape]
- * @param {MultipleParams.p} [p]
- * @param {MultipleParams.attrs} [attrs]
+ * @param {MultipleParams.l=} [l]
+ * @param {MultipleParams.shape=} [shape]
+ * @param {MultipleParams.p=} [p]
+ * @param {MultipleParams.attrs=} [attrs]
  */
 - block index->multiple(l = 2, shape = 'rect', p = {}, attrs = {})
 	- for var i = 0; i < l; i++
@@ -87,8 +88,8 @@
  * Generates a skeleton column
  *
  * @param content
- * @param {SkeletonParams.attrs} [attrs]
- * @param {string} [wrapperClass]
+ * @param {SkeletonParams.attrs=} [attrs]
+ * @param {string=} [wrapperClass]
  */
 - block index->column(content, attrs = {}, wrapperClass = 'column-default')
 	? wrapperClass = wrapperClass || 'column-default'
@@ -98,11 +99,30 @@
 			{content}
 
 /**
+ * Generates a skeleton in runtime, provides specified attrs into v-attrs
+ *
+ * @param {MultipleParams.p=} [p]
+ * @param {MultipleParams.attrs=} [attrs]
+ */
+- block index->runtime(p = {}, attrs = {})
+	< ?.${self.name()}
+		< .&__item &
+			:class = provide.componentClasses(${self.name()|json} + '__item', {
+				shape: ${p.shape} || 'rect',
+				size: ${p.size} || 's',
+				animation: ${p.animation} || 's'
+			}).concat(${p.class} || '') |
+
+			-skeleton-marker = true |
+			${attrs}
+		.
+
+/**
  * Generates a skeleton row
  *
  * @param content
- * @param {SkeletonParams.attrs} [attrs]
- * @param {string} [wrapperClass]
+ * @param {SkeletonParams.attrs=} [attrs]
+ * @param {string=} [wrapperClass]
  */
 - block index->row(content, attrs = {}, wrapperClass = 'row-default')
 	? wrapperClass = wrapperClass || 'row-default'

@@ -6,30 +6,10 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import Range from 'core/range';
-
 import ScrollRender from 'base/b-virtual-scroll/modules/scroll-render';
 import ScrollRequest from 'base/b-virtual-scroll/modules/scroll-request';
 
-import { RequestMoreParams, ScrollRenderStatus } from 'base/b-virtual-scroll/modules/interface';
-
-// tslint:disable-next-line:completed-docs
-export function isNatural(v: number): boolean {
-	return v.isNatural();
-}
-
-/**
- * Returns a value of height with margins of the specified node
- * @param node
- */
-export function getHeightWithMargin(node: HTMLElement): number {
-	const
-		style = window.getComputedStyle(node);
-
-	return ['top', 'bottom']
-		.map((side) => parseInt(style[`margin-${side}`], 10))
-		.reduce((total, side) => total + side, node.offsetHeight);
-}
+import { RequestMoreParams } from 'base/b-virtual-scroll/modules/interface';
 
 /**
  * Returns a request params
@@ -43,25 +23,27 @@ export function getRequestParams(
 	scrollRenderCtx?: ScrollRender,
 	merge?: Dictionary
 ): RequestMoreParams {
-	const base = {
+	const
+		component = scrollRenderCtx?.component || scrollRequestCtx?.component;
+
+	const
+		lastLoadedData = scrollRequestCtx?.lastLoadedData.length ? scrollRequestCtx.lastLoadedData : component?.options;
+
+	const base: RequestMoreParams = {
 		currentPage: 0,
-		currentRange: new Range(0, 0),
+		nextPage: 1,
 		items: [],
-		lastLoaded: [],
-		currentSlice: [],
+		lastLoadedData: lastLoadedData || [],
 		isLastEmpty: false,
-		itemsToReachBottom: 0
+		itemsTillBottom: 0
 	};
 
-	const params = scrollRequestCtx && scrollRenderCtx && scrollRenderCtx.status !== ScrollRenderStatus.notInitialized ? {
-		currentRange: scrollRenderCtx.range,
+	const params = scrollRequestCtx && scrollRenderCtx ? {
+		items: scrollRenderCtx.items,
 		currentPage: scrollRequestCtx.page,
-		lastLoaded: scrollRenderCtx.lastRegisteredData,
+		lastLoadedData: lastLoadedData || [],
 		isLastEmpty: scrollRequestCtx.isLastEmpty,
-
-		currentSlice: scrollRenderCtx.items.slice(scrollRenderCtx.range.start, scrollRenderCtx.range.end),
-		itemsToReachBottom: scrollRequestCtx.total - scrollRenderCtx.currentAnchor.index,
-		items: scrollRenderCtx.items
+		itemsTillBottom: scrollRenderCtx.items.length - scrollRenderCtx.lastIntersectsItem
 	} : base;
 
 	const merged = {

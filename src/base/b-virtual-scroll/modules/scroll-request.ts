@@ -10,7 +10,7 @@ import bVirtualScroll from 'base/b-virtual-scroll/b-virtual-scroll';
 import ScrollRender from 'base/b-virtual-scroll/modules/scroll-render';
 
 import { getRequestParams } from 'base/b-virtual-scroll/modules/helpers';
-import { RemoteData, RequestMoreParams, ScrollRenderStatus } from 'base/b-virtual-scroll/modules/interface';
+import { RemoteData, RequestMoreParams } from 'base/b-virtual-scroll/modules/interface';
 
 export default class ScrollRequest {
 	/**
@@ -29,6 +29,11 @@ export default class ScrollRequest {
 	data: unknown[] = [];
 
 	/**
+	 * Last loaded data
+	 */
+	lastLoadedData: unknown[] = [];
+
+	/**
 	 * True if all requests for additional data was requested
 	 */
 	isDone: boolean = false;
@@ -41,7 +46,7 @@ export default class ScrollRequest {
 	/**
 	 * Component instance
 	 */
-	protected component: bVirtualScroll;
+	readonly component: bVirtualScroll['unsafe'];
 
 	/**
 	 * API for scroll rendering
@@ -55,7 +60,7 @@ export default class ScrollRequest {
 	 * @param component - component instance
 	 */
 	constructor(component: bVirtualScroll) {
-		this.component = component;
+		this.component = component.unsafe;
 	}
 
 	/**
@@ -67,7 +72,6 @@ export default class ScrollRequest {
 		this.data = [];
 		this.isDone = false;
 		this.isLastEmpty = false;
-		this.component.removeMod('requestsDone', true);
 	}
 
 	/**
@@ -76,8 +80,9 @@ export default class ScrollRequest {
 	reloadLast(): void {
 		this.isDone = false;
 		this.isLastEmpty = false;
-		this.component.removeMod('requestsDone', true);
-		this.scrollRender.updateRange();
+
+		this.scrollRender.setRefVisibility('retry', false);
+		this.try();
 	}
 
 	/**
@@ -87,38 +92,51 @@ export default class ScrollRequest {
 		const
 			{component, scrollRender} = this;
 
+		const additionParams = {
+			lastLoadedData: this.lastLoadedData.length === 0 ? component.options : this.lastLoadedData
+		};
+
 		const
 			resolved = Promise.resolve(),
-			shouldRequest = component.shouldMakeRequest(getRequestParams(this, scrollRender));
+			shouldRequest = component.shouldMakeRequest(getRequestParams(this, scrollRender, additionParams));
+
+		if (this.isDone) {
+			return resolved;
+		}
 
 		const cantRequest = () =>
 			this.isDone ||
 			!shouldRequest ||
 			!component.dataProvider ||
-			component.mods.progress === 'true' ||
-			scrollRender.status !== ScrollRenderStatus.render;
+			component.mods.progress === 'true';
 
 		if (cantRequest()) {
 			return resolved;
 		}
 
+		scrollRender.setLoadersVisibility(true);
+
 		return this.load()
 			.then((v) => {
+				scrollRender.setLoadersVisibility(false);
+
 				if (!component.field.get('data.length', v)) {
 					this.isLastEmpty = true;
-					this.checksRequestPossibility(getRequestParams(this, scrollRender, {lastLoaded: []}));
+					this.shouldStopRequest(getRequestParams(this, scrollRender, {lastLoadedData: []}));
 					return;
 				}
 
 				const
-					{data, total} = <RemoteData>v;
+					{data} = <RemoteData>v;
 
 				this.page++;
 				this.isLastEmpty = false;
 				this.data = this.data.concat(data);
+				this.lastLoadedData = data;
 
-				scrollRender.max = total || Infinity;
-				scrollRender.add(data);
+				this.shouldStopRequest(getRequestParams(this, scrollRender));
+				scrollRender.initItems(data);
+				scrollRender.render();
 
 			}).catch(stderr);
 	}
@@ -127,19 +145,16 @@ export default class ScrollRequest {
 	 * Checks possibility of another request for data
 	 * @param params
 	 */
-	checksRequestPossibility(params: RequestMoreParams): boolean {
+	shouldStopRequest(params: RequestMoreParams): boolean {
 		const {component, scrollRender} = this;
-		this.isDone = !component.shouldContinueRequest(params);
+		this.isDone = component.shouldStopRequest(params);
 
 		if (this.isDone) {
 			// @ts-ignore (access)
 			scrollRender.onRequestsDone();
-
-		} else {
-			component.removeMod('requestsDone', true);
 		}
 
-		return !this.isDone;
+		return this.isDone;
 	}
 
 	/**
@@ -149,13 +164,18 @@ export default class ScrollRequest {
 		const
 			{component} = this;
 
+		component.setMod('progress', true);
+
 		// @ts-ignore (access)
-		const params = <Dictionary>(component.getDefaultRequestParams('get') || [])[0];
+		const params = <CanUndef<Dictionary>>(component.getDefaultRequestParams('get') || [])[0];
 		Object.assign(params, component.requestQuery?.(getRequestParams(this, this.scrollRender))?.get);
 
-		return component.get(params)
+		return component.getData(component, params)
 			.then((data) => {
+				component.removeMod('progress', true);
+
 				if (!data) {
+					this.lastLoadedData = [];
 					return;
 				}
 
@@ -164,13 +184,20 @@ export default class ScrollRequest {
 					converted = component.convertDataToDB<CanUndef<RemoteData>>(data);
 
 				if (!converted?.data?.length) {
+					this.lastLoadedData = [];
 					return;
 				}
 
-				component.options = component.options.concat(converted);
 				return converted;
 			})
 
-			.catch((err) => (stderr(err), undefined));
+			.catch((err) => {
+				component.removeMod('progress', true);
+				this.scrollRender.setRefVisibility('retry', true);
+
+				stderr(err);
+				this.lastLoadedData = [];
+				return undefined;
+			});
 	}
 }

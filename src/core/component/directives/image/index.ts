@@ -13,17 +13,13 @@ import { DirectiveOptions } from 'core/component/directives/image/interface';
 
 export * from 'core/component/directives/image/interface';
 
-let ImageLoaderInstance: ImageLoader;
+const ImageLoaderInstance = new ImageLoader();
 export { ImageLoaderInstance as ImageLoader };
 
 ComponentDriver.directive('image', {
 	inserted(el: HTMLElement, {value}: DirectiveOptions): void {
 		if (!value) {
 			return;
-		}
-
-		if (!ImageLoaderInstance) {
-			ImageLoaderInstance = new ImageLoader();
 		}
 
 		ImageLoaderInstance.load(el, value);

@@ -157,7 +157,7 @@ export function component(params?: ComponentParams): Function {
 				functional;
 
 			// tslint:disable-next-line:prefer-conditional-expression
-			if (Object.isObject(p.functional) && Object.isObject(parentParams.functional)) {
+			if (Object.isPlainObject(p.functional) && Object.isPlainObject(parentParams.functional)) {
 				functional = {...parentParams.functional, ...p.functional};
 
 			} else {
@@ -182,7 +182,7 @@ export function component(params?: ComponentParams): Function {
 			a.push(regComponent);
 		}
 
-		if (Object.isObject(p.functional)) {
+		if (Object.isPlainObject(p.functional)) {
 			component({
 				...params,
 				name: `${name}-functional`,
@@ -278,7 +278,7 @@ export function component(params?: ComponentParams): Function {
 							cache = cache || new Map();
 
 							const
-								v = Object.isObject(val) ? val : String(val);
+								v = Object.isPlainObject(val) ? val : String(val);
 
 							if (!cache.has(v)) {
 								cache.set(v, v);
@@ -363,7 +363,7 @@ export function component(params?: ComponentParams): Function {
 									ctx = this || rootCtx;
 
 								const
-									hasOpts = Object.isObject(opts),
+									hasOpts = Object.isPlainObject(opts),
 									attrOpts = <CanUndef<Dictionary>>(hasOpts ? (<Dictionary>opts).attrs : undefined),
 									composite = attrOpts && attrOpts['v4-composite'];
 

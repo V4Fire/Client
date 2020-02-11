@@ -35,7 +35,7 @@ export const
 				const
 					p = componentParams.get(chunks[1]);
 
-				if (p && Object.isObject(p.functional)) {
+				if (p && Object.isPlainObject(p.functional)) {
 					initEventOnce(`${el}-functional`, listener);
 				}
 

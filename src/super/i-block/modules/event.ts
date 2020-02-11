@@ -117,7 +117,7 @@ export function eventFactory(
 // tslint:disable-next-line:completed-docs
 export function eventFactory($a: Async, emitter: EventEmitterLikeP, params?: boolean | EventFactoryParams): Event {
 	const
-		p = Object.isObject(params) ? params : {remote: Boolean(params)};
+		p = Object.isPlainObject(params) ? params : {remote: Boolean(params)};
 
 	const group = (p) => {
 		const

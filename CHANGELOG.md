@@ -11,6 +11,23 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-beta.246 (2020-02-03)
+
+#### :rocket: New Feature
+
+* [Added `i-item` trait](https://github.com/V4Fire/Client/pull/154)
+* [Added `runtime` block to `b-skeleton`](https://github.com/V4Fire/Client/pull/154)
+* [Added `inViewFactory` to create local `in-view` instances](https://github.com/V4Fire/Client/pull/154)
+* [Added `observable.size` for `in-view` observable elements](https://github.com/V4Fire/Client/pull/154)
+
+#### :boom: Breaking Change
+
+* [Review `b-virtual-scroll` component](https://github.com/V4Fire/Client/pull/154)
+
+#### :bug: Bug Fix
+
+* [Fixed `v-image` multiply backgrounds](https://github.com/V4Fire/Client/pull/154)
+
 ## v3.0.0-beta.245 (2020-01-31)
 
 #### :bug: Bug Fix

@@ -7,7 +7,4 @@
  */
 
 import semaphore from 'core/init/semaphore';
-
-export default (() => {
-	semaphore('ABTReady');
-})();
+export default (() => semaphore('ABTReady'))();

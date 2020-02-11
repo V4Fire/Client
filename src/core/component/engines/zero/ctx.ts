@@ -96,7 +96,7 @@ export default {
 	},
 
 	_g: (data, val) => {
-		if (Object.isObject(val)) {
+		if (Object.isPlainObject(val)) {
 			const
 				on = data.on = data.on ? {...data.on} : {};
 

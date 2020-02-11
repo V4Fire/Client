@@ -166,20 +166,23 @@ export default class InView extends Super {
 	 */
 	poll(): void {
 		this.pollingElements.forEach((map) => {
-			map.forEach((el) => {
-				if (el.isDeactivated) {
+			map.forEach((observable) => {
+				if (observable.isDeactivated) {
 					return;
 				}
 
 				const
-					root = Object.isFunction(el.root) ? el.root() : el.root,
-					isElementIn = isInView(el.node, el.threshold, root);
+					root = Object.isFunction(observable.root) ? observable.root() : observable.root,
+					elRect = observable.node.getBoundingClientRect(),
+					isElementIn = isInView(elRect, observable.threshold, root);
 
-				if (isElementIn && !el.isLeaving) {
-					this.onObservableIn(el);
+				this.setObservableSize(observable, elRect);
 
-				} else if (!isElementIn && el.isLeaving) {
-					this.onObservableOut(el);
+				if (isElementIn && !observable.isLeaving) {
+					this.onObservableIn(observable);
+
+				} else if (!isElementIn && observable.isLeaving) {
+					this.onObservableOut(observable);
 				}
 			});
 		});
@@ -247,24 +250,26 @@ export default class InView extends Super {
 			rootRect = getRootRect();
 
 		this.elements.forEach((thresholdMap) => {
-			thresholdMap.forEach((el) => {
-				if (el.isDeactivated) {
+			thresholdMap.forEach((observable) => {
+				if (observable.isDeactivated) {
 					return;
 				}
 
 				const
-					rect = getElementRect(rootRect, el.node);
+					rect = getElementRect(rootRect, observable.node);
 
 				let listNum = Math.ceil(rect.top / 100);
 				listNum = listNum === 0 ? 0 : listNum - 1;
 
+				this.setObservableSize(observable, rect);
+
 				if (!isElementVisible(rect)) {
-					this.clearAllAsync(el);
+					this.clearAllAsync(observable);
 					return;
 				}
 
 				const tile = map[listNum] = map[listNum] || [];
-				tile.push({...rect, observable: el});
+				tile.push({...rect, observable});
 			});
 		});
 

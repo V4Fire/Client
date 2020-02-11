@@ -7,12 +7,20 @@
  */
 
 /**
- * Returns a srcset string for an img tag
+ * [[include:core/html/README.md]]
+ * @packageDocumentation
+ */
+
+/**
+ * Returns an srcset string for an img tag by the specified resolution map
+ *
  * @param resolutions - map, where key is a picture multiplier and value is a picture url
  *
  * @example
+ * ```js
+ * // 'http://img-hdpi.png 2x, http://img-xhdpi.png 3x'
  * getSrcSet({'2x': 'http://img-hdpi.png', '3x': 'http://img-xhdpi.png'})
- * -> 'http://img-hdpi.png 2x, http://img-xhdpi.png 3x'
+ * ```
  */
 export function getSrcSet(resolutions: Dictionary<string>): string {
 	let str = '';

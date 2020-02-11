@@ -165,7 +165,7 @@ export function parseVAttrs(data: VNodeData, component?: ComponentMeta): void {
 	delete attrs['v-attrs'];
 	delete attrs['v-slots'];
 
-	if (Object.isObject(slotsSpreadObj)) {
+	if (Object.isPlainObject(slotsSpreadObj)) {
 		const
 			slotOpts: Dictionary = data.scopedSlots || {};
 
@@ -194,7 +194,7 @@ export function parseVAttrs(data: VNodeData, component?: ComponentMeta): void {
 		delete slotOpts['@'];
 	}
 
-	if (Object.isObject(attrsSpreadObj)) {
+	if (Object.isPlainObject(attrsSpreadObj)) {
 		const
 			eventOpts: Dictionary = data.on = data.on || {},
 			nativeEventOpts: Dictionary = data.nativeOn = data.nativeOn || {},
