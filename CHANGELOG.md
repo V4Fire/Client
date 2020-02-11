@@ -11,6 +11,10 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-beta.248 (2020-02-11)
+
+* [Fixed icon importing](https://github.com/V4Fire/Client/pull/160)
+
 ## v3.0.0-beta.247 (2020-02-11)
 
 #### :house: Internal
