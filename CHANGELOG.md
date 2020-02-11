@@ -19,6 +19,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 * [Added `runtime` block to `b-skeleton`](https://github.com/V4Fire/Client/pull/154)
 * [Added `inViewFactory` to create local `in-view` instances](https://github.com/V4Fire/Client/pull/154)
 * [Added `observable.size` for `in-view` observable elements](https://github.com/V4Fire/Client/pull/154)
+* [Improved icon loading from DS](https://github.com/V4Fire/Client/pull/148)
 
 #### :boom: Breaking Change
 
