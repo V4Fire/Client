@@ -50,7 +50,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		},
 
 		dataURILimit() {
-			return this.fatHTML() ? undefined : 2048;
+			return this.fatHTML() ? undefined : 4096;
 		},
 
 		externals: {
