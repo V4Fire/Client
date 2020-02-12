@@ -21,7 +21,6 @@ const
  */
 const aliases = {
 	'@super': resolve.rootDependencies[0],
-	'ds': pzlr.designSystem,
 	...$C(pzlr.dependencies).to({}).reduce((map, el, i) => {
 		const
 			a = resolve.depMap[el].config.assets;
@@ -34,6 +33,10 @@ const aliases = {
 		return map;
 	})
 };
+
+if (pzlr.designSystem) {
+	aliases.ds = pzlr.designSystem;
+}
 
 if (pzlr.assets && pzlr.assets.sprite) {
 	aliases.sprite = src.assets(pzlr.assets.sprite);
