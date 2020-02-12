@@ -14,6 +14,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 ## v3.0.0-beta.250 (2020-02-12)
 
 * Fixed `core/router/engines/browser.history`
+* [Fixed icon importing](https://github.com/V4Fire/Client/pull/161)
 
 ## v3.0.0-beta.249 (2020-02-12)
 
