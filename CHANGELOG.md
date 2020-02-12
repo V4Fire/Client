@@ -11,12 +11,19 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v3.0.0-beta.250 (2020-02-12)
+## v3.0.0-beta.251 (2020-02-12)
 
 #### :bug: Bug Fix
 
 * Fixed `reInit` method in `b-virtual-scroll`(https://github.com/V4Fire/Client/pull/162)
 * Fixed `in-view` initialization(https://github.com/V4Fire/Client/pull/162)
+
+## v3.0.0-beta.250 (2020-02-12)
+
+#### :bug: Bug Fix
+
+* Fixed `core/router/engines/browser.history`
+* [Fixed icon importing](https://github.com/V4Fire/Client/pull/161)
 
 ## v3.0.0-beta.249 (2020-02-12)
 
