@@ -62,7 +62,12 @@ try {
 	historyPos = historyStorage.get('pos') || 0;
 
 	for (let o = <HistoryLog>historyStorage.get('log'), i = 0; i < o.length; i++) {
-		historyLog.push(o[i]);
+		const
+			el = o[i];
+
+		if (Object.isPlainObject(el)) {
+			historyLog.push(el);
+		}
 	}
 
 	truncateHistoryLog();
