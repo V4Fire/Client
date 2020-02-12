@@ -210,7 +210,7 @@ c($kit, $id = null, $reserved = false, $base = false)
  * @param {string=} [$align]
  */
 i($name, $repeat = no-repeat, $align = center)
-	background img($name, true) $repeat $align
+	background img(join(".", $name svg), true) $repeat $align
 
 	$chunks = split("/", $name)
 
