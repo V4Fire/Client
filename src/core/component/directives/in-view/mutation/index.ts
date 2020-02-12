@@ -108,23 +108,26 @@ export default class InView extends Super {
 			this.recalculateDeffer();
 		});
 
-		this.mutationObserver.observe(document.body, {
-			childList: true,
-			attributes: true,
-			subtree: true,
-			characterData: true
-		});
+		this.async.wait(() => Boolean(document.body), {label: $$.waitBody}).then(() => {
+			this.mutationObserver.observe(document.body, {
+				childList: true,
+				attributes: true,
+				subtree: true,
+				characterData: true
+			});
 
-		$a.setInterval(this.poll, POLL_INTERVAL, {
-			group: 'inView',
-			label: $$.poll,
-			join: true
-		});
+			$a.setInterval(this.poll, POLL_INTERVAL, {
+				group: 'inView',
+				label: $$.poll,
+				join: true
+			});
 
-		$a.on(document, 'scroll', checkDeffer);
-		$a.on(window, 'resize', () => recalculateDeffer({
-			join: false
-		}));
+			$a.on(document, 'scroll', checkDeffer);
+			$a.on(window, 'resize', () => recalculateDeffer({
+				join: false
+			}));
+
+		});
 	}
 
 	/** @override */

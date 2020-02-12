@@ -21,7 +21,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :rocket: New Feature
 
-* [Added `i-item` trait](https://github.com/V4Fire/Client/pull/154)
+* [Added `i-items` trait](https://github.com/V4Fire/Client/pull/154)
 * [Added `runtime` block to `b-skeleton`](https://github.com/V4Fire/Client/pull/154)
 * [Added `inViewFactory` to create local `in-view` instances](https://github.com/V4Fire/Client/pull/154)
 * [Added `observable.size` for `in-view` observable elements](https://github.com/V4Fire/Client/pull/154)
