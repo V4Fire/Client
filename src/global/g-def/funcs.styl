@@ -35,11 +35,13 @@ img($img, $isDsAsset = false)
 
 	// @stlint-disable
 
+	if $isDsAsset
+		$img = join("/", ds icons $img)
+
 	if !$IMG[$img]
 		$IMG[$img] = {
 			selectors: ()
 			props: {}
-			ds: $isDsAsset
 		}
 
 	$obj = $IMG[$img]
@@ -58,11 +60,10 @@ img($img, $isDsAsset = false)
 generateImgClasses()
 	for $img, $obj in $IMG
 		$sel = join(",", $obj.selectors)
-		$value = $obj.ds ? getDSIcon($img) : $img
 
 		{$sel}
 			for $prop in $obj.props
-				add-property($prop, "url(%s)" % $value)
+				add-property($prop, "url(%s)" % $img)
 
 /**
  * Executes the default font pattern and returns a result
