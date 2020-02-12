@@ -195,17 +195,8 @@ export default class bVirtualScroll extends iData implements iItems {
 	 * Re-initializes component
 	 * @param [waitReady] - if false, the component will be initialized immediately
 	 */
-	async reInit(waitReady: boolean = true): Promise<void> {
+	async reInit(): Promise<void> {
 		this.componentRender.reInit();
-		this.scrollRender.reInit();
-
-		if (waitReady) {
-			await this.waitStatus('ready', {
-				label: $$.initScrollRender,
-				group: 'scroll-render'
-			});
-		}
-
 		this.scrollRender.reInit();
 	}
 
