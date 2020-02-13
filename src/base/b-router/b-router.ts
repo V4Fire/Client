@@ -515,7 +515,7 @@ export default class bRouter extends iData {
 					}
 
 					if (Object.isArray(obj)) {
-						for (let i = 0; i < obj.length; i++) {
+						for (let i = 0; i < (<unknown[]>obj).length; i++) {
 							normalizeOpts(obj[i], i, obj);
 						}
 
@@ -524,11 +524,15 @@ export default class bRouter extends iData {
 
 					if (data) {
 						// tslint:disable-next-line:prefer-conditional-expression
-						if ({true: true, false: true}[obj]) {
+						if (/^(?:true|false|null|undefined)$/.test(obj)) {
 							data[key] = Object.isString(obj) ? Object.parse(obj) : obj;
 
 						} else {
-							data[key] = isNaN(obj) ? String(obj) : Number(obj);
+							const
+								strVal = String(obj),
+								numVal = Number(obj);
+
+							data[key] = isNaN(obj) || strVal !== String(numVal) ? strVal : numVal;
 						}
 					}
 				};
