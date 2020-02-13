@@ -49,7 +49,7 @@ export default class ScrollRender {
 	}
 
 	/**
-	 * API for unsafe invoking of internal properties of the component
+	 * API to unsafe invoke of internal properties of the component
 	 */
 	get unsafe(): UnsafeScrollRender & this {
 		return <any>this;

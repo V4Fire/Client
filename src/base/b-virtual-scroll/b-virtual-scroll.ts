@@ -198,7 +198,6 @@ export default class bVirtualScroll extends iData implements iItems {
 
 	/**
 	 * Re-initializes component
-	 * @param [waitReady] - if false, the component will be initialized immediately
 	 */
 	async reInit(): Promise<void> {
 		this.componentRender.reInit();

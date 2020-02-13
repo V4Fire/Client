@@ -677,7 +677,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	readonly vdom!: VDOM;
 
 	/**
-	 * API for unsafe invoking of internal properties of the component
+	 * API to unsafe invoke of internal properties of the component
 	 */
 	@p({cache: false})
 	get unsafe(): Unsafe<this> & this {

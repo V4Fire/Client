@@ -49,7 +49,7 @@ export default class ScrollRequest {
 	readonly component: bVirtualScroll['unsafe'];
 
 	/**
-	 * API for unsafe invoking of internal properties of the component
+	 * API to unsafe invoke of internal properties of the component
 	 */
 	get unsafe(): UnsafeScrollRequest & this {
 		return <any>this;
