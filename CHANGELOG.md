@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-beta.252 (2020-02-13)
+
+#### :bug: Bug Fix
+
+* Fixed URL resolving `core/data`
+
 ## v3.0.0-beta.251 (2020-02-13)
 
 #### :bug: Bug Fix
