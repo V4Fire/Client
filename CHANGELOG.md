@@ -17,6 +17,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 * Fixed custom base URL-s with providers
 * Fixed `messageHelpers` type
+* Fixed `State.initFromRouter`
 
 ## v3.0.0-beta.250 (2020-02-12)
 

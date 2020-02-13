@@ -347,26 +347,33 @@ export default class State {
 
 			if (c.syncRouterStoreOnInit) {
 				const
-					routerState = c.syncRouterState(stateFields, 'remote');
+					stateForRouter = c.syncRouterState(stateFields, 'remote'),
+					stateKeys = Object.keys(stateForRouter);
 
-				if (Object.keys(routerState).length) {
+				if (stateKeys.length) {
 					let
-						modState;
+						query;
 
-					for (let keys = Object.keys(routerState), i = 0; i < keys.length; i++) {
+					for (let i = 0; i < stateKeys.length; i++) {
 						const
-							key = keys[i],
-							p = route.params,
-							q = route.query;
+							key = stateKeys[i];
 
-						if ((!p || p[key] === undefined) && (!q || q[key] === undefined)) {
-							modState = modState || {};
-							modState[key] = routerState[key];
+						const
+							currentParams = route.params,
+							currentQuery = route.query;
+
+						const
+							val = stateForRouter[key],
+							currentVal = currentParams?.[key] || currentQuery?.[key];
+
+						if (currentVal === undefined && val !== undefined) {
+							query = query || {};
+							query[key] = val;
 						}
 					}
 
-					if (modState) {
-						router.replace(null, {query: modState});
+					if (query) {
+						router.replace(null, {query});
 					}
 				}
 			}
