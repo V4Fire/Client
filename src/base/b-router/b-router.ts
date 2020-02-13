@@ -523,7 +523,6 @@ export default class bRouter extends iData {
 					}
 
 					if (data) {
-						// tslint:disable-next-line:prefer-conditional-expression
 						if (/^(?:true|false|null|undefined)$/.test(obj)) {
 							data[key] = Object.isString(obj) ? Object.parse(obj) : obj;
 
