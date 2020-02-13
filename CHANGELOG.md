@@ -11,6 +11,10 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-beta.251 (2020-02-13)
+
+* Fixed custom base URL-s with providers
+
 ## v3.0.0-beta.250 (2020-02-12)
 
 * Fixed `core/router/engines/browser.history`
