@@ -15,6 +15,8 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :bug: Bug Fix
 
+* Fixed custom base URL-s with providers
+* Fixed `messageHelpers` type
 * [Fixed `reInit` method in `b-virtual-scroll`](https://github.com/V4Fire/Client/pull/162)
 * [Fixed `in-view` initialization](https://github.com/V4Fire/Client/pull/162)
 
@@ -31,9 +33,13 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 ## v3.0.0-beta.249 (2020-02-12)
 
+#### :bug: Bug Fix
+
 * Reverted `f375c42106b83eea608a4de61e69dee1fb157d26` and `109f11eb9d46f4cf28523a4b8a9db16e4135aeea`
 
 ## v3.0.0-beta.248 (2020-02-11)
+
+#### :bug: Bug Fix
 
 * [Fixed icon importing](https://github.com/V4Fire/Client/pull/160)
 

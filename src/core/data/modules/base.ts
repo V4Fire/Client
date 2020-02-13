@@ -248,8 +248,16 @@ export default abstract class Provider extends ParamsProvider implements iProvid
 			return this.baseURL;
 		}
 
-		const obj = Object.create(this);
+		const
+			obj = Object.create(this);
+
 		obj.baseURL = value;
+		obj.baseGetURL = undefined;
+		obj.basePeekURL = undefined;
+		obj.baseAddURL = undefined;
+		obj.baseUpdURL = undefined;
+		obj.baseDelURL = undefined;
+
 		return obj;
 	}
 
@@ -289,13 +297,11 @@ export default abstract class Provider extends ParamsProvider implements iProvid
 
 	/** @inheritDoc */
 	get<T = unknown>(query?: RequestQuery, opts?: CreateRequestOptions<T>): RequestResponse {
-		if (this.baseGetURL && !this.advURL) {
-			this.base(this.baseGetURL);
-		}
+		const
+			url = this.resolveURL(this.baseGetURL),
+			alias = this.alias || this.providerName;
 
 		const
-			url = this.url(),
-			alias = this.alias || this.providerName,
 			eventName = this.name(),
 			method = this.method() || this.getMethod;
 
@@ -394,12 +400,8 @@ export default abstract class Provider extends ParamsProvider implements iProvid
 
 	/** @inheritDoc */
 	peek<T = unknown>(query?: RequestQuery, opts?: CreateRequestOptions<T>): RequestResponse {
-		if (this.basePeekURL && !this.advURL) {
-			this.base(this.basePeekURL);
-		}
-
 		const
-			url = this.url(),
+			url = this.resolveURL(this.basePeekURL),
 			eventName = this.name(),
 			method = this.method() || this.peekMethod;
 
@@ -419,7 +421,7 @@ export default abstract class Provider extends ParamsProvider implements iProvid
 	/** @inheritDoc */
 	post<T = unknown>(body?: RequestBody, opts?: CreateRequestOptions<T>): RequestResponse {
 		const
-			url = this.url(),
+			url = this.resolveURL(),
 			eventName = this.name(),
 			method = this.method() || 'POST';
 
@@ -438,12 +440,8 @@ export default abstract class Provider extends ParamsProvider implements iProvid
 
 	/** @inheritDoc */
 	add<T = unknown>(body?: RequestBody, opts?: CreateRequestOptions<T>): RequestResponse {
-		if (this.baseAddURL && !this.advURL) {
-			this.base(this.baseAddURL);
-		}
-
 		const
-			url = this.url(),
+			url = this.resolveURL(this.baseAddURL),
 			eventName = this.name() || 'add',
 			method = this.method() || this.addMethod;
 
@@ -456,12 +454,8 @@ export default abstract class Provider extends ParamsProvider implements iProvid
 
 	/** @inheritDoc */
 	upd<T = unknown>(body?: RequestBody, opts?: CreateRequestOptions<T>): RequestResponse {
-		if (this.baseUpdURL && !this.advURL) {
-			this.base(this.baseUpdURL);
-		}
-
 		const
-			url = this.url(),
+			url = this.resolveURL(this.baseUpdURL),
 			eventName = this.name() || 'upd',
 			method = this.method() || this.updMethod;
 
@@ -474,12 +468,8 @@ export default abstract class Provider extends ParamsProvider implements iProvid
 
 	/** @inheritDoc */
 	del<T = unknown>(body?: RequestBody, opts?: CreateRequestOptions<T>): RequestResponse {
-		if (this.baseDelURL && !this.advURL) {
-			this.base(this.baseDelURL);
-		}
-
 		const
-			url = this.url(),
+			url = this.resolveURL(this.baseDelURL),
 			eventName = this.name() || 'del',
 			method = this.method() || this.delMethod;
 
@@ -488,6 +478,16 @@ export default abstract class Provider extends ParamsProvider implements iProvid
 			body,
 			method
 		})));
+	}
+
+	/**
+	 * Returns the full URL of any request with support of patching the specified chunks of URL
+	 *
+	 * @param [baseURL]
+	 * @param [advURL]
+	 */
+	protected resolveURL(baseURL?: Nullable<string>, advURL?: Nullable<string>): string {
+		return concatUrls(baseURL == null ? this.baseURL : baseURL, advURL == null ? this.advURL : advURL);
 	}
 
 	/**

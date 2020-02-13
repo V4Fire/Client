@@ -83,7 +83,7 @@ export default interface Provider {
 	base(value: string): Provider;
 
 	/**
-	 * Returns a full URL of any request
+	 * Returns the full URL of any request
 	 */
 	url(): string;
 
