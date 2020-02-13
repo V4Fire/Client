@@ -138,7 +138,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	/**
 	 * If true, then will be generated a markup for default messages
 	 */
-	@prop({type: String, required: false})
+	@prop({type: Boolean, required: false})
 	readonly messageHelpers?: boolean;
 
 	/**
