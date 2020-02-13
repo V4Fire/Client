@@ -10,7 +10,7 @@ import bVirtualScroll from 'base/b-virtual-scroll/b-virtual-scroll';
 import ScrollRender from 'base/b-virtual-scroll/modules/scroll-render';
 
 import { getRequestParams } from 'base/b-virtual-scroll/modules/helpers';
-import { RemoteData, RequestMoreParams } from 'base/b-virtual-scroll/modules/interface';
+import { RemoteData, RequestMoreParams, UnsafeScrollRequest } from 'base/b-virtual-scroll/modules/interface';
 
 export default class ScrollRequest {
 	/**
@@ -49,11 +49,17 @@ export default class ScrollRequest {
 	readonly component: bVirtualScroll['unsafe'];
 
 	/**
+	 * API for unsafe invoking of internal properties of the component
+	 */
+	get unsafe(): UnsafeScrollRequest & this {
+		return <any>this;
+	}
+
+	/**
 	 * API for scroll rendering
 	 */
-	protected get scrollRender(): ScrollRender {
-		// @ts-ignore (access)
-		return this.component.scrollRender;
+	protected get scrollRender(): ScrollRender['unsafe'] {
+		return this.component.scrollRender.unsafe;
 	}
 
 	/**
@@ -150,7 +156,6 @@ export default class ScrollRequest {
 		this.isDone = component.shouldStopRequest(params);
 
 		if (this.isDone) {
-			// @ts-ignore (access)
 			scrollRender.onRequestsDone();
 		}
 
@@ -166,7 +171,6 @@ export default class ScrollRequest {
 
 		component.setMod('progress', true);
 
-		// @ts-ignore (access)
 		const params = <CanUndef<Dictionary>>(component.getDefaultRequestParams('get') || [])[0];
 		Object.assign(params, component.requestQuery?.(getRequestParams(this, this.scrollRender))?.get);
 
@@ -180,7 +184,6 @@ export default class ScrollRequest {
 				}
 
 				const
-					// @ts-ignore (access)
 					converted = component.convertDataToDB<CanUndef<RemoteData>>(data);
 
 				if (!converted?.data?.length) {
