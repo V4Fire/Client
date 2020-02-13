@@ -13,9 +13,9 @@ import bVirtualScroll from 'base/b-virtual-scroll/b-virtual-scroll';
 import ComponentRender from 'base/b-virtual-scroll/modules/component-render';
 import ScrollRequest from 'base/b-virtual-scroll/modules/scroll-request';
 
-import { RenderItem } from 'base/b-virtual-scroll/modules/interface';
 import { InitOptions } from 'core/component/directives/in-view/interface';
 import { InViewAdapter, inViewFactory } from 'core/component/directives/in-view';
+import { RenderItem, UnsafeScrollRender } from 'base/b-virtual-scroll/modules/interface';
 
 export const
 	$$ = symbolGenerator();
@@ -49,6 +49,13 @@ export default class ScrollRender {
 	}
 
 	/**
+	 * API for unsafe invoking of internal properties of the component
+	 */
+	get unsafe(): UnsafeScrollRender & this {
+		return <any>this;
+	}
+
+	/**
 	 * Async group
 	 */
 	protected readonly asyncGroup: string = 'scroll-render:';
@@ -67,7 +74,6 @@ export default class ScrollRender {
 	 * API for dynamic component rendering
 	 */
 	protected get componentRender(): ComponentRender {
-		// @ts-ignore (access)
 		return this.component.componentRender;
 	}
 
@@ -75,7 +81,6 @@ export default class ScrollRender {
 	 * API for scroll data requests
 	 */
 	protected get scrollRequest(): ScrollRequest {
-		// @ts-ignore (access)
 		return this.component.scrollRequest;
 	}
 
@@ -238,7 +243,6 @@ export default class ScrollRender {
 		const
 			{component} = this,
 			{node} = item,
-			// @ts-ignore (access)
 			label = `${this.asyncGroup}:${this.asyncInViewPrefix}${component.getOptionKey(item.data, item.index)}`;
 
 		if (!node) {

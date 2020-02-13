@@ -6,7 +6,10 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import bVirtualScroll from 'base/b-virtual-scroll/b-virtual-scroll';
+import iBlock from 'super/i-block/i-block';
+import bVirtualScroll, { Unsafe as SuperUnsafe } from 'base/b-virtual-scroll/b-virtual-scroll';
+
+import ScrollRender from 'base/b-virtual-scroll/modules/scroll-render';
 
 export interface RequestQueryFn<T extends unknown = unknown> {
 	(params: RequestMoreParams<T>): Dictionary<Dictionary>;
@@ -100,4 +103,21 @@ export interface RenderItem<T extends unknown = unknown> {
 	 * Component position in a DOM tree
 	 */
 	index: number;
+}
+
+export interface Unsafe<T extends iBlock = bVirtualScroll> extends SuperUnsafe<T> {
+	scrollRender: bVirtualScroll['scrollRender'];
+	scrollRequest: bVirtualScroll['scrollRequest'];
+	componentRender: bVirtualScroll['componentRender'];
+	getOptionKey: bVirtualScroll['getOptionKey'];
+	getDefaultRequestParams: bVirtualScroll['getDefaultRequestParams'];
+	convertDataToDB: bVirtualScroll['convertDataToDB'];
+}
+
+export interface UnsafeScrollRender {
+	onRequestsDone: ScrollRender['onRequestsDone'];
+}
+
+export interface UnsafeScrollRequest {
+
 }

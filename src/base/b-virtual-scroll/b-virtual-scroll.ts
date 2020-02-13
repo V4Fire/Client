@@ -31,7 +31,7 @@ import ScrollRender from 'base/b-virtual-scroll/modules/scroll-render';
 import ScrollRequest from 'base/b-virtual-scroll/modules/scroll-request';
 
 import { getRequestParams } from 'base/b-virtual-scroll/modules/helpers';
-import { RequestFn, RemoteData, RequestQueryFn, GetData } from 'base/b-virtual-scroll/modules/interface';
+import { RequestFn, RemoteData, RequestQueryFn, GetData, Unsafe } from 'base/b-virtual-scroll/modules/interface';
 
 export { RequestFn, RemoteData, RequestQueryFn, GetData };
 export * from 'super/i-data/i-data';
@@ -131,6 +131,11 @@ export default class bVirtualScroll extends iData implements iItems {
 	 */
 	@prop({type: Function, default: (v) => v.isLastEmpty})
 	readonly shouldStopRequest!: RequestFn;
+
+	/** @override */
+	get unsafe(): Unsafe & this {
+		return <any>this;
+	}
 
 	/** @override */
 	protected get requestParams(): RequestParams {
