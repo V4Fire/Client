@@ -26,7 +26,7 @@ export default class ComponentRender {
 	/**
 	 * Component instance
 	 */
-	protected component: bVirtualScroll;
+	protected component: bVirtualScroll['unsafe'];
 
 	/**
 	 * If false, the cache flushing process is not currently running
@@ -49,7 +49,6 @@ export default class ComponentRender {
 	 * API for scroll rendering
 	 */
 	protected get scrollRender(): ScrollRender {
-		// @ts-ignore (access)
 		return this.component.scrollRender;
 	}
 
@@ -57,35 +56,35 @@ export default class ComponentRender {
 	 * Async instance
 	 */
 	protected get async(): Async<bVirtualScroll> {
-		return this.component.unsafe.async;
+		return this.component.async;
 	}
 
 	/**
 	 * Link to the component $createElement method
 	 */
 	protected get createElement(): bVirtualScroll['$createElement'] {
-		return this.component.unsafe.$createElement.bind(this.component);
+		return this.component.$createElement.bind(this.component);
 	}
 
 	/**
 	 * Link to the component $refs
 	 */
 	protected get refs(): bVirtualScroll['$refs'] {
-		return this.component.unsafe.$refs;
+		return this.component.$refs;
 	}
 
 	/**
 	 * Classname for options
 	 */
 	get optionClass(): string {
-		return this.component.unsafe.block.getFullElName('option-el');
+		return this.component.block.getFullElName('option-el');
 	}
 
 	/**
 	 * @param component
 	 */
 	constructor(component: bVirtualScroll) {
-		this.component = component;
+		this.component = component.unsafe;
 	}
 
 	/**
@@ -132,9 +131,8 @@ export default class ComponentRender {
 	}
 
 	/** @see bVirtualScroll.getOptionKey */
-	getOptionKey(data: unknown): string {
-		// @ts-ignore (access)
-		return this.component.getOptionKey(data);
+	getOptionKey(data: unknown, index: number): string {
+		return String(this.component.getOptionKey(data, index));
 	}
 
 	/**
@@ -160,7 +158,7 @@ export default class ComponentRender {
 
 			if (canCache) {
 				const
-					key = this.getOptionKey(item.data),
+					key = this.getOptionKey(item.data, item.index),
 					node = key && this.getCachedComponent(key);
 
 				if (node) {
@@ -182,7 +180,7 @@ export default class ComponentRender {
 					item = needRender[i][0],
 					indexesToAssign = needRender[i][1],
 					node = nodes[i],
-					key = this.getOptionKey(item.data);
+					key = this.getOptionKey(item.data, item.index);
 
 				if (canCache) {
 					this.cacheNode(key, item.node = node);
@@ -232,7 +230,7 @@ export default class ComponentRender {
 				item = items[i],
 				props = Object.isFunction(c.optionProps) ? c.optionProps(getOptionEl(item.data, item.index), item.index, {
 					ctx: c,
-					key: this.getOptionKey(item.data)
+					key: this.getOptionKey(item.data, item.index)
 				}) : c.optionProps;
 
 			children.push(createChildren(props));

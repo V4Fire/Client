@@ -30,18 +30,21 @@
 
 			< .&__retry &
 				ref = retry |
-				v-if = vdom.getSlot('retry')
+				v-if = vdom.getSlot('retry') |
+				:style = {display: 'none'}
 			.
 				+= self.slot('retry')
 
 			< .&__empty &
 				ref = empty |
-				v-if = vdom.getSlot('empty')
+				v-if = vdom.getSlot('empty') |
+				:style = {display: 'none'}
 			.
 				+= self.slot('empty')
 
 			< .&__done &
 				ref = done |
-				v-if = vdom.getSlot('done')
+				v-if = vdom.getSlot('done') |
+				:style = {display: 'none'}
 			.
 				+= self.slot('done')

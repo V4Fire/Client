@@ -31,7 +31,7 @@ import ScrollRender from 'base/b-virtual-scroll/modules/scroll-render';
 import ScrollRequest from 'base/b-virtual-scroll/modules/scroll-request';
 
 import { getRequestParams } from 'base/b-virtual-scroll/modules/helpers';
-import { RequestFn, RemoteData, RequestQueryFn, GetData } from 'base/b-virtual-scroll/modules/interface';
+import { RequestFn, RemoteData, RequestQueryFn, GetData, Unsafe } from 'base/b-virtual-scroll/modules/interface';
 
 export { RequestFn, RemoteData, RequestQueryFn, GetData };
 export * from 'super/i-data/i-data';
@@ -133,6 +133,11 @@ export default class bVirtualScroll extends iData implements iItems {
 	readonly shouldStopRequest!: RequestFn;
 
 	/** @override */
+	get unsafe(): Unsafe & this {
+		return <any>this;
+	}
+
+	/** @override */
 	protected get requestParams(): RequestParams {
 		return {
 			get: {
@@ -195,17 +200,8 @@ export default class bVirtualScroll extends iData implements iItems {
 	 * Re-initializes component
 	 * @param [waitReady] - if false, the component will be initialized immediately
 	 */
-	async reInit(waitReady: boolean = true): Promise<void> {
+	async reInit(): Promise<void> {
 		this.componentRender.reInit();
-		this.scrollRender.reInit();
-
-		if (waitReady) {
-			await this.waitStatus('ready', {
-				label: $$.initScrollRender,
-				group: 'scroll-render'
-			});
-		}
-
 		this.scrollRender.reInit();
 	}
 
