@@ -523,14 +523,14 @@ export default class bRouter extends iData {
 					}
 
 					if (data) {
-						if (/^(?:true|false|null|undefined)$/.test(obj)) {
+						const
+							strVal = String(obj);
+
+						if (/^(?:true|false|null|undefined)$/.test(strVal)) {
 							data[key] = Object.isString(obj) ? Object.parse(obj) : obj;
 
 						} else {
-							const
-								strVal = String(obj),
-								numVal = Number(obj);
-
+							const numVal = Number(obj);
 							data[key] = isNaN(obj) || strVal !== String(numVal) ? strVal : numVal;
 						}
 					}
