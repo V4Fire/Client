@@ -112,10 +112,12 @@ export interface Unsafe<T extends iBlock = bVirtualScroll> extends SuperUnsafe<T
 	getOptionKey: bVirtualScroll['getOptionKey'];
 	getDefaultRequestParams: bVirtualScroll['getDefaultRequestParams'];
 	convertDataToDB: bVirtualScroll['convertDataToDB'];
+	dp: bVirtualScroll['dp'];
 }
 
 export interface UnsafeScrollRender {
 	onRequestsDone: ScrollRender['onRequestsDone'];
+	asyncGroup: ScrollRender['asyncGroup'];
 }
 
 export interface UnsafeScrollRequest {

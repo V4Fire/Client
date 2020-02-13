@@ -20,7 +20,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :house: Internal
 
-* [Unsafe getter for `b-virtual-scroll`, `b-virtual-scroll/scroll-render`, `b-virtual-scroll/scroll-request`](https://github.com/V4Fire/Client/pull/162)
+* [Added `unsafe` getter for `b-virtual-scroll`, `b-virtual-scroll/scroll-render`, `b-virtual-scroll/scroll-request`](https://github.com/V4Fire/Client/pull/162)
 
 ## v3.0.0-beta.250 (2020-02-12)
 
