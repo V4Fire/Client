@@ -79,7 +79,7 @@ export interface ComponentHook {
 }
 
 export type ComponentHooks = {
-	[H in Hook]: ComponentHook[];
+	[hook in Hook]: ComponentHook[];
 };
 
 export type ComponentMethodHooks = {

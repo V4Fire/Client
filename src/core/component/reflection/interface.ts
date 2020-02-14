@@ -13,6 +13,7 @@ export interface ComponentInfo {
 	componentName: string;
 	isAbstract: boolean;
 	isSmart: boolean;
+	constructor: Function;
 	params: ComponentParams;
 	parent?: Function;
 	parentParams?: ComponentParams;

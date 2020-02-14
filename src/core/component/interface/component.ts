@@ -25,7 +25,7 @@ import {
 
 } from 'core/component/engines';
 
-import { ComponentMeta } from 'core/component/interface/meta';
+import { ComponentMeta } from 'core/component/create/meta/interface';
 import { Hook, SyncLinkCache } from 'core/component/interface/other';
 
 export type ComponentElement<T = unknown> = Element & {

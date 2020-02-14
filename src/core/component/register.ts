@@ -14,7 +14,7 @@ import log from 'core/log';
 
 import inheritMeta from 'core/component/create/inherit';
 
-import { getInfoFromConstructor } from 'core/component/meta/info';
+import { getInfoFromConstructor, getComponentMods } from 'core/component/reflection';
 
 import { runHook, patchRefs, parseVAttrs } from 'core/component/create/helpers';
 import { ComponentInterface, ComponentParams, ComponentMeta, ComponentMethod } from 'core/component/interface';
@@ -42,6 +42,7 @@ import {
 
 } from 'core/component/create';
 
+import { registerComponent, registerParentComponents } from 'core/component/create/register';
 import { createFakeCtx, execRenderObject, patchVNode } from 'core/component/create/functional';
 import { getComponentDataFromVnode, createCompositeElement } from 'core/component/create/composite';
 import * as c from 'core/component/const';
@@ -79,7 +80,7 @@ export function component(declParams?: ComponentParams): Function {
 			regComponent();
 
 		} else {
-			const initList = c.regCache[i.name] = c.regCache[i.name] || [];
+			const initList = c.componentInitializers[i.name] = c.componentInitializers[i.name] || [];
 			initList.push(regComponent);
 		}
 
@@ -95,106 +96,11 @@ export function component(declParams?: ComponentParams): Function {
 
 		function regComponent(): void {
 			// Lazy initializing of parent components
-
-			let
-				parentName = i.parentParams?.name;
-
-			if (parentName && c.regCache[parentName]) {
-				let
-					parentComponent = i.parent;
-
-				while (parentName === i.name) {
-					parentComponent = Object.getPrototypeOf(parentComponent);
-
-					if (parentComponent) {
-						const p = c.componentParams.get(parentComponent);
-						parentName = p && p.name;
-					}
-				}
-
-				if (parentName) {
-					const
-						regParentComponent = c.regCache[parentName];
-
-					if (regParentComponent) {
-						for (let i = 0; i < regParentComponent.length; i++) {
-							regParentComponent[i]();
-						}
-
-						delete c.regCache[parentName];
-					}
-				}
-			}
+			registerParentComponents(i);
 
 			const
-				parentMeta = i.parent && c.components.get(i.parent),
-				mods = {},
-				modsStore = {};
-
-			if (target.mods) {
-				Object.assign(modsStore, target.mods);
-			}
-
-			const
-				dsMods = dsComponentsMods?.[i.componentName];
-
-			if (dsMods) {
-				for (let keys = Object.keys(dsMods), i = 0; i < keys.length; i++) {
-					const
-						key = keys[i],
-						el = dsMods[key],
-						store = modsStore[key];
-
-					modsStore[key] = store ? store.concat(el) : el;
-				}
-			}
-
-			for (let o = modsStore, keys = Object.keys(o), i = 0; i < keys.length; i++) {
-				const
-					key = keys[i],
-					modVal = o[key],
-					res = <unknown[]>[];
-
-				if (modVal) {
-					let
-						cache,
-						active;
-
-					for (let i = 0; i < modVal.length; i++) {
-						const
-							val = modVal[i];
-
-						if (Object.isArray(val)) {
-							cache = cache || new Map();
-
-							if (active !== undefined) {
-								cache.set(active, active);
-							}
-
-							active = String(val[0]);
-							cache.set(active, [active]);
-
-						} else {
-							cache = cache || new Map();
-
-							const
-								v = Object.isPlainObject(val) ? val : String(val);
-
-							if (!cache.has(v)) {
-								cache.set(v, v);
-							}
-						}
-					}
-
-					if (cache) {
-						for (let o = cache.values(), el = o.next(); !el.done; el = o.next()) {
-							res.push(el.value);
-						}
-					}
-				}
-
-				mods[key.camelize(false)] = res;
-			}
+				parentMeta = i.parentMeta,
+				mods = getComponentMods(i);
 
 			const meta: ComponentMeta = {
 				name: i.name,
@@ -279,22 +185,7 @@ export function component(declParams?: ComponentParams): Function {
 								}
 
 								const
-									regComponent = c.regCache[tagName];
-
-								let
-									component;
-
-								if (regComponent) {
-									for (let i = 0; i < regComponent.length; i++) {
-										regComponent[i]();
-									}
-
-									delete c.regCache[tagName];
-									component = c.components.get(tag);
-
-								} else {
-									component = c.components.get(tag);
-								}
+									component = registerComponent(tagName);
 
 								// tslint:disable-next-line:prefer-conditional-expression
 								if (hasOpts) {
@@ -356,7 +247,7 @@ export function component(declParams?: ComponentParams): Function {
 										<CreateElement>createElement,
 										renderCtx,
 
-										c.minimalCtxCache[componentName] = c.minimalCtxCache[componentName] ||
+										c.renderCtxCache[componentName] = c.renderCtxCache[componentName] ||
 											Object.assign(Object.create(minimalCtx), {
 												componentName,
 												meta: component,
@@ -367,8 +258,8 @@ export function component(declParams?: ComponentParams): Function {
 										{initProps: true}
 									);
 
-									const renderObject = c.tplCache[componentName] =
-										c.tplCache[componentName] ||
+									const renderObject = c.componentTemplates[componentName] =
+										c.componentTemplates[componentName] ||
 										tpl.index && tpl.index();
 
 									vnode = patchVNode(execRenderObject(renderObject, fakeCtx), fakeCtx, renderCtx);
@@ -656,7 +547,7 @@ export function component(declParams?: ComponentParams): Function {
 
 				const addRenderAndResolve = (tpls) => {
 					const
-						fns = c.tplCache[i.name] = c.tplCache[i.name] || tpls.index(),
+						fns = c.componentTemplates[i.name] = c.componentTemplates[i.name] || tpls.index(),
 						renderObj = <ComponentMethod>{wrapper: true, watchers: {}, hooks: {}};
 
 					renderObj.fn = fns.render;
