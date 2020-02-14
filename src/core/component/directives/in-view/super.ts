@@ -15,7 +15,8 @@ import {
 	InitOptions,
 	ObservableElement,
 	ObservableElementsThresholdMap,
-	ObservableThresholdMap
+	ObservableThresholdMap,
+	Size
 
 } from 'core/component/directives/in-view/interface';
 
@@ -239,6 +240,12 @@ export default abstract class AbstractInView {
 			id: String(Math.random()),
 			group: 'inView:base',
 			threshold: 1,
+
+			size: {
+				width: 0,
+				height: 0
+			},
+
 			...opts
 		};
 	}
@@ -318,6 +325,14 @@ export default abstract class AbstractInView {
 			}
 
 		});
+	}
+
+	/**
+	 * Sets a size of the specified observable element
+	 */
+	protected setObservableSize(observable: ObservableElement, size: Size): void {
+		observable.size.width = size.width;
+		observable.size.height = size.height;
 	}
 
 	/**

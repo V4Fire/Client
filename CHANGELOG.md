@@ -11,6 +11,87 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-beta.252 (2020-02-13)
+
+#### :bug: Bug Fix
+
+* Fixed URL resolving `core/data`
+
+## v3.0.0-beta.251 (2020-02-13)
+
+#### :bug: Bug Fix
+
+* Fixed custom base URL-s with providers
+* Fixed `messageHelpers` type
+* Fixed `State.initFromRouter`
+* [Fixed `reInit` method in `b-virtual-scroll`](https://github.com/V4Fire/Client/pull/162)
+* [Fixed `in-view` initialization](https://github.com/V4Fire/Client/pull/162)
+
+#### :house: Internal
+
+* [Added `unsafe` getter for `b-virtual-scroll`, `b-virtual-scroll/scroll-render`, `b-virtual-scroll/scroll-request`](https://github.com/V4Fire/Client/pull/162)
+
+## v3.0.0-beta.250 (2020-02-12)
+
+#### :bug: Bug Fix
+
+* Fixed `core/router/engines/browser.history`
+* [Fixed icon importing](https://github.com/V4Fire/Client/pull/161)
+
+## v3.0.0-beta.249 (2020-02-12)
+
+#### :bug: Bug Fix
+
+* Reverted `f375c42106b83eea608a4de61e69dee1fb157d26` and `109f11eb9d46f4cf28523a4b8a9db16e4135aeea`
+
+## v3.0.0-beta.248 (2020-02-11)
+
+#### :bug: Bug Fix
+
+* [Fixed icon importing](https://github.com/V4Fire/Client/pull/160)
+
+## v3.0.0-beta.247 (2020-02-11)
+
+#### :house: Internal
+
+* `Provider` constructor marked as public
+
+## v3.0.0-beta.246 (2020-02-11)
+
+#### :rocket: New Feature
+
+* [Added `i-items` trait](https://github.com/V4Fire/Client/pull/154)
+* [Added `runtime` block to `b-skeleton`](https://github.com/V4Fire/Client/pull/154)
+* [Added `inViewFactory` to create local `in-view` instances](https://github.com/V4Fire/Client/pull/154)
+* [Added `observable.size` for `in-view` observable elements](https://github.com/V4Fire/Client/pull/154)
+* [Improved icon loading from DS](https://github.com/V4Fire/Client/pull/148)
+
+#### :boom: Breaking Change
+
+* [Review `b-virtual-scroll` component](https://github.com/V4Fire/Client/pull/154)
+
+#### :bug: Bug Fix
+
+* [Fixed `v-image` multiply backgrounds](https://github.com/V4Fire/Client/pull/154)
+
+## v3.0.0-beta.245 (2020-01-31)
+
+#### :bug: Bug Fix
+
+* Fixed loading of dynamic dependencies `core/prelude/dependencies`
+
+## v3.0.0-beta.244 (2020-01-30)
+
+#### :house: Internal
+
+* Removed console.log `AsyncRender`
+
+## v3.0.0-beta.243 (2020-01-30)
+
+#### :bug: Bug Fix
+
+* Fixed stream support with `AsyncRender`
+
 ## v3.0.0-beta.242 (2020-01-22)
 
 #### :rocket: Breaking Change
@@ -529,7 +610,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :rocket: New Feature
 
-* Added `skeletonMarker` flag to `iBlock` 
+* Added `skeletonMarker` flag to `iBlock`
 
 #### :house: Internal
 
@@ -845,16 +926,16 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :house: Internal
 
-* Updated dependencies: browserslist@4.7.0, image-webpack-loader@6.0.0 
+* Updated dependencies: browserslist@4.7.0, image-webpack-loader@6.0.0
 
 ## v3.0.0-beta.156 (2019-09-03)
 
 #### :rocket: New Feature
 
-* Added `optionKey` prop to `bSlider` 
-* Added `optionsIterator` prop to `bSlider` 
+* Added `optionKey` prop to `bSlider`
+* Added `optionsIterator` prop to `bSlider`
 * Provided an option index to a prop function `bSlider`
-* Added support for non defined values with `asyncRender.iterate` 
+* Added support for non defined values with `asyncRender.iterate`
 * Marked `asyncRender` as public `iBlock`
 * Added `isInitializedOnce` parameter `iBlock`
 
@@ -915,7 +996,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :rocket: New Feature
 
-* Added `styles` prop to `iBlock` 
+* Added `styles` prop to `iBlock`
 
 #### :bug: Bug Fix
 
@@ -979,7 +1060,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 * Added support for `.watch` with `@system` fields
 * Fixed `Field` API with links like `$root.something`, `$parent.something`, etc.
-  
+
 #### :house: Internal
 
 * Renamed `core/component/create/helpers/getRealFieldInfo` -> `getFieldInfo` and improved API
@@ -992,7 +1073,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
   * Added support for async data
   * Response can be a function
   * Response can be a promise
-  
+
 #### :house: Internal
 
 * Added `CHANGELOG.md`

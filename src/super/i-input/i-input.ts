@@ -138,7 +138,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	/**
 	 * If true, then will be generated a markup for default messages
 	 */
-	@prop({type: String, required: false})
+	@prop({type: Boolean, required: false})
 	readonly messageHelpers?: boolean;
 
 	/**
@@ -573,8 +573,8 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 		for (const el of this.validators) {
 			const
 				isArray = Object.isArray(el),
-				isObject = !isArray && Object.isPlainObject(el),
-				key = <string>(isObject ? Object.keys(el)[0] : isArray ? el[0] : el),
+				isPlainObject = !isArray && Object.isPlainObject(el),
+				key = <string>(isPlainObject ? Object.keys(el)[0] : isArray ? el[0] : el),
 				validator = this.validatorsMap[key];
 
 			if (!validator) {
@@ -584,7 +584,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 			const validation = validator.call(
 				this,
 				// tslint:disable-next-line:prefer-object-spread
-				Object.assign(isObject ? el[key] : isArray && el[1] || {}, params)
+				Object.assign(isPlainObject ? el[key] : isArray && el[1] || {}, params)
 			);
 
 			if (Object.isPromise(validation)) {

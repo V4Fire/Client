@@ -34,6 +34,10 @@ const aliases = {
 	})
 };
 
+if (pzlr.designSystem) {
+	aliases.ds = pzlr.designSystem;
+}
+
 if (pzlr.assets && pzlr.assets.sprite) {
 	aliases.sprite = src.assets(pzlr.assets.sprite);
 }

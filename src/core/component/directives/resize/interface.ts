@@ -28,12 +28,11 @@ export interface ObserverOptions {
 	watchHeight?: boolean;
 
 	/**
-	 * Callback that will be called if the element size has been changed
-	 *
-	 * @param observable
-	 * @param oldSize
-	 * @param newSize
+	 * If true, then the callback is invoked immediately after initializing of the directive
 	 */
+	immediate?: boolean;
+
+	/** @see ObserverCb */
 	callback: ObserverCb;
 }
 
@@ -49,4 +48,11 @@ export interface Size {
 	height: number;
 }
 
-export type ObserverCb = (observable: Observable, oldSize: Size, newSize: Size) => unknown;
+/**
+ * Callback that is invoked if an element size has been changed
+ *
+ * @param observable
+ * @param newSize
+ * @param [oldSize]
+ */
+export type ObserverCb = (observable: Observable, newSize: Size, oldSize?: Size) => unknown;

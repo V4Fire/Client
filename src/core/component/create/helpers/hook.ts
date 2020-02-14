@@ -27,7 +27,8 @@ export function runHook(
 	...args: unknown[]
 ): Promise<void> {
 	// @ts-ignore (access)
-	ctx.hook = hook;
+	// tslint:disable-next-line:no-string-literal
+	ctx['hook'] = hook;
 
 	// @ts-ignore (access)
 	if (Object.isFunction(ctx.log)) {

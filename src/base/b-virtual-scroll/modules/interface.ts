@@ -6,92 +6,120 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import Range from 'core/range';
-import { axis } from 'base/b-virtual-scroll/b-virtual-scroll';
+import iBlock from 'super/i-block/i-block';
+import bVirtualScroll, { Unsafe as SuperUnsafe } from 'base/b-virtual-scroll/b-virtual-scroll';
 
-export type OptionProps = (el: OptionEl, i: number) => Dictionary;
-export type OptionKey = (el: unknown, i: number) => (string | number);
-export type Axis = keyof typeof axis;
+import ScrollRender from 'base/b-virtual-scroll/modules/scroll-render';
 
-export type RequestQuery<T extends unknown = unknown> = (params: RequestMoreParams<T>) => Dictionary<Dictionary>;
-export type RequestFn<T extends unknown = unknown> = (params: RequestMoreParams<T>) => boolean;
+export interface RequestQueryFn<T extends unknown = unknown> {
+	(params: RequestMoreParams<T>): Dictionary<Dictionary>;
+}
+export interface RequestFn<T extends unknown = unknown> {
+	(params: RequestMoreParams<T>): boolean;
+}
 
-export type RenderList = [RenderItem, number][];
-export type RequestParams = CanUndef<Record<string, Dictionary>>;
+export interface GetData<T extends unknown = unknown> {
+	(ctx: bVirtualScroll, query: CanUndef<Dictionary>): Promise<T>;
+}
 
 export interface OptionEl<T extends unknown = unknown> {
+	/**
+	 * Current render data
+	 */
 	current: T;
+
+	/**
+	 * Previous render data
+	 */
 	prev: CanUndef<T>;
+
+	/**
+	 * Next render data
+	 */
 	next: CanUndef<T>;
 }
 
 export interface RequestMoreParams<T extends unknown = unknown> {
-	currentSlice: RenderItem<T>[];
+	/**
+	 * Number of the last loaded page
+	 */
 	currentPage: number;
-	currentRange: Range<number>;
 
+	/**
+	 * Number of a page to upload
+	 */
 	nextPage: number;
-	itemsToReachBottom: number;
+
+	/**
+	 * Number of items to show till the page bottom is reached
+	 */
+	itemsTillBottom: number;
+
+	/**
+	 * Items to render
+	 */
 	items: RenderItem<T>[];
 
+	/**
+	 * True if the last requested data response was empty
+	 */
 	isLastEmpty: boolean;
-	lastLoaded: Array<T>;
+
+	/**
+	 * Last loaded data chunk
+	 */
+	lastLoadedData: Array<T>;
 }
 
 export interface RemoteData {
+	/**
+	 * Data to render components
+	 */
 	data: unknown[];
+
+	/**
+	 * Total number of elements
+	 */
 	total?: number;
 }
 
-export interface RecycleComponent<T extends unknown = unknown> {
-	node: HTMLElement;
-	id: string;
-	data: T;
-}
-
 export interface RenderItem<T extends unknown = unknown> {
+	/**
+	 * Component data
+	 */
 	data: T;
+
+	/**
+	 * Component DOM node
+	 */
 	node: CanUndef<HTMLElement>;
+
+	/**
+	 * Component destructor
+	 */
 	destructor: CanUndef<Function>;
-	width: number;
-	height: number;
-	top: number;
-}
 
-export interface RenderedNode {
-	width: number;
-	height: number;
-	node: HTMLElement;
-}
-
-export interface AnchoredItem {
+	/**
+	 * Component position in a DOM tree
+	 */
 	index: number;
-	offset: number;
 }
 
-export interface ElementPosition {
-	x: number;
-	y: number;
+export interface Unsafe<T extends iBlock = bVirtualScroll> extends SuperUnsafe<T> {
+	scrollRender: bVirtualScroll['scrollRender'];
+	scrollRequest: bVirtualScroll['scrollRequest'];
+	componentRender: bVirtualScroll['componentRender'];
+	getOptionKey: bVirtualScroll['getOptionKey'];
+	getDefaultRequestParams: bVirtualScroll['getDefaultRequestParams'];
+	convertDataToDB: bVirtualScroll['convertDataToDB'];
+	dp: bVirtualScroll['dp'];
 }
 
-export interface Size {
-	width: number;
-	height: number;
+export interface UnsafeScrollRender {
+	onRequestsDone: ScrollRender['onRequestsDone'];
+	asyncGroup: ScrollRender['asyncGroup'];
 }
 
-export enum ScrollRenderStatus {
-	notInitialized,
-	waitRender,
-	render
-}
+export interface UnsafeScrollRequest {
 
-export interface RenderedItems {
-	positions: Dictionary<[HTMLElement, number]>;
-	nodes: HTMLElement[];
-	items: [RenderItem, number][];
-}
-
-export interface ReInitParams {
-	hard?: boolean;
-	waitReady?: boolean;
 }

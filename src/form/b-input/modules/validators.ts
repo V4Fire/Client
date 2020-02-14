@@ -254,7 +254,7 @@ export default <ValidatorsDecl<bInput, unknown>>{
 		showMsg = true
 	}: PatternValidatorParams): Promise<ValidatorResult> {
 		const
-			value = await this.formValue || '';
+			value = (await this.formValue) || '';
 
 		let
 			rgxp;
@@ -320,7 +320,7 @@ export default <ValidatorsDecl<bInput, unknown>>{
 		showMsg = true
 	}: PasswordValidatorParams): Promise<ValidatorResult> {
 		const
-			value = await this.formValue || '';
+			value = (await this.formValue) || '';
 
 		const error = (
 			type: PasswordValidatorResult['name'] = 'INVALID_VALUE',

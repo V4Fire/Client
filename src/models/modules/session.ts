@@ -58,7 +58,7 @@ export default class Session extends Provider {
 		if (Object.isString(session.auth)) {
 			return {
 				[this.authHeader]: this.authPrfx + session.auth,
-				[this.csrfHeader]: session.params?.csrf
+				[this.csrfHeader]: session?.params?.csrf
 			};
 		}
 

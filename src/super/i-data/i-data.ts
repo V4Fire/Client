@@ -99,7 +99,7 @@ export default abstract class iData extends iBlock implements iProgress {
 	 * Initial parameters for a data provider instance
 	 */
 	@prop({type: Object, required: false})
-	readonly dataProviderParams?: ProviderOptions;
+	readonly dataProviderOptions?: ProviderOptions;
 
 	/**
 	 * Initial request parameters
@@ -623,7 +623,7 @@ export default abstract class iData extends iBlock implements iProgress {
 	/**
 	 * Synchronization for dataProvider properties
 	 */
-	@watch(['dataProvider', 'dataProviderParams'])
+	@watch(['dataProvider', 'dataProviderOptions'])
 	protected syncDataProviderWatcher(): void {
 		const
 			provider = this.dataProvider;
@@ -651,7 +651,7 @@ export default abstract class iData extends iBlock implements iProgress {
 
 			this.dp = new ProviderConstructor({
 				extraProviders: this.extraProviders,
-				...this.dataProviderParams
+				...this.dataProviderOptions
 			});
 
 			this.initDataListeners();

@@ -118,7 +118,7 @@ export default class Resize {
 				newSize = getSize(contentRect);
 
 			if (observable.height === undefined) {
-				Object.assign(observable, newSize);
+				this.setInitialSize(observable, newSize);
 				return;
 			}
 
@@ -126,6 +126,20 @@ export default class Resize {
 		});
 
 		observable.observer.observe(observable.node);
+	}
+
+	/**
+	 * Sets an initial size of the specified observable
+	 *
+	 * @param observable
+	 * @param size
+	 */
+	protected setInitialSize(observable: Observable, size: Size): void {
+		Object.assign(observable, size);
+
+		if (observable.immediate) {
+			observable.callback(observable, size);
+		}
 	}
 
 	/**
@@ -143,7 +157,7 @@ export default class Resize {
 					newSize = this.getElSize(observable.node);
 
 				if (observable.height === undefined) {
-					Object.assign(observable, newSize);
+					this.setInitialSize(observable, newSize);
 					continue;
 				}
 
@@ -228,7 +242,7 @@ export default class Resize {
 		};
 
 		if (this.shouldCallCallback(observable, newSize)) {
-			observable.callback(observable, oldSize, newSize);
+			observable.callback(observable, newSize, oldSize);
 		}
 
 		Object.assign(observable, newSize);

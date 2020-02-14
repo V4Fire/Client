@@ -234,7 +234,7 @@ export default abstract class Provider {
 	 * }
 	 * ```
 	 */
-	baseGetURL: string = '';
+	baseGetURL?: string;
 
 	/**
 	 * Base part of URL for a request for the "peek" method
@@ -248,7 +248,7 @@ export default abstract class Provider {
 	 * }
 	 * ```
 	 */
-	basePeekURL: string = '';
+	basePeekURL?: string;
 
 	/**
 	 * Base part of URL for a request for the "add" method
@@ -262,7 +262,7 @@ export default abstract class Provider {
 	 * }
 	 * ```
 	 */
-	baseAddURL: string = '';
+	baseAddURL?: string;
 
 	/**
 	 * Base part of URL for a request for the "upd" method
@@ -276,7 +276,7 @@ export default abstract class Provider {
 	 * }
 	 * ```
 	 */
-	baseUpdURL: string = '';
+	baseUpdURL?: string;
 
 	/**
 	 * Base part of URL for a request for the "del" method
@@ -290,7 +290,7 @@ export default abstract class Provider {
 	 * }
 	 * ```
 	 */
-	baseDelURL: string = '';
+	baseDelURL?: string;
 
 	/**
 	 * List of additional data providers for the "get" method.

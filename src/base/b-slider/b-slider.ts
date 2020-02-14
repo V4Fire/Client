@@ -9,6 +9,8 @@
 import symbolGenerator from 'core/symbol';
 
 import iObserveDOM from 'traits/i-observe-dom/i-observe-dom';
+import iItems from 'traits/i-items/i-items';
+
 import iData, { component, prop, field, system, hook, watch, wait, p } from 'super/i-data/i-data';
 
 export * from 'super/i-data/i-data';
@@ -23,13 +25,6 @@ export interface SlideRect extends ClientRect {
  * 1  - Next
  */
 export type SlideDirection = -1 | 0 | 1;
-export interface OptionPropParams {
-	key?: string;
-	ctx: bSlider;
-}
-
-export type OptionProps = ((el: unknown, i: number, params: OptionPropParams) => Dictionary) | Dictionary;
-export type OptionsIterator<T = bSlider> = (options: unknown[], ctx: T) => unknown[];
 
 export const
 	$$ = symbolGenerator();
@@ -50,7 +45,7 @@ export type AlignType = keyof typeof alignTypes;
 export type Mode = keyof typeof sliderModes;
 
 @component()
-export default class bSlider extends iData implements iObserveDOM {
+export default class bSlider extends iData implements iObserveDOM, iItems {
 	/**
 	 * Slider mode
 	 *   *) scroll - scroll implementation
@@ -86,74 +81,62 @@ export default class bSlider extends iData implements iObserveDOM {
 	/**
 	 * How much does the shift along the X axis correspond to a finger movement
 	 */
-	@prop({type: Number, validator: (v: number) => v.isPositiveBetweenZeroAndOne()})
+	@prop({type: Number, validator: Number.isPositiveBetweenZeroAndOne})
 	readonly deltaX: number = 0.9;
 
 	/**
 	 * The minimum required percentage to scroll the slider to an another slide
 	 */
-	@prop({type: Number, validator: (v: number) => v.isPositiveBetweenZeroAndOne()})
+	@prop({type: Number, validator: Number.isPositiveBetweenZeroAndOne})
 	readonly threshold: number = 0.3;
 
 	/**
 	 * The minimum required percentage for the scroll slider to an another slide in fast motion on the slider
 	 */
-	@prop({type: Number, validator: (v: number) => v.isPositiveBetweenZeroAndOne()})
+	@prop({type: Number, validator: Number.isPositiveBetweenZeroAndOne})
 	readonly fastSwipeThreshold: number = 0.05;
 
 	/**
 	 * Time (in milliseconds) after which we can assume that there was a quick swipe
 	 */
-	@prop({type: Number, validator: (v: number) => v.isNatural()})
+	@prop({type: Number, validator: Number.isNatural})
 	readonly fastSwipeDelay: number = (0.3).seconds();
 
 	/**
 	 * The minimum displacement threshold along the X axis at which the slider will be considered to be used (in px)
 	 */
-	@prop({type: Number, validator: (v: number) => v.isNatural()})
+	@prop({type: Number, validator: Number.isNatural})
 	readonly swipeToleranceX: number = 10;
 
 	/**
 	 * The minimum Y offset threshold at which the slider will be considered to be used (in px)
 	 */
-	@prop({type: Number, validator: (v: number) => v.isNatural()})
+	@prop({type: Number, validator: Number.isNatural})
 	readonly swipeToleranceY: number = 50;
 
-	/**
-	 * Initial component options
-	 */
+	/** @see [[iItems.prototype.itemsProp]] */
 	@prop(Array)
-	readonly optionsProp?: unknown[] = [];
+	readonly optionsProp?: iItems['optionsProp'] = [];
 
-	/**
-	 * Factory for an options iterator
-	 */
+	/** @see [[iItems.prototype.itemsIterator]] */
 	@prop({type: Function, required: false})
-	optionsIterator?: OptionsIterator;
+	optionsIterator?: iItems['optionsIterator'];
 
-	/**
-	 * Component options
-	 */
+	/** @see [[iItems.prototype.items]] */
 	@field((o) => o.sync.link())
 	options!: unknown[];
 
-	/**
-	 * Option component
-	 */
+	/** @see [[iItems.prototype.item]] */
 	@prop({type: String, required: false})
-	readonly option?: string;
+	readonly option?: iItems['option'];
 
-	/**
-	 * Option unique key (for v-for)
-	 */
+	/** @see [[iItems.prototype.itemKey]] */
 	@prop({type: [String, Function], required: false})
-	readonly optionKey?: string | ((el: unknown, i: number) => string);
+	readonly optionKey?: iItems['optionKey'];
 
-	/**
-	 * Option component props
-	 */
-	@prop({type: [Object, Function]})
-	readonly optionProps: OptionProps = {};
+	/** @see [[iItems.prototype.itemProps]] */
+	@prop({type: Function, default: () => ({})})
+	readonly optionProps!: iItems['optionProps'];
 
 	/**
 	 * The number of slides in the slider
@@ -384,18 +367,10 @@ export default class bSlider extends iData implements iObserveDOM {
 		iObserveDOM.onDOMChange(this);
 	}
 
-	/**
-	 * Generates or returns an option key for v-for
-	 *
-	 * @param el
-	 * @param i
-	 */
+	/** @see [[iItems.getItemKey]] */
 	protected getOptionKey(el: unknown, i: number): CanUndef<string> {
-		return Object.isFunction(this.optionKey) ?
-			this.optionKey(el, i) :
-			this.optionKey;
+		return iItems.getItemKey(this, el, i);
 	}
-
 	/**
 	 * Synchronizes the slider state
 	 */

@@ -101,11 +101,7 @@ export default class ImageLoader {
 	 * @param imageSrc
 	 */
 	setBackgroundImage(el: HTMLElement, imageSrc: string): void {
-		const
-			url = `url('${imageSrc}')`,
-			{backgroundImage} = el.style;
-
-		el.style.backgroundImage = backgroundImage ? `${backgroundImage}, ${url}` : `${url}`;
+		el.style.backgroundImage = `url('${imageSrc}')`;
 	}
 
 	/**

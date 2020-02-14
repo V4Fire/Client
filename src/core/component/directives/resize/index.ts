@@ -11,7 +11,7 @@ import Resize from 'core/component/directives/resize/resize';
 import { ComponentDriver } from 'core/component/engines';
 import { DirectiveOptions, ObserverOptions } from 'core/component/directives/resize/interface';
 
-let ResizeInstance: Resize;
+const ResizeInstance = new Resize();
 
 export { ResizeInstance as Resize };
 
@@ -24,16 +24,12 @@ ComponentDriver.directive('resize', {
 			return;
 		}
 
-		if (!ResizeInstance) {
-			ResizeInstance = new Resize();
-		}
-
 		ResizeInstance.observe(el, p);
 	},
 
 	update(el: HTMLElement, opts: DirectiveOptions): void {
 		const
-			oldParams = getOpts(opts),
+			oldParams = getOpts({...opts, value: opts.oldValue}),
 			newParams = getOpts(opts);
 
 		if (Object.fastCompare(oldParams, newParams)) {
@@ -54,7 +50,9 @@ ComponentDriver.directive('resize', {
 
 /**
  * Returns a directive options
+ *
  * @param options
+ * @private
  */
 function getOpts({value, modifiers}: DirectiveOptions): CanUndef<ObserverOptions> {
 	if (!value) {
