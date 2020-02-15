@@ -8,5 +8,8 @@
 
 export * from 'core/component/interface/component';
 export * from 'core/component/create/meta/interface';
+export * from 'core/component/reflection/interface';
+export * from 'core/component/interface/mod';
 export * from 'core/component/interface/watch';
-export * from 'core/component/interface/other';
+export * from 'core/component/interface/fields';
+export * from 'core/component/interface/life-cycle';

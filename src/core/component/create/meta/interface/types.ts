@@ -9,7 +9,7 @@
 import { ComponentInterface } from 'core/component/interface/component';
 import { ComponentDriver, ComputedOptions, DirectiveOptions } from 'core/component/engines';
 import { FieldWatcher, MethodWatcher } from 'core/component/interface/watch';
-import { PropOptions, Hook, InitFieldFn, MergeFieldFn, UniqueFieldFn } from 'core/component/interface/other';
+import { PropOptions, Hook, InitFieldFn, MergeFieldFn, UniqueFieldFn } from 'core/component/interface';
 
 export interface ComponentModel {
 	prop?: string;

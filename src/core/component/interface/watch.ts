@@ -7,7 +7,19 @@
  */
 
 import { ComponentInterface } from 'core/component';
-import { WatchOptions } from 'core/component/engines';
+
+export type WatchExpr<CTX extends ComponentInterface = ComponentInterface> =
+	string |
+	((this: CTX) => string);
+
+export interface RawWatchHandler<CTX extends ComponentInterface = ComponentInterface, V = unknown> {
+	(this: this, n: V, o?: V): any;
+}
+
+export interface WatchOptions {
+	deep?: boolean;
+	immediate?: boolean;
+}
 
 export interface WatchHandler<CTX extends ComponentInterface = ComponentInterface, A = unknown, B = A> {
 	(a: A, b: B): unknown;

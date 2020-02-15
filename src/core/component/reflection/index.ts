@@ -16,14 +16,17 @@ import { dsComponentsMods } from 'core/component/reflection/const';
 import { isAbstractComponent, isSmartComponent } from 'core/component/reflection/types';
 
 import { ComponentParams, ComponentMeta, ModsDecl } from 'core/component/interface';
-import { ComponentInfo } from 'core/component/reflection/interface';
+import { ComponentConstructorInfo } from 'core/component/reflection/interface';
 
 export * from 'core/component/reflection/types';
 export * from 'core/component/reflection/interface';
 
 /**
- * Returns a component name by the specified constructor
+ * Returns a component name by the specified constructor.
+ * The name is represented in a dash style.
+ *
  * @param constructor
+ *
  */
 export function getComponentName(constructor: Function): string {
 	return (constructor.name || '').dasherize();
@@ -35,7 +38,7 @@ export function getComponentName(constructor: Function): string {
  * @param constructor
  * @param [declParams] - component declaration parameters
  */
-export function getInfoFromConstructor(constructor: Function, declParams?: ComponentParams): ComponentInfo {
+export function getInfoFromConstructor(constructor: Function, declParams?: ComponentParams): ComponentConstructorInfo {
 	const
 		name = declParams?.name || getComponentName(constructor),
 		parent = Object.getPrototypeOf(constructor),
@@ -89,7 +92,7 @@ export function getInfoFromConstructor(constructor: Function, declParams?: Compo
  * Returns a map of component modifiers from the specified component
  * @param component - information object of the component
  */
-export function getComponentMods(component: ComponentInfo): ModsDecl {
+export function getComponentMods(component: ComponentConstructorInfo): ModsDecl {
 	const
 		{constructor, componentName} = component;
 

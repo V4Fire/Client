@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { ComponentInfo } from 'core/component/reflection';
+import { ComponentConstructorInfo } from 'core/component/reflection';
 import { componentInitializers, componentParams, components } from 'core/component/const';
 import { ComponentMeta } from 'core/component/interface';
 
@@ -18,7 +18,7 @@ import { ComponentMeta } from 'core/component/interface';
  *
  * @param component - information object of the component
  */
-export function registerParentComponents(component: ComponentInfo): boolean {
+export function registerParentComponents(component: ComponentConstructorInfo): boolean {
 	const
 		{name} = component;
 

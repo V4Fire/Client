@@ -6,9 +6,9 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { ComponentMeta, ComponentInfo } from 'core/component/interface';
+import { ComponentMeta, ComponentConstructorInfo } from 'core/component/interface';
 
-export function getBlankMetaForComponent(component: ComponentInfo): ComponentMeta {
+export function getBlankMetaForComponent(component: ComponentConstructorInfo): ComponentMeta {
 	return {
 		name: component.name,
 		componentName: component.componentName,
