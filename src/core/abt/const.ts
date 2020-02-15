@@ -9,7 +9,7 @@
 import { EventEmitter2 as EventEmitter } from 'eventemitter2';
 
 /**
- * Event emitter for broadcasting ABT events
+ * Event emitter to broadcast ABT events
  */
 export const
 	emitter = new EventEmitter({maxListeners: 1e3, newListener: false});

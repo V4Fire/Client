@@ -552,7 +552,7 @@ export default abstract class Provider extends ParamsProvider implements iProvid
 	 * This method takes a name of the model method that have associated options.
 	 *
 	 * @param method - model method
-	 * @param obj - object for mixing
+	 * @param obj - object to mix
 	 */
 	protected mixWithOpts<A = unknown, B = unknown>(
 		method: ModelMethod,

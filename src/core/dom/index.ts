@@ -17,7 +17,7 @@ import { deprecate } from 'core/functools';
  * Wraps the specified function as an event handler with delegation.
  * This function can be used as a decorator or like a simple function.
  *
- * @param selector - selector for delegating
+ * @param selector - selector to delegate
  * @param [handler]
  *
  * @example

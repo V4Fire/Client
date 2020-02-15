@@ -17,7 +17,7 @@ export * from 'core/object/interface';
 /**
  * Finds an element from an object by the specified parameters
  *
- * @param obj - object for searching
+ * @param obj - object to search
  * @param params - search parameters
  *
  * @example

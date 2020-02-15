@@ -25,7 +25,7 @@ import { ResetType } from 'core/component/event/interface';
 export * from 'core/component/event/interface';
 
 /**
- * Sends a message for resetting to all components of an application
+ * Sends a message to reset all components of an application
  * @param [type] - reset type
  */
 export function reset(type?: ResetType): void {

@@ -17,7 +17,7 @@ export const
 	providers = Object.createDict();
 
 /**
- * Global event emitter for broadcasting provider events
+ * Global event emitter to broadcast provider events
  */
 export const emitter = new EventEmitter({
 	maxListeners: 1e3,

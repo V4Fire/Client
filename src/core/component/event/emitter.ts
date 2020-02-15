@@ -10,7 +10,7 @@ import log from 'core/log';
 import { EventEmitter2 as EventEmitter } from 'eventemitter2';
 
 /**
- * Event emitter for broadcasting external events to components
+ * Event emitter to broadcast external events to components
  */
 const emitter = new EventEmitter({
 	maxListeners: 1e6,

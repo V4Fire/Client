@@ -18,7 +18,7 @@ export interface SelectParams {
 	from?: string | number;
 
 	/**
-	 * Object for matching or an array of objects.
+	 * Object to match or an array of objects.
 	 * The array is interpreted as "or".
 	 *
 	 * @example

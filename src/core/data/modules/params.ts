@@ -55,7 +55,7 @@ export default abstract class Provider {
 
 	/**
 	 * Sequence of middlewares that is provided to the request function.
-	 * An object form is easily for extending, bur you can choose any different form.
+	 * An object form is easily to extend, bur you can choose any different form.
 	 *
 	 * @see [[Middlewares]]
 	 * @example
@@ -122,7 +122,7 @@ export default abstract class Provider {
 	 * for example [[attachMock]] from `'core/data/middlewares'`.
 	 *
 	 * The key of a map element is represents a type of a request method: 'GET', 'POST', etc.
-	 * The value of a map element is represents a list of parameters for matching.
+	 * The value of a map element is represents a list of parameters to match.
 	 *
 	 * @see [[Middlewares]]
 	 * @example
@@ -181,7 +181,7 @@ export default abstract class Provider {
 	/**
 	 * Finds an element from an object by the specified parameters
 	 *
-	 * @param obj - object for searching
+	 * @param obj - object to search
 	 * @param params - search parameters
 	 *
 	 * @example
@@ -195,7 +195,7 @@ export default abstract class Provider {
 	}
 
 	/**
-	 * Global event emitter for broadcasting provider events
+	 * Global event emitter to broadcast provider events
 	 */
 	readonly globalEmitter: EventEmitter = emitter;
 

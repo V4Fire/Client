@@ -425,7 +425,7 @@ export default class User extends Provider {
 Basically, the result of a middleware function is ignoring, with the exceptions of promises and functions.
 If some middleware returns a promise, it will be awaited.
 And if at least one of middlewares returns a function, then the result of invoking this function will be returned as the request result.
-It can be helpful for organizing mocks of data and other similar cases when you don't want to execute a real request.
+It can be helpful to organize mocks of data and other similar cases when you don't want to execute a real request.
 
 ```js
 import Provider, { provider, Response } from 'core/provider';
@@ -515,7 +515,7 @@ If some encoder returns a promise, it will be awaited.
 
 #### Custom request function
 
-To create a request all providers use the `core/request` module. And if you need to provide some extra parameters of request, such as "contentType", you can specify a factory for making these requests using the special overload of the request function.
+To create a request all providers use the `core/request` module. And if you need to provide some extra parameters of request, such as "contentType", you can specify a factory to make these requests using the special overload of the request function.
 
 ```js
 import request from 'core/request';

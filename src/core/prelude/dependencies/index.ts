@@ -32,7 +32,7 @@ export default globalThis[MODULE_DEPENDENCIES] = Object.assign(globalThis[MODULE
 	cache: Object.createDict(),
 
 	/**
-	 * Event emitter for broadcasting module events
+	 * Event emitter to broadcast module events
 	 */
 	emitter: new EventEmitter({maxListeners: 100, newListener: false}),
 

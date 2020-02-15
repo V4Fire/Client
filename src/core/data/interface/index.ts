@@ -31,7 +31,7 @@ export default interface Provider {
 	readonly alias?: string;
 
 	/**
-	 * Event emitter for broadcasting provider events
+	 * Event emitter to broadcast provider events
 	 */
 	readonly emitter: EventEmitterLike;
 
