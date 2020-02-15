@@ -12,15 +12,15 @@ import { asyncLabel, defaultWrapper } from 'core/component/const';
 import {
 
 	runHook,
-	createMeta,
 	isTypeCanBeFunc,
 	initDataObject,
 	bindWatchers,
-	addMethodsToMeta,
 	getNormalParent,
 	patchRefs
 
 } from 'core/component/create/helpers';
+
+import { forkMeta, addMethodsToMeta } from 'core/component/create/meta';
 
 import {
 
@@ -114,7 +114,7 @@ export function getComponent(
 			ctx.$normalParent = getNormalParent(ctx);
 			ctx.instance = instance;
 			ctx.componentName = meta.name;
-			ctx.meta = createMeta(meta);
+			ctx.meta = forkMeta(meta);
 
 			runHook('beforeRuntime', ctx.meta, ctx)
 				.catch(stderr);

@@ -29,15 +29,15 @@ import {
 import {
 
 	runHook,
-	createMeta,
 	initDataObject,
 	initPropsObject,
 	bindWatchers,
 	addEventAPI,
-	addMethodsFromMeta,
 	getNormalParent
 
 } from 'core/component/create/helpers';
+
+import { forkMeta, addMethodsFromMeta } from 'core/component/create/meta';
 
 export interface RenderContext extends BaseRenderContext {
 	$root?: FunctionalCtx;
@@ -98,7 +98,7 @@ export function createFakeCtx<T extends object = FunctionalCtx>(
 ): T {
 	const
 		fakeCtx = Object.create(baseCtx),
-		meta = createMeta(fakeCtx.meta);
+		meta = forkMeta(fakeCtx.meta);
 
 	const
 		{instance} = fakeCtx,

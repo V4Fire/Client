@@ -6,14 +6,19 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import { getComponentMods } from 'core/component/reflection';
 import { ComponentMeta, ComponentConstructorInfo } from 'core/component/interface';
 
+/**
+ * Creates a blank meta object for the specified component and returns it
+ * @param component
+ */
 export function getBlankMetaForComponent(component: ComponentConstructorInfo): ComponentMeta {
 	return {
 		name: component.name,
 		componentName: component.componentName,
 
-		parentMet: component.parentMeta,
+		parentMeta: component.parentMeta,
 		constructor: component.constructor,
 		instance: {},
 		params: component.params,
@@ -21,7 +26,7 @@ export function getBlankMetaForComponent(component: ComponentConstructorInfo): C
 		props: {},
 		fields: {},
 		systemFields: {},
-		mods,
+		mods: getComponentMods(component),
 
 		computed: {},
 		accessors: {},
@@ -48,13 +53,14 @@ export function getBlankMetaForComponent(component: ComponentConstructorInfo): C
 		},
 
 		component: {
-			name: i.name,
+			name: component.name,
 			mods: {},
 			props: {},
 			methods: {},
 			computed: {},
 			staticRenderFns: [],
-			render() {
+			render(): never {
+				throw new ReferenceError(`A render function for the component "${component.componentName}" is not specified`);
 			}
 		}
 	};

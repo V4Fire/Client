@@ -10,18 +10,18 @@ import { defProp } from 'core/const/props';
 import { supports, CreateElement, VNode, VNodeDirective, NormalizedScopedSlot } from 'core/component/engines';
 import { ComponentInterface, ComponentMeta } from 'core/component/interface';
 import { execRenderObject } from 'core/component/create/functional';
-import { components } from 'core/component/const';
+import { components, NULL } from 'core/component/const';
 
 import {
 
-	NULL,
 	initDataObject,
 	initPropsObject,
 	addEventAPI,
-	addMethodsFromMeta,
 	getNormalParent
 
 } from 'core/component/create/helpers';
+
+import { addMethodsFromMeta } from 'core/component/create/meta';
 
 interface ComponentOptions {
 	ref?: string;

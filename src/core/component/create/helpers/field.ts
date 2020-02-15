@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { ComponentInterface, PropOptions, ComponentField, SystemField } from 'core/component/interface';
+import { ComponentInterface, PropOptions, ComponentField, ComponentSystemField } from 'core/component/interface';
 import { defaultWrapper, NULL } from 'core/component/const';
 
 export interface FieldInfo {
@@ -245,7 +245,7 @@ export function initDataObject(
 	for (let keys = Object.keys(fields).sort(), i = 0; i < keys.length; i++) {
 		const
 			key = keys[i],
-			el = <NonNullable<SystemField>>fields[key];
+			el = <NonNullable<ComponentSystemField>>fields[key];
 
 		if (isFlyweight && el.functional === false) {
 			skipped[key] = true;
@@ -327,7 +327,7 @@ export function initDataObject(
 			}
 
 			const
-				el = <NonNullable<SystemField>>fields[key];
+				el = <NonNullable<ComponentSystemField>>fields[key];
 
 			if (!el) {
 				continue;
@@ -422,7 +422,7 @@ export function initDataObject(
 			}
 
 			const
-				el = <NonNullable<SystemField>>fields[key];
+				el = <NonNullable<ComponentSystemField>>fields[key];
 
 			if (!el) {
 				continue;
