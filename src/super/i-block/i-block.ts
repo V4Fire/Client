@@ -96,7 +96,7 @@ import {
 	cloneWatchValue,
 	bindWatchers,
 
-	FieldInfo,
+	PropertyInfo,
 	ComponentMeta,
 	ComponentInterface,
 
@@ -1729,7 +1729,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	@p({replace: false})
 	protected $$watch<T = unknown>(
 		exprOrFn: string | ((this: this) => string),
-		opts: WatchOptionsWithHandler<T> & {fieldInfo?: FieldInfo}
+		opts: WatchOptionsWithHandler<T> & {fieldInfo?: PropertyInfo}
 	): Function {
 		const
 			{handler} = opts;

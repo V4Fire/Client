@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { ComponentParams, ComponentMeta } from 'core/component/interface';
+import { ComponentParams, ComponentMeta, ComponentInterface } from 'core/component/interface';
 
 /**
  * Information about a component that can be taken from a constructor
@@ -57,4 +57,74 @@ export interface ComponentConstructorInfo {
 	 * Link to a parent component meta object
 	 */
 	parentMeta?: ComponentMeta;
+}
+
+export type AccessorType =
+	'computed' |
+	'accessor';
+
+export type PropertyType =
+	'prop' |
+	'field' |
+	'system' |
+	AccessorType;
+
+/**
+ * Information about a component property: prop, field, computed, etc.
+ */
+export interface PropertyInfo {
+	/**
+	 * Property root name
+	 *
+	 * @example
+	 * ```js
+	 * getPropertyInfo('$root.bla.bar', ctx) // name == 'bla'
+	 * ```
+	 */
+	name: string;
+
+	/**
+	 * Path to the property
+	 *
+	 * @example
+	 * ```js
+	 * getPropertyInfo('$root.bla.bar', ctx) // path == 'bla.bar'
+	 * ```
+	 */
+	path: string;
+
+	/**
+	 * Full path to the property
+	 *
+	 * @example
+	 * ```js
+	 * getPropertyInfo('$root.bla.bar', ctx) // fullPath == '$root.bla.bar'
+	 * ```
+	 */
+	fullPath: string;
+
+	/**
+	 * Property type
+	 */
+	type: PropertyType;
+
+	/**
+	 * Name of an accessor that is tied with the property
+	 */
+	accessor?: string;
+
+	/**
+	 * Type of an accessor that is tied with the property
+	 */
+	accessorType?: AccessorType;
+
+	/**
+	 * Link to a context of the property
+	 *
+	 * @example
+	 * ```js
+	 * getPropertyInfo('$root.bla.bar', ctx) // ctx == $root
+	 * ```
+	 */
+	ctx: ComponentInterface;
 }
