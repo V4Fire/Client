@@ -17,7 +17,7 @@ import { InitPropsObjectOptions } from 'core/component/prop/interface';
 export * from 'core/component/prop/interface';
 
 /**
- * Initializes the specified properties to a component context.
+ * Initializes the specified input properties to a component context.
  * The method returns an object with initialized properties.
  *
  * @param props - component input properties
