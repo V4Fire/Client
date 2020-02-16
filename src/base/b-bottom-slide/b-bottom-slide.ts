@@ -278,6 +278,12 @@ export default class bBottomSlide extends iBlock implements iLockPageScroll, iOp
 	@system()
 	protected isTrigger: boolean = false;
 
+	/**
+	 * True if the element is closing or opening at the moment
+	 */
+	@system()
+	protected isTransitionInProgress: boolean = false;
+
 	/** @see offset */
 	@system()
 	protected offsetStore: number = 0;
@@ -789,6 +795,15 @@ export default class bBottomSlide extends iBlock implements iLockPageScroll, iOp
 	}
 
 	/**
+	 * Removes component's element from DOM if its transition is finished
+	 */
+	protected removeDOMElement(): void {
+		if (!this.isTransitionInProgress) {
+			this.$el.remove();
+		}
+	}
+
+	/**
 	 * Handler: on component history cleared
 	 */
 	@p({watch: ':history:clear'})
@@ -806,6 +821,8 @@ export default class bBottomSlide extends iBlock implements iLockPageScroll, iOp
 		const
 			{window: w, view: v} = this.$refs;
 
+		this.isTransitionInProgress = true;
+
 		this.async.once(w, 'transitionend', () => {
 			if (this.isFullyOpened) {
 				this.lock().catch(stderr);
@@ -819,7 +836,13 @@ export default class bBottomSlide extends iBlock implements iLockPageScroll, iOp
 					v.scrollTo(0, 0);
 				}
 			}
-		}, {label: $$.waitAnimationToFinish});
+
+			this.isTransitionInProgress = false;
+
+			if (this.componentStatus === 'destroyed') {
+				this.removeDOMElement();
+			}
+		}, {group: ':zombie', label: $$.waitAnimationToFinish});
 
 		this.stickToStep();
 	}
@@ -926,6 +949,6 @@ export default class bBottomSlide extends iBlock implements iLockPageScroll, iOp
 	/** @override */
 	protected beforeDestroy(): void {
 		super.beforeDestroy();
-		this.$el.remove();
+		this.removeDOMElement();
 	}
 }
