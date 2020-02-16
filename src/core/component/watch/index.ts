@@ -6,35 +6,32 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import Async from 'core/async';
-import { getFieldInfo, ComponentInterface, WatchOptions, WatchObject, FieldInfo } from 'core/component';
+/**
+ * [[include:core/component/watch/README.md]]
+ * @packageDocumentation
+ */
 
-export interface BindWatchersParams<A extends object = ComponentInterface> {
-	async?: Async<A>;
-	watchers?: Dictionary<WatchObject[]>;
-	info?: FieldInfo;
-}
+import { getPropertyInfo } from 'core/component/reflection';
 
-export const
-	customWatcherRgxp = /^([!?]?)([^!?:]*):(.*)/,
-	systemWatchers = new WeakMap<ComponentInterface, Dictionary<{cb: Set<Function>}>>();
+import { beforeHooks } from 'core/component/const';
+import { systemWatchers, customWatcherRgxp } from 'core/component/watch/const';
 
-const beforeHooks = {
-	beforeRuntime: true,
-	beforeCreate: true,
-	beforeDataCreate: true
-};
+import { ComponentInterface, WatchOptions } from 'core/component/interface';
+import { BindWatchersParams } from 'core/component/watch/interface';
+
+export * from 'core/component/watch/const';
+export * from 'core/component/watch/interface';
 
 /**
  * Clones the specified watcher value
  *
  * @param value
- * @param [params]
+ * @param [opts]
  */
-export function cloneWatchValue<T>(value: T, params: WatchOptions = {}): T {
+export function cloneWatchValue<T>(value: T, opts: WatchOptions = {}): T {
 	if (!Object.isFrozen(value)) {
 		if (Object.isArray(value)) {
-			if (params.deep) {
+			if (opts.deep) {
 				return Object.mixin(true, [], value);
 			}
 
@@ -42,7 +39,7 @@ export function cloneWatchValue<T>(value: T, params: WatchOptions = {}): T {
 		}
 
 		if (Object.isSimpleObject(value)) {
-			if (params.deep) {
+			if (opts.deep) {
 				return Object.mixin(true, {}, value);
 			}
 
@@ -54,18 +51,15 @@ export function cloneWatchValue<T>(value: T, params: WatchOptions = {}): T {
 }
 
 /**
- * Binds watchers to the specified component
- * (very critical for loading time)
+ * Initializes watchers from the specified component context
  *
  * @param ctx - component context
- * @param [watchers] - dictionary with watchers
- * @param [async] - async instance
- * @param [info] - field info object (from cache)
+ * @param [params] - additional parameters
  */
-export function bindWatchers(
-	ctx: ComponentInterface,
-	{watchers, async, info}: BindWatchersParams = {}
-): void {
+export function initWatchers(ctx: ComponentInterface, params?: BindWatchersParams): void {
+	const
+		p = params || {};
+
 	const
 		// @ts-ignore (access)
 		{meta, hook, meta: {hooks}} = ctx,
@@ -75,7 +69,7 @@ export function bindWatchers(
 
 		// @ts-ignore (access)
 		selfAsync = ctx.$async,
-		$a = async || selfAsync;
+		$a = p.async || selfAsync;
 
 	const
 		// @ts-ignore (access)
@@ -83,7 +77,7 @@ export function bindWatchers(
 		isDeactivated = hook === 'deactivated',
 		isBeforeCreate = beforeHooks[hook];
 
-	for (let o = watchers || meta.watchers, keys = Object.keys(o), i = 0; i < keys.length; i++) {
+	for (let o = p.watchers || meta.watchers, keys = Object.keys(o), i = 0; i < keys.length; i++) {
 		let
 			key = keys[i];
 
@@ -148,7 +142,7 @@ export function bindWatchers(
 
 						if (Object.isString(rawHandler)) {
 							if (!Object.isFunction(ctx[rawHandler])) {
-								throw new ReferenceError(`The specified method (${rawHandler}) for watching is not defined`);
+								throw new ReferenceError(`The specified method "${rawHandler}" to watch is not defined`);
 							}
 
 							if (group.label) {
@@ -180,7 +174,7 @@ export function bindWatchers(
 
 						if (Object.isString(rawHandler)) {
 							if (!Object.isFunction(ctx[rawHandler])) {
-								throw new ReferenceError(`The specified method (${rawHandler}) for watching is not defined`);
+								throw new ReferenceError(`The specified method "${rawHandler}" to watch is not defined`);
 							}
 
 							if (group.label) {
@@ -226,7 +220,7 @@ export function bindWatchers(
 						}
 
 						const
-							fieldInfo = info || getFieldInfo(key, ctx),
+							fieldInfo = p.info || getPropertyInfo(key, ctx),
 							fieldCtx = fieldInfo.ctx;
 
 						if (fieldInfo.type === 'system') {
@@ -315,7 +309,7 @@ export function bindWatchers(
 					}
 
 					const
-						fieldInfo = info || getFieldInfo(key, ctx),
+						fieldInfo = p.info || getPropertyInfo(key, ctx),
 						fieldCtx = fieldInfo.ctx;
 
 					if (fieldInfo.type === 'system') {

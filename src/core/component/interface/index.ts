@@ -7,7 +7,7 @@
  */
 
 export * from 'core/component/interface/component';
-export * from 'core/component/create/meta/interface';
+export * from 'core/component/meta/interface';
 export * from 'core/component/reflection/interface';
 export * from 'core/component/interface/mod';
 export * from 'core/component/interface/watch';

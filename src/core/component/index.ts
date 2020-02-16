@@ -39,16 +39,9 @@ export {
 
 } from 'core/component/decorators';
 
-export {
-
-	customWatcherRgxp,
-	runHook,
-	getFieldInfo,
-	cloneWatchValue,
-	bindWatchers,
-	FieldInfo
-
-} from 'core/component/create/helpers';
+export * from 'core/component/watch';
+export * from 'core/component/field';
+export * from 'core/component/hook';
 
 export {
 

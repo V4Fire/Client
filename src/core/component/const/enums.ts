@@ -18,3 +18,9 @@ export const mountedHooks = Object.createDict({
 	updated: true,
 	activated: true
 });
+
+export const beforeHooks = Object.createDict({
+	beforeRuntime: true,
+	beforeCreate: true,
+	beforeDataCreate: true
+});

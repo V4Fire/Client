@@ -20,9 +20,9 @@ import {
 	ComponentHooks,
 	ComponentDirectiveOptions
 
-} from 'core/component/create/meta/interface/types';
+} from 'core/component/meta/interface/types';
 
-export * from 'core/component/create/meta/interface/types';
+export * from 'core/component/meta/interface/types';
 
 /**
  * Abstract representation of a component
