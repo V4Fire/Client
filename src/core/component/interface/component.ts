@@ -45,7 +45,7 @@ export interface FunctionalCtx {
 }
 
 /**
- * DOM Element that tied with a component
+ * DOM Element that is tied with a component
  */
 export type ComponentElement<T = unknown> = Element & {
 	component?: T;
@@ -91,7 +91,7 @@ export abstract class ComponentInterface<
 	readonly renderGroup?: string;
 
 	/**
-	 * Link to a DOM element that tied with the component
+	 * Link to a DOM element that is tied with the component
 	 */
 	readonly $el!: ComponentElement<C>;
 
@@ -152,7 +152,7 @@ export abstract class ComponentInterface<
 	protected readonly $$parent?: C;
 
 	/**
-	 * Special symbol that tied with async rendering
+	 * Special symbol that is tied with async rendering
 	 */
 	protected readonly $asyncLabel!: symbol;
 
@@ -223,7 +223,7 @@ export abstract class ComponentInterface<
 	protected readonly $ssrContext!: unknown;
 
 	/**
-	 * Link to a virtual node that tied with the component
+	 * Link to a virtual node that is tied with the component
 	 */
 	protected readonly $vnode!: VNode;
 
@@ -238,7 +238,7 @@ export abstract class ComponentInterface<
 	 * @param ctxOrOpts - logging context or logging options (logLevel, context)
 	 * @param [details] - event details
 	 */
-	protected log?(ctxOrOpts: string | LogMessageOptions, ...details: unknown[]): void;
+	log?(ctxOrOpts: string | LogMessageOptions, ...details: unknown[]): void;
 
 	/**
 	 * Mounts the component to a DOM element

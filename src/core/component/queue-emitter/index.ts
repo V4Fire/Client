@@ -6,26 +6,33 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-export interface Event {
-	event: Set<string>;
-	cb: Function;
-}
+/**
+ * [[include:core/component/queue-emitter/README.md]]
+ * @packageDocumentation
+ */
 
-export default class EventEmitter {
+import { EventListener } from 'core/component/queue-emitter/interface';
+export * from 'core/component/queue-emitter/interface';
+
+/**
+ * Special kind of an event emitter that supports queues of events
+ */
+export default class QueueEmitter {
 	/**
-	 * Listeners queue
+	 * Queue of event listeners that is ready to fire
 	 */
 	protected queue: Function[] = [];
 
 	/**
-	 * Event map
+	 * Map of tied event listeners that isn't ready to fire
 	 */
-	protected events: Dictionary<Event[]> = {};
+	protected listeners: Dictionary<EventListener[]> = Object.createDict();
 
 	/**
-	 * Attaches a callback for the specified set of events
+	 * Attaches a callback for the specified set of events.
+	 * The callback will invoked only when all specified events was emitted.
 	 *
-	 * @param event - set of events
+	 * @param event - set of events (can be undefined)
 	 * @param cb
 	 */
 	on(event: CanUndef<Set<string>>, cb: Function): void {
@@ -33,7 +40,7 @@ export default class EventEmitter {
 			for (let v = event.values(), el = v.next(); !el.done; el = v.next()) {
 				const
 					key = el.value,
-					queue = this.events[key] = this.events[key] || [];
+					queue = this.listeners[key] = this.listeners[key] || [];
 
 				queue.push({event, cb});
 			}
@@ -45,12 +52,15 @@ export default class EventEmitter {
 	}
 
 	/**
-	 * Emits the specified event
+	 * Emits the specified event.
+	 * If at least one of listeners returns a promise,
+	 * the method returns promise that is resolved after all internal promises are resolved.
+	 *
 	 * @param event
 	 */
 	emit(event: string): CanPromise<void> {
 		const
-			queue = this.events[event];
+			queue = this.listeners[event];
 
 		if (!queue) {
 			return;
@@ -61,7 +71,7 @@ export default class EventEmitter {
 
 		for (let i = 0; i < queue.length; i++) {
 			const
-				el = <Event>queue[i];
+				el = <EventListener>queue[i];
 
 			if (el) {
 				const ev = el.event;
@@ -84,7 +94,9 @@ export default class EventEmitter {
 	}
 
 	/**
-	 * Drains the listeners queue
+	 * Drains the queue of listeners that is ready to fire.
+	 * If at least one of listeners returns a promise,
+	 * the method returns promise that is resolved after all internal promises are resolved.
 	 */
 	drain(): CanPromise<void> {
 		const

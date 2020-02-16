@@ -8,17 +8,16 @@
 
 import log from 'core/log';
 import SyncPromise from 'core/promise/sync';
-import HookEmitter from 'core/component/create/helpers/event';
+import QueueEmitter from 'core/component/queue-emitter';
 import { ComponentHook, ComponentInterface, ComponentMeta } from 'core/component/interface';
 
 /**
- * Runs a hook from the specified meta object
- * (very critical for loading time)
+ * Runs a component hook from the specified component meta object
  *
- * @param hook
- * @param meta
+ * @param hook - hook name
+ * @param meta - component meta object
  * @param ctx - component context
- * @param args - event arguments
+ * @param args - hook arguments
  */
 export function runHook(
 	hook: string,
@@ -32,7 +31,6 @@ export function runHook(
 
 	// @ts-ignore (access)
 	if (Object.isFunction(ctx.log)) {
-		// @ts-ignore (access)
 		ctx.log(`hook:${hook}`, ...args);
 
 	} else {
@@ -47,7 +45,7 @@ export function runHook(
 	}
 
 	const
-		event = new HookEmitter(),
+		event = new QueueEmitter(),
 		filteredHooks = <ComponentHook[]>[];
 
 	for (let i = 0; i < hooks.length; i++) {
