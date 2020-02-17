@@ -11,6 +11,7 @@
  * @packageDocumentation
  */
 
+import { EventEmitterLike } from 'core/async';
 import { getPropertyInfo } from 'core/component/reflection';
 
 import { beforeHooks } from 'core/component/const';
@@ -51,7 +52,10 @@ export function cloneWatchValue<T>(value: T, opts: WatchOptions = {}): T {
 }
 
 /**
- * Initializes watchers from the specified component context
+ * Initializes watchers and event listeners from the specified component context.
+ *
+ * Basically, this function takes watchers from a meta property of a component,
+ * but you can provide custom watchers to initialize using the second parameter of the function.
  *
  * @param ctx - component context
  * @param [params] - additional parameters
@@ -64,19 +68,30 @@ export function initWatchers(ctx: ComponentInterface, params?: BindWatchersParam
 		// @ts-ignore (access)
 		{meta, hook, meta: {hooks}} = ctx,
 
+		// Link to a "native" function to watch
 		// @ts-ignore (access)
 		$watch = ctx.$$watch || ctx.$watch,
 
+		// Link to the self component async instance
 		// @ts-ignore (access)
 		selfAsync = ctx.$async,
+
+		// Link to an async instance
 		$a = p.async || selfAsync;
 
 	const
+		// True if the method was invoked with passing custom async instance as a property
 		// @ts-ignore (access)
-		customAsync = $a !== ctx.$async,
+		customAsync = $a !== ctx.$async;
+
+	const
+		// True if the component is deactivated right now
 		isDeactivated = hook === 'deactivated',
+
+		// True if the component isn't created yet
 		isBeforeCreate = beforeHooks[hook];
 
+	// Iterate over all registered watchers and listeners and initialize their
 	for (let o = p.watchers || meta.watchers, keys = Object.keys(o), i = 0; i < keys.length; i++) {
 		let
 			key = keys[i];
@@ -89,74 +104,130 @@ export function initWatchers(ctx: ComponentInterface, params?: BindWatchersParam
 		}
 
 		let
-			root = <any>ctx,
-			onCreated = true,
-			onMounted = false;
+			// Link to a context of the watcher,
+			// by default it is a component that is passed to the function
+			watcherCtx = ctx,
 
-		const
-			customWatcher = customWatcherRgxp.exec(key);
+			// True if this watcher must initialize only when component is created
+			watcherNeedCreated = true,
+
+			// True if this watcher must initialize only when component is mounted
+			watcherNeedMounted = false;
+
+		// Custom watchers looks like ':foo', 'bla:foo', '?bla:foo'
+		// and uses to listen some events instead listen of changing of component fields
+		const customWatcher = customWatcherRgxp.exec(key);
 
 		if (customWatcher) {
 			const m = customWatcher[1];
-			onCreated = !m;
-			onMounted = m === '?';
+			watcherNeedCreated = !m;
+			watcherNeedMounted = m === '?';
 		}
 
 		const exec = () => {
+			// If we have a custom watcher we need to find a link to an event emitter.
+			// For instance:
+			// ':foo' -> watcherCtx == ctx; key = 'foo'
+			// 'document:foo' -> watcherCtx == document; key = 'foo'
 			if (customWatcher) {
 				const l = customWatcher[2];
-				root = l ? Object.get(ctx, l) || Object.get(globalThis, l) || ctx : ctx;
+				watcherCtx = l ? Object.get(ctx, l) || Object.get(globalThis, l) || ctx : ctx;
 				key = l ? customWatcher[3].toString() : customWatcher[3].dasherize();
 			}
 
+			// Iterates over all registered handlers for this watcher
 			for (let i = 0; i < watchers.length; i++) {
 				const
-					watchObj = watchers[i],
-					rawHandler = watchObj.handler;
+					watchInfo = watchers[i],
+					rawHandler = watchInfo.handler;
 
-				const group = {
-					label: watchObj.label,
-					group: watchObj.group,
-					join: watchObj.join
+				const asyncParams = {
+					label: watchInfo.label,
+					group: watchInfo.group,
+					join: watchInfo.join
 				};
 
 				if (!customAsync) {
-					const defLabel = `[[WATCHER:${key}:${
-						watchObj.method != null ? watchObj.method : Object.isString(watchObj.handler) ?
-							watchObj.handler : (<Function>watchObj.handler).name
-					}]]`;
+					if (!asyncParams.label) {
+						let
+							defLabel;
 
-					group.label = group.label || defLabel;
-					group.group = group.group || 'watchers';
+						if (watchInfo.method != null) {
+							defLabel = `[[WATCHER:${key}:${watchInfo.method}]]`;
+
+						} else if (Object.isString(watchInfo.handler)) {
+							defLabel = `[[WATCHER:${key}:${watchInfo.handler}]]`;
+
+						} else {
+							defLabel = `[[WATCHER:${key}:${(<Function>watchInfo.handler).name}]]`;
+						}
+
+						asyncParams.label = defLabel;
+					}
+
+					asyncParams.group = asyncParams.group || 'watchers';
 				}
 
-				const
-					eventParams = {...group, options: watchObj.options, single: watchObj.single};
+				const eventParams = {
+					...asyncParams,
+					options: watchInfo.options,
+					single: watchInfo.single
+				};
 
 				let
 					handler;
 
+				// Right now we need to create a wrapper for our "raw" handler,
+				// because there are some conditions for our watcher:
+				// 1. it can provide or not provide arguments from an event that it listen;
+				// 2. the handler can be specified as a function or as a method name from a component.
+
+				// Also, we have two different cases:
+				// 1. we listen to custom event, OR we watch for some component property,
+				// but we don't need to analyze the old value of the property;
+				// 2. we watch for some component property and we need to analyze the old value of the property.
+
+				// These cases is based on one problem: if we watch for some property that isn't primitive,
+				// like a hash table or a list, and we add a new item to this structure but don't change the original object,
+				// the new and old values will be equal.
+
+				// class bButton {
+				//   @field()
+				//   foo = {baz: 0};
+				//
+				//   @watch('foo')
+				//   onFooChange(newVal, oldVal) {
+				//     console.log(newVal === oldVal);
+				//   }
+				//
+				//   created() {
+				//     this.foo.baz++;
+				//   }
+				// }
+
+				// To fix this problem we can check a handler if it requires the second argument by using a length property,
+				// and if the argument is really needed, we can clone the old value and keep it within a closure.
+
+				// The situation when we need to keep the old value (a property watcher with handler length more than one),
+				// or we don't care about it (an event listener).
 				if (customWatcher || !Object.isFunction(rawHandler) || rawHandler.length > 1) {
 					handler = (a, b, ...args) => {
-						args = watchObj.provideArgs === false ? [] : [a, b].concat(args);
+						args = watchInfo.provideArgs === false ? [] : [a, b].concat(args);
 
 						if (Object.isString(rawHandler)) {
 							if (!Object.isFunction(ctx[rawHandler])) {
 								throw new ReferenceError(`The specified method "${rawHandler}" to watch is not defined`);
 							}
 
-							if (group.label) {
-								$a.setImmediate(
-									() => ctx[rawHandler](...args),
-									group
-								);
+							if (asyncParams.label) {
+								$a.setImmediate(() => ctx[rawHandler](...args), asyncParams);
 
 							} else {
 								ctx[rawHandler](...args);
 							}
 
 						} else {
-							if (watchObj.method) {
+							if (watchInfo.method) {
 								rawHandler.call(ctx, ...args);
 
 							} else {
@@ -165,30 +236,30 @@ export function initWatchers(ctx: ComponentInterface, params?: BindWatchersParam
 						}
 					};
 
+				// The situation for a property watcher when we define the standard length of one argument
 				} else {
 					// tslint:disable-next-line:only-arrow-functions
 					handler = function (val?: unknown): void {
+						// We can safely refers to the second argument without increasing of the handler length by using arguments
+						const oldVal = arguments[1];
+
 						const
-							oldVal = arguments[1],
-							args = watchObj.provideArgs === false ? [] : [val, oldVal];
+							args = watchInfo.provideArgs === false ? [] : [val, oldVal];
 
 						if (Object.isString(rawHandler)) {
 							if (!Object.isFunction(ctx[rawHandler])) {
 								throw new ReferenceError(`The specified method "${rawHandler}" to watch is not defined`);
 							}
 
-							if (group.label) {
-								$a.setImmediate(
-									() => ctx[rawHandler](...args),
-									group
-								);
+							if (asyncParams.label) {
+								$a.setImmediate(() => ctx[rawHandler](...args), asyncParams);
 
 							} else {
 								ctx[rawHandler](...args);
 							}
 
 						} else {
-							if (watchObj.method) {
+							if (watchInfo.method) {
 								rawHandler.call(ctx, ...args);
 
 							} else {
@@ -198,22 +269,35 @@ export function initWatchers(ctx: ComponentInterface, params?: BindWatchersParam
 					};
 				}
 
-				if (watchObj.wrapper) {
-					handler = <typeof handler>watchObj.wrapper(ctx, handler);
+				// Apply a watcher wrapper if it specified.
+				// Mind that wrapper must returns a function as the result,
+				// but it can be packed to a promise.
+				if (watchInfo.wrapper) {
+					handler = <typeof handler>watchInfo.wrapper(ctx, handler);
 				}
 
+				// To improve initialization performance, we must separately handle the promise situation
+				// ("copy-paste", but works better)
 				if (handler instanceof Promise) {
-					$a.promise(handler, group).then((handler) => {
+					$a.promise(handler, asyncParams).then((handler) => {
 						if (customWatcher) {
-							const
-								needDefEmitter = root === ctx && !Object.isFunction(root.on) && !Object.isFunction(root.addListener);
+							// True if an event must be listen by using the component itself,
+							// because the watcherCtx doesn't look like an event emitter
+							const needDefEmitter =
+								watcherCtx === ctx &&
+
+								// tslint:disable-next-line:no-string-literal
+								!Object.isFunction(watcherCtx['on']) &&
+
+								// tslint:disable-next-line:no-string-literal
+								!Object.isFunction(watcherCtx['addListener']);
 
 							if (needDefEmitter) {
 								// @ts-ignore (access)
 								ctx.$on(key, handler);
 
 							} else {
-								$a.on(root, key, handler, eventParams, ...(watchObj.args || []));
+								$a.on(<EventEmitterLike>watcherCtx, key, handler, eventParams, ...(watchInfo.args || []));
 							}
 
 							return;
@@ -223,6 +307,7 @@ export function initWatchers(ctx: ComponentInterface, params?: BindWatchersParam
 							fieldInfo = p.info || getPropertyInfo(key, ctx),
 							fieldCtx = fieldInfo.ctx;
 
+						// To add support of watching to a system field we need create a wrapper
 						if (fieldInfo.type === 'system') {
 							key = fieldInfo.name;
 
@@ -230,7 +315,7 @@ export function initWatchers(ctx: ComponentInterface, params?: BindWatchersParam
 								watchers = systemWatchers.get(fieldCtx);
 
 							if (!watchers) {
-								watchers = {};
+								watchers = Object.createDict();
 								systemWatchers.set(fieldCtx, watchers);
 							}
 
@@ -266,43 +351,54 @@ export function initWatchers(ctx: ComponentInterface, params?: BindWatchersParam
 							}
 
 							handler = selfAsync.proxy(handler, {
-								...group,
+								...asyncParams,
 								single: false,
 								onClear: () => watcher && watcher.cb.delete(handler)
 							});
 
 							watcher.cb.add(handler);
-							watchObj.immediate && handler(store);
+							watchInfo.immediate && handler(store);
 
+						// Sometimes we can optimize the process of initializing just skip redundant listeners.
+						// For instance, if a component doesn't take a prop from a template it can't be changed,
+						// i.e. we don't need to watch this prop.
 						} else if (
-							watchObj.immediate ||
+							watchInfo.immediate ||
 							fieldInfo.type !== 'prop' ||
 							// @ts-ignore (access)
 							!fieldCtx.meta.params.root &&
 							(fieldInfo.name in (fieldCtx.$options.propsData || {}))
 						) {
 							const unwatch = $watch.call(ctx, fieldInfo.fullPath, {
-								deep: watchObj.deep,
-								immediate: watchObj.immediate,
+								deep: watchInfo.deep,
+								immediate: watchInfo.immediate,
 								handler,
 								fieldInfo
 							});
 
-							$a.worker(unwatch, group);
+							$a.worker(unwatch, asyncParams);
 						}
 					});
 
 				} else {
 					if (customWatcher) {
-						const
-							needDefEmitter = root === ctx && !Object.isFunction(root.on) && !Object.isFunction(root.addListener);
+						// True if an event must be listen by using the component itself,
+						// because the watcherCtx doesn't look like an event emitter
+						const needDefEmitter =
+							watcherCtx === ctx &&
+
+							// tslint:disable-next-line:no-string-literal
+							!Object.isFunction(watcherCtx['on']) &&
+
+							// tslint:disable-next-line:no-string-literal
+							!Object.isFunction(watcherCtx['addListener']);
 
 						if (needDefEmitter) {
 							// @ts-ignore (access)
 							ctx.$on(key, handler);
 
 						} else {
-							$a.on(root, key, handler, eventParams, ...(watchObj.args || []));
+							$a.on(<EventEmitterLike>watcherCtx, key, handler, eventParams, ...(watchInfo.args || []));
 						}
 
 						continue;
@@ -312,6 +408,7 @@ export function initWatchers(ctx: ComponentInterface, params?: BindWatchersParam
 						fieldInfo = p.info || getPropertyInfo(key, ctx),
 						fieldCtx = fieldInfo.ctx;
 
+					// To add support of watching to a system field we need create a wrapper
 					if (fieldInfo.type === 'system') {
 						key = fieldInfo.name;
 
@@ -319,7 +416,7 @@ export function initWatchers(ctx: ComponentInterface, params?: BindWatchersParam
 							watchers = systemWatchers.get(fieldCtx);
 
 						if (!watchers) {
-							watchers = {};
+							watchers = Object.createDict();
 							systemWatchers.set(fieldCtx, watchers);
 						}
 
@@ -355,40 +452,45 @@ export function initWatchers(ctx: ComponentInterface, params?: BindWatchersParam
 						}
 
 						handler = selfAsync.proxy(handler, {
-							...group,
+							...asyncParams,
 							single: false,
 							onClear: () => watcher && watcher.cb.delete(handler)
 						});
 
 						watcher.cb.add(handler);
-						watchObj.immediate && handler(store);
+						watchInfo.immediate && handler(store);
 
+					// Sometimes we can optimize the process of initializing just skip redundant listeners.
+					// For instance, if a component doesn't take a prop from a template it can't be changed,
+					// i.e. we don't need to watch this prop.
 					} else if (
-						watchObj.immediate ||
+						watchInfo.immediate ||
 						fieldInfo.type !== 'prop' ||
 						// @ts-ignore (access)
 						!fieldCtx.meta.params.root &&
 						(fieldInfo.name in (fieldCtx.$options.propsData || {}))
 					) {
 						const unwatch = $watch.call(ctx, fieldInfo.fullPath, {
-							deep: watchObj.deep,
-							immediate: watchObj.immediate,
+							deep: watchInfo.deep,
+							immediate: watchInfo.immediate,
 							handler,
 							fieldInfo
 						});
 
-						$a.worker(unwatch, group);
+						$a.worker(unwatch, asyncParams);
 					}
 				}
 			}
 		};
 
-		if (onCreated && isBeforeCreate) {
+		// Add listener to a component created hook if the component isn't created yet
+		if (watcherNeedCreated && isBeforeCreate) {
 			hooks.created.unshift({fn: exec});
 			continue;
 		}
 
-		if (onMounted && (isBeforeCreate || !ctx.$el)) {
+		// Add listener to a component mounted/activated hook if the component isn't mounted yet
+		if (watcherNeedMounted && (isBeforeCreate || !ctx.$el)) {
 			hooks[isDeactivated ? 'activated' : 'mounted'].unshift({fn: exec});
 			continue;
 		}
