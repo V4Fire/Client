@@ -19,6 +19,14 @@ import { ComponentConstructorInfo } from 'core/component/reflection/interface';
  *
  * @param constructor
  *
+ * @example
+ * ```js
+ * class bButton {
+ *
+ * }
+ *
+ * getComponentName(bButton); // 'b-button'
+ * ```
  */
 export function getComponentName(constructor: Function): string {
 	return (constructor.name || '').dasherize();
@@ -29,13 +37,33 @@ export function getComponentName(constructor: Function): string {
  *
  * @param constructor
  * @param [declParams] - component declaration parameters
+ *
+ * @example
+ * ```js
+ * @component({functional: true})
+ * class bButton extends iBlock {
+ *
+ * }
+ *
+ * // {
+ * //   name: 'b-button',
+ * //   componentName: 'b-button',
+ * //   parent: iBlock,
+ * //   ...
+ * // }
+ * getInfoFromConstructor(bButton);
+ * ```
  */
-export function getInfoFromConstructor(constructor: Function, declParams?: ComponentParams): ComponentConstructorInfo {
+export function getInfoFromConstructor(
+	constructor: Function,
+	declParams?: ComponentParams
+): ComponentConstructorInfo {
 	const
 		name = declParams?.name || getComponentName(constructor),
 		parent = Object.getPrototypeOf(constructor),
 		parentParams = parent && componentParams.get(parent);
 
+	// Create an object with parameters of a component
 	const params = parentParams ? {root: parentParams.root, ...declParams, name} : {
 		root: false,
 		tpl: true,
@@ -45,6 +73,7 @@ export function getInfoFromConstructor(constructor: Function, declParams?: Compo
 		name
 	};
 
+	// Mix the "functional" parameter from a parent @component declaration
 	if (parentParams) {
 		let
 			functional;
@@ -60,6 +89,7 @@ export function getInfoFromConstructor(constructor: Function, declParams?: Compo
 		params.functional = functional;
 	}
 
+	// Register component parameters in the special storage
 	if (!componentParams.has(constructor)) {
 		componentParams.set(constructor, params);
 		componentParams.set(name, params);
@@ -81,36 +111,59 @@ export function getInfoFromConstructor(constructor: Function, declParams?: Compo
 }
 
 /**
- * Returns a map of component modifiers from the specified component
+ * Returns a map of component modifiers from the specified component.
+ * This function normalizes the raw modifier declaration and mixes to it values from a design system
+ * (if it is specified).
+ *
  * @param component - information object of the component
+ *
+ * @example
+ * ```js
+ * @component()
+ * class bButton extends iBlock {
+ *   static mods = {
+ *     'opened-window': [
+ *       true,
+ *       false,
+ *       undefined,
+ *       [false],
+ *       bButton.PARENT
+ *     ]
+ *   };
+ * }
+ *
+ * // {openedWindow: ['true', ['false'], bButton.PARENT]}
+ * getComponentMods(getInfoFromConstructor());
+ * ```
  */
 export function getComponentMods(component: ComponentConstructorInfo): ModsDecl {
 	const
 		{constructor, componentName} = component;
 
 	const
-		normalizedMods = {},
-		dsMods = dsComponentsMods?.[componentName],
+		mods = {};
 
+	const
+		modsFromDS = dsComponentsMods?.[componentName],
 		// tslint:disable-next-line:no-string-literal
-		mods = {...constructor['mods']};
+		modsFromConstructor = {...constructor['mods']};
 
-	if (dsMods) {
-		for (let keys = Object.keys(dsMods), i = 0; i < keys.length; i++) {
+	if (modsFromDS) {
+		for (let keys = Object.keys(modsFromDS), i = 0; i < keys.length; i++) {
 			const
 				key = keys[i],
-				dsModDecl = dsMods[key],
-				modDecl = mods[key];
+				dsModDecl = modsFromDS[key],
+				modDecl = modsFromConstructor[key];
 
-			mods[key] = modDecl ? modDecl.concat(dsModDecl) : dsModDecl;
+			modsFromConstructor[key] = modDecl ? modDecl.concat(dsModDecl) : dsModDecl;
 		}
 	}
 
-	for (let o = mods, keys = Object.keys(o), i = 0; i < keys.length; i++) {
+	for (let o = modsFromConstructor, keys = Object.keys(o), i = 0; i < keys.length; i++) {
 		const
 			key = keys[i],
 			modDecl = o[key],
-			res = <unknown[]>[];
+			modValues = <Array<string | object>>[];
 
 		if (modDecl) {
 			let
@@ -143,13 +196,13 @@ export function getComponentMods(component: ComponentConstructorInfo): ModsDecl 
 
 			if (cache) {
 				for (let o = cache.values(), el = o.next(); !el.done; el = o.next()) {
-					res.push(el.value);
+					modValues.push(el.value);
 				}
 			}
 		}
 
-		normalizedMods[key.camelize(false)] = res;
+		mods[key.camelize(false)] = modValues;
 	}
 
-	return normalizedMods;
+	return mods;
 }

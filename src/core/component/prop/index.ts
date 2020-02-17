@@ -34,7 +34,9 @@ export function initProps(
 		{meta, meta: {component, instance}} = ctx;
 
 	const
-		store = opts.store || {},
+		store = opts.store = opts.store || {},
+
+		// True if a component is functional or flyweight (composite)
 		isFlyweight = ctx.$isFlyweight || meta.params.functional === true;
 
 	for (let keys = Object.keys(props), i = 0; i < keys.length; i++) {
@@ -42,7 +44,13 @@ export function initProps(
 			key = keys[i],
 			el = props[key];
 
-		if (!el || isFlyweight && el.functional === false) {
+		if (!el) {
+			continue;
+		}
+
+		// Don't initialize a property for a functional component
+		// unless explicitly required (functional == false)
+		if (isFlyweight && el.functional === false) {
 			continue;
 		}
 
@@ -82,7 +90,14 @@ export function initProps(
 
 /**
  * Returns true if the specified type can be a function
+ *
  * @param type
+ * @example
+ * ```js
+ * isTypeCanBeFunc(Boolean); // false
+ * isTypeCanBeFunc(Function); // true
+ * isTypeCanBeFunc([Function, Boolean]); // true
+ * ```
  */
 export function isTypeCanBeFunc(type: CanUndef<CanArray<Function>>): boolean {
 	if (!type) {

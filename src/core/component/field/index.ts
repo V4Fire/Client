@@ -14,12 +14,15 @@
 import { NULL } from 'core/component/const';
 import { ComponentInterface, ComponentField, ComponentSystemField } from 'core/component/interface';
 
-const
-	fieldQueue = new Set();
+// Queue for fields to initialize
+const fieldQueue = new Set();
 
 /**
  * Initializes the specified fields to a component context.
- * The method returns an object with initialized fields.
+ * The function returns an object with initialized fields.
+ *
+ * This method have some "copy-paste" chunks, but it's done for better performance, because it's very hot function.
+ * Mind that the initialization of fields is a synchronous operation.
  *
  * @param fields - component fields or system fields
  * @param ctx - component context
@@ -36,40 +39,57 @@ export function initFields(
 		{meta: {params, instance}} = ctx;
 
 	const
+		// True if a component is functional or flyweight (composite)
 		isFlyweight = ctx.$isFlyweight || params.functional === true;
 
 	const
-		skipped = {},
+		// Map of fields that we should skip, i.e. not to initialize.
+		// For instance, some properties isn't initialized if a component is functional.
+		fieldsToSkip = Object.createDict(),
+
+		// List of atomics to initialize
 		atomList = <string[]>[],
+
+		// List of non-atomics fields to initialize
 		fieldList = <string[]>[];
 
-	// Sorting atoms
+	// At first we should initialize all atomic fields, but some atomics wait another atomics.
+	// That's why we sort list of fields and organize simple synchronous queue.
+	// All atomics that waits another atomics is added to atomList.
+	// All non-atomics fields is added to fieldList.
 	for (let keys = Object.keys(fields).sort(), i = 0; i < keys.length; i++) {
 		const
 			key = keys[i],
 			el = <ComponentSystemField>fields[key];
 
+		// Don't initialize a property for a functional component
+		// unless explicitly required (functional == false)
 		if (isFlyweight && el.functional === false) {
-			skipped[key] = true;
+			fieldsToSkip[key] = true;
 			continue;
 		}
 
+		// If a field is atomic, or if the field doesn't have an initializer:
+		// if the field doesn't have the initializer it guarantee doesn't have any dependencies
 		if (el.atom || !el.init && (el.default !== undefined || key in instance)) {
-			let
-				canInit = true;
+			// If true, then the field doesn't have any dependencies and can be initialized right now
+			let canInit = true;
 
-			const
-				{after} = el;
+			// Set of dependencies to wait
+			const {after} = el;
 
 			if (after && after.size) {
 				for (let o = after.values(), val = o.next(); !val.done; val = o.next()) {
 					const
 						waitFieldKey = val.value;
 
-					if (skipped[waitFieldKey]) {
+					if (fieldsToSkip[waitFieldKey]) {
 						continue;
 					}
 
+					// Check that the dependency is not already initialized.
+					// NULL is a special value to prevent undefined behaviour
+					// when a property already initialized with an undefined value.
 					if (!(waitFieldKey in store) || store[waitFieldKey] === NULL) {
 						atomList.push(key);
 						canInit = false;
@@ -95,6 +115,8 @@ export function initFields(
 
 				if (val === undefined) {
 					if (store[key] === undefined) {
+						// We need to clone default value from a constructor
+						// to prevent linking to the same object for a non-primitive value
 						val = el.default !== undefined ? el.default : Object.fastClone(instance[key]);
 						store[key] = val;
 					}
@@ -112,6 +134,7 @@ export function initFields(
 		}
 	}
 
+	// Initialize all atomics that have some dependencies
 	while (atomList.length) {
 		for (let i = 0; i < atomList.length; i++) {
 			const
@@ -135,11 +158,11 @@ export function initFields(
 				continue;
 			}
 
-			const
-				{after} = el;
+			// If true, then all dependencies of the fields is already initialized an we can initialize this field
+			let canInit = true;
 
-			let
-				canInit = true;
+			// Set of dependencies to wait
+			const {after} = el;
 
 			if (after && after.size) {
 				for (let o = after.values(), val = o.next(); !val.done; val = o.next()) {
@@ -147,7 +170,7 @@ export function initFields(
 						waitFieldKey = val.value,
 						waitField = fields[waitFieldKey];
 
-					if (skipped[waitFieldKey]) {
+					if (fieldsToSkip[waitFieldKey]) {
 						continue;
 					}
 
@@ -202,11 +225,13 @@ export function initFields(
 			}
 		}
 
+		// All atomics are initialized
 		if (!fieldQueue.size) {
 			break;
 		}
 	}
 
+	// Initialize all non-atomics
 	while (fieldList.length) {
 		for (let i = 0; i < fieldList.length; i++) {
 			const
@@ -230,11 +255,11 @@ export function initFields(
 				continue;
 			}
 
-			const
-				{after} = el;
+			// If true, then all dependencies of the fields is already initialized an we can initialize this field
+			let canInit = true;
 
-			let
-				canInit = true;
+			// Set of dependencies to wait
+			const {after} = el;
 
 			if (after && after.size) {
 				for (let o = after.values(), val = o.next(); !val.done; val = o.next()) {
@@ -242,7 +267,7 @@ export function initFields(
 						waitFieldKey = val.value,
 						waitField = fields[waitFieldKey];
 
-					if (skipped[waitFieldKey]) {
+					if (fieldsToSkip[waitFieldKey]) {
 						continue;
 					}
 
@@ -293,6 +318,7 @@ export function initFields(
 			}
 		}
 
+		// All fields are initialized
 		if (!fieldQueue.size) {
 			break;
 		}
