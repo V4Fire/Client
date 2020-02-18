@@ -16,8 +16,8 @@ import inheritMeta from 'core/component/create/inherit';
 
 import { getInfoFromConstructor } from 'core/component/reflection';
 
-import { getBlankMetaForComponent } from 'core/component/create/meta';
-import { runHook, patchRefs, parseVAttrs } from 'core/component/create/helpers';
+import { getBlankMetaForComponent } from 'core/component/meta';
+import { runHook, patchRefs, parseVAttrs } from 'core/component/helpers';
 import { ComponentInterface, ComponentParams, ComponentMethod } from 'core/component/interface';
 
 import {
@@ -45,7 +45,7 @@ import {
 
 import { registerComponent, registerParentComponents } from 'core/component/create/register';
 import { createFakeCtx, execRenderObject, patchVNode } from 'core/component/create/functional';
-import { getComponentDataFromVnode, createCompositeElement } from 'core/component/create/composite';
+import { getComponentDataFromVnode, createFlyweightComponent } from 'core/component/create/composite';
 import * as c from 'core/component/const';
 
 export const
@@ -226,7 +226,7 @@ export function component(declParams?: ComponentParams): Function {
 						}
 
 						if (!vnode) {
-							vnode = createCompositeElement(
+							vnode = createFlyweightComponent(
 								nativeCreate.apply(ctx, arguments),
 								<CreateElement>createElement,
 								ctx

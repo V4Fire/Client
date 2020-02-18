@@ -6,35 +6,37 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+/**
+ * [[include:core/component/hook/README.md]]
+ * @packageDocumentation
+ */
+
 import log from 'core/log';
 import SyncPromise from 'core/promise/sync';
 import QueueEmitter from 'core/component/queue-emitter';
-import { ComponentHook, ComponentInterface, ComponentMeta } from 'core/component/interface';
+import { ComponentHook, ComponentInterface } from 'core/component/interface';
 
 /**
- * Runs a component hook from the specified component meta object
+ * Runs a component hook from the specified component instance
  *
  * @param hook - hook name
- * @param meta - component meta object
- * @param ctx - component context
+ * @param component - component instance
  * @param args - hook arguments
  */
-export function runHook(
-	hook: string,
-	meta: ComponentMeta,
-	ctx: ComponentInterface,
-	...args: unknown[]
-): Promise<void> {
+export function runHook(hook: string, component: ComponentInterface, ...args: unknown[]): Promise<void> {
+	const
+		// @ts-ignore (access)
+		{meta} = component;
+
 	// @ts-ignore (access)
 	// tslint:disable-next-line:no-string-literal
-	ctx['hook'] = hook;
+	component['hook'] = hook;
 
-	// @ts-ignore (access)
-	if (Object.isFunction(ctx.log)) {
-		ctx.log(`hook:${hook}`, ...args);
+	if (Object.isFunction(component.log)) {
+		component.log(`hook:${hook}`, ...args);
 
 	} else {
-		log(`component:hook:${meta.componentName}:${hook}`, ...args, ctx);
+		log(`component:hook:${meta.componentName}:${hook}`, ...args, component);
 	}
 
 	const
@@ -59,7 +61,7 @@ export function runHook(
 
 		event.on(hook.after, () => {
 			const
-				res = args.length ? hook.fn.apply(ctx, args) : hook.fn.call(ctx);
+				res = args.length ? hook.fn.apply(component, args) : hook.fn.call(component);
 
 			if (res instanceof Promise) {
 				return res.then(() => nm ? event.emit(nm) : undefined);

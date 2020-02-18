@@ -10,7 +10,7 @@ import { defProp } from 'core/const/props';
 import { ComponentInterface, ComponentMeta } from 'core/component';
 
 /**
- * Iterates over a prototype of the the specified constructor and adds methods/accessors to the meta object
+ * Iterates over a prototype of the the specified constructor and adds methods/accessors to a meta object
  *
  * @param constructor
  * @param meta
@@ -44,6 +44,7 @@ export function addMethodsToMeta(constructor: Function, meta: ComponentMeta): vo
 		const
 			desc = <PropertyDescriptor>Object.getOwnPropertyDescriptor(proto, key);
 
+		// Methods
 		if ('value' in desc) {
 			const
 				fn = desc.value;
@@ -55,10 +56,13 @@ export function addMethodsToMeta(constructor: Function, meta: ComponentMeta): vo
 			// tslint:disable-next-line:prefer-object-spread
 			methods[key] = Object.assign(methods[key] || {replace, watchers: {}, hooks: {}}, {src, fn});
 
+		// Accessors
 		} else {
+			// Computed properties are cached by default
+			const metaKey = key in accessors ? 'accessors' : 'computed';
+
 			const
 				field = props[key] ? props : fields[key] ? fields : systemFields,
-				metaKey = key in accessors ? 'accessors' : 'computed',
 				obj = meta[metaKey];
 
 			if (field[key]) {
@@ -71,6 +75,7 @@ export function addMethodsToMeta(constructor: Function, meta: ComponentMeta): vo
 				set = desc.set || old && old.set,
 				get = desc.get || old && old.get;
 
+			// For using "super" within a setter we also create a method with a name of form `${key}Setter`
 			if (set) {
 				const
 					k = `${key}Setter`;
@@ -85,6 +90,7 @@ export function addMethodsToMeta(constructor: Function, meta: ComponentMeta): vo
 				};
 			}
 
+			// For using "super" within a getter we also create a method with a name of form `${key}Getter`
 			if (get) {
 				const
 					k = `${key}Getter`;
@@ -115,6 +121,7 @@ export function addMethodsToMeta(constructor: Function, meta: ComponentMeta): vo
  * @param meta
  * @param component
  * @param [safe] - if true, then the function uses safe access to object properties
+ *   by using Object.getOwnPropertyDescriptor/defineProperty
  */
 export function addMethodsFromMeta(meta: ComponentMeta, component: ComponentInterface, safe?: boolean): void {
 	const list = [

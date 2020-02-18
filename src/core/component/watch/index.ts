@@ -18,7 +18,7 @@ import { beforeHooks } from 'core/component/const';
 import { systemWatchers, customWatcherRgxp } from 'core/component/watch/const';
 
 import { ComponentInterface, WatchOptions } from 'core/component/interface';
-import { BindWatchersParams } from 'core/component/watch/interface';
+import { InitWatchersParams } from 'core/component/watch/interface';
 
 export * from 'core/component/watch/const';
 export * from 'core/component/watch/interface';
@@ -60,7 +60,7 @@ export function cloneWatchValue<T>(value: T, opts: WatchOptions = {}): T {
  * @param ctx - component context
  * @param [params] - additional parameters
  */
-export function initWatchers(ctx: ComponentInterface, params?: BindWatchersParams): void {
+export function initWatchers(ctx: ComponentInterface, params?: InitWatchersParams): void {
 	const
 		p = params || {};
 

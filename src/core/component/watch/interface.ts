@@ -9,7 +9,7 @@
 import Async from 'core/async';
 import { ComponentInterface, PropertyInfo, WatchObject } from 'core/component';
 
-export interface BindWatchersParams<A extends object = ComponentInterface> {
+export interface InitWatchersParams<A extends object = ComponentInterface> {
 	/**
 	 * Link to an instance of Async
 	 */

@@ -197,8 +197,7 @@ export abstract class ComponentInterface<
 	protected readonly $data!: Dictionary;
 
 	/**
-	 * Map of component fields that can force re-rendering
-	 * (using with functional components)
+	 * Raw map of component fields that can force re-rendering
 	 */
 	protected readonly $$data!: Dictionary;
 
@@ -319,7 +318,7 @@ export abstract class ComponentInterface<
 
 	/**
 	 * Sets a watcher to specified expression.
-	 * The method wraps the original $watch.
+	 * The method wraps the "native" $watch and added some extra features.
 	 *
 	 * @param exprOrFn
 	 * @param opts

@@ -6,14 +6,12 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-// tslint:disable:cyclomatic-complexity
-
 import { metaPointers, PARENT } from 'core/component/const';
 import { ComponentMeta, ComponentParams, StrictModDeclVal } from 'core/component/interface';
 
 /**
- * Inherits parameters to the specified meta object from an other object
- * and returns a new component options
+ * Inherits parameters to the specified meta object from another meta object
+ * and returns a new object with component parameters
  *
  * @param meta
  * @param parentMeta

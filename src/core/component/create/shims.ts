@@ -7,18 +7,16 @@
  */
 
 import { EventEmitter2 as EventEmitter } from 'eventemitter2';
-import { ComponentElement, ComponentInterface, ComponentMeta } from 'core/component/interface';
-import { VNodeData } from 'core/component/engines';
 
 /**
- * Adds the component event API to the specified component
- * @param ctx - component context
+ * Adds the component event API to a component instance
+ * @param component - component instance
  */
-export function addEventAPI(ctx: Dictionary<any>): void {
+export function addEventAPI(component: object): void {
 	const
 		$e = new EventEmitter({maxListeners: 1e6, newListener: false});
 
-	Object.assign(ctx, {
+	Object.assign(component, {
 		$emit(e: string, ...args: any[]): void {
 			$e.emit(e, ...args);
 		},
@@ -46,104 +44,3 @@ export function addEventAPI(ctx: Dictionary<any>): void {
 		}
 	});
 }
-
-/**
- * Patches ref links for the specified component
- * @param ctx - component context
- */
-export function patchRefs(ctx: ComponentInterface): void {
-	const
-		// @ts-ignore (access)
-		{$refs, $$refs} = ctx;
-
-	if ($refs) {
-		for (let keys = Object.keys($refs), i = 0; i < keys.length; i++) {
-			const
-				key = keys[i],
-				el = $refs[key];
-
-			if (!el) {
-				continue;
-			}
-
-			if (Object.isArray(el)) {
-				const
-					arr = <unknown[]>[];
-
-				let
-					needRewrite;
-
-				for (let i = 0; i < el.length; i++) {
-					const
-						listEl = el[i];
-
-					let
-						component;
-
-					if (listEl instanceof Node) {
-						component = (<ComponentElement>listEl).component;
-						needRewrite = Boolean(component) && component.$el === listEl;
-
-					} else {
-						const {$el} = <ComponentInterface>listEl;
-						component = $el.component;
-						needRewrite = listEl !== component;
-					}
-
-					arr.push(needRewrite ? component : listEl);
-				}
-
-				if (needRewrite) {
-					Object.defineProperty($refs, key, {
-						configurable: true,
-						enumerable: true,
-						writable: true,
-						value: arr
-					});
-				}
-
-			} else {
-				let
-					component,
-					needRewrite = false;
-
-				if (el instanceof Node) {
-					component = (<ComponentElement>el).component;
-					needRewrite = Boolean(component) && component.$el === el;
-
-				} else {
-					const {$el} = <ComponentInterface>el;
-					component = $el.component;
-					needRewrite = el !== component;
-				}
-
-				if (needRewrite) {
-					Object.defineProperty($refs, key, {
-						configurable: true,
-						enumerable: true,
-						writable: true,
-						value: component
-					});
-				}
-			}
-		}
-
-		if ($$refs) {
-			for (let keys = Object.keys($$refs), i = 0; i < keys.length; i++) {
-				const
-					key = keys[i],
-					watchers = $$refs[key],
-					el = $refs[key];
-
-				if (el && watchers) {
-					for (let i = 0; i < watchers.length; i++) {
-						watchers[i](el);
-					}
-
-					delete $$refs[key];
-				}
-			}
-		}
-	}
-}
-

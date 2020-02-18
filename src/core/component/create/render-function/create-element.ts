@@ -16,7 +16,7 @@ import {
 
 	patchVNode,
 	getComponentDataFromVnode,
-	createCompositeElement,
+	createFlyweightComponent,
 	createFakeCtx,
 	execRenderObject,
 	ComponentInterface
@@ -159,7 +159,7 @@ export function wrapCreateElement(
 		}
 
 		if (!vnode) {
-			vnode = createCompositeElement(
+			vnode = createFlyweightComponent(
 				createElement.apply(ctx, arguments),
 				<CreateElement>wrappedCreateElement,
 				ctx
