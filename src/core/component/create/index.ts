@@ -83,7 +83,7 @@ export function getComponent(
 				data = ctx.$$data;
 
 			initFields(meta.fields, ctx, data);
-			runHook('beforeDataCreate', ctx.meta, ctx).catch(stderr);
+			runHook('beforeDataCreate', ctx).catch(stderr);
 			initWatchers(ctx);
 
 			ctx.$$data = this;
@@ -112,7 +112,7 @@ export function getComponent(
 			ctx.componentName = meta.name;
 			ctx.meta = forkMeta(meta);
 
-			runHook('beforeRuntime', ctx.meta, ctx)
+			runHook('beforeRuntime', ctx)
 				.catch(stderr);
 
 			for (let o = meta.accessors, keys = Object.keys(o), i = 0; i < keys.length; i++) {
@@ -141,21 +141,21 @@ export function getComponent(
 		},
 
 		created(): void {
-			runHook('created', this.meta, this).catch(stderr);
+			runHook('created', this).catch(stderr);
 			callMethodFromMeta(this, 'created');
 		},
 
 		beforeMount(): void {
-			runHook('beforeMount', this.meta, this).catch(stderr);
+			runHook('beforeMount', this).catch(stderr);
 			callMethodFromMeta(this, 'beforeMount');
 		},
 
 		mounted(): void {
 			this.$el.component = this;
-			runHook('beforeMounted', this.meta, this).catch(stderr);
+			runHook('beforeMounted', this).catch(stderr);
 			patchRefs(this);
 
-			runHook('mounted', this.meta, this).then(() => {
+			runHook('mounted', this).then(() => {
 				if (methods.mounted) {
 					return methods.mounted.fn.call(this);
 				}
@@ -163,14 +163,14 @@ export function getComponent(
 		},
 
 		beforeUpdate(): void {
-			runHook('beforeUpdate', this.meta, this).catch(stderr);
+			runHook('beforeUpdate', this).catch(stderr);
 			callMethodFromMeta(this, 'beforeUpdate');
 		},
 
 		updated(): void {
-			runHook('beforeUpdated', this.meta, this).catch(stderr);
+			runHook('beforeUpdated', this).catch(stderr);
 			patchRefs(this);
-			runHook('updated', this.meta, this).then(() => {
+			runHook('updated', this).then(() => {
 				if (methods.updated) {
 					return methods.updated.fn.call(this);
 				}
@@ -178,25 +178,25 @@ export function getComponent(
 		},
 
 		activated(): void {
-			runHook('beforeActivated', this.meta, this).catch(stderr);
+			runHook('beforeActivated', this).catch(stderr);
 			patchRefs(this);
-			runHook('activated', this.meta, this).catch(stderr);
+			runHook('activated', this).catch(stderr);
 			callMethodFromMeta(this, 'activated');
 		},
 
 		deactivated(): void {
-			runHook('deactivated', this.meta, this).catch(stderr);
+			runHook('deactivated', this).catch(stderr);
 			callMethodFromMeta(this, 'deactivated');
 		},
 
 		beforeDestroy(): void {
-			runHook('beforeDestroy', this.meta, this).catch(stderr);
+			runHook('beforeDestroy', this).catch(stderr);
 			callMethodFromMeta(this, 'beforeDestroy');
 			this.$async.clearAll().locked = true;
 		},
 
 		destroyed(): void {
-			runHook('destroyed', this.meta, this).then(() => {
+			runHook('destroyed', this).then(() => {
 				if (methods.destroyed) {
 					return methods.destroyed.fn.call(this);
 				}
@@ -207,7 +207,7 @@ export function getComponent(
 			const
 				args = arguments;
 
-			runHook('errorCaptured', this.meta, this, ...args).then(() => {
+			runHook('errorCaptured', this, ...args).then(() => {
 				if (methods.errorCaptured) {
 					return methods.errorCaptured.fn.apply(this, args);
 				}

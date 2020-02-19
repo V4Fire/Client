@@ -7,7 +7,7 @@
  */
 
 import iBlock from 'super/i-block/i-block';
-import { getFieldInfo } from 'core/component';
+import { getPropertyInfo } from 'core/component';
 
 export interface FieldGetter<R = unknown, D = unknown> {
 	(key: string, data: NonNullable<D>): R;
@@ -69,7 +69,7 @@ export default class Field {
 
 		if (isComponent) {
 			const
-				info = getFieldInfo(path, ctx),
+				info = getPropertyInfo(path, ctx),
 				isReady = !ctx.lfc.isBeforeCreate();
 
 			// @ts-ignore
@@ -138,7 +138,7 @@ export default class Field {
 
 		if (isComponent) {
 			const
-				info = getFieldInfo(path, ctx),
+				info = getPropertyInfo(path, ctx),
 				isReady = !ctx.lfc.isBeforeCreate();
 
 			// @ts-ignore
@@ -229,7 +229,7 @@ export default class Field {
 
 		if (isComponent) {
 			const
-				info = getFieldInfo(path, ctx);
+				info = getPropertyInfo(path, ctx);
 
 			// @ts-ignore
 			ctx = info.ctx;

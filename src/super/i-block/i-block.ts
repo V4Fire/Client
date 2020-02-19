@@ -1687,7 +1687,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	 * @param [details]
 	 */
 	@p({replace: false})
-	protected log(ctxOrOpts: string | LogMessageOptions, ...details: unknown[]): void {
+	log(ctxOrOpts: string | LogMessageOptions, ...details: unknown[]): void {
 		let
 			context = ctxOrOpts,
 			logLevel;

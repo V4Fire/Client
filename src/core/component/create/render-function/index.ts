@@ -201,7 +201,7 @@ export function wrapRender(meta: ComponentMeta): RenderFunction {
 									}
 
 									ctx.renderGroup = undefined;
-									runHook('beforeUpdated', ctx.meta, ctx, p)
+									runHook('beforeUpdated', ctx, p)
 										.catch(stderr);
 
 									patchRefs(ctx);
