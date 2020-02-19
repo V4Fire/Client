@@ -10,7 +10,7 @@ import { componentParams, components } from 'core/component/const';
 import { dsComponentsMods } from 'core/component/reflection/const';
 import { isAbstractComponent, isSmartComponent } from 'core/component/reflection/types';
 
-import { ComponentParams, ComponentMeta, ComponentConstructor, ModsDecl } from 'core/component/interface';
+import { ComponentOptions, ComponentMeta, ComponentConstructor, ModsDecl } from 'core/component/interface';
 import { ComponentConstructorInfo } from 'core/component/reflection/interface';
 
 /**
@@ -56,7 +56,7 @@ export function getComponentName(constructor: Function): string {
  */
 export function getInfoFromConstructor(
 	constructor: ComponentConstructor,
-	declParams?: ComponentParams
+	declParams?: ComponentOptions
 ): ComponentConstructorInfo {
 	const
 		name = declParams?.name || getComponentName(constructor),

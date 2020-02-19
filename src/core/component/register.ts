@@ -18,31 +18,17 @@ import { getInfoFromConstructor } from 'core/component/reflection';
 import { getComponent, ComponentDriver } from 'core/component/engines';
 import { registerParentComponents } from 'core/component/create';
 
-import { ComponentParams, ComponentMethod } from 'core/component/interface';
+import { ComponentOptions, ComponentMethod } from 'core/component/interface';
 
 /**
  * Creates a new component
  *
  * @decorator
- * @param [declParams] - additional parameters:
- *   *) [name] - component name
- *   *) [root] - if true, then the component will be registered as root
- *   *) [tpl] - if false, then will be used the default template
- *   *) [functional] - functional status:
- *        *) if true, then the component will be created as functional
- *        *) if a table with parameters, then the component will be created as smart component
- *
- *   *) [flyweight] - if true, then the component can be used as flyweight (within a composite virtual tree)
- *   *) [parent] - link to a parent component
- *
- *   // Component driver options (by default Vue):
- *
- *   *) [model] - parameters for a model option
- *   *) [inheritAttrs] - parameters for an inheritAttrs option
+ * @param [opts] - additional options
  */
-export function component(declParams?: ComponentParams): Function {
+export function component(opts?: ComponentOptions): Function {
 	return (target) => {
-		const componentInfo = getInfoFromConstructor(target, declParams);
+		const componentInfo = getInfoFromConstructor(target, opts);
 		c.initEmitter.emit('bindConstructor', componentInfo.name);
 
 		if (!componentInfo.name || componentInfo.params.root || componentInfo.isAbstract) {
@@ -57,7 +43,7 @@ export function component(declParams?: ComponentParams): Function {
 		// we need to compile 2 components in the runtime
 		if (Object.isPlainObject(componentInfo.params.functional)) {
 			component({
-				...declParams,
+				...opts,
 				name: `${componentInfo.name}-functional`,
 				functional: true
 			})(target);

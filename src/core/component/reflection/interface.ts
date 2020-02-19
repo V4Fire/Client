@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { ComponentParams, ComponentMeta, ComponentInterface, ComponentConstructor } from 'core/component/interface';
+import { ComponentOptions, ComponentMeta, ComponentInterface, ComponentConstructor } from 'core/component/interface';
 
 /**
  * Information about a component that can be taken from a constructor
@@ -41,7 +41,7 @@ export interface ComponentConstructorInfo {
 	/**
 	 * Map of component parameters that was provided to a @component decorator
 	 */
-	params: ComponentParams;
+	params: ComponentOptions;
 
 	/**
 	 * Link to a parent constructor
@@ -51,7 +51,7 @@ export interface ComponentConstructorInfo {
 	/**
 	 * Map of parent component parameters that was provided to a @component decorator
 	 */
-	parentParams?: ComponentParams;
+	parentParams?: ComponentOptions;
 
 	/**
 	 * Link to a parent component meta object

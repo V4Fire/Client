@@ -6,8 +6,8 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { ComponentConstructorInfo } from 'core/component/reflection';
 import { componentInitializers, componentParams, components } from 'core/component/const';
+import { ComponentConstructorInfo } from 'core/component/reflection';
 import { ComponentMeta } from 'core/component/interface';
 
 /**

@@ -7,12 +7,12 @@
  */
 
 import { ComponentOptions, ComponentDriver } from 'core/component/engines';
-import { ComponentMeta, ComponentParams } from 'core/component/interface';
+import { ComponentMeta, ComponentOptions } from 'core/component/interface';
 
 /**
  * Map of component declaration parameters
  */
-export const componentParams = new Map<Function | string, ComponentParams>();
+export const componentParams = new Map<Function | string, ComponentOptions>();
 
 /**
  * Map of root components

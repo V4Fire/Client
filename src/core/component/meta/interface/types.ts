@@ -16,15 +16,47 @@ export interface ComponentModel {
 	event?: string;
 }
 
-export interface ComponentParams {
+export interface ComponentOptions {
+	/**
+	 * Component name
+	 */
 	name?: string;
+
+	/**
+	 * If true, then the component is registered as root
+	 * @default `false`
+	 */
 	root?: boolean;
+
+	/**
+	 * If false, then the component uses the default template
+	 * @default `true`
+	 */
 	tpl?: boolean;
 
+	/**
+	 * Functional mode:
+	 * * if true, then the component will be created as a functional component
+	 * * if an object with parameters, then the component will be created as a smart component
+	 *
+	 * @default `false`
+	 */
 	functional?: Nullable<boolean> | Dictionary;
+
+	/**
+	 * If true, then the component can be used as a flyweight component
+	 * @default `false`
+	 */
 	flyweight?: boolean;
 
+	/**
+	 * Parameters for a model option
+	 */
 	model?: ComponentModel;
+
+	/**
+	 * Link to a parent component
+	 */
 	parent?: ComponentDriver;
 
 	inheritAttrs?: boolean;
@@ -32,7 +64,7 @@ export interface ComponentParams {
 	defaultProps?: boolean;
 }
 
-export type ComponentInfo = ComponentParams & {
+export type ComponentInfo = ComponentOptions & {
 	name: string;
 };
 

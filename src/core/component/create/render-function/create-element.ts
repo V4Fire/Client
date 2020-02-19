@@ -10,11 +10,12 @@ import symbolGenerator from 'core/symbol';
 import * as c from 'core/component/const';
 
 import { getComponentRenderCtxFromVNode } from 'core/component/vnode';
-import { createFakeCtx, initComponentVNode } from 'core/component/functional';
-import { parseVNode } from 'core/component/flyweight';
 import { execRenderObject } from 'core/component/render';
 
-import applyDynamicAttrs from 'core/component/create/render-function/v-attrs';
+import { parseVNode } from 'core/component/flyweight';
+import { createFakeCtx, initComponentVNode } from 'core/component/functional';
+
+import { applyDynamicAttrs } from 'core/component/create/render-function/v-attrs';
 import { registerComponent } from 'core/component/create/register';
 
 import {
@@ -36,7 +37,9 @@ export const
 	$$ = symbolGenerator();
 
 /**
- * Wraps the specified createElement function and returns a new function.
+ * Wraps the specified createElement function and returns a pair:
+ * the wrapped function and a list of registered render tasks.
+ *
  * This method adds V4Fire specific logic (v-attrs, composites, etc.) to a simple createElement function.
  *
  * @param createElement - original createElement function

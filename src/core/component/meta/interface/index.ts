@@ -11,7 +11,7 @@ import { ComponentConstructor, PropOptions, RenderFunction, ModsDecl } from 'cor
 
 import {
 
-	ComponentParams,
+	ComponentOptions,
 	ComponentProp,
 	ComponentField,
 	ComponentComputedField,
@@ -52,7 +52,7 @@ export interface ComponentMeta {
 	/**
 	 * Map of component parameters that was provided to a @component decorator
 	 */
-	params: ComponentParams;
+	params: ComponentOptions;
 
 	/**
 	 * Link to a parent component meta object

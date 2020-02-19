@@ -18,7 +18,7 @@ const
  * @param vnode - vnode data object
  * @param [component] - component meta object that is tied to the vnode
  */
-export default function apply(vnode: VNodeData, component?: ComponentMeta): void {
+export function applyDynamicAttrs(vnode: VNodeData, component?: ComponentMeta): void {
 	const
 		attrs = vnode.attrs = vnode.attrs || {},
 		attrsSpreadObj = attrs['v-attrs'],
