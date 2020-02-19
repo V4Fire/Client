@@ -10,7 +10,6 @@ import { AsyncOptions } from 'core/async';
 import { statuses } from 'super/i-block/modules/const';
 import { Statuses, iBlockDecorator } from 'super/i-block/i-block';
 import { initEmitter, ModVal, InitFieldFn as BaseInitFieldFn, ComponentInterface } from 'core/component';
-import { WatchOptions } from 'core/component/engines';
 
 import {
 
@@ -28,7 +27,7 @@ import {
 	ComponentProp as BaseComponentProp,
 	ComponentField as BaseComponentField
 
-} from 'core/component/decorators/base';
+} from 'core/component/decorators';
 
 export interface InitFieldFn<
 	CTX extends ComponentInterface = ComponentInterface
