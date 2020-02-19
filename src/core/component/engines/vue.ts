@@ -52,7 +52,8 @@ export function renderData(data: CanArray<VNode>, parent: ComponentInterface): C
 	});
 
 	// @ts-ignore (access)
-	vue.$root = Object.create(parent.$root);
+	// tslint:disable-next-line:no-string-literal
+	vue['$root'] = Object.create(parent.$root);
 
 	// @ts-ignore (access)
 	vue.$root.$$parent = parent;

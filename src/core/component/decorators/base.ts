@@ -15,7 +15,7 @@ import {
 	PropOptions,
 	ComponentInterface,
 	ComponentMeta,
-	Hooks,
+	Hook,
 
 	InitFieldFn,
 	MergeFieldFn,
@@ -115,14 +115,14 @@ export const system = paramsFactory<InitFieldFn | SystemField>('systemFields', (
 });
 
 export type HookParams = {
-	[hook in Hooks]?: FunctionalOptions & {
+	[hook in Hook]?: FunctionalOptions & {
 		after?: CanArray<string>;
 	}
 };
 
 export type ComponentHooks =
-	Hooks |
-	Hooks[] |
+	Hook |
+	Hook[] |
 	HookParams |
 	HookParams[];
 

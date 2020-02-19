@@ -240,6 +240,21 @@ export abstract class ComponentInterface<
 	log?(ctxOrOpts: string | LogMessageOptions, ...details: unknown[]): void;
 
 	/**
+	 * Forces the component to re-render
+	 */
+	$forceUpdate(): void {}
+
+	/**
+	 * Executes the specified function on a next render tick
+	 * @param cb
+	 */
+	$nextTick(cb: Function | ((this: this) => void)): void;
+
+	// @ts-ignore (abstract)
+	$nextTick(): Promise<void>;
+	$nextTick() {}
+
+	/**
 	 * Mounts the component to a DOM element
 	 *
 	 * @param elementOrSelector - link to an element or a selector to an element
@@ -248,11 +263,6 @@ export abstract class ComponentInterface<
 	// @ts-ignore (abstract)
 	protected $mount(elementOrSelector?: Element | string, hydrating?: boolean): this;
 	protected $mount() {}
-
-	/**
-	 * Forces the component to re-render
-	 */
-	protected $forceUpdate(): void {}
 
 	/**
 	 * Destroys the component
@@ -370,14 +380,4 @@ export abstract class ComponentInterface<
 	// @ts-ignore (abstract)
 	protected $emit(event: string, ...args: unknown[]): this;
 	protected $emit() {}
-
-	/**
-	 * Executes the specified function on a next render tick
-	 * @param cb
-	 */
-	protected $nextTick(cb: Function | ((this: this) => void)): void;
-
-	// @ts-ignore (abstract)
-	protected $nextTick(): Promise<void>;
-	protected $nextTick() {}
 }

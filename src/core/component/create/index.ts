@@ -9,18 +9,14 @@
 import Async from 'core/async';
 import { asyncLabel, defaultWrapper } from 'core/component/const';
 
-import {
+import { runHook } from 'core/component/hook';
+import { isTypeCanBeFunc } from 'core/component/prop';
+import { initFields } from 'core/component/field';
+import { initWatchers } from 'core/component/watch';
+import { patchRefs } from 'core/component/create/refs';
 
-	runHook,
-	isTypeCanBeFunc,
-	initDataObject,
-	bindWatchers,
-	getNormalParent,
-	patchRefs
-
-} from 'core/component/create/helpers';
-
-import { forkMeta, addMethodsToMeta } from 'core/component/create/meta';
+import { getNormalParent } from 'core/component/traverse';
+import { forkMeta, addMethodsToMeta } from 'core/component/meta';
 
 import {
 
@@ -86,9 +82,9 @@ export function getComponent(
 				ctx = <any>this,
 				data = ctx.$$data;
 
-			initDataObject(meta.fields, ctx, instance, data);
+			initFields(meta.fields, ctx, data);
 			runHook('beforeDataCreate', ctx.meta, ctx).catch(stderr);
-			bindWatchers(ctx);
+			initWatchers(ctx);
 
 			ctx.$$data = this;
 			return data;
@@ -134,14 +130,13 @@ export function getComponent(
 				}
 			}
 
-			initDataObject(
+			initFields(
 				meta.systemFields,
 				ctx,
-				instance,
 				ctx
 			);
 
-			runHook('beforeCreate', meta, ctx).catch(stderr);
+			runHook('beforeCreate', ctx).catch(stderr);
 			callMethodFromMeta(ctx, 'beforeCreate');
 		},
 

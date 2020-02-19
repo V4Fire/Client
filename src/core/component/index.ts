@@ -11,8 +11,8 @@ import 'core/component/directives';
 
 export * from 'core/component/interface';
 export * from 'core/component/const';
-export * from 'core/component/create/functional';
-export * from 'core/component/create/composite';
+export * from 'core/component/functional';
+export * from 'core/component/flyweight';
 export * from 'core/component/register';
 
 export {
@@ -42,6 +42,7 @@ export {
 export * from 'core/component/watch';
 export * from 'core/component/field';
 export * from 'core/component/hook';
+export * from 'core/component/reflection';
 
 export {
 

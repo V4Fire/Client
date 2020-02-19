@@ -11,30 +11,36 @@ import Async from 'core/async';
 import { asyncLabel } from 'core/component/const';
 import { EventEmitter2 as EventEmitter } from 'eventemitter2';
 
-import { $$, componentOpts, destroyHooks, destroyCheckHooks } from 'core/component/create/functional/const';
+import { $$, componentOpts, destroyHooks, destroyCheckHooks } from 'core/component/functional/const';
 import { forkMeta, addMethodsFromMeta } from 'core/component/meta';
 
 import { runHook } from 'core/component/hook';
-import { getNormalParent } from 'core/component/helpers/other';
+import { getNormalParent } from 'core/component/traverse';
 import { initProps } from 'core/component/prop';
 import { initFields } from 'core/component/field';
 import { initWatchers } from 'core/component/watch';
 import { addEventAPI } from 'core/component/create/shims';
 
-import { CreateElement, WatchOptions, WatchOptionsWithHandler } from 'core/component/engines';
+import {
+
+	CreateElement,
+	WatchOptions,
+	WatchOptionsWithHandler
+
+} from 'core/component/engines';
 
 import { RenderContext } from 'core/component/render';
-import { FunctionalCtx } from 'core/component/interface';
+import { ComponentInterface, FunctionalCtx, WatchExpr, RawWatchHandler } from 'core/component/interface';
 
-import { CreateFakeCtxOptions } from 'core/component/create/functional/interface';
-export * from 'core/component/create/functional/interface';
+import { CreateFakeCtxOptions } from 'core/component/functional/interface';
+export * from 'core/component/functional/interface';
 
 /**
- * Generates a fake context for a function component
+ * Creates a fake context for a functional component that is based on the specified parameters
  *
- * @param createElement - create element function
- * @param renderCtx - render context from vnode
- * @param baseCtx - base component context (methods, accessors, etc.)
+ * @param createElement - function to create VNode element
+ * @param renderCtx - render context from VNode
+ * @param baseCtx - component context that provided core functional
  * @param [opts] - additional options
  */
 export function createFakeCtx<T extends object = FunctionalCtx>(
@@ -43,6 +49,8 @@ export function createFakeCtx<T extends object = FunctionalCtx>(
 	baseCtx: FunctionalCtx,
 	opts: CreateFakeCtxOptions
 ): T {
+	// Create a new context object that is based on baseCtx
+
 	const
 		fakeCtx = Object.create(baseCtx),
 		meta = forkMeta(fakeCtx.meta);
@@ -51,7 +59,7 @@ export function createFakeCtx<T extends object = FunctionalCtx>(
 		{methods, component} = meta;
 
 	const
-		p = <Dictionary<any>>renderCtx.parent,
+		p = <ComponentInterface>Any(renderCtx.parent),
 		data = {};
 
 	const
@@ -66,7 +74,7 @@ export function createFakeCtx<T extends object = FunctionalCtx>(
 
 	if (p && p.$options) {
 		const
-			{filters, directives, components} = p.$options;
+			{filters = {}, directives = {}, components = {}} = p.$options;
 
 		$options = {
 			filters: Object.create(filters),
@@ -136,6 +144,8 @@ export function createFakeCtx<T extends object = FunctionalCtx>(
 			}
 
 			$a.clearAll().locked = true;
+
+			// We need to clear all handlers that we bound to a parent component of the current
 
 			const
 				parent = this.$normalParent;
@@ -214,16 +224,19 @@ export function createFakeCtx<T extends object = FunctionalCtx>(
 		},
 
 		$watch(
-			exprOrFn: string | (() => string),
-			cbOrOpts: (n: any, o: any) => void | WatchOptionsWithHandler<any>,
+			exprOrFn: WatchExpr<typeof fakeCtx>,
+			cbOrOpts: RawWatchHandler<typeof fakeCtx, T> | WatchOptionsWithHandler<any>,
 			opts?: WatchOptions
 		): (() => void) {
 			let
-				cb = cbOrOpts;
+				cb;
 
 			if (Object.isPlainObject(cbOrOpts)) {
-				cb = (<any>cbOrOpts).handler;
-				opts = <any>cbOrOpts;
+				cb = cbOrOpts.handler;
+				opts = cbOrOpts;
+
+			} else {
+				cb = cbOrOpts;
 			}
 
 			if (Object.isFunction(exprOrFn)) {
@@ -273,6 +286,7 @@ export function createFakeCtx<T extends object = FunctionalCtx>(
 	runHook('beforeDataCreate', fakeCtx).catch(stderr);
 	initWatchers(fakeCtx);
 
+	// Organize support of watching for fields
 	for (let keys = Object.keys(data), i = 0; i < keys.length; i++) {
 		const
 			key = keys[i];

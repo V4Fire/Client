@@ -12,9 +12,9 @@ import symbolGenerator from 'core/symbol';
 
 import { components } from 'core/component/const';
 import { ComponentInterface } from 'core/component/interface';
-import { getComponentDataFromVnode } from 'core/component/create/composite';
-import { runHook } from 'core/component/create/helpers';
-import { createFakeCtx } from 'core/component/create/functional';
+import { getComponentDataFromVNode } from 'core/component/vnode';
+import { runHook } from 'core/component/hook';
+import { createFakeCtx } from 'core/component/functional';
 
 import config from 'core/component/engines/zero/config';
 import minimalCtx from 'core/component/engines/zero/ctx';
@@ -211,7 +211,7 @@ export class ComponentDriver {
 
 			if (meta) {
 				const
-					data = <VNodeData>getComponentDataFromVnode(meta.componentName, <any>{data: opts});
+					data = <VNodeData>getComponentDataFromVNode(meta.componentName, <any>{data: opts});
 
 				const baseCtx = Object.assign(Object.create(this), {
 					props: data.props,
@@ -456,9 +456,9 @@ export function createComponent<T>(
 	meta.params.functional = true;
 
 	// @ts-ignore (access)
-	fakeCtx.hook = 'created';
+	fakeCtx['hook'] = 'created';
 
-	runHook('created', meta, fakeCtx).then(() => {
+	runHook('created', fakeCtx).then(() => {
 		if (methods.created) {
 			return methods.created.fn.call(fakeCtx);
 		}
@@ -468,7 +468,7 @@ export function createComponent<T>(
 		node = render.call(fakeCtx, createElement);
 
 	// @ts-ignore (access)
-	fakeCtx.$el = node;
+	fakeCtx['$el'] = node;
 	node.component = fakeCtx;
 
 	const
@@ -485,7 +485,7 @@ export function createComponent<T>(
 		}
 
 		mounted = true;
-		runHook('mounted', <NonNullable<typeof meta>>meta, fakeCtx).then(() => {
+		runHook('mounted', fakeCtx).then(() => {
 			if (methods.mounted) {
 				return methods.mounted.fn.call(fakeCtx);
 			}

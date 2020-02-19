@@ -6,31 +6,36 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { $$, mountHooks, parentMountMap } from 'core/component/create/functional/const';
+import { $$, mountHooks, parentMountMap } from 'core/component/functional/const';
+
 import { runHook } from 'core/component/hook';
-import { patchVNode as patch, VNode } from 'core/component/engines';
+import { patchVNode, VNode } from 'core/component/engines';
 
 import { RenderContext } from 'core/component/render';
+import { FlyweightVNode } from 'core/component/flyweight';
 import { ComponentInterface } from 'core/component/interface';
 
 /**
- * Patches the specified virtual node: adds classes, event handlers, etc.
+ * Initializes a component from the specified VNode.
+ * This function provides life-cycle hooks, adds classes and event listeners, etc.
  *
  * @param vnode
  * @param ctx - component context
  * @param renderCtx - render context
  */
-export function patchVNode(vnode: VNode, ctx: ComponentInterface, renderCtx: RenderContext): VNode {
-	// @ts-ignore (access)
-	vnode.fakeContext = ctx;
+export function initComponentVNode(vnode: VNode, ctx: ComponentInterface, renderCtx: RenderContext): FlyweightVNode {
+	const flyweightVNode = <FlyweightVNode>vnode;
+	flyweightVNode.fakeContext = ctx;
 
 	const
 		{data} = renderCtx,
+
 		// @ts-ignore (access)
 		{meta: {methods}} = ctx;
 
-	patch(vnode, ctx, renderCtx);
+	patchVNode(flyweightVNode, ctx, renderCtx);
 
+	// Attach component event listeners
 	if (data.on) {
 		for (let o = data.on, keys = Object.keys(o), i = 0; i < keys.length; i++) {
 			const
@@ -59,7 +64,7 @@ export function patchVNode(vnode: VNode, ctx: ComponentInterface, renderCtx: Ren
 		p = ctx.$normalParent;
 
 	if (!p) {
-		return vnode;
+		return flyweightVNode;
 	}
 
 	const
@@ -76,14 +81,19 @@ export function patchVNode(vnode: VNode, ctx: ComponentInterface, renderCtx: Ren
 	};
 
 	destroy[$$.self] = ctx;
+
+	// If a parent component was destroyed the current component need to destroy too
 	hooks.beforeDestroy.unshift({fn: destroy});
 
 	const
 		// @ts-ignore (access)
 		{$async: $a} = ctx;
 
+	// Mount hook listener
 	const mount = (retry?) => {
 		if (ctx.hook === 'mounted') {
+			// If a parent component was mounted, but the current component doesn't exist in the DOM and
+			// doesn't have the keepAlive flag, then the component should to destroy
 			if (!ctx.keepAlive && !ctx.$el) {
 				destroy();
 			}
@@ -95,12 +105,13 @@ export function patchVNode(vnode: VNode, ctx: ComponentInterface, renderCtx: Ren
 			return;
 		}
 
+		// If after the first mount hook the source component doesn't exists in the DOM,
+		// we should try again on the next tick
 		if (!ctx.$el) {
 			if (retry) {
 				return;
 			}
 
-			// @ts-ignore (access)
 			return $a.promise(p.$nextTick(), {
 				label: $$.findElWait
 			}).then(() => mount(true), stderr);
@@ -112,6 +123,8 @@ export function patchVNode(vnode: VNode, ctx: ComponentInterface, renderCtx: Ren
 		let
 			oldCtx = el[$$.component];
 
+		// The situation when we have an old context of the same component on the same node:
+		// we need to merge the old state with a new
 		if (oldCtx) {
 			if (oldCtx === ctx) {
 				return;
@@ -126,6 +139,7 @@ export function patchVNode(vnode: VNode, ctx: ComponentInterface, renderCtx: Ren
 		if (oldCtx) {
 			oldCtx._componentId = ctx.componentId;
 
+			// Destroy the old component
 			// @ts-ignore (access)
 			oldCtx.$destroy();
 
@@ -134,6 +148,7 @@ export function patchVNode(vnode: VNode, ctx: ComponentInterface, renderCtx: Ren
 				oldProps = oldCtx.$props,
 				linkedFields = <Dictionary<string>>{};
 
+			// Merge prop values
 			for (let keys = Object.keys(oldProps), i = 0; i < keys.length; i++) {
 				const
 					key = keys[i],
@@ -151,6 +166,8 @@ export function patchVNode(vnode: VNode, ctx: ComponentInterface, renderCtx: Ren
 					}
 				}
 			}
+
+			// Merge field values
 
 			{
 				const list = [
@@ -304,5 +321,5 @@ export function patchVNode(vnode: VNode, ctx: ComponentInterface, renderCtx: Ren
 		deferMount();
 	}
 
-	return vnode;
+	return flyweightVNode;
 }

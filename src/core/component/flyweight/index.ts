@@ -7,7 +7,7 @@
  */
 
 /**
- * [[include:core/component/create/composite/README.md]]
+ * [[include:core/component/flyweight/README.md]]
  * @packageDocumentation
  */
 
@@ -19,17 +19,15 @@ import { initProps } from 'core/component/prop';
 import { initFields } from 'core/component/field';
 
 import { addMethodsFromMeta } from 'core/component/meta';
-import { getNormalParent } from 'core/component/helpers/other';
+import { getNormalParent } from 'core/component/traverse';
 
 import { supports, CreateElement, VNode } from 'core/component/engines';
-import { getComponentDataFromVnode } from 'core/component/vnode';
-import { execRenderObject } from 'core/component/create/functional';
+import { getComponentDataFromVNode } from 'core/component/vnode';
+import { execRenderObject } from 'core/component/render';
 import { addEventAPI } from 'core/component/create/shims';
 
-const defField = {
-	...defProp,
-	value: NULL
-};
+import { FlyweightVNode } from 'core/component/flyweight/interface';
+export * from 'core/component/flyweight/interface';
 
 /**
  * Takes a vnode and, if it has the composite attribute, returns a new vnode that contains a flyweight component,
@@ -39,11 +37,11 @@ const defField = {
  * @param createElement - function to create VNode element
  * @param parentCtx - parent component context
  */
-export function createFlyweightComponent(
+export function parseVNode(
 	vnode: VNode,
 	createElement: CreateElement,
 	parentCtx: ComponentInterface
-): VNode {
+): VNode | FlyweightVNode {
 	const
 		compositeAttr = vnode?.data?.attrs?.['v4-composite'];
 
@@ -61,11 +59,12 @@ export function createFlyweightComponent(
 	}
 
 	const
-		componentData = getComponentDataFromVnode(compositeAttr, vnode),
+		componentData = getComponentDataFromVNode(compositeAttr, vnode),
 		componentProto = meta.constructor.prototype,
 		componentTpl = TPLS[compositeAttr] || componentProto.render;
 
 	// To create a flyweight component we need to create a "fake" context for a component.
+	// The context is based on the specified parent context by using Object.create.
 	// Also, we need to shim some component hooks.
 
 	const fakeCtx = Object.assign(Object.create(parentCtx), {
@@ -149,6 +148,11 @@ export function createFlyweightComponent(
 		fakeCtx.$props[key] = value;
 	}
 
+	const defField = {
+		...defProp,
+		value: NULL
+	};
+
 	const
 		{systemFields, fields} = meta;
 
@@ -179,8 +183,10 @@ export function createFlyweightComponent(
 	fakeCtx.hook = 'created';
 	fakeCtx.componentStatus = 'ready';
 
+	const newVNode = <FlyweightVNode>execRenderObject(componentTpl.index(), fakeCtx);
+	newVNode.fakeContext = fakeCtx;
+
 	const
-		newVNode = execRenderObject(componentTpl.index(), fakeCtx),
 		newVData = newVNode.data = newVNode.data || {};
 
 	// Attach component event listeners
@@ -207,9 +213,6 @@ export function createFlyweightComponent(
 	newVData.staticClass = (<string[]>[]).concat(newVData.staticClass || [], componentData.staticClass).join(' ');
 	newVData.class = (<string[]>[]).concat(newVData.class || [], componentData.class);
 	newVData.directives = componentData.directives;
-
-	// @ts-ignore
-	newVNode.fakeContext = fakeCtx;
 
 	return newVNode;
 }

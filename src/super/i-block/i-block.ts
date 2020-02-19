@@ -92,9 +92,9 @@ import {
 
 	globalEvent,
 	hook,
-	getFieldInfo,
+	getPropertyInfo,
 	cloneWatchValue,
-	bindWatchers,
+	initWatchers,
 
 	PropertyInfo,
 	ComponentMeta,
@@ -1120,7 +1120,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 
 		if (Object.isString(exprOrFn) && (
 			isCustomWatcher.test(exprOrFn) ||
-			(info = getFieldInfo(exprOrFn, this)).type === 'system')
+			(info = getPropertyInfo(exprOrFn, this)).type === 'system')
 		) {
 			if (info && info.type === 'prop' && (
 				info.ctx.unsafe.meta.params.root ||
@@ -1133,7 +1133,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 				return;
 			}
 
-			bindWatchers(this, {
+			initWatchers(this, {
 				info,
 				async: <Async<any>>this.async,
 				watchers: {
@@ -1741,7 +1741,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 
 		if (Object.isString(exprOrFn)) {
 			const
-				info = opts.fieldInfo || getFieldInfo(exprOrFn, this),
+				info = opts.fieldInfo || getPropertyInfo(exprOrFn, this),
 				val = this.field.get(exprOrFn);
 
 			if (info && info.type === 'prop' && (

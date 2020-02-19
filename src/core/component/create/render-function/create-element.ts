@@ -7,21 +7,15 @@
  */
 
 import symbolGenerator from 'core/symbol';
-import applyDynamicAttrs from 'core/component/create/render-function/v-attrs';
-
 import * as c from 'core/component/const';
+
+import { getComponentRenderCtxFromVNode } from 'core/component/vnode';
+import { createFakeCtx, initComponentVNode } from 'core/component/functional';
+import { parseVNode } from 'core/component/flyweight';
+import { execRenderObject } from 'core/component/render';
+
+import applyDynamicAttrs from 'core/component/create/render-function/v-attrs';
 import { registerComponent } from 'core/component/create/register';
-
-import {
-
-	patchVNode,
-	getComponentDataFromVnode,
-	createFlyweightComponent,
-	createFakeCtx,
-	execRenderObject,
-	ComponentInterface
-
-} from 'core/component';
 
 import {
 
@@ -30,13 +24,13 @@ import {
 	minimalCtx,
 
 	CreateElement,
-	NormalizedScopedSlot,
-	RenderContext,
 
 	VNode,
 	VNodeData
 
 } from 'core/component/engines';
+
+import { ComponentInterface } from 'core/component/interface';
 
 export const
 	$$ = symbolGenerator();
@@ -55,7 +49,7 @@ export function wrapCreateElement(
 	const
 		tasks = <Function[]>[];
 
-	const wrappedCreateElement = function (tag: string, opts?: VNodeData, children?: VNode[]): VNode {
+	const wrappedCreateElement = <CreateElement>function (tag: string, opts?: VNodeData, children?: VNode[]): VNode {
 		'use strict';
 
 		const
@@ -111,30 +105,7 @@ export function wrapCreateElement(
 
 			const
 				node = createElement('span', {...opts, tag: undefined}, children),
-				data = getComponentDataFromVnode(component, node);
-
-			const renderCtx: RenderContext = {
-				parent: ctx,
-				children: node.children || [],
-				props: data.props,
-				listeners: <Record<string, CanArray<Function>>>data.on,
-
-				slots: () => data.slots,
-				scopedSlots: <Record<string, NormalizedScopedSlot>>data.scopedSlots,
-				injections: undefined,
-
-				data: {
-					ref: data.ref,
-					refInFor: data.refInFor,
-					on: <Record<string, CanArray<Function>>>data.on,
-					nativeOn: <Record<string, CanArray<Function>>>data.nativeOn,
-					attrs: data.attrs,
-					class: data.class,
-					staticClass: data.staticClass,
-					style: data.style,
-					directives: data.directives
-				}
-			};
+				renderCtx = getComponentRenderCtxFromVNode(component, node, ctx);
 
 			const fakeCtx = createFakeCtx<ComponentInterface>(
 				<CreateElement>wrappedCreateElement,
@@ -155,13 +126,17 @@ export function wrapCreateElement(
 				c.componentTemplates[componentName] ||
 				tpl.index && tpl.index();
 
-			vnode = patchVNode(execRenderObject(renderObject, fakeCtx), fakeCtx, renderCtx);
+			vnode = initComponentVNode(
+				execRenderObject(renderObject, fakeCtx),
+				fakeCtx,
+				renderCtx
+			);
 		}
 
 		if (!vnode) {
-			vnode = createFlyweightComponent(
+			vnode = parseVNode(
 				createElement.apply(ctx, arguments),
-				<CreateElement>wrappedCreateElement,
+				wrappedCreateElement,
 				ctx
 			);
 		}
@@ -222,5 +197,5 @@ export function wrapCreateElement(
 		return vnode;
 	};
 
-	return <any>wrappedCreateElement;
+	return [wrappedCreateElement, tasks];
 }

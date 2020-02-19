@@ -12,10 +12,49 @@
  */
 
 import { components } from 'core/component/const';
-import { VNode, VNodeDirective } from 'core/component/engines';
-import { ComponentMeta } from 'core/component/interface';
+import { ComponentInterface, ComponentMeta } from 'core/component/interface';
+import { RenderContext, VNode, VNodeDirective, NormalizedScopedSlot } from 'core/component/engines';
 import { ComponentVNodeData, ComponentModelVNodeData } from 'core/component/vnode/interface';
 export * from 'core/component/vnode/interface';
+
+/**
+ * Returns a component render context object from the specified vnode
+ *
+ * @param component - component name or a meta object
+ * @param vnode
+ * @param [parent] - parent component instance
+ */
+export function getComponentRenderCtxFromVNode(
+	component: string | ComponentMeta,
+	vnode: VNode,
+	parent?: ComponentInterface
+): RenderContext {
+	const
+		data = getComponentDataFromVNode(component, vnode);
+
+	return {
+		parent: <any>parent,
+		children: vnode.children || [],
+		props: data.props,
+		listeners: <Record<string, CanArray<Function>>>data.on,
+
+		slots: () => data.slots,
+		scopedSlots: <Record<string, NormalizedScopedSlot>>data.scopedSlots,
+		injections: undefined,
+
+		data: {
+			ref: data.ref,
+			refInFor: data.refInFor,
+			on: <Record<string, CanArray<Function>>>data.on,
+			nativeOn: <Record<string, CanArray<Function>>>data.nativeOn,
+			attrs: data.attrs,
+			class: data.class,
+			staticClass: data.staticClass,
+			style: data.style,
+			directives: data.directives
+		}
+	};
+}
 
 /**
  * Returns a component data object from the specified vnode
@@ -23,7 +62,7 @@ export * from 'core/component/vnode/interface';
  * @param component - component name or a meta object
  * @param vnode
  */
-export function getComponentDataFromVnode(component: string | ComponentMeta, vnode: VNode): ComponentVNodeData {
+export function getComponentDataFromVNode(component: string | ComponentMeta, vnode: VNode): ComponentVNodeData {
 	const
 		vData = vnode.data || {},
 		slots = (<Dictionary>vData).slots;
