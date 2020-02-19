@@ -44,6 +44,10 @@ export interface FunctionalCtx {
 	$options: Dictionary;
 }
 
+export interface ComponentConstructor<T = unknown> {
+	new(): T;
+}
+
 /**
  * DOM Element that is tied with a component
  */

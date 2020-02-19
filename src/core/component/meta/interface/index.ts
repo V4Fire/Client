@@ -7,7 +7,7 @@
  */
 
 import { WatchObject } from 'core/component/interface/watch';
-import { PropOptions, RenderFunction, ModsDecl } from 'core/component/interface';
+import { ComponentConstructor, PropOptions, RenderFunction, ModsDecl } from 'core/component/interface';
 
 import {
 
@@ -42,7 +42,7 @@ export interface ComponentMeta {
 	/**
 	 * Link to the component constructor
 	 */
-	constructor: Function;
+	constructor: ComponentConstructor;
 
 	/**
 	 * Link to a component instance

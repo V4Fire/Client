@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { ComponentParams, ComponentMeta, ComponentInterface } from 'core/component/interface';
+import { ComponentParams, ComponentMeta, ComponentInterface, ComponentConstructor } from 'core/component/interface';
 
 /**
  * Information about a component that can be taken from a constructor
@@ -36,7 +36,7 @@ export interface ComponentConstructorInfo {
 	/**
 	 * Link to the component constructor
 	 */
-	constructor: Function;
+	constructor: ComponentConstructor;
 
 	/**
 	 * Map of component parameters that was provided to a @component decorator

@@ -24,7 +24,7 @@ import { getNormalParent } from 'core/component/traverse';
 import { supports, CreateElement, VNode } from 'core/component/engines';
 import { getComponentDataFromVNode } from 'core/component/vnode';
 import { execRenderObject } from 'core/component/render';
-import { addEventAPI } from 'core/component/create/shims';
+import { addEventAPI } from 'core/component/create';
 
 import { FlyweightVNode } from 'core/component/flyweight/interface';
 export * from 'core/component/flyweight/interface';

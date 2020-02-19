@@ -12,12 +12,11 @@ import log from 'core/log';
 import * as defTpls from 'core/block.ss';
 import * as c from 'core/component/const';
 
-import { createComponentMeta, inherit } from 'core/component/meta';
+import { createMeta, fillMeta } from 'core/component/meta';
 import { getInfoFromConstructor } from 'core/component/reflection';
 
-import { ComponentDriver } from 'core/component/engines';
-import { getComponent, getBaseComponent } from 'core/component/create';
-import { registerParentComponents } from 'core/component/create/register';
+import { getComponent, ComponentDriver } from 'core/component/engines';
+import { registerParentComponents } from 'core/component/create';
 
 import { ComponentParams, ComponentMethod } from 'core/component/interface';
 
@@ -70,7 +69,7 @@ export function component(declParams?: ComponentParams): Function {
 
 			const
 				parentMeta = componentInfo.parentMeta,
-				meta = createComponentMeta(componentInfo);
+				meta = createMeta(componentInfo);
 
 			if (!componentInfo.params.name || !componentInfo.isSmart) {
 				c.components.set(target, meta);
@@ -80,10 +79,11 @@ export function component(declParams?: ComponentParams): Function {
 			c.initEmitter.emit(`constructor.${componentInfo.name}`, {meta, parentMeta});
 
 			if (componentInfo.isAbstract) {
-				getBaseComponent(target, meta);
+				fillMeta(meta, target);
 				return;
 			}
 
+			// Function that waits till a component template is loaded
 			const loadTemplate = (component) => (resolve) => {
 				const success = () => {
 					log(`component:load:${componentInfo.name}`, component);
@@ -147,7 +147,7 @@ export function component(declParams?: ComponentParams): Function {
 			};
 
 			const
-				obj = loadTemplate(getComponent(target, meta));
+				obj = loadTemplate(getComponent(meta));
 
 			if (componentInfo.params.root) {
 				c.rootComponents[componentInfo.name] = new Promise(obj);

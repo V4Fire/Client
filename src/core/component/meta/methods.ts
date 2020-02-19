@@ -10,12 +10,39 @@ import { defProp } from 'core/const/props';
 import { ComponentInterface, ComponentMeta } from 'core/component';
 
 /**
- * Iterates over a prototype of the the specified constructor and adds methods/accessors to a meta object
+ * Invokes a method from the specified component instance
  *
- * @param constructor
- * @param meta
+ * @param component
+ * @param method - method name
+ * @param [args] - method arguments
  */
-export function addMethodsToMeta(constructor: Function, meta: ComponentMeta): void {
+export function callMethodFromComponent(component: ComponentInterface, method: string, ...args: unknown[]): void {
+	const
+		// @ts-ignore (access)
+		obj = component.meta.methods[method];
+
+	if (obj) {
+		try {
+			const
+				res = obj.fn.apply(component, args);
+
+			if (res instanceof Promise) {
+				res.catch(stderr);
+			}
+
+		} catch (err) {
+			stderr(err);
+		}
+	}
+}
+
+/**
+ * Iterates over a prototype of a component constructor and adds methods/accessors to the specified meta object
+ *
+ * @param meta
+ * @param [constructor]
+ */
+export function addMethodsToMeta(meta: ComponentMeta, constructor: Function = meta.constructor): void {
 	const
 		proto = constructor.prototype,
 		ownProps = Object.getOwnPropertyNames(proto);

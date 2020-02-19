@@ -3,7 +3,7 @@
 This module provides a class to organize event emitter with support of ordering events.
 
 ```js
-import QueueEmitter from 'core/component/create/queue-emitter';
+import QueueEmitter from 'core/component/queue-emitter';
 
 const
   eventEmitter = new QueueEmitter();
