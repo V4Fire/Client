@@ -108,10 +108,10 @@ export function initWatchers(ctx: ComponentInterface, params?: InitWatchersParam
 			// by default it is a component that is passed to the function
 			watcherCtx = ctx,
 
-			// True if this watcher must initialize only when component is created
+			// True if this watcher can initialize only when component is created
 			watcherNeedCreated = true,
 
-			// True if this watcher must initialize only when component is mounted
+			// True if this watcher can initialize only when component is mounted
 			watcherNeedMounted = false;
 
 		// Custom watchers looks like ':foo', 'bla:foo', '?bla:foo'
@@ -270,18 +270,18 @@ export function initWatchers(ctx: ComponentInterface, params?: InitWatchersParam
 				}
 
 				// Apply a watcher wrapper if it specified.
-				// Mind that wrapper must returns a function as the result,
+				// Mind that the wrapper must returns a function as the result,
 				// but it can be packed to a promise.
 				if (watchInfo.wrapper) {
 					handler = <typeof handler>watchInfo.wrapper(ctx, handler);
 				}
 
-				// To improve initialization performance, we must separately handle the promise situation
+				// To improve initialization performance, we should separately handle the promise situation
 				// ("copy-paste", but works better)
 				if (handler instanceof Promise) {
 					$a.promise(handler, asyncParams).then((handler) => {
 						if (customWatcher) {
-							// True if an event must be listen by using the component itself,
+							// True if an event can be listen by using the component itself,
 							// because the watcherCtx doesn't look like an event emitter
 							const needDefEmitter =
 								watcherCtx === ctx &&
@@ -382,7 +382,7 @@ export function initWatchers(ctx: ComponentInterface, params?: InitWatchersParam
 
 				} else {
 					if (customWatcher) {
-						// True if an event must be listen by using the component itself,
+						// True if an event can be listen by using the component itself,
 						// because the watcherCtx doesn't look like an event emitter
 						const needDefEmitter =
 							watcherCtx === ctx &&
