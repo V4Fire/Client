@@ -6,16 +6,14 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-// @ts-ignore
-import * as defTpls from 'core/block.ss';
 import log from 'core/log';
 
+// @ts-ignore
+import * as defTpls from 'core/block.ss';
 import * as c from 'core/component/const';
-import { getBlankMetaForComponent } from 'core/component/meta';
-import { getInfoFromConstructor } from 'core/component/reflection';
 
-import inheritMeta from 'core/component/create/inherit';
-import { wrapRender } from 'core/component/create/render-function';
+import { createComponentMeta, inherit } from 'core/component/meta';
+import { getInfoFromConstructor } from 'core/component/reflection';
 
 import { ComponentDriver } from 'core/component/engines';
 import { getComponent, getBaseComponent } from 'core/component/create';
@@ -45,56 +43,50 @@ import { ComponentParams, ComponentMethod } from 'core/component/interface';
  */
 export function component(declParams?: ComponentParams): Function {
 	return (target) => {
-		const i = getInfoFromConstructor(target, declParams);
-		c.initEmitter.emit('bindConstructor', i.name);
+		const componentInfo = getInfoFromConstructor(target, declParams);
+		c.initEmitter.emit('bindConstructor', componentInfo.name);
 
-		if (!i.name || i.params.root || i.isAbstract) {
+		if (!componentInfo.name || componentInfo.params.root || componentInfo.isAbstract) {
 			regComponent();
 
 		} else {
-			const initList = c.componentInitializers[i.name] = c.componentInitializers[i.name] || [];
+			const initList = c.componentInitializers[componentInfo.name] = c.componentInitializers[componentInfo.name] || [];
 			initList.push(regComponent);
 		}
 
 		// If we have a smart component,
-		// then we compile 2 components in the runtime
-		if (Object.isPlainObject(i.params.functional)) {
+		// we need to compile 2 components in the runtime
+		if (Object.isPlainObject(componentInfo.params.functional)) {
 			component({
 				...declParams,
-				name: `${i.name}-functional`,
+				name: `${componentInfo.name}-functional`,
 				functional: true
 			})(target);
 		}
 
 		function regComponent(): void {
 			// Lazy initializing of parent components
-			registerParentComponents(i);
+			registerParentComponents(componentInfo);
 
 			const
-				parentMeta = i.parentMeta,
-				meta = getBlankMetaForComponent(i);
+				parentMeta = componentInfo.parentMeta,
+				meta = createComponentMeta(componentInfo);
 
-			meta.component.render = wrapRender(meta);
-
-			if (parentMeta) {
-				i.params = inheritMeta(meta, parentMeta);
-			}
-
-			if (!i.params.name || !i.isSmart) {
+			if (!componentInfo.params.name || !componentInfo.isSmart) {
 				c.components.set(target, meta);
 			}
 
-			c.components.set(i.name, meta);
-			c.initEmitter.emit(`constructor.${i.name}`, {meta, parentMeta});
+			c.components.set(componentInfo.name, meta);
+			c.initEmitter.emit(`constructor.${componentInfo.name}`, {meta, parentMeta});
 
-			if (i.isAbstract) {
+			if (componentInfo.isAbstract) {
 				getBaseComponent(target, meta);
 				return;
 			}
 
 			const loadTemplate = (component) => (resolve) => {
 				const success = () => {
-					log(`component:load:${i.name}`, component);
+					log(`component:load:${componentInfo.name}`, component);
 					resolve(component);
 				};
 
@@ -103,7 +95,7 @@ export function component(declParams?: ComponentParams): Function {
 
 				const addRenderAndResolve = (tpls) => {
 					const
-						fns = c.componentTemplates[i.name] = c.componentTemplates[i.name] || tpls.index(),
+						fns = c.componentTemplates[componentInfo.name] = c.componentTemplates[componentInfo.name] || tpls.index(),
 						renderObj = <ComponentMethod>{wrapper: true, watchers: {}, hooks: {}};
 
 					renderObj.fn = fns.render;
@@ -113,7 +105,7 @@ export function component(declParams?: ComponentParams): Function {
 					success();
 				};
 
-				if (i.params.tpl === false) {
+				if (componentInfo.params.tpl === false) {
 					if (r && !r.wrapper) {
 						success();
 
@@ -157,12 +149,12 @@ export function component(declParams?: ComponentParams): Function {
 			const
 				obj = loadTemplate(getComponent(target, meta));
 
-			if (i.params.root) {
-				c.rootComponents[i.name] = new Promise(obj);
+			if (componentInfo.params.root) {
+				c.rootComponents[componentInfo.name] = new Promise(obj);
 
 			} else {
 				const
-					c = ComponentDriver.component(i.name, obj);
+					c = ComponentDriver.component(componentInfo.name, obj);
 
 				if (Object.isPromise(c)) {
 					c.catch(stderr);

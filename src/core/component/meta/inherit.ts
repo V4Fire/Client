@@ -7,20 +7,20 @@
  */
 
 import { metaPointers, PARENT } from 'core/component/const';
-import { ComponentMeta, ComponentParams, StrictModDeclVal } from 'core/component/interface';
+import { ComponentMeta, StrictModDeclVal } from 'core/component/interface';
 
 /**
- * Inherits parameters to the specified meta object from another meta object
- * and returns a new object with component parameters
+ * Inherits the specified meta object from another meta object.
+ * The function modifies the original object and returns it.
  *
  * @param meta
  * @param parentMeta
  */
-export default function inheritMeta(
+export function inherit(
 	meta: ComponentMeta,
 	parentMeta: ComponentMeta
-): ComponentParams {
-	let
+): ComponentMeta {
+	const
 		p = meta.params;
 
 	const {
@@ -41,7 +41,7 @@ export default function inheritMeta(
 	// Component parameters inheritance
 	///////////////////////////////////
 
-	p = meta.params = {
+	meta.params = {
 		...params,
 		...p,
 		name: p.name,
@@ -247,5 +247,5 @@ export default function inheritMeta(
 		}
 	}
 
-	return p;
+	return meta;
 }

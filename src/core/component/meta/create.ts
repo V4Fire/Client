@@ -7,14 +7,16 @@
  */
 
 import { getComponentMods } from 'core/component/reflection';
-import { ComponentMeta, ComponentConstructorInfo } from 'core/component/interface';
+import { inherit } from 'core/component/meta/inherit';
+import { wrapRender } from 'core/component/create/render-function';
+import { ComponentMeta, ComponentConstructorInfo, RenderFunction } from 'core/component/interface';
 
 /**
- * Creates a blank meta object for the specified component and returns it
- * @param component
+ * Creates a meta object for the specified component and returns it
+ * @param component - component constructor info
  */
-export function getBlankMetaForComponent(component: ComponentConstructorInfo): ComponentMeta {
-	return {
+export function createComponentMeta(component: ComponentConstructorInfo): ComponentMeta {
+	const meta = {
 		name: component.name,
 		componentName: component.componentName,
 
@@ -59,9 +61,17 @@ export function getBlankMetaForComponent(component: ComponentConstructorInfo): C
 			methods: {},
 			computed: {},
 			staticRenderFns: [],
-			render(): never {
+			render: <RenderFunction>(() => {
 				throw new ReferenceError(`A render function for the component "${component.componentName}" is not specified`);
-			}
+			})
 		}
 	};
+
+	meta.component.render = wrapRender(meta);
+
+	if (component.parentMeta) {
+		inherit(meta, component.parentMeta);
+	}
+
+	return meta;
 }
