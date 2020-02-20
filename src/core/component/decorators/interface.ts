@@ -23,7 +23,7 @@ import {
 
 } from 'core/component/interface';
 
-export interface FieldWatcherObject<
+export interface DecoratorFieldWatcherObject<
 	CTX extends ComponentInterface = ComponentInterface,
 	A = unknown,
 	B = A
@@ -32,23 +32,25 @@ export interface FieldWatcherObject<
 	provideArgs?: boolean;
 }
 
-export type FieldWatcher<CTX extends ComponentInterface = ComponentInterface, A = unknown, B = A> =
+export type DecoratorFieldWatcher<CTX extends ComponentInterface = ComponentInterface, A = unknown, B = A> =
 	string |
-	FieldWatcherObject<CTX, A, B> |
+	DecoratorFieldWatcherObject<CTX, A, B> |
 	WatchHandler<CTX, A, B> |
-	Array<string | FieldWatcherObject<CTX, A, B> | WatchHandler<CTX, A, B>>;
+	Array<string | DecoratorFieldWatcherObject<CTX, A, B> | WatchHandler<CTX, A, B>>;
 
-export interface ComponentProp<
+export interface DecoratorProp<
 	CTX extends ComponentInterface = ComponentInterface,
 	A = unknown,
 	B = A
 > extends PropOptions {
 	forceDefault?: boolean;
-	watch?: FieldWatcher<CTX, A, B>;
+	watch?: DecoratorFieldWatcher<CTX, A, B>;
 	meta?: Dictionary;
 }
 
-export interface SystemField<CTX extends ComponentInterface = ComponentInterface> extends FunctionalOptions {
+export interface DecoratorSystem<
+	CTX extends ComponentInterface = ComponentInterface
+> extends DecoratorFunctionalOptions {
 	atom?: boolean;
 	default?: unknown;
 	unique?: boolean | UniqueFieldFn<CTX>;
@@ -58,42 +60,50 @@ export interface SystemField<CTX extends ComponentInterface = ComponentInterface
 	meta?: Dictionary;
 }
 
-export interface ComponentField<
+export interface DecoratorField<
 	CTX extends ComponentInterface = ComponentInterface,
 	A = unknown,
 	B = A
-> extends SystemField<CTX> {
-	watch?: FieldWatcher<CTX, A, B>;
+> extends DecoratorSystem<CTX> {
+	watch?: DecoratorFieldWatcher<CTX, A, B>;
 }
 
-export interface FunctionalOptions {
+export interface DecoratorFunctionalOptions {
 	replace?: boolean;
 	functional?: boolean;
 }
 
-export interface ComponentAccessor extends FunctionalOptions {
+export interface DecoratorComponentAccessor extends DecoratorFunctionalOptions {
 	cache: boolean;
 }
 
-export type HookParams = {
-	[hook in Hook]?: FunctionalOptions & {
+export type DecoratorHookParams = {
+	[hook in Hook]?: DecoratorFunctionalOptions & {
 		after?: CanArray<string>;
 	}
 };
 
-export type ComponentHooks =
+export type DecoratorHook =
 	Hook |
 	Hook[] |
-	HookParams |
-	HookParams[];
+	DecoratorHookParams |
+	DecoratorHookParams[];
 
-export type MethodWatchers<CTX extends ComponentInterface = ComponentInterface, A = unknown, B = A> =
+export type DecoratorMethodWatchers<CTX extends ComponentInterface = ComponentInterface, A = unknown, B = A> =
 	string |
 	MethodWatcher<CTX, A, B> |
 	Array<string | MethodWatcher<CTX, A, B>>;
 
-export interface ComponentMethod<CTX extends ComponentInterface = ComponentInterface, A = unknown, B = A> {
-	watch?: MethodWatchers<CTX, A, B>;
+export interface DecoratorMethod<CTX extends ComponentInterface = ComponentInterface, A = unknown, B = A> {
+	watch?: DecoratorMethodWatchers<CTX, A, B>;
 	watchParams?: MethodWatcher<CTX, A, B>;
-	hook?: ComponentHooks;
+	hook?: DecoratorHook;
+}
+
+export interface ParamsFactoryTransformer {
+	(params: object, cluster: string): Dictionary<any>
+}
+
+export interface FactoryTransformer<T = object> {
+	(params?: T): Function;
 }

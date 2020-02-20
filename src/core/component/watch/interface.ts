@@ -7,7 +7,7 @@
  */
 
 import Async from 'core/async';
-import { ComponentInterface, PropertyInfo, WatchObject } from 'core/component';
+import { ComponentInterface, PropertyInfo, WatchObject } from 'core/component/interface';
 
 export interface InitWatchersParams<A extends object = ComponentInterface> {
 	/**

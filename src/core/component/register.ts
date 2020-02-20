@@ -103,6 +103,7 @@ export function component(opts?: ComponentOptions): Function {
 					let
 						i = 0;
 
+					// Dirty check of a component template loading status
 					const f = () => {
 						const
 							fns = TPLS[meta.componentName];

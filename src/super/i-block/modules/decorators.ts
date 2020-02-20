@@ -13,8 +13,8 @@ import { initEmitter, ModVal, InitFieldFn as BaseInitFieldFn, ComponentInterface
 
 import {
 
-	ComponentMethod,
-	ComponentAccessor,
+	DecoratorMethod,
+	DecoratorComponentAccessor,
 
 	p as pDecorator,
 	prop as propDecorator,
@@ -22,10 +22,10 @@ import {
 	system as systemDecorator,
 	watch as watchDecorator,
 
-	MethodWatchers as BaseMethodWatchers,
-	FieldWatcher as BaseFieldWatcher,
-	ComponentProp as BaseComponentProp,
-	ComponentField as BaseComponentField
+	DecoratorMethodWatchers as BaseMethodWatchers,
+	DecoratorFieldWatcher as BaseFieldWatcher,
+	DecoratorProp as BaseComponentProp,
+	DecoratorField as BaseComponentField
 
 } from 'core/component/decorators';
 
@@ -62,7 +62,7 @@ export interface ComponentField<
  * @override
  */
 export const p = pDecorator as <CTX extends ComponentInterface = ComponentInterface, A = unknown, B = A>(
-	params?: ComponentProp<CTX, A, B> | ComponentField<CTX, A, B> | ComponentMethod<CTX, A, B> | ComponentAccessor
+	params?: ComponentProp<CTX, A, B> | ComponentField<CTX, A, B> | DecoratorMethod<CTX, A, B> | DecoratorComponentAccessor
 ) => Function;
 
 /**

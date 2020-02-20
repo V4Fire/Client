@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { ComponentInterface } from 'core/component';
+import { ComponentInterface } from 'core/component/interface';
 
 export type Prop<T = unknown> =
 	{(): T} |

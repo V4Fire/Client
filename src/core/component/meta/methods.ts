@@ -7,7 +7,7 @@
  */
 
 import { defProp } from 'core/const/props';
-import { ComponentInterface, ComponentMeta } from 'core/component';
+import { ComponentInterface, ComponentMeta } from 'core/component/interface';
 
 /**
  * Invokes a method from the specified component instance

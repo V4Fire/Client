@@ -7,7 +7,7 @@
  */
 
 import { VNodeData } from 'core/component/engines';
-import { ComponentMeta } from 'core/component';
+import { ComponentMeta } from 'core/component/interface';
 
 const
 	directiveRgxp = /(v-(.*?))(?::(.*?))?(\..*)?$/;

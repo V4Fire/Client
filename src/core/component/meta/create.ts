@@ -10,7 +10,7 @@ import { defaultWrapper } from 'core/component/const';
 
 import { getComponentMods, isAbstractComponent } from 'core/component/reflection';
 import { isTypeCanBeFunc } from 'core/component/prop';
-import { wrapRender } from 'core/component/create';
+import { wrapRender } from 'core/component/render-function';
 
 import { inherit } from 'core/component/meta/inherit';
 import { addMethodsToMeta } from 'core/component/meta/methods';

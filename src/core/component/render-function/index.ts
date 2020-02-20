@@ -6,14 +6,19 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+/**
+ * [[include:core/component/render-function/README.md]]
+ * @packageDocumentation
+ */
+
 import { runHook } from 'core/component/hook';
 import { beforeMountHooks, mountedHooks } from 'core/component/const';
 
 import { patchRefs } from 'core/component/create/refs';
 import { renderData, CreateElement, RenderContext, VNode } from 'core/component/engines';
-import { wrapCreateElement } from 'core/component/create/render-function/create-element';
+import { wrapCreateElement } from 'core/component/render-function/create-element';
 
-import { ComponentMeta, ComponentInterface, RenderFunction } from 'core/component/interface';
+import { ComponentInterface, ComponentMeta, RenderFunction } from 'core/component/interface';
 
 /**
  * Wraps the specified render function and returns a new function.
@@ -50,6 +55,7 @@ export function wrapRender(meta: ComponentMeta): RenderFunction {
 					// @ts-ignore (access)
 					forEach = rootCtx._l;
 
+				// Wrap slot directive to support async rendering
 				// @ts-ignore (access)
 				rootCtx._u = (fns, res) => {
 					res = res || {};
@@ -87,6 +93,7 @@ export function wrapRender(meta: ComponentMeta): RenderFunction {
 					return res;
 				};
 
+				// Wrap v-for directive to support async loop rendering
 				// @ts-ignore (access)
 				rootCtx._l = (obj, cb) => {
 					const
@@ -126,8 +133,9 @@ export function wrapRender(meta: ComponentMeta): RenderFunction {
 								vnode.fakeContext = ctx;
 							}
 
+							// Function that render a chunk of VNodes
 							const fn = () => ctx.$async.setTimeout(() => {
-								obj[asyncLabel]((obj, p = {}) => {
+								obj[asyncLabel]((obj, p?: ComponentInterface) => {
 									const
 										els = <Node[]>[],
 										renderNodes = <Nullable<Node>[]>[],
@@ -142,7 +150,7 @@ export function wrapRender(meta: ComponentMeta): RenderFunction {
 									}
 
 									ctx.hook = 'beforeUpdate';
-									ctx.renderGroup = p.renderGroup;
+									ctx.renderGroup = p?.renderGroup;
 
 									for (let o = forEach(obj, cb), i = 0; i < o.length; i++) {
 										const

@@ -15,7 +15,7 @@ import { execRenderObject } from 'core/component/render';
 import { parseVNode } from 'core/component/flyweight';
 import { createFakeCtx, initComponentVNode } from 'core/component/functional';
 
-import { applyDynamicAttrs } from 'core/component/create/render-function/v-attrs';
+import { applyDynamicAttrs } from 'core/component/render-function/v-attrs';
 import { registerComponent } from 'core/component/create/register';
 
 import {
@@ -152,6 +152,7 @@ export function wrapCreateElement(
 			ctx.renderTmp[renderKey] = cloneVNode(vnode);
 		}
 
+		// Add $refs link if it doesn't exist
 		if (vData && ref && ctx !== baseCtx) {
 			vData[$$.ref] = ref;
 			vData.ref = `${ref}:${ctx.componentId}`;
@@ -174,6 +175,7 @@ export function wrapCreateElement(
 			});
 		}
 
+		// Add $el link if it doesn't exist
 		if (needEl && vnode.fakeContext) {
 			Object.defineProperty(vnode.fakeContext, '$el', {
 				enumerable: true,

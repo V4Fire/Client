@@ -6,7 +6,11 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-export * from 'core/component/create/render-function';
+/**
+ * [[include:core/component/create/README.md]]
+ * @packageDocumentation
+ */
+
 export * from 'core/component/create/refs';
 export * from 'core/component/create/register';
 export * from 'core/component/create/shims';

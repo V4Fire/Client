@@ -8,7 +8,9 @@
 
 import { defProp } from 'core/const/props';
 import { initEmitter, metaPointers } from 'core/component/const';
+
 import { ComponentMeta } from 'core/component/interface';
+import { ParamsFactoryTransformer, FactoryTransformer } from 'core/component/decorators/interface';
 
 const inverseFieldMap = Object.createDict({
 	props: ['fields', 'systemFields'],
@@ -17,15 +19,15 @@ const inverseFieldMap = Object.createDict({
 });
 
 /**
- * Factory for creating component property decorators
+ * Factory to create component property decorators
  *
  * @param cluster - property cluster
  * @param [transformer] - transformer for parameters
  */
-export function paramsFactory<T = unknown>(
+export function paramsFactory<T = object>(
 	cluster: Nullable<string>,
-	transformer?: (params: any, cluster: string) => Dictionary<any>
-): (params?: T) => Function {
+	transformer?: ParamsFactoryTransformer
+): FactoryTransformer<T> {
 	return (params: Dictionary<any> = {}) => (target, key, desc) => {
 		initEmitter.once('bindConstructor', (componentName) => {
 			const
@@ -82,12 +84,12 @@ export function paramsFactory<T = unknown>(
 					if (p.watch) {
 						watchers = watchers || {};
 
-						for (let o = <any[]>[].concat(p.watch), i = 0; i < o.length; i++) {
+						for (let o = <Array<typeof p.watch>>[].concat(p.watch), i = 0; i < o.length; i++) {
 							const
 								el = o[i];
 
 							if (Object.isPlainObject(el)) {
-								watchers[String((<Dictionary>el).field)] = wrapOpts({...p.watchParams, ...el});
+								watchers[String(el.field)] = wrapOpts({...p.watchParams, ...el});
 
 							} else {
 								watchers[el] = wrapOpts({field: el, ...p.watchParams});
@@ -98,7 +100,7 @@ export function paramsFactory<T = unknown>(
 					if (p.hook) {
 						hooks = hooks || {};
 
-						for (let o = <any[]>[].concat(p.hook), i = 0; i < o.length; i++) {
+						for (let o = <Array<typeof p.hook>>[].concat(p.hook), i = 0; i < o.length; i++) {
 							const
 								el = o[i];
 
@@ -184,14 +186,14 @@ export function paramsFactory<T = unknown>(
 			}
 
 			if (p.watch) {
-				for (let o = <any[]>[].concat(p.watch), i = 0; i < o.length; i++) {
+				for (let o = <Array<typeof p.watch>>[].concat(p.watch), i = 0; i < o.length; i++) {
 					watchers = watchers || new Map();
 
 					const
 						val = o[i];
 
 					if (Object.isPlainObject(val)) {
-						watchers.set((<Dictionary>val).fn, wrapOpts({...val}));
+						watchers.set(val.fn, wrapOpts({...val}));
 
 					} else {
 						watchers.set(val, wrapOpts({fn: val}));

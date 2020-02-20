@@ -11,26 +11,31 @@ import { InitFieldFn } from 'core/component/interface';
 
 import {
 
-	ComponentProp,
-	SystemField,
-	ComponentField,
+	DecoratorProp,
+	DecoratorSystem,
+	DecoratorField,
 
-	ComponentAccessor,
-	ComponentMethod,
+	DecoratorComponentAccessor,
+	DecoratorMethod,
 
-	ComponentHooks,
-	FieldWatcher,
-	MethodWatchers
+	DecoratorHook,
+	DecoratorFieldWatcher,
+	DecoratorMethodWatchers
 
 } from 'core/component/decorators/interface';
 
+export * from 'core/component/decorators/base';
 export * from 'core/component/decorators/interface';
 
 /**
  * Marks a class property as a component initial property
  * @decorator
  */
-export const prop = paramsFactory<CanArray<Function> | ObjectConstructor | ComponentProp>('props', (p) => {
+export const prop = paramsFactory<
+	CanArray<Function> |
+	ObjectConstructor |
+	DecoratorProp
+>('props', (p) => {
 	if (Object.isFunction(p) || Object.isArray(p)) {
 		return {type: p};
 	}
@@ -42,7 +47,7 @@ export const prop = paramsFactory<CanArray<Function> | ObjectConstructor | Compo
  * Marks a class property as a component data property
  * @decorator
  */
-export const field = paramsFactory<InitFieldFn | ComponentField>('fields', (p) => {
+export const field = paramsFactory<InitFieldFn | DecoratorField>('fields', (p) => {
 	if (Object.isFunction(p)) {
 		return {init: p};
 	}
@@ -54,7 +59,7 @@ export const field = paramsFactory<InitFieldFn | ComponentField>('fields', (p) =
  * Marks a class property as a system property
  * @decorator
  */
-export const system = paramsFactory<InitFieldFn | SystemField>('systemFields', (p) => {
+export const system = paramsFactory<InitFieldFn | DecoratorSystem>('systemFields', (p) => {
 	if (Object.isFunction(p)) {
 		return {init: p};
 	}
@@ -66,16 +71,24 @@ export const system = paramsFactory<InitFieldFn | SystemField>('systemFields', (
  * Universal decorator of component properties
  * @decorator
  */
-export const p = paramsFactory<ComponentProp | ComponentField | ComponentMethod | ComponentAccessor>(null);
+export const p = paramsFactory<
+	DecoratorProp |
+	DecoratorField |
+	DecoratorMethod |
+	DecoratorComponentAccessor
+>(null);
 
 /**
  * Attaches a hook listener to a method
  * @decorator
  */
-export const hook = paramsFactory<ComponentHooks>(null, (hook) => ({hook}));
+export const hook = paramsFactory<DecoratorHook>(null, (hook) => ({hook}));
 
 /**
  * Attaches a watch listener to a method or a field
  * @decorator
  */
-export const watch = paramsFactory<FieldWatcher | MethodWatchers>(null, (watch) => ({watch}));
+export const watch = paramsFactory<
+	DecoratorFieldWatcher |
+	DecoratorMethodWatchers
+>(null, (watch) => ({watch}));
