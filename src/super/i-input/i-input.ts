@@ -97,7 +97,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	 * Illegal component values
 	 */
 	@prop({required: false})
-	readonly disallow?: this['Value'] | this['Value'][] | Function | RegExp;
+	readonly disallow?: CanArray<this['Value']> | Function | RegExp;
 
 	/**
 	 * Component value type factory
