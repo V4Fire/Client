@@ -7,6 +7,8 @@
  */
 
 console.time('Initializing');
+
+import 'core/object/watch';
 import { Option } from 'form/b-select/b-select';
 
 import iStaticPage, { component } from 'super/i-static-page/i-static-page';

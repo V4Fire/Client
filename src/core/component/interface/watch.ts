@@ -12,8 +12,8 @@ export type WatchExpr<CTX extends ComponentInterface = ComponentInterface> =
 	string |
 	((this: CTX) => string);
 
-export interface RawWatchHandler<CTX extends ComponentInterface = ComponentInterface, V = unknown> {
-	(this: this, n: V, o?: V): any;
+export interface RawWatchHandler<CTX extends ComponentInterface = ComponentInterface, A = unknown, B = A> {
+	(this: this, a: A, b?: B): any;
 }
 
 export interface WatchOptions {
