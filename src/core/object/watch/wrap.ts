@@ -7,27 +7,65 @@
  */
 
 import { structureWrappers } from 'core/object/watch/const';
-import { WatchOptions, WatchHandler } from 'core/object/watch/interface';
+import { WrapOptions, WatchHandler } from 'core/object/watch/interface';
 
 /**
- * Wraps the specified object with mutation hooks
+ * Wraps mutation methods of the specified object that they be able to emit events about mutations
+ *
+ * @param obj
+ * @param opts - additional options
+ * @param cb - callback that is invoked on every mutation hook
+ *
+ * @example
+ * ```js
+ * const arr = bindMutationHooks([], (value, oldValue, path) => {
+ *   console.log(value, oldValue, path);
+ * });
+ *
+ * arr.push(1);
+ * arr.push(2);
+ * arr.push(3);
+ * ```
+ */
+export function bindMutationHooks<T extends object>(obj: T, opts: WrapOptions, cb: WatchHandler): T;
+
+/**
+ * Wraps mutation methods of the specified object that they be able to emit events about mutations
  *
  * @param obj
  * @param cb - callback that is invoked on every mutation hook
- * @param [opts]
  */
+export function bindMutationHooks<T extends object>(obj: T, cb: WatchHandler): T;
 export function bindMutationHooks<T extends object>(
 	obj: T,
-	cb: WatchHandler,
-	opts: WatchOptions = {}
+	optsOrCb: WatchHandler | WrapOptions,
+	cbOrOpts?: WrapOptions | WatchHandler
 ): T {
+	let
+		cb,
+		opts;
+
+	if (Object.isFunction(cbOrOpts)) {
+		cb = cbOrOpts;
+		opts = Object.isPlainObject(optsOrCb) ? optsOrCb : {};
+
+	} else {
+		cb = optsOrCb;
+		opts = {};
+	}
+
 	const wrappedCb = (args) => {
 		if (!args) {
 			return;
 		}
 
 		for (let i = 0; i < args.length; i++) {
-			cb(...args[i]);
+			const a = args[i];
+			cb(...a.slice(0, -1), {
+				obj,
+				isRoot: Boolean(opts.isRoot),
+				path: a[a.length - 1]
+			});
 		}
 	};
 

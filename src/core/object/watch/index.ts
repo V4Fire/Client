@@ -6,69 +6,42 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { bindMutationHooks } from 'core/object/watch/wrap';
+import proxyWatch from 'core/object/watch/engines/proxy';
+import { WatchOptions, WatchHandler } from 'core/object/watch/interface';
 
-export function watch(obj: object, cb) {
-	function watch(obj, cb, path) {
-		if (!obj || typeof obj !== 'object') {
-			return;
-		}
+export function watch(obj: object, cb: WatchHandler, opts?: WatchOptions) {
+	let
+		timer;
 
-		if (!Object.isPlainObject(obj)) {
-			bindMutationHooks(obj, cb, {path});
-		}
+	if (opts?.collapseToTopProperties) {
+		const
+			original = cb;
 
-		return obj;
-
-		if (typeof Proxy === 'function') {
-			if (!Object.isPlainObject(obj) && !Object.isArray(obj)) {
-				bindMutationHooks(obj, cb, {path});
+		cb = (val, oldVal, p) => {
+			if (!timer) {
+				// tslint:disable-next-line:no-string-literal
+				timer = globalThis['setImmediate'](() => {
+					original(p.isRoot ? val : p.top, p.isRoot ? oldVal : p.top, p);
+					timer = undefined;
+				});
 			}
-
-			return new Proxy(obj, {
-				get: (target, key, receiver) => {
-					const
-						val = Reflect.get(target, key, receiver);
-
-					if (Object.isPlainObject(val) || Object.isArray(val)) {
-						return watch(val, cb, (<unknown[]>[]).concat(path ?? [], key));
-					}
-
-					if (Object.isPlainObject(target) || Object.isArray(target)) {
-						return val;
-					}
-
-					return Object.isFunction(val) ? val.bind(target) : val;
-				},
-
-				set: (target, key, val, receiver) => {
-					if (Object.isArray(target) && String(Number(key)) === key) {
-						key = Number(key);
-					}
-
-					const
-						oldVal = Reflect.get(target, key, receiver);
-
-					if (oldVal !== val && Reflect.set(target, key, val, receiver)) {
-						cb(val, oldVal, (<unknown[]>[]).concat(path ?? [], key));
-					}
-
-					return true;
-				}
-			});
-		}
+		};
 	}
 
-	return watch(obj, cb);
+	if (typeof Proxy === 'function') {
+		return proxyWatch(obj, undefined, cb, opts);
+	}
 }
 
-let foo = [];
+let foo = {a: {b: {c: []}}};
 
 foo = watch(foo, (val, oldVal, key) => {
 	console.log(555, val, oldVal, key);
-});
+}, {collapseToTopProperties: true, deep: true});
 
-foo.push(1, 2);
-foo.push(1, 4);
-foo.splice(1, 4, 34, 65);
-console.log(foo.length);
+foo.a.b.c.push(3434);
+
+setTimeout(() => {
+	console.log(77);
+	foo.a.b.c.push(232);
+}, 10);
