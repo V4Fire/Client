@@ -200,7 +200,7 @@ export function wait<CTX extends ComponentInterface = ComponentInterface>(
 	let
 		ctx;
 
-	if (Object.isObject(status)) {
+	if (Object.isPlainObject(status)) {
 		params = <WaitOptions>status;
 		status = 0;
 

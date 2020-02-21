@@ -275,7 +275,7 @@ export function createFakeCtx<T extends object = FunctionalCtx>(
 			let
 				cb = cbOrOpts;
 
-			if (Object.isObject(cbOrOpts)) {
+			if (Object.isDictionary(cbOrOpts)) {
 				cb = (<any>cbOrOpts).handler;
 				opts = <any>cbOrOpts;
 			}
@@ -546,7 +546,7 @@ export function patchVNode(vnode: VNode, ctx: ComponentInterface, renderCtx: Ren
 									let
 										newVal = old;
 
-									if (Object.isObject(val) || Object.isObject(old)) {
+									if (Object.isDictionary(val) || Object.isDictionary(old)) {
 										// tslint:disable-next-line:prefer-object-spread
 										newVal = Object.assign({}, val, old);
 

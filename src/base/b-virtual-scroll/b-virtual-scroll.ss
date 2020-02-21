@@ -12,20 +12,39 @@
 
 - template index() extends ['i-data'].index
 	- block body
-		< .&__container &
-			ref = container |
-			v-resize.width = () => axis === 'y' ? onResize : undefined
-		.
-			< .&__trigger &
-				v-in-view = {
-					delay: 0,
-					onEnter: onIntersectChange,
-					onLeave: onIntersectChange
-				}
+		< .&__wrapper
+			< .&__container ref = container
+
+			< .&__tombstones &
+				ref = tombstones |
+				v-if = vdom.getSlot('tombstone')
 			.
+				< .&__tombstone v-for = i in tombstonesSize || chunkSize
+					+= self.slot('tombstone')
 
-			< .&__scroll-runner ref = scrollRunner
-				&nbsp;
+			< .&__loader &
+				ref = loader |
+				v-if = vdom.getSlot('loader')
+			.
+				+= self.slot('loader')
 
-		< .&__tombstone ref = tombstone
-			+= self.slot('tombstone')
+			< .&__retry &
+				ref = retry |
+				v-if = vdom.getSlot('retry') |
+				:style = {display: 'none'}
+			.
+				+= self.slot('retry')
+
+			< .&__empty &
+				ref = empty |
+				v-if = vdom.getSlot('empty') |
+				:style = {display: 'none'}
+			.
+				+= self.slot('empty')
+
+			< .&__done &
+				ref = done |
+				v-if = vdom.getSlot('done') |
+				:style = {display: 'none'}
+			.
+				+= self.slot('done')

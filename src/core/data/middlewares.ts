@@ -99,7 +99,7 @@ export async function attachMock(this: Provider, params: MiddlewareParams): Prom
 				val = request[key],
 				baseVal = opts[key];
 
-			if (Object.isObject(val)) {
+			if (Object.isPlainObject(val)) {
 				for (let keys = Object.keys(val), i = 0; i < keys.length; i++) {
 					const
 						key = keys[i];

@@ -28,7 +28,7 @@
 					.
 
 					< b-image.&__overlay-img &
-						v-else-if = Object.isObject(overlayImg) |
+						v-else-if = Object.isPlainObject(overlayImg) |
 						:v-attrs = overlayImg
 					.
 
@@ -41,7 +41,7 @@
 					.
 
 					< b-image.&__broken-img &
-						v-else-if = Object.isObject(brokenImg) |
+						v-else-if = Object.isPlainObject(brokenImg) |
 						:v-attrs = brokenImg
 					.
 

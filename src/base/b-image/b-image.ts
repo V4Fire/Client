@@ -8,7 +8,7 @@
 
 import symbolGenerator from 'core/symbol';
 
-import { AsyncCtx } from 'core/async';
+import { TaskCtx } from 'core/async';
 import { getSrcSet } from 'core/html';
 
 import iProgress from 'traits/i-progress/i-progress';
@@ -239,7 +239,7 @@ export default class bImage extends iBlock implements iProgress, iVisible {
 	 * @param err
 	 * @emits loadFail()
 	 */
-	protected onImageLoadFailed(err: CanUndef<Error | AsyncCtx>): void {
+	protected onImageLoadFailed(err: CanUndef<Error | TaskCtx>): void {
 		this.setMod('progress', false);
 
 		if (err && 'type' in err && err.type === 'clearAsync') {

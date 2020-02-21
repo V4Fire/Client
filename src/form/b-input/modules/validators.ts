@@ -84,7 +84,7 @@ export default <ValidatorsDecl<bInput, unknown>>{
 		showMsg = true
 	}: NumberValidatorParams): Promise<ValidatorResult<NumberValidatorResult>> {
 		const
-			value = (await this.formValue).trim();
+			value = (await this.formValue)?.trim() || '';
 
 		if (!value) {
 			const
@@ -254,7 +254,7 @@ export default <ValidatorsDecl<bInput, unknown>>{
 		showMsg = true
 	}: PatternValidatorParams): Promise<ValidatorResult> {
 		const
-			value = await this.formValue;
+			value = (await this.formValue) || '';
 
 		let
 			rgxp;
@@ -299,7 +299,7 @@ export default <ValidatorsDecl<bInput, unknown>>{
 
 	async email({msg, showMsg = true}: ValidatorParams): Promise<ValidatorResult<boolean>> {
 		const
-			value = (await this.formValue).trim();
+			value = (await this.formValue)?.trim();
 
 		if (value && !/@/.test(value)) {
 			this.setValidationMsg(this.getValidatorMsg(false, msg, t`Invalid email format`), showMsg);
@@ -320,7 +320,7 @@ export default <ValidatorsDecl<bInput, unknown>>{
 		showMsg = true
 	}: PasswordValidatorParams): Promise<ValidatorResult> {
 		const
-			value = await this.formValue;
+			value = (await this.formValue) || '';
 
 		const error = (
 			type: PasswordValidatorResult['name'] = 'INVALID_VALUE',

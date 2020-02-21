@@ -34,7 +34,7 @@
 			? Object.assign(val, el)
 
 		- else if Array.isArray(val) && Array.isArray(el)
-			? p[key] = Array.union(val, el)
+			? p[key] = val.union(el)
 
 		- else
 			? p[key] = el

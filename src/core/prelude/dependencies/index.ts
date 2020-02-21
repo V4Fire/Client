@@ -6,11 +6,12 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import { deprecate } from 'core/functools';
 import { EventEmitter2 as EventEmitter } from 'eventemitter2';
 
 /**
- * Adds an attribute "nonce" to the specified element if defined "GLOBAL_NONCE" variable
- * (support Content Security Policy)
+ * Adds an attribute "nonce" to the specified element if the "GLOBAL_NONCE" variable is defined
+ * (support for Content Security Policy)
  *
  * @param el
  */
@@ -26,20 +27,29 @@ function addNonceAttribute(el: Element): void {
 // tslint:disable-next-line:prefer-object-spread
 export default globalThis[MODULE_DEPENDENCIES] = Object.assign(globalThis[MODULE_DEPENDENCIES] || {}, {
 	/**
-	 * Cache for modules
+	 * Cache of modules
 	 */
 	cache: Object.createDict(),
 
 	/**
-	 * Event emitter instance
+	 * Event emitter for broadcasting module events
 	 */
-	event: new EventEmitter({maxListeners: 100, newListener: false}),
+	emitter: new EventEmitter({maxListeners: 100, newListener: false}),
+
+	/**
+	 * @deprecated
+	 * @see emitter
+	 */
+	get event(): EventEmitter {
+		deprecate({name: 'event', type: 'accessor', renamedTo: 'emitter'});
+		return this.emitter;
+	},
 
 	/**
 	 * Adds new dependencies to the cache
 	 *
 	 * @param moduleName
-	 * @param dependencies
+	 * @param dependencies - list of dependencies
 	 */
 	add(moduleName: string, dependencies: string[]): void {
 		const
@@ -127,7 +137,8 @@ export default globalThis[MODULE_DEPENDENCIES] = Object.assign(globalThis[MODULE
 						links = document.getElementsByTagName('link');
 
 					if (links.length) {
-						links[links.length - 1].after(link);
+						const lastLink = links[links.length - 1];
+						(<HTMLElement>lastLink.parentElement).insertBefore(link, lastLink.nextSibling);
 
 					} else {
 						head.insertAdjacentElement('beforeend', link);
@@ -157,7 +168,7 @@ export default globalThis[MODULE_DEPENDENCIES] = Object.assign(globalThis[MODULE
 	},
 
 	/**
-	 * Get dependencies for the specified module
+	 * Get a list of dependencies for the specified module
 	 * @param module
 	 */
 	get(module: string): CanPromise<string[]> {

@@ -8,6 +8,8 @@
 
 import symbolGenerator from 'core/symbol';
 
+import iItems from 'traits/i-items/i-items';
+
 import iData, {
 
 	component,
@@ -15,12 +17,12 @@ import iData, {
 	field,
 	system,
 	wait,
-	p,
 
 	CheckDBEquality,
 	InitLoadParams,
 	RequestParams,
-	ModsDecl
+	RequestError,
+	RetryRequestFn
 
 } from 'super/i-data/i-data';
 
@@ -28,180 +30,112 @@ import ComponentRender from 'base/b-virtual-scroll/modules/component-render';
 import ScrollRender from 'base/b-virtual-scroll/modules/scroll-render';
 import ScrollRequest from 'base/b-virtual-scroll/modules/scroll-request';
 
-import { isNatural, getRequestParams } from 'base/b-virtual-scroll/modules/helpers';
+import { getRequestParams } from 'base/b-virtual-scroll/modules/helpers';
+import { RequestFn, RemoteData, RequestQueryFn, GetData, Unsafe } from 'base/b-virtual-scroll/modules/interface';
 
-import {
-
-	OptionProps,
-	OptionKey,
-	Axis,
-	ScrollRenderStatus,
-	RequestFn,
-	RemoteData,
-	RequestQuery,
-	ReInitParams
-
-} from 'base/b-virtual-scroll/modules/interface';
-
+export { RequestFn, RemoteData, RequestQueryFn, GetData };
 export * from 'super/i-data/i-data';
 
 export const
 	$$ = symbolGenerator();
 
-export const axis = Object.createDict({
-	x: true,
-	y: true
-});
-
 @component()
-export default class bVirtualScroll extends iData {
+export default class bVirtualScroll extends iData implements iItems {
 	/** @override */
 	readonly DB!: RemoteData;
 
 	/** @override */
 	readonly checkDBEquality: CheckDBEquality = false;
 
-	/**
-	 * Option component
-	 */
-	@prop({type: String, watch: 'syncPropsWatcher'})
-	readonly option!: string;
+	/** @see [[iItems.prototype.itemsProp]] */
+	@prop(Array)
+	readonly optionsProp?: iItems['optionsProp'] = [];
 
-	/**
-	 * Initial component options
-	 */
-	@prop({type: Array, watch: 'syncPropsWatcher'})
-	readonly optionsProp?: unknown[] = [];
-
-	/**
-	 * Component options
-	 */
+	/** @see [[iItems.prototype.items]] */
 	@field((o) => o.sync.link())
 	options!: unknown[];
 
-	/**
-	 * Option component props
-	 */
-	@prop({type: Function, watch: 'syncPropsWatcher', default: () => ({})})
-	readonly optionProps!: OptionProps;
+	/** @see [[iItems.prototype.item]] */
+	@prop({type: String, required: false})
+	readonly option?: iItems['option'];
+
+	/** @see [[iItems.prototype.itemKey]] */
+	@prop({type: [String, Function], required: false})
+	readonly optionKey?: iItems['optionKey'];
+
+	/** @see [[iItems.prototype.itemProps]] */
+	@prop({type: Function, default: () => ({})})
+	readonly optionProps!: iItems['optionProps'];
 
 	/**
-	 * Option unique key (for v-for)
+	 * Maximum number of elements to cache
 	 */
-	@prop({type: Function, watch: 'syncPropsWatcher'})
-	readonly optionKey!: OptionKey;
-
-	/**
-	 * Number of columns
-	 */
-	@prop({type: Number, watch: 'syncPropsWatcher', validator: isNatural})
-	readonly columns: number = 1;
-
-	/**
-	 * Number of components that could be cached
-	 */
-	@prop({type: Number, watch: 'syncPropsWatcher', validator: isNatural})
+	@prop({type: Number, watch: 'syncPropsWatcher', validator: Number.isNatural})
 	readonly cacheSize: number = 400;
 
 	/**
-	 * Number of items that will be removed from the cache when it is full
+	 * Number of elements till the page bottom that should initialize a new render iteration
 	 */
-	@prop({type: Number, watch: 'syncPropsWatcher', validator: isNatural})
-	readonly dropCacheSize: number = 50;
+	@prop({type: Number, validator: Number.isNatural})
+	readonly renderGap: number = 10;
 
 	/**
-	 * Number of elements from the same range that cannot be removed from the cache
+	 * Number of elements per one render chunk
 	 */
-	@prop({type: Number, watch: 'syncPropsWatcher', validator: isNatural})
-	readonly dropCacheSafeZone: number = 10;
+	@prop({type: Number, validator: Number.isNatural})
+	readonly chunkSize: number = 10;
 
 	/**
-	 * Number of nodes at the same time
+	 * Number of tombstones to render
 	 */
-	@prop({type: Number,  watch: 'syncPropsWatcher', validator: isNatural})
-	readonly realElementsCount: number = 20;
+	@prop({type: Number, required: false, validator: Number.isNatural})
+	readonly tombstonesSize?: number;
 
 	/**
-	 * Number of nodes at the same time that are drawn in the opposite direction from the scroll
+	 * If true, then elements is dropped from a DOM tree after scrolling:
+	 * this method is recommended to use if you need to display a huge number of elements and prevent an OOM error
 	 */
-	@prop({type: Number, watch: 'syncPropsWatcher', validator: isNatural})
-	readonly oppositeElementsCount: number = 10;
+	@prop(Boolean)
+	readonly clearNodes: boolean = false;
 
 	/**
-	 * Number of tombstones
-	 */
-	@prop({type: Number, watch: 'syncPropsWatcher'})
-	readonly tombstoneCount: number = 10;
-
-	/**
-	 * Number of additional pixels length for allow scrolling
-	 */
-	@prop({type: Number, watch: 'syncPropsWatcher'})
-	readonly scrollRunnerOffset: number = 0;
-
-	/**
-	 * Scroll axis
-	 */
-	@prop({type: String, watch: 'syncPropsWatcher', validator: (v: string) => axis[v]})
-	readonly axis: Axis = 'y';
-
-	/**
-	 * If true, then created nodes will be cached
+	 * If true then created nodes will be cached
 	 */
 	@prop({type: Boolean, watch: 'syncPropsWatcher'})
-	readonly cacheNode: boolean = true;
-
-	/**
-	 * If true, then the container height will be updated for every change in the range
-	 */
-	@prop({type: Boolean, watch: 'syncPropsWatcher'})
-	readonly containerSize: boolean = true;
-
-	/**
-	 * Function that returns the scroll root
-	 */
-	@prop({type: Function, watch: 'syncPropsWatcher', required: false})
-	readonly scrollingElement?: Function;
+	readonly cacheNodes: boolean = true;
 
 	/**
 	 * Function that returns request parameters
 	 */
 	@prop({type: Function, required: false})
-	readonly requestQuery?: RequestQuery;
+	readonly requestQuery?: RequestQueryFn;
 
 	/** @override */
 	@prop({type: [Object, Array], required: false})
 	readonly request?: RequestParams;
 
 	/**
-	 * If, when calling a function, it returns true, then the component will be able to request additional data
+	 * Requests remote data chunk to render
 	 */
-	@prop({type: Function, default: (v) => v.itemsToReachBottom <= 10 && !v.isLastEmpty})
+	@prop({type: Function, default: (ctx, query) => ctx.get(query), required: false})
+	readonly getData!: GetData;
+
+	/**
+	 * When this function returns true the component will be able to request additional data
+	 */
+	@prop({type: Function, default: (v) => v.itemsTillBottom <= 10 && !v.isLastEmpty})
 	readonly shouldMakeRequest!: RequestFn;
 
 	/**
-	 * If, when calling a function, it returns false, then the component will stop request data
+	 * When this function returns true the component will stop to request new data
 	 */
-	@prop({type: Function, default: (v) => !v.isLastEmpty})
-	readonly shouldContinueRequest!: RequestFn;
+	@prop({type: Function, default: (v) => v.isLastEmpty})
+	readonly shouldStopRequest!: RequestFn;
 
-	/** @inheritDoc */
-	static readonly mods: ModsDecl = {
-		containerSize: [
-			['true'],
-			'false'
-		],
-
-		requestsDone: [
-			'true',
-			['false']
-		],
-
-		axis: [
-			['y'],
-			'x'
-		]
-	};
+	/** @override */
+	get unsafe(): Unsafe & this {
+		return <any>this;
+	}
 
 	/** @override */
 	protected get requestParams(): RequestParams {
@@ -239,43 +173,17 @@ export default class bVirtualScroll extends iData {
 	/** @override */
 	protected $refs!: {
 		container: HTMLElement;
-		tombstone: HTMLElement;
-		scrollRunner: HTMLElement;
+		loader?: HTMLElement;
+		tombstones?: HTMLElement;
+		empty?: HTMLElement;
+		retry?: HTMLElement;
+		done?: HTMLElement;
 	};
-
-	/**
-	 * Link to the scroll root
-	 */
-	@p({cache: false})
-	protected get scrollRoot(): HTMLElement {
-		if (this.scrollingElement) {
-			return this.scrollingElement();
-		}
-
-		if (this.axis === 'x') {
-			return <HTMLElement>this.$el;
-		}
-
-		return document.documentElement.scrollTop ?
-			document.documentElement :
-			document.body;
-	}
-
-	/**
-	 * Link to the scroll event emitter
-	 */
-	protected get scrollEmitter(): Document | HTMLElement {
-		if (this.scrollingElement) {
-			return this.scrollingElement();
-		}
-
-		return this.axis === 'y' ? document : this.scrollRoot;
-	}
 
 	/** @override */
 	initLoad(data?: unknown, params: InitLoadParams = {}): CanPromise<void> {
 		if (!this.lfc.isBeforeCreate()) {
-			this.reInit({hard: true}).catch(stderr);
+			this.reInit().catch(stderr);
 		}
 
 		return super.initLoad(data, params);
@@ -285,27 +193,15 @@ export default class bVirtualScroll extends iData {
 	 * Reloads the last request
 	 */
 	reloadLast(): void {
-		return this.scrollRequest.reloadLast();
+		this.scrollRequest.reloadLast();
 	}
 
 	/**
 	 * Re-initializes component
-	 *
-	 * @param [waitReady] - if false, the component will be initialized immediately
-	 * @param [force] - if true, all tombstones will be redraw
 	 */
-	async reInit({waitReady = true, hard = false}: ReInitParams = {}): Promise<void> {
-		await this.componentRender.reInit();
-		await this.scrollRender.reInit(hard);
-
-		if (waitReady) {
-			await this.waitStatus('ready', {
-				label: $$.initScrollRender,
-				group: 'scroll-render'
-			});
-		}
-
-		await this.scrollRender.init();
+	async reInit(): Promise<void> {
+		this.componentRender.reInit();
+		this.scrollRender.reInit();
 	}
 
 	/** @override */
@@ -315,10 +211,7 @@ export default class bVirtualScroll extends iData {
 		this.sync.mod('axis', 'axis', String);
 	}
 
-	/**
-	 * @override
-	 * @emits empty()
-	 */
+	/** @override */
 	protected initRemoteData(): CanUndef<unknown[]> {
 		if (!this.db) {
 			return;
@@ -328,27 +221,21 @@ export default class bVirtualScroll extends iData {
 			val = this.convertDBToComponent<RemoteData>(this.db);
 
 		if (this.field.get('data.length', val)) {
-			return this.options = val.data;
+			this.options = <unknown[]>val.data;
+			this.scrollRequest.shouldStopRequest(getRequestParams(undefined, undefined, {lastLoadedData: val.data}));
+			return this.options;
 
 		} else {
 			this.options = [];
-			this.scrollRequest.checksRequestPossibility(getRequestParams(undefined, undefined, {isLastEmpty: true}));
-			this.emit('empty');
+			this.scrollRequest.shouldStopRequest(getRequestParams(undefined, undefined, {isLastEmpty: true}));
 		}
 
 		return this.options;
 	}
 
-	/**
-	 * Returns an option key
-	 *
-	 * @param el
-	 * @param i
-	 */
+	/** @see [[iItems.getItemKey]] */
 	protected getOptionKey(el: unknown, i: number): CanUndef<string | number> {
-		return Object.isFunction(this.optionKey) ?
-			this.optionKey(el, i) :
-			this.optionKey;
+		return iItems.getItemKey(this, el, i);
 	}
 
 	/**
@@ -356,31 +243,12 @@ export default class bVirtualScroll extends iData {
 	 */
 	@wait('ready', {defer: true, label: $$.syncPropsWatcher})
 	protected async syncPropsWatcher(): Promise<void> {
-		const
-			{scrollRender: {status}} = this;
-
-		if (status !== ScrollRenderStatus.render) {
-			return;
-		}
-
 		return this.reInit();
 	}
 
-	/**
-	 * Handler: container or window was resized
-	 */
-	protected onResize(): void {
-		this.async.setTimeout(() => {
-			// @ts-ignore (access)
-			this.scrollRender.onResize();
-
-		}, 100, {label: $$.onResize});
-	}
-
-	/**
-	 * Handler: element enters/leaves viewport
-	 */
-	protected onIntersectChange(): void {
-		this.scrollRender.updateOffset();
+	/** @override */
+	protected onRequestError(err: Error | RequestError, retry: RetryRequestFn): void {
+		super.onRequestError(err, retry);
+		this.scrollRender.setRefVisibility('retry', true);
 	}
 }

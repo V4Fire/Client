@@ -147,7 +147,7 @@ export default class Provide {
 				let
 					el = mods[key];
 
-				if (!Object.isObject(el)) {
+				if (!Object.isPlainObject(el)) {
 					el = {default: el};
 				}
 
@@ -334,7 +334,7 @@ export default class Provide {
 				this.fullElName(<string>componentName, el)
 			);
 
-			if (!Object.isObject(mods)) {
+			if (!Object.isPlainObject(mods)) {
 				continue;
 			}
 

@@ -270,7 +270,7 @@ export class ComponentInterface<
 	readonly $children?: C[];
 	readonly $parent?: C;
 	readonly $normalParent?: C;
-	readonly $root!: R | any;
+	readonly $root!: R;
 	readonly $isServer!: boolean;
 	readonly $isFlyweight?: boolean;
 	protected readonly meta!: ComponentMeta;

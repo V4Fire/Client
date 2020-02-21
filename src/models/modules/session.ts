@@ -58,7 +58,7 @@ export default class Session extends Provider {
 		if (Object.isString(session.auth)) {
 			return {
 				[this.authHeader]: this.authPrfx + session.auth,
-				[this.csrfHeader]: session.csrf
+				[this.csrfHeader]: session?.params?.csrf
 			};
 		}
 
@@ -90,7 +90,7 @@ export default class Session extends Provider {
 
 			try {
 				if (refreshHeader) {
-					s.set(refreshHeader, info.getHeader(this.csrfHeader));
+					s.set(refreshHeader, {csrf: info.getHeader(this.csrfHeader)});
 				}
 			} catch {}
 		};
@@ -99,14 +99,14 @@ export default class Session extends Provider {
 		return req.catch(async (err) => {
 			const
 				response = Object.get<Response>(err, 'details.response'),
-				{auth, csrf} = await session;
+				{auth, params} = await session;
 
 			if (response) {
 				const
 					r = () => this.updateRequest(url, <string>event, <RequestFunctionResponse>factory);
 
 				if (response.status === 401) {
-					if (!await s.match(auth, csrf)) {
+					if (!await s.match(auth, params)) {
 						return r();
 					}
 

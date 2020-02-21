@@ -6,14 +6,21 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-/// <reference types="socket.io-client"/>
+/**
+ * [[include:core/socket/README.md]]
+ * @packageDocumentation
+ */
 
 import config from 'config';
-export const PING = (5).seconds();
-export type Socket = SocketIOClient.Socket;
+
+import { PING } from 'core/socket/const';
+import { Socket } from 'core/socket/interface';
+
+export * from 'core/socket/const';
+export * from 'core/socket/interface';
 
 /**
- * Wrapper for sockets
+ * Wrapper for a socket library
  * @param [namespace] - connection namespace
  */
 export default function socket(namespace: string = ''): CanUndef<Socket> {

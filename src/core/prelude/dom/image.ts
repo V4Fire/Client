@@ -9,7 +9,7 @@
 import extend from 'core/prelude/extend';
 
 /**
- * Executes the specified functions after the source image load
+ * Executes the specified callbacks after loading of the image
  *
  * @param onSuccess
  * @param [onFail]
@@ -49,7 +49,7 @@ extend(HTMLImageElement.prototype, 'onInit', function (
 });
 
 /**
- * Promisify version of HTMLImageElement.onInit
+ * Returns a promise that resolves after loading of the image
  */
 extend(HTMLImageElement.prototype, 'init', {
 	get(): Promise<HTMLImageElement> {

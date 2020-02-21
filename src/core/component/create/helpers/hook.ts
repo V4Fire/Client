@@ -8,7 +8,7 @@
 
 import log from 'core/log';
 import HookEmitter from 'core/component/create/helpers/event';
-import { createSyncPromise } from 'core/event';
+import SyncPromise from 'core/promise/sync';
 import { Hook, ComponentInterface, ComponentMeta } from 'core/component/interface';
 
 /**
@@ -27,7 +27,8 @@ export function runHook(
 	...args: unknown[]
 ): Promise<void> {
 	// @ts-ignore (access)
-	ctx.hook = hook;
+	// tslint:disable-next-line:no-string-literal
+	ctx['hook'] = hook;
 
 	// @ts-ignore (access)
 	if (Object.isFunction(ctx.log)) {
@@ -42,7 +43,7 @@ export function runHook(
 		hooks = meta.hooks[hook];
 
 	if (!hooks.length) {
-		return createSyncPromise();
+		return SyncPromise.resolve();
 	}
 
 	const
@@ -84,5 +85,5 @@ export function runHook(
 		return tasks;
 	}
 
-	return createSyncPromise();
+	return SyncPromise.resolve();
 }

@@ -81,7 +81,7 @@ export function createSVGChildren(ctx: ComponentInterface, children: Element[]):
 				// @ts-ignore (access)
 				refs = ctx.$refs;
 
-			if (data.ref && Object.isObject(refs)) {
+			if (data.ref && Object.isPlainObject(refs)) {
 				if (data.refInFor) {
 					const arr = refs[data.ref] = <Element[]>(refs[data.ref] || []);
 					arr.push(el);

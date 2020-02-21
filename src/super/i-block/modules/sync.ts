@@ -328,7 +328,7 @@ export default class Sync {
 
 		const merge = (...args) => Object.mixin({
 			deep: true,
-			extendFilter: (d, v) => Object.isObject(v)
+			extendFilter: (d, v) => Object.isPlainObject(v)
 		}, undefined, ...args);
 
 		const setField = (path, val) => {
