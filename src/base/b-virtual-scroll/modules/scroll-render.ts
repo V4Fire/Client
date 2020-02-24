@@ -134,6 +134,7 @@ export default class ScrollRender {
 	 */
 	reInit(): void {
 		this.lastIntersectsItem = 0;
+		this.lastRenderRange = [0, 0];
 		this.chunk = 0;
 		this.items = [];
 
@@ -174,6 +175,7 @@ export default class ScrollRender {
 			return;
 		}
 
+		this.chunk++;
 		this.lastRenderRange = [renderFrom, renderTo];
 
 		const
@@ -308,7 +310,6 @@ export default class ScrollRender {
 			this.lastIntersectsItem = index;
 
 			if (currentRender - index <= renderGap) {
-				this.chunk++;
 				this.render();
 			}
 		}
