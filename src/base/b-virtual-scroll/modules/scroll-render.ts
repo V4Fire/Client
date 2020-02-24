@@ -169,9 +169,11 @@ export default class ScrollRender {
 			renderTo = chunk * component.chunkSize,
 			renderItems = items.slice(renderFrom, renderTo);
 
-		if ((renderFrom === this.lastRenderRange[0] &&
+		if (
+			(renderFrom === this.lastRenderRange[0] &&
 			renderTo === this.lastRenderRange[1]) ||
-			!renderItems.length) {
+			!renderItems.length
+		) {
 			return;
 		}
 
