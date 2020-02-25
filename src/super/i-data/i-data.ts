@@ -18,11 +18,9 @@ import { providers } from 'core/data/const';
 
 import Provider, {
 
-	Socket,
 	RequestQuery,
 	RequestBody,
 	RequestResponseObject,
-	Response,
 	ModelMethod,
 	ProviderOptions,
 	ExtraProviders

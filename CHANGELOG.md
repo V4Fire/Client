@@ -16,10 +16,13 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### :rocket: New Feature
 
 * Added a new event `dbCanChange` for `iData`
+* [Optimized rendering of `b-virtual-scroll`](https://github.com/V4Fire/Client/pull/169)
+* [Added `prefetch` in `core/init`](https://github.com/V4Fire/Client/pull/169)
 
 #### :bug: Bug Fix
 
 * Fixed memory leak with data providers
+* [Fixed issue with `b-virtual-scroll` not beign render some chunks](https://github.com/V4Fire/Client/pull/169)
 
 ## v3.0.0-beta.253 (2020-02-24)
 
