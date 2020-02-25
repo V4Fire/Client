@@ -7,7 +7,7 @@
  */
 
 import { bindMutationHooks } from 'core/object/watch/wrap';
-import { WatchHandler, WatchOptions } from 'core/object/watch/interface';
+import { WatchHandler, WatchOptions, Watcher } from 'core/object/watch/interface';
 
 const
 	watchHandlers = Symbol('Watch handlers'),
@@ -21,25 +21,49 @@ const
  * @param cb - callback that is invoked on every mutation hook
  * @param [opts] - additional options
  * @param [top] - link a top property of watching
+ * @param [destructors] - list of destructors to cancel of watching
  */
 export default function watch<T>(
 	obj: T,
 	path: CanUndef<unknown[]>,
 	cb: WatchHandler,
 	opts?: WatchOptions,
-	top?: object
-): T {
+	top?: object,
+	destructors: Function[] = []
+): Watcher<T> | T {
+	const returnProxy = (obj, proxy?) => {
+		const
+			handlers = proxy && obj[watchHandlers];
+
+		if (handlers) {
+			handlers.add(cb);
+
+			destructors.push(() => {
+				handlers.delete(cb);
+			});
+		}
+
+		if (!top) {
+			return {
+				proxy: proxy || obj,
+				unwatch(): void {
+					destructors.forEach((fn) => fn());
+				}
+			};
+		}
+
+		return proxy || obj;
+	};
 
 	if (!obj || typeof obj !== 'object' || Object.isFrozen(obj)) {
-		return obj;
+		return returnProxy(obj);
 	}
 
 	const
 		proxy = obj[watchLabel];
 
 	if (proxy) {
-		obj[watchHandlers].add(cb);
-		return proxy;
+		return returnProxy(obj, proxy);
 	}
 
 	const
@@ -54,24 +78,24 @@ export default function watch<T>(
 		!Object.isWeakMap(obj) &&
 		!Object.isWeakSet(obj)
 	) {
-		return obj;
+		return returnProxy(obj);
 	}
 
 	const
-		handlers = obj[watchHandlers] = new Set([cb]),
+		handlers = obj[watchHandlers] = new Set(<Array<typeof cb>>[]),
 		isRoot = !path;
 
 	if (!isPlainObject && !isArray) {
-		bindMutationHooks(<any>obj, {path, isRoot: Boolean(path)}, cb);
+		bindMutationHooks(<any>obj, {path, isRoot: Boolean(path)}, handlers);
 	}
 
-	return obj[watchLabel] = new Proxy(<any>obj, {
+	return returnProxy(obj, obj[watchLabel] = new Proxy(<any>obj, {
 		get: (target, key, receiver) => {
 			const
 				val = Reflect.get(target, key, receiver);
 
 			if (opts?.deep) {
-				return watch(val, (<unknown[]>[]).concat(path ?? [], key), cb, opts, top || val);
+				return watch(val, (<unknown[]>[]).concat(path ?? [], key), cb, opts, top || val, destructors);
 			}
 
 			if (Object.isPlainObject(target) || Object.isArray(target)) {
@@ -102,5 +126,5 @@ export default function watch<T>(
 
 			return true;
 		}
-	});
+	}));
 }

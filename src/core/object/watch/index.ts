@@ -39,9 +39,10 @@ foo = watch(foo, (val, oldVal, key) => {
 	console.log(555, val, oldVal, key);
 }, {collapseToTopProperties: true, deep: true});
 
-foo.a.b.c.push(3434);
+foo.proxy.a.b.c.push(3434);
+foo.unwatch();
 
 setTimeout(() => {
 	console.log(77);
-	foo.a.b.c.push(232);
+	foo.proxy.a.b.c.push(232);
 }, 10);

@@ -62,3 +62,8 @@ export interface WatchHandlerParams {
 export interface WatchHandler<NEW = unknown, OLD = NEW> {
 	(newValue: CanUndef<NEW>, oldValue: CanUndef<OLD>, params: WatchHandlerParams): any;
 }
+
+export interface Watcher<T = unknown> {
+	proxy: T;
+	unwatch(): void;
+}

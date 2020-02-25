@@ -14,7 +14,7 @@ import { WrapOptions, WatchHandler } from 'core/object/watch/interface';
  *
  * @param obj
  * @param opts - additional options
- * @param cb - callback that is invoked on every mutation hook
+ * @param handlers - set of callbacks that are invoked on every mutation hooks
  *
  * @example
  * ```js
@@ -27,30 +27,30 @@ import { WrapOptions, WatchHandler } from 'core/object/watch/interface';
  * arr.push(3);
  * ```
  */
-export function bindMutationHooks<T extends object>(obj: T, opts: WrapOptions, cb: WatchHandler): T;
+export function bindMutationHooks<T extends object>(obj: T, opts: WrapOptions, handlers: Set<WatchHandler>): T;
 
 /**
  * Wraps mutation methods of the specified object that they be able to emit events about mutations
  *
  * @param obj
- * @param cb - callback that is invoked on every mutation hook
+ * @param handlers - set of callbacks that are invoked on every mutation hooks
  */
-export function bindMutationHooks<T extends object>(obj: T, cb: WatchHandler): T;
+export function bindMutationHooks<T extends object>(obj: T, handlers: Set<WatchHandler>): T;
 export function bindMutationHooks<T extends object>(
 	obj: T,
-	optsOrCb: WatchHandler | WrapOptions,
-	cbOrOpts?: WrapOptions | WatchHandler
+	optsOrHandlers: Set<WatchHandler> | WrapOptions,
+	handlersOrOpts?: WrapOptions | Set<WatchHandler>
 ): T {
 	let
-		cb,
+		handlers,
 		opts;
 
-	if (Object.isFunction(cbOrOpts)) {
-		cb = cbOrOpts;
-		opts = Object.isPlainObject(optsOrCb) ? optsOrCb : {};
+	if (Object.isSet(handlersOrOpts)) {
+		handlers = handlersOrOpts;
+		opts = Object.isPlainObject(optsOrHandlers) ? optsOrHandlers : {};
 
 	} else {
-		cb = optsOrCb;
+		handlers = optsOrHandlers;
 		opts = {};
 	}
 
@@ -60,12 +60,18 @@ export function bindMutationHooks<T extends object>(
 		}
 
 		for (let i = 0; i < args.length; i++) {
-			const a = args[i];
-			cb(...a.slice(0, -1), {
-				obj,
-				isRoot: Boolean(opts.isRoot),
-				path: a[a.length - 1]
-			});
+			const
+				a = args[i];
+
+			console.log(handlers);
+
+			for (let o = handlers, el = o.next(); !o.done; el = o.next()) {
+				el.value(...a.slice(0, -1), {
+					obj,
+					isRoot: Boolean(opts.isRoot),
+					path: a[a.length - 1]
+				});
+			}
 		}
 	};
 
