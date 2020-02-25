@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-beta.255 (2020-02-25)
+
+#### :boom: Breaking Change
+
+* Removed `extraProviders` from `ProviderOptions`
+
 ## v3.0.0-beta.254 (2020-02-25)
 
 #### :rocket: New Feature

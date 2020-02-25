@@ -213,13 +213,6 @@ export default abstract class iData extends iBlock implements iProgress {
 	@system()
 	protected dp?: Provider;
 
-	/**
-	 * Returns a list of additional data providers for the get request
-	 */
-	extraProviders(): CanUndef<ExtraProviders> {
-		return undefined;
-	}
-
 	/** @override */
 	initLoad(data?: unknown, params: InitLoadParams = {}): CanPromise<void> {
 		if (!this.isActivated) {
@@ -651,15 +644,7 @@ export default abstract class iData extends iBlock implements iProgress {
 				throw new Error(`Provider "${provider}" is not defined`);
 			}
 
-			// We need to fix function toString value because it used to calculate a provider cache key
-			const {extraProviders} = this;
-			extraProviders.toString = () => this.instance.extraProviders.toString();
-
-			this.dp = new ProviderConstructor({
-				extraProviders,
-				...this.dataProviderOptions
-			});
-
+			this.dp = new ProviderConstructor(this.dataProviderOptions);
 			this.initDataListeners();
 		}
 	}

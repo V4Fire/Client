@@ -85,30 +85,7 @@ export default abstract class Provider extends ParamsProvider implements iProvid
 		super();
 
 		const
-			paramsForCache = <Dictionary>{...opts},
-			extra = opts.extraProviders;
-
-		if (extra) {
-			let
-				cacheKey;
-
-			if (Object.isFunction(extra)) {
-				cacheKey = extra[$$.extraProviderKey] =
-					extra[$$.extraProviderKey] || (Object.isCustomObject(extra) ? extra.toString() : Math.random());
-
-			} else {
-				cacheKey = Object.keys(extra).join();
-			}
-
-			if (cacheKey) {
-				paramsForCache.extraProviders = cacheKey;
-
-			} else {
-				delete paramsForCache.extraProviders;
-			}
-		}
-
-		const
+			paramsForCache = Object.reject(opts, 'collapseEvents'),
 			id = this.cacheId = `${this.providerName}:${JSON.stringify(paramsForCache)}`,
 			cacheVal = instanceCache[id];
 
@@ -122,14 +99,6 @@ export default abstract class Provider extends ParamsProvider implements iProvid
 
 		requestCache[id] =
 			Object.createDict();
-
-		if (extra) {
-			this.setReadonlyParam('extraProviders', extra);
-		}
-
-		if (Object.isBoolean(opts.alias)) {
-			this.setReadonlyParam('alias', opts.alias);
-		}
 
 		if (Object.isBoolean(opts.externalRequest)) {
 			this.setReadonlyParam('externalRequest', opts.externalRequest);
