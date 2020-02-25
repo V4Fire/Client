@@ -92,9 +92,9 @@ export default abstract class Provider extends ParamsProvider implements iProvid
 			let
 				cacheKey;
 
-			// tslint:disable-next-line:prefer-conditional-expression
 			if (Object.isFunction(extra)) {
-				cacheKey = extra[$$.extraProviderKey] = extra[$$.extraProviderKey] || Math.random();
+				cacheKey = extra[$$.extraProviderKey] =
+					extra[$$.extraProviderKey] || (Object.isCustomObject(extra) ? extra.toString() : Math.random());
 
 			} else {
 				cacheKey = Object.keys(extra).join();

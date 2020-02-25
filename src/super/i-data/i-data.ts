@@ -649,8 +649,12 @@ export default abstract class iData extends iBlock implements iProgress {
 				throw new Error(`Provider "${provider}" is not defined`);
 			}
 
+			// We need to fix function toString value because it used to calculate a provider cache key
+			const {extraProviders} = this;
+			extraProviders.toString = () => this.instance.extraProviders.toString();
+
 			this.dp = new ProviderConstructor({
-				extraProviders: this.extraProviders,
+				extraProviders,
 				...this.dataProviderOptions
 			});
 

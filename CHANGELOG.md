@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-beta.254 (2020-02-25)
+
+#### :bug: Bug Fix
+
+* Fixed memory leak with data providers
+
 ## v3.0.0-beta.253 (2020-02-24)
 
 #### :bug: Bug Fix
