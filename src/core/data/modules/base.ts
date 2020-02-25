@@ -85,7 +85,7 @@ export default abstract class Provider extends ParamsProvider implements iProvid
 		super();
 
 		const
-			paramsForCache = Object.reject(opts, 'collapseEvents'),
+			paramsForCache = Object.select(opts, 'externalRequest'),
 			id = this.cacheId = `${this.providerName}:${JSON.stringify(paramsForCache)}`,
 			cacheVal = instanceCache[id];
 
