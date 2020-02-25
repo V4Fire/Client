@@ -11,6 +11,17 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-beta.254 (2020-02-25)
+
+### :rocket: New Feature
+
+* [Optimize rendering of `b-virtual-scroll`](https://github.com/V4Fire/Client/pull/169)
+* [Added `prefetch` in `core/init`](https://github.com/V4Fire/Client/pull/169)
+
+### :bug: Bug Fix
+
+* [Fix issue with `b-virtual-scroll` not beign render some chunks](https://github.com/V4Fire/Client/pull/169)
+
 ## v3.0.0-beta.253 (2020-02-24)
 
 #### :bug: Bug Fix
