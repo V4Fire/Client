@@ -13,6 +13,10 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 ## v3.0.0-beta.254 (2020-02-25)
 
+#### :rocket: New Feature
+
+* Added a new event `dbCanChange` for `iData`
+
 #### :bug: Bug Fix
 
 * Fixed memory leak with data providers

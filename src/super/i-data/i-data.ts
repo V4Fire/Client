@@ -149,9 +149,13 @@ export default abstract class iData extends iBlock implements iProgress {
 
 	/**
 	 * Sets new component data
+	 *
+	 * @emits dbCanChange(value: CanUndef<this['DB']>)
 	 * @emits dbChange(value: CanUndef<this['DB']>)
 	 */
 	set db(value: CanUndef<this['DB']>) {
+		this.emit('dbCanChange', value);
+
 		if (value === this.db) {
 			return;
 		}
