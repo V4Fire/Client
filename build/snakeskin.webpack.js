@@ -205,7 +205,7 @@ function tagFilter({name, attrs = {}}) {
 			try {
 				attr = new Function(`return ${attr}`)();
 
-			} catch (_) {}
+			} catch {}
 
 			if (Object.isArray(el)) {
 				if (!Object.isArray(el[0])) {

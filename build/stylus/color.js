@@ -111,7 +111,7 @@ function pickColor(str, meta = {}) {
 	try {
 		return new stylus.Parser(str).peek().val;
 
-	} catch (_) {
+	} catch {
 		throw new Error(`Can't find a color with the hex value ${str}. Additional info ${JSON.stringify(meta)}`);
 	}
 }
