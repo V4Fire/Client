@@ -29,7 +29,7 @@
     "test": "echo \"Error: no test specified\" && exit 0"
   },
   "dependencies": {
-    "@v4fire/core": "^3.3.3",
+    "@v4fire/core": "^3.3.8",
     "escaper": "^3.0.3",
     "eventemitter2": "^5.0.1",
     "fg-loadcss": "^2.1.0",
@@ -114,10 +114,10 @@
     "webpack-cli": "^3.3.10"
   },
   "devDependencies": {
-    "babel-eslint": "^10.0.3",
+    "babel-eslint": "^10.1.0",
     "eslint": "^6.8.0",
-    "stlint": "^1.0.59",
-    "stlint-v4fire": "^1.0.30",
+    "stlint": "^1.0.62",
+    "stlint-v4fire": "^1.0.37",
     "tslint": "^5.20.1"
   }
 }

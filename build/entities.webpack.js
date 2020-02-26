@@ -45,23 +45,7 @@ module.exports = (async () => {
 
 	if (build.buildGraphFromCache) {
 		if (fs.existsSync(cacheFile)) {
-			await new Promise((r) => {
-				const f = () => {
-					setTimeout(() => {
-						if (fs.readFileSync(cacheFile, 'utf-8') !== '') {
-							r();
-
-						} else {
-							f();
-						}
-
-					}, 15);
-				};
-
-				f();
-			});
-
-			return fs.readJSONSync(cacheFile, {
+			const readCache = () => fs.readJSONSync(cacheFile, {
 				reviver(k, v) {
 					if (Object.isObject(v) && v.type === 'Map') {
 						return new Map(v.value);
@@ -69,6 +53,21 @@ module.exports = (async () => {
 
 					return v;
 				}
+			});
+
+			return await new Promise((r) => {
+				const f = () => {
+					setTimeout(() => {
+						try {
+							r(readCache());
+
+						} catch {
+							f();
+						}
+					}, 15);
+				};
+
+				f();
 			});
 		}
 
