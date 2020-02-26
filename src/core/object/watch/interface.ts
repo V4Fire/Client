@@ -6,6 +6,13 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+export type WatchPath = string | unknown[];
+
+export interface Watcher<T = unknown> {
+	proxy: T;
+	unwatch(): void;
+}
+
 export interface WatchOptions {
 	/**
 	 * If true, then the callback of changing is also fired on mutation of nested objects
@@ -61,9 +68,4 @@ export interface WatchHandlerParams {
 
 export interface WatchHandler<NEW = unknown, OLD = NEW> {
 	(newValue: CanUndef<NEW>, oldValue: CanUndef<OLD>, params: WatchHandlerParams): any;
-}
-
-export interface Watcher<T = unknown> {
-	proxy: T;
-	unwatch(): void;
 }

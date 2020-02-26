@@ -27,7 +27,7 @@ import { WrapOptions, WatchHandler } from 'core/object/watch/interface';
  * arr.push(3);
  * ```
  */
-export function bindMutationHooks<T extends object>(obj: T, opts: WrapOptions, handlers: Set<WatchHandler>): T;
+export function bindMutationHooks<T extends object>(obj: T, opts: WrapOptions, handlers: Map<WatchHandler, boolean>): T;
 
 /**
  * Wraps mutation methods of the specified object that they be able to emit events about mutations
@@ -35,22 +35,22 @@ export function bindMutationHooks<T extends object>(obj: T, opts: WrapOptions, h
  * @param obj
  * @param handlers - set of callbacks that are invoked on every mutation hooks
  */
-export function bindMutationHooks<T extends object>(obj: T, handlers: Set<WatchHandler>): T;
+export function bindMutationHooks<T extends object>(obj: T, handlers: Map<WatchHandler, boolean>): T;
 export function bindMutationHooks<T extends object>(
 	obj: T,
-	optsOrHandlers: Set<WatchHandler> | WrapOptions,
-	handlersOrOpts?: WrapOptions | Set<WatchHandler>
+	optsOrHandlers: Map<WatchHandler, boolean> | WrapOptions,
+	handlersOrOpts?: WrapOptions | Map<WatchHandler, boolean>
 ): T {
 	let
-		handlers,
+		handlers: Map<WatchHandler, boolean>,
 		opts;
 
-	if (Object.isSet(handlersOrOpts)) {
+	if (Object.isMap(handlersOrOpts)) {
 		handlers = handlersOrOpts;
 		opts = Object.isPlainObject(optsOrHandlers) ? optsOrHandlers : {};
 
 	} else {
-		handlers = optsOrHandlers;
+		handlers = Object.isMap(optsOrHandlers) ? optsOrHandlers : new Map();
 		opts = {};
 	}
 
@@ -63,14 +63,17 @@ export function bindMutationHooks<T extends object>(
 			const
 				a = args[i];
 
-			console.log(handlers);
+			for (let o = handlers.entries(), el = o.next(); !el.done; el = o.next()) {
+				const
+					[handler, state] = el.value;
 
-			for (let o = handlers, el = o.next(); !o.done; el = o.next()) {
-				el.value(...a.slice(0, -1), {
-					obj,
-					isRoot: Boolean(opts.isRoot),
-					path: a[a.length - 1]
-				});
+				if (state) {
+					handler(a[0], a[1], {
+						obj,
+						isRoot: Boolean(opts.isRoot),
+						path: a[2]
+					});
+				}
 			}
 		}
 	};
@@ -94,9 +97,9 @@ export function bindMutationHooks<T extends object>(
 				continue;
 			}
 
-			obj[method] = function (...args: unknown[]): unknown {
+			obj[method] = (...args) => {
 				wrappedCb(getArgs(obj, opts.path, ...args));
-				return original.apply(this, args);
+				return original.apply(obj, args);
 			};
 		}
 

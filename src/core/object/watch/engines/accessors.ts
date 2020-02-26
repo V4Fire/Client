@@ -14,7 +14,7 @@ const
 	watchLabel = Symbol('Watch label');
 
 /**
- * Watches for changes of the specified object by using Proxy objects
+ * Watches for changes of the specified object by using accessors
  *
  * @param obj
  * @param path - base path to object properties: it is provided to a watch handler with parameters
@@ -29,7 +29,7 @@ export default function watch<T>(
 ): Watcher<T>;
 
 /**
- * Watches for changes of the specified object by using Proxy objects
+ * Watches for changes of the specified object by using accessors
  *
  * @param obj
  * @param path - base path to object properties: it is provided to a watch handler with parameters
@@ -58,9 +58,6 @@ export default function watch<T>(
 	handlers: Map<WatchHandler, boolean> = !top && obj[watchHandlers] || new Map(),
 	destructors: Function[] = []
 ): Watcher<T> | T {
-	// tslint:disable-next-line:no-string-literal
-	obj = obj && typeof obj === 'object' && obj['__PROXY_TARGET__'] || obj;
-
 	if (!top) {
 		handlers = obj[watchHandlers] = handlers;
 	}
@@ -92,7 +89,7 @@ export default function watch<T>(
 		return returnProxy(obj);
 	}
 
-	const
+	let
 		proxy = obj[watchLabel];
 
 	if (proxy) {
@@ -114,56 +111,64 @@ export default function watch<T>(
 	const
 		isRoot = !path;
 
-	if (!Object.isPlainObject(obj) && !Object.isArray(obj)) {
+	if (!Object.isPlainObject(obj)) {
 		bindMutationHooks(<any>obj, {path, isRoot: Boolean(path)}, handlers!);
 	}
 
-	return returnProxy(obj, obj[watchLabel] = new Proxy(<any>obj, {
-		get: (target, key, receiver) => {
-			if (key === '__PROXY_TARGET__') {
-				return target;
-			}
+	proxy = obj[watchLabel] = Object.create(<any>obj);
 
-			const
-				val = Reflect.get(target, key, receiver);
+	for (let keys = Object.keys(obj), i = 0; i < keys.length; i++) {
+		const
+			key = keys[i],
+			descriptors = Object.getOwnPropertyDescriptor(obj, key);
 
-			if (opts?.deep && canProxy(val)) {
-				const fullPath = (<unknown[]>[]).concat(path ?? [], key);
-				return watch(val, fullPath, cb, opts, top || val, handlers, destructors);
-			}
+		if (descriptors?.configurable) {
+			Object.defineProperty(proxy, key, {
+				enumerable: true,
+				configurable: true,
 
-			if (Object.isPlainObject(target) || Object.isArray(target)) {
-				return val;
-			}
-
-			return Object.isFunction(val) ? val.bind(target) : val;
-		},
-
-		set: (target, key, val, receiver) => {
-			if (Object.isArray(target) && String(Number(key)) === key) {
-				key = Number(key);
-			}
-
-			const
-				oldVal = Reflect.get(target, key, receiver);
-
-			if (oldVal !== val && Reflect.set(target, key, val, receiver)) {
-				for (let o = handlers.entries(), el = o.next(); !el.done; el = o.next()) {
+				get(): unknown {
 					const
-						[handler, state] = el.value;
+						val = obj[key];
 
-					if (state) {
-						handler(val, oldVal, {
-							obj: <any>obj,
-							top,
-							isRoot,
-							path: (<unknown[]>[]).concat(path ?? [], key)
-						});
+					if (opts?.deep && canProxy(val)) {
+						const fullPath = (<unknown[]>[]).concat(path ?? [], key);
+						return watch(val, fullPath, cb, opts, top || val, handlers, destructors);
+					}
+
+					return val;
+				},
+
+				set(val: unknown): void {
+					const
+						oldVal = obj[key];
+
+					if (oldVal !== val) {
+						try {
+							obj[key] = val;
+
+						} catch {
+							return;
+						}
+
+						for (let o = handlers.entries(), el = o.next(); !el.done; el = o.next()) {
+							const
+								[handler, state] = el.value;
+
+							if (state) {
+								handler(val, oldVal, {
+									obj: <any>obj,
+									top,
+									isRoot,
+									path: (<unknown[]>[]).concat(path ?? [], key)
+								});
+							}
+						}
 					}
 				}
-			}
-
-			return true;
+			});
 		}
-	}));
+	}
+
+	return returnProxy(obj, proxy);
 }
