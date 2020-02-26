@@ -6,9 +6,5 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-export default [
-	'domReady',
-	'ABTReady',
-	'stateReady',
-	'prefetchReady'
-];
+import semaphore from 'core/init/semaphore';
+export default (() => semaphore('prefetchReady'))();

@@ -24,7 +24,7 @@ const isStaticLiteral = (v) => {
 		new Function(`return ${v}`)();
 		return true;
 
-	} catch (_) {
+	} catch {
 		return false;
 	}
 };

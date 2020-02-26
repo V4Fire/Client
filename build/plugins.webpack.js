@@ -45,7 +45,7 @@ module.exports = async function ({buildId}) {
 						try {
 							config[key] = el.call(obj);
 
-						} catch (_) {}
+						} catch {}
 					}
 
 				} else if (Object.isObject(el)) {

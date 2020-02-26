@@ -74,11 +74,11 @@ module.exports = function ({graph}) {
 					try {
 						assets = JSON.parse(fs.readFileSync(fd, 'utf-8'));
 
-					} catch (_) {}
+					} catch {}
 
 					fs.closeSync(fd);
 
-				} catch (_) {}
+				} catch {}
 
 				Object.assign(assets, manifest);
 

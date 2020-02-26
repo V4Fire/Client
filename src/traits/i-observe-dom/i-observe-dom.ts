@@ -38,6 +38,10 @@ export default abstract class iObserveDOM {
 		const
 			observers = this.getObserversMap(component);
 
+		if (!opts.reInit && this.isNodeBeingObserved(component, opts.node)) {
+			return;
+		}
+
 		if (observers.has(node)) {
 			this.unobserve(component, node);
 		}
@@ -114,6 +118,13 @@ export default abstract class iObserveDOM {
 		opts?: ObserveOptions
 	): void {
 		component.emit('DOMChange', records, opts);
+	}
+
+	/**
+	 * Returns true if MutationObserver is already observing the specified node
+	 */
+	static isNodeBeingObserved<T extends iBlock & iObserveDOM>(component: T, node: Element): boolean {
+		return this.getObserversMap(component).has(node);
 	}
 
 	/**

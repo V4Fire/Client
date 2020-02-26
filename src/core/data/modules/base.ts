@@ -85,51 +85,19 @@ export default abstract class Provider extends ParamsProvider implements iProvid
 		super();
 
 		const
-			paramsForCache = <Dictionary>{...opts},
-			extra = opts.extraProviders;
-
-		if (extra) {
-			let
-				cacheKey;
-
-			// tslint:disable-next-line:prefer-conditional-expression
-			if (Object.isFunction(extra)) {
-				cacheKey = extra[$$.extraProviderKey] = extra[$$.extraProviderKey] || Math.random();
-
-			} else {
-				cacheKey = Object.keys(extra).join();
-			}
-
-			if (cacheKey) {
-				paramsForCache.extraProviders = cacheKey;
-
-			} else {
-				delete paramsForCache.extraProviders;
-			}
-		}
-
-		const
-			id = this.cacheId = `${this.providerName}:${JSON.stringify(paramsForCache)}`,
+			id = this.cacheId = this.getCacheKey(Object.select(opts, 'externalRequest')),
 			cacheVal = instanceCache[id];
 
 		if (cacheVal) {
 			return <this>cacheVal;
 		}
 
+		instanceCache[id] = this;
+		requestCache[id] = Object.createDict();
+
 		this.async = new Async(this);
 		this.emitter = new EventEmitter({maxListeners: 1e3, newListener: false});
 		this.eventMap = new Map();
-
-		requestCache[id] =
-			Object.createDict();
-
-		if (extra) {
-			this.setReadonlyParam('extraProviders', extra);
-		}
-
-		if (Object.isBoolean(opts.alias)) {
-			this.setReadonlyParam('alias', opts.alias);
-		}
 
 		if (Object.isBoolean(opts.externalRequest)) {
 			this.setReadonlyParam('externalRequest', opts.externalRequest);
@@ -147,8 +115,14 @@ export default abstract class Provider extends ParamsProvider implements iProvid
 				c.then(this.initSocketBehaviour.bind(this), stderr);
 			}
 		}
+	}
 
-		instanceCache[id] = this;
+	/**
+	 * Returns a key to cache a class instance
+	 * @param [paramsForCache]
+	 */
+	getCacheKey(paramsForCache: ProviderOptions = {}): string {
+		return `${this.providerName}:${JSON.stringify(paramsForCache)}`;
 	}
 
 	/**

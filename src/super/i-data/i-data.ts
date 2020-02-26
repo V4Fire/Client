@@ -18,11 +18,9 @@ import { providers } from 'core/data/const';
 
 import Provider, {
 
-	Socket,
 	RequestQuery,
 	RequestBody,
 	RequestResponseObject,
-	Response,
 	ModelMethod,
 	ProviderOptions,
 	ExtraProviders
@@ -149,9 +147,13 @@ export default abstract class iData extends iBlock implements iProgress {
 
 	/**
 	 * Sets new component data
+	 *
+	 * @emits dbCanChange(value: CanUndef<this['DB']>)
 	 * @emits dbChange(value: CanUndef<this['DB']>)
 	 */
 	set db(value: CanUndef<this['DB']>) {
+		this.emit('dbCanChange', value);
+
 		if (value === this.db) {
 			return;
 		}
@@ -210,13 +212,6 @@ export default abstract class iData extends iBlock implements iProgress {
 	 */
 	@system()
 	protected dp?: Provider;
-
-	/**
-	 * Returns a list of additional data providers for the get request
-	 */
-	extraProviders(): CanUndef<ExtraProviders> {
-		return undefined;
-	}
 
 	/** @override */
 	initLoad(data?: unknown, params: InitLoadParams = {}): CanPromise<void> {
@@ -649,11 +644,7 @@ export default abstract class iData extends iBlock implements iProgress {
 				throw new Error(`Provider "${provider}" is not defined`);
 			}
 
-			this.dp = new ProviderConstructor({
-				extraProviders: this.extraProviders,
-				...this.dataProviderOptions
-			});
-
+			this.dp = new ProviderConstructor(this.dataProviderOptions);
 			this.initDataListeners();
 		}
 	}

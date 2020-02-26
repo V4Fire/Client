@@ -103,35 +103,6 @@ export interface ProviderOptions {
 	 * @default `false`
 	 */
 	collapseEvents?: boolean;
-
-	/**
-	 * Provider alias: it is used with extra providers
-	 * @see [[ProviderOptions.extraProviders]]
-	 */
-	alias?: string;
-
-	/**
-	 * List of additional data providers for the "get" method.
-	 * It can be useful if you have some providers that you want combine to one.
-	 *
-	 * @example
-	 * ```js
-	 * class User extends Provider {
-	 *   baseURL: 'user/info',
-	 *
-	 *   extraProviders: {
-	 *     balance: {
-	 *       provider: 'UserBalance'
-	 *     },
-	 *
-	 *     hobby: {
-	 *       provider: 'UserHobby'
-	 *     },
-	 *   }
-	 * }
-	 * ```
-	 */
-	extraProviders?: FunctionalExtraProviders;
 }
 
 export interface ExtraProviderParams<T = unknown> {
