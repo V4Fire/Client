@@ -85,20 +85,19 @@ export default abstract class Provider extends ParamsProvider implements iProvid
 		super();
 
 		const
-			paramsForCache = Object.select(opts, 'externalRequest'),
-			id = this.cacheId = `${this.providerName}:${JSON.stringify(paramsForCache)}`,
+			id = this.cacheId = this.getCacheKey(Object.select(opts, 'externalRequest')),
 			cacheVal = instanceCache[id];
 
 		if (cacheVal) {
 			return <this>cacheVal;
 		}
 
+		instanceCache[id] = this;
+		requestCache[id] = Object.createDict();
+
 		this.async = new Async(this);
 		this.emitter = new EventEmitter({maxListeners: 1e3, newListener: false});
 		this.eventMap = new Map();
-
-		requestCache[id] =
-			Object.createDict();
 
 		if (Object.isBoolean(opts.externalRequest)) {
 			this.setReadonlyParam('externalRequest', opts.externalRequest);
@@ -116,8 +115,14 @@ export default abstract class Provider extends ParamsProvider implements iProvid
 				c.then(this.initSocketBehaviour.bind(this), stderr);
 			}
 		}
+	}
 
-		instanceCache[id] = this;
+	/**
+	 * Returns a key to cache a class instance
+	 * @param [paramsForCache]
+	 */
+	getCacheKey(paramsForCache: ProviderOptions = {}): string {
+		return `${this.providerName}:${JSON.stringify(paramsForCache)}`;
 	}
 
 	/**
