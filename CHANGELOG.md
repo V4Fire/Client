@@ -11,6 +11,16 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-beta.256 (2020-02-26)
+
+#### :rocket: New Feature
+
+* Added `getCacheKey` for `Provider`
+
+#### :bug: Bug Fix
+
+* Fixed a race condition with `parallel-webpack`
+
 ## v3.0.0-beta.255 (2020-02-25)
 
 #### :boom: Breaking Change
