@@ -111,6 +111,25 @@
 
 					+= injectFavicons()
 
+			: pageName = self.name()
+
+			- block pageData
+				? rootAttrs['data-root-component'] = pageName
+				? rootAttrs['data-root-component-params'] = ({data: pageData}|json)
+
+			< body
+				< ${rootTag}.i-static-page.${pageName} ${rootAttrs|!html}
+					- block headHelpers
+					- block innerRoot
+						- if overWrapper
+							< .&__over-wrapper
+								- block overWrapper
+
+							- block body
+						- block helpers
+						- block providers
+
+
 				+= self.jsScript({})
 					# block initVars
 						window[#{globals.MODULE_DEPENDENCIES}] = {fileCache: {}};
@@ -272,21 +291,3 @@
 					+= self.jsScript({})
 						- block depsReady
 							READY_STATE++;
-
-			: pageName = self.name()
-
-			- block pageData
-				? rootAttrs['data-root-component'] = pageName
-				? rootAttrs['data-root-component-params'] = ({data: pageData}|json)
-
-			< body
-				< ${rootTag}.i-static-page.${pageName} ${rootAttrs|!html}
-					- block headHelpers
-					- block innerRoot
-						- if overWrapper
-							< .&__over-wrapper
-								- block overWrapper
-
-							- block body
-						- block helpers
-						- block providers
