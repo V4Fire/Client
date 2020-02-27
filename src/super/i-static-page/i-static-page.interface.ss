@@ -111,6 +111,66 @@
 
 					+= injectFavicons()
 
+				- block headScripts
+					: headLibs = deps.headScripts
+					- block headLibs
+
+					- block loadHeadScripts
+						- for var o = headLibs.entries(), el = o.next(); !el.done; el = o.next()
+							: &
+								key = el.value[0],
+								src = el.value[1],
+								isStr = Object.isString(src)
+							.
+
+							: &
+								p = isStr ? {src: src} : src,
+								needLoad = p.load !== false && !/\/$/.test(p.src)
+							.
+
+							: &
+								basename = path.basename(p.src),
+								inline = @@fatHTML || p.inline,
+								cwd = !p.source || p.source === 'lib' ? @@lib : p.source === 'src' ? @@src : @@output
+							.
+
+							? src = p.src
+
+							- if p.source === 'output'
+								- while !assets[src]
+									- while !fs.existsSync(build.assetsJSON)
+										? await delay(500)
+
+									? await delay(500)
+									? Object.assign(assets, fs.readJSONSync(path.join(build.assetsJSON)))
+
+								? src = assets[src]
+								? src = path.join(cwd, Object.isObject(src) ? src.path : src)
+								? src = inline ? src : path.relative(@@output, src)
+
+							- else
+								? src = self.loadToLib.apply(self, [{name: key, relative: !inline}].concat(cwd, src))
+
+							? p = Object.reject(p, ['src', 'source', 'load'])
+
+							- if !needLoad
+								? src = @@publicPath(src)
+
+								+= self.jsScript({})
+									PATH['{key}'] = '{src}';
+
+							- else
+								- if inline
+									- while !fs.existsSync(src)
+										? await delay(500)
+
+									+= self.jsScript(p)
+										requireMonic({src})
+
+								- else
+									? src = @@publicPath(src)
+									+= self.jsScript(Object.assign({defer: true}, p, {src: src}))
+
 			: pageName = self.name()
 
 			- block pageData
