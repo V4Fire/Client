@@ -6,9 +6,13 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import proxyWatch from 'core/object/watch/engines/proxy';
-import accessorsWatch from 'core/object/watch/engines/accessors';
+import * as proxyEngine from 'core/object/watch/engines/proxy';
+import * as accEngine from 'core/object/watch/engines/accessors';
+
 import { WatchPath, WatchOptions, WatchHandler, Watcher } from 'core/object/watch/interface';
+
+export * from 'core/object/watch/const';
+export * from 'core/object/watch/interface';
 
 /**
  * Watches for changes of the specified object
@@ -81,8 +85,29 @@ export function watch<T extends object>(
 	}
 
 	if (typeof Proxy === 'function') {
-		return proxyWatch(obj, undefined, cb, opts);
+		return proxyEngine.watch(obj, undefined, cb, opts);
 	}
 
-	return accessorsWatch(obj, undefined, cb, opts);
+	return accEngine.watch(obj, undefined, cb, opts);
+}
+
+/**
+ * Sets a new watchable value for an object by the specified path
+ *
+ * @param obj
+ * @param path
+ * @param value
+ */
+export function set(obj: object, path: WatchPath, value: unknown): void {
+	return (typeof Proxy === 'function' ? proxyEngine : accEngine).set(obj, path, value);
+}
+
+/**
+ * Unsets a watchable value for an object by the specified path
+ *
+ * @param obj
+ * @param path
+ */
+export function unset(obj: object, path: WatchPath): void {
+	return (typeof Proxy === 'function' ? proxyEngine : accEngine).unset(obj, path);
 }

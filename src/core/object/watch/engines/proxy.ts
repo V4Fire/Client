@@ -6,12 +6,10 @@
  * https://github.com/V4Fire/Core/blob/master/LICENSE
  */
 
+import { watchLabel, watchHandlersLabel } from 'core/object/watch/const';
 import { bindMutationHooks } from 'core/object/watch/wrap';
-import { WatchHandler, WatchOptions, Watcher } from 'core/object/watch/interface';
-
-const
-	watchHandlers = Symbol('Watch handlers'),
-	watchLabel = Symbol('Watch label');
+import { proxyType } from 'core/object/watch/engines/helpers';
+import { WatchPath, WatchHandler, WatchOptions, Watcher } from 'core/object/watch/interface';
 
 /**
  * Watches for changes of the specified object by using Proxy objects
@@ -21,7 +19,7 @@ const
  * @param cb - callback that is invoked on every mutation hook
  * @param [opts] - additional options
  */
-export default function watch<T>(
+export function watch<T>(
 	obj: T,
 	path: CanUndef<unknown[]>,
 	cb: WatchHandler,
@@ -37,50 +35,41 @@ export default function watch<T>(
  * @param [opts] - additional options
  * @param [top] - link a top property of watching
  * @param [handlers] - map of registered handlers
- * @param [destructors] - list of destructors to cancel of watching
  */
-export default function watch<T>(
+export function watch<T>(
 	obj: T,
 	path: CanUndef<unknown[]>,
-	cb: WatchHandler,
+	cb: Nullable<WatchHandler>,
 	opts: CanUndef<WatchOptions>,
 	top: object,
-	handlers: Map<WatchHandler, boolean>,
-	destructors: Function[]
+	handlers: Map<WatchHandler, boolean>
 ): T;
 
-export default function watch<T>(
+export function watch<T>(
 	obj: T,
 	path: CanUndef<unknown[]>,
-	cb: WatchHandler,
+	cb: Nullable<WatchHandler>,
 	opts?: WatchOptions,
 	top?: object,
-	handlers: Map<WatchHandler, boolean> = !top && obj[watchHandlers] || new Map(),
-	destructors: Function[] = []
+	handlers: Map<WatchHandler, boolean> = !top && obj[watchHandlersLabel] || new Map()
 ): Watcher<T> | T {
 	// tslint:disable-next-line:no-string-literal
 	obj = obj && typeof obj === 'object' && obj['__PROXY_TARGET__'] || obj;
 
 	if (!top) {
-		handlers = obj[watchHandlers] = handlers;
+		handlers = obj[watchHandlersLabel] = handlers;
 	}
 
 	const returnProxy = (obj, proxy?) => {
-		if (proxy) {
-			if (!top || !handlers.has(cb)) {
-				handlers.set(cb, true);
-			}
-
-			destructors.push(() => {
-				handlers.set(cb, false);
-			});
+		if (cb && proxy && (!top || !handlers.has(cb))) {
+			handlers.set(cb, true);
 		}
 
 		if (!top) {
 			return {
 				proxy: proxy || obj,
 				unwatch(): void {
-					destructors.forEach((fn) => fn());
+					cb && handlers.set(cb, false);
 				}
 			};
 		}
@@ -99,22 +88,14 @@ export default function watch<T>(
 		return returnProxy(obj, proxy);
 	}
 
-	const canProxy = (obj) =>
-		Object.isPlainObject(obj) ||
-		Object.isArray(obj) ||
-		Object.isMap(obj) ||
-		Object.isSet(obj) ||
-		Object.isWeakMap(obj) ||
-		Object.isWeakSet(obj);
-
-	if (!canProxy(obj)) {
+	if (!proxyType(obj)) {
 		return returnProxy(obj);
 	}
 
 	const
-		isRoot = !path;
+		isRoot = path === undefined;
 
-	if (!Object.isPlainObject(obj) && !Object.isArray(obj)) {
+	if (!Object.isDictionary(obj) && !Object.isArray(obj)) {
 		bindMutationHooks(<any>obj, {path, isRoot: Boolean(path)}, handlers!);
 	}
 
@@ -127,9 +108,9 @@ export default function watch<T>(
 			const
 				val = Reflect.get(target, key, receiver);
 
-			if (opts?.deep && canProxy(val)) {
+			if (opts?.deep && proxyType(val)) {
 				const fullPath = (<unknown[]>[]).concat(path ?? [], key);
-				return watch(val, fullPath, cb, opts, top || val, handlers, destructors);
+				return watch(val, fullPath, null, opts, top || val, handlers);
 			}
 
 			if (Object.isPlainObject(target) || Object.isArray(target)) {
@@ -166,4 +147,84 @@ export default function watch<T>(
 			return true;
 		}
 	}));
+}
+
+/**
+ * Sets a new watchable value for an object by the specified path
+ *
+ * @param obj
+ * @param path
+ * @param value
+ */
+export function set(obj: object, path: WatchPath, value: unknown): void {
+	// tslint:disable-next-line:no-string-literal
+	obj = obj && typeof obj === 'object' && obj['__PROXY_TARGET__'] || obj;
+
+	const
+		normalizedPath = Object.isArray(path) ? path : path.split('.');
+
+	const
+		prop = normalizedPath[normalizedPath.length - 1],
+		refPath = normalizedPath.slice(0, -1);
+
+	const
+		ref = Object.get(obj[watchLabel] || obj, refPath);
+
+	if (!Object.isDictionary(ref)) {
+		const
+			type = proxyType(ref);
+
+		switch (type) {
+			case 'array':
+				(<unknown[]>ref).splice(Number(prop), 1, value);
+				break;
+
+			case 'map':
+				(<Map<unknown, unknown>>ref).set(prop, value);
+		}
+
+		return;
+	}
+
+	ref[String(prop)] = value;
+}
+
+/**
+ * Unsets a watchable value for an object by the specified path
+ *
+ * @param obj
+ * @param path
+ */
+export function unset(obj: object, path: WatchPath): void {
+	// tslint:disable-next-line:no-string-literal
+	obj = obj && typeof obj === 'object' && obj['__PROXY_TARGET__'] || obj;
+
+	const
+		normalizedPath = Object.isArray(path) ? path : path.split('.');
+
+	const
+		prop = normalizedPath[normalizedPath.length - 1],
+		refPath = normalizedPath.slice(0, -1);
+
+	const
+		ref = Object.get(obj[watchLabel] || obj, refPath);
+
+	if (!Object.isDictionary(ref)) {
+		const
+			type = proxyType(ref);
+
+		switch (type) {
+			case 'array':
+				(<unknown[]>ref).splice(Number(prop), 1);
+				break;
+
+			case 'map':
+			case 'set':
+				(<Map<unknown, unknown>>ref).delete(prop);
+		}
+
+		return;
+	}
+
+	ref[String(prop)] = undefined;
 }

@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Core/blob/master/LICENSE
  */
 
-import { structureWrappers } from 'core/object/watch/const';
+import { structureWrappers } from 'core/object/watch/wrap/const';
 import { WrapOptions, WatchHandler } from 'core/object/watch/interface';
 
 /**
@@ -97,10 +97,14 @@ export function bindMutationHooks<T extends object>(
 				continue;
 			}
 
-			obj[method] = (...args) => {
-				wrappedCb(getArgs(obj, opts.path, ...args));
-				return original.apply(obj, args);
-			};
+			Object.defineProperty(obj, method, {
+				writable: true,
+				configurable: true,
+				value: (...args) => {
+					wrappedCb(getArgs(obj, opts.path, ...args));
+					return original.apply(obj, args);
+				}
+			});
 		}
 
 		break;
