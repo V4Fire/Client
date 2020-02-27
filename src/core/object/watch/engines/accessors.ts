@@ -90,7 +90,7 @@ export function watch<T>(
 	}
 
 	if (!Object.isDictionary(obj)) {
-		bindMutationHooks(<any>obj, {path, isRoot: Boolean(path)}, handlers!);
+		bindMutationHooks(<any>obj, {top, path, isRoot: path === undefined}, handlers!);
 		return returnProxy(obj, obj);
 	}
 

@@ -96,7 +96,7 @@ export function watch<T>(
 		isRoot = path === undefined;
 
 	if (!Object.isDictionary(obj) && !Object.isArray(obj)) {
-		bindMutationHooks(<any>obj, {path, isRoot: Boolean(path)}, handlers!);
+		bindMutationHooks(<any>obj, {top, path, isRoot}, handlers!);
 	}
 
 	return returnProxy(obj, obj[watchLabel] = new Proxy(<any>obj, {

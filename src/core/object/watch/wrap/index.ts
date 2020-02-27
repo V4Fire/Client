@@ -70,6 +70,7 @@ export function bindMutationHooks<T extends object>(
 				if (state) {
 					handler(a[0], a[1], {
 						obj,
+						top: opts.top,
 						isRoot: Boolean(opts.isRoot),
 						path: a[2]
 					});

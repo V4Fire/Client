@@ -21,7 +21,7 @@ export * from 'core/object/watch/interface';
  * @param cb - callback that is invoked on every mutation hook
  * @param [opts] - additional options
  */
-export function watch<T extends object>(obj: object, cb: WatchHandler, opts?: WatchOptions): Watcher<T>;
+export function watch<T extends object>(obj: T, cb: WatchHandler, opts?: WatchOptions): Watcher<T>;
 
 /**
  * Watches for changes of the specified object

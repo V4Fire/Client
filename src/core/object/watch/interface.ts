@@ -29,6 +29,11 @@ export interface WatchOptions {
 
 export interface WrapOptions {
 	/**
+	 * Link a top property of watching
+	 */
+	top?: object;
+
+	/**
 	 * Base path to object properties:
 	 * it is provided to a watch handler with parameters
 	 */
