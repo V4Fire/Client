@@ -11,11 +11,15 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v3.0.0-beta.275 (2020-02-27)
+## v3.0.0-beta.275 (2020-02-28)
 
 #### :rocket: New Feature
 
 * [Scripts and styles are now located in body tag](https://github.com/V4Fire/Client/pull/172)
+
+#### :bug: Bug Fix
+
+* [Fixed `b-virtual-scroll/scroll-request` `getData` method was not wrapped with `async.request`](https://github.com/V4Fire/Client/pull/171)
 
 ## v3.0.0-beta.256 (2020-02-26)
 
