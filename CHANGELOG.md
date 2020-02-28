@@ -11,7 +11,11 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v3.0.0-beta.257 (2020-02-26)
+## v3.0.0-beta.275 (2020-02-28)
+
+#### :rocket: New Feature
+
+* [Scripts and styles are now located in body tag](https://github.com/V4Fire/Client/pull/172)
 
 #### :bug: Bug Fix
 

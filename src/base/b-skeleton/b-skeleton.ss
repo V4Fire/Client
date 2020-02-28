@@ -28,6 +28,26 @@
  */
 
 /**
+ * Generates a skeleton with dynamic shape
+ *
+ * @param {SkeletonParams.p=} [p]
+ * @param {SkeletonParams.attrs=} [attrs]
+ */
+- block index->dynamicShape(p = {}, attrs = {})
+	? p = Object.assign({ &
+		class: 'default',
+		animation: 's',
+		size: 's',
+		shape: 'shapeless'
+	}, p) .
+
+	< ?.${self.name()}
+		< .&__${p.class}.&__item[.&_shape_${p.shape}.&_animation_${p.animation}.&_size_${p.size}] &
+			${attrs} |
+			-skeleton-marker = true
+		.
+
+/**
  * Generates a skeleton rectangle
  *
  * @param {SkeletonParams.p=} [p]
