@@ -19,9 +19,17 @@ export * from 'core/object/watch/interface';
  *
  * @param obj
  * @param cb - callback that is invoked on every mutation hook
- * @param [opts] - additional options
  */
-export function watch<T extends object>(obj: T, cb: WatchHandler, opts?: WatchOptions): Watcher<T>;
+export function watch<T extends object>(obj: T, cb: WatchHandler): Watcher<T>;
+
+/**
+ * Watches for changes of the specified object
+ *
+ * @param obj
+ * @param opts - additional options
+ * @param cb - callback that is invoked on every mutation hook
+ */
+export function watch<T extends object>(obj: T, opts: WatchOptions, cb: WatchHandler): Watcher<T>;
 
 /**
  * Watches for changes of the specified object
@@ -29,33 +37,60 @@ export function watch<T extends object>(obj: T, cb: WatchHandler, opts?: WatchOp
  * @param obj
  * @param path - path to a property to watch
  * @param cb - callback that is invoked on every mutation hook
- * @param [opts] - additional options
  */
 export function watch<T extends object>(
-	obj: object,
+	obj: T,
+	// tslint:disable-next-line:unified-signatures
 	path: WatchPath,
-	cb: WatchHandler,
-	opts?: WatchOptions
+	cb: WatchHandler
+): Watcher<T>;
+
+/**
+ * Watches for changes of the specified object
+ *
+ * @param obj
+ * @param path - path to a property to watch
+ * @param opts - additional options
+ * @param cb - callback that is invoked on every mutation hook
+ */
+export function watch<T extends object>(
+	obj: T,
+	path: WatchPath,
+	opts: WatchOptions,
+	cb: WatchHandler
 ): Watcher<T>;
 
 export function watch<T extends object>(
 	obj: T,
-	pathOrCb: WatchPath | WatchHandler,
+	pathOptsOrCb: WatchPath | WatchHandler | WatchOptions,
 	cbOrOpts?: WatchHandler | WatchOptions,
-	opts?: WatchOptions
+	optsOrCb?: WatchOptions | WatchHandler
 ): Watcher<T> {
 	let
 		cb,
+		opts;
+
+	let
 		timer,
 		normalizedPath;
 
-	if (Object.isString(pathOrCb) || Object.isArray(pathOrCb)) {
-		normalizedPath = Object.isArray(pathOrCb) ? pathOrCb : pathOrCb.split('.');
-		cb = <Function>cbOrOpts;
+	if (Object.isString(pathOptsOrCb) || Object.isArray(pathOptsOrCb)) {
+		normalizedPath = Object.isArray(pathOptsOrCb) ? pathOptsOrCb : pathOptsOrCb.split('.');
+
+		if (Object.isFunction(cbOrOpts)) {
+			cb = cbOrOpts;
+
+		} else {
+			opts = cbOrOpts;
+			cb = optsOrCb;
+		}
+
+	} else if (Object.isFunction(pathOptsOrCb)) {
+		cb = pathOptsOrCb;
 
 	} else {
-		cb = <Function>pathOrCb;
-		opts = <WatchOptions>cbOrOpts;
+		opts = pathOptsOrCb;
+		cb = cbOrOpts;
 	}
 
 	if (opts?.collapseToTopProperties) {
