@@ -189,7 +189,6 @@
 						- block helpers
 						- block providers
 
-
 				+= self.jsScript({})
 					# block initVars
 						window[#{globals.MODULE_DEPENDENCIES}] = {fileCache: {}};
