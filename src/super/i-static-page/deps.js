@@ -27,6 +27,9 @@ const deps = module.exports = {
 		['eventemitter2', 'eventemitter2/lib/eventemitter2.js']
 	]),
 
+	/** @see deps.scripts */
+	headScripts: new Map(),
+
 	/**
 	 * @type {Map<(string|{
 	 *   src: string,
