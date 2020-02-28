@@ -21,10 +21,82 @@ export interface WatchOptions {
 	deep?: boolean;
 
 	/**
-	 * If true, then all mutation events will be collapsed to one event and fired from a top property of the object
+	 * If true, then all mutation events will be fired immediately
 	 * @default `false`
 	 */
-	collapseToTopProperties?: boolean;
+	immediate?: boolean;
+
+	/**
+	 * If true, then all mutation events of nested properties will be collapsed to one event
+	 * and fired from a top property of the object
+	 *
+	 * @default `false`
+	 */
+	collapse?: boolean;
+
+	/**
+	 * List of prefixes for a path to watch.
+	 * This parameter can help to watch getters.
+	 *
+	 * @example
+	 * ```js
+	 * const obj = {
+	 *   get foo() {
+	 *     return this._foo * 2;
+	 *   },
+	 *
+	 *   _foo: 2
+	 * };
+	 *
+	 * watch(obj, 'foo', {prefixes: ['_']}, (val) => {
+	 *   console.log(val);
+	 * });
+	 * ```
+	 */
+	prefixes?: string[];
+
+	/**
+	 * List of postfixes for a path to watch.
+	 * This parameter can help to watch getters.
+	 *
+	 * @example
+	 * ```js
+	 * const obj = {
+	 *   get foo() {
+	 *     return this.fooStore * 2;
+	 *   },
+	 *
+	 *   fooStore: 2
+	 * };
+	 *
+	 * watch(obj, 'foo', {postfixes: ['Store']}, (val) => {
+	 *   console.log(val);
+	 * });
+	 * ```
+	 */
+	postfixes?: string[];
+
+	/**
+	 * List of dependencies for a path to watch.
+	 * This parameter can help to watch getters.
+	 *
+	 * @example
+	 * ```js
+	 * const obj = {
+	 *   get foo() {
+	 *     return this.bla * this.baz;
+	 *   },
+	 *
+	 *   bla: 2,
+	 *   baz: 3
+	 * };
+	 *
+	 * watch(obj, 'foo', {dependencies: ['bla', 'baz']}, (val) => {
+	 *   console.log(val);
+	 * });
+	 * ```
+	 */
+	dependencies?: WatchPath[];
 }
 
 export interface WrapOptions {
@@ -73,4 +145,8 @@ export interface WatchHandlerParams {
 
 export interface WatchHandler<NEW = unknown, OLD = NEW> {
 	(newValue: CanUndef<NEW>, oldValue: CanUndef<OLD>, params: WatchHandlerParams): any;
+}
+
+export interface MultipleWatchHandler<NEW = unknown, OLD = NEW> {
+	(mutations: [CanUndef<NEW>, CanUndef<OLD>, WatchHandlerParams]): any;
 }
