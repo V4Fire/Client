@@ -6,6 +6,8 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import { watchLabel, watchHandlersLabel } from 'core/object/watch/const';
+
 import * as proxyEngine from 'core/object/watch/engines/proxy';
 import * as accEngine from 'core/object/watch/engines/accessors';
 
@@ -96,7 +98,7 @@ export function watch<T extends object>(
 ): Watcher<T> {
 	let
 		cb,
-		opts;
+		opts: CanUndef<WatchOptions>;
 
 	let
 		timer,
@@ -123,7 +125,7 @@ export function watch<T extends object>(
 
 	const
 		immediate = opts?.immediate,
-		collapse = normalizedPath ? opts?.collapseToTopProperties !== false : opts?.collapseToTopProperties;
+		collapse = normalizedPath ? opts?.collapse !== false : opts?.collapse;
 
 	const
 		pref = opts?.prefixes,
@@ -133,15 +135,30 @@ export function watch<T extends object>(
 		deps = opts?.dependencies;
 
 	if (deps) {
-		deps = deps.slice();
+		if (Object.isArray(deps)) {
+			deps = deps.slice();
 
-		for (let i = 0; i < deps.length; i++) {
-			const dep = deps[i];
-			deps[i] = Object.isArray(dep) ? dep : dep.split('.');
+			for (let i = 0; i < deps.length; i++) {
+				const dep = deps[i];
+				deps[i] = Object.isArray(dep) ? dep : dep.split('.');
+			}
+
+		} else if (Object.isDictionary(deps)) {
+			deps = {...deps};
+
+			for (let keys = Object.keys(deps), i = 0; i < keys.length; i++) {
+				const
+					keyDeps = deps[keys[i]]!.slice();
+
+				for (let i = 0; i < keyDeps.length; i++) {
+					const dep = keyDeps[i];
+					keyDeps[i] = Object.isArray(dep) ? dep : dep.split('.');
+				}
+			}
 		}
 	}
 
-	if (!immediate || collapse || normalizedPath) {
+	if (!immediate || collapse || normalizedPath || deps) {
 		const
 			original = cb,
 			NULL = {};
@@ -153,6 +170,60 @@ export function watch<T extends object>(
 		cb = (val, oldVal, p) => {
 			let
 				dynamic = false;
+
+			const fire = (path = normalizedPath) => {
+				const getArgs = () => {
+					if (dynamic) {
+						val = Object.get(obj, collapse ? path[0] : path);
+
+						if (original.length < 2) {
+							return [val, undefined, p];
+						}
+
+						const args = [val, dynamicOldVal === NULL ? undefined : dynamicOldVal, p];
+						dynamicOldVal = val;
+
+						return args;
+					}
+
+					if (collapse) {
+						return [p.isRoot ? val : p.top, p.isRoot ? oldVal : p.top, p];
+					}
+
+					return [val, oldVal, p];
+				};
+
+				if (immediate) {
+					original(...getArgs());
+
+				} else {
+					if (collapse) {
+						argsQueue = getArgs();
+
+					} else {
+						argsQueue.push(getArgs());
+					}
+
+					if (!timer) {
+						// tslint:disable-next-line:no-string-literal
+						timer = globalThis['setImmediate'](() => {
+							timer = undefined;
+
+							try {
+								if (collapse) {
+									original(...argsQueue);
+
+								} else {
+									original(argsQueue);
+								}
+
+							} finally {
+								argsQueue = [];
+							}
+						});
+					}
+				}
+			};
 
 			if (normalizedPath) {
 				const
@@ -184,7 +255,7 @@ export function watch<T extends object>(
 						}
 					}
 
-					if (deps) {
+					if (Object.isArray(deps)) {
 						deps: for (let i = 0; i < deps.length; i++) {
 							const
 								depPath = deps[i],
@@ -205,64 +276,49 @@ export function watch<T extends object>(
 
 					return;
 				}
+
+				fire();
+				return;
 			}
 
-			const getArgs = () => {
-				if (dynamic) {
-					val = Object.get(obj, collapse ? normalizedPath[0] : normalizedPath);
+			fire();
 
-					if (original.length < 2) {
-						return [val, undefined, p];
-					}
+			if (Object.isDictionary(deps)) {
+				console.log(67, deps, deps[p.path[0]]);
 
-					const args = [val, dynamicOldVal === NULL ? undefined : dynamicOldVal, p];
-					dynamicOldVal = val;
-
-					return args;
-				}
-
-				if (collapse) {
-					return [p.isRoot ? val : p.top, p.isRoot ? oldVal : p.top, p];
-				}
-
-				return [val, oldVal, p];
-			};
-
-			if (immediate) {
-				original(...getArgs());
-
-			} else {
-				if (!collapse) {
-					argsQueue.push(getArgs());
-				}
-
-				if (!timer) {
-					// tslint:disable-next-line:no-string-literal
-					timer = globalThis['setImmediate'](() => {
-						timer = undefined;
-
-						try {
-							if (collapse) {
-								original(...getArgs());
-
-							} else {
-								original(argsQueue);
-							}
-
-						} finally {
-							argsQueue = [];
-						}
-					});
-				}
+				console.log(5656, p.path);
 			}
 		};
 	}
 
-	if (typeof Proxy === 'function') {
-		return proxyEngine.watch(obj, undefined, cb, opts);
+	const
+		mapTo = opts?.mapTo,
+		res = (typeof Proxy === 'function' ? proxyEngine : accEngine).watch(obj, undefined, cb, opts),
+		proxy = res.proxy;
+
+	if (mapTo && Object.isSimpleObject(proxy)) {
+		mapTo[watchLabel] = obj[watchLabel];
+		mapTo[watchHandlersLabel] = obj[watchHandlersLabel];
+
+		for (let keys = Object.keys(proxy), i = 0; i < keys.length; i++) {
+			const
+				key = keys[i];
+
+			Object.defineProperty(mapTo, key, {
+				enumerable: true,
+				configurable: true,
+				get(): unknown {
+					return proxy[key];
+				},
+
+				set(val: unknown): void {
+					proxy[key] = val;
+				}
+			});
+		}
 	}
 
-	return accEngine.watch(obj, undefined, cb, opts);
+	return res;
 }
 
 /**
@@ -285,3 +341,27 @@ export function set(obj: object, path: WatchPath, value: unknown): void {
 export function unset(obj: object, path: WatchPath): void {
 	return (typeof Proxy === 'function' ? proxyEngine : accEngine).unset(obj, path);
 }
+
+const data = {
+	foo: 1,
+
+	get bla() {
+		return this.foo * 2;
+	}
+};
+
+const component = {
+
+};
+
+const {unwatch} = watch(data, {mapTo: component, collapse: true}, (val, oldVal) => {
+//console.log(11, val, oldVal);
+});
+
+
+watch(component, {dependencies: {foo: ['bla']}}, (val) => {
+	console.log(val[0][0]);
+});
+
+component.foo = 2;
+component.foo = 53;

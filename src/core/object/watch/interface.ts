@@ -96,7 +96,7 @@ export interface WatchOptions {
 	 * });
 	 * ```
 	 */
-	dependencies?: WatchPath[];
+	dependencies?: WatchPath[] | Dictionary<WatchPath[]>;
 }
 
 export interface WrapOptions {
