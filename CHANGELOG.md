@@ -15,7 +15,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :house: Internal
 
-* Review `b-virtual-scroll`
+* [Review `b-virtual-scroll`](https://github.com/V4Fire/Client/pull/173)
 
 ## v3.0.0-beta.258 (2020-03-04)
 
