@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-beta.258 (2020-03-04)
+
+#### :bug: Bug Fix
+
+* Provided request information to an error `core/data/middlewares/attach-mock`
+
 ## v3.0.0-beta.257 (2020-02-28)
 
 #### :rocket: New Feature
