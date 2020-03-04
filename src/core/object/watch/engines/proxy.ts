@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Core/blob/master/LICENSE
  */
 
-import { watchLabel, watchHandlersLabel } from 'core/object/watch/const';
+import { watchProxyLabel, watchTargetLabel, watchOptionsLabel, watchHandlersLabel } from 'core/object/watch/const';
 import { bindMutationHooks } from 'core/object/watch/wrap';
 import { proxyType } from 'core/object/watch/engines/helpers';
 import { WatchPath, WatchHandler, WatchOptions, Watcher } from 'core/object/watch/interface';
@@ -53,11 +53,19 @@ export function watch<T>(
 	top?: object,
 	handlers: Map<WatchHandler, boolean> = !top && obj[watchHandlersLabel] || new Map()
 ): Watcher<T> | T {
-	// tslint:disable-next-line:no-string-literal
-	obj = obj && typeof obj === 'object' && obj['__PROXY_TARGET__'] || obj;
+	obj = obj && typeof obj === 'object' && obj[watchTargetLabel] || obj;
 
 	if (!top) {
 		handlers = obj[watchHandlersLabel] = handlers;
+
+		const
+			tmpOpts = obj[watchOptionsLabel] = obj[watchOptionsLabel] || {...opts};
+
+		if (opts?.deep) {
+			tmpOpts.deep = true;
+		}
+
+		opts = tmpOpts;
 	}
 
 	const returnProxy = (obj, proxy?) => {
@@ -82,7 +90,7 @@ export function watch<T>(
 	}
 
 	const
-		proxy = obj[watchLabel];
+		proxy = obj[watchProxyLabel];
 
 	if (proxy) {
 		return returnProxy(obj, proxy);
@@ -99,14 +107,14 @@ export function watch<T>(
 		bindMutationHooks(<any>obj, {top, path, isRoot}, handlers!);
 	}
 
-	return returnProxy(obj, obj[watchLabel] = new Proxy(<any>obj, {
+	return returnProxy(obj, obj[watchProxyLabel] = new Proxy(<any>obj, {
 		get: (target, key, receiver) => {
-			if (key === '__PROXY_TARGET__') {
-				return target;
-			}
-
 			const
 				val = Reflect.get(target, key, receiver);
+
+			if (Object.isSymbol(key)) {
+				return val;
+			}
 
 			if (opts?.deep && proxyType(val)) {
 				const fullPath = (<unknown[]>[]).concat(path ?? [], key);
@@ -121,6 +129,10 @@ export function watch<T>(
 		},
 
 		set: (target, key, val, receiver) => {
+			if (Object.isSymbol(key)) {
+				return Reflect.set(target, key, val, receiver);
+			}
+
 			if (Object.isArray(target) && String(Number(key)) === key) {
 				key = Number(key);
 			}
@@ -157,8 +169,7 @@ export function watch<T>(
  * @param value
  */
 export function set(obj: object, path: WatchPath, value: unknown): void {
-	// tslint:disable-next-line:no-string-literal
-	obj = obj && typeof obj === 'object' && obj['__PROXY_TARGET__'] || obj;
+	obj = obj && typeof obj === 'object' && obj[watchTargetLabel] || obj;
 
 	const
 		normalizedPath = Object.isArray(path) ? path : path.split('.');
@@ -168,7 +179,7 @@ export function set(obj: object, path: WatchPath, value: unknown): void {
 		refPath = normalizedPath.slice(0, -1);
 
 	const
-		ref = Object.get(obj[watchLabel] || obj, refPath);
+		ref = Object.get(obj[watchProxyLabel] || obj, refPath);
 
 	if (!Object.isDictionary(ref)) {
 		const
@@ -196,8 +207,7 @@ export function set(obj: object, path: WatchPath, value: unknown): void {
  * @param path
  */
 export function unset(obj: object, path: WatchPath): void {
-	// tslint:disable-next-line:no-string-literal
-	obj = obj && typeof obj === 'object' && obj['__PROXY_TARGET__'] || obj;
+	obj = obj && typeof obj === 'object' && obj[watchTargetLabel] || obj;
 
 	const
 		normalizedPath = Object.isArray(path) ? path : path.split('.');
@@ -207,7 +217,7 @@ export function unset(obj: object, path: WatchPath): void {
 		refPath = normalizedPath.slice(0, -1);
 
 	const
-		ref = Object.get(obj[watchLabel] || obj, refPath);
+		ref = Object.get(obj[watchProxyLabel] || obj, refPath);
 
 	if (!Object.isDictionary(ref)) {
 		const

@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Core/blob/master/LICENSE
  */
 
-import { watchLabel, watchHandlersLabel } from 'core/object/watch/const';
+import { watchProxyLabel, watchTargetLabel, watchOptionsLabel, watchHandlersLabel } from 'core/object/watch/const';
 import { bindMutationHooks } from 'core/object/watch/wrap';
 import { proxyType } from 'core/object/watch/engines/helpers';
 import { WatchPath, WatchHandler, WatchOptions, Watcher } from 'core/object/watch/interface';
@@ -53,8 +53,19 @@ export function watch<T>(
 	top?: object,
 	handlers: Map<WatchHandler, boolean> = !top && obj[watchHandlersLabel] || new Map()
 ): Watcher<T> | T {
+	obj = obj && typeof obj === 'object' && obj[watchTargetLabel] || obj;
+
 	if (!top) {
 		handlers = obj[watchHandlersLabel] = handlers;
+
+		const
+			tmpOpts = obj[watchOptionsLabel] = obj[watchOptionsLabel] || {...opts};
+
+		if (opts?.deep) {
+			tmpOpts.deep = true;
+		}
+
+		opts = tmpOpts;
 	}
 
 	const returnProxy = (obj, proxy?) => {
@@ -79,7 +90,7 @@ export function watch<T>(
 	}
 
 	let
-		proxy = obj[watchLabel];
+		proxy = obj[watchProxyLabel];
 
 	if (proxy) {
 		return returnProxy(obj, proxy);
@@ -98,6 +109,7 @@ export function watch<T>(
 		proxy = setWatchAccessors(obj, keys[i], path, handlers, top, opts);
 	}
 
+	proxy[watchTargetLabel] = obj;
 	return returnProxy(obj, proxy);
 }
 
@@ -109,6 +121,8 @@ export function watch<T>(
  * @param value
  */
 export function set(obj: object, path: WatchPath, value: unknown): void {
+	obj = obj && typeof obj === 'object' && obj[watchTargetLabel] || obj;
+
 	const
 		normalizedPath = Object.isArray(path) ? path : path.split('.');
 
@@ -118,7 +132,7 @@ export function set(obj: object, path: WatchPath, value: unknown): void {
 
 	const
 		handlers = obj[watchHandlersLabel],
-		ref = Object.get(obj[watchLabel] || obj, refPath);
+		ref = Object.get(obj[watchProxyLabel] || obj, refPath);
 
 	if (!Object.isDictionary(ref)) {
 		const
@@ -155,6 +169,8 @@ export function set(obj: object, path: WatchPath, value: unknown): void {
  * @param path
  */
 export function unset(obj: object, path: WatchPath): void {
+	obj = obj && typeof obj === 'object' && obj[watchTargetLabel] || obj;
+
 	const
 		normalizedPath = Object.isArray(path) ? path : path.split('.');
 
@@ -164,7 +180,7 @@ export function unset(obj: object, path: WatchPath): void {
 
 	const
 		handlers = obj[watchHandlersLabel],
-		ref = Object.get(obj[watchLabel] || obj, refPath);
+		ref = Object.get(obj[watchProxyLabel] || obj, refPath);
 
 	if (!Object.isDictionary(ref)) {
 		const
@@ -207,16 +223,18 @@ export function unset(obj: object, path: WatchPath): void {
  * @param [opts] - additional watch options
  */
 export function setWatchAccessors(
-	obj: Dictionary,
+	obj: object,
 	key: string,
 	path: CanUndef<unknown[]>,
 	handlers: Map<WatchHandler, boolean>,
 	top?: object,
 	opts?: WatchOptions
 ): Dictionary {
+	obj = obj && typeof obj === 'object' && obj[watchTargetLabel] || obj;
+
 	const
 		// @ts-ignore (symbol)
-		proxy = obj[watchLabel] = obj[watchLabel] || Object.create(obj);
+		proxy = obj[watchProxyLabel] = obj[watchProxyLabel] || Object.create(obj);
 
 	const
 		isRoot = path === undefined,

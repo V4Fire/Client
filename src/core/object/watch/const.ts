@@ -7,5 +7,7 @@
  */
 
 export const
-	watchLabel = Symbol('Watch label'),
-	watchHandlersLabel = Symbol('Watch handlers');
+	watchProxyLabel = Symbol('Watch proxy label'),
+	watchTargetLabel = Symbol('Watch target label'),
+	watchOptionsLabel = Symbol('Watch options label'),
+	watchHandlersLabel = Symbol('Watch handlers label');

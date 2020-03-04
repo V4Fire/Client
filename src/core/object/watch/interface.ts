@@ -35,6 +35,31 @@ export interface WatchOptions {
 	collapse?: boolean;
 
 	/**
+	 * Link to an object that has connection with the watched object
+	 *
+	 * @example
+	 * ```js
+	 * const data = {
+	 *   foo: 2
+	 * };
+	 *
+	 * class Bla {
+	 *   data = data;
+	 *
+	 *   constructor() {
+	 *     watch(this.data, {tiedWith: this}, (val) => {
+	 *       console.log(val);
+	 *     });
+	 *   }
+	 * }
+	 *
+	 * const bla = new Bla();
+	 * bla.foo = 3;
+	 * ```
+	 */
+	tiedWith?: object;
+
+	/**
 	 * List of prefixes for a path to watch.
 	 * This parameter can help to watch getters.
 	 *
@@ -96,7 +121,7 @@ export interface WatchOptions {
 	 * });
 	 * ```
 	 */
-	dependencies?: WatchPath[] | Dictionary<WatchPath[]>;
+	dependencies?: WatchPath[] | [WatchPath, WatchPath[]];
 }
 
 export interface WrapOptions {
