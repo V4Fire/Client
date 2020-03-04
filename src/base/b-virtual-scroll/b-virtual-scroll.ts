@@ -183,7 +183,7 @@ export default class bVirtualScroll extends iData implements iItems {
 	/** @override */
 	initLoad(data?: unknown, params: InitLoadParams = {}): CanPromise<void> {
 		if (!this.lfc.isBeforeCreate()) {
-			this.reInit().catch(stderr);
+			this.reInit();
 		}
 
 		return super.initLoad(data, params);
@@ -199,16 +199,9 @@ export default class bVirtualScroll extends iData implements iItems {
 	/**
 	 * Re-initializes component
 	 */
-	async reInit(): Promise<void> {
+	reInit(): void {
 		this.componentRender.reInit();
 		this.scrollRender.reInit();
-	}
-
-	/** @override */
-	protected initModEvents(): void {
-		super.initModEvents();
-		this.sync.mod('containerSize', 'containerSize', String);
-		this.sync.mod('axis', 'axis', String);
 	}
 
 	/** @override */
@@ -221,16 +214,12 @@ export default class bVirtualScroll extends iData implements iItems {
 			val = this.convertDBToComponent<RemoteData>(this.db);
 
 		if (this.field.get('data.length', val)) {
-			this.options = <unknown[]>val.data;
 			this.scrollRequest.shouldStopRequest(getRequestParams(undefined, undefined, {lastLoadedData: val.data}));
-			return this.options;
-
-		} else {
-			this.options = [];
-			this.scrollRequest.shouldStopRequest(getRequestParams(undefined, undefined, {isLastEmpty: true}));
+			return this.options = <unknown[]>val.data;
 		}
 
-		return this.options;
+		this.scrollRequest.shouldStopRequest(getRequestParams(undefined, undefined, {isLastEmpty: true}));
+		return this.options = [];
 	}
 
 	/** @see [[iItems.getItemKey]] */
@@ -242,8 +231,8 @@ export default class bVirtualScroll extends iData implements iItems {
 	 * Synchronization for the component props
 	 */
 	@wait('ready', {defer: true, label: $$.syncPropsWatcher})
-	protected async syncPropsWatcher(): Promise<void> {
-		return this.reInit();
+	protected syncPropsWatcher(): CanPromise<void> {
+		this.reInit();
 	}
 
 	/** @override */
