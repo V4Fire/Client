@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-beta.259 (2020-03-05)
+
+#### :house: Internal
+
+* Review `b-virtual-scroll`
+
 ## v3.0.0-beta.258 (2020-03-04)
 
 #### :bug: Bug Fix
