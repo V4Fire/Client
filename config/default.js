@@ -54,10 +54,9 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		},
 
 		externals: {
-			'vue': 'Vue',
-			'eventemitter2': 'EventEmitter2',
-			'socket.io-client': 'io',
-			'setimmediate': 'setImmediate'
+			vue: 'Vue',
+			eventemitter2: 'EventEmitter2',
+			setimmediate: 'setImmediate'
 		},
 
 		longCache() {
@@ -201,7 +200,6 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		return {
 			'engine': this.engine(),
 
-			'socket': false,
 			'noGlobals': false,
 			'svgSprite': true,
 
