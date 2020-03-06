@@ -145,6 +145,12 @@ export default class bCheckbox extends iInput implements iSize {
 		return this.setMod('checked', false);
 	}
 
+	/** @override */
+	async reset(): Promise<boolean> {
+		const cleared = await super.reset();
+		return cleared ? this.uncheck() : false;
+	}
+
 	/**
 	 * Toggles the checkbox
 	 */
