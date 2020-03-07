@@ -146,7 +146,7 @@ export default function createRouter(ctx: bRouter): Router {
 				}
 
 				if (info.page) {
-					if (Object.isArray(ModuleDependencies.get(info.page))) {
+					if (info.meta && info.meta.remote === false || Object.isArray(ModuleDependencies.get(info.page))) {
 						resolve();
 						return;
 					}
