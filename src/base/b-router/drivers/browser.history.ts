@@ -146,7 +146,7 @@ export default function createRouter(ctx: bRouter): Router {
 				}
 
 				if (info.page) {
-					if (Object.isArray(ModuleDependencies.get(info.page))) {
+					if (info.meta && info.meta.remote === false || Object.isArray(ModuleDependencies.get(info.page))) {
 						resolve();
 						return;
 					}
@@ -231,7 +231,7 @@ export default function createRouter(ctx: bRouter): Router {
 		},
 
 		async clean(fn?: HistoryCleanFilter): Promise<void> {
-			$a.muteEventListeners(popstate);
+			$a.muteEventListener(popstate);
 			truncateHistoryLog();
 
 			const
@@ -302,7 +302,7 @@ export default function createRouter(ctx: bRouter): Router {
 				await $a.nextTick();
 			}
 
-			$a.unmuteEventListeners(popstate);
+			$a.unmuteEventListener(popstate);
 			truncateHistoryLog();
 
 			const
