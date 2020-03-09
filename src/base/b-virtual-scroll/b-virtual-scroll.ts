@@ -17,6 +17,7 @@ import iData, {
 	field,
 	system,
 	wait,
+	p,
 
 	CheckDBEquality,
 	InitLoadParams,
@@ -138,6 +139,7 @@ export default class bVirtualScroll extends iData implements iItems {
 	}
 
 	/** @override */
+	@p({cache: false})
 	protected get requestParams(): RequestParams {
 		return {
 			get: {
@@ -183,7 +185,7 @@ export default class bVirtualScroll extends iData implements iItems {
 	/** @override */
 	initLoad(data?: unknown, params: InitLoadParams = {}): CanPromise<void> {
 		if (!this.lfc.isBeforeCreate()) {
-			this.reInit();
+			this.reInit().catch(stderr);
 		}
 
 		return super.initLoad(data, params);
@@ -199,7 +201,7 @@ export default class bVirtualScroll extends iData implements iItems {
 	/**
 	 * Re-initializes component
 	 */
-	reInit(): void {
+	async reInit(): Promise<void> {
 		this.componentRender.reInit();
 		this.scrollRender.reInit();
 	}
@@ -231,8 +233,8 @@ export default class bVirtualScroll extends iData implements iItems {
 	 * Synchronization for the component props
 	 */
 	@wait('ready', {defer: true, label: $$.syncPropsWatcher})
-	protected syncPropsWatcher(): CanPromise<void> {
-		this.reInit();
+	protected async syncPropsWatcher(): Promise<void> {
+		return this.reInit();
 	}
 
 	/** @override */
