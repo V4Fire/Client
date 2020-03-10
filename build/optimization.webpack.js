@@ -76,7 +76,7 @@ module.exports = async function ({buildId, plugins}) {
 
 			new TerserPlugin({
 				parallel: true,
-				terserOptions: inherit(config.uglify(), {
+				terserOptions: inherit({
 					safari10: true,
 					warnings: false,
 					ecma: es,
@@ -86,7 +86,7 @@ module.exports = async function ({buildId, plugins}) {
 					output: {
 						comments: false
 					}
-				})
+				}, config.uglify())
 			})
 			/* eslint-enable camelcase */
 		];
