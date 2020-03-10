@@ -224,7 +224,7 @@ export default class bVirtualScroll extends iData implements iItems {
 			this.options = [];
 		}
 
-		this.localEvent.emit('initOptions');
+		this.localEvent.emit('localReady');
 	}
 
 	/** @see [[iItems.getItemKey]] */
@@ -243,6 +243,8 @@ export default class bVirtualScroll extends iData implements iItems {
 	/** @override */
 	protected onRequestError(err: Error | RequestError<unknown>, retry: RetryRequestFn): void {
 		super.onRequestError(err, retry);
+
+		this.localEvent.emit('localReady');
 		this.scrollRender.setRefVisibility('retry', true);
 	}
 }

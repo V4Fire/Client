@@ -125,7 +125,7 @@ export default class ScrollRender {
 
 		this.component.meta.hooks.mounted.push({fn: () => {
 			this.setLoadersVisibility(true);
-			this.async.once(this.component.localEvent, 'initOptions', this.onReady.bind(this), {label: $$.reInit});
+			this.async.once(this.component.localEvent, 'localReady', this.onReady.bind(this), {label: $$.reInit});
 		}});
 	}
 
@@ -146,7 +146,7 @@ export default class ScrollRender {
 		this.setRefVisibility('done', false);
 		this.setRefVisibility('empty', false);
 
-		this.async.once(this.component.localEvent, 'initOptions', this.onReady.bind(this), {label: $$.reInit});
+		this.async.once(this.component.localEvent, 'localReady', this.onReady.bind(this), {label: $$.reInit});
 	}
 
 	/**
