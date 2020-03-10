@@ -199,7 +199,7 @@ export default class ComponentRender {
 	 */
 	protected createComponents(items: RenderItem[]): HTMLElement[] {
 		const
-			{component: c} = this;
+			{component: c, scrollRender: {items: totalItems}} = this;
 
 		const render = (childrens: Dictionary[]) =>
 			c.vdom.render(childrens.map((el) => this.createElement(c.option, el))) as HTMLElement[];
@@ -218,8 +218,8 @@ export default class ComponentRender {
 
 		const getOptionEl = (data, i: number) => ({
 			current: data,
-			prev: items[i - 1] && items[i - 1].data,
-			next: items[i + 1] && items[i + 1].data
+			prev: totalItems[i - 1] && totalItems[i - 1].data,
+			next: totalItems[i + 1] && totalItems[i + 1].data
 		});
 
 		const

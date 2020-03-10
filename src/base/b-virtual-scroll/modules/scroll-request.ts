@@ -81,6 +81,7 @@ export default class ScrollRequest {
 		this.total = 0;
 		this.page = 1;
 		this.data = [];
+		this.lastLoadedData = [];
 		this.isDone = false;
 		this.isLastEmpty = false;
 	}
