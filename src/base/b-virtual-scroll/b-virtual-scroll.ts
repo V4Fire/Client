@@ -217,11 +217,16 @@ export default class bVirtualScroll extends iData implements iItems {
 
 		if (this.field.get('data.length', val)) {
 			this.scrollRequest.shouldStopRequest(getRequestParams(undefined, undefined, {lastLoadedData: val.data}));
-			return this.options = <unknown[]>val.data;
+			this.options = <unknown[]>val.data;
+
+		} else {
+			this.scrollRequest.shouldStopRequest(getRequestParams(undefined, undefined, {isLastEmpty: true}));
+			this.options = [];
 		}
 
-		this.scrollRequest.shouldStopRequest(getRequestParams(undefined, undefined, {isLastEmpty: true}));
-		return this.options = [];
+		if (!this.lfc.isBeforeCreate()) {
+			this.scrollRender.onReady();
+		}
 	}
 
 	/** @see [[iItems.getItemKey]] */
@@ -238,7 +243,7 @@ export default class bVirtualScroll extends iData implements iItems {
 	}
 
 	/** @override */
-	protected onRequestError(err: Error | RequestError, retry: RetryRequestFn): void {
+	protected onRequestError(err: Error | RequestError<unknown>, retry: RetryRequestFn): void {
 		super.onRequestError(err, retry);
 		this.scrollRender.setRefVisibility('retry', true);
 	}

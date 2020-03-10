@@ -145,8 +145,6 @@ export default class ScrollRender {
 		this.setRefVisibility('retry', false);
 		this.setRefVisibility('done', false);
 		this.setRefVisibility('empty', false);
-
-		this.component.waitStatus('ready', this.onReady.bind(this), {label: $$.reInit});
 	}
 
 	/**
