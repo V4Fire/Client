@@ -13,6 +13,10 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 ## v3.0.0-beta.260 (2020-03-10)
 
+#### :boom: Breaking Change
+
+* [Removed default `mangle` option from `terser`](https://github.com/V4Fire/Client/pull/177)
+
 ### :bug: Bug Fix
 
 * [Fixed issue with `prev` was undefined](https://github.com/V4Fire/Client/pull/173)
