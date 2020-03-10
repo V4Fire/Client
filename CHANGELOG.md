@@ -15,7 +15,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :boom: Breaking Change
 
-* Removed default `mangle` option from `terser`
+* [Removed default `mangle` option from `terser`](https://github.com/V4Fire/Client/pull/177)
 
 ## v3.0.0-beta.258 (2020-03-04)
 
