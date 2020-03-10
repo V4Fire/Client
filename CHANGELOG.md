@@ -17,6 +17,15 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 * [Removed default `mangle` option from `terser`](https://github.com/V4Fire/Client/pull/177)
 
+### :bug: Bug Fix
+
+* [Fixed issue with `prev` was undefined](https://github.com/V4Fire/Client/pull/173)
+* [Fixed issue with `reload` `requestQuery` was not called](https://github.com/V4Fire/Client/pull/173)
+
+#### :house: Internal
+
+* [Review `b-virtual-scroll`](https://github.com/V4Fire/Client/pull/173)
+
 ## v3.0.0-beta.259 (2020-03-05)
 
 #### :rocket: New Feature
