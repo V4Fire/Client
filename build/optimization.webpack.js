@@ -85,10 +85,6 @@ module.exports = async function ({buildId, plugins}) {
 
 					output: {
 						comments: false
-					},
-
-					mangle: {
-						safari10: true
 					}
 				})
 			})
