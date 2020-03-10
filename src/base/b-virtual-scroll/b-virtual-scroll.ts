@@ -224,9 +224,7 @@ export default class bVirtualScroll extends iData implements iItems {
 			this.options = [];
 		}
 
-		if (!this.lfc.isBeforeCreate()) {
-			this.scrollRender.onReady();
-		}
+		this.localEvent.emit('initOptions');
 	}
 
 	/** @see [[iItems.getItemKey]] */
