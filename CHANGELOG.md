@@ -11,6 +11,13 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-beta.261 (2020-03-10)
+
+### :bug: Bug Fix
+
+* [Fixed `reload` method in `b-virtual-scroll`](https://github.com/V4Fire/Client/pull/180)
+* [Updated `validators.ts`](https://github.com/V4Fire/Client/pull/178/files)
+
 ## v3.0.0-beta.260 (2020-03-10)
 
 #### :boom: Breaking Change
