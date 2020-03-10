@@ -17,6 +17,7 @@ import iData, {
 	field,
 	system,
 	wait,
+	p,
 
 	CheckDBEquality,
 	InitLoadParams,
@@ -138,6 +139,7 @@ export default class bVirtualScroll extends iData implements iItems {
 	}
 
 	/** @override */
+	@p({cache: false})
 	protected get requestParams(): RequestParams {
 		return {
 			get: {
@@ -205,13 +207,6 @@ export default class bVirtualScroll extends iData implements iItems {
 	}
 
 	/** @override */
-	protected initModEvents(): void {
-		super.initModEvents();
-		this.sync.mod('containerSize', 'containerSize', String);
-		this.sync.mod('axis', 'axis', String);
-	}
-
-	/** @override */
 	protected initRemoteData(): CanUndef<unknown[]> {
 		if (!this.db) {
 			return;
@@ -221,16 +216,12 @@ export default class bVirtualScroll extends iData implements iItems {
 			val = this.convertDBToComponent<RemoteData>(this.db);
 
 		if (this.field.get('data.length', val)) {
-			this.options = <unknown[]>val.data;
 			this.scrollRequest.shouldStopRequest(getRequestParams(undefined, undefined, {lastLoadedData: val.data}));
-			return this.options;
-
-		} else {
-			this.options = [];
-			this.scrollRequest.shouldStopRequest(getRequestParams(undefined, undefined, {isLastEmpty: true}));
+			return this.options = <unknown[]>val.data;
 		}
 
-		return this.options;
+		this.scrollRequest.shouldStopRequest(getRequestParams(undefined, undefined, {isLastEmpty: true}));
+		return this.options = [];
 	}
 
 	/** @see [[iItems.getItemKey]] */
