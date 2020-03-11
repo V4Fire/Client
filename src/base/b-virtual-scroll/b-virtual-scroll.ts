@@ -133,6 +133,12 @@ export default class bVirtualScroll extends iData implements iItems {
 	@prop({type: Function, default: (v) => v.isLastEmpty})
 	readonly shouldStopRequest!: RequestFn;
 
+	/**
+	 * Total amount of items that can be loaded
+	 */
+	@system()
+	protected total?: number;
+
 	/** @override */
 	get unsafe(): Unsafe & this {
 		return <any>this;
@@ -192,10 +198,15 @@ export default class bVirtualScroll extends iData implements iItems {
 	}
 
 	/**
-	 * Reloads the last request
+	 * Reloads the last request (if there is no `db` or `options` `bVirtualScroll.prototype.reload` will be called)
 	 */
 	reloadLast(): void {
-		this.scrollRequest.reloadLast();
+		if (!this.db || !this.options.length) {
+			this.reload();
+
+		} else {
+			this.scrollRequest.reloadLast();
+		}
 	}
 
 	/**
@@ -218,6 +229,7 @@ export default class bVirtualScroll extends iData implements iItems {
 		if (this.field.get('data.length', val)) {
 			this.scrollRequest.shouldStopRequest(getRequestParams(undefined, undefined, {lastLoadedData: val.data}));
 			this.options = <unknown[]>val.data;
+			this.total = Object.isNumber(val.total) ? val.total : undefined;
 
 		} else {
 			this.scrollRequest.shouldStopRequest(getRequestParams(undefined, undefined, {isLastEmpty: true}));

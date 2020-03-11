@@ -113,6 +113,7 @@ export interface Unsafe<T extends iBlock = bVirtualScroll> extends SuperUnsafe<T
 	getDefaultRequestParams: bVirtualScroll['getDefaultRequestParams'];
 	convertDataToDB: bVirtualScroll['convertDataToDB'];
 	dp: bVirtualScroll['dp'];
+	total: bVirtualScroll['total'];
 }
 
 export interface UnsafeScrollRender {
