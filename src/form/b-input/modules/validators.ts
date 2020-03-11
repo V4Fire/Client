@@ -189,7 +189,7 @@ export default <ValidatorsDecl<bInput, unknown>>{
 		if (!src) {
 			return true;
 		}
-		
+
 		const
 			value = Date.create(src.replace(/[\.\-]/g, '/'));
 
