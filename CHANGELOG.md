@@ -11,7 +11,7 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v3.0.0-beta.261 (2020-03-11)
+## v3.0.0-beta.262 (2020-03-11)
 
 ### :bug: Bug Fix
 
