@@ -189,9 +189,9 @@ export default <ValidatorsDecl<bInput, unknown>>{
 		if (!src) {
 			return true;
 		}
-
+		
 		const
-			value = Date.create(src);
+			value = Date.create(src.replace(/[\.\-]/g, '/'));
 
 		const error = (
 			type: DateValidatorResult['name'] = 'INVALID_VALUE',
