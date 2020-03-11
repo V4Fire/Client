@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-beta.261 (2020-03-11)
+
+### :bug: Bug Fix
+
+* [Fixed `reload` method in `b-virtual-scroll` when `db` was empty](https://github.com/V4Fire/Client/pull/180)
+
 ## v3.0.0-beta.261 (2020-03-10)
 
 ### :bug: Bug Fix
