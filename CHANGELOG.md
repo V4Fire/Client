@@ -11,6 +11,98 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-beta.262 (2020-03-11)
+
+### :bug: Bug Fix
+
+* [Fixed `reload` method in `b-virtual-scroll` when `db` was empty](https://github.com/V4Fire/Client/pull/180)
+
+## v3.0.0-beta.261 (2020-03-10)
+
+### :bug: Bug Fix
+
+* [Fixed `reload` method in `b-virtual-scroll`](https://github.com/V4Fire/Client/pull/180)
+* [Updated `validators.ts`](https://github.com/V4Fire/Client/pull/178/files)
+
+## v3.0.0-beta.260 (2020-03-10)
+
+#### :boom: Breaking Change
+
+* [Removed default `mangle` option from `terser`](https://github.com/V4Fire/Client/pull/177)
+
+### :bug: Bug Fix
+
+* [Fixed issue with `prev` was undefined](https://github.com/V4Fire/Client/pull/173)
+* [Fixed issue with `reload` `requestQuery` was not called](https://github.com/V4Fire/Client/pull/173)
+
+#### :house: Internal
+
+* [Review `b-virtual-scroll`](https://github.com/V4Fire/Client/pull/173)
+
+## v3.0.0-beta.259 (2020-03-05)
+
+#### :rocket: New Feature
+
+* Added `core/event`
+* Added `core/session`
+
+#### :house: Internal
+
+* Moved `core/data` to `@v4fire/core`
+* Moved `core/object` to `@v4fire/core`
+* Moved `core/socket` to `@v4fire/core`
+
+## v3.0.0-beta.258 (2020-03-04)
+
+#### :bug: Bug Fix
+
+* Provided request information to an error `core/data/middlewares/attach-mock`
+
+## v3.0.0-beta.257 (2020-02-28)
+
+#### :rocket: New Feature
+
+* [Scripts and styles are now located in body tag](https://github.com/V4Fire/Client/pull/172)
+
+#### :bug: Bug Fix
+
+* [Fixed `b-virtual-scroll/scroll-request` `getData` method was not wrapped with `async.request`](https://github.com/V4Fire/Client/pull/171)
+
+## v3.0.0-beta.256 (2020-02-26)
+
+#### :rocket: New Feature
+
+* Added `getCacheKey` for `Provider`
+
+#### :bug: Bug Fix
+
+* Fixed a race condition with `parallel-webpack`
+
+## v3.0.0-beta.255 (2020-02-25)
+
+#### :boom: Breaking Change
+
+* Removed `extraProviders` from `ProviderOptions`
+
+## v3.0.0-beta.254 (2020-02-25)
+
+#### :rocket: New Feature
+
+* Added a new event `dbCanChange` for `iData`
+* [Optimized rendering of `b-virtual-scroll`](https://github.com/V4Fire/Client/pull/169)
+* [Added `prefetch` in `core/init`](https://github.com/V4Fire/Client/pull/169)
+
+#### :bug: Bug Fix
+
+* Fixed memory leak with data providers
+* [Fixed issue with `b-virtual-scroll` not beign render some chunks](https://github.com/V4Fire/Client/pull/169)
+
+## v3.0.0-beta.253 (2020-02-24)
+
+#### :bug: Bug Fix
+
+* Removed `pointer-events` style from `i-access` trait that causes click propagation behind a disabled button
+
 ## v3.0.0-beta.252 (2020-02-13)
 
 #### :bug: Bug Fix

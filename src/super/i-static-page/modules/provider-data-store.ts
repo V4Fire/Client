@@ -106,7 +106,7 @@ export default class ProviderDataStore {
 	 * @param key
 	 */
 	has(key: string): boolean {
-		return this.store[key] != null;
+		return key in this.store;
 	}
 
 	/**

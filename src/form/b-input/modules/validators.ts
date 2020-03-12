@@ -301,7 +301,7 @@ export default <ValidatorsDecl<bInput, unknown>>{
 		const
 			value = (await this.formValue)?.trim();
 
-		if (value && !/@/.test(value)) {
+		if (value && !/.+@.+/.test(value)) {
 			this.setValidationMsg(this.getValidatorMsg(false, msg, t`Invalid email format`), showMsg);
 			return false;
 		}

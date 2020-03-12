@@ -17,10 +17,13 @@ b-slider_mode_scroll extends b-slider
 
 	/mode &__fake-view-content
 		position relative
+
 		display flex
 		width 100%
-		opacity 0
+		visibility hidden
+
 		pointer-events none
+		opacity 0
 
 	/mode &__outer-view-wrapper
 		-webkit-overflow-scrolling touch

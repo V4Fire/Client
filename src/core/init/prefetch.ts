@@ -6,4 +6,5 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-export const PING = (5).seconds();
+import semaphore from 'core/init/semaphore';
+export default (() => semaphore('prefetchReady'))();

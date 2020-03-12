@@ -17,6 +17,7 @@ import iData, {
 	field,
 	system,
 	wait,
+	p,
 
 	CheckDBEquality,
 	InitLoadParams,
@@ -132,12 +133,19 @@ export default class bVirtualScroll extends iData implements iItems {
 	@prop({type: Function, default: (v) => v.isLastEmpty})
 	readonly shouldStopRequest!: RequestFn;
 
+	/**
+	 * Total amount of items that can be loaded
+	 */
+	@system()
+	protected total?: number;
+
 	/** @override */
 	get unsafe(): Unsafe & this {
 		return <any>this;
 	}
 
 	/** @override */
+	@p({cache: false})
 	protected get requestParams(): RequestParams {
 		return {
 			get: {
@@ -190,10 +198,15 @@ export default class bVirtualScroll extends iData implements iItems {
 	}
 
 	/**
-	 * Reloads the last request
+	 * Reloads the last request (if there is no `db` or `options` `bVirtualScroll.prototype.reload` will be called)
 	 */
 	reloadLast(): void {
-		this.scrollRequest.reloadLast();
+		if (!this.db || !this.options.length) {
+			this.reload();
+
+		} else {
+			this.scrollRequest.reloadLast();
+		}
 	}
 
 	/**
@@ -202,13 +215,6 @@ export default class bVirtualScroll extends iData implements iItems {
 	async reInit(): Promise<void> {
 		this.componentRender.reInit();
 		this.scrollRender.reInit();
-	}
-
-	/** @override */
-	protected initModEvents(): void {
-		super.initModEvents();
-		this.sync.mod('containerSize', 'containerSize', String);
-		this.sync.mod('axis', 'axis', String);
 	}
 
 	/** @override */
@@ -221,16 +227,16 @@ export default class bVirtualScroll extends iData implements iItems {
 			val = this.convertDBToComponent<RemoteData>(this.db);
 
 		if (this.field.get('data.length', val)) {
-			this.options = <unknown[]>val.data;
 			this.scrollRequest.shouldStopRequest(getRequestParams(undefined, undefined, {lastLoadedData: val.data}));
-			return this.options;
+			this.options = <unknown[]>val.data;
+			this.total = Object.isNumber(val.total) ? val.total : undefined;
 
 		} else {
-			this.options = [];
 			this.scrollRequest.shouldStopRequest(getRequestParams(undefined, undefined, {isLastEmpty: true}));
+			this.options = [];
 		}
 
-		return this.options;
+		this.localEvent.emit('localReady');
 	}
 
 	/** @see [[iItems.getItemKey]] */
@@ -247,8 +253,10 @@ export default class bVirtualScroll extends iData implements iItems {
 	}
 
 	/** @override */
-	protected onRequestError(err: Error | RequestError, retry: RetryRequestFn): void {
+	protected onRequestError(err: Error | RequestError<unknown>, retry: RetryRequestFn): void {
 		super.onRequestError(err, retry);
+
+		this.localEvent.emit('localReady');
 		this.scrollRender.setRefVisibility('retry', true);
 	}
 }

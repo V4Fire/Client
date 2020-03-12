@@ -9,6 +9,7 @@
 export interface ObserveOptions extends MutationObserverInit {
 	node: Element;
 	label?: string | symbol | number;
+	reInit?: boolean;
 }
 
 export interface Observer {

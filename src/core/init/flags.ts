@@ -9,5 +9,6 @@
 export default [
 	'domReady',
 	'ABTReady',
-	'stateReady'
+	'stateReady',
+	'prefetchReady'
 ];
