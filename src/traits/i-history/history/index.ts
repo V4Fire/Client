@@ -8,6 +8,7 @@
 
 import Async from 'core/async';
 import Block from 'super/i-block/modules/block';
+import symbolGenerator from 'core/symbol';
 
 import { ModsDecl, ComponentHooks } from 'super/i-block/i-block';
 import { InView } from 'core/component/directives/in-view';
@@ -17,6 +18,9 @@ import iHistory from 'traits/i-history/i-history';
 
 export * from 'traits/i-history/history/interface';
 export const INITIAL_STAGE = 'index';
+
+export const
+	$$ = symbolGenerator();
 
 export default class History<T extends iHistory> {
 	/**
@@ -272,7 +276,7 @@ export default class History<T extends iHistory> {
 			});
 
 		} else {
-			InView.stopObserve(trigger);
+			this.async.worker(() => InView.stopObserve(trigger), {label: $$.observing});
 		}
 	}
 

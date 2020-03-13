@@ -481,11 +481,6 @@ export default class bBottomSlide extends iBlock implements iLockPageScroll, iOp
 		const
 			{content} = this.$refs;
 
-		if (this.heightMode === 'full') {
-			iObserveDom.unobserve(this, content);
-			return;
-		}
-
 		iObserveDom.observe(this, {
 			node: content,
 			childList: true,
