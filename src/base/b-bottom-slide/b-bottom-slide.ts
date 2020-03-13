@@ -808,7 +808,7 @@ export default class bBottomSlide extends iBlock implements iLockPageScroll, iOp
 	 */
 	@p({watch: ':history:clear'})
 	protected onHistoryCleared(): void {
-		Object.assign(this.$refs.content.style, {height: 'initial'});
+		this.$refs.content.style.removeProperty('height');
 	}
 
 	/**
