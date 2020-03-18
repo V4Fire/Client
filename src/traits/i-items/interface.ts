@@ -20,3 +20,7 @@ export interface ItemProps<CTX = unknown> {
 export interface ItemsIterator<CTX = iBlock> {
 	(options: unknown[], ctx: CTX): unknown[];
 }
+
+export interface OptionFn {
+	(el: unknown, i: number): string;
+}
