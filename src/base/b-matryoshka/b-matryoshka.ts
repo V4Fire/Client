@@ -27,7 +27,7 @@ export default class bMatryoshka extends iData implements iItems {
 	options!: Doll[];
 
 	/** @see [[iItems.prototype.item]] */
-	@prop({type: String, required: false})
+	@prop({type: [String, Function], required: false})
 	readonly option?: iItems['option'];
 
 	/** @see [[iItems.prototype.itemKey]] */

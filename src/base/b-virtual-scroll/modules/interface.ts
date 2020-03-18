@@ -124,3 +124,9 @@ export interface UnsafeScrollRender {
 export interface UnsafeScrollRequest {
 
 }
+
+export interface DataToRender {
+	itemAttrs: Dictionary;
+	itemParams: OptionEl;
+	index: number;
+}
