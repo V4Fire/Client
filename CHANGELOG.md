@@ -15,7 +15,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :rocket: New Feature
 
-* [Added ability to provide `option` prop as function into components that implement `iItems` trait](https://github.com/V4Fire/Client/pull/188)
+* [Added ability to provide an `option` prop as a function into components that implement `iItems` trait](https://github.com/V4Fire/Client/pull/188)
 
 ## v3.0.0-beta.262 (2020-03-11)
 
