@@ -57,7 +57,7 @@ export default class bVirtualScroll extends iData implements iItems {
 	options!: unknown[];
 
 	/** @see [[iItems.prototype.item]] */
-	@prop({type: String, required: false})
+	@prop({type: [String, Function], required: false})
 	readonly option?: iItems['option'];
 
 	/** @see [[iItems.prototype.itemKey]] */

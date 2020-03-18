@@ -12,7 +12,7 @@ import symbolGenerator from 'core/symbol';
 import ScrollRender from 'base/b-virtual-scroll/modules/scroll-render';
 import bVirtualScroll from 'base/b-virtual-scroll/b-virtual-scroll';
 
-import { RenderItem } from 'base/b-virtual-scroll/modules/interface';
+import { RenderItem, DataToRender } from 'base/b-virtual-scroll/modules/interface';
 
 export const
 	$$ = symbolGenerator();
@@ -201,10 +201,14 @@ export default class ComponentRender {
 		const
 			{component: c, scrollRender: {items: totalItems}} = this;
 
-		const render = (childrens: Dictionary[]) =>
-			c.vdom.render(childrens.map((el) => this.createElement(c.option, el))) as HTMLElement[];
+		const
+			option = (...args) => Object.isFunction(c.option) ? option(...args) : option;
 
-		const createChildren = (props) => ({
+		const render = (childrens: DataToRender[]) =>
+			c.vdom.render(childrens.map(({itemAttrs, itemParams, index}) =>
+				this.createElement(option(itemParams, index), itemAttrs))) as HTMLElement[];
+
+		const getChildrenAttrs = (props) => ({
 			attrs: {
 				'v-attrs': {
 					...props,
@@ -216,24 +220,28 @@ export default class ComponentRender {
 			}
 		});
 
-		const getOptionEl = (data, i: number) => ({
+		const getItemEl = (data, i: number) => ({
 			current: data,
 			prev: totalItems[i - 1] && totalItems[i - 1].data,
 			next: totalItems[i + 1] && totalItems[i + 1].data
 		});
 
 		const
-			children: Dictionary[] = [];
+			children: DataToRender[] = [];
 
 		for (let i = 0; i < items.length; i++) {
 			const
 				item = items[i],
-				props = Object.isFunction(c.optionProps) ? c.optionProps(getOptionEl(item.data, item.index), item.index, {
+				itemParams = getItemEl(item.data, item.index),
+				itemIndex = item.index;
+
+			const
+				attrs = Object.isFunction(c.optionProps) ? c.optionProps(getItemEl(item.data, item.index), item.index, {
 					ctx: c,
 					key: this.getOptionKey(item.data, item.index)
 				}) : c.optionProps;
 
-			children.push(createChildren(props));
+			children.push({itemParams, itemAttrs: attrs, index: itemIndex});
 		}
 
 		return render(children);

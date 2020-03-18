@@ -42,7 +42,7 @@ export default abstract class iItems {
 	/**
 	 * Item component name
 	 */
-	abstract readonly option?: string;
+	abstract readonly option?: string | ((el: unknown, i: number) => string);
 
 	/**
 	 * Item unique key
