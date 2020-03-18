@@ -12,7 +12,7 @@ import symbolGenerator from 'core/symbol';
 import ScrollRender from 'base/b-virtual-scroll/modules/scroll-render';
 import bVirtualScroll from 'base/b-virtual-scroll/b-virtual-scroll';
 
-import { RenderItem, DataToRender } from 'base/b-virtual-scroll/modules/interface';
+import { RenderItem, DataToRender, OptionEl } from 'base/b-virtual-scroll/modules/interface';
 
 export const
 	$$ = symbolGenerator();
@@ -201,12 +201,12 @@ export default class ComponentRender {
 		const
 			{component: c, scrollRender: {items: totalItems}} = this;
 
-		const
-			option = (...args) => Object.isFunction(c.option) ? option(...args) : option;
+		const getOption = (itemParas: OptionEl, index: number) =>
+			Object.isFunction(c.option) ? c.option(itemParas, index) : c.option;
 
 		const render = (childrens: DataToRender[]) =>
 			c.vdom.render(childrens.map(({itemAttrs, itemParams, index}) =>
-				this.createElement(option(itemParams, index), itemAttrs))) as HTMLElement[];
+				this.createElement(getOption(itemParams, index), itemAttrs))) as HTMLElement[];
 
 		const getChildrenAttrs = (props) => ({
 			attrs: {
@@ -241,7 +241,7 @@ export default class ComponentRender {
 					key: this.getOptionKey(item.data, item.index)
 				}) : c.optionProps;
 
-			children.push({itemParams, itemAttrs: attrs, index: itemIndex});
+			children.push({itemParams, itemAttrs: getChildrenAttrs(attrs), index: itemIndex});
 		}
 
 		return render(children);
