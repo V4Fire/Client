@@ -11,6 +11,8 @@
  * @packageDocumentation
  */
 
+export * from 'core/component/engines/const';
+
 //#if runtime.engine = vue
 export * from 'core/component/engines/vue';
 //#endif

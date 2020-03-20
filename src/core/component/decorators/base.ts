@@ -62,7 +62,7 @@ export function paramsFactory<T = object>(
 				delete meta.systemFields[key];
 
 				const metaKey = cluster || (
-					'value' in desc ? 'methods' : key in meta.computedFields && p.cache !== false ?
+					'value' in desc ? 'methods' : p.cache === true || key in meta.computedFields && p.cache !== false ?
 						'computedFields' : 'accessors'
 				);
 
@@ -136,6 +136,10 @@ export function paramsFactory<T = object>(
 
 				} else {
 					obj[key] = wrapOpts({...el, ...p});
+				}
+
+				if (p.dependencies) {
+					meta.watchDependencies.set(key, p.dependencies);
 				}
 
 				return;

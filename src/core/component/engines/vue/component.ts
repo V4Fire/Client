@@ -7,7 +7,8 @@
  */
 
 import Async from 'core/async';
-import { asyncLabel } from 'core/component/const';
+import watch from 'core/object/watch';
+import { asyncLabel, beforeMountHooks } from 'core/component/const';
 
 import { runHook } from 'core/component/hook';
 import { initFields } from 'core/component/field';
@@ -19,6 +20,7 @@ import { isAbstractComponent } from 'core/component/reflection';
 import { forkMeta, fillMeta, callMethodFromComponent } from 'core/component/meta';
 
 import { ComponentDriver, ComponentOptions, FunctionalComponentOptions } from 'core/component/engines';
+import { cacheStatus } from 'core/component/engines/const';
 import { ComponentMeta } from 'core/component/interface';
 
 /**
@@ -57,10 +59,51 @@ export function getComponent(
 
 			initFields(meta.fields, ctx, data);
 			runHook('beforeDataCreate', ctx).catch(stderr);
-			initWatchers(ctx);
 
-			ctx.$$data = this;
-			return data;
+			const watchOpts = {
+				deep: true,
+				tiedWith: this,
+				collapse: true,
+				postfixes: ['Store', 'Prop'],
+				dependencies: meta.watchDependencies
+			};
+
+			const watcher = watch(data, watchOpts, (mutations) => {
+				for (let i = 0; i < mutations.length; i++) {
+					const
+						info = mutations[i][2];
+
+					if (info.parent) {
+						const
+							nm = String(info.path[0]);
+
+						if (meta.computedFields[nm]?.get) {
+							delete Object.getOwnPropertyDescriptor(this, nm)?.get?.[cacheStatus];
+						}
+					}
+				}
+
+				if (!beforeMountHooks[ctx.hook]) {
+					this.$forceUpdate();
+				}
+			});
+
+			ctx.$watch = (path, cb, opts) => {
+				if (Object.isDictionary(cb)) {
+					opts = Object.reject(cb, 'handler');
+					cb = cb.handler;
+				}
+
+				const {unwatch} = watch(watcher.proxy, path, {...opts, collapse: true}, cb);
+				return unwatch;
+			};
+
+			ctx.$$data = watcher.proxy;
+			ctx.$set = watcher.set;
+			ctx.$delete = watcher.delete;
+
+			initWatchers(ctx);
+			return {};
 		},
 
 		beforeCreate(): void {
@@ -98,6 +141,29 @@ export function getComponent(
 						configurable: true,
 						enumerable: true,
 						get: el.get,
+						set: el.set
+					});
+				}
+			}
+
+			for (let o = meta.computedFields, keys = Object.keys(o), i = 0; i < keys.length; i++) {
+				const
+					key = keys[i],
+					el = o[key];
+
+				if (el) {
+					const get = () => {
+						if (cacheStatus in get) {
+							return get[cacheStatus];
+						}
+
+						return get[cacheStatus] = el.get!.call(ctx);
+					};
+
+					Object.defineProperty(ctx, keys[i], {
+						configurable: true,
+						enumerable: true,
+						get: el.get && get,
 						set: el.set
 					});
 				}

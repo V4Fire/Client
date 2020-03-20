@@ -7,7 +7,6 @@
  */
 
 import { defProp } from 'core/const/props';
-import { bindingRgxp } from 'core/component/reflection';
 import { ComponentInterface, ComponentMeta } from 'core/component/interface';
 
 /**
@@ -84,12 +83,19 @@ export function addMethodsToMeta(meta: ComponentMeta, constructor: Function = me
 
 		// Accessors
 		} else {
+			const
+				propKey = `${key}Prop`,
+				storeKey = `${key}Store`;
+
 			let
 				metaKey;
 
 			// Computed fields are cached by default
 			// tslint:disable-next-line:prefer-conditional-expression
-			if (key in computedFields || !(key in accessors) && bindingRgxp.test(key)) {
+			if (
+				key in computedFields ||
+				!(key in accessors) && (props[propKey] || fields[storeKey] || systemFields[storeKey])
+			) {
 				metaKey = 'computedFields';
 
 			} else {

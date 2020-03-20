@@ -68,6 +68,12 @@ export const system = paramsFactory<InitFieldFn | DecoratorSystem>('systemFields
 });
 
 /**
+ * Attaches meta information to a computed field
+ * @decorator
+ */
+export const computed = paramsFactory<DecoratorComponentAccessor>(null);
+
+/**
  * Universal decorator of component properties
  * @decorator
  */

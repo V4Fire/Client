@@ -6,6 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import { WatchPath } from 'core/object/watch';
 import { WatchOptions } from 'core/component/engines';
 
 import {
@@ -75,6 +76,7 @@ export interface DecoratorFunctionalOptions {
 
 export interface DecoratorComponentAccessor extends DecoratorFunctionalOptions {
 	cache: boolean;
+	dependencies?: WatchPath[];
 }
 
 export type DecoratorHookParams = {

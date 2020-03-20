@@ -53,6 +53,7 @@ export function createMeta(component: ComponentConstructorInfo): ComponentMeta {
 		accessors: {},
 		methods: {},
 		watchers: {},
+		watchDependencies: new Map(),
 
 		hooks: {
 			beforeRuntime: [],

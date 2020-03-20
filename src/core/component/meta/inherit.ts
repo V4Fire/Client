@@ -31,7 +31,8 @@ export function inherit(
 		computedFields: pComputedFields,
 		systemFields: pSystemFields,
 		accessors: pAccessors,
-		methods: pMethods
+		methods: pMethods,
+		watchDependencies: pWatchDependencies
 	} = parentMeta;
 
 	// Component parameters inheritance
@@ -42,6 +43,18 @@ export function inherit(
 		name: meta.params.name,
 		model: (meta.params.model || pParams.model) && {...pParams.model, ...meta.params.model}
 	};
+
+	// Watcher dependencies
+
+	if (meta.watchDependencies.size) {
+		for (let o = pWatchDependencies.entries(), el = o.next(); !el.done; el = o.next()) {
+			const [key, pVal] = el.value;
+			meta.watchDependencies.set(key, (meta.watchDependencies.get(key) || []).concat(pVal));
+		}
+
+	} else {
+		meta.watchDependencies = new Map(pWatchDependencies.entries());
+	}
 
 	// Props|fields inheritance
 

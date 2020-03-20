@@ -17,7 +17,8 @@ import {
 	ComponentAccessor,
 	ComponentMethod,
 	ComponentHooks,
-	ComponentDirectiveOptions
+	ComponentDirectiveOptions,
+	ComponentWatchDependencies
 
 } from 'core/component/meta/interface/types';
 
@@ -97,6 +98,11 @@ export interface ComponentMeta {
 	 * Map of component watchers
 	 */
 	watchers: Dictionary<WatchObject[]>;
+
+	/**
+	 * Map of dependencies to watch (to invalidate cache of computed fields)
+	 */
+	watchDependencies: ComponentWatchDependencies;
 
 	/**
 	 * Map of component hook listeners

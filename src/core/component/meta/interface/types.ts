@@ -6,6 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import { WatchPath } from 'core/object/watch';
 import { ComponentInterface } from 'core/component/interface/component';
 import { ComponentDriver, ComputedOptions, DirectiveOptions } from 'core/component/engines';
 import { FieldWatcher, MethodWatcher } from 'core/component/interface/watch';
@@ -135,3 +136,5 @@ export interface ComponentMethod {
 export interface ComponentDirectiveOptions extends DirectiveOptions {
 
 }
+
+export type ComponentWatchDependencies = Map<WatchPath, WatchPath[]>;
