@@ -168,7 +168,7 @@ export default class Sync {
 			isProp = Boolean(meta.props[field]);
 
 			if (!isProp) {
-				isAccessor = Boolean(meta.accessors[field] || meta.computed[field]);
+				isAccessor = Boolean(meta.accessors[field] || meta.computedFields[field]);
 			}
 		}
 
@@ -352,7 +352,7 @@ export default class Sync {
 				isAccessor;
 
 			if (!isProp) {
-				isAccessor = Boolean(meta.accessors[field] || meta.computed[field]);
+				isAccessor = Boolean(meta.accessors[field] || meta.computedFields[field]);
 			}
 
 			const
