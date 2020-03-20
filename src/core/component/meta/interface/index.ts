@@ -14,7 +14,6 @@ import {
 	ComponentOptions,
 	ComponentProp,
 	ComponentField,
-	ComponentComputedField,
 	ComponentAccessor,
 	ComponentMethod,
 	ComponentHooks,
@@ -65,9 +64,19 @@ export interface ComponentMeta {
 	props: Dictionary<ComponentProp>;
 
 	/**
+	 * Map of available component modifiers
+	 */
+	mods: ModsDecl;
+
+	/**
 	 * Map of component fields that can force re-rendering
 	 */
 	fields: Dictionary<ComponentField>;
+
+	/**
+	 * Map of component computed fields with support of caching
+	 */
+	computedFields: Dictionary<ComponentAccessor>;
 
 	/**
 	 * Map of component fields that can't force re-rendering
@@ -75,17 +84,7 @@ export interface ComponentMeta {
 	systemFields: Dictionary<ComponentField>;
 
 	/**
-	 * Map of available component modifiers
-	 */
-	mods: ModsDecl;
-
-	/**
-	 * Map of component accessors with support of caching
-	 */
-	computed: Dictionary<ComponentAccessor>;
-
-	/**
-	 * Map of component accessors without support of caching
+	 * Map of component accessors
 	 */
 	accessors: Dictionary<ComponentAccessor>;
 
@@ -129,11 +128,6 @@ export interface ComponentMeta {
 		 * Map of component methods
 		 */
 		methods: Dictionary<Function>;
-
-		/**
-		 * Map of component accessors with support of caching
-		 */
-		computed: Dictionary<ComponentComputedField>;
 
 		/**
 		 * Map of available component filters

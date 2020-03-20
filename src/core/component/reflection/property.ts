@@ -10,6 +10,7 @@ import { ComponentInterface } from 'core/component/interface';
 import { PropertyInfo } from 'core/component/reflection/interface';
 
 export const
+	bindingRgxp = /(?:Prop|Store)$/,
 	propRgxp = /Prop$|^\$props/,
 	storeRgxp = /Store$|^\$attrs/,
 	hasSeparator = /\./;
@@ -78,7 +79,7 @@ export function getPropertyInfo(path: string, ctx: ComponentInterface): Property
 
 	const
 		// @ts-ignore (access)
-		{props, fields, systemFields, computed, accessors} = ctx.meta;
+		{props, fields, systemFields, computedFields, accessors} = ctx.meta;
 
 	if (propRgxp.test(name)) {
 		return {
@@ -142,7 +143,7 @@ export function getPropertyInfo(path: string, ctx: ComponentInterface): Property
 
 	const
 		storeName = `${name}Store`,
-		accessorType = computed[name] ? 'computed' : accessors[name] ? 'accessor' : undefined,
+		accessorType = computedFields[name] ? 'computed' : accessors[name] ? 'accessor' : undefined,
 		accessor = accessorType && name;
 
 	if (fields[storeName]) {
@@ -222,6 +223,6 @@ export function getPropertyInfo(path: string, ctx: ComponentInterface): Property
 		fullPath,
 		name,
 		ctx,
-		type: computed[name] ? 'computed' : accessors[name] ? 'accessor' : 'system'
+		type: computedFields[name] ? 'computed' : accessors[name] ? 'accessor' : 'system'
 	};
 }

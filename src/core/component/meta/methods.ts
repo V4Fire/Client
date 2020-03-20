@@ -7,6 +7,7 @@
  */
 
 import { defProp } from 'core/const/props';
+import { bindingRgxp } from 'core/component/reflection';
 import { ComponentInterface, ComponentMeta } from 'core/component/interface';
 
 /**
@@ -45,20 +46,18 @@ export function callMethodFromComponent(component: ComponentInterface, method: s
 export function addMethodsToMeta(meta: ComponentMeta, constructor: Function = meta.constructor): void {
 	const
 		proto = constructor.prototype,
-		ownProps = Object.getOwnPropertyNames(proto);
+		ownProps = Object.getOwnPropertyNames(proto),
+		replace = !meta.params.flyweight;
 
 	const {
 		componentName: src,
-		params,
-		methods,
-		accessors,
 		props,
 		fields,
-		systemFields
+		computedFields,
+		systemFields,
+		accessors,
+		methods
 	} = meta;
-
-	const
-		replace = !params.flyweight;
 
 	for (let i = 0; i < ownProps.length; i++) {
 		const
@@ -85,13 +84,24 @@ export function addMethodsToMeta(meta: ComponentMeta, constructor: Function = me
 
 		// Accessors
 		} else {
-			// Computed properties are cached by default
-			const metaKey = key in accessors ? 'accessors' : 'computed';
+			let
+				metaKey;
+
+			// Computed fields are cached by default
+			// tslint:disable-next-line:prefer-conditional-expression
+			if (key in computedFields || !(key in accessors) && bindingRgxp.test(key)) {
+				metaKey = 'computedFields';
+
+			} else {
+				metaKey = 'accessors';
+			}
 
 			const
 				field = props[key] ? props : fields[key] ? fields : systemFields,
 				obj = meta[metaKey];
 
+			// If we already have a property by this key, like a prop or a field,
+			// we need to delete it to correct override
 			if (field[key]) {
 				Object.defineProperty(proto, key, defProp);
 				delete field[key];
@@ -153,7 +163,7 @@ export function addMethodsToMeta(meta: ComponentMeta, constructor: Function = me
 export function addMethodsFromMeta(meta: ComponentMeta, component: ComponentInterface, safe?: boolean): void {
 	const list = [
 		meta.accessors,
-		meta.computed,
+		meta.computedFields,
 		meta.methods
 	];
 

@@ -70,7 +70,7 @@ export type PropertyType =
 	AccessorType;
 
 /**
- * Information about a component property: prop, field, computed, etc.
+ * Information about a component property: prop, field, computedField, etc.
  */
 export interface PropertyInfo {
 	/**

@@ -44,11 +44,12 @@ export function createMeta(component: ComponentConstructorInfo): ComponentMeta {
 		params: component.params,
 
 		props: {},
-		fields: {},
-		systemFields: {},
 		mods: getComponentMods(component),
 
-		computed: {},
+		fields: {},
+		computedFields: {},
+		systemFields: {},
+
 		accessors: {},
 		methods: {},
 		watchers: {},
@@ -77,7 +78,6 @@ export function createMeta(component: ComponentConstructorInfo): ComponentMeta {
 			mods: {},
 			props: {},
 			methods: {},
-			computed: {},
 			staticRenderFns: [],
 			render: <RenderFunction>(() => {
 				throw new ReferenceError(`A render function for the component "${component.componentName}" is not specified`);
@@ -130,8 +130,7 @@ export function fillMeta(
 			continue;
 		}
 
-		component.methods[nm] =
-			method.fn;
+		component.methods[nm] = method.fn;
 
 		if (method.watchers) {
 			for (let o = method.watchers, keys = Object.keys(o), i = 0; i < keys.length; i++) {
@@ -178,13 +177,6 @@ export function fillMeta(
 				});
 			}
 		}
-	}
-
-	// Computed properties
-
-	for (let o = meta.computed, keys = Object.keys(o), i = 0; i < keys.length; i++) {
-		const key = keys[i];
-		component.computed[key] = o[key];
 	}
 
 	// Props

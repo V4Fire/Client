@@ -62,7 +62,8 @@ export function paramsFactory<T = object>(
 				delete meta.systemFields[key];
 
 				const metaKey = cluster || (
-					'value' in desc ? 'methods' : key in meta.computed && p.cache !== false ? 'computed' : 'accessors'
+					'value' in desc ? 'methods' : key in meta.computedFields && p.cache !== false ?
+						'computedFields' : 'accessors'
 				);
 
 				if (transformer) {
@@ -129,9 +130,9 @@ export function paramsFactory<T = object>(
 				const hasCache = 'cache' in p;
 				delete p.cache;
 
-				if (metaKey === 'accessors' ? key in meta.computed : !hasCache && key in meta.accessors) {
-					obj[key] = wrapOpts({...meta.computed[key], ...p});
-					delete meta.computed[key];
+				if (metaKey === 'accessors' ? key in meta.computedFields : !hasCache && key in meta.accessors) {
+					obj[key] = wrapOpts({...meta.computedFields[key], ...p});
+					delete meta.computedFields[key];
 
 				} else {
 					obj[key] = wrapOpts({...el, ...p});
@@ -142,10 +143,10 @@ export function paramsFactory<T = object>(
 
 			delete meta.methods[key];
 			delete meta.accessors[key];
-			delete meta.computed[key];
+			delete meta.computedFields[key];
 
 			const
-				accessors = meta.accessors[key] ? meta.accessors : meta.computed;
+				accessors = meta.accessors[key] ? meta.accessors : meta.computedFields;
 
 			if (accessors[key]) {
 				Object.defineProperty(meta.constructor.prototype, key, defProp);

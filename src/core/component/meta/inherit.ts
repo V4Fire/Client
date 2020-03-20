@@ -21,42 +21,35 @@ export function inherit(
 	parentMeta: ComponentMeta
 ): ComponentMeta {
 	const
-		p = meta.params;
-
-	const {
-		params,
-		props,
-		fields,
-		systemFields,
-		mods,
-		computed,
-		accessors,
-		methods
-	} = parentMeta;
-
-	const
 		metaPointer = metaPointers[meta.componentName];
 
-	///////////////////////////////////
+	const {
+		params: pParams,
+		props: pProps,
+		mods: pMods,
+		fields: pFields,
+		computedFields: pComputedFields,
+		systemFields: pSystemFields,
+		accessors: pAccessors,
+		methods: pMethods
+	} = parentMeta;
+
 	// Component parameters inheritance
-	///////////////////////////////////
 
 	meta.params = {
-		...params,
-		...p,
-		name: p.name,
-		model: (p.model || params.model) && {...params.model, ...p.model}
+		...pParams,
+		...meta.params,
+		name: meta.params.name,
+		model: (meta.params.model || pParams.model) && {...pParams.model, ...meta.params.model}
 	};
 
-	///////////////////////////
 	// Props|fields inheritance
-	///////////////////////////
 
 	{
 		const list = [
-			[meta.props, props],
-			[meta.fields, fields],
-			[meta.systemFields, systemFields]
+			[meta.props, pProps],
+			[meta.fields, pFields],
+			[meta.systemFields, pSystemFields]
 		];
 
 		for (let i = 0; i < list.length; i++) {
@@ -105,8 +98,8 @@ export function inherit(
 
 	{
 		const list = [
-			[meta.computed, computed],
-			[meta.accessors, accessors]
+			[meta.computedFields, pComputedFields],
+			[meta.accessors, pAccessors]
 		];
 
 		for (let i = 0; i < list.length; i++) {
@@ -120,10 +113,10 @@ export function inherit(
 		}
 	}
 
-	for (let o = meta.methods, keys = Object.keys(methods), i = 0; i < keys.length; i++) {
+	for (let o = meta.methods, keys = Object.keys(pMethods), i = 0; i < keys.length; i++) {
 		const
 			key = keys[i],
-			parent = methods[key];
+			parent = pMethods[key];
 
 		if (!parent) {
 			continue;
@@ -169,15 +162,13 @@ export function inherit(
 		o[key] = {...parent, watchers, hooks};
 	}
 
-	////////////////////////
 	// Modifiers inheritance
-	////////////////////////
 
-	for (let o = meta.mods, keys = Object.keys(mods), i = 0; i < keys.length; i++) {
+	for (let o = meta.mods, keys = Object.keys(pMods), i = 0; i < keys.length; i++) {
 		const
 			key = keys[i],
 			current = o[key],
-			parent = (mods[key] || []).slice();
+			parent = (pMods[key] || []).slice();
 
 		if (current) {
 			const
