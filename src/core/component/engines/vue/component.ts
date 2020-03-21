@@ -12,7 +12,7 @@ import { asyncLabel, beforeMountHooks } from 'core/component/const';
 
 import { runHook } from 'core/component/hook';
 import { initFields } from 'core/component/field';
-import { initWatchers } from 'core/component/watch';
+import { cacheStatus, bindRemoteWatchers, initComponentWatcher } from 'core/component/watch';
 import { patchRefs } from 'core/component/create';
 
 import { getNormalParent } from 'core/component/traverse';
@@ -20,7 +20,6 @@ import { isAbstractComponent } from 'core/component/reflection';
 import { forkMeta, fillMeta, callMethodFromComponent } from 'core/component/meta';
 
 import { ComponentDriver, ComponentOptions, FunctionalComponentOptions } from 'core/component/engines';
-import { cacheStatus } from 'core/component/engines/const';
 import { ComponentMeta } from 'core/component/interface';
 
 /**
@@ -54,55 +53,19 @@ export function getComponent(
 
 		data(): Dictionary {
 			const
-				ctx = <any>this,
-				data = ctx.$$data;
+				ctx = <any>this;
 
-			initFields(meta.fields, ctx, data);
+			initFields(meta.fields, ctx, ctx.$fields);
 			runHook('beforeDataCreate', ctx).catch(stderr);
+			initComponentWatcher(ctx);
 
-			const watchOpts = {
-				deep: true,
-				tiedWith: this,
-				collapse: true,
-				postfixes: ['Store', 'Prop'],
-				dependencies: meta.watchDependencies
-			};
-
-			const watcher = watch(data, watchOpts, (mutations) => {
-				for (let i = 0; i < mutations.length; i++) {
-					const
-						info = mutations[i][2];
-
-					if (info.parent) {
-						const
-							nm = String(info.path[0]);
-
-						if (meta.computedFields[nm]?.get) {
-							delete Object.getOwnPropertyDescriptor(this, nm)?.get?.[cacheStatus];
-						}
-					}
-				}
-
+			watch(ctx.$fields, {deep: true, collapse: true}, () => {
 				if (!beforeMountHooks[ctx.hook]) {
 					this.$forceUpdate();
 				}
 			});
 
-			ctx.$watch = (path, cb, opts) => {
-				if (Object.isDictionary(cb)) {
-					opts = Object.reject(cb, 'handler');
-					cb = cb.handler;
-				}
-
-				const {unwatch} = watch(watcher.proxy, path, {...opts, collapse: true}, cb);
-				return unwatch;
-			};
-
-			ctx.$$data = watcher.proxy;
-			ctx.$set = watcher.set;
-			ctx.$delete = watcher.delete;
-
-			initWatchers(ctx);
+			bindRemoteWatchers(ctx);
 			return {};
 		},
 
@@ -110,8 +73,9 @@ export function getComponent(
 			const
 				ctx = <any>this;
 
-			ctx.$$data = {};
-			ctx.$$refs = {};
+			ctx.$fields = {};
+			ctx.$systemFields = {};
+			ctx.$refHandlers = {};
 
 			ctx.$async = new Async(this);
 			ctx.$asyncLabel = asyncLabel;
@@ -170,6 +134,12 @@ export function getComponent(
 			}
 
 			initFields(meta.systemFields, ctx, ctx);
+
+			for (let keys = Object.keys(meta.systemFields), i = 0; i < keys.length; i++) {
+				const key = keys[i];
+				ctx.$systemFields[key] = ctx[key];
+			}
+
 			runHook('beforeCreate', ctx).catch(stderr);
 			callMethodFromComponent(ctx, 'beforeCreate');
 		},

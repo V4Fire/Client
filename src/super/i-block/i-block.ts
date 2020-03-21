@@ -94,7 +94,7 @@ import {
 	hook,
 	getPropertyInfo,
 	cloneWatchValue,
-	initWatchers,
+	bindRemoteWatchers,
 
 	PropertyInfo,
 	ComponentMeta,
@@ -1133,7 +1133,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 				return;
 			}
 
-			initWatchers(this, {
+			bindRemoteWatchers(this, {
 				info,
 				async: <Async<any>>this.async,
 				watchers: {
@@ -1159,11 +1159,10 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 		}
 
 		this.lfc.execCbAfterComponentCreated(() => {
-			const watcher = this.$$watch(exprOrFn, {
-				handler: cb,
+			const watcher = this.$watch(exprOrFn, {
 				deep: p.deep,
 				immediate: p.immediate
-			});
+			}, cb);
 
 			if (p.group || p.label || p.join) {
 				this.async.worker(watcher, {group: p.group, label: p.label, join: p.join});
@@ -1721,72 +1720,6 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	}
 
 	/**
-	 * Internal $watch wrapper
-	 *
-	 * @param exprOrFn
-	 * @param opts
-	 */
-	@p({replace: false})
-	protected $$watch<T = unknown>(
-		exprOrFn: string | ((this: this) => string),
-		opts: WatchOptionsWithHandler<T> & {fieldInfo?: PropertyInfo}
-	): Function {
-		const
-			{handler} = opts;
-
-		let
-			oldVal,
-			watchCache,
-			needCache;
-
-		if (Object.isString(exprOrFn)) {
-			const
-				info = opts.fieldInfo || getPropertyInfo(exprOrFn, this),
-				val = this.field.get(exprOrFn);
-
-			if (info && info.type === 'prop' && (
-				(<iBlock>info.ctx).unsafe.meta.params.root ||
-				!(info.name in ((<iBlock>info.ctx).unsafe.$options.propsData || {}))
-			)) {
-				if (opts.immediate) {
-					handler.call(this, val);
-				}
-
-				return () => undefined;
-			}
-
-			exprOrFn = info.fullPath;
-			needCache = handler.length > 1;
-
-			if (needCache) {
-				watchCache = (<iBlock>info.ctx).unsafe.watchCache;
-
-				oldVal = watchCache[exprOrFn] = exprOrFn in watchCache ?
-					watchCache[exprOrFn] : cloneWatchValue(val);
-			}
-		}
-
-		return this.$watch(exprOrFn, {
-			handler(val: unknown, defOldVal: unknown): unknown {
-				if (!needCache || val !== defOldVal) {
-					if (needCache) {
-						oldVal = defOldVal;
-					}
-
-					return handler.call(this, val, defOldVal);
-				}
-
-				const res = handler.call(this, val, oldVal);
-				oldVal = watchCache[<string>exprOrFn] = cloneWatchValue(val);
-				return res;
-			},
-
-			deep: opts.deep,
-			immediate: opts.immediate
-		});
-	}
-
-	/**
 	 * Returns an object with default component fields for saving to a local storage
 	 *
 	 * @param [data] - advanced data
@@ -1869,7 +1802,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 		}
 
 		const
-			watchers = that.$$refs[ref] = that.$$refs[ref] || [],
+			watchers = that.$refHandlers[ref] = that.$refHandlers[ref] || [],
 			refVal = that.$refs[ref];
 
 		return this.async.promise(() => new Promise((resolve) => {

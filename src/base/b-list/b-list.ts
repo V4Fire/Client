@@ -372,7 +372,7 @@ export default class bList extends iData implements iIcon, iVisible, iWidth {
 			indexes = {},
 			active = this.field.get('activeStore');
 
-		for (let o = <Option[]>this.$$data.value || [], i = 0; i < o.length; i++) {
+		for (let o = <Option[]>this.$fields.value || [], i = 0; i < o.length; i++) {
 			const
 				el = o[i],
 				val = el.value;

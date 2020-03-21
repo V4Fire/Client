@@ -84,7 +84,7 @@ export default class Field {
 
 			} else {
 				const isField = info.type === 'field';
-				res = isField ? ctx.$$data : ctx;
+				res = isField ? ctx.$fields : ctx;
 
 				if ((isField && !isReady || !(chunks[0] in res))) {
 					chunks[0] = info.name;
@@ -154,7 +154,7 @@ export default class Field {
 
 			} else {
 				isField = info.type === 'field';
-				ref = isField ? ctx.$$data : ctx;
+				ref = isField ? ctx.$fields : ctx;
 
 				if ((isField && !isReady || !(chunks[0] in ref))) {
 					chunks[0] = info.name;
@@ -234,7 +234,7 @@ export default class Field {
 			// @ts-ignore
 			ctx = info.ctx;
 			isField = info.type === 'field';
-			ref = isField ? ctx.$$data : ctx;
+			ref = isField ? ctx.$fields : ctx;
 			chunks = info.path.split('.');
 			chunks[0] = info.name;
 

@@ -451,7 +451,7 @@ export default class bSelect extends bInput implements iOpenToggle {
 	@hook('beforeDataCreate')
 	protected async initComponentValues(): Promise<void> {
 		const
-			data = this.$$data,
+			data = this.$fields,
 			labels = {},
 			values = {};
 
