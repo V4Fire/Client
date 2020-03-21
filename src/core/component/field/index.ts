@@ -21,7 +21,7 @@ const fieldQueue = new Set();
  * Initializes the specified fields to a component instance.
  * The function returns an object with initialized fields.
  *
- * This method have some "copy-paste" chunks, but it's done for better performance, because it's very hot function.
+ * This method have some "copy-paste" chunks, but it's done for better performance, because it's a very hot function.
  * Mind that the initialization of fields is a synchronous operation.
  *
  * @param fields - component fields or system fields
