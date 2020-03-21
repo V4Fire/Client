@@ -104,6 +104,16 @@ export interface PropertyInfo {
 	fullPath: string;
 
 	/**
+	 * Original path of the property
+	 *
+	 * @example
+	 * ```js
+	 * getPropertyInfo('$root.bla.bar', ctx) // originalPath == '$root.bla.bar'
+	 * ```
+	 */
+	originalPath: string;
+
+	/**
 	 * Property type
 	 */
 	type: PropertyType;

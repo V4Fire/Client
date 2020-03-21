@@ -19,7 +19,7 @@ export const
  * Returns an information object about the component property by the specified path
  *
  * @param path
- * @param ctx - component context
+ * @param component - component instance
  *
  * @example
  * ```js
@@ -37,6 +37,7 @@ export const
  *     //   name: 'fooStore',
  *     //   path: 'fooStore',
  *     //   fullPath: '$root.$refs.button.fooStore',
+ *     //   originalPath: '$root.$refs.button.foo',
  *     //   type: 'system',
  *     //   accessor: 'foo',
  *     //   accessorType: 'computed'
@@ -46,7 +47,10 @@ export const
  * }
  * ```
  */
-export function getPropertyInfo(path: string, ctx: ComponentInterface): PropertyInfo {
+export function getPropertyInfo(path: string, component: ComponentInterface): PropertyInfo {
+	const
+		originalPath = path;
+
 	let
 		name = path,
 		fullPath = path,
@@ -58,7 +62,7 @@ export function getPropertyInfo(path: string, ctx: ComponentInterface): Property
 		rootI = 0;
 
 		let
-			obj = ctx;
+			obj = component;
 
 		for (let i = 0; i < chunks.length; i++) {
 			if (!obj) {
@@ -68,7 +72,7 @@ export function getPropertyInfo(path: string, ctx: ComponentInterface): Property
 			obj = obj[chunks[i]];
 
 			if (obj && obj.instance instanceof ComponentInterface) {
-				ctx = obj;
+				component = obj;
 				rootI = i === chunks.length - 1 ? i : i + 1;
 			}
 		}
@@ -79,14 +83,15 @@ export function getPropertyInfo(path: string, ctx: ComponentInterface): Property
 
 	const
 		// @ts-ignore (access)
-		{props, fields, systemFields, computedFields, accessors} = ctx.meta;
+		{props, fields, systemFields, computedFields, accessors} = component.meta;
 
 	if (propRgxp.test(name)) {
 		return {
 			path,
 			fullPath,
+			originalPath,
 			name,
-			ctx,
+			ctx: component,
 			type: 'prop'
 		};
 	}
@@ -96,8 +101,9 @@ export function getPropertyInfo(path: string, ctx: ComponentInterface): Property
 			return {
 				path,
 				fullPath,
+				originalPath,
 				name,
-				ctx,
+				ctx: component,
 				type: 'field'
 			};
 		}
@@ -105,8 +111,9 @@ export function getPropertyInfo(path: string, ctx: ComponentInterface): Property
 		return {
 			path,
 			fullPath,
+			originalPath,
 			name,
-			ctx,
+			ctx: component,
 			type: 'system'
 		};
 	}
@@ -115,8 +122,9 @@ export function getPropertyInfo(path: string, ctx: ComponentInterface): Property
 		return {
 			path,
 			fullPath,
+			originalPath,
 			name,
-			ctx,
+			ctx: component,
 			type: 'field'
 		};
 	}
@@ -125,8 +133,9 @@ export function getPropertyInfo(path: string, ctx: ComponentInterface): Property
 		return {
 			path,
 			fullPath,
+			originalPath,
 			name,
-			ctx,
+			ctx: component,
 			type: 'prop'
 		};
 	}
@@ -135,8 +144,9 @@ export function getPropertyInfo(path: string, ctx: ComponentInterface): Property
 		return {
 			path,
 			fullPath,
+			originalPath,
 			name,
-			ctx,
+			ctx: component,
 			type: 'system'
 		};
 	}
@@ -161,8 +171,9 @@ export function getPropertyInfo(path: string, ctx: ComponentInterface): Property
 		return {
 			path,
 			fullPath,
+			originalPath,
 			name,
-			ctx,
+			ctx: component,
 			accessor,
 			accessorType,
 			type: 'field'
@@ -184,8 +195,9 @@ export function getPropertyInfo(path: string, ctx: ComponentInterface): Property
 		return {
 			path,
 			fullPath,
+			originalPath,
 			name,
-			ctx,
+			ctx: component,
 			accessor,
 			accessorType,
 			type: 'system'
@@ -210,8 +222,9 @@ export function getPropertyInfo(path: string, ctx: ComponentInterface): Property
 		return {
 			path,
 			fullPath,
+			originalPath,
 			name: propName,
-			ctx,
+			ctx: component,
 			type: 'prop',
 			accessor,
 			accessorType
@@ -221,8 +234,9 @@ export function getPropertyInfo(path: string, ctx: ComponentInterface): Property
 	return {
 		path,
 		fullPath,
+		originalPath,
 		name,
-		ctx,
+		ctx: component,
 		type: computedFields[name] ? 'computed' : accessors[name] ? 'accessor' : 'system'
 	};
 }
