@@ -35,12 +35,12 @@ export * from 'core/component/flyweight/interface';
  *
  * @param vnode
  * @param createElement - function to create VNode element
- * @param parentCtx - parent component context
+ * @param parentComponent - parent component instance
  */
 export function parseVNode(
 	vnode: VNode,
 	createElement: CreateElement,
-	parentCtx: ComponentInterface
+	parentComponent: ComponentInterface
 ): VNode | FlyweightVNode {
 	const
 		compositeAttr = vnode?.data?.attrs?.['v4-composite'];
@@ -67,7 +67,7 @@ export function parseVNode(
 	// The context is based on the specified parent context by using Object.create.
 	// Also, we need to shim some component hooks.
 
-	const fakeCtx = Object.assign(Object.create(parentCtx), {
+	const fakeCtx = Object.assign(Object.create(parentComponent), {
 		meta,
 		hook: 'beforeDataCreate',
 		instance: meta.instance,
@@ -109,7 +109,7 @@ export function parseVNode(
 		value: {}
 	});
 
-	Object.defineProperty(fakeCtx, '$$data', {
+	Object.defineProperty(fakeCtx, '$fields', {
 		configurable: true,
 		enumerable: true,
 		writable: true,
@@ -128,7 +128,7 @@ export function parseVNode(
 		value: componentData.scopedSlots
 	});
 
-	Object.defineProperty(fakeCtx, '$parent', {value: parentCtx});
+	Object.defineProperty(fakeCtx, '$parent', {value: parentComponent});
 	Object.defineProperty(fakeCtx, '$normalParent', {value: getNormalParent(fakeCtx)});
 	Object.defineProperty(fakeCtx, '$children', {value: vnode.children});
 
@@ -179,7 +179,7 @@ export function parseVNode(
 	initFields(systemFields, fakeCtx, fakeCtx);
 	initFields(fields, fakeCtx, fakeCtx);
 
-	fakeCtx.$$data = fakeCtx;
+	fakeCtx.$fields = fakeCtx;
 	fakeCtx.hook = 'created';
 	fakeCtx.componentStatus = 'ready';
 

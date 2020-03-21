@@ -10,7 +10,7 @@ import { ComponentElement, ComponentInterface } from 'core/component/interface';
 
 /**
  * Patches refs from the specified component instance.
- * This function replaces refs to component DOM nodes to component instances.
+ * This function replaces refs from component DOM nodes to component instances.
  * Also, this function fires events of appearance refs.
  *
  * @param component - component instance
@@ -18,7 +18,7 @@ import { ComponentElement, ComponentInterface } from 'core/component/interface';
 export function patchRefs(component: ComponentInterface): void {
 	const
 		// @ts-ignore (access)
-		{$refs, $$refs} = component;
+		{$refs, $refHandlers} = component;
 
 	if (!$refs) {
 		return;
@@ -95,11 +95,11 @@ export function patchRefs(component: ComponentInterface): void {
 		}
 	}
 
-	if ($$refs) {
-		for (let keys = Object.keys($$refs), i = 0; i < keys.length; i++) {
+	if ($refHandlers) {
+		for (let keys = Object.keys($refHandlers), i = 0; i < keys.length; i++) {
 			const
 				key = keys[i],
-				watchers = $$refs[key],
+				watchers = $refHandlers[key],
 				el = $refs[key];
 
 			if (el && watchers) {
@@ -107,7 +107,7 @@ export function patchRefs(component: ComponentInterface): void {
 					watchers[i](el);
 				}
 
-				delete $$refs[key];
+				delete $refHandlers[key];
 			}
 		}
 	}

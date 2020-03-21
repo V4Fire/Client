@@ -18,29 +18,29 @@ import { ComponentInterface, ComponentField, ComponentSystemField } from 'core/c
 const fieldQueue = new Set();
 
 /**
- * Initializes the specified fields to a component context.
+ * Initializes the specified fields to a component instance.
  * The function returns an object with initialized fields.
  *
  * This method have some "copy-paste" chunks, but it's done for better performance, because it's very hot function.
  * Mind that the initialization of fields is a synchronous operation.
  *
  * @param fields - component fields or system fields
- * @param ctx - component context
+ * @param component - component instance
  * @param [store] - storage object for initialized fields
  */
 // tslint:disable-next-line:cyclomatic-complexity
 export function initFields(
 	fields: Dictionary<ComponentField>,
-	ctx: ComponentInterface,
+	component: ComponentInterface,
 	store: Dictionary = {}
 ): Dictionary {
 	const
 		// @ts-ignore (access)
-		{meta: {params, instance}} = ctx;
+		{meta: {params, instance}} = component;
 
 	const
 		// True if a component is functional or flyweight (composite)
-		isFlyweight = ctx.$isFlyweight || params.functional === true;
+		isFlyweight = component.$isFlyweight || params.functional === true;
 
 	const
 		// Map of fields that we should skip, i.e. not to initialize.
@@ -104,13 +104,13 @@ export function initFields(
 				}
 
 				// @ts-ignore (access)
-				ctx.$activeField = key;
+				component.$activeField = key;
 
 				let
 					val;
 
 				if (el.init) {
-					val = el.init(<any>ctx, store);
+					val = el.init(<any>component, store);
 				}
 
 				if (val === undefined) {
@@ -126,7 +126,7 @@ export function initFields(
 				}
 
 				// @ts-ignore (access)
-				ctx.$activeField = undefined;
+				component.$activeField = undefined;
 			}
 
 		} else {
@@ -200,14 +200,14 @@ export function initFields(
 				}
 
 				// @ts-ignore (access)
-				ctx.$activeField = key;
+				component.$activeField = key;
 				fieldQueue.delete(key);
 
 				let
 					val;
 
 				if (el.init) {
-					val = el.init(<any>ctx, store);
+					val = el.init(<any>component, store);
 				}
 
 				if (val === undefined) {
@@ -221,7 +221,7 @@ export function initFields(
 				}
 
 				// @ts-ignore (access)
-				ctx.$activeField = undefined;
+				component.$activeField = undefined;
 			}
 		}
 
@@ -293,14 +293,14 @@ export function initFields(
 				}
 
 				// @ts-ignore (access)
-				ctx.$activeField = key;
+				component.$activeField = key;
 				fieldQueue.delete(key);
 
 				let
 					val;
 
 				if (el.init) {
-					val = el.init(<any>ctx, store);
+					val = el.init(<any>component, store);
 				}
 
 				if (val === undefined) {
@@ -314,7 +314,7 @@ export function initFields(
 				}
 
 				// @ts-ignore (access)
-				ctx.$activeField = undefined;
+				component.$activeField = undefined;
 			}
 		}
 

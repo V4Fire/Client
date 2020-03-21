@@ -8,15 +8,10 @@
 
 import { defProp } from 'core/const/props';
 import { initEmitter, metaPointers } from 'core/component/const';
+import { inverseFieldMap } from 'core/component/decorators/const';
 
 import { ComponentMeta } from 'core/component/interface';
 import { ParamsFactoryTransformer, FactoryTransformer } from 'core/component/decorators/interface';
-
-const inverseFieldMap = Object.createDict({
-	props: ['fields', 'systemFields'],
-	fields: ['props', 'systemFields'],
-	systemFields: ['props', 'fields']
-});
 
 /**
  * Factory to create component property decorators

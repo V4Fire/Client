@@ -18,7 +18,7 @@ import { runHook } from 'core/component/hook';
 import { getNormalParent } from 'core/component/traverse';
 import { initProps } from 'core/component/prop';
 import { initFields } from 'core/component/field';
-import { initWatchers } from 'core/component/watch';
+import { bindRemoteWatchers } from 'core/component/watch';
 import { addEventAPI } from 'core/component/create';
 
 import {
@@ -30,7 +30,7 @@ import {
 } from 'core/component/engines';
 
 import { RenderContext } from 'core/component/render';
-import { ComponentInterface, FunctionalCtx, WatchExpr, RawWatchHandler } from 'core/component/interface';
+import { ComponentInterface, FunctionalCtx, WatchPath, RawWatchHandler } from 'core/component/interface';
 
 import { CreateFakeCtxOptions } from 'core/component/functional/interface';
 export * from 'core/component/functional/interface';
@@ -119,7 +119,7 @@ export function createFakeCtx<T extends object = FunctionalCtx>(
 		$createElement: createElement.bind(fakeCtx),
 
 		$data: data,
-		$$data: data,
+		$fields: data,
 		$dataCache: Object.createDict(),
 
 		$props: renderCtx.props || {},
@@ -224,7 +224,7 @@ export function createFakeCtx<T extends object = FunctionalCtx>(
 		},
 
 		$watch(
-			exprOrFn: WatchExpr<typeof fakeCtx>,
+			exprOrFn: WatchPath<typeof fakeCtx>,
 			cbOrOpts: RawWatchHandler<typeof fakeCtx, T> | WatchOptionsWithHandler<any>,
 			opts?: WatchOptions
 		): (() => void) {
@@ -284,7 +284,7 @@ export function createFakeCtx<T extends object = FunctionalCtx>(
 
 	initFields(meta.fields, fakeCtx, data);
 	runHook('beforeDataCreate', fakeCtx).catch(stderr);
-	initWatchers(fakeCtx);
+	bindRemoteWatchers(fakeCtx);
 
 	// Organize support of watching for fields
 	for (let keys = Object.keys(data), i = 0; i < keys.length; i++) {
@@ -313,6 +313,6 @@ export function createFakeCtx<T extends object = FunctionalCtx>(
 		});
 	}
 
-	fakeCtx.$$data = fakeCtx;
+	fakeCtx.$fields = fakeCtx;
 	return fakeCtx;
 }
