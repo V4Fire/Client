@@ -6,25 +6,24 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import { WatchOptions, WatchHandlerParams  } from 'core/object/watch';
+import { PropertyInfo } from 'core/component/reflection';
 import { ComponentInterface } from 'core/component/interface';
 
-export type WatchExpr<CTX extends ComponentInterface = ComponentInterface> =
+export { WatchOptions, WatchHandlerParams };
+
+export type WatchPath<CTX extends ComponentInterface = ComponentInterface> =
 	string |
-	((this: CTX) => string);
+	PropertyInfo;
 
 export interface RawWatchHandler<CTX extends ComponentInterface = ComponentInterface, A = unknown, B = A> {
-	(this: this, a: A, b?: B): any;
-}
-
-export interface WatchOptions {
-	deep?: boolean;
-	immediate?: boolean;
+	(this: this, a: A, b?: B, params?: WatchHandlerParams): any;
 }
 
 export interface WatchHandler<CTX extends ComponentInterface = ComponentInterface, A = unknown, B = A> {
-	(a: A, b: B): unknown;
+	(a: A, b: B, params?: WatchHandlerParams): unknown;
 	(...args: A[]): unknown;
-	(ctx: CTX, a: A, b: B): unknown;
+	(ctx: CTX, a: A, b: B, params?: WatchHandlerParams): unknown;
 	(ctx: CTX, ...args: A[]): unknown;
 }
 

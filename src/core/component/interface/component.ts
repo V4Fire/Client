@@ -10,22 +10,30 @@
 // tslint:disable:typedef
 
 import Async from 'core/async';
-
 import { LogMessageOptions } from 'core/log';
-import { ComponentMeta, Hook, SyncLinkCache, WatchExpr, RawWatchHandler } from 'core/component/interface';
+
+import {
+
+	ComponentMeta,
+	Hook,
+	SyncLinkCache,
+
+	WatchPath,
+	WatchOptions,
+	RawWatchHandler
+
+} from 'core/component/interface';
 
 import {
 
 	ComponentDriver,
+
 	ComponentOptions,
 	FunctionalComponentOptions,
 
-	WatchOptions,
-	WatchOptionsWithHandler,
-
 	CreateElement,
-	VNode,
-	ScopedSlot
+	ScopedSlot,
+	VNode
 
 } from 'core/component/engines';
 
@@ -183,7 +191,7 @@ export abstract class ComponentInterface<
 	/**
 	 * Map of handlers that wait appearing of references to elements that have a "ref" attribute
 	 */
-	protected readonly $$refs!: Dictionary<Function[]>;
+	protected readonly $refHandlers!: Dictionary<Function[]>;
 
 	/**
 	 * Map of available render slots
@@ -203,7 +211,12 @@ export abstract class ComponentInterface<
 	/**
 	 * Raw map of component fields that can force re-rendering
 	 */
-	protected readonly $$data!: Dictionary;
+	protected readonly $fields!: Dictionary;
+
+	/**
+	 * Raw map of component fields that can force re-rendering
+	 */
+	protected readonly $systemFields!: Dictionary;
 
 	/**
 	 * Cache object for component fields
@@ -312,38 +325,23 @@ export abstract class ComponentInterface<
 	/**
 	 * Sets a watcher to specified expression
 	 *
-	 * @param exprOrFn
-	 * @param cb
+	 * @param path
+	 * @param handler
 	 * @param opts
 	 */
 	// @ts-ignore (abstract)
 	protected $watch<T = unknown>(
-		exprOrFn: WatchExpr<this>,
-		cb: RawWatchHandler<this, T>,
-		opts?: WatchOptions
+		path: WatchPath,
+		opts: WatchOptions,
+		handler: RawWatchHandler<this, T>
 	): Function;
 
 	protected $watch<T = unknown>(
-		exprOrFn: WatchExpr<this>,
-		opts: WatchOptionsWithHandler<T>
+		path: WatchPath,
+		handler: RawWatchHandler<this, T>
 	): Function;
 
 	protected $watch() {}
-
-	/**
-	 * Sets a watcher to specified expression.
-	 * The method wraps the "native" $watch and added some extra features.
-	 *
-	 * @param exprOrFn
-	 * @param opts
-	 */
-	// @ts-ignore (abstract)
-	protected $$watch?<T = unknown>(
-		exprOrFn: WatchExpr<this>,
-		opts: WatchOptionsWithHandler<T>
-	): Function;
-
-	protected $$watch() {}
 
 	/**
 	 * Attaches an event listener to the specified component event
