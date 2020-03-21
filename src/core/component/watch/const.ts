@@ -6,8 +6,16 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { ComponentInterface } from 'core/component/interface';
+export const
+	cacheStatus = Symbol('Cache status'),
+	toWatcher = Symbol('Link to a watcher object'),
+	toComponent = Symbol('Link to a component object');
 
 export const
-	customWatcherRgxp = /^([!?]?)([^!?:]*):(.*)/,
-	systemWatchers = new WeakMap<ComponentInterface, Dictionary<{cb: Set<Function>}>>();
+	customWatcherRgxp = /^([!?]?)([^!?:]*):(.*)/;
+
+export const proxyGetters = Object.createDict({
+	prop: (ctx) => ctx.$props,
+	field: (ctx) => ctx.$fields,
+	system: (ctx) => ctx.$systemFields
+});
