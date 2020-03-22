@@ -266,27 +266,12 @@ export function bindRemoteWatchers(component: ComponentInterface, params?: BindR
 							return;
 						}
 
-						const
-							info = p.info || getPropertyInfo(key, component),
-							pathCtx = info.ctx;
+						const unwatch = $watch.call(component, p.info || getPropertyInfo(key, component), {
+							deep: watchInfo.deep,
+							immediate: watchInfo.immediate
+						}, handler);
 
-						// Sometimes we can optimize the process of initializing just skip redundant listeners.
-						// For instance, if a component doesn't take a prop from a template it can't be changed,
-						// i.e. we don't need to watch this prop.
-						if (
-							watchInfo.immediate ||
-							info.type !== 'prop' ||
-							// @ts-ignore (access)
-							!pathCtx.meta.params.root &&
-							(info.name in (pathCtx.$options.propsData || {}))
-						) {
-							const unwatch = $watch.call(component, info, {
-								deep: watchInfo.deep,
-								immediate: watchInfo.immediate
-							}, handler);
-
-							$a.worker(unwatch, asyncParams);
-						}
+						unwatch && $a.worker(unwatch, asyncParams);
 					});
 
 				} else {
@@ -313,27 +298,12 @@ export function bindRemoteWatchers(component: ComponentInterface, params?: BindR
 						continue;
 					}
 
-					const
-						info = p.info || getPropertyInfo(key, component),
-						pathCtx = info.ctx;
+					const unwatch = $watch.call(component, p.info || getPropertyInfo(key, component), {
+						deep: watchInfo.deep,
+						immediate: watchInfo.immediate
+					}, handler);
 
-					// Sometimes we can optimize the process of initializing just skip redundant listeners.
-					// For instance, if a component doesn't take a prop from a template it can't be changed,
-					// i.e. we don't need to watch this prop.
-					if (
-						watchInfo.immediate ||
-						info.type !== 'prop' ||
-						// @ts-ignore (access)
-						!pathCtx.meta.params.root &&
-						(info.name in (pathCtx.$options.propsData || {}))
-					) {
-						const unwatch = $watch.call(component, info, {
-							deep: watchInfo.deep,
-							immediate: watchInfo.immediate
-						}, handler);
-
-						$a.worker(unwatch, asyncParams);
-					}
+					unwatch && $a.worker(unwatch, asyncParams);
 				}
 			}
 		};

@@ -61,6 +61,7 @@ export function createWatchFn(
 			oldVal = watchCache[ref] = ref in watchCache ?
 				watchCache[ref] :
 				opts?.immediate || !isAccessor ? cloneWatchValue(getVal(), opts) : undefined;
+
 			const
 				original = handler;
 
@@ -80,6 +81,14 @@ export function createWatchFn(
 
 		} else if (opts?.immediate) {
 			handler.call(component, getVal());
+		}
+
+		if (info && info.type === 'prop' && (
+			// @ts-ignore (access)
+			info.ctx.meta.params.root ||
+			!(info.name in (info.ctx.$options.propsData || {}))
+		)) {
+			return null;
 		}
 
 		if (getData) {

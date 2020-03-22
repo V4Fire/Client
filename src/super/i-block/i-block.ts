@@ -24,7 +24,7 @@ import * as browser from 'core/browser';
 //#endif
 
 //#if runtime has bRouter
-import bRouter from 'base/b-router/b-router';
+import bRouter, {RawWatchHandler, WatchPath} from 'base/b-router/b-router';
 //#endif
 
 //#if runtime has iStaticPage
@@ -116,6 +116,7 @@ import {
 	MethodWatchers
 
 } from 'super/i-block/modules/decorators';
+import {WatchOptions} from 'core/component/interface';
 
 export * from 'core/component';
 export * from 'super/i-block/modules/interface';
@@ -1095,6 +1096,30 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	protected readonly global!: Window;
 
 	/**
+	 *
+	 * @param path
+	 * @param opts
+	 * @param handler
+	 */
+	protected watch<T = unknown>(
+		path: WatchPath,
+		opts: WatchOptions,
+		handler: RawWatchHandler<this, T>
+	): Nullable<Function>;
+
+	/**
+	 *
+	 * @param path
+	 * @param handler
+	 * @param opts
+	 */
+	protected watch<T = unknown>(
+		path: WatchPath,
+		handler: RawWatchHandler<this, T>,
+		opts?: WatchOptions
+	): Nullable<Function>;
+
+	/**
 	 * Sets a watcher to an event or a field
 	 *
 	 * @see Async.worker
@@ -1104,7 +1129,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	 */
 	@p({replace: false})
 	watch<T = unknown>(
-		exprOrFn: string | ((this: this) => string),
+		exprOrFn: string,
 		cb: (this: this, n: T, o?: T) => void,
 		params?: AsyncWatchOptions
 	): void {
@@ -1114,49 +1139,6 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 
 		const
 			p = params || {};
-
-		let
-			info;
-
-		if (Object.isString(exprOrFn) && (
-			isCustomWatcher.test(exprOrFn) ||
-			(info = getPropertyInfo(exprOrFn, this)).type === 'system')
-		) {
-			if (info && info.type === 'prop' && (
-				info.ctx.unsafe.meta.params.root ||
-				!(info.name in (info.ctx.unsafe.$options.propsData || {}))
-			)) {
-				if (p.immediate) {
-					cb.call(this, this.field.get(exprOrFn));
-				}
-
-				return;
-			}
-
-			bindRemoteWatchers(this, {
-				info,
-				async: <Async<any>>this.async,
-				watchers: {
-					[exprOrFn]: [{
-						handler: (ctx, ...args: unknown[]) => cb.call(this, ...args),
-						...p
-					}]
-				}
-			});
-
-			return;
-		}
-
-		if (info && info.type === 'prop' && (
-			info.ctx.unsafe.meta.params.root ||
-			!(info.name in (info.ctx.unsafe.$options.propsData || {}))
-		)) {
-			if (p.immediate) {
-				cb.call(this, this.field.get(<string>exprOrFn));
-			}
-
-			return;
-		}
 
 		this.lfc.execCbAfterComponentCreated(() => {
 			const watcher = this.$watch(exprOrFn, {

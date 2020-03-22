@@ -9,14 +9,14 @@
 import Async, { AsyncOptions } from 'core/async';
 import iBlock from 'super/i-block/i-block';
 import { statuses } from 'super/i-block/modules/const';
-import { Hooks, ComponentMeta } from 'core/component';
+import { Hook, ComponentMeta } from 'core/component';
 import { Statuses } from 'super/i-block/modules/interface';
 
 export default class Lfc {
 	/**
 	 * Current component hook
 	 */
-	get hook(): Hooks {
+	get hook(): Hook {
 		return this.component.hook;
 	}
 
@@ -57,7 +57,7 @@ export default class Lfc {
 	 * Returns true if the component hook is equal one of "before" hooks
 	 * @param [skip] - name of a skipped hook
 	 */
-	isBeforeCreate(...skip: Hooks[]): boolean {
+	isBeforeCreate(...skip: Hook[]): boolean {
 		const beforeHooks = {
 			beforeRuntime: true,
 			beforeCreate: true,

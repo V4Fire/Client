@@ -63,6 +63,10 @@ export type ComponentElement<T = unknown> = Element & {
 	component?: T;
 };
 
+export interface BindedFn<CTX extends ComponentInterface = ComponentInterface<any, any>> {
+	(this: CTX): any;
+}
+
 /**
  * Abstract class that represents Vue compatible component API
  */
@@ -161,7 +165,7 @@ export abstract class ComponentInterface<
 	 * Link to a parent component
 	 * (using with async rendering)
 	 */
-	protected readonly $$parent?: C;
+	protected readonly $remoteParent?: C;
 
 	/**
 	 * Special symbol that is tied with async rendering
@@ -181,7 +185,7 @@ export abstract class ComponentInterface<
 	/**
 	 * Map of external listeners of component events
 	 */
-	protected readonly $listeners!: Dictionary<Function | Function[]>;
+	protected readonly $listeners!: Dictionary<CanArray<Function>>;
 
 	/**
 	 * Map of references to elements that have a "ref" attribute
@@ -234,16 +238,6 @@ export abstract class ComponentInterface<
 	protected readonly $syncLinkCache!: SyncLinkCache;
 
 	/**
-	 * Context for SSR rendering
-	 */
-	protected readonly $ssrContext!: unknown;
-
-	/**
-	 * Link to a virtual node that is tied with the component
-	 */
-	protected readonly $vnode!: VNode;
-
-	/**
 	 * Link to a function that creates virtual nodes
 	 */
 	protected $createElement!: CreateElement;
@@ -265,21 +259,21 @@ export abstract class ComponentInterface<
 	 * Executes the specified function on a next render tick
 	 * @param cb
 	 */
-	$nextTick(cb: Function | ((this: this) => void)): void;
+	$nextTick(cb: Function | BindedFn<this>): void;
 
-	// @ts-ignore (abstract)
+	/**
+	 * Returns a promise that will be resolved on a next render tick
+	 */
 	$nextTick(): Promise<void>;
-	$nextTick() {}
+	$nextTick(): CanPromise<void> {}
 
 	/**
 	 * Mounts the component to a DOM element
-	 *
 	 * @param elementOrSelector - link to an element or a selector to an element
-	 * @param [hydrating]
 	 */
-	// @ts-ignore (abstract)
-	protected $mount(elementOrSelector?: Element | string, hydrating?: boolean): this;
-	protected $mount() {}
+	protected $mount(elementOrSelector?: Element | string) {
+		return this;
+	}
 
 	/**
 	 * Destroys the component
@@ -293,17 +287,9 @@ export abstract class ComponentInterface<
 	 * @param key
 	 * @param value
 	 */
-	protected $set<T = unknown>(object: object, key: string, value: T): T;
-
-	/**
-	 * Sets a new reactive value to the specified index of an array
-	 *
-	 * @param array
-	 * @param key
-	 * @param value
-	 */
-	protected $set<T = unknown>(array: T[], key: number, value: T): T;
-	protected $set() {}
+	protected $set<T = unknown>(object: object, key: unknown, value: T): T {
+		return value;
+	}
 
 	/**
 	 * Deletes the specified reactive property from an object
@@ -311,37 +297,35 @@ export abstract class ComponentInterface<
 	 * @param object
 	 * @param key
 	 */
-	protected $delete(object: object, key: string): void;
+	protected $delete(object: object, key: unknown): void {}
 
 	/**
-	 * Deletes the specified reactive value from an array
-	 *
-	 * @param array
-	 * @param key
-	 */
-	protected $delete<T = unknown>(array: T[], key: number): void;
-	protected $delete() {}
-
-	/**
-	 * Sets a watcher to specified expression
+	 * Sets a watcher to a component property by the specified path
 	 *
 	 * @param path
 	 * @param handler
 	 * @param opts
 	 */
-	// @ts-ignore (abstract)
 	protected $watch<T = unknown>(
 		path: WatchPath,
 		opts: WatchOptions,
 		handler: RawWatchHandler<this, T>
-	): Function;
+	): Nullable<Function>;
 
+	/**
+	 * Sets a watcher to a component property by the specified path
+	 *
+	 * @param path
+	 * @param handler
+	 */
 	protected $watch<T = unknown>(
 		path: WatchPath,
 		handler: RawWatchHandler<this, T>
-	): Function;
+	): Nullable<Function>;
 
-	protected $watch() {}
+	protected $watch() {
+		return null;
+	}
 
 	/**
 	 * Attaches an event listener to the specified component event
@@ -349,9 +333,9 @@ export abstract class ComponentInterface<
 	 * @param event
 	 * @param cb
 	 */
-	// @ts-ignore (abstract)
-	protected $on(event: CanArray<string>, cb: Function): this;
-	protected $on() {}
+	protected $on(event: CanArray<string>, cb: Function): this {
+		return this;
+	}
 
 	/**
 	 * Attaches a single event listener to the specified component event
@@ -359,19 +343,19 @@ export abstract class ComponentInterface<
 	 * @param event
 	 * @param cb
 	 */
-	// @ts-ignore (abstract)
-	protected $once(event: string, cb: Function): this;
-	protected $once() {}
+	protected $once(event: string, cb: Function): this {
+		return this;
+	}
 
 	/**
-	 * Detaches the specified event listeners from the component
+	 * Detaches an event listeners from the component
 	 *
 	 * @param [event]
 	 * @param [cb]
 	 */
-	// @ts-ignore (abstract)
-	protected $off(event?: CanArray<string>, cb?: Function): this;
-	protected $off() {}
+	protected $off(event?: CanArray<string>, cb?: Function): this {
+		return this;
+	}
 
 	/**
 	 * Emits a component event
@@ -379,7 +363,7 @@ export abstract class ComponentInterface<
 	 * @param event
 	 * @param args
 	 */
-	// @ts-ignore (abstract)
-	protected $emit(event: string, ...args: unknown[]): this;
-	protected $emit() {}
+	protected $emit(event: string, ...args: unknown[]): this {
+		return this;
+	}
 }

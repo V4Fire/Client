@@ -6,14 +6,6 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-/*!
- * V4Fire Client Core
- * https://github.com/V4Fire/Client
- *
- * Released under the MIT license
- * https://github.com/V4Fire/Client/blob/master/LICENSE
- */
-
 import watch, { MultipleWatchHandler, Watcher } from 'core/object/watch';
 
 import { getPropertyInfo } from 'core/component/reflection';
@@ -33,6 +25,7 @@ export function initComponentWatcher(component: ComponentInterface): void {
 
 	const watchOpts = {
 		deep: true,
+		withProto: true,
 		collapse: true,
 		postfixes: ['Store', 'Prop'],
 		dependencies: meta.watchDependencies
