@@ -16,15 +16,23 @@ import { createMeta, fillMeta } from 'core/component/meta';
 import { getInfoFromConstructor } from 'core/component/reflection';
 
 import { getComponent, ComponentDriver } from 'core/component/engines';
-import { registerParentComponents } from 'core/component/create';
+import { registerParentComponents } from 'core/component/register/helpers';
 
 import { ComponentOptions, ComponentMethod } from 'core/component/interface';
 
 /**
- * Creates a new component
+ * Registers a new component
  *
  * @decorator
  * @param [opts] - additional options
+ *
+ * @example
+ * ```js
+ * @component()
+ * class Button {
+ *
+ * }
+ * ```
  */
 export function component(opts?: ComponentOptions): Function {
 	return (target) => {

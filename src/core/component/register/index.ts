@@ -7,10 +7,9 @@
  */
 
 /**
- * [[include:core/component/create/README.md]]
+ * [[include:core/component/register/README.md]]
  * @packageDocumentation
  */
 
-export * from 'core/component/create/refs';
-export * from 'core/component/create/register';
-export * from 'core/component/create/shims';
+export * from 'core/component/register/helpers';
+export * from 'core/component/register/decorator';

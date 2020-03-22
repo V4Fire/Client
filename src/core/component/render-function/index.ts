@@ -14,7 +14,7 @@
 import { runHook } from 'core/component/hook';
 import { beforeMountHooks, mountedHooks } from 'core/component/const';
 
-import { patchRefs } from 'core/component/create/refs';
+import { resolveRefs } from 'core/component/refs';
 import { renderData, CreateElement, RenderContext, VNode } from 'core/component/engines';
 import { wrapCreateElement } from 'core/component/render-function/create-element';
 
@@ -212,7 +212,7 @@ export function wrapRender(meta: ComponentMeta): RenderFunction {
 									runHook('beforeUpdated', ctx, p)
 										.catch(stderr);
 
-									patchRefs(ctx);
+									resolveRefs(ctx);
 									ctx.hook = baseHook;
 
 									return els;

@@ -6,16 +6,22 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+/**
+ * [[include:core/component/refs/README.md]]
+ * @packageDocumentation
+ */
+
 import { ComponentElement, ComponentInterface } from 'core/component/interface';
 
 /**
- * Patches refs from the specified component instance.
+ * Resolves refs from the specified component instance.
+ *
  * This function replaces refs from component DOM nodes to component instances.
  * Also, this function fires events of appearance refs.
  *
  * @param component - component instance
  */
-export function patchRefs(component: ComponentInterface): void {
+export function resolveRefs(component: ComponentInterface): void {
 	const
 		// @ts-ignore (access)
 		{$refs, $refHandlers} = component;

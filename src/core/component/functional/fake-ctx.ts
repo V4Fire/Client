@@ -19,7 +19,7 @@ import { getNormalParent } from 'core/component/traverse';
 import { initProps } from 'core/component/prop';
 import { initFields } from 'core/component/field';
 import { bindRemoteWatchers } from 'core/component/watch';
-import { addEventAPI } from 'core/component/create';
+import { addEventAPI } from 'core/component/event';
 
 import {
 

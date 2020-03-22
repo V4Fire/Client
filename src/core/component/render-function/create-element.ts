@@ -16,7 +16,7 @@ import { parseVNode } from 'core/component/flyweight';
 import { createFakeCtx, initComponentVNode } from 'core/component/functional';
 
 import { applyDynamicAttrs } from 'core/component/render-function/v-attrs';
-import { registerComponent } from 'core/component/create/register';
+import { registerComponent } from 'core/component/register';
 
 import {
 
