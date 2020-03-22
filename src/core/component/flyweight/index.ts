@@ -175,7 +175,7 @@ export function parseVNode(
 	addMethodsFromMeta(meta, fakeCtx, true);
 
 	// Initialize values
-	initProps(meta.component.props, fakeCtx, {store: fakeCtx, saveToStore: true});
+	initProps(fakeCtx, {store: fakeCtx, saveToStore: true});
 	initFields(systemFields, fakeCtx, fakeCtx);
 	initFields(fields, fakeCtx, fakeCtx);
 

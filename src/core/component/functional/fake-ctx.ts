@@ -273,7 +273,7 @@ export function createFakeCtx<T extends object = FunctionalCtx>(
 	addMethodsFromMeta(meta, fakeCtx, opts?.safe);
 	runHook('beforeRuntime', fakeCtx).catch(stderr);
 
-	initProps(meta.component.props, fakeCtx, {store: fakeCtx, saveToStore: opts?.initProps});
+	initProps(fakeCtx, {store: fakeCtx, saveToStore: opts?.initProps});
 	initFields(meta.systemFields, fakeCtx, fakeCtx);
 
 	runHook('beforeCreate', fakeCtx).then(() => {

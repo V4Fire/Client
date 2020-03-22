@@ -8,11 +8,14 @@
 
 import Async from 'core/async';
 import watch from 'core/object/watch';
-import { asyncLabel, beforeMountHooks } from 'core/component/const';
+
+import { asyncLabel, beforeRenderHooks } from 'core/component/const';
 
 import { runHook } from 'core/component/hook';
 import { initFields } from 'core/component/field';
-import { cacheStatus, bindRemoteWatchers, initComponentWatcher } from 'core/component/watch';
+import { initAccessors } from 'core/component/accessor';
+
+import { bindRemoteWatchers, initComponentWatcher } from 'core/component/watch';
 import { patchRefs } from 'core/component/create';
 
 import { getNormalParent } from 'core/component/traverse';
@@ -60,7 +63,7 @@ export function getComponent(
 			initComponentWatcher(ctx);
 
 			watch(ctx.$fields, {deep: true, collapse: true}, () => {
-				if (!beforeMountHooks[ctx.hook]) {
+				if (!beforeRenderHooks[ctx.hook]) {
 					this.$forceUpdate();
 				}
 			});
@@ -84,7 +87,7 @@ export function getComponent(
 				parent = ctx.$parent;
 
 			if (parent && !parent.componentName) {
-				ctx.$parent = ctx.$root.$$parent;
+				ctx.$parent = ctx.$root.$remoteParent;
 			}
 
 			ctx.$normalParent = getNormalParent(ctx);
@@ -95,44 +98,7 @@ export function getComponent(
 			runHook('beforeRuntime', ctx)
 				.catch(stderr);
 
-			for (let o = meta.accessors, keys = Object.keys(o), i = 0; i < keys.length; i++) {
-				const
-					key = keys[i],
-					el = o[key];
-
-				if (el) {
-					Object.defineProperty(ctx, keys[i], {
-						configurable: true,
-						enumerable: true,
-						get: el.get,
-						set: el.set
-					});
-				}
-			}
-
-			for (let o = meta.computedFields, keys = Object.keys(o), i = 0; i < keys.length; i++) {
-				const
-					key = keys[i],
-					el = o[key];
-
-				if (el) {
-					const get = () => {
-						if (cacheStatus in get) {
-							return get[cacheStatus];
-						}
-
-						return get[cacheStatus] = el.get!.call(ctx);
-					};
-
-					Object.defineProperty(ctx, keys[i], {
-						configurable: true,
-						enumerable: true,
-						get: el.get && get,
-						set: el.set
-					});
-				}
-			}
-
+			initAccessors(ctx);
 			initFields(meta.systemFields, ctx, ctx);
 
 			for (let keys = Object.keys(meta.systemFields), i = 0; i < keys.length; i++) {

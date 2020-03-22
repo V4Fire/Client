@@ -30,7 +30,7 @@ export function renderData(data: CanArray<VNode>, parent: ComponentInterface): C
 	vue['$root'] = Object.create(parent.$root);
 
 	// @ts-ignore (access)
-	vue.$root.$$parent = parent;
+	vue.$root.$remoteParent = parent;
 
 	const el = document.createElement('div');
 	vue.$mount(el);

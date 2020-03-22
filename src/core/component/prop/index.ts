@@ -12,32 +12,30 @@
  */
 
 import { defaultWrapper } from 'core/component/const';
-import { ComponentInterface, PropOptions } from 'core/component/interface';
+import { ComponentInterface } from 'core/component/interface';
 import { InitPropsObjectOptions } from 'core/component/prop/interface';
 export * from 'core/component/prop/interface';
 
 /**
- * Initializes the specified input properties to a component context.
+ * Initializes input properties of the specified component instance.
  * The method returns an object with initialized properties.
  *
- * @param props - component input properties
- * @param ctx - component context
+ * @param component - component instance
  * @param [opts] - additional options
  */
 export function initProps(
-	props: Dictionary<PropOptions>,
-	ctx: ComponentInterface,
+	component: ComponentInterface,
 	opts: InitPropsObjectOptions = {}
 ): Dictionary {
 	const
 		// @ts-ignore (access)
-		{meta, meta: {component, instance}} = ctx;
+		{meta, meta: {component: {props}}} = component;
 
 	const
 		store = opts.store = opts.store || {},
 
 		// True if a component is functional or flyweight (composite)
-		isFlyweight = ctx.$isFlyweight || meta.params.functional === true;
+		isFlyweight = component.$isFlyweight || meta.params.functional === true;
 
 	for (let keys = Object.keys(props), i = 0; i < keys.length; i++) {
 		const
@@ -55,27 +53,27 @@ export function initProps(
 		}
 
 		// @ts-ignore (access)
-		ctx.$activeField = key;
+		component.$activeField = key;
 
 		let
-			val = ctx[key];
+			val = component[key];
 
 		if (val === undefined) {
-			val = el.default !== undefined ? el.default : Object.fastClone(instance[key]);
+			val = el.default !== undefined ? el.default : Object.fastClone(meta.instance[key]);
 		}
 
 		if (val === undefined) {
 			const
-				obj = component.props[key];
+				obj = props[key];
 
 			if (obj && obj.required) {
-				throw new TypeError(`Missing the required property "${key}" (component "${ctx.componentName}")`);
+				throw new TypeError(`Missing the required property "${key}" (component "${component.componentName}")`);
 			}
 		}
 
 		if (Object.isFunction(val)) {
 			if (opts.saveToStore || !val[defaultWrapper]) {
-				store[key] = isTypeCanBeFunc(el.type) ? val.bind(ctx) : val.call(ctx);
+				store[key] = isTypeCanBeFunc(el.type) ? val.bind(component) : val.call(component);
 			}
 
 		} else if (opts.saveToStore) {
@@ -84,7 +82,7 @@ export function initProps(
 	}
 
 	// @ts-ignore (access)
-	ctx.$activeField = undefined;
+	component.$activeField = undefined;
 	return store;
 }
 

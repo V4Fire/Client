@@ -24,3 +24,11 @@ export const beforeHooks = Object.createDict({
 	beforeCreate: true,
 	beforeDataCreate: true
 });
+
+export const beforeRenderHooks = Object.createDict({
+	beforeCreate: true,
+	beforeDataCreate: true,
+	created: true,
+	beforeMount: true,
+	beforeUpdate: true
+});
