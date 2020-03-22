@@ -24,7 +24,7 @@ import * as browser from 'core/browser';
 //#endif
 
 //#if runtime has bRouter
-import bRouter, {RawWatchHandler, WatchPath} from 'base/b-router/b-router';
+import bRouter from 'base/b-router/b-router';
 //#endif
 
 //#if runtime has iStaticPage
@@ -92,16 +92,14 @@ import {
 
 	globalEvent,
 	hook,
-	getPropertyInfo,
-	cloneWatchValue,
-	bindRemoteWatchers,
 
-	PropertyInfo,
+	WatchPath,
+	RawWatchHandler,
+
 	ComponentMeta,
 	ComponentInterface,
 
-	VNode,
-	WatchOptionsWithHandler
+	VNode
 
 } from 'core/component';
 
@@ -116,7 +114,6 @@ import {
 	MethodWatchers
 
 } from 'super/i-block/modules/decorators';
-import {WatchOptions} from 'core/component/interface';
 
 export * from 'core/component';
 export * from 'super/i-block/modules/interface';
@@ -161,9 +158,10 @@ export const
 	$$ = symbolGenerator(),
 	modsCache = Object.createDict<ModsNTable>();
 
-const
-	isCustomWatcher = /:/,
-	readyStatuses = Object.createDict({beforeReady: true, ready: true});
+const readyStatuses = Object.createDict({
+	beforeReady: true,
+	ready: true
+});
 
 @component()
 export default abstract class iBlock extends ComponentInterface<iBlock, iStaticPage> {
@@ -1096,58 +1094,66 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	protected readonly global!: Window;
 
 	/**
+	 * Sets a watcher to a component property by the specified path
 	 *
 	 * @param path
 	 * @param opts
 	 * @param handler
 	 */
-	protected watch<T = unknown>(
+	watch<T = unknown>(
 		path: WatchPath,
-		opts: WatchOptions,
+		opts: AsyncWatchOptions,
 		handler: RawWatchHandler<this, T>
-	): Nullable<Function>;
+	): void;
 
 	/**
+	 * Sets a watcher to a component property by the specified path
 	 *
 	 * @param path
 	 * @param handler
 	 * @param opts
 	 */
-	protected watch<T = unknown>(
+	watch<T = unknown>(
 		path: WatchPath,
 		handler: RawWatchHandler<this, T>,
-		opts?: WatchOptions
-	): Nullable<Function>;
+		opts?: AsyncWatchOptions
+	): void;
 
-	/**
-	 * Sets a watcher to an event or a field
-	 *
-	 * @see Async.worker
-	 * @param exprOrFn
-	 * @param cb
-	 * @param [params] - additional parameters
-	 */
 	@p({replace: false})
 	watch<T = unknown>(
-		exprOrFn: string,
-		cb: (this: this, n: T, o?: T) => void,
-		params?: AsyncWatchOptions
+		path: WatchPath,
+		optsOrHandler: AsyncWatchOptions | RawWatchHandler<this, T>,
+		handlerOrOpts?: RawWatchHandler<this, T> | AsyncWatchOptions
 	): void {
 		if (this.isFlyweight) {
 			return;
 		}
 
-		const
-			p = params || {};
+		let
+			handler,
+			opts;
+
+		if (Object.isFunction(optsOrHandler)) {
+			handler = optsOrHandler;
+			opts = handlerOrOpts || {};
+
+		} else {
+			handler = handlerOrOpts;
+			opts = optsOrHandler || {};
+		}
 
 		this.lfc.execCbAfterComponentCreated(() => {
-			const watcher = this.$watch(exprOrFn, {
-				deep: p.deep,
-				immediate: p.immediate
-			}, cb);
+			const watcher = this.$watch(path, {
+				deep: opts.deep,
+				immediate: opts.immediate
+			}, handler);
 
-			if (p.group || p.label || p.join) {
-				this.async.worker(watcher, {group: p.group, label: p.label, join: p.join});
+			if (watcher && (opts.group || opts.label || opts.join)) {
+				this.async.worker(watcher, {
+					group: opts.group,
+					label: opts.label,
+					join: opts.join
+				});
 			}
 		});
 	}
