@@ -29,6 +29,10 @@ export function createWatchFn(
 		watchCache = Object.createDict();
 
 	return (path, optsOrHandler, rawHandler?) => {
+		if (component.$isFlyweight) {
+			return null;
+		}
+
 		let
 			handler: RawWatchHandler,
 			opts: CanUndef<WatchOptions>;
