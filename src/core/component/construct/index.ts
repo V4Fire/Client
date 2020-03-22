@@ -1,0 +1,203 @@
+/*!
+ * V4Fire Client Core
+ * https://github.com/V4Fire/Client
+ *
+ * Released under the MIT license
+ * https://github.com/V4Fire/Client/blob/master/LICENSE
+ */
+
+/**
+ * [[include:core/component/construct/README.md]]
+ * @packageDocumentation
+ */
+
+import Async from 'core/async';
+import { asyncLabel } from 'core/component/const';
+
+import { initFields } from 'core/component/field';
+import { initAccessors } from 'core/component/accessor';
+
+import { addEventAPI } from 'core/component/event';
+import { bindRemoteWatchers, initComponentWatcher } from 'core/component/watch';
+
+import { runHook } from 'core/component/hook';
+import { resolveRefs } from 'core/component/refs';
+
+import { getNormalParent } from 'core/component/traverse';
+import { forkMeta, callMethodFromComponent } from 'core/component/meta';
+
+import { ComponentInterface, ComponentMeta } from 'core/component/interface';
+
+/**
+ * Initializes "beforeCreate" state to the specified component instance
+ *
+ * @param component - component instance
+ * @param meta - component meta object
+ */
+export function beforeCreateState(component: ComponentInterface, meta: ComponentMeta): void {
+	Object.assign(component, {
+		meta: forkMeta(meta),
+		componentName: meta.componentName,
+		instance: meta.instance,
+
+		$fields: {},
+		$systemFields: {},
+		$refHandlers: {},
+		$modifiedFields: {},
+		$async: new Async(component),
+		$asyncLabel: asyncLabel
+	});
+
+	const
+		parent = component.$parent;
+
+	if (parent && !parent.componentName) {
+		// @ts-ignore (access)
+		// tslint:disable-next-line:no-string-literal
+		component['$parent'] = component.$root.$remoteParent;
+	}
+
+	// @ts-ignore (access)
+	// tslint:disable-next-line:no-string-literal
+	component['$normalParent'] = getNormalParent(component);
+
+	addEventAPI(component);
+	initAccessors(component);
+	runHook('beforeRuntime', component).catch(stderr);
+	initFields(meta.systemFields, component, <any>component);
+
+	for (let keys = Object.keys(meta.systemFields), i = 0; i < keys.length; i++) {
+		const key = keys[i];
+		// @ts-ignore (access)
+		component.$systemFields[key] = component[key];
+	}
+
+	runHook('beforeCreate', component).catch(stderr);
+	callMethodFromComponent(component, 'beforeCreate');
+}
+
+/**
+ * Initializes "beforeDataCreate" state to the specified component instance
+ * @param component
+ */
+export function beforeDataCreateState(component: ComponentInterface): void {
+	const
+		// @ts-ignore (access)
+		{meta, $fields} = component;
+
+	initFields(meta.fields, component, $fields);
+	runHook('beforeDataCreate', component).catch(stderr);
+	initComponentWatcher(component);
+	bindRemoteWatchers(component);
+}
+
+/**
+ * Initializes "created" state to the specified component instance
+ * @param component
+ */
+export function createdState(component: ComponentInterface): void {
+	runHook('created', component).then(() => {
+		callMethodFromComponent(component, 'created');
+	}, stderr);
+}
+
+/**
+ * Initializes "beforeMount" state to the specified component instance
+ * @param component
+ */
+export function beforeMountState(component: ComponentInterface): void {
+	runHook('beforeMount', component).catch(stderr);
+	callMethodFromComponent(component, 'beforeMount');
+}
+
+/**
+ * Initializes "mounted" state to the specified component instance
+ * @param component
+ */
+export function mountedState(component: ComponentInterface): void {
+	component.$el.component = component;
+	runHook('beforeMounted', component).catch(stderr);
+	resolveRefs(component);
+
+	runHook('mounted', component).then(() => {
+		callMethodFromComponent(component, 'mounted');
+	}, stderr);
+}
+
+/**
+ * Initializes "beforeUpdate" state to the specified component instance
+ * @param component
+ */
+export function beforeUpdateState(component: ComponentInterface): void {
+	runHook('beforeUpdate', component).catch(stderr);
+	callMethodFromComponent(component, 'beforeUpdate');
+}
+
+/**
+ * Initializes "updated" state to the specified component instance
+ * @param component
+ */
+export function updatedState(component: ComponentInterface): void {
+	runHook('beforeUpdated', component).catch(stderr);
+	resolveRefs(component);
+	runHook('updated', component).then(() => {
+		callMethodFromComponent(component, 'updated');
+	}, stderr);
+}
+
+/**
+ * Initializes "activated" state to the specified component instance
+ * @param component
+ */
+export function activatedState(component: ComponentInterface): void {
+	runHook('beforeActivated', component).catch(stderr);
+	resolveRefs(component);
+	runHook('activated', component).catch(stderr);
+	callMethodFromComponent(component, 'activated');
+}
+
+/**
+ * Initializes "deactivated" state to the specified component instance
+ * @param component
+ */
+export function deactivatedState(component: ComponentInterface): void {
+	runHook('deactivated', component).catch(stderr);
+	callMethodFromComponent(component, 'deactivated');
+}
+
+/**
+ * Initializes "beforeDestroy" state to the specified component instance
+ * @param component
+ */
+export function beforeDestroyState(component: ComponentInterface): void {
+	const
+		// @ts-ignore (access)
+		{$async} = component;
+
+	runHook('beforeDestroy', component).catch(stderr);
+	callMethodFromComponent(component, 'beforeDestroy');
+	$async.clearAll().locked = true;
+}
+
+/**
+ * Initializes "destroyed" state to the specified component instance
+ * @param component
+ */
+export function destroyedState(component: ComponentInterface): void {
+	runHook('destroyed', component).then(() => {
+		callMethodFromComponent(component, 'destroyed');
+	}, stderr);
+}
+
+/**
+ * Initializes "errorCaptured" state to the specified component instance
+ * @param component
+ */
+export function errorCapturedState(component: ComponentInterface): void {
+	const
+		args = arguments;
+
+	runHook('errorCaptured', component, ...args).then(() => {
+		callMethodFromComponent(component, 'errorCaptured', ...args);
+	}, stderr);
+}

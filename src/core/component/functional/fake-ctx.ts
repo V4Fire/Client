@@ -6,33 +6,19 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import Async from 'core/async';
+import watch from 'core/object/watch';
+import * as init from 'core/component/construct';
 
-import { asyncLabel } from 'core/component/const';
-import { EventEmitter2 as EventEmitter } from 'eventemitter2';
+import { forkMeta, callMethodFromComponent } from 'core/component/meta';
+import { runHook } from 'core/component/hook';
+
+import { CreateElement } from 'core/component/engines';
+import { RenderContext } from 'core/component/render';
 
 import { $$, componentOpts, destroyHooks, destroyCheckHooks } from 'core/component/functional/const';
-import { forkMeta, addMethodsFromMeta } from 'core/component/meta';
-
-import { runHook } from 'core/component/hook';
-import { getNormalParent } from 'core/component/traverse';
-import { initProps } from 'core/component/prop';
-import { initFields } from 'core/component/field';
-import { bindRemoteWatchers } from 'core/component/watch';
-import { addEventAPI } from 'core/component/event';
-
-import {
-
-	CreateElement,
-	WatchOptions,
-	WatchOptionsWithHandler
-
-} from 'core/component/engines';
-
-import { RenderContext } from 'core/component/render';
-import { ComponentInterface, FunctionalCtx, WatchPath, RawWatchHandler } from 'core/component/interface';
-
+import { ComponentInterface, FunctionalCtx } from 'core/component/interface';
 import { CreateFakeCtxOptions } from 'core/component/functional/interface';
+
 export * from 'core/component/functional/interface';
 
 /**
@@ -53,28 +39,22 @@ export function createFakeCtx<T extends object = FunctionalCtx>(
 
 	const
 		fakeCtx = Object.create(baseCtx),
-		meta = forkMeta(fakeCtx.meta);
+		meta = forkMeta(fakeCtx.meta),
+		p = <ComponentInterface>Any(renderCtx.parent);
 
 	const
-		{methods, component} = meta;
-
-	const
-		p = <ComponentInterface>Any(renderCtx.parent),
-		data = {};
-
-	const
-		$w = new EventEmitter({maxListeners: 1e6, newListener: false}),
-		$a = new Async(this);
-
-	const
+		{component} = meta,
 		{children, data: dataOpts} = renderCtx;
 
 	let
 		$options;
 
-	if (p && p.$options) {
-		const
-			{filters = {}, directives = {}, components = {}} = p.$options;
+	if (p?.$options) {
+		const {
+			filters = {},
+			directives = {},
+			components = {}
+		} = p.$options;
 
 		$options = {
 			filters: Object.create(filters),
@@ -103,29 +83,22 @@ export function createFakeCtx<T extends object = FunctionalCtx>(
 
 	// Add base methods and properties
 	Object.assign(fakeCtx, renderCtx.props, {
+		children: children || [],
+
 		_self: fakeCtx,
 		_renderProxy: fakeCtx,
 		_staticTrees: [],
 
-		meta,
-		children: children || [],
+		$createElement: createElement.bind(fakeCtx),
 
 		$parent: p,
 		$root: renderCtx.$root || p && p.$root,
 		$options,
 
-		$async: $a,
-		$asyncLabel: asyncLabel,
-		$createElement: createElement.bind(fakeCtx),
-
-		$data: data,
-		$fields: data,
-		$dataCache: Object.createDict(),
-
 		$props: renderCtx.props || {},
 		$attrs: dataOpts && dataOpts.attrs || {},
-
 		$listeners: renderCtx.listeners || dataOpts && dataOpts.on || {},
+
 		$refs: {},
 		$destroyedHooks: {},
 
@@ -139,11 +112,11 @@ export function createFakeCtx<T extends object = FunctionalCtx>(
 		},
 
 		$destroy(): void {
-			if (fakeCtx.componentStatus === 'destroyed') {
+			if (this.componentStatus === 'destroyed') {
 				return;
 			}
 
-			$a.clearAll().locked = true;
+			this.$async.clearAll().locked = true;
 
 			// We need to clear all handlers that we bound to a parent component of the current
 
@@ -173,7 +146,7 @@ export function createFakeCtx<T extends object = FunctionalCtx>(
 						const
 							el = list[j];
 
-						if (el.fn[$$.self] !== fakeCtx) {
+						if (el.fn[$$.self] !== this) {
 							filteredHooks.push(el);
 
 						} else {
@@ -193,18 +166,16 @@ export function createFakeCtx<T extends object = FunctionalCtx>(
 				const
 					key = o[i];
 
-				runHook(key, fakeCtx).then(() => {
-					const
-						m = methods[key];
-
-					if (m) {
-						return m.fn.call(fakeCtx);
-					}
+				runHook(key, this).then(() => {
+					callMethodFromComponent(this, key);
 				}, stderr);
 			}
 		},
 
 		$nextTick(cb?: () => void): Promise<void> | void {
+			const
+				{$async: $a} = this;
+
 			if (cb) {
 				$a.setImmediate(cb);
 				return;
@@ -218,101 +189,24 @@ export function createFakeCtx<T extends object = FunctionalCtx>(
 				return;
 			}
 
-			$a.setImmediate(() => p.$forceUpdate(), {
+			this.$async.setImmediate(() => p.$forceUpdate(), {
 				label: $$.forceUpdate
 			});
-		},
-
-		$watch(
-			exprOrFn: WatchPath<typeof fakeCtx>,
-			cbOrOpts: RawWatchHandler<typeof fakeCtx, T> | WatchOptionsWithHandler<any>,
-			opts?: WatchOptions
-		): (() => void) {
-			let
-				cb;
-
-			if (Object.isPlainObject(cbOrOpts)) {
-				cb = cbOrOpts.handler;
-				opts = cbOrOpts;
-
-			} else {
-				cb = cbOrOpts;
-			}
-
-			if (Object.isFunction(exprOrFn)) {
-				return () => { /* */ };
-			}
-
-			cb = cb.bind(this);
-			$w.on(exprOrFn, cb);
-
-			if (opts && opts.immediate) {
-				$w.emit(exprOrFn, Object.get(this, exprOrFn));
-			}
-
-			return () => $w.off(exprOrFn, cb);
-		},
-
-		$set(obj: object, key: string, value: any): any {
-			obj[key] = value;
-			return value;
-		},
-
-		$delete(obj: object, key: string): void {
-			delete obj[key];
 		}
 	});
-
-	fakeCtx.$normalParent = getNormalParent(fakeCtx);
-	addEventAPI(fakeCtx);
 
 	if (!fakeCtx.$root) {
 		fakeCtx.$root = fakeCtx;
 	}
 
-	addMethodsFromMeta(meta, fakeCtx, opts?.safe);
-	runHook('beforeRuntime', fakeCtx).catch(stderr);
+	init.beforeCreateState(fakeCtx, meta);
+	init.beforeDataCreateState(fakeCtx);
 
-	initProps(fakeCtx, {store: fakeCtx, saveToStore: opts?.initProps});
-	initFields(meta.systemFields, fakeCtx, fakeCtx);
-
-	runHook('beforeCreate', fakeCtx).then(() => {
-		if (methods.beforeCreate) {
-			return methods.beforeCreate.fn.call(fakeCtx);
-		}
-	}, stderr);
-
-	initFields(meta.fields, fakeCtx, data);
-	runHook('beforeDataCreate', fakeCtx).catch(stderr);
-	bindRemoteWatchers(fakeCtx);
-
-	// Organize support of watching for fields
-	for (let keys = Object.keys(data), i = 0; i < keys.length; i++) {
-		const
-			key = keys[i];
-
-		Object.defineProperty(fakeCtx, key, {
-			enumerable: true,
-			configurable: true,
-
-			get(): any {
-				return data[key];
-			},
-
-			set(val: any): void {
-				fakeCtx.$dataCache[key] = true;
-
-				const
-					old = data[key];
-
-				if (val !== old) {
-					data[key] = val;
-					$w.emit(key, val, old);
-				}
-			}
+	for (let o = [fakeCtx.$systemFields, fakeCtx.$fields], i = 0; i < o.length; i++) {
+		watch(o[i], {deep: true, collapse: true, immediate: true}, (v, o, i) => {
+			fakeCtx.$modifiedFields[String(i.path[0])] = true;
 		});
 	}
 
-	fakeCtx.$fields = fakeCtx;
 	return fakeCtx;
 }

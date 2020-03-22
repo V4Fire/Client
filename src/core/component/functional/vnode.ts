@@ -6,13 +6,13 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { $$, mountHooks, parentMountMap } from 'core/component/functional/const';
+import * as init from 'core/component/construct';
 
-import { runHook } from 'core/component/hook';
 import { patchVNode, VNode } from 'core/component/engines';
-
 import { RenderContext } from 'core/component/render';
 import { FlyweightVNode } from 'core/component/flyweight';
+
+import { $$, mountHooks, parentMountMap } from 'core/component/functional/const';
 import { ComponentInterface } from 'core/component/interface';
 
 /**
@@ -27,12 +27,7 @@ export function initComponentVNode(vnode: VNode, ctx: ComponentInterface, render
 	const flyweightVNode = <FlyweightVNode>vnode;
 	flyweightVNode.fakeContext = ctx;
 
-	const
-		{data} = renderCtx,
-
-		// @ts-ignore (access)
-		{meta: {methods}} = ctx;
-
+	const {data} = renderCtx;
 	patchVNode(flyweightVNode, ctx, renderCtx);
 
 	// Attach component event listeners
@@ -54,11 +49,7 @@ export function initComponentVNode(vnode: VNode, ctx: ComponentInterface, render
 		}
 	}
 
-	runHook('created', ctx).then(() => {
-		if (methods.created) {
-			return methods.created.fn.call(ctx);
-		}
-	}, stderr);
+	init.createdState(ctx);
 
 	const
 		p = ctx.$normalParent;
@@ -198,7 +189,7 @@ export function initComponentVNode(vnode: VNode, ctx: ComponentInterface, render
 
 						if (
 							// @ts-ignore (access)
-							!ctx.$dataCache[key] &&
+							!ctx.$modifiedFields[key] &&
 							(Object.isFunction(field.unique) ? !field.unique(ctx, oldCtx) : !field.unique) &&
 							!Object.fastCompare(val, old) &&
 
@@ -236,13 +227,8 @@ export function initComponentVNode(vnode: VNode, ctx: ComponentInterface, render
 			}
 		}
 
-		el.component = el[$$.component] = ctx;
-
-		runHook('mounted', ctx).then(() => {
-			if (methods.mounted) {
-				return methods.mounted.fn.call(ctx);
-			}
-		}, stderr);
+		el[$$.component] = ctx;
+		init.mountedState(ctx);
 	};
 
 	const deferMount = () => {

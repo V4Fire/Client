@@ -223,9 +223,9 @@ export abstract class ComponentInterface<
 	protected readonly $systemFields!: Dictionary;
 
 	/**
-	 * Cache object for component fields
+	 * Map of modified fields
 	 */
-	protected readonly $dataCache!: Dictionary;
+	protected readonly $modifiedFields!: Dictionary;
 
 	/**
 	 * Name of an active field to initialize

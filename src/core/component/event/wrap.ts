@@ -20,8 +20,8 @@ export function addEventAPI(component: object): void {
 	});
 
 	Object.assign(component, {
-		$emit: $e.emit.bind(this),
-		$once: $e.once.bind(this),
+		$emit: $e.emit.bind($e),
+		$once: $e.once.bind($e),
 
 		$on(e: CanArray<string>, cb: Listener): void {
 			const
