@@ -12,6 +12,7 @@ import * as init from 'core/component/construct';
 import { beforeRenderHooks } from 'core/component/const';
 import { fillMeta } from 'core/component/meta';
 
+import { fakeMapSetCopy } from 'core/component/engines/helpers';
 import { ComponentDriver, ComponentOptions } from 'core/component/engines';
 import { ComponentMeta } from 'core/component/interface';
 
@@ -42,13 +43,22 @@ export function getComponent(meta: ComponentMeta): ComponentOptions<ComponentDri
 			const ctx = <any>this;
 			init.beforeDataCreateState(ctx);
 
-			watch(ctx.$fields, {deep: true, collapse: true}, () => {
-				if (!beforeRenderHooks[ctx.hook]) {
-					this.$forceUpdate();
+			watch(ctx.$fields, {deep: true, collapse: true, immediate: true}, (val, oldVal, info) => {
+				if (
+					info.path.length > 1 &&
+					(Object.isSet(val) || Object.isMap(val) || Object.isWeakMap(val) || Object.isWeakSet(val))
+				) {
+					Object.set(ctx, info.path.slice(0, -1), fakeMapSetCopy(val));
 				}
 			});
 
-			return {};
+			watch(ctx.$fields, {deep: true, collapse: true}, () => {
+				if (!beforeRenderHooks[ctx.hook]) {
+					ctx.$forceUpdate();
+				}
+			});
+
+			return ctx.$fields;
 		},
 
 		beforeCreate(): void {
