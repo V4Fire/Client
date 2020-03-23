@@ -19,20 +19,46 @@ export function cloneWatchValue<T>(value: T, opts?: WatchOptions): T {
 		return value;
 	}
 
+	const
+		isDeep = opts?.deep;
+
+	let
+		needClone = false;
+
 	if (Object.isArray(value)) {
-		if (opts?.deep) {
-			return Object.mixin(true, [], value);
+		if (!isDeep) {
+			return <any>value.slice();
 		}
 
-		return <any>value.slice();
+		needClone = true;
 	}
 
-	if (Object.isSimpleObject(value)) {
-		if (opts?.deep) {
-			return Object.mixin(true, {}, value);
+	if (Object.isDictionary(value)) {
+		if (!isDeep) {
+			return {...value};
 		}
 
-		return {...value};
+		needClone = true;
+	}
+
+	if (Object.isMap(value)) {
+		if (!isDeep) {
+			return <any>new Map(value);
+		}
+
+		needClone = true;
+	}
+
+	if (Object.isSet(value)) {
+		if (!isDeep) {
+			return <any>new Set(value);
+		}
+
+		needClone = true;
+	}
+
+	if (needClone) {
+		return Object.mixin(true, null, value);
 	}
 
 	return value;

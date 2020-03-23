@@ -9,13 +9,8 @@
 export const
 	cacheStatus = Symbol('Cache status'),
 	toWatcher = Symbol('Link to a watcher object'),
-	toComponent = Symbol('Link to a component object');
+	toComponent = Symbol('Link to a component object'),
+	ignoreLabel = Symbol('Ignore label');
 
 export const
 	customWatcherRgxp = /^([!?]?)([^!?:]*):(.*)/;
-
-export const proxyGetters = Object.createDict({
-	prop: (ctx) => ctx.$props,
-	field: (ctx) => ctx.$fields,
-	system: (ctx) => ctx.$systemFields
-});

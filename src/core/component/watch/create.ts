@@ -6,12 +6,13 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import watch from 'core/object/watch';
+import watch, { unwrap, getProxyType, WatchHandlerParams } from 'core/object/watch';
 
 import { getPropertyInfo, PropertyInfo } from 'core/component/reflection';
 import { ComponentInterface, WatchOptions, RawWatchHandler } from 'core/component/interface';
 
-import { proxyGetters } from 'core/component/watch/const';
+import { proxyGetters } from 'core/component/engines';
+import { ignoreLabel } from 'core/component/watch/const';
 import { DynamicHandlers } from 'core/component/watch/interface';
 import { cloneWatchValue } from 'core/component';
 
@@ -48,7 +49,8 @@ export function createWatchFn(
 
 		const
 			info: PropertyInfo = Object.isString(path) ? getPropertyInfo(path, component) : path,
-			getData = proxyGetters[info.type];
+			watchInfo = proxyGetters[info.type]?.(info.ctx),
+			proxy = watchInfo?.value;
 
 		const
 			needCache = handler.length > 1,
@@ -59,7 +61,7 @@ export function createWatchFn(
 
 		const
 			isAccessor = info.type === 'accessor' || info.type === 'computed' || info.accessor,
-			getVal = () => Object.get(info.type === 'field' ? getData(info.ctx) : component, info.originalPath);
+			getVal = () => Object.get(info.type === 'field' ? proxy : component, info.originalPath);
 
 		if (needCache) {
 			oldVal = watchCache[ref] = ref in watchCache ?
@@ -95,20 +97,100 @@ export function createWatchFn(
 			return null;
 		}
 
-		if (getData) {
-			const
-				proxy = getData(info.ctx);
+		const normalizedOpts = {
+			collapse: true,
+			...opts,
+			...watchInfo.opts,
+			immediate: false
+		};
 
-			if (info.type === 'system' && !Object.getOwnPropertyDescriptor(info.ctx, info.name)?.get) {
-				Object.defineProperty(info.ctx, info.name, {
-					enumerable: true,
-					configurable: true,
-					get: () => proxy[info.name],
-					set: (v) => proxy[info.name] = v
-				});
+		if (proxy) {
+			if (info.type === 'system') {
+				if (!Object.getOwnPropertyDescriptor(info.ctx, info.name)?.get) {
+					Object.defineProperty(info.ctx, info.name, {
+						enumerable: true,
+						configurable: true,
+						get: () => proxy[info.name],
+						set: (v) => proxy[info.name] = v
+					});
+				}
+
+			} else if (info.type === 'prop') {
+				const
+					destructors = <Function[]>[];
+
+				const watchHandler = (val, oldVal, info) => {
+					for (let i = destructors.length; --i > 0;) {
+						destructors[i]();
+						destructors.pop();
+					}
+
+					attachDeepProxy(val);
+
+					if (val[ignoreLabel]) {
+						return;
+					}
+
+					handler.call(this, val, oldVal, info);
+				};
+
+				const {unwatch} = watch(proxy, info.path, normalizedOpts, watchHandler);
+				destructors.push(unwatch);
+
+				const
+					pathChunks = info.path.split('.');
+
+				const attachDeepProxy = (proxy) => {
+					const
+						proxyVal = Object.get(unwrap(proxy), info.path);
+
+					if (getProxyType(proxyVal)) {
+						const {unwatch} = watch(<object>proxyVal, normalizedOpts, (...args) => {
+							component.$nextTick(() => {
+								const modInfo = (mutInfo) => {
+									mutInfo = Object.create(mutInfo);
+									mutInfo.path = [...pathChunks, ...mutInfo.path.slice(1)];
+									return mutInfo;
+								};
+
+								if (args.length === 3) {
+									const
+										[val, oldVal, mutInfo] = args;
+
+									if (mutInfo.path.length > 1) {
+										handler.call(this, val, oldVal, modInfo(mutInfo));
+									}
+
+								} else {
+									const
+										values = <[unknown, unknown, WatchHandlerParams][]>args[0];
+
+									for (let i = 0; i < values.length; i++) {
+										const
+											[val, oldVal, mutInfo] = values[i];
+
+										if (mutInfo.path.length > 1) {
+											handler.call(this, val, oldVal, modInfo(mutInfo));
+										}
+									}
+								}
+							});
+						});
+
+						destructors.push(unwatch);
+					}
+				};
+
+				attachDeepProxy(proxy);
+
+				return () => {
+					for (let i = 0; i < destructors.length; i++) {
+						destructors[i]();
+					}
+				};
 			}
 
-			const {unwatch} = watch(getData(info.ctx), info.path, {collapse: true, ...opts, immediate: false}, handler);
+			const {unwatch} = watch(proxy, info.path, normalizedOpts, handler);
 			return unwatch;
 		}
 

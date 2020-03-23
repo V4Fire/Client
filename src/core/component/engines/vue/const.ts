@@ -26,3 +26,21 @@ export const
 		}
 	}
 }
+
+export const proxyGetters = Object.createDict({
+	prop: (ctx) => ({
+		key: '_props',
+		value: ctx._props,
+		opts: {deep: false}
+	}),
+
+	field: (ctx) => ({
+		key: '$fields',
+		value: ctx.$fields
+	}),
+
+	system: (ctx) => ({
+		key: '$systemFields',
+		value: ctx.$systemFields
+	})
+});

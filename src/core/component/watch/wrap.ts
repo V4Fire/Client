@@ -9,8 +9,9 @@
 import watch, { MultipleWatchHandler, Watcher } from 'core/object/watch';
 
 import { getPropertyInfo } from 'core/component/reflection';
-import { cacheStatus, proxyGetters, toWatcher, toComponent } from 'core/component/watch/const';
+import { cacheStatus, toWatcher, toComponent } from 'core/component/watch/const';
 import { createWatchFn } from 'core/component/watch/create';
+import { proxyGetters } from 'core/component/engines';
 
 import { ComponentInterface } from 'core/component/interface';
 
@@ -21,7 +22,7 @@ import { ComponentInterface } from 'core/component/interface';
 export function initComponentWatcher(component: ComponentInterface): void {
 	const
 		// @ts-ignore (access)
-		{meta, $props, $systemFields, $fields} = component;
+		{meta} = component;
 
 	const watchOpts = {
 		deep: true,
@@ -82,15 +83,25 @@ export function initComponentWatcher(component: ComponentInterface): void {
 	};
 
 	const
-		propsWatcher = watch($props, watchOpts, handler),
-		systemFieldsWatcher = watch($systemFields, watchOpts, handler),
-		fieldsWatcher = watch($fields, {tiedWith: component, ...watchOpts}, handler);
+		fields = proxyGetters.field(component),
+		systemFields = proxyGetters.system(component);
 
-	const watchers = <[string, Watcher<object>][]>[
-		['$props', propsWatcher],
-		['$fields', fieldsWatcher],
-		['$systemFields', systemFieldsWatcher]
+	const
+		fieldsWatcher = watch(fields.value, watchOpts, handler),
+		systemFieldsWatcher = watch(systemFields.value, watchOpts, handler);
+
+	const watchers = <[string, Watcher][]>[
+		[fields.key, fieldsWatcher],
+		[systemFields.key, systemFieldsWatcher]
 	];
+
+	if (!meta.params.root) {
+		const
+			props = proxyGetters.prop(component),
+			propsWatcher = watch(props.value, {...watchOpts, ...props.opts}, handler);
+
+		watchers.push([props.key, propsWatcher]);
+	}
 
 	for (let i = 0; i < watchers.length; i++) {
 		const [key, watcher] = watchers[i];
@@ -116,12 +127,20 @@ export function initComponentWatcher(component: ComponentInterface): void {
 		writable: true,
 		value: (path, val) => {
 			const
-				info = getPropertyInfo(path, component),
+				info = getPropertyInfo(path, component);
+
+			if (info.type === 'prop') {
+				return val;
+			}
+
+			const
 				getData = proxyGetters[info.type];
 
 			if (getData) {
-				getData(info.ctx)?.[toWatcher]?.set?.(path, val);
+				getData(info.ctx).value[toWatcher]?.set?.(path, val);
 			}
+
+			return val;
 		}
 	});
 
@@ -131,11 +150,17 @@ export function initComponentWatcher(component: ComponentInterface): void {
 		writable: true,
 		value: (path) => {
 			const
-				info = getPropertyInfo(path, component),
+				info = getPropertyInfo(path, component);
+
+			if (info.type === 'prop') {
+				return;
+			}
+
+			const
 				getData = proxyGetters[info.type];
 
 			if (getData) {
-				getData(info.ctx)?.[toWatcher]?.delete?.(path);
+				getData(info.ctx).value[toWatcher]?.delete?.(path);
 			}
 		}
 	});
