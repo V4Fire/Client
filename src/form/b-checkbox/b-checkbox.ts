@@ -146,9 +146,15 @@ export default class bCheckbox extends iInput implements iSize {
 	}
 
 	/** @override */
+	async clear(): Promise<boolean> {
+		const cleared = await super.clear();
+		return cleared ? this.uncheck() : false;
+	}
+
+	/** @override */
 	async reset(): Promise<boolean> {
 		const cleared = await super.reset();
-		return cleared ? this.uncheck() : false;
+		return cleared ? this[`${this.default ? '' : 'un'}check`]() : false;
 	}
 
 	/**
