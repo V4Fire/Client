@@ -125,9 +125,9 @@ export function createWatchFn(
 						destructors.pop();
 					}
 
-					attachDeepProxy(val);
+					attachDeepProxy();
 
-					if (val[fakeCopyLabel]) {
+					if (val?.[fakeCopyLabel]) {
 						return;
 					}
 
@@ -140,7 +140,7 @@ export function createWatchFn(
 				const
 					pathChunks = info.path.split('.');
 
-				const attachDeepProxy = (proxy) => {
+				const attachDeepProxy = () => {
 					const
 						proxyVal = Object.get(unwrap(proxy), info.path);
 
@@ -157,17 +157,25 @@ export function createWatchFn(
 									const
 										[val, oldVal, mutInfo] = args;
 
+									if (typeof val === 'object' && val?.[fakeCopyLabel]) {
+										return;
+									}
+
 									if (mutInfo.path.length > 1) {
 										handler.call(this, val, oldVal, modInfo(mutInfo));
 									}
 
 								} else {
 									const
-										values = <[unknown, unknown, WatchHandlerParams][]>args[0];
+										mutations = <[unknown, unknown, WatchHandlerParams][]>args[0];
 
-									for (let i = 0; i < values.length; i++) {
+									for (let i = 0; i < mutations.length; i++) {
 										const
-											[val, oldVal, mutInfo] = values[i];
+											[val, oldVal, mutInfo] = mutations[i];
+
+										if (typeof val === 'object' && val?.[fakeCopyLabel]) {
+											continue;
+										}
 
 										if (mutInfo.path.length > 1) {
 											handler.call(this, val, oldVal, modInfo(mutInfo));
@@ -181,7 +189,7 @@ export function createWatchFn(
 					}
 				};
 
-				attachDeepProxy(proxy);
+				attachDeepProxy();
 
 				return () => {
 					for (let i = 0; i < destructors.length; i++) {
