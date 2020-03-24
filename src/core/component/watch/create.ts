@@ -145,7 +145,13 @@ export function createWatchFn(
 						proxyVal = Object.get(unwrap(proxy), info.path);
 
 					if (getProxyType(proxyVal)) {
-						const {unwatch} = watch(<object>proxyVal, normalizedOpts, (...args) => {
+						const normalizedOpts = {
+							collapse: true,
+							...opts,
+							immediate: false
+						};
+
+						const watchHandler = (...args) => {
 							component.$nextTick(() => {
 								const modInfo = (mutInfo) => {
 									mutInfo = Object.create(mutInfo);
@@ -153,7 +159,7 @@ export function createWatchFn(
 									return mutInfo;
 								};
 
-								if (args.length === 3) {
+								if (args.length > 1) {
 									const
 										[val, oldVal, mutInfo] = args;
 
@@ -183,8 +189,9 @@ export function createWatchFn(
 									}
 								}
 							});
-						});
+						};
 
+						const {unwatch} = watch(<object>proxyVal, normalizedOpts, watchHandler);
 						destructors.push(unwatch);
 					}
 				};
