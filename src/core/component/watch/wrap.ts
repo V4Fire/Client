@@ -9,7 +9,7 @@
 import watch, { MultipleWatchHandler, Watcher } from 'core/object/watch';
 
 import { getPropertyInfo } from 'core/component/reflection';
-import { cacheStatus, toWatcher, toComponent } from 'core/component/watch/const';
+import { cacheStatus, toWatcherObject, toComponentObject } from 'core/component/watch/const';
 import { createWatchFn } from 'core/component/watch/create';
 import { proxyGetters } from 'core/component/engines';
 
@@ -55,7 +55,7 @@ export function initComponentWatcher(component: ComponentInterface): void {
 
 				const
 					rootKey = String(info.path[0]),
-					currentDynamicHandlers = dynamicHandlers.get(info.obj[toComponent])?.[rootKey];
+					currentDynamicHandlers = dynamicHandlers.get(info.obj[toComponentObject])?.[rootKey];
 
 				if (currentDynamicHandlers) {
 					for (let o = currentDynamicHandlers.values(), el = o.next(); !el.done; el = o.next()) {
@@ -105,8 +105,8 @@ export function initComponentWatcher(component: ComponentInterface): void {
 
 	for (let i = 0; i < watchers.length; i++) {
 		const [key, watcher] = watchers[i];
-		watcher.proxy[toWatcher] = watcher;
-		watcher.proxy[toComponent] = component;
+		watcher.proxy[toWatcherObject] = watcher;
+		watcher.proxy[toComponentObject] = component;
 		Object.defineProperty(component, key, {
 			enumerable: true,
 			configurable: true,
@@ -137,7 +137,7 @@ export function initComponentWatcher(component: ComponentInterface): void {
 				getData = proxyGetters[info.type];
 
 			if (getData) {
-				getData(info.ctx).value[toWatcher]?.set?.(path, val);
+				getData(info.ctx).value[toWatcherObject]?.set?.(path, val);
 			}
 
 			return val;
@@ -160,7 +160,7 @@ export function initComponentWatcher(component: ComponentInterface): void {
 				getData = proxyGetters[info.type];
 
 			if (getData) {
-				getData(info.ctx).value[toWatcher]?.delete?.(path);
+				getData(info.ctx).value[toWatcherObject]?.delete?.(path);
 			}
 		}
 	});

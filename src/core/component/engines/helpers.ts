@@ -6,10 +6,10 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { ignoreLabel } from 'core/component/watch';
+import { fakeCopyLabel } from 'core/component/watch';
 
 const
-	toOriginal = Symbol('Link to an original object');
+	toNonFakeObject = Symbol('Link to an non fake object');
 
 /**
  * Returns a "fake" copy of the specified (weak)map/(weak)set object
@@ -18,7 +18,7 @@ const
 export function fakeMapSetCopy<
 	T extends Map<unknown, unknown> | WeakMap<object, unknown> | Set<unknown> | WeakSet<object>
 >(obj: T): T {
-	obj = obj[toOriginal] || obj;
+	obj = obj[toNonFakeObject] || obj;
 
 	const
 		Constructor = obj.constructor,
@@ -51,8 +51,13 @@ export function fakeMapSetCopy<
 		}
 	}
 
-	wrap[toOriginal] = obj;
-	wrap[ignoreLabel] = true;
+	for (let symbols = Object.getOwnPropertySymbols(obj), i = 0; i < symbols.length; i++) {
+		const symbol = symbols[i];
+		wrap[symbol] = obj[symbol];
+	}
+
+	wrap[toNonFakeObject] = obj;
+	wrap[fakeCopyLabel] = true;
 
 	return wrap;
 }

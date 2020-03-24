@@ -7,10 +7,12 @@
  */
 
 export const
+	toWatcherObject = Symbol('Link to a watcher object'),
+	toComponentObject = Symbol('Link to a component object');
+
+export const
 	cacheStatus = Symbol('Cache status'),
-	toWatcher = Symbol('Link to a watcher object'),
-	toComponent = Symbol('Link to a component object'),
-	ignoreLabel = Symbol('Ignore label');
+	fakeCopyLabel = Symbol('Fake copy label');
 
 export const
 	customWatcherRgxp = /^([!?]?)([^!?:]*):(.*)/;

@@ -12,7 +12,7 @@ import { getPropertyInfo, PropertyInfo } from 'core/component/reflection';
 import { ComponentInterface, WatchOptions, RawWatchHandler } from 'core/component/interface';
 
 import { proxyGetters } from 'core/component/engines';
-import { ignoreLabel } from 'core/component/watch/const';
+import { fakeCopyLabel } from 'core/component/watch/const';
 import { DynamicHandlers } from 'core/component/watch/interface';
 import { cloneWatchValue } from 'core/component';
 
@@ -127,7 +127,7 @@ export function createWatchFn(
 
 					attachDeepProxy(val);
 
-					if (val[ignoreLabel]) {
+					if (val[fakeCopyLabel]) {
 						return;
 					}
 
