@@ -51,6 +51,9 @@ export function fakeMapSetCopy<
 		}
 	}
 
+	wrap[Symbol.iterator] = obj[Symbol.iterator]?.bind(obj);
+	wrap[Symbol.asyncIterator] = obj[Symbol.asyncIterator]?.bind(obj);
+
 	wrap[toNonFakeObject] = obj;
 	wrap[fakeCopyLabel] = true;
 
