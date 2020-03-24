@@ -51,11 +51,6 @@ export function fakeMapSetCopy<
 		}
 	}
 
-	for (let symbols = Object.getOwnPropertySymbols(obj), i = 0; i < symbols.length; i++) {
-		const symbol = symbols[i];
-		wrap[symbol] = obj[symbol];
-	}
-
 	wrap[toNonFakeObject] = obj;
 	wrap[fakeCopyLabel] = true;
 
