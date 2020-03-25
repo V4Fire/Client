@@ -40,15 +40,40 @@ export function getComponent(meta: ComponentMeta): ComponentOptions<ComponentDri
 		},
 
 		data(): Dictionary {
-			const ctx = <any>this;
+			const
+				ctx = <any>this,
+				{$set} = this;
+
 			init.beforeDataCreateState(ctx);
 
-			watch(ctx.$fields, {deep: true, collapse: true, immediate: true}, (val, oldVal, info) => {
-				if (
-					info.path.length > 1 &&
-					(Object.isSet(val) || Object.isMap(val) || Object.isWeakMap(val) || Object.isWeakSet(val))
-				) {
-					Object.set(ctx, info.path.slice(0, -1), fakeMapSetCopy(val));
+			watch(ctx.$fields, {deep: true, immediate: true}, (val, oldVal, info) => {
+				let
+					{obj} = info;
+
+				if (info.path.length > 1) {
+					if (Object.isDictionary(obj)) {
+						const
+							key = String(info.path[info.path.length - 1]),
+							desc = Object.getOwnPropertyDescriptor(obj, key);
+
+						// If we register a new property, we must register it to Vue too
+						if (!desc?.get) {
+							// For correct registering of a property with Vue,
+							// we need to remove it from a proxy and original object
+							delete obj[key];
+
+							// Get a link to a proxy object
+							obj = Object.get(ctx.$fields, info.path.slice(0, -1));
+							delete obj[key];
+
+							// Finally we can register a Vue watcher
+							$set.call(ctx, obj, key, val);
+						}
+
+					// Because Vue doesn't see changes from Map/Set structures, we must to use this hack
+					} else if (Object.isSet(obj) || Object.isMap(obj) || Object.isWeakMap(obj) || Object.isWeakSet(obj)) {
+						Object.set(ctx, info.path.slice(0, -1), fakeMapSetCopy(obj));
+					}
 				}
 			});
 

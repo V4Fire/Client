@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import watch, { MultipleWatchHandler, Watcher } from 'core/object/watch';
+import watch, { set, unset, watchHandlers, MultipleWatchHandler, Watcher } from 'core/object/watch';
 
 import { getPropertyInfo } from 'core/component/reflection';
 import { cacheStatus, toWatcherObject, toComponentObject } from 'core/component/watch/const';
@@ -125,19 +125,24 @@ export function initComponentWatcher(component: ComponentInterface): void {
 		enumerable: true,
 		configurable: true,
 		writable: true,
-		value: (path, val) => {
-			const
-				info = getPropertyInfo(path, component);
+		value: (obj, path, val) => {
+			if (obj?.instance instanceof ComponentInterface) {
+				const
+					info = getPropertyInfo(path, obj);
 
-			if (info.type === 'prop') {
-				return val;
-			}
+				if (info.type === 'prop') {
+					return val;
+				}
 
-			const
-				getData = proxyGetters[info.type];
+				const
+					getData = proxyGetters[info.type];
 
-			if (getData) {
-				getData(info.ctx).value[toWatcherObject]?.set?.(path, val);
+				if (getData) {
+					getData(info.ctx).value[toWatcherObject]?.set?.(path, val);
+				}
+
+			} else {
+				set(obj, path, val, obj[watchHandlers] || fieldsWatcher.proxy[watchHandlers]);
 			}
 
 			return val;
@@ -148,19 +153,24 @@ export function initComponentWatcher(component: ComponentInterface): void {
 		enumerable: true,
 		configurable: true,
 		writable: true,
-		value: (path) => {
-			const
-				info = getPropertyInfo(path, component);
+		value: (obj, path) => {
+			if (obj?.instance instanceof ComponentInterface) {
+				const
+					info = getPropertyInfo(path, obj);
 
-			if (info.type === 'prop') {
-				return;
-			}
+				if (info.type === 'prop') {
+					return;
+				}
 
-			const
-				getData = proxyGetters[info.type];
+				const
+					getData = proxyGetters[info.type];
 
-			if (getData) {
-				getData(info.ctx).value[toWatcherObject]?.delete?.(path);
+				if (getData) {
+					getData(info.ctx).value[toWatcherObject]?.delete?.(path);
+				}
+
+			} else {
+				unset(obj, path, obj[watchHandlers] || fieldsWatcher.proxy[watchHandlers]);
 			}
 		}
 	});

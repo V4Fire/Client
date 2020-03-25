@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import watch, { unwrap, getProxyType, WatchHandlerParams } from 'core/object/watch';
+import watch, { unwrap, getProxyType } from 'core/object/watch';
 
 import { getPropertyInfo, PropertyInfo } from 'core/component/reflection';
 import { ComponentInterface, WatchOptions, RawWatchHandler } from 'core/component/interface';
@@ -159,34 +159,15 @@ export function createWatchFn(
 									return mutInfo;
 								};
 
-								if (args.length > 1) {
-									const
-										[val, oldVal, mutInfo] = args;
+								if (args.length === 1) {
+									args = args[0][args[0].length - 1];
+								}
 
-									if (typeof val === 'object' && val?.[fakeCopyLabel]) {
-										return;
-									}
+								const
+									[val, oldVal, mutInfo] = args;
 
-									if (mutInfo.path.length > 1) {
-										handler.call(this, val, oldVal, modInfo(mutInfo));
-									}
-
-								} else {
-									const
-										mutations = <[unknown, unknown, WatchHandlerParams][]>args[0];
-
-									for (let i = 0; i < mutations.length; i++) {
-										const
-											[val, oldVal, mutInfo] = mutations[i];
-
-										if (typeof val === 'object' && val?.[fakeCopyLabel]) {
-											continue;
-										}
-
-										if (mutInfo.path.length > 1) {
-											handler.call(this, val, oldVal, modInfo(mutInfo));
-										}
-									}
+								if (mutInfo.path.length > 1) {
+									handler.call(this, val, oldVal, modInfo(mutInfo));
 								}
 							});
 						};
