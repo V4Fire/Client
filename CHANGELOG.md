@@ -11,7 +11,7 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v3.0.0-beta.263 (2020-03-26)
+## v3.0.0-beta.264 (2020-03-26)
 
 #### :rocket: New Feature
 
@@ -20,6 +20,12 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### :house: Internal
 
 * Review `RequestError` export
+
+## v3.0.0-beta.263 (2020-03-18)
+
+#### :rocket: New Feature
+
+* [Added ability to provide an `option` prop as a function into components that implement `iItems` trait](https://github.com/V4Fire/Client/pull/188)
 
 ## v3.0.0-beta.262 (2020-03-11)
 

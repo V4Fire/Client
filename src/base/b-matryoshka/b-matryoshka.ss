@@ -37,7 +37,7 @@
 					- block doll
 						< template v-if = option
 							< component.&__option &
-								:is = option |
+								:is = Object.isFunction(option) ? option(el, i) : option |
 								:v-attrs = getOptionProps(el, i)
 							.
 
