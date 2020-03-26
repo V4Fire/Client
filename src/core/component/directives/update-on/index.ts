@@ -16,6 +16,7 @@ export * from 'core/component/directives/update-on/interface';
  * Update on firing third-party emitters events directive
  *
  * @example
+ * ```
  * < .&__example v-update-on = [{ &
  *  emitter: parentEvent,
  *  event: 'foo',
@@ -25,6 +26,7 @@ export * from 'core/component/directives/update-on/interface';
  *  event: 'bar',
  *  listener: (el, v) => onSampleEvent(el, v, true)
  * }] .
+ * ```
  */
 ComponentDriver.directive('update-on', {
 	inserted(el: HTMLElement, {value}: DirectiveOptions): void {
