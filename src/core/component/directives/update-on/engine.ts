@@ -9,11 +9,10 @@
 import Async from 'core/async';
 import { DirectiveValue } from 'core/component/directives/update-on/interface';
 
-const
-	DATA_ATTRS = {
-		id: 'data-update-on-id',
-		event: 'data-update-on-event-name'
-	};
+const DATA_ATTRS = {
+	id: 'data-update-on-id',
+	event: 'data-update-on-event-name'
+};
 
 const
 	async = new Async();
