@@ -8,7 +8,6 @@
 
 import symbolGenerator from 'core/symbol';
 
-import iIcon from 'traits/i-icon/i-icon';
 import iVisible from 'traits/i-visible/i-visible';
 import iWidth from 'traits/i-width/i-width';
 
@@ -32,7 +31,7 @@ export const
 	}
 })
 
-export default class bList extends iData implements iIcon, iVisible, iWidth {
+export default class bList extends iData implements iVisible, iWidth {
 	/**
 	 * Initial component value
 	 */
@@ -168,11 +167,6 @@ export default class bList extends iData implements iIcon, iVisible, iWidth {
 
 			return undefined;
 		});
-	}
-
-	/** @see iIcon.getIconLink */
-	getIconLink(iconId: string): string {
-		return iIcon.getIconLink(iconId);
 	}
 
 	/**

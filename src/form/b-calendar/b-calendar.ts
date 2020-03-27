@@ -11,7 +11,6 @@ import bInputTime from 'form/b-input-time/b-input-time';
 
 import iWidth from 'traits/i-width/i-width';
 import iSize from 'traits/i-size/i-size';
-import iIcon from 'traits/i-icon/i-icon';
 import iOpenToggle, { CloseHelperEvents } from 'traits/i-open-toggle/i-open-toggle';
 
 import iInput, {
@@ -51,7 +50,7 @@ export const
 	$$ = symbolGenerator();
 
 @component()
-export default class bCalendar extends iInput implements iWidth, iSize, iIcon, iOpenToggle {
+export default class bCalendar extends iInput implements iWidth, iSize, iOpenToggle {
 	/** @override */
 	readonly Value!: Value;
 
@@ -374,11 +373,6 @@ export default class bCalendar extends iInput implements iWidth, iSize, iIcon, i
 	/** @see iOpenToggle.toggle */
 	toggle(): Promise<boolean> {
 		return iOpenToggle.toggle(this);
-	}
-
-	/** @see iIcon.getIconLink */
-	getIconLink(iconId: string): string {
-		return iIcon.getIconLink(iconId);
 	}
 
 	/** @see iOpenToggle.onOpenedChange */

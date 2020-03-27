@@ -10,7 +10,6 @@ import symbolGenerator from 'core/symbol';
 
 import iWidth from 'traits/i-width/i-width';
 import iSize from 'traits/i-size/i-size';
-import iIcon from 'traits/i-icon/i-icon';
 
 import iInput, {
 
@@ -44,7 +43,7 @@ export const
 	}
 })
 
-export default class bInput extends iInput implements iWidth, iSize, iIcon {
+export default class bInput extends iInput implements iWidth, iSize {
 	/** @override */
 	readonly Value!: Value;
 
@@ -317,11 +316,6 @@ export default class bInput extends iInput implements iWidth, iSize, iIcon {
 	 */
 	@system()
 	private _mask?: {value: Array<string | RegExp>; tpl: string};
-
-	/** @see iIcon.getIconLink */
-	getIconLink(iconId: string): string {
-		return iIcon.getIconLink(iconId);
-	}
 
 	/** @override */
 	async clear(): Promise<boolean> {
