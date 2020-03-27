@@ -46,7 +46,6 @@
 	} .
 
 	- htmlAttrs = {}
-	- block htmlAttrs
 
 	- block root
 		- if @@fatHTML
@@ -66,6 +65,8 @@
 
 		- block doctype
 			- doctype
+
+		- block htmlAttrs
 
 		< html ${htmlAttrs}
 			< head

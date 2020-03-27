@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-beta.265 (2020-03-27)
+
+#### :bug: Bug Fix
+
+* Fixed `htmlAttrs` block from `super/i-static-page/i-static-page.interface.ss`
+
 ## v3.0.0-beta.264 (2020-03-26)
 
 #### :rocket: New Feature
