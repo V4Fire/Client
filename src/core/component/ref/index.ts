@@ -7,7 +7,7 @@
  */
 
 /**
- * [[include:core/component/refs/README.md]]
+ * [[include:core/component/ref/README.md]]
  * @packageDocumentation
  */
 
@@ -19,7 +19,7 @@ import { ComponentElement, ComponentInterface } from 'core/component/interface';
  * This function replaces refs from component DOM nodes to component instances.
  * Also, this function fires events of appearance refs.
  *
- * @param component - component instance
+ * @param component
  */
 export function resolveRefs(component: ComponentInterface): void {
 	const

@@ -7,34 +7,7 @@
  */
 
 import { defProp } from 'core/const/props';
-import { ComponentInterface, ComponentMeta } from 'core/component/interface';
-
-/**
- * Invokes a method from the specified component instance
- *
- * @param component
- * @param method - method name
- * @param [args] - method arguments
- */
-export function callMethodFromComponent(component: ComponentInterface, method: string, ...args: unknown[]): void {
-	const
-		// @ts-ignore (access)
-		obj = component.meta.methods[method];
-
-	if (obj) {
-		try {
-			const
-				res = obj.fn.apply(component, args);
-
-			if (res instanceof Promise) {
-				res.catch(stderr);
-			}
-
-		} catch (err) {
-			stderr(err);
-		}
-	}
-}
+import { ComponentMeta } from 'core/component/interface';
 
 /**
  * Iterates over a prototype of a component constructor and adds methods/accessors to the specified meta object
@@ -154,64 +127,6 @@ export function addMethodsToMeta(meta: ComponentMeta, constructor: Function = me
 				get: desc.get || old && old.get,
 				set
 			});
-		}
-	}
-}
-
-/**
- * Adds methods from the specified meta object to a component
- *
- * @param meta
- * @param component
- * @param [safe] - if true, then the function uses safe access to object properties
- *   by using Object.getOwnPropertyDescriptor/defineProperty
- */
-export function addMethodsFromMeta(meta: ComponentMeta, component: ComponentInterface, safe?: boolean): void {
-	const list = [
-		meta.accessors,
-		meta.computedFields,
-		meta.methods
-	];
-
-	const
-		isFlyweight = component.$isFlyweight || meta.params.functional === true;
-
-	for (let i = 0; i < list.length; i++) {
-		const
-			o = list[i];
-
-		for (let keys = Object.keys(o), i = 0; i < keys.length; i++) {
-			const
-				key = keys[i],
-				el = <StrictDictionary<any>>o[key];
-
-			if (isFlyweight && el.functional === false) {
-				continue;
-			}
-
-			const
-				alreadyExists = safe ? Object.getOwnPropertyDescriptor(component, key) : component[key];
-
-			if (alreadyExists && (!isFlyweight || el.replace !== false)) {
-				continue;
-			}
-
-			if ('fn' in el) {
-				if (safe) {
-					Object.defineProperty(component, key, {
-						configurable: true,
-						enumerable: true,
-						writable: true,
-						value: el.fn.bind(component)
-					});
-
-				} else {
-					component[key] = el.fn.bind(component);
-				}
-
-			} else {
-				Object.defineProperty(component, key, el);
-			}
 		}
 	}
 }

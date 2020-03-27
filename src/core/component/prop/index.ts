@@ -20,7 +20,7 @@ export * from 'core/component/prop/interface';
  * Initializes input properties of the specified component instance.
  * The method returns an object with initialized properties.
  *
- * @param component - component instance
+ * @param component
  * @param [opts] - additional options
  */
 export function initProps(

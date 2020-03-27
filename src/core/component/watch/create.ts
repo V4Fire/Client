@@ -19,7 +19,7 @@ import { cloneWatchValue } from 'core/component';
 /**
  * Creates a function to watch changes from the specified component instance and returns it
  *
- * @param component - component instance
+ * @param component
  * @param dynamicHandlers - map of handlers to watch dynamic fields, like accessors and computedFields
  */
 export function createWatchFn(

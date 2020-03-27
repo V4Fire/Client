@@ -14,7 +14,7 @@
 import { runHook } from 'core/component/hook';
 import { beforeMountHooks, mountedHooks } from 'core/component/const';
 
-import { resolveRefs } from 'core/component/refs';
+import { resolveRefs } from 'core/component/ref';
 import { renderData, CreateElement, RenderContext, VNode } from 'core/component/engines';
 import { wrapCreateElement } from 'core/component/render-function/create-element';
 

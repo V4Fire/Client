@@ -9,7 +9,8 @@
 import watch from 'core/object/watch';
 import * as init from 'core/component/construct';
 
-import { forkMeta, callMethodFromComponent } from 'core/component/meta';
+import { forkMeta } from 'core/component/meta';
+import { callMethodFromComponent } from 'core/component/method';
 import { runHook } from 'core/component/hook';
 
 import { CreateElement } from 'core/component/engines';
@@ -199,7 +200,7 @@ export function createFakeCtx<T extends object = FunctionalCtx>(
 		fakeCtx.$root = fakeCtx;
 	}
 
-	init.beforeCreateState(fakeCtx, meta);
+	init.beforeCreateState(fakeCtx, meta, {addMethods: true, safe: opts?.safe});
 	init.beforeDataCreateState(fakeCtx);
 
 	for (let o = [fakeCtx.$systemFields, fakeCtx.$fields], i = 0; i < o.length; i++) {

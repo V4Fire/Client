@@ -23,7 +23,7 @@ import 'core/component/event/providers';
 
 import { ResetType } from 'core/component/event/interface';
 
-export * from 'core/component/event/wrap';
+export * from 'core/component/event/component-api';
 export * from 'core/component/event/interface';
 
 /**

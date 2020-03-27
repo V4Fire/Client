@@ -22,7 +22,7 @@ import { BindRemoteWatchersParams } from 'core/component/watch/interface';
  * Basically, this function takes watchers from a meta property of a component,
  * but you can provide custom watchers to initialize by using the second parameter of the function.
  *
- * @param component - component instance
+ * @param component
  * @param [params] - additional parameters
  */
 export function bindRemoteWatchers(component: ComponentInterface, params?: BindRemoteWatchersParams): void {

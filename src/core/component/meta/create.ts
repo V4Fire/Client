@@ -13,7 +13,7 @@ import { isTypeCanBeFunc } from 'core/component/prop';
 import { wrapRender } from 'core/component/render-function';
 
 import { inherit } from 'core/component/meta/inherit';
-import { addMethodsToMeta } from 'core/component/meta/methods';
+import { addMethodsToMeta } from 'core/component/meta/method';
 
 import {
 

@@ -1,3 +1,3 @@
-# core/component/refs
+# core/component/ref
 
 This module provides API to resolve component refs.

@@ -9,10 +9,10 @@
 import { EventEmitter2 as EventEmitter, Listener } from 'eventemitter2';
 
 /**
- * Adds the base event API to a component instance
- * @param component - component instance
+ * Implements the base event API to a component instance
+ * @param component
  */
-export function addEventAPI(component: object): void {
+export function implementEventAPI(component: object): void {
 	const $e = new EventEmitter({
 		maxListeners: 1e6,
 		newListener: false,

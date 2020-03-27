@@ -13,20 +13,22 @@
 
 import { defProp } from 'core/const/props';
 import { components, NULL } from 'core/component/const';
-import { ComponentInterface } from 'core/component/interface';
 
 import { initProps } from 'core/component/prop';
 import { initFields } from 'core/component/field';
 
-import { addMethodsFromMeta } from 'core/component/meta';
 import { getNormalParent } from 'core/component/traverse';
+import { attachAccessorsFromMeta } from 'core/component/accessor';
+import { attachMethodsFromMeta } from 'core/component/method';
+import { implementEventAPI } from 'core/component/event';
 
 import { supports, CreateElement, VNode } from 'core/component/engines';
 import { getComponentDataFromVNode } from 'core/component/vnode';
 import { execRenderObject } from 'core/component/render';
-import { addEventAPI } from 'core/component/event';
 
+import { ComponentInterface } from 'core/component/interface';
 import { FlyweightVNode } from 'core/component/flyweight/interface';
+
 export * from 'core/component/flyweight/interface';
 
 /**
@@ -76,7 +78,10 @@ export function parseVNode(
 	});
 
 	fakeCtx.$createElement = createElement.bind(fakeCtx);
-	addEventAPI(fakeCtx);
+
+	attachMethodsFromMeta(fakeCtx);
+	implementEventAPI(fakeCtx);
+	attachAccessorsFromMeta(fakeCtx, true);
 
 	Object.defineProperty(fakeCtx, 'componentStatusStore', {
 		configurable: true,
@@ -171,8 +176,6 @@ export function parseVNode(
 			}
 		}
 	}
-
-	addMethodsFromMeta(meta, fakeCtx, true);
 
 	// Initialize values
 	initProps(fakeCtx, {store: fakeCtx, saveToStore: true});

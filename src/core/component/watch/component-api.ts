@@ -9,17 +9,18 @@
 import watch, { set, unset, watchHandlers, MultipleWatchHandler, Watcher } from 'core/object/watch';
 
 import { getPropertyInfo } from 'core/component/reflection';
+import { proxyGetters } from 'core/component/engines';
+
 import { cacheStatus, toWatcherObject, toComponentObject } from 'core/component/watch/const';
 import { createWatchFn } from 'core/component/watch/create';
-import { proxyGetters } from 'core/component/engines';
 
 import { ComponentInterface } from 'core/component/interface';
 
 /**
- * Initializes a watcher of the specified component
+ * Implements the base component watch API to a component instance
  * @param component
  */
-export function initComponentWatcher(component: ComponentInterface): void {
+export function implementComponentWatchAPI(component: ComponentInterface): void {
 	const
 		// @ts-ignore (access)
 		{meta} = component;
@@ -97,10 +98,12 @@ export function initComponentWatcher(component: ComponentInterface): void {
 
 	if (!meta.params.root) {
 		const
-			props = proxyGetters.prop(component),
-			propsWatcher = watch(props.value, {...watchOpts, ...props.opts}, handler);
+			props = proxyGetters.prop(component);
 
-		watchers.push([props.key, propsWatcher]);
+		if (props.value) {
+			const propsWatcher = watch(props.value, {...watchOpts, ...props.opts}, handler);
+			watchers.push([props.key, propsWatcher]);
+		}
 	}
 
 	for (let i = 0; i < watchers.length; i++) {

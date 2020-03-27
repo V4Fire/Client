@@ -15,7 +15,7 @@ import { ComponentInterface } from 'core/component/interface';
 
 /**
  * Returns a link to a "normal" (non-functional and non-flyweight) parent component for the specified component
- * @param component - component instance
+ * @param component
  */
 export function getNormalParent(component: ComponentInterface): CanUndef<ComponentInterface> {
 	let

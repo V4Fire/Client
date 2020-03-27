@@ -15,26 +15,35 @@ import Async from 'core/async';
 import { asyncLabel } from 'core/component/const';
 
 import { initFields } from 'core/component/field';
-import { initAccessors } from 'core/component/accessor';
+import { attachAccessorsFromMeta } from 'core/component/accessor';
+import { attachMethodsFromMeta, callMethodFromComponent } from 'core/component/method';
 
-import { addEventAPI } from 'core/component/event';
-import { bindRemoteWatchers, initComponentWatcher } from 'core/component/watch';
+import { implementEventAPI } from 'core/component/event';
+import { bindRemoteWatchers, implementComponentWatchAPI } from 'core/component/watch';
 
 import { runHook } from 'core/component/hook';
-import { resolveRefs } from 'core/component/refs';
+import { resolveRefs } from 'core/component/ref';
 
 import { getNormalParent } from 'core/component/traverse';
-import { forkMeta, callMethodFromComponent } from 'core/component/meta';
+import { forkMeta } from 'core/component/meta';
 
 import { ComponentInterface, ComponentMeta } from 'core/component/interface';
+import { InitBeforeCreateStateOptions } from 'core/component/construct/interface';
+
+export * from 'core/component/construct/interface';
 
 /**
  * Initializes "beforeCreate" state to the specified component instance
  *
- * @param component - component instance
+ * @param component
  * @param meta - component meta object
+ * @param [opts] - additional options
  */
-export function beforeCreateState(component: ComponentInterface, meta: ComponentMeta): void {
+export function beforeCreateState(
+	component: ComponentInterface,
+	meta: ComponentMeta,
+	opts?: InitBeforeCreateStateOptions
+): void {
 	Object.assign(component, {
 		meta: forkMeta(meta),
 		componentName: meta.componentName,
@@ -61,8 +70,12 @@ export function beforeCreateState(component: ComponentInterface, meta: Component
 	// tslint:disable-next-line:no-string-literal
 	component['$normalParent'] = getNormalParent(component);
 
-	addEventAPI(component);
-	initAccessors(component);
+	if (opts?.addMethods) {
+		attachMethodsFromMeta(component);
+	}
+
+	implementEventAPI(component);
+	attachAccessorsFromMeta(component, opts?.safe);
 	runHook('beforeRuntime', component).catch(stderr);
 	initFields(meta.systemFields, component, <any>component);
 
@@ -87,7 +100,7 @@ export function beforeDataCreateState(component: ComponentInterface): void {
 
 	initFields(meta.fields, component, $fields);
 	runHook('beforeDataCreate', component).catch(stderr);
-	initComponentWatcher(component);
+	implementComponentWatchAPI(component);
 	bindRemoteWatchers(component);
 }
 
