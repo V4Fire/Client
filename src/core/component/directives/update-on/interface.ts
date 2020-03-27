@@ -19,6 +19,7 @@ export interface DirectiveOptions extends VNodeDirective {
 
 export interface DirectiveValue {
 	emitter: EventEmitterLike;
+	once: boolean;
 	event: string;
 	listener: Function;
 }

@@ -29,7 +29,7 @@ export default {
 			elId = Math.random().toString().slice(2);
 
 		el.setAttribute(DATA_ATTRS.id, elId);
-		async.on(params.emitter, params.event, (v) => params.listener(el, v), {label: elId});
+		async[params.once ? 'once' : 'on'](params.emitter, params.event, (v) => params.listener(el, v), {label: elId});
 	},
 
 	/**
