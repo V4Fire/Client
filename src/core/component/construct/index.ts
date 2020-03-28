@@ -74,7 +74,7 @@ export function beforeCreateState(
 		attachMethodsFromMeta(component);
 	}
 
-	implementEventAPI(component);
+	//implementEventAPI(component);
 	attachAccessorsFromMeta(component, opts?.safe);
 	runHook('beforeRuntime', component).catch(stderr);
 	initFields(meta.systemFields, component, <any>component);

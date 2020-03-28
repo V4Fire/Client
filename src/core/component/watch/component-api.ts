@@ -6,12 +6,12 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import watch, { set, unset, watchHandlers, MultipleWatchHandler, Watcher } from 'core/object/watch';
+import watch, { set, unset, watchHandlers, MultipleWatchHandler } from 'core/object/watch';
 
-import { getPropertyInfo } from 'core/component/reflection';
+import { bindingRgxp } from 'core/component/reflection';
 import { proxyGetters } from 'core/component/engines';
 
-import { cacheStatus, toWatcherObject, toComponentObject } from 'core/component/watch/const';
+import { cacheStatus, toComponentObject } from 'core/component/watch/const';
 import { createWatchFn } from 'core/component/watch/create';
 
 import { ComponentInterface } from 'core/component/interface';
@@ -23,14 +23,14 @@ import { ComponentInterface } from 'core/component/interface';
 export function implementComponentWatchAPI(component: ComponentInterface): void {
 	const
 		// @ts-ignore (access)
-		{meta} = component;
+		{meta, meta: {watchDependencies, computedFields, accessors}} = component;
 
 	const watchOpts = {
 		deep: true,
 		withProto: true,
 		collapse: true,
 		postfixes: ['Store', 'Prop'],
-		dependencies: meta.watchDependencies
+		dependencies: watchDependencies
 	};
 
 	const
@@ -40,34 +40,57 @@ export function implementComponentWatchAPI(component: ComponentInterface): void 
 	let
 		timerId;
 
-	const handler: MultipleWatchHandler = (mutations) => {
+	const handler: MultipleWatchHandler = (mutations, ...args) => {
+		if (args.length) {
+			mutations = [<any>[mutations, ...args]];
+		}
+
 		for (let i = 0; i < mutations.length; i++) {
 			const
-				args = mutations[i],
-				info = args[2];
+				eventArgs = mutations[i],
+				info = eventArgs[2];
 
+			const
+				{path} = info;
+
+			if (path[path.length - 1] === '__proto__') {
+				continue;
+			}
+
+			// This mutation can affect on computed fields or accessors
 			if (info.parent) {
 				const
-					nm = String(info.path[0]);
+					{path: parentPath} = info.parent.info;
 
-				if (meta.computedFields[nm]?.get) {
-					delete Object.getOwnPropertyDescriptor(component, nm)?.get?.[cacheStatus];
+				if (parentPath[parentPath.length - 1] === '__proto__') {
+					continue;
 				}
 
 				const
-					rootKey = String(info.path[0]),
-					currentDynamicHandlers = dynamicHandlers.get(info.obj[toComponentObject])?.[rootKey];
+					rootKey = String(path[0]);
+
+				// If was changed there properties that can affect on cached computed fields,
+				// then we need to invalidate these caches
+				if (meta.computedFields[rootKey]?.get) {
+					delete Object.getOwnPropertyDescriptor(component, rootKey)?.get?.[cacheStatus];
+				}
+
+				const
+					ctx = handler[cacheStatus] ? component : info.root[toComponentObject] || component,
+					currentDynamicHandlers = dynamicHandlers.get(ctx)?.[rootKey];
 
 				if (currentDynamicHandlers) {
 					for (let o = currentDynamicHandlers.values(), el = o.next(); !el.done; el = o.next()) {
 						const
 							handler = el.value;
 
+						// Because we register several watchers (props, fields, etc.) at the same time,
+						// we need to control that every dynamic handler must be invoked no more than one time per tick
 						if (usedHandlers.has(handler)) {
 							continue;
 						}
 
-						handler();
+						handler(...eventArgs);
 						usedHandlers.add(handler);
 
 						if (!timerId) {
@@ -91,31 +114,17 @@ export function implementComponentWatchAPI(component: ComponentInterface): void 
 		fieldsWatcher = watch(fields.value, watchOpts, handler),
 		systemFieldsWatcher = watch(systemFields.value, watchOpts, handler);
 
-	const watchers = <[string, Watcher][]>[
-		[fields.key, fieldsWatcher],
-		[systemFields.key, systemFieldsWatcher]
-	];
-
-	if (!meta.params.root) {
-		const
-			props = proxyGetters.prop(component);
-
-		if (props.value) {
-			const propsWatcher = watch(props.value, {...watchOpts, ...props.opts}, handler);
-			watchers.push([props.key, propsWatcher]);
-		}
-	}
-
-	for (let i = 0; i < watchers.length; i++) {
-		const [key, watcher] = watchers[i];
-		watcher.proxy[toWatcherObject] = watcher;
+	const initWatcher = (name, watcher) => {
 		watcher.proxy[toComponentObject] = component;
-		Object.defineProperty(component, key, {
+		Object.defineProperty(component, name, {
 			enumerable: true,
 			configurable: true,
 			value: watcher.proxy
 		});
-	}
+	};
+
+	initWatcher(fields.key, fieldsWatcher);
+	initWatcher(systemFields.key, systemFieldsWatcher);
 
 	Object.defineProperty(component, '$watch', {
 		enumerable: true,
@@ -129,25 +138,7 @@ export function implementComponentWatchAPI(component: ComponentInterface): void 
 		configurable: true,
 		writable: true,
 		value: (obj, path, val) => {
-			if (obj?.instance instanceof ComponentInterface) {
-				const
-					info = getPropertyInfo(path, obj);
-
-				if (info.type === 'prop') {
-					return val;
-				}
-
-				const
-					getData = proxyGetters[info.type];
-
-				if (getData) {
-					getData(info.ctx).value[toWatcherObject]?.set?.(path, val);
-				}
-
-			} else {
-				set(obj, path, val, obj[watchHandlers] || fieldsWatcher.proxy[watchHandlers]);
-			}
-
+			set(obj, path, val, obj[watchHandlers] || fieldsWatcher.proxy[watchHandlers]);
 			return val;
 		}
 	});
@@ -157,24 +148,63 @@ export function implementComponentWatchAPI(component: ComponentInterface): void 
 		configurable: true,
 		writable: true,
 		value: (obj, path) => {
-			if (obj?.instance instanceof ComponentInterface) {
-				const
-					info = getPropertyInfo(path, obj);
-
-				if (info.type === 'prop') {
-					return;
-				}
-
-				const
-					getData = proxyGetters[info.type];
-
-				if (getData) {
-					getData(info.ctx).value[toWatcherObject]?.delete?.(path);
-				}
-
-			} else {
-				unset(obj, path, obj[watchHandlers] || fieldsWatcher.proxy[watchHandlers]);
-			}
+			unset(obj, path, obj[watchHandlers] || fieldsWatcher.proxy[watchHandlers]);
 		}
 	});
+
+	if (!meta.params.root) {
+		const
+			props = proxyGetters.prop(component),
+			propsStore = props.value;
+
+		if (propsStore) {
+			if (!('watch' in props)) {
+				const propsWatcher = watch(propsStore, watchOpts, () => undefined);
+				initWatcher(props!.key, propsWatcher);
+			}
+
+			if (Object.size(computedFields) || Object.size(accessors)) {
+				for (let keys = Object.keys(propsStore), i = 0; i < keys.length; i++) {
+					const
+						prop = keys[i],
+						normalizedKey = prop.replace(bindingRgxp, '');
+
+					let
+						tiedLinks,
+						needWatch = Boolean(computedFields[normalizedKey] || accessors[normalizedKey]);
+
+					if (needWatch) {
+						tiedLinks = [[normalizedKey]];
+					}
+
+					if (!needWatch && watchDependencies.size) {
+						tiedLinks = [];
+
+						for (let o = watchDependencies.entries(), el = o.next(); !el.done; el = o.next()) {
+							const
+								[key, deps] = el.value;
+
+							for (let j = 0; j < deps.length; j++) {
+								const
+									dep = deps[j];
+
+								if ((Object.isArray(dep) ? dep[0] : dep) === prop) {
+									needWatch = true;
+									tiedLinks.push([key]);
+									break;
+								}
+							}
+						}
+					}
+
+					if (needWatch) {
+						handler[cacheStatus] = tiedLinks;
+
+						// @ts-ignore (access)
+						component.$watch(prop, watchOpts, handler);
+					}
+				}
+			}
+		}
+	}
 }

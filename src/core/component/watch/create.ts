@@ -12,7 +12,7 @@ import { getPropertyInfo, PropertyInfo } from 'core/component/reflection';
 import { ComponentInterface, WatchOptions, RawWatchHandler } from 'core/component/interface';
 
 import { proxyGetters } from 'core/component/engines';
-import { fakeCopyLabel } from 'core/component/watch/const';
+import { cacheStatus, fakeCopyLabel } from 'core/component/watch/const';
 import { DynamicHandlers } from 'core/component/watch/interface';
 import { cloneWatchValue } from 'core/component';
 
@@ -49,7 +49,10 @@ export function createWatchFn(
 
 		const
 			info: PropertyInfo = Object.isString(path) ? getPropertyInfo(path, component) : path,
-			watchInfo = proxyGetters[info.type]?.(info.ctx),
+			isAccessor = info.type === 'accessor' || info.type === 'computed' || info.accessor;
+
+		const
+			watchInfo = isAccessor ? null : proxyGetters[info.type]?.(info.ctx),
 			proxy = watchInfo?.value;
 
 		const
@@ -60,7 +63,6 @@ export function createWatchFn(
 			oldVal;
 
 		const
-			isAccessor = info.type === 'accessor' || info.type === 'computed' || info.accessor,
 			getVal = () => Object.get(info.type === 'field' ? proxy : component, info.originalPath);
 
 		if (needCache) {
@@ -81,6 +83,8 @@ export function createWatchFn(
 				return res;
 			};
 
+			handler[cacheStatus] = original[cacheStatus];
+
 			if (opts?.immediate) {
 				handler.call(component, oldVal);
 			}
@@ -97,14 +101,14 @@ export function createWatchFn(
 			return null;
 		}
 
-		const normalizedOpts = {
-			collapse: true,
-			...opts,
-			...watchInfo.opts,
-			immediate: false
-		};
-
 		if (proxy) {
+			const normalizedOpts = {
+				collapse: true,
+				...opts,
+				...watchInfo.opts,
+				immediate: false
+			};
+
 			if (info.type === 'system') {
 				if (!Object.getOwnPropertyDescriptor(info.ctx, info.name)?.get) {
 					Object.defineProperty(info.ctx, info.name, {
@@ -134,7 +138,46 @@ export function createWatchFn(
 					handler.call(this, val, oldVal, info);
 				};
 
-				const {unwatch} = watch(proxy, info.path, normalizedOpts, watchHandler);
+				let
+					unwatch;
+
+				if ('watch' in watchInfo) {
+					const
+						prop = info.path.split('.')[0];
+
+					unwatch = watchInfo.watch(prop, (value, oldValue) => {
+						const info = {
+							obj: component,
+							root: component,
+							path: [prop],
+							originalPath: [prop],
+							top: value,
+							fromProto: false
+						};
+
+						const
+							tiedLinks = handler[cacheStatus];
+
+						if (tiedLinks) {
+							for (let i = 0; i < tiedLinks.length; i++) {
+								const modifiedInfo = {
+									...info,
+									path: tiedLinks[i],
+									parent: {value, oldValue, info}
+								};
+
+								watchHandler(value, oldValue, modifiedInfo);
+							}
+
+						} else {
+							watchHandler(value, oldValue, info);
+						}
+					});
+
+				} else {
+					unwatch = watch(proxy, info.path, normalizedOpts, watchHandler).unwatch;
+				}
+
 				destructors.push(unwatch);
 
 				const
@@ -148,28 +191,21 @@ export function createWatchFn(
 						const normalizedOpts = {
 							collapse: true,
 							...opts,
-							immediate: false
+							immediate: false,
+							pathModifier: (path) => [...pathChunks, ...path.slice(1)]
 						};
 
 						const watchHandler = (...args) => {
-							component.$nextTick(() => {
-								const modInfo = (mutInfo) => {
-									mutInfo = Object.create(mutInfo);
-									mutInfo.path = [...pathChunks, ...mutInfo.path.slice(1)];
-									return mutInfo;
-								};
+							if (args.length === 1) {
+								args = args[0][args[0].length - 1];
+							}
 
-								if (args.length === 1) {
-									args = args[0][args[0].length - 1];
-								}
+							const
+								[val, oldVal, mutInfo] = args;
 
-								const
-									[val, oldVal, mutInfo] = args;
-
-								if (mutInfo.path.length > 1) {
-									handler.call(this, val, oldVal, modInfo(mutInfo));
-								}
-							});
+							if (mutInfo.originalPath.length > 1) {
+								handler.call(this, val, oldVal, mutInfo);
+							}
 						};
 
 						const {unwatch} = watch(<object>proxyVal, normalizedOpts, watchHandler);

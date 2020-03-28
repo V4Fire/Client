@@ -42,7 +42,11 @@ export function getComponent(meta: ComponentMeta): ComponentOptions<ComponentDri
 		data(): Dictionary {
 			const
 				ctx = <any>this,
-				{$set} = this;
+				{$watch, $set, $delete} = this;
+
+			ctx.$vueWatch = $watch;
+			ctx.$vueSet = $set;
+			ctx.$vueDelte = $delete;
 
 			init.beforeDataCreateState(ctx);
 
