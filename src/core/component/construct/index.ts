@@ -12,6 +12,8 @@
  */
 
 import Async from 'core/async';
+
+import { unmute } from 'core/object/watch';
 import { asyncLabel } from 'core/component/const';
 
 import { initFields } from 'core/component/field';
@@ -117,6 +119,10 @@ export function beforeDataCreateState(
  * @param component
  */
 export function createdState(component: ComponentInterface): void {
+	unmute(this.$props);
+	unmute(this.$fields);
+	unmute(this.$systemFields);
+
 	runHook('created', component).then(() => {
 		callMethodFromComponent(component, 'created');
 	}, stderr);

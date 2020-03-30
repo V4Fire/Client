@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import watch, { set, unset, watchHandlers, MultipleWatchHandler } from 'core/object/watch';
+import watch, { set, unset, mute, watchHandlers, MultipleWatchHandler } from 'core/object/watch';
 
 import { bindingRgxp } from 'core/component/reflection';
 import { proxyGetters } from 'core/component/engines';
@@ -133,7 +133,9 @@ export function implementComponentWatchAPI(
 		systemFieldsWatcher = watch(systemFields.value, watchOpts, handler);
 
 	const initWatcher = (name, watcher) => {
+		mute(watcher.proxy);
 		watcher.proxy[toComponentObject] = component;
+
 		Object.defineProperty(component, name, {
 			enumerable: true,
 			configurable: true,
