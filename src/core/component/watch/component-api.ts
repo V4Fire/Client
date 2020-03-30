@@ -29,9 +29,10 @@ export function implementComponentWatchAPI(
 ): void {
 	const
 		// @ts-ignore (access)
-		{meta, meta: {watchDependencies, computedFields, accessors}} = component;
+		{meta, meta: {watchDependencies, computedFields, accessors, params}} = component;
 
 	const
+		isFlyweight = component.$isFlyweight || meta.params.functional === true,
 		dynamicHandlers = new WeakMap<ComponentInterface, Dictionary<Set<Function>>>(),
 		usedHandlers = new Set<Function>();
 
@@ -112,7 +113,7 @@ export function implementComponentWatchAPI(
 		deep: true,
 		withProto: true,
 		collapse: true,
-		postfixes: ['Store', 'Prop'],
+		postfixes: ['Store'],
 		dependencies: watchDependencies
 	};
 
@@ -169,14 +170,19 @@ export function implementComponentWatchAPI(
 		}
 	});
 
-	if (!meta.params.root) {
+	if (!isFlyweight && !params.root)  {
 		const
 			props = proxyGetters.prop(component),
 			propsStore = props.value;
 
 		if (propsStore) {
+			const propWatchOpts = {
+				...watchOpts,
+				postfixes: ['Prop']
+			};
+
 			if (!('watch' in props)) {
-				const propsWatcher = watch(propsStore, watchOpts, () => undefined);
+				const propsWatcher = watch(propsStore, propWatchOpts, () => undefined);
 				initWatcher(props!.key, propsWatcher);
 			}
 
@@ -218,7 +224,7 @@ export function implementComponentWatchAPI(
 						handler[cacheStatus] = tiedLinks;
 
 						// @ts-ignore (access)
-						component.$watch(prop, watchOpts, handler);
+						component.$watch(prop, propWatchOpts, handler);
 					}
 				}
 			}
