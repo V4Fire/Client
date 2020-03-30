@@ -15,6 +15,7 @@ import iData, {
 	prop,
 	field,
 	system,
+	computed,
 	wait,
 	p,
 
@@ -158,7 +159,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	/**
 	 * Link to the form that is associated to the component
 	 */
-	@p({cache: false, replace: false})
+	@p({replace: false})
 	get connectedForm(): CanPromise<CanUndef<HTMLFormElement>> {
 		return this.waitStatus('ready', () =>
 			(this.form ? document.querySelector<HTMLFormElement>(`#${this.form}`) : this.$el.closest('form')) || undefined);
@@ -191,7 +192,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	/**
 	 * Form value of the component
 	 */
-	@p({cache: false, replace: false})
+	@p({replace: false})
 	get formValue(): Promise<this['FormValue']> {
 		return (async () => {
 			await this.nextTick();
@@ -233,7 +234,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	/**
 	 * Grouped form value of the component
 	 */
-	@p({cache: false, replace: false})
+	@p({replace: false})
 	get groupFormValue(): Promise<CanArray<this['FormValue']>> {
 		return (async () => {
 			const
@@ -262,7 +263,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	/**
 	 * List of elements from the current form group
 	 */
-	@p({cache: false, replace: false})
+	@p({replace: false})
 	get groupElements(): CanPromise<ReadonlyArray<iInput>> {
 		const
 			nm = this.name;

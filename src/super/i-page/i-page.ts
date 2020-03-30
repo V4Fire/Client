@@ -11,7 +11,7 @@ import { WrappedCb } from 'core/async';
 
 import iVisible from 'traits/i-visible/i-visible';
 
-import iData, { component, prop, system, watch, hook, p, ModsDecl } from 'super/i-data/i-data';
+import iData, { component, prop, system, watch, hook, ModsDecl } from 'super/i-data/i-data';
 export * from 'super/i-data/i-data';
 
 export type TitleValue<T = unknown> = string | ((ctx: T) => string);
@@ -55,7 +55,6 @@ export default abstract class iPage extends iData implements iVisible {
 	/**
 	 * Page title
 	 */
-	@p({cache: false})
 	get pageTitle(): string {
 		return this.$root.pageTitle;
 	}
@@ -72,7 +71,6 @@ export default abstract class iPage extends iData implements iVisible {
 	/**
 	 * Proxy wrapper for the scrollTo method
 	 */
-	@p({cache: false})
 	get scrollToProxy(): ScrollToFn {
 		return this.scrollToProxyFn();
 	}

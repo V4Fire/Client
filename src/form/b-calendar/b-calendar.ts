@@ -93,7 +93,6 @@ export default class bCalendar extends iInput implements iWidth, iSize, iIcon, i
 	readonly timeMargin: number = (1).second();
 
 	/** @override */
-	@p({cache: false})
 	get value(): this['Value'] {
 		return Object.fastClone(this.field.get<this['Value']>('valueStore')!);
 	}
@@ -146,7 +145,6 @@ export default class bCalendar extends iInput implements iWidth, iSize, iIcon, i
 	/**
 	 * Minimum date value
 	 */
-	@p({cache: false})
 	get min(): CanUndef<Date> {
 		return this.minProp != null ? Date.create(this.minProp) : undefined;
 	}
@@ -154,7 +152,6 @@ export default class bCalendar extends iInput implements iWidth, iSize, iIcon, i
 	/**
 	 * Maximum date value
 	 */
-	@p({cache: false})
 	get max(): CanUndef<Date> {
 		return this.maxProp != null ? Date.create(this.maxProp) : undefined;
 	}
@@ -271,7 +268,6 @@ export default class bCalendar extends iInput implements iWidth, iSize, iIcon, i
 	/**
 	 * Month animation enter class for switching
 	 */
-	@p({cache: false})
 	protected get animateMonthEnterClass(): string {
 		return `animated fadeIn${this.directions[Number(!this.monthSwitchDirection)].capitalize()}`;
 	}
@@ -279,7 +275,6 @@ export default class bCalendar extends iInput implements iWidth, iSize, iIcon, i
 	/**
 	 * Title for a calendar dropdown
 	 */
-	@p({cache: false})
 	protected get dropdownTitle(): string {
 		let
 			title = '';

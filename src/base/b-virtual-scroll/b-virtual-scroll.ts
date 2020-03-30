@@ -17,7 +17,6 @@ import iData, {
 	field,
 	system,
 	wait,
-	p,
 
 	CheckDBEquality,
 	InitLoadParams,
@@ -139,7 +138,6 @@ export default class bVirtualScroll extends iData implements iItems {
 	}
 
 	/** @override */
-	@p({cache: false})
 	protected get requestParams(): RequestParams {
 		return {
 			get: {

@@ -25,7 +25,6 @@ import iData, {
 	field,
 	prop,
 	wait,
-	p,
 
 	ModelMethod,
 	RequestFilter,
@@ -115,7 +114,6 @@ export default class bForm extends iData {
 	/**
 	 * Array of form components
 	 */
-	@p({cache: false})
 	get elements(): CanPromise<ReadonlyArray<iInput>> {
 		const
 			cache = Object.createDict();
@@ -141,7 +139,6 @@ export default class bForm extends iData {
 	/**
 	 * Array of form submit components
 	 */
-	@p({cache: false})
 	get submits(): CanPromise<ReadonlyArray<bButton>> {
 		return this.waitStatus('ready', () => {
 			const list = Array.from(this.$el.querySelectorAll('button[type="submit"]')).concat(

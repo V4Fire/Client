@@ -7,7 +7,7 @@
  */
 
 import symbolGenerator from 'core/symbol';
-import bInput, { component, prop, field, watch, p } from 'form/b-input/b-input';
+import bInput, { component, prop, field, watch } from 'form/b-input/b-input';
 export * from 'form/b-input/b-input';
 
 export const
@@ -57,7 +57,6 @@ export default class bInputTime extends bInput {
 	/**
 	 * Minimum date value
 	 */
-	@p({cache: false})
 	get min(): CanUndef<Date> {
 		return this.minProp != null ? Date.create(this.minProp) : undefined;
 	}
@@ -65,7 +64,6 @@ export default class bInputTime extends bInput {
 	/**
 	 * Maximum date value
 	 */
-	@p({cache: false})
 	get max(): CanUndef<Date> {
 		return this.maxProp != null ? Date.create(this.maxProp) : undefined;
 	}

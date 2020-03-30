@@ -13,7 +13,6 @@ import bInput, {
 	component,
 	prop,
 	system,
-	p,
 	hook,
 	wait,
 	watch,
@@ -48,7 +47,6 @@ export default class bTextarea extends bInput {
 	/**
 	 * Textarea height
 	 */
-	@p({cache: false})
 	get height(): CanPromise<number> {
 		return this.waitStatus('ready', () => {
 			const
@@ -66,7 +64,6 @@ export default class bTextarea extends bInput {
 	/**
 	 * Maximum component height
 	 */
-	@p({cache: false})
 	get maxHeight(): CanPromise<number> {
 		return this.waitStatus('ready', () => {
 			const s = getComputedStyle(this.$refs.superWrapper);

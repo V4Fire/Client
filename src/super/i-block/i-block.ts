@@ -92,6 +92,7 @@ import {
 
 	globalEvent,
 	hook,
+	computed,
 
 	WatchPath,
 	RawWatchHandler,
@@ -403,7 +404,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	 *   *) destroyed - component was destroyed:
 	 *      its can intersects with some hooks like beforeDestroy or destroyed
 	 */
-	@p({cache: false, replace: false})
+	@p({replace: false})
 	get componentStatus(): Statuses {
 		return this.shadowComponentStatusStore || this.field.get<Statuses>('componentStatusStore')!;
 	}
@@ -445,7 +446,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	 * Component stage value
 	 * @see stageProp
 	 */
-	@p({cache: false, replace: false})
+	@p({replace: false})
 	get stage(): CanUndef<Stage> {
 		return this.field.get('stageStore');
 	}
@@ -524,7 +525,6 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	/**
 	 * Link to the application router
 	 */
-	@p({cache: false})
 	get router(): bRouter {
 		return <bRouter>this.field.get('routerStore', this.$root);
 	}
@@ -532,7 +532,6 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	/**
 	 * Link to the application route object
 	 */
-	@p({cache: false})
 	get route(): CanUndef<this['$root']['CurrentPage']> {
 		return this.field.get('route', this.$root);
 	}
@@ -541,7 +540,12 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	 * True if the current component is ready
 	 * (componentStatus == ready)
 	 */
-	@p({cache: false, replace: false})
+	@computed({
+		cache: true,
+		dependencies: ['componentStatus'],
+		replace: false
+	})
+
 	get isReady(): boolean {
 		return Boolean(readyStatuses[this.componentStatus]);
 	}
@@ -569,7 +573,12 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	 * and you passes to the outer component some theme modifier.
 	 * This modifier will recursively provided to all children components.
 	 */
-	@p({replace: false})
+	@computed({
+		cache: true,
+		dependencies: ['mods'],
+		replace: false
+	})
+
 	get baseMods(): CanUndef<Readonly<ModsNTable>> {
 		const
 			m = this.mods;
@@ -678,7 +687,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	/**
 	 * API to unsafe invoke of internal properties of the component
 	 */
-	@p({cache: false})
+	@p({replace: true})
 	get unsafe(): Unsafe<this> & this {
 		return <any>this;
 	}
@@ -833,7 +842,12 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	/**
 	 * Watched component modifiers
 	 */
-	@p({replace: false})
+	@computed({
+		cache: true,
+		dependencies: ['mods'],
+		replace: false
+	})
+
 	protected get m(): Readonly<ModsNTable> {
 		return getWatchableMods(this);
 	}
@@ -841,7 +855,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	/**
 	 * Cache of ifOnce
 	 */
-	@field({merge: true, replace: false})
+	@system({merge: true, replace: false})
 	protected readonly ifOnceStore: Dictionary = {};
 
 	/**

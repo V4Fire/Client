@@ -198,7 +198,7 @@ export default abstract class iData extends iBlock implements iProgress {
 	/**
 	 * Request parameters
 	 */
-	@field({merge: true})
+	@system({merge: true})
 	protected readonly requestParams: RequestParams = {get: {}};
 
 	/**

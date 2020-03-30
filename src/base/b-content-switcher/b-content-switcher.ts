@@ -19,7 +19,6 @@ import iBlock, {
 	hook,
 	watch,
 	wait,
-	p,
 
 	ModsDecl,
 	ComponentElement
@@ -124,7 +123,6 @@ export default class bContentSwitcher extends iBlock implements iObserveDOM {
 	/**
 	 * Link to a content node
 	 */
-	@p({cache: false})
 	get content(): CanPromise<HTMLElement> {
 		return this.waitStatus('loading', () => {
 			const {$refs: {content}} = this;
@@ -135,7 +133,6 @@ export default class bContentSwitcher extends iBlock implements iObserveDOM {
 	/**
 	 * Number of DOM nodes within a content block
 	 */
-	@p({cache: false})
 	get contentLength(): number {
 		return this.contentLengthStore;
 	}
@@ -194,7 +191,6 @@ export default class bContentSwitcher extends iBlock implements iObserveDOM {
 	/**
 	 * True if possible to display a content block
 	 */
-	@p({cache: false})
 	protected get isReadyToSwitch(): boolean {
 		return this.is.readyToSwitchStore;
 	}

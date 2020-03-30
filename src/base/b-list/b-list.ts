@@ -12,7 +12,7 @@ import iIcon from 'traits/i-icon/i-icon';
 import iVisible from 'traits/i-visible/i-visible';
 import iWidth from 'traits/i-width/i-width';
 
-import iData, { component, prop, field, system, hook, watch, p, ModsDecl } from 'super/i-data/i-data';
+import iData, { component, prop, field, system, computed, hook, watch, ModsDecl } from 'super/i-data/i-data';
 import { Option } from 'base/b-list/modules/interface';
 
 export * from 'super/i-data/i-data';
@@ -84,7 +84,6 @@ export default class bList extends iData implements iIcon, iVisible, iWidth {
 	/**
 	 * Component active value
 	 */
-	@p({cache: false})
 	get active(): unknown {
 		const v = this.field.get('activeStore');
 		return this.multiple ? Object.keys(<object>v) : v;
@@ -154,7 +153,11 @@ export default class bList extends iData implements iIcon, iVisible, iWidth {
 	/**
 	 * Returns link to the active element
 	 */
-	@p({cache: true})
+	@computed({
+		cache: true,
+		dependencies: ['active']
+	})
+
 	protected get activeElement(): CanPromise<CanUndef<HTMLAnchorElement>> {
 		return this.waitStatus('ready', () => {
 			const

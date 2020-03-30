@@ -15,7 +15,7 @@ import symbolGenerator from 'core/symbol';
 
 import { concatUrls, toQueryString } from 'core/url';
 import { Router, BasePageMeta, PageSchema, CurrentPage, HistoryClearFilter } from 'core/router/interface';
-import iData, { component, prop, system, hook, watch, p } from 'super/i-data/i-data';
+import iData, { component, prop, system, hook, watch } from 'super/i-data/i-data';
 
 export * from 'super/i-data/i-data';
 export * from 'core/router/interface';
@@ -198,7 +198,6 @@ export default class bRouter extends iData {
 	/**
 	 * Current page
 	 */
-	@p({cache: false})
 	get page(): CanUndef<CurrentPage> {
 		return this.field.get('pageStore');
 	}
@@ -652,7 +651,7 @@ export default class bRouter extends iData {
 		if (meta.paramsFromQuery !== false) {
 			const
 				paramsFromRoot = meta.paramsFromRoot !== false,
-				rootState = r.syncRouterState(undefined, 'remoteCheck');
+				rootState = r.unsafe.syncRouterState(undefined, 'remoteCheck');
 
 			for (let o = meta.params, i = 0; i < o.length; i++) {
 				const
@@ -676,8 +675,8 @@ export default class bRouter extends iData {
 
 			if (paramsFromRoot) {
 				const
-					rootField = r.meta.fields,
-					rootSystemFields = r.meta.systemFields;
+					rootField = r.unsafe.meta.fields,
+					rootSystemFields = r.unsafe.meta.systemFields;
 
 				for (let keys = Object.keys(rootState), i = 0; i < keys.length; i++) {
 					const
