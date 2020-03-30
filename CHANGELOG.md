@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-beta.266 (2020-03-30)
+
+#### :bug: Bug Fix
+
+* Fixed `onClick` without data provider `form/b-button`
+
 ## v3.0.0-beta.265 (2020-03-27)
 
 #### :bug: Bug Fix
