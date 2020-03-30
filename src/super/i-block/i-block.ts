@@ -931,6 +931,18 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	protected blockReadyListeners: Function[] = [];
 
 	/**
+	 * Self event emitter
+	 */
+	@system({
+		atom: true,
+		after: 'async',
+		unique: true,
+		replace: true,
+		init: (o, d) => eventFactory(<Async>d.async, {on: o.on, off: o.off, emit: o.emit})
+	})
+	protected readonly selfEvent!: Event<this>;
+
+	/**
 	 * Local event emitter
 	 */
 	@system({
