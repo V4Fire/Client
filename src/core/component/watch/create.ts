@@ -63,6 +63,7 @@ export function createWatchFn(
 			oldVal;
 
 		const
+			originalHandler = handler,
 			getVal = () => Object.get(info.type === 'field' ? proxy : component, info.originalPath);
 
 		if (needCache) {
@@ -70,27 +71,33 @@ export function createWatchFn(
 				watchCache[ref] :
 				opts?.immediate || !isAccessor ? cloneWatchValue(getVal(), opts) : undefined;
 
-			const
-				original = handler;
-
 			handler = (val, _, ...args) => {
 				if (isAccessor) {
 					val = Object.get(component, info.originalPath);
 				}
 
-				const res = original.call(this, val, oldVal, ...args);
+				const res = originalHandler.call(this, val, oldVal, ...args);
 				oldVal = watchCache[ref] = cloneWatchValue(val, opts);
 				return res;
 			};
 
-			handler[cacheStatus] = original[cacheStatus];
+			handler[cacheStatus] = originalHandler[cacheStatus];
 
 			if (opts?.immediate) {
 				handler.call(component, oldVal);
 			}
 
-		} else if (opts?.immediate) {
-			handler.call(component, getVal());
+		} else {
+			if (isAccessor) {
+				handler = (val, oldVal, ...args) => {
+					val = Object.get(component, info.originalPath);
+					return originalHandler.call(this, val, oldVal, ...args);
+				};
+			}
+
+			if (opts?.immediate) {
+				handler.call(component, getVal());
+			}
 		}
 
 		if (info && info.type === 'prop' && (
