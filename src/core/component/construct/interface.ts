@@ -8,5 +8,10 @@
 
 export interface InitBeforeCreateStateOptions {
 	addMethods?: boolean;
+	implementEventAPI?: boolean;
 	safe?: boolean;
+}
+
+export interface InitBeforeDataCreateStateOptions {
+	tieFields?: boolean;
 }

@@ -28,7 +28,7 @@ import { getNormalParent } from 'core/component/traverse';
 import { forkMeta } from 'core/component/meta';
 
 import { ComponentInterface, ComponentMeta } from 'core/component/interface';
-import { InitBeforeCreateStateOptions } from 'core/component/construct/interface';
+import { InitBeforeCreateStateOptions, InitBeforeDataCreateStateOptions } from 'core/component/construct/interface';
 
 export * from 'core/component/construct/interface';
 
@@ -74,7 +74,10 @@ export function beforeCreateState(
 		attachMethodsFromMeta(component);
 	}
 
-	//implementEventAPI(component);
+	if (opts?.implementEventAPI) {
+		implementEventAPI(component);
+	}
+
 	attachAccessorsFromMeta(component, opts?.safe);
 	runHook('beforeRuntime', component).catch(stderr);
 	initFields(meta.systemFields, component, <any>component);
@@ -91,16 +94,21 @@ export function beforeCreateState(
 
 /**
  * Initializes "beforeDataCreate" state to the specified component instance
+ *
  * @param component
+ * @param [opts] - additional options
  */
-export function beforeDataCreateState(component: ComponentInterface): void {
+export function beforeDataCreateState(
+	component: ComponentInterface,
+	opts?: InitBeforeDataCreateStateOptions
+): void {
 	const
 		// @ts-ignore (access)
 		{meta, $fields} = component;
 
 	initFields(meta.fields, component, $fields);
 	runHook('beforeDataCreate', component).catch(stderr);
-	implementComponentWatchAPI(component);
+	implementComponentWatchAPI(component, {tieFields: opts?.tieFields});
 	bindRemoteWatchers(component);
 }
 

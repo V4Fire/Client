@@ -15,23 +15,21 @@ import { cacheStatus, toComponentObject } from 'core/component/watch/const';
 import { createWatchFn } from 'core/component/watch/create';
 
 import { ComponentInterface } from 'core/component/interface';
+import { ImplementComponentWatchAPIOptions } from 'core/component/watch/interface';
 
 /**
  * Implements the base component watch API to a component instance
+ *
  * @param component
+ * @param [opts] - additional options
  */
-export function implementComponentWatchAPI(component: ComponentInterface): void {
+export function implementComponentWatchAPI(
+	component: ComponentInterface,
+	opts?: ImplementComponentWatchAPIOptions
+): void {
 	const
 		// @ts-ignore (access)
 		{meta, meta: {watchDependencies, computedFields, accessors}} = component;
-
-	const watchOpts = {
-		deep: true,
-		withProto: true,
-		collapse: true,
-		postfixes: ['Store', 'Prop'],
-		dependencies: watchDependencies
-	};
 
 	const
 		dynamicHandlers = new WeakMap<ComponentInterface, Dictionary<Set<Function>>>(),
@@ -110,8 +108,27 @@ export function implementComponentWatchAPI(component: ComponentInterface): void 
 		fields = proxyGetters.field(component),
 		systemFields = proxyGetters.system(component);
 
+	const watchOpts = {
+		deep: true,
+		withProto: true,
+		collapse: true,
+		postfixes: ['Store', 'Prop'],
+		dependencies: watchDependencies
+	};
+
+	let
+		fieldWatchOpts;
+
+	// tslint:disable-next-line:prefer-conditional-expression
+	if (opts?.tieFields) {
+		fieldWatchOpts = {...watchOpts, tiedWith: component};
+
+	} else {
+		fieldWatchOpts = watchOpts;
+	}
+
 	const
-		fieldsWatcher = watch(fields.value, watchOpts, handler),
+		fieldsWatcher = watch(fields.value, fieldWatchOpts, handler),
 		systemFieldsWatcher = watch(systemFields.value, watchOpts, handler);
 
 	const initWatcher = (name, watcher) => {

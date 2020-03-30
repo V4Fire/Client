@@ -200,8 +200,13 @@ export function createFakeCtx<T extends object = FunctionalCtx>(
 		fakeCtx.$root = fakeCtx;
 	}
 
-	init.beforeCreateState(fakeCtx, meta, {addMethods: true, safe: opts?.safe});
-	init.beforeDataCreateState(fakeCtx);
+	init.beforeCreateState(fakeCtx, meta, {
+		addMethods: true,
+		implementEventAPI: true,
+		safe: opts?.safe
+	});
+
+	init.beforeDataCreateState(fakeCtx, {tieFields: true});
 
 	for (let o = [fakeCtx.$systemFields, fakeCtx.$fields], i = 0; i < o.length; i++) {
 		watch(o[i], {deep: true, collapse: true, immediate: true}, (v, o, i) => {

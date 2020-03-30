@@ -30,3 +30,7 @@ export interface BindRemoteWatchersParams<A extends object = ComponentInterface>
 	 */
 	info?: PropertyInfo;
 }
+
+export interface ImplementComponentWatchAPIOptions {
+	tieFields?: boolean;
+}
