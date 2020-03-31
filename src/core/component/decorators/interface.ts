@@ -75,7 +75,7 @@ export interface DecoratorFunctionalOptions {
 }
 
 export interface DecoratorComponentAccessor extends DecoratorFunctionalOptions {
-	cache: boolean;
+	cache?: boolean;
 	dependencies?: WatchPath[];
 }
 

@@ -15,6 +15,7 @@ export interface CreateFakeCtxOptions {
 	/**
 	 * If true, then the function uses safe access to object properties
 	 * by using Object.getOwnPropertyDescriptor/defineProperty
+	 *
 	 * @default `false`
 	 */
 	safe?: boolean;
