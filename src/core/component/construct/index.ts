@@ -82,12 +82,23 @@ export function beforeCreateState(
 
 	attachAccessorsFromMeta(component, opts?.safe);
 	runHook('beforeRuntime', component).catch(stderr);
+
+	// @ts-ignore (access)
+	const {$systemFields} = component;
 	initFields(meta.systemFields, component, <any>component);
 
+	// Tie system fields with a component
 	for (let keys = Object.keys(meta.systemFields), i = 0; i < keys.length; i++) {
-		const key = keys[i];
-		// @ts-ignore (access)
-		component.$systemFields[key] = component[key];
+		const
+			key = keys[i];
+
+		$systemFields[key] = component[key];
+		Object.defineProperty(component, key, {
+			enumerable: true,
+			configurable: true,
+			get: () => $systemFields[key],
+			set: (v) => $systemFields[key] = v
+		});
 	}
 
 	runHook('beforeCreate', component).catch(stderr);
@@ -119,9 +130,11 @@ export function beforeDataCreateState(
  * @param component
  */
 export function createdState(component: ComponentInterface): void {
-	unmute(this.$props);
-	unmute(this.$fields);
-	unmute(this.$systemFields);
+	// @ts-ignore (access)
+	unmute(component.$fields);
+
+	// @ts-ignore (access)
+	unmute(component.$systemFields);
 
 	runHook('created', component).then(() => {
 		callMethodFromComponent(component, 'created');

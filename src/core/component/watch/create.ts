@@ -116,17 +116,7 @@ export function createWatchFn(
 				immediate: false
 			};
 
-			if (info.type === 'system') {
-				if (!Object.getOwnPropertyDescriptor(info.ctx, info.name)?.get) {
-					Object.defineProperty(info.ctx, info.name, {
-						enumerable: true,
-						configurable: true,
-						get: () => proxy[info.name],
-						set: (v) => proxy[info.name] = v
-					});
-				}
-
-			} else if (info.type === 'prop') {
+			if (info.type === 'prop') {
 				const
 					destructors = <Function[]>[];
 
