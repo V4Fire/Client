@@ -10,6 +10,7 @@ import watch from 'core/object/watch';
 import * as init from 'core/component/construct';
 
 import { forkMeta } from 'core/component/meta';
+import { initProps } from 'core/component/prop';
 import { callMethodFromComponent } from 'core/component/method';
 import { runHook } from 'core/component/hook';
 
@@ -199,6 +200,11 @@ export function createFakeCtx<T extends object = FunctionalCtx>(
 	if (!fakeCtx.$root) {
 		fakeCtx.$root = fakeCtx;
 	}
+
+	initProps(fakeCtx, {
+		store: fakeCtx,
+		saveToStore: opts?.initProps
+	});
 
 	init.beforeCreateState(fakeCtx, meta, {
 		addMethods: true,
