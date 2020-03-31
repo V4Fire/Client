@@ -6,13 +6,6 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-export const beforeMountHooks = Object.createDict({
-	beforeCreate: true,
-	beforeDataCreate: true,
-	created: true,
-	beforeMount: true
-});
-
 export const mountedHooks = Object.createDict({
 	mounted: true,
 	updated: true,
@@ -25,10 +18,13 @@ export const beforeHooks = Object.createDict({
 	beforeDataCreate: true
 });
 
-export const beforeRenderHooks = Object.createDict({
-	beforeCreate: true,
-	beforeDataCreate: true,
+export const beforeMountHooks = Object.createDict({
+	...beforeHooks,
 	created: true,
-	beforeMount: true,
+	beforeMount: true
+});
+
+export const beforeRenderHooks = Object.createDict({
+	...beforeMountHooks,
 	beforeUpdate: true
 });
