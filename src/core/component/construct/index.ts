@@ -21,7 +21,7 @@ import { attachAccessorsFromMeta } from 'core/component/accessor';
 import { attachMethodsFromMeta, callMethodFromComponent } from 'core/component/method';
 
 import { implementEventAPI } from 'core/component/event';
-import {bindRemoteWatchers, implementComponentWatchAPI, watcherInitializer} from 'core/component/watch';
+import { watcherInitializer, bindRemoteWatchers, implementComponentWatchAPI } from 'core/component/watch';
 
 import { runHook } from 'core/component/hook';
 import { resolveRefs } from 'core/component/ref';
@@ -99,13 +99,13 @@ export function beforeCreateState(
 		}
 	}
 
+	// @ts-ignore (access)
+	const {$systemFields} = component;
+
 	// Tie system fields with a component
 	for (let keys = Object.keys(meta.systemFields), i = 0; i < keys.length; i++) {
-		const
-			key = keys[i];
-
-		// @ts-ignore (access)
-		component.$systemFields[key] = component[key];
+		const key = keys[i];
+		(<object>$systemFields)[watcherInitializer]?.();
 
 		if (watchMap?.[key]) {
 			Object.defineProperty(component, key, {
