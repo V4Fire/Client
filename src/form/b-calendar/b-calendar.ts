@@ -331,10 +331,9 @@ export default class bCalendar extends iInput implements iWidth, iSize, iIcon, i
 
 	/** @see iOpenToggle.open */
 	async open(): Promise<boolean> {
-		const
-			res = await iOpenToggle.open(this);
+		this.shown = true;
 
-		if (res) {
+		if (await iOpenToggle.open(this)) {
 			try {
 				const
 					dropdown = await this.waitRef<HTMLElement>('dropdown', {label: $$.openedDropdown}),
@@ -347,23 +346,18 @@ export default class bCalendar extends iInput implements iWidth, iSize, iIcon, i
 					this.position = 'bottom-left';
 				}
 
-				this.shown = true;
 			} catch {}
+
+			return true;
 		}
 
-		return res;
+		return false;
 	}
 
 	/** @see iOpenToggle.close */
 	async close(): Promise<boolean> {
-		const
-			res = await iOpenToggle.close(this);
-
-		if (res) {
-			this.shown = false;
-		}
-
-		return res;
+		this.shown = false;
+		return iOpenToggle.close(this);
 	}
 
 	/** @see iOpenToggle.toggle */
