@@ -88,8 +88,9 @@ export interface Unsafe<CTX extends iBlock = iBlock> {
 	$props: iBlock['$props'];
 	$attrs: iBlock['$attrs'];
 
-	$data: iBlock['$data'];
 	$fields: iBlock['$fields'];
+	$systemFields: iBlock['$fields'];
+
 	$options: iBlock['$options'];
 	$syncLinkCache: iBlock['$syncLinkCache'];
 
