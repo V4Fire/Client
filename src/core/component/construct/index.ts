@@ -84,6 +84,21 @@ export function beforeCreateState(
 	runHook('beforeRuntime', component).catch(stderr);
 	initFields(meta.systemFields, component, <any>component);
 
+	const
+		{watchDependencies} = meta;
+
+	let
+		watchMap;
+
+	if (watchDependencies.size) {
+		watchMap = Object.createDict();
+
+		for (let o = watchDependencies.values(), el = o.next(); !el.done; el = o.next()) {
+			const val = el.value;
+			watchMap[<string>(Object.isArray(val) ? val[0] : val)] = true;
+		}
+	}
+
 	// Tie system fields with a component
 	for (let keys = Object.keys(meta.systemFields), i = 0; i < keys.length; i++) {
 		const
@@ -92,16 +107,18 @@ export function beforeCreateState(
 		// @ts-ignore (access)
 		component.$systemFields[key] = component[key];
 
-		Object.defineProperty(component, key, {
-			enumerable: true,
-			configurable: true,
+		if (watchMap?.[key]) {
+			Object.defineProperty(component, key, {
+				enumerable: true,
+				configurable: true,
 
-			// @ts-ignore (access)
-			get: () => component.$systemFields[key],
+				// @ts-ignore (access)
+				get: () => component.$systemFields[key],
 
-			// @ts-ignore (access)
-			set: (v) => component.$systemFields[key] = v
-		});
+				// @ts-ignore (access)
+				set: (v) => component.$systemFields[key] = v
+			});
+		}
 	}
 
 	runHook('beforeCreate', component).catch(stderr);

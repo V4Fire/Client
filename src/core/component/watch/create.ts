@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import watch, { unwrap, getProxyType } from 'core/object/watch';
+import watch, { mute, unmute, unwrap, getProxyType } from 'core/object/watch';
 
 import { getPropertyInfo, PropertyInfo } from 'core/component/reflection';
 import { ComponentInterface, WatchOptions, RawWatchHandler } from 'core/component/interface';
@@ -116,7 +116,21 @@ export function createWatchFn(
 				immediate: false
 			};
 
-			if (info.type === 'prop') {
+			if (info.type === 'system') {
+				if (!Object.getOwnPropertyDescriptor(info.ctx, info.name)?.get) {
+					mute(proxy);
+					proxy[info.name] = info.ctx[info.name];
+					unmute(proxy);
+
+					Object.defineProperty(info.ctx, info.name, {
+						enumerable: true,
+						configurable: true,
+						get: () => proxy[info.name],
+						set: (v) => proxy[info.name] = v
+					});
+				}
+
+			} else if (info.type === 'prop') {
 				const
 					destructors = <Function[]>[];
 
