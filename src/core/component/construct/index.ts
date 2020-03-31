@@ -82,9 +82,6 @@ export function beforeCreateState(
 
 	attachAccessorsFromMeta(component, opts?.safe);
 	runHook('beforeRuntime', component).catch(stderr);
-
-	// @ts-ignore (access)
-	const {$systemFields} = component;
 	initFields(meta.systemFields, component, <any>component);
 
 	// Tie system fields with a component
@@ -92,12 +89,18 @@ export function beforeCreateState(
 		const
 			key = keys[i];
 
-		$systemFields[key] = component[key];
+		// @ts-ignore (access)
+		component.$systemFields[key] = component[key];
+
 		Object.defineProperty(component, key, {
 			enumerable: true,
 			configurable: true,
-			get: () => $systemFields[key],
-			set: (v) => $systemFields[key] = v
+
+			// @ts-ignore (access)
+			get: () => component.$systemFields[key],
+
+			// @ts-ignore (access)
+			set: (v) => component.$systemFields[key] = v
 		});
 	}
 
