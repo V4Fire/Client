@@ -287,7 +287,7 @@ export default class Block {
 				c.mods[name] = <string>value;
 
 				if (name in watchModsStore && watchModsStore[name] !== value) {
-					delete watchModsStore[name];
+					delete Object.getPrototypeOf(watchModsStore)[name];
 					c.field.set(`watchModsStore.${name}`, value);
 				}
 
@@ -341,7 +341,7 @@ export default class Block {
 				c.mods[name] = undefined;
 
 				if (name in watchModsStore && watchModsStore[name]) {
-					delete watchModsStore[name];
+					delete Object.getPrototypeOf(watchModsStore)[name];
 					c.field.set(`watchModsStore.${name}`, undefined);
 				}
 

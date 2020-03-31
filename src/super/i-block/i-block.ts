@@ -836,8 +836,13 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	/**
 	 * Watched store of component modifiers
 	 */
-	@field({merge: true, replace: false})
-	protected watchModsStore: ModsNTable = {};
+	@field({
+		merge: true,
+		replace: false,
+		init: () => Object.create({})
+	})
+
+	protected watchModsStore!: ModsNTable;
 
 	/**
 	 * Watched component modifiers
