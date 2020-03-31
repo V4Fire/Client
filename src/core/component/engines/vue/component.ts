@@ -51,6 +51,12 @@ export function getComponent(meta: ComponentMeta): ComponentOptions<ComponentDri
 			init.beforeDataCreateState(ctx);
 
 			watch(ctx.$fields, {deep: true, immediate: true}, (val, oldVal, info) => {
+				if (beforeRenderHooks[ctx.hook]) {
+					return;
+				}
+
+				ctx.$forceUpdate();
+
 				let
 					{obj} = info;
 
@@ -78,12 +84,6 @@ export function getComponent(meta: ComponentMeta): ComponentOptions<ComponentDri
 					} else if (Object.isSet(obj) || Object.isMap(obj) || Object.isWeakMap(obj) || Object.isWeakSet(obj)) {
 						Object.set(ctx, info.path.slice(0, -1), fakeMapSetCopy(obj));
 					}
-				}
-			});
-
-			watch(ctx.$fields, {deep: true, collapse: true}, () => {
-				if (!beforeRenderHooks[ctx.hook]) {
-					ctx.$forceUpdate();
 				}
 			});
 
