@@ -194,17 +194,19 @@ export function getWatchableMods<T extends iBlock>(component: T): Readonly<ModsN
 
 	for (let keys = Object.keys(m), i = 0; i < keys.length; i++) {
 		const
-			key = keys[i],
-			val = m[key];
+			key = keys[i];
 
 		if (key in w) {
-			o[key] = val;
+			o[key] = m[key];
 
 		} else {
 			Object.defineProperty(o, key, {
 				configurable: true,
 				enumerable: true,
 				get: () => {
+					const
+						val = m[key];
+
 					if (!(key in w)) {
 						w[key] = val;
 					}

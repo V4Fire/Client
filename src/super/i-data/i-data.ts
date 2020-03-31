@@ -572,11 +572,6 @@ export default abstract class iData extends iBlock implements iProgress {
 	 * @param [value]
 	 * @param [oldValue]
 	 */
-	@watch([
-		{field: 'request', deep: true},
-		{field: 'requestParams', deep: true}
-	])
-
 	protected syncRequestParamsWatcher<T = unknown>(
 		value?: RequestParams<T>,
 		oldValue?: RequestParams<T>
@@ -643,6 +638,14 @@ export default abstract class iData extends iBlock implements iProgress {
 
 				throw new Error(`Provider "${provider}" is not defined`);
 			}
+
+			const watchParams = {
+				deep: true,
+				group: 'requestSync'
+			};
+
+			this.watch('request', watchParams, this.syncRequestParamsWatcher);
+			this.watch('requestParams', watchParams, this.syncRequestParamsWatcher);
 
 			this.dp = new ProviderConstructor(this.dataProviderOptions);
 			this.initDataListeners();

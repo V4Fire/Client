@@ -21,7 +21,7 @@ import { attachAccessorsFromMeta } from 'core/component/accessor';
 import { attachMethodsFromMeta, callMethodFromComponent } from 'core/component/method';
 
 import { implementEventAPI } from 'core/component/event';
-import { bindRemoteWatchers, implementComponentWatchAPI } from 'core/component/watch';
+import {bindRemoteWatchers, implementComponentWatchAPI, watcherInitializer} from 'core/component/watch';
 
 import { runHook } from 'core/component/hook';
 import { resolveRefs } from 'core/component/ref';

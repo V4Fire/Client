@@ -573,12 +573,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	 * and you passes to the outer component some theme modifier.
 	 * This modifier will recursively provided to all children components.
 	 */
-	@computed({
-		cache: true,
-		dependencies: ['mods'],
-		replace: false
-	})
-
+	@computed({cache: true, replace: false})
 	get baseMods(): CanUndef<Readonly<ModsNTable>> {
 		const
 			m = this.mods;
@@ -847,12 +842,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	/**
 	 * Watched component modifiers
 	 */
-	@computed({
-		cache: true,
-		dependencies: ['mods'],
-		replace: false
-	})
-
+	@computed({cache: true, replace: false})
 	protected get m(): Readonly<ModsNTable> {
 		return getWatchableMods(this);
 	}
@@ -1057,13 +1047,9 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	/**
 	 * Alias for .i18n
 	 */
-	@system({
-		atom: true,
-		after: 'sync',
-		init: (o, d) => (<Sync>d.sync).link('i18n')
-	})
-
-	protected readonly t!: typeof i18n;
+	protected get t(): this['i18n'] {
+		return this.i18n;
+	}
 
 	/**
 	 * Link to window.l

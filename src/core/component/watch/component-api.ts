@@ -11,7 +11,7 @@ import watch, { set, unset, mute, watchHandlers, MultipleWatchHandler } from 'co
 import { bindingRgxp } from 'core/component/reflection';
 import { proxyGetters } from 'core/component/engines';
 
-import { cacheStatus, toComponentObject } from 'core/component/watch/const';
+import { cacheStatus, watcherInitializer, toComponentObject } from 'core/component/watch/const';
 import { createWatchFn } from 'core/component/watch/create';
 
 import { ComponentInterface } from 'core/component/interface';
@@ -129,8 +129,13 @@ export function implementComponentWatchAPI(
 	}
 
 	const
-		fieldsWatcher = watch(fields.value, fieldWatchOpts, handler),
-		systemFieldsWatcher = watch(systemFields.value, watchOpts, handler);
+		fieldsWatcher = watch(fields.value, fieldWatchOpts, handler);
+
+	systemFields.value[watcherInitializer] = () => {
+		delete systemFields.value[watcherInitializer];
+		const systemFieldsWatcher = watch(systemFields.value, watchOpts, handler);
+		initWatcher(systemFields.key, systemFieldsWatcher);
+	};
 
 	const initWatcher = (name, watcher) => {
 		mute(watcher.proxy);
@@ -144,7 +149,6 @@ export function implementComponentWatchAPI(
 	};
 
 	initWatcher(fields.key, fieldsWatcher);
-	initWatcher(systemFields.key, systemFieldsWatcher);
 
 	Object.defineProperty(component, '$watch', {
 		enumerable: true,

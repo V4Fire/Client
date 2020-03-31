@@ -7,6 +7,7 @@
  */
 
 export const
+	watcherInitializer = Symbol('Watcher initializer'),
 	toComponentObject = Symbol('Link to a component object');
 
 export const

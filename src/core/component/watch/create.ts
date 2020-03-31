@@ -12,7 +12,7 @@ import { getPropertyInfo, PropertyInfo } from 'core/component/reflection';
 import { ComponentInterface, WatchOptions, RawWatchHandler } from 'core/component/interface';
 
 import { proxyGetters } from 'core/component/engines';
-import { cacheStatus, fakeCopyLabel } from 'core/component/watch/const';
+import { cacheStatus, fakeCopyLabel, watcherInitializer } from 'core/component/watch/const';
 import { DynamicHandlers } from 'core/component/watch/interface';
 import { cloneWatchValue } from 'core/component';
 
@@ -118,6 +118,7 @@ export function createWatchFn(
 
 			if (info.type === 'system') {
 				if (!Object.getOwnPropertyDescriptor(info.ctx, info.name)?.get) {
+					proxy[watcherInitializer]?.();
 					mute(proxy);
 					proxy[info.name] = info.ctx[info.name];
 					unmute(proxy);
