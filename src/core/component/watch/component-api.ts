@@ -128,19 +128,10 @@ export function implementComponentWatchAPI(
 		fieldWatchOpts = watchOpts;
 	}
 
-	const
-		fieldsWatcher = watch(fields.value, fieldWatchOpts, handler);
-
-	systemFields.value[watcherInitializer] = () => {
-		delete systemFields.value[watcherInitializer];
-		const systemFieldsWatcher = watch(systemFields.value, watchOpts, handler);
-		initWatcher(systemFields.key, systemFieldsWatcher);
-	};
-
+	// Initializes the specified watcher on a component instance
 	const initWatcher = (name, watcher) => {
 		mute(watcher.proxy);
 		watcher.proxy[toComponentObject] = component;
-
 		Object.defineProperty(component, name, {
 			enumerable: true,
 			configurable: true,
@@ -148,7 +139,18 @@ export function implementComponentWatchAPI(
 		});
 	};
 
+	// Watcher of fields
+	const fieldsWatcher = watch(fields.value, fieldWatchOpts, handler);
 	initWatcher(fields.key, fieldsWatcher);
+
+	// Don't force watching of system fields until it becomes necessary
+	systemFields.value[watcherInitializer] = () => {
+		delete systemFields.value[watcherInitializer];
+		const systemFieldsWatcher = watch(systemFields.value, watchOpts, handler);
+		initWatcher(systemFields.key, systemFieldsWatcher);
+	};
+
+	// Register the base watch API methods
 
 	Object.defineProperty(component, '$watch', {
 		enumerable: true,
@@ -176,22 +178,29 @@ export function implementComponentWatchAPI(
 		}
 	});
 
+	// Watching of component props.
+	// The root component and flyweight/component components can't watch props.
 	if (!isFlyweight && !params.root)  {
 		const
 			props = proxyGetters.prop(component),
 			propsStore = props.value;
 
+		// We need to attach a watcher for a prop object
+		// and watchers for each non primitive value of that object, like arrays or maps.
 		if (propsStore) {
 			const propWatchOpts = {
 				...watchOpts,
 				postfixes: ['Prop']
 			};
 
+			// If a component engine doesn't have the own mechanism of watching
+			// we need to wrap a prop object
 			if (!('watch' in props)) {
 				const propsWatcher = watch(propsStore, propWatchOpts, () => undefined);
 				initWatcher(props!.key, propsWatcher);
 			}
 
+			// We need to attach default watchers for all props that can affect on component computed fields
 			if (Object.size(computedFields) || Object.size(accessors)) {
 				for (let keys = Object.keys(propsStore), i = 0; i < keys.length; i++) {
 					const
@@ -226,6 +235,7 @@ export function implementComponentWatchAPI(
 						}
 					}
 
+					// Skip redundant watchers
 					if (needWatch) {
 						handler[cacheStatus] = tiedLinks;
 
