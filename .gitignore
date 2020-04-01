@@ -41,6 +41,7 @@ Icon
 /bower_components
 /node_modules
 /.yalc
+/yalc.lock
 
 # Build && test
 /coverage
