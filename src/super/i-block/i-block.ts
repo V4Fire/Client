@@ -6,6 +6,11 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+/**
+ * [[include:super/i-block/README.md]]
+ * @packageDocumentation
+ */
+
 // tslint:disable:max-file-line-count
 
 import symbolGenerator from 'core/symbol';
@@ -70,7 +75,7 @@ import {
 	InitLoadParams,
 	Unsafe
 
-} from 'super/i-block/modules/interface';
+} from 'super/i-block/interface';
 
 import {
 
@@ -117,7 +122,7 @@ import {
 } from 'super/i-block/modules/decorators';
 
 export * from 'core/component';
-export * from 'super/i-block/modules/interface';
+export * from 'super/i-block/interface';
 export * from 'super/i-block/modules/const';
 
 export * from 'super/i-block/modules/block';
@@ -179,7 +184,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 
 	/**
 	 * Component render cache key.
-	 * It used for hard caching of a component vnode.
+	 * It is used to hard cache a component vnode.
 	 */
 	@prop({required: false})
 	readonly renderKey?: string;
