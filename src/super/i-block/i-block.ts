@@ -940,7 +940,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 		replace: true,
 		init: (o, d) => eventFactory(<Async>d.async, {on: o.on, off: o.off, emit: o.emit})
 	})
-	protected readonly selfEvent!: Event<this>;
+	protected readonly selfEmitter!: Event<this>;
 
 	/**
 	 * Local event emitter
