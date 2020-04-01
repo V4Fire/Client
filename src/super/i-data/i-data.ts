@@ -22,23 +22,7 @@ import Provider, {
 	RequestBody,
 	RequestResponseObject,
 	ModelMethod,
-	ProviderOptions,
-	ExtraProviders
-
-} from 'core/data';
-
-export {
-
-	Socket,
-	RequestError,
-	RequestQuery,
-	RequestBody,
-	RequestResponseObject,
-	Response,
-	ModelMethod,
-	ProviderOptions,
-	ExtraProvider,
-	ExtraProviders
+	ProviderOptions
 
 } from 'core/data';
 
@@ -71,6 +55,26 @@ import {
 	CheckDBEquality
 
 } from 'super/i-data/modules/interface';
+
+export { RequestError };
+
+//#if runtime has core/data
+
+export {
+
+	Socket,
+	RequestQuery,
+	RequestBody,
+	RequestResponseObject,
+	Response,
+	ModelMethod,
+	ProviderOptions,
+	ExtraProvider,
+	ExtraProviders
+
+} from 'core/data';
+
+//#endif
 
 export * from 'super/i-block/i-block';
 export * from 'super/i-data/modules/interface';

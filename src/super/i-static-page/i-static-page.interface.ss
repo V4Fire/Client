@@ -45,6 +45,8 @@
 		'user-scalable': 'no'
 	} .
 
+	- htmlAttrs = {}
+
 	- block root
 		- if @@fatHTML
 			- forEach @@dependencies => el, key
@@ -64,7 +66,9 @@
 		- block doctype
 			- doctype
 
-		< html
+		- block htmlAttrs
+
+		< html ${htmlAttrs}
 			< head
 				: base = @@publicPath()
 

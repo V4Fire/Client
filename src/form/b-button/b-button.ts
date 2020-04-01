@@ -236,7 +236,10 @@ export default class bButton extends iData implements iAccess, iOpenToggle, iIco
 	 */
 	protected async onClick(e: Event): Promise<void> {
 		if (this.type !== 'link') {
-			if (this.dataProvider !== 'Provider' || this.href) {
+			const
+				dp = this.dataProvider;
+
+			if (dp != null && (dp !== 'Provider' || this.href)) {
 				if (this.href) {
 					this.base(this.href);
 				}

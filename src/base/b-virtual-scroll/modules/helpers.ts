@@ -43,7 +43,8 @@ export function getRequestParams(
 		currentPage: scrollRequestCtx.page,
 		lastLoadedData: lastLoadedData || [],
 		isLastEmpty: scrollRequestCtx.isLastEmpty,
-		itemsTillBottom: scrollRenderCtx.items.length - scrollRenderCtx.lastIntersectsItem
+		itemsTillBottom: scrollRenderCtx.items.length - scrollRenderCtx.lastIntersectsItem,
+		total: component && component.total
 	} : base;
 
 	const merged = {

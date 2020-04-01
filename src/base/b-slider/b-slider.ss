@@ -28,7 +28,7 @@
 				.
 
 					< component.&__option &
-						:is = option |
+						:is = Object.isFunction(option) ? option(el, i) : option |
 						:v-attrs = Object.isFunction(optionProps) ? optionProps(el, i, {
 							key: getOptionKey(el, i),
 							ctx: self
