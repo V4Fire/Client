@@ -63,6 +63,11 @@ export default class Friend<C extends iBlock = iBlock> {
 		return this.component.localEvent;
 	}
 
+	/** @see [[iBlock.lazy]] */
+	protected get lazy(): this['C']['lazy'] {
+		return this.component.lazy;
+	}
+
 	constructor(component: C) {
 		this.component = component.unsafe;
 	}
