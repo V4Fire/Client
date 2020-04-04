@@ -26,7 +26,7 @@ export * from 'super/i-block/modules/dom/interface';
 export default class DOM<C extends iBlock = iBlock> extends Friend<C> {
 	/**
 	 * Takes a string identifier and returns a new identifier that is connected to the component.
-	 * This method should use to generate id attributes for a DOM node.
+	 * This method should use to generate id attributes for DOM nodes.
 	 *
 	 * @param id
 	 *
@@ -76,7 +76,7 @@ export default class DOM<C extends iBlock = iBlock> extends Friend<C> {
 
 	/**
 	 * Puts the specified element to a render stream.
-	 * This methods forces the render of an element.
+	 * This methods forces the render of the element.
 	 *
 	 * @param cb
 	 * @param [el] - link to a DOM element or a component element name
@@ -130,13 +130,17 @@ export default class DOM<C extends iBlock = iBlock> extends Friend<C> {
 	}
 
 	/**
-	 * Appends a child node to the specified parent
+	 * Appends a child node to the specified parent.
+	 * The method returns a link to an Async worker that wraps the operation.
 	 *
 	 * @param parent - element name or a link to the parent node
 	 * @param newNode
 	 * @param [group] - operation group
 	 */
-	appendChild(parent: string | Element | DocumentFragment, newNode: Element, group?: string): Function | false {
+	appendChild(
+		parent: string | Element | DocumentFragment,
+		newNode: Element, group?: string
+	): Function | false {
 		const
 			parentNode = Object.isString(parent) ? this.block.element(parent) : parent;
 
@@ -152,12 +156,12 @@ export default class DOM<C extends iBlock = iBlock> extends Friend<C> {
 
 		return this.component.async.worker(() => {
 			newNode.remove();
-
 		}, {group: group || 'asyncComponents'});
 	}
 
 	/**
-	 * Replaces a component element with the specified node
+	 * Replaces a component element with the specified node.
+	 * The method returns a link to an Async worker that wraps the operation.
 	 *
 	 * @param el - element name or a link to a node
 	 * @param newNode
@@ -180,12 +184,11 @@ export default class DOM<C extends iBlock = iBlock> extends Friend<C> {
 			if (newNode.parentNode) {
 				newNode.parentNode.removeChild(newNode);
 			}
-
 		}, {group: group || 'asyncComponents'});
 	}
 
 	/**
-	 * Returns an instance of a component by the specified element
+	 * Returns an instance of a component from the specified element
 	 *
 	 * @param el
 	 * @param [filter]
@@ -193,18 +196,18 @@ export default class DOM<C extends iBlock = iBlock> extends Friend<C> {
 	getComponent<T extends iBlock>(el: ComponentElement<T>, filter?: string): T;
 
 	/**
-	 * Returns an instance of a component by the specified query
+	 * Returns an instance of a component by the specified CSS selector
 	 *
-	 * @param query
+	 * @param selector
 	 * @param [filter]
 	 */
-	getComponent<T extends iBlock>(query: string, filter?: string): CanUndef<T>;
+	getComponent<T extends iBlock>(selector: string, filter?: string): CanUndef<T>;
 	getComponent<T extends iBlock>(query: string | ComponentElement<T>, filter: string = ''): CanUndef<T> {
 		const
 			q = Object.isString(query) ? document.body.querySelector<ComponentElement<T>>(query) : query;
 
 		if (q) {
-			if (q.component && (q.component.instance instanceof iBlock)) {
+			if (q.component?.instance instanceof iBlock) {
 				return q.component;
 			}
 
@@ -225,7 +228,7 @@ export default class DOM<C extends iBlock = iBlock> extends Friend<C> {
 	 * @param node
 	 * @param [component]
 	 */
-	createBlockCtxFromNode(node: Element, component?: this['C']): Dictionary {
+	createBlockCtxFromNode<T extends iBlock>(node: Element, component?: T): Dictionary {
 		const
 			$el = <ComponentElement<this['C']>>node,
 			comp = component || $el.component;
