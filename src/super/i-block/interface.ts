@@ -8,7 +8,7 @@
 
 import Async, { AsyncOptions } from 'core/async';
 import iBlock from 'super/i-block/i-block';
-import { statuses } from 'super/i-block/modules/const';
+import { statuses } from 'super/i-block/const';
 
 export type Statuses =
 	'destroyed' |

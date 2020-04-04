@@ -6,28 +6,25 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import iBlock from 'super/i-block/i-block';
+/**
+ * [[include:super/i-block/modules/field/README.md]]
+ * @packageDocumentation
+ */
+
 import { getPropertyInfo } from 'core/component';
 
-export interface FieldGetter<R = unknown, D = unknown> {
-	(key: string, data: NonNullable<D>): R;
-}
+import iBlock from 'super/i-block/i-block';
+import Friend from 'super/i-block/modules/friend';
 
-export default class Field {
-	/**
-	 * Component instance
-	 */
-	protected readonly component: iBlock['unsafe'];
+import { FieldGetter } from 'super/i-block/modules/field/interface';
+export * from 'super/i-block/modules/field/interface';
 
+/**
+ * Class that provides helper methods to safety access to a component property
+ */
+export default class Field<C extends iBlock = iBlock> extends Friend<C> {
 	/**
-	 * @param component - component instance
-	 */
-	constructor(component: iBlock) {
-		this.component = component.unsafe;
-	}
-
-	/**
-	 * Returns a property from the specified object
+	 * Returns a property from a component by the specified path
 	 *
 	 * @param path - path to the property (bla.baz.foo)
 	 * @param [getter] - field getter
@@ -35,6 +32,8 @@ export default class Field {
 	get<T = unknown>(path: string, getter?: FieldGetter): CanUndef<T>;
 
 	/**
+	 * Returns a property from an object by the specified path
+	 *
 	 * @param path - path to the property (bla.baz.foo)
 	 * @param [obj]
 	 * @param [getter] - field getter
@@ -55,7 +54,7 @@ export default class Field {
 		}
 
 		let
-			ctx = this.component,
+			ctx = <iBlock['unsafe']>this.component,
 			isComponent = false;
 
 		if ((<Dictionary>obj).instance instanceof iBlock) {
@@ -72,8 +71,7 @@ export default class Field {
 				info = getPropertyInfo(path, ctx),
 				isReady = !ctx.lfc.isBeforeCreate();
 
-			// @ts-ignore
-			ctx = res = info.ctx;
+			ctx = res = <any>info.ctx;
 			chunks = info.path.split('.');
 
 			if (info.accessor && (
@@ -108,7 +106,7 @@ export default class Field {
 	}
 
 	/**
-	 * Sets a new property to the specified object
+	 * Sets a new property to an object by the specified path
 	 *
 	 * @param path - path to the property (bla.baz.foo)
 	 * @param value
@@ -120,7 +118,7 @@ export default class Field {
 		}
 
 		let
-			ctx = this.component,
+			ctx = <iBlock['unsafe']>this.component,
 			isComponent = false;
 
 		if ((<Dictionary>obj).instance instanceof iBlock) {
@@ -141,8 +139,7 @@ export default class Field {
 				info = getPropertyInfo(path, ctx),
 				isReady = !ctx.lfc.isBeforeCreate();
 
-			// @ts-ignore
-			ctx = ref = info.ctx;
+			ctx = ref = <any>info.ctx;
 			chunks = info.path.split('.');
 
 			if (info.accessor && (
@@ -200,7 +197,7 @@ export default class Field {
 	}
 
 	/**
-	 * Deletes a property from the specified object
+	 * Deletes a property from an object by the specified path
 	 *
 	 * @param path - path to the property (bla.baz.foo)
 	 * @param [obj]
@@ -211,7 +208,7 @@ export default class Field {
 		}
 
 		let
-			ctx = this.component,
+			ctx = <iBlock['unsafe']>this.component,
 			isComponent = false;
 
 		if ((<Dictionary>obj).instance instanceof iBlock) {
@@ -231,8 +228,7 @@ export default class Field {
 			const
 				info = getPropertyInfo(path, ctx);
 
-			// @ts-ignore
-			ctx = info.ctx;
+			ctx = <any>info.ctx;
 			isField = info.type === 'field';
 			ref = isField ? ctx.$fields : ctx;
 			chunks = info.path.split('.');

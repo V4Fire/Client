@@ -6,46 +6,41 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import Async from 'core/async';
+/**
+ * [[include:super/i-block/modules/storage/README.md]]
+ * @packageDocumentation
+ */
+
 import iBlock from 'super/i-block/i-block';
+import Friend from 'super/i-block/modules/friend';
 
 //#if runtime has core/kv-storage
 import { asyncLocal, factory, AsyncNamespace } from 'core/kv-storage';
 //#endif
 
-export default class Storage {
+/**
+ * Class to work with a local storage
+ */
+export default class Storage<C extends iBlock = iBlock> extends Friend<C> {
 	//#if runtime has core/kv-storage
 
-	/**
-	 * Component unique name
-	 */
-	get globalName(): CanUndef<string> {
+	/** @see [[iBlock.globalName]] */
+	get globalName(): this['C']['globalName'] {
 		return this.component.globalName;
 	}
 
 	/**
-	 * Storage engine object
+	 * Storage engine
 	 */
 	readonly engine: CanUndef<AsyncNamespace>;
 
 	/**
-	 * Component instance
-	 */
-	protected readonly component: iBlock['unsafe'];
-
-	/**
-	 * Async instance
-	 */
-	protected get async(): Async<iBlock> {
-		return this.component.async;
-	}
-
-	/**
-	 * @param component - component instance
+	 * @override
+	 * @param component
 	 * @param [engine] - custom engine
 	 */
-	constructor(component: iBlock, engine?: Dictionary) {
-		this.component = component.unsafe;
+	constructor(component: T, engine?: Dictionary) {
+		super(component);
 
 		//#if runtime has core/kv-storage
 		this.engine = (engine ? factory(engine, true) : asyncLocal).namespace(component.componentName);

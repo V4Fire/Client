@@ -6,39 +6,34 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import iBlock from 'super/i-block/i-block';
-import Block from 'super/i-block/modules/block';
-
-import { delegate } from 'core/dom';
-import { wait } from 'super/i-block/modules/decorators';
+import { wrapAsDelegateHandler } from 'core/dom';
 import { ComponentElement } from 'core/component';
 
-const
-	componentRgxp = /(?:^| )([bpg]-[^_ ]+)(?: |$)/;
+import iBlock from 'super/i-block/i-block';
+import Block from 'super/i-block/modules/block';
+import Friend from 'super/i-block/modules/friend';
 
-export default class DOM {
-	/**
-	 * Component instance
-	 */
-	protected readonly component: iBlock['unsafe'];
+import { wait } from 'super/i-block/modules/decorators';
+import { componentRgxp } from 'super/i-block/modules/dom/const';
+import { ElCb } from 'super/i-block/modules/dom/interface';
 
-	/**
-	 * Block instance
-	 */
-	protected get block(): Block {
-		return this.component.block;
-	}
+export * from 'super/i-block/modules/dom/const';
+export * from 'super/i-block/modules/dom/interface';
 
+/**
+ * Class that provides some methods to work with a DOM tree
+ */
+export default class DOM<C extends iBlock = iBlock> extends Friend<C> {
 	/**
-	 * @param component - component instance
-	 */
-	constructor(component: iBlock) {
-		this.component = component.unsafe;
-	}
-
-	/**
-	 * Returns a string id, which is connected to the component
-	 * @param id - custom id
+	 * Takes a string identifier and returns a new identifier that is connected to the component.
+	 * This method should use to generate id attributes for a DOM node.
+	 *
+	 * @param id
+	 *
+	 * @example
+	 * ```
+	 * < div :id = dom.getId('bla')
+	 * ```
 	 */
 	getId(id: string): string;
 	getId(id: undefined | null): undefined;
@@ -51,24 +46,25 @@ export default class DOM {
 	}
 
 	/**
-	 * Wrapper for core/dom -> delegate
+	 * Wraps the specified function as an event handler with delegation
 	 *
-	 * @param selector - CSS selector
-	 * @param handler
+	 * @see [[wrapAsDelegateHandler]]
+	 * @param selector - selector to delegate
+	 * @param [fn]
 	 */
-	delegate(selector: string, handler?: Function): Function {
-		return delegate(selector, handler);
+	delegate(selector: string, fn?: Function): Function {
+		return wrapAsDelegateHandler(selector, fn);
 	}
 
 	/**
-	 * Wraps a handler for delegation of the specified element
+	 * Wraps the specified function as an event handler with delegation of a component element
 	 *
 	 * @param name - element name
-	 * @param handler
+	 * @param fn
 	 */
-	delegateElement(name: string, handler: Function): CanPromise<Function> {
+	delegateElement(name: string, fn: Function): CanPromise<Function> {
 		const res = this.component.lfc.execCbAfterBlockReady(() =>
-			this.delegate(this.block.getElSelector(name), handler)
+			this.delegate(this.block.getElSelector(name), fn)
 		);
 
 		if (Object.isPromise(res)) {
@@ -79,14 +75,15 @@ export default class DOM {
 	}
 
 	/**
-	 * Puts the specified element to the render stream
+	 * Puts the specified element to a render stream.
+	 * This methods forces the render of an element.
 	 *
 	 * @param cb
-	 * @param [el] - link to a dome element or an element name
+	 * @param [el] - link to a DOM element or a component element name
 	 */
 	@wait('ready')
-	async putInStream<T extends iBlock>(
-		cb: (this: T, el: Element) => void,
+	async putInStream(
+		cb: ElCb<this['C']>,
 		el: Element | string = this.component.$el
 	): Promise<boolean> {
 		const
@@ -133,9 +130,36 @@ export default class DOM {
 	}
 
 	/**
-	 * Replaces an element with the specified
+	 * Appends a child node to the specified parent
 	 *
-	 * @param el - element name or a link to the node
+	 * @param parent - element name or a link to the parent node
+	 * @param newNode
+	 * @param [group] - operation group
+	 */
+	appendChild(parent: string | Element | DocumentFragment, newNode: Element, group?: string): Function | false {
+		const
+			parentNode = Object.isString(parent) ? this.block.element(parent) : parent;
+
+		if (!parentNode) {
+			return false;
+		}
+
+		if (!group && !(parent instanceof DocumentFragment)) {
+			group = (<Element>parentNode).getAttribute('data-render-group') || '';
+		}
+
+		parentNode.appendChild(newNode);
+
+		return this.component.async.worker(() => {
+			newNode.remove();
+
+		}, {group: group || 'asyncComponents'});
+	}
+
+	/**
+	 * Replaces a component element with the specified node
+	 *
+	 * @param el - element name or a link to a node
 	 * @param newNode
 	 * @param [group] - operation group
 	 */
@@ -156,31 +180,6 @@ export default class DOM {
 			if (newNode.parentNode) {
 				newNode.parentNode.removeChild(newNode);
 			}
-		}, {group: group || 'asyncComponents'});
-	}
-
-	/**
-	 * Appends a node to the specified parent
-	 *
-	 * @param parent - element name or a link to the parent node
-	 * @param newNode
-	 * @param [group] - operation group
-	 */
-	appendChild(parent: string | Element | DocumentFragment, newNode: Element, group?: string): Function | false {
-		const
-			parentNode = Object.isString(parent) ? this.block.element(parent) : parent;
-
-		if (!parentNode) {
-			return false;
-		}
-
-		if (!group && !(parent instanceof DocumentFragment)) {
-			group = (<Element>parentNode).getAttribute('data-render-group') || '';
-		}
-
-		parentNode.appendChild(newNode);
-		return this.component.async.worker(() => {
-			newNode.remove();
 
 		}, {group: group || 'asyncComponents'});
 	}
@@ -226,9 +225,9 @@ export default class DOM {
 	 * @param node
 	 * @param [component]
 	 */
-	createBlockCtxFromNode(node: Element, component?: iBlock): Dictionary {
+	createBlockCtxFromNode(node: Element, component?: this['C']): Dictionary {
 		const
-			$el = <ComponentElement<iBlock>>node,
+			$el = <ComponentElement<this['C']>>node,
 			comp = component || $el.component;
 
 		const componentName = comp ?

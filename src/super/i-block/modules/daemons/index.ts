@@ -6,73 +6,56 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+/**
+ * [[include:super/i-block/modules/daemons/README.md]]
+ * @packageDocumentation
+ */
+
 import iBlock from 'super/i-block/i-block';
+import Friend from 'super/i-block/modules/friend';
 import { wait } from 'super/i-block/modules/decorators';
 
-import { AsyncOptions } from 'core/async';
-import { WatchOptions, Hooks } from 'core/component';
-import { Statuses } from 'super/i-block/modules/interface';
+import {
 
-export interface DaemonWatchObject extends WatchOptions {
-	field: string;
-}
+	Daemon,
+	SpawnedDaemon,
 
-export type DaemonHookObject = {
-	[P in keyof Record<Hooks, string>]?: CanArray<string>;
-};
+	DaemonsDict,
+	DaemonWatcher,
 
-export interface DaemonsAsyncOptions {
-	label?: Nullable<AsyncOptions['label']>;
-	group?: AsyncOptions['group'];
-	join?: AsyncOptions['join'];
-}
+	DaemonHook,
+	DaemonHookOptions
 
-export interface Daemon {
-	hook?: Hooks[] | DaemonHookObject;
-	watch?: DaemonWatcher[];
-	wait?: Statuses;
-	immediate?: boolean;
-	asyncOptions?: DaemonsAsyncOptions;
-	wrappedFn?: Function;
-	fn: Function;
-}
+} from 'super/i-block/modules/daemons/interface';
 
-export interface SpawnedDaemonObject {
-	fn: Function;
-	wait?: Statuses;
-	immediate?: boolean;
-	asyncOptions?: DaemonsAsyncOptions;
-}
+export * from 'super/i-block/modules/daemons/interface';
 
-export interface DaemonHookParams {
-	after: CanUndef<Set<string>>;
-}
-
-export type DaemonWatcher = DaemonWatchObject | string;
-export type SpawnedDaemon = SpawnedDaemonObject | Function;
-export type DaemonsDict = Dictionary<Daemon>;
-
-export default class Daemons {
+/**
+ * Class to manage component daemons
+ */
+export default class Daemons<T extends iBlock = iBlock> extends Friend<T> {
 	//#if runtime has component/daemons
 
 	/**
-	 * Inherits base daemons from parent and returns a new object
+	 * Creates a new daemons dictionary with extending from the specified parent and returns it
 	 *
 	 * @param base
-	 * @param parent
+	 * @param [parent]
 	 */
-	static createDaemons(base: DaemonsDict, parent: DaemonsDict): DaemonsDict {
+	static createDaemons(base: DaemonsDict, parent?: DaemonsDict): DaemonsDict {
 		const
 			mixedDaemons = {...parent, ...base};
 
-		for (let keys = Object.keys(parent), i = 0; i < keys.length; i++) {
-			const
-				daemonName = keys[i],
-				parentDaemon = parent[daemonName],
-				daemon = base[daemonName];
+		if (parent) {
+			for (let keys = Object.keys(parent), i = 0; i < keys.length; i++) {
+				const
+					daemonName = keys[i],
+					parentDaemon = parent[daemonName],
+					daemon = base[daemonName];
 
-			if (daemon && parentDaemon) {
-				mixedDaemons[daemonName] = mergeDaemons(daemon, parentDaemon);
+				if (daemon && parentDaemon) {
+					mixedDaemons[daemonName] = mergeDaemons(daemon, parentDaemon);
+				}
 			}
 		}
 
@@ -80,27 +63,20 @@ export default class Daemons {
 	}
 
 	/**
-	 * Component instance
-	 */
-	protected component: iBlock['unsafe'];
-
-	/**
-	 * Returns component daemons
+	 * Map of component daemons
 	 */
 	protected get daemons(): DaemonsDict {
 		return (<typeof iBlock>this.component.instance.constructor).daemons;
 	}
 
-	/**
-	 * @param component
-	 */
-	constructor(component: iBlock) {
-		this.component = component.unsafe;
+	/** @override */
+	constructor(component: T) {
+		super(component);
 		this.init();
 	}
 
 	/**
-	 * Returns true if a daemon by the specified name exists
+	 * Returns true if a daemon by the specified name is exist
 	 * @param name
 	 */
 	isExists(name: string): boolean {
@@ -126,12 +102,12 @@ export default class Daemons {
 	}
 
 	/**
-	 * Calls a daemon with specified parameters
+	 * Runs a daemon with the specified arguments
 	 *
 	 * @param name
 	 * @param args
 	 */
-	run<T = unknown>(name: string, ...args: unknown[]): CanUndef<T> {
+	run<R = unknown>(name: string, ...args: unknown[]): CanUndef<R> {
 		const
 			ctx = this.component,
 			daemon = this.get(name);
@@ -139,10 +115,6 @@ export default class Daemons {
 		if (!daemon) {
 			return;
 		}
-
-		const
-			// @ts-ignore
-			{async: $a} = ctx;
 
 		const
 			fn = daemon.wrappedFn || daemon.fn;
@@ -154,11 +126,11 @@ export default class Daemons {
 				...daemon.asyncOptions
 			};
 
-			if (asyncOptions.label === null) {
+			if (asyncOptions.label == null) {
 				delete asyncOptions.label;
 			}
 
-			$a.setImmediate(() => fn.apply(ctx, args), <any>asyncOptions);
+			ctx.async.setImmediate(() => fn.apply(ctx, args), <any>asyncOptions);
 
 		} else {
 			return fn.apply(ctx, args);
@@ -185,7 +157,7 @@ export default class Daemons {
 	}
 
 	/**
-	 * Creates a wrapped function for daemon
+	 * Creates a wrapped function for the specified daemon
 	 * @param daemon
 	 */
 	protected wrapDaemonFn(daemon: Daemon): Daemon {
@@ -198,15 +170,15 @@ export default class Daemons {
 	 *
 	 * @param hook
 	 * @param name
-	 * @param [params]
+	 * @param [opts] - additional options
 	 */
-	protected bindToHook(hook: string, name: string, params?: DaemonHookParams): void {
+	protected bindToHook(hook: string, name: string, opts?: DaemonHookOptions): void {
 		const
 			{hooks} = this.component.meta;
 
 		hooks[hook].push({
 			fn: () => this.run(name),
-			...params
+			...opts
 		});
 	}
 
@@ -243,7 +215,7 @@ export default class Daemons {
 	}
 
 	/**
-	 * Initializes daemons
+	 * Initializes all static daemons
 	 */
 	protected init(): void {
 		const
@@ -288,40 +260,41 @@ export default class Daemons {
 }
 
 /**
- * Merge two daemons
+ * Merge the two specified daemons to a new object and returns it
  *
- * @param a - base daemon
- * @param b - parent daemon
+ * @param base
+ * @param parent
  */
-function mergeDaemons(a: Daemon, b: Daemon): Daemon {
+function mergeDaemons(base: Daemon, parent: Daemon): Daemon {
 	const
-		hook = mergeHooks(a, b),
-		watch = (b.watch || []).union(a.watch || []);
+		hook = mergeHooks(base, parent),
+		watch = (parent.watch || []).union(base.watch || []);
 
 	return {
-		...b,
-		...a,
+		...parent,
+		...base,
 		hook,
 		watch
 	};
 }
 
 /**
- * Merge daemons hooks
+ * Merge hooks of two specified daemons to a new object and returns it
  *
- * @param a - base daemon hooks
- * @param b - parent daemon hooks
+ * @param base
+ * @param parent
  */
-function mergeHooks(a: Daemon, b: Daemon): CanUndef<DaemonHookObject | Hooks[]> {
+function mergeHooks(base: Daemon, parent: Daemon): CanUndef<DaemonHook> {
 	const
-		{hook: aHooks} = a,
-		{hook: bHooks} = b;
+		{hook: aHooks} = base,
+		{hook: bHooks} = parent;
 
 	if (!aHooks && !bHooks) {
 		return;
 	}
 
-	const convertHooksToObject = (h) => Array.isArray(h) ? h.reduce((acc, a) => (acc[a] = undefined, acc), {}) : h;
+	const
+		convertHooksToObject = (h) => Array.isArray(h) ? h.reduce((acc, a) => (acc[a] = undefined, acc), {}) : h;
 
 	return {
 		...convertHooksToObject(bHooks),
