@@ -456,7 +456,7 @@ export default class Sync<C extends iBlock = iBlock> extends Friend<C> {
 	 * @param opts - additional options
 	 * @param fields - declaration of object properties
 	 *
-	 * * @example
+	 * @example
 	 * ```typescript
 	 * @component()
 	 * class Foo extends iBlock {
