@@ -38,12 +38,12 @@ const
  */
 export default class Block<C extends iBlock = iBlock> extends Friend<C> {
 	/** @see [[iBlock.componentId]] */
-	get id(): this['C']['componentId'] {
+	get id(): string {
 		return this.component.componentId;
 	}
 
 	/** @see [[iBlock.componentName]] */
-	get name(): this['C']['componentName'] {
+	get name(): string {
 		return this.component.componentName;
 	}
 

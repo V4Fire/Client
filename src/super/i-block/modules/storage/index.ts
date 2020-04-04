@@ -25,7 +25,7 @@ export default class Storage<C extends iBlock = iBlock> extends Friend<C> {
 	//#if runtime has core/kv-storage
 
 	/** @see [[iBlock.globalName]] */
-	get globalName(): this['C']['globalName'] {
+	get globalName(): CanUndef<string> {
 		return this.component.globalName;
 	}
 
@@ -39,7 +39,7 @@ export default class Storage<C extends iBlock = iBlock> extends Friend<C> {
 	 * @param component
 	 * @param [engine] - custom engine
 	 */
-	constructor(component: T, engine?: Dictionary) {
+	constructor(component: C, engine?: Dictionary) {
 		super(component);
 
 		//#if runtime has core/kv-storage
