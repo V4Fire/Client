@@ -121,8 +121,8 @@ export default class Daemons<T extends iBlock = iBlock> extends Friend<T> {
 
 		if (daemon.immediate !== true) {
 			const asyncOptions = {
-				group: `daemons-${this.component.componentName}`,
-				label: `daemons-${name}`,
+				group: `daemons:${this.component.componentName}`,
+				label: `daemons:${name}`,
 				...daemon.asyncOptions
 			};
 
