@@ -6,22 +6,15 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import Async from 'core/async';
+/**
+ * [[include:super/i-block/modules/state/README.md]]
+ * @packageDocumentation
+ */
+
 import symbolGenerator from 'core/symbol';
 
 import iBlock from 'super/i-block/i-block';
-import Field from 'super/i-block/modules/field';
-import Storage from 'super/i-block/modules/storage';
-import Lazy from 'super/i-block/modules/lazy';
-import Lfc from 'super/i-block/modules/lfc';
-
-import { Event } from 'super/i-block/modules/event';
-import { Hooks } from 'core/component';
-
-export type ConverterCallType =
-	'component' |
-	'remote' |
-	'remoteCheck';
+import Friend from 'super/i-block/modules/friend';
 
 export const
 	$$ = symbolGenerator();
@@ -29,11 +22,12 @@ export const
 let
 	baseSyncRouterState;
 
-export default class State {
-	/**
-	 * Current component hook
-	 */
-	get hook(): Hooks {
+/**
+ * Class that provides some helper methods to initialize a component state
+ */
+export default class State<C extends iBlock = iBlock> extends Friend<C> {
+	/** @see [[iBlock.hook]] */
+	get hook(): this['C']['hook'] {
 		return this.component.hook;
 	}
 
@@ -45,89 +39,31 @@ export default class State {
 		return baseSyncRouterState !== this.instance.syncRouterState;
 	}
 
-	/**
-	 * Component instance
-	 */
-	protected readonly component: iBlock['unsafe'];
-
-	/**
-	 * Component unique name
-	 */
+	/** @see [[iBlock.globalName]] */
 	protected get globalName(): CanUndef<string> {
 		return this.component.globalName;
 	}
 
-	/**
-	 * API for component field accessors
-	 */
-	protected get field(): Field {
-		return this.component.field;
-	}
-
-	/**
-	 * API for a component storage
-	 */
-	protected get storage(): Storage {
-		return this.component.storage;
-	}
-
-	/**
-	 * API for lazy operations
-	 */
-	protected get lazy(): Lazy {
-		return this.component.lazy;
-	}
-
-	/**
-	 * API for component life cycle helpers
-	 */
-	protected get lfc(): Lfc {
-		return this.component.lfc;
-	}
-
-	/**
-	 * Local event emitter
-	 */
-	protected get localEvent(): Event {
-		return this.component.localEvent;
-	}
-
-	/**
-	 * Async instance
-	 */
-	protected get async(): Async<iBlock> {
-		return this.component.async;
-	}
-
-	/**
-	 * Component class instance
-	 */
-	protected get instance(): iBlock {
+	/** @see [[iBlock.instance]] */
+	protected get instance(): this['C']['instance'] {
 		// @ts-ignore (access)
 		baseSyncRouterState = baseSyncRouterState || iBlock.prototype.syncRouterState;
 		return this.component.instance;
 	}
 
 	/**
-	 * @param component - component instance
+	 * Gets values from an object and saves it to a state of the current component
+	 * @param data
 	 */
-	constructor(component: iBlock) {
-		this.component = component.unsafe;
-	}
-
-	/**
-	 * Gets values from the specified object and saves it to the component state
-	 * @param [obj]
-	 */
-	set(obj?: Dictionary): boolean {
-		if (!obj) {
+	set(data: Nullable<Dictionary>): boolean {
+		if (!data) {
 			return true;
 		}
 
-		for (let keys = Object.keys(obj), i = 0; i < keys.length; i++) {
+		for (let keys = Object.keys(data), i = 0; i < keys.length; i++) {
 			const
 				key = keys[i],
-				el = obj[key],
+				el = data[key],
 				p = key.split('.');
 
 			if (p[0] === 'mods') {
@@ -142,8 +78,8 @@ export default class State {
 	}
 
 	/**
-	 * Saves a component state to a storage
-	 * @param [data] - advanced data
+	 * Saves a state of the current component to a local storage
+	 * @param [data] - additional data to save
 	 */
 	async saveToStorage(data?: Dictionary): Promise<boolean> {
 		//#if runtime has core/kv-storage
@@ -153,13 +89,13 @@ export default class State {
 		}
 
 		const
-			c = this.component;
+			{component} = this;
 
-		data = c.syncStorageState(data, 'remote');
-		this.set(c.syncStorageState(data));
+		data = component.syncStorageState(data, 'remote');
+		this.set(component.syncStorageState(data));
 
 		await this.storage.set(data, '[[STORE]]');
-		c.log('state:save:storage', this, data);
+		component.log('state:save:storage', this, data);
 
 		return true;
 
@@ -167,7 +103,7 @@ export default class State {
 	}
 
 	/**
-	 * Initializes a component state from a storage
+	 * Initializes a state of the current component from a local storage
 	 */
 	async initFromStorage(): Promise<boolean> {
 		//#if runtime has core/kv-storage
@@ -184,11 +120,11 @@ export default class State {
 		}
 
 		const
-			c = this.component,
-			storeWatchers = {group: 'storeWatchers'};
+			{component} = this;
 
-		const {async: $a} = this;
-		$a.clearAll(storeWatchers);
+		const
+			storeWatchers = {group: 'storeWatchers'},
+			$a = this.async.clearAll(storeWatchers);
 
 		return this[key] = $a.promise(async () => {
 			const
@@ -196,7 +132,7 @@ export default class State {
 
 			this.lfc.execCbAtTheRightTime(() => {
 				const
-					stateFields = c.syncStorageState(data);
+					stateFields = component.syncStorageState(data);
 
 				this.set(
 					stateFields
@@ -213,11 +149,11 @@ export default class State {
 							p = key.split('.');
 
 						if (p[0] === 'mods') {
-							$a.on(this.localEvent, `block.mod.*.${p[1]}.*`, sync, storeWatchers);
+							$a.on(this.localEmitter, `block.mod.*.${p[1]}.*`, sync, storeWatchers);
 
 						} else {
 							// tslint:disable-next-line:only-arrow-functions
-							c.watch(key, function (val: unknown): void {
+							component.watch(key, function (val: unknown): void {
 								if (!Object.fastCompare(val, arguments[1])) {
 									sync();
 								}
@@ -229,7 +165,7 @@ export default class State {
 					}
 				}
 
-				c.log('state:init:storage', this, stateFields);
+				component.log('state:init:storage', this, stateFields);
 			});
 
 			return true;
@@ -243,7 +179,7 @@ export default class State {
 	}
 
 	/**
-	 * Resets a component storage state
+	 * Resets a storage state of the current component
 	 */
 	async resetStorage(): Promise<boolean> {
 		//#if runtime has core/kv-storage
@@ -253,23 +189,25 @@ export default class State {
 		}
 
 		const
-			c = this.component,
-			stateFields = c.convertStateToStorageReset();
+			{component} = this;
+
+		const
+			stateFields = component.convertStateToStorageReset();
 
 		this.set(
 			stateFields
 		);
 
 		await this.saveToStorage();
-		c.log('state:reset:storage', this, stateFields);
+		component.log('state:reset:storage', this, stateFields);
 		return true;
 
 		//#endif
 	}
 
 	/**
-	 * Saves a component state to a router
-	 * @param [data] - advanced data
+	 * Saves a state of the current component to a router
+	 * @param [data] - additional data to save
 	 */
 	async saveToRouter(data?: Dictionary): Promise<boolean> {
 		//#if runtime has bRouter
@@ -279,30 +217,28 @@ export default class State {
 		}
 
 		const
-			c = this.component;
+			{component} = this,
+			{router} = component.r;
 
-		data = c.syncRouterState(data, 'remote');
-		this.set(c.syncRouterState(data));
+		data = component.syncRouterState(data, 'remote');
+		this.set(component.syncRouterState(data));
 
-		const
-			r = c.$root.router;
-
-		if (!c.isActivated || !r) {
+		if (!component.isActivated || !router) {
 			return false;
 		}
 
-		await r.push(null, {
+		await router.push(null, {
 			query: data
 		});
 
-		c.log('state:save:router', this, data);
+		component.log('state:save:router', this, data);
 		return true;
 
 		//#endif
 	}
 
 	/**
-	 * Initializes a component state from a router
+	 * Initializes a state of the current component from a router
 	 */
 	initFromRouter(): boolean {
 		//#if runtime has bRouter
@@ -312,15 +248,15 @@ export default class State {
 		}
 
 		const
-			c = this.component,
-			routerWatchers = {group: 'routerWatchers'};
+			{component} = this;
 
-		const {async: $a} = this;
-		$a.clearAll(routerWatchers);
+		const
+			routerWatchers = {group: 'routerWatchers'},
+			$a = this.async.clearAll(routerWatchers);
 
 		this.lfc.execCbAtTheRightTime(async () => {
 			const
-				r = c.$root;
+				{r} = component;
 
 			let
 				{router} = r;
@@ -338,16 +274,16 @@ export default class State {
 			}
 
 			const
-				route = r.route || {},
-				stateFields = c.syncRouterState(Object.assign(Object.create(route), route.params, route.query));
+				route = r.route || <NonNullable<typeof r.route>>{},
+				stateFields = component.syncRouterState(Object.assign(Object.create(route), route.params, route.query));
 
 			this.set(
 				stateFields
 			);
 
-			if (c.syncRouterStoreOnInit) {
+			if (component.syncRouterStoreOnInit) {
 				const
-					stateForRouter = c.syncRouterState(stateFields, 'remote'),
+					stateForRouter = component.syncRouterState(stateFields, 'remote'),
 					stateKeys = Object.keys(stateForRouter);
 
 				if (stateKeys.length) {
@@ -389,11 +325,11 @@ export default class State {
 						p = key.split('.');
 
 					if (p[0] === 'mods') {
-						$a.on(this.localEvent, `block.mod.*.${p[1]}.*`, sync, routerWatchers);
+						$a.on(this.localEmitter, `block.mod.*.${p[1]}.*`, sync, routerWatchers);
 
 					} else {
 						// tslint:disable-next-line:only-arrow-functions
-						c.watch(key, function (val: unknown): void {
+						component.watch(key, function (val: unknown): void {
 							if (!Object.fastCompare(val, arguments[1])) {
 								sync();
 							}
@@ -405,7 +341,7 @@ export default class State {
 				}
 			}
 
-			c.log('state:init:router', this, stateFields);
+			component.log('state:init:router', this, stateFields);
 
 		}, {
 			label: $$.initFromRouter
@@ -417,7 +353,7 @@ export default class State {
 	}
 
 	/**
-	 * Resets a component router state
+	 * Resets a router state of the current component
 	 */
 	async resetRouter(): Promise<boolean> {
 		//#if runtime has bRouter
@@ -427,22 +363,22 @@ export default class State {
 		}
 
 		const
-			c = this.component,
-			stateFields = c.convertStateToRouterReset();
+			{component} = this,
+			{router} = component.r;
+
+		const
+			stateFields = component.convertStateToRouterReset();
 
 		this.set(
 			stateFields
 		);
 
-		const
-			r = c.$root.router;
-
-		if (!this.component.isActivated || !r) {
+		if (!component.isActivated || !router) {
 			return false;
 		}
 
-		await r.push(null);
-		c.log('state:reset:router', this, stateFields);
+		await router.push(null);
+		component.log('state:reset:router', this, stateFields);
 		return true;
 
 		//#endif
