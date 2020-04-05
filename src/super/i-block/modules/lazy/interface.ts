@@ -15,4 +15,5 @@ export interface CreateLazyFnOptions extends AsyncOptions {
 
 export interface LazyFn<FN extends (...args: unknown[]) => unknown, CTX extends iBlock = iBlock> {
 	(this: CTX, ...args: Parameters<FN>): Promise<ReturnType<FN>>;
+	(...args: Parameters<FN>): Promise<ReturnType<FN>>;
 }
