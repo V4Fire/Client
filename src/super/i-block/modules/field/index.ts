@@ -44,8 +44,8 @@ export default class Field<C extends iBlock = iBlock> extends Friend<C> {
 		obj: object | FieldGetter = this.component,
 		getter?: FieldGetter
 	): CanUndef<T> {
-		if (!getter && Object.isFunction(obj)) {
-			getter = <FieldGetter>obj;
+		if (Object.isFunction(obj)) {
+			getter = obj;
 			obj = this;
 		}
 
@@ -68,23 +68,19 @@ export default class Field<C extends iBlock = iBlock> extends Friend<C> {
 
 		if (isComponent) {
 			const
-				info = getPropertyInfo(path, ctx),
-				isReady = !ctx.lfc.isBeforeCreate();
+				info = getPropertyInfo(path, ctx);
 
 			ctx = res = <any>info.ctx;
 			chunks = info.path.split('.');
 
-			if (info.accessor && (
-				info.accessorType === 'accessor' && this.component.hook !== 'beforeRuntime' ||
-				info.accessorType === 'computed' && isReady
-			)) {
+			if (info.accessor && this.component.hook !== 'beforeRuntime') {
 				chunks[0] = info.accessor;
 
 			} else {
 				const isField = info.type === 'field';
 				res = isField ? ctx.$fields : ctx;
 
-				if ((isField && !isReady || !(chunks[0] in res))) {
+				if ((isField && ctx.lfc.isBeforeCreate() || !(chunks[0] in res))) {
 					chunks[0] = info.name;
 				}
 			}
@@ -99,7 +95,7 @@ export default class Field<C extends iBlock = iBlock> extends Friend<C> {
 			}
 
 			const prop = chunks[i];
-			res = <Dictionary>(getter ? getter(prop, res) : res[prop]);
+			res = getter ? getter(prop, res) : res[prop];
 		}
 
 		return <any>res;
@@ -126,9 +122,6 @@ export default class Field<C extends iBlock = iBlock> extends Friend<C> {
 			isComponent = true;
 		}
 
-		const
-			isReady = !ctx.lfc.isBeforeCreate();
-
 		let
 			isField = isComponent,
 			ref = obj,
@@ -142,10 +135,7 @@ export default class Field<C extends iBlock = iBlock> extends Friend<C> {
 			ctx = ref = <any>info.ctx;
 			chunks = info.path.split('.');
 
-			if (info.accessor && (
-				info.accessorType === 'accessor' && this.component.hook !== 'beforeRuntime' ||
-				info.accessorType === 'computed' && isReady
-			)) {
+			if (info.accessor && this.component.hook !== 'beforeRuntime') {
 				isField = false;
 				chunks[0] = info.accessor;
 
@@ -161,6 +151,9 @@ export default class Field<C extends iBlock = iBlock> extends Friend<C> {
 		} else {
 			chunks = path.split('.');
 		}
+
+		const
+			isReady = !ctx.lfc.isBeforeCreate();
 
 		for (let i = 0; i < chunks.length; i++) {
 			const
@@ -216,9 +209,6 @@ export default class Field<C extends iBlock = iBlock> extends Friend<C> {
 			isComponent = true;
 		}
 
-		const
-			isReady = !ctx.lfc.isBeforeCreate();
-
 		let
 			isField = isComponent,
 			ref = obj,
@@ -259,7 +249,7 @@ export default class Field<C extends iBlock = iBlock> extends Friend<C> {
 		}
 
 		if (test) {
-			if (isField && isReady) {
+			if (isField && !ctx.lfc.isBeforeCreate()) {
 				ctx.$delete(ref, path);
 
 			} else {
