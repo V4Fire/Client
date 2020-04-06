@@ -229,8 +229,8 @@ export default class ScrollRender {
 	 * Event handlers initialisation
 	 */
 	protected initEventHandlers(): void {
-		this.async.once(this.component.localEvent, 'localReady', this.onReady.bind(this), {label: $$.reInit});
-		this.async.once(this.component.localEvent, 'localError', this.onError.bind(this), {label: $$.reInit});
+		this.component.localEvent.once('localReady', this.onReady.bind(this), {label: $$.reInit});
+		this.component.localEvent.once('localError', this.onError.bind(this), {label: $$.reInit});
 	}
 
 	/**
