@@ -125,7 +125,7 @@ export default class ScrollRender {
 
 		this.component.meta.hooks.mounted.push({fn: () => {
 			this.setLoadersVisibility(true);
-			this.async.once(this.component.localEvent, 'localReady', this.onReady.bind(this), {label: $$.reInit});
+			this.initEventHandlers();
 		}});
 	}
 
@@ -146,7 +146,7 @@ export default class ScrollRender {
 		this.setRefVisibility('done', false);
 		this.setRefVisibility('empty', false);
 
-		this.async.once(this.component.localEvent, 'localReady', this.onReady.bind(this), {label: $$.reInit});
+		this.initEventHandlers();
 	}
 
 	/**
@@ -223,6 +223,14 @@ export default class ScrollRender {
 	setLoadersVisibility(show: boolean): void {
 		this.setRefVisibility('tombstones', show);
 		this.setRefVisibility('loader', show);
+	}
+
+	/**
+	 * Event handlers initialisation
+	 */
+	protected initEventHandlers(): void {
+		this.component.localEvent.once('localReady', this.onReady.bind(this), {label: $$.reInit});
+		this.component.localEvent.once('localError', this.onError.bind(this), {label: $$.reInit});
 	}
 
 	/**
@@ -334,5 +342,13 @@ export default class ScrollRender {
 	protected onRequestsDone(): void {
 		this.setLoadersVisibility(false);
 		this.setRefVisibility('done', true);
+	}
+
+	/**
+	 * Handler: error occurred
+	 */
+	protected onError(): void {
+		this.setLoadersVisibility(false);
+		this.setRefVisibility('retry', true);
 	}
 }

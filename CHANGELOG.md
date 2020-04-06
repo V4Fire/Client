@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-beta.267 ()
+
+#### :bug: Bug Fix
+
+* Used `localError` event on request error instead of `localReady` 
+
 ## v3.0.0-beta.266 (2020-03-30)
 
 #### :bug: Bug Fix
