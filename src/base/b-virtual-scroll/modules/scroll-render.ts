@@ -348,6 +348,7 @@ export default class ScrollRender {
 	 * Handler: error occurred
 	 */
 	protected onError(): void {
+		this.setLoadersVisibility(false);
 		this.setRefVisibility('retry', true);
 	}
 }
