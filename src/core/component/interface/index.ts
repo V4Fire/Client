@@ -13,3 +13,4 @@ export * from 'core/component/interface/mod';
 export * from 'core/component/interface/watch';
 export * from 'core/component/interface/fields';
 export * from 'core/component/interface/life-cycle';
+export * from 'core/component/render/interface';

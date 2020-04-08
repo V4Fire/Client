@@ -22,6 +22,7 @@ export * from 'core/component/reflection';
 export * from 'core/component/decorators';
 
 export * from 'core/component/event';
+export * from 'core/component/render';
 
 export {
 
@@ -35,6 +36,7 @@ export {
 export {
 
 	renderData,
+	patchVNode,
 	ComponentDriver as default,
 
 	WatchOptions,
