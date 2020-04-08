@@ -310,7 +310,7 @@ export default class ScrollRender {
 		const
 			{component, items} = this,
 			{chunkSize, renderGap} = component,
-			currentRender = this.chunk * chunkSize;
+			currentRender = (this.chunk - 1) * chunkSize;
 
 		if (index + renderGap + chunkSize >= items.length) {
 			this.scrollRequest.try();
