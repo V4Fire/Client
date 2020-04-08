@@ -6,59 +6,29 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+/**
+ * [[include:super/i-block/modules/provide/README.md]]
+ * @packageDocumentation
+ */
+
 import iBlock from 'super/i-block/i-block';
-import Cache from 'super/i-block/modules/cache';
+import Friend from 'super/i-block/modules/friend';
 import Block from 'super/i-block/modules/block';
-import { ModVal, ModsTable, ModsNTable } from 'super/i-block/modules/mods';
 
-export type Classes = Dictionary<
-	string |
-	Array<string | true> |
-	true
->;
+import { ModsTable, ModsNTable } from 'super/i-block/modules/mods';
+import { classesCache, modsCache } from 'super/i-block/modules/provide/const';
+import { Classes, ProvideMods } from 'super/i-block/modules/provide/interface';
 
-export type Styles = Dictionary<
-	string |
-	Array<string> |
-	Dictionary<string>
->;
+export * from 'super/i-block/modules/provide/const';
+export * from 'super/i-block/modules/provide/interface';
 
-export type ClassesCacheNms =
-	'base' |
-	'components' |
-	'els';
-
-export type ClassesCacheValue =
-	ReadonlyArray<string> |
-	Readonly<Dictionary<string>>;
-
-export const
-	modsCache = Object.createDict<ModsNTable>();
-
-export const classesCache = new Cache<ClassesCacheNms, ClassesCacheValue>([
-	'base',
-	'components',
-	'els'
-]);
-
-export default class Provide {
-	/**
-	 * Component name
-	 */
+/**
+ * Class with methods to provide component classes/styles to another component, etc.
+ */
+export default class Provide<C extends iBlock = iBlock> extends Friend<C> {
+	/** @see [[iBlock.componentName]] */
 	get componentName(): string {
 		return this.component.componentName;
-	}
-
-	/**
-	 * Component instance
-	 */
-	protected readonly component: iBlock['unsafe'];
-
-	/**
-	 * @param component - component instance
-	 */
-	constructor(component: iBlock) {
-		this.component = component.unsafe;
 	}
 
 	/**
@@ -70,7 +40,9 @@ export default class Provide {
 	fullComponentName(modName?: string, modValue?: unknown): string;
 
 	/**
-	 * @param [componentName]
+	 * Returns a full name of the specified component
+	 *
+	 * @param [componentName] - base component name
 	 * @param [modName]
 	 * @param [modValue]
 	 */
@@ -97,6 +69,8 @@ export default class Provide {
 	fullElName(componentName: string, elName: string, modName?: string, modValue?: unknown): string;
 
 	/**
+	 * Returns a full name of the specified element
+	 *
 	 * @param elName
 	 * @param [modName]
 	 * @param [modValue]
@@ -115,10 +89,10 @@ export default class Provide {
 	}
 
 	/**
-	 * Returns an object with base component modifiers
+	 * Returns a dictionary with base component modifiers
 	 * @param mods - additional modifiers ({modifier: {currentValue: value}} || {modifier: value})
 	 */
-	mods(mods?: Dictionary<ModVal | Dictionary<ModVal>>): CanUndef<Readonly<ModsNTable>> {
+	mods(mods?: ProvideMods): CanUndef<Readonly<ModsNTable>> {
 		const
 			{baseMods} = this.component;
 
@@ -173,6 +147,7 @@ export default class Provide {
 	classes(componentName: string, classes?: Classes): Readonly<Dictionary<string>>;
 
 	/**
+	 * Returns an object with classes for elements of an another component
 	 * @param classes - additional classes ({baseElementName: newElementName})
 	 */
 	classes(classes: Classes): Readonly<Dictionary<string>>;
@@ -235,6 +210,7 @@ export default class Provide {
 	componentClasses(componentName: CanUndef<string>, mods: ModsTable): ReadonlyArray<string>;
 
 	/**
+	 * Returns an array of component classes by the specified parameters
 	 * @param mods - map of modifiers
 	 */
 	componentClasses(mods: ModsTable): ReadonlyArray<string>;
@@ -277,12 +253,13 @@ export default class Provide {
 	/**
 	 * Returns an array of element classes by the specified parameters
 	 *
-	 * @param componentNameOrCtx
+	 * @param componentNameOrCtx - component name or a link to a component context
 	 * @param els - map of elements with map of modifiers ({button: {focused: true}})
 	 */
 	elClasses(componentNameOrCtx: string | iBlock, els: Dictionary<ModsTable>): ReadonlyArray<string>;
 
 	/**
+	 * Returns an array of element classes by the specified parameters
 	 * @param els - map of elements with map of modifiers ({button: {focused: true}})
 	 */
 	elClasses(els: Dictionary<ModsTable>): ReadonlyArray<string>;

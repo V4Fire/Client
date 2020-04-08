@@ -6,43 +6,39 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import iBlock from 'super/i-block/i-block';
-
-import Opt from 'super/i-block/modules/opt';
-import Field from 'super/i-block/modules/field';
-import Provide from 'super/i-block/modules/provide';
+/**
+ * [[include:super/i-block/modules/vdom/README.md]]
+ * @packageDocumentation
+ */
 
 import {
 
 	renderData,
 	patchVNode,
 	execRenderObject,
+
 	RenderObject,
-	RenderContext,
 	VNode,
 	ScopedSlot
 
 } from 'core/component';
 
-export type RenderFn =
-	(params?: Dictionary) => VNode;
+import iBlock from 'super/i-block/i-block';
+import Friend from 'super/i-block/modules/friend';
 
-const
-	tplCache = Object.createDict<RenderObject>();
+import Opt from 'super/i-block/modules/opt';
+import Field from 'super/i-block/modules/field';
+import Provide from 'super/i-block/modules/provide';
 
-export default class VDOM {
-	/**
-	 * Component instance
-	 */
-	protected readonly component: iBlock['unsafe'];
+import { tplCache } from 'super/i-block/modules/vdom/conts';
+import { RenderFn, RenderPath, RenderContext } from 'super/i-block/modules/vdom/interface';
 
-	/**
-	 * @param component - component instance
-	 */
-	constructor(component: iBlock) {
-		this.component = component.unsafe;
-	}
+export * from 'super/i-block/modules/vdom/interface';
 
+/**
+ * Class that provides API to work with a VDOM tree
+ */
+export default class VDOM<C extends iBlock = iBlock> extends Friend<C> {
 	/**
 	 * Renders the specified data
 	 * @param data
@@ -55,7 +51,7 @@ export default class VDOM {
 
 	/**
 	 * Returns a render object by the specified path
-	 * @param path - template path (index | bExample.index ...)
+	 * @param path - path to a template (index | bExample.index ...)
 	 */
 	getRenderObject(path: string): CanUndef<RenderObject> {
 		const
@@ -100,13 +96,10 @@ export default class VDOM {
 	/**
 	 * Returns a function that executes the specified render object
 	 *
-	 * @param objOrPath - render object or a template path
+	 * @param objOrPath - render object or path to a template
 	 * @param [ctx] - render context
 	 */
-	bindRenderObject(
-		objOrPath: CanUndef<RenderObject> | string,
-		ctx?: RenderContext | [Dictionary] | [Dictionary, RenderContext]
-	): RenderFn {
+	bindRenderObject(objOrPath: RenderPath, ctx?: RenderContext): RenderFn {
 		const
 			renderObj = Object.isString(objOrPath) ? this.getRenderObject(objOrPath) : objOrPath;
 
@@ -160,7 +153,7 @@ export default class VDOM {
 				vnode = execRenderObject(renderObj, instanceCtx);
 
 			if (renderCtx) {
-				return patchVNode(vnode, instanceCtx, renderCtx);
+				patchVNode(vnode, instanceCtx, renderCtx);
 			}
 
 			return vnode;
@@ -170,18 +163,15 @@ export default class VDOM {
 	/**
 	 * Executes the specified render object
 	 *
-	 * @param objOrPath - render object or a template path
+	 * @param objOrPath - render object or path to a template
 	 * @param [ctx] - render context
 	 */
-	execRenderObject(
-		objOrPath: CanUndef<RenderObject> | string,
-		ctx?: RenderContext | [Dictionary] | [Dictionary, RenderContext]
-	): VNode {
+	execRenderObject(objOrPath: RenderPath, ctx?: RenderContext): VNode {
 		return this.bindRenderObject(objOrPath, ctx)();
 	}
 
 	/**
-	 * Returns a link to the closest parent component for the current
+	 * Returns a link to the closest parent component from the current
 	 * @param component - component name or a link to the component constructor
 	 */
 	closest<T extends iBlock = iBlock>(component: string | ClassConstructor<T> | Function): CanUndef<T> {
@@ -209,11 +199,10 @@ export default class VDOM {
 	 * @param elName
 	 * @param [ctx] - component context
 	 */
-	findElFromVNode<T extends iBlock>(
+	findElFromVNode(
 		vnode: VNode,
 		elName: string,
-		// @ts-ignore
-		ctx: T = this.component
+		ctx: iBlock = this.component
 	): CanUndef<VNode> {
 		const
 			selector = ctx.provide.fullElName(elName);
@@ -252,12 +241,11 @@ export default class VDOM {
 	 * Returns a slot by the specified name
 	 *
 	 * @param name
-	 * @param ctx
+	 * @param [ctx] - component context to get the slot
 	 */
-	getSlot<T extends iBlock>(
+	getSlot(
 		name: string,
-		// @ts-ignore
-		ctx: T = this.component
+		ctx: iBlock = this.component
 	): CanUndef<VNode | ScopedSlot> {
 		return Object.get(ctx, `$slots.${name}`) || Object.get(ctx, `$scopedSlots.${name}`);
 	}

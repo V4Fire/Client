@@ -7,8 +7,10 @@
  */
 
 /**
- * Cache helper
+ * [[include:super/i-block/modules/cache/README.md]]
+ * @packageDocumentation
  */
+
 export default class Cache<K extends string = string, V = unknown> {
 	/**
 	 * Cache dictionary

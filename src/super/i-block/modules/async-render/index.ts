@@ -6,76 +6,36 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import Async from 'core/async';
-import iBlock from 'super/i-block/i-block';
+/**
+ * [[include:super/i-block/modules/async-render/README.md]]
+ * @packageDocumentation
+ */
 
 //#if runtime has component/async-render
-import { runHook, ComponentMeta } from 'core/component';
 import { queue, restart, deferRestart } from 'core/render';
 //#endif
 
-export interface TaskI<D = unknown> {
-	list: Iterator<D>;
-	i: number;
-	total: number;
-	chunk?: number;
-}
+import iBlock from 'super/i-block/i-block';
+import Friend from 'super/i-block/modules/friend';
 
-export interface TaskFilter<EL = unknown, I extends number = number, D = unknown> {
-	(): boolean;
-	(el: EL, i: I, task: TaskI<D>): boolean;
-}
+import { TaskOptions, TaskDesc } from 'super/i-block/modules/async-render/interface';
+export * from 'super/i-block/modules/async-render/interface';
 
-export interface TaskDestructor {
-	(el: Node);
-}
-
-export interface TaskOptions<EL = unknown, I extends number = number, D = unknown> {
-	group?: string;
-	weight?: number;
-	filter?: TaskFilter<EL, I, D>;
-	destructor?: TaskDestructor;
-}
-
-export interface TaskDesc {
-	renderGroup?: string;
-	destructor?: Function;
-}
-
-export default class AsyncRender {
+/**
+ * Class that provides API to render chunks of a component template asynchronously
+ */
+export default class AsyncRender<C extends iBlock = iBlock> extends Friend<C> {
 	//#if runtime has component/async-render
 
-	/**
-	 * Component async label
-	 */
+	/** @see [[iBlock.$asyncLabel]] */
 	get asyncLabel(): symbol {
 		return this.component.$asyncLabel;
 	}
 
-	/**
-	 * Component instance
-	 */
-	protected readonly component: iBlock['unsafe'];
+	/** @override */
+	constructor(component: C) {
+		super(component);
 
-	/**
-	 * Async instance
-	 */
-	protected get async(): Async<iBlock> {
-		return this.component.async;
-	}
-
-	/**
-	 * Component meta object
-	 */
-	protected get meta(): ComponentMeta {
-		return this.component.meta;
-	}
-
-	/**
-	 * @param component - component instance
-	 */
-	constructor(component: iBlock) {
-		this.component = component.unsafe;
 		this.meta.hooks.beforeUpdate.push({fn: () => {
 			const group = {
 				group: 'asyncComponents'
@@ -93,14 +53,14 @@ export default class AsyncRender {
 	}
 
 	/**
-	 * Restarts the async render daemon for forcing render
+	 * Restarts the async render daemon to force render
 	 */
 	forceRender(): void {
 		restart();
 	}
 
 	/**
-	 * Restarts the async render daemon for forcing render
+	 * Restarts the async render daemon to force render
 	 * (runs on a next tick)
 	 */
 	deferForceRender(): void {
@@ -112,9 +72,9 @@ export default class AsyncRender {
 	 *
 	 * @param value
 	 * @param slice - elements per chunk or [start position, elements per chunk]
-	 * @param [params]
+	 * @param [opts] - additional options
 	 */
-	iterate(value: unknown, slice: number | [number, number], params: TaskOptions = {}): unknown[] {
+	iterate(value: unknown, slice: number | [number, number], opts: TaskOptions = {}): unknown[] {
 		if (!value) {
 			return [];
 		}
@@ -157,7 +117,7 @@ export default class AsyncRender {
 		}
 
 		const
-			f = params.filter,
+			f = opts.filter,
 			finalArr = <unknown[]>[],
 			filteredArr = <unknown[]>[],
 			isPromise = Object.isPromise(list);
@@ -240,7 +200,7 @@ export default class AsyncRender {
 			};
 
 			const
-				weight = params.weight || 1,
+				weight = opts.weight || 1,
 				newIterator = createIterator();
 
 			let
@@ -291,8 +251,8 @@ export default class AsyncRender {
 						let
 							group = 'asyncComponents';
 
-						if (params.group) {
-							group = `asyncComponents:${params.group}:${chunkI}`;
+						if (opts.group) {
+							group = `asyncComponents:${opts.group}:${chunkI}`;
 							desc.destructor = () => $a.terminateWorker({group});
 						}
 
@@ -312,8 +272,8 @@ export default class AsyncRender {
 									$a.worker(() => destroyEl(el), {group});
 
 								} else if (el.parentNode) {
-									if (params.destructor) {
-										params.destructor(el);
+									if (opts.destructor) {
+										opts.destructor(el);
 									}
 
 									el.parentNode.removeChild(el);

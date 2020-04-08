@@ -6,16 +6,19 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+/**
+ * [[include:super/i-block/modules/mods/README.md]]
+ * @packageDocumentation
+ */
+
 import iBlock from 'super/i-block/i-block';
 import { ExperimentsSet } from 'core/abt/interface';
-import { ModVal, ModsDecl } from 'core/component';
 
-export { ModVal, ModsDecl };
-export type ModsTable = Dictionary<ModVal>;
-export type ModsNTable = Dictionary<CanUndef<string>>;
+import { ModsTable, ModsNTable } from 'super/i-block/modules/mods/interface';
+export * from 'super/i-block/modules/mods/interface';
 
 /**
- * Merges old component modifiers with new
+ * Merges old component modifiers with new modifiers
  * (for functional components)
  *
  * @param component
@@ -145,7 +148,7 @@ export function initMods<T extends iBlock>(component: T): ModsNTable {
 		}
 
 		const
-			{experiments} = c.$root.remoteState;
+			{experiments} = c.r.remoteState;
 
 		if (Object.isArray(experiments)) {
 			for (let i = 0; i < experiments.length; i++) {
@@ -183,7 +186,7 @@ export function initMods<T extends iBlock>(component: T): ModsNTable {
 }
 
 /**
- * Returns an object with watchable modifiers
+ * Returns a dictionary with watchable modifiers
  * @param component
  */
 export function getWatchableMods<T extends iBlock>(component: T): Readonly<ModsNTable> {

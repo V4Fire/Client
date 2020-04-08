@@ -6,6 +6,11 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+/**
+ * [[include:super/i-block/modules/dom/README.md]]
+ * @packageDocumentation
+ */
+
 import { wrapAsDelegateHandler } from 'core/dom';
 import { ComponentElement } from 'core/component';
 

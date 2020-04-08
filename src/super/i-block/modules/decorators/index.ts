@@ -6,10 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { AsyncOptions } from 'core/async';
-import { statuses } from 'super/i-block/modules/const';
-import { Statuses, iBlockDecorator } from 'super/i-block/i-block';
-import { initEmitter, ModVal, InitFieldFn as BaseInitFieldFn, ComponentInterface } from 'core/component';
+import { initEmitter, ModVal } from 'core/component';
 
 import {
 
@@ -20,48 +17,38 @@ import {
 	prop as propDecorator,
 	field as fieldDecorator,
 	system as systemDecorator,
-	watch as watchDecorator,
-
-	DecoratorMethodWatchers as BaseMethodWatchers,
-	DecoratorFieldWatcher as BaseFieldWatcher,
-	DecoratorProp as BaseComponentProp,
-	DecoratorField as BaseComponentField
+	watch as watchDecorator
 
 } from 'core/component/decorators';
 
-export interface InitFieldFn<
-	CTX extends ComponentInterface = ComponentInterface
-> extends BaseInitFieldFn<CTX & iBlockDecorator> {}
+import iBlock from 'super/i-block/i-block';
+import { statuses } from 'super/i-block/const';
+import { waitCtxRgxp } from 'super/i-block/modules/decorators/const';
 
-export type MethodWatchers<
-	CTX extends ComponentInterface = ComponentInterface,
-	A = unknown,
-	B = A
-> = BaseMethodWatchers<CTX & iBlockDecorator, A, B>;
+import {
 
-export type FieldWatcher<
-	CTX extends ComponentInterface = ComponentInterface,
-	A = unknown,
-	B = A
-> = BaseFieldWatcher<CTX & iBlockDecorator, A, B>;
+	ComponentProp,
+	ComponentField,
+	InitFieldFn,
 
-export interface ComponentProp<
-	CTX extends ComponentInterface = ComponentInterface,
-	A = unknown,
-	B = A
-> extends BaseComponentProp<CTX & iBlockDecorator, A, B> {}
+	FieldWatcher,
+	MethodWatchers,
 
-export interface ComponentField<
-	CTX extends ComponentInterface = ComponentInterface,
-	A = unknown,
-	B = A
-> extends BaseComponentField<CTX & iBlockDecorator, A, B> {}
+	WaitOptions,
+	WaitStatuses,
+
+	ModEventType,
+	DecoratorCtx
+
+} from 'super/i-block/modules/decorators/interface';
+
+export * from 'super/i-block/modules/decorators/interface';
 
 /**
  * @see core/component/decorators/base.ts
  * @override
  */
-export const p = pDecorator as <CTX extends ComponentInterface = ComponentInterface, A = unknown, B = A>(
+export const p = pDecorator as <CTX extends iBlock['unsafe'] = iBlock['unsafe'], A = unknown, B = A>(
 	params?: ComponentProp<CTX, A, B> | ComponentField<CTX, A, B> | DecoratorMethod<CTX, A, B> | DecoratorComponentAccessor
 ) => Function;
 
@@ -69,7 +56,7 @@ export const p = pDecorator as <CTX extends ComponentInterface = ComponentInterf
  * @see core/component/decorators/base.ts
  * @override
  */
-export const prop = propDecorator as <CTX extends ComponentInterface = ComponentInterface, A = unknown, B = A>(
+export const prop = propDecorator as <CTX extends iBlock['unsafe'] = iBlock['unsafe'], A = unknown, B = A>(
 	params?: CanArray<Function> | ObjectConstructor | ComponentProp<CTX, A, B>
 ) => Function;
 
@@ -77,7 +64,7 @@ export const prop = propDecorator as <CTX extends ComponentInterface = Component
  * @see core/component/decorators/base.ts
  * @override
  */
-export const field = fieldDecorator as <CTX extends ComponentInterface = ComponentInterface, A = unknown, B = A>(
+export const field = fieldDecorator as <CTX extends iBlock['unsafe'] = iBlock['unsafe'], A = unknown, B = A>(
 	params?: InitFieldFn<CTX> | ComponentField<CTX, A, B>
 ) => Function;
 
@@ -85,7 +72,7 @@ export const field = fieldDecorator as <CTX extends ComponentInterface = Compone
  * @see core/component/decorators/base.ts
  * @override
  */
-export const system = systemDecorator as <CTX extends ComponentInterface = ComponentInterface, A = unknown, B = A>(
+export const system = systemDecorator as <CTX extends iBlock['unsafe'] = iBlock['unsafe'], A = unknown, B = A>(
 	params?: InitFieldFn<CTX> | ComponentField<CTX, A, B>
 ) => Function;
 
@@ -93,41 +80,37 @@ export const system = systemDecorator as <CTX extends ComponentInterface = Compo
  * @see core/component/decorators/base.ts
  * @override
  */
-export const watch = watchDecorator as <CTX extends ComponentInterface = ComponentInterface, A = unknown, B = A>(
+export const watch = watchDecorator as <CTX extends iBlock['unsafe'] = iBlock['unsafe'], A = unknown, B = A>(
 	params?: FieldWatcher<CTX, A, B> | MethodWatchers<CTX, A, B>
 ) => Function;
 
-export type DecoratorCtx<CTX> = {component: CTX} | CTX;
-
 /**
- * Returns a component instance from a decorator wrapper
- * @param val
+ * Returns a component instance from the specified decorator wrapper
+ * @param wrapper
  */
-export function getComponentCtx<CTX>(val: DecoratorCtx<CTX>): CTX {
+export function getComponentCtx<CTX>(wrapper: DecoratorCtx<CTX>): CTX {
 	// @ts-ignore
-	return val.component || val;
+	return wrapper.component || wrapper;
 }
-
-type EventType = 'on' | 'once';
 
 /**
  * Decorates a method as a modifier handler
  *
  * @decorator
- * @param name
- * @param [value]
- * @param [method]
+ * @param name - modifier name to listen
+ * @param [value] - modifier value to listen
+ * @param [method] - event method
  */
-export function mod<CTX extends ComponentInterface = ComponentInterface>(
+export function mod<CTX extends iBlock['unsafe'] = iBlock['unsafe']>(
 	name: string,
 	value: ModVal = '*',
-	method: EventType = 'on'
+	method: ModEventType = 'on'
 ): Function {
 	return (target, key, descriptor) => {
 		initEmitter.once('bindConstructor', (componentName) => {
 			initEmitter.once(`constructor.${componentName}`, ({meta}) => {
 				meta.hooks.beforeCreate.push({
-					fn(this: DecoratorCtx<CTX & iBlockDecorator>): void {
+					fn(this: DecoratorCtx<CTX>): void {
 						const c = getComponentCtx(this);
 						c.localEvent[method](`block.mod.set.${name}.${value}`, descriptor.value.bind(c));
 					}
@@ -141,20 +124,20 @@ export function mod<CTX extends ComponentInterface = ComponentInterface>(
  * Decorates a method as a remove modifier handler
  *
  * @decorator
- * @param name
- * @param [value]
- * @param [method]
+ * @param name - modifier name to listen
+ * @param [value] - modifier value to listen
+ * @param [method] - event method
  */
-export function removeMod<CTX extends ComponentInterface = ComponentInterface>(
+export function removeMod<CTX extends iBlock['unsafe'] = iBlock['unsafe']>(
 	name: string,
 	value: ModVal = '*',
-	method: EventType = 'on'
+	method: ModEventType = 'on'
 ): Function {
 	return (target, key, descriptor) => {
 		initEmitter.once('bindConstructor', (componentName) => {
 			initEmitter.once(`constructor.${componentName}`, ({meta}) => {
 				meta.hooks.beforeCreate.push({
-					fn(this: DecoratorCtx<CTX & iBlockDecorator>): void {
+					fn(this: DecoratorCtx<CTX>): void {
 						const c = getComponentCtx(this);
 						c.localEvent[method](`block.mod.remove.${name}.${value}`, descriptor.value.bind(c));
 					}
@@ -164,43 +147,36 @@ export function removeMod<CTX extends ComponentInterface = ComponentInterface>(
 	};
 }
 
-export interface WaitOptions extends AsyncOptions {
-	fn?: Function;
-	defer?: boolean | number;
-}
-
-const
-	waitCtxRgxp = /([^:]+):(\w+)/;
-
 /**
- * Decorates a method or a function for using with the specified init status
+ * Decorates a method or a function to use with the specified initialize status
  *
- * @see Async.wait
+ * @see [[Async.wait]]
  * @decorator
- * @param params - additional parameters:
- *   *) [params.fn] - callback function
- *   *) [params.defer] - if true, then the function will always return a promise
+ *
+ * @param opts - additional options
  */
-export function wait(params: WaitOptions): Function;
+export function wait(opts: WaitOptions): Function;
 
 /**
- * @see Async.wait
+ * Decorates a method or a function to use with the specified initialize status
+ *
+ * @see [[Async.wait]]
  * @decorator
- * @param status
- * @param [params]
+ *
+ * @param status - status to wait
+ * @param [opts] - additional options
  */
 // tslint:disable-next-line:completed-docs
-export function wait(status: number | string | Statuses, params?: WaitOptions | Function): Function;
-// tslint:disable-next-line:completed-docs
-export function wait<CTX extends ComponentInterface = ComponentInterface>(
-	status: number | string | Statuses | WaitOptions,
-	params?: WaitOptions | Function
+export function wait(status: WaitStatuses, opts?: WaitOptions | Function): Function;
+export function wait<CTX extends iBlock['unsafe'] = iBlock['unsafe']>(
+	status: WaitStatuses | WaitOptions,
+	opts?: WaitOptions | Function
 ): Function {
 	let
 		ctx;
 
 	if (Object.isPlainObject(status)) {
-		params = <WaitOptions>status;
+		opts = <WaitOptions>status;
 		status = 0;
 
 	} else if (Object.isString(status)) {
@@ -220,17 +196,17 @@ export function wait<CTX extends ComponentInterface = ComponentInterface>(
 		group,
 		defer,
 		fn
-	} = params && !Object.isFunction(params) ? params : <WaitOptions>{};
+	} = opts && !Object.isFunction(opts) ? opts : <WaitOptions>{};
 
 	// tslint:enable:prefer-const
 
 	let
-		handler = <Function>(fn || params);
+		handler = <Function>(fn || opts);
 
 	const
 		isDecorator = !Object.isFunction(handler);
 
-	function wrapper(this: DecoratorCtx<CTX & iBlockDecorator>): CanUndef<CanPromise<CTX>> {
+	function wrapper(this: DecoratorCtx<CTX>): CanUndef<CanPromise<CTX>> {
 		const
 			component = getComponentCtx(this);
 
