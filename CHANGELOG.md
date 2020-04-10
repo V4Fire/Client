@@ -11,6 +11,46 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-beta.268 (2020-04-08)
+
+#### :bug: Bug Fix
+
+* [Fixed rendering `b-virtual-scroll`](https://github.com/V4Fire/Client/pull/194)
+
+## v3.0.0-beta.267 (2020-04-06)
+
+#### :bug: Bug Fix
+
+* Used `localError` event on a request error instead of `localReady`
+
+## v3.0.0-beta.266 (2020-03-30)
+
+#### :bug: Bug Fix
+
+* Fixed `onClick` without data provider `form/b-button`
+
+## v3.0.0-beta.265 (2020-03-27)
+
+#### :bug: Bug Fix
+
+* Fixed `htmlAttrs` block from `super/i-static-page/i-static-page.interface.ss`
+
+## v3.0.0-beta.264 (2020-03-26)
+
+#### :rocket: New Feature
+
+* Added `htmlAttrs` to `super/i-static-page/i-static-page.interface.ss`
+
+#### :house: Internal
+
+* Review `RequestError` export
+
+## v3.0.0-beta.263 (2020-03-18)
+
+#### :rocket: New Feature
+
+* [Added ability to provide an `option` prop as a function into components that implement `iItems` trait](https://github.com/V4Fire/Client/pull/188)
+
 ## v3.0.0-beta.262 (2020-03-11)
 
 ### :bug: Bug Fix

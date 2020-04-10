@@ -57,7 +57,7 @@ export default class bVirtualScroll extends iData implements iItems {
 	options!: unknown[];
 
 	/** @see [[iItems.prototype.item]] */
-	@prop({type: String, required: false})
+	@prop({type: [String, Function], required: false})
 	readonly option?: iItems['option'];
 
 	/** @see [[iItems.prototype.itemKey]] */
@@ -217,7 +217,10 @@ export default class bVirtualScroll extends iData implements iItems {
 		this.scrollRender.reInit();
 	}
 
-	/** @override */
+	/**
+	 * @override
+	 * @emits localEvent:localReady
+	 */
 	protected initRemoteData(): CanUndef<unknown[]> {
 		if (!this.db) {
 			return;
@@ -252,11 +255,13 @@ export default class bVirtualScroll extends iData implements iItems {
 		return this.reInit();
 	}
 
-	/** @override */
+	/**
+	 *  @override
+	 *  @emits localEvent:localError
+	 */
 	protected onRequestError(err: Error | RequestError<unknown>, retry: RetryRequestFn): void {
 		super.onRequestError(err, retry);
 
-		this.localEvent.emit('localReady');
-		this.scrollRender.setRefVisibility('retry', true);
+		this.localEvent.emit('localError');
 	}
 }
