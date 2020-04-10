@@ -6,13 +6,15 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import iBlock from 'super/i-block/i-block';
+/**
+ * [[include:super/i-block/directives/event/README.md]]
+ * @packageDocumentation
+ */
+
 import Component, { VNode, VNodeDirective, ComponentElement } from 'core/component';
 
-const
-	cache = new WeakMap(),
-	commaRgxp = /\s*,\s*/g,
-	keyValRgxp = /\.key\.([^.]*)/;
+import iBlock from 'super/i-block/i-block';
+import { cache, commaRgxp, keyValRgxp } from 'super/i-block/directives/event/const';
 
 function bind(
 	node: ComponentElement<iBlock>,
@@ -30,8 +32,7 @@ function bind(
 
 	const
 		m = <NonNullable<VNodeDirective['modifiers']>>(p.modifiers || {}),
-		// @ts-ignore
-		obj = vNode.context.async,
+		obj = vNode.context.unsafe.async,
 		raw = <string>(<any>p).rawName;
 
 	const
