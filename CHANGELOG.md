@@ -11,6 +11,15 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-beta.269
+
+#### :rocket: New Feature
+
+* Added new component bBottomSlide with history
+* Added iHistory trait
+* Added tiny History class for managing component history
+* Added v-update-on directive for listening events from various emitter
+
 ## v3.0.0-beta.268 (2020-04-08)
 
 #### :bug: Bug Fix
