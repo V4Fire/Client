@@ -247,7 +247,7 @@ export default class DOM<C extends iBlock = iBlock> extends Friend<C> {
 				$el,
 				componentName,
 				isFlyweight: true,
-				localEvent: {emit(): void { /* loopback */ }}
+				localEmitter: {emit(): void { /* loopback */ }}
 			}
 		});
 	}

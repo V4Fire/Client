@@ -6,11 +6,11 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import Async, { AsyncOptions } from 'core/async';
+import Async from 'core/async';
 import iBlock from 'super/i-block/i-block';
 import { statuses } from 'super/i-block/const';
 
-export type Statuses =
+export type ComponentStatus =
 	'destroyed' |
 	'inactive' |
 	'unloaded' |
@@ -18,32 +18,45 @@ export type Statuses =
 	'beforeReady' |
 	'ready';
 
-export interface WaitStatusOptions extends AsyncOptions {
-	defer?: boolean;
-}
+export type ComponentStatuses = Partial<
+	Record<keyof typeof statuses, boolean>
+>;
 
-export type ParentMessageFields =
+export type ParentMessageProperty =
 	'instanceOf' |
 	'globalName' |
 	'componentName' |
 	'componentId';
 
-export interface ParentMessage<T extends iBlock = iBlock> {
-	check: [ParentMessageFields, unknown];
-	action(this: T): Function;
+export interface ParentMessage<CTX extends iBlock = iBlock> {
+	check: [ParentMessageProperty, unknown];
+	action(this: CTX): Function;
 }
 
-export type Stage = string | number;
-export type ComponentStatuses = Partial<Record<keyof typeof statuses, boolean>>;
+export type Stage =
+	string |
+	number;
 
 export interface ComponentEventDecl {
 	event: string;
 	type?: 'error';
 }
 
-export interface InitLoadParams {
+export interface InitLoadOptions {
+	/**
+	 * If true, the component is loaded in a silent mode,
+	 * i.e. without toggling .componentStatus to 'loading'.
+	 */
 	silent?: boolean;
+
+	/**
+	 * If true, the component force all of child components to load/reload
+	 */
 	recursive?: boolean;
+}
+
+export interface InitLoadCb<R = unknown, CTX extends iBlock = iBlock> {
+	(this: CTX): R;
 }
 
 export interface Unsafe<CTX extends iBlock = iBlock> {
@@ -60,10 +73,10 @@ export interface Unsafe<CTX extends iBlock = iBlock> {
 	block: iBlock['block'];
 	async: Async<CTX>;
 
-	localEvent: iBlock['localEvent'];
-	parentEvent: iBlock['parentEvent'];
-	rootEvent: iBlock['rootEvent'];
-	globalEvent: iBlock['globalEvent'];
+	localEmitter: iBlock['localEmitter'];
+	parentEmitter: iBlock['parentEmitter'];
+	rootEmitter: iBlock['rootEmitter'];
+	globalEmitter: iBlock['globalEmitter'];
 
 	log: iBlock['log'];
 	meta: iBlock['meta'];

@@ -28,32 +28,32 @@ export type EventEmitterLikeP = CanUndef<
 	(() => CanUndef<EventEmitterLike>)
 >;
 
-export interface BaseEventEmitter<L, CTX extends object> {
+export interface ReadonlyEventEmitterWrapper<CTX extends object = Async> {
 	on<E = unknown, R = unknown>(
 		events: CanArray<string>,
 		handler: ProxyCb<E, R, CTX>,
 		...args: unknown[]
-	): L;
+	): object;
 
 	on<E = unknown, R = unknown>(
 		events: CanArray<string>,
 		handler: ProxyCb<E, R, CTX>,
 		params: AsyncOnOptions<CTX>,
 		...args: unknown[]
-	): L;
+	): object;
 
 	once<E = unknown, R = unknown>(
 		events: CanArray<string>,
 		handler: ProxyCb<E, R, CTX>,
 		...args: unknown[]
-	): L;
+	): object;
 
 	once<E = unknown, R = unknown>(
 		events: CanArray<string>,
 		handler: ProxyCb<E, R, CTX>,
 		params: AsyncOnceOptions<CTX>,
 		...args: unknown[]
-	): L;
+	): object;
 
 	promisifyOnce<T = unknown>(events: CanArray<string>, ...args: unknown[]): Promise<CanUndef<T>>;
 	promisifyOnce<T = unknown>(
@@ -66,19 +66,15 @@ export interface BaseEventEmitter<L, CTX extends object> {
 	off(params: ClearOptionsId<object>): void;
 }
 
-export interface ReadonlyEventEmitter<CTX extends object = Async> extends BaseEventEmitter<CanUndef<object>, CTX> {
-
-}
-
-export interface EventEmitter<CTX extends object = Async> extends BaseEventEmitter<object, CTX> {
+export interface EventEmitterWrapper<CTX extends object = Async> extends ReadonlyEventEmitterWrapper<CTX> {
 	emit(event: string, ...args: unknown[]): boolean;
 }
 
-export interface EventEmitterWrapOptions {
+export interface EventEmitterWrapperOptions {
 	suspend?: boolean;
-	remote?: boolean;
+	readonly?: boolean;
 }
 
-export interface ReadonlyEventWrapOptions extends EventEmitterWrapOptions {
-	remote: true;
+export interface ReadonlyEventEmitterWrapperOptions extends EventEmitterWrapperOptions {
+	readonly: true;
 }

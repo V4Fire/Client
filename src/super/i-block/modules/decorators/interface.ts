@@ -10,7 +10,7 @@ import { AsyncOptions } from 'core/async';
 import { InitFieldFn as BaseInitFieldFn, ComponentInterface } from 'core/component';
 
 import iBlock from 'super/i-block';
-import { Statuses } from 'super/i-block/interface';
+import { ComponentStatus } from 'super/i-block/interface';
 
 import {
 
@@ -54,13 +54,12 @@ export interface ComponentField<
 export type WaitStatuses =
 	number |
 	string |
-	Statuses;
+	ComponentStatus;
 
 export type WaitFn<
-	CTX extends iBlock = iBlock['unsafe'],
 	ARGS extends unknown[] = unknown[],
 	R = unknown
-> = (this: CTX, ...args: ARGS) => R;
+> = (...args: ARGS) => R;
 
 export interface WaitDecoratorOptions extends AsyncOptions {
 	/**

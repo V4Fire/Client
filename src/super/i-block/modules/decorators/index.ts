@@ -119,7 +119,7 @@ export function mod(
 				meta.hooks.beforeCreate.push({
 					fn(this: DecoratorCtx<iBlock['unsafe']>): void {
 						const c = getComponentCtx(this);
-						c.localEvent[method](`block.mod.set.${name}.${value}`, descriptor.value.bind(c));
+						c.localEmitter[method](`block.mod.set.${name}.${value}`, descriptor.value.bind(c));
 					}
 				});
 			});
@@ -146,7 +146,7 @@ export function removeMod(
 				meta.hooks.beforeCreate.push({
 					fn(this: DecoratorCtx<iBlock['unsafe']>): void {
 						const c = getComponentCtx(this);
-						c.localEvent[method](`block.mod.remove.${name}.${value}`, descriptor.value.bind(c));
+						c.localEmitter[method](`block.mod.remove.${name}.${value}`, descriptor.value.bind(c));
 					}
 				});
 			});
@@ -170,9 +170,9 @@ export function wait(opts: WaitDecoratorOptions): Function;
  * @see [[Async.wait]]
  * @param opts - additional options
  */
-export function wait<CTX extends iBlock = iBlock['unsafe'], F extends WaitFn = WaitFn>(
+export function wait<F extends WaitFn = WaitFn>(
 	opts: WaitOptions<F>
-): WaitFn<CTX, Parameters<F>, ReturnType<F>>;
+): WaitFn<Parameters<F>, CanPromise<ReturnType<F>>>;
 
 /**
  * Decorates a method to wait the specified component status
@@ -192,10 +192,10 @@ export function wait(status: WaitStatuses, opts?: WaitDecoratorOptions): Functio
  * @param status
  * @param fnOrOpts - function to wrap or additional options
  */
-export function wait<CTX extends iBlock = iBlock['unsafe'], F extends WaitFn = WaitFn>(
+export function wait<F extends WaitFn = WaitFn>(
 	status: WaitStatuses,
 	fnOrOpts: F | WaitOptions<F>
-): WaitFn<CTX, Parameters<F>, ReturnType<F>>;
+): WaitFn<Parameters<F>, CanPromise<ReturnType<F>>>;
 
 export function wait(
 	statusOrOpts: WaitStatuses | WaitDecoratorOptions | WaitOptions,

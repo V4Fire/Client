@@ -17,10 +17,10 @@ import { unsuspendRgxp, emitLikeEvents } from 'super/i-block/modules/event-emitt
 import {
 
 	EventEmitterLikeP,
-	EventEmitterWrapOptions,
-	ReadonlyEventWrapOptions,
-	EventEmitter,
-	ReadonlyEventEmitter
+	EventEmitterWrapperOptions,
+	ReadonlyEventEmitterWrapperOptions,
+	EventEmitterWrapper,
+	ReadonlyEventEmitterWrapper
 
 } from 'super/i-block/modules/event-emitter/interface';
 
@@ -36,8 +36,8 @@ export * from 'super/i-block/modules/event-emitter/interface';
 export function wrapEventEmitter(
 	$a: Async,
 	emitter: EventEmitterLikeP,
-	opts?: false | EventEmitterWrapOptions
-): EventEmitter;
+	opts?: false | EventEmitterWrapperOptions
+): EventEmitterWrapper;
 
 /**
  * Wraps the specified event emitter with async
@@ -49,16 +49,16 @@ export function wrapEventEmitter(
 export function wrapEventEmitter(
 	$a: Async,
 	emitter: EventEmitterLikeP,
-	opts: true | ReadonlyEventWrapOptions
-): ReadonlyEventEmitter;
+	opts: true | ReadonlyEventEmitterWrapperOptions
+): ReadonlyEventEmitterWrapper;
 
 export function wrapEventEmitter(
 	$a: Async,
 	emitter: EventEmitterLikeP,
-	opts?: boolean | EventEmitterWrapOptions
-): EventEmitter {
+	opts?: boolean | EventEmitterWrapperOptions
+): EventEmitterWrapper {
 	const
-		p = Object.isPlainObject(opts) ? opts : {remote: Boolean(opts)};
+		p = Object.isPlainObject(opts) ? opts : {readonly: Boolean(opts)};
 
 	const group = (p) => {
 		const
@@ -134,8 +134,8 @@ export function wrapEventEmitter(
 		}
 	};
 
-	if (!p.remote) {
-		(<EventEmitter>wrappedEmitter).emit = (event, ...args) => {
+	if (!p.readonly) {
+		(<EventEmitterWrapper>wrappedEmitter).emit = (event, ...args) => {
 			let
 				e = emitter;
 
@@ -158,5 +158,5 @@ export function wrapEventEmitter(
 		};
 	}
 
-	return <EventEmitter>wrappedEmitter;
+	return <EventEmitterWrapper>wrappedEmitter;
 }

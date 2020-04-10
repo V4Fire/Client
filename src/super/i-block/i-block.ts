@@ -14,7 +14,9 @@
 // tslint:disable:max-file-line-count
 
 import symbolGenerator from 'core/symbol';
+import { deprecated } from 'core/functools';
 
+import SyncPromise from 'core/promise/sync';
 import Async, { AsyncOptions, ClearOptionsId, WrappedCb, ProxyCb } from 'core/async';
 import log, { LogMessageOptions } from 'core/log';
 
@@ -36,8 +38,26 @@ import bRouter from 'base/b-router/b-router';
 import iStaticPage from 'super/i-static-page/i-static-page';
 //#endif
 
-import 'super/i-block/directives';
+import {
+
+	component,
+	PARENT,
+
+	globalEvent,
+	hook,
+	computed,
+
+	WatchPath,
+	RawWatchHandler,
+	ComponentInterface,
+
+	VNode
+
+} from 'core/component';
+
 import * as presets from 'presets';
+import 'super/i-block/directives';
+import { statuses } from 'super/i-block/const';
 
 import Cache from 'super/i-block/modules/cache';
 import Opt from 'super/i-block/modules/opt';
@@ -51,6 +71,7 @@ import VDOM from 'super/i-block/modules/vdom';
 
 import Lfc from 'super/i-block/modules/lfc';
 import AsyncRender from 'super/i-block/modules/async-render';
+import Sync, { AsyncWatchOptions } from 'super/i-block/modules/sync';
 
 import Block from 'super/i-block/modules/block';
 import Field from 'super/i-block/modules/field';
@@ -58,21 +79,27 @@ import Field from 'super/i-block/modules/field';
 import Provide, { classesCache, Classes, Styles } from 'super/i-block/modules/provide';
 import State, { ConverterCallType } from 'super/i-block/modules/state';
 import Storage from 'super/i-block/modules/storage';
-import Sync, { AsyncWatchOptions } from 'super/i-block/modules/sync';
 
-import { statuses } from 'super/i-block/modules/const';
-import { eventFactory, Event, RemoteEvent } from 'super/i-block/modules/event';
-import { initGlobalEvents, initRemoteWatchers } from 'super/i-block/modules/listeners';
-import { activate, deactivate, onActivated, onDeactivated } from 'super/i-block/modules/keep-alive';
 import {
 
-	Statuses,
-	WaitStatusOptions,
+	wrapEventEmitter,
+	EventEmitterWrapper,
+	ReadonlyEventEmitterWrapper
+
+} from 'super/i-block/modules/event-emitter';
+
+import { initGlobalListeners, initRemoteWatchers } from 'super/i-block/modules/listeners';
+import { readyStatuses, activate, deactivate, onActivated, onDeactivated } from 'super/i-block/modules/activation';
+
+import {
+
+	ComponentStatus,
 	Stage,
 	ParentMessage,
 	ComponentStatuses,
 	ComponentEventDecl,
-	InitLoadParams,
+	InitLoadOptions,
+	InitLoadCb,
 	Unsafe
 
 } from 'super/i-block/interface';
@@ -92,45 +119,31 @@ import {
 
 import {
 
-	component,
-	PARENT,
-
-	globalEvent,
-	hook,
-	computed,
-
-	WatchPath,
-	RawWatchHandler,
-
-	ComponentMeta,
-	ComponentInterface,
-
-	VNode
-
-} from 'core/component';
-
-import {
+	p,
 
 	prop,
 	field,
 	system,
+
 	watch,
 	wait,
-	p,
+
+	WaitFn,
+	WaitDecoratorOptions,
 	MethodWatchers
 
 } from 'super/i-block/modules/decorators';
 
 export * from 'core/component';
+export * from 'super/i-block/const';
 export * from 'super/i-block/interface';
-export * from 'super/i-block/modules/const';
 
 export * from 'super/i-block/modules/block';
 export * from 'super/i-block/modules/field';
 export * from 'super/i-block/modules/state';
 
 export * from 'super/i-block/modules/daemons';
-export * from 'super/i-block/modules/event';
+export * from 'super/i-block/modules/event-emitter';
 
 export * from 'super/i-block/modules/sync';
 export * from 'super/i-block/modules/async-render';
@@ -150,25 +163,25 @@ export {
 export {
 
 	p,
+
 	prop,
 	field,
 	system,
+
 	watch,
 	wait,
+
 	mod,
 	removeMod
 
 } from 'super/i-block/modules/decorators';
 
 export const
-	$$ = symbolGenerator(),
-	modsCache = Object.createDict<ModsNTable>();
+	$$ = symbolGenerator();
 
-const readyStatuses = Object.createDict({
-	beforeReady: true,
-	ready: true
-});
-
+/**
+ * Superclass for all components
+ */
 @component()
 export default abstract class iBlock extends ComponentInterface<iBlock, iStaticPage> {
 	/**
@@ -184,7 +197,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 
 	/**
 	 * Component unique name.
-	 * It's used to enable synchronization component data with different storages: local, router, etc.
+	 * It's used to enable synchronization of component data with different storages: local, router, etc.
 	 */
 	@prop({type: String, required: false})
 	readonly globalName?: string;
@@ -200,10 +213,10 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	 * Initial component stage value.
 	 *
 	 * The stage property can be used to mark different states of the component.
-	 * For example, we have a component that implements a form of an image uploading,
+	 * For example, we have a component that implements a form of image uploading,
 	 * and we have two variants of the form: upload by a link or upload from a computer.
 	 *
-	 * We can create two stage values: 'link' and 'file' and separate the component template by two variant of a markup
+	 * We can create two stage values: 'link' and 'file' to separate the component template by two variant of a markup
 	 * depending on the stage value.
 	 */
 	@prop({type: [String, Number], required: false})
@@ -220,10 +233,10 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 
 	/**
 	 * Sets a new component stage value.
-	 * Also, by default, clears all async threads from the group of `stage.${oldGroup}`.
+	 * Also, by default, clears all async listeners from the group of `stage.${oldGroup}`.
 	 *
 	 * @see [[iBlock.stageProp]]
-	 * @emits stageChange(value: CanUndef<Stage>, oldValue: CanUndef<Stage>)
+	 * @emits `stageChange(value: CanUndef<Stage>, oldValue: CanUndef<Stage>)`
 	 */
 	set stage(value: CanUndef<Stage>) {
 		const
@@ -289,16 +302,16 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 
 	/**
 	 * If true, then the component will try to reload data on re-activation.
-	 * This parameter can be useful if you are using a keep-alive directive withing your template.
+	 * This parameter can be useful if you are using keep-alive directive within your template.
 	 * For example, you have a page within keep-alive, and after backing to this page the component will be forcely drawn
-	 * from a keep-alice cache, but after this the page will try to update the page data in a silent mode.
+	 * from a keep-alice cache, but after this page will try to update data in a silent mode.
 	 */
 	@prop(Boolean)
 	readonly reloadOnActivation: boolean = false;
 
 	/**
 	 * If true, then the component is marked with a remote provider label.
-	 * It's mean, that the parent component will wait the loading of the current component.
+	 * It means, that a parent component will wait the loading of the current component.
 	 */
 	@prop(Boolean)
 	readonly remoteProvider: boolean = false;
@@ -334,7 +347,6 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	 * But, if in some cases we don't have "stage" within "route.query" and the component have the default value,
 	 * we trap in a situation where exists route, that wasn't synchronized with the component and
 	 * it can affect to the "back" logic. Sometimes, this behavior doesn't match with our expectation.
-	 *
 	 * But if we toggle "syncRouterStoreOnInit" to true,
 	 * the component will forcely map own state to the router after initializing.
 	 */
@@ -346,8 +358,8 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	 * The usage of this mechanism is similar to the "@watch" decorator:
 	 *   *) As a key we declare a name of a component method that we want to call;
 	 *   *) As a value we use a field name or an event that we want to listen.
-	 *      Also, supports an "object" override that provides additional parameters of watching.
-	 *      Mind, the fields or events will be taken from a component which content the current.
+	 *      Also, the method supports can pass parameters of watching.
+	 *      Mind, the fields or events will be taken from a component that contents the current.
 	 *
 	 * @example
 	 * ```js
@@ -389,13 +401,13 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	/**
 	 * If true, then is enabled a dispatching mode of component events.
 	 *
-	 * It's mean that all component events will bubble to a parent component:
-	 * if the parent also has this property in true, then the event will bubble to the next (from the the hierarchy)
+	 * It means that all component events will bubble to a parent component:
+	 * if the parent also has this property in true, then the event will bubble to the next (from the hierarchy)
 	 * parent component.
 	 *
 	 * All dispatching events have special prefixes to avoid collisions with events from another components,
 	 * for example: bButton "click" will bubbled as "b-button::click".
-	 * Or if the component has globalName, it will additionally bubbled as `${globalName}::click`.
+	 * Or if the component has globalName parameter, it will additionally bubbled as `${globalName}::click`.
 	 */
 	@prop(Boolean)
 	readonly dispatching: boolean = false;
@@ -450,7 +462,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	readonly styles?: Styles;
 
 	/**
-	 * Link to i18n function, that will be used for localization
+	 * Link to i18n function, that will be used to localize of string literals
 	 */
 	@prop(Function)
 	readonly i18n: typeof i18n = defaultI18n;
@@ -458,9 +470,9 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	/**
 	 * Link to a remote state object.
 	 *
-	 * Remote state object is a special watchable object that provides some parameters
+	 * The remote state object is a special watchable object that provides some parameters
 	 * that can't be initialized in a component directly. You can modify this object outside from components,
-	 * but remember, that these mutations will force re-render of components.
+	 * but remember, that these mutations may force re-render of all components.
 	 */
 	get remoteState(): Dictionary {
 		return this.r.remoteState;
@@ -492,8 +504,8 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	 *      this status can intersects with some hooks, like beforeDestroy or destroyed
 	 */
 	@computed({replace: false})
-	get componentStatus(): Statuses {
-		return this.shadowComponentStatusStore || this.field.get<Statuses>('componentStatusStore')!;
+	get componentStatus(): ComponentStatus {
+		return this.shadowComponentStatusStore || this.field.get<ComponentStatus>('componentStatusStore')!;
 	}
 
 	/**
@@ -501,9 +513,9 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	 * Notice, not all statuses emit re-render of the component: unloaded, inactive, destroyed will emit only an event.
 	 *
 	 * @param value
-	 * @emits status${$value}(value: Statuses)
+	 * @emits `status${$value}(value: Statuses)`
 	 */
-	set componentStatus(value: Statuses) {
+	set componentStatus(value: ComponentStatus) {
 		const
 			old = this.componentStatus;
 
@@ -571,14 +583,14 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	}
 
 	/**
-	 * Link to the application router
+	 * Link to an application router
 	 */
 	get router(): bRouter {
 		return <bRouter>this.field.get('routerStore', this.r);
 	}
 
 	/**
-	 * Link to the application route object
+	 * Link to an application route object
 	 */
 	get route(): CanUndef<this['r']['CurrentPage']> {
 		return this.field.get('route', this.r);
@@ -667,7 +679,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 
 	/**
 	 * API for component field accessors.
-	 * This property provides a bunch of methods for safety access to a component property.
+	 * This property provides a bunch of methods to safety access to a component property.
 	 *
 	 * @example
 	 * ```js
@@ -726,7 +738,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	readonly asyncRender!: AsyncRender;
 
 	/**
-	 * API to operate with VDOM tree
+	 * API to work with a VDOM tree
 	 */
 	@system({
 		atom: true,
@@ -886,7 +898,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	protected readonly state!: State;
 
 	/**
-	 * API to operate with DOM tree
+	 * API to work with a DOM tree
 	 */
 	@system({
 		atom: true,
@@ -957,14 +969,14 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	 * @see [[iBlock.componentStatus]]
 	 */
 	@field({unique: true})
-	protected componentStatusStore: Statuses = 'unloaded';
+	protected componentStatusStore: ComponentStatus = 'unloaded';
 
 	/**
 	 * Component initialize status store for non watch statuses
 	 * @see [[iBlock.componentStatus]]
 	 */
 	@system({unique: true})
-	protected shadowComponentStatusStore?: Statuses;
+	protected shadowComponentStatusStore?: ComponentStatus;
 
 	/**
 	 * Store of component modifiers that can emit re-render of the component
@@ -979,7 +991,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 
 	/**
 	 * Special getter for component modifiers:
-	 * on first touch of a property from that object it will be registered a modifier by the property name
+	 * on first touch of a property from that object will be registered a modifier by the property name
 	 * that can emit re-render of the component.
 	 * Don't use this getter outside the component template.
 	 */
@@ -1046,20 +1058,29 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 
 	/**
 	 * Local event emitter:
-	 * all events that are fired from this emitter won't bubble
+	 * all events that are fired from this emitter don't bubble
 	 */
 	@system({
 		atom: true,
 		after: 'async',
 		unique: true,
-		init: (o, d) => eventFactory(<Async>d.async, new EventEmitter({
+		init: (o, d) => wrapEventEmitter(<Async>d.async, new EventEmitter({
 			maxListeners: 1e3,
 			newListener: false,
 			wildcard: true
 		}), {suspend: true})
 	})
 
-	protected readonly localEvent!: Event<this>;
+	protected readonly localEmitter!: EventEmitterWrapper<this>;
+
+	/**
+	 * @deprecated
+	 * @see [[iBlock.localEmitter]]
+	 */
+	@deprecated({renamedTo: 'localEmitter'})
+	get localEvent(): EventEmitterWrapper<this> {
+		return this.localEmitter;
+	}
 
 	/**
 	 * Event emitter of a parent component
@@ -1068,10 +1089,19 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 		atom: true,
 		after: 'async',
 		unique: true,
-		init: (o, d) => eventFactory(<Async>d.async, () => o.$parent, true)
+		init: (o, d) => wrapEventEmitter(<Async>d.async, () => o.$parent, true)
 	})
 
-	protected readonly parentEvent!: RemoteEvent<this>;
+	protected readonly parentEmitter!: ReadonlyEventEmitterWrapper<this>;
+
+	/**
+	 * @deprecated
+	 * @see [[iBlock.parentEmitter]]
+	 */
+	@deprecated({renamedTo: 'parentEmitter'})
+	get parentEvent(): ReadonlyEventEmitterWrapper<this> {
+		return this.parentEmitter;
+	}
 
 	/**
 	 * Event emitter of the root component
@@ -1081,10 +1111,19 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 		after: 'async',
 		unique: true,
 		replace: true,
-		init: (o, d) => eventFactory(<Async>d.async, o.r)
+		init: (o, d) => wrapEventEmitter(<Async>d.async, o.r)
 	})
 
-	protected readonly rootEvent!: Event<this>;
+	protected readonly rootEmitter!: EventEmitterWrapper<this>;
+
+	/**
+	 * @deprecated
+	 * @see [[iBlock.rootEmitter]]
+	 */
+	@deprecated({renamedTo: 'rootEmitter'})
+	get rootEvent(): ReadonlyEventEmitterWrapper<this> {
+		return this.rootEmitter;
+	}
 
 	/**
 	 * Global event emitter of the application.
@@ -1095,13 +1134,43 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 		after: 'async',
 		unique: true,
 		replace: true,
-		init: (o, d) => eventFactory(<Async>d.async, globalEvent)
+		init: (o, d) => wrapEventEmitter(<Async>d.async, globalEvent)
 	})
 
-	protected readonly globalEvent!: Event<this>;
+	protected readonly globalEmitter!: EventEmitterWrapper<this>;
 
 	/**
-	 * Browser constants
+	 * @deprecated
+	 * @see [[iBlock.globalEmitter]]
+	 */
+	@deprecated({renamedTo: 'globalEmitter'})
+	get globalEvent(): ReadonlyEventEmitterWrapper<this> {
+		return this.globalEmitter;
+	}
+
+	/**
+	 * Map of extra helpers.
+	 * It can be useful to provide some helper functions to a component.
+	 */
+	@system({
+		atom: true,
+		unique: true,
+		replace: true,
+		init: () => {
+			//#if runtime has core/helpers
+			return helpers;
+			//#endif
+
+			//#unless runtime has core/helpers
+			return {};
+			//#endunless
+		}
+	})
+
+	protected readonly h!: typeof helpers;
+
+	/**
+	 * API to check a browser
 	 */
 	@system({
 		atom: true,
@@ -1121,7 +1190,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	protected readonly browser!: typeof browser;
 
 	/**
-	 * Presets table
+	 * Map of component presets
 	 */
 	@system({
 		atom: true,
@@ -1130,28 +1199,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 		init: () => presets
 	})
 
-	protected readonly preset!: typeof presets;
-
-	/**
-	 * Map of extra helpers.
-	 * It can be useful to provide some converters to a component.
-	 */
-	@system({
-		atom: true,
-		unique: true,
-		replace: true,
-		init: () => {
-			//#if runtime has core/helpers
-			return helpers;
-			//#endif
-
-			//#unless runtime has core/helpers
-			return {};
-			//#endunless
-		}
-	})
-
-	protected readonly h!: typeof helpers;
+	protected readonly presets!: typeof presets;
 
 	/**
 	 * Number of beforeReady event listeners:
@@ -1226,7 +1274,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	 * Sets a watcher to a component property by the specified path
 	 *
 	 * @param path
-	 * @param opts
+	 * @param opts - additional options
 	 * @param handler
 	 */
 	watch<T = unknown>(
@@ -1240,7 +1288,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	 *
 	 * @param path
 	 * @param handler
-	 * @param opts
+	 * @param opts - additional options
 	 */
 	watch<T = unknown>(
 		path: WatchPath,
@@ -1326,7 +1374,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 
 	/**
 	 * Emits a component error event
-	 * (all functions from args will be wrapped for logging)
+	 * (all functions from arguments will be wrapped for logging)
 	 *
 	 * @param event
 	 * @param args
@@ -1401,14 +1449,14 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	 * @see [[Async.on]]
 	 * @param event
 	 * @param handler
-	 * @param [params] - async parameters
+	 * @param [opts] - additional options
 	 */
 	@p({replace: false})
-	on<E = unknown, R = unknown>(event: string, handler: ProxyCb<E, R, any>, params?: AsyncOptions): void {
+	on<E = unknown, R = unknown>(event: string, handler: ProxyCb<E, R, any>, opts?: AsyncOptions): void {
 		event = event.dasherize();
 
-		if (params) {
-			this.async.on(this, event, handler, params);
+		if (opts) {
+			this.async.on(this, event, handler, opts);
 			return;
 		}
 
@@ -1421,14 +1469,14 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	 * @see [[Async.once]]
 	 * @param event
 	 * @param handler
-	 * @param [params] - async parameters
+	 * @param [opts] - additional options
 	 */
 	@p({replace: false})
-	once<E = unknown, R = unknown>(event: string, handler: ProxyCb<E, R, any>, params?: AsyncOptions): void {
+	once<E = unknown, R = unknown>(event: string, handler: ProxyCb<E, R, any>, opts?: AsyncOptions): void {
 		event = event.dasherize();
 
-		if (params) {
-			this.async.once(this, event, handler, params);
+		if (opts) {
+			this.async.once(this, event, handler, opts);
 			return;
 		}
 
@@ -1440,11 +1488,11 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	 *
 	 * @see [[Async.promisifyOnce]]
 	 * @param event
-	 * @param [params] - async parameters
+	 * @param [opts] - additional options
 	 */
 	@p({replace: false})
-	promisifyOnce<T = unknown>(event: string, params?: AsyncOptions): Promise<T> {
-		return this.async.promisifyOnce(this, event.dasherize(), params);
+	promisifyOnce<T = unknown>(event: string, opts?: AsyncOptions): Promise<T> {
+		return this.async.promisifyOnce(this, event.dasherize(), opts);
 	}
 
 	/**
@@ -1459,9 +1507,9 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	 * Detaches an event listeners from the component
 	 *
 	 * @see [[Async.off]]
-	 * @param [params] - async parameters
+	 * @param [opts] - additional options
 	 */
-	off(params: ClearOptionsId<object>): void;
+	off(opts: ClearOptionsId<object>): void;
 
 	@p({replace: false})
 	off(eventOrParams?: string | ClearOptionsId<object>, handler?: Function): void {
@@ -1475,65 +1523,97 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	}
 
 	/**
-	 * Wrapper for a wait decorator
+	 * Returns a promise that will be resolved when the component is toggled to the specified status
 	 *
 	 * @see [[Async.promise]]
 	 * @param status
-	 * @param [params] - additional parameters:
-	 *   *) [params.defer] - if true, then the function will always return a promise
+	 * @param [opts] - additional options
 	 */
-	waitStatus(status: Statuses, params?: WaitStatusOptions): Promise<void>;
+	waitStatus(status: ComponentStatus, opts?: WaitDecoratorOptions): Promise<void>;
 
 	/**
+	 * Executes a callback when the component is toggled to the specified status.
+	 * The method returns a promise with a result of invoking the function or the raw result without wrapping
+	 * if the component already in the specified status.
+	 *
 	 * @see [[Async.promise]]
 	 * @param status
 	 * @param cb
-	 * @param [params] - additional parameters:
-	 *   *) [params.defer] - if true, then the function will always return a promise
+	 * @param [opts] - additional options
 	 */
-	waitStatus<T = unknown>(status: Statuses, cb: (this: this) => T, params?: WaitStatusOptions): CanPromise<T>;
+	waitStatus<F extends WaitFn = WaitFn>(
+		status: ComponentStatus,
+		cb: F,
+		opts?: WaitDecoratorOptions
+	): CanPromise<ReturnType<F>>;
 
 	@p({replace: false})
-	waitStatus<T = unknown>(
-		status: Statuses,
-		cbOrParams?: Function | WaitStatusOptions,
-		params?: WaitStatusOptions
-	): CanPromise<T> {
-		const
-			isFn = cbOrParams && Object.isFunction(cbOrParams),
-			p = {...(isFn ? params : cbOrParams) || {}, join: false};
+	waitStatus<F extends WaitFn = WaitFn>(
+		status: ComponentStatus,
+		cbOrOpts?: F | WaitDecoratorOptions,
+		opts?: WaitDecoratorOptions
+	): CanPromise<void | ReturnType<F>> {
+		let
+			needWrap = true;
 
-		if (isFn) {
-			return wait(status, {fn: <Function>cbOrParams, ...p}).call(this);
+		let
+			cb;
+
+		if (Object.isFunction(cbOrOpts)) {
+			cb = cbOrOpts;
+			needWrap = false;
+
+		} else {
+			opts = cbOrOpts;
 		}
 
-		return this.async.promise(new Promise((r) => wait(status, {fn: r, ...p}).call(this)));
+		opts = {...opts, join: false};
+
+		if (!needWrap) {
+			return wait(status, {...opts, fn: cb}).call(this);
+		}
+
+		let
+			isResolved = false;
+
+		const promise = new SyncPromise((resolve) => wait(status, {...opts, fn: () => {
+			isResolved = true;
+			resolve();
+		}})());
+
+		if (isResolved) {
+			return promise;
+		}
+
+		return this.async.promise<void>(promise);
 	}
 
 	/**
 	 * Executes the specified function on a next render tick
 	 *
 	 * @see [[Async.proxy]]
-	 * @param cb
-	 * @param [params] - async parameters
+	 * @param fn
+	 * @param [opts] - additional options
 	 */
-	nextTick(cb: WrappedCb, params?: AsyncOptions): void;
+	nextTick(fn: WrappedCb, opts?: AsyncOptions): void;
 
 	/**
+	 * Returns a promise that will be resolved on a next render tick
+	 *
 	 * @see [[Async.promise]]
-	 * @param [params] - async parameters
+	 * @param [opts] - additional options
 	 */
-	nextTick(params?: AsyncOptions): Promise<void>;
-	nextTick(cbOrParams?: WrappedCb | AsyncOptions, params?: AsyncOptions): CanPromise<void> {
+	nextTick(opts?: AsyncOptions): Promise<void>;
+	nextTick(fnOrOpts?: WrappedCb | AsyncOptions, opts?: AsyncOptions): CanPromise<void> {
 		const
 			{async: $a} = this;
 
-		if (cbOrParams && Object.isFunction(cbOrParams)) {
-			this.$nextTick($a.proxy(<WrappedCb>cbOrParams, params));
+		if (Object.isFunction(fnOrOpts)) {
+			this.$nextTick($a.proxy(fnOrOpts, opts));
 			return;
 		}
 
-		return $a.promise(this.$nextTick(), cbOrParams);
+		return $a.promise(this.$nextTick(), fnOrOpts);
 	}
 
 	/**
@@ -1546,33 +1626,30 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	}
 
 	/**
-	 * Loads component data
+	 * Loads initial data to the component
 	 *
 	 * @param [data] - data object (for events)
-	 * @param [params] - additional parameters:
-	 *   *) [silent] - silent mode
-	 *   *) [recursive] - recursive loading of all remote providers
+	 * @param [opts] - additional options
 	 *
-	 * @emits initLoad(data: CanUndef<unknown>, params: CanUndef<InitLoadParams>)
-	 * @emits dbReady(data: CanUndef<unknown>, params: CanUndef<InitLoadParams>)
+	 * @emits `initLoad(data: CanUndef<unknown>, params: CanUndef<InitLoadParams>)`
+	 * @emits `dbReady(data: CanUndef<unknown>, params: CanUndef<InitLoadParams>)`
 	 */
 	@hook('beforeDataCreate')
-	initLoad(
-		data?: unknown | ((this: this) => unknown),
-		params: InitLoadParams = {}
-	): CanPromise<void> {
+	initLoad(data?: unknown | InitLoadCb, opts: InitLoadOptions = {}): CanPromise<void> {
 		if (!this.isActivated) {
 			return;
 		}
 
 		this.beforeReadyListeners = 0;
 
-		if (!params.silent) {
+		if (!opts.silent) {
 			this.componentStatus = 'loading';
 		}
 
 		const
-			{$children: $c, async: $a} = this,
+			{$children: $c, async: $a} = this;
+
+		const
 			providers = new Set<iBlock>();
 
 		if ($c) {
@@ -1583,8 +1660,8 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 
 				if (el.remoteProvider && statuses[st]) {
 					if (st === 'ready') {
-						if (params.recursive) {
-							el.reload({silent: params.silent === true, ...params}).catch(stderr);
+						if (opts.recursive) {
+							el.reload({silent: opts.silent === true, ...opts}).catch(stderr);
 
 						} else {
 							continue;
@@ -1600,7 +1677,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 			const
 				get = () => Object.isFunction(data) ? data.call(this) : data;
 
-			this.lfc.execCbAtTheRightTime(() => this.emit('dbReady', get(), params));
+			this.lfc.execCbAtTheRightTime(() => this.emit('dbReady', get(), opts));
 			this.componentStatus = 'beforeReady';
 
 			this.lfc.execCbAfterBlockReady(() => {
@@ -1610,11 +1687,11 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 				if (this.beforeReadyListeners > 1) {
 					this.nextTick().then(() => {
 						this.beforeReadyListeners = 0;
-						this.emit('initLoad', get(), params);
+						this.emit('initLoad', get(), opts);
 					});
 
 				} else {
-					this.emit('initLoad', get(), params);
+					this.emit('initLoad', get(), opts);
 				}
 			});
 		};
@@ -1653,14 +1730,11 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 
 	/**
 	 * Reloads component data
-	 *
-	 * @param [params] - additional parameters:
-	 *   *) [silent] - silent mode
-	 *   *) [recursive] - recursive loading of all remote providers
+	 * @param [opts] - additional options
 	 */
-	reload(params?: InitLoadParams): Promise<void> {
+	reload(opts?: InitLoadOptions): Promise<void> {
 		const
-			res = this.initLoad(undefined, {silent: true, ...params});
+			res = this.initLoad(undefined, {silent: true, ...opts});
 
 		if (Object.isPromise(res)) {
 			return res;
@@ -1670,17 +1744,19 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	}
 
 	/**
-	 * Sets a component modifier
+	 * Sets a component modifier to the specified node
 	 *
 	 * @param node
-	 * @param name
-	 * @param value
+	 * @param name - modifier name
+	 * @param value - modifier value
 	 */
 	setMod(node: Element, name: string, value: unknown): CanPromise<boolean>;
 
 	/**
-	 * @param name
-	 * @param value
+	 * Sets a component modifier
+	 *
+	 * @param name - modifier name
+	 * @param value - modifier value
 	 */
 	setMod(name: string, value: unknown): CanPromise<boolean>;
 
@@ -1712,17 +1788,19 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	}
 
 	/**
-	 * Removes a component modifier
+	 * Removes a component modifier from the specified node
 	 *
 	 * @param node
-	 * @param name
-	 * @param [value]
+	 * @param name - modifier name
+	 * @param [value] - modifier value
 	 */
 	removeMod(node: Element, name: string, value?: unknown): CanPromise<boolean>;
 
 	/**
-	 * @param name
-	 * @param [value]
+	 * Removes a component modifier
+	 *
+	 * @param name - modifier name
+	 * @param [value] - modifier value
 	 */
 	removeMod(name: string, value?: unknown): CanPromise<boolean>;
 
@@ -1754,7 +1832,9 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	}
 
 	/**
-	 * Sets a modifier for the root element
+	 * Sets a modifier to the root element of an application.
+	 * This method is useful, when you need to attach a class that can affect for the whole application,
+	 * for instance, you want to lock page scroll, i.e. you need to add a class to a root HTML tag.
 	 *
 	 * @param name
 	 * @param value
@@ -1765,7 +1845,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	}
 
 	/**
-	 * Removes a modifier from the root element
+	 * Removes a modifier from the root element of an application
 	 *
 	 * @param name
 	 * @param value
@@ -1785,15 +1865,27 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	}
 
 	/**
-	 * Activates the component
-	 * @param [force]
+	 * Activates the component.
+	 * The deactivated component won't load data from providers on initializing.
+	 *
+	 * Basically, you don't need to think about a component activation,
+	 * because it is automatically synchronized with keep-alive or the special input property.
+	 *
+	 * @see [[iBlock.activatedProp]]
+	 * @param [force] - if true, then the component will be activated forced, even if it is already activated
 	 */
 	activate(force?: boolean): void {
 		activate(this, force);
 	}
 
 	/**
-	 * Deactivates the component
+	 * Deactivates the component.
+	 * The deactivated component won't load data from providers on initializing.
+	 *
+	 * Basically, you don't need to think about a component activation,
+	 * because it is automatically synchronized with keep-alive or the special input property.
+	 *
+	 * @see [[iBlock.activatedProp]]
 	 */
 	deactivate(): void {
 		deactivate(this);
@@ -1840,7 +1932,17 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	}
 
 	/**
-	 * Returns an object with default component fields for saving to a local storage
+	 * This method works as a two-way connector between a local storage and a component.
+	 *
+	 * When the component initializes, it asks the local storage for data that associated to this component
+	 * by using a global name as a namespace to search. When the local storage is ready to provide data to the component,
+	 * it passes data  to this method. After this, the method returns a dictionary that will be mapped to the
+	 * component as properties (you can specify a complex path with dots, like 'foo.bla.bar' or 'mod.hidden').
+	 *
+	 * Also, the component will watch for changes of every property that was in that dictionary
+	 * and when at least one of these properties is changed, the whole butch of data will be send to the local storage
+	 * by using this method. When the component provides local storage data the second argument of the method is
+	 * equal to "remote".
 	 *
 	 * @param [data] - advanced data
 	 * @param [type] - call type
@@ -1850,7 +1952,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	}
 
 	/**
-	 * Returns an object with default component fields for resetting a local storage
+	 * Returns a dictionary with default component properties to reset a local storage state
 	 * @param [data] - advanced data
 	 */
 	protected convertStateToStorageReset(data?: Dictionary): Dictionary<undefined> {
@@ -1868,7 +1970,19 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	}
 
 	/**
-	 * Returns an object with default component fields for saving to a router
+	 * This method works as a two-way connector between the global router and a component.
+	 *
+	 * When the component initializes, it asks the router for data. The router provides the data by using this method.
+	 * After this, the method returns a dictionary that will be mapped to the
+	 * component as properties (you can specify a complex path with dots, like 'foo.bla.bar' or 'mod.hidden').
+	 *
+	 * Also, the component will watch for changes of every property that was in that dictionary
+	 * and when at least one of these properties is changed, the whole butch of data will be send to the router
+	 * by using this method (the router will produce a new transition by using "push").
+	 * When the component provides router data the second argument of the method is equal to "remote".
+	 *
+	 * Mind, that the router is global for all components, i.e. a dictionary that this method passes to the router
+	 * will extend the current route data but not override (`router.push(null, {...route, ...componentData}})`).
 	 *
 	 * @param [data] - advanced data
 	 * @param [type] - call type
@@ -1878,7 +1992,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	}
 
 	/**
-	 * Returns an object with default component fields for resetting a router
+	 * Returns a dictionary with default component properties to reset a router state
 	 * @param [data] - advanced data
 	 */
 	protected convertStateToRouterReset(data?: Dictionary): Dictionary<undefined> {
@@ -1906,13 +2020,14 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	}
 
 	/**
-	 * Waits until the specified reference won't be available and returns it
+	 * Waits until the specified reference won't be available and returns it.
+	 * The method returns a promise.
 	 *
-	 * @see Async.wait
-	 * @param ref
-	 * @param [params] - async parameters
+	 * @see [[Async.wait]]
+	 * @param ref - ref name
+	 * @param [opts] - additional options
 	 */
-	protected waitRef<T = iBlock | Element | iBlock[] | Element[]>(ref: string, params?: AsyncOptions): Promise<T> {
+	protected waitRef<T = CanArray<iBlock | Element>>(ref: string, opts?: AsyncOptions): Promise<T> {
 		let
 			that = <iBlock>this;
 
@@ -1932,7 +2047,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 			} else {
 				watchers.push(resolve);
 			}
-		}), params);
+		}), opts);
 	}
 
 	/**
@@ -1953,7 +2068,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	}
 
 	/**
-	 * Initializes component instance
+	 * Initializes an instance of the Block class for the current component
 	 */
 	@hook('mounted')
 	protected initBlockInstance(): void {
@@ -1985,7 +2100,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	 */
 	@hook({created: {functional: false}})
 	protected initGlobalEvents(resetListener?: boolean): void {
-		initGlobalEvents(this, resetListener);
+		initGlobalListeners(this, resetListener);
 	}
 
 	/**
@@ -2013,7 +2128,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 			return;
 		}
 
-		this.parentEvent.on('onCallChild', this.onCallChild);
+		this.parentEmitter.on('onCallChild', this.onCallChild);
 	}
 
 	/**
@@ -2048,7 +2163,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	}
 
 	/**
-	 * Component beforeDestroy hook
+	 * Component destructor
 	 */
 	@p({replace: false})
 	protected beforeDestroy(): void {
@@ -2059,26 +2174,6 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 			delete classesCache.dict.els[this.componentId];
 		}
 	}
-}
-
-/**
- * Hack for i-component decorators
- */
-export abstract class iBlockDecorator extends iBlock {
-	public readonly h!: typeof helpers;
-	public readonly browser!: typeof browser;
-	public readonly t!: typeof i18n;
-
-	public readonly meta!: ComponentMeta;
-	public readonly $attrs!: Dictionary<string>;
-
-	public readonly async!: Async<this>;
-	public readonly block!: Block;
-	public readonly dom!: DOM;
-
-	public readonly localEvent!: Event<this>;
-	public readonly globalEvent!: Event<this>;
-	public readonly rootEvent!: Event<this>;
 }
 
 function defaultI18n(): string {

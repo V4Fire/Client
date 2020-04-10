@@ -8,7 +8,7 @@
 
 import { AsyncOptions } from 'core/async';
 import { Hook, WatchOptions } from 'core/component';
-import { Statuses } from 'super/i-block/interface';
+import { ComponentStatus } from 'super/i-block/interface';
 
 export interface DaemonsAsyncOptions {
 	group?: AsyncOptions['group'];
@@ -25,7 +25,7 @@ export type DaemonHook = Hook[] | DaemonHookObject;
 export interface Daemon {
 	hook?: DaemonHook;
 	watch?: DaemonWatcher[];
-	wait?: Statuses;
+	wait?: ComponentStatus;
 	immediate?: boolean;
 	asyncOptions?: DaemonsAsyncOptions;
 	wrappedFn?: Function;
@@ -34,7 +34,7 @@ export interface Daemon {
 
 export interface SpawnedDaemonObject {
 	fn: Function;
-	wait?: Statuses;
+	wait?: ComponentStatus;
 	immediate?: boolean;
 	asyncOptions?: DaemonsAsyncOptions;
 }

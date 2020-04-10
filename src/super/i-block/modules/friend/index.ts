@@ -58,9 +58,9 @@ export default class Friend<C extends iBlock = iBlock> {
 		return this.component.block;
 	}
 
-	/** @see [[iBlock.localEvent]] */
-	protected get localEmitter(): this['C']['localEvent'] {
-		return this.component.localEvent;
+	/** @see [[iBlock.localEmitter]] */
+	protected get localEmitter(): this['C']['localEmitter'] {
+		return this.component.localEmitter;
 	}
 
 	/** @see [[iBlock.lazy]] */
