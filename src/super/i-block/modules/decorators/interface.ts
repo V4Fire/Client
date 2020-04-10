@@ -51,16 +51,30 @@ export interface ComponentField<
 	B = A
 > extends BaseComponentField<CTX, A, B> {}
 
-export type WaitStatuses = number | string | Statuses;
+export type WaitStatuses =
+	number |
+	string |
+	Statuses;
 
-export interface WaitOptions extends AsyncOptions {
-	fn?: Function;
+export type WaitFn<
+	CTX extends iBlock = iBlock['unsafe'],
+	ARGS extends unknown[] = unknown[],
+	R = unknown
+> = (this: CTX, ...args: ARGS) => R;
 
+export interface WaitDecoratorOptions extends AsyncOptions {
 	/**
 	 * If true, then the wrapped function will always return a promise
 	 * @default `false`
 	 */
 	defer?: boolean | number;
+}
+
+export interface WaitOptions<F extends WaitFn = WaitFn> extends WaitDecoratorOptions {
+	/**
+	 * Function to wrap
+	 */
+	fn: F;
 }
 
 export type DecoratorCtx<CTX> = {component: CTX} | CTX;

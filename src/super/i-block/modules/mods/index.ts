@@ -99,7 +99,7 @@ export function mergeMods<T extends iBlock>(
  * Initializes the component modifiers
  * @param component
  */
-export function initMods<T extends iBlock>(component: T): ModsNTable {
+export function initMods(component: iBlock): ModsNTable {
 	const
 		c = component.unsafe,
 		declMods = c.meta.component.mods;

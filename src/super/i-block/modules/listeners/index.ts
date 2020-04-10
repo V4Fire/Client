@@ -6,9 +6,14 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+/**
+ * [[include:super/i-block/modules/listeners/README.md]]
+ * @packageDocumentation
+ */
+
 import symbolGenerator from 'core/symbol';
-import iBlock from 'super/i-block/i-block';
 import { customWatcherRgxp, MethodWatcher } from 'core/component';
+import iBlock from 'super/i-block/i-block';
 
 export const
 	$$ = symbolGenerator();
@@ -22,15 +27,21 @@ let
  * @param component
  * @param [resetListener]
  */
-export function initGlobalEvents(component: iBlock, resetListener?: boolean): void {
+export function initGlobalListeners(component: iBlock, resetListener?: boolean): void {
 	baseInitLoad = baseInitLoad || iBlock.prototype.initLoad;
 
 	const
-		c = component.unsafe,
-		{globalName, globalEvent: $e, state: $s, state: {needRouterSync}} = c;
+		ctx = component.unsafe;
+
+	const {
+		globalName,
+		globalEvent: $e,
+		state: $s,
+		state: {needRouterSync}
+	} = ctx;
 
 	resetListener = Boolean(
-		(resetListener != null ? resetListener : baseInitLoad !== c.instance.initLoad) ||
+		(resetListener != null ? resetListener : baseInitLoad !== ctx.instance.initLoad) ||
 		globalName ||
 		needRouterSync
 	);
@@ -41,7 +52,7 @@ export function initGlobalEvents(component: iBlock, resetListener?: boolean): vo
 
 	const waitNextTick = (fn) => async () => {
 		try {
-			await c.nextTick({label: $$.reset});
+			await ctx.nextTick({label: $$.reset});
 			await fn();
 
 		} catch (err) {
@@ -49,8 +60,8 @@ export function initGlobalEvents(component: iBlock, resetListener?: boolean): vo
 		}
 	};
 
-	$e.on('reset.load', waitNextTick(c.initLoad));
-	$e.on('reset.load.silence', waitNextTick(c.reload));
+	$e.on('reset.load', waitNextTick(ctx.initLoad));
+	$e.on('reset.load.silence', waitNextTick(ctx.reload));
 
 	if (needRouterSync) {
 		$e.on('reset.router', $s.resetRouter);
@@ -61,7 +72,7 @@ export function initGlobalEvents(component: iBlock, resetListener?: boolean): vo
 	}
 
 	$e.on('reset', waitNextTick(async () => {
-		c.componentStatus = 'loading';
+		ctx.componentStatus = 'loading';
 
 		if (needRouterSync || globalName) {
 			await Promise.all(
@@ -72,7 +83,7 @@ export function initGlobalEvents(component: iBlock, resetListener?: boolean): vo
 			);
 		}
 
-		await c.initLoad();
+		await ctx.initLoad();
 	}));
 
 	$e.on('reset.silence', waitNextTick(async () => {
@@ -85,7 +96,7 @@ export function initGlobalEvents(component: iBlock, resetListener?: boolean): vo
 			);
 		}
 
-		await c.reload();
+		await ctx.reload();
 	}));
 }
 
@@ -95,11 +106,13 @@ export function initGlobalEvents(component: iBlock, resetListener?: boolean): vo
  */
 export function initRemoteWatchers(component: iBlock): void {
 	const
-		c = component.unsafe,
-		w = c.meta.watchers,
-		o = c.watchProp;
+		ctx = component.unsafe;
 
-	if (!o) {
+	const
+		watchMap = ctx.meta.watchers,
+		watchProp = ctx.watchProp;
+
+	if (!watchProp) {
 		return;
 	}
 
@@ -112,10 +125,10 @@ export function initRemoteWatchers(component: iBlock): void {
 		return `$parent.${field}`;
 	};
 
-	for (let keys = Object.keys(o), i = 0; i < keys.length; i++) {
+	for (let keys = Object.keys(watchProp), i = 0; i < keys.length; i++) {
 		const
 			method = keys[i],
-			watchers = (<Array<string | MethodWatcher>>[]).concat(<CanArray<string | MethodWatcher>>o[method] || []);
+			watchers = (<Array<string | MethodWatcher>>[]).concat(<CanArray<string | MethodWatcher>>watchProp[method] || []);
 
 		for (let i = 0; i < watchers.length; i++) {
 			const
@@ -124,7 +137,7 @@ export function initRemoteWatchers(component: iBlock): void {
 			if (Object.isString(el)) {
 				const
 					field = normalizeField(el),
-					wList = w[field] = w[field] || [];
+					wList = watchMap[field] = watchMap[field] || [];
 
 				wList.push({
 					method,
@@ -134,7 +147,7 @@ export function initRemoteWatchers(component: iBlock): void {
 			} else {
 				const
 					field = normalizeField(el.field),
-					wList = w[field] = w[field] || [];
+					wList = watchMap[field] = watchMap[field] || [];
 
 				wList.push({
 					...el,

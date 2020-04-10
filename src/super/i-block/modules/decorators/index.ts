@@ -6,6 +6,11 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+/**
+ * [[include:super/i-block/modules/decorators/README.md]]
+ * @packageDocumentation
+ */
+
 import { initEmitter, ModVal } from 'core/component';
 
 import {
@@ -34,8 +39,10 @@ import {
 	FieldWatcher,
 	MethodWatchers,
 
-	WaitOptions,
 	WaitStatuses,
+	WaitFn,
+	WaitDecoratorOptions,
+	WaitOptions,
 
 	ModEventType,
 	DecoratorCtx
@@ -48,7 +55,7 @@ export * from 'super/i-block/modules/decorators/interface';
  * @see core/component/decorators/base.ts
  * @override
  */
-export const p = pDecorator as <CTX extends iBlock['unsafe'] = iBlock['unsafe'], A = unknown, B = A>(
+export const p = pDecorator as <CTX extends iBlock = iBlock['unsafe'], A = unknown, B = A>(
 	params?: ComponentProp<CTX, A, B> | ComponentField<CTX, A, B> | DecoratorMethod<CTX, A, B> | DecoratorComponentAccessor
 ) => Function;
 
@@ -56,7 +63,7 @@ export const p = pDecorator as <CTX extends iBlock['unsafe'] = iBlock['unsafe'],
  * @see core/component/decorators/base.ts
  * @override
  */
-export const prop = propDecorator as <CTX extends iBlock['unsafe'] = iBlock['unsafe'], A = unknown, B = A>(
+export const prop = propDecorator as <CTX extends iBlock = iBlock['unsafe'], A = unknown, B = A>(
 	params?: CanArray<Function> | ObjectConstructor | ComponentProp<CTX, A, B>
 ) => Function;
 
@@ -64,7 +71,7 @@ export const prop = propDecorator as <CTX extends iBlock['unsafe'] = iBlock['uns
  * @see core/component/decorators/base.ts
  * @override
  */
-export const field = fieldDecorator as <CTX extends iBlock['unsafe'] = iBlock['unsafe'], A = unknown, B = A>(
+export const field = fieldDecorator as <CTX extends iBlock = iBlock['unsafe'], A = unknown, B = A>(
 	params?: InitFieldFn<CTX> | ComponentField<CTX, A, B>
 ) => Function;
 
@@ -72,7 +79,7 @@ export const field = fieldDecorator as <CTX extends iBlock['unsafe'] = iBlock['u
  * @see core/component/decorators/base.ts
  * @override
  */
-export const system = systemDecorator as <CTX extends iBlock['unsafe'] = iBlock['unsafe'], A = unknown, B = A>(
+export const system = systemDecorator as <CTX extends iBlock = iBlock['unsafe'], A = unknown, B = A>(
 	params?: InitFieldFn<CTX> | ComponentField<CTX, A, B>
 ) => Function;
 
@@ -80,7 +87,7 @@ export const system = systemDecorator as <CTX extends iBlock['unsafe'] = iBlock[
  * @see core/component/decorators/base.ts
  * @override
  */
-export const watch = watchDecorator as <CTX extends iBlock['unsafe'] = iBlock['unsafe'], A = unknown, B = A>(
+export const watch = watchDecorator as <CTX extends iBlock = iBlock['unsafe'], A = unknown, B = A>(
 	params?: FieldWatcher<CTX, A, B> | MethodWatchers<CTX, A, B>
 ) => Function;
 
@@ -101,7 +108,7 @@ export function getComponentCtx<CTX>(wrapper: DecoratorCtx<CTX>): CTX {
  * @param [value] - modifier value to listen
  * @param [method] - event method
  */
-export function mod<CTX extends iBlock['unsafe'] = iBlock['unsafe']>(
+export function mod(
 	name: string,
 	value: ModVal = '*',
 	method: ModEventType = 'on'
@@ -110,7 +117,7 @@ export function mod<CTX extends iBlock['unsafe'] = iBlock['unsafe']>(
 		initEmitter.once('bindConstructor', (componentName) => {
 			initEmitter.once(`constructor.${componentName}`, ({meta}) => {
 				meta.hooks.beforeCreate.push({
-					fn(this: DecoratorCtx<CTX>): void {
+					fn(this: DecoratorCtx<iBlock['unsafe']>): void {
 						const c = getComponentCtx(this);
 						c.localEvent[method](`block.mod.set.${name}.${value}`, descriptor.value.bind(c));
 					}
@@ -128,7 +135,7 @@ export function mod<CTX extends iBlock['unsafe'] = iBlock['unsafe']>(
  * @param [value] - modifier value to listen
  * @param [method] - event method
  */
-export function removeMod<CTX extends iBlock['unsafe'] = iBlock['unsafe']>(
+export function removeMod(
 	name: string,
 	value: ModVal = '*',
 	method: ModEventType = 'on'
@@ -137,7 +144,7 @@ export function removeMod<CTX extends iBlock['unsafe'] = iBlock['unsafe']>(
 		initEmitter.once('bindConstructor', (componentName) => {
 			initEmitter.once(`constructor.${componentName}`, ({meta}) => {
 				meta.hooks.beforeCreate.push({
-					fn(this: DecoratorCtx<CTX>): void {
+					fn(this: DecoratorCtx<iBlock['unsafe']>): void {
 						const c = getComponentCtx(this);
 						c.localEvent[method](`block.mod.remove.${name}.${value}`, descriptor.value.bind(c));
 					}
@@ -148,44 +155,91 @@ export function removeMod<CTX extends iBlock['unsafe'] = iBlock['unsafe']>(
 }
 
 /**
- * Decorates a method or a function to use with the specified initialize status
+ * Decorates a method to wait
  *
  * @see [[Async.wait]]
  * @decorator
  *
  * @param opts - additional options
  */
-export function wait(opts: WaitOptions): Function;
+export function wait(opts: WaitDecoratorOptions): Function;
 
 /**
- * Decorates a method or a function to use with the specified initialize status
+ * Wraps the specified function to wait a component status
+ *
+ * @see [[Async.wait]]
+ * @param opts - additional options
+ */
+export function wait<CTX extends iBlock = iBlock['unsafe'], F extends WaitFn = WaitFn>(
+	opts: WaitOptions<F>
+): WaitFn<CTX, Parameters<F>, ReturnType<F>>;
+
+/**
+ * Decorates a method to wait the specified component status
  *
  * @see [[Async.wait]]
  * @decorator
  *
- * @param status - status to wait
+ * @param status
  * @param [opts] - additional options
  */
-// tslint:disable-next-line:completed-docs
-export function wait(status: WaitStatuses, opts?: WaitOptions | Function): Function;
-export function wait<CTX extends iBlock['unsafe'] = iBlock['unsafe']>(
-	status: WaitStatuses | WaitOptions,
-	opts?: WaitOptions | Function
+export function wait(status: WaitStatuses, opts?: WaitDecoratorOptions): Function;
+
+/**
+ * Wraps the specified function to wait a component status
+ *
+ * @see [[Async.wait]]
+ * @param status
+ * @param fnOrOpts - function to wrap or additional options
+ */
+export function wait<CTX extends iBlock = iBlock['unsafe'], F extends WaitFn = WaitFn>(
+	status: WaitStatuses,
+	fnOrOpts: F | WaitOptions<F>
+): WaitFn<CTX, Parameters<F>, ReturnType<F>>;
+
+export function wait(
+	statusOrOpts: WaitStatuses | WaitDecoratorOptions | WaitOptions,
+	optsOrCb?: WaitDecoratorOptions | WaitOptions | Function
 ): Function {
 	let
+		status,
+		opts,
+		handler,
 		ctx;
 
-	if (Object.isPlainObject(status)) {
-		opts = <WaitOptions>status;
-		status = 0;
+	if (Object.isFunction(optsOrCb)) {
+		if (Object.isString(statusOrOpts)) {
+			if (waitCtxRgxp.test(statusOrOpts)) {
+				ctx = RegExp.$1;
+				status = statuses[RegExp.$2];
 
-	} else if (Object.isString(status)) {
-		if (waitCtxRgxp.test(status)) {
-			ctx = RegExp.$1;
-			status = RegExp.$2;
+			} else {
+				status = statuses[statusOrOpts];
+			}
+
+		} else {
+			status = 0;
+			opts = statusOrOpts;
 		}
 
-		status = statuses[status];
+		handler = optsOrCb;
+
+	} else if (Object.isString(statusOrOpts)) {
+		if (waitCtxRgxp.test(statusOrOpts)) {
+			ctx = RegExp.$1;
+			status = statuses[RegExp.$2];
+
+		} else {
+			status = statuses[statusOrOpts];
+		}
+
+		opts = optsOrCb;
+		handler = opts?.fn;
+
+	} else {
+		status = 0;
+		opts = statusOrOpts;
+		handler = opts?.fn;
 	}
 
 	// tslint:disable:prefer-const
@@ -194,19 +248,15 @@ export function wait<CTX extends iBlock['unsafe'] = iBlock['unsafe']>(
 		join,
 		label,
 		group,
-		defer,
-		fn
-	} = opts && !Object.isFunction(opts) ? opts : <WaitOptions>{};
+		defer
+	} = opts || {};
 
 	// tslint:enable:prefer-const
-
-	let
-		handler = <Function>(fn || opts);
 
 	const
 		isDecorator = !Object.isFunction(handler);
 
-	function wrapper(this: DecoratorCtx<CTX>): CanUndef<CanPromise<CTX>> {
+	function wrapper(this: DecoratorCtx<iBlock['unsafe']>): CanUndef<CanPromise<unknown>> {
 		const
 			component = getComponentCtx(this);
 
@@ -237,7 +287,7 @@ export function wait<CTX extends iBlock['unsafe'] = iBlock['unsafe']>(
 				});
 			}
 
-			if (component.$isFlyweight || componentStatus >= status) {
+			if (component.isFlyweight || componentStatus >= status) {
 				init = true;
 				res = defer ?
 					$a.promise($a.nextTick().then(() => handler.apply(this, args)), p) :
@@ -245,7 +295,7 @@ export function wait<CTX extends iBlock['unsafe'] = iBlock['unsafe']>(
 			}
 
 			if (!init) {
-				res = $a.promisifyOnce(ctx, `status-${statuses[<number>status]}`, {
+				res = $a.promisifyOnce(ctx, `status-${statuses[status]}`, {
 					...p,
 					handler: () => handler.apply(this, args)
 				});

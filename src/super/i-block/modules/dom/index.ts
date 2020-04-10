@@ -233,7 +233,7 @@ export default class DOM<C extends iBlock = iBlock> extends Friend<C> {
 	 * @param node
 	 * @param [component]
 	 */
-	createBlockCtxFromNode<T extends iBlock>(node: Element, component?: T): Dictionary {
+	createBlockCtxFromNode(node: Element, component?: iBlock): Dictionary {
 		const
 			$el = <ComponentElement<this['C']>>node,
 			comp = component || $el.component;
