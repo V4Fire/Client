@@ -20,6 +20,10 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 * Added tiny History class for managing component history
 * Added v-update-on directive for listening events from various emitter
 
+#### :bug: Bug Fix
+
+* Fix nested pages scrolling into iLockPageScroll lock method
+
 ## v3.0.0-beta.268 (2020-04-08)
 
 #### :bug: Bug Fix
