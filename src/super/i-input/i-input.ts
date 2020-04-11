@@ -12,10 +12,10 @@ import iVisible from 'traits/i-visible/i-visible';
 import iData, {
 
 	component,
+
 	prop,
 	field,
 	system,
-	computed,
 	wait,
 	p,
 
@@ -28,6 +28,7 @@ import {
 
 	Value,
 	FormValue,
+
 	Validators,
 	ValidatorMsg,
 	ValidatorParams,
@@ -35,10 +36,10 @@ import {
 	ValidationResult,
 	ValidatorsDecl
 
-} from 'super/i-input/modules/interface';
+} from 'super/i-input/interface';
 
 export * from 'super/i-data/i-data';
-export * from 'super/i-input/modules/interface';
+export * from 'super/i-input/interface';
 
 @component({
 	model: {
@@ -71,13 +72,13 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	readonly defaultProp?: this['Value'];
 
 	/**
-	 * Input id
+	 * Input DOM identifier
 	 */
 	@prop({type: String, required: false})
 	readonly id?: string;
 
 	/**
-	 * Input name
+	 * Input DOM name
 	 */
 	@prop({type: String, required: false})
 	readonly name?: string;
@@ -89,7 +90,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	readonly autofocus?: boolean;
 
 	/**
-	 * Connected form id
+	 * Identifier of a form that connected to the component
 	 */
 	@prop({type: String, required: false})
 	readonly form?: string;
@@ -101,13 +102,13 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	readonly disallow?: CanArray<this['Value']> | Function | RegExp;
 
 	/**
-	 * Component value type factory
+	 * Data type of a component form value
 	 */
 	@prop(Function)
 	readonly dataType: Function = ((Any));
 
 	/**
-	 * Form value converter
+	 * Converter/s of a component value to a form value
 	 */
 	@prop({type: [Function, Array], required: false})
 	readonly formConverter?: CanArray<Function>;
@@ -119,7 +120,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	readonly cache: boolean = true;
 
 	/**
-	 * List of validators
+	 * List of component validators
 	 */
 	@prop(Array)
 	readonly validators: Validators = [];
@@ -710,7 +711,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 		iAccess.initModEvents(this);
 		iVisible.initModEvents(this);
 
-		this.localEvent.on('block.mod.*.valid.*', ({type, value}: ModEvent) => {
+		this.localEmitter.on('block.mod.*.valid.*', ({type, value}: ModEvent) => {
 			if (type === 'remove' && value === 'false' || type === 'set' && value === 'true') {
 				this.error = undefined;
 			}

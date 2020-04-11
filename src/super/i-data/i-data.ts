@@ -130,7 +130,7 @@ export default abstract class iData extends iBlock implements iProgress {
 	readonly requestFilter: RequestFilter = true;
 
 	/**
-	 * Remote data converter.
+	 * Remote data converter/s.
 	 * This function transforms initial provider data before saving to .db.
 	 */
 	@prop({type: [Function, Array], required: false})
@@ -144,7 +144,7 @@ export default abstract class iData extends iBlock implements iProgress {
 	readonly checkDBEquality: CheckDBEquality = true;
 
 	/**
-	 * Converter from .db to the component format
+	 * Converter/s from .db to the component format
 	 */
 	@prop({type: [Function, Array], required: false})
 	readonly componentConverter?: CanArray<ComponentConverter<any>>;
