@@ -375,11 +375,14 @@ export default class bForm extends iData {
 					res = await this.action(body, submitCtx);
 
 				} else {
+					let
+						that = this;
+
 					if (this.action) {
-						this.base(this.action);
+						that = this.base(this.action);
 					}
 
-					res = await (<Function>this[this.method])(body, this.params);
+					res = await (<Function>that[this.method])(body, this.params);
 				}
 
 				Object.assign(this.tmp, body);

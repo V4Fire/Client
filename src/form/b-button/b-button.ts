@@ -240,11 +240,14 @@ export default class bButton extends iData implements iAccess, iOpenToggle, iIco
 				dp = this.dataProvider;
 
 			if (dp != null && (dp !== 'Provider' || this.href)) {
+				let
+					that = this;
+
 				if (this.href) {
-					this.base(this.href);
+					that = this.base(this.href);
 				}
 
-				await (<Function>this[this.method])();
+				await (<Function>that[this.method])();
 
 			// Form attribute fix for MS Edge && IE
 			} else if (this.form && this.type === 'submit') {

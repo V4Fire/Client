@@ -54,6 +54,8 @@ import iBlock, {
 
 } from 'super/i-block/i-block';
 
+import { providerMethods } from 'super/i-data/const';
+
 import {
 
 	RequestParams,
@@ -87,6 +89,7 @@ export {
 //#endif
 
 export * from 'super/i-block/i-block';
+export * from 'super/i-data/const';
 export * from 'super/i-data/interface';
 
 export const
@@ -369,6 +372,82 @@ export default abstract class iData extends iBlock implements iProgress {
 	 */
 	dropRequestCache(): void {
 		this.dp?.dropCache();
+	}
+
+	/**
+	 * Returns full URL of any request
+	 */
+	url(): CanUndef<string>;
+
+	/**
+	 * Sets an extra URL part for any request (it is concatenated with the base part of URL).
+	 * This method returns a new component object with additional context.
+	 *
+	 * @param [value]
+	 */
+	url(value: string): this;
+	url(value?: string): CanUndef<string> | this {
+		if (value == null) {
+			return this.dp?.url();
+		}
+
+		if (this.dp) {
+			const ctx = Object.create(this);
+			ctx.dp = this.dp.url(value);
+
+			for (let i = 0; i < providerMethods.length; i++) {
+				const
+					method = providerMethods[i];
+
+				Object.defineProperty(ctx, method, {
+					writable: true,
+					configurable: true,
+					value: this.instance[method]
+				});
+			}
+
+			return ctx;
+		}
+
+		return this;
+	}
+
+	/**
+	 * Returns a base part of URL of any request
+	 */
+	base(): CanUndef<string>;
+
+	/**
+	 * Sets a base part of URL for any request.
+	 * This method returns a new component object with additional context.
+	 *
+	 * @param [value]
+	 */
+	base(value: string): this;
+	base(value?: string): CanUndef<string> | this {
+		if (value == null) {
+			return this.dp?.base();
+		}
+
+		if (this.dp) {
+			const ctx = Object.create(this);
+			ctx.dp = this.dp.base(value);
+
+			for (let i = 0; i < providerMethods.length; i++) {
+				const
+					method = providerMethods[i];
+
+				Object.defineProperty(ctx, method, {
+					writable: true,
+					configurable: true,
+					value: this.instance[method]
+				});
+			}
+
+			return ctx;
+		}
+
+		return this;
 	}
 
 	/**
