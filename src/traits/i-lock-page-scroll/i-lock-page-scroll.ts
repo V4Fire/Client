@@ -25,7 +25,7 @@ export default abstract class iLockPageScroll {
 	 */
 	static lock<T extends iBlock>(component: T, scrollableNode?: Element): Promise<void> {
 		const
-			{$root: r, $root: {async: $a}} = component;
+			{$root: r, $root: {async: $a}} = component.unsafe;
 
 		let
 			promise = Promise.resolve();

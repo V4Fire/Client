@@ -15,7 +15,7 @@ import iBlock, { ModEvent, ModsDecl } from 'super/i-block/i-block';
 
 export default abstract class iVisible {
 	/**
-	 * Initializes modifier event listeners
+	 * Initializes modifier event listeners for the specified component
 	 *
 	 * @emits `show()`
 	 * @emits `hide()`

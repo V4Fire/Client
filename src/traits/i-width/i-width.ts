@@ -6,6 +6,11 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+/**
+ * [[include:traits/i-width/README.md]]
+ * @packageDocumentation
+ */
+
 import { ModsDecl } from 'super/i-block/i-block';
 
 export default abstract class iWidth {
