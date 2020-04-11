@@ -56,10 +56,9 @@ export type WaitStatuses =
 	string |
 	ComponentStatus;
 
-export type WaitFn<
-	ARGS extends unknown[] = unknown[],
-	R = unknown
-> = (...args: ARGS) => R;
+export interface WaitFn<ARGS extends unknown[] = unknown[], R = unknown> {
+	(...args: ARGS): R;
+}
 
 export interface WaitDecoratorOptions extends AsyncOptions {
 	/**

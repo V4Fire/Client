@@ -22,14 +22,22 @@ export type DaemonHookObject = {
 
 export type DaemonHook = Hook[] | DaemonHookObject;
 
+export interface DaemonFn<ARGS extends unknown[] = unknown[], R = unknown> {
+	(...args: ARGS): R;
+}
+
+export interface WrappedDaemonFn<ARGS extends unknown[] = unknown[], R = unknown> {
+	(...args: ARGS): CanPromise<R>;
+}
+
 export interface Daemon {
 	hook?: DaemonHook;
 	watch?: DaemonWatcher[];
 	wait?: ComponentStatus;
 	immediate?: boolean;
 	asyncOptions?: DaemonsAsyncOptions;
-	wrappedFn?: Function;
-	fn: Function;
+	wrappedFn?: WrappedDaemonFn;
+	fn: DaemonFn;
 }
 
 export interface SpawnedDaemonObject {

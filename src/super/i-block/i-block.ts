@@ -1541,14 +1541,14 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	 * @param cb
 	 * @param [opts] - additional options
 	 */
-	waitStatus<F extends WaitFn = WaitFn>(
+	waitStatus<F extends WaitFn>(
 		status: ComponentStatus,
 		cb: F,
 		opts?: WaitDecoratorOptions
 	): CanPromise<ReturnType<F>>;
 
 	@p({replace: false})
-	waitStatus<F extends WaitFn = WaitFn>(
+	waitStatus<F extends WaitFn>(
 		status: ComponentStatus,
 		cbOrOpts?: F | WaitDecoratorOptions,
 		opts?: WaitDecoratorOptions

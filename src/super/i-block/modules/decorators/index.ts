@@ -170,7 +170,7 @@ export function wait(opts: WaitDecoratorOptions): Function;
  * @see [[Async.wait]]
  * @param opts - additional options
  */
-export function wait<F extends WaitFn = WaitFn>(
+export function wait<F extends WaitFn>(
 	opts: WaitOptions<F>
 ): WaitFn<Parameters<F>, CanPromise<ReturnType<F>>>;
 
@@ -192,7 +192,7 @@ export function wait(status: WaitStatuses, opts?: WaitDecoratorOptions): Functio
  * @param status
  * @param fnOrOpts - function to wrap or additional options
  */
-export function wait<F extends WaitFn = WaitFn>(
+export function wait<F extends WaitFn>(
 	status: WaitStatuses,
 	fnOrOpts: F | WaitOptions<F>
 ): WaitFn<Parameters<F>, CanPromise<ReturnType<F>>>;
