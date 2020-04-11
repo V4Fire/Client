@@ -33,7 +33,7 @@ export * from 'super/i-block/modules/daemons/interface';
 /**
  * Class to manage component daemons
  */
-export default class Daemons<T extends iBlock = iBlock> extends Friend<T> {
+export default class Daemons<C extends iBlock = iBlock> extends Friend<C> {
 	//#if runtime has component/daemons
 
 	/**
@@ -42,7 +42,10 @@ export default class Daemons<T extends iBlock = iBlock> extends Friend<T> {
 	 * @param base
 	 * @param [parent]
 	 */
-	static createDaemons(base: DaemonsDict, parent?: DaemonsDict): DaemonsDict {
+	static createDaemons<CTX extends iBlock = iBlock['unsafe']>(
+		base: DaemonsDict,
+		parent?: DaemonsDict
+	): DaemonsDict<CTX> {
 		const
 			mixedDaemons = {...parent, ...base};
 
@@ -65,12 +68,12 @@ export default class Daemons<T extends iBlock = iBlock> extends Friend<T> {
 	/**
 	 * Map of component daemons
 	 */
-	protected get daemons(): DaemonsDict {
+	protected get daemons(): DaemonsDict<this['C']> {
 		return (<typeof iBlock>this.component.instance.constructor).daemons;
 	}
 
 	/** @override */
-	constructor(component: T) {
+	constructor(component: C) {
 		super(component);
 		this.init();
 	}
@@ -89,7 +92,7 @@ export default class Daemons<T extends iBlock = iBlock> extends Friend<T> {
 	 * @param name
 	 * @param spawned
 	 */
-	spawn(name: string, spawned: SpawnedDaemon): boolean {
+	spawn(name: string, spawned: SpawnedDaemon<this['C']>): boolean {
 		const
 			exists = this.isExists(name);
 
@@ -141,7 +144,7 @@ export default class Daemons<T extends iBlock = iBlock> extends Friend<T> {
 	 * Returns a daemon by the specified name
 	 * @param name
 	 */
-	protected get(name: string): CanUndef<Daemon> {
+	protected get(name: string): CanUndef<Daemon<this['C']>> {
 		return this.daemons[name];
 	}
 
@@ -160,7 +163,7 @@ export default class Daemons<T extends iBlock = iBlock> extends Friend<T> {
 	 * Creates a wrapped function for the specified daemon
 	 * @param daemon
 	 */
-	protected wrapDaemonFn(daemon: Daemon): Daemon {
+	protected wrapDaemonFn<T extends Daemon>(daemon: T): T {
 		daemon.wrappedFn = daemon.wait ? wait(daemon.wait, daemon.fn) : daemon.fn;
 		return daemon;
 	}
