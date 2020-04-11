@@ -6,7 +6,13 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+/**
+ * [[include:super/i-data/README.md]]
+ * @packageDocumentation
+ */
+
 import symbolGenerator from 'core/symbol';
+import { deprecated } from 'core/functools';
 
 import iProgress from 'traits/i-progress/i-progress';
 import Async, { AsyncOptions } from 'core/async';
@@ -31,16 +37,20 @@ import Provider, {
 import iBlock, {
 
 	component,
+	wrapEventEmitter,
+
 	prop,
 	field,
 	system,
 	watch,
 	wait,
-	eventFactory,
 
-	RemoteEvent,
-	ModsDecl,
-	InitLoadParams
+	ReadonlyEventEmitterWrapper,
+
+	InitLoadCb,
+	InitLoadOptions,
+
+	ModsDecl
 
 } from 'super/i-block/i-block';
 
@@ -54,7 +64,7 @@ import {
 	ComponentConverter,
 	CheckDBEquality
 
-} from 'super/i-data/modules/interface';
+} from 'super/i-data/interface';
 
 export { RequestError };
 
@@ -77,11 +87,14 @@ export {
 //#endif
 
 export * from 'super/i-block/i-block';
-export * from 'super/i-data/modules/interface';
+export * from 'super/i-data/interface';
 
 export const
 	$$ = symbolGenerator();
 
+/**
+ * Superclass for all components that need to download data from data providers
+ */
 @component({functional: null})
 export default abstract class iData extends iBlock implements iProgress {
 	/**
@@ -110,22 +123,22 @@ export default abstract class iData extends iBlock implements iProgress {
 	readonly request?: RequestParams;
 
 	/**
-	 * If false, then the initial get request wont be executed if the request data is empty.
-	 * Also can be passed as a function, that will return true if the request can be executed.
+	 * If false, then the initial data request won't be executed if the request data is empty.
+	 * Also, the parameter can be passed as a function, that returns true if the request can be executed.
 	 */
 	@prop({type: [Boolean, Function]})
 	readonly requestFilter: RequestFilter = true;
 
 	/**
-	 * Remote data converter
+	 * Remote data converter.
+	 * This function transforms initial provider data before saving to .db.
 	 */
 	@prop({type: [Function, Array], required: false})
 	readonly dbConverter?: CanArray<ComponentConverter<any>>;
 
 	/**
-	 * If true, then all new db data will be compared with old data.
-	 * Also can be passed as a function, that will return true if data is equal.
-	 * If the data will be equal, then re-render won't be executed.
+	 * If true, then all new initial provider data will be compared with old data.
+	 * Also, the parameter can be passed as a function, that returns true if data are equal.
 	 */
 	@prop({type: [Boolean, Function]})
 	readonly checkDBEquality: CheckDBEquality = true;
@@ -143,7 +156,8 @@ export default abstract class iData extends iBlock implements iProgress {
 	readonly offlineReload: boolean = false;
 
 	/**
-	 * Component data
+	 * Initial component data.
+	 * When a component takes data from own data provider it stores the value within this property.
 	 */
 	get db(): CanUndef<this['DB']> {
 		return this.field.get('dbStore');
@@ -152,8 +166,8 @@ export default abstract class iData extends iBlock implements iProgress {
 	/**
 	 * Sets new component data
 	 *
-	 * @emits dbCanChange(value: CanUndef<this['DB']>)
-	 * @emits dbChange(value: CanUndef<this['DB']>)
+	 * @emits `dbCanChange(value: CanUndef<this['DB']>)`
+	 * @emits `dbChange(value: CanUndef<this['DB']>)`
 	 */
 	set db(value: CanUndef<this['DB']>) {
 		this.emit('dbCanChange', value);
@@ -187,38 +201,79 @@ export default abstract class iData extends iBlock implements iProgress {
 	};
 
 	/**
-	 * Data provider event emitter
+	 * Event emitter of a component data provider
 	 */
 	@system({
 		atom: true,
 		after: 'async',
 		unique: true,
 		// @ts-ignore
-		init: (o, d) => eventFactory(<Async>d.async, () => o.dp && o.dp.event, true)
+		init: (o, d) => wrapEventEmitter(<Async>d.async, () => o.dp?.event, true)
 	})
 
-	protected readonly dataEvent!: RemoteEvent<this>;
+	protected readonly dataProviderEmitter!: ReadonlyEventEmitterWrapper<this>;
 
 	/**
-	 * Request parameters
+	 * @deprecated
+	 * @see [[iData.dataProviderEmitter]]
+	 */
+	@deprecated({renamedTo: 'dataProviderEmitter'})
+	get dataEvent(): ReadonlyEventEmitterWrapper<this> {
+		return this.dataProviderEmitter;
+	}
+
+	/**
+	 * Request parameters for a data provider.
+	 * Keys of the object represent names of data provider methods.
+	 * Parameters that associated to provider methods will be automatically appended to
+	 * invocation as parameters by default.
+	 *
+	 * To create logic when the data provider automatically reload data, if some of properties has been
+	 * changed, you need to use 'sync.object'.
+	 *
+	 * @example
+	 * ```ts
+	 * class Foo extends iData {
+	 *   @system()
+	 *   i: number = 0;
+	 *
+	 *   // {get: {step: 0}, upd: {i: 0}, del: {i: '0'}}
+	 *   @system((ctx) => ({
+	 *     ...ctx.sync.link('get', [
+	 *       ['step', 'i']
+	 *     ]),
+	 *
+	 *     ...ctx.sync.link('upd', [
+	 *       ['i']
+	 *     ]),
+	 *
+	 *     ...ctx.sync.link('del', [
+	 *       ['i', String]
+	 *     ]),
+	 *   })
+	 *
+	 *   protected readonly requestParams!: RequestParams;
+	 * }
+	 * ```
 	 */
 	@system({merge: true})
 	protected readonly requestParams: RequestParams = {get: {}};
 
 	/**
 	 * Component data store
+	 * @see [[iData.db]]
 	 */
 	@field()
 	protected dbStore?: CanUndef<this['DB']>;
 
 	/**
-	 * Provider instance
+	 * Instance of a component data provider by .dataProvider value
 	 */
 	@system()
 	protected dp?: Provider;
 
 	/** @override */
-	initLoad(data?: unknown, params: InitLoadParams = {}): CanPromise<void> {
+	initLoad(data?: unknown, opts: InitLoadOptions = {}): CanPromise<void> {
 		if (!this.isActivated) {
 			return;
 		}
@@ -241,14 +296,14 @@ export default abstract class iData extends iBlock implements iProgress {
 				}
 
 				return this.db;
-			}, params);
+			}, opts);
 		}
 
 		if (this.dataProvider && !this.dp) {
 			this.syncDataProviderWatcher();
 		}
 
-		if (!params.silent) {
+		if (!opts.silent) {
 			this.componentStatus = 'loading';
 		}
 
@@ -274,11 +329,11 @@ export default abstract class iData extends iBlock implements iProgress {
 
 					.then((data) => {
 						this.lfc.execCbAtTheRightTime(() => this.db = this.convertDataToDB<this['DB']>(data), label);
-						return super.initLoad(() => this.db, params);
+						return super.initLoad(() => this.db, opts);
 
 					}, (err) => {
 						stderr(err);
-						return super.initLoad(() => this.db, params);
+						return super.initLoad(() => this.db, opts);
 					});
 
 			} else if (this.db) {
@@ -286,106 +341,47 @@ export default abstract class iData extends iBlock implements iProgress {
 			}
 		}
 
-		return super.initLoad(() => this.db, params);
+		return super.initLoad(() => this.db, opts);
 	}
 
 	/**
-	 * Alias for iBlock.initLoad
+	 * Link to iBlock.initLoad
 	 *
-	 * @see iBlock.initLoad
-	 * @param data
-	 * @param [params] - additional parameters:
-	 *   *) [silent] - silent mode
-	 *   *) [recursive] - recursive loading of all remote providers
+	 * @see [[iBlock.initLoad]]
+	 * @param [data]
+	 * @param [opts]
 	 */
-	initBaseLoad(data?: unknown | ((this: this) => unknown), params: InitLoadParams = {}): CanPromise<void> {
-		return super.initLoad(data, params);
+	initBaseLoad(data?: unknown | InitLoadCb, opts?: InitLoadOptions): CanPromise<void> {
+		return super.initLoad(data, opts);
 	}
 
 	/** @override */
-	reload(params?: InitLoadParams): Promise<void> {
-		if (!this.$root.isOnline && !this.offlineReload) {
+	reload(opts?: InitLoadOptions): Promise<void> {
+		if (!this.r.isOnline && !this.offlineReload) {
 			return Promise.resolve();
 		}
 
-		return super.reload(params);
-	}
-
-	/**
-	 * Returns the full request URL
-	 */
-	url(): CanUndef<string>;
-
-	/**
-	 * Sets an advanced URL for requests
-	 * @param [value]
-	 */
-	url(value: string): this;
-	url(value?: string): CanUndef<this | string> {
-		const
-			{dp: $d} = this;
-
-		if (!$d) {
-			return value != null ? this : undefined;
-		}
-
-		if (value == null) {
-			return $d.url();
-		}
-
-		$d.url(value);
-		return this;
-	}
-
-	/**
-	 * Sets a base temporary URL for requests
-	 * @param value
-	 */
-	base(value: string): this {
-		if (this.dp) {
-			this.dp.base(value);
-		}
-
-		return this;
+		return super.reload(opts);
 	}
 
 	/**
 	 * Drops the request cache
 	 */
 	dropRequestCache(): void {
-		if (!this.dp) {
-			return;
-		}
-
-		this.dp.dropCache();
+		this.dp?.dropCache();
 	}
 
 	/**
-	 * Peeks data
+	 * Requests the provider for data by a query.
+	 * This method is similar for a GET request.
 	 *
-	 * @param [data]
-	 * @param [params]
+	 * @see [[Provider.get]]
+	 * @param [query] - request query
+	 * @param [opts] - additional request options
 	 */
-	peek(data?: RequestQuery, params?: CreateRequestOptions<this['DB']>): Promise<CanUndef<this['DB']>> {
+	get<D = unknown>(query?: RequestQuery, opts?: CreateRequestOptions<D>): Promise<CanUndef<D>> {
 		const
-			args = arguments.length > 0 ? [data, params] : this.getDefaultRequestParams('peek');
-
-		if (args) {
-			return this.createRequest('peek', ...<any>args);
-		}
-
-		return Promise.resolve(undefined);
-	}
-
-	/**
-	 * Gets data
-	 *
-	 * @param [data]
-	 * @param [params]
-	 */
-	get(data?: RequestQuery, params?: CreateRequestOptions<this['DB']>): Promise<CanUndef<this['DB']>> {
-		const
-			args = arguments.length > 0 ? [data, params] : this.getDefaultRequestParams('get');
+			args = arguments.length > 0 ? [query, opts] : this.getDefaultRequestParams('get');
 
 		if (args) {
 			return this.createRequest('get', ...<any>args);
@@ -395,14 +391,35 @@ export default abstract class iData extends iBlock implements iProgress {
 	}
 
 	/**
-	 * Post data
+	 * Checks accessibility of the provider by a query.
+	 * This method is similar for a HEAD request.
 	 *
-	 * @param data
-	 * @param [params]
+	 * @see [[Provider.peek]]
+	 * @param [query] - request query
+	 * @param [opts] - additional request options
 	 */
-	post<T = unknown>(data?: RequestBody, params?: CreateRequestOptions<T>): Promise<CanUndef<T>> {
+	peek<D = unknown>(query?: RequestQuery, opts?: CreateRequestOptions<this['DB']>): Promise<CanUndef<this['DB']>> {
 		const
-			args = arguments.length > 0 ? [data, params] : this.getDefaultRequestParams('post');
+			args = arguments.length > 0 ? [query, opts] : this.getDefaultRequestParams('peek');
+
+		if (args) {
+			return this.createRequest('peek', ...<any>args);
+		}
+
+		return Promise.resolve(undefined);
+	}
+
+	/**
+	 * Sends custom data to the provider without any logically effect.
+	 * This method is similar for a POST request.
+	 *
+	 * @see [[Provider.post]]
+	 * @param [body] - request body
+	 * @param [opts] - additional request options
+	 */
+	post<D = unknown>(body?: RequestBody, opts?: CreateRequestOptions<D>): Promise<CanUndef<D>> {
+		const
+			args = arguments.length > 0 ? [body, opts] : this.getDefaultRequestParams('post');
 
 		if (args) {
 			return this.createRequest('post', ...<any>args);
@@ -412,14 +429,16 @@ export default abstract class iData extends iBlock implements iProgress {
 	}
 
 	/**
-	 * Adds data
+	 * Add new data to the provider.
+	 * This method is similar for a POST request.
 	 *
-	 * @param data
-	 * @param [params]
+	 * @see [[Provider.add]]
+	 * @param [body] - request body
+	 * @param [opts] - additional request options
 	 */
-	add<T = unknown>(data?: RequestBody, params?: CreateRequestOptions<T>): Promise<CanUndef<T>> {
+	add<D = unknown>(body?: RequestBody, opts?: CreateRequestOptions<D>): Promise<CanUndef<D>> {
 		const
-			args = arguments.length > 0 ? [data, params] : this.getDefaultRequestParams('add');
+			args = arguments.length > 0 ? [body, opts] : this.getDefaultRequestParams('add');
 
 		if (args) {
 			return this.createRequest('add', ...<any>args);
@@ -429,14 +448,16 @@ export default abstract class iData extends iBlock implements iProgress {
 	}
 
 	/**
-	 * Updates data
+	 * Updates data of the provider by a query.
+	 * This method is similar for a PUT request.
 	 *
-	 * @param [data]
-	 * @param [params]
+	 * @see [[Provider.upd]]
+	 * @param [body] - request body
+	 * @param [opts] - additional request options
 	 */
-	upd<T = unknown>(data?: RequestBody, params?: CreateRequestOptions<T>): Promise<CanUndef<T>> {
+	upd<D = unknown>(body?: RequestBody, opts?: CreateRequestOptions<D>): Promise<CanUndef<D>> {
 		const
-			args = arguments.length > 0 ? [data, params] : this.getDefaultRequestParams('upd');
+			args = arguments.length > 0 ? [body, opts] : this.getDefaultRequestParams('upd');
 
 		if (args) {
 			return this.createRequest('upd', ...<any>args);
@@ -446,14 +467,16 @@ export default abstract class iData extends iBlock implements iProgress {
 	}
 
 	/**
-	 * Deletes data
+	 * Deletes data of the provider by a query.
+	 * This method is similar for a DELETE request.
 	 *
-	 * @param [data]
-	 * @param [params]
+	 * @see [[Provider.del]]
+	 * @param [body] - request body
+	 * @param [opts] - additional request options
 	 */
-	del<T = unknown>(data?: RequestBody, params?: CreateRequestOptions<T>): Promise<CanUndef<T>> {
+	del<D = unknown>(body?: RequestBody, opts?: CreateRequestOptions<D>): Promise<CanUndef<D>> {
 		const
-			args = arguments.length > 0 ? [data, params] : this.getDefaultRequestParams('del');
+			args = arguments.length > 0 ? [body, opts] : this.getDefaultRequestParams('del');
 
 		if (args) {
 			return this.createRequest('del', ...<any>args);
@@ -463,10 +486,10 @@ export default abstract class iData extends iBlock implements iProgress {
 	}
 
 	/**
-	 * Saves the specified data to the root data store
+	 * Saves data to the root data store
 	 *
 	 * @param data
-	 * @param [key]
+	 * @param [key] - key to save data
 	 */
 	protected saveDataToRootStore(data: unknown, key?: string): void {
 		key = key || this.globalName || this.dataProvider;
@@ -479,7 +502,7 @@ export default abstract class iData extends iBlock implements iProgress {
 	}
 
 	/**
-	 * Converts the specified remote data to the component format and returns it
+	 * Converts data to the component format and returns it
 	 * @param data
 	 */
 	protected convertDataToDB<O>(data: unknown): O;
@@ -508,7 +531,7 @@ export default abstract class iData extends iBlock implements iProgress {
 	}
 
 	/**
-	 * Converts the specified data to the internal component format and returns it
+	 * Converts data to the internal component format and returns it
 	 * @param data
 	 */
 	protected convertDBToComponent<O = unknown>(data: unknown): O | this['DB'] {
@@ -524,7 +547,9 @@ export default abstract class iData extends iBlock implements iProgress {
 	}
 
 	/**
-	 * Initializes remote data
+	 * Initializes component data from a data provider.
+	 * This method is used to map .db to component properties.
+	 * If the method is used, it must return some value that not equals to undefined.
 	 */
 	@watch('componentConverter')
 	protected initRemoteData(): CanUndef<unknown> {
@@ -542,7 +567,7 @@ export default abstract class iData extends iBlock implements iProgress {
 	@wait('ready')
 	protected initDataListeners(): void {
 		const
-			{dataEvent: $e} = this,
+			{dataProviderEmitter: $e} = this,
 			group = {group: 'dataProviderSync'};
 
 		$e.off(
@@ -627,7 +652,7 @@ export default abstract class iData extends iBlock implements iProgress {
 				.clearAll({group: /requestSync/})
 				.clearAll({label: $$.initLoad});
 
-			this.dataEvent.off();
+			this.dataProviderEmitter.off();
 			this.dp = undefined;
 		}
 
@@ -713,44 +738,43 @@ export default abstract class iData extends iBlock implements iProgress {
 	}
 
 	/**
-	 * Create a new request to the data provider
+	 * Creates a new request to the data provider
 	 *
 	 * @param method - request method
-	 * @param [data]
-	 * @param [params]
+	 * @param [body] - request body
+	 * @param [opts] - additional options
 	 */
-	protected createRequest<T = unknown>(
+	protected createRequest<D = unknown>(
 		method: ModelMethod,
-		data?: RequestBody,
-		params?: CreateRequestOptions<T>
-	): Promise<CanUndef<T>> {
+		body?: RequestBody,
+		opts: CreateRequestOptions<D> = {}
+	): Promise<CanUndef<D>> {
 		if (!this.dp) {
 			return Promise.resolve(undefined);
 		}
 
 		const
-			p = <CreateRequestOptions<T>>(params || {}),
 			asyncFields = ['join', 'label', 'group'],
-			reqParams = <CreateRequestOptions<T>>(Object.reject(p, asyncFields)),
-			asyncParams = <AsyncOptions>(Object.select(p, asyncFields));
+			reqParams = Object.reject(opts, asyncFields),
+			asyncParams = Object.select(opts, asyncFields);
 
 		const
-			req = this.async.request<RequestResponseObject<T>>((<Function>this.dp[method])(data, reqParams), asyncParams),
+			req = this.async.request<RequestResponseObject<D>>((<Function>this.dp[method])(body, reqParams), asyncParams),
 			is = (v) => v !== false;
 
 		if (this.mods.progress !== 'true') {
-			if (is(p.showProgress)) {
+			if (is(opts.showProgress)) {
 				this.setMod('progress', true);
 			}
 
 			const then = () => {
-				if (is(p.hideProgress)) {
+				if (is(opts.hideProgress)) {
 					this.lfc.execCbAtTheRightTime(() => this.setMod('progress', false));
 				}
 			};
 
 			req.then(then, (err) => {
-				this.onRequestError(err, () => this.createRequest<T>(method, data, params));
+				this.onRequestError(err, () => this.createRequest<D>(method, body, opts));
 				then();
 			});
 		}
@@ -767,7 +791,7 @@ export default abstract class iData extends iBlock implements iProgress {
 	 *
 	 * @param err
 	 * @param retry - retry function
-	 * @emits requestError(err: Error | RequestError, retry: RetryRequestFn)
+	 * @emits `requestError(err: Error | RequestError, retry: RetryRequestFn)`
 	 */
 	protected onRequestError<T = unknown>(err: Error | RequestError, retry: RetryRequestFn): void {
 		this.emitError('requestError', err, retry);

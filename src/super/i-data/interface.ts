@@ -21,23 +21,27 @@ import {
 
 //#endif
 
-export interface RequestFilterOptions<T = unknown> {
+export interface RequestFilterOptions<D = unknown> {
 	isEmpty: boolean;
 	method: ModelMethod;
-	params: CreateRequestOptions<T>;
+	params: CreateRequestOptions<D>;
 }
 
-export interface RequestFilterFn<T = unknown> {
-	(data: RequestQuery | RequestBody, opts: RequestFilterOptions<T>): boolean;
+export interface RequestFilterFn<D = unknown> {
+	(data: RequestQuery | RequestBody, opts: RequestFilterOptions<D>): boolean;
 }
 
-export type RequestFilter<T = unknown> =
+export type RequestFilter<D = unknown> =
 	boolean |
-	RequestFilterFn<T>;
+	RequestFilterFn<D>;
 
-export type DefaultRequest<T = unknown> = [RequestQuery | RequestBody, CreateRequestOptions<T>];
-export type Request<T = unknown> = RequestQuery | RequestBody | DefaultRequest<T>;
-export type RequestParams<T = unknown> = StrictDictionary<Request<T>>;
+export type DefaultRequest<D = unknown> = [RequestQuery | RequestBody, CreateRequestOptions<D>];
+export type RequestParams<D = unknown> = StrictDictionary<Request<D>>;
+
+export type Request<D = unknown> =
+	RequestQuery |
+	RequestBody |
+	DefaultRequest<D>;
 
 export interface CreateRequestOptions<T = unknown> extends BaseCreateRequestOptions<T>, AsyncOptions {
 	showProgress?: boolean;
