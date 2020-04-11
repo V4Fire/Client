@@ -30,7 +30,11 @@ export const
 export const proxyGetters = Object.createDict({
 	prop: (ctx) => ({
 		key: '_props',
-		value: ctx._props,
+
+		get value(): typeof ctx._props {
+			return ctx._props;
+		},
+
 		watch: (path, handler) => ctx.$vueWatch(path, (val, oldVal) => {
 			if (val !== oldVal) {
 				handler(val, oldVal);
@@ -40,11 +44,15 @@ export const proxyGetters = Object.createDict({
 
 	field: (ctx) => ({
 		key: '$fields',
-		value: ctx.$fields
+		get value(): typeof ctx.$fields {
+			return ctx.$fields;
+		}
 	}),
 
 	system: (ctx) => ({
 		key: '$systemFields',
-		value: ctx.$systemFields
+		get value(): typeof ctx.$systemFields {
+			return ctx.$systemFields;
+		}
 	})
 });

@@ -52,7 +52,9 @@ export function createWatchFn(
 			isAccessor = info.type === 'accessor' || info.type === 'computed' || info.accessor;
 
 		const
-			watchInfo = isAccessor ? null : proxyGetters[info.type]?.(info.ctx),
+			watchInfo = isAccessor ? null : proxyGetters[info.type]?.(info.ctx);
+
+		let
 			proxy = watchInfo?.value;
 
 		const
@@ -119,6 +121,8 @@ export function createWatchFn(
 			if (info.type === 'system') {
 				if (!Object.getOwnPropertyDescriptor(info.ctx, info.name)?.get) {
 					proxy[watcherInitializer]?.();
+					proxy = watchInfo?.value;
+
 					mute(proxy);
 					proxy[info.name] = info.ctx[info.name];
 					unmute(proxy);
