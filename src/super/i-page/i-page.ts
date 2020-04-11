@@ -6,32 +6,26 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import symbolGenerator from 'core/symbol';
-import { WrappedCb } from 'core/async';
+/**
+ * [[include:super/i-page/README.md]]
+ * @packageDocumentation
+ */
 
+import symbolGenerator from 'core/symbol';
 import iVisible from 'traits/i-visible/i-visible';
 
 import iData, { component, prop, system, watch, hook, ModsDecl } from 'super/i-data/i-data';
+import { TitleValue, StageTitles, ScrollOptions } from 'super/i-page/interface';
+
 export * from 'super/i-data/i-data';
-
-export type TitleValue<T = unknown> = string | ((ctx: T) => string);
-export interface StageTitles<T = unknown> extends Dictionary<TitleValue<T>> {
-	'[[DEFAULT]]': TitleValue<T>;
-}
-
-export interface ScrollToFn<T = number, N = ScrollOptions> extends WrappedCb {
-	(x?: T | N, y?: T): void
-}
-
-export interface ScrollOptions {
-	x?: number;
-	y?: number;
-	behavior?: ScrollBehavior;
-}
+export * from 'super/i-page/interface';
 
 export const
 	$$ = symbolGenerator();
 
+/**
+ * Superclass for all page components
+ */
 @component({inheritMods: false})
 export default abstract class iPage extends iData implements iVisible {
 	/** @override */
@@ -47,10 +41,10 @@ export default abstract class iPage extends iData implements iVisible {
 	readonly pageTitleProp: TitleValue = '';
 
 	/**
-	 * Map of page titles ({stage: title})
+	 * Map of page titles that associated with component state values
 	 */
 	@prop({type: Object, required: false})
-	readonly stagePageTitles?: StageTitles;
+	readonly stagePageTitles?: StageTitles<this>;
 
 	/**
 	 * Page title
@@ -64,15 +58,19 @@ export default abstract class iPage extends iData implements iVisible {
 	 */
 	set pageTitle(value: string) {
 		if (this.isActivated) {
-			this.$root.setPageTitle(value, this);
+			this.r.setPageTitle(value, this);
 		}
 	}
 
 	/**
-	 * Proxy wrapper for the scrollTo method
+	 * Wrapped version of .scrollTo method
+	 * @see [[iPage.scrollTo]]
 	 */
-	get scrollToProxy(): ScrollToFn {
-		return this.scrollToProxyFn();
+	get scrollToProxy(): this['scrollTo'] {
+		return this.async.proxy(this.scrollTo, {
+			single: false,
+			label: $$.scrollTo
+		});
 	}
 
 	/** @inheritDoc */
@@ -87,41 +85,37 @@ export default abstract class iPage extends iData implements iVisible {
 	protected pageTitleStore!: string;
 
 	/**
-	 * Scrolls a page to specified coordinates
-	 * @param p
+	 * Scrolls a page by the specified options
+	 * @param opts
 	 */
-	scrollTo(p: ScrollOptions): void;
+	scrollTo(opts: ScrollOptions): void;
 
 	/**
+	 * Scrolls a page to specified coordinates
+	 *
 	 * @param x
 	 * @param y
 	 */
 	scrollTo(x?: number, y?: number): void;
 
-	// tslint:disable-next-line
 	scrollTo(p?: ScrollOptions | number, y?: number): void {
 		this.async.cancelProxy({label: $$.scrollTo});
 
-		const scroll = (p: ScrollToOptions) => {
+		const scroll = (opts: ScrollToOptions) => {
 			try {
-				scrollTo(p);
+				scrollTo(opts);
 
 			} catch {
-				scrollTo(p.left == null ? pageXOffset : p.left, p.top == null ? pageYOffset : p.top);
+				scrollTo(opts.left == null ? pageXOffset : opts.left, opts.top == null ? pageYOffset : opts.top);
 			}
 		};
 
-		if (p && Object.isPlainObject(p)) {
-			const
-				{x, y} = <ScrollOptions>p,
-				opts = <ScrollOptions>Object.reject(p, ['x', 'y']);
-
-			scroll({left: x, top: y, ...opts});
+		if (Object.isPlainObject(p)) {
+			scroll({left: p.x, top: p.y, ...Object.reject(p, ['x', 'y'])});
 
 		} else {
-			scroll({left: <CanUndef<number>>p, top: y});
+			scroll({left: p, top: y});
 		}
-
 	}
 
 	/** @override */
@@ -137,24 +131,7 @@ export default abstract class iPage extends iData implements iVisible {
 	}
 
 	/**
-	 * Returns proxy wrapper for the scrollTo method
-	 */
-	protected scrollToProxyFn(): ScrollToFn {
-		return this.async.proxy((x?: number | ScrollOptions, y?: number) => {
-			if (x && Object.isPlainObject(x)) {
-				this.scrollTo(<ScrollOptions>x);
-
-			} else {
-				this.scrollTo(<CanUndef<number>>x, y);
-			}
-		}, {
-			single: false,
-			label: $$.scrollTo
-		});
-	}
-
-	/**
-	 * Synchronization for the stagePageTitles field
+	 * Synchronization for .stagePageTitles field
 	 */
 	@watch('!:onStageChange')
 	protected syncStageTitles(): CanUndef<string> {
