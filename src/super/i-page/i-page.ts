@@ -50,7 +50,7 @@ export default abstract class iPage extends iData implements iVisible {
 	 * Page title
 	 */
 	get pageTitle(): string {
-		return this.$root.pageTitle;
+		return this.r.pageTitle;
 	}
 
 	/**
