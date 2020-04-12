@@ -168,7 +168,7 @@ export default globalThis[MODULE_DEPENDENCIES] = Object.assign(globalThis[MODULE
 	},
 
 	/**
-	 * Get a list of dependencies for the specified module
+	 * Returns a list of dependencies for the specified module
 	 * @param module
 	 */
 	get(module: string): CanPromise<string[]> {
