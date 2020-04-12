@@ -23,7 +23,7 @@ import { cacheStatus, ComponentInterface } from 'core/component';
 export function attachAccessorsFromMeta(component: ComponentInterface, safe?: boolean): void {
 	const
 		// @ts-ignore (access)
-		{meta} = component;
+		{meta, meta: {params: {deprecatedProps}}} = component;
 
 	const
 		isFlyweight = component.$isFlyweight || meta.params.functional === true;
@@ -90,5 +90,24 @@ export function attachAccessorsFromMeta(component: ComponentInterface, safe?: bo
 			get: el.get && get,
 			set: el.set
 		});
+	}
+
+	if (deprecatedProps) {
+		for (let keys = Object.keys(deprecatedProps), i = 0; i < keys.length; i++) {
+			const
+				key = keys[i],
+				alternative = deprecatedProps[key];
+
+			if (!alternative) {
+				continue;
+			}
+
+			Object.defineProperty(component, key, {
+				configurable: true,
+				enumerable: true,
+				get: () => component[alternative],
+				set: (v) => component[alternative] = v
+			});
+		}
 	}
 }

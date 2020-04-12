@@ -57,10 +57,10 @@ export function bindRemoteWatchers(component: ComponentInterface, params?: BindR
 	// Iterate over all registered watchers and listeners and initialize their
 	for (let keys = Object.keys(watchersMap), i = 0; i < keys.length; i++) {
 		let
-			key = keys[i];
+			watchPath = keys[i];
 
 		const
-			watchers = watchersMap[key];
+			watchers = watchersMap[watchPath];
 
 		if (!watchers) {
 			continue;
@@ -79,7 +79,7 @@ export function bindRemoteWatchers(component: ComponentInterface, params?: BindR
 
 		// Custom watchers looks like ':foo', 'bla:foo', '?bla:foo'
 		// and uses to listen some events instead listen of changing of component fields
-		const customWatcher = customWatcherRgxp.exec(key);
+		const customWatcher = customWatcherRgxp.exec(watchPath);
 
 		if (customWatcher) {
 			const m = customWatcher[1];
@@ -95,7 +95,7 @@ export function bindRemoteWatchers(component: ComponentInterface, params?: BindR
 			if (customWatcher) {
 				const l = customWatcher[2];
 				watcherCtx = l ? Object.get(component, l) || Object.get(globalThis, l) || component : component;
-				key = l ? customWatcher[3].toString() : customWatcher[3].dasherize();
+				watchPath = l ? customWatcher[3].toString() : customWatcher[3].dasherize();
 			}
 
 			// Iterates over all registered handlers for this watcher
@@ -116,13 +116,13 @@ export function bindRemoteWatchers(component: ComponentInterface, params?: BindR
 							defLabel;
 
 						if (watchInfo.method != null) {
-							defLabel = `[[WATCHER:${key}:${watchInfo.method}]]`;
+							defLabel = `[[WATCHER:${watchPath}:${watchInfo.method}]]`;
 
 						} else if (Object.isString(watchInfo.handler)) {
-							defLabel = `[[WATCHER:${key}:${watchInfo.handler}]]`;
+							defLabel = `[[WATCHER:${watchPath}:${watchInfo.handler}]]`;
 
 						} else {
-							defLabel = `[[WATCHER:${key}:${(<Function>watchInfo.handler).name}]]`;
+							defLabel = `[[WATCHER:${watchPath}:${(<Function>watchInfo.handler).name}]]`;
 						}
 
 						asyncParams.label = defLabel;
@@ -257,16 +257,16 @@ export function bindRemoteWatchers(component: ComponentInterface, params?: BindR
 
 							if (needDefEmitter) {
 								// @ts-ignore (access)
-								component.$on(key, handler);
+								component.$on(watchPath, handler);
 
 							} else {
-								$a.on(<EventEmitterLike>watcherCtx, key, handler, eventParams, ...(watchInfo.args || []));
+								$a.on(<EventEmitterLike>watcherCtx, watchPath, handler, eventParams, ...(watchInfo.args || []));
 							}
 
 							return;
 						}
 
-						const unwatch = $watch.call(component, p.info || getPropertyInfo(key, component), {
+						const unwatch = $watch.call(component, p.info || getPropertyInfo(watchPath, component), {
 							deep: watchInfo.deep,
 							immediate: watchInfo.immediate
 						}, handler);
@@ -289,16 +289,16 @@ export function bindRemoteWatchers(component: ComponentInterface, params?: BindR
 
 						if (needDefEmitter) {
 							// @ts-ignore (access)
-							component.$on(key, handler);
+							component.$on(watchPath, handler);
 
 						} else {
-							$a.on(<EventEmitterLike>watcherCtx, key, handler, eventParams, ...(watchInfo.args || []));
+							$a.on(<EventEmitterLike>watcherCtx, watchPath, handler, eventParams, ...(watchInfo.args || []));
 						}
 
 						continue;
 					}
 
-					const unwatch = $watch.call(component, p.info || getPropertyInfo(key, component), {
+					const unwatch = $watch.call(component, p.info || getPropertyInfo(watchPath, component), {
 						deep: watchInfo.deep,
 						immediate: watchInfo.immediate
 					}, handler);

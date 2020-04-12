@@ -49,9 +49,12 @@ export function createWatchFn(
 
 		const
 			info: PropertyInfo = Object.isString(path) ? getPropertyInfo(path, component) : path,
-			isAccessor = info.type === 'accessor' || info.type === 'computed' || info.accessor;
+
+			// @ts-ignore
+			ctxParams = info.ctx.meta.params;
 
 		const
+			isAccessor = info.type === 'accessor' || info.type === 'computed' || info.accessor,
 			watchInfo = isAccessor ? null : proxyGetters[info.type]?.(info.ctx);
 
 		let
@@ -102,11 +105,11 @@ export function createWatchFn(
 			}
 		}
 
-		if (info && info.type === 'prop' && (
-			// @ts-ignore (access)
-			info.ctx.meta.params.root ||
-			!(info.name in (info.ctx.$options.propsData || {}))
-		)) {
+		if (info.type === 'prop' && (
+			ctxParams.root ||
+			ctxParams.functional === true ||
+			!(info.name in (info.ctx.$options.propsData || {})))
+		) {
 			return null;
 		}
 
@@ -126,7 +129,6 @@ export function createWatchFn(
 					mute(proxy);
 					proxy[info.name] = info.ctx[info.name];
 					unmute(proxy);
-
 					Object.defineProperty(info.ctx, info.name, {
 						enumerable: true,
 						configurable: true,

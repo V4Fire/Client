@@ -11,7 +11,14 @@
  * @packageDocumentation
  */
 
-import { bindingRgxp, SyncLinkCache } from 'core/component';
+import {
+
+	bindingRgxp,
+	customWatcherRgxp,
+	getPropertyInfo,
+	SyncLinkCache
+
+} from 'core/component';
 
 import iBlock from 'super/i-block/i-block';
 import Friend from 'super/i-block/modules/friend';
@@ -224,8 +231,7 @@ export default class Sync<C extends iBlock = iBlock> extends Friend<C> {
 			meta,
 			component,
 			linksCache,
-			syncLinkCache,
-			component: {$options: {propsData}}
+			syncLinkCache
 		} = this;
 
 		if (linksCache[head]) {
@@ -233,21 +239,19 @@ export default class Sync<C extends iBlock = iBlock> extends Friend<C> {
 		}
 
 		let
-			isProp,
-			isAccessor;
+			info,
+			isCustomWatcher = false;
 
 		if (!path || !Object.isString(path)) {
 			wrapper = <LinkWrapper<D>>opts;
 			opts = <AsyncWatchOptions>path;
 			path = `${head.replace(bindingRgxp, '')}Prop`;
-			isProp = true;
+
+		} else if (!customWatcherRgxp.test(path)) {
+			info = getPropertyInfo(path, this.component);
 
 		} else {
-			isProp = Boolean(meta.props[path]);
-
-			if (!isProp) {
-				isAccessor = Boolean(meta.accessors[path] || meta.computedFields[path]);
-			}
+			isCustomWatcher = true;
 		}
 
 		if (Object.isFunction(opts)) {
@@ -257,6 +261,12 @@ export default class Sync<C extends iBlock = iBlock> extends Friend<C> {
 
 		opts = opts || {};
 
+		const isAccessor = info && (
+			info.type === 'accessor' ||
+			info.type === 'computed' ||
+			info.accessor
+		);
+
 		if (isAccessor) {
 			opts.immediate = opts.immediate !== false;
 		}
@@ -264,7 +274,9 @@ export default class Sync<C extends iBlock = iBlock> extends Friend<C> {
 		linksCache[head] = {};
 
 		const sync = (val?, oldVal?) => {
-			val = val !== undefined ? val : this.field.get(<string>path);
+			if (!isCustomWatcher) {
+				val = val !== undefined ? val : this.field.get(<string>path);
+			}
 
 			const
 				res = wrapper ? wrapper.call(this, val, oldVal) : val;
@@ -273,38 +285,37 @@ export default class Sync<C extends iBlock = iBlock> extends Friend<C> {
 			return res;
 		};
 
-		const canWatch = !component.isFlyweight && (
-			component.isFunctional ?
-				!isProp :
-				!isProp || !propsData || path in propsData
-		);
+		if (wrapper && wrapper.length > 1) {
+			component.watch(info || path, (val, oldVal) => {
+				if (isCustomWatcher) {
+					oldVal = undefined;
 
-		if (canWatch) {
-			if (wrapper && wrapper.length > 1) {
-				component.watch(path, (val, oldVal) => {
-					if (Object.fastCompare(val, oldVal) || Object.fastCompare(val, this.field.get(head))) {
-						return;
-					}
+				} else if (Object.fastCompare(val, oldVal) || Object.fastCompare(val, this.field.get(head))) {
+					return;
+				}
 
-					sync(val, oldVal);
-				}, opts);
+				sync(val, oldVal);
+			}, opts);
 
-			} else {
-				const
-					that = this;
+		} else {
+			const
+				that = this;
 
-				// tslint:disable-next-line:only-arrow-functions
-				component.watch(path, function (val?: unknown): void {
-					const
-						oldVal = arguments[1];
+			// tslint:disable-next-line:only-arrow-functions
+			component.watch(info || path, function (val?: unknown): void {
+				let
+					oldVal;
+
+				if (!isCustomWatcher) {
+					oldVal = arguments[1];
 
 					if (Object.fastCompare(val, oldVal) || Object.fastCompare(val, that.field.get(head))) {
 						return;
 					}
+				}
 
-					sync(val, oldVal);
-				}, opts);
-			}
+				sync(val, oldVal);
+			}, opts);
 		}
 
 		// tslint:disable-next-line:prefer-object-spread
@@ -531,12 +542,10 @@ export default class Sync<C extends iBlock = iBlock> extends Friend<C> {
 		}
 
 		const {
-			meta,
 			component,
 			syncLinkCache,
 			linksCache,
-			meta: {hooks: {beforeDataCreate: hooks}},
-			component: {$options: {propsData}}
+			meta: {hooks: {beforeDataCreate: hooks}}
 		} = this;
 
 		const
@@ -565,19 +574,25 @@ export default class Sync<C extends iBlock = iBlock> extends Friend<C> {
 			return val;
 		};
 
-		const attachWatcher = (field, path, getVal, clone?) => {
-			Object.set(linksCache, path, true);
+		const attachWatcher = (watchPath, tiedPath, getVal, clone?) => {
+			Object.set(linksCache, tiedPath, true);
 
 			const
-				sync = (val?, oldVal?) => setField(path, getVal(val, oldVal)),
-				isProp = meta.props[field];
+				isCustomWatcher = customWatcherRgxp.test(watchPath),
+				sync = (val?, oldVal?) => setField(tiedPath, getVal(val, oldVal));
 
 			let
-				isAccessor;
+				info;
 
-			if (!isProp) {
-				isAccessor = Boolean(meta.accessors[field] || meta.computedFields[field]);
+			if (!isCustomWatcher) {
+				info = getPropertyInfo(watchPath, this.component);
 			}
+
+			const isAccessor = info && (
+				info.type === 'accessor' ||
+				info.type === 'computed' ||
+				info.accessor
+			);
 
 			const
 				p = <AsyncWatchOptions>{...opts};
@@ -586,44 +601,43 @@ export default class Sync<C extends iBlock = iBlock> extends Friend<C> {
 				p.immediate = p.immediate !== false;
 			}
 
-			const canWatch = !component.isFlyweight && (
-				component.isFunctional ?
-					!isProp :
-					!isProp || !propsData || field in propsData
-			);
+			if (clone) {
+				component.watch(info || watchPath, (val, oldVal) => {
+					if (isCustomWatcher) {
+						oldVal = undefined;
 
-			if (canWatch) {
-				if (clone) {
-					component.watch(field, (val, oldVal) => {
-						if (Object.fastCompare(val, oldVal) || Object.fastCompare(val, this.field.get(path))) {
+					} else if (Object.fastCompare(val, oldVal) || Object.fastCompare(val, this.field.get(tiedPath))) {
+						return;
+					}
+
+					sync(val, oldVal);
+				}, p);
+
+			} else {
+				const
+					that = this;
+
+				// tslint:disable-next-line:only-arrow-functions
+				component.watch(info || watchPath, function (val?: unknown): void {
+					let
+						oldVal;
+
+					if (!isCustomWatcher) {
+						oldVal = arguments[1];
+
+						if (Object.fastCompare(val, oldVal) || Object.fastCompare(val, that.field.get(tiedPath))) {
 							return;
 						}
+					}
 
-						sync(val, oldVal);
-					}, p);
-
-				} else {
-					const
-						that = this;
-
-					// tslint:disable-next-line:only-arrow-functions
-					component.watch(field, function (val?: unknown): void {
-						const
-							oldVal = arguments[1];
-
-						if (Object.fastCompare(val, oldVal) || Object.fastCompare(val, that.field.get(path))) {
-							return;
-						}
-
-						sync(val, oldVal);
-					}, p);
-				}
+					sync(val, oldVal);
+				}, p);
 			}
 
 			// tslint:disable-next-line:prefer-object-spread
-			syncLinkCache[field] = Object.assign(syncLinkCache[field] || {}, {
-				[path]: {
-					path,
+			syncLinkCache[watchPath] = Object.assign(syncLinkCache[watchPath] || {}, {
+				[tiedPath]: {
+					path: tiedPath,
 					sync
 				}
 			});
@@ -640,40 +654,50 @@ export default class Sync<C extends iBlock = iBlock> extends Friend<C> {
 			if (Object.isArray(el)) {
 				let
 					wrapper,
-					field;
+					watchPath;
 
 				if (el.length === 3) {
-					field = el[1];
+					watchPath = el[1];
 					wrapper = el[2];
 
 				} else if (Object.isFunction(el[1])) {
-					field = el[0];
+					watchPath = el[0];
 					wrapper = el[1];
 
 				} else {
-					field = el[1];
+					watchPath = el[1];
 				}
 
 				const
-					l = [path, el[0]].join('.');
+					tiedPath = [path, el[0]].join('.');
 
-				if (!Object.get(linksCache, l)) {
+				if (!Object.get(linksCache, tiedPath)) {
 					const getVal = (val?, oldVal?) => {
-						val = val !== undefined ? val : this.field.get(field);
+						if (!customWatcherRgxp.test(watchPath)) {
+							val = val !== undefined ? val : this.field.get(watchPath);
+						}
+
 						return wrapper ? wrapper.call(this, val, oldVal) : val;
 					};
 
-					attachWatcher(field, l, getVal, wrapper && wrapper.length > 1);
+					attachWatcher(watchPath, tiedPath, getVal, wrapper && wrapper.length > 1);
 					cursor[el[0]] = getVal();
 				}
 
 			} else {
 				const
-					l = [path, el].join('.');
+					tiedPath = [path, el].join('.');
 
-				if (!Object.get(linksCache, l)) {
-					const getVal = (val?) => val !== undefined ? val : this.field.get(el);
-					attachWatcher(el, l, getVal);
+				if (!Object.get(linksCache, tiedPath)) {
+					const getVal = (val?) => {
+						if (customWatcherRgxp.test(el)) {
+							return val;
+						}
+
+						return val !== undefined ? val : this.field.get(el);
+					};
+
+					attachWatcher(el, tiedPath, getVal);
 					cursor[el] = getVal();
 				}
 			}

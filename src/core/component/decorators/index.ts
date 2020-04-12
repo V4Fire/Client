@@ -180,7 +180,7 @@ export const hook = paramsFactory<DecoratorHook>(null, (hook) => ({hook}));
  *   }
  *
  *   // Deep watch for changes of "foo"
- *   @watch({field: 'foo', deep: true}})
+ *   @watch({path: 'foo', deep: true}})
  *   watcher2() {
  *
  *   }

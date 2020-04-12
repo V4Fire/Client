@@ -85,10 +85,11 @@ export function paramsFactory<T = object>(
 								el = o[i];
 
 							if (Object.isPlainObject(el)) {
-								watchers[String(el.field)] = wrapOpts({...p.watchParams, ...el});
+								const path = String(el.path || el.field);
+								watchers[path] = wrapOpts({...p.watchParams, ...el, path});
 
 							} else {
-								watchers[el] = wrapOpts({field: el, ...p.watchParams});
+								watchers[el] = wrapOpts({...p.watchParams, field: el, path: el});
 							}
 						}
 					}

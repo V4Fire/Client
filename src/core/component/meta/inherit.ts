@@ -41,7 +41,8 @@ export function inherit(
 		...pParams,
 		...meta.params,
 		name: meta.params.name,
-		model: (meta.params.model || pParams.model) && {...pParams.model, ...meta.params.model}
+		model: (meta.params.model || pParams.model) && {...pParams.model, ...meta.params.model},
+		deprecatedProps: {...pParams.deprecatedProps, ...meta.params.deprecatedProps}
 	};
 
 	// Watcher dependencies

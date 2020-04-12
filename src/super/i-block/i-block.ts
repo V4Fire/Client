@@ -391,7 +391,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	 *
 	 *     // Additional form
 	 *     {
-	 *       field: 'document:scroll',
+	 *       path: 'document:scroll',
 	 *       provideArgs: false
 	 *     }
 	 *   ]

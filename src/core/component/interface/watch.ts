@@ -65,7 +65,12 @@ export interface MethodWatcher<
 	A = unknown,
 	B = A
 > extends WatchOptions {
+	/**
+	 * @deprecated
+	 * @see [[MethodWatcher.path]]
+	 */
 	field?: string;
+	path?: string;
 	group?: string;
 	single?: boolean;
 	functional?: boolean;
