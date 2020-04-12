@@ -138,6 +138,7 @@ function tagFilter({name, attrs = {}}) {
 
 			if (alternative) {
 				attrs[`:${dasherize(alternative)}`] = el;
+				delete attrs[key];
 			}
 		});
 
