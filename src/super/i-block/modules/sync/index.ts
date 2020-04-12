@@ -76,9 +76,10 @@ export default class Sync<C extends iBlock = iBlock> extends Friend<C> {
 	}
 
 	/**
-	 * Sets a link to a property that logically connected to the current.
-	 * The link is mean that every time the value by a link is changed
-	 * the value that refers to the link will be also changed.
+	 * Sets a link to a property that logically connected to the current property.
+	 *
+	 * The link is mean that every time a value by the link is changed or the linked event is fired
+	 * a value that refers to the link will be also changed.
 	 *
 	 * Logical connection is based on a name convention: properties that matches the pattern
 	 * "${property} -> ${property}Prop | ${property}Store -> ${property}Prop"
@@ -103,9 +104,10 @@ export default class Sync<C extends iBlock = iBlock> extends Friend<C> {
 	link<D = unknown, R = D>(optsOrWrapper?: AsyncWatchOptions | LinkWrapper<D, R>): CanUndef<R>;
 
 	/**
-	 * Sets a link to a property that logically connected to the current.
-	 * The link is mean that every time the value by a link is changed
-	 * the value that refers to the link will be also changed.
+	 * Sets a link to a property that logically connected to the current property.
+	 *
+	 * The link is mean that every time a value by the link is changed or the linked event is fired
+	 * a value that refers to the link will be also changed.
 	 *
 	 * Logical connection is based on a name convention:
 	 * properties that matches the pattern "${property} -> ${property}Prop" are connected with each other.
@@ -130,12 +132,16 @@ export default class Sync<C extends iBlock = iBlock> extends Friend<C> {
 	link<D = unknown, R = D>(opts: AsyncWatchOptions, wrapper?: LinkWrapper<D, R>): CanUndef<R>;
 
 	/**
-	 * Sets a link to a property by the specified path.
-	 * The link is mean that every time the value by a link is changed
-	 * the value that refers to the link will be also changed.
+	 * Sets a link to a property/event by the specified path.
 	 *
-	 * @param path - path to property that we are referring or
-	 *   [path to property that contains a link, path to property that we are referring]
+	 * The link is mean that every time a value by the link is changed or the linked event is fired
+	 * a value that refers to the link will be also changed.
+	 *
+	 * To listen an event you need to use the special delimiter ":" within a path.
+	 * Also, you can specify an event emitter to listen by writing a link before ":".
+	 *
+	 * @param path - path to a property/event that we are referring or
+	 *   [path to a property that contains a link, path to a property/event that we are referring]
 	 *
 	 * @param [optsOrWrapper] - additional options or a wrapper
 	 *
@@ -169,12 +175,16 @@ export default class Sync<C extends iBlock = iBlock> extends Friend<C> {
 	link<D = unknown, R = D>(path: LinkDecl, optsOrWrapper?: AsyncWatchOptions | LinkWrapper<D, R>): CanUndef<R>;
 
 	/**
-	 * Sets a link to a property by the specified path.
-	 * The link is mean that every time the value by a link is changed
-	 * the value that refers to the link will be also changed.
+	 * Sets a link to a property/event by the specified path.
 	 *
-	 * @param path - path to property that we are referring or
-	 *   [path to property that contains a link, path to property that we are referring]
+	 * The link is mean that every time a value by the link is changed or the linked event is fired
+	 * a value that refers to the link will be also changed.
+	 *
+	 * To listen an event you need to use the special delimiter ":" within a path.
+	 * Also, you can specify an event emitter to listen by writing a link before ":".
+	 *
+	 * @param path - path to a property/event that we are referring or
+	 *   [path to a property that contains a link, path to a property/event that we are referring]
 	 *
 	 * @param opts - additional options
 	 * @param [wrapper]
@@ -348,10 +358,13 @@ export default class Sync<C extends iBlock = iBlock> extends Friend<C> {
 	}
 
 	/**
-	 * Creates an object where all keys are referring to another properties as links.
+	 * Creates an object where all keys are referring to another properties/events as links.
 	 *
-	 * The link is mean that every time the value by a link is changed
-	 * the value that refers to the link will be also changed.
+	 * The link is mean that every time a value by the link is changed or the linked event is fired
+	 * a value that refers to the link will be also changed.
+	 *
+	 * To listen an event you need to use the special delimiter ":" within a path.
+	 * Also, you can specify an event emitter to listen by writing a link before ":".
 	 *
 	 * Mind, this method can be used only within a property decorator.
 	 *
@@ -383,10 +396,13 @@ export default class Sync<C extends iBlock = iBlock> extends Friend<C> {
 	object(decl: ObjectLinksDecl): Dictionary;
 
 	/**
-	 * Creates an object where all keys refer to another properties as links.
+	 * Creates an object where all keys refer to another properties/events as links.
 	 *
-	 * The link is mean that every time the value by a link is changed
-	 * the value that refers to the link will be also changed.
+	 * The link is mean that every time a value by the link is changed or the linked event is fired
+	 * a value that refers to the link will be also changed.
+	 *
+	 * To listen an event you need to use the special delimiter ":" within a path.
+	 * Also, you can specify an event emitter to listen by writing a link before ":".
 	 *
 	 * Mind, this method can be used only within a property decorator.
 	 *
@@ -419,12 +435,15 @@ export default class Sync<C extends iBlock = iBlock> extends Friend<C> {
 	object(opts: AsyncWatchOptions, fields: ObjectLinksDecl): Dictionary;
 
 	/**
-	 * Creates an object where all keys refer to another properties as links.
+	 * Creates an object where all keys refer to another properties/events as links.
 	 *
-	 * The link is mean that every time the value by a link is changed
-	 * the value that refers to the link will be also changed.
+	 * The link is mean that every time a value by the link is changed or the linked event is fired
+	 * a value that refers to the link will be also changed.
 	 *
-	 * @param path - path to property that contains the result object
+	 * To listen an event you need to use the special delimiter ":" within a path.
+	 * Also, you can specify an event emitter to listen by writing a link before ":".
+	 *
+	 * @param path - path to a property that contains the result object
 	 *   (if the method is used within a property decorator, this value will be concatenated to an active field name)
 	 *
 	 * @param fields - declaration of object properties
@@ -456,12 +475,15 @@ export default class Sync<C extends iBlock = iBlock> extends Friend<C> {
 	object(path: LinkDecl, fields: ObjectLinksDecl): Dictionary;
 
 	/**
-	 * Creates an object where all keys refer to another properties as links.
+	 * Creates an object where all keys refer to another properties/events as links.
 	 *
-	 * The link is mean that every time the value by a link is changed
-	 * the value that refers to the link will be also changed.
+	 * The link is mean that every time a value by the link is changed or the linked event is fired
+	 * a value that refers to the link will be also changed.
 	 *
-	 * @param path - path to property that contains the result object
+	 * To listen an event you need to use the special delimiter ":" within a path.
+	 * Also, you can specify an event emitter to listen by writing a link before ":".
+	 *
+	 * @param path - path to a property that contains the result object
 	 *   (if the method is used within a property decorator, this value will be concatenated to an active field name)
 	 *
 	 * @param opts - additional options
@@ -709,8 +731,8 @@ export default class Sync<C extends iBlock = iBlock> extends Friend<C> {
 	/**
 	 * Synchronizes component link values with values they are linked
 	 *
-	 * @param path - path to property that we are referring or
-	 *   [path to property that contains a link, path to property that we are referring]
+	 * @param path - path to a property/event that we are referring or
+	 *   [path to a property that contains a link, path to a property/event that we are referring]
 	 *
 	 * @param [value] - additional value for sync
 	 */
