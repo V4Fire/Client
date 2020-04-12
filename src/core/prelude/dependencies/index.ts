@@ -188,7 +188,7 @@ export default globalThis[MODULE_DEPENDENCIES] = Object.assign(globalThis[MODULE
 			url = `${module}.dependencies`;
 
 		if (!PATH[url]) {
-			throw new ReferenceError(`Dependencies "${url}" is not defined`);
+			throw new ReferenceError(`Dependencies for "${url}" are not defined`);
 		}
 
 		script.src = <string>PATH[`${module}.dependencies`];
