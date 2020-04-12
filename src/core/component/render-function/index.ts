@@ -130,7 +130,7 @@ export function wrapRender(meta: ComponentMeta): RenderFunction {
 								ctx = vnode.context;
 
 							if (!isTemplateParent) {
-								vnode.fakeContext = ctx;
+								vnode.fakeInstance = ctx;
 							}
 
 							// Function that render a chunk of VNodes

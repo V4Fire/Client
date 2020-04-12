@@ -25,7 +25,7 @@ import { ComponentInterface } from 'core/component/interface';
  */
 export function initComponentVNode(vnode: VNode, ctx: ComponentInterface, renderCtx: RenderContext): FlyweightVNode {
 	const flyweightVNode = <FlyweightVNode>vnode;
-	flyweightVNode.fakeContext = ctx;
+	flyweightVNode.fakeInstance = ctx;
 
 	const {data} = renderCtx;
 	patchVNode(flyweightVNode, ctx, renderCtx);

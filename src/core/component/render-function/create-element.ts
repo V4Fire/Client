@@ -170,14 +170,14 @@ export function wrapCreateElement(
 						return l;
 					}
 
-					return vnode && (vnode.fakeContext || vnode.elm);
+					return vnode && (vnode.fakeInstance || vnode.elm);
 				}
 			});
 		}
 
 		// Add $el link if it doesn't exist
-		if (needEl && vnode.fakeContext) {
-			Object.defineProperty(vnode.fakeContext, '$el', {
+		if (needEl && vnode.fakeInstance) {
+			Object.defineProperty(vnode.fakeInstance, '$el', {
 				enumerable: true,
 				configurable: true,
 

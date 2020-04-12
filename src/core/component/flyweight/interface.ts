@@ -10,5 +10,5 @@ import { VNode } from 'core/component/engines';
 import { ComponentInterface } from 'core/component/interface';
 
 export interface FlyweightVNode extends VNode {
-	fakeContext: ComponentInterface;
+	fakeInstance: ComponentInterface;
 }

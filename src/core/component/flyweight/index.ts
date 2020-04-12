@@ -180,7 +180,7 @@ export function parseVNode(
 	fakeCtx.hook = 'created';
 
 	const newVNode = <FlyweightVNode>execRenderObject(componentTpl.index(), fakeCtx);
-	newVNode.fakeContext = fakeCtx;
+	newVNode.fakeInstance = fakeCtx;
 
 	const
 		newVData = newVNode.data = newVNode.data || {};
