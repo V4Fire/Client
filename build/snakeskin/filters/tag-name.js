@@ -9,6 +9,13 @@
  */
 
 const
+	Snakeskin = require('snakeskin'),
+	escaper = require('escaper');
+
+const
+	{validators} = require('@pzlr/build-core');
+
+const
 	isVoidLink = /^a:void$/,
 	isButtonLink = /^button:a$/;
 
@@ -45,3 +52,28 @@ module.exports = [
 		return tag;
 	}
 ];
+
+const
+	tagRgxp = /<[^>]+>/,
+	elRgxp = new RegExp(`\\b${validators.baseBlockName}__[a-z0-9][a-z0-9-_]*\\b`);
+
+Snakeskin.importFilters({
+	/**
+	 * Returns a first element name
+	 *
+	 * @param {string} decl
+	 * @returns {?string}
+	 */
+	getFirstTagElementName(decl) {
+		const
+			escapedStr = escaper.replace(decl),
+			tagMatch = tagRgxp.exec(escapedStr);
+
+		if (!tagMatch) {
+			return null;
+		}
+
+		const search = elRgxp.exec(escaper.paste(tagMatch[0]));
+		return search ? search[0] : null;
+	}
+});

@@ -10,14 +10,14 @@
 
 const
 	$C = require('collection.js'),
-	{wrapAttrArray} = include('build/filters/helpers');
+	{wrapAttrArray} = include('build/snakeskin/filters/helpers');
 
 const
 	elSeparatorRgxp = /^_+/;
 
 module.exports = [
 	/**
-	 * Converts bem classes to a component
+	 * Converts BEM classes to a component
 	 *
 	 * @param {string} block
 	 * @param {!Object} attrs
