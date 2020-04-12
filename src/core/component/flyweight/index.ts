@@ -83,13 +83,6 @@ export function parseVNode(
 	implementEventAPI(fakeCtx);
 	attachAccessorsFromMeta(fakeCtx, true);
 
-	Object.defineProperty(fakeCtx, 'componentStatusStore', {
-		configurable: true,
-		enumerable: true,
-		writable: true,
-		value: 'unloaded'
-	});
-
 	Object.defineProperty(fakeCtx, '$refs', {
 		configurable: true,
 		enumerable: true,
@@ -183,8 +176,8 @@ export function parseVNode(
 	initFields(fields, fakeCtx, fakeCtx);
 
 	fakeCtx.$fields = fakeCtx;
+	fakeCtx.$systemFields = fakeCtx;
 	fakeCtx.hook = 'created';
-	fakeCtx.componentStatus = 'ready';
 
 	const newVNode = <FlyweightVNode>execRenderObject(componentTpl.index(), fakeCtx);
 	newVNode.fakeContext = fakeCtx;

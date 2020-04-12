@@ -508,6 +508,10 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	 */
 	@computed({replace: false})
 	get componentStatus(): ComponentStatus {
+		if (this.isFlyweight) {
+			return 'ready';
+		}
+
 		return this.shadowComponentStatusStore || this.field.get<ComponentStatus>('componentStatusStore')!;
 	}
 
