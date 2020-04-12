@@ -239,6 +239,8 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	 * Also, by default, clears all async listeners from the group of `stage.${oldGroup}`.
 	 *
 	 * @see [[iBlock.stageProp]]
+	 *
+	 * @emits `stage:${value}(value: CanUndef<Stage>, oldValue: CanUndef<Stage>)`
 	 * @emits `stageChange(value: CanUndef<Stage>, oldValue: CanUndef<Stage>)`
 	 */
 	set stage(value: CanUndef<Stage>) {
@@ -251,6 +253,11 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 
 		this.async.clearAll({group: this.stageGroup});
 		this.field.set('stageStore', value);
+
+		if (value != null) {
+			this.emit(`stage:${value}`, value, oldValue);
+		}
+
 		this.emit('stageChange', value, oldValue);
 	}
 
@@ -520,20 +527,21 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	 * Notice, not all statuses emit re-render of the component: unloaded, inactive, destroyed will emit only an event.
 	 *
 	 * @param value
-	 * @emits `componentStatus:{$value}(value: Statuses)`
+	 * @emits `componentStatus:{$value}(value: Statuses, oldValue: Statuses)`
+	 * @emits `componentStatusChange(value: Statuses, oldValue: Statuses)`
 	 */
 	set componentStatus(value: ComponentStatus) {
 		const
-			old = this.componentStatus;
+			oldValue = this.componentStatus;
 
-		if (old === value && value !== 'beforeReady') {
+		if (oldValue === value && value !== 'beforeReady') {
 			return;
 		}
 
 		const
 			isShadowStatus = (<typeof iBlock>this.instance.constructor).shadowComponentStatuses[value];
 
-		if (isShadowStatus || value === 'ready' && old === 'beforeReady') {
+		if (isShadowStatus || value === 'ready' && oldValue === 'beforeReady') {
 			this.shadowComponentStatusStore = value;
 
 		} else {
@@ -546,7 +554,8 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 
 			// @deprecated
 			this.emit(`status-${value}`, value);
-			this.emit(`componentStatus:${value}`, value);
+			this.emit(`componentStatus:${value}`, value, oldValue);
+			this.emit('componentStatusChange', value, oldValue);
 		}
 	}
 
@@ -962,12 +971,16 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	 */
 	@field({
 		replace: false,
-		init: (o) => o.sync.link((val, old) => {
-			if (val === old) {
+		init: (o) => o.sync.link((val, oldVal) => {
+			if (val === oldVal) {
 				return;
 			}
 
-			o.emit('stageChange', val, old);
+			if (val != null) {
+				o.emit(`stage:${val}`, val, oldVal);
+			}
+
+			o.emit('stageChange', val, oldVal);
 			return val;
 		})
 	})
