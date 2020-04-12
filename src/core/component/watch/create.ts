@@ -129,6 +129,7 @@ export function createWatchFn(
 					mute(proxy);
 					proxy[info.name] = info.ctx[info.name];
 					unmute(proxy);
+
 					Object.defineProperty(info.ctx, info.name, {
 						enumerable: true,
 						configurable: true,
