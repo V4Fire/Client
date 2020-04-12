@@ -239,7 +239,6 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	 * Also, by default, clears all async listeners from the group of `stage.${oldGroup}`.
 	 *
 	 * @see [[iBlock.stageProp]]
-	 *
 	 * @emits `stage:${value}(value: CanUndef<Stage>, oldValue: CanUndef<Stage>)`
 	 * @emits `stageChange(value: CanUndef<Stage>, oldValue: CanUndef<Stage>)`
 	 */
@@ -1721,9 +1720,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	 *
 	 * @param [data] - data object (for events)
 	 * @param [opts] - additional options
-	 *
-	 * @emits `initLoad(data: CanUndef<unknown>, params: CanUndef<InitLoadParams>)`
-	 * @emits `dbReady(data: CanUndef<unknown>, params: CanUndef<InitLoadParams>)`
+	 * @emits `initLoad(data: CanUndef<unknown>, params: CanUndef<InitLoadOptions>)`
 	 */
 	@hook('beforeDataCreate')
 	initLoad(data?: unknown | InitLoadCb, opts: InitLoadOptions = {}): CanPromise<void> {
@@ -1765,10 +1762,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 		}
 
 		const done = () => {
-			const
-				get = () => Object.isFunction(data) ? data.call(this) : data;
-
-			this.lfc.execCbAtTheRightTime(() => this.emit('dbReady', get(), opts));
+			const get = () => Object.isFunction(data) ? data.call(this) : data;
 			this.componentStatus = 'beforeReady';
 
 			this.lfc.execCbAfterBlockReady(() => {
