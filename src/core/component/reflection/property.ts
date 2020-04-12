@@ -83,7 +83,23 @@ export function getPropertyInfo(path: string, component: ComponentInterface): Pr
 
 	const
 		// @ts-ignore (access)
-		{props, fields, systemFields, computedFields, accessors} = component.meta;
+		{props, fields, systemFields, computedFields, accessors, params: {deprecatedProps}} = component.meta;
+
+	const
+		alternative = deprecatedProps?.[name];
+
+	if (alternative) {
+		name = alternative;
+
+		if (chunks) {
+			chunks[rootI] = name;
+			path = chunks.slice(chunks).join('.');
+			fullPath = chunks.join('.');
+
+		} else {
+			path = fullPath = name;
+		}
+	}
 
 	if (propRgxp.test(name)) {
 		return {
