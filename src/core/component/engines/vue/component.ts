@@ -30,8 +30,6 @@ export function getComponent(meta: ComponentMeta): ComponentOptions<ComponentDri
 
 	return {
 		...<ComponentOptions<ComponentDriver>>Any(component),
-
-		parent: p.parent,
 		inheritAttrs: p.inheritAttrs,
 
 		model: m && {
