@@ -6,6 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import { deprecate } from 'core/functools/deprecation';
 import { cacheStatus, ComponentInterface } from 'core/component';
 
 /**
@@ -105,8 +106,15 @@ export function attachAccessorsFromMeta(component: ComponentInterface, safe?: bo
 			Object.defineProperty(component, key, {
 				configurable: true,
 				enumerable: true,
-				get: () => component[alternative],
-				set: (v) => component[alternative] = v
+				get: () => {
+					deprecate({type: 'property', name: key, renamedTo: alternative});
+					return component[alternative];
+				},
+
+				set: (val) => {
+					deprecate({type: 'property', name: key, renamedTo: alternative});
+					component[alternative] = val;
+				}
 			});
 		}
 	}

@@ -6,6 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import { deprecate } from 'core/functools/deprecation';
 import { ComponentInterface } from 'core/component/interface';
 import { PropertyInfo } from 'core/component/reflection/interface';
 
@@ -89,6 +90,7 @@ export function getPropertyInfo(path: string, component: ComponentInterface): Pr
 		alternative = deprecatedProps?.[name];
 
 	if (alternative) {
+		deprecate({type: 'property', name, renamedTo: alternative});
 		name = alternative;
 
 		if (chunks) {
