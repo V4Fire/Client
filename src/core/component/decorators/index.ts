@@ -28,8 +28,24 @@ export * from 'core/component/decorators/base';
 export * from 'core/component/decorators/interface';
 
 /**
- * Marks a class property as a component initial property
+ * Marks a class property as a component prop
+ *
  * @decorator
+ *
+ * @example
+ * ```typescript
+ * @component()
+ * class bExample extends iBlock {
+ *   @prop(Number)
+ *   bla: number = 0;
+ *
+ *   @prop({type: Number, required: false})
+ *   baz?: number;
+ *
+ *   @prop({type: Number, default: () => Math.random()})
+ *   bar!: number;
+ * }
+ * ```
  */
 export const prop = paramsFactory<
 	CanArray<Function> |
@@ -44,8 +60,22 @@ export const prop = paramsFactory<
 });
 
 /**
- * Marks a class property as a component data property
+ * Marks a class property as a component field.
+ * In a regular component mutations of field properties force component re-rendering.
+ *
  * @decorator
+ *
+ * @example
+ * ```typescript
+ * @component()
+ * class bExample extends iBlock {
+ *   @field()
+ *   bla: number = 0;
+ *
+ *   @field(() => Math.random())
+ *   baz?: number;
+ * }
+ * ```
  */
 export const field = paramsFactory<InitFieldFn | DecoratorField>('fields', (p) => {
 	if (Object.isFunction(p)) {
@@ -56,8 +86,22 @@ export const field = paramsFactory<InitFieldFn | DecoratorField>('fields', (p) =
 });
 
 /**
- * Marks a class property as a system property
+ * Marks a class property as a system field.
+ * Mutations of system properties never force component re-rendering.
+ *
  * @decorator
+ *
+ * @example
+ * ```typescript
+ * @component()
+ * class bExample extends iBlock {
+ *   @field()
+ *   bla: number = 0;
+ *
+ *   @field(() => Math.random())
+ *   baz?: number;
+ * }
+ * ```
  */
 export const system = paramsFactory<InitFieldFn | DecoratorSystem>('systemFields', (p) => {
 	if (Object.isFunction(p)) {
@@ -68,14 +112,38 @@ export const system = paramsFactory<InitFieldFn | DecoratorSystem>('systemFields
 });
 
 /**
- * Attaches meta information to a computed field
+ * Attaches extra meta information to a component computed field or accessor
+ *
  * @decorator
+ *
+ * @example
+ * ```typescript
+ * @component()
+ * class bExample extends iBlock {
+ *   @computed({cache: true})
+ *   get foo() {
+ *     return 42;
+ *   }
+ * }
+ * ```
  */
 export const computed = paramsFactory<DecoratorComponentAccessor>(null);
 
 /**
- * Universal decorator of component properties
+ * Universal decorator for a component property/accessor/method
+ *
  * @decorator
+ *
+ * @example
+ * ```typescript
+ * @component()
+ * class bExample extends iBlock {
+ *   @p({cache: true})
+ *   get foo() {
+ *     return 42;
+ *   }
+ * }
+ * ```
  */
 export const p = paramsFactory<
 	DecoratorProp |
@@ -85,14 +153,57 @@ export const p = paramsFactory<
 >(null);
 
 /**
- * Attaches a hook listener to a method
+ * Attaches a hook listener to a component method
  * @decorator
  */
 export const hook = paramsFactory<DecoratorHook>(null, (hook) => ({hook}));
 
 /**
- * Attaches a watch listener to a method or a field
+ * Attaches a watcher to a component property/event to a component method or property.
+ *
+ * To listen an event you need to use the special delimiter ":" within a path.
+ * Also, you can specify an event emitter to listen by writing a link before ":".
+ *
  * @decorator
+ *
+ * @example
+ * ```typescript
+ * @component()
+ * class bExample extends iBlock {
+ *   @field()
+ *   foo: Dictionary = {bla: 0};
+ *
+ *   // Watch for changes of "foo"
+ *   @watch('foo')
+ *   watcher1() {
+ *
+ *   }
+ *
+ *   // Deep watch for changes of "foo"
+ *   @watch({field: 'foo', deep: true}})
+ *   watcher2() {
+ *
+ *   }
+ *
+ *   // Watch for changes of "foo.bla"
+ *   @watch('foo.bla')
+ *   watcher3() {
+ *
+ *   }
+ *
+ *   // Listen "onChange" event of a component
+ *   @watch(':onChange')
+ *   watcher3() {
+ *
+ *   }
+ *
+ *   // Listen "onChange" event of a component parentEmitter
+ *   @watch('parentEmitter:onChange')
+ *   watcher4() {
+ *
+ *   }
+ * }
+ * ```
  */
 export const watch = paramsFactory<
 	DecoratorFieldWatcher |

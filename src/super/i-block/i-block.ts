@@ -47,6 +47,9 @@ import {
 	hook,
 	computed,
 
+	customWatcherRgxp,
+	bindRemoteWatchers,
+
 	WatchPath,
 	RawWatchHandler,
 	ComponentInterface,
@@ -1271,11 +1274,42 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	protected readonly global!: Window;
 
 	/**
-	 * Sets a watcher to a component property by the specified path
+	 * Sets a watcher to a component property/event by the specified path.
 	 *
-	 * @param path
+	 * To listen an event you need to use the special delimiter ":" within a path.
+	 * Also, you can specify an event emitter to listen by writing a link before ":".
+	 *
+	 * @param path - path to a component property to watch or an event to listen
 	 * @param opts - additional options
 	 * @param handler
+	 *
+	 * @example
+	 * ```js
+	 * // Watch for changes of "foo"
+	 * this.watch('foo', (val, oldVal) => {
+	 *   console.log(val, oldVal);
+	 * });
+	 *
+	 * // Deep watch for changes of "foo"
+	 * this.watch('foo', {deep: true}, (val, oldVal) => {
+	 *   console.log(val, oldVal);
+	 * });
+	 *
+	 * // Watch for changes of "foo.bla"
+	 * this.watch('foo.bla', (val, oldVal) => {
+	 *   console.log(val, oldVal);
+	 * });
+	 *
+	 * // Listen "onChange" event of a component
+	 * this.watch(':onChange', (val, oldVal) => {
+	 *   console.log(val, oldVal);
+	 * });
+	 *
+	 * // Listen "onChange" event of a component parentEmitter
+	 * this.watch('parentEmitter:onChange', (val, oldVal) => {
+	 *   console.log(val, oldVal);
+	 * });
+	 * ```
 	 */
 	watch<T = unknown>(
 		path: WatchPath,
@@ -1284,11 +1318,42 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	): void;
 
 	/**
-	 * Sets a watcher to a component property by the specified path
+	 * Sets a watcher to a component property/event by the specified path.
 	 *
-	 * @param path
+	 * To listen an event you need to use the special delimiter ":" within a path.
+	 * Also, you can specify an event emitter to listen by writing a link before ":".
+	 *
+	 * @param path - path to a component property to watch or an event to listen
 	 * @param handler
 	 * @param opts - additional options
+	 *
+	 * @example
+	 * ```js
+	 * // Watch for changes of "foo"
+	 * this.watch('foo', (val, oldVal) => {
+	 *   console.log(val, oldVal);
+	 * });
+	 *
+	 * // Deep watch for changes of "foo"
+	 * this.watch('foo', {deep: true}, (val, oldVal) => {
+	 *   console.log(val, oldVal);
+	 * });
+	 *
+	 * // Watch for changes of "foo.bla"
+	 * this.watch('foo.bla', (val, oldVal) => {
+	 *   console.log(val, oldVal);
+	 * });
+	 *
+	 * // Listen "onChange" event of a component
+	 * this.watch(':onChange', (val, oldVal) => {
+	 *   console.log(val, oldVal);
+	 * });
+	 *
+	 * // Listen "onChange" event of a component parentEmitter
+	 * this.watch('parentEmitter:onChange', (val, oldVal) => {
+	 *   console.log(val, oldVal);
+	 * });
+	 * ```
 	 */
 	watch<T = unknown>(
 		path: WatchPath,
@@ -1317,6 +1382,20 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 		} else {
 			handler = handlerOrOpts;
 			opts = optsOrHandler || {};
+		}
+
+		if (Object.isString(path) && customWatcherRgxp.test(path)) {
+			bindRemoteWatchers(this, {
+				async: <Async<any>>this.async,
+				watchers: {
+					[path]: [{
+						handler: (ctx, ...args: unknown[]) => handler.call(this, ...args),
+						...opts
+					}]
+				}
+			});
+
+			return;
 		}
 
 		this.lfc.execCbAfterComponentCreated(() => {
