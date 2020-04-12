@@ -37,8 +37,8 @@ export function mergeMods<T extends iBlock>(
 	}
 
 	const
-		c = component.unsafe,
-		cache = c.$syncLinkCache[link];
+		ctx = component.unsafe,
+		cache = ctx.$syncLinkCache[link];
 
 	if (!cache) {
 		return;
@@ -74,14 +74,14 @@ export function mergeMods<T extends iBlock>(
 	};
 
 	const
-		modsProp = getFullModsProp(c),
+		modsProp = getFullModsProp(ctx),
 		mods = {...oldComponent.mods};
 
 	for (let keys = Object.keys(mods), i = 0; i < keys.length; i++) {
 		const
 			key = keys[i];
 
-		if (c.sync.syncModCache[key]) {
+		if (ctx.sync.syncModCache[key]) {
 			delete mods[key];
 		}
 	}
@@ -101,21 +101,21 @@ export function mergeMods<T extends iBlock>(
  */
 export function initMods(component: iBlock): ModsNTable {
 	const
-		c = component.unsafe,
-		declMods = c.meta.component.mods;
+		ctx = component.unsafe,
+		declMods = ctx.meta.component.mods;
 
 	const
 		attrMods = <string[][]>[],
 		modVal = (val) => val != null ? String(val) : undefined;
 
-	for (let attrs = c.$attrs, keys = Object.keys(attrs), i = 0; i < keys.length; i++) {
+	for (let attrs = ctx.$attrs, keys = Object.keys(attrs), i = 0; i < keys.length; i++) {
 		const
 			key = keys[i],
 			modKey = key.camelize(false);
 
 		if (modKey in declMods) {
 			const attrVal = attrs[key];
-			c.watch(`$attrs.${key}`, (val: Dictionary = {}) => c.setMod(modKey, modVal(val[key])));
+			ctx.watch(`$attrs.${key}`, (val: Dictionary = {}) => ctx.setMod(modKey, modVal(val[key])));
 
 			if (attrVal == null) {
 				continue;
@@ -128,7 +128,7 @@ export function initMods(component: iBlock): ModsNTable {
 	function link(propMods: ModsTable): ModsNTable {
 		const
 			// tslint:disable-next-line:prefer-object-spread
-			mods = c.mods || {...declMods};
+			mods = ctx.mods || {...declMods};
 
 		if (propMods) {
 			for (let keys = Object.keys(propMods), i = 0; i < keys.length; i++) {
@@ -148,7 +148,7 @@ export function initMods(component: iBlock): ModsNTable {
 		}
 
 		const
-			{experiments} = c.r.remoteState;
+			{experiments} = ctx.r.remoteState;
 
 		if (Object.isArray(experiments)) {
 			for (let i = 0; i < experiments.length; i++) {
@@ -176,13 +176,13 @@ export function initMods(component: iBlock): ModsNTable {
 				val = modVal(mods[key]);
 
 			mods[key] = val;
-			c.hook !== 'beforeDataCreate' && c.setMod(key, val);
+			ctx.hook !== 'beforeDataCreate' && ctx.setMod(key, val);
 		}
 
 		return mods;
 	}
 
-	return c.sync.link<any>(link);
+	return ctx.sync.link<any>(link);
 }
 
 /**
@@ -191,27 +191,27 @@ export function initMods(component: iBlock): ModsNTable {
  */
 export function getWatchableMods<T extends iBlock>(component: T): Readonly<ModsNTable> {
 	const
-		o = {},
-		w = Object.getPrototypeOf(component.field.get<ModsNTable>('watchModsStore')!),
-		m = component.mods;
+		res = {},
+		watchers = Object.getPrototypeOf(component.field.get<ModsNTable>('watchModsStore')!),
+		systemMods = component.mods;
 
-	for (let keys = Object.keys(m), i = 0; i < keys.length; i++) {
+	for (let keys = Object.keys(systemMods), i = 0; i < keys.length; i++) {
 		const
 			key = keys[i];
 
-		if (key in w) {
-			o[key] = m[key];
+		if (key in watchers) {
+			res[key] = systemMods[key];
 
 		} else {
-			Object.defineProperty(o, key, {
+			Object.defineProperty(res, key, {
 				configurable: true,
 				enumerable: true,
 				get: () => {
 					const
-						val = m[key];
+						val = systemMods[key];
 
-					if (!(key in w)) {
-						w[key] = val;
+					if (!(key in watchers)) {
+						watchers[key] = val;
 					}
 
 					return val;
@@ -220,5 +220,5 @@ export function getWatchableMods<T extends iBlock>(component: T): Readonly<ModsN
 		}
 	}
 
-	return Object.freeze(o);
+	return Object.freeze(res);
 }
