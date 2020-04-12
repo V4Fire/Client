@@ -275,7 +275,10 @@ export default class Block<C extends iBlock = iBlock> extends Friend<C> {
 			}
 
 			this.localEmitter.emit(`block.mod.set.${name}.${normalizedVal}`, event);
+
+			// @deprecated
 			component.emit(`mod-set-${name}-${normalizedVal}`, event);
+			component.emit(`mod:set:${name}:${normalizedVal}`, event);
 
 		} else {
 			this.localEmitter.emit(`block.mod.set.${name}.${normalizedVal}`, event);
@@ -331,7 +334,10 @@ export default class Block<C extends iBlock = iBlock> extends Friend<C> {
 			}
 
 			this.localEmitter.emit(`block.mod.remove.${name}.${current}`, event);
+
+			// @deprecated
 			component.emit(`mod-remove-${name}-${current}`, event);
+			component.emit(`mod:remove:${name}:${current}`, event);
 
 		} else {
 			this.localEmitter.emit(`block.mod.remove.${name}.${current}`, event);

@@ -520,7 +520,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	 * Notice, not all statuses emit re-render of the component: unloaded, inactive, destroyed will emit only an event.
 	 *
 	 * @param value
-	 * @emits `status${$value}(value: Statuses)`
+	 * @emits `componentStatus:{$value}(value: Statuses)`
 	 */
 	set componentStatus(value: ComponentStatus) {
 		const
@@ -543,7 +543,10 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 
 		if (!this.isFlyweight) {
 			this.setMod('status', value);
+
+			// @deprecated
 			this.emit(`status-${value}`, value);
+			this.emit(`componentStatus:${value}`, value);
 		}
 	}
 
