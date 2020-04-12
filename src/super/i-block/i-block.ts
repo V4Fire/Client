@@ -971,16 +971,8 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	 */
 	@field({
 		replace: false,
-		init: (o) => o.sync.link((val, oldVal) => {
-			if (val === oldVal) {
-				return;
-			}
-
-			if (val != null) {
-				o.emit(`stage:${val}`, val, oldVal);
-			}
-
-			o.emit('stageChange', val, oldVal);
+		init: (o) => o.sync.link<Stage>((val) => {
+			o.stage = val;
 			return val;
 		})
 	})
