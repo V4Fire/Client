@@ -89,7 +89,9 @@ export function createWatchFn(
 			handler[cacheStatus] = originalHandler[cacheStatus];
 
 			if (opts?.immediate) {
-				handler.call(component, oldVal);
+				const val = oldVal;
+				oldVal = undefined;
+				handler.call(component, val);
 			}
 
 		} else {
