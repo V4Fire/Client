@@ -1137,7 +1137,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	}
 
 	/**
-	 * Global event emitter of the application.
+	 * Global event emitter of an application.
 	 * It can be used to provide external events to a component.
 	 */
 	@system({
@@ -1950,7 +1950,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	/**
 	 * Sets a modifier to the root element of an application.
 	 * This method is useful, when you need to attach a class that can affect for the whole application,
-	 * for instance, you want to lock page scroll, i.e. you need to add a class to a root HTML tag.
+	 * for instance, you want to lock page scrolling, i.e. you need to add a class to the root HTML tag.
 	 *
 	 * @param name
 	 * @param value
@@ -2228,7 +2228,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	}
 
 	/**
-	 * Initializes watchers from .watchProp
+	 * Initializes remote watchers from the prop
 	 */
 	@hook({beforeDataCreate: {functional: false}})
 	protected initRemoteWatchers(): void {
@@ -2236,7 +2236,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	}
 
 	/**
-	 * Initializes callChild event listener
+	 * Initializes "callChild" event listener
 	 */
 	@watch({field: 'proxyCall', immediate: true})
 	protected initCallChildListener(value: boolean): void {
@@ -2248,7 +2248,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	}
 
 	/**
-	 * Handler: parent call child event
+	 * Handler: "callChild" event
 	 * @param e
 	 */
 	protected onCallChild(e: ParentMessage): void {
@@ -2264,7 +2264,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	 * Component activated hook
 	 * (for keep-alive)
 	 *
-	 * @param [force]
+	 * @param [force] - if true, then the component will be activated forced, even if it's already activated
 	 */
 	protected activated(force?: boolean): void {
 		onActivated(this, force);
