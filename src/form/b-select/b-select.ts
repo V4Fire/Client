@@ -25,7 +25,7 @@ import bInput, {
 	ModEvent,
 	SetModEvent,
 	ModsDecl,
-	InitLoadParams
+	InitLoadOptions
 
 } from 'form/b-input/b-input';
 
@@ -153,7 +153,7 @@ export default class bSelect extends bInput implements iOpenToggle {
 	};
 
 	/** @override */
-	initLoad(data?: unknown, params?: InitLoadParams): CanPromise<void> {
+	initLoad(data?: unknown, params?: InitLoadOptions): CanPromise<void> {
 		/// FIXME
 		if (this.initAfterOpen && !this.browser.is.mobile) {
 			const

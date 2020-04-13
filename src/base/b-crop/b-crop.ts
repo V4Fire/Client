@@ -26,7 +26,7 @@ export default class bCrop extends iBlock implements iVisible {
 	@prop({
 		type: String,
 		watch: {
-			fn: 'initSelect',
+			handler: 'initSelect',
 			immediate: true
 		}
 	})

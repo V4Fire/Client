@@ -31,7 +31,7 @@ export default class bImage extends iBlock implements iProgress, iVisible {
 	 */
 	@prop({
 		type: String,
-		watch: {fn: 'init', immediate: true}
+		watch: {handler: 'init', immediate: true}
 	})
 
 	readonly src: string = '';

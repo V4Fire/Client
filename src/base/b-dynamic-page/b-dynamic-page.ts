@@ -16,8 +16,8 @@ import iDynamicPage, {
 	field,
 	watch,
 
-	Statuses,
-	InitLoadParams
+	ComponentStatus,
+	InitLoadOptions
 
 } from 'super/i-dynamic-page/i-dynamic-page';
 
@@ -103,18 +103,18 @@ export default class bDynamicPage extends iDynamicPage {
 	}
 
 	/** @override */
-	protected readonly componentStatusStore: Statuses = 'ready';
+	protected readonly componentStatusStore: ComponentStatus = 'ready';
 
 	/** @override */
 	protected readonly $refs!: {component?: iDynamicPage};
 
 	/** @override */
-	async initLoad(data?: unknown, params?: InitLoadParams): Promise<void> {
+	async initLoad(data?: unknown, params?: InitLoadOptions): Promise<void> {
 		return undefined;
 	}
 
 	/** @override */
-	async reload(params?: InitLoadParams): Promise<void> {
+	async reload(params?: InitLoadOptions): Promise<void> {
 		const {component} = this.$refs;
 		return component && component.reload(params);
 	}

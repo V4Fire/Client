@@ -29,7 +29,9 @@ export interface DecoratorFieldWatcherObject<
 	A = unknown,
 	B = A
 > extends WatchOptions {
-	fn: string | WatchHandler<CTX, A, B>;
+	handler: string | WatchHandler<CTX, A, B>;
+	/** @deprecated */
+	fn?: string | WatchHandler<CTX, A, B>;
 	provideArgs?: boolean;
 }
 

@@ -37,7 +37,7 @@ export interface FieldWatcher<
 	/**
 	 * Handler that is invoked on watcher events
 	 */
-	fn: WatchHandler<CTX, A, B>;
+	handler: WatchHandler<CTX, A, B>;
 
 	/**
 	 * If false, the watcher won't registered for functional/flyweight components

@@ -89,7 +89,7 @@ export function paramsFactory<T = object>(
 								watchers[path] = wrapOpts({...p.watchParams, ...el, path});
 
 							} else {
-								watchers[el] = wrapOpts({...p.watchParams, field: el, path: el});
+								watchers[el] = wrapOpts({...p.watchParams, path: el});
 							}
 						}
 					}
@@ -194,10 +194,10 @@ export function paramsFactory<T = object>(
 						val = o[i];
 
 					if (Object.isPlainObject(val)) {
-						watchers.set(val.fn, wrapOpts({...val}));
+						watchers.set(val.handler || val.fn, wrapOpts({...val, handler: val.handler}));
 
 					} else {
-						watchers.set(val, wrapOpts({fn: val}));
+						watchers.set(val, wrapOpts({handler: val}));
 					}
 				}
 			}

@@ -19,7 +19,7 @@ import iData, {
 	wait,
 
 	CheckDBEquality,
-	InitLoadParams,
+	InitLoadOptions,
 	RequestParams,
 	RequestError,
 	RetryRequestFn
@@ -187,7 +187,7 @@ export default class bVirtualScroll extends iData implements iItems {
 	};
 
 	/** @override */
-	initLoad(data?: unknown, params: InitLoadParams = {}): CanPromise<void> {
+	initLoad(data?: unknown, params: InitLoadOptions = {}): CanPromise<void> {
 		if (!this.lfc.isBeforeCreate()) {
 			this.reInit().catch(stderr);
 		}

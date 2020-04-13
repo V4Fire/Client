@@ -92,7 +92,7 @@ export function inherit(
 					for (let w = parent.watchers.values(), el = w.next(); !el.done; el = w.next()) {
 						const val = el.value;
 						watchers = watchers || new Map();
-						watchers.set(val.fn, {...el.value});
+						watchers.set(val.handler, {...el.value});
 					}
 				}
 

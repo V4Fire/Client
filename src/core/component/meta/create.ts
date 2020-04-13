@@ -232,7 +232,7 @@ export function fillMeta(
 					deep: watcher.deep,
 					immediate: watcher.immediate,
 					provideArgs: watcher.provideArgs,
-					handler: watcher.fn
+					handler: watcher.handler
 				});
 			}
 		}
@@ -259,7 +259,7 @@ export function fillMeta(
 					deep: watcher.deep,
 					immediate: watcher.immediate,
 					provideArgs: watcher.provideArgs,
-					handler: watcher.fn
+					handler: watcher.handler
 				});
 			}
 		}

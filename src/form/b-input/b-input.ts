@@ -177,7 +177,7 @@ export default class bInput extends iInput implements iWidth, iSize, iIcon {
 	/**
 	 * Mask placeholder
 	 */
-	@prop({type: String, watch: {fn: 'updateMask', immediate: true, provideArgs: false}})
+	@prop({type: String, watch: {handler: 'updateMask', immediate: true, provideArgs: false}})
 	readonly maskPlaceholder: string = '_';
 
 	/**
@@ -256,7 +256,7 @@ export default class bInput extends iInput implements iWidth, iSize, iIcon {
 	@field({
 		after: 'valueStore',
 		watch: {
-			fn: 'onValueBufferUpdate',
+			handler: 'onValueBufferUpdate',
 			immediate: true
 		},
 
