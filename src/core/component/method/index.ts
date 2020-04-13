@@ -48,7 +48,7 @@ export function attachMethodsFromMeta(component: ComponentInterface): void {
 	const
 		// @ts-ignore (access)
 		{meta, meta: {methods}} = component,
-		isFlyweight = component.$isFlyweight || meta.params.functional === true;
+		isFlyweight = component.isFlyweight || meta.params.functional === true;
 
 	for (let keys = Object.keys(methods), i = 0; i < keys.length; i++) {
 		const

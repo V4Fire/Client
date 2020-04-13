@@ -102,7 +102,7 @@ export abstract class ComponentInterface<
 
 	/**
 	 * Name of an active render group
-	 * (using with async rendering)
+	 * (it is used with async rendering)
 	 */
 	readonly renderGroup?: string;
 
@@ -142,14 +142,9 @@ export abstract class ComponentInterface<
 	readonly $root!: R;
 
 	/**
-	 * True if the component is rendered using SSR
-	 */
-	readonly $isServer!: boolean;
-
-	/**
 	 * True if the component can attach to a parent render function
 	 */
-	readonly $isFlyweight?: boolean;
+	readonly isFlyweight?: boolean;
 
 	/**
 	 * Link to the component meta object

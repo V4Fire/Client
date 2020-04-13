@@ -40,7 +40,7 @@ export function initFields(
 
 	const
 		// True if a component is functional or a flyweight
-		isFlyweight = component.$isFlyweight || params.functional === true;
+		isFlyweight = component.isFlyweight || params.functional === true;
 
 	const
 		// Map of fields that we should skip, i.e. not to initialize.

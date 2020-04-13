@@ -32,7 +32,7 @@ export function implementComponentWatchAPI(
 		{meta, meta: {watchDependencies, computedFields, accessors, params}} = component;
 
 	const
-		isFlyweight = component.$isFlyweight || meta.params.functional === true,
+		isFlyweight = component.isFlyweight || meta.params.functional === true,
 		dynamicHandlers = new WeakMap<ComponentInterface, Dictionary<Set<Function>>>(),
 		usedHandlers = new Set<Function>();
 

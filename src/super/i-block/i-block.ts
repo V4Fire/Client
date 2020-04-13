@@ -634,14 +634,6 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	}
 
 	/**
-	 * True if the current component is a flyweight
-	 */
-	@computed({replace: false})
-	get isFlyweight(): boolean {
-		return Boolean(this.$isFlyweight);
-	}
-
-	/**
 	 * Base component modifiers.
 	 * These modifiers are automatically provided to child components.
 	 * For example, you have a component that uses another component within,

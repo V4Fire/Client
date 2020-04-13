@@ -27,7 +27,7 @@ export function attachAccessorsFromMeta(component: ComponentInterface, safe?: bo
 		{meta, meta: {params: {deprecatedProps}}} = component;
 
 	const
-		isFlyweight = component.$isFlyweight || meta.params.functional === true;
+		isFlyweight = component.isFlyweight || meta.params.functional === true;
 
 	for (let o = meta.accessors, keys = Object.keys(o), i = 0; i < keys.length; i++) {
 		const

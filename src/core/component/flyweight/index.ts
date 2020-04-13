@@ -74,7 +74,7 @@ export function parseVNode(
 		hook: 'beforeDataCreate',
 		instance: meta.instance,
 		componentName: meta.componentName,
-		$isFlyweight: true
+		isFlyweight: true
 	});
 
 	fakeCtx.$createElement = createElement.bind(fakeCtx);
