@@ -1035,7 +1035,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 
 	/**
 	 * Render temporary cache.
-	 * It is used with "renderKey" directive.
+	 * It is used with the "renderKey" directive.
 	 */
 	@system({
 		merge: true,
@@ -1065,8 +1065,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	}
 
 	/**
-	 * Local event emitter:
-	 * all events that are fired from this emitter don't bubble
+	 * Local event emitter: all events that are fired from this emitter don't bubble
 	 */
 	@system({
 		atom: true,
@@ -1091,7 +1090,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	}
 
 	/**
-	 * Event emitter of a parent component
+	 * Event emitter of the parent component
 	 */
 	@system({
 		atom: true,
