@@ -6,6 +6,11 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+/**
+ * [[include:form/b-button/README.md]]
+ * @packageDocumentation
+ */
+
 //#if runtime has core/data
 import 'core/data';
 //#endif
@@ -35,16 +40,15 @@ import iData, {
 
 } from 'super/i-data/i-data';
 
+import { ButtonType } from 'form/b-button/interface';
+
 export * from 'super/i-data/i-data';
 export * from 'traits/i-open-toggle/i-open-toggle';
+export * from 'form/b-button/interface';
 
-export type ButtonType<T extends string = any> =
-	'submit' |
-	'button' |
-	'image' |
-	'link' |
-	T;
-
+/**
+ * Component to create a button
+ */
 @component({
 	flyweight: true,
 	functional: {
