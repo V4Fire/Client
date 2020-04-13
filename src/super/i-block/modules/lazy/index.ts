@@ -20,7 +20,7 @@ export * from 'super/i-block/modules/lazy/interface';
 /**
  * Class that provides some methods to organize lazy calculations
  */
-export default class Opt<C extends iBlock = iBlock> extends Friend<C> {
+export default class Lazy<C extends iBlock = iBlock> extends Friend<C> {
 	/**
 	 * Creates a new function from the specified function that executes deferredly.
 	 * The new function returns a promise with a result of the original function.

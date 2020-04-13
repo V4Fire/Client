@@ -56,8 +56,8 @@ export default class Opt<C extends iBlock = iBlock> extends Friend<C> {
 		}
 
 		if (value) {
-			// @ts-ignore
-			this.ifOnceStore[strLabel] = 1;
+			// @ts-ignore (access)
+			return this.ifOnceStore[strLabel] = 1;
 		}
 
 		return 0;
