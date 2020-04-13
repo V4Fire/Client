@@ -8,7 +8,14 @@
 
 import { ModVal, ModsDecl } from 'core/component';
 
+/**
+ * Raw modifiers
+ */
 export type ModsTable = Dictionary<ModVal>;
+
+/**
+ * Normalized modifiers
+ */
 export type ModsNTable = Dictionary<CanUndef<string>>;
 
 export { ModVal, ModsDecl };

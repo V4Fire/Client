@@ -275,7 +275,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	/**
 	 * Initial component modifiers.
 	 * Modifiers represent the special API to bind component state properties directly with CSS classes
-	 * without needless of component re-render.
+	 * without needless of component re-rendering.
 	 */
 	@prop({type: Object, required: false})
 	readonly modsProp?: ModsTable;
@@ -317,13 +317,13 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	 * If true, then the component will try to reload data on re-activation.
 	 * This parameter can be useful if you are using keep-alive directive within your template.
 	 * For example, you have a page within keep-alive, and after backing to this page the component will be forcely drawn
-	 * from a keep-alice cache, but after this page will try to update data in a silent mode.
+	 * from a keep-alive cache, but after this page will try to update data in a silent mode.
 	 */
 	@prop(Boolean)
 	readonly reloadOnActivation: boolean = false;
 
 	/**
-	 * If true, then the component is marked with a remote provider label.
+	 * If true, then the component is marked as a remote provider.
 	 * It means, that a parent component will wait the loading of the current component.
 	 */
 	@prop(Boolean)
