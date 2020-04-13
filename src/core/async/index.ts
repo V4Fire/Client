@@ -41,31 +41,31 @@ export default class Async<CTX extends object = Async<any>> extends Super<CTX> {
 	/**
 	 * Wrapper for requestAnimationFrame
 	 *
-	 * @param fn - callback function
+	 * @param cb - callback function
 	 * @param [element] - link for the element
 	 */
-	requestAnimationFrame<T = unknown>(fn: AnimationFrameCb<T, CTX>, element?: Element): Nullable<number>;
+	requestAnimationFrame<T = unknown>(cb: AnimationFrameCb<T, CTX>, element?: Element): Nullable<number>;
 
 	/**
 	 * Wrapper for requestAnimationFrame
 	 *
-	 * @param fn - callback function
+	 * @param cb - callback function
 	 * @param opts - additional options for the operation
 	 */
 	requestAnimationFrame<T = unknown>(
-		fn: AnimationFrameCb<T, CTX>,
+		cb: AnimationFrameCb<T, CTX>,
 		opts: AsyncRequestAnimationFrameOptions<CTX>
 	): Nullable<number>;
 
 	requestAnimationFrame<T>(
-		fn: AnimationFrameCb<T, CTX>,
+		cb: AnimationFrameCb<T, CTX>,
 		p?: Element | AsyncRequestAnimationFrameOptions<CTX>
 	): Nullable<number> {
 		if (Object.isPlainObject(p)) {
 			return this.registerTask({
 				...p,
 				name: this.namespaces.animationFrame,
-				obj: fn,
+				obj: cb,
 				clearFn: cancelAnimationFrame,
 				wrapper: requestAnimationFrame,
 				linkByWrapper: true,
@@ -75,7 +75,7 @@ export default class Async<CTX extends object = Async<any>> extends Super<CTX> {
 
 		return this.registerTask({
 			name: this.namespaces.animationFrame,
-			obj: fn,
+			obj: cb,
 			clearFn: cancelAnimationFrame,
 			wrapper: requestAnimationFrame,
 			linkByWrapper: true,
