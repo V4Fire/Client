@@ -179,7 +179,7 @@ export function implementComponentWatchAPI(
 	});
 
 	// Watching of component props.
-	// The root component and flyweight/component components can't watch props.
+	// The root component and functional/flyweight components can't watch props.
 	if (!isFlyweight && !params.root)  {
 		const
 			props = proxyGetters.prop(component),

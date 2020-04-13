@@ -148,7 +148,7 @@ export interface ComponentOptions {
 	 * ```
 	 *
 	 * ```
-	 * // To use a component as flyweight you need to add @ symbol
+	 * // To use a component as a flyweight you need to add @ symbol
 	 * // before the component name within a template
 	 * < @b-button
 	 * ```

@@ -367,7 +367,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	 * The usage of this mechanism is similar to the "@watch" decorator:
 	 *   *) As a key we declare a name of a component method that we want to call;
 	 *   *) As a value we declare a path to a property/event we want to watch/listen.
-	 *      Also, the method can takes additional parameters of watching.
+	 *      Also, the method can take additional parameters of watching.
 	 *      Mind, the properties/events is taken from a component that contents the current.
 	 *
 	 * @see [[iBlock.watch]]

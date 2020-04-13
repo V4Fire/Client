@@ -153,8 +153,20 @@ export const p = paramsFactory<
 >(null);
 
 /**
- * Attaches a hook listener to a component method
+ * Attaches a hook listener to a component method.
+ * It means, that when a component is switched to the specified hook/s, the method will be invoked.
+ *
  * @decorator
+ * @example
+ *  ```typescript
+ * @component()
+ * class Foo extends iBlock {
+ *   @hook('mounted')
+ *   onMounted() {
+ *
+ *   }
+ * }
+ * ```
  */
 export const hook = paramsFactory<DecoratorHook>(null, (hook) => ({hook}));
 

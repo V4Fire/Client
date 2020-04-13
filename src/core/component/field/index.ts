@@ -21,7 +21,7 @@ const fieldQueue = new Set();
  * Initializes the specified fields to a component instance.
  * The function returns an object with initialized fields.
  *
- * This method have some "copy-paste" chunks, but it's done for better performance, because it's a very hot function.
+ * This method has some "copy-paste" chunks, but it's done for better performance, because it's a very hot function.
  * Mind that the initialization of fields is a synchronous operation.
  *
  * @param fields - component fields or system fields
@@ -39,7 +39,7 @@ export function initFields(
 		{meta: {params, instance}} = component;
 
 	const
-		// True if a component is functional or flyweight (composite)
+		// True if a component is functional or a flyweight
 		isFlyweight = component.$isFlyweight || params.functional === true;
 
 	const
