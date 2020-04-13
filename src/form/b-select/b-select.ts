@@ -83,7 +83,7 @@ export default class bSelect extends bInput implements iOpenToggle {
 	 * Selected value store
 	 */
 	@field<bSelect>((o) => o.sync.link((val) => {
-		val = o.initDefaultValue(val);
+		val = o.resolveValue(val);
 		return val !== undefined ? String(val) : undefined;
 	}))
 

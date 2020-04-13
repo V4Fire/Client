@@ -714,8 +714,8 @@ export default class bInput extends iInput implements iWidth, iSize, iIcon {
 	}
 
 	/** @override */
-	protected initValueEvents(): void {
-		super.initValueEvents();
+	protected initValueListeners(): void {
+		super.initValueListeners();
 		this.watch('valueBuffer', async (val: this['Value'] = '') => {
 			try {
 				const

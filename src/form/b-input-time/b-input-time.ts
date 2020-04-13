@@ -110,7 +110,7 @@ export default class bInputTime extends bInput {
 		val = o.getNPointer(undefined, val, o.pointerStore);
 
 		if (val === undefined) {
-			return <any>o.initDefaultValue();
+			return <any>o.resolveValue();
 		}
 
 		return val;

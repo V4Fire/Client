@@ -218,7 +218,7 @@ export default class bCalendar extends iInput implements iWidth, iSize, iIcon, i
 			return val;
 		}
 
-		return (<bCalendar['Value']>[]).concat(o.initDefaultValue(val) || []);
+		return (<bCalendar['Value']>[]).concat(o.resolveValue(val) || []);
 	}))
 
 	protected valueStore!: this['Value'];

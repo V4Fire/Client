@@ -167,7 +167,7 @@ export default class bCheckbox extends iInput implements iSize {
 	}
 
 	/** @override */
-	protected initValueEvents(): void {
+	protected initValueListeners(): void {
 		this.on('actionChange', () => this.validate());
 
 		let

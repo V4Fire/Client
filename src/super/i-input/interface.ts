@@ -8,10 +8,14 @@
 
 import iInput from 'super/i-input/i-input';
 
+export interface ValidatorMsgFn {
+	(err: ValidatorResult): string;
+}
+
 export type ValidatorMsg = Nullable<
 	string |
 	Dictionary<string> |
-	((err: ValidatorResult) => string)
+	ValidatorMsgFn
 >;
 
 export interface ValidatorParams extends Dictionary {
@@ -19,26 +23,35 @@ export interface ValidatorParams extends Dictionary {
 	showMsg?: boolean;
 }
 
-export interface ValidatorError<T = unknown> extends Dictionary {
+export interface ValidatorError<E = unknown> extends Dictionary {
 	name: string;
-	value?: T;
+	value?: E;
 }
 
-export type ValidatorResult<T = unknown> =
+export type ValidatorResult<ERR = unknown> =
 	boolean |
 	null |
-	ValidatorError<T>;
+	ValidatorError<ERR>;
 
-export interface ValidationError<T = unknown> {
+export interface ValidationError<E = unknown> {
 	validator: string;
-	error: ValidatorError<T>;
+	error: ValidatorError<E>;
 	msg?: string;
 }
 
-export type ValidationResult<T = unknown> = boolean | ValidationError<T>;
-export type Validators = Array<string | Dictionary<ValidatorParams> | [string, ValidatorParams]>;
-export type ValidatorsDecl<T = iInput, P = ValidatorParams> = Dictionary<(this: T, params: P) =>
-	CanPromise<boolean | unknown>>;
+export type ValidationResult<ERR = unknown> =
+	boolean |
+	ValidationError<ERR>;
+
+export type Validators = Array<
+	string |
+	Dictionary<ValidatorParams> |
+	[string, ValidatorParams]
+>;
+
+export type ValidatorsDecl<CTX = iInput, P = ValidatorParams> = Dictionary<
+	(this: CTX, params: P) => CanPromise<boolean | unknown>
+>;
 
 export type Value = unknown;
 export type FormValue = Value;
