@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import watch, { set, unset, mute, watchHandlers, MultipleWatchHandler } from 'core/object/watch';
+import watch, { set, unset, mute, watchHandlers, WatchHandler, MultipleWatchHandler } from 'core/object/watch';
 
 import { bindingRgxp } from 'core/component/reflection';
 import { proxyGetters } from 'core/component/engines';
@@ -39,7 +39,27 @@ export function implementComponentWatchAPI(
 	let
 		timerId;
 
-	const handler: MultipleWatchHandler = (mutations, ...args) => {
+	const invalidateComputedCache: WatchHandler = (val, oldVal, info) => {
+		if (!info) {
+			return;
+		}
+
+		const
+			{path} = info;
+
+		if (info.parent) {
+			const
+				rootKey = String(path[0]);
+
+			// If was changed there properties that can affect on cached computed fields,
+			// then we need to invalidate these caches
+			if (meta.computedFields[rootKey]?.get) {
+				delete Object.getOwnPropertyDescriptor(component, rootKey)?.get?.[cacheStatus];
+			}
+		}
+	};
+
+	const emitAccessorEvents: MultipleWatchHandler = (mutations, ...args) => {
 		if (args.length) {
 			mutations = [<any>[mutations, ...args]];
 		}
@@ -66,16 +86,8 @@ export function implementComponentWatchAPI(
 				}
 
 				const
-					rootKey = String(path[0]);
-
-				// If was changed there properties that can affect on cached computed fields,
-				// then we need to invalidate these caches
-				if (meta.computedFields[rootKey]?.get) {
-					delete Object.getOwnPropertyDescriptor(component, rootKey)?.get?.[cacheStatus];
-				}
-
-				const
-					ctx = handler[cacheStatus] ? component : info.root[toComponentObject] || component,
+					rootKey = String(path[0]),
+					ctx = emitAccessorEvents[cacheStatus] ? component : info.root[toComponentObject] || component,
 					currentDynamicHandlers = dynamicHandlers.get(ctx)?.[rootKey];
 
 				if (currentDynamicHandlers) {
@@ -140,13 +152,15 @@ export function implementComponentWatchAPI(
 	};
 
 	// Watcher of fields
-	const fieldsWatcher = watch(fields.value, fieldWatchOpts, handler);
+	const fieldsWatcher = watch(fields.value, {...fieldWatchOpts, immediate: true}, invalidateComputedCache);
+	watch(fieldsWatcher.proxy, fieldWatchOpts, emitAccessorEvents);
 	initWatcher(fields.key, fieldsWatcher);
 
 	// Don't force watching of system fields until it becomes necessary
 	systemFields.value[watcherInitializer] = () => {
 		delete systemFields.value[watcherInitializer];
-		const systemFieldsWatcher = watch(systemFields.value, watchOpts, handler);
+		const systemFieldsWatcher = watch(systemFields.value, {...watchOpts, immediate: true}, invalidateComputedCache);
+		watch(systemFieldsWatcher.proxy, watchOpts, emitAccessorEvents);
 		initWatcher(systemFields.key, systemFieldsWatcher);
 	};
 
@@ -196,7 +210,7 @@ export function implementComponentWatchAPI(
 			// If a component engine doesn't have the own mechanism of watching
 			// we need to wrap a prop object
 			if (!('watch' in props)) {
-				const propsWatcher = watch(propsStore, propWatchOpts, () => undefined);
+				const propsWatcher = watch(propsStore, propWatchOpts);
 				initWatcher(props!.key, propsWatcher);
 			}
 
@@ -237,10 +251,13 @@ export function implementComponentWatchAPI(
 
 					// Skip redundant watchers
 					if (needWatch) {
-						handler[cacheStatus] = tiedLinks;
+						emitAccessorEvents[cacheStatus] = tiedLinks;
 
 						// @ts-ignore (access)
-						component.$watch(prop, propWatchOpts, handler);
+						component.$watch(prop, {...propWatchOpts, immediate: true}, invalidateComputedCache);
+
+						// @ts-ignore (access)
+						component.$watch(prop, propWatchOpts, emitAccessorEvents);
 					}
 				}
 			}
