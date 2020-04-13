@@ -161,8 +161,67 @@ export const hook = paramsFactory<DecoratorHook>(null, (hook) => ({hook}));
 /**
  * Attaches a watcher to a component property/event to a component method or property.
  *
+ * When you watch for changes of some property, the handler function can take the second argument that refers
+ * to an old value of a property. If the object that watching is non-primitive, the old value will be cloned from an
+ * original old value to avoid the problem when we have two links to the one object.
+ *
+ * ```typescript
+ * @component()
+ * class Foo extends iBlock {
+ *   @field()
+ *   list: Dictionary[] = [];
+ *
+ *   @watch('list')
+ *   onListChange(value: Dictionary[], oldValue: Dictionary[]): void {
+ *     // true
+ *     console.log(value !== oldValue);
+ *     console.log(value[0] !== oldValue[0]);
+ *   }
+ *
+ *   // When you don't declare the second argument in a watcher,
+ *   // the previous value isn't cloned
+ *   @watch('list')
+ *   onListChangeWithoutCloning(value: Dictionary[]): void {
+ *     // true
+ *     console.log(value === arguments[1]);
+ *     console.log(value[0] === oldValue[0]);
+ *   }
+ *
+ *   // When you watch a property in a deep mode and declare the second argument
+ *   // in a watcher, the previous value is cloned deeply
+ *   @watch({path: 'list', deep: true})
+ *   onListChangeWithDeepCloning(value: Dictionary[], oldValue: Dictionary[]): void {
+ *     // true
+ *     console.log(value !== oldValue);
+ *     console.log(value[0] !== oldValue[0]);
+ *   }
+ *
+ *   created() {
+ *     this.list.push({});
+ *     this.list[0].foo = 1;
+ *   }
+ * }
+ * ```
+ *
  * To listen an event you need to use the special delimiter ":" within a path.
  * Also, you can specify an event emitter to listen by writing a link before ":".
+ * For instance:
+ *
+ * 1. `':onChange'` - a component will listen own event "onChange";
+ * 2. `'localEmitter:onChange'` - a component will listen an event "onChange" from "localEmitter";
+ * 3. `'$parent.localEmitter:onChange'` - a component will listen an event "onChange" from "$parent.localEmitter";
+ * 4. `'document:scroll'` - a component will listen an event "scroll" from "window.document".
+ *
+ * A link to the event emitter is taken from component properties or from the global object.
+ * The empty link '' is a link to a component itself.
+ *
+ * Also, if you listen an event, you can manage when start to listen the event by using special characters at the
+ * beginning of a path string:
+ *
+ * 1. `'!'` - start to listen an event on the "beforeCreate" hook, for example: `'!rootEmitter:reset'`;
+ * 2. `'?'` - start to listen an event on the "mounted" hook, for example: `'?$el:click'`.
+ *
+ * By default, all events start to listen on the "created" hook.
  *
  * @decorator
  *
