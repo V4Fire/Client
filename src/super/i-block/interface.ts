@@ -37,7 +37,7 @@ export type Stage =
 	string |
 	number;
 
-export interface ComponentEventDecl {
+export interface ComponentEvent {
 	event: string;
 	type?: 'error';
 }

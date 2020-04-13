@@ -30,6 +30,8 @@ import * as helpers from 'core/helpers';
 import * as browser from 'core/browser';
 //#endif
 
+import * as presets from 'presets';
+
 //#if runtime has bRouter
 import bRouter from 'base/b-router/b-router';
 //#endif
@@ -58,7 +60,6 @@ import {
 
 } from 'core/component';
 
-import * as presets from 'presets';
 import 'super/i-block/directives';
 import { statuses } from 'super/i-block/const';
 
@@ -96,13 +97,16 @@ import { readyStatuses, activate, deactivate, onActivated, onDeactivated } from 
 
 import {
 
-	ComponentStatus,
 	Stage,
-	ParentMessage,
+	ComponentStatus,
+
 	ComponentStatuses,
-	ComponentEventDecl,
+	ComponentEvent,
+
 	InitLoadOptions,
 	InitLoadCb,
+
+	ParentMessage,
 	Unsafe
 
 } from 'super/i-block/interface';
@@ -207,7 +211,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 
 	/**
 	 * Component render cache key.
-	 * It is used to hard cache the component vnode.
+	 * It's used to cache the component vnode.
 	 */
 	@prop({required: false})
 	readonly renderKey?: string;
@@ -270,7 +274,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 
 	/**
 	 * Initial component modifiers.
-	 * Modifiers represents the special API to bind component state properties directly with CSS classes
+	 * Modifiers represent the special API to bind component state properties directly with CSS classes
 	 * without needless of component re-render.
 	 */
 	@prop({type: Object, required: false})
@@ -771,7 +775,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 
 	/**
 	 * Special link to a parent component.
-	 * This parameters is used with static declaration of modifiers to refer parent modifiers.
+	 * This parameters are used with static declaration of modifiers to refer parent modifiers.
 	 *
 	 * @example
 	 * ```js
@@ -1035,7 +1039,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 
 	/**
 	 * Render temporary cache.
-	 * It is used with the "renderKey" directive.
+	 * It's used with the "renderKey" directive.
 	 */
 	@system({
 		merge: true,
@@ -1463,7 +1467,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	 * @param args
 	 */
 	@p({replace: false})
-	emit(event: string | ComponentEventDecl, ...args: unknown[]): void {
+	emit(event: string | ComponentEvent, ...args: unknown[]): void {
 		const
 			decl = Object.isString(event) ? {event} : event,
 			eventNm = decl.event = decl.event.dasherize();
@@ -1508,7 +1512,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	 * @param args
 	 */
 	@p({replace: false})
-	dispatch(event: string | ComponentEventDecl, ...args: unknown[]): void {
+	dispatch(event: string | ComponentEvent, ...args: unknown[]): void {
 		const
 			decl = Object.isString(event) ? {event} : event,
 			eventNm = decl.event = decl.event.dasherize();

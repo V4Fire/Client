@@ -92,7 +92,7 @@ export default class bVirtualScroll extends iData implements iItems {
 	readonly tombstonesSize?: number;
 
 	/**
-	 * If true, then elements is dropped from a DOM tree after scrolling:
+	 * If true, then elements are dropped from a DOM tree after scrolling:
 	 * this method is recommended to use if you need to display a huge number of elements and prevent an OOM error
 	 */
 	@prop(Boolean)

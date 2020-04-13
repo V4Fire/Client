@@ -55,8 +55,8 @@ export function initFields(
 
 	// At first we should initialize all atomic fields, but some atomics wait another atomics.
 	// That's why we sort list of fields and organize simple synchronous queue.
-	// All atomics that waits another atomics is added to atomList.
-	// All non-atomics fields is added to fieldList.
+	// All atomics that waits another atomics are added to atomList.
+	// All non-atomics fields are added to fieldList.
 	for (let keys = Object.keys(fields).sort(), i = 0; i < keys.length; i++) {
 		const
 			key = keys[i],
