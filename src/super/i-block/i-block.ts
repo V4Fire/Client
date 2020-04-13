@@ -417,7 +417,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	 * If true, then is enabled a dispatching mode of component events.
 	 *
 	 * It means that all component events will bubble to a parent component:
-	 * if the parent also has this property in true, then the event will bubble to the next (from the hierarchy)
+	 * if the parent also has this property in true, then the events will bubble to the next (from the hierarchy)
 	 * parent component.
 	 *
 	 * All dispatching events have special prefixes to avoid collisions with events from another components,
@@ -428,7 +428,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	readonly dispatching: boolean = false;
 
 	/**
-	 * If true, then all bubbling events from child components
+	 * If true, then all events that are bubbled from child components
 	 * will be emitted as component self events without any prefixes
 	 */
 	@prop(Boolean)
@@ -486,7 +486,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	 * Link to a remote state object.
 	 *
 	 * The remote state object is a special watchable object that provides some parameters
-	 * that can't be initialized in a component directly. You can modify this object outside from components,
+	 * that can't be initialized within a component directly. You can modify this object outside from components,
 	 * but remember, that these mutations may force re-render of all components.
 	 */
 	get remoteState(): Dictionary {
@@ -640,7 +640,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	/**
 	 * Base component modifiers.
 	 * These modifiers are automatically provided to child components.
-	 * For example, you have a component that uses another component within,
+	 * For example, you have a component that uses another component within own template,
 	 * and you specify to the outer component some theme modifier.
 	 * This modifier will recursively provided to all child components.
 	 */
@@ -660,7 +660,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	}
 
 	/**
-	 * API for an analytic engine
+	 * API for analytic engines
 	 */
 	@system({
 		atom: true,
@@ -683,7 +683,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	readonly provide!: Provide;
 
 	/**
-	 * API for component life cycle
+	 * API for the component life cycle
 	 */
 	@system({
 		atom: true,
@@ -735,7 +735,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	readonly sync!: Sync;
 
 	/**
-	 * API to render chunks of a component template asynchronously
+	 * API to render component template chunks asynchronously
 	 *
 	 * @example
 	 * ```
@@ -877,7 +877,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	protected readonly daemons!: Daemons;
 
 	/**
-	 * API for a component local storage
+	 * API for the component local storage
 	 */
 	@system({
 		atom: true,
@@ -901,7 +901,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	protected readonly async!: Async<this>;
 
 	/**
-	 * API for a component state.
+	 * API for the component state.
 	 * This property provides a bunch of helper methods to initialize component state.
 	 */
 	@system({
@@ -984,7 +984,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	protected componentStatusStore: ComponentStatus = 'unloaded';
 
 	/**
-	 * Component initialize status store for non watch statuses
+	 * Component initialize status store for unwatchable statuses
 	 * @see [[iBlock.componentStatus]]
 	 */
 	@system({unique: true})
@@ -1003,7 +1003,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 
 	/**
 	 * Special getter for component modifiers:
-	 * on first touch of a property from that object will be registered a modifier by the property name
+	 * on a first touch of a property from that object will be registered a modifier by the property name
 	 * that can emit re-render of the component.
 	 * Don't use this getter outside the component template.
 	 */
@@ -1138,7 +1138,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 
 	/**
 	 * Global event emitter of the application.
-	 * It can be used to provide external events to components.
+	 * It can be used to provide external events to a component.
 	 */
 	@system({
 		atom: true,
@@ -1220,14 +1220,14 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 
 	/**
 	 * Number of beforeReady event listeners:
-	 * it is used to optimize component initializing
+	 * it's used to optimize component initializing
 	 */
 	@system({unique: true})
 	protected beforeReadyListeners: number = 0;
 
 	/**
 	 * List of block ready listeners:
-	 * it is used to optimize component initializing
+	 * it's used to optimize component initializing
 	 */
 	@system({unique: true})
 	protected blockReadyListeners: Function[] = [];
@@ -1985,10 +1985,10 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	 * The deactivated component won't load data from providers on initializing.
 	 *
 	 * Basically, you don't need to think about a component activation,
-	 * because it is automatically synchronized with keep-alive or the special input property.
+	 * because it's automatically synchronized with keep-alive or the special input property.
 	 *
 	 * @see [[iBlock.activatedProp]]
-	 * @param [force] - if true, then the component will be activated forced, even if it is already activated
+	 * @param [force] - if true, then the component will be activated forced, even if it's already activated
 	 */
 	activate(force?: boolean): void {
 		activate(this, force);
@@ -1999,7 +1999,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	 * The deactivated component won't load data from providers on initializing.
 	 *
 	 * Basically, you don't need to think about a component activation,
-	 * because it is automatically synchronized with keep-alive or the special input property.
+	 * because it's automatically synchronized with keep-alive or the special input property.
 	 *
 	 * @see [[iBlock.activatedProp]]
 	 */
