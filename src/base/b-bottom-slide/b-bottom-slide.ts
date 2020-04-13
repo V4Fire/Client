@@ -544,7 +544,9 @@ export default class bBottomSlide extends iBlock implements iLockPageScroll, iOp
 		}
 
 		Object.assign(view.style, {
-			maxHeight: maxVisiblePx.px,
+			// If documentElement's height is 0 then maxVisiblePx would be 0 and after new call of initHeights,
+			// view.clientHeight above would return 0 as well, even though the real content is bigger than that
+			maxHeight: maxVisiblePx === 0 ? undefined : maxVisiblePx.px,
 			paddingBottom: header.clientHeight.px
 		});
 	}
