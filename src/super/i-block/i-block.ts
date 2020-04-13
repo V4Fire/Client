@@ -1208,6 +1208,12 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 
 	protected readonly presets!: typeof presets;
 
+	/** @see [[iBlock.presets]] */
+	@deprecated({renamedTo: 'presets'})
+	get preset(): typeof presets {
+		return this.presets;
+	}
+
 	/**
 	 * Number of beforeReady event listeners:
 	 * it is used to optimize component initializing
