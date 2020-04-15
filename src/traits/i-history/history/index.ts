@@ -134,9 +134,11 @@ export default class History<C extends iHistory> {
 				throw new Error(`A page with the stage "${stage}" is already opened`);
 			}
 
-			this.block.setElMod(els.content.el, 'page', 'turning', 'in');
-			this.block.setElMod(currentPage, 'page', 'below', true);
-			this.component.setMod('blankHistory', false);
+			this.async.requestAnimationFrame(() => {
+				this.block.setElMod(els.content.el, 'page', 'turning', 'in');
+				this.block.setElMod(currentPage, 'page', 'below', true);
+				this.component.setMod('blankHistory', false);
+			}, {label: $$.pageChange});
 
 			this.store.push({stage, options: opts, ...els});
 			this.scrollToTop();
@@ -191,7 +193,9 @@ export default class History<C extends iHistory> {
 		}
 
 		this.store = [];
-		this.block.removeElMod(this.store[0]?.content?.el, 'page', 'below');
+		this.async.requestAnimationFrame(() => {
+			this.block.removeElMod(this.store[0]?.content?.el, 'page', 'below');
+		}, {label: $$.pageChange});
 
 		const
 			history = <HTMLElement>this.block.element('history');
@@ -200,8 +204,10 @@ export default class History<C extends iHistory> {
 			history.removeAttribute('data-page');
 		}
 
-		this.component.setMod('blankHistory', true);
-		this.component.emit('history:clear');
+		this.async.requestAnimationFrame(() => {
+			this.component.setMod('blankHistory', true);
+			this.component.emit('history:clear');
+		}, {label: $$.historyClear});
 
 		return true;
 	}
@@ -210,9 +216,11 @@ export default class History<C extends iHistory> {
 	 * Calculates the current page
 	 */
 	protected calculateCurrentPage(): void {
-		const els = this.initPage(this.current.stage);
-		Object.assign(this.current, els);
-		this.initTitleModifiers();
+		this.async.requestAnimationFrame(() => {
+			const els = this.initPage(this.current.stage);
+			Object.assign(this.current, els);
+			this.initTitleModifiers();
+		}, {label: $$.calculateCurrentPage});
 	}
 
 	/**
@@ -224,14 +232,16 @@ export default class History<C extends iHistory> {
 			page = item.content?.el,
 			trigger = item.content?.trigger;
 
-		if (trigger) {
-			this.setObserving(trigger, false);
-		}
+		this.async.requestAnimationFrame(() => {
+			if (trigger) {
+				this.setObserving(trigger, false);
+			}
 
-		if (page) {
-			this.block.removeElMod(page, 'page', 'turning');
-			this.block.removeElMod(page, 'page', 'below');
-		}
+			if (page) {
+				this.block.removeElMod(page, 'page', 'turning');
+				this.block.removeElMod(page, 'page', 'below');
+			}
+		}, {label: $$.pageChange});
 	}
 
 	/**
@@ -245,13 +255,15 @@ export default class History<C extends iHistory> {
 		const t = document.createElement('div');
 		t.setAttribute(this.config.triggerAttr, 'true');
 
-		Object.assign(t.style, {
-			height: 1,
-			width: '100%',
-			position: 'absolute',
-			top: 0,
-			zIndex: -1
-		});
+		this.async.requestAnimationFrame(() => {
+			Object.assign(t.style, {
+				height: 1,
+				width: '100%',
+				position: 'absolute',
+				top: 0,
+				zIndex: -1
+			});
+		}, {label: $$.createTrigger});
 
 		return t;
 	}
@@ -296,7 +308,7 @@ export default class History<C extends iHistory> {
 			$a = this.async;
 
 		let
-			page = this.block?.node?.querySelector(`[data-page=${stage}]`);
+			page = this.block?.node?.querySelector<HTMLElement>(`[data-page=${stage}]`);
 
 		if (!page) {
 			this.component.emit('history:initPageFail', stage);
@@ -309,9 +321,11 @@ export default class History<C extends iHistory> {
 			page.setAttribute('data-page', stage);
 		}
 
-		if (!page.classList.contains(this.block.getFullElName('page'))) {
-			page.classList.add(this.block.getFullElName('page'));
-		}
+		this.async.requestAnimationFrame(() => {
+			if (!page!.classList.contains(this.block.getFullElName('page'))) {
+				page!.classList.add(this.block.getFullElName('page'));
+			}
+		}, {label: $$.initPage});
 
 		const
 			title = page.querySelector('[data-title]'),
@@ -320,18 +334,22 @@ export default class History<C extends iHistory> {
 
 		if (title) {
 			if (trigger) {
-				trigger.style.height = title.clientHeight.px;
+				this.async.requestAnimationFrame(() => {
+					trigger.style.height = title.clientHeight.px;
+				}, {label: $$.initTrigger});
 			}
 
 			$a.on(title, 'click', this.onTitleClick.bind(this));
 		}
 
 		if (trigger) {
-			if (!hasTrigger) {
-				page.insertAdjacentElement('afterbegin', trigger);
-			}
+			this.async.requestAnimationFrame(() => {
+				if (!hasTrigger) {
+					(<HTMLElement>page).insertAdjacentElement('afterbegin', trigger);
+				}
 
-			this.setObserving(trigger, true);
+				this.setObserving(trigger, true);
+			}, {label: $$.initTrigger});
 		}
 
 		const response = {
@@ -356,7 +374,10 @@ export default class History<C extends iHistory> {
 	 * @param [animate]
 	 */
 	protected scrollToTop(animate: boolean = false): void {
-		if (this.current.content) {
+		const
+			{content} = this.current;
+
+		if (content && (content.el.scrollTop !== 0 || content.el.scrollLeft !== 0)) {
 			const
 				options = {top: 0, left: 0};
 
@@ -364,7 +385,7 @@ export default class History<C extends iHistory> {
 				Object.assign(options, {behavior: 'smooth'});
 			}
 
-			this.current.content.el.scrollTo(options);
+			content.el.scrollTo(options);
 		}
 	}
 
