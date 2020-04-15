@@ -358,8 +358,8 @@ export default class bBottomSlide extends iBlock implements iLockPageScroll, iOp
 		return !Boolean(is.iOS);
 	}
 
-	/** @see [[History.prototype.onPageTopReached]] */
-	onPageTopReached(show: boolean): void {
+	/** @see [[History.prototype.onPageTopVisibilityChange]] */
+	onPageTopVisibilityChange(show: boolean): void {
 		this.isViewportTopReached = show;
 	}
 

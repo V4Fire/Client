@@ -16,8 +16,8 @@ export default abstract class iHistory extends iBlock {
 	abstract history: History<iHistory>;
 
 	/**
-	 * Handler: page top reach (true/false)
+	 * Handler: page top visible (true/false)
 	 * @param show
 	 */
-	abstract onPageTopReached(show: boolean): void;
+	abstract onPageTopVisibilityChange(show: boolean): void;
 }

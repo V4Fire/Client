@@ -271,8 +271,8 @@ export default class History<T extends iHistory> {
 		if (flag) {
 			InView.observe(trigger, {
 				threshold: this.config.titleThreshold,
-				onEnter: () => this.onPageTopReached(true),
-				onLeave: () => this.onPageTopReached(false)
+				onEnter: () => this.onPageTopVisibilityChange(true),
+				onLeave: () => this.onPageTopVisibilityChange(false)
 			});
 
 		} else {
@@ -357,7 +357,10 @@ export default class History<T extends iHistory> {
 	 * @param [animate]
 	 */
 	protected scrollToTop(animate: boolean = false): void {
-		if (this.current.content) {
+		const
+			{content} = this.current;
+
+		if (content && (content.el.scrollTop !== 0 || content.el.scrollLeft !== 0)) {
 			const
 				options = {top: 0, left: 0};
 
@@ -365,7 +368,7 @@ export default class History<T extends iHistory> {
 				Object.assign(options, {behavior: 'smooth'});
 			}
 
-			this.current.content.el.scrollTo(options);
+			content.el.scrollTo(options);
 		}
 	}
 
@@ -390,12 +393,12 @@ export default class History<T extends iHistory> {
 	 * Handler: page trigger inView visibility change
 	 * @param state
 	 */
-	protected onPageTopReached(state: boolean): void {
+	protected onPageTopVisibilityChange(state: boolean): void {
 		if (this.current?.title?.el) {
 			this.initTitleModifiers();
 		}
 
-		this.component.onPageTopReached(state);
+		this.component.onPageTopVisibilityChange(state);
 	}
 
 	/**
