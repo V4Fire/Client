@@ -24,9 +24,9 @@
 			- block header
 				< header.&__header &
 					ref = header |
-					@touchstart = (e) => onStart(e, true) |
-					@touchmove = onMove |
-					@touchend = onRelease
+					@touchstart = onPullStart($event, true) |
+					@touchmove = onPull |
+					@touchend = onPullEnd
 				.
 					< .&__toggler-stripe
 						< .&__toggler
@@ -34,9 +34,9 @@
 			- block view
 				< .&__view &
 					ref = view |
-					@touchstart = onStart |
-					@touchmove = onMove |
-					@touchend = onRelease
+					@touchstart = onPullStart |
+					@touchmove = onPull |
+					@touchend = onPullEnd
 				.
 					- block content
 						< .&__content ref = content
