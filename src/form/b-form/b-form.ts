@@ -428,8 +428,8 @@ export default class bForm extends iData {
 	}
 
 	/**
-	 * Returns values of child form items grouped by name
-	 * @param [validation]
+	 * Returns values of child form elements grouped by names
+	 * @param [validation] - if you need only valid value
 	 */
 	async values(validation?: ValidateParams): Promise<Dictionary<CanArray<FormValue>>> {
 		const

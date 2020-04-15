@@ -7,26 +7,13 @@
  */
 
 import { ComponentDriver } from 'core/component/engines';
-import { DirectiveOptions } from 'core/component/directives/update-on/interface';
-import engine from 'core/component/directives/update-on/engine';
 
+import engine from 'core/component/directives/update-on/engines';
+import { DirectiveOptions } from 'core/component/directives/update-on/interface';
 export * from 'core/component/directives/update-on/interface';
 
 /**
- * Update on firing third-party emitters events directive
- *
- * @example
- * ```
- * < .&__example v-update-on = [{ &
- *  emitter: parentEvent,
- *  event: 'foo',
- *  listener: (el, v) => onSampleEvent(el, v, false)
- * }, {
- *  emitter: rootEvent,
- *  event: 'bar',
- *  listener: (el, v) => onSampleEvent(el, v, true)
- * }] .
- * ```
+ * Directive to manually update an element by using special events
  */
 ComponentDriver.directive('update-on', {
 	inserted(el: HTMLElement, {value}: DirectiveOptions): void {
