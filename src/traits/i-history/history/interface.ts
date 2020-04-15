@@ -17,6 +17,11 @@ export interface Title {
 	initBoundingRect: CanUndef<DOMRect>;
 }
 
+export interface Page {
+	content: Content;
+	title: Title;
+}
+
 export interface HistoryItem {
 	stage: string;
 	options: CanUndef<Dictionary>;
@@ -30,7 +35,11 @@ export interface HistoryConfig {
 	titleThreshold: number;
 }
 
+export type TransitionType =
+	'back' |
+	'push';
+
 export interface Transition {
-	type: 'back' | 'push';
+	type: TransitionType;
 	page: HistoryItem;
 }

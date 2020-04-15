@@ -7,24 +7,26 @@
  */
 
 import Async from 'core/async';
-import Block from 'super/i-block/modules/block';
 import symbolGenerator from 'core/symbol';
 
-import { ModsDecl, ComponentHooks } from 'super/i-block/i-block';
+import { ModsDecl, ComponentHooks } from 'core/component';
 import { InView } from 'core/component/directives/in-view';
-import { Content, Title, HistoryItem, HistoryConfig, Transition } from 'traits/i-history/history/interface';
 
+import Block from 'super/i-block/modules/block';
 import iHistory from 'traits/i-history/i-history';
 
+import { INITIAL_STAGE } from 'traits/i-history/history/const';
+import { Page, HistoryItem, HistoryConfig, Transition } from 'traits/i-history/history/interface';
+
+export * from 'traits/i-history/history/const';
 export * from 'traits/i-history/history/interface';
-export const INITIAL_STAGE = 'index';
 
 export const
 	$$ = symbolGenerator();
 
-export default class History<T extends iHistory> {
+export default class History<C extends iHistory> {
 	/**
-	 * Default configuration for any history item
+	 * Default configuration for a history item
 	 */
 	static defaultConfig: HistoryConfig = {
 		titleThreshold: 0.01,
@@ -43,12 +45,33 @@ export default class History<T extends iHistory> {
 	};
 
 	/**
-	 * Linked component instance
+	 * Linked component async
 	 */
-	protected readonly component: T['unsafe'];
+	get async(): Async<C['unsafe']> {
+		return this.component.async;
+	}
 
 	/**
-	 * Transitions store
+	 * Current store position
+	 */
+	get current(): HistoryItem {
+		return this.store[this.store.length - 1];
+	}
+
+	/**
+	 * History length
+	 */
+	get length(): number {
+		return this.store.length;
+	}
+
+	/**
+	 * Linked component instance
+	 */
+	protected readonly component: C['unsafe'];
+
+	/**
+	 * List of transitions
 	 */
 	protected store: HistoryItem[] = [];
 
@@ -61,7 +84,7 @@ export default class History<T extends iHistory> {
 	 * @param component
 	 * @param [config]
 	 */
-	constructor(component: T, config?: HistoryConfig) {
+	constructor(component: C, config?: HistoryConfig) {
 		this.component = component.unsafe;
 		this.config = {...History.defaultConfig, ...config};
 	}
@@ -81,43 +104,22 @@ export default class History<T extends iHistory> {
 	}
 
 	/**
-	 * Initializes index page
-	 * @param [initial]
+	 * Initializes the index page
+	 * @param [item] - initial history item
 	 */
-	initIndex(initial: HistoryItem = {stage: INITIAL_STAGE, options: {}}): void {
-		this.store.push(initial);
+	initIndex(item: HistoryItem = {stage: INITIAL_STAGE, options: {}}): void {
+		this.store.push(item);
 		this.calculateCurrentPage();
 	}
 
 	/**
-	 * Linked component async
-	 */
-	get async(): Async<T['unsafe']> {
-		return this.component.async;
-	}
-
-	/**
-	 * Current store position
-	 */
-	get current(): HistoryItem {
-		return this.store[this.store.length - 1];
-	}
-
-	/**
-	 * History length
-	 */
-	get length(): number {
-		return this.store.length;
-	}
-
-	/**
-	 * Adds a new stage to the history
+	 * Pushes a new stage to the history
 	 *
 	 * @param stage
-	 * @param [options]
-	 * @emits history:transition(value: Transition)
+	 * @param [opts] - additional options
+	 * @emits `history:transition(value: Transition)`
 	 */
-	push(stage: string, options?: Dictionary): void {
+	push(stage: string, opts?: Dictionary): void {
 		const
 			currentPage = this.current?.content?.el;
 
@@ -129,26 +131,25 @@ export default class History<T extends iHistory> {
 				isBelow = this.block.getElMod(els.content.el, 'page', 'below') === 'true';
 
 			if (isBelow || currentPage === els.content.el) {
-				throw new ReferenceError(`Page with the stage "${stage}" is already opened`);
+				throw new Error(`A page with the stage "${stage}" is already opened`);
 			}
 
 			this.block.setElMod(els.content.el, 'page', 'turning', 'in');
 			this.block.setElMod(currentPage, 'page', 'below', true);
-
 			this.component.setMod('blankHistory', false);
 
-			this.store.push({stage, options, ...els});
+			this.store.push({stage, options: opts, ...els});
 			this.scrollToTop();
-			this.component.emit('history:transition', <Transition>{page: this.current, type: 'push'});
+			this.component.emit('history:transition', {page: this.current, type: 'push'});
 
 		} else {
-			throw new ReferenceError(`Page for the stage "${stage}" is not defined`);
+			throw new ReferenceError(`A page for the stage "${stage}" is not defined`);
 		}
 	}
 
 	/**
 	 * Navigates back through the history
-	 * @emits history:transition(value: Transition)
+	 * @emits `history:transition(value: Transition)`
 	 */
 	back(): CanUndef<HistoryItem> {
 		if (this.store.length === 1) {
@@ -178,7 +179,7 @@ export default class History<T extends iHistory> {
 
 	/**
 	 * Clears the history
-	 * @emits history:clear
+	 * @emits `history:clear`
 	 */
 	clear(): boolean {
 		if (this.store.length === 0) {
@@ -206,18 +207,16 @@ export default class History<T extends iHistory> {
 	}
 
 	/**
-	 * Calculates current page
+	 * Calculates the current page
 	 */
 	protected calculateCurrentPage(): void {
-		const
-			els = this.initPage(this.current.stage);
-
+		const els = this.initPage(this.current.stage);
 		Object.assign(this.current, els);
 		this.initTitleModifiers();
 	}
 
 	/**
-	 * Unwinds the specified page to initial state
+	 * Unwinds a history item to the initial state
 	 * @param item
 	 */
 	protected unwindPage(item: HistoryItem): void {
@@ -236,7 +235,7 @@ export default class History<T extends iHistory> {
 	}
 
 	/**
-	 * Creates a trigger element for observing
+	 * Creates a trigger element to observe
 	 */
 	protected createTrigger(): CanUndef<HTMLElement> {
 		if (!this.config.pageTriggers) {
@@ -258,36 +257,41 @@ export default class History<T extends iHistory> {
 	}
 
 	/**
-	 * Sets observing for the specified trigger
+	 * Sets observing for the specified element
 	 *
-	 * @param trigger
-	 * @param flag
+	 * @param el
+	 * @param observe - if false, observing for the element will be stopped
 	 */
-	protected setObserving(trigger: HTMLElement, flag: boolean): void {
+	protected setObserving(el: HTMLElement, observe: boolean): void {
 		if (!this.config.pageTriggers) {
 			return;
 		}
 
-		if (flag) {
-			InView.observe(trigger, {
+		const
+			label = {label: $$.setObserving};
+
+		if (observe) {
+			InView.observe(el, {
 				threshold: this.config.titleThreshold,
-				onEnter: () => this.onPageTopReached(true),
-				onLeave: () => this.onPageTopReached(false)
+				onEnter: () => this.onPageTopVisibilityChange(true),
+				onLeave: () => this.onPageTopVisibilityChange(false)
 			});
 
+			this.async.worker(() => InView.stopObserve(el), label);
+
 		} else {
-			this.async.worker(() => InView.stopObserve(trigger), {label: $$.observing});
+			this.async.terminateWorker(label);
 		}
 	}
 
 	/**
-	 * Initializes layout for the specified stage
+	 * Initializes a layout for the specified stage and returns a page object
 	 *
 	 * @param stage
-	 * @emits history:initPage({content: Content, title: Title})
-	 * @emits history:initPageFail(stage: string)
+	 * @emits `history:initPage({content: Content, title: Title})`
+	 * @emits `history:initPageFail(stage: string)`
 	 */
-	protected initPage(stage: string): CanUndef<{content: Content; title: Title}> {
+	protected initPage(stage: string): CanUndef<Page> {
 		const
 			$a = this.async;
 
@@ -297,13 +301,12 @@ export default class History<T extends iHistory> {
 		if (!page) {
 			this.component.emit('history:initPageFail', stage);
 
-			if (stage === INITIAL_STAGE) {
-				page = <HTMLElement>this.block.element('history');
-				page.setAttribute('data-page', stage);
-
-			} else {
+			if (stage !== INITIAL_STAGE) {
 				return;
 			}
+
+			page = this.block.element<HTMLElement>('history')!;
+			page.setAttribute('data-page', stage);
 		}
 
 		if (!page.classList.contains(this.block.getFullElName('page'))) {
@@ -320,11 +323,7 @@ export default class History<T extends iHistory> {
 				trigger.style.height = title.clientHeight.px;
 			}
 
-			$a.on(
-				title,
-				'click',
-				this.onTitleClick.bind(this)
-			);
+			$a.on(title, 'click', this.onTitleClick.bind(this));
 		}
 
 		if (trigger) {
@@ -353,7 +352,7 @@ export default class History<T extends iHistory> {
 	}
 
 	/**
-	 * Scrolls a container to the top
+	 * Scrolls a content to the top
 	 * @param [animate]
 	 */
 	protected scrollToTop(animate: boolean = false): void {
@@ -371,7 +370,7 @@ export default class History<T extends iHistory> {
 
 	/**
 	 * Initializes title modifiers
-	 * @emits history:titleInView(visible: boolean)
+	 * @emits `history:titleInView(visible: boolean)`
 	 */
 	protected initTitleModifiers(): void {
 		const
@@ -387,15 +386,15 @@ export default class History<T extends iHistory> {
 	}
 
 	/**
-	 * Handler: page trigger inView visibility change
-	 * @param state
+	 * Handler: was changed the visibility state of the top of a content
+	 * @param state - if true, the top is visible
 	 */
-	protected onPageTopReached(state: boolean): void {
+	protected onPageTopVisibilityChange(state: boolean): void {
 		if (this.current?.title?.el) {
 			this.initTitleModifiers();
 		}
 
-		this.component.onPageTopReached(state);
+		this.component.onPageTopVisibilityChange(state);
 	}
 
 	/**
