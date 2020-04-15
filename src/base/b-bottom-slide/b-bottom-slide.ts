@@ -6,120 +6,142 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import symbolGenerator from 'core/symbol';
-import { is } from 'core/browser';
+/**
+ * [[include:base/b-bottom-slide/README.md]]
+ * @packageDocumentation
+ */
 
-import iHistory from 'traits/i-history/i-history';
+import symbolGenerator from 'core/symbol';
+
 import History from 'traits/i-history/history';
+import iHistory from 'traits/i-history/i-history';
 
 import iLockPageScroll from 'traits/i-lock-page-scroll/i-lock-page-scroll';
+import iObserveDOM from 'traits/i-observe-dom/i-observe-dom';
+
 import iOpen from 'traits/i-open/i-open';
 import iVisible from 'traits/i-visible/i-visible';
-import iObserveDom from 'traits/i-observe-dom/i-observe-dom';
-import iBlock, { ModsDecl, component, prop, field, system, hook, watch, wait, p } from 'super/i-block/i-block';
+
+import iBlock, {
+
+	component,
+	prop,
+	field,
+	system,
+
+	hook,
+	watch,
+	wait,
+	p,
+
+	ModsDecl
+
+} from 'super/i-block/i-block';
 
 export * from 'super/i-data/i-data';
 
-export type HeightMode = 'content' | 'full';
-export type Direction = -1 | 0 | 1;
+import { HeightMode, Direction } from 'base/b-bottom-slide/interface';
+import { heightMode } from 'base/b-bottom-slide/const';
+
+export * from 'base/b-bottom-slide/const';
+export * from 'base/b-bottom-slide/interface';
 
 export const
 	$$ = symbolGenerator();
 
 /**
- * Component: bottom sheet behavior
+ * Component to create bottom sheet behavior that is similar to native mobile UI
+ * @see https://material.io/develop/android/components/bottom-sheet-behavior/
  */
 @component()
-export default class bBottomSlide extends iBlock implements iLockPageScroll, iOpen, iVisible, iObserveDom, iHistory {
+export default class bBottomSlide extends iBlock implements iLockPageScroll, iOpen, iVisible, iObserveDOM, iHistory {
 	/**
-	 * Component height Option:
-	 *   *) content – the height of the instance, but not more than the full value,
-	 *      in addition, "steps" will be ignored
-	 *
-	 *   *) full – the height of the content will always be the full height of the viewport
+	 * Component height mode:
+	 * 1. "content" – the height value is based on a component content, but no more than the viewport height
+	 * 2. "full" – the height value is equal to the viewport height
 	 */
-	@prop({type: String, validator: (v) => ({full: true, content: true}).hasOwnProperty(v)})
+	@prop({type: String, validator: Object.hasOwnProperty(heightMode)})
 	readonly heightMode: HeightMode = 'full';
 
 	/**
-	 * Number of allowed component positions relative to the screen height (%)
+	 * List of allowed component positions relative to the screen height (in percentages)
 	 */
 	@prop({type: Array, validator: (v) => v.every((a) => a >= 0 && a <= 100)})
 	readonly stepsProp: number[] = [];
 
-	/** @see steps */
+	/** @see [[bBottomSlide.steps]] */
 	@field((o: bBottomSlide) => o.sync.link('stepsProp', (v: number[]) => v.slice().sort((a, b) => a - b)))
 	readonly stepsStore!: number[];
 
 	/**
-	 * Visible part of the content (will be visible over the page content) (px)
+	 * Minimum height value of a component visible part (in pixels),
+	 * i.e. even the component is closed this part still be visible
 	 */
-	@prop({type: Number, validator: (v: number) => v.isNonNegative()})
+	@prop({type: Number, validator: Number.isNonNegative})
 	readonly visible: number = 0;
 
 	/**
-	 * Time (in milliseconds) after which we can assume that there was a quick swipe
-	 */
-	@prop({type: Number, validator: (v: number) => v.isPositive()})
-	readonly fastSwipeDelay: number = (0.3).seconds();
-
-	/**
-	 * The minimum required pixels for the scroll slider to an another slide in fast motion on the slider
-	 */
-	@prop({type: Number, validator: (v: number) => v.isNatural()})
-	readonly fastSwipeThreshold: number = 10;
-
-	/**
-	 * The minimum Y offset threshold at which the slider will be considered to be used (px)
-	 */
-	@prop({type: Number, validator: (v: number) => v.isNatural()})
-	readonly swipeThreshold: number = 40;
-
-	/**
-	 * Max value of overlay opacity
-	 */
-	@prop({type: Number, validator: (v) => v >= 0 && v <= 1})
-	readonly maxOpacity: number = 0.8;
-
-	/**
-	 * If true, the content will scroll up on component close
-	 */
-	@prop(Boolean)
-	readonly scrollToTopOnClose: boolean = true;
-
-	/**
-	 * If true, overlay will be used
-	 */
-	@prop(Boolean)
-	readonly overlay: boolean = true;
-
-	/**
-	 * Maximum percentage of the height of the screen to which you can pull the component
+	 * Maximum height value to which you can pull the component
 	 */
 	@prop({type: Number, validator: (v) => v >= 0 && v <= 100})
 	readonly maxVisiblePercent: number = 90;
 
 	/**
-	 * Possible component positions in % (of screen height)
+	 * Maximum time in milliseconds after after which we can assume that there was a quick swipe
+	 */
+	@prop({type: Number, validator: Number.isPositive})
+	readonly fastSwipeDelay: number = (0.3).seconds();
+
+	/**
+	 * Minimum required amount of pixels of scrolling after which we can assume that there was a quick swipe
+	 */
+	@prop({type: Number, validator: Number.isNatural})
+	readonly fastSwipeThreshold: number = 10;
+
+	/**
+	 * Minimum required amount of pixels of scrolling to swipe
+	 */
+	@prop({type: Number, validator: Number.isNatural})
+	readonly swipeThreshold: number = 40;
+
+	/**
+	 * If true, the component will overlay background while it's opened
+	 */
+	@prop(Boolean)
+	readonly overlay: boolean = true;
+
+	/**
+	 * Maximum value of overlay opacity
+	 */
+	@prop({type: Number, validator: Number.isBetweenZeroAndOne})
+	readonly maxOpacity: number = 0.8;
+
+	/**
+	 * If true, then the content scroll will be automatically reset to the top after closing the component
+	 */
+	@prop(Boolean)
+	readonly scrollToTopOnClose: boolean = true;
+
+	/**
+	 * List of possible component positions relative to the screen height (in percentages)
 	 */
 	@p({cache: false})
 	get steps(): number[] {
 		const
-			{heightMode, visiblePercent, contentHeight, windowHeight, stepsStore, maxVisiblePercent} = this,
-			res = [visiblePercent];
+			res = [this.visibleInPercent];
 
-		if (heightMode === 'content') {
-			res.push(contentHeight / windowHeight * 100);
+		if (this.heightMode === 'content') {
+			res.push(this.contentHeight / this.windowHeight * 100);
 
 		} else {
-			res.push(maxVisiblePercent);
+			res.push(this.maxVisiblePercent);
 		}
 
-		return res.concat(stepsStore).sort((a, b) => a - b);
+		return res.concat(this.field.get<number[]>('stepsStore')!).sort((a, b) => a - b);
 	}
 
 	/**
-	 * True if the content is fully open
+	 * True if the content is fully opened
 	 */
 	@p({cache: false})
 	get isFullyOpened(): boolean {
@@ -134,7 +156,7 @@ export default class bBottomSlide extends iBlock implements iLockPageScroll, iOp
 		return this.step === 0;
 	}
 
-	/** @see iHistory.history */
+	/** @see [[iHistory.history]] */
 	@system((ctx: iHistory) => new History(ctx))
 	readonly history!: History<iHistory>;
 
@@ -163,7 +185,7 @@ export default class bBottomSlide extends iBlock implements iLockPageScroll, iOp
 		overlay?: HTMLElement;
 	};
 
-	/** @see step */
+	/** @see [[bBottomSlide.step]] */
 	@system()
 	protected stepStore: number = 0;
 
@@ -176,8 +198,8 @@ export default class bBottomSlide extends iBlock implements iLockPageScroll, iOp
 	}
 
 	/**
-	 * Sets current component step
-	 * @emits changeStep(step: number)
+	 * Sets a new component step
+	 * @emits `stepChange(step: number)`
 	 */
 	protected set step(v: number) {
 		if (v === this.step) {
@@ -185,11 +207,14 @@ export default class bBottomSlide extends iBlock implements iLockPageScroll, iOp
 		}
 
 		this.stepStore = v;
+
+		// @deprecated
 		this.emit('changeStep', v);
+		this.emit('stepChange', v);
 	}
 
 	/**
-	 * Steps of component (px)
+	 * List of possible component positions relative to the screen height (in pixels)
 	 */
 	@system()
 	protected stepsInPixels: number[] = [];
@@ -201,7 +226,7 @@ export default class bBottomSlide extends iBlock implements iLockPageScroll, iOp
 	protected startTime: number = 0;
 
 	/**
-	 * Y position of the first touch on the component
+	 * Y position of a start touch on the component
 	 */
 	@system()
 	protected startY: number = 0;
@@ -219,16 +244,10 @@ export default class bBottomSlide extends iBlock implements iLockPageScroll, iOp
 	protected endY: number = 0;
 
 	/**
-	 * Difference in cursor position compared to last frame
+	 * Difference in a cursor position compared to the last frame
 	 */
 	@system()
 	protected diff: number = 0;
-
-	/**
-	 * The current value of the transparency of the overlay
-	 */
-	@system()
-	protected opacity: number = 0;
 
 	/**
 	 * Current cursor direction
@@ -237,54 +256,54 @@ export default class bBottomSlide extends iBlock implements iLockPageScroll, iOp
 	protected direction: Direction = 0;
 
 	/**
+	 * Current value of the overlay transparency
+	 */
+	@system()
+	protected opacity: number = 0;
+
+	/**
 	 * Window height
 	 */
 	@system()
 	protected windowHeight: number = 0;
 
 	/**
-	 * Maximum content height (px)
-	 */
-	@system()
-	protected contentMaxHeight: number = 0;
-
-	/**
-	 * Content height (px)
+	 * Content height (in pixels)
 	 */
 	@system()
 	protected contentHeight: number = 0;
 
 	/**
-	 * Component end position height
+	 * Maximum content height (in pixels)
 	 */
 	@system()
-	protected maxPullOutHeight: number = 0;
+	protected contentMaxHeight: number = 0;
 
 	/**
-	 * True if the content scrolled to the top
+	 * True if the content is already scrolled to the top
 	 */
 	@system()
 	protected isViewportTopReached: boolean = true;
 
 	/**
-	 * True if now the item position is being updated
+	 * True if element positions are being updated now
 	 */
 	@system()
-	protected isAnimating: boolean = false;
+	protected isPositionUpdating: boolean = false;
 
 	/**
-	 * True if content is pulled using the trigger
+	 * True if the component is switching to another step now
 	 */
 	@system()
-	protected isTrigger: boolean = false;
+	protected isStepTransitionInProgress: boolean = false;
 
 	/**
-	 * True if the element is closing or opening at the moment
+	 * True if content is pulled by using the trigger
 	 */
 	@system()
-	protected isTransitionInProgress: boolean = false;
+	protected byTrigger: boolean = false;
 
-	/** @see offset */
+	/** @see [[bBottomSlide.offset]] */
 	@system()
 	protected offsetStore: number = 0;
 
@@ -297,65 +316,73 @@ export default class bBottomSlide extends iBlock implements iLockPageScroll, iOp
 	}
 
 	/**
-	 * Sets current component offset
+	 * Sets a new component offset
 	 */
 	protected set offset(value: number) {
 		this.offsetStore = value;
 		this.endY = value;
 	}
 
-	/** @see isMoving */
+	/** @see [[bBottomSlide.isPulling]] */
 	@system()
-	protected isMovingStore: boolean = false;
+	protected isPullingStore: boolean = false;
 
 	/**
-	 * True if component are pulled
+	 * True if the component is being pulled now
 	 */
 	@p({cache: false})
-	protected get isMoving(): boolean {
-		return this.isMovingStore;
+	protected get isPulling(): boolean {
+		return this.isPullingStore;
 	}
 
-	/** @emits changeMoveState(val: boolean) */
-	protected set isMoving(val: boolean) {
-		if (this.isMovingStore === val) {
+	/**
+	 * Switches the component pulling mode
+	 * @emits `moveStateChange(value boolean)`
+	 */
+	protected set isPulling(value: boolean) {
+		if (this.isPullingStore === value) {
 			return;
 		}
 
-		this.isMovingStore = val;
-		this[val ? 'setRootMod' : 'removeRootMod']('fullscreen-moving', true);
-		this[val ? 'setMod' : 'removeMod']('stick', false);
-		this.emit('changeMoveState', val);
+		this.isPullingStore = value;
+
+		this[value ? 'setRootMod' : 'removeRootMod']('fullscreen-moving', true);
+		this[value ? 'setMod' : 'removeMod']('stick', false);
+
+		// @deprecated
+		this.emit('changeMoveState', value);
+		this.emit('moveStateChange', value);
 	}
 
 	/**
-	 * Visible percent of component
-	 * @see visible
+	 * Minimum height value of a component visible part (in percents),
+	 * i.e. even the component is closed this part still be visible
+	 * @see [[bBottomSlide.visible]]
 	 */
 	@p({cache: false})
-	protected get visiblePercent(): number {
+	protected get visibleInPercent(): number {
 		return this.visible / this.windowHeight * 100;
 	}
 
 	/**
-	 * Last step offset (px)
+	 * Last step offset (in pixels)
 	 */
 	protected get lastStepOffset(): number {
 		return this.stepsInPixels[this.stepsInPixels.length - 1];
 	}
 
 	/**
-	 * Current step offset (px)
+	 * Current step offset (in pixels)
 	 */
 	protected get currentStepOffset(): number {
 		return this.stepsInPixels[this.step];
 	}
 
 	/**
-	 * True if RAF should be used for animations
+	 * True if all animations need to use requestAnimationFrame
 	 */
-	protected get isLowEnd(): boolean {
-		return !Boolean(is.iOS);
+	protected get shouldUseRAF(): boolean {
+		return !this.browser.is.iOS;
 	}
 
 	/** @see [[History.prototype.onPageTopVisibilityChange]] */
@@ -363,21 +390,21 @@ export default class bBottomSlide extends iBlock implements iLockPageScroll, iOp
 		this.isViewportTopReached = show;
 	}
 
-	/** @see iLockPageScroll.lock */
+	/** @see [[iLockPageScroll.lock]] */
 	@wait('ready')
 	lock(): Promise<void> {
-		return iLockPageScroll.lock(this, <HTMLElement>this.$refs.view);
+		return iLockPageScroll.lock(this, this.$refs.view);
 	}
 
-	/** @see iLockPageScroll.unlock */
+	/** @see [[iLockPageScroll.unlock]] */
 	unlock(): Promise<void> {
 		return iLockPageScroll.unlock(this);
 	}
 
 	/**
-	 * @see iOpen.open
+	 * @see [[iOpen.open]]
 	 * @param [step]
-	 * @emits open()
+	 * @emits `open()`
 	 */
 	@wait('ready')
 	async open(step?: number): Promise<boolean> {
@@ -398,8 +425,8 @@ export default class bBottomSlide extends iBlock implements iLockPageScroll, iOp
 	}
 
 	/**
-	 * @see iOpen.close
-	 * @emits close()
+	 * @see [[iOpen.close]]
+	 * @emits `close()`
 	 */
 	async close(): Promise<boolean> {
 		if (this.isClosed) {
@@ -419,7 +446,8 @@ export default class bBottomSlide extends iBlock implements iLockPageScroll, iOp
 	}
 
 	/**
-	 * Opens next component step
+	 * Switches to the next component step.
+	 * The methods returns false if the component is already fully opened.
 	 */
 	async next(): Promise<boolean> {
 		if (this.isFullyOpened) {
@@ -435,7 +463,8 @@ export default class bBottomSlide extends iBlock implements iLockPageScroll, iOp
 	}
 
 	/**
-	 * Opens previous component step
+	 * Switches to the previous component step.
+	 * The methods returns false if the component is already closed.
 	 */
 	async prev(): Promise<boolean> {
 		if (this.isClosed) {
@@ -453,36 +482,33 @@ export default class bBottomSlide extends iBlock implements iLockPageScroll, iOp
 		return true;
 	}
 
-	/** @see iOpen.onOpenedChange */
+	/** @see [[iOpen.onOpenedChange]] */
 	onOpenedChange(): void {
 		return;
 	}
 
-	/** @see iObserveDom.onDOMChange */
+	/** @see [[iObserveDOM.onDOMChange]] */
 	onDOMChange(): void {
-		iObserveDom.onDOMChange(this);
+		iObserveDOM.onDOMChange(this);
 	}
 
-	/** @see iOpen.onKeyClose */
+	/** @see [[iOpen.onKeyClose]] */
 	async onKeyClose(): Promise<void> {
 		return;
 	}
 
-	/** @see iOpen.onTouchClose */
+	/** @see [[iOpen.onTouchClose]] */
 	async onTouchClose(): Promise<void> {
 		return;
 	}
 
-	/** @see iObserveDom.initObservers */
+	/** @see [[iObserveDOM.initObservers]] */
 	@watch('heightMode')
 	@hook('mounted')
 	@wait('ready')
 	initDOMObservers(): CanPromise<void> {
-		const
-			{content} = this.$refs;
-
-		iObserveDom.observe(this, {
-			node: content,
+		iObserveDOM.observe(this, {
+			node: this.$refs.content,
 			childList: true,
 			subtree: true
 		});
@@ -497,21 +523,20 @@ export default class bBottomSlide extends iBlock implements iLockPageScroll, iOp
 	}
 
 	/**
-	 * Puts the node to the top level of the DOM tree
+	 * Puts a node of the component to the top level of a DOM tree
 	 */
 	@hook('mounted')
 	@wait('ready')
 	protected initNodePosition(): CanPromise<void> {
-		const {$el} = this;
-		document.body.insertAdjacentElement('afterbegin', $el);
+		document.body.insertAdjacentElement('afterbegin', this.$el);
 	}
 
 	/**
-	 * Initializes heights of elements
+	 * Initializes geometry of elements
 	 */
 	@hook('mounted')
 	@wait('ready')
-	protected initHeights(): CanPromise<void> {
+	protected initGeometry(): CanPromise<void> {
 		const
 			{maxVisiblePercent, $refs: {header, content, view}} = this;
 
@@ -519,7 +544,6 @@ export default class bBottomSlide extends iBlock implements iLockPageScroll, iOp
 			currentPage = this.history?.current?.content;
 
 		if (this.heightMode === 'content' && currentPage?.initBoundingRect) {
-
 			const
 				currentContentPageHeight = currentPage?.initBoundingRect.height;
 
@@ -544,7 +568,10 @@ export default class bBottomSlide extends iBlock implements iLockPageScroll, iOp
 		}
 
 		Object.assign(view.style, {
-			maxHeight: maxVisiblePx.px,
+			// If documentElement height is equal to zero, maxVisiblePx is always be zero too,
+			// even after new calling of initGeometry.
+			// Also, view.clientHeight above would return zero as well, even though the real size is bigger.
+			maxHeight: maxVisiblePx === 0 ? undefined : maxVisiblePx.px,
 			paddingBottom: header.clientHeight.px
 		});
 	}
@@ -556,49 +583,43 @@ export default class bBottomSlide extends iBlock implements iLockPageScroll, iOp
 	@watch('visible')
 	protected initOffset(): void {
 		this.offset = this.visible;
-		this.setPosition();
+		this.updateWindowPosition();
 	}
 
 	/**
-	 * Updates steps value
+	 * Bakes values of steps in pixels
 	 */
 	@hook('mounted')
 	@watch('steps')
-	protected updateSteps(): void {
-		const {
-			steps,
-			windowHeight
-		} = this;
-
-		this.stepsInPixels = steps.map((s) => (s / 100 * windowHeight));
+	protected bakeSteps(): void {
+		this.stepsInPixels = this.steps.map((s) => (s / 100 * this.windowHeight));
 	}
 
 	/**
-	 * Sticks component to the closest step
+	 * Sticks the component to the closest step
 	 */
 	protected stickToStep(): void {
+		this.isPulling = false;
 		this.offset = this.stepsInPixels[this.step];
-		this.isMoving = false;
 		this.opacity = this.isFullyOpened ? this.maxOpacity : 0;
-
-		this.stopAnimation();
-		this.setPosition();
-		this.setOpacity();
+		this.stopMovingAnimation();
+		this.updateWindowPosition();
+		this.updateOpacity();
 	}
 
 	/**
-	 * Sets a position of the window node
+	 * Updates a position of the window node
 	 */
 	@wait('ready')
-	protected setPosition(): CanPromise<void> {
+	protected updateWindowPosition(): CanPromise<void> {
 		this.$refs.window.style.transform = `translate3d(0, ${(-this.offset).px}, 0)`;
 	}
 
 	/**
-	 * Sets an opacity of the overlay node
+	 * Updates an opacity of the overlay node
 	 */
 	@wait('ready')
-	protected setOpacity(): CanPromise<void> {
+	protected updateOpacity(): CanPromise<void> {
 		const
 			{$refs: {overlay}} = this;
 
@@ -610,17 +631,16 @@ export default class bBottomSlide extends iBlock implements iLockPageScroll, iOp
 	}
 
 	/**
-	 * Sets a new CSS values for elements
+	 * Updates CSS values of component elements
 	 */
-	protected setKeyframeValues(): void {
+	protected updateKeyframeValues(): void {
 		const
-			{windowHeight} = this,
-			isMaxNotReached = windowHeight >= this.offset + this.diff;
+			isMaxNotReached = this.windowHeight >= this.offset + this.diff;
 
 		if (isMaxNotReached) {
 			this.offset += this.diff;
-			this.isMoving = true;
-			this.setPosition();
+			this.isPulling = true;
+			this.updateWindowPosition();
 		}
 
 		this.performOpacity();
@@ -628,38 +648,46 @@ export default class bBottomSlide extends iBlock implements iLockPageScroll, iOp
 	}
 
 	/**
-	 * Initializes animation
+	 * Initializes the animation of component elements moving
 	 */
-	protected animate(): void {
-		if (this.isAnimating && this.isLowEnd) {
+	protected animateMoving(): void {
+		if (this.isPositionUpdating && this.shouldUseRAF) {
 			return;
 		}
 
-		this.performAnimation();
+		this.performMovingAnimation();
 	}
 
 	/**
-	 * Performs component move animation
+	 * Performs the animation of component elements moving
 	 */
-	protected performAnimation(): void {
-		this.isAnimating = true;
+	protected performMovingAnimation(): void {
+		this.isPositionUpdating = true;
 
-		if (this.isLowEnd) {
+		if (this.shouldUseRAF) {
 			this.async.requestAnimationFrame(() => {
-				if (this.isAnimating) {
-					this.setKeyframeValues();
-					this.performAnimation();
+				if (this.isPositionUpdating) {
+					this.updateKeyframeValues();
+					this.performMovingAnimation();
 				}
-
-			}, {label: $$.raf});
+			}, {label: $$.performMovingAnimation});
 
 		} else {
-			this.setKeyframeValues();
+			this.updateKeyframeValues();
 		}
 	}
 
 	/**
-	 * Performs overlay opacity animation
+	 * Stops the animation of component elements moving
+	 */
+	protected stopMovingAnimation(): void {
+		this.async.clearAnimationFrame({label: $$.performMovingAnimation});
+		this.isPositionUpdating = false;
+		this.diff = 0;
+	}
+
+	/**
+	 * Performs the animation of the component overlay opacity
 	 */
 	@wait('ready')
 	protected performOpacity(): CanPromise<void> {
@@ -671,17 +699,17 @@ export default class bBottomSlide extends iBlock implements iLockPageScroll, iOp
 		}
 
 		const
-			{stepsInPixels, offset, steps} = this,
-			lastStep = stepsInPixels[steps.length - 1],
-			penultimateStep = stepsInPixels[steps.length - 2];
+			stepLength = this.steps.length,
+			lastStep = this.stepsInPixels[stepLength - 1],
+			penultimateStep = this.stepsInPixels[stepLength - 2];
 
-		if (penultimateStep === undefined || penultimateStep > offset) {
+		if (penultimateStep === undefined || penultimateStep > this.offset) {
 			return;
 		}
 
 		const
 			p = (lastStep - penultimateStep) / 100,
-			currentP = (lastStep - offset) / p,
+			currentP = (lastStep - this.offset) / p,
 			calculatedOpacity = maxOpacity - maxOpacity / 100 * currentP,
 			opacity = calculatedOpacity > maxOpacity ? maxOpacity : calculatedOpacity,
 			diff = Math.abs(this.opacity - opacity) >= 0.025;
@@ -691,24 +719,24 @@ export default class bBottomSlide extends iBlock implements iLockPageScroll, iOp
 		}
 
 		this.opacity = opacity;
-		this.setOpacity();
+		this.updateOpacity();
 	}
 
 	/**
 	 * Moves the component to the nearest step relative to the current position
 	 *
-	 * @param respectDirection - if true, then when searching for the next step,
-	 *   the direction of the cursor will be taken into account, and not the nearest step
+	 * @param respectDirection - if true, then when searching for a new step to change,
+	 *   the cursor direction will be taken into account, but not the nearest step
 	 *
-	 * @param isThresholdPassed - if true, then the minimum threshold for changing the step is passed
+	 * @param isThresholdPassed - if true, then the minimum threshold to change a step is passed
 	 */
 	protected moveToClosest(respectDirection: boolean, isThresholdPassed: boolean): void {
 		const
-			{heightMode, contentHeight, offset, direction} = this;
+			{offset, direction} = this;
 
-		if (heightMode === 'content') {
+		if (this.heightMode === 'content') {
 			if (!respectDirection && isThresholdPassed) {
-				this[contentHeight / 2 < offset ? 'next' : 'prev']();
+				this[this.contentHeight / 2 < offset ? 'next' : 'prev']();
 
 			} else if (respectDirection) {
 				this[direction > 0 ? 'next' : 'prev']();
@@ -766,59 +794,53 @@ export default class bBottomSlide extends iBlock implements iLockPageScroll, iOp
 	}
 
 	/**
-	 * Stops all animations
+	 * Recalculates a component state: sizes, positions, etc.
 	 */
-	protected stopAnimation(): void {
-		this.async.clearAnimationFrame({label: $$.raf});
-		this.isAnimating = false;
-		this.diff = 0;
-	}
-
-	/**
-	 * Recalculates sizes and steps
-	 */
-	@p({watch: ['window:resize', ':DOMChange', ':history:transition']})
+	@watch(['window:resize', ':DOMChange', ':history:transition'])
 	@wait('ready')
-	protected async recalculate(): Promise<void> {
+	protected async recalculateState(): Promise<void> {
 		try {
 			await this.async.sleep(50, {label: $$.syncStateDefer, join: true});
-			this.initHeights();
-			this.updateSteps();
+			this.initGeometry();
+			this.bakeSteps();
 			this.stickToStep();
 
 		} catch {}
 	}
 
 	/**
-	 * Removes component's element from DOM if its transition is finished
+	 * Removes the component element from DOM if its transition is finished
 	 */
-	protected removeDOMElement(): void {
-		if (!this.isTransitionInProgress) {
+	@hook('beforeDestroy')
+	protected removeFromDOMIfPossible(): void {
+		if (!this.isStepTransitionInProgress) {
 			this.$el.remove();
 		}
 	}
 
 	/**
-	 * Handler: on component history cleared
+	 * Handler: the component history was cleared
 	 */
-	@p({watch: ':history:clear'})
-	protected onHistoryCleared(): void {
+	@watch(':history:clear')
+	protected onHistoryClear(): void {
 		this.$refs.content.style.removeProperty('height');
 	}
 
 	/**
-	 * Handler: current step was changed
+	 * Handler: the current step was changed
 	 */
 	@watch(':changeStep')
 	@hook('mounted')
 	@wait('ready')
 	protected onStepChange(): CanPromise<void> {
-		const
-			{window: w, view: v} = this.$refs;
+		const {
+			window: win,
+			view
+		} = this.$refs;
 
-		this.isTransitionInProgress = true;
+		this.isStepTransitionInProgress = true;
 
-		this.async.once(w, 'transitionend', () => {
+		this.async.once(win, 'transitionend', () => {
 			if (this.isFullyOpened) {
 				this.lock().catch(stderr);
 				this.removeMod('events', false);
@@ -828,62 +850,57 @@ export default class bBottomSlide extends iBlock implements iLockPageScroll, iOp
 				this.setMod('events', false);
 
 				if (this.scrollToTopOnClose) {
-					v.scrollTo(0, 0);
+					view.scrollTo(0, 0);
 				}
 			}
 
-			this.isTransitionInProgress = false;
+			this.isStepTransitionInProgress = false;
 
 			if (this.componentStatus === 'destroyed') {
-				this.removeDOMElement();
+				this.removeFromDOMIfPossible();
 			}
+
 		}, {group: ':zombie', label: $$.waitAnimationToFinish});
 
 		this.stickToStep();
 	}
 
 	/**
-	 * Handler: touch start
+	 * Handler: start to pull the component
 	 *
 	 * @param e
 	 * @param [isTrigger]
 	 */
-	protected onStart(e: TouchEvent, isTrigger: boolean = false): void {
+	protected onPullStart(e: TouchEvent, isTrigger: boolean = false): void {
 		const
-			touch = e.touches[0],
-			{clientY} = touch;
+			touch = e.touches[0];
 
-		this.isTrigger = isTrigger;
-		this.startY = clientY;
+		this.byTrigger = isTrigger;
+		this.startY = touch.clientY;
 		this.startTime = performance.now();
 	}
 
 	/**
-	 * Handler: touch move
+	 * Handler: the component is being pulled
 	 * @param e
 	 */
-	protected onMove(e: TouchEvent): void {
-		const {
-			currentY,
-			isViewportTopReached,
-			isTrigger,
-			isFullyOpened,
-			lastStepOffset
-		} = this;
+	protected onPull(e: TouchEvent): void {
+		const
+			{clientY} = e.touches[0];
 
 		const
-			{clientY} = e.touches[0],
-			diff = (currentY || clientY) - clientY;
+			diff = (this.currentY || clientY) - clientY;
 
 		this.currentY = clientY;
 		this.direction = Math.sign(diff) as Direction;
 
-		if (
-			isTrigger ||
-			!isFullyOpened ||
-			(isViewportTopReached && (this.direction < 0 || this.offset < lastStepOffset))
-		) {
-			this.animate();
+		const needAnimate =
+			this.byTrigger ||
+			!this.isFullyOpened ||
+			(this.isViewportTopReached && (this.direction < 0 || this.offset < this.lastStepOffset));
+
+		if (needAnimate) {
+			this.animateMoving();
 			this.diff += diff;
 
 			if (e.cancelable) {
@@ -894,22 +911,13 @@ export default class bBottomSlide extends iBlock implements iLockPageScroll, iOp
 			return;
 		}
 
-		this.stopAnimation();
+		this.stopMovingAnimation();
 	}
 
 	/**
-	 * Handler: touch end
+	 * Handler: finish to pull the component
 	 */
-	protected onRelease(): void {
-		const {
-			startTime,
-			isTrigger,
-			fastSwipeDelay,
-			swipeThreshold,
-			fastSwipeThreshold,
-			isViewportTopReached
-		} = this;
-
+	protected onPullEnd(): void {
 		if (this.currentY === 0) {
 			return;
 		}
@@ -918,32 +926,26 @@ export default class bBottomSlide extends iBlock implements iLockPageScroll, iOp
 			startEndDiff = Math.abs(this.startY - this.endY),
 			endTime = performance.now();
 
-		const isFastSwiped =
-			endTime - startTime <= fastSwipeDelay &&
-			startEndDiff >= fastSwipeThreshold;
+		const isFastSwipe =
+			endTime - this.startTime <= this.fastSwipeDelay &&
+			startEndDiff >= this.fastSwipeThreshold;
 
-		const isNotScroll = isFastSwiped && (
-			isViewportTopReached ||
+		const notScroll = isFastSwipe && (
 			!this.isFullyOpened ||
-			isTrigger
+			this.isViewportTopReached ||
+			this.byTrigger
 		);
 
 		const
-			isThresholdPassed = !isFastSwiped && startEndDiff >= swipeThreshold;
+			isThresholdPassed = !isFastSwipe && startEndDiff >= this.swipeThreshold;
 
-		this.stopAnimation();
-		this.moveToClosest(isNotScroll, isThresholdPassed);
+		this.stopMovingAnimation();
+		this.moveToClosest(notScroll, isThresholdPassed);
 
 		this.endY = this.endY + (this.startY - this.currentY);
-		this.isTrigger = false;
+		this.byTrigger = false;
 
 		this.diff = 0;
 		this.currentY = 0;
-	}
-
-	/** @override */
-	protected beforeDestroy(): void {
-		super.beforeDestroy();
-		this.removeDOMElement();
 	}
 }
