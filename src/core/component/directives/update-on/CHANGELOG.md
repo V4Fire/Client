@@ -11,4 +11,4 @@ Changelog
 
 ## (2020-03-26)
 
-`v-update-on` directive was created
+* `v-update-on` directive was created
