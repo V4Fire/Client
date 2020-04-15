@@ -132,10 +132,12 @@ export default class History<T extends iHistory> {
 				throw new ReferenceError(`Page with the stage "${stage}" is already opened`);
 			}
 
-			this.block.setElMod(els.content.el, 'page', 'turning', 'in');
-			this.block.setElMod(currentPage, 'page', 'below', true);
+			this.async.requestAnimationFrame(() => {
+				this.block.setElMod(els.content.el, 'page', 'turning', 'in');
+				this.block.setElMod(currentPage, 'page', 'below', true);
 
-			this.component.setMod('blankHistory', false);
+				this.component.setMod('blankHistory', false);
+			}, {label: $$.pageChange});
 
 			this.store.push({stage, options, ...els});
 			this.scrollToTop();
@@ -190,7 +192,10 @@ export default class History<T extends iHistory> {
 		}
 
 		this.store = [];
-		this.block.removeElMod(this.store[0]?.content?.el, 'page', 'below');
+
+		this.async.requestAnimationFrame(() => {
+			this.block.removeElMod(this.store[0]?.content?.el, 'page', 'below');
+		}, {label: $$.pageChange});
 
 		const
 			history = <HTMLElement>this.block.element('history');
@@ -199,8 +204,10 @@ export default class History<T extends iHistory> {
 			history.removeAttribute('data-page');
 		}
 
-		this.component.setMod('blankHistory', true);
-		this.component.emit('history:clear');
+		this.async.requestAnimationFrame(() => {
+			this.component.setMod('blankHistory', true);
+			this.component.emit('history:clear');
+		}, {label: $$.historyClear});
 
 		return true;
 	}
@@ -209,11 +216,13 @@ export default class History<T extends iHistory> {
 	 * Calculates current page
 	 */
 	protected calculateCurrentPage(): void {
-		const
-			els = this.initPage(this.current.stage);
+		this.async.requestAnimationFrame(() => {
+			const
+				els = this.initPage(this.current.stage);
 
-		Object.assign(this.current, els);
-		this.initTitleModifiers();
+			Object.assign(this.current, els);
+			this.initTitleModifiers();
+		}, {label: $$.calculateCurrentPage});
 	}
 
 	/**
@@ -225,14 +234,16 @@ export default class History<T extends iHistory> {
 			page = item.content?.el,
 			trigger = item.content?.trigger;
 
-		if (trigger) {
-			this.setObserving(trigger, false);
-		}
+		this.async.requestAnimationFrame(() => {
+			if (trigger) {
+				this.setObserving(trigger, false);
+			}
 
-		if (page) {
-			this.block.removeElMod(page, 'page', 'turning');
-			this.block.removeElMod(page, 'page', 'below');
-		}
+			if (page) {
+				this.block.removeElMod(page, 'page', 'turning');
+				this.block.removeElMod(page, 'page', 'below');
+			}
+		}, {label: $$.pageChange});
 	}
 
 	/**
@@ -246,13 +257,15 @@ export default class History<T extends iHistory> {
 		const t = document.createElement('div');
 		t.setAttribute(this.config.triggerAttr, 'true');
 
-		Object.assign(t.style, {
-			height: 1,
-			width: '100%',
-			position: 'absolute',
-			top: 0,
-			zIndex: -1
-		});
+		this.async.requestAnimationFrame(() => {
+			Object.assign(t.style, {
+				height: 1,
+				width: '100%',
+				position: 'absolute',
+				top: 0,
+				zIndex: -1
+			});
+		}, {label: $$.createTrigger});
 
 		return t;
 	}
@@ -306,9 +319,11 @@ export default class History<T extends iHistory> {
 			}
 		}
 
-		if (!page.classList.contains(this.block.getFullElName('page'))) {
-			page.classList.add(this.block.getFullElName('page'));
-		}
+		this.async.requestAnimationFrame(() => {
+			if (!(<HTMLElement>page).classList.contains(this.block.getFullElName('page'))) {
+				(<HTMLElement>page).classList.add(this.block.getFullElName('page'));
+			}
+		}, {label: $$.initPage});
 
 		const
 			title = page.querySelector('[data-title]'),
@@ -317,7 +332,9 @@ export default class History<T extends iHistory> {
 
 		if (title) {
 			if (trigger) {
-				trigger.style.height = title.clientHeight.px;
+				this.async.requestAnimationFrame(() => {
+					trigger.style.height = title.clientHeight.px;
+				}, {label: $$.initTrigger});
 			}
 
 			$a.on(
@@ -328,11 +345,13 @@ export default class History<T extends iHistory> {
 		}
 
 		if (trigger) {
-			if (!hasTrigger) {
-				page.insertAdjacentElement('afterbegin', trigger);
-			}
+			this.async.requestAnimationFrame(() => {
+				if (!hasTrigger) {
+					(<HTMLElement>page).insertAdjacentElement('afterbegin', trigger);
+				}
 
-			this.setObserving(trigger, true);
+				this.setObserving(trigger, true);
+			}, {label: $$.initTrigger});
 		}
 
 		const response = {
