@@ -11,6 +11,19 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-beta.269
+
+#### :rocket: New Feature
+
+* Added new component bBottomSlide with history
+* Added iHistory trait
+* Added tiny History class for managing component history
+* Added v-update-on directive for listening events from various emitter
+
+#### :bug: Bug Fix
+
+* Fix nested pages scrolling into iLockPageScroll lock method
+
 ## v3.0.0-beta.268 (2020-04-08)
 
 #### :bug: Bug Fix
@@ -381,7 +394,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :bug: Bug Fix
 
-* [https://github.com/V4Fire/Client/pull/143](Correctly process alias and redirect fields)
+* [Correctly process alias and redirect fields](https://github.com/V4Fire/Client/pull/143)
 
 ## v3.0.0-beta.223 (2019-11-28)
 

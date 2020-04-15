@@ -116,7 +116,7 @@ export default class Provide {
 
 	/**
 	 * Returns an object with base component modifiers
-	 * @param mods - additional modifiers ({modifier: {currentValue: value}} || {modifier: value})
+	 * @param [mods] - additional modifiers ({modifier: {currentValue: value}} || {modifier: value})
 	 */
 	mods(mods?: Dictionary<ModVal | Dictionary<ModVal>>): CanUndef<Readonly<ModsNTable>> {
 		const
@@ -168,7 +168,7 @@ export default class Provide {
 	 * Returns an object with classes for elements of an another component
 	 *
 	 * @param componentName
-	 * @param classes - additional classes ({baseElementName: newElementName})
+	 * @param [classes] - additional classes ({baseElementName: newElementName})
 	 */
 	classes(componentName: string, classes?: Classes): Readonly<Dictionary<string>>;
 

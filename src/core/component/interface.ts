@@ -202,6 +202,10 @@ export type RenderFunction =
 	ComponentOptions<Component>['render'] |
 	FunctionalComponentOptions['render'];
 
+export type ComponentHooks = {
+	[H in Hooks]: Hook[]
+};
+
 export interface ComponentMeta {
 	name: string;
 	componentName: string;
@@ -220,7 +224,7 @@ export interface ComponentMeta {
 	accessors: Dictionary<ComponentAccessor>;
 	methods: Dictionary<ComponentMethod>;
 	watchers: Dictionary<WatchObject[]>;
-	hooks: {[H in Hooks]: Hook[]};
+	hooks: ComponentHooks;
 
 	component: {
 		name: string;

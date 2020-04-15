@@ -51,15 +51,26 @@ export default abstract class iLockPageScroll {
 				);
 
 				$a.on(scrollableNode, 'touchmove', (e: TouchEvent) => {
+					let
+						scrollTarget = <HTMLElement>e.target || scrollableNode;
+
+					while (scrollTarget !== scrollableNode) {
+						if (scrollTarget.scrollHeight > scrollTarget.clientHeight || !scrollTarget.parentElement) {
+							break;
+						}
+
+						scrollTarget = scrollTarget.parentElement;
+					}
+
 					const {
 						scrollTop,
 						scrollHeight,
 						clientHeight
-					} = scrollableNode;
+					} = <HTMLElement>scrollTarget;
 
 					const
 						clientY = e.targetTouches[0].clientY - component[$$.initialY],
-						isOnTop = clientY > 0 && scrollTop  === 0,
+						isOnTop = clientY > 0 && scrollTop === 0,
 						isOnBottom = clientY < 0 && scrollTop + clientHeight + 1 >= scrollHeight;
 
 					if ((isOnTop || isOnBottom) && e.cancelable) {

@@ -12,11 +12,12 @@
 
 - template index() extends ['i-data'].index
 	- block body
-		< template v-for = el in top.asyncRender.iterate(options, top.renderChunks, { &
+		< template v-for = (el, i) in top.asyncRender.iterate(options, top.renderChunks, { &
 			filter: renderFilter
 		}) .
-			< . &
+			< .&__matryoshka &
 				:-id = top.dom.getId(el.id) |
+				:-level = level |
 				:class = provide.elClasses({matryoshka: {
 					level,
 					folded

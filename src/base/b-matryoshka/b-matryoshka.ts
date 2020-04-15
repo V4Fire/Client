@@ -35,7 +35,7 @@ export default class bMatryoshka extends iData implements iItems {
 	readonly optionKey?: iItems['optionKey'];
 
 	/** @see [[iItems.prototype.itemProps]] */
-	@prop({type: Function, default: () => ({})})
+	@prop({type: Function, required: false})
 	readonly optionProps!: iItems['optionProps'];
 
 	/**
@@ -121,7 +121,8 @@ export default class bMatryoshka extends iData implements iItems {
 	protected getNestedDollProps(): Dictionary {
 		const opts = {
 			folded: this.folded,
-			level: this.level + 1
+			level: this.level + 1,
+			classes: this.classes
 		};
 
 		if (this.$listeners.fold) {
