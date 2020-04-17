@@ -67,6 +67,12 @@ export interface BindedFn<CTX extends ComponentInterface = ComponentInterface<an
 	(this: CTX): any;
 }
 
+export interface RenderReason {
+	value: unknown;
+	oldValue: CanUndef<unknown>;
+	path: unknown[];
+}
+
 /**
  * Abstract class that represents Vue compatible component API
  */
@@ -150,6 +156,22 @@ export abstract class ComponentInterface<
 	 * Link to the component meta object
 	 */
 	protected readonly meta!: ComponentMeta;
+
+	/**
+	 * Value that increments on every re-rendering of the component
+	 */
+	protected renderCounter!: number;
+
+	/**
+	 * Last reason why the component was re-rendered.
+	 * The null value is means that the component was re-rendered by using $forceUpdate.
+	 */
+	protected lastSelfReasonToRender?: Nullable<RenderReason>;
+
+	/**
+	 * Timestamp of last component rendering
+	 */
+	protected lastTimeOfRender?: DOMHighResTimeStamp;
 
 	/**
 	 * Cache table for virtual nodes
@@ -247,8 +269,9 @@ export abstract class ComponentInterface<
 
 	/**
 	 * Forces the component to re-render
+	 * @param [reason] - reason of re-rendering
 	 */
-	$forceUpdate(): void {}
+	$forceUpdate(reason?: RenderReason): void {}
 
 	/**
 	 * Executes the specified function on a next render tick

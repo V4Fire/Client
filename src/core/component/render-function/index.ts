@@ -32,6 +32,9 @@ export function wrapRender(meta: ComponentMeta): RenderFunction {
 		nativeCreate: CreateElement,
 		baseCtx: RenderContext
 	): VNode {
+		// @ts-ignore (access)
+		this.lastTimeOfRender = performance.now();
+
 		const
 			{methods: {render: r}} = meta;
 

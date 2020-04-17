@@ -189,6 +189,8 @@ export function mountedState(component: ComponentInterface): void {
  * @param component
  */
 export function beforeUpdateState(component: ComponentInterface): void {
+	// @ts-ignore (access)
+	component.renderCounter++;
 	runHook('beforeUpdate', component).catch(stderr);
 	callMethodFromComponent(component, 'beforeUpdate');
 }

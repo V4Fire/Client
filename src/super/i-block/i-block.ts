@@ -956,10 +956,8 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 
 	protected readonly opt!: Opt;
 
-	/**
-	 * Value that increments on every re-render of the component
-	 */
-	@field({functional: false})
+	/** @override */
+	@system()
 	protected renderCounter: number = 0;
 
 	/**
@@ -1741,9 +1739,8 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	 * Forces the component re-render
 	 */
 	@wait({defer: true, label: $$.forceUpdate})
-	forceUpdate(): Promise<void> {
-		this.renderCounter++;
-		return Promise.resolve();
+	async forceUpdate(): Promise<void> {
+		this.$forceUpdate();
 	}
 
 	/**

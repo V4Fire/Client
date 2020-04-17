@@ -11,6 +11,7 @@ import * as init from 'core/component/construct';
 
 import { beforeRenderHooks } from 'core/component/const';
 import { fillMeta } from 'core/component/meta';
+import { implementComponentForceUpdateAPI } from 'core/component/render';
 
 import { fakeMapSetCopy } from 'core/component/engines/helpers';
 import { ComponentDriver, ComponentOptions } from 'core/component/engines';
@@ -48,12 +49,16 @@ export function getComponent(meta: ComponentMeta): ComponentOptions<ComponentDri
 
 			init.beforeDataCreateState(ctx);
 
-			watch(ctx.$fields, {deep: true, immediate: true}, (val, oldVal, info) => {
+			watch(ctx.$fields, {deep: true, immediate: true}, (value, oldValue, info) => {
 				if (beforeRenderHooks[ctx.hook]) {
 					return;
 				}
 
-				ctx.$forceUpdate();
+				ctx.$forceUpdate({
+					value,
+					oldValue,
+					path: info.path
+				});
 
 				let
 					{obj} = info;
@@ -75,7 +80,7 @@ export function getComponent(meta: ComponentMeta): ComponentOptions<ComponentDri
 							delete obj[key];
 
 							// Finally we can register a Vue watcher
-							$set.call(ctx, obj, key, val);
+							$set.call(ctx, obj, key, value);
 						}
 
 					// Because Vue doesn't see changes from Map/Set structures, we must to use this hack
@@ -89,7 +94,9 @@ export function getComponent(meta: ComponentMeta): ComponentOptions<ComponentDri
 		},
 
 		beforeCreate(): void {
-			init.beforeCreateState(<any>this, meta);
+			const ctx = <any>this;
+			init.beforeCreateState(ctx, meta);
+			implementComponentForceUpdateAPI(ctx, this.$forceUpdate);
 		},
 
 		created(): void {
