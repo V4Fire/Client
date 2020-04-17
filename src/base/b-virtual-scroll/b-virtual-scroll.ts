@@ -7,6 +7,7 @@
  */
 
 import symbolGenerator from 'core/symbol';
+import { FullClearOptions } from 'core/async';
 
 import iItems from 'traits/i-items/i-items';
 
@@ -262,6 +263,12 @@ export default class bVirtualScroll extends iData implements iItems {
 	protected onRequestError(err: Error | RequestError<unknown>, retry: RetryRequestFn): void {
 		super.onRequestError(err, retry);
 
-		this.localEvent.emit('localError');
+		if (!isClearErr(err)) {
+			this.localEvent.emit('localError');
+		}
 	}
+}
+
+function isClearErr(a: any): a is FullClearOptions {
+	return Object.isPlainObject(a) && a.reason && a.reason === 'collision';
 }
