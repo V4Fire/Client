@@ -251,12 +251,11 @@ export function destroyedState(component: ComponentInterface): void {
 
 /**
  * Initializes "errorCaptured" state to the specified component instance
+ *
  * @param component
+ * @param args - additional arguments
  */
-export function errorCapturedState(component: ComponentInterface): void {
-	const
-		args = arguments;
-
+export function errorCapturedState(component: ComponentInterface, ...args: unknown[]): void {
 	runHook('errorCaptured', component, ...args).then(() => {
 		callMethodFromComponent(component, 'errorCaptured', ...args);
 	}, stderr);

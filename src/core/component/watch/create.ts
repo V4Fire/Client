@@ -119,8 +119,7 @@ export function createWatchFn(
 			const normalizedOpts = {
 				collapse: true,
 				...opts,
-				...watchInfo.opts,
-				immediate: false
+				...watchInfo.opts
 			};
 
 			if (info.type === 'system') {
@@ -212,7 +211,6 @@ export function createWatchFn(
 						const normalizedOpts = {
 							collapse: true,
 							...opts,
-							immediate: false,
 							pathModifier: (path) => [...pathChunks, ...path.slice(1)]
 						};
 
