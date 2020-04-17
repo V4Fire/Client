@@ -18,7 +18,11 @@ import iInput, {
 	prop,
 	field,
 	system,
+
+	watch,
+	hook,
 	wait,
+
 	ModsDecl,
 	ValidatorsDecl
 
@@ -255,11 +259,6 @@ export default class bInput extends iInput implements iWidth, iSize, iIcon {
 	 */
 	@field({
 		after: 'valueStore',
-		watch: {
-			handler: 'onValueBufferUpdate',
-			immediate: true
-		},
-
 		init: (o, data) => o.sync.link('valueProp', (val) => {
 			val = val === undefined ? data.valueStore : val;
 			return val !== undefined ? String(val) : '';
@@ -591,11 +590,12 @@ export default class bInput extends iInput implements iWidth, iSize, iIcon {
 
 	/**
 	 * Handler: value buffer update
-	 * @param value
 	 */
-	protected onValueBufferUpdate(value: this['Value']): void {
+	@watch('valueBufferStore')
+	@hook('beforeDataCreate')
+	protected onValueBufferUpdate(): void {
 		if (!this.mask) {
-			this.value = value;
+			this.value = this.field.get<this['Value']>('valueBufferStore')!;
 		}
 	}
 
