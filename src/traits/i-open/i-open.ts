@@ -38,8 +38,7 @@ export default abstract class iOpen {
 	 */
 	static initCloseHelpers<T extends iBlock>(component: T & iOpen, events: CloseHelperEvents = {}): void {
 		const
-			// @ts-ignore
-			{async: $a, localEvent: $e} = component;
+			{async: $a, localEmitter: $e} = component.unsafe;
 
 		const
 			helpersGroup = {group: 'closeHelpers'},
@@ -88,8 +87,7 @@ export default abstract class iOpen {
 	 */
 	static initModEvents<T extends iBlock>(component: T): void {
 		const
-			// @ts-ignore
-			{localEvent: $e} = component;
+			{localEmitter: $e} = component.unsafe;
 
 		$e.on('block.mod.*.opened.*', (e: ModEvent) => {
 			if (e.type === 'remove' && e.reason !== 'removeMod') {

@@ -9,7 +9,7 @@
 import remoteState from 'core/component/state';
 import { ComponentInterface } from 'core/component';
 
-export { globalEvent, ResetType } from 'core/component';
+export { globalEmitter, ResetType } from 'core/component';
 export { CurrentPage } from 'core/router/interface';
 
 export type RemoteState = typeof remoteState;

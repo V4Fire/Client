@@ -47,7 +47,7 @@ export function runHook(hook: string, component: ComponentInterface, ...args: un
 	}
 
 	const
-		event = new QueueEmitter(),
+		emitter = new QueueEmitter(),
 		filteredHooks = <ComponentHook[]>[];
 
 	for (let i = 0; i < hooks.length; i++) {
@@ -59,16 +59,16 @@ export function runHook(hook: string, component: ComponentInterface, ...args: un
 			filteredHooks.push(hook);
 		}
 
-		event.on(hook.after, () => {
+		emitter.on(hook.after, () => {
 			const
 				res = args.length ? hook.fn.apply(component, args) : hook.fn.call(component);
 
 			if (res instanceof Promise) {
-				return res.then(() => nm ? event.emit(nm) : undefined);
+				return res.then(() => nm ? emitter.emit(nm) : undefined);
 			}
 
 			const
-				tasks = nm ? event.emit(nm) : undefined;
+				tasks = nm ? emitter.emit(nm) : undefined;
 
 			if (tasks !== undefined) {
 				return tasks;
@@ -79,7 +79,7 @@ export function runHook(hook: string, component: ComponentInterface, ...args: un
 	meta.hooks[hook] = filteredHooks;
 
 	const
-		tasks = event.drain();
+		tasks = emitter.drain();
 
 	if (tasks instanceof Promise) {
 		return tasks;

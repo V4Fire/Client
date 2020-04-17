@@ -293,7 +293,7 @@ export default abstract class iStaticPage extends iPage {
 	 * Synchronization for .localeStore field
 	 * @param locale
 	 */
-	@watch(['localeStore', 'globalEvent:i18n.setLocale'])
+	@watch(['localeStore', 'globalEmitter:i18n.setLocale'])
 	protected syncLocaleWatcher(locale: string): void {
 		if (this.locale === locale) {
 			return;
@@ -307,7 +307,7 @@ export default abstract class iStaticPage extends iPage {
 	 * Synchronization for .isAuth field
 	 * @param [e]
 	 */
-	@watch('globalEvent:session.*')
+	@watch('globalEmitter:session.*')
 	protected syncAuthWatcher(e?: Session): void {
 		this.isAuth = Boolean(e && e.auth);
 	}
@@ -316,7 +316,7 @@ export default abstract class iStaticPage extends iPage {
 	 * Synchronization for .isOnline field
 	 * @param e
 	 */
-	@watch('globalEvent:net.status')
+	@watch('globalEmitter:net.status')
 	protected syncOnlineWatcher(e: NetStatus): void {
 		this.isOnline = e.status;
 		this.lastOnlineDate = e.lastOnline;

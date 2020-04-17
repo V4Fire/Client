@@ -45,7 +45,7 @@ import {
 	component,
 	PARENT,
 
-	globalEvent,
+	globalEmitter,
 	hook,
 	computed,
 
@@ -1145,7 +1145,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 		after: 'async',
 		unique: true,
 		replace: true,
-		init: (o, d) => wrapEventEmitter(<Async>d.async, globalEvent)
+		init: (o, d) => wrapEventEmitter(<Async>d.async, globalEmitter)
 	})
 
 	protected readonly globalEmitter!: EventEmitterWrapper<this>;

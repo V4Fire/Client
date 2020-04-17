@@ -45,7 +45,7 @@ export function activate(component: iBlock, force?: boolean): void {
 		beforeCreate = ctx.lfc.isBeforeCreate();
 
 	const
-		{state: $s, rootEvent: $e} = ctx;
+		{state: $s, rootEmitter: $e} = ctx;
 
 	if (!ctx.isActivated || force) {
 		if (beforeCreate) {

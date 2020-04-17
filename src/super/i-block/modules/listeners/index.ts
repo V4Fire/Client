@@ -35,7 +35,7 @@ export function initGlobalListeners(component: iBlock, resetListener?: boolean):
 
 	const {
 		globalName,
-		globalEvent: $e,
+		globalEmitter: $e,
 		state: $s,
 		state: {needRouterSync}
 	} = ctx;

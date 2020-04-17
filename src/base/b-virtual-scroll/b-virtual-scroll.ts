@@ -217,7 +217,7 @@ export default class bVirtualScroll extends iData implements iItems {
 
 	/**
 	 * @override
-	 * @emits localEvent:localReady
+	 * @emits localEmitter:localReady
 	 */
 	protected initRemoteData(): CanUndef<unknown[]> {
 		if (!this.db) {
@@ -237,7 +237,7 @@ export default class bVirtualScroll extends iData implements iItems {
 			this.options = [];
 		}
 
-		this.localEvent.emit('localReady');
+		this.localEmitter.emit('localReady');
 	}
 
 	/** @see [[iItems.getItemKey]] */
@@ -255,11 +255,11 @@ export default class bVirtualScroll extends iData implements iItems {
 
 	/**
 	 *  @override
-	 *  @emits localEvent:localError
+	 *  @emits localEmitter:localError
 	 */
 	protected onRequestError(err: Error | RequestError<unknown>, retry: RetryRequestFn): void {
 		super.onRequestError(err, retry);
 
-		this.localEvent.emit('localError');
+		this.localEmitter.emit('localError');
 	}
 }
