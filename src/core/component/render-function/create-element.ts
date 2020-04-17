@@ -12,7 +12,7 @@ import * as c from 'core/component/const';
 import { getComponentRenderCtxFromVNode } from 'core/component/vnode';
 import { execRenderObject } from 'core/component/render';
 
-import { parseVNode } from 'core/component/flyweight';
+import { parseVNodeAsFlyweight } from 'core/component/flyweight';
 import { createFakeCtx, initComponentVNode } from 'core/component/functional';
 
 import { applyDynamicAttrs } from 'core/component/render-function/v-attrs';
@@ -61,7 +61,7 @@ export function wrapCreateElement(
 		const
 			hasOpts = Object.isPlainObject(opts),
 			attrOpts = hasOpts ? opts?.attrs : undefined,
-			composite = attrOpts?.['v4-composite'];
+			flyweightComponent = attrOpts?.['v4-flyweight-component'];
 
 		if (tag === 'v-render') {
 			return attrOpts && attrOpts.from || createElement();
@@ -70,8 +70,8 @@ export function wrapCreateElement(
 		let
 			tagName = tag;
 
-		if (composite && attrOpts) {
-			attrOpts['v4-composite'] = tagName = tagName === 'span' ? composite : tagName.dasherize();
+		if (flyweightComponent && attrOpts) {
+			attrOpts['v4-flyweight-component'] = tagName = tagName === 'span' ? flyweightComponent : tagName.dasherize();
 		}
 
 		const
@@ -92,11 +92,16 @@ export function wrapCreateElement(
 
 		let
 			vnode = ctx.renderTmp[renderKey],
-			needEl = Boolean(composite);
+			needLinkToEl = Boolean(flyweightComponent);
 
-		// Create functional component
-		if (!vnode && component && supports.functional && component.params.functional === true) {
-			needEl = true;
+		const needCreateFunctionalComponent =
+			!vnode &&
+			!flyweightComponent &&
+			supports.functional &&
+			component?.params.functional === true;
+
+		if (component && needCreateFunctionalComponent) {
+			needLinkToEl = true;
 
 			const
 				{componentName} = component,
@@ -137,7 +142,7 @@ export function wrapCreateElement(
 		}
 
 		if (!vnode) {
-			vnode = parseVNode(
+			vnode = parseVNodeAsFlyweight(
 				createElement.apply(ctx, arguments),
 				wrappedCreateElement,
 				ctx
@@ -176,7 +181,7 @@ export function wrapCreateElement(
 		}
 
 		// Add $el link if it doesn't exist
-		if (needEl && vnode.fakeInstance) {
+		if (needLinkToEl && vnode.fakeInstance) {
 			Object.defineProperty(vnode.fakeInstance, '$el', {
 				enumerable: true,
 				configurable: true,

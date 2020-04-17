@@ -39,13 +39,13 @@ export * from 'core/component/flyweight/interface';
  * @param createElement - function to create VNode element
  * @param parentComponent - parent component instance
  */
-export function parseVNode(
+export function parseVNodeAsFlyweight(
 	vnode: VNode,
 	createElement: CreateElement,
 	parentComponent: ComponentInterface
 ): VNode | FlyweightVNode {
 	const
-		compositeAttr = vnode?.data?.attrs?.['v4-composite'];
+		compositeAttr = vnode?.data?.attrs?.['v4-flyweight-component'];
 
 	if (!supports.composite || !compositeAttr) {
 		return vnode;

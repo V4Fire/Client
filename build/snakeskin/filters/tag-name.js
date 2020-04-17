@@ -30,7 +30,7 @@ module.exports = [
 	 */
 	function convertAliases(tag, attrs, rootTag) {
 		if (tag[0] === '@') {
-			attrs['v4-composite'] = attrs[':instance-of'] = [tag.slice(1)];
+			attrs['v4-flyweight-component'] = attrs[':instance-of'] = [tag.slice(1)];
 			return 'span';
 		}
 
