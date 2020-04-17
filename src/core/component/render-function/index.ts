@@ -44,7 +44,7 @@ export function wrapRender(meta: ComponentMeta): RenderFunction {
 
 			if (lastTimeOfRender && now - lastTimeOfRender < 100) {
 				const printableReason = lastSelfReasonToRender ?
-					{...lastSelfReasonToRender, path: lastSelfReasonToRender?.path.join('.')} : 'forceUpdate';
+					{...lastSelfReasonToRender, path: lastSelfReasonToRender.path.join('.')} : 'forceUpdate';
 
 				console.warn(
 					`There is too frequent redrawing of the component "${this.componentName}" (${renderCounter}).`,
