@@ -12,7 +12,7 @@
  */
 
 import { VNode } from 'core/component/engines';
-import { ComponentInterface, RenderReason } from 'core/component/interface';
+import { ComponentInterface } from 'core/component/interface';
 import { RenderObject } from 'core/component/render/interface';
 export * from 'core/component/render/interface';
 
@@ -46,7 +46,7 @@ export function execRenderObject(
  * Implements the base component force update API to a component instance
  *
  * @param component
- * @param forceUpdate - native function to update the component
+ * @param forceUpdate - native function to update a component
  */
 export function implementComponentForceUpdateAPI(component: ComponentInterface, forceUpdate: Function): void {
 	component.$forceUpdate = () => {
