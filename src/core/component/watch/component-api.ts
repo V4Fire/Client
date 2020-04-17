@@ -158,10 +158,10 @@ export function implementComponentWatchAPI(
 
 	// Don't force watching of system fields until it becomes necessary
 	systemFields.value[watcherInitializer] = () => {
-		/*delete systemFields.value[watcherInitializer];
+		delete systemFields.value[watcherInitializer];
 		const systemFieldsWatcher = watch(systemFields.value, {...watchOpts, immediate: true}, invalidateComputedCache);
 		watch(systemFieldsWatcher.proxy, watchOpts, emitAccessorEvents);
-		initWatcher(systemFields.key, systemFieldsWatcher);*/
+		initWatcher(systemFields.key, systemFieldsWatcher);
 	};
 
 	// Register the base watch API methods
