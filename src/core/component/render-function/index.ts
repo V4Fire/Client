@@ -35,19 +35,23 @@ export function wrapRender(meta: ComponentMeta): RenderFunction {
 		const
 			// @ts-ignore (access)
 			renderCounter = ++this.renderCounter,
-			now = performance.now();
+			now = Date.now();
 
 		if (!IS_PROD) {
 			const
 				// @ts-ignore (access)
 				{lastSelfReasonToRender, lastTimeOfRender} = this;
 
-			if (lastTimeOfRender && now - lastTimeOfRender < 100) {
+			let
+				diff;
+
+			// tslint:disable-next-line:no-conditional-assignment
+			if (lastTimeOfRender && (diff = now - lastTimeOfRender) < 300) {
 				const printableReason = lastSelfReasonToRender ?
 					{...lastSelfReasonToRender, path: lastSelfReasonToRender.path.join('.')} : 'forceUpdate';
 
 				console.warn(
-					`There is too frequent redrawing of the component "${this.componentName}" (${renderCounter}).`,
+					`There is too frequent redrawing of the component "${this.componentName}" (# ${renderCounter}; ${diff}ms).`,
 					printableReason
 				);
 			}
