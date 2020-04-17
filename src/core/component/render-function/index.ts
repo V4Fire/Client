@@ -46,7 +46,7 @@ export function wrapRender(meta: ComponentMeta): RenderFunction {
 				diff;
 
 			// tslint:disable-next-line:no-conditional-assignment
-			if (lastTimeOfRender && (diff = now - lastTimeOfRender) < 300) {
+			if (lastTimeOfRender && (diff = now - lastTimeOfRender) < 100) {
 				const printableReason = lastSelfReasonToRender ?
 					{...lastSelfReasonToRender, path: lastSelfReasonToRender.path.join('.')} : 'forceUpdate';
 
