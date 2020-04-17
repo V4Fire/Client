@@ -263,12 +263,12 @@ export default class bVirtualScroll extends iData implements iItems {
 	protected onRequestError(err: Error | RequestError<unknown>, retry: RetryRequestFn): void {
 		super.onRequestError(err, retry);
 
-		if (!isClearErr(err)) {
+		if (!isCollisionError(err)) {
 			this.localEvent.emit('localError');
 		}
 	}
 }
 
-function isClearErr(a: any): a is FullClearOptions {
+function isCollisionError(a: any): a is FullClearOptions {
 	return Object.isPlainObject(a) && a.reason && a.reason === 'collision';
 }
