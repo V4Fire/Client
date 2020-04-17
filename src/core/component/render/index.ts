@@ -49,30 +49,9 @@ export function execRenderObject(
  * @param forceUpdate - native function to update the component
  */
 export function implementComponentForceUpdateAPI(component: ComponentInterface, forceUpdate: Function): void {
-	component.$forceUpdate = (reason?: RenderReason) => {
+	component.$forceUpdate = () => {
 		if (!('renderCounter' in component)) {
 			return;
-		}
-
-		// @ts-ignore (access)
-		component.renderCounter++;
-
-		// @ts-ignore (access)
-		component.lastSelfReasonToRender = reason !== null ? reason : null;
-
-		if (!IS_PROD) {
-			const
-				now = performance.now(),
-
-				// @ts-ignore (access)
-				prev = component.lastTimeOfRender;
-
-			if (prev && now - prev < 100) {
-				console.warn('There is too frequent redrawing of a component template', component.componentName, {
-					...reason,
-					path: reason?.path.join('.')
-				});
-			}
 		}
 
 		forceUpdate.call(component);

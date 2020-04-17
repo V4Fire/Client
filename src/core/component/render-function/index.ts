@@ -32,8 +32,29 @@ export function wrapRender(meta: ComponentMeta): RenderFunction {
 		nativeCreate: CreateElement,
 		baseCtx: RenderContext
 	): VNode {
+		const
+			// @ts-ignore (access)
+			renderCounter = ++this.renderCounter,
+			now = performance.now();
+
+		if (!IS_PROD) {
+			const
+				// @ts-ignore (access)
+				{lastSelfReasonToRender, lastTimeOfRender} = this;
+
+			if (lastTimeOfRender && now - lastTimeOfRender < 100) {
+				const printableReason = lastSelfReasonToRender ?
+					{...lastSelfReasonToRender, path: lastSelfReasonToRender?.path.join('.')} : 'forceUpdate';
+
+				console.warn(
+					`There is too frequent redrawing of the component "${this.componentName}" (${renderCounter}).`,
+					printableReason
+				);
+			}
+		}
+
 		// @ts-ignore (access)
-		this.lastTimeOfRender = performance.now();
+		this.lastTimeOfRender = now;
 
 		const
 			{methods: {render: r}} = meta;

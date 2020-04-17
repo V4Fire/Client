@@ -269,9 +269,8 @@ export abstract class ComponentInterface<
 
 	/**
 	 * Forces the component to re-render
-	 * @param [reason] - reason of re-rendering
 	 */
-	$forceUpdate(reason?: RenderReason): void {}
+	$forceUpdate(): void {}
 
 	/**
 	 * Executes the specified function on a next render tick

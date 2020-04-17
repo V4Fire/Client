@@ -111,7 +111,7 @@ export function bindRemoteWatchers(component: ComponentInterface, params?: BindR
 				};
 
 				if (!customAsync) {
-					if (!asyncParams.label) {
+					if (!asyncParams.label && !watchInfo.immediate) {
 						let
 							defLabel;
 

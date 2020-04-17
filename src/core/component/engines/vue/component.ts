@@ -50,15 +50,17 @@ export function getComponent(meta: ComponentMeta): ComponentOptions<ComponentDri
 			init.beforeDataCreateState(ctx);
 
 			watch(ctx.$fields, {deep: true, immediate: true}, (value, oldValue, info) => {
+				ctx.lastSelfReasonToRender = {
+					path: info.path,
+					value,
+					oldValue
+				};
+
 				if (beforeRenderHooks[ctx.hook]) {
 					return;
 				}
 
-				ctx.$forceUpdate({
-					value,
-					oldValue,
-					path: info.path
-				});
+				ctx.$forceUpdate();
 
 				let
 					{obj} = info;
