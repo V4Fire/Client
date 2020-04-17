@@ -85,4 +85,28 @@ export default class Opt<C extends iBlock = iBlock> extends Friend<C> {
 		const key = Object.fastHash(literal);
 		return literalCache[key] = literalCache[key] || Object.freeze(<any>literal);
 	}
+
+	/**
+	 * Shows any changes of the component properties.
+	 * This method is useful to debug.
+	 */
+	showAnyChanges(): void {
+		Object.forEach(this.component.$systemFields, (val, key) => {
+			this.component.watch(key, {deep: true}, (val, oldVal, info) => {
+				console.log(`System field "${key}" (${this.component.componentName})`, val, oldVal, info?.path);
+			});
+		});
+
+		Object.forEach(this.component.$fields, (val, key) => {
+			this.component.watch(key, {deep: true}, (val, oldVal, info) => {
+				console.log(`Field "${key}" (${this.component.componentName})`, val, oldVal, info?.path);
+			});
+		});
+
+		Object.forEach(this.component.$props, (val, key) => {
+			this.component.watch(key, {deep: true}, (val, oldVal, info) => {
+				console.log(`Prop "${key}" (${this.component.componentName})`, val, oldVal, info?.path);
+			});
+		});
+	}
 }
