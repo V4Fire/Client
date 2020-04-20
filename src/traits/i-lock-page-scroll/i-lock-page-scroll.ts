@@ -160,7 +160,7 @@ export default abstract class iLockPageScroll {
 				body.style.paddingRight = component[$$.paddingRight] || '';
 				res();
 
-			}, {group, label: $$.unlock});
+			}, {group, label: $$.unlockRaf, join: true});
 
 		}), {
 			group,
