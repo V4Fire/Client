@@ -11,7 +11,8 @@
 const
 	$C = require('collection.js'),
 	stylus = require('stylus'),
-	{config} = require('@pzlr/build-core');
+	{config} = require('@pzlr/build-core'),
+	runtime = config.runtime();
 
 let
 	DS = {};
@@ -41,8 +42,6 @@ function setVar(path) {
 		variable = `--${path.split('.').join('-')}`;
 
 	$C(cssVars).set(`var(${variable})`, path);
-	$C(cssVars).set(`var(${variable}-diff)`, `diff.${path}`);
-
 	cssVars.__map__.set(path, [variable, $C(DS).get(path)]);
 }
 
@@ -124,13 +123,11 @@ module.exports = function (style) {
 
 			if (value) {
 				const
-					__vars__ = $C(cssVars).get(`components.${string}`),
-					__diffVars__ = $C(cssVars).get(`diff.components.${string}`);
+					__vars__ = $C(cssVars).get(`components.${string}`);
 
 				return stylus.utils.coerce({
 					...value,
-					__vars__,
-					__diffVars__
+					__vars__
 				}, true);
 			}
 

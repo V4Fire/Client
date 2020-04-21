@@ -203,8 +203,9 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 			'noGlobals': false,
 			'svgSprite': true,
 
-			'ds-diff': false,
 			'ds-vars': false,
+			'theme': false,
+			'includes-ds-themes': true,
 
 			'blockNames': false,
 			'passDesignSystem': false,
