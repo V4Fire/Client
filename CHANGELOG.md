@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-beta.270 (2020-04-21)
+
+#### :bug: Bug Fix
+
+* Fixed repetitive iLockPageScroll.unlock calls `traits/iLockPageScroll/lock`
+
 ## v3.0.0-beta.269 (2020-04-15)
 
 #### :rocket: New Feature
