@@ -149,8 +149,7 @@ export default class bImage extends iBlock implements iProgress, iVisible {
 
 		this.async
 			.promise(img.init, {label: $$.loadImage})
-			.then(() => this.onImageLoadSuccess(img), this.onImageLoadFailed)
-			.then(() => this.updateImageRatio(img));
+			.then(() => this.onImageLoadSuccess(img), this.onImageLoadFailed);
 	}
 
 	/**
@@ -186,11 +185,7 @@ export default class bImage extends iBlock implements iProgress, iVisible {
 	 * Updates an image ratio according to its height and width
 	 * @param img
 	 */
-	protected updateImageRatio(img: HTMLImageElement | string): void {
-		if (Object.isString(img) || this.ratio !== undefined) {
-			return;
-		}
-
+	protected setCalculatedImageRatio(img: HTMLImageElement): void {
 		const
 			{img: imgRef} = this.$refs;
 
@@ -233,6 +228,10 @@ export default class bImage extends iBlock implements iProgress, iVisible {
 		const
 			{img: imgRef} = this.$refs,
 			cssImg = Object.isString(img) ? img : `url("${img.currentSrc}")`;
+
+		if (!Object.isString(img) && this.ratio === undefined) {
+			this.setCalculatedImageRatio(img);
+		}
 
 		this.setMod('progress', false);
 		this.setMod('showError', false);
