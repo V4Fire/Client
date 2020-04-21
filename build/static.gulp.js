@@ -45,10 +45,9 @@ module.exports = function (gulp = require('gulp')) {
 
 			gulp.src(a('favicons/*'))
 				.pipe($.plumber())
-				.pipe($.image({
-					pngquant: true,
-					concurrent: 10
-				}))
+				.pipe($.imagemin([
+					$.imagemin.optipng({optimizationLevel: 5})
+				]))
 
 				.pipe(gulp.dest(a('favicons')))
 		]);
@@ -105,14 +104,15 @@ module.exports = function (gulp = require('gulp')) {
 
 	gulp.task('static:image', () => {
 		function f(src) {
-			const isArr = Array.isArray(src);
+			const
+				isArr = Array.isArray(src);
+
 			return gulp.src([path.join(isArr ? src[0] : src, '/**/*.@(png|svg)')].concat(isArr ? src[1] || [] : []))
 				.pipe($.plumber())
-				.pipe($.image({
-					pngquant: true,
-					svgo: true,
-					concurrent: 10
-				}))
+				.pipe($.imagemin([
+					$.imagemin.optipng({optimizationLevel: 5}),
+					$.imagemin.svgo()
+				]))
 
 				.pipe(gulp.dest(isArr ? src[0] : src));
 		}
