@@ -134,7 +134,7 @@ module.exports = function (gulp = require('gulp')) {
 			return gulp.src([path.join(isArr ? src[0] : src, '/**/*.@(png|jpg|jpeg)')].concat(isArr ? src[1] || [] : []))
 				.pipe($.plumber())
 				.pipe($.imagemin([
-					$.imagemin.webp({quality: 75})
+					$.imagemin.webp({quality: 100})
 				]))
 				.pipe($.extReplace('webp'))
 				.pipe(gulp.dest(isArr ? src[0] : src))

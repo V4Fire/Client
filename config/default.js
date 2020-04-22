@@ -157,6 +157,9 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		return {
 			svgo: {
 				removeUnknownsAndDefaults: false
+			},
+			webp: {
+				quality: 75
 			}
 		};
 	},
