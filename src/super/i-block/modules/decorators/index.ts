@@ -64,7 +64,7 @@ export const p = pDecorator as <CTX extends iBlock = iBlock['unsafe'], A = unkno
  * @override
  */
 export const prop = propDecorator as <CTX extends iBlock = iBlock['unsafe'], A = unknown, B = A>(
-	params?: CanArray<Function> | ObjectConstructor | ComponentProp<CTX, A, B>
+	params?: CanArray<FunctionConstructor | Function> | ObjectConstructor | ComponentProp<CTX, A, B>
 ) => Function;
 
 /**
