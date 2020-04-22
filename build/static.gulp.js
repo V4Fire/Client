@@ -123,6 +123,25 @@ module.exports = function (gulp = require('gulp')) {
 		]);
 	});
 
+	gulp.task('static:webp', () => {
+		function f(src) {
+			const
+				isArr = Array.isArray(src);
+
+			return gulp.src([path.join(isArr ? src[0] : src, '/**/*.@(png|jpg|jpeg)')].concat(isArr ? src[1] || [] : []))
+				.pipe($.plumber())
+				.pipe($.imagemin([
+					$.imagemin.webp({quality: 75})
+				]))
+				.pipe($.extReplace('webp'))
+				.pipe(gulp.dest(isArr ? src[0] : src))
+		}
+
+		return merge([
+			f(a())
+		]);
+	});
+
 	gulp.task('static:gzip', gulp.series([gulp.parallel(['static:image', 'static:html', 'static:css', 'static:js']), () => {
 		function f(src) {
 			return gulp.src([path.join(src, '/**/*'), `!${path.join(src, '/**/*.gz')}`])

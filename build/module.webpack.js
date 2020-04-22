@@ -237,7 +237,7 @@ module.exports = async function ({buildId, plugins}) {
 	});
 
 	loaders.rules.set('img', {
-		test: /\.(?:png|gif|jpe?g)$/,
+		test: /\.(?:png|webp|gif|jpe?g)$/,
 		use: [
 			{
 				loader: 'url',
