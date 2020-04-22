@@ -11,11 +11,14 @@
 module.exports = function (gulp = require('gulp')) {
 	const
 		path = require('upath'),
-		config = require('config');
+		config = require('config'),
+		webp = require('imagemin-webp');
 
 	const
 		merge = require('merge2'),
 		$ = require('gulp-load-plugins')({scope: ['optionalDependencies']});
+
+	$.imageming.webp = webp;
 
 	function a(file = '') {
 		return path.join(config.src.assets(), file);
