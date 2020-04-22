@@ -6,6 +6,11 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+/**
+ * [[include:traits/i-history/README.md]]
+ * @packageDocumentation
+ */
+
 import iBlock from 'super/i-block/i-block';
 import History from 'traits/i-history/history';
 
