@@ -168,14 +168,7 @@ export default class bImage extends iBlock implements iProgress, iVisible {
 				tmpPadding = `${(1 / this.ratio) * 100}%`;
 
 			} else if (!Object.isString(img) && this.ratio !== 0) {
-				let
-					ratio = 1;
-
-				if (img && (img.naturalHeight || img.naturalWidth)) {
-					ratio = img.naturalHeight === 0 ? 1 : img.naturalWidth / img.naturalHeight;
-				}
-
-				tmpPadding = `${(1 / ratio) * 100}%`;
+				tmpPadding = '100%';
 
 			} else {
 				tmpPadding = '';
@@ -186,6 +179,22 @@ export default class bImage extends iBlock implements iProgress, iVisible {
 			{paddingBottom: tmpPadding} :
 			{height: '100%'}
 		);
+	}
+
+	/**
+	 * Updates an image ratio according to its height and width
+	 * @param img
+	 */
+	protected setCalculatedImageRatio(img: HTMLImageElement): void {
+		const
+			{img: imgRef} = this.$refs;
+
+		if (img && (img.naturalHeight || img.naturalWidth)) {
+			const
+				ratio = img.naturalHeight === 0 ? 1 : img.naturalWidth / img.naturalHeight;
+
+			imgRef.style.paddingBottom = `${(1 / ratio) * 100}%`;
+		}
 	}
 
 	/**
@@ -219,6 +228,10 @@ export default class bImage extends iBlock implements iProgress, iVisible {
 		const
 			{img: imgRef} = this.$refs,
 			cssImg = Object.isString(img) ? img : `url("${img.currentSrc}")`;
+
+		if (!Object.isString(img) && this.ratio === undefined) {
+			this.setCalculatedImageRatio(img);
+		}
 
 		this.setMod('progress', false);
 		this.setMod('showError', false);
