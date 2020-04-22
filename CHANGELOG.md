@@ -11,11 +11,16 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v3.0.0-beta.270 (2020-04-21)
+## v3.0.0-beta.270 (2020-04-22)
 
 #### :bug: Bug Fix
 
-* Fixed repetitive `iLockPageScroll.unlock` calls `traits/iLockPageScroll/lock`
+* [Fixed repetitive `iLockPageScroll.unlock` calls `traits/iLockPageScroll/lock`](https://github.com/V4Fire/Client/pull/200)
+* [Fixed the default image ratio `bImage`](https://github.com/V4Fire/Client/pull/197)
+
+#### :house: Internal
+
+* [Added README for `iHistory`](https://github.com/V4Fire/Client/pull/199)
 
 ## v3.0.0-beta.269 (2020-04-15)
 
