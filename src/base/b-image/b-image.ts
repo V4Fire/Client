@@ -15,11 +15,10 @@ import iProgress from 'traits/i-progress/i-progress';
 import iVisible from 'traits/i-visible/i-visible';
 
 import iBlock, { component, prop, hook, wait, ModsDecl } from 'super/i-block/i-block';
-export * from 'super/i-block/i-block';
+import { SizeType } from 'base/b-image/interface';
 
-export type SizeType =
-	'cover' |
-	'contain';
+export * from 'super/i-block/i-block';
+export * from 'base/b-image/interface';
 
 export const
 	$$ = symbolGenerator();
@@ -185,14 +184,12 @@ export default class bImage extends iBlock implements iProgress, iVisible {
 	 * Updates an image ratio according to its height and width
 	 * @param img
 	 */
-	protected setCalculatedImageRatio(img: HTMLImageElement): void {
+	protected updateCalculatedImageRatio(img: HTMLImageElement): void {
 		const
 			{img: imgRef} = this.$refs;
 
 		if (img && (img.naturalHeight || img.naturalWidth)) {
-			const
-				ratio = img.naturalHeight === 0 ? 1 : img.naturalWidth / img.naturalHeight;
-
+			const ratio = img.naturalHeight === 0 ? 1 : img.naturalWidth / img.naturalHeight;
 			imgRef.style.paddingBottom = `${(1 / ratio) * 100}%`;
 		}
 	}
@@ -230,7 +227,7 @@ export default class bImage extends iBlock implements iProgress, iVisible {
 			cssImg = Object.isString(img) ? img : `url("${img.currentSrc}")`;
 
 		if (!Object.isString(img) && this.ratio === undefined) {
-			this.setCalculatedImageRatio(img);
+			this.updateCalculatedImageRatio(img);
 		}
 
 		this.setMod('progress', false);
