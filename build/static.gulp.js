@@ -18,7 +18,7 @@ module.exports = function (gulp = require('gulp')) {
 		merge = require('merge2'),
 		$ = require('gulp-load-plugins')({scope: ['optionalDependencies']});
 
-	$.imageming.webp = webp;
+	$.imagemin.webp = webp;
 
 	function a(file = '') {
 		return path.join(config.src.assets(), file);
