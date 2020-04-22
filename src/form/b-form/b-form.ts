@@ -13,7 +13,7 @@ import 'core/data';
 //#endif
 
 import iVisible from 'traits/i-visible/i-visible';
-import iInput from 'super/i-input/i-input';
+import iInput, { FormValue } from 'super/i-input/i-input';
 
 //#if runtime has bButton
 import bButton from 'form/b-button/b-button';
@@ -425,6 +425,52 @@ export default class bForm extends iData {
 		}
 
 		this.emit('submitSuccess', res, submitCtx);
+	}
+
+	/**
+	 * Returns values of child form elements grouped by names
+	 * @param [validation] - if you need only valid value
+	 */
+	async values(validation?: ValidateParams): Promise<Dictionary<CanArray<FormValue>>> {
+		const
+			els = validation ? await this.validate(validation) : await this.elements;
+
+		if (els && els.length) {
+			const
+				result = {},
+				tasks = <Promise<unknown>[]>[];
+
+			for (let i = 0; i < els.length; i++) {
+				const
+					el = els[i],
+					{name} = el;
+
+				if (!name || result.hasOwnProperty(name)) {
+					continue;
+				}
+
+				tasks.push((async () => {
+					let
+						v = await el.groupFormValue;
+
+					if (el.formConverter) {
+						v = (<Function[]>[]).concat(el.formConverter).reduce((res, fn) => fn.call(this, res), v);
+					}
+
+					if (v !== undefined) {
+						result[name] = v;
+					}
+				})());
+			}
+
+			await Promise.all(
+				tasks
+			);
+
+			return result;
+		}
+
+		return {};
 	}
 
 	/** @override */

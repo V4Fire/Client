@@ -11,6 +11,29 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-beta.270 (2020-04-22)
+
+#### :bug: Bug Fix
+
+* [Fixed repetitive `iLockPageScroll.unlock` calls `traits/iLockPageScroll/lock`](https://github.com/V4Fire/Client/pull/200)
+* [Fixed the default image ratio `bImage`](https://github.com/V4Fire/Client/pull/197)
+
+#### :house: Internal
+
+* [Added README for `iHistory`](https://github.com/V4Fire/Client/pull/199)
+
+## v3.0.0-beta.269 (2020-04-15)
+
+#### :rocket: New Feature
+
+* Added `base/bBottomSlide`
+* Added `traits/iHistory`
+* Added `core/component/directive/v-update-on`
+
+#### :bug: Bug Fix
+
+* Fixed scrolling of nested pages `traits/iLockPageScroll/lock`
+
 ## v3.0.0-beta.268 (2020-04-08)
 
 #### :bug: Bug Fix
@@ -381,7 +404,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :bug: Bug Fix
 
-* [https://github.com/V4Fire/Client/pull/143](Correctly process alias and redirect fields)
+* [Correctly process alias and redirect fields](https://github.com/V4Fire/Client/pull/143)
 
 ## v3.0.0-beta.223 (2019-11-28)
 

@@ -25,7 +25,7 @@ export default abstract class iLockPageScroll {
 	 */
 	static lock<T extends iBlock>(component: T, scrollableNode?: Element): Promise<void> {
 		const
-			{$root: r, $root: {async: $a}} = component.unsafe;
+			{$root: r, $root: {unsafe: {async: $a}}} = component;
 
 		let
 			promise = Promise.resolve();
@@ -51,15 +51,26 @@ export default abstract class iLockPageScroll {
 				);
 
 				$a.on(scrollableNode, 'touchmove', (e: TouchEvent) => {
+					let
+						scrollTarget = <HTMLElement>e.target || scrollableNode;
+
+					while (scrollTarget !== scrollableNode) {
+						if (scrollTarget.scrollHeight > scrollTarget.clientHeight || !scrollTarget.parentElement) {
+							break;
+						}
+
+						scrollTarget = scrollTarget.parentElement;
+					}
+
 					const {
 						scrollTop,
 						scrollHeight,
 						clientHeight
-					} = scrollableNode;
+					} = <HTMLElement>scrollTarget;
 
 					const
 						clientY = e.targetTouches[0].clientY - component[$$.initialY],
-						isOnTop = clientY > 0 && scrollTop  === 0,
+						isOnTop = clientY > 0 && scrollTop === 0,
 						isOnBottom = clientY < 0 && scrollTop + clientHeight + 1 >= scrollHeight;
 
 					if ((isOnTop || isOnBottom) && e.cancelable) {
@@ -93,7 +104,7 @@ export default abstract class iLockPageScroll {
 
 					component[$$.scrollTop] = scrollTop;
 					body.style.top = `-${scrollTop}px`;
-					r.setRootMod('lockScrollMobile', true, r);
+					r.setRootMod('lockScrollMobile', true);
 
 					res();
 
@@ -109,7 +120,7 @@ export default abstract class iLockPageScroll {
 
 					component[$$.paddingRight] = body.style.paddingRight;
 					body.style.paddingRight = `${scrollBarWidth}px`;
-					r.setRootMod('lockScrollDesktop', true, r);
+					r.setRootMod('lockScrollDesktop', true);
 
 					res();
 
@@ -127,7 +138,7 @@ export default abstract class iLockPageScroll {
 	 */
 	static unlock<T extends iBlock>(component: T): Promise<void> {
 		const
-			{$root: r, $root: {async: $a}} = component.unsafe,
+			{$root: r, $root: {unsafe: {async: $a}}} = component.unsafe,
 			{body} = document;
 
 		if (!r[$$.isLocked]) {
@@ -138,8 +149,8 @@ export default abstract class iLockPageScroll {
 			$a.off({group});
 
 			$a.requestAnimationFrame(() => {
-				r.removeRootMod('lockScrollMobile', true, r);
-				r.removeRootMod('lockScrollDesktop', true, r);
+				r.removeRootMod('lockScrollMobile', true);
+				r.removeRootMod('lockScrollDesktop', true);
 				r[$$.isLocked] = false;
 
 				if (is.Android) {
@@ -149,7 +160,7 @@ export default abstract class iLockPageScroll {
 				body.style.paddingRight = component[$$.paddingRight] || '';
 				res();
 
-			}, {group, label: $$.unlock});
+			}, {group, label: $$.unlockRaf, join: true});
 
 		}), {
 			group,

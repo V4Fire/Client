@@ -41,6 +41,11 @@ export function inViewFactory(): InViewAdapter {
 export let
 	InView: InViewAdapter = inViewFactory();
 
+if (!InView.hasAdaptee) {
+	// @ts-ignore
+	InView.setInstance(new Adaptee());
+}
+
 ComponentDriver.directive('in-view', {
 	inserted(el: Element, {value}: DirectiveOptions): void {
 		if (!Adaptee || !value) {

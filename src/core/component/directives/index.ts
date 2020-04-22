@@ -17,3 +17,7 @@ import 'core/component/directives/resize';
 //#if runtime has directives/image
 import 'core/component/directives/image';
 //#endif
+
+//#if runtime has directives/update-on
+import 'core/component/directives/update-on';
+//#endif

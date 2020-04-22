@@ -1067,6 +1067,19 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	}
 
 	/**
+	 * Self event emitter
+	 */
+	@system({
+		atom: true,
+		after: 'async',
+		unique: true,
+		replace: true,
+		init: (o, d) => wrapEventEmitter(<Async>d.async, o)
+	})
+
+	protected readonly selfEmitter!: EventEmitterWrapper<this>;
+
+	/**
 	 * Local event emitter: all events that are fired from this emitter don't bubble
 	 */
 	@system({
