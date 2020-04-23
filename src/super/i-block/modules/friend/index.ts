@@ -58,6 +58,11 @@ export default class Friend<C extends iBlock = iBlock> {
 		return this.component.block;
 	}
 
+	/** @see [[iBlock.provide]] */
+	protected get provide(): this['C']['provide'] {
+		return this.component.provide;
+	}
+
 	/** @see [[iBlock.localEmitter]] */
 	protected get localEmitter(): this['C']['localEmitter'] {
 		return this.component.localEmitter;
