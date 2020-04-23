@@ -97,7 +97,7 @@ export function initProps(
  * isTypeCanBeFunc([Function, Boolean]); // true
  * ```
  */
-export function isTypeCanBeFunc(type: CanUndef<CanArray<Function>>): boolean {
+export function isTypeCanBeFunc(type: CanUndef<CanArray<Function | FunctionConstructor>>): boolean {
 	if (!type) {
 		return false;
 	}
