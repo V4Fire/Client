@@ -26,7 +26,7 @@ export const components = new Map<Function | string, ComponentMeta>();
 
 /**
  * Map of component initializers:
- * by default all components don't register automatically but a first call from a template,
+ * by default all components don't register automatically, but the first call from a template,
  * and this map contains functions to register components.
  */
 export const componentInitializers = Object.createDict<Function[]>();

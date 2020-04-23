@@ -48,7 +48,7 @@ export * from 'core/component/decorators/interface';
  * ```
  */
 export const prop = paramsFactory<
-	CanArray<Function> |
+	CanArray<Function | FunctionConstructor> |
 	ObjectConstructor |
 	DecoratorProp
 >('props', (p) => {

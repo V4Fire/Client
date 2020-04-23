@@ -37,6 +37,8 @@ import { deprecate } from 'core/functools';
  * }
  * ```
  */
+export function wrapAsDelegateHandler<T extends Function>(selector: string, fn: T): T;
+export function wrapAsDelegateHandler(selector: string): Function;
 export function wrapAsDelegateHandler(selector: string, fn?: Function): Function {
 	function wrapper(e: Event): boolean {
 		const

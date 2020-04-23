@@ -55,9 +55,9 @@ export default class DOM<C extends iBlock = iBlock> extends Friend<C> {
 	 *
 	 * @see [[wrapAsDelegateHandler]]
 	 * @param selector - selector to delegate
-	 * @param [fn]
+	 * @param fn
 	 */
-	delegate(selector: string, fn?: Function): Function {
+	delegate<T extends Function>(selector: string, fn: T): T {
 		return wrapAsDelegateHandler(selector, fn);
 	}
 
@@ -67,16 +67,8 @@ export default class DOM<C extends iBlock = iBlock> extends Friend<C> {
 	 * @param name - element name
 	 * @param fn
 	 */
-	delegateElement(name: string, fn: Function): CanPromise<Function> {
-		const res = this.component.lfc.execCbAfterBlockReady(() =>
-			this.delegate(this.block.getElSelector(name), fn)
-		);
-
-		if (Object.isPromise(res)) {
-			return res.then((fn) => fn || ((Any)));
-		}
-
-		return res || ((Any));
+	delegateElement<T extends Function>(name: string, fn: T): T {
+		return this.delegate(this.provide.elClasses({[name]: {}}).join('.'), fn);
 	}
 
 	/**
