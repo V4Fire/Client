@@ -9,7 +9,7 @@
 import { ComponentOptions, ComponentMeta, ComponentInterface, ComponentConstructor } from 'core/component/interface';
 
 /**
- * Information about a component that can be taken from a constructor
+ * Information about a component can be taken from a constructor
  */
 export interface ComponentConstructorInfo {
 	/**
@@ -104,7 +104,7 @@ export interface PropertyInfo {
 	fullPath: string;
 
 	/**
-	 * Original path of the property
+	 * The original path of the property
 	 *
 	 * @example
 	 * ```js
@@ -124,7 +124,7 @@ export interface PropertyInfo {
 	accessor?: string;
 
 	/**
-	 * Type of an accessor that is tied with the property
+	 * Type of accessor that is tied with the property
 	 */
 	accessorType?: AccessorType;
 

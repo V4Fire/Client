@@ -74,7 +74,7 @@ export interface RenderReason {
 }
 
 /**
- * Abstract class that represents Vue compatible component API
+ * Abstract class represents Vue compatible component API
  */
 export abstract class ComponentInterface<
 	C extends ComponentInterface = ComponentInterface<any, any>,
@@ -101,7 +101,7 @@ export abstract class ComponentInterface<
 	readonly hook!: Hook;
 
 	/**
-	 * True if the component shouldn't destroyed after removal from DOM
+	 * True if the component shouldn't be destroyed after removal from DOM
 	 * (only for functional components)
 	 */
 	readonly keepAlive!: boolean;
@@ -185,7 +185,7 @@ export abstract class ComponentInterface<
 	protected readonly $remoteParent?: C;
 
 	/**
-	 * Special symbol that is tied with async rendering
+	 * The special symbol that is tied with async rendering
 	 */
 	protected readonly $asyncLabel!: symbol;
 
@@ -230,12 +230,12 @@ export abstract class ComponentInterface<
 	protected readonly $data!: Dictionary;
 
 	/**
-	 * Raw map of component fields that can force re-rendering
+	 * The raw map of component fields that can force re-rendering
 	 */
 	protected readonly $fields!: Dictionary;
 
 	/**
-	 * Raw map of component fields that can force re-rendering
+	 * The raw map of component fields that can force re-rendering
 	 */
 	protected readonly $systemFields!: Dictionary;
 

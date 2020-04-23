@@ -85,7 +85,7 @@ export function getComponent(meta: ComponentMeta): ComponentOptions<ComponentDri
 							$set.call(ctx, obj, key, value);
 						}
 
-					// Because Vue doesn't see changes from Map/Set structures, we must to use this hack
+					// Because Vue doesn't see changes from Map/Set structures, we must use this hack
 					} else if (Object.isSet(obj) || Object.isMap(obj) || Object.isWeakMap(obj) || Object.isWeakSet(obj)) {
 						Object.set(ctx, info.path.slice(0, -1), fakeMapSetCopy(obj));
 					}

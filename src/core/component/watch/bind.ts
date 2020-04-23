@@ -68,7 +68,7 @@ export function bindRemoteWatchers(component: ComponentInterface, params?: BindR
 
 		let
 			// Link to a context of the watcher,
-			// by default it is a component that is passed to the function
+			// by default it is a component is passed to the function
 			watcherCtx = component,
 
 			// True if this watcher can initialize only when component is created
@@ -142,13 +142,13 @@ export function bindRemoteWatchers(component: ComponentInterface, params?: BindR
 
 				// Right now we need to create a wrapper for our "raw" handler,
 				// because there are some conditions for the watcher:
-				// 1. it can provide or not provide arguments from an event that it listen;
-				// 2. the handler can be specified as a function or as a method name from a component.
+				// 1. It can provide or not provide arguments from an event that it listen;
+				// 2. The handler can be specified as a function or as a method name from a component.
 
 				// Also, we have two different cases:
-				// 1. we listen to custom event, OR we watch for some component property,
+				// 1. We listen to custom event, OR we watch for some component property,
 				// but we don't need to analyze the old value of the property;
-				// 2. we watch for some component property and we need to analyze the old value of the property.
+				// 2. We watch for some component property, and we need to analyze the old value of the property.
 
 				// These cases are based on one problem: if we watch for some property that isn't primitive,
 				// like a hash table or a list, and we add a new item to this structure but don't change the original object,
@@ -203,7 +203,7 @@ export function bindRemoteWatchers(component: ComponentInterface, params?: BindR
 				} else {
 					// tslint:disable-next-line:only-arrow-functions
 					handler = function (val?: unknown): void {
-						// We can safely refers to the second argument without increasing of the handler length by using arguments
+						// We can safely refer to the second argument without increasing of the handler length by using arguments
 						const oldVal = arguments[1];
 
 						const
@@ -233,7 +233,7 @@ export function bindRemoteWatchers(component: ComponentInterface, params?: BindR
 				}
 
 				// Apply a watcher wrapper if it specified.
-				// Mind that the wrapper must returns a function as the result,
+				// Mind that the wrapper must return a function as the result,
 				// but it can be packed to a promise.
 				if (watchInfo.wrapper) {
 					handler = <typeof handler>watchInfo.wrapper(component, handler);
@@ -244,7 +244,7 @@ export function bindRemoteWatchers(component: ComponentInterface, params?: BindR
 				if (handler instanceof Promise) {
 					$a.promise(handler, asyncParams).then((handler) => {
 						if (customWatcher) {
-							// True if an event can be listen by using the component itself,
+							// True if an event can listen by using the component itself,
 							// because the watcherCtx doesn't look like an event emitter
 							const needDefEmitter =
 								watcherCtx === component &&
@@ -276,7 +276,7 @@ export function bindRemoteWatchers(component: ComponentInterface, params?: BindR
 
 				} else {
 					if (customWatcher) {
-						// True if an event can be listen by using the component itself,
+						// True if an event can listen by using the component itself,
 						// because the watcherCtx doesn't look like an event emitter
 						const needDefEmitter =
 							watcherCtx === component &&

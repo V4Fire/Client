@@ -70,7 +70,7 @@ export function initFields(
 		}
 
 		// If a field is atomic, or if the field doesn't have an initializer:
-		// if the field doesn't have the initializer it guarantee doesn't have any dependencies
+		// if the field doesn't have the initializer it guarantees doesn't have any dependencies
 		if (el.atom || !el.init && (el.default !== undefined || key in instance)) {
 			// If true, then the field doesn't have any dependencies and can be initialized right now
 			let canInit = true;
@@ -87,7 +87,7 @@ export function initFields(
 						continue;
 					}
 
-					// Check that the dependency is not already initialized.
+					// Check the dependency is not already initialized.
 					// NULL is a special value to prevent undefined behaviour
 					// when a property already initialized with an undefined value.
 					if (!(waitFieldKey in store) || store[waitFieldKey] === NULL) {
@@ -158,7 +158,7 @@ export function initFields(
 				continue;
 			}
 
-			// If true, then all dependencies of the fields is already initialized an we can initialize this field
+			// If true, then all dependencies of the fields is already initialized, and we can initialize this field
 			let canInit = true;
 
 			// Set of dependencies to wait
@@ -255,7 +255,7 @@ export function initFields(
 				continue;
 			}
 
-			// If true, then all dependencies of the fields is already initialized an we can initialize this field
+			// If true, then all dependencies of the fields is already initialized, and we can initialize this field
 			let canInit = true;
 
 			// Set of dependencies to wait

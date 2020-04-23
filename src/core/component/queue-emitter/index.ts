@@ -15,7 +15,7 @@ import { EventListener } from 'core/component/queue-emitter/interface';
 export * from 'core/component/queue-emitter/interface';
 
 /**
- * Special kind of an event emitter that supports queues of events
+ * The special kind of event emitter that supports queues of events
  */
 export default class QueueEmitter {
 	/**
@@ -30,7 +30,7 @@ export default class QueueEmitter {
 
 	/**
 	 * Attaches a callback for the specified set of events.
-	 * The callback will invoked only when all specified events was emitted.
+	 * The callback will be invoked only when all specified events was emitted.
 	 *
 	 * @param event - set of events (can be undefined)
 	 * @param cb

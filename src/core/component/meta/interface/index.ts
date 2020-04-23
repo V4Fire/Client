@@ -100,7 +100,7 @@ export interface ComponentMeta {
 	watchers: Dictionary<WatchObject[]>;
 
 	/**
-	 * Map of dependencies to watch (to invalidate cache of computed fields)
+	 * Map of dependencies to watch (to invalidate the cache of computed fields)
 	 */
 	watchDependencies: ComponentWatchDependencies;
 

@@ -40,7 +40,7 @@ export interface FieldWatcher<
 	handler: WatchHandler<CTX, A, B>;
 
 	/**
-	 * If false, the watcher won't registered for functional/flyweight components
+	 * If false, the watcher won't be registered for functional/flyweight components
 	 * @default `true`
 	 */
 	functional?: boolean;
@@ -86,7 +86,7 @@ export interface WatchObject<
 	single?: boolean;
 
 	/**
-	 * If false, the watcher won't registered for functional/flyweight components
+	 * If false, the watcher won't be registered for functional/flyweight components
 	 * @default `true`
 	 */
 	functional?: boolean;
@@ -151,7 +151,7 @@ export interface MethodWatcher<
 	field?: string;
 
 	/**
-	 * Path to a component property to watch or an event to listen
+	 * Path to a component property to watch or event to listen
 	 */
 	path?: string;
 
@@ -168,7 +168,7 @@ export interface MethodWatcher<
 	single?: boolean;
 
 	/**
-	 * If false, the watcher won't registered for functional/flyweight components
+	 * If false, the watcher won't be registered for functional/flyweight components
 	 * @default `true`
 	 */
 	functional?: boolean;

@@ -9,7 +9,7 @@
 import { fakeCopyLabel } from 'core/component/watch';
 
 const
-	toNonFakeObject = Symbol('Link to an non fake object');
+	toNonFakeObject = Symbol('Link to a non fake object');
 
 /**
  * Returns a "fake" copy of the specified (weak)map/(weak)set object

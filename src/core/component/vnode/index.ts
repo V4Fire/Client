@@ -20,7 +20,7 @@ export * from 'core/component/vnode/interface';
 /**
  * Returns a component render context object from the specified vnode
  *
- * @param component - component name or a meta object
+ * @param component - component name or meta object
  * @param vnode
  * @param [parent] - parent component instance
  */

@@ -24,7 +24,7 @@ import { CreateFakeCtxOptions } from 'core/component/functional/interface';
 export * from 'core/component/functional/interface';
 
 /**
- * Creates a fake context for a functional component that is based on the specified parameters
+ * Creates a fake context for a functional component is based on the specified parameters
  *
  * @param createElement - function to create VNode element
  * @param renderCtx - render context from VNode

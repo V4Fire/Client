@@ -38,7 +38,7 @@ export const
 
 /**
  * Wraps the specified createElement function and returns a pair:
- * the wrapped function and a list of registered render tasks.
+ * the wrapped function, and a list of registered render tasks.
  *
  * This method adds V4Fire specific logic (v-attrs, composites, etc.) to a simple createElement function.
  *

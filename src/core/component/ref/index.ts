@@ -14,7 +14,7 @@
 import { ComponentElement, ComponentInterface } from 'core/component/interface';
 
 /**
- * Resolves refs from the specified component instance.
+ * Resolves reference from the specified component instance.
  *
  * This function replaces refs from component DOM nodes to component instances.
  * Also, this function fires events of appearance refs.

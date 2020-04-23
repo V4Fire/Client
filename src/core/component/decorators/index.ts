@@ -61,7 +61,7 @@ export const prop = paramsFactory<
 
 /**
  * Marks a class property as a component field.
- * In a regular component mutations of field properties force component re-rendering.
+ * In a regular component mutation of field properties force component re-rendering.
  *
  * @decorator
  *
@@ -130,7 +130,7 @@ export const system = paramsFactory<InitFieldFn | DecoratorSystem>('systemFields
 export const computed = paramsFactory<DecoratorComponentAccessor>(null);
 
 /**
- * Universal decorator for a component property/accessor/method
+ * The universal decorator for a component property/accessor/method
  *
  * @decorator
  *
@@ -199,7 +199,7 @@ export const hook = paramsFactory<DecoratorHook>(null, (hook) => ({hook}));
  *     console.log(value[0] === oldValue[0]);
  *   }
  *
- *   // When you watch a property in a deep mode and declare the second argument
+ *   // When you watch a property in a deep and declare the second argument
  *   // in a watcher, the previous value is cloned deeply
  *   @watch({path: 'list', deep: true})
  *   onListChangeWithDeepCloning(value: Dictionary[], oldValue: Dictionary[]): void {

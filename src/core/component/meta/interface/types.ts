@@ -17,7 +17,7 @@ import { PropOptions, Hook, InitFieldFn, MergeFieldFn, UniqueFieldFn } from 'cor
  */
 export interface ComponentOptions {
 	/**
-	 * Component name.
+	 * The component name.
 	 * If the name isn't specified, it will be taken from a class name by using reflection.
 	 * This parameter can't be inherited from a parent.
 	 *
@@ -42,7 +42,7 @@ export interface ComponentOptions {
 	 * If true, then the component is registered as a root component.
 	 *
 	 * The root component is the top of components hierarchy, i.e it contains all components in an application,
-	 * and the application can't exists without the root.
+	 * and the application can't exist without the root.
 	 *
 	 * All components, even the root component, have a link to the root component.
 	 * This parameter can be inherited from a parent.
@@ -69,23 +69,23 @@ export interface ComponentOptions {
 	tpl?: boolean;
 
 	/**
-	 * Functional mode:
+	 * The functional mode:
 	 *
 	 * 1. if true, the component will be created as a functional component;
 	 * 2. if a dictionary, the component can be created as a functional component or as a regular component, depending on
 	 * values of the input properties:
-	 *   1. if an empty dictionary, the component will always created as functional;
-	 *   2. if a dictionary with values, the dictionary properties represent component input properties.
+	 *   1. If an empty dictionary, the component will always created as functional;
+	 *   2. If a dictionary with values, the dictionary properties represent component input properties.
 	 *      If the component invocation take these properties with the values that declared within "functional" parameters,
 	 *      it will be created as functional.
 	 *      Also, you can specify multiple values of one input property by using a list of values.
 	 *      Mind that inferring of a component type is compile based, i.e. you can't depend on values from runtime,
 	 *      but you can directly cast the type by using "v-func" directive;
-	 *   3. if null, all components watchers and listeners that directly specified in a class don't
+	 *   3. If null, all components watchers and listeners that directly specified in a class don't
 	 *      be attached to a functional component. It is useful to create superclass behaviour depending
 	 *      on a component type.
 	 *
-	 * The functional component is a component that can be rendered only once from input properties.
+	 * The functional component is a component can be rendered only once from input properties.
 	 * This type of components have a state and lifecycle hooks, but mutation of the state don't force re-render of a
 	 * component. Usually, functional components lighter in 2-3 times with the first render than regular components, but
 	 * avoid their if you have long animations within a component or if you need to frequent re-draws some deep structure
@@ -104,7 +104,7 @@ export interface ComponentOptions {
 	 *
 	 * }
 	 *
-	 * // bLink will be always created as a functional component
+	 * // bLink will always be created as a functional component
 	 * @component({functional: true})
 	 * class bLink extends iData {
 	 *
@@ -126,15 +126,15 @@ export interface ComponentOptions {
 
 	/**
 	 * If true, then the component can be used as a flyweight component.
-	 * The flyweight component is a special kind of a stateless component that borrows parent context
+	 * The flyweight component is a special kind of stateless component borrows parent context
 	 * to create own context. This type of components have the lightest first render initialising comparing with
 	 * functional or regular components, but there are a lot of limitations:
 	 *
-	 * 1. you don't have a state;
-	 * 2. you can't use lifecycle hooks;
-	 * 3. you can't watch changes of component properties.
+	 * 1. You don't have a state;
+	 * 2. You can't use lifecycle hooks;
+	 * 3. You can't watch changes of component properties.
 	 *
-	 * Also, flyweight components inherit all limitation from functional components. But, you still have modifier API.
+	 * Also, flyweight components inherit all limitation from functional components. Also, you still have modifier API.
 	 * This parameter can be inherited from a parent.
 	 *
 	 * @default `false`

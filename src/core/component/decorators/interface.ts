@@ -94,7 +94,7 @@ export interface DecoratorSystem<
 	unique?: boolean | UniqueFieldFn<CTX>;
 
 	/**
-	 * Name or a list of names after which this property should be initialized
+	 * Name or list of names after which this property should be initialized
 	 */
 	after?: CanArray<string>;
 
@@ -161,7 +161,7 @@ export interface DecoratorComponentAccessor extends DecoratorFunctionalOptions {
 
 	/**
 	 * List of dependencies for the accessor.
-	 * The dependencies are needed to watch for changes of the accessor or to invalidate cache.
+	 * The dependencies are needed to watch for changes of the accessor or to invalidate the cache.
 	 *
 	 * Also, when the accessor has a logically connected prop/field
 	 * (by using a name convention "${property} -> ${property}Prop | ${property}Store"),
@@ -192,7 +192,7 @@ export interface DecoratorComponentAccessor extends DecoratorFunctionalOptions {
 export type DecoratorHookOptions = {
 	[hook in Hook]?: DecoratorFunctionalOptions & {
 		/**
-		 * Method name or a list of method names after which the method should be invoked on a hook event
+		 * Method name or list of method names after which the method should be invoked on a hook event
 		 */
 		after?: CanArray<string>;
 	}

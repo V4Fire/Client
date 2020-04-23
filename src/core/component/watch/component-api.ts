@@ -51,7 +51,7 @@ export function implementComponentWatchAPI(
 			const
 				rootKey = String(path[0]);
 
-			// If was changed there properties that can affect on cached computed fields,
+			// If was changed there properties that can affect cached computed fields,
 			// then we need to invalidate these caches
 			if (meta.computedFields[rootKey]?.get) {
 				delete Object.getOwnPropertyDescriptor(component, rootKey)?.get?.[cacheStatus];
@@ -76,7 +76,7 @@ export function implementComponentWatchAPI(
 				continue;
 			}
 
-			// This mutation can affect on computed fields or accessors
+			// This mutation can affect computed fields or accessors
 			if (info.parent) {
 				const
 					{path: parentPath} = info.parent.info;
@@ -214,7 +214,7 @@ export function implementComponentWatchAPI(
 				initWatcher(props!.key, propsWatcher);
 			}
 
-			// We need to attach default watchers for all props that can affect on component computed fields
+			// We need to attach default watchers for all props that can affect component computed fields
 			if (Object.size(computedFields) || Object.size(accessors)) {
 				for (let keys = Object.keys(propsStore), i = 0; i < keys.length; i++) {
 					const

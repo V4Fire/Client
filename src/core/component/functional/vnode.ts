@@ -96,7 +96,7 @@ export function initComponentVNode(vnode: VNode, ctx: ComponentInterface, render
 			return;
 		}
 
-		// If after the first mount hook the source component doesn't exists in the DOM,
+		// If after the first mount hook the source component doesn't exist in the DOM,
 		// we should try again on the next tick
 		if (!ctx.$el) {
 			if (retry) {
