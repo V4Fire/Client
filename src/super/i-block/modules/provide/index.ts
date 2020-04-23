@@ -194,7 +194,7 @@ export default class Provide<C extends iBlock = iBlock> extends Friend<C> {
 					}
 				}
 
-				map[key.dasherize()] = this.fullElName.apply(this, (<unknown[]>[componentName]).concat(el));
+				map[key.dasherize()] = this.fullElName.apply(this, [componentName]).concat(el);
 			}
 		}
 

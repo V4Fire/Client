@@ -143,7 +143,7 @@ export function addAttrs(el: DirElement, attrs?: Dictionary<string>): void {
 
 export function addStyles(el: DirElement, styles?: CanArray<Nullable<string | object>>): void {
 	const
-		normalizedStyles = (<Array<string | object>>[]).concat(styles || []);
+		normalizedStyles = Array.concat([], styles);
 
 	if (!normalizedStyles.length) {
 		return;
@@ -198,11 +198,10 @@ export function createTemplate(): DocumentFragmentP {
 }
 
 export function addClass(el: Element, opts: VNodeData): void {
-	const className = (<string[]>[]).concat(
-		el.getAttribute('class') || '',
-		opts.staticClass || '',
-		...Object.isArray(opts.class) ? <string[]>opts.class : [<string>opts.class]
-	).join(' ').trim();
+	const className = Array
+		.concat([], el.getAttribute('class') || '', opts.staticClass || '', ...Array.concat([], opts.class))
+		.join(' ')
+		.trim();
 
 	if (className) {
 		if (el instanceof SVGElement) {
@@ -223,7 +222,7 @@ export function attachEvents(el: Node, events?: Dictionary<CanArray<Function>>):
 		const
 			key = keys[i],
 			mods = eventModifiersRgxp.exec(key),
-			handlers = (<EventListener[]>[]).concat(<any>events[key] || []),
+			handlers = Array.concat([], events[key]),
 			flags = {};
 
 		if (mods) {

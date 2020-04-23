@@ -170,13 +170,13 @@ export function applyDynamicAttrs(vnode: VNodeData, component?: ComponentMeta): 
 				directiveOpts.push(<any>dir);
 
 			} else if (key === 'staticClass') {
-				vnode.staticClass = (<string[]>[]).concat(vnode.staticClass || [], <string>val).join(' ');
+				vnode.staticClass = Array.concat([], vnode.staticClass, val).join(' ');
 
 			} else if (key === 'class') {
-				vnode.class = (<unknown[]>[]).concat(vnode.class || [], val);
+				vnode.class = Array.concat([], vnode.class, val);
 
 			} else if (key === 'style') {
-				vnode.style = (<unknown[]>[]).concat(vnode.style || [], val);
+				vnode.style = Array.concat([], vnode.style, val);
 
 			} else if (!attrs[key]) {
 				attrs[key] = val;

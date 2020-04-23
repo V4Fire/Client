@@ -103,7 +103,7 @@ function bind(
 		}
 
 		const
-			handlers = (<Function[]>[]).concat(handler);
+			handlers = Array.concat([], handler);
 
 		for (let i = 0; i < handlers.length; i++) {
 			const

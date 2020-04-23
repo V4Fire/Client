@@ -101,8 +101,8 @@ export default <ValidatorsDecl<bInput, unknown>>{
 		}
 
 		const
-			s = `[${(<string[]>[]).concat(separator).join('')}]`,
-			ss = `[${(<string[]>[]).concat(styleSeparator).join('')}]`,
+			s = `[${Array.concat([], separator).join('')}]`,
+			ss = `[${Array.concat([], styleSeparator).join('')}]`,
 			pr = precision ? String(precision) : '';
 
 		const error = (

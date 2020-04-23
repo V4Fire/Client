@@ -35,7 +35,7 @@ export function initComponentVNode(vnode: VNode, ctx: ComponentInterface, render
 		for (let o = data.on, keys = Object.keys(o), i = 0; i < keys.length; i++) {
 			const
 				key = keys[i],
-				fns = (<Function[]>[]).concat(o[key]);
+				fns = Array.concat([], o[key]);
 
 			for (let i = 0; i < fns.length; i++) {
 				const
@@ -246,7 +246,7 @@ export function initComponentVNode(vnode: VNode, ctx: ComponentInterface, render
 			// @ts-ignore (access)
 			{$destroyedHooks} = ctx;
 
-		for (let o = (<string[]>[]).concat(mountHooks, parentHook || []), i = 0; i < o.length; i++) {
+		for (let o = Array.concat([], mountHooks, parentHook), i = 0; i < o.length; i++) {
 			const
 				hook = o[i];
 

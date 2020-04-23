@@ -332,7 +332,7 @@ export default class bForm extends iData {
 						v = await el.groupFormValue;
 
 					if (el.formConverter) {
-						v = (<Function[]>[]).concat(el.formConverter).reduce((res, fn) => fn.call(this, res), v);
+						v = Array.concat([], el.formConverter).reduce((res, fn) => fn.call(this, res), v);
 					}
 
 					if (v instanceof Blob || v instanceof File || v instanceof FileList) {
@@ -454,7 +454,7 @@ export default class bForm extends iData {
 						v = await el.groupFormValue;
 
 					if (el.formConverter) {
-						v = (<Function[]>[]).concat(el.formConverter).reduce((res, fn) => fn.call(this, res), v);
+						v = Array.concat([], el.formConverter).reduce((res, fn) => fn.call(this, res), v);
 					}
 
 					if (v !== undefined) {

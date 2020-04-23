@@ -126,7 +126,7 @@ export default class bList extends iData implements iIcon, iVisible, iWidth {
 
 		if (o.multiple) {
 			const
-				objVal = Object.fromArray((<unknown[]>[]).concat(val || []));
+				objVal = Object.fromArray(Array.concat([], val));
 
 			if (Object.fastCompare(objVal, o.activeStore)) {
 				return o.activeStore;

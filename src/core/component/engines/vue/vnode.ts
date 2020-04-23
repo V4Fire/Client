@@ -47,7 +47,7 @@ export function patchVNode(vnode: VNode, ctx: ComponentInterface, renderCtx: Ren
 		}
 
 		if (data.style) {
-			vData.style = (<unknown[]>[]).concat(vData.style || [], data.style);
+			vData.style = Array.concat([], vData.style, data.style);
 		}
 
 		if (data.attrs && meta.params.inheritAttrs) {
@@ -63,7 +63,7 @@ export function patchVNode(vnode: VNode, ctx: ComponentInterface, renderCtx: Ren
 		if (data.nativeOn) {
 			for (let o = data.nativeOn, keys = Object.keys(o), i = 0; i < keys.length; i++) {
 				const key = keys[i];
-				on[key] = (<Function[]>[]).concat(on[key] || [], o[key] || []);
+				on[key] = Array.concat([], on[key], o[key]);
 			}
 		}
 

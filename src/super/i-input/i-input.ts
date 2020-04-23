@@ -226,7 +226,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 			await this.nextTick();
 
 			const
-				test = (<Array<this['Value'] | Function | RegExp>>[]).concat(this.disallow || []),
+				test = Array.concat([], this.disallow),
 				value = await this[this.valueKey];
 
 			const match = (el) => {

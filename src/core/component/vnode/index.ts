@@ -75,7 +75,7 @@ export function getComponentDataFromVNode(component: string | ComponentMeta, vno
 		props: {},
 
 		model: (<Dictionary>vData).model,
-		directives: (<VNodeDirective[]>[]).concat(vData.directives || []),
+		directives: Array.concat([], vData.directives),
 
 		slots: {...<Dictionary>slots},
 		scopedSlots: {...vData.scopedSlots},

@@ -243,7 +243,7 @@ export default class Async<CTX extends object = Async<any>> extends Super<CTX> {
 		}
 
 		const
-			clearHandlers = p.onClear = (<any[]>[]).concat(p.onClear || []);
+			clearHandlers = p.onClear = Array.concat([], p.onClear);
 
 		function dragStartClear(...args: unknown[]): void {
 			for (let i = 0; i < clearHandlers.length; i++) {
@@ -263,13 +263,13 @@ export default class Async<CTX extends object = Async<any>> extends Super<CTX> {
 			}
 		}
 
-		const dragStartUseCapture = !p.onDragStart || Object.isFunction(p.onDragStart) ?
+		const dragStartUseCapture = !p.onDragStart || Object.isSimpleFunction(p.onDragStart) ?
 			useCapture : Boolean(p.onDragStart.capture);
 
-		const dragUseCapture = !p.onDrag || Object.isFunction(p.onDrag) ?
+		const dragUseCapture = !p.onDrag || Object.isSimpleFunction(p.onDrag) ?
 			useCapture : Boolean(p.onDrag.capture);
 
-		const dragEndUseCapture = !p.onDragEnd || Object.isFunction(p.onDragEnd) ?
+		const dragEndUseCapture = !p.onDragEnd || Object.isSimpleFunction(p.onDragEnd) ?
 			useCapture : Boolean(p.onDragEnd.capture);
 
 		const

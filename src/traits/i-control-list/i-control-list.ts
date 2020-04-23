@@ -77,14 +77,12 @@ export default abstract class iControlList {
 				throw new TypeError(`Action method "${action}" is not a function`);
 			}
 
-			if (Object.isFunction(action)) {
+			if (Object.isSimpleFunction(action)) {
 				return action.call(component);
 			}
 
-			const fullArgs = (<unknown[]>[]).concat(
-				action.defArgs ? args : [],
-				action.args || []
-			);
+			const
+				fullArgs = Array.concat([], action.defArgs ? args : null, action.args);
 
 			const
 				{method, argsMap} = action,

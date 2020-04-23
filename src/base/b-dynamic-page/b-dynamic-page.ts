@@ -142,7 +142,7 @@ export default class bDynamicPage extends iDynamicPage {
 					v = e;
 
 				if (this.eventConverter) {
-					v = (<Function[]>[]).concat(this.eventConverter).reduce((res, fn) => fn.call(this, res, this.page), v);
+					v = Array.concat([], this.eventConverter).reduce((res, fn) => fn.call(this, res, this.page), v);
 				}
 
 				if (v == null || Object.isString(v)) {

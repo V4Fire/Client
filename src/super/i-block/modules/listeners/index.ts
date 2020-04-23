@@ -76,10 +76,7 @@ export function initGlobalListeners(component: iBlock, resetListener?: boolean):
 
 		if (needRouterSync || globalName) {
 			await Promise.all(
-				(<Promise<unknown>[]>[]).concat(
-					needRouterSync ? $s.resetRouter() : [],
-					globalName ? $s.resetStorage() : []
-				)
+				Array.concat([], needRouterSync ? $s.resetRouter() : null, globalName ? $s.resetStorage() : null)
 			);
 		}
 
@@ -89,10 +86,7 @@ export function initGlobalListeners(component: iBlock, resetListener?: boolean):
 	$e.on('reset.silence', waitNextTick(async () => {
 		if (needRouterSync || globalName) {
 			await Promise.all(
-				(<Promise<unknown>[]>[]).concat(
-					needRouterSync ? $s.resetRouter() : [],
-					globalName ? $s.resetStorage() : []
-				)
+				Array.concat([], needRouterSync ? $s.resetRouter() : null, globalName ? $s.resetStorage() : null)
 			);
 		}
 
@@ -128,7 +122,7 @@ export function initRemoteWatchers(component: iBlock): void {
 	for (let keys = Object.keys(watchProp), i = 0; i < keys.length; i++) {
 		const
 			method = keys[i],
-			watchers = (<Array<string | MethodWatcher>>[]).concat(<CanArray<string | MethodWatcher>>watchProp[method] || []);
+			watchers = Array.concat([], watchProp[method]);
 
 		for (let i = 0; i < watchers.length; i++) {
 			const
@@ -151,7 +145,7 @@ export function initRemoteWatchers(component: iBlock): void {
 
 				wList.push({
 					...el,
-					args: (<unknown[]>[]).concat(el.args || []),
+					args: Array.concat([], el.args),
 					method,
 					handler: method
 				});

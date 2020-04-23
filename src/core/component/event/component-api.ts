@@ -25,7 +25,7 @@ export function implementEventAPI(component: object): void {
 
 		$on(e: CanArray<string>, cb: Listener): void {
 			const
-				events = (<string[]>[]).concat(e);
+				events = Array.concat([], e);
 
 			for (let i = 0; i < events.length; i++) {
 				$e.on(events[i], cb);
@@ -34,7 +34,7 @@ export function implementEventAPI(component: object): void {
 
 		$off(e: CanArray<string>, cb: Listener): void {
 			const
-				events = (<string[]>[]).concat(e);
+				events = Array.concat([], e);
 
 			for (let i = 0; i < events.length; i++) {
 				$e.off(events[i], cb);

@@ -149,7 +149,7 @@ export function fillMeta(
 					group: watcher.group,
 					single: watcher.single,
 					options: watcher.options,
-					args: (<unknown[]>[]).concat(watcher.args || []),
+					args: Array.concat([], watcher.args),
 					provideArgs: watcher.provideArgs,
 					deep: watcher.deep,
 					immediate: watcher.immediate,

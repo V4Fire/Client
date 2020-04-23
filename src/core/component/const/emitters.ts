@@ -20,7 +20,7 @@ export const
 ((initEventOnce) => {
 	initEmitter.once = function (event: CanArray<string>, listener: Listener): EventEmitter {
 		const
-			events = (<string[]>[]).concat(event);
+			events = Array.concat([], event);
 
 		for (let i = 0; i < events.length; i++) {
 			const

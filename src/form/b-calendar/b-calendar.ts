@@ -22,7 +22,6 @@ import iInput, {
 	system,
 	watch,
 	hook,
-	p,
 
 	ModsDecl,
 	ModEvent,
@@ -124,7 +123,7 @@ export default class bCalendar extends iInput implements iWidth, iSize, iIcon, i
 
 	/** @override */
 	get default(): this['Value'] {
-		return (<this['Value']>[]).concat(this.defaultProp || new Date());
+		return Array.concat([], this.defaultProp || new Date());
 	}
 
 	/**
@@ -218,7 +217,7 @@ export default class bCalendar extends iInput implements iWidth, iSize, iIcon, i
 			return val;
 		}
 
-		return (<bCalendar['Value']>[]).concat(o.resolveValue(val) || []);
+		return Array.concat([], o.resolveValue(val));
 	}))
 
 	protected valueStore!: this['Value'];

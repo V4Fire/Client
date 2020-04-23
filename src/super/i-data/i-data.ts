@@ -591,7 +591,7 @@ export default abstract class iData extends iBlock implements iProgress {
 			v = data;
 
 		if (this.dbConverter) {
-			v = (<Function[]>[]).concat(this.dbConverter)
+			v = Array.concat([], this.dbConverter)
 				.reduce((res, fn) => fn.call(this, res), Object.isArray(v) || Object.isPlainObject(v) ? v.valueOf() : v);
 		}
 
@@ -618,7 +618,7 @@ export default abstract class iData extends iBlock implements iProgress {
 			v = data;
 
 		if (this.componentConverter) {
-			v = (<Function[]>[]).concat(this.componentConverter)
+			v = Array.concat([], this.componentConverter)
 				.reduce((res, fn) => fn.call(this, res), Object.isArray(v) || Object.isPlainObject(v) ? v.valueOf() : v);
 		}
 
@@ -768,9 +768,8 @@ export default abstract class iData extends iBlock implements iProgress {
 		const
 			{field} = this;
 
-		const [customData, customOpts] = (<unknown[]>[]).concat(
-			field.get(`request.${method}`) || []
-		);
+		const
+			[customData, customOpts] = Array.concat([], field.get(`request.${method}`));
 
 		const
 			p = field.get(`requestParams.${method}`),

@@ -156,11 +156,11 @@ export class ComponentDriver {
 				opts: VNodeData;
 
 			if (Object.isSimpleObject(attrs)) {
-				children = (<Node[]>[]).concat(children || []);
+				children = Array.concat([], children);
 				opts = <VNodeData>attrs;
 
 			} else {
-				children = (<Node[]>[]).concat(attrs || []);
+				children = Array.concat([], attrs);
 				opts = {};
 			}
 
@@ -263,7 +263,7 @@ export class ComponentDriver {
 					for (let o = opts.on, keys = Object.keys(o), i = 0; i < keys.length; i++) {
 						const
 							key = keys[i],
-							fns = (<Function[]>[]).concat(o[key]);
+							fns = Array.concat([], o[key]);
 
 						for (let i = 0; i < fns.length; i++) {
 							const
