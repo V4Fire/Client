@@ -174,6 +174,13 @@ export default abstract class iStaticPage extends iPage {
 	}
 
 	/**
+	 * Themes list, which are available
+	 */
+	get availableThemes(): CanUndef<string[]> {
+		return includedThemes;
+	}
+
+	/**
 	 * Root theme
 	 */
 	get theme(): unknown {
@@ -186,7 +193,7 @@ export default abstract class iStaticPage extends iPage {
 	 */
 	set theme(value: unknown) {
 		if (!includedThemes?.includes(String(value))) {
-			throw new ReferenceError(`Theme "${value}" is not defined`);
+			throw new ReferenceError(`Theme with name "${value}" is not defined`);
 		}
 
 		this.setRootMod('theme', value, false);
