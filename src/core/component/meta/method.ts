@@ -28,7 +28,8 @@ export function addMethodsToMeta(meta: ComponentMeta, constructor: Function = me
 		computedFields,
 		systemFields,
 		accessors,
-		methods
+		methods,
+		watchers
 	} = meta;
 
 	for (let i = 0; i < ownProps.length; i++) {
@@ -70,7 +71,17 @@ export function addMethodsToMeta(meta: ComponentMeta, constructor: Function = me
 				!(key in accessors) && (props[propKey] || fields[storeKey] || systemFields[storeKey])
 			) {
 				if (systemFields[storeKey]) {
-					meta.params.forceSystemWatching = true;
+					const
+						watcherListeners = watchers[key] = watchers[key] || [];
+
+					if (!watchers.length) {
+						watcherListeners.push({
+							deep: false,
+							immediate: false,
+							provideArgs: false,
+							handler: () => undefined
+						});
+					}
 				}
 
 				metaKey = 'computedFields';

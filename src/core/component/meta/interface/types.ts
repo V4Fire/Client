@@ -248,12 +248,6 @@ export interface ComponentOptions {
 	 * @default `true`
 	 */
 	defaultProps?: boolean;
-
-	/**
-	 * If true, then a component should forcely initialize watchers of system fields
-	 * @protected
-	 */
-	forceSystemWatching?: boolean;
 }
 
 /**
