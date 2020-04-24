@@ -204,7 +204,9 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	},
 
 	includedThemes() {
-		return undefined;
+		return o('included-themes', {
+			env: true
+		});
 	},
 
 	runtime() {
