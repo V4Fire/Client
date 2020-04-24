@@ -38,6 +38,9 @@ module.exports = {
 		}
 	}) : null,
 
+	THEME: s(config.theme()),
+	INCLUDED_THEMES: s(config.includedThemes()),
+
 	DS_COMPONENTS_MODS: pzlr.designSystem ? getComponentsMods() : null,
 	DS: runtime.passDesignSystem && pzlr.designSystem ? (() => {
 		try {

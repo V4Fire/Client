@@ -11,7 +11,15 @@
 @import "global/g-def/animations.styl"
 @import "global/g-def/reset.styl"
 
-//#if runtime has ds-vars
+//#if runtime has theme
+//#unless runtime has includedThemes
 :root
-	interpolate-props(getFlatDSVars(), false)
+	interpolate-props(getFlatDSVars(defaultTheme()), false)
+//#endunless
+//#endif
+
+//#if runtime has includedThemes
+for name in includedThemes()
+	html.root_theme_{name}
+		interpolate-props(getFlatDSVars(name), false)
 //#endif

@@ -32,11 +32,14 @@ export type RemoteState = typeof remoteState;
 export type RootMods = Dictionary<{
 	mod: string;
 	value: string;
-	component: ComponentInterface;
+	component: ComponentInterface | false;
 }>;
 
 export const
 	$$ = symbolGenerator();
+
+const
+	includedThemes = INCLUDED_THEMES;
 
 @component()
 export default abstract class iStaticPage extends iPage {
@@ -171,6 +174,25 @@ export default abstract class iStaticPage extends iPage {
 	}
 
 	/**
+	 * Root theme
+	 */
+	get theme(): unknown {
+		return this.getRootMod('theme', false);
+	}
+
+	/**
+	 * Sets a theme mod for the root element
+	 * @param value
+	 */
+	set theme(value: unknown) {
+		if (!includedThemes?.includes(String(value))) {
+			throw new ReferenceError(`Theme "${value}" is not defined`);
+		}
+
+		this.setRootMod('theme', value, false);
+	}
+
+	/**
 	 * Route information object store
 	 */
 	@field()
@@ -217,7 +239,7 @@ export default abstract class iStaticPage extends iPage {
 
 	/** @override */
 	// @ts-ignore
-	setRootMod(name: string, value: unknown, component: iBlock = this): boolean {
+	setRootMod(name: string, value: unknown, component: false | iBlock = this): boolean {
 		const
 			root = document.documentElement;
 
@@ -228,11 +250,21 @@ export default abstract class iStaticPage extends iPage {
 		const
 			cl = root.classList;
 
-		const
-			c = (component.globalName || component.componentName).dasherize(),
-			mod = this.provide.fullComponentName(c, name, value).replace(/_/g, '-');
+		let
+			mod;
 
-		name = `${c}_${name.camelize(false)}`;
+		if (component === false) {
+			mod = `root_${name}_${value}`;
+			name = `root_${name.camelize(false)}`;
+
+		} else {
+			const
+				c = (component.globalName || component.componentName).dasherize();
+
+			mod = this.provide.fullComponentName(c, name, value).replace(/_/g, '-');
+			name = `${c}_${name.camelize(false)}`;
+		}
+
 		value = String(value).dasherize();
 
 		const
@@ -258,7 +290,7 @@ export default abstract class iStaticPage extends iPage {
 
 	/** @override */
 	// @ts-ignore
-	removeRootMod(name: string, value?: unknown, component: iBlock = this): boolean {
+	removeRootMod(name: string, value?: unknown, component: false | iBlock = this): boolean {
 		const
 			root = document.documentElement;
 
@@ -266,7 +298,10 @@ export default abstract class iStaticPage extends iPage {
 			return false;
 		}
 
-		name = `${(component.globalName || component.componentName).dasherize()}_${name.camelize(false)}`;
+		const
+			prefix = component === false ? 'root' : (component.globalName || component.componentName).dasherize();
+
+		name = `${prefix}_${name.camelize(false)}`;
 		value = value !== undefined ? String(value).dasherize() : undefined;
 
 		const
@@ -288,8 +323,12 @@ export default abstract class iStaticPage extends iPage {
 	}
 
 	/** @override */
-	getRootMod(name: string, component: ComponentInterface = this): undefined | string {
-		return this.removeRootMod[name] && this.removeRootMod[name].value;
+	getRootMod(name: string, component: false | ComponentInterface = this): CanUndef<string> {
+		const
+			prefix = component === false ? 'root' : (component.globalName || component.componentName).dasherize();
+
+		name = `${prefix}_${name.camelize(false)}`;
+		return this.rootMods?.[name]?.value;
 	}
 
 	/**

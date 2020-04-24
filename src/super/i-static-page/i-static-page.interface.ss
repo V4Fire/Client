@@ -48,6 +48,11 @@
 	- htmlAttrs = {}
 
 	- block root
+		: runtime = config.runtime()
+
+		- if runtime.includedThemes && runtime.theme
+			? Object.assign(htmlAttrs, {class: 'root_theme_' + runtime.theme})
+
 		- if @@fatHTML
 			- forEach @@dependencies => el, key
 				: nm = @@outputPattern({name: key})

@@ -196,6 +196,17 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		});
 	},
 
+	theme() {
+		return o('theme', {
+			short: 't',
+			env: true
+		});
+	},
+
+	includedThemes() {
+		return undefined;
+	},
+
 	runtime() {
 		return {
 			'engine': this.engine(),
@@ -203,9 +214,8 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 			'noGlobals': false,
 			'svgSprite': true,
 
-			'ds-vars': false,
-			'theme': false,
-			'includes-ds-themes': true,
+			'theme': this.theme(),
+			'includedThemes': this.includedThemes(),
 
 			'blockNames': false,
 			'passDesignSystem': false,

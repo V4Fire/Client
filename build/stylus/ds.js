@@ -11,22 +11,28 @@
 const
 	$C = require('collection.js'),
 	stylus = require('stylus'),
-	{config} = require('@pzlr/build-core'),
+	pzlr = require('@pzlr/build-core');
+
+const
+	config = require('config'),
 	runtime = config.runtime();
 
-let
-	DS = {};
+let DS = {};
 
-const cssVars = {
-	__map__: new Map()
-};
+const
+	CSSVars = Object.create(null);
 
-if (config.designSystem) {
+Object.defineProperty(CSSVars, '__map__', {
+	enumerable: false,
+	value: {}
+});
+
+if (pzlr.config.designSystem) {
 	try {
-		DS = require(config.designSystem);
+		DS = require(pzlr.config.designSystem);
 
 	} catch {
-		console.log(`[stylus] Can't find "${config.designSystem}" design system package`);
+		console.log(`[stylus] Can't find "${pzlr.config.designSystem}" design system package`);
 	}
 
 } else {
@@ -34,22 +40,38 @@ if (config.designSystem) {
 }
 
 /**
- * Sets a variable into cssVars dictionary by the specified path
+ * Sets a variable into CSSVars dictionary by the specified path
+ *
  * @param {string} path
+ * @param {unknown} dsValue
+ * @param {string} [theme]
  */
-function setVar(path) {
+function setVar(path, dsValue, theme) {
 	const
 		variable = `--${path.split('.').join('-')}`;
 
-	$C(cssVars).set(`var(${variable})`, path);
-	cssVars.__map__.set(path, [variable, $C(DS).get(path)]);
+	const
+		mapValue = [variable, dsValue];
+
+	$C(CSSVars).set(`var(${variable})`, path);
+
+	if (!theme) {
+		CSSVars.__map__[path] = mapValue;
+
+	} else {
+		if (!CSSVars.__map__[theme]) {
+			Object.defineProperty(CSSVars.__map__, theme, {value: {}, enumerable: false});
+		}
+
+		CSSVars.__map__[theme][path] = mapValue;
+	}
 }
 
 /**
  * Returns path with a dot delimiter between prefix and suffix
  *
  * @param {string} prefix
- * @param {string} suffix
+ * @param {string|number} suffix
  * @returns {string}
  */
 function genPath(prefix, suffix) {
@@ -61,28 +83,47 @@ function genPath(prefix, suffix) {
  *
  * @param {Object} data
  * @param {string=} [path]
+ * @param {string|boolean=} [theme]
  */
-function prepareData(data, path) {
+function prepareData(data, path, theme) {
 	$C(data).forEach((d, val) => {
-		if (Object.isObject(d)) {
-			prepareData(d, genPath(path, val));
+		if (theme === true) {
+			if (Object.isObject(d)) {
+				if (theme === true) {
+					prepareData(d, path, val);
+				}
+
+			} else {
+				throw new Error('Cannot find theme dictionary');
+			}
+
+		} else if (val === 'theme') {
+			if (Object.isObject(d)) {
+				prepareData(d, path, true);
+
+			} else {
+				throw new Error('Cannot find themes dictionary');
+			}
+
+		} else if (Object.isObject(d)) {
+			prepareData(d, genPath(path, val), theme);
 
 		} else if (Object.isArray(d)) {
-			prepareData(d, genPath(path, val));
+			prepareData(d, genPath(path, val), theme);
 			d = stylus.utils.coerceArray(d, true);
 
 		} else {
-			setVar(genPath(path, val));
-
 			if (/^[a-z-_]+\(.*\)$/.test(d)) {
 				// Built-in function
 				data[val] = new stylus.Parser(d).function();
+				setVar(genPath(path, val), data[val], theme);
 				return;
 			}
 
 			if (/^#(?=[0-9a-fA-F]*$)(?:.{3,4}|.{6}|.{8})$/.test(d)) {
 				// HEX value
 				data[val] = new stylus.Parser(d).peek().val;
+				setVar(genPath(path, val), data[val], theme);
 				return;
 			}
 
@@ -94,19 +135,23 @@ function prepareData(data, path) {
 				if (unit) {
 					// Value with unit
 					data[val] = new stylus.nodes.Unit(parseFloat(unit[1]), unit[2]);
+					setVar(genPath(path, val), data[val], theme);
 					return;
 				}
 
 				data[val] = new stylus.nodes.String(d);
+				setVar(genPath(path, val), data[val], theme);
 				return;
 			}
 
 			data[val] = new stylus.nodes.Unit(d);
+			setVar(genPath(path, val), data[val], theme);
 		}
 	});
 }
 
 prepareData(DS);
+
 
 module.exports = function (style) {
 	/**
@@ -123,7 +168,7 @@ module.exports = function (style) {
 
 			if (value) {
 				const
-					__vars__ = $C(cssVars).get(`components.${string}`);
+					__vars__ = $C(CSSVars).get(`components.${string}`);
 
 				return stylus.utils.coerce({
 					...value,
@@ -137,21 +182,19 @@ module.exports = function (style) {
 
 	/**
 	 * Returns Design System css variables with values
+	 *
+	 * @param {string} theme
 	 * @returns {!Object}
 	 */
-	style.define('getFlatDSVars', () => {
+	style.define('getFlatDSVars', ({string: theme}) => {
 		const
-			obj = {};
+			obj = {},
+			iterator = theme ? CSSVars.__map__[theme] : CSSVars.__map__;
 
-		// eslint-disable-next-line no-unused-vars
-		for (const val of cssVars.__map__.values()) {
-			const
-				[key, value] = val;
-
-			if (value || Object.isNumber(value)) {
-				obj[key] = stylus.utils.parseString(value);
-			}
-		}
+		Object.forEach(iterator, (val) => {
+			const [key, value] = val;
+			obj[key] = value;
+		});
 
 		return stylus.utils.coerce(obj, true);
 	});
@@ -167,7 +210,7 @@ module.exports = function (style) {
 		'getDSOptions',
 		({string}, vars = false) => {
 			if (vars && vars.val) {
-				return string ? stylus.utils.coerce($C(cssVars).get(string), true) : {};
+				return string ? stylus.utils.coerce($C(CSSVars).get(string), true) : {};
 			}
 
 			return string ? stylus.utils.coerce($C(DS).get(string), true) || {} : DS;
@@ -177,28 +220,68 @@ module.exports = function (style) {
 	/**
 	 * Returns color(s) from the Design System by the specified name and identifier (optional)
 	 *
-	 * @param {!Object} hueInput
-	 * @param {!Object} [hueNum]
+	 * @param {!Object} name
+	 * @param {!Object} [id]
+	 * @param {!string} [theme]
 	 * @returns {(!Object|!Array)}
 	 */
 	style.define(
 		'getDSColor',
-		(hueInput, hueId) => {
+		(name, id, theme = runtime.theme) => {
+			name = name.string || name.name;
+
+			if (!name) {
+				return;
+			}
+
 			const
-				hue = hueInput.string || hueInput.name;
+				path = ['colors'];
 
-			let
-				id;
-
-			if (hueId) {
-				id = hueId.string || hueId.val;
+			if (id) {
+				id = id.string || id.val;
 
 				if (Object.isNumber(id)) {
 					id = id - 1;
 				}
 			}
 
-			return hue ? $C(DS).get(`colors.${hue}${id !== undefined ? `.${id}` : ''}`) : undefined;
+			if (Object.isString(theme)) {
+				path.push(theme);
+			}
+
+			path.push(name);
+
+			if (id !== undefined) {
+				path.push(id);
+			}
+
+			return $C(DS).get(path.join('.'));
 		}
 	);
+
+	/**
+	 * Returns runtime config theme value
+	 */
+	style.define('defaultTheme', () => runtime.theme);
+
+	/**
+	 * Returns included design system themes
+	 */
+	style.define('includedThemes', () => {
+		if (runtime.includedThemes) {
+			return Object.isBoolean(runtime.includedThemes) ? DS.meta.themes : runtime.includedThemes;
+		}
+
+		return false;
+	});
+
+	style.define('getDsVars', () => {
+		if (runtime.theme && !runtime.includedThemes) {
+			return CSSVars;
+		}
+
+		if (runtime.includedThemes) {
+
+		}
+	});
 };
