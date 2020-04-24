@@ -12,6 +12,7 @@
  */
 
 import Async from 'core/async';
+import { deprecate } from 'core/functools/deprecation';
 
 import { unmute } from 'core/object/watch';
 import { asyncLabel } from 'core/component/const';
@@ -140,6 +141,14 @@ export function beforeDataCreateState(
 		{meta, $fields} = component;
 
 	initFields(meta.fields, component, $fields);
+
+	Object.defineProperty(component, '$$data', {
+		get(): typeof $fields {
+			deprecate({name: '$$data', type: 'property', renamedTo: '$fields'});
+			return $fields;
+		}
+	});
+
 	runHook('beforeDataCreate', component).catch(stderr);
 	implementComponentWatchAPI(component, {tieFields: opts?.tieFields});
 	bindRemoteWatchers(component);

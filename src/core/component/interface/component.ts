@@ -235,6 +235,12 @@ export abstract class ComponentInterface<
 	protected readonly $fields!: Dictionary;
 
 	/**
+	 * @deprecated
+	 * @see [[ComponentInterface.$fields]]
+	 */
+	protected readonly $$data!: Dictionary;
+
+	/**
 	 * The raw map of component fields that can force re-rendering
 	 */
 	protected readonly $systemFields!: Dictionary;

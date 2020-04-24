@@ -12,6 +12,7 @@
  */
 
 import { defProp } from 'core/const/props';
+import { deprecate } from 'core/functools/deprecation';
 import { components, NULL } from 'core/component/const';
 
 import { initProps } from 'core/component/prop';
@@ -176,6 +177,14 @@ export function parseVNodeAsFlyweight(
 	initFields(fields, fakeCtx, fakeCtx);
 
 	fakeCtx.$fields = fakeCtx;
+
+	Object.defineProperty(fakeCtx, '$$data', {
+		get(): typeof fakeCtx {
+			deprecate({name: '$$data', type: 'property', renamedTo: '$fields'});
+			return fakeCtx;
+		}
+	});
+
 	fakeCtx.$systemFields = fakeCtx;
 	fakeCtx.hook = 'created';
 
