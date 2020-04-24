@@ -69,6 +69,10 @@ export function addMethodsToMeta(meta: ComponentMeta, constructor: Function = me
 				key in computedFields ||
 				!(key in accessors) && (props[propKey] || fields[storeKey] || systemFields[storeKey])
 			) {
+				if (systemFields[storeKey]) {
+					meta.params.forceSystemWatching = true;
+				}
+
 				metaKey = 'computedFields';
 
 			} else {

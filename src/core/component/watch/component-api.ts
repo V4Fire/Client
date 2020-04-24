@@ -164,6 +164,10 @@ export function implementComponentWatchAPI(
 		initWatcher(systemFields.key, systemFieldsWatcher);
 	};
 
+	if (params.forceSystemWatching) {
+		systemFields.value[watcherInitializer]();
+	}
+
 	// Register the base watch API methods
 
 	Object.defineProperty(component, '$watch', {
