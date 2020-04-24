@@ -285,7 +285,10 @@ export default abstract class iStaticPage extends iPage {
 			cl.remove(cache.mod);
 		}
 
-		cl.add(mod);
+		if (!cl.contains(mod)) {
+			cl.add(mod);
+		}
+
 		this.rootMods[name] = {
 			mod,
 			value: <string>value,
