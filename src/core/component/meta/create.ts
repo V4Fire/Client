@@ -240,27 +240,29 @@ export function fillMeta(
 
 	// Fields
 
-	for (let o = meta.fields, keys = Object.keys(o), i = 0; i < keys.length; i++) {
-		const
-			key = keys[i],
-			field = <NonNullable<ComponentField>>o[key];
+	for (let fields = [meta.systemFields, meta.fields], i = 0; i < fields.length; i++) {
+		for (let o = fields[i], keys = Object.keys(o), j = 0; j < keys.length; j++) {
+			const
+				key = keys[j],
+				field = <NonNullable<ComponentField>>o[key];
 
-		if (field.watchers) {
-			for (let w = field.watchers.values(), el = w.next(); !el.done; el = w.next()) {
-				const
-					watcher = el.value,
-					watcherListeners = watchers[key] = watchers[key] || [];
+			if (field.watchers) {
+				for (let w = field.watchers.values(), el = w.next(); !el.done; el = w.next()) {
+					const
+						watcher = el.value,
+						watcherListeners = watchers[key] = watchers[key] || [];
 
-				if (isFunctional && watcher.functional === false) {
-					continue;
+					if (isFunctional && watcher.functional === false) {
+						continue;
+					}
+
+					watcherListeners.push({
+						deep: watcher.deep,
+						immediate: watcher.immediate,
+						provideArgs: watcher.provideArgs,
+						handler: watcher.handler
+					});
 				}
-
-				watcherListeners.push({
-					deep: watcher.deep,
-					immediate: watcher.immediate,
-					provideArgs: watcher.provideArgs,
-					handler: watcher.handler
-				});
 			}
 		}
 	}

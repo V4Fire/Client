@@ -28,8 +28,7 @@ export function addMethodsToMeta(meta: ComponentMeta, constructor: Function = me
 		computedFields,
 		systemFields,
 		accessors,
-		methods,
-		watchers
+		methods
 	} = meta;
 
 	for (let i = 0; i < ownProps.length; i++) {
@@ -62,26 +61,19 @@ export function addMethodsToMeta(meta: ComponentMeta, constructor: Function = me
 				storeKey = `${key}Store`;
 
 			let
-				metaKey;
+				metaKey,
+				tiedSystemField;
 
 			// Computed fields are cached by default
 			// tslint:disable-next-line:prefer-conditional-expression
 			if (
 				key in computedFields ||
-				!(key in accessors) && (props[propKey] || fields[storeKey] || systemFields[storeKey])
+				// tslint:disable-next-line:no-conditional-assignment
+				!(key in accessors) && (props[propKey] || fields[storeKey] || (tiedSystemField = systemFields[storeKey]))
 			) {
-				if (systemFields[storeKey]) {
-					const
-						watcherListeners = watchers[key] = watchers[key] || [];
-
-					if (!watchers.length) {
-						watcherListeners.push({
-							deep: false,
-							immediate: false,
-							provideArgs: false,
-							handler: () => undefined
-						});
-					}
+				if (tiedSystemField && !tiedSystemField.watchers?.size) {
+					const handler = () => undefined;
+					tiedSystemField.watchers = (tiedSystemField.watchers || new Map()).set(handler, {handler});
 				}
 
 				metaKey = 'computedFields';
