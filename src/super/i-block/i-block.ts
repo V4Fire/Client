@@ -497,7 +497,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	 * Component status.
 	 * This parameter is pretty similar to "hook" parameter.
 	 * But, the hook represents a component status relative to its MVVM instance: created, mounted, destroyed, etc.
-	 * Opposite to "hook", "componentStatus" represents a logical components status:
+	 * Opposite to "hook", "componentStatus" represents a logical component status:
 	 *
 	 *   *) unloaded - a component was just created without any initializing:
 	 *      this status can intersect with some hooks, like beforeCreate or created
@@ -512,7 +512,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	 *   *) ready - a component was fully loaded and rendered:
 	 *      this status can intersect with "mounted" hook
 	 *
-	 *   *) inactive - a component is frozen by keep-alive mechanism or the special input property:
+	 *   *) inactive - a component is frozen by keep-alive mechanism or special input property:
 	 *      this status can intersect with "deactivated" hook
 	 *
 	 *   *) destroyed - a component was destroyed:
