@@ -58,18 +58,18 @@ export function addMethodsToMeta(meta: ComponentMeta, constructor: Function = me
 		} else {
 			const
 				propKey = `${key}Prop`,
-				storeKey = `${key}Store`;
+				storeKey = `${key}Store`,
+				tiedSystemField = systemFields[storeKey];
 
 			let
-				metaKey,
-				tiedSystemField;
+				metaKey;
 
 			// Computed fields are cached by default
 			// tslint:disable-next-line:prefer-conditional-expression
 			if (
 				key in computedFields ||
 				// tslint:disable-next-line:no-conditional-assignment
-				!(key in accessors) && (props[propKey] || fields[storeKey] || (tiedSystemField = systemFields[storeKey]))
+				!(key in accessors) && (props[propKey] || fields[storeKey] || tiedSystemField)
 			) {
 				if (tiedSystemField && !tiedSystemField.watchers?.size) {
 					const handler = () => undefined;
