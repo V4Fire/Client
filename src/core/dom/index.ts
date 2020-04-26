@@ -6,12 +6,12 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { deprecate } from 'core/functools';
-
 /**
  * [[include:core/dom/README.md]]
  * @packageDocumentation
  */
+
+import { deprecate } from 'core/functools';
 
 /**
  * Wraps the specified function as an event handler with delegation.
