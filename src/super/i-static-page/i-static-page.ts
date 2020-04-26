@@ -218,6 +218,12 @@ export default abstract class iStaticPage extends iPage {
 	protected localeStore!: string;
 
 	/**
+	 * Root element self modifiers prefix
+	 */
+	@system()
+	protected rootPrefix: string = 'root';
+
+	/**
 	 * Cache of root modifiers
 	 */
 	@system()
@@ -261,8 +267,8 @@ export default abstract class iStaticPage extends iPage {
 			mod;
 
 		if (component === false) {
-			mod = `root_${name}_${value}`;
-			name = `root_${name.camelize(false)}`;
+			mod = `${this.rootPrefix}_${name}_${value}`;
+			name = `${this.rootPrefix}_${name.camelize(false)}`;
 
 		} else {
 			const
@@ -285,10 +291,7 @@ export default abstract class iStaticPage extends iPage {
 			cl.remove(cache.mod);
 		}
 
-		if (!cl.contains(mod)) {
-			cl.add(mod);
-		}
-
+		cl.add(mod);
 		this.rootMods[name] = {
 			mod,
 			value: <string>value,
@@ -309,7 +312,7 @@ export default abstract class iStaticPage extends iPage {
 		}
 
 		const
-			prefix = component === false ? 'root' : (component.globalName || component.componentName).dasherize();
+			prefix = component === false ? this.rootPrefix : (component.globalName || component.componentName).dasherize();
 
 		name = `${prefix}_${name.camelize(false)}`;
 		value = value !== undefined ? String(value).dasherize() : undefined;
@@ -335,7 +338,7 @@ export default abstract class iStaticPage extends iPage {
 	/** @override */
 	getRootMod(name: string, component: false | ComponentInterface = this): CanUndef<string> {
 		const
-			prefix = component === false ? 'root' : (component.globalName || component.componentName).dasherize();
+			prefix = component === false ? this.rootPrefix : (component.globalName || component.componentName).dasherize();
 
 		name = `${prefix}_${name.camelize(false)}`;
 		return this.rootMods?.[name]?.value;
@@ -378,5 +381,26 @@ export default abstract class iStaticPage extends iPage {
 	protected initBaseAPI(): void {
 		super.initBaseAPI();
 		Object.defineProperty(this, 'remoteState', {...defProp, value: remoteState});
+	}
+
+	/** @override */
+	protected initBlockInstance(): void {
+		super.initBlockInstance();
+
+		const
+			root = document.documentElement;
+
+		root.classList.forEach((className) => {
+			const
+				[prefix, name, value] = className.split('_');
+
+			if (prefix === this.rootPrefix && name && value) {
+				this.rootMods[`${prefix}_${name.camelize(false)}`] = {
+					value,
+					mod: className,
+					component: false
+				};
+			}
+		});
 	}
 }
