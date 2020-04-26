@@ -44,13 +44,13 @@ export interface ComponentEvent {
 
 export interface InitLoadOptions {
 	/**
-	 * If true, the component is loaded in a silent mode,
+	 * If true, the component is loaded in silent,
 	 * i.e. without toggling .componentStatus to 'loading'.
 	 */
 	silent?: boolean;
 
 	/**
-	 * If true, the component force all of child components to load/reload
+	 * If true, the component force all child components to load/reload
 	 */
 	recursive?: boolean;
 }

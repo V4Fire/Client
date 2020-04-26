@@ -20,7 +20,7 @@ import { FieldGetter } from 'super/i-block/modules/field/interface';
 export * from 'super/i-block/modules/field/interface';
 
 /**
- * Class that provides helper methods to safety access to a component property
+ * Class provides helper methods to safety access to a component property
  */
 export default class Field<C extends iBlock = iBlock> extends Friend<C> {
 	/**

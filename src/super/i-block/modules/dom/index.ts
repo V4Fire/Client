@@ -26,7 +26,7 @@ export * from 'super/i-block/modules/dom/const';
 export * from 'super/i-block/modules/dom/interface';
 
 /**
- * Class that provides some methods to work with a DOM tree
+ * Class provides some methods to work with a DOM tree
  */
 export default class DOM<C extends iBlock = iBlock> extends Friend<C> {
 	/**
@@ -73,10 +73,10 @@ export default class DOM<C extends iBlock = iBlock> extends Friend<C> {
 
 	/**
 	 * Puts the specified element to a render stream.
-	 * This methods forces the render of the element.
+	 * This method forces the render of the element.
 	 *
 	 * @param cb
-	 * @param [el] - link to a DOM element or a component element name
+	 * @param [el] - link to a DOM element or component element name
 	 */
 	@wait('ready')
 	async putInStream(

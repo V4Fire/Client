@@ -37,11 +37,11 @@ import {
 export * from 'super/i-block/modules/sync/interface';
 
 /**
- * Class that provides API to organize a "link" from one component property to another
+ * Class provides API to organize a "link" from one component property to another
  */
 export default class Sync<C extends iBlock = iBlock> extends Friend<C> {
 	/**
-	 * Cache for modifier synchronize functions
+	 * Cache of functions to synchronize modifiers
 	 */
 	readonly syncModCache!: Dictionary<Function>;
 
@@ -78,7 +78,7 @@ export default class Sync<C extends iBlock = iBlock> extends Friend<C> {
 	/**
 	 * Sets a link to a property that logically connected to the current property.
 	 *
-	 * The link is mean that every time a value by the link is changed or the linked event is fired
+	 * The link is mean every time a value by the link is changed or linked event is fired
 	 * a value that refers to the link will be also changed.
 	 *
 	 * Logical connection is based on a name convention: properties that matches the pattern
@@ -106,7 +106,7 @@ export default class Sync<C extends iBlock = iBlock> extends Friend<C> {
 	/**
 	 * Sets a link to a property that logically connected to the current property.
 	 *
-	 * The link is mean that every time a value by the link is changed or the linked event is fired
+	 * The link is mean every time a value by the link is changed or linked event is fired
 	 * a value that refers to the link will be also changed.
 	 *
 	 * Logical connection is based on a name convention:
@@ -134,7 +134,7 @@ export default class Sync<C extends iBlock = iBlock> extends Friend<C> {
 	/**
 	 * Sets a link to a property/event by the specified path.
 	 *
-	 * The link is mean that every time a value by the link is changed or the linked event is fired
+	 * The link is mean every time a value by the link is changed or linked event is fired
 	 * a value that refers to the link will be also changed.
 	 *
 	 * To listen an event you need to use the special delimiter ":" within a path.
@@ -178,7 +178,7 @@ export default class Sync<C extends iBlock = iBlock> extends Friend<C> {
 	/**
 	 * Sets a link to a property/event by the specified path.
 	 *
-	 * The link is mean that every time a value by the link is changed or the linked event is fired
+	 * The link is mean every time a value by the link is changed or linked event is fired
 	 * a value that refers to the link will be also changed.
 	 *
 	 * To listen an event you need to use the special delimiter ":" within a path.
@@ -362,7 +362,7 @@ export default class Sync<C extends iBlock = iBlock> extends Friend<C> {
 	/**
 	 * Creates an object where all keys are referring to another properties/events as links.
 	 *
-	 * The link is mean that every time a value by the link is changed or the linked event is fired
+	 * The link is mean every time a value by the link is changed or linked event is fired
 	 * a value that refers to the link will be also changed.
 	 *
 	 * To listen an event you need to use the special delimiter ":" within a path.
@@ -401,7 +401,7 @@ export default class Sync<C extends iBlock = iBlock> extends Friend<C> {
 	/**
 	 * Creates an object where all keys refer to another properties/events as links.
 	 *
-	 * The link is mean that every time a value by the link is changed or the linked event is fired
+	 * The link is mean every time a value by the link is changed or linked event is fired
 	 * a value that refers to the link will be also changed.
 	 *
 	 * To listen an event you need to use the special delimiter ":" within a path.
@@ -441,7 +441,7 @@ export default class Sync<C extends iBlock = iBlock> extends Friend<C> {
 	/**
 	 * Creates an object where all keys refer to another properties/events as links.
 	 *
-	 * The link is mean that every time a value by the link is changed or the linked event is fired
+	 * The link is mean every time a value by the link is changed or linked event is fired
 	 * a value that refers to the link will be also changed.
 	 *
 	 * To listen an event you need to use the special delimiter ":" within a path.
@@ -482,7 +482,7 @@ export default class Sync<C extends iBlock = iBlock> extends Friend<C> {
 	/**
 	 * Creates an object where all keys refer to another properties/events as links.
 	 *
-	 * The link is mean that every time a value by the link is changed or the linked event is fired
+	 * The link is mean every time a value by the link is changed or linked event is fired
 	 * a value that refers to the link will be also changed.
 	 *
 	 * To listen an event you need to use the special delimiter ":" within a path.

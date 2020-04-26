@@ -63,7 +63,7 @@ export default abstract class iPage extends iData implements iVisible {
 	}
 
 	/**
-	 * Wrapped version of .scrollTo method
+	 * The wrapped version of .scrollTo method
 	 * @see [[iPage.scrollTo]]
 	 */
 	get scrollToProxy(): this['scrollTo'] {
@@ -91,7 +91,7 @@ export default abstract class iPage extends iData implements iVisible {
 	scrollTo(opts: ScrollOptions): void;
 
 	/**
-	 * Scrolls a page to specified coordinates
+	 * Scrolls a page to the specified coordinates
 	 *
 	 * @param x
 	 * @param y

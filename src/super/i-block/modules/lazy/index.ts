@@ -18,7 +18,7 @@ import { CreateLazyFnOptions, LazyFn } from 'super/i-block/modules/lazy/interfac
 export * from 'super/i-block/modules/lazy/interface';
 
 /**
- * Class that provides some methods to organize lazy calculations
+ * Class provides some methods to organize lazy calculations
  */
 export default class Lazy<C extends iBlock = iBlock> extends Friend<C> {
 	/**

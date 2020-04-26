@@ -37,7 +37,7 @@ export default class Daemons<C extends iBlock = iBlock> extends Friend<C> {
 	//#if runtime has component/daemons
 
 	/**
-	 * Creates a new daemons dictionary with extending from the specified parent and returns it
+	 * Creates a new daemon dictionary with extending from the specified parent and returns it
 	 *
 	 * @param base
 	 * @param [parent]

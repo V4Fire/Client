@@ -1,3 +1,3 @@
 # traits/i-width
 
-This module provides a trait for a component that have some "width" behaviour.
+This module provides a trait for a component have some "width" behaviour.

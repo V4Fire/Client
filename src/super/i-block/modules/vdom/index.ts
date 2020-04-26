@@ -36,7 +36,7 @@ import { RenderFn, RenderPath, RenderContext } from 'super/i-block/modules/vdom/
 export * from 'super/i-block/modules/vdom/interface';
 
 /**
- * Class that provides API to work with a VDOM tree
+ * Class provides API to work with a VDOM tree
  */
 export default class VDOM<C extends iBlock = iBlock> extends Friend<C> {
 	/**

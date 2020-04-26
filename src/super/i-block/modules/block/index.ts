@@ -34,7 +34,7 @@ const
 	elRxp = /_+/;
 
 /**
- * Class that implements BEM-like API
+ * Class implements BEM-like API
  */
 export default class Block<C extends iBlock = iBlock> extends Friend<C> {
 	/** @see [[iBlock.componentId]] */

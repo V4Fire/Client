@@ -25,7 +25,7 @@ let
 	baseSyncRouterState;
 
 /**
- * Class that provides some helper methods to initialize a component state
+ * Class provides some helper methods to initialize a component state
  */
 export default class State<C extends iBlock = iBlock> extends Friend<C> {
 	/** @see [[iBlock.hook]] */
@@ -54,7 +54,7 @@ export default class State<C extends iBlock = iBlock> extends Friend<C> {
 	}
 
 	/**
-	 * Gets values from an object and saves it to a state of the current component
+	 * Retrieves object values and saves it to a state of the current component
 	 * @param data
 	 */
 	set(data: Nullable<Dictionary>): boolean {

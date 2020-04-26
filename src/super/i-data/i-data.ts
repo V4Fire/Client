@@ -231,7 +231,7 @@ export default abstract class iData extends iBlock implements iProgress {
 	 * Parameters that associated to provider methods will be automatically appended to
 	 * invocation as parameters by default.
 	 *
-	 * To create logic when the data provider automatically reload data, if some of properties has been
+	 * To create logic when the data provider automatically reload data, if some properties has been
 	 * changed, you need to use 'sync.object'.
 	 *
 	 * @example

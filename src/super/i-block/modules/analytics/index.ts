@@ -19,7 +19,7 @@ import iBlock from 'super/i-block/i-block';
 import Friend from 'super/i-block/modules/friend';
 
 /**
- * Class that provides some methods to work with analytic engines
+ * Class provides some methods to work with analytic engines
  */
 export default class Analytics<C extends iBlock = iBlock> extends Friend<C> {
 	/**

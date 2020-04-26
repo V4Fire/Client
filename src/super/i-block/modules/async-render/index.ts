@@ -22,7 +22,7 @@ import { TaskOptions, TaskDesc } from 'super/i-block/modules/async-render/interf
 export * from 'super/i-block/modules/async-render/interface';
 
 /**
- * Class that provides API to render chunks of a component template asynchronously
+ * Class provides API to render chunks of a component template asynchronously
  */
 export default class AsyncRender<C extends iBlock = iBlock> extends Friend<C> {
 	//#if runtime has component/async-render

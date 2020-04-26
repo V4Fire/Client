@@ -220,7 +220,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	 * Initial component stage value.
 	 *
 	 * The stage property can be used to mark different states of the component.
-	 * For example, we have a component that implements a form of image uploading,
+	 * For example, we have a component implements a form of image uploading,
 	 * and we have two variants of the form: upload by a link or upload from a computer.
 	 *
 	 * We can create two stage values: 'link' and 'file' to separate the component template by two variant of a markup
@@ -317,7 +317,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	 * If true, then the component will try to reload data on re-activation.
 	 * This parameter can be useful if you are using keep-alive directive within your template.
 	 * For example, you have a page within keep-alive, and after backing to this page the component will be forcely drawn
-	 * from a keep-alive cache, but after this page will try to update data in a silent mode.
+	 * from a keep-alive cache, but after this page will try to update data in silent.
 	 */
 	@prop(Boolean)
 	readonly reloadOnActivation: boolean = false;
@@ -338,7 +338,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 
 	/**
 	 * If true, then the component state will be synchronized with the router after initializing.
-	 * For example, you have a component that uses "syncRouterState" method to create two-way binding with a router.
+	 * For example, you have a component uses "syncRouterState" method to create two-way binding with a router.
 	 *
 	 * ```typescript
 	 * @component()
@@ -349,7 +349,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	 *   syncRouterState(data?: Dictionary) {
 	 *     // This notation means that if there is a value within "route.query"
 	 *     // it will be mapped to the component as "stage" field.
-	 *     // If a route was changed, the mapping is repeated again.
+	 *     // If a route was changed, the mapping repeat.
 	 *     // Also if "stage" field of the component was changed,
 	 *     // it will be mapped to the router as "stage" query parameter by using "router.push".
 	 *     return {stage: data?.stage || this.stage};
@@ -357,8 +357,8 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	 * }
 	 * ```
 	 *
-	 * But, if in some cases we don't have "stage" within "route.query" and the component have the default value,
-	 * we trap in a situation where exists route, that wasn't synchronized with the component and
+	 * But, if in some cases we don't have "stage" within "route.query", and the component have the default value,
+	 * we trap in a situation where exists route, which wasn't synchronized with the component, and
 	 * it can affect to the "back" logic. Sometimes, this behavior doesn't match with our expectation.
 	 * But if we toggle "syncRouterStoreOnInit" to true,
 	 * the component will forcely map own state to the router after initializing.
@@ -372,7 +372,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	 *   *) As a key we declare a name of a component method that we want to call;
 	 *   *) As a value we declare a path to a property/event we want to watch/listen.
 	 *      Also, the method can take additional parameters of watching.
-	 *      Mind, the properties/events is taken from a component that contents the current.
+	 *      Mind, the properties/events is taken from a component contents the current.
 	 *
 	 * @see [[iBlock.watch]]
 	 * @example
@@ -390,7 +390,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	 *
 	 * @example
 	 * ```js
-	 * // We can attaches multiple watchers for one method
+	 * // We can attach multiple watchers for one method
 	 *
 	 * {
 	 *   reload: [
@@ -421,8 +421,8 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	 * parent component.
 	 *
 	 * All dispatching events have special prefixes to avoid collisions with events from another components,
-	 * for example: bButton "click" will bubbled as "b-button::click".
-	 * Or if the component has globalName parameter, it will additionally bubbled as `${globalName}::click`.
+	 * for example: bButton "click" will bubble as "b-button::click".
+	 * Or if the component has globalName parameter, it will additionally bubble as `${globalName}::click`.
 	 */
 	@prop(Boolean)
 	readonly dispatching: boolean = false;
@@ -444,11 +444,11 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	/**
 	 * Additional classes for component elements.
 	 * It can be useful, if you need to attach some extra classes to internal component elements.
-	 * Be sure that you know what are you doing, because this mechanism is tied on a component internal markup.
+	 * Be sure you know what are you doing, because this mechanism is tied on a component internal markup.
 	 *
 	 * @example
 	 * // Key names are tied with component elements,
-	 * // and values contain a CSS class or a list of classes we want to add
+	 * // and values contain a CSS class or list of classes we want to add
 	 *
 	 * {
 	 *   foo: 'bla',
@@ -461,11 +461,11 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	/**
 	 * Additional styles for component elements.
 	 * It can be useful, if you need to attach some extra styles to internal component elements.
-	 * Be sure that you know what are you doing, because this mechanism is tied on a component internal markup.
+	 * Be sure you know what are you doing, because this mechanism is tied on a component internal markup.
 	 *
 	 * @example
 	 * // Key names are tied with component elements,
-	 * // and values contains a CSS style string, a style object or a list of style strings
+	 * // and values contains a CSS style string, a style object or list of style strings
 	 *
 	 * {
 	 *   foo: 'color: red',
@@ -504,7 +504,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	 *
 	 *   *) loading - a component starts to load data from own providers:
 	 *      this status can intersect with some hooks, like created or mounted.
-	 *      If the component was mounted with this status, you can show in UI that data is loading.
+	 *      If the component was mounted with this status, you can show by using UI that data is loading.
 	 *
 	 *   *) beforeReady - a component was fully loaded and starts to prepare to render:
 	 *      this status can intersect with some hooks like created or mounted
@@ -640,9 +640,9 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	/**
 	 * Base component modifiers.
 	 * These modifiers are automatically provided to child components.
-	 * For example, you have a component that uses another component within own template,
+	 * For example, you have a component uses another component within own template,
 	 * and you specify to the outer component some theme modifier.
-	 * This modifier will recursively provided to all child components.
+	 * This modifier will recursively provide to all child components.
 	 */
 	@computed({replace: false})
 	get baseMods(): CanUndef<Readonly<ModsNTable>> {
@@ -774,8 +774,8 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	}
 
 	/**
-	 * Special link to a parent component.
-	 * This parameters are used with static declaration of modifiers to refer parent modifiers.
+	 * The special link to a parent component.
+	 * This parameter is used with static declaration of modifiers to refer parent modifiers.
 	 *
 	 * @example
 	 * ```js
@@ -1017,7 +1017,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	protected readonly ifOnceStore: Dictionary = {};
 
 	/**
-	 * Temporary cache.
+	 * The temporary cache.
 	 * Mutation of this object don't emit re-render of the component.
 	 */
 	@system({
@@ -1029,14 +1029,14 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	protected tmp!: Dictionary;
 
 	/**
-	 * Temporary cache.
+	 * The temporary cache.
 	 * Mutation of this object emit re-render of the component.
 	 */
 	@field({merge: true})
 	protected watchTmp: Dictionary = {};
 
 	/**
-	 * Render temporary cache.
+	 * The render temporary cache.
 	 * It's used with the "renderKey" directive.
 	 */
 	@system({
@@ -1327,7 +1327,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	 *     console.log(value[0] === oldValue[0]);
 	 *   }
 	 *
-	 *   // When you watch a property in a deep mode and declare the second argument
+	 *   // When you watch a property in a deep and declare the second argument
 	 *   // in a watcher, the previous value is cloned deeply
 	 *   @watch({path: 'list', deep: true})
 	 *   onListChangeWithDeepCloning(value: Dictionary[], oldValue: Dictionary[]): void {
@@ -1363,7 +1363,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	 *
 	 * By default, all events start to listen on the "created" hook.
 	 *
-	 * @param path - path to a component property to watch or an event to listen
+	 * @param path - path to a component property to watch or event to listen
 	 * @param opts - additional options
 	 * @param handler
 	 *
@@ -1404,7 +1404,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	/**
 	 * Sets a watcher to a component property/event by the specified path
 	 *
-	 * @param path - path to a component property to watch or an event to listen
+	 * @param path - path to a component property to watch or event to listen
 	 * @param handler
 	 * @param opts - additional options
 	 */
@@ -1665,7 +1665,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 
 	/**
 	 * Executes a callback when the component is toggled to the specified status.
-	 * The method returns a promise with a result of invoking the function or the raw result without wrapping
+	 * The method returns a promise with a result of invoking the function or raw result without wrapping
 	 * if the component already in the specified status.
 	 *
 	 * @see [[Async.promise]]
@@ -1959,7 +1959,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 
 	/**
 	 * Sets a modifier to the root element of an application.
-	 * This method is useful, when you need to attach a class that can affect for the whole application,
+	 * This method is useful, when you need to attach a class can affect to the whole application,
 	 * for instance, you want to lock page scrolling, i.e. you need to add a class to the root HTML tag.
 	 *
 	 * @param name
@@ -2066,7 +2066,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	 * component as properties (you can specify a complex path with dots, like 'foo.bla.bar' or 'mod.hidden').
 	 *
 	 * Also, the component will watch for changes of every property that was in that dictionary
-	 * and when at least one of these properties is changed, the whole butch of data will be send to the local storage
+	 * and when at least one of these properties is changed, the whole butch of data will be sent to the local storage
 	 * by using this method. When the component provides local storage data the second argument of the method is
 	 * equal to "remote".
 	 *
@@ -2103,7 +2103,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	 * component as properties (you can specify a complex path with dots, like 'foo.bla.bar' or 'mod.hidden').
 	 *
 	 * Also, the component will watch for changes of every property that was in that dictionary
-	 * and when at least one of these properties is changed, the whole butch of data will be send to the router
+	 * and when at least one of these properties is changed, the whole butch of data will be sent to the router
 	 * by using this method (the router will produce a new transition by using "push").
 	 * When the component provides router data the second argument of the method is equal to "remote".
 	 *

@@ -21,7 +21,7 @@ export * from 'super/i-block/modules/opt/const';
 export * from 'super/i-block/modules/opt/interface';
 
 /**
- * Class that provides some methods to optimize an application
+ * Class provides some methods to optimize an application
  */
 export default class Opt<C extends iBlock = iBlock> extends Friend<C> {
 	/** @see [[iBlock.ifOnceStore]] */

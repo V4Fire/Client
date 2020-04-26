@@ -139,7 +139,7 @@ export default class Provide<C extends iBlock = iBlock> extends Friend<C> {
 	}
 
 	/**
-	 * Returns an object with classes for elements of an another component
+	 * Returns an object with classes for elements of another component
 	 *
 	 * @param componentName
 	 * @param [classes] - additional classes ({baseElementName: newElementName})
@@ -147,7 +147,7 @@ export default class Provide<C extends iBlock = iBlock> extends Friend<C> {
 	classes(componentName: string, classes?: Classes): Readonly<Dictionary<string>>;
 
 	/**
-	 * Returns an object with classes for elements of an another component
+	 * Returns an object with classes for elements of another component
 	 * @param classes - additional classes ({baseElementName: newElementName})
 	 */
 	classes(classes: Classes): Readonly<Dictionary<string>>;
@@ -254,13 +254,13 @@ export default class Provide<C extends iBlock = iBlock> extends Friend<C> {
 	 * Returns an array of element classes by the specified parameters
 	 *
 	 * @param componentNameOrCtx - component name or a link to a component context
-	 * @param els - map of elements with map of modifiers ({button: {focused: true}})
+	 * @param els - map of elements and its modifiers ({button: {focused: true}})
 	 */
 	elClasses(componentNameOrCtx: string | iBlock, els: Dictionary<ModsTable>): ReadonlyArray<string>;
 
 	/**
 	 * Returns an array of element classes by the specified parameters
-	 * @param els - map of elements with map of modifiers ({button: {focused: true}})
+	 * @param els - map of elements and its modifiers ({button: {focused: true}})
 	 */
 	elClasses(els: Dictionary<ModsTable>): ReadonlyArray<string>;
 	elClasses(

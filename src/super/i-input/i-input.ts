@@ -105,15 +105,15 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 
 	/**
 	 * Component values that are not allowed to send to a form.
-	 * The parameter can take a value or a list of values to ban,
+	 * The parameter can take a value or list of values to ban,
 	 * or a function that checks the values, or a regular expression to test.
 	 */
 	@prop({required: false})
 	readonly disallow?: CanArray<this['Value']> | Function | RegExp;
 
 	/**
-	 * Data type of a component form value.
-	 * This function is used to transform a component value to one of primitive types that will be send from a form.
+	 * Data type of component form value.
+	 * This function is used to transform a component value to one of primitive types that will be sent from a form.
 	 * For example: String, Blob or Number.
 	 */
 	@prop(Function)
@@ -121,7 +121,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 
 	/**
 	 * Converter/s of a component value to a form value.
-	 * These functions are used to convert a component value to a value that will be send from a form.
+	 * These functions are used to convert a component value to a value that will be sent from a form.
 	 */
 	@prop({type: [Function, Array], required: false})
 	readonly formConverter?: CanArray<Function>;
