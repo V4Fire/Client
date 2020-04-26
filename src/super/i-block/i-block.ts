@@ -500,23 +500,23 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	 * Opposite to "hook", "componentStatus" represents a logical components status:
 	 *
 	 *   *) unloaded - a component was just created without any initializing:
-	 *      this status can intersects with some hooks, like beforeCreate or created
+	 *      this status can intersect with some hooks, like beforeCreate or created
 	 *
 	 *   *) loading - a component starts to load data from own providers:
-	 *      this status can intersects with some hooks, like created or mounted.
+	 *      this status can intersect with some hooks, like created or mounted.
 	 *      If the component was mounted with this status, you can show in UI that data is loading.
 	 *
 	 *   *) beforeReady - a component was fully loaded and starts to prepare to render:
-	 *      this status can intersects with some hooks like created or mounted
+	 *      this status can intersect with some hooks like created or mounted
 	 *
 	 *   *) ready - a component was fully loaded and rendered:
-	 *      this status can intersects with "mounted" hook
+	 *      this status can intersect with "mounted" hook
 	 *
 	 *   *) inactive - a component is frozen by keep-alive mechanism or the special input property:
-	 *      this status can intersects with "deactivated" hook
+	 *      this status can intersect with "deactivated" hook
 	 *
 	 *   *) destroyed - a component was destroyed:
-	 *      this status can intersects with some hooks, like beforeDestroy or destroyed
+	 *      this status can intersect with some hooks, like beforeDestroy or destroyed
 	 */
 	@computed({replace: false})
 	get componentStatus(): ComponentStatus {
