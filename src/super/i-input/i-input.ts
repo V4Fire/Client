@@ -581,7 +581,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 
 	/**
 	 * Validates the component value
-	 * (returns true or a name of the failed validation)
+	 * (returns true or name of the failed validation)
 	 *
 	 * @param params - additional parameters
 	 * @emits `validationStart()`
