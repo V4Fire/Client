@@ -15,9 +15,11 @@ const
 
 const
 	config = require('config'),
-	runtime = config.runtime();
+	runtime = config.runtime(),
+	it = runtime.includedThemes;
 
-let DS = {};
+let
+	DS = {};
 
 const
 	CSSVars = Object.create(null);
@@ -152,6 +154,9 @@ function prepareData(data, path, theme) {
 
 prepareData(DS);
 
+const
+	THEME = runtime.theme,
+	INCLUDED_THEMES = it && Object.isBoolean(it) ? DS.meta.includedThemes : it;
 
 module.exports = function (style) {
 	/**
@@ -222,12 +227,11 @@ module.exports = function (style) {
 	 *
 	 * @param {!Object} name
 	 * @param {!Object} [id]
-	 * @param {!string} [theme]
 	 * @returns {(!Object|!Array)}
 	 */
 	style.define(
 		'getDSColor',
-		(name, id, theme = runtime.theme) => {
+		(name, id) => {
 			name = name.string || name.name;
 
 			if (!name) {
@@ -235,7 +239,8 @@ module.exports = function (style) {
 			}
 
 			const
-				path = ['colors'];
+				hasIncludedThemes = Boolean(INCLUDED_THEMES),
+				path = !hasIncludedThemes && THEME ? ['colors', 'theme', THEME] : ['colors'];
 
 			if (id) {
 				id = id.string || id.val;
@@ -245,43 +250,23 @@ module.exports = function (style) {
 				}
 			}
 
-			if (Object.isString(theme)) {
-				path.push(theme);
-			}
-
 			path.push(name);
 
 			if (id !== undefined) {
 				path.push(id);
 			}
 
-			return $C(DS).get(path.join('.'));
+			return hasIncludedThemes ? stylus.utils.coerce($C(CSSVars).get(path)) : $C(DS).get(path);
 		}
 	);
 
 	/**
 	 * Returns runtime config theme value
 	 */
-	style.define('defaultTheme', () => runtime.theme);
+	style.define('defaultTheme', () => THEME);
 
 	/**
 	 * Returns included design system themes
 	 */
-	style.define('includedThemes', () => {
-		if (runtime.includedThemes) {
-			return Object.isBoolean(runtime.includedThemes) ? DS.meta.themes : runtime.includedThemes;
-		}
-
-		return false;
-	});
-
-	style.define('getDsVars', () => {
-		if (runtime.theme && !runtime.includedThemes) {
-			return CSSVars;
-		}
-
-		if (runtime.includedThemes) {
-
-		}
-	});
+	style.define('includedThemes', () => INCLUDED_THEMES);
 };

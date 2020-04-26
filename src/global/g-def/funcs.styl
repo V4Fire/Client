@@ -198,7 +198,9 @@ stretch-layer($position, $zIndexPos = "modal")
  */
 c($kit, $id = null, $reserved = false, $base = false)
 	if getDSOptions("colors")
-		return getDSColor($kit, $id)
+		$color = getDSColor($kit, $id)
+		$value = type($color) == "string" ? convert($color) : $color
+		return $value
 
 	getGlobalColor($kit, $id || null, $reserved, $base)
 
@@ -274,10 +276,4 @@ path($arr)
  */
 generateRules($p, $fn)
 	if !$p.skipDsInheritance
-		//#if runtime has ds-vars
-		$fn($p.__vars__)
-		//#endif
-
-		//#unless runtime has ds-vars
 		$fn($p)
-		//#endunless
