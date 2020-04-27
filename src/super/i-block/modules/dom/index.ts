@@ -68,7 +68,7 @@ export default class DOM<C extends iBlock = iBlock> extends Friend<C> {
 	 * @param fn
 	 */
 	delegateElement<T extends Function>(name: string, fn: T): T {
-		return this.delegate(this.provide.elClasses({[name]: {}}).join('.'), fn);
+		return this.delegate([''].concat(this.provide.elClasses({[name]: {}})).join('.'), fn);
 	}
 
 	/**
