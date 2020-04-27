@@ -135,7 +135,10 @@ export function createWatchFn(
 						enumerable: true,
 						configurable: true,
 						get: () => proxy[info.name],
-						set: (v) => proxy[info.name] = v
+						set: (val) => {
+							// @ts-ignore (access))
+							info.ctx.$set(proxy, info.name, val);
+						}
 					});
 				}
 
