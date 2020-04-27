@@ -10,7 +10,7 @@ import Range from 'core/range';
 import symbolGenerator from 'core/symbol';
 
 import iVisible from 'traits/i-visible/i-visible';
-import iBlock, { component, prop, system, p, wait, watch, ModsDecl } from 'super/i-block/i-block';
+import iBlock, { component, prop, system, wait, watch, ModsDecl } from 'super/i-block/i-block';
 import {
 
 	Offset,
@@ -47,7 +47,6 @@ export default class bScroll extends iBlock implements iVisible {
 	/**
 	 * Scroll offset
 	 */
-	@p({cache: false})
 	get scrollOffset(): CanPromise<Offset> {
 		return this.waitStatus('ready', () => {
 			const {area} = this.$refs;
@@ -61,7 +60,6 @@ export default class bScroll extends iBlock implements iVisible {
 	/**
 	 * Scroll width
 	 */
-	@p({cache: false})
 	get scrollWidth(): CanPromise<number> {
 		return this.waitStatus('ready', () => this.$refs.area.scrollWidth);
 	}
@@ -69,7 +67,6 @@ export default class bScroll extends iBlock implements iVisible {
 	/**
 	 * Scroll height
 	 */
-	@p({cache: false})
 	get scrollHeight(): CanPromise<number> {
 		return this.waitStatus('ready', () => this.$refs.area.scrollHeight);
 	}
@@ -77,7 +74,6 @@ export default class bScroll extends iBlock implements iVisible {
 	/**
 	 * Component width
 	 */
-	@p({cache: false})
 	get width(): CanPromise<number> {
 		return this.waitStatus('ready', () => this.$refs.area.clientWidth);
 	}
@@ -85,7 +81,6 @@ export default class bScroll extends iBlock implements iVisible {
 	/**
 	 * Component height
 	 */
-	@p({cache: false})
 	get height(): CanPromise<number> {
 		return this.waitStatus('ready', () => this.$refs.area.clientHeight);
 	}

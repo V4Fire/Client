@@ -98,26 +98,6 @@
 							< use :xlink:href = getIconLink('${iconId}')
 
 				/**
-				 * Generates a transition wrapper for a content
-				 * @param {string=} [content] - content to wrapping
-				 */
-				- block transition(content)
-					: elName = (content + '' |getFirstTagElementName)
-
-					- if !elName
-						< transition
-							{content}
-
-					- else
-						: a = {}
-
-						- forEach ['enter', 'enter-active', 'enter-to', 'leave', 'leave-active', 'leave-to'] => type
-							? a[type + '-class'] = elName + '_' + type + '_true';
-
-						< transition ${a}
-							{content}
-
-				/**
 				 * Generates a slot declaration (scoped and plain)
 				 *
 				 * @param {string=} [name] - slot name

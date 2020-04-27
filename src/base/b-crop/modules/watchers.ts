@@ -549,7 +549,7 @@ export function syncResizeSelectWatcher<T extends bCrop>(component: T, value: bo
 		onDragStart: {
 			capture: true,
 			// @ts-ignore (access)
-			handler: <Function>c.dom.delegateElement('r', (e) => {
+			handler: c.dom.delegateElement('r', (e) => {
 				e.stopPropagation();
 				c.setMod('active', true);
 				init(e.target, e, cancelMinMax);

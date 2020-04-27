@@ -6,19 +6,19 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { deprecate } from 'core/functools';
-
 /**
  * [[include:core/dom/README.md]]
  * @packageDocumentation
  */
 
+import { deprecate } from 'core/functools';
+
 /**
  * Wraps the specified function as an event handler with delegation.
  * This function can be used as a decorator or like a simple function.
  *
- * @param selector - selector for delegating
- * @param [handler]
+ * @param selector - selector to delegate
+ * @param [fn]
  *
  * @example
  * ```js
@@ -37,7 +37,9 @@ import { deprecate } from 'core/functools';
  * }
  * ```
  */
-export function wrapAsDelegateHandler(selector: string, handler?: Function): Function {
+export function wrapAsDelegateHandler<T extends Function>(selector: string, fn: T): T;
+export function wrapAsDelegateHandler(selector: string): Function;
+export function wrapAsDelegateHandler(selector: string, fn?: Function): Function {
 	function wrapper(e: Event): boolean {
 		const
 			t = <Element>e.target;
@@ -51,19 +53,19 @@ export function wrapAsDelegateHandler(selector: string, handler?: Function): Fun
 
 		if (link) {
 			e.delegateTarget = link;
-			handler && handler.call(this, e);
+			fn && fn.call(this, e);
 			return true;
 		}
 
 		return false;
 	}
 
-	if (handler) {
+	if (fn) {
 		return wrapper;
 	}
 
 	return (target, key, descriptors) => {
-		handler = descriptors.value;
+		fn = descriptors.value;
 		descriptors.value = wrapper;
 	};
 }

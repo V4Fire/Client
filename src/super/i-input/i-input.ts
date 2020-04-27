@@ -6,12 +6,18 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+/**
+ * [[include:super/i-input/README.md]]
+ * @packageDocumentation
+ */
+
 import iAccess from 'traits/i-access/i-access';
 import iVisible from 'traits/i-visible/i-visible';
 
 import iData, {
 
 	component,
+
 	prop,
 	field,
 	system,
@@ -27,6 +33,7 @@ import {
 
 	Value,
 	FormValue,
+
 	Validators,
 	ValidatorMsg,
 	ValidatorParams,
@@ -34,11 +41,14 @@ import {
 	ValidationResult,
 	ValidatorsDecl
 
-} from 'super/i-input/modules/interface';
+} from 'super/i-input/interface';
 
 export * from 'super/i-data/i-data';
-export * from 'super/i-input/modules/interface';
+export * from 'super/i-input/interface';
 
+/**
+ * Superclass for form components
+ */
 @component({
 	model: {
 		prop: 'valueProp',
@@ -70,13 +80,13 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	readonly defaultProp?: this['Value'];
 
 	/**
-	 * Input id
+	 * Input DOM identifier
 	 */
 	@prop({type: String, required: false})
 	readonly id?: string;
 
 	/**
-	 * Input name
+	 * Input DOM name
 	 */
 	@prop({type: String, required: false})
 	readonly name?: string;
@@ -88,55 +98,62 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	readonly autofocus?: boolean;
 
 	/**
-	 * Connected form id
+	 * Identifier of a form that connected to the component
 	 */
 	@prop({type: String, required: false})
 	readonly form?: string;
 
 	/**
-	 * Illegal component values
+	 * Component values that are not allowed to send to a form.
+	 * The parameter can take a value or list of values to ban,
+	 * or a function that checks the values, or a regular expression to test.
 	 */
 	@prop({required: false})
-	readonly disallow?: this['Value'] | this['Value'][] | Function | RegExp;
+	readonly disallow?: CanArray<this['Value']> | Function | RegExp;
 
 	/**
-	 * Component value type factory
+	 * Data type of component form value.
+	 * This function is used to transform a component value to one of primitive types that will be sent from a form.
+	 * For example: String, Blob or Number.
 	 */
 	@prop(Function)
 	readonly dataType: Function = ((Any));
 
 	/**
-	 * Form value converter
+	 * Converter/s of a component value to a form value.
+	 * These functions are used to convert a component value to a value that will be sent from a form.
 	 */
 	@prop({type: [Function, Array], required: false})
 	readonly formConverter?: CanArray<Function>;
 
 	/**
-	 * If false, then the component value won't be cached by a form
+	 * If false, then the component value won't be cached by a form.
+	 * The caching is mean, that if the component value doesn't change since the last sending of a form,
+	 * it won't be send again.
 	 */
 	@prop(Boolean)
 	readonly cache: boolean = true;
 
 	/**
-	 * List of validators
+	 * List of component validators
 	 */
 	@prop(Array)
 	readonly validators: Validators = [];
 
 	/**
-	 * Initial information message
+	 * Initial information message that component need to show
 	 */
 	@prop({type: String, required: false})
 	readonly infoProp?: string;
 
 	/**
-	 * Initial error message
+	 * Initial error message that component need to show
 	 */
 	@prop({type: String, required: false})
 	readonly errorProp?: string;
 
 	/**
-	 * If true, then will be generated a markup for default messages
+	 * If true, then will be generated the default markup within a component template to show info/error messages
 	 */
 	@prop({type: Boolean, required: false})
 	readonly messageHelpers?: boolean;
@@ -148,7 +165,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	prevValue?: this['Value'];
 
 	/**
-	 * Link to the component validators map
+	 * Link to a map of available component validators
 	 */
 	@p({replace: false})
 	get validatorsMap(): typeof iInput['validators'] {
@@ -156,12 +173,24 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	}
 
 	/**
-	 * Link to the form that is associated to the component
+	 * Link to a form that is tied with the component
 	 */
-	@p({cache: false, replace: false})
+	@p({replace: false})
 	get connectedForm(): CanPromise<CanUndef<HTMLFormElement>> {
-		return this.waitStatus('ready', () =>
-			(this.form ? document.querySelector<HTMLFormElement>(`#${this.form}`) : this.$el.closest('form')) || undefined);
+		return this.waitStatus('ready', () => {
+			let
+				form;
+
+			// tslint:disable-next-line:prefer-conditional-expression
+			if (this.form) {
+				form = document.querySelector<HTMLFormElement>(`#${this.form}`);
+
+			} else {
+				form = this.$el.closest('form');
+			}
+
+			return form || undefined;
+		});
 	}
 
 	/**
@@ -191,13 +220,13 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	/**
 	 * Form value of the component
 	 */
-	@p({cache: false, replace: false})
+	@p({replace: false})
 	get formValue(): Promise<this['FormValue']> {
 		return (async () => {
 			await this.nextTick();
 
 			const
-				test = (<Array<this['Value'] | Function | RegExp>>[]).concat(this.disallow || []),
+				test = Array.concat([], this.disallow),
 				value = await this[this.valueKey];
 
 			const match = (el) => {
@@ -231,9 +260,11 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	}
 
 	/**
-	 * Grouped form value of the component
+	 * Grouped form value of the component, i.e.
+	 * if there are another form components with the same form name,
+	 * their values will be grouped
 	 */
-	@p({cache: false, replace: false})
+	@p({replace: false})
 	get groupFormValue(): Promise<CanArray<this['FormValue']>> {
 		return (async () => {
 			const
@@ -260,9 +291,9 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	}
 
 	/**
-	 * List of elements from the current form group
+	 * List of components from the current form group (components with the same form name)
 	 */
-	@p({cache: false, replace: false})
+	@p({replace: false})
 	get groupElements(): CanPromise<ReadonlyArray<iInput>> {
 		const
 			nm = this.name;
@@ -293,7 +324,8 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	}
 
 	/**
-	 * Information message
+	 * Information message that component need to show.
+	 * This parameter logically is pretty similar to STD output from Unix.
 	 */
 	@p({replace: false})
 	get info(): CanUndef<string> {
@@ -307,18 +339,21 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	set info(value: CanUndef<string>) {
 		this.infoStore = value;
 
-		this.waitStatus('ready', () => {
-			const
-				box = this.block.element('info-box');
+		if (this.messageHelpers) {
+			this.waitStatus('ready', () => {
+				const
+					box = this.block.element('info-box');
 
-			if (box && box.children[0]) {
-				box.children[0].innerHTML = this.infoStore || '';
-			}
-		});
+				if (box?.children[0]) {
+					box.children[0].innerHTML = this.infoStore || '';
+				}
+			});
+		}
 	}
 
 	/**
-	 * Error message
+	 * Error message that component need to show.
+	 * This parameter logically is pretty similar to STDERR output from Unix.
 	 */
 	@p({replace: false})
 	get error(): CanUndef<string> {
@@ -332,14 +367,16 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	set error(value: CanUndef<string>) {
 		this.errorStore = value;
 
-		this.waitStatus('ready', () => {
-			const
-				box = this.block.element('error-box');
+		if (this.messageHelpers) {
+			this.waitStatus('ready', () => {
+				const
+					box = this.block.element('error-box');
 
-			if (box && box.children[0]) {
-				box.children[0].innerHTML = this.errorStore || '';
-			}
-		});
+				if (box?.children[0]) {
+					box.children[0].innerHTML = this.errorStore || '';
+				}
+			});
+		}
 	}
 
 	/** @inheritDoc */
@@ -369,7 +406,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	};
 
 	/**
-	 * Component validators
+	 * Map of available component validators
 	 */
 	static validators: ValidatorsDecl = {
 		//#if runtime has iInput/validators
@@ -387,27 +424,23 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	};
 
 	/**
-	 * Component value key name
+	 * Name of a component property that is used as a source for a form value
 	 */
 	@field({replace: false})
 	protected readonly valueKey: string = 'value';
 
-	/**
-	 * Information message store
-	 */
+	/** @see [[iInput.info]] */
 	@system({
 		replace: false,
-		init: (o) => o.sync.link('infoProp')
+		init: (o) => o.sync.link()
 	})
 
 	protected infoStore?: string;
 
-	/**
-	 * Error message store
-	 */
+	/** @see [[iInput.error]] */
 	@system({
 		replace: false,
-		init: (o) => o.sync.link('errorProp')
+		init: (o) => o.sync.link()
 	})
 
 	protected errorStore?: string;
@@ -415,12 +448,10 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	/** @override */
 	protected readonly $refs!: {input?: HTMLInputElement};
 
-	/**
-	 * Component value store
-	 */
+	/** @see [[iInput.value]] */
 	@field<iInput>({
 		replace: false,
-		init: (o) => o.sync.link((val) => o.initDefaultValue(val))
+		init: (o) => o.sync.link((val) => o.resolveValue(val))
 	})
 
 	protected valueStore!: unknown;
@@ -431,19 +462,19 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	@system()
 	private validationMsg?: string;
 
-	/** @see iAccess.enable */
+	/** @see [[iAccess.enable]] */
 	@p({replace: false})
 	enable(): Promise<boolean> {
 		return iAccess.enable(this);
 	}
 
-	/** @see iAccess.disable */
+	/** @see [[iAccess.disable]] */
 	@p({replace: false})
 	disable(): Promise<boolean> {
 		return iAccess.disable(this);
 	}
 
-	/** @see iAccess.focus */
+	/** @see [[iAccess.focus]] */
 	@p({replace: false})
 	@wait('ready')
 	async focus(): Promise<boolean> {
@@ -458,7 +489,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 		return false;
 	}
 
-	/** @see iAccess.blur */
+	/** @see [[iAccess.blur]] */
 	@p({replace: false})
 	@wait('ready')
 	async blur(): Promise<boolean> {
@@ -474,8 +505,8 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	}
 
 	/**
-	 * Clears value of the component
-	 * @emits clear()
+	 * Clears the component value
+	 * @emits `clear()`
 	 */
 	@p({replace: false})
 	@wait('ready')
@@ -484,8 +515,10 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 			this[this.valueKey] = undefined;
 			this.async.clearAll({group: 'validation'});
 			await this.nextTick();
+
 			this.removeMod('valid');
 			this.emit('clear');
+
 			return true;
 		}
 
@@ -503,8 +536,10 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 			this[this.valueKey] = this.default;
 			this.async.clearAll({group: 'validation'});
 			await this.nextTick();
+
 			this.removeMod('valid');
 			this.emit('reset');
+
 			return true;
 		}
 
@@ -546,13 +581,13 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 
 	/**
 	 * Validates the component value
-	 * (returns true or a failed validation name)
+	 * (returns true or name of the failed validation)
 	 *
 	 * @param params - additional parameters
-	 * @emits validationStart()
-	 * @emits validationSuccess()
-	 * @emits validationFail(failedValidation: ValidationError<FV>)
-	 * @emits validationEnd(result: boolean, failedValidation?: ValidationError<FV>)
+	 * @emits `validationStart()`
+	 * @emits `validationSuccess()`
+	 * @emits `validationFail(failedValidation: ValidationError<this['FormValue']>)`
+	 * @emits `validationEnd(result: boolean, failedValidation?: ValidationError<this['FormValue']>)`
 	 */
 	@p({replace: false})
 	@wait('ready')
@@ -570,11 +605,13 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 			valid,
 			failedValidation;
 
-		for (const el of this.validators) {
+		for (const decl of this.validators) {
 			const
-				isArray = Object.isArray(el),
-				isPlainObject = !isArray && Object.isPlainObject(el),
-				key = <string>(isPlainObject ? Object.keys(el)[0] : isArray ? el[0] : el),
+				isArray = Object.isArray(decl),
+				isPlainObject = !isArray && Object.isPlainObject(decl);
+
+			const
+				key = <string>(isPlainObject ? Object.keys(decl)[0] : isArray ? decl[0] : decl),
 				validator = this.validatorsMap[key];
 
 			if (!validator) {
@@ -584,7 +621,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 			const validation = validator.call(
 				this,
 				// tslint:disable-next-line:prefer-object-spread
-				Object.assign(isPlainObject ? el[key] : isArray && el[1] || {}, params)
+				Object.assign(isPlainObject ? decl[key] : isArray && decl[1] || {}, params)
 			);
 
 			if (Object.isPromise(validation)) {
@@ -634,7 +671,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	/** @override */
 	protected initBaseAPI(): void {
 		super.initBaseAPI();
-		this.initDefaultValue = this.instance.initDefaultValue.bind(this);
+		this.resolveValue = this.instance.resolveValue.bind(this);
 	}
 
 	/** @override */
@@ -647,7 +684,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	}
 
 	/**
-	 * Handler: focus
+	 * Handler: component focus
 	 */
 	@p({replace: false})
 	protected onFocus(): void {
@@ -655,7 +692,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	}
 
 	/**
-	 * Handler: blur
+	 * Handler: component blur
 	 */
 	@p({replace: false})
 	protected onBlur(): void {
@@ -664,22 +701,25 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 
 	/**
 	 * Handler: component value change
-	 * @emits change(value)
+	 * @emits `change(value)`
 	 */
 	@p({replace: false})
 	protected onValueChange(newValue: this['Value'], oldValue: CanUndef<this['Value']>): void {
 		this.prevValue = oldValue;
+
 		if (newValue !== oldValue || newValue && typeof newValue === 'object') {
 			this.emit('change', this[this.valueKey]);
 		}
 	}
 
 	/**
-	 * Initializes a default value (if needed) for the valueKey field
-	 * @param value - valueKey field value
+	 * Resolves the specified component value and returns it.
+	 * If the value argument is undefined, the method returns a value by default.
+	 *
+	 * @param value
 	 */
 	@p({replace: false})
-	protected initDefaultValue(value?: unknown): this['Value'] {
+	protected resolveValue(value?: unknown): this['Value'] {
 		const
 			i = this.instance,
 			k = i.valueKey,
@@ -694,10 +734,10 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	}
 
 	/**
-	 * Initializes events for valueStore
+	 * Initializes default event listeners for a component value
 	 */
 	@p({hook: 'created', replace: false})
-	protected initValueEvents(): void {
+	protected initValueListeners(): void {
 		this.watch(this.valueKey, this.onValueChange);
 		this.on('actionChange', () => this.validate());
 	}
@@ -709,7 +749,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 		iAccess.initModEvents(this);
 		iVisible.initModEvents(this);
 
-		this.localEvent.on('block.mod.*.valid.*', ({type, value}: ModEvent) => {
+		this.localEmitter.on('block.mod.*.valid.*', ({type, value}: ModEvent) => {
 			if (type === 'remove' && value === 'false' || type === 'set' && value === 'true') {
 				this.error = undefined;
 			}
