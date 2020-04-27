@@ -15,7 +15,7 @@ import iBlock from 'super/i-block/i-block';
 import Friend from 'super/i-block/modules/friend';
 
 //#if runtime has core/kv-storage
-import { asyncLocal, factory, AsyncNamespace } from 'core/kv-storage';
+import { asyncLocal, factory, AsyncStorageNamespace } from 'core/kv-storage';
 //#endif
 
 /**
@@ -32,7 +32,7 @@ export default class Storage<C extends iBlock = iBlock> extends Friend<C> {
 	/**
 	 * Storage engine
 	 */
-	readonly engine: CanUndef<AsyncNamespace>;
+	readonly engine: CanUndef<AsyncStorageNamespace>;
 
 	/**
 	 * @override

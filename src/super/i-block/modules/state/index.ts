@@ -264,9 +264,9 @@ export default class State<C extends iBlock = iBlock> extends Friend<C> {
 				{router} = r;
 
 			if (!router) {
-				await $a.promisifyOnce(r, 'initRouter', {
+				await (<Promise<unknown>>$a.promisifyOnce(r, 'initRouter', {
 					label: $$.initFromRouter
-				});
+				}));
 
 				({router} = r);
 			}
