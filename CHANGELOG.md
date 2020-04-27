@@ -11,6 +11,47 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.1 (2020-04-27)
+
+#### :rocket: New Feature
+
+* Moved to `core/object/watch` within components:
+  1. Added support to watch Set/Map properties of a component;
+  2. Added deep watching of system fields;
+  3. Every mutation of component fields will force re-render;
+  4. Watching of changes is based on the Proxy API.
+
+* Added support to deprecate component props with auto-redirect to a new alternative:
+
+```typescript
+import iBlock, { component, prop } from 'super/i-block/i-block';
+
+@component({
+  deprecatedProps: {foo: 'bar'}
+})
+
+export default class bExample extends iBlock {
+  @prop()
+  readonly bar: string;
+}
+```
+
+* Improved API `super/i-block/modules/sync`
+* Added `super/i-block/modules/friend`
+* Marked `core/component/helpers/observable` as deprecated
+* Deprecated a bunch of component properties:
+  * `localEvent` -> `localEmitter` (`iBlock`)
+  * `parentEvent` -> `parentEmitter` (`iBlock`)
+  * `rootEvent` -> `rootEmitter` (`iBlock`)
+  * `globalEvent` -> `globalEmitter` (`iBlock`)
+  * `dataEvent` -> `dataEmitter` (`iData`)
+  * `preset` -> `presets` (`iBlock`)
+
+#### :house: Internal
+
+* Documentation
+* Refactoring
+
 ## v3.0.0-beta.271 (2020-04-27)
 
 #### :boom: Breaking Change
