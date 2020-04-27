@@ -24,7 +24,6 @@ import iVisible from 'traits/i-visible/i-visible';
 import iWidth from 'traits/i-width/i-width';
 import iSize from 'traits/i-size/i-size';
 import iOpenToggle, { CloseHelperEvents } from 'traits/i-open-toggle/i-open-toggle';
-import iIcon from 'traits/i-icon/i-icon';
 
 import iData, {
 
@@ -57,7 +56,7 @@ export * from 'form/b-button/interface';
 	}
 })
 
-export default class bButton extends iData implements iAccess, iOpenToggle, iIcon, iVisible, iWidth, iSize {
+export default class bButton extends iData implements iAccess, iOpenToggle, iVisible, iWidth, iSize {
 	/** @override */
 	readonly dataProvider: string = 'Provider';
 
@@ -196,11 +195,6 @@ export default class bButton extends iData implements iAccess, iOpenToggle, iIco
 	/** @see iOpenToggle.toggle */
 	toggle(): Promise<boolean> {
 		return iOpenToggle.toggle(this);
-	}
-
-	/** @see iIcon.getIconLink */
-	getIconLink(iconId: string): string {
-		return iIcon.getIconLink(iconId);
 	}
 
 	/** @see iOpenToggle.onOpenedChange */
