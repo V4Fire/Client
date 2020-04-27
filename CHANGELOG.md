@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-beta.271 (2020-04-27)
+
+#### :boom: Breaking Change
+
+* [Improved SVG sprites](https://github.com/V4Fire/Client/pull/190)
+
 ## v3.0.0-beta.270 (2020-04-22)
 
 #### :bug: Bug Fix
