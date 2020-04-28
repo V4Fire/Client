@@ -18,9 +18,26 @@ const
 	glob = require('glob');
 
 const
+	camelize = require('camelize');
+
+const
 	{validators, resolve} = require('@pzlr/build-core');
 
-module.exports = {};
+module.exports = {
+	getComponentPropAttrs(name) {
+		name = camelize(name);
+
+		if (!this[name]) {
+			throw new ReferenceError(`The specified component "${name}" is not defined`);
+		}
+
+		return $C(this[name].props)
+			.object(true)
+			.to({})
+			.reduce((map, el, key) => (map[`:${key}`] = key, map));
+	}
+};
+
 const componentsTree = module.exports;
 
 const
