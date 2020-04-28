@@ -30,7 +30,7 @@ import Opt from 'super/i-block/modules/opt';
 import Field from 'super/i-block/modules/field';
 import Provide from 'super/i-block/modules/provide';
 
-import { tplCache } from 'super/i-block/modules/vdom/conts';
+import { tplCache } from 'super/i-block/modules/vdom/const';
 import { RenderFn, RenderPath, RenderContext } from 'super/i-block/modules/vdom/interface';
 
 export * from 'super/i-block/modules/vdom/interface';
