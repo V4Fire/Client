@@ -136,7 +136,8 @@ export default class DOM<C extends iBlock = iBlock> extends Friend<C> {
 	 */
 	appendChild(
 		parent: string | Element | DocumentFragment,
-		newNode: Element, group?: string
+		newNode: Element,
+		group?: string
 	): Function | false {
 		const
 			parentNode = Object.isString(parent) ? this.block.element(parent) : parent;
