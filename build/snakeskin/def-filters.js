@@ -63,87 +63,95 @@ function tagFilter({name, attrs = {}}) {
 			props = component ? component.props : Object.create(null);
 
 		const
-			smart = [attrs['v-func-placeholder'], delete attrs['v-func-placeholder']][0] && component && component.functional,
-			vFunc = [attrs['v-func'], delete attrs['v-func']][0];
+			smartProps = [attrs['v-func-placeholder'], delete attrs['v-func-placeholder']][0] && component && component.functional,
+			funcMode = [attrs['v-func'], delete attrs['v-func']][0];
 
-		const isFunctional = component && component.functional === true || !vFunc && $C(smart).every((el, key) => {
-			key = dasherize(key);
+		let
+			isFunctional = false;
 
-			if (!isV4Prop.test(key)) {
-				key = `:${key}`;
-			}
+		if (component && component.functional === true) {
+			isFunctional = true;
 
-			let
-				attr = attrs[key] && attrs[key][0];
+		} else if (!funcMode) {
+			isFunctional = $C(smartProps).every((el, key) => {
+				key = dasherize(key);
 
-			try {
-				attr = new Function(`return ${attr}`)();
-
-			} catch {}
-
-			if (Object.isArray(el)) {
-				if (!Object.isArray(el[0])) {
-					return $C(el).includes(attr);
+				if (!isV4Prop.test(key)) {
+					key = `:${key}`;
 				}
 
-				return Object.isEqual(el[0], attr);
-			}
+				let
+					attr = attrs[key] && attrs[key][0];
 
-			if (Object.isRegExp(el)) {
-				return el.test(attr);
-			}
+				try {
+					attr = new Function(`return ${attr}`)();
 
-			if (Object.isFunction(el)) {
-				return el(attr);
-			}
+				} catch {}
 
-			return Object.isEqual(el, attr);
-		});
+				if (Object.isArray(el)) {
+					if (!Object.isArray(el[0])) {
+						return $C(el).includes(attr);
+					}
 
-		if (isFunctional || vFunc) {
-			if (smart) {
-				if (vFunc) {
-					attrs[':is'] = [`'${attrs['is'][0]}' + (${vFunc[0]} ? '-functional' : '')`];
-					delete attrs['is'];
-
-				} else {
-					attrs['is'] = [`${attrs['is'][0]}-functional`];
+					return Object.isEqual(el[0], attr);
 				}
+
+				if (Object.isRegExp(el)) {
+					return el.test(attr);
+				}
+
+				if (Object.isFunction(el)) {
+					return el(attr);
+				}
+
+				return Object.isEqual(el, attr);
+			});
+		}
+
+		if ((isFunctional || funcMode) && smartProps) {
+			if (funcMode) {
+				attrs[':is'] = [`'${attrs['is'][0]}' + (${funcMode[0]} ? '-functional' : '')`];
+				delete attrs['is'];
+
+			} else {
+				attrs['is'] = [`${attrs['is'][0]}-functional`];
 			}
 		}
 
-		$C(attrs).forEach((el, key) => {
-			if (key[0] !== ':') {
-				return;
-			}
-
-			const
-				basePropName = camelize(key.slice(1)),
-				directPropName = `${basePropName}Prop`;
-
-			let
-				resolvedPropName = basePropName,
-				alternative = component.deprecatedProps[resolvedPropName];
-
-			if (!props[basePropName] && props[directPropName]) {
-				resolvedPropName = directPropName;
-				alternative = component.deprecatedProps[resolvedPropName];
-
-				if (!alternative) {
-					attrs[`:${dasherize(directPropName)}`] = el;
+		if (component) {
+			$C(attrs).forEach((el, key) => {
+				if (key[0] !== ':') {
+					return;
 				}
 
-				delete attrs[key];
-			}
+				const
+					basePropName = camelize(key.slice(1)),
+					directPropName = `${basePropName}Prop`;
 
-			if (alternative) {
-				attrs[`:${dasherize(alternative)}`] = el;
-				delete attrs[key];
-			}
-		});
+				let
+					resolvedPropName = basePropName,
+					alternative = component.deprecatedProps[resolvedPropName];
 
-		if (component && component.inheritMods !== false && !attrs[':mods-prop']) {
-			attrs[':mods-prop'] = ['provide.mods()'];
+				if (!props[basePropName] && props[directPropName]) {
+					resolvedPropName = directPropName;
+					alternative = component.deprecatedProps[resolvedPropName];
+
+					if (!alternative) {
+						attrs[`:${dasherize(directPropName)}`] = el;
+					}
+
+					delete attrs[key];
+				}
+
+				if (alternative) {
+					attrs[`:${dasherize(alternative)}`] = el;
+					delete attrs[key];
+				}
+			});
+
+			if (component.inheritMods !== false && !attrs[':mods-prop']) {
+				attrs[':mods-prop'] = ['provide.mods()'];
+			}
 		}
 	}
 }
