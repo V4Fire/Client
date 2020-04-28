@@ -138,7 +138,7 @@ export default class History<C extends iHistory> {
 				this.block.setElMod(els.content.el, 'page', 'turning', 'in');
 				this.block.setElMod(currentPage, 'page', 'below', true);
 				this.component.setMod('blankHistory', false);
-			}, {label: $$.pageChange});
+			}, {label: $$.addNewPage});
 
 			this.store.push({stage, options: opts, ...els});
 			this.scrollToTop();
@@ -236,7 +236,8 @@ export default class History<C extends iHistory> {
 	protected unwindPage(item: HistoryItem): void {
 		const
 			page = item.content?.el,
-			trigger = item.content?.trigger;
+			trigger = item.content?.trigger,
+			label = {label: $$[`unwindPage${item.stage.camelize()}`]};
 
 		this.async.requestAnimationFrame(() => {
 			if (trigger) {
@@ -247,7 +248,7 @@ export default class History<C extends iHistory> {
 				this.block.removeElMod(page, 'page', 'turning');
 				this.block.removeElMod(page, 'page', 'below');
 			}
-		}, {label: $$.pageChange});
+		}, label);
 	}
 
 	/**
@@ -340,7 +341,9 @@ export default class History<C extends iHistory> {
 
 		if (title) {
 			if (trigger) {
-				trigger.style.height = title.clientHeight.px;
+				this.async.requestAnimationFrame(() => {
+					trigger.style.height = title.clientHeight.px;
+				}, {label: $$.setTriggerHeight});
 			}
 
 			$a.on(title, 'click', this.onTitleClick.bind(this));
