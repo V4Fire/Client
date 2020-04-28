@@ -13,6 +13,15 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 ## v3.0.0-rc.1 (2020-04-27)
 
+#### :boom: Breaking Change
+
+* All getters are cached by default and can be watched only if they have tied properties, for instance, `foo` -> `fooStore` or `foo` -> `fooProp`,
+otherwise, you need to provide dependencies by using the special decorator to enable these features
+
+* Renamed `build/snakeskin.webpack` to `build/snakeskin/index`
+* Renamed `build/snakeskin.vars` to `build/snakeskin/vars`
+* Renamed `build/filters` to `build/snakeskin/filters`
+
 #### :rocket: New Feature
 
 * Moved to `core/object/watch` within components:
@@ -21,6 +30,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
   3. Every mutation of component fields will force re-render;
   4. Watching of changes is based on the Proxy API.
 
+* Added a new decorator `@computed` to provide meta information to a component accessor property
 * Added support to deprecate component props with auto-redirect to a new alternative:
 
 ```typescript
