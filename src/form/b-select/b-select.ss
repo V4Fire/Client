@@ -21,6 +21,7 @@
 			ref = select |
 			v-if = b.is.mobile |
 			v-model = selectedStore |
+			:tabindex = tabIndex |
 			@focus = onFocus |
 			@blur = onBlur |
 			@change = onOptionSelected($event.target.dataset.value)
