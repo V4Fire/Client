@@ -98,7 +98,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	 */
 	@prop({type: Boolean, required: false})
 	readonly autofocus?: boolean;
-	
+
 	/**
 	 * Input focus order for keyboard navigation
 	 */
