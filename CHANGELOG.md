@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.5 (2020-04-29)
+
+#### :bug: Bug Fix
+
+* Rollback to url-loader@2.3.0
+
 ## v3.0.0-rc.4 (2020-04-29)
 
 #### :rocket: New Feature
