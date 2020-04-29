@@ -55,6 +55,7 @@
 								:placeholder = placeholder && t(placeholder) |
 								:autocomplete = autocomplete |
 								:autofocus = autofocus |
+								:tabindex = tabIndex |
 								:maxlength = maxlength |
 								:min = min |
 								:max = max |

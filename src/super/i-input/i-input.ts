@@ -98,6 +98,12 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	 */
 	@prop({type: Boolean, required: false})
 	readonly autofocus?: boolean;
+	
+	/**
+	 * Input focus order for keyboard navigation
+	 */
+	@prop({type: Number, required: false})
+	readonly tabIndex?: number;
 
 	/**
 	 * Identifier of a form that connected to the component
