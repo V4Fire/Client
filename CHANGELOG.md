@@ -17,6 +17,12 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 * [Fixed dynamic creation of components](https://github.com/V4Fire/Client/pull/213)
 
+#### :house: Internal
+
+* Updated dependencies: eventemitter2@6.3.1, browserslist@4.12.0, extract-loader@5.0.1, file-loader@6.0.1, html-loader@1.1.0, mini-css-extract-plugin@0.9.0, raw-loader@4.0.1, svg-url-loader@5.0.0, ts-loader@7.0.1, url-loader@4.1.0, webpack@4.43.0
+
+* Removed replace-loader
+
 ## v3.0.0-rc.2 (2020-04-28)
 
 #### :bug: Bug Fix
