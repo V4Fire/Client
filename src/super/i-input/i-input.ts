@@ -11,6 +11,8 @@
  * @packageDocumentation
  */
 
+import { identity } from 'core/functools';
+
 import iAccess from 'traits/i-access/i-access';
 import iVisible from 'traits/i-visible/i-visible';
 
@@ -117,7 +119,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	 * For example: String, Blob or Number.
 	 */
 	@prop(Function)
-	readonly dataType: Function = ((Any));
+	readonly dataType: Function = identity;
 
 	/**
 	 * Converter/s of a component value to a form value.

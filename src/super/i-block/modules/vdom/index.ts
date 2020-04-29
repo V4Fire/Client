@@ -42,6 +42,15 @@ export default class VDOM<C extends iBlock = iBlock> extends Friend<C> {
 	/**
 	 * Renders the specified data
 	 * @param data
+	 *
+	 * @example
+	 * ```js
+	 * this.render(this.$createElement('b-example', {
+	 *   attrs: {
+	 *     prop1: 'foo'
+	 *   }
+	 * }));
+	 * ```
 	 */
 	render(data: VNode): Node;
 	render(data: VNode[]): Node[];
@@ -51,7 +60,15 @@ export default class VDOM<C extends iBlock = iBlock> extends Friend<C> {
 
 	/**
 	 * Returns a render object by the specified path
-	 * @param path - path to a template (index | bExample.index ...)
+	 * @param path - path to a template
+	 *
+	 * @example
+	 * ```js
+	 * // Returns the main render object of bExample
+	 * this.getRenderObject('bExample');
+	 *
+	 * this.getRenderObject('bExample.subTemplate');
+	 * ```
 	 */
 	getRenderObject(path: string): CanUndef<RenderObject> {
 		const
@@ -98,6 +115,12 @@ export default class VDOM<C extends iBlock = iBlock> extends Friend<C> {
 	 *
 	 * @param objOrPath - render object or path to a template
 	 * @param [ctx] - render context
+	 *
+	 * @example
+	 * ```js
+	 * this.bindRenderObject(this.getRenderObject('bExample'));
+	 * this.bindRenderObject('bExample.subTemplate');
+	 * ```
 	 */
 	bindRenderObject(objOrPath: RenderPath, ctx?: RenderContext): RenderFn {
 		const
@@ -165,6 +188,12 @@ export default class VDOM<C extends iBlock = iBlock> extends Friend<C> {
 	 *
 	 * @param objOrPath - render object or path to a template
 	 * @param [ctx] - render context
+	 *
+	 * @example
+	 * ```js
+	 * this.execRenderObject(this.getRenderObject('bExample'));
+	 * this.execRenderObject('bExample.subTemplate');
+	 * ```
 	 */
 	execRenderObject(objOrPath: RenderPath, ctx?: RenderContext): VNode {
 		return this.bindRenderObject(objOrPath, ctx)();
@@ -211,10 +240,9 @@ export default class VDOM<C extends iBlock = iBlock> extends Friend<C> {
 			const
 				data = vnode.data || {};
 
-			const classes = Object.fromArray([].concat(
-				(data.staticClass || '').split(' '),
-				data.class || []
-			));
+			const classes = Object.fromArray(
+				Array.concat([], (data.staticClass || '').split(' '), data.class)
+			);
 
 			if (classes[selector]) {
 				return vnode;

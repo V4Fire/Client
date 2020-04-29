@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.3 (2020-04-29)
+
+#### :bug: Bug Fix
+
+* [Fixed dynamic creation of components](https://github.com/V4Fire/Client/pull/213)
+
 ## v3.0.0-rc.2 (2020-04-28)
 
 #### :bug: Bug Fix

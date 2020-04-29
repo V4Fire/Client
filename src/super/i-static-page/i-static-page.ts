@@ -286,7 +286,7 @@ export default abstract class iStaticPage extends iPage {
 
 	/** @override */
 	getRootMod(name: string, component: ComponentInterface = this): undefined | string {
-		return this.removeRootMod[name]?.value;
+		return this.rootMods[name]?.value;
 	}
 
 	/**
