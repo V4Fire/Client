@@ -142,11 +142,11 @@ export function wrapCreateElement(
 		}
 
 		if (!vnode) {
-			vnode = parseVNodeAsFlyweight(
-				createElement.apply(ctx, arguments),
-				wrappedCreateElement,
-				ctx
-			);
+			vnode = createElement.apply(ctx, arguments);
+
+			if (flyweightComponent) {
+				vnode = parseVNodeAsFlyweight(vnode, wrappedCreateElement, ctx);
+			}
 		}
 
 		const
