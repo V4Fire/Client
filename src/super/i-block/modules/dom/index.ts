@@ -122,7 +122,7 @@ export default class DOM<C extends iBlock = iBlock> extends Friend<C> {
 			}
 		}
 
-		wrapper.remove();
+		wrapper.parentNode?.removeChild(wrapper);
 		return true;
 	}
 
@@ -135,8 +135,8 @@ export default class DOM<C extends iBlock = iBlock> extends Friend<C> {
 	 * @param [group] - operation group
 	 */
 	appendChild(
-		parent: string | Element | DocumentFragment,
-		newNode: Element,
+		parent: string | Node | DocumentFragment,
+		newNode: Node,
 		group?: string
 	): Function | false {
 		const
@@ -151,10 +151,9 @@ export default class DOM<C extends iBlock = iBlock> extends Friend<C> {
 		}
 
 		parentNode.appendChild(newNode);
-
-		return this.component.async.worker(() => {
-			newNode.remove();
-		}, {group: group || 'asyncComponents'});
+		return this.component.async.worker(() => newNode.parentNode?.removeChild(newNode), {
+			group: group || 'asyncComponents'
+		});
 	}
 
 	/**
@@ -178,11 +177,9 @@ export default class DOM<C extends iBlock = iBlock> extends Friend<C> {
 		}
 
 		node.replaceWith(newNode);
-		return this.component.async.worker(() => {
-			if (newNode.parentNode) {
-				newNode.parentNode.removeChild(newNode);
-			}
-		}, {group: group || 'asyncComponents'});
+		return this.component.async.worker(() => newNode.parentNode?.removeChild(newNode), {
+			group: group || 'asyncComponents'
+		});
 	}
 
 	/**
@@ -226,7 +223,7 @@ export default class DOM<C extends iBlock = iBlock> extends Friend<C> {
 	 * @param node
 	 * @param [component]
 	 */
-	createBlockCtxFromNode(node: Element, component?: iBlock): Dictionary {
+	createBlockCtxFromNode(node: Node, component?: iBlock): Dictionary {
 		const
 			$el = <ComponentElement<this['C']>>node,
 			comp = component || $el.component;
