@@ -20,6 +20,7 @@
 			ref = select |
 			v-if = browser.is.mobile |
 			v-model = selectedStore |
+			:tabindex = tabIndex |
 			@focus = onFocus |
 			@blur = onBlur |
 			@change = onOptionSelected($event.target.value)
