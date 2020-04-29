@@ -163,11 +163,15 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 
 	html() {
 		return {
-			useShortDoctype: true,
-			conservativeCollapse: true,
-			removeAttributeQuotes: true,
-			removeComments: isProd,
-			collapseWhitespace: isProd
+			attributes: false,
+
+			minimize: {
+				useShortDoctype: true,
+				conservativeCollapse: true,
+				removeAttributeQuotes: true,
+				removeComments: isProd,
+				collapseWhitespace: isProd
+			}
 		};
 	},
 
