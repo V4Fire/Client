@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { componentInitializers, componentParams, components } from 'core/component/const';
+import { isComponent, componentInitializers, componentParams, components } from 'core/component/const';
 import { ComponentConstructorInfo } from 'core/component/reflection';
 import { ComponentMeta } from 'core/component/interface';
 
@@ -66,6 +66,10 @@ export function registerParentComponents(component: ComponentConstructorInfo): b
  * @param name - component name
  */
 export function registerComponent(name: string): CanUndef<ComponentMeta> {
+	if (!isComponent.test(name)) {
+		return;
+	}
+
 	const
 		regComponent = componentInitializers[name];
 
