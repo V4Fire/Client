@@ -89,7 +89,13 @@ export default class iInput<
 	 * Input autofocus mode
 	 */
 	@prop({type: Boolean, required: false})
-	readonly autofocus?: boolean;
+	readonly autofocus?: boolean;	
+	
+	/**
+	 * Input focus order for keyboard navigation
+	 */
+	@prop({type: Number, required: false})
+	readonly tabIndex?: number;
 
 	/**
 	 * Connected form id
