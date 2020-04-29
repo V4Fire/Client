@@ -13,7 +13,8 @@ import { PropertyInfo } from 'core/component/reflection/interface';
 export const
 	bindingRgxp = /(?:Prop|Store)$/,
 	propRgxp = /Prop$|^\$props/,
-	storeRgxp = /Store$|^\$attrs/,
+	attrRgxp = /^\$attrs/,
+	storeRgxp = /Store$/,
 	hasSeparator = /\./;
 
 /**
@@ -111,6 +112,17 @@ export function getPropertyInfo(path: string, component: ComponentInterface): Pr
 			name,
 			ctx: component,
 			type: 'prop'
+		};
+	}
+
+	if (attrRgxp.test(name)) {
+		return {
+			path,
+			fullPath,
+			originalPath,
+			name,
+			ctx: component,
+			type: 'attr'
 		};
 	}
 

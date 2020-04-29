@@ -42,6 +42,20 @@ export const proxyGetters = Object.createDict({
 		})
 	}),
 
+	attr: (ctx) => ({
+		key: '$attrs',
+
+		get value(): typeof ctx.$attrs {
+			return ctx.$attrs;
+		},
+
+		watch: (path, handler) => ctx.$vueWatch(path, (val, oldVal) => {
+			if (val !== oldVal) {
+				handler(val, oldVal);
+			}
+		})
+	}),
+
 	field: (ctx) => ({
 		key: '$fields',
 		get value(): typeof ctx.$fields {
