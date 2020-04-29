@@ -107,13 +107,9 @@ export function createWatchFn(
 			}
 		}
 
-		if (info.type === 'prop' && (
-			ctxParams.root ||
-			ctxParams.functional === true ||
-			!(info.name in (info.ctx.$options.propsData || {})))
-		) {
-			return null;
-		}
+		const rootOrFunctional = Boolean(
+			ctxParams.root || ctxParams.functional === true
+		);
 
 		if (proxy) {
 			const normalizedOpts = {
@@ -146,19 +142,23 @@ export function createWatchFn(
 					break;
 
 				case 'attr': {
+					const
+						attr = info.name;
+
+					if (rootOrFunctional) {
+						return null;
+					}
+
 					let
 						unwatch;
 
 					if ('watch' in watchInfo) {
-						const
-							rootName = info.name;
-
-						unwatch = watchInfo.watch(rootName, (value, oldValue) => {
+						unwatch = watchInfo.watch(attr, (value, oldValue) => {
 							const info = {
 								obj: component,
 								root: component,
-								path: [rootName],
-								originalPath: [rootName],
+								path: [attr],
+								originalPath: [attr],
 								top: value,
 								fromProto: false
 							};
@@ -174,6 +174,13 @@ export function createWatchFn(
 				}
 
 				case 'prop': {
+					const
+						prop = info.name;
+
+					if (rootOrFunctional) {
+						return null;
+					}
+
 					const
 						destructors = <Function[]>[];
 
@@ -196,15 +203,12 @@ export function createWatchFn(
 						unwatch;
 
 					if ('watch' in watchInfo) {
-						const
-							rootName = info.name;
-
-						unwatch = watchInfo.watch(rootName, (value, oldValue) => {
+						unwatch = watchInfo.watch(prop, (value, oldValue) => {
 							const info = {
 								obj: component,
 								root: component,
-								path: [rootName],
-								originalPath: [rootName],
+								path: [prop],
+								originalPath: [prop],
 								top: value,
 								fromProto: false
 							};
