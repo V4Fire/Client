@@ -11,6 +11,10 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.6 (2020-04-30)
+
+* Fixed watching for getters
+
 ## v3.0.0-rc.5 (2020-04-29)
 
 #### :bug: Bug Fix
