@@ -16,7 +16,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### :bug: Bug Fix
 
 * Fixed async labels for request animation frame operations `traits/iHistory/history`
-* Fixed history clearing on close `base/b-bottom-slide/b-bottom-slide`
+* Fixed history clearing on close `base/b-bottom-slide`
 
 ## v3.0.0-rc.6 (2020-04-30)
 
