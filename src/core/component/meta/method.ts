@@ -71,6 +71,9 @@ export function addMethodsToMeta(meta: ComponentMeta, constructor: Function = me
 				// tslint:disable-next-line:no-conditional-assignment
 				!(key in accessors) && (props[propKey] || fields[storeKey] || tiedSystemField)
 			) {
+				// If a computed property is tied with a system field,
+				// and the host component doesn't have any watchers for system fields,
+				// we need to register the "fake" watcher to force watching for system fields
 				if (tiedSystemField && !tiedSystemField.watchers?.size) {
 					const handler = () => undefined;
 					tiedSystemField.watchers = (tiedSystemField.watchers || new Map()).set(handler, {handler});
