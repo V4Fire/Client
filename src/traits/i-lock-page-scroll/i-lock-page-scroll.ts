@@ -175,7 +175,7 @@ export default abstract class iLockPageScroll {
 	 */
 	static initModEvents<T extends iBlock>(component: T & iLockPageScroll): void {
 		const
-			{$async: $a, localEvent: $e} = component.unsafe;
+			{$async: $a, localEmitter: $e} = component.unsafe;
 
 		$e.on('block.mod.*.opened.*', (e: ModEvent) => {
 			if (e.type === 'remove' && e.reason !== 'removeMod') {

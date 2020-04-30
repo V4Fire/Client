@@ -25,7 +25,7 @@ import bInput, {
 	ModEvent,
 	SetModEvent,
 	ModsDecl,
-	InitLoadParams
+	InitLoadOptions
 
 } from 'form/b-input/b-input';
 
@@ -83,7 +83,7 @@ export default class bSelect extends bInput implements iOpenToggle {
 	 * Selected value store
 	 */
 	@field<bSelect>((o) => o.sync.link((val) => {
-		val = o.initDefaultValue(val);
+		val = o.resolveValue(val);
 		return val !== undefined ? String(val) : undefined;
 	}))
 
@@ -153,7 +153,7 @@ export default class bSelect extends bInput implements iOpenToggle {
 	};
 
 	/** @override */
-	initLoad(data?: unknown, params?: InitLoadParams): CanPromise<void> {
+	initLoad(data?: unknown, params?: InitLoadOptions): CanPromise<void> {
 		/// FIXME
 		if (this.initAfterOpen && !this.browser.is.mobile) {
 			const
@@ -451,7 +451,7 @@ export default class bSelect extends bInput implements iOpenToggle {
 	@hook('beforeDataCreate')
 	protected async initComponentValues(): Promise<void> {
 		const
-			data = this.$$data,
+			data = this.$fields,
 			labels = {},
 			values = {};
 

@@ -11,7 +11,6 @@ import bInputTime from 'form/b-input-time/b-input-time';
 
 import iWidth from 'traits/i-width/i-width';
 import iSize from 'traits/i-size/i-size';
-import iIcon from 'traits/i-icon/i-icon';
 import iOpenToggle, { CloseHelperEvents } from 'traits/i-open-toggle/i-open-toggle';
 
 import iInput, {
@@ -22,7 +21,6 @@ import iInput, {
 	system,
 	watch,
 	hook,
-	p,
 
 	ModsDecl,
 	ModEvent,
@@ -51,7 +49,7 @@ export const
 	$$ = symbolGenerator();
 
 @component()
-export default class bCalendar extends iInput implements iWidth, iSize, iIcon, iOpenToggle {
+export default class bCalendar extends iInput implements iWidth, iSize, iOpenToggle {
 	/** @override */
 	readonly Value!: Value;
 
@@ -93,7 +91,6 @@ export default class bCalendar extends iInput implements iWidth, iSize, iIcon, i
 	readonly timeMargin: number = (1).second();
 
 	/** @override */
-	@p({cache: false})
 	get value(): this['Value'] {
 		return Object.fastClone(this.field.get<this['Value']>('valueStore')!);
 	}
@@ -125,7 +122,7 @@ export default class bCalendar extends iInput implements iWidth, iSize, iIcon, i
 
 	/** @override */
 	get default(): this['Value'] {
-		return (<this['Value']>[]).concat(this.defaultProp || new Date());
+		return Array.concat([], this.defaultProp || new Date());
 	}
 
 	/**
@@ -146,7 +143,6 @@ export default class bCalendar extends iInput implements iWidth, iSize, iIcon, i
 	/**
 	 * Minimum date value
 	 */
-	@p({cache: false})
 	get min(): CanUndef<Date> {
 		return this.minProp != null ? Date.create(this.minProp) : undefined;
 	}
@@ -154,7 +150,6 @@ export default class bCalendar extends iInput implements iWidth, iSize, iIcon, i
 	/**
 	 * Maximum date value
 	 */
-	@p({cache: false})
 	get max(): CanUndef<Date> {
 		return this.maxProp != null ? Date.create(this.maxProp) : undefined;
 	}
@@ -221,7 +216,7 @@ export default class bCalendar extends iInput implements iWidth, iSize, iIcon, i
 			return val;
 		}
 
-		return (<bCalendar['Value']>[]).concat(o.initDefaultValue(val) || []);
+		return Array.concat([], o.resolveValue(val));
 	}))
 
 	protected valueStore!: this['Value'];
@@ -271,7 +266,6 @@ export default class bCalendar extends iInput implements iWidth, iSize, iIcon, i
 	/**
 	 * Month animation enter class for switching
 	 */
-	@p({cache: false})
 	protected get animateMonthEnterClass(): string {
 		return `animated fadeIn${this.directions[Number(!this.monthSwitchDirection)].capitalize()}`;
 	}
@@ -279,7 +273,6 @@ export default class bCalendar extends iInput implements iWidth, iSize, iIcon, i
 	/**
 	 * Title for a calendar dropdown
 	 */
-	@p({cache: false})
 	protected get dropdownTitle(): string {
 		let
 			title = '';
@@ -336,10 +329,9 @@ export default class bCalendar extends iInput implements iWidth, iSize, iIcon, i
 
 	/** @see iOpenToggle.open */
 	async open(): Promise<boolean> {
-		const
-			res = await iOpenToggle.open(this);
+		this.shown = true;
 
-		if (res) {
+		if (await iOpenToggle.open(this)) {
 			try {
 				const
 					dropdown = await this.waitRef<HTMLElement>('dropdown', {label: $$.openedDropdown}),
@@ -352,33 +344,23 @@ export default class bCalendar extends iInput implements iWidth, iSize, iIcon, i
 					this.position = 'bottom-left';
 				}
 
-				this.shown = true;
 			} catch {}
+
+			return true;
 		}
 
-		return res;
+		return false;
 	}
 
 	/** @see iOpenToggle.close */
 	async close(): Promise<boolean> {
-		const
-			res = await iOpenToggle.close(this);
-
-		if (res) {
-			this.shown = false;
-		}
-
-		return res;
+		this.shown = false;
+		return iOpenToggle.close(this);
 	}
 
 	/** @see iOpenToggle.toggle */
 	toggle(): Promise<boolean> {
 		return iOpenToggle.toggle(this);
-	}
-
-	/** @see iIcon.getIconLink */
-	getIconLink(iconId: string): string {
-		return iIcon.getIconLink(iconId);
 	}
 
 	/** @see iOpenToggle.onOpenedChange */

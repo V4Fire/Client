@@ -37,7 +37,7 @@ export function has(name: string): boolean {
  * @param value
  * @param [opts] - additional options
  */
-export function set(name: string, value: string, opts: SetOptions): string {
+export function set(name: string, value: string, opts?: SetOptions): string {
 	opts = {path: '/', ...opts};
 
 	const

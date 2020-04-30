@@ -13,7 +13,7 @@
 
 - template index() extends ['i-dynamic-page'].index
 	- block body
-		: tree = include('build/snakeskin.webpack')
+		: tree = include('build/snakeskin')
 
 		? Object.assign(attrs, tree.getComponentPropAttrs(self.name(PARENT_TPL_NAME)))
 		? delete attrs[':is']

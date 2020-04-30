@@ -66,7 +66,7 @@ export default class bBottomSlide extends iBlock implements iLockPageScroll, iOp
 	/**
 	 * List of allowed component positions relative to the screen height (in percentages)
 	 */
-	@prop({type: Array, validator: (v) => v.every((a) => a >= 0 && a <= 100)})
+	@prop({type: Array, validator: (v: number[]) => v.every((a) => a >= 0 && a <= 100)})
 	readonly stepsProp: number[] = [];
 
 	/** @see [[bBottomSlide.steps]] */
@@ -83,7 +83,7 @@ export default class bBottomSlide extends iBlock implements iLockPageScroll, iOp
 	/**
 	 * Maximum height value to which you can pull the component
 	 */
-	@prop({type: Number, validator: (v) => v >= 0 && v <= 100})
+	@prop({type: Number, validator: (v: number) => v >= 0 && v <= 100})
 	readonly maxVisiblePercent: number = 90;
 
 	/**

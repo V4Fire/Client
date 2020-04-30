@@ -8,7 +8,6 @@
 
 import symbolGenerator from 'core/symbol';
 import iObserveDOM from 'traits/i-observe-dom/i-observe-dom';
-import { observeMap } from 'core/component/helpers/observable';
 
 import iBlock, {
 
@@ -19,7 +18,6 @@ import iBlock, {
 	hook,
 	watch,
 	wait,
-	p,
 
 	ModsDecl,
 	ComponentElement
@@ -124,7 +122,6 @@ export default class bContentSwitcher extends iBlock implements iObserveDOM {
 	/**
 	 * Link to a content node
 	 */
-	@p({cache: false})
 	get content(): CanPromise<HTMLElement> {
 		return this.waitStatus('loading', () => {
 			const {$refs: {content}} = this;
@@ -135,7 +132,6 @@ export default class bContentSwitcher extends iBlock implements iObserveDOM {
 	/**
 	 * Number of DOM nodes within a content block
 	 */
-	@p({cache: false})
 	get contentLength(): number {
 		return this.contentLengthStore;
 	}
@@ -151,8 +147,8 @@ export default class bContentSwitcher extends iBlock implements iObserveDOM {
 	/**
 	 * Map for ready components
 	 */
-	@system((o: bContentSwitcher) => observeMap(new Map(), () => o.setSwitchReadiness()))
-	protected semaphoreReadyMap!: Map<iBlock, boolean>;
+	@system({watch: 'setSwitchReadiness'})
+	protected semaphoreReadyMap: Map<iBlock, boolean> = new Map();
 
 	/**
 	 * Number of DOM nodes within a content block
@@ -194,7 +190,6 @@ export default class bContentSwitcher extends iBlock implements iObserveDOM {
 	/**
 	 * True if possible to display a content block
 	 */
-	@p({cache: false})
 	protected get isReadyToSwitch(): boolean {
 		return this.is.readyToSwitchStore;
 	}

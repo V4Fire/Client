@@ -163,11 +163,15 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 
 	html() {
 		return {
-			useShortDoctype: true,
-			conservativeCollapse: true,
-			removeAttributeQuotes: true,
-			removeComments: isProd,
-			collapseWhitespace: isProd
+			attributes: false,
+
+			minimize: {
+				useShortDoctype: true,
+				conservativeCollapse: true,
+				removeAttributeQuotes: true,
+				removeComments: isProd,
+				collapseWhitespace: isProd
+			}
 		};
 	},
 
@@ -219,25 +223,12 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 			'core/session': true,
 			'core/net': false,
 
-			'range/extended': false,
-
 			'prelude/dependencies': true,
-			'prelude/object/has': false,
-			'prelude/object/getPrototypeChain': false,
-
-			'prelude/date/modify': true,
 			'prelude/date/relative': true,
 			'prelude/date/format': true,
-			'prelude/date/create': true,
 
 			'prelude/number/rounding': true,
 			'prelude/number/format': true,
-
-			'prelude/string/underscore': true,
-			'prelude/string/capitalize': true,
-
-			'prelude/function/debounce': true,
-			'prelude/function/throttle': true,
 
 			'component/async-render': true,
 			'component/daemons': true,
@@ -301,7 +292,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	snakeskin() {
 		const
 			{webpack, src} = this,
-			snakeskinVars = include('build/snakeskin.vars');
+			snakeskinVars = include('build/snakeskin/vars');
 
 		return {
 			client: this.extend(super.snakeskin(), {

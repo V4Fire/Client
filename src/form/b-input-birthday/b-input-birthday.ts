@@ -8,7 +8,7 @@
 
 import iWidth from 'traits/i-width/i-width';
 import bSelect, { Option } from 'form/b-select/b-select';
-import iInput, { component, prop, p, Cache, ModsDecl } from 'super/i-input/i-input';
+import iInput, { component, prop, Cache, ModsDecl } from 'super/i-input/i-input';
 export * from 'super/i-input/i-input';
 
 export type Value = Date;
@@ -42,7 +42,6 @@ export default class bInputBirthday extends iInput implements iWidth {
 	readonly defaultProp?: this['Value'];
 
 	/** @override */
-	@p({cache: false})
 	get value(): this['Value'] {
 		return Object.fastClone(this.field.get<this['Value']>('valueStore')!);
 	}
@@ -60,7 +59,6 @@ export default class bInputBirthday extends iInput implements iWidth {
 	/**
 	 * List of accepted months
 	 */
-	@p({cache: false})
 	get months(): ReadonlyArray<Option> {
 		const months = [
 			t`January`,

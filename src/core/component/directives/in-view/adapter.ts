@@ -72,7 +72,7 @@ export default class InViewAdapter {
 			return false;
 		}
 
-		params = (<InitOptions[]>[]).concat(params);
+		params = Array.concat([], params);
 
 		for (let i = 0; i < params.length; i++) {
 			if (valueValidator(params[i])) {

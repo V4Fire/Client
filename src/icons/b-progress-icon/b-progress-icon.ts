@@ -6,14 +6,16 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import iIcon from 'traits/i-icon/i-icon';
+/**
+ * [[include:icons/b-progress-icon/README.md]]
+ * @packageDocumentation
+ */
+
 import iBlock, { component } from 'super/i-block/i-block';
 export * from 'super/i-block/i-block';
 
+/**
+ * Component to indicate a loading
+ */
 @component({functional: true, flyweight: true})
-export default class bProgressIcon extends iBlock implements iIcon {
-	/** @see iIcon.getIconLink */
-	getIconLink(iconId: string): string {
-		return iIcon.getIconLink(iconId);
-	}
-}
+export default class bProgressIcon extends iBlock {}

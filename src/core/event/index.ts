@@ -38,7 +38,7 @@ export const afterDOMLoaded = deprecate(
 		alternative: 'resolveAfterDOMLoaded'
 	},
 
-	function afterDOMLoaded(cb?: Function): SyncPromise<void> {
+	function afterDOMLoaded(cb?: AnyFunction): SyncPromise<void> {
 		const
 			promise = resolveAfterDOMLoaded();
 

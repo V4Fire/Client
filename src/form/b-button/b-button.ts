@@ -6,6 +6,11 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+/**
+ * [[include:form/b-button/README.md]]
+ * @packageDocumentation
+ */
+
 //#if runtime has core/data
 import 'core/data';
 //#endif
@@ -19,7 +24,6 @@ import iVisible from 'traits/i-visible/i-visible';
 import iWidth from 'traits/i-width/i-width';
 import iSize from 'traits/i-size/i-size';
 import iOpenToggle, { CloseHelperEvents } from 'traits/i-open-toggle/i-open-toggle';
-import iIcon from 'traits/i-icon/i-icon';
 
 import iData, {
 
@@ -35,16 +39,15 @@ import iData, {
 
 } from 'super/i-data/i-data';
 
+import { ButtonType } from 'form/b-button/interface';
+
 export * from 'super/i-data/i-data';
 export * from 'traits/i-open-toggle/i-open-toggle';
+export * from 'form/b-button/interface';
 
-export type ButtonType<T extends string = any> =
-	'submit' |
-	'button' |
-	'image' |
-	'link' |
-	T;
-
+/**
+ * Component to create a button
+ */
 @component({
 	flyweight: true,
 	functional: {
@@ -53,7 +56,7 @@ export type ButtonType<T extends string = any> =
 	}
 })
 
-export default class bButton extends iData implements iAccess, iOpenToggle, iIcon, iVisible, iWidth, iSize {
+export default class bButton extends iData implements iAccess, iOpenToggle, iVisible, iWidth, iSize {
 	/** @override */
 	readonly dataProvider: string = 'Provider';
 
@@ -194,11 +197,6 @@ export default class bButton extends iData implements iAccess, iOpenToggle, iIco
 		return iOpenToggle.toggle(this);
 	}
 
-	/** @see iIcon.getIconLink */
-	getIconLink(iconId: string): string {
-		return iIcon.getIconLink(iconId);
-	}
-
 	/** @see iOpenToggle.onOpenedChange */
 	onOpenedChange(e: ModEvent | SetModEvent): void {
 		// ...
@@ -240,11 +238,14 @@ export default class bButton extends iData implements iAccess, iOpenToggle, iIco
 				dp = this.dataProvider;
 
 			if (dp != null && (dp !== 'Provider' || this.href)) {
+				let
+					that = this;
+
 				if (this.href) {
-					this.base(this.href);
+					that = this.base(this.href);
 				}
 
-				await (<Function>this[this.method])();
+				await (<Function>that[this.method])();
 
 			// Form attribute fix for MS Edge && IE
 			} else if (this.form && this.type === 'submit') {

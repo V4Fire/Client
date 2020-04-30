@@ -21,18 +21,20 @@ function addNonceAttribute(el: Element): void {
 	}
 }
 
+const
+	API = globalThis[MODULE_DEPENDENCIES] || {};
+
 /**
  * Manager of modules
  */
-// tslint:disable-next-line:prefer-object-spread
-export default globalThis[MODULE_DEPENDENCIES] = Object.assign(globalThis[MODULE_DEPENDENCIES] || {}, {
+export default globalThis[MODULE_DEPENDENCIES] = Object.mixin({withAccessors: true}, API, {
 	/**
 	 * Cache of modules
 	 */
 	cache: Object.createDict(),
 
 	/**
-	 * Event emitter for broadcasting module events
+	 * Event emitter to broadcast module events
 	 */
 	emitter: new EventEmitter({maxListeners: 100, newListener: false}),
 
@@ -64,7 +66,7 @@ export default globalThis[MODULE_DEPENDENCIES] = Object.assign(globalThis[MODULE
 
 		const indicator = () => {
 			const blob = new Blob(
-				[`${MODULE_DEPENDENCIES}.event.emit('component.${moduleName}.loading', {packages: ${packages}})`],
+				[`${MODULE_DEPENDENCIES}.emitter.emit('component.${moduleName}.loading', {packages: ${packages}})`],
 				{type: 'application/javascript'}
 			);
 
@@ -164,11 +166,11 @@ export default globalThis[MODULE_DEPENDENCIES] = Object.assign(globalThis[MODULE
 		}
 
 		this.cache[moduleName] = dependencies;
-		this.event.emit(`dependencies.${moduleName}`, {dependencies, moduleName, packages});
+		this.emitter.emit(`dependencies.${moduleName}`, {dependencies, moduleName, packages});
 	},
 
 	/**
-	 * Get a list of dependencies for the specified module
+	 * Returns a list of dependencies for the specified module
 	 * @param module
 	 */
 	get(module: string): CanPromise<string[]> {
@@ -188,14 +190,14 @@ export default globalThis[MODULE_DEPENDENCIES] = Object.assign(globalThis[MODULE
 			url = `${module}.dependencies`;
 
 		if (!PATH[url]) {
-			throw new ReferenceError(`Dependencies "${url}" is not defined`);
+			throw new ReferenceError(`Dependencies for "${url}" are not defined`);
 		}
 
 		script.src = <string>PATH[`${module}.dependencies`];
 		addNonceAttribute(script);
 
 		return new Promise((resolve) => {
-			this.event.once(`dependencies.${module}`, resolve);
+			this.emitter.once(`dependencies.${module}`, resolve);
 			head.appendChild(script);
 		});
 	}

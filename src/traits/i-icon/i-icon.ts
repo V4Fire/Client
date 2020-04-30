@@ -6,6 +6,11 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+/**
+ * [[include:traits/i-icon/README.md]]
+ * @packageDocumentation
+ */
+
 import { icons, iconsMap } from 'traits/i-icon/modules/icons';
 
 export default abstract class iIcon {

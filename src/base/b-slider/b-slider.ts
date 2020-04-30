@@ -11,7 +11,7 @@ import symbolGenerator from 'core/symbol';
 import iObserveDOM from 'traits/i-observe-dom/i-observe-dom';
 import iItems from 'traits/i-items/i-items';
 
-import iData, { component, prop, field, system, hook, watch, wait, p } from 'super/i-data/i-data';
+import iData, { component, prop, field, system, hook, watch, wait } from 'super/i-data/i-data';
 
 export * from 'super/i-data/i-data';
 
@@ -51,7 +51,7 @@ export default class bSlider extends iData implements iObserveDOM, iItems {
 	 *   *) scroll - scroll implementation
 	 *   *) slider - slider implementation (impossible to skip slides)
 	 */
-	@prop({type: String, validator: (v) => sliderModes.hasOwnProperty(v)})
+	@prop({type: String, validator: Object.hasOwnProperty(sliderModes)})
 	readonly mode: Mode = 'slider';
 
 	/**
@@ -69,7 +69,7 @@ export default class bSlider extends iData implements iObserveDOM, iItems {
 	/**
 	 * Slide alignment type
 	 */
-	@prop({type: String, validator: (v) => alignTypes.hasOwnProperty(v)})
+	@prop({type: String, validator: Object.hasOwnProperty(alignTypes)})
 	readonly align: AlignType = 'center';
 
 	/**
@@ -147,7 +147,6 @@ export default class bSlider extends iData implements iObserveDOM, iItems {
 	/**
 	 * Link to a content node
 	 */
-	@p({cache: false})
 	get content(): CanUndef<HTMLElement> {
 		return this.$refs.content;
 	}
@@ -155,7 +154,6 @@ export default class bSlider extends iData implements iObserveDOM, iItems {
 	/**
 	 * Number of DOM nodes within a content block
 	 */
-	@p({cache: false})
 	get contentLength(): number {
 		const l = this.content;
 		return l ? l.children.length : 0;
@@ -164,7 +162,6 @@ export default class bSlider extends iData implements iObserveDOM, iItems {
 	/**
 	 * Pointer to the current slide
 	 */
-	@p({cache: false})
 	get current(): number {
 		return this.currentStore;
 	}
@@ -192,7 +189,6 @@ export default class bSlider extends iData implements iObserveDOM, iItems {
 	/**
 	 * Returns the current slider scroll
 	 */
-	@p({cache: false})
 	get currentOffset(): number {
 		const
 			{slideRects, current, align, viewRect} = this,
