@@ -399,7 +399,7 @@ export default class History<C extends iHistory> {
 	/**
 	 * Initializes a title in-view state
 	 *
-	 * @param visible
+	 * @param [visible]
 	 * @emits `history:titleInView(visible: boolean)`
 	 */
 	protected initTitleInView(visible?: boolean): void {
