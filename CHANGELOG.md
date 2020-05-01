@@ -17,6 +17,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 * Fixed async labels for request animation frame operations `traits/iHistory/history`
 * Fixed history clearing on close `base/b-bottom-slide`
+* Fixed `setMod` event `super/i-block/modules/block/setMod`
 
 ## v3.0.0-rc.6 (2020-04-30)
 
