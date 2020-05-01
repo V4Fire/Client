@@ -648,8 +648,8 @@ export default class bSelect extends bInput implements iOpenToggle {
 	}
 
 	/** @override */
-	protected async onEdit(e: Event): Promise<void> {
-		this.valueBufferStore =
+	protected onEdit(e: Event): void {
+		this.valueBuffer =
 			(<HTMLInputElement>e.target).value || '';
 
 		this.async.setTimeout(() => {
