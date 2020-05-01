@@ -260,7 +260,7 @@ export default class Block<C extends iBlock = iBlock> extends Friend<C> {
 			event: 'block.mod.set',
 			type: 'set',
 			name,
-			value,
+			value: normalizedVal,
 			prev,
 			reason
 		};
