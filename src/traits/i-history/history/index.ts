@@ -138,7 +138,7 @@ export default class History<C extends iHistory> {
 				this.block.setElMod(els.content.el, 'page', 'turning', 'in');
 				this.block.setElMod(currentPage, 'page', 'below', true);
 				this.component.setMod('blankHistory', false);
-			}, {label: $$.pageChange});
+			}, {label: $$.addNewPage});
 
 			this.store.push({stage, options: opts, ...els});
 			this.scrollToTop();
@@ -219,7 +219,13 @@ export default class History<C extends iHistory> {
 		this.async.requestAnimationFrame(() => {
 			const els = this.initPage(this.current.stage);
 			Object.assign(this.current, els);
-			this.initTitleModifiers();
+
+			const
+				titleH = this.current?.title?.initBoundingRect?.height || 0,
+				scrollTop = this.current.content?.el?.scrollTop || 0,
+				visible = titleH - scrollTop >= titleH * this.config.titleThreshold;
+
+			this.initTitleInView(visible);
 		}, {label: $$.calculateCurrentPage});
 	}
 
@@ -230,7 +236,8 @@ export default class History<C extends iHistory> {
 	protected unwindPage(item: HistoryItem): void {
 		const
 			page = item.content?.el,
-			trigger = item.content?.trigger;
+			trigger = item.content?.trigger,
+			label = {label: $$[`unwindPage${item.stage.camelize()}`]};
 
 		this.async.requestAnimationFrame(() => {
 			if (trigger) {
@@ -241,7 +248,7 @@ export default class History<C extends iHistory> {
 				this.block.removeElMod(page, 'page', 'turning');
 				this.block.removeElMod(page, 'page', 'below');
 			}
-		}, {label: $$.pageChange});
+		}, label);
 	}
 
 	/**
@@ -336,7 +343,7 @@ export default class History<C extends iHistory> {
 			if (trigger) {
 				this.async.requestAnimationFrame(() => {
 					trigger.style.height = title.clientHeight.px;
-				}, {label: $$.initTrigger});
+				}, {label: $$.setTriggerHeight});
 			}
 
 			$a.on(title, 'click', this.onTitleClick.bind(this));
@@ -390,17 +397,14 @@ export default class History<C extends iHistory> {
 	}
 
 	/**
-	 * Initializes title modifiers
+	 * Initializes a title in-view state
+	 *
+	 * @param [visible]
 	 * @emits `history:titleInView(visible: boolean)`
 	 */
-	protected initTitleModifiers(): void {
+	protected initTitleInView(visible?: boolean): void {
 		const
 			{current} = this;
-
-		const
-			titleH = current?.title?.initBoundingRect?.height || 0,
-			scrollTop = current.content?.el?.scrollTop || 0,
-			visible = titleH - scrollTop > titleH * this.config.titleThreshold;
 
 		this.block.setElMod(current?.title?.el, 'title', 'in-view', visible);
 		this.component.emit('history:titleInView', visible);
@@ -412,7 +416,7 @@ export default class History<C extends iHistory> {
 	 */
 	protected onPageTopVisibilityChange(state: boolean): void {
 		if (this.current?.title?.el) {
-			this.initTitleModifiers();
+			this.initTitleInView(state);
 		}
 
 		this.component.onPageTopVisibilityChange(state);

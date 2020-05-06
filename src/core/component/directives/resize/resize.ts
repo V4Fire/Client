@@ -44,7 +44,7 @@ export default class Resize {
 	}
 
 	/**
-	 * Starts to observe resize for the specified element
+	 * Starts to observe resizing of the specified element
 	 *
 	 * @param el
 	 * @param params
@@ -70,7 +70,7 @@ export default class Resize {
 	}
 
 	/**
-	 * Stops to observe resize on the specified element
+	 * Stops to observe resizing of the specified element
 	 * @param el
 	 */
 	unobserve(el: HTMLElement): boolean {

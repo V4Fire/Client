@@ -6,34 +6,34 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+/**
+ * [[include:super/i-static-page/README.md]]
+ * @packageDocumentation
+ */
+
 import symbolGenerator from 'core/symbol';
 import remoteState from 'core/component/state';
 
 import { defProp } from 'core/const/props';
-import { reset, globalEvent, ResetType, ComponentInterface } from 'core/component';
+import { reset, ResetType, ComponentInterface } from 'core/component';
 import { setLocale, locale } from 'core/i18n';
 
 import { Session } from 'core/session/interface';
 import { NetStatus } from 'core/net/interface';
-
-import iBlock from 'super/i-block/i-block';
-import ProvidedDataStore from 'super/i-static-page/modules/provider-data-store';
-import iPage, { component, field, system, watch, p, Event } from 'super/i-page/i-page';
 import { CurrentPage } from 'core/router/interface';
 
 //#if runtime has bRouter
 import bRouter from 'base/b-router/b-router';
 //#endif
 
-export * from 'super/i-data/i-data';
-export { globalEvent, ResetType, CurrentPage };
+import iBlock from 'super/i-block/i-block';
+import iPage, { component, field, system, watch } from 'super/i-page/i-page';
 
-export type RemoteState = typeof remoteState;
-export type RootMods = Dictionary<{
-	mod: string;
-	value: string;
-	component: ComponentInterface | false;
-}>;
+import ProvidedDataStore from 'super/i-static-page/modules/provider-data-store';
+import { RemoteState, RootMod } from 'super/i-static-page/interface';
+
+export * from 'super/i-page/i-page';
+export * from 'super/i-static-page/interface';
 
 export const
 	$$ = symbolGenerator();
@@ -41,6 +41,9 @@ export const
 const
 	includedThemes = INCLUDED_THEMES;
 
+/**
+ * Superclass for all root components
+ */
 @component()
 export default abstract class iStaticPage extends iPage {
 	/**
@@ -63,15 +66,9 @@ export default abstract class iStaticPage extends iPage {
 	 */
 	readonly CurrentPage!: CurrentPage<this['PageParams'], this['PageQuery'], this['PageMeta']>;
 
-	/**
-	 * Link to i18n function
-	 */
+	/** @override */
 	@system()
 	readonly i18n: typeof i18n = ((i18n));
-
-	/** @override */
-	@system(() => globalEvent)
-	readonly globalEvent!: Event<this>;
 
 	/**
 	 * Remote data store
@@ -114,10 +111,10 @@ export default abstract class iStaticPage extends iPage {
 	remoteState!: Dictionary;
 
 	/**
-	 * Active page component
+	 * Name of the active page
 	 */
 	get activePage(): CanUndef<string> {
-		return this.route && this.field.get('route.meta.page');
+		return this.field.get('route.meta.page');
 	}
 
 	/** @override */
@@ -126,8 +123,10 @@ export default abstract class iStaticPage extends iPage {
 	}
 
 	/**
-	 * @override
-	 * @emits setRoute(value: CanUndef<this['CurrentPage']>)
+	 * Sets a new route object
+	 *
+	 * @param value
+	 * @emits `setRoute(value: CanUndef<this['CurrentPage']>)`
 	 */
 	set route(value: CanUndef<this['CurrentPage']>) {
 		this.field.set('routeStore', value);
@@ -135,7 +134,6 @@ export default abstract class iStaticPage extends iPage {
 	}
 
 	/** @override */
-	@p({cache: false})
 	get pageTitle(): string {
 		return this.field.get<string>('pageTitleStore')!;
 	}
@@ -201,19 +199,18 @@ export default abstract class iStaticPage extends iPage {
 
 	/**
 	 * Route information object store
+	 * @see [[iStaticPage.route]]
 	 */
 	@field()
 	protected routeStore?: this['CurrentPage'];
 
 	/**
-	 * Root page router instance
+	 * Link to a router instance
 	 */
 	@system()
 	protected routerStore?: bRouter;
 
-	/**
-	 * System locale store
-	 */
+	/** @see [[iStaticPage.locale]]  */
 	@field(() => locale.value)
 	protected localeStore!: string;
 
@@ -227,7 +224,7 @@ export default abstract class iStaticPage extends iPage {
 	 * Cache of root modifiers
 	 */
 	@system()
-	protected rootMods: RootMods = {};
+	protected rootMods: Dictionary<RootMod> = {};
 
 	/**
 	 * Sets a new page title
@@ -241,7 +238,7 @@ export default abstract class iStaticPage extends iPage {
 	}
 
 	/**
-	 * Sends a message for reset to all components
+	 * Sends a message to reset data of all components
 	 * @param [type] - reset type
 	 */
 	reset(type?: ResetType): void {
@@ -345,10 +342,10 @@ export default abstract class iStaticPage extends iPage {
 	}
 
 	/**
-	 * Synchronization for the localeStore field
+	 * Synchronization for .localeStore field
 	 * @param locale
 	 */
-	@watch(['localeStore', 'globalEvent:i18n.setLocale'])
+	@watch(['localeStore', 'globalEmitter:i18n.setLocale'])
 	protected syncLocaleWatcher(locale: string): void {
 		if (this.locale === locale) {
 			return;
@@ -359,19 +356,19 @@ export default abstract class iStaticPage extends iPage {
 	}
 
 	/**
-	 * Synchronization for the isAuth field
+	 * Synchronization for .isAuth field
 	 * @param [e]
 	 */
-	@watch('globalEvent:session.*')
+	@watch('globalEmitter:session.*')
 	protected syncAuthWatcher(e?: Session): void {
 		this.isAuth = Boolean(e && e.auth);
 	}
 
 	/**
-	 * Synchronization for the isOnline field
+	 * Synchronization for .isOnline field
 	 * @param e
 	 */
-	@watch('globalEvent:net.status')
+	@watch('globalEmitter:net.status')
 	protected syncOnlineWatcher(e: NetStatus): void {
 		this.isOnline = e.status;
 		this.lastOnlineDate = e.lastOnline;

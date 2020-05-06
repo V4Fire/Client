@@ -6,6 +6,11 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+/**
+ * [[include:super/i-dynamic-page/README.md]]
+ * @packageDocumentation
+ */
+
 import iPage, { component } from 'super/i-page/i-page';
 export * from 'super/i-page/i-page';
 

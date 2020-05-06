@@ -175,17 +175,17 @@ export default class bCheckbox extends iInput implements iSize {
 	protected initModEvents(): void {
 		super.initModEvents();
 		this.sync.mod('checked', 'value', this.convertValueToChecked);
-		this.localEvent.on('block.mod.*.checked.*', this.onCheckedChange);
+		this.localEmitter.on('block.mod.*.checked.*', this.onCheckedChange);
 	}
 
 	/** @override */
-	protected initValueEvents(): void {
+	protected initValueListeners(): void {
 		this.on('actionChange', () => this.validate());
 
 		let
 			oldVal = this.value;
 
-		this.localEvent.on('block.mod.*.checked.*', (e: ModEvent) => {
+		this.localEmitter.on('block.mod.*.checked.*', (e: ModEvent) => {
 			if (e.type === 'remove' && e.reason !== 'removeMod') {
 				return;
 			}

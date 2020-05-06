@@ -6,20 +6,13 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+/**
+ * [[include:traits/i-size/README.md]]
+ * @packageDocumentation
+ */
+
 import { ModsDecl } from 'super/i-block/i-block';
-
-export type Size =
-	'xxs' |
-	'xs' |
-	's' |
-	'm' |
-	'l' |
-	'xl' |
-	'xxl';
-
-export type SizeDictionary = Dictionary<
-	Size
->;
+export * from 'traits/i-size/interface';
 
 export default abstract class iSize {
 	/**

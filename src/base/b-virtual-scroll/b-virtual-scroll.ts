@@ -17,10 +17,9 @@ import iData, {
 	field,
 	system,
 	wait,
-	p,
 
 	CheckDBEquality,
-	InitLoadParams,
+	InitLoadOptions,
 	RequestParams,
 	RequestError,
 	RetryRequestFn
@@ -93,7 +92,7 @@ export default class bVirtualScroll extends iData implements iItems {
 	readonly tombstonesSize?: number;
 
 	/**
-	 * If true, then elements is dropped from a DOM tree after scrolling:
+	 * If true, then elements are dropped from a DOM tree after scrolling:
 	 * this method is recommended to use if you need to display a huge number of elements and prevent an OOM error
 	 */
 	@prop(Boolean)
@@ -145,7 +144,6 @@ export default class bVirtualScroll extends iData implements iItems {
 	}
 
 	/** @override */
-	@p({cache: false})
 	protected get requestParams(): RequestParams {
 		return {
 			get: {
@@ -189,7 +187,7 @@ export default class bVirtualScroll extends iData implements iItems {
 	};
 
 	/** @override */
-	initLoad(data?: unknown, params: InitLoadParams = {}): CanPromise<void> {
+	initLoad(data?: unknown, params: InitLoadOptions = {}): CanPromise<void> {
 		if (!this.lfc.isBeforeCreate()) {
 			this.reInit().catch(stderr);
 		}
@@ -219,7 +217,7 @@ export default class bVirtualScroll extends iData implements iItems {
 
 	/**
 	 * @override
-	 * @emits localEvent:localReady
+	 * @emits localEmitter:localReady
 	 */
 	protected initRemoteData(): CanUndef<unknown[]> {
 		if (!this.db) {
@@ -239,7 +237,7 @@ export default class bVirtualScroll extends iData implements iItems {
 			this.options = [];
 		}
 
-		this.localEvent.emit('localReady');
+		this.localEmitter.emit('localReady');
 	}
 
 	/** @see [[iItems.getItemKey]] */
@@ -257,11 +255,11 @@ export default class bVirtualScroll extends iData implements iItems {
 
 	/**
 	 *  @override
-	 *  @emits localEvent:localError
+	 *  @emits localEmitter:localError
 	 */
 	protected onRequestError(err: Error | RequestError<unknown>, retry: RetryRequestFn): void {
 		super.onRequestError(err, retry);
 
-		this.localEvent.emit('localError');
+		this.localEmitter.emit('localError');
 	}
 }

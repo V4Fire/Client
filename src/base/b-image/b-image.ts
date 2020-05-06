@@ -30,7 +30,7 @@ export default class bImage extends iBlock implements iProgress, iVisible {
 	 */
 	@prop({
 		type: String,
-		watch: {fn: 'init', immediate: true}
+		watch: {handler: 'init', immediate: true}
 	})
 
 	readonly src: string = '';
@@ -235,7 +235,7 @@ export default class bImage extends iBlock implements iProgress, iVisible {
 
 		imgRef[$$.img] = cssImg;
 		Object.assign(imgRef.style, {
-			backgroundImage: (<string[]>[]).concat(this.beforeImg || [], cssImg, this.afterImg || []).join(','),
+			backgroundImage: Array.concat([], this.beforeImg, cssImg, this.afterImg).join(','),
 			backgroundSize: this.sizeType,
 			backgroundPosition: this.position
 		});

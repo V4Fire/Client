@@ -11,6 +11,109 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.7 (2020-05-01)
+
+#### :bug: Bug Fix
+
+* Fixed async labels for request animation frame operations `traits/iHistory/history`
+* Fixed history clearing on close `base/b-bottom-slide`
+* Fixed `setMod` event `super/i-block/modules/block/setMod`
+
+## v3.0.0-rc.6 (2020-04-30)
+
+* Fixed watching for getters
+
+## v3.0.0-rc.5 (2020-04-29)
+
+#### :bug: Bug Fix
+
+* Rollback to url-loader@2.3.0
+
+## v3.0.0-rc.4 (2020-04-29)
+
+#### :rocket: New Feature
+
+* Added `iInput/tabIndex`
+
+#### :bug: Bug Fix
+
+* Fixed watching for `$attrs`
+
+## v3.0.0-rc.3 (2020-04-29)
+
+#### :bug: Bug Fix
+
+* [Fixed dynamic creation of components](https://github.com/V4Fire/Client/pull/213)
+
+#### :house: Internal
+
+* Updated dependencies: eventemitter2@6.3.1, browserslist@4.12.0, extract-loader@5.0.1, file-loader@6.0.1, html-loader@1.1.0, mini-css-extract-plugin@0.9.0, raw-loader@4.0.1, svg-url-loader@5.0.0, ts-loader@7.0.1, url-loader@4.1.0, webpack@4.43.0
+
+* Removed replace-loader
+
+## v3.0.0-rc.2 (2020-04-28)
+
+#### :bug: Bug Fix
+
+* Fixed build
+
+## v3.0.0-rc.1 (2020-04-27)
+
+#### :boom: Breaking Change
+
+* All getters are cached by default and can be watched only if they have tied properties, for instance, `foo` -> `fooStore` or `foo` -> `fooProp`,
+otherwise, you need to provide dependencies by using the special decorator to enable these features
+
+* Renamed `build/snakeskin.webpack` to `build/snakeskin/index`
+* Renamed `build/snakeskin.vars` to `build/snakeskin/vars`
+* Renamed `build/filters` to `build/snakeskin/filters`
+
+#### :rocket: New Feature
+
+* Moved to `core/object/watch` within components:
+  1. Added support to watch Set/Map properties of a component;
+  2. Added deep watching of system fields;
+  3. Every mutation of component fields will force re-render;
+  4. Watching of changes is based on the Proxy API.
+
+* Added a new decorator `@computed` to provide meta information to a component accessor property
+* Added support to deprecate component props with auto-redirect to a new alternative:
+
+```typescript
+import iBlock, { component, prop } from 'super/i-block/i-block';
+
+@component({
+  deprecatedProps: {foo: 'bar'}
+})
+
+export default class bExample extends iBlock {
+  @prop()
+  readonly bar: string;
+}
+```
+
+* Improved API `super/i-block/modules/sync`
+* Added `super/i-block/modules/friend`
+* Marked `core/component/helpers/observable` as deprecated
+* Deprecated a bunch of component properties:
+  * `localEvent` -> `localEmitter` (`iBlock`)
+  * `parentEvent` -> `parentEmitter` (`iBlock`)
+  * `rootEvent` -> `rootEmitter` (`iBlock`)
+  * `globalEvent` -> `globalEmitter` (`iBlock`)
+  * `dataEvent` -> `dataEmitter` (`iData`)
+  * `preset` -> `presets` (`iBlock`)
+
+#### :house: Internal
+
+* Documentation
+* Refactoring
+
+## v3.0.0-beta.271 (2020-04-27)
+
+#### :boom: Breaking Change
+
+* [Improved SVG sprites](https://github.com/V4Fire/Client/pull/190)
+
 ## v3.0.0-beta.270 (2020-04-22)
 
 #### :bug: Bug Fix
