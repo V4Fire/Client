@@ -17,5 +17,5 @@ export type RemoteState = typeof remoteState;
 export interface RootMod {
 	mod: string;
 	value: string;
-	component: ComponentInterface;
+	component: ComponentInterface | false;
 }
