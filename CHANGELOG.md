@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.8 (2020-05-08)
+
+#### :rocket: New Feature
+
+* Added integration with a test library
+
 ## v3.0.0-rc.7 (2020-05-01)
 
 #### :bug: Bug Fix
