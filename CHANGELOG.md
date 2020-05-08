@@ -16,6 +16,11 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### :rocket: New Feature
 
 * Added integration with a test library
+* Added dynamic demo-s
+
+```bash
+npx webpack --components b-button,b-select
+```
 
 #### :nail_care: Polish
 
