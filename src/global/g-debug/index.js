@@ -6,6 +6,4 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-package('i-static-page')
-	.extends('i-page')
-	.dependencies('g-def', 'g-debug');
+package('g-debug');
