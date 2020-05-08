@@ -12,82 +12,31 @@
 
 - template index() extends ['i-static-page.component'].index
 	- block body
-		: defAttrs = { &
-			':info': "'Some info text'",
-			':error': "'Some error text'",
-			':mods': '{showInfo: false, showError: false}'
-		} .
+		: config = require('config').build
 
-		< b-v4-component-demo
-			< b-file-button &
-				v-func = false |
-				slot-scope = {ctx} |
-				@statusReady = ctx.debug |
-				${defAttrs}
-			.
-				Some text
+		- forEach config.components => @component
+			- if config.inspectComponents
+				< b-v4-component-demo
+					< ${@name} &
+						v-func = false |
+						slot-scope = {ctx} |
+						@statusReady = ctx.debug |
+						${@attrs}
+					.
+						- if Object.isString(@content)
+							+= @content
 
-		< b-v4-component-demo
-			< b-button &
-				v-func = false |
-				slot-scope = {ctx} |
-				@statusReady = ctx.debug |
-				${defAttrs}
-			.
-				Some text
+						- else
+							- forEach @content => el, key
+								< template #${key} = {ctx}
+									+= el
 
-		< b-v4-component-demo
-			< b-checkbox &
-				v-func = false |
-				slot-scope = {ctx} |
-				@statusReady = ctx.debug |
-				${defAttrs}
-			.
-				Some text
+			- else
+				< ${@name} ${@attrs}
+					- if Object.isString(@content)
+						+= @content
 
-		< b-v4-component-demo
-			< b-calendar &
-				slot-scope = {ctx} |
-				:value = new Date() |
-				@statusReady = ctx.debug |
-				${defAttrs}
-			.
-				Some text
-
-		< b-v4-component-demo
-			< b-calendar &
-				slot-scope = {ctx} |
-				:value = [new Date().beginningOfMonth(), new Date()] |
-				@statusReady = ctx.debug |
-				${defAttrs}
-			.
-				Some text
-
-		< b-v4-component-demo
-			< b-input &
-				v-func = false |
-				slot-scope = {ctx} |
-				@statusReady = ctx.debug |
-				${defAttrs}
-			.
-				Some text
-
-		< b-v4-component-demo
-			< b-select &
-				v-func = false |
-				slot-scope = {ctx} |
-				:options = selectOptions |
-				@statusReady = ctx.debug |
-				${defAttrs}
-			.
-
-		< b-v4-component-demo
-			< b-image &
-				:src = 'https://avatars.mds.yandex.net/get-pdb/1789050/30714d83-1b23-4a48-990a-cadb3ea19a71/s1200' |
-				:ratio = 16/9 |
-				:sizeType = 'cover' |
-				:style = {width: '200px'} |
-				slot-scope = {ctx} |
-				@statusReady = ctx.debug |
-				${defAttrs}
-			.
+					- else
+						- forEach @content => el, key
+							< template #${key} = {ctx}
+								+= el

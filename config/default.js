@@ -9,8 +9,11 @@
  */
 
 const
-	path = require('upath'),
 	config = require('@v4fire/core/config/default'),
+	pzlr = require('@pzlr/build-core');
+
+const
+	path = require('upath'),
 	o = require('uniconf/options').option;
 
 module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
@@ -20,6 +23,44 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		entries: o('entries', {
 			env: true,
 			coerce: (v) => v ? v.split(',') : []
+		}),
+
+		inspectComponents: o('inspect-components', {
+			env: true,
+			type: 'boolean'
+		}),
+
+		components: o('components', {
+			env: true,
+			coerce: (v) => {
+				try {
+					const
+						obj = JSON.parse(v);
+
+					if (Object.isArray(obj)) {
+						return obj;
+					}
+
+					return [Object.isObject(obj) ? obj : {name: obj}];
+
+				} catch {}
+
+				if (!v) {
+					return [];
+				}
+
+				return v
+					.split(',')
+					.flatMap((name) => {
+						try {
+							const dir = pzlr.resolve.blockSync(name);
+							return [].concat(require(path.join(dir, 'demo.js')) || []).map((p) => ({name, ...p}));
+
+						} catch {}
+
+						return {name};
+					});
+			}
 		}),
 
 		fast() {
