@@ -17,6 +17,10 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 * Added integration with a test library
 
+#### :nail_care: Polish
+
+* [Printing any changes as groups](https://github.com/V4Fire/Client/pull/218)
+
 ## v3.0.0-rc.7 (2020-05-01)
 
 #### :bug: Bug Fix
