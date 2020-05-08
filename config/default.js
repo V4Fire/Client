@@ -202,8 +202,11 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 
 	runtime() {
 		return {
-			'engine': this.engine(),
+			'prod': IS_PROD,
+			'debug': !IS_PROD,
+			'env': process.env.NODE_ENV,
 
+			'engine': this.engine(),
 			'noGlobals': false,
 			'svgSprite': true,
 
