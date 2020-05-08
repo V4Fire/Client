@@ -91,21 +91,29 @@ export default class Opt<C extends iBlock = iBlock> extends Friend<C> {
 	 * This method is useful to debug.
 	 */
 	showAnyChanges(): void {
+		const cg = (name, key, val, oldVal, info) => {
+			console.group(`${name} "${key}" (${this.component.componentName})`);
+			console.log(Object.fastClone(val));
+			console.log(oldVal);
+			console.log('Path: ', info?.path);
+			console.groupEnd();
+		};
+
 		Object.forEach(this.component.$systemFields, (val, key) => {
 			this.component.watch(key, {deep: true}, (val, oldVal, info) => {
-				console.log(`System field "${key}" (${this.component.componentName})`, val, oldVal, info?.path);
+				cg('System field', key, val, oldVal, info);
 			});
 		});
 
 		Object.forEach(this.component.$fields, (val, key) => {
 			this.component.watch(key, {deep: true}, (val, oldVal, info) => {
-				console.log(`Field "${key}" (${this.component.componentName})`, val, oldVal, info?.path);
+				cg('Field', key, val, oldVal, info);
 			});
 		});
 
 		Object.forEach(this.component.$props, (val, key) => {
 			this.component.watch(key, {deep: true}, (val, oldVal, info) => {
-				console.log(`Prop "${key}" (${this.component.componentName})`, val, oldVal, info?.path);
+				cg('Prop', key, val, oldVal, info);
 			});
 		});
 	}
