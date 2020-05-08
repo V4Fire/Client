@@ -5,7 +5,7 @@
   "main": "src/core/index.js",
   "typings": "index.d.ts",
   "license": "MIT",
-  "version": "3.0.0-rc.7",
+  "version": "3.0.0-rc.8",
   "author": {
     "name": "kobezzza",
     "email": "kobezzza@gmail.com",
@@ -29,9 +29,9 @@
     "test": "echo \"Error: no test specified\" && exit 0"
   },
   "dependencies": {
-    "@v4fire/core": "^3.13.1",
+    "@v4fire/core": "^3.14.0",
     "escaper": "^3.0.3",
-    "eventemitter2": "^6.3.1",
+    "eventemitter2": "^6.4.0",
     "fg-loadcss": "^2.1.0",
     "path-to-regexp": "^3.2.0",
     "requestidlecallback": "^0.3.0",

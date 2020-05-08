@@ -41,6 +41,13 @@ const deps = module.exports = {
 	styles: new Map()
 };
 
+if (runtime.debug) {
+	deps.scripts.set('jasmine-core', 'jasmine-core/lib/jasmine-core/jasmine.js');
+	deps.scripts.set('jasmine-html', 'jasmine-core/lib/jasmine-core/jasmine-html.js');
+	deps.scripts.set('jasmine-boot', 'jasmine-core/lib/jasmine-core/boot.js');
+	deps.styles.set('jasmine', 'jasmine-core/lib/jasmine-core/jasmine.css');
+}
+
 if (runtime.engine === 'vue') {
 	deps.scripts.set('vue', {
 		defer: false,
