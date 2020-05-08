@@ -16,13 +16,14 @@ import { deprecate } from 'core/functools/deprecation';
 
 import { unmute } from 'core/object/watch';
 import { asyncLabel } from 'core/component/const';
+import { storeRgxp } from 'core/component/reflection';
 
 import { initFields } from 'core/component/field';
 import { attachAccessorsFromMeta } from 'core/component/accessor';
 import { attachMethodsFromMeta, callMethodFromComponent } from 'core/component/method';
 
 import { implementEventAPI } from 'core/component/event';
-import { watcherInitializer, bindRemoteWatchers, implementComponentWatchAPI } from 'core/component/watch';
+import { bindRemoteWatchers, implementComponentWatchAPI } from 'core/component/watch';
 
 import { runHook } from 'core/component/hook';
 import { resolveRefs } from 'core/component/ref';
@@ -47,8 +48,10 @@ export function beforeCreateState(
 	meta: ComponentMeta,
 	opts?: InitBeforeCreateStateOptions
 ): void {
+	meta = forkMeta(meta);
+
 	Object.assign(component, {
-		meta: forkMeta(meta),
+		meta,
 		componentName: meta.componentName,
 		instance: meta.instance,
 
@@ -83,10 +86,14 @@ export function beforeCreateState(
 
 	attachAccessorsFromMeta(component, opts?.safe);
 	runHook('beforeRuntime', component).catch(stderr);
-	initFields(meta.systemFields, component, <any>component);
 
 	const
-		{watchDependencies} = meta;
+		{systemFields, computedFields, accessors, watchDependencies, watchers} = meta,
+
+		// @ts-ignore (access)
+		{$systemFields} = component;
+
+	initFields(systemFields, component, <any>component);
 
 	let
 		watchMap;
@@ -95,30 +102,42 @@ export function beforeCreateState(
 		watchMap = Object.createDict();
 
 		for (let o = watchDependencies.values(), el = o.next(); !el.done; el = o.next()) {
-			const val = el.value;
-			watchMap[<string>(Object.isArray(val) ? val[0] : val)] = true;
+			const
+				val = el.value,
+				key = <string>(Object.isArray(val) ? val[0] : val);
+
+			if (systemFields[key]) {
+				watchMap[key] = true;
+			}
 		}
 	}
 
-	// @ts-ignore (access)
-	const {$systemFields} = component;
+	const
+		fakeHandler = () => undefined;
 
 	// Tie system fields with a component
-	for (let keys = Object.keys(meta.systemFields), i = 0; i < keys.length; i++) {
-		const key = keys[i];
-		(<object>$systemFields)[watcherInitializer]?.();
+	for (let keys = Object.keys(systemFields), i = 0; i < keys.length; i++) {
+		const
+			key = keys[i],
+			normalizedKey = key.replace(storeRgxp, '');
 
-		if (watchMap?.[key]) {
-			Object.defineProperty(component, key, {
-				enumerable: true,
-				configurable: true,
+		$systemFields[key] = component[key];
 
-				// @ts-ignore (access)
-				get: () => component.$systemFields[key],
+		// If a computed property is tied with a system field
+		// and the host component doesn't have any watchers to this field,
+		// we need to register the "fake" watcher to force watching for system fields
+		const needToForceWatching = !watchers[key] && (
+			watchMap?.[key] ||
+			storeRgxp.test(key) && (computedFields[normalizedKey] || accessors[normalizedKey])
+		);
 
-				// @ts-ignore (access)
-				set: (v) => component.$systemFields[key] = v
-			});
+		if (needToForceWatching) {
+			watchers[key] = [{
+				deep: true,
+				immediate: true,
+				provideArgs: false,
+				handler: fakeHandler
+			}];
 		}
 	}
 

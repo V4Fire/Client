@@ -33,6 +33,7 @@
 				:name = name |
 				:form = form |
 				:autofocus = autofocus |
+				:tabIndex = tabIndex |
 				@focus = onFocus |
 				@blur = onBlur |
 				${attrs|!html}

@@ -65,6 +65,7 @@ export type AccessorType =
 
 export type PropertyType =
 	'prop' |
+	'attr' |
 	'field' |
 	'system' |
 	AccessorType;

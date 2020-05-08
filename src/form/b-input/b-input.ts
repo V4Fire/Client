@@ -611,8 +611,8 @@ export default class bInput extends iInput implements iWidth, iSize {
 	 * @param e
 	 * @emits actionChange(value: V)
 	 */
-	protected async onEdit(e: Event): Promise<void> {
-		this.valueBufferStore =
+	protected onEdit(e: Event): void {
+		this.valueBuffer =
 			(<HTMLInputElement>e.target).value || '';
 
 		if (!this.mask && this.valueKey === 'value') {

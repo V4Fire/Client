@@ -77,12 +77,12 @@ export function attachAccessorsFromMeta(component: ComponentInterface, safe?: bo
 			continue;
 		}
 
-		const get = () => {
+		const get = function (this: typeof component): unknown {
 			if (cacheStatus in get) {
 				return get[cacheStatus];
 			}
 
-			return get[cacheStatus] = el.get!.call(component);
+			return get[cacheStatus] = el.get!.call(this);
 		};
 
 		Object.defineProperty(component, keys[i], {

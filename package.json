@@ -5,7 +5,7 @@
   "main": "src/core/index.js",
   "typings": "index.d.ts",
   "license": "MIT",
-  "version": "3.0.0-rc.3",
+  "version": "3.0.0-rc.7",
   "author": {
     "name": "kobezzza",
     "email": "kobezzza@gmail.com",
@@ -101,7 +101,7 @@
     "typograf": "^6.11.0",
     "uniconf": "^2.1.1",
     "upath": "^1.2.0",
-    "url-loader": "^4.1.0",
+    "url-loader": "^2.3.0",
     "urlconcat": "0.0.12",
     "vue-template-compiler": "2.6.10",
     "vue-template-es2015-compiler": "^1.9.1",

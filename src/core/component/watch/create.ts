@@ -107,13 +107,9 @@ export function createWatchFn(
 			}
 		}
 
-		if (info.type === 'prop' && (
-			ctxParams.root ||
-			ctxParams.functional === true ||
-			!(info.name in (info.ctx.$options.propsData || {})))
-		) {
-			return null;
-		}
+		const rootOrFunctional = Boolean(
+			ctxParams.root || ctxParams.functional === true
+		);
 
 		if (proxy) {
 			const normalizedOpts = {
@@ -122,126 +118,166 @@ export function createWatchFn(
 				...watchInfo.opts
 			};
 
-			if (info.type === 'system') {
-				if (!Object.getOwnPropertyDescriptor(info.ctx, info.name)?.get) {
-					proxy[watcherInitializer]?.();
-					proxy = watchInfo?.value;
+			switch (info.type) {
+				case 'system':
+					if (!Object.getOwnPropertyDescriptor(info.ctx, info.name)?.get) {
+						proxy[watcherInitializer]?.();
+						proxy = watchInfo?.value;
 
-					mute(proxy);
-					proxy[info.name] = info.ctx[info.name];
-					unmute(proxy);
+						mute(proxy);
+						proxy[info.name] = info.ctx[info.name];
+						unmute(proxy);
 
-					Object.defineProperty(info.ctx, info.name, {
-						enumerable: true,
-						configurable: true,
-						get: () => proxy[info.name],
-						set: (val) => {
-							// @ts-ignore (access))
-							info.ctx.$set(proxy, info.name, val);
-						}
-					});
+						Object.defineProperty(info.ctx, info.name, {
+							enumerable: true,
+							configurable: true,
+							get: () => proxy[info.name],
+							set: (val) => {
+								// @ts-ignore (access))
+								info.ctx.$set(proxy, info.name, val);
+							}
+						});
+					}
+
+					break;
+
+				case 'attr': {
+					const
+						attr = info.name;
+
+					if (rootOrFunctional) {
+						return null;
+					}
+
+					let
+						unwatch;
+
+					if ('watch' in watchInfo) {
+						unwatch = watchInfo.watch(attr, (value, oldValue) => {
+							const info = {
+								obj: component,
+								root: component,
+								path: [attr],
+								originalPath: [attr],
+								top: value,
+								fromProto: false
+							};
+
+							handler.call(this, value, oldValue, info);
+						});
+
+					} else {
+						unwatch = watch(proxy, info.path, normalizedOpts, handler).unwatch;
+					}
+
+					return unwatch;
 				}
 
-			} else if (info.type === 'prop') {
-				const
-					destructors = <Function[]>[];
+				case 'prop': {
+					const
+						prop = info.name;
 
-				const watchHandler = (val, oldVal, info) => {
-					for (let i = destructors.length; --i > 0;) {
-						destructors[i]();
-						destructors.pop();
+					if (rootOrFunctional) {
+						return null;
 					}
+
+					const
+						destructors = <Function[]>[];
+
+					const watchHandler = (value, oldValue, info) => {
+						for (let i = destructors.length; --i > 0;) {
+							destructors[i]();
+							destructors.pop();
+						}
+
+						attachDeepProxy();
+
+						if (value?.[fakeCopyLabel]) {
+							return;
+						}
+
+						handler.call(this, value, oldValue, info);
+					};
+
+					let
+						unwatch;
+
+					if ('watch' in watchInfo) {
+						unwatch = watchInfo.watch(prop, (value, oldValue) => {
+							const info = {
+								obj: component,
+								root: component,
+								path: [prop],
+								originalPath: [prop],
+								top: value,
+								fromProto: false
+							};
+
+							const
+								tiedLinks = handler[cacheStatus];
+
+							if (tiedLinks) {
+								for (let i = 0; i < tiedLinks.length; i++) {
+									const modifiedInfo = {
+										...info,
+										path: tiedLinks[i],
+										parent: {value, oldValue, info}
+									};
+
+									watchHandler(value, oldValue, modifiedInfo);
+								}
+
+							} else {
+								watchHandler(value, oldValue, info);
+							}
+						});
+
+					} else {
+						unwatch = watch(proxy, info.path, normalizedOpts, watchHandler).unwatch;
+					}
+
+					destructors.push(unwatch);
+
+					const
+						pathChunks = info.path.split('.');
+
+					const attachDeepProxy = () => {
+						const
+							proxyVal = Object.get(unwrap(proxy), info.path);
+
+						if (getProxyType(proxyVal)) {
+							const normalizedOpts = {
+								collapse: true,
+								...opts,
+								pathModifier: (path) => [...pathChunks, ...path.slice(1)]
+							};
+
+							const watchHandler = (...args) => {
+								if (args.length === 1) {
+									args = args[0][args[0].length - 1];
+								}
+
+								const
+									[val, oldVal, mutInfo] = args;
+
+								if (mutInfo.originalPath.length > 1) {
+									handler.call(this, val, oldVal, mutInfo);
+								}
+							};
+
+							const {unwatch} = watch(<object>proxyVal, normalizedOpts, watchHandler);
+							destructors.push(unwatch);
+						}
+					};
 
 					attachDeepProxy();
 
-					if (val?.[fakeCopyLabel]) {
-						return;
-					}
-
-					handler.call(this, val, oldVal, info);
-				};
-
-				let
-					unwatch;
-
-				if ('watch' in watchInfo) {
-					const
-						prop = info.path.split('.')[0];
-
-					unwatch = watchInfo.watch(prop, (value, oldValue) => {
-						const info = {
-							obj: component,
-							root: component,
-							path: [prop],
-							originalPath: [prop],
-							top: value,
-							fromProto: false
-						};
-
-						const
-							tiedLinks = handler[cacheStatus];
-
-						if (tiedLinks) {
-							for (let i = 0; i < tiedLinks.length; i++) {
-								const modifiedInfo = {
-									...info,
-									path: tiedLinks[i],
-									parent: {value, oldValue, info}
-								};
-
-								watchHandler(value, oldValue, modifiedInfo);
-							}
-
-						} else {
-							watchHandler(value, oldValue, info);
+					return () => {
+						for (let i = 0; i < destructors.length; i++) {
+							destructors[i]();
 						}
-					});
-
-				} else {
-					unwatch = watch(proxy, info.path, normalizedOpts, watchHandler).unwatch;
+					};
 				}
-
-				destructors.push(unwatch);
-
-				const
-					pathChunks = info.path.split('.');
-
-				const attachDeepProxy = () => {
-					const
-						proxyVal = Object.get(unwrap(proxy), info.path);
-
-					if (getProxyType(proxyVal)) {
-						const normalizedOpts = {
-							collapse: true,
-							...opts,
-							pathModifier: (path) => [...pathChunks, ...path.slice(1)]
-						};
-
-						const watchHandler = (...args) => {
-							if (args.length === 1) {
-								args = args[0][args[0].length - 1];
-							}
-
-							const
-								[val, oldVal, mutInfo] = args;
-
-							if (mutInfo.originalPath.length > 1) {
-								handler.call(this, val, oldVal, mutInfo);
-							}
-						};
-
-						const {unwatch} = watch(<object>proxyVal, normalizedOpts, watchHandler);
-						destructors.push(unwatch);
-					}
-				};
-
-				attachDeepProxy();
-
-				return () => {
-					for (let i = 0; i < destructors.length; i++) {
-						destructors[i]();
-					}
-				};
 			}
 
 			const {unwatch} = watch(proxy, info.path, normalizedOpts, handler);

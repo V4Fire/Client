@@ -7,4 +7,11 @@
  */
 
 export const
+	bindingRgxp = /(?:Prop|Store)$/,
+	propRgxp = /Prop$|^\$props/,
+	attrRgxp = /^\$attrs/,
+	storeRgxp = /Store$/,
+	hasSeparator = /\./;
+
+export const
 	dsComponentsMods = DS_COMPONENTS_MODS;

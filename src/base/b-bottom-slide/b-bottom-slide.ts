@@ -430,6 +430,10 @@ export default class bBottomSlide extends iBlock implements iLockPageScroll, iOp
 	 */
 	async close(): Promise<boolean> {
 		if (this.isClosed) {
+			if (this.history.length > 1) {
+				this.history.clear();
+			}
+
 			return false;
 		}
 

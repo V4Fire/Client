@@ -26,6 +26,7 @@
 				:form = form |
 				:placeholder = placeholder |
 				:autofocus = autofocus |
+				:tabindex = tabIndex |
 				:maxlength = maxlength |
 				@focus = onFocus |
 				@input = onEdit |
