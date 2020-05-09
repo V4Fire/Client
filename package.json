@@ -82,6 +82,7 @@
     "monic-loader": "^3.0.1",
     "nib": "^1.1.2",
     "node-object-hash": "^2.0.0",
+    "node-static": "^0.7.11",
     "optimize-css-assets-webpack-plugin": "^5.0.3",
     "parallel-webpack": "2.0.0",
     "path-equal": "^1.1.1",
@@ -112,7 +113,6 @@
   "devDependencies": {
     "babel-eslint": "^10.1.0",
     "eslint": "^6.8.0",
-    "node-static": "^0.7.11",
     "playwright": "^1.0.1",
     "stlint": "^1.0.62",
     "stlint-v4fire": "^1.0.37",
