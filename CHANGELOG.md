@@ -15,7 +15,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :rocket: New Feature
 
-* Added API to test components by using playwright and jasmine
+* [Added API to test components by using playwright and jasmine](https://github.com/V4Fire/Client/pull/223)
 
 ```bash
 npx gulp test:component --name b-button
