@@ -81,7 +81,7 @@ module.exports = function (gulp = require('gulp')) {
 				page = await context.newPage();
 
 			await page.goto(`localhost:${args['--port']}/${args['--page']}.html`);
-			const testEnv = getTestEnv();
+			const testEnv = getTestEnv(browserType);
 			await test(page, {browserType, componentDir, tmpDir});
 
 			const
@@ -91,19 +91,21 @@ module.exports = function (gulp = require('gulp')) {
 				testEnv.afterAll(() => resolve(), 10e3);
 				testEnv.execute();
 			}).then(close, close);
-
-			console.log('\n-------------\n');
 		}
 
 		await server.close();
 
-		function getTestEnv() {
+		function getTestEnv(browserType) {
 			const
 				Jasmine = require('jasmine'),
 				jasmine = new Jasmine();
 
 			jasmine.configureDefaultReporter({});
 			Object.assign(globalThis, jasmine.env);
+
+			console.log('\n-------------');
+			console.log(`Starting to test "${args['--name']}" on "${browserType}"`);
+			console.log('-------------\n');
 
 			return jasmine.env;
 		}
