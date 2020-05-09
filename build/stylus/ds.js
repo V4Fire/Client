@@ -207,19 +207,12 @@ module.exports = function (style) {
 	/**
 	 * Returns a part of the Design System by the specified path or whole DS object
 	 *
-	 * @param {string} string - field path
-	 * @param {boolean=} [vars] - if true, the method will return css variables from the specified path
+	 * @param {string} [string] - field path
 	 * @returns {!Object}
 	 */
 	style.define(
 		'getDSOptions',
-		({string}, vars = false) => {
-			if (vars && vars.val) {
-				return string ? stylus.utils.coerce($C(CSSVars).get(string), true) : {};
-			}
-
-			return string ? stylus.utils.coerce($C(DS).get(string), true) || {} : DS;
-		}
+		({string} = {}) => string ? stylus.utils.coerce($C(DS).get(string), true) || {} : DS
 	);
 
 	/**
@@ -261,12 +254,12 @@ module.exports = function (style) {
 	);
 
 	/**
-	 * Returns runtime config theme value
+	 * Returns the runtime config theme value
 	 */
 	style.define('defaultTheme', () => THEME);
 
 	/**
-	 * Returns included design system themes
+	 * Returns included interface themes
 	 */
 	style.define('includedThemes', () => INCLUDED_THEMES);
 };
