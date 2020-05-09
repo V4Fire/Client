@@ -11,6 +11,16 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.9 (2020-05-09)
+
+#### :rocket: New Feature
+
+* Added API to test components by using playwright and jasmine
+
+```bash
+npx gulp test:component --name b-button
+```
+
 ## v3.0.0-rc.8 (2020-05-08)
 
 #### :rocket: New Feature
