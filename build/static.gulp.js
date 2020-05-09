@@ -8,11 +8,11 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-module.exports = function (gulp = require('gulp')) {
-	const
-		path = require('upath'),
-		config = require('config');
+const
+	path = require('upath'),
+	config = require('config');
 
+module.exports = function (gulp = require('gulp')) {
 	const
 		merge = require('merge2'),
 		$ = require('gulp-load-plugins')({scope: ['optionalDependencies']});
