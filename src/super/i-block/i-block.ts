@@ -1780,6 +1780,11 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 		const
 			{async: $a} = this;
 
+		const label = <AsyncOptions>{
+			label: $$.initLoad,
+			join: 'replace'
+		};
+
 		const done = () => {
 			const get = () => Object.isFunction(data) ? data.call(this) : data;
 			this.componentStatus = 'beforeReady';
@@ -1805,7 +1810,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 				await this.state.initFromStorage();
 
 			} else {
-				await this.nextTick();
+				await this.nextTick(label);
 			}
 
 			const
@@ -1857,7 +1862,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 			done();
 		};
 
-		return $a.promise(init, {join: 'replace', label: $$.initLoad}).catch(stderr);
+		return $a.promise(init, label).catch(stderr);
 	}
 
 	/**
