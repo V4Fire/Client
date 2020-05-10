@@ -15,7 +15,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :rocket: New Feature
 
-* Added `forceUpdate` parameter for `@field` decorator
+* [Added `forceUpdate` parameter for `@field` decorator](https://github.com/V4Fire/Client/pull/226)
 
 ## v3.0.0-rc.10 (2020-05-10)
 
