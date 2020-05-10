@@ -11,6 +11,8 @@
  * @packageDocumentation
  */
 
+import { deprecated } from 'core/functools/deprecation';
+
 import iBlock from 'super/i-block/i-block';
 import Friend from 'super/i-block/modules/friend';
 
@@ -25,12 +27,13 @@ export default class Lazy<C extends iBlock = iBlock> extends Friend<C> {
 	 * Creates a new function from the specified function that executes deferredly.
 	 * The new function returns a promise with a result of the original function.
 	 *
-	 * @see [[Async.setImmediate]]
-	 * @see [[Async.setTimeout]]
+	 * @deprecated
+	 * @see [[Async.debounce]]
 	 *
 	 * @param fn
 	 * @param [opts] - additional options
 	 */
+	@deprecated({alternative: 'Async.debounce'})
 	createLazyFn<T extends (...args: unknown[]) => unknown>(fn: T, opts?: CreateLazyFnOptions): LazyFn<T> {
 		const {async: $a} = this;
 		return (...args) => (opts?.delay ? $a.sleep(opts.delay, opts) : $a.nextTick())

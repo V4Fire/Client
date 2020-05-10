@@ -140,8 +140,8 @@ export default class State<C extends iBlock = iBlock> extends Friend<C> {
 					stateFields
 				);
 
-				const sync = this.lazy.createLazyFn(() => this.saveToStorage(), {
-					label: $$.syncLocalStore
+				const sync = $a.debounce(this.saveToStorage, 0, {
+					label: $$.syncLocalStorage
 				});
 
 				if (stateFields) {
@@ -316,7 +316,7 @@ export default class State<C extends iBlock = iBlock> extends Friend<C> {
 				}
 			}
 
-			const sync = this.lazy.createLazyFn(() => this.saveToRouter(), {
+			const sync = $a.debounce(this.saveToRouter, 0, {
 				label: $$.syncRouter
 			});
 
