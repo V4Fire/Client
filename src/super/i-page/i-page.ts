@@ -103,10 +103,10 @@ export default abstract class iPage extends iData implements iVisible {
 
 		const scroll = (opts: ScrollToOptions) => {
 			try {
-				scrollTo(opts);
+				window.scrollTo(opts);
 
 			} catch {
-				scrollTo(opts.left == null ? pageXOffset : opts.left, opts.top == null ? pageYOffset : opts.top);
+				window.scrollTo(opts.left == null ? pageXOffset : opts.left, opts.top == null ? pageYOffset : opts.top);
 			}
 		};
 

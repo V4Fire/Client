@@ -17,6 +17,10 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 * [Added `forceUpdate` parameter for `@field` decorator](https://github.com/V4Fire/Client/pull/226)
 
+#### :bug: Bug Fix
+
+* Fixed calling `window.scrollTo` without window context
+
 ## v3.0.0-rc.10 (2020-05-10)
 
 #### :rocket: New Feature
