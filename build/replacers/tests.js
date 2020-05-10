@@ -38,7 +38,7 @@ module.exports = async function (str, file) {
 	const tests = await $C([path.dirname(file)])
 		.async
 		.to([])
-		.reduce(async (res, el) => res.concat(await glob(path.join(el, '/**/@spec.js'))));
+		.reduce(async (res, el) => res.concat(await glob(path.join(el, '/**/spec.js'))));
 
 	return str.replace(requireRgxp, () => tests.map((el) => `import '${el}';\n`).join('\n'));
 };
