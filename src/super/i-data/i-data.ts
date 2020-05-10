@@ -120,7 +120,20 @@ export default abstract class iData extends iBlock implements iProgress {
 	readonly dataProviderOptions?: ProviderOptions;
 
 	/**
-	 * Initial request parameters
+	 * External request parameters.
+	 * Keys of the object represent names of data provider methods.
+	 * Parameters that associated to provider methods will be automatically appended to
+	 * invocation as parameters by default.
+	 *
+	 * This parameter is useful to provide some request parameters from a parent component.
+	 *
+	 * @example
+	 * ```
+	 * < b-select :dataProvider = 'Cities' | :request = {get: {text: searchValue}}
+	 *
+	 * // Also, you can provide additional parameters to request method
+	 * < b-select :dataProvider = 'Cities' | :request = {get: [{text: searchValue}, {cacheStrategy: 'never'}]}
+	 * ```
 	 */
 	@prop({type: [Object, Array], required: false})
 	readonly request?: RequestParams;

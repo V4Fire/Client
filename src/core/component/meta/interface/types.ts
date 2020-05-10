@@ -291,6 +291,7 @@ export interface ComponentSystemField<CTX extends ComponentInterface = Component
 
 export interface ComponentField<CTX extends ComponentInterface = ComponentInterface> extends ComponentSystemField<CTX> {
 	watchers?: Map<string | Function, FieldWatcher>;
+	forceUpdate?: boolean;
 }
 
 export interface ComponentComputedField<T = unknown> extends ComputedOptions<T> {
