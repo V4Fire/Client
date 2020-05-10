@@ -23,7 +23,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :house: Internal
 
-* Marked `iBlock/modules/lazy` as deprecated
+* [Marked `iBlock/modules/lazy` as deprecated](https://github.com/V4Fire/Client/pull/228)
 
 ## v3.0.0-rc.10 (2020-05-10)
 
