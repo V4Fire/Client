@@ -36,7 +36,7 @@ export type RequestFilter<D = unknown> =
 	RequestFilterFn<D>;
 
 export type DefaultRequest<D = unknown> = [RequestQuery | RequestBody, CreateRequestOptions<D>];
-export type RequestParams<D = unknown> = StrictDictionary<Request<D>>;
+export type RequestParams<D = unknown> = Partial<Record<ModelMethod, Request<D>>>;
 
 export type Request<D = unknown> =
 	RequestQuery |
