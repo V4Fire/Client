@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.10 (2020-05-10)
+
+#### :rocket: New Feature
+
+* Added support for `*.spec.js` files
+
 ## v3.0.0-rc.9 (2020-05-09)
 
 #### :rocket: New Feature
