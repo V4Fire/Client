@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.11 (2020-05-10)
+
+#### :bug: Bug Fix
+
+* Fixed calling `window.scrollTo` without window context
+
 ## v3.0.0-rc.10 (2020-05-10)
 
 #### :rocket: New Feature
