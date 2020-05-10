@@ -344,10 +344,10 @@ export default class bContentSwitcher extends iBlock implements iObserveDOM {
 		const
 			content = <HTMLElement>this.content;
 
-		const defferCheck = this.lazy.createLazyFn(() => {
+		const defferCheck = this.async.debounce(() => {
 			this.is.mutationReady = this.contentLengthStore > 0;
 			this.setSwitchReadiness();
-		}, {label: $$.defferCheck, join: true});
+		}, 0, {label: $$.defferCheck, join: true});
 
 		this.contentLengthStore =
 			content.children.length;
@@ -392,7 +392,7 @@ export default class bContentSwitcher extends iBlock implements iObserveDOM {
 			}
 		};
 
-		const defferRegister = this.lazy.createLazyFn(register, {label: $$.register});
+		const defferRegister = $a.debounce(register, 0, {label: $$.register});
 		defferRegister();
 
 		this.initDOMObservers();

@@ -934,6 +934,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	/**
 	 * API for lazy operations.
 	 * This property provides a bunch of helper methods to organize lazy calculations.
+	 * @deprecated
 	 */
 	@system({
 		atom: true,

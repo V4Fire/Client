@@ -21,6 +21,10 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 * Fixed calling `window.scrollTo` without window context
 
+#### :house: Internal
+
+* [Marked `iBlock/modules/lazy` as deprecated](https://github.com/V4Fire/Client/pull/228)
+
 ## v3.0.0-rc.10 (2020-05-10)
 
 #### :rocket: New Feature
