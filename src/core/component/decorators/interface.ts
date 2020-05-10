@@ -137,6 +137,12 @@ export interface DecoratorField<
 	 * Watcher for changes of the property
 	 */
 	watch?: DecoratorFieldWatcher<CTX, A, B>;
+
+	/**
+	 * If false, then changes of the property don't force direct re-render
+	 * @default `true`
+	 */
+	forceUpdate?: boolean;
 }
 
 export interface DecoratorFunctionalOptions {

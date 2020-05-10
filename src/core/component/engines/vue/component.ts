@@ -60,7 +60,9 @@ export function getComponent(meta: ComponentMeta): ComponentOptions<ComponentDri
 					return;
 				}
 
-				ctx.$forceUpdate();
+				if (meta.fields[info.path[0]]?.forceUpdate !== false) {
+					ctx.$forceUpdate();
+				}
 
 				let
 					{obj} = info;

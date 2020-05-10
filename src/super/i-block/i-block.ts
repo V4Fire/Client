@@ -966,6 +966,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	 */
 	@field({
 		replace: false,
+		forceUpdate: false,
 		init: (o) => o.sync.link<CanUndef<Stage>>((val) => {
 			o.stage = val;
 			return o.field.get('stageStore');
@@ -978,7 +979,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	 * Component initialize status store
 	 * @see [[iBlock.componentStatus]]
 	 */
-	@field({unique: true})
+	@field({unique: true, forceUpdate: false})
 	protected componentStatusStore: ComponentStatus = 'unloaded';
 
 	/**
@@ -994,6 +995,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	@field({
 		merge: true,
 		replace: false,
+		forceUpdate: false,
 		init: () => Object.create({})
 	})
 
@@ -1776,31 +1778,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 		}
 
 		const
-			{$children: $c, async: $a} = this;
-
-		const
-			providers = new Set<iBlock>();
-
-		if ($c) {
-			for (let i = 0; i < $c.length; i++) {
-				const
-					el = $c[i],
-					st = <string>el.componentStatus;
-
-				if (el.remoteProvider && statuses[st]) {
-					if (st === 'ready') {
-						if (opts.recursive) {
-							el.reload({silent: opts.silent === true, ...opts}).catch(stderr);
-
-						} else {
-							continue;
-						}
-					}
-
-					providers.add(el);
-				}
-			}
-		}
+			{async: $a} = this;
 
 		const done = () => {
 			const get = () => Object.isFunction(data) ? data.call(this) : data;
@@ -1822,36 +1800,64 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 			});
 		};
 
-		if (this.globalName || providers.size) {
-			const init = async () => {
+		const init = async () => {
+			if (this.globalName) {
 				await this.state.initFromStorage();
 
-				if (providers.size) {
-					await $a.wait(() => {
-						for (let o = providers.values(), el = o.next(); !el.done; el = o.next()) {
-							const
-								val = el.value,
-								st = <string>val.componentStatus;
+			} else {
+				await this.nextTick();
+			}
 
-							if (st === 'ready' || statuses[st] <= 0) {
-								providers.delete(val);
+			const
+				{$children: childComponent} = this;
+
+			const
+				remoteProviders = new Set<iBlock>();
+
+			if (childComponent) {
+				for (let i = 0; i < childComponent.length; i++) {
+					const
+						el = childComponent[i],
+						st = el.componentStatus;
+
+					if (el.remoteProvider && statuses[st]) {
+						if (st === 'ready') {
+							if (opts.recursive) {
+								el.reload({silent: opts.silent === true, ...opts}).catch(stderr);
+
+							} else {
 								continue;
 							}
-
-							return false;
 						}
 
-						return true;
-					});
+						remoteProviders.add(el);
+					}
 				}
+			}
 
-				done();
-			};
+			if (remoteProviders.size) {
+				await $a.wait(() => {
+					for (let o = remoteProviders.values(), el = o.next(); !el.done; el = o.next()) {
+						const
+							val = el.value,
+							st = val.componentStatus;
 
-			return $a.promise(init, {join: 'replace', label: $$.initLoad}).catch(stderr);
-		}
+						if (st === 'ready' || statuses[st] <= 0) {
+							remoteProviders.delete(val);
+							continue;
+						}
 
-		done();
+						return false;
+					}
+
+					return true;
+				});
+			}
+
+			done();
+		};
+
+		return $a.promise(init, {join: 'replace', label: $$.initLoad}).catch(stderr);
 	}
 
 	/**
