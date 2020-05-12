@@ -15,11 +15,10 @@ import iProgress from 'traits/i-progress/i-progress';
 import iVisible from 'traits/i-visible/i-visible';
 
 import iBlock, { component, prop, hook, wait, ModsDecl } from 'super/i-block/i-block';
-export * from 'super/i-block/i-block';
+import { SizeType } from 'base/b-image/interface';
 
-export type SizeType =
-	'cover' |
-	'contain';
+export * from 'super/i-block/i-block';
+export * from 'base/b-image/interface';
 
 export const
 	$$ = symbolGenerator();
@@ -31,7 +30,7 @@ export default class bImage extends iBlock implements iProgress, iVisible {
 	 */
 	@prop({
 		type: String,
-		watch: {fn: 'init', immediate: true}
+		watch: {handler: 'init', immediate: true}
 	})
 
 	readonly src: string = '';
@@ -168,14 +167,7 @@ export default class bImage extends iBlock implements iProgress, iVisible {
 				tmpPadding = `${(1 / this.ratio) * 100}%`;
 
 			} else if (!Object.isString(img) && this.ratio !== 0) {
-				let
-					ratio = 1;
-
-				if (img && (img.naturalHeight || img.naturalWidth)) {
-					ratio = img.naturalHeight === 0 ? 1 : img.naturalWidth / img.naturalHeight;
-				}
-
-				tmpPadding = `${(1 / ratio) * 100}%`;
+				tmpPadding = '100%';
 
 			} else {
 				tmpPadding = '';
@@ -186,6 +178,20 @@ export default class bImage extends iBlock implements iProgress, iVisible {
 			{paddingBottom: tmpPadding} :
 			{height: '100%'}
 		);
+	}
+
+	/**
+	 * Updates an image ratio according to its height and width
+	 * @param img
+	 */
+	protected updateCalculatedImageRatio(img: HTMLImageElement): void {
+		const
+			{img: imgRef} = this.$refs;
+
+		if (img && (img.naturalHeight || img.naturalWidth)) {
+			const ratio = img.naturalHeight === 0 ? 1 : img.naturalWidth / img.naturalHeight;
+			imgRef.style.paddingBottom = `${(1 / ratio) * 100}%`;
+		}
 	}
 
 	/**
@@ -220,12 +226,16 @@ export default class bImage extends iBlock implements iProgress, iVisible {
 			{img: imgRef} = this.$refs,
 			cssImg = Object.isString(img) ? img : `url("${img.currentSrc}")`;
 
+		if (!Object.isString(img) && this.ratio === undefined) {
+			this.updateCalculatedImageRatio(img);
+		}
+
 		this.setMod('progress', false);
 		this.setMod('showError', false);
 
 		imgRef[$$.img] = cssImg;
 		Object.assign(imgRef.style, {
-			backgroundImage: (<string[]>[]).concat(this.beforeImg || [], cssImg, this.afterImg || []).join(','),
+			backgroundImage: Array.concat([], this.beforeImg, cssImg, this.afterImg).join(','),
 			backgroundSize: this.sizeType,
 			backgroundPosition: this.position
 		});

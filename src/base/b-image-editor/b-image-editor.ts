@@ -416,7 +416,7 @@ export default class bImageEditor extends iBlock implements iVisible {
 	protected initModEvents(): void {
 		super.initModEvents();
 		iVisible.initModEvents(this);
-		this.localEvent.on('block.mod.set.progress.*', ({value}) => {
+		this.localEmitter.on('block.mod.set.progress.*', ({value}) => {
 			const {crop} = this.$refs;
 			crop && crop.setMod('parentProgress', value);
 		});

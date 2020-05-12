@@ -31,7 +31,8 @@ const
 const fileLoaderOpts = {
 	name: path.basename(assetsOutput),
 	outputPath: path.dirname(assetsOutput),
-	limit: webpack.dataURILimit()
+	limit: webpack.dataURILimit()/*,
+	encoding: 'base64'*/
 };
 
 /**

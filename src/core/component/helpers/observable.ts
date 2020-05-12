@@ -6,9 +6,16 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+/**
+ * @deprecated
+ * @packageDocumentation
+ */
+
+import { deprecate } from 'core/functools/deprecation';
+
 export type ObservableSet<V> = Set<V> | WeakSet<object>;
-export type observableMap<K, V> = Map<K, V> | WeakMap<object, V>;
-export type ObservableInstance<K = unknown, V = unknown> = ObservableSet<V> | observableMap<K, V>;
+export type ObservableMap<K, V> = Map<K, V> | WeakMap<object, V>;
+export type ObservableInstance<K = unknown, V = unknown> = ObservableSet<V> | ObservableMap<K, V>;
 
 export interface ObservableParams {
 	/**
@@ -22,7 +29,7 @@ export interface ObservableParams {
 	ignore?: string[];
 
 	/**
-	 * If true, then the callback will be called immediately after a mutation
+	 * If true, then the callback is invoked immediately after any mutation
 	 */
 	immediate?: boolean;
 }
@@ -38,14 +45,14 @@ export const shimTable = {
  * Wraps the specified Map object with mutation hooks
  *
  * @param obj
- * @param cb - callback which will be called on every mutation hook
+ * @param cb - callback that is invoked on every mutation hook
  * @param [params]
  *
  * @example
  * const s = observeMap(new Map(), () => console.log(123));
  * s.set(1); // 123
  */
-export function observeMap<T extends observableMap<unknown, unknown> = observableMap<unknown, unknown>>(
+export function observeMap<T extends ObservableMap<unknown, unknown> = ObservableMap<unknown, unknown>>(
 	obj: T,
 	cb: Function,
 	params?: ObservableParams
@@ -57,7 +64,7 @@ export function observeMap<T extends observableMap<unknown, unknown> = observabl
  * Wraps the specified Set object with mutation hooks
  *
  * @param obj
- * @param cb - callback which will be called on every mutation hook
+ * @param cb - callback that is invoked on every mutation hook
  * @param [params]
  *
  * @example
@@ -73,10 +80,10 @@ export function observeSet<T extends ObservableSet<unknown> = ObservableSet<unkn
 }
 
 /**
- * Wraps the specified object object with mutation hooks
+ * Wraps the specified object with mutation hooks
  *
  * @param obj
- * @param cb - callback which will be called on every mutation hook
+ * @param cb - callback that is invoked on every mutation hook
  * @param [params]
  * @private
  */
@@ -85,6 +92,15 @@ function bindMutationHooks<T extends ObservableInstance = ObservableInstance<unk
 	cb: Function,
 	params: ObservableParams = {}
 ): T {
+	deprecate({
+		type: 'function',
+		name: 'bindMutationHooks',
+		alternative: {
+			name: 'watch',
+			source: 'core/object/watch'
+		}
+	});
+
 	const {
 		ignore,
 		info,

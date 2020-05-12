@@ -12,7 +12,7 @@
  */
 
 /**
- * Returns an srcset string for an img tag by the specified resolution map
+ * Returns a srcset string for an img tag by the specified resolution map
  *
  * @param resolutions - map, where key is a picture multiplier and value is a picture url
  *

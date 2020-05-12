@@ -9,8 +9,11 @@
  */
 
 const
-	path = require('upath'),
 	config = require('@v4fire/core/config/default'),
+	pzlr = require('@pzlr/build-core');
+
+const
+	path = require('upath'),
 	o = require('uniconf/options').option;
 
 module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
@@ -20,6 +23,44 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		entries: o('entries', {
 			env: true,
 			coerce: (v) => v ? v.split(',') : []
+		}),
+
+		inspectComponents: o('inspect-components', {
+			env: true,
+			type: 'boolean'
+		}),
+
+		components: o('components', {
+			env: true,
+			coerce: (v) => {
+				try {
+					const
+						obj = JSON.parse(v);
+
+					if (Object.isArray(obj)) {
+						return obj;
+					}
+
+					return [Object.isObject(obj) ? obj : {name: obj}];
+
+				} catch {}
+
+				if (!v) {
+					return [];
+				}
+
+				return v
+					.split(',')
+					.flatMap((name) => {
+						try {
+							const dir = pzlr.resolve.blockSync(name);
+							return [].concat(require(path.join(dir, 'demo.js')) || []).map((p) => ({name, ...p}));
+
+						} catch {}
+
+						return {name};
+					});
+			}
 		}),
 
 		fast() {
@@ -166,11 +207,15 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 
 	html() {
 		return {
-			useShortDoctype: true,
-			conservativeCollapse: true,
-			removeAttributeQuotes: true,
-			removeComments: isProd,
-			collapseWhitespace: isProd
+			attributes: false,
+
+			minimize: {
+				useShortDoctype: true,
+				conservativeCollapse: true,
+				removeAttributeQuotes: true,
+				removeComments: isProd,
+				collapseWhitespace: isProd
+			}
 		};
 	},
 
@@ -201,8 +246,11 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 
 	runtime() {
 		return {
-			'engine': this.engine(),
+			'prod': IS_PROD,
+			'debug': !IS_PROD,
+			'env': process.env.NODE_ENV,
 
+			'engine': this.engine(),
 			'noGlobals': false,
 			'svgSprite': true,
 
@@ -222,25 +270,12 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 			'core/session': true,
 			'core/net': false,
 
-			'range/extended': false,
-
 			'prelude/dependencies': true,
-			'prelude/object/has': false,
-			'prelude/object/getPrototypeChain': false,
-
-			'prelude/date/modify': true,
 			'prelude/date/relative': true,
 			'prelude/date/format': true,
-			'prelude/date/create': true,
 
 			'prelude/number/rounding': true,
 			'prelude/number/format': true,
-
-			'prelude/string/underscore': true,
-			'prelude/string/capitalize': true,
-
-			'prelude/function/debounce': true,
-			'prelude/function/throttle': true,
 
 			'component/async-render': true,
 			'component/daemons': true,
@@ -304,7 +339,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	snakeskin() {
 		const
 			{webpack, src} = this,
-			snakeskinVars = include('build/snakeskin.vars');
+			snakeskinVars = include('build/snakeskin/vars');
 
 		return {
 			client: this.extend(super.snakeskin(), {

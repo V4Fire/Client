@@ -6,6 +6,11 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+/**
+ * [[include:core/component/filters/README.md]]
+ * @packageDocumentation
+ */
+
 import { ComponentDriver } from 'core/component/engines';
 import * as strings from 'core/helpers/string';
 

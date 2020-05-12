@@ -10,7 +10,6 @@ import symbolGenerator from 'core/symbol';
 
 import iWidth from 'traits/i-width/i-width';
 import iSize from 'traits/i-size/i-size';
-import iIcon from 'traits/i-icon/i-icon';
 
 import iInput, {
 
@@ -18,7 +17,11 @@ import iInput, {
 	prop,
 	field,
 	system,
+
+	watch,
+	hook,
 	wait,
+
 	ModsDecl,
 	ValidatorsDecl
 
@@ -44,7 +47,7 @@ export const
 	}
 })
 
-export default class bInput extends iInput implements iWidth, iSize, iIcon {
+export default class bInput extends iInput implements iWidth, iSize {
 	/** @override */
 	readonly Value!: Value;
 
@@ -177,7 +180,7 @@ export default class bInput extends iInput implements iWidth, iSize, iIcon {
 	/**
 	 * Mask placeholder
 	 */
-	@prop({type: String, watch: {fn: 'updateMask', immediate: true, provideArgs: false}})
+	@prop({type: String, watch: {handler: 'updateMask', immediate: true, provideArgs: false}})
 	readonly maskPlaceholder: string = '_';
 
 	/**
@@ -255,11 +258,6 @@ export default class bInput extends iInput implements iWidth, iSize, iIcon {
 	 */
 	@field({
 		after: 'valueStore',
-		watch: {
-			fn: 'onValueBufferUpdate',
-			immediate: true
-		},
-
 		init: (o, data) => o.sync.link('valueProp', (val) => {
 			val = val === undefined ? data.valueStore : val;
 			return val !== undefined ? String(val) : '';
@@ -317,11 +315,6 @@ export default class bInput extends iInput implements iWidth, iSize, iIcon {
 	 */
 	@system()
 	private _mask?: {value: Array<string | RegExp>; tpl: string};
-
-	/** @see iIcon.getIconLink */
-	getIconLink(iconId: string): string {
-		return iIcon.getIconLink(iconId);
-	}
 
 	/** @override */
 	async clear(): Promise<boolean> {
@@ -591,11 +584,12 @@ export default class bInput extends iInput implements iWidth, iSize, iIcon {
 
 	/**
 	 * Handler: value buffer update
-	 * @param value
 	 */
-	protected onValueBufferUpdate(value: this['Value']): void {
+	@watch('valueBufferStore')
+	@hook('beforeDataCreate')
+	protected onValueBufferUpdate(): void {
 		if (!this.mask) {
-			this.value = value;
+			this.value = this.field.get<this['Value']>('valueBufferStore')!;
 		}
 	}
 
@@ -617,8 +611,8 @@ export default class bInput extends iInput implements iWidth, iSize, iIcon {
 	 * @param e
 	 * @emits actionChange(value: V)
 	 */
-	protected async onEdit(e: Event): Promise<void> {
-		this.valueBufferStore =
+	protected onEdit(e: Event): void {
+		this.valueBuffer =
 			(<HTMLInputElement>e.target).value || '';
 
 		if (!this.mask && this.valueKey === 'value') {
@@ -714,8 +708,8 @@ export default class bInput extends iInput implements iWidth, iSize, iIcon {
 	}
 
 	/** @override */
-	protected initValueEvents(): void {
-		super.initValueEvents();
+	protected initValueListeners(): void {
+		super.initValueListeners();
 		this.watch('valueBuffer', async (val: this['Value'] = '') => {
 			try {
 				const

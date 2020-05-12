@@ -8,13 +8,13 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+const
+	path = require('upath'),
+	config = require('config');
+
 module.exports = function (gulp = require('gulp')) {
 	const
-		path = require('upath'),
-		config = require('config'),
-		webp = require('imagemin-webp');
-
-	const
+		webp = require('imagemin-webp'),
 		merge = require('merge2'),
 		$ = require('gulp-load-plugins')({scope: ['optionalDependencies']});
 

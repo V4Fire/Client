@@ -15,10 +15,9 @@ import iDynamicPage, {
 	prop,
 	field,
 	watch,
-	p,
 
-	Statuses,
-	InitLoadParams
+	ComponentStatus,
+	InitLoadOptions
 
 } from 'super/i-dynamic-page/i-dynamic-page';
 
@@ -99,24 +98,23 @@ export default class bDynamicPage extends iDynamicPage {
 	/**
 	 * Link to a page component
 	 */
-	@p({cache: false})
 	get component(): CanUndef<iDynamicPage> {
 		return this.$refs.component;
 	}
 
 	/** @override */
-	protected readonly componentStatusStore: Statuses = 'ready';
+	protected readonly componentStatusStore: ComponentStatus = 'ready';
 
 	/** @override */
 	protected readonly $refs!: {component?: iDynamicPage};
 
 	/** @override */
-	async initLoad(data?: unknown, params?: InitLoadParams): Promise<void> {
+	async initLoad(data?: unknown, params?: InitLoadOptions): Promise<void> {
 		return undefined;
 	}
 
 	/** @override */
-	async reload(params?: InitLoadParams): Promise<void> {
+	async reload(params?: InitLoadOptions): Promise<void> {
 		const {component} = this.$refs;
 		return component && component.reload(params);
 	}
@@ -144,7 +142,7 @@ export default class bDynamicPage extends iDynamicPage {
 					v = e;
 
 				if (this.eventConverter) {
-					v = (<Function[]>[]).concat(this.eventConverter).reduce((res, fn) => fn.call(this, res, this.page), v);
+					v = Array.concat([], this.eventConverter).reduce((res, fn) => fn.call(this, res, this.page), v);
 				}
 
 				if (v == null || Object.isString(v)) {
