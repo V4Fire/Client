@@ -6,6 +6,10 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+//#if demo
+import 'models/demo/pagination';
+//#endif
+
 import symbolGenerator from 'core/symbol';
 
 import iItems from 'traits/i-items/i-items';

@@ -50,21 +50,26 @@ module.exports = function (gulp = require('gulp')) {
 			'--name': String,
 			'--port': Number,
 			'--page': String,
-			'--browsers': String
-		});
+			'--browsers': String,
+			'--close': String,
+			'--headless': String
+		}, {permissive: true});
 
 		if (!args['--name']) {
 			throw new ReferenceError('"--name" parameter is not specified');
 		}
 
 		let
-			browsers = ['chromium', 'firefox', 'webkit'];
+			browsers = ['chromium', 'firefox', 'webkit'],
+			headless = true,
+			closeOnFinish = true;
 
 		if (args['--browsers']) {
 			const aliases = {
 				ff: 'firefox',
 				chr: 'chromium',
 				chrome: 'chromium',
+				chromium: 'chromium',
 				wk: 'webkit'
 			};
 
@@ -76,6 +81,14 @@ module.exports = function (gulp = require('gulp')) {
 			if (browsers.length) {
 				browsers = customBrowsers;
 			}
+		}
+
+		if (args['--headless']) {
+			headless = JSON.parse(args['--headless']);
+		}
+
+		if (args['--close']) {
+			closeOnFinish = JSON.parse(args['--close']);
 		}
 
 		args['--port'] = args['--port'] || Number.random(2000, 6000);
@@ -97,11 +110,11 @@ module.exports = function (gulp = require('gulp')) {
 		fs.mkdirpSync(tmpDir);
 
 		const
-			test = require(path.join(componentDir, 'test.js'));
+			test = require(path.join(componentDir, 'test'));
 
 		for (const browserType of browsers) {
 			const
-				browser = await playwright[browserType].launch(),
+				browser = await playwright[browserType].launch({headless}),
 				context = await browser.newContext(),
 				page = await context.newPage();
 
@@ -110,7 +123,7 @@ module.exports = function (gulp = require('gulp')) {
 			await test(page, {browser, context, browserType, componentDir, tmpDir});
 
 			const
-				close = () => browser.close();
+				close = () => closeOnFinish && browser.close();
 
 			await new Promise((resolve) => {
 				testEnv.afterAll(() => resolve(), 10e3);

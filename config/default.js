@@ -298,27 +298,31 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	monic() {
 		const
 			runtime = this.runtime(),
-			es = this.es();
+			es = this.es(),
+			demo = Boolean(this.build.components.length);
 
 		return {
 			stylus: {
 				flags: {
 					runtime,
-					'+:*': true
+					'+:*': true,
+					demo
 				}
 			},
 
 			typescript: {
 				flags: {
 					runtime,
-					es
+					es,
+					demo
 				}
 			},
 
 			javascript: {
 				flags: {
 					runtime,
-					es
+					es,
+					demo
 				}
 			}
 		};

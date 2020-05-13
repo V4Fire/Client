@@ -7,16 +7,11 @@
  */
 
 const
-	s = JSON.stringify;
+	pzlr = require('@pzlr/build-core'),
+	path = require('upath');
 
-module.exports = [
-	{
-		attrs: {
-			':theme': s('demo'),
-			':option': s('div'),
-			':options': s(Array.from(Array(100), (v, i) => i))
-		},
+const
+	componentDir = pzlr.resolve.blockSync('b-virtual-scroll'),
+	preset = require(path.join(componentDir, `test/presets.js`));
 
-		content: {}
-	}
-];
+module.exports = preset;
