@@ -7,10 +7,12 @@
  */
 
 import { WatchPath } from 'core/object/watch';
-import { ComponentInterface } from 'core/component/interface/component';
 import { ComputedOptions, DirectiveOptions } from 'core/component/engines';
+
+import { Hook } from 'core/component/interface/life-cycle';
+import { ComponentInterface } from 'core/component/interface/component';
 import { FieldWatcher, MethodWatcher } from 'core/component/interface/watch';
-import { PropOptions, Hook, InitFieldFn, MergeFieldFn, UniqueFieldFn } from 'core/component/interface';
+import { PropOptions, InitFieldFn, MergeFieldFn, UniqueFieldFn } from 'core/component/decorators';
 
 /**
  * Additional options to register a component
