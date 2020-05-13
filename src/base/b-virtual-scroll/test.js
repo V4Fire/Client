@@ -25,7 +25,6 @@ module.exports = async (page, {browserType, componentDir, tmpDir}) => {
 
 			await page.evaluate('window.scrollTo(0, document.body.scrollHeight)');
 			await page.waitForFunction(`document.querySelector('${cName}__container').childElementCount > 10`);
-
 			expect(await c.evaluate((ctx) => ctx.$refs.container.childElementCount)).toBe(20);
 		});
 	});
