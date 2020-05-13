@@ -46,9 +46,6 @@ import {
 	PARENT,
 
 	globalEmitter,
-	hook,
-	computed,
-
 	customWatcherRgxp,
 	bindRemoteWatchers,
 
@@ -131,8 +128,10 @@ import {
 	prop,
 	field,
 	system,
+	computed,
 
 	watch,
+	hook,
 	wait,
 
 	WaitFn,
@@ -154,6 +153,7 @@ export * from 'super/i-block/modules/event-emitter';
 
 export * from 'super/i-block/modules/sync';
 export * from 'super/i-block/modules/async-render';
+export * from 'super/i-block/modules/decorators';
 
 export {
 
@@ -166,22 +166,6 @@ export {
 	ModsNTable
 
 };
-
-export {
-
-	p,
-
-	prop,
-	field,
-	system,
-
-	watch,
-	wait,
-
-	mod,
-	removeMod
-
-} from 'super/i-block/modules/decorators';
 
 export const
 	$$ = symbolGenerator();
@@ -1806,64 +1790,79 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 			});
 		};
 
-		const init = async () => {
-			if (this.globalName) {
-				await this.state.initFromStorage();
-
-			} else {
-				await this.nextTick(label);
+		if (this.globalName || !this.isFunctional) {
+			if (this.isFunctional) {
+				return $a.promise(async () => {
+					await this.state.initFromStorage();
+					done();
+				}, label).catch(stderr);
 			}
 
-			const
-				{$children: childComponent} = this;
+			const init = async () => {
+				if (this.globalName) {
+					await this.state.initFromStorage();
 
-			const
-				remoteProviders = new Set<iBlock>();
+				} else {
+					await this.nextTick(label);
+				}
 
-			if (childComponent) {
-				for (let i = 0; i < childComponent.length; i++) {
-					const
-						el = childComponent[i],
-						st = el.componentStatus;
+				const
+					{$children: childComponent} = this;
 
-					if (el.remoteProvider && statuses[st]) {
-						if (st === 'ready') {
-							if (opts.recursive) {
-								el.reload({silent: opts.silent === true, ...opts}).catch(stderr);
+				let
+					remoteProviders!: Set<iBlock>;
 
-							} else {
-								continue;
+				if (childComponent) {
+					for (let i = 0; i < childComponent.length; i++) {
+						const
+							el = childComponent[i],
+							st = el.componentStatus;
+
+						if (el.remoteProvider && statuses[st]) {
+							if (st === 'ready') {
+								if (opts.recursive) {
+									el.reload({silent: opts.silent === true, ...opts}).catch(stderr);
+
+								} else {
+									continue;
+								}
 							}
-						}
 
-						remoteProviders.add(el);
+							if (!remoteProviders) {
+								remoteProviders = new Set<iBlock>();
+							}
+
+							remoteProviders.add(el);
+						}
 					}
 				}
-			}
 
-			if (remoteProviders.size) {
-				await $a.wait(() => {
-					for (let o = remoteProviders.values(), el = o.next(); !el.done; el = o.next()) {
-						const
-							val = el.value,
-							st = val.componentStatus;
+				if (remoteProviders) {
+					await $a.wait(() => {
+						for (let o = remoteProviders.values(), el = o.next(); !el.done; el = o.next()) {
+							const
+								val = el.value,
+								st = val.componentStatus;
 
-						if (st === 'ready' || statuses[st] <= 0) {
-							remoteProviders.delete(val);
-							continue;
+							if (st === 'ready' || statuses[st] <= 0) {
+								remoteProviders.delete(val);
+								continue;
+							}
+
+							return false;
 						}
 
-						return false;
-					}
+						return true;
+					});
+				}
 
-					return true;
-				});
-			}
+				done();
+			};
 
-			done();
-		};
+			return $a.promise(init, label).catch(stderr);
+		}
 
-		return $a.promise(init, label).catch(stderr);
+		done();
 	}
 
 	/**

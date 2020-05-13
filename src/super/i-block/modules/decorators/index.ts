@@ -15,14 +15,14 @@ import { initEmitter, ModVal } from 'core/component';
 
 import {
 
-	DecoratorMethod,
-	DecoratorComponentAccessor,
-
 	p as pDecorator,
 	prop as propDecorator,
 	field as fieldDecorator,
 	system as systemDecorator,
-	watch as watchDecorator
+	watch as watchDecorator,
+
+	DecoratorMethod,
+	DecoratorComponentAccessor
 
 } from 'core/component/decorators';
 
@@ -32,12 +32,12 @@ import { waitCtxRgxp } from 'super/i-block/modules/decorators/const';
 
 import {
 
-	ComponentProp,
-	ComponentField,
+	DecoratorProp,
+	DecoratorField,
 	InitFieldFn,
 
-	FieldWatcher,
-	MethodWatchers,
+	DecoratorFieldWatcher,
+	DecoratorMethodWatcher,
 
 	WaitStatuses,
 	WaitFn,
@@ -49,6 +49,7 @@ import {
 
 } from 'super/i-block/modules/decorators/interface';
 
+export { hook, computed } from 'core/component/decorators';
 export * from 'super/i-block/modules/decorators/interface';
 
 /**
@@ -56,7 +57,7 @@ export * from 'super/i-block/modules/decorators/interface';
  * @override
  */
 export const p = pDecorator as <CTX extends iBlock = iBlock['unsafe'], A = unknown, B = A>(
-	params?: ComponentProp<CTX, A, B> | ComponentField<CTX, A, B> | DecoratorMethod<CTX, A, B> | DecoratorComponentAccessor
+	params?: DecoratorProp<CTX, A, B> | DecoratorField<CTX, A, B> | DecoratorMethod<CTX, A, B> | DecoratorComponentAccessor
 ) => Function;
 
 /**
@@ -64,7 +65,7 @@ export const p = pDecorator as <CTX extends iBlock = iBlock['unsafe'], A = unkno
  * @override
  */
 export const prop = propDecorator as <CTX extends iBlock = iBlock['unsafe'], A = unknown, B = A>(
-	params?: CanArray<FunctionConstructor | Function> | ObjectConstructor | ComponentProp<CTX, A, B>
+	params?: CanArray<FunctionConstructor | Function> | ObjectConstructor | DecoratorProp<CTX, A, B>
 ) => Function;
 
 /**
@@ -72,7 +73,7 @@ export const prop = propDecorator as <CTX extends iBlock = iBlock['unsafe'], A =
  * @override
  */
 export const field = fieldDecorator as <CTX extends iBlock = iBlock['unsafe'], A = unknown, B = A>(
-	params?: InitFieldFn<CTX> | ComponentField<CTX, A, B>
+	params?: InitFieldFn<CTX> | DecoratorField<CTX, A, B>
 ) => Function;
 
 /**
@@ -80,7 +81,7 @@ export const field = fieldDecorator as <CTX extends iBlock = iBlock['unsafe'], A
  * @override
  */
 export const system = systemDecorator as <CTX extends iBlock = iBlock['unsafe'], A = unknown, B = A>(
-	params?: InitFieldFn<CTX> | ComponentField<CTX, A, B>
+	params?: InitFieldFn<CTX> | DecoratorField<CTX, A, B>
 ) => Function;
 
 /**
@@ -88,7 +89,7 @@ export const system = systemDecorator as <CTX extends iBlock = iBlock['unsafe'],
  * @override
  */
 export const watch = watchDecorator as <CTX extends iBlock = iBlock['unsafe'], A = unknown, B = A>(
-	params?: FieldWatcher<CTX, A, B> | MethodWatchers<CTX, A, B>
+	params?: DecoratorFieldWatcher<CTX, A, B> | DecoratorMethodWatcher<CTX, A, B>
 ) => Function;
 
 /**

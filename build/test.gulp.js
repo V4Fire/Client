@@ -19,13 +19,16 @@ module.exports = function (gulp = require('gulp')) {
 	gulp.task('test:component:build', () => {
 		const
 			arg = require('arg'),
-			args = arg({'--name': String});
+			args = arg({'--name': String}, {permissive: true});
 
 		if (!args['--name']) {
 			throw new ReferenceError('"--name" parameter is not specified');
 		}
 
-		return $.run(`npx webpack --public-path / --client-output ${args['--name']} --components ${args['--name']}`, {verbosity: 3})
+		const
+			extraArgs = args._.slice(1).join(' ');
+
+		return $.run(`npx webpack --public-path / --client-output ${args['--name']} --components ${args['--name']} ${extraArgs}`, {verbosity: 3})
 			.exec()
 			.on('error', console.error);
 	});
@@ -46,11 +49,33 @@ module.exports = function (gulp = require('gulp')) {
 		const args = arg({
 			'--name': String,
 			'--port': Number,
-			'--page': String
+			'--page': String,
+			'--browsers': String
 		});
 
 		if (!args['--name']) {
 			throw new ReferenceError('"--name" parameter is not specified');
+		}
+
+		let
+			browsers = ['chromium', 'firefox', 'webkit'];
+
+		if (args['--browsers']) {
+			const aliases = {
+				ff: 'firefox',
+				chr: 'chromium',
+				chrome: 'chromium',
+				wk: 'webkit'
+			};
+
+			const customBrowsers = args['--browsers']
+				.split(',')
+				.map((name) => aliases[name] || null)
+				.filter((name) => name);
+
+			if (browsers.length) {
+				browsers = customBrowsers;
+			}
 		}
 
 		args['--port'] = args['--port'] || Number.random(2000, 6000);
@@ -74,7 +99,7 @@ module.exports = function (gulp = require('gulp')) {
 		const
 			test = require(path.join(componentDir, 'test.js'));
 
-		for (const browserType of ['chromium', 'firefox', 'webkit']) {
+		for (const browserType of browsers) {
 			const
 				browser = await playwright[browserType].launch(),
 				context = await browser.newContext(),
