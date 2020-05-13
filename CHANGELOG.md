@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.13 (2020-05-13)
+
+#### :bug: Bug Fix
+
+* Fixed build with TS@3.9
+
 ## v3.0.0-rc.12 (2020-05-13)
 
 #### :rocket: New Feature
