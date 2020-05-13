@@ -12,18 +12,9 @@ const
 module.exports = [
 	{
 		attrs: {
+			':theme': s('demo'),
 			':option': s('div'),
-			':options': s(Array.from(Array(100), (v, i) => i) )
-		},
-
-		content: {}
-	},
-
-
-	{
-		attrs: {
-			':option': s('section'),
-			':options': s(Array.from(Array(100), (v, i) => i) )
+			':options': s(Array.from(Array(100), (v, i) => i))
 		},
 
 		content: {}

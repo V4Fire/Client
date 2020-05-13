@@ -6,16 +6,27 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+// @ts-check
+
 module.exports = async (page, {browserType, componentDir, tmpDir}) => {
 	await page.screenshot({path: `${tmpDir}/example-${browserType}.png`});
 
-	describe('b-virtual-scroll', () => {
-		it('getting a component instance from a DOM node', async () => {
-			const
-				component = await (await page.$('.b-virtual-scroll')).getProperty('component'),
-				componentName = await component.getProperty('componentName');
+	const
+		cName = '.b-virtual-scroll',
+		c = await (await page.$(cName)).getProperty('component')
 
-			expect(await componentName.jsonValue()).toBe('b-virtual-scroll');
+	describe('b-virtual-scroll', () => {
+		it('provides items to the chunk renderer', async () => {
+			expect(await c.evaluate((ctx) => ctx.chunkRender.items.length)).toBe(100)
+		});
+
+		it('renders data chunks to the page', async () => {
+			expect(await c.evaluate((ctx) => ctx.$refs.container.childElementCount)).toBe(10);
+
+			await page.evaluate('window.scrollTo(0, document.body.scrollHeight)');
+			await page.waitForFunction(`document.querySelector('${cName}__container').childElementCount > 10`);
+
+			expect(await c.evaluate((ctx) => ctx.$refs.container.childElementCount)).toBe(20);
 		});
 	});
 };
