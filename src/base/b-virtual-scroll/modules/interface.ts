@@ -9,7 +9,7 @@
 import iBlock from 'super/i-block/i-block';
 import bVirtualScroll, { Unsafe as SuperUnsafe } from 'base/b-virtual-scroll/b-virtual-scroll';
 
-import ScrollRender from 'base/b-virtual-scroll/modules/scroll-render';
+import ChunkRender from 'base/b-virtual-scroll/modules/chunk-render';
 
 export interface RequestQueryFn<T extends unknown = unknown> {
 	(params: RequestMoreParams<T>): Dictionary<Dictionary>;
@@ -106,8 +106,8 @@ export interface RenderItem<T extends unknown = unknown> {
 }
 
 export interface Unsafe<T extends iBlock = bVirtualScroll> extends SuperUnsafe<T> {
-	scrollRender: bVirtualScroll['scrollRender'];
-	scrollRequest: bVirtualScroll['scrollRequest'];
+	chunkRender: bVirtualScroll['chunkRender'];
+	chunkRequest: bVirtualScroll['chunkRequest'];
 	componentRender: bVirtualScroll['componentRender'];
 	getOptionKey: bVirtualScroll['getOptionKey'];
 	getDefaultRequestParams: bVirtualScroll['getDefaultRequestParams'];
@@ -117,11 +117,11 @@ export interface Unsafe<T extends iBlock = bVirtualScroll> extends SuperUnsafe<T
 }
 
 export interface UnsafeScrollRender {
-	onRequestsDone: ScrollRender['onRequestsDone'];
-	asyncGroup: ScrollRender['asyncGroup'];
+	onRequestsDone: ChunkRender['onRequestsDone'];
+	asyncGroup: ChunkRender['asyncGroup'];
 }
 
-export interface UnsafeScrollRequest {
+export interface UnsafeChunkRequest {
 
 }
 

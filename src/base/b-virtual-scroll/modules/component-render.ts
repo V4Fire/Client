@@ -9,7 +9,7 @@
 import Async from 'core/async';
 import symbolGenerator from 'core/symbol';
 
-import ScrollRender from 'base/b-virtual-scroll/modules/scroll-render';
+import ScrollRender from 'base/b-virtual-scroll/modules/chunk-render';
 import bVirtualScroll from 'base/b-virtual-scroll/b-virtual-scroll';
 
 import { RenderItem, DataToRender, OptionEl } from 'base/b-virtual-scroll/modules/interface';
@@ -49,7 +49,7 @@ export default class ComponentRender {
 	 * API for scroll rendering
 	 */
 	protected get scrollRender(): ScrollRender {
-		return this.component.scrollRender;
+		return this.component.chunkRender;
 	}
 
 	/**

@@ -11,7 +11,7 @@ import symbolGenerator from 'core/symbol';
 
 import bVirtualScroll from 'base/b-virtual-scroll/b-virtual-scroll';
 import ComponentRender from 'base/b-virtual-scroll/modules/component-render';
-import ScrollRequest from 'base/b-virtual-scroll/modules/scroll-request';
+import ChunkRequest from 'base/b-virtual-scroll/modules/chunk-request';
 
 import { InitOptions } from 'core/component/directives/in-view/interface';
 import { InViewAdapter, inViewFactory } from 'core/component/directives/in-view';
@@ -20,7 +20,7 @@ import { RenderItem, UnsafeScrollRender } from 'base/b-virtual-scroll/modules/in
 export const
 	$$ = symbolGenerator();
 
-export default class ScrollRender {
+export default class ChunkRender {
 	/**
 	 * Render items
 	 */
@@ -85,8 +85,8 @@ export default class ScrollRender {
 	/**
 	 * API for scroll data requests
 	 */
-	protected get scrollRequest(): ScrollRequest {
-		return this.component.scrollRequest;
+	protected get chunkRequest(): ChunkRequest {
+		return this.component.chunkRequest;
 	}
 
 	/**
@@ -126,6 +126,10 @@ export default class ScrollRender {
 		this.component.meta.hooks.mounted.push({fn: () => {
 			this.setLoadersVisibility(true);
 			this.initEventHandlers();
+
+			if (!this.component.dataProvider) {
+				this.component.localEmitter.emit('localReady');
+			}
 		}});
 	}
 
@@ -138,7 +142,7 @@ export default class ScrollRender {
 		this.chunk = 0;
 		this.items = [];
 
-		this.scrollRequest.reset();
+		this.chunkRequest.reset();
 		this.async.clearAll({group: new RegExp(this.asyncGroup)});
 
 		this.setLoadersVisibility(true);
@@ -313,7 +317,7 @@ export default class ScrollRender {
 			currentRender = (this.chunk - 1) * chunkSize;
 
 		if (index + renderGap + chunkSize >= items.length) {
-			this.scrollRequest.try();
+			this.chunkRequest.try();
 		}
 
 		if (index > this.lastIntersectsItem) {

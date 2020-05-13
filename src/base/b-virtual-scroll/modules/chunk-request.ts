@@ -9,15 +9,15 @@
 import symbolGenerator from 'core/symbol';
 
 import bVirtualScroll from 'base/b-virtual-scroll/b-virtual-scroll';
-import ScrollRender from 'base/b-virtual-scroll/modules/scroll-render';
+import ChunkRender from 'base/b-virtual-scroll/modules/chunk-render';
 
 import { getRequestParams } from 'base/b-virtual-scroll/modules/helpers';
-import { RemoteData, RequestMoreParams, UnsafeScrollRequest } from 'base/b-virtual-scroll/modules/interface';
+import { RemoteData, RequestMoreParams, UnsafeChunkRequest } from 'base/b-virtual-scroll/modules/interface';
 
 export const $$ =
 	symbolGenerator();
 
-export default class ScrollRequest {
+export default class ChunkRequest {
 	/**
 	 * Current page
 	 */
@@ -56,15 +56,15 @@ export default class ScrollRequest {
 	/**
 	 * API to unsafe invoke of internal properties of the component
 	 */
-	get unsafe(): UnsafeScrollRequest & this {
+	get unsafe(): UnsafeChunkRequest & this {
 		return <any>this;
 	}
 
 	/**
 	 * API for scroll rendering
 	 */
-	protected get scrollRender(): ScrollRender['unsafe'] {
-		return this.component.scrollRender.unsafe;
+	protected get scrollRender(): ChunkRender['unsafe'] {
+		return this.component.chunkRender.unsafe;
 	}
 
 	/**

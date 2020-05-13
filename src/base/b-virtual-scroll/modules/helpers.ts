@@ -6,28 +6,28 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import ScrollRender from 'base/b-virtual-scroll/modules/scroll-render';
-import ScrollRequest from 'base/b-virtual-scroll/modules/scroll-request';
+import ChunkRender from 'base/b-virtual-scroll/modules/chunk-render';
+import ChunkRequest from 'base/b-virtual-scroll/modules/chunk-request';
 
 import { RequestMoreParams } from 'base/b-virtual-scroll/modules/interface';
 
 /**
  * Returns a request params
  *
- * @param [scrollRequestCtx]
- * @param [scrollRenderCtx]
+ * @param [chunkRequestCtx]
+ * @param [chunkRenderCtx]
  * @param [merge]
  */
 export function getRequestParams(
-	scrollRequestCtx?: ScrollRequest,
-	scrollRenderCtx?: ScrollRender,
+	chunkRequestCtx?: ChunkRequest,
+	chunkRenderCtx?: ChunkRender,
 	merge?: Dictionary
 ): RequestMoreParams {
 	const
-		component = scrollRenderCtx?.component || scrollRequestCtx?.component;
+		component = chunkRenderCtx?.component || chunkRequestCtx?.component;
 
 	const
-		lastLoadedData = scrollRequestCtx?.lastLoadedData.length ? scrollRequestCtx.lastLoadedData : component?.options;
+		lastLoadedData = chunkRequestCtx?.lastLoadedData.length ? chunkRequestCtx.lastLoadedData : component?.options;
 
 	const base: RequestMoreParams = {
 		currentPage: 0,
@@ -38,12 +38,12 @@ export function getRequestParams(
 		itemsTillBottom: 0
 	};
 
-	const params = scrollRequestCtx && scrollRenderCtx ? {
-		items: scrollRenderCtx.items,
-		currentPage: scrollRequestCtx.page,
+	const params = chunkRequestCtx && chunkRenderCtx ? {
+		items: chunkRenderCtx.items,
+		currentPage: chunkRequestCtx.page,
 		lastLoadedData: lastLoadedData || [],
-		isLastEmpty: scrollRequestCtx.isLastEmpty,
-		itemsTillBottom: scrollRenderCtx.items.length - scrollRenderCtx.lastIntersectsItem,
+		isLastEmpty: chunkRequestCtx.isLastEmpty,
+		itemsTillBottom: chunkRenderCtx.items.length - chunkRenderCtx.lastIntersectsItem,
 		total: component && component.total
 	} : base;
 

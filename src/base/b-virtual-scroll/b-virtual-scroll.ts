@@ -27,8 +27,8 @@ import iData, {
 } from 'super/i-data/i-data';
 
 import ComponentRender from 'base/b-virtual-scroll/modules/component-render';
-import ScrollRender from 'base/b-virtual-scroll/modules/scroll-render';
-import ScrollRequest from 'base/b-virtual-scroll/modules/scroll-request';
+import ChunkRender from 'base/b-virtual-scroll/modules/chunk-render';
+import ChunkRequest from 'base/b-virtual-scroll/modules/chunk-request';
 
 import { getRequestParams } from 'base/b-virtual-scroll/modules/helpers';
 import { RequestFn, RemoteData, RequestQueryFn, GetData, Unsafe } from 'base/b-virtual-scroll/modules/interface';
@@ -105,6 +105,12 @@ export default class bVirtualScroll extends iData implements iItems {
 	readonly cacheNodes: boolean = true;
 
 	/**
+	 * If true then additional data chunk will be requested automatically on user scroll
+	 */
+	@prop({type: Boolean})
+	readonly requestOnScroll: boolean = true;
+
+	/**
 	 * Function that returns request parameters
 	 */
 	@prop({type: Function, required: false})
@@ -161,14 +167,14 @@ export default class bVirtualScroll extends iData implements iItems {
 	/**
 	 * API for scroll rendering
 	 */
-	@system((o: bVirtualScroll) => new ScrollRender(o))
-	protected scrollRender!: ScrollRender;
+	@system((o: bVirtualScroll) => new ChunkRender(o))
+	protected chunkRender!: ChunkRender;
 
 	/**
 	 * API for scroll data requests
 	 */
-	@system((o: bVirtualScroll) => new ScrollRequest(o))
-	protected scrollRequest!: ScrollRequest;
+	@system((o: bVirtualScroll) => new ChunkRequest(o))
+	protected chunkRequest!: ChunkRequest;
 
 	/**
 	 * API for dynamic component rendering
@@ -203,7 +209,7 @@ export default class bVirtualScroll extends iData implements iItems {
 			this.reload();
 
 		} else {
-			this.scrollRequest.reloadLast();
+			this.chunkRequest.reloadLast();
 		}
 	}
 
@@ -212,14 +218,14 @@ export default class bVirtualScroll extends iData implements iItems {
 	 */
 	async reInit(): Promise<void> {
 		this.componentRender.reInit();
-		this.scrollRender.reInit();
+		this.chunkRender.reInit();
 	}
 
 	/**
 	 * @override
 	 * @emits localEmitter:localReady
 	 */
-	protected initRemoteData(): CanUndef<unknown[]> {
+	protected initRemoteData(): void {
 		if (!this.db) {
 			return;
 		}
@@ -228,12 +234,12 @@ export default class bVirtualScroll extends iData implements iItems {
 			val = this.convertDBToComponent<RemoteData>(this.db);
 
 		if (this.field.get('data.length', val)) {
-			this.scrollRequest.shouldStopRequest(getRequestParams(undefined, undefined, {lastLoadedData: val.data}));
+			this.chunkRequest.shouldStopRequest(getRequestParams(undefined, undefined, {lastLoadedData: val.data}));
 			this.options = <unknown[]>val.data;
 			this.total = Object.isNumber(val.total) ? val.total : undefined;
 
 		} else {
-			this.scrollRequest.shouldStopRequest(getRequestParams(undefined, undefined, {isLastEmpty: true}));
+			this.chunkRequest.shouldStopRequest(getRequestParams(undefined, undefined, {isLastEmpty: true}));
 			this.options = [];
 		}
 
