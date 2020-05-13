@@ -21,6 +21,10 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 * Fixed initializing of functional components
 
+#### :house: Internal
+
+* Added demo styles `form/b-button`
+
 ## v3.0.0-rc.11 (2020-05-10)
 
 #### :rocket: New Feature
