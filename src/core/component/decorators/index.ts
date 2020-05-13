@@ -20,7 +20,7 @@ import {
 
 	DecoratorHook,
 	DecoratorFieldWatcher,
-	DecoratorMethodWatchers
+	DecoratorMethodWatcher
 
 } from 'core/component/decorators/interface';
 
@@ -278,5 +278,5 @@ export const hook = paramsFactory<DecoratorHook>(null, (hook) => ({hook}));
  */
 export const watch = paramsFactory<
 	DecoratorFieldWatcher |
-	DecoratorMethodWatchers
+	DecoratorMethodWatcher
 >(null, (watch) => ({watch}));

@@ -46,9 +46,6 @@ import {
 	PARENT,
 
 	globalEmitter,
-	hook,
-	computed,
-
 	customWatcherRgxp,
 	bindRemoteWatchers,
 
@@ -131,8 +128,10 @@ import {
 	prop,
 	field,
 	system,
+	computed,
 
 	watch,
+	hook,
 	wait,
 
 	WaitFn,
@@ -154,6 +153,7 @@ export * from 'super/i-block/modules/event-emitter';
 
 export * from 'super/i-block/modules/sync';
 export * from 'super/i-block/modules/async-render';
+export * from 'super/i-block/modules/decorators';
 
 export {
 
@@ -166,22 +166,6 @@ export {
 	ModsNTable
 
 };
-
-export {
-
-	p,
-
-	prop,
-	field,
-	system,
-
-	watch,
-	wait,
-
-	mod,
-	removeMod
-
-} from 'super/i-block/modules/decorators';
 
 export const
 	$$ = symbolGenerator();
