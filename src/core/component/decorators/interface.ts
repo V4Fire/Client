@@ -18,15 +18,6 @@ import {
 
 } from 'core/component/interface';
 
-import {
-
-	PropOptions,
-	InitFieldFn,
-	MergeFieldFn,
-	UniqueFieldFn
-
-} from 'core/component/interface/decorators';
-
 export type Prop<T = unknown> =
 	{(): T} |
 	{new(...args: any[]): T & object} |
