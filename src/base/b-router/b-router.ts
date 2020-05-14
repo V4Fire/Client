@@ -7,82 +7,68 @@
  */
 
 import Async from 'core/async';
-import path, { RegExpOptions } from 'path-to-regexp';
-
-import globalRoutes from 'routes';
-import engine from 'core/router';
 import symbolGenerator from 'core/symbol';
+import path from 'path-to-regexp';
 
+import { deprecated } from 'core/functools/deprecation';
 import { concatUrls, toQueryString } from 'core/url';
-import { Router, BasePageMeta, PageSchema, CurrentPage, HistoryClearFilter } from 'core/router/interface';
+
+import engine, { Router, Route, HistoryClearFilter } from 'core/router';
 import iData, { component, prop, system, hook, watch } from 'super/i-data/i-data';
 
+import {
+
+	pageOptsKeys,
+	qsClearFixRgxp,
+	externalLinkRgxp
+
+} from 'base/b-router/const';
+
+import { initRoutes } from 'base/b-router/modules/initializers';
+
+import {
+
+	RouteAPI,
+	ActiveRoute,
+	StaticRoutes,
+
+	RouteBlueprint,
+	RouteBlueprints,
+
+	SetPageMethod,
+	TransitionOptions
+
+} from 'base/b-router/interface';
+import {deprecate} from '../../../.yalc/@v4fire/core/src/core/functools/deprecation';
+
 export * from 'super/i-data/i-data';
-export * from 'core/router/interface';
-
-export interface PageOptions<
-	PARAMS extends object = Dictionary,
-	QUERY extends object = Dictionary,
-	META extends object = Dictionary
-> extends CurrentPage<PARAMS, QUERY, META> {
-	toPath(params?: Dictionary): string;
-}
-
-export interface PageOptionsProp {
-	meta?: BasePageMeta;
-	params?: Dictionary;
-	query?: Dictionary;
-}
-
-export const pageOptsKeys = [
-	'meta',
-	'params',
-	'query'
-];
-
-export interface PagePropObject extends PageOptionsProp {
-	page: string;
-}
-
-export type PageProp =
-	string |
-	PagePropObject;
-
-export interface Page {
-	page: string;
-	pattern?: string;
-	rgxp?: RegExp;
-	index: boolean;
-	alias?: string;
-	redirect?: string;
-	meta: BasePageMeta;
-}
-
-export type Pages = Dictionary<Page>;
-export type PageSchemaDict = Dictionary<PageSchema>;
-export type SetPage = 'push' | 'replace' | 'event';
-
-export interface RouteParams {
-	params?: Dictionary;
-	query?: Dictionary;
-}
+export * from 'base/b-router/const';
+export * from 'base/b-router/interface';
 
 export const
 	$$ = symbolGenerator();
 
-@component()
+@component({
+	deprecatedProps: {
+		pageProp: 'activeRoute',
+		pagesProp: 'routesProp'
+	}
+})
+
 export default class bRouter extends iData {
 	/* @override */
 	public async!: Async<this>;
 
 	/**
-	 * Base route path
+	 * Base root path: all route paths are concatenated with this path
 	 */
 	@prop()
 	readonly basePath: string = '/';
 
 	/**
-	 * Initial page
+	 * Active route value.
+	 * Usually, you don't need to manually provide of the active route value,
+	 * because it can be automatically inferred, but sometimes it can be useful.
 	 */
 	@prop<bRouter>({
 		type: [String, Object],
@@ -92,16 +78,18 @@ export default class bRouter extends iData {
 		}
 	})
 
-	readonly pageProp?: PageProp;
+	readonly activeRoute?: ActiveRoute;
 
 	/**
-	 * Initial router paths
+	 * Static schema of application routes.
+	 * By default, this value is taken from "routes/index.ts".
 	 */
 	@prop({type: Object, required: false})
-	readonly pagesProp?: PageSchemaDict;
+	readonly routesProp?: StaticRoutes;
 
 	/**
-	 * Engine constructor for router
+	 * Factory to create router engine.
+	 * By default, this value is taken from "core/router/engines".
 	 */
 	@prop<bRouter>({
 		type: Function,
@@ -114,176 +102,169 @@ export default class bRouter extends iData {
 	readonly engineProp!: () => Router;
 
 	/**
-	 * Page load status
-	 */
-	@system()
-	status: number = 0;
-
-	/**
-	 * Engine for remote router
+	 * Active router engine.
+	 * For example, it can be HTML5 history router or router that based on URL Hash value.
+	 *
+	 * @see [[bRouter.engine]]
 	 */
 	@system((o) => o.sync.link<(v: unknown) => Router>((v) => <any>v(o)))
 	protected engine!: Router;
 
 	/**
-	 * Page store
+	 * Value of the active route
 	 */
 	@system()
-	protected pageStore?: CurrentPage;
+	protected routeStore?: Route;
 
 	/**
-	 * Router paths
+	 * Compiled schema of application routes
+	 * @see [[bRouter.routesProp]]
 	 */
-	@system<bRouter>({
-		after: 'engine',
-		init: (o) => o.sync.link((v) => {
-			const
-				base = o.basePath,
-				routes = <PageSchemaDict>(v || o.engine.routes || globalRoutes),
-				pages = {};
-
-			for (let keys = Object.keys(routes), i = 0; i < keys.length; i++) {
-				const
-					key = keys[i],
-					obj = routes[key] || {},
-					params = [];
-
-				let
-					page = key;
-
-				if (Object.isString(obj)) {
-					let
-						pattern;
-
-					if (obj && base) {
-						pattern = concatUrls(base, obj);
-					}
-
-					pages[key] = {
-						page,
-						pattern,
-						index: page === 'index',
-						rgxp: pattern != null ? path(pattern, params) : undefined,
-						meta: {page, params}
-					};
-
-				} else {
-					page = String(obj.page || page);
-
-					let
-						pattern;
-
-					if (Object.isString(obj.path) && base) {
-						pattern = concatUrls(base, obj.path);
-					}
-
-					pages[key] = {
-						page,
-						pattern,
-						alias: obj.alias,
-						redirect: obj.redirect,
-						index: obj.index || page === 'index',
-						rgxp: pattern != null ? path(pattern, params, <RegExpOptions>obj.pathOpts) : undefined,
-						meta: {...obj, page, params}
-					};
-				}
-			}
-
-			return pages;
-		})
-	})
-
-	protected pages!: Pages;
+	@system<bRouter>({after: 'engine', init: initRoutes})
+	protected routes!: RouteBlueprints;
 
 	/**
-	 * Current page
+	 * Value of the active route
+	 * @see [[bRouter.routeStore]]
 	 */
-	get page(): CanUndef<CurrentPage> {
-		return this.field.get('pageStore');
+	get route(): CanUndef<Route> {
+		return this.field.get('routeStore');
 	}
 
 	/**
-	 * Scrolls a document to the specified coordinates
+	 * @deprecated
+	 * @see [[bRouter.route]]
 	 */
-	scrollTo(y?: number, x?: number): void {
-		this.r.scrollTo(x, y);
+	@deprecated({renamedTo: 'route'})
+	get page(): CanUndef<Route> {
+		return this.route;
 	}
 
 	/**
-	 * Pushes a new transition to the history
+	 * Link to the root scroll method
+	 */
+	get scrollTo(): this['r']['scrollTo'] {
+		return this.r.scrollTo;
+	}
+
+	/**
+	 * Pushes a new route to the history stack.
+	 * The method returns a promise that is resolved when the transition will be completed.
 	 *
 	 * @param page
-	 * @param [opts] - additional transition options
+	 * @param [opts] - additional options
 	 */
-	async push(page: Nullable<string>, opts?: PageOptionsProp): Promise<void> {
+	async push(page: Nullable<string>, opts?: TransitionOptions): Promise<void> {
 		await this.setPage(page, opts, 'push');
 	}
 
 	/**
-	 * Replaces the current transition from the history to a new
+	 * Replaces the current route.
+	 * The method returns a promise that is resolved when the transition will be completed.
 	 *
 	 * @param page
-	 * @param [opts] - additional transition options
+	 * @param [opts] - additional options
 	 */
-	async replace(page: Nullable<string>, opts?: PageOptionsProp): Promise<void> {
+	async replace(page: Nullable<string>, opts?: TransitionOptions): Promise<void> {
 		await this.setPage(page, opts, 'replace');
 	}
 
 	/**
-	 * Loads a page from the history, identified by its relative position to the current page
-	 * (with the current page being relative index 0)
+	 * Switches to a route from the history,
+	 * identified by its relative position to the current route (with the current route being relative index 0).
+	 * The method returns a promise that is resolved when the transition will be completed.
 	 *
 	 * @param pos
+	 *
+	 * @example
+	 * ````js
+	 * this.go(-1) // this.back();
+	 * this.go(1)  // this.forward();
+	 * this.go(-2) // this.back(); this.back();
+	 * ```
 	 */
-	go(pos: number): void {
+	async go(pos: number): Promise<void> {
+		const res = this.promisifyOnce('foo');
 		this.engine.go(pos);
+		await res;
 	}
 
 	/**
-	 * Moves forward through the history
+	 * Switches to the next route from the history.
+	 * The method returns a promise that is resolved when the transition will be completed.
 	 */
-	forward(): void {
+	async forward(): Promise<void> {
+		const res = this.promisifyOnce('foo');
 		this.engine.forward();
+		await res;
 	}
 
 	/**
-	 * Moves backward through the history
+	 * Switches to the previous route from the history.
+	 * The method returns a promise that is resolved when the transition will be completed.
 	 */
-	back(): void {
+	async back(): Promise<void> {
+		const res = this.promisifyOnce('foo');
 		this.engine.back();
+		await res;
 	}
 
 	/**
-	 * Clears the history session: if specified filter, then all matched transitions will be cleared
-	 * @param [filter]
+	 * Clears the routes history
+	 * @param [filter] - filter predicate
 	 */
 	clear(filter?: HistoryClearFilter): Promise<void> {
 		return this.engine.clear(filter);
 	}
 
 	/**
-	 * Clears temporary history transitions
+	 * Clears all temporary routes from the history.
+	 * The temporary route is a route that has "tmp" flag within its own properties, like, "params", "query" or "meta".
+	 *
+	 * @example
+	 * ```js
+	 * this.push('redeem-money', {
+	 *   meta: {
+	 *     tmp: true
+	 *   }
+	 * });
+	 *
+	 * this.clearTmp();
+	 * ```
 	 */
 	clearTmp(): Promise<void> {
 		return this.engine.clearTmp();
 	}
 
 	/**
-	 * Returns a full route path string by the specified parameters
+	 * Returns a route of the specified route with padding of additional parameters
 	 *
-	 * @param path - base path
-	 * @param [opts] - route options
+	 * @param ref - route name or path
+	 * @param [opts] - additional options
+	 *
+	 * @example
+	 * ```js
+	 * routes = {
+	 *   demo: {
+	 *     route: '/demo'
+	 *   }
+	 * };
+	 *
+	 *
+	 * this.getRoutePath('demo') === '/demo';
+	 * this.getRoutePath('/demo', {query: {foo: 'bar'}}) === '/demo?foo=bar';
+	 * ```
 	 */
-	getRoutePath(path: string, opts: RouteParams = {}): CanUndef<string> {
+	getRoutePath(ref: string, opts: TransitionOptions = {}): CanUndef<string> {
 		const
-			route = this.getPageOpts(path);
+			route = this.getRoute(ref);
 
 		if (!route) {
 			return;
 		}
 
 		let
-			res = route.toPath(opts.params);
+			res = route.resolvePath(opts.params);
 
 		if (opts.query) {
 			const
@@ -294,172 +275,228 @@ export default class bRouter extends iData {
 			}
 		}
 
-		return res.replace(/[#?]\s*$/, '');
+		return res.replace(qsClearFixRgxp, '');
 	}
 
 	/**
-	 * Returns an information object of the specified page
-	 * @param [page]
+	 * Returns a route object by the specified name or path
+	 *
+	 * @param ref - route name or path
+	 *
+	 * @example
+	 * ```js
+	 * routes = {
+	 *   demo: {
+	 *     route: '/demo'
+	 *   }
+	 * };
+	 *
+	 *
+	 * this.getRoutePath('/demo').name === 'demo';
+	 * ```
 	 */
-	getPageOpts(page: string): CanUndef<PageOptions> {
+	getRoute(ref: string): CanUndef<RouteAPI> {
 		const
-			p = this.pages,
-			keys = Object.keys(p),
-			base = this.basePath;
+			{routes, basePath} = this;
 
 		const
-			externalLinkRgxp = /^(?:https?:)?\/\/(?:[^\s]*)+$/,
-			normalizeBaseRgxp = /(.*)?[\\/]+$/,
-			initialPage = page;
+			routeKeys = Object.keys(routes),
+			initialRef = ref;
 
 		let
-			byId = false,
-			alias,
-			obj;
+			resolvedById = false,
+			resolvedRoute,
+			alias;
 
 		let
-			pageRef = page,
-			basePage = true;
+			resolvedRef = ref,
+			refIsNormalized = true;
 
 		while (true) {
-			if (pageRef in p) {
-				byId = true;
-				obj = p[pageRef];
+			// Reference to a route is passed as ID
+			if (resolvedRef in routes) {
+				resolvedById = true;
+				resolvedRoute = routes[resolvedRef];
 
-				if (!obj || obj && !obj.redirect && !obj.alias) {
+				if (!resolvedRoute || resolvedRoute && !resolvedRoute.redirect && !resolvedRoute.alias) {
 					break;
 				}
 
+			// Reference to a route is passed as a path
 			} else {
-				if (base) {
-					const v = base.replace(normalizeBaseRgxp, (str, base) => `${RegExp.escape(base)}/*`);
-					pageRef = concatUrls(base, pageRef.replace(new RegExp(`^${v}`), ''));
+				if (basePath) {
+					// Resolve the situation when the passed path already has basePath
+					const v = basePath.replace(/(.*)?[\\/]+$/, (str, base) => `${RegExp.escape(base)}/*`);
+					resolvedRef = concatUrls(basePath, resolvedRef.replace(new RegExp(`^${v}`), ''));
 
-					if (basePage) {
-						page = pageRef;
-						basePage = false;
+					// We need to normalize only a user "raw" ref
+					if (refIsNormalized) {
+						ref = resolvedRef;
+						refIsNormalized = false;
 					}
 				}
 
-				for (let i = 0; i < keys.length; i++) {
+				for (let i = 0; i < routeKeys.length; i++) {
 					const
-						el = p[keys[i]];
+						route = routes[routeKeys[i]];
 
-					if (!el) {
+					if (!route) {
 						continue;
 					}
 
-					if (el.page === pageRef || el.pattern === pageRef) {
-						byId = true;
-						obj = el;
+					// In this case we have full matching of a route ref by a name or pattern
+					if (route.name === resolvedRef || route.pattern === resolvedRef) {
+						resolvedById = true;
+						resolvedRoute = route;
 						break;
 					}
 
-					if (el.rgxp && el.rgxp.test(pageRef) && (
-						!obj ||
-						(<string>el.pattern).length > obj.pattern.length
-					)) {
-						obj = el;
+					// Try to test the passed ref with a route pattern
+					if (route.rgxp?.test(resolvedRef)) {
+						if (!resolvedRoute) {
+							resolvedRoute = route;
+							continue;
+						}
+
+						// If we have several matches with the provided ref,
+						// like routes "/foo" and "/foo/:id" are matched with "/foo/bar",
+						// we should prefer that pattern that has more length
+						if (route.pattern!.length > resolvedRoute.pattern.length) {
+							resolvedRoute = route;
+						}
 					}
 				}
 			}
 
-			if (!obj || !obj.redirect && !obj.alias) {
+			// If we haven't found a route that matches to the provided ref or the founded route doesn't redirect or refer
+			// to another route, we can exit from the search loop, otherwise, we need to resolve the redirect/alias
+			if (!resolvedRoute || !resolvedRoute.redirect && !resolvedRoute.alias) {
 				break;
 			}
 
-			if (obj.alias) {
+			// The alias should preserve an original route name
+			if (resolvedRoute.alias) {
 				if (alias == null) {
-					alias = obj;
+					alias = resolvedRoute;
 				}
 
-				pageRef = obj.alias;
+				resolvedRef = resolvedRoute.alias;
 
 			} else {
-				pageRef = page = obj.redirect;
+				resolvedRef = ref = resolvedRoute.redirect;
 
 				if (alias == null) {
 					alias = false;
 				}
 			}
 
-			if (obj.meta.external || obj.meta.external !== false && externalLinkRgxp.test(pageRef)) {
-				obj.meta.external = true;
-				break;
+			const
+				{external} = resolvedRoute.meta;
 
-			} else {
-				obj = undefined;
+			// If the resolved route is marked as external or looks like external,
+			// i.e., it refers to another domain
+			if (external || external !== false && externalLinkRgxp.test(resolvedRef)) {
+				resolvedRoute.meta.external = true;
+				break;
 			}
+
+			// Continue of resolving
+			resolvedRoute = undefined;
 		}
 
-		if (!obj) {
-			for (let i = 0; i < keys.length; i++) {
+		// We haven't found a route by the provided ref,
+		// that why we need to find "default" route as loopback
+		if (!resolvedRoute) {
+			for (let i = 0; i < routeKeys.length; i++) {
 				const
-					el = p[keys[i]];
+					el = routes[routeKeys[i]];
 
-				if (el && el.index) {
-					obj = el;
+				if (el && el.default) {
+					resolvedRoute = el;
 					break;
 				}
 			}
 
+		// We have found a route by the provided ref, but it contains an alias
 		} else if (alias) {
-			obj = {...obj, pattern: alias.pattern};
+			resolvedRoute = {...resolvedRoute, pattern: alias.pattern};
 		}
 
-		if (obj) {
-			const meta = Object.create({
-				meta: Object.mixin(true, {}, obj.meta),
-				toPath(initParams?: Dictionary): string {
-					const
-						p = {};
+		if (!resolvedRoute) {
+			return;
+		}
 
-					if (initParams) {
-						for (let keys = Object.keys(initParams), i = 0; i < keys.length; i++) {
-							const
-								key = keys[i],
-								el = initParams[key];
+		const routeAPI: RouteAPI = Object.create({
+			meta: Object.mixin(true, {}, resolvedRoute.meta),
 
-							if (el !== undefined) {
-								p[key] = String(el);
-							}
-						}
-					}
+			get page(): string {
+				deprecate({name: 'page', type: 'property', renamedTo: 'name'});
+				return this.name;
+			},
 
-					if (obj.meta.external) {
-						return path.compile(pageRef)(p);
-					}
-
-					return path.compile(obj.pattern || page)(p);
-				}
-			});
-
-			// tslint:disable-next-line:prefer-object-spread
-			const t = Object.assign(meta, {
-				page: obj.page,
-				params: {},
-				query: {}
-			});
-
-			if (!byId && obj.pattern) {
+			resolvePath(params?: Dictionary): string {
 				const
-					url = obj.meta.external ? initialPage : obj.url || page,
-					params = obj.rgxp.exec(url);
+					p = {};
 
 				if (params) {
-					for (let o = path.parse(obj.pattern), i = 0, j = 0; i < o.length; i++) {
+					for (let keys = Object.keys(params), i = 0; i < keys.length; i++) {
 						const
-							el = o[i];
+							key = keys[i],
+							el = params[key];
 
-						if (Object.isSimpleObject(el)) {
-							t.params[el.name] = params[++j];
+						if (el !== undefined) {
+							p[key] = String(el);
 						}
+					}
+				}
+
+				if (resolvedRoute.meta.external) {
+					return path.compile(resolvedRef)(p);
+				}
+
+				return path.compile(resolvedRoute.pattern || ref)(p);
+			},
+
+			toPath(params?: Dictionary): string {
+				deprecate({name: 'toPath', type: 'method', renamedTo: 'resolvePath'});
+				return this.resolvePath(params);
+			}
+		});
+
+		Object.assign(routeAPI, {
+			name: resolvedRoute.name,
+			params: {},
+			query: {}
+		});
+
+		// Fill route parameters from URL
+		if (!resolvedById && resolvedRoute.pattern) {
+			const
+				url = resolvedRoute.meta.external ? initialRef : resolvedRoute.url || ref,
+				params = resolvedRoute.rgxp.exec(url);
+
+			if (params) {
+				for (let o = path.parse(resolvedRoute.pattern), i = 0, j = 0; i < o.length; i++) {
+					const
+						el = o[i];
+
+					if (Object.isSimpleObject(el)) {
+						routeAPI.params[el.name] = params[++j];
 					}
 				}
 			}
-
-			return t;
 		}
+
+		return routeAPI;
+	}
+
+	/**
+	 * @deprecated
+	 * @see [[bRouter.getRoute]]
+	 */
+	@deprecated({renamedTo: 'getRoute'})
+	getPageOpts(ref: string): CanUndef<RouteBlueprint> {
+		return this.getRoute(ref);
 	}
 
 	/**
@@ -477,9 +514,9 @@ export default class bRouter extends iData {
 	 */
 	async setPage(
 		page: Nullable<string>,
-		opts?: PageOptionsProp,
-		method: SetPage = 'push'
-	): Promise<CanUndef<CurrentPage>> {
+		opts?: TransitionOptions,
+		method: SetPageMethod = 'push'
+	): Promise<CanUndef<Route>> {
 		const
 			{$root: r, engine, engine: {page: currentPage}} = this;
 
@@ -608,7 +645,7 @@ export default class bRouter extends iData {
 		// Attach scroll position
 		if (currentPage && method !== 'replace') {
 			const
-				modCurrentPage = Object.mixin<CurrentPage>(true, undefined, currentPage, scroll);
+				modCurrentPage = Object.mixin<Route>(true, undefined, currentPage, scroll);
 
 			if (!Object.fastCompare(currentPage, modCurrentPage)) {
 				// @ts-ignore
@@ -629,7 +666,7 @@ export default class bRouter extends iData {
 		}
 
 		const
-			current = this.field.get<CurrentPage>('pageStore');
+			current = this.field.get<Route>('pageStore');
 
 		{
 			const normalize = (val) => Object.mixin(true, val && rejectSystemOpts(val), {
@@ -813,6 +850,7 @@ export default class bRouter extends iData {
 			})();
 		}
 
+		this.emit('foo');
 		return store;
 	}
 
@@ -822,14 +860,14 @@ export default class bRouter extends iData {
 	@hook('beforeDataCreate')
 	protected async initComponentValues(): Promise<void> {
 		const
-			page = this.pageProp;
+			{activeRoute} = this;
 
-		if (page) {
-			if (Object.isString(page)) {
-				await this.replace(page);
+		if (activeRoute) {
+			if (Object.isString(activeRoute)) {
+				await this.replace(activeRoute);
 
 			} else {
-				await this.replace(page.page, Object.reject(page, 'page'));
+				await this.replace(activeRoute.name, Object.reject(activeRoute, ['name', 'page']));
 			}
 
 		} else {

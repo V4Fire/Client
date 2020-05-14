@@ -9,7 +9,10 @@
 import { Key, RegExpOptions, ParseOptions } from 'path-to-regexp';
 import { EventEmitter2 as EventEmitter } from 'eventemitter2';
 
-export type RouteMeta<M extends object = Dictionary> = M & {
+/**
+ * Meta information of a route that can be declared statically as a literal
+ */
+export type StaticRouteMeta<M extends object = Dictionary> = M & {
 	/**
 	 * Unique route name: can be used to direct transition
 	 *
@@ -22,7 +25,7 @@ export type RouteMeta<M extends object = Dictionary> = M & {
 
 	/**
 	 * @deprecated
-	 * @see [[DynamicRouteMeta.name]]
+	 * @see [[StaticRouteMeta.name]]
 	 */
 	page?: string;
 
@@ -70,7 +73,7 @@ export type RouteMeta<M extends object = Dictionary> = M & {
 
 	/**
 	 * @deprecated
-	 * @see [[DynamicRouteMeta.remote]]
+	 * @see [[StaticRouteMeta.remote]]
 	 */
 	remote?: boolean;
 
@@ -116,7 +119,7 @@ export type RouteMeta<M extends object = Dictionary> = M & {
 
 	/**
 	 * @deprecated
-	 * @see [[DynamicRouteMeta.default]]
+	 * @see [[StaticRouteMeta.default]]
 	 */
 	index?: boolean;
 
@@ -152,42 +155,45 @@ export type RouteMeta<M extends object = Dictionary> = M & {
 };
 
 /**
- * Dynamic route parameters.
- * These parameters can be passed only by using "push" and "replace" methods of the router.
+ * Static schema of application routes
  */
-export type DynamicRouteMeta<M extends object = Dictionary> = RouteMeta<M> & {
-	/** @see [[RouteMeta.name]] */
+export type StaticRoutes<M extends object = Dictionary> = Dictionary<
+	string |
+	StaticRouteMeta<M>
+>;
+
+/**
+ * Meta information of a route
+ */
+export type RouteMeta<M extends object = Dictionary> = StaticRouteMeta<M> & {
+	/** @see [[StaticRouteMeta.name]] */
 	name: string;
 
 	/**
 	 * @deprecated
-	 * @see [[RouteMeta.name]]
+	 * @see [[StaticRouteMeta.name]]
 	 */
 	page: string;
 
-	/** @see [[RouteMeta.default]] */
+	/** @see [[StaticRouteMeta.default]] */
 	default: boolean;
 
 	/**
 	 * @deprecated
-	 * @see [[RouteMeta.default]]
+	 * @see [[StaticRouteMeta.default]]
 	 */
 	index: boolean;
 
 	/**
-	 * Parameters to pass to the route path
+	 * List of parameters that passed to the route path
+	 * @deprecated
 	 */
 	params: Key[];
 };
 
 /**
- * Static schema of application routes
+ * Route object
  */
-export type RoutesSchema<M extends object = Dictionary> = Dictionary<
-	string |
-	RouteMeta<M>
->;
-
 export interface Route<
 	PARAMS extends object = Dictionary,
 	QUERY extends object = Dictionary,
@@ -205,7 +211,7 @@ export interface Route<
 
 	/**
 	 * @deprecated
-	 * @see [[CurrentRoute.name]]
+	 * @see [[Route.name]]
 	 */
 	page: string;
 
@@ -216,7 +222,7 @@ export interface Route<
 
 	/**
 	 * @deprecated
-	 * @see [[CurrentRoute.default]]
+	 * @see [[Route.default]]
 	 */
 	index: boolean;
 
@@ -233,7 +239,7 @@ export interface Route<
 	/**
 	 * Route meta information
 	 */
-	meta: DynamicRouteMeta<META>;
+	meta: RouteMeta<META>;
 }
 
 export interface HistoryClearFilter {
@@ -267,7 +273,7 @@ export interface Router<
 	/**
 	 * Static schema of application routes
 	 */
-	readonly routes?: RoutesSchema<META>;
+	readonly routes?: StaticRoutes<META>;
 
 	/**
 	 * Returns an identifier of the route by a name or URL
@@ -316,7 +322,8 @@ export interface Router<
 	clear(filter?: HistoryClearFilter): Promise<void>;
 
 	/**
-	 * Clears all temporary routes from the history
+	 * Clears all temporary routes from the history.
+	 * The temporary route is a route that has "tmp" flag within its own properties, like, "params", "query" or "meta".
 	 */
 	clearTmp(): Promise<void>;
 }
