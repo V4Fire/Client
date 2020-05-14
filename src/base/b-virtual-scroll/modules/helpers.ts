@@ -27,6 +27,7 @@ export function getRequestParams(
 		component = chunkRenderCtx?.component || chunkRequestCtx?.component;
 
 	const
+		pendingData = chunkRequestCtx?.unsafe.pendingData || [],
 		lastLoadedData = chunkRequestCtx?.lastLoadedData.length ? chunkRequestCtx.lastLoadedData : component?.options;
 
 	const base: RequestMoreParams = {
@@ -35,6 +36,7 @@ export function getRequestParams(
 		items: [],
 		lastLoadedData: lastLoadedData || [],
 		isLastEmpty: false,
+		pendingData,
 		itemsTillBottom: 0
 	};
 
@@ -42,6 +44,7 @@ export function getRequestParams(
 		items: chunkRenderCtx.items,
 		currentPage: chunkRequestCtx.page,
 		lastLoadedData: lastLoadedData || [],
+		pendingData,
 		isLastEmpty: chunkRequestCtx.isLastEmpty,
 		itemsTillBottom: chunkRenderCtx.items.length - chunkRenderCtx.lastIntersectsItem,
 		total: component && component.total

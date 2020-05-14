@@ -14,22 +14,22 @@ module.exports.getComponentProps = async function (page) {
 /**
  * Scrolls page down and waits for items to be rendered
  *
- * @param page
- * @param count
- * @param componentSelector
+ * @param {*} page
+ * @param {number} count
+ * @param {string} componentSelector
  */
 module.exports.scrollAndWaitItemsCountGreaterThan = async function (page, count, componentSelector) {
 	await page.evaluate('window.scrollTo(0, document.body.scrollHeight)');
-	await waitItemsCountGreaterThan(page, count, componentSelector);
+	await module.exports.waitItemsCountGreaterThan(page, count, componentSelector);
 }
 
 /**
  * Scrolls page down and waits for items to be rendered
  *
- * @param page
- * @param count
- * @param componentSelector
+ * @param {*} page
+ * @param {number} count
+ * @param {string} componentSelector
  */
-module.exports.scrollAndWaitItemsCountGreaterThan = async function (page, count, componentSelector) {
+module.exports.waitItemsCountGreaterThan = async function (page, count, componentSelector) {
 	await page.waitForFunction(`document.querySelector('${componentSelector}__container').childElementCount > ${count}`);
 }

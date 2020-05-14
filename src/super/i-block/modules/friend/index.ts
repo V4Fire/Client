@@ -73,6 +73,16 @@ export default class Friend<C extends iBlock = iBlock> {
 		return this.component.lazy;
 	}
 
+	/** @see [[iBlock.dom]] */
+	protected get dom(): this['C']['dom'] {
+		return this.component.dom;
+	}
+
+	/** @see [[iBlock.$refs]] */
+	protected get refs(): this['C']['$refs'] {
+		return this.component.$refs;
+	}
+
 	constructor(component: C) {
 		this.component = component.unsafe;
 	}

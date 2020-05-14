@@ -10,6 +10,7 @@ import iBlock from 'super/i-block/i-block';
 import bVirtualScroll, { Unsafe as SuperUnsafe } from 'base/b-virtual-scroll/b-virtual-scroll';
 
 import ChunkRender from 'base/b-virtual-scroll/modules/chunk-render';
+import ChunkRequest from 'base/b-virtual-scroll/modules/chunk-request';
 
 export interface RequestQueryFn<T extends unknown = unknown> {
 	(params: RequestMoreParams<T>): Dictionary<Dictionary>;
@@ -59,6 +60,11 @@ export interface RequestMoreParams<T extends unknown = unknown> {
 	 * Items to render
 	 */
 	items: RenderItem<T>[];
+
+	/**
+	 * Data that pending to be rendered
+	 */
+	pendingData: unknown[];
 
 	/**
 	 * True if the last requested data response was empty
@@ -114,6 +120,7 @@ export interface Unsafe<T extends iBlock = bVirtualScroll> extends SuperUnsafe<T
 	convertDataToDB: bVirtualScroll['convertDataToDB'];
 	dp: bVirtualScroll['dp'];
 	total: bVirtualScroll['total'];
+	localState: bVirtualScroll['localState'];
 }
 
 export interface UnsafeScrollRender {
@@ -122,7 +129,7 @@ export interface UnsafeScrollRender {
 }
 
 export interface UnsafeChunkRequest {
-
+	pendingData: ChunkRequest['pendingData'];
 }
 
 export interface DataToRender {
@@ -130,3 +137,14 @@ export interface DataToRender {
 	itemParams: OptionEl;
 	index: number;
 }
+
+/**
+ * Local state of component
+ *
+ *   *) `error` - indicates that loading error appear
+ *
+ *   *) `loading` - indicates that component now loading first chunk of data
+ *
+ *   *) `ready` - indicates that component now is ready to render data
+ */
+export type LocalState = 'loading' | 'ready' | 'error';

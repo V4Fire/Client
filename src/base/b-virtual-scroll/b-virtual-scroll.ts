@@ -18,9 +18,9 @@ import iData, {
 
 	component,
 	prop,
-	field,
 	system,
 	wait,
+	p,
 
 	CheckDBEquality,
 	InitLoadOptions,
@@ -35,7 +35,7 @@ import ChunkRender from 'base/b-virtual-scroll/modules/chunk-render';
 import ChunkRequest from 'base/b-virtual-scroll/modules/chunk-request';
 
 import { getRequestParams } from 'base/b-virtual-scroll/modules/helpers';
-import { RequestFn, RemoteData, RequestQueryFn, GetData, Unsafe } from 'base/b-virtual-scroll/modules/interface';
+import { RequestFn, RemoteData, RequestQueryFn, GetData, Unsafe, LocalState } from 'base/b-virtual-scroll/modules/interface';
 
 export { RequestFn, RemoteData, RequestQueryFn, GetData };
 export * from 'super/i-data/i-data';
@@ -56,7 +56,7 @@ export default class bVirtualScroll extends iData implements iItems {
 	readonly optionsProp?: iItems['optionsProp'] = [];
 
 	/** @see [[iItems.prototype.items]] */
-	@field((o) => o.sync.link())
+	@system((o) => o.sync.link())
 	options!: unknown[];
 
 	/** @see [[iItems.prototype.item]] */
@@ -148,6 +148,30 @@ export default class bVirtualScroll extends iData implements iItems {
 	@system()
 	protected total?: number;
 
+	/**
+	 * Local component state
+	 */
+	@p({cache: false})
+	protected get localState(): LocalState {
+		return this.localStateStore;
+	}
+
+	/**
+	 * @param state
+	 * @emits localLoading()
+	 * @emits localReady()
+	 * @emits localError()
+	 */
+	protected set localState(state: LocalState) {
+		this.localStateStore = state;
+		this.localEmitter.emit(`local${state.camelize(true)}`);
+	}
+
+	/**
+	 * Local component state store
+	 */
+	protected localStateStore: LocalState = 'loading';
+
 	/** @override */
 	get unsafe(): Unsafe & this {
 		return <any>this;
@@ -178,7 +202,7 @@ export default class bVirtualScroll extends iData implements iItems {
 	 * API for scroll data requests
 	 */
 	@system((o: bVirtualScroll) => new ChunkRequest(o))
-	protected chunkRequest!: ChunkRequest;
+	protected chunkRequest!: ChunkRequest['unsafe'];
 
 	/**
 	 * API for dynamic component rendering
@@ -239,7 +263,7 @@ export default class bVirtualScroll extends iData implements iItems {
 
 		if (this.field.get('data.length', val)) {
 			this.chunkRequest.shouldStopRequest(getRequestParams(undefined, undefined, {lastLoadedData: val.data}));
-			this.options = <unknown[]>val.data;
+			this.options = val.data;
 			this.total = Object.isNumber(val.total) ? val.total : undefined;
 
 		} else {
@@ -247,7 +271,15 @@ export default class bVirtualScroll extends iData implements iItems {
 			this.options = [];
 		}
 
-		this.localEmitter.emit('localReady');
+		if (this.options.length < this.chunkSize) {
+			this.chunkRequest.pendingData = this.options;
+			this.chunkRequest.try().then(() => this.localState = 'ready');
+
+			return;
+		}
+
+		this.chunkRender.initItems(this.options);
+		this.localState = 'ready';
 	}
 
 	/** @see [[iItems.getItemKey]] */
@@ -269,7 +301,6 @@ export default class bVirtualScroll extends iData implements iItems {
 	 */
 	protected onRequestError(err: Error | RequestError<unknown>, retry: RetryRequestFn): void {
 		super.onRequestError(err, retry);
-
-		this.localEmitter.emit('localError');
+		this.localState = 'error';
 	}
 }

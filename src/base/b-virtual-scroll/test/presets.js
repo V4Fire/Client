@@ -19,8 +19,7 @@ const
  */
 const presets = {
 	/**
-	 * Set of parameters for rendering data test
-	 * Run test with suit render
+	 * Set of parameters for rendering demo
 	 */
 	demo: [{
 		attrs: {
@@ -34,7 +33,6 @@ const presets = {
 
 	/**
 	 * Set of parameters for rendering data test
-	 * Run test with suit render
 	 */
 	render: [{
 		attrs: {
@@ -48,7 +46,6 @@ const presets = {
 
 	/**
 	 * Set of parameters for render truncated data
-	 * Run test with suit render-truncated
 	 */
 	renderTruncated: [{
 		attrs: {
@@ -56,6 +53,17 @@ const presets = {
 			':option': s('div'),
 			':dataProvider': s('demo.Pagination'),
 			':dbConverter': '({data}) => ({data: data.splice(0, 5)})'
+		}
+	}],
+
+	/**
+	 * Set of parameters for render static data
+	 */
+	renderOptions: [{
+		attrs: {
+			':theme': s('demo'),
+			':option': s('div'),
+			':options': s(Array.from(Array(100), () => 'test'))
 		}
 	}]
 }

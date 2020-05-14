@@ -8,10 +8,15 @@
 
 import { MiddlewareParams, MockCustomResponse } from 'models/demo';
 
+let
+	i = 0;
+
 export default {
 	GET: [{
 		async response({opts}: MiddlewareParams, res: MockCustomResponse): Promise<any> {
-			return {data: Array.from(Array(10), () => ({}))};
+			return {
+				data: Array.from(Array(10), () => ({i: i++}))
+			};
 		}
 	}]
 };

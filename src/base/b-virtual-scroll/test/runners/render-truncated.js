@@ -20,13 +20,13 @@ module.exports = async (page, {componentSelector, component}) => {
 	describe('b-virtual-scroll', () => {
 		it('renders truncated data chunks to the page', async () => {
 			await helpers.waitItemsCountGreaterThan(page, 0, componentSelector);
-			expect(await component.evaluate((ctx) => ctx.$refs.container.childElementCount)).toBeGreaterThan(0);
-
-			await helpers.scrollAndWaitItemsCountGreaterThan(page, 5, componentSelector);
-			expect(await component.evaluate((ctx) => ctx.$refs.container.childElementCount)).toBeGreaterThan(5);
+			expect(await component.evaluate((ctx) => ctx.$refs.container.childElementCount)).toBe(10);
 
 			await helpers.scrollAndWaitItemsCountGreaterThan(page, 10, componentSelector);
 			expect(await component.evaluate((ctx) => ctx.$refs.container.childElementCount)).toBeGreaterThan(10);
+
+			await helpers.scrollAndWaitItemsCountGreaterThan(page, 20, componentSelector);
+			expect(await component.evaluate((ctx) => ctx.$refs.container.childElementCount)).toBeGreaterThan(20);
 		});
 	});
 };

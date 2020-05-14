@@ -9,13 +9,14 @@
 const
 	path = require('upath'),
 	pzlr = require('@pzlr/build-core'),
-	args = require('arg')({'--suit': String}, {permissive: true});
+	dasherize = require('string-dasherize'),
+	args = require('arg')({'--runner': String, '--suit': String}, {permissive: true});
 
 let
-	suit = 'render';
+	runner = 'render';
 
-if (args['suit']) {
-	suit = args['suit'];
+if (args['--runner'] || args['--suit']) {
+	runner = args['--runner'] || args['--suit'];
 }
 
 const
@@ -23,7 +24,7 @@ const
 
 const
 	helpers = require(path.join(componentDir, 'test/helpers.js'));
-	test = require(path.join(componentDir, `test/runners/${suit}.js`));
+	test = require(path.join(componentDir, `test/runners/${dasherize(runner)}.js`));
 
 module.exports = async (page, params) => {
 	await setup(page);

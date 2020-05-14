@@ -61,9 +61,14 @@ export default class ChunkRequest {
 	}
 
 	/**
+	 * Contains data that pending to be rendered
+	 */
+	protected pendingData: unknown[] = [];
+
+	/**
 	 * API for scroll rendering
 	 */
-	protected get scrollRender(): ChunkRender['unsafe'] {
+	protected get chunkRender(): ChunkRender['unsafe'] {
 		return this.component.chunkRender.unsafe;
 	}
 
@@ -93,16 +98,16 @@ export default class ChunkRequest {
 		this.isDone = false;
 		this.isLastEmpty = false;
 
-		this.scrollRender.setRefVisibility('retry', false);
+		this.chunkRender.setRefVisibility('retry', false);
 		this.try();
 	}
 
 	/**
 	 * Tries to request additional data
 	 */
-	try(): Promise<void> {
+	try(): Promise<void | RemoteData> {
 		const
-			{component, scrollRender} = this;
+			{component, chunkRender} = this;
 
 		const additionParams = {
 			lastLoadedData: this.lastLoadedData.length === 0 ? component.options : this.lastLoadedData
@@ -110,7 +115,7 @@ export default class ChunkRequest {
 
 		const
 			resolved = Promise.resolve(),
-			shouldRequest = component.shouldMakeRequest(getRequestParams(this, scrollRender, additionParams));
+			shouldRequest = component.shouldMakeRequest(getRequestParams(this, chunkRender, additionParams));
 
 		if (this.isDone) {
 			return resolved;
@@ -126,15 +131,15 @@ export default class ChunkRequest {
 			return resolved;
 		}
 
-		scrollRender.setLoadersVisibility(true);
+		chunkRender.setLoadersVisibility(true);
 
 		return this.load()
 			.then((v) => {
-				scrollRender.setLoadersVisibility(false);
+				chunkRender.setLoadersVisibility(false);
 
 				if (!component.field.get('data.length', v)) {
 					this.isLastEmpty = true;
-					this.shouldStopRequest(getRequestParams(this, scrollRender, {lastLoadedData: []}));
+					this.shouldStopRequest(getRequestParams(this, chunkRender, {lastLoadedData: []}));
 					return;
 				}
 
@@ -145,10 +150,21 @@ export default class ChunkRequest {
 				this.isLastEmpty = false;
 				this.data = this.data.concat(data);
 				this.lastLoadedData = data;
+				this.pendingData = this.pendingData.concat(data);
 
-				this.shouldStopRequest(getRequestParams(this, scrollRender));
-				scrollRender.initItems(data);
-				scrollRender.render();
+				this.shouldStopRequest(getRequestParams(this, chunkRender));
+
+				if (this.pendingData.length < component.chunkSize) {
+					return this.try();
+				}
+
+				const
+					dataToRender = this.pendingData.slice(0, component.chunkSize);
+
+				this.pendingData.splice(0, component.chunkSize);
+
+				chunkRender.initItems(dataToRender);
+				chunkRender.render();
 
 			}).catch(stderr);
 	}
@@ -158,11 +174,11 @@ export default class ChunkRequest {
 	 * @param params
 	 */
 	shouldStopRequest(params: RequestMoreParams): boolean {
-		const {component, scrollRender} = this;
+		const {component, chunkRender} = this;
 		this.isDone = component.shouldStopRequest(params);
 
 		if (this.isDone) {
-			scrollRender.onRequestsDone();
+			chunkRender.onRequestsDone();
 		}
 
 		return this.isDone;
@@ -178,7 +194,7 @@ export default class ChunkRequest {
 		component.setMod('progress', true);
 
 		const params = <CanUndef<Dictionary>>(component.getDefaultRequestParams('get') || [])[0];
-		Object.assign(params, component.requestQuery?.(getRequestParams(this, this.scrollRender))?.get);
+		Object.assign(params, component.requestQuery?.(getRequestParams(this, this.chunkRender))?.get);
 
 		return component.async.request(component.getData(component, params), {label: $$.request})
 			.then((data) => {
@@ -202,7 +218,7 @@ export default class ChunkRequest {
 
 			.catch((err) => {
 				component.removeMod('progress', true);
-				this.scrollRender.setRefVisibility('retry', true);
+				this.chunkRender.setRefVisibility('retry', true);
 
 				stderr(err);
 				this.lastLoadedData = [];

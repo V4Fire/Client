@@ -128,7 +128,8 @@ export default class ChunkRender {
 			this.initEventHandlers();
 
 			if (!this.component.dataProvider) {
-				this.component.localEmitter.emit('localReady');
+				this.initItems(this.component.options);
+				this.component.localState = 'ready';
 			}
 		}});
 	}
@@ -165,6 +166,10 @@ export default class ChunkRender {
 	 * Renders component content
 	 */
 	render(): void {
+		if (this.component.localState !== 'ready') {
+			return;
+		}
+
 		const
 			{component, chunk, items} = this;
 
@@ -230,7 +235,7 @@ export default class ChunkRender {
 	}
 
 	/**
-	 * Event handlers initialisation
+	 * Event handlers initialization
 	 */
 	protected initEventHandlers(): void {
 		this.component.localEmitter.once('localReady', this.onReady.bind(this), {label: $$.reInit});
@@ -312,17 +317,17 @@ export default class ChunkRender {
 	 */
 	protected onNodeIntersect(index: number): void {
 		const
-			{component, items} = this,
+			{component, items, lastIntersectsItem} = this,
 			{chunkSize, renderGap} = component,
 			currentRender = (this.chunk - 1) * chunkSize;
+
+		this.lastIntersectsItem = index;
 
 		if (index + renderGap + chunkSize >= items.length) {
 			this.chunkRequest.try();
 		}
 
-		if (index > this.lastIntersectsItem) {
-			this.lastIntersectsItem = index;
-
+		if (index >= lastIntersectsItem) {
 			if (currentRender - index <= renderGap) {
 				this.render();
 			}
@@ -333,7 +338,6 @@ export default class ChunkRender {
 	 * Handler: component ready
 	 */
 	protected onReady(): void {
-		this.initItems(this.component.options);
 		this.setLoadersVisibility(false);
 
 		this.chunk++;
