@@ -19,23 +19,21 @@ if (args['suit']) {
 }
 
 const
-	componentDir = pzlr.resolve.blockSync('b-virtual-scroll'),
+	componentDir = pzlr.resolve.blockSync('b-virtual-scroll');
+
+const
+	helpers = require(path.join(componentDir, 'test/helpers.js'));
 	test = require(path.join(componentDir, `test/runners/${suit}.js`));
 
 module.exports = async (page, params) => {
 	await setup(page);
-	await test(page, {...(await getComponentProps(page)), ...params});
+	await test(page, {...(await helpers.getComponentProps(page)), ...params});
 }
-
+/**
+ * Setups an environment
+ * @param {*} page
+ */
 async function setup(page) {
 	await page.evaluate(`setEnv('mock', {patterns: ['.*']});`);
 	await page.reload();
-}
-
-async function getComponentProps(page) {
-	const
-		componentSelector = '.b-virtual-scroll',
-		component = await (await page.$(componentSelector)).getProperty('component');
-
-	return {componentSelector, component};
 }

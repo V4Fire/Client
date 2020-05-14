@@ -48,14 +48,14 @@ const presets = {
 
 	/**
 	 * Set of parameters for render truncated data
-	 * Run test with suit render-truncated-data
+	 * Run test with suit render-truncated
 	 */
-	renderTruncatedData: [{
+	renderTruncated: [{
 		attrs: {
 			':theme': s('demo'),
 			':option': s('div'),
 			':dataProvider': s('demo.Pagination'),
-			':dbConverter': '(data) => console.log(data)'
+			':dbConverter': '({data}) => ({data: data.splice(0, 5)})'
 		}
 	}]
 }
@@ -64,8 +64,8 @@ const presets = {
 let
 	suit = 'demo';
 
-if (args['suit']) {
-	suit = args['suit'];
+if (args['--suit']) {
+	suit = args['--suit'];
 }
 
 module.exports.presets = presets;

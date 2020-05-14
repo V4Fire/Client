@@ -16,15 +16,17 @@ const
 	componentDir = pzlr.resolve.blockSync('b-virtual-scroll'),
 	helpers = require(path.join(componentDir, 'test/helpers.js'));
 
-
 module.exports = async (page, {componentSelector, component}) => {
 	describe('b-virtual-scroll', () => {
-		it('renders data chunks to the page', async () => {
+		it('renders truncated data chunks to the page', async () => {
 			await helpers.waitItemsCountGreaterThan(page, 0, componentSelector);
 			expect(await component.evaluate((ctx) => ctx.$refs.container.childElementCount)).toBeGreaterThan(0);
 
+			await helpers.scrollAndWaitItemsCountGreaterThan(page, 5, componentSelector);
+			expect(await component.evaluate((ctx) => ctx.$refs.container.childElementCount)).toBeGreaterThan(5);
+
 			await helpers.scrollAndWaitItemsCountGreaterThan(page, 10, componentSelector);
-			expect(await component.evaluate((ctx) => ctx.$refs.container.childElementCount)).toBe(20);
+			expect(await component.evaluate((ctx) => ctx.$refs.container.childElementCount)).toBeGreaterThan(10);
 		});
 	});
 };
