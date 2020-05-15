@@ -66,17 +66,17 @@ module.exports = async (page) => {
 			await router.push('second');
 			await router.push('index');
 			await router.push('second');
-			return router.page.meta.content;
+			return router.route.meta.content;
 		})).toBe('Second page');
 
 		expect(await root.evaluate(async ({router}) => {
 			await router.go(-2);
-			return router.page.meta.content;
+			return router.route.meta.content;
 		})).toBe('Second page');
 
 		expect(await root.evaluate(async ({router}) => {
 			await router.go(1);
-			return router.page.meta.content;
+			return router.route.meta.content;
 		})).toBe('Index page');
 	});
 
@@ -98,13 +98,13 @@ module.exports = async (page) => {
 		};
 
 		expect(await root.evaluate(async ({router}) => {
-			const page = router.getRoute('second');
-			return page.meta;
+			const route = router.getRoute('second');
+			return route.meta;
 		})).toEqual(pageMeta);
 
 		expect(await root.evaluate(async ({router}) => {
-			const page = router.getRoute('/second');
-			return page.meta;
+			const route = router.getRoute('/second');
+			return route.meta;
 		})).toEqual(pageMeta);
 	});
 };
