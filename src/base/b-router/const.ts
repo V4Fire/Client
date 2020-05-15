@@ -6,10 +6,16 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-export const pageOptsKeys = [
+export const transitionOptions = [
 	'meta',
 	'params',
 	'query'
+];
+
+export const systemRouteParams = [
+	'url',
+	'name',
+	'page'
 ];
 
 export const defaultRoutes = Object.createDict({

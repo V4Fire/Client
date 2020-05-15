@@ -399,7 +399,7 @@ export default function createRouter(component: bRouter): Router {
 			}
 		}
 
-		await component.setPage(location.href, history.state, 'event');
+		await component.emitTransition(location.href, history.state, 'event');
 	}, popstate);
 
 	return router;

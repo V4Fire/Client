@@ -7,8 +7,21 @@
  */
 
 import { Key } from 'path-to-regexp';
-import { Route as BaseRoute, RouteMeta } from 'core/router';
-export * from 'core/router/interface';
+import { Route as EngineRoute, RouteMeta } from 'core/router';
+
+export { EngineRoute };
+export {
+
+	Router,
+	StaticRoutes,
+
+	StaticRouteMeta,
+	RouteMeta,
+
+	TransitionParams,
+	HistoryClearFilter
+
+} from 'core/router/interface';
 
 /**
  * Compiled not applied route
@@ -81,7 +94,34 @@ export type Route<
 	PARAMS extends object = Dictionary,
 	QUERY extends object = Dictionary,
 	META extends object = Dictionary
-> = BaseRoute<PARAMS, QUERY, META> & RouteBlueprint<PARAMS, QUERY, META>;
+> = EngineRoute<PARAMS, QUERY, META> & RouteBlueprint<PARAMS, QUERY, META>;
+
+export type AnyRoute =
+	Route |
+	EngineRoute |
+	RouteAPI;
+
+/**
+ * Route without system fields
+ */
+export type PurifiedRoute<T extends AnyRoute> = Partial<Omit<T, 'url' | 'name' | 'page'>>;
+
+/**
+ * Plain route object
+ */
+export type PlainRoute<T extends AnyRoute, FILTER extends string = '_'> = Partial<Omit<
+	T extends RouteAPI ? Omit<T, 'resolvePath' | 'toPath'> : T,
+	FILTER
+>>;
+
+/**
+ * Route that support watching
+ */
+export type WatchableRoute<T extends AnyRoute> = PlainRoute<T, 'meta'>;
+
+export interface RouteParamsFilter {
+	(el: unknown, key: string): boolean;
+}
 
 /**
  * Public API to work with a route
@@ -134,4 +174,6 @@ export interface RouteParams extends TransitionOptions {
 }
 
 export type ActiveRoute = string | RouteParams;
-export type SetPageMethod = 'push' | 'replace' | 'event';
+
+export type TransitionType = 'soft' | 'hard';
+export type TransitionMethod = 'push' | 'replace' | 'event';

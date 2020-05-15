@@ -10,21 +10,29 @@ import Async from 'core/async';
 import symbolGenerator from 'core/symbol';
 import path from 'path-to-regexp';
 
-import { deprecated } from 'core/functools/deprecation';
+import { deprecate, deprecated } from 'core/functools/deprecation';
 import { concatUrls, toQueryString } from 'core/url';
 
 import engine, { Router, Route, HistoryClearFilter } from 'core/router';
-import iData, { component, prop, system, hook, watch } from 'super/i-data/i-data';
+import iData, { component, prop, system, hook } from 'super/i-data/i-data';
+
+import { qsClearFixRgxp, externalLinkRgxp } from 'base/b-router/const';
+import { initRoutes } from 'base/b-router/modules/initializers';
 
 import {
 
-	pageOptsKeys,
-	qsClearFixRgxp,
-	externalLinkRgxp
+	purifyRoute,
 
-} from 'base/b-router/const';
+	getBlankRouteFrom,
+	getParamsFromRouteThatNeedWatch,
 
-import { initRoutes } from 'base/b-router/modules/initializers';
+	convertRouteToPlainObject,
+	convertRouteToPlainObjectWithoutProto,
+
+	normalizeTransitionOpts,
+	fillRouteParams
+
+} from 'base/b-router/modules/normalizers';
 
 import {
 
@@ -35,11 +43,10 @@ import {
 	RouteBlueprint,
 	RouteBlueprints,
 
-	SetPageMethod,
+	TransitionMethod,
 	TransitionOptions
 
 } from 'base/b-router/interface';
-import {deprecate} from '../../../.yalc/@v4fire/core/src/core/functools/deprecation';
 
 export * from 'super/i-data/i-data';
 export * from 'base/b-router/const';
@@ -155,7 +162,7 @@ export default class bRouter extends iData {
 	 * @param [opts] - additional options
 	 */
 	async push(page: Nullable<string>, opts?: TransitionOptions): Promise<void> {
-		await this.setPage(page, opts, 'push');
+		await this.emitTransition(page, opts, 'push');
 	}
 
 	/**
@@ -166,7 +173,7 @@ export default class bRouter extends iData {
 	 * @param [opts] - additional options
 	 */
 	async replace(page: Nullable<string>, opts?: TransitionOptions): Promise<void> {
-		await this.setPage(page, opts, 'replace');
+		await this.emitTransition(page, opts, 'replace');
 	}
 
 	/**
@@ -184,7 +191,7 @@ export default class bRouter extends iData {
 	 * ```
 	 */
 	async go(pos: number): Promise<void> {
-		const res = this.promisifyOnce('foo');
+		const res = this.promisifyOnce('transition');
 		this.engine.go(pos);
 		await res;
 	}
@@ -194,7 +201,7 @@ export default class bRouter extends iData {
 	 * The method returns a promise that is resolved when the transition will be completed.
 	 */
 	async forward(): Promise<void> {
-		const res = this.promisifyOnce('foo');
+		const res = this.promisifyOnce('transition');
 		this.engine.forward();
 		await res;
 	}
@@ -204,7 +211,7 @@ export default class bRouter extends iData {
 	 * The method returns a promise that is resolved when the transition will be completed.
 	 */
 	async back(): Promise<void> {
-		const res = this.promisifyOnce('foo');
+		const res = this.promisifyOnce('transition');
 		this.engine.back();
 		await res;
 	}
@@ -500,136 +507,72 @@ export default class bRouter extends iData {
 	}
 
 	/**
-	 * Sets a new page
+	 * Emits a new transition to the specified route
 	 *
-	 * @param page
+	 * @param ref - route name or route path or null, if the route is equal to the previous
 	 * @param [opts] - additional transition options
-	 * @param [method] - engine method
+	 * @param [method] - transition method
 	 *
-	 * @emits beforeChange(page: Nullable<string>, params: CanUndef<PageOptionsProp>, method: string)
-	 * @emits change(info: PageOptions)
-	 * @emits hardChange(info: PageOptions)
-	 * @emits softChange(info: PageOptions)
-	 * @emits $root.transition(info: PageOptions, type: string)
+	 * @emits beforeChange(route: Nullable<string>, params: CanUndef<PageOptionsProp>, method: TransitionMethod)
+	 *
+	 * @emits change(route: Route)
+	 * @emits hardChange(route: Route)
+	 * @emits softChange(route: Route)
+	 *
+	 * @emits transition(route: Route, type: TransitionType)
+	 * @emits $root.transition(route: Route, type: TransitionType)
 	 */
-	async setPage(
-		page: Nullable<string>,
+	async emitTransition(
+		ref: Nullable<string>,
 		opts?: TransitionOptions,
-		method: SetPageMethod = 'push'
+		method: TransitionMethod = 'push'
 	): Promise<CanUndef<Route>> {
-		const
-			{$root: r, engine, engine: {page: currentPage}} = this;
+		opts = normalizeTransitionOpts(opts);
 
-		let
-			isEmptyOpts = !opts;
-
-		if (opts) {
-			isEmptyOpts = true;
-
-			for (let keys = Object.keys(opts), i = 0; i < keys.length; i++) {
-				if (Object.size(opts[keys[i]])) {
-					isEmptyOpts = false;
-					break;
-				}
-			}
-
-			if (!isEmptyOpts) {
-				opts = Object.mixin<Dictionary>(true, {}, Object.select(opts, pageOptsKeys));
-
-				const normalizeOpts = (obj, key?, data?) => {
-					if (!obj) {
-						return;
-					}
-
-					if (Object.isPlainObject(obj)) {
-						for (let keys = Object.keys(obj), i = 0; i < keys.length; i++) {
-							const key = keys[i];
-							normalizeOpts(obj[key], key, obj);
-						}
-
-						return;
-					}
-
-					if (Object.isArray(obj)) {
-						for (let i = 0; i < (<unknown[]>obj).length; i++) {
-							normalizeOpts(obj[i], i, obj);
-						}
-
-						return;
-					}
-
-					if (data) {
-						const
-							strVal = String(obj);
-
-						if (/^(?:true|false|null|undefined)$/.test(strVal)) {
-							data[key] = Object.isString(obj) ? Object.parse(obj) : obj;
-
-						} else {
-							const numVal = Number(obj);
-							data[key] = isNaN(obj) || strVal !== String(numVal) ? strVal : numVal;
-						}
-					}
-				};
-
-				normalizeOpts(opts.params);
-				normalizeOpts(opts.query);
-			}
-		}
-
-		if (!page && isEmptyOpts && !this.lfc.isBeforeCreate()) {
+		if (!ref && !opts && !this.lfc.isBeforeCreate()) {
 			return;
 		}
 
-		this.emit('beforeChange', page, opts, method);
-
-		const rejectSystemOpts = (obj) => {
-			if (obj) {
-				return Object.reject(obj, ['page', 'url']);
+		const {
+			r,
+			engine,
+			engine: {
+				route: currentRoute
 			}
+		} = this;
 
-			return {};
-		};
+		this.emit('beforeChange', ref, opts, method);
 
-		const getPlainOpts = (obj, filter?) => {
-			const
-				res = {};
+		// Emits the route transition event
+		const emitTransition = (onlyOwnTransition?) => {
+			const type = hardChange ? 'hard' : 'soft';
 
-			if (obj) {
-				for (const key in obj) {
-					const
-						el = obj[key];
+			if (onlyOwnTransition) {
+				this.emit('transition', routeStore, type);
 
-					if (filter && !filter(el, key)) {
-						continue;
-					}
-
-					if (!Object.isFunction(el)) {
-						res[key] = el;
-					}
-				}
+			} else {
+				this.emit('change', routeStore);
+				this.emit('transition', routeStore, type);
+				r.emit('transition', routeStore, type);
 			}
-
-			return res;
 		};
-
-		const getPlainWatchOpts = (obj) =>
-			getPlainOpts(obj, (el, key) => key !== 'meta' && key[0] !== '_');
 
 		let
-			info;
+			routeInfo;
 
-		if (page) {
-			info = this.getPageOpts(engine.id(page));
+		// Get information about the specified route
+		if (ref) {
+			routeInfo = this.getRoute(engine.id(ref));
 
-		} else if (currentPage) {
-			page = currentPage.url || currentPage.page;
+			// Get information about the current route
+		} else if (currentRoute) {
+			ref = currentRoute.url || currentRoute.name;
 
 			const
-				p = this.getPageOpts(page);
+				route = this.getRoute(ref);
 
-			if (p) {
-				info = Object.mixin(true, p, rejectSystemOpts(currentPage));
+			if (route) {
+				routeInfo = Object.mixin(true, route, purifyRoute(currentRoute));
 			}
 		}
 
@@ -642,216 +585,190 @@ export default class bRouter extends iData {
 			}
 		};
 
-		// Attach scroll position
-		if (currentPage && method !== 'replace') {
+		// To save scroll position before change to a new route
+		// we need to emit system "replace" transition with padding information about the scroll
+		if (currentRoute && method !== 'replace') {
 			const
-				modCurrentPage = Object.mixin<Route>(true, undefined, currentPage, scroll);
+				currentRouteWithScroll = Object.mixin(true, undefined, currentRoute, scroll);
 
-			if (!Object.fastCompare(currentPage, modCurrentPage)) {
-				// @ts-ignore
-				await engine.replace(currentPage.url || currentPage.page, modCurrentPage);
+			if (!Object.fastCompare(currentRoute, currentRouteWithScroll)) {
+				await engine.replace(currentRoute.url || currentRoute.name, currentRouteWithScroll);
 			}
 		}
 
-		if (!info) {
-			if (method !== 'event' && page != null) {
-				await engine[method](page, scroll);
+		// We haven't found any routes that math to the specified ref
+		if (!routeInfo) {
+			// The transition was emitted by a user, then we need to save the scroll
+			if (method !== 'event' && ref != null) {
+				await engine[method](ref, scroll);
 			}
 
 			return;
 		}
 
-		if (!info.page && currentPage && currentPage.page) {
-			info.page = currentPage.page;
+		if (!routeInfo.name && currentRoute?.name) {
+			routeInfo.name = currentRoute.name;
 		}
 
 		const
-			current = this.field.get<Route>('pageStore');
+			current = this.field.get<Route>('routeStore'),
+			deepMixin = (...args) => Object.mixin({deep: true, withUndef: true}, ...args);
 
-		{
-			const normalize = (val) => Object.mixin(true, val && rejectSystemOpts(val), {
-				query: {},
-				params: {},
-				meta: {}
-			});
+		// If a new route matches by a name with the current,
+		// we need to mix a new state with the current
+		if (current?.name === routeInfo.name) {
+			deepMixin(routeInfo, getBlankRouteFrom(current), getBlankRouteFrom(opts));
 
-			const p = current && current.page === info.page ? current : undefined;
-			Object.mixin({deep: true, withUndef: true}, info, normalize(getPlainOpts(p)), normalize(opts));
+		// Simple normalizing of a route state
+		} else {
+			deepMixin(routeInfo, getBlankRouteFrom(opts));
 		}
 
-		const {
-			meta,
-			query,
-			params
-		} = info;
+		const {meta} = routeInfo;
 
-		if (meta.paramsFromQuery !== false) {
-			const
-				paramsFromRoot = meta.paramsFromRoot !== false,
-				rootState = r.unsafe.syncRouterState(undefined, 'remoteCheck');
+		// If the route support filling from the root object or query parameters
+		fillRouteParams(routeInfo, r);
 
-			for (let o = meta.params, i = 0; i < o.length; i++) {
-				const
-					key = o[i],
-					nm = key.name,
-					val = query[nm];
+		// We have two variants of a transition:
+		// "soft" - between routes were changed only query or meta parameters
+		// "hard" - first and second routes aren't equal by a name
 
-				if (params[nm] === undefined) {
-					if (val !== undefined && new RegExp(key.pattern).test(val)) {
-						params[nm] = val;
-						delete query[nm];
-
-					} else if (paramsFromRoot) {
-						params[nm] = rootState[nm];
-					}
-
-				} else {
-					delete query[nm];
-				}
-			}
-
-			if (paramsFromRoot) {
-				const
-					rootField = r.unsafe.meta.fields,
-					rootSystemFields = r.unsafe.meta.systemFields;
-
-				for (let keys = Object.keys(rootState), i = 0; i < keys.length; i++) {
-					const
-						key = keys[i],
-						rootVal = rootState[key];
-
-					if (query[key] === undefined) {
-						const
-							field = rootField[key] || rootSystemFields[key];
-
-						if (field && field.meta['router.query']) {
-							query[key] = rootVal;
-
-						} else {
-							delete query[key];
-						}
-					}
-				}
-			}
-		}
+		// Mutations of query and meta parameters of a route shouldn't force re-render of components,
+		// that why we placed it to a prototype object by using Object.create
 
 		const
-			nonWatchValues = {query: info.query, meta},
-			store = Object.assign(Object.create(nonWatchValues), Object.reject(info, Object.keys(nonWatchValues)));
+			nonWatchRouteValues = {query: routeInfo.query, meta};
+
+		const routeStore = Object.assign(
+			Object.create(nonWatchRouteValues),
+			Object.reject(routeInfo, Object.keys(nonWatchRouteValues))
+		);
 
 		let
 			hardChange = false;
 
-		const emitTransition = () => {
-			this.emit('change', store);
-			r.emit('transition', store, hardChange ? 'hard' : 'soft');
-		};
+		// Checking that the new route is really needed, i.e. it isn't equal to the previous
+		const newRouteIsReallyNeeded = !Object.fastCompare(
+			getParamsFromRouteThatNeedWatch(current),
+			getParamsFromRouteThatNeedWatch(routeStore)
+		);
 
-		if (!Object.fastCompare(getPlainWatchOpts(current), getPlainWatchOpts(store))) {
-			this.field.set('pageStore', store);
+		// The transition is real needed, but now we need to understand should we emit "soft" or "hard" transition
+		if (newRouteIsReallyNeeded) {
+			this.field.set('routeStore', routeStore);
 
 			const
-				plainInfo = getPlainOpts(info);
+				plainInfo = convertRouteToPlainObject(routeInfo);
 
-			if (
-				currentPage &&
+			const canRouteTransformToReplace =
+				currentRoute &&
 				method !== 'replace' &&
-				Object.fastCompare(getPlainOpts(currentPage), plainInfo)
-			) {
+				Object.fastCompare(convertRouteToPlainObject(currentRoute), plainInfo);
+
+			if (canRouteTransformToReplace) {
 				method = 'replace';
 			}
 
+			// If the used engine doesn't support the requested transition method,
+			// we should fallback to "replace"
 			if (!Object.isFunction(engine[method])) {
 				method = 'replace';
 			}
 
-			if (info.meta.external) {
-				location.href = info.toPath(info.params) || '/';
+			// This transitions is marked as external,
+			// i.e. it refers to another site
+			if (routeInfo.meta.external) {
+				location.href = routeInfo.toPath(routeInfo.params) || '/';
 				return;
 			}
 
-			await engine[method](
-				info.toPath(info.params),
-				plainInfo
-			);
+			await engine[method](routeInfo.toPath(routeInfo.params), plainInfo);
 
-			const getPlainOptsWithoutProto = (v) => {
-				const
-					res = {};
+			const isSoftTransition = Boolean(r.route && Object.fastCompare(
+				convertRouteToPlainObjectWithoutProto(current),
+				convertRouteToPlainObjectWithoutProto(routeStore)
+			));
 
-				if (v) {
-					for (let keys = Object.keys(v), i = 0; i < keys.length; i++) {
-						const
-							key = keys[i],
-							el = v[key];
-
-						if (key[0] === '_') {
-							continue;
-						}
-
-						if (!Object.isFunction(el)) {
-							res[key] = el;
-						}
-					}
-				}
-
-				return res;
-			};
-
-			if (r.route && Object.fastCompare(getPlainOptsWithoutProto(current), getPlainOptsWithoutProto(store))) {
+			// In this transition were changed only properties from a prototype,
+			// that why it can be emitted as soft transition, i.e. without forcing of re-render of components
+			if (isSoftTransition) {
 				const
 					proto = Object.getPrototypeOf(r.route);
 
-				for (let keys = Object.keys(nonWatchValues), i = 0; i < keys.length; i++) {
+				// Correct values from the root route object
+				for (let keys = Object.keys(nonWatchRouteValues), i = 0; i < keys.length; i++) {
 					const key = keys[i];
-					proto[key] = nonWatchValues[key];
+					proto[key] = nonWatchRouteValues[key];
 				}
 
-				this.emit('softChange', store);
+				this.emit('softChange', routeStore);
 
 			} else {
 				hardChange = true;
-				this.emit('hardChange', store);
-				r.route = store;
+				this.emit('hardChange', routeStore);
+				r.route = routeStore;
 			}
 
 			emitTransition();
 
+		// This route is equal to the previous and we don't actually do transition,
+		// but for a "push" request we need to emit the "fake" transition event anyway
 		} else if (method === 'push') {
 			emitTransition();
+
+		} else {
+			emitTransition(true);
 		}
 
+		// Restoring the scroll position
 		if (meta.autoScroll !== false) {
 			(async () => {
-				try {
-					const label = {
-						label: $$.autoScroll
-					};
+				const label = {
+					label: $$.autoScroll
+				};
 
-					if (hardChange) {
-						await this.async.wait(() => Object.fastCompare(store, r.route), label);
-					}
-
-					await this.nextTick(label);
-
-					const
-						s = meta.scroll;
-
-					if (s) {
-						this.scrollTo(s.y, s.x);
-
-					} else if (hardChange) {
-						this.scrollTo(0, 0);
-					}
-
-				} catch (err) {
-					stderr(err);
+				if (hardChange) {
+					await this.async.wait(() => Object.fastCompare(routeStore, r.route), label);
 				}
-			})();
+
+				await this.nextTick(label);
+
+				const
+					s = meta.scroll;
+
+				if (s) {
+					this.scrollTo(s.y, s.x);
+
+				} else if (hardChange) {
+					this.scrollTo(0, 0);
+				}
+			})().catch(stderr);
 		}
 
-		this.emit('foo');
-		return store;
+		return routeStore;
+	}
+
+	/**
+	 * @deprecated
+	 * @see [[bRouter.emitTransition]]
+	 *
+	 * @param ref
+	 * @param opts
+	 * @param method
+	 */
+	@deprecated({renamedTo: 'emitTransition'})
+	setPage(ref: Nullable<string>, opts?: TransitionOptions, method?: TransitionMethod): Promise<CanUndef<Route>> {
+		return this.emitTransition(ref, opts, method);
+	}
+
+	/**
+	 * Initializes the router within an application
+	 * @emits $root.initRouter(router: bRouter)
+	 */
+	@hook('created')
+	protected init(): void {
+		this.field.set('routerStore', this, this.$root);
+		this.r.emit('initRouter', this);
 	}
 
 	/**
@@ -875,70 +792,9 @@ export default class bRouter extends iData {
 		}
 	}
 
-	/**
-	 * Handler: link trigger
-	 * @param e
-	 */
-	@watch({
-		field: 'document:click',
-		wrapper: (o, cb) => o.dom.delegate('[href]', cb)
-	})
-
-	protected async onLink(e: MouseEvent): Promise<void> {
-		const
-			a = <HTMLElement>e.delegateTarget,
-			href = a.getAttribute('href');
-
-		if (!href || /^(#|\w+:|\/\/)/.test(href)) {
-			return;
-		}
-
-		e.preventDefault();
-
-		const
-			l = Object.assign(document.createElement('a'), {href});
-
-		if (e.ctrlKey) {
-			window.open(l.href, '_blank');
-
-		} else {
-			const
-				data = a.dataset,
-				method = data.method;
-
-			switch (method) {
-				case 'back':
-					this.back();
-					break;
-
-				case 'forward':
-					this.back();
-					break;
-
-				case 'go':
-					this.go(Number(data.pos || -1));
-					break;
-
-				default:
-					await this[method === 'replace' ? 'replace' : 'push'](href, {
-						params: Object.parse(data.params) || {},
-						query: Object.parse(data.query) || {}
-					});
-			}
-		}
-	}
-
 	/** @override */
 	protected initBaseAPI(): void {
 		super.initBaseAPI();
-		this.setPage = this.instance.setPage.bind(this);
-	}
-
-	/**
-	 * @emits $root.initRouter(router: bRouter)
-	 */
-	protected created(): void {
-		this.field.set('routerStore', this, this.$root);
-		this.r.emit('initRouter', this);
+		this.emitTransition = this.instance.emitTransition.bind(this);
 	}
 }

@@ -20,10 +20,9 @@ import { setLocale, locale } from 'core/i18n';
 
 import { Session } from 'core/session/interface';
 import { NetStatus } from 'core/net/interface';
-import { CurrentPage } from 'core/router/interface';
 
 //#if runtime has bRouter
-import bRouter from 'base/b-router/b-router';
+import bRouter, { Route } from 'base/b-router/b-router';
 //#endif
 
 import iBlock from 'super/i-block/i-block';
@@ -61,7 +60,7 @@ export default abstract class iStaticPage extends iPage {
 	/**
 	 * Type: current page
 	 */
-	readonly CurrentPage!: CurrentPage<this['PageParams'], this['PageQuery'], this['PageMeta']>;
+	readonly CurrentPage!: Route<this['PageParams'], this['PageQuery'], this['PageMeta']>;
 
 	/** @override */
 	@system()
