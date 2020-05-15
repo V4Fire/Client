@@ -136,7 +136,7 @@ import {
 
 	WaitFn,
 	WaitDecoratorOptions,
-	MethodWatchers
+	DecoratorMethodWatcher
 
 } from 'super/i-block/modules/decorators';
 
@@ -395,7 +395,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	 * ```
 	 */
 	@prop({type: Object, required: false})
-	readonly watchProp?: Dictionary<MethodWatchers>;
+	readonly watchProp?: Dictionary<DecoratorMethodWatcher>;
 
 	/**
 	 * If true, then is enabled a dispatching mode of component events.

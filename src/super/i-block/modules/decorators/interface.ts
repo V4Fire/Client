@@ -26,8 +26,6 @@ import {
 
 } from 'core/component/decorators';
 
-export type ModEventType = 'on' | 'once';
-
 export interface InitFieldFn<
 	CTX extends ComponentInterface = iBlock['unsafe']
 > extends BaseInitFieldFn<CTX> {}
@@ -88,4 +86,5 @@ export interface WaitOptions<F extends WaitFn = WaitFn> extends WaitDecoratorOpt
 	fn: F;
 }
 
+export type DecoratorEventListenerMethod = 'on' | 'once';
 export type DecoratorCtx<CTX> = {component: CTX} | CTX;

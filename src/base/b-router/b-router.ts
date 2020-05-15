@@ -565,7 +565,7 @@ export default class bRouter extends iData {
 		};
 
 		let
-			routeInfo: RouteAPI;
+			routeInfo;
 
 		// Get information about the specified route
 		if (ref) {
