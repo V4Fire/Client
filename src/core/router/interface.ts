@@ -242,6 +242,8 @@ export interface Route<
 	meta: RouteMeta<META>;
 }
 
+export type TransitionParams = {[K in keyof Route]?: Route[K] extends Dictionary<any> ? Partial<Route[K]> : Route[K]};
+
 export interface HistoryClearFilter {
 	(page: Route): unknown;
 }
@@ -287,7 +289,7 @@ export interface Router<
 	 * @param route - route name or URL
 	 * @param params - route parameters
 	 */
-	push(route: string, params?: Route): Promise<void>;
+	push(route: string, params?: TransitionParams): Promise<void>;
 
 	/**
 	 * Replaces the current route
@@ -295,7 +297,7 @@ export interface Router<
 	 * @param route - route name or URL
 	 * @param params - route parameters
 	 */
-	replace(route: string, params?: Route): Promise<void>;
+	replace(route: string, params?: TransitionParams): Promise<void>;
 
 	/**
 	 * Switches to a route from the history, identified by its relative position to the current route
