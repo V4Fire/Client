@@ -533,6 +533,8 @@ export default class bRouter extends iData {
 			return;
 		}
 
+		opts = getBlankRouteFrom(opts);
+
 		const {
 			r,
 			engine,
@@ -617,11 +619,11 @@ export default class bRouter extends iData {
 		// If a new route matches by a name with the current,
 		// we need to mix a new state with the current
 		if (current?.name === routeInfo.name) {
-			deepMixin(routeInfo, getBlankRouteFrom(current), getBlankRouteFrom(opts));
+			deepMixin(routeInfo, getBlankRouteFrom(current), opts);
 
 		// Simple normalizing of a route state
 		} else {
-			deepMixin(routeInfo, getBlankRouteFrom(opts));
+			deepMixin(routeInfo, opts);
 		}
 
 		const {meta} = routeInfo;
