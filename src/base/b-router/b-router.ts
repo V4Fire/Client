@@ -434,10 +434,10 @@ export default class bRouter extends iData {
 		}
 
 		const routeAPI: RouteAPI = Object.create({
+			...resolvedRoute,
 			meta: Object.mixin(true, {}, resolvedRoute.meta),
 
 			get page(): string {
-				deprecate({name: 'page', type: 'property', renamedTo: 'name'});
 				return this.name;
 			},
 
@@ -558,13 +558,13 @@ export default class bRouter extends iData {
 		};
 
 		let
-			routeInfo;
+			routeInfo: RouteAPI;
 
 		// Get information about the specified route
 		if (ref) {
 			routeInfo = this.getRoute(engine.id(ref));
 
-			// Get information about the current route
+		// Get information about the current route
 		} else if (currentRoute) {
 			ref = currentRoute.url || currentRoute.name;
 
@@ -678,11 +678,11 @@ export default class bRouter extends iData {
 			// This transitions is marked as external,
 			// i.e. it refers to another site
 			if (routeInfo.meta.external) {
-				location.href = routeInfo.toPath(routeInfo.params) || '/';
+				location.href = routeInfo.resolvePath(routeInfo.params) || '/';
 				return;
 			}
 
-			await engine[method](routeInfo.toPath(routeInfo.params), plainInfo);
+			await engine[method](routeInfo.resolvePath(routeInfo.params), plainInfo);
 
 			const isSoftTransition = Boolean(r.route && Object.fastCompare(
 				convertRouteToPlainObjectWithoutProto(current),

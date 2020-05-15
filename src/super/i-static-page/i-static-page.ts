@@ -110,7 +110,7 @@ export default abstract class iStaticPage extends iPage {
 	 * Name of the active page
 	 */
 	get activePage(): CanUndef<string> {
-		return this.field.get('route.meta.page');
+		return this.field.get('route.meta.name');
 	}
 
 	/** @override */

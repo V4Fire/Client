@@ -9,16 +9,14 @@
 module.exports = [
 	{
 		attrs: {
-			':pages': JSON.stringify({
+			':routes': JSON.stringify({
 				index: {
 					path: '/',
-					remote: false,
 					content: 'Index page'
 				},
 
 				second: {
 					path: '/second',
-					remote: false,
 					content: 'Second page'
 				}
 			})

@@ -7,7 +7,6 @@
  */
 
 import globalRoutes from 'routes';
-import { deprecate } from 'core/functools/deprecation';
 
 import path, { Key, RegExpOptions } from 'path-to-regexp';
 import { concatUrls } from 'core/url';
@@ -55,12 +54,10 @@ export function initRoutes(component: bRouter): RouteBlueprints {
 					},
 
 					get page(): string {
-						deprecate({name: 'page', type: 'property', renamedTo: 'name'});
 						return this.name;
 					},
 
 					get index(): boolean {
-						deprecate({name: 'index', type: 'property', renamedTo: 'default'});
 						return this.default;
 					},
 
@@ -85,7 +82,7 @@ export function initRoutes(component: bRouter): RouteBlueprints {
 
 				compiledRoutes[name] = {
 					name,
-					default: Boolean(route.index || defaultRoutes[name]),
+					default: Boolean(route.default || route.index || defaultRoutes[name]),
 
 					alias: route.alias,
 					redirect: route.redirect,
@@ -98,12 +95,10 @@ export function initRoutes(component: bRouter): RouteBlueprints {
 					},
 
 					get page(): string {
-						deprecate({name: 'page', type: 'property', renamedTo: 'name'});
 						return this.name;
 					},
 
 					get index(): boolean {
-						deprecate({name: 'index', type: 'property', renamedTo: 'default'});
 						return this.default;
 					},
 

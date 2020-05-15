@@ -88,22 +88,22 @@ module.exports = async (page) => {
 			.toBe('/?bla=1');
 	});
 
-	it('getting page options by a query', async () => {
+	it('getting route parameters by a query', async () => {
 		const pageMeta = {
-			path: '/second',
-			remote: false,
-			content: 'Second page',
+			name: 'second',
 			page: 'second',
+			path: '/second',
+			content: 'Second page',
 			params: []
 		};
 
 		expect(await root.evaluate(async ({router}) => {
-			const page = router.getPageOpts('second');
+			const page = router.getRoute('second');
 			return page.meta;
 		})).toEqual(pageMeta);
 
 		expect(await root.evaluate(async ({router}) => {
-			const page = router.getPageOpts('/second');
+			const page = router.getRoute('/second');
 			return page.meta;
 		})).toEqual(pageMeta);
 	});
