@@ -188,7 +188,7 @@ export default function createRouter(component: bRouter): Router {
 
 			if (location.href !== route) {
 				params.url = route;
-				history[method](params, params.page, route);
+				history[method](params, params.name, route);
 			}
 
 			const dontLoadDependencies =
@@ -208,7 +208,7 @@ export default function createRouter(component: bRouter): Router {
 			let
 				i = 0;
 
-			ModuleDependencies.emitter.on(`component.${params.page}.loading`, $a.proxy(
+			ModuleDependencies.emitter.on(`component.${params.name}.loading`, $a.proxy(
 				({packages}) => {
 					component.field.set('status', (++i * 100) / packages);
 					(i === packages) && resolve();
@@ -270,8 +270,8 @@ export default function createRouter(component: bRouter): Router {
 			return load(route, params);
 		},
 
-		replace(page: string, params?: Route): Promise<void> {
-			return load(page, params, 'replaceState');
+		replace(route: string, params?: Route): Promise<void> {
+			return load(route, params, 'replaceState');
 		},
 
 		go(pos: number): void {
