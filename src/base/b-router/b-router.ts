@@ -132,14 +132,14 @@ export default class bRouter extends iData {
 	 * Compiled schema of application routes
 	 * @see [[bRouter.routesProp]]
 	 */
-	@system<bRouter>({after: 'engine', init: initRoutes})
+	@system({after: 'engine', init: initRoutes})
 	protected routes!: RouteBlueprints;
 
 	/**
 	 * Value of the active route
 	 * @see [[bRouter.routeStore]]
 	 */
-	get route(): CanUndef<Route> {
+	get route(): CanUndef<this['r']['CurrentPage']> {
 		return this.field.get('routeStore');
 	}
 
@@ -634,6 +634,7 @@ export default class bRouter extends iData {
 		const {meta} = routeInfo;
 
 		// If the route support filling from the root object or query parameters
+		// @ts-ignore
 		fillRouteParams(routeInfo, r);
 
 		// We have two variants of a transition:
@@ -700,7 +701,7 @@ export default class bRouter extends iData {
 			// that why it can be emitted as soft transition, i.e. without forcing of re-render of components
 			if (isSoftTransition) {
 				const
-					proto = r.route.__proto__;
+					proto = <any>r!.route!.__proto__;
 
 				// Correct values from the root route object
 				for (let keys = Object.keys(nonWatchRouteValues), i = 0; i < keys.length; i++) {
