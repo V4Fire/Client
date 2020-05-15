@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.14 (2020-05-15)
+
+#### :bug: Bug Fix
+
+* Fixed `b-bottom-slide` bottom padding
+
 ## v3.0.0-rc.13 (2020-05-13)
 
 #### :bug: Bug Fix
