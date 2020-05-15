@@ -148,7 +148,7 @@ export default class bRouter extends iData {
 	 * @see [[bRouter.route]]
 	 */
 	@deprecated({renamedTo: 'route'})
-	get page(): CanUndef<Route> {
+	get page(): CanUndef<this['r']['CurrentPage']> {
 		return this.route;
 	}
 
