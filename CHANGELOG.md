@@ -15,7 +15,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :bug: Bug Fix
 
-* Fixed `b-bottom-slide` bottom padding
+* [Fixed `b-bottom-slide` bottom padding](https://github.com/V4Fire/Client/pull/232)
 
 ## v3.0.0-rc.13 (2020-05-13)
 
