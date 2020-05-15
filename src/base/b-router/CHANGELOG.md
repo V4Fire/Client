@@ -17,6 +17,10 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 * Removed click handler
 
+#### :rocket: New Feature
+
+* Added support to watch route query
+
 #### :house: Internal
 
 * Refactoring
