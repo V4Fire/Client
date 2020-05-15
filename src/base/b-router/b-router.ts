@@ -6,6 +6,11 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+/**
+ * [[include:base/b-router/README.md]]
+ * @packageDocumentation
+ */
+
 import Async from 'core/async';
 import symbolGenerator from 'core/symbol';
 import path from 'path-to-regexp';
