@@ -21,7 +21,7 @@ import { concatUrls, toQueryString } from 'core/url';
 import engine, { Router, Route, HistoryClearFilter } from 'core/router';
 import iData, { component, prop, system, hook } from 'super/i-data/i-data';
 
-import { qsClearFixRgxp, isExternal } from 'base/b-router/const';
+import { qsClearFixRgxp } from 'base/b-router/const';
 import { initRoutes } from 'base/b-router/modules/initializers';
 
 import {
