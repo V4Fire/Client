@@ -326,7 +326,7 @@ export default class bRouter extends iData {
 			externalRedirect = false;
 
 		while (true) {
-			// Reference to a route is passed as ID
+			// Reference to a route that passed as ID
 			if (resolvedRef in routes) {
 				resolvedById = true;
 				resolvedRoute = routes[resolvedRef];
@@ -343,7 +343,7 @@ export default class bRouter extends iData {
 					break;
 				}
 
-			// Reference to a route is passed as a path
+			// Reference to a route that passed as a path
 			} else {
 				if (basePath) {
 					// Resolve the situation when the passed path already has basePath
