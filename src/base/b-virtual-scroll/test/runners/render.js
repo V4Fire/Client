@@ -25,6 +25,9 @@ module.exports = async (page, {componentSelector, component}) => {
 
 			await helpers.scrollAndWaitItemsCountGreaterThan(page, 10, componentSelector);
 			expect(await component.evaluate((ctx) => ctx.$refs.container.childElementCount)).toBe(20);
+
+			await helpers.scrollAndWaitItemsCountGreaterThan(page, 20, componentSelector);
+			expect(await component.evaluate((ctx) => ctx.$refs.container.childElementCount)).toBe(30);
 		});
 	});
 };

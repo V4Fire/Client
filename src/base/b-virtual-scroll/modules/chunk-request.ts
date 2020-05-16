@@ -80,6 +80,38 @@ export default class ChunkRequest {
 	}
 
 	/**
+	 * Initializes a request module
+	 */
+	async init(): Promise<void> {
+		const
+			{options, chunkSize, dataProvider} = this.component;
+
+		this.pendingData = options;
+
+		const initChunkRenderer = () => {
+			this.chunkRender.initItems(dataProvider ? this.pendingData.splice(0, chunkSize) : this.pendingData);
+		};
+
+		if (!dataProvider) {
+			this.onRequestsDone();
+		}
+
+		if (this.pendingData.length < chunkSize && dataProvider) {
+			if (!this.isDone) {
+				await this.try();
+
+			} else {
+				initChunkRenderer();
+			}
+
+		} else {
+			initChunkRenderer();
+		}
+
+		this.component.localState = 'ready';
+	}
+
+	/**
 	 * Resets the current state
 	 */
 	reset(): void {
@@ -89,6 +121,7 @@ export default class ChunkRequest {
 		this.lastLoadedData = [];
 		this.isDone = false;
 		this.isLastEmpty = false;
+		this.pendingData = [];
 	}
 
 	/**
@@ -107,7 +140,8 @@ export default class ChunkRequest {
 	 */
 	try(): Promise<void | RemoteData> {
 		const
-			{component, chunkRender} = this;
+			{component, chunkRender} = this,
+			{chunkSize} = component;
 
 		const additionParams = {
 			lastLoadedData: this.lastLoadedData.length === 0 ? component.options : this.lastLoadedData
@@ -118,6 +152,7 @@ export default class ChunkRequest {
 			shouldRequest = component.shouldMakeRequest(getRequestParams(this, chunkRender, additionParams));
 
 		if (this.isDone) {
+			this.onRequestsDone();
 			return resolved;
 		}
 
@@ -158,13 +193,8 @@ export default class ChunkRequest {
 					return this.try();
 				}
 
-				const
-					dataToRender = this.pendingData.slice(0, component.chunkSize);
-
-				this.pendingData.splice(0, component.chunkSize);
-
-				chunkRender.initItems(dataToRender);
-				chunkRender.render();
+				this.chunkRender.initItems(this.pendingData.splice(0, chunkSize));
+				this.chunkRender.render();
 
 			}).catch(stderr);
 	}
@@ -174,11 +204,11 @@ export default class ChunkRequest {
 	 * @param params
 	 */
 	shouldStopRequest(params: RequestMoreParams): boolean {
-		const {component, chunkRender} = this;
+		const {component} = this;
 		this.isDone = component.shouldStopRequest(params);
 
 		if (this.isDone) {
-			chunkRender.onRequestsDone();
+			this.onRequestsDone();
 		}
 
 		return this.isDone;
@@ -224,5 +254,30 @@ export default class ChunkRequest {
 				this.lastLoadedData = [];
 				return undefined;
 			});
+	}
+
+	/**
+	 * Handler: all requests are done
+	 */
+	protected onRequestsDone(): void {
+		const
+			{chunkSize} = this.component;
+
+		if (this.pendingData.length) {
+			this.chunkRender.initItems(this.pendingData.splice(0, chunkSize));
+			this.chunkRender.render();
+
+		} else {
+			this.onPendingDone();
+		}
+
+		this.chunkRender.setLoadersVisibility(false);
+	}
+
+	/**
+	 * Handler: data to render ended
+	 */
+	protected onPendingDone(): void {
+		this.chunkRender.setRefVisibility('done', true);
 	}
 }

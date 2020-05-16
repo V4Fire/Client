@@ -14,6 +14,17 @@ const
 const
 	s = JSON.stringify;
 
+const
+	baseAttrs = {
+		':theme': s('demo'),
+		':option': s('div'),
+		':optionProps': '({current}, i) => ({"data-index": current.i})',
+	},
+
+	baseContent = {
+		tombstone: '<div class="b-virtual-scroll__skeleton">Skeleton</div>'
+	};
+
 /**
  * Set of test cases
  */
@@ -23,12 +34,13 @@ const presets = {
 	 */
 	demo: [{
 		attrs: {
-			':theme': s('demo'),
-			':option': s('div'),
+			...baseAttrs,
 			':dataProvider': s('demo.Pagination')
 		},
 
-		content: {}
+		content: {
+			...baseContent
+		}
 	}],
 
 	/**
@@ -36,12 +48,13 @@ const presets = {
 	 */
 	render: [{
 		attrs: {
-			':theme': s('demo'),
-			':option': s('div'),
+			...baseAttrs,
 			':dataProvider': s('demo.Pagination')
 		},
 
-		content: {}
+		content: {
+			...baseContent
+		}
 	}],
 
 	/**
@@ -49,12 +62,15 @@ const presets = {
 	 */
 	renderTruncated: [{
 		attrs: {
-			':theme': s('demo'),
-			':option': s('div'),
+			...baseAttrs,
 			':dataProvider': s('demo.Pagination'),
-			':chunkSize': s(6),
-			':optionProps': '({current}, i) => ({"data-index": current.i})',
-			':dbConverter': '({data}) => ({data: data.splice(0, 12)})'
+			':chunkSize': '10',
+			':dbConverter': '({data}) => ({data: data.splice(0, 4)})',
+			':request': '{get: {chunkSize: 8, total: 32, id: "render-truncated-virtual"}}'
+		},
+
+		content: {
+			...baseContent
 		}
 	}],
 
@@ -63,10 +79,12 @@ const presets = {
 	 */
 	renderOptions: [{
 		attrs: {
-			':theme': s('demo'),
-			':option': s('div'),
-			':options': s(Array.from(Array(100), () => 'test')),
-			':request': '{get: {chunkSize: 10}}'
+			...baseAttrs,
+			':options': s(Array.from(Array(97), (v, i) => ({i})))
+		},
+
+		content: {
+			...baseContent
 		}
 	}]
 }

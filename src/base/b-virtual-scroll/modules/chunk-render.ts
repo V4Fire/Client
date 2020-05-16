@@ -15,7 +15,7 @@ import ChunkRequest from 'base/b-virtual-scroll/modules/chunk-request';
 
 import { InitOptions } from 'core/component/directives/in-view/interface';
 import { InViewAdapter, inViewFactory } from 'core/component/directives/in-view';
-import { RenderItem, UnsafeScrollRender } from 'base/b-virtual-scroll/modules/interface';
+import { RenderItem, UnsafeChunkRender } from 'base/b-virtual-scroll/modules/interface';
 
 export const
 	$$ = symbolGenerator();
@@ -56,9 +56,14 @@ export default class ChunkRender {
 	/**
 	 * API to unsafe invoke of internal properties of the component
 	 */
-	get unsafe(): UnsafeScrollRender & this {
+	get unsafe(): UnsafeChunkRender & this {
 		return <any>this;
 	}
+
+	/**
+	 * Display states of refs
+	 */
+	protected refState: Dictionary<string> = {};
 
 	/**
 	 * Async group
@@ -124,12 +129,10 @@ export default class ChunkRender {
 		this.component = component.unsafe;
 
 		this.component.meta.hooks.mounted.push({fn: () => {
-			this.setLoadersVisibility(true);
 			this.initEventHandlers();
 
 			if (!this.component.dataProvider) {
-				this.initItems(this.component.options);
-				this.component.localState = 'ready';
+				this.chunkRequest.init();
 			}
 		}});
 	}
@@ -142,6 +145,7 @@ export default class ChunkRender {
 		this.lastRenderRange = [0, 0];
 		this.chunk = 0;
 		this.items = [];
+		this.refState = {};
 
 		this.chunkRequest.reset();
 		this.async.clearAll({group: new RegExp(this.asyncGroup)});
@@ -222,7 +226,13 @@ export default class ChunkRender {
 			return;
 		}
 
-		refEl.style.display = show ? '' : 'none';
+		const state = show ? '' : 'none';
+
+		if (state === this.refState[ref]) {
+			return;
+		}
+
+		refEl.style.display = state;
 	}
 
 	/**
@@ -342,14 +352,6 @@ export default class ChunkRender {
 
 		this.chunk++;
 		this.render();
-	}
-
-	/**
-	 * Handler: all requests are done
-	 */
-	protected onRequestsDone(): void {
-		this.setLoadersVisibility(false);
-		this.setRefVisibility('done', true);
 	}
 
 	/**

@@ -21,6 +21,7 @@ import iData, {
 	system,
 	wait,
 	p,
+	field,
 
 	CheckDBEquality,
 	InitLoadOptions,
@@ -56,7 +57,7 @@ export default class bVirtualScroll extends iData implements iItems {
 	readonly optionsProp?: iItems['optionsProp'] = [];
 
 	/** @see [[iItems.prototype.items]] */
-	@system((o) => o.sync.link())
+	@field((o) => o.sync.link())
 	options!: unknown[];
 
 	/** @see [[iItems.prototype.item]] */
@@ -271,15 +272,7 @@ export default class bVirtualScroll extends iData implements iItems {
 			this.options = [];
 		}
 
-		if (this.options.length < this.chunkSize) {
-			this.chunkRequest.pendingData = this.options;
-			this.chunkRequest.try().then(() => this.localState = 'ready');
-
-			return;
-		}
-
-		this.chunkRender.initItems(this.options);
-		this.localState = 'ready';
+		this.chunkRequest.init();
 	}
 
 	/** @see [[iItems.getItemKey]] */

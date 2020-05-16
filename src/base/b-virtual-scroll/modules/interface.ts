@@ -123,8 +123,8 @@ export interface Unsafe<T extends iBlock = bVirtualScroll> extends SuperUnsafe<T
 	localState: bVirtualScroll['localState'];
 }
 
-export interface UnsafeScrollRender {
-	onRequestsDone: ChunkRender['onRequestsDone'];
+export interface UnsafeChunkRender {
+	onRequestsDone: ChunkRequest['onRequestsDone'];
 	asyncGroup: ChunkRender['asyncGroup'];
 }
 
