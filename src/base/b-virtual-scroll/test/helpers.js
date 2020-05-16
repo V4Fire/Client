@@ -30,6 +30,6 @@ module.exports.scrollAndWaitItemsCountGreaterThan = async function (page, count,
  * @param {number} count
  * @param {string} componentSelector
  */
-module.exports.waitItemsCountGreaterThan = async function (page, count, componentSelector) {
-	await page.waitForFunction(`document.querySelector('${componentSelector}__container').childElementCount > ${count}`);
+module.exports.waitItemsCountGreaterThan = async function (page, count, componentSelector, op = '>') {
+	await page.waitForFunction(`document.querySelector('${componentSelector}__container').childElementCount ${op} ${count}`);
 }

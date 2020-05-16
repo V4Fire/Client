@@ -52,7 +52,9 @@ const presets = {
 			':theme': s('demo'),
 			':option': s('div'),
 			':dataProvider': s('demo.Pagination'),
-			':dbConverter': '({data}) => ({data: data.splice(0, 5)})'
+			':chunkSize': s(6),
+			':optionProps': '({current}, i) => ({"data-index": current.i})',
+			':dbConverter': '({data}) => ({data: data.splice(0, 12)})'
 		}
 	}],
 
@@ -63,7 +65,8 @@ const presets = {
 		attrs: {
 			':theme': s('demo'),
 			':option': s('div'),
-			':options': s(Array.from(Array(100), () => 'test'))
+			':options': s(Array.from(Array(100), () => 'test')),
+			':request': '{get: {chunkSize: 10}}'
 		}
 	}]
 }
