@@ -11,7 +11,7 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## (2020-05-15)
+## (2020-05-16)
 
 #### :boom: Breaking Change
 
@@ -20,6 +20,10 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### :rocket: New Feature
 
 * Added support to watch route query
+
+#### :bug: Bug Fix
+
+* Fixed `external`, `alias` and `redirect` logic
 
 #### :house: Internal
 

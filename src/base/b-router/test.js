@@ -147,6 +147,8 @@ module.exports = async (page) => {
 			name: 'second',
 			page: 'second',
 			path: '/second',
+			default: false,
+			external: false,
 			content: 'Second page',
 			params: []
 		};

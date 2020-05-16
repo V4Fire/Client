@@ -53,6 +53,20 @@ module.exports = [
 				redirectToRedirect: {
 					path: '/redirect-redirect',
 					redirect: 'secondRedirect'
+				},
+
+				external: {
+					path: 'https://www.google.com'
+				},
+
+				externalRedirect: {
+					path: '/external-redirect',
+					redirect: 'https://www.google.com'
+				},
+
+				localExternal: {
+					path: '/',
+					external: true
 				}
 			})
 		},

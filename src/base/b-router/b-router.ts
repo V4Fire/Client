@@ -404,7 +404,7 @@ export default class bRouter extends iData {
 			}
 
 			// The alias should preserve an original route name and path
-			if (resolvedRoute.alias) {
+			if (meta.alias) {
 				if (alias == null) {
 					alias = resolvedRoute;
 				}
