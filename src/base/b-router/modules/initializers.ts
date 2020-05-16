@@ -12,7 +12,7 @@ import path, { Key, RegExpOptions } from 'path-to-regexp';
 import { concatUrls } from 'core/url';
 
 import bRouter from 'base/b-router';
-import { defaultRoutes } from 'base/b-router/const';
+import { defaultRoutes, isExternal } from 'base/b-router/const';
 import { StaticRoutes, RouteBlueprints } from 'base/b-router/interface';
 
 /**
@@ -44,7 +44,6 @@ export function initRoutes(component: bRouter): RouteBlueprints {
 
 				compiledRoutes[name] = {
 					name,
-					default: Boolean(defaultRoutes[name]),
 
 					pattern,
 					rgxp: pattern != null ? path(pattern, pathParams) : undefined,
@@ -53,16 +52,19 @@ export function initRoutes(component: bRouter): RouteBlueprints {
 						return pathParams;
 					},
 
+					/** @deprecated */
 					get page(): string {
 						return this.name;
 					},
 
+					/** @deprecated */
 					get index(): boolean {
-						return this.default;
+						return this.meta.default;
 					},
 
 					meta: {
 						name,
+						external: isExternal.test(pattern),
 
 						/** @deprecated */
 						page: name,
@@ -82,10 +84,6 @@ export function initRoutes(component: bRouter): RouteBlueprints {
 
 				compiledRoutes[name] = {
 					name,
-					default: Boolean(route.default || route.index || defaultRoutes[name]),
-
-					alias: route.alias,
-					redirect: route.redirect,
 
 					pattern,
 					rgxp: pattern != null ? path(pattern, pathParams, <RegExpOptions>route.pathOpts) : undefined,
@@ -94,17 +92,25 @@ export function initRoutes(component: bRouter): RouteBlueprints {
 						return pathParams;
 					},
 
+					/** @deprecated */
 					get page(): string {
 						return this.name;
 					},
 
+					/** @deprecated */
 					get index(): boolean {
-						return this.default;
+						return this.meta.default;
 					},
 
 					meta: {
 						...route,
+
 						name,
+						default: Boolean(route.default || route.index || defaultRoutes[name]),
+
+						external: route.external ??
+							isExternal.test(pattern) ||
+							isExternal.test(route.redirect),
 
 						/** @deprecated */
 						page: name,

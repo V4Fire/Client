@@ -43,13 +43,8 @@ export interface RouteBlueprint<
 	page: string;
 
 	/**
-	 * If true, this route can be used as default
-	 */
-	default: boolean;
-
-	/**
 	 * @deprecated
-	 * @see [[CompiledRoute.default]]
+	 * @see [[CompiledRoute.meta.default]]
 	 */
 	index: boolean;
 

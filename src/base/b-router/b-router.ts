@@ -21,7 +21,7 @@ import { concatUrls, toQueryString } from 'core/url';
 import engine, { Router, Route, HistoryClearFilter } from 'core/router';
 import iData, { component, prop, system, hook } from 'super/i-data/i-data';
 
-import { qsClearFixRgxp, externalLinkRgxp } from 'base/b-router/const';
+import { qsClearFixRgxp, isExternal } from 'base/b-router/const';
 import { initRoutes } from 'base/b-router/modules/initializers';
 
 import {
@@ -322,7 +322,8 @@ export default class bRouter extends iData {
 
 		let
 			resolvedRef = ref,
-			refIsNormalized = true;
+			refIsNormalized = true,
+			externalRedirect = false;
 
 		while (true) {
 			// Reference to a route is passed as ID
@@ -330,7 +331,15 @@ export default class bRouter extends iData {
 				resolvedById = true;
 				resolvedRoute = routes[resolvedRef];
 
-				if (!resolvedRoute || resolvedRoute && !resolvedRoute.redirect && !resolvedRoute.alias) {
+				const
+					meta = resolvedRoute?.meta;
+
+				if (!meta || !meta.redirect && !meta.alias) {
+					break;
+				}
+
+				if (meta.external) {
+					externalRedirect = true;
 					break;
 				}
 
@@ -380,9 +389,17 @@ export default class bRouter extends iData {
 				}
 			}
 
+			const
+				meta = resolvedRoute?.meta;
+
 			// If we haven't found a route that matches to the provided ref or the founded route doesn't redirect or refer
 			// to another route, we can exit from the search loop, otherwise, we need to resolve the redirect/alias
-			if (!resolvedRoute || !resolvedRoute.redirect && !resolvedRoute.alias) {
+			if (!meta || !meta.redirect && !meta.alias) {
+				break;
+			}
+
+			if (meta.external) {
+				externalRedirect = true;
 				break;
 			}
 
@@ -392,20 +409,10 @@ export default class bRouter extends iData {
 					alias = resolvedRoute;
 				}
 
-				resolvedRef = resolvedRoute.alias;
+				resolvedRef = meta.alias;
 
 			} else {
-				resolvedRef = ref = resolvedRoute.redirect;
-			}
-
-			const
-				{external} = resolvedRoute.meta;
-
-			// If the resolved route is marked as external or looks like external,
-			// i.e., it refers to another domain
-			if (external || external !== false && externalLinkRgxp.test(resolvedRef)) {
-				resolvedRoute.meta.external = true;
-				break;
+				resolvedRef = ref = meta.redirect;
 			}
 
 			// Continue of resolving
@@ -419,7 +426,7 @@ export default class bRouter extends iData {
 				const
 					el = routes[routeKeys[i]];
 
-				if (el && el.default) {
+				if (el?.meta.default) {
 					resolvedRoute = el;
 					break;
 				}
@@ -463,8 +470,8 @@ export default class bRouter extends iData {
 					}
 				}
 
-				if (resolvedRoute.meta.external) {
-					return path.compile(resolvedRef)(p);
+				if (externalRedirect) {
+					return path.compile(resolvedRoute.meta.redirect || ref)(p);
 				}
 
 				return path.compile(resolvedRoute.pattern || ref)(p);

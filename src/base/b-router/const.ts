@@ -25,4 +25,4 @@ export const defaultRoutes = Object.createDict({
 
 export const
 	qsClearFixRgxp = /[#?]\s*$/,
-	externalLinkRgxp = /^(?:\w+:)?\/\/(?:[^\s]*)+$/;
+	isExternal = /^(?:\w+:)?\/\/(?:[^\s]*)+$/;
