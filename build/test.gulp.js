@@ -105,9 +105,18 @@ module.exports = function (gulp = require('gulp')) {
 				context = await browser.newContext(),
 				page = await context.newPage();
 
-			await page.goto(`localhost:${args['--port']}/${args['--page']}.html`);
-			const testEnv = getTestEnv(browserType);
-			await test(page, {browserType, componentDir, tmpDir});
+			const testURL = `localhost:${args['--port']}/${args['--page']}.html`;
+			await page.goto(testURL);
+
+			const
+				testEnv = getTestEnv(browserType);
+
+			await test(page, {
+				browserType,
+				componentDir,
+				tmpDir,
+				testURL
+			});
 
 			const
 				close = () => browser.close();
