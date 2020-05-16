@@ -37,6 +37,60 @@ module.exports = async (page) => {
 			})).toBe('Index page');
 		});
 
+		it('transition to an alias', async () => {
+			expect(await root.evaluate(async (ctx) => {
+				await ctx.router.push('/second/alias');
+				return ctx.route.meta.content;
+			})).toBe('Second page');
+
+			expect(await root.evaluate(async ({route}) => route.name)).toBe('secondAlias');
+		});
+
+		it('transition to an alias with redirect', async () => {
+			expect(await root.evaluate(async (ctx) => {
+				await ctx.router.push('/second/alias-redirect');
+				return ctx.route.meta.content;
+			})).toBe('Index page');
+
+			expect(await root.evaluate(async ({route}) => route.name)).toBe('aliasToRedirect');
+		});
+
+		it('transition to chained aliases', async () => {
+			expect(await root.evaluate(async (ctx) => {
+				await ctx.router.push('/alias-to-alias');
+				return ctx.route.meta.content;
+			})).toBe('Second page');
+
+			expect(await root.evaluate(async ({route}) => route.name)).toBe('aliasToAlias');
+		});
+
+		it('transition with redirect', async () => {
+			expect(await root.evaluate(async (ctx) => {
+				await ctx.router.push('/second/redirect');
+				return ctx.route.meta.content;
+			})).toBe('Second page');
+
+			expect(await root.evaluate(async ({route}) => route.name)).toBe('second');
+		});
+
+		it('transition with redirect and alias', async () => {
+			expect(await root.evaluate(async (ctx) => {
+				await ctx.router.push('/redirect-alias');
+				return ctx.route.meta.content;
+			})).toBe('Second page');
+
+			expect(await root.evaluate(async ({route}) => route.name)).toBe('secondAlias');
+		});
+
+		it('transition with chained redirect', async () => {
+			expect(await root.evaluate(async (ctx) => {
+				await ctx.router.push('/redirect-redirect');
+				return ctx.route.meta.content;
+			})).toBe('Second page');
+
+			expect(await root.evaluate(async ({route}) => route.name)).toBe('second');
+		});
+
 		it('moving back and forward from one page to another', async () => {
 			expect(await root.evaluate(async (ctx) => {
 				await ctx.router.push('index');

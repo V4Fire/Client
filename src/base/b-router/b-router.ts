@@ -386,7 +386,7 @@ export default class bRouter extends iData {
 				break;
 			}
 
-			// The alias should preserve an original route name
+			// The alias should preserve an original route name and path
 			if (resolvedRoute.alias) {
 				if (alias == null) {
 					alias = resolvedRoute;
@@ -396,10 +396,6 @@ export default class bRouter extends iData {
 
 			} else {
 				resolvedRef = ref = resolvedRoute.redirect;
-
-				if (alias == null) {
-					alias = false;
-				}
 			}
 
 			const
@@ -431,7 +427,12 @@ export default class bRouter extends iData {
 
 		// We have found a route by the provided ref, but it contains an alias
 		} else if (alias) {
-			resolvedRoute = {...resolvedRoute, pattern: alias.pattern};
+			resolvedRoute = {...resolvedRoute, ...Object.select(alias, [
+				'name',
+				'pattern',
+				'rgxp',
+				'pathParams'
+			])};
 		}
 
 		if (!resolvedRoute) {
