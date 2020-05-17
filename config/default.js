@@ -299,7 +299,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		const
 			runtime = this.runtime(),
 			es = this.es(),
-			demo = Boolean(this.build.components.length);
+			demo = Boolean(this.build.components && this.build.components.length);
 
 		return {
 			stylus: {
