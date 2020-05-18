@@ -49,6 +49,11 @@ export default class ScrollRequest {
 	isLastEmpty: boolean = false;
 
 	/**
+	 * Last loaded chunk of data that did not go through processing `dbConverter`
+	 */
+	rawLastLoadedData: unknown;
+
+	/**
 	 * Component instance
 	 */
 	readonly component: bVirtualScroll['unsafe'];
@@ -229,6 +234,7 @@ export default class ScrollRequest {
 		return component.async.request(component.getData(component, params), {label: $$.request})
 			.then((data) => {
 				component.removeMod('progress', true);
+				this.rawLastLoadedData = data;
 
 				if (!data) {
 					this.lastLoadedData = [];
