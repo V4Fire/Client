@@ -40,7 +40,7 @@ export interface OptionEl<T extends unknown = unknown> {
 	next: CanUndef<T>;
 }
 
-export interface RequestMoreParams<T extends unknown = unknown> {
+export interface RequestMoreParams<T extends unknown = unknown, V extends unknown = unknown> {
 	/**
 	 * Number of the last loaded page
 	 */
@@ -79,7 +79,7 @@ export interface RequestMoreParams<T extends unknown = unknown> {
 	/**
 	 * Last loaded chunk of data that did not go through processing `dbConverter`
 	 */
-	rawLastLoadedData: unknown;
+	rawLastLoadedData: V;
 }
 
 export interface RemoteData {
