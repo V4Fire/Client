@@ -75,6 +75,11 @@ export interface RequestMoreParams<T extends unknown = unknown> {
 	 * Last loaded data chunk
 	 */
 	lastLoadedData: Array<T>;
+
+	/**
+	 * Last loaded chunk of data that did not go through processing `dbConverter`
+	 */
+	rawLastLoadedData: unknown;
 }
 
 export interface RemoteData {

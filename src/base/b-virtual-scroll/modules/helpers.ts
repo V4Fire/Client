@@ -37,7 +37,8 @@ export function getRequestParams(
 		lastLoadedData: lastLoadedData || [],
 		isLastEmpty: false,
 		pendingData,
-		itemsTillBottom: 0
+		itemsTillBottom: 0,
+		rawLastLoadedData: undefined
 	};
 
 	const params = chunkRequestCtx && chunkRenderCtx ? {
@@ -47,7 +48,8 @@ export function getRequestParams(
 		pendingData,
 		isLastEmpty: chunkRequestCtx.isLastEmpty,
 		itemsTillBottom: chunkRenderCtx.items.length - chunkRenderCtx.lastIntersectsItem,
-		total: component && component.total
+		total: component && component.total,
+		rawLastLoadedData: chunkRequestCtx.rawLastLoadedData
 	} : base;
 
 	const merged = {

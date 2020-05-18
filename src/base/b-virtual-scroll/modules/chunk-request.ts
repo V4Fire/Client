@@ -49,6 +49,11 @@ export default class ChunkRequest {
 	isLastEmpty: boolean = false;
 
 	/**
+	 * Last loaded chunk of data that did not go through processing `dbConverter`
+	 */
+	rawLastLoadedData: unknown;
+
+	/**
 	 * Component instance
 	 */
 	readonly component: bVirtualScroll['unsafe'];
@@ -86,7 +91,7 @@ export default class ChunkRequest {
 		const
 			{options, chunkSize, dataProvider} = this.component;
 
-		this.pendingData = options;
+		this.pendingData = [...options];
 
 		const initChunkRenderer = () => {
 			this.chunkRender.initItems(dataProvider ? this.pendingData.splice(0, chunkSize) : this.pendingData);
@@ -141,14 +146,20 @@ export default class ChunkRequest {
 	try(): Promise<void | RemoteData> {
 		const
 			{component, chunkRender} = this,
-			{chunkSize} = component;
+			{chunkSize} = component,
+			resolved = Promise.resolve();
 
 		const additionParams = {
 			lastLoadedData: this.lastLoadedData.length === 0 ? component.options : this.lastLoadedData
 		};
 
+		if (this.pendingData.length >= chunkSize) {
+			this.chunkRender.initItems(this.pendingData.splice(0, chunkSize));
+			this.chunkRender.render();
+			return resolved;
+		}
+
 		const
-			resolved = Promise.resolve(),
 			shouldRequest = component.shouldMakeRequest(getRequestParams(this, chunkRender, additionParams));
 
 		if (this.isDone) {
@@ -229,6 +240,7 @@ export default class ChunkRequest {
 		return component.async.request(component.getData(component, params), {label: $$.request})
 			.then((data) => {
 				component.removeMod('progress', true);
+				this.rawLastLoadedData = data;
 
 				if (!data) {
 					this.lastLoadedData = [];
