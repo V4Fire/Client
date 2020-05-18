@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-beta.272 (2020-05-19)
+
+#### :bug: Bug Fix
+
+* [Fixed rendering of truncated data in `b-virtual-scroll`](https://github.com/V4Fire/Client/issues/231)
+
 ## v3.0.0-beta.271 (2020-04-27)
 
 #### :boom: Breaking Change
