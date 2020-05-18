@@ -76,6 +76,11 @@ export default class ScrollRender {
 	protected readonly InView: InViewAdapter = inViewFactory();
 
 	/**
+	 * Display states of refs
+	 */
+	protected refState: Dictionary<string> = {};
+
+	/**
 	 * API for dynamic component rendering
 	 */
 	protected get componentRender(): ComponentRender {
@@ -126,6 +131,10 @@ export default class ScrollRender {
 		this.component.meta.hooks.mounted.push({fn: () => {
 			this.setLoadersVisibility(true);
 			this.initEventHandlers();
+
+			if (!this.component.dataProvider) {
+				this.scrollRequest.init();
+			}
 		}});
 	}
 
@@ -137,6 +146,9 @@ export default class ScrollRender {
 		this.lastRenderRange = [0, 0];
 		this.chunk = 0;
 		this.items = [];
+		this.refState = {};
+
+		this.scrollRequest.reset();
 
 		this.scrollRequest.reset();
 		this.async.clearAll({group: new RegExp(this.asyncGroup)});
@@ -161,6 +173,10 @@ export default class ScrollRender {
 	 * Renders component content
 	 */
 	render(): void {
+		if (this.component.localState !== 'ready') {
+			return;
+		}
+
 		const
 			{component, chunk, items} = this;
 
@@ -308,17 +324,17 @@ export default class ScrollRender {
 	 */
 	protected onNodeIntersect(index: number): void {
 		const
-			{component, items} = this,
+			{component, items, lastIntersectsItem} = this,
 			{chunkSize, renderGap} = component,
 			currentRender = (this.chunk - 1) * chunkSize;
+
+		this.lastIntersectsItem = index;
 
 		if (index + renderGap + chunkSize >= items.length) {
 			this.scrollRequest.try();
 		}
 
-		if (index > this.lastIntersectsItem) {
-			this.lastIntersectsItem = index;
-
+		if (index >= lastIntersectsItem) {
 			if (currentRender - index <= renderGap) {
 				this.render();
 			}
@@ -329,7 +345,6 @@ export default class ScrollRender {
 	 * Handler: component ready
 	 */
 	protected onReady(): void {
-		this.initItems(this.component.options);
 		this.setLoadersVisibility(false);
 
 		this.chunk++;

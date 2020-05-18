@@ -114,6 +114,7 @@ export interface Unsafe<T extends iBlock = bVirtualScroll> extends SuperUnsafe<T
 	convertDataToDB: bVirtualScroll['convertDataToDB'];
 	dp: bVirtualScroll['dp'];
 	total: bVirtualScroll['total'];
+	localState: bVirtualScroll['localState'];
 }
 
 export interface UnsafeScrollRender {
@@ -130,3 +131,14 @@ export interface DataToRender {
 	itemParams: OptionEl;
 	index: number;
 }
+
+/**
+ * Local state of component
+ *
+ *   *) `error` - indicates that loading error appear
+ *
+ *   *) `loading` - indicates that component now loading first chunk of data
+ *
+ *   *) `ready` - indicates that component now is ready to render data
+ */
+export type LocalState = 'loading' | 'ready' | 'error';

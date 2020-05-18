@@ -61,6 +61,11 @@ export default class ScrollRequest {
 	}
 
 	/**
+	 * Contains data that pending to be rendered
+	 */
+	protected pendingData: unknown[] = [];
+
+	/**
 	 * API for scroll rendering
 	 */
 	protected get scrollRender(): ScrollRender['unsafe'] {
@@ -84,6 +89,7 @@ export default class ScrollRequest {
 		this.lastLoadedData = [];
 		this.isDone = false;
 		this.isLastEmpty = false;
+		this.pendingData = [];
 	}
 
 	/**
@@ -98,11 +104,44 @@ export default class ScrollRequest {
 	}
 
 	/**
+	 * Initializes a request module
+	 */
+	async init(): Promise<void> {
+		const
+			{options, chunkSize, dataProvider} = this.component;
+
+		this.pendingData = options;
+
+		const initChunkRenderer = () => {
+			this.scrollRender.initItems(dataProvider ? this.pendingData.splice(0, chunkSize) : this.pendingData);
+		};
+
+		if (!dataProvider) {
+			this.onRequestsDone();
+		}
+
+		if (this.pendingData.length < chunkSize && dataProvider) {
+			if (!this.isDone) {
+				await this.try();
+
+			} else {
+				initChunkRenderer();
+			}
+
+		} else {
+			initChunkRenderer();
+		}
+
+		this.component.localState = 'ready';
+	}
+
+	/**
 	 * Tries to request additional data
 	 */
-	try(): Promise<void> {
+	try(): Promise<void | RemoteData> {
 		const
-			{component, scrollRender} = this;
+			{component, scrollRender} = this,
+			{chunkSize} = component;
 
 		const additionParams = {
 			lastLoadedData: this.lastLoadedData.length === 0 ? component.options : this.lastLoadedData
@@ -113,6 +152,7 @@ export default class ScrollRequest {
 			shouldRequest = component.shouldMakeRequest(getRequestParams(this, scrollRender, additionParams));
 
 		if (this.isDone) {
+			this.onRequestsDone();
 			return resolved;
 		}
 
@@ -145,10 +185,16 @@ export default class ScrollRequest {
 				this.isLastEmpty = false;
 				this.data = this.data.concat(data);
 				this.lastLoadedData = data;
+				this.pendingData = this.pendingData.concat(data);
 
 				this.shouldStopRequest(getRequestParams(this, scrollRender));
-				scrollRender.initItems(data);
-				scrollRender.render();
+
+				if (this.pendingData.length < component.chunkSize) {
+					return this.try();
+				}
+
+				this.scrollRender.initItems(this.pendingData.splice(0, chunkSize));
+				this.scrollRender.render();
 
 			}).catch(stderr);
 	}
@@ -208,5 +254,30 @@ export default class ScrollRequest {
 				this.lastLoadedData = [];
 				return undefined;
 			});
+	}
+
+	/**
+	 * Handler: all requests are done
+	 */
+	protected onRequestsDone(): void {
+		const
+			{chunkSize} = this.component;
+
+		if (this.pendingData.length) {
+			this.scrollRender.initItems(this.pendingData.splice(0, chunkSize));
+			this.scrollRender.render();
+
+		} else {
+			this.onPendingDone();
+		}
+
+		this.scrollRender.setLoadersVisibility(false);
+	}
+
+	/**
+	 * Handler: data to render ended
+	 */
+	protected onPendingDone(): void {
+		this.scrollRender.setRefVisibility('done', true);
 	}
 }
