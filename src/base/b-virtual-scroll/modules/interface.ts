@@ -123,7 +123,6 @@ export interface Unsafe<T extends iBlock = bVirtualScroll> extends SuperUnsafe<T
 }
 
 export interface UnsafeScrollRender {
-	onRequestsDone: ScrollRender['onRequestsDone'];
 	asyncGroup: ScrollRender['asyncGroup'];
 }
 

@@ -115,7 +115,7 @@ export default class ScrollRequest {
 		const
 			{options, chunkSize, dataProvider} = this.component;
 
-		this.pendingData = options;
+		this.pendingData = [...options];
 
 		const initChunkRenderer = () => {
 			this.scrollRender.initItems(dataProvider ? this.pendingData.splice(0, chunkSize) : this.pendingData);
@@ -151,6 +151,12 @@ export default class ScrollRequest {
 		const additionParams = {
 			lastLoadedData: this.lastLoadedData.length === 0 ? component.options : this.lastLoadedData
 		};
+
+		if (this.pendingData.length >= chunkSize) {
+			this.scrollRender.initItems(this.pendingData.splice(0, chunkSize));
+			this.scrollRender.render();
+			return Promise.resolve();
+		}
 
 		const
 			resolved = Promise.resolve(),
@@ -209,11 +215,11 @@ export default class ScrollRequest {
 	 * @param params
 	 */
 	shouldStopRequest(params: RequestMoreParams): boolean {
-		const {component, scrollRender} = this;
+		const {component} = this;
 		this.isDone = component.shouldStopRequest(params);
 
 		if (this.isDone) {
-			scrollRender.onRequestsDone();
+			this.onRequestsDone();
 		}
 
 		return this.isDone;
@@ -274,16 +280,9 @@ export default class ScrollRequest {
 			this.scrollRender.render();
 
 		} else {
-			this.onPendingDone();
+			this.scrollRender.setRefVisibility('done', true);
 		}
 
 		this.scrollRender.setLoadersVisibility(false);
-	}
-
-	/**
-	 * Handler: data to render ended
-	 */
-	protected onPendingDone(): void {
-		this.scrollRender.setRefVisibility('done', true);
 	}
 }

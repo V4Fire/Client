@@ -352,14 +352,6 @@ export default class ScrollRender {
 	}
 
 	/**
-	 * Handler: all requests are done
-	 */
-	protected onRequestsDone(): void {
-		this.setLoadersVisibility(false);
-		this.setRefVisibility('done', true);
-	}
-
-	/**
 	 * Handler: error occurred
 	 */
 	protected onError(): void {
