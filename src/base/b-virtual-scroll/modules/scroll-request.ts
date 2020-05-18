@@ -95,6 +95,7 @@ export default class ScrollRequest {
 		this.isDone = false;
 		this.isLastEmpty = false;
 		this.pendingData = [];
+		this.rawLastLoadedData = undefined;
 	}
 
 	/**
