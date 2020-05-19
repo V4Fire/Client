@@ -149,10 +149,11 @@ export default class ScrollRequest {
 	/**
 	 * Tries to request additional data
 	 */
-	try(): Promise<void | RemoteData> {
+	try(): Promise<CanUndef<RemoteData>> {
 		const
 			{component, scrollRender} = this,
-			{chunkSize} = component;
+			{chunkSize} = component,
+			resolved = Promise.resolve(undefined);
 
 		const additionParams = {
 			lastLoadedChunk: {
@@ -164,11 +165,10 @@ export default class ScrollRequest {
 		if (this.pendingData.length >= chunkSize) {
 			this.scrollRender.initItems(this.pendingData.splice(0, chunkSize));
 			this.scrollRender.render();
-			return Promise.resolve();
+			return resolved;
 		}
 
 		const
-			resolved = Promise.resolve(),
 			shouldRequest = component.shouldMakeRequest(getRequestParams(this, scrollRender, additionParams));
 
 		if (this.isDone) {
@@ -216,7 +216,7 @@ export default class ScrollRequest {
 				this.scrollRender.initItems(this.pendingData.splice(0, chunkSize));
 				this.scrollRender.render();
 
-			}).catch(stderr);
+			}).catch((err) => (stderr(err), undefined));
 	}
 
 	/**

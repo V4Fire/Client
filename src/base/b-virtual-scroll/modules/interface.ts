@@ -40,8 +40,8 @@ export interface OptionEl<T extends unknown = unknown> {
 }
 
 /**
- * @typeParam DataItem - data item to render
- * @typeParam RawData - raw provider data without any processing
+ * @typeParam DATA_ITEM - data item to render
+ * @typeParam RAW_DATA - raw provider data without any processing
  */
 export interface RequestMoreParams<DATA_ITEM extends unknown = unknown, RAW_DATA extends unknown = unknown> {
 	/**
@@ -147,10 +147,13 @@ export interface UnsafeScrollRequest {
 
 /**
  * Last loaded data chunk
+ *
+ * @typeParam DATA - data to render
+ * @typeParam RAW_DATA - raw provider data without any processing
  */
-export interface LastLoadedChunk<NormalizedData extends unknown = unknown[], RawData extends unknown = unknown> {
-	normalized: NormalizedData;
-	raw: RawData;
+export interface LastLoadedChunk<DATA extends unknown = unknown[], RAW_DATA extends unknown = unknown> {
+	normalized: DATA;
+	raw: RAW_DATA;
 }
 
 export interface DataToRender {
