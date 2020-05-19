@@ -40,7 +40,7 @@ export interface OptionEl<T extends unknown = unknown> {
 }
 
 /**
- * @typeParam DataItem - data item for render
+ * @typeParam DataItem - data item to render
  * @typeParam RawData - raw loaded data from the server
  */
 export interface RequestMoreParams<DATA_ITEM extends unknown = unknown, RAW_DATA extends unknown = unknown> {
