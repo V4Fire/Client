@@ -41,8 +41,8 @@ export interface OptionEl<T extends unknown = unknown> {
 }
 
 /**
- * @typeParam DataItem - data item for render
- * @typeParam RawData - raw loaded data from the server
+ * @typeParam DATA_ITEM - data item to render
+ * @typeParam RAW_DATA - raw provider data without any processing
  */
 export interface RequestMoreParams<DATA_ITEM extends unknown = unknown, RAW_DATA extends unknown = unknown> {
 	/**
@@ -92,7 +92,7 @@ export interface RequestMoreParams<DATA_ITEM extends unknown = unknown, RAW_DATA
 
 	/**
 	 * @deprecated
-	 * @see RequestMoreParams.lastLoadedChunk
+	 * @see [[RequestMoreParams.lastLoadedChunk]]
 	 */
 	lastLoadedData: Array<DATA_ITEM>;
 }
@@ -154,10 +154,13 @@ export interface UnsafeChunkRequest {
 
 /**
  * Last loaded data chunk
+ *
+ * @typeParam DATA - data to render
+ * @typeParam RAW_DATA - raw provider data without any processing
  */
-export interface LastLoadedChunk<NormalizedData extends unknown = unknown[], RawData extends unknown = unknown> {
-	normalized: NormalizedData;
-	raw: RawData;
+export interface LastLoadedChunk<DATA extends unknown = unknown[], RAW_DATA extends unknown = unknown> {
+	normalized: DATA;
+	raw: RAW_DATA;
 }
 
 export interface DataToRender {
@@ -170,9 +173,7 @@ export interface DataToRender {
  * The local state of a component
  *
  *   *) `error` - indicates the component loading error appear
- *
  *   *) `init` - indicates the component now loading the first chunk of data
- *
  *   *) `ready` - indicates the component now is ready to render data
  */
 export type LocalState = 'init' | 'ready' | 'error';

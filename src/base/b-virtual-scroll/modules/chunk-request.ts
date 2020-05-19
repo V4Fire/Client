@@ -149,11 +149,11 @@ export default class ChunkRequest {
 	/**
 	 * Tries to request additional data
 	 */
-	try(): Promise<void | RemoteData> {
+	try(): Promise<CanUndef<RemoteData>> {
 		const
 			{component, chunkRender} = this,
 			{chunkSize} = component,
-			resolved = Promise.resolve();
+			resolved = Promise.resolve(undefined);
 
 		const additionParams = {
 			lastLoadedChunk: {
@@ -216,7 +216,7 @@ export default class ChunkRequest {
 				this.chunkRender.initItems(this.pendingData.splice(0, chunkSize));
 				this.chunkRender.render();
 
-			}).catch(stderr);
+			}).catch((err) => (stderr(err), undefined));
 	}
 
 	/**
