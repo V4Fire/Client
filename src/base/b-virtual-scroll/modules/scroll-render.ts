@@ -76,9 +76,13 @@ export default class ScrollRender {
 	protected readonly InView: InViewAdapter = inViewFactory();
 
 	/**
-	 * Display states of refs
+	 * The current display state that is set for ref
+	 *
+	 * ```
+	 * [refName]:[state]
+	 * ```
 	 */
-	protected refState: Dictionary<string> = {};
+	protected refState: Dictionary<'' | 'none'> = {};
 
 	/**
 	 * API for dynamic component rendering
@@ -242,7 +246,7 @@ export default class ScrollRender {
 	}
 
 	/**
-	 * Event handlers initialisation
+	 * Event handlers initialization
 	 */
 	protected initEventHandlers(): void {
 		this.component.localEvent.once('localReady', this.onReady.bind(this), {label: $$.reInit});

@@ -39,7 +39,11 @@ export interface OptionEl<T extends unknown = unknown> {
 	next: CanUndef<T>;
 }
 
-export interface RequestMoreParams<T extends unknown = unknown, V extends unknown = unknown> {
+/**
+ * @typeParam DataItem - render data
+ * @typeParam RawData - raw loaded data
+ */
+export interface RequestMoreParams<DataItem extends unknown = unknown, RawData extends unknown = unknown> {
 	/**
 	 * Number of the last loaded page
 	 */
@@ -58,7 +62,7 @@ export interface RequestMoreParams<T extends unknown = unknown, V extends unknow
 	/**
 	 * Items to render
 	 */
-	items: RenderItem<T>[];
+	items: RenderItem<DataItem>[];
 
 	/**
 	 * True if the last requested data response was empty
@@ -68,12 +72,23 @@ export interface RequestMoreParams<T extends unknown = unknown, V extends unknow
 	/**
 	 * Last loaded data chunk
 	 */
-	lastLoadedData: Array<T>;
+	lastLoadedChunk: {
+		/**
+		 * Normalized data (processed with `dbConverter`)
+		 */
+		normalized: Array<DataItem>;
+
+		/**
+		 * Raw data that was loaded from the server
+		 */
+		raw: RawData;
+	}
 
 	/**
-	 * Last loaded chunk of data that did not go through processing `dbConverter`
+	 * @deprecated
+	 * @see RequestMoreParams.lastLoadedChunk
 	 */
-	rawLastLoadedData: V;
+	lastLoadedData: Array<DataItem>;
 }
 
 export interface RemoteData {
@@ -130,6 +145,14 @@ export interface UnsafeScrollRequest {
 
 }
 
+/**
+ * Last loaded data chunk
+ */
+export interface LastLoadedChunk<NormalizedData extends unknown = unknown[], RawData extends unknown = unknown> {
+	normalized: NormalizedData;
+	raw: RawData;
+}
+
 export interface DataToRender {
 	itemAttrs: Dictionary;
 	itemParams: OptionEl;
@@ -137,11 +160,11 @@ export interface DataToRender {
 }
 
 /**
- * Local state of component
+ * The local state of the component
  *
  *   *) `error` - indicates that loading error appear
  *
- *   *) `loading` - indicates that component now loading first chunk of data
+ *   *) `loading` - indicates that component now loading the first chunk of data
  *
  *   *) `ready` - indicates that component now is ready to render data
  */

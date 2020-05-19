@@ -170,9 +170,9 @@ export default class bVirtualScroll extends iData implements iItems {
 
 	/**
 	 * @param state
-	 * @emits localLoading()
-	 * @emits localReady()
-	 * @emits localError()
+	 * @emits local:loading()
+	 * @emits local:ready()
+	 * @emits local:error()
 	 */
 	protected set localState(state: LocalState) {
 		this.localStateStore = state;

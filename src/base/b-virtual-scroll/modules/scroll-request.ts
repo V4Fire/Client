@@ -12,7 +12,7 @@ import bVirtualScroll from 'base/b-virtual-scroll/b-virtual-scroll';
 import ScrollRender from 'base/b-virtual-scroll/modules/scroll-render';
 
 import { getRequestParams } from 'base/b-virtual-scroll/modules/helpers';
-import { RemoteData, RequestMoreParams, UnsafeScrollRequest } from 'base/b-virtual-scroll/modules/interface';
+import { RemoteData, RequestMoreParams, UnsafeScrollRequest, LastLoadedChunk } from 'base/b-virtual-scroll/modules/interface';
 
 export const $$ =
 	symbolGenerator();
@@ -34,9 +34,19 @@ export default class ScrollRequest {
 	data: unknown[] = [];
 
 	/**
-	 * Last loaded data
+	 * Last uploaded chunk of data that was processed with `dbConverter`
+	 * @deprecated
+	 * @see [[ScrollRequest.prototype.lastLoadedChunk]]
 	 */
 	lastLoadedData: unknown[] = [];
+
+	/**
+	 * Last loaded data chunk
+	 */
+	lastLoadedChunk: LastLoadedChunk = {
+		normalized: [],
+		raw: undefined
+	};
 
 	/**
 	 * True if all requests for additional data was requested
@@ -91,7 +101,7 @@ export default class ScrollRequest {
 		this.total = 0;
 		this.page = 1;
 		this.data = [];
-		this.lastLoadedData = [];
+		this.lastLoadedChunk = {raw: undefined, normalized: []};
 		this.isDone = false;
 		this.isLastEmpty = false;
 		this.pendingData = [];
@@ -150,7 +160,10 @@ export default class ScrollRequest {
 			{chunkSize} = component;
 
 		const additionParams = {
-			lastLoadedData: this.lastLoadedData.length === 0 ? component.options : this.lastLoadedData
+			lastLoadedChunk: {
+				...this.lastLoadedChunk,
+				normalized: this.lastLoadedChunk.normalized.length === 0 ? component.options : this.lastLoadedChunk.normalized
+			}
 		};
 
 		if (this.pendingData.length >= chunkSize) {
@@ -196,7 +209,7 @@ export default class ScrollRequest {
 				this.page++;
 				this.isLastEmpty = false;
 				this.data = this.data.concat(data);
-				this.lastLoadedData = data;
+				this.lastLoadedChunk.normalized = data;
 				this.pendingData = this.pendingData.concat(data);
 
 				this.shouldStopRequest(getRequestParams(this, scrollRender));
@@ -241,10 +254,10 @@ export default class ScrollRequest {
 		return component.async.request(component.getData(component, params), {label: $$.request})
 			.then((data) => {
 				component.removeMod('progress', true);
-				this.rawLastLoadedData = data;
+				this.lastLoadedChunk.raw = data;
 
 				if (!data) {
-					this.lastLoadedData = [];
+					this.lastLoadedChunk.normalized = [];
 					return;
 				}
 
@@ -252,7 +265,7 @@ export default class ScrollRequest {
 					converted = component.convertDataToDB<CanUndef<RemoteData>>(data);
 
 				if (!converted?.data?.length) {
-					this.lastLoadedData = [];
+					this.lastLoadedChunk.normalized = [];
 					return;
 				}
 
@@ -262,9 +275,11 @@ export default class ScrollRequest {
 			.catch((err) => {
 				component.removeMod('progress', true);
 				this.scrollRender.setRefVisibility('retry', true);
-
 				stderr(err);
-				this.lastLoadedData = [];
+
+				this.lastLoadedChunk.raw = [];
+				this.lastLoadedChunk.normalized = [];
+
 				return undefined;
 			});
 	}
