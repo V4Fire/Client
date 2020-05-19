@@ -160,7 +160,7 @@ export interface DataToRender {
 }
 
 /**
- * The local state of the component
+ * The local state of a component
  *
  *   *) `error` - indicates that loading error appear
  *
