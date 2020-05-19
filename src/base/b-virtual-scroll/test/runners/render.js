@@ -6,8 +6,6 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-// @ts-check
-
 const
 	path = require('upath'),
 	pzlr = require('@pzlr/build-core');

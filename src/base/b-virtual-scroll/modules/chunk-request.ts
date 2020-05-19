@@ -291,16 +291,9 @@ export default class ChunkRequest {
 			this.chunkRender.render();
 
 		} else {
-			this.onPendingDone();
+			this.chunkRender.setRefVisibility('done', true);
 		}
 
 		this.chunkRender.setLoadersVisibility(false);
-	}
-
-	/**
-	 * Handler: data to render ended
-	 */
-	protected onPendingDone(): void {
-		this.chunkRender.setRefVisibility('done', true);
 	}
 }
