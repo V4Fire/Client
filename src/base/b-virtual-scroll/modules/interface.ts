@@ -164,8 +164,8 @@ export interface DataToRender {
  *
  *   *) `error` - indicates that loading error appear
  *
- *   *) `loading` - indicates that component now loading the first chunk of data
+ *   *) `init` - indicates that component now loading the first chunk of data
  *
  *   *) `ready` - indicates that component now is ready to render data
  */
-export type LocalState = 'loading' | 'ready' | 'error';
+export type LocalState = 'init' | 'ready' | 'error';

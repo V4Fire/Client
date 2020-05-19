@@ -170,19 +170,19 @@ export default class bVirtualScroll extends iData implements iItems {
 
 	/**
 	 * @param state
-	 * @emits local:loading()
-	 * @emits local:ready()
-	 * @emits local:error()
+	 * @emits localEvent:localState.loading()
+	 * @emits localEvent:localState.ready()
+	 * @emits localEvent:localState.error()
 	 */
 	protected set localState(state: LocalState) {
 		this.localStateStore = state;
-		this.localEvent.emit(`local${state.camelize(true)}`);
+		this.localEvent.emit(`localState.${state}`);
 	}
 
 	/**
 	 * Local component state store
 	 */
-	protected localStateStore: LocalState = 'loading';
+	protected localStateStore: LocalState = 'init';
 
 	/**
 	 * API for scroll rendering
