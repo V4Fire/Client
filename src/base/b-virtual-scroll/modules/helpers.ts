@@ -53,7 +53,7 @@ export function getRequestParams(
 
 		lastLoadedData: lastLoadedData || [],
 		lastLoadedChunk: {
-			raw: scrollRequestCtx.rawLastLoadedData,
+			raw: scrollRequestCtx.lastLoadedChunk.raw,
 			normalized: lastLoadedData || []
 		}
 

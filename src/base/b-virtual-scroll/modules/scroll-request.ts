@@ -59,11 +59,6 @@ export default class ScrollRequest {
 	isLastEmpty: boolean = false;
 
 	/**
-	 * Last loaded chunk of data that did not go through processing `dbConverter`
-	 */
-	rawLastLoadedData: unknown;
-
-	/**
 	 * Component instance
 	 */
 	readonly component: bVirtualScroll['unsafe'];
@@ -105,7 +100,6 @@ export default class ScrollRequest {
 		this.isDone = false;
 		this.isLastEmpty = false;
 		this.pendingData = [];
-		this.rawLastLoadedData = undefined;
 	}
 
 	/**
