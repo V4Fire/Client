@@ -40,10 +40,10 @@ export interface OptionEl<T extends unknown = unknown> {
 }
 
 /**
- * @typeParam DATA_ITEM - data item to render
- * @typeParam RAW_DATA - raw provider data without any processing
+ * @typeParam ITEM - data item to render
+ * @typeParam RAW - raw provider data without any processing
  */
-export interface RequestMoreParams<DATA_ITEM extends unknown = unknown, RAW_DATA extends unknown = unknown> {
+export interface RequestMoreParams<ITEM extends unknown = unknown, RAW extends unknown = unknown> {
 	/**
 	 * Number of the last loaded page
 	 */
@@ -62,7 +62,7 @@ export interface RequestMoreParams<DATA_ITEM extends unknown = unknown, RAW_DATA
 	/**
 	 * Items to render
 	 */
-	items: RenderItem<DATA_ITEM>[];
+	items: RenderItem<ITEM>[];
 
 	/**
 	 * True if the last requested data response was empty
@@ -76,19 +76,19 @@ export interface RequestMoreParams<DATA_ITEM extends unknown = unknown, RAW_DATA
 		/**
 		 * Normalized data (processed with `dbConverter`)
 		 */
-		normalized: Array<DATA_ITEM>;
+		normalized: Array<ITEM>;
 
 		/**
 		 * Raw data that was loaded from the server
 		 */
-		raw: RAW_DATA;
+		raw: RAW;
 	}
 
 	/**
 	 * @deprecated
 	 * @see [[RequestMoreParams.lastLoadedChunk]]
 	 */
-	lastLoadedData: Array<DATA_ITEM>;
+	lastLoadedData: Array<ITEM>;
 }
 
 export interface RemoteData {
@@ -149,11 +149,11 @@ export interface UnsafeScrollRequest {
  * Last loaded data chunk
  *
  * @typeParam DATA - data to render
- * @typeParam RAW_DATA - raw provider data without any processing
+ * @typeParam RAW - raw provider data without any processing
  */
-export interface LastLoadedChunk<DATA extends unknown = unknown[], RAW_DATA extends unknown = unknown> {
+export interface LastLoadedChunk<DATA extends unknown = unknown[], RAW extends unknown = unknown> {
 	normalized: DATA;
-	raw: RAW_DATA;
+	raw: RAW;
 }
 
 export interface DataToRender {
