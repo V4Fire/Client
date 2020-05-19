@@ -39,7 +39,11 @@ export interface OptionEl<T extends unknown = unknown> {
 	next: CanUndef<T>;
 }
 
-export interface RequestMoreParams<T extends unknown = unknown> {
+/**
+ * @typeParam ITEM - data item to render
+ * @typeParam RAW - raw provider data without any processing
+ */
+export interface RequestMoreParams<ITEM extends unknown = unknown, RAW extends unknown = unknown> {
 	/**
 	 * Number of the last loaded page
 	 */
@@ -58,7 +62,7 @@ export interface RequestMoreParams<T extends unknown = unknown> {
 	/**
 	 * Items to render
 	 */
-	items: RenderItem<T>[];
+	items: RenderItem<ITEM>[];
 
 	/**
 	 * True if the last requested data response was empty
@@ -68,7 +72,23 @@ export interface RequestMoreParams<T extends unknown = unknown> {
 	/**
 	 * Last loaded data chunk
 	 */
-	lastLoadedData: Array<T>;
+	lastLoadedChunk: {
+		/**
+		 * Normalized data (processed with `dbConverter`)
+		 */
+		normalized: Array<ITEM>;
+
+		/**
+		 * Raw provider data without any processing
+		 */
+		raw: RAW;
+	}
+
+	/**
+	 * @deprecated
+	 * @see [[RequestMoreParams.lastLoadedChunk]]
+	 */
+	lastLoadedData: Array<ITEM>;
 }
 
 export interface RemoteData {
@@ -114,10 +134,10 @@ export interface Unsafe<T extends iBlock = bVirtualScroll> extends SuperUnsafe<T
 	convertDataToDB: bVirtualScroll['convertDataToDB'];
 	dp: bVirtualScroll['dp'];
 	total: bVirtualScroll['total'];
+	localState: bVirtualScroll['localState'];
 }
 
 export interface UnsafeScrollRender {
-	onRequestsDone: ScrollRender['onRequestsDone'];
 	asyncGroup: ScrollRender['asyncGroup'];
 }
 
@@ -125,8 +145,33 @@ export interface UnsafeScrollRequest {
 
 }
 
+/**
+ * Last loaded data chunk
+ *
+ * @typeParam DATA - data to render
+ * @typeParam RAW - raw provider data without any processing
+ */
+export interface LastLoadedChunk<DATA extends unknown = unknown[], RAW extends unknown = unknown> {
+	normalized: DATA;
+	raw: RAW;
+}
+
 export interface DataToRender {
 	itemAttrs: Dictionary;
 	itemParams: OptionEl;
 	index: number;
 }
+
+/**
+ * The local state of a component
+ *
+ * * `error` - indicates the component loading error appear
+ * * `init` - indicates the component now loading the first chunk of data
+ * * `ready` - indicates the component now is ready to render data
+ */
+export type LocalState = 'init' | 'ready' | 'error';
+
+/**
+ * Display state of the ref
+ */
+export type RefDisplayState = '' | 'none';

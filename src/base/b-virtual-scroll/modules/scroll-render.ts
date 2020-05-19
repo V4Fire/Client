@@ -15,7 +15,7 @@ import ScrollRequest from 'base/b-virtual-scroll/modules/scroll-request';
 
 import { InitOptions } from 'core/component/directives/in-view/interface';
 import { InViewAdapter, inViewFactory } from 'core/component/directives/in-view';
-import { RenderItem, UnsafeScrollRender } from 'base/b-virtual-scroll/modules/interface';
+import { RenderItem, UnsafeScrollRender, RefDisplayState } from 'base/b-virtual-scroll/modules/interface';
 
 export const
 	$$ = symbolGenerator();
@@ -76,6 +76,15 @@ export default class ScrollRender {
 	protected readonly InView: InViewAdapter = inViewFactory();
 
 	/**
+	 * The cache of the current display (`style.display`) state of nodes
+	 *
+	 * ```
+	 * [refName]:[displayValue]
+	 * ```
+	 */
+	protected refState: Dictionary<RefDisplayState> = {};
+
+	/**
 	 * API for dynamic component rendering
 	 */
 	protected get componentRender(): ComponentRender {
@@ -126,6 +135,10 @@ export default class ScrollRender {
 		this.component.meta.hooks.mounted.push({fn: () => {
 			this.setLoadersVisibility(true);
 			this.initEventHandlers();
+
+			if (!this.component.dataProvider) {
+				this.scrollRequest.init();
+			}
 		}});
 	}
 
@@ -137,6 +150,9 @@ export default class ScrollRender {
 		this.lastRenderRange = [0, 0];
 		this.chunk = 0;
 		this.items = [];
+		this.refState = {};
+
+		this.scrollRequest.reset();
 
 		this.scrollRequest.reset();
 		this.async.clearAll({group: new RegExp(this.asyncGroup)});
@@ -161,6 +177,10 @@ export default class ScrollRender {
 	 * Renders component content
 	 */
 	render(): void {
+		if (this.component.localState !== 'ready') {
+			return;
+		}
+
 		const
 			{component, chunk, items} = this;
 
@@ -226,11 +246,11 @@ export default class ScrollRender {
 	}
 
 	/**
-	 * Event handlers initialisation
+	 * Event handlers initialization
 	 */
 	protected initEventHandlers(): void {
-		this.component.localEvent.once('localReady', this.onReady.bind(this), {label: $$.reInit});
-		this.component.localEvent.once('localError', this.onError.bind(this), {label: $$.reInit});
+		this.component.localEvent.once('localState.ready', this.onReady.bind(this), {label: $$.reInit});
+		this.component.localEvent.once('localState.error', this.onError.bind(this), {label: $$.reInit});
 	}
 
 	/**
@@ -308,17 +328,17 @@ export default class ScrollRender {
 	 */
 	protected onNodeIntersect(index: number): void {
 		const
-			{component, items} = this,
+			{component, items, lastIntersectsItem} = this,
 			{chunkSize, renderGap} = component,
 			currentRender = (this.chunk - 1) * chunkSize;
+
+		this.lastIntersectsItem = index;
 
 		if (index + renderGap + chunkSize >= items.length) {
 			this.scrollRequest.try();
 		}
 
-		if (index > this.lastIntersectsItem) {
-			this.lastIntersectsItem = index;
-
+		if (index >= lastIntersectsItem) {
 			if (currentRender - index <= renderGap) {
 				this.render();
 			}
@@ -329,19 +349,10 @@ export default class ScrollRender {
 	 * Handler: component ready
 	 */
 	protected onReady(): void {
-		this.initItems(this.component.options);
 		this.setLoadersVisibility(false);
 
 		this.chunk++;
 		this.render();
-	}
-
-	/**
-	 * Handler: all requests are done
-	 */
-	protected onRequestsDone(): void {
-		this.setLoadersVisibility(false);
-		this.setRefVisibility('done', true);
 	}
 
 	/**

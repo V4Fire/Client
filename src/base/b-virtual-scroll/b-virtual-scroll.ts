@@ -32,7 +32,7 @@ import ScrollRender from 'base/b-virtual-scroll/modules/scroll-render';
 import ScrollRequest from 'base/b-virtual-scroll/modules/scroll-request';
 
 import { getRequestParams } from 'base/b-virtual-scroll/modules/helpers';
-import { RequestFn, RemoteData, RequestQueryFn, GetData, Unsafe } from 'base/b-virtual-scroll/modules/interface';
+import { RequestFn, RemoteData, RequestQueryFn, GetData, Unsafe, LocalState } from 'base/b-virtual-scroll/modules/interface';
 
 export { RequestFn, RemoteData, RequestQueryFn, GetData };
 export * from 'super/i-data/i-data';
@@ -161,6 +161,30 @@ export default class bVirtualScroll extends iData implements iItems {
 	}
 
 	/**
+	 * Local component state
+	 */
+	@p({cache: false})
+	protected get localState(): LocalState {
+		return this.localStateStore;
+	}
+
+	/**
+	 * @param state
+	 * @emits localEvent:localState.loading()
+	 * @emits localEvent:localState.ready()
+	 * @emits localEvent:localState.error()
+	 */
+	protected set localState(state: LocalState) {
+		this.localStateStore = state;
+		this.localEvent.emit(`localState.${state}`);
+	}
+
+	/**
+	 * Local component state store
+	 */
+	protected localStateStore: LocalState = 'init';
+
+	/**
 	 * API for scroll rendering
 	 */
 	@system((o: bVirtualScroll) => new ScrollRender(o))
@@ -239,7 +263,7 @@ export default class bVirtualScroll extends iData implements iItems {
 			this.options = [];
 		}
 
-		this.localEvent.emit('localReady');
+		this.scrollRequest.init();
 	}
 
 	/** @see [[iItems.getItemKey]] */
@@ -262,6 +286,6 @@ export default class bVirtualScroll extends iData implements iItems {
 	protected onRequestError(err: Error | RequestError<unknown>, retry: RetryRequestFn): void {
 		super.onRequestError(err, retry);
 
-		this.localEvent.emit('localError');
+		this.localState = 'error';
 	}
 }

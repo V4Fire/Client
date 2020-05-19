@@ -12,7 +12,7 @@ import bVirtualScroll from 'base/b-virtual-scroll/b-virtual-scroll';
 import ScrollRender from 'base/b-virtual-scroll/modules/scroll-render';
 
 import { getRequestParams } from 'base/b-virtual-scroll/modules/helpers';
-import { RemoteData, RequestMoreParams, UnsafeScrollRequest } from 'base/b-virtual-scroll/modules/interface';
+import { RemoteData, RequestMoreParams, UnsafeScrollRequest, LastLoadedChunk } from 'base/b-virtual-scroll/modules/interface';
 
 export const $$ =
 	symbolGenerator();
@@ -34,9 +34,20 @@ export default class ScrollRequest {
 	data: unknown[] = [];
 
 	/**
-	 * Last loaded data
+	 * Last uploaded chunk of data that was processed with `dbConverter`
+	 *
+	 * @deprecated
+	 * @see [[ScrollRequest.prototype.lastLoadedChunk]]
 	 */
 	lastLoadedData: unknown[] = [];
+
+	/**
+	 * Last loaded data chunk
+	 */
+	lastLoadedChunk: LastLoadedChunk = {
+		normalized: [],
+		raw: undefined
+	};
 
 	/**
 	 * True if all requests for additional data was requested
@@ -61,6 +72,11 @@ export default class ScrollRequest {
 	}
 
 	/**
+	 * Contains data that pending to be rendered
+	 */
+	protected pendingData: unknown[] = [];
+
+	/**
 	 * API for scroll rendering
 	 */
 	protected get scrollRender(): ScrollRender['unsafe'] {
@@ -81,9 +97,10 @@ export default class ScrollRequest {
 		this.total = 0;
 		this.page = 1;
 		this.data = [];
-		this.lastLoadedData = [];
+		this.lastLoadedChunk = {raw: undefined, normalized: []};
 		this.isDone = false;
 		this.isLastEmpty = false;
+		this.pendingData = [];
 	}
 
 	/**
@@ -98,21 +115,64 @@ export default class ScrollRequest {
 	}
 
 	/**
-	 * Tries to request additional data
+	 * Initializes the request module
 	 */
-	try(): Promise<void> {
+	async init(): Promise<void> {
 		const
-			{component, scrollRender} = this;
+			{options, chunkSize, dataProvider} = this.component;
 
-		const additionParams = {
-			lastLoadedData: this.lastLoadedData.length === 0 ? component.options : this.lastLoadedData
+		this.pendingData = [...options];
+
+		const initChunkRenderer = () => {
+			this.scrollRender.initItems(dataProvider ? this.pendingData.splice(0, chunkSize) : this.pendingData);
 		};
 
+		if (!dataProvider) {
+			this.onRequestsDone();
+		}
+
+		if (this.pendingData.length < chunkSize && dataProvider) {
+			if (!this.isDone) {
+				await this.try();
+
+			} else {
+				initChunkRenderer();
+			}
+
+		} else {
+			initChunkRenderer();
+		}
+
+		this.component.localState = 'ready';
+	}
+
+	/**
+	 * Tries to request additional data
+	 */
+	try(): Promise<CanUndef<RemoteData>> {
 		const
-			resolved = Promise.resolve(),
+			{component, scrollRender} = this,
+			{chunkSize} = component,
+			resolved = Promise.resolve(undefined);
+
+		const additionParams = {
+			lastLoadedChunk: {
+				...this.lastLoadedChunk,
+				normalized: this.lastLoadedChunk.normalized.length === 0 ? component.options : this.lastLoadedChunk.normalized
+			}
+		};
+
+		if (this.pendingData.length >= chunkSize) {
+			this.scrollRender.initItems(this.pendingData.splice(0, chunkSize));
+			this.scrollRender.render();
+			return resolved;
+		}
+
+		const
 			shouldRequest = component.shouldMakeRequest(getRequestParams(this, scrollRender, additionParams));
 
 		if (this.isDone) {
+			this.onRequestsDone();
 			return resolved;
 		}
 
@@ -130,11 +190,10 @@ export default class ScrollRequest {
 
 		return this.load()
 			.then((v) => {
-				scrollRender.setLoadersVisibility(false);
-
 				if (!component.field.get('data.length', v)) {
 					this.isLastEmpty = true;
 					this.shouldStopRequest(getRequestParams(this, scrollRender, {lastLoadedData: []}));
+					scrollRender.setLoadersVisibility(false);
 					return;
 				}
 
@@ -144,13 +203,20 @@ export default class ScrollRequest {
 				this.page++;
 				this.isLastEmpty = false;
 				this.data = this.data.concat(data);
-				this.lastLoadedData = data;
+				this.lastLoadedChunk.normalized = data;
+				this.pendingData = this.pendingData.concat(data);
 
 				this.shouldStopRequest(getRequestParams(this, scrollRender));
-				scrollRender.initItems(data);
-				scrollRender.render();
 
-			}).catch(stderr);
+				if (this.pendingData.length < component.chunkSize) {
+					return this.try();
+				}
+
+				scrollRender.setLoadersVisibility(false);
+				this.scrollRender.initItems(this.pendingData.splice(0, chunkSize));
+				this.scrollRender.render();
+
+			}).catch((err) => (stderr(err), undefined));
 	}
 
 	/**
@@ -158,11 +224,11 @@ export default class ScrollRequest {
 	 * @param params
 	 */
 	shouldStopRequest(params: RequestMoreParams): boolean {
-		const {component, scrollRender} = this;
+		const {component} = this;
 		this.isDone = component.shouldStopRequest(params);
 
 		if (this.isDone) {
-			scrollRender.onRequestsDone();
+			this.onRequestsDone();
 		}
 
 		return this.isDone;
@@ -183,9 +249,10 @@ export default class ScrollRequest {
 		return component.async.request(component.getData(component, params), {label: $$.request})
 			.then((data) => {
 				component.removeMod('progress', true);
+				this.lastLoadedChunk.raw = data;
 
 				if (!data) {
-					this.lastLoadedData = [];
+					this.lastLoadedChunk.normalized = [];
 					return;
 				}
 
@@ -193,7 +260,7 @@ export default class ScrollRequest {
 					converted = component.convertDataToDB<CanUndef<RemoteData>>(data);
 
 				if (!converted?.data?.length) {
-					this.lastLoadedData = [];
+					this.lastLoadedChunk.normalized = [];
 					return;
 				}
 
@@ -203,10 +270,30 @@ export default class ScrollRequest {
 			.catch((err) => {
 				component.removeMod('progress', true);
 				this.scrollRender.setRefVisibility('retry', true);
-
 				stderr(err);
-				this.lastLoadedData = [];
+
+				this.lastLoadedChunk.raw = [];
+				this.lastLoadedChunk.normalized = [];
+
 				return undefined;
 			});
+	}
+
+	/**
+	 * Handler: all requests are done
+	 */
+	protected onRequestsDone(): void {
+		const
+			{chunkSize} = this.component;
+
+		if (this.pendingData.length) {
+			this.scrollRender.initItems(this.pendingData.splice(0, chunkSize));
+			this.scrollRender.render();
+
+		} else {
+			this.scrollRender.setRefVisibility('done', true);
+		}
+
+		this.scrollRender.setLoadersVisibility(false);
 	}
 }

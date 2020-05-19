@@ -26,25 +26,37 @@ export function getRequestParams(
 	const
 		component = scrollRenderCtx?.component || scrollRequestCtx?.component;
 
-	const
-		lastLoadedData = scrollRequestCtx?.lastLoadedData.length ? scrollRequestCtx.lastLoadedData : component?.options;
+	const lastLoadedData = scrollRequestCtx?.lastLoadedChunk.normalized.length ?
+		scrollRequestCtx.lastLoadedChunk.normalized :
+		component?.options;
 
 	const base: RequestMoreParams = {
 		currentPage: 0,
 		nextPage: 1,
 		items: [],
-		lastLoadedData: lastLoadedData || [],
 		isLastEmpty: false,
-		itemsTillBottom: 0
+		itemsTillBottom: 0,
+
+		lastLoadedData: lastLoadedData || [],
+		lastLoadedChunk: {
+			raw: undefined,
+			normalized: lastLoadedData || []
+		}
 	};
 
 	const params = scrollRequestCtx && scrollRenderCtx ? {
 		items: scrollRenderCtx.items,
 		currentPage: scrollRequestCtx.page,
-		lastLoadedData: lastLoadedData || [],
 		isLastEmpty: scrollRequestCtx.isLastEmpty,
 		itemsTillBottom: scrollRenderCtx.items.length - scrollRenderCtx.lastIntersectsItem,
-		total: component && component.total
+		total: component && component.total,
+
+		lastLoadedData: lastLoadedData || [],
+		lastLoadedChunk: {
+			raw: scrollRequestCtx.lastLoadedChunk.raw,
+			normalized: lastLoadedData || []
+		}
+
 	} : base;
 
 	const merged = {
