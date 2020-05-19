@@ -76,7 +76,7 @@ export default class ScrollRender {
 	protected readonly InView: InViewAdapter = inViewFactory();
 
 	/**
-	 * The current display state that is set for ref
+	 * The cache of the current display state of nodes
 	 *
 	 * ```
 	 * [refName]:[state]
