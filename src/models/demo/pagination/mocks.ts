@@ -7,15 +7,15 @@
  */
 
 import { MiddlewareParams, MockCustomResponse } from 'models/demo';
-import request from '@v4fire/core/src/core/request';
+import { RequestState, RequestQuery } from 'models/demo/pagination/interface';
 
 async function sleep(t: number): Promise<void> {
-	return new Promise((res, rej) => {
+	return new Promise((res) => {
 		setTimeout(res, t);
 	});
 }
 
-const requestStates: any = {
+const requestStates: Dictionary<RequestState> = {
 
 };
 
@@ -24,24 +24,26 @@ export default {
 		async response({opts}: MiddlewareParams, res: MockCustomResponse): Promise<any> {
 			await sleep(300);
 
-			opts.query = {
+			const query = <RequestQuery>{
 				chunkSize: 12,
-				id: Math.random(),
+				id: String(Math.random()),
 				...Object.isObject(opts.query) ? opts.query : {}
 			};
 
-			const s = requestStates[<string>opts.query.id] = requestStates[<string>opts.query.id] || {
+			const s = requestStates[query.id] = requestStates[query.id] || {
 				i: 0,
 				totalSended: 0,
-				...opts.query
+				...query
 			};
 
 			if (s.totalSended === s.total) {
-				return {data: []};
+				return {
+					data: []
+				};
 			}
 
 			const
-				dataToSend = Array.from(Array(opts.query.chunkSize), () => ({i: s.i++}));
+				dataToSend = Array.from(Array(query.chunkSize), () => ({i: s.i++}));
 
 			s.totalSended += dataToSend.length;
 
