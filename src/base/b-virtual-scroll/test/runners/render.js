@@ -16,7 +16,6 @@ const
 	componentDir = pzlr.resolve.blockSync('b-virtual-scroll'),
 	helpers = require(path.join(componentDir, 'test/helpers.js'));
 
-
 module.exports = async (page, {componentSelector, component}) => {
 	describe('b-virtual-scroll', () => {
 		it('renders data chunks to the page', async () => {

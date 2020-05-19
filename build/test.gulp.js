@@ -19,7 +19,7 @@ module.exports = function (gulp = require('gulp')) {
 	gulp.task('test:component:build', () => {
 		const
 			arg = require('arg'),
-			args = arg({'--name': String}, {permissive: true});
+			args = arg({'--name': String, '--suit': String}, {permissive: true});
 
 		if (!args['--name']) {
 			throw new ReferenceError('"--name" parameter is not specified');
@@ -28,7 +28,7 @@ module.exports = function (gulp = require('gulp')) {
 		const
 			extraArgs = args._.slice(1).join(' ');
 
-		return $.run(`npx webpack --public-path / --client-output ${args['--name']} --components ${args['--name']} ${extraArgs}`, {verbosity: 3})
+		return $.run(`npx webpack --public-path / --client-output ${args['--name']} --components ${args['--name']} --suit ${args['--suit']} ${extraArgs}`, {verbosity: 3})
 			.exec()
 			.on('error', console.error);
 	});

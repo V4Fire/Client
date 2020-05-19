@@ -14,7 +14,11 @@ const
 
 const
 	path = require('upath'),
+	camelize = require('camelize'),
 	o = require('uniconf/options').option;
+
+const
+	args = require('arg')({'--suit': String}, {permissive: true})
 
 module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	__proto__: config,
@@ -53,8 +57,19 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 					.split(',')
 					.flatMap((name) => {
 						try {
-							const dir = pzlr.resolve.blockSync(name);
-							return [].concat(require(path.join(dir, 'demo.js')) || []).map((p) => ({name, ...p}));
+							const
+								dir = pzlr.resolve.blockSync(name),
+								demo = require(path.join(dir, 'demo.js')),
+								suit = camelize(args['--suit'] === 'undefined' ? 'demo' : args['--suit']);
+
+							const
+								wrap = (d) => [].concat((d || []).map((p) => ({name, ...p})));
+
+							if (Object.isObject(demo)) {
+								return wrap(demo[suit]);
+							}
+
+							return wrap(demo);
 
 						} catch {}
 

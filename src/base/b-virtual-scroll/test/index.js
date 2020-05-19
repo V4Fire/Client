@@ -9,20 +9,14 @@
 const
 	path = require('upath'),
 	pzlr = require('@pzlr/build-core'),
-	dasherize = require('string-dasherize'),
-	args = require('arg')({'--runner': String, '--suit': String}, {permissive: true});
-
-let
-	runner = 'render';
-
-if (args['--runner'] || args['--suit']) {
-	runner = args['--runner'] || args['--suit'];
-}
+	dasherize = require('string-dasherize');
 
 const
-	componentDir = pzlr.resolve.blockSync('b-virtual-scroll');
+	args = require('arg')({'--runner': String}, {permissive: true}),
+	runner = args['--runner'] || 'render';
 
 const
+	componentDir = pzlr.resolve.blockSync('b-virtual-scroll'),
 	helpers = require(path.join(componentDir, 'test/helpers.js'));
 	test = require(path.join(componentDir, `test/runners/${dasherize(runner)}.js`));
 
