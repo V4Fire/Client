@@ -79,7 +79,7 @@ export interface RequestMoreParams<ITEM extends unknown = unknown, RAW extends u
 		normalized: Array<ITEM>;
 
 		/**
-		 * Raw data that was loaded from the server
+		 * Raw provider data without any processing
 		 */
 		raw: RAW;
 	}
