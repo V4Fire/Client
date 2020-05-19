@@ -15,7 +15,7 @@ import ScrollRequest from 'base/b-virtual-scroll/modules/scroll-request';
 
 import { InitOptions } from 'core/component/directives/in-view/interface';
 import { InViewAdapter, inViewFactory } from 'core/component/directives/in-view';
-import { RenderItem, UnsafeScrollRender } from 'base/b-virtual-scroll/modules/interface';
+import { RenderItem, UnsafeScrollRender, RefDisplayState } from 'base/b-virtual-scroll/modules/interface';
 
 export const
 	$$ = symbolGenerator();
@@ -82,7 +82,7 @@ export default class ScrollRender {
 	 * [refName]:[state]
 	 * ```
 	 */
-	protected refState: Dictionary<'' | 'none'> = {};
+	protected refState: Dictionary<RefDisplayState> = {};
 
 	/**
 	 * API for dynamic component rendering

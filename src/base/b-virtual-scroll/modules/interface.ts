@@ -40,10 +40,10 @@ export interface OptionEl<T extends unknown = unknown> {
 }
 
 /**
- * @typeParam DataItem - Data item for render
- * @typeParam RawData - Raw loaded data from the server
+ * @typeParam DataItem - data item for render
+ * @typeParam RawData - raw loaded data from the server
  */
-export interface RequestMoreParams<DataItem extends unknown = unknown, RawData extends unknown = unknown> {
+export interface RequestMoreParams<DATA_ITEM extends unknown = unknown, RAW_DATA extends unknown = unknown> {
 	/**
 	 * Number of the last loaded page
 	 */
@@ -62,7 +62,7 @@ export interface RequestMoreParams<DataItem extends unknown = unknown, RawData e
 	/**
 	 * Items to render
 	 */
-	items: RenderItem<DataItem>[];
+	items: RenderItem<DATA_ITEM>[];
 
 	/**
 	 * True if the last requested data response was empty
@@ -76,19 +76,19 @@ export interface RequestMoreParams<DataItem extends unknown = unknown, RawData e
 		/**
 		 * Normalized data (processed with `dbConverter`)
 		 */
-		normalized: Array<DataItem>;
+		normalized: Array<DATA_ITEM>;
 
 		/**
 		 * Raw data that was loaded from the server
 		 */
-		raw: RawData;
+		raw: RAW_DATA;
 	}
 
 	/**
 	 * @deprecated
 	 * @see RequestMoreParams.lastLoadedChunk
 	 */
-	lastLoadedData: Array<DataItem>;
+	lastLoadedData: Array<DATA_ITEM>;
 }
 
 export interface RemoteData {
@@ -162,10 +162,15 @@ export interface DataToRender {
 /**
  * The local state of a component
  *
- *   *) `error` - indicates that loading error appear
+ *   *) `error` - indicates the component loading error appear
  *
- *   *) `init` - indicates that component now loading the first chunk of data
+ *   *) `init` - indicates the component now loading the first chunk of data
  *
- *   *) `ready` - indicates that component now is ready to render data
+ *   *) `ready` - indicates the component now is ready to render data
  */
 export type LocalState = 'init' | 'ready' | 'error';
+
+/**
+ * Display state of the ref
+ */
+export type RefDisplayState = '' | 'none';

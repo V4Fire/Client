@@ -35,6 +35,7 @@ export default class ScrollRequest {
 
 	/**
 	 * Last uploaded chunk of data that was processed with `dbConverter`
+	 *
 	 * @deprecated
 	 * @see [[ScrollRequest.prototype.lastLoadedChunk]]
 	 */
@@ -114,7 +115,7 @@ export default class ScrollRequest {
 	}
 
 	/**
-	 * Initializes a request module
+	 * Initializes the request module
 	 */
 	async init(): Promise<void> {
 		const
@@ -189,11 +190,10 @@ export default class ScrollRequest {
 
 		return this.load()
 			.then((v) => {
-				scrollRender.setLoadersVisibility(false);
-
 				if (!component.field.get('data.length', v)) {
 					this.isLastEmpty = true;
 					this.shouldStopRequest(getRequestParams(this, scrollRender, {lastLoadedData: []}));
+					scrollRender.setLoadersVisibility(false);
 					return;
 				}
 
@@ -212,6 +212,7 @@ export default class ScrollRequest {
 					return this.try();
 				}
 
+				scrollRender.setLoadersVisibility(false);
 				this.scrollRender.initItems(this.pendingData.splice(0, chunkSize));
 				this.scrollRender.render();
 
