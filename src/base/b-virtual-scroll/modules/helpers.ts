@@ -24,32 +24,42 @@ export function getRequestParams(
 	merge?: Dictionary
 ): RequestMoreParams {
 	const
-		component = chunkRenderCtx?.component || chunkRequestCtx?.component;
+		component = chunkRenderCtx?.component || chunkRequestCtx?.component,
+		pendingData = chunkRequestCtx?.unsafe.pendingData || [];
 
-	const
-		pendingData = chunkRequestCtx?.unsafe.pendingData || [],
-		lastLoadedData = chunkRequestCtx?.lastLoadedData.length ? chunkRequestCtx.lastLoadedData : component?.options;
+	const lastLoadedData = chunkRequestCtx?.lastLoadedChunk.normalized.length ?
+		chunkRequestCtx.lastLoadedChunk.normalized :
+		component?.options;
 
 	const base: RequestMoreParams = {
 		currentPage: 0,
 		nextPage: 1,
 		items: [],
-		lastLoadedData: lastLoadedData || [],
 		isLastEmpty: false,
-		pendingData,
 		itemsTillBottom: 0,
-		rawLastLoadedData: undefined
+
+		pendingData,
+		lastLoadedData: lastLoadedData || [],
+		lastLoadedChunk: {
+			raw: undefined,
+			normalized: lastLoadedData || []
+		}
 	};
 
 	const params = chunkRequestCtx && chunkRenderCtx ? {
 		items: chunkRenderCtx.items,
 		currentPage: chunkRequestCtx.page,
-		lastLoadedData: lastLoadedData || [],
-		pendingData,
 		isLastEmpty: chunkRequestCtx.isLastEmpty,
 		itemsTillBottom: chunkRenderCtx.items.length - chunkRenderCtx.lastIntersectsItem,
 		total: component && component.total,
-		rawLastLoadedData: chunkRequestCtx.rawLastLoadedData
+
+		pendingData,
+		lastLoadedData: lastLoadedData || [],
+		lastLoadedChunk: {
+			raw: chunkRequestCtx.lastLoadedChunk.raw,
+			normalized: lastLoadedData || []
+		}
+
 	} : base;
 
 	const merged = {

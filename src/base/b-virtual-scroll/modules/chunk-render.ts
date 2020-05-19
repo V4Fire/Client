@@ -15,7 +15,7 @@ import ChunkRequest from 'base/b-virtual-scroll/modules/chunk-request';
 
 import { InitOptions } from 'core/component/directives/in-view/interface';
 import { InViewAdapter, inViewFactory } from 'core/component/directives/in-view';
-import { RenderItem, UnsafeChunkRender } from 'base/b-virtual-scroll/modules/interface';
+import { RenderItem, UnsafeChunkRender, RefDisplayState } from 'base/b-virtual-scroll/modules/interface';
 
 export const
 	$$ = symbolGenerator();
@@ -61,11 +61,6 @@ export default class ChunkRender {
 	}
 
 	/**
-	 * Display states of refs
-	 */
-	protected refState: Dictionary<string> = {};
-
-	/**
 	 * Async group
 	 */
 	protected readonly asyncGroup: string = 'scroll-render:';
@@ -79,6 +74,15 @@ export default class ChunkRender {
 	 * Local in-view instance
 	 */
 	protected readonly InView: InViewAdapter = inViewFactory();
+
+	/**
+	 * The cache of the current display (`style.display`) state of nodes
+	 *
+	 * ```
+	 * [refName]:[displayValue]
+	 * ```
+	 */
+	protected refState: Dictionary<RefDisplayState> = {};
 
 	/**
 	 * API for dynamic component rendering
@@ -248,8 +252,8 @@ export default class ChunkRender {
 	 * Event handlers initialization
 	 */
 	protected initEventHandlers(): void {
-		this.component.localEmitter.once('localReady', this.onReady.bind(this), {label: $$.reInit});
-		this.component.localEmitter.once('localError', this.onError.bind(this), {label: $$.reInit});
+		this.component.localEmitter.once('localState.ready', this.onReady.bind(this), {label: $$.reInit});
+		this.component.localEmitter.once('localState.error', this.onError.bind(this), {label: $$.reInit});
 	}
 
 	/**

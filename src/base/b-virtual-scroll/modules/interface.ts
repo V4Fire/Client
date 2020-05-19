@@ -40,7 +40,11 @@ export interface OptionEl<T extends unknown = unknown> {
 	next: CanUndef<T>;
 }
 
-export interface RequestMoreParams<T extends unknown = unknown, V extends unknown = unknown> {
+/**
+ * @typeParam DataItem - data item for render
+ * @typeParam RawData - raw loaded data from the server
+ */
+export interface RequestMoreParams<DATA_ITEM extends unknown = unknown, RAW_DATA extends unknown = unknown> {
 	/**
 	 * Number of the last loaded page
 	 */
@@ -59,7 +63,7 @@ export interface RequestMoreParams<T extends unknown = unknown, V extends unknow
 	/**
 	 * Items to render
 	 */
-	items: RenderItem<T>[];
+	items: RenderItem<DATA_ITEM>[];
 
 	/**
 	 * Data that pending to be rendered
@@ -74,12 +78,23 @@ export interface RequestMoreParams<T extends unknown = unknown, V extends unknow
 	/**
 	 * Last loaded data chunk
 	 */
-	lastLoadedData: Array<T>;
+	lastLoadedChunk: {
+		/**
+		 * Normalized data (processed with `dbConverter`)
+		 */
+		normalized: Array<DATA_ITEM>;
+
+		/**
+		 * Raw data that was loaded from the server
+		 */
+		raw: RAW_DATA;
+	}
 
 	/**
-	 * Last loaded chunk of data that did not go through processing `dbConverter`
+	 * @deprecated
+	 * @see RequestMoreParams.lastLoadedChunk
 	 */
-	rawLastLoadedData: V;
+	lastLoadedData: Array<DATA_ITEM>;
 }
 
 export interface RemoteData {
@@ -137,6 +152,14 @@ export interface UnsafeChunkRequest {
 	pendingData: ChunkRequest['pendingData'];
 }
 
+/**
+ * Last loaded data chunk
+ */
+export interface LastLoadedChunk<NormalizedData extends unknown = unknown[], RawData extends unknown = unknown> {
+	normalized: NormalizedData;
+	raw: RawData;
+}
+
 export interface DataToRender {
 	itemAttrs: Dictionary;
 	itemParams: OptionEl;
@@ -144,12 +167,17 @@ export interface DataToRender {
 }
 
 /**
- * Local state of component
+ * The local state of a component
  *
- *   *) `error` - indicates that loading error appear
+ *   *) `error` - indicates the component loading error appear
  *
- *   *) `loading` - indicates that component now loading first chunk of data
+ *   *) `init` - indicates the component now loading the first chunk of data
  *
- *   *) `ready` - indicates that component now is ready to render data
+ *   *) `ready` - indicates the component now is ready to render data
  */
-export type LocalState = 'loading' | 'ready' | 'error';
+export type LocalState = 'init' | 'ready' | 'error';
+
+/**
+ * Display state of the ref
+ */
+export type RefDisplayState = '' | 'none';

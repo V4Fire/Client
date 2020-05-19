@@ -12,7 +12,7 @@ import bVirtualScroll from 'base/b-virtual-scroll/b-virtual-scroll';
 import ChunkRender from 'base/b-virtual-scroll/modules/chunk-render';
 
 import { getRequestParams } from 'base/b-virtual-scroll/modules/helpers';
-import { RemoteData, RequestMoreParams, UnsafeChunkRequest } from 'base/b-virtual-scroll/modules/interface';
+import { RemoteData, RequestMoreParams, UnsafeChunkRequest, LastLoadedChunk } from 'base/b-virtual-scroll/modules/interface';
 
 export const $$ =
 	symbolGenerator();
@@ -34,9 +34,20 @@ export default class ChunkRequest {
 	data: unknown[] = [];
 
 	/**
-	 * Last loaded data
+	 * Last uploaded chunk of data that was processed with `dbConverter`
+	 *
+	 * @deprecated
+	 * @see [[ScrollRequest.prototype.lastLoadedChunk]]
 	 */
 	lastLoadedData: unknown[] = [];
+
+	/**
+	 * Last loaded data chunk
+	 */
+	lastLoadedChunk: LastLoadedChunk = {
+		normalized: [],
+		raw: undefined
+	};
 
 	/**
 	 * True if all requests for additional data was requested
@@ -47,11 +58,6 @@ export default class ChunkRequest {
 	 * True if the last request returned an empty array or undefined
 	 */
 	isLastEmpty: boolean = false;
-
-	/**
-	 * Last loaded chunk of data that did not go through processing `dbConverter`
-	 */
-	rawLastLoadedData: unknown;
 
 	/**
 	 * Component instance
@@ -85,7 +91,31 @@ export default class ChunkRequest {
 	}
 
 	/**
-	 * Initializes a request module
+	 * Resets the current state
+	 */
+	reset(): void {
+		this.total = 0;
+		this.page = 1;
+		this.data = [];
+		this.lastLoadedChunk = {raw: undefined, normalized: []};
+		this.isDone = false;
+		this.isLastEmpty = false;
+		this.pendingData = [];
+	}
+
+	/**
+	 * Reloads the last request
+	 */
+	reloadLast(): void {
+		this.isDone = false;
+		this.isLastEmpty = false;
+
+		this.chunkRender.setRefVisibility('retry', false);
+		this.try();
+	}
+
+	/**
+	 * Initializes the request module
 	 */
 	async init(): Promise<void> {
 		const
@@ -117,30 +147,6 @@ export default class ChunkRequest {
 	}
 
 	/**
-	 * Resets the current state
-	 */
-	reset(): void {
-		this.total = 0;
-		this.page = 1;
-		this.data = [];
-		this.lastLoadedData = [];
-		this.isDone = false;
-		this.isLastEmpty = false;
-		this.pendingData = [];
-	}
-
-	/**
-	 * Reloads the last request
-	 */
-	reloadLast(): void {
-		this.isDone = false;
-		this.isLastEmpty = false;
-
-		this.chunkRender.setRefVisibility('retry', false);
-		this.try();
-	}
-
-	/**
 	 * Tries to request additional data
 	 */
 	try(): Promise<void | RemoteData> {
@@ -150,7 +156,10 @@ export default class ChunkRequest {
 			resolved = Promise.resolve();
 
 		const additionParams = {
-			lastLoadedData: this.lastLoadedData.length === 0 ? component.options : this.lastLoadedData
+			lastLoadedChunk: {
+				...this.lastLoadedChunk,
+				normalized: this.lastLoadedChunk.normalized.length === 0 ? component.options : this.lastLoadedChunk.normalized
+			}
 		};
 
 		if (this.pendingData.length >= chunkSize) {
@@ -181,11 +190,10 @@ export default class ChunkRequest {
 
 		return this.load()
 			.then((v) => {
-				chunkRender.setLoadersVisibility(false);
-
 				if (!component.field.get('data.length', v)) {
 					this.isLastEmpty = true;
 					this.shouldStopRequest(getRequestParams(this, chunkRender, {lastLoadedData: []}));
+					chunkRender.setLoadersVisibility(false);
 					return;
 				}
 
@@ -195,7 +203,7 @@ export default class ChunkRequest {
 				this.page++;
 				this.isLastEmpty = false;
 				this.data = this.data.concat(data);
-				this.lastLoadedData = data;
+				this.lastLoadedChunk.normalized = data;
 				this.pendingData = this.pendingData.concat(data);
 
 				this.shouldStopRequest(getRequestParams(this, chunkRender));
@@ -204,6 +212,7 @@ export default class ChunkRequest {
 					return this.try();
 				}
 
+				chunkRender.setLoadersVisibility(false);
 				this.chunkRender.initItems(this.pendingData.splice(0, chunkSize));
 				this.chunkRender.render();
 
@@ -240,10 +249,10 @@ export default class ChunkRequest {
 		return component.async.request(component.getData(component, params), {label: $$.request})
 			.then((data) => {
 				component.removeMod('progress', true);
-				this.rawLastLoadedData = data;
+				this.lastLoadedChunk.raw = data;
 
 				if (!data) {
-					this.lastLoadedData = [];
+					this.lastLoadedChunk.normalized = [];
 					return;
 				}
 
@@ -251,7 +260,7 @@ export default class ChunkRequest {
 					converted = component.convertDataToDB<CanUndef<RemoteData>>(data);
 
 				if (!converted?.data?.length) {
-					this.lastLoadedData = [];
+					this.lastLoadedChunk.normalized = [];
 					return;
 				}
 
@@ -261,9 +270,11 @@ export default class ChunkRequest {
 			.catch((err) => {
 				component.removeMod('progress', true);
 				this.chunkRender.setRefVisibility('retry', true);
-
 				stderr(err);
-				this.lastLoadedData = [];
+
+				this.lastLoadedChunk.raw = [];
+				this.lastLoadedChunk.normalized = [];
+
 				return undefined;
 			});
 	}
