@@ -126,7 +126,7 @@ module.exports = function (gulp = require('gulp')) {
 		]);
 	});
 
-	gulp.task('static:webp', () => {
+	gulp.task('static:image:webp', () => {
 		function f(src) {
 			const
 				isArr = Array.isArray(src);
