@@ -79,7 +79,7 @@ export default class ScrollRender {
 	 * The cache of the current display (`style.display`) state of nodes
 	 *
 	 * ```
-	 * [refName]:[state]
+	 * [refName]:[displayValue]
 	 * ```
 	 */
 	protected refState: Dictionary<RefDisplayState> = {};
