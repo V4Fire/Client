@@ -41,7 +41,7 @@ export interface OptionEl<T extends unknown = unknown> {
 
 /**
  * @typeParam DataItem - data item to render
- * @typeParam RawData - raw data that was not processed with `dbConverter`
+ * @typeParam RawData - raw provider data without any processing
  */
 export interface RequestMoreParams<DATA_ITEM extends unknown = unknown, RAW_DATA extends unknown = unknown> {
 	/**
@@ -86,7 +86,7 @@ export interface RequestMoreParams<DATA_ITEM extends unknown = unknown, RAW_DATA
 
 	/**
 	 * @deprecated
-	 * @see RequestMoreParams.lastLoadedChunk
+	 * @see [[RequestMoreParams.lastLoadedChunk]]
 	 */
 	lastLoadedData: Array<DATA_ITEM>;
 }
@@ -163,9 +163,7 @@ export interface DataToRender {
  * The local state of a component
  *
  *   *) `error` - indicates the component loading error appear
- *
  *   *) `init` - indicates the component now loading the first chunk of data
- *
  *   *) `ready` - indicates the component now is ready to render data
  */
 export type LocalState = 'init' | 'ready' | 'error';
