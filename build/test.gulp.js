@@ -26,9 +26,10 @@ module.exports = function (gulp = require('gulp')) {
 		}
 
 		const
+			suitArg = args['--suit'] ? `--suit ${args['--suit']}` : '',
 			extraArgs = args._.slice(1).join(' ');
 
-		return $.run(`npx webpack --public-path / --client-output ${args['--name']} --components ${args['--name']} --suit ${args['--suit']} ${extraArgs}`, {verbosity: 3})
+		return $.run(`npx webpack --public-path / --client-output ${args['--name']} --components ${args['--name']} ${suitArg} ${extraArgs}`, {verbosity: 3})
 			.exec()
 			.on('error', console.error);
 	});
