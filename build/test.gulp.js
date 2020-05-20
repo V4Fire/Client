@@ -9,6 +9,7 @@
  */
 
 const
+	path = require('upath'),
 	{src} = require('config'),
 	{resolve} = require('@pzlr/build-core');
 
@@ -153,4 +154,25 @@ module.exports = function (gulp = require('gulp')) {
 	gulp.task('test:component',
 		gulp.series(['test:component:build', 'test:component:run'])
 	);
+
+	gulp.task('test:components', async (cb) => {
+		const
+			cwd = resolve.cwd,
+			cases = require(path.join(cwd, 'tests/cases.js'));
+
+		const run = (c) => new Promise((res) => {
+			$.run(`npx gulp test:component ${c}`, {verbosity: 3})
+				.exec('', res)
+				.on('error', console.error);
+		})
+
+		for (let i = 0; i < cases.length; i++) {
+			const
+				c = cases[i];
+
+			await run(c);
+		}
+
+		cb();
+	});
 };

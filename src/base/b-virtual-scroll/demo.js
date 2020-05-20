@@ -6,8 +6,6 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-// @ts-check
-
 const
 	s = JSON.stringify;
 
@@ -51,7 +49,7 @@ const suits = {
 	}],
 
 	/**
-	 * Set of parameters for render truncated data
+	 * Set of parameters for rendering truncated data
 	 */
 	renderTruncated: [{
 		attrs: {
@@ -68,7 +66,7 @@ const suits = {
 	}],
 
 	/**
-	 * Set of parameters for render static data
+	 * Set of parameters for rendering static data
 	 */
 	renderOptions: [{
 		attrs: {

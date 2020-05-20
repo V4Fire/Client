@@ -22,7 +22,7 @@ const
 
 module.exports = async (page, params) => {
 	await setup(page);
-	await test(page, {...(await helpers.getComponentProps(page)), ...params});
+	await test(page, {...(await helpers.getComponentProps(page, '.b-virtual-scroll')), ...params});
 }
 /**
  * Setups an environment
