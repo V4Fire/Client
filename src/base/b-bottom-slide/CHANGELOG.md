@@ -15,7 +15,7 @@ Changelog
 
 * Removed `padding-bottom` of the page element
 
-## v3.0.0-rc.14 (2020-04-28)
+## v3.0.0-rc.2 (2020-04-28)
 
 #### :bug: Bug Fix
 
