@@ -41,10 +41,10 @@ export interface OptionEl<T extends unknown = unknown> {
 }
 
 /**
- * @typeParam DATA_ITEM - data item to render
- * @typeParam RAW_DATA - raw provider data without any processing
+ * @typeParam ITEM - data item to render
+ * @typeParam RAW - raw provider data without any processing
  */
-export interface RequestMoreParams<DATA_ITEM extends unknown = unknown, RAW_DATA extends unknown = unknown> {
+export interface RequestMoreParams<ITEM extends unknown = unknown, RAW extends unknown = unknown> {
 	/**
 	 * Number of the last loaded page
 	 */
@@ -63,7 +63,7 @@ export interface RequestMoreParams<DATA_ITEM extends unknown = unknown, RAW_DATA
 	/**
 	 * Items to render
 	 */
-	items: RenderItem<DATA_ITEM>[];
+	items: RenderItem<ITEM>[];
 
 	/**
 	 * Data that pending to be rendered
@@ -82,19 +82,19 @@ export interface RequestMoreParams<DATA_ITEM extends unknown = unknown, RAW_DATA
 		/**
 		 * Normalized data (processed with `dbConverter`)
 		 */
-		normalized: Array<DATA_ITEM>;
+		normalized: Array<ITEM>;
 
 		/**
-		 * Raw data that was loaded from the server
+		 * Raw provider data without any processing
 		 */
-		raw: RAW_DATA;
+		raw: RAW;
 	}
 
 	/**
 	 * @deprecated
 	 * @see [[RequestMoreParams.lastLoadedChunk]]
 	 */
-	lastLoadedData: Array<DATA_ITEM>;
+	lastLoadedData: Array<ITEM>;
 }
 
 export interface RemoteData {
@@ -156,11 +156,11 @@ export interface UnsafeChunkRequest {
  * Last loaded data chunk
  *
  * @typeParam DATA - data to render
- * @typeParam RAW_DATA - raw provider data without any processing
+ * @typeParam RAW - raw provider data without any processing
  */
-export interface LastLoadedChunk<DATA extends unknown = unknown[], RAW_DATA extends unknown = unknown> {
+export interface LastLoadedChunk<DATA extends unknown = unknown[], RAW extends unknown = unknown> {
 	normalized: DATA;
-	raw: RAW_DATA;
+	raw: RAW;
 }
 
 export interface DataToRender {
@@ -172,9 +172,9 @@ export interface DataToRender {
 /**
  * The local state of a component
  *
- *   *) `error` - indicates the component loading error appear
- *   *) `init` - indicates the component now loading the first chunk of data
- *   *) `ready` - indicates the component now is ready to render data
+ * * `error` - indicates the component loading error appear
+ * * `init` - indicates the component now loading the first chunk of data
+ * * `ready` - indicates the component now is ready to render data
  */
 export type LocalState = 'init' | 'ready' | 'error';
 
