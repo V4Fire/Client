@@ -160,17 +160,28 @@ module.exports = function (gulp = require('gulp')) {
 			cwd = resolve.cwd,
 			cases = require(path.join(cwd, 'tests/cases.js'));
 
+		let
+			successCount = 0,
+			failedCount = 0;
+
+		const
+			failedCases = [];
+
 		const run = (c) => new Promise((res) => {
 			$.run(`npx gulp test:component ${c}`, {verbosity: 3})
-				.exec('', res)
-				.on('error', console.error);
-		})
+				.exec('', () => (successCount++, res()))
+				.on('error', (err) => (failedCount++, failedCases.push(c), console.error(err)));
+		});
 
 		for (let i = 0; i < cases.length; i++) {
-			const
-				c = cases[i];
+			await run(cases[i]);
+		}
 
-			await run(c);
+		console.log(`✔️ Tests passed: ${successCount}`);
+		console.log(`❌ Tests failed: ${failedCount}`);
+
+		if (failedCases.length) {
+			console.log(`❗ Failed tests: \n${failedCases.join('\n')}`);
 		}
 
 		cb();
