@@ -59,7 +59,7 @@ const suits = {
 			':dataProvider': s('demo.Pagination'),
 			':chunkSize': '10',
 			':dbConverter': '({data}) => ({data: data.splice(0, 4)})',
-			':request': '{get: {chunkSize: 8, total: 32, id: "render-truncated-virtual"}}'
+			':request': '{get: {chunkSize: 8, total: 32, id: "b-virtual:render-truncated"}}'
 		},
 
 		content: {
