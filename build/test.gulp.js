@@ -169,8 +169,17 @@ module.exports = function (gulp = require('gulp')) {
 
 		const run = (c) => new Promise((res) => {
 			$.run(`npx gulp test:component ${c}`, {verbosity: 3})
-				.exec('', () => (successCount++, res()))
-				.on('error', (err) => (failedCount++, failedCases.push(c), console.error(err)));
+
+				.exec('', () => {
+					successCount++;
+					res();
+				})
+
+				.on('error', (err) => {
+					failedCount++;
+					failedCases.push(c);
+					console.error(err);
+				});
 		});
 
 		for (let i = 0; i < cases.length; i++) {
