@@ -9,13 +9,13 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
-## (2020-05-20)
+## v3.0.0-rc.15 (2020-05-20)
 
 #### :bug: Bug Fix
 
-* Removed padding-bottom of the page element
+* Removed `padding-bottom` of the page element
 
-## (2020-04-28)
+## v3.0.0-rc.14 (2020-04-28)
 
 #### :bug: Bug Fix
 
