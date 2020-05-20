@@ -60,7 +60,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 							const
 								dir = pzlr.resolve.blockSync(name),
 								demo = require(path.join(dir, 'demo.js')),
-								suit = camelize(args['--suit'] === 'undefined' ? 'demo' : args['--suit']);
+								suit = camelize(args['--suit'] || 'demo');
 
 							const
 								wrap = (d) => [].concat((d || []).map((p) => ({name, ...p})));
