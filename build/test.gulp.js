@@ -10,6 +10,7 @@
 
 const
 	path = require('upath'),
+	process = require('process'),
 	{src} = require('config'),
 	{resolve} = require('@pzlr/build-core');
 
@@ -37,8 +38,7 @@ module.exports = function (gulp = require('gulp')) {
 
 	gulp.task('test:component:run', async () => {
 		const
-			arg = require('arg'),
-			playwright = require('playwright');
+			arg = require('arg');
 
 		const
 			http = require('http'),
@@ -62,28 +62,9 @@ module.exports = function (gulp = require('gulp')) {
 		}
 
 		let
-			browsers = ['chromium', 'firefox', 'webkit'],
+			browsers = getSelectedBrowsers(),
 			headless = true,
 			closeOnFinish = true;
-
-		if (args['--browsers']) {
-			const aliases = {
-				ff: 'firefox',
-				chr: 'chromium',
-				chrome: 'chromium',
-				chromium: 'chromium',
-				wk: 'webkit'
-			};
-
-			const customBrowsers = args['--browsers']
-				.split(',')
-				.map((name) => aliases[name] || null)
-				.filter((name) => name);
-
-			if (browsers.length) {
-				browsers = customBrowsers;
-			}
-		}
 
 		if (args['--headless']) {
 			headless = JSON.parse(args['--headless']);
@@ -116,7 +97,7 @@ module.exports = function (gulp = require('gulp')) {
 
 		for (const browserType of browsers) {
 			const
-				browser = await playwright[browserType].launch({headless}),
+				browser = await getBrowserInstance(browserType),
 				context = await browser.newContext(),
 				page = await context.newPage();
 
@@ -125,7 +106,7 @@ module.exports = function (gulp = require('gulp')) {
 			await test(page, {browser, context, browserType, componentDir, tmpDir});
 
 			const
-				close = () => closeOnFinish && browser.close();
+				close = () => closeOnFinish && context.close() && (process.exitCode = 1);
 
 			await new Promise((resolve) => {
 				testEnv.afterAll(() => resolve(), 10e3);
@@ -157,22 +138,113 @@ module.exports = function (gulp = require('gulp')) {
 
 	gulp.task('test:components', async (cb) => {
 		const
+			playwright = require('playwright');
+
+		const
 			cwd = resolve.cwd,
 			cases = require(path.join(cwd, 'tests/cases.js'));
 
+		const
+			wsEndpoints = {chromium: '', firefox: '', webkit: ''},
+			browsers = getSelectedBrowsers(),
+			servers = {};
+
+		for (const browserType of browsers) {
+			const
+				browser = servers[browserType] = await playwright[browserType].launchServer(),
+				wsEndpoint = browser.wsEndpoint();
+
+			wsEndpoints[browserType] = wsEndpoint;
+		};
+
+		let
+			endpointArg = Object.entries(wsEndpoints).map(([key, value]) => `--${key}WsEndpoint ${value}`).join(' ');
+
+		let
+			successCount = 0,
+			failedCount = 0;
+
+		const
+			failedCases = [];
+
 		const run = (c) => new Promise((res) => {
-			$.run(`npx gulp test:component ${c}`, {verbosity: 3})
+			$.run(`npx gulp test:component ${c} ${endpointArg}`, {verbosity: 3})
 				.exec('', res)
-				.on('error', console.error);
-		})
+				.on('error', (err) => (failedCount++, failedCases.push(c), console.error(err)));
+		});
 
 		for (let i = 0; i < cases.length; i++) {
-			const
-				c = cases[i];
-
-			await run(c);
+			await run(cases[i]);
 		}
 
-		cb();
+		console.log(`✔️ Tests passed: ${successCount}`);
+		console.log(`❌ Tests failed: ${failedCount}`);
+
+		if (failedCases.length) {
+			console.log(`❗ Failed tests: \n${failedCases.join('\n')}`);
+		}
+
+		Object.keys(servers).forEach(async (key) => await servers[key].close());
 	});
 };
+
+
+/**
+ * Returns a browser instance
+ * @param {string} browserType
+ */
+async function getBrowserInstance(browserType) {
+	const
+		arg = require('arg'),
+		playwright = require('playwright');
+
+	const args = arg({
+		'--firefoxWsEndpoint': String,
+		'--webkitWsEndpoint': String,
+		'--chromiumWsEndpoint': String
+	}, {permissive: true});
+
+	const endpointMap = {
+		firefox: '--firefoxWsEndpoint',
+		webkit: '--webkitWsEndpoint',
+		chromium: '--chromiumWsEndpoint'
+	};
+
+	if (args[endpointMap]) {
+		return await playwright[browserType].connect({wsEndpoint: args[endpointMap]});
+	}
+
+	return await playwright[browserType].launch();
+}
+
+/**
+ * Returns selected browsers
+ */
+function getSelectedBrowsers() {
+	const
+		args = require('arg')({'--browsers': String}, {permissive: true});
+
+	const
+		browsers = ['chromium', 'firefox', 'webkit'];
+
+	const aliases = {
+		ff: 'firefox',
+		chr: 'chromium',
+		chrome: 'chromium',
+		chromium: 'chromium',
+		wk: 'webkit'
+	};
+
+	if (args['--browsers']) {
+		const customBrowsers = args['--browsers']
+			.split(',')
+			.map((name) => aliases[name] || null)
+			.filter((name) => name);
+
+		if (customBrowsers.length) {
+			return customBrowsers;
+		}
+	}
+
+	return browsers;
+}
