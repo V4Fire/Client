@@ -567,8 +567,7 @@ export default class bBottomSlide extends iBlock implements iLockPageScroll, iOp
 
 		if (currentPage) {
 			Object.assign((<HTMLElement>currentPage.el).style, {
-				maxHeight: maxVisiblePx.px,
-				paddingBottom: header.clientHeight.px
+				maxHeight: maxVisiblePx.px
 			});
 		}
 
