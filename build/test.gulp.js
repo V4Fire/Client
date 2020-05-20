@@ -10,6 +10,7 @@
 
 const
 	path = require('upath'),
+	fs = require('fs'),
 	{src} = require('config'),
 	{resolve} = require('@pzlr/build-core');
 
@@ -54,7 +55,8 @@ module.exports = function (gulp = require('gulp')) {
 			'--page': String,
 			'--browsers': String,
 			'--close': String,
-			'--headless': String
+			'--headless': String,
+			'--saveEndpoint': String
 		}, {permissive: true});
 
 		if (!args['--name']) {
@@ -62,7 +64,10 @@ module.exports = function (gulp = require('gulp')) {
 		}
 
 		let
-			browsers = ['chromium', 'firefox', 'webkit'],
+			browsers = ['chromium', 'firefox', 'webkit'];
+
+		let
+			saveEndpoint = false,
 			headless = true,
 			closeOnFinish = true;
 
@@ -93,6 +98,10 @@ module.exports = function (gulp = require('gulp')) {
 			closeOnFinish = JSON.parse(args['--close']);
 		}
 
+		if (args['--saveEndpoint']) {
+			saveEndpoint = JSON.parse(args['--saveEndpoint']);
+		}
+
 		args['--port'] = args['--port'] || Number.random(2000, 6000);
 		args['--page'] = args['--page'] || 'p-v4-components-demo';
 
@@ -116,9 +125,26 @@ module.exports = function (gulp = require('gulp')) {
 
 		for (const browserType of browsers) {
 			const
-				browser = await playwright[browserType].launch({headless}),
+				browserProto = playwright[browserType];
+
+			let
+				server,
+				savedWsEndpoint = getEndpoint(browserType),
+				wsEndpoint = savedWsEndpoint;
+
+			if (!savedWsEndpoint && saveEndpoint) {
+				server = await browserProto.launchServer({headless}),
+				wsEndpoint = server.wsEndpoint();
+			}
+
+			const
+				browser = saveEndpoint ? await browserProto.connect({wsEndpoint}) : await browserProto.launch({headless}),
 				context = await browser.newContext(),
 				page = await context.newPage();
+
+			if (!savedWsEndpoint) {
+				writeEndpoint(browserType, wsEndpoint);
+			}
 
 			await page.goto(`localhost:${args['--port']}/${args['--page']}.html`);
 			const testEnv = getTestEnv(browserType);
@@ -160,19 +186,76 @@ module.exports = function (gulp = require('gulp')) {
 			cwd = resolve.cwd,
 			cases = require(path.join(cwd, 'tests/cases.js'));
 
+		clearEndpointTemp();
+
 		const run = (c) => new Promise((res) => {
-			$.run(`npx gulp test:component ${c}`, {verbosity: 3})
+			$.run(`npx gulp test:component --saveEndpoint true ${c}`, {verbosity: 3})
 				.exec('', res)
 				.on('error', console.error);
 		})
 
-		for (let i = 0; i < cases.length; i++) {
-			const
-				c = cases[i];
+		const promises = [];
 
-			await run(c);
+		for (let i = 0; i < cases.length; i++) {
+			promises.push(run(cases[i]));
 		}
 
+		await Promise.all(promises);
 		cb();
+
+		// Выключать сервера браузеров
 	});
 };
+
+/**
+ * Returns a browser connection endpoint
+ *
+ * @param {string} browserType
+ * @returns {string}
+ */
+function getEndpoint(browserType) {
+	const
+		temp = path.join(resolve.cwd, 'tests/temp');
+
+	try {
+		return fs.readFileSync(path.join(temp, `endpoint-${browserType}`), {encoding: 'utf-8'});
+
+	} catch (e) {
+		if (e.code !== 'ENOENT') throw e;
+		return null;
+	}
+
+}
+
+/**
+ * Saves the specified end point to the temporary file
+ *
+ * @param {string} browserType 
+ * @param {string} endpoint
+ */
+function writeEndpoint(browserType, endpoint) {
+	const
+		temp = path.join(resolve.cwd, 'tests/temp/');
+
+	if (!fs.existsSync(temp)){
+		fs.mkdirSync(temp);
+	}
+
+	fs.writeFileSync(`${temp}/endpoint-${browserType}`, endpoint);
+}
+
+/**
+ * Clears endpoint temporary files
+ * @returns {Promise}
+ */
+function clearEndpointTemp() {
+	const
+		$ = require('gulp-load-plugins')({scope: ['optionalDependencies']});
+
+	return new Promise((res) => {
+		const
+			temp = path.join(resolve.cwd, 'tests/temp');
+
+		$.run(`rm -rf ${temp}`).exec('', res);
+	});
+}
