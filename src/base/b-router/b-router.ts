@@ -526,7 +526,7 @@ export default class bRouter extends iData {
 	 * @param [opts] - additional transition options
 	 * @param [method] - transition method
 	 *
-	 * @emits beforeChange(route: Nullable<string>, params: CanUndef<PageOptionsProp>, method: TransitionMethod)
+	 * @emits beforeChange(route: Nullable<string>, params: PageOptionsProp, method: TransitionMethod)
 	 *
 	 * @emits change(route: Route)
 	 * @emits hardChange(route: Route)

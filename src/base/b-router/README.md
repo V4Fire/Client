@@ -255,17 +255,63 @@ Also, the router saves scroll coordinates every time it moves to another route t
 
 Usually, we split our scripts and styles in different chunks to improve a site loading speed. We can tie our routes with these chunks by using the `entryPoint` option.
 
-#### Defying an entry point
+#### Defying entry points
 
 To describe how the builder should build an application you need to create a build file within the `src/entries` directory. There are two reserved names of an entry point:
 
-* `index` - the entry point that contains minimal required core to work of the V4 framework and other critical dependencies.
-For instance,
+* `index` - the entry point that contains minimal required core to work of the V4 framework and other critical dependencies. For instance,
 
-*"your-project"/src/entries/index.js*
+*your-project-directory/src/entries/index.js*
 
 ```js
 import "@v4fire/client/src/core";
 ```
 
 * `std` - the optional entry point that contains polyfills to the standard library and other similar stuff. This entry point will always initialize before other entry points.
+
+Now you can add new files that represent entry points, for example,
+
+*your-project-directory/src/entries/p-v4-components-demo.js*
+
+```js
+// To prevent duplication of files we need to import dependencies
+import './index';
+
+// To add a component you need to create import for its index file
+import '../pages/p-v4-components-demo';
+```
+
+The created entry point has a name that matches with the file name.
+
+#### Binding entry points with routes
+
+Just add the `entryPoint` option to a route and pass the name of the needed entry point.
+
+```js
+export default {
+  demo: {
+    path: '/demo',
+    entryPoint: 'p-v4-components-demo'
+  }
+};
+```
+
+Mind that "index" and "std" entry points loaded by default, so you don't need to declare it clearly.
+
+## Event flow of transitions
+
+When we invoke one of router transition methods, like, push or replace, the router emits a bunch of special events.
+
+1. `beforeChange(route: Nullable<string>, params: PageOptionsProp, method: TransitionMethod)` - this event fires before any transition. The handlers that listen to this event are taken arguments:
+
+  1. `route`  - ref to a route to go to.
+  2. `params` - parameters of a route. The handlers can modify this object to attach more parameters.
+  3. `method` - the type of used transition methods: "push", "replace" or "event" (for native history navigation).
+
+3. `softChange(route: Route)` or `hardChange(route: Route)` - fires one of these events before changing the route object. The difference between these events is that "soft" means that the route still have the same with the previous route, but were changes some query parameters, despite "hard" indicates that the route was changed or was changed one of parameters that can modify URL.
+
+2. `change(route: Route)` - fires every time the route was changed. Mind that sometimes transition can be prevented and this event won't be fired, for instance, if we try to execute "replace" transition on the same route with the same parameters.
+
+5. `transition(route: Route)` - fires after calling of transition methods, if the transition takes a place, the event is fired after "change" event.
+
+The router also provides "change" event to the root component as "transition", just for usability.
