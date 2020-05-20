@@ -37,6 +37,7 @@ module.exports = function (gulp = require('gulp')) {
 
 	gulp.task('test:component:run', async () => {
 		const
+			process = require('process'),
 			arg = require('arg'),
 			playwright = require('playwright');
 
@@ -63,6 +64,7 @@ module.exports = function (gulp = require('gulp')) {
 
 		let
 			browsers = ['chromium', 'firefox', 'webkit'],
+			exitCode = 0,
 			headless = true,
 			closeOnFinish = true;
 
@@ -125,7 +127,17 @@ module.exports = function (gulp = require('gulp')) {
 			await test(page, {browser, context, browserType, componentDir, tmpDir});
 
 			const
-				close = () => closeOnFinish && browser.close();
+				close = () => closeOnFinish && browser.close() && (process.exitCode = exitCode);
+
+			testEnv.addReporter({
+				specDone: (res) => {
+					if (exitCode === 1) {
+						return;
+					}
+
+					exitCode = res.status === 'failed' ? 1 : 0
+				}
+			});
 
 			await new Promise((resolve) => {
 				testEnv.afterAll(() => resolve(), 10e3);
@@ -160,25 +172,15 @@ module.exports = function (gulp = require('gulp')) {
 			cwd = resolve.cwd,
 			cases = require(path.join(cwd, 'tests/cases.js'));
 
-		let
-			successCount = 0,
-			failedCount = 0;
-
 		const
 			failedCases = [];
 
-		const run = (c) => new Promise((res) => {
+		const run = (c) => new Promise((res, rej) => {
 			$.run(`npx gulp test:component ${c}`, {verbosity: 3})
-
-				.exec('', () => {
-					successCount++;
-					res();
-				})
-
+				.exec('', res)
 				.on('error', (err) => {
-					failedCount++;
 					failedCases.push(c);
-					console.error(err);
+					rej();
 				});
 		});
 
@@ -186,11 +188,14 @@ module.exports = function (gulp = require('gulp')) {
 			await run(cases[i]);
 		}
 
-		console.log(`✔️ Tests passed: ${successCount}`);
-		console.log(`❌ Tests failed: ${failedCount}`);
+		console.log(`\n✔️  Tests passed: ${cases.filter((v) => !failedCases.includes(v)).length}`);
+		console.log(`\n❌ Tests failed: ${failedCases.length}`);
 
 		if (failedCases.length) {
-			console.log(`❗ Failed tests: \n${failedCases.join('\n')}`);
+			console.log(`\n❗ Failed tests:`);
+			console.log('\n-------------');
+			console.log(`${failedCases.join('\n')}`);
+			console.log('-------------\n');
 		}
 
 		cb();
