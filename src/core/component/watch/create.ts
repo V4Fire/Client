@@ -12,20 +12,15 @@ import { getPropertyInfo, PropertyInfo } from 'core/component/reflection';
 import { ComponentInterface, WatchOptions, RawWatchHandler } from 'core/component/interface';
 
 import { proxyGetters } from 'core/component/engines';
-import { cacheStatus, fakeCopyLabel, watcherInitializer } from 'core/component/watch/const';
-import { DynamicHandlers } from 'core/component/watch/interface';
+import { dynamicHandlers, cacheStatus, fakeCopyLabel, watcherInitializer } from 'core/component/watch/const';
 import { cloneWatchValue } from 'core/component';
 
 /**
  * Creates a function to watch changes from the specified component instance and returns it
  *
  * @param component
- * @param dynamicHandlers - map of handlers to watch dynamic fields, like accessors and computedFields
  */
-export function createWatchFn(
-	component: ComponentInterface,
-	dynamicHandlers: DynamicHandlers
-): ComponentInterface['$watch'] {
+export function createWatchFn(component: ComponentInterface): ComponentInterface['$watch'] {
 	const
 		watchCache = Object.createDict();
 
@@ -285,11 +280,11 @@ export function createWatchFn(
 		}
 
 		let
-			handlersStore = dynamicHandlers.get(component);
+			handlersStore = dynamicHandlers.get(info.ctx);
 
 		if (!handlersStore) {
 			handlersStore = Object.createDict();
-			dynamicHandlers.set(component, handlersStore);
+			dynamicHandlers.set(info.ctx, handlersStore);
 		}
 
 		const

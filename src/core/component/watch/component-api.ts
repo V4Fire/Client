@@ -11,7 +11,7 @@ import watch, { set, unset, mute, watchHandlers, WatchHandler, MultipleWatchHand
 import { bindingRgxp } from 'core/component/reflection';
 import { proxyGetters } from 'core/component/engines';
 
-import { cacheStatus, watcherInitializer, toComponentObject } from 'core/component/watch/const';
+import { dynamicHandlers, cacheStatus, watcherInitializer, toComponentObject } from 'core/component/watch/const';
 import { createWatchFn } from 'core/component/watch/create';
 
 import { ComponentInterface } from 'core/component/interface';
@@ -33,7 +33,6 @@ export function implementComponentWatchAPI(
 
 	const
 		isFlyweight = component.isFlyweight || meta.params.functional === true,
-		dynamicHandlers = new WeakMap<ComponentInterface, Dictionary<Set<Function>>>(),
 		usedHandlers = new Set<Function>();
 
 	let
@@ -170,7 +169,7 @@ export function implementComponentWatchAPI(
 		enumerable: true,
 		configurable: true,
 		writable: true,
-		value: createWatchFn(component, dynamicHandlers)
+		value: createWatchFn(component)
 	});
 
 	Object.defineProperty(component, '$set', {
