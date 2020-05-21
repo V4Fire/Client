@@ -13,7 +13,7 @@ Changelog
 
 #### :bug: Bug Fix
 
-* Fixed `hasTrigger` flag calculation if a page has no children (`initPage` method)
+* Fixed the `hasTrigger` flag calculation if a page has no children (`initPage`)
 
 ## v3.0.0-rc.15 (2020-05-20)
 

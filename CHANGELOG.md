@@ -11,6 +11,13 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.16 (2020-05-21)
+
+#### :bug: Bug Fix
+
+* Fixed NaN at the `visibleInPercent` getter in a case of `windowHeight === 0` `traits/i-history`
+* Fixed the `hasTrigger` flag calculation if a page has no children `bBottomSlide`
+
 ## v3.0.0-rc.15 (2020-05-20)
 
 #### :bug: Bug Fix

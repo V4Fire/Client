@@ -13,7 +13,7 @@ Changelog
 
 #### :bug: Bug Fix
 
-* Fixed NaN at the `visibleInPercent` getter in case of `windowHeight === 0`
+* Fixed NaN at the `visibleInPercent` getter in a case of `windowHeight === 0`
 
 ## v3.0.0-rc.7 (2020-05-01)
 
