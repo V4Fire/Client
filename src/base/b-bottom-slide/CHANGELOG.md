@@ -9,13 +9,19 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
-## v3.0.0-rc.15 (2020-05-21)
+## v3.0.0-rc.16 (2020-05-21)
 
 #### :bug: Bug Fix
 
 * Fixed `hasTrigger` flag calculation if a page has no children (`initPage` method)
 
-## v3.0.0-rc.7 (2020-05-01)
+## v3.0.0-rc.15 (2020-05-20)
+
+#### :bug: Bug Fix
+
+* Removed `padding-bottom` of the page element
+
+## v3.0.0-rc.2 (2020-04-28)
 
 #### :bug: Bug Fix
 
