@@ -25,7 +25,6 @@ import iData, {
 	field,
 	prop,
 	wait,
-	p,
 
 	ModelMethod,
 	RequestFilter,
@@ -115,7 +114,6 @@ export default class bForm extends iData {
 	/**
 	 * Array of form components
 	 */
-	@p({cache: false})
 	get elements(): CanPromise<ReadonlyArray<iInput>> {
 		const
 			cache = Object.createDict();
@@ -141,7 +139,6 @@ export default class bForm extends iData {
 	/**
 	 * Array of form submit components
 	 */
-	@p({cache: false})
 	get submits(): CanPromise<ReadonlyArray<bButton>> {
 		return this.waitStatus('ready', () => {
 			const list = Array.from(this.$el.querySelectorAll('button[type="submit"]')).concat(
@@ -335,7 +332,7 @@ export default class bForm extends iData {
 						v = await el.groupFormValue;
 
 					if (el.formConverter) {
-						v = (<Function[]>[]).concat(el.formConverter).reduce((res, fn) => fn.call(this, res), v);
+						v = Array.concat([], el.formConverter).reduce((res, fn) => fn.call(this, res), v);
 					}
 
 					if (v instanceof Blob || v instanceof File || v instanceof FileList) {
@@ -378,11 +375,14 @@ export default class bForm extends iData {
 					res = await this.action(body, submitCtx);
 
 				} else {
+					let
+						that = this;
+
 					if (this.action) {
-						this.base(this.action);
+						that = this.base(this.action);
 					}
 
-					res = await (<Function>this[this.method])(body, this.params);
+					res = await (<Function>that[this.method])(body, this.params);
 				}
 
 				Object.assign(this.tmp, body);
@@ -454,7 +454,7 @@ export default class bForm extends iData {
 						v = await el.groupFormValue;
 
 					if (el.formConverter) {
-						v = (<Function[]>[]).concat(el.formConverter).reduce((res, fn) => fn.call(this, res), v);
+						v = Array.concat([], el.formConverter).reduce((res, fn) => fn.call(this, res), v);
 					}
 
 					if (v !== undefined) {

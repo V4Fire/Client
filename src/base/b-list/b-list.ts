@@ -11,7 +11,7 @@ import symbolGenerator from 'core/symbol';
 import iVisible from 'traits/i-visible/i-visible';
 import iWidth from 'traits/i-width/i-width';
 
-import iData, { component, prop, field, system, hook, watch, p, ModsDecl } from 'super/i-data/i-data';
+import iData, { component, prop, field, system, computed, hook, watch, ModsDecl } from 'super/i-data/i-data';
 import { Option } from 'base/b-list/modules/interface';
 
 export * from 'super/i-data/i-data';
@@ -83,7 +83,6 @@ export default class bList extends iData implements iVisible, iWidth {
 	/**
 	 * Component active value
 	 */
-	@p({cache: false})
 	get active(): unknown {
 		const v = this.field.get('activeStore');
 		return this.multiple ? Object.keys(<object>v) : v;
@@ -126,7 +125,7 @@ export default class bList extends iData implements iVisible, iWidth {
 
 		if (o.multiple) {
 			const
-				objVal = Object.fromArray((<unknown[]>[]).concat(val || []));
+				objVal = Object.fromArray(Array.concat([], val));
 
 			if (Object.fastCompare(objVal, o.activeStore)) {
 				return o.activeStore;
@@ -153,7 +152,11 @@ export default class bList extends iData implements iVisible, iWidth {
 	/**
 	 * Returns link to the active element
 	 */
-	@p({cache: true})
+	@computed({
+		cache: true,
+		dependencies: ['active']
+	})
+
 	protected get activeElement(): CanPromise<CanUndef<HTMLAnchorElement>> {
 		return this.waitStatus('ready', () => {
 			const
@@ -366,7 +369,7 @@ export default class bList extends iData implements iVisible, iWidth {
 			indexes = {},
 			active = this.field.get('activeStore');
 
-		for (let o = <Option[]>this.$$data.value || [], i = 0; i < o.length; i++) {
+		for (let o = <Option[]>this.$fields.value || [], i = 0; i < o.length; i++) {
 			const
 				el = o[i],
 				val = el.value;

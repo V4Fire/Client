@@ -6,6 +6,11 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+/**
+ * [[include:core/component/engines/README.md]]
+ * @packageDocumentation
+ */
+
 //#if runtime.engine = vue
 export * from 'core/component/engines/vue';
 //#endif

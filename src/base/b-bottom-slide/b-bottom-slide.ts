@@ -66,7 +66,7 @@ export default class bBottomSlide extends iBlock implements iLockPageScroll, iOp
 	/**
 	 * List of allowed component positions relative to the screen height (in percentages)
 	 */
-	@prop({type: Array, validator: (v) => v.every((a) => a >= 0 && a <= 100)})
+	@prop({type: Array, validator: (v: number[]) => v.every((a) => a >= 0 && a <= 100)})
 	readonly stepsProp: number[] = [];
 
 	/** @see [[bBottomSlide.steps]] */
@@ -83,7 +83,7 @@ export default class bBottomSlide extends iBlock implements iLockPageScroll, iOp
 	/**
 	 * Maximum height value to which you can pull the component
 	 */
-	@prop({type: Number, validator: (v) => v >= 0 && v <= 100})
+	@prop({type: Number, validator: (v: number) => v >= 0 && v <= 100})
 	readonly maxVisiblePercent: number = 90;
 
 	/**
@@ -361,7 +361,7 @@ export default class bBottomSlide extends iBlock implements iLockPageScroll, iOp
 	 */
 	@p({cache: false})
 	protected get visibleInPercent(): number {
-		return this.visible / this.windowHeight * 100;
+		return !this.windowHeight ? 0 : this.visible / this.windowHeight * 100;
 	}
 
 	/**
@@ -430,6 +430,10 @@ export default class bBottomSlide extends iBlock implements iLockPageScroll, iOp
 	 */
 	async close(): Promise<boolean> {
 		if (this.isClosed) {
+			if (this.history.length > 1) {
+				this.history.clear();
+			}
+
 			return false;
 		}
 
@@ -571,8 +575,7 @@ export default class bBottomSlide extends iBlock implements iLockPageScroll, iOp
 			// If documentElement height is equal to zero, maxVisiblePx is always be zero too,
 			// even after new calling of initGeometry.
 			// Also, view.clientHeight above would return zero as well, even though the real size is bigger.
-			maxHeight: maxVisiblePx === 0 ? undefined : maxVisiblePx.px,
-			paddingBottom: header.clientHeight.px
+			maxHeight: maxVisiblePx === 0 ? undefined : maxVisiblePx.px
 		});
 	}
 

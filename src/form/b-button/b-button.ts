@@ -6,6 +6,11 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+/**
+ * [[include:form/b-button/README.md]]
+ * @packageDocumentation
+ */
+
 //#if runtime has core/data
 import 'core/data';
 //#endif
@@ -34,16 +39,15 @@ import iData, {
 
 } from 'super/i-data/i-data';
 
+import { ButtonType } from 'form/b-button/interface';
+
 export * from 'super/i-data/i-data';
 export * from 'traits/i-open-toggle/i-open-toggle';
+export * from 'form/b-button/interface';
 
-export type ButtonType<T extends string = any> =
-	'submit' |
-	'button' |
-	'image' |
-	'link' |
-	T;
-
+/**
+ * Component to create a button
+ */
 @component({
 	flyweight: true,
 	functional: {
@@ -234,11 +238,14 @@ export default class bButton extends iData implements iAccess, iOpenToggle, iVis
 				dp = this.dataProvider;
 
 			if (dp != null && (dp !== 'Provider' || this.href)) {
+				let
+					that = this;
+
 				if (this.href) {
-					this.base(this.href);
+					that = this.base(this.href);
 				}
 
-				await (<Function>this[this.method])();
+				await (<Function>that[this.method])();
 
 			// Form attribute fix for MS Edge && IE
 			} else if (this.form && this.type === 'submit') {

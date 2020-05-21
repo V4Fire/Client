@@ -53,7 +53,7 @@ const predefinedTasks = $C(build.MAX_PROCESS).map((el, buildId) => new Promise((
 }));
 
 const tasks = (async () => {
-	await include('build/snakeskin.webpack');
+	await include('build/snakeskin');
 
 	const
 		graph = await build,

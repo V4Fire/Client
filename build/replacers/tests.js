@@ -17,29 +17,28 @@ const
 	glob = require('glob-promise');
 
 const
-	{resolve} = require('@pzlr/build-core');
-
-const
 	requireRgxp = /\/\/\s*@requireTests\n/g;
-
-let
-	specs;
 
 /**
  * Monic replacer for @requireTests declarations
  *
  * @param {string} str
+ * @param {string} file
  * @returns {string}
  */
-module.exports = async function (str) {
-	if (!config.runtime().tests) {
+module.exports = async function (str, file) {
+	if (!config.runtime().debug) {
 		return str;
 	}
 
-	specs = specs || await $C([resolve.sourceDir].concat(resolve.rootDependencies))
+	if (!requireRgxp.test(str)) {
+		return str;
+	}
+
+	const tests = await $C([path.dirname(file)])
 		.async
 		.to([])
-		.reduce(async (res, el) => res.concat(await glob(path.join(el, '/**/*(*.spec.ts|spec.ts)'))));
+		.reduce(async (res, el) => res.concat(await glob(path.join(el, '/**/@(spec.js|*.spec.js)'))));
 
-	return str.replace(requireRgxp, () => specs.map((el) => `import '${el}';\n`).join('\n'));
+	return str.replace(requireRgxp, () => tests.map((el) => `import '${el}';\n`).join('\n'));
 };

@@ -20,13 +20,18 @@ const
 
 module.exports = {
 	IS_PROD,
+	DEBUG: runtime.debug === true,
+
+	APP_NAME: s(APP_NAME),
+	API_URL: s(API_URL),
 
 	LOCALE: s(LOCALE),
-	API_URL: s(API_URL),
-	APP_NAME: s(APP_NAME),
 	PUBLIC_PATH: s(config.webpack.publicPath()),
 
-	MODULE_DEPENDENCIES: s(`ModuleDependencies${runtime.noGlobals ? `_${Number.random(1e6)}` : ''}`),
+	MODULE_DEPENDENCIES: s(
+		`ModuleDependencies${runtime.noGlobals ? `_${Number.random(1e6)}` : ''}`
+	),
+
 	'process.env': {
 		NODE_ENV: s(process.env.NODE_ENV)
 	},
@@ -38,7 +43,9 @@ module.exports = {
 		}
 	}) : null,
 
-	DS_COMPONENTS_MODS: pzlr.designSystem ? getComponentsMods() : null,
+	DS_COMPONENTS_MODS: pzlr.designSystem ?
+		getComponentsMods() : null,
+
 	DS: runtime.passDesignSystem && pzlr.designSystem ? (() => {
 		try {
 			return s(require(pzlr.designSystem));

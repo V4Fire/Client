@@ -60,7 +60,7 @@ export default class bMatryoshka extends iData implements iItems {
 	 * Link to the top level component
 	 */
 	protected get top(): this {
-		return (this.isFlyweight && this.$normalParent || this) as this;
+		return this.isFlyweight && <any>this.$normalParent || this;
 	}
 
 	/** @override */

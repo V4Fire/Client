@@ -6,6 +6,11 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+/**
+ * [[include:traits/i-access/README.md]]
+ * @packageDocumentation
+ */
+
 import iBlock, { ModsDecl, ModEvent } from 'super/i-block/i-block';
 
 export default abstract class iAccess {
@@ -26,7 +31,7 @@ export default abstract class iAccess {
 	}
 
 	/**
-	 * Sets focus for the component
+	 * Sets focus to the component
 	 * @param component
 	 */
 	static async focus<T extends iBlock>(component: T): Promise<boolean> {
@@ -34,7 +39,7 @@ export default abstract class iAccess {
 	}
 
 	/**
-	 * Unsets focus for the component
+	 * Unsets focus to the component
 	 * @param component
 	 */
 	static async blur<T extends iBlock>(component: T): Promise<boolean> {
@@ -42,20 +47,19 @@ export default abstract class iAccess {
 	}
 
 	/**
-	 * Initializes modifier event listeners
+	 * Initializes modifier event listeners for the specified component
 	 *
-	 * @emits enable()
-	 * @emits disable()
+	 * @emits `enable()`
+	 * @emits `disable()`
 	 *
-	 * @emits focus()
-	 * @emits blur()
+	 * @emits `focus()`
+	 * @emits `blur()`
 	 *
 	 * @param component
 	 */
 	static initModEvents<T extends iBlock>(component: T): void {
 		const
-			// @ts-ignore
-			{localEvent: $e, async: $a} = component;
+			{localEmitter: $e, async: $a} = component.unsafe;
 
 		$e.on('block.mod.*.disabled.*', (e: ModEvent) => {
 			if (e.value === 'false' || e.type === 'remove') {
@@ -119,13 +123,13 @@ export default abstract class iAccess {
 	abstract async enable(...args: unknown[]): Promise<boolean>;
 
 	/**
-	 * Sets focus for the component
+	 * Sets focus to the component
 	 * @param args
 	 */
 	abstract async focus(...args: unknown[]): Promise<boolean> ;
 
 	/**
-	 * Unsets focus for the component
+	 * Unsets focus to the component
 	 * @param args
 	 */
 	abstract async blur(...args: unknown[]): Promise<boolean>;

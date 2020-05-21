@@ -6,10 +6,10 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { AsyncNamespace } from 'core/kv-storage';
+import { AsyncStorageNamespace } from 'core/kv-storage';
 
 let
-	engine: Promise<AsyncNamespace>;
+	engine: Promise<AsyncStorageNamespace>;
 
 //#if runtime has core/kv-storage
 engine = Any(import('core/kv-storage').then(({asyncLocal}) => asyncLocal.namespace('[[SESSION]]')));

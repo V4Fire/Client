@@ -105,7 +105,7 @@ export default {
 					ours = val[key],
 					existing = on[key];
 
-				on[key] = existing ? (<unknown[]>[]).concat(existing, ours) : ours;
+				on[key] = existing ? Array.concat([], existing, ours) : ours;
 			}
 
 		} else {

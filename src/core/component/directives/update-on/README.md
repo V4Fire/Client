@@ -19,5 +19,5 @@ You can add one or more reactions to one element, for example:
 ] .
 ```
 
-The template above attaches two event listeners for two different emitters.
+The template above attaches two event-listeners for two different emitters.
 Use this directive if you want to update some parts of your template without re-render of a whole template or with functional components.

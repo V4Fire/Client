@@ -35,7 +35,7 @@ export default abstract class iItems {
 	abstract options: unknown[];
 
 	/**
-	 * Factory for an items iterator
+	 * Factory for an item iterator
 	 */
 	abstract readonly optionsIterator?: ItemsIterator;
 
