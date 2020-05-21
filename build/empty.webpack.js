@@ -40,9 +40,9 @@ module.exports = function ({buildId}) {
 		},
 
 		plugins: [
-			new HardSourceWebpackPlugin({
-				cacheDirectory: path.join(buildCache, `${buildId}/[confighash]`)
-			})
+			// new HardSourceWebpackPlugin({
+			// 	cacheDirectory: path.join(buildCache, `${buildId}/[confighash]`)
+			// })
 		]
 	};
 };

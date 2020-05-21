@@ -10,7 +10,6 @@
 
 const
 	path = require('upath'),
-	process = require('process'),
 	{src} = require('config'),
 	{resolve} = require('@pzlr/build-core');
 
@@ -21,7 +20,7 @@ module.exports = function (gulp = require('gulp')) {
 	gulp.task('test:component:build', () => {
 		const
 			arg = require('arg'),
-			args = arg({'--name': String, '--suit': String}, {permissive: true});
+			args = arg({'--name': String, '--suit': String, '--client-name': String}, {permissive: true});
 
 		if (!args['--name']) {
 			throw new ReferenceError('"--name" parameter is not specified');
@@ -31,7 +30,7 @@ module.exports = function (gulp = require('gulp')) {
 			suitArg = args['--suit'] ? `--suit ${args['--suit']}` : '',
 			extraArgs = args._.slice(1).join(' ');
 
-		return $.run(`npx webpack --public-path / --client-output ${args['--name']} --components ${args['--name']} ${suitArg} ${extraArgs}`, {verbosity: 3})
+		return $.run(`npx webpack --public-path --client-output ${args['--client-name'] || args['--name']} --components ${args['--name']} ${suitArg} ${extraArgs}`, {verbosity: 3})
 			.exec()
 			.on('error', console.error);
 	});
@@ -55,15 +54,19 @@ module.exports = function (gulp = require('gulp')) {
 			'--page': String,
 			'--browsers': String,
 			'--close': String,
-			'--headless': String
+			'--headless': String,
+			'--client-name': String
 		}, {permissive: true});
 
 		if (!args['--name']) {
 			throw new ReferenceError('"--name" parameter is not specified');
 		}
 
+		args['--client-name'] = args['--client-name'] || args['--name'];
+
 		let
 			browsers = getSelectedBrowsers(),
+			exitCode = 0,
 			headless = true,
 			closeOnFinish = true;
 
@@ -79,7 +82,7 @@ module.exports = function (gulp = require('gulp')) {
 		args['--page'] = args['--page'] || 'p-v4-components-demo';
 
 		const
-			fileServer = new nodeStatic.Server(src.output(args['--name']));
+			fileServer = new nodeStatic.Server(src.output(args['--client-name']));
 
 		const server = http.createServer(async (req, res) => {
 			req.addListener('end', () => {
@@ -149,6 +152,7 @@ module.exports = function (gulp = require('gulp')) {
 
 	gulp.task('test:components', async (cb) => {
 		const
+			arg = require('arg'),
 			playwright = require('playwright');
 
 		const
@@ -171,11 +175,43 @@ module.exports = function (gulp = require('gulp')) {
 		let
 			endpointArg = Object.entries(wsEndpoints).map(([key, value]) => `--${key}WsEndpoint ${value}`).join(' ');
 
+		const build = (argsString) => new Promise((res, rej) => {
+			$.run(`npx gulp test:component:build ${argsString}`, {verbosity: 3})
+				.exec('', res)
+				.on('error', (err) => {
+					console.log(err);
+					rej();
+				});
+		});
+
 		const
-			failedCases = [];
+			buildCache = {},
+			buildPromises = [];
+
+		for (let i = 0; i < cases.length; i++) {
+			const
+				c = cases[i],
+				args = arg({'--suit': String, '--name': String}, {argv: c.split(' '), permissive: true});
+
+			args['--suit'] = args['--suit'] || 'demo';
+			args['--client-name'] = `${args['--name']}_${args['--suit']}`;
+
+			if (buildCache[args['--client-name']]) {
+				continue;
+			}
+
+			buildPromises.push(build(`--suit ${args['--suit']} --name ${args['--name']} --client-name ${args['--client-name']}`));
+			buildCache[args['--client-name']] = true;
+		}
+
+		await Promise.all(buildPromises);
+
+		const
+			failedCases = [],
+			promises = [];
 
 		const run = (c) => new Promise((res, rej) => {
-			$.run(`npx gulp test:component ${c} ${endpointArg}`, {verbosity: 3})
+			$.run(`npx gulp test:component:run ${c} ${endpointArg}`, {verbosity: 3})
 				.exec('', res)
 				.on('error', (err) => {
 					failedCases.push(c);
@@ -184,8 +220,17 @@ module.exports = function (gulp = require('gulp')) {
 		});
 
 		for (let i = 0; i < cases.length; i++) {
-			await run(cases[i]);
+			const
+				c = cases[i],
+				args = arg({'--suit': String, '--name': String}, {argv: c.split(' '), permissive: true});
+
+				args['--suit'] = args['--suit'] || 'demo';
+				args['--client-name'] = `${args['--name']}_${args['--suit']}`;
+
+			promises.push(run(`${c} --client-name ${args['--client-name']}`));
 		}
+
+		await Promise.all(promises);
 
 		console.log(`\n✔️  Tests passed: ${cases.filter((v) => !failedCases.includes(v)).length}`);
 		console.log(`\n❌ Tests failed: ${failedCases.length}`);
@@ -198,7 +243,6 @@ module.exports = function (gulp = require('gulp')) {
 		}
 
 		Object.keys(servers).forEach(async (key) => await servers[key].close());
-
 		cb();
 	});
 };
