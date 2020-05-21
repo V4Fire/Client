@@ -38,6 +38,7 @@ module.exports = function (gulp = require('gulp')) {
 
 	gulp.task('test:component:run', async () => {
 		const
+			process = require('process'),
 			arg = require('arg');
 
 		const
@@ -106,7 +107,17 @@ module.exports = function (gulp = require('gulp')) {
 			await test(page, {browser, context, browserType, componentDir, tmpDir});
 
 			const
-				close = () => closeOnFinish && context.close() && (process.exitCode = 1);
+				close = () => closeOnFinish && browser.close() && (process.exitCode = exitCode);
+
+			testEnv.addReporter({
+				specDone: (res) => {
+					if (exitCode === 1) {
+						return;
+					}
+
+					exitCode = res.status === 'failed' ? 1 : 0
+				}
+			});
 
 			await new Promise((resolve) => {
 				testEnv.afterAll(() => resolve(), 10e3);
@@ -160,31 +171,35 @@ module.exports = function (gulp = require('gulp')) {
 		let
 			endpointArg = Object.entries(wsEndpoints).map(([key, value]) => `--${key}WsEndpoint ${value}`).join(' ');
 
-		let
-			successCount = 0,
-			failedCount = 0;
-
 		const
 			failedCases = [];
 
-		const run = (c) => new Promise((res) => {
+		const run = (c) => new Promise((res, rej) => {
 			$.run(`npx gulp test:component ${c} ${endpointArg}`, {verbosity: 3})
 				.exec('', res)
-				.on('error', (err) => (failedCount++, failedCases.push(c), console.error(err)));
+				.on('error', (err) => {
+					failedCases.push(c);
+					rej();
+				});
 		});
 
 		for (let i = 0; i < cases.length; i++) {
 			await run(cases[i]);
 		}
 
-		console.log(`✔️ Tests passed: ${successCount}`);
-		console.log(`❌ Tests failed: ${failedCount}`);
+		console.log(`\n✔️  Tests passed: ${cases.filter((v) => !failedCases.includes(v)).length}`);
+		console.log(`\n❌ Tests failed: ${failedCases.length}`);
 
 		if (failedCases.length) {
-			console.log(`❗ Failed tests: \n${failedCases.join('\n')}`);
+			console.log(`\n❗ Failed tests:`);
+			console.log('\n-------------');
+			console.log(`${failedCases.join('\n')}`);
+			console.log('-------------\n');
 		}
 
 		Object.keys(servers).forEach(async (key) => await servers[key].close());
+
+		cb();
 	});
 };
 
