@@ -64,14 +64,14 @@ module.exports = async function ({buildId}) {
 			return config;
 		};
 
-		// plugins.set('buildCache', new HardSourceWebpackPlugin({
-		// 	environmentHash: {files: ['package-lock.json', 'yarn.lock']},
-		// 	cacheDirectory: path.join(buildCache, String(buildId), wp.cacheDir()),
-		// 	configHash: () => require('node-object-hash')().hash({
-		// 		webpack: global.WEBPACK_CONFIG,
-		// 		config: expandConfig({}, config)
-		// 	})
-		// }));
+		plugins.set('buildCache', new HardSourceWebpackPlugin({
+			environmentHash: {files: ['package-lock.json', 'yarn.lock']},
+			cacheDirectory: path.join(buildCache, String(buildId), wp.cacheDir()),
+			configHash: () => require('node-object-hash')().hash({
+				webpack: global.WEBPACK_CONFIG,
+				config: expandConfig({}, config)
+			})
+		}));
 	}
 
 	return plugins;

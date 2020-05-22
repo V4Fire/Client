@@ -9,9 +9,13 @@
  */
 
 const
+	os = require('os'),
 	path = require('upath'),
 	{src} = require('config'),
 	{resolve} = require('@pzlr/build-core');
+
+const
+	cpus = Math.round(os.cpus().length * 0.75);
 
 module.exports = function (gulp = require('gulp')) {
 	const
@@ -30,7 +34,15 @@ module.exports = function (gulp = require('gulp')) {
 			suitArg = args['--suit'] ? `--suit ${args['--suit']}` : '',
 			extraArgs = args._.slice(1).join(' ');
 
-		return $.run(`npx webpack --public-path --client-output ${args['--client-name'] || args['--name']} --components ${args['--name']} ${suitArg} ${extraArgs}`, {verbosity: 3})
+		const argsString = [
+			['--client-output', args['--client-name'] || args['--name']],
+			['--components', args['--name']],
+			['--long-cache', false],
+			['--public-path', '']
+
+		].flat().join(' ');
+
+		return $.run(`npx webpack ${argsString} ${suitArg} ${extraArgs}`, {verbosity: 3})
 			.exec()
 			.on('error', console.error);
 	});
@@ -110,7 +122,7 @@ module.exports = function (gulp = require('gulp')) {
 			await test(page, {browser, context, browserType, componentDir, tmpDir});
 
 			const
-				close = () => closeOnFinish && browser.close() && (process.exitCode = exitCode);
+				close = () => (closeOnFinish && browser.close()) && (process.exitCode = exitCode);
 
 			testEnv.addReporter({
 				specDone: (res) => {
@@ -160,9 +172,14 @@ module.exports = function (gulp = require('gulp')) {
 			cases = require(path.join(cwd, 'tests/cases.js'));
 
 		const
+			processesArgs = arg({'--processes': Number, '--test-processes': Number, '--build-processes': Number}, {permissive: true}),
 			wsEndpoints = {chromium: '', firefox: '', webkit: ''},
 			browsers = getSelectedBrowsers(),
 			servers = {};
+
+		const
+			buildProcess = processesArgs['--build-processes'] || processesArgs['--processes'] || cpus,
+			testProcess = processesArgs['--test-processes'] || processesArgs['--processes'] || cpus;
 
 		for (const browserType of browsers) {
 			const
@@ -175,18 +192,26 @@ module.exports = function (gulp = require('gulp')) {
 		let
 			endpointArg = Object.entries(wsEndpoints).map(([key, value]) => `--${key}WsEndpoint ${value}`).join(' ');
 
-		const build = (argsString) => new Promise((res, rej) => {
-			$.run(`npx gulp test:component:build ${argsString}`, {verbosity: 3})
-				.exec('', res)
+		const
+			waitForQuota = (map, maxQueue) => wait(() => map.size < maxQueue),
+			waitForEmpty = (map) => wait(() => map.size === 0);
+
+		const exec = (execString, successCb, failCb) => new Promise((res, rej) => {
+			$.run(execString, {verbosity: 3})
+				.exec('', () => {
+					successCb && successCb();
+					res();
+				})
 				.on('error', (err) => {
-					console.log(err);
+					failCb(execString, err);
 					rej();
 				});
 		});
 
+		// Build Components
 		const
 			buildCache = {},
-			buildPromises = [];
+			buildMap = new Map();
 
 		for (let i = 0; i < cases.length; i++) {
 			const
@@ -200,53 +225,95 @@ module.exports = function (gulp = require('gulp')) {
 				continue;
 			}
 
-			buildPromises.push(build(`--suit ${args['--suit']} --name ${args['--name']} --client-name ${args['--client-name']}`));
+			const argsString = [
+				['--suit', args['--suit']],
+				['--name', args['--name']],
+				['--client-name', args['--client-name']]
+
+			].flat().join(' ');
+
+			await waitForQuota(buildMap, buildProcess);
+
+			buildMap.set(
+				argsString,
+				exec(`npx gulp test:component:build ${argsString}`, () => buildMap.delete(argsString))
+			);
+
 			buildCache[args['--client-name']] = true;
 		}
 
-		await Promise.all(buildPromises);
+		await waitForEmpty(buildMap);
 
+		// Run tests
 		const
+			totalCases = [],
 			failedCases = [],
-			promises = [];
-
-		const run = (c) => new Promise((res, rej) => {
-			$.run(`npx gulp test:component:run ${c} ${endpointArg}`, {verbosity: 3})
-				.exec('', res)
-				.on('error', (err) => {
-					failedCases.push(c);
-					rej();
-				});
-		});
+			testMap = new Map();
 
 		for (let i = 0; i < cases.length; i++) {
 			const
 				c = cases[i],
 				args = arg({'--suit': String, '--name': String}, {argv: c.split(' '), permissive: true});
 
-				args['--suit'] = args['--suit'] || 'demo';
-				args['--client-name'] = `${args['--name']}_${args['--suit']}`;
+			args['--suit'] = args['--suit'] || 'demo';
+			args['--client-name'] = `${args['--name']}_${args['--suit']}`;
 
-			promises.push(run(`${c} --client-name ${args['--client-name']}`));
+			const
+				argsString = `${c} --client-name ${args['--client-name']}`;
+
+			totalCases.push(argsString);
+			await waitForQuota(testMap, testProcess);
+
+			const
+				onTestEnd = (argsString) => testMap.delete(argsString);
+
+			testMap.set(
+				argsString,
+				exec(`npx gulp test:component:run ${argsString} ${endpointArg}`, 
+					() => onTestEnd(argsString),
+					() => onTestEnd(argsString)
+				)
+			);
 		}
 
-		await Promise.all(promises);
+		await waitForEmpty(testMap);
 
-		console.log(`\n✔️  Tests passed: ${cases.filter((v) => !failedCases.includes(v)).length}`);
+		console.log('\n-------------');
+		console.log(`\n✔️  Tests passed: ${totalCases.filter((v) => !failedCases.includes(v)).length}`);
 		console.log(`\n❌ Tests failed: ${failedCases.length}`);
 
 		if (failedCases.length) {
 			console.log(`\n❗ Failed tests:`);
-			console.log('\n-------------');
-			console.log(`${failedCases.join('\n')}`);
-			console.log('-------------\n');
+			console.log(`\n${failedCases.join('\n')}`);
 		}
+
+		console.log('\n-------------\n');
 
 		Object.keys(servers).forEach(async (key) => await servers[key].close());
 		cb();
 	});
 };
 
+/**
+ * @param {Function} cb
+ * @param {number} interval
+ */
+function wait(cb, interval = 15) {
+	return new Promise((res) => {
+		if (Boolean(cb())) {
+			res();
+			return;
+		}
+	
+		const intervalId = setInterval(() => {
+			if (Boolean(cb())) {
+				res();
+				clearInterval(intervalId);
+			}
+	
+		}, interval);
+	});
+}
 
 /**
  * Returns a browser instance
@@ -269,8 +336,8 @@ async function getBrowserInstance(browserType) {
 		chromium: '--chromiumWsEndpoint'
 	};
 
-	if (args[endpointMap]) {
-		return await playwright[browserType].connect({wsEndpoint: args[endpointMap]});
+	if (args[endpointMap[browserType]]) {
+		return await playwright[browserType].connect({wsEndpoint: args[endpointMap[browserType]]});
 	}
 
 	return await playwright[browserType].launch();

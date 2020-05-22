@@ -41,9 +41,7 @@ MAX_PROCESS += MAX_PROCESS <= I ? 1 : 0;
  */
 module.exports = (async () => {
 	const
-		hash = Math.random();
-
-	const
+		hash = Math.random() * 1000,
 		cacheFile = path.join(buildCache, `graph-${hash}.json`);
 
 	if (build.buildGraphFromCache) {
