@@ -60,6 +60,12 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 			needCache = handler.length > 1,
 			ref = info.originalPath;
 
+		const normalizedOpts = {
+			collapse: true,
+			...opts,
+			...watchInfo?.opts
+		};
+
 		let
 			oldVal;
 
@@ -74,7 +80,13 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 
 			handler = (val, _, ...args) => {
 				if (isAccessor) {
-					val = Object.get(component, info.originalPath);
+					// tslint:disable-next-line:prefer-conditional-expression
+					if (normalizedOpts.collapse) {
+						val = Object.get(info.ctx, info.accessor ?? info.name);
+
+					} else {
+						val = Object.get(component, info.originalPath);
+					}
 				}
 
 				const res = originalHandler.call(this, val, oldVal, ...args);
@@ -93,7 +105,14 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 		} else {
 			if (isAccessor) {
 				handler = (val, oldVal, ...args) => {
-					val = Object.get(component, info.originalPath);
+					// tslint:disable-next-line:prefer-conditional-expression
+					if (normalizedOpts.collapse) {
+						val = Object.get(info.ctx, info.accessor ?? info.name);
+
+					} else {
+						val = Object.get(component, info.originalPath);
+					}
+
 					return originalHandler.call(this, val, oldVal, ...args);
 				};
 			}
@@ -108,17 +127,15 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 		);
 
 		if (proxy) {
-			const normalizedOpts = {
-				collapse: true,
-				...opts,
-				...watchInfo.opts
-			};
+			if (!watchInfo) {
+				return null;
+			}
 
 			switch (info.type) {
 				case 'system':
 					if (!Object.getOwnPropertyDescriptor(info.ctx, info.name)?.get) {
 						proxy[watcherInitializer]?.();
-						proxy = watchInfo?.value;
+						proxy = watchInfo.value;
 
 						mute(proxy);
 						proxy[info.name] = info.ctx[info.name];

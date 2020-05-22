@@ -35,7 +35,7 @@ export function attachDynamicWatcher(
 	}
 
 	const
-		nm = prop.accessor || prop.name;
+		nm = prop.accessor ?? prop.name;
 
 	let
 		handlersSet = handlersStore[nm];
