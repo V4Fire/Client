@@ -7,9 +7,10 @@
  */
 
 import { paramsFactory } from 'core/component/decorators/base';
-import { InitFieldFn } from 'core/component/interface';
 
 import {
+
+	InitFieldFn,
 
 	DecoratorProp,
 	DecoratorSystem,
