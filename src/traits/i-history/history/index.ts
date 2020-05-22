@@ -336,7 +336,7 @@ export default class History<C extends iHistory> {
 
 		const
 			title = page.querySelector('[data-title]'),
-			hasTrigger = page.children[0].getAttribute(this.config.triggerAttr),
+			hasTrigger = page.children?.[0]?.getAttribute(this.config.triggerAttr),
 			trigger = !hasTrigger ? this.createTrigger() : <HTMLElement>page.children[0];
 
 		if (title) {

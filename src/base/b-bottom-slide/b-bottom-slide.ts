@@ -361,7 +361,7 @@ export default class bBottomSlide extends iBlock implements iLockPageScroll, iOp
 	 */
 	@p({cache: false})
 	protected get visibleInPercent(): number {
-		return this.visible / this.windowHeight * 100;
+		return !this.windowHeight ? 0 : this.visible / this.windowHeight * 100;
 	}
 
 	/**

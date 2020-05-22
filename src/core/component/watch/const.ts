@@ -6,7 +6,14 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import { DynamicHandlers } from 'core/component/watch/interface';
+
 export const
+	dynamicHandlers: DynamicHandlers = new WeakMap(),
+	immediateDynamicHandlers: DynamicHandlers = new WeakMap();
+
+export const
+	tiedWatchers = Symbol('List of tied watchers'),
 	watcherInitializer = Symbol('Watcher initializer'),
 	toComponentObject = Symbol('Link to a component object');
 

@@ -473,6 +473,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	 * that can't be initialized within a component directly. You can modify this object outside from components,
 	 * but remember, that these mutations may force re-render of all components.
 	 */
+	@computed({cache: true, dependencies: ['r.remoteState']})
 	get remoteState(): Dictionary {
 		return this.r.remoteState;
 	}
