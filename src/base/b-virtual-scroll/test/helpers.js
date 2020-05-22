@@ -7,13 +7,6 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-/**
- * Scrolls page down and waits for items to be rendered
- *
- * @param {*} page
- * @param {number} count
- * @param {string} componentSelector
- */
 const
 	path = require('upath'),
 	pzlr = require('@pzlr/build-core');
@@ -24,6 +17,13 @@ const
 
 Object.assign(module.exports, helpers);
 
+/**
+ * Scrolls page down and waits for items to be rendered
+ *
+ * @param {*} page
+ * @param {number} count
+ * @param {string} componentSelector
+ */
 module.exports.scrollAndWaitItemsCountGreaterThan = async function (page, count, componentSelector) {
 	await module.exports.scrollToPageBottom(page);
 	await module.exports.waitItemsCountGreaterThan(page, count, componentSelector);
