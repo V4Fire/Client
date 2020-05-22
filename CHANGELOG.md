@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.17 (2020-05-22)
+
+#### :bug: Bug Fix
+
+* [Fixed watching for accessors with external dependencies](https://github.com/V4Fire/Client/pull/244)
+
 ## v3.0.0-rc.16 (2020-05-21)
 
 #### :bug: Bug Fix
