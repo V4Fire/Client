@@ -9,11 +9,12 @@
 import watch, { mute, unmute, unwrap, getProxyType } from 'core/object/watch';
 
 import { getPropertyInfo, PropertyInfo } from 'core/component/reflection';
-import { ComponentInterface, WatchOptions, RawWatchHandler } from 'core/component/interface';
-
 import { proxyGetters } from 'core/component/engines';
-import { dynamicHandlers, cacheStatus, fakeCopyLabel, watcherInitializer } from 'core/component/watch/const';
-import { cloneWatchValue } from 'core/component';
+import { ComponentInterface,  WatchOptions, RawWatchHandler } from 'core/component/interface';
+
+import { tiedWatchers, watcherInitializer, fakeCopyLabel } from 'core/component/watch/const';
+import { cloneWatchValue } from 'core/component/watch/clone';
+import { attachDynamicWatcher } from 'core/component/watch/helpers';
 
 /**
  * Creates a function to watch changes from the specified component instance and returns it
@@ -81,7 +82,7 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 				return res;
 			};
 
-			handler[cacheStatus] = originalHandler[cacheStatus];
+			handler[tiedWatchers] = originalHandler[tiedWatchers];
 
 			if (opts?.immediate) {
 				const val = oldVal;
@@ -209,7 +210,7 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 							};
 
 							const
-								tiedLinks = handler[cacheStatus];
+								tiedLinks = handler[tiedWatchers];
 
 							if (tiedLinks) {
 								for (let i = 0; i < tiedLinks.length; i++) {
@@ -279,28 +280,6 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 			return unwatch;
 		}
 
-		let
-			handlersStore = dynamicHandlers.get(info.ctx);
-
-		if (!handlersStore) {
-			handlersStore = Object.createDict();
-			dynamicHandlers.set(info.ctx, handlersStore);
-		}
-
-		const
-			nm = info.accessor || info.name;
-
-		let
-			handlersSet = handlersStore[nm];
-
-		if (!handlersSet) {
-			handlersSet = handlersStore[nm] = new Set<Function>();
-		}
-
-		handlersSet.add(handler);
-
-		return () => {
-			handlersSet?.delete(handler);
-		};
+		return attachDynamicWatcher(component, info, handler);
 	};
 }

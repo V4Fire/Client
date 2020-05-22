@@ -9,6 +9,11 @@
 import Async from 'core/async';
 import { ComponentInterface, PropertyInfo, WatchObject } from 'core/component/interface';
 
+export type DynamicHandlers = WeakMap<
+	ComponentInterface,
+	Dictionary<Set<Function>>
+>;
+
 export interface BindRemoteWatchersParams<A extends object = ComponentInterface> {
 	/**
 	 * Link to an instance of Async
