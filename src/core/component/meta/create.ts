@@ -145,15 +145,9 @@ export function fillMeta(
 				}
 
 				watcherListeners.push({
+					...watcher,
 					method: nm,
-					group: watcher.group,
-					single: watcher.single,
-					options: watcher.options,
 					args: Array.concat([], watcher.args),
-					provideArgs: watcher.provideArgs,
-					deep: watcher.deep,
-					immediate: watcher.immediate,
-					wrapper: watcher.wrapper,
 					handler: <any>method.fn
 				});
 			}
@@ -171,11 +165,7 @@ export function fillMeta(
 					continue;
 				}
 
-				hooks[key].push({
-					name: watcher.name,
-					fn: method.fn,
-					after: watcher.after
-				});
+				hooks[key].push({...watcher, fn: method.fn});
 			}
 		}
 	}
@@ -228,12 +218,7 @@ export function fillMeta(
 					continue;
 				}
 
-				watcherListeners.push({
-					deep: watcher.deep,
-					immediate: watcher.immediate,
-					provideArgs: watcher.provideArgs,
-					handler: watcher.handler
-				});
+				watcherListeners.push(watcher);
 			}
 		}
 	}
@@ -256,12 +241,7 @@ export function fillMeta(
 						continue;
 					}
 
-					watcherListeners.push({
-						deep: watcher.deep,
-						immediate: watcher.immediate,
-						provideArgs: watcher.provideArgs,
-						handler: watcher.handler
-					});
+					watcherListeners.push(watcher);
 				}
 			}
 		}
