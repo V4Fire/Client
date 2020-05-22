@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import watch from 'core/object/watch';
+import watch, { set } from 'core/object/watch';
 import * as init from 'core/component/construct';
 
 import { beforeRenderHooks } from 'core/component/const';
@@ -85,6 +85,9 @@ export function getComponent(meta: ComponentMeta): ComponentOptions<ComponentDri
 
 							// Finally we can register a Vue watcher
 							$set.call(ctx, obj, key, value);
+
+							// Don't forget to restore the original watcher
+							set(obj, key, value);
 						}
 
 					// Because Vue doesn't see changes from Map/Set structures, we must use this hack
