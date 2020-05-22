@@ -36,6 +36,7 @@ module.exports = function (gulp = require('gulp')) {
 
 		const argsString = [
 			['--client-output', args['--client-name'] || args['--name']],
+			['--entries-hash', args['--client-name'] || args['--name']],
 			['--components', args['--name']],
 			['--long-cache', false],
 			['--public-path', '']
@@ -193,7 +194,7 @@ module.exports = function (gulp = require('gulp')) {
 			endpointArg = Object.entries(wsEndpoints).map(([key, value]) => `--${key}WsEndpoint ${value}`).join(' ');
 
 		const
-			waitForQuota = (map, maxQueue) => wait(() => map.size < maxQueue),
+			waitForQuotas = (map, maxQueue) => wait(() => map.size < maxQueue),
 			waitForEmpty = (map) => wait(() => map.size === 0);
 
 		const exec = (execString, successCb, failCb) => new Promise((res, rej) => {
@@ -232,7 +233,7 @@ module.exports = function (gulp = require('gulp')) {
 
 			].flat().join(' ');
 
-			await waitForQuota(buildMap, buildProcess);
+			await waitForQuotas(buildMap, buildProcess);
 
 			buildMap.set(
 				argsString,
@@ -262,7 +263,7 @@ module.exports = function (gulp = require('gulp')) {
 				argsString = `${c} --client-name ${args['--client-name']}`;
 
 			totalCases.push(argsString);
-			await waitForQuota(testMap, testProcess);
+			await waitForQuotas(testMap, testProcess);
 
 			const
 				onTestEnd = (argsString) => testMap.delete(argsString);

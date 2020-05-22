@@ -12,7 +12,8 @@ const
 	$C = require('collection.js'),
 	fs = require('fs-extra-promise'),
 	path = require('upath'),
-	camelize = require('camelize');
+	camelize = require('camelize'),
+	args = require('arg')({'--entries-hash': String}, {permissive: true});
 
 const
 	{build, src} = require('config'),
@@ -41,8 +42,8 @@ MAX_PROCESS += MAX_PROCESS <= I ? 1 : 0;
  */
 module.exports = (async () => {
 	const
-		hash = Math.random() * 1000,
-		cacheFile = path.join(buildCache, `graph-${hash}.json`);
+		hash = args['--entries-hash'] ? `${args['--entries-hash']}_` : '',
+		cacheFile = path.join(buildCache, `${hash}graph.json`);
 
 	if (build.buildGraphFromCache) {
 		if (fs.existsSync(cacheFile)) {
@@ -119,7 +120,7 @@ module.exports = (async () => {
 			const
 				blackName = /^[iv]-/,
 				logicTaskName = `${name}.js`,
-				logicFile = path.join(tmpEntries, `${hash}-${logicTaskName}`);
+				logicFile = path.join(tmpEntries, `${hash}${logicTaskName}`);
 
 			console.log(logicFile);
 			fs.writeFileSync(logicFile, await $C(list).async.to('').reduce(async (str, {name}) => {
@@ -152,7 +153,7 @@ module.exports = (async () => {
 
 			const
 				styleTaskName = `${name}$style`,
-				styleFile = path.join(tmpEntries, `${hash}-${name}.styl`);
+				styleFile = path.join(tmpEntries, `${hash}${name}.styl`);
 
 			fs.writeFileSync(styleFile, [
 				await $C(list).async.to('').reduce(async (str, {name, isParent}) => {
@@ -194,7 +195,7 @@ module.exports = (async () => {
 
 			const
 				tplTaskName = `${name}_tpl.js`,
-				tplFile = path.join(tmpEntries, `${hash}-${name}.ss${!isFastBuild ? '.js' : ''}`);
+				tplFile = path.join(tmpEntries, `${hash}${name}.ss${!isFastBuild ? '.js' : ''}`);
 
 			fs.writeFileSync(tplFile, await $C(list)
 				.async
@@ -232,7 +233,7 @@ module.exports = (async () => {
 
 			const
 				htmlTaskName = `${name}_view`,
-				htmlFile = path.join(tmpEntries, `${hash}-${htmlTaskName}.html.js`);
+				htmlFile = path.join(tmpEntries, `${hash}${htmlTaskName}.html.js`);
 
 			fs.writeFileSync(htmlFile, await $C(list).async.to('').reduce(async (str, {name}) => {
 				const
