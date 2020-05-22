@@ -26,7 +26,8 @@
     "build:file": "gulp build:tsconfig && webpack --public-path",
     "dev": "gulp build:tsconfig && webpack --watch",
     "dev:file": "gulp build:tsconfig && webpack --watch --public-path",
-    "test": "echo \"Error: no test specified\" && exit 0"
+    "test": "echo \"Error: no test specified\" && exit 0",
+    "test:components": "npx gulp test:components"
   },
   "dependencies": {
     "@v4fire/core": "3.17.0",
