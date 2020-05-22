@@ -266,11 +266,7 @@ export function bindRemoteWatchers(component: ComponentInterface, params?: BindR
 							return;
 						}
 
-						const unwatch = $watch.call(component, p.info || getPropertyInfo(watchPath, component), {
-							deep: watchInfo.deep,
-							immediate: watchInfo.immediate
-						}, handler);
-
+						const unwatch = $watch.call(component, p.info || getPropertyInfo(watchPath, component), watchInfo, handler);
 						unwatch && $a.worker(unwatch, asyncParams);
 					});
 
@@ -298,11 +294,7 @@ export function bindRemoteWatchers(component: ComponentInterface, params?: BindR
 						continue;
 					}
 
-					const unwatch = $watch.call(component, p.info || getPropertyInfo(watchPath, component), {
-						deep: watchInfo.deep,
-						immediate: watchInfo.immediate
-					}, handler);
-
+					const unwatch = $watch.call(component, p.info || getPropertyInfo(watchPath, component), watchInfo, handler);
 					unwatch && $a.worker(unwatch, asyncParams);
 				}
 			}

@@ -44,7 +44,7 @@ import {
 	WaitDecoratorOptions,
 	WaitOptions,
 
-	ModEventType,
+	DecoratorEventListenerMethod,
 	DecoratorCtx
 
 } from 'super/i-block/modules/decorators/interface';
@@ -112,7 +112,7 @@ export function getComponentCtx<CTX>(wrapper: DecoratorCtx<CTX>): CTX {
 export function mod(
 	name: string,
 	value: ModVal = '*',
-	method: ModEventType = 'on'
+	method: DecoratorEventListenerMethod = 'on'
 ): Function {
 	return (target, key, descriptor) => {
 		initEmitter.once('bindConstructor', (componentName) => {
@@ -139,7 +139,7 @@ export function mod(
 export function removeMod(
 	name: string,
 	value: ModVal = '*',
-	method: ModEventType = 'on'
+	method: DecoratorEventListenerMethod = 'on'
 ): Function {
 	return (target, key, descriptor) => {
 		initEmitter.once('bindConstructor', (componentName) => {
