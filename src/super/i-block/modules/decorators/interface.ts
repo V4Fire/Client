@@ -26,7 +26,7 @@ import {
 
 } from 'core/component/decorators';
 
-export type ModEventType = 'on' | 'once';
+export type DecoratorEventListenerMethod = 'on' | 'once';
 
 export interface InitFieldFn<
 	CTX extends ComponentInterface = iBlock['unsafe']
