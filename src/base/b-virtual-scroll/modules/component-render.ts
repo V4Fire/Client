@@ -55,7 +55,7 @@ export default class ComponentRender {
 	/**
 	 * Async instance
 	 */
-	protected get async(): Async<bVirtualScroll> {
+	protected get async(): Async<bVirtualScroll['unsafe']> {
 		return this.component.async;
 	}
 

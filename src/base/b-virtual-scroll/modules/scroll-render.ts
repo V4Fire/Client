@@ -101,7 +101,7 @@ export default class ScrollRender {
 	/**
 	 * Async instance
 	 */
-	protected get async(): Async<bVirtualScroll> {
+	protected get async(): Async<bVirtualScroll['unsafe']> {
 		return this.component.async;
 	}
 
@@ -129,7 +129,7 @@ export default class ScrollRender {
 	/**
 	 * @param component
 	 */
-	constructor(component: bVirtualScroll) {
+	constructor(component: bVirtualScroll['unsafe']) {
 		this.component = component.unsafe;
 
 		this.component.meta.hooks.mounted.push({fn: () => {

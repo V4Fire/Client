@@ -17,6 +17,7 @@ import iData, {
 	field,
 	system,
 	wait,
+	computed,
 
 	CheckDBEquality,
 	InitLoadOptions,
@@ -161,7 +162,7 @@ export default class bVirtualScroll extends iData implements iItems {
 	/**
 	 * Local component state
 	 */
-	@p({cache: false})
+	@computed({cache: false})
 	protected get localState(): LocalState {
 		return this.localStateStore;
 	}
