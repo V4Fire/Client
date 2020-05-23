@@ -122,7 +122,6 @@ module.exports = (async () => {
 				logicTaskName = `${name}.js`,
 				logicFile = path.join(tmpEntries, `${hash}${logicTaskName}`);
 
-			console.log(logicFile);
 			fs.writeFileSync(logicFile, await $C(list).async.to('').reduce(async (str, {name}) => {
 				const
 					block = blockMap.get(name),
