@@ -272,7 +272,10 @@ module.exports = function (gulp = require('gulp')) {
 				argsString,
 				exec(`npx gulp test:component:run ${argsString} ${endpointArg}`, 
 					() => onTestEnd(argsString),
-					() => onTestEnd(argsString)
+					() => {
+						onTestEnd(argsString);
+						failedCases.push(argsString);
+					}
 				)
 			);
 		}
@@ -291,6 +294,11 @@ module.exports = function (gulp = require('gulp')) {
 		console.log('\n-------------\n');
 
 		Object.keys(servers).forEach(async (key) => await servers[key].close());
+
+		if (failedCases.length) {
+			throw new Error(`Tests didn't passed`);
+		}
+
 		cb();
 	});
 };
