@@ -83,7 +83,7 @@ module.exports = (async () => {
 	}
 
 	const
-		tmpEntries = path.join(resolve.entry(), 'tmp/hash');
+		tmpEntries = path.join(resolve.entry(), `tmp/${hash}`);
 
 	fs.mkdirpSync(tmpEntries);
 	fs.mkdirpSync(path.join(src.clientOutput(), path.dirname(output)));
