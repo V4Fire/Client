@@ -23,8 +23,7 @@ import { cacheStatus, ComponentInterface } from 'core/component';
  */
 export function attachAccessorsFromMeta(component: ComponentInterface, safe?: boolean): void {
 	const
-		// @ts-ignore (access)
-		{meta, meta: {params: {deprecatedProps}}} = component;
+		{meta, meta: {params: {deprecatedProps}}} = component.unsafe;
 
 	const
 		isFlyweight = component.isFlyweight || meta.params.functional === true;

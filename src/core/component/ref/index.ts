@@ -23,8 +23,7 @@ import { ComponentElement, ComponentInterface } from 'core/component/interface';
  */
 export function resolveRefs(component: ComponentInterface): void {
 	const
-		// @ts-ignore (access)
-		{$refs, $refHandlers} = component;
+		{$refs, $refHandlers} = component.unsafe;
 
 	if (!$refs) {
 		return;

@@ -22,8 +22,7 @@ import { ComponentInterface } from 'core/component';
  */
 export function callMethodFromComponent(component: ComponentInterface, method: string, ...args: unknown[]): void {
 	const
-		// @ts-ignore (access)
-		obj = component.meta.methods[method];
+		obj = component.unsafe.meta.methods[method];
 
 	if (obj) {
 		try {
@@ -46,8 +45,9 @@ export function callMethodFromComponent(component: ComponentInterface, method: s
  */
 export function attachMethodsFromMeta(component: ComponentInterface): void {
 	const
-		// @ts-ignore (access)
-		{meta, meta: {methods}} = component,
+		{unsafe: {meta, meta: {methods}}} = component;
+
+	const
 		isFlyweight = component.isFlyweight || meta.params.functional === true;
 
 	for (let keys = Object.keys(methods), i = 0; i < keys.length; i++) {

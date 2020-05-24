@@ -76,6 +76,11 @@ export interface RenderReason {
 }
 
 export interface Unsafe<CTX extends ComponentInterface = ComponentInterface> {
+	renderCounter: number;
+	lastSelfReasonToRender?: Nullable<RenderReason>;
+	lastTimeOfRender?: DOMHighResTimeStamp;
+	renderTmp: Dictionary<VNode>;
+
 	$asyncLabel: symbol;
 	$activeField: CanUndef<string>;
 
@@ -135,6 +140,27 @@ export interface Unsafe<CTX extends ComponentInterface = ComponentInterface> {
 
 	// @ts-ignore (access)
 	$destroy: CTX['$destroy'];
+
+	// Internal render helpers
+
+	// @ts-ignore (access)
+	_c: CTX['$createElement'];
+
+	_o: Function;
+	_q: Function;
+	_s: Function;
+	_v: Function;
+	_e: Function;
+	_f: Function;
+	_n: Function;
+	_i: Function;
+	_m: Function;
+	_l: Function;
+	_g: Function;
+	_k: Function;
+	_b: Function;
+	_t: Function;
+	_u: Function;
 }
 
 type UnsafeGetter<U extends Unsafe> = U extends Unsafe<infer CTX> ? U & {-readonly [K in keyof CTX]: CTX[K]} : U;

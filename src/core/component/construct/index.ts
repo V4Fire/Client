@@ -52,6 +52,7 @@ export function beforeCreateState(
 
 	Object.assign(component, {
 		meta,
+		unsafe: component,
 		componentName: meta.componentName,
 		instance: meta.instance,
 
@@ -64,17 +65,13 @@ export function beforeCreateState(
 	});
 
 	const
-		parent = component.$parent;
+		{unsafe, unsafe: {$parent: parent}} = component;
 
 	if (parent && !parent.componentName) {
-		// @ts-ignore (access)
-		// tslint:disable-next-line:no-string-literal
-		component['$parent'] = component.$root.$remoteParent;
+		unsafe.$parent = unsafe.$root.unsafe.$remoteParent;
 	}
 
-	// @ts-ignore (access)
-	// tslint:disable-next-line:no-string-literal
-	component['$normalParent'] = getNormalParent(component);
+	unsafe.$normalParent = getNormalParent(component);
 
 	if (opts?.addMethods) {
 		attachMethodsFromMeta(component);
@@ -89,11 +86,9 @@ export function beforeCreateState(
 
 	const
 		{systemFields, computedFields, accessors, watchDependencies, watchers} = meta,
+		{$systemFields} = unsafe;
 
-		// @ts-ignore (access)
-		{$systemFields} = component;
-
-	initFields(systemFields, component, <any>component);
+	initFields(systemFields, component, unsafe);
 
 	let
 		watchMap;
@@ -155,10 +150,7 @@ export function beforeDataCreateState(
 	component: ComponentInterface,
 	opts?: InitBeforeDataCreateStateOptions
 ): void {
-	const
-		// @ts-ignore (access)
-		{meta, $fields} = component;
-
+	const {meta, $fields} = component.unsafe;
 	initFields(meta.fields, component, $fields);
 
 	Object.defineProperty(component, '$$data', {
@@ -178,11 +170,11 @@ export function beforeDataCreateState(
  * @param component
  */
 export function createdState(component: ComponentInterface): void {
-	// @ts-ignore (access)
-	unmute(component.$fields);
+	const
+		{unsafe} = component;
 
-	// @ts-ignore (access)
-	unmute(component.$systemFields);
+	unmute(unsafe.$fields);
+	unmute(unsafe.$systemFields);
 
 	runHook('created', component).then(() => {
 		callMethodFromComponent(component, 'created');
@@ -258,10 +250,7 @@ export function deactivatedState(component: ComponentInterface): void {
  * @param component
  */
 export function beforeDestroyState(component: ComponentInterface): void {
-	const
-		// @ts-ignore (access)
-		{$async} = component;
-
+	const {$async} = component.unsafe;
 	runHook('beforeDestroy', component).catch(stderr);
 	callMethodFromComponent(component, 'beforeDestroy');
 	$async.clearAll().locked = true;

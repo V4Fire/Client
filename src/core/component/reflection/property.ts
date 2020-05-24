@@ -78,8 +78,7 @@ export function getPropertyInfo(path: string, component: ComponentInterface): Pr
 	}
 
 	const
-		// @ts-ignore (access)
-		{props, fields, systemFields, computedFields, accessors, params: {deprecatedProps}} = component.meta;
+		{props, fields, systemFields, computedFields, accessors, params: {deprecatedProps}} = component.unsafe.meta;
 
 	const
 		alternative = deprecatedProps?.[name];

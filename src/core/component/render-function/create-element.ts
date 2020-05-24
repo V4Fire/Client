@@ -167,8 +167,7 @@ export function wrapCreateElement(
 				enumerable: true,
 				get: () => {
 					const
-						// @ts-ignore (access)
-						r = baseCtx.$refs,
+						r = baseCtx.unsafe.$refs,
 						l = r[`${ref}:${ctx._componentId}`] || r[`${ref}:${ctx.componentId}`];
 
 					if (l) {
