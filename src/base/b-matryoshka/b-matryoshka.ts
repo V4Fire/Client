@@ -111,7 +111,7 @@ export default class bMatryoshka extends iData implements iItems {
 
 		return Object.isFunction(op) ? op(item, i, {
 			key: this.getOptionKey(item, i),
-			ctx: this
+			this
 		}) : op;
 	}
 

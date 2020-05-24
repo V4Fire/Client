@@ -70,7 +70,7 @@ export default class bBottomSlide extends iBlock implements iLockPageScroll, iOp
 	readonly stepsProp: number[] = [];
 
 	/** @see [[bBottomSlide.steps]] */
-	@field((o: bBottomSlide) => o.sync.link('stepsProp', (v: number[]) => v.slice().sort((a, b) => a - b)))
+	@field<bBottomSlide>((o) => o.sync.link('stepsProp', (v: number[]) => v.slice().sort((a, b) => a - b)))
 	readonly stepsStore!: number[];
 
 	/**
@@ -157,7 +157,7 @@ export default class bBottomSlide extends iBlock implements iLockPageScroll, iOp
 	}
 
 	/** @see [[iHistory.history]] */
-	@system((ctx: iHistory) => new History(ctx))
+	@system<iHistory>((ctx) => new History(ctx))
 	readonly history!: History<iHistory>;
 
 	/** @inheritDoc */
