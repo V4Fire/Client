@@ -15,8 +15,14 @@ const baseAttrs = {
 	':optionProps': '({current}, i) => ({"data-index": current.i})',
 };
 
+const slots = {
+	tombstone: '<div class="b-virtual-scroll__skeleton">Skeleton</div>',
+	retry: '<button id="retry">Повторить</button>',
+	empty: '<div id="empty">Здесь пусто</div>'
+};
+
 const baseContent = {
-	tombstone: '<div class="b-virtual-scroll__skeleton">Skeleton</div>'
+	tombstone: slots.tombstone
 };
 
 const suits = {
@@ -55,7 +61,6 @@ const suits = {
 		attrs: {
 			...baseAttrs,
 			':dataProvider': s('demo.Pagination'),
-			':chunkSize': '10',
 			':dbConverter': '({data}) => ({data: data.splice(0, 4)})',
 			':request': '{get: {chunkSize: 8, total: 32, id: "b-virtual:render-truncated"}}'
 		},
@@ -76,6 +81,22 @@ const suits = {
 
 		content: {
 			...baseContent
+		}
+	}],
+
+	/**
+	 * Set of parameters for rendering empty slot
+	 */
+	slotEmpty: [{
+		attrs: {
+			...baseAttrs,
+			':dataProvider': s('demo.Pagination'),
+			':dbConverter': '({data}) => ({data: []})',
+		},
+
+		content: {
+			...baseContent,
+			empty: slots.empty
 		}
 	}]
 }

@@ -39,3 +39,15 @@ module.exports.scrollAndWaitItemsCountGreaterThan = async function (page, count,
 module.exports.waitItemsCountGreaterThan = async function (page, count, componentSelector, op = '>') {
 	await page.waitForFunction(`document.querySelector('${componentSelector}__container').childElementCount ${op} ${count}`);
 }
+
+/**
+ * Waits for ref to have the specified display value
+ *
+ * @param {*} page 
+ * @param {string} componentSelector
+ * @param {string} refClassName
+ * @param {string} display
+ */
+module.exports.waitForRefDisplay = async function (page, componentSelector, refClassName, display) {
+	await page.waitForFunction(`document.querySelector('${componentSelector}__${refClassName}').style.display === '${display}'`);
+}

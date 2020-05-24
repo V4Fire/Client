@@ -143,6 +143,13 @@ export default class ChunkRequest {
 			initChunkRenderer();
 		}
 
+		if (
+			this.component.localState !== 'error' &&
+			options.length === 0
+		) {
+			this.chunkRender.setRefVisibility('empty', true);
+		}
+
 		this.component.localState = 'ready';
 	}
 

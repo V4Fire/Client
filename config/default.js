@@ -18,7 +18,7 @@ const
 	o = require('uniconf/options').option;
 
 const
-	args = require('arg')({'--suit': String}, {permissive: true})
+	shellArgs = require('arg')({'--suit': String}, {permissive: true})
 
 module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	__proto__: config,
@@ -40,7 +40,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 
 		components: o('components', {
 			env: true,
-			coerce: (v, ...args) => {
+			coerce: (v) => {
 				try {
 					const
 						obj = JSON.parse(v);
@@ -64,7 +64,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 							const
 								dir = pzlr.resolve.blockSync(name),
 								demo = require(path.join(dir, 'demo.js')),
-								suit = camelize(args['--suit'] || 'demo');
+								suit = camelize(shellArgs['--suit'] || 'demo');
 
 							const wrap = (d) => [].concat((d || []).map((p) => ({name, ...p})));
 

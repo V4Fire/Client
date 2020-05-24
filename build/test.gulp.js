@@ -17,8 +17,6 @@ const
 const
 	cpus = os.cpus().length;
 
-console.log(`CPUS available: ${cpus}`);
-
 module.exports = function (gulp = require('gulp')) {
 	const
 		$ = require('gulp-load-plugins')({scope: ['optionalDependencies']});
@@ -38,7 +36,6 @@ module.exports = function (gulp = require('gulp')) {
 
 		const argsString = [
 			['--client-output', args['--client-name'] || args['--name']],
-			['--entries-hash', args['--client-name'] || args['--name']],
 			['--components', args['--name']],
 			['--long-cache', false],
 			['--public-path', '']
@@ -169,6 +166,8 @@ module.exports = function (gulp = require('gulp')) {
 	);
 
 	gulp.task('test:components', async (cb) => {
+		console.log(`CPUS available: ${cpus}`);
+
 		const
 			arg = require('arg'),
 			playwright = require('playwright');
