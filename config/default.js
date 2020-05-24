@@ -34,6 +34,10 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 			type: 'boolean'
 		}),
 
+		suite: o('suite', {
+			env: true
+		}),
+
 		components: o('components', {
 			env: true,
 			coerce: (v) => {

@@ -15,7 +15,9 @@ const
 	{resolve} = require('@pzlr/build-core');
 
 const
-	cpus = Math.round(os.cpus().length * 0.75);
+	cpus = os.cpus().length;
+
+console.log(`CPUS available: ${cpus}`);
 
 module.exports = function (gulp = require('gulp')) {
 	const
