@@ -28,8 +28,8 @@ export function initProps(
 	opts: InitPropsObjectOptions = {}
 ): Dictionary {
 	const
-		// @ts-ignore (access)
-		{meta, meta: {component: {props}}} = component;
+		{unsafe} = component,
+		{meta, meta: {component: {props}}} = unsafe;
 
 	const
 		store = opts.store = opts.store || {},
@@ -52,8 +52,7 @@ export function initProps(
 			continue;
 		}
 
-		// @ts-ignore (access)
-		component.$activeField = key;
+		unsafe.$activeField = key;
 
 		let
 			val = component[key];
@@ -81,8 +80,7 @@ export function initProps(
 		}
 	}
 
-	// @ts-ignore (access)
-	component.$activeField = undefined;
+	unsafe.$activeField = undefined;
 	return store;
 }
 

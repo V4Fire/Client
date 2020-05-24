@@ -6,8 +6,9 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import iBlock from 'super/i-block/i-block';
-import bVirtualScroll, { Unsafe as SuperUnsafe } from 'base/b-virtual-scroll/b-virtual-scroll';
+import { UnsafeIData } from 'super/i-data/i-data';
+
+import bVirtualScroll from 'base/b-virtual-scroll';
 
 import ChunkRender from 'base/b-virtual-scroll/modules/chunk-render';
 import ChunkRequest from 'base/b-virtual-scroll/modules/chunk-request';
@@ -131,16 +132,19 @@ export interface RenderItem<T extends unknown = unknown> {
 	index: number;
 }
 
-export interface Unsafe<T extends iBlock = bVirtualScroll> extends SuperUnsafe<T> {
-	chunkRender: bVirtualScroll['chunkRender'];
-	chunkRequest: bVirtualScroll['chunkRequest'];
-	componentRender: bVirtualScroll['componentRender'];
-	getOptionKey: bVirtualScroll['getOptionKey'];
-	getDefaultRequestParams: bVirtualScroll['getDefaultRequestParams'];
-	convertDataToDB: bVirtualScroll['convertDataToDB'];
-	dp: bVirtualScroll['dp'];
-	total: bVirtualScroll['total'];
-	localState: bVirtualScroll['localState'];
+// @ts-ignore
+export interface UnsafeBVirtualScroll<CTX extends bVirtualScroll = bVirtualScroll> extends UnsafeIData<CTX> {
+	// @ts-ignore (access)
+	chunkRender: CTX['chunkRender'];
+
+	// @ts-ignore (access)
+	chunkRequest: CTX['chunkRequest'];
+
+	// @ts-ignore (access)
+	componentRender: CTX['componentRender'];
+
+	// @ts-ignore (access)
+	getOptionKey: CTX['getOptionKey'];
 }
 
 export interface UnsafeChunkRender {

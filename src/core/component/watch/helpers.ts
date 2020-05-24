@@ -46,8 +46,7 @@ export function attachDynamicWatcher(
 
 	handlersSet.add(handler);
 
-	// @ts-ignore (access)
-	return component.$async.worker(() => {
+	return component.unsafe.$async.worker(() => {
 		handlersSet?.delete(handler);
 	});
 }

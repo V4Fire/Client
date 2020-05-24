@@ -23,11 +23,14 @@ import iData, {
 	p,
 	field,
 
-	CheckDBEquality,
-	InitLoadOptions,
 	RequestParams,
 	RequestError,
-	RetryRequestFn
+
+	InitLoadOptions,
+	RetryRequestFn,
+	CheckDBEquality,
+
+	UnsafeGetter
 
 } from 'super/i-data/i-data';
 
@@ -36,7 +39,16 @@ import ChunkRender from 'base/b-virtual-scroll/modules/chunk-render';
 import ChunkRequest from 'base/b-virtual-scroll/modules/chunk-request';
 
 import { getRequestParams } from 'base/b-virtual-scroll/modules/helpers';
-import { RequestFn, RemoteData, RequestQueryFn, GetData, Unsafe, LocalState } from 'base/b-virtual-scroll/modules/interface';
+import {
+
+	GetData,
+	RequestFn,
+	RemoteData,
+	LocalState,
+	RequestQueryFn,
+	UnsafeBVirtualScroll
+
+} from 'base/b-virtual-scroll/modules/interface';
 
 export { RequestFn, RemoteData, RequestQueryFn, GetData };
 export * from 'super/i-data/i-data';
@@ -174,7 +186,7 @@ export default class bVirtualScroll extends iData implements iItems {
 	protected localStateStore: LocalState = 'init';
 
 	/** @override */
-	get unsafe(): Unsafe & this {
+	get unsafe(): UnsafeGetter<UnsafeBVirtualScroll<this>> {
 		return <any>this;
 	}
 
