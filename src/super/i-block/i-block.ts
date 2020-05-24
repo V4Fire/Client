@@ -648,10 +648,10 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	/**
 	 * API for analytic engines
 	 */
-	@system<iBlock>({
+	@system({
 		atom: true,
 		unique: true,
-		init: (ctx) => new Analytics(ctx)
+		init: (ctx: iBlock) => new Analytics(ctx)
 	})
 
 	readonly analytics!: Analytics;
@@ -660,10 +660,10 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	 * API for component value providers.
 	 * This property gives a bunch of methods to provide component classes/styles to another component, etc.
 	 */
-	@system<iBlock>({
+	@system({
 		atom: true,
 		unique: true,
-		init: (ctx) => new Provide(ctx)
+		init: (ctx: iBlock) => new Provide(ctx)
 	})
 
 	readonly provide!: Provide;
@@ -671,10 +671,10 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	/**
 	 * API for the component life cycle
 	 */
-	@system<iBlock>({
+	@system({
 		atom: true,
 		unique: true,
-		init: (ctx) => new Lfc(ctx)
+		init: (ctx: iBlock) => new Lfc(ctx)
 	})
 
 	readonly lfc!: Lfc;
@@ -688,10 +688,10 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	 * this.field.get('foo.bar.bla')
 	 * ```
 	 */
-	@system<iBlock>({
+	@system({
 		atom: true,
 		unique: true,
-		init: (ctx) => new Field(ctx)
+		init: (ctx: iBlock) => new Field(ctx)
 	})
 
 	readonly field!: Field;
@@ -712,10 +712,10 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	 * }
 	 * ```
 	 */
-	@system<iBlock>({
+	@system({
 		atom: true,
 		unique: true,
-		init: (ctx) => new Sync(ctx)
+		init: (ctx: iBlock) => new Sync(ctx)
 	})
 
 	readonly sync!: Sync;
@@ -729,12 +729,12 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	 *   {{ el }}
 	 * ```
 	 */
-	@system<iBlock>({
+	@system({
 		atom: true,
 		unique: true,
 		replace: true,
 		functional: false,
-		init: (ctx) => new AsyncRender(ctx)
+		init: (ctx: iBlock) => new AsyncRender(ctx)
 	})
 
 	readonly asyncRender!: AsyncRender;
@@ -742,10 +742,10 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	/**
 	 * API to work with a VDOM tree
 	 */
-	@system<iBlock>({
+	@system({
 		atom: true,
 		unique: true,
-		init: (ctx) => new VDOM(ctx)
+		init: (ctx: iBlock) => new VDOM(ctx)
 	})
 
 	readonly vdom!: VDOM;
@@ -854,10 +854,10 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	/**
 	 * API for daemons
 	 */
-	@system<iBlock>({
+	@system({
 		unique: true,
 		replace: true,
-		init: (ctx) => new Daemons(ctx)
+		init: (ctx: iBlock) => new Daemons(ctx)
 	})
 
 	protected readonly daemons!: Daemons;
@@ -865,11 +865,11 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	/**
 	 * API for the component local storage
 	 */
-	@system<iBlock>({
+	@system({
 		atom: true,
 		unique: true,
 		replace: true,
-		init: (ctx) => new Storage(ctx)
+		init: (ctx: iBlock) => new Storage(ctx)
 	})
 
 	protected readonly storage!: Storage;
@@ -890,11 +890,11 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	 * API for the component state.
 	 * This property provides a bunch of helper methods to initialize component state.
 	 */
-	@system<iBlock>({
+	@system({
 		atom: true,
 		unique: true,
 		replace: true,
-		init: (ctx) => new State(ctx)
+		init: (ctx: iBlock) => new State(ctx)
 	})
 
 	protected readonly state!: State;
@@ -902,10 +902,10 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	/**
 	 * API to work with a DOM tree
 	 */
-	@system<iBlock>({
+	@system({
 		atom: true,
 		unique: true,
-		init: (ctx) => new DOM(ctx)
+		init: (ctx: iBlock) => new DOM(ctx)
 	})
 
 	protected readonly dom!: DOM;
@@ -922,11 +922,11 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	 * This property provides a bunch of helper methods to organize lazy calculations.
 	 * @deprecated
 	 */
-	@system<iBlock>({
+	@system({
 		atom: true,
 		unique: true,
 		replace: true,
-		init: (ctx) => new Lazy(ctx)
+		init: (ctx: iBlock) => new Lazy(ctx)
 	})
 
 	protected readonly lazy!: Lazy;
@@ -935,10 +935,10 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	 * API for optimization.
 	 * This property provides a bunch of helper methods to optimize some operations.
 	 */
-	@system<iBlock>({
+	@system({
 		atom: true,
 		unique: true,
-		init: (ctx) => new Opt(ctx)
+		init: (ctx: iBlock) => new Opt(ctx)
 	})
 
 	protected readonly opt!: Opt;
