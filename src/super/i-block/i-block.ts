@@ -954,7 +954,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	@field({
 		replace: false,
 		forceUpdate: false,
-		init: (o) => o.sync.link((val) => {
+		init: (o) => o.sync.link<CanUndef<Stage>>((val) => {
 			o.stage = val;
 			return o.field.get('stageStore');
 		})
