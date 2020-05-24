@@ -75,7 +75,7 @@ export interface RenderReason {
 	path: unknown[];
 }
 
-export interface Unsafe<CTX extends ComponentInterface = ComponentInterface> {
+export interface UnsafeComponentInterface<CTX extends ComponentInterface = ComponentInterface> {
 	renderCounter: number;
 	lastSelfReasonToRender?: Nullable<RenderReason>;
 	lastTimeOfRender?: DOMHighResTimeStamp;
@@ -163,7 +163,8 @@ export interface Unsafe<CTX extends ComponentInterface = ComponentInterface> {
 	_u: Function;
 }
 
-type UnsafeGetter<U extends Unsafe> = U extends Unsafe<infer CTX> ? U & {-readonly [K in keyof CTX]: CTX[K]} : U;
+export type UnsafeGetter<U extends UnsafeComponentInterface> = U extends UnsafeComponentInterface<infer CTX> ?
+	U & {-readonly [K in keyof CTX]: K extends 'unsafe' ? never : CTX[K]} : U;
 
 /**
  * Abstract class represents Vue compatible component API
@@ -208,7 +209,8 @@ export abstract class ComponentInterface<
 	 * API to unsafe invoke of internal properties of the component.
 	 * It can be useful to create friendly classes for a component.
 	 */
-	readonly unsafe!: UnsafeGetter<Unsafe<this>>;
+	// @ts-ignore
+	readonly unsafe!: UnsafeGetter<UnsafeComponentInterface<this>>;
 
 	/**
 	 * Link to a DOM element that is tied with the component

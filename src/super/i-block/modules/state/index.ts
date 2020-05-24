@@ -37,7 +37,6 @@ export default class State<C extends iBlock = iBlock> extends Friend<C> {
 	 * True if needed synchronization with a router
 	 */
 	get needRouterSync(): boolean {
-		// @ts-ignore (access)
 		return baseSyncRouterState !== this.instance.syncRouterState;
 	}
 

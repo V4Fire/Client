@@ -11,7 +11,7 @@
  * @packageDocumentation
  */
 
-import { initEmitter, ModVal } from 'core/component';
+import { initEmitter, ModVal, ComponentInterface } from 'core/component';
 
 import {
 
@@ -56,7 +56,7 @@ export * from 'super/i-block/modules/decorators/interface';
  * @see core/component/decorators/base.ts
  * @override
  */
-export const p = pDecorator as <CTX extends iBlock = iBlock['unsafe'], A = unknown, B = A>(
+export const p = pDecorator as <CTX extends ComponentInterface = iBlock['unsafe'], A = unknown, B = A>(
 	params?: DecoratorProp<CTX, A, B> | DecoratorField<CTX, A, B> | DecoratorMethod<CTX, A, B> | DecoratorComponentAccessor
 ) => Function;
 
@@ -64,7 +64,7 @@ export const p = pDecorator as <CTX extends iBlock = iBlock['unsafe'], A = unkno
  * @see core/component/decorators/base.ts
  * @override
  */
-export const prop = propDecorator as <CTX extends iBlock = iBlock['unsafe'], A = unknown, B = A>(
+export const prop = propDecorator as <CTX extends ComponentInterface = iBlock['unsafe'], A = unknown, B = A>(
 	params?: CanArray<FunctionConstructor | Function> | ObjectConstructor | DecoratorProp<CTX, A, B>
 ) => Function;
 
@@ -72,7 +72,7 @@ export const prop = propDecorator as <CTX extends iBlock = iBlock['unsafe'], A =
  * @see core/component/decorators/base.ts
  * @override
  */
-export const field = fieldDecorator as <CTX extends iBlock = iBlock['unsafe'], A = unknown, B = A>(
+export const field = fieldDecorator as <CTX extends ComponentInterface = iBlock['unsafe'], A = unknown, B = A>(
 	params?: InitFieldFn<CTX> | DecoratorField<CTX, A, B>
 ) => Function;
 
@@ -80,7 +80,7 @@ export const field = fieldDecorator as <CTX extends iBlock = iBlock['unsafe'], A
  * @see core/component/decorators/base.ts
  * @override
  */
-export const system = systemDecorator as <CTX extends iBlock = iBlock['unsafe'], A = unknown, B = A>(
+export const system = systemDecorator as <CTX extends ComponentInterface = iBlock['unsafe'], A = unknown, B = A>(
 	params?: InitFieldFn<CTX> | DecoratorField<CTX, A, B>
 ) => Function;
 
@@ -88,7 +88,7 @@ export const system = systemDecorator as <CTX extends iBlock = iBlock['unsafe'],
  * @see core/component/decorators/base.ts
  * @override
  */
-export const watch = watchDecorator as <CTX extends iBlock = iBlock['unsafe'], A = unknown, B = A>(
+export const watch = watchDecorator as <CTX extends ComponentInterface = iBlock['unsafe'], A = unknown, B = A>(
 	params?: DecoratorFieldWatcher<CTX, A, B> | DecoratorMethodWatcher<CTX, A, B>
 ) => Function;
 
@@ -276,7 +276,7 @@ export function wait(
 
 		const exec = (ctx) => {
 			const
-				componentStatus = statuses[component.componentStatus];
+				componentStatus = Number(statuses[component.componentStatus]);
 
 			let
 				res,

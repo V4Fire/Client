@@ -52,6 +52,7 @@ import {
 	WatchPath,
 	RawWatchHandler,
 	ComponentInterface,
+	UnsafeGetter,
 
 	VNode
 
@@ -104,7 +105,7 @@ import {
 	InitLoadCb,
 
 	ParentMessage,
-	Unsafe
+	UnsafeIBlock
 
 } from 'super/i-block/interface';
 
@@ -754,7 +755,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	 * It can be useful to create friendly classes for a component.
 	 */
 	@p({replace: true})
-	get unsafe(): Unsafe<this> & this {
+	get unsafe(): UnsafeGetter<UnsafeIBlock<this>> {
 		return <any>this;
 	}
 
@@ -953,7 +954,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	@field({
 		replace: false,
 		forceUpdate: false,
-		init: (o) => o.sync.link<CanUndef<Stage>>((val) => {
+		init: (o) => o.sync.link((val) => {
 			o.stage = val;
 			return o.field.get('stageStore');
 		})
