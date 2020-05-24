@@ -24,8 +24,11 @@ import { ComponentInterface } from 'core/component/interface';
  * @param renderCtx - render context
  */
 export function initComponentVNode(vnode: VNode, ctx: ComponentInterface, renderCtx: RenderContext): FlyweightVNode {
-	const flyweightVNode = <FlyweightVNode>vnode;
-	flyweightVNode.fakeInstance = ctx;
+	const
+		{unsafe} = ctx,
+
+		// tslint:disable-next-line:prefer-object-spread
+		flyweightVNode = Object.assign(vnode, {fakeInstance: ctx});
 
 	const {data} = renderCtx;
 	patchVNode(flyweightVNode, ctx, renderCtx);
@@ -42,8 +45,7 @@ export function initComponentVNode(vnode: VNode, ctx: ComponentInterface, render
 					fn = fns[i];
 
 				if (Object.isFunction(fn)) {
-					// @ts-ignore (access)
-					ctx.$on(key, fn);
+					unsafe.$on(key, fn);
 				}
 			}
 		}
@@ -52,22 +54,20 @@ export function initComponentVNode(vnode: VNode, ctx: ComponentInterface, render
 	init.createdState(ctx);
 
 	const
-		p = ctx.$normalParent;
+		parent = unsafe.$normalParent;
 
-	if (!p) {
+	if (!parent) {
 		return flyweightVNode;
 	}
 
 	const
-		// @ts-ignore (access)
-		hooks = p.meta.hooks;
+		{hooks} = parent.unsafe.meta;
 
 	let
 		destroyed;
 
 	const destroy = () => {
-		// @ts-ignore (access)
-		ctx.$destroy();
+		unsafe.$destroy();
 		destroyed = true;
 	};
 
@@ -77,8 +77,7 @@ export function initComponentVNode(vnode: VNode, ctx: ComponentInterface, render
 	hooks.beforeDestroy.unshift({fn: destroy});
 
 	const
-		// @ts-ignore (access)
-		{$async: $a} = ctx;
+		{$async: $a} = unsafe;
 
 	// Mount hook listener
 	const mount = (retry?) => {
@@ -103,7 +102,7 @@ export function initComponentVNode(vnode: VNode, ctx: ComponentInterface, render
 				return;
 			}
 
-			return $a.promise(p.$nextTick(), {
+			return $a.promise(parent.$nextTick(), {
 				label: $$.findElWait
 			}).then(() => mount(true), stderr);
 		}
@@ -131,7 +130,6 @@ export function initComponentVNode(vnode: VNode, ctx: ComponentInterface, render
 			oldCtx._componentId = ctx.componentId;
 
 			// Destroy the old component
-			// @ts-ignore (access)
 			oldCtx.$destroy();
 
 			const
@@ -143,7 +141,6 @@ export function initComponentVNode(vnode: VNode, ctx: ComponentInterface, render
 			for (let keys = Object.keys(oldProps), i = 0; i < keys.length; i++) {
 				const
 					key = keys[i],
-					// @ts-ignore (access)
 					linked = oldCtx.$syncLinkCache[key];
 
 				if (linked) {
@@ -162,9 +159,7 @@ export function initComponentVNode(vnode: VNode, ctx: ComponentInterface, render
 
 			{
 				const list = [
-					// @ts-ignore (access)
 					oldCtx.meta.systemFields,
-					// @ts-ignore (access)
 					oldCtx.meta.fields
 				];
 
@@ -188,8 +183,7 @@ export function initComponentVNode(vnode: VNode, ctx: ComponentInterface, render
 							old = oldCtx[key];
 
 						if (
-							// @ts-ignore (access)
-							!ctx.$modifiedFields[key] &&
+							!unsafe.$modifiedFields[key] &&
 							(Object.isFunction(field.unique) ? !field.unique(ctx, oldCtx) : !field.unique) &&
 							!Object.fastCompare(val, old) &&
 
@@ -227,7 +221,7 @@ export function initComponentVNode(vnode: VNode, ctx: ComponentInterface, render
 			}
 		}
 
-		el[$$.component] = ctx;
+		el[$$.component] = unsafe;
 		init.mountedState(ctx);
 	};
 
@@ -238,19 +232,17 @@ export function initComponentVNode(vnode: VNode, ctx: ComponentInterface, render
 
 		$a.setImmediate(mount, {
 			label: $$.mount,
-			// @ts-ignore (access)
-			onClear: () => ctx.$destroy()
+			onClear: () => unsafe.$destroy()
 		});
 
 		const
-			// @ts-ignore (access)
-			{$destroyedHooks} = ctx;
+			{$unregisteredHooks} = unsafe;
 
 		for (let o = Array.concat([], mountHooks, parentHook), i = 0; i < o.length; i++) {
 			const
 				hook = o[i];
 
-			if ($destroyedHooks[hook]) {
+			if ($unregisteredHooks[hook]) {
 				continue;
 			}
 
@@ -276,14 +268,14 @@ export function initComponentVNode(vnode: VNode, ctx: ComponentInterface, render
 				hooks[hook] = filteredHooks;
 			}
 
-			$destroyedHooks[hook] = true;
+			$unregisteredHooks[hook] = true;
 		}
 	};
 
 	deferMount[$$.self] = ctx;
 
 	const
-		parentHook = parentMountMap[p.hook];
+		parentHook = parentMountMap[parent.hook];
 
 	for (let i = 0; i < mountHooks.length; i++) {
 		const

@@ -18,7 +18,6 @@ import { attachDynamicWatcher } from 'core/component/watch/helpers';
 
 /**
  * Creates a function to watch changes from the specified component instance and returns it
- *
  * @param component
  */
 export function createWatchFn(component: ComponentInterface): ComponentInterface['$watch'] {
@@ -45,9 +44,8 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 
 		const
 			info: PropertyInfo = Object.isString(path) ? getPropertyInfo(path, component) : path,
-
-			// @ts-ignore
-			ctxParams = info.ctx.meta.params;
+			propCtx = info.ctx.unsafe,
+			ctxParams = propCtx.meta.params;
 
 		const
 			isAccessor = info.type === 'accessor' || info.type === 'computed' || info.accessor,
@@ -146,8 +144,7 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 							configurable: true,
 							get: () => proxy[info.name],
 							set: (val) => {
-								// @ts-ignore (access))
-								info.ctx.$set(proxy, info.name, val);
+								propCtx.$set(proxy, info.name, val);
 							}
 						});
 					}

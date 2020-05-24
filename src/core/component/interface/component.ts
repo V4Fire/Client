@@ -40,7 +40,9 @@ import {
 /**
  * Component render function
  */
-export type RenderFunction = ComponentOptions<ComponentDriver>['render'] | FunctionalComponentOptions['render'];
+export type RenderFunction =
+	ComponentOptions<ComponentDriver>['render'] |
+	FunctionalComponentOptions['render'];
 
 /**
  * Base context of a functional component
@@ -63,7 +65,7 @@ export type ComponentElement<T = unknown> = Element & {
 	component?: T;
 };
 
-export interface BindedFn<CTX extends ComponentInterface = ComponentInterface<any, any>> {
+export interface BindedFn<CTX extends ComponentInterface = ComponentInterface> {
 	(this: CTX): any;
 }
 
@@ -72,6 +74,97 @@ export interface RenderReason {
 	oldValue: CanUndef<unknown>;
 	path: unknown[];
 }
+
+export interface UnsafeComponentInterface<CTX extends ComponentInterface = ComponentInterface> {
+	renderCounter: number;
+	lastSelfReasonToRender?: Nullable<RenderReason>;
+	lastTimeOfRender?: DOMHighResTimeStamp;
+	renderTmp: Dictionary<VNode>;
+
+	$asyncLabel: symbol;
+	$activeField: CanUndef<string>;
+
+	// @ts-ignore (access)
+	meta: CTX['meta'];
+
+	// @ts-ignore (access)
+	$async: CTX['$async'];
+
+	// @ts-ignore (access)
+	$attrs: CTX['$attrs'];
+
+	// @ts-ignore (access)
+	$fields: CTX['$fields'];
+
+	// @ts-ignore (access)
+	$systemFields: CTX['$fields'];
+
+	// @ts-ignore (access)
+	$modifiedFields: CTX['$modifiedFields'];
+
+	// @ts-ignore (access)
+	$unregisteredHooks: CTX['$unregisteredHooks'];
+
+	// @ts-ignore (access)
+	$syncLinkCache: CTX['$syncLinkCache'];
+
+	// @ts-ignore (access)
+	$refs: CTX['$refs'];
+
+	// @ts-ignore (access)
+	$remoteParent: CTX['$remoteParent'];
+
+	// @ts-ignore (access)
+	$watch: CTX['$watch'];
+
+	// @ts-ignore (access)
+	$on: CTX['$on'];
+
+	// @ts-ignore (access)
+	$once: CTX['$once'];
+
+	// @ts-ignore (access)
+	$off: CTX['$off'];
+
+	// @ts-ignore (access)
+	$emit: CTX['$emit'];
+
+	// @ts-ignore (access)
+	$set: CTX['$set'];
+
+	// @ts-ignore (access)
+	$delete: CTX['$delete'];
+
+	// @ts-ignore (access)
+	$createElement: CTX['$createElement'];
+
+	// @ts-ignore (access)
+	$destroy: CTX['$destroy'];
+
+	// Internal render helpers
+
+	// @ts-ignore (access)
+	_c: CTX['$createElement'];
+
+	_o: Function;
+	_q: Function;
+	_s: Function;
+	_v: Function;
+	_e: Function;
+	_f: Function;
+	_n: Function;
+	_i: Function;
+	_m: Function;
+	_l: Function;
+	_g: Function;
+	_k: Function;
+	_b: Function;
+	_t: Function;
+	_u: Function;
+}
+
+export type UnsafeGetter<U extends UnsafeComponentInterface> = U extends UnsafeComponentInterface<infer CTX> ?
+	U & {-readonly [K in keyof CTX]: K extends 'unsafe' ? never : CTX[K]} : U;
 
 /**
  * Abstract class represents Vue compatible component API
@@ -111,6 +204,13 @@ export abstract class ComponentInterface<
 	 * (it is used with async rendering)
 	 */
 	readonly renderGroup?: string;
+
+	/**
+	 * API to unsafe invoke of internal properties of the component.
+	 * It can be useful to create friendly classes for a component.
+	 */
+	// @ts-ignore
+	readonly unsafe!: UnsafeGetter<UnsafeComponentInterface<this>>;
 
 	/**
 	 * Link to a DOM element that is tied with the component
@@ -246,9 +346,16 @@ export abstract class ComponentInterface<
 	protected readonly $systemFields!: Dictionary;
 
 	/**
-	 * Map of modified fields
+	 * Map of fields and system fields that were modified and need to synchronize
+	 * (only for functional components)
 	 */
 	protected readonly $modifiedFields!: Dictionary;
+
+	/**
+	 * Map of hook listeners that were already unregistered
+	 * (only for functional components)
+	 */
+	protected readonly $unregisteredHooks!: Dictionary<boolean>;
 
 	/**
 	 * Name of an active field to initialize

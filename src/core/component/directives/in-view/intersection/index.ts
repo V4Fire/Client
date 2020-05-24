@@ -40,6 +40,11 @@ export default class InView extends Super {
 	 */
 	protected readonly rootMap: Map<Element, number> = new Map();
 
+	/** @override */
+	constructor() {
+		super();
+	}
+
 	/**
 	 * Initializes an observer
 	 * @param observable

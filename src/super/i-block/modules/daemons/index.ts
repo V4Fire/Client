@@ -42,10 +42,10 @@ export default class Daemons<C extends iBlock = iBlock> extends Friend<C> {
 	 * @param base
 	 * @param [parent]
 	 */
-	static createDaemons<CTX extends iBlock = iBlock['unsafe']>(
+	static createDaemons<CTX extends iBlock = iBlock>(
 		base: DaemonsDict,
 		parent?: DaemonsDict
-	): DaemonsDict<CTX> {
+	): DaemonsDict<CTX['unsafe']> {
 		const
 			mixedDaemons = {...parent, ...base};
 

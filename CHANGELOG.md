@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.18 (2020-05-24)
+
+#### :boom: Breaking Change
+
+* [Renamed `interface/Unsafe` to `interface/UnsafeIBlock` `iBlock`](https://github.com/V4Fire/Client/pull/247)
+
 ## v3.0.0-rc.17 (2020-05-22)
 
 #### :bug: Bug Fix
