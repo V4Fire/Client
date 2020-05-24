@@ -8,7 +8,7 @@
 
 import { UnsafeIData } from 'super/i-data/i-data';
 
-import bVirtualScroll from 'base/b-virtual-scroll';
+import bVirtualScroll from 'base/b-virtual-scroll/b-virtual-scroll';
 
 import ChunkRender from 'base/b-virtual-scroll/modules/chunk-render';
 import ChunkRequest from 'base/b-virtual-scroll/modules/chunk-request';

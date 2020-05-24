@@ -30,11 +30,7 @@
     "test:components": "npx gulp test:components"
   },
   "dependencies": {
-<<<<<<< HEAD
     "@v4fire/core": "git+https://github.com/v4fire/core.git#feat/config-expand",
-=======
-    "@v4fire/core": "3.17.1",
->>>>>>> 494f2abcebd3082f47c1c33b7a3f9ca7ef2b0941
     "escaper": "^3.0.4",
     "eventemitter2": "6.4.1",
     "fg-loadcss": "^2.1.0",
