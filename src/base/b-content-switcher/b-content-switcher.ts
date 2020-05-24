@@ -159,7 +159,7 @@ export default class bContentSwitcher extends iBlock implements iObserveDOM {
 	/**
 	 * Strategies readiness map
 	 */
-	@system((o: bContentSwitcher): IsStrategyReadyMap => ({
+	@system<bContentSwitcher>((o): IsStrategyReadyMap => ({
 		mutation: () => o.is.mutationReady,
 
 		semaphore: () => {
@@ -178,7 +178,7 @@ export default class bContentSwitcher extends iBlock implements iObserveDOM {
 	/**
 	 * Is table
 	 */
-	@system((o: bContentSwitcher): IsTable => ({
+	@system<bContentSwitcher>((o): IsTable => ({
 		readyToSwitchStore: false,
 		placeholderHidden: false,
 		mutationReady: false,

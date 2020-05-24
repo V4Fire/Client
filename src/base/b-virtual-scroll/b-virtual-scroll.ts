@@ -208,19 +208,19 @@ export default class bVirtualScroll extends iData implements iItems {
 	/**
 	 * API for scroll rendering
 	 */
-	@system((o: bVirtualScroll) => new ChunkRender(o))
+	@system<bVirtualScroll>((o) => new ChunkRender(o))
 	protected chunkRender!: ChunkRender;
 
 	/**
 	 * API for scroll data requests
 	 */
-	@system((o: bVirtualScroll) => new ChunkRequest(o))
+	@system<bVirtualScroll>((o) => new ChunkRequest(o))
 	protected chunkRequest!: ChunkRequest['unsafe'];
 
 	/**
 	 * API for dynamic component rendering
 	 */
-	@system((o: bVirtualScroll) => new ComponentRender(o))
+	@system<bVirtualScroll>((o) => new ComponentRender(o))
 	protected componentRender!: ComponentRender;
 
 	/** @override */
