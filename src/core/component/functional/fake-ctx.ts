@@ -201,15 +201,15 @@ export function createFakeCtx<T extends object = FunctionalCtx>(
 		fakeCtx.$root = fakeCtx;
 	}
 
-	initProps(fakeCtx, {
-		store: fakeCtx,
-		saveToStore: opts?.initProps
-	});
-
 	init.beforeCreateState(fakeCtx, meta, {
 		addMethods: true,
 		implementEventAPI: true,
 		safe: opts?.safe
+	});
+
+	initProps(fakeCtx, {
+		store: fakeCtx,
+		saveToStore: opts?.initProps
 	});
 
 	init.beforeDataCreateState(fakeCtx, {tieFields: true});
