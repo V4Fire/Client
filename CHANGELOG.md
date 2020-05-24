@@ -15,7 +15,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :boom: Breaking Change
 
-* Renamed `interface/Unsafe` to `interface/UnsafeIBlock` `iBlock`
+* [Renamed `interface/Unsafe` to `interface/UnsafeIBlock` `iBlock`](https://github.com/V4Fire/Client/pull/247)
 
 ## v3.0.0-rc.17 (2020-05-22)
 
