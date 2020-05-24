@@ -42,11 +42,11 @@ MAX_PROCESS += MAX_PROCESS <= I ? 1 : 0;
  * @type {Promise<{entry, processes, dependencies, blockMap}>}
  */
 module.exports = (async () => {
-	const
-		hash = objectHash().hash({
-			config: config.expand({}, config)
-		}),
-		cacheFile = path.join(buildCache, `${hash}_graph.json`);
+	const hash = objectHash().hash({
+		config: config.expand({}, config)
+	});
+
+	const cacheFile = path.join(buildCache, `${hash}_graph.json`);
 
 	if (build.buildGraphFromCache) {
 		if (fs.existsSync(cacheFile)) {
