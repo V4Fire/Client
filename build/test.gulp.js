@@ -368,7 +368,7 @@ async function getBrowserInstance(browserType, params) {
 		chromium: '--chromiumWsEndpoint'
 	};
 
-	if (args[endpointMap[browserType]]) {
+	if (false) {
 		return await playwright[browserType].connect({wsEndpoint: args[endpointMap[browserType]], ...params});
 	}
 
