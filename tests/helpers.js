@@ -9,7 +9,7 @@
 /**
  * Returns the specified field from the object
  *
- * @param {*} object
+ * @param {object} object
  * @param {string} path
  */
 module.exports.getField = async function (object, path) {
@@ -48,7 +48,7 @@ module.exports.getComponentProps = async function (page, componentSelector) {
 }
 
 /**
- * Scrolls page to bottom
+ * Scrolls page to the bottom
  * @param {*} page
  */
 module.exports.scrollToPageBottom = async function (page) {

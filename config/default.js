@@ -34,13 +34,13 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 			type: 'boolean'
 		}),
 
-		suite: o('suite', {
+		suit: o('suit', {
 			env: true
 		}),
 
 		components: o('components', {
 			env: true,
-			coerce: (v) => {
+			coerce: (v, ...args) => {
 				try {
 					const
 						obj = JSON.parse(v);
@@ -66,8 +66,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 								demo = require(path.join(dir, 'demo.js')),
 								suit = camelize(args['--suit'] || 'demo');
 
-							const
-								wrap = (d) => [].concat((d || []).map((p) => ({name, ...p})));
+							const wrap = (d) => [].concat((d || []).map((p) => ({name, ...p})));
 
 							if (Object.isObject(demo)) {
 								return wrap(demo[suit]);

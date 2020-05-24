@@ -83,7 +83,7 @@ export interface RequestMoreParams<ITEM extends unknown = unknown, RAW extends u
 		/**
 		 * Normalized data (processed with `dbConverter`)
 		 */
-		normalized: Array<ITEM>;
+		normalized: ITEM[];
 
 		/**
 		 * Raw provider data without any processing

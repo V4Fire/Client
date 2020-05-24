@@ -18,7 +18,7 @@ export interface Response {
  */
 export interface ResponseItem {
 	/**
-	 * Item index in response
+	 * Item index
 	 */
 	i: number;
 }
