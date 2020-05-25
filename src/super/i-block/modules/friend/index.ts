@@ -14,7 +14,7 @@
 import iBlock from 'super/i-block/i-block';
 
 /**
- * Class is friendly to a component
+ * Class that friendly to a component
  * @typeparam T - component
  */
 export default class Friend {
