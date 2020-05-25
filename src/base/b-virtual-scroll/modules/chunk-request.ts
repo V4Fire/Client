@@ -131,7 +131,8 @@ export default class ChunkRequest extends Friend {
 
 		if (
 			this.ctx.localState !== 'error' &&
-			options.length === 0
+			this.pendingData.length === 0 &&
+			this.isDone
 		) {
 			this.chunkRender.setRefVisibility('empty', true);
 		}
