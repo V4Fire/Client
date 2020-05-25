@@ -10,10 +10,14 @@
 
 const
 	$C = require('collection.js'),
+	config = require('config');
+
+const
+	objectHash = require('node-object-hash'),
 	path = require('path');
 
 const
-	{src, webpack} = require('config'),
+	{src, webpack: wp} = config,
 	{config: {dependencies}} = require('@pzlr/build-core');
 
 /**
@@ -27,37 +31,45 @@ exports.depsRgxpStr = dependencies.map((el) => {
 /**
  * Output pattern
  */
-exports.output = hash(webpack.output());
+exports.output = hash(wp.output());
 
 /**
  * Output pattern for assets
  */
-exports.assetsOutput = hash(webpack.assetsOutput());
+exports.assetsOutput = hash(wp.assetsOutput());
 
 /**
  * Path to assets.json
  */
-exports.assetsJSON = path.join(src.clientOutput(), webpack.assetsJSON());
+exports.assetsJSON = path.join(src.clientOutput(), wp.assetsJSON());
 
 /**
  * Path to assets.js
  */
-exports.assetsJS = path.join(src.clientOutput(), webpack.assetsJS());
+exports.assetsJS = path.join(src.clientOutput(), wp.assetsJS());
 
 /**
  * Path to dll-manifest.json
  */
-exports.dllManifest = path.join(src.clientOutput(), webpack.dllOutput({name: 'dll-manifest.json', hash: null}));
+exports.dllManifest = path.join(src.clientOutput(), wp.dllOutput({name: 'dll-manifest.json', hash: null}));
 
 /**
  * Build cache folder
  */
 exports.buildCache = path.join(src.cwd(), 'app-cache');
 
+/**
+ * Hash of the config
+ */
+exports.configHash = objectHash().hash({config: config.expand()}).slice(0, wp.hashLength);
+
 // Some helpers
 
+const
+	hashRgxp = /\[(chunk)?hash(:\d+)?]_/g;
+
 exports.hash = hash;
-exports.hashRgxp = /\[(chunk)?hash(:\d+)?]_/g;
+exports.hashRgxp = hashRgxp;
 
 /**
  * Returns WebPack output path string from the specified with hash parameters
@@ -67,8 +79,7 @@ exports.hashRgxp = /\[(chunk)?hash(:\d+)?]_/g;
  * @param {boolean=} [chunk] - if true, then the specified output is a chunk
  */
 function hash(output, chunk) {
-	const l = webpack.hashLength;
-	return output.replace(exports.hashRgxp, chunk ? `[chunkhash:${l}]_` : `[hash:${l}]_`);
+	return output.replace(hashRgxp, chunk ? `[chunkhash:${wp.hashLength}]_` : `[hash:${wp.hashLength}]_`);
 }
 
 exports.inherit = inherit;

@@ -11,6 +11,9 @@
 const
 	os = require('os'),
 	path = require('upath'),
+	arg = require('arg');
+
+const
 	{src} = require('config'),
 	{resolve} = require('@pzlr/build-core');
 
@@ -21,9 +24,11 @@ module.exports = function (gulp = require('gulp')) {
 	const
 		$ = require('gulp-load-plugins')({scope: ['optionalDependencies']});
 
+	/**
+	 * Build an application to test the specified component
+	 */
 	gulp.task('test:component:build', () => {
 		const
-			arg = require('arg'),
 			args = arg({'--name': String, '--suit': String, '--client-name': String}, {permissive: true});
 
 		if (!args['--name']) {
@@ -39,7 +44,6 @@ module.exports = function (gulp = require('gulp')) {
 			['--components', args['--name']],
 			['--long-cache', false],
 			['--public-path', '']
-
 		].flat().join(' ');
 
 		return $.run(`npx webpack ${argsString} ${suitArg} ${extraArgs}`, {verbosity: 3})
@@ -47,10 +51,12 @@ module.exports = function (gulp = require('gulp')) {
 			.on('error', console.error);
 	});
 
+	/**
+	 * Runs tests for the specified component
+	 */
 	gulp.task('test:component:run', async () => {
 		const
-			process = require('process'),
-			arg = require('arg');
+			process = require('process');
 
 		const
 			http = require('http'),
@@ -68,7 +74,6 @@ module.exports = function (gulp = require('gulp')) {
 			'--close': String,
 			'--headless': String,
 			'--client-name': String
-
 		}, {permissive: true});
 
 		if (!args['--name']) {
@@ -77,8 +82,10 @@ module.exports = function (gulp = require('gulp')) {
 
 		args['--client-name'] = args['--client-name'] || args['--name'];
 
+		const
+			browsers = getSelectedBrowsers();
+
 		let
-			browsers = getSelectedBrowsers(),
 			exitCode = 0,
 			headless = true,
 			closeOnFinish = true;
@@ -109,7 +116,8 @@ module.exports = function (gulp = require('gulp')) {
 
 		fs.mkdirpSync(tmpDir);
 
-		const test = require(path.join(componentDir, 'test'));
+		const
+			test = require(path.join(componentDir, 'test'));
 
 		const browserParams = {
 			chromium: {},
@@ -123,15 +131,23 @@ module.exports = function (gulp = require('gulp')) {
 				context = await browser.newContext(),
 				page = await context.newPage();
 
-			browserParams[browserType] = {page, browser, context, browserType, componentDir, tmpDir};
-		}
+			browserParams[browserType] = {
+				browser,
+				browserType,
+				page,
+				context,
+				componentDir,
+				tmpDir
+			};
+		};
 
 		const runTest = async (browserType) => {
 			const
-				params = browserParams[browserType],
-				{page} = params;
+				params = browserParams[browserType];
 
+			const {page} = params;
 			await page.goto(`localhost:${args['--port']}/${args['--page']}.html`);
+
 			const testEnv = getTestEnv(browserType);
 			await test(page, params);
 
@@ -146,7 +162,7 @@ module.exports = function (gulp = require('gulp')) {
 						return;
 					}
 
-					exitCode = res.status === 'failed' ? 1 : 0
+					exitCode = res.status === 'failed' ? 1 : 0;
 				}
 			});
 
@@ -154,9 +170,10 @@ module.exports = function (gulp = require('gulp')) {
 				testEnv.afterAll(() => resolve(), 10e3);
 				testEnv.execute();
 			}).then(close, close);
-		}
+		};
 
-		const browsersPromises = [];
+		const
+			browsersPromises = [];
 
 		for (const browserType of browsers) {
 			browsersPromises.push(createBrowser(browserType));
@@ -186,15 +203,21 @@ module.exports = function (gulp = require('gulp')) {
 		}
 	});
 
-	gulp.task('test:component',
-		gulp.series(['test:component:build', 'test:component:run'])
-	);
+	/**
+	 * Builds and runs tests for the specified component
+	 */
+	gulp.task('test:component', gulp.series([
+		'test:component:build',
+		'test:component:run'
+	]));
 
+	/**
+	 * Builds and runs tests for all components
+	 */
 	gulp.task('test:components', async (cb) => {
 		console.log(`CPUS available: ${cpus}`);
 
 		const
-			arg = require('arg'),
 			playwright = require('playwright');
 
 		const
@@ -205,7 +228,6 @@ module.exports = function (gulp = require('gulp')) {
 			'--processes': Number,
 			'--test-processes': Number,
 			'--build-processes': Number
-
 		}, {permissive: true});
 
 		const wsEndpoints = {
@@ -223,14 +245,11 @@ module.exports = function (gulp = require('gulp')) {
 			testProcess = processesArgs['--test-processes'] || processesArgs['--processes'] || cpus;
 
 		for (const browserType of browsers) {
-			const
-				browser = servers[browserType] = await playwright[browserType].launchServer(),
-				wsEndpoint = browser.wsEndpoint();
+			const browser = servers[browserType] = await playwright[browserType].launchServer();
+			browser.wsEndpoint()[browserType] = wsEndpoint;
+		}
 
-			wsEndpoints[browserType] = wsEndpoint;
-		};
-
-		let
+		const
 			endpointArg = Object.entries(wsEndpoints).map(([key, value]) => `--${key}WsEndpoint ${value}`).join(' ');
 
 		const
@@ -243,13 +262,15 @@ module.exports = function (gulp = require('gulp')) {
 					successCb && successCb();
 					res();
 				})
+
 				.on('error', (err) => {
 					failCb(execString, err);
 					rej();
 				});
 		});
 
-		// Build Components
+		// Build components
+
 		const
 			buildCache = {},
 			buildMap = new Map();
@@ -260,7 +281,6 @@ module.exports = function (gulp = require('gulp')) {
 			const args = arg({
 				'--suit': String,
 				'--name': String
-
 			}, {argv: c.split(' '), permissive: true});
 
 			args['--suit'] = args['--suit'] || 'demo';
@@ -274,7 +294,6 @@ module.exports = function (gulp = require('gulp')) {
 				['--suit', args['--suit']],
 				['--name', args['--name']],
 				['--client-name', args['--client-name']]
-
 			].flat().join(' ');
 
 			await waitForQuotas(buildMap, buildProcess);
@@ -290,6 +309,7 @@ module.exports = function (gulp = require('gulp')) {
 		await waitForEmpty(buildMap);
 
 		// Run tests
+
 		const
 			totalCases = [],
 			failedCases = [],
@@ -307,16 +327,18 @@ module.exports = function (gulp = require('gulp')) {
 			args['--suit'] = args['--suit'] || 'demo';
 			args['--client-name'] = `${args['--name']}_${args['--suit']}`;
 
-			const argsString = `${c} --client-name ${args['--client-name']}`;
+			const
+				argsString = `${c} --client-name ${args['--client-name']}`;
 
 			totalCases.push(argsString);
 			await waitForQuotas(testMap, testProcess);
 
-			const onTestEnd = (argsString) => testMap.delete(argsString);
+			const
+				onTestEnd = (argsString) => testMap.delete(argsString);
 
 			testMap.set(
 				argsString,
-				exec(`npx gulp test:component:run ${argsString} ${endpointArg}`, 
+				exec(`npx gulp test:component:run ${argsString} ${endpointArg}`,
 					() => onTestEnd(argsString),
 					() => {
 						onTestEnd(argsString);
@@ -350,35 +372,36 @@ module.exports = function (gulp = require('gulp')) {
 };
 
 /**
+ * Waits till the specified callback function returns true
+ *
  * @param {Function} cb
  * @param {number} interval
+ * @returns {!Promise<void>}
  */
 function wait(cb, interval = 15) {
 	return new Promise((res) => {
-		if (Boolean(cb())) {
+		if (cb()) {
 			res();
 			return;
 		}
-	
+
 		const intervalId = setInterval(() => {
-			if (Boolean(cb())) {
+			if (cb()) {
 				res();
 				clearInterval(intervalId);
 			}
-	
 		}, interval);
 	});
 }
 
 /**
- * Returns a browser instance
+ * Returns a browser instance by the specified parameters
  *
  * @param {string} browserType
  * @param {!Object} params
  */
 async function getBrowserInstance(browserType, params) {
 	const
-		arg = require('arg'),
 		playwright = require('playwright');
 
 	const args = arg({
@@ -401,19 +424,22 @@ async function getBrowserInstance(browserType, params) {
 }
 
 /**
- * Returns selected browsers
+ * Returns a list of selected browsers
+ * @returns {!Array<string>}
  */
 function getSelectedBrowsers() {
 	const
-		args = require('arg')({'--browsers': String}, {permissive: true}),
+		args = arg({'--browsers': String}, {permissive: true}),
 		browsers = ['chromium', 'firefox', 'webkit'];
 
 	const aliases = {
 		ff: 'firefox',
+		firefox: 'firefox',
 		chr: 'chromium',
 		chrome: 'chromium',
 		chromium: 'chromium',
-		wk: 'webkit'
+		wk: 'webkit',
+		webkit: 'webkit'
 	};
 
 	if (args['--browsers']) {

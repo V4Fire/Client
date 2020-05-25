@@ -19,7 +19,7 @@ const
 
 const
 	path = require('upath'),
-	build = include('build/entities.webpack'),
+	build = include('build/entries.webpack'),
 	depsRgxp = new RegExp(`(?:^|[\\/])node_modules[\\/](?:(?!${depsRgxpStr}).)*?(?:[\\/]|$)`);
 
 const

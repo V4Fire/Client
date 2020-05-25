@@ -14,11 +14,8 @@ const
 
 module.exports = function (gulp = require('gulp')) {
 	const
-		webp = require('imagemin-webp'),
 		merge = require('merge2'),
 		$ = require('gulp-load-plugins')({scope: ['optionalDependencies']});
-
-	$.imagemin.webp = webp;
 
 	function a(file = '') {
 		return path.join(config.src.assets(), file);
@@ -83,6 +80,7 @@ module.exports = function (gulp = require('gulp')) {
 		function f(src) {
 			return gulp.src([path.join(src, '/**/*.js'), `!${path.join(src, '/**/*.min.js')}`])
 				.pipe($.plumber())
+
 				.pipe($.uglify({
 					compress: {
 						warnings: false,
@@ -112,6 +110,7 @@ module.exports = function (gulp = require('gulp')) {
 
 			return gulp.src([path.join(isArr ? src[0] : src, '/**/*.@(png|svg)')].concat(isArr ? src[1] || [] : []))
 				.pipe($.plumber())
+
 				.pipe($.imagemin([
 					$.imagemin.optipng({optimizationLevel: 5}),
 					$.imagemin.svgo()
@@ -128,16 +127,21 @@ module.exports = function (gulp = require('gulp')) {
 
 	gulp.task('static:image:webp', () => {
 		function f(src) {
+			const webp = require('imagemin-webp');
+			$.imagemin.webp = webp;
+
 			const
 				isArr = Array.isArray(src);
 
 			return gulp.src([path.join(isArr ? src[0] : src, '/**/*.@(png|jpg|jpeg)')].concat(isArr ? src[1] || [] : []))
 				.pipe($.plumber())
 				.pipe($.extReplace('webp'))
+
 				.pipe($.imagemin([
 					$.imagemin.webp({quality: 100, lossless: true})
 				]))
-				.pipe(gulp.dest(isArr ? src[0] : src))
+
+				.pipe(gulp.dest(isArr ? src[0] : src));
 		}
 
 		return merge([
@@ -149,6 +153,7 @@ module.exports = function (gulp = require('gulp')) {
 		function f(src) {
 			return gulp.src([path.join(src, '/**/*'), `!${path.join(src, '/**/*.gz')}`])
 				.pipe($.plumber())
+
 				.pipe($.gzip({
 					threshold: '1kb',
 					gzipOptions: {level: 9}
