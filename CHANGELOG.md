@@ -11,6 +11,35 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.19 (2020-05-25)
+
+#### :rocket: New Feature
+
+* [Added `webp` format support](https://github.com/V4Fire/Client/pull/201)
+  1. Added gulp task `static:image:webp` which will create `webp` from `jpg`, `png` files;
+  2. Replaced `gulp-image` to the `gulp-imagemin`;
+  3. Webpack will pass `webp` files through the `image-webpack`.
+
+* [Added gulp task "test: components" which will run in parallel all the tests that are specified in the `tests/cases.js` file](https://github.com/V4Fire/Client/pull/201)
+
+### :bug: Bug Fix
+
+* [Fixed rendering of truncated data in `b-virtual-scroll`](https://github.com/V4Fire/Client/issues/231)
+* [Fixed rendering of empty slot in `b-virtual-scroll`](https://github.com/V4Fire/Client/issues/241)
+* [Fixed parallel components build](https://github.com/V4Fire/Client/pull/201)
+
+#### :house: Internal
+
+* [Added test action](https://github.com/V4Fire/Client/pull/201)
+  1. Runs components tests;
+  2. Runs typescript tests;
+  3. Runs eslint.
+
+* [Added demo model](https://github.com/V4Fire/Client/pull/201)
+* [Review `b-virtual-scroll`](https://github.com/V4Fire/Client/pull/201)
+* [Added few tests for `b-virtual-scroll`](https://github.com/V4Fire/Client/pull/201)
+* [Improves tests performance](https://github.com/V4Fire/Client/pull/201)
+
 ## v3.0.0-rc.18 (2020-05-24)
 
 #### :boom: Breaking Change

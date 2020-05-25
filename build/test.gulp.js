@@ -43,7 +43,8 @@ module.exports = function (gulp = require('gulp')) {
 			['--client-output', args['--client-name'] || args['--name']],
 			['--components', args['--name']],
 			['--long-cache', false],
-			['--public-path', '']
+			['--public-path', ''],
+			['--es', 'ES2019']
 		].flat().join(' ');
 
 		return $.run(`npx webpack ${argsString} ${suitArg} ${extraArgs}`, {verbosity: 3})
