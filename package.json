@@ -26,11 +26,12 @@
     "build:file": "gulp build:tsconfig && webpack --public-path",
     "dev": "gulp build:tsconfig && webpack --watch",
     "dev:file": "gulp build:tsconfig && webpack --watch --public-path",
-    "test": "echo \"Error: no test specified\" && exit 0",
+    "test": "npm run test:typescript && npm run test:components",
+    "test:typescript": "node node_modules/@v4fire/typescript-check",
     "test:components": "npx gulp test:components"
   },
   "dependencies": {
-    "@v4fire/core": "git+https://github.com/v4fire/core.git#feat/config-expand",
+    "@v4fire/core": "3.17.2",
     "escaper": "^3.0.4",
     "eventemitter2": "6.4.1",
     "fg-loadcss": "^2.1.0",

@@ -77,8 +77,10 @@ module.exports = function (gulp = require('gulp')) {
 
 		args['--client-name'] = args['--client-name'] || args['--name'];
 
+		const
+			browsers = getSelectedBrowsers();
+
 		let
-			browsers = getSelectedBrowsers(),
 			exitCode = 0,
 			headless = true,
 			closeOnFinish = true;
@@ -124,7 +126,7 @@ module.exports = function (gulp = require('gulp')) {
 				page = await context.newPage();
 
 			browserParams[browserType] = {page, browser, context, browserType, componentDir, tmpDir};
-		}
+		};
 
 		const runTest = async (browserType) => {
 			const
@@ -146,7 +148,7 @@ module.exports = function (gulp = require('gulp')) {
 						return;
 					}
 
-					exitCode = res.status === 'failed' ? 1 : 0
+					exitCode = res.status === 'failed' ? 1 : 0;
 				}
 			});
 
@@ -154,7 +156,7 @@ module.exports = function (gulp = require('gulp')) {
 				testEnv.afterAll(() => resolve(), 10e3);
 				testEnv.execute();
 			}).then(close, close);
-		}
+		};
 
 		const browsersPromises = [];
 
@@ -208,30 +210,9 @@ module.exports = function (gulp = require('gulp')) {
 
 		}, {permissive: true});
 
-		const wsEndpoints = {
-			chromium: '',
-			firefox: '',
-			webkit: ''
-		};
-
-		const
-			servers = {},
-			browsers = getSelectedBrowsers();
-
 		const
 			buildProcess = processesArgs['--build-processes'] || processesArgs['--processes'] || cpus,
 			testProcess = processesArgs['--test-processes'] || processesArgs['--processes'] || cpus;
-
-		for (const browserType of browsers) {
-			const
-				browser = servers[browserType] = await playwright[browserType].launchServer(),
-				wsEndpoint = browser.wsEndpoint();
-
-			wsEndpoints[browserType] = wsEndpoint;
-		};
-
-		let
-			endpointArg = Object.entries(wsEndpoints).map(([key, value]) => `--${key}WsEndpoint ${value}`).join(' ');
 
 		const
 			waitForQuotas = (map, maxQueue) => wait(() => map.size < maxQueue),
@@ -289,6 +270,29 @@ module.exports = function (gulp = require('gulp')) {
 
 		await waitForEmpty(buildMap);
 
+		// Launch browser server
+		const wsEndpoints = {
+			chromium: '',
+			firefox: '',
+			webkit: ''
+		};
+
+		const
+			servers = {},
+			browsers = getSelectedBrowsers();
+
+		for (const browserType of browsers) {
+			const
+				browser = servers[browserType] = await playwright[browserType].launchServer(),
+				wsEndpoint = browser.wsEndpoint();
+
+			await playwright[browserType].connect({wsEndpoint});
+			wsEndpoints[browserType] = wsEndpoint;
+		}
+
+		const
+			endpointArg = Object.entries(wsEndpoints).map(([key, value]) => `--${key}WsEndpoint ${value}`).join(' ');
+
 		// Run tests
 		const
 			totalCases = [],
@@ -316,7 +320,7 @@ module.exports = function (gulp = require('gulp')) {
 
 			testMap.set(
 				argsString,
-				exec(`npx gulp test:component:run ${argsString} ${endpointArg}`, 
+				exec(`npx gulp test:component:run ${argsString} ${endpointArg}`,
 					() => onTestEnd(argsString),
 					() => {
 						onTestEnd(argsString);
@@ -355,17 +359,17 @@ module.exports = function (gulp = require('gulp')) {
  */
 function wait(cb, interval = 15) {
 	return new Promise((res) => {
-		if (Boolean(cb())) {
+		if (cb()) {
 			res();
 			return;
 		}
-	
+
 		const intervalId = setInterval(() => {
-			if (Boolean(cb())) {
+			if (cb()) {
 				res();
 				clearInterval(intervalId);
 			}
-	
+
 		}, interval);
 	});
 }

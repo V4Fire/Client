@@ -137,7 +137,7 @@ module.exports = function (gulp = require('gulp')) {
 				.pipe($.imagemin([
 					$.imagemin.webp({quality: 100, lossless: true})
 				]))
-				.pipe(gulp.dest(isArr ? src[0] : src))
+				.pipe(gulp.dest(isArr ? src[0] : src));
 		}
 
 		return merge([

@@ -18,7 +18,7 @@ const
 	o = require('uniconf/options').option;
 
 const
-	shellArgs = require('arg')({'--suit': String}, {permissive: true})
+	shellArgs = require('arg')({'--suit': String}, {permissive: true});
 
 module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	__proto__: config,

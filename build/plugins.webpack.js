@@ -43,7 +43,7 @@ module.exports = async function ({buildId}) {
 			cacheDirectory: path.join(buildCache, String(buildId), wp.cacheDir()),
 			configHash: () => require('node-object-hash')().hash({
 				webpack: global.WEBPACK_CONFIG,
-				config: config.expand({}, config)
+				config: config.expand(config)
 			})
 		}));
 	}
