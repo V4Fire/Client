@@ -156,8 +156,7 @@ module.exports = function (gulp = require('gulp')) {
 			}).then(close, close);
 		}
 
-		const
-			browsersPromises = [];
+		const browsersPromises = [];
 
 		for (const browserType of browsers) {
 			browsersPromises.push(createBrowser(browserType));
