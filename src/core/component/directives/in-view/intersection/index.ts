@@ -129,19 +129,21 @@ export default class InView extends Super {
 			this.setObservableSize(observable, entry.boundingClientRect);
 
 			if (observable.isLeaving) {
-				this.onObservableOut(observable);
+				this.onObservableOut(observable, entry);
 
 			} else if (entry.intersectionRatio >= observable.threshold && !observable.isDeactivated) {
-				this.onObservableIn(observable);
+				this.onObservableIn(observable, entry);
 			}
 		}
 	}
 
 	/**
 	 * Handler: element becomes visible on viewport
+	 *
 	 * @param observable
+	 * @param entry
 	 */
-	protected onObservableIn(observable: ObservableElement): void {
+	protected onObservableIn(observable: ObservableElement, entry: IntersectionObserverEntry): void {
 		const
 			{async: $a} = this;
 
@@ -150,6 +152,9 @@ export default class InView extends Super {
 			label: observable.id,
 			join: true
 		};
+
+		observable.time = entry.time;
+		observable.timeIn = entry.time;
 
 		if (Object.isFunction(observable.onEnter)) {
 			observable.onEnter(observable);
@@ -167,11 +172,16 @@ export default class InView extends Super {
 
 	/**
 	 * Handler: element leaves viewport
+	 *
 	 * @param observable
+	 * @param entry
 	 */
-	protected onObservableOut(observable: ObservableElement): void {
+	protected onObservableOut(observable: ObservableElement, entry: IntersectionObserverEntry): void {
 		const
 			{async: $a} = this;
+
+		observable.time = entry.time;
+		observable.timeOut = entry.time;
 
 		const asyncOptions = {
 			group: 'inView',

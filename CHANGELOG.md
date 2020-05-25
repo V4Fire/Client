@@ -21,6 +21,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
   * Webpack will pass `webp` files through the `image-webpack`.
 
 * [Added gulp task "test: components" which will run in parallel all the tests that are specified in the `tests/cases.js` file](https://github.com/V4Fire/Client/pull/201)
+* [Added `time`, `timeIn`, `timeOut` in `in-view` directive](https://github.com/V4Fire/Client/pull/201)
 
 ### :bug: Bug Fix
 
