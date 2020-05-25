@@ -22,13 +22,14 @@ const requestStates: Dictionary<RequestState> = {
 export default {
 	GET: [{
 		async response({opts}: MiddlewareParams): Promise<{data: ResponseItem[]}> {
-			await sleep(300);
-
 			const query = <RequestQuery>{
 				chunkSize: 12,
 				id: String(Math.random()),
+				sleep: 300,
 				...Object.isObject(opts.query) ? opts.query : {}
 			};
+
+			await sleep(<number>query.sleep);
 
 			const state = requestStates[query.id] = requestStates[query.id] || {
 				i: 0,

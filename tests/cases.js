@@ -11,13 +11,13 @@ module.exports = [
 		b-virtual-scroll tests
 	*/
 	`--name b-virtual-scroll --suit render`,
-	// `--name b-virtual-scroll --suit render-options`,
-	// `--name b-virtual-scroll --suit render-truncated --runner render-truncated`,
+	`--name b-virtual-scroll --suit render-options`,
+	`--name b-virtual-scroll --suit render-truncated --runner render-truncated`,
 
-	// '--name b-virtual-scroll --suit slot-empty --runner slot-empty',
+	'--name b-virtual-scroll --suit slot-empty --runner slot-empty',
 
-	// /*
-	// 	b-button tests
-	// */
-	// `--name b-button --suit demo`
+	/*
+		b-button tests
+	*/
+	`--name b-button --suit demo`
 ]

@@ -38,6 +38,12 @@ export interface RequestQuery {
 	 * Total data that can be loaded
 	 */
 	total?: number;
+
+	/**
+	 * Sleep time before send response
+	 * @default 300
+	 */
+	sleep?: number;
 }
 
 /**

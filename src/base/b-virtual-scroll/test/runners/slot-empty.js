@@ -17,13 +17,6 @@ const
 
 module.exports = async (page, {componentSelector, component: c}) => {
 	describe('b-virtual-scroll', () => {
-		it('renders skeletons', async () => {
-			await h.waitForRefDisplay(page, componentSelector, 'tombstones', '');
-
-			expect(await c.evaluate((ctx) => Boolean(ctx.vdom.getSlot('tombstone')))).toBe(true);
-			expect(await c.evaluate((ctx) => ctx.$refs.tombstones.style.display)).toBe('');
-		});
-
 		it('has empty slot', async () => {
 			expect(await c.evaluate((ctx) => Boolean(ctx.vdom.getSlot('empty')))).toBe(true);
 		});

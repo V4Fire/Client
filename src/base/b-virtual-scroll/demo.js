@@ -91,7 +91,7 @@ const suits = {
 		attrs: {
 			...baseAttrs,
 			':dataProvider': s('demo.Pagination'),
-			':dbConverter': '({data}) => ({data: []})',
+			':dbConverter': '({data}) => ({data: []})'
 		},
 
 		content: {
