@@ -109,21 +109,34 @@ module.exports = function (gulp = require('gulp')) {
 
 		fs.mkdirpSync(tmpDir);
 
-		const
-			test = require(path.join(componentDir, 'test'));
+		const test = require(path.join(componentDir, 'test'));
 
-		for (const browserType of browsers) {
+		const browserParams = {
+			chromium: {},
+			firefox: {},
+			webkit: {}
+		};
+
+		const createBrowser = async (browserType) => {
 			const
 				browser = await getBrowserInstance(browserType, {headless}),
 				context = await browser.newContext(),
 				page = await context.newPage();
 
+			browserParams[browserType] = {page, browser, context, browserType, componentDir, tmpDir};
+		}
+
+		const runTest = async (browserType) => {
+			const
+				params = browserParams[browserType],
+				{page} = params;
+
 			await page.goto(`localhost:${args['--port']}/${args['--page']}.html`);
 			const testEnv = getTestEnv(browserType);
-			await test(page, {browser, context, browserType, componentDir, tmpDir});
+			await test(page, params);
 
 			const close = () => {
-				closeOnFinish && browser.close();
+				closeOnFinish && params.browser.close();
 				process.exitCode = exitCode;
 			};
 
@@ -142,6 +155,22 @@ module.exports = function (gulp = require('gulp')) {
 				testEnv.execute();
 			}).then(close, close);
 		}
+
+		const
+			browsersPromises = [],
+			testsPromises = [];
+
+		for (const browserType of browsers) {
+			browsersPromises.push(createBrowser(browserType));
+		}
+
+		await Promise.all(browsersPromises);
+
+		for (const browserType of browsers) {
+			testsPromises.push(runTest(browserType));
+		}
+
+		await Promise.all(testsPromises);
 
 		await server.close();
 
