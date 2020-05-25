@@ -15,39 +15,44 @@ const
 	cwd = pzlr.resolve.cwd,
 	helpers = require(path.join(cwd, 'tests/helpers.js'));
 
-Object.assign(module.exports, helpers);
+const
+	h = Object.assign(module.exports, helpers);
 
 /**
- * Scrolls page down and waits for items to be rendered
+ * Scrolls the page down and waits for items to be rendered
  *
- * @param {*} page
+ * @param {?} page
  * @param {number} count
  * @param {string} componentSelector
+ * @returns {!Promise<void>}
  */
 module.exports.scrollAndWaitItemsCountGreaterThan = async function (page, count, componentSelector) {
-	await module.exports.scrollToPageBottom(page);
-	await module.exports.waitItemsCountGreaterThan(page, count, componentSelector);
-}
+	await h.scrollToPageBottom(page);
+	await h.waitItemsCountGreaterThan(page, count, componentSelector);
+};
 
 /**
- * Scrolls page down and waits for items to be rendered
+ * Waits items to be rendered
  *
- * @param {*} page
+ * @param {?} page
  * @param {number} count
  * @param {string} componentSelector
+ * @param {string=} [op]
+ * @returns {!Promise<void>}
  */
 module.exports.waitItemsCountGreaterThan = async function (page, count, componentSelector, op = '>') {
 	await page.waitForFunction(`document.querySelector('${componentSelector}__container').childElementCount ${op} ${count}`);
-}
+};
 
 /**
- * Waits for ref to have the specified display value
+ * Waits the ref to have the specified display value
  *
- * @param {*} page 
+ * @param {?} page
  * @param {string} componentSelector
  * @param {string} refClassName
  * @param {string} display
+ * @returns {!Promise<void>}
  */
 module.exports.waitForRefDisplay = async function (page, componentSelector, refClassName, display) {
 	await page.waitForFunction(`document.querySelector('${componentSelector}__${refClassName}').style.display === '${display}'`);
-}
+};

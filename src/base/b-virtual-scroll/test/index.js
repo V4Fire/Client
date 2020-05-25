@@ -23,8 +23,9 @@ const
 /**
  * Starts a test
  *
- * @param {*} page
- * @param {object} params
+ * @param {?} page
+ * @param {!Object} params
+ * @returns {!Promise<void>}
  */
 module.exports = async (page, params) => {
 	await setup(page);
@@ -32,8 +33,10 @@ module.exports = async (page, params) => {
 }
 
 /**
- * Setups an environment
- * @param {*} page
+ * Setups an environment for the specified page
+ *
+ * @param {?} page
+ * @returns {!Promise<void>}
  */
 async function setup(page) {
 	await page.evaluate(`setEnv('mock', {patterns: ['.*']});`);

@@ -21,7 +21,7 @@ module.exports = async (page, {componentSelector, component: c}) => {
 			expect(await c.evaluate((ctx) => Boolean(ctx.vdom.getSlot('empty')))).toBe(true);
 		});
 
-		it('renders empty slot on the page', async () => {
+		it('renders empty slot to the page', async () => {
 			await h.waitForRefDisplay(page, componentSelector, 'tombstones', 'none');
 			await h.waitForRefDisplay(page, componentSelector, 'empty', '');
 

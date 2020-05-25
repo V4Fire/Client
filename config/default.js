@@ -17,9 +17,6 @@ const
 	camelize = require('camelize'),
 	o = require('uniconf/options').option;
 
-const
-	shellArgs = require('arg')({'--suit': String}, {permissive: true});
-
 module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	__proto__: config,
 
@@ -41,6 +38,9 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		components: o('components', {
 			env: true,
 			coerce: (v) => {
+				const
+					args = require('arg')({'--suit': String}, {permissive: true});
+
 				try {
 					const
 						obj = JSON.parse(v);
@@ -64,9 +64,10 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 							const
 								dir = pzlr.resolve.blockSync(name),
 								demo = require(path.join(dir, 'demo.js')),
-								suit = camelize(shellArgs['--suit'] || 'demo');
+								suit = camelize(args['--suit'] || 'demo');
 
-							const wrap = (d) => [].concat((d || []).map((p) => ({name, ...p})));
+							const
+								wrap = (d) => [].concat((d || []).map((p) => ({name, ...p})));
 
 							if (Object.isObject(demo)) {
 								return wrap(demo[suit]);
