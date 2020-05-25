@@ -7,6 +7,7 @@
  */
 
 import symbolGenerator from 'core/symbol';
+import Friend from 'super/i-block/modules/friend';
 
 import bVirtualScroll from 'base/b-virtual-scroll/b-virtual-scroll';
 import ChunkRender from 'base/b-virtual-scroll/modules/chunk-render';
@@ -17,7 +18,11 @@ import { RemoteData, RequestMoreParams, UnsafeChunkRequest, LastLoadedChunk } fr
 export const $$ =
 	symbolGenerator();
 
-export default class ChunkRequest {
+export default class ChunkRequest extends Friend {
+	/* @override */
+	// @ts-ignore
+	readonly C!: bVirtualScroll;
+
 	/**
 	 * Current page
 	 */
@@ -60,11 +65,6 @@ export default class ChunkRequest {
 	isLastEmpty: boolean = false;
 
 	/**
-	 * Component instance
-	 */
-	readonly component: bVirtualScroll['unsafe'];
-
-	/**
 	 * API to unsafe invoke of internal properties of the component
 	 */
 	get unsafe(): UnsafeChunkRequest & this {
@@ -80,14 +80,7 @@ export default class ChunkRequest {
 	 * API for scroll rendering
 	 */
 	protected get chunkRender(): ChunkRender['unsafe'] {
-		return this.component.chunkRender.unsafe;
-	}
-
-	/**
-	 * @param component - component instance
-	 */
-	constructor(component: bVirtualScroll) {
-		this.component = component.unsafe;
+		return this.ctx.chunkRender.unsafe;
 	}
 
 	/**
@@ -119,7 +112,7 @@ export default class ChunkRequest {
 	 */
 	async init(): Promise<void> {
 		const
-			{options, chunkSize, dataProvider} = this.component;
+			{options, chunkSize, dataProvider} = this.ctx;
 
 		this.pendingData = [...options];
 
@@ -144,13 +137,13 @@ export default class ChunkRequest {
 		}
 
 		if (
-			this.component.localState !== 'error' &&
+			this.ctx.localState !== 'error' &&
 			options.length === 0
 		) {
 			this.chunkRender.setRefVisibility('empty', true);
 		}
 
-		this.component.localState = 'ready';
+		this.ctx.localState = 'ready';
 	}
 
 	/**
@@ -158,14 +151,14 @@ export default class ChunkRequest {
 	 */
 	try(): Promise<CanUndef<RemoteData>> {
 		const
-			{component, chunkRender} = this,
-			{chunkSize} = component,
+			{ctx, chunkRender} = this,
+			{chunkSize} = ctx,
 			resolved = Promise.resolve(undefined);
 
 		const additionParams = {
 			lastLoadedChunk: {
 				...this.lastLoadedChunk,
-				normalized: this.lastLoadedChunk.normalized.length === 0 ? component.options : this.lastLoadedChunk.normalized
+				normalized: this.lastLoadedChunk.normalized.length === 0 ? ctx.options : this.lastLoadedChunk.normalized
 			}
 		};
 
@@ -176,7 +169,7 @@ export default class ChunkRequest {
 		}
 
 		const
-			shouldRequest = component.shouldMakeRequest(getRequestParams(this, chunkRender, additionParams));
+			shouldRequest = ctx.shouldMakeRequest(getRequestParams(this, chunkRender, additionParams));
 
 		if (this.isDone) {
 			this.onRequestsDone();
@@ -186,8 +179,8 @@ export default class ChunkRequest {
 		const cantRequest = () =>
 			this.isDone ||
 			!shouldRequest ||
-			!component.dataProvider ||
-			component.mods.progress === 'true';
+			!ctx.dataProvider ||
+			ctx.mods.progress === 'true';
 
 		if (cantRequest()) {
 			return resolved;
@@ -197,7 +190,7 @@ export default class ChunkRequest {
 
 		return this.load()
 			.then((v) => {
-				if (!component.field.get('data.length', v)) {
+				if (!ctx.field.get('data.length', v)) {
 					this.isLastEmpty = true;
 					this.shouldStopRequest(getRequestParams(this, chunkRender, {lastLoadedData: []}));
 					chunkRender.setLoadersVisibility(false);
@@ -215,7 +208,7 @@ export default class ChunkRequest {
 
 				this.shouldStopRequest(getRequestParams(this, chunkRender));
 
-				if (this.pendingData.length < component.chunkSize) {
+				if (this.pendingData.length < ctx.chunkSize) {
 					return this.try();
 				}
 
@@ -231,8 +224,8 @@ export default class ChunkRequest {
 	 * @param params
 	 */
 	shouldStopRequest(params: RequestMoreParams): boolean {
-		const {component} = this;
-		this.isDone = component.shouldStopRequest(params);
+		const {ctx} = this;
+		this.isDone = ctx.shouldStopRequest(params);
 
 		if (this.isDone) {
 			this.onRequestsDone();
@@ -246,16 +239,16 @@ export default class ChunkRequest {
 	 */
 	protected load(): Promise<CanUndef<RemoteData>> {
 		const
-			{component} = this;
+			{ctx} = this;
 
-		component.setMod('progress', true);
+		ctx.setMod('progress', true);
 
-		const params = <CanUndef<Dictionary>>(component.getDefaultRequestParams('get') || [])[0];
-		Object.assign(params, component.requestQuery?.(getRequestParams(this, this.chunkRender))?.get);
+		const params = <CanUndef<Dictionary>>(ctx.getDefaultRequestParams('get') || [])[0];
+		Object.assign(params, ctx.requestQuery?.(getRequestParams(this, this.chunkRender))?.get);
 
-		return component.async.request(component.getData(component, params), {label: $$.request})
+		return ctx.async.request(ctx.getData(this.component, params), {label: $$.request})
 			.then((data) => {
-				component.removeMod('progress', true);
+				ctx.removeMod('progress', true);
 				this.lastLoadedChunk.raw = data;
 
 				if (!data) {
@@ -264,7 +257,7 @@ export default class ChunkRequest {
 				}
 
 				const
-					converted = component.convertDataToDB<CanUndef<RemoteData>>(data);
+					converted = ctx.convertDataToDB<CanUndef<RemoteData>>(data);
 
 				if (!converted?.data?.length) {
 					this.lastLoadedChunk.normalized = [];
@@ -275,7 +268,7 @@ export default class ChunkRequest {
 			})
 
 			.catch((err) => {
-				component.removeMod('progress', true);
+				ctx.removeMod('progress', true);
 				this.chunkRender.setRefVisibility('retry', true);
 				stderr(err);
 
@@ -291,7 +284,7 @@ export default class ChunkRequest {
 	 */
 	protected onRequestsDone(): void {
 		const
-			{chunkSize} = this.component;
+			{chunkSize} = this.ctx;
 
 		if (this.pendingData.length) {
 			this.chunkRender.initItems(this.pendingData.splice(0, chunkSize));

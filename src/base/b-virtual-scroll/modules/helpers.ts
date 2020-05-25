@@ -51,7 +51,7 @@ export function getRequestParams(
 		currentPage: chunkRequestCtx.page,
 		isLastEmpty: chunkRequestCtx.isLastEmpty,
 		itemsTillBottom: chunkRenderCtx.items.length - chunkRenderCtx.lastIntersectsItem,
-		total: component && component.total,
+		total: component?.unsafe.total,
 
 		pendingData,
 		lastLoadedData: lastLoadedData || [],

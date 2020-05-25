@@ -25,15 +25,15 @@ export * from 'super/i-block/modules/lfc/interface';
 /**
  * Class to work with a component life cycle
  */
-export default class Lfc<C extends iBlock = iBlock> extends Friend<C> {
+export default class Lfc extends Friend {
 	/** @see [[iBlock.hook]] */
-	get hook(): this['C']['hook'] {
-		return this.component.hook;
+	get hook(): this['CTX']['hook'] {
+		return this.ctx.hook;
 	}
 
 	/** @see [[iBlock.componentStatus]] */
-	get status(): this['C']['componentStatus'] {
-		return this.component.componentStatus;
+	get status(): this['CTX']['componentStatus'] {
+		return this.ctx.componentStatus;
 	}
 
 	/**
@@ -65,18 +65,18 @@ export default class Lfc<C extends iBlock = iBlock> extends Friend<C> {
 	execCbAtTheRightTime<R = unknown>(cb: WrappedCb<R, this['C']>, opts?: AsyncOptions): CanPromise<CanVoid<R>> {
 		if (this.isBeforeCreate('beforeDataCreate')) {
 			return this.async.promise(new Promise<R>((r) => {
-				this.meta.hooks.beforeDataCreate.push({fn: () => r(cb.call(this.component))});
+				this.meta.hooks.beforeDataCreate.push({fn: () => r(cb.call(this.ctx))});
 			}), opts).catch(stderr);
 		}
 
 		if (this.hook === 'beforeDataCreate') {
-			return cb.call(this.component);
+			return cb.call(this.ctx);
 		}
 
-		this.component.beforeReadyListeners++;
+		this.ctx.beforeReadyListeners++;
 
 		const
-			res = this.component.waitStatus('beforeReady', cb, opts);
+			res = this.ctx.waitStatus('beforeReady', cb, opts);
 
 		if (Object.isPromise(res)) {
 			return res.catch(stderr);
@@ -92,16 +92,16 @@ export default class Lfc<C extends iBlock = iBlock> extends Friend<C> {
 	 * @param [opts] - additional options
 	 */
 	execCbAfterBlockReady<R = unknown>(cb: WrappedCb<R, this['C']>, opts?: AsyncOptions): CanPromise<CanVoid<R>> {
-		if (this.component.block) {
+		if (this.ctx.block) {
 			if (statuses[this.status] >= 0) {
-				return cb.call(this.component);
+				return cb.call(this.ctx);
 			}
 
 			return;
 		}
 
 		return this.async.promise(new Promise<R>((r) => {
-			this.component.blockReadyListeners.push(() => r(cb.call(this.component)));
+			this.ctx.blockReadyListeners.push(() => r(cb.call(this.ctx)));
 		}), opts).catch(stderr);
 	}
 
@@ -114,12 +114,12 @@ export default class Lfc<C extends iBlock = iBlock> extends Friend<C> {
 	execCbAfterComponentCreated<R = unknown>(cb: WrappedCb<R, this['C']>, opts?: AsyncOptions): CanPromise<CanVoid<R>> {
 		if (this.isBeforeCreate()) {
 			return this.async.promise(new Promise<R>((r) => {
-				this.meta.hooks.created.unshift({fn: () => r(cb.call(this.component))});
+				this.meta.hooks.created.unshift({fn: () => r(cb.call(this.ctx))});
 			}), opts).catch(stderr);
 		}
 
 		if (statuses[this.status] >= 0) {
-			return cb.call(this.component);
+			return cb.call(this.ctx);
 		}
 	}
 }

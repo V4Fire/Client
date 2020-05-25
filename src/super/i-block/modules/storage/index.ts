@@ -11,7 +11,6 @@
  * @packageDocumentation
  */
 
-import iBlock from 'super/i-block/i-block';
 import Friend from 'super/i-block/modules/friend';
 
 //#if runtime has core/kv-storage
@@ -21,12 +20,12 @@ import { asyncLocal, factory, AsyncStorageNamespace } from 'core/kv-storage';
 /**
  * Class to work with a local storage
  */
-export default class Storage<C extends iBlock = iBlock> extends Friend<C> {
+export default class Storage extends Friend {
 	//#if runtime has core/kv-storage
 
 	/** @see [[iBlock.globalName]] */
 	get globalName(): CanUndef<string> {
-		return this.component.globalName;
+		return this.ctx.globalName;
 	}
 
 	/**
@@ -39,7 +38,7 @@ export default class Storage<C extends iBlock = iBlock> extends Friend<C> {
 	 * @param component
 	 * @param [engine] - custom engine
 	 */
-	constructor(component: C, engine?: Dictionary) {
+	constructor(component: any, engine?: Dictionary) {
 		super(component);
 
 		//#if runtime has core/kv-storage
@@ -64,7 +63,7 @@ export default class Storage<C extends iBlock = iBlock> extends Friend<C> {
 
 				if (engine) {
 					const res = await engine.get<T>(id, ...args);
-					this.component.log('storage:load', () => Object.fastClone(res));
+					this.ctx.log('storage:load', () => Object.fastClone(res));
 					return res;
 				}
 
@@ -95,7 +94,7 @@ export default class Storage<C extends iBlock = iBlock> extends Friend<C> {
 
 				if (engine) {
 					await engine.set(id, value, ...args);
-					this.component.log('storage:save', () => Object.fastClone(value));
+					this.ctx.log('storage:save', () => Object.fastClone(value));
 				}
 
 			} catch {}
@@ -126,7 +125,7 @@ export default class Storage<C extends iBlock = iBlock> extends Friend<C> {
 
 				if (engine) {
 					await engine.remove(id, ...args);
-					this.component.log('storage:remove', id);
+					this.ctx.log('storage:remove', id);
 				}
 
 			} catch {}

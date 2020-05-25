@@ -135,6 +135,12 @@ export interface RenderItem<T extends unknown = unknown> {
 // @ts-ignore
 export interface UnsafeBVirtualScroll<CTX extends bVirtualScroll = bVirtualScroll> extends UnsafeIData<CTX> {
 	// @ts-ignore (access)
+	total: CTX['total'];
+
+	// @ts-ignore (access)
+	localState: CTX['localState'];
+
+	// @ts-ignore (access)
 	chunkRender: CTX['chunkRender'];
 
 	// @ts-ignore (access)

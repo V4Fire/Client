@@ -20,7 +20,6 @@ import {
 
 } from 'core/component';
 
-import iBlock from 'super/i-block/i-block';
 import Friend from 'super/i-block/modules/friend';
 import { statuses } from 'super/i-block/const';
 
@@ -39,7 +38,7 @@ export * from 'super/i-block/modules/sync/interface';
 /**
  * Class provides API to organize a "link" from one component property to another
  */
-export default class Sync<C extends iBlock = iBlock> extends Friend<C> {
+export default class Sync extends Friend {
 	/**
 	 * Cache of functions to synchronize modifiers
 	 */
@@ -47,19 +46,17 @@ export default class Sync<C extends iBlock = iBlock> extends Friend<C> {
 
 	/** @see [[iBlock.$activeField]] */
 	protected get activeField(): CanUndef<string> {
-		return this.component.$activeField;
+		return this.ctx.$activeField;
 	}
 
 	/** @see [[iBlock.$syncLinkCache]] */
 	protected get syncLinkCache(): SyncLinkCache {
-		return this.component.$syncLinkCache;
+		return this.ctx.$syncLinkCache;
 	}
 
 	/** @see [[iBlock.$syncLinkCache]] */
 	protected set syncLinkCache(value: SyncLinkCache) {
-		// @ts-ignore
-		// tslint:disable:no-string-literal
-		this.component['$syncLinkCache'] = value;
+		Object.set(this.ctx, '$syncLinkCache', value);
 	}
 
 	/**
@@ -68,7 +65,7 @@ export default class Sync<C extends iBlock = iBlock> extends Friend<C> {
 	protected readonly linksCache!: Dictionary<Dictionary>;
 
 	/** @override */
-	constructor(component: C) {
+	constructor(component: any) {
 		super(component);
 		this.linksCache = Object.createDict();
 		this.syncLinkCache = Object.createDict();
@@ -241,7 +238,7 @@ export default class Sync<C extends iBlock = iBlock> extends Friend<C> {
 
 		const {
 			meta,
-			component,
+			ctx,
 			linksCache,
 			syncLinkCache
 		} = this;
@@ -260,7 +257,7 @@ export default class Sync<C extends iBlock = iBlock> extends Friend<C> {
 			path = `${head.replace(bindingRgxp, '')}Prop`;
 
 		} else if (!customWatcherRgxp.test(path)) {
-			info = getPropertyInfo(path, this.component);
+			info = getPropertyInfo(path, this.ctx);
 
 		} else {
 			isCustomWatcher = true;
@@ -298,7 +295,7 @@ export default class Sync<C extends iBlock = iBlock> extends Friend<C> {
 		};
 
 		if (wrapper && wrapper.length > 1) {
-			component.watch(info || path, (val, oldVal) => {
+			ctx.watch(info || path, (val, oldVal) => {
 				if (isCustomWatcher) {
 					oldVal = undefined;
 
@@ -314,7 +311,7 @@ export default class Sync<C extends iBlock = iBlock> extends Friend<C> {
 				that = this;
 
 			// tslint:disable-next-line:only-arrow-functions
-			component.watch(info || path, function (val?: unknown): void {
+			ctx.watch(info || path, function (val?: unknown): void {
 				let
 					oldVal;
 
@@ -570,7 +567,7 @@ export default class Sync<C extends iBlock = iBlock> extends Friend<C> {
 		}
 
 		const {
-			component,
+			ctx,
 			syncLinkCache,
 			linksCache,
 			meta: {hooks: {beforeDataCreate: hooks}}
@@ -613,7 +610,7 @@ export default class Sync<C extends iBlock = iBlock> extends Friend<C> {
 				info;
 
 			if (!isCustomWatcher) {
-				info = getPropertyInfo(watchPath, this.component);
+				info = getPropertyInfo(watchPath, this.ctx);
 			}
 
 			const isAccessor = info && (
@@ -630,7 +627,7 @@ export default class Sync<C extends iBlock = iBlock> extends Friend<C> {
 			}
 
 			if (clone) {
-				component.watch(info || watchPath, (val, oldVal) => {
+				ctx.watch(info || watchPath, (val, oldVal) => {
 					if (isCustomWatcher) {
 						oldVal = undefined;
 
@@ -646,7 +643,7 @@ export default class Sync<C extends iBlock = iBlock> extends Friend<C> {
 					that = this;
 
 				// tslint:disable-next-line:only-arrow-functions
-				component.watch(info || watchPath, function (val?: unknown): void {
+				ctx.watch(info || watchPath, function (val?: unknown): void {
 					let
 						oldVal;
 
@@ -838,23 +835,23 @@ export default class Sync<C extends iBlock = iBlock> extends Friend<C> {
 		}
 
 		const
-			{component} = this;
+			{ctx} = this;
 
 		const setWatcher = () => {
 			const wrapper = (val, ...args) => {
 				val = converter.call(this, val, ...args);
 
 				if (val !== undefined) {
-					this.component.setMod(modName, val);
+					this.ctx.setMod(modName, val);
 				}
 			};
 
 			if (converter.length > 1) {
 				// tslint:disable-next-line:no-unnecessary-callback-wrapper
-				component.watch(path, (val, oldVal) => wrapper(val, oldVal), opts);
+				ctx.watch(path, (val, oldVal) => wrapper(val, oldVal), opts);
 
 			} else {
-				component.watch(path, wrapper, opts);
+				ctx.watch(path, wrapper, opts);
 			}
 		};
 
@@ -864,11 +861,11 @@ export default class Sync<C extends iBlock = iBlock> extends Friend<C> {
 					v = converter.call(this, this.field.get(path));
 
 				if (v !== undefined) {
-					component.mods[modName] = String(v);
+					ctx.mods[modName] = String(v);
 				}
 			};
 
-			if (component.hook !== 'beforeDataCreate') {
+			if (ctx.hook !== 'beforeDataCreate') {
 				this.meta.hooks.beforeDataCreate.push({
 					fn: sync
 				});
@@ -879,7 +876,7 @@ export default class Sync<C extends iBlock = iBlock> extends Friend<C> {
 
 			setWatcher();
 
-		} else if (statuses[component.componentStatus] >= 1) {
+		} else if (statuses[ctx.componentStatus] >= 1) {
 			setWatcher();
 		}
 	}

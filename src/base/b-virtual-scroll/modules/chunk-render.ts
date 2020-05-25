@@ -6,21 +6,28 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import Async from 'core/async';
 import symbolGenerator from 'core/symbol';
-
-import bVirtualScroll from 'base/b-virtual-scroll/b-virtual-scroll';
-import ComponentRender from 'base/b-virtual-scroll/modules/component-render';
-import ChunkRequest from 'base/b-virtual-scroll/modules/chunk-request';
 
 import { InitOptions } from 'core/component/directives/in-view/interface';
 import { InViewAdapter, inViewFactory } from 'core/component/directives/in-view';
-import { RenderItem, UnsafeChunkRender, RefDisplayState } from 'base/b-virtual-scroll/modules/interface';
+
+import { Friend } from 'super/i-block/i-block';
+import bVirtualScroll from 'base/b-virtual-scroll/b-virtual-scroll';
+
+import ComponentRender from 'base/b-virtual-scroll/modules/component-render';
+import ChunkRequest from 'base/b-virtual-scroll/modules/chunk-request';
+
+import { RenderItem, RefDisplayState, UnsafeChunkRender } from 'base/b-virtual-scroll/modules/interface';
 
 export const
 	$$ = symbolGenerator();
 
-export default class ChunkRender {
+// @ts-ignore
+export default class ChunkRender extends Friend {
+	/* @override */
+	// @ts-ignore
+	readonly C!: bVirtualScroll;
+
 	/**
 	 * Render items
 	 */
@@ -40,11 +47,6 @@ export default class ChunkRender {
 	 * Last rendered range
 	 */
 	lastRenderRange: number[] = [0, 0];
-
-	/**
-	 * Component instance
-	 */
-	readonly component: bVirtualScroll['unsafe'];
 
 	/**
 	 * Number of items
@@ -88,35 +90,14 @@ export default class ChunkRender {
 	 * API for dynamic component rendering
 	 */
 	protected get componentRender(): ComponentRender {
-		return this.component.componentRender;
+		return this.ctx.componentRender;
 	}
 
 	/**
 	 * API for scroll data requests
 	 */
 	protected get chunkRequest(): ChunkRequest {
-		return this.component.chunkRequest;
-	}
-
-	/**
-	 * Async instance
-	 */
-	protected get async(): Async<bVirtualScroll> {
-		return this.component.async;
-	}
-
-	/**
-	 * API for component DOM operations
-	 */
-	protected get dom(): bVirtualScroll['dom'] {
-		return this.component.dom;
-	}
-
-	/**
-	 * Link to the component refs
-	 */
-	protected get refs(): bVirtualScroll['$refs'] {
-		return this.component.$refs;
+		return this.ctx.chunkRequest;
 	}
 
 	/**
@@ -126,17 +107,15 @@ export default class ChunkRender {
 		return Math.floor((Math.random() * (0.06 - 0.01) + 0.01) * 100) / 100;
 	}
 
-	/**
-	 * @param component
-	 */
-	constructor(component: bVirtualScroll) {
-		this.component = component.unsafe;
+	/** @override */
+	constructor(component: any) {
+		super(component);
 
-		this.component.meta.hooks.mounted.push({fn: () => {
+		this.ctx.meta.hooks.mounted.push({fn: () => {
 			this.initEventHandlers();
 
-			if (!this.component.dataProvider) {
-				this.chunkRequest.init();
+			if (!this.ctx.dataProvider) {
+				this.chunkRequest.init().catch(stderr);
 			}
 		}});
 	}
@@ -174,16 +153,16 @@ export default class ChunkRender {
 	 * Renders component content
 	 */
 	render(): void {
-		if (this.component.localState !== 'ready') {
+		if (this.ctx.localState !== 'ready') {
 			return;
 		}
 
 		const
-			{component, chunk, items} = this;
+			{ctx, chunk, items} = this;
 
 		const
-			renderFrom = (chunk - 1) * component.chunkSize,
-			renderTo = chunk * component.chunkSize,
+			renderFrom = (chunk - 1) * ctx.chunkSize,
+			renderTo = chunk * ctx.chunkSize,
 			renderItems = items.slice(renderFrom, renderTo);
 
 		if (
@@ -252,8 +231,8 @@ export default class ChunkRender {
 	 * Event handlers initialization
 	 */
 	protected initEventHandlers(): void {
-		this.component.localEmitter.once('localState.ready', this.onReady.bind(this), {label: $$.reInit});
-		this.component.localEmitter.once('localState.error', this.onError.bind(this), {label: $$.reInit});
+		this.ctx.localEmitter.once('localState.ready', this.onReady.bind(this), {label: $$.reInit});
+		this.ctx.localEmitter.once('localState.error', this.onError.bind(this), {label: $$.reInit});
 	}
 
 	/**
@@ -285,9 +264,9 @@ export default class ChunkRender {
 	 */
 	protected wrapInView(item: RenderItem): void {
 		const
-			{component} = this,
+			{ctx} = this,
 			{node} = item,
-			label = `${this.asyncGroup}:${this.asyncInViewPrefix}${component.getOptionKey(item.data, item.index)}`;
+			label = `${this.asyncGroup}:${this.asyncInViewPrefix}${ctx.getOptionKey(item.data, item.index)}`;
 
 		if (!node) {
 			return;
@@ -320,7 +299,7 @@ export default class ChunkRender {
 		return {
 			delay: 0,
 			threshold: this.randomThreshold,
-			once: !this.component.clearNodes,
+			once: !this.ctx.clearNodes,
 			onEnter: () => this.onNodeIntersect(index)
 		};
 	}
@@ -331,8 +310,8 @@ export default class ChunkRender {
 	 */
 	protected onNodeIntersect(index: number): void {
 		const
-			{component, items, lastIntersectsItem} = this,
-			{chunkSize, renderGap} = component,
+			{ctx, items, lastIntersectsItem} = this,
+			{chunkSize, renderGap} = ctx,
 			currentRender = (this.chunk - 1) * chunkSize;
 
 		this.lastIntersectsItem = index;

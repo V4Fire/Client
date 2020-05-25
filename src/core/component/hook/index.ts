@@ -27,7 +27,7 @@ export function runHook(hook: string, component: ComponentInterface, ...args: un
 	const
 		{unsafe, unsafe: {meta}} = component;
 
-	unsafe.hook = hook;
+	Object.set(unsafe, 'hook', hook);
 
 	if (Object.isFunction(component.log)) {
 		component.log(`hook:${hook}`, ...args);
