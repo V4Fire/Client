@@ -167,7 +167,15 @@ module.exports = function (gulp = require('gulp')) {
 		await Promise.all(browsersPromises);
 
 		for (const browserType of browsers) {
-			testsPromises.push(runTest(browserType));
+			testsPromises.push(new Promise(async (res, rej) => {
+				try {
+					await runTest(browserType);
+					res();
+
+				} catch (e) {
+					rej(e);
+				}
+			}));
 		}
 
 		await Promise.all(testsPromises);
