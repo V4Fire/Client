@@ -156,6 +156,8 @@ export * from 'super/i-block/modules/sync';
 export * from 'super/i-block/modules/async-render';
 export * from 'super/i-block/modules/decorators';
 
+export { default as Friend } from 'super/i-block/modules/friend';
+
 export {
 
 	Cache,
@@ -175,7 +177,16 @@ export const
  * Superclass for all components
  */
 @component()
-export default abstract class iBlock extends ComponentInterface<iBlock, iStaticPage> {
+export default abstract class iBlock extends ComponentInterface {
+	/** @override */
+	readonly Component!: iBlock;
+
+	/** @override */
+	readonly Root!: iStaticPage;
+
+	/** @override */
+	readonly $root!: this['Root'];
+
 	/**
 	 * Component unique identifier
 	 */
@@ -651,7 +662,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	@system({
 		atom: true,
 		unique: true,
-		init: (ctx: iBlock) => new Analytics(ctx)
+		init: (ctx) => new Analytics(ctx)
 	})
 
 	readonly analytics!: Analytics;
@@ -663,7 +674,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	@system({
 		atom: true,
 		unique: true,
-		init: (ctx: iBlock) => new Provide(ctx)
+		init: (ctx) => new Provide(ctx)
 	})
 
 	readonly provide!: Provide;
@@ -674,7 +685,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	@system({
 		atom: true,
 		unique: true,
-		init: (ctx: iBlock) => new Lfc(ctx)
+		init: (ctx) => new Lfc(ctx)
 	})
 
 	readonly lfc!: Lfc;
@@ -691,7 +702,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	@system({
 		atom: true,
 		unique: true,
-		init: (ctx: iBlock) => new Field(ctx)
+		init: (ctx) => new Field(ctx)
 	})
 
 	readonly field!: Field;
@@ -715,7 +726,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	@system({
 		atom: true,
 		unique: true,
-		init: (ctx: iBlock) => new Sync(ctx)
+		init: (ctx) => new Sync(ctx)
 	})
 
 	readonly sync!: Sync;
@@ -734,7 +745,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 		unique: true,
 		replace: true,
 		functional: false,
-		init: (ctx: iBlock) => new AsyncRender(ctx)
+		init: (ctx) => new AsyncRender(ctx)
 	})
 
 	readonly asyncRender!: AsyncRender;
@@ -745,7 +756,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	@system({
 		atom: true,
 		unique: true,
-		init: (ctx: iBlock) => new VDOM(ctx)
+		init: (ctx) => new VDOM(ctx)
 	})
 
 	readonly vdom!: VDOM;
@@ -857,7 +868,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	@system({
 		unique: true,
 		replace: true,
-		init: (ctx: iBlock) => new Daemons(ctx)
+		init: (ctx) => new Daemons(ctx)
 	})
 
 	protected readonly daemons!: Daemons;
@@ -869,7 +880,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 		atom: true,
 		unique: true,
 		replace: true,
-		init: (ctx: iBlock) => new Storage(ctx)
+		init: (ctx) => new Storage(ctx)
 	})
 
 	protected readonly storage!: Storage;
@@ -894,7 +905,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 		atom: true,
 		unique: true,
 		replace: true,
-		init: (ctx: iBlock) => new State(ctx)
+		init: (ctx) => new State(ctx)
 	})
 
 	protected readonly state!: State;
@@ -905,7 +916,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	@system({
 		atom: true,
 		unique: true,
-		init: (ctx: iBlock) => new DOM(ctx)
+		init: (ctx) => new DOM(ctx)
 	})
 
 	protected readonly dom!: DOM;
@@ -926,7 +937,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 		atom: true,
 		unique: true,
 		replace: true,
-		init: (ctx: iBlock) => new Lazy(ctx)
+		init: (ctx) => new Lazy(ctx)
 	})
 
 	protected readonly lazy!: Lazy;
@@ -938,7 +949,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	@system({
 		atom: true,
 		unique: true,
-		init: (ctx: iBlock) => new Opt(ctx)
+		init: (ctx) => new Opt(ctx)
 	})
 
 	protected readonly opt!: Opt;
@@ -954,7 +965,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	@field({
 		replace: false,
 		forceUpdate: false,
-		init: (o) => o.sync.link((val) => {
+		init: (o) => o.sync.link<CanUndef<Stage>>((val) => {
 			o.stage = val;
 			return o.field.get('stageStore');
 		})

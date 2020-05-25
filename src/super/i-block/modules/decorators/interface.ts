@@ -29,37 +29,37 @@ import {
 export type DecoratorEventListenerMethod = 'on' | 'once';
 
 export interface InitFieldFn<
-	CTX extends ComponentInterface = iBlock['unsafe']
+	CTX extends ComponentInterface = iBlock
 > extends BaseInitFieldFn<CTX> {}
 
 export interface MergeFieldFn<
-	CTX extends ComponentInterface = iBlock['unsafe']
+	CTX extends ComponentInterface = iBlock
 > extends BaseMergeFieldFn<CTX> {}
 
 export interface UniqueFieldFn<
-	CTX extends ComponentInterface = iBlock['unsafe']
+	CTX extends ComponentInterface = iBlock
 > extends BaseUniqueFieldFn<CTX> {}
 
 export type DecoratorMethodWatcher<
-	CTX extends ComponentInterface = iBlock['unsafe'],
+	CTX extends ComponentInterface = iBlock,
 	A = unknown,
 	B = A
 > = BaseDecoratorMethodWatcher<CTX , A, B>;
 
 export type DecoratorFieldWatcher<
-	CTX extends ComponentInterface = iBlock['unsafe'],
+	CTX extends ComponentInterface = iBlock,
 	A = unknown,
 	B = A
 > = BaseDecoratorFieldWatcher<CTX, A, B>;
 
 export interface DecoratorProp<
-	CTX extends ComponentInterface = iBlock['unsafe'],
+	CTX extends ComponentInterface = iBlock,
 	A = unknown,
 	B = A
 > extends BaseDecoratorProp<CTX, A, B> {}
 
 export interface DecoratorField<
-	CTX extends ComponentInterface = iBlock['unsafe'],
+	CTX extends ComponentInterface = iBlock,
 	A = unknown,
 	B = A
 > extends BaseDecoratorField<CTX, A, B> {}

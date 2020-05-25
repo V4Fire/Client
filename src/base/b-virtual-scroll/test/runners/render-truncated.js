@@ -17,7 +17,6 @@ const
 module.exports = async (page, {componentSelector, component: c}) => {
 	describe('b-virtual-scroll', () => {
 		it('renders truncated data chunks to the page', async () => {
-
 			const [chunkSize, total, requestChunkSize, convertedLength] = await Promise.all([
 				h.getField(c, 'chunkSize'),
 				h.getField(c, 'request.get.total'),
@@ -27,7 +26,7 @@ module.exports = async (page, {componentSelector, component: c}) => {
 
 			const
 				hasSkeletons = await c.evaluate((ctx) => Boolean(ctx.vdom.getSlot('tombstone'))),
-				totalGivenDataToRender = total / (requestChunkSize / convertedLength)
+				totalGivenDataToRender = total / (requestChunkSize / convertedLength);
 
 			await h.waitItemsCountGreaterThan(page, 0, componentSelector);
 

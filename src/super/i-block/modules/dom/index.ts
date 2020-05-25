@@ -28,7 +28,7 @@ export * from 'super/i-block/modules/dom/interface';
 /**
  * Class provides some methods to work with a DOM tree
  */
-export default class DOM<C extends iBlock = iBlock> extends Friend<C> {
+export default class DOM extends Friend {
 	/**
 	 * Takes a string identifier and returns a new identifier that is connected to the component.
 	 * This method should use to generate id attributes for DOM nodes.
@@ -47,7 +47,7 @@ export default class DOM<C extends iBlock = iBlock> extends Friend<C> {
 			return undefined;
 		}
 
-		return `${this.component.componentId}-${id}`;
+		return `${this.ctx.componentId}-${id}`;
 	}
 
 	/**
@@ -81,7 +81,7 @@ export default class DOM<C extends iBlock = iBlock> extends Friend<C> {
 	@wait('ready')
 	async putInStream(
 		cb: ElCb<this['C']>,
-		el: Element | string = this.component.$el
+		el: Element | string = this.ctx.$el
 	): Promise<boolean> {
 		const
 			node = Object.isString(el) ? this.block.element(el) : el;
@@ -91,7 +91,7 @@ export default class DOM<C extends iBlock = iBlock> extends Friend<C> {
 		}
 
 		if (node.clientHeight) {
-			cb.call(this.component, node);
+			cb.call(this.ctx, node);
 			return false;
 		}
 
@@ -111,7 +111,7 @@ export default class DOM<C extends iBlock = iBlock> extends Friend<C> {
 
 		wrapper.appendChild(node);
 		document.body.appendChild(wrapper);
-		await cb.call(this.component, node);
+		await cb.call(this.ctx, node);
 
 		if (parent) {
 			if (before) {
@@ -151,7 +151,7 @@ export default class DOM<C extends iBlock = iBlock> extends Friend<C> {
 		}
 
 		parentNode.appendChild(newNode);
-		return this.component.async.worker(() => newNode.parentNode?.removeChild(newNode), {
+		return this.ctx.async.worker(() => newNode.parentNode?.removeChild(newNode), {
 			group: group || 'asyncComponents'
 		});
 	}
@@ -177,7 +177,7 @@ export default class DOM<C extends iBlock = iBlock> extends Friend<C> {
 		}
 
 		node.replaceWith(newNode);
-		return this.component.async.worker(() => newNode.parentNode?.removeChild(newNode), {
+		return this.ctx.async.worker(() => newNode.parentNode?.removeChild(newNode), {
 			group: group || 'asyncComponents'
 		});
 	}
@@ -225,12 +225,12 @@ export default class DOM<C extends iBlock = iBlock> extends Friend<C> {
 	 */
 	createBlockCtxFromNode(node: Node, component?: iBlock): Dictionary {
 		const
-			$el = <ComponentElement<this['C']>>node,
+			$el = <ComponentElement<this['CTX']>>node,
 			comp = component || $el.component;
 
 		const componentName = comp ?
 			comp.componentName :
-			Object.get(componentRgxp.exec($el.className), '1') || this.component.componentName;
+			Object.get(componentRgxp.exec($el.className), '1') || this.ctx.componentName;
 
 		return Object.assign(Object.create(Block.prototype), {
 			component: comp || {

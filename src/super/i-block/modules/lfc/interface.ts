@@ -7,4 +7,4 @@
  */
 
 import iBlock from 'super/i-block/i-block';
-export type WrappedCb<R, CTX extends iBlock = iBlock> = (this: CTX) => R;
+export type WrappedCb<R, CTX extends iBlock = iBlock> = (this: CTX['unsafe']) => R;

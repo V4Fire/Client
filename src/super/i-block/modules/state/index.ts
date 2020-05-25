@@ -27,10 +27,10 @@ let
 /**
  * Class provides some helper methods to initialize a component state
  */
-export default class State<C extends iBlock = iBlock> extends Friend<C> {
+export default class State extends Friend {
 	/** @see [[iBlock.hook]] */
-	get hook(): this['C']['hook'] {
-		return this.component.hook;
+	get hook(): this['CTX']['hook'] {
+		return this.ctx.hook;
 	}
 
 	/**
@@ -42,14 +42,14 @@ export default class State<C extends iBlock = iBlock> extends Friend<C> {
 
 	/** @see [[iBlock.globalName]] */
 	protected get globalName(): CanUndef<string> {
-		return this.component.globalName;
+		return this.ctx.globalName;
 	}
 
 	/** @see [[iBlock.instance]] */
-	protected get instance(): this['C']['instance'] {
+	protected get instance(): this['CTX']['instance'] {
 		// @ts-ignore (access)
 		baseSyncRouterState = baseSyncRouterState || iBlock.prototype.syncRouterState;
-		return this.component.instance;
+		return this.ctx.instance;
 	}
 
 	/**
@@ -68,7 +68,7 @@ export default class State<C extends iBlock = iBlock> extends Friend<C> {
 				p = key.split('.');
 
 			if (p[0] === 'mods') {
-				this.component.setMod(p[1], el);
+				this.ctx.setMod(p[1], el);
 
 			} else if (!Object.fastCompare(el, this.field.get(key))) {
 				this.field.set(key, el);
@@ -90,13 +90,13 @@ export default class State<C extends iBlock = iBlock> extends Friend<C> {
 		}
 
 		const
-			{component} = this;
+			{ctx} = this;
 
-		data = component.syncStorageState(data, 'remote');
-		this.set(component.syncStorageState(data));
+		data = ctx.syncStorageState(data, 'remote');
+		this.set(ctx.syncStorageState(data));
 
 		await this.storage.set(data, '[[STORE]]');
-		component.log('state:save:storage', this, data);
+		ctx.log('state:save:storage', this, data);
 
 		return true;
 
@@ -121,7 +121,7 @@ export default class State<C extends iBlock = iBlock> extends Friend<C> {
 		}
 
 		const
-			{component} = this;
+			{ctx} = this;
 
 		const
 			storeWatchers = {group: 'storeWatchers'},
@@ -133,7 +133,7 @@ export default class State<C extends iBlock = iBlock> extends Friend<C> {
 
 			this.lfc.execCbAtTheRightTime(() => {
 				const
-					stateFields = component.syncStorageState(data);
+					stateFields = ctx.syncStorageState(data);
 
 				this.set(
 					stateFields
@@ -154,7 +154,7 @@ export default class State<C extends iBlock = iBlock> extends Friend<C> {
 
 						} else {
 							// tslint:disable-next-line:only-arrow-functions
-							component.watch(key, function (val: unknown): void {
+							ctx.watch(key, function (val: unknown): void {
 								if (!Object.fastCompare(val, arguments[1])) {
 									sync();
 								}
@@ -166,7 +166,7 @@ export default class State<C extends iBlock = iBlock> extends Friend<C> {
 					}
 				}
 
-				component.log('state:init:storage', this, stateFields);
+				ctx.log('state:init:storage', this, stateFields);
 			});
 
 			return true;
@@ -190,17 +190,17 @@ export default class State<C extends iBlock = iBlock> extends Friend<C> {
 		}
 
 		const
-			{component} = this;
+			{ctx} = this;
 
 		const
-			stateFields = component.convertStateToStorageReset();
+			stateFields = ctx.convertStateToStorageReset();
 
 		this.set(
 			stateFields
 		);
 
 		await this.saveToStorage();
-		component.log('state:reset:storage', this, stateFields);
+		ctx.log('state:reset:storage', this, stateFields);
 		return true;
 
 		//#endif
@@ -218,13 +218,13 @@ export default class State<C extends iBlock = iBlock> extends Friend<C> {
 		}
 
 		const
-			{component} = this,
-			{router} = component.r;
+			{ctx} = this,
+			{router} = ctx.r;
 
-		data = component.syncRouterState(data, 'remote');
-		this.set(component.syncRouterState(data));
+		data = ctx.syncRouterState(data, 'remote');
+		this.set(ctx.syncRouterState(data));
 
-		if (!component.isActivated || !router) {
+		if (!ctx.isActivated || !router) {
 			return false;
 		}
 
@@ -232,7 +232,7 @@ export default class State<C extends iBlock = iBlock> extends Friend<C> {
 			query: data
 		});
 
-		component.log('state:save:router', this, data);
+		ctx.log('state:save:router', this, data);
 		return true;
 
 		//#endif
@@ -249,7 +249,7 @@ export default class State<C extends iBlock = iBlock> extends Friend<C> {
 		}
 
 		const
-			{component} = this;
+			{ctx} = this;
 
 		const
 			routerWatchers = {group: 'routerWatchers'},
@@ -257,7 +257,7 @@ export default class State<C extends iBlock = iBlock> extends Friend<C> {
 
 		this.lfc.execCbAtTheRightTime(async () => {
 			const
-				{r} = component;
+				{r} = ctx;
 
 			let
 				{router} = r;
@@ -276,15 +276,15 @@ export default class State<C extends iBlock = iBlock> extends Friend<C> {
 
 			const
 				route = r.route || <NonNullable<typeof r.route>>{},
-				stateFields = component.syncRouterState(Object.assign(Object.create(route), route.params, route.query));
+				stateFields = ctx.syncRouterState(Object.assign(Object.create(route), route.params, route.query));
 
 			this.set(
 				stateFields
 			);
 
-			if (component.syncRouterStoreOnInit) {
+			if (ctx.syncRouterStoreOnInit) {
 				const
-					stateForRouter = component.syncRouterState(stateFields, 'remote'),
+					stateForRouter = ctx.syncRouterState(stateFields, 'remote'),
 					stateKeys = Object.keys(stateForRouter);
 
 				if (stateKeys.length) {
@@ -330,7 +330,7 @@ export default class State<C extends iBlock = iBlock> extends Friend<C> {
 
 					} else {
 						// tslint:disable-next-line:only-arrow-functions
-						component.watch(key, function (val: unknown): void {
+						ctx.watch(key, function (val: unknown): void {
 							if (!Object.fastCompare(val, arguments[1])) {
 								sync();
 							}
@@ -342,7 +342,7 @@ export default class State<C extends iBlock = iBlock> extends Friend<C> {
 				}
 			}
 
-			component.log('state:init:router', this, stateFields);
+			ctx.log('state:init:router', this, stateFields);
 
 		}, {
 			label: $$.initFromRouter
@@ -364,22 +364,22 @@ export default class State<C extends iBlock = iBlock> extends Friend<C> {
 		}
 
 		const
-			{component} = this,
-			{router} = component.r;
+			{ctx} = this,
+			{router} = ctx.r;
 
 		const
-			stateFields = component.convertStateToRouterReset();
+			stateFields = ctx.convertStateToRouterReset();
 
 		this.set(
 			stateFields
 		);
 
-		if (!component.isActivated || !router) {
+		if (!ctx.isActivated || !router) {
 			return false;
 		}
 
 		await router.push(null);
-		component.log('state:reset:router', this, stateFields);
+		ctx.log('state:reset:router', this, stateFields);
 		return true;
 
 		//#endif
