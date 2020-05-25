@@ -52,4 +52,4 @@ jobs:
         run: npx gulp build:tsconfig
 
       - name: Run typescript test
-        run: node test:typescript
+        run: npm run test:typescript
