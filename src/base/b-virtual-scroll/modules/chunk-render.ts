@@ -17,7 +17,7 @@ import bVirtualScroll from 'base/b-virtual-scroll/b-virtual-scroll';
 import ComponentRender from 'base/b-virtual-scroll/modules/component-render';
 import ChunkRequest from 'base/b-virtual-scroll/modules/chunk-request';
 
-import { RenderItem, RefDisplayState, UnsafeChunkRender } from 'base/b-virtual-scroll/modules/interface';
+import { RenderItem, RefDisplayState } from 'base/b-virtual-scroll/interface';
 
 export const
 	$$ = symbolGenerator();
@@ -49,23 +49,16 @@ export default class ChunkRender extends Friend {
 	lastRenderRange: number[] = [0, 0];
 
 	/**
+	 * Async group
+	 */
+	readonly asyncGroup: string = 'scroll-render:';
+
+	/**
 	 * Number of items
 	 */
 	get itemsCount(): number {
 		return this.items.length;
 	}
-
-	/**
-	 * API to unsafe invoke of internal properties of the component
-	 */
-	get unsafe(): UnsafeChunkRender & this {
-		return <any>this;
-	}
-
-	/**
-	 * Async group
-	 */
-	protected readonly asyncGroup: string = 'scroll-render:';
 
 	/**
 	 * Async in-view label prefix

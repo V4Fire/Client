@@ -13,7 +13,7 @@ import bVirtualScroll from 'base/b-virtual-scroll/b-virtual-scroll';
 import ChunkRender from 'base/b-virtual-scroll/modules/chunk-render';
 
 import { getRequestParams } from 'base/b-virtual-scroll/modules/helpers';
-import { RemoteData, RequestMoreParams, UnsafeChunkRequest, LastLoadedChunk } from 'base/b-virtual-scroll/modules/interface';
+import { RemoteData, RequestMoreParams, LastLoadedChunk } from 'base/b-virtual-scroll/interface';
 
 export const $$ =
 	symbolGenerator();
@@ -65,22 +65,15 @@ export default class ChunkRequest extends Friend {
 	isLastEmpty: boolean = false;
 
 	/**
-	 * API to unsafe invoke of internal properties of the component
-	 */
-	get unsafe(): UnsafeChunkRequest & this {
-		return <any>this;
-	}
-
-	/**
 	 * Contains data that pending to be rendered
 	 */
-	protected pendingData: unknown[] = [];
+	pendingData: unknown[] = [];
 
 	/**
 	 * API for scroll rendering
 	 */
-	protected get chunkRender(): ChunkRender['unsafe'] {
-		return this.ctx.chunkRender.unsafe;
+	protected get chunkRender(): ChunkRender {
+		return this.ctx.chunkRender;
 	}
 
 	/**

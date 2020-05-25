@@ -10,9 +10,6 @@ import { UnsafeIData } from 'super/i-data/i-data';
 
 import bVirtualScroll from 'base/b-virtual-scroll/b-virtual-scroll';
 
-import ChunkRender from 'base/b-virtual-scroll/modules/chunk-render';
-import ChunkRequest from 'base/b-virtual-scroll/modules/chunk-request';
-
 export interface RequestQueryFn<T extends unknown = unknown> {
 	(params: RequestMoreParams<T>): Dictionary<Dictionary>;
 }
@@ -151,15 +148,6 @@ export interface UnsafeBVirtualScroll<CTX extends bVirtualScroll = bVirtualScrol
 
 	// @ts-ignore (access)
 	getOptionKey: CTX['getOptionKey'];
-}
-
-export interface UnsafeChunkRender {
-	onRequestsDone: ChunkRequest['onRequestsDone'];
-	asyncGroup: ChunkRender['asyncGroup'];
-}
-
-export interface UnsafeChunkRequest {
-	pendingData: ChunkRequest['pendingData'];
 }
 
 /**
