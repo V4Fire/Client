@@ -16,9 +16,9 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### :rocket: New Feature
 
 * [Added `webp` format support](https://github.com/V4Fire/Client/pull/201)
-  1. Added gulp task `static:image:webp` which will create `webp` from `jpg`, `png` files;
-  2. Replaced `gulp-image` to the `gulp-imagemin`;
-  3. Webpack will pass `webp` files through the `image-webpack`.
+  * Added gulp task `static:image:webp` which will create `webp` from `jpg`, `png` files;
+  * Replaced `gulp-image` to the `gulp-imagemin`;
+  * Webpack will pass `webp` files through the `image-webpack`.
 
 * [Added gulp task "test: components" which will run in parallel all the tests that are specified in the `tests/cases.js` file](https://github.com/V4Fire/Client/pull/201)
 
@@ -31,9 +31,9 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### :house: Internal
 
 * [Added test action](https://github.com/V4Fire/Client/pull/201)
-  1. Runs components tests;
-  2. Runs typescript tests;
-  3. Runs eslint.
+  * Runs components tests;
+  * Runs typescript tests;
+  * Runs eslint.
 
 * [Added demo model](https://github.com/V4Fire/Client/pull/201)
 * [Review `b-virtual-scroll`](https://github.com/V4Fire/Client/pull/201)
