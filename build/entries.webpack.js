@@ -10,16 +10,17 @@
 
 const
 	$C = require('collection.js'),
+	config = require('config');
+
+const
 	fs = require('fs-extra-promise'),
 	path = require('upath'),
-	camelize = require('camelize'),
-	objectHash = require('node-object-hash'),
-	config = require('config');
+	camelize = require('camelize');
 
 const
 	{build, src} = config,
 	{resolve, entries, block} = require('@pzlr/build-core'),
-	{output, buildCache} = include('build/build.webpack');
+	{output, buildCache, configHash} = include('build/build.webpack');
 
 const
 	isFastBuild = build.fast();
@@ -42,11 +43,8 @@ MAX_PROCESS += MAX_PROCESS <= I ? 1 : 0;
  * @type {Promise<{entry, processes, dependencies, blockMap}>}
  */
 module.exports = (async () => {
-	const hash = objectHash().hash({
-		config: config.expand(config)
-	});
-
-	const cacheFile = path.join(buildCache, `${hash}_graph.json`);
+	const
+		cacheFile = path.join(buildCache, `${configHash}_graph.json`);
 
 	if (build.buildGraphFromCache) {
 		if (fs.existsSync(cacheFile)) {
@@ -83,7 +81,7 @@ module.exports = (async () => {
 	}
 
 	const
-		tmpEntries = path.join(resolve.entry(), `tmp/${hash}`);
+		tmpEntries = path.join(resolve.entry(), `tmp/${configHash}`);
 
 	fs.mkdirpSync(tmpEntries);
 	fs.mkdirpSync(path.join(src.clientOutput(), path.dirname(output)));
@@ -123,7 +121,7 @@ module.exports = (async () => {
 			const
 				blackName = /^[iv]-/,
 				logicTaskName = `${name}.js`,
-				logicFile = path.join(tmpEntries, `${hash}_${logicTaskName}`);
+				logicFile = path.join(tmpEntries, `${configHash}__${logicTaskName}`);
 
 			fs.writeFileSync(logicFile, await $C(list).async.to('').reduce(async (str, {name}) => {
 				const
@@ -155,7 +153,7 @@ module.exports = (async () => {
 
 			const
 				styleTaskName = `${name}$style`,
-				styleFile = path.join(tmpEntries, `${hash}_${name}.styl`);
+				styleFile = path.join(tmpEntries, `${configHash}__${name}.styl`);
 
 			fs.writeFileSync(styleFile, [
 				await $C(list).async.to('').reduce(async (str, {name, isParent}) => {
@@ -197,7 +195,7 @@ module.exports = (async () => {
 
 			const
 				tplTaskName = `${name}_tpl.js`,
-				tplFile = path.join(tmpEntries, `${hash}_${name}.ss${!isFastBuild ? '.js' : ''}`);
+				tplFile = path.join(tmpEntries, `${configHash}__${name}.ss${!isFastBuild ? '.js' : ''}`);
 
 			fs.writeFileSync(tplFile, await $C(list)
 				.async
@@ -235,7 +233,7 @@ module.exports = (async () => {
 
 			const
 				htmlTaskName = `${name}_view`,
-				htmlFile = path.join(tmpEntries, `${hash}_${htmlTaskName}.html.js`);
+				htmlFile = path.join(tmpEntries, `${configHash}__${htmlTaskName}.html.js`);
 
 			fs.writeFileSync(htmlFile, await $C(list).async.to('').reduce(async (str, {name}) => {
 				const

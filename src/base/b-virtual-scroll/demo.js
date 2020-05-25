@@ -27,7 +27,7 @@ const baseContent = {
 
 const suits = {
 	/**
-	 * Set of parameters for rendering demo
+	 * Set of parameters to render demo
 	 */
 	demo: [{
 		attrs: {
@@ -41,7 +41,7 @@ const suits = {
 	}],
 
 	/**
-	 * Set of parameters for rendering data test
+	 * Set of parameters to render data
 	 */
 	render: [{
 		attrs: {
@@ -55,7 +55,7 @@ const suits = {
 	}],
 
 	/**
-	 * Set of parameters for rendering truncated data
+	 * Set of parameters to render truncated data
 	 */
 	renderTruncated: [{
 		attrs: {
@@ -71,7 +71,7 @@ const suits = {
 	}],
 
 	/**
-	 * Set of parameters for rendering static data
+	 * Set of parameters to render static data
 	 */
 	renderOptions: [{
 		attrs: {
@@ -85,7 +85,7 @@ const suits = {
 	}],
 
 	/**
-	 * Set of parameters for rendering empty slot
+	 * Set of parameters to render the empty slot
 	 */
 	slotEmpty: [{
 		attrs: {
@@ -99,6 +99,6 @@ const suits = {
 			empty: slots.empty
 		}
 	}]
-}
+};
 
 module.exports = suits;

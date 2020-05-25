@@ -31,7 +31,7 @@
     "test:components": "npx gulp test:components"
   },
   "dependencies": {
-    "@v4fire/core": "3.17.2",
+    "@v4fire/core": "^3.17.2",
     "escaper": "^3.0.4",
     "eventemitter2": "6.4.1",
     "fg-loadcss": "^2.1.0",
