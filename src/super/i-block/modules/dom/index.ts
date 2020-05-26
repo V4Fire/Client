@@ -218,18 +218,19 @@ export default class DOM extends Friend {
 	}
 
 	/**
-	 * Creates a Block instance from the specified node
+	 * Creates a Block instance from the specified node and component instance
 	 *
 	 * @param node
-	 * @param [component]
+	 * @param [component] - component instance, if not specified, the instance is taken from a node
 	 */
-	createBlockCtxFromNode(node: Node, component?: iBlock): Dictionary {
+	createBlockCtxFromNode(node: CanUndef<Node>, component?: iBlock): Dictionary {
 		const
-			$el = <ComponentElement<this['CTX']>>node,
-			ctxFromNode = component || $el.component;
+			$el = <CanUndef<ComponentElement<this['CTX']>>>node,
+			ctxFromNode = component || $el?.component;
 
 		const componentName = ctxFromNode ?
-			ctxFromNode.componentName : Object.get(componentRgxp.exec($el.className), '1') || this.ctx.componentName;
+			ctxFromNode.componentName :
+			Object.get(componentRgxp.exec($el?.className || ''), '1') || this.ctx.componentName;
 
 		const resolvedCtx = ctxFromNode || {
 			$el,

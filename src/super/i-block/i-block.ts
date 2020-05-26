@@ -1910,30 +1910,19 @@ export default abstract class iBlock extends ComponentInterface {
 	setMod(name: string, value: unknown): CanPromise<boolean>;
 
 	@p({replace: false})
-	setMod(nodeOrName: Element | string, name: string | unknown, value?: unknown): CanPromise<boolean | void> {
+	setMod(nodeOrName: Element | string, name: string | unknown, value?: unknown): CanPromise<boolean> {
 		if (Object.isString(nodeOrName)) {
-			if (this.isFlyweight || this.isFunctional) {
-				const res = Block.prototype.setMod.call(
-					this.dom.createBlockCtxFromNode(this.$el, this),
-					nodeOrName,
-					name
-				);
-
-				if (res) {
-					this.mods[nodeOrName] = String(name);
-				}
-
-				return res;
+			if (this.isFlyweight) {
+				const ctx = this.dom.createBlockCtxFromNode(this.$el, this);
+				return Block.prototype.setMod.call(ctx, nodeOrName, name);
 			}
 
-			return this.lfc.execCbAfterBlockReady(() => this.block.setMod(nodeOrName, name)) || false;
+			const res = this.lfc.execCbAfterBlockReady(() => this.block.setMod(nodeOrName, name));
+			return <CanPromise<boolean>>(res || false);
 		}
 
-		return Block.prototype.setMod.call(
-			this.dom.createBlockCtxFromNode(nodeOrName),
-			name,
-			value
-		);
+		const ctx = this.dom.createBlockCtxFromNode(nodeOrName);
+		return Block.prototype.setMod.call(ctx, name, value);
 	}
 
 	/**
@@ -1954,30 +1943,19 @@ export default abstract class iBlock extends ComponentInterface {
 	removeMod(name: string, value?: unknown): CanPromise<boolean>;
 
 	@p({replace: false})
-	removeMod(nodeOrName: Element | string, name?: string | unknown, value?: unknown): CanPromise<boolean | void> {
+	removeMod(nodeOrName: Element | string, name?: string | unknown, value?: unknown): CanPromise<boolean> {
 		if (Object.isString(nodeOrName)) {
-			if (this.isFlyweight || this.isFunctional) {
-				const res = Block.prototype.removeMod.call(
-					this.dom.createBlockCtxFromNode(this.$el, this),
-					nodeOrName,
-					name
-				);
-
-				if (res) {
-					delete this.mods[nodeOrName];
-				}
-
-				return res;
+			if (this.isFlyweight) {
+				const ctx = this.dom.createBlockCtxFromNode(this.$el, this);
+				return Block.prototype.removeMod.call(ctx, nodeOrName, name);
 			}
 
-			return this.lfc.execCbAfterBlockReady(() => this.block.removeMod(nodeOrName, name)) || false;
+			const res = this.lfc.execCbAfterBlockReady(() => this.block.removeMod(nodeOrName, name));
+			return <CanPromise<boolean>>(res || false);
 		}
 
-		return Block.prototype.removeMod.call(
-			this.dom.createBlockCtxFromNode(nodeOrName),
-			name,
-			value
-		);
+		const ctx = this.dom.createBlockCtxFromNode(nodeOrName);
+		return Block.prototype.removeMod.call(ctx, name, value);
 	}
 
 	/**
