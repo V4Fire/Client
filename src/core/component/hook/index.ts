@@ -25,12 +25,9 @@ import { ComponentHook, ComponentInterface } from 'core/component/interface';
  */
 export function runHook(hook: string, component: ComponentInterface, ...args: unknown[]): Promise<void> {
 	const
-		// @ts-ignore (access)
-		{meta} = component;
+		{unsafe, unsafe: {meta}} = component;
 
-	// @ts-ignore (access)
-	// tslint:disable-next-line:no-string-literal
-	component['hook'] = hook;
+	Object.set(unsafe, 'hook', hook);
 
 	if (Object.isFunction(component.log)) {
 		component.log(`hook:${hook}`, ...args);

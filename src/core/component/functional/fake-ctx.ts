@@ -85,24 +85,25 @@ export function createFakeCtx<T extends object = FunctionalCtx>(
 
 	// Add base methods and properties
 	Object.assign(fakeCtx, renderCtx.props, {
-		children: children || [],
-
 		_self: fakeCtx,
 		_renderProxy: fakeCtx,
 		_staticTrees: [],
+
+		unsafe: fakeCtx,
+		children: children || [],
 
 		$createElement: createElement.bind(fakeCtx),
 
 		$parent: p,
 		$root: renderCtx.$root || p && p.$root,
-		$options,
 
+		$options,
 		$props: renderCtx.props || {},
 		$attrs: dataOpts && dataOpts.attrs || {},
 		$listeners: renderCtx.listeners || dataOpts && dataOpts.on || {},
 
 		$refs: {},
-		$destroyedHooks: {},
+		$unregisteredHooks: {},
 
 		$slots: {
 			default: children && children.length ? children : undefined,
@@ -128,13 +129,13 @@ export function createFakeCtx<T extends object = FunctionalCtx>(
 			if (parent) {
 				const
 					{hooks} = parent.meta,
-					{$destroyedHooks} = this;
+					{$unregisteredHooks} = this;
 
 				for (let o = destroyCheckHooks, i = 0; i < o.length; i++) {
 					const
 						hook = o[i];
 
-					if ($destroyedHooks[hook]) {
+					if ($unregisteredHooks[hook]) {
 						continue;
 					}
 
@@ -160,7 +161,7 @@ export function createFakeCtx<T extends object = FunctionalCtx>(
 						hooks[hook] = filteredHooks;
 					}
 
-					$destroyedHooks[hook] = true;
+					$unregisteredHooks[hook] = true;
 				}
 			}
 

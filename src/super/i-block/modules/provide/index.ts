@@ -12,6 +12,7 @@
  */
 
 import iBlock from 'super/i-block/i-block';
+
 import Friend from 'super/i-block/modules/friend';
 import Block from 'super/i-block/modules/block';
 
@@ -25,12 +26,7 @@ export * from 'super/i-block/modules/provide/interface';
 /**
  * Class with methods to provide component classes/styles to another component, etc.
  */
-export default class Provide<C extends iBlock = iBlock> extends Friend<C> {
-	/** @see [[iBlock.componentName]] */
-	get componentName(): string {
-		return this.component.componentName;
-	}
-
+export default class Provide extends Friend {
 	/**
 	 * Returns a full name of the specified component
 	 *
@@ -55,7 +51,7 @@ export default class Provide<C extends iBlock = iBlock> extends Friend<C> {
 		}
 
 		componentName = componentName || this.componentName;
-		return Block.prototype.getFullBlockName.call({name: componentName}, modName, modValue);
+		return Block.prototype.getFullBlockName.call({componentName}, modName, modValue);
 	}
 
 	/**
@@ -85,7 +81,7 @@ export default class Provide<C extends iBlock = iBlock> extends Friend<C> {
 		}
 
 		componentName = componentName || this.componentName;
-		return Block.prototype.getFullElName.call({name: componentName}, elName, modName, modValue);
+		return Block.prototype.getFullElName.call({componentName}, elName, modName, modValue);
 	}
 
 	/**
@@ -94,7 +90,7 @@ export default class Provide<C extends iBlock = iBlock> extends Friend<C> {
 	 */
 	mods(mods?: ProvideMods): CanUndef<Readonly<ModsNTable>> {
 		const
-			{baseMods} = this.component;
+			{baseMods} = this.ctx;
 
 		if (!baseMods && !mods) {
 			return;
@@ -272,7 +268,7 @@ export default class Provide<C extends iBlock = iBlock> extends Friend<C> {
 			componentName;
 
 		if (arguments.length === 1) {
-			id = this.component.componentId;
+			id = this.ctx.componentId;
 			els = <Dictionary<ModsTable>>componentNameOrCtx;
 
 		} else {

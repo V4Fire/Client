@@ -19,7 +19,7 @@ const
 
 const
 	path = require('upath'),
-	build = include('build/entities.webpack'),
+	build = include('build/entries.webpack'),
 	depsRgxp = new RegExp(`(?:^|[\\/])node_modules[\\/](?:(?!${depsRgxpStr}).)*?(?:[\\/]|$)`);
 
 const
@@ -238,7 +238,7 @@ module.exports = async function ({buildId, plugins}) {
 	});
 
 	loaders.rules.set('img', {
-		test: /\.(?:png|gif|jpe?g)$/,
+		test: /\.(?:png|webp|gif|jpe?g)$/,
 		use: [
 			{
 				loader: 'url',

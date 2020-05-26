@@ -27,11 +27,11 @@ export type DaemonHook =
 	DaemonHookObject;
 
 export interface DaemonFn<
-	CTX extends iBlock = iBlock['unsafe'],
+	CTX extends iBlock = iBlock,
 	ARGS extends unknown[] = unknown[],
 	R = unknown
 > {
-	(this: CTX, ...args: ARGS): R;
+	(this: CTX['unsafe'], ...args: ARGS): R;
 }
 
 export interface DaemonHookOptions {
@@ -47,14 +47,14 @@ export type DaemonWatcher =
 	string;
 
 export interface WrappedDaemonFn<
-	CTX extends iBlock = iBlock['unsafe'],
+	CTX extends iBlock = iBlock,
 	ARGS extends unknown[] = unknown[],
 	R = unknown
 > {
-	(this: CTX, ...args: ARGS): CanPromise<R>;
+	(this: CTX['unsafe'], ...args: ARGS): CanPromise<R>;
 }
 
-export interface Daemon<CTX extends iBlock = iBlock['unsafe']> {
+export interface Daemon<CTX extends iBlock = iBlock> {
 	hook?: DaemonHook;
 	watch?: DaemonWatcher[];
 	wait?: ComponentStatus;
@@ -64,15 +64,15 @@ export interface Daemon<CTX extends iBlock = iBlock['unsafe']> {
 	fn: DaemonFn<CTX>;
 }
 
-export interface SpawnedDaemonObject<CTX extends iBlock = iBlock['unsafe']> {
+export interface SpawnedDaemonObject<CTX extends iBlock = iBlock> {
 	fn: WrappedDaemonFn<CTX>;
 	wait?: ComponentStatus;
 	immediate?: boolean;
 	asyncOptions?: DaemonsAsyncOptions;
 }
 
-export type SpawnedDaemon<CTX extends iBlock = iBlock['unsafe']> =
+export type SpawnedDaemon<CTX extends iBlock = iBlock> =
 	SpawnedDaemonObject<CTX> |
 	WrappedDaemonFn<CTX>;
 
-export type DaemonsDict<CTX extends iBlock = iBlock['unsafe']> = Dictionary<Daemon<CTX>>;
+export type DaemonsDict<CTX extends iBlock = iBlock> = Dictionary<Daemon<CTX>>;

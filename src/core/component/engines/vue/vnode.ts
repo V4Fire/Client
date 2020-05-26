@@ -30,8 +30,7 @@ export function patchVNode(vnode: VNode, ctx: ComponentInterface, renderCtx: Ren
 
 	const
 		{data} = renderCtx,
-		// @ts-ignore (access)
-		{meta} = ctx;
+		{meta} = ctx.unsafe;
 
 	if (data) {
 		vData.staticClass = vData.staticClass || '';

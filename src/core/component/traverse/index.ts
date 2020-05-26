@@ -21,8 +21,7 @@ export function getNormalParent(component: ComponentInterface): CanUndef<Compone
 	let
 		normalParent: CanUndef<ComponentInterface> = component.$parent;
 
-	// @ts-ignore (access)
-	while (normalParent && normalParent.meta && (normalParent.isFlyweight || normalParent.meta.params.functional)) {
+	while (normalParent?.unsafe?.meta && (normalParent.isFlyweight || normalParent.unsafe.meta.params.functional)) {
 		normalParent = normalParent.$parent;
 	}
 

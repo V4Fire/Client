@@ -6,6 +6,10 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+//#if demo
+import 'models/demo/pagination';
+//#endif
+
 import symbolGenerator from 'core/symbol';
 
 import iItems from 'traits/i-items/i-items';
@@ -17,21 +21,35 @@ import iData, {
 	field,
 	system,
 	wait,
+	p,
 
-	CheckDBEquality,
-	InitLoadOptions,
 	RequestParams,
 	RequestError,
-	RetryRequestFn
+
+	InitLoadOptions,
+	RetryRequestFn,
+	CheckDBEquality,
+
+	UnsafeGetter
 
 } from 'super/i-data/i-data';
 
 import ComponentRender from 'base/b-virtual-scroll/modules/component-render';
-import ScrollRender from 'base/b-virtual-scroll/modules/scroll-render';
-import ScrollRequest from 'base/b-virtual-scroll/modules/scroll-request';
+import ChunkRender from 'base/b-virtual-scroll/modules/chunk-render';
+import ChunkRequest from 'base/b-virtual-scroll/modules/chunk-request';
 
 import { getRequestParams } from 'base/b-virtual-scroll/modules/helpers';
-import { RequestFn, RemoteData, RequestQueryFn, GetData, Unsafe } from 'base/b-virtual-scroll/modules/interface';
+
+import {
+
+	GetData,
+	RequestFn,
+	RemoteData,
+	LocalState,
+	RequestQueryFn,
+	UnsafeBVirtualScroll
+
+} from 'base/b-virtual-scroll/interface';
 
 export { RequestFn, RemoteData, RequestQueryFn, GetData };
 export * from 'super/i-data/i-data';
@@ -47,23 +65,23 @@ export default class bVirtualScroll extends iData implements iItems {
 	/** @override */
 	readonly checkDBEquality: CheckDBEquality = false;
 
-	/** @see [[iItems.prototype.itemsProp]] */
+	/** @see [[iItems.itemsProp]] */
 	@prop(Array)
 	readonly optionsProp?: iItems['optionsProp'] = [];
 
-	/** @see [[iItems.prototype.items]] */
+	/** @see [[iItems.items]] */
 	@field((o) => o.sync.link())
 	options!: unknown[];
 
-	/** @see [[iItems.prototype.item]] */
+	/** @see [[iItems.item]] */
 	@prop({type: [String, Function], required: false})
 	readonly option?: iItems['option'];
 
-	/** @see [[iItems.prototype.itemKey]] */
+	/** @see [[iItems.itemKey]] */
 	@prop({type: [String, Function], required: false})
 	readonly optionKey?: iItems['optionKey'];
 
-	/** @see [[iItems.prototype.itemProps]] */
+	/** @see [[iItems.itemProps]] */
 	@prop({type: Function, default: () => ({})})
 	readonly optionProps!: iItems['optionProps'];
 
@@ -99,10 +117,16 @@ export default class bVirtualScroll extends iData implements iItems {
 	readonly clearNodes: boolean = false;
 
 	/**
-	 * If true then created nodes will be cached
+	 * If true, then created nodes will be cached
 	 */
 	@prop({type: Boolean, watch: 'syncPropsWatcher'})
 	readonly cacheNodes: boolean = true;
+
+	/**
+	 * If true, then additional data chunk will be requested automatically on user scroll
+	 */
+	@prop({type: Boolean})
+	readonly requestOnScroll: boolean = true;
 
 	/**
 	 * Function that returns request parameters
@@ -115,7 +139,7 @@ export default class bVirtualScroll extends iData implements iItems {
 	readonly request?: RequestParams;
 
 	/**
-	 * Requests remote data chunk to render
+	 * Requests a new data chunk to render
 	 */
 	@prop({type: Function, default: (ctx, query) => ctx.get(query), required: false})
 	readonly getData!: GetData;
@@ -138,8 +162,32 @@ export default class bVirtualScroll extends iData implements iItems {
 	@system()
 	protected total?: number;
 
+	/**
+	 * Local component state
+	 */
+	@p({cache: false})
+	protected get localState(): LocalState {
+		return this.localStateStore;
+	}
+
+	/**
+	 * @param state
+	 * @emits localEvent:localState.loading()
+	 * @emits localEvent:localState.ready()
+	 * @emits localEvent:localState.error()
+	 */
+	protected set localState(state: LocalState) {
+		this.localStateStore = state;
+		this.localEmitter.emit(`localState.${state}`);
+	}
+
+	/**
+	 * Local component state store
+	 */
+	protected localStateStore: LocalState = 'init';
+
 	/** @override */
-	get unsafe(): Unsafe & this {
+	get unsafe(): UnsafeGetter<UnsafeBVirtualScroll<this>> {
 		return <any>this;
 	}
 
@@ -161,19 +209,19 @@ export default class bVirtualScroll extends iData implements iItems {
 	/**
 	 * API for scroll rendering
 	 */
-	@system((o: bVirtualScroll) => new ScrollRender(o))
-	protected scrollRender!: ScrollRender;
+	@system<bVirtualScroll>((o) => new ChunkRender(o))
+	protected chunkRender!: ChunkRender;
 
 	/**
 	 * API for scroll data requests
 	 */
-	@system((o: bVirtualScroll) => new ScrollRequest(o))
-	protected scrollRequest!: ScrollRequest;
+	@system<bVirtualScroll>((o) => new ChunkRequest(o))
+	protected chunkRequest!: ChunkRequest;
 
 	/**
 	 * API for dynamic component rendering
 	 */
-	@system((o: bVirtualScroll) => new ComponentRender(o))
+	@system<bVirtualScroll>((o) => new ComponentRender(o))
 	protected componentRender!: ComponentRender;
 
 	/** @override */
@@ -196,14 +244,14 @@ export default class bVirtualScroll extends iData implements iItems {
 	}
 
 	/**
-	 * Reloads the last request (if there is no `db` or `options` `bVirtualScroll.prototype.reload` will be called)
+	 * Reloads the last request (if there is no `db` or `options` the method calls reload)
 	 */
 	reloadLast(): void {
 		if (!this.db || !this.options.length) {
-			this.reload();
+			this.reload().catch(stderr);
 
 		} else {
-			this.scrollRequest.reloadLast();
+			this.chunkRequest.reloadLast();
 		}
 	}
 
@@ -212,14 +260,11 @@ export default class bVirtualScroll extends iData implements iItems {
 	 */
 	async reInit(): Promise<void> {
 		this.componentRender.reInit();
-		this.scrollRender.reInit();
+		this.chunkRender.reInit();
 	}
 
-	/**
-	 * @override
-	 * @emits localEmitter:localReady
-	 */
-	protected initRemoteData(): CanUndef<unknown[]> {
+	/** @override  */
+	protected initRemoteData(): void {
 		if (!this.db) {
 			return;
 		}
@@ -228,16 +273,22 @@ export default class bVirtualScroll extends iData implements iItems {
 			val = this.convertDBToComponent<RemoteData>(this.db);
 
 		if (this.field.get('data.length', val)) {
-			this.scrollRequest.shouldStopRequest(getRequestParams(undefined, undefined, {lastLoadedData: val.data}));
-			this.options = <unknown[]>val.data;
+			const
+				params = getRequestParams(undefined, undefined, {lastLoadedData: val.data});
+
+			this.chunkRequest.shouldStopRequest(params);
+			this.options = val.data;
 			this.total = Object.isNumber(val.total) ? val.total : undefined;
 
 		} else {
-			this.scrollRequest.shouldStopRequest(getRequestParams(undefined, undefined, {isLastEmpty: true}));
+			const
+				params = getRequestParams(undefined, undefined, {isLastEmpty: true});
+
+			this.chunkRequest.shouldStopRequest(params);
 			this.options = [];
 		}
 
-		this.localEmitter.emit('localReady');
+		this.chunkRequest.init().catch(stderr);
 	}
 
 	/** @see [[iItems.getItemKey]] */
@@ -253,13 +304,9 @@ export default class bVirtualScroll extends iData implements iItems {
 		return this.reInit();
 	}
 
-	/**
-	 *  @override
-	 *  @emits localEmitter:localError
-	 */
+	/** @override */
 	protected onRequestError(err: Error | RequestError<unknown>, retry: RetryRequestFn): void {
 		super.onRequestError(err, retry);
-
-		this.localEmitter.emit('localError');
+		this.localState = 'error';
 	}
 }

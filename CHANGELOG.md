@@ -11,6 +11,47 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.19 (2020-05-26)
+
+#### :rocket: New Feature
+
+* [Added `webp` format support](https://github.com/V4Fire/Client/pull/201)
+  * Added gulp task `static:image:webp` which will create `webp` from `jpg`, `png` files;
+  * Replaced `gulp-image` to the `gulp-imagemin`;
+  * Webpack will pass `webp` files through the `image-webpack`.
+
+* [Added gulp task "test: components" which will run in parallel all tests that are specified in the `tests/cases.js` file](https://github.com/V4Fire/Client/pull/201)
+* [Added `time`, `timeIn`, `timeOut` in the `in-view` directive](https://github.com/V4Fire/Client/pull/201)
+
+### :bug: Bug Fix
+
+* [Fixed rendering of truncated data in `b-virtual-scroll`](https://github.com/V4Fire/Client/issues/231)
+* [Fixed rendering of empty slot in `b-virtual-scroll`](https://github.com/V4Fire/Client/issues/241)
+* [Fixed clear of `in-view` in `b-virtual-scroll`](https://github.com/V4Fire/Client/pull/201)
+* [Fixed issue with `in-view` that element did not becomes observable](https://github.com/V4Fire/Client/pull/201)
+* [Fixed `stopObserver` method in `in-view`](https://github.com/V4Fire/Client/pull/201)
+* [Fixed parallel components build](https://github.com/V4Fire/Client/pull/201)
+* [Fixed extra space `b-checkbox`](https://github.com/V4Fire/Client/pull/246)
+
+#### :house: Internal
+
+* Added `husky`
+* [Added test action](https://github.com/V4Fire/Client/pull/201)
+  * Runs component tests;
+  * Runs typescript tests;
+  * Runs eslint.
+
+* [Added demo model](https://github.com/V4Fire/Client/pull/201)
+* [Review `b-virtual-scroll`](https://github.com/V4Fire/Client/pull/201)
+* [Added few tests for `b-virtual-scroll`](https://github.com/V4Fire/Client/pull/201)
+* [Improves tests performance](https://github.com/V4Fire/Client/pull/201)
+
+## v3.0.0-rc.18 (2020-05-24)
+
+#### :boom: Breaking Change
+
+* [Renamed `interface/Unsafe` to `interface/UnsafeIBlock` `iBlock`](https://github.com/V4Fire/Client/pull/247)
+
 ## v3.0.0-rc.17 (2020-05-22)
 
 #### :bug: Bug Fix
@@ -197,6 +238,12 @@ export default class bExample extends iBlock {
 
 * Documentation
 * Refactoring
+
+## v3.0.0-beta.272 (2020-05-19)
+
+#### :bug: Bug Fix
+
+* [Fixed rendering of truncated data in `b-virtual-scroll`](https://github.com/V4Fire/Client/issues/231)
 
 ## v3.0.0-beta.271 (2020-04-27)
 

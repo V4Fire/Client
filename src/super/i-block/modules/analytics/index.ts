@@ -15,13 +15,12 @@
 import * as analytics from 'core/analytics';
 //#endif
 
-import iBlock from 'super/i-block/i-block';
 import Friend from 'super/i-block/modules/friend';
 
 /**
  * Class provides some methods to work with analytic engines
  */
-export default class Analytics<C extends iBlock = iBlock> extends Friend<C> {
+export default class Analytics extends Friend {
 	/**
 	 * Sends an analytic event with the specified details
 	 *

@@ -35,12 +35,12 @@ export function initFields(
 	store: Dictionary = {}
 ): Dictionary {
 	const
-		// @ts-ignore (access)
-		{meta: {params, instance}} = component;
+		{unsafe} = component,
+		{meta: {params, instance}} = unsafe;
 
 	const
 		// True if a component is functional or a flyweight
-		isFlyweight = component.isFlyweight || params.functional === true;
+		isFlyweight = unsafe.isFlyweight || params.functional === true;
 
 	const
 		// Map of fields that we should skip, i.e. not to initialize.
@@ -103,14 +103,13 @@ export function initFields(
 					store[key] = undefined;
 				}
 
-				// @ts-ignore (access)
-				component.$activeField = key;
+				Object.set(unsafe, '$activeField', key);
 
 				let
 					val;
 
 				if (el.init) {
-					val = el.init(<any>component, store);
+					val = el.init(unsafe, store);
 				}
 
 				if (val === undefined) {
@@ -125,8 +124,7 @@ export function initFields(
 					store[key] = val;
 				}
 
-				// @ts-ignore (access)
-				component.$activeField = undefined;
+				Object.set(unsafe, '$activeField', undefined);
 			}
 
 		} else {
@@ -199,15 +197,14 @@ export function initFields(
 					store[key] = undefined;
 				}
 
-				// @ts-ignore (access)
-				component.$activeField = key;
+				Object.set(unsafe, '$activeField', key);
 				fieldQueue.delete(key);
 
 				let
 					val;
 
 				if (el.init) {
-					val = el.init(<any>component, store);
+					val = el.init(unsafe, store);
 				}
 
 				if (val === undefined) {
@@ -220,8 +217,7 @@ export function initFields(
 					store[key] = val;
 				}
 
-				// @ts-ignore (access)
-				component.$activeField = undefined;
+				Object.set(unsafe, '$activeField', undefined);
 			}
 		}
 
@@ -292,15 +288,14 @@ export function initFields(
 					store[key] = undefined;
 				}
 
-				// @ts-ignore (access)
-				component.$activeField = key;
+				Object.set(unsafe, '$activeField', key);
 				fieldQueue.delete(key);
 
 				let
 					val;
 
 				if (el.init) {
-					val = el.init(<any>component, store);
+					val = el.init(unsafe, store);
 				}
 
 				if (val === undefined) {
@@ -313,8 +308,7 @@ export function initFields(
 					store[key] = val;
 				}
 
-				// @ts-ignore (access)
-				component.$activeField = undefined;
+				Object.set(unsafe, '$activeField', undefined);
 			}
 		}
 

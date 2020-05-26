@@ -67,7 +67,7 @@ export function getPropertyInfo(path: string, component: ComponentInterface): Pr
 
 			obj = obj[chunks[i]];
 
-			if (obj && obj.instance instanceof ComponentInterface) {
+			if (obj?.instance instanceof ComponentInterface) {
 				component = obj;
 				rootI = i === chunks.length - 1 ? i : i + 1;
 			}
@@ -78,8 +78,7 @@ export function getPropertyInfo(path: string, component: ComponentInterface): Pr
 	}
 
 	const
-		// @ts-ignore (access)
-		{props, fields, systemFields, computedFields, accessors, params: {deprecatedProps}} = component.meta;
+		{props, fields, systemFields, computedFields, accessors, params: {deprecatedProps}} = component.unsafe.meta;
 
 	const
 		alternative = deprecatedProps?.[name];
@@ -247,7 +246,7 @@ export function getPropertyInfo(path: string, component: ComponentInterface): Pr
 			path,
 			fullPath,
 			originalPath,
-			name: propName,
+			name,
 			ctx: component,
 			type: 'prop',
 			accessor,

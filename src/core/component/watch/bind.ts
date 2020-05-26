@@ -30,12 +30,11 @@ export function bindRemoteWatchers(component: ComponentInterface, params?: BindR
 		p = params || {};
 
 	const
-		// @ts-ignore (access)
-		{$watch, meta, hook, meta: {hooks}} = component,
+		{unsafe} = component,
+		{$watch, meta, hook, meta: {hooks}} = unsafe,
 
 		// Link to the self component async instance
-		// @ts-ignore (access)
-		selfAsync = component.$async,
+		selfAsync = unsafe.$async,
 
 		// Link to an async instance
 		$a = p.async || selfAsync;
@@ -51,8 +50,7 @@ export function bindRemoteWatchers(component: ComponentInterface, params?: BindR
 		watchersMap = p.watchers || meta.watchers,
 
 		// True if the method was invoked with passing custom async instance as a property
-		// @ts-ignore (access)
-		customAsync = $a !== component.$async;
+		customAsync = $a !== unsafe.$async;
 
 	// Iterate over all registered watchers and listeners and initialize their
 	for (let keys = Object.keys(watchersMap), i = 0; i < keys.length; i++) {
@@ -236,7 +234,7 @@ export function bindRemoteWatchers(component: ComponentInterface, params?: BindR
 				// Mind that the wrapper must return a function as the result,
 				// but it can be packed to a promise.
 				if (watchInfo.wrapper) {
-					handler = <typeof handler>watchInfo.wrapper(component, handler);
+					handler = <typeof handler>watchInfo.wrapper(component.unsafe, handler);
 				}
 
 				// To improve initialization performance, we should separately handle the promise situation
@@ -256,8 +254,7 @@ export function bindRemoteWatchers(component: ComponentInterface, params?: BindR
 								!Object.isFunction(watcherCtx['addListener']);
 
 							if (needDefEmitter) {
-								// @ts-ignore (access)
-								component.$on(watchPath, handler);
+								unsafe.$on(watchPath, handler);
 
 							} else {
 								$a.on(<EventEmitterLike>watcherCtx, watchPath, handler, eventParams, ...(watchInfo.args || []));
@@ -284,8 +281,7 @@ export function bindRemoteWatchers(component: ComponentInterface, params?: BindR
 							!Object.isFunction(watcherCtx['addListener']);
 
 						if (needDefEmitter) {
-							// @ts-ignore (access)
-							component.$on(watchPath, handler);
+							unsafe.$on(watchPath, handler);
 
 						} else {
 							$a.on(<EventEmitterLike>watcherCtx, watchPath, handler, eventParams, ...(watchInfo.args || []));

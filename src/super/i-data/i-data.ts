@@ -50,7 +50,8 @@ import iBlock, {
 	InitLoadCb,
 	InitLoadOptions,
 
-	ModsDecl
+	ModsDecl,
+	UnsafeGetter
 
 } from 'super/i-block/i-block';
 
@@ -58,10 +59,13 @@ import { providerMethods } from 'super/i-data/const';
 
 import {
 
+	UnsafeIData,
+
 	RequestParams,
-	RequestFilter,
 	DefaultRequest,
+	RequestFilter,
 	CreateRequestOptions,
+
 	RetryRequestFn,
 	ComponentConverter,
 	CheckDBEquality
@@ -170,6 +174,11 @@ export default abstract class iData extends iBlock implements iProgress {
 	 */
 	@prop(Boolean)
 	readonly offlineReload: boolean = false;
+
+	/** @override */
+	get unsafe(): UnsafeGetter<UnsafeIData<this>> {
+		return <any>this;
+	}
 
 	/**
 	 * Initial component data.
@@ -280,6 +289,7 @@ export default abstract class iData extends iBlock implements iProgress {
 	 * @see [[iData.db]]
 	 */
 	@field()
+	// @ts-ignore
 	protected dbStore?: CanUndef<this['DB']>;
 
 	/**

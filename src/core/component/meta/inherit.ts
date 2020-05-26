@@ -96,9 +96,7 @@ export function inherit(
 					}
 				}
 
-				// @ts-ignore
-				if (parent.after) {
-					// @ts-ignore
+				if ('after' in parent && parent.after) {
 					for (let a = parent.after.values(), el = a.next(); !el.done; el = a.next()) {
 						after = after || new Set();
 						after.add(el.value);

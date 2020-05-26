@@ -6,7 +6,16 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import watch, { set, unset, mute, watchHandlers, WatchHandler, MultipleWatchHandler } from 'core/object/watch';
+import watch, {
+
+	set,
+	unset,
+	mute,
+
+	watchHandlers,
+	MultipleWatchHandler
+
+} from 'core/object/watch';
 
 import { getPropertyInfo, bindingRgxp } from 'core/component/reflection';
 import { proxyGetters } from 'core/component/engines';
@@ -27,7 +36,7 @@ import {
 import { createWatchFn } from 'core/component/watch/create';
 import { attachDynamicWatcher } from 'core/component/watch/helpers';
 
-import { ComponentInterface } from 'core/component/interface';
+import { ComponentInterface, RawWatchHandler } from 'core/component/interface';
 import { ImplementComponentWatchAPIOptions } from 'core/component/watch/interface';
 
 /**
@@ -41,8 +50,8 @@ export function implementComponentWatchAPI(
 	opts?: ImplementComponentWatchAPIOptions
 ): void {
 	const
-		// @ts-ignore (access)
-		{meta, meta: {watchDependencies, computedFields, accessors, params}} = component;
+		{unsafe} = component,
+		{meta, meta: {watchDependencies, computedFields, accessors, params}} = unsafe;
 
 	const
 		isFlyweight = component.isFlyweight || meta.params.functional === true,
@@ -53,7 +62,7 @@ export function implementComponentWatchAPI(
 
 	// The handler to invalidate the cache of computed fields
 	// tslint:disable-next-line:typedef
-	const invalidateComputedCache = () => <WatchHandler>function invalidateComputedCache(val, oldVal, info) {
+	const invalidateComputedCache = () => <RawWatchHandler>function invalidateComputedCache(val, oldVal, info) {
 		if (!info) {
 			return;
 		}
@@ -359,11 +368,8 @@ export function implementComponentWatchAPI(
 						// Provide the list of connections to handlers
 						invalidateComputedCache[tiedWatchers] = emitAccessorEvents[tiedWatchers] = tiedLinks;
 
-						// @ts-ignore (access)
-						component.$watch(prop, {...propWatchOpts, immediate: true}, immediateHandler);
-
-						// @ts-ignore (access)
-						component.$watch(prop, propWatchOpts, handler);
+						unsafe.$watch(prop, {...propWatchOpts, immediate: true}, immediateHandler);
+						unsafe.$watch(prop, propWatchOpts, handler);
 					}
 				}
 			}

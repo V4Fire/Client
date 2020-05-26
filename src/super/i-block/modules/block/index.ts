@@ -11,10 +11,9 @@
  * @packageDocumentation
  */
 
-import iBlock from 'super/i-block/i-block';
 import Friend from 'super/i-block/modules/friend';
-
 import { ModsTable, ModsNTable } from 'super/i-block/modules/mods';
+
 import {
 
 	ModEvent,
@@ -36,29 +35,14 @@ const
 /**
  * Class implements BEM-like API
  */
-export default class Block<C extends iBlock = iBlock> extends Friend<C> {
-	/** @see [[iBlock.componentId]] */
-	get id(): string {
-		return this.component.componentId;
-	}
-
-	/** @see [[iBlock.componentName]] */
-	get name(): string {
-		return this.component.componentName;
-	}
-
-	/** @see [[iBlock.$el]] */
-	get node(): this['C']['$el'] {
-		return this.component.$el;
-	}
-
+export default class Block extends Friend {
 	/**
 	 * Map of applied modifiers
 	 */
 	protected readonly mods?: Dictionary<CanUndef<string>>;
 
 	/** @override */
-	constructor(component: C) {
+	constructor(component: any) {
 		super(component);
 		this.mods = Object.createDict();
 
@@ -75,7 +59,7 @@ export default class Block<C extends iBlock = iBlock> extends Friend<C> {
 	 * @param [modValue]
 	 */
 	getFullBlockName(modName?: string, modValue?: unknown): string {
-		return this.name + (modName ? `_${modName.dasherize()}_${String(modValue).dasherize()}` : '');
+		return this.componentName + (modName ? `_${modName.dasherize()}_${String(modValue).dasherize()}` : '');
 	}
 
 	/**
@@ -105,7 +89,7 @@ export default class Block<C extends iBlock = iBlock> extends Friend<C> {
 	 */
 	getFullElName(name: string, modName?: string, modValue?: unknown): string {
 		const modStr = modName ? `_${modName.dasherize()}_${String(modValue).dasherize()}` : '';
-		return `${this.name}__${name.dasherize()}${modStr}`;
+		return `${this.componentName}__${name.dasherize()}${modStr}`;
 	}
 
 	/**
@@ -116,7 +100,7 @@ export default class Block<C extends iBlock = iBlock> extends Friend<C> {
 	 */
 	getElSelector(name: string, mods?: ModsTable): string {
 		let
-			res = `.${this.id}.${this.getFullElName(name)}`;
+			res = `.${this.componentId}.${this.getFullElName(name)}`;
 
 		if (mods) {
 			for (let keys = Object.keys(mods), i = 0; i < keys.length; i++) {
@@ -221,30 +205,32 @@ export default class Block<C extends iBlock = iBlock> extends Friend<C> {
 		name = name.camelize(false);
 
 		const
-			{mods, node, component} = this;
+			{mods, node, ctx} = this;
 
 		const
 			normalizedVal = String(value).dasherize(),
-			initSetMod = reason === 'initSetMod',
-			prev = this.getMod(name);
+			prevVal = this.getMod(name);
 
-		if (prev === normalizedVal) {
+		if (prevVal === normalizedVal) {
 			return false;
 		}
 
+		const
+			isInit = reason === 'initSetMod';
+
 		let
-			domPrev,
+			prevValFromDOM,
 			needSync = false;
 
-		if (initSetMod) {
-			domPrev = this.getMod(name, true);
-			needSync = domPrev !== normalizedVal;
+		if (isInit) {
+			prevValFromDOM = this.getMod(name, true);
+			needSync = prevValFromDOM !== normalizedVal;
 		}
 
 		if (needSync) {
-			this.removeMod(name, domPrev, 'initSetMod');
+			this.removeMod(name, prevValFromDOM, 'initSetMod');
 
-		} else if (!initSetMod) {
+		} else if (!isInit) {
 			this.removeMod(name, undefined, 'setMod');
 		}
 
@@ -252,7 +238,7 @@ export default class Block<C extends iBlock = iBlock> extends Friend<C> {
 			mods[name] = normalizedVal;
 		}
 
-		if (node && (!initSetMod || needSync)) {
+		if (node && (!isInit || needSync)) {
 			node.classList.add(this.getFullBlockName(name, normalizedVal));
 		}
 
@@ -261,28 +247,26 @@ export default class Block<C extends iBlock = iBlock> extends Friend<C> {
 			type: 'set',
 			name,
 			value: normalizedVal,
-			prev,
+			prev: prevVal,
 			reason
 		};
 
-		if (component.field) {
-			const watchModsStore = component.field.get<ModsNTable>('watchModsStore')!;
-			component.mods[name] = normalizedVal;
+		ctx.mods[name] = normalizedVal;
 
-			if (name in watchModsStore && watchModsStore[name] !== normalizedVal) {
-				delete Object.getPrototypeOf(watchModsStore)[name];
-				component.field.set(`watchModsStore.${name}`, normalizedVal);
-			}
+		const
+			watchModsStore = ctx.field?.get<ModsNTable>('watchModsStore');
 
-			this.localEmitter.emit(`block.mod.set.${name}.${normalizedVal}`, event);
-
-			// @deprecated
-			component.emit(`mod-set-${name}-${normalizedVal}`, event);
-			component.emit(`mod:set:${name}:${normalizedVal}`, event);
-
-		} else {
-			this.localEmitter.emit(`block.mod.set.${name}.${normalizedVal}`, event);
+		if (watchModsStore && name in watchModsStore && watchModsStore[name] !== normalizedVal) {
+			delete Object.getPrototypeOf(watchModsStore)[name];
+			ctx.field.set(`watchModsStore.${name}`, normalizedVal);
 		}
+
+		this.localEmitter
+			.emit(`block.mod.set.${name}.${normalizedVal}`, event);
+
+		// @deprecated
+		ctx.emit(`mod-set-${name}-${normalizedVal}`, event);
+		ctx.emit(`mod:set:${name}:${normalizedVal}`, event);
 
 		return true;
 	}
@@ -299,12 +283,12 @@ export default class Block<C extends iBlock = iBlock> extends Friend<C> {
 		value = value != null ? String(value).dasherize() : undefined;
 
 		const
-			{mods, node, component} = this;
+			{mods, node, ctx} = this;
 
 		const
-			current = this.getMod(name, reason === 'initSetMod');
+			currentVal = this.getMod(name, reason === 'initSetMod');
 
-		if (current === undefined || value !== undefined && current !== value) {
+		if (currentVal === undefined || value !== undefined && currentVal !== value) {
 			return false;
 		}
 
@@ -313,34 +297,39 @@ export default class Block<C extends iBlock = iBlock> extends Friend<C> {
 		}
 
 		if (node) {
-			node.classList.remove(this.getFullBlockName(name, current));
+			node.classList.remove(this.getFullBlockName(name, currentVal));
 		}
 
 		const event = <ModEvent>{
 			event: 'block.mod.remove',
 			type: 'remove',
 			name,
-			value: current,
+			value: currentVal,
 			reason
 		};
 
-		if (reason === 'removeMod' && component.field) {
-			const watchModsStore = component.field.get<ModsNTable>('watchModsStore')!;
-			component.mods[name] = undefined;
+		const
+			needNotify = reason === 'removeMod';
 
-			if (name in watchModsStore && watchModsStore[name]) {
+		if (needNotify) {
+			ctx.mods[name] = undefined;
+
+			const
+				watchModsStore = ctx.field?.get<ModsNTable>('watchModsStore');
+
+			if (watchModsStore && name in watchModsStore && watchModsStore[name]) {
 				delete Object.getPrototypeOf(watchModsStore)[name];
-				component.field.set(`watchModsStore.${name}`, undefined);
+				ctx.field.set(`watchModsStore.${name}`, undefined);
 			}
+		}
 
-			this.localEmitter.emit(`block.mod.remove.${name}.${current}`, event);
+		this.localEmitter
+			.emit(`block.mod.remove.${name}.${currentVal}`, event);
 
+		if (needNotify) {
 			// @deprecated
-			component.emit(`mod-remove-${name}-${current}`, event);
-			component.emit(`mod:remove:${name}:${current}`, event);
-
-		} else {
-			this.localEmitter.emit(`block.mod.remove.${name}.${current}`, event);
+			ctx.emit(`mod-remove-${name}-${currentVal}`, event);
+			ctx.emit(`mod:remove:${name}:${currentVal}`, event);
 		}
 
 		return true;
@@ -354,13 +343,13 @@ export default class Block<C extends iBlock = iBlock> extends Friend<C> {
 	 */
 	getMod(name: string, fromNode?: boolean): CanUndef<string> {
 		const
-			{mods, node, component} = this;
+			{mods, node, ctx} = this;
 
 		if (mods && !fromNode) {
 			return mods[name.camelize(false)];
 		}
 
-		if (!node || !component.isFlyweight && !component.isFunctional) {
+		if (!node || !ctx.isFlyweight && !ctx.isFunctional) {
 			return undefined;
 		}
 
@@ -397,14 +386,16 @@ export default class Block<C extends iBlock = iBlock> extends Friend<C> {
 
 		elName = elName.camelize(false);
 		modName = modName.camelize(false);
-		value = String(value).dasherize();
 
-		if (this.getElMod(link, elName, modName) === value) {
+		const
+			normalizedVal = String(value).dasherize();
+
+		if (this.getElMod(link, elName, modName) === normalizedVal) {
 			return false;
 		}
 
 		this.removeElMod(link, elName, modName, undefined, 'setMod');
-		link.classList.add(this.getFullElName(elName, modName, value));
+		link.classList.add(this.getFullElName(elName, modName, normalizedVal));
 
 		const event = <SetElementModEvent>{
 			element: elName,
@@ -412,11 +403,11 @@ export default class Block<C extends iBlock = iBlock> extends Friend<C> {
 			type: 'set',
 			link,
 			modName,
-			value,
+			value: normalizedVal,
 			reason
 		};
 
-		this.localEmitter.emit(`el.mod.set.${elName}.${modName}.${value}`, event);
+		this.localEmitter.emit(`el.mod.set.${elName}.${modName}.${normalizedVal}`, event);
 		return true;
 	}
 
@@ -442,16 +433,17 @@ export default class Block<C extends iBlock = iBlock> extends Friend<C> {
 
 		elName = elName.camelize(false);
 		modName = modName.camelize(false);
-		value = value != null ? String(value).dasherize() : undefined;
 
 		const
-			current = this.getElMod(link, elName, modName);
+			normalizedVal = value != null ? String(value).dasherize() : undefined,
+			currentVal = this.getElMod(link, elName, modName);
 
-		if (current === undefined || value !== undefined && current !== value) {
+		if (currentVal === undefined || normalizedVal !== undefined && currentVal !== normalizedVal) {
 			return false;
 		}
 
-		link.classList.remove(this.getFullElName(elName, modName, current));
+		link.classList
+			.remove(this.getFullElName(elName, modName, currentVal));
 
 		const event = <ElementModEvent>{
 			element: elName,
@@ -459,11 +451,11 @@ export default class Block<C extends iBlock = iBlock> extends Friend<C> {
 			type: 'remove',
 			link,
 			modName,
-			value: current,
+			value: currentVal,
 			reason
 		};
 
-		this.localEmitter.emit(`el.mod.remove.${elName}.${modName}.${current}`, event);
+		this.localEmitter.emit(`el.mod.remove.${elName}.${modName}.${currentVal}`, event);
 		return true;
 	}
 
