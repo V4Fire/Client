@@ -34,6 +34,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :house: Internal
 
+* Added `husky`
 * [Added test action](https://github.com/V4Fire/Client/pull/201)
   * Runs component tests;
   * Runs typescript tests;
