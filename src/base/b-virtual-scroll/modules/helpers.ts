@@ -9,7 +9,7 @@
 import ChunkRender from 'base/b-virtual-scroll/modules/chunk-render';
 import ChunkRequest from 'base/b-virtual-scroll/modules/chunk-request';
 
-import { RequestMoreParams } from 'base/b-virtual-scroll/modules/interface';
+import { RequestMoreParams } from 'base/b-virtual-scroll/interface';
 
 /**
  * Returns a request params
@@ -25,7 +25,7 @@ export function getRequestParams(
 ): RequestMoreParams {
 	const
 		component = chunkRenderCtx?.component || chunkRequestCtx?.component,
-		pendingData = chunkRequestCtx?.unsafe.pendingData || [];
+		pendingData = chunkRequestCtx?.pendingData || [];
 
 	const lastLoadedData = chunkRequestCtx?.lastLoadedChunk.normalized.length ?
 		chunkRequestCtx.lastLoadedChunk.normalized :

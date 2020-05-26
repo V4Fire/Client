@@ -48,7 +48,7 @@ import {
 	RequestQueryFn,
 	UnsafeBVirtualScroll
 
-} from 'base/b-virtual-scroll/modules/interface';
+} from 'base/b-virtual-scroll/interface';
 
 export { RequestFn, RemoteData, RequestQueryFn, GetData };
 export * from 'super/i-data/i-data';
@@ -215,7 +215,7 @@ export default class bVirtualScroll extends iData implements iItems {
 	 * API for scroll data requests
 	 */
 	@system<bVirtualScroll>((o) => new ChunkRequest(o))
-	protected chunkRequest!: ChunkRequest['unsafe'];
+	protected chunkRequest!: ChunkRequest;
 
 	/**
 	 * API for dynamic component rendering

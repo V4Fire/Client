@@ -13,7 +13,7 @@ import { Friend } from 'super/i-block/i-block';
 import ScrollRender from 'base/b-virtual-scroll/modules/chunk-render';
 import bVirtualScroll from 'base/b-virtual-scroll/b-virtual-scroll';
 
-import { RenderItem, DataToRender, OptionEl } from 'base/b-virtual-scroll/modules/interface';
+import { RenderItem, DataToRender, OptionEl } from 'base/b-virtual-scroll/interface';
 
 export const
 	$$ = symbolGenerator();

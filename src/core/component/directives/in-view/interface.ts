@@ -14,6 +14,22 @@ export interface Observable {
 	isLeaving: boolean;
 	isDeactivated: boolean;
 	size: Size;
+
+	/**
+	 * Indicates the time at which the element enters the viewport relative to the creation of the document.
+	 */
+	timeIn?: DOMHighResTimeStamp;
+
+	/**
+	 * Indicates the time at which the element leaves the viewport relative to the creation of the document.
+	 */
+	timeOut?: DOMHighResTimeStamp;
+
+	/**
+	 * Last recorded time from entry
+	 * @see https://developer.mozilla.org/en-US/docs/Web/API/IntersectionObserverEntry/time
+	 */
+	time?: DOMHighResTimeStamp;
 }
 
 export interface Size {
