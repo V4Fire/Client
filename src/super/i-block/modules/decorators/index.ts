@@ -44,8 +44,7 @@ import {
 	WaitDecoratorOptions,
 	WaitOptions,
 
-	DecoratorEventListenerMethod,
-	DecoratorCtx
+	DecoratorEventListenerMethod
 
 } from 'super/i-block/modules/decorators/interface';
 
@@ -98,15 +97,6 @@ export const watch = watchDecorator as <CTX = iBlock, A = unknown, B = A>(
 ) => Function;
 
 /**
- * Returns a component instance from the specified decorator wrapper
- * @param wrapper
- */
-export function getComponentCtx<CTX>(wrapper: DecoratorCtx<CTX>): CTX {
-	// @ts-ignore
-	return wrapper.component || wrapper;
-}
-
-/**
  * Decorates a method as a modifier handler
  *
  * @decorator
@@ -123,9 +113,8 @@ export function mod(
 		initEmitter.once('bindConstructor', (componentName) => {
 			initEmitter.once(`constructor.${componentName}`, ({meta}) => {
 				meta.hooks.beforeCreate.push({
-					fn(this: DecoratorCtx<iBlock['unsafe']>): void {
-						const c = getComponentCtx(this);
-						c.localEmitter[method](`block.mod.set.${name}.${value}`, descriptor.value.bind(c));
+					fn(this: iBlock['unsafe']): void {
+						this.localEmitter[method](`block.mod.set.${name}.${value}`, descriptor.value.bind(this));
 					}
 				});
 			});
@@ -150,9 +139,8 @@ export function removeMod(
 		initEmitter.once('bindConstructor', (componentName) => {
 			initEmitter.once(`constructor.${componentName}`, ({meta}) => {
 				meta.hooks.beforeCreate.push({
-					fn(this: DecoratorCtx<iBlock['unsafe']>): void {
-						const c = getComponentCtx(this);
-						c.localEmitter[method](`block.mod.remove.${name}.${value}`, descriptor.value.bind(c));
+					fn(this: iBlock['unsafe']): void {
+						this.localEmitter[method](`block.mod.remove.${name}.${value}`, descriptor.value.bind(this));
 					}
 				});
 			});
@@ -262,12 +250,9 @@ export function wait(
 	const
 		isDecorator = !Object.isFunction(handler);
 
-	function wrapper(this: DecoratorCtx<iBlock['unsafe']>): CanUndef<CanPromise<unknown>> {
+	function wrapper(this: iBlock['unsafe']): CanUndef<CanPromise<unknown>> {
 		const
-			component = getComponentCtx(this);
-
-		const
-			getRoot = () => ctx ? component.field.get(ctx) : component,
+			getRoot = () => ctx ? this.field.get(ctx) : this,
 			root = getRoot(),
 			args = arguments;
 
@@ -276,12 +261,12 @@ export function wait(
 		}
 
 		const
-			{async: $a} = component,
+			{async: $a} = this,
 			p = {join, label, group};
 
 		const exec = (ctx) => {
 			const
-				componentStatus = Number(statuses[component.componentStatus]);
+				componentStatus = Number(statuses[this.componentStatus]);
 
 			let
 				res,
@@ -293,7 +278,7 @@ export function wait(
 				});
 			}
 
-			if (component.isFlyweight || componentStatus >= status) {
+			if (this.isFlyweight || componentStatus >= status) {
 				init = true;
 				res = defer ?
 					$a.promise($a.nextTick().then(() => handler.apply(this, args)), p) :

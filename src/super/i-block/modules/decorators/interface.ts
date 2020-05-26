@@ -83,5 +83,3 @@ export interface WaitOptions<F extends Function = Function> extends WaitDecorato
 	 */
 	fn: F;
 }
-
-export type DecoratorCtx<CTX> = {component: CTX} | CTX;
