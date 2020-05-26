@@ -6,27 +6,25 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import Async from 'core/async';
 import symbolGenerator from 'core/symbol';
 
-import ScrollRender from 'base/b-virtual-scroll/modules/scroll-render';
+import { Friend } from 'super/i-block/i-block';
+
+import ScrollRender from 'base/b-virtual-scroll/modules/chunk-render';
 import bVirtualScroll from 'base/b-virtual-scroll/b-virtual-scroll';
 
-import { RenderItem, DataToRender, OptionEl } from 'base/b-virtual-scroll/modules/interface';
+import { RenderItem, DataToRender, OptionEl } from 'base/b-virtual-scroll/interface';
 
 export const
 	$$ = symbolGenerator();
 
-export default class ComponentRender {
+export default class ComponentRender extends Friend {
+	readonly C!: bVirtualScroll;
+
 	/**
 	 * Async group
 	 */
 	readonly asyncGroup: string = 'component-render';
-
-	/**
-	 * Component instance
-	 */
-	protected component: bVirtualScroll['unsafe'];
 
 	/**
 	 * If false, the cache flushing process is not currently running
@@ -42,49 +40,28 @@ export default class ComponentRender {
 	 * True if rendered nodes can be cached
 	 */
 	protected get canCache(): boolean {
-		return this.component.cacheNodes && this.component.clearNodes;
+		return this.ctx.cacheNodes && this.ctx.clearNodes;
 	}
 
 	/**
 	 * API for scroll rendering
 	 */
 	protected get scrollRender(): ScrollRender {
-		return this.component.scrollRender;
-	}
-
-	/**
-	 * Async instance
-	 */
-	protected get async(): Async<bVirtualScroll> {
-		return this.component.async;
+		return this.ctx.chunkRender;
 	}
 
 	/**
 	 * Link to the component $createElement method
 	 */
 	protected get createElement(): bVirtualScroll['$createElement'] {
-		return this.component.$createElement.bind(this.component);
-	}
-
-	/**
-	 * Link to the component $refs
-	 */
-	protected get refs(): bVirtualScroll['$refs'] {
-		return this.component.$refs;
+		return this.ctx.$createElement.bind(this.ctx);
 	}
 
 	/**
 	 * Classname for options
 	 */
 	get optionClass(): string {
-		return this.component.block.getFullElName('option-el');
-	}
-
-	/**
-	 * @param component
-	 */
-	constructor(component: bVirtualScroll) {
-		this.component = component.unsafe;
+		return this.ctx.block.getFullElName('option-el');
 	}
 
 	/**
@@ -114,14 +91,14 @@ export default class ComponentRender {
 	 * @param node
 	 */
 	cacheNode(key: string, node: HTMLElement): HTMLElement {
-		if (!this.component.cacheNodes) {
+		if (!this.ctx.cacheNodes) {
 			return node;
 		}
 
 		this.nodesCache[key] = node;
 
 		const
-			{nodesCache, component: {cacheSize}} = this;
+			{nodesCache, ctx: {cacheSize}} = this;
 
 		if (Object.keys(nodesCache).length > cacheSize) {
 			this.canDropCache = true;
@@ -130,9 +107,9 @@ export default class ComponentRender {
 		return node;
 	}
 
-	/** @see bVirtualScroll.getOptionKey */
+	/** @see [[bVirtualScroll.getOptionKey]] */
 	getOptionKey(data: unknown, index: number): string {
-		return String(this.component.getOptionKey(data, index));
+		return String(this.ctx.getOptionKey(data, index));
 	}
 
 	/**
@@ -199,13 +176,13 @@ export default class ComponentRender {
 	 */
 	protected createComponents(items: RenderItem[]): HTMLElement[] {
 		const
-			{component: c, scrollRender: {items: totalItems}} = this;
+			{ctx: c, scrollRender: {items: totalItems}} = this;
 
 		const getOption = (itemParas: OptionEl, index: number) =>
 			Object.isFunction(c.option) ? c.option(itemParas, index) : c.option;
 
-		const render = (childrens: DataToRender[]) =>
-			c.vdom.render(childrens.map(({itemAttrs, itemParams, index}) =>
+		const render = (children: DataToRender[]) =>
+			c.vdom.render(children.map(({itemAttrs, itemParams, index}) =>
 				this.createElement(getOption(itemParams, index), itemAttrs))) as HTMLElement[];
 
 		const getChildrenAttrs = (props) => ({
@@ -235,11 +212,10 @@ export default class ComponentRender {
 				itemParams = getItemEl(item.data, item.index),
 				itemIndex = item.index;
 
-			const
-				attrs = Object.isFunction(c.optionProps) ? c.optionProps(getItemEl(item.data, item.index), item.index, {
-					ctx: c,
-					key: this.getOptionKey(item.data, item.index)
-				}) : c.optionProps;
+			const attrs = Object.isFunction(c.optionProps) ? c.optionProps(getItemEl(item.data, item.index), item.index, {
+				ctx: c,
+				key: this.getOptionKey(item.data, item.index)
+			}) : c.optionProps;
 
 			children.push({itemParams, itemAttrs: getChildrenAttrs(attrs), index: itemIndex});
 		}

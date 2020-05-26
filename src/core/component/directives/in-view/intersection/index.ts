@@ -8,7 +8,7 @@
 
 import symbolGenerator from 'core/symbol';
 
-import { ObservableElement, IntersectionObserverOptions } from 'core/component/directives/in-view/interface';
+import { ObservableElement } from 'core/component/directives/in-view/interface';
 import { hasIntersection } from 'core/component/directives/in-view/intersection/helpers';
 
 import Super from 'core/component/directives/in-view/super';
@@ -33,7 +33,7 @@ export default class InView extends Super {
 	/**
 	 * Contains IntersectionObserver instances
 	 */
-	protected readonly observers: Dictionary<IntersectionObserver> = {};
+	protected readonly observers: Map<string, IntersectionObserver> = new Map();
 
 	/**
 	 * Map of ids for root elements
@@ -51,8 +51,7 @@ export default class InView extends Super {
 	 */
 	protected initObserve(observable: ObservableElement): ObservableElement {
 		const
-			hash = this.getHash(observable),
-			observer = this.observers[hash] || this.createObserver(observable, hash);
+			observer = this.createObserver(observable);
 
 		observer.observe(observable.node);
 		this.putInMap(this.elements, observable);
@@ -62,10 +61,11 @@ export default class InView extends Super {
 
 	/** @override */
 	protected remove(observable: ObservableElement): boolean {
-		const observer = this.observers[this.getHash(observable)];
+		const observer = this.observers.get(observable.id);
 
 		if (observer) {
 			observer.unobserve(observable.node);
+			this.observers.delete(observable.id);
 			return true;
 		}
 
@@ -73,40 +73,21 @@ export default class InView extends Super {
 	}
 
 	/**
-	 * Returns a hash by given params
-	 *
-	 * @param intersectionObserverOptions
-	 *   *) threshold
-	 *   *) trackVisibility
-	 *   *) root
-	 */
-	protected getHash({threshold, trackVisibility, root}: IntersectionObserverOptions): string {
-		root = Object.isFunction(root) ? root() : root;
-
-		let
-			id = root && this.rootMap.get(root) || '';
-
-		if (!id && root) {
-			id = Math.random();
-			this.rootMap.set(root, id);
-		}
-
-		return `${threshold.toFixed(2)}${Boolean(trackVisibility)}${id}`;
-	}
-
-	/**
 	 * Creates a new IntersectionObserver instance
-	 *
-	 * @param opts
-	 * @param hash
+	 * @param observable
 	 */
-	protected createObserver(opts: IntersectionObserverOptions, hash: string): IntersectionObserver {
+	protected createObserver(observable: ObservableElement): IntersectionObserver {
 		const
-			root = Object.isFunction(opts.root) ? opts.root() : opts.root,
-			observerOpts = {...opts, root};
+			root = Object.isFunction(observable.root) ? observable.root() : observable.root,
+			opts = {...observable, root};
 
-		delete observerOpts.delay;
-		return this.observers[hash] = new IntersectionObserver(this.onIntersects.bind(this, opts.threshold), observerOpts);
+		delete opts.delay;
+
+		const
+			observer = new IntersectionObserver(this.onIntersects.bind(this, observable.threshold), opts);
+
+		this.observers.set(observable.id, observer);
+		return observer;
 	}
 
 	/**
@@ -129,19 +110,21 @@ export default class InView extends Super {
 			this.setObservableSize(observable, entry.boundingClientRect);
 
 			if (observable.isLeaving) {
-				this.onObservableOut(observable);
+				this.onObservableOut(observable, entry);
 
 			} else if (entry.intersectionRatio >= observable.threshold && !observable.isDeactivated) {
-				this.onObservableIn(observable);
+				this.onObservableIn(observable, entry);
 			}
 		}
 	}
 
 	/**
 	 * Handler: element becomes visible on viewport
+	 *
 	 * @param observable
+	 * @param entry
 	 */
-	protected onObservableIn(observable: ObservableElement): void {
+	protected onObservableIn(observable: ObservableElement, entry: IntersectionObserverEntry): void {
 		const
 			{async: $a} = this;
 
@@ -150,6 +133,9 @@ export default class InView extends Super {
 			label: observable.id,
 			join: true
 		};
+
+		observable.time = entry.time;
+		observable.timeIn = entry.time;
 
 		if (Object.isFunction(observable.onEnter)) {
 			observable.onEnter(observable);
@@ -167,11 +153,16 @@ export default class InView extends Super {
 
 	/**
 	 * Handler: element leaves viewport
+	 *
 	 * @param observable
+	 * @param entry
 	 */
-	protected onObservableOut(observable: ObservableElement): void {
+	protected onObservableOut(observable: ObservableElement, entry: IntersectionObserverEntry): void {
 		const
 			{async: $a} = this;
+
+		observable.time = entry.time;
+		observable.timeOut = entry.time;
 
 		const asyncOptions = {
 			group: 'inView',

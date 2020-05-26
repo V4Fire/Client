@@ -383,7 +383,7 @@ export default class bCrop extends iBlock implements iVisible {
 
 		if (params.x != null) {
 			if (minWidth && minHeight || params.width && params.height) {
-				this.setFixSize({width: minWidth, height: minHeight, ...<Size>params});
+				this.setFixSize({width: minWidth, height: minHeight, ...<any>params});
 			}
 
 		} else {

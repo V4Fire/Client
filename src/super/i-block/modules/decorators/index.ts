@@ -11,7 +11,8 @@
  * @packageDocumentation
  */
 
-import { initEmitter, ModVal, ComponentInterface } from 'core/component';
+import { ProxyCb } from 'core/async';
+import { initEmitter, ModVal } from 'core/component';
 
 import {
 
@@ -40,7 +41,6 @@ import {
 	DecoratorMethodWatcher,
 
 	WaitStatuses,
-	WaitFn,
 	WaitDecoratorOptions,
 	WaitOptions,
 
@@ -56,7 +56,8 @@ export * from 'super/i-block/modules/decorators/interface';
  * @see core/component/decorators/base.ts
  * @override
  */
-export const p = pDecorator as <CTX extends ComponentInterface = iBlock['unsafe'], A = unknown, B = A>(
+export const p = pDecorator as <CTX = iBlock, A = unknown, B = A>(
+	// @ts-ignore
 	params?: DecoratorProp<CTX, A, B> | DecoratorField<CTX, A, B> | DecoratorMethod<CTX, A, B> | DecoratorComponentAccessor
 ) => Function;
 
@@ -64,7 +65,8 @@ export const p = pDecorator as <CTX extends ComponentInterface = iBlock['unsafe'
  * @see core/component/decorators/base.ts
  * @override
  */
-export const prop = propDecorator as <CTX extends ComponentInterface = iBlock['unsafe'], A = unknown, B = A>(
+export const prop = propDecorator as <CTX = iBlock, A = unknown, B = A>(
+	// @ts-ignore
 	params?: CanArray<FunctionConstructor | Function> | ObjectConstructor | DecoratorProp<CTX, A, B>
 ) => Function;
 
@@ -72,7 +74,8 @@ export const prop = propDecorator as <CTX extends ComponentInterface = iBlock['u
  * @see core/component/decorators/base.ts
  * @override
  */
-export const field = fieldDecorator as <CTX extends ComponentInterface = iBlock['unsafe'], A = unknown, B = A>(
+export const field = fieldDecorator as <CTX = iBlock, A = unknown, B = A>(
+	// @ts-ignore
 	params?: InitFieldFn<CTX> | DecoratorField<CTX, A, B>
 ) => Function;
 
@@ -80,7 +83,8 @@ export const field = fieldDecorator as <CTX extends ComponentInterface = iBlock[
  * @see core/component/decorators/base.ts
  * @override
  */
-export const system = systemDecorator as <CTX extends ComponentInterface = iBlock['unsafe'], A = unknown, B = A>(
+export const system = systemDecorator as <CTX = iBlock, A = unknown, B = A>(
+	// @ts-ignore
 	params?: InitFieldFn<CTX> | DecoratorField<CTX, A, B>
 ) => Function;
 
@@ -88,7 +92,8 @@ export const system = systemDecorator as <CTX extends ComponentInterface = iBloc
  * @see core/component/decorators/base.ts
  * @override
  */
-export const watch = watchDecorator as <CTX extends ComponentInterface = iBlock['unsafe'], A = unknown, B = A>(
+export const watch = watchDecorator as <CTX = iBlock, A = unknown, B = A>(
+	// @ts-ignore
 	params?: DecoratorFieldWatcher<CTX, A, B> | DecoratorMethodWatcher<CTX, A, B>
 ) => Function;
 
@@ -171,9 +176,9 @@ export function wait(opts: WaitDecoratorOptions): Function;
  * @see [[Async.wait]]
  * @param opts - additional options
  */
-export function wait<F extends WaitFn>(
+export function wait<F extends AnyFunction>(
 	opts: WaitOptions<F>
-): WaitFn<Parameters<F>, CanPromise<ReturnType<F>>>;
+): ProxyCb<Parameters<F>, CanPromise<ReturnType<F>>, iBlock>;
 
 /**
  * Decorates a method to wait the specified component status
@@ -193,10 +198,10 @@ export function wait(status: WaitStatuses, opts?: WaitDecoratorOptions): Functio
  * @param status
  * @param fnOrOpts - function to wrap or additional options
  */
-export function wait<F extends WaitFn>(
+export function wait<F extends AnyFunction>(
 	status: WaitStatuses,
 	fnOrOpts: F | WaitOptions<F>
-): WaitFn<Parameters<F>, CanPromise<ReturnType<F>>>;
+): ProxyCb<Parameters<F>, CanPromise<ReturnType<F>>, iBlock>;
 
 export function wait(
 	statusOrOpts: WaitStatuses | WaitDecoratorOptions | WaitOptions,

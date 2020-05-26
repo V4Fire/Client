@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-module.exports = async (page, {browserType, componentDir, tmpDir}) => {
+module.exports = async (page, {browserType, tmpDir}) => {
 	await page.screenshot({path: `${tmpDir}/example-${browserType}.png`});
 
 	describe('b-button', () => {

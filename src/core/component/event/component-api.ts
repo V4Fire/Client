@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { EventEmitter2 as EventEmitter, Listener } from 'eventemitter2';
+import { EventEmitter2 as EventEmitter, ListenerFn } from 'eventemitter2';
 
 /**
  * Implements the base event API to a component instance
@@ -23,7 +23,7 @@ export function implementEventAPI(component: object): void {
 		$emit: $e.emit.bind($e),
 		$once: $e.once.bind($e),
 
-		$on(e: CanArray<string>, cb: Listener): void {
+		$on(e: CanArray<string>, cb: ListenerFn): void {
 			const
 				events = Array.concat([], e);
 
@@ -32,7 +32,7 @@ export function implementEventAPI(component: object): void {
 			}
 		},
 
-		$off(e: CanArray<string>, cb: Listener): void {
+		$off(e: CanArray<string>, cb: ListenerFn): void {
 			const
 				events = Array.concat([], e);
 

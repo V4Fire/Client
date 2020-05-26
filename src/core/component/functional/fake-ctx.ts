@@ -85,18 +85,19 @@ export function createFakeCtx<T extends object = FunctionalCtx>(
 
 	// Add base methods and properties
 	Object.assign(fakeCtx, renderCtx.props, {
-		children: children || [],
-
 		_self: fakeCtx,
 		_renderProxy: fakeCtx,
 		_staticTrees: [],
+
+		unsafe: fakeCtx,
+		children: children || [],
 
 		$createElement: createElement.bind(fakeCtx),
 
 		$parent: p,
 		$root: renderCtx.$root || p && p.$root,
-		$options,
 
+		$options,
 		$props: renderCtx.props || {},
 		$attrs: dataOpts && dataOpts.attrs || {},
 		$listeners: renderCtx.listeners || dataOpts && dataOpts.on || {},
@@ -201,15 +202,15 @@ export function createFakeCtx<T extends object = FunctionalCtx>(
 		fakeCtx.$root = fakeCtx;
 	}
 
+	initProps(fakeCtx, {
+		store: fakeCtx,
+		saveToStore: opts?.initProps
+	});
+
 	init.beforeCreateState(fakeCtx, meta, {
 		addMethods: true,
 		implementEventAPI: true,
 		safe: opts?.safe
-	});
-
-	initProps(fakeCtx, {
-		store: fakeCtx,
-		saveToStore: opts?.initProps
 	});
 
 	init.beforeDataCreateState(fakeCtx, {tieFields: true});

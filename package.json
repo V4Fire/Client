@@ -5,7 +5,7 @@
   "main": "src/core/index.js",
   "typings": "index.d.ts",
   "license": "MIT",
-  "version": "3.0.0-rc.18",
+  "version": "3.0.0-rc.19",
   "author": {
     "name": "kobezzza",
     "email": "kobezzza@gmail.com",
@@ -26,10 +26,18 @@
     "build:file": "gulp build:tsconfig && webpack --public-path",
     "dev": "gulp build:tsconfig && webpack --watch",
     "dev:file": "gulp build:tsconfig && webpack --watch --public-path",
-    "test": "echo \"Error: no test specified\" && exit 0"
+    "test": "npm run test:typescript && npm run test:eslint && npm run test:components",
+    "test:eslint": "npx eslint ./config/**/*.js ./build/**/*.js ./src/**/*.js",
+    "test:typescript": "node node_modules/@v4fire/typescript-check",
+    "test:components": "npx gulp test:components"
+  },
+  "husky": {
+    "hooks": {
+      "pre-push": "npm run test:typescript && npm run test:eslint"
+    }
   },
   "dependencies": {
-    "@v4fire/core": "3.17.1",
+    "@v4fire/core": "^3.17.3",
     "escaper": "^3.0.4",
     "eventemitter2": "6.4.1",
     "fg-loadcss": "^2.1.0",
@@ -45,7 +53,7 @@
     "@types/fs-extra-promise": "^1.0.9",
     "@types/glob": "^7.1.1",
     "@types/webpack": "^4.41.12",
-    "@v4fire/design-system": "git+https://github.com/V4Fire/DesignSystem.git",
+    "@v4fire/design-system": "^1.23.0",
     "arg": "^4.1.3",
     "autoprefixer": "^9.7.6",
     "browserslist": "^4.12.0",
@@ -66,8 +74,9 @@
     "gulp-csso": "^4.0.1",
     "gulp-favicons": "^2.4.0",
     "gulp-gzip": "^1.4.2",
+    "gulp-ext-replace": "0.3.0",
     "gulp-htmlmin": "^5.0.1",
-    "gulp-image": "^5.1.0",
+    "gulp-imagemin": "^7.1.0",
     "gulp-load-plugins": "^2.0.3",
     "gulp-plumber": "^1.2.1",
     "gulp-run": "^1.7.1",
@@ -76,6 +85,7 @@
     "hasha": "^5.2.0",
     "html-loader": "^1.1.0",
     "image-webpack-loader": "^6.0.0",
+    "imagemin-webp": "^5.1.0",
     "is-path-inside": "^3.0.2",
     "merge2": "^1.3.0",
     "mini-css-extract-plugin": "^0.9.0",
@@ -114,6 +124,7 @@
   "devDependencies": {
     "babel-eslint": "^10.1.0",
     "eslint": "^6.8.0",
+    "husky": "^4.2.5",
     "playwright": "1.0.2",
     "stlint": "^1.0.62",
     "stlint-v4fire": "^1.0.37",
