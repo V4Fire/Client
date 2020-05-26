@@ -14,66 +14,126 @@
 import iBlock from 'super/i-block/i-block';
 
 /**
- * Class is friendly to a component
+ * Class that friendly to a component
  * @typeparam T - component
  */
-export default class Friend<C extends iBlock = iBlock> {
+export default class Friend {
 	/**
-	 * Type: unsafe component instance
+	 * Type: component instance
 	 */
-	readonly C!: C['unsafe'];
+	readonly C!: iBlock;
+
+	/**
+	 * Type: component context
+	 */
+	readonly CTX!: this['C']['unsafe'];
 
 	/**
 	 * Component instance
 	 */
-	protected readonly component: this['C'];
+	readonly component: this['C'];
 
-	/** @see [[iBlock.meta]] */
-	protected get meta(): this['C']['meta'] {
-		return this.component.meta;
+	/**
+	 * Component context
+	 */
+	protected readonly ctx: this['CTX'];
+
+	/** @see [[iBlock.componentId]] */
+	get componentId(): string {
+		return this.ctx.componentId;
 	}
 
-	/** @see [[iBlock.storage]] */
-	protected get storage(): this['C']['storage'] {
-		return this.component.storage;
+	/** @see [[iBlock.componentName]] */
+	get componentName(): string {
+		return this.ctx.componentName;
 	}
 
-	/** @see [[iBlock.lfc]] */
-	protected get lfc(): this['C']['lfc'] {
-		return this.component.lfc;
+	/** @see [[iBlock.globalName]] */
+	get globalName(): CanUndef<string> {
+		return this.ctx.globalName;
+	}
+
+	/** @see [[iBlock.componentStatus]] */
+	get componentStatus(): this['CTX']['componentStatus'] {
+		return this.ctx.componentStatus;
+	}
+
+	/** @see [[iBlock.$asyncLabel]] */
+	get asyncLabel(): symbol {
+		return this.ctx.$asyncLabel;
+	}
+
+	/** @see [[iBlock.hook]] */
+	get hook(): this['CTX']['hook'] {
+		return this.ctx.hook;
+	}
+
+	/** @see [[iBlock.$el]] */
+	get node(): this['CTX']['$el'] {
+		return this.ctx.$el;
 	}
 
 	/** @see [[iBlock.field]] */
-	protected get field(): this['C']['field'] {
-		return this.component.field;
-	}
-
-	/** @see [[iBlock.async]] */
-	protected get async(): this['C']['async'] {
-		return this.component.async;
-	}
-
-	/** @see [[iBlock.block]] */
-	protected get block(): this['C']['block'] {
-		return this.component.block;
+	get field(): this['CTX']['field'] {
+		return this.ctx.field;
 	}
 
 	/** @see [[iBlock.provide]] */
-	protected get provide(): this['C']['provide'] {
-		return this.component.provide;
+	get provide(): this['CTX']['provide'] {
+		return this.ctx.provide;
+	}
+
+	/** @see [[iBlock.lfc]] */
+	get lfc(): this['CTX']['lfc'] {
+		return this.ctx.lfc;
+	}
+
+	/** @see [[iBlock.meta]] */
+	protected get meta(): this['CTX']['meta'] {
+		return this.ctx.meta;
+	}
+
+	/** @see [[iBlock.$activeField]] */
+	protected get activeField(): CanUndef<string> {
+		return this.ctx.$activeField;
 	}
 
 	/** @see [[iBlock.localEmitter]] */
-	protected get localEmitter(): this['C']['localEmitter'] {
-		return this.component.localEmitter;
+	protected get localEmitter(): this['CTX']['localEmitter'] {
+		return this.ctx.localEmitter;
 	}
 
-	/** @see [[iBlock.lazy]] */
-	protected get lazy(): this['C']['lazy'] {
-		return this.component.lazy;
+	/** @see [[iBlock.async]] */
+	protected get async(): this['CTX']['async'] {
+		return this.ctx.async;
 	}
 
-	constructor(component: C) {
-		this.component = component.unsafe;
+	/** @see [[iBlock.storage]] */
+	protected get storage(): this['CTX']['storage'] {
+		return this.ctx.storage;
+	}
+
+	/** @see [[iBlock.block]] */
+	protected get block(): this['CTX']['block'] {
+		return this.ctx.block;
+	}
+
+	/** @see [[iBlock.$refs]] */
+	protected get refs(): this['CTX']['$refs'] {
+		return this.ctx.$refs;
+	}
+
+	/** @see [[iBlock.dom]] */
+	protected get dom(): this['CTX']['dom'] {
+		return this.ctx.dom;
+	}
+
+	constructor(component: any) {
+		if (!(component?.instance instanceof iBlock)) {
+			throw new TypeError("The specified component isn't inherited from iBlock");
+		}
+
+		this.ctx = component.unsafe;
+		this.component = component;
 	}
 }

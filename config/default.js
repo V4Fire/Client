@@ -14,6 +14,7 @@ const
 
 const
 	path = require('upath'),
+	camelize = require('camelize'),
 	o = require('uniconf/options').option;
 
 module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
@@ -30,9 +31,16 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 			type: 'boolean'
 		}),
 
+		suit: o('suit', {
+			env: true
+		}),
+
 		components: o('components', {
 			env: true,
 			coerce: (v) => {
+				const
+					args = require('arg')({'--suit': String}, {permissive: true});
+
 				try {
 					const
 						obj = JSON.parse(v);
@@ -53,8 +61,19 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 					.split(',')
 					.flatMap((name) => {
 						try {
-							const dir = pzlr.resolve.blockSync(name);
-							return [].concat(require(path.join(dir, 'demo.js')) || []).map((p) => ({name, ...p}));
+							const
+								dir = pzlr.resolve.blockSync(name),
+								demo = require(path.join(dir, 'demo.js')),
+								suit = camelize(args['--suit'] || 'demo');
+
+							const
+								wrap = (d) => [].concat((d || []).map((p) => ({name, ...p})));
+
+							if (Object.isObject(demo)) {
+								return wrap(demo[suit]);
+							}
+
+							return wrap(demo);
 
 						} catch {}
 
@@ -198,6 +217,9 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		return {
 			svgo: {
 				removeUnknownsAndDefaults: false
+			},
+			webp: {
+				quality: 75
 			}
 		};
 	},
@@ -295,27 +317,31 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	monic() {
 		const
 			runtime = this.runtime(),
-			es = this.es();
+			es = this.es(),
+			demo = Boolean(this.build.components && this.build.components.length);
 
 		return {
 			stylus: {
 				flags: {
 					runtime,
-					'+:*': true
+					'+:*': true,
+					demo
 				}
 			},
 
 			typescript: {
 				flags: {
 					runtime,
-					es
+					es,
+					demo
 				}
 			},
 
 			javascript: {
 				flags: {
 					runtime,
-					es
+					es,
+					demo
 				}
 			}
 		};

@@ -52,7 +52,7 @@ export function initProps(
 			continue;
 		}
 
-		unsafe.$activeField = key;
+		Object.set(unsafe, '$activeField', key);
 
 		let
 			val = component[key];
@@ -80,7 +80,7 @@ export function initProps(
 		}
 	}
 
-	unsafe.$activeField = undefined;
+	Object.set(unsafe, '$activeField', undefined);
 	return store;
 }
 

@@ -346,7 +346,7 @@ export class ComponentDriver {
  */
 export function renderData(data: VNode, parent: ComponentInterface): Node;
 export function renderData(data: VNode[], parent: ComponentInterface): Node[];
-export function renderData(data: CanArray<VNode>, parent: ComponentInterface): CanArray<Node> {
+export function renderData(data: CanArray<VNode>, _: ComponentInterface): CanArray<Node> {
 	return <any>data;
 }
 

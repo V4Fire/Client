@@ -13,16 +13,14 @@
 
 import { deprecated } from 'core/functools/deprecation';
 
-import iBlock from 'super/i-block/i-block';
 import Friend from 'super/i-block/modules/friend';
-
 import { CreateLazyFnOptions, LazyFn } from 'super/i-block/modules/lazy/interface';
 export * from 'super/i-block/modules/lazy/interface';
 
 /**
  * Class provides some methods to organize lazy calculations
  */
-export default class Lazy<C extends iBlock = iBlock> extends Friend<C> {
+export default class Lazy extends Friend {
 	/**
 	 * Creates a new function from the specified function that executes deferredly.
 	 * The new function returns a promise with a result of the original function.

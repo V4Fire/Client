@@ -12,7 +12,7 @@
  */
 
 import symbolGenerator from 'core/symbol';
-import { customWatcherRgxp, MethodWatcher } from 'core/component';
+import { customWatcherRgxp } from 'core/component';
 import iBlock from 'super/i-block/i-block';
 
 export const

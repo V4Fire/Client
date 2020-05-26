@@ -15,7 +15,7 @@ const
 
 const
 	{inherit, depsRgxpStr} = include('build/build.webpack'),
-	{RUNTIME} = include('build/entities.webpack');
+	{RUNTIME} = include('build/entries.webpack');
 
 const excludeCustomNodeModules = new RegExp(
 	`(?:^|[\\\\/])node_modules[\\/](?:${depsRgxpStr})(?:[\\\\/]|$)|^(?:(?!(?:^|[\\\\/])node_modules[\\\\/]).)*$`

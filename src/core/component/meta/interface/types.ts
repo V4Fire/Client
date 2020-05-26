@@ -183,7 +183,7 @@ export interface ComponentOptions {
 	 * ```
 	 *
 	 * ```
-	 * // The value of bInput is two-way binded to bla
+	 * // The value of bInput is two-way bound to bla
 	 * < b-input v-model = bla
 	 * ```
 	 */

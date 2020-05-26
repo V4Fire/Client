@@ -17,7 +17,7 @@ import symbolGenerator from 'core/symbol';
 import { deprecated } from 'core/functools';
 
 import SyncPromise from 'core/promise/sync';
-import Async, { AsyncOptions, ClearOptionsId, WrappedCb, ProxyCb } from 'core/async';
+import Async, { AsyncOptions, ClearOptionsId, ProxyCb, BoundFn } from 'core/async';
 import log, { LogMessageOptions } from 'core/log';
 
 import { EventEmitter2 as EventEmitter } from 'eventemitter2';
@@ -135,7 +135,6 @@ import {
 	hook,
 	wait,
 
-	WaitFn,
 	WaitDecoratorOptions,
 	DecoratorMethodWatcher
 
@@ -156,6 +155,8 @@ export * from 'super/i-block/modules/sync';
 export * from 'super/i-block/modules/async-render';
 export * from 'super/i-block/modules/decorators';
 
+export { default as Friend } from 'super/i-block/modules/friend';
+
 export {
 
 	Cache,
@@ -175,7 +176,17 @@ export const
  * Superclass for all components
  */
 @component()
-export default abstract class iBlock extends ComponentInterface<iBlock, iStaticPage> {
+export default abstract class iBlock extends ComponentInterface {
+	/** @override */
+	readonly Component!: iBlock;
+
+	/** @override */
+	readonly Root!: iStaticPage;
+
+	/** @override */
+	// @ts-ignore
+	readonly $root!: this['Root'];
+
 	/**
 	 * Component unique identifier
 	 */
@@ -651,7 +662,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	@system({
 		atom: true,
 		unique: true,
-		init: (ctx: iBlock) => new Analytics(ctx)
+		init: (ctx) => new Analytics(ctx)
 	})
 
 	readonly analytics!: Analytics;
@@ -663,7 +674,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	@system({
 		atom: true,
 		unique: true,
-		init: (ctx: iBlock) => new Provide(ctx)
+		init: (ctx) => new Provide(ctx)
 	})
 
 	readonly provide!: Provide;
@@ -674,7 +685,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	@system({
 		atom: true,
 		unique: true,
-		init: (ctx: iBlock) => new Lfc(ctx)
+		init: (ctx) => new Lfc(ctx)
 	})
 
 	readonly lfc!: Lfc;
@@ -691,7 +702,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	@system({
 		atom: true,
 		unique: true,
-		init: (ctx: iBlock) => new Field(ctx)
+		init: (ctx) => new Field(ctx)
 	})
 
 	readonly field!: Field;
@@ -715,7 +726,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	@system({
 		atom: true,
 		unique: true,
-		init: (ctx: iBlock) => new Sync(ctx)
+		init: (ctx) => new Sync(ctx)
 	})
 
 	readonly sync!: Sync;
@@ -734,7 +745,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 		unique: true,
 		replace: true,
 		functional: false,
-		init: (ctx: iBlock) => new AsyncRender(ctx)
+		init: (ctx) => new AsyncRender(ctx)
 	})
 
 	readonly asyncRender!: AsyncRender;
@@ -745,7 +756,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	@system({
 		atom: true,
 		unique: true,
-		init: (ctx: iBlock) => new VDOM(ctx)
+		init: (ctx) => new VDOM(ctx)
 	})
 
 	readonly vdom!: VDOM;
@@ -857,7 +868,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	@system({
 		unique: true,
 		replace: true,
-		init: (ctx: iBlock) => new Daemons(ctx)
+		init: (ctx) => new Daemons(ctx)
 	})
 
 	protected readonly daemons!: Daemons;
@@ -869,7 +880,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 		atom: true,
 		unique: true,
 		replace: true,
-		init: (ctx: iBlock) => new Storage(ctx)
+		init: (ctx) => new Storage(ctx)
 	})
 
 	protected readonly storage!: Storage;
@@ -894,7 +905,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 		atom: true,
 		unique: true,
 		replace: true,
-		init: (ctx: iBlock) => new State(ctx)
+		init: (ctx) => new State(ctx)
 	})
 
 	protected readonly state!: State;
@@ -905,7 +916,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	@system({
 		atom: true,
 		unique: true,
-		init: (ctx: iBlock) => new DOM(ctx)
+		init: (ctx) => new DOM(ctx)
 	})
 
 	protected readonly dom!: DOM;
@@ -926,7 +937,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 		atom: true,
 		unique: true,
 		replace: true,
-		init: (ctx: iBlock) => new Lazy(ctx)
+		init: (ctx) => new Lazy(ctx)
 	})
 
 	protected readonly lazy!: Lazy;
@@ -938,7 +949,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	@system({
 		atom: true,
 		unique: true,
-		init: (ctx: iBlock) => new Opt(ctx)
+		init: (ctx) => new Opt(ctx)
 	})
 
 	protected readonly opt!: Opt;
@@ -954,7 +965,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	@field({
 		replace: false,
 		forceUpdate: false,
-		init: (o) => o.sync.link((val) => {
+		init: (o) => o.sync.link<CanUndef<Stage>>((val) => {
 			o.stage = val;
 			return o.field.get('stageStore');
 		})
@@ -1573,7 +1584,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	 * @param [opts] - additional options
 	 */
 	@p({replace: false})
-	on<E = unknown, R = unknown>(event: string, handler: ProxyCb<E, R, any>, opts?: AsyncOptions): void {
+	on<E = unknown, R = unknown>(event: string, handler: ProxyCb<E, R, this>, opts?: AsyncOptions): void {
 		event = event.dasherize();
 
 		if (opts) {
@@ -1593,7 +1604,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	 * @param [opts] - additional options
 	 */
 	@p({replace: false})
-	once<E = unknown, R = unknown>(event: string, handler: ProxyCb<E, R, any>, opts?: AsyncOptions): void {
+	once<E = unknown, R = unknown>(event: string, handler: ProxyCb<E, R, this>, opts?: AsyncOptions): void {
 		event = event.dasherize();
 
 		if (opts) {
@@ -1662,14 +1673,14 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	 * @param cb
 	 * @param [opts] - additional options
 	 */
-	waitStatus<F extends WaitFn>(
+	waitStatus<F extends BoundFn<this>>(
 		status: ComponentStatus,
 		cb: F,
 		opts?: WaitDecoratorOptions
 	): CanPromise<ReturnType<F>>;
 
 	@p({replace: false})
-	waitStatus<F extends WaitFn>(
+	waitStatus<F extends BoundFn<this>>(
 		status: ComponentStatus,
 		cbOrOpts?: F | WaitDecoratorOptions,
 		opts?: WaitDecoratorOptions
@@ -1700,7 +1711,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 		const promise = new SyncPromise((resolve) => wait(status, {...opts, fn: () => {
 			isResolved = true;
 			resolve();
-		}})());
+		}}).call(this));
 
 		if (isResolved) {
 			return promise;
@@ -1716,7 +1727,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	 * @param fn
 	 * @param [opts] - additional options
 	 */
-	nextTick(fn: WrappedCb, opts?: AsyncOptions): void;
+	nextTick(fn: BoundFn<this>, opts?: AsyncOptions): void;
 
 	/**
 	 * Returns a promise that will be resolved on a next render tick
@@ -1725,7 +1736,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	 * @param [opts] - additional options
 	 */
 	nextTick(opts?: AsyncOptions): Promise<void>;
-	nextTick(fnOrOpts?: WrappedCb | AsyncOptions, opts?: AsyncOptions): CanPromise<void> {
+	nextTick(fnOrOpts?: BoundFn<this> | AsyncOptions, opts?: AsyncOptions): CanPromise<void> {
 		const
 			{async: $a} = this;
 
@@ -1900,30 +1911,19 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	setMod(name: string, value: unknown): CanPromise<boolean>;
 
 	@p({replace: false})
-	setMod(nodeOrName: Element | string, name: string | unknown, value?: unknown): CanPromise<boolean | void> {
+	setMod(nodeOrName: Element | string, name: string | unknown, value?: unknown): CanPromise<boolean> {
 		if (Object.isString(nodeOrName)) {
-			if (this.isFlyweight || this.isFunctional) {
-				const res = Block.prototype.setMod.call(
-					this.dom.createBlockCtxFromNode(this.$el, this),
-					nodeOrName,
-					name
-				);
-
-				if (res) {
-					this.mods[nodeOrName] = String(name);
-				}
-
-				return res;
+			if (this.isFlyweight) {
+				const ctx = this.dom.createBlockCtxFromNode(this.$el, this);
+				return Block.prototype.setMod.call(ctx, nodeOrName, name);
 			}
 
-			return this.lfc.execCbAfterBlockReady(() => this.block.setMod(nodeOrName, name)) || false;
+			const res = this.lfc.execCbAfterBlockReady(() => this.block.setMod(nodeOrName, name));
+			return <CanPromise<boolean>>(res || false);
 		}
 
-		return Block.prototype.setMod.call(
-			this.dom.createBlockCtxFromNode(nodeOrName),
-			name,
-			value
-		);
+		const ctx = this.dom.createBlockCtxFromNode(nodeOrName);
+		return Block.prototype.setMod.call(ctx, name, value);
 	}
 
 	/**
@@ -1944,30 +1944,19 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	removeMod(name: string, value?: unknown): CanPromise<boolean>;
 
 	@p({replace: false})
-	removeMod(nodeOrName: Element | string, name?: string | unknown, value?: unknown): CanPromise<boolean | void> {
+	removeMod(nodeOrName: Element | string, name?: string | unknown, value?: unknown): CanPromise<boolean> {
 		if (Object.isString(nodeOrName)) {
-			if (this.isFlyweight || this.isFunctional) {
-				const res = Block.prototype.removeMod.call(
-					this.dom.createBlockCtxFromNode(this.$el, this),
-					nodeOrName,
-					name
-				);
-
-				if (res) {
-					delete this.mods[nodeOrName];
-				}
-
-				return res;
+			if (this.isFlyweight) {
+				const ctx = this.dom.createBlockCtxFromNode(this.$el, this);
+				return Block.prototype.removeMod.call(ctx, nodeOrName, name);
 			}
 
-			return this.lfc.execCbAfterBlockReady(() => this.block.removeMod(nodeOrName, name)) || false;
+			const res = this.lfc.execCbAfterBlockReady(() => this.block.removeMod(nodeOrName, name));
+			return <CanPromise<boolean>>(res || false);
 		}
 
-		return Block.prototype.removeMod.call(
-			this.dom.createBlockCtxFromNode(nodeOrName),
-			name,
-			value
-		);
+		const ctx = this.dom.createBlockCtxFromNode(nodeOrName);
+		return Block.prototype.removeMod.call(ctx, name, value);
 	}
 
 	/**
@@ -2274,7 +2263,7 @@ export default abstract class iBlock extends ComponentInterface<iBlock, iStaticP
 	 * Handler: "callChild" event
 	 * @param e
 	 */
-	protected onCallChild(e: ParentMessage): void {
+	protected onCallChild(e: ParentMessage<this>): void {
 		if (
 			e.check[0] !== 'instanceOf' && e.check[1] === this[e.check[0]] ||
 			e.check[0] === 'instanceOf' && this.instance instanceof <Function>e.check[1]

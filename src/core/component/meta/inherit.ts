@@ -7,7 +7,7 @@
  */
 
 import { metaPointers, PARENT } from 'core/component/const';
-import { ComponentMeta, ComponentField, StrictModDeclVal } from 'core/component/interface';
+import { ComponentMeta, StrictModDeclVal } from 'core/component/interface';
 
 /**
  * Inherits the specified meta object from another meta object.
@@ -96,8 +96,8 @@ export function inherit(
 					}
 				}
 
-				if ((<ComponentField>parent).after) {
-					for (let a = (<ComponentField>parent).after.values(), el = a.next(); !el.done; el = a.next()) {
+				if ('after' in parent && parent.after) {
+					for (let a = parent.after.values(), el = a.next(); !el.done; el = a.next()) {
 						after = after || new Set();
 						after.add(el.value);
 					}

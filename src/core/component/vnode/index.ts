@@ -13,7 +13,7 @@
 
 import { components } from 'core/component/const';
 import { ComponentInterface, ComponentMeta } from 'core/component/interface';
-import { RenderContext, VNode, VNodeDirective, NormalizedScopedSlot } from 'core/component/engines';
+import { RenderContext, VNode, NormalizedScopedSlot } from 'core/component/engines';
 import { ComponentVNodeData, ComponentModelVNodeData } from 'core/component/vnode/interface';
 export * from 'core/component/vnode/interface';
 

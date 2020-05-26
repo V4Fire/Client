@@ -87,7 +87,7 @@ export function observeSet<T extends ObservableSet<unknown> = ObservableSet<unkn
  * @param [params]
  * @private
  */
-function bindMutationHooks<T extends ObservableInstance = ObservableInstance<unknown, unknown>>(
+function bindMutationHooks<T extends ObservableInstance = ObservableInstance>(
 	obj: T,
 	cb: Function,
 	params: ObservableParams = {}

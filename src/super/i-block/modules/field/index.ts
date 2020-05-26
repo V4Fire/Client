@@ -22,7 +22,7 @@ export * from 'super/i-block/modules/field/interface';
 /**
  * Class provides helper methods to safety access to a component property
  */
-export default class Field<C extends iBlock = iBlock> extends Friend<C> {
+export default class Field extends Friend {
 	/**
 	 * Returns a property from a component by the specified path
 	 *
@@ -41,7 +41,7 @@ export default class Field<C extends iBlock = iBlock> extends Friend<C> {
 	get<T = unknown>(path: string, obj?: object, getter?: FieldGetter): CanUndef<T>;
 	get<T = unknown>(
 		path: string,
-		obj: object | FieldGetter = this.component,
+		obj: object | FieldGetter = this.ctx,
 		getter?: FieldGetter
 	): CanUndef<T> {
 		if (Object.isFunction(obj)) {
@@ -54,7 +54,7 @@ export default class Field<C extends iBlock = iBlock> extends Friend<C> {
 		}
 
 		let
-			ctx = <iBlock['unsafe']>this.component,
+			ctx = this.ctx,
 			isComponent = false;
 
 		if ((<Dictionary>obj).instance instanceof iBlock) {
@@ -73,7 +73,7 @@ export default class Field<C extends iBlock = iBlock> extends Friend<C> {
 			ctx = res = <any>info.ctx;
 			chunks = info.path.split('.');
 
-			if (info.accessor && this.component.hook !== 'beforeRuntime') {
+			if (info.accessor && this.ctx.hook !== 'beforeRuntime') {
 				chunks[0] = info.accessor;
 
 			} else {
@@ -108,13 +108,13 @@ export default class Field<C extends iBlock = iBlock> extends Friend<C> {
 	 * @param value
 	 * @param [obj]
 	 */
-	set<T = unknown>(path: string, value: T, obj: object = this.component): T {
+	set<T = unknown>(path: string, value: T, obj: object = this.ctx): T {
 		if (!obj) {
 			return value;
 		}
 
 		let
-			ctx = <iBlock['unsafe']>this.component,
+			ctx = this.ctx,
 			isComponent = false;
 
 		if ((<Dictionary>obj).instance instanceof iBlock) {
@@ -135,7 +135,7 @@ export default class Field<C extends iBlock = iBlock> extends Friend<C> {
 			ctx = ref = <any>info.ctx;
 			chunks = info.path.split('.');
 
-			if (info.accessor && this.component.hook !== 'beforeRuntime') {
+			if (info.accessor && this.ctx.hook !== 'beforeRuntime') {
 				isField = false;
 				chunks[0] = info.accessor;
 
@@ -195,13 +195,13 @@ export default class Field<C extends iBlock = iBlock> extends Friend<C> {
 	 * @param path - path to the property (bla.baz.foo)
 	 * @param [obj]
 	 */
-	delete(path: string, obj: object = this.component): boolean {
+	delete(path: string, obj: object = this.ctx): boolean {
 		if (!obj) {
 			return false;
 		}
 
 		let
-			ctx = <iBlock['unsafe']>this.component,
+			ctx = this.ctx,
 			isComponent = false;
 
 		if ((<Dictionary>obj).instance instanceof iBlock) {
