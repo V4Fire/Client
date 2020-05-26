@@ -12,7 +12,8 @@ import ChunkRequest from 'base/b-virtual-scroll/modules/chunk-request';
 import { RequestMoreParams } from 'base/b-virtual-scroll/interface';
 
 /**
- * Returns a request params
+ * Returns accumulated data among `b-virtual-scroll`,` chunk-render`, `chunk-request` and passes it to the client
+ * to make any decisions, for example, one more chunk of data needs to be loaded
  *
  * @param [chunkRequestCtx]
  * @param [chunkRenderCtx]
