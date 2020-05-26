@@ -31,6 +31,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 * [Fixed issue with `in-view` that element did not becomes observable](https://github.com/V4Fire/Client/pull/201)
 * [Fixed `stopObserver` method in `in-view`](https://github.com/V4Fire/Client/pull/201)
 * [Fixed parallel components build](https://github.com/V4Fire/Client/pull/201)
+* [Fixed extra space `b-checkbox`](https://github.com/V4Fire/Client/pull/246)
 
 #### :house: Internal
 
