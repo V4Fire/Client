@@ -78,6 +78,7 @@ export function parseVNodeAsFlyweight(
 		isFlyweight: true
 	});
 
+	fakeCtx.unsafe = fakeCtx;
 	fakeCtx.$createElement = createElement.bind(fakeCtx);
 
 	attachMethodsFromMeta(fakeCtx);

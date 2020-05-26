@@ -6,7 +6,18 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import watch, { set, unset, mute, watchHandlers, WatchHandler, MultipleWatchHandler } from 'core/object/watch';
+import watch, {
+
+	set,
+	unset,
+	mute,
+
+	watchHandlers,
+
+	WatchHandler,
+	MultipleWatchHandler
+
+} from 'core/object/watch';
 
 import { getPropertyInfo, bindingRgxp } from 'core/component/reflection';
 import { proxyGetters } from 'core/component/engines';
@@ -41,8 +52,8 @@ export function implementComponentWatchAPI(
 	opts?: ImplementComponentWatchAPIOptions
 ): void {
 	const
-		// @ts-ignore (access)
-		{meta, meta: {watchDependencies, computedFields, accessors, params}} = component;
+		{unsafe} = component,
+		{meta, meta: {watchDependencies, computedFields, accessors, params}} = unsafe;
 
 	const
 		isFlyweight = component.isFlyweight || meta.params.functional === true,
@@ -359,11 +370,8 @@ export function implementComponentWatchAPI(
 						// Provide the list of connections to handlers
 						invalidateComputedCache[tiedWatchers] = emitAccessorEvents[tiedWatchers] = tiedLinks;
 
-						// @ts-ignore (access)
-						component.$watch(prop, {...propWatchOpts, immediate: true}, immediateHandler);
-
-						// @ts-ignore (access)
-						component.$watch(prop, propWatchOpts, handler);
+						unsafe.$watch(prop, {...propWatchOpts, immediate: true}, immediateHandler);
+						unsafe.$watch(prop, propWatchOpts, handler);
 					}
 				}
 			}

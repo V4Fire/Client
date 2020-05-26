@@ -31,8 +31,7 @@ export function inViewFactory(): InViewAdapter {
 	const inView = new InViewAdapter();
 
 	if (!inView.hasAdaptee) {
-		// @ts-ignore
-		inView.setInstance(new Adaptee());
+		inView.setInstance(new Adaptee!());
 	}
 
 	return inView;
@@ -42,8 +41,7 @@ export let
 	InView: InViewAdapter = inViewFactory();
 
 if (!InView.hasAdaptee) {
-	// @ts-ignore
-	InView.setInstance(new Adaptee());
+	InView.setInstance(new Adaptee!());
 }
 
 ComponentDriver.directive('in-view', {

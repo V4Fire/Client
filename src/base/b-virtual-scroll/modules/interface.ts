@@ -6,9 +6,9 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import iBlock from 'super/i-block/i-block';
-import bVirtualScroll, { Unsafe as SuperUnsafe } from 'base/b-virtual-scroll/b-virtual-scroll';
+import { UnsafeIData } from 'super/i-data/i-data';
 
+import bVirtualScroll from 'base/b-virtual-scroll/b-virtual-scroll';
 import ScrollRender from 'base/b-virtual-scroll/modules/scroll-render';
 
 export interface RequestQueryFn<T extends unknown = unknown> {
@@ -105,15 +105,19 @@ export interface RenderItem<T extends unknown = unknown> {
 	index: number;
 }
 
-export interface Unsafe<T extends iBlock = bVirtualScroll> extends SuperUnsafe<T> {
-	scrollRender: bVirtualScroll['scrollRender'];
-	scrollRequest: bVirtualScroll['scrollRequest'];
-	componentRender: bVirtualScroll['componentRender'];
-	getOptionKey: bVirtualScroll['getOptionKey'];
-	getDefaultRequestParams: bVirtualScroll['getDefaultRequestParams'];
-	convertDataToDB: bVirtualScroll['convertDataToDB'];
-	dp: bVirtualScroll['dp'];
-	total: bVirtualScroll['total'];
+// @ts-ignore
+export interface UnsafeBVirtualScroll<CTX extends bVirtualScroll = bVirtualScroll> extends UnsafeIData<CTX> {
+	// @ts-ignore (access)
+	scrollRender: CTX['scrollRender'];
+
+	// @ts-ignore (access)
+	scrollRequest: CTX['scrollRequest'];
+
+	// @ts-ignore (access)
+	componentRender: CTX['componentRender'];
+
+	// @ts-ignore (access)
+	getOptionKey: CTX['getOptionKey'];
 }
 
 export interface UnsafeScrollRender {

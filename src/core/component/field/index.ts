@@ -35,12 +35,14 @@ export function initFields(
 	store: Dictionary = {}
 ): Dictionary {
 	const
-		// @ts-ignore (access)
-		{meta: {params, instance}} = component;
+		ctx = component.unsafe;
+
+	const
+		{meta: {params, instance}} = ctx;
 
 	const
 		// True if a component is functional or a flyweight
-		isFlyweight = component.isFlyweight || params.functional === true;
+		isFlyweight = ctx.isFlyweight || params.functional === true;
 
 	const
 		// Map of fields that we should skip, i.e. not to initialize.
@@ -103,14 +105,13 @@ export function initFields(
 					store[key] = undefined;
 				}
 
-				// @ts-ignore (access)
-				component.$activeField = key;
+				ctx.$activeField = key;
 
 				let
 					val;
 
 				if (el.init) {
-					val = el.init(<any>component, store);
+					val = el.init(ctx, store);
 				}
 
 				if (val === undefined) {
@@ -125,8 +126,7 @@ export function initFields(
 					store[key] = val;
 				}
 
-				// @ts-ignore (access)
-				component.$activeField = undefined;
+				ctx.$activeField = undefined;
 			}
 
 		} else {
@@ -199,15 +199,14 @@ export function initFields(
 					store[key] = undefined;
 				}
 
-				// @ts-ignore (access)
-				component.$activeField = key;
+				ctx.$activeField = key;
 				fieldQueue.delete(key);
 
 				let
 					val;
 
 				if (el.init) {
-					val = el.init(<any>component, store);
+					val = el.init(ctx, store);
 				}
 
 				if (val === undefined) {
@@ -220,8 +219,7 @@ export function initFields(
 					store[key] = val;
 				}
 
-				// @ts-ignore (access)
-				component.$activeField = undefined;
+				ctx.$activeField = undefined;
 			}
 		}
 
@@ -292,15 +290,14 @@ export function initFields(
 					store[key] = undefined;
 				}
 
-				// @ts-ignore (access)
-				component.$activeField = key;
+				ctx.$activeField = key;
 				fieldQueue.delete(key);
 
 				let
 					val;
 
 				if (el.init) {
-					val = el.init(<any>component, store);
+					val = el.init(ctx, store);
 				}
 
 				if (val === undefined) {
@@ -313,8 +310,7 @@ export function initFields(
 					store[key] = val;
 				}
 
-				// @ts-ignore (access)
-				component.$activeField = undefined;
+				ctx.$activeField = undefined;
 			}
 		}
 

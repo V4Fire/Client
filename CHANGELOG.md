@@ -11,11 +11,17 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v3.0.0-rc.18 (2020-05-23)
+## v3.0.0-rc.19 (2020-05-26)
 
 #### :bug: Bug Fix
 
 * Fixed extra space in `b-checkbox`
+
+## v3.0.0-rc.18 (2020-05-24)
+
+#### :boom: Breaking Change
+
+* [Renamed `interface/Unsafe` to `interface/UnsafeIBlock` `iBlock`](https://github.com/V4Fire/Client/pull/247)
 
 ## v3.0.0-rc.17 (2020-05-22)
 

@@ -6,7 +6,8 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import Async from 'core/async';
+import { UnsafeComponentInterface } from 'core/component';
+
 import iBlock from 'super/i-block/i-block';
 import { statuses } from 'super/i-block/const';
 
@@ -59,62 +60,73 @@ export interface InitLoadCb<R = unknown, CTX extends iBlock = iBlock> {
 	(this: CTX): R;
 }
 
-export interface Unsafe<CTX extends iBlock = iBlock> {
-	instance: CTX['instance'];
-
-	lfc: iBlock['lfc'];
-	state: iBlock['state'];
-	storage: iBlock['storage'];
-
-	opt: iBlock['opt'];
-	lazy: iBlock['lazy'];
-
-	dom: iBlock['dom'];
-	block: iBlock['block'];
-	async: Async<CTX>;
-
-	localEmitter: iBlock['localEmitter'];
-	parentEmitter: iBlock['parentEmitter'];
-	rootEmitter: iBlock['rootEmitter'];
-	globalEmitter: iBlock['globalEmitter'];
-
-	log: iBlock['log'];
-	meta: iBlock['meta'];
-	blockReadyListeners: iBlock['blockReadyListeners'];
-	beforeReadyListeners: iBlock['beforeReadyListeners'];
-
-	tmp: iBlock['tmp'];
-	watchTmp: iBlock['watchTmp'];
-	renderTmp: iBlock['renderTmp'];
-	ifOnceStore: iBlock['ifOnceStore'];
-
-	activated: iBlock['activated'];
-	deactivated: iBlock['deactivated'];
-	syncRouterState: iBlock['syncRouterState'];
-	convertStateToRouterReset: iBlock['convertStateToRouterReset'];
-	syncStorageState: iBlock['syncStorageState'];
-	convertStateToStorageReset: iBlock['convertStateToStorageReset'];
-
-	$el: iBlock['$el'];
-	$async: iBlock['$async'];
-
-	$props: iBlock['$props'];
-	$attrs: iBlock['$attrs'];
-
-	$fields: iBlock['$fields'];
-	$systemFields: iBlock['$fields'];
-
-	$options: iBlock['$options'];
-	$syncLinkCache: iBlock['$syncLinkCache'];
-
-	readonly $asyncLabel: symbol;
-	readonly $activeField: CanUndef<string>;
+export interface UnsafeIBlock<CTX extends iBlock = iBlock> extends UnsafeComponentInterface<CTX> {
+	// @ts-ignore (access)
+	state: CTX['state'];
 
 	// @ts-ignore (access)
-	$refs: CTX['$refs'];
-	$root: CTX['$root'];
+	storage: CTX['storage'];
 
-	$set: iBlock['$set'];
-	$delete: iBlock['$delete'];
-	$createElement: iBlock['$createElement'];
+	// @ts-ignore (access)
+	opt: CTX['opt'];
+
+	// @ts-ignore (access)
+	dom: CTX['dom'];
+
+	// @ts-ignore (access)
+	block: CTX['block'];
+
+	// @ts-ignore (access)
+	async: CTX['async'];
+
+	// @ts-ignore (access)
+	sync: CTX['sync'];
+
+	// @ts-ignore (access)
+	localEmitter: CTX['localEmitter'];
+
+	// @ts-ignore (access)
+	parentEmitter: CTX['parentEmitter'];
+
+	// @ts-ignore (access)
+	rootEmitter: CTX['rootEmitter'];
+
+	// @ts-ignore (access)
+	globalEmitter: CTX['globalEmitter'];
+
+	// @ts-ignore (access)
+	blockReadyListeners: CTX['blockReadyListeners'];
+
+	// @ts-ignore (access)
+	beforeReadyListeners: CTX['beforeReadyListeners'];
+
+	// @ts-ignore (access)
+	tmp: CTX['tmp'];
+
+	// @ts-ignore (access)
+	watchTmp: CTX['watchTmp'];
+
+	// @ts-ignore (access)
+	renderTmp: CTX['renderTmp'];
+
+	// @ts-ignore (access)
+	ifOnceStore: CTX['ifOnceStore'];
+
+	// @ts-ignore (access)
+	activated: CTX['activated'];
+
+	// @ts-ignore (access)
+	deactivated: CTX['deactivated'];
+
+	// @ts-ignore (access)
+	syncRouterState: CTX['syncRouterState'];
+
+	// @ts-ignore (access)
+	convertStateToRouterReset: CTX['convertStateToRouterReset'];
+
+	// @ts-ignore (access)
+	syncStorageState: CTX['syncStorageState'];
+
+	// @ts-ignore (access)
+	convertStateToStorageReset: CTX['convertStateToStorageReset'];
 }

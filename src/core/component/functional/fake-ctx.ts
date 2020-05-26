@@ -102,7 +102,7 @@ export function createFakeCtx<T extends object = FunctionalCtx>(
 		$listeners: renderCtx.listeners || dataOpts && dataOpts.on || {},
 
 		$refs: {},
-		$destroyedHooks: {},
+		$unregisteredHooks: {},
 
 		$slots: {
 			default: children && children.length ? children : undefined,
@@ -128,13 +128,13 @@ export function createFakeCtx<T extends object = FunctionalCtx>(
 			if (parent) {
 				const
 					{hooks} = parent.meta,
-					{$destroyedHooks} = this;
+					{$unregisteredHooks} = this;
 
 				for (let o = destroyCheckHooks, i = 0; i < o.length; i++) {
 					const
 						hook = o[i];
 
-					if ($destroyedHooks[hook]) {
+					if ($unregisteredHooks[hook]) {
 						continue;
 					}
 
@@ -160,7 +160,7 @@ export function createFakeCtx<T extends object = FunctionalCtx>(
 						hooks[hook] = filteredHooks;
 					}
 
-					$destroyedHooks[hook] = true;
+					$unregisteredHooks[hook] = true;
 				}
 			}
 
@@ -201,15 +201,15 @@ export function createFakeCtx<T extends object = FunctionalCtx>(
 		fakeCtx.$root = fakeCtx;
 	}
 
-	initProps(fakeCtx, {
-		store: fakeCtx,
-		saveToStore: opts?.initProps
-	});
-
 	init.beforeCreateState(fakeCtx, meta, {
 		addMethods: true,
 		implementEventAPI: true,
 		safe: opts?.safe
+	});
+
+	initProps(fakeCtx, {
+		store: fakeCtx,
+		saveToStore: opts?.initProps
 	});
 
 	init.beforeDataCreateState(fakeCtx, {tieFields: true});

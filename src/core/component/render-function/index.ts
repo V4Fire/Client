@@ -33,14 +33,15 @@ export function wrapRender(meta: ComponentMeta): RenderFunction {
 		baseCtx: RenderContext
 	): VNode {
 		const
-			// @ts-ignore (access)
-			renderCounter = ++this.renderCounter,
+			{unsafe} = this;
+
+		const
+			renderCounter = ++unsafe.renderCounter,
 			now = Date.now();
 
 		if (!IS_PROD) {
 			const
-				// @ts-ignore (access)
-				{lastSelfReasonToRender, lastTimeOfRender} = this;
+				{lastSelfReasonToRender, lastTimeOfRender} = unsafe;
 
 			let
 				diff;
@@ -57,8 +58,7 @@ export function wrapRender(meta: ComponentMeta): RenderFunction {
 			}
 		}
 
-		// @ts-ignore (access)
-		this.lastTimeOfRender = now;
+		unsafe.lastTimeOfRender = now;
 
 		const
 			{methods: {render: r}} = meta;
@@ -68,24 +68,20 @@ export function wrapRender(meta: ComponentMeta): RenderFunction {
 				// tslint:disable-next-line:no-this-assignment
 				rootCtx = this,
 
-				// @ts-ignore (access)
-				asyncLabel = rootCtx.$asyncLabel;
+				asyncLabel = unsafe.$asyncLabel;
 
 			let
 				// tslint:disable-next-line:prefer-const
 				[createElement, tasks] = wrapCreateElement(nativeCreate, rootCtx);
 
 			if (rootCtx) {
-				// @ts-ignore (access)
-				rootCtx.$createElement = rootCtx._c = createElement;
+				unsafe.$createElement = unsafe._c = createElement;
 
 				const
-					// @ts-ignore (access)
-					forEach = rootCtx._l;
+					forEach = unsafe._l;
 
 				// Wrap slot directive to support async rendering
-				// @ts-ignore (access)
-				rootCtx._u = (fns, res) => {
+				unsafe._u = (fns, res) => {
 					res = res || {};
 
 					for (let i = 0; i < fns.length; i++) {
@@ -97,8 +93,7 @@ export function wrapRender(meta: ComponentMeta): RenderFunction {
 						}
 
 						if (Array.isArray(el)) {
-							// @ts-ignore (access)
-							rootCtx._u(el, res);
+							unsafe._u(el, res);
 
 						} else {
 							res[el.key] = function (): VNode[] {
@@ -122,8 +117,7 @@ export function wrapRender(meta: ComponentMeta): RenderFunction {
 				};
 
 				// Wrap v-for directive to support async loop rendering
-				// @ts-ignore (access)
-				rootCtx._l = (obj, cb) => {
+				unsafe._l = (obj, cb) => {
 					const
 						res = forEach(obj, cb);
 

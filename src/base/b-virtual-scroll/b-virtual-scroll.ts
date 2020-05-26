@@ -18,11 +18,14 @@ import iData, {
 	system,
 	wait,
 
-	CheckDBEquality,
-	InitLoadOptions,
 	RequestParams,
 	RequestError,
-	RetryRequestFn
+
+	InitLoadOptions,
+	RetryRequestFn,
+	CheckDBEquality,
+
+	UnsafeGetter
 
 } from 'super/i-data/i-data';
 
@@ -31,7 +34,15 @@ import ScrollRender from 'base/b-virtual-scroll/modules/scroll-render';
 import ScrollRequest from 'base/b-virtual-scroll/modules/scroll-request';
 
 import { getRequestParams } from 'base/b-virtual-scroll/modules/helpers';
-import { RequestFn, RemoteData, RequestQueryFn, GetData, Unsafe } from 'base/b-virtual-scroll/modules/interface';
+import {
+
+	RequestFn,
+	RemoteData,
+	RequestQueryFn,
+	GetData,
+	UnsafeBVirtualScroll
+
+} from 'base/b-virtual-scroll/modules/interface';
 
 export { RequestFn, RemoteData, RequestQueryFn, GetData };
 export * from 'super/i-data/i-data';
@@ -139,7 +150,7 @@ export default class bVirtualScroll extends iData implements iItems {
 	protected total?: number;
 
 	/** @override */
-	get unsafe(): Unsafe & this {
+	get unsafe(): UnsafeGetter<UnsafeBVirtualScroll<this>> {
 		return <any>this;
 	}
 
