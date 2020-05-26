@@ -108,9 +108,10 @@ export function initRoutes(component: bRouter): RouteBlueprints {
 						name,
 						default: Boolean(route.default || route.index || defaultRoutes[name]),
 
-						external: route.external ??
+						external: route.external ?? (
 							isExternal.test(pattern) ||
-							isExternal.test(route.redirect),
+							isExternal.test(route.redirect || '')
+						),
 
 						/** @deprecated */
 						page: name,
