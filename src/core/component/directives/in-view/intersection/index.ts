@@ -8,7 +8,7 @@
 
 import symbolGenerator from 'core/symbol';
 
-import { ObservableElement, IntersectionObserverOptions } from 'core/component/directives/in-view/interface';
+import { ObservableElement } from 'core/component/directives/in-view/interface';
 import { hasIntersection } from 'core/component/directives/in-view/intersection/helpers';
 
 import Super from 'core/component/directives/in-view/super';
