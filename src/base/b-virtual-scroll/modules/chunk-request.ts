@@ -15,12 +15,11 @@ import ChunkRender from 'base/b-virtual-scroll/modules/chunk-render';
 import { getRequestParams } from 'base/b-virtual-scroll/modules/helpers';
 import { RemoteData, RequestMoreParams, LastLoadedChunk } from 'base/b-virtual-scroll/interface';
 
-export const $$ =
-	symbolGenerator();
+export const
+	$$ = symbolGenerator();
 
 export default class ChunkRequest extends Friend {
 	/* @override */
-	// @ts-ignore
 	readonly C!: bVirtualScroll;
 
 	/**
@@ -42,7 +41,7 @@ export default class ChunkRequest extends Friend {
 	 * Last uploaded chunk of data that was processed with `dbConverter`
 	 *
 	 * @deprecated
-	 * @see [[ScrollRequest.prototype.lastLoadedChunk]]
+	 * @see [[ScrollRequest.lastLoadedChunk]]
 	 */
 	lastLoadedData: unknown[] = [];
 
@@ -97,7 +96,7 @@ export default class ChunkRequest extends Friend {
 		this.isLastEmpty = false;
 
 		this.chunkRender.setRefVisibility('retry', false);
-		this.try();
+		this.try().catch(stderr);
 	}
 
 	/**
@@ -196,6 +195,7 @@ export default class ChunkRequest extends Friend {
 
 				this.page++;
 				this.isLastEmpty = false;
+
 				this.data = this.data.concat(data);
 				this.lastLoadedChunk.normalized = data;
 				this.pendingData = this.pendingData.concat(data);
@@ -232,9 +232,7 @@ export default class ChunkRequest extends Friend {
 	 * Loads additional data
 	 */
 	protected load(): Promise<CanUndef<RemoteData>> {
-		const
-			{ctx} = this;
-
+		const {ctx} = this;
 		ctx.setMod('progress', true);
 
 		const params = <CanUndef<Dictionary>>(ctx.getDefaultRequestParams('get') || [])[0];

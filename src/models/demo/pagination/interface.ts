@@ -41,22 +41,22 @@ export interface RequestQuery {
 
 	/**
 	 * Sleep time before send response
-	 * @default 300
+	 * @default `300`
 	 */
 	sleep?: number;
 }
 
 /**
- * State of the request
+ * State of a request
  */
 export interface RequestState extends RequestQuery {
 	/**
-	 * Amount of response items that was sended
+	 * Amount of response items that was sent
 	 */
-	totalSended: number;
+	totalSent: number;
 
 	/**
-	 * Current index of a response item
+	 * Current index of the response item
 	 */
 	i: number;
 }

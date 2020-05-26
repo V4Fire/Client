@@ -19,8 +19,6 @@ export const
 	$$ = symbolGenerator();
 
 export default class ComponentRender extends Friend {
-	/* @override */
-	// @ts-ignore
 	readonly C!: bVirtualScroll;
 
 	/**
@@ -109,7 +107,7 @@ export default class ComponentRender extends Friend {
 		return node;
 	}
 
-	/** @see bVirtualScroll.getOptionKey */
+	/** @see [[bVirtualScroll.getOptionKey]] */
 	getOptionKey(data: unknown, index: number): string {
 		return String(this.ctx.getOptionKey(data, index));
 	}
@@ -183,8 +181,8 @@ export default class ComponentRender extends Friend {
 		const getOption = (itemParas: OptionEl, index: number) =>
 			Object.isFunction(c.option) ? c.option(itemParas, index) : c.option;
 
-		const render = (childrens: DataToRender[]) =>
-			c.vdom.render(childrens.map(({itemAttrs, itemParams, index}) =>
+		const render = (children: DataToRender[]) =>
+			c.vdom.render(children.map(({itemAttrs, itemParams, index}) =>
 				this.createElement(getOption(itemParams, index), itemAttrs))) as HTMLElement[];
 
 		const getChildrenAttrs = (props) => ({
@@ -214,11 +212,10 @@ export default class ComponentRender extends Friend {
 				itemParams = getItemEl(item.data, item.index),
 				itemIndex = item.index;
 
-			const
-				attrs = Object.isFunction(c.optionProps) ? c.optionProps(getItemEl(item.data, item.index), item.index, {
-					ctx: c,
-					key: this.getOptionKey(item.data, item.index)
-				}) : c.optionProps;
+			const attrs = Object.isFunction(c.optionProps) ? c.optionProps(getItemEl(item.data, item.index), item.index, {
+				ctx: c,
+				key: this.getOptionKey(item.data, item.index)
+			}) : c.optionProps;
 
 			children.push({itemParams, itemAttrs: getChildrenAttrs(attrs), index: itemIndex});
 		}
