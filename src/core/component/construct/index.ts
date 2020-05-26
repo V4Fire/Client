@@ -68,10 +68,10 @@ export function beforeCreateState(
 		{unsafe, unsafe: {$parent: parent}} = component;
 
 	if (parent && !parent.componentName) {
-		unsafe.$parent = unsafe.$root.unsafe.$remoteParent;
+		Object.set(unsafe, '$parent', unsafe.$root.unsafe.$remoteParent);
 	}
 
-	unsafe.$normalParent = getNormalParent(component);
+	Object.set(unsafe, '$normalParent', getNormalParent(component));
 
 	if (opts?.addMethods) {
 		attachMethodsFromMeta(component);

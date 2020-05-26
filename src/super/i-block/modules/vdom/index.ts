@@ -38,7 +38,7 @@ export * from 'super/i-block/modules/vdom/interface';
 /**
  * Class provides API to work with a VDOM tree
  */
-export default class VDOM<C extends iBlock = iBlock> extends Friend<C> {
+export default class VDOM extends Friend {
 	/**
 	 * Renders the specified data
 	 * @param data
@@ -55,7 +55,7 @@ export default class VDOM<C extends iBlock = iBlock> extends Friend<C> {
 	render(data: VNode): Node;
 	render(data: VNode[]): Node[];
 	render(data: CanArray<VNode>): CanArray<Node> {
-		return renderData(<any>data, this.component);
+		return renderData(<any>data, this.ctx);
 	}
 
 	/**
@@ -81,7 +81,7 @@ export default class VDOM<C extends iBlock = iBlock> extends Friend<C> {
 		}
 
 		if (chunks.length === 1) {
-			chunks.unshift(this.component.componentName);
+			chunks.unshift(this.ctx.componentName);
 
 		} else {
 			chunks[0] = chunks[0].dasherize();
@@ -127,7 +127,7 @@ export default class VDOM<C extends iBlock = iBlock> extends Friend<C> {
 			renderObj = Object.isString(objOrPath) ? this.getRenderObject(objOrPath) : objOrPath;
 
 		if (!renderObj) {
-			return () => this.component.$createElement('span');
+			return () => this.ctx.$createElement('span');
 		}
 
 		let
@@ -135,7 +135,7 @@ export default class VDOM<C extends iBlock = iBlock> extends Friend<C> {
 			renderCtx;
 
 		if (ctx && Object.isArray(ctx)) {
-			instanceCtx = ctx[0] || this.component;
+			instanceCtx = ctx[0] || this.ctx;
 			renderCtx = ctx[1];
 
 			if (instanceCtx !== instanceCtx.provide.component) {
@@ -145,7 +145,7 @@ export default class VDOM<C extends iBlock = iBlock> extends Friend<C> {
 			}
 
 		} else {
-			instanceCtx = this.component;
+			instanceCtx = this.ctx;
 			renderCtx = ctx;
 		}
 
@@ -208,7 +208,7 @@ export default class VDOM<C extends iBlock = iBlock> extends Friend<C> {
 			nm = Object.isString(component) ? component.dasherize() : undefined;
 
 		let
-			el = <CanUndef<T>>this.component.$parent;
+			el = <CanUndef<T>>this.ctx.$parent;
 
 		while (el) {
 			if (Object.isFunction(component) && el.instance instanceof component || el.componentName === nm) {

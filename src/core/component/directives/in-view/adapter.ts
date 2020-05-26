@@ -119,14 +119,16 @@ export default class InViewAdapter {
 
 	/**
 	 * Stops observing the specified element
+	 *
 	 * @param el
+	 * @param [threshold]
 	 */
-	stopObserve(el: Element): boolean {
+	stopObserve(el: Element, threshold?: number): boolean {
 		if (!this.adaptee) {
 			return false;
 		}
 
-		return this.adaptee.stopObserve(el);
+		return this.adaptee.stopObserve(el, threshold);
 	}
 
 	/**

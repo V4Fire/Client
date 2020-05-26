@@ -15,7 +15,7 @@ const
 	EventEmitter = require('eventemitter2').EventEmitter2;
 
 const
-	build = include('build/entities.webpack'),
+	build = include('build/entries.webpack'),
 	buildEvent = new EventEmitter({maxListeners: build.MAX_PROCESS});
 
 async function buildFactory(entry, buildId) {

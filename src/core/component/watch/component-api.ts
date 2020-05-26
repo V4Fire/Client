@@ -13,8 +13,6 @@ import watch, {
 	mute,
 
 	watchHandlers,
-
-	WatchHandler,
 	MultipleWatchHandler
 
 } from 'core/object/watch';
@@ -38,7 +36,7 @@ import {
 import { createWatchFn } from 'core/component/watch/create';
 import { attachDynamicWatcher } from 'core/component/watch/helpers';
 
-import { ComponentInterface } from 'core/component/interface';
+import { ComponentInterface, RawWatchHandler } from 'core/component/interface';
 import { ImplementComponentWatchAPIOptions } from 'core/component/watch/interface';
 
 /**
@@ -64,7 +62,7 @@ export function implementComponentWatchAPI(
 
 	// The handler to invalidate the cache of computed fields
 	// tslint:disable-next-line:typedef
-	const invalidateComputedCache = () => <WatchHandler>function invalidateComputedCache(val, oldVal, info) {
+	const invalidateComputedCache = () => <RawWatchHandler>function invalidateComputedCache(val, oldVal, info) {
 		if (!info) {
 			return;
 		}

@@ -28,7 +28,7 @@ export * from 'super/i-block/modules/dom/interface';
 /**
  * Class provides some methods to work with a DOM tree
  */
-export default class DOM<C extends iBlock = iBlock> extends Friend<C> {
+export default class DOM extends Friend {
 	/**
 	 * Takes a string identifier and returns a new identifier that is connected to the component.
 	 * This method should use to generate id attributes for DOM nodes.
@@ -47,7 +47,7 @@ export default class DOM<C extends iBlock = iBlock> extends Friend<C> {
 			return undefined;
 		}
 
-		return `${this.component.componentId}-${id}`;
+		return `${this.ctx.componentId}-${id}`;
 	}
 
 	/**
@@ -81,7 +81,7 @@ export default class DOM<C extends iBlock = iBlock> extends Friend<C> {
 	@wait('ready')
 	async putInStream(
 		cb: ElCb<this['C']>,
-		el: Element | string = this.component.$el
+		el: Element | string = this.ctx.$el
 	): Promise<boolean> {
 		const
 			node = Object.isString(el) ? this.block.element(el) : el;
@@ -151,7 +151,7 @@ export default class DOM<C extends iBlock = iBlock> extends Friend<C> {
 		}
 
 		parentNode.appendChild(newNode);
-		return this.component.async.worker(() => newNode.parentNode?.removeChild(newNode), {
+		return this.ctx.async.worker(() => newNode.parentNode?.removeChild(newNode), {
 			group: group || 'asyncComponents'
 		});
 	}
@@ -177,7 +177,7 @@ export default class DOM<C extends iBlock = iBlock> extends Friend<C> {
 		}
 
 		node.replaceWith(newNode);
-		return this.component.async.worker(() => newNode.parentNode?.removeChild(newNode), {
+		return this.ctx.async.worker(() => newNode.parentNode?.removeChild(newNode), {
 			group: group || 'asyncComponents'
 		});
 	}
@@ -218,27 +218,30 @@ export default class DOM<C extends iBlock = iBlock> extends Friend<C> {
 	}
 
 	/**
-	 * Creates a Block instance from the specified node
+	 * Creates a Block instance from the specified node and component instance
 	 *
 	 * @param node
-	 * @param [component]
+	 * @param [component] - component instance, if not specified, the instance is taken from a node
 	 */
-	createBlockCtxFromNode(node: Node, component?: iBlock): Dictionary {
+	createBlockCtxFromNode(node: CanUndef<Node>, component?: iBlock): Dictionary {
 		const
-			$el = <ComponentElement<this['C']>>node,
-			comp = component || $el.component;
+			$el = <CanUndef<ComponentElement<this['CTX']>>>node,
+			ctxFromNode = component || $el?.component;
 
-		const componentName = comp ?
-			comp.componentName :
-			Object.get(componentRgxp.exec($el.className), '1') || this.component.componentName;
+		const componentName = ctxFromNode ?
+			ctxFromNode.componentName :
+			Object.get(componentRgxp.exec($el?.className || ''), '1') || this.ctx.componentName;
+
+		const resolvedCtx = ctxFromNode || {
+			$el,
+			componentName,
+			isFlyweight: true,
+			localEmitter: {emit(): void { /* loopback */ }}
+		};
 
 		return Object.assign(Object.create(Block.prototype), {
-			component: comp || {
-				$el,
-				componentName,
-				isFlyweight: true,
-				localEmitter: {emit(): void { /* loopback */ }}
-			}
+			ctx: resolvedCtx,
+			component: resolvedCtx
 		});
 	}
 }

@@ -232,13 +232,17 @@ export default abstract class AbstractInView {
 	 */
 	protected createObservable(el: Element, opts: InitOptions): ObservableElement {
 		return {
+			id: String(Math.random()),
+			group: 'inView:base',
+
 			node: el,
 			count: true,
+
 			isLeaving: false,
 			isDeactivated: false,
 			removeStrategy: 'remove',
-			id: String(Math.random()),
-			group: 'inView:base',
+
+			// @ts-ignore
 			threshold: 1,
 
 			size: {
