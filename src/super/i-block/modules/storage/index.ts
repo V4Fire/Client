@@ -23,11 +23,6 @@ import { asyncLocal, factory, AsyncStorageNamespace } from 'core/kv-storage';
 export default class Storage extends Friend {
 	//#if runtime has core/kv-storage
 
-	/** @see [[iBlock.globalName]] */
-	get globalName(): CanUndef<string> {
-		return this.ctx.globalName;
-	}
-
 	/**
 	 * Storage engine
 	 */

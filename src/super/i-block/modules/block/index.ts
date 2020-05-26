@@ -36,21 +36,6 @@ const
  * Class implements BEM-like API
  */
 export default class Block extends Friend {
-	/** @see [[iBlock.componentId]] */
-	get id(): string {
-		return this.ctx.componentId;
-	}
-
-	/** @see [[iBlock.componentName]] */
-	get name(): string {
-		return this.ctx.componentName;
-	}
-
-	/** @see [[iBlock.$el]] */
-	get node(): this['CTX']['$el'] {
-		return this.ctx.$el;
-	}
-
 	/**
 	 * Map of applied modifiers
 	 */
@@ -74,7 +59,7 @@ export default class Block extends Friend {
 	 * @param [modValue]
 	 */
 	getFullBlockName(modName?: string, modValue?: unknown): string {
-		return this.name + (modName ? `_${modName.dasherize()}_${String(modValue).dasherize()}` : '');
+		return this.componentName + (modName ? `_${modName.dasherize()}_${String(modValue).dasherize()}` : '');
 	}
 
 	/**
@@ -104,7 +89,7 @@ export default class Block extends Friend {
 	 */
 	getFullElName(name: string, modName?: string, modValue?: unknown): string {
 		const modStr = modName ? `_${modName.dasherize()}_${String(modValue).dasherize()}` : '';
-		return `${this.name}__${name.dasherize()}${modStr}`;
+		return `${this.componentName}__${name.dasherize()}${modStr}`;
 	}
 
 	/**
@@ -115,7 +100,7 @@ export default class Block extends Friend {
 	 */
 	getElSelector(name: string, mods?: ModsTable): string {
 		let
-			res = `.${this.id}.${this.getFullElName(name)}`;
+			res = `.${this.componentId}.${this.getFullElName(name)}`;
 
 		if (mods) {
 			for (let keys = Object.keys(mods), i = 0; i < keys.length; i++) {

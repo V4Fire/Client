@@ -6,18 +6,19 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import iBlock from 'super/i-block/i-block';
 import { AsyncOptions } from 'core/async';
 import { WatchOptions } from 'core/component';
 
 export type AsyncWatchOptions =
 	WatchOptions & AsyncOptions;
 
-export interface LinkWrapper<V = unknown, R = unknown> {
-	(value: V, oldValue?: V): R;
+export interface LinkWrapper<CTX extends iBlock = iBlock, V = unknown, R = unknown> {
+	(this: CTX, value: V, oldValue?: V): R;
 }
 
-export type ModValueConverter<V = unknown, R = unknown> =
-	LinkWrapper<V, CanUndef<R>> |
+export type ModValueConverter<CTX extends iBlock = iBlock, V = unknown, R = unknown> =
+	LinkWrapper<CTX, V, CanUndef<R>> |
 	Function;
 
 export type Link = string;

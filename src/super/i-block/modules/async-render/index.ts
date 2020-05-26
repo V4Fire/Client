@@ -25,11 +25,6 @@ export * from 'super/i-block/modules/async-render/interface';
 export default class AsyncRender extends Friend {
 	//#if runtime has component/async-render
 
-	/** @see [[iBlock.$asyncLabel]] */
-	get asyncLabel(): symbol {
-		return this.ctx.$asyncLabel;
-	}
-
 	/** @override */
 	constructor(component: any) {
 		super(component);
@@ -141,7 +136,7 @@ export default class AsyncRender extends Friend {
 					val = el.value,
 					isPromise = Object.isPromise(val);
 
-				if (!isPromise && (!f || f.call(this.ctx, val, syncI, {list, i: syncI, total: syncTotal}))) {
+				if (!isPromise && (!f || f.call(this.component, val, syncI, {list, i: syncI, total: syncTotal}))) {
 					syncTotal++;
 					finalArr.push(val);
 
@@ -229,7 +224,7 @@ export default class AsyncRender extends Friend {
 							{methods} = this.meta;
 
 						if (methods.errorCaptured) {
-							methods.errorCaptured.fn.call(this, err);
+							methods.errorCaptured.fn.call(this.component, err);
 						}
 
 						continue;

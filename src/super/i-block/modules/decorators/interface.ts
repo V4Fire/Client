@@ -69,10 +69,6 @@ export type WaitStatuses =
 	string |
 	ComponentStatus;
 
-export interface WaitFn<ARGS extends unknown[] = unknown[], R = unknown> {
-	(...args: ARGS): R;
-}
-
 export interface WaitDecoratorOptions extends AsyncOptions {
 	/**
 	 * If true, then the wrapped function will always return a promise
@@ -81,7 +77,7 @@ export interface WaitDecoratorOptions extends AsyncOptions {
 	defer?: boolean | number;
 }
 
-export interface WaitOptions<F extends WaitFn = WaitFn> extends WaitDecoratorOptions {
+export interface WaitOptions<F extends Function = Function> extends WaitDecoratorOptions {
 	/**
 	 * Function to wrap
 	 */

@@ -28,21 +28,11 @@ let
  * Class provides some helper methods to initialize a component state
  */
 export default class State extends Friend {
-	/** @see [[iBlock.hook]] */
-	get hook(): this['CTX']['hook'] {
-		return this.ctx.hook;
-	}
-
 	/**
 	 * True if needed synchronization with a router
 	 */
 	get needRouterSync(): boolean {
 		return baseSyncRouterState !== this.instance.syncRouterState;
-	}
-
-	/** @see [[iBlock.globalName]] */
-	protected get globalName(): CanUndef<string> {
-		return this.ctx.globalName;
 	}
 
 	/** @see [[iBlock.instance]] */

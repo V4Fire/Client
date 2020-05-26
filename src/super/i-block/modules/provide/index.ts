@@ -27,11 +27,6 @@ export * from 'super/i-block/modules/provide/interface';
  * Class with methods to provide component classes/styles to another component, etc.
  */
 export default class Provide extends Friend {
-	/** @see [[iBlock.componentName]] */
-	get componentName(): string {
-		return this.ctx.componentName;
-	}
-
 	/**
 	 * Returns a full name of the specified component
 	 *

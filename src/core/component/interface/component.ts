@@ -9,7 +9,7 @@
 // tslint:disable:no-empty
 // tslint:disable:typedef
 
-import Async from 'core/async';
+import Async, {BoundFn, ProxyCb} from 'core/async';
 import { LogMessageOptions } from 'core/log';
 
 import {
@@ -64,10 +64,6 @@ export interface ComponentConstructor<T = unknown> {
 export type ComponentElement<T = unknown> = Element & {
 	component?: T;
 };
-
-export interface BoundFn<CTX extends ComponentInterface = ComponentInterface> {
-	(this: CTX): any;
-}
 
 export interface RenderReason {
 	value: unknown;
@@ -486,9 +482,9 @@ export abstract class ComponentInterface {
 	 * Attaches an event listener to the specified component event
 	 *
 	 * @param event
-	 * @param cb
+	 * @param handler
 	 */
-	protected $on(event: CanArray<string>, cb: Function): this {
+	protected $on<E = unknown, R = unknown>(event: CanArray<string>, handler: ProxyCb<E, R, this>): this {
 		return this;
 	}
 
@@ -496,9 +492,9 @@ export abstract class ComponentInterface {
 	 * Attaches a single event listener to the specified component event
 	 *
 	 * @param event
-	 * @param cb
+	 * @param handler
 	 */
-	protected $once(event: string, cb: Function): this {
+	protected $once<E = unknown, R = unknown>(event: string, handler: ProxyCb<E, R, this>): this {
 		return this;
 	}
 
@@ -506,9 +502,9 @@ export abstract class ComponentInterface {
 	 * Detaches an event listeners from the component
 	 *
 	 * @param [event]
-	 * @param [cb]
+	 * @param [handler]
 	 */
-	protected $off(event?: CanArray<string>, cb?: Function): this {
+	protected $off(event?: CanArray<string>, handler?: Function): this {
 		return this;
 	}
 

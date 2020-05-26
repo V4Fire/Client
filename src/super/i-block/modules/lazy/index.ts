@@ -35,6 +35,6 @@ export default class Lazy extends Friend {
 	createLazyFn<T extends (...args: unknown[]) => unknown>(fn: T, opts?: CreateLazyFnOptions): LazyFn<T> {
 		const {async: $a} = this;
 		return (...args) => (opts?.delay ? $a.sleep(opts.delay, opts) : $a.nextTick())
-			.then(() => fn.call(this.ctx, ...args));
+			.then(() => fn.call(this.component, ...args));
 	}
 }

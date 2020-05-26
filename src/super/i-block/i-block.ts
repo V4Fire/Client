@@ -17,7 +17,7 @@ import symbolGenerator from 'core/symbol';
 import { deprecated } from 'core/functools';
 
 import SyncPromise from 'core/promise/sync';
-import Async, { AsyncOptions, ClearOptionsId, WrappedCb, ProxyCb } from 'core/async';
+import Async, { AsyncOptions, ClearOptionsId, ProxyCb, BoundFn } from 'core/async';
 import log, { LogMessageOptions } from 'core/log';
 
 import { EventEmitter2 as EventEmitter } from 'eventemitter2';
@@ -135,7 +135,6 @@ import {
 	hook,
 	wait,
 
-	WaitFn,
 	WaitDecoratorOptions,
 	DecoratorMethodWatcher
 
@@ -1584,7 +1583,7 @@ export default abstract class iBlock extends ComponentInterface {
 	 * @param [opts] - additional options
 	 */
 	@p({replace: false})
-	on<E = unknown, R = unknown>(event: string, handler: ProxyCb<E, R, any>, opts?: AsyncOptions): void {
+	on<E = unknown, R = unknown>(event: string, handler: ProxyCb<E, R, this>, opts?: AsyncOptions): void {
 		event = event.dasherize();
 
 		if (opts) {
@@ -1604,7 +1603,7 @@ export default abstract class iBlock extends ComponentInterface {
 	 * @param [opts] - additional options
 	 */
 	@p({replace: false})
-	once<E = unknown, R = unknown>(event: string, handler: ProxyCb<E, R, any>, opts?: AsyncOptions): void {
+	once<E = unknown, R = unknown>(event: string, handler: ProxyCb<E, R, this>, opts?: AsyncOptions): void {
 		event = event.dasherize();
 
 		if (opts) {
@@ -1673,14 +1672,14 @@ export default abstract class iBlock extends ComponentInterface {
 	 * @param cb
 	 * @param [opts] - additional options
 	 */
-	waitStatus<F extends WaitFn>(
+	waitStatus<F extends BoundFn<this>>(
 		status: ComponentStatus,
 		cb: F,
 		opts?: WaitDecoratorOptions
 	): CanPromise<ReturnType<F>>;
 
 	@p({replace: false})
-	waitStatus<F extends WaitFn>(
+	waitStatus<F extends BoundFn<this>>(
 		status: ComponentStatus,
 		cbOrOpts?: F | WaitDecoratorOptions,
 		opts?: WaitDecoratorOptions
@@ -1711,7 +1710,7 @@ export default abstract class iBlock extends ComponentInterface {
 		const promise = new SyncPromise((resolve) => wait(status, {...opts, fn: () => {
 			isResolved = true;
 			resolve();
-		}})());
+		}}).call(this));
 
 		if (isResolved) {
 			return promise;
@@ -1727,7 +1726,7 @@ export default abstract class iBlock extends ComponentInterface {
 	 * @param fn
 	 * @param [opts] - additional options
 	 */
-	nextTick(fn: WrappedCb, opts?: AsyncOptions): void;
+	nextTick(fn: BoundFn<this>, opts?: AsyncOptions): void;
 
 	/**
 	 * Returns a promise that will be resolved on a next render tick
@@ -1736,7 +1735,7 @@ export default abstract class iBlock extends ComponentInterface {
 	 * @param [opts] - additional options
 	 */
 	nextTick(opts?: AsyncOptions): Promise<void>;
-	nextTick(fnOrOpts?: WrappedCb | AsyncOptions, opts?: AsyncOptions): CanPromise<void> {
+	nextTick(fnOrOpts?: BoundFn<this> | AsyncOptions, opts?: AsyncOptions): CanPromise<void> {
 		const
 			{async: $a} = this;
 
@@ -2285,7 +2284,7 @@ export default abstract class iBlock extends ComponentInterface {
 	 * Handler: "callChild" event
 	 * @param e
 	 */
-	protected onCallChild(e: ParentMessage): void {
+	protected onCallChild(e: ParentMessage<this>): void {
 		if (
 			e.check[0] !== 'instanceOf' && e.check[1] === this[e.check[0]] ||
 			e.check[0] === 'instanceOf' && this.instance instanceof <Function>e.check[1]
