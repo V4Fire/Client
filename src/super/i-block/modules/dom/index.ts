@@ -235,8 +235,10 @@ export default class DOM extends Friend {
 		const resolvedCtx = ctxFromNode || {
 			$el,
 			componentName,
+			mods: {},
 			isFlyweight: true,
-			localEmitter: {emit(): void { /* loopback */ }}
+			localEmitter: {emit(): void { /* loopback */ }},
+			emit(): void { /* loopback */ }
 		};
 
 		return Object.assign(Object.create(Block.prototype), {

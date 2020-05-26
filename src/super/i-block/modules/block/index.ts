@@ -234,22 +234,13 @@ export default class Block extends Friend {
 			this.removeMod(name, undefined, 'setMod');
 		}
 
-		if (mods) {
-			mods[name] = normalizedVal;
-		}
-
 		if (node && (!isInit || needSync)) {
 			node.classList.add(this.getFullBlockName(name, normalizedVal));
 		}
 
-		const event = <SetModEvent>{
-			event: 'block.mod.set',
-			type: 'set',
-			name,
-			value: normalizedVal,
-			prev: prevVal,
-			reason
-		};
+		if (mods) {
+			mods[name] = normalizedVal;
+		}
 
 		ctx.mods[name] = normalizedVal;
 
@@ -260,6 +251,15 @@ export default class Block extends Friend {
 			delete Object.getPrototypeOf(watchModsStore)[name];
 			ctx.field.set(`watchModsStore.${name}`, normalizedVal);
 		}
+
+		const event = <SetModEvent>{
+			event: 'block.mod.set',
+			type: 'set',
+			name,
+			value: normalizedVal,
+			prev: prevVal,
+			reason
+		};
 
 		this.localEmitter
 			.emit(`block.mod.set.${name}.${normalizedVal}`, event);
@@ -292,21 +292,13 @@ export default class Block extends Friend {
 			return false;
 		}
 
-		if (mods) {
-			mods[name] = undefined;
-		}
-
 		if (node) {
 			node.classList.remove(this.getFullBlockName(name, currentVal));
 		}
 
-		const event = <ModEvent>{
-			event: 'block.mod.remove',
-			type: 'remove',
-			name,
-			value: currentVal,
-			reason
-		};
+		if (mods) {
+			mods[name] = undefined;
+		}
 
 		const
 			needNotify = reason === 'removeMod';
@@ -322,6 +314,14 @@ export default class Block extends Friend {
 				ctx.field.set(`watchModsStore.${name}`, undefined);
 			}
 		}
+
+		const event = <ModEvent>{
+			event: 'block.mod.remove',
+			type: 'remove',
+			name,
+			value: currentVal,
+			reason
+		};
 
 		this.localEmitter
 			.emit(`block.mod.remove.${name}.${currentVal}`, event);
