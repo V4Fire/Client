@@ -15,6 +15,5 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :bug: Bug Fix
 
-* [Fixed rendering of truncated data in `b-virtual-scroll`](https://github.com/V4Fire/Client/issues/231)
-* [Fixed rendering of empty slot in `b-virtual-scroll`](https://github.com/V4Fire/Client/issues/241)
-* [Fixed clear of `in-view` in `b-virtual-scroll`](https://github.com/V4Fire/Client/pull/201)
+* [Fixed issue with `in-view` that element did not becomes observable](https://github.com/V4Fire/Client/pull/201)
+* [Fixed `stopObserver` method in `in-view`](https://github.com/V4Fire/Client/pull/201)

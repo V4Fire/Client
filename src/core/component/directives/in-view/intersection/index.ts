@@ -33,7 +33,7 @@ export default class InView extends Super {
 	/**
 	 * Contains IntersectionObserver instances
 	 */
-	protected readonly observers: Dictionary<IntersectionObserver> = {};
+	protected readonly observers: Map<string, IntersectionObserver> = new Map();
 
 	/**
 	 * Map of ids for root elements
@@ -51,8 +51,7 @@ export default class InView extends Super {
 	 */
 	protected initObserve(observable: ObservableElement): ObservableElement {
 		const
-			hash = this.getHash(observable),
-			observer = this.observers[hash] || this.createObserver(observable, hash);
+			observer = this.createObserver(observable);
 
 		observer.observe(observable.node);
 		this.putInMap(this.elements, observable);
@@ -62,10 +61,11 @@ export default class InView extends Super {
 
 	/** @override */
 	protected remove(observable: ObservableElement): boolean {
-		const observer = this.observers[this.getHash(observable)];
+		const observer = this.observers.get(observable.id);
 
 		if (observer) {
 			observer.unobserve(observable.node);
+			this.observers.delete(observable.id);
 			return true;
 		}
 
@@ -73,40 +73,20 @@ export default class InView extends Super {
 	}
 
 	/**
-	 * Returns a hash by given params
-	 *
-	 * @param intersectionObserverOptions
-	 *   *) threshold
-	 *   *) trackVisibility
-	 *   *) root
-	 */
-	protected getHash({threshold, trackVisibility, root}: IntersectionObserverOptions): string {
-		root = Object.isFunction(root) ? root() : root;
-
-		let
-			id = root && this.rootMap.get(root) || '';
-
-		if (!id && root) {
-			id = Math.random();
-			this.rootMap.set(root, id);
-		}
-
-		return `${threshold.toFixed(6)}${Boolean(trackVisibility)}${id}`;
-	}
-
-	/**
 	 * Creates a new IntersectionObserver instance
-	 *
-	 * @param opts
-	 * @param hash
+	 * @param observable
 	 */
-	protected createObserver(opts: IntersectionObserverOptions, hash: string): IntersectionObserver {
+	protected createObserver(observable: ObservableElement): IntersectionObserver {
 		const
-			root = Object.isFunction(opts.root) ? opts.root() : opts.root,
-			observerOpts = {...opts, root};
+			root = Object.isFunction(observable.root) ? observable.root() : observable.root,
+			opts = {...observable, root};
 
-		delete observerOpts.delay;
-		return this.observers[hash] = new IntersectionObserver(this.onIntersects.bind(this, opts.threshold), observerOpts);
+		delete opts.delay;
+
+		const observer = new IntersectionObserver(this.onIntersects.bind(this, observable.threshold), opts);
+
+		this.observers.set(observable.id, observer);
+		return observer;
 	}
 
 	/**
