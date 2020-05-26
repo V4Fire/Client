@@ -184,6 +184,7 @@ export default abstract class iBlock extends ComponentInterface {
 	readonly Root!: iStaticPage;
 
 	/** @override */
+	// @ts-ignore
 	readonly $root!: this['Root'];
 
 	/**

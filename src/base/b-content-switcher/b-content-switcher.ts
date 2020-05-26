@@ -182,7 +182,7 @@ export default class bContentSwitcher extends iBlock implements iObserveDOM {
 		readyToSwitchStore: false,
 		placeholderHidden: false,
 		mutationReady: false,
-		manual: () =>  !o.resolve || !o.resolve.length
+		manual: () => !o.resolve || !o.resolve.length
 	}))
 
 	protected is!: IsTable;

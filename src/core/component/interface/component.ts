@@ -178,7 +178,7 @@ export interface UnsafeComponentInterface<CTX extends ComponentInterface = Compo
  * it fixes some ambiguous TS warnings
  */
 export type UnsafeGetter<U extends UnsafeComponentInterface = UnsafeComponentInterface> =
-	Dictionary & U['CTX'] & U & {unsafe: any};
+	U['CTX'] & U extends never ? U['CTX'] & U & any : Dictionary & U['CTX'] & U & {unsafe: any};
 
 /**
  * Abstract class represents Vue compatible component API
