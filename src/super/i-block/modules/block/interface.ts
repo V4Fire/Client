@@ -6,15 +6,6 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-export interface ModInfo {
-	name: string;
-	value: CanUndef<string>;
-}
-
-export type ModResult =
-	ModInfo |
-	false;
-
 export type ModEventType =
 	'set' |
 	'remove';

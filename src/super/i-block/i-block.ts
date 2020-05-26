@@ -1914,24 +1914,16 @@ export default abstract class iBlock extends ComponentInterface {
 	setMod(nodeOrName: Element | string, name: string | unknown, value?: unknown): CanPromise<boolean> {
 		if (Object.isString(nodeOrName)) {
 			if (this.isFlyweight) {
-				const
-					ctx = this.dom.createBlockCtxFromNode(this.$el, this),
-					res = Block.prototype.setMod.call(ctx, nodeOrName, name);
-
-				// Synchronization for cases where we don't have the real context
-				if (res) {
-					this.mods[res.name] = res.value;
-				}
-
-				return Boolean(res);
+				const ctx = this.dom.createBlockCtxFromNode(this.$el, this);
+				return Block.prototype.setMod.call(ctx, nodeOrName, name);
 			}
 
-			const res = this.lfc.execCbAfterBlockReady(() => Boolean(this.block.setMod(nodeOrName, name)));
+			const res = this.lfc.execCbAfterBlockReady(() => this.block.setMod(nodeOrName, name));
 			return <CanPromise<boolean>>(res || false);
 		}
 
 		const ctx = this.dom.createBlockCtxFromNode(nodeOrName);
-		return Boolean(Block.prototype.setMod.call(ctx, name, value));
+		return Block.prototype.setMod.call(ctx, name, value);
 	}
 
 	/**
@@ -1955,24 +1947,16 @@ export default abstract class iBlock extends ComponentInterface {
 	removeMod(nodeOrName: Element | string, name?: string | unknown, value?: unknown): CanPromise<boolean> {
 		if (Object.isString(nodeOrName)) {
 			if (this.isFlyweight) {
-				const
-					ctx = this.dom.createBlockCtxFromNode(this.$el, this),
-					res = Block.prototype.removeMod.call(ctx, nodeOrName, name);
-
-				// Synchronization for cases where we don't have the real context
-				if (res) {
-					delete this.mods[res.name];
-				}
-
-				return Boolean(res);
+				const ctx = this.dom.createBlockCtxFromNode(this.$el, this);
+				return Block.prototype.removeMod.call(ctx, nodeOrName, name);
 			}
 
-			const res = this.lfc.execCbAfterBlockReady(() => Boolean(this.block.removeMod(nodeOrName, name)));
+			const res = this.lfc.execCbAfterBlockReady(() => this.block.removeMod(nodeOrName, name));
 			return <CanPromise<boolean>>(res || false);
 		}
 
 		const ctx = this.dom.createBlockCtxFromNode(nodeOrName);
-		return Boolean(Block.prototype.removeMod.call(ctx, name, value));
+		return Block.prototype.removeMod.call(ctx, name, value);
 	}
 
 	/**
