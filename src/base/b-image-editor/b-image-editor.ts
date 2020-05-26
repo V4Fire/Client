@@ -129,7 +129,7 @@ export default class bImageEditor extends iBlock implements iVisible {
 
 	/** @private */
 	@system()
-	private _n: number = 0;
+	protected _n: number = 0;
 
 	/**
 	 * Initialises an image
