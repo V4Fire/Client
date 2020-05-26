@@ -22,10 +22,8 @@ import { RenderItem, RefDisplayState } from 'base/b-virtual-scroll/interface';
 export const
 	$$ = symbolGenerator();
 
-// @ts-ignore
 export default class ChunkRender extends Friend {
 	/* @override */
-	// @ts-ignore
 	readonly C!: bVirtualScroll;
 
 	/**
@@ -114,7 +112,7 @@ export default class ChunkRender extends Friend {
 	}
 
 	/**
-	 * Re-initializes a rendering process
+	 * Re-initializes the rendering process
 	 */
 	reInit(): void {
 		this.lastIntersectsItem = 0;
@@ -202,7 +200,8 @@ export default class ChunkRender extends Friend {
 			return;
 		}
 
-		const state = show ? '' : 'none';
+		const
+			state = show ? '' : 'none';
 
 		if (state === this.refState[ref]) {
 			return;
@@ -212,7 +211,7 @@ export default class ChunkRender extends Friend {
 	}
 
 	/**
-	 * Hides or shows refs to the loader and tombstones
+	 * Hides or shows refs of the loader and tombstones
 	 * @param show
 	 */
 	setLoadersVisibility(show: boolean): void {
@@ -252,13 +251,15 @@ export default class ChunkRender extends Friend {
 	}
 
 	/**
-	 * Wraps the specified item node with an in-view directive
+	 * Wraps the specified item node with the in-view directive
 	 * @param item
 	 */
 	protected wrapInView(item: RenderItem): void {
 		const
 			{ctx} = this,
-			{node} = item,
+			{node} = item;
+
+		const
 			label = `${this.asyncGroup}:${this.asyncInViewPrefix}${ctx.getOptionKey(item.data, item.index)}`;
 
 		if (!node) {
@@ -309,13 +310,15 @@ export default class ChunkRender extends Friend {
 	protected onNodeIntersect(index: number): void {
 		const
 			{ctx, items, lastIntersectsItem} = this,
-			{chunkSize, renderGap} = ctx,
+			{chunkSize, renderGap} = ctx;
+
+		const
 			currentRender = (this.chunk - 1) * chunkSize;
 
 		this.lastIntersectsItem = index;
 
 		if (index + renderGap + chunkSize >= items.length) {
-			this.chunkRequest.try();
+			this.chunkRequest.try().catch(stderr);
 		}
 
 		if (index >= lastIntersectsItem) {
@@ -330,7 +333,6 @@ export default class ChunkRender extends Friend {
 	 */
 	protected onReady(): void {
 		this.setLoadersVisibility(false);
-
 		this.chunk++;
 		this.render();
 	}

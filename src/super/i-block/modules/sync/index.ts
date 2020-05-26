@@ -44,11 +44,6 @@ export default class Sync extends Friend {
 	 */
 	readonly syncModCache!: Dictionary<Function>;
 
-	/** @see [[iBlock.$activeField]] */
-	protected get activeField(): CanUndef<string> {
-		return this.ctx.$activeField;
-	}
-
 	/** @see [[iBlock.$syncLinkCache]] */
 	protected get syncLinkCache(): SyncLinkCache {
 		return this.ctx.$syncLinkCache;
@@ -98,7 +93,7 @@ export default class Sync extends Friend {
 	 * }
 	 * ```
 	 */
-	link<D = unknown, R = D>(optsOrWrapper?: AsyncWatchOptions | LinkWrapper<D, R>): CanUndef<R>;
+	link<D = unknown, R = D>(optsOrWrapper?: AsyncWatchOptions | LinkWrapper<this['C'], D, R>): CanUndef<R>;
 
 	/**
 	 * Sets a link to a property that logically connected to the current property.
@@ -126,7 +121,7 @@ export default class Sync extends Friend {
 	 * }
 	 * ```
 	 */
-	link<D = unknown, R = D>(opts: AsyncWatchOptions, wrapper?: LinkWrapper<D, R>): CanUndef<R>;
+	link<D = unknown, R = D>(opts: AsyncWatchOptions, wrapper?: LinkWrapper<this['C'], D, R>): CanUndef<R>;
 
 	/**
 	 * Sets a link to a property/event by the specified path.
@@ -170,7 +165,10 @@ export default class Sync extends Friend {
 	 * }
 	 * ```
 	 */
-	link<D = unknown, R = D>(path: LinkDecl, optsOrWrapper?: AsyncWatchOptions | LinkWrapper<D, R>): CanUndef<R>;
+	link<D = unknown, R = D>(
+		path: LinkDecl,
+		optsOrWrapper?: AsyncWatchOptions | LinkWrapper<this['C'], D, R>
+	): CanUndef<R>;
 
 	/**
 	 * Sets a link to a property/event by the specified path.
@@ -215,11 +213,15 @@ export default class Sync extends Friend {
 	 * }
 	 * ```
 	 */
-	link<D = unknown, R = D>(path: LinkDecl, opts: AsyncWatchOptions, wrapper?: LinkWrapper<D, R>): CanUndef<R>;
 	link<D = unknown, R = D>(
-		path?: LinkDecl | AsyncWatchOptions | LinkWrapper<D>,
-		opts?: AsyncWatchOptions | LinkWrapper<D>,
-		wrapper?: LinkWrapper<D>
+		path: LinkDecl,
+		opts: AsyncWatchOptions, wrapper?: LinkWrapper<this['C'], D, R>
+	): CanUndef<R>;
+
+	link<D = unknown, R = D>(
+		path?: LinkDecl | AsyncWatchOptions | LinkWrapper<this['C'], D>,
+		opts?: AsyncWatchOptions | LinkWrapper<this['C'], D>,
+		wrapper?: LinkWrapper<this['C'], D>
 	): CanUndef<R> {
 		let
 			head;
@@ -252,7 +254,7 @@ export default class Sync extends Friend {
 			isCustomWatcher = false;
 
 		if (!path || !Object.isString(path)) {
-			wrapper = <LinkWrapper<D>>opts;
+			wrapper = <LinkWrapper<this['C'], D>>opts;
 			opts = <AsyncWatchOptions>path;
 			path = `${head.replace(bindingRgxp, '')}Prop`;
 
@@ -288,7 +290,7 @@ export default class Sync extends Friend {
 			}
 
 			const
-				res = wrapper ? wrapper.call(this, val, oldVal) : val;
+				res = wrapper ? wrapper.call(this.component, val, oldVal) : val;
 
 			this.field.set(head, res);
 			return res;
@@ -702,7 +704,7 @@ export default class Sync extends Friend {
 							val = val !== undefined ? val : this.field.get(watchPath);
 						}
 
-						return wrapper ? wrapper.call(this, val, oldVal) : val;
+						return wrapper ? wrapper.call(this.component, val, oldVal) : val;
 					};
 
 					attachWatcher(watchPath, tiedPath, getVal, wrapper && wrapper.length > 1);
@@ -798,7 +800,7 @@ export default class Sync extends Friend {
 	mod<D = unknown, R = unknown>(
 		modName: string,
 		path: string,
-		converter?: ModValueConverter<D, R>
+		converter?: ModValueConverter<this['C'], D, R>
 	): void;
 
 	/**
@@ -813,14 +815,14 @@ export default class Sync extends Friend {
 		modName: string,
 		path: string,
 		opts: AsyncWatchOptions,
-		converter?: ModValueConverter<D, R>
+		converter?: ModValueConverter<this['C'], D, R>
 	): void;
 
 	mod<D = unknown, R = unknown>(
 		modName: string,
 		path: string,
-		optsOrConverter?: AsyncWatchOptions | ModValueConverter<D, R>,
-		converter: ModValueConverter<D, R> = (v) => v != null ? Boolean(v) : undefined
+		optsOrConverter?: AsyncWatchOptions | ModValueConverter<this['C'], D, R>,
+		converter: ModValueConverter<this['C'], D, R> = (v) => v != null ? Boolean(v) : undefined
 	): void {
 		modName = modName.camelize(false);
 
@@ -839,7 +841,7 @@ export default class Sync extends Friend {
 
 		const setWatcher = () => {
 			const wrapper = (val, ...args) => {
-				val = converter.call(this, val, ...args);
+				val = converter.call(this.component, val, ...args);
 
 				if (val !== undefined) {
 					this.ctx.setMod(modName, val);
@@ -858,7 +860,7 @@ export default class Sync extends Friend {
 		if (this.lfc.isBeforeCreate()) {
 			const sync = this.syncModCache[modName] = () => {
 				const
-					v = converter.call(this, this.field.get(path));
+					v = converter.call(this.component, this.field.get(path));
 
 				if (v !== undefined) {
 					ctx.mods[modName] = String(v);

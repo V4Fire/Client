@@ -11,7 +11,8 @@
  * @packageDocumentation
  */
 
-import { initEmitter, ModVal, ComponentInterface } from 'core/component';
+import { ProxyCb } from 'core/async';
+import { initEmitter, ModVal } from 'core/component';
 
 import {
 
@@ -40,7 +41,6 @@ import {
 	DecoratorMethodWatcher,
 
 	WaitStatuses,
-	WaitFn,
 	WaitDecoratorOptions,
 	WaitOptions,
 
@@ -176,9 +176,9 @@ export function wait(opts: WaitDecoratorOptions): Function;
  * @see [[Async.wait]]
  * @param opts - additional options
  */
-export function wait<F extends WaitFn>(
+export function wait<F extends AnyFunction>(
 	opts: WaitOptions<F>
-): WaitFn<Parameters<F>, CanPromise<ReturnType<F>>>;
+): ProxyCb<Parameters<F>, CanPromise<ReturnType<F>>, iBlock>;
 
 /**
  * Decorates a method to wait the specified component status
@@ -198,10 +198,10 @@ export function wait(status: WaitStatuses, opts?: WaitDecoratorOptions): Functio
  * @param status
  * @param fnOrOpts - function to wrap or additional options
  */
-export function wait<F extends WaitFn>(
+export function wait<F extends AnyFunction>(
 	status: WaitStatuses,
 	fnOrOpts: F | WaitOptions<F>
-): WaitFn<Parameters<F>, CanPromise<ReturnType<F>>>;
+): ProxyCb<Parameters<F>, CanPromise<ReturnType<F>>, iBlock>;
 
 export function wait(
 	statusOrOpts: WaitStatuses | WaitDecoratorOptions | WaitOptions,

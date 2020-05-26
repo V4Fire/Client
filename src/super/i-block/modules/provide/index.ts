@@ -27,11 +27,6 @@ export * from 'super/i-block/modules/provide/interface';
  * Class with methods to provide component classes/styles to another component, etc.
  */
 export default class Provide extends Friend {
-	/** @see [[iBlock.componentName]] */
-	get componentName(): string {
-		return this.ctx.componentName;
-	}
-
 	/**
 	 * Returns a full name of the specified component
 	 *
@@ -56,7 +51,7 @@ export default class Provide extends Friend {
 		}
 
 		componentName = componentName || this.componentName;
-		return Block.prototype.getFullBlockName.call({name: componentName}, modName, modValue);
+		return Block.prototype.getFullBlockName.call({componentName}, modName, modValue);
 	}
 
 	/**
@@ -86,7 +81,7 @@ export default class Provide extends Friend {
 		}
 
 		componentName = componentName || this.componentName;
-		return Block.prototype.getFullElName.call({name: componentName}, elName, modName, modValue);
+		return Block.prototype.getFullElName.call({componentName}, elName, modName, modValue);
 	}
 
 	/**

@@ -9,5 +9,5 @@
 import iBlock from 'super/i-block/i-block';
 
 export interface ElCb<CTX extends iBlock = iBlock> {
-	(this: CTX['unsafe'], el: Element): any;
+	(this: CTX, el: Element): any;
 }

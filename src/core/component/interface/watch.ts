@@ -19,14 +19,20 @@ export type WatchPath<CTX extends ComponentInterface = ComponentInterface> =
 
 export interface RawWatchHandler<CTX extends ComponentInterface = ComponentInterface, A = unknown, B = A> {
 	(a: A, b?: B, params?: WatchHandlerParams): any;
-	(this: this, a: A, b?: B, params?: WatchHandlerParams): any;
+	(this: CTX, a: A, b?: B, params?: WatchHandlerParams): any;
 }
 
 export interface WatchHandler<CTX extends ComponentInterface = ComponentInterface, A = unknown, B = A> {
 	(a: A, b: B, params?: WatchHandlerParams): unknown;
 	(...args: A[]): unknown;
+
+	// These overloads meet with the cases when we attach watcher from a decorator
 	(ctx: CTX['unsafe'], a: A, b: B, params?: WatchHandlerParams): unknown;
 	(ctx: CTX['unsafe'], ...args: A[]): unknown;
+}
+
+export interface WatchWrapper<CTX extends ComponentInterface = ComponentInterface, A = unknown, B = A> {
+	(ctx: CTX['unsafe'], handler: WatchHandler<CTX, A, B>): CanPromise<WatchHandler<CTX, A, B> | Function>;
 }
 
 export interface FieldWatcher<
@@ -50,10 +56,6 @@ export interface FieldWatcher<
 	 * @default `true`
 	 */
 	provideArgs?: boolean;
-}
-
-export interface WatchWrapper<CTX extends ComponentInterface = ComponentInterface, A = unknown, B = A> {
-	(ctx: CTX['unsafe'], handler: WatchHandler<CTX, A, B>): CanPromise<WatchHandler<CTX, A, B> | Function>;
 }
 
 export interface WatchObject<

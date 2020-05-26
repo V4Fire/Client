@@ -7,7 +7,6 @@
  */
 
 import { UnsafeIData } from 'super/i-data/i-data';
-
 import bVirtualScroll from 'base/b-virtual-scroll/b-virtual-scroll';
 
 export interface RequestQueryFn<T extends unknown = unknown> {
@@ -129,27 +128,6 @@ export interface RenderItem<T extends unknown = unknown> {
 	index: number;
 }
 
-// @ts-ignore
-export interface UnsafeBVirtualScroll<CTX extends bVirtualScroll = bVirtualScroll> extends UnsafeIData<CTX> {
-	// @ts-ignore (access)
-	total: CTX['total'];
-
-	// @ts-ignore (access)
-	localState: CTX['localState'];
-
-	// @ts-ignore (access)
-	chunkRender: CTX['chunkRender'];
-
-	// @ts-ignore (access)
-	chunkRequest: CTX['chunkRequest'];
-
-	// @ts-ignore (access)
-	componentRender: CTX['componentRender'];
-
-	// @ts-ignore (access)
-	getOptionKey: CTX['getOptionKey'];
-}
-
 /**
  * Last loaded data chunk
  *
@@ -180,3 +158,24 @@ export type LocalState = 'init' | 'ready' | 'error';
  * Display state of the ref
  */
 export type RefDisplayState = '' | 'none';
+
+// @ts-ignore
+export interface UnsafeBVirtualScroll<CTX extends bVirtualScroll = bVirtualScroll> extends UnsafeIData<CTX> {
+	// @ts-ignore (access)
+	total: CTX['total'];
+
+	// @ts-ignore (access)
+	localState: CTX['localState'];
+
+	// @ts-ignore (access)
+	chunkRender: CTX['chunkRender'];
+
+	// @ts-ignore (access)
+	chunkRequest: CTX['chunkRequest'];
+
+	// @ts-ignore (access)
+	componentRender: CTX['componentRender'];
+
+	// @ts-ignore (access)
+	getOptionKey: CTX['getOptionKey'];
+}

@@ -33,18 +33,18 @@ export default {
 
 			const state = requestStates[query.id] = requestStates[query.id] || {
 				i: 0,
-				totalSended: 0,
+				totalSent: 0,
 				...query
 			};
 
-			if (state.totalSended === state.total) {
+			if (state.totalSent === state.total) {
 				return {
 					data: []
 				};
 			}
 
 			const dataToSend = Array.from(Array(query.chunkSize), () => ({i: state.i++}));
-			state.totalSended += dataToSend.length;
+			state.totalSent += dataToSend.length;
 
 			return {
 				data: dataToSend

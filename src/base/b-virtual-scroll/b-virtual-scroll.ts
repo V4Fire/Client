@@ -18,10 +18,10 @@ import iData, {
 
 	component,
 	prop,
+	field,
 	system,
 	wait,
 	p,
-	field,
 
 	RequestParams,
 	RequestError,
@@ -39,6 +39,7 @@ import ChunkRender from 'base/b-virtual-scroll/modules/chunk-render';
 import ChunkRequest from 'base/b-virtual-scroll/modules/chunk-request';
 
 import { getRequestParams } from 'base/b-virtual-scroll/modules/helpers';
+
 import {
 
 	GetData,
@@ -64,23 +65,23 @@ export default class bVirtualScroll extends iData implements iItems {
 	/** @override */
 	readonly checkDBEquality: CheckDBEquality = false;
 
-	/** @see [[iItems.prototype.itemsProp]] */
+	/** @see [[iItems.itemsProp]] */
 	@prop(Array)
 	readonly optionsProp?: iItems['optionsProp'] = [];
 
-	/** @see [[iItems.prototype.items]] */
+	/** @see [[iItems.items]] */
 	@field((o) => o.sync.link())
 	options!: unknown[];
 
-	/** @see [[iItems.prototype.item]] */
+	/** @see [[iItems.item]] */
 	@prop({type: [String, Function], required: false})
 	readonly option?: iItems['option'];
 
-	/** @see [[iItems.prototype.itemKey]] */
+	/** @see [[iItems.itemKey]] */
 	@prop({type: [String, Function], required: false})
 	readonly optionKey?: iItems['optionKey'];
 
-	/** @see [[iItems.prototype.itemProps]] */
+	/** @see [[iItems.itemProps]] */
 	@prop({type: Function, default: () => ({})})
 	readonly optionProps!: iItems['optionProps'];
 
@@ -116,13 +117,13 @@ export default class bVirtualScroll extends iData implements iItems {
 	readonly clearNodes: boolean = false;
 
 	/**
-	 * If true then created nodes will be cached
+	 * If true, then created nodes will be cached
 	 */
 	@prop({type: Boolean, watch: 'syncPropsWatcher'})
 	readonly cacheNodes: boolean = true;
 
 	/**
-	 * If true then additional data chunk will be requested automatically on user scroll
+	 * If true, then additional data chunk will be requested automatically on user scroll
 	 */
 	@prop({type: Boolean})
 	readonly requestOnScroll: boolean = true;
@@ -138,7 +139,7 @@ export default class bVirtualScroll extends iData implements iItems {
 	readonly request?: RequestParams;
 
 	/**
-	 * Requests remote data chunk to render
+	 * Requests a new data chunk to render
 	 */
 	@prop({type: Function, default: (ctx, query) => ctx.get(query), required: false})
 	readonly getData!: GetData;
@@ -243,11 +244,11 @@ export default class bVirtualScroll extends iData implements iItems {
 	}
 
 	/**
-	 * Reloads the last request (if there is no `db` or `options` `bVirtualScroll.prototype.reload` will be called)
+	 * Reloads the last request (if there is no `db` or `options` the method calls reload)
 	 */
 	reloadLast(): void {
 		if (!this.db || !this.options.length) {
-			this.reload();
+			this.reload().catch(stderr);
 
 		} else {
 			this.chunkRequest.reloadLast();
@@ -262,10 +263,7 @@ export default class bVirtualScroll extends iData implements iItems {
 		this.chunkRender.reInit();
 	}
 
-	/**
-	 * @override
-	 * @emits localEmitter:localReady
-	 */
+	/** @override  */
 	protected initRemoteData(): void {
 		if (!this.db) {
 			return;
@@ -275,16 +273,22 @@ export default class bVirtualScroll extends iData implements iItems {
 			val = this.convertDBToComponent<RemoteData>(this.db);
 
 		if (this.field.get('data.length', val)) {
-			this.chunkRequest.shouldStopRequest(getRequestParams(undefined, undefined, {lastLoadedData: val.data}));
+			const
+				params = getRequestParams(undefined, undefined, {lastLoadedData: val.data});
+
+			this.chunkRequest.shouldStopRequest(params);
 			this.options = val.data;
 			this.total = Object.isNumber(val.total) ? val.total : undefined;
 
 		} else {
-			this.chunkRequest.shouldStopRequest(getRequestParams(undefined, undefined, {isLastEmpty: true}));
+			const
+				params = getRequestParams(undefined, undefined, {isLastEmpty: true});
+
+			this.chunkRequest.shouldStopRequest(params);
 			this.options = [];
 		}
 
-		this.chunkRequest.init();
+		this.chunkRequest.init().catch(stderr);
 	}
 
 	/** @see [[iItems.getItemKey]] */
@@ -300,10 +304,7 @@ export default class bVirtualScroll extends iData implements iItems {
 		return this.reInit();
 	}
 
-	/**
-	 *  @override
-	 *  @emits localEmitter:localError
-	 */
+	/** @override */
 	protected onRequestError(err: Error | RequestError<unknown>, retry: RetryRequestFn): void {
 		super.onRequestError(err, retry);
 		this.localState = 'error';

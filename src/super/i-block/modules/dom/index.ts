@@ -91,7 +91,7 @@ export default class DOM extends Friend {
 		}
 
 		if (node.clientHeight) {
-			cb.call(this.ctx, node);
+			cb.call(this.component, node);
 			return false;
 		}
 
@@ -111,7 +111,7 @@ export default class DOM extends Friend {
 
 		wrapper.appendChild(node);
 		document.body.appendChild(wrapper);
-		await cb.call(this.ctx, node);
+		await cb.call(this.component, node);
 
 		if (parent) {
 			if (before) {
@@ -218,27 +218,30 @@ export default class DOM extends Friend {
 	}
 
 	/**
-	 * Creates a Block instance from the specified node
+	 * Creates a Block instance from the specified node and component instance
 	 *
 	 * @param node
-	 * @param [component]
+	 * @param [component] - component instance, if not specified, the instance is taken from a node
 	 */
-	createBlockCtxFromNode(node: Node, component?: iBlock): Dictionary {
+	createBlockCtxFromNode(node: CanUndef<Node>, component?: iBlock): Dictionary {
 		const
-			$el = <ComponentElement<this['CTX']>>node,
-			comp = component || $el.component;
+			$el = <CanUndef<ComponentElement<this['CTX']>>>node,
+			ctxFromNode = component || $el?.component;
 
-		const componentName = comp ?
-			comp.componentName :
-			Object.get(componentRgxp.exec($el.className), '1') || this.ctx.componentName;
+		const componentName = ctxFromNode ?
+			ctxFromNode.componentName :
+			Object.get(componentRgxp.exec($el?.className || ''), '1') || this.ctx.componentName;
+
+		const resolvedCtx = ctxFromNode || {
+			$el,
+			componentName,
+			isFlyweight: true,
+			localEmitter: {emit(): void { /* loopback */ }}
+		};
 
 		return Object.assign(Object.create(Block.prototype), {
-			component: comp || {
-				$el,
-				componentName,
-				isFlyweight: true,
-				localEmitter: {emit(): void { /* loopback */ }}
-			}
+			ctx: resolvedCtx,
+			component: resolvedCtx
 		});
 	}
 }

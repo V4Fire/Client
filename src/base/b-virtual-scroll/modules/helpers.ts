@@ -8,7 +8,6 @@
 
 import ChunkRender from 'base/b-virtual-scroll/modules/chunk-render';
 import ChunkRequest from 'base/b-virtual-scroll/modules/chunk-request';
-
 import { RequestMoreParams } from 'base/b-virtual-scroll/interface';
 
 /**
@@ -60,7 +59,6 @@ export function getRequestParams(
 			raw: chunkRequestCtx.lastLoadedChunk.raw,
 			normalized: lastLoadedData || []
 		}
-
 	} : base;
 
 	const merged = {

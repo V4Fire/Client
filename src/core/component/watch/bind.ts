@@ -234,7 +234,7 @@ export function bindRemoteWatchers(component: ComponentInterface, params?: BindR
 				// Mind that the wrapper must return a function as the result,
 				// but it can be packed to a promise.
 				if (watchInfo.wrapper) {
-					handler = <typeof handler>watchInfo.wrapper(component, handler);
+					handler = <typeof handler>watchInfo.wrapper(component.unsafe, handler);
 				}
 
 				// To improve initialization performance, we should separately handle the promise situation
