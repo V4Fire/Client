@@ -20,8 +20,8 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
   * Replaced `gulp-image` to the `gulp-imagemin`;
   * Webpack will pass `webp` files through the `image-webpack`.
 
-* [Added gulp task "test: components" which will run in parallel all the tests that are specified in the `tests/cases.js` file](https://github.com/V4Fire/Client/pull/201)
-* [Added `time`, `timeIn`, `timeOut` in `in-view` directive](https://github.com/V4Fire/Client/pull/201)
+* [Added gulp task "test: components" which will run in parallel all tests that are specified in the `tests/cases.js` file](https://github.com/V4Fire/Client/pull/201)
+* [Added `time`, `timeIn`, `timeOut` in the `in-view` directive](https://github.com/V4Fire/Client/pull/201)
 
 ### :bug: Bug Fix
 
@@ -35,7 +35,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### :house: Internal
 
 * [Added test action](https://github.com/V4Fire/Client/pull/201)
-  * Runs components tests;
+  * Runs component tests;
   * Runs typescript tests;
   * Runs eslint.
 

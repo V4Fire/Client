@@ -83,7 +83,8 @@ export default class InView extends Super {
 
 		delete opts.delay;
 
-		const observer = new IntersectionObserver(this.onIntersects.bind(this, observable.threshold), opts);
+		const
+			observer = new IntersectionObserver(this.onIntersects.bind(this, observable.threshold), opts);
 
 		this.observers.set(observable.id, observer);
 		return observer;
