@@ -51,7 +51,8 @@ import {
 
 } from 'base/b-virtual-scroll/interface';
 
-export { RequestFn, RemoteData, RequestQueryFn, GetData };
+export * from 'base/b-virtual-scroll/modules/helpers';
+export * from 'base/b-virtual-scroll/interface';
 export * from 'super/i-data/i-data';
 
 export const
