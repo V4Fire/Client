@@ -289,6 +289,7 @@ export default abstract class iData extends iBlock implements iProgress {
 	 * @see [[iData.db]]
 	 */
 	@field()
+	// @ts-ignore
 	protected dbStore?: CanUndef<this['DB']>;
 
 	/**

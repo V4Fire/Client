@@ -88,9 +88,9 @@ export default class bImageEditor extends iBlock implements iVisible {
 	/**
 	 * Link for a CanvasRenderingContext2D element
 	 */
-	@system({
+	@system<bImageEditor>({
 		after: 'canvas',
-		init: (o: bImageEditor) => o.canvas.getContext('2d')
+		init: (o) => o.canvas.getContext('2d')
 	})
 
 	ctx!: CanvasRenderingContext2D;

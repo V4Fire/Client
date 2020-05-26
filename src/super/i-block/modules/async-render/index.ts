@@ -15,25 +15,23 @@
 import { queue, restart, deferRestart } from 'core/render';
 //#endif
 
-import iBlock from 'super/i-block/i-block';
 import Friend from 'super/i-block/modules/friend';
-
 import { TaskOptions, TaskDesc } from 'super/i-block/modules/async-render/interface';
 export * from 'super/i-block/modules/async-render/interface';
 
 /**
  * Class provides API to render chunks of a component template asynchronously
  */
-export default class AsyncRender<C extends iBlock = iBlock> extends Friend<C> {
+export default class AsyncRender extends Friend {
 	//#if runtime has component/async-render
 
 	/** @see [[iBlock.$asyncLabel]] */
 	get asyncLabel(): symbol {
-		return this.component.$asyncLabel;
+		return this.ctx.$asyncLabel;
 	}
 
 	/** @override */
-	constructor(component: C) {
+	constructor(component: any) {
 		super(component);
 
 		this.meta.hooks.beforeUpdate.push({fn: () => {
@@ -42,7 +40,7 @@ export default class AsyncRender<C extends iBlock = iBlock> extends Friend<C> {
 			};
 
 			this.async.clearAll(group);
-			this.component.$async.clearAll(group);
+			this.ctx.$async.clearAll(group);
 		}});
 
 		this.meta.hooks.beforeUpdated.push({fn: (desc: TaskDesc = {}) => {
@@ -143,7 +141,7 @@ export default class AsyncRender<C extends iBlock = iBlock> extends Friend<C> {
 					val = el.value,
 					isPromise = Object.isPromise(val);
 
-				if (!isPromise && (!f || f.call(this.component, val, syncI, {list, i: syncI, total: syncTotal}))) {
+				if (!isPromise && (!f || f.call(this.ctx, val, syncI, {list, i: syncI, total: syncTotal}))) {
 					syncTotal++;
 					finalArr.push(val);
 
@@ -289,7 +287,7 @@ export default class AsyncRender<C extends iBlock = iBlock> extends Friend<C> {
 
 				this.createTask(task, {
 					weight,
-					filter: f && f.bind(this.component, val, i, {
+					filter: f && f.bind(this.ctx, val, i, {
 						list,
 						i: syncI + i + 1,
 

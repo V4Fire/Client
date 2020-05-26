@@ -11,7 +11,6 @@
  * @packageDocumentation
  */
 
-import iBlock from 'super/i-block/i-block';
 import Friend from 'super/i-block/modules/friend';
 
 import { literalCache } from 'super/i-block/modules/opt/const';
@@ -23,10 +22,10 @@ export * from 'super/i-block/modules/opt/interface';
 /**
  * Class provides some methods to optimize an application
  */
-export default class Opt<C extends iBlock = iBlock> extends Friend<C> {
+export default class Opt extends Friend {
 	/** @see [[iBlock.ifOnceStore]] */
-	protected get ifOnceStore(): this['C']['ifOnceStore'] {
-		return this.component.ifOnceStore;
+	protected get ifOnceStore(): this['CTX']['ifOnceStore'] {
+		return this.ctx.ifOnceStore;
 	}
 
 	/**
@@ -92,27 +91,27 @@ export default class Opt<C extends iBlock = iBlock> extends Friend<C> {
 	 */
 	showAnyChanges(): void {
 		const cg = (name, key, val, oldVal, info) => {
-			console.group(`${name} "${key}" (${this.component.componentName})`);
+			console.group(`${name} "${key}" (${this.ctx.componentName})`);
 			console.log(Object.fastClone(val));
 			console.log(oldVal);
 			console.log('Path: ', info?.path);
 			console.groupEnd();
 		};
 
-		Object.forEach(this.component.$systemFields, (val, key) => {
-			this.component.watch(key, {deep: true}, (val, oldVal, info) => {
+		Object.forEach(this.ctx.$systemFields, (val, key) => {
+			this.ctx.watch(key, {deep: true}, (val, oldVal, info) => {
 				cg('System field', key, val, oldVal, info);
 			});
 		});
 
-		Object.forEach(this.component.$fields, (val, key) => {
-			this.component.watch(key, {deep: true}, (val, oldVal, info) => {
+		Object.forEach(this.ctx.$fields, (val, key) => {
+			this.ctx.watch(key, {deep: true}, (val, oldVal, info) => {
 				cg('Field', key, val, oldVal, info);
 			});
 		});
 
-		Object.forEach(this.component.$props, (val, key) => {
-			this.component.watch(key, {deep: true}, (val, oldVal, info) => {
+		Object.forEach(this.ctx.$props, (val, key) => {
+			this.ctx.watch(key, {deep: true}, (val, oldVal, info) => {
 				cg('Prop', key, val, oldVal, info);
 			});
 		});

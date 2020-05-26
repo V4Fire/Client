@@ -6,21 +6,28 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import Async from 'core/async';
 import symbolGenerator from 'core/symbol';
-
-import bVirtualScroll from 'base/b-virtual-scroll/b-virtual-scroll';
-import ComponentRender from 'base/b-virtual-scroll/modules/component-render';
-import ScrollRequest from 'base/b-virtual-scroll/modules/scroll-request';
 
 import { InitOptions } from 'core/component/directives/in-view/interface';
 import { InViewAdapter, inViewFactory } from 'core/component/directives/in-view';
-import { RenderItem, UnsafeScrollRender } from 'base/b-virtual-scroll/modules/interface';
+
+import { Friend } from 'super/i-block/i-block';
+import bVirtualScroll from 'base/b-virtual-scroll/b-virtual-scroll';
+
+import ComponentRender from 'base/b-virtual-scroll/modules/component-render';
+import ChunkRequest from 'base/b-virtual-scroll/modules/chunk-request';
+
+import { RenderItem, RefDisplayState } from 'base/b-virtual-scroll/interface';
 
 export const
 	$$ = symbolGenerator();
 
-export default class ScrollRender {
+// @ts-ignore
+export default class ChunkRender extends Friend {
+	/* @override */
+	// @ts-ignore
+	readonly C!: bVirtualScroll;
+
 	/**
 	 * Render items
 	 */
@@ -42,9 +49,9 @@ export default class ScrollRender {
 	lastRenderRange: number[] = [0, 0];
 
 	/**
-	 * Component instance
+	 * Async group
 	 */
-	readonly component: bVirtualScroll['unsafe'];
+	readonly asyncGroup: string = 'scroll-render:';
 
 	/**
 	 * Number of items
@@ -52,18 +59,6 @@ export default class ScrollRender {
 	get itemsCount(): number {
 		return this.items.length;
 	}
-
-	/**
-	 * API to unsafe invoke of internal properties of the component
-	 */
-	get unsafe(): UnsafeScrollRender & this {
-		return <any>this;
-	}
-
-	/**
-	 * Async group
-	 */
-	protected readonly asyncGroup: string = 'scroll-render:';
 
 	/**
 	 * Async in-view label prefix
@@ -76,38 +71,26 @@ export default class ScrollRender {
 	protected readonly InView: InViewAdapter = inViewFactory();
 
 	/**
+	 * The cache of the current display (`style.display`) state of nodes
+	 *
+	 * ```
+	 * [refName]:[displayValue]
+	 * ```
+	 */
+	protected refState: Dictionary<RefDisplayState> = {};
+
+	/**
 	 * API for dynamic component rendering
 	 */
 	protected get componentRender(): ComponentRender {
-		return this.component.componentRender;
+		return this.ctx.componentRender;
 	}
 
 	/**
 	 * API for scroll data requests
 	 */
-	protected get scrollRequest(): ScrollRequest {
-		return this.component.scrollRequest;
-	}
-
-	/**
-	 * Async instance
-	 */
-	protected get async(): Async<bVirtualScroll> {
-		return this.component.async;
-	}
-
-	/**
-	 * API for component DOM operations
-	 */
-	protected get dom(): bVirtualScroll['dom'] {
-		return this.component.dom;
-	}
-
-	/**
-	 * Link to the component refs
-	 */
-	protected get refs(): bVirtualScroll['$refs'] {
-		return this.component.$refs;
+	protected get chunkRequest(): ChunkRequest {
+		return this.ctx.chunkRequest;
 	}
 
 	/**
@@ -117,15 +100,16 @@ export default class ScrollRender {
 		return Math.floor((Math.random() * (0.06 - 0.01) + 0.01) * 100) / 100;
 	}
 
-	/**
-	 * @param component
-	 */
-	constructor(component: bVirtualScroll) {
-		this.component = component.unsafe;
+	/** @override */
+	constructor(component: any) {
+		super(component);
 
-		this.component.meta.hooks.mounted.push({fn: () => {
-			this.setLoadersVisibility(true);
+		this.ctx.meta.hooks.mounted.push({fn: () => {
 			this.initEventHandlers();
+
+			if (!this.ctx.dataProvider) {
+				this.chunkRequest.init().catch(stderr);
+			}
 		}});
 	}
 
@@ -137,8 +121,9 @@ export default class ScrollRender {
 		this.lastRenderRange = [0, 0];
 		this.chunk = 0;
 		this.items = [];
+		this.refState = {};
 
-		this.scrollRequest.reset();
+		this.chunkRequest.reset();
 		this.async.clearAll({group: new RegExp(this.asyncGroup)});
 
 		this.setLoadersVisibility(true);
@@ -161,12 +146,16 @@ export default class ScrollRender {
 	 * Renders component content
 	 */
 	render(): void {
-		const
-			{component, chunk, items} = this;
+		if (this.ctx.localState !== 'ready') {
+			return;
+		}
 
 		const
-			renderFrom = (chunk - 1) * component.chunkSize,
-			renderTo = chunk * component.chunkSize,
+			{ctx, chunk, items} = this;
+
+		const
+			renderFrom = (chunk - 1) * ctx.chunkSize,
+			renderTo = chunk * ctx.chunkSize,
 			renderItems = items.slice(renderFrom, renderTo);
 
 		if (
@@ -213,7 +202,13 @@ export default class ScrollRender {
 			return;
 		}
 
-		refEl.style.display = show ? '' : 'none';
+		const state = show ? '' : 'none';
+
+		if (state === this.refState[ref]) {
+			return;
+		}
+
+		refEl.style.display = state;
 	}
 
 	/**
@@ -226,11 +221,11 @@ export default class ScrollRender {
 	}
 
 	/**
-	 * Event handlers initialisation
+	 * Event handlers initialization
 	 */
 	protected initEventHandlers(): void {
-		this.component.localEmitter.once('localReady', this.onReady.bind(this), {label: $$.reInit});
-		this.component.localEmitter.once('localError', this.onError.bind(this), {label: $$.reInit});
+		this.ctx.localEmitter.once('localState.ready', this.onReady.bind(this), {label: $$.reInit});
+		this.ctx.localEmitter.once('localState.error', this.onError.bind(this), {label: $$.reInit});
 	}
 
 	/**
@@ -262,9 +257,9 @@ export default class ScrollRender {
 	 */
 	protected wrapInView(item: RenderItem): void {
 		const
-			{component} = this,
+			{ctx} = this,
 			{node} = item,
-			label = `${this.asyncGroup}:${this.asyncInViewPrefix}${component.getOptionKey(item.data, item.index)}`;
+			label = `${this.asyncGroup}:${this.asyncInViewPrefix}${ctx.getOptionKey(item.data, item.index)}`;
 
 		if (!node) {
 			return;
@@ -302,7 +297,7 @@ export default class ScrollRender {
 		return {
 			delay: 0,
 			threshold: this.randomThreshold,
-			once: !this.component.clearNodes,
+			once: !this.ctx.clearNodes,
 			onEnter: () => this.onNodeIntersect(index)
 		};
 	}
@@ -313,17 +308,17 @@ export default class ScrollRender {
 	 */
 	protected onNodeIntersect(index: number): void {
 		const
-			{component, items} = this,
-			{chunkSize, renderGap} = component,
+			{ctx, items, lastIntersectsItem} = this,
+			{chunkSize, renderGap} = ctx,
 			currentRender = (this.chunk - 1) * chunkSize;
 
+		this.lastIntersectsItem = index;
+
 		if (index + renderGap + chunkSize >= items.length) {
-			this.scrollRequest.try();
+			this.chunkRequest.try();
 		}
 
-		if (index > this.lastIntersectsItem) {
-			this.lastIntersectsItem = index;
-
+		if (index >= lastIntersectsItem) {
 			if (currentRender - index <= renderGap) {
 				this.render();
 			}
@@ -334,19 +329,10 @@ export default class ScrollRender {
 	 * Handler: component ready
 	 */
 	protected onReady(): void {
-		this.initItems(this.component.options);
 		this.setLoadersVisibility(false);
 
 		this.chunk++;
 		this.render();
-	}
-
-	/**
-	 * Handler: all requests are done
-	 */
-	protected onRequestsDone(): void {
-		this.setLoadersVisibility(false);
-		this.setRefVisibility('done', true);
 	}
 
 	/**

@@ -11,10 +11,9 @@
  * @packageDocumentation
  */
 
-import iBlock from 'super/i-block/i-block';
 import Friend from 'super/i-block/modules/friend';
-
 import { ModsTable, ModsNTable } from 'super/i-block/modules/mods';
+
 import {
 
 	ModEvent,
@@ -36,20 +35,20 @@ const
 /**
  * Class implements BEM-like API
  */
-export default class Block<C extends iBlock = iBlock> extends Friend<C> {
+export default class Block extends Friend {
 	/** @see [[iBlock.componentId]] */
 	get id(): string {
-		return this.component.componentId;
+		return this.ctx.componentId;
 	}
 
 	/** @see [[iBlock.componentName]] */
 	get name(): string {
-		return this.component.componentName;
+		return this.ctx.componentName;
 	}
 
 	/** @see [[iBlock.$el]] */
-	get node(): this['C']['$el'] {
-		return this.component.$el;
+	get node(): this['CTX']['$el'] {
+		return this.ctx.$el;
 	}
 
 	/**
@@ -58,7 +57,7 @@ export default class Block<C extends iBlock = iBlock> extends Friend<C> {
 	protected readonly mods?: Dictionary<CanUndef<string>>;
 
 	/** @override */
-	constructor(component: C) {
+	constructor(component: any) {
 		super(component);
 		this.mods = Object.createDict();
 
@@ -221,7 +220,7 @@ export default class Block<C extends iBlock = iBlock> extends Friend<C> {
 		name = name.camelize(false);
 
 		const
-			{mods, node, component} = this;
+			{mods, node, ctx} = this;
 
 		const
 			normalizedVal = String(value).dasherize(),
@@ -265,20 +264,20 @@ export default class Block<C extends iBlock = iBlock> extends Friend<C> {
 			reason
 		};
 
-		if (component.field) {
-			const watchModsStore = component.field.get<ModsNTable>('watchModsStore')!;
-			component.mods[name] = normalizedVal;
+		if (ctx.field) {
+			const watchModsStore = ctx.field.get<ModsNTable>('watchModsStore')!;
+			ctx.mods[name] = normalizedVal;
 
 			if (name in watchModsStore && watchModsStore[name] !== normalizedVal) {
 				delete Object.getPrototypeOf(watchModsStore)[name];
-				component.field.set(`watchModsStore.${name}`, normalizedVal);
+				ctx.field.set(`watchModsStore.${name}`, normalizedVal);
 			}
 
 			this.localEmitter.emit(`block.mod.set.${name}.${normalizedVal}`, event);
 
 			// @deprecated
-			component.emit(`mod-set-${name}-${normalizedVal}`, event);
-			component.emit(`mod:set:${name}:${normalizedVal}`, event);
+			ctx.emit(`mod-set-${name}-${normalizedVal}`, event);
+			ctx.emit(`mod:set:${name}:${normalizedVal}`, event);
 
 		} else {
 			this.localEmitter.emit(`block.mod.set.${name}.${normalizedVal}`, event);
@@ -299,7 +298,7 @@ export default class Block<C extends iBlock = iBlock> extends Friend<C> {
 		value = value != null ? String(value).dasherize() : undefined;
 
 		const
-			{mods, node, component} = this;
+			{mods, node, ctx} = this;
 
 		const
 			current = this.getMod(name, reason === 'initSetMod');
@@ -324,20 +323,20 @@ export default class Block<C extends iBlock = iBlock> extends Friend<C> {
 			reason
 		};
 
-		if (reason === 'removeMod' && component.field) {
-			const watchModsStore = component.field.get<ModsNTable>('watchModsStore')!;
-			component.mods[name] = undefined;
+		if (reason === 'removeMod' && ctx.field) {
+			const watchModsStore = ctx.field.get<ModsNTable>('watchModsStore')!;
+			ctx.mods[name] = undefined;
 
 			if (name in watchModsStore && watchModsStore[name]) {
 				delete Object.getPrototypeOf(watchModsStore)[name];
-				component.field.set(`watchModsStore.${name}`, undefined);
+				ctx.field.set(`watchModsStore.${name}`, undefined);
 			}
 
 			this.localEmitter.emit(`block.mod.remove.${name}.${current}`, event);
 
 			// @deprecated
-			component.emit(`mod-remove-${name}-${current}`, event);
-			component.emit(`mod:remove:${name}:${current}`, event);
+			ctx.emit(`mod-remove-${name}-${current}`, event);
+			ctx.emit(`mod:remove:${name}:${current}`, event);
 
 		} else {
 			this.localEmitter.emit(`block.mod.remove.${name}.${current}`, event);
@@ -354,13 +353,13 @@ export default class Block<C extends iBlock = iBlock> extends Friend<C> {
 	 */
 	getMod(name: string, fromNode?: boolean): CanUndef<string> {
 		const
-			{mods, node, component} = this;
+			{mods, node, ctx} = this;
 
 		if (mods && !fromNode) {
 			return mods[name.camelize(false)];
 		}
 
-		if (!node || !component.isFlyweight && !component.isFunctional) {
+		if (!node || !ctx.isFlyweight && !ctx.isFunctional) {
 			return undefined;
 		}
 

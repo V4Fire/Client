@@ -33,7 +33,7 @@ export * from 'super/i-block/modules/daemons/interface';
 /**
  * Class to manage component daemons
  */
-export default class Daemons<C extends iBlock = iBlock> extends Friend<C> {
+export default class Daemons extends Friend {
 	//#if runtime has component/daemons
 
 	/**
@@ -68,12 +68,12 @@ export default class Daemons<C extends iBlock = iBlock> extends Friend<C> {
 	/**
 	 * Map of component daemons
 	 */
-	protected get daemons(): DaemonsDict<this['C']> {
-		return (<typeof iBlock>this.component.instance.constructor).daemons;
+	protected get daemons(): DaemonsDict<this['CTX']> {
+		return (<typeof iBlock>this.ctx.instance.constructor).daemons;
 	}
 
 	/** @override */
-	constructor(component: C) {
+	constructor(component: any) {
 		super(component);
 		this.init();
 	}
@@ -92,7 +92,7 @@ export default class Daemons<C extends iBlock = iBlock> extends Friend<C> {
 	 * @param name
 	 * @param spawned
 	 */
-	spawn(name: string, spawned: SpawnedDaemon<this['C']>): boolean {
+	spawn(name: string, spawned: SpawnedDaemon<this['CTX']>): boolean {
 		const
 			exists = this.isExists(name);
 
@@ -112,7 +112,7 @@ export default class Daemons<C extends iBlock = iBlock> extends Friend<C> {
 	 */
 	run<R = unknown>(name: string, ...args: unknown[]): CanUndef<R> {
 		const
-			ctx = this.component,
+			ctx = this.ctx,
 			daemon = this.get(name);
 
 		if (!daemon) {
@@ -124,7 +124,7 @@ export default class Daemons<C extends iBlock = iBlock> extends Friend<C> {
 
 		if (daemon.immediate !== true) {
 			const asyncOptions = {
-				group: `daemons:${this.component.componentName}`,
+				group: `daemons:${this.ctx.componentName}`,
 				label: `daemons:${name}`,
 				...daemon.asyncOptions
 			};
@@ -144,7 +144,7 @@ export default class Daemons<C extends iBlock = iBlock> extends Friend<C> {
 	 * Returns a daemon by the specified name
 	 * @param name
 	 */
-	protected get(name: string): CanUndef<Daemon<this['C']>> {
+	protected get(name: string): CanUndef<Daemon<this['CTX']>> {
 		return this.daemons[name];
 	}
 
@@ -177,7 +177,7 @@ export default class Daemons<C extends iBlock = iBlock> extends Friend<C> {
 	 */
 	protected bindToHook(hook: string, name: string, opts?: DaemonHookOptions): void {
 		const
-			{hooks} = this.component.meta;
+			{hooks} = this.ctx.meta;
 
 		hooks[hook].push({
 			fn: () => this.run(name),
@@ -193,7 +193,7 @@ export default class Daemons<C extends iBlock = iBlock> extends Friend<C> {
 	 */
 	protected bindToWatch(watch: DaemonWatcher, name: string): void {
 		const
-			{watchers} = this.component.meta;
+			{watchers} = this.ctx.meta;
 
 		const
 			watchName = Object.isSimpleObject(watch) ? watch.field : watch,

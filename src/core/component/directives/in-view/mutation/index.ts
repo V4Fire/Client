@@ -338,6 +338,10 @@ export default class InView extends Super {
 			join: true
 		};
 
+		const highResTimeStamp = performance.now();
+		observable.time = highResTimeStamp;
+		observable.timeIn = highResTimeStamp;
+
 		if (Object.isFunction(observable.onEnter)) {
 			observable.onEnter(observable);
 		}
@@ -362,6 +366,10 @@ export default class InView extends Super {
 			label: observable.id,
 			join: true
 		};
+
+		const highResTimeStamp = performance.now();
+		observable.time = highResTimeStamp;
+		observable.timeOut = highResTimeStamp;
 
 		if (Object.isFunction(observable.onLeave)) {
 			observable.onLeave(observable);

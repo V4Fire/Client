@@ -65,7 +65,7 @@ export type ComponentElement<T = unknown> = Element & {
 	component?: T;
 };
 
-export interface BindedFn<CTX extends ComponentInterface = ComponentInterface> {
+export interface BoundFn<CTX extends ComponentInterface = ComponentInterface> {
 	(this: CTX): any;
 }
 
@@ -76,6 +76,8 @@ export interface RenderReason {
 }
 
 export interface UnsafeComponentInterface<CTX extends ComponentInterface = ComponentInterface> {
+	readonly CTX: CTX;
+
 	renderCounter: number;
 	lastSelfReasonToRender?: Nullable<RenderReason>;
 	lastTimeOfRender?: DOMHighResTimeStamp;
@@ -110,6 +112,9 @@ export interface UnsafeComponentInterface<CTX extends ComponentInterface = Compo
 
 	// @ts-ignore (access)
 	$refs: CTX['$refs'];
+
+	// @ts-ignore (access)
+	$refHandlers: CTX['$refHandlers'];
 
 	// @ts-ignore (access)
 	$remoteParent: CTX['$remoteParent'];
@@ -163,16 +168,23 @@ export interface UnsafeComponentInterface<CTX extends ComponentInterface = Compo
 	_u: Function;
 }
 
-export type UnsafeGetter<U extends UnsafeComponentInterface> = U extends UnsafeComponentInterface<infer CTX> ?
-	U & {-readonly [K in keyof CTX]: K extends 'unsafe' ? never : CTX[K]} : U;
+export type UnsafeGetter<U extends UnsafeComponentInterface = UnsafeComponentInterface> =
+	Dictionary & U['CTX'] & U & {unsafe: any};
 
 /**
  * Abstract class represents Vue compatible component API
  */
-export abstract class ComponentInterface<
-	C extends ComponentInterface = ComponentInterface<any, any>,
-	R extends ComponentInterface = ComponentInterface<any, any>
-> {
+export abstract class ComponentInterface {
+	/**
+	 * Type: base component
+	 */
+	readonly Component!: ComponentInterface;
+
+	/**
+	 * Type: root component
+	 */
+	readonly Root!: ComponentInterface;
+
 	/**
 	 * Unique component string identifier
 	 */
@@ -209,13 +221,12 @@ export abstract class ComponentInterface<
 	 * API to unsafe invoke of internal properties of the component.
 	 * It can be useful to create friendly classes for a component.
 	 */
-	// @ts-ignore
 	readonly unsafe!: UnsafeGetter<UnsafeComponentInterface<this>>;
 
 	/**
 	 * Link to a DOM element that is tied with the component
 	 */
-	readonly $el!: ComponentElement<C>;
+	readonly $el!: ComponentElement<this['Component']>;
 
 	/**
 	 * Map of raw component options
@@ -230,22 +241,22 @@ export abstract class ComponentInterface<
 	/**
 	 * List of child components
 	 */
-	readonly $children?: C[];
+	readonly $children?: this['Component'][];
 
 	/**
 	 * Link to a parent component
 	 */
-	readonly $parent?: C;
+	readonly $parent?: this['Component'];
 
 	/**
 	 * Link to the closest non functional parent component
 	 */
-	readonly $normalParent?: C;
+	readonly $normalParent?: this['Component'];
 
 	/**
 	 * Link to the root component
 	 */
-	readonly $root!: R;
+	readonly $root!: this['Root'];
 
 	/**
 	 * True if the component can attach to a parent render function
@@ -282,7 +293,8 @@ export abstract class ComponentInterface<
 	 * Link to a parent component
 	 * (using with async rendering)
 	 */
-	protected readonly $remoteParent?: C;
+	// @ts-ignore
+	protected readonly $remoteParent?: this['Component'];
 
 	/**
 	 * The special symbol that is tied with async rendering
@@ -389,7 +401,7 @@ export abstract class ComponentInterface<
 	 * Executes the specified function on a next render tick
 	 * @param cb
 	 */
-	$nextTick(cb: Function | BindedFn<this>): void;
+	$nextTick(cb: Function | BoundFn<this>): void;
 
 	/**
 	 * Returns a promise that will be resolved on a next render tick

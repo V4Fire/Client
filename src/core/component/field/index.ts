@@ -35,14 +35,12 @@ export function initFields(
 	store: Dictionary = {}
 ): Dictionary {
 	const
-		ctx = component.unsafe;
-
-	const
-		{meta: {params, instance}} = ctx;
+		{unsafe} = component,
+		{meta: {params, instance}} = unsafe;
 
 	const
 		// True if a component is functional or a flyweight
-		isFlyweight = ctx.isFlyweight || params.functional === true;
+		isFlyweight = unsafe.isFlyweight || params.functional === true;
 
 	const
 		// Map of fields that we should skip, i.e. not to initialize.
@@ -105,13 +103,13 @@ export function initFields(
 					store[key] = undefined;
 				}
 
-				ctx.$activeField = key;
+				Object.set(unsafe, '$activeField', key);
 
 				let
 					val;
 
 				if (el.init) {
-					val = el.init(ctx, store);
+					val = el.init(unsafe, store);
 				}
 
 				if (val === undefined) {
@@ -126,7 +124,7 @@ export function initFields(
 					store[key] = val;
 				}
 
-				ctx.$activeField = undefined;
+				Object.set(unsafe, '$activeField', undefined);
 			}
 
 		} else {
@@ -199,14 +197,14 @@ export function initFields(
 					store[key] = undefined;
 				}
 
-				ctx.$activeField = key;
+				Object.set(unsafe, '$activeField', key);
 				fieldQueue.delete(key);
 
 				let
 					val;
 
 				if (el.init) {
-					val = el.init(ctx, store);
+					val = el.init(unsafe, store);
 				}
 
 				if (val === undefined) {
@@ -219,7 +217,7 @@ export function initFields(
 					store[key] = val;
 				}
 
-				ctx.$activeField = undefined;
+				Object.set(unsafe, '$activeField', undefined);
 			}
 		}
 
@@ -290,14 +288,14 @@ export function initFields(
 					store[key] = undefined;
 				}
 
-				ctx.$activeField = key;
+				Object.set(unsafe, '$activeField', key);
 				fieldQueue.delete(key);
 
 				let
 					val;
 
 				if (el.init) {
-					val = el.init(ctx, store);
+					val = el.init(unsafe, store);
 				}
 
 				if (val === undefined) {
@@ -310,7 +308,7 @@ export function initFields(
 					store[key] = val;
 				}
 
-				ctx.$activeField = undefined;
+				Object.set(unsafe, '$activeField', undefined);
 			}
 		}
 

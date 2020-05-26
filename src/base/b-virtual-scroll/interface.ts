@@ -9,7 +9,6 @@
 import { UnsafeIData } from 'super/i-data/i-data';
 
 import bVirtualScroll from 'base/b-virtual-scroll/b-virtual-scroll';
-import ScrollRender from 'base/b-virtual-scroll/modules/scroll-render';
 
 export interface RequestQueryFn<T extends unknown = unknown> {
 	(params: RequestMoreParams<T>): Dictionary<Dictionary>;
@@ -39,7 +38,11 @@ export interface OptionEl<T extends unknown = unknown> {
 	next: CanUndef<T>;
 }
 
-export interface RequestMoreParams<T extends unknown = unknown> {
+/**
+ * @typeParam ITEM - data item to render
+ * @typeParam RAW - raw provider data without any processing
+ */
+export interface RequestMoreParams<ITEM extends unknown = unknown, RAW extends unknown = unknown> {
 	/**
 	 * Number of the last loaded page
 	 */
@@ -58,7 +61,12 @@ export interface RequestMoreParams<T extends unknown = unknown> {
 	/**
 	 * Items to render
 	 */
-	items: RenderItem<T>[];
+	items: RenderItem<ITEM>[];
+
+	/**
+	 * Data that pending to be rendered
+	 */
+	pendingData: unknown[];
 
 	/**
 	 * True if the last requested data response was empty
@@ -68,7 +76,23 @@ export interface RequestMoreParams<T extends unknown = unknown> {
 	/**
 	 * Last loaded data chunk
 	 */
-	lastLoadedData: Array<T>;
+	lastLoadedChunk: {
+		/**
+		 * Normalized data (processed with `dbConverter`)
+		 */
+		normalized: ITEM[];
+
+		/**
+		 * Raw provider data without any processing
+		 */
+		raw: RAW;
+	}
+
+	/**
+	 * @deprecated
+	 * @see [[RequestMoreParams.lastLoadedChunk]]
+	 */
+	lastLoadedData: Array<ITEM>;
 }
 
 export interface RemoteData {
@@ -108,10 +132,16 @@ export interface RenderItem<T extends unknown = unknown> {
 // @ts-ignore
 export interface UnsafeBVirtualScroll<CTX extends bVirtualScroll = bVirtualScroll> extends UnsafeIData<CTX> {
 	// @ts-ignore (access)
-	scrollRender: CTX['scrollRender'];
+	total: CTX['total'];
 
 	// @ts-ignore (access)
-	scrollRequest: CTX['scrollRequest'];
+	localState: CTX['localState'];
+
+	// @ts-ignore (access)
+	chunkRender: CTX['chunkRender'];
+
+	// @ts-ignore (access)
+	chunkRequest: CTX['chunkRequest'];
 
 	// @ts-ignore (access)
 	componentRender: CTX['componentRender'];
@@ -120,13 +150,15 @@ export interface UnsafeBVirtualScroll<CTX extends bVirtualScroll = bVirtualScrol
 	getOptionKey: CTX['getOptionKey'];
 }
 
-export interface UnsafeScrollRender {
-	onRequestsDone: ScrollRender['onRequestsDone'];
-	asyncGroup: ScrollRender['asyncGroup'];
-}
-
-export interface UnsafeScrollRequest {
-
+/**
+ * Last loaded data chunk
+ *
+ * @typeParam DATA - data to render
+ * @typeParam RAW - raw provider data without any processing
+ */
+export interface LastLoadedChunk<DATA extends unknown = unknown[], RAW extends unknown = unknown> {
+	normalized: DATA;
+	raw: RAW;
 }
 
 export interface DataToRender {
@@ -134,3 +166,17 @@ export interface DataToRender {
 	itemParams: OptionEl;
 	index: number;
 }
+
+/**
+ * The local state of a component
+ *
+ * * `error` - indicates the component loading error appear
+ * * `init` - indicates the component now loading the first chunk of data
+ * * `ready` - indicates the component now is ready to render data
+ */
+export type LocalState = 'init' | 'ready' | 'error';
+
+/**
+ * Display state of the ref
+ */
+export type RefDisplayState = '' | 'none';

@@ -6,45 +6,60 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import ScrollRender from 'base/b-virtual-scroll/modules/scroll-render';
-import ScrollRequest from 'base/b-virtual-scroll/modules/scroll-request';
+import ChunkRender from 'base/b-virtual-scroll/modules/chunk-render';
+import ChunkRequest from 'base/b-virtual-scroll/modules/chunk-request';
 
-import { RequestMoreParams } from 'base/b-virtual-scroll/modules/interface';
+import { RequestMoreParams } from 'base/b-virtual-scroll/interface';
 
 /**
  * Returns a request params
  *
- * @param [scrollRequestCtx]
- * @param [scrollRenderCtx]
+ * @param [chunkRequestCtx]
+ * @param [chunkRenderCtx]
  * @param [merge]
  */
 export function getRequestParams(
-	scrollRequestCtx?: ScrollRequest,
-	scrollRenderCtx?: ScrollRender,
+	chunkRequestCtx?: ChunkRequest,
+	chunkRenderCtx?: ChunkRender,
 	merge?: Dictionary
 ): RequestMoreParams {
 	const
-		component = scrollRenderCtx?.component || scrollRequestCtx?.component;
+		component = chunkRenderCtx?.component || chunkRequestCtx?.component,
+		pendingData = chunkRequestCtx?.pendingData || [];
 
-	const
-		lastLoadedData = scrollRequestCtx?.lastLoadedData.length ? scrollRequestCtx.lastLoadedData : component?.options;
+	const lastLoadedData = chunkRequestCtx?.lastLoadedChunk.normalized.length ?
+		chunkRequestCtx.lastLoadedChunk.normalized :
+		component?.options;
 
 	const base: RequestMoreParams = {
 		currentPage: 0,
 		nextPage: 1,
 		items: [],
-		lastLoadedData: lastLoadedData || [],
 		isLastEmpty: false,
-		itemsTillBottom: 0
+		itemsTillBottom: 0,
+
+		pendingData,
+		lastLoadedData: lastLoadedData || [],
+		lastLoadedChunk: {
+			raw: undefined,
+			normalized: lastLoadedData || []
+		}
 	};
 
-	const params = scrollRequestCtx && scrollRenderCtx ? {
-		items: scrollRenderCtx.items,
-		currentPage: scrollRequestCtx.page,
+	const params = chunkRequestCtx && chunkRenderCtx ? {
+		items: chunkRenderCtx.items,
+		currentPage: chunkRequestCtx.page,
+		isLastEmpty: chunkRequestCtx.isLastEmpty,
+		itemsTillBottom: chunkRenderCtx.items.length - chunkRenderCtx.lastIntersectsItem,
+		total: component?.unsafe.total,
+
+		pendingData,
 		lastLoadedData: lastLoadedData || [],
-		isLastEmpty: scrollRequestCtx.isLastEmpty,
-		itemsTillBottom: scrollRenderCtx.items.length - scrollRenderCtx.lastIntersectsItem,
-		total: component && component.total
+		lastLoadedChunk: {
+			raw: chunkRequestCtx.lastLoadedChunk.raw,
+			normalized: lastLoadedData || []
+		}
+
 	} : base;
 
 	const merged = {
