@@ -91,7 +91,7 @@ export default class InView extends Super {
 			this.rootMap.set(root, id);
 		}
 
-		return `${threshold.toFixed(2)}${Boolean(trackVisibility)}${id}`;
+		return `${threshold.toFixed(6)}${Boolean(trackVisibility)}${id}`;
 	}
 
 	/**
