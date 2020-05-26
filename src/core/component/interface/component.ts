@@ -9,7 +9,7 @@
 // tslint:disable:no-empty
 // tslint:disable:typedef
 
-import Async, {BoundFn, ProxyCb} from 'core/async';
+import Async, { BoundFn, ProxyCb } from 'core/async';
 import { LogMessageOptions } from 'core/log';
 
 import {
