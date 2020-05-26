@@ -75,8 +75,17 @@ export interface RenderReason {
 	path: unknown[];
 }
 
+/**
+ * Special interface to provide access to protected properties and methods outside the component.
+ * It's used to create the "friendly classes" feature.
+ */
 export interface UnsafeComponentInterface<CTX extends ComponentInterface = ComponentInterface> {
+	/**
+	 * Type: context type
+	 */
 	readonly CTX: CTX;
+
+	// Don't use referring from CTX for primitive types, because it breaks TS
 
 	renderCounter: number;
 	lastSelfReasonToRender?: Nullable<RenderReason>;
@@ -168,6 +177,10 @@ export interface UnsafeComponentInterface<CTX extends ComponentInterface = Compo
 	_u: Function;
 }
 
+/**
+ * Helper structure to pack an unsafe interface:
+ * it fixes some ambiguous TS warnings
+ */
 export type UnsafeGetter<U extends UnsafeComponentInterface = UnsafeComponentInterface> =
 	Dictionary & U['CTX'] & U & {unsafe: any};
 
@@ -201,7 +214,7 @@ export abstract class ComponentInterface {
 	readonly instance!: this;
 
 	/**
-	 * Name of an active component hook
+	 * Name of the active component hook
 	 */
 	readonly hook!: Hook;
 
@@ -212,8 +225,8 @@ export abstract class ComponentInterface {
 	readonly keepAlive!: boolean;
 
 	/**
-	 * Name of an active render group
-	 * (it is used with async rendering)
+	 * Name of the active render group
+	 * (it's used with async rendering)
 	 */
 	readonly renderGroup?: string;
 
@@ -259,12 +272,12 @@ export abstract class ComponentInterface {
 	readonly $root!: this['Root'];
 
 	/**
-	 * True if the component can attach to a parent render function
+	 * True if the component can be attached to a parent render function
 	 */
 	readonly isFlyweight?: boolean;
 
 	/**
-	 * Link to the component meta object
+	 * Link to a component meta object
 	 */
 	protected readonly meta!: ComponentMeta;
 
@@ -274,13 +287,13 @@ export abstract class ComponentInterface {
 	protected renderCounter!: number;
 
 	/**
-	 * Last reason why the component was re-rendered.
+	 * The last reason why the component was re-rendered.
 	 * The null value is means that the component was re-rendered by using $forceUpdate.
 	 */
 	protected lastSelfReasonToRender?: Nullable<RenderReason>;
 
 	/**
-	 * Timestamp of last component rendering
+	 * Timestamp of the last component rendering
 	 */
 	protected lastTimeOfRender?: DOMHighResTimeStamp;
 
@@ -290,16 +303,16 @@ export abstract class ComponentInterface {
 	protected readonly renderTmp!: Dictionary<VNode>;
 
 	/**
+	 * The special symbol that is tied with async rendering
+	 */
+	protected readonly $asyncLabel!: symbol;
+
+	/**
 	 * Link to a parent component
 	 * (using with async rendering)
 	 */
 	// @ts-ignore
 	protected readonly $remoteParent?: this['Component'];
-
-	/**
-	 * The special symbol that is tied with async rendering
-	 */
-	protected readonly $asyncLabel!: symbol;
 
 	/**
 	 * Internal API for async operations
@@ -353,7 +366,7 @@ export abstract class ComponentInterface {
 	protected readonly $$data!: Dictionary;
 
 	/**
-	 * The raw map of component fields that can force re-rendering
+	 * The raw map of component fields that can't force re-rendering
 	 */
 	protected readonly $systemFields!: Dictionary;
 
@@ -370,7 +383,7 @@ export abstract class ComponentInterface {
 	protected readonly $unregisteredHooks!: Dictionary<boolean>;
 
 	/**
-	 * Name of an active field to initialize
+	 * Name of the active field to initialize
 	 */
 	protected readonly $activeField?: string;
 

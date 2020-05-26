@@ -85,19 +85,19 @@ export function createFakeCtx<T extends object = FunctionalCtx>(
 
 	// Add base methods and properties
 	Object.assign(fakeCtx, renderCtx.props, {
-		unsafe: fakeCtx,
-		children: children || [],
-
 		_self: fakeCtx,
 		_renderProxy: fakeCtx,
 		_staticTrees: [],
+
+		unsafe: fakeCtx,
+		children: children || [],
 
 		$createElement: createElement.bind(fakeCtx),
 
 		$parent: p,
 		$root: renderCtx.$root || p && p.$root,
-		$options,
 
+		$options,
 		$props: renderCtx.props || {},
 		$attrs: dataOpts && dataOpts.attrs || {},
 		$listeners: renderCtx.listeners || dataOpts && dataOpts.on || {},
