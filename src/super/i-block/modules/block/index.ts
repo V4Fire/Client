@@ -16,6 +16,8 @@ import { ModsTable, ModsNTable } from 'super/i-block/modules/mods';
 
 import {
 
+	ModResult,
+
 	ModEvent,
 	ModEventReason,
 	SetModEvent,
@@ -197,7 +199,7 @@ export default class Block extends Friend {
 	 * @param value
 	 * @param [reason] - reason to set a modifier
 	 */
-	setMod(name: string, value: unknown, reason: ModEventReason = 'setMod'): boolean {
+	setMod(name: string, value: unknown, reason: ModEventReason = 'setMod'): ModResult {
 		if (value == null) {
 			return false;
 		}
@@ -268,7 +270,7 @@ export default class Block extends Friend {
 		ctx.emit(`mod-set-${name}-${normalizedVal}`, event);
 		ctx.emit(`mod:set:${name}:${normalizedVal}`, event);
 
-		return true;
+		return {name, value: normalizedVal};
 	}
 
 	/**
@@ -278,7 +280,7 @@ export default class Block extends Friend {
 	 * @param [value]
 	 * @param [reason] - reason to remove a modifier
 	 */
-	removeMod(name: string, value?: unknown, reason: ModEventReason = 'removeMod'): boolean {
+	removeMod(name: string, value?: unknown, reason: ModEventReason = 'removeMod'): ModResult {
 		name = name.camelize(false);
 		value = value != null ? String(value).dasherize() : undefined;
 
@@ -332,7 +334,7 @@ export default class Block extends Friend {
 			ctx.emit(`mod:remove:${name}:${currentVal}`, event);
 		}
 
-		return true;
+		return {name, value: undefined};
 	}
 
 	/**
@@ -379,7 +381,7 @@ export default class Block extends Friend {
 		modName: string,
 		value: unknown,
 		reason: ModEventReason = 'setMod'
-	): boolean {
+	): ModResult {
 		if (!link || value == null) {
 			return false;
 		}
@@ -408,7 +410,7 @@ export default class Block extends Friend {
 		};
 
 		this.localEmitter.emit(`el.mod.set.${elName}.${modName}.${normalizedVal}`, event);
-		return true;
+		return {name: modName, value: normalizedVal};
 	}
 
 	/**
@@ -426,7 +428,7 @@ export default class Block extends Friend {
 		modName: string,
 		value?: unknown,
 		reason: ModEventReason = 'removeMod'
-	): boolean {
+	): ModResult {
 		if (!link) {
 			return false;
 		}
@@ -456,7 +458,7 @@ export default class Block extends Friend {
 		};
 
 		this.localEmitter.emit(`el.mod.remove.${elName}.${modName}.${currentVal}`, event);
-		return true;
+		return {name: modName, value: undefined};
 	}
 
 	/**
