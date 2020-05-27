@@ -332,7 +332,7 @@ module.exports = function (gulp = require('gulp')) {
 		if (!cliParams.reInitBrowser) {
 			for (const browserType of browsers) {
 				const
-					browser = servers[browserType] = await playwright[browserType].launchServer(),
+					browser = servers[browserType] = await playwright[browserType].launchServer({args: ['--no-sandbox', '--disable-setuid-sandbox']}),
 					wsEndpoint = browser.wsEndpoint();
 
 				await playwright[browserType].connect({wsEndpoint});
