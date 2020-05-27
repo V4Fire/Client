@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.21 (2020-05-27)
+
+#### :bug: Bug Fix
+
+* Fixed deep watching for accessors
+
 ## v3.0.0-rc.20 (2020-05-26)
 
 #### :bug: Bug Fix
