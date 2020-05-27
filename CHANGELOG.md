@@ -16,6 +16,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### :bug: Bug Fix
 
 * Fixed providing of watch parameters
+* Fixed state synchronizing
 
 ## v3.0.0-rc.21 (2020-05-27)
 
