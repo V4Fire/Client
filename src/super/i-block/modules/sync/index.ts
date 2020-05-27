@@ -297,7 +297,7 @@ export default class Sync extends Friend {
 		};
 
 		if (wrapper && wrapper.length > 1) {
-			ctx.watch(info || path, (val, oldVal) => {
+			ctx.watch(info || path, opts, (val, oldVal) => {
 				if (isCustomWatcher) {
 					oldVal = undefined;
 
@@ -306,14 +306,14 @@ export default class Sync extends Friend {
 				}
 
 				sync(val, oldVal);
-			}, opts);
+			});
 
 		} else {
 			const
 				that = this;
 
 			// tslint:disable-next-line:only-arrow-functions
-			ctx.watch(info || path, function (val?: unknown): void {
+			ctx.watch(info || path, opts, function (val?: unknown): void {
 				let
 					oldVal;
 
@@ -326,7 +326,7 @@ export default class Sync extends Friend {
 				}
 
 				sync(val, oldVal);
-			}, opts);
+			});
 		}
 
 		// tslint:disable-next-line:prefer-object-spread
@@ -622,14 +622,14 @@ export default class Sync extends Friend {
 			);
 
 			const
-				p = <AsyncWatchOptions>{...opts};
+				isolatedOpts = <AsyncWatchOptions>{...opts};
 
 			if (isAccessor) {
-				p.immediate = p.immediate !== false;
+				isolatedOpts.immediate = isolatedOpts.immediate !== false;
 			}
 
 			if (clone) {
-				ctx.watch(info || watchPath, (val, oldVal) => {
+				ctx.watch(info || watchPath, isolatedOpts, (val, oldVal) => {
 					if (isCustomWatcher) {
 						oldVal = undefined;
 
@@ -638,14 +638,14 @@ export default class Sync extends Friend {
 					}
 
 					sync(val, oldVal);
-				}, p);
+				});
 
 			} else {
 				const
 					that = this;
 
 				// tslint:disable-next-line:only-arrow-functions
-				ctx.watch(info || watchPath, function (val?: unknown): void {
+				ctx.watch(info || watchPath, isolatedOpts, function (val?: unknown): void {
 					let
 						oldVal;
 
@@ -658,7 +658,7 @@ export default class Sync extends Friend {
 					}
 
 					sync(val, oldVal);
-				}, p);
+				});
 			}
 
 			// tslint:disable-next-line:prefer-object-spread
@@ -850,10 +850,10 @@ export default class Sync extends Friend {
 
 			if (converter.length > 1) {
 				// tslint:disable-next-line:no-unnecessary-callback-wrapper
-				ctx.watch(path, (val, oldVal) => wrapper(val, oldVal), opts);
+				ctx.watch(path, opts, (val, oldVal) => wrapper(val, oldVal));
 
 			} else {
-				ctx.watch(path, wrapper, opts);
+				ctx.watch(path, opts, wrapper);
 			}
 		};
 
