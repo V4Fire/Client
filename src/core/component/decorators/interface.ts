@@ -6,12 +6,14 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { WatchPath, WatchOptions } from 'core/object/watch';
+import { WatchPath } from 'core/object/watch';
 
 import {
 
-	ComponentInterface,
 	Hook,
+	ComponentInterface,
+
+	WatchOptions,
 	MethodWatcher,
 	WatchHandler
 
