@@ -6,8 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { WatchPath } from 'core/object/watch';
-import { WatchOptions } from 'core/component/engines';
+import { WatchPath, WatchOptions } from 'core/object/watch';
 
 import {
 

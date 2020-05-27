@@ -36,10 +36,8 @@ export {
 
 	renderData,
 	patchVNode,
-	ComponentDriver as default,
 
-	WatchOptions,
-	WatchOptionsWithHandler,
+	ComponentDriver as default,
 
 	VNode,
 	VNodeDirective,
