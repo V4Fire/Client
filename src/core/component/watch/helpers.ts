@@ -20,8 +20,8 @@ import { DynamicHandlers } from 'core/component/watch/interface';
  *
  * @param component - component that watches
  * @param prop - property to watch
- * @param handler
  * @param opts - options for watching
+ * @param handler
  * @param [store] - store with dynamic handlers
  */
 export function attachDynamicWatcher(
