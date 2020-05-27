@@ -10,9 +10,9 @@ module.exports = [
 	{
 		attrs: {
 			':routes': JSON.stringify({
-				index: {
+				main: {
 					path: '/',
-					content: 'Index page'
+					content: 'Main page'
 				},
 
 				second: {
@@ -37,7 +37,7 @@ module.exports = [
 
 				indexRedirect: {
 					path: '/redirect',
-					redirect: 'index'
+					redirect: 'main'
 				},
 
 				secondRedirect: {
@@ -67,6 +67,11 @@ module.exports = [
 				localExternal: {
 					path: '/',
 					external: true
+				},
+
+				notFound: {
+					default: true,
+					content: '404'
 				}
 			})
 		},

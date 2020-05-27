@@ -8,6 +8,7 @@
 
 module.exports = async (page) => {
 	const
+		url = require('url'),
 		root = await (await page.$('.i-block-helper')).getProperty('component');
 
 	describe('b-router', () => {
@@ -34,7 +35,17 @@ module.exports = async (page) => {
 			expect(await root.evaluate(async (ctx) => {
 				await ctx.router.push('/');
 				return ctx.route.meta.content;
-			})).toBe('Index page');
+			})).toBe('Main page');
+		});
+
+		it('transition to the default page', async () => {
+			expect(await root.evaluate(async (ctx) => {
+				await ctx.router.push('/some/fake/page');
+				return ctx.route.meta.content;
+			})).toBe('404');
+
+			expect(await root.evaluate(({route}) => route.name)).toBe('notFound');
+			expect(url.parse(await page.url()).pathname).toBe('/some/fake/page');
 		});
 
 		it('transition to an alias', async () => {
@@ -50,7 +61,7 @@ module.exports = async (page) => {
 			expect(await root.evaluate(async (ctx) => {
 				await ctx.router.push('/second/alias-redirect');
 				return ctx.route.meta.content;
-			})).toBe('Index page');
+			})).toBe('Main page');
 
 			expect(await root.evaluate(async ({route}) => route.name)).toBe('aliasToRedirect');
 		});
@@ -93,9 +104,9 @@ module.exports = async (page) => {
 
 		it('moving back and forward from one page to another', async () => {
 			expect(await root.evaluate(async (ctx) => {
-				await ctx.router.push('index');
+				await ctx.router.push('main');
 				return ctx.route.meta.content;
-			})).toBe('Index page');
+			})).toBe('Main page');
 
 			expect(await root.evaluate(async (ctx) => {
 				await ctx.router.push('second');
@@ -105,7 +116,7 @@ module.exports = async (page) => {
 			expect(await root.evaluate(async (ctx) => {
 				await ctx.router.back();
 				return ctx.route.meta.content;
-			})).toBe('Index page');
+			})).toBe('Main page');
 
 			expect(await root.evaluate(async (ctx) => {
 				await ctx.router.forward();
@@ -116,9 +127,9 @@ module.exports = async (page) => {
 
 	it('moving back and forward from one page to another by using .go', async () => {
 		expect(await root.evaluate(async ({router}) => {
-			await router.push('index');
+			await router.push('main');
 			await router.push('second');
-			await router.push('index');
+			await router.push('main');
 			await router.push('second');
 			return router.route.meta.content;
 		})).toBe('Second page');
@@ -131,7 +142,7 @@ module.exports = async (page) => {
 		expect(await root.evaluate(async ({router}) => {
 			await router.go(1);
 			return router.route.meta.content;
-		})).toBe('Index page');
+		})).toBe('Main page');
 	});
 
 	it('getting an URL string by a query', async () => {
