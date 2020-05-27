@@ -150,9 +150,12 @@ module.exports = function (gulp = require('gulp')) {
 			const
 				params = browserParams[browserType];
 
-			const {page} = params;
-			await page.goto(testURL);
+			const {
+				testURL,
+				page
+			} = params;
 
+			await page.goto(testURL);
 			const testEnv = getTestEnv(browserType);
 			await test(page, params);
 
