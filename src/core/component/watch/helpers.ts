@@ -82,7 +82,12 @@ export function attachDynamicWatcher(
 		}
 
 		if (filteredMutations.length) {
-			handler[needPack ? 'call' : 'apply'](this, filteredMutations);
+			if (needPack) {
+				handler.call(this, filteredMutations);
+
+			} else {
+				handler.apply(this, filteredMutations[0]);
+			}
 		}
 	};
 
