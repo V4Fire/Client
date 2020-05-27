@@ -10,6 +10,7 @@ import { WatchOptions, MultipleWatchHandler } from 'core/object/watch';
 
 import { PropertyInfo } from 'core/component/reflection';
 import { ComponentInterface } from 'core/component/interface';
+
 import { dynamicHandlers } from 'core/component/watch/const';
 import { DynamicHandlers } from 'core/component/watch/interface';
 

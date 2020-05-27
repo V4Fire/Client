@@ -129,7 +129,7 @@ export default class State extends Friend {
 					stateFields
 				);
 
-				const sync = $a.debounce(this.saveToStorage, 0, {
+				const sync = $a.debounce(this.saveToStorage.bind(this), 0, {
 					label: $$.syncLocalStorage
 				});
 
@@ -305,7 +305,7 @@ export default class State extends Friend {
 				}
 			}
 
-			const sync = $a.debounce(this.saveToRouter, 0, {
+			const sync = $a.debounce(this.saveToRouter.bind(this), 0, {
 				label: $$.syncRouter
 			});
 

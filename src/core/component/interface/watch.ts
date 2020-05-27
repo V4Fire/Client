@@ -7,7 +7,8 @@
  */
 
 import { Group, Label, Join } from 'core/async';
-import { WatchOptions, WatchHandlerParams  } from 'core/object/watch';
+import { WatchOptions, WatchHandlerParams } from 'core/object/watch';
+
 import { PropertyInfo } from 'core/component/reflection';
 import { ComponentInterface } from 'core/component/interface';
 
