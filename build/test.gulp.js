@@ -317,6 +317,7 @@ module.exports = function (gulp = require('gulp')) {
 		await waitForEmpty(buildMap);
 
 		// Launch browser server
+
 		let endpointArg = '';
 
 		const wsEndpoints = {
@@ -332,7 +333,7 @@ module.exports = function (gulp = require('gulp')) {
 		if (!cliParams.reInitBrowser) {
 			for (const browserType of browsers) {
 				const
-					browser = servers[browserType] = await playwright[browserType].launchServer({args: ['--no-sandbox', '--disable-setuid-sandbox']}),
+					browser = servers[browserType] = await playwright[browserType].launchServer({args: getBrowserArgs()}),
 					wsEndpoint = browser.wsEndpoint();
 
 				await playwright[browserType].connect({wsEndpoint});
@@ -465,7 +466,7 @@ async function getBrowserInstance(browserType, params, options = {}) {
 		return await playwright[browserType].connect({wsEndpoint: args[endpointMap[browserType]], ...params});
 	}
 
-	return await playwright[browserType].launch(params);
+	return await playwright[browserType].launch({args: getBrowserArgs(), ...params});
 }
 
 /**
@@ -499,4 +500,20 @@ function getSelectedBrowsers() {
 	}
 
 	return browsers;
+}
+
+/**
+ * Returns a list of arguments which will be provided to browser
+ */
+function getBrowserArgs() {
+	const
+		args = arg({'--browser-args': String}, {permissive: true});
+
+	if (!args['--browser-args']) {
+		return [];
+	}
+
+	const v = args['--browser-args'].split(',').map((v) => `--${v.trim()}`);
+	console.log(v);
+	return v;
 }
