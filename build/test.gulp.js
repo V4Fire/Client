@@ -228,7 +228,11 @@ module.exports = function (gulp = require('gulp')) {
 		const processesArgs = arg({
 			'--processes': Number,
 			'--test-processes': Number,
-			'--build-processes': Number
+			'--build-processes': Number,
+
+			'--p': '--processes',
+			'--tp': '--test-processes',
+			'--bp': '--build-processes'
 		}, {permissive: true});
 
 		const
@@ -279,11 +283,13 @@ module.exports = function (gulp = require('gulp')) {
 				['--client-name', args['--client-name']]
 			].flat().join(' ');
 
+			const extraArgs = args._.join(' ');
+
 			await waitForQuotas(buildMap, buildProcess);
 
 			buildMap.set(
 				argsString,
-				exec(`npx gulp test:component:build ${argsString}`, () => buildMap.delete(argsString))
+				exec(`npx gulp test:component:build ${argsString} ${extraArgs}`, () => buildMap.delete(argsString))
 			);
 
 			buildCache[args['--client-name']] = true;
@@ -334,7 +340,8 @@ module.exports = function (gulp = require('gulp')) {
 			args['--client-name'] = `${args['--name']}_${args['--suit']}`;
 
 			const
-				argsString = `${c} --client-name ${args['--client-name']}`;
+				argsString = `${c} --client-name ${args['--client-name']}`,
+				extraArgs = args._.join(' ');
 
 			totalCases.push(argsString);
 			await waitForQuotas(testMap, testProcess);
@@ -344,7 +351,7 @@ module.exports = function (gulp = require('gulp')) {
 
 			testMap.set(
 				argsString,
-				exec(`npx gulp test:component:run ${argsString} ${endpointArg}`,
+				exec(`npx gulp test:component:run ${argsString} ${endpointArg} ${extraArgs}`,
 					() => onTestEnd(argsString),
 					() => {
 						onTestEnd(argsString);
