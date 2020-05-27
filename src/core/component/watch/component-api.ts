@@ -177,6 +177,11 @@ export function implementComponentWatchAPI(
 
 		immediateHandler[tiedWatchers] = handler[tiedWatchers] = [];
 
+		const watchOpts = {
+			deep: true,
+			withProto: true
+		};
+
 		for (let o = watchDependencies.entries(), el = o.next(); !el.done; el = o.next()) {
 			const
 				[key, deps] = el.value;
@@ -189,18 +194,18 @@ export function implementComponentWatchAPI(
 					continue;
 				}
 
-				// Invalidate cache (immediately)
-				attachDynamicWatcher(component, info, (value, oldValue, info) => {
+				const invalidateCache = (value, oldValue, info) => {
 					info = Object.assign(Object.create(info), {
 						path: [key],
 						parent: {value, oldValue, info}
 					});
 
 					immediateHandler(value, oldValue, info);
-				}, immediateDynamicHandlers);
+				};
 
-				// Broadcast events (deferred)
-				attachDynamicWatcher(component, info, (mutations, ...args) => {
+				attachDynamicWatcher(component, info, watchOpts, invalidateCache, immediateDynamicHandlers);
+
+				const broadcastEvents = (mutations, ...args) => {
 					if (args.length) {
 						mutations = [<any>[mutations, ...args]];
 					}
@@ -224,7 +229,9 @@ export function implementComponentWatchAPI(
 					}
 
 					handler(modifiedMutations);
-				}, dynamicHandlers);
+				};
+
+				attachDynamicWatcher(component, info, watchOpts, broadcastEvents, dynamicHandlers);
 			}
 		}
 	}

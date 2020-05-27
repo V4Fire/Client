@@ -31,7 +31,7 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 
 		let
 			handler: RawWatchHandler,
-			opts: CanUndef<WatchOptions>;
+			opts: WatchOptions;
 
 		if (Object.isFunction(optsOrHandler)) {
 			handler = optsOrHandler;
@@ -39,7 +39,7 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 
 		} else {
 			handler = rawHandler;
-			opts = optsOrHandler;
+			opts = optsOrHandler || {};
 		}
 
 		const
@@ -74,7 +74,7 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 		if (needCache) {
 			oldVal = watchCache[ref] = ref in watchCache ?
 				watchCache[ref] :
-				opts?.immediate || !isAccessor ? cloneWatchValue(getVal(), opts) : undefined;
+				opts.immediate || !isAccessor ? cloneWatchValue(getVal(), opts) : undefined;
 
 			handler = (val, _, ...args) => {
 				if (isAccessor) {
@@ -94,7 +94,7 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 
 			handler[tiedWatchers] = originalHandler[tiedWatchers];
 
-			if (opts?.immediate) {
+			if (opts.immediate) {
 				const val = oldVal;
 				oldVal = undefined;
 				handler.call(component, val);
@@ -115,7 +115,7 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 				};
 			}
 
-			if (opts?.immediate) {
+			if (opts.immediate) {
 				handler.call(component, getVal());
 			}
 		}
@@ -294,6 +294,6 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 			return unwatch;
 		}
 
-		return attachDynamicWatcher(component, info, handler);
+		return attachDynamicWatcher(component, info, opts, handler);
 	};
 }
