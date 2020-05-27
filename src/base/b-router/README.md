@@ -166,7 +166,7 @@ export default {
 };
 ```
 
-* The `notFound` route isn't directly tied with any URL-s (because it hasn't the `path` property), but it has `default` property in `true`, i.e. every time some URL can't be matched directly will be used `notFound`. For example, `https://foo.com/bro` or `https://foo.com/bla/bar`.
+* The `notFound` route isn't directly tied with any URL-s (because it hasn't the `path` property), but it has `default` property in `true`, i.e. every time some URL can't be matched directly will be used `notFound`. For example, `https://foo.com/bro` or `https://foo.com/bla/bar`. Also, you can name the default route as `index` instead of setting the `default` property.
 
 Notice, we don't specify the whole URL in `path`, if we do it, it will work as "external" transition, i.e, the browser switches to this URL by using `location.href` instead of `history.pushState`. It can help if you need to declare some routes that should go to other sites.
 Also, you can mark some routes with the `external` flag to force this behavior.
