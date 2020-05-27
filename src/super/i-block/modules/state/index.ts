@@ -265,7 +265,7 @@ export default class State extends Friend {
 			}
 
 			const
-				route = r.route || <NonNullable<typeof r.route>>{},
+				route = Object.mixin({deep: true, withProto: true}, {}, r.route),
 				stateFields = ctx.syncRouterState(Object.assign(Object.create(route), route.params, route.query));
 
 			this.set(
