@@ -38,6 +38,80 @@ module.exports = async (page) => {
 			})).toBe('Main page');
 		});
 
+		it('transition to a route with path interpolating', async () => {
+			expect(await root.evaluate(async (ctx) => {
+				const
+					result = {},
+					s = () => ctx.location.pathname + ctx.location.search;
+
+				await ctx.router.push('template', {params: {param1: 'foo'}});
+				result.path1 = s();
+
+				await ctx.router.push('template', {params: {param1: 'foo'}, query: {param2: 109}});
+				result.path2 = s();
+
+				await ctx.router.push('/strict-tpl/:param1', {params: {param1: 'foo'}, query: {param2: 109}});
+				result.path3 = s();
+
+				return result;
+
+			})).toEqual({
+				path1: '/tpl/foo',
+				path2: '/tpl/foo/109',
+				path3: '/strict-tpl/foo?param2=109'
+			});
+		});
+
+		it('soft transition', async () => {
+			expect(await root.evaluate(async (ctx) => {
+				const
+					result = {};
+
+				await ctx.router.push('/');
+
+				result.initialQuery = ctx.location.search;
+				result.initialContent = ctx.route.meta.content;
+
+				ctx.router.once('onSoftChange', (route) => {
+					result.onSoftChange = [
+						Object.fastClone(ctx.route.query),
+						Object.fastClone(route.query)
+					];
+				});
+
+				await ctx.router.push(null, {query: {foo: 1}});
+
+				result.modifiedQuery = ctx.location.search;
+				result.modifiedContent = ctx.route.meta.content;
+
+				await ctx.router.push(null, {query: {bar: 2}});
+
+				result.modifiedQuery2 = ctx.location.search;
+				result.modifiedContent2 = ctx.route.meta.content;
+
+				await ctx.router.push(null, {query: {foo: null, bar: undefined}});
+
+				result.modifiedQuery3 = ctx.location.search;
+				result.modifiedContent3 = ctx.route.meta.content;
+
+				return result;
+
+			})).toEqual({
+				initialContent: 'Main page',
+				initialQuery: '',
+
+				modifiedContent: 'Main page',
+				modifiedQuery: '?foo=1',
+				onSoftChange: [{}, {foo: 1}],
+
+				modifiedContent2: 'Main page',
+				modifiedQuery2: '?bar=2&foo=1',
+
+				modifiedContent3: 'Main page',
+				modifiedQuery3: '?bar=2'
+			});
+		});
+
 		it('transition to the default page', async () => {
 			expect(await root.evaluate(async (ctx) => {
 				await ctx.router.push('/some/fake/page');

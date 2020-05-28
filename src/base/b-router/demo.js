@@ -69,6 +69,15 @@ module.exports = [
 					external: true
 				},
 
+				template: {
+					path: '/tpl/:param1/:param2?'
+				},
+
+				strictTemplate: {
+					paramsFromQuery: false,
+					path: '/strict-tpl/:param1/:param2?'
+				},
+
 				notFound: {
 					default: true,
 					content: '404'
