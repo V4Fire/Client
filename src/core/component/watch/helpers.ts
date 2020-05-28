@@ -20,8 +20,8 @@ import { DynamicHandlers } from 'core/component/watch/interface';
  *
  * @param component - component that watches
  * @param prop - property to watch
- * @param handler
  * @param opts - options for watching
+ * @param handler
  * @param [store] - store with dynamic handlers
  */
 export function attachDynamicWatcher(
@@ -82,7 +82,12 @@ export function attachDynamicWatcher(
 		}
 
 		if (filteredMutations.length) {
-			handler[needPack ? 'call' : 'apply'](this, filteredMutations);
+			if (needPack) {
+				handler.call(this, filteredMutations);
+
+			} else {
+				handler.apply(this, filteredMutations[0]);
+			}
 		}
 	};
 
