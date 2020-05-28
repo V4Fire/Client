@@ -298,6 +298,22 @@ export default {
 
 Mind that "index" and "std" entry points loaded by default, so you don't need to declare it clearly.
 
+### Providing of extra parameters
+
+You can attach you own parameter to any route, just add a property to declaration.
+
+```js
+export default {
+  user: {
+    path: '/user',
+    showWelcomeBoard: true
+  }
+};
+```
+
+All extra properties are stored within the `meta` parameter. Now you can access this parameter bu using `route.meta.showWelcomeBoard`.
+Be careful, don't eventually redefine predefined properties.
+
 ## Event flow of transitions
 
 When we invoke one of router transition methods, like, push or replace, the router emits a bunch of special events.
@@ -315,3 +331,11 @@ When we invoke one of router transition methods, like, push or replace, the rout
 5. `transition(route: Route)` - fires after calling of transition methods, if the transition takes a place, the event is fired after "change" event.
 
 The router also provides "change" event to the root component as "transition", just for usability.
+
+## How dynamically tie a component property with the router
+
+Every time you use `router.push` or `router.replace` the router can change the `route` property value, but there are some details you should know:
+
+* If you emit transition without changing of route path, i.e., without changing pathname, the mutations of the `route` object don't force render of components. Technically, it means that if you just add or change some query parameters, there won't be re-render, you should tie your component properties manually. This behavior helps to increase application performance when changing the route, because, usually, when you just change query parameters, you don't want to change the active page or emit great mutations of UI. This behaviour is called "soft".
+
+* When you emit the soft transition, you modify query parameters, but don't rewrite, i.e., if you have the URL like `/foo?bla=1` and you do `router.push(null, {query: {baz: 2}})`, finally you'll see `/foo?bla=1&baz=2`. If you want to remove some parameters, provide their with null values, `router.push(null, {query: {bla: null}})`.
