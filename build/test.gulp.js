@@ -241,9 +241,9 @@ module.exports = function (gulp = require('gulp')) {
 			'--test-processes': Number,
 			'--build-processes': Number,
 
-			'--p': '--processes',
-			'--tp': '--test-processes',
-			'--bp': '--build-processes'
+			'-p': '--processes',
+			'-tp': '--test-processes',
+			'-bp': '--build-processes'
 		}, {permissive: true});
 
 		const cliArgs = arg({
