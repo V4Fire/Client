@@ -552,7 +552,7 @@ export default class bRouter extends iData {
 			r,
 			engine,
 			engine: {
-				route: currentRoute
+				route: currentEngineRoute
 			}
 		} = this;
 
@@ -563,31 +563,32 @@ export default class bRouter extends iData {
 			const type = hardChange ? 'hard' : 'soft';
 
 			if (onlyOwnTransition) {
-				this.emit('transition', routeStore, type);
+				this.emit('transition', newRoute, type);
 
 			} else {
-				this.emit('change', routeStore);
-				this.emit('transition', routeStore, type);
-				r.emit('transition', routeStore, type);
+				this.emit('change', newRoute);
+				this.emit('transition', newRoute, type);
+				r.emit('transition', newRoute, type);
 			}
 		};
 
 		let
-			routeInfo;
+			newRouteInfo;
 
 		// Get information about the specified route
 		if (ref) {
-			routeInfo = this.getRoute(engine.id(ref));
+			newRouteInfo = this.getRoute(engine.id(ref));
 
-		// Get information about the current route
-		} else if (currentRoute) {
-			ref = currentRoute.url || currentRoute.name;
+		// In this case, we don't have the specified ref to a transition,
+		// so we try to get information from the current route and use it as a blueprint to the new
+		} else if (currentEngineRoute) {
+			ref = currentEngineRoute.url || currentEngineRoute.name;
 
 			const
 				route = this.getRoute(ref);
 
 			if (route) {
-				routeInfo = Object.mixin(true, route, purifyRoute(currentRoute));
+				newRouteInfo = Object.mixin(true, route, purifyRoute(currentEngineRoute));
 			}
 		}
 
@@ -602,17 +603,17 @@ export default class bRouter extends iData {
 
 		// To save scroll position before change to a new route
 		// we need to emit system "replace" transition with padding information about the scroll
-		if (currentRoute && method !== 'replace') {
+		if (currentEngineRoute && method !== 'replace') {
 			const
-				currentRouteWithScroll = Object.mixin(true, undefined, currentRoute, scroll);
+				currentRouteWithScroll = Object.mixin(true, undefined, currentEngineRoute, scroll);
 
-			if (!Object.fastCompare(currentRoute, currentRouteWithScroll)) {
-				await engine.replace(currentRoute.url || currentRoute.name, currentRouteWithScroll);
+			if (!Object.fastCompare(currentEngineRoute, currentRouteWithScroll)) {
+				await engine.replace(currentEngineRoute.url || currentEngineRoute.name, currentRouteWithScroll);
 			}
 		}
 
 		// We haven't found any routes that math to the specified ref
-		if (!routeInfo) {
+		if (!newRouteInfo) {
 			// The transition was emitted by a user, then we need to save the scroll
 			if (method !== 'event' && ref != null) {
 				await engine[method](ref, scroll);
@@ -621,29 +622,28 @@ export default class bRouter extends iData {
 			return;
 		}
 
-		if (!routeInfo.name && currentRoute?.name) {
-			routeInfo.name = currentRoute.name;
+		if (!newRouteInfo.name && currentEngineRoute?.name) {
+			newRouteInfo.name = currentEngineRoute.name;
 		}
 
 		const
-			current = this.field.get<Route>('routeStore'),
+			currentRoute = this.field.get<Route>('routeStore'),
 			deepMixin = (...args) => Object.mixin({deep: true, withUndef: true}, ...args);
 
 		// If a new route matches by a name with the current,
 		// we need to mix a new state with the current
-		if (current?.name === routeInfo.name) {
-			deepMixin(routeInfo, getBlankRouteFrom(current), opts);
+		if (currentRoute?.name === newRouteInfo.name) {
+			deepMixin(newRouteInfo, getBlankRouteFrom(currentRoute), opts);
 
 		// Simple normalizing of a route state
 		} else {
-			deepMixin(routeInfo, opts);
+			deepMixin(newRouteInfo, opts);
 		}
 
-		const {meta} = routeInfo;
+		const {meta} = newRouteInfo;
 
 		// If the route support filling from the root object or query parameters
-		// @ts-ignore
-		fillRouteParams(routeInfo, r);
+		fillRouteParams(newRouteInfo, r);
 
 		// We have two variants of a transition:
 		// "soft" - between routes were changed only query or meta parameters
@@ -653,11 +653,11 @@ export default class bRouter extends iData {
 		// that why we placed it to a prototype object by using Object.create
 
 		const
-			nonWatchRouteValues = {query: routeInfo.query, meta};
+			nonWatchRouteValues = {query: newRouteInfo.query, meta};
 
-		const routeStore = Object.assign(
+		const newRoute = Object.assign(
 			Object.create(nonWatchRouteValues),
-			Object.reject(routeInfo, Object.keys(nonWatchRouteValues))
+			Object.reject(convertRouteToPlainObject(newRouteInfo), Object.keys(nonWatchRouteValues))
 		);
 
 		let
@@ -665,16 +665,16 @@ export default class bRouter extends iData {
 
 		// Checking that the new route is really needed, i.e. it isn't equal to the previous
 		const newRouteIsReallyNeeded = !Object.fastCompare(
-			getParamsFromRouteThatNeedWatch(current),
-			getParamsFromRouteThatNeedWatch(routeStore)
+			getParamsFromRouteThatNeedWatch(currentRoute),
+			getParamsFromRouteThatNeedWatch(newRoute)
 		);
 
 		// The transition is real needed, but now we need to understand should we emit "soft" or "hard" transition
 		if (newRouteIsReallyNeeded) {
-			this.field.set('routeStore', routeStore);
+			this.field.set('routeStore', newRoute);
 
 			const
-				plainInfo = convertRouteToPlainObject(routeInfo);
+				plainInfo = convertRouteToPlainObject(newRouteInfo);
 
 			const canRouteTransformToReplace =
 				currentRoute &&
@@ -693,21 +693,23 @@ export default class bRouter extends iData {
 
 			// This transitions is marked as external,
 			// i.e. it refers to another site
-			if (routeInfo.meta.external) {
-				location.href = routeInfo.resolvePath(routeInfo.params) || '/';
+			if (newRouteInfo.meta.external) {
+				location.href = newRouteInfo.resolvePath(newRouteInfo.params) || '/';
 				return;
 			}
 
-			await engine[method](routeInfo.resolvePath(routeInfo.params), plainInfo);
+			await engine[method](newRouteInfo.resolvePath(newRouteInfo.params), plainInfo);
 
 			const isSoftTransition = Boolean(r.route && Object.fastCompare(
-				convertRouteToPlainObjectWithoutProto(current),
-				convertRouteToPlainObjectWithoutProto(routeStore)
+				convertRouteToPlainObjectWithoutProto(currentRoute),
+				convertRouteToPlainObjectWithoutProto(newRoute)
 			));
 
 			// In this transition were changed only properties from a prototype,
 			// that why it can be emitted as soft transition, i.e. without forcing of re-render of components
 			if (isSoftTransition) {
+				this.emit('softChange', newRoute);
+
 				const
 					proto = <any>r!.route!.__proto__;
 
@@ -717,12 +719,10 @@ export default class bRouter extends iData {
 					proto[key] = nonWatchRouteValues[key];
 				}
 
-				this.emit('softChange', routeStore);
-
 			} else {
 				hardChange = true;
-				this.emit('hardChange', routeStore);
-				r.route = routeStore;
+				this.emit('hardChange', newRoute);
+				r.route = newRoute;
 			}
 
 			emitTransition();
@@ -744,7 +744,7 @@ export default class bRouter extends iData {
 				};
 
 				if (hardChange) {
-					await this.async.wait(() => Object.fastCompare(routeStore, r.route), label);
+					await this.async.wait(() => Object.fastCompare(newRoute, r.route), label);
 				}
 
 				await this.nextTick(label);
@@ -761,7 +761,7 @@ export default class bRouter extends iData {
 			})().catch(stderr);
 		}
 
-		return routeStore;
+		return newRoute;
 	}
 
 	/**

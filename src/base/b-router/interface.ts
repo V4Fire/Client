@@ -97,17 +97,17 @@ export type AnyRoute =
 	RouteAPI;
 
 /**
- * Route without system fields
- */
-export type PurifiedRoute<T extends AnyRoute> = Partial<Omit<T, 'url' | 'name' | 'page'>>;
-
-/**
  * Plain route object
  */
 export type PlainRoute<T extends AnyRoute, FILTER extends string = '_'> = Partial<Omit<
 	T extends RouteAPI ? Omit<T, 'resolvePath' | 'toPath'> : T,
 	FILTER
 >>;
+
+/**
+ * Purified route, i.e., only common parameters
+ */
+export type PurifiedRoute<T extends AnyRoute> = PlainRoute<T, 'url' | 'name' | 'page'>;
 
 /**
  * Route that support watching

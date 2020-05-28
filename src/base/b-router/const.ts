@@ -12,11 +12,11 @@ export const transitionOptions = [
 	'query'
 ];
 
-export const systemRouteParams = [
-	'url',
-	'name',
-	'page'
-];
+export const systemRouteParams = Object.createDict({
+	url: true,
+	name: true,
+	page: true
+});
 
 export const defaultRoutes = Object.createDict({
 	index: true,

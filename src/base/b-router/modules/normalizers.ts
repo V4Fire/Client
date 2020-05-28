@@ -95,30 +95,6 @@ export function normalizeTransitionOpts(data: Nullable<TransitionOptions>): CanU
 }
 
 /**
- * Returns a common representation of the specified route
- * @param params
- */
-export function purifyRoute<T extends AnyRoute>(params: Nullable<T>): PurifiedRoute<T> {
-	if (params) {
-		return <any>Object.reject(params, systemRouteParams);
-	}
-
-	return {};
-}
-
-/**
- * Returns a blank route object from the specified
- * @param route
- */
-export function getBlankRouteFrom(route: Nullable<AnyRoute | TransitionOptions>): PurifiedRoute<AnyRoute> {
-	return Object.mixin(true, route ? purifyRoute(<AnyRoute>route) : undefined, {
-		query: {},
-		params: {},
-		meta: {}
-	});
-}
-
-/**
  * Converts the specified route object to a plain object and returns it
  *
  * @param route
@@ -152,6 +128,30 @@ export function convertRouteToPlainObject<FILTER extends string, T extends AnyRo
 }
 
 /**
+ * Returns a common representation of the specified route
+ * @param params
+ */
+export function purifyRoute<T extends AnyRoute>(params: Nullable<T>): PurifiedRoute<T> {
+	if (params) {
+		return convertRouteToPlainObject(params, (el, key) => key[0] !== '_' && !systemRouteParams[key]);
+	}
+
+	return {};
+}
+
+/**
+ * Returns a blank route object from the specified
+ * @param route
+ */
+export function getBlankRouteFrom(route: Nullable<AnyRoute | TransitionOptions>): PurifiedRoute<AnyRoute> {
+	return Object.mixin(true, route ? purifyRoute(<AnyRoute>route) : undefined, {
+		query: {},
+		params: {},
+		meta: {}
+	});
+}
+
+/**
  * Converts the specified route object to a plain object and returns it.
  * All properties from a prototype are skipped.
  *
@@ -162,7 +162,7 @@ export function convertRouteToPlainObjectWithoutProto<T extends AnyRoute>(route:
 		res = {};
 
 	if (route) {
-		for (let keys = Object.keys(route), i = 0; i < keys.length; i++) {
+		for (let keys = Object.keys(route).sort(), i = 0; i < keys.length; i++) {
 			const
 				key = keys[i],
 				el = route[key];
