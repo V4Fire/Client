@@ -247,11 +247,13 @@ module.exports = function (gulp = require('gulp')) {
 		}, {permissive: true});
 
 		const cliArgs = arg({
-			'--reinit-browser': String
+			'--reinit-browser': String,
+			'--browser-args': String
 		}, {permissive: true});
 
 		const cliParams = {
-			reInitBrowser: cliArgs['--reinit-browser'] ? JSON.parse(cliArgs['--reinit-browser']) : false
+			reInitBrowser: cliArgs['--reinit-browser'] ? JSON.parse(cliArgs['--reinit-browser']) : false,
+			browserArgs: cliArgs['--browser-args'] ? cliArgs['--browser-args'].split(',') : [],
 		};
 
 		const
@@ -363,7 +365,8 @@ module.exports = function (gulp = require('gulp')) {
 			args['--client-name'] = `${args['--name']}_${args['--suit']}`;
 
 			const
-				argsString = `${c} --client-name ${args['--client-name']} --browsers ${browsers.join(',')}`,
+				browserArgs = cliParams.browserArgs.join(','),
+				argsString = `${c} --client-name ${args['--client-name']} --browsers ${browsers.join(',')} --browser-args ${browserArgs}`,
 				extraArgs = args._.join(' ');
 
 			totalCases.push(argsString);
