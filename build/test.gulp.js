@@ -363,7 +363,7 @@ module.exports = function (gulp = require('gulp')) {
 			args['--client-name'] = `${args['--name']}_${args['--suit']}`;
 
 			const
-				argsString = `${c} --client-name ${args['--client-name']}`,
+				argsString = `${c} --client-name ${args['--client-name']} --browsers ${browsers.join(',')}`,
 				extraArgs = args._.join(' ');
 
 			totalCases.push(argsString);
@@ -514,6 +514,5 @@ function getBrowserArgs() {
 	}
 
 	const v = args['--browser-args'].split(',').map((v) => `--${v.trim()}`);
-	console.log(v);
 	return v;
 }
