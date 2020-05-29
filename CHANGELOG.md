@@ -11,6 +11,17 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.24 (2020-05-28)
+
+#### :bug: Bug Fix
+
+* [Fixed issue with providing extra args in tests](https://github.com/V4Fire/Client/pull/252)
+* [Fixed issue with running tests in single browser](https://github.com/V4Fire/Client/pull/252)
+
+#### :house: Internal
+
+* [Added `--reinit-browser` argument for `npx gulp test:components`](https://github.com/V4Fire/Client/pull/252)
+
 ## v3.0.0-rc.23 (2020-05-27)
 
 #### :bug: Bug Fix
