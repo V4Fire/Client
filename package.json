@@ -37,7 +37,7 @@
     }
   },
   "dependencies": {
-    "@v4fire/core": "^3.17.3",
+    "@v4fire/core": "^3.18.0",
     "escaper": "^3.0.4",
     "eventemitter2": "6.4.1",
     "fg-loadcss": "^2.1.0",
@@ -92,10 +92,9 @@
     "monic": "^2.6.0",
     "monic-loader": "^3.0.1",
     "nib": "^1.1.2",
-    "node-object-hash": "^2.0.0",
     "node-static": "^0.7.11",
     "optimize-css-assets-webpack-plugin": "^5.0.3",
-    "parallel-webpack": "2.0.0",
+    "parallel-webpack": "^2.6.0",
     "path-equal": "^1.1.1",
     "postcss-loader": "^3.0.0",
     "raw-loader": "^4.0.1",
