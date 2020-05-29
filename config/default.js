@@ -26,13 +26,13 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 			coerce: (v) => v ? v.split(',') : []
 		}),
 
+		suit: o('suit', {
+			env: true
+		}),
+
 		inspectComponents: o('inspect-components', {
 			env: true,
 			type: 'boolean'
-		}),
-
-		suit: o('suit', {
-			env: true
 		}),
 
 		components: o('components', {
@@ -91,6 +91,13 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 			return v != null ? v : isProd;
 		},
 
+		processes: o('processes', {
+			env: true,
+			short: 'p',
+			type: 'number',
+			default: require('os').cpus().length
+		}),
+
 		buildGraphFromCache: o('build-graph-from-cache', {
 			env: true,
 			type: 'boolean'
@@ -99,10 +106,9 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 
 	webpack: {
 		devtool: false,
-		hashLength: 8,
 
 		hashFunction() {
-			return !isProd || this.fatHTML() ? undefined : 'md5';
+			return !isProd || this.fatHTML() ? undefined : this.config.build.hashAlg;
 		},
 
 		fatHTML() {

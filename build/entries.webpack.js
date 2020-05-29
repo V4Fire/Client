@@ -20,7 +20,7 @@ const
 const
 	{build, src} = config,
 	{resolve, entries, block} = require('@pzlr/build-core'),
-	{output, buildCache, configHash} = include('build/build.webpack');
+	{output, buildCache} = include('build/build.webpack');
 
 const
 	isFastBuild = build.fast();
@@ -28,14 +28,13 @@ const
 const
 	STD = 0,
 	RUNTIME = 1,
-	HTML = 2,
-	I = [STD, RUNTIME, HTML].length;
+	HTML = 2;
 
 const
-	RCPU = require('os').cpus().length,
+	I = [STD, RUNTIME, HTML].length,
 	IN_PROCESS = ['js', 'css', 'html'].length;
 
-let MAX_PROCESS = RCPU > IN_PROCESS ? RCPU : IN_PROCESS;
+let MAX_PROCESS = build.processes > IN_PROCESS ? build.processes : IN_PROCESS;
 MAX_PROCESS += MAX_PROCESS <= I ? 1 : 0;
 
 /**
@@ -44,11 +43,12 @@ MAX_PROCESS += MAX_PROCESS <= I ? 1 : 0;
  */
 module.exports = (async () => {
 	const
-		cacheFile = path.join(buildCache, `${configHash}_graph.json`);
+		configHash = build.hash(),
+		graphCacheFile = path.join(buildCache, `${configHash}_graph.json`);
 
 	if (build.buildGraphFromCache) {
-		if (fs.existsSync(cacheFile)) {
-			const readCache = () => fs.readJSONSync(cacheFile, {
+		if (fs.existsSync(graphCacheFile)) {
+			const readCache = () => fs.readJSONSync(graphCacheFile, {
 				reviver(k, v) {
 					if (Object.isObject(v) && v.type === 'Map') {
 						return new Map(v.value);
@@ -76,7 +76,7 @@ module.exports = (async () => {
 
 	} else {
 		fs.mkdirpSync(buildCache);
-		fs.writeFileSync(cacheFile, '');
+		fs.writeFileSync(graphCacheFile, '');
 		process.env.BUILD_GRAPH_FROM_CACHE = 1;
 	}
 
@@ -97,12 +97,14 @@ module.exports = (async () => {
 
 	const
 		buildConfig = (await entries.getBuildConfig()).filter((el, key) => entriesFilter ? entriesFilter[key] : true),
-		blockMap = await block.getAll(),
+		blockMap = await block.getAll();
+
+	const
 		graph = await buildConfig.getUnionEntryPoints({cache: blockMap}),
 		processes = $C(I).map(() => ({}));
 
 	/**
-	 * Returns an url relative to the entry folder
+	 * Returns the specified URL relative to the entry folder
 	 */
 	function getUrl(url) {
 		if (resolve.isNodeModule(url)) {
@@ -271,7 +273,7 @@ module.exports = (async () => {
 		dependencies: $C(graph.dependencies).map((el, key) => [...el, key])
 	};
 
-	fs.writeFileSync(cacheFile, JSON.stringify(res, null, 2));
+	fs.writeFileSync(graphCacheFile, JSON.stringify(res, null, 2));
 	console.log('Project graph initialized');
 
 	return res;
