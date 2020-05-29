@@ -11,12 +11,10 @@
 require('config');
 
 const
-	$C = require('collection.js'),
-	EventEmitter = require('eventemitter2').EventEmitter2;
+	$C = require('collection.js');
 
 const
-	build = include('build/entries.webpack'),
-	buildEvent = new EventEmitter({maxListeners: build.MAX_PROCESS});
+	build = include('build/entries.webpack');
 
 async function buildFactory(entry, buildId) {
 	await include('build/preload.webpack');
@@ -47,11 +45,6 @@ async function buildFactory(entry, buildId) {
 	};
 }
 
-const predefinedTasks = $C(build.MAX_PROCESS).map((el, buildId) => new Promise((resolve) => {
-	buildEvent.once(`build.${buildId}`, resolve);
-	buildEvent.once(`build.all`, () => resolve(include('build/empty.webpack')({buildId})));
-}));
-
 const tasks = (async () => {
 	await include('build/snakeskin');
 
@@ -59,15 +52,7 @@ const tasks = (async () => {
 		graph = await build,
 		tasks = global.WEBPACK_CONFIG = await $C(graph.processes).async.map((el, i) => buildFactory(el, i));
 
-	$C(tasks).forEach((config, i) => {
-		buildEvent.emit(`build.${i}`, config);
-	});
-
-	buildEvent.emit(`build.all`, tasks[0]);
-	buildEvent.removeAllListeners();
-
 	return tasks;
 })();
 
-// FIXME: https://github.com/trivago/parallel-webpack/issues/76
-module.exports = /[/\\]webpack\b/.test(process.argv[1]) ? tasks : predefinedTasks;
+module.exports = tasks;
