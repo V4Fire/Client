@@ -74,7 +74,8 @@ module.exports = function (gulp = require('gulp')) {
 			'--browsers': String,
 			'--close': String,
 			'--headless': String,
-			'--client-name': String
+			'--client-name': String,
+			'--reinit-browser': String
 		}, {permissive: true});
 
 		if (!args['--name']) {
@@ -86,18 +87,17 @@ module.exports = function (gulp = require('gulp')) {
 		const
 			browsers = getSelectedBrowsers();
 
-		let
-			exitCode = 0,
-			headless = true,
-			closeOnFinish = true;
+		let exitCode = 0;
 
-		if (args['--headless']) {
-			headless = JSON.parse(args['--headless']);
-		}
+		const cliParams = {
+			'headless': true,
+			'reinit-browser': false,
+			'close': true
+		};
 
-		if (args['--close']) {
-			closeOnFinish = JSON.parse(args['--close']);
-		}
+		Object.keys(cliParams).forEach((key) => {
+			cliParams[key] = args[`--${key}`] && JSON.parse(args[`--${key}`]) || cliParams[key];
+		});
 
 		args['--port'] = args['--port'] || Number.random(2000, 6000);
 		args['--page'] = args['--page'] || 'p-v4-components-demo';
@@ -127,8 +127,16 @@ module.exports = function (gulp = require('gulp')) {
 		};
 
 		const createBrowser = async (browserType) => {
+			const browserInstanceParams = {
+				headless: cliParams.headless
+			};
+
+			const browserInstanceOptions = {
+				reInit: cliParams['reinit-browser']
+			};
+
 			const
-				browser = await getBrowserInstance(browserType, {headless}),
+				browser = await getBrowserInstance(browserType, browserInstanceParams, browserInstanceOptions),
 				context = await browser.newContext(),
 				page = await context.newPage();
 
@@ -160,7 +168,10 @@ module.exports = function (gulp = require('gulp')) {
 			await test(page, params);
 
 			const close = () => {
-				closeOnFinish && params.browser.close();
+				if (!cliParams['reinit-browser'] && cliParams.close) {
+					params.browser.close();
+				}
+
 				process.exitCode = exitCode;
 			};
 
@@ -235,8 +246,22 @@ module.exports = function (gulp = require('gulp')) {
 		const processesArgs = arg({
 			'--processes': Number,
 			'--test-processes': Number,
-			'--build-processes': Number
+			'--build-processes': Number,
+
+			'-p': '--processes',
+			'-tp': '--test-processes',
+			'-bp': '--build-processes'
 		}, {permissive: true});
+
+		const cliArgs = arg({
+			'--reinit-browser': String,
+			'--browser-args': String
+		}, {permissive: true});
+
+		const cliParams = {
+			reInitBrowser: cliArgs['--reinit-browser'] ? JSON.parse(cliArgs['--reinit-browser']) : false,
+			browserArgs: cliArgs['--browser-args'] ? cliArgs['--browser-args'].split(',') : [],
+		};
 
 		const
 			buildProcess = processesArgs['--build-processes'] || processesArgs['--processes'] || cpus,
@@ -286,11 +311,13 @@ module.exports = function (gulp = require('gulp')) {
 				['--client-name', args['--client-name']]
 			].flat().join(' ');
 
+			const extraArgs = args._.join(' ');
+
 			await waitForQuotas(buildMap, buildProcess);
 
 			buildMap.set(
 				argsString,
-				exec(`npx gulp test:component:build ${argsString}`, () => buildMap.delete(argsString))
+				exec(`npx gulp test:component:build ${argsString} ${extraArgs}`, () => buildMap.delete(argsString))
 			);
 
 			buildCache[args['--client-name']] = true;
@@ -299,6 +326,9 @@ module.exports = function (gulp = require('gulp')) {
 		await waitForEmpty(buildMap);
 
 		// Launch browser server
+
+		let endpointArg = '';
+
 		const wsEndpoints = {
 			chromium: '',
 			firefox: '',
@@ -309,17 +339,18 @@ module.exports = function (gulp = require('gulp')) {
 			servers = {},
 			browsers = getSelectedBrowsers();
 
-		for (const browserType of browsers) {
-			const
-				browser = servers[browserType] = await playwright[browserType].launchServer(),
-				wsEndpoint = browser.wsEndpoint();
+		if (!cliParams.reInitBrowser) {
+			for (const browserType of browsers) {
+				const
+					browser = servers[browserType] = await playwright[browserType].launchServer({args: getBrowserArgs()}),
+					wsEndpoint = browser.wsEndpoint();
 
-			await playwright[browserType].connect({wsEndpoint});
-			wsEndpoints[browserType] = wsEndpoint;
-		}
+				await playwright[browserType].connect({wsEndpoint});
+				wsEndpoints[browserType] = wsEndpoint;
+			}
 
-		const
 			endpointArg = Object.entries(wsEndpoints).map(([key, value]) => `--${key}WsEndpoint ${value}`).join(' ');
+		}
 
 		// Run tests
 
@@ -341,7 +372,9 @@ module.exports = function (gulp = require('gulp')) {
 			args['--client-name'] = `${args['--name']}_${args['--suit']}`;
 
 			const
-				argsString = `${c} --client-name ${args['--client-name']}`;
+				browserArgs = cliParams.browserArgs.join(','),
+				argsString = `${c} --client-name ${args['--client-name']} --browsers ${browsers.join(',')} --browser-args ${browserArgs}`,
+				extraArgs = args._.join(' ');
 
 			totalCases.push(argsString);
 			await waitForQuotas(testMap, testProcess);
@@ -351,7 +384,7 @@ module.exports = function (gulp = require('gulp')) {
 
 			testMap.set(
 				argsString,
-				exec(`npx gulp test:component:run ${argsString} ${endpointArg}`,
+				exec(`npx gulp test:component:run ${argsString} ${endpointArg} ${extraArgs}`,
 					() => onTestEnd(argsString),
 					() => {
 						onTestEnd(argsString);
@@ -374,7 +407,9 @@ module.exports = function (gulp = require('gulp')) {
 
 		console.log('\n-------------\n');
 
-		Object.keys(servers).forEach(async (key) => await servers[key].close());
+		if (!cliParams.reInitBrowser) {
+			Object.keys(servers).forEach(async (key) => await servers[key].close());
+		}
 
 		if (failedCases.length) {
 			throw new Error(`Tests didn't passed`);
@@ -412,16 +447,25 @@ function wait(cb, interval = 15) {
  *
  * @param {string} browserType
  * @param {!Object} params
+ * @param {!Object} options
+ * @returns {!Promise<?>}
  */
-async function getBrowserInstance(browserType, params) {
+async function getBrowserInstance(browserType, params, options = {}) {
 	const
 		playwright = require('playwright');
 
-	const args = arg({
-		'--firefoxWsEndpoint': String,
-		'--webkitWsEndpoint': String,
-		'--chromiumWsEndpoint': String
-	}, {permissive: true});
+	const args = {
+		'--firefoxWsEndpoint': '',
+		'--webkitWsEndpoint': '',
+		'--chromiumWsEndpoint': ''
+	};
+
+	Object.keys(args).forEach((key) => {
+		try {
+			args[key] = arg({[key]: String}, {permissive: true})[key];
+
+		} catch {}
+	});
 
 	const endpointMap = {
 		firefox: '--firefoxWsEndpoint',
@@ -429,11 +473,11 @@ async function getBrowserInstance(browserType, params) {
 		chromium: '--chromiumWsEndpoint'
 	};
 
-	if (args[endpointMap[browserType]]) {
+	if (args[endpointMap[browserType]] && !options.reInit) {
 		return await playwright[browserType].connect({wsEndpoint: args[endpointMap[browserType]], ...params});
 	}
 
-	return await playwright[browserType].launch(params);
+	return await playwright[browserType].launch({args: getBrowserArgs(), ...params});
 }
 
 /**
@@ -467,4 +511,19 @@ function getSelectedBrowsers() {
 	}
 
 	return browsers;
+}
+
+/**
+ * Returns a list of arguments that will be provided to a browser
+ * @returns {!Array<string>}
+ */
+function getBrowserArgs() {
+	const
+		args = arg({'--browser-args': String}, {permissive: true});
+
+	if (!args['--browser-args']) {
+		return [];
+	}
+
+	return args['--browser-args'].split(',').map((v) => `--${v.trim()}`);
 }
