@@ -441,6 +441,7 @@ function wait(cb, interval = 15) {
  * @param {string} browserType
  * @param {!Object} params
  * @param {!Object} options
+ * @returns {!Promise<?>}
  */
 async function getBrowserInstance(browserType, params, options = {}) {
 	const
@@ -506,7 +507,8 @@ function getSelectedBrowsers() {
 }
 
 /**
- * Returns a list of arguments which will be provided to browser
+ * Returns a list of arguments that will be provided to a browser
+ * @returns {!Array<string>}
  */
 function getBrowserArgs() {
 	const
@@ -516,6 +518,5 @@ function getBrowserArgs() {
 		return [];
 	}
 
-	const v = args['--browser-args'].split(',').map((v) => `--${v.trim()}`);
-	return v;
+	return args['--browser-args'].split(',').map((v) => `--${v.trim()}`);
 }
