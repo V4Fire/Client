@@ -121,7 +121,6 @@ export default class ChunkRender extends Friend {
 		this.items = [];
 		this.refState = {};
 
-		this.chunkRequest.reset();
 		this.async.clearAll({group: new RegExp(this.asyncGroup)});
 
 		this.setLoadersVisibility(true);

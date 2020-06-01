@@ -263,6 +263,7 @@ export default class bVirtualScroll extends iData implements iItems {
 	 */
 	async reInit(): Promise<void> {
 		this.componentRender.reInit();
+		this.chunkRequest.reset();
 		this.chunkRender.reInit();
 	}
 
@@ -310,6 +311,19 @@ export default class bVirtualScroll extends iData implements iItems {
 	/** @override */
 	protected onRequestError(err: Error | RequestError<unknown>, retry: RetryRequestFn): void {
 		super.onRequestError(err, retry);
+
+		if (isAsyncReplaceError(err)) {
+			return;
+		}
+
 		this.localState = 'error';
 	}
+}
+
+/**
+ * True if the specified error is an async error
+ * @param err
+ */
+function isAsyncReplaceError(err: unknown): boolean {
+	return Object.isPlainObject(err) && Object.isString(err.join) && err.join === 'replace';
 }

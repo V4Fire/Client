@@ -96,7 +96,7 @@ module.exports = function (gulp = require('gulp')) {
 		};
 
 		Object.keys(cliParams).forEach((key) => {
-			cliParams[key] = args[`--${key}`] && JSON.parse(args[`--${key}`]) || cliParams[key];
+			cliParams[key] = args[`--${key}`] ? JSON.parse(args[`--${key}`]) : cliParams[key];
 		});
 
 		args['--port'] = args['--port'] || Number.random(2000, 6000);

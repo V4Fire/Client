@@ -34,8 +34,24 @@ module.exports = async (page, {componentSelector, component: c}) => {
 			await testInitLoadPromise;
 		});
 
+		const testFrequentInitLoad = async () => {
+			let i = 4;
+
+			while (i--) {
+				c.evaluate((ctx) => ctx.initLoad());
+				await h.sleep(100);
+				await h.waitForRefDisplay(page, componentSelector, 'tombstones', '');
+			}
+		};
+
 		it('reloads data with frequent initLoad calls', async () => {
-			// ...
+			await testInitLoadPromise;
+			await testFrequentInitLoad();
+
+			const chunkSize = await c.evaluate((ctx) => ctx.chunkSize);
+
+			await h.waitForRefDisplay(page, componentSelector, 'tombstones', 'none');
+			expect(await c.evaluate((ctx) => ctx.$refs.container.childElementCount)).toBe(chunkSize);
 		});
 	});
 };
