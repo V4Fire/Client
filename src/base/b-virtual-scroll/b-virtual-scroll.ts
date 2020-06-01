@@ -312,9 +312,11 @@ export default class bVirtualScroll extends iData implements iItems {
 	protected onRequestError(err: Error | RequestError<unknown>, retry: RetryRequestFn): void {
 		super.onRequestError(err, retry);
 
-		if (!isAsyncReplaceError(err)) {
-			this.localState = 'error';
+		if (isAsyncReplaceError(err)) {
+			return;
 		}
+
+		this.localState = 'error';
 	}
 }
 

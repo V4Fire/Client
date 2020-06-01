@@ -14,14 +14,14 @@ const
 	componentDir = pzlr.resolve.blockSync('b-virtual-scroll'),
 	h = require(path.join(componentDir, 'test/helpers.js'));
 
-module.exports = async (page, {componentSelector, component: c}) => {
+module.exports = async (p, {componentSelector, component: c}) => {
 	describe('b-virtual-scroll', () => {
 		const testInitLoad = async () => {
 			const chunkSize = await c.evaluate((ctx) => ctx.chunkSize);
 
 			c.evaluate((ctx) => ctx.initLoad());
-			await h.waitForRefDisplay(page, componentSelector, 'tombstones', '');
-			await h.waitForRefDisplay(page, componentSelector, 'tombstones', 'none');
+			await h.waitForRefDisplay(p, componentSelector, 'tombstones', '');
+			await h.waitForRefDisplay(p, componentSelector, 'tombstones', 'none');
 
 			expect(await c.evaluate((ctx) => ctx.$refs.tombstones.style.display)).toBe('none');
 			expect(await c.evaluate((ctx) => ctx.$refs.container.style.display)).toBe('');
@@ -38,25 +38,26 @@ module.exports = async (page, {componentSelector, component: c}) => {
 		let i = reloadCount;
 
 		const testFrequentInitLoad = async () => {
+			await testInitLoadPromise;
+
 			while (i--) {
 				c.evaluate((ctx) => ctx.initLoad());
 				await h.sleep(100);
-				await h.waitForRefDisplay(page, componentSelector, 'tombstones', '');
+				await h.waitForRefDisplay(p, componentSelector, 'tombstones', '');
 			}
-		};
-
-		const testFrequentInitLoadPromise = async () => {
-			await testInitLoadPromise;
-			await testFrequentInitLoad();
 
 			const
 				chunkSize = await c.evaluate((ctx) => ctx.chunkSize);
 
-			await h.waitForRefDisplay(page, componentSelector, 'tombstones', 'none');
+			await h.waitForRefDisplay(p, componentSelector, 'tombstones', 'none');
 			expect(await c.evaluate((ctx) => ctx.$refs.container.childElementCount)).toBe(chunkSize);
 		};
 
-		it('reloads data with frequent initLoad calls', testFrequentInitLoadPromise);
+		const testFrequentInitLoadPromise = testFrequentInitLoad();
+
+		it('reloads data with frequent initLoad calls', async () => {
+			await testFrequentInitLoadPromise;
+		});
 
 		it('renders correct data chunk to the page', async () => {
 			await Promise.all([testInitLoadPromise, testFrequentInitLoadPromise]);
