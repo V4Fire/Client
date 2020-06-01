@@ -34,9 +34,10 @@ module.exports = async (page, {componentSelector, component: c}) => {
 			await testInitLoadPromise;
 		});
 
-		const testFrequentInitLoad = async () => {
-			let i = 6;
+		const reloadCount = 6;
+		let i = reloadCount;
 
+		const testFrequentInitLoad = async () => {
 			while (i--) {
 				c.evaluate((ctx) => ctx.initLoad());
 				await h.sleep(100);
@@ -44,14 +45,30 @@ module.exports = async (page, {componentSelector, component: c}) => {
 			}
 		};
 
-		it('reloads data with frequent initLoad calls', async () => {
+		const testFrequentInitLoadPromise = async () => {
 			await testInitLoadPromise;
 			await testFrequentInitLoad();
 
-			const chunkSize = await c.evaluate((ctx) => ctx.chunkSize);
+			const
+				chunkSize = await c.evaluate((ctx) => ctx.chunkSize);
 
 			await h.waitForRefDisplay(page, componentSelector, 'tombstones', 'none');
 			expect(await c.evaluate((ctx) => ctx.$refs.container.childElementCount)).toBe(chunkSize);
+		};
+
+		it('reloads data with frequent initLoad calls', testFrequentInitLoadPromise);
+
+		it('renders correct data chunk to the page', async () => {
+			await Promise.all([testInitLoadPromise, testFrequentInitLoadPromise]);
+
+			const
+				chunkSize = await c.evaluate((ctx) => ctx.chunkSize);
+
+			expect(await c.evaluate((ctx) => ctx.$refs.container.childElementCount)).toBe(chunkSize);
+
+			expect(
+				await c.evaluate((ctx) => ctx.$refs.container.children[0].getAttribute('data-index')
+			)).toBe(`${(reloadCount + 1) * chunkSize}`);
 		});
 	});
 };

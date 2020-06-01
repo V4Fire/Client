@@ -33,7 +33,7 @@ const suits = {
 		attrs: {
 			...baseAttrs,
 			':dataProvider': s('demo.Pagination'),
-			':request': '{get: {id: "b-virtual:init-load"}}'
+			':request': '{get: {id: "b-virtual:init-load", chunkSize: 10}}'
 		},
 
 		content: {
