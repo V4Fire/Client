@@ -103,6 +103,8 @@ export default class ChunkRequest extends Friend {
 	 * Initializes the request module
 	 */
 	async init(): Promise<void> {
+		await this.async.sleep(50, {label: $$.waitForInitCalls});
+
 		const
 			{options, chunkSize, dataProvider} = this.ctx;
 
