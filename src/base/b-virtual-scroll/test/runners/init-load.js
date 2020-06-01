@@ -35,7 +35,7 @@ module.exports = async (page, {componentSelector, component: c}) => {
 		});
 
 		const testFrequentInitLoad = async () => {
-			let i = 4;
+			let i = 6;
 
 			while (i--) {
 				c.evaluate((ctx) => ctx.initLoad());
