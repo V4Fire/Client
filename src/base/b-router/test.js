@@ -67,6 +67,7 @@ module.exports = async (page) => {
 				const
 					result = {};
 
+				await ctx.router.push('/second');
 				await ctx.router.push('/');
 
 				result.initialQuery = ctx.location.search;
@@ -109,6 +110,70 @@ module.exports = async (page) => {
 
 				modifiedContent3: 'Main page',
 				modifiedQuery3: '?bar=2'
+			});
+		});
+
+		it('transition event flow', async () => {
+			expect(await root.evaluate(async (ctx) => {
+				const
+					result = {};
+
+				await ctx.router.push('/second');
+				await ctx.router.push('/');
+
+				result.initialQuery = ctx.location.search;
+				result.initialContent = ctx.route.meta.content;
+
+				ctx.router.once('onBeforeChange', (route, {query}) => {
+					query.bla = 1;
+				});
+
+				ctx.router.once('onHardChange', (route) => {
+					result.onHardChange = [
+						Object.fastClone(ctx.route.query),
+						Object.fastClone(route.query)
+					];
+				});
+
+				ctx.router.once('onChange', (route) => {
+					result.onChange = [
+						Object.fastClone(ctx.route.query),
+						Object.fastClone(route.query)
+					];
+				});
+
+				ctx.router.once('onTransition', (route) => {
+					result.onTransition = [
+						Object.fastClone(ctx.route.query),
+						Object.fastClone(route.query)
+					];
+				});
+
+				ctx.rootEmitter.once('onTransition', (route) => {
+					result.onRootTransition = [
+						Object.fastClone(ctx.route.query),
+						Object.fastClone(route.query)
+					];
+				});
+
+				await ctx.router.push('second', {query: {foo: 1}});
+
+				result.modifiedQuery = ctx.location.search;
+				result.modifiedContent = ctx.route.meta.content;
+
+				return result;
+
+			})).toEqual({
+				initialContent: 'Main page',
+				initialQuery: '',
+
+				modifiedContent: 'Second page',
+				modifiedQuery: '?bla=1&foo=1',
+
+				onHardChange: [{}, {foo: 1, bla: 1}],
+				onChange: [{foo: 1, bla: 1}, {foo: 1, bla: 1}],
+				onTransition: [{foo: 1, bla: 1}, {foo: 1, bla: 1}],
+				onRootTransition: [{foo: 1, bla: 1}, {foo: 1, bla: 1}],
 			});
 		});
 
