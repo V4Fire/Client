@@ -7,7 +7,7 @@
  */
 
 import iBlock from 'super/i-block/i-block';
-import { transitionOptions, systemRouteParams } from 'base/b-router/const';
+import { transitionOptions, systemRouteParams, canParse } from 'base/b-router/const';
 
 import {
 
@@ -22,9 +22,6 @@ import {
 	RouteParamsFilter
 
 } from 'base/b-router/interface';
-
-const
-	canParseRgxp = /^(?:true|false|null|undefined)$/;
 
 /**
  * Normalizes the specified transitions options and returns a new object
@@ -78,7 +75,7 @@ export function normalizeTransitionOpts(data: Nullable<TransitionOptions>): CanU
 			const
 				strVal = String(data);
 
-			if (canParseRgxp.test(strVal)) {
+			if (canParse.test(strVal)) {
 				parent[key] = Object.isString(data) ? Object.parse(data) : data;
 
 			} else {

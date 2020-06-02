@@ -24,5 +24,6 @@ export const defaultRoutes = Object.createDict({
 });
 
 export const
-	qsClearFixRgxp = /[#?]\s*$/,
-	isExternal = /^(?:\w+:)?\/\/(?:[^\s]*)+$/;
+	isExternal = /^(?:\w+:)?\/\/(?:[^\s]*)+$/,
+	canParse = /^(?:true|false|null|undefined)$/m,
+	qsClearFixRgxp = /[#?]\s*$/;
