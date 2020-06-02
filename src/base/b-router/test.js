@@ -177,6 +177,81 @@ module.exports = async (page) => {
 			});
 		});
 
+		it('watching for route changes', async () => {
+			expect(await root.evaluate(async (ctx) => {
+				const
+					result = {routeChanges: [], queryChanges: []};
+
+				await ctx.router.push('/second');
+				await ctx.router.push('/');
+
+				result.initialQuery = ctx.location.search;
+				result.initialContent = ctx.route.meta.content;
+
+				const
+					group = {group: Math.random().toString()};
+
+				ctx.watch('route', group, (val, old) => {
+					result.routeChanges.push([
+						Object.fastClone(val.query),
+						Object.fastClone(old?.query)
+					]);
+				}, group);
+
+				ctx.watch('route.query', {deep: true, withProto: true, collapse: false, ...group}, (val, old) => {
+					result.queryChanges.push([Object.fastClone(val), Object.fastClone(old)]);
+				}, group);
+
+				await ctx.router.push('second', {query: {foo: 1}});
+				await ctx.router.push('second', {query: {foo: 2}});
+				ctx.async.terminateWorker(group);
+
+				await ctx.router.push('second', {query: {foo: 3}});
+				return result;
+
+			})).toEqual({
+				initialContent: 'Main page',
+				initialQuery: '',
+				routeChanges: [[{foo: 1}, null]],
+				queryChanges: [[{foo: 1}, null], [{foo: 2}, {foo: 1}]]
+			});
+		});
+
+		it('linking for the route', async () => {
+			expect(await root.evaluate(async (ctx) => {
+				const
+					result = {};
+
+				await ctx.router.push('/second');
+				await ctx.router.push('/');
+
+				result.initialQuery = ctx.location.search;
+				result.initialContent = ctx.route.meta.content;
+
+				const
+					group = {group: Math.random().toString()},
+					watchOpts = {deep: true, withProto: true, collapse: false, ...group};
+
+				result.initialRouteLink =
+					ctx.sync.link(['routeLink', 'route.query'], watchOpts, (query) => Object.fastClone(query));
+
+				await ctx.router.push('second', {query: {foo: 1}});
+				result.routeLink = ctx.routeLink;
+				ctx.async.terminateWorker(group);
+
+				await ctx.router.push('second', {query: {foo: 3}});
+				result.routeLink = ctx.routeLink;
+
+				return result;
+
+			})).toEqual({
+				initialContent: 'Main page',
+				initialQuery: '',
+				initialRouteLink: {},
+				routeLink: {foo: 1}
+			});
+		});
+
 		it('transition to the default page', async () => {
 			expect(await root.evaluate(async (ctx) => {
 				await ctx.router.push('/some/fake/page');
