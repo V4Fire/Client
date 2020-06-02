@@ -180,6 +180,23 @@ export default {
 };
 ```
 
+#### Using a path with the router transition methods
+
+When you use router transition methods, like, "push" or "replace", you basically specify a route to go by a name, but, also, you can use a path of the route.
+The code below:
+
+```js
+this.router.push('/help');
+this.router.push('/friends/:userId', {params: {userId: '109'}});
+```
+
+Is similar to:
+
+```js
+this.router.push('help');
+this.router.push('friends', {params: {userId: '109'}});
+```
+
 ### Redirecting to another route
 
 We can specify logic when one route will automatically redirect to another.
