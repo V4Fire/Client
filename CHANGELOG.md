@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.25 (2020-06-02)
+
+#### :house: Internal
+
+* [Fixed type of `DaemonFn`](https://github.com/V4Fire/Client/issues/257)
+
 ## v3.0.0-rc.24 (2020-05-29)
 
 #### :bug: Bug Fix
