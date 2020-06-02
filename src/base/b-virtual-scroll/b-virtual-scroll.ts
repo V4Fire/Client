@@ -38,7 +38,7 @@ import ComponentRender from 'base/b-virtual-scroll/modules/component-render';
 import ChunkRender from 'base/b-virtual-scroll/modules/chunk-render';
 import ChunkRequest from 'base/b-virtual-scroll/modules/chunk-request';
 
-import { getRequestParams } from 'base/b-virtual-scroll/modules/helpers';
+import { getRequestParams, isAsyncReplaceError } from 'base/b-virtual-scroll/modules/helpers';
 
 import {
 
@@ -318,12 +318,4 @@ export default class bVirtualScroll extends iData implements iItems {
 
 		this.localState = 'error';
 	}
-}
-
-/**
- * True if the specified error is an `async replace` error
- * @param err
- */
-function isAsyncReplaceError(err: unknown): boolean {
-	return Object.isPlainObject(err) && Object.isString(err.join) && err.join === 'replace';
 }
