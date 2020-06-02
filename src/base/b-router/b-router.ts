@@ -710,6 +710,11 @@ export default class bRouter extends iData {
 			if (isSoftTransition) {
 				this.emit('softChange', newRoute);
 
+				// We get the prototype by using __proto__ link
+				// because Object.getPrototypeOf returns non-watchable object.
+				// This behavior is based on a strategy that every touch to an object property of a watched object
+				// will create a child watch object.
+
 				const
 					proto = <any>r!.route!.__proto__;
 
@@ -732,6 +737,8 @@ export default class bRouter extends iData {
 		} else if (method === 'push') {
 			emitTransition();
 
+		// In this case, we don't do transition, but still,
+		// we should emit the special event, because some methods, like, "back" or "forward" can wait for it
 		} else {
 			emitTransition(true);
 		}
