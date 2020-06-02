@@ -42,8 +42,8 @@ Of course, you can provide extra props to declaration. Mind that here is can be 
 
 All components have two links to work with the router:
 
-* `router` - a link to a router instance;
-* `route` - an object of the active route.
+* `router` — a link to a router instance;
+* `route` — an object of the active route.
 
 To emit a transition to another route just call one of the router methods.
 
@@ -168,15 +168,20 @@ export default {
 
 * The `notFound` route isn't directly tied with any URL-s (because it hasn't the `path` property), but it has `default` property in `true`, i.e. every time some URL can't be matched directly will be used `notFound`. For example, `https://foo.com/bro` or `https://foo.com/bla/bar`. Also, you can name the default route as `index` instead of setting the `default` property.
 
-Notice, we don't specify the whole URL in `path`, if we do it, it will work as "external" transition, i.e, the browser switches to this URL by using `location.href` instead of `history.pushState`. It can help if you need to declare some routes that should go to other sites.
-Also, you can mark some routes with the `external` flag to force this behavior.
+#### External routes
+
+Usually, when we emit a new transition by using router methods, the transition isn't reloaded a browser because it uses HistoryAPI or similar techniques. It is the way to create single-page applications (SPA), but sometimes we can want to force reloading of the browser, for instance, we jump to another site or subdomain of the current. To do this you should specify a route path as absolute, i.e., with a protocol, host address, port, etc., or add the special `external` flag.
 
 ```js
 export default {
-  friends: {
-    path: '/friends/:userId',
+  google: {
+    path: 'https://google.com'
+  },
+
+  help: {
+    path: '/help',
     external: true
-  }
+  },
 };
 ```
 
@@ -197,6 +202,12 @@ this.router.push('help');
 this.router.push('friends', {params: {userId: '109'}});
 ```
 
+You can provide routes with absolute URL-is too, even there aren't specified within the routing schema.
+
+```js
+this.router.push('https://google.com');
+```
+
 ### Redirecting to another route
 
 We can specify logic when one route will automatically redirect to another.
@@ -214,8 +225,33 @@ export default {
 };
 ```
 
-You can create more complex cases with more than one redirect. Usually, you should provide a route name within the `redirect`
-property, but it supports when you provide a whole URL - in that case, redirect will work as "external", i.e, the browser switches to this URL by using `location.href` instead of `history.pushState`.
+You can create more complex cases with more than one redirect.
+
+#### External redirect
+
+Usually, you should provide a route name within the `redirect` property, but it supports when you provide the whole URL - in that case, the redirect will work as "external", i.e, the browser switches to this URL by using `location.href` instead of `history.pushState`.
+
+```js
+export default {
+  google: {
+    path: '/google',
+    redirect: 'https://google.com'
+  }
+};
+```
+
+Mind, that this declaration isn't equal to:
+
+```js
+export default {
+  google: {
+    path: 'https://google.com'
+  }
+};
+```
+
+If the first example, we declare the route with a path on the own site, for instance, `https://bla.com/google` that redirects to google.
+In the second example we just declare an external route, i.e. it hasn't tied URL on the own site.
 
 ### Creating an alias for a route
 
@@ -234,7 +270,7 @@ export default {
 };
 ```
 
-Instead of `redirect`, `alias` will save URL and name, but other options will be taken from a route we refer to.
+Instead of `redirect`, `alias` will save URL and name, but other options will be taken from the route we refer to.
 
 ### Scrolling to the specified coordinates after a transition
 
@@ -274,31 +310,44 @@ Usually, we split our scripts and styles in different chunks to improve a site l
 
 #### Defying entry points
 
-To describe how the builder should build an application you need to create a build file within the `src/entries` directory. There are two reserved names of an entry point:
+To describe how the builder should build an application you need to create a build file within the `src/entries` directory.
+The created entry points have names that match the file names.
 
-* `index` - the entry point that contains minimal required core to work of the V4 framework and other critical dependencies. For instance,
+##### Base entry points
+
+There are two reserved names of entry points:
+
+* `index` — the entry point that contains minimal required core to work of the V4 framework and other critical dependencies. For instance,
 
 *your-project-directory/src/entries/index.js*
+
+Also, if you have only the one entry point, you can name it differently.
 
 ```js
 import "@v4fire/client/src/core";
 ```
 
-* `std` - the optional entry point that contains polyfills to the standard library and other similar stuff. This entry point will always initialize before other entry points.
+* `std` — the optional entry point that contains polyfills to the standard library and other similar stuff. This entry point will always initialize before other entry points.
+
+##### Custom entry points
 
 Now you can add new files that represent entry points, for example,
 
 *your-project-directory/src/entries/p-v4-components-demo.js*
 
 ```js
-// To prevent duplication of files we need to import dependencies
-import './index';
-
 // To add a component you need to create import for its index file
 import '../pages/p-v4-components-demo';
 ```
 
-The created entry point has a name that matches with the file name.
+##### Inheriting of entry points
+
+To avoid duplication of code lines you can specify that one entry point depends on another entry point. To do this, just add an import to this entry point.
+
+```js
+import './index';
+import '../pages/p-v4-components-demo';
+```
 
 #### Binding entry points with routes
 
@@ -331,23 +380,83 @@ export default {
 All extra properties are stored within the `meta` parameter. Now you can access this parameter bu using `route.meta.showWelcomeBoard`.
 Be careful, don't eventually redefine predefined properties.
 
+## Transition methods
+
+The router instance has several methods to manage transitions:
+
+* `push` — emits a new transition with adding to the history stack;
+* `replace` — emits a new transition that replaces the current route;
+* `back` — go back to the one step from the history stack;
+* `forward` — go forward to the one step from the history stack;
+* `go` — switches to a route from the history stack, identified by its relative position to the current route.
+
+"push" and "replace" method can take additional parameters:
+
+* `query` — extra query parameters to a route, basically, their attaches to the URL `/foo?bla=1`.
+
+```js
+router.push('foo', {query: {bla: 1}});
+```
+
+* `params` — parameters that provide values to path interpolation.
+
+```js
+router.push('/friends/:userId', {query: {userId: 1}});
+```
+
+* `meta` — extra parameters that haven't a "side" effect on a route path.
+
+```js
+router.push('/friends/:userId', {meta: {scroll: {x: 0, y: 100}}});
+```
+
+Mind, all query and param parameters normalize before transitions: "true/false/null/undefined" and numbers to their JS equivalents.
+
+```js
+// These two transitions are equal
+router.push('foo', {query: {bla: 1}});
+router.push('foo', {query: {bla: '1'}});
+
+// These two transitions are equal
+router.push('/friends/:userId', {query: {userId: 1}});
+router.push('/friends/:userId', {query: {userId: '1'}});
+```
+
+All transition methods return promises that are resolved when their transitions are finished.
+
+```js
+router.back().then(() => {
+  // ...
+});
+```
+
 ## Event flow of transitions
 
-When we invoke one of router transition methods, like, push or replace, the router emits a bunch of special events.
+When we invoke one of router transition methods, like, "push" or "replace", the router emits a bunch of special events.
 
-1. `beforeChange(route: Nullable<string>, params: PageOptionsProp, method: TransitionMethod)` - this event fires before any transition. The handlers that listen to this event are taken arguments:
+1. `beforeChange(route: Nullable<string>, params: PageOptionsProp, method: TransitionMethod)` — this event fires before any transition. The handlers that listen to this event are taken arguments:
 
-  1. `route`  - ref to a route to go to.
-  2. `params` - parameters of a route. The handlers can modify this object to attach more parameters.
-  3. `method` - the type of used transition methods: "push", "replace" or "event" (for native history navigation).
+  1. `route`  — ref to a route to go to.
+  2. `params` — parameters of the route. The handlers can modify this object to attach more parameters.
+  3. `method` — the type of used transition methods: `push`, `replace` or `event` (for native history navigation).
 
-3. `softChange(route: Route)` or `hardChange(route: Route)` - fires one of these events before changing the route object. The difference between these events is that "soft" means that the route still have the same with the previous route, but were changes some query parameters, despite "hard" indicates that the route was changed or was changed one of parameters that can modify URL.
+3. `softChange(route: Route)` or `hardChange(route: Route)` — fires one of these events before changing the route object. The difference between these events is that "soft" means that the route still has the same name with the previous route, but there were some changes of query parameters, opposite "hard" indicates that the route was changed or was changed one of the parameters that can modify the path URL.
 
-2. `change(route: Route)` - fires every time the route was changed. Mind that sometimes transition can be prevented and this event won't be fired, for instance, if we try to execute "replace" transition on the same route with the same parameters.
+2. `change(route: Route)` — fires every time the route was changed. Mind that sometimes transition can be prevented and this event won't be fired, for instance, if we try to execute "replace" transition on the same route with the same parameters.
 
-5. `transition(route: Route)` - fires after calling of transition methods, if the transition takes a place, the event is fired after "change" event.
+5. `transition(route: Route)` — fires after calling of transition methods, if the transition takes a place, the event is fired after "change" event.
 
 The router also provides "change" event to the root component as "transition", just for usability.
+
+```js
+router.on('change', () => {
+  // ...
+});
+
+rootEmitter.on('transition', () => {
+  // ...
+});
+```
 
 ## How dynamically tie a component property with the router
 
