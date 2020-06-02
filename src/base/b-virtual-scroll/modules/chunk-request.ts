@@ -86,6 +86,7 @@ export default class ChunkRequest extends Friend {
 		this.isDone = false;
 		this.isLastEmpty = false;
 		this.pendingData = [];
+		this.async.clearTimeout({label: $$.waitForInitCalls});
 	}
 
 	/**
