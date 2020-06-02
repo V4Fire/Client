@@ -42,7 +42,7 @@ module.exports = async (page) => {
 			expect(await root.evaluate(async (ctx) => {
 				const
 					result = {},
-					s = () => ctx.location.pathname + ctx.location.search;
+					s = () => location.pathname + location.search;
 
 				await ctx.router.push('template', {params: {param1: 'foo'}});
 				result.path1 = s();
@@ -65,34 +65,37 @@ module.exports = async (page) => {
 		it('soft transition', async () => {
 			expect(await root.evaluate(async (ctx) => {
 				const
+					{router} = ctx;
+
+				const
 					result = {};
 
-				await ctx.router.push('/second');
-				await ctx.router.push('/');
+				await router.push('/second');
+				await router.push('/');
 
-				result.initialQuery = ctx.location.search;
+				result.initialQuery = location.search;
 				result.initialContent = ctx.route.meta.content;
 
-				ctx.router.once('onSoftChange', (route) => {
+				router.once('onSoftChange', (route) => {
 					result.onSoftChange = [
 						Object.fastClone(ctx.route.query),
 						Object.fastClone(route.query)
 					];
 				});
 
-				await ctx.router.push(null, {query: {foo: 1}});
+				await router.push(null, {query: {foo: 1}});
 
-				result.modifiedQuery = ctx.location.search;
+				result.modifiedQuery = location.search;
 				result.modifiedContent = ctx.route.meta.content;
 
-				await ctx.router.push(null, {query: {bar: 2}});
+				await router.push(null, {query: {bar: 2}});
 
-				result.modifiedQuery2 = ctx.location.search;
+				result.modifiedQuery2 = location.search;
 				result.modifiedContent2 = ctx.route.meta.content;
 
-				await ctx.router.push(null, {query: {foo: null, bar: undefined}});
+				await router.push(null, {query: {foo: null, bar: undefined}});
 
-				result.modifiedQuery3 = ctx.location.search;
+				result.modifiedQuery3 = location.search;
 				result.modifiedContent3 = ctx.route.meta.content;
 
 				return result;
@@ -116,33 +119,36 @@ module.exports = async (page) => {
 		it('transition event flow', async () => {
 			expect(await root.evaluate(async (ctx) => {
 				const
+					{router} = ctx;
+
+				const
 					result = {};
 
-				await ctx.router.push('/second');
-				await ctx.router.push('/');
+				await router.push('/second');
+				await router.push('/');
 
-				result.initialQuery = ctx.location.search;
+				result.initialQuery = location.search;
 				result.initialContent = ctx.route.meta.content;
 
-				ctx.router.once('onBeforeChange', (route, {query}) => {
+				router.once('onBeforeChange', (route, {query}) => {
 					query.bla = 1;
 				});
 
-				ctx.router.once('onHardChange', (route) => {
+				router.once('onHardChange', (route) => {
 					result.onHardChange = [
 						Object.fastClone(ctx.route.query),
 						Object.fastClone(route.query)
 					];
 				});
 
-				ctx.router.once('onChange', (route) => {
+				router.once('onChange', (route) => {
 					result.onChange = [
 						Object.fastClone(ctx.route.query),
 						Object.fastClone(route.query)
 					];
 				});
 
-				ctx.router.once('onTransition', (route) => {
+				router.once('onTransition', (route) => {
 					result.onTransition = [
 						Object.fastClone(ctx.route.query),
 						Object.fastClone(route.query)
@@ -156,9 +162,9 @@ module.exports = async (page) => {
 					];
 				});
 
-				await ctx.router.push('second', {query: {foo: 1}});
+				await router.push('second', {query: {foo: 1}});
 
-				result.modifiedQuery = ctx.location.search;
+				result.modifiedQuery = location.search;
 				result.modifiedContent = ctx.route.meta.content;
 
 				return result;
@@ -180,12 +186,15 @@ module.exports = async (page) => {
 		it('watching for route changes', async () => {
 			expect(await root.evaluate(async (ctx) => {
 				const
+					{router} = ctx;
+
+				const
 					result = {routeChanges: [], queryChanges: []};
 
-				await ctx.router.push('/second');
-				await ctx.router.push('/');
+				await router.push('/second');
+				await router.push('/');
 
-				result.initialQuery = ctx.location.search;
+				result.initialQuery = location.search;
 				result.initialContent = ctx.route.meta.content;
 
 				const
@@ -202,11 +211,11 @@ module.exports = async (page) => {
 					result.queryChanges.push([Object.fastClone(val), Object.fastClone(old)]);
 				}, group);
 
-				await ctx.router.push('second', {query: {foo: 1}});
-				await ctx.router.push('second', {query: {foo: 2}});
+				await router.push('second', {query: {foo: 1}});
+				await router.push('second', {query: {foo: 2}});
 				ctx.async.terminateWorker(group);
 
-				await ctx.router.push('second', {query: {foo: 3}});
+				await router.push('second', {query: {foo: 3}});
 				return result;
 
 			})).toEqual({
@@ -220,12 +229,15 @@ module.exports = async (page) => {
 		it('linking for the route', async () => {
 			expect(await root.evaluate(async (ctx) => {
 				const
+					{router} = ctx;
+
+				const
 					result = {};
 
-				await ctx.router.push('/second');
-				await ctx.router.push('/');
+				await router.push('/second');
+				await router.push('/');
 
-				result.initialQuery = ctx.location.search;
+				result.initialQuery = location.search;
 				result.initialContent = ctx.route.meta.content;
 
 				const
@@ -235,11 +247,11 @@ module.exports = async (page) => {
 				result.initialRouteLink =
 					ctx.sync.link(['routeLink', 'route.query'], watchOpts, (query) => Object.fastClone(query));
 
-				await ctx.router.push('second', {query: {foo: 1}});
+				await router.push('second', {query: {foo: 1}});
 				result.routeLink = ctx.routeLink;
 				ctx.async.terminateWorker(group);
 
-				await ctx.router.push('second', {query: {foo: 3}});
+				await router.push('second', {query: {foo: 3}});
 				result.routeLink = ctx.routeLink;
 
 				return result;
@@ -357,6 +369,39 @@ module.exports = async (page) => {
 			await router.go(1);
 			return router.route.meta.content;
 		})).toBe('Main page');
+	});
+
+	it('updating of routes', async () => {
+		expect(await root.evaluate(async (ctx) => {
+			const
+				{router} = ctx;
+
+			const
+				res = {},
+				oldRoutes = ctx.router.routes;
+
+			await router.updateRoutes({
+				main: {
+					path: '/',
+					default: true,
+					content: 'Dynamic Main page'
+				}
+			});
+
+			res.dynamicPage = ctx.route.meta.content;
+
+			router.routes = oldRoutes;
+			router.routeStore = undefined;
+
+			await router.initRoute('main');
+			res.restoredPage = ctx.route.meta.content;
+
+			return res;
+
+		})).toEqual({
+			dynamicPage: 'Dynamic Main page',
+			restoredPage: 'Main page'
+		});
 	});
 
 	it('getting an URL string by a query', async () => {

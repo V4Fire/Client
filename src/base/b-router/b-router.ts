@@ -19,10 +19,10 @@ import { deprecate, deprecated } from 'core/functools/deprecation';
 import { concatUrls, toQueryString } from 'core/url';
 
 import engine, { Router, Route, HistoryClearFilter } from 'core/router';
-import iData, { component, prop, system, hook } from 'super/i-data/i-data';
+import iData, { component, prop, system, computed, hook, wait } from 'super/i-data/i-data';
 
 import { qsClearFixRgxp } from 'base/b-router/const';
-import { initRoutes } from 'base/b-router/modules/initializers';
+import { initRoutes, compileRoutes } from 'base/b-router/modules/initializers';
 
 import {
 
@@ -42,7 +42,7 @@ import {
 import {
 
 	RouteAPI,
-	ActiveRoute,
+	InitialRoute,
 	StaticRoutes,
 
 	RouteBlueprint,
@@ -55,6 +55,7 @@ import {
 
 export * from 'super/i-data/i-data';
 export * from 'base/b-router/const';
+export * from 'base/b-router/modules/initializers';
 export * from 'base/b-router/interface';
 
 export const
@@ -78,19 +79,17 @@ export default class bRouter extends iData {
 	readonly basePath: string = '/';
 
 	/**
-	 * Active route value.
-	 * Usually, you don't need to manually provide of the active route value,
+	 * Initial route value.
+	 * Usually, you don't need to manually provide the initial route value,
 	 * because it can be automatically inferred, but sometimes it can be useful.
 	 */
 	@prop<bRouter>({
 		type: [String, Object],
 		required: false,
-		watch: (o) => {
-			o.initComponentValues().catch(stderr);
-		}
+		watch: 'updateCurrentRoute'
 	})
 
-	readonly activeRoute?: ActiveRoute;
+	readonly initialRoute?: InitialRoute;
 
 	/**
 	 * Static schema of application routes.
@@ -105,10 +104,8 @@ export default class bRouter extends iData {
 	 */
 	@prop<bRouter>({
 		type: Function,
-		default: engine,
-		watch: (o) => {
-			o.initComponentValues().catch(stderr);
-		}
+		watch: 'updateCurrentRoute',
+		default: engine
 	})
 
 	readonly engineProp!: () => Router;
@@ -132,7 +129,12 @@ export default class bRouter extends iData {
 	 * Compiled schema of application routes
 	 * @see [[bRouter.routesProp]]
 	 */
-	@system({after: 'engine', init: initRoutes})
+	@system({
+		after: 'engine',
+		watch: 'updateCurrentRoute',
+		init: initRoutes
+	})
+
 	protected routes!: RouteBlueprints;
 
 	/**
@@ -150,6 +152,26 @@ export default class bRouter extends iData {
 	@deprecated({renamedTo: 'route'})
 	get page(): CanUndef<this['r']['CurrentPage']> {
 		return this.route;
+	}
+
+	/**
+	 * Default route value
+	 */
+	@computed({cache: true, dependencies: ['routes']})
+	get defaultRoute(): CanUndef<RouteBlueprint> {
+		let route;
+
+		for (let keys = Object.keys(this.routes), i = 0; i < keys.length; i++) {
+			const
+				el = this.routes[keys[i]];
+
+			if (el?.meta.default) {
+				route = el;
+				break;
+			}
+		}
+
+		return route;
 	}
 
 	/**
@@ -422,15 +444,7 @@ export default class bRouter extends iData {
 		// We haven't found a route by the provided ref,
 		// that why we need to find "default" route as loopback
 		if (!resolvedRoute) {
-			for (let i = 0; i < routeKeys.length; i++) {
-				const
-					el = routes[routeKeys[i]];
-
-				if (el?.meta.default) {
-					resolvedRoute = el;
-					break;
-				}
-			}
+			resolvedRoute = this.defaultRoute;
 
 		// We have found a route by the provided ref, but it contains an alias
 		} else if (alias) {
@@ -540,13 +554,7 @@ export default class bRouter extends iData {
 		opts?: TransitionOptions,
 		method: TransitionMethod = 'push'
 	): Promise<CanUndef<Route>> {
-		opts = normalizeTransitionOpts(opts);
-
-		if (!ref && !opts && !this.lfc.isBeforeCreate()) {
-			return;
-		}
-
-		opts = getBlankRouteFrom(opts);
+		opts = getBlankRouteFrom(normalizeTransitionOpts(opts));
 
 		const {
 			r,
@@ -785,6 +793,39 @@ export default class bRouter extends iData {
 	}
 
 	/**
+	 * Updates the schema of routes
+	 *
+	 * @param routes
+	 * @param [route] - active route
+	 */
+	@wait('beforeReady')
+	async updateRoutes(
+		routes: StaticRoutes,
+		route?: Nullable<InitialRoute>
+	): Promise<RouteBlueprints> {
+		this.routes = compileRoutes(this, routes);
+		this.routeStore = undefined;
+		await this.initRoute(route || this.initialRoute || this.defaultRoute);
+		return this.routes;
+	}
+
+	/** @override */
+	protected initRemoteData(): CanUndef<CanPromise<RouteBlueprints>> {
+		if (!this.db) {
+			return;
+		}
+
+		const
+			val = this.convertDBToComponent<StaticRoutes>(this.db);
+
+		if (Object.isDictionary(val)) {
+			return this.updateRoutes(val);
+		}
+
+		return this.routes;
+	}
+
+	/**
 	 * Initializes the router within an application
 	 * @emits $root.initRouter(router: bRouter)
 	 */
@@ -795,24 +836,28 @@ export default class bRouter extends iData {
 	}
 
 	/**
-	 * Initializes component values
+	 * Initializes the specified route
+	 * @param [route] - route
 	 */
 	@hook('beforeDataCreate')
-	protected async initComponentValues(): Promise<void> {
-		const
-			{activeRoute} = this;
-
-		if (activeRoute) {
-			if (Object.isString(activeRoute)) {
-				await this.replace(activeRoute);
-
-			} else {
-				await this.replace(activeRoute.name, Object.reject(activeRoute, ['name', 'page']));
+	protected initRoute(route: Nullable<InitialRoute> = this.initialRoute): Promise<void> {
+		if (route) {
+			if (Object.isString(route)) {
+				return this.replace(route);
 			}
 
-		} else {
-			await this.replace(null);
+			return this.replace(route.name, Object.reject(route, ['name', 'page']));
 		}
+
+		return this.replace(null);
+	}
+
+	/**
+	 * Updates the current route value
+	 */
+	@wait({defer: true, label: $$.updateCurrentRoute})
+	protected updateCurrentRoute(): Promise<void> {
+		return this.initRoute(null);
 	}
 
 	/** @override */

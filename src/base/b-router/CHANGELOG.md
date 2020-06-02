@@ -27,10 +27,10 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :house: Internal
 
-* Refactoring
+* Added tests & refactoring
 * Renamed a group of properties:
   * `page` -> `route`
-  * `pageProp` -> `activeRoute`
+  * `pageProp` -> `initialRoute`
   * `pages` -> `routes`
   * `pagesProp` -> `routesProp`
   * `getPageOpts` -> `getRoute`

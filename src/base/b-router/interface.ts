@@ -168,7 +168,6 @@ export interface RouteParams extends TransitionOptions {
 	page: string;
 }
 
-export type ActiveRoute = string | RouteParams;
-
+export type InitialRoute = string | RouteParams;
 export type TransitionType = 'soft' | 'hard';
 export type TransitionMethod = 'push' | 'replace' | 'event';

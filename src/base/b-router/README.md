@@ -37,7 +37,7 @@ Of course, you can provide extra props to declaration. Mind that here is can be 
 
 - template index() extends ['i-static-page.component'].index
   - block headHelpers
-    < b-router :routes = linkToRoutes | :activeRoute = 'foo'
+    < b-router :routes = linkToRoutes | :initialRoute = 'foo'
 ```
 
 All components have two links to work with the router:
