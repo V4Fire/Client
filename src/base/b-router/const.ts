@@ -18,7 +18,7 @@ export const systemRouteParams = Object.createDict({
 	page: true
 });
 
-export const defaultRoutes = Object.createDict({
+export const defaultRouteNames = Object.createDict({
 	index: true,
 	default: true
 });

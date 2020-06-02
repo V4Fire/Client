@@ -13,7 +13,9 @@
 
 import Async from 'core/async';
 import symbolGenerator from 'core/symbol';
-import path from 'path-to-regexp';
+
+import globalRoutes from 'routes';
+import path, { Key, RegExpOptions } from 'path-to-regexp';
 
 import { deprecate, deprecated } from 'core/functools/deprecation';
 import { concatUrls, toQueryString } from 'core/url';
@@ -21,8 +23,7 @@ import { concatUrls, toQueryString } from 'core/url';
 import engine, { Router, Route, HistoryClearFilter } from 'core/router';
 import iData, { component, prop, system, computed, hook, wait } from 'super/i-data/i-data';
 
-import { qsClearFixRgxp } from 'base/b-router/const';
-import { initRoutes, compileRoutes } from 'base/b-router/modules/initializers';
+import { defaultRouteNames, isExternal, qsClearFixRgxp } from 'base/b-router/const';
 
 import {
 
@@ -55,7 +56,6 @@ import {
 
 export * from 'super/i-data/i-data';
 export * from 'base/b-router/const';
-export * from 'base/b-router/modules/initializers';
 export * from 'base/b-router/interface';
 
 export const
@@ -132,7 +132,7 @@ export default class bRouter extends iData {
 	@system({
 		after: 'engine',
 		watch: 'updateCurrentRoute',
-		init: initRoutes
+		init: (o) => o.sync.link(<any>o.compileStaticRoutes)
 	})
 
 	protected routes!: RouteBlueprints;
@@ -803,7 +803,7 @@ export default class bRouter extends iData {
 		routes: StaticRoutes,
 		route?: Nullable<InitialRoute>
 	): Promise<RouteBlueprints> {
-		this.routes = compileRoutes(this, routes);
+		this.routes = this.compileStaticRoutes(routes);
 		this.routeStore = undefined;
 		await this.initRoute(route || this.initialRoute || this.defaultRoute);
 		return this.routes;
@@ -860,9 +860,117 @@ export default class bRouter extends iData {
 		return this.initRoute(null);
 	}
 
+	/**
+	 * Compiles the specified static routes and returns a new object
+	 * @param [routes]
+	 */
+	protected compileStaticRoutes(routes: StaticRoutes = this.engine.routes || globalRoutes): RouteBlueprints {
+		const
+			basePath = this.basePath,
+			compiledRoutes = {};
+
+		for (let keys = Object.keys(routes), i = 0; i < keys.length; i++) {
+			const
+				name = keys[i],
+				route = routes[name] || {},
+				pathParams = [];
+
+			if (Object.isString(route)) {
+				let
+					pattern;
+
+				if (route && basePath) {
+					pattern = concatUrls(basePath, route);
+				}
+
+				compiledRoutes[name] = {
+					name,
+
+					pattern,
+					rgxp: pattern != null ? path(pattern, pathParams) : undefined,
+
+					get pathParams(): Key[] {
+						return pathParams;
+					},
+
+					/** @deprecated */
+					get page(): string {
+						return this.name;
+					},
+
+					/** @deprecated */
+					get index(): boolean {
+						return this.meta.default;
+					},
+
+					meta: {
+						name,
+						external: isExternal.test(pattern),
+
+						/** @deprecated */
+						page: name,
+
+						/** @deprecated */
+						params: pathParams
+					}
+				};
+
+			} else {
+				let
+					pattern;
+
+				if (Object.isString(route.path) && basePath) {
+					pattern = concatUrls(basePath, route.path);
+				}
+
+				compiledRoutes[name] = {
+					name,
+
+					pattern,
+					rgxp: pattern != null ? path(pattern, pathParams, <RegExpOptions>route.pathOpts) : undefined,
+
+					get pathParams(): Key[] {
+						return pathParams;
+					},
+
+					/** @deprecated */
+					get page(): string {
+						return this.name;
+					},
+
+					/** @deprecated */
+					get index(): boolean {
+						return this.meta.default;
+					},
+
+					meta: {
+						...route,
+
+						name,
+						default: Boolean(route.default || route.index || defaultRouteNames[name]),
+
+						external: route.external ?? (
+							isExternal.test(pattern) ||
+							isExternal.test(route.redirect || '')
+						),
+
+						/** @deprecated */
+						page: name,
+
+						/** @deprecated */
+						params: pathParams
+					}
+				};
+			}
+		}
+
+		return compiledRoutes;
+	}
+
 	/** @override */
 	protected initBaseAPI(): void {
 		super.initBaseAPI();
+		this.compileStaticRoutes = this.instance.compileStaticRoutes.bind(this);
 		this.emitTransition = this.instance.emitTransition.bind(this);
 	}
 }

@@ -178,7 +178,7 @@ export function convertRouteToPlainObjectWithoutProto<T extends AnyRoute>(route:
 }
 
 /**
- * Returns a plain object based on the specified route without static fields
+ * Returns a plain object based on the specified route without non-watchable properties
  * @param route
  */
 export function getParamsFromRouteThatNeedWatch<T extends AnyRoute>(route: Nullable<T>): WatchableRoute<T> {
