@@ -75,9 +75,9 @@ export function getRequestParams(
 }
 
 /**
- * True if the specified error is an `async replace` error
- * @param err
+ * True if the specified value is an `async replace` error
+ * @param val
  */
-export function isAsyncReplaceError(err: unknown): boolean {
-	return Object.isPlainObject(err) && Object.isString(err.join) && err.join === 'replace';
+export function isAsyncReplaceError(val: unknown): boolean {
+	return Object.isPlainObject(val) && Object.isString(val.join) && val.join === 'replace';
 }
