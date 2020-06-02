@@ -97,6 +97,12 @@ export function attachDynamicWatcher(
 		handlersSet?.delete(wrapper);
 	};
 
-	component.unsafe.$async.worker(destructor);
+	// Every worker that passed to async have a counter with number of consumers of this worker,
+	// but in this case this behaviour is redundant and can produce an error,
+	// that why we wrap original destructor with a new function
+
+	// tslint:disable-next-line:no-unnecessary-callback-wrapper
+	component.unsafe.$async.worker(() => destructor());
+
 	return destructor;
 }

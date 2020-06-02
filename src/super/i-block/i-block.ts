@@ -1453,10 +1453,10 @@ export default abstract class iBlock extends ComponentInterface {
 
 		this.lfc.execCbAfterComponentCreated(() => {
 			const
-				watcher = this.$watch(path, opts, handler);
+				unwatch = this.$watch(path, opts, handler);
 
-			if (watcher && (opts.group || opts.label || opts.join)) {
-				this.async.worker(watcher, {
+			if (unwatch && (opts.group || opts.label || opts.join)) {
+				this.async.worker(unwatch, {
 					group: opts.group,
 					label: opts.label,
 					join: opts.join
