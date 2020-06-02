@@ -93,7 +93,10 @@ export function attachDynamicWatcher(
 
 	handlersSet.add(wrapper);
 
-	return component.unsafe.$async.worker(() => {
+	const destructor = () => {
 		handlersSet?.delete(wrapper);
-	});
+	};
+
+	component.unsafe.$async.worker(destructor);
+	return destructor;
 }
