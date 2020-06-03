@@ -60,11 +60,16 @@ module.exports = async (page) => {
 		it('"replace" to a page by null', async () => {
 			expect(await root.evaluate(async (ctx) => {
 				const
+					{router} = ctx;
+
+				await router.replace('/');
+
+				const
 					historyLength = history.length,
 					res = {};
 
-				await ctx.router.replace('second');
-				await ctx.router.replace(null, {query: {bla: 1}});
+				await router.replace('second');
+				await router.replace(null, {query: {bla: 1}});
 
 				res.content = ctx.route.meta.content;
 				res.query = location.search;
@@ -94,16 +99,19 @@ module.exports = async (page) => {
 		it('transition to a route with path interpolating', async () => {
 			expect(await root.evaluate(async (ctx) => {
 				const
+					{router} = ctx;
+
+				const
 					result = {},
 					s = () => location.pathname + location.search;
 
-				await ctx.router.push('template', {params: {param1: 'foo'}});
+				await router.push('template', {params: {param1: 'foo'}});
 				result.path1 = s();
 
-				await ctx.router.push('template', {params: {param1: 'foo'}, query: {param2: 109}});
+				await router.push('template', {params: {param1: 'foo'}, query: {param2: 109}});
 				result.path2 = s();
 
-				await ctx.router.push('/strict-tpl/:param1', {params: {param1: 'foo'}, query: {param2: 109}});
+				await router.push('/strict-tpl/:param1', {params: {param1: 'foo'}, query: {param2: 109}});
 				result.path3 = s();
 
 				return result;
@@ -234,6 +242,22 @@ module.exports = async (page) => {
 				onTransition: [{foo: 1, bla: 1}, {foo: 1, bla: 1}],
 				onRootTransition: [{foo: 1, bla: 1}, {foo: 1, bla: 1}],
 			});
+		});
+
+		it('transition with root parameters', async () => {
+			expect(await root.evaluate(async (ctx) => {
+				const
+					{router} = ctx;
+
+				await router.push('/second');
+				await router.push('/');
+
+				ctx.rootParam = 1;
+				await router.push('second');
+				ctx.rootParam = undefined;
+
+				return location.search;
+			})).toBe('?rootParam=1');
 		});
 
 		it('watching for route changes', async () => {

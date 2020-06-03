@@ -200,7 +200,7 @@ export function getParamsFromRouteThatNeedWatch<T extends AnyRoute>(route: Nulla
  */
 export function fillRouteParams(route: Route, root: iBlock): void {
 	const
-		rootAPI = root.unsafe;
+		rootMeta = root.unsafe.meta;
 
 	const {
 		meta,
@@ -208,29 +208,30 @@ export function fillRouteParams(route: Route, root: iBlock): void {
 		params
 	} = route;
 
-	const
-		paramsFromRoot = meta.paramsFromRoot !== false,
-		rootState = rootAPI.syncRouterState(undefined, 'remoteCheck');
-
-	if (paramsFromRoot) {
-		const
-			rootField = rootAPI.meta.fields,
-			rootSystemFields = rootAPI.meta.systemFields;
-
-		for (let keys = Object.keys(rootState), i = 0; i < keys.length; i++) {
+	if (meta.paramsFromRoot !== false) {
+		for (let o = [rootMeta.systemFields, rootMeta.fields], i = 0; i < o.length; i++) {
 			const
-				key = keys[i],
-				rootVal = rootState[key];
+				fields = o[i],
+				keys = Object.keys(fields);
 
-			if (query[key] === undefined) {
+			for (let i = 0; i < keys.length; i++) {
 				const
-					field = rootField[key] || rootSystemFields[key];
+					key = keys[i],
+					field = fields[key]?.meta;
 
-				if (field?.meta['router.query']) {
-					query[key] = rootVal;
+				if (!field || !field.route) {
+					continue;
+				}
 
-				} else {
-					delete query[key];
+				const
+					obj = route[<string>field.route];
+
+				if (!Object.isDictionary(obj)) {
+					continue;
+				}
+
+				if (obj[key] === undefined) {
+					obj[key] = root[key];
 				}
 			}
 		}
@@ -240,21 +241,18 @@ export function fillRouteParams(route: Route, root: iBlock): void {
 		for (let o = route.pathParams, i = 0; i < o.length; i++) {
 			const
 				param = o[i],
-				name = param.name,
-				queryVal = query[name];
+				name = param.name;
 
 			if (params[name] === undefined) {
+				const
+					queryVal = query[name];
+
 				if (queryVal !== undefined && new RegExp(param.pattern).test(String(queryVal))) {
 					params[name] = queryVal;
-					delete query[name];
-
-				} else if (paramsFromRoot) {
-					params[name] = rootState[name];
 				}
-
-			} else {
-				delete query[name];
 			}
+
+			delete query[name];
 		}
 	}
 }

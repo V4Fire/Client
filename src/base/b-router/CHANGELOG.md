@@ -17,6 +17,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 * Removed click handler
 * Removed `scrollTo`
+* Review legacy logic with providing of root parameters to the router
 
 #### :rocket: New Feature
 

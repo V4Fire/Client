@@ -94,10 +94,18 @@ export type StaticRouteMeta<M extends object = Dictionary> = M & {
 	pathOpts?: RegExpOptions & ParseOptions;
 
 	/**
-	 * If true, then the route can take values from a router state of the root application component
-	 * and places they as query parameters.
+	 * If true, then the route can take some values from the root component.
+	 * The values to take have the special "route" flag.
 	 *
-	 * The router state is an object that returns "syncRouterState" method of a component.
+	 * @example
+	 * ```typescript
+	 * @component({root: true})
+	 * export default class pV4ComponentsDemo extends iStaticPage {
+	 *   // Will save this parameter to the route.query
+	 *   @system({meta: {route: 'query'}})
+	 *   rootParam: number == 1;
+	 * }
+	 * ```
 	 */
 	paramsFromRoot?: boolean;
 
