@@ -99,8 +99,24 @@ const suits = {
 			...baseContent,
 			empty: slots.empty
 		}
+	}, {
+		attrs: {
+			...baseAttrs,
+			':dataProvider': s('demo.Pagination'),
+			':dbConverter': '({data}) => ({data: data.splice(0, 4)})',
+			':request': '{get: {chunkSize: 8, total: 8, id: "b-virtual:slot-empty"}}',
+			'id': 'second'
+		},
+
+		content: {
+			...baseContent,
+			empty: slots.empty
+		}
 	}],
 
+	/**
+	 * Set of parameters to render two instances of b-virtual-scroll
+	 */
 	doubleComponents: [{
 		attrs: {
 			...baseAttrs,
