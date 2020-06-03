@@ -33,8 +33,6 @@ module.exports = async (page, {componentSelector, component: c}) => {
 				secondComponentSelector = `.b-virtual-scroll#second`,
 				{component: secondCtx} = await h.getComponentCtx(page, secondComponentSelector);
 
-			console.log(secondComponentSelector);
-
 			await h.waitForRefDisplay(page, secondComponentSelector, 'tombstones', 'none', componentSelector);
 			await h.waitItemsCountGreaterThan(page, 0, secondComponentSelector, '>', componentSelector);
 
