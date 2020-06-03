@@ -107,7 +107,7 @@ export default abstract class iStaticPage extends iPage {
 	remoteState!: Dictionary;
 
 	/**
-	 * Name of the active page
+	 * Name of the active route page
 	 */
 	get activePage(): CanUndef<string> {
 		return this.field.get('route.meta.name');
