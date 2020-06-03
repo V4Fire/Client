@@ -27,5 +27,19 @@ module.exports = async (page, {componentSelector, component: c}) => {
 
 			expect(await c.evaluate((ctx) => ctx.$refs.empty.style.display)).toBe('');
 		});
+
+		it('does not render empty slot to the page if contains data', async () => {
+			const
+				secondComponentSelector = `.b-virtual-scroll#second`,
+				{component: secondCtx} = await h.getComponentCtx(page, secondComponentSelector);
+
+			console.log(secondComponentSelector);
+
+			await h.waitForRefDisplay(page, secondComponentSelector, 'tombstones', 'none', componentSelector);
+			await h.waitItemsCountGreaterThan(page, 0, secondComponentSelector, '>', componentSelector);
+
+			expect(await secondCtx.evaluate((ctx) => ctx.$refs.container.childElementCount)).toBeGreaterThan(0);
+			expect(await secondCtx.evaluate((ctx) => ctx.$refs.empty.style.display)).toBe('none');
+		});
 	});
 };
