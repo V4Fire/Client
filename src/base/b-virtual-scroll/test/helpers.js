@@ -38,10 +38,11 @@ module.exports.scrollAndWaitItemsCountGreaterThan = async function (page, count,
  * @param {number} count
  * @param {string} componentSelector
  * @param {string=} [op]
+ * @param {string=} [elName]
  * @returns {!Promise<void>}
  */
-module.exports.waitItemsCountGreaterThan = async function (page, count, componentSelector, op = '>') {
-	await page.waitForFunction(`document.querySelector('${componentSelector}__container').childElementCount ${op} ${count}`);
+module.exports.waitItemsCountGreaterThan = async function (page, count, componentSelector, op = '>', elName = componentSelector) {
+	await page.waitForFunction(`document.querySelector('${componentSelector} ${elName}__container').childElementCount ${op} ${count}`);
 };
 
 /**
@@ -51,8 +52,9 @@ module.exports.waitItemsCountGreaterThan = async function (page, count, componen
  * @param {string} componentSelector
  * @param {string} refClassName
  * @param {string} display
+ * @param {string} elName
  * @returns {!Promise<void>}
  */
-module.exports.waitForRefDisplay = async function (page, componentSelector, refClassName, display) {
-	await page.waitForFunction(`document.querySelector('${componentSelector}__${refClassName}').style.display === '${display}'`);
+module.exports.waitForRefDisplay = async function (page, componentSelector, refClassName, display, elName = componentSelector) {
+	await page.waitForFunction(`document.querySelector('${componentSelector} ${elName}__${refClassName}').style.display === '${display}'`);
 };
