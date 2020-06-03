@@ -17,6 +17,10 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 * [Fixed an issue where an `empty` slot appeared when there was data in the `b-virtual-scroll` component](https://github.com/V4Fire/Client/issues/259)
 
+#### :house: Internal
+
+* [Fixed type of `DaemonFn`](https://github.com/V4Fire/Client/issues/257)
+
 ## v3.0.0-rc.24 (2020-05-29)
 
 #### :bug: Bug Fix
