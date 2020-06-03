@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.25 (2020-06-03)
+
+#### :bug: Bug Fix
+
+* [Fixed an issue where an `empty` slot appeared when there was data in the `b-virtual-scroll` component](https://github.com/V4Fire/Client/issues/259)
+
 ## v3.0.0-rc.24 (2020-05-29)
 
 #### :bug: Bug Fix
