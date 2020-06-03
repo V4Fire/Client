@@ -349,88 +349,88 @@ module.exports = async (page) => {
 				return ctx.route.meta.content;
 			})).toBe('Second page');
 		});
-	});
 
-	it('moving back and forward from one page to another by using .go', async () => {
-		expect(await root.evaluate(async ({router}) => {
-			await router.push('main');
-			await router.push('second');
-			await router.push('main');
-			await router.push('second');
-			return router.route.meta.content;
-		})).toBe('Second page');
+		it('moving back and forward from one page to another by using .go', async () => {
+			expect(await root.evaluate(async ({router}) => {
+				await router.push('main');
+				await router.push('second');
+				await router.push('main');
+				await router.push('second');
+				return router.route.meta.content;
+			})).toBe('Second page');
 
-		expect(await root.evaluate(async ({router}) => {
-			await router.go(-2);
-			return router.route.meta.content;
-		})).toBe('Second page');
+			expect(await root.evaluate(async ({router}) => {
+				await router.go(-2);
+				return router.route.meta.content;
+			})).toBe('Second page');
 
-		expect(await root.evaluate(async ({router}) => {
-			await router.go(1);
-			return router.route.meta.content;
-		})).toBe('Main page');
-	});
-
-	it('updating of routes', async () => {
-		expect(await root.evaluate(async (ctx) => {
-			const
-				{router} = ctx;
-
-			const
-				res = {},
-				oldRoutes = ctx.router.routes;
-
-			await router.updateRoutes({
-				main: {
-					path: '/',
-					default: true,
-					content: 'Dynamic Main page'
-				}
-			});
-
-			res.dynamicPage = ctx.route.meta.content;
-
-			router.routes = oldRoutes;
-			router.routeStore = undefined;
-
-			await router.initRoute('main');
-			res.restoredPage = ctx.route.meta.content;
-
-			return res;
-
-		})).toEqual({
-			dynamicPage: 'Dynamic Main page',
-			restoredPage: 'Main page'
+			expect(await root.evaluate(async ({router}) => {
+				await router.go(1);
+				return router.route.meta.content;
+			})).toBe('Main page');
 		});
-	});
 
-	it('getting an URL string by a query', async () => {
-		expect(await root.evaluate(async ({router}) => router.getRoutePath('second', {query: {bla: 1}})))
-			.toBe('/second?bla=1');
+		it('updating of routes', async () => {
+			expect(await root.evaluate(async (ctx) => {
+				const
+					{router} = ctx;
 
-		expect(await root.evaluate(async ({router}) => router.getRoutePath('/', {query: {bla: 1}})))
-			.toBe('/?bla=1');
-	});
+				const
+					res = {},
+					oldRoutes = ctx.router.routes;
 
-	it('getting route parameters by a query', async () => {
-		const pageMeta = {
-			name: 'second',
-			page: 'second',
-			path: '/second',
-			default: false,
-			external: false,
-			content: 'Second page',
-			params: []
-		};
+				await router.updateRoutes({
+					main: {
+						path: '/',
+						default: true,
+						content: 'Dynamic Main page'
+					}
+				});
 
-		expect(await root.evaluate(async ({router}) => {
-			const route = router.getRoute('second');
-			return route.meta;
-		})).toEqual(pageMeta);
+				res.dynamicPage = ctx.route.meta.content;
 
-		expect(await root.evaluate(async ({router}) => {
-			const route = router.getRoute('/second');
-			return route.meta;
-		})).toEqual(pageMeta);
+				router.routes = oldRoutes;
+				router.routeStore = undefined;
+
+				await router.initRoute('main');
+				res.restoredPage = ctx.route.meta.content;
+
+				return res;
+
+			})).toEqual({
+				dynamicPage: 'Dynamic Main page',
+				restoredPage: 'Main page'
+			});
+		});
+
+		it('getting URL by a query', async () => {
+			expect(await root.evaluate(async ({router}) => router.getRoutePath('second', {query: {bla: 1}})))
+				.toBe('/second?bla=1');
+
+			expect(await root.evaluate(async ({router}) => router.getRoutePath('/', {query: {bla: 1}})))
+				.toBe('/?bla=1');
+		});
+
+		it('getting route parameters by a query', async () => {
+			const pageMeta = {
+				name: 'second',
+				page: 'second',
+				path: '/second',
+				default: false,
+				external: false,
+				content: 'Second page',
+				params: []
+			};
+
+			expect(await root.evaluate(async ({router}) => {
+				const route = router.getRoute('second');
+				return route.meta;
+			})).toEqual(pageMeta);
+
+			expect(await root.evaluate(async ({router}) => {
+				const route = router.getRoute('/second');
+				return route.meta;
+			})).toEqual(pageMeta);
+		});
 	});
 };
