@@ -47,7 +47,7 @@ module.exports = function (gulp = require('gulp')) {
 			['--es', 'ES2019']
 		].flat().join(' ');
 
-		return $.run(`npx --no-install webpack ${argsString} ${suitArg} ${extraArgs}`, {verbosity: 3})
+		return $.run(`npx webpack ${argsString} ${suitArg} ${extraArgs}`, {verbosity: 3})
 			.exec()
 			.on('error', console.error);
 	});
@@ -310,7 +310,7 @@ module.exports = function (gulp = require('gulp')) {
 
 			buildMap.set(
 				argsString,
-				exec(`npx --no-install gulp test:component:build ${argsString} ${extraArgs}`, () => buildMap.delete(argsString))
+				exec(`npx gulp test:component:build ${argsString} ${extraArgs}`, () => buildMap.delete(argsString))
 			);
 
 			buildCache[args['--client-name']] = true;
@@ -377,7 +377,7 @@ module.exports = function (gulp = require('gulp')) {
 
 			testMap.set(
 				argsString,
-				exec(`npx --no-install gulp test:component:run ${argsString} ${endpointArg} ${extraArgs}`,
+				exec(`npx gulp test:component:run ${argsString} ${endpointArg} ${extraArgs}`,
 					() => onTestEnd(argsString),
 					() => {
 						onTestEnd(argsString);
