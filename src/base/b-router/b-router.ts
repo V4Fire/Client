@@ -1009,7 +1009,7 @@ export default class bRouter extends iData {
 	 */
 	@wait({defer: true, label: $$.updateCurrentRoute})
 	protected updateCurrentRoute(): Promise<void> {
-		return this.initRoute(null);
+		return this.initRoute();
 	}
 
 	/**
