@@ -15,7 +15,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :bug: Bug Fix
 
-* [Fixed an issue where an `empty` slot appeared when there was data in the `b-virtual-scroll` component](https://github.com/V4Fire/Client/issues/259)
+* [Fixed an issue where an `empty` slot appeared when there was data `b-virtual-scroll`](https://github.com/V4Fire/Client/issues/259)
 
 #### :house: Internal
 
