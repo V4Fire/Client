@@ -611,5 +611,6 @@ export default class bExample extends iBlock {
 ```
 
 To reset the router state you should invoke `state.resetRouter()` from your component instance or invoke the root reset method.
+By default, all properties from syncRouterState will rewrite to undefined.
 
 ### Taking parameters from the root
