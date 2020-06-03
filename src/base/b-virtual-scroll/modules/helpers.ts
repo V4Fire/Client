@@ -79,5 +79,5 @@ export function getRequestParams(
  * @param val
  */
 export function isAsyncReplaceError(val: unknown): boolean {
-	return Object.isPlainObject(val) && Object.isString(val.join) && val.join === 'replace';
+	return Object.isPlainObject(val) && val.join === 'replace';
 }
