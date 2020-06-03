@@ -98,6 +98,18 @@ export default class bRouter extends iData {
 	readonly routesProp?: StaticRoutes;
 
 	/**
+	 * Compiled schema of application routes
+	 * @see [[bRouter.routesProp]]
+	 */
+	@system({
+		after: 'engine',
+		watch: 'updateCurrentRoute',
+		init: (o) => o.sync.link(<any>o.compileStaticRoutes)
+	})
+
+	routes!: RouteBlueprints;
+
+	/**
 	 * Initial route value.
 	 * Usually, you don't need to manually provide the initial route value,
 	 * because it can be automatically inferred, but sometimes it can be useful.
@@ -137,7 +149,18 @@ export default class bRouter extends iData {
 	 * ```
 	 */
 	@prop()
-	readonly basePath: string = '/';
+	readonly basePathProp: string = '/';
+
+	/**
+	 * Base route path: all route paths are concatenated with this path
+	 * @see [[bRouter.basePathProp]]
+	 */
+	@system<bRouter>({
+		init: (o) => o.sync.link(),
+		watch: (o) => o.routes = o.compileStaticRoutes(o.routes)
+	})
+
+	basePath!: string;
 
 	/**
 	 * Factory to create router engine.
@@ -170,18 +193,6 @@ export default class bRouter extends iData {
 	 */
 	@system()
 	protected routeStore?: Route;
-
-	/**
-	 * Compiled schema of application routes
-	 * @see [[bRouter.routesProp]]
-	 */
-	@system({
-		after: 'engine',
-		watch: 'updateCurrentRoute',
-		init: (o) => o.sync.link(<any>o.compileStaticRoutes)
-	})
-
-	protected routes!: RouteBlueprints;
 
 	/**
 	 * Value of the active route

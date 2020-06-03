@@ -21,6 +21,8 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### :rocket: New Feature
 
 * Added support to watch route query
+* Marked `routes` as public
+* Marked `basePath` as system field
 
 #### :bug: Bug Fix
 
