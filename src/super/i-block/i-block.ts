@@ -334,7 +334,7 @@ export default abstract class iBlock extends ComponentInterface {
 
 	/**
 	 * If true, then the component state will be synchronized with the router after initializing.
-	 * For example, you have a component uses "syncRouterState" method to create two-way binding with a router.
+	 * For example, you have a component uses "syncRouterState" method to create two-way binding with the router.
 	 *
 	 * ```typescript
 	 * @component()
@@ -355,9 +355,9 @@ export default abstract class iBlock extends ComponentInterface {
 	 *
 	 * But, if in some cases we don't have "stage" within "route.query", and the component have the default value,
 	 * we trap in a situation where exists route, which wasn't synchronized with the component, and
-	 * it can affect to the "back" logic. Sometimes, this behavior doesn't match with our expectation.
-	 * But if we toggle "syncRouterStoreOnInit" to true,
-	 * the component will forcely map own state to the router after initializing.
+	 * it can affect to the "back" logic. Sometimes, this behavior doesn't match our expectations.
+	 * But if we toggle "syncRouterStoreOnInit" to true, the component will forcibly map own state to
+	 * the router after initializing.
 	 */
 	@prop(Boolean)
 	readonly syncRouterStoreOnInit: boolean = false;

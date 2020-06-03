@@ -588,6 +588,11 @@ export default class bExample extends iBlock {
 
 Mind, that the router is global for all components, i.e. a dictionary that this method passes to the router will extend the current route data but not override.
 
+### Synchronizing with the router after initializing a component
+
+When a component uses "syncRouterState", it asks the router data on initializing, but sometimes, the router doesn't have requested properties, and we provide default values for these.
+There is a nuance: the default values don't synchronize with the router, i.e., when we move from this page to another by using "push" and return back by using "back/forward" the properties that take values from the default state won't be restored. Sometimes, this behavior doesn't match our expectations, and that why every component has the `syncRouterStoreOnInit` prop. If we toggle "syncRouterStoreOnInit" to true, the component will forcibly map own state to the router after initializing.
+
 ### Resetting the router state
 
 You can additionally specify the method that serves the situation when you want to reset a state synchronized with the router.
