@@ -7,7 +7,7 @@
  */
 
 import iBlock from 'super/i-block/i-block';
-import { transitionOptions, systemRouteParams, canParse } from 'base/b-router/const';
+import { transitionOptions, systemRouteParams, canParseStr } from 'base/b-router/const';
 
 import {
 
@@ -25,7 +25,14 @@ import {
 
 /**
  * Normalizes the specified transitions options and returns a new object
+ *
  * @param data
+ *
+ * @example
+ * ```js
+ * // {query: {bla: 1}, params: {id: null}}
+ * normalizeTransitionOpts({query: {bla: '1'}, params: {id: 'null'}});
+ * ```
  */
 export function normalizeTransitionOpts(data: Nullable<TransitionOptions>): CanUndef<TransitionOptions> {
 	if (!data) {
@@ -75,7 +82,7 @@ export function normalizeTransitionOpts(data: Nullable<TransitionOptions>): CanU
 			const
 				strVal = String(data);
 
-			if (canParse.test(strVal)) {
+			if (canParseStr.test(strVal)) {
 				parent[key] = Object.isString(data) ? Object.parse(data) : data;
 
 			} else {
@@ -89,6 +96,30 @@ export function normalizeTransitionOpts(data: Nullable<TransitionOptions>): CanU
 	normalizer(normalizedData.query);
 
 	return normalizedData;
+}
+
+/**
+ * Returns a common representation of the specified route
+ * @param params
+ */
+export function purifyRoute<T extends AnyRoute>(params: Nullable<T>): PurifiedRoute<T> {
+	if (params) {
+		return convertRouteToPlainObject(params, (el, key) => key[0] !== '_' && !systemRouteParams[key]);
+	}
+
+	return {};
+}
+
+/**
+ * Returns a blank route object from the specified
+ * @param route
+ */
+export function getBlankRouteFrom(route: Nullable<AnyRoute | TransitionOptions>): PurifiedRoute<AnyRoute> {
+	return Object.mixin(true, route ? purifyRoute(<AnyRoute>route) : undefined, {
+		query: {},
+		params: {},
+		meta: {}
+	});
 }
 
 /**
@@ -122,30 +153,6 @@ export function convertRouteToPlainObject<FILTER extends string, T extends AnyRo
 	}
 
 	return res;
-}
-
-/**
- * Returns a common representation of the specified route
- * @param params
- */
-export function purifyRoute<T extends AnyRoute>(params: Nullable<T>): PurifiedRoute<T> {
-	if (params) {
-		return convertRouteToPlainObject(params, (el, key) => key[0] !== '_' && !systemRouteParams[key]);
-	}
-
-	return {};
-}
-
-/**
- * Returns a blank route object from the specified
- * @param route
- */
-export function getBlankRouteFrom(route: Nullable<AnyRoute | TransitionOptions>): PurifiedRoute<AnyRoute> {
-	return Object.mixin(true, route ? purifyRoute(<AnyRoute>route) : undefined, {
-		query: {},
-		params: {},
-		meta: {}
-	});
 }
 
 /**

@@ -16,6 +16,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### :boom: Breaking Change
 
 * Removed click handler
+* Removed `scrollTo`
 
 #### :rocket: New Feature
 

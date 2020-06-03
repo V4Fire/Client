@@ -6,6 +6,11 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+export const
+	isExternal = /^(?:\w+:)?\/\/(?:[^\s]*)+$/,
+	canParseStr = /^(?:true|false|null|undefined)$/m,
+	qsClearFixRgxp = /[#?]\s*$/;
+
 export const transitionOptions = [
 	'meta',
 	'params',
@@ -22,8 +27,3 @@ export const defaultRouteNames = Object.createDict({
 	index: true,
 	default: true
 });
-
-export const
-	isExternal = /^(?:\w+:)?\/\/(?:[^\s]*)+$/,
-	canParse = /^(?:true|false|null|undefined)$/m,
-	qsClearFixRgxp = /[#?]\s*$/;

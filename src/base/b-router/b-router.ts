@@ -11,6 +11,8 @@
  * @packageDocumentation
  */
 
+// tslint:disable:max-file-line-count
+
 import Async from 'core/async';
 import symbolGenerator from 'core/symbol';
 
@@ -61,6 +63,9 @@ export * from 'base/b-router/interface';
 export const
 	$$ = symbolGenerator();
 
+/**
+ * Component to route application pages
+ */
 @component({
 	deprecatedProps: {
 		pageProp: 'activeRoute',
@@ -73,15 +78,42 @@ export default class bRouter extends iData {
 	public async!: Async<this>;
 
 	/**
-	 * Base root path: all route paths are concatenated with this path
+	 * Static schema of application routes.
+	 * By default, this value is taken from "routes/index.ts".
+	 *
+	 * @example
+	 * ```
+	 * < b-router :routes = { &
+	 *   main: {
+	 *     path: '/'
+	 *   },
+	 *
+	 *   notFound: {
+	 *     default: true
+	 *   }
+	 * } .
+	 * ```
 	 */
-	@prop()
-	readonly basePath: string = '/';
+	@prop({type: Object, required: false})
+	readonly routesProp?: StaticRoutes;
 
 	/**
 	 * Initial route value.
 	 * Usually, you don't need to manually provide the initial route value,
 	 * because it can be automatically inferred, but sometimes it can be useful.
+	 *
+	 * @example
+	 * ```
+	 * < b-router :initialRoute = 'main' | :routes = { &
+	 *   main: {
+	 *     path: '/'
+	 *   },
+	 *
+	 *   notFound: {
+	 *     default: true
+	 *   }
+	 * } .
+	 * ```
 	 */
 	@prop<bRouter>({
 		type: [String, Object],
@@ -92,15 +124,29 @@ export default class bRouter extends iData {
 	readonly initialRoute?: InitialRoute;
 
 	/**
-	 * Static schema of application routes.
-	 * By default, this value is taken from "routes/index.ts".
+	 * Base route path: all route paths are concatenated with this path
+	 *
+	 * @example
+	 * ```
+	 * < b-router :basePath = '/demo' | :routes = { &
+	 *   user: {
+	 *     /// '/demo/user'
+	 *     path: '/user'
+	 *   }
+	 * } .
+	 * ```
 	 */
-	@prop({type: Object, required: false})
-	readonly routesProp?: StaticRoutes;
+	@prop()
+	readonly basePath: string = '/';
 
 	/**
 	 * Factory to create router engine.
 	 * By default, this value is taken from "core/router/engines".
+	 *
+	 * @example
+	 * ```
+	 * < b-router :engine = myCustomEngine
+	 * ```
 	 */
 	@prop<bRouter>({
 		type: Function,
@@ -111,8 +157,8 @@ export default class bRouter extends iData {
 	readonly engineProp!: () => Router;
 
 	/**
-	 * Active router engine.
-	 * For example, it can be HTML5 history router or router that based on URL Hash value.
+	 * Internal router engine.
+	 * For example, it can be the HTML5 history router or a router that based on URL Hash value.
 	 *
 	 * @see [[bRouter.engine]]
 	 */
@@ -140,6 +186,11 @@ export default class bRouter extends iData {
 	/**
 	 * Value of the active route
 	 * @see [[bRouter.routeStore]]
+	 *
+	 * @example
+	 * ```js
+	 * console.log(route?.query)
+	 * ```
 	 */
 	get route(): CanUndef<this['r']['CurrentPage']> {
 		return this.field.get('routeStore');
@@ -156,6 +207,23 @@ export default class bRouter extends iData {
 
 	/**
 	 * Default route value
+	 *
+	 * @example
+	 * ```
+	 * < b-router :initialRoute = 'main' | :routes = { &
+	 *   main: {
+	 *     path: '/'
+	 *   },
+	 *
+	 *   notFound: {
+	 *     default: true
+	 *   }
+	 * } .
+	 * ```
+	 *
+	 * ```js
+	 * router.defaultRoute.name === 'notFound'
+	 * ```
 	 */
 	@computed({cache: true, dependencies: ['routes']})
 	get defaultRoute(): CanUndef<RouteBlueprint> {
@@ -175,32 +243,39 @@ export default class bRouter extends iData {
 	}
 
 	/**
-	 * Link to the root scroll method
-	 */
-	get scrollTo(): this['r']['scrollTo'] {
-		return this.r.scrollTo;
-	}
-
-	/**
 	 * Pushes a new route to the history stack.
 	 * The method returns a promise that is resolved when the transition will be completed.
 	 *
-	 * @param page
+	 * @param route - route name or URL
 	 * @param [opts] - additional options
+	 *
+	 * @example
+	 * ```js
+	 * router.push('main', {query: {foo: 1}});
+	 * router.push('/user/:id', {params: {id: 1}});
+	 * router.push('https://google.com');
+	 * ```
 	 */
-	async push(page: Nullable<string>, opts?: TransitionOptions): Promise<void> {
-		await this.emitTransition(page, opts, 'push');
+	async push(route: Nullable<string>, opts?: TransitionOptions): Promise<void> {
+		await this.emitTransition(route, opts, 'push');
 	}
 
 	/**
 	 * Replaces the current route.
 	 * The method returns a promise that is resolved when the transition will be completed.
 	 *
-	 * @param page
+	 * @param route - route name or URL
 	 * @param [opts] - additional options
+	 *
+	 * @example
+	 * ```js
+	 * router.replace('main', {query: {foo: 1}});
+	 * router.replace('/user/:id', {params: {id: 1}});
+	 * router.replace('https://google.com');
+	 * ```
 	 */
-	async replace(page: Nullable<string>, opts?: TransitionOptions): Promise<void> {
-		await this.emitTransition(page, opts, 'replace');
+	async replace(route: Nullable<string>, opts?: TransitionOptions): Promise<void> {
+		await this.emitTransition(route, opts, 'replace');
 	}
 
 	/**
@@ -244,7 +319,9 @@ export default class bRouter extends iData {
 	}
 
 	/**
-	 * Clears the routes history
+	 * Clears the routes history.
+	 * Mind, this method can't work properly with HistoryAPI based engines.
+	 *
 	 * @param [filter] - filter predicate
 	 */
 	clear(filter?: HistoryClearFilter): Promise<void> {
@@ -254,6 +331,7 @@ export default class bRouter extends iData {
 	/**
 	 * Clears all temporary routes from the history.
 	 * The temporary route is a route that has "tmp" flag within its own properties, like, "params", "query" or "meta".
+	 * Mind, this method can't work properly with HistoryAPI based engines.
 	 *
 	 * @example
 	 * ```js
@@ -271,7 +349,7 @@ export default class bRouter extends iData {
 	}
 
 	/**
-	 * Returns a route of the specified route with padding of additional parameters
+	 * Returns a path of the specified route with padding of additional parameters
 	 *
 	 * @param ref - route name or path
 	 * @param [opts] - additional options
@@ -536,7 +614,7 @@ export default class bRouter extends iData {
 	/**
 	 * Emits a new transition to the specified route
 	 *
-	 * @param ref - route name or route path or null, if the route is equal to the previous
+	 * @param ref - route name or URL or null, if the route is equal to the previous
 	 * @param [opts] - additional transition options
 	 * @param [method] - transition method
 	 *
@@ -768,10 +846,10 @@ export default class bRouter extends iData {
 					s = meta.scroll;
 
 				if (s) {
-					this.scrollTo(s.y, s.x);
+					this.r.scrollTo(s.y, s.x);
 
 				} else if (hardChange) {
-					this.scrollTo(0, 0);
+					this.r.scrollTo(0, 0);
 				}
 			})().catch(stderr);
 		}
@@ -782,10 +860,6 @@ export default class bRouter extends iData {
 	/**
 	 * @deprecated
 	 * @see [[bRouter.emitTransition]]
-	 *
-	 * @param ref
-	 * @param opts
-	 * @param method
 	 */
 	@deprecated({renamedTo: 'emitTransition'})
 	setPage(ref: Nullable<string>, opts?: TransitionOptions, method?: TransitionMethod): Promise<CanUndef<Route>> {
