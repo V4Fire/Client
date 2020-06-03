@@ -28,25 +28,25 @@ module.exports = async (page, {componentSelector, component: c}) => {
 				hasSkeletons = await c.evaluate((ctx) => Boolean(ctx.vdom.getSlot('tombstone'))),
 				totalGivenDataToRender = total / (requestChunkSize / convertedLength);
 
-			await h.waitItemsCountGreaterThan(page, 0, componentSelector);
+			await h.waitItemsCountGreaterThan(page, 0, {componentSelector});
 
 			expect(await c.evaluate((ctx) => ctx.$refs.container.childElementCount)).toBe(chunkSize);
 
 			await h.scrollToPageBottom(page);
 
 			if (hasSkeletons) {
-				await h.waitForRefDisplay(page, componentSelector, 'tombstones', '');
+				await h.waitForRefDisplay(page, {componentSelector}, 'tombstones', '');
 				expect(await c.evaluate((ctx) => ctx.$refs.tombstones.style.display)).toBe('');
 			}
 
-			await h.waitItemsCountGreaterThan(page, chunkSize, componentSelector);
+			await h.waitItemsCountGreaterThan(page, chunkSize, {componentSelector});
 
 			expect(await c.evaluate((ctx) => ctx.$refs.container.childElementCount)).toBe(totalGivenDataToRender);
 			expect(await c.evaluate((ctx) => ctx.chunkRequest.isDone)).toBe(true);
 			expect(await c.evaluate((ctx) => ctx.chunkRequest.pendingData.length)).toBe(0);
 
 			if (hasSkeletons) {
-				await h.waitForRefDisplay(page, componentSelector, 'tombstones', 'none');
+				await h.waitForRefDisplay(page, {componentSelector}, 'tombstones', 'none');
 				expect(await c.evaluate((ctx) => ctx.$refs.tombstones.style.display)).toBe('none');
 			}
 		});
