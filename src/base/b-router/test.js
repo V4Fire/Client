@@ -38,6 +38,47 @@ module.exports = async (page) => {
 			})).toBe('Main page');
 		});
 
+		it('"replace" to a page by a path', async () => {
+			expect(await root.evaluate(async (ctx) => {
+				const
+					historyLength = history.length,
+					res = {};
+
+				await ctx.router.replace('second');
+
+				res.content = ctx.route.meta.content;
+				res.lengthDoesntChange = historyLength === history.length;
+
+				return res;
+
+			})).toEqual({
+				content: 'Second page',
+				lengthDoesntChange: true
+			});
+		});
+
+		it('"replace" to a page by null', async () => {
+			expect(await root.evaluate(async (ctx) => {
+				const
+					historyLength = history.length,
+					res = {};
+
+				await ctx.router.replace('second');
+				await ctx.router.replace(null, {query: {bla: 1}});
+
+				res.content = ctx.route.meta.content;
+				res.query = location.search;
+				res.lengthDoesntChange = historyLength === history.length;
+
+				return res;
+
+			})).toEqual({
+				query: '?bla=1',
+				content: 'Second page',
+				lengthDoesntChange: true
+			});
+		});
+
 		it('transition to a route with path interpolating', async () => {
 			expect(await root.evaluate(async (ctx) => {
 				const
@@ -370,7 +411,7 @@ module.exports = async (page) => {
 			})).toBe('Main page');
 		});
 
-		it('updating of routes', async () => {
+		it('updating of the routes', async () => {
 			expect(await root.evaluate(async (ctx) => {
 				const
 					{router} = ctx;
@@ -383,7 +424,7 @@ module.exports = async (page) => {
 					main: {
 						path: '/',
 						default: true,
-						content: 'Dynamic Main page'
+						content: 'Dynamic main page'
 					}
 				});
 
@@ -398,7 +439,47 @@ module.exports = async (page) => {
 				return res;
 
 			})).toEqual({
-				dynamicPage: 'Dynamic Main page',
+				dynamicPage: 'Dynamic main page',
+				restoredPage: 'Main page'
+			});
+		});
+
+		it('updating of the base path', async () => {
+			expect(await root.evaluate(async (ctx) => {
+				const
+					{router} = ctx;
+
+				const
+					res = {},
+					oldRoutes = ctx.router.routes;
+
+				await router.updateRoutes('/demo', '/demo/second', {
+					main: {
+						path: '/',
+						default: true,
+						content: 'Dynamic main page'
+					},
+
+					second: {
+						path: '/second',
+						default: true,
+						content: 'Dynamic second page'
+					}
+				});
+
+				res.dynamicPage = ctx.route.meta.content;
+
+				router.basePath = '/';
+				router.routes = oldRoutes;
+				router.routeStore = undefined;
+
+				await router.initRoute('/');
+				res.restoredPage = ctx.route.meta.content;
+
+				return res;
+
+			})).toEqual({
+				dynamicPage: 'Dynamic second page',
 				restoredPage: 'Main page'
 			});
 		});
