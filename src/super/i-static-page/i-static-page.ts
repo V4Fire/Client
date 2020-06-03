@@ -26,7 +26,7 @@ import bRouter, { Route } from 'base/b-router/b-router';
 //#endif
 
 import iBlock from 'super/i-block/i-block';
-import iPage, { component, field, system, watch } from 'super/i-page/i-page';
+import iPage, { component, field, system, computed, watch } from 'super/i-page/i-page';
 
 import ProvidedDataStore from 'super/i-static-page/modules/provider-data-store';
 import { RemoteState, RootMod } from 'super/i-static-page/interface';
@@ -109,6 +109,7 @@ export default abstract class iStaticPage extends iPage {
 	/**
 	 * Name of the active route page
 	 */
+	@computed({cache: true, dependencies: ['route.meta.name']})
 	get activePage(): CanUndef<string> {
 		return this.field.get('route.meta.name');
 	}

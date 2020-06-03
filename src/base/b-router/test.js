@@ -79,6 +79,18 @@ module.exports = async (page) => {
 			});
 		});
 
+		it('checking the .activePage property', async () => {
+			expect(await root.evaluate(async (ctx) => {
+				await ctx.router.push('second');
+				return ctx.activePage;
+			})).toBe('second');
+
+			expect(await root.evaluate(async (ctx) => {
+				await ctx.router.push('main');
+				return ctx.activePage;
+			})).toBe('main');
+		});
+
 		it('transition to a route with path interpolating', async () => {
 			expect(await root.evaluate(async (ctx) => {
 				const
