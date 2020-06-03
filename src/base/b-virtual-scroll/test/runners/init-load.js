@@ -39,7 +39,7 @@ module.exports = async (p, {componentSelector, component: c, components}) => {
 		const
 			reloadCount = 6;
 
-		it('reloads data with frequent initLoad calls and render correct data chunk to the page', async () => {
+		it('reloads data with frequent initLoad calls and renders correct data chunk to the page', async () => {
 			let i = reloadCount;
 
 			while (i--) {
