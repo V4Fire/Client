@@ -331,7 +331,7 @@ this.router.push('user', {
 
 Also, the router saves scroll coordinates every time it moves to another route to restore position with "back/forward" cases.
 
-### Loading of styles and scripts on a transition
+### Loading styles and scripts on a transition
 
 Usually, we split our scripts and styles in different chunks to improve loading speed. We can tie our routes with these chunks by using the `entryPoint` option.
 
@@ -391,7 +391,7 @@ export default {
 
 Mind that "index" and "std" entry points loaded by default, so you don't need to declare it clearly.
 
-### Providing of extra parameters
+### Providing extra parameters to a route
 
 You can attach you own parameter to any route, just add a property to declaration.
 
