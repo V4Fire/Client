@@ -23,12 +23,12 @@ const
  *
  * @param {?} page
  * @param {number} count
- * @param {string} componentSelector
+ * @param {string} componentSelectors
  * @returns {!Promise<void>}
  */
-module.exports.scrollAndWaitItemsCountGreaterThan = async function (page, count, componentSelector) {
+module.exports.scrollAndWaitItemsCountGreaterThan = async function (page, count, {componentSelector, componentName}) {
 	await h.scrollToPageBottom(page);
-	await h.waitItemsCountGreaterThan(page, count, componentSelector);
+	await h.waitItemsCountGreaterThan(page, count, {componentSelector, componentName});
 };
 
 /**
@@ -36,25 +36,45 @@ module.exports.scrollAndWaitItemsCountGreaterThan = async function (page, count,
  *
  * @param {?} page
  * @param {number} count
- * @param {string} componentSelector
- * @param {string=} [op]
- * @param {string=} [elName]
+ * @param {Dictionary} options
  * @returns {!Promise<void>}
  */
-module.exports.waitItemsCountGreaterThan = async function (page, count, componentSelector, op = '>', elName = componentSelector) {
-	await page.waitForFunction(`document.querySelector('${componentSelector} ${elName}__container').childElementCount ${op} ${count}`);
+module.exports.waitItemsCountGreaterThan = async function (page, count, options) {
+	const {componentSelector, componentName, op} = {
+		op: '>',
+		...options,
+		componentSelector: options.componentSelector || options.componentName,
+		componentName: options.componentName || options.componentSelector
+	};
+
+	await page.waitForFunction(`${querySelector(componentSelector, componentName, 'container')}.childElementCount ${op} ${count}`);
 };
 
 /**
  * Waits the ref to have the specified display value
  *
  * @param {?} page
- * @param {string} componentSelector
+ * @param {Dictionary} selectors
  * @param {string} refClassName
  * @param {string} display
  * @param {string} elName
  * @returns {!Promise<void>}
  */
-module.exports.waitForRefDisplay = async function (page, componentSelector, refClassName, display, elName = componentSelector) {
-	await page.waitForFunction(`document.querySelector('${componentSelector} ${elName}__${refClassName}').style.display === '${display}'`);
+module.exports.waitForRefDisplay = async function (page, {componentSelector, componentName}, refClassName, display) {
+	await page.waitForFunction(`${querySelector(componentSelector, componentName, refClassName)}.style.display === '${display}'`);
 };
+
+/**
+ * Generates a query selector string
+ *
+ * @param {string} componentSelector
+ * @param {string} componentName
+ * @param {string} elName
+ */
+function querySelector(componentSelector, componentName, elName) {
+	if (!componentName) {
+		componentName = componentSelector;
+	}
+
+	return `document.querySelector('${componentSelector} ${componentName}__${elName}')`;
+}

@@ -86,6 +86,7 @@ export default class ChunkRequest extends Friend {
 		this.isDone = false;
 		this.isLastEmpty = false;
 		this.pendingData = [];
+		this.async.clearTimeout({label: $$.waitForInitCalls});
 	}
 
 	/**
@@ -103,6 +104,8 @@ export default class ChunkRequest extends Friend {
 	 * Initializes the request module
 	 */
 	async init(): Promise<void> {
+		await this.async.sleep(50, {label: $$.waitForInitCalls});
+
 		const
 			{options, chunkSize, dataProvider} = this.ctx;
 

@@ -22,8 +22,8 @@ module.exports = async (page, {componentSelector, component: c}) => {
 		});
 
 		it('renders empty slot to the page', async () => {
-			await h.waitForRefDisplay(page, componentSelector, 'tombstones', 'none');
-			await h.waitForRefDisplay(page, componentSelector, 'empty', '');
+			await h.waitForRefDisplay(page, {componentSelector}, 'tombstones', 'none');
+			await h.waitForRefDisplay(page, {componentSelector}, 'empty', '');
 
 			expect(await c.evaluate((ctx) => ctx.$refs.empty.style.display)).toBe('');
 		});
@@ -33,8 +33,8 @@ module.exports = async (page, {componentSelector, component: c}) => {
 				secondComponentSelector = `.b-virtual-scroll#second`,
 				{component: secondCtx} = await h.getComponentCtx(page, secondComponentSelector);
 
-			await h.waitForRefDisplay(page, secondComponentSelector, 'tombstones', 'none', componentSelector);
-			await h.waitItemsCountGreaterThan(page, 0, secondComponentSelector, '>', componentSelector);
+			await h.waitForRefDisplay(page, {componentSelector: secondComponentSelector, componentName: componentSelector}, 'tombstones', 'none');
+			await h.waitItemsCountGreaterThan(page, 0, {componentSelector: secondComponentSelector, componentName: componentSelector});
 
 			expect(await secondCtx.evaluate((ctx) => ctx.$refs.container.childElementCount)).toBeGreaterThan(0);
 			expect(await secondCtx.evaluate((ctx) => ctx.$refs.empty.style.display)).toBe('none');

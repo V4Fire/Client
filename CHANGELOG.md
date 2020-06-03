@@ -15,6 +15,8 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :bug: Bug Fix
 
+* [Fixed an issue where skeletons disappeared in `b-virtual-scroll`](https://github.com/V4Fire/Client/issues/230)
+* [Fixed an issue with a race condition in `b-virtual-scroll/chunk-request/init`](https://github.com/V4Fire/Client/issues/203)
 * [Fixed an issue where an `empty` slot appeared when there was data `b-virtual-scroll`](https://github.com/V4Fire/Client/issues/259)
 
 #### :house: Internal

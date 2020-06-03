@@ -73,3 +73,11 @@ export function getRequestParams(
 		nextPage: merged.currentPage + 1
 	});
 }
+
+/**
+ * True if the specified value is an `async replace` error
+ * @param val
+ */
+export function isAsyncReplaceError(val: unknown): boolean {
+	return Object.isPlainObject(val) && val.join === 'replace';
+}
