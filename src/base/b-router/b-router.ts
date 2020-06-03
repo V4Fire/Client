@@ -94,7 +94,16 @@ export default class bRouter extends iData {
 	 * } .
 	 * ```
 	 */
-	@prop({type: Object, required: false})
+	@prop<bRouter>({
+		type: Object,
+		required: false,
+		watch: (ctx, val, old) => {
+			if (!Object.fastCompare(val, old)) {
+				ctx.updateCurrentRoute();
+			}
+		}
+	})
+
 	readonly routesProp?: StaticRoutes;
 
 	/**
@@ -103,7 +112,6 @@ export default class bRouter extends iData {
 	 */
 	@system({
 		after: 'engine',
-		watch: 'updateCurrentRoute',
 		init: (o) => o.sync.link(<any>o.compileStaticRoutes)
 	})
 
@@ -157,7 +165,7 @@ export default class bRouter extends iData {
 	 */
 	@system<bRouter>({
 		init: (o) => o.sync.link(),
-		watch: (o) => o.routes = o.compileStaticRoutes(o.routes)
+		watch: 'updateCurrentRoute'
 	})
 
 	basePath!: string;
@@ -880,17 +888,72 @@ export default class bRouter extends iData {
 	/**
 	 * Updates the schema of routes
 	 *
-	 * @param routes
-	 * @param [route] - active route
+	 * @param basePath - base route path
+	 * @param [routes] - static schema of application routes
+	 * @param [activeRoute]
+	 */
+	updateRoutes(basePath: string, routes?: StaticRoutes, activeRoute?: Nullable<InitialRoute>): Promise<RouteBlueprints>;
+
+	/**
+	 * Updates the schema of routes
+	 *
+	 * @param basePath - base route path
+	 * @param activeRoute
+	 * @param [routes] - static schema of application routes
+	 */
+	updateRoutes(basePath: string, activeRoute: InitialRoute, routes?: StaticRoutes): Promise<RouteBlueprints>;
+
+	/**
+	 * Updates the schema of routes
+	 *
+	 * @param routes - static schema of application routes
+	 * @param [activeRoute]
+	 */
+	updateRoutes(routes: StaticRoutes, activeRoute?: Nullable<InitialRoute>): Promise<RouteBlueprints>;
+
+	/**
+	 * @param basePathOrRoutes
+	 * @param [routesOrActiveRoute]
+	 * @param [activeRouteOrRoutes]
 	 */
 	@wait('beforeReady')
 	async updateRoutes(
-		routes: StaticRoutes,
-		route?: Nullable<InitialRoute>
+		basePathOrRoutes: string | StaticRoutes,
+		routesOrActiveRoute?: StaticRoutes | Nullable<InitialRoute>,
+		activeRouteOrRoutes?: Nullable<InitialRoute> | StaticRoutes
 	): Promise<RouteBlueprints> {
-		this.routes = this.compileStaticRoutes(routes);
+		let
+			basePath,
+			routes,
+			activeRoute;
+
+		if (Object.isString(basePathOrRoutes)) {
+			basePath = basePathOrRoutes;
+
+			if (Object.isString(routesOrActiveRoute)) {
+				routes = <StaticRoutes>activeRouteOrRoutes;
+				activeRoute = routesOrActiveRoute;
+
+			} else {
+				routes = routesOrActiveRoute;
+				activeRoute = <Nullable<InitialRoute>>activeRouteOrRoutes;
+			}
+
+		} else {
+			routes = <StaticRoutes>basePathOrRoutes;
+			activeRoute = <Nullable<InitialRoute>>routesOrActiveRoute;
+		}
+
+		if (basePath != null) {
+			this.basePath = basePath;
+		}
+
+		if (routes != null) {
+			this.routes = this.compileStaticRoutes(routes);
+		}
+
 		this.routeStore = undefined;
-		await this.initRoute(route || this.initialRoute || this.defaultRoute);
+		await this.initRoute(activeRoute || this.initialRoute || this.defaultRoute);
 		return this.routes;
 	}
 
@@ -905,6 +968,10 @@ export default class bRouter extends iData {
 
 		if (Object.isDictionary(val)) {
 			return this.updateRoutes(val);
+		}
+
+		if (Object.isArray(val)) {
+			return this.updateRoutes.apply(this, val);
 		}
 
 		return this.routes;
