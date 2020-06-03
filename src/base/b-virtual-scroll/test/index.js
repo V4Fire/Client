@@ -36,7 +36,7 @@ module.exports = async (page, params) => {
 
 	for (let i = 0; i < components.length; i++) {
 		components[i] = await components[i].getProperty('component')
-	};
+	}
 
 	await test(page, {...ctx, components, ...params});
 }

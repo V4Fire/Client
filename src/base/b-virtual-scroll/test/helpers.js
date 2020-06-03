@@ -57,7 +57,6 @@ module.exports.waitItemsCountGreaterThan = async function (page, count, options)
  * @param {Dictionary} selectors
  * @param {string} refClassName
  * @param {string} display
- * @param {string} elName
  * @returns {!Promise<void>}
  */
 module.exports.waitForRefDisplay = async function (page, {componentSelector, componentName}, refClassName, display) {
