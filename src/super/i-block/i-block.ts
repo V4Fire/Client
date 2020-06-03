@@ -2063,7 +2063,7 @@ export default abstract class iBlock extends ComponentInterface {
 	 * When the component initializes, it asks the local storage for data that associated to this component
 	 * by using a global name as a namespace to search. When the local storage is ready to provide data to the component,
 	 * it passes data  to this method. After this, the method returns a dictionary that will be mapped to the
-	 * component as properties (you can specify a complex path with dots, like 'foo.bla.bar' or 'mod.hidden').
+	 * component as properties (you can specify a complex path with dots, like 'foo.bla.bar' or 'mods.hidden').
 	 *
 	 * Also, the component will watch for changes of every property that was in that dictionary
 	 * and when at least one of these properties is changed, the whole butch of data will be sent to the local storage
@@ -2100,7 +2100,7 @@ export default abstract class iBlock extends ComponentInterface {
 	 *
 	 * When the component initializes, it asks the router for data. The router provides the data by using this method.
 	 * After this, the method returns a dictionary that will be mapped to the
-	 * component as properties (you can specify a complex path with dots, like 'foo.bla.bar' or 'mod.hidden').
+	 * component as properties (you can specify a complex path with dots, like 'foo.bla.bar' or 'mods.hidden').
 	 *
 	 * Also, the component will watch for changes of every property that was in that dictionary
 	 * and when at least one of these properties is changed, the whole butch of data will be sent to the router
