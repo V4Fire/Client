@@ -208,35 +208,35 @@ export function fillRouteParams(route: Route, root: iBlock): void {
 		params
 	} = route;
 
-	if (meta.paramsFromQuery !== false) {
+	const
+		paramsFromRoot = meta.paramsFromRoot !== false,
+		rootState = rootAPI.syncRouterState(undefined, 'remoteCheck');
+
+	if (paramsFromRoot) {
 		const
-			paramsFromRoot = meta.paramsFromRoot !== false,
-			rootState = rootAPI.syncRouterState(undefined, 'remoteCheck');
+			rootField = rootAPI.meta.fields,
+			rootSystemFields = rootAPI.meta.systemFields;
 
-		if (paramsFromRoot) {
+		for (let keys = Object.keys(rootState), i = 0; i < keys.length; i++) {
 			const
-				rootField = rootAPI.meta.fields,
-				rootSystemFields = rootAPI.meta.systemFields;
+				key = keys[i],
+				rootVal = rootState[key];
 
-			for (let keys = Object.keys(rootState), i = 0; i < keys.length; i++) {
+			if (query[key] === undefined) {
 				const
-					key = keys[i],
-					rootVal = rootState[key];
+					field = rootField[key] || rootSystemFields[key];
 
-				if (query[key] === undefined) {
-					const
-						field = rootField[key] || rootSystemFields[key];
+				if (field?.meta['router.query']) {
+					query[key] = rootVal;
 
-					if (field?.meta['router.query']) {
-						query[key] = rootVal;
-
-					} else {
-						delete query[key];
-					}
+				} else {
+					delete query[key];
 				}
 			}
 		}
+	}
 
+	if (meta.paramsFromQuery !== false) {
 		for (let o = route.pathParams, i = 0; i < o.length; i++) {
 			const
 				param = o[i],

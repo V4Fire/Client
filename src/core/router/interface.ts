@@ -94,7 +94,9 @@ export type StaticRouteMeta<M extends object = Dictionary> = M & {
 	pathOpts?: RegExpOptions & ParseOptions;
 
 	/**
-	 * If true, then the route can take "params" values from a router state of the root application component.
+	 * If true, then the route can take values from a router state of the root application component
+	 * and places they as query parameters.
+	 *
 	 * The router state is an object that returns "syncRouterState" method of a component.
 	 */
 	paramsFromRoot?: boolean;
