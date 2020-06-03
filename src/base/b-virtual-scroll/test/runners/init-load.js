@@ -8,7 +8,8 @@
 
 const
 	path = require('upath'),
-	pzlr = require('@pzlr/build-core');
+	pzlr = require('@pzlr/build-core'),
+	delay = require('delay');
 
 const
 	componentDir = pzlr.resolve.blockSync('b-virtual-scroll'),
@@ -20,8 +21,8 @@ module.exports = async (p, {componentSelector, component: c, components}) => {
 			const chunkSize = await c.evaluate((ctx) => ctx.chunkSize);
 
 			c.evaluate((ctx) => ctx.initLoad());
-			await h.waitForRefDisplay(p, componentSelector, 'tombstones', '');
-			await h.waitForRefDisplay(p, componentSelector, 'tombstones', 'none');
+			await h.waitForRefDisplay(p, {componentSelector}, 'tombstones', '');
+			await h.waitForRefDisplay(p, {componentSelector}, 'tombstones', 'none');
 
 			expect(await c.evaluate((ctx) => ctx.$refs.tombstones.style.display)).toBe('none');
 			expect(await c.evaluate((ctx) => ctx.$refs.container.style.display)).toBe('');
@@ -33,6 +34,9 @@ module.exports = async (p, {componentSelector, component: c, components}) => {
 			secondComponentSelector = `${componentSelector}#second`;
 
 		const
+			selectors = {componentSelector: secondComponentSelector, componentName: componentSelector};
+
+		const
 			reloadCount = 6;
 
 		it('reloads data with frequent initLoad calls', async () => {
@@ -40,14 +44,14 @@ module.exports = async (p, {componentSelector, component: c, components}) => {
 
 			while (i--) {
 				secondComponent.evaluate((ctx) => ctx.initLoad());
-				await h.sleep(100);
-				await h.waitForRefDisplay(p, componentSelector, 'tombstones', '');
+				await delay(100);
+				await h.waitForRefDisplay(p, selectors, 'tombstones', '');
 			}
 
 			const
 				chunkSize = await secondComponent.evaluate((ctx) => ctx.chunkSize);
 
-			await h.waitForRefDisplay(p, componentSelector, 'tombstones', 'none');
+			await h.waitForRefDisplay(p, selectors, 'tombstones', 'none');
 			expect(await secondComponent.evaluate((ctx) => ctx.$refs.container.childElementCount)).toBe(chunkSize);
 		});
 
@@ -56,6 +60,7 @@ module.exports = async (p, {componentSelector, component: c, components}) => {
 			const
 				chunkSize = await secondComponent.evaluate((ctx) => ctx.chunkSize);
 
+			await h.waitItemsCountGreaterThan(p, 0, selectors);
 			expect(await secondComponent.evaluate((ctx) => ctx.$refs.container.childElementCount)).toBe(chunkSize);
 
 			expect(

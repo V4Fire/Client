@@ -27,11 +27,3 @@ module.exports.getComponentCtx = async function (page, selector) {
 module.exports.scrollToPageBottom = async function (page) {
 	await page.evaluate('window.scrollTo(0, document.body.scrollHeight)');
 };
-
-/**
- * @param {number} timeout
- * @returns {!Promise<void>}
- */
-module.exports.sleep = (timeout) => new Promise((res) => {
-	setTimeout(res, timeout);
-});

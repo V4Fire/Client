@@ -32,7 +32,11 @@ module.exports = async (page, params) => {
 
 	const
 		ctx = await helpers.getComponentCtx(page, '.b-virtual-scroll'),
-		components = (await page.$$('.b-virtual-scroll')).map(async (c) => await c.getProperty('component'));
+		components = await page.$$('.b-virtual-scroll');
+
+	for (let i = 0; i < components.length; i++) {
+		components[i] = await components[i].getProperty('component')
+	};
 
 	await test(page, {...ctx, components, ...params});
 }
