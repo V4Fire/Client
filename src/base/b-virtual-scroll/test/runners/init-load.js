@@ -39,7 +39,7 @@ module.exports = async (p, {componentSelector, component: c, components}) => {
 		const
 			reloadCount = 6;
 
-		it('reloads data with frequent initLoad calls', async () => {
+		it('reloads data with frequent initLoad calls and render correct data chunk to the page', async () => {
 			let i = reloadCount;
 
 			while (i--) {
@@ -49,23 +49,16 @@ module.exports = async (p, {componentSelector, component: c, components}) => {
 			}
 
 			const
-				chunkSize = await secondComponent.evaluate((ctx) => ctx.chunkSize);
+				chunkSize = await secondComponent.evaluate((ctx) => ctx.chunkSize),
+				elIndex = reloadCount * chunkSize;
 
 			await h.waitForRefDisplay(p, selectors, 'tombstones', 'none');
 			expect(await secondComponent.evaluate((ctx) => ctx.$refs.container.childElementCount)).toBe(chunkSize);
-		});
-
-		it('renders correct data chunk to the page', async () => {
-
-			const
-				chunkSize = await secondComponent.evaluate((ctx) => ctx.chunkSize);
-
-			await h.waitItemsCountGreaterThan(p, 0, selectors);
 			expect(await secondComponent.evaluate((ctx) => ctx.$refs.container.childElementCount)).toBe(chunkSize);
 
 			expect(
 				await secondComponent.evaluate((ctx) => ctx.$refs.container.children[0].getAttribute('data-index')
-			)).toBe(`${reloadCount * chunkSize}`);
+			)).toBe(String(elIndex));
 		});
 	});
 };
