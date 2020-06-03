@@ -14,7 +14,7 @@ module.exports = [
 
 	'--name b-virtual-scroll --suit slot-empty --runner slot-empty',
 
-	'--name b-virtual-scroll --runner init-load',
+	'--name b-virtual-scroll --suit double-components --runner init-load',
 
 	// b-button
 	`--name b-button --suit demo`

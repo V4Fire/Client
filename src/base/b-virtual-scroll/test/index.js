@@ -29,7 +29,12 @@ const
  */
 module.exports = async (page, params) => {
 	await setup(page);
-	await test(page, {...(await helpers.getComponentCtx(page, '.b-virtual-scroll')), ...params});
+
+	const
+		ctx = await helpers.getComponentCtx(page, '.b-virtual-scroll'),
+		components = (await page.$$('.b-virtual-scroll')).map(async (c) => await c.getProperty('component'));
+
+	await test(page, {...ctx, components, ...params});
 }
 
 /**

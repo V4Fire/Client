@@ -99,7 +99,30 @@ const suits = {
 			...baseContent,
 			empty: slots.empty
 		}
-	}]
+	}],
+
+	doubleComponents: [{
+		attrs: {
+			...baseAttrs,
+			':dataProvider': s('demo.Pagination'),
+			':request': '{get: {chunkSize: 10}}'
+		},
+
+		content: {
+			...baseContent
+		}
+	}, {
+		attrs: {
+			...baseAttrs,
+			':dataProvider': s('demo.Pagination'),
+			':request': '{get: {id: "b-virtual:init-load", chunkSize: 10}}',
+			'id': 'second'
+		},
+
+		content: {
+			...baseContent
+		}
+	}],
 };
 
 module.exports = suits;

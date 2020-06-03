@@ -14,9 +14,9 @@ const
 	componentDir = pzlr.resolve.blockSync('b-virtual-scroll'),
 	h = require(path.join(componentDir, 'test/helpers.js'));
 
-module.exports = async (p, {componentSelector, component: c}) => {
+module.exports = async (p, {componentSelector, component: c, components}) => {
 	describe('b-virtual-scroll', () => {
-		const testInitLoad = async () => {
+		it('reloads data with initLoad', async () => {
 			const chunkSize = await c.evaluate((ctx) => ctx.chunkSize);
 
 			c.evaluate((ctx) => ctx.initLoad());
@@ -26,50 +26,41 @@ module.exports = async (p, {componentSelector, component: c}) => {
 			expect(await c.evaluate((ctx) => ctx.$refs.tombstones.style.display)).toBe('none');
 			expect(await c.evaluate((ctx) => ctx.$refs.container.style.display)).toBe('');
 			expect(await c.evaluate((ctx) => ctx.$refs.container.childElementCount)).toBe(chunkSize);
-		};
-
-		const testInitLoadPromise = testInitLoad();
-
-		it('reloads data with initLoad', async () => {
-			await testInitLoadPromise;
 		});
 
-		const reloadCount = 6;
-		let i = reloadCount;
+		const
+			secondComponent = components[1],
+			secondComponentSelector = `${componentSelector}#second`;
 
-		const testFrequentInitLoad = async () => {
-			await testInitLoadPromise;
+		const
+			reloadCount = 6;
+
+		it('reloads data with frequent initLoad calls', async () => {
+			let i = reloadCount;
 
 			while (i--) {
-				c.evaluate((ctx) => ctx.initLoad());
+				secondComponent.evaluate((ctx) => ctx.initLoad());
 				await h.sleep(100);
 				await h.waitForRefDisplay(p, componentSelector, 'tombstones', '');
 			}
 
 			const
-				chunkSize = await c.evaluate((ctx) => ctx.chunkSize);
+				chunkSize = await secondComponent.evaluate((ctx) => ctx.chunkSize);
 
 			await h.waitForRefDisplay(p, componentSelector, 'tombstones', 'none');
-			expect(await c.evaluate((ctx) => ctx.$refs.container.childElementCount)).toBe(chunkSize);
-		};
-
-		const testFrequentInitLoadPromise = testFrequentInitLoad();
-
-		it('reloads data with frequent initLoad calls', async () => {
-			await testFrequentInitLoadPromise;
+			expect(await secondComponent.evaluate((ctx) => ctx.$refs.container.childElementCount)).toBe(chunkSize);
 		});
 
 		it('renders correct data chunk to the page', async () => {
-			await Promise.all([testInitLoadPromise, testFrequentInitLoadPromise]);
 
 			const
-				chunkSize = await c.evaluate((ctx) => ctx.chunkSize);
+				chunkSize = await secondComponent.evaluate((ctx) => ctx.chunkSize);
 
-			expect(await c.evaluate((ctx) => ctx.$refs.container.childElementCount)).toBe(chunkSize);
+			expect(await secondComponent.evaluate((ctx) => ctx.$refs.container.childElementCount)).toBe(chunkSize);
 
 			expect(
-				await c.evaluate((ctx) => ctx.$refs.container.children[0].getAttribute('data-index')
-			)).toBe(`${(reloadCount + 1) * chunkSize}`);
+				await secondComponent.evaluate((ctx) => ctx.$refs.container.children[0].getAttribute('data-index')
+			)).toBe(`${reloadCount * chunkSize}`);
 		});
 	});
 };

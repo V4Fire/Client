@@ -15,8 +15,8 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :bug: Bug Fix
 
-* [Fixed issue with skeletons disappears in `b-virtual-scroll`](https://github.com/V4Fire/Client/issues/230)
-* [Fixed issue with condition race in `b-virtual-scroll/chunk-request/init`'](https://github.com/V4Fire/Client/issues/203)
+* [Fixed an issue where skeletons disappeared in `b-virtual-scroll`](https://github.com/V4Fire/Client/issues/230)
+* [Fixed an issue with a race condition in `b-virtual-scroll/chunk-request/init`](https://github.com/V4Fire/Client/issues/203)
 
 ## v3.0.0-rc.19 (2020-05-26)
 
