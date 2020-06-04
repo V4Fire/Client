@@ -104,6 +104,14 @@ export default function createRouter(component: bRouter): Router {
 	const
 		{async: $a} = component;
 
+	const
+		engineGroup = {group: 'routerEngine'},
+		popstateLabel = {...engineGroup, label: $$.popstate},
+		modHistoryLabel = {...engineGroup, label: $$.modHistory};
+
+	$a
+		.clearAll(engineGroup);
+
 	function load(route: string, params?: Route, method: string = 'pushState'): Promise<void> {
 		if (!route) {
 			throw new Error('Page to load is not defined');
@@ -217,17 +225,18 @@ export default function createRouter(component: bRouter): Router {
 				},
 
 				{
-					label: $$.component,
+					...engineGroup,
+					label: $$.loadEntryPoint,
 					single: false
 				}
 			));
 		});
 	}
 
-	const
-		popstate = {label: $$.popstate},
-		modHistory = {label: $$.modHistory},
-		emitter = new EventEmitter({maxListeners: 1e3, newListener: false});
+	const emitter = new EventEmitter({
+		maxListeners: 1e3,
+		newListener: false
+	});
 
 	const router = Object.mixin({withAccessors: true}, Object.create(emitter), <Router>{
 		get route(): CanUndef<Route> {
@@ -289,7 +298,7 @@ export default function createRouter(component: bRouter): Router {
 		},
 
 		async clear(filter?: HistoryClearFilter): Promise<void> {
-			$a.muteEventListener(popstate);
+			$a.muteEventListener(popstateLabel);
 			truncateHistoryLog();
 
 			const
@@ -347,7 +356,7 @@ export default function createRouter(component: bRouter): Router {
 					history.go(from - historyPos - 1);
 				}
 
-				await $a.promisifyOnce(window, 'popstate', modHistory);
+				await $a.promisifyOnce(window, 'popstate', modHistoryLabel);
 
 				historyLog.splice(from);
 				historyLog.push(to);
@@ -366,7 +375,7 @@ export default function createRouter(component: bRouter): Router {
 				await $a.nextTick();
 			}
 
-			$a.unmuteEventListener(popstate);
+			$a.unmuteEventListener(popstateLabel);
 			truncateHistoryLog();
 
 			const
@@ -374,7 +383,7 @@ export default function createRouter(component: bRouter): Router {
 
 			if (lastPos > 0) {
 				history.go(lastPos);
-				await $a.promisifyOnce(window, 'popstate', modHistory);
+				await $a.promisifyOnce(window, 'popstate', modHistoryLabel);
 				historyPos = lastPos;
 				saveHistoryPos();
 			}
@@ -402,7 +411,7 @@ export default function createRouter(component: bRouter): Router {
 		}
 
 		await component.emitTransition(location.href, history.state, 'event');
-	}, popstate);
+	}, popstateLabel);
 
 	return router;
 }
