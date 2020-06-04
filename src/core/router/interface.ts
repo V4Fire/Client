@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { Key, RegExpOptions, ParseOptions } from 'path-to-regexp';
+import { RegExpOptions, ParseOptions } from 'path-to-regexp';
 import { EventEmitter2 as EventEmitter } from 'eventemitter2';
 
 /**
@@ -94,22 +94,6 @@ export type StaticRouteMeta<M extends object = Dictionary> = M & {
 	pathOpts?: RegExpOptions & ParseOptions;
 
 	/**
-	 * If true, then the route can take some values from the root component.
-	 * The values to take have the special "route" flag.
-	 *
-	 * @example
-	 * ```typescript
-	 * @component({root: true})
-	 * export default class pV4ComponentsDemo extends iStaticPage {
-	 *   // Will save this parameter to the route.query
-	 *   @system({meta: {route: 'query'}})
-	 *   rootParam: number == 1;
-	 * }
-	 * ```
-	 */
-	paramsFromRoot?: boolean;
-
-	/**
 	 * If true, then the route can take "params" values from the "query" property
 	 */
 	paramsFromQuery?: boolean;
@@ -147,6 +131,24 @@ export type StaticRouteMeta<M extends object = Dictionary> = M & {
 	redirect?: string;
 
 	/**
+	 * Default "query" parameters.
+	 * If some parameter value is specified as a function, it will be invoked with the router instance as an argument.
+	 */
+	query?: Dictionary;
+
+	/**
+	 * Default "params" parameters.
+	 * If some parameter value is specified as a function, it will be invoked with the router instance as an argument.
+	 */
+	params?: Dictionary;
+
+	/**
+	 * Default "meta" parameters.
+	 * If some parameter value is specified as a function, it will be invoked with the router instance as an argument.
+	 */
+	meta?: Dictionary;
+
+	/**
 	 * If false, the router don't automatically scroll a page to coordinates that tied with the route.
 	 * Mind, if you switch off this parameter, the scroll position of a page
 	 * won't be restored on a back or forward tap too.
@@ -179,26 +181,8 @@ export type RouteMeta<M extends object = Dictionary> = StaticRouteMeta<M> & {
 	/** @see [[StaticRouteMeta.name]] */
 	name: string;
 
-	/**
-	 * @deprecated
-	 * @see [[StaticRouteMeta.name]]
-	 */
-	page: string;
-
 	/** @see [[StaticRouteMeta.default]] */
 	default: boolean;
-
-	/**
-	 * @deprecated
-	 * @see [[StaticRouteMeta.default]]
-	 */
-	index: boolean;
-
-	/**
-	 * List of parameters that passed to the route path
-	 * @deprecated
-	 */
-	params: Key[];
 };
 
 /**

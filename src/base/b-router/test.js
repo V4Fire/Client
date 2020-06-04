@@ -536,7 +536,7 @@ module.exports = async (page) => {
 				default: false,
 				external: false,
 				content: 'Second page',
-				params: []
+				query: {}
 			};
 
 			expect(await root.evaluate(async ({router}) => {

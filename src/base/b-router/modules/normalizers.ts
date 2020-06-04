@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import iBlock from 'super/i-block/i-block';
+import bRouter from 'base/b-router/b-router';
 import { transitionOptions, systemRouteParams, canParseStr } from 'base/b-router/const';
 
 import {
@@ -128,7 +128,7 @@ export function getBlankRouteFrom(route: Nullable<AnyRoute | TransitionOptions>)
  * @param route
  * @param [filter] - filter predicate
  */
-export function convertRouteToPlainObject<FILTER extends string, T extends AnyRoute>(
+export function convertRouteToPlainObject<T extends AnyRoute, FILTER extends string>(
 	route: Nullable<T>,
 	filter?: RouteParamsFilter
 ): PlainRoute<T, FILTER> {
@@ -185,54 +185,53 @@ export function convertRouteToPlainObjectWithoutProto<T extends AnyRoute>(route:
 }
 
 /**
- * Returns a plain object based on the specified route without non-watchable properties
+ * Returns a plain object based on the specified route without non-comparing parameters
  * @param route
  */
-export function getParamsFromRouteThatNeedWatch<T extends AnyRoute>(route: Nullable<T>): WatchableRoute<T> {
-	return convertRouteToPlainObject<'meta', T>(route, (el, key) => key !== 'meta' && key[0] !== '_');
+export function getComparableRouteParams<T extends AnyRoute>(route: Nullable<T>): WatchableRoute<T> {
+	return convertRouteToPlainObject<T, 'meta'>(route, (el, key) => key !== 'meta' && key[0] !== '_');
 }
 
 /**
- * Fills route parameters from the root object (if it needed)
+ * Fills route parameters with default values and other stuff
  *
  * @param route
- * @param root - link to the root object
+ * @param router - link to the router instance
  */
-export function fillRouteParams(route: Route, root: iBlock): void {
-	const
-		rootMeta = root.unsafe.meta;
-
+export function fillRouteParams(route: Route, router: bRouter): void {
 	const {
 		meta,
 		query,
 		params
 	} = route;
 
-	if (meta.paramsFromRoot !== false) {
-		for (let o = [rootMeta.systemFields, rootMeta.fields], i = 0; i < o.length; i++) {
+	const defs: [CanUndef<Dictionary>, Dictionary][] = [
+		[meta.query, query],
+		[meta.params, params],
+		[meta.meta, meta]
+	];
+
+	for (let o = defs, i = 0; i < o.length; i++) {
+		const
+			[def, original] = o[i];
+
+		if (!Object.isDictionary(def)) {
+			continue;
+		}
+
+		for (let keys = Object.keys(def), i = 0; i < keys.length; i++) {
 			const
-				fields = o[i],
-				keys = Object.keys(fields);
+				key = keys[i];
 
-			for (let i = 0; i < keys.length; i++) {
-				const
-					key = keys[i],
-					field = fields[key]?.meta;
+			let
+				val = def[key];
 
-				if (!field || !field.route) {
-					continue;
-				}
+			if (Object.isFunction(val)) {
+				val = def[key] = val(router);
+			}
 
-				const
-					obj = route[<string>field.route];
-
-				if (!Object.isDictionary(obj)) {
-					continue;
-				}
-
-				if (obj[key] === undefined) {
-					obj[key] = root[key];
-				}
+			if (val !== undefined && original[key] === undefined) {
+				original[key] = val;
 			}
 		}
 	}

@@ -9,12 +9,22 @@
 console.time('Initializing');
 
 import iStaticPage, { component, system } from 'super/i-static-page/i-static-page';
+import { testRoutes } from 'pages/p-v4-components-demo/const';
 export * from 'super/i-static-page/i-static-page';
 
 @component({root: true})
 export default class pV4ComponentsDemo extends iStaticPage {
-	@system({meta: {route: 'query'}})
+	/**
+	 * Parameter to test
+	 */
+	@system()
 	rootParam?: number;
+
+	/**
+	 * Routes schema to test
+	 */
+	@system()
+	testRoutes: Dictionary = testRoutes;
 
 	protected beforeCreate(): void {
 		console.time('Render');

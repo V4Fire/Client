@@ -32,7 +32,7 @@ import {
 	purifyRoute,
 
 	getBlankRouteFrom,
-	getParamsFromRouteThatNeedWatch,
+	getComparableRouteParams,
 
 	convertRouteToPlainObject,
 	convertRouteToPlainObjectWithoutProto,
@@ -748,7 +748,7 @@ export default class bRouter extends iData {
 		const {meta} = newRouteInfo;
 
 		// If the route support filling from the root object or query parameters
-		fillRouteParams(newRouteInfo, r);
+		fillRouteParams(newRouteInfo, this);
 
 		// We have two variants of a transition:
 		// "soft" - between routes were changed only query or meta parameters
@@ -770,8 +770,8 @@ export default class bRouter extends iData {
 
 		// Checking that the new route is really needed, i.e. it isn't equal to the previous
 		const newRouteIsReallyNeeded = !Object.fastCompare(
-			getParamsFromRouteThatNeedWatch(currentRoute),
-			getParamsFromRouteThatNeedWatch(newRoute)
+			getComparableRouteParams(currentRoute),
+			getComparableRouteParams(newRoute)
 		);
 
 		// The transition is real needed, but now we need to understand should we emit "soft" or "hard" transition
@@ -1060,10 +1060,7 @@ export default class bRouter extends iData {
 						external: isExternal.test(pattern),
 
 						/** @deprecated */
-						page: name,
-
-						/** @deprecated */
-						params: pathParams
+						page: name
 					}
 				};
 
@@ -1107,10 +1104,7 @@ export default class bRouter extends iData {
 						),
 
 						/** @deprecated */
-						page: name,
-
-						/** @deprecated */
-						params: pathParams
+						page: name
 					}
 				};
 			}
