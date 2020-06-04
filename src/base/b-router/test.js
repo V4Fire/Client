@@ -530,22 +530,21 @@ module.exports = async (page) => {
 
 		it('getting route parameters by a query', async () => {
 			const pageMeta = {
-				name: 'second',
-				page: 'second',
-				path: '/second',
+				name: 'main',
+				page: 'main',
+				path: '/',
 				default: false,
 				external: false,
-				content: 'Second page',
-				query: {}
+				content: 'Main page'
 			};
 
 			expect(await root.evaluate(async ({router}) => {
-				const route = router.getRoute('second');
+				const route = router.getRoute('main');
 				return route.meta;
 			})).toEqual(pageMeta);
 
 			expect(await root.evaluate(async ({router}) => {
-				const route = router.getRoute('/second');
+				const route = router.getRoute('/');
 				return route.meta;
 			})).toEqual(pageMeta);
 		});
