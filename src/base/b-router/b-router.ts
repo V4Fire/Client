@@ -423,7 +423,7 @@ export default class bRouter extends iData {
 	 * };
 	 *
 	 *
-	 * this.getRoutePath('/demo').name === 'demo';
+	 * this.getRoute('/demo').name === 'demo';
 	 * ```
 	 */
 	getRoute(ref: string): CanUndef<RouteAPI> {
