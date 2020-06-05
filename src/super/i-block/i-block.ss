@@ -94,10 +94,10 @@
 
 					< svg[.g-icon] &
 						:class = provide.elClasses(${classes|json}) |
-						:style = icon.getStyle('${iconId}') |
+						:style = gIcon.getStyle('${iconId}') |
 						${attrs}
 					.
-						< use :xlink:href = icon.getLink('${iconId}')
+						< use :xlink:href = gIcon.getLink('${iconId}')
 
 				/**
 				 * Generates a slot declaration (scoped and plain)

@@ -14,4 +14,4 @@
 	- rootTag = 'svg'
 
 	- block body
-		< use v-if = value | :xlink:href = icon.getLink(value)
+		< use v-if = value | :xlink:href = gIcon.getLink(value)

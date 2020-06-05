@@ -771,7 +771,7 @@ export default abstract class iBlock extends ComponentInterface {
 		init: (ctx) => new Icon()
 	})
 
-	readonly icon!: Icon;
+	readonly gIcon!: Icon;
 
 	/**
 	 * API to unsafe invoke of internal properties of the component.
