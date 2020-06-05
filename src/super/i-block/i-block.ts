@@ -68,6 +68,7 @@ import Lazy from 'super/i-block/modules/lazy';
 import Daemons, { DaemonsDict } from 'super/i-block/modules/daemons';
 import Analytics from 'super/i-block/modules/analytics';
 
+import Icon from 'super/i-block/modules/icon';
 import DOM from 'super/i-block/modules/dom';
 import VDOM from 'super/i-block/modules/vdom';
 
@@ -760,6 +761,17 @@ export default abstract class iBlock extends ComponentInterface {
 	})
 
 	readonly vdom!: VDOM;
+
+	/**
+	 * API to work with a svg sprite icon
+	 */
+	@system({
+		atom: true,
+		unique: true,
+		init: (ctx) => new Icon()
+	})
+
+	readonly icon!: Icon;
 
 	/**
 	 * API to unsafe invoke of internal properties of the component.

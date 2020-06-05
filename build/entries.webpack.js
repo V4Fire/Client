@@ -119,26 +119,35 @@ module.exports = (async () => {
 			// JS / TS
 
 			const
-				blackName = /^[iv]-/,
+				blackName = /^[iva]-/,
+				isAbstract = /^a-/.test(name),
 				logicTaskName = `${name}.js`,
 				logicFile = path.join(tmpEntries, `${configHash}__${logicTaskName}`);
 
-			fs.writeFileSync(logicFile, await $C(list).async.to('').reduce(async (str, {name}) => {
-				const
-					block = blockMap.get(name),
-					logic = block && await block.logic;
-
-				if (block) {
-					$C(block.libs).forEach((el) => str += `require('${el}');\n`);
+			if (isAbstract) {
+				if (!fs.existsSync(logicFile)) {
+					fs.createFileSync(logicFile);
 				}
 
-				if (!block || logic) {
-					const url = logic ? logic : resolve.isNodeModule(name) ? name : path.resolve(tmpEntries, '../', name);
-					str += `require('${getUrl(url)}');\n`;
-				}
+			} else {
+				fs.writeFileSync(logicFile, await $C(list).async.to('').reduce(async (str, {name}) => {
+					const
+						block = blockMap.get(name),
+						logic = block && await block.logic;
 
-				return str;
-			}));
+					if (block) {
+						$C(block.libs).forEach((el) => str += `require('${el}');\n`);
+					}
+
+
+					if (!block || logic) {
+						const url = logic ? logic : resolve.isNodeModule(name) ? name : path.resolve(tmpEntries, '../', name);
+						str += `require('${getUrl(url)}');\n`;
+					}
+
+					return str;
+				}));
+			}
 
 			entry[logicTaskName] = logicFile;
 

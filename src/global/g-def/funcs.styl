@@ -36,7 +36,7 @@ img($img, $isDsAsset = false)
 	// @stlint-disable
 
 	if $isDsAsset
-		$img = join("/", ds icons $img)
+		$img = join("/", sprite $img)
 
 	if !$IMG[$img]
 		$IMG[$img] = {

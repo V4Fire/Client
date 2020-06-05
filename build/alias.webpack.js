@@ -39,7 +39,7 @@ if (pzlr.designSystem) {
 }
 
 if (pzlr.assets && pzlr.assets.sprite) {
-	aliases.sprite = src.assets(pzlr.assets.sprite);
+	aliases.sprite = pzlr.designSystem ? pzlr.assets.sprite : src.assets(pzlr.assets.sprite);
 }
 
 module.exports = aliases;

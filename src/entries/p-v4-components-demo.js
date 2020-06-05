@@ -7,4 +7,5 @@
  */
 
 import './index';
+import './a-svg';
 import '../pages/p-v4-components-demo';

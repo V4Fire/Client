@@ -221,6 +221,10 @@ module.exports = async function ({buildId, plugins}) {
 			'prelude',
 
 			{
+				loader: 'require-assets'
+			},
+
+			{
 				loader: 'snakeskin',
 				options: snakeskin.client
 			}
@@ -254,17 +258,26 @@ module.exports = async function ({buildId, plugins}) {
 
 	loaders.rules.set('img.svg', {
 		test: /\.svg$/,
-		use: [
+		oneOf: [
+			{
+				resourceQuery: /sprite/,
+				loader: 'svg-sprite-loader',
+				options: imageOpts.svgSprite
+			},
+
 			{
 				loader: 'svg-url',
 				options: fileLoaderOpts
 			}
-		].concat(
-			isProd ? {
-				loader: 'svgo',
-				options: imageOpts.svgo
-			} : []
-		)
+		]
+	});
+
+	loaders.rules.set('img.svg.svgo', {
+		test: /\.svg$/,
+		use: isProd ? [{
+			loader: 'svgo',
+			options: imageOpts.svgo
+		}] : []
 	});
 
 	return loaders;

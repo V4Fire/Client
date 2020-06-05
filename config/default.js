@@ -218,6 +218,16 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 			svgo: {
 				removeUnknownsAndDefaults: false
 			},
+			svgSprite: {
+				symbolId(filePath) {
+					const
+						{name, dir} = path.parse(filePath),
+						chunks = dir.split('/'),
+						parentDir = chunks[chunks.length - 1];
+
+					return !isNaN(Number(parentDir)) ? `${parentDir}/${name}` : name;
+				}
+			},
 			webp: {
 				quality: 75
 			}
@@ -271,7 +281,6 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 
 			'engine': this.engine(),
 			'noGlobals': false,
-			'svgSprite': true,
 
 			'ds-diff': false,
 			'ds-vars': false,

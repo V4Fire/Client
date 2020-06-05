@@ -11,7 +11,6 @@
  * @packageDocumentation
  */
 
-import iIcon from 'traits/i-icon/i-icon';
 import iSize from 'traits/i-size/i-size';
 
 import iBlock, { component, prop, ModsDecl } from 'super/i-block/i-block';
@@ -21,7 +20,7 @@ export * from 'super/i-block/i-block';
  * Component to use an SVG icon from the global SVG sprite
  */
 @component({functional: true, flyweight: true})
-export default class bIcon extends iBlock implements iIcon, iSize {
+export default class bIcon extends iBlock implements iSize {
 	/**
 	 * Component value
 	 */
@@ -55,9 +54,4 @@ export default class bIcon extends iBlock implements iIcon, iSize {
 			'full'
 		]
 	};
-
-	/** @see iIcon.getIconLink */
-	getIconLink(iconId: string): string {
-		return iIcon.getIconLink(iconId);
-	}
 }

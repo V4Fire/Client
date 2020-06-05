@@ -90,12 +90,14 @@
 				 * @param {Object=} [attrs]
 				 */
 				- block index->gIcon(iconId, classes = {}, attrs = {})
-					< svg[.g-icon] :class = provide.elClasses(${classes|json}) | ${attrs}
-						- if Object.isArray(iconId)
-							< use :xlink:href = getIconLink(${iconId})
+					requireAsset({iconId})
 
-						- else
-							< use :xlink:href = getIconLink('${iconId}')
+					< svg[.g-icon] &
+						:class = provide.elClasses(${classes|json}) |
+						:style = icon.getStyle('${iconId}') |
+						${attrs}
+					.
+						< use :xlink:href = icon.getLink('${iconId}')
 
 				/**
 				 * Generates a slot declaration (scoped and plain)
