@@ -22,11 +22,52 @@ $IMG = {}
 
 /**
  * Saves the specified image to the global cache
+ * Use object to set some styles for a svg image
  *
- * @param {string} $img
- * @param {boolean=} [$isDsAsset]
+ * For more information about passing styles to a svg
+ * @see https://www.npmjs.com/package/svg-transform-loader#how-to-pass-transform-parameters
+ *
+ * @param {string|object} $params
+ * @example
+ * ```
+ * background img('assets/404.png')
+ * background img('assets/404.svg')
+ *
+ * background img({url: 'assets/404.svg', fill: #444, stroke: cyan})
+ * background img({url: 'assets/404.svg', fill: {'.some-classname': rgb(145, 5, 90)}})
+ * ```
  */
-img($img, $isDsAsset = false)
+img($params)
+	$img = $params
+	$query = ''
+
+	if type($params) == 'object'
+		$img = $params.url
+		remove($params, 'url')
+
+		if length($params)
+			$result = ()
+			$query += '?'
+
+			replaceHash($v)
+				replaceByRegExp(type($v) != string ? s("%s", $v) : $v, "^#", "%23")
+
+			for $key, $value in $params
+				if type($value) == 'object'
+					$string = $key + '='
+					$values = ()
+
+					for $field, $color in $value
+						push($values, replaceHash($color) + '%20' + replaceHash($field))
+
+					push($result, $string + join(',', $values))
+
+				else
+					push($result, $key + '=' + replaceHash($value))
+
+			if length($result)
+				$query += join('&', $result)
+
 	$prop = current-property[0]
 	$keys = {
 		background: background-image
@@ -35,8 +76,8 @@ img($img, $isDsAsset = false)
 
 	// @stlint-disable
 
-	if $isDsAsset
-		$img = join("/", sprite $img)
+	if $query
+		$img = $img + $query
 
 	if !$IMG[$img]
 		$IMG[$img] = {
@@ -206,16 +247,18 @@ c($kit, $id = null, $reserved = false, $base = false)
  * Returns a background rule from the Design System styles by the specified name and parameters
  *
  * @param {string} $name
- * @param {string=} [$repeat]
- * @param {string=} [$align]
+ * @param {object} [$params]
  */
-i($name, $repeat = no-repeat, $align = center)
-	background img(join(".", $name svg), true) $repeat $align
+i($name, $params = null)
+	$path = join('/', sprite $name)
+	$imgParams = merge({url: join(".", $path svg)}, $params)
+	background img($imgParams)
 
 	$chunks = split("/", $name)
 
 	if length($chunks) > 1 and typeof(convert($chunks[0])) == "unit"
 		size unit(convert($chunks[0]), "px")
+		background-size unit(convert($chunks[0]), "px")
 
 /**
  * Returns text style rules from the Design System styles by the specified name
@@ -235,7 +278,9 @@ t($name)
  * @param {string} [$pos] - %s tokens-styled string for multiple border-radius values
  *
  * @example
+ * ```
  * r(big, '$s 0 $s') -> border-radius 16px 0 16px
+ * ```
  */
 r($name, $pos = null)
 	$val = getDSOptions("rounding." + $name)

@@ -27,10 +27,7 @@ module.exports = async function (str) {
 		graph = await build,
 		filePath = graph.entry['a-svg.js'];
 
-	return str.replace(replaceRegExp, (str, name) => {
-		const
-			url = `sprite/${name}.svg?sprite`;
-
+	return str.replace(replaceRegExp, (str, url) => {
 		if (!includedIcons.has(url)) {
 			includedIcons.add(url);
 			fs.writeFileSync(

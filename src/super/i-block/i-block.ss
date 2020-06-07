@@ -85,12 +85,13 @@
 				/**
 				 * Generates an icon block
 				 *
-				 * @param {(string|!Array<gIcon>)} iconId
+				 * @param {string} iconId
 				 * @param {Object=} [classes]
 				 * @param {Object=} [attrs]
 				 */
 				- block index->gIcon(iconId, classes = {}, attrs = {})
-					requireAsset({iconId})
+					: url = 'sprite/' + iconId + '.svg?sprite'
+					requireAsset({url})
 
 					< svg[.g-icon] &
 						:class = provide.elClasses(${classes|json}) |

@@ -272,6 +272,13 @@ module.exports = async function ({buildId, plugins}) {
 		]
 	});
 
+	loaders.rules.set('img.svg.query', {
+		test: /\.svg(\?.*)?$/,
+		use: [
+			'svg-transform-loader'
+		]
+	});
+
 	loaders.rules.set('img.svg.svgo', {
 		test: /\.svg$/,
 		use: isProd ? [{
