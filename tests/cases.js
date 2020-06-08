@@ -16,6 +16,9 @@ module.exports = [
 
 	'--name b-virtual-scroll --suit double-components --runner init-load',
 
+	// b-router
+	`--name b-router`,
+
 	// b-button
 	`--name b-button --suit demo`
 ];

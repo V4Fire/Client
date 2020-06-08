@@ -58,7 +58,7 @@ export function cloneWatchValue<T>(value: T, opts?: WatchOptions): T {
 	}
 
 	if (needClone) {
-		return Object.mixin(true, null, value);
+		return Object.mixin({deep: true, withProto: true}, null, value);
 	}
 
 	return value;

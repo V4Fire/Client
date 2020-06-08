@@ -8,5 +8,4 @@
 
 export type ConverterCallType =
 	'component' |
-	'remote' |
-	'remoteCheck';
+	'remote';

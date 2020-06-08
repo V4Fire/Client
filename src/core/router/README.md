@@ -1,3 +1,4 @@
 # core/router
 
-This module provides a base interface for a router engine. Also, it provides a router engine based on the browser history API.
+This module provides base interfaces for a router engine and the default implementations of these interfaces.
+The engines aren't used directly, but with [[bRouter]].

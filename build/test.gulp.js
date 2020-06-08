@@ -140,7 +140,11 @@ module.exports = function (gulp = require('gulp')) {
 				context = await browser.newContext(),
 				page = await context.newPage();
 
+			const
+				testURL = `localhost:${args['--port']}/${args['--page']}.html`;
+
 			browserParams[browserType] = {
+				testURL,
 				browser,
 				browserType,
 				page,
@@ -154,9 +158,12 @@ module.exports = function (gulp = require('gulp')) {
 			const
 				params = browserParams[browserType];
 
-			const {page} = params;
-			await page.goto(`localhost:${args['--port']}/${args['--page']}.html`);
+			const {
+				testURL,
+				page
+			} = params;
 
+			await page.goto(testURL);
 			const testEnv = getTestEnv(browserType);
 			await test(page, params);
 
