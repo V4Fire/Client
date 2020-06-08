@@ -13,7 +13,7 @@
  * @param {string} selector
  * @returns {!Promise<{componentSelector: string, component: ?}>}
  */
-module.exports.getComponentCtx = async function (page, selector) {
+exports.getComponentCtx = async function (page, selector) {
 	const component = await (await page.$(selector)).getProperty('component');
 	return {componentSelector: selector, component};
 };
@@ -24,6 +24,6 @@ module.exports.getComponentCtx = async function (page, selector) {
  * @param {?} page
  * @returns {!Promise<void>}
  */
-module.exports.scrollToPageBottom = async function (page) {
+exports.scrollToPageBottom = async function (page) {
 	await page.evaluate('window.scrollTo(0, document.body.scrollHeight)');
 };
