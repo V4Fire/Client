@@ -32,6 +32,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :house: Internal
 
+* Added `README.md`
 * Added tests & refactoring
 * Renamed a group of properties:
   * `page` -> `route`
