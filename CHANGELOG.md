@@ -11,6 +11,24 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.26 (2020-06-03)
+
+#### :bug: Bug Fix
+
+* Fixed race condition within tests `b-virtual-scroll`
+
+## v3.0.0-rc.25 (2020-06-03)
+
+#### :bug: Bug Fix
+
+* [Fixed an issue where skeletons disappeared `b-virtual-scroll`](https://github.com/V4Fire/Client/issues/230)
+* [Fixed an issue with a race condition `b-virtual-scroll/chunk-request/init`](https://github.com/V4Fire/Client/issues/203)
+* [Fixed an issue where an `empty` slot appeared when there was data `b-virtual-scroll`](https://github.com/V4Fire/Client/issues/259)
+
+#### :house: Internal
+
+* [Fixed type of `DaemonFn`](https://github.com/V4Fire/Client/issues/257)
+
 ## v3.0.0-rc.24 (2020-05-29)
 
 #### :bug: Bug Fix

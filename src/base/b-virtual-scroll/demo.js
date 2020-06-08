@@ -32,7 +32,8 @@ const suits = {
 	demo: [{
 		attrs: {
 			...baseAttrs,
-			':dataProvider': s('demo.Pagination')
+			':dataProvider': s('demo.Pagination'),
+			':request': '{get: {id: "b-virtual:init-load", chunkSize: 10}}'
 		},
 
 		content: {
@@ -98,7 +99,46 @@ const suits = {
 			...baseContent,
 			empty: slots.empty
 		}
-	}]
+	}, {
+		attrs: {
+			...baseAttrs,
+			':dataProvider': s('demo.Pagination'),
+			':dbConverter': '({data}) => ({data: data.splice(0, 4)})',
+			':request': '{get: {chunkSize: 8, total: 8, id: "b-virtual:slot-empty"}}',
+			'id': 'second'
+		},
+
+		content: {
+			...baseContent,
+			empty: slots.empty
+		}
+	}],
+
+	/**
+	 * Set of parameters to render two instances of b-virtual-scroll
+	 */
+	doubleComponents: [{
+		attrs: {
+			...baseAttrs,
+			':dataProvider': s('demo.Pagination'),
+			':request': '{get: {chunkSize: 10}}'
+		},
+
+		content: {
+			...baseContent
+		}
+	}, {
+		attrs: {
+			...baseAttrs,
+			':dataProvider': s('demo.Pagination'),
+			':request': '{get: {id: "b-virtual:init-load", chunkSize: 10}}',
+			'id': 'second'
+		},
+
+		content: {
+			...baseContent
+		}
+	}],
 };
 
 module.exports = suits;
