@@ -17,10 +17,14 @@ export const transitionOptions = [
 	'query'
 ];
 
+export const routeNames = [
+	'name',
+	'page'
+];
+
 export const systemRouteParams = Object.createDict({
 	url: true,
-	name: true,
-	page: true
+	...Object.fromArray(routeNames)
 });
 
 export const defaultRouteNames = Object.createDict({

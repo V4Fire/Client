@@ -25,7 +25,8 @@ import { concatUrls, toQueryString } from 'core/url';
 import engine, { Router, Route, HistoryClearFilter } from 'core/router';
 import iData, { component, prop, system, computed, hook, wait } from 'super/i-data/i-data';
 
-import { defaultRouteNames, isExternal, qsClearFixRgxp } from 'base/b-router/const';
+import { routeNames, defaultRouteNames, isExternal, qsClearFixRgxp } from 'base/b-router/const';
+import { getRouteName } from 'base/b-router/modules/helpers';
 
 import {
 
@@ -485,7 +486,7 @@ export default class bRouter extends iData {
 					}
 
 					// In this case we have full matching of a route ref by a name or pattern
-					if (route.name === resolvedRef || route.pattern === resolvedRef) {
+					if (getRouteName(route) === resolvedRef || route.pattern === resolvedRef) {
 						resolvedById = true;
 						resolvedRoute = route;
 						break;
@@ -653,13 +654,11 @@ export default class bRouter extends iData {
 	): Promise<CanUndef<Route>> {
 		opts = getBlankRouteFrom(normalizeTransitionOpts(opts));
 
-		const {
-			r,
-			engine,
-			engine: {
-				route: currentEngineRoute
-			}
-		} = this;
+		const
+			{r, engine} = this;
+
+		const
+			currentEngineRoute = engine.route || engine.page;
 
 		this.emit('beforeChange', ref, opts, method);
 
@@ -680,6 +679,10 @@ export default class bRouter extends iData {
 		let
 			newRouteInfo;
 
+		const getEngineRoute = () => currentEngineRoute ?
+			currentEngineRoute.url || getRouteName(currentEngineRoute) :
+			undefined;
+
 		// Get information about the specified route
 		if (ref) {
 			newRouteInfo = this.getRoute(engine.id(ref));
@@ -687,7 +690,7 @@ export default class bRouter extends iData {
 		// In this case, we don't have the specified ref to a transition,
 		// so we try to get information from the current route and use it as a blueprint to the new
 		} else if (currentEngineRoute) {
-			ref = currentEngineRoute.url || currentEngineRoute.name;
+			ref = getEngineRoute()!;
 
 			const
 				route = this.getRoute(ref);
@@ -713,7 +716,7 @@ export default class bRouter extends iData {
 				currentRouteWithScroll = Object.mixin(true, undefined, currentEngineRoute, scroll);
 
 			if (!Object.fastCompare(currentEngineRoute, currentRouteWithScroll)) {
-				await engine.replace(currentEngineRoute.url || currentEngineRoute.name, currentRouteWithScroll);
+				await engine.replace(getEngineRoute()!, currentRouteWithScroll);
 			}
 		}
 
@@ -727,8 +730,13 @@ export default class bRouter extends iData {
 			return;
 		}
 
-		if (!newRouteInfo.name && currentEngineRoute?.name) {
-			newRouteInfo.name = currentEngineRoute.name;
+		if (!newRouteInfo.name) {
+			const
+				nm = getRouteName(currentEngineRoute);
+
+			if (nm) {
+				newRouteInfo.name = nm;
+			}
 		}
 
 		const
@@ -737,7 +745,7 @@ export default class bRouter extends iData {
 
 		// If a new route matches by a name with the current,
 		// we need to mix a new state with the current
-		if (currentRoute?.name === newRouteInfo.name) {
+		if (getRouteName(currentRoute) === newRouteInfo.name) {
 			deepMixin(newRouteInfo, getBlankRouteFrom(currentRoute), opts);
 
 		// Simple normalizing of a route state
@@ -865,7 +873,7 @@ export default class bRouter extends iData {
 					s = meta.scroll;
 
 				if (s) {
-					this.r.scrollTo(s.y, s.x);
+					this.r.scrollTo(s.x, s.y);
 
 				} else if (hardChange) {
 					this.r.scrollTo(0, 0);
@@ -998,7 +1006,7 @@ export default class bRouter extends iData {
 				return this.replace(route);
 			}
 
-			return this.replace(route.name, Object.reject(route, ['name', 'page']));
+			return this.replace(getRouteName(route), Object.reject(route, routeNames));
 		}
 
 		return this.replace(null);
