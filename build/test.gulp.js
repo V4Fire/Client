@@ -75,7 +75,8 @@ module.exports = function (gulp = require('gulp')) {
 			'--close': String,
 			'--headless': String,
 			'--client-name': String,
-			'--reinit-browser': String
+			'--reinit-browser': String,
+			'--test-timeout': Number
 		}, {permissive: true});
 
 		if (!args['--name']) {
@@ -186,7 +187,7 @@ module.exports = function (gulp = require('gulp')) {
 			});
 
 			await new Promise((resolve) => {
-				testEnv.afterAll(() => resolve(), 10e3);
+				testEnv.afterAll(() => resolve(), args['--test-timeout'] || 10e3);
 				testEnv.execute();
 			}).then(close, close);
 		};
