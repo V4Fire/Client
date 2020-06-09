@@ -397,7 +397,7 @@ module.exports = function (gulp = require('gulp')) {
 		await waitForEmpty(testMap);
 
 		console.log('\n-------------');
-		console.log(`\n✔️ Tests passed: ${totalCases.filter((v) => !failedCases.includes(v)).length}`);
+		console.log(`\n✔ Tests passed: ${totalCases.filter((v) => !failedCases.includes(v)).length}`);
 		console.log(`\n❌ Tests failed: ${failedCases.length}`);
 
 		if (failedCases.length) {
