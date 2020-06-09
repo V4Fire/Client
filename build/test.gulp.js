@@ -346,7 +346,6 @@ module.exports = function (gulp = require('gulp')) {
 					browser = servers[browserType] = await playwright[browserType].launchServer({args: getBrowserArgs()}),
 					wsEndpoint = browser.wsEndpoint();
 
-				await playwright[browserType].connect({wsEndpoint});
 				wsEndpoints[browserType] = wsEndpoint;
 			}
 
