@@ -11,7 +11,7 @@ jobs:
 
   # Run components tests
   components:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
 
     strategy:
       matrix:
@@ -26,7 +26,7 @@ jobs:
           node-version: ${{ matrix.node-version }}
 
       - name: Install dependencies
-        run: npm ci
+        run: npm ci && npm i playwright --no-save
 
       - name: Build tsconfig
         run: npx gulp build:tsconfig
@@ -37,7 +37,7 @@ jobs:
 
   # Run typescript check
   typescript:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
 
     strategy:
       matrix:
@@ -63,7 +63,7 @@ jobs:
 
   # Run eslint check
   eslint:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
 
     strategy:
       matrix:
