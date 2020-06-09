@@ -203,8 +203,8 @@ export default function createRouter(component: bRouter): Router {
 
 			const
 				entryPoint = params.meta.entryPoint || params.page,
-				dontLoadDependencies = !entryPoint || params.meta.dynamicDependencies === false,
-				depsAlreadyLoaded = !dontLoadDependencies || Object.isArray(ModuleDependencies.get(entryPoint));
+				depsAlreadyLoaded = Boolean(entryPoint && Object.isArray(ModuleDependencies.get(entryPoint))),
+				dontLoadDependencies = depsAlreadyLoaded || params.meta.dynamicDependencies === false;
 
 			if (dontLoadDependencies || depsAlreadyLoaded) {
 				resolve();
