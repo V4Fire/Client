@@ -241,6 +241,7 @@ export default function createRouter(component: bRouter): Router {
 
 			return {
 				name: url,
+				page: url,
 				query: fromQueryString(location.search),
 				...history.state,
 				url
