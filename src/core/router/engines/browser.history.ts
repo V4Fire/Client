@@ -206,7 +206,7 @@ export default function createRouter(component: bRouter): Router {
 				depsAlreadyLoaded = Boolean(entryPoint && Object.isArray(ModuleDependencies.get(entryPoint))),
 				dontLoadDependencies = depsAlreadyLoaded || params.meta.dynamicDependencies === false;
 
-			if (dontLoadDependencies || depsAlreadyLoaded) {
+			if (dontLoadDependencies) {
 				resolve();
 				return;
 			}
