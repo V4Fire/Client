@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.28 (2020-06-09)
+
+#### :bug: Bug Fix
+
+* Fixed loading of external dependencies
+
 ## v3.0.0-rc.27 (2020-06-08)
 
 #### :house: Internal

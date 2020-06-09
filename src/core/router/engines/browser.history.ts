@@ -201,16 +201,12 @@ export default function createRouter(component: bRouter): Router {
 				history[method](Object.fastClone(params), params.name, route);
 			}
 
-			const dontLoadDependencies =
-				!params.name ||
-				!params.meta?.entryPoint ||
-				params.meta.dynamicDependencies === false;
+			const
+				entryPoint = params.meta.entryPoint || params.page,
+				dontLoadDependencies = !entryPoint || params.meta.dynamicDependencies === false,
+				depsAlreadyLoaded = !dontLoadDependencies && Object.isArray(ModuleDependencies.get(entryPoint));
 
-			const alreadyLoaded =
-				!dontLoadDependencies &&
-				Object.isArray(ModuleDependencies.get(params.name));
-
-			if (dontLoadDependencies || alreadyLoaded) {
+			if (dontLoadDependencies || depsAlreadyLoaded) {
 				resolve();
 				return;
 			}
@@ -218,7 +214,7 @@ export default function createRouter(component: bRouter): Router {
 			let
 				i = 0;
 
-			ModuleDependencies.emitter.on(`component.${params.name}.loading`, $a.proxy(
+			ModuleDependencies.emitter.on(`component.${entryPoint}.loading`, $a.proxy(
 				({packages}) => {
 					component.field.set('status', (++i * 100) / packages);
 					(i === packages) && resolve();
