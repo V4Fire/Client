@@ -11,7 +11,8 @@
 const
 	os = require('os'),
 	path = require('upath'),
-	arg = require('arg');
+	arg = require('arg'),
+	delay = require('delay');
 
 const
 	{src} = require('config'),
@@ -351,6 +352,9 @@ module.exports = function (gulp = require('gulp')) {
 
 			endpointArg = Object.entries(wsEndpoints).map(([key, value]) => `--${key}WsEndpoint ${value}`).join(' ');
 		}
+
+		// Delay for the server to start
+		await delay(1000);
 
 		// Run tests
 
