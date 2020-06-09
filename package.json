@@ -47,9 +47,6 @@
     "tslib": "2.0.0",
     "vue": "2.6.10"
   },
-  "peerDependencies": {
-    "playwright": "1.0.2"
-  },
   "optionalDependencies": {
     "@pzlr/build-core": "^2.10.2",
     "@pzlr/stylus-inheritance": "^3.1.0",
