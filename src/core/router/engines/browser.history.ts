@@ -202,9 +202,9 @@ export default function createRouter(component: bRouter): Router {
 			}
 
 			const
-				entryPoint = params.meta.entryPoint || params.page,
-				depsAlreadyLoaded = Boolean(entryPoint && Object.isArray(ModuleDependencies.get(entryPoint))),
-				dontLoadDependencies = depsAlreadyLoaded || params.meta.dynamicDependencies === false;
+				entryPoint = params.meta.entryPoint,
+				depsAlreadyLoaded = entryPoint != null ? Object.isArray(ModuleDependencies.get(entryPoint)) : false,
+				dontLoadDependencies = !entryPoint || depsAlreadyLoaded || params.meta.dynamicDependencies === false;
 
 			if (dontLoadDependencies) {
 				resolve();
@@ -241,7 +241,6 @@ export default function createRouter(component: bRouter): Router {
 
 			return {
 				name: url,
-				page: url,
 				query: fromQueryString(location.search),
 				...history.state,
 				url

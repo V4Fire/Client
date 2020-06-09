@@ -563,7 +563,7 @@ export default class bRouter extends iData {
 			meta: Object.mixin(true, {}, resolvedRoute.meta),
 
 			get page(): string {
-				return this.name;
+				return resolvedRoute.name;
 			},
 
 			resolvePath(params?: Dictionary): string {

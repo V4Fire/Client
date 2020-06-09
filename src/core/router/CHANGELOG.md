@@ -13,6 +13,10 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 ## v3.0.0-rc.29 (2020-06-09)
 
+#### :boom: Breaking Change
+
+* Removed deprecated API
+
 #### :bug: Bug Fix
 
 * Fixed loading of external dependencies
