@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.30 (2020-06-10)
+
+#### :bug: Bug Fix
+
+* Fixed invalid expanding of string literals `build/replacers/ts-import`
+
 ## v3.0.0-rc.29 (2020-06-09)
 
 #### :bug: Bug Fix
