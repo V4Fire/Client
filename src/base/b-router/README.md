@@ -500,7 +500,7 @@ router.push(route?.name, {query: {foo: 1}});
 
 When we invoke one of the router transition methods, like, "push" or "replace", the router emits a bunch of special events.
 
-1. `beforeChange(route: Nullable<string>, params: PageOptionsProp, method: TransitionMethod)` — this event fires before any transition. The handlers that listen to this event are taken arguments:
+1. `beforeChange(route: Nullable<string>, params: TransitionOptions, method: TransitionMethod)` — this event fires before any transition. The handlers that listen to this event are taken arguments:
 
   1. `route`  — ref to a route to go to.
   2. `params` — parameters of the route. The handlers can modify this object to attach more parameters.
