@@ -10,6 +10,22 @@ import flags from 'core/init/flags';
 import Component, { rootComponents } from 'core/component';
 import { createsAsyncSemaphore } from 'core/event';
 
+let isSemaphoreReady = false;
+const onSemaphoreReadyCallbacks: Function[] = [];
+
+/**
+ * Add a semaphore success handler
+ * @param cb
+ */
+export const onSemaphoreReady = (cb: Function) => {
+	if (isSemaphoreReady) {
+		cb();
+
+	} else {
+		onSemaphoreReadyCallbacks.push(cb);
+	}
+};
+
 export default createsAsyncSemaphore(async () => {
 	const
 		node = document.querySelector<HTMLElement>('[data-root-component]');
@@ -40,6 +56,9 @@ export default createsAsyncSemaphore(async () => {
 		...component,
 		el: node
 	});
+
+	isSemaphoreReady = true;
+	onSemaphoreReadyCallbacks.forEach((clb) => clb());
 
 	READY_STATE++;
 }, ...flags);
