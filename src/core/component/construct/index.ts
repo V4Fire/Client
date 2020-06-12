@@ -68,7 +68,8 @@ export function beforeCreateState(
 		{unsafe, unsafe: {$parent: parent}} = component;
 
 	if (parent && !parent.componentName) {
-		Object.set(unsafe, '$parent', unsafe.$root.unsafe.$remoteParent);
+		// @ts-ignore
+		Object.set(unsafe, '$parent', unsafe.$root.$remoteParent);
 	}
 
 	Object.set(unsafe, '$normalParent', getNormalParent(component));
