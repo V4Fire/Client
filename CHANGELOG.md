@@ -15,11 +15,13 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :bug: Bug Fix
 
+* Fixed a problem with the disappearance of loaders before the content was rendered
 * Fixed unsafe pointer `core/component/engines/vue/render`
 
 #### :house: Internal
 
 * Added `.npmignore`
+* [Fixed type of `DaemonFn`](https://github.com/V4Fire/Client/issues/257)
 
 ## v3.0.0-rc.30 (2020-06-10)
 
@@ -80,7 +82,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :house: Internal
 
-* [Fixed type of `DaemonFn`](https://github.com/V4Fire/Client/issues/257)
+* [Fixed type of `WrappedDaemonFn`](https://github.com/V4Fire/Client/issues/257)
 
 ## v3.0.0-rc.24 (2020-05-29)
 
