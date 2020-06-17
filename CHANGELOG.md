@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.32 (2020-06-17)
+
+#### :house: Internal
+
+* [Improves github actions performance](https://github.com/V4Fire/Client/issues/266)
+
 ## v3.0.0-rc.31 (2020-06-17)
 
 #### :bug: Bug Fix
