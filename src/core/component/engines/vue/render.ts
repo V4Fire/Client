@@ -32,6 +32,9 @@ export function renderData(data: CanArray<VNode>, parent: ComponentInterface): C
 	// @ts-ignore (access)
 	vue.$root.$remoteParent = parent;
 
+	// @ts-ignore (access)
+	vue.$root.unsafe = vue.$root;
+
 	const el = document.createElement('div');
 	vue.$mount(el);
 
