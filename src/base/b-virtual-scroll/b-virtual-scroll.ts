@@ -187,6 +187,7 @@ export default class bVirtualScroll extends iData implements iItems {
 	/**
 	 * Local component state store
 	 */
+	@system()
 	protected localStateStore: LocalState = 'init';
 
 	/** @override */
@@ -272,6 +273,8 @@ export default class bVirtualScroll extends iData implements iItems {
 		if (!this.db) {
 			return;
 		}
+
+		this.localState = 'init';
 
 		const
 			val = this.convertDBToComponent<RemoteData>(this.db);

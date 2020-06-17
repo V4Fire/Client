@@ -11,7 +11,7 @@ jobs:
 
   # Run components tests
   components:
-    runs-on: windows-latest
+    runs-on: macos-latest
 
     strategy:
       matrix:
@@ -37,8 +37,9 @@ jobs:
             ${{ runner.os }}-node-
 
       - name: Install dependencies
+        if: steps.npm-cache.outputs.cache-hit != 'true'
         run: npm ci
-
+        
       - name: Build tsconfig
         run: npx gulp build:tsconfig
 
@@ -74,8 +75,9 @@ jobs:
             ${{ runner.os }}-node-
 
       - name: Install dependencies
+        if: steps.npm-cache.outputs.cache-hit != 'true'
         run: npm ci
-
+        
       - name: Build tsconfig
         run: npx gulp build:tsconfig
 
@@ -111,6 +113,7 @@ jobs:
             ${{ runner.os }}-node-
 
       - name: Install dependencies
+        if: steps.npm-cache.outputs.cache-hit != 'true'
         run: npm ci
 
       - name: Build tsconfig

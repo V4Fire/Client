@@ -290,6 +290,14 @@ export default class ChunkRequest extends Friend {
 			this.chunkRender.setRefVisibility('done', true);
 		}
 
-		this.chunkRender.setLoadersVisibility(false);
+		this.async.wait(() => this.ctx.localState === 'ready', {label: $$.requestDoneWaitForReady})
+			.then(() => {
+				if (!this.pendingData.length) {
+					this.chunkRender.setRefVisibility('done', true);
+				}
+
+				this.chunkRender.setLoadersVisibility(false);
+			})
+			.catch(stderr);
 	}
 }
