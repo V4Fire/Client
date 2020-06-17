@@ -38,7 +38,7 @@ jobs:
         run: npx gulp build:tsconfig
 
       - name: Set env
-        run: export NODE_ENV=development
+        run: echo ::set-env name=NODE_ENV::$(echo development)
 
       - name: Run components test
         run: npm run test:components
