@@ -518,12 +518,17 @@ function getSelectedBrowsers() {
  * @returns {!Array<string>}
  */
 function getBrowserArgs() {
-	const
-		args = arg({'--browser-args': String}, {permissive: true});
+	try {
+		const
+			args = arg({'--browser-args': String}, {permissive: true});
 
-	if (!args['--browser-args']) {
+		if (!args['--browser-args']) {
+			return [];
+		}
+
+		return args['--browser-args'].split(',').map((v) => `--${v.trim()}`);
+
+	} catch {
 		return [];
 	}
-
-	return args['--browser-args'].split(',').map((v) => `--${v.trim()}`);
 }
