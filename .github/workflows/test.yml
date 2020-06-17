@@ -38,6 +38,7 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
+        if: steps.npm-cache.outputs.cache-hit != 'true'
 
       - name: Build tsconfig
         run: npx gulp build:tsconfig
@@ -75,6 +76,7 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
+        if: steps.npm-cache.outputs.cache-hit != 'true'
 
       - name: Build tsconfig
         run: npx gulp build:tsconfig
@@ -112,6 +114,7 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
+        if: steps.npm-cache.outputs.cache-hit != 'true'
 
       - name: Build tsconfig
         run: npx gulp build:tsconfig
