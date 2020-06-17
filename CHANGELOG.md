@@ -15,7 +15,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :bug: Bug Fix
 
-* Fixed a problem with the disappearance of loaders before the content was rendered in `bVirtualScroll`
+* Fixed a problem with the disappearance of loaders before the content was rendered
 
 #### :house: Internal
 
