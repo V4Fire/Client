@@ -5,7 +5,7 @@
   "main": "src/core/index.js",
   "typings": "index.d.ts",
   "license": "MIT",
-  "version": "3.0.0-rc.31",
+  "version": "3.0.0-rc.30",
   "author": {
     "name": "kobezzza",
     "email": "kobezzza@gmail.com",
@@ -38,7 +38,7 @@
   },
   "dependencies": {
     "@v4fire/core": "3.19.0",
-    "escaper": "3.0.5",
+    "escaper": "^3.0.4",
     "eventemitter2": "6.4.1",
     "fg-loadcss": "^2.1.0",
     "path-to-regexp": "^3.2.0",
@@ -119,11 +119,11 @@
     "vue-template-compiler": "2.6.10",
     "vue-template-es2015-compiler": "^1.9.1",
     "webpack": "^4.43.0",
-    "webpack-cli": "^3.3.11",
-    "babel-eslint": "^10.1.0",
-    "eslint": "^6.8.0"
+    "webpack-cli": "^3.3.11"
   },
   "devDependencies": {
+    "babel-eslint": "^10.1.0",
+    "eslint": "^6.8.0",
     "husky": "^4.2.5",
     "playwright": "1.0.2",
     "stlint": "^1.0.62",

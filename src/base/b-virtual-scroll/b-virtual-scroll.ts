@@ -37,7 +37,7 @@ import iData, {
 import ComponentRender from 'base/b-virtual-scroll/modules/component-render';
 import ChunkRender from 'base/b-virtual-scroll/modules/chunk-render';
 import ChunkRequest from 'base/b-virtual-scroll/modules/chunk-request';
-//
+
 import { getRequestParams, isAsyncReplaceError } from 'base/b-virtual-scroll/modules/helpers';
 
 import {
