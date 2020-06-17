@@ -25,19 +25,15 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
 
-      - name: Get npm cache directory
-        id: npm-cache
-        run: |
-          echo "::set-output name=dir::$(npm config get cache)"
       - uses: actions/cache@v2
         with:
-          path: ${{ steps.npm-cache.outputs.dir }}
+          path: ~/.npm
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-node-
 
       - name: Install dependencies
-        if: steps.npm-cache.outputs.cache-hit != 'true'
+        if: steps.cache.outputs.cache-hit != 'true'
         run: npm ci
         
       - name: Build tsconfig
@@ -63,21 +59,17 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
 
-      - name: Get npm cache directory
-        id: npm-cache
-        run: |
-          echo "::set-output name=dir::$(npm config get cache)"
       - uses: actions/cache@v2
         with:
-          path: ${{ steps.npm-cache.outputs.dir }}
+          path: ~/.npm
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-node-
 
       - name: Install dependencies
-        if: steps.npm-cache.outputs.cache-hit != 'true'
+        if: steps.cache.outputs.cache-hit != 'true'
         run: npm ci
-        
+
       - name: Build tsconfig
         run: npx gulp build:tsconfig
 
@@ -101,19 +93,15 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
 
-      - name: Get npm cache directory
-        id: npm-cache
-        run: |
-          echo "::set-output name=dir::$(npm config get cache)"
       - uses: actions/cache@v2
         with:
-          path: ${{ steps.npm-cache.outputs.dir }}
+          path: ~/.npm
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-node-
 
       - name: Install dependencies
-        if: steps.npm-cache.outputs.cache-hit != 'true'
+        if: steps.cache.outputs.cache-hit != 'true'
         run: npm ci
 
       - name: Build tsconfig
