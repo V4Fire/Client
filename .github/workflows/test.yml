@@ -17,9 +17,6 @@ jobs:
       matrix:
         node-version: [14.1]
 
-    env:
-      NODE_ENV: production
-
     steps:
       - uses: actions/checkout@v2
 
@@ -28,17 +25,22 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
 
-      - name: Use Playwright
-        uses: microsoft/playwright-github-action@v1
+      - name: Get npm cache directory
+        id: npm-cache
+        run: |
+          echo "::set-output name=dir::$(npm config get cache)"
+      - uses: actions/cache@v2
+        with:
+          path: ${{ steps.npm-cache.outputs.dir }}
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
 
       - name: Install dependencies
         run: npm ci
 
       - name: Build tsconfig
         run: npx gulp build:tsconfig
-
-      - name: Set env
-        run: echo ::set-env name=NODE_ENV::$(echo development)
 
       - name: Run components test
         run: npm run test:components
@@ -52,9 +54,6 @@ jobs:
       matrix:
         node-version: [14.1]
 
-    env:
-      NODE_ENV: production
-
     steps:
       - uses: actions/checkout@v2
 
@@ -62,6 +61,17 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: ${{ matrix.node-version }}
+
+      - name: Get npm cache directory
+        id: npm-cache
+        run: |
+          echo "::set-output name=dir::$(npm config get cache)"
+      - uses: actions/cache@v2
+        with:
+          path: ${{ steps.npm-cache.outputs.dir }}
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
 
       - name: Install dependencies
         run: npm ci
@@ -81,9 +91,6 @@ jobs:
       matrix:
         node-version: [14.1]
 
-    env:
-      NODE_ENV: production
-
     steps:
       - uses: actions/checkout@v2
 
@@ -91,6 +98,17 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: ${{ matrix.node-version }}
+
+      - name: Get npm cache directory
+        id: npm-cache
+        run: |
+          echo "::set-output name=dir::$(npm config get cache)"
+      - uses: actions/cache@v2
+        with:
+          path: ${{ steps.npm-cache.outputs.dir }}
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
 
       - name: Install dependencies
         run: npm ci
