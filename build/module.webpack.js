@@ -238,7 +238,22 @@ module.exports = async function ({buildId, plugins}) {
 	});
 
 	loaders.rules.set('img', {
-		test: /\.(?:png|webp|gif|jpe?g)$/,
+		test: /\.(?:png|gif|jpe?g)$/,
+		use: [
+			{
+				loader: 'url',
+				options: fileLoaderOpts
+			}
+		].concat(
+			isProd ? {
+				loader: 'image-webpack',
+				options: Object.reject(imageOpts, ['webp'])
+			} : []
+		)
+	});
+
+	loaders.rules.set('img.webp', {
+		test: /\.webp$/,
 		use: [
 			{
 				loader: 'url',
