@@ -26,6 +26,7 @@ jobs:
           node-version: ${{ matrix.node-version }}
 
       - uses: actions/cache@v2
+        id: cache
         with:
           path: ~/.npm
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
@@ -60,6 +61,7 @@ jobs:
           node-version: ${{ matrix.node-version }}
 
       - uses: actions/cache@v2
+        id: cache
         with:
           path: ~/.npm
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
@@ -94,6 +96,7 @@ jobs:
           node-version: ${{ matrix.node-version }}
 
       - uses: actions/cache@v2
+        id: cache
         with:
           path: ~/.npm
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
