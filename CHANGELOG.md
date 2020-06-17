@@ -11,11 +11,15 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v3.0.0-rc.30 (2020-06-17)
+## v3.0.0-rc.31 (2020-06-17)
 
 #### :bug: Bug Fix
 
 * Fixed unsafe pointer `core/component/engines/vue/render`
+
+#### :house: Internal
+
+* Added `.npmignore`
 
 ## v3.0.0-rc.30 (2020-06-10)
 
