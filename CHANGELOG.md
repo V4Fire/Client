@@ -11,6 +11,16 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.31 (2020-06-17)
+
+#### :bug: Bug Fix
+
+* Fixed a problem with the disappearance of loaders before the content was rendered
+
+#### :house: Internal
+
+* [Fixed type of `DaemonFn`](https://github.com/V4Fire/Client/issues/257)
+
 ## v3.0.0-rc.30 (2020-06-10)
 
 #### :bug: Bug Fix
@@ -70,7 +80,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :house: Internal
 
-* [Fixed type of `DaemonFn`](https://github.com/V4Fire/Client/issues/257)
+* [Fixed type of `WrappedDaemonFn`](https://github.com/V4Fire/Client/issues/257)
 
 ## v3.0.0-rc.24 (2020-05-29)
 
