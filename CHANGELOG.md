@@ -16,7 +16,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### :bug: Bug Fix
 
 * Fixed a problem with converting images to webp `static:image:webp` at `build/static.gulp.js`
-* Fixed a problem with image loading with `image-webpack-plugin` at `build/module.webpack.js`
+* Fixed a problem with image loading `image-webpack-plugin` at `build/module.webpack.js`
 
 #### :house: Internal
 
