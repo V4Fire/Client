@@ -11,6 +11,13 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.32 (2020-06-17)
+
+#### :bug: Bug Fix
+
+* Fixed a problem with converting images to webp `static:image:webp` at `build/static.gulp.js`
+* Fixed a problem with image loading with `image-webpack-plugin` at `build/module.webpack.js`
+
 ## v3.0.0-rc.31 (2020-06-17)
 
 #### :bug: Bug Fix
