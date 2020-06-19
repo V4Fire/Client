@@ -5,7 +5,7 @@
   "main": "src/core/index.js",
   "typings": "index.d.ts",
   "license": "MIT",
-  "version": "3.0.0-rc.31",
+  "version": "3.0.0-rc.30",
   "author": {
     "name": "kobezzza",
     "email": "kobezzza@gmail.com",
@@ -29,7 +29,7 @@
     "test": "npm run test:typescript && npm run test:eslint && npm run test:components",
     "test:eslint": "npx eslint ./config/**/*.js ./build/**/*.js ./src/**/*.js",
     "test:typescript": "node node_modules/@v4fire/typescript-check",
-    "test:components": "npx gulp test:components"
+    "test:components": "npx gulp test:components --reinit-browser true"
   },
   "husky": {
     "hooks": {
@@ -38,7 +38,7 @@
   },
   "dependencies": {
     "@v4fire/core": "3.19.0",
-    "escaper": "3.0.5",
+    "escaper": "^3.0.4",
     "eventemitter2": "6.4.1",
     "fg-loadcss": "^2.1.0",
     "path-to-regexp": "^3.2.0",
