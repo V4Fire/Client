@@ -140,7 +140,11 @@ module.exports = function (gulp = require('gulp')) {
 				context = await browser.newContext(),
 				page = await context.newPage();
 
+			const
+				testURL = `localhost:${args['--port']}/${args['--page']}.html`;
+
 			browserParams[browserType] = {
+				testURL,
 				browser,
 				browserType,
 				page,
@@ -154,9 +158,12 @@ module.exports = function (gulp = require('gulp')) {
 			const
 				params = browserParams[browserType];
 
-			const {page} = params;
-			await page.goto(`localhost:${args['--port']}/${args['--page']}.html`);
+			const {
+				testURL,
+				page
+			} = params;
 
+			await page.goto(testURL);
 			const testEnv = getTestEnv(browserType);
 			await test(page, params);
 
@@ -390,7 +397,7 @@ module.exports = function (gulp = require('gulp')) {
 		await waitForEmpty(testMap);
 
 		console.log('\n-------------');
-		console.log(`\n✔️ Tests passed: ${totalCases.filter((v) => !failedCases.includes(v)).length}`);
+		console.log(`\n✔ Tests passed: ${totalCases.filter((v) => !failedCases.includes(v)).length}`);
 		console.log(`\n❌ Tests failed: ${failedCases.length}`);
 
 		if (failedCases.length) {
@@ -511,12 +518,17 @@ function getSelectedBrowsers() {
  * @returns {!Array<string>}
  */
 function getBrowserArgs() {
-	const
-		args = arg({'--browser-args': String}, {permissive: true});
+	try {
+		const
+			args = arg({'--browser-args': String}, {permissive: true});
 
-	if (!args['--browser-args']) {
+		if (!args['--browser-args']) {
+			return [];
+		}
+
+		return args['--browser-args'].split(',').map((v) => `--${v.trim()}`);
+
+	} catch {
 		return [];
 	}
-
-	return args['--browser-args'].split(',').map((v) => `--${v.trim()}`);
 }

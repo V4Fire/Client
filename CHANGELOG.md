@@ -11,23 +11,89 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.32 (2020-06-19)
+
+#### :bug: Bug Fix
+
+* Fixed a problem with converting images to webp `static:image:webp` at `build/static.gulp.js`
+* Fixed a problem with image loading `image-webpack-plugin` at `build/module.webpack.js`
+
+#### :house: Internal
+
+* [Improves github actions performance](https://github.com/V4Fire/Client/issues/266)
+
+## v3.0.0-rc.31 (2020-06-17)
+
+#### :bug: Bug Fix
+
+* Fixed a problem with the disappearance of loaders before the content was rendered
+* Fixed unsafe pointer `core/component/engines/vue/render`
+
+#### :house: Internal
+
+* Added `.npmignore`
+* [Fixed type of `DaemonFn`](https://github.com/V4Fire/Client/issues/257)
+
+## v3.0.0-rc.30 (2020-06-10)
+
+#### :bug: Bug Fix
+
+* Fixed invalid expanding of string literals `build/replacers/ts-import`
+
+## v3.0.0-rc.29 (2020-06-09)
+
+#### :bug: Bug Fix
+
+* Fixed loading of external dependencies `core/router/engines/browser.history`
+
+## v3.0.0-rc.28 (2020-06-09)
+
+#### :bug: Bug Fix
+
+* Fixed loading of external dependencies `core/router/engines/browser.history`
+
+## v3.0.0-rc.27 (2020-06-08)
+
+#### :boom: Breaking Change
+
+* Removed legacy `bRouter`:
+  * Removed click handler;
+  * Removed `scrollTo`;
+  * Review legacy logic with providing of root parameters to the router.
+
+#### :rocket: New Feature
+
+* Improved API `bRouter`:
+  * Added `updateRoutes`;
+  * Added support to watch route query;
+  * Marked `routes` as public;
+  * Marked `basePath` as system field.
+
+#### :bug: Bug Fix
+
+* Fixed `external`, `alias` and `redirect` logic `bRouter`
+
+#### :house: Internal
+
+* Added doc and tests `bRouter`
+
 ## v3.0.0-rc.26 (2020-06-03)
 
 #### :bug: Bug Fix
 
-* Fixed race condition within tests `b-virtual-scroll`
+* Fixed race condition within tests `bVirtualScroll`
 
 ## v3.0.0-rc.25 (2020-06-03)
 
 #### :bug: Bug Fix
 
-* [Fixed an issue where skeletons disappeared `b-virtual-scroll`](https://github.com/V4Fire/Client/issues/230)
+* [Fixed an issue where skeletons disappeared `bVirtualScroll`](https://github.com/V4Fire/Client/issues/230)
 * [Fixed an issue with a race condition `b-virtual-scroll/chunk-request/init`](https://github.com/V4Fire/Client/issues/203)
-* [Fixed an issue where an `empty` slot appeared when there was data `b-virtual-scroll`](https://github.com/V4Fire/Client/issues/259)
+* [Fixed an issue where an `empty` slot appeared when there was data `bVirtualScroll`](https://github.com/V4Fire/Client/issues/259)
 
 #### :house: Internal
 
-* [Fixed type of `DaemonFn`](https://github.com/V4Fire/Client/issues/257)
+* [Fixed type of `WrappedDaemonFn`](https://github.com/V4Fire/Client/issues/257)
 
 ## v3.0.0-rc.24 (2020-05-29)
 
@@ -57,7 +123,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :bug: Bug Fix
 
-* Fixed deep watching for accessors
+* Fixed deep watching of accessors
 
 ## v3.0.0-rc.20 (2020-05-26)
 
@@ -79,13 +145,13 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 ### :bug: Bug Fix
 
-* [Fixed rendering of truncated data in `b-virtual-scroll`](https://github.com/V4Fire/Client/issues/231)
-* [Fixed rendering of empty slot in `b-virtual-scroll`](https://github.com/V4Fire/Client/issues/241)
-* [Fixed clear of `in-view` in `b-virtual-scroll`](https://github.com/V4Fire/Client/pull/201)
+* [Fixed rendering of truncated data in `bVirtualScroll`](https://github.com/V4Fire/Client/issues/231)
+* [Fixed rendering of empty slot in `bVirtualScroll`](https://github.com/V4Fire/Client/issues/241)
+* [Fixed clear of `in-view` in `bVirtualScroll`](https://github.com/V4Fire/Client/pull/201)
 * [Fixed issue with `in-view` that element did not becomes observable](https://github.com/V4Fire/Client/pull/201)
 * [Fixed `stopObserver` method in `in-view`](https://github.com/V4Fire/Client/pull/201)
 * [Fixed parallel components build](https://github.com/V4Fire/Client/pull/201)
-* [Fixed extra space `b-checkbox`](https://github.com/V4Fire/Client/pull/246)
+* [Fixed extra space `bCheckbox`](https://github.com/V4Fire/Client/pull/246)
 
 #### :house: Internal
 
@@ -96,8 +162,8 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
   * Runs eslint.
 
 * [Added demo model](https://github.com/V4Fire/Client/pull/201)
-* [Review `b-virtual-scroll`](https://github.com/V4Fire/Client/pull/201)
-* [Added few tests for `b-virtual-scroll`](https://github.com/V4Fire/Client/pull/201)
+* [Review `bVirtualScroll`](https://github.com/V4Fire/Client/pull/201)
+* [Added few tests for `bVirtualScroll`](https://github.com/V4Fire/Client/pull/201)
 * [Improves tests performance](https://github.com/V4Fire/Client/pull/201)
 
 ## v3.0.0-rc.18 (2020-05-24)
@@ -129,7 +195,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :bug: Bug Fix
 
-* [Fixed `b-bottom-slide` bottom padding](https://github.com/V4Fire/Client/pull/232)
+* [Fixed `bBottomSlide` bottom padding](https://github.com/V4Fire/Client/pull/232)
 
 ## v3.0.0-rc.13 (2020-05-13)
 
@@ -200,7 +266,7 @@ npx webpack --components b-button,b-select
 
 #### :bug: Bug Fix
 
-* Fixed async labels for request animation frame operations `traits/iHistory/history`
+* Fixed async labels for request animation frame operations `traits/i-history/history`
 * Fixed history clearing on close `base/b-bottom-slide`
 * Fixed `setMod` event `super/i-block/modules/block/setMod`
 
@@ -297,7 +363,7 @@ export default class bExample extends iBlock {
 
 #### :bug: Bug Fix
 
-* [Fixed rendering of truncated data in `b-virtual-scroll`](https://github.com/V4Fire/Client/issues/231)
+* [Fixed rendering of truncated data in `bVirtualScroll`](https://github.com/V4Fire/Client/issues/231)
 
 ## v3.0.0-beta.271 (2020-04-27)
 
@@ -309,7 +375,7 @@ export default class bExample extends iBlock {
 
 #### :bug: Bug Fix
 
-* [Fixed repetitive `iLockPageScroll.unlock` calls `traits/iLockPageScroll/lock`](https://github.com/V4Fire/Client/pull/200)
+* [Fixed repetitive `iLockPageScroll.unlock` calls `traits/i-lock-page-scroll/lock`](https://github.com/V4Fire/Client/pull/200)
 * [Fixed the default image ratio `bImage`](https://github.com/V4Fire/Client/pull/197)
 
 #### :house: Internal
@@ -321,18 +387,18 @@ export default class bExample extends iBlock {
 #### :rocket: New Feature
 
 * Added `base/bBottomSlide`
-* Added `traits/iHistory`
+* Added `traits/i-history`
 * Added `core/component/directive/v-update-on`
 
 #### :bug: Bug Fix
 
-* Fixed scrolling of nested pages `traits/iLockPageScroll/lock`
+* Fixed scrolling of nested pages `traits/i-lock-page-scroll/lock`
 
 ## v3.0.0-beta.268 (2020-04-08)
 
 #### :bug: Bug Fix
 
-* [Fixed rendering `b-virtual-scroll`](https://github.com/V4Fire/Client/pull/194)
+* [Fixed rendering `bVirtualScroll`](https://github.com/V4Fire/Client/pull/194)
 
 ## v3.0.0-beta.267 (2020-04-06)
 
@@ -372,13 +438,13 @@ export default class bExample extends iBlock {
 
 ### :bug: Bug Fix
 
-* [Fixed `reload` method in `b-virtual-scroll` when `db` was empty](https://github.com/V4Fire/Client/pull/180)
+* [Fixed `reload` method in `bVirtualScroll` when `db` was empty](https://github.com/V4Fire/Client/pull/180)
 
 ## v3.0.0-beta.261 (2020-03-10)
 
 ### :bug: Bug Fix
 
-* [Fixed `reload` method in `b-virtual-scroll`](https://github.com/V4Fire/Client/pull/180)
+* [Fixed `reload` method in `bVirtualScroll`](https://github.com/V4Fire/Client/pull/180)
 * [Updated `validators.ts`](https://github.com/V4Fire/Client/pull/178/files)
 
 ## v3.0.0-beta.260 (2020-03-10)
@@ -394,7 +460,7 @@ export default class bExample extends iBlock {
 
 #### :house: Internal
 
-* [Review `b-virtual-scroll`](https://github.com/V4Fire/Client/pull/173)
+* [Review `bVirtualScroll`](https://github.com/V4Fire/Client/pull/173)
 
 ## v3.0.0-beta.259 (2020-03-05)
 
@@ -446,13 +512,13 @@ export default class bExample extends iBlock {
 #### :rocket: New Feature
 
 * Added a new event `dbCanChange` for `iData`
-* [Optimized rendering of `b-virtual-scroll`](https://github.com/V4Fire/Client/pull/169)
+* [Optimized rendering of `bVirtualScroll`](https://github.com/V4Fire/Client/pull/169)
 * [Added `prefetch` in `core/init`](https://github.com/V4Fire/Client/pull/169)
 
 #### :bug: Bug Fix
 
 * Fixed memory leak with data providers
-* [Fixed issue with `b-virtual-scroll` not beign render some chunks](https://github.com/V4Fire/Client/pull/169)
+* [Fixed issue with `bVirtualScroll` not beign render some chunks](https://github.com/V4Fire/Client/pull/169)
 
 ## v3.0.0-beta.253 (2020-02-24)
 
@@ -473,12 +539,12 @@ export default class bExample extends iBlock {
 * Fixed custom base URL-s with providers
 * Fixed `messageHelpers` type
 * Fixed `State.initFromRouter`
-* [Fixed `reInit` method in `b-virtual-scroll`](https://github.com/V4Fire/Client/pull/162)
+* [Fixed `reInit` method in `bVirtualScroll`](https://github.com/V4Fire/Client/pull/162)
 * [Fixed `in-view` initialization](https://github.com/V4Fire/Client/pull/162)
 
 #### :house: Internal
 
-* [Added `unsafe` getter for `b-virtual-scroll`, `b-virtual-scroll/scroll-render`, `b-virtual-scroll/scroll-request`](https://github.com/V4Fire/Client/pull/162)
+* [Added `unsafe` getter for `bVirtualScroll`, `b-virtual-scroll/scroll-render`, `b-virtual-scroll/scroll-request`](https://github.com/V4Fire/Client/pull/162)
 
 ## v3.0.0-beta.250 (2020-02-12)
 
@@ -510,14 +576,14 @@ export default class bExample extends iBlock {
 #### :rocket: New Feature
 
 * [Added `i-items` trait](https://github.com/V4Fire/Client/pull/154)
-* [Added `runtime` block to `b-skeleton`](https://github.com/V4Fire/Client/pull/154)
+* [Added `runtime` block to `bSkeleton`](https://github.com/V4Fire/Client/pull/154)
 * [Added `inViewFactory` to create local `in-view` instances](https://github.com/V4Fire/Client/pull/154)
 * [Added `observable.size` for `in-view` observable elements](https://github.com/V4Fire/Client/pull/154)
 * [Improved icon loading from DS](https://github.com/V4Fire/Client/pull/148)
 
 #### :boom: Breaking Change
 
-* [Review `b-virtual-scroll` component](https://github.com/V4Fire/Client/pull/154)
+* [Review `bVirtualScroll` component](https://github.com/V4Fire/Client/pull/154)
 
 #### :bug: Bug Fix
 
@@ -609,9 +675,9 @@ export default class bExample extends iBlock {
 
 #### :house: Internal
 
-* [`b-slider` component now implements `i-observe-dom`](https://github.com/V4Fire/Client/pull/146)
-* [`b-content-switcher` component now implements `i-observe-dom`](https://github.com/V4Fire/Client/pull/146)
-* [`b-slider` component now uses `v-resize` directive](https://github.com/V4Fire/Client/pull/146)
+* [`bSlider` component now implements `i-observe-dom`](https://github.com/V4Fire/Client/pull/146)
+* [`bContentSwitcher` component now implements `i-observe-dom`](https://github.com/V4Fire/Client/pull/146)
+* [`bSlider` component now uses `v-resize` directive](https://github.com/V4Fire/Client/pull/146)
 * [Review observable APIs](https://github.com/V4Fire/Client/pull/146)
 
 ## v3.0.0-beta.233 (2019-12-13)
@@ -636,12 +702,12 @@ export default class bExample extends iBlock {
 
 #### :rocket: New Feature
 
-* Added `beforeOptions` and `afterOptions` slots to `b-slider` component
+* Added `beforeOptions` and `afterOptions` slots to `bSlider` component
 
 #### :bug: Bug Fix
 
-* [Fixed `b-virtual-scroll` request params](https://github.com/V4Fire/Client/pull/149)
-* [Fixed `b-virtual-scroll` size calculation in `fixSize` method](https://github.com/V4Fire/Client/pull/149)
+* [Fixed `bVirtualScroll` request params](https://github.com/V4Fire/Client/pull/149)
+* [Fixed `bVirtualScroll` size calculation in `fixSize` method](https://github.com/V4Fire/Client/pull/149)
 
 ## v3.0.0-beta.229 (2019-12-10)
 
@@ -685,9 +751,9 @@ export default class bExample extends iBlock {
 
 #### :bug: Bug Fix
 
-* [Fixed `b-virtual-scroll` reloadLast method](https://github.com/V4Fire/Client/pull/144)
-* [Fixed `b-virtual-scroll` reload method](https://github.com/V4Fire/Client/pull/144)
-* [Fixed `b-image` onImageLoaded method](https://github.com/V4Fire/Client/pull/145)
+* [Fixed `bVirtualScroll` reloadLast method](https://github.com/V4Fire/Client/pull/144)
+* [Fixed `bVirtualScroll` reload method](https://github.com/V4Fire/Client/pull/144)
+* [Fixed `bImage` onImageLoaded method](https://github.com/V4Fire/Client/pull/145)
 * Fixed race conditions within `iData`
 
 #### :house: Internal
@@ -710,14 +776,14 @@ export default class bExample extends iBlock {
 
 #### :bug: Bug Fix
 
-* [Fixed `b-virtual-scroll` component](https://github.com/V4Fire/Client/pull/142)
+* [Fixed `bVirtualScroll` component](https://github.com/V4Fire/Client/pull/142)
 
 ## v3.0.0-beta.221 (2019-11-27)
 
 #### :boom: Breaking Change
 
 * [Changed `iLockPageScroll` trait methods signature](https://github.com/V4Fire/Client/pull/137)
-* [Changed `before` and `after` slots position in `b-slider`](https://github.com/V4Fire/Client/pull/137)
+* [Changed `before` and `after` slots position in `bSlider`](https://github.com/V4Fire/Client/pull/137)
 * [Changed `saveDataToRootStore` key generation](https://github.com/V4Fire/Client/pull/137)
 * Renamed `needReInit` to `reloadOnActivation` from `iBlock`
 * Renamed `needOfflineReInit` to `offlineReload` from `iData`
@@ -728,15 +794,15 @@ export default class bExample extends iBlock {
 
 #### :rocket: New Feature
 
-* [Added `b-virtual-scroll` component](https://github.com/V4Fire/Client/pull/137)
+* [Added `bVirtualScroll` component](https://github.com/V4Fire/Client/pull/137)
 * [Added `appendChild` method to the DOM module](https://github.com/V4Fire/Client/pull/137)
-* [Added `placeholderHidden` prop to `b-content-switcher`](https://github.com/V4Fire/Client/pull/137)
+* [Added `placeholderHidden` prop to `bContentSwitcher`](https://github.com/V4Fire/Client/pull/137)
 * [Added support for icons from DS](https://github.com/V4Fire/Client/pull/140)
 
 #### :bug: Bug Fix
 
-* [Fixed `b-content-switcher` `components` resolver not being resolved with multiply components in `content` slot](https://github.com/V4Fire/Client/pull/137)
-* [Fixed `b-content-switcher` not being hidden with `animation` set to `none`](https://github.com/V4Fire/Client/pull/137)
+* [Fixed `bContentSwitcher` `components` resolver not being resolved with multiply components in `content` slot](https://github.com/V4Fire/Client/pull/137)
+* [Fixed `bContentSwitcher` not being hidden with `animation` set to `none`](https://github.com/V4Fire/Client/pull/137)
 
 ## v3.0.0-beta.220 (2019-11-25)
 
@@ -1030,7 +1096,7 @@ export default class bExample extends iBlock {
 * New API for `i-static-page/deps.js`
 * Removed redundant span tag within `b-icon/b-icon.ss`
 * Rewrite `bCheckboxGroup` API
-* [Added `attrs` argument instead of `style` for `b-skeleton`](https://github.com/V4Fire/Client/pull/134)
+* [Added `attrs` argument instead of `style` for `bSkeleton`](https://github.com/V4Fire/Client/pull/134)
 
 #### :rocket: New Feature
 
@@ -1040,7 +1106,7 @@ export default class bExample extends iBlock {
 #### :bug: Bug Fix
 
 * Fixed dependency loader `i-static-page/i-static-page.ss`
-* [Fixed `b-skeleton` has an additional wrapper](https://github.com/V4Fire/Client/pull/134)
+* [Fixed `bSkeleton` has an additional wrapper](https://github.com/V4Fire/Client/pull/134)
 * Fixed icons within `bCheckbox`
 
 #### :house: Internal
@@ -1069,16 +1135,16 @@ export default class bExample extends iBlock {
 
 #### :boom: Breaking Change
 
-* [Renamed `b-switcher` component to `b-content-switcher`](https://github.com/V4Fire/Client/pull/132/files)
+* [Renamed `bSwitcher` component to `bContentSwitcher`](https://github.com/V4Fire/Client/pull/132/files)
 
 ### :rocket: New Feature
 
-* [Added `resolveStrategy` property to `b-content-switcher`](https://github.com/V4Fire/Client/pull/132/files)
-* [Added `syncState` event to `b-slider`](https://github.com/V4Fire/Client/pull/132/files)
+* [Added `resolveStrategy` property to `bContentSwitcher`](https://github.com/V4Fire/Client/pull/132/files)
+* [Added `syncState` event to `bSlider`](https://github.com/V4Fire/Client/pull/132/files)
 
 #### :bug: Bug Fix
 
-* [Fixed `b-skeleton` params providing to blocks](https://github.com/V4Fire/Client/pull/132/files)
+* [Fixed `bSkeleton` params providing to blocks](https://github.com/V4Fire/Client/pull/132/files)
 
 #### :house: Internal
 
@@ -1325,7 +1391,7 @@ export default class bExample extends iBlock {
 
 #### :bug: Bug Fix
 
-* Removed V2 legacy code from `b-window`, `b-checkbox-group`
+* Removed V2 legacy code from `bWindow`, `bCheckboxGroup`
 * Fixed `asyncRender` with nested template tags
 
 #### :nail_care: Polish
@@ -1367,7 +1433,7 @@ export default class bExample extends iBlock {
 
 #### :rocket: New Feature
 
-* Added support for `height` prop (stylus) within `b-slider`
+* Added support for `height` prop (stylus) within `bSlider`
 
 #### :bug: Bug Fix
 

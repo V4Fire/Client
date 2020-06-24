@@ -28,7 +28,7 @@ export type DaemonHook =
 
 export interface DaemonFn<
 	CTX extends iBlock = iBlock,
-	ARGS extends unknown[] = unknown[],
+	ARGS extends any[] = any[],
 	R = unknown
 > {
 	(this: CTX['unsafe'], ...args: ARGS): R;
