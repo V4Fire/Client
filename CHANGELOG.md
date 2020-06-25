@@ -11,6 +11,11 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.0.0-rc.33 (2020-06-24)
+
+#### :house: Internal
+* Unlocked the @v4fire/core package version
+
 ## v3.0.0-rc.32 (2020-06-19)
 
 #### :bug: Bug Fix
