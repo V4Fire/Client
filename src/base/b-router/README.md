@@ -547,7 +547,7 @@ import iBlock, { component, field } from 'super/i-block/i-block';
 
 @component()
 export default class bExample extends iBlock {
-  @field((o) => o.sync.link('route', {deep: true, withProto: true}), ({query}) => query.bla || 'foo')
+  @field((o) => o.sync.link('route', {deep: true, withProto: true}, ({query}) => query.bla || 'foo'))
   bla!: string;
 }
 ```
