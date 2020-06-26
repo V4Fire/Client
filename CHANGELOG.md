@@ -11,6 +11,13 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+
+## v3.0.0-rc.34 (2020-06-26)
+
+#### :house: Internal
+
+* Added `test-entry` argument for test cases
+
 ## v3.0.0-rc.33 (2020-06-24)
 
 #### :house: Internal

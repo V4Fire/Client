@@ -76,9 +76,7 @@ module.exports = function (gulp = require('gulp')) {
 			'--headless': String,
 			'--client-name': String,
 			'--reinit-browser': String,
-			'--test-entry': String,
-
-			'-te': '--test-entry'
+			'--test-entry': String
 		}, {permissive: true});
 
 		if (!args['--name']) {
@@ -122,8 +120,8 @@ module.exports = function (gulp = require('gulp')) {
 
 		let testPath;
 
-		if (args['-te']) {
-			testPath = resolve.blockSync(args['-te']);
+		if (args['--test-entry']) {
+			testPath = resolve.blockSync(args['--test-entry']);
 
 		} else {
 			testPath = path.join(componentDir, 'test');
