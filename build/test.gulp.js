@@ -118,14 +118,9 @@ module.exports = function (gulp = require('gulp')) {
 
 		fs.mkdirpSync(tmpDir);
 
-		let testPath;
-
-		if (args['--test-entry']) {
-			testPath = resolve.blockSync(args['--test-entry']);
-
-		} else {
-			testPath = path.join(componentDir, 'test');
-		}
+		const testPath = args['--test-entry'] ?
+			resolve.blockSync(args['--test-entry']) :
+			path.join(componentDir, 'test');
 
 		const
 			test = require(testPath);
