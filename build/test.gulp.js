@@ -75,7 +75,8 @@ module.exports = function (gulp = require('gulp')) {
 			'--close': String,
 			'--headless': String,
 			'--client-name': String,
-			'--reinit-browser': String
+			'--reinit-browser': String,
+			'--test-entry': String
 		}, {permissive: true});
 
 		if (!args['--name']) {
@@ -117,8 +118,12 @@ module.exports = function (gulp = require('gulp')) {
 
 		fs.mkdirpSync(tmpDir);
 
+		const testPath = args['--test-entry'] ?
+			resolve.blockSync(args['--test-entry']) :
+			path.join(componentDir, 'test');
+
 		const
-			test = require(path.join(componentDir, 'test'));
+			test = require(testPath);
 
 		const browserParams = {
 			chromium: {},

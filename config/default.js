@@ -62,8 +62,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 					.flatMap((name) => {
 						try {
 							const
-								dir = pzlr.resolve.blockSync(name),
-								demo = require(path.join(dir, 'demo.js')),
+								demo = require(pzlr.resolve.blockSync(`${name}/demo.js`)),
 								suit = camelize(args['--suit'] || 'demo');
 
 							const
