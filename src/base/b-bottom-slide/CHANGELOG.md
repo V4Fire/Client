@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.0.0-rc.35 (2020-06-30)
+
+#### :bug: Bug Fix
+
+* Fixed incorrect bottom-slide positioning with content bigger than `maxVisiblePx`
+
 ## v3.0.0-rc.16 (2020-05-21)
 
 #### :bug: Bug Fix
