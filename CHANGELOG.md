@@ -12,7 +12,7 @@ Changelog
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
 
-## v3.0.0-rc.34 (2020-06-26)
+## v3.0.0-rc.34 (2020-06-30)
 
 #### :house: Internal
 
