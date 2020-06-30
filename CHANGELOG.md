@@ -12,6 +12,12 @@ Changelog
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
 
+## v3.0.0-rc.35 (2020-06-30)
+
+#### :bug: Bug Fix
+
+* Fixed incorrect bottom-slide positioning with content bigger than `maxVisiblePx`
+
 ## v3.0.0-rc.34 (2020-06-30)
 
 #### :house: Internal
